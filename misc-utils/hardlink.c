@@ -94,7 +94,7 @@ void doexit(int i)
   exit(i);
 }
 
-void usage(prog)
+void usage(char *prog)
 {
   fprintf (stderr, "Usage: %s [-cnv] directories...\n", prog);
   exit(255);
