@@ -175,7 +175,7 @@ void rf (char *name)
           fprintf(stderr, "\r%*s\r", (int)strlen(name)+2, "");
         return;
       }
-    if (fp) {
+    if (fp && st.st_size > 0) {
       p = mmap (NULL, st.st_size, PROT_READ, MAP_SHARED, fd, 0);
       nmmap++;
       if (p == (void *)-1) {
@@ -191,7 +191,7 @@ void rf (char *name)
           st2.st_dev == st.st_dev) {
         int fd2 = open (fp2->name, O_RDONLY);
         if (fd2 < 0) continue;
-        if (fstat (fd2, &st2) || !S_ISREG (st2.st_mode)) {
+        if (fstat (fd2, &st2) || !S_ISREG (st2.st_mode) || st2.st_size == 0) {
           close (fd2);
           continue;
         }
