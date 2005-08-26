@@ -97,6 +97,9 @@ void doexit(int i)
 void usage(char *prog)
 {
   fprintf (stderr, "Usage: %s [-cnv] directories...\n", prog);
+  fprintf (stderr, "  -c    When finding candidates for linking, compare only file contents.\n");
+  fprintf (stderr, "  -n    Don't actually link anything, just report what would be done.\n");
+  fprintf (stderr, "  -v    Operate in verbose mode.\n");
   exit(255);
 }
 
