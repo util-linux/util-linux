@@ -96,10 +96,11 @@ void doexit(int i)
 
 void usage(char *prog)
 {
-  fprintf (stderr, "Usage: %s [-cnv] directories...\n", prog);
+  fprintf (stderr, "Usage: %s [-cnvh] directories...\n", prog);
   fprintf (stderr, "  -c    When finding candidates for linking, compare only file contents.\n");
   fprintf (stderr, "  -n    Don't actually link anything, just report what would be done.\n");
   fprintf (stderr, "  -v    Operate in verbose mode.\n");
+  fprintf (stderr, "  -h    Show help.\n");
   exit(255);
 }
 
@@ -125,7 +126,7 @@ void rf (char *name)
     int fd, i;
     f * fp, * fp2;
     h * hp;
-    char *p, *q;
+    char *p = NULL, *q;
     char *n1, *n2;
     int cksumsize = sizeof(buf);
     unsigned int cksum;
@@ -292,7 +293,7 @@ int main(int argc, char **argv)
   d * dp;
   DIR *dh;
   struct dirent *di;
-  while ((ch = getopt (argc, argv, "cnv")) != -1) {
+  while ((ch = getopt (argc, argv, "cnvh")) != -1) {
     switch (ch) {
     case 'n':
       no_link++;
@@ -303,6 +304,7 @@ int main(int argc, char **argv)
     case 'c':
       content_only++;
       break;
+    case 'h':
     default:
       usage(argv[0]);
     }
