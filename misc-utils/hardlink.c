@@ -17,7 +17,8 @@
    write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330,
    Boston, MA 02111-1307, USA.  */
   
-/*  Changes by Rémy Card to use constants and add option -n.  */
+/*  Changes by RÃ©my Card to use constants and add option -n.  */
+/*  Changes by Jindrich Novy to add option -h.  */
 
 #define _GNU_SOURCE
 #include <sys/types.h>
