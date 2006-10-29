@@ -100,7 +100,8 @@ void usage(char *prog)
   fprintf (stderr, "Usage: %s [-cnvh] directories...\n", prog);
   fprintf (stderr, "  -c    When finding candidates for linking, compare only file contents.\n");
   fprintf (stderr, "  -n    Don't actually link anything, just report what would be done.\n");
-  fprintf (stderr, "  -v    Operate in verbose mode.\n");
+  fprintf (stderr, "  -v    Print summary after hardlinking.\n");
+  fprintf (stderr, "  -vv   Print every hardlinked file and bytes saved + summary.\n");
   fprintf (stderr, "  -h    Show help.\n");
   exit(255);
 }

@@ -3,7 +3,7 @@
 hardlink \- Consolidate duplicate files via hardlinks
 .SH "SYNOPSIS"
 .PP
-\fBhardlink\fP [\fB-c\fP] [\fB-n\fP] [\fB-v\fP] [\fB-h\fP] directory1 [ directory2 ... ]
+\fBhardlink\fP [\fB-c\fP] [\fB-n\fP] [\fB-v\fP] [\fB-vv\fP] [\fB-h\fP] directory1 [ directory2 ... ]
 .SH "DESCRIPTION"
 .PP
 This manual page documents \fBhardlink\fP, a 
@@ -27,7 +27,9 @@ Disregards permission, ownership and other differences.
 .IP "\fB-n\fP" 10
 Do not perform the consolidation; only print what would be changed.
 .IP "\fB-v\fP" 10
-Enable verbose logging.
+Print summary after hardlinking.
+.IP "\fB-vv\fP" 10
+Print every hardlinked file and bytes saved. Also print summary after hardlinking.
 .IP "\fB-h\fP" 10
 Show help.
 .SH "AUTHOR"
