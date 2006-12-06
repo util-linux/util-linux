@@ -105,7 +105,7 @@ static void
 discard_mntentchn(struct mntentchn *mc0) {
 	struct mntentchn *mc, *mc1;
 
-	for (mc = mc0->nxt; mc != mc0; mc = mc1) {
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc1) {
 		mc1 = mc->nxt;
 		my_free(mc->m.mnt_fsname);
 		my_free(mc->m.mnt_dir);

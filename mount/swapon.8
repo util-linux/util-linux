@@ -80,8 +80,8 @@ Not available before Linux 2.1.25.
 .B \-a
 All devices marked as ``swap'' swap devices in
 .I /etc/fstab
-are made available. Devices that are already running as swap are silently
-skipped.
+are made available, except for those with the ``noauto'' option.
+Devices that are already running as swap are silently skipped.
 .TP 
 .B \-e
 When 

@@ -792,7 +792,10 @@ static int
 reread_ioctl(int fd) {
     if (ioctl(fd, BLKRRPART)) {
 	perror("BLKRRPART");
-	return -1;
+
+	/* 2.6.8 returns EIO for a zero table */
+	if (errno == EBUSY)
+		return -1;
     }
     return 0;
 }

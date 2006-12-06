@@ -57,7 +57,7 @@ mount_blkid_put_cache(void) {
 
 const char *
 mount_get_volume_label_by_spec(const char *spec) {
-	return strdup(get_volume_label_by_spec(spec));
+	return xstrdup(get_volume_label_by_spec(spec));
 }
 
 const char *

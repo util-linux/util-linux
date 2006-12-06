@@ -74,6 +74,7 @@ struct systypes i386_sys_types[] = {
 	{0xb8, N_("BSDI swap")},
 	{0xbb, N_("Boot Wizard hidden")},
 	{0xbe, N_("Solaris boot")},
+	{0xbf, N_("Solaris")},
 	{0xc1, N_("DRDOS/sec (FAT-12)")},
 	{0xc4, N_("DRDOS/sec (FAT-16 < 32M)")},
 	{0xc6, N_("DRDOS/sec (FAT-16)")},

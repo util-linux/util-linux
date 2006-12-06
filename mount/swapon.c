@@ -315,6 +315,7 @@ main_swapon(int argc, char *argv[]) {
 		}
 		while ((fstab = getmntent(fp)) != NULL) {
 			char *special = fstab->mnt_fsname;
+			int skip = 0;
 
 			if (streq(fstab->mnt_type, MNTTYPE_SWAP) &&
 			    !is_in_proc_swaps(special)
@@ -323,10 +324,14 @@ main_swapon(int argc, char *argv[]) {
 				char *opt, *opts = strdup(fstab->mnt_opts);
 	   
 				for (opt = strtok(opts, ","); opt != NULL;
-				     opt = strtok(NULL, ","))
+				     opt = strtok(NULL, ",")) {
 					if (strncmp(opt, "pri=", 4) == 0)
 						priority = atoi(opt+4);
-				status |= do_swapon(special, priority);
+					if (strcmp(opt, "noauto") == 0)
+						skip = 1;
+				}
+				if (!skip)
+					status |= do_swapon(special, priority);
 			}
 		}
 		fclose(fp);

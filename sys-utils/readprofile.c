@@ -388,6 +388,10 @@ main(int argc, char **argv) {
 
 		maplineno++;
 	}
+
+	/* clock ticks, out of kernel text - probably modules */
+	printf("%6i %s\n", buf[len/sizeof(*buf)-1], "*unknown*");
+
 	/* trailer */
 	if (optVerbose)
 		printf("%016x %-40s %6i %8.4f\n",

@@ -1,32 +1,5 @@
 /*
- * A umount(8) for Linux 0.99.
- * umount.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
- *
- * Wed Sep 14 22:43:54 1994: Sebastian Lederer
- * (lederer@next-pc.informatik.uni-bonn.de) added support for sending an
- * unmount RPC call to the server when an NFS-filesystem is unmounted.
- *
- * Tue Sep 26 16:33:09 1995: Added patches from Greg Page (greg@caldera.com)
- * so that NetWare filesystems can be unmounted.
- *
- * 951213: Marek Michalkiewicz <marekm@i17linuxb.ists.pwr.wroc.pl>:
- * Ignore any RPC errors, so that you can umount an nfs mounted filesystem
- * if the server is down.
- *
- * 960223: aeb - several minor changes
- * 960324: aeb - added some changes from Rob Leslie <rob@mars.org>
- * 960823: aeb - also try umount(spec) when umount(node) fails
- * 970307: aeb - canonicalise names from fstab
- * 970726: aeb - remount read-only in cases where umount fails
- * 980810: aeb - umount2 support
- * 981222: aeb - If mount point or special file occurs several times
- *               in mtab, try them all, with last one tried first
- *             - Differentiate "user" and "users" key words in fstab
- * 001202: aeb - remove at most one line from /etc/mtab
- * 010716: Michael K. Johnson <johnsonm@redhat.com: -a -O
- * 010914: Jamie Strandboge - use tcp if that was used for mount
- * 011005: hch - add lazy umount support
- * 020105: aeb - permission test owner umount
+ * umount(8) for Linux 0.99 - jrs, 1993
  */
 
 #include <stdio.h>
@@ -36,6 +9,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <sys/stat.h>
+#include <sys/wait.h>
 #include <sys/mount.h>
 #include "mount_constants.h"
 #include "sundries.h"
@@ -91,6 +65,10 @@ umount2(const char *path, int flags) {
 #define MNT_DETACH 2
 #endif
 
+
+/* True if we are allowed to call /sbin/umount.${FSTYPE} */
+int external_allowed = 1;
+
 /* Nonzero for force umount (-f).  There is kernel support since 2.1.116.  */
 int force = 0;
 
@@ -112,15 +90,61 @@ int verbose = 0;
 /* True if ruid != euid.  */
 int suid = 0;
 
-#ifdef USE_SPECIAL_UMOUNTPROG
-/* unimplemented so far */
+/*
+ * check_special_umountprog()
+ *	If there is a special umount program for this type, exec it.
+ * returns: 0: no exec was done, 1: exec was done, status has result
+ */
 static int
-check_special_umountprog() {
-	/* find type from command line or /etc/mtab;
-	   stat /sbin/umount.%s
-	   if it exists, use it */
+check_special_umountprog(const char *spec, const char *node,
+			 const char *type, int *status) {
+	char umountprog[120];
+	struct stat statbuf;
+	int res;
+
+	if (!external_allowed)
+		return 0;
+
+	if (type && strlen(type) < 100) {
+		sprintf(umountprog, "/sbin/umount.%s", type);
+		if (stat(umountprog, &statbuf) == 0) {
+			res = fork();
+			if (res == 0) {
+				char *umountargs[8];
+				int i = 0;
+
+				setuid(getuid());
+				setgid(getgid());
+				umountargs[i++] = umountprog;
+				umountargs[i++] = xstrdup(node);
+				if (nomtab)
+					umountargs[i++] = "-n";
+				if (lazy)
+					umountargs[i++] = "-l";
+				if (force)
+					umountargs[i++] = "-f";
+				if (verbose)
+					umountargs[i++] = "-v";
+				if (remount)
+					umountargs[i++] = "-r";
+				umountargs[i] = NULL;
+				execv(umountprog, umountargs);
+				exit(1);	/* exec failed */
+			} else if (res != -1) {
+				int st;
+				wait(&st);
+				*status = (WIFEXITED(st) ? WEXITSTATUS(st)
+					   : EX_SYSERR);
+				return 1;
+			} else {
+				int errsv = errno;
+				error(_("umount: cannot fork: %s"),
+				      strerror(errsv));
+			}
+		}
+	}
+	return 0;
 }
-#endif
 
 #ifdef HAVE_NFS
 static int xdr_dir(XDR *xdrsp, char *dirp)
@@ -248,6 +272,7 @@ umount_one (const char *spec, const char *node, const char *type,
 	int umnt_err, umnt_err2;
 	int isroot;
 	int res;
+	int status;
 	const char *loopdev;
 
 	/* Special case for root.  As of 0.99pl10 we can (almost) unmount root;
@@ -260,6 +285,13 @@ umount_one (const char *spec, const char *node, const char *type,
 		  || streq (node, "rootfs"));
 	if (isroot)
 		nomtab++;
+	
+	/*
+	 * Call umount.TYPE for types that require a separate umount program.
+	 * All such special things must occur isolated in the types string.
+	 */
+	if (check_special_umountprog(spec, node, type, &status))
+		return status;
 
 #ifdef HAVE_NFS
 	/* Ignore any RPC errors, so that you can umount the filesystem
@@ -322,7 +354,7 @@ umount_one (const char *spec, const char *node, const char *type,
 				spec);
 			remnt.mnt_type = remnt.mnt_fsname = NULL;
 			remnt.mnt_dir = xstrdup(node);
-			remnt.mnt_opts = "ro";
+			remnt.mnt_opts = xstrdup("ro");
 			update_mtab(node, &remnt);
 			return 0;
 		} else if (errno != EBUSY) { 	/* hmm ... */
@@ -514,7 +546,8 @@ static int
 umount_file (char *arg) {
 	struct mntentchn *mc, *fs;
 	const char *file, *options;
-	int fstab_has_user, fstab_has_users, fstab_has_owner, ok;
+	int fstab_has_user, fstab_has_users, fstab_has_owner, fstab_has_group;
+	int ok;
 
 	file = canonicalize(arg); /* mtab paths are canonicalized */
 	if (verbose > 1)
@@ -556,16 +589,17 @@ umount_file (char *arg) {
 					  "the fstab"), file);
 		}
 
-		/* User mounting and unmounting is allowed only
-		   if fstab contains one of the options `user',
-		   `users' or `owner'. */
-		/* The option `users' allows arbitrary users to mount
-		   and unmount - this may be a security risk. */
-		/* The option `user' only allows unmounting by the user
-		   that mounted. */
-		/* The option `owner' only allows (un)mounting by the owner. */
-		/* A convenient side effect is that the user who mounted
-		   is visible in mtab. */
+		/*
+		 * User mounting and unmounting is allowed only
+		 * if fstab contains one of the options `user',
+		 * `users' or `owner' or `group'.
+		 *
+		 * The option `users' allows arbitrary users to mount
+		 * and unmount - this may be a security risk.
+		 *
+		 * The options `user', `owner' and `group' only allow
+		 * unmounting by the user that mounted (visible in mtab).
+		 */
 
 		options = fs->m.mnt_opts;
 		if (!options)
@@ -573,12 +607,14 @@ umount_file (char *arg) {
 		fstab_has_user = contains(options, "user");
 		fstab_has_users = contains(options, "users");
 		fstab_has_owner = contains(options, "owner");
+		fstab_has_group = contains(options, "group");
 		ok = 0;
 
 		if (fstab_has_users)
 			ok = 1;
 
-		if (!ok && (fstab_has_user || fstab_has_owner)) {
+		if (!ok && (fstab_has_user || fstab_has_owner ||
+			    fstab_has_group)) {
 			char *user = getusername();
 
 			options = mc->m.mnt_opts;
@@ -601,11 +637,13 @@ umount_file (char *arg) {
 		return umount_one (arg, arg, arg, arg, NULL);
 }
 
+char *progname;
+
 int
 main (int argc, char *argv[]) {
 	int c;
 	int all = 0;
-	char *types = NULL, *test_opts = NULL;
+	char *types = NULL, *test_opts = NULL, *p;
 	int result = 0;
 
 	sanitize_env();
@@ -613,9 +651,13 @@ main (int argc, char *argv[]) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
+	progname = argv[0];
+	if ((p = strrchr(progname, '/')) != NULL)
+		progname = p+1;
+
 	umask(033);
 
-	while ((c = getopt_long (argc, argv, "adfhlnrt:O:vV",
+	while ((c = getopt_long (argc, argv, "adfhlnrit:O:vV",
 				 longopts, NULL)) != -1)
 		switch (c) {
 		case 'a':		/* umount everything */
@@ -651,6 +693,9 @@ main (int argc, char *argv[]) {
 			exit (0);
 		case 't':		/* specify file system type */
 			types = optarg;
+			break;
+		case 'i':
+  			external_allowed = 0;
 			break;
 		case 0:
 			break;

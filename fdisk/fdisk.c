@@ -295,6 +295,20 @@ set_changed(int i) {
 	ptes[i].changed = 1;
 }
 
+static int
+is_garbage_table(void) {
+	int i;
+
+	for (i = 0; i < 4; i++) {
+		struct pte *pe = &ptes[i];
+		struct partition *p = pe->part_table;
+
+		if (p->boot_ind != 0 && p->boot_ind != 0x80)
+			return 1;
+	}
+	return 0;
+}
+
 /*
  * Avoid warning about DOS partitions when no DOS partition was changed.
  * Here a heuristic "is probably dos partition".
@@ -630,7 +644,7 @@ read_extended(int ext) {
 			struct pte *pre = &ptes[partitions-1];
 
 			fprintf(stderr,
-				_("Warning: deleting partitions after %d\n"),
+				_("Warning: omitting partitions after %d\n"),
 				partitions);
 			clear_partition(pre->ext_pointer);
 			pre->changed = 1;
@@ -1683,6 +1697,12 @@ list_table(int xtra) {
 		xbsd_print_disklabel(xtra);
 		return;
 	}
+
+	if (is_garbage_table()) {
+		printf(_("This doesn't look like a partition table\n"
+			 "Probably you selected the wrong device.\n\n"));
+	}
+		
 
 	/* Heuristic: we list partition 3 of /dev/foo as /dev/foo3,
 	   but if the device name ends in a digit, say /dev/foo1,

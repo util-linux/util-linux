@@ -1,0 +1,45 @@
+.TH FLOCK "1" "November 2004" "flock (util-linux)" "User Commands"
+.SH NAME
+flock \- acquire a file lock and then execute a command with the lock held
+.SH SYNOPSIS
+.BR flock
+[ \fB\-\-shared\fR | \fB\-\-timeout=\fR\fIseconds\fR ] lockfile command ..
+.SH DESCRIPTION
+.\" Add any additional description here
+.PP
+Acquire a file lock using the flock(2) system call and then execute
+the given command with the lock held.  Depending on the options given,
+the lock can be either exclusive or shared, and the behavior in the
+event of lock contention can be specified as either waiting
+indefinitely for the lock to become available (the default), or
+failing if the lock does not become available after a specific time,
+which can be specified as zero to make the command not wait at all.
+.PP
+.TP
+\fB\-\-shared\fR
+Acquire a shared lock.  Acquiring a shared lock does
+not stop others from acquiring a shared lock, but it will stop others
+from acquiring an exclusive lock.  Conversely, acquiring an exclusive
+lock (the default) stops both exclusive and shared attempts to acquire
+the lock.  Typically, a shared lock is used if a command is just going
+to read the locked data, and an exclusive lock is used if the command
+might write to it.
+.TP
+\fB\-\-timeout=n\fR
+Abort if the lock cannot be acquired before \fIn\fR seconds.
+For a completely non-blocking attempt to acquire a lock, specify
+\fB\-\-timeout=0\fR.
+The timer applies only to the attempt to acquire the lock.  As soon
+as the lock is acquired, the timeout is cancelled.  The command to
+be run is not subject to the timeout.
+.PP
+.SH "EXAMPLES (invoking some imaginary programs)"
+.hl
+.PP
+flock /etc/passwd read-and-write-to-passwd
+.PP
+flock \-\-shared /etc/passwd just-read-something-from-passwd
+.PP
+flock \-\-timeout=0 /sys /usr/local/bin/update-hotplug /sys
+.SH AUTHOR
+Written by Adam J. Richter

@@ -74,6 +74,9 @@ In case unmounting fails, try to remount read-only.
 In case the unmounted device was a loop device, also
 free this loop device.
 .TP
+.B \-i
+Don't call the /sbin/umount.<filesystem> helper even if it exists. By default /sbin/umount.<filesystem> helper is called if one exists.
+.TP
 .B \-a
 All of the file systems described in
 .I /etc/mtab

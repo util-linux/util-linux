@@ -143,6 +143,9 @@ endif
 ifeq "$(ALLOW_VCS_USE)" "yes"
 	LOGINFLAGS += -DCHOWNVCS
 endif
+ifeq "$(DO_STAT_MAIL)" "yes"
+	LOGINFLAGS += -DDO_STAT_MAIL
+endif
 
 login.o: login.c $(LIB)/pathnames.h $(LIB)/setproctitle.c $(LIB)/setproctitle.h
 	$(CC) -c $(CFLAGS) $(PAMFL) $(LOGINFLAGS) login.c

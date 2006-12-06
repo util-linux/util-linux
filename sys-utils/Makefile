@@ -8,7 +8,7 @@ include ../MCONFIG
 
 # Where to put man pages?
 
-MAN1=		arch.1 readprofile.1
+MAN1=		arch.1 flock.1 readprofile.1
 
 MAN8= 		ctrlaltdel.8 cytune.8 dmesg.8 \
 		ipcrm.8 ipcs.8 renice.8 \
@@ -19,7 +19,7 @@ MAN8= 		ctrlaltdel.8 cytune.8 dmesg.8 \
 
 BIN=            arch dmesg
 
-USRBIN=		cytune ipcrm ipcs renice setsid
+USRBIN=		cytune flock ipcrm ipcs renice setsid
 
 USRSBIN=	readprofile tunelp
 

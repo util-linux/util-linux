@@ -3,24 +3,40 @@
 losetup \- set up and control loop devices
 .SH SYNOPSIS
 .ad l
+Get info:
+.sp
+.in +5
 .B losetup
-[
-.RB [ \-e | \-E ]
-.I encryption
-] [
-.B \-o
-.I offset
-] [
-.B \-p
-.I pfd
-]
-.I loop_device file
-.br
-.B losetup
-[
-.B \-d
-]
 .I loop_device
+.sp
+.in -5
+Delete loop:
+.sp
+.in +5
+.B "losetup \-d"
+.I loop_device
+.sp
+.in -5
+Print name of first unused loop device:
+.sp
+.in +5
+.B "losetup \-f"
+.sp
+.in -5
+Setup loop device:
+.sp
+.in +5
+.B losetup
+.RB [{\-e | \-E}
+.IR encryption ]
+.RB [ \-o
+.IR offset ]
+.RB [ \-p
+.IR pfd ]
+.in +8
+.RB { \-f | \fIloop_device\fP }
+.I file
+.in -13
 .ad b
 .SH DESCRIPTION
 .B losetup
@@ -56,6 +72,10 @@ Detach the file or device associated with the specified loop device.
 Enable data encryption with specified number.
 .IP "\fB\-e \fIencryption_name\fP"
 Enable data encryption with specified name.
+.IP "\fB\-f\fP"
+Find the first unused loop device. If a
+.I file
+argument is present, use this device. Otherwise, print its name.
 .IP "\fB\-o \fIoffset\fP"
 The data start is moved \fIoffset\fP bytes into the specified file or
 device.

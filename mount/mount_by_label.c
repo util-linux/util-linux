@@ -94,7 +94,7 @@ uuidcache_init_lvm(void) {
 			sprintf(lvm_device, "%s/%s/%s", DEVLABELDIR,
 				vg_iter->d_name, lv_iter->d_name);
 			if (!get_label_uuid(lvm_device, &label, uuid))
-				uuidcache_addentry(strdup(lvm_device),
+				uuidcache_addentry(xstrdup(lvm_device),
 						   label, uuid);
 		}
 		closedir(lv_list);
@@ -117,7 +117,7 @@ uuidcache_init_evms(void) {
 	while (fgets(line, sizeof(line), procvol)) {
 		if (sscanf(line, "%*d %*d %*d %*s %*s %[^\n]", volname) == 1) {
 			if (!get_label_uuid(volname, &label, uuid))
-				uuidcache_addentry(strdup(volname), label, uuid);
+				uuidcache_addentry(xstrdup(volname), label, uuid);
 		}
 	}
 	
@@ -243,7 +243,7 @@ uuidcache_init(void) {
 		 */
 			sprintf(device, "%s/%s", DEVLABELDIR, ptname);
 			if (!get_label_uuid(device, &label, uuid))
-				uuidcache_addentry(strdup(device), label, uuid);
+				uuidcache_addentry(xstrdup(device), label, uuid);
 		}
 	    }
 	}

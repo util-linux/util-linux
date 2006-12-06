@@ -145,7 +145,7 @@ if ./testincl "sys/user.h"; then
         echo "#define HAVE_sys_user_h" >> defines.h
 else if ./testincl "asm/page.h"; then
         echo "#define HAVE_asm_page_h" >> defines.h
-fi fi
+fi; fi
 
 #
 # H7. For nfsmount.c: do we have <rpcsvc/nfs_prot.h>?
@@ -418,6 +418,7 @@ if [ $have_ncurses = 0 ]; then
 	echo "You don't have ncurses - I will not make ul and setterm."
 else
 	echo "LIBCURSES=-lncurses" >> make_include
+	echo "#define HAVE_ncurses" >> defines.h
 fi
 
 #

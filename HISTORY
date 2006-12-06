@@ -1,3 +1,17 @@
+util-linux 2.12j
+
+* cal: highlight today (Pádraig Brady)
+* lomount: stop reading passwd at NUL, fix lo_encrypt key_size (Wolfram Kleff)
+* losetup: add -f option to find an unused loop device
+  (Alexander Wigen, Remco van Mook)
+* more: code cleanup (Joachim Henke)
+* mount: add "group" mount option (Martin Dickopp)
+* sfdisk: fix 2.6.8 BLKRRPART ioctl damage (Eric Lammerts)
+* swapon: let swapon -a skip the swapfiles marked "noauto" (Dale R. Worley)
+* umount: fix problem with empty mtab (Bryan Kadzban)
+* umount: use special umount program if it exists (Ram Pai)
+* New Danish messages
+
 util-linux 2.12i
 
 * MCONFIG: fix build conditions

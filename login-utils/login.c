@@ -1081,17 +1081,28 @@ Michael Riepe <michael@stud.uni-hannover.de>
     }
     
     if (!quietlog) {
-	struct stat st;
-	char *mail;
-	
 	motd();
-	mail = getenv("MAIL");
-	if (mail && stat(mail, &st) == 0 && st.st_size != 0) {
+
+#ifdef DO_STAT_MAIL
+	/*
+	 * This turns out to be a bad idea: when the mail spool
+	 * is NFS mounted, and the NFS connection hangs, the
+	 * login hangs, even root cannot login.
+	 * Checking for mail should be done from the shell.
+	 */
+	{
+	    struct stat st;
+	    char *mail;
+	
+	    mail = getenv("MAIL");
+	    if (mail && stat(mail, &st) == 0 && st.st_size != 0) {
 		if (st.st_mtime > st.st_atime)
 			printf(_("You have new mail.\n"));
 		else
 			printf(_("You have mail.\n"));
+	    }
 	}
+#endif
     }
     
     signal(SIGALRM, SIG_DFL);

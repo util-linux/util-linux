@@ -51,7 +51,6 @@ LIBPTY:=$(LIBPTY) -lutil
 endif
 
 # Programs requiring special compilation
-
 NEEDS_CURSES=  setterm
 NEEDS_OPENPTY= script
 
@@ -62,6 +61,16 @@ ifeq "$(HAVE_NCURSES)" "yes"
 	$(CC) $(LDFLAGS) $^ -o $@ $(LIBCURSES)
 else
 	@echo $@ not made since it requires ncurses
+endif
+
+ifeq "$(HAVE_NCURSES)" "yes"
+cal:
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIBCURSES)
+else
+ifeq "$(HAVE_TERMCAP)" "yes"
+cal:
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIBTERMCAP)
+endif
 endif
 
 $(NEEDS_OPENPTY):

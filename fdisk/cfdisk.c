@@ -1444,8 +1444,10 @@ new_part(int i) {
 	    print_warning(_("No room to create the extended partition"));
 	    return;
 	}
-	(void) add_part(ext, DOS_EXTENDED, 0, first, last,
-		       (first == 0 ? sectors : 0), 0, &errmsg);
+	errmsg = 0;
+	if (add_part(ext, DOS_EXTENDED, 0, first, last,
+		     (first == 0 ? sectors : 0), 0, &errmsg) && errmsg)
+		print_warning(errmsg);
 	first = ext_info.first_sector + ext_info.offset;
     }
 
@@ -1456,7 +1458,9 @@ new_part(int i) {
     if (first == 0 || IS_LOGICAL(num))
 	offset = sectors;
 
-    (void) add_part(num, id, flags, first, last, offset, 0, &errmsg);
+    errmsg = 0;
+    if (add_part(num, id, flags, first, last, offset, 0, &errmsg) && errmsg)
+	    print_warning(errmsg);
 }
 
 static void

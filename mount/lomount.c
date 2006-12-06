@@ -1,17 +1,4 @@
-/* Taken from Ted's losetup.c - Mitch <m.dsouza@mrc-apu.cam.ac.uk> */
-/* Added vfs mount options - aeb - 960223 */
-/* Removed lomount - aeb - 960224 */
-
-/*
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
- * - added Native Language Support
- * 1999-03-21 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
- * - fixed strerr(errno) in gettext calls
- * 2000-09-24 Marc Mutz <Marc@Mutz.com>
- * - added -p option to pass passphrases via fd's to losetup/mount.
- *   Used for encryption in non-interactive environments.
- *   The idea behind xgetpass() is stolen from GnuPG, v.1.0.3.
- */
+/* Originally from Ted's losetup.c */
 
 #define LOOPMAJOR	7
 
@@ -37,6 +24,7 @@
 #include "nls.h"
 
 extern int verbose;
+extern char *progname;
 extern char *xstrdup (const char *s);	/* not: #include "sundries.h" */
 extern void error (const char *fmt, ...);	/* idem */
 
@@ -186,15 +174,15 @@ find_unused_loop_device (void) {
 	}
 
 	if (!somedev)
-		error(_("mount: could not find any device /dev/loop#"));
-	else if (!someloop) {
+		error(_("%s: could not find any device /dev/loop#"), progname);
+	else if (!someloop)
 		error(_(
-		    "mount: Could not find any loop device. Maybe this kernel "
+		    "%s: Could not find any loop device. Maybe this kernel "
 		    "does not know\n"
 		    "       about the loop device? (If so, recompile or "
-		    "`modprobe loop'.)"));
-	} else
-		error(_("mount: could not find any free loop device"));
+		    "`modprobe loop'.)"), progname);
+	else
+		error(_("%s: could not find any free loop device"), progname);
 	return 0;
 }
 
@@ -226,15 +214,16 @@ xgetpass(int pfd, const char *prompt) {
 				break;
 			}
 		}
-		if (read(pfd, pass+i, 1) != 1 || pass[i] == '\n')
+		if (read(pfd, pass+i, 1) != 1 ||
+		    pass[i] == '\n' || pass[i] == 0)
 			break;
 	}
+
 	if (pass == NULL)
 		return "";
-	else {
-		pass[i] = 0;
-		return pass;
-	}
+
+	pass[i] = 0;
+	return pass;
 }
 
 static int
@@ -249,7 +238,7 @@ int
 set_loop(const char *device, const char *file, unsigned long long offset,
 	 const char *encryption, int pfd, int *loopro) {
 	struct loop_info64 loopinfo64;
-	int fd, ffd, mode, i;
+	int fd, ffd, mode, i, n;
 	char *pass;
 
 	mode = (*loopro ? O_RDONLY : O_RDWR);
@@ -302,16 +291,15 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 		break;
 	case LO_CRYPT_XOR:
 		pass = getpass(_("Password: "));
-		xstrncpy(loopinfo64.lo_encrypt_key, pass, LO_KEY_SIZE);
-		memset(pass, 0, strlen(pass));
-		loopinfo64.lo_encrypt_key_size =
-			strlen(loopinfo64.lo_encrypt_key);
-		break;
+		goto gotpass;
 	default:
 		pass = xgetpass(pfd, _("Password: "));
+	gotpass:
 		xstrncpy(loopinfo64.lo_encrypt_key, pass, LO_KEY_SIZE);
-		memset(pass, 0, strlen(pass));
-		loopinfo64.lo_encrypt_key_size = LO_KEY_SIZE;
+		n = strlen(pass);
+		memset(pass, 0, n);
+		loopinfo64.lo_encrypt_key_size =
+			(n < LO_KEY_SIZE) ? n : LO_KEY_SIZE;
 	}
 
 	if (ioctl(fd, LOOP_SET_FD, ffd) < 0) {
@@ -413,10 +401,11 @@ static char *progname;
 static void
 usage(void) {
 	fprintf(stderr, _("usage:\n\
-  %s loop_device                                      # give info\n\
-  %s -d loop_device                                   # delete\n\
-  %s [ -e encryption ] [ -o offset ] loop_device file # setup\n"),
-		progname, progname, progname);
+  %s loop_device                                       # give info\n\
+  %s -d loop_device                                    # delete\n\
+  %s -f                                                # find unused\n\
+  %s [-e encryption] [-o offset] {-f|loop_device} file # setup\n"),
+		progname, progname, progname, progname);
 	exit(1);
 }
 
@@ -449,8 +438,8 @@ error (const char *fmt, ...) {
 
 int
 main(int argc, char **argv) {
-	char *offset, *encryption, *passfd;
-	int delete, c;
+	char *p, *offset, *encryption, *passfd, *device, *file;
+	int delete, find, c;
 	int res = 0;
 	int ro = 0;
 	int pfd = -1;
@@ -460,10 +449,15 @@ main(int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	delete = off = 0;
+	delete = find = 0;
+	off = 0;
 	offset = encryption = passfd = NULL;
+
 	progname = argv[0];
-	while ((c = getopt(argc,argv,"de:E:o:p:v")) != -1) {
+	if ((p = strrchr(progname, '/')) != NULL)
+		progname = p+1;
+
+	while ((c = getopt(argc, argv, "de:E:fo:p:v")) != -1) {
 		switch (c) {
 		case 'd':
 			delete = 1;
@@ -471,6 +465,9 @@ main(int argc, char **argv) {
 		case 'E':
 		case 'e':
 			encryption = optarg;
+			break;
+		case 'f':
+			find = 1;
 			break;
 		case 'o':
 			offset = optarg;
@@ -485,22 +482,49 @@ main(int argc, char **argv) {
 			usage();
 		}
 	}
-	if (argc == 1) usage();
-	if ((delete && (argc != optind+1 || encryption || offset)) ||
-	    (!delete && (argc < optind+1 || argc > optind+2)))
+
+	if (argc == 1) {
 		usage();
-	if (argc == optind+1) {
-		if (delete)
-			res = del_loop(argv[optind]);
-		else
-			res = show_loop(argv[optind]);
+	} else if (delete) {
+		if (argc != optind+1 || encryption || offset || find)
+			usage();
+	} else if (find) {
+		if (argc < optind || argc > optind+1)
+			usage();
 	} else {
+		if (argc < optind+1 || argc > optind+2)
+			usage();
+	}
+
+	if (find) {
+		device = find_unused_loop_device();
+		if (device == NULL)
+			return -1;
+		if (verbose)
+			printf("Loop device is %s\n", device);
+		if (argc == optind) {
+			printf("%s\n", device);
+			return 0;
+		}
+		file = argv[optind];
+	} else {
+		device = argv[optind];
+		if (argc == optind+1)
+			file = NULL;
+		else
+			file = argv[optind+1];
+	}
+
+	if (delete)
+		res = del_loop(device);
+	else if (file == NULL)
+		res = show_loop(device);
+	else {
 		if (offset && sscanf(offset, "%llu", &off) != 1)
 			usage();
 		if (passfd && sscanf(passfd, "%d", &pfd) != 1)
 			usage();
-		res = set_loop(argv[optind], argv[optind+1], off,
-			       encryption, pfd, &ro);
+		res = set_loop(device, file, off, encryption, pfd, &ro);
 	}
 	return res;
 }

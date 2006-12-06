@@ -90,6 +90,11 @@ HAVE_KILL=no
 # file descriptor after logging out to trick the next user.
 ALLOW_VCS_USE=yes
 
+# If DO_STAT_MAIL is set to "yes", then login will stat() the mailbox
+# and tell the user that she has new mail. This can hang the login if
+# the mailbox is on a NFS mounted filesystem.
+DO_STAT_MAIL=no
+
 # If HAVE_RESET is set to "yes", then reset won't be installed.  The version
 # of reset that comes with the ncurses package is less aggressive.
 HAVE_RESET=yes
@@ -118,7 +123,7 @@ ifeq "$(ARCH)" "intel"
     CPUHEAD=-m
   else
     CPUHEAD=-mcpu=i
-# recent versions want -march=i
+# it is rumoured that recent gcc versions want -march=i
 # must add the right test
   endif
   ifeq "$(CPU)" "i386"

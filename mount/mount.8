@@ -216,6 +216,10 @@ option, with the restriction that the user must be the owner
 of the special file. This may be useful e.g. for
 .I /dev/fd
 if a login script makes the console user owner of this device.
+The
+.B group
+option is similar, with the restriction that the user must be
+member of the group of the special file.
 
 The programs
 .B mount
@@ -551,6 +555,14 @@ Interpret character or block special devices on the file system.
 .B exec
 Permit execution of binaries.
 .TP
+.B group
+Allow an ordinary (i.e., non-root) user to mount the file system if one
+of his groups matches the group of the device.
+This option implies the options
+.BR nosuid " and " nodev
+(unless overridden by subsequent options, as in the option line
+.BR group,dev,suid ).
+.TP
 .B _netdev
 The filesystem resides on a device that requires network access
 (used to prevent the system from attempting to mount these filesystems
@@ -582,6 +594,14 @@ suidperl(1) installed.)
 .B nouser
 Forbid an ordinary (i.e., non-root) user to mount the file system.
 This is the default.
+.TP
+.B owner
+Allow an ordinary (i.e., non-root) user to mount the file system if he
+is the owner of the device.
+This option implies the options
+.BR nosuid " and " nodev
+(unless overridden by subsequent options, as in the option line
+.BR owner,dev,suid ).
 .TP
 .B remount
 Attempt to remount an already-mounted file system.  This is commonly

@@ -96,6 +96,7 @@ struct opt_map {
 #define MS_USERS	0x40000000
 #define MS_USER		0x20000000
 #define MS_OWNER	0x10000000
+#define MS_GROUP	0x08000000
 #define MS_COMMENT	0x00020000
 #define MS_LOOP		0x00010000
 
@@ -135,6 +136,8 @@ static const struct opt_map opt_map[] = {
   { "nouser",	0, 1, MS_USER	},	/* Forbid ordinary user to mount */
   { "owner",	0, 0, MS_OWNER  },	/* Let the owner of the device mount */
   { "noowner",	0, 1, MS_OWNER  },	/* Device owner has no special privs */
+  { "group",	0, 0, MS_GROUP  },	/* Let the group of the device mount */
+  { "nogroup",	0, 1, MS_GROUP  },	/* Device group has no special privs */
   { "_netdev",	0, 0, MS_COMMENT},	/* Device requires network */
   { "comment",	0, 0, MS_COMMENT},	/* fstab comment only (kudzu,_netdev)*/
 
@@ -263,7 +266,8 @@ parse_opt (const char *opt, int *mask, char *extra_opts) {
 			if ((om->mask == MS_USER || om->mask == MS_USERS)
 			    && !om->inv)
 				*mask |= MS_SECURE;
-			if ((om->mask == MS_OWNER) && !om->inv)
+			if ((om->mask == MS_OWNER || om->mask == MS_GROUP)
+			    && !om->inv)
 				*mask |= MS_OWNERSECURE;
 #ifdef MS_SILENT
 			if (om->mask == MS_SILENT && om->inv)  {
@@ -507,20 +511,47 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
 static void
 suid_check(const char *spec, const char *node, int *flags, char **user) {
   if (suid) {
-      /* RedHat patch: allow owners to mount when fstab contains
-	 the owner option.  Note that this should never be used
-	 in a high security environment, but may be useful to give
-	 people at the console the possibility of mounting a floppy. */
-      if (*flags & MS_OWNER) {
-	  if (!strncmp(spec, "/dev/", 5)) {
-	      struct stat sb;
+      /*
+       * MS_OWNER: Allow owners to mount when fstab contains
+       * the owner option.  Note that this should never be used
+       * in a high security environment, but may be useful to give
+       * people at the console the possibility of mounting a floppy.
+       * MS_GROUP: Allow members of device group to mount. (Martin Dickopp)
+       */
+      if (*flags & (MS_OWNER | MS_GROUP)) {
+	  struct stat sb;
 
-	      if (!stat(spec, &sb)) {
+	  if (!strncmp(spec, "/dev/", 5) && stat(spec, &sb) == 0) {
+
+	      if (*flags & MS_OWNER) {
 		  if (getuid() == sb.st_uid)
 		      *flags |= MS_USER;
 	      }
+
+	      if (*flags & MS_GROUP) {
+		  if (getgid() == sb.st_gid)
+		      *flags |= MS_USER;
+		  else {
+		      int n = getgroups(0, NULL);
+
+		      if (n > 0) {
+			      gid_t *groups = xmalloc(n * sizeof(*groups));
+			      if (getgroups(n, groups) == n) {
+				      int i;
+				      for (i = 0; i < n; i++) {
+					      if (groups[i] == sb.st_gid) {
+						      *flags |= MS_USER;
+						      break;
+					      }
+				      }
+			      }
+			      free(groups);
+		      }
+		  }
+	      }
 	  }
       }
+
       /* James Kehl <mkehl@gil.com.au> came with a similar patch:
 	 allow an arbitrary user to mount when he is the owner of
 	 the mount-point and has write-access to the device.
@@ -537,8 +568,7 @@ suid_check(const char *spec, const char *node, int *flags, char **user) {
 	  *user = getusername();
   }
 
-  if (*flags & MS_OWNER)
-      *flags &= ~MS_OWNER;
+  *flags &= ~(MS_OWNER | MS_GROUP);
 }
 
 static int
@@ -927,13 +957,13 @@ retry_nfs:
 	error (_("mount: %s not mounted already, or bad option"), node);
       } else {
 	error (_("mount: wrong fs type, bad option, bad superblock on %s,\n"
-	       "       or too many mounted file systems"),
+	       "       missing codepage, or too many mounted file systems"),
 	       spec);
 
 	if (stat(spec, &statbuf) == 0 && S_ISBLK(statbuf.st_mode)
 	   && (fd = open(spec, O_RDONLY | O_NONBLOCK)) >= 0) {
 	  if (ioctl(fd, BLKGETSIZE, &size) == 0) {
-	    if (size == 0) {
+	    if (size == 0 && !loop) {
 	      warned++;
 	  error ("       (could this be the IDE device where you in fact use\n"
 		 "       ide-scsi so that sr0 or sda or so is needed?)");
@@ -1111,61 +1141,63 @@ is_existing_file (const char *s) {
 static int
 mount_one (const char *spec, const char *node, const char *types,
 	   const char *opts, char *cmdlineopts, int freq, int pass) {
-  int status, status2;
-  const char *nspec;
+	int status, status2;
+	const char *nspec;
 
-  /* Substitute values in opts, if required */
-  opts = usersubst(opts);
+	/* Substitute values in opts, if required */
+	opts = usersubst(opts);
 
-  /* Merge the fstab and command line options.  */
-  if (opts == NULL)
-       opts = cmdlineopts;
-  else if (cmdlineopts != NULL)
-       opts = xstrconcat3(opts, ",", cmdlineopts);
+	/* Merge the fstab and command line options.  */
+	if (opts == NULL)
+		opts = cmdlineopts;
+	else if (cmdlineopts != NULL)
+		opts = xstrconcat3(opts, ",", cmdlineopts);
 
-  /* Handle possible LABEL= and UUID= forms of spec */
-  nspec = mount_get_devname_for_mounting(spec);
-  if (nspec)
-       spec = nspec;
+	/* Handle possible LABEL= and UUID= forms of spec */
+	nspec = mount_get_devname_for_mounting(spec);
+	if (nspec)
+		spec = nspec;
 
-  if (types == NULL && !mounttype && !is_existing_file(spec)) {
-      if (strchr (spec, ':') != NULL) {
-	types = "nfs";
-	if (verbose)
-	  printf(_("mount: no type was given - "
-		 "I'll assume nfs because of the colon\n"));
-      } else if(!strncmp(spec, "//", 2)) {
-	types = "smbfs";
-	if (verbose)
-	  printf(_("mount: no type was given - "
-		   "I'll assume smbfs because of the // prefix\n"));
-      }
-  }
+	if (types == NULL && !mounttype && !is_existing_file(spec)) {
+		if (strchr (spec, ':') != NULL) {
+			types = "nfs";
+			if (verbose)
+				printf(_("mount: no type was given - "
+					 "I'll assume nfs because of "
+					 "the colon\n"));
+		} else if(!strncmp(spec, "//", 2)) {
+			types = "smbfs";
+			if (verbose)
+				printf(_("mount: no type was given - "
+					 "I'll assume smbfs because of "
+					 "the // prefix\n"));
+		}
+	}
 
-  /*
-   * Try to mount the file system. When the exit status is EX_BG,
-   * we will retry in the background. Otherwise, we're done.
-   */
-  status = try_mount_one (spec, node, types, opts, freq, pass, 0, 0);
-  if (status != EX_BG)
-    return status;
+	/*
+	 * Try to mount the file system. When the exit status is EX_BG,
+	 * we will retry in the background. Otherwise, we're done.
+	 */
+	status = try_mount_one (spec, node, types, opts, freq, pass, 0, 0);
+	if (status != EX_BG)
+		return status;
 
-  /*
-   * Retry in the background.
-   */
-  printf (_("mount: backgrounding \"%s\"\n"), spec);
-  fflush( stdout );		/* prevent duplicate output */
-  if (fork() > 0)
-    return 0;			/* parent returns "success" */
-  spec = xstrdup(spec);		/* arguments will be destroyed */
-  node = xstrdup(node);		/* by set_proc_name()          */
-  types = xstrdup(types);
-  opts = xstrdup(opts);
-  set_proc_name (spec);		/* make a nice "ps" listing */
-  status2 = try_mount_one (spec, node, types, opts, freq, pass, 1, 0);
-  if (verbose && status2)
-    printf (_("mount: giving up \"%s\"\n"), spec);
-  exit (0);			/* child stops here */
+	/*
+	 * Retry in the background.
+	 */
+	printf (_("mount: backgrounding \"%s\"\n"), spec);
+	fflush( stdout );		/* prevent duplicate output */
+	if (fork() > 0)
+		return 0;			/* parent returns "success" */
+	spec = xstrdup(spec);		/* arguments will be destroyed */
+	node = xstrdup(node);		/* by set_proc_name()          */
+	types = xstrdup(types);
+	opts = xstrdup(opts);
+	set_proc_name (spec);		/* make a nice "ps" listing */
+	status2 = try_mount_one (spec, node, types, opts, freq, pass, 1, 0);
+	if (verbose && status2)
+		printf (_("mount: giving up \"%s\"\n"), spec);
+	exit (0);			/* child stops here */
 }
 
 /* Check if an fsname/dir pair was already in the old mtab.  */
@@ -1177,6 +1209,8 @@ mounted (const char *spec0, const char *node0) {
 
 	/* Handle possible UUID= and LABEL= in spec */
 	spec0 = mount_get_devname(spec0);
+	if (!spec0)
+		return ret;
 
 	spec = canonicalize(spec0);
 	node = canonicalize(node0);
@@ -1189,8 +1223,8 @@ mounted (const char *spec0, const char *node0) {
 			break;
 		}
 
-	free(spec);
-	free(node);
+	my_free(spec);
+	my_free(node);
 
 	return ret;
 }
@@ -1407,14 +1441,17 @@ usage (FILE *fp, int n) {
 	exit (n);
 }
 
+char *progname;
+
 int
-main (int argc, char *argv[]) {
+main(int argc, char *argv[]) {
 	int c, result = 0, specseen;
 	char *options = NULL, *test_opts = NULL, *node;
 	const char *spec;
 	char *volumelabel = NULL;
 	char *uuid = NULL;
 	char *types = NULL;
+	char *p;
 	struct mntentchn *mc;
 	int fd;
 
@@ -1422,6 +1459,10 @@ main (int argc, char *argv[]) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+
+	progname = argv[0];
+	if ((p = strrchr(progname, '/')) != NULL)
+		progname = p+1;
 
 	umask(033);
 

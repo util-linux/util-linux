@@ -60,7 +60,7 @@ rootdev(char *p) {
 			sprintf(devname, "/dev/%s%c", type, let);
 		else
 			sprintf(devname, "/dev/%s%c%d", type, let, mi);
-		return strdup(devname);
+		return xstrdup(devname);
 	}
 	return NULL;
 }
