@@ -33,6 +33,8 @@
 .\" 970914, reg: -s option
 .\" 981111, K.Garloff: /etc/filesystems
 .\" 990111, aeb: documented /sbin/mount.smbfs
+.\" 990730, Yann Droneaud <lch@multimania.com>: updated page
+.\" 991214, Elrond <Elrond@Wunder-Nett.org>: added some docs on devpts
 .\"
 .TH MOUNT 8 "14 September 1997" "Linux 2.0" "Linux Programmer's Manual"
 .SH NAME
@@ -175,6 +177,14 @@ instead of
 in the
 .I fstab
 line.
+The
+.B owner
+option is similar to the
+.B user
+option, with the restriction that the user must be the owner
+of the special file. This may be useful e.g. for
+.I /dev/fd
+if a login script makes the console user owner of this device.
 
 The programs
 .B mount
@@ -202,7 +212,11 @@ option below). It is possible to replace
 by a symbolic link to
 .IR /proc/mounts ,
 but some information is lost that way, and in particular
-working with the loop device will be less convenient.
+working with the loop device will be less convenient. Also,
+pathnames containing spaces are handled correctly by
+.I /etc/mtab
+but not (yet) by
+.IR /proc/mounts .
 
 .SH OPTIONS
 The full set of options used by an invocation of
@@ -294,31 +308,35 @@ The argument following the
 is used to indicate the file system type.  The file system types which are
 currently supported are listed in
 .IR linux/fs/filesystems.c :
-.IR minix ,
-.IR xiafs ,
-.IR ext ,
-.IR ext2 ,
-.IR msdos ,
-.IR umsdos ,
-.IR vfat ,
-.IR proc ,
-.IR autofs ,
-.IR devpts ,
-.IR nfs ,
-.IR iso9660 ,
-.IR smbfs ,
-.IR ncpfs ,
 .IR adfs ,
 .IR affs ,
+.IR autofs ,
 .IR coda ,
+.IR coherent ,
+.IR devpts ,
+.IR efs ,
+.IR ext ,
+.IR ext2 ,
 .IR hfs ,
 .IR hpfs ,
+.IR iso9660 ,
+.IR minix ,
+.IR msdos ,
+.IR ncpfs ,
+.IR nfs ,
 .IR ntfs ,
+.IR proc ,
 .IR qnx4 ,
 .IR romfs ,
+.IR smbfs ,
+.IR sysv ,
+.IR udf ,
 .IR ufs ,
-.IR sysv ", " xenix ", " coherent .
-Note that the last three are equivalent and that
+.IR umsdos ,
+.IR vfat ,
+.IR xenix ,
+.IR xiafs .
+Note that coherent, sysv and xenix are equivalent and that
 .I xenix
 and
 .I coherent
@@ -355,6 +373,7 @@ option is given, or if the
 .B auto
 type is specified, the superblock is probed for the filesystem type
 .RI ( minix ", " ext ", " ext2 ", " xiafs ", " iso9660 ", " romfs
+.RI , ufs ", " ntfs  ", " qnx4 ", " bfs
 are supported).
 If this probe fails, mount will try to read the file
 .IR /etc/filesystems ,
@@ -362,6 +381,7 @@ or, if that does not exist,
 .IR /proc/filesystems .
 All of the filesystem types listed there will be tried,
 except for those that are labeled "nodev" (e.g.,
+.IR devpts ,
 .I proc
 and
 .IR nfs ).
@@ -537,6 +557,32 @@ These options are accepted but ignored.
 .SH "Mount options for coherent"
 None.
 
+.SH "Mount options for devpts"
+The devpts file system is a pseudo file system, traditionally mounted on
+.IR /dev/pts .
+In order to acquire a pseudo terminal, a process opens
+.IR /dev/ptmx ;
+the number of the pseudo terminal is then made available to the process
+and the pseudo terminal slave can be accessed as
+.IR /dev/pts/ <number>.
+.TP
+\fBuid=\fP\fIvalue\fP and \fBgid=\fP\fIvalue\fP
+This sets the owner or the group of newly created PTYs to
+the specified values. When nothing is specified, they will
+be set to the UID and GID of the creating process.
+For example, if there is a tty group with GID 5, then
+.B gid=5
+will cause newly created PTYs to belong to the tty group.
+.TP
+.BI mode= value
+Set the mode of newly created PTYs to the specified value.
+The default is 0600.
+A value of 
+.B mode=620
+and 
+.B gid=5
+makes "mesg y" the default on newly created PTYs.
+
 .SH "Mount options for ext"
 None.
 Note that the `ext' file system is obsolete. Don't use it.
@@ -619,11 +665,15 @@ These options determine who can use the reserved blocks.
 Instead of block 1, use block
 .I n
 as superblock. This could be useful when the filesystem has been damaged.
-Usually, copies of the superblock are found every 8192 blocks: in
-block 1, 8193, 16385, ...
-(Thus, one gets hundreds or even thousands of copies of the superblock
-on a big filesystem. I do not know of options to mke2fs that would
-cause fewer copies to be written.)
+(Earlier, copies of the superblock would be made every 8192 blocks: in
+block 1, 8193, 16385, ... (and one got hundreds or even thousands
+of copies on a big filesystem). Since version 1.08,
+.B mke2fs
+has a \-s (sparse superblock) option to reduce the number of backup
+superblocks, and since version 1.15 this is the default. Note
+that this may mean that ext2 filesystems created by a recent
+.B mke2fs
+cannot be mounted r/w under Linux 2.0.*.)
 .TP
 .BR grpquota " / " noquota " / " quota " / " usrquota
 These options are accepted but ignored.
@@ -638,7 +688,7 @@ and
 .I vfat
 filesystems.)
 .TP
-.BR blocksize=512 " / " blocksize=1024
+.BR blocksize=512 " / " blocksize=1024 " / " blocksize=2048
 Set blocksize (default 512).
 .TP
 \fBuid=\fP\fIvalue\fP and \fBgid=\fP\fIvalue\fP
@@ -673,6 +723,10 @@ that are sometimes used on Linux, but are not accepted by MS-DOS are
 rejected. (+, =, spaces, etc.)
 .RE
 .TP
+.BI codepage= value
+Sets the codepage for converting to shortname characters on FAT
+and VFAT filesystems. By default, codepage 437 is used.
+.TP
 .BR conv=b[inary] " / " conv=t[ext] " / " conv=a[uto]
 The
 .I fat
@@ -703,6 +757,15 @@ For file systems mounted in binary mode, a conversion tool
 (fromdos/todos) is available.
 .RE
 .TP
+.BI cvf_format= module
+Forces the driver to use the CVF (Compressed Volume File) module
+.RI cvf_ module
+instead of auto-detection. If the kernel supports kmod, the
+cvf_format=xxx option also controls on-demand CVF module loading.
+.TP
+.BI cvf_option= option
+Option passed to the CVF module.
+.TP
 .B debug
 Turn on the
 .I debug
@@ -710,9 +773,14 @@ flag.  A version string and a list of file system parameters will be
 printed (these data are also printed if the parameters appear to be
 inconsistent).
 .TP
-.BR fat=12 " / " fat=16
-Specify either a 12 bit fat or a 16 bit fat.  This overrides
+.BR fat=12 " / " fat=16 " / " fat=32
+Specify a 12, 16 or 32 bit fat.  This overrides
 the automatic FAT type detection routine.  Use with caution!
+.TP
+.BI iocharset= value
+Character set to use for converting between 8 bit characters
+and 16 bit Unicode characters. The default is iso8859-1.
+Long filenames are stored on disk in Unicode format.
 .TP
 .B quiet
 Turn on the
@@ -774,6 +842,9 @@ that it is read-only, of course).
 .B norock
 Disable the use of Rock Ridge extensions, even if available. Cf.\&
 .BR map .
+.B nojoliet
+Disable the use of Microsoft Joliet extensions, even if available. Cf.\&
+.BR map .
 .TP
 .BR check=r[elaxed] " / " check=s[trict]
 With
@@ -792,7 +863,7 @@ possibly overriding the information found in the Rock Ridge extensions.
 (Default:
 .BR uid=0,gid=0 .)
 .TP
-.BR map=n[ormal] " / " map=o[ff]
+.BR map=n[ormal] " / " map=o[ff] " / " map=a[corn]
 For non-Rock Ridge volumes, normal name translation maps upper
 to lower case ASCII, drops a trailing `;1', and converts `;' to `.'.
 With
@@ -801,6 +872,10 @@ no name translation is done. See
 .BR norock .
 (Default:
 .BR map=normal .)
+.B map=acorn
+is like
+.BR map=normal
+but also apply Acorn extensions if present.
 .TP
 .BI mode= value
 For non-Rock Ridge volumes, give all files the indicated mode.
@@ -821,7 +896,7 @@ Set the block size to the indicated value.
 .BR conv=binary .)
 Since Linux 1.3.54 this option has no effect anymore.
 (And non-binary settings used to be very dangerous,
-often leading to silent data corruption.)
+possibly leading to silent data corruption.)
 .TP
 .B cruft
 If the high byte of the file length contains other garbage,
@@ -830,6 +905,12 @@ This implies that a file cannot be larger than 16MB.
 The `cruft' option is set automatically if the entire CDROM
 has a weird size (negative, or more than 800MB). It is also
 set when volume sequence numbers other than 0 or 1 are seen.
+.TP
+.B session=x
+Select number of session on multisession CD. (Since 2.3.4.)
+.TP
+.B sbsector=xxx
+Session begins from sector xxx. (Since 2.3.4.)
 
 .SH "Mount options for minix"
 None.
@@ -926,6 +1007,30 @@ Usually it just causes lots of trouble.
 .B nolock
 Do not use locking. Do not start lockd.
 
+.SH "Mount options for ntfs"
+.TP
+.BI iocharset= name
+Character set to use when returning file names.
+Unlike VFAT, NTFS suppresses names that contain
+unconvertible characters.
+.TP
+.BR utf8
+Use UTF-8 for converting file names.
+.TP
+.B uni_xlate=[0|1|2]
+For 0 (or `no' or `false') or 1 (or `yes' or `true'):
+use the VFAT-style encoding for file names outside the current
+character set. A value of 2 will disable the encoding with ":".
+.TP
+.B posix=[0|1]
+If enabled (posix=1), the file system distinguishes between
+upper and lower case. The 8.3 alias names are presented as
+hard links instead of being suppressed.
+.TP
+\fBuid=\fP\fIvalue\fP, \fBgid=\fP\fIvalue\fP and \fBumask=\fP\fIvalue\fP
+Set the file permission on the filesystem.
+By default, the files are owned by root and not readable by somebody else.
+
 .SH "Mount options for proc"
 .TP
 \fBuid=\fP\fIvalue\fP and \fBgid=\fP\fIvalue\fP
@@ -943,13 +1048,109 @@ to the mount system call. This argument is constructed by
 .BR smbmount (8)
 and the current version of
 .B mount
-(2.6c) does not know anything about smb.
+(2.9w) does not know anything about smb.
 
 .SH "Mount options for sysv"
 None.
 
+.SH "Mount options for udf"
+.TP
+.B gid=
+Set the default group.
+.TP
+.B umask=
+Set the default umask.
+.TP
+.B uid=
+Set the default user.
+.TP
+.B unhide
+Show otherwise hidden files.
+.TP
+.B undelete
+Show deleted files in lists.
+.TP
+.B strict
+Set strict conformance (unused).
+.TP
+.B utf8
+(unused).
+.TP
+.B iocharset
+(unused).
+.TP
+.B bs=
+Set the block size. (May not work unless 2048.)
+.TP
+.B novrs
+Skip volume sequence recognition.
+.TP
+.B session=
+Set the CDROM session counting from 0. Default: last session.
+.TP
+.B anchor=
+Override standard anchor location. Default: 256.
+.TP
+.B volume=
+Override the VolumeDesc location. (unused)
+.TP
+.B partition=
+Override the PartitionDesc location. (unused)
+.TP
+.B lastblock=
+Set the last block of the filesystem.
+.TP
+.B fileset=
+Override the fileset block location. (unused)
+.TP
+.B rootdir=
+Override the root directory location. (unused)
+
 .SH "Mount options for ufs"
-None.
+.TP
+.BI ufstype= value
+UFS is a file system widely used in different operating systems.
+The problem are differences among implementations. Features of some
+implementations are undocumented, so its hard to recognize the
+type of ufs automatically.
+That's why user must specify the type of ufs by mount option.
+Possible values are:
+.RS
+.TP
+.B old
+Old format of ufs, this is the default, read only.
+.TP
+.B 44bsd
+For filesystems created by a BSD-like system (NetBSD,FreeBSD,OpenBSD).
+.TP
+.B sun
+For filesystems created by SunOS or Solaris on Sparc.
+.TP
+.B sunx86
+For filesystems created by Solaris on x86.
+.TP
+.B nextstep
+For filesystems created by NeXTStep (on NeXT station) (currently read only).
+.TP
+.B nextstep-cd
+For NextStep CDROMs (block_size == 2048), read-only.
+.TP
+.B openstep
+For filesystems created by OpenStep (currently read only).
+.RE
+
+.TP
+.BI onerror= value
+Set behaviour on error:
+.RS
+.TP
+.B panic
+If an error is encountered, cause a kernel panic.
+.TP
+.B [lock|umount|repair]
+These mount options don't do anything at present;
+when an error is encountered only a console message is printed.
+.RE
 
 .SH "Mount options for umsdos"
 See mount options for msdos.
@@ -984,6 +1185,11 @@ Allow two files with names that only differ in case.
 First try to make a short name without sequence number,
 before trying
 .IR name~num.ext .
+.TP
+.B utf8
+UTF8 is the filesystem safe 8-bit encoding of Unicode that is used
+by the console. It can be be enabled for the filesystem with this option.
+If `uni_xlate' gets set, UTF8 gets disabled.
 
 .SH "Mount options for xenix"
 None.

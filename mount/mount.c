@@ -32,6 +32,8 @@
  * - fixed strerr(errno) in gettext calls
  * 1999-07-05 Hirokazu Takahashi <h-takaha@sss.abk.nec.co.jp>
  * - fixed use of nouser option
+ * 1999-09-09 Michael K. Johnson <johnsonm@redhat.com>
+ * - added `owner' mount option
  */
 
 #include <unistd.h>
@@ -107,6 +109,7 @@ struct opt_map
 #define MS_NOAUTO	0x80000000
 #define MS_USERS	0x40000000
 #define MS_USER		0x20000000
+#define MS_OWNER	0x10000000
 #define MS_LOOP		0x00010000
 
 /* Options that we keep the mount system call from seeing.  */
@@ -115,8 +118,11 @@ struct opt_map
 /* Options that we keep from appearing in the options field in the mtab.  */
 #define MS_NOMTAB	(MS_REMOUNT|MS_NOAUTO|MS_USERS|MS_USER)
 
-/* OPTIONS that we make ordinary users have by default.  */
+/* Options that we make ordinary users have by default.  */
 #define MS_SECURE	(MS_NOEXEC|MS_NOSUID|MS_NODEV)
+
+/* Options that we make owner-mounted devices have by default */
+#define MS_OWNERSECURE	(MS_NOSUID|MS_NODEV)
 
 const struct opt_map opt_map[] = {
   { "defaults",	0, 0, 0		},	/* default options */
@@ -137,6 +143,8 @@ const struct opt_map opt_map[] = {
   { "nousers",	0, 1, MS_USERS	},	/* Forbid ordinary user to mount */
   { "user",	0, 0, MS_USER	},	/* Allow ordinary user to mount */
   { "nouser",	0, 1, MS_USER	},	/* Forbid ordinary user to mount */
+  { "owner",	0, 0, MS_OWNER  },	/* Let the owner of the device mount */
+  { "noowner",	0, 1, MS_OWNER  },	/* Device owner has no special privs */
   /* add new options here */
 #ifdef MS_NOSUB
   { "sub",	0, 1, MS_NOSUB	},	/* allow submounts */
@@ -244,6 +252,8 @@ parse_opt (const char *opt, int *mask, char *extra_opts)
 	if ((om->mask == MS_USER || om->mask == MS_USERS)
 	    && !om->inv)
 	  *mask |= MS_SECURE;
+	if ((om->mask == MS_OWNER) && !om->inv)
+	  *mask |= MS_OWNERSECURE;
 #ifdef MS_SILENT
         if (om->mask == MS_SILENT && om->inv)  {
           mount_quiet = 1;
@@ -377,6 +387,7 @@ create_mtab (void) {
 /* count successful mount system calls */
 static int mountcount = 0;
 
+/* returns 0: OK, -1: error */
 static int
 mount5 (struct mountargs *args) {
      int ret = mount (args->spec, args->node, args->type,
@@ -386,9 +397,9 @@ mount5 (struct mountargs *args) {
      return ret;
 }
 
-/* Mount a single file system.  Return status,
-   so don't exit on non-fatal errors.  */
- 
+/* Mount a single file system.
+   Return status: 0: OK, -1: error in errno, 1: other error
+   don't exit on non-fatal errors.  */
 static int
 try_mount5 (char *spec, char *node, char **type, int flags, char *mount_opts) {
    struct mountargs args = { spec, node, NULL, flags & ~MS_NOSYS, mount_opts };
@@ -396,8 +407,14 @@ try_mount5 (char *spec, char *node, char **type, int flags, char *mount_opts) {
    if (*type && strcasecmp (*type, "auto") == 0)
       *type = NULL;
 
-   if (!*type && !(flags & MS_REMOUNT))
+   if (!*type && !(flags & MS_REMOUNT)) {
       *type = guess_fstype_from_superblock(spec);
+      if (*type && !strcmp(*type, "swap")) {
+	  error(_("%s looks like swapspace - not mounted"), spec);
+	  *type = NULL;
+	  return 1;
+      }
+   }
 
    if (*type || (flags & MS_REMOUNT)) {
       args.type = *type;
@@ -419,6 +436,7 @@ try_mount_one (const char *spec0, const char *node0, char *type0,
 	       const char *opts0, int freq, int pass, int bg, int ro) {
   struct mntentchn mcn;
   struct mntent mnt;
+  int mnt5_res = 0;		/* only for gcc */
   int mnt_err;
   int flags;
   char *extra_opts;		/* written in mtab */
@@ -438,6 +456,26 @@ try_mount_one (const char *spec0, const char *node0, char *type0,
 
   /* root may allow certain types of mounts by ordinary users */
   if (suid) {
+      /* RedHat patch: allow owners to mount when fstab contains
+	 the owner option.  Note that this should never be used
+         in a high security environment, but may be useful to give
+         people at the console the possibility of mounting a floppy. */
+      if (flags & MS_OWNER) {
+	  if (!strncmp(spec0, "/dev/", 5)) {
+	      struct stat sb;
+
+	      if (!stat(spec0, &sb)) {
+		  if (getuid() == sb.st_uid)
+		      flags |= MS_USER;
+	      }
+	  }
+      }
+      /* James Kehl <mkehl@gil.com.au> came with a similar patch:
+	 allow an arbitrary user to mount when he is the owner of
+	 the mount-point and has write-access to the device.
+         This is even less secure. Let me skip it for the time being;
+         there should be an explicit fstab line allowing such things. */
+
       if (!(flags & (MS_USER | MS_USERS))) {
           if (already (spec, node))
 	    die (EX_USAGE, _("mount failed"));
@@ -447,6 +485,9 @@ try_mount_one (const char *spec0, const char *node0, char *type0,
       if (flags & MS_USER)
 	  user = getusername();
   }
+
+  if (flags & MS_OWNER)
+      flags &= ~MS_OWNER;
 
   /* quietly succeed for fstab entries that don't get mounted automatically */
   if (all && (flags & MS_NOAUTO))
@@ -538,7 +579,8 @@ try_mount_one (const char *spec0, const char *node0, char *type0,
 
        sprintf(mountprog, "/sbin/mount.%s", type);
        if (stat(mountprog, &statbuf) == 0) {
-	    if (fork() == 0) {
+	    int res;
+	    if ((res = fork()) == 0) {
 		 char *oo, *mountargs[10];
 		 int i = 0;
 
@@ -559,7 +601,7 @@ try_mount_one (const char *spec0, const char *node0, char *type0,
 		 mountargs[i] = NULL;
 		 execv(mountprog, mountargs);
 		 exit(1);	/* exec failed */
-	    } else if (fork() != -1) {
+	    } else if (res != -1) {
 		 int status;
 		 wait(&status);
 		 return status;
@@ -572,10 +614,11 @@ try_mount_one (const char *spec0, const char *node0, char *type0,
 
   block_signals (SIG_BLOCK);
 
-  if (fake
-      || (try_mount5 (spec, node, &type, flags & ~MS_NOSYS, mount_opts)) == 0)
+  if (!fake)
+    mnt5_res = try_mount5 (spec, node, &type, flags & ~MS_NOSYS, mount_opts);
+
+  if (fake || mnt5_res == 0) {
     /* Mount succeeded, report this (if verbose) and write mtab entry.  */
-    {
       if (loop)
 	  opt_loopdev = loopdev;
 
@@ -619,7 +662,7 @@ try_mount_one (const char *spec0, const char *node0, char *type0,
 
       block_signals (SIG_UNBLOCK);
       return 0;
-    }
+  }
 
   mnt_err = errno;
 
@@ -630,11 +673,17 @@ try_mount_one (const char *spec0, const char *node0, char *type0,
 
   /* Mount failed, complain, but don't die.  */
 
-  if (type == 0)
-    error (_("mount: you must specify the filesystem type"));
-  else
-  switch (mnt_err)
-    {
+  if (type == 0) {
+    if (suid)
+      error (_("mount: I could not determine the filesystem type, "
+	       "and none was specified"));
+    else
+      error (_("mount: you must specify the filesystem type"));
+  } else if (mnt5_res != -1) {
+      /* should not happen */
+      error (_("mount: mount failed"));
+  } else {
+   switch (mnt_err) {
     case EPERM:
       if (geteuid() == 0) {
 	   if (stat (node, &statbuf) || !S_ISDIR(statbuf.st_mode))
@@ -775,6 +824,7 @@ try_mount_one (const char *spec0, const char *node0, char *type0,
     default:
       error ("mount: %s", strerror (mnt_err)); break;
     }
+  }
   return EX_FAIL;
 }
 

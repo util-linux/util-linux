@@ -49,7 +49,7 @@ struct partition {
 
 enum failure {usage, usage2, ioctl_error,
 	unable_to_open, unable_to_read, unable_to_seek,
-	unable_to_write, out_of_memory, no_partition, no_device};
+	unable_to_write, out_of_memory};
 
 enum action {fdisk, require, try_only, create_empty};
 
@@ -68,6 +68,7 @@ extern void list_types(struct systypes *sys);
 extern int read_line (void);
 extern char read_char(char *mesg);
 extern int read_hex(struct systypes *sys);
+extern void reread_partition_table(int leave);
 uint read_int(uint low, uint dflt, uint high, uint base, char *mesg);
 
 #define PLURAL	0
@@ -83,3 +84,5 @@ extern int btrydev (char * dev);
 
 /* prototypes for fdisksgilabel.c */
 extern int valid_part_table_flag(unsigned char *b);
+
+#define PROC_PARTITIONS "/proc/partitions"

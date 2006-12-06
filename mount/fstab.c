@@ -224,6 +224,23 @@ getmntoptfile (const char *file)
      return NULL;
 }
 
+/* Find the entry (SPEC,FILE) in fstab */
+struct mntentchn *
+getfsspecfile (const char *spec, const char *file) {
+    struct mntentchn *mc;
+
+    for (mc = fstab_head()->nxt; mc; mc = mc->nxt)
+	if (streq (mc->mnt_dir, file) && streq (mc->mnt_fsname, spec))
+	     return mc;
+    for (mc = fstab_head()->nxt; mc; mc = mc->nxt)
+	if ((streq (mc->mnt_dir, file) ||
+	     streq (canonicalize(mc->mnt_dir), file))
+	    && (streq (mc->mnt_fsname, spec) ||
+		streq (canonicalize(mc->mnt_fsname), spec)))
+	     break;
+    return mc;
+}
+
 /* Find the dir FILE in fstab.  */
 struct mntentchn *
 getfsfile (const char *file) {
@@ -401,6 +418,8 @@ lock_mtab (void) {
 			}
 			we_created_lockfile = 1;
 		} else {
+			static int tries = 0;
+
 			/* Someone else made the link. Wait. */
 			alarm(LOCK_TIMEOUT);
 			if (fcntl (fd, F_SETLKW, &flock) == -1) {
@@ -410,7 +429,15 @@ lock_mtab (void) {
 				     _("timed out") : strerror (errsv));
 			}
 			alarm(0);
-			/* Maybe limit the number of iterations? */
+			/* Limit the number of iterations - maybe there
+			   still is some old /etc/mtab~ */
+			if (tries++ > 3) {
+				if (tries > 5)
+					die (EX_FILEIO, _("Cannot create link %s\n"
+					    "Perhaps there is a stale lock file?\n"),
+					     MOUNTED_LOCK);
+				sleep(1);
+			}
 		}
 
 		close(fd);

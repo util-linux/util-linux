@@ -32,12 +32,13 @@
  */
 
 /*
-**	modified by Kars de Jong <jongk@cs.utwente.nl> to use terminfo instead
-**	  of termcap.
-	1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
-	- added Native Language Support
-
-*/
+ * modified by Kars de Jong <jongk@cs.utwente.nl>
+ *	to use terminfo instead of termcap.
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 	added Native Language Support
+ * 1999-09-19 Bruno Haible <haible@clisp.cons.org>
+ * 	modified to work correctly in multi-byte locales
+ */
 
 #include <stdio.h>
 #include <unistd.h>		/* for getopt(), isatty() */
@@ -47,6 +48,21 @@
 #include <limits.h>		/* for INT_MAX */
 #include "nls.h"
 
+#include "widechar.h"
+
+#ifdef ENABLE_WIDECHAR
+static int put1wc(int c) /* Output an ASCII character as a wide character */
+{
+  if (putwchar(c) == WEOF)
+    return EOF;
+  else
+    return c;
+}
+#define putwp(s) tputs(s,1,put1wc)
+#else
+#define putwp(s) putp(s)
+#endif
+
 void filter(FILE *f);
 void flushln(void);
 void overstrike(void);
@@ -55,7 +71,7 @@ void initbuf(void);
 void fwd(void);
 void reverse(void);
 void initinfo(void);
-void outc(int c);
+void outc(wint_t c);
 void setmode(int newmode);
 void setcol(int newcol);
 
@@ -81,7 +97,7 @@ char	*CURS_UP, *CURS_RIGHT, *CURS_LEFT,
 
 struct	CHAR	{
 	char	c_mode;
-	char	c_char;
+	wchar_t	c_char;
 } ;
 
 struct	CHAR	*obuf;
@@ -92,7 +108,7 @@ int	halfpos;
 int	upln;
 int	iflag;
 
-#define	PRINT(s)	if (s == NULL) /* void */; else putp(s)
+#define	PRINT(s)	if (s == NULL) /* void */; else putwp(s)
 
 int main(int argc, char **argv)
 {
@@ -156,14 +172,16 @@ int main(int argc, char **argv)
 		} else
 			filter(f);
 	}
+	if (ferror(stdout) || fclose(stdout))
+		return 1;
 	return 0;
 }
 
 void filter(FILE *f)
 {
-	int c;
+	wint_t c;
 
-	while ((c = getc(f)) != EOF) switch(c) {
+	while ((c = getwc(f)) != WEOF) switch(c) {
 
 	case '\b':
 		setcol(col - 1);
@@ -186,7 +204,7 @@ void filter(FILE *f)
 		continue;
 
 	case IESC:
-		switch (c = getc(f)) {
+		switch (c = getwc(f)) {
 
 		case HREV:
 			if (halfpos == 0) {
@@ -241,11 +259,11 @@ void filter(FILE *f)
 
 	case '\f':
 		flushln();
-		putchar('\f');
+		putwchar('\f');
 		continue;
 
 	default:
-		if (c < ' ')	/* non printing */
+		if (!iswprint(c))	/* non printing */
 			continue;
 		if (obuf[col].c_char == '\0') {
 			obuf[col].c_char = c;
@@ -290,7 +308,7 @@ void flushln()
 	}
 	if (must_overstrike && hadmodes)
 		overstrike();
-	putchar('\n');
+	putwchar('\n');
 	if (iflag && hadmodes)
 		iattr();
 	(void)fflush(stdout);
@@ -306,8 +324,12 @@ void flushln()
 void overstrike()
 {
 	register int i;
-	char lbuf[256];
-	register char *cp = lbuf;
+#ifdef __GNUC__
+	register wchar_t *lbuf = __builtin_alloca((maxcol+1)*sizeof(wchar_t));
+#else
+	wchar_t lbuf[256];
+#endif
+	register wchar_t *cp = lbuf;
 	int hadbold=0;
 
 	/* Set up overstrike buffer */
@@ -325,25 +347,29 @@ void overstrike()
 			hadbold=1;
 			break;
 		}
-	putchar('\r');
+	putwchar('\r');
 	for (*cp=' '; *cp==' '; cp--)
 		*cp = 0;
 	for (cp=lbuf; *cp; cp++)
-		putchar(*cp);
+		putwchar(*cp);
 	if (hadbold) {
-		putchar('\r');
+		putwchar('\r');
 		for (cp=lbuf; *cp; cp++)
-			putchar(*cp=='_' ? ' ' : *cp);
-		putchar('\r');
+			putwchar(*cp=='_' ? ' ' : *cp);
+		putwchar('\r');
 		for (cp=lbuf; *cp; cp++)
-			putchar(*cp=='_' ? ' ' : *cp);
+			putwchar(*cp=='_' ? ' ' : *cp);
 	}
 }
 
 void iattr()
 {
 	register int i;
+#ifdef __GNUC__
+	register char *lbuf = __builtin_alloca((maxcol+1)*sizeof(char));
+#else
 	char lbuf[256];
+#endif
 	register char *cp = lbuf;
 
 	for (i=0; i<maxcol; i++)
@@ -359,8 +385,8 @@ void iattr()
 	for (*cp=' '; *cp==' '; cp--)
 		*cp = 0;
 	for (cp=lbuf; *cp; cp++)
-		putchar(*cp);
-	putchar('\n');
+		putwchar(*cp);
+	putwchar('\n');
 }
 
 void initbuf()
@@ -449,9 +475,9 @@ void initinfo()
 
 static int curmode = 0;
 
-void outc(int c)
+void outc(wint_t c)
 {
-	putchar(c);
+	putwchar(c);
 	if (must_use_uc && (curmode&UNDERL)) {
 		PRINT(CURS_LEFT);
 		PRINT(UNDER_CHAR);

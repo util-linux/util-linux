@@ -1,11 +1,10 @@
 .\" Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be freely distributed.
-.\" " for emacs hilit19 mode
-.TH MKFS 8 "2 July 1996" "Util-linux 2.6" "Linux System Administrator's Manual"
+.TH MKFS.MINIX 8 "2 July 1996" "Util-linux 2.6" "Linux System Administrator's Manual"
 .SH NAME
-mkfs \- make a Linux MINIX filesystem
+mkfs.minix \- make a Linux MINIX filesystem
 .SH SYNOPSIS
-.BR "mkfs [ \-c | \-l filename ] [ \-n"
+.BR "mkfs.minix [ \-c | \-l filename ] [ \-n"
 namelength
 .B ] [ \-i
 inodecount
@@ -15,7 +14,7 @@ device
 size-in-blocks
 .B ]
 .SH DESCRIPTION
-.B mkfs
+.B mkfs.minix
 creates a Linux MINIX file-system on a device (usually a disk partition).
 
 The
@@ -33,14 +32,11 @@ is usually of the following form:
 
 The
 .I size-in-blocks
-parameter is the desired size of the file system, in blocks.  This
-information can be determined from the
-.BR fdisk (8)
-or
-.BR cfdisk (8)
-program.  If omitted it will be determined automaticaly.  Only block
-counts strictly greater than 10 and strictly less than 65536 are
-allowed.
+parameter is the desired size of the file system, in blocks.
+It is present only for backwards compatibility.
+If omitted the size will be determined automatically.
+Only block counts strictly greater than 10 and strictly less than
+65536 are allowed.
 .SH OPTIONS
 .TP
 .B \-c
@@ -50,7 +46,7 @@ are found, the count is printed.
 .BI \-n " namelength"
 Specify the maximum length of filenames.
 Currently, the only allowable values are 14 and 30.
-.B 30 is the default.
+The default is 30.
 .TP
 .BI \-i " inodecount"
 Specify the number of inodes for the filesystem.
@@ -76,24 +72,4 @@ Usage or syntax error
 .SH "SEE ALSO"
 .BR mkfs (8),
 .BR fsck (8),
-.BR mke2fs (8),
-.BR e2fsck (8),
 .BR reboot (8)
-.\" .SH AUTHORS
-.\" Linus Torvalds (torvalds@cs.helsinki.fi).
-.\" .br
-.\" Error code values by Rik Faith (faith@cs.unc.edu)
-.\" .br
-.\" Inode request feature by Scott Heavner (sdh@po.cwru.edu)
-.\" .br
-.\" Support for the file system valid flag by Dr. Wettstein
-.\" (greg%wind.uucp@plains.nodak.edu)
-.\" .br
-.\" Check to prevent mkfs of mounted filesystem and boot sector clearing
-.\" by Daniel Quinlan (quinlan@yggdrasil.com)
-.\" .br
-.\" Minix v2 support by Andreas Schwab
-.\" (schwab@issan.informatik.uni-dortmund.de), updated by Nicolai
-.\" Langfeldt (janl@math.uio.no)
-.\" .br
-.\" Portability patch by Russell King.

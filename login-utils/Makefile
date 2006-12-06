@@ -124,12 +124,12 @@ wall: wall.o ttymsg.o
 ifeq "$(USE_TTY_GROUP)" "yes"
 login.o: login.c $(LIB)/pathnames.h $(LIB)/setproctitle.c $(LIB)/setproctitle.h
 	$(CC) -c $(CFLAGS) $(PAMFL) -DUSE_TTY_GROUP login.c
-mesg.o: mesg.c $(LIB)/err.h
+mesg.o: mesg.c $(LIB)/errs.h
 	$(CC) -c $(CFLAGS) -DUSE_TTY_GROUP mesg.c
 else
 login.o: $(LIB)/pathnames.h
 	$(CC) -c $(CFLAGS) $(PAMFL) login.c
-mesg.o: $(LIB)/err.h
+mesg.o: $(LIB)/errs.h
 endif
 
 passwd: passwd.o islocal.o setpwnam.o $(LIB)/env.o

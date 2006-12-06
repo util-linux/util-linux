@@ -237,6 +237,9 @@ void error P_((int va_alist));
 
 char *progname;
 
+/* Fake hostname for ut_host specified on command line. */
+char *fakehost = NULL;
+
 /* ... */
 #ifdef DEBUGGING
 #define debug(s) fprintf(dbf,s); fflush(dbf)
@@ -390,7 +393,7 @@ parse_args(argc, argv, op)
     extern int optind;			/* getopt */
     int     c;
 
-    while (isascii(c = getopt(argc, argv, "I:Lf:hil:mt:wn"))) {
+    while (isascii(c = getopt(argc, argv, "I:LH:f:hil:mt:wn"))) {
 	switch (c) {
 	case 'I':
 	    if (!(op->initstring = malloc(strlen(optarg)))) {
@@ -435,6 +438,9 @@ parse_args(argc, argv, op)
 	case 'L':				/* force local */
  	    op->flags |= F_LOCAL;
  	    break;
+	case 'H':                               /* fake login host */
+	    fakehost = optarg;
+	    break;
 	case 'f':				/* custom issue file */
 	    op->flags |= F_CUSTISSUE;
 	    op->issue = optarg;
@@ -547,6 +553,8 @@ update_utmp(line)
 	
     strncpy(ut.ut_user, "LOGIN", sizeof(ut.ut_user));
     strncpy(ut.ut_line, line, sizeof(ut.ut_line));
+    if (fakehost)
+	strncpy(ut.ut_host, fakehost, sizeof(ut.ut_host));
     time(&t);
     ut.ut_time = t;
     ut.ut_type = LOGIN_PROCESS;
@@ -586,6 +594,8 @@ update_utmp(line)
 		  ut.ut_time = time((long *) 0);
 		  (void) strncpy(ut.ut_name, "LOGIN", sizeof(ut.ut_name));
 		  (void) strncpy(ut.ut_line, line, sizeof(ut.ut_line));
+		  if (fakehost)
+		      (void) strncpy(ut.ut_host, fakehost, sizeof(ut.ut_host));
 		  (void) lseek(ut_fd, -ut_size, 1);
 		  (void) write(ut_fd, (char *) &ut, sizeof(ut));
 		  (void) close(ut_fd);
@@ -1160,7 +1170,7 @@ bcode(s)
 void
 usage()
 {
-    fprintf(stderr, _("Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] baud_rate,... line [termtype]\nor\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] line baud_rate,... [termtype]\n"), progname);
+    fprintf(stderr, _("Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\nor\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"), progname);
     exit(1);
 }
 

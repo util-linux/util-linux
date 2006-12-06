@@ -13,170 +13,109 @@
  * GNU Library Public License for more details.
  */
 
-#define HAVE_GETCWD
-
 /*
  * This routine is part of libc.  We include it nevertheless,
  * since the libc version has some security flaws.
  */
 
-#ifdef __linux__
-extern char *realpath(const char *path, char *resolved_path);
-#define HAVE_UNISTD_H
-#define HAVE_STRING_H
-#endif
-
-#ifdef HAVE_CONFIG_H
-#include <config.h>
-#endif
-
-#include <sys/types.h>
-#if defined(HAVE_UNISTD_H) || defined(STDC_HEADERS)
+#include <limits.h>		/* for PATH_MAX */
 #include <unistd.h>
-#endif
-#include <stdio.h>
-#ifdef HAVE_STRING_H
 #include <string.h>
-#else
-#include <strings.h>
-#endif
-#ifdef _POSIX_VERSION
-#include <limits.h>			/* for PATH_MAX */
-#else
-#include <sys/param.h>			/* for MAXPATHLEN */
-#endif
 #include <errno.h>
-
-#include <sys/stat.h>			/* for S_IFLNK */
-
-#ifndef PATH_MAX
-#ifdef _POSIX_VERSION
-#define PATH_MAX _POSIX_PATH_MAX
-#else
-#ifdef MAXPATHLEN
-#define PATH_MAX MAXPATHLEN
-#else
-#define PATH_MAX 1024
-#endif
-#endif
-#endif
+#include "realpath.h"
+#include "sundries.h"		/* for xstrdup */
 
 #define MAX_READLINKS 32
 
-#ifdef __STDC__
-char *realpath(const char *path, char *resolved_path)
-#else
-char *realpath(path, resolved_path)
-const char *path;
-char *resolved_path;
-#endif
-{
-	char copy_path[PATH_MAX];
-	char link_path[PATH_MAX];
-	char *new_path = resolved_path;
-	char *max_path;
+char *
+myrealpath(const char *path, char *resolved_path, int maxreslth) {
+	char *npath;
+	char link_path[PATH_MAX+1];
 	int readlinks = 0;
 	int n;
 
-	/* Make a copy of the source path since we may need to modify it. */
-	if (strlen(path) >= PATH_MAX) {
-		errno = ENAMETOOLONG;
-		return NULL;
-	}
-	strcpy(copy_path, path);
-	path = copy_path;
-	max_path = copy_path + PATH_MAX - 2;
+	npath = resolved_path;
 
-	/* If it's a relative pathname use getwd for starters. */
+	/* If it's a relative pathname use getcwd for starters. */
 	if (*path != '/') {
-#ifdef HAVE_GETCWD
-		getcwd(new_path, PATH_MAX - 1);
-#else
-		getwd(new_path);
-#endif
-		new_path += strlen(new_path);
-		if (new_path[-1] != '/')
-			*new_path++ = '/';
-	}
-	else {
-		*new_path++ = '/';
+		getcwd(npath, maxreslth-2);
+		npath += strlen(npath);
+		if (npath[-1] != '/')
+			*npath++ = '/';
+	} else {
+		*npath++ = '/';
 		path++;
 	}
+
 	/* Expand each slash-separated pathname component. */
 	while (*path != '\0') {
-		/* Ignore stray "/". */
+		/* Ignore stray "/" */
 		if (*path == '/') {
 			path++;
 			continue;
 		}
-		if (*path == '.') {
-			/* Ignore ".". */
-			if (path[1] == '\0' || path[1] == '/') {
-				path++;
-				continue;
-			}
-			if (path[1] == '.') {
-				if (path[2] == '\0' || path[2] == '/') {
-					path += 2;
-					/* Ignore ".." at root. */
-					if (new_path == resolved_path + 1)
-						continue;
-					/* Handle ".." by backing up. */
-					while ((--new_path)[-1] != '/')
-						;
-					continue;
-				}
-			}
+		if (*path == '.' && (path[1] == '\0' || path[1] == '/')) {
+			/* Ignore "." */
+			path++;
+			continue;
+		}
+		if (*path == '.' && path[1] == '.' &&
+		    (path[2] == '\0' || path[2] == '/')) {
+			/* Backup for ".." */
+			path += 2;
+			while (npath > resolved_path+1 &&
+			       (--npath)[-1] != '/')
+				;
+			continue;
 		}
 		/* Safely copy the next pathname component. */
 		while (*path != '\0' && *path != '/') {
-			if (path > max_path) {
+			if (npath-resolved_path > maxreslth-2) {
 				errno = ENAMETOOLONG;
 				return NULL;
 			}
-			*new_path++ = *path++;
+			*npath++ = *path++;
 		}
-#ifdef S_IFLNK
+
 		/* Protect against infinite loops. */
 		if (readlinks++ > MAX_READLINKS) {
 			errno = ELOOP;
 			return NULL;
 		}
+
 		/* See if latest pathname component is a symlink. */
-		*new_path = '\0';
-		n = readlink(resolved_path, link_path, PATH_MAX - 1);
+		*npath = '\0';
+		n = readlink(resolved_path, link_path, PATH_MAX);
 		if (n < 0) {
 			/* EINVAL means the file exists but isn't a symlink. */
 			if (errno != EINVAL)
 				return NULL;
-		}
-		else {
+		} else {
 			/* Note: readlink doesn't add the null byte. */
 			link_path[n] = '\0';
 			if (*link_path == '/')
 				/* Start over for an absolute symlink. */
-				new_path = resolved_path;
+				npath = resolved_path;
 			else
 				/* Otherwise back up over this component. */
-				while (*(--new_path) != '/')
+				while (*(--npath) != '/')
 					;
 			/* Safe sex check. */
-			if (strlen(path) + n >= PATH_MAX) {
+			if (strlen(path) + n >= sizeof(link_path)) {
 				errno = ENAMETOOLONG;
 				return NULL;
 			}
 			/* Insert symlink contents into path. */
 			strcat(link_path, path);
-			strcpy(copy_path, link_path);
-			path = copy_path;
+			path = xstrdup(link_path);
 		}
-#endif /* S_IFLNK */
-		*new_path++ = '/';
+
+		*npath++ = '/';
 	}
 	/* Delete trailing slash but don't whomp a lone slash. */
-	if (new_path != resolved_path + 1 && new_path[-1] == '/')
-		new_path--;
+	if (npath != resolved_path+1 && npath[-1] == '/')
+		npath--;
 	/* Make sure it's null terminated. */
-	*new_path = '\0';
+	*npath = '\0';
 	return resolved_path;
 }

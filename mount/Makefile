@@ -1,7 +1,6 @@
 include ../make_include
 include ../MCONFIG
 
-CC = gcc
 CFLAGS = -I$(LIB) $(OPT)
 WARNFLAGS = -Wall -Wstrict-prototypes -Wmissing-prototypes
 DEFINES = -DHAVE_NFS
@@ -9,17 +8,6 @@ DEFINES = -DHAVE_NFS
 RPCSVCDIR = rpcsvc
 RPC_CFLAGS = -Wno-unused 
 RPCGEN = rpcgen
-#INSTALL = install
-#INSTALLSUID = $(INSTALL) -m 4755 -o root
-#INSTALLPROG = $(INSTALL) -m 755
-#INSTALLDATA = $(INSTALL) -m 644
-
-## for suid progs (mount, umount)
-#BINDIR = /bin
-## for nosuid progs (swapon)
-#SBINDIR = /sbin
-
-# End of configuration section.
 
 COMPILE = $(CC) -c $(WARNFLAGS) $(CFLAGS) $(DEFINES)
 LINK = $(CC) $(LDFLAGS)
@@ -67,7 +55,7 @@ swapon:	swapon.o version.o
 losetup: losetup.o
 	$(LINK) $^ -o $@
 
-mount.o umount.o nfsmount.o losetup.o fstab.o sundries.o: sundries.h
+mount.o umount.o nfsmount.o losetup.o fstab.o realpath.o sundries.o: sundries.h
 
 mount.o umount.o fstab.o sundries.o: fstab.h
 
@@ -88,6 +76,8 @@ sundries.o nfsmount.o nfsmount_xdr.o nfsmount_clnt.o: nfsmount.h
 umount.o: mount_constants.h
 
 mount.o mount_by_label.o mount_guess_fstype.o: linux_fs.h
+
+sundries.o realpath.o: realpath.h
 
 nfsmount_clnt.o: nfsmount_clnt.c
 	$(COMPILE) $(RPC_CFLAGS) nfsmount_clnt.c

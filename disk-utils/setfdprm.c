@@ -109,18 +109,27 @@ gap rate spec1 fmt_gap\n"),name);
 }
 
 int
-main(int argc,char **argv)
+main(int argc, char **argv)
 {
     int fd;
     unsigned int cmd;
-    char *name;
+    char *progname, *p;
+
+    progname = argv[0];
+    if ((p = strrchr(progname, '/')) != NULL)
+	    progname = p+1;
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
 
-    name = argv[0];
-    if (argc < 3) usage(name);
+    if (argc == 2 &&
+	(!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
+	    printf(_("%s from %s\n"), progname, util_linux_version);
+	    exit(0);
+    }
+
+    if (argc < 3) usage(progname);
     cmd = FDSETPRM;
     if (*argv[1] == '-') {
 	switch (argv[1][1]) {
@@ -142,7 +151,7 @@ main(int argc,char **argv)
 		break;
 #endif
 	    default:
-		usage(name);
+		usage(progname);
 	}
 	argc--;
 	argv++;
@@ -152,11 +161,11 @@ main(int argc,char **argv)
 	exit(1);
     }
     if (cmd != FDSETPRM && cmd != FDDEFPRM) {
-	if (argc != 2) usage(name);
+	if (argc != 2) usage(progname);
 	cmd_without_param(cmd,fd);
     }
     if (argc != 11 && argc != 3)
-	usage(name);
+	usage(progname);
     else if (argc == 11)
 	set_params(cmd,fd,&argv[2]);
     else

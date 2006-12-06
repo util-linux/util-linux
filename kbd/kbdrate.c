@@ -85,7 +85,6 @@ beats rebuilding the kernel!
 #endif
 
 #include "nls.h"
-#include "../version.h"
 
 static int valid_rates[] = { 300, 267, 240, 218, 200, 185, 171, 160, 150,
                                    133, 120, 109, 100, 92, 86, 80, 75, 67,
@@ -202,7 +201,7 @@ int main( int argc, char **argv )
    textdomain(PACKAGE);
    
 
-   while ( (c = getopt( argc, argv, "r:d:sv" )) != EOF ) {
+   while ( (c = getopt( argc, argv, "r:d:svVh?" )) != EOF ) {
          switch (c) {
          case 'r':
             rate = atof( optarg );
@@ -214,7 +213,13 @@ int main( int argc, char **argv )
             silent = 1;
             break;
 	 case 'v':
+	 case 'V':
 	    fprintf( stderr, "util-linux %s kbdrate\n", UTIL_LINUX_VERSION);
+	    exit(0);
+	 case 'h':
+	 case '?':
+	    fprintf( stderr,
+		  _("Usage: kbdrate [-V] [-s] [-r rate] [-d delay]\n"));
 	    exit(0);
          }
    }

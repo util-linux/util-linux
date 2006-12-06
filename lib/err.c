@@ -31,17 +31,13 @@
  * SUCH DAMAGE.
  */
 
-#include <err.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <string.h>
-
-#ifdef __STDC__
 #include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
+#include <string.h>
+#include "errs.h"
+
 
 #include "../defines.h"
 #ifdef HAVE_progname
@@ -50,101 +46,63 @@ extern char *__progname;		/* Program name, from crt0. */
 char *__progname = "foo";		/* probably libc4 */
 #endif
 
-__dead void
-#ifdef __STDC__
-err(int eval, const char *fmt, ...)
-#else
-err(eval, fmt, va_alist)
-	int eval;
-	const char *fmt;
-	va_dcl
-#endif
-{
+/* Some compilers complain "null format string" upon err(1,NULL) */
+/* Make them happy with a separate routine. */
+void
+err_nomsg(int exitval) {
+	(void)fprintf(stderr, "%s: %s\n", __progname, strerror(errno));
+	exit(exitval);
+}
+
+void
+err(int exitval, const char *fmt, ...) {
 	va_list ap;
-#if __STDC__
 	va_start(ap, fmt);
-#else
-	va_start(ap);
-#endif
-	verr(eval, fmt, ap);
+	verr(exitval, fmt, ap);
 	va_end(ap);
 }
 
-__dead void
-verr(eval, fmt, ap)
-	int eval;
-	const char *fmt;
-	va_list ap;
-{
+void
+verr(int exitval, const char *fmt, va_list ap) {
 	int sverrno;
 
 	sverrno = errno;
 	(void)fprintf(stderr, "%s: ", __progname);
-	if (fmt != NULL) {
+	if (fmt != NULL && *fmt != 0) {
 		(void)vfprintf(stderr, fmt, ap);
 		(void)fprintf(stderr, ": ");
 	}
 	(void)fprintf(stderr, "%s\n", strerror(sverrno));
-	exit(eval);
+	exit(exitval);
 }
 
-__dead void
-#if __STDC__
-errx(int eval, const char *fmt, ...)
-#else
-errx(eval, fmt, va_alist)
-	int eval;
-	const char *fmt;
-	va_dcl
-#endif
-{
+void
+errx(int exitval, const char *fmt, ...) {
 	va_list ap;
-#if __STDC__
 	va_start(ap, fmt);
-#else
-	va_start(ap);
-#endif
-	verrx(eval, fmt, ap);
+	verrx(exitval, fmt, ap);
 	va_end(ap);
 }
 
-__dead void
-verrx(eval, fmt, ap)
-	int eval;
-	const char *fmt;
-	va_list ap;
-{
+void
+verrx(int exitval, const char *fmt, va_list ap) {
 	(void)fprintf(stderr, "%s: ", __progname);
 	if (fmt != NULL)
 		(void)vfprintf(stderr, fmt, ap);
 	(void)fprintf(stderr, "\n");
-	exit(eval);
+	exit(exitval);
 }
 
 void
-#if __STDC__
-warn(const char *fmt, ...)
-#else
-warn(fmt, va_alist)
-	const char *fmt;
-	va_dcl
-#endif
-{
+warn(const char *fmt, ...) {
 	va_list ap;
-#if __STDC__
 	va_start(ap, fmt);
-#else
-	va_start(ap);
-#endif
 	vwarn(fmt, ap);
 	va_end(ap);
 }
 
 void
-vwarn(fmt, ap)
-	const char *fmt;
-	va_list ap;
-{
+vwarn(const char *fmt, va_list ap) {
 	int sverrno;
 
 	sverrno = errno;
@@ -157,29 +115,15 @@ vwarn(fmt, ap)
 }
 
 void
-#ifdef __STDC__
-warnx(const char *fmt, ...)
-#else
-warnx(fmt, va_alist)
-	const char *fmt;
-	va_dcl
-#endif
-{
+warnx(const char *fmt, ...) {
 	va_list ap;
-#ifdef __STDC__
 	va_start(ap, fmt);
-#else
-	va_start(ap);
-#endif
 	vwarnx(fmt, ap);
 	va_end(ap);
 }
 
 void
-vwarnx(fmt, ap)
-	const char *fmt;
-	va_list ap;
-{
+vwarnx(const char *fmt, va_list ap) {
 	(void)fprintf(stderr, "%s: ", __progname);
 	if (fmt != NULL)
 		(void)vfprintf(stderr, fmt, ap);

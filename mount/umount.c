@@ -49,17 +49,21 @@
 #include <arpa/inet.h>
 #endif
 
-#ifdef MNT_FORCE
+#if defined(MNT_FORCE) && !defined(__sparc__) && !defined(__arm__)
 /* Interesting ... it seems libc knows about MNT_FORCE and presumably
    about umount2 as well -- need not do anything */
 #else /* MNT_FORCE */
-static int umount2(const char *path, int flags);
 
 /* Does the present kernel source know about umount2? */
 #include <linux/unistd.h>
 #ifdef __NR_umount2
+
+static int umount2(const char *path, int flags);
+
 _syscall2(int, umount2, const char *, path, int, flags);
+
 #else /* __NR_umount2 */
+
 static int
 umount2(const char *path, int flags) {
 	fprintf(stderr, _("umount: compiled without support for -f\n"));
@@ -68,8 +72,10 @@ umount2(const char *path, int flags) {
 }
 #endif /* __NR_umount2 */
 
+#if !defined(MNT_FORCE)
 /* dare not try to include <linux/mount.h> -- lots of errors */
 #define MNT_FORCE 1
+#endif
 
 #endif /* MNT_FORCE */
 
@@ -476,14 +482,21 @@ main (int argc, char *argv[])
 	    die (2, _("umount: %s is not mounted (according to mtab)"), file);
 	  if (getmntfilesbackward (file, mc))
 	    die (2, _("umount: it seems %s is mounted multiple times"), file);
-	  if (!(fs = getfsspec (file)) && !(fs = getfsfile (file)))
-	    die (2, _("umount: %s is not in the fstab (and you are not root)"),
+
+	  /* If fstab contains the two lines
+	       /dev/sda1 /mnt/zip auto user,noauto  0 0
+	       /dev/sda4 /mnt/zip auto user,noauto  0 0
+	     then "mount /dev/sda4" followed by "umount /mnt/zip"
+	     used to fail. So, we must not look for file, but for
+	     the pair (spec,file) in fstab. */
+	  fs = getfsspecfile(mc->mnt_fsname, mc->mnt_dir);
+	  if (!fs) {
+	    if (!getfsspec (file) && !getfsfile (file))
+	      die (2,
+		 _("umount: %s is not in the fstab (and you are not root)"),
 		 file);
-	  if ((!streq (mc->mnt_fsname, fs->mnt_fsname) &&
-	       !streq (mc->mnt_fsname, canonicalize (fs->mnt_fsname)))
-	      || (!streq (mc->mnt_dir, fs->mnt_dir) &&
-		  !streq (mc->mnt_dir, canonicalize (fs->mnt_dir)))) {
-	    die (2, _("umount: %s mount disagrees with the fstab"), file);
+	    else
+	      die (2, _("umount: %s mount disagrees with the fstab"), file);
 	  }
 
 	  /* User mounting and unmounting is allowed only
@@ -492,19 +505,22 @@ main (int argc, char *argv[])
 	     and unmount - this may be a security risk. */
 	  /* The option `user' only allows unmounting by the user
 	     that mounted. */
+	  /* The option `owner' only allows (un)mounting by the owner. */
 	  /* A convenient side effect is that the user who mounted
 	     is visible in mtab. */
 	  options = parse_list (fs->mnt_opts);
 	  while (options) {
 	      if (streq (car (options), "user") ||
-		  streq (car (options), "users"))
+		  streq (car (options), "users") ||
+		  streq (car (options), "owner"))
 		break;
 	      options = cdr (options);
 	  }
 	  if (!options)
 	    die (2, _("umount: only root can unmount %s from %s"),
 		 fs->mnt_fsname, fs->mnt_dir);
-	  if (streq (car (options), "user")) {
+	  if (streq (car (options), "user") ||
+	      streq (car (options), "owner")) {
 	      char *user = getusername();
 
 	      options = parse_list (mc->mnt_opts);

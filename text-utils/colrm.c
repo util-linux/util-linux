@@ -31,35 +31,43 @@
  * SUCH DAMAGE.
  */
 
- /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
-  * - added Native Language Support
-  */
+/*
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 	added Native Language Support
+ * 1999-09-19 Bruno Haible <haible@clisp.cons.org>
+ * 	modified to work correctly in multi-byte locales
+ */
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <locale.h>
+
+#include "widechar.h"
 
 /*
 COLRM removes unwanted columns from a file
 	Jeff Schriebman  UC Berkeley 11-74
 */
 
-int getn(char *ap);
-
 int
 main(int argc, char **argv)
 {
-	register int c, ct, first, last;
+	register int ct, first, last;
+	register wint_t c;
+
+	setlocale(LC_ALL, "");
 
 	first = 0;
 	last = 0;
 	if (argc > 1)
-		first = getn(*++argv);
+		first = atoi(*++argv);
 	if (argc > 2)
-		last = getn(*++argv);
+		last = atoi(*++argv);
 
 start:
 	ct = 0;
 loop1:
-	c = getc(stdin);
+	c = getwc(stdin);
 	if (feof(stdin))
 		goto fin;
 	if (c == '\t')
@@ -69,21 +77,21 @@ loop1:
 	else
 		ct++;
 	if (c == '\n') {
-		putc(c, stdout);
+		putwc(c, stdout);
 		goto start;
 	}
 	if (!first || ct < first) {
-		putc(c, stdout);
+		putwc(c, stdout);
 		goto loop1;
 	}
 
 /* Loop getting rid of characters */
 	while (!last || ct < last) {
-		c = getc(stdin);
+		c = getwc(stdin);
 		if (feof(stdin))
 			goto fin;
 		if (c == '\n') {
-			putc(c, stdout);
+			putwc(c, stdout);
 			goto start;
 		}
 		if (c == '\t')
@@ -96,26 +104,16 @@ loop1:
 
 /* Output last of the line */
 	for (;;) {
-		c = getc(stdin);
+		c = getwc(stdin);
 		if (feof(stdin))
 			break;
-		putc(c, stdout);
+		putwc(c, stdout);
 		if (c == '\n')
 			goto start;
 	}
 fin:
 	fflush(stdout);
+	if (ferror(stdout) || fclose(stdout))
+		return 1;
 	return 0;
-}
-
-int getn(char *ap)
-{
-	register int n,c;
-	register char *p;
-
-	p = ap;
-	n = 0;
-	while ((c = *p++) >= '0' && c <= '9')
-		n = n*10 + c - '0';
-	return(n);
 }

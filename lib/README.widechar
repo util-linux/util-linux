@@ -1,0 +1,18 @@
+From haible@ilog.fr Mon Sep 20 15:34:21 1999
+
+Hello Andries,
+
+Here is a patch for adding multi-byte locale support to a few programs
+found in util-linux-2.9u. With these patches, the programs
+
+    col colcrt colrm column rev ul
+
+now work correctly in UTF-8 locales. This is done by using the ISO C / SUSV2
+i18n functions, therefore they will become effective when glibc-2.2 comes
+out. For the moment, you can test the patches by
+  1. defining ENABLE_WIDECHAR in defines.h
+  2. Change the #if 0 to #if 1 in lib/widechar.h
+  3. Modify your CFLAGS and LDFLAGS to include the directories where libutf8
+     is installed.
+
+

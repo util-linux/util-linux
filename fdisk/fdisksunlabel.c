@@ -472,7 +472,7 @@ void add_sun_partition(int n, int sys)
 	uint starts[8], lens[8];
 	int whole_disk = 0;
 		
-	char mesg[48];
+	char mesg[256];
 	int i, first, last;
 
 	if (sunlabel->partitions[n].num_sectors && sunlabel->infos[n].id) {

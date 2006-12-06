@@ -28,6 +28,7 @@ struct mntentchn *getmntfilesbackward (const char *file, struct mntentchn *mc);
 struct mntentchn *fstab_head (void);
 struct mntentchn *getfsfile (const char *file);
 struct mntentchn *getfsspec (const char *spec);
+struct mntentchn *getfsspecfile (const char *spec, const char *file);
 struct mntentchn *getfsuuidspec (const char *uuid);
 struct mntentchn *getfsvolspec (const char *label);
 

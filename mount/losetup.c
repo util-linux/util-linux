@@ -103,7 +103,8 @@ int set_loop(const char *device, const char *file, int offset,
 	loopinfo.lo_name[LO_NAME_SIZE-1] = 0;
 	if (encryption && (loopinfo.lo_encrypt_type = crypt_type(encryption))
 	    < 0) {
-		fprintf(stderr,_("Unsupported encryption type %s\n"),encryption);
+		fprintf(stderr,_("Unsupported encryption type %s\n"),
+			encryption);
 		exit(1);
 	}
 	loopinfo.lo_offset = offset;
@@ -129,7 +130,8 @@ int set_loop(const char *device, const char *file, int offset,
 				    (islower(pass[i]) ? toupper(pass[i]) :
 				    pass[i])-'A'+10 : pass[i]-'0') << (i & 7)*4;
 			else {
-				fprintf(stderr,_("Non-hex digit '%c'.\n"),pass[i]);
+				fprintf(stderr,_("Non-hex digit '%c'.\n"),
+					pass[i]);
 				exit(1);
 			}
 		break;
@@ -183,6 +185,7 @@ int main(int argc, char **argv)
 {
 	char *offset,*encryption;
 	int delete,off,c;
+	int res = 0;
 	int ro = 0;
 
 	setlocale(LC_ALL, "");
@@ -219,9 +222,9 @@ int main(int argc, char **argv)
 	} else {
 		if (offset && sscanf(offset,"%d",&off) != 1)
 			usage();
-		set_loop(argv[optind],argv[optind+1],off,encryption,&ro);
+		res = set_loop(argv[optind],argv[optind+1],off,encryption,&ro);
 	}
-	return 0;
+	return res;
 }
 
 #else /* LOOP_SET_FD not defined */

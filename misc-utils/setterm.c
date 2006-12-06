@@ -12,7 +12,7 @@
  *
  * Sanity increases by Cafeine Addict [sic].
  *
- * Powersave features by, todd j. derr <tjd@wordsmith.org>
+ * Powersave features by todd j. derr <tjd@wordsmith.org>
  *
  * Converted to terminfo by Kars de Jong (jongk@cs.utwente.nl)
  *
@@ -27,7 +27,6 @@
  *   [ -reset ]
  *   [ -initialize ]
  *   [ -cursor [on|off] ]
- *   [ -keyboard pc|olivetti|dutch|extended ]
  *   [ -repeat [on|off] ]
  *   [ -appcursorkeys [on|off] ]
  *   [ -linewrap [on|off] ]
@@ -162,7 +161,7 @@ extern int klogctl(int type, char *buf, int len);
 /* Static variables. */
 
 /* Option flags.  Set if the option is to be invoked. */
-int opt_term, opt_reset, opt_initialize, opt_cursor, opt_keyboard;
+int opt_term, opt_reset, opt_initialize, opt_cursor;
 int opt_linewrap, opt_snow, opt_softscroll, opt_default, opt_foreground;
 int opt_background, opt_bold, opt_blink, opt_reverse, opt_underline;
 int opt_store, opt_clear, opt_blank, opt_snap, opt_snapfile, opt_standout;
@@ -251,33 +250,6 @@ int *bad_arg;			/* Set to true if an error is detected. */
 	*opt_on = TRUE;
   }
 }
-
-#if 0
-void parse_keyboard(argc, argv, option, opt_keyboard, bad_arg)
-int argc;			/* Number of arguments for this option. */
-char *argv[];			/* Arguments for this option. */
-int *option;			/* Keyboard flag to set. */
-int *opt_keyboard;		/* Keyboard type to set. */
-int *bad_arg;			/* Set to true if an error is detected. */
-{
-/* Parse a -keyboard specification. */
-
-  if (argc != 1 || *option) *bad_arg = TRUE;
-  *option = TRUE;
-  if (argc == 1) {
-	if (strcmp(argv[0], "pc") == 0)
-		*opt_keyboard = PC;
-	else if (strcmp(argv[0], "olivetti") == 0)
-		*opt_keyboard = OLIVETTI;
-	else if (strcmp(argv[0], "dutch") == 0)
-		*opt_keyboard = DUTCH;
-	else if (strcmp(argv[0], "extended") == 0)
-		*opt_keyboard = EXTENDED;
-	else
-		*bad_arg = TRUE;
-  }
-}
-#endif
 
 void par_color(argc, argv, option, opt_color, bad_arg)
 int argc;			/* Number of arguments for this option. */
@@ -659,10 +631,6 @@ int *bad_arg;			/* Set to true if an error is detected. */
 	parse_none(argc, argv, &opt_initialize, bad_arg);
   else if (STRCMP(option, "cursor") == 0)
 	parse_switch(argc, argv, &opt_cursor, &opt_cu_on, bad_arg);
-#if 0
-  else if (STRCMP(option, "keyboard") == 0)
-	parse_keyboard(argc, argv, &opt_keyboard, &opt_ke_type, bad_arg);
-#endif
   else if (STRCMP(option, "repeat") == 0)
 	parse_switch(argc, argv, &opt_repeat, &opt_rep_on, bad_arg);
   else if (STRCMP(option, "appcursorkeys") == 0)
@@ -752,7 +720,6 @@ char *prog_name;		/* Name of this program. */
 #if 0
   fprintf(stderr, _("  [ -snow [on|off] ]\n"));
   fprintf(stderr, _("  [ -softscroll [on|off] ]\n"));
-  fprintf(stderr, _("  [ -keyboard pc|olivetti|dutch|extended ]\n"));
 #endif
   fprintf(stderr, _("  [ -repeat [on|off] ]\n"));
   fprintf(stderr, _("  [ -appcursorkeys [on|off] ]\n"));
@@ -832,26 +799,6 @@ int vcterm;			/* Set if terminal is a virtual console. */
 	else
 		putp(ti_entry("civis"));
   }
-
-#if 0
-  /* -keyboard pc|olivetti|dutch|extended.  Vc only. */
-  if (opt_keyboard && vcterm) {
-	switch (opt_ke_type) {
-	    case PC:
-		printf("%s%s%s", DCS, _("keyboard.pc"), ST);
-		break;
-	    case OLIVETTI:
-		printf("%s%s%s", DCS, _("keyboard.olivetti"), ST);
-		break;
-	    case DUTCH:
-		printf("%s%s%s", DCS, _("keyboard.dutch"), ST);
-		break;
-	    case EXTENDED:
-		printf("%s%s%s", DCS, _("keyboard.extended"), ST);
-		break;
-	}
-  }
-#endif
 
   /* -linewrap [on|off]. Vc only (vt102) */
   if (opt_linewrap && vcterm) {

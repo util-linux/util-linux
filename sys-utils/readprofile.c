@@ -21,6 +21,8 @@
 /*
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
  * - added Native Language Support
+ * 1999-09-01 Stephane Eranian <eranian@cello.hpl.hp.com>
+ * - 64bit clean patch
  */
 
 #include <errno.h>
@@ -79,9 +81,10 @@ FILE *pro;
 FILE *map;
 int proFd;
 char *mapFile, *proFile;
-unsigned int len=0, add0=0, step, index=0;
+unsigned long len=0, add0=0, index=0;
+unsigned int step;
 unsigned int *buf, total, fn_len;
-unsigned int fn_add, next_add;           /* current and next address */
+unsigned long fn_add, next_add;           /* current and next address */
 char fn_name[S_LEN], next_name[S_LEN];   /* current and next name */
 char mode[8];
 int c;
@@ -162,13 +165,13 @@ int popenMap;   /* flag to tell if popen() has been used */
 
   while(fgets(mapline,S_LEN,map))
     {
-    if (sscanf(mapline,"%x %s %s",&fn_add,mode,fn_name)!=3)
+    if (sscanf(mapline,"%lx %s %s",&fn_add,mode,fn_name)!=3)
       {
       fprintf(stderr,_("%s: %s(%i): wrong map line\n"),
 	      prgname,mapFile, maplineno);
       exit(1);
       }
-    if (strcmp(fn_name,"_stext")) /* only elf works like this */
+    if (!strcmp(fn_name,"_stext")) /* only elf works like this */
       {
       add0=fn_add;
       break;
@@ -188,12 +191,14 @@ int popenMap;   /* flag to tell if popen() has been used */
     {
     unsigned int this=0;
 
-    if (sscanf(mapline,"%x %s %s",&next_add,mode,next_name)!=3)
+    if (sscanf(mapline,"%lx %s %s",&next_add,mode,next_name)!=3)
       {
       fprintf(stderr,_("%s: %s(%i): wrong map line\n"),
 	      prgname,mapFile, maplineno);
       exit(1);
       }
+    /* ignore any LEADING (before a '[tT]' symbol is found) Absolute symbols */
+    if (*mode == 'A' && total == 0) continue;
     if (*mode!='T' && *mode!='t') break; /* only text is profiled */
 
     while (index < (next_add-add0)/step)
@@ -204,7 +209,7 @@ int popenMap;   /* flag to tell if popen() has been used */
     if (fn_len && (this || optAll))
       {
       if (optVerbose)
-	printf("%08x %-40s %6i %8.4f\n",
+	printf("%08lx %-40s %6i %8.4f\n",
 	       fn_add,fn_name,this,this/(double)fn_len);
       else
 	printf("%6i %-40s %8.4f\n",

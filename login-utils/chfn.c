@@ -33,9 +33,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <getopt.h>
-#include <locale.h>
 #include "my_crypt.h"
-#include "../version.h"
 #include "nls.h"
 #include "env.h"
 

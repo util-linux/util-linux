@@ -146,8 +146,9 @@ set_cmos_epoch(int ARCconsole, int SRM) {
       if (debug) printf (_("booted from MILO\n"));
   }
 
-  /* See whether we are dealing with a RUFFIAN aka UX, as they have REALLY
-     different TOY (TimeOfYear) format: BCD, and not an ARC-style epoch.
+  /* See whether we are dealing with a RUFFIAN aka Alpha PC-164 UX (or BX),
+     as they have REALLY different TOY (TimeOfYear) format: BCD, and not
+     an ARC-style epoch.
      BCD is detected dynamically, but we must NOT adjust like ARC. */
   if (ARCconsole && is_in_cpuinfo("system type", "Ruffian")) {
     ARCconsole = 0;

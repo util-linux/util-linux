@@ -74,7 +74,7 @@ char *string;
 char *comparbuf;
 
 static char *binary_search (char *, char *);
-static int compare (char *, char *, int);
+static int compare (char *, char *);
 static void err (const char *fmt, ...);
 static char *linear_search (char *, char *);
 static int look (char *, char *);
@@ -192,10 +192,6 @@ look(char *front, char *back)
  * 	back points to the beginning of a line at or after the first 
  *	matching line.
  * 
- * Base of the Invariants.
- * 	front = NULL; 
- *	back = EOF;
- * 
  * Advancing the Invariants:
  * 
  * 	p = first newline after halfway point from front to back.
@@ -232,7 +228,7 @@ binary_search(char *front, char *back)
 	 * infinitely loop.
 	 */
 	while (p < back && back > front) {
-		if (compare(p, back, 1) == GREATER)
+		if (compare(p, back) == GREATER)
 			front = p;
 		else
 			back = p;
@@ -257,7 +253,7 @@ char *
 linear_search(char *front, char *back)
 {
 	while (front < back) {
-		switch (compare(front, back, 1)) {
+		switch (compare(front, back)) {
 		case EQUAL:		/* Found it. */
 			return (front);
 			break;
@@ -280,8 +276,8 @@ print_from(char *front, char *back)
 {
 	int eol;
 
-	while (front < back && compare(front, back, 1) == EQUAL) {
-		if (compare(front, back, fflag) == EQUAL) {
+	while (front < back && compare(front, back) == EQUAL) {
+		if (compare(front, back) == EQUAL) {
 			eol = 0;
 			while (front < back && !eol) {
 				if (putchar(*front) == EOF)
@@ -311,7 +307,7 @@ print_from(char *front, char *back)
  * in other locales.
  */
 int
-compare(char *s2, char *s2end, int nocase) {
+compare(char *s2, char *s2end) {
 	int i;
 	char *p;
 
@@ -326,7 +322,7 @@ compare(char *s2, char *s2end, int nocase) {
 	*p = 0;
 
 	/* and compare */
-	if (nocase)
+	if (fflag)
 		i = strncasecmp(comparbuf, string, stringlen);
 	else
 		i = strncmp(comparbuf, string, stringlen);

@@ -10,8 +10,8 @@ include ../MCONFIG
 # Where to put man pages?
 
 MAN1= 		cal.1 chkdupexe.1 ddate.1 kill.1 \
-		logger.1 look.1 mcookie.1 namei.1 script.1 \
-		tsort.1 whereis.1 write.1
+		logger.1 look.1 mcookie.1 namei.1 rename.1 script.1 \
+		whereis.1 write.1
 
 # Where to put binaries?
 # See the "install" rule for the links. . .
@@ -19,12 +19,7 @@ MAN1= 		cal.1 chkdupexe.1 ddate.1 kill.1 \
 BIN=            kill
 
 USRBIN=		cal chkdupexe ddate logger look mcookie \
-		namei script tsort whereis write
-
-ifeq "$(HAVE_CLEAR)" "no"
-USRBIN:=$(USRBIN) clear
-MAN1:=$(MAN1) clear.1
-endif
+		namei rename script whereis write
 
 ifeq "$(HAVE_RESET)" "no"
 USRBIN:=$(USRBIN) reset
@@ -34,6 +29,11 @@ endif
 ifeq "$(HAVE_NCURSES)" "yes"
 USRBIN:=$(USRBIN) setterm
 MAN1:=$(MAN1) setterm.1
+endif
+
+ifeq "$(HAVE_TSORT)" "no"
+USRBIN:=$(USRBIN) tsort
+MAN1:=$(MAN1) tsort.1
 endif
 
 # For script only
@@ -69,9 +69,9 @@ $(NEEDS_OPENPTY):
 
 # Rules for everything else
 
+cal.o: $(LIB)/errs.h
 cal: cal.o $(ERR_O)
 chkdupexe: chkdupexe.pl
-clear: clear.sh
 kill: kill.o procs.o
 logger: logger.o
 mcookie: mcookie.o md5.o

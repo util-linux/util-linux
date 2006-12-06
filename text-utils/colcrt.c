@@ -31,16 +31,21 @@
  * SUCH DAMAGE.
  */
 
- /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
-  * - added Native Language Support
-  */
+/*
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 	added Native Language Support
+ * 1999-09-19 Bruno Haible <haible@clisp.cons.org>
+ * 	modified to work correctly in multi-byte locales
+ */
 
 #include <stdio.h>
 #include <unistd.h>		/* for close() */
 #include <string.h>
 #include "nls.h"
 
-int plus(char c, char d);
+#include "widechar.h"
+
+int plus(wchar_t c, wchar_t d);
 void move(int l, int m);
 void pflush(int ol);
 
@@ -58,7 +63,7 @@ void pflush(int ol);
  * Option -2 forces printing of all half lines.
  */
 
-char	page[267][132];
+wchar_t	page[267][132];
 
 int	outline = 1;
 int	outcol;
@@ -67,13 +72,13 @@ char	suppresul;
 char	printall;
 
 char	*progname;
-FILE	*f;
 
 int
 main(int argc, char **argv)
 {
-	int c;
-	char *cp, *dp;
+	FILE *f;
+	wint_t c;
+	wchar_t *cp, *dp;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -97,9 +102,9 @@ main(int argc, char **argv)
 		argc--;
 		argv++;
 	}
+	f = stdin;
 	do {
 		if (argc > 0) {
-			close(0);
 			if (!(f = fopen(argv[0], "r"))) {
 				fflush(stdout);
 				perror(argv[0]);
@@ -109,7 +114,7 @@ main(int argc, char **argv)
 			argv++;
 		}
 		for (;;) {
-			c = getc(stdin);
+			c = getwc(f);
 			if (c == -1) {
 				pflush(outline);
 				fflush(stdout);
@@ -126,7 +131,7 @@ main(int argc, char **argv)
 					case '\017':
 					continue;
 				case 033:
-					c = getc(stdin);
+					c = getwc(f);
 					switch (c) {
 						case '9':
 							if (outline >= 266)
@@ -180,12 +185,16 @@ main(int argc, char **argv)
 					continue;
 			}
 		}
+		if (f != stdin)
+			fclose(f);
 	} while (argc > 0);
 	fflush(stdout);
+	if (ferror(stdout) || fclose(stdout))
+		return 1;
 	return 0;
 }
 
-int plus(char c, char d)
+int plus(wchar_t c, wchar_t d)
 {
 
 	return (c == '|' && (d == '-' || d == '_'));
@@ -196,7 +205,7 @@ int first;
 void pflush(int ol)
 {
 	register int i;
-	register char *cp;
+	register wchar_t *cp;
 	char lastomit;
 	int l;
 
@@ -217,10 +226,11 @@ void pflush(int ol)
 			continue;
 		}
 		lastomit = 0;
-		printf("%s\n", cp);
+		fputws(cp, stdout);
+		putwchar('\n');
 	}
-	bcopy(page[ol], page, (267 - ol) * 132);
-	bzero(page[267- ol], ol * 132);
+	bcopy(page[ol], page, (267 - ol) * 132 * sizeof(wchar_t));
+	bzero(page[267- ol], ol * 132 * sizeof(wchar_t));
 	outline -= ol;
 	outcol = 0;
 	first = 1;
@@ -228,7 +238,7 @@ void pflush(int ol)
 
 void move(int l, int m)
 {
-	register char *cp, *dp;
+	register wchar_t *cp, *dp;
 
 	for (cp = page[l], dp = page[m]; *cp; cp++, dp++) {
 		switch (*cp) {

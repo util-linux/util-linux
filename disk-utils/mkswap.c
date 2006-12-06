@@ -77,9 +77,20 @@ linux_version_code(void) {
 /*
  * The definition of the union swap_header uses the constant PAGE_SIZE.
  * Unfortunately, on some architectures this depends on the hardware model,
- * and can only be found at run time -- we use getpagesize().
+ * and can only be found at run time -- we use getpagesize(), so that
+ * we do not need separate binaries e.g. for sun4, sun4c/d/m and sun4u.
+ *
+ * Even more unfortunately, getpagesize() does not always return
+ * the right information. For example, libc4 and libc5 do not use
+ * the system call but invent a value themselves
+ * (EXEC_PAGESIZE or NBPG * CLSIZE or NBPC), and thus it may happen
+ * that e.g. on a sparc PAGE_SIZE=4096 and getpagesize() returns 8192.
+ * What to do? Let us allow the user to specify the pagesize explicitly.
  */
 
+static int user_pagesize = 0;
+static int kernel_pagesize;	   /* obtained via getpagesize(); */
+static int defined_pagesize = 0;   /* PAGE_SIZE, when that exists */
 static int pagesize;
 static int *signature_page;
 
@@ -94,12 +105,31 @@ struct swap_header_v1 {
 
 static void
 init_signature_page() {
-	pagesize = getpagesize();
-
 #ifdef PAGE_SIZE
-	if (pagesize != PAGE_SIZE)
-		fprintf(stderr, _("Assuming pages of size %d\n"), pagesize);
+	defined_pagesize = PAGE_SIZE;
 #endif
+	kernel_pagesize = getpagesize();
+	pagesize = kernel_pagesize;
+
+	if (user_pagesize) {
+		if ((user_pagesize & (user_pagesize-1)) ||
+		    user_pagesize < 1024) {
+			fprintf(stderr, _("Bad user-specified page size %d\n"),
+				user_pagesize);
+			exit(1);
+		}
+		pagesize = user_pagesize;
+	}
+
+	if (user_pagesize && user_pagesize != kernel_pagesize &&
+	    user_pagesize != defined_pagesize)
+		fprintf(stderr, _("Using user-specified page size %d, "
+				  "instead of the system values %d/%d\n"),
+			pagesize, kernel_pagesize, defined_pagesize);
+	else if (defined_pagesize && pagesize != defined_pagesize)
+		fprintf(stderr, _("Assuming pages of size %d (not %d)\n"),
+			pagesize, defined_pagesize);
+
 	signature_page = (int *) malloc(pagesize);
 	memset(signature_page,0,pagesize);
 	p = (struct swap_header_v1 *) signature_page;
@@ -158,8 +188,8 @@ It is roughly 2GB on i386, PPC, m68k, ARM, 1GB on sparc, 512MB on mips,
 
 #define MAX_BADPAGES	((pagesize-1024-128*sizeof(int)-10)/sizeof(int))
 
-static void bit_set (unsigned int *addr, unsigned int nr)
-{
+static void
+bit_set (unsigned int *addr, unsigned int nr) {
 	unsigned int r, m;
 
 	addr += nr / (8 * sizeof(int));
@@ -168,8 +198,8 @@ static void bit_set (unsigned int *addr, unsigned int nr)
 	*addr = r | m;
 }
 
-static int bit_test_and_clear (unsigned int *addr, unsigned int nr)
-{
+static int
+bit_test_and_clear (unsigned int *addr, unsigned int nr) {
 	unsigned int r, m;
 
 	addr += nr / (8 * sizeof(int));
@@ -179,14 +209,19 @@ static int bit_test_and_clear (unsigned int *addr, unsigned int nr)
 	return (r & m) != 0;
 }
 
-void fatal_error(const char * fmt_string)
-{
-	fprintf(stderr,fmt_string,program_name,device_name);
+void
+usage(void) {
+	fprintf(stderr,
+		_("Usage: %s [-c] [-v0|-v1] [-pPAGESZ] /dev/name [blocks]\n"),
+		program_name);
 	exit(1);
 }
 
-#define usage() fatal_error(_("Usage: %s [-c] [-v0|-v1] /dev/name [blocks]\n"))
-#define die(str) fatal_error(_("%s: " str "\n"))
+void
+die(const char *str) {
+	fprintf(stderr, "%s: %s\n", program_name, str);
+	exit(1);
+}
 
 void
 page_ok(int page) {
@@ -200,7 +235,7 @@ page_bad(int page) {
 		bit_test_and_clear(signature_page, page);
 	else {
 		if (badpages == MAX_BADPAGES)
-			die("too many bad pages");
+			die(_("too many bad pages"));
 		p->badpages[badpages] = page;
 	}
 	badpages++;
@@ -214,7 +249,7 @@ check_blocks(void) {
 
 	buffer = malloc(pagesize);
 	if (!buffer)
-		die("Out of memory");
+		die(_("Out of memory"));
 	current_page = 0;
 	while (current_page < PAGES) {
 		if (!check) {
@@ -223,7 +258,7 @@ check_blocks(void) {
 		}
 		if (do_seek && lseek(DEV,current_page*pagesize,SEEK_SET) !=
 		    current_page*pagesize)
-			die("seek failed in check_blocks");
+			die(_("seek failed in check_blocks"));
 		if ((do_seek = (pagesize != read(DEV, buffer, pagesize)))) {
 			page_bad(current_page++);
 			continue;
@@ -236,8 +271,8 @@ check_blocks(void) {
 		printf(_("%d bad pages\n"), badpages);
 }
 
-static long valid_offset (int fd, int offset)
-{
+static long
+valid_offset (int fd, int offset) {
 	char ch;
 
 	if (lseek (fd, offset, 0) < 0)
@@ -248,8 +283,7 @@ static long valid_offset (int fd, int offset)
 }
 
 static int
-find_size (int fd)
-{
+find_size (int fd) {
 	unsigned int high, low;
 
 	low = 0;
@@ -269,8 +303,7 @@ find_size (int fd)
 
 /* return size in pages, to avoid integer overflow */
 static long
-get_size(const char  *file)
-{
+get_size(const char  *file) {
 	int	fd;
 	long	size;
 
@@ -289,57 +322,84 @@ get_size(const char  *file)
 	return size;
 }
 
-int main(int argc, char ** argv)
-{
-	char * tmp;
+int
+isnzdigit(char c) {
+	return (c >= '1' && c <= '9');
+}
+
+int
+main(int argc, char ** argv) {
 	struct stat statbuf;
-	int sz;
+	int i, sz;
 	int maxpages;
 	int goodpages;
 	int offset;
 	int force = 0;
+	char *block_count = 0;
+	char *pp;
+
+	program_name = (argc && *argv) ? argv[0] : "fsck.minix";
+	if ((pp = strrchr(program_name, '/')) != NULL)
+		program_name = pp+1;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	
 
-	if (argc && *argv)
-		program_name = *argv;
+	if (argc == 2 &&
+	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
+		printf(_("%s from %s\n"), program_name, util_linux_version);
+		exit(0);
+	}
 
-	init_signature_page();	/* get pagesize */
-
-	while (argc-- > 1) {
-		argv++;
-		if (argv[0][0] != '-') {
-			if (device_name) {
-				int blocks_per_page = pagesize/1024;
-				PAGES = strtol(argv[0],&tmp,0)/blocks_per_page;
-				if (*tmp)
-					usage();
-			} else
-				device_name = argv[0];
-		} else {
-			switch (argv[0][1]) {
+	for (i=1; i<argc; i++) {
+		if (argv[i][0] == '-') {
+			switch (argv[i][1]) {
 				case 'c':
 					check=1;
 					break;
 				case 'f':
 					force=1;
 					break;
+				case 'p':
+					pp = argv[i]+2;
+					if (!*pp && i+1 < argc)
+						pp = argv[++i];
+					if (isnzdigit(*pp))
+						user_pagesize=atoi(pp);
+					else
+						usage();
+					break;
 				case 'v':
-					version=atoi(argv[0]+2);
+					version = atoi(argv[0]+2);
 					break;
 				default:
 					usage();
 			}
-		}
+		} else if (!device_name) {
+			device_name = argv[i];
+		} else if (!block_count) {
+			block_count = argv[i];
+		} else
+			usage();
 	}
+
+	init_signature_page();	/* get pagesize */
+
 	if (!device_name) {
 		fprintf(stderr,
 			_("%s: error: Nowhere to set up swap on?\n"),
 			program_name);
 		usage();
+	}
+	if (block_count) {
+		/* this silly user specified the number of blocks
+		   explicitly */
+		char *tmp;
+		int blocks_per_page = pagesize/1024;
+		PAGES = strtol(block_count,&tmp,0)/blocks_per_page;
+		if (*tmp)
+			usage();
 	}
 	sz = get_size(device_name);
 	if (!PAGES) {
@@ -401,7 +461,7 @@ int main(int argc, char ** argv)
 	if (!S_ISBLK(statbuf.st_mode))
 		check=0;
 	else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
-		die("Will not try to make swapdevice on '%s'");
+		die(_("Will not try to make swapdevice on '%s'"));
 
 #ifdef __sparc__
 	if (!force && version == 0) {
@@ -410,7 +470,7 @@ int main(int argc, char ** argv)
 		unsigned short *q, sum;
 
 		if (read(DEV, buffer, 512) != 512)
-			die("fatal: first page unreadable");
+			die(_("fatal: first page unreadable"));
 		if (buffer[508] == 0xDA && buffer[509] == 0xBE) {
 			q = (unsigned short *)(buffer + 510);
 			for (sum = 0; q >= (unsigned short *) buffer;)
@@ -431,7 +491,7 @@ the -f option to force it.\n"),
 	if (version == 0 || check)
 		check_blocks();
 	if (version == 0 && !bit_test_and_clear(signature_page,0))
-		die("fatal: first page unreadable");
+		die(_("fatal: first page unreadable"));
 	if (version == 1) {
 		p->version = version;
 		p->last_page = PAGES-1;
@@ -440,23 +500,23 @@ the -f option to force it.\n"),
 
 	goodpages = PAGES - badpages - 1;
 	if (goodpages <= 0)
-		die("Unable to set up swap-space: unreadable");
+		die(_("Unable to set up swap-space: unreadable"));
 	printf(_("Setting up swapspace version %d, size = %ld bytes\n"),
 		version, (long)(goodpages*pagesize));
 	write_signature((version == 0) ? "SWAP-SPACE" : "SWAPSPACE2");
 
 	offset = ((version == 0) ? 0 : 1024);
 	if (lseek(DEV, offset, SEEK_SET) != offset)
-		die("unable to rewind swap-device");
+		die(_("unable to rewind swap-device"));
 	if (write(DEV,(char*)signature_page+offset, pagesize-offset)
 	    != pagesize-offset)
-		die("unable to write signature page");
+		die(_("unable to write signature page"));
 
 	/*
 	 * A subsequent swapon() will fail if the signature
 	 * is not actually on disk. (This is a kernel bug.)
 	 */
 	if (fsync(DEV))
-		 die("fsync failed");
+		 die(_("fsync failed"));
 	return 0;
 }

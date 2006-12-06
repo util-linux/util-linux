@@ -8,7 +8,7 @@
 #  - define DESTDIR
 
 # Select for CPU one of intel, alpha, sparc, arm, m68k, mips
-CPU=$(shell uname -m | sed s/i.86/intel/)
+CPU=$(shell uname -m | sed 's/i.86/intel/;s/arm.*/arm/')
 
 # define where is locale directrory (default /usr/share/locale)
 LOCALEDIR=/usr/share/locale
@@ -74,25 +74,36 @@ HAVE_RESET=yes
 # sln also comes with libc and glibc.
 HAVE_SLN=no
 
-CC=		gcc
+# If HAVE_TSORT is set to "yes", then tsort won't be installed.
+# GNU textutils 2.0 includes tsort.
+HAVE_TSORT=no
+
+# If HAVE_FDUTILS is set to "yes", then setfdprm won't be installed.
+HAVE_FDUTILS=no
+
+# Get CC from environment if defined
+ifeq "$(CC)" ""
+  CC=		gcc
+endif
 
 # Different optimizations for different cpus.
 ifeq "$(CPU)" "intel"
   OPT=		-pipe -O2 -m486 -fomit-frame-pointer
 else 
   ifeq "$(CPU)" "arm"
-    OPT=	-O2 -m3 -fomit-frame-pointer
+    OPT=	-pipe -O2 -fsigned-char -fomit-frame-pointer
   else
     OPT=	-O2 -fomit-frame-pointer
   endif
 endif
 
-ERR_O=$(LIB)/err.o
+LDFLAGS   = -s
+
+WARNFLAGS = -Wall
 
 LIB=../lib
 
-LDFLAGS   = -s
-WARNFLAGS = -Wall
+ERR_O=$(LIB)/err.o
 
 CFLAGS    = $(OPT) -I. -I$(LIB) $(WARNFLAGS) \
 			$(CURSESFLAGS) $(SLANGFLAGS) \
@@ -140,6 +151,9 @@ FSCKDIR=	$(SBINDIR)
 
 # Directory for passwd
 PASSWDDIR=	$(USRBINDIR)
+
+# Directory for help file for more.  Some may want /usr/share/misc .
+MOREHELPDIR=	$(USRLIBDIR)
 
 # Modes
 DIRMODE=	755

@@ -7,7 +7,7 @@ fdisk \- Partition table manipulator for Linux
 .SH SYNOPSIS
 .BI "fdisk [\-u] " device
 .sp
-.BI "fdisk \-l [\-u] " "device ..."
+.BI "fdisk \-l [\-u] [" "device ..." ]
 .sp
 .BI "fdisk \-s " "partition ..."
 .sp
@@ -175,11 +175,10 @@ Print version number of
 program and exit.
 .TP
 .B \-l
-List the partition tables for
-.BR /dev/hd[a-d] ,
-.BR /dev/sd[a-h] ,
-.BR /dev/ed[a-d] ,
-and then exit.
+List the partition tables for the specified devices and then exit.
+If no devices are given, those mentioned in
+.I /proc/partitions
+(if that exists) are used.
 .TP
 .B \-u
 When listing partition tables, give sizes in sectors instead

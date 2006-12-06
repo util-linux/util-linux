@@ -2,34 +2,35 @@
 .SH NAME
 clock \- query and set the hardware clock (RTC)
 .SH SYNOPSIS
-.B "hwclock --show"
+.B "hwclock \-\-show"
 .br
-.B "hwclock --set --date=newdate"
+.B "hwclock \-\-set \-\-date=newdate"
 .br
-.B "hwclock --systohc"
+.B "hwclock \-\-systohc"
 .br
-.B "hwclock --hctosys" 
+.B "hwclock \-\-hctosys" 
 .br
-.B "hwclock --getepoch"
+.B "hwclock \-\-getepoch"
 .br
-.B "hwclock --setepoch --epoch=year"
+.B "hwclock \-\-setepoch \-\-epoch=year"
 .br
-.B "hwclock --adjust"
+.B "hwclock \-\-adjust"
 .br
-.B "hwclock --version"
+.B "hwclock \-\-version"
 .PP
 other options:
 .PP
-.B "--utc  --localtime --directisa --test --debug"
+.B "\-\-utc  \-\-localtime \-\-directisa \-\-test \-\-debug"
 .PP
 and arcane options for DEC Alpha:
 .PP
-.B "--arc --jensen --srm --funky-toy"
+.B "\-\-arc \-\-jensen \-\-srm \-\-funky-toy"
 .PP
 Minimum unique abbreviations of all options are acceptable.
 .PP
-Also, equivalent options -r, -w, -s, -a, -v, -u, -D, -A, -J, -S, and -F
-are accepted for compatibility with the program "clock".
+Also, equivalent options \-r, \-w, \-s, \-a, \-v, \-u,
+\-D, \-A, \-J, \-S, and \-F are accepted for compatibility
+with the program "clock", while \-h asks for a help message.
 
 .SH DESCRIPTION
 .I hwclock
@@ -239,7 +240,9 @@ are invalid if you don't have an Alpha and shouldn't be necessary if you
 do, because 
 .I hwclock 
 should be able to determine by itself what it's 
-running on.  These options make it possible for 
+running on, at least when
+.I /proc
+is mounted.  These options make it possible for 
 .I hwclock 
 to work even when
 its environment does not conform to its expectations and thus it cannot
@@ -259,10 +262,12 @@ automatically.
 means you are running on a Jensen model.
 
 .B \-\-arc 
-means your machine is running with ARC console time.
+means your machine uses epoch 1980 in its hardware clock, as is commonly
+the case for machines on ARC console (but Ruffians have epoch 1900).
 
 .B \-\-srm 
-means your machine is running with SRM console time.
+means your machine uses epoch 1900 in its hardware clock, as is commonly
+the case for machines on SRM console.
 
 .B \-\-funky\-toy 
 means that on your machine, one has to use the UF bit instead

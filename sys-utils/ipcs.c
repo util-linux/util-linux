@@ -28,11 +28,6 @@
 #include <grp.h>
 #include "nls.h"
 
-#include "../defines.h"		/* for NEED_linkage_h */
-#ifdef NEED_linkage_h
-#define __KERNEL__		/* required for SHM_DEST etc. */
-#include <linux/linkage.h>	/* required for the keyword asmlinkage */
-#endif
 /* X/OPEN tells us to use <sys/{types,ipc,sem}.h> for semctl() */
 /* X/OPEN tells us to use <sys/{types,ipc,msg}.h> for msgctl() */
 /* X/OPEN tells us to use <sys/{types,ipc,shm}.h> for shmctl() */
@@ -41,9 +36,40 @@
 #include <sys/sem.h>
 #include <sys/msg.h>
 #include <sys/shm.h>
-#ifdef NEED_linkage_h
-#undef __KERNEL__
+
+/*-------------------------------------------------------------------*/
+/* SHM_DEST and SHM_LOCKED are defined in kernel headers,
+   but inside #ifdef __KERNEL__ ... #endif */
+#ifndef SHM_DEST
+/* shm_mode upper byte flags */
+#define SHM_DEST        01000   /* segment will be destroyed on last detach */
+#define SHM_LOCKED      02000   /* segment will not be swapped */
 #endif
+
+/* For older kernels the same holds for the defines below */
+#ifndef MSG_STAT
+#define MSG_STAT	11
+#define MSG_INFO	12
+#endif
+
+#ifndef SHM_STAT
+#define SHM_STAT        13
+#define SHM_INFO        14
+struct shm_info {
+     int   used_ids;
+     ulong shm_tot; /* total allocated shm */
+     ulong shm_rss; /* total resident shm */
+     ulong shm_swp; /* total swapped shm */
+     ulong swap_attempts;
+     ulong swap_successes;
+};
+#endif
+
+#ifndef SEM_STAT
+#define SEM_STAT	18
+#define SEM_INFO	19
+#endif
+/*-------------------------------------------------------------------*/
 
 /* The last arg of semctl is a union semun, but where is it defined?
    X/OPEN tells us to define it ourselves, but until recently

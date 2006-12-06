@@ -1,0 +1,28 @@
+#!/bin/sh
+#
+# call:
+#	COMPILE=...; export COMPILE
+#	if ./testincl [-q] "foo.h" ...
+#
+echo=echo
+case $1 in -q)
+    echo=":"
+    shift
+    ;;
+esac
+IFILE="<$1>"
+
+echo "
+#include $IFILE
+main(){ exit(0); }
+" > conftest.c
+eval $COMPILE
+if test -s conftest && ./conftest 2>/dev/null; then
+	res=0
+	$echo "You have $IFILE"
+else
+        res=1
+	$echo "You don't have $IFILE"
+fi
+rm -f conftest conftest.c
+exit $res

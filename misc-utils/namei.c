@@ -255,11 +255,12 @@ register int lev;
 		    (void)printf(" l %s -> %s", buf, sym);
 
 		if(symcount > 0 && symcount++ > MAXSYMLINKS){
-		    (void)printf(_("  *** EXCEEDED UNIX LIMIT OF SYMLINKS ***"));
+		    (void)printf(_("  *** EXCEEDED UNIX LIMIT OF SYMLINKS ***\n"));
 		    symcount = -1;
+		} else {
+		    (void)printf("\n");
+		    namei(sym, lev + 1);
 		}
-		(void)printf("\n");
-		namei(sym, lev + 1);
 		break;
 
 	    case S_IFCHR:

@@ -3,6 +3,7 @@ clock/hwclock.c
 clock/kd.c
 clock/rtc.c
 clock/shhopt.c
+disk-utils/blockdev.c
 disk-utils/fdformat.c
 disk-utils/fsck.minix.c
 disk-utils/mkfs.c

@@ -21,8 +21,8 @@ WARNING: The simpleinit and some other programs in this package are
 To install from source:
 
 1) Get source distribution (see the .lsm file for locations)
-2) Untar util-linux-2.9X.tar.gz somewhere
-3) cd util-linux-2.9X
+2) Untar util-linux-2.10X.tar.gz somewhere
+3) cd util-linux-2.10X
 4) Edit MCONFIG
 5) ./configure
 6) Look at defines.h and make_include, and edit if necessary
@@ -37,15 +37,30 @@ To install from source:
 
 If you have compilation problems: tell util-linux@math.uio.no about it.
 
-Users of libc 5.4.46 may get warnings like
-  /usr/include/linux/byteorder/swab.h:100: warning: no previous prototype for `__fswab16'
-that they'll have to ignore. The Linux kernel includes are not meant to be included
-in user programs, but libc5 does precisely that and is inherently broken.
+A glibc header bug causes
+  /usr/include/bits/string2.h:419: warning: pointer of type `void *'
+    used in arithmetic
+This is harmless.
 
-Some old libc have complaints like
+Users of libc5 may get warnings like
+  /usr/include/linux/byteorder/swab.h:100: warning: no previous prototype for `__fswab16'
+that they'll have to ignore. The Linux kernel includes are not meant to be
+included in user programs, but libc5 does precisely that and is inherently
+broken.
+
+Several old libc have complaints like
   /usr/include/sys/syslog.h:71: warning: missing braces around initializer
+  /usr/include/rpc/xdr.h:103: warning: function declaration isn't a prototype
+  /usr/include/rpc/auth.h:86: warning: function declaration isn't a prototype
+  /usr/include/rpc/svc.h:79: warning: function declaration isn't a prototype
 Also this is a libc/include problem.
 
+Warnings like
+  <sys/mman.h>:11: warning: `MAP_FILE' redefined
+  <asm/mman.h>:30: warning: this is the location of the previous definition
+are caused by the libc/kernel combination.
+
+All such warnings are harmless.
 There should be no compilation errors.
 
 

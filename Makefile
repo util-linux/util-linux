@@ -5,8 +5,6 @@
 # May be distributed under the terms of the GNU GPL.
 #
 
-VERSION=2.9
-
 include ./make_include
 include ./MCONFIG
 
@@ -24,7 +22,7 @@ SUBDIRS=po \
 	text-utils \
 	kbd
 
-.PHONEY: all install clean
+.PHONEY: all install clean now
 all:	defines.h
 	@for subdir in $(SUBDIRS); do \
 		(cd $$subdir && $(MAKE) $@) || exit 1; \
@@ -32,6 +30,12 @@ all:	defines.h
 
 defines.h make_include:
 	./configure
+
+now:
+	touch defines.h
+
+$(SUBDIRS): defines.h now
+	cd $@ && $(MAKE)
 
 install:
 	@if [ "`whoami`" = "root" ]; then umask 022; fi
@@ -49,17 +53,20 @@ distclean: make_include clean
 	cd po && make distclean
 	-rm -f defines.h make_include
 
-dist:
-	(cd /tmp; \
-	rm -rf /tmp/util-linux-$(VERSION); \
-	cvs export -fNd util-linux-$(VERSION) -r HEAD util-linux; \
-	cd util-linux-$(VERSION); \
-	find -type d | xargs chmod 755; \
-	find -type f | xargs chmod 644; \
-	find -type d | xargs chown root:root; \
-	find -type f | xargs chown root:root; \
-	cd ..; \
-	GZIP=-9 tar cvvzf util-linux-$(VERSION).tar.gz util-linux-$(VERSION); \
-	cp -p util-linux-$(VERSION)/LSM util-linux-$(VERSION).lsm; \
-	cp -p util-linux-$(VERSION)/ANNOUNCE util-linux-$(VERSION).Announce; \
-	echo Done.)
+#
+# dist:
+#	(cd /tmp; \
+#	rm -rf /tmp/util-linux-$(VERSION); \
+#	cvs export -fNd util-linux-$(VERSION) -r HEAD util-linux; \
+#	cd util-linux-$(VERSION); \
+#	find -type d | xargs chmod 755; \
+#	find -type f | xargs chmod 644; \
+#	find -type d | xargs chown root:root; \
+#	find -type f | xargs chown root:root; \
+#	cd ..; \
+#	GZIP=-9 tar cvvzf util-linux-$(VERSION).tar.gz util-linux-$(VERSION); \
+#	cp -p util-linux-$(VERSION)/LSM util-linux-$(VERSION).lsm; \
+#	cp -p util-linux-$(VERSION)/ANNOUNCE util-linux-$(VERSION).Announce; \
+#	echo Done.)
+#
+

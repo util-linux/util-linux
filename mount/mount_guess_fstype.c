@@ -13,6 +13,9 @@
  *
  * Wed Nov  11 11:33:55 1998: K.Garloff@ping.de, try /etc/filesystems before
  * /proc/filesystems
+ * [This was mainly in order to specify vfat before fat; these days we often
+ *  detect *fat and then assume vfat, so perhaps /etc/filesystems isnt
+ *  so useful anymore.]
  *
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
  * - added Native Language Support
@@ -67,12 +70,17 @@ swapped(unsigned short a) {
     Added ufs from a patch by jj. But maybe there are several types of ufs?
     Added ntfs from a patch by Richard Russon.
     Added a very weak heuristic for vfat - aeb
+    Added qnx4 - aeb
+    Added swap - aeb
 
-    Currently supports: minix, ext, ext2, xiafs, iso9660, romfs, ufs, ntfs, vfat
+    Currently supports: minix, ext, ext2, xiafs, iso9660, romfs,
+    ufs, ntfs, vfat, qnx4, bfs
 */
 static char
 *magic_known[] = { "minix", "ext", "ext2", "xiafs", "iso9660", "romfs",
-		   "ufs", "ntfs" };
+		   "ufs", "ntfs", "qnx4", "bfs", "udf",
+		   "swap"	/* last - just to warn the user */
+};
 
 static int
 tested(const char *device) {
@@ -82,6 +90,32 @@ tested(const char *device) {
         if (!strcmp(*m, device))
 	    return 1;
     return 0;
+}
+
+/* udf magic - I find that trying to mount garbage as an udf fs
+   causes a very large kernel delay, almost killing the machine.
+   So, we do not try udf unless there is positive evidence that it
+   might work. Try iso9660 first, it is much more likely.
+
+   Strings below taken from ECMA 167. */
+static char
+*udf_magic[] = { "BEA01", "BOOT2", "CD001", "CDW02", "NSR02",
+		 "NSR03", "TEA01" };
+
+static int
+may_be_udf(const char *id) {
+    char **m;
+
+    for (m = udf_magic; m - udf_magic < SIZE(udf_magic); m++)
+       if (!strncmp(*m, id, 5))
+	  return 1;
+    return 0;
+}
+
+static int
+may_be_swap(const char *s) {
+	return (strncmp(s-10, "SWAP-SPACE", 10) == 0 ||
+		strncmp(s-10, "SWAPSPACE2", 10) == 0);
 }
 
 static char *
@@ -96,6 +130,8 @@ fstype(const char *device) {
     union {
 	struct xiafs_super_block xiasb;
 	char romfs_magic[8];
+	char qnx4fs_magic[10];	/* ignore first 4 bytes */
+	long bfs_magic;
 	struct ntfs_super_block ntfssb;
 	struct fat_super_block fatsb;
     } xsb;
@@ -141,11 +177,17 @@ fstype(const char *device) {
 	      type = "xiafs";
 	 else if(!strncmp(xsb.romfs_magic, "-rom1fs-", 8))
 	      type = "romfs";
+	 else if(!strncmp(xsb.qnx4fs_magic+4, "QNX4FS", 6))
+	      type = "qnx4fs";
+	 else if(xsb.bfs_magic == 0x1badface)
+	      type = "bfs";
 	 else if(!strncmp(xsb.ntfssb.s_magic, NTFS_SUPER_MAGIC,
 			  sizeof(xsb.ntfssb.s_magic)))
 	      type = "ntfs";
 	 else if ((!strncmp(xsb.fatsb.s_os, "MSDOS", 5) ||
-		   !strncmp(xsb.fatsb.s_os, "MSWIN", 5))
+		   !strncmp(xsb.fatsb.s_os, "MSWIN", 5) ||
+		   !strncmp(xsb.fatsb.s_os, "MTOOL", 5) ||
+		   !strncmp(xsb.fatsb.s_os, "mkdosfs", 7))
 		  && (!strncmp(xsb.fatsb.s_fs, "FAT12   ", 8) ||
 		      !strncmp(xsb.fatsb.s_fs, "FAT16   ", 8) ||
 		      !strncmp(xsb.fatsb.s_fs2, "FAT32   ", 8)))
@@ -169,6 +211,28 @@ fstype(const char *device) {
 	 if(strncmp(isosb.iso.id, ISO_STANDARD_ID, sizeof(isosb.iso.id)) == 0
 	    || strncmp(isosb.hs.id, HS_STANDARD_ID, sizeof(isosb.hs.id)) == 0)
 	      type = "iso9660";
+	 else if (may_be_udf(isosb.iso.id))
+	      type = "udf";
+    }
+
+    if (!type) {
+	    /* perhaps the user tries to mount the swap space
+	       on a new disk; warn her before she does mke2fs on it */
+	    int pagesize = getpagesize();
+	    int rd;
+	    char buf[32768];
+
+	    rd = pagesize;
+	    if (rd < 8192)
+		    rd = 8192;
+	    if (rd > sizeof(buf))
+		    rd = sizeof(buf);
+	    if (lseek(fd, 0, SEEK_SET) != 0
+		|| read(fd, buf, rd) != rd)
+		    goto io_error;
+	    if (may_be_swap(buf+pagesize) ||
+		may_be_swap(buf+4096) || may_be_swap(buf+8192))
+		    type = "swap";
     }
 
     close (fd);
@@ -182,17 +246,19 @@ io_error:
 
 char *
 guess_fstype_from_superblock(const char *spec) {
-      char *type = fstype(spec);
-      if (verbose) {
-	  printf (_("mount: you didn't specify a filesystem type for %s\n"),
-		  spec);
-	  if (type)
-	    printf (_("       I will try type %s\n"), type);
-	  else
-	    printf (_("       I will try all types mentioned in %s or %s\n"),
-		    ETC_FILESYSTEMS, PROC_FILESYSTEMS);
-      }
-      return type;
+	char *type = fstype(spec);
+	if (verbose) {
+	    printf (_("mount: you didn't specify a filesystem type for %s\n"),
+		    spec);
+	    if (!type)
+	      printf (_("       I will try all types mentioned in %s or %s\n"),
+		      ETC_FILESYSTEMS, PROC_FILESYSTEMS);
+	    else if (!strcmp(type, "swap"))
+	      printf (_("       and it looks like this is swapspace\n"));
+	    else
+	      printf (_("       I will try type %s\n"), type);
+	}
+	return type;
 }
 
 static FILE *procfs;
@@ -237,17 +303,24 @@ is_in_procfs(const char *type) {
     return 0;
 }
 
+/* return: 0: OK, -1: error in errno, 1: type not found */
+/* when 1 is returned, *type is NULL */
 int
 procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
 	   char **type) {
    char *fsname;
 
+   *type = NULL;
    if (!procfsopen())
-     return -1;
+     return 1;
    while ((fsname = procfsnext()) != NULL) {
       if (tested (fsname))
 	 continue;
       args->type = fsname;
+      if (verbose) {
+	 printf(_("Trying %s\n"), fsname);
+	 fflush(stdout);
+      }
       if ((*mount_fn) (args) == 0) {
 	 *type = xstrdup(fsname);
 	 procfsclose();
@@ -255,13 +328,11 @@ procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
       } else if (errno != EINVAL) {
          *type = "guess";
 	 procfsclose();
-	 return 1;
+	 return -1;
       }
    }
    procfsclose();
-   *type = NULL;
-
-   return -1;
+   return 1;
 }
 
 int

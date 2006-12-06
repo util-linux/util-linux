@@ -39,6 +39,7 @@
   */
 
 #include <sys/types.h>
+#include <stdlib.h>
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
@@ -87,7 +88,7 @@ typedef struct _buf {
 
 NODE *add_node(), *find_node();
 void add_arc(), no_memory(), remove_node(), tsort();
-char *grow_buf(), *malloc();
+char *grow_buf();
 int find_cycle(NODE *, NODE *, int, int);
 
 extern int errno;
@@ -168,8 +169,6 @@ grow_buf(bp, size)
 	char *bp;
 	int size;
 {
-	char *realloc();
-
 	if (!(bp = realloc(bp, (u_int)size)))
 		no_memory();
 	return(bp);

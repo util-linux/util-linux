@@ -8,6 +8,7 @@ agetty \- alternative Linux getty
 .RI "[-l " login_program ]
 .RI "[-I " init ]
 .RI "[-t " timeout ]
+.RI "[-H " login_host ]
 .I port
 .I baud_rate,...
 .RI [ term ]
@@ -17,6 +18,7 @@ agetty \- alternative Linux getty
 .RI "[-l " login_program ]
 .RI "[-I " init ]
 .RI "[-t " timeout ]
+.RI "[-H " login_host ]
 .I baud_rate,...
 .I port
 .RI [ term ]
@@ -119,6 +121,12 @@ Invoke the specified \fIlogin_program\fP instead of /bin/login.
 This allows the use of a non-standard login program (for example,
 one that asks for a dial-up password or that uses a different
 password file).
+.TP
+\-H \fIlogin_host\fP
+Write the specified \fIlogin_host\fP into the utmp file. (Normally,
+no login host is given, since \fBagetty\fP is used for local hardwired
+connections and consoles. However, this option can be useful for 
+identifying terminal concentrators and the like.
 .TP
 \-m
 Try to extract the baud rate the CONNECT status message

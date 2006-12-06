@@ -61,15 +61,12 @@
 #include <errno.h>
 #include "lp.h"
 #include "nls.h"
-#include "../version.h"
 
 struct command {
   long op;
   long val;
   struct command *next;
 };
-
-
 
 
 void print_usage(char *progname) {
@@ -95,12 +92,12 @@ void *mylloc(long size) {
   return ptr;
 }
 
-
+static char *progname;
 
 long get_val(char *val) {
   long ret;
   if (!(sscanf(val, "%ld", &ret) == 1)) {
-    perror(_("sscanf error"));
+    fprintf(stderr, _("%s: bad value\n"), progname);
     exit(3);
   }
   return ret;
@@ -113,16 +110,20 @@ long get_onoff(char *val) {
   return 0;
 }
 
-
-
 int main (int argc, char ** argv) {
   int c, fd, irq, status, show_irq, offset = 0, retval;
-  char *progname;
-  char *filename;
+  char *filename, *p;
   struct stat statbuf;
   struct command *cmds, *cmdst;
 
   progname = argv[0];
+  if ((p = strrchr(progname, '/')) != NULL)
+	  progname = p+1;
+
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
+
   if (argc < 2) print_usage(progname);
 
   cmdst = cmds = mylloc(sizeof(struct command));

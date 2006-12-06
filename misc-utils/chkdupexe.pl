@@ -29,13 +29,18 @@ $execdirs='/bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin '.
   '/usr/TeX/bin /usr/tex/bin /usr/games '.
   '/usr/local/games';
 
+# Turn off buffering for the output channel.
+$|=1;
+
 # Values from /usr/include/linux/errno.h.  Existence of linux/errno.ph is not
 # something to count on... :-(
 $ENOENT=2;
 
 %didthis=();
 
-foreach $dir (split(/\s+/, "$execdirs")) {
+foreach $dir (split(/\s+/, "$execdirs"), "\0", split(/:/, $ENV{PATH})) {
+
+  if ($dir eq "\0") { $checkingpath = 1; next; }
 
   # It's like this: One directory corresponds to one $device,$inode tuple
   # If a symlink points to a directory we already checked that directory
@@ -52,7 +57,7 @@ foreach $dir (split(/\s+/, "$execdirs")) {
       print "Dangling symlink: $dir\n";
       next;
     }
-    # warn "Nonexistent directory: $dir\n";
+    warn "Nonexistent directory: $dir\n" if ($checkingpath);
     next;
   }
 
@@ -90,7 +95,7 @@ foreach $dir (split(/\s+/, "$execdirs")) {
   closedir(DIR);
 }
 
-open(LS,"| xargs ls -ldU");
+open(LS,"| xargs -r ls -ldU");
 while (($prog,$paths)=each %progs) {
   print LS "$paths\n" if ($count{$prog}>1);
 }

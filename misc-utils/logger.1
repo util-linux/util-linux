@@ -31,6 +31,8 @@
 .\"
 .\"	@(#)logger.1	8.1 (Berkeley) 6/6/93
 .\"
+.\" Section on valid facitily and level strings added by
+.\" and1000@debian.org, 26 Oct 1997.
 .Dd June 6, 1993
 .Dt LOGGER 1
 .Os BSD 4.3
@@ -78,6 +80,11 @@ Mark every line in the log with the specified
 Write to socket as specified with
 .Ar socket
 instead of builtin syslog routines.
+.It --
+End the argument list. This is to allow the
+.Ar message
+to start with a hyphen (\-).  This feature was not present in the
+original BSD logger command; it is a GNU-specific extra.
 .It Ar message
 Write the message to log; if not specified, and the
 .Fl f
@@ -88,6 +95,15 @@ provided, standard input is logged.
 The
 .Nm logger
 utility exits 0 on success, and >0 if an error occurs.
+.Pp
+Valid facility names are: auth, authpriv (for security information of
+a sensitive nature), cron, daemon, ftp, kern, lpr, mail, news,
+security (deprecated synonym for auth), syslog, user, uucp, and local0
+to local7, inclusive.
+.Pp
+Valid level names are: alert, crit, debug, emerg, err, error
+(deprecated synonym for err), info, notice, panic (deprecated synonym
+for emerg), warning, warn (deprecated synonym for warning).
 .Sh EXAMPLES
 .Bd -literal -offset indent -compact
 logger System rebooted

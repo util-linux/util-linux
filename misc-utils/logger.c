@@ -210,6 +210,13 @@ main(argc, argv)
 		}
 	} else
 		while (fgets(buf, sizeof(buf), stdin) != NULL) {
+		    /* glibc is buggy and adds an additional newline,
+		       so we have to remove it here until glibc is fixed */
+		    int len = strlen(buf);
+
+		    if (len > 0 && buf[len - 1] == '\n')
+			    buf[len - 1] = '\0';
+
 		    if (!usock)
 			syslog(pri, "%s", buf);
 		    else

@@ -671,7 +671,7 @@ sgi_delete_partition( int i )
 void
 sgi_add_partition( int n, int sys )
 {
-    char mesg[48];
+    char mesg[256];
     int first=0, last=0;
 
     if( n == 10 ) {

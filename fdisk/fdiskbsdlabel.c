@@ -75,7 +75,7 @@ static int xbsd_initlabel  (struct partition *p, struct xbsd_disklabel *d, int p
 static int xbsd_readlabel  (struct partition *p, struct xbsd_disklabel *d);
 static int xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d);
 static void sync_disks (void);
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
 static int xbsd_translate_fstype (int linux_type);
 static void xbsd_link_part (void);
 #endif
@@ -85,7 +85,7 @@ void alpha_bootblock_checksum (char *boot);
 
 static struct xbsd_disklabel xbsd_dlabel;
 static char buffer[BSD_BBSIZE];
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
 static struct partition *xbsd_part;
 static int xbsd_part_index;
 #endif
@@ -111,13 +111,13 @@ bmenu (void)
   puts (_("   n   add a new BSD partition"));
   puts (_("   p   print BSD partition table"));
   puts (_("   q   quit without saving changes"));
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
   puts (_("   r   return to main menu"));
 #endif
   puts (_("   s   show complete disklabel"));
   puts (_("   t   change a partition's filesystem id"));
   puts (_("   w   write disklabel to disk"));
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
   puts (_("   x   link BSD partition to non-BSD partition"));
 #endif
 }
@@ -134,7 +134,7 @@ is_netbsd_partition_type(int type) {
 
 void
 bselect (void) {
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
   int t, ss;
 
   for (t=0; t<4; t++)
@@ -203,7 +203,7 @@ bselect (void) {
       case 'w':
 	xbsd_write_disklabel ();
 	break;
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
       case 'r':
 	return;
       case 'x':
@@ -235,33 +235,35 @@ static void
 xbsd_new_part (void)
 {
   uint begin, end;
-  char mesg[48];
+  char mesg[256];
   int i;
 
   if (!xbsd_check_new_partition (&i))
     return;
 
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
   begin = get_start_sect(xbsd_part);
   end = begin + get_nr_sects(xbsd_part) - 1;
 #elif defined (__alpha__) || defined (__powerpc__)
   begin = 0;
-  end = xbsd_dlabel.d_secperunit;
+  end = xbsd_dlabel.d_secperunit - 1;
 #endif
 
   sprintf (mesg, _("First %s"), str_units(SINGULAR));
   begin = read_int (cround (begin), cround (begin), cround (end),
 		    0, mesg);
 
-  sprintf (mesg, _("Last %s or +size or +sizeM or +sizeK"), str_units(SINGULAR));
+  if (display_in_cyl_units)
+    begin = (begin - 1) * units_per_sector;
+
+  sprintf (mesg, _("Last %s or +size or +sizeM or +sizeK"),
+	   str_units(SINGULAR));
   end = read_int (cround (begin), cround (end), cround (end),
 		  cround (begin), mesg);
 
   if (display_in_cyl_units)
-  {
-    begin = (begin - 1) * units_per_sector;
     end = end * units_per_sector - 1;
-  }
+
   xbsd_dlabel.d_partitions[i].p_size   = end - begin + 1;
   xbsd_dlabel.d_partitions[i].p_offset = begin;
   xbsd_dlabel.d_partitions[i].p_fstype = BSD_FS_UNUSED; 
@@ -277,7 +279,7 @@ xbsd_print_disklabel (int show_all)
 
   if (show_all)
   {
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
     fprintf(f, "# %s%d:\n", disk_device, xbsd_part_index+1);
 #elif defined (__alpha__)
     fprintf(f, "# %s:\n", disk_device);
@@ -374,13 +376,14 @@ xbsd_print_disklabel (int show_all)
 static void
 xbsd_write_disklabel (void)
 {
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
   printf (_("Writing disklabel to %s%d.\n"), disk_device, xbsd_part_index+1);
   xbsd_writelabel (xbsd_part, &xbsd_dlabel);
 #elif defined (__alpha__)
   printf (_("Writing disklabel to %s.\n"), disk_device);
   xbsd_writelabel (NULL, &xbsd_dlabel);
 #endif
+  reread_partition_table(0);	/* no exit yet */
 }
 
 static int
@@ -388,7 +391,7 @@ xbsd_create_disklabel (void)
 {
   char c;
 
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
   fprintf (stderr, _("%s%d contains no disklabel.\n"),
 	   disk_device, xbsd_part_index+1);
 #elif defined (__alpha__)
@@ -398,7 +401,7 @@ xbsd_create_disklabel (void)
   while (1)
     if ((c = tolower (read_char (_("Do you want to create a disklabel? (y/n) ")))) == 'y')
     {
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
       if (xbsd_initlabel (xbsd_part, &xbsd_dlabel, xbsd_part_index) == 1)
 #elif defined (__alpha__) || defined (__powerpc__)
       if (xbsd_initlabel (NULL, &xbsd_dlabel, 0) == 1)
@@ -529,7 +532,7 @@ xbsd_write_bootstrap (void)
 
   bcopy (&dl, d, sizeof (struct xbsd_disklabel));
 
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
   sector = get_start_sect(xbsd_part);
 #elif defined (__powerpc__)
   sector = 0;
@@ -543,7 +546,7 @@ xbsd_write_bootstrap (void)
   if (BSD_BBSIZE != write (fd, buffer, BSD_BBSIZE))
     fatal (unable_to_write);
 
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
   printf (_("Bootstrap installed on %s%d.\n"), disk_device, xbsd_part_index+1);
 #elif defined (__alpha__)
   printf (_("Bootstrap installed on %s.\n"), disk_device);
@@ -564,7 +567,7 @@ xbsd_change_fstype (void)
 static int
 xbsd_get_part_index (int max)
 {
-  char prompt[40];
+  char prompt[256];
   char l;
 
   sprintf (prompt, _("Partition (a-%c): "), 'a' + max - 1);
@@ -647,7 +650,7 @@ xbsd_initlabel (struct partition *p, struct xbsd_disklabel *d, int pindex)
   d -> d_subtype = BSD_DSTYPE_INDOSPART & pindex;
 #endif
 
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
   d -> d_flags = BSD_D_DOSPART;
 #else
   d -> d_flags = 0;
@@ -670,7 +673,7 @@ xbsd_initlabel (struct partition *p, struct xbsd_disklabel *d, int pindex)
   d -> d_bbsize = BSD_BBSIZE;
   d -> d_sbsize = BSD_SBSIZE;
 
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
   d -> d_npartitions = 4;
   pp = &d -> d_partitions[2]; /* Partition C should be the NetBSD partition */
   pp -> p_offset = get_start_sect(p);
@@ -696,7 +699,7 @@ xbsd_readlabel (struct partition *p, struct xbsd_disklabel *d)
 {
   int t, sector;
 
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
   sector = (p ? get_start_sect(p) : 0);
 #elif defined (__alpha__)
   sector = 0;
@@ -730,7 +733,7 @@ xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d)
 {
   int sector;
 
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
   sector = get_start_sect(p) + BSD_LABELSECTOR;
 #elif defined (__alpha__) || defined (__powerpc__)
   sector = BSD_LABELSECTOR;
@@ -771,7 +774,7 @@ sync_disks (void)
   sleep (4);
 }
 
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
 static int
 xbsd_translate_fstype (int linux_type)
 {
@@ -810,7 +813,7 @@ xbsd_link_part (void)
 
 #if defined (__alpha__)
 
-#if 0
+#if !defined(__GLIBC__)
 typedef unsigned long long u_int64_t;
 #endif
 

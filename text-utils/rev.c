@@ -38,7 +38,9 @@
  * 3-Jun-1998: Patched by Nicolai Langfeldt to work better on Linux:
  * 	Handle any-length-lines.  Code copied from util-linux' setpwnam.c
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
- * - added Native Language Support
+ * 	added Native Language Support
+ * 1999-09-19 Bruno Haible <haible@clisp.cons.org>
+ * 	modified to work correctly in multi-byte locales
  *
  */
 
@@ -50,6 +52,8 @@
 #include <unistd.h>
 #include "nls.h"
 
+#include "widechar.h"
+
 void usage __P((void));
 void warn __P((const char *, ...));
 
@@ -58,9 +62,10 @@ main(argc, argv)
 	int argc;
 	char *argv[];
 {
-  register char *filename, *t;
-  size_t buflen=512;
-  char *p=malloc(buflen);
+  register char *filename;
+  register wchar_t *t;
+  size_t buflen = 512;
+  wchar_t *p = malloc(buflen*sizeof(wchar_t));
   size_t len;
   FILE *fp;
   int ch, rval;
@@ -93,9 +98,9 @@ main(argc, argv)
       filename = *argv++;
     }
 
-    while (fgets(p, buflen, fp)) {
+    while (fgetws(p, buflen, fp)) {
 
-      len = strlen(p);
+      len = wcslen(p);
 
       /* This is my hack from setpwnam.c -janl */
       while (p[len-1] != '\n' && !feof(fp)) {
@@ -104,32 +109,33 @@ main(argc, argv)
 	/* So now we double the buffer size */
 	buflen *= 2;
 
-	p = realloc(p, buflen);
+	p = realloc(p, buflen*sizeof(wchar_t));
 	if (p == NULL) {
 	  fprintf(stderr,_("Unable to allocate bufferspace\n"));
 	  exit(1);
 	}
 
 	/* And fill the rest of the buffer */
-	if (fgets(&p[len], buflen/2, fp) == NULL) break;
+	if (fgetws(&p[len], buflen/2, fp) == NULL) break;
 
-	len = strlen(p);
+	len = wcslen(p);
       
 	/* That was a lot of work for nothing.  Gimme perl! */
       }
 		  
-      t = p + len - 1 - (*(p+len-1)=='\r'
-			 || *(p+len-1)=='\n');
+      t = p + len - 1 - (*(p+len-1)=='\r' || *(p+len-1)=='\n');
       for ( ; t >= p; --t)
-	if(strcmp(t, "\0") != 0)
-	  putchar(*t);
-      putchar('\n');
+	if (*t != 0)
+	  putwchar(*t);
+      putwchar('\n');
     }
+    fflush(fp);
     if (ferror(fp)) {
       warn("%s: %s", filename, strerror(errno));
       rval = 1;
     }
-    (void)fclose(fp);
+    if (fclose(fp))
+      rval = 1;
   } while(*argv);
   exit(rval);
 }

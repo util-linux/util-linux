@@ -98,7 +98,6 @@
 
 #include <linux/fs.h>
 #include <linux/minix_fs.h>
-#include "../version.h"
 #include "nls.h"
 
 #ifdef MINIX2_SUPER_MAGIC2
@@ -125,7 +124,6 @@
 #define BITS_PER_BLOCK (BLOCK_SIZE<<3)
 
 static char * program_name = "fsck.minix";
-static char * program_version = "1.2 - 11/11/96";
 static char * device_name = NULL;
 static int IN;
 static int repair=0, automatic=0, verbose=0, list=0, show=0, warn_mode=0, 
@@ -185,17 +183,25 @@ void recursive_check2(unsigned int ino);
 #define mark_zone(x) (setbit(zone_map,(x)-FIRSTZONE+1),changed=1)
 #define unmark_zone(x) (clrbit(zone_map,(x)-FIRSTZONE+1),changed=1)
 
-void fatal_error(const char *, int) __attribute__ ((noreturn));
-void fatal_error(const char * fmt_string, int status)
+void leave(int) __attribute__ ((noreturn));
+void leave(int status)
 {
-	fprintf(stderr,fmt_string,program_name,device_name);
 	if (termios_set)
 		tcsetattr(0, TCSANOW, &termios);
 	exit(status);
 }
 
-#define usage() fatal_error(_("Usage: %s [-larvsmf] /dev/name\n"),16)
-#define die(str) fatal_error(_("%s: " str "\n"),8)
+void usage(void) {
+	fprintf(stderr,
+		_("Usage: %s [-larvsmf] /dev/name\n"),
+		program_name);
+	leave(16);
+}
+
+void die(const char *str) {
+	fprintf(stderr, "%s: %s\n", program_name, str);
+	leave(8);
+}
 
 /*
  * This simply goes through the file-name data and prints out the
@@ -381,7 +387,7 @@ void write_block(unsigned int nr, char * addr)
 		return;
 	}
 	if (BLOCK_SIZE*nr != lseek(IN, BLOCK_SIZE*nr, SEEK_SET))
-		die("seek failed in write_block");
+		die(_("seek failed in write_block"));
 	if (BLOCK_SIZE != write(IN, addr, BLOCK_SIZE)) {
 		printf(_("Write error: bad block in file '"));
 		print_current_name();
@@ -502,9 +508,9 @@ void write_super_block(void)
 		Super.s_state &= ~MINIX_ERROR_FS;
 	
 	if (BLOCK_SIZE != lseek(IN, BLOCK_SIZE, SEEK_SET))
-		die("seek failed in write_super_block");
+		die(_("seek failed in write_super_block"));
 	if (BLOCK_SIZE != write(IN, super_block_buffer, BLOCK_SIZE))
-		die("unable to write super-block");
+		die(_("unable to write super-block"));
 
 	return;
 }
@@ -514,11 +520,11 @@ void write_tables(void)
 	write_super_block();
 
 	if (IMAPS*BLOCK_SIZE != write(IN,inode_map,IMAPS*BLOCK_SIZE))
-		die("Unable to write inode map");
+		die(_("Unable to write inode map"));
 	if (ZMAPS*BLOCK_SIZE != write(IN,zone_map,ZMAPS*BLOCK_SIZE))
-		die("Unable to write zone map");
+		die(_("Unable to write zone map"));
 	if (INODE_BUFFER_SIZE != write(IN,inode_buffer,INODE_BUFFER_SIZE))
-		die("Unable to write inodes");
+		die(_("Unable to write inodes"));
 }
 
 void get_dirsize (void)
@@ -547,9 +553,9 @@ void get_dirsize (void)
 void read_superblock(void)
 {
 	if (BLOCK_SIZE != lseek(IN, BLOCK_SIZE, SEEK_SET))
-		die("seek failed");
+		die(_("seek failed"));
 	if (BLOCK_SIZE != read(IN, super_block_buffer, BLOCK_SIZE))
-		die("unable to read super block");
+		die(_("unable to read super block"));
 	if (MAGIC == MINIX_SUPER_MAGIC) {
 		namelen = 14;
 		dirsize = 16;
@@ -569,20 +575,20 @@ void read_superblock(void)
 		version2 = 1;
 #endif
 	} else
-		die("bad magic number in super-block");
+		die(_("bad magic number in super-block"));
 	if (ZONESIZE != 0 || BLOCK_SIZE != 1024)
-		die("Only 1k blocks/zones supported");
+		die(_("Only 1k blocks/zones supported"));
 	if (IMAPS * BLOCK_SIZE * 8 < INODES + 1)
-		die("bad s_imap_blocks field in super-block");
+		die(_("bad s_imap_blocks field in super-block"));
 	if (ZMAPS * BLOCK_SIZE * 8 < ZONES - FIRSTZONE + 1)
-		die("bad s_zmap_blocks field in super-block");
+		die(_("bad s_zmap_blocks field in super-block"));
 }
 
 void read_tables(void)
 {
 	inode_map = malloc(IMAPS * BLOCK_SIZE);
 	if (!inode_map)
-		die("Unable to allocate buffer for inode map");
+		die(_("Unable to allocate buffer for inode map"));
 	zone_map = malloc(ZMAPS * BLOCK_SIZE);
 	if (!inode_map)
 		die("Unable to allocate buffer for zone map");
@@ -590,19 +596,19 @@ void read_tables(void)
 	memset(zone_map,0,sizeof(zone_map));
 	inode_buffer = malloc(INODE_BUFFER_SIZE);
 	if (!inode_buffer)
-		die("Unable to allocate buffer for inodes");
+		die(_("Unable to allocate buffer for inodes"));
 	inode_count = malloc(INODES + 1);
 	if (!inode_count)
-		die("Unable to allocate buffer for inode count");
+		die(_("Unable to allocate buffer for inode count"));
 	zone_count = malloc(ZONES);
 	if (!zone_count)
-		die("Unable to allocate buffer for zone count");
+		die(_("Unable to allocate buffer for zone count"));
 	if (IMAPS*BLOCK_SIZE != read(IN,inode_map,IMAPS*BLOCK_SIZE))
-		die("Unable to read inode map");
+		die(_("Unable to read inode map"));
 	if (ZMAPS*BLOCK_SIZE != read(IN,zone_map,ZMAPS*BLOCK_SIZE))
-		die("Unable to read zone map");
+		die(_("Unable to read zone map"));
 	if (INODE_BUFFER_SIZE != read(IN,inode_buffer,INODE_BUFFER_SIZE))
-		die("Unable to read inodes");
+		die(_("Unable to read inodes"));
 	if (NORM_FIRSTZONE != FIRSTZONE) {
 		printf(_("Warning: Firstzone != Norm_firstzone\n"));
 		errors_uncorrected = 1;
@@ -723,7 +729,7 @@ void check_root(void)
 	struct minix_inode * inode = Inode + ROOT_INO;
 
 	if (!inode || !S_ISDIR(inode->i_mode))
-		die("root inode isn't a directory");
+		die(_("root inode isn't a directory"));
 }
 
 #ifdef HAVE_MINIX2
@@ -1065,7 +1071,7 @@ void recursive_check(unsigned int ino)
 
 	dir = Inode + ino;
 	if (!S_ISDIR(dir->i_mode))
-		die("internal error");
+		die(_("internal error"));
 	if (dir->i_size < 2 * dirsize) {
 		print_current_name();
 		printf(_(": bad directory: size<32"));
@@ -1100,7 +1106,7 @@ int bad_zone(int i)
 	char buffer[1024];
 
 	if (BLOCK_SIZE*i != lseek(IN, BLOCK_SIZE*i, SEEK_SET))
-		die("seek failed in bad_zone");
+		die(_("seek failed in bad_zone"));
 	return (BLOCK_SIZE != read(IN, buffer, BLOCK_SIZE));
 }
 
@@ -1234,19 +1240,27 @@ int main(int argc, char ** argv)
 	struct termios tmp;
 	int count;
 	int retcode = 0;
+	char *p;
+
+	program_name = (argc && *argv) ? argv[0] : "fsck.minix";
+	if ((p = strrchr(program_name, '/')) != NULL)
+		program_name = p+1;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	
 
-	if (argc && *argv)
-		program_name = *argv;
+	if (argc == 2 &&
+	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
+		printf(_("%s from %s\n"), program_name, util_linux_version);
+		exit(0);
+	}
+
 	if (INODE_SIZE * MINIX_INODES_PER_BLOCK != BLOCK_SIZE)
-		die("bad inode size");
+		die(_("bad inode size"));
 #ifdef HAVE_MINIX2
 	if (INODE_SIZE2 * MINIX2_INODES_PER_BLOCK != BLOCK_SIZE)
-		die("bad v2 inode size");
+		die(_("bad v2 inode size"));
 #endif
 	while (argc-- > 1) {
 		argv++;
@@ -1272,11 +1286,11 @@ int main(int argc, char ** argv)
 	check_mount();		/* trying to check a mounted filesystem? */
 	if (repair && !automatic) {
 		if (!isatty(0) || !isatty(1))
-			die("need terminal for interactive repairs");
+			die(_("need terminal for interactive repairs"));
 	}
 	IN = open(device_name,repair?O_RDWR:O_RDONLY);
 	if (IN < 0)
-		die("unable to open '%s'");
+		die(_("unable to open '%s'"));
 	for (count=0 ; count<3 ; count++)
 		sync();
 	read_superblock();
@@ -1287,8 +1301,6 @@ int main(int argc, char ** argv)
 	 * flags and whether or not the -f switch was specified on the 
 	 * command line.
 	 */
-	printf("%s, %s / %s\n", program_name, program_version,
-	       util_linux_version);
 	if ( !(Super.s_state & MINIX_ERROR_FS) && 
 	      (Super.s_state & MINIX_VALID_FS) && 
 	      !force ) {

@@ -24,7 +24,6 @@
 #include <limits.h>
 #include "nls.h"
 
-#include "../version.h"
 #define VERSION		UTIL_LINUX_VERSION
 
 #ifndef DEFAULT_FSTYPE
@@ -41,10 +40,21 @@ int main(int argc, char *argv[])
   char *fstype = NULL;
   int i, more = 0, verbose = 0;
   char *oldpath, *newpath;
+  char *program_name, *p;
+
+  program_name = argv[0];
+  if ((p = strrchr(program_name, '/')) != NULL)
+	  program_name = p+1;
 
   setlocale(LC_ALL, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
+
+  if (argc == 2 &&
+      (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
+	  printf(_("%s from %s\n"), program_name, util_linux_version);
+	  exit(0);
+  }
 
   /* Check commandline options. */
   opterr = 0;
@@ -86,7 +96,7 @@ int main(int argc, char *argv[])
   argv[--optind] = progname;
 
   if (verbose) {
-    puts(_("mkfs version " VERSION " (" __DATE__ ")"));
+    printf(_("mkfs version %s (%s)\n"), VERSION, __DATE__);
     i = optind;
     while (argv[i])
       printf("%s ", argv[i++]);

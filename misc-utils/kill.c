@@ -38,6 +38,8 @@
  *  1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
  *  - added Native Language Support
  *
+ *  1999-11-13 aeb Accept signal numers 128+s.
+ *
  */
 
 #include <stdio.h>
@@ -137,7 +139,7 @@ struct signv {
 int main (int argc, char *argv[]);
 extern char *mybasename(char *);
 int signame_to_signum (char *sig);
-int arg_to_signum (char *arg);
+int arg_to_signum (char *arg, int mask);
 void nosig (char *name);
 void printsig (int sig);
 void printsignals (FILE *fp);
@@ -146,15 +148,18 @@ int kill_verbose (char *procname, int pid, int sig);
 
 extern int *get_pids (char *, int);
 
-char version_string[] = "kill v2.0\n";
 char *whoami;
 
 int main (int argc, char *argv[])
 {
     int errors, numsig, pid;
-    char *ep, *arg;
+    char *ep, *arg, *progname, *p;
     int do_pid, do_kill, check_all;
     int *pids, *ip;
+
+    progname = argv[0];
+    if ((p = strrchr(progname, '/')) != NULL)
+	    progname = p+1;
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
@@ -174,11 +179,16 @@ int main (int argc, char *argv[])
 	if (*arg != '-') {
 	    break;
 	}
+	if (! strcmp (arg, "--")) {
+	    argc--, argv++;
+	    break;
+	}
 	if (! strcmp (arg, "-u")) {
 	    return usage (0);
 	}
-	if (! strcmp (arg, "-v")) {
-	    fputs (version_string, stdout);
+	if (! strcmp (arg, "-v") || ! strcmp (arg, "-V") ||
+	    ! strcmp (arg, "--version")) {
+	    printf(_("%s from %s\n"), progname, util_linux_version);
 	    return 0;
 	}
 	if (! strcmp (arg, "-a")) {
@@ -193,9 +203,9 @@ int main (int argc, char *argv[])
 	    if (argc > 2) {
 		return usage (1);
 	    }
-	    /* argc == 2 */
+	    /* argc == 2, accept "kill -l $?" */
 	    arg = argv[1];
-	    if ((numsig = arg_to_signum (arg)) < 0) {
+	    if ((numsig = arg_to_signum (arg, 1)) < 0) {
 		fprintf (stderr, _("%s: unknown signal %s\n"), whoami, arg);
 		return 1;
 	    }
@@ -217,7 +227,7 @@ int main (int argc, char *argv[])
 		return usage (1);
 	    argc--, argv++;
 	    arg = *argv;
-	    if ((numsig = arg_to_signum (arg)) < 0) {
+	    if ((numsig = arg_to_signum (arg, 0)) < 0) {
 		nosig (arg);
 		return 1;
 	    }
@@ -231,7 +241,7 @@ int main (int argc, char *argv[])
 	if (do_kill)
 	  break;
 	arg++;
-	if ((numsig = arg_to_signum (arg)) < 0) {
+	if ((numsig = arg_to_signum (arg, 0)) < 0) {
 	    return usage (1);
 	}
 	do_kill++;
@@ -284,13 +294,15 @@ int signame_to_signum (char *sig)
     return (-1);
 }
 
-int arg_to_signum (char *arg)
+int arg_to_signum (char *arg, int maskbit)
 {
     int numsig;
     char *ep;
 
     if (isdigit (*arg)) {
 	numsig = strtol (arg, &ep, 10);
+	if (numsig >= NSIG && maskbit && (numsig & 128) != 0)
+	    numsig -= 128;
 	if (*ep != 0 || numsig < 0 || numsig >= NSIG)
 	    return (-1);
 	return (numsig);

@@ -1,4 +1,25 @@
-/* call: rescuept /dev/hda */
+/*
+ * rescuept - Andries Brouwer - aeb@cwi.nl - 1999
+ *
+ * This may be distributed under the GPL.
+ *
+ * call: rescuept /dev/xxx
+ *
+ * The output is a proposed partition table, in the
+ * form of input to sfdisk. Typical use:
+ *
+ *	./rescuept /dev/xxx > xxx.pt
+ * now look at xxx.pt to see whether it resembles what
+ * you expected, and possibly edit the partition types;
+ * if you are satisfied, then
+ *	sfdisk /dev/xxx < xxx.pt
+ * will restore your partition table. If you are cautious, use
+ *	sfdisk /dev/xxx -O xxx.old < xxx.pt
+ * so that the original state can be retrieved using
+ *	sfdisk /dev/xxx -I xxx.old
+ *
+ * Here xxx stands for hda or hdb or sda or sdb or ... 
+ */
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
@@ -113,7 +134,7 @@ void outparts() {
 }
 
 void outmsg(char *msg, int start, int nextstart, unsigned char type) {
-	printf("# %4d MB %16s (type %2x): sectors %9d-%9d\n",
+	printf("# %5d MB %16s (type %2x): sectors %9d-%9d\n",
 	       ((nextstart-start)+1024)/2048, msg, type, start, nextstart-1);
 }
 
@@ -307,7 +328,7 @@ struct fat_boot_sector_start {
    fd	5.25"	9/2/40	360k
    fe	5.25"	8/1/40	160k
    ff	5.25"	8/2/40	320k
-   Conclusion: this bytes does not differentiate between 3.5" and 5.25",
+   Conclusion: this byte does not differentiate between 3.5" and 5.25",
    it does not give the capacity or the number of sectors per track.
    However, maybe C and H can be derived.
 */
@@ -414,6 +435,40 @@ struct swap_header_v1 {
         unsigned int padding[125];
         unsigned int badpages[1];
 };
+
+struct unixware_slice {
+	unsigned short slice_type;
+	unsigned short slice_flags;
+	unsigned int start;
+	unsigned int size;
+};
+
+struct bsd_disklabel {
+	uchar	d_magic[4];
+	uchar	d_stuff1[4];
+	uchar	d_typename[16];		/* type name, e.g. "eagle" */
+	uchar	d_packname[16];		/* pack identifier */ 
+	uint32	d_secsize;		/* # of bytes per sector */
+	uint32	d_nsectors;		/* # of data sectors per track */
+	uint32	d_ntracks;		/* # of tracks per cylinder */
+	uint32	d_ncylinders;		/* # of data cylinders per unit */
+	uint32	d_secpercyl;		/* # of data sectors per cylinder */
+	uint32	d_secperunit;		/* # of data sectors per unit */
+	uchar	d_stuff2[68];
+	uchar	d_magic2[4];		/* the magic number (again) */
+	uint16	d_checksum;		/* xor of data incl. partitions */
+
+			/* filesystem and partition information: */
+	uint16	d_npartitions;		/* number of partitions in following */
+	uint32	d_bbsize;		/* size of boot area at sn0, bytes */
+	uint32	d_sbsize;		/* max size of fs superblock, bytes */
+	struct	bsd_partition {		/* the partition table */
+		uint32	p_size;		/* number of sectors in partition */
+		uint32	p_offset;	/* starting sector */
+		uchar	p_stuff[8];
+	} d_partitions[16];		/* 16 is for openbsd */
+};
+
 
 int
 main(int argc, char **argv){
@@ -630,6 +685,62 @@ main(int argc, char **argv){
 				}
 			}
 
+		}
+
+		if (bp[4] == 0x0d && bp[5] == 0x60 &&
+		    bp[6] == 0x5e && bp[7] == 0xca &&   /* CA5E600D */
+		    bp[156] == 0xee && bp[157] == 0xde &&
+		    bp[158] == 0x0d && bp[159] == 0x60) /* 600DDEEE */ {
+			int ss, es;
+			struct unixware_slice *u;
+			printf("# Unixware partition seen\n");
+			u = (struct unixware_slice *)(bp + 216);
+			if (u->slice_type == 5	/* entire disk */
+			    && (u->slice_flags & 0x200)) /* valid */ {
+				ss = u->start;
+				es = u->start + u->size;
+				outmsg("Unixware ptn", ss, es, 0x63);
+				addpart(ss, es-ss, 0x63);
+				i = es-1;
+				continue;
+			} else
+				printf("# Unrecognized details\n");
+		}
+
+		/* bsd disk magic 0x82564557UL */
+		if (bp[0] == 0x57 && bp[1] == 0x45 && bp[2] == 0x56 && bp[3] == 0x82) {
+			int ss, es, npts, j;
+			struct bsd_disklabel *l;
+			struct bsd_partition *p;
+			printf("# BSD magic seen in sector %d\n", i);
+			l = (struct bsd_disklabel *) bp;
+			if (l->d_magic2[0] != 0x57 || l->d_magic2[1] != 0x45 ||
+			    l->d_magic2[2] != 0x56 || l->d_magic2[3] != 0x82)
+				printf("# 2nd magic bad - ignored this sector\n");
+			else if ((npts = l->d_npartitions) > 16)
+				printf("# strange number (%d) of subpartitions - "
+				       "ignored this sector\n", npts);
+			else {
+				for (j=0; j<npts; j++) {
+					p = &(l->d_partitions[j]);
+					if (p->p_size)
+						printf("# part %c: size %9d, start %9d\n",
+						       'a'+j, p->p_size, p->p_offset);
+				}
+				ss = l->d_partitions[2].p_offset;
+				es = ss + l->d_partitions[2].p_size;
+				if (ss != i-1)
+					printf("# strange start of whole disk - "
+					       "ignored this sector\n");
+				else {
+					/* FreeBSD 0xa5, OpenBSD 0xa6, NetBSD 0xa9, BSDI 0xb7 */
+					/* How to distinguish? */
+					outmsg("BSD partition", ss, es, 0xa5);
+					addpart(ss, es-ss, 0xa5);
+					i = es-1;
+					continue;
+				}
+			}
 		}
 	}
 

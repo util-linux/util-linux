@@ -56,10 +56,7 @@
 #include <unistd.h>
 #include <utmp.h>
 #include "nls.h"
-#ifdef __linux__
-#include <locale.h>
 #include "pathnames.h"
-#endif
 
 void	makemsg __P((char *));
 

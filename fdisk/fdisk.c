@@ -94,7 +94,6 @@
 #include <setjmp.h>
 #include <errno.h>
 #include <getopt.h>
-#include <locale.h>
 #include "nls.h"
 
 #include <sys/stat.h>
@@ -110,7 +109,6 @@
 #include "fdisksgilabel.h"
 #include "fdiskaixlabel.h"
 
-#include "../version.h"
 #include "../defines.h"
 #ifdef HAVE_blkpg_h
 #include <linux/blkpg.h>
@@ -263,13 +261,6 @@ void fatal(enum failure why)
 "  or: fdisk /dev/eda  (for the first PS/2 ESDI drive)\n"
 "  or: fdisk /dev/rd/c0d0  or: fdisk /dev/ida/c0d0  (for RAID devices)\n"
 "  ...\n");
-			break;
-		case no_device:
-			message = _("A disk block device is needed.\n");
-			break;
-		case no_partition:
-			message =_("Given name does not refer to a partition,\n"
-				  "or maybe not even to a block device.\n");
 			break;
 		case unable_to_open:
 			sprintf(error, _("Unable to open %s\n"), disk_device);
@@ -805,7 +796,7 @@ read_hex(struct systypes *sys)
 }
 
 /*
- * Print the message MESG, then read an integer between LOW and HIGH.
+ * Print the message MESG, then read an integer between LOW and HIGH (inclusive).
  * If the user hits Enter, DFLT is returned.
  * Answers like +10 are interpreted as offsets from BASE.
  *
@@ -1243,10 +1234,10 @@ void x_list_table(int extend)
 		q = part_table;
 	printf(_("\nDisk %s: %d heads, %d sectors, %d cylinders\n\n"),
 		disk_device, heads, sectors, cylinders);
-        printf(_("Nr AF  Hd Sec  Cyl  Hd Sec  Cyl   Start    Size ID\n"));
+        printf(_("Nr AF  Hd Sec  Cyl  Hd Sec  Cyl    Start     Size ID\n"));
 	for (i = 0 ; i < partitions; i++)
 		if ((p = q[i]) != NULL) {
-                        printf("%2d %02x%4d%4d%5d%4d%4d%5d%8d%8d %02x\n",
+                        printf("%2d %02x%4d%4d%5d%4d%4d%5d%9d%9d %02x\n",
 				i + 1, p->boot_ind, p->head,
 				sector(p->sector),
 				cylinder(p->sector, p->cyl), p->end_head,
@@ -1370,7 +1361,7 @@ void verify(void)
 
 void add_partition(int n, int sys)
 {
-	char mesg[48];
+	char mesg[256];		/* 48 does not suffice in Japanese */
 	int i, read = 0;
 	struct partition *p = part_table[n], *q = part_table[ext_index];
 	uint start, stop = 0, limit, temp,
@@ -1563,7 +1554,7 @@ void new_partition(void)
 
 void write_table(void)
 {
-	int i, error = 0;
+	int i;
 
 	changed[3] = changed[0] || changed[1] || changed[2] || changed[3];
 	if (!sun_label && !sgi_label) {
@@ -1588,6 +1579,13 @@ void write_table(void)
 	}
 
 	printf(_("The partition table has been altered!\n\n"));
+	reread_partition_table(1);
+}
+
+void
+reread_partition_table(int leave) {
+	int error = 0;
+	int i;
 
 	printf(_("Calling ioctl() to re-read partition table.\n"));
 	sync();
@@ -1604,12 +1602,6 @@ void write_table(void)
                         error = errno;
         }
 
-	close(fd);
-
-	printf(_("Syncing disks.\n"));
-	sync();
-	sleep(4);		/* for sync() */
-
 	if (i < 0)
 		printf(_("Re-read table failed with error %d: %s.\nReboot your "
 			"system to ensure the partition table is updated.\n"),
@@ -1621,7 +1613,14 @@ void write_table(void)
 		"partitions, please see the fdisk manual page for additional\n"
 		"information.\n"));
 
-	exit(0);
+	if (leave) {
+		close(fd);
+
+		printf(_("Syncing disks.\n"));
+		sync();
+		sleep(4);		/* for sync() */
+		exit(!!i);
+	}
 }
 
 #define MAX_PER_LINE	16
@@ -1693,7 +1692,7 @@ void xselect(void)
 				move_begin(get_partition(0, partitions));
 			break;
 		case 'c':
-			cylinders = read_int(1, cylinders, 65535,
+			cylinders = read_int(1, cylinders, 131071,
 					     0, _("Number of cylinders"));
 			if (sun_label)
 				sun_set_ncyl(cylinders);
@@ -1826,6 +1825,32 @@ void try(char *device, int user_specified)
 	}
 }
 
+/* for fdisk -l: try all things in /proc/partitions
+   that look like a partition name (do not end in a digit) */
+void
+tryprocpt() {
+	FILE *procpt;
+	char line[100], ptname[100], devname[120], *s;
+	int ma, mi, sz;
+
+	procpt = fopen(PROC_PARTITIONS, "r");
+	if (procpt == NULL) {
+		fprintf(stderr, _("cannot open %s\n"), PROC_PARTITIONS);
+		return;
+	}
+
+	while (fgets(line, sizeof(line), procpt)) {
+		if (sscanf (line, " %d %d %d %[^\n]\n",
+			    &ma, &mi, &sz, ptname) != 4)
+			continue;
+		for(s = ptname; *s; s++);
+		if (isdigit(s[-1]))
+			continue;
+		sprintf(devname, "/dev/%s", ptname);
+		try(devname, 1);
+	}
+}
+
 int
 dir_exists(char *dirname) {
 	struct stat statbuf;
@@ -1837,8 +1862,7 @@ void
 dummy(int *kk) {}
 
 int
-main(int argc, char **argv)
-{
+main(int argc, char **argv) {
 	int j, c;
 	int optl = 0, opts = 0;
 	int user_set_sector_size = 0;
@@ -1892,7 +1916,6 @@ main(int argc, char **argv)
 #endif
 
 	if (optl) {
-		listing = 1;
 		nowarn = 1;
 		type_open = O_RDONLY;
 		if (argc > optind) {
@@ -1900,11 +1923,13 @@ main(int argc, char **argv)
 			/* avoid gcc warning:
 			   variable `k' might be clobbered by `longjmp' */
 			dummy(&k);
+			listing = 1;
 			for(k=optind; k<argc; k++)
 				try(argv[k], 1);
 		} else {
 			/* we no longer have default device names */
-			fatal(usage2);
+			/* but, we can use /proc/partitions instead */
+			tryprocpt();
 		}
 		exit(0);
 	}

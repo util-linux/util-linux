@@ -14,8 +14,10 @@ rm -f loop.h
 
 if [ -f /usr/include/linux/posix_types.h ]; then
    echo '#include <linux/posix_types.h>' >> loop.h
+   echo '#undef dev_t' >> loop.h
    echo '#define dev_t __kernel_dev_t' >> loop.h
 else
+   echo '#undef dev_t' >> loop.h
    echo '#define dev_t unsigned short' >> loop.h
 fi
 

@@ -38,7 +38,9 @@
  * Wed Sep 14 22:31:17 1994: patches from Carl Christofferson
  *                           (cchris@connected.com)
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
- * - added Native Language Support
+ * 	added Native Language Support
+ * 1999-09-19 Bruno Haible <haible@clisp.cons.org>
+ * 	modified to work correctly in multi-byte locales
  *
  */
 
@@ -50,7 +52,8 @@
 #include <stdio.h>
 #include <unistd.h>
 #include "nls.h"
-#include <locale.h>
+
+#include "widechar.h"
 
 #define	BS	'\b'		/* backspace */
 #define	TAB	'\t'		/* tab */
@@ -75,7 +78,7 @@ typedef struct char_str {
 #define	CS_ALTERNATE	2
 	short		c_column;	/* column character is in */
 	CSET		c_set;		/* character set (currently only 2) */
-	char		c_char;		/* character in question */
+	wchar_t		c_char;		/* character in question */
 } CHAR;
 
 typedef struct line_str LINE;
@@ -108,14 +111,14 @@ int nblank_lines;		/* # blanks after last flushed line */
 int no_backspaces;		/* if not to output any backspaces */
 
 #define	PUTC(ch) \
-	if (putchar(ch) == EOF) \
+	if (putwchar(ch) == WEOF) \
 		wrerr();
 
 int main(int argc, char **argv)
 {
 	extern int optind;
 	extern char *optarg;
-	register int ch;
+	register wint_t ch;
 	CHAR *c;
 	CSET cur_set;			/* current character set */
 	LINE *l;			/* current line */
@@ -170,8 +173,8 @@ int main(int argc, char **argv)
 	cur_set = last_set = CS_NORMAL;
 	lines = l = alloc_line();
 
-	while ((ch = getchar()) != EOF) {
-		if (!isgraph(ch)) {
+	while ((ch = getwchar()) != WEOF) {
+		if (!iswgraph(ch)) {
 			switch (ch) {
 			case BS:		/* can't go back further */
 				if (cur_col == 0)
@@ -182,7 +185,7 @@ int main(int argc, char **argv)
 				cur_col = 0;
 				continue;
 			case ESC:		/* just ignore EOF */
-				switch(getchar()) {
+				switch(getwchar()) {
 				case RLF:
 					cur_line -= 2;
 					break;
@@ -316,6 +319,8 @@ int main(int argc, char **argv)
 		/* missing a \n on the last line? */
 		nblank_lines = 2;
 	flush_blanks();
+	if (ferror(stdout) || fclose(stdout))
+		return 1;
 	return 0;
 }
 

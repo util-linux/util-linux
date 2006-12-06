@@ -101,22 +101,31 @@ static void usage(char *name)
 int main(int argc,char **argv)
 {
     int verify;
-    char *name;
     struct stat st;
+    char *progname, *p;
+
+    progname = argv[0];
+    if ((p = strrchr(progname, '/')) != NULL)
+	    progname = p+1;
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
 
-    name = argv[0];
+    if (argc == 2 &&
+	(!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
+	    printf(_("%s from %s\n"), progname, util_linux_version);
+	    exit(0);
+    }
+
     verify = 1;
     if (argc > 1 && argv[1][0] == '-') {
-	if (argv[1][1] != 'n') usage(name);
+	if (argv[1][1] != 'n') usage(progname);
 	verify = 0;
 	argc--;
 	argv++;
     }
-    if (argc != 2) usage(name);
+    if (argc != 2) usage(progname);
     if (stat(argv[1],&st) < 0) PERROR(argv[1]);
     if (!S_ISBLK(st.st_mode) || MAJOR(st.st_rdev) != FLOPPY_MAJOR) {
 	fprintf(stderr,_("%s: not a floppy device\n"),argv[1]);
@@ -127,7 +136,8 @@ int main(int argc,char **argv)
     if (ioctl(ctrl,FDGETPRM,(long) &param) < 0) 
       PERROR(_("Could not determine current format type"));
     printf(_("%s-sided, %d tracks, %d sec/track. Total capacity %d kB.\n"),
-      param.head ? _("Double") : _("Single"),param.track,param.sect,param.size >> 1);
+	   param.head ? _("Double") : _("Single"),
+	   param.track, param.sect,param.size >> 1);
     format_disk(argv[1]);
     if (verify) verify_disk(argv[1]);
     return 0;

@@ -32,9 +32,10 @@
 	- more nls translatable strings
 	1999-05-09 aeb - applied a RedHat patch (setjmp->sigsetjmp); without it
 	a second ^Z would fail.
-	1999-05-09 aeb - undone Kars' work, so that more works without libcurses
-	(and hence can be in /bin with libcurses being in /usr/lib which may not
-	be mounted). However, when termcap is not present curses can still be used.
+	1999-05-09 aeb - undone Kars' work, so that more works without
+	libcurses (and hence can be in /bin with libcurses being in /usr/lib
+	which may not be mounted). However, when termcap is not present curses
+	can still be used.
 */
 
 #include <stdio.h>
@@ -56,7 +57,7 @@
 #include <locale.h>
 #include "nls.h"
 
-#define HELPFILE	"/usr/lib/more.help"
+/* #define MOREHELPFILE "/usr/lib/more.help" */
 #define VI		"/usr/bin/vi"
 
 #define Fopen(s,m)	(Currline = 0,file_pos=0,fopen(s,m))
@@ -1259,7 +1260,7 @@ int command (char *filename, register FILE *f)
 	    break;
 	case '?':
 	case 'h':
-	    if ((helpf = fopen (HELPFILE, "r")) == NULL)
+	    if ((helpf = fopen (MOREHELPFILE, "r")) == NULL)
 		error (_("Can't open help file"));
 	    if (noscroll) doclear ();
 	    copy_file (helpf);

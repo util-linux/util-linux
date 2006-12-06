@@ -69,7 +69,6 @@
 #endif
 #include <signal.h>
 #include <math.h>
-#include <locale.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
@@ -89,7 +88,6 @@ typedef long      ext2_loff_t;
 extern ext2_loff_t ext2_llseek(unsigned int fd, ext2_loff_t offset,
 			       unsigned int origin);
 
-#include "../version.h"
 #define VERSION UTIL_LINUX_VERSION
 
 #define DEFAULT_DEVICE "/dev/hda"
@@ -1316,7 +1314,7 @@ void new_part(int i)
     int num_sects = last - first + 1;
     int len, ext, j;
     char *errmsg;
-
+    double sectors_per_MB = K*K / 512.0;
 
     if (p_info[i].num == PRI_OR_LOG) {
         static struct MenuItem menuPartType[]=
@@ -1341,7 +1339,7 @@ void new_part(int i)
     else
 	print_warning(_("!!! Internal error !!!"));
 
-    sprintf(def, "%.2f", ceiling(num_sects/(K*0.02))/100);
+    sprintf(def, "%.2f", num_sects/sectors_per_MB);
     mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X, _("Size (in MB): "));
     if ((len = get_string(response, LINE_LENGTH, def)) <= 0 &&
 	len != GS_DEFAULT)
@@ -2367,8 +2365,13 @@ void draw_partition(int i)
     }
 
     if (p_info[i].id > 0) {
+	char *dbn = my_basename(disk_device);
+	int l = strlen(dbn);
+	int digit_last = isdigit(dbn[l-1]);
+
 	mvprintw(y, NAME_START,
-		 "%s%d", my_basename(disk_device), p_info[i].num+1);
+		 "%s%s%d", dbn, (digit_last ? "p" : ""),
+		 p_info[i].num+1);
 	if (p_info[i].flags) {
 	    if (p_info[i].flags == ACTIVE_FLAG)
 		mvaddstr(y, FLAGS_START, _("Boot"));

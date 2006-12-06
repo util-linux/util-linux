@@ -39,7 +39,7 @@
  * banner [-w#] [-d] [-t] message ...
  */
 
-#include "err.h"
+#include "errs.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

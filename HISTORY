@@ -1,3 +1,88 @@
+util-linux 2.10f:
+
+* Security fix for mount (okir)
+* Avoid infinite loop in namei (Brett Wuth)
+* added clock-ppc.c (from Matsuura Takanori), not merged yet
+* deleted clockB subdirectory
+* recognize mkdosfs string (Michal Svec)
+
+util-linux 2.10e:
+
+* New: rename
+* Added option to mkswap so that user can override pagesize
+* fdisk -l now reads /proc/partitions when no device was given
+* Fixed fdisk.8 (James Manning)
+* Added devpts info to mount.8 (Elrond)
+* Newline fix for logger output to stdout (Henri Spencer)
+
+util-linux 2.10d:
+
+* Do not try to mount something as udf without good reason
+* Do not loop in umount if there is a stale lock file
+* Allow fdisk twice as many cylinders
+* Fixed non-casefolding search in look (Markus Demleitner)
+
+util-linux 2.10c:
+
+* Various compilation fixes
+
+util-linux 2.10b:
+
+* Fixed smbmount problem (Andrew Tridgell)
+* Fixed ddate problem with the day after St. Tib's Day (Brad)
+* German messages (Elrond)
+* Made kill a bit more standard compliant
+* Made some more programs output a version
+
+util-linux 2.10a:
+
+* Japanese messages (Daisuke Yamashita)
+* French messages and several Debian fixes (Vincent Renardias)
+* Fixed infinite loop in mkfs.minix
+
+util-linux 2.10:
+
+* Added BSD disklabel code to rescuept
+* Added blockdev utility
+* Fix losetup return code
+* Fix unit display in cfdisk
+* Do not redefine _PATH_MAILDIR (so that recent systems can have /var/mail)
+* Added --localtime option to hwclock;
+  added third line (LOCAL/UTC) to /etc/adjtime.
+* Add -H option to agetty (David Holland)
+
+util-linux 2.9z:
+
+* Japanese messages (Daisuke Yamashita)
+* Czech messages (Jiri Pavlovsky)
+* Added some udf stuff to mount.8
+* Added ioctl for fdisk on bsdlabels
+
+util-linux 2.9y:
+
+* Wide character support (Bruno Haible)
+* German messages and some small fixes (Elrond)
+* Small fix to owner mount option (Erik Troan)
+* Don't sleep so long in clock/kd.c (Christian T. Steigies)
+
+util-linux 2.9x:
+
+* German messages and a i18n fix (Elrond)
+* mount option: allow the owner to mount a device (RedHat)
+* ugly: let login open console with O_NONBLOCK (Maciej W. Rozycki)
+* UGLY: let login ignore mail that is precisely 523 bytes long (RedHat)
+* added mkfs.bfs, mkfs.bfs.8
+* mount now recognizes qnx4 and bfs partitions
+* rescuept now recognizes Unixware partitions
+* hwclock fix on m68k (Roman Hodek)
+* several minor things
+
+util-linux 2.9w:
+
+* Updated mount.8 (Yann Droneaud)
+* Improved makefiles
+* Fixed flaw in fdisk
+
 util-linux 2.9v:
 
 * cfdisk no longer believes the kernel's HDGETGEO
@@ -31,6 +116,7 @@ util-linux 2.9t:
 util-linux 2.9s:
 
 * tunelp patch (Andrea Arcangeli)
+* fixed mount race (HJLu)
 * German messages (Elrond)
 
 util-linux 2.9[pqr]:
@@ -66,8 +152,8 @@ util-linux 2.9l:
 util-linux 2.9k:
 
 * major reshuffle of hwclock stuff; added sparc and alpha code
+* fdisk fix
 * tiny shutdown fix
-* tiny fdisk fix
 
 util-linux 2.9j:
 

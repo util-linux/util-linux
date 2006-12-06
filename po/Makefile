@@ -1,7 +1,7 @@
 PACKAGE = util-linux
-VERSION = 2.9s
 
 include ../make_include
+include ../MCONFIG
 
 #
 # po2tbl.sed is not taken from /usr/share/gettext/intl
@@ -13,7 +13,7 @@ INTL = /usr/share/gettext/intl
 
 SHELL = /bin/sh
 
-prefix = /usr
+prefix = $(DESTDIR)/usr
 exec_prefix = ${prefix}
 datadir = $(prefix)/share
 localedir = $(datadir)/locale

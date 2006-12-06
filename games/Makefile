@@ -20,6 +20,7 @@ all: $(USRGAMES)
 
 # Rules for everything else
 
+banner.o: $(LIB)/errs.h
 banner: banner.o $(ERR_O)
 ddate: ddate.o
 

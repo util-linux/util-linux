@@ -14,6 +14,7 @@
 #include <mntent.h>		/* for MNTTYPE_SWAP */
 #include "fstab.h"
 #include "sundries.h"
+#include "realpath.h"
 #include "nfsmount.h"
 #include "nls.h"
 
@@ -224,9 +225,9 @@ canonicalize (const char *path) {
      if (streq(path, "none") || streq(path, "proc") || streq(path, "devpts"))
 	  return xstrdup(path);
 
-     canonical = xmalloc (PATH_MAX + 1);
+     canonical = xmalloc (PATH_MAX+2);
   
-     if (realpath (path, canonical))
+     if (myrealpath (path, canonical, PATH_MAX+1))
 	  return canonical;
 
      free(canonical);

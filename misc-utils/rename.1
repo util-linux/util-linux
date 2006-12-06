@@ -1,0 +1,40 @@
+.\" Written by Andries E. Brouwer (aeb@cwi.nl)
+.\" Placed in the public domain
+.\"
+.TH RENAME 1 "1 Januari 2000" "" "Linux Programmer's Manual"
+.SH NAME
+rename \- Rename files
+.SH SYNOPSIS
+.BI rename " from to file..."
+.SH DESCRIPTION
+.B rename
+will rename the specified files by replacing the first occurrence of
+.I from
+in their name by
+.IR to .
+
+For example, given the files
+.IR foo1 ", ..., " foo9 ", " foo10 ", ..., " foo278 ,
+the commands
+
+.RS
+.nf
+rename foo foo0 foo?
+rename foo foo0 foo??
+.fi
+.RE
+
+will turn them into
+.IR foo001 ", ..., " foo009 ", " foo010 ", ..., " foo278 .
+
+And
+.RS
+.nf
+rename .htm .html *.htm
+.fi
+.RE
+
+will fix the extension of your html files.
+
+.SH "SEE ALSO"
+.BR mv (1)

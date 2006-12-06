@@ -24,31 +24,34 @@ endif
 
 # Where to put datebase files?
 
-USRLIB=		more.help
+MOREHELP=	more.help
+MOREHELPFILE=$(MOREHELPDIR)/$(MOREHELP)
+# MOREHELPDIR set in ../MCONFIG
+CFLAGS:=$(CFLAGS) -DMOREHELPFILE=\"$(MOREHELPFILE)\"
 
 all: $(BIN) $(USRBIN)
 
-# Programs requiring special compilation
-
-NEEDS_NCURSES=  ul
-
-ifeq "$(HAVE_TERMCAP)" "no"
-NEEDS_NCURSES:=$(NEEDS_NCURSES) more
+# more and ul use curses - maybe we can't compile them
+ifeq "$(HAVE_NCURSES)" "yes"
+# Have ncurses - make more and ul
+more ul:
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LIBCURSES)
+more: more.o
+ul: ul.o
+else
+# Do not have ncurses - give up on ul
+ul:
+	@echo $@ not made since it requires ncurses
+ifeq "$(HAVE_TERMCAP)" "yes"
+more: more.o
+	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LIBTERMCAP)
 else
 more:
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LIBTERMCAP)
+	@echo $@ not made since it requires ncurses or termcap
 endif
-
-$(NEEDS_NCURSES):
-ifeq "$(HAVE_NCURSES)" "yes"
-	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LIBCURSES)
-else
-	@echo $@ not made since it requires ncurses
 endif
-
 
 # Rules for hexdump
-
 hexdump: hexdump.o conv.o display.o hexsyntax.o odsyntax.o parse.o
 hexdump.o: hexdump.c hexdump.h
 conv.o: conv.c hexdump.h
@@ -58,24 +61,19 @@ odsyntax.o: odsyntax.c hexdump.h
 parse.o: parse.c hexdump.h
 
 # Rules for everything else
-
 col: col.o
 colcrt: colcrt.o
 colrm: colrm.o
+column.o: $(LIB)/errs.h
 column: column.o $(ERR_O)
-more: more.o
 more.o: more.c $(LIB)/pathnames.h
 rev: rev.o
 
-ifeq "$(HAVE_NCURSES)" "yes"
-ul: ul.o
-endif
-
 install install.shadow install.text-utils: all
-	$(INSTALLDIR) $(BINDIR) $(USRBINDIR) $(USRLIBDIR) $(MAN1DIR)
+	$(INSTALLDIR) $(BINDIR) $(USRBINDIR) $(MOREHELPDIR) $(MAN1DIR)
 	$(INSTALLBIN) $(BIN) $(BINDIR)
 	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
-	$(INSTALLDAT) $(USRLIB) $(USRLIBDIR)
+	$(INSTALLDAT) $(MOREHELP) $(MOREHELPDIR)
 	$(INSTALLMAN) $(MAN1) $(MAN1DIR)
 
 .PHONY: clean distclean

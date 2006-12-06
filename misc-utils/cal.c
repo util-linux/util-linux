@@ -44,13 +44,13 @@
 #include <sys/types.h>
 
 #include <ctype.h>
-#include <err.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
 #include <locale.h>
+#include "errs.h"
 #include "nls.h"
 #include "../defines.h"
 
@@ -138,6 +138,7 @@ void	trim_trailing_spaces __P((char *));
 void	usage __P((void));
 void	yearly __P((int));
 void    headers_init(void);
+extern char *__progname;
 
 int
 main(argc, argv)
@@ -147,17 +148,17 @@ main(argc, argv)
 	struct tm *local_time;
 	time_t now;
 	int ch, month, year, yflag;
+	char *progname, *p;
 
-#ifdef __linux__
-	extern char *__progname;
-	__progname = argv[0];
-#endif
-	
+	progname = argv[0];
+	if ((p = strrchr(progname, '/')) != NULL)
+		progname = p+1;
+	__progname = progname;
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	
-	setlocale(LC_ALL,"");
 	yflag = 0;
 	while ((ch = getopt(argc, argv, "mjy")) != EOF)
 		switch(ch) {
@@ -170,6 +171,10 @@ main(argc, argv)
 		case 'y':
 			yflag = 1;
 			break;
+		case 'V':
+			printf(_("%s from %s\n"),
+			       progname, util_linux_version);
+			return 0;
 		case '?':
 		default:
 			usage();
@@ -254,7 +259,7 @@ monthly(month, year)
 	int month, year;
 {
 	int col, row, len, days[MAXDAYS];
-	char *p, lineout[30];
+	char *p, lineout[300];
 
 	day_array(month, year, days);
 	len = sprintf(lineout, "%s %d", full_month[month - 1], year);
@@ -481,6 +486,6 @@ void
 usage()
 {
 
-	(void)fprintf(stderr, _("usage: cal [-mjy] [[month] year]\n"));
+	(void)fprintf(stderr, _("usage: cal [-mjyV] [[month] year]\n"));
 	exit(1);
 }

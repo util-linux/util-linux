@@ -86,10 +86,10 @@ unmangle(char *s) {
 
 /*
  * fstat'ing the file and allocating a buffer holding all of it
- * may be a bad idea: if the file is /proc/mounttab, the stat
+ * may be a bad idea: if the file is /proc/mounts, the stat
  * returns 0.
  * (On the other hand, mangling and unmangling is meaningless
- *  for /proc/mounttab.)
+ *  for /proc/mounts.)
  */
 
 mntFILE *

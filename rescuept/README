@@ -8,7 +8,8 @@ It is in the non-installed part of the e2progs distribution.
 
 (ii) rescuept is a utility that recognizes ext2 superblocks,
 FAT partitions, swap partitions, and extended partition tables;
-it prints out information that can be used with fdisk or sfdisk
+it may also recognize BSD disklabels and Unixware 7 partitions.
+It prints out information that can be used with fdisk or sfdisk
 to reconstruct the partition table.
 It is in the non-installed part of the util-linux distribution.
 
@@ -31,21 +32,6 @@ that are handled by rescuept and not by any of the others,
 so let it be for the moment. 
 
 
-Two patches for bugs found in gpart-0.1c:
-=================================================================
-diff -r ../gpart-0.1c/src/gm_ext2.c ./src/gm_ext2.c
-74c74,75
-<       if ((sb->s_errors != EXT2_ERRORS_CONTINUE) &&
----
->       if ((sb->s_errors != 0) &&
->           (sb->s_errors != EXT2_ERRORS_CONTINUE) &&
-78c79
-<       if (sb->s_state && (sb->s_state != EXT2_VALID_FS) && (sb->s_state != EXT2_ERROR_FS))
----
->       if (sb->s_state & ~(EXT2_VALID_FS | EXT2_ERROR_FS))
-=================================================================
-(Both bugs have the effect that good ext2 filesystems are not
-recognized by gpart-0.1c. Patches sent to gpart author.)
 
 
 
@@ -82,7 +68,7 @@ by gpart.)
 
 
 
-A comment:
+Comments:
 -----
 From: Nix <nix-kernel@vger.rutgers.edu>
 Subject: Re: [OFFTOPIC] Searching for filesystem locator
@@ -95,4 +81,29 @@ I've just tried this but it appears to suffer from a 2^31-sectors problem.
 > (iv) gpart
 
 ... but this proved a godsend.
+-----
+From: Chris L. Mason <cmason@unixzone.com>
+Subject: All hail rescuept!
+Date: Fri, 27 Aug 1999 22:58:24 -0400
+
+..rescuept got me out of a real jam!
+I tried fixdisktable without any luck.
+-----
+From: Osman <osman@Cable.EU.org>
+Subject: Re: rescuept
+Date: Thu, 26 Aug 1999 16:24:40 +0200 (CEST)
+
+Ok, This is what I tried:
+
+"./rescuept /dev/sdc > detection.txt"
+"cat detection.txt | sfdisk -f /dev/sdc"
+
+The "-f" was to force it because sfdisk didn't like the partitioning,
+whoehaha...
+After carefully looking at the data in "detection.txt",
+I remembered that I had created the table with the "dos compatibility"
+flag turned off. That gave me 31 sectors back at that time...
+Well after that I mounted the ext2 partition read-only and it looked
+recovered!
+Wowy !!!!
 -----

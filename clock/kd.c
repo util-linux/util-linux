@@ -3,6 +3,7 @@
 #include <fcntl.h>		/* for O_RDONLY */
 #include <sys/ioctl.h>
 
+#include "../defines.h"		/* for HAVE_nanosleep */
 #include "clock.h"
 #include "nls.h"
 
@@ -46,6 +47,20 @@ synchronize_to_clock_tick_kd(void) {
 	
   i = 0;
   do {
+    /* Added by Roman Hodek <Roman.Hodek@informatik.uni-erlangen.de> */
+    /* "The culprit is the fast loop with KDGHWCLK ioctls. It seems
+       the kernel gets confused by those on Amigas with A2000 RTCs
+       and simply hangs after some time. Inserting a nanosleep helps." */
+    /* Christian T. Steigies: 1 instead of 1000000 is still sufficient
+       to keep the machine from freezing. */
+
+#ifdef HAVE_nanosleep
+    struct timespec sleep = { 0, 1 };
+    nanosleep( &sleep, NULL );
+#else
+    usleep(1);
+#endif
+
     if (i++ >= 1000000) {
       fprintf(stderr, _("Timed out waiting for time change.\n"));
       return 2;

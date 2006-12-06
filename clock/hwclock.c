@@ -75,9 +75,9 @@
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <shhopt.h>
+#include <stdarg.h>
 
 #include "clock.h"
-#include "../version.h"
 #include "nls.h"
 
 #define MYNAME "hwclock"
@@ -104,11 +104,19 @@ struct adjtime {
      structure is not what's in the disk file (because it has been
      updated since read from the disk file).  
      */
-  bool dirty;        
+  bool dirty;
+  /* line 1 */
   float drift_factor;    
   time_t last_adj_time;
   float not_adjusted;
+  /* line 2 */
   time_t last_calib_time;
+      /* The most recent time that we set the clock from an external
+	 authority (as opposed to just doing a drift adjustment) */
+  /* line 3 */
+  enum a_local_utc {LOCAL, UTC, UNKNOWN} local_utc;
+      /* To which time zone, local or UTC, we most recently set the
+	 hardware clock. */
 };
 
 bool debug;
@@ -189,6 +197,25 @@ time_inc(struct timeval addend, float increment) {
 }
 
 
+static bool
+hw_clock_is_utc(const bool utc, const bool local_opt,
+		const struct adjtime adjtime) {
+	bool ret;
+
+	if (utc)
+		ret = TRUE;	/* --utc explicitly given on command line */
+	else if (local_opt)
+		ret = FALSE;	/* --localtime explicitly given */
+	else
+				/* get info from adjtime file - default is local */
+		ret = (adjtime.local_utc == UTC);
+	if (debug)
+		printf(_("Assuming hardware clock is kept in %s time.\n"),
+		       ret ? _("UTC") : _("local"));
+	return ret;
+}
+
+
 
 static void
 read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
@@ -214,6 +241,7 @@ read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
     adjtime_p->last_adj_time = 0;
     adjtime_p->not_adjusted = 0;
     adjtime_p->last_calib_time = 0;
+    adjtime_p->local_utc = UNKNOWN;
 
     *rc_p = 0;
   } else { 
@@ -224,11 +252,14 @@ read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
     } else {
       char line1[81];           /* String: first line of adjtime file */
       char line2[81];           /* String: second line of adjtime file */
+      char line3[81];           /* String: third line of adjtime file */
       
       line1[0] = '\0';          /* In case fgets fails */
       fgets(line1, sizeof(line1), adjfile);
       line2[0] = '\0';          /* In case fgets fails */
       fgets(line2, sizeof(line2), adjfile);
+      line3[0] = '\0';          /* In case fgets fails */
+      fgets(line3, sizeof(line3), adjfile);
       
       fclose(adjfile);
       
@@ -244,6 +275,19 @@ read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
              &adjtime_p->not_adjusted);
       
       sscanf(line2, "%d", (int *) &adjtime_p->last_calib_time);
+
+      if (!strcmp(line3, "UTC\n"))
+	adjtime_p->local_utc = UTC;
+      else if (!strcmp(line3, "LOCAL\n"))
+	adjtime_p->local_utc = LOCAL;
+      else {
+	adjtime_p->local_utc = UNKNOWN;
+	if (line3[0]) {
+	  fprintf(stderr, _("%s: Warning: unrecognized third line in adjtime file\n"),
+		  MYNAME);
+	  fprintf(stderr, _("(Expected: `UTC' or `LOCAL' or nothing.)\n"));
+	}
+      }
       
       *rc_p = 0;
     }
@@ -254,6 +298,9 @@ read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
              (int) adjtime_p->last_adj_time);
       printf(_("Last calibration done at %d seconds after 1969\n"),
              (int) adjtime_p->last_calib_time);
+      printf(_("Hardware clock is on %s time\n"),
+	     (adjtime_p->local_utc == LOCAL) ? _("local") :
+	     (adjtime_p->local_utc == UTC) ? _("UTC") : _("unknown"));
     }
   }
 }
@@ -312,7 +359,6 @@ mktime_tz(struct tm tm, const bool universal,
      changing the local time zone to UTC.
      */
   zone = (char *) getenv("TZ");	/* remember original time zone */
-  mktime_result = mktime(&tm);
   if (universal) {
     /* Set timezone to UTC */
     setenv("TZ", "", TRUE);
@@ -340,7 +386,9 @@ mktime_tz(struct tm tm, const bool universal,
     *valid_p = TRUE;
     *systime_p = mktime_result;
     if (debug) 
-      printf(_("Hw clock time : %.2d:%.2d:%.2d = %d seconds since 1969\n"),
+      printf(_("Hw clock time : %2d/%.2d/%.2d %.2d:%.2d:%.2d = "
+	       "%d seconds since 1969\n"),
+	     tm.tm_year, tm.tm_mon+1, tm.tm_mday,
              tm.tm_hour, tm.tm_min, tm.tm_sec, (int) *systime_p);
   }
   /* now put back the original zone.  */
@@ -578,10 +626,7 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
 
    Also set the kernel time zone value to the value indicated by the 
    TZ environment variable and/or /usr/lib/zoneinfo/, interpreted as
-   tzset() would interpret them.  Except: do not consider Daylight
-   Savings Time to be a separate component of the time zone.  Include
-   any effect of DST in the basic timezone value and set the kernel
-   DST value to 0.
+   tzset() would interpret them.
 
    EXCEPT: if hclock_valid is false, just issue an error message
    saying there is no valid time in the Hardware Clock to which to set
@@ -590,7 +635,7 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
    If 'testing' is true, don't actually update anything -- just say we 
    would have.
 -----------------------------------------------------------------------------*/
-  int retcode;  /* our eventual return code */
+  int retcode;
 
   if (!hclock_valid) {
     fprintf(stderr,_("The Hardware Clock does not contain a valid time, so "
@@ -598,32 +643,30 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
     retcode = 1;
   } else {
     struct timeval tv;
-    int rc;  /* local return code */
+    int rc;
     
     tv.tv_sec = newtime;
     tv.tv_usec = 0;
     
-    tzset(); /* init timezone, daylight from TZ or ...zoneinfo/localtime */
-    /* An undocumented function of tzset() is to set global variabales
-       'timezone' and 'daylight'
-       */
+    tzset(); /* init timezone from TZ or ...zoneinfo/localtime */
     
     if (debug) {
       printf( _("Calling settimeofday:\n") );
       printf( _("\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"),
              (long) tv.tv_sec, (long) tv.tv_usec );
-      printf( _("\ttz.tz_minuteswest = %ld\n"), timezone/60 - 60*daylight);
+      printf( _("\ttz.tz_minuteswest = %ld\n"), timezone/60);
     }
     if (testing) {
       printf(_("Not setting system clock because running in test mode.\n"));
       retcode = 0;
     } else {
       /* For documentation of settimeofday(), in addition to its man page,
-         see kernel/time.c in the Linux source code.  
-         */
-      const struct timezone tz = { timezone/60 - 60*daylight, 0 };
-      /* put daylight in minuteswest rather than dsttime,
-         since the latter is mostly ignored ... */
+         see kernel/time.c in the Linux source code.
+	 The code used to have `-60*daylight' here, but that is wrong.
+	 The variable `daylight' does not specify whether it is DST now. */
+
+      const struct timezone tz = { timezone/60, 0 };
+
       rc = settimeofday(&tv, &tz);
       if (rc != 0) {
         if (errno == EPERM)
@@ -744,16 +787,17 @@ save_adjtime(const struct adjtime adjtime, const bool testing) {
   But if the contents are clean (unchanged since read from disk), don't
   bother.
 -----------------------------------------------------------------------------*/
-  char newfile[405];   /* Stuff to write to disk file */
+  char newfile[412];   /* Stuff to write to disk file */
 
   if (adjtime.dirty) {
     /* snprintf is not always available, but this is safe
        as long as libc does not use more than 100 positions for %ld or %f */
-    sprintf(newfile, "%f %ld %f\n%ld\n",
+    sprintf(newfile, "%f %ld %f\n%ld\n%s\n",
              adjtime.drift_factor,
              (long) adjtime.last_adj_time,
              adjtime.not_adjusted,
-             (long) adjtime.last_calib_time  );
+             (long) adjtime.last_calib_time,
+	     (adjtime.local_utc == UTC) ? "UTC" : "LOCAL");
 
     if (testing) {
       printf(_("Not updating adjtime file because of testing mode.\n"));
@@ -883,9 +927,8 @@ manipulate_clock(const bool show, const bool adjust,
                  const bool set, const time_t set_time,
                  const bool hctosys, const bool systohc, 
                  const struct timeval startup_time, 
-                 const bool universal, const bool testing,
-                 int *retcode_p
-                 ) {
+                 const bool utc, const bool local_opt,
+		 const bool testing, int *retcode_p) {
 /*---------------------------------------------------------------------------
   Do all the normal work of hwclock - read, set clock, etc.
 
@@ -902,7 +945,7 @@ manipulate_clock(const bool show, const bool adjust,
 
   if (no_auth) *retcode_p = 1;
   else {
-    if (adjust || set || systohc) 
+    if (adjust || set || systohc || (!utc && !local_opt)) 
       read_adjtime(&adjtime, &rc);
     else {
       /* A little trick to avoid reading the file if we don't have to */
@@ -911,6 +954,14 @@ manipulate_clock(const bool show, const bool adjust,
     }
     if (rc != 0) *retcode_p = 2;
     else {
+      const bool universal = hw_clock_is_utc(utc, local_opt, adjtime);
+
+      if ((set || systohc || adjust) &&
+	  (adjtime.local_utc == UTC) != universal) {
+	adjtime.local_utc = universal ? UTC : LOCAL;
+	adjtime.dirty = TRUE;
+      }
+
       synchronize_to_clock_tick(retcode_p);  
         /* this takes up to 1 second */
       if (*retcode_p == 0) {
@@ -1016,6 +1067,66 @@ manipulate_epoch(const bool getepoch, const bool setepoch,
 #endif
 }
 
+/*
+    usage - Output (error and) usage information
+
+    This function is called both directly from main to show usage 
+    information and as fatal function from shhopt if some argument is 
+    not understood. In case of normal usage info FMT should be NULL. 
+    In that case the info is printed to stdout. If FMT is given 
+    usage will act like fprintf( stderr, fmt, ... ), show a usage 
+    information and terminate the program afterwards.
+*/
+static void 
+usage( const char *fmt, ... ) {
+  FILE    *usageto;
+  va_list ap;
+
+  usageto = fmt ? stderr : stdout;
+
+  fprintf( usageto, _(
+    "hwclock - query and set the hardware clock (RTC)\n\n"
+    "Usage: hwclock [function] [options...]\n\n"
+    "Functions:\n"
+    "  --help        show this help\n"
+    "  --show        read hardware clock and print result\n"
+    "  --set         set the rtc to the time given with --date\n"
+    "  --hctosys     set the system time from the hardware clock\n"
+    "  --systohc     set the hardware clock to the current system time\n"
+    "  --adjust      adjust the rtc to account for systematic drift since \n"
+    "                the clock was last set or adjusted\n"
+    "  --getepoch    print out the kernel's hardware clock epoch value\n"
+    "  --setepoch    set the kernel's hardware clock epoch value to the \n"
+    "                value given with --epoch\n"
+    "  --version     print out the version of hwclock to stdout\n"
+    "\nOptions: \n"
+    "  --utc         the hardware clock is kept in coordinated universal time\n"
+    "  --localtime   the hardware clock is kept in local time\n"
+    "  --directisa   access the ISA bus directly instead of /dev/rtc\n"
+    "  --badyear     ignore rtc's year because the bios is broken\n"
+    "  --date        specifies the time to which to set the hardware clock\n"
+    "  --epoch=year  specifies the year which is the beginning of the \n"
+    "                hardware clock's epoch value\n"
+    ));
+#ifdef __alpha__
+  fprintf( usageto, _(
+    "  --jensen, --arc, --srm, --funky-toy\n"
+    "                tell hwclock the type of alpha you have (see hwclock(8))\n"
+    ) );
+#endif
+
+
+  fflush(stdout);
+  if( fmt ) {
+    usageto = stderr;
+    va_start(ap, fmt);
+    vfprintf(stderr, fmt, ap);
+    va_end(ap);
+  }
+ 
+  exit( fmt ? 99 : 0 );
+}
+
 int 
 main(int argc, char **argv, char **envp) {
 
@@ -1034,12 +1145,14 @@ main(int argc, char **argv, char **envp) {
      are given by the option_def.  The only exception is <show>, which
      may be modified after parsing is complete to effect an implied option.
      */
-  bool show, set, systohc, hctosys, adjust, getepoch, setepoch, version;
-  bool ARCconsole, universal, testing, directisa, Jensen, SRM, funky_toy;
+  bool help, show, set, systohc, hctosys, adjust, getepoch, setepoch, version;
+  bool ARCconsole, utc, testing, directisa, Jensen, SRM, funky_toy;
+  bool local_opt;
   char *date_opt;
   int epoch_opt;
 
   const optStruct option_def[] = {
+    { 'h', (char *) "help",      OPT_FLAG,   &help,      0 },
     { 'r', (char *) "show",      OPT_FLAG,   &show,      0 },
     { 0,   (char *) "set",       OPT_FLAG,   &set,       0 },
     { 'w', (char *) "systohc",   OPT_FLAG,   &systohc,   0 },
@@ -1048,9 +1161,11 @@ main(int argc, char **argv, char **envp) {
     { 0,   (char *) "setepoch",  OPT_FLAG,   &setepoch,  0 },
     { 'a', (char *) "adjust",    OPT_FLAG,   &adjust,    0 },
     { 'v', (char *) "version",   OPT_FLAG,   &version,   0 },
+    { 'V', (char *) "version",   OPT_FLAG,   &version,   0 },
     { 0,   (char *) "date",      OPT_STRING, &date_opt,  0 },
     { 0,   (char *) "epoch",     OPT_UINT,   &epoch_opt, 0 },
-    { 'u', (char *) "utc",       OPT_FLAG,   &universal, 0 },
+    { 'u', (char *) "utc",       OPT_FLAG,   &utc,       0 },
+    { 0,   (char *) "localtime", OPT_FLAG,   &local_opt, 0 },
     { 0,   (char *) "badyear",   OPT_FLAG,   &badyear,   0 },
     { 0,   (char *) "directisa", OPT_FLAG,   &directisa, 0 },
     { 0,   (char *) "test",      OPT_FLAG,   &testing,   0 },
@@ -1073,8 +1188,8 @@ main(int argc, char **argv, char **envp) {
   textdomain(PACKAGE);
 
   /* set option defaults */
-  show = set = systohc = hctosys = adjust = getepoch = setepoch = 
-    version = universal = ARCconsole = SRM = funky_toy =
+  help = show = set = systohc = hctosys = adjust = getepoch = setepoch = 
+    version = utc = local_opt = ARCconsole = SRM = funky_toy =
     directisa = badyear = Jensen = testing = debug = FALSE;
   date_opt = NULL;
   epoch_opt = -1; 
@@ -1082,8 +1197,8 @@ main(int argc, char **argv, char **envp) {
   argc_parse = argc; argv_parse = argv;
   optParseOptions(&argc_parse, argv_parse, option_def, 0);
     /* Uses and sets argc_parse, argv_parse. 
-       Sets show, systohc, hctosys, adjust, universal, version, testing, 
-       debug, set, date_opt, getepoch, setepoch, epoch_opt
+       Sets show, systohc, hctosys, adjust, utc, local_opt, version,
+       testing, debug, set, date_opt, getepoch, setepoch, epoch_opt
        */
     /* This is an ugly routine - for example, if I give an incorrect
        option, it only says "unrecognized option" without telling
@@ -1091,16 +1206,24 @@ main(int argc, char **argv, char **envp) {
        getopt() and usage() and throw shhopt out. */
   
   if (argc_parse - 1 > 0) {
-    fprintf(stderr, _("%s takes no non-option arguments.  "
+    usage( _("%s takes no non-option arguments.  "
             "You supplied %d.\n"),
             MYNAME, argc_parse - 1);
-    exit(100);
   }
+
+  if (help)
+    usage( NULL );
 
   if (show + set + systohc + hctosys + adjust + 
       getepoch + setepoch + version > 1) {
     fprintf(stderr, _("You have specified multiple function options.\n"
             "You can only perform one function at a time.\n"));
+    exit(100);
+  }
+
+  if (utc && local_opt) {
+    fprintf(stderr, _("%s: The --utc and --localtime options are mutually "
+		      "exclusive.  You specified both.\n"), MYNAME);
     exit(100);
   }
 
@@ -1145,6 +1268,8 @@ main(int argc, char **argv, char **envp) {
     } else if (getepoch || setepoch) {
       manipulate_epoch(getepoch, setepoch, epoch_opt, testing);
     } else {
+      if (debug)
+        printf(MYNAME " " VERSION "/%s\n",util_linux_version);
       determine_clock_access_method(directisa);
       if (!ur)
         fprintf(stderr, _("Cannot access the Hardware Clock via any known "
@@ -1152,7 +1277,7 @@ main(int argc, char **argv, char **envp) {
                 "search for an access method.\n"));
       else
         manipulate_clock(show, adjust, set, set_time, hctosys, systohc, 
-                         startup_time, universal, testing, &rc);
+                         startup_time, utc, local_opt, testing, &rc);
     }
   }
   exit(retcode);
@@ -1161,7 +1286,7 @@ main(int argc, char **argv, char **envp) {
 /* A single routine for greater uniformity */
 void
 outsyserr(char *msg) {
-	fprintf(stderr, _("%s: %s, errno=%d: %s.\n"),
+	fprintf(stderr, "%s: %s, errno=%d: %s.\n",
 		progname, msg, errno, strerror(errno));
 }
 

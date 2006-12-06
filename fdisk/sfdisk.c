@@ -32,7 +32,7 @@
 
 #define PROGNAME "sfdisk"
 #define VERSION "3.07"
-#define DATE "980518"
+#define DATE "990908"
 
 #include <stdio.h>
 #include <stdlib.h>		/* atoi, free */
@@ -48,7 +48,6 @@
 #include <linux/unistd.h>	/* _syscall */
 #include <linux/hdreg.h>	/* HDIO_GETGEO */
 #include <linux/fs.h>		/* BLKGETSIZE */
-#include <locale.h>
 #include "nls.h"
 #include "common.h"
 
@@ -829,7 +828,7 @@ void
 out_partition_header(char *dev, int format, struct geometry G) {
     if (dump) {
 	printf(_("# partition table of %s\n"), dev);
-	printf(_("unit: sectors\n\n"));
+	printf("unit: sectors\n\n");
 	return;
     }
 
@@ -929,12 +928,12 @@ out_partition(char *dev, int format, struct part_desc *p,
     size = p->size;
 
     if (dump) {
-	printf(_(" start=%9lu"), start);
-	printf(_(", size=%8lu"), size);
+	printf(" start=%9lu", start);
+	printf(", size=%8lu", size);
 	if (p->ptype == DOS_TYPE) {
-	    printf(_(", Id=%2x"), p->p.sys_type);
+	    printf(", Id=%2x", p->p.sys_type);
 	    if (p->p.bootable == 0x80)
-		printf(_(", bootable"));
+		printf(", bootable");
 	}
 	printf("\n");
 	return;
@@ -1012,16 +1011,24 @@ out_partition(char *dev, int format, struct part_desc *p,
 
 void
 out_partitions(char *dev, struct disk_desc *z) {
+    struct part_desc *p;
     int pno, format = 0;
 
     if (z->partno == 0)
 	printf(_("No partitions found\n"));
     else {
-	if (get_fdisk_geometry(&(z->partitions[0])))
-	    printf(_("Warning: The first partition looks like it was made\n"
+	for (pno=0; pno < z->partno; pno++) {
+	    p = &(z->partitions[pno]);
+	    if (p->size != 0 && p->p.sys_type != 0) {
+		if (get_fdisk_geometry(p))
+		    printf(
+		   _("Warning: The first partition looks like it was made\n"
 		     "  for C/H/S=*/%ld/%ld (instead of %ld/%ld/%ld).\n"
 		     "For this listing I'll assume that geometry.\n"),
 		   F.heads, F.sectors, B.cylinders, B.heads, B.sectors);
+		break;
+	    }
+	}
 	out_partition_header(dev, format, F);
 	for(pno=0; pno < z->partno; pno++) {
 	    out_partition(dev, format, &(z->partitions[pno]), z, F);

@@ -30,6 +30,7 @@
    - added Native Language Support
 
 */
+#include "../defines.h"		/* for util-linux-version */
 
 
 /* configuration options  VVVVV   READ THIS!!! */
@@ -150,6 +151,11 @@ main (int argc, char *argv[])
     struct disc_time hastur;
     char schwa[23*17], *fnord=0;
     int pi;
+    char *progname, *p;
+
+    progname = argv[0];
+    if ((p = strrchr(progname, '/')) != NULL)
+	progname = p+1;
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
@@ -162,6 +168,8 @@ main (int argc, char *argv[])
 	case '+': fnord=argv[pi]+1; break;
 	case '-': 
 	    switch(argv[pi][1]) {
+	    case 'V':
+		printf(_("%s from %s\n"), progname, util_linux_version);
 	    default: goto usage;
 	    }
 	default: goto thud;
@@ -281,7 +289,7 @@ struct disc_time makeday(int imonth,int iday,int iyear) /*i for input */
     funkychickens.day=dayspast+iday-1;
     funkychickens.season=0;
     if((funkychickens.year%4)==2) {
-	if (funkychickens.day==59)  funkychickens.day=-1;
+	if (funkychickens.day==59 && iday==29)  funkychickens.day=-1;
     }
     funkychickens.yday=funkychickens.day;
 /*               note: EQUAL SIGN...hopefully that fixes it */

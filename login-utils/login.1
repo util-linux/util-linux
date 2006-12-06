@@ -35,14 +35,14 @@ these must be met, or the log in attempt will be denied and a
 .B syslog
 message will be generated. See the section on "Special Access Restrictions".
 
-If the user is root, then the login must be occuring on a tty listed in
+If the user is root, then the login must be occurring on a tty listed in
 .IR /etc/securetty .
 Failures will be logged with the
 .B syslog
 facility.
 
-After these conditions are checked, the password will be requested and
-checks (if a password is required for this username).  Ten attempts
+After these conditions have been checked, the password will be requested and
+checked (if a password is required for this username).  Ten attempts
 are allowed before
 .B login
 dies, but after the first three, the response starts to get very slow.
@@ -53,8 +53,8 @@ facility.  This facility is also used to report any successful root logins.
 If the file
 .I .hushlogin
 exists, then a "quiet" login is performed (this disables the checking
-of the checking of mail and the printing of the last login time and
-message of the day).  Otherwise, if
+of mail and the printing of the last login time and message of the day).
+Otherwise, if
 .I /var/log/lastlog
 exists, the last login time is printed (and the current login is
 recorded).

@@ -68,8 +68,6 @@
 #include "nls.h"
 #include "env.h"
 
-#include "../version.h"
-
 #ifndef _PATH_CHFN
 # define _PATH_CHFN "/usr/bin/chfn"
 # define _PATH_CHSH "/usr/bin/chsh"

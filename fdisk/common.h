@@ -6,3 +6,4 @@ struct systypes {
 };
 
 extern struct systypes i386_sys_types[];
+

@@ -162,6 +162,23 @@
 #include "setproctitle.h"
 #endif
 
+/*
+ * RedHat writes:
+ * we've got a REAL HACK to avoid telling people that they have
+ * mail because the imap server has left a turd in their inbox.
+ * It works, but it sucks...
+ * It turns out that the turd is always 523 bytes long, so we
+ * just check for that size.
+ */
+/*
+ * If you want to turn this strange hack off, set
+	#define REDHAT_IGNORED_MAILSIZE 0
+ * In case people complain, this may become a configuration option,
+ * or perhaps this hack is thrown out again.
+ * A better solution would be to check the contents of this file..
+ */
+#define REDHAT_IGNORED_MAILSIZE	523
+
 #if 0
 /* from before we had a lastlog.h file in linux */
 struct  lastlog
@@ -241,12 +258,23 @@ const char *months[] =
 { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
     "Sep", "Oct", "Nov", "Dec" };
 
-/* provided by Linus Torvalds 16-Feb-93 */
+/* Nice and simple code provided by Linus Torvalds 16-Feb-93 */
+/* Nonblocking stuff by Maciej W. Rozycki, macro@ds2.pg.gda.pl, 1999.
+   He writes: "Login performs open() on a tty in a blocking mode.
+   In some cases it may make login wait in open() for carrier infinitely,
+   for example if the line is a simplistic case of a three-wire serial
+   connection. I believe login should open the line in the non-blocking mode
+   leaving the decision to make a connection to getty (where it actually
+   belongs). */
 void 
 opentty(const char * tty)
 {
     int i;
-    int fd = open(tty, O_RDWR);
+    int fd = open(tty, O_RDWR | O_NONBLOCK);
+    int flags = fcntl(fd, F_GETFL);
+
+    flags &= ~O_NONBLOCK;
+    fcntl(fd, F_SETFL, flags);
     
     for (i = 0 ; i < fd ; i++)
       close(i);
@@ -483,6 +511,12 @@ main(int argc, char **argv)
     retcode = pam_set_item(pamh, PAM_RHOST, hostname);
     PAM_FAIL_CHECK;
     retcode = pam_set_item(pamh, PAM_TTY, tty);
+    PAM_FAIL_CHECK;
+
+    /* Andrew.Taylor@cal.montage.ca: Provide a user prompt to PAM
+       so that the "login: " prompt gets localized. Unfortunately,
+       PAM doesn't have an interface to specify the "Password: " string (yet). */
+    retcode = pam_set_item(pamh, PAM_USER_PROMPT, _("login: "));
     PAM_FAIL_CHECK;
 
 #if 0
@@ -1050,7 +1084,8 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	
 	motd();
 	mail = getenv("MAIL");
-	if (mail && stat(mail, &st) == 0 && st.st_size != 0) {
+	if (mail && stat(mail, &st) == 0 && st.st_size != 0
+		 && st.st_size != REDHAT_IGNORED_MAILSIZE) {
 		printf(_("You have %smail.\n"),
 		       (st.st_mtime > st.st_atime) ? _("new ") : "");
 	}

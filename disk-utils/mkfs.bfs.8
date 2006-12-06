@@ -1,0 +1,48 @@
+.\" Copyright 1999 Andries E. Brouwer (aeb@cwi.nl)
+.\" May be freely distributed.
+.TH MKFS.BFS 8 "12 Sept 1999" "Util-linux 2.9x" "Linux System Administrator's Manual"
+.SH NAME
+mkfs.bfs \- make an SCO bfs filesystem
+.SH SYNOPSIS
+.BR "mkfs.bfs [ \-N"
+nr-of-inodes
+.B ] [ \-V
+volume-name
+.B ] [ \-F
+fsname
+.B ]
+device 
+.B [ 
+size-in-blocks
+.B ]
+.SH DESCRIPTION
+.B mkfs.bfs
+creates an SCO bfs file-system on a block device
+(usually a disk partition or a file accessed via the loop device).
+
+The
+.I size-in-blocks
+parameter is the desired size of the file system, in blocks.
+If nothing is specified, the entire partition will be used.
+
+.SH OPTIONS
+.TP
+.B \-N
+Specify the desired number of inodes (at most 512).
+If nothing is specified some default number in the range 48-512 is picked
+depending on the size of the partition.
+.TP
+.BI \-V " volume-label"
+Specify the volume label. I have no idea if/where this is used.
+.TP
+.BI \-F " fsname"
+Specify the fsname. I have no idea if/where this is used.
+.TP
+.B \-v
+Be verbose.
+.SH "EXIT CODES"
+The exit code returned by
+.B mkfs.bfs
+is 0 when all went well, and 1 when something went wrong.
+.SH "SEE ALSO"
+.BR mkfs (8).

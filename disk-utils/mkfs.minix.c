@@ -76,7 +76,6 @@
 #include <linux/minix_fs.h>
 
 #include "nls.h"
-#include "../version.h"
 
 #ifdef MINIX2_SUPER_MAGIC2
 #define HAVE_MINIX2 1
@@ -489,6 +488,7 @@ void setup_tables(void)
 	ZONESIZE = 0;
 	MAXSIZE = version2 ? 0x7fffffff : (7+512+512*512)*1024;
 	ZONES = BLOCKS;
+
 /* some magic nrs: 1 inode / 3 blocks */
 	if ( req_nr_inodes == 0 ) 
 		inodes = BLOCKS/3;
@@ -507,9 +507,13 @@ void setup_tables(void)
 		inodes = 65535;
 	INODES = inodes;
 	IMAPS = UPPER(INODES + 1,BITS_PER_BLOCK);
-	ZMAPS = 0;
-	while (ZMAPS != UPPER(BLOCKS - NORM_FIRSTZONE + 1,BITS_PER_BLOCK))
-		ZMAPS = UPPER(BLOCKS - NORM_FIRSTZONE + 1,BITS_PER_BLOCK);
+	ZMAPS = UPPER(BLOCKS - (1+IMAPS+INODE_BLOCKS), BITS_PER_BLOCK+1);
+	/* The old code here
+	 * ZMAPS = 0;
+	 * while (ZMAPS != UPPER(BLOCKS - NORM_FIRSTZONE + 1,BITS_PER_BLOCK))
+	 *	  ZMAPS = UPPER(BLOCKS - NORM_FIRSTZONE + 1,BITS_PER_BLOCK);
+	 * was no good, since it may loop. - aeb
+	 */
 	FIRSTZONE = NORM_FIRSTZONE;
 	inode_map = malloc(IMAPS * BLOCK_SIZE);
 	zone_map = malloc(ZMAPS * BLOCK_SIZE);
@@ -630,9 +634,23 @@ int main(int argc, char ** argv)
   char * tmp;
   struct stat statbuf;
   char * listfile = NULL;
+  char * p;
 
   if (argc && *argv)
     program_name = *argv;
+  if ((p = strrchr(program_name, '/')) != NULL)
+    program_name = p+1;
+
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
+
+  if (argc == 2 &&
+      (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
+	  printf(_("%s from %s\n"), program_name, util_linux_version);
+	  exit(0);
+  }
+
   if (INODE_SIZE * MINIX_INODES_PER_BLOCK != BLOCK_SIZE)
     die(_("bad inode size"));
 #ifdef HAVE_MINIX2

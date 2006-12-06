@@ -43,7 +43,7 @@
 
 #define BSD_LINUX_BOOTDIR "/usr/ucb/mdec"
 
-#if defined (i386) || defined (sparc)
+#if defined (i386) || defined (__sparc__) || defined (__arm__)
 #define BSD_LABELSECTOR   1
 #define BSD_LABELOFFSET   0
 #elif defined (__alpha__) || defined (__powerpc__)

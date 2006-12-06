@@ -91,6 +91,7 @@ struct ntfs_super_block {
 struct fat_super_block {
     u_char    s_dummy[3];
     u_char    s_os[8];		/* "MSDOS5.0" or "MSWIN4.0" or "MSWIN4.1" */
+				/* mtools-3.9.4 writes "MTOOL394" */
     u_char    s_dummy2[32];
     u_char    s_label[11];	/* for DOS? */
     u_char    s_fs[8];		/* "FAT12   " or "FAT16   " or all zero   */
