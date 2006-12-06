@@ -59,7 +59,7 @@ char *sys_signame[NSIG] = {
 #endif
 
 int main (int argc, char *argv[]);
-char *mybasename(char *pathname);
+extern char *mybasename(char *);
 int signame_to_signum (char *sig);
 int arg_to_signum (char *arg);
 void nosig (char *name);
@@ -144,8 +144,12 @@ int main (int argc, char *argv[])
 	    continue;
 	}
 	/*  `arg' begins with a dash but is not a known option.
-	    so it's probably something like -HUP.
-	    try to deal with it.  */
+	    so it's probably something like -HUP, or -1/-n
+	    try to deal with it.
+	    -n could be signal n, or pid -n (i.e. process group n).
+	    If a signal has been parsed, assume it's a pid, break */
+	if (do_kill)
+	  break;
 	arg++;
 	if ((numsig = arg_to_signum (arg)) < 0) {
 	    return usage (1);
@@ -186,13 +190,6 @@ int main (int argc, char *argv[])
     return (errors);
 }
 
-char *mybasename (char *path)
-{
-    char *cp;
-
-    cp = strrchr (path, '/');
-    return (cp ? cp + 1 : path);
-}
 
 int signame_to_signum (char *sig)
 {

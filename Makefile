@@ -5,22 +5,22 @@
 # May be distributed under the terms of the GNU GPL.
 #
 
-VERSION=2.5
+VERSION=2.7.1
 
 include ./MCONFIG
+
+ifeq "$(HAVE_MOUNT)" "no"
+	MOUNTDIR=mount
+endif
 
 SUBDIRS= bsd \
 	disk-utils \
 	games \
 	login-utils \
 	misc-utils \
-	mount \
+	$(MOUNTDIR) \
 	sys-utils \
 	text-utils
-
-ifeq "$(HAVE_SYSLOGD)" "no"
-SUBDIRS:=$(SUBDIRS) syslogd
-endif
 
 .PHONEY: all install clean
 all:
@@ -36,7 +36,7 @@ install:
 
 clean:
 	-rm -f *.o *~ core poe.diffs
-	@for subdir in $(SUBDIRS) historic/selection; do \
+	@for subdir in $(SUBDIRS); do \
 		(cd $$subdir && $(MAKE) $@) || exit 1; \
 	done
 
@@ -50,8 +50,7 @@ dist:
 	find -type d | xargs chown root:root; \
 	find -type f | xargs chown root:root; \
 	cd ..; \
-	tar cvvf util-linux-$(VERSION).tar util-linux-$(VERSION); \
-	gzip -9 util-linux-$(VERSION).tar; \
+	GZIP=-9 tar cvvzf util-linux-$(VERSION).tar.gz util-linux-$(VERSION); \
 	cp -p util-linux-$(VERSION)/LSM util-linux-$(VERSION).lsm; \
 	cp -p util-linux-$(VERSION)/ANNOUNCE util-linux-$(VERSION).Announce; \
 	echo Done.)

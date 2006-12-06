@@ -1,0 +1,155 @@
+shhopt - library for parsing command line options.
+==================================================
+
+This is a set of functions for parsing command line options. Both
+traditional one-character options, and GNU-style --long-options are
+supported.
+
+
+What separates this from traditional getopt?
+--------------------------------------------
+
+This library does more of the parsing for you. You set up a special
+structure describing the names and types of the options you want your
+program to support. In the structure you also give addresses of
+variables to update or functions to call for the various
+options. By calling optParseOptions, all options in argv are parsed
+and removed from argv. What is left, are the non-optional arguments to
+your program.
+
+The down-side of this, is that you won't be able to make a program
+where the position of the options between the non-options are
+significant.
+
+
+Usage
+-----
+
+To see how to use this library, take a look at the sample program
+example.c.
+
+A brief explanation:
+
+To parse your command line, you need to create and initialize an array
+of optStruct's. Each element in the array describes a long and short
+version of an option and specifies what type of option it is and how
+to handle it.
+
+The structure fields (see also shhopt.h):
+
+  `shortName' is the short option name without the leading '-'.
+
+  `longName' is the long option name without the leading "--".
+
+  `type' specifies what type of option this is. (Does it expect an
+      argument? Is it a flag? If it takes an argument,what type should
+      it be?)
+
+  `arg' is either a function to be called with the argument from
+      the commandline, or a pointer to a location in which to store
+      the value.
+
+  `flags' indicates whether `arg' points to a function or a storage
+      location.
+
+The different argument types:
+
+  `OPT_END' flags this as the last element in the options array.
+
+  `OPT_FLAG' indicates an option that takes no arguments. If `arg' is
+      not a function pointer, the value of `arg' will be set to 1 if
+      this flag is found on the command line.
+
+  `OPT_STRING' expects a string argument.
+
+  `OPT_INT' expects an int argument.
+
+  `OPT_UINT' expects an unsigned int argument.
+
+  `OPT_LONG' expects a long argument.
+
+  `OPT_ULONG' expects an unsigned long argument.
+
+The different flag types:
+
+  `OPT_CALLFUNC' indicates that `arg' is a function pointer. If this
+      is not given, `arg' is taken as a pointer to a variable.
+
+
+Notes
+-----
+
+* A dash (`-') by itself is not taken as any kind of an option, as
+  several programs use this to indicate the special files stdin and
+  stdout. It is thus left as a normal argument to the program.
+
+* Two dashes (`--') as an argument, is taken to mean that the rest of
+  the arguments should not be scanned for options. This simplifies
+  giving names of files that start with a dash.
+
+* Short (one-character) options accept parameters in two ways, either
+  directly following the option in the same argv-entry, or in the next
+  argv-entry:
+
+	-sPARAMETER
+	-s PARAMETER
+
+* Long options accept parameters in two ways:
+
+	--long-option=PARAMETER
+	--long-option PARAMETER
+
+  To follow the GNU-tradition, your program documentation should use
+  the first form.
+
+* Several one-character options may be combined after a single
+  dash. If any of the options requires a parameter, the rest of the
+  string is taken as this parameter. If there is no "rest of the
+  string", the next argument is taken as the parameter.
+
+* There is no support for floating point (double) arguments to
+  options. This is to avoid unnecessary linking with the math
+  library. See example.c for how to get around this by writing a
+  function converting a string argument to a double.
+
+
+Portability
+-----------
+
+If your libc lacks strtoul, you will need to link with GNU's -liberty,
+that may be found by anonymous ftp to prep.ai.mit.edu:/pub/gnu
+
+The library has (more or less recently) been compiled and `tested' on
+the following systems:
+
+	IRIX Release 5.3 IP22
+	Linux 1.2.9
+	SunOS Release 4.1.3_U1 (-liberty needed)
+	ULTRIX V4.4 (Rev. 69)
+
+All compilations were done using GNU's gcc, and GNU's make.
+
+
+Author
+------
+
+The program is written by
+
+	Sverre H. Huseby
+	Maridalsvn. 122, leil. 101
+	N-0461 Oslo
+	Norway
+
+	sverrehu@ifi.uio.no
+	http://www.ifi.uio.no/~sverrehu/
+
+You can use and copy this for free. If you decide to use it, please do
+me three small favours:
+
+	1. Tell me! (E-mail, postcard, letter, whatever. If you wish
+	   to give me something, please send a bottle of your
+	   favourite beer (making this BeerWare))
+	2. Let your friends and favourite download site have a copy!
+	   (with all files intact, please..)
+	3. Report any bugs you find!
+

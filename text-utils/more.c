@@ -32,21 +32,33 @@ static char sccsid[] = "@(#)more.c	5.19 (Berkeley) 6/29/88";
 **
 **	modified by Geoff Peck, UCB to add underlining, single spacing
 **	modified by John Foderaro, UCB to add -c and MORE environment variable
+**	modified by Erik Troan <ewt@redhat.com> to be more posix and so compile
+**	  on linux/axp.
+**	modified by Kars de Jong <jongk@cs.utwente.nl> to use terminfo instead
+**	  of termcap.
 */
 
 #include <stdio.h>
+#include <string.h>
 #include <unistd.h>
+#include <stdlib.h>		/* for alloca() */
 #include <sys/param.h>
 #include <ctype.h>
 #include <signal.h>
 #include <errno.h>
 #include <termios.h>
 #include <setjmp.h>
+#include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/file.h>
+#include <sys/wait.h>
 #include <a.out.h>
-#include <varargs.h>
-#include <termcap.h>
+#if NCH
+#include <ncurses.h>
+#else
+#include <curses.h>
+#endif
+#include <term.h>
 
 #define HELPFILE	"/usr/lib/more.help"
 #define VI		"/usr/bin/vi"
@@ -57,25 +69,40 @@ static char sccsid[] = "@(#)more.c	5.19 (Berkeley) 6/29/88";
 #define Getc(f)		(++file_pos, getc(f))
 #define Ungetc(c,f)	(--file_pos, ungetc(c,f))
 
-#define stty(fd,argp)	ioctl(fd,TCSETAF,argp)
+#define stty(fd,argp)	ioctl(fd,TCSETSF,argp)
 
 /* some function declarations */
-void initterm();
+void initterm(void);
+void kill_line(void);
+void doclear(void);
+void cleareol(void);
+void clreos(void);
+void home(void);
+void error (char *mess);
+void do_shell (char *filename);
+int  colon (char *filename, int cmd, int nlines);
+int  expand (char *outbuf, char *inbuf);
 void argscan(char *s);
+void rdline (register FILE *f);
 void copy_file(register FILE *f);
-void doclear();
-void home();
 void search(char buf[], FILE *file, register int n);
+void skipf (register int nskip);
 void skiplns(register int n, register FILE *f);
 void screen (register FILE *f, register int num_lines);
 int  command (char *filename, register FILE *f);
-void erase (register int col);
-void cleareol();
-void clreos();
+void erasep (register int col);
+void show (register char ch);
 int  pr(char *s1);
-void reset_tty();
-int  getline(register FILE *f, int *length);
+int  printd (int n);
+void set_tty(void);
+void reset_tty(void);
+void ttyin (char buf[], register int nmax, char pchar);
+int  number(char *cmd);
+int  readch (void);
+int  get_line(register FILE *f, int *length);
 void prbuf (register char *s, register int n);
+int  xprintf (char *fmt, ...);
+void execute (char *filename, char *cmd, ...);
 
 #define TBUFSIZ	1024
 #define LINSIZ	256
@@ -84,7 +111,7 @@ void prbuf (register char *s, register int n);
 #define ESC	'\033'
 #define QUIT	'\034'
 
-struct termio	otty, savetty;
+struct termios	otty, savetty0;
 long		file_pos, file_size;
 int		fnum, no_intty, no_tty, slow_tty;
 int		dum_opt, dlines;
@@ -149,7 +176,7 @@ int main(int argc, char **argv) {
     int			initopt = 0;
     int			srchopt = 0;
     int			clearit = 0;
-    int			initline;
+    int			initline = 0;
     char		initbuf[80];
     FILE		*checkf();
 
@@ -159,7 +186,7 @@ int main(int argc, char **argv) {
     nscroll = Lpp/2 - 1;
     if (nscroll <= 0)
 	nscroll = 1;
-    if(s = getenv("MORE")) argscan(s);
+    if((s = getenv("MORE")) != NULL) argscan(s);
     while (--nfiles > 0) {
 	if ((ch = (*++fnames)[0]) == '-') {
 	    argscan(*fnames+1);
@@ -279,12 +306,12 @@ int main(int argc, char **argv) {
 			doclear ();
 		if (prnames) {
 		    if (bad_so)
-			erase (0);
+			erasep (0);
 		    if (clreol)
 			cleareol ();
 		    pr("::::::::::::::");
 		    if (promptlen > 14)
-			erase (14);
+			erasep (14);
 		    xprintf ("\n");
 		    if(clreol) cleareol();
 		    xprintf("%s\n", fnames[fnum]);
@@ -425,23 +452,6 @@ magic(f, fs)
 }
 
 /*
-** A real function, for the tputs routine in termlib
-*/
-#ifdef __linux__
-int putch( int ch )
-#else
-void
-putch (ch)
-char ch;
-#endif
-{
-    putchar (ch);
-#ifdef __linux__
-    return 0;
-#endif
-}
-
-/*
 ** Print out the contents of the file f, one screenful at a time.
 */
 
@@ -456,7 +466,7 @@ void screen (register FILE *f, register int num_lines)
 
     for (;;) {
 	while (num_lines > 0 && !Pause) {
-	    if ((nchars = getline (f, &length)) == EOF)
+	    if ((nchars = get_line (f, &length)) == EOF)
 	    {
 		if (clreol)
 		    clreos();
@@ -466,7 +476,7 @@ void screen (register FILE *f, register int num_lines)
 		continue;
 	    prev_len = length;
 	    if (bad_so || ((Senter && *Senter == ' ') && (promptlen > 0)))
-		erase (0);
+		erasep (0);
 	    /* must clear before drawing line since tabs on some terminals
 	     * do not erase what they tab over.
 	     */
@@ -474,7 +484,7 @@ void screen (register FILE *f, register int num_lines)
 		cleareol ();
 	    prbuf (Line, length);
 	    if (nchars < promptlen)
-		erase (nchars);	/* erase () sets promptlen to 0 */
+		erasep (nchars);	/* erasep () sets promptlen to 0 */
 	    else promptlen = 0;
 	    /* is this needed?
 	     * if (clreol)
@@ -487,7 +497,7 @@ void screen (register FILE *f, register int num_lines)
 	    num_lines--;
 	}
 	if (pstate) {
-		tputs(ULexit, 1, putch);
+		putp (ULexit);
 		pstate = 0;
 	}
 	fflush(stdout);
@@ -506,7 +516,7 @@ void screen (register FILE *f, register int num_lines)
 	if ((num_lines = command (NULL, f)) == 0)
 	    return;
 	if (hard && promptlen > 0)
-		erase (0);
+		erasep (0);
 	if (noscroll && num_lines >= dlines)
 	{
 	    if (clreol)
@@ -599,16 +609,14 @@ void copy_file(register FILE *f) {
 
 /* Simplified printf function */
 
-int xprintf (fmt, va_alist)
-register char *fmt;
-va_dcl
+int xprintf (char *fmt, ...)
 {
 	va_list ap;
 	register char ch;
 	register int ccount;
 
 	ccount = 0;
-	va_start(ap);
+	va_start(ap, fmt);
 	while (*fmt) {
 		while ((ch = *fmt++) != '%') {
 			if (ch == '\0')
@@ -643,12 +651,11 @@ va_dcl
 ** returning the length of the print representation.
 */
 
-printd (n)
-int n;
+int printd (int n)
 {
     int a, nchars;
 
-    if (a = n/10)
+    if ((a = n/10) != 0)
 	nchars = 1 + printd(a);
     else
 	nchars = 1;
@@ -659,25 +666,22 @@ int n;
 /* Put the print representation of an integer into a string */
 static char *sptr;
 
-scanstr (n, str)
-int n;
-char *str;
+void Sprintf (int n) {
+    int a;
+
+    if ((a = n/10) != 0)
+	Sprintf (a);
+    *sptr++ = n % 10 + '0';
+}
+
+void scanstr (int n, char *str)
 {
     sptr = str;
     Sprintf (n);
     *sptr = '\0';
 }
 
-Sprintf (n)
-{
-    int a;
-
-    if (a = n/10)
-	Sprintf (a);
-    *sptr++ = n % 10 + '0';
-}
-
-static char bell = ctrl('G');
+static char my_bell = ctrl('G');
 
 #ifdef undef
 strlen (s)
@@ -696,7 +700,7 @@ char *s;
 ** string "string"
 */
 
-tailequ (path, string)
+int tailequ (path, string)
 char *path;
 register char *string;
 {
@@ -713,7 +717,7 @@ register char *string;
 	return(0);
 }
 
-prompt (filename)
+void prompt (filename)
 char *filename;
 {
     if (clreol)
@@ -723,7 +727,7 @@ char *filename;
     if (!hard) {
 	promptlen = 8;
 	if (Senter && Sexit) {
-	    tputs (Senter, 1, putch);
+	    putp (Senter);
 	    promptlen += (2 * soglitch);
 	}
 	if (clreol)
@@ -739,13 +743,13 @@ char *filename;
 	    promptlen += pr("[Press space to continue, 'q' to quit.]");
 	}
 	if (Senter && Sexit)
-	    tputs (Sexit, 1, putch);
+	    putp (Sexit);
 	if (clreol)
 	    clreos ();
 	fflush(stdout);
     }
     else
-	write (2, &bell, 1);
+	write (2, &my_bell, 1);
     inwait++;
 }
 
@@ -753,7 +757,7 @@ char *filename;
 ** Get a logical line
 */
 
-int getline(register FILE *f, int *length)
+int get_line(register FILE *f, int *length)
 {
     register int	c;
     register char	*p;
@@ -783,10 +787,10 @@ int getline(register FILE *f, int *length)
 	}
 	*p++ = c;
 	if (c == '\t')
-	    if (!hardtabs || column < promptlen && !hard) {
+	    if (!hardtabs || (column < promptlen && !hard)) {
 		if (hardtabs && eraseln && !dumb) {
 		    column = 1 + (column | 7);
-		    tputs (eraseln, 1, putch);
+		    putp (eraseln);
 		    promptlen = 0;
 		}
 		else {
@@ -837,7 +841,7 @@ int getline(register FILE *f, int *length)
 ** Erase the rest of the prompt, assuming we are starting at column col.
 */
 
-void erase (register int col)
+void erasep (register int col)
 {
 
     if (promptlen == 0)
@@ -849,7 +853,7 @@ void erase (register int col)
 	if (col == 0)
 	    putchar ('\r');
 	if (!dumb && eraseln)
-	    tputs (eraseln, 1, putch);
+	    putp (eraseln);
 	else
 	    for (col = promptlen - col; col > 0; col--)
 		putchar (' ');
@@ -861,10 +865,11 @@ void erase (register int col)
 ** Erase the current line entirely
 */
 
-kill_line ()
+void kill_line ()
 {
-    erase (0);
-    if (!eraseln || dumb) putchar ('\r');
+    erasep (0);
+    if (!eraseln || dumb)
+	putchar ('\r');
 }
 
 /*
@@ -872,12 +877,12 @@ kill_line ()
  */
 void cleareol()
 {
-    tputs(eraseln, 1, putch);
+    putp(eraseln);
 }
 
 void clreos()
 {
-    tputs(EodClr, 1, putch);
+    putp(EodClr);
 }
 
 /*
@@ -889,7 +894,7 @@ int pr(char *s1)
     register char	*s;
     register char	c;
 
-    for (s = s1; c = *s++; )
+    for (s = s1; (c = *s++) != 0; )
 	putchar(c);
     return (int) (s - s1 - 1);
 }
@@ -911,7 +916,7 @@ void prbuf (register char *s, register int n)
 		s++;
 		continue;
 	    }
-	    if (state = wouldul(s, n)) {
+	    if ((state = wouldul(s, n)) != 0) {
 		c = (*s == '_')? s[2] : *s ;
 		n -= 2;
 		s += 3;
@@ -921,13 +926,13 @@ void prbuf (register char *s, register int n)
 		if (c == ' ' && state == 0 && ulglitch && wouldul(s, n-1))
 		    state = 1;
 		else
-		    tputs(state ? ULenter : ULexit, 1, putch);
+		    putp(state ? ULenter : ULexit);
 	    }
 	    if (c != ' ' || pstate == 0 || state != 0 || ulglitch == 0)
 	        putchar(c);
 	    if (state && *chUL) {
 		pr(chBS);
-		tputs(chUL, 1, putch);
+		putp(chUL);
 	    }
 	    pstate = state;
 	}
@@ -940,7 +945,7 @@ void
 doclear()
 {
     if (Clear && !hard) {
-	tputs(Clear, 1, putch);
+	putp(Clear);
 
 	/* Put out carriage return so that system doesn't
 	** get confused by escape sequences when expanding tabs
@@ -956,7 +961,7 @@ doclear()
 void
 home()
 {
-    tputs(Home,1,putch);
+    putp(Home);
 }
 
 static int lastcmd, lastarg, lastp;
@@ -973,12 +978,12 @@ char shell_line[132];
 int command (char *filename, register FILE *f)
 {
     register int nlines;
-    register int retval;
+    register int retval = 0;
     register char c;
     char colonch;
     FILE *helpf;
     int done;
-    char comchar, cmdbuf[80], *p;
+    char comchar, cmdbuf[80];
 
 #define ret(val) retval=val;done++;break
 
@@ -1016,14 +1021,14 @@ int command (char *filename, register FILE *f)
 		register int initline;
 
 		if (no_intty) {
-		    write(2, &bell, 1);
+		    write(2, &my_bell, 1);
 		    return (-1);
 		}
 
 		if (nlines == 0) nlines++;
 
 		putchar ('\r');
-		erase (0);
+		erasep (0);
 		xprintf ("\n");
 		if (clreol)
 			cleareol ();
@@ -1069,7 +1074,7 @@ int command (char *filename, register FILE *f)
 	    if (comchar == 'f')
 		nlines *= dlines;
 	    putchar ('\r');
-	    erase (0);
+	    erasep (0);
 	    xprintf ("\n");
 	    if (clreol)
 		cleareol ();
@@ -1108,7 +1113,7 @@ int command (char *filename, register FILE *f)
 		ret (dlines);
 	    }
 	    else {
-		write (2, &bell, 1);
+		write (2, &my_bell, 1);
 		break;
 	    }
 	case '\'':
@@ -1120,7 +1125,7 @@ int command (char *filename, register FILE *f)
 		ret (dlines);
 	    }
 	    else {
-		write (2, &bell, 1);
+		write (2, &my_bell, 1);
 		break;
 	    }
 	case '=':
@@ -1141,7 +1146,7 @@ int command (char *filename, register FILE *f)
 		search (NULL, f, nlines);	/* Use previous r.e. */
 	    }
 	    else {
-		ttyin (cmdbuf, 78, '/');
+		ttyin (cmdbuf, sizeof(cmdbuf)-2, '/');
 		write (2, "\r", 1);
 		search (cmdbuf, f, nlines);
 	    }
@@ -1172,16 +1177,16 @@ int command (char *filename, register FILE *f)
 	    if (dum_opt) {
    		kill_line ();
 		if (Senter && Sexit) {
-		    tputs (Senter, 1, putch);
+		    putp (Senter);
 		    promptlen = pr ("[Press 'h' for instructions.]") + (2 * soglitch);
-		    tputs (Sexit, 1, putch);
+		    putp (Sexit);
 		}
 		else
 		    promptlen = pr ("[Press 'h' for instructions.]");
 		fflush (stdout);
 	    }
 	    else
-		write (2, &bell, 1);
+		write (2, &my_bell, 1);
 	    break;
 	}
 	if (done) break;
@@ -1201,10 +1206,7 @@ char ch;
  * more of the file to be printed.
  */
 
-colon (filename, cmd, nlines)
-char *filename;
-int cmd;
-int nlines;
+int colon (char *filename, int cmd, int nlines)
 {
 	if (cmd == 0)
 		ch = readch ();
@@ -1227,16 +1229,16 @@ int nlines;
 			nlines++;
 		}
 		putchar ('\r');
-		erase (0);
+		erasep (0);
 		skipf (nlines);
 		return (0);
 	case 'p':
 		if (no_intty) {
-			write (2, &bell, 1);
+			write (2, &my_bell, 1);
 			return (-1);
 		}
 		putchar ('\r');
-		erase (0);
+		erasep (0);
 		if (nlines == 0)
 			nlines++;
 		skipf (-nlines);
@@ -1248,7 +1250,7 @@ int nlines;
 	case 'Q':
 		end_it ();
 	default:
-		write (2, &bell, 1);
+		write (2, &my_bell, 1);
 		return (-1);
 	}
 }
@@ -1258,8 +1260,7 @@ int nlines;
 ** terminates the number.
 */
 
-number(cmd)
-char *cmd;
+int number(char *cmd)
 {
 	register int i;
 
@@ -1278,8 +1279,7 @@ char *cmd;
 	return (i);
 }
 
-do_shell (filename)
-char *filename;
+void do_shell (char *filename)
 {
 	char cmdbuf[80];
 
@@ -1290,7 +1290,7 @@ char *filename;
 	if (lastp)
 		pr (shell_line);
 	else {
-		ttyin (cmdbuf, 78, '!');
+		ttyin (cmdbuf, sizeof(cmdbuf)-2, '!');
 		if (expand (shell_line, cmdbuf)) {
 			kill_line ();
 			promptlen = xprintf ("!%s", shell_line);
@@ -1383,14 +1383,14 @@ void search(char buf[], FILE *file, register int n)
 }
 
 /*VARARGS2*/
-execute (filename, cmd, va_alist)
-char *filename;
-char *cmd;
-va_dcl
+void execute (char * filename, char * cmd, ...)
 {
 	int id;
 	int n;
 	va_list argp;
+	char * arg;
+ 	char ** args;
+	int argcount;
 
 	fflush (stdout);
 	reset_tty ();
@@ -1401,11 +1401,33 @@ va_dcl
 		close(0);
 		open("/dev/tty", 0);
 	    }
-	    va_start(argp);
-	    execv (cmd, argp);
+
+	    va_start(argp, cmd);
+
+	    arg = va_arg(argp, char *);
+	    argcount = 0;
+	    while (arg) {
+		argcount++;
+	        arg = va_arg(argp, char *);
+	    }
+	    va_end(argp);	/* balance {}'s for some UNIX's */
+
+	    args = alloca(sizeof(char *) * (argcount + 1));
+	    args[argcount] = NULL;
+	    
+	    va_start(argp, cmd);
+	    arg = va_arg(argp, char *);
+	    argcount = 0;
+	    while (arg) {
+		args[argcount] = arg;
+		argcount++;
+	        arg = va_arg(argp, char *);
+	    }
+	    va_end(argp);	/* balance {}'s for some UNIX's */
+	
+	    execv (cmd, args);
 	    write (2, "exec failed\n", 12);
 	    exit (1);
-	    va_end(argp);	/* balance {}'s for some UNIX's */
 	}
 	if (id > 0) {
 	    signal (SIGINT, SIG_IGN);
@@ -1445,8 +1467,7 @@ void skiplns (register int n, register FILE *f)
 ** negative.
 */
 
-skipf (nskip)
-register int nskip;
+void skipf (register int nskip)
 {
     if (nskip == 0) return;
     if (nskip > 0) {
@@ -1476,70 +1497,74 @@ register int nskip;
 
 void initterm()
 {
-    char	buf[TBUFSIZ];
-    static char	clearbuf[TBUFSIZ];
-    char	*clearptr, *padstr;
-    int		ldisc;
-    int		lmode;
+    int		ret;
+    char	*padstr;
     char	*term;
-    int		tgrp;
     struct winsize win;
 
+#ifdef do_SIGTTOU
 retry:
-    no_tty = ioctl(fileno(stdout), TCGETA, &otty);
+#endif
+    no_tty = ioctl(fileno(stdout), TCGETS, &otty);
     if (!no_tty) {	
 	docrterase = (otty.c_cc[VERASE] != 255);
 	docrtkill =  (otty.c_cc[VKILL] != 255);
-#ifdef undef
-	/*
-	 * Wait until we're in the foreground before we save the
-	 * the terminal modes.
-	 */
-	if (ioctl(fileno(stdout), TIOCGPGRP, &tgrp) < 0) {
-	    perror("TIOCGPGRP");
-	    exit(1);
-	}
-	if (tgrp != getpgrp(0)) {
-	    kill(0, SIGTTOU);
-	    goto retry;
+#ifdef do_SIGTTOU
+	{
+	    int tgrp;
+	    /*
+	     * Wait until we're in the foreground before we save the
+	     * the terminal modes.
+	     */
+	    if (ioctl(fileno(stdout), TIOCGPGRP, &tgrp) < 0) {
+		 perror("TIOCGPGRP");
+		 exit(1);
+	    }
+	    if (tgrp != getpgrp(0)) {
+		 kill(0, SIGTTOU);
+		 goto retry;
+	    }
 	}
 #endif
-	if ((term = getenv("TERM")) == 0 || tgetent(buf, term) <= 0) {
+	if ((term = getenv("TERM")) == 0) {
+	    dumb++; ul_opt = 0;
+	}
+        setupterm(term, 1, &ret);
+	if (ret <= 0) {
 	    dumb++; ul_opt = 0;
 	}
 	else {
 #ifdef TIOCGWINSZ
 	    if (ioctl(fileno(stdout), TIOCGWINSZ, &win) < 0) {
 #endif
-		Lpp = tgetnum("li");
-		Mcol = tgetnum("co");
+		Lpp = tigetnum("lines");
+		Mcol = tigetnum("cols");
 #ifdef TIOCGWINSZ
 	    } else {
 		if ((Lpp = win.ws_row) == 0)
-		    Lpp = tgetnum("li");
+		    Lpp = tigetnum("lines");
 		if ((Mcol = win.ws_col) == 0)
-		    Mcol = tgetnum("co");
+		    Mcol = tigetnum("cols");
 	    }
 #endif
-	    if ((Lpp <= 0) || tgetflag("hc")) {
+	    if ((Lpp <= 0) || tigetflag("hc")) {
 		hard++;	/* Hard copy terminal */
 		Lpp = 24;
 	    }
-	    if (tgetflag("xn"))
+	    if (tigetflag("xenl"))
 		eatnl++; /* Eat newline at last column + 1; dec, concept */
 	    if (Mcol <= 0)
 		Mcol = 80;
 
-	    if (tailequ (fnames[0], "page") || !hard && tgetflag("ns"))
+	    if (tailequ (fnames[0], "page"))
 		noscroll++;
-	    Wrap = tgetflag("am");
-	    bad_so = tgetflag ("xs");
-	    clearptr = clearbuf;
-	    eraseln = tgetstr("ce",&clearptr);
-	    Clear = tgetstr("cl", &clearptr);
-	    Senter = tgetstr("so", &clearptr);
-	    Sexit = tgetstr("se", &clearptr);
-	    if ((soglitch = tgetnum("sg")) < 0)
+	    Wrap = tigetflag("am");
+	    bad_so = tigetflag ("xhp");
+	    eraseln = tigetstr("el");
+	    Clear = tigetstr("clear");
+	    Senter = tigetstr("smso");
+	    Sexit = tigetstr("rmso");
+	    if ((soglitch = tigetnum("xmc")) < 0)
 		soglitch = 0;
 
 	    /*
@@ -1550,50 +1575,49 @@ retry:
 	     *  isn't available, settle for standout sequence.
 	     */
 
-	    if (tgetflag("ul") || tgetflag("os"))
+	    if (tigetflag("ul") || tigetflag("os"))
 		ul_opt = 0;
-	    if ((chUL = tgetstr("uc", &clearptr)) == NULL )
+	    if ((chUL = tigetstr("uc")) == NULL )
 		chUL = "";
-	    if (((ULenter = tgetstr("us", &clearptr)) == NULL ||
-	         (ULexit = tgetstr("ue", &clearptr)) == NULL) && !*chUL) {
+	    if (((ULenter = tigetstr("smul")) == NULL ||
+	         (ULexit = tigetstr("rmul")) == NULL) && !*chUL) {
 	        if ((ULenter = Senter) == NULL || (ULexit = Sexit) == NULL) {
 			ULenter = "";
 			ULexit = "";
 		} else
 			ulglitch = soglitch;
 	    } else {
-		if ((ulglitch = tgetnum("ug")) < 0)
-		    ulglitch = 0;
+		ulglitch = 0;
 	    }
 
-	    if (padstr = tgetstr("pc", &clearptr))
+	    if ((padstr = tigetstr("pad")) != NULL)
 		PC = *padstr;
-	    Home = tgetstr("ho",&clearptr);
+	    Home = tigetstr("home");
 	    if (Home == 0 || *Home == '\0')
 	    {
-		if ((cursorm = tgetstr("cm", &clearptr)) != NULL) {
-		    strcpy(cursorhome, tgoto(cursorm, 0, 0));
+		if ((cursorm = tigetstr("cup")) != NULL) {
+		    strcpy(cursorhome, (const char *)tparm(cursorm, 0, 0));
 		    Home = cursorhome;
 	       }
 	    }
-	    EodClr = tgetstr("cd", &clearptr);
-	    if ((chBS = tgetstr("bc", &clearptr)) == NULL)
+	    EodClr = tigetstr("ed");
+	    if ((chBS = tigetstr("cub1")) == NULL)
 		chBS = "\b";
 
 	}
 	if ((shell = getenv("SHELL")) == NULL)
 	    shell = "/bin/sh";
     }
-    no_intty = ioctl(fileno(stdin), TCGETA, &otty);
-    ioctl(fileno(stderr), TCGETA, &otty);
-    savetty = otty;
+    no_intty = ioctl(fileno(stdin), TCGETS, &otty);
+    ioctl(fileno(stderr), TCGETS, &otty);
+    savetty0 = otty;
     slow_tty = (otty.c_cflag & CBAUD) < B1200;
     hardtabs = (otty.c_oflag & TABDLY) != XTABS;
     if (!no_tty) 
 	otty.c_lflag &= ~(ICANON|ECHO);
 }
 
-readch ()
+int readch ()
 {
 	char ch;
 	extern int errno;
@@ -1616,10 +1640,7 @@ static char CARAT = '^';
     else \
 	write (2, &BS, sizeof(BS));
 
-ttyin (buf, nmax, pchar)
-char buf[];
-register int nmax;
-char pchar;
+void ttyin (char buf[], register int nmax, char pchar)
 {
     register char *sptr;
     register char ch;
@@ -1661,7 +1682,7 @@ char pchar;
 		putchar ('\r');
 		putchar (pchar);
 		if (eraseln)
-		    erase (1);
+		    erasep (1);
 		else if (docrtkill)
 		    while (promptlen-- > 1)
 			write (2, BSB, sizeof(BSB));
@@ -1697,9 +1718,7 @@ char pchar;
 	error ("Line too long");
 }
 
-expand (outbuf, inbuf)
-char *outbuf;
-char *inbuf;
+int expand (char *outbuf, char *inbuf)
 {
     register char *instr;
     register char *outstr;
@@ -1740,8 +1759,7 @@ char *inbuf;
     return (changed);
 }
 
-show (ch)
-register char ch;
+void show (register char ch)
 {
     char cbuf;
 
@@ -1755,8 +1773,7 @@ register char ch;
     promptlen++;
 }
 
-error (mess)
-char *mess;
+void error (char *mess)
 {
     if (clreol)
 	cleareol ();
@@ -1764,9 +1781,9 @@ char *mess;
 	kill_line ();
     promptlen += strlen (mess);
     if (Senter && Sexit) {
-	tputs (Senter, 1, putch);
+	putp (Senter);
 	pr(mess);
-	tputs (Sexit, 1, putch);
+	putp (Sexit);
     }
     else
 	pr (mess);
@@ -1776,10 +1793,14 @@ char *mess;
 }
 
 
-set_tty ()
+void set_tty ()
 {
 	otty.c_lflag &= ~(ICANON|ECHO);
 	stty(fileno(stderr), &otty);
+}
+
+int ourputch(int ch) {
+    return putc(ch, stdout);
 }
 
 void reset_tty ()
@@ -1787,16 +1808,15 @@ void reset_tty ()
     if (no_tty)
 	return;
     if (pstate) {
-	tputs(ULexit, 1, putch);
+	tputs(ULexit, 1, ourputch);
 	fflush(stdout);
 	pstate = 0;
     }
     otty.c_lflag |= ICANON|ECHO;
-    stty(fileno(stderr), &savetty);
+    stty(fileno(stderr), &savetty0);
 }
 
-rdline (f)
-register FILE *f;
+void rdline (register FILE *f)
 {
     register char c;
     register char *p;

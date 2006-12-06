@@ -93,6 +93,7 @@ typedef struct _buf {
 NODE *add_node(), *find_node();
 void add_arc(), no_memory(), remove_node(), tsort();
 char *grow_buf(), *malloc();
+int find_cycle(NODE *, NODE *, int, int);
 
 extern int errno;
 NODE *graph;
@@ -100,6 +101,7 @@ NODE *hashtable[HASHSIZE];
 NODE **cycle_buf;
 NODE **longest_cycle;
 
+int
 main(argc, argv)
 	int argc;
 	char **argv;
@@ -158,7 +160,7 @@ main(argc, argv)
 
 	/* do the sort */
 	tsort();
-	exit(0);
+	return 0;
 }
 
 /* double the size of oldbuf and return a pointer to the new buffer. */
@@ -213,6 +215,7 @@ add_arc(s1, s2)
 	++n2->n_refcnt;
 }
 
+int
 hash_string(s)
 	char *s;
 {
@@ -257,7 +260,7 @@ add_node(name)
 	n->n_flags = 0;
 
 	/* add to linked list */
-	if (n->n_next = graph)
+	if ((n->n_next = graph) != NULL)
 		graph->n_prevp = &n->n_next;
 	n->n_prevp = &graph;
 	graph = n;
@@ -312,7 +315,7 @@ tsort()
 		}
 		for (n = graph; n; n = n->n_next)
 			if (!(n->n_flags & NF_ACYCLIC)) {
-				if (cnt = find_cycle(n, n, 0, 0)) {
+				if ((cnt = find_cycle(n, n, 0, 0)) != 0) {
 					register int i;
 
 					(void)fprintf(stderr,
@@ -353,6 +356,7 @@ remove_node(n)
 }
 
 /* look for the longest cycle from node from to node to. */
+int
 find_cycle(from, to, longest_len, depth)
 	NODE *from, *to;
 	int depth, longest_len;

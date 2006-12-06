@@ -24,9 +24,11 @@
 #include <string.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <asm/page.h>
 
-#include <linux/mm.h>
+#define BLKGETSIZE 0x1260
 
 #ifndef __linux__
 # define volatile
@@ -43,7 +45,7 @@ static int badpages = 0;
 
 static int signature_page[PAGE_SIZE/sizeof(int)];
 
-static long bit_test_and_set (unsigned int *addr, unsigned int nr)
+static void bit_set (unsigned int *addr, unsigned int nr)
 {
 	unsigned int r, m;
 
@@ -51,10 +53,9 @@ static long bit_test_and_set (unsigned int *addr, unsigned int nr)
 	r = *addr;
 	m = 1 << (nr & (8 * sizeof(int) - 1));
 	*addr = r | m;
-	return (r & m) != 0;
 }
 
-static bit_test_and_clear (unsigned int *addr, unsigned int nr)
+static int bit_test_and_clear (unsigned int *addr, unsigned int nr)
 {
 	unsigned int r, m;
 
@@ -88,18 +89,18 @@ void check_blocks(void)
 	current_page = 0;
 	while (current_page < PAGES) {
 		if (!check) {
-			bit_test_and_set(signature_page,current_page++);
+			bit_set(signature_page,current_page++);
 			continue;
 		}
 		if (do_seek && lseek(DEV,current_page*PAGE_SIZE,SEEK_SET) !=
 		current_page*PAGE_SIZE)
 			die("seek failed in check_blocks");
-		if (do_seek = (PAGE_SIZE != read(DEV, buffer, PAGE_SIZE))) {
+		if ((do_seek = (PAGE_SIZE != read(DEV, buffer, PAGE_SIZE)))) {
 			bit_test_and_clear(signature_page,current_page++);
 			badpages++;
 			continue;
 		}
-		bit_test_and_set(signature_page,current_page++);
+		bit_set(signature_page,current_page++);
 	}
 	if (badpages)
 		printf("%d bad page%s\n",badpages,(badpages>1)?"s":"");
@@ -183,7 +184,13 @@ int main(int argc, char ** argv)
 	if (device_name && !PAGES) {
 		PAGES = get_size(device_name) / PAGE_SIZE;
 	}
-	if (!device_name || PAGES<10) {
+	if (!device_name) {
+		fprintf(stderr,
+			"%s: error: Nowhere to set up swap on?\n",
+			program_name);
+		usage();
+	}
+	if (PAGES < 10) {
 		fprintf(stderr,
 			"%s: error: swap area needs to be at least %ldkB\n",
 			program_name, 10 * PAGE_SIZE / 1024);
@@ -209,8 +216,9 @@ int main(int argc, char ** argv)
 	goodpages = PAGES - badpages - 1;
 	if (goodpages <= 0)
 		die("Unable to set up swap-space: unreadable");
-	printf("Setting up swapspace, size = %d bytes\n",goodpages*PAGE_SIZE);
-	strncpy((char*)signature_page+PAGE_SIZE-10,"SWAP-SPACE",10);
+	printf("Setting up swapspace, size = %ld bytes\n",
+	       goodpages*PAGE_SIZE);
+	strncpy((char*)signature_page+PAGE_SIZE-10, "SWAP-SPACE", 10);
 	if (lseek(DEV, 0, SEEK_SET))
 		die("unable to rewind swap-device");
 	if (PAGE_SIZE != write(DEV, signature_page, PAGE_SIZE))

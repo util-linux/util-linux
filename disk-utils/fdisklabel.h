@@ -31,8 +31,14 @@
  * SUCH DAMAGE.
  */
 
-#define BSD_DISKMAGIC     ((u_long) 0x82564557)
+#ifndef BSD_DISKMAGIC	/* perhaps from <linux/genhd.h> */
+#define BSD_DISKMAGIC     ((__u32) 0x82564557)
+#endif
+
+#ifndef BSD_MAXPARTITIONS
 #define	BSD_MAXPARTITIONS 8
+#endif
+
 #define BSD_LINUX_BOOTDIR "/usr/ucb/mdec"
 
 #if defined (i386)
@@ -41,62 +47,40 @@
 #define	BSD_BBSIZE        8192		/* size of boot area, with label */
 #define	BSD_SBSIZE        8192		/* max size of fs superblock */
 #elif defined (__alpha__)
-#error LABELSECTOR, LABELOFFSET, BBSIZE & SBSIZE are undefined for __alpha__
 #define BSD_LABELSECTOR   0
-#define BSD_LABELOFFSET   0
-#define	BSD_BBSIZE        0
-#define	BSD_SBSIZE        0
+#define BSD_LABELOFFSET   64
+#define	BSD_BBSIZE        8192
+#define	BSD_SBSIZE        8192
 #else
 #error unknown architecture
 #endif
 
-struct disklabel {
-	u_long	d_magic;		/* the magic number */
-	short	d_type;			/* drive type */
-	short	d_subtype;		/* controller/d_type specific */
+struct xbsd_disklabel {
+	__u32	d_magic;		/* the magic number */
+	__s16	d_type;			/* drive type */
+	__s16	d_subtype;		/* controller/d_type specific */
 	char	d_typename[16];		/* type name, e.g. "eagle" */
-	/* 
-	 * d_packname contains the pack identifier and is returned when
-	 * the disklabel is read off the disk or in-core copy.
-	 * d_boot0 and d_boot1 are the (optional) names of the
-	 * primary (block 0) and secondary (block 1-15) bootstraps
-	 * as found in /usr/mdec.  These are returned when using
-	 * getdiskbyname(3) to retrieve the values from /etc/disktab.
-	 */
-#if defined(KERNEL) || defined(STANDALONE)
 	char	d_packname[16];			/* pack identifier */ 
-#else
-	union {
-		char	un_d_packname[16];	/* pack identifier */ 
-		struct {
-			char *un_d_boot0;	/* primary bootstrap name */
-			char *un_d_boot1;	/* secondary bootstrap name */
-		} un_b; 
-	} d_un; 
-#define d_packname	d_un.un_d_packname
-#define d_boot0		d_un.un_b.un_d_boot0
-#define d_boot1		d_un.un_b.un_d_boot1
-#endif	/* ! KERNEL or STANDALONE */
 			/* disk geometry: */
-	u_long	d_secsize;		/* # of bytes per sector */
-	u_long	d_nsectors;		/* # of data sectors per track */
-	u_long	d_ntracks;		/* # of tracks per cylinder */
-	u_long	d_ncylinders;		/* # of data cylinders per unit */
-	u_long	d_secpercyl;		/* # of data sectors per cylinder */
-	u_long	d_secperunit;		/* # of data sectors per unit */
+	__u32	d_secsize;		/* # of bytes per sector */
+	__u32	d_nsectors;		/* # of data sectors per track */
+	__u32	d_ntracks;		/* # of tracks per cylinder */
+	__u32	d_ncylinders;		/* # of data cylinders per unit */
+	__u32	d_secpercyl;		/* # of data sectors per cylinder */
+	__u32	d_secperunit;		/* # of data sectors per unit */
 	/*
 	 * Spares (bad sector replacements) below
 	 * are not counted in d_nsectors or d_secpercyl.
 	 * Spare sectors are assumed to be physical sectors
 	 * which occupy space at the end of each track and/or cylinder.
 	 */
-	u_short	d_sparespertrack;	/* # of spare sectors per track */
-	u_short	d_sparespercyl;		/* # of spare sectors per cylinder */
+	__u16	d_sparespertrack;	/* # of spare sectors per track */
+	__u16	d_sparespercyl;		/* # of spare sectors per cylinder */
 	/*
 	 * Alternate cylinders include maintenance, replacement,
 	 * configuration description areas, etc.
 	 */
-	u_long	d_acylinders;		/* # of alt. cylinders per unit */
+	__u32	d_acylinders;		/* # of alt. cylinders per unit */
 
 			/* hardware characteristics: */
 	/*
@@ -115,30 +99,30 @@ struct disklabel {
 	 * Finally, d_cylskew is the offset of sector 0 on cylinder N
 	 * relative to sector 0 on cylinder N-1.
 	 */
-	u_short	d_rpm;			/* rotational speed */
-	u_short	d_interleave;		/* hardware sector interleave */
-	u_short	d_trackskew;		/* sector 0 skew, per track */
-	u_short	d_cylskew;		/* sector 0 skew, per cylinder */
-	u_long	d_headswitch;		/* head switch time, usec */
-	u_long	d_trkseek;		/* track-to-track seek, usec */
-	u_long	d_flags;		/* generic flags */
+	__u16	d_rpm;			/* rotational speed */
+	__u16	d_interleave;		/* hardware sector interleave */
+	__u16	d_trackskew;		/* sector 0 skew, per track */
+	__u16	d_cylskew;		/* sector 0 skew, per cylinder */
+	__u32	d_headswitch;		/* head switch time, usec */
+	__u32	d_trkseek;		/* track-to-track seek, usec */
+	__u32	d_flags;		/* generic flags */
 #define NDDATA 5
-	u_long	d_drivedata[NDDATA];	/* drive-type specific information */
+	__u32	d_drivedata[NDDATA];	/* drive-type specific information */
 #define NSPARE 5
-	u_long	d_spare[NSPARE];	/* reserved for future use */
-	u_long	d_magic2;		/* the magic number (again) */
-	u_short	d_checksum;		/* xor of data incl. partitions */
+	__u32	d_spare[NSPARE];	/* reserved for future use */
+	__u32	d_magic2;		/* the magic number (again) */
+	__u16	d_checksum;		/* xor of data incl. partitions */
 			/* filesystem and partition information: */
-	u_short	d_npartitions;	        /* number of partitions in following */
-	u_long	d_bbsize;	        /* size of boot area at sn0, bytes */
-	u_long	d_sbsize;	        /* max size of fs superblock, bytes */
-	struct bsd_partition {	        /* the partition table */
-		u_long	p_size;	        /* number of sectors in partition */
-		u_long	p_offset;       /* starting sector */
-		u_long	p_fsize;        /* filesystem basic fragment size */
-		u_char	p_fstype;       /* filesystem type, see below */
-		u_char	p_frag;	        /* filesystem fragments per block */
-		u_short	p_cpg;	        /* filesystem cylinders per group */
+	__u16	d_npartitions;	        /* number of partitions in following */
+	__u32	d_bbsize;	        /* size of boot area at sn0, bytes */
+	__u32	d_sbsize;	        /* max size of fs superblock, bytes */
+	struct xbsd_partition	 {	/* the partition table */
+		__u32	p_size;	        /* number of sectors in partition */
+		__u32	p_offset;       /* starting sector */
+		__u32	p_fsize;        /* filesystem basic fragment size */
+		__u8	p_fstype;       /* filesystem type, see below */
+		__u8	p_frag;	        /* filesystem fragments per block */
+		__u16	p_cpg;	        /* filesystem cylinders per group */
 	} d_partitions[BSD_MAXPARTITIONS]; /* actually may be more */
 };
 
@@ -159,7 +143,7 @@ struct disklabel {
 #define BSD_DSTYPE_GEOMETRY	0x10		/* drive params in label */
 
 #ifdef DKTYPENAMES
-static char *bsd_dktypenames[] = {
+static char *xbsd_dktypenames[] = {
 	"unknown",
 	"SMD",
 	"MSCP",
@@ -173,7 +157,7 @@ static char *bsd_dktypenames[] = {
 	"floppy",
 	0
 };
-#define BSD_DKMAXTYPES	(sizeof(bsd_dktypenames) / sizeof(bsd_dktypenames[0]) - 1)
+#define BSD_DKMAXTYPES	(sizeof(xbsd_dktypenames) / sizeof(xbsd_dktypenames[0]) - 1)
 #endif
 
 /*
@@ -189,7 +173,6 @@ static char *bsd_dktypenames[] = {
 #define	BSD_FS_V71K    	5		/* V7 with 1K blocks (4.1, 2.9) */
 #define	BSD_FS_V8      	6		/* Eighth Edition, 4K blocks */
 #define	BSD_FS_BSDFFS	7		/* 4.2BSD fast file system */
-#define	BSD_FS_MSDOS	8		/* MS-DOS file system */
 #define	BSD_FS_BSDLFS	9		/* 4.4BSD log-structured file system */
 #define	BSD_FS_OTHER	10		/* in use, but unknown/unsupported */
 #define	BSD_FS_HPFS	11		/* OS/2 high-performance file system */
@@ -199,8 +182,15 @@ static char *bsd_dktypenames[] = {
 #define BSD_FS_ADOS	14		/* AmigaDOS fast file system */
 #define BSD_FS_HFS	15		/* Macintosh HFS */
 
+/* this is annoying, but it's also the way it is :-( */
+#ifdef __alpha__
+#define	BSD_FS_EXT2	8		/* MS-DOS file system */
+#else
+#define	BSD_FS_MSDOS	8		/* MS-DOS file system */
+#endif
+
 #ifdef	DKTYPENAMES
-static struct systypes bsd_fstypes[] = {
+static struct systypes xbsd_fstypes[] = {
         {BSD_FS_UNUSED, "unused"},
 	{BSD_FS_SWAP,   "swap"},
 	{BSD_FS_V6,     "Version 6"},
@@ -209,7 +199,11 @@ static struct systypes bsd_fstypes[] = {
 	{BSD_FS_V71K,   "4.1BSD"},
 	{BSD_FS_V8,     "Eighth Edition"},
 	{BSD_FS_BSDFFS, "4.2BSD"},
+#ifdef __alpha__
+	{BSD_FS_EXT2,   "ext2"},
+#else
 	{BSD_FS_MSDOS,  "MS-DOS"},
+#endif
 	{BSD_FS_BSDLFS, "4.4LFS"},
 	{BSD_FS_OTHER,  "unknown"},
 	{BSD_FS_HPFS,   "HPFS"},
@@ -219,7 +213,7 @@ static struct systypes bsd_fstypes[] = {
 	{BSD_FS_HFS,    "HFS"}
 };
 
-#define BSD_FSMAXTYPES	(sizeof(bsd_fstypes) / sizeof(struct systypes))
+#define BSD_FSMAXTYPES	(sizeof(xbsd_fstypes) / sizeof(struct systypes))
 #endif
 
 /*

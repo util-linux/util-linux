@@ -1,0 +1,46 @@
+Hwclock is a program that runs under Linux and sets and queries the 
+Hardware Clock, which is often called the Real Time Clock, RTC, or
+CMOS clock.
+
+Hwclock is shipped with an ELF executable built for ISA (Intel)
+machines.  So there is nothing to build for those machines.  Just
+install the executable file "hwclock" and the man page file
+"hwclock.8" in suitable directories (like /sbin/hwclock and
+/usr/man/man8/hwclock.8) and you're ready to go.
+
+hwclock accesses platform-dependent hardware, so if you have something
+other than an ISA machine, the shipped executable probably doesn't work,
+and you have to compile hwclock yourself.
+
+Sometimes, you need to install hwclock setuid root.  If you want users
+other than the superuser to be able to display the clock value using the
+direct ISA I/O method, install it setuid root.  If you have the /dev/rtc
+interface on your system or are on a non-ISA system, there's no need for
+users to use the direct ISA I/O method, so don't bother.
+
+To install setuid root, do something like this:
+
+  chmod a=rx,u=s /sbin/hwclock
+
+In any case, hwclock will not allow you to set anything unless you have
+the superuser _real_ uid.  (This is restriction is not necessary if you
+haven't installed setuid root, but it's there for now).
+
+You may want to preformat and/or compress the man page before installing.
+
+If you want to build hwclock, just cd to the source directory and invoke
+make with no parameters.
+
+hwclock calls option processing routines in the libsshopt library,
+which is part of Sverre H. Huseby's "shhopt" package.  An ELF
+executable of this library is included in the package, but you can use
+a copy that is already on your system by altering the make file.  You
+can find a more authoritative copy of this library, and its source
+code, on sunsite (ftp://sunsite.unc.edu/pub/Linux/libs/shhopt-X.Y).
+
+As shipped, the routines are linked in statically, so you only need the
+libsshopt.a file to build hwclock, not to run it.
+
+
+
+

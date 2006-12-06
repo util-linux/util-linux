@@ -13,8 +13,11 @@
  * GNU Library Public License for more details.
  */
 
+#define HAVE_GETCWD
+
 /*
- * realpath.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
+ * This routine is part of libc.  We include it nevertheless,
+ * since the libc version has some security flaws.
  */
 
 #ifdef __linux__
@@ -79,9 +82,14 @@ char *resolved_path;
 	int n;
 
 	/* Make a copy of the source path since we may need to modify it. */
+	if (strlen(path) >= PATH_MAX) {
+		errno = ENAMETOOLONG;
+		return NULL;
+	}
 	strcpy(copy_path, path);
 	path = copy_path;
 	max_path = copy_path + PATH_MAX - 2;
+
 	/* If it's a relative pathname use getwd for starters. */
 	if (*path != '/') {
 #ifdef HAVE_GETCWD

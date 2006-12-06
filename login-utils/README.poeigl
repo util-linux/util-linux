@@ -15,7 +15,81 @@ is different.
 
 If you are uncertain whether you got the latest version, check out
 
-	ftp://ftp.daimi.aau.dk:/pub/linux/poe/
+	ftp://ftp.daimi.aau.dk/pub/linux/poe/
+
+Version 1.49 (20-Jun-97)
+	Small patches for new util-linux distribution and glibc compat.
+	PAM support in login.c by Erik Troan.
+
+Version 1.48 (6-Jun-97)
+	Now changes mode and owner of /dev/vcs devices for console logins.
+	After idea by Andries Brouwer.
+
+Version 1.47 (2-Apr-97)
+	Got new version of hostid.c and hostid.1 from 
+	Sander van Malssen <svm@kozmix.ow.nl>.
+	Removed premature endutent() call in login.c, simpleinit.c and 
+	agetty.c to be compatible with the changed semantics of gnu libc2. 
+	Fix by Jesse Thilo <Jesse.Thilo@pobox.com>.
+
+Version 1.46 (28-Jan-97)
+	Several security fixes for login by David Holland (buffer overruns)
+	<dholland@hcs.harvard.edu>
+	Fixed write.c, to handle a terminating period correctly.
+	Re-indented login.c, it was getting too messy.
+
+Version 1.45a (16-Dec-96)
+	Better support in login for shadow passwords. Compile with
+	-DSHADOW_PWD if you have <shadow.h>. This is on by default.
+	By Marek Michalkiewicz <marekm@i17linuxb.ists.pwr.wroc.pl>.
+	Changed the wtmp locking scheme in login.c,agetty.c,simpleinit.c
+	to flock() /etc/wtmplock instead of the wtmp file directly.
+	This avoids a denial of service attack.
+	Some support for the RB-1 Cryptocard token for challenge/response
+	authentication. This needs a DES library, either Eric Young's
+	libdes, or the Koontz implementation, see cryptocard.c.
+	Initial support patch by Randolph Bentson, 
+	<bentson@grieg.seaslug.org>
+	Changed getpass() to use fputs() instead of fprintf().
+
+Version 1.44 (13-Nov-96):
+	Made isapty() in checktty.c more resilient to 2.0 systems
+	that haven't re-MAKEDEV'ed their pty devices.
+
+Version 1.43 (8-Nov-96):
+	Fix to checktty.c: PTY's are numbered differently after 1.3,
+	blush! Fix by Gerhard Schneider <gs@ilfb.tuwien.ac.at>
+
+Version 1.42c (6-Nov-96):
+	Small fix by Gabriel M. Schuyler <schuyler@easiest.com>, to get
+	better syslog messages (1 LOGIN FAILURE instead of 2 LOGIN FAILURES).
+	Patch butchered by me.
+
+Version 1.42b (30-Sep-96):
+	Got patch for checktty.c from Christoph Lameter
+	<clameter@miriam.fuller.edu> so it doesn't traverse the groupfile
+	"manually" but uses the getgroups() call, this is more efficient
+	with large groupfiles and NIS/YP.
+
+Version 1.42a (24-Sep-96):
+	Added extra syslog() call to login.c to log all good logins.
+	Patch from Steve Philp.
+
+Version 1.41 (20-Jul-96):
+	Added security fix to checktty.c by JDS to clear certain lists.
+	Patches butchered and ANSI'fied by me.
+	Added -n option to agetty to avoid the login prompt.
+
+Version 1.40a (29-Dec-95):
+	Added -f <issue_file> option to agetty. Patches from Eric Rasmussen
+	<ear@usfirst.org>, but somewhat butchered by me.
+
+Version 1.39 (25-Oct-95):
+	Lots of testing and bugfixes in agetty. Now the modem init stuff 
+	should finally work (for me). Also wrote modem.agetty as an example
+	on how to use agetty with a modem.
+	Agetty now also supports baud rates of 38400, 57600, 115200 and
+	230400 bps.
 
 Version 1.37 (15-Sep-95):
 	Added -I <initstring> and -w options to agetty.c for those that

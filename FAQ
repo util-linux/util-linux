@@ -1,0 +1,11 @@
+Util linux faqs:
+
+Q. Where can I get util-linux?
+A. Please read the ANNOUNCE file.
+
+Q. Will util-linux support shadow passwords?
+A. No, not ever.
+
+Q. Will util-linux support NLS things?
+A. Maybe.
+

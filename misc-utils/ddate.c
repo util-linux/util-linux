@@ -53,13 +53,19 @@
 
 /*#define PRAISE_BOB 13013*/
 
-#include <time.h>
+#include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <stdio.h>
 
 #ifndef __GNUC__
 #define inline /* foo */
 #endif
+
+#ifdef KILL_BOB
+int xday_countdown(int yday, int year);
+#endif
+
 
 /* string constants */
 
@@ -76,11 +82,11 @@ char *season_long[5] = {
 char *season_short[5] = {"Chs", "Dsc", "Cfn", "Bcy", "Afm"};
 
 char *holyday[5][2] = { 
-    "Mungday", "Chaoflux",
-    "Mojoday", "Discoflux",
-    "Syaday",  "Confuflux",
-    "Zaraday", "Bureflux",
-    "Maladay", "Afflux"
+    { "Mungday", "Chaoflux" },
+    { "Mojoday", "Discoflux" },
+    { "Syaday",  "Confuflux" },
+    { "Zaraday", "Bureflux" },
+    { "Maladay", "Afflux" }
 };
 
 struct disc_time {
@@ -131,6 +137,7 @@ int load_fortunes(char *fn, char *delim, char** result);
 struct disc_time convert(int,int);
 struct disc_time makeday(int,int,int);
 
+int
 main (int argc, char *argv[]) 
 {
     long t;
@@ -297,7 +304,6 @@ struct disc_time convert(int nday, int nyear)
    return funkychickens;
   
  }
-
 
 #ifdef KILL_BOB
 

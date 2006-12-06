@@ -1,6 +1,6 @@
 # Makefile -- Makefile for util-linux Linux utilities
 # Created: Sat Dec 26 20:09:40 1992
-# Revised: Sat Jun  3 14:11:08 1995 by r.faith@ieee.org
+# Revised: Mon Aug 19 20:11:15 1996 by faith@cs.unc.edu
 # Copyright 1992, 1993, 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
 #
 
@@ -32,12 +32,12 @@ USRLIB=		more.help
 
 # Programs requiring special compilation
 
-NEEDS_TERMCAP=  more ul
+NEEDS_NCURSES=  more ul
 
 all: $(BIN) $(USRBIN)
 
-$(NEEDS_TERMCAP):
-	$(CC) $(LDFLAGS) $^ -o $@ -ltermcap
+$(NEEDS_NCURSES):
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIBCURSES)
 
 # Rules for hexdump
 

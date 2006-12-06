@@ -1,7 +1,7 @@
 /*
  *  readprofile.c - used to read /proc/profile
  *
- *  Copyright (C) 1994 Alessandro Rubini
+ *  Copyright (C) 1994,1996 Alessandro Rubini (rubini@ipvvis.unipv.it)
  *
  *   This program is free software; you can redistribute it and/or modify
  *   it under the terms of the GNU General Public License as published by
@@ -18,20 +18,23 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <unistd.h>  /* getopt() */
+#include <unistd.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
-#define RELEASE "1.1, Jan 1995"
+#define RELEASE "2.0, May 1996"
 
 #define S_LEN 128
 
 static char *prgname;
 
-/* These are the defaults and they cna be changed */
-static char defaultmap1[]="/usr/src/linux/System.map";
-static char defaultmap2[]="/usr/src/linux/zSystem.map";
+/* These are the defaults */
+static char defaultmap[]="/usr/src/linux/System.map";
 static char defaultpro[]="/proc/profile";
 static char optstring[]="m:p:itvarV";
 
@@ -42,12 +45,11 @@ void usage()
 		  "\t -m <mapfile>  (default = \"%s\")\n"
 		  "\t -p <pro-file> (default = \"%s\")\n"
 		  "\t -i            print only info about the sampling step\n"
-		  "\t -t            print terse data\n"
 		  "\t -v            print verbose data\n"
 		  "\t -a            print all symbols, even if count is 0\n"
 		  "\t -r            reset all the counters (root only)\n"
 		  "\t -V            print version and exit\n"
-		  ,prgname,prgname,defaultmap1,defaultpro);
+		  ,prgname,prgname,defaultmap,defaultpro);
   exit(1);
 }
 
@@ -56,11 +58,11 @@ FILE *myopen(char *name, char *mode, int *flag)
 static char cmdline[S_LEN];
 
   if (!strcmp(name+strlen(name)-3,".gz"))
-	{
-	*flag=1;
-	sprintf(cmdline,"zcat %s", name);
-	return popen(cmdline,mode);
-	}
+    {
+    *flag=1;
+    sprintf(cmdline,"zcat %s", name);
+    return popen(cmdline,mode);
+    }
   *flag=0;
   return fopen(name,mode);
 }
@@ -69,24 +71,24 @@ int main (int argc, char **argv)
 {
 FILE *pro;
 FILE *map;
-unsigned long l;
-char *proFile;
-char *mapFile;
-int add, step;
-int fn_add[2];            /* current and next address */
-char fn_name[2][S_LEN];   /* current and next name */
+int proFd;
+char *mapFile, *proFile;
+unsigned int len, add0=0, step, index=0;
+unsigned int *buf, total, fn_len;
+unsigned int fn_add, next_add;           /* current and next address */
+char fn_name[S_LEN], next_name[S_LEN];   /* current and next name */
 char mode[8];
-int i,c,current=0;
-int optAll=0, optInfo=0, optReset=0, optTerse=0, optVerbose=0;
+int c;
+int optAll=0, optInfo=0, optReset=0, optVerbose=0;
 char mapline[S_LEN];
 int maplineno=1;
-int popenMap, popenPro;   /* flags to tell if popen() is used */
+int popenMap;   /* flag to tell if popen() has been used */
 
 #define next (current^1)
 
   prgname=argv[0];
   proFile=defaultpro;
-  mapFile=defaultmap1;
+  mapFile=defaultmap;
 
   while ((c=getopt(argc,argv,optstring))!=-1)
     {
@@ -96,128 +98,121 @@ int popenMap, popenPro;   /* flags to tell if popen() is used */
       case 'p': proFile=optarg; break;
       case 'a': optAll++;       break;
       case 'i': optInfo++;      break;
-	  case 't': optTerse++;     break;
-	  case 'r': optReset++;     break;
-	  case 'v': optVerbose++;   break;
-	  case 'V': printf("%s Version %s\n",prgname,RELEASE); exit(0);
+      case 'r': optReset++;     break;
+      case 'v': optVerbose++;   break;
+      case 'V': printf("%s Version %s\n",prgname,RELEASE); exit(0);
       default: usage();
       }
     }
 
   if (optReset)
-	{
-	pro=fopen(defaultpro,"w");
-	if (!pro)
-	  {perror(proFile); exit(1);}
-	fprintf(pro,"anything\n");
-	fclose(pro);
+    {
+    /* try to become root, just in case */
+    setuid(0);
+    pro=fopen(defaultpro,"w");
+    if (!pro)
+      {perror(proFile); exit(1);}
+    fprintf(pro,"anything\n");
+    fclose(pro);
     exit(0);
-	}
-
-  if (!(pro=myopen(proFile,"r",&popenPro))) 
-    {fprintf(stderr,"%s: ",prgname);perror(proFile);exit(1);}
+    }
 
   /*
-   * In opening the map file, try both the default names, but exit
-   * at first fail if the filename was specified on cmdline
+   * Use an fd for the profiling buffer, to skip stdio overhead
    */
-  for (map=NULL; map==NULL; )
-	{
-	if (!(map=myopen(mapFile,"r",&popenMap)))
-	  {
-	  fprintf(stderr,"%s: ",prgname);perror(mapFile);
-	  if (mapFile!=defaultmap1) exit(1);
-	  mapFile=defaultmap2;
-	  }
-	}
-
-#define NEXT_WORD(where) \
-        (fread((void *)where, 1,sizeof(unsigned long),pro), feof(pro) ? 0 : 1)
-
-  /*
-   * Init the 'next' field
-   */
-  if (!fgets(mapline,S_LEN,map))
-	{
-	fprintf(stderr,"%s: %s(%i): premature EOF\n",prgname,mapFile,maplineno);
-	exit(1);
-	}
-  if (sscanf(mapline,"%x %s %s",&(fn_add[next]),mode,fn_name[next])!=3)
-	{
-	fprintf(stderr,"%s: %s(%i): wrong map line\n",prgname,mapFile, maplineno);
-	exit(1);
-	}
-
-  add=0;
-
-  if (!NEXT_WORD(&step))
-	{
-    fprintf(stderr,"%s: %s: premature EOF\n",prgname,proFile);
+  if ( ((proFd=open(proFile,O_RDONLY)) < 0)
+      || ((len=lseek(proFd,0,SEEK_END)) < 0)
+      || (lseek(proFd,0,SEEK_SET)<0) )
+    {
+    fprintf(stderr,"%s: %s: %s\n",prgname,proFile,strerror(errno));
     exit(1);
     }
 
+  if ( !(buf=malloc(len)) )
+    { fprintf(stderr,"%s: malloc(): %s\n",prgname, strerror(errno)); exit(1); }
+
+  if (read(proFd,buf,len) != len)
+    {
+    fprintf(stderr,"%s: %s: %s\n",prgname,proFile,strerror(errno));
+    exit(1);
+    }
+  close(proFd);
+
+  step=buf[0];
   if (optInfo)
     {
-    printf(optTerse ? "%i\n" : "The sampling step in the kernel is %i bytes\n",
-		   step);
+    printf("Sampling_step: %i\n",step);
     exit(0);
     } 
 
-  /*
-   * The main loop is build around the mapfile
-   */
-  
-  while(current^=1, maplineno++, fgets(mapline,S_LEN,map))
+  total=0;
+
+  if (!(map=myopen(mapFile,"r",&popenMap)))
+    {fprintf(stderr,"%s: ",prgname);perror(mapFile);exit(1);}
+
+  while(fgets(mapline,S_LEN,map))
     {
-    int fn_len;
-    int count=0;
-
-
-	if (sscanf(mapline,"%x %s %s",&(fn_add[next]),mode,fn_name[next])!=3)
-	  {
-	  fprintf(stderr,"%s: %s(%i): wrong map line\n",
-			  prgname,mapFile, maplineno);
-	  exit(1);
-	  }
-
-	if (!(fn_len=fn_add[next]-fn_add[current]))
-	  continue;
-
-    if (*mode=='d' || *mode=='D') break; /* only text is profiled */
-
-    while (add<fn_add[next])
+    if (sscanf(mapline,"%x %s %s",&fn_add,mode,fn_name)!=3)
       {
-      if (!NEXT_WORD(&l))
-		{
-		fprintf(stderr,"%s: %s: premature EOF\n",prgname,proFile);
-		exit(1);
-		}
-      count+=l; add+=step;
+      fprintf(stderr,"%s: %s(%i): wrong map line\n",
+	      prgname,mapFile, maplineno);
+      exit(1);
       }
+    if (strcmp(fn_name,"_stext")) /* only elf works like this */
+      {
+      add0=fn_add;
+      break;
+      }
+    }
 
-    if (count || optAll)
-	  {
-	  if (optTerse)
-		printf("%i %s %lg\n",
-			   count,fn_name[current],count/(double)fn_len);
-	  else if (optVerbose)
-		printf("%08x %-40s %6i %8.4lf\n",
-			   fn_add[current],fn_name[current],count,count/(double)fn_len);
-	  else
-		printf("%6i %-40s %8.4lf\n",
-			   count,fn_name[current],count/(double)fn_len);
-	  }
-	}
+  if (!add0)
+    {
+    fprintf(stderr,"%s: can't find \"_stext\" in %s\n",prgname, mapFile);
+    exit(1);
+    }
 
-  if (feof(map))
-	{
-	fprintf(stderr,"%s: %s(%i): premature EOF\n",prgname,mapFile,maplineno);
-	exit(1);
-	}
+  /*
+   * Main loop.
+   */
+  while(fgets(mapline,S_LEN,map))
+    {
+    unsigned int this=0;
+
+    if (sscanf(mapline,"%x %s %s",&next_add,mode,next_name)!=3)
+      {
+      fprintf(stderr,"%s: %s(%i): wrong map line\n",
+	      prgname,mapFile, maplineno);
+      exit(1);
+      }
+    if (*mode!='T' && *mode!='t') break; /* only text is profiled */
+
+    while (index < (next_add-add0)/step)
+      this += buf[index++];
+    total += this;
+
+    fn_len = next_add-fn_add;
+    if (fn_len && (this || optAll))
+      {
+      if (optVerbose)
+	printf("%08x %-40s %6i %8.4f\n",
+	       fn_add,fn_name,this,this/(double)fn_len);
+      else
+	printf("%6i %-40s %8.4f\n",
+	       this,fn_name,this/(double)fn_len);
+      }
+    fn_add=next_add; strcpy(fn_name,next_name);
+    }
+  /* trailer */
+  if (optVerbose)
+    printf("%08x %-40s %6i %8.4f\n",
+	   0,"total",total,total/(double)(fn_add-add0));
+  else
+    printf("%6i %-40s %8.4f\n",
+	   total,"total",total/(double)(fn_add-add0));
 	
-  popenPro ? pclose(pro) : fclose(pro);
   popenMap ? pclose(map) : fclose(map);
   exit(0);
 }
+
 
 

@@ -54,8 +54,11 @@ Wed Jun 22 21:12:29 1994: Applied patches from Dave
 
 */
 
+#include <stdio.h>
+
 /* rdev.c  -  query/set root device. */
 
+void
 usage()
 {
 
@@ -108,7 +111,7 @@ static char *find_dev(int number)
     if (!number) return "Boot device";
     if ((dp = opendir("/dev")) == NULL) die("opendir /dev");
     strcpy(name,"/dev/");
-    while (dir = readdir(dp)) {
+    while ((dir = readdir(dp)) != NULL) {
 	strcpy(name+5,dir->d_name);
 	if (stat(name,&s) < 0) die(name);
 	if ((s.st_mode & S_IFMT) == S_IFBLK && s.st_rdev == number) return name;
@@ -128,11 +131,12 @@ char *desc[6] = { "Root device", "Video mode",  "Ramsize",  "Swap device",
 int main(int argc,char **argv)
 {
     int image,offset,dev_nr, i, newoffset=-1;
-    char *device, cmd = 0, *ptr, tmp[40];
+    char *device, *ptr;
     struct stat s;
+    int cmd = 0;
 
     device = NULL;
-    if (ptr = strrchr(argv[0],'/'))
+    if ((ptr = strrchr(argv[0],'/')) != NULL)
     	ptr++;
     else
     	ptr = argv[0];

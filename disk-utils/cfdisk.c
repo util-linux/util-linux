@@ -29,6 +29,7 @@
  * >2GB patches: Sat Feb 11 09:08:10 1995, faith@cs.unc.edu
  * Prettier menus: Sat Feb 11 09:08:25 1995, Janne Kukonlehto
  *                                           <jtklehto@stekt.oulu.fi>
+ * Versions 0.8e-h: aeb@cwi.nl
  *
  ****************************************************************************/
 
@@ -44,6 +45,7 @@
 #include <signal.h>
 #include <math.h>
 #include <string.h>
+#include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <linux/genhd.h>
 #include <linux/hdreg.h>
@@ -55,12 +57,10 @@ typedef long long ext2_loff_t;
 typedef long      ext2_loff_t;
 #endif
 
-extern ext2_loff_t ext2_llseek(unsigned int fd,
-			       ext2_loff_t offset,
+extern ext2_loff_t ext2_llseek(unsigned int fd, ext2_loff_t offset,
 			       unsigned int origin);
 
-
-#define VERSION "0.8d BETA (>2GB)"
+#define VERSION "0.8i"
 
 #define DEFAULT_DEVICE "/dev/hda"
 #define ALTERNATE_DEVICE "/dev/sda"
@@ -79,7 +79,8 @@ extern ext2_loff_t ext2_llseek(unsigned int fd,
 
 #define UNUSABLE -1
 #define FREE_SPACE 0x00
-#define EXTENDED 0x05
+#define DOS_EXTENDED 0x05
+#define LINUX_EXTENDED 0x85
 #define LINUX_MINIX 0x81
 #define LINUX_SWAP 0x82
 #define LINUX 0x83
@@ -107,6 +108,7 @@ extern ext2_loff_t ext2_llseek(unsigned int fd,
 #define BAD_CYLINDERS "Illegal cylinders value"
 #define BAD_HEADS "Illegal heads value"
 #define BAD_SECTORS "Illegal sectors value"
+#define READONLY_WARN "Opened disk read-only - you have no permission to write"
 #define WRITE_WARN "Warning!!  This may destroy data on your disk!"
 #define YES_NO "Please enter `yes' or `no'"
 #define WRITING_PART "Writing partition table to disk..."
@@ -155,6 +157,11 @@ extern ext2_loff_t ext2_llseek(unsigned int fd,
       s |= (sector >> 2) & 0xC0;\
 }
 
+#define is_extended(x)	((x) == DOS_EXTENDED || (x) == LINUX_EXTENDED)
+
+/* we might also want to recognise 0xe and 0xf */
+#define is_dos_partition(x) ((x) == 1 || (x) == 4 || (x) == 6)
+
 #define ALIGNMENT 2
 typedef union {
     struct {
@@ -176,6 +183,8 @@ typedef struct {
     int flags;		/* active == 0x80 */
     int id;		/* filesystem type */
     int num;		/* number of partition -- primary vs. logical */
+#define LABELSZ 11
+    char dos_label[LABELSZ+1];
 } partition_info;
 
 char *disk_device = DEFAULT_DEVICE;
@@ -185,6 +194,8 @@ int sectors = 0;
 int cylinders = 0;
 int changed = FALSE;
 int opened = FALSE;
+int opentype;
+int curses_started = 0;
 
 partition_info p_info[MAXIMUM_PARTS];
 partition_info ext_info;
@@ -227,12 +238,20 @@ char *partition_type[NUM_PART_TYPES] = {
     [LINUX_SWAP]  = "Linux Swap",
     [LINUX]       = "Linux",
     [FREE_SPACE]  = "Free Space",
-    [EXTENDED]    = "Extended",
-    [0x01]        = "DOS 12-bit FAT",
-    [0x04]        = "DOS 16-bit < 32Mb",
-    [0x06]        = "DOS 16-bit >=32Mb",
-    [0x07]        = "OS/2 HPFS",
+    [DOS_EXTENDED]= "Extended",
+    [LINUX_EXTENDED] = "Linux extended",
+    [0x01]        = "DOS FAT12",
+    [0x04]        = "DOS FAT16",
+    [0x06]        = "DOS FAT16 (big)",
+    [0x07]        = "OS/2 HPFS or NTFS",
     [0x0A]        = "OS/2 Boot Manager",
+    [0x0B]        = "Win95 FAT32",
+    [0x0C]        = "Win95 FAT32 (LBA)",
+    [0x0E]        = "Win95 FAT16 (LBA)",
+    [0x0F]        = "Win95 Extended (LBA)",
+    [0x11]        = "Hidden DOS FAT12",
+    [0x14]        = "Hidden DOS FAT16",
+    [0x16]        = "Hidden DOS FAT16 (big)",
     [0xA5]        = "BSD/386",
 
 /* The rest of these are taken from A. V. Le Blanc's (LeBlanc@mcc.ac.uk)
@@ -278,7 +297,6 @@ void fdexit(int ret)
 		         "DOS 6.x partitions, please see the cfdisk manual\n"
 		         "page for additional information.\n" );
     }
-
 
     exit(ret);
 }
@@ -346,7 +364,7 @@ void clear_warning(void)
 {
     int i;
 
-    if (!warning_last_time)
+    if (!curses_started || !warning_last_time)
 	return;
 
     move(WARNING_START,0);
@@ -358,37 +376,56 @@ void clear_warning(void)
 
 void print_warning(char *s)
 {
-    mvaddstr(WARNING_START, (COLS-strlen(s))/2, s);
-    putchar(BELL); /* CTRL-G */
+    if (!curses_started) {
+	 fprintf(stderr, "%s\n", s);
+    } else {
+	mvaddstr(WARNING_START, (COLS-strlen(s))/2, s);
+	putchar(BELL); /* CTRL-G */
 
-    warning_last_time = TRUE;
+	warning_last_time = TRUE;
+    }
 }
+
+void die_x(int ret);
 
 void fatal(char *s)
 {
     char str[LINE_LENGTH];
 
-    sprintf(str, "FATAL ERROR: %s", s);
-    mvaddstr(WARNING_START, (COLS-strlen(str))/2, str);
-    sprintf(str, "Press any key to exit fdisk");
-    mvaddstr(WARNING_START+1, (COLS-strlen(str))/2, str);
-    putchar(BELL); /* CTRL-G */
+    if (curses_started) {
+	 sprintf(str, "FATAL ERROR: %s", s);
+	 mvaddstr(WARNING_START, (COLS-strlen(str))/2, str);
+	 sprintf(str, "Press any key to exit fdisk");
+	 mvaddstr(WARNING_START+1, (COLS-strlen(str))/2, str);
+	 putchar(BELL); /* CTRL-G */
+	 refresh();
+	 (void)getch();
+	 die_x(1);
+    } else {
+	 fprintf(stderr, "FATAL ERROR: %s\n", s);
+	 exit(1);
+    }
+}
 
-    refresh();
+void die(int dummy)
+{
+    die_x(0);
+}
 
-    (void)getch();
-
+void die_x(int ret)
+{
     signal(SIGINT, old_SIGINT);
     signal(SIGTERM, old_SIGTERM);
     mvcur(0, COLS-1, LINES-1, 0);
     nl();
     endwin();
-    fdexit(1);
+    printf("\n");
+    fdexit(ret);
 }
 
 void read_sector(char *buffer, int sect_num)
 {
-    if (ext2_llseek(fd, sect_num*SECTOR_SIZE, SEEK_SET) < 0)
+    if (ext2_llseek(fd, ((ext2_loff_t) sect_num)*SECTOR_SIZE, SEEK_SET) < 0)
 	fatal(BAD_SEEK);
     if (read(fd, buffer, SECTOR_SIZE) != SECTOR_SIZE)
 	fatal(BAD_READ);
@@ -396,10 +433,28 @@ void read_sector(char *buffer, int sect_num)
 
 void write_sector(char *buffer, int sect_num)
 {
-    if (ext2_llseek(fd, sect_num*SECTOR_SIZE, SEEK_SET) < 0)
+    if (ext2_llseek(fd, ((ext2_loff_t) sect_num)*SECTOR_SIZE, SEEK_SET) < 0)
 	fatal(BAD_SEEK);
     if (write(fd, buffer, SECTOR_SIZE) != SECTOR_SIZE)
 	fatal(BAD_WRITE);
+}
+
+void get_dos_label(int i)
+{
+    char label[LABELSZ+1];
+    ext2_loff_t offset;
+    int j;
+
+    offset = ((ext2_loff_t) p_info[i].first_sector + p_info[i].offset)
+	 * SECTOR_SIZE + 43;
+    if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	&& read(fd, &label, LABELSZ) == LABELSZ) {
+	 for(j=0; j<LABELSZ; j++)
+	      if(!isascii(label[j]))
+		   label[j] = 0;
+	 label[LABELSZ] = 0;
+	 strcpy(p_info[i].dos_label, label);
+    }
 }
 
 void check_part_info(void)
@@ -411,7 +466,7 @@ void check_part_info(void)
 	    pri++;
 	else if (p_info[i].id > 0 && IS_LOGICAL(p_info[i].num))
 	    log++;
-    if (ext_info.id == EXTENDED)
+    if (is_extended(ext_info.id))
 	if (log > 0)
 	    pri++;
 	else {
@@ -423,10 +478,10 @@ void check_part_info(void)
 	    ext_info.num = PRIMARY;
 	}
 
-    if (pri >= 4)
+    if (pri >= 4) {
 	for (i = 0; i < num_parts; i++)
 	    if (p_info[i].id == FREE_SPACE || p_info[i].id == UNUSABLE)
-		if (ext_info.id == EXTENDED)
+		if (is_extended(ext_info.id))
 		    if (p_info[i].first_sector >= ext_info.first_sector &&
 			p_info[i].last_sector <= ext_info.last_sector) {
 			p_info[i].id = FREE_SPACE;
@@ -447,16 +502,16 @@ void check_part_info(void)
 			p_info[i].num = LOGICAL;
 		    } else
 			p_info[i].id = UNUSABLE;
-		else /* if (ext_info.id != EXTENDED) */
+		else /* if (!is_extended(ext_info.id)) */
 		    p_info[i].id = UNUSABLE;
 	    else /* if (p_info[i].id > 0) */
 		while (0); /* Leave these alone */
-    else /* if (pri < 4) */
+    } else { /* if (pri < 4) */
 	for (i = 0; i < num_parts; i++) {
 	    if (p_info[i].id == UNUSABLE)
 		p_info[i].id = FREE_SPACE;
 	    if (p_info[i].id == FREE_SPACE)
-		if (ext_info.id == EXTENDED)
+		if (is_extended(ext_info.id))
 		    if (p_info[i].first_sector >= ext_info.first_sector &&
 			p_info[i].last_sector <= ext_info.last_sector)
 			p_info[i].num = LOGICAL;
@@ -474,11 +529,12 @@ void check_part_info(void)
 			p_info[i].num = PRI_OR_LOG;
 		    else
 			p_info[i].num = PRIMARY;
-		else /* if (ext_info.id != EXTENDED) */
+		else /* if (!is_extended(ext_info.id)) */
 		    p_info[i].num = PRI_OR_LOG;
 	    else /* if (p_info[i].id > 0) */
 		while (0); /* Leave these alone */
 	}
+    }
 }
 
 void remove_part(int i)
@@ -491,8 +547,7 @@ void remove_part(int i)
     num_parts--;
 }
 
-void insert_part(int i, int num, int id, int flags, int first, int last,
-		 int offset)
+void insert_empty_part(int i, int first, int last)
 {
     int p;
 
@@ -501,10 +556,11 @@ void insert_part(int i, int num, int id, int flags, int first, int last,
 
     p_info[i].first_sector = first;
     p_info[i].last_sector = last;
-    p_info[i].offset = offset;
-    p_info[i].flags = flags;
-    p_info[i].id = id;
-    p_info[i].num = num;
+    p_info[i].offset = 0;
+    p_info[i].flags = 0;
+    p_info[i].id = FREE_SPACE;
+    p_info[i].num = PRI_OR_LOG;
+    p_info[i].dos_label[0] = 0;
 
     num_parts++;
 }
@@ -548,8 +604,10 @@ void del_part(int i)
 	 * last logical drive; and if there are any other logical drives
 	 * then renumber the ones after "num".
 	 */
-	if (i == 0 || (i > 0 && IS_PRIMARY(p_info[i-1].num)))
+	if (i == 0 || (i > 0 && IS_PRIMARY(p_info[i-1].num))) {
 	    ext_info.first_sector = p_info[i].last_sector + 1;
+	    ext_info.offset = 0;
+	}
 	if (i == num_parts-1 ||
 	    (i < num_parts-1 && IS_PRIMARY(p_info[i+1].num)))
 	    ext_info.last_sector = p_info[i].first_sector - 1;
@@ -562,7 +620,8 @@ void del_part(int i)
     check_part_info();
 }
 
-int add_part(int num, int id, int flags, int first, int last, int offset)
+int add_part(int num, int id, int flags, int first, int last, int offset,
+	     int want_label)
 {
     int i, pri = 0, log = 0;
 
@@ -570,45 +629,51 @@ int add_part(int num, int id, int flags, int first, int last, int offset)
 	first < 0 ||
 	first >= cylinders*heads*sectors ||
 	last < 0 ||
-	last >= cylinders*heads*sectors)
-	return -1;
+	last >= cylinders*heads*sectors) {
+	return -1;		/* bad start or end */
+    }
 
     for (i = 0; i < num_parts; i++)
 	if (p_info[i].id > 0 && IS_PRIMARY(p_info[i].num))
 	    pri++;
 	else if (p_info[i].id > 0 && IS_LOGICAL(p_info[i].num))
 	    log++;
-    if (ext_info.id == EXTENDED && log > 0)
+    if (is_extended(ext_info.id) && log > 0)
 	pri++;
 
     if (IS_PRIMARY(num))
-	if (pri >= 4)
-	    return -1;
-	else
+	if (pri >= 4) {
+	    return -1;		/* no room for more */
+	} else
 	    pri++;
 
-    for (i = 0; p_info[i].last_sector < first; i++);
+    for (i = 0; i < num_parts && p_info[i].last_sector < first; i++);
 
-    if (p_info[i].id != FREE_SPACE || last > p_info[i].last_sector)
+    if (i == num_parts || p_info[i].id != FREE_SPACE
+	|| last > p_info[i].last_sector) {
 	return -1;
+    }
 
-    if (id == EXTENDED)
-	if (ext_info.id != FREE_SPACE)
-	    return -1;
+    if (is_extended(id)) {
+	if (ext_info.id != FREE_SPACE) {
+	    return -1;		/* second extended */
+	}
 	else if (IS_PRIMARY(num)) {
 	    ext_info.first_sector = first;
 	    ext_info.last_sector = last;
 	    ext_info.offset = offset;
 	    ext_info.flags = flags;
-	    ext_info.id = EXTENDED;
+	    ext_info.id = id;
 	    ext_info.num = num;
-
+	    ext_info.dos_label[0] = 0;
 	    return 0;
-	} else
-	    return -1;
+	} else {
+	    return -1;		/* explicit extended logical */
+	}
+    }
 
     if (IS_LOGICAL(num)) {
-	if (ext_info.id != EXTENDED) {
+	if (!is_extended(ext_info.id)) {
 	    print_warning("!!!! Internal error creating logical "
 			  "drive with no extended partition !!!!");
 	} else {
@@ -626,29 +691,29 @@ int add_part(int num, int id, int flags, int first, int last, int offset)
 		    if (first == 0) {
 			ext_info.first_sector = 0;
 			ext_info.offset = first = offset;
-		    } else
+		    } else {
 			ext_info.first_sector = first;
+		    }
 		}
 	    } else if (last > ext_info.last_sector) {
 		if (i > 0 && IS_PRIMARY(p_info[i-1].num)) {
 		    print_warning(TWO_EXTENDEDS);
 		    return -1;
-		} else
+		} else {
 		    ext_info.last_sector = last;
+		}
 	    }
 	}
     }
 
     if (first != p_info[i].first_sector &&
 	!(IS_LOGICAL(num) && first == offset)) {
-	insert_part(i, PRI_OR_LOG, FREE_SPACE, 0,
-		    p_info[i].first_sector, first-1, 0);
+	insert_empty_part(i, p_info[i].first_sector, first-1);
 	i++;
     }
 
     if (last != p_info[i].last_sector)
-	insert_part(i+1, PRI_OR_LOG, FREE_SPACE, 0,
-		    last+1, p_info[i].last_sector, 0);
+	insert_empty_part(i+1, last+1, p_info[i].last_sector);
 
     p_info[i].first_sector = first;
     p_info[i].last_sector = last;
@@ -656,6 +721,9 @@ int add_part(int num, int id, int flags, int first, int last, int offset)
     p_info[i].flags = flags;
     p_info[i].id = id;
     p_info[i].num = num;
+    p_info[i].dos_label[0] = 0;
+    if (want_label && is_dos_partition(id))
+	 get_dos_label(i);
 
     check_part_info();
 
@@ -668,7 +736,7 @@ int find_primary(void)
 
     while (cur < num_parts && IS_PRIMARY(num))
 	if ((p_info[cur].id > 0 && p_info[cur].num == num) ||
-	    (ext_info.id == EXTENDED && ext_info.num == num)) {
+	    (is_extended(ext_info.id) && ext_info.num == num)) {
 	    num++;
 	    cur = 0;
 	} else
@@ -1046,7 +1114,7 @@ void new_part(int i)
 	    return;
     }
 
-    if (IS_LOGICAL(num) && ext_info.id != EXTENDED) {
+    if (IS_LOGICAL(num) && !is_extended(ext_info.id)) {
 	/* We want to add a logical partition, but need to create an
 	 * extended partition first.
 	 */
@@ -1054,8 +1122,9 @@ void new_part(int i)
 	    print_warning(NEED_EXT);
 	    return;
 	}
-	(void)add_part(ext, EXTENDED, 0, first, last,
-		       (first == 0 ? sectors : 0));
+	(void) add_part(ext, DOS_EXTENDED, 0, first, last,
+		       (first == 0 ? sectors : 0), 0);
+	first = ext_info.first_sector + ext_info.offset;
     }
 
     if (IS_LOGICAL(num))
@@ -1065,7 +1134,7 @@ void new_part(int i)
     if (first == 0 || IS_LOGICAL(num))
 	offset = sectors;
 
-    (void)add_part(num, id, flags, first, last, offset);
+    (void) add_part(num, id, flags, first, last, offset, 0);
 }
 
 void clear_p_info(void)
@@ -1093,8 +1162,20 @@ void fill_p_info(void)
     partition_table buffer;
     partition_info tmp_ext = { 0, 0, 0, 0, FREE_SPACE, PRIMARY };
 
-    if ((fd = open(disk_device, O_RDWR)) < 0)
-	fatal(BAD_OPEN);
+    if ((fd = open(disk_device, O_RDWR)) < 0) {
+	 if ((fd = open(disk_device, O_RDONLY)) < 0)
+	      fatal(BAD_OPEN);
+	 opentype = O_RDONLY;
+	 print_warning(READONLY_WARN);
+	 if (curses_started) {
+	      refresh();
+	      getch();
+	      clear_warning();
+	 }
+    } else
+	 opentype = O_RDWR;
+    opened = TRUE;
+
     read_sector(buffer.c.b, 0);
 
     if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
@@ -1113,52 +1194,53 @@ void fill_p_info(void)
 
     if (!zero_table) {
 	for (i = 0; i < 4; i++) {
+	    int bs = buffer.p.part[i].start_sect;
+
 	    if (buffer.p.part[i].sys_ind > 0 &&
 		add_part(i,
 			 buffer.p.part[i].sys_ind,
 			 buffer.p.part[i].boot_ind,
-			 ((buffer.p.part[i].start_sect <= sectors) ?
-			  0 : buffer.p.part[i].start_sect),
+			 ((bs <= sectors) ? 0 : bs),
 			 buffer.p.part[i].start_sect +
 			 buffer.p.part[i].nr_sects - 1,
-			 ((buffer.p.part[i].start_sect <= sectors) ?
-			  buffer.p.part[i].start_sect : 0))) {
+			 ((bs <= sectors) ? bs : 0),
+			 1)) {
 		fatal(BAD_PRIMARY);
 	    }
-	    if (buffer.p.part[i].sys_ind == EXTENDED)
+	    if (is_extended(buffer.p.part[i].sys_ind))
 		tmp_ext = ext_info;
 	}
 
-	if (tmp_ext.id == EXTENDED) {
+	if (is_extended(tmp_ext.id)) {
 	    ext_info = tmp_ext;
-	    logical_sectors[logical] = ext_info.first_sector;
+	    logical_sectors[logical] =
+		 ext_info.first_sector + ext_info.offset;
 	    read_sector(buffer.c.b, logical_sectors[logical++]);
 	    i = 4;
 	    do {
 		for (p = 0;
 		     p < 4 && (!buffer.p.part[p].sys_ind ||
-			       buffer.p.part[p].sys_ind == 5);
+			       is_extended(buffer.p.part[p].sys_ind));
 		     p++);
-		if (p > 3)
-		    fatal(BAD_LOGICAL);
 
-		if (add_part(i++,
+		if (p < 4 && add_part(i++,
 			     buffer.p.part[p].sys_ind,
 			     buffer.p.part[p].boot_ind,
 			     logical_sectors[logical-1],
 			     logical_sectors[logical-1] +
 			     buffer.p.part[p].start_sect +
 			     buffer.p.part[p].nr_sects - 1,
-			     buffer.p.part[p].start_sect)) {
+			     buffer.p.part[p].start_sect,
+			     1)) {
 		    fatal(BAD_LOGICAL);
 		}
 
 		for (p = 0;
-		     p < 4 && buffer.p.part[p].sys_ind != 5;
+		     p < 4 && !is_extended(buffer.p.part[p].sys_ind);
 		     p++);
 		if (p < 4) {
-		    logical_sectors[logical] =
-			ext_info.first_sector + buffer.p.part[p].start_sect;
+		    logical_sectors[logical] = ext_info.first_sector
+			 + ext_info.offset + buffer.p.part[p].start_sect;
 		    read_sector(buffer.c.b, logical_sectors[logical++]);
 		}
 	    } while (p < 4 && logical < MAXIMUM_PARTS-4);
@@ -1197,7 +1279,7 @@ void fill_primary_table(partition_table *buffer)
 	if (IS_PRIMARY(p_info[i].num))
 	    fill_part_table(&(buffer->p.part[p_info[i].num]), &(p_info[i]));
 
-    if (ext_info.id == EXTENDED)
+    if (is_extended(ext_info.id))
 	fill_part_table(&(buffer->p.part[ext_info.num]), &ext_info);
 
     buffer->p.flag = PART_TABLE_FLAG;
@@ -1228,8 +1310,8 @@ void fill_logical_table(partition_table *buffer, partition_info *pi)
 	pi = &(p_info[i]);
 
 	p->boot_ind = 0;
-	p->sys_ind = 5;
-	p->start_sect = pi->first_sector - ext_info.first_sector;
+	p->sys_ind = DOS_EXTENDED;
+	p->start_sect = pi->first_sector - ext_info.first_sector - ext_info.offset;
 	p->nr_sects = pi->last_sector - pi->first_sector + 1;
 	sects = ((pi->first_sector/(sectors*heads) > 1023) ?
 		 heads*sectors*1024 - 1 : pi->first_sector);
@@ -1246,62 +1328,78 @@ void write_part_table(void)
 {
     int i, done = FALSE, len;
     partition_table buffer;
+    struct stat s;
+    int is_bdev;
     char response[LINE_LENGTH];
 
-    print_warning(WRITE_WARN);
-
-    while (!done) {
-	mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X,
-		 "Are you sure you want write the partition table to disk? (yes or no): ");
-	
-	len = get_string(response, LINE_LENGTH, NULL);
-
-	clear_warning();
-
-	if (len == GS_ESCAPE)
-	    return;
-	else if (len == 2 &&
-		 toupper(response[0]) == 'N' &&
-		 toupper(response[1]) == 'O') {
-	    print_warning(NO_WRITE);
-	    return;
-	} else if (len == 3 &&
-		   toupper(response[0]) == 'Y' &&
-		   toupper(response[1]) == 'E' &&
-		   toupper(response[2]) == 'S')
-	    done = TRUE;
-	else
-	    print_warning(YES_NO);
+    if (opentype == O_RDONLY) {
+	 print_warning(READONLY_WARN);
+	 refresh();
+	 getch();
+	 clear_warning();
+	 return;
     }
 
-    clear_warning();
-    print_warning(WRITING_PART);
-    refresh();
-    
+    is_bdev = 0;
+    if(fstat(fd, &s) == 0 && S_ISBLK(s.st_mode))
+	 is_bdev = 1;
+
+    if (is_bdev) {
+	 print_warning(WRITE_WARN);
+
+	 while (!done) {
+	      mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X,
+		       "Are you sure you want write the partition table "
+		       "to disk? (yes or no): ");
+	      len = get_string(response, LINE_LENGTH, NULL);
+	      clear_warning();
+	      if (len == GS_ESCAPE)
+		   return;
+	      else if (len == 2 &&
+		       toupper(response[0]) == 'N' &&
+		       toupper(response[1]) == 'O') {
+		   print_warning(NO_WRITE);
+		   return;
+	      } else if (len == 3 &&
+			 toupper(response[0]) == 'Y' &&
+			 toupper(response[1]) == 'E' &&
+			 toupper(response[2]) == 'S')
+		   done = TRUE;
+	      else
+		   print_warning(YES_NO);
+	 }
+
+	 clear_warning();
+	 print_warning(WRITING_PART);
+	 refresh();
+    }
+
     read_sector(buffer.c.b, 0);
     fill_primary_table(&buffer);
     write_sector(buffer.c.b, 0);
 
     for (i = 0; i < num_parts; i++)
 	if (IS_LOGICAL(p_info[i].num)) {
-	    /* Read the extended partition table from disk ??? KEM */
 	    read_sector(buffer.c.b, p_info[i].first_sector);
 	    fill_logical_table(&buffer, &(p_info[i]));
 	    write_sector(buffer.c.b, p_info[i].first_sector);
 	}
 
-    sync();
-    sleep(2);
-    if (!ioctl(fd,BLKRRPART))
-	changed = TRUE;
-    sync();
-    sleep(4);
+    if (is_bdev) {
+	 sync();
+	 sleep(2);
+	 if (!ioctl(fd,BLKRRPART))
+	      changed = TRUE;
+	 sync();
+	 sleep(4);
 
-    clear_warning();
-    if (changed)
-	print_warning(YES_WRITE);
-    else
-	print_warning(RRPART_FAILED);
+	 clear_warning();
+	 if (changed)
+	      print_warning(YES_WRITE);
+	 else
+	      print_warning(RRPART_FAILED);
+    } else
+	 print_warning(YES_WRITE);
 }
 
 void fp_printf(FILE *fp, char *format, ...)
@@ -1380,12 +1478,14 @@ void print_raw_table(void)
 
     fp_printf(fp, "Disk Drive: %s\n", disk_device);
 
+    fp_printf(fp, "Sector 0:\n");
     read_sector(buffer.c.b, 0);
     fill_primary_table(&buffer);
     print_file_buffer(fp, buffer.c.b);
 
     for (i = 0; i < num_parts; i++)
 	if (IS_LOGICAL(p_info[i].num)) {
+	    fp_printf(fp, "Sector %d:\n", p_info[i].first_sector);
 	    read_sector(buffer.c.b, p_info[i].first_sector);
 	    fill_logical_table(&buffer, &(p_info[i]));
 	    print_file_buffer(fp, buffer.c.b);
@@ -1402,7 +1502,7 @@ void print_raw_table(void)
 void print_p_info_entry(FILE *fp, partition_info *p)
 {
     int size;
-    char part_str[21];
+    char part_str[40];
 
     if (p->id == UNUSABLE)
 	fp_printf(fp, "   None   ");
@@ -1418,45 +1518,39 @@ void print_p_info_entry(FILE *fp, partition_info *p)
 
     fp_printf(fp, " ");
 
-    fp_printf(fp, "%7d%c", p->first_sector,
+    fp_printf(fp, "%8d%c", p->first_sector,
 	      ((p->first_sector/(sectors*heads)) !=
 	       ((float)p->first_sector/(sectors*heads)) ?
 	       '*' : ' '));
 
-    fp_printf(fp, " ");
-
-    fp_printf(fp, "%7d%c", p->last_sector,
+    fp_printf(fp, "%8d%c", p->last_sector,
 	      (((p->last_sector+1)/(sectors*heads)) !=
 	       ((float)(p->last_sector+1)/(sectors*heads)) ?
 	       '*' : ' '));
 
-    fp_printf(fp, " ");
-
-    fp_printf(fp, "%6d%c", p->offset,
+    fp_printf(fp, "%7d%c", p->offset,
 	      ((((p->first_sector == 0 || IS_LOGICAL(p->num)) &&
 		 (p->offset != sectors)) ||
 		(p->first_sector != 0 && IS_PRIMARY(p->num) &&
 		 p->offset != 0)) ?
 	       '#' : ' '));
 
-    fp_printf(fp, " ");
-
     size = p->last_sector - p->first_sector + 1;
-    fp_printf(fp, "%7d%c", size,
+    fp_printf(fp, "%8d%c", size,
 	      ((size/(sectors*heads)) != ((float)size/(sectors*heads)) ?
 	       '*' : ' '));
 
     fp_printf(fp, " ");
 
     if (p->id == UNUSABLE)
-	sprintf(part_str, "%.16s", "Unusable");
+	sprintf(part_str, "%.17s", "Unusable");
     else if (p->id == FREE_SPACE)
-	sprintf(part_str, "%.16s", "Free Space");
+	sprintf(part_str, "%.17s", "Free Space");
     else if (partition_type[p->id])
-	sprintf(part_str, "%.16s (%02X)", partition_type[p->id], p->id);
+	sprintf(part_str, "%.17s (%02X)", partition_type[p->id], p->id);
     else
-	sprintf(part_str, "%.16s (%02X)", "Unknown", p->id);
-    fp_printf(fp, "%-21.21s", part_str);
+	sprintf(part_str, "%.17s (%02X)", "Unknown", p->id);
+    fp_printf(fp, "%-22.22s", part_str);
 
     fp_printf(fp, " ");
 
@@ -1474,7 +1568,7 @@ void print_p_info(void)
 {
     char fname[LINE_LENGTH];
     FILE *fp;
-    int i, to_file, pext = (ext_info.id == EXTENDED);
+    int i, to_file, pext = is_extended(ext_info.id);
 
     if (print_only) {
 	fp = stdout;
@@ -1502,9 +1596,9 @@ void print_p_info(void)
 
     fp_printf(fp, "Partition Table for %s\n", disk_device);
     fp_printf(fp, "\n");
-    fp_printf(fp, "           First    Last\n");
-    fp_printf(fp, " # Type    Sector   Sector   Offset  Length   Filesystem Type (ID)  Flags\n");
-    fp_printf(fp, "-- ------- -------- -------- ------- -------- --------------------- ---------\n");
+    fp_printf(fp, "            First    Last\n");
+    fp_printf(fp, " # Type     Sector   Sector   Offset  Length   Filesystem Type (ID)   Flags\n");
+    fp_printf(fp, "-- ------- -------- --------- ------ --------- ---------------------- ---------\n");
 
     for (i = 0; i < num_parts; i++) {
 	if (pext && (p_info[i].first_sector >= ext_info.first_sector)) {
@@ -1557,7 +1651,7 @@ void print_part_entry(FILE *fp, int num, partition_info *pi)
 	ec = end / heads;
     }
 
-    fp_printf(fp, "%2d  0x%02X %4d %4d %4d 0x%02X %4d %4d %4d %7d %7d\n",
+    fp_printf(fp, "%2d  0x%02X %4d %4d %4d 0x%02X %4d %4d %4d %7d %9d\n",
 	      num+1, flags, sh, ss, sc, id, eh, es, ec, first, size);
 }
 
@@ -1594,9 +1688,9 @@ void print_part_table(void)
 
     fp_printf(fp, "Partition Table for %s\n", disk_device);
     fp_printf(fp, "\n");
-    fp_printf(fp, "         ---Starting---      ----Ending---- Start   Number\n");
-    fp_printf(fp, " # Flags Head Sect Cyl   ID  Head Sect Cyl  Sector  Sectors\n");
-    fp_printf(fp, "-- ----- ---- ---- ---- ---- ---- ---- ---- ------- -------\n");
+    fp_printf(fp, "         ---Starting---      ----Ending----   Start Number of\n");
+    fp_printf(fp, " # Flags Head Sect Cyl   ID  Head Sect Cyl   Sector  Sectors\n");
+    fp_printf(fp, "-- ----- ---- ---- ---- ---- ---- ---- ---- ------- ---------\n");
 
     for (i = 0; i < 4; i++) {
 	for (j = 0;
@@ -1604,7 +1698,7 @@ void print_part_table(void)
 	     j++);
 	if (j < num_parts) {
 	    print_part_entry(fp, i, &(p_info[j]));
-	} else if (ext_info.id == EXTENDED && ext_info.num == i) {
+	} else if (is_extended(ext_info.id) && ext_info.num == i) {
 	    print_part_entry(fp, i, &ext_info);
 	} else {
 	    print_part_entry(fp, i, NULL);
@@ -1667,7 +1761,7 @@ void display_help()
 	"allows you to create, delete and modify partitions on your hard",
 	"disk drive.",
 	"",
-	"Copyright (C) 1994 Kevin E. Martin",
+	"Copyright (C) 1994-1997 Kevin E. Martin & aeb",
 	"",
 	"Command      Meaning",
 	"-------      -------",
@@ -1796,8 +1890,10 @@ int change_geometry(void)
     }
 
     if (ret_val) {
-	if (p_info[num_parts-1].last_sector > heads*sectors*cylinders-1) {
-	    while (p_info[num_parts-1].first_sector > heads*sectors*cylinders-1) {
+	int disk_end = heads*sectors*cylinders-1;
+
+	if (p_info[num_parts-1].last_sector > disk_end) {
+	    while (p_info[num_parts-1].first_sector > disk_end) {
 		if (p_info[num_parts-1].id == FREE_SPACE ||
 		    p_info[num_parts-1].id == UNUSABLE)
 		    remove_part(num_parts-1);
@@ -1805,18 +1901,18 @@ int change_geometry(void)
 		    del_part(num_parts-1);
 	    }
 
-	    p_info[num_parts-1].last_sector = heads*sectors*cylinders - 1;
+	    p_info[num_parts-1].last_sector = disk_end;
 
-	    if (ext_info.last_sector > heads*sectors*cylinders-1)
-		ext_info.last_sector = heads*sectors*cylinders - 1;
-	} else if (p_info[num_parts-1].last_sector < heads*sectors*cylinders-1) {
+	    if (ext_info.last_sector > disk_end)
+		ext_info.last_sector = disk_end;
+	} else if (p_info[num_parts-1].last_sector < disk_end) {
 	    if (p_info[num_parts-1].id == FREE_SPACE ||
 		p_info[num_parts-1].id == UNUSABLE) {
-		p_info[num_parts-1].last_sector = heads*sectors*cylinders - 1;
+		p_info[num_parts-1].last_sector = disk_end;
 	    } else {
-		insert_part(num_parts, PRI_OR_LOG, FREE_SPACE, 0,
-			    p_info[num_parts-1].last_sector+1,
-			    heads*sectors*cylinders-1, 0);
+		insert_empty_part(num_parts,
+				  p_info[num_parts-1].last_sector+1,
+				  disk_end);
 	    }
 	}
 
@@ -1878,7 +1974,7 @@ void change_id(int i)
 
     if (new_id == 0)
 	print_warning(ID_EMPTY);
-    else if (new_id == EXTENDED)
+    else if (is_extended(new_id))
 	print_warning(ID_EXT);
     else
 	p_info[i].id = new_id;
@@ -1934,6 +2030,11 @@ void draw_partition(int i)
 	mvaddstr(y, FSTYPE_START, partition_type[p_info[i].id]);
     else
 	mvprintw(y, FSTYPE_START, "Unknown (%02X)", p_info[i].id);
+
+    if (p_info[i].dos_label[0]) {
+	int l = strlen(p_info[i].dos_label);
+	mvprintw(y, SIZE_START-5-l, " [%s]  ", p_info[i].dos_label);
+    }
 
     size = p_info[i].last_sector - p_info[i].first_sector + 1;
     if (display_units == SECTORS)
@@ -2055,16 +2156,6 @@ int draw_cursor(int move)
     return 0;
 }
 
-void die(int dummy)
-{
-    signal(SIGINT, old_SIGINT);
-    signal(SIGTERM, old_SIGTERM);
-    mvcur(0, COLS-1, LINES-1, 0);
-    nl();
-    endwin();
-    fdexit(0);
-}
-
 void do_curses_fdisk(void)
 {
     int done = FALSE;
@@ -2085,7 +2176,7 @@ void do_curses_fdisk(void)
         { 'W', "Write", "Write partition table to disk (this might destroy data)" },
         { 0, NULL, NULL }
     };
-
+    curses_started = 1;
     initscr();
     old_SIGINT = signal(SIGINT, die);
     old_SIGTERM = signal(SIGTERM, die);
@@ -2105,18 +2196,23 @@ void do_curses_fdisk(void)
     draw_screen();
 
     while (!done) {
+	char *s;
+
 	(void)draw_cursor(0);
 
-	if (p_info[cur_part].id == FREE_SPACE)
-	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 8, "hnpquW",
-	        MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
-	else if (p_info[cur_part].id > 0)
-	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 8, "bdhmpqtuW",
-	        MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
-	else
-	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 8, "hpquW",
-	        MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
-
+	if (p_info[cur_part].id == FREE_SPACE) {
+	    s = ((opentype == O_RDWR) ? "hnpquW" : "hnpqu");
+	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 8,
+	        s, MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
+	} else if (p_info[cur_part].id > 0) {
+	    s = ((opentype == O_RDWR) ? "bdhmpqtuW" : "bdhmpqtu");
+	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 8,
+	        s, MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
+	} else {
+	    s = ((opentype == O_RDWR) ? "hpquW" : "hpqu");
+	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 8,
+	        s, MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
+	}
 	switch ( command ) {
 	case 'B':
 	case 'b':
@@ -2225,30 +2321,34 @@ void do_curses_fdisk(void)
 	}
     }
 
-    signal(SIGINT, old_SIGINT);
-    signal(SIGTERM, old_SIGTERM);
-    mvcur(0, COLS-1, LINES-1, 0);
-    nl();
-    endwin();
-    fdexit(0);
+    die_x(0);
 }
 
 void copyright(void)
 {
-    fprintf(stderr, "Copyright (C) 1994 Kevin E. Martin\n");
+    fprintf(stderr, "Copyright (C) 1994-1997 Kevin E. Martin & aeb\n");
 }
 
 void usage(char *prog_name)
 {
-    fprintf(stderr,
-	    "%s: [-avz] [-c # cylinders] [-h # heads] [-s # sectors/track]\n",
-	    prog_name);
-    fprintf(stderr,
-	    "[ -P opt ] device\n");
+    fprintf(stderr, "\nUsage:\n");
+    fprintf(stderr, "Print version:\n");
+    fprintf(stderr, "\t%s -v\n", prog_name);
+    fprintf(stderr, "Print partition table:\n");
+    fprintf(stderr, "\t%s -P {r|s|t} [options] device\n", prog_name);
+    fprintf(stderr, "Interactive use:\n");
+    fprintf(stderr, "\t%s [options] device\n", prog_name);
+    fprintf(stderr, "
+Options:
+-a: Use arrow instead of highlighting;
+-z: Start with a zero partition table, instead of reading the pt from disk;
+-c C -h H -s S: Override the kernel's idea of the number of cylinders,
+                the number of heads and the number of sectors/track.\n\n");
+
     copyright();
 }
 
-void main(int argc, char **argv)
+int main(int argc, char **argv)
 {
     char c;
     int i, len;
@@ -2315,7 +2415,7 @@ void main(int argc, char **argv)
     else if (argc-optind != 0) {
 	usage(argv[0]);
 	exit(1);
-    } else if ((fd = open(DEFAULT_DEVICE, O_RDWR)) < 0)
+    } else if ((fd = open(DEFAULT_DEVICE, O_RDONLY)) < 0)
 	disk_device = ALTERNATE_DEVICE;
     else close(fd);
 
@@ -2329,4 +2429,5 @@ void main(int argc, char **argv)
 	    print_part_table();
     } else
 	do_curses_fdisk();
+    return 0;
 }

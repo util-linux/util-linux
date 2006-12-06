@@ -1,15 +1,28 @@
 /*
  * A swapon(8)/swapoff(8) for Linux 0.99.
  * swapon.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
+ * Added '-s' (Summary option) <Vincent.Renardias@waw.com> 02/1997.
  */
 
-#include "sundries.h"
+#include <stdlib.h>
+#include <stdio.h>
+#include <getopt.h>
+#include <string.h>
+#include <mntent.h>
+#include <errno.h>
+#include "swap.h"
+#include "swapargs.h"
+
+#define streq(s, t)	(strcmp ((s), (t)) == 0)
+
+#define	_PATH_FSTAB     "/etc/fstab"
+#define PROC_SWAPS      "/proc/swaps"
+
+/* #define SWAPON_NEEDS_TWO_ARGS */
 
 /* Nonzero for chatty (-v).  This is a nonstandard flag (not in BSD).  */
 int verbose = 0;
-#ifdef SUPPORT_PRIORITIES
 int priority = -1;	/* non-prioritized swap by default */
-#endif
 
 extern char version[];
 static char *program_name;
@@ -17,57 +30,69 @@ static struct option longopts[] =
 {
   { "all", 0, 0, 'a' },
   { "help", 0, 0, 'h' },
-#ifdef SUPPORT_PRIORITIES
   { "priority", required_argument, 0, 'p' },
-#endif
+  { "summary", 0, 0, 's' },
   { "verbose", 0, 0, 'v' },
   { "version", 0, 0, 'V' },
   { NULL, 0, 0, 0 }
 };
 
-#ifdef SUPPORT_PRIORITIES
 const char *usage_string = "\
 usage: %s [-hV]\n\
        %s -a [-v]\n\
        %s [-v] [-p priority] special ...\n\
+       %s [-s]\n\
 ";
-#else
-const char *usage_string = "\
-usage: %s [-hV]\n\
-       %s -a [-v]\n\
-       %s [-v] [-p priority] special ...\n\
-";
-#endif
 
 static void
 usage (FILE *fp, int n)
 {
-  fprintf (fp, usage_string, program_name, program_name, program_name);
+  fprintf (fp, usage_string, program_name, program_name, program_name, program_name);
   exit (n);
 }
 
-static int
-#ifdef SUPPORT_PRIORITIES
-swap (const char *special, int prio)
-#else
-swap (const char *special)
+#ifdef SWAPON_HAS_TWO_ARGS
+#define SWAPON_NEEDS_TWO_ARGS
 #endif
+
+#ifdef SWAPON_NEEDS_TWO_ARGS
+#ifdef SWAPON_HAS_TWO_ARGS
+/* libc is OK */
+#include <unistd.h>
+#else
+/* We want a swapon with two args, but have an old libc.
+   Build the kernel call by hand. */
+#include <linux/unistd.h>
+static
+_syscall2(int,  swapon,  const char *,  path, int, flags);
+static
+_syscall1(int,  swapoff,  const char *,  path);
+#endif
+#else
+/* just do as libc says */
+#include <unistd.h>
+#endif
+
+static int
+swap (const char *special, int prio)
 {
   int status;
-#ifdef SUPPORT_PRIORITIES
-  int flags;
-#endif
 
   if (verbose)
     printf("%s on device %s\n", program_name, special);
 
   if (streq (program_name, "swapon")) {
-#ifdef SUPPORT_PRIORITIES
-     flags = 0;
+#ifdef SWAPON_NEEDS_TWO_ARGS
+     int flags = 0;
+
+#ifdef SWAP_FLAG_PREFER
      if (prio >= 0) {
+        if (prio > SWAP_FLAG_PRIO_MASK)
+	  prio = SWAP_FLAG_PRIO_MASK;
 	flags = SWAP_FLAG_PREFER
 		| ((prio & SWAP_FLAG_PRIO_MASK) << SWAP_FLAG_PRIO_SHIFT);
      }
+#endif
      status = swapon (special, flags);
 #else
      status = swapon (special);
@@ -81,10 +106,27 @@ swap (const char *special)
   return status;
 }
 
+static int
+display_summary(void)
+{
+       FILE *swaps;
+       char line[200] ;
+
+       if ((swaps = fopen(PROC_SWAPS, "r")) == NULL) {
+               fprintf (stderr, "%s: %s: %s\n", program_name, PROC_SWAPS,
+			strerror (errno));
+               return -1 ; 
+       }
+       while ( fgets(line, sizeof(line), swaps))
+               printf ("%s", line);
+
+       return 0 ;
+}
+
 int
 main (int argc, char *argv[])
 {
-  struct fstab *fstab;
+  struct mntent *fstab;
   int status;
   int all = 0;
   int c;
@@ -94,11 +136,7 @@ main (int argc, char *argv[])
   else
     program_name = argv[0];
 
-#ifdef SUPPORT_PRIORITIES
-  while ((c = getopt_long (argc, argv, "ahp:vV", longopts, NULL)) != EOF)
-#else
-  while ((c = getopt_long (argc, argv, "ahvV", longopts, NULL)) != EOF)
-#endif
+  while ((c = getopt_long (argc, argv, "ahp:svV", longopts, NULL)) != EOF)
     switch (c)
       {
       case 'a':			/* all */
@@ -107,16 +145,17 @@ main (int argc, char *argv[])
       case 'h':			/* help */
 	usage (stdout, 0);
 	break;
-#ifdef SUPPORT_PRIORITIES
       case 'p':			/* priority */
 	priority = atoi(optarg);
 	break;
-#endif
+      case 's':			/* tell about current use of swap areas */
+	status = display_summary();
+	exit(status);
       case 'v':			/* be chatty */
 	++verbose;
 	break;
       case 'V':			/* version */
-	printf ("swapon: %s\n", version);
+	printf ("%s: %s\n", program_name, version);
 	exit (0);
       case 0:
 	break;
@@ -129,43 +168,30 @@ main (int argc, char *argv[])
 
   status = 0;
 
-  if (all)
-    {
-      while ((fstab = getfsent()) != NULL)
-	if (streq (fstab->fs_type, FSTAB_SW))
-	{
-#ifdef SUPPORT_PRIORITIES
-	   /* parse mount options; */
-	   char *opt, *opts = strdup(fstab->fs_mntopts);
-	   
-	   for (opt = strtok (opts, ",");
-		opt != NULL;
-		opt = strtok (NULL, ","))
-	   {
-	      if (strncmp(opt, "pri=", 4) == 0)
-	      {
-		 priority = atoi(opt+4);
-	      }
-	   }
-	   status |= swap (fstab->fs_spec, priority);
-#else
-	   status |= swap (fstab->fs_spec);
-#endif
-	}
-    }
-  else if (*argv == NULL)
-    {
-      usage (stderr, 2);
-    }
-  else
-    {
-       while (*argv != NULL) {
-#ifdef SUPPORT_PRIORITIES
-	  status |= swap (*argv++,priority);
-#else
-	  status |= swap (*argv++);
-#endif
+  if (all) {
+       FILE *fp = setmntent(_PATH_FSTAB, "r");
+       if (fp == NULL) {
+	    fprintf(stderr, "%s: cannot open %s: %s\n", program_name,
+		    _PATH_FSTAB, strerror(errno));
+	    exit(2);
        }
-    }
+       while ((fstab = getmntent(fp)) != NULL) {
+	    if (streq (fstab->mnt_type, MNTTYPE_SWAP)) {
+		 /* parse mount options; */
+		 char *opt, *opts = strdup(fstab->mnt_opts);
+	   
+		 for (opt = strtok (opts, ","); opt != NULL;
+		      opt = strtok (NULL, ","))
+		      if (strncmp(opt, "pri=", 4) == 0)
+			   priority = atoi(opt+4);
+		 status |= swap (fstab->mnt_fsname, priority);
+	    }
+       }
+  } else if (*argv == NULL) {
+       usage (stderr, 2);
+  } else {
+       while (*argv != NULL)
+	    status |= swap (*argv++,priority);
+  }
   return status;
 }

@@ -7,6 +7,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
 #include <linux/fd.h>
 #include <linux/fs.h>
 
@@ -28,13 +29,15 @@ static void format_disk(char *name)
     for (track = 0; track < param.track; track++) {
 	descr.track = track;
 	descr.head = 0;
-	if (ioctl(ctrl,FDFMTTRK,(int) &descr) < 0) PERROR("\nioctl(FDFMTTRK)");
+	if (ioctl(ctrl,FDFMTTRK,(long) &descr) < 0)
+	  PERROR("\nioctl(FDFMTTRK)");
+
 	printf("%3d\b\b\b",track);
 	fflush(stdout);
 	if (param.head == 2) {
 	    descr.head = 1;
-	    if (ioctl(ctrl,FDFMTTRK,(int) &descr) < 0)
-		PERROR("\nioctl(FDFMTTRK)");
+	    if (ioctl(ctrl,FDFMTTRK,(long) &descr) < 0)
+	      PERROR("\nioctl(FDFMTTRK)");
 	}
     }
     if (ioctl(ctrl,FDFMTEND,NULL) < 0) PERROR("\nioctl(FDFMTEND)");
@@ -72,7 +75,7 @@ static void usage(char *name)
 {
     char *this;
 
-    if (this = strrchr(name,'/')) name = this+1;
+    if ((this = strrchr(name,'/')) != NULL) name = this+1;
     fprintf(stderr,"usage: %s [ -n ] device\n",name);
     exit(1);
 }
@@ -100,7 +103,8 @@ int main(int argc,char **argv)
     }
     if (access(argv[1],W_OK) < 0) PERROR(argv[1]);
     if ((ctrl = open(argv[1],3)) < 0) PERROR(argv[1]);
-    if (ioctl(ctrl,FDGETPRM,(int) &param) < 0) PERROR("ioctl(FDGETPRM)");
+    if (ioctl(ctrl,FDGETPRM,(long) &param) < 0) 
+      PERROR("Could not determine current format type");
     printf("%sle-sided, %d tracks, %d sec/track. Total capacity %d kB.\n",
       param.head ? "Doub" : "Sing",param.track,param.sect,param.size >> 1);
     format_disk(argv[1]);

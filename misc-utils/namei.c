@@ -42,15 +42,20 @@ chdir to /,  or if it encounters an unknown file type.
 -------------------------------------------------------------*/
 
 #ifndef lint
-static char *RCSid = "$Id: namei.c,v 1.4 1995/03/12 01:35:45 faith Exp $";
+static char *RCSid = "$Id: namei.c,v 1.6 1997/07/06 00:13:09 aebr Exp $";
 #endif
 
 #include <stdio.h>
+#include <unistd.h>
+#include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/param.h>
 
+#ifndef __GNU_LIBRARY__
 extern char *sys_errlist[];
+#endif
+
 extern int errno;
 #define ERR	sys_errlist[errno],errno
 
@@ -64,6 +69,7 @@ int xflag = 0;
 
 static char *pperm();
 
+int
 main(argc, argv)
 int argc;
 char *argv[];
@@ -110,7 +116,7 @@ char *argv[];
 	    exit(1);
 	}
     }
-    exit(0);
+    return 0;
 }
 
 void

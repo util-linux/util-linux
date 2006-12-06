@@ -8,6 +8,13 @@
  *
  * Enhancements by Mika Liljeberg (liljeber@cs.Helsinki.FI)
  *
+ * Beep modifications by Christophe Jolif (cjolif@storm.gatelink.fr.net)
+ *
+ * Sanity increases by Cafeine Addict [sic].
+ *
+ * Powersave features by, todd j. derr <tjd@wordsmith.org>
+ *
+ * Converted to terminfo by Kars de Jong (jongk@cs.utwente.nl)
  *
  * Syntax:
  *
@@ -47,18 +54,22 @@
  *   [ -standout [attr] ]
  *   [ -msg [on|off] ]
  *   [ -msglevel [0-8] ]
- *   [ -powersave [on|off] ]
+ *   [ -powersave [on|vsync|hsync|powerdown|off] ]
+ *   [ -powerdown [0-60] ]
+ *   [ -blength [0-2000] ]
+ *   [ -bfreq freq ]
  *
  *
  * Semantics:
  *
- * Setterm writes to standard output a character string that will invoke the
- * specified terminal capabilities.  Where possibile termcap is consulted to
- * find the string to use.  Some options however do not correspond to a
- * termcap capability.  In this case if the terminal type is "con*", or
- * "linux*" the string that invokes the specified capabilities on the PC
- * Linux virtual console driver is output.  Options that are not implemented
- * by the terminal are ignored.
+ * Setterm writes to standard output a character string that will
+ * invoke the specified terminal capabilities.  Where possibile
+ * terminfo is consulted to find the string to use.  Some options
+ * however do not correspond to a terminfo capability.  In this case if
+ * the terminal type is "con*", or "linux*" the string that invokes
+ * the specified capabilities on the PC Linux virtual console driver
+ * is output.  Options that are not implemented by the terminal are
+ * ignored.
  *
  * The following options are non-obvious.
  *
@@ -74,33 +85,47 @@
  *   -default sets the terminal's rendering options to the default values.
  *
  *   -store stores the terminal's current rendering options as the default
- *      values.
- */
+ *      values.  */
 
 #include <stdlib.h>
 #include <stdio.h>
+#include <errno.h>
 #include <ctype.h>
-#include <termcap.h>
-#include <linux/config.h>
-#include <sys/time.h>
 #include <unistd.h>
 #include <termios.h>
 #include <string.h>
+#include <fcntl.h>
+#include <term.h>
+#if NCH
+#include <ncurses.h>
+#else
+#include <curses.h>
+#endif
+#include <sys/ioctl.h>
+#include <sys/time.h>
 
-/* for syslog system call */
-#include <linux/unistd.h>
-#include <errno.h>
-_syscall3(int, syslog, int, type, char*, buf, int, len);
+#ifndef TCGETS
+/* TCGETS is either defined in termios.h, or here: */
+#include <asm/ioctls.h>
+#endif
+
+#if __GNU_LIBRARY__ < 5
+#ifndef __alpha__
+# include <linux/unistd.h>
+#define __NR_klogctl __NR_syslog
+_syscall3(int, klogctl, int, type, char*, buf, int, len);
+#else /* __alpha__ */
+#define klogctl syslog
+#endif
+#endif
 
 /* Constants. */
 
-/* Termcap constants. */
-#define TC_BUF_SIZE 1024	/* Size of termcap(3) buffer. */
-#define TC_ENT_SIZE 50		/* Size of termcap(3) entry buffer. */
-
 /* General constants. */
+#ifndef TRUE
 #define TRUE  1
 #define FALSE 0
+#endif
 
 /* Keyboard types. */
 #define PC	 0
@@ -127,8 +152,6 @@ _syscall3(int, syslog, int, type, char*, buf, int, len);
 
 /* Static variables. */
 
-char tc_buf[TC_BUF_SIZE];	/* Termcap buffer. */
-
 /* Option flags.  Set if the option is to be invoked. */
 int opt_term, opt_reset, opt_initialize, opt_cursor, opt_keyboard;
 int opt_linewrap, opt_snow, opt_softscroll, opt_default, opt_foreground;
@@ -136,7 +159,8 @@ int opt_background, opt_bold, opt_blink, opt_reverse, opt_underline;
 int opt_store, opt_clear, opt_blank, opt_snap, opt_snapfile, opt_standout;
 int opt_append, opt_ulcolor, opt_hbcolor, opt_halfbright, opt_repeat;
 int opt_tabs, opt_clrtabs, opt_regtabs, opt_appcursorkeys, opt_inversescreen;
-int opt_msg, opt_msglevel, opt_powersave;
+int opt_msg, opt_msglevel, opt_powersave, opt_powerdown;
+int opt_blength, opt_bfreq;
 
 /* Option controls.  The variable names have been contracted to ensure
  * uniqueness.
@@ -144,19 +168,24 @@ int opt_msg, opt_msglevel, opt_powersave;
 char *opt_te_terminal_name;	/* Terminal name. */
 int opt_cu_on, opt_li_on, opt_sn_on, opt_so_on, opt_bo_on, opt_hb_on, opt_bl_on;
 int opt_re_on, opt_un_on, opt_rep_on, opt_appck_on, opt_invsc_on;
-int opt_msg_on, opt_ps_on;	/* Boolean switches. */
+int opt_msg_on;			/* Boolean switches. */
 int opt_ke_type;		/* Keyboard type. */
 int opt_fo_color, opt_ba_color;	/* Colors. */
 int opt_ul_color, opt_hb_color;
 int opt_cl_all;			/* Clear all or rest. */
 int opt_bl_min;			/* Blank screen. */
+int opt_blength_l;
+int opt_bfreq_f;
 int opt_sn_num = 0;		/* Snap screen. */
 int opt_st_attr;
 int opt_rt_len;			/* regular tab length */
 int opt_tb_array[161];		/* Array for tab list */
 int opt_msglevel_num;
+int opt_ps_mode, opt_pd_min;	/* powersave mode/powerdown time */
 
 char opt_sn_name[200] = "screen.dump";
+
+void screendump(int vcnum, FILE *F);
 
 /* Command line parsing routines.
  *
@@ -253,30 +282,31 @@ int *bad_arg;			/* Set to true if an error is detected. */
   if (argc != 1 || *option) *bad_arg = TRUE;
   *option = TRUE;
   if (argc == 1) {
-	if (strcmp(argv[0], "black") == 0)
-		*opt_color = BLACK;
-	else if (strcmp(argv[0], "red") == 0)
-		*opt_color = RED;
-	else if (strcmp(argv[0], "green") == 0)
-		*opt_color = GREEN;
-	else if (strcmp(argv[0], "yellow") == 0)
-		*opt_color = YELLOW;
-	else if (strcmp(argv[0], "blue") == 0)
-		*opt_color = BLUE;
-	else if (strcmp(argv[0], "magenta") == 0)
-		*opt_color = MAGENTA;
-	else if (strcmp(argv[0], "cyan") == 0)
-		*opt_color = CYAN;
-	else if (strcmp(argv[0], "white") == 0)
-		*opt_color = WHITE;
-	else if (strcmp(argv[0], "default") == 0)
-		*opt_color = DEFAULT;
-	else if (isdigit(argv[0][0]))
-	    *opt_color = atoi(argv[0]);
-	else    
-		*bad_arg = TRUE;
-       if(*opt_color < 0 || *opt_color > 15)
-	    *bad_arg = TRUE;
+    if (strcmp(argv[0], "black") == 0)
+      *opt_color = BLACK;
+    else if (strcmp(argv[0], "red") == 0)
+      *opt_color = RED;
+    else if (strcmp(argv[0], "green") == 0)
+      *opt_color = GREEN;
+    else if (strcmp(argv[0], "yellow") == 0)
+      *opt_color = YELLOW;
+    else if (strcmp(argv[0], "blue") == 0)
+      *opt_color = BLUE;
+    else if (strcmp(argv[0], "magenta") == 0)
+      *opt_color = MAGENTA;
+    else if (strcmp(argv[0], "cyan") == 0)
+      *opt_color = CYAN;
+    else if (strcmp(argv[0], "white") == 0)
+      *opt_color = WHITE;
+    else if (strcmp(argv[0], "default") == 0)
+      *opt_color = DEFAULT;
+    else if (isdigit(argv[0][0]))
+      *opt_color = atoi(argv[0]);
+    else    
+      *bad_arg = TRUE;
+    
+    if(*opt_color < 0 || *opt_color > 7)
+      *bad_arg = TRUE;
   }
 }
 
@@ -364,7 +394,7 @@ int *option;			/* Clear flag to set. */
 int *opt_all;			/* Clear all switch to set or reset. */
 int *bad_arg;			/* Set to true if an error is detected. */
 {
-/* Parse a -clear specification. */
+/* Parse a -blank specification. */
 
   if (argc > 1 || *option) *bad_arg = TRUE;
   *option = TRUE;
@@ -377,6 +407,35 @@ int *bad_arg;			/* Set to true if an error is detected. */
   }
 }
 
+void parse_powersave(argc, argv, option, opt_mode, bad_arg)
+int argc;                      /* Number of arguments for this option. */
+char *argv[];                  /* Arguments for this option. */
+int *option;                   /* powersave flag to set. */
+int *opt_mode;                 /* Powersaving mode, defined in vesa_blank.c */
+int *bad_arg;                  /* Set to true if an error is detected. */
+{
+/* Parse a -powersave mode specification. */
+
+  if (argc > 1 || *option) *bad_arg = TRUE;
+  *option = TRUE;
+  if (argc == 1) {
+	if (strcmp(argv[0], "on") == 0)
+		*opt_mode = 1;
+	else if (strcmp(argv[0], "vsync") == 0)
+		*opt_mode = 1;
+	else if (strcmp(argv[0], "hsync") == 0)
+		*opt_mode = 2;
+	else if (strcmp(argv[0], "powerdown") == 0)
+		*opt_mode = 3;
+	else if (strcmp(argv[0], "off") == 0)
+		*opt_mode = 0;
+	else
+		*bad_arg = TRUE;
+  } else {
+	*opt_mode = 0;
+  }
+}
+
 #if 0
 void parse_standout(argc, argv, option, opt_all, bad_arg)
 int argc;			/* Number of arguments for this option. */
@@ -385,7 +444,7 @@ int *option;			/* Clear flag to set. */
 int *opt_all;			/* Clear all switch to set or reset. */
 int *bad_arg;			/* Set to true if an error is detected. */
 {
-/* Parse a -clear specification. */
+/* Parse a -standout specification. */
 
   if (argc > 1 || *option) *bad_arg = TRUE;
   *option = TRUE;
@@ -423,7 +482,7 @@ int *option;			/* Clear flag to set. */
 int *opt_all;			/* Clear all switch to set or reset. */
 int *bad_arg;			/* Set to true if an error is detected. */
 {
-/* Parse a -clear specification. */
+/* Parse a -dump or -append specification. */
 
   if (argc > 1 || *option) *bad_arg = TRUE;
   *option = TRUE;
@@ -443,7 +502,7 @@ int *option;			/* Clear flag to set. */
 int *opt_all;			/* Clear all switch to set or reset. */
 int *bad_arg;			/* Set to true if an error is detected. */
 {
-/* Parse a -clear specification. */
+/* Parse a -file specification. */
 
   if (argc != 1 || *option) *bad_arg = TRUE;
   *option = TRUE;
@@ -514,9 +573,49 @@ int *bad_arg;			/* Set to true if an error is detected. */
   }
 }
 
+
+void parse_blength(argc, argv, option, opt_all, bad_arg)
+int argc;			/* Number of arguments for this option. */
+char *argv[];			/* Arguments for this option. */
+int *option;			/* Clear flag to set. */
+int *opt_all;			
+int *bad_arg;			/* Set to true if an error is detected. */
+{
+/* Parse  -blength specification. */
+
+  if (argc > 1 || *option) *bad_arg = TRUE;
+  *option = TRUE;
+  if (argc == 1) {
+	*opt_all = atoi(argv[0]);
+	if (*opt_all > 2000)
+		*bad_arg = TRUE;
+  } else {
+	*opt_all = 0;
+  }
+}
+
+void parse_bfreq(argc, argv, option, opt_all, bad_arg)
+int argc;			/* Number of arguments for this option. */
+char *argv[];			/* Arguments for this option. */
+int *option;			/* Clear flag to set. */
+int *opt_all;			
+int *bad_arg;			/* Set to true if an error is detected. */
+{
+/* Parse  -bfreq specification. */
+
+  if (argc > 1 || *option) *bad_arg = TRUE;
+  *option = TRUE;
+  if (argc == 1) {
+	*opt_all = atoi(argv[0]);
+  } else {
+	*opt_all = 0;
+  }
+}
+
+
 void show_tabs()
 {
-  int i, co = tgetnum("co");
+  int i, co = tigetnum("cols");
 
   if(co > 0) {
     printf("\r         ");
@@ -612,7 +711,13 @@ int *bad_arg;			/* Set to true if an error is detected. */
   else if (STRCMP(option, "msglevel") == 0)
 	parse_msglevel(argc, argv, &opt_msglevel, &opt_msglevel_num, bad_arg);
   else if (STRCMP(option, "powersave") == 0)
-	parse_switch(argc, argv, &opt_powersave, &opt_ps_on, bad_arg);
+	parse_powersave(argc, argv, &opt_powersave, &opt_ps_mode, bad_arg);
+  else if (STRCMP(option, "powerdown") == 0)
+	parse_blank(argc, argv, &opt_powerdown, &opt_pd_min, bad_arg);
+  else if (STRCMP(option, "blength") == 0)
+	parse_blength(argc, argv, &opt_blength, &opt_blength_l, bad_arg);
+  else if (STRCMP(option, "bfreq") == 0)
+   	parse_bfreq(argc, argv, &opt_bfreq, &opt_bfreq_f, bad_arg);
 #if 0
   else if (STRCMP(option, "standout") == 0)
 	parse_standout(argc, argv, &opt_standout, &opt_st_attr, bad_arg);
@@ -676,23 +781,23 @@ char *prog_name;		/* Name of this program. */
   fprintf(stderr, "  [ -file dumpfilename ]\n");
   fprintf(stderr, "  [ -msg [on|off] ]\n");
   fprintf(stderr, "  [ -msglevel [0-8] ]\n");
-  fprintf(stderr, "  [ -powersave [on|off] ]\n");
+  fprintf(stderr, "  [ -powersave [on|vsync|hsync|powerdown|off] ]\n");
+  fprintf(stderr, "  [ -powerdown [0-60] ]\n");
+  fprintf(stderr, "  [ -blength [0-2000] ]\n");
+  fprintf(stderr, "  [ -bfreq freqnumber ]\n");
 }
 
-char tc_ent_buf[TC_ENT_SIZE];	/* Buffer for storing a termcap entry. */
-
-char *tc_entry(name)
-char *name;			/* Termcap capability string to lookup. */
+char *ti_entry(name)
+const char *name;		/* Terminfo capability string to lookup. */
 {
-/* Return the specified termcap string, or an empty string if no such termcap
+/* Return the specified terminfo string, or an empty string if no such terminfo
  * capability exists.
  */
 
   char *buf_ptr;
 
-  buf_ptr = tc_ent_buf;
-  if (tgetstr(name, &buf_ptr) == NULL) tc_ent_buf[0] = '\0';
-  return tc_ent_buf;
+  if ((buf_ptr = tigetstr(name)) == (char *)-1) buf_ptr = NULL;
+  return buf_ptr;
 }
 
 void perform_sequence(vcterm)
@@ -703,20 +808,20 @@ int vcterm;			/* Set if terminal is a virtual console. */
 
   /* -reset. */
   if (opt_reset) {
-	printf("%s", tc_entry("rs"));
+	putp(ti_entry("rs1"));
   }
 
   /* -initialize. */
   if (opt_initialize) {
-	printf("%s", tc_entry("is"));
+	putp(ti_entry("is2"));
   }
 
   /* -cursor [on|off]. */
   if (opt_cursor) {
 	if (opt_cu_on)
-		printf("%s", tc_entry("ve"));
+		putp(ti_entry("cnorm"));
 	else
-		printf("%s", tc_entry("vi"));
+		putp(ti_entry("civis"));
   }
 
 #if 0
@@ -788,7 +893,7 @@ int vcterm;			/* Set if terminal is a virtual console. */
 	if (vcterm)
 		printf("\033[0m");
 	else
-		printf("%s", tc_entry("me"));
+		putp(ti_entry("sgr0"));
   }
 
   /* -foreground black|red|green|yellow|blue|magenta|cyan|white|default.
@@ -834,12 +939,12 @@ int vcterm;			/* Set if terminal is a virtual console. */
    */
   if (opt_bold) {
 	if (opt_bo_on)
-		printf("%s", tc_entry("md"));
+		putp(ti_entry("bold"));
 	else {
 		if (vcterm)
 			printf("%s%s", ESC, "[22m");
 		else
-			printf("%s", tc_entry("me"));
+			putp(ti_entry("sgr0"));
 	}
   }
 
@@ -848,12 +953,12 @@ int vcterm;			/* Set if terminal is a virtual console. */
    */
   if (opt_halfbright) {
 	if (opt_hb_on)
-		printf("%s", tc_entry("mh"));
+		putp(ti_entry("dim"));
 	else {
 		if (vcterm)
 			printf("%s%s", ESC, "[22m");
 		else
-			printf("%s", tc_entry("me"));
+			putp(ti_entry("sgr0"));
 	}
   }
 
@@ -862,12 +967,12 @@ int vcterm;			/* Set if terminal is a virtual console. */
    */
   if (opt_blink) {
 	if (opt_bl_on)
-		printf("%s", tc_entry("mb"));
+		putp(ti_entry("blink"));
 	else {
 		if (vcterm)
 			printf("%s%s", ESC, "[25m");
 		else
-			printf("%s", tc_entry("me"));
+			putp(ti_entry("sgr0"));
 	}
   }
 
@@ -876,21 +981,21 @@ int vcterm;			/* Set if terminal is a virtual console. */
    */
   if (opt_reverse) {
 	if (opt_re_on)
-		printf("%s", tc_entry("mr"));
+		putp(ti_entry("rev"));
 	else {
 		if (vcterm)
 			printf("%s%s", ESC, "[27m");
 		else
-			printf("%s", tc_entry("me"));
+			putp(ti_entry("sgr0"));
 	}
   }
 
   /* -underline [on|off]. */
   if (opt_underline) {
 	if (opt_un_on)
-		printf("%s", tc_entry("us"));
+		putp(ti_entry("smul"));
 	else
-		printf("%s", tc_entry("ue"));
+		putp(ti_entry("rmul"));
   }
 
   /* -store.  Vc only. */
@@ -901,9 +1006,9 @@ int vcterm;			/* Set if terminal is a virtual console. */
   /* -clear [all|rest]. */
   if (opt_clear) {
 	if (opt_cl_all)
-		printf("%s", tc_entry("cl"));
+		putp(ti_entry("clear"));
 	else
-		printf("%s", tc_entry("cd"));
+		putp(ti_entry("ed"));
   }
 
   /* -tabs Vc only. */
@@ -926,7 +1031,7 @@ int vcterm;			/* Set if terminal is a virtual console. */
     if (opt_tb_array[0] == -1)
       printf("\033[3g");
     else
-      for(i=0; opt_tb_array[i]; i++)
+      for(i=0; opt_tb_array[i] > 0; i++)
         printf("\033[%dG\033[g", opt_tb_array[i]);
     putchar('\r');
   }
@@ -942,16 +1047,21 @@ int vcterm;			/* Set if terminal is a virtual console. */
   }
 
   /* -blank [0-60]. */
-  if (opt_blank) 
+  if (opt_blank && vcterm) 
     printf("\033[9;%d]", opt_bl_min);
     
-  /* -powersave [on|off] (console) */
+  /* -powersave [on|vsync|hsync|powerdown|off] (console) */
   if (opt_powersave) {
         char ioctlarg[2];
 	ioctlarg[0] = 10;	/* powersave */
-	ioctlarg[1] = opt_ps_on;
+	ioctlarg[1] = opt_ps_mode;
         if (ioctl(0,TIOCLINUX,ioctlarg))
 	    fprintf(stderr,"cannot (un)set powersave mode\n");
+  }
+
+  /* -powerdown [0-60]. */
+  if (opt_powerdown) {
+	printf("\033[14;%d]", opt_pd_min);
   }
 
 #if 0
@@ -979,26 +1089,38 @@ int vcterm;			/* Set if terminal is a virtual console. */
   if (opt_msg && vcterm) {
        if (opt_msg_on)
                /* 7 -- Enable printk's to console */
-               result = syslog(7, NULL, 0);
+               result = klogctl(7, NULL, 0);
        else
                /*  6 -- Disable printk's to console */
-               result = syslog(6, NULL, 0);
+               result = klogctl(6, NULL, 0);
 
        if (result != 0)
-               printf("syslog error: %s\n", strerror(result));
+               printf("klogctl error: %s\n", strerror(result));
   }
 
   /* -msglevel [0-8] */
   if (opt_msglevel && vcterm) {
        /* 8 -- Set level of messages printed to console */
-       result = syslog(8, NULL, opt_msglevel_num);
+       result = klogctl(8, NULL, opt_msglevel_num);
        if (result != 0)
-               printf("syslog error: %s\n", strerror(result));
+               printf("klogctl error: %s\n", strerror(result));
    }
+
+  /* -blength [0-2000] */
+  if (opt_blength && vcterm) {
+       printf("\033[11;%d]", opt_blength_l);
+  }
+  
+  /* -bfreq freqnumber */
+  if (opt_bfreq && vcterm) {
+   	printf("\033[10;%d]", opt_bfreq_f);
+  }
+
 }
 
 extern char *malloc();
 
+void
 screendump(int vcnum, FILE *F){
 #include <sys/param.h>
     char infile[MAXPATHLEN];
@@ -1069,7 +1191,7 @@ try_ioctl:
     }
 }
 
-void main(int argc, char **argv)
+int main(int argc, char **argv)
 {
   int bad_arg = FALSE;		/* Set if error in arguments. */
   int arg, modifier;
@@ -1117,13 +1239,9 @@ void main(int argc, char **argv)
 	}
   }
 
-  /* Find termcap entry. */
+  /* Find terminfo entry. */
 
-  if (tgetent(tc_buf, term) != 1) {
-	fprintf(stderr, "%s: Could not find termcap entry for %s.\n",
-		argv[0], term);
-	exit(1);
-  }
+  setupterm(term, 1, (int *)0);
 
   /* See if the terminal is a virtual console terminal. */
 
@@ -1133,5 +1251,5 @@ void main(int argc, char **argv)
 
   perform_sequence(vcterm);
 
-  exit(0);
+  return 0;
 }

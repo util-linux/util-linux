@@ -1,21 +1,19 @@
 .\" Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be freely distributed.
 .\" " for emacs hilit19 mode
-.TH MKFS 8 "10 January 1994" "Linux 0.99" "Linux Programmer's Manual"
+.TH MKFS 8 "2 July 1996" "Util-linux 2.6" "Linux System Administrator's Manual"
 .SH NAME
 mkfs \- make a Linux MINIX filesystem
 .SH SYNOPSIS
-.BR "mkfs [ \-c ] [ \-n"
+.BR "mkfs [ \-c | \-l filename ] [ \-n"
 namelength
 .B ] [ \-i
 inodecount
+.B ] [ \-v ]
+device 
+.B [ 
+size-in-blocks
 .B ]
-device size-in-blocks
-.br
-.B "mkfs [ \-l"
-filename
-.B ]
-device size-in-blocks
 .SH DESCRIPTION
 .B mkfs
 creates a Linux MINIX file-system on a device (usually a disk partition).
@@ -26,10 +24,10 @@ is usually of the following form:
 
 .nf
 .RS
-/dev/hda[1-8]
-/dev/hdb[1-8]
-/dev/sda[1-8]
-/dev/sdb[1-8]
+/dev/hda[1-8] (IDE disk 1)
+/dev/hdb[1-8] (IDE disk 2)
+/dev/sda[1-8] (SCSI disk 1)
+/dev/sdb[1-8] (SCSI disk 2)
 .RE
 .fi
 
@@ -38,8 +36,11 @@ The
 parameter is the desired size of the file system, in blocks.  This
 information can be determined from the
 .BR fdisk (8)
-program.  Only block counts strictly greater than 10 and strictly less than
-65536 are allowed.
+or
+.BR cfdisk (8)
+program.  If omitted it will be determined automaticaly.  Only block
+counts strictly greater than 10 and strictly less than 65536 are
+allowed.
 .SH OPTIONS
 .TP
 .B \-c
@@ -62,6 +63,9 @@ Read the bad blocks list from
 .IR filename .
 The file has one bad block number per line.  The count of bad blocks read
 is printed.
+.TP
+.B \-v
+Make a Minix version 2 filesystem.
 .SH "EXIT CODES"
 The exit code returned by
 .B mkfs.minix
@@ -77,8 +81,8 @@ Usage or syntax error
 .BR mkefs (8),
 .BR efsck (8),
 .BR reboot (8)
-.SH AUTHOR
-Linus Torvalds (torvalds@cs.helsinki.fi)
+.SH AUTHORS
+Stared by Linus Torvalds (torvalds@cs.helsinki.fi).
 .br
 Error code values by Rik Faith (faith@cs.unc.edu)
 .br
@@ -89,3 +93,9 @@ Support for the file system valid flag by Dr. Wettstein
 .br
 Check to prevent mkfs of mounted filesystem and boot sector clearing
 by Daniel Quinlan (quinlan@yggdrasil.com)
+.br
+Minix v2 support by Andreas Schwab
+(schwab@issan.informatik.uni-dortmund.de), updated by Nicolai
+Langfeldt (janl@math.uio.no)
+.br
+Portability patch by Russell King.

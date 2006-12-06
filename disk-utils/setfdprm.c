@@ -2,11 +2,13 @@
 		  autodetection and switches diagnostic messages. */
 
 #include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
 #include <sys/types.h>
 #include <sys/stat.h>
+#include <sys/ioctl.h>
 #include <linux/fd.h>
 
 #define FDPRMFILE "/etc/fdprm"
@@ -89,7 +91,7 @@ static void usage(char *name)
 {
     char *this;
 
-    if (this = strrchr(name,'/')) name = this+1;
+    if ((this = strrchr(name,'/')) != NULL) name = this+1;
     fprintf(stderr,"usage: %s [ -p ] dev name\n",name);
     fprintf(stderr,"       %s [ -p ] dev size sect heads tracks stretch \
 gap rate spec1 fmt_gap\n",name);
@@ -101,10 +103,11 @@ gap rate spec1 fmt_gap\n",name);
     exit(1);
 }
 
-
+void
 main(int argc,char **argv)
 {
-    int cmd,fd;
+    int fd;
+    unsigned int cmd;
     char *name;
 
     name = argv[0];
@@ -143,7 +146,11 @@ main(int argc,char **argv)
 	if (argc != 2) usage(name);
 	cmd_without_param(cmd,fd);
     }
-    if (argc != 11 && argc != 3) usage(name);
-    if (argc == 11) set_params(cmd,fd,&argv[2]);
-    else find_params(cmd,fd,argv[2]);
+    if (argc != 11 && argc != 3)
+	usage(name);
+    else if (argc == 11)
+	set_params(cmd,fd,&argv[2]);
+    else
+	find_params(cmd,fd,argv[2]);
+    /* not reached */
 }

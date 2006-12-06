@@ -36,14 +36,14 @@ static char sccsid[] = "@(#)hexsyntax.c	5.2 (Berkeley) 5/8/90";
 #endif /* not lint */
 
 #include <sys/types.h>
+#include <unistd.h>
+#include <stdlib.h>
 #include <stdio.h>
 #include "hexdump.h"
 
 off_t skip;				/* bytes to skip */
 
-newsyntax(argc, argvp)
-	int argc;
-	char ***argvp;
+void newsyntax(int argc, char ***argvp)
 {
 	extern enum _vflag vflag;
 	extern FS *fshead;
@@ -122,7 +122,7 @@ newsyntax(argc, argvp)
 	*argvp += optind;
 }
 
-usage()
+void usage()
 {
 	(void)fprintf(stderr,
 "hexdump: [-bcdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n");

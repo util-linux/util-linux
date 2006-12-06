@@ -45,7 +45,7 @@ char copyright[] =
 
 #ifndef lint
 /*static char sccsid[] = "from: @(#)rev.c	5.2 (Berkeley) 3/21/92";*/
-static char rcsid[] = "$Id: rev.c,v 1.3 1995/10/07 01:32:14 faith Exp $";
+static char rcsid[] = "$Id: rev.c,v 1.4 1996/07/02 20:08:07 janl Exp $";
 #endif /* not lint */
 
 #include <sys/types.h>
@@ -53,7 +53,7 @@ static char rcsid[] = "$Id: rev.c,v 1.3 1995/10/07 01:32:14 faith Exp $";
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef linux
+#ifdef __linux__
 #include <unistd.h>
 #endif /* linux */
 
@@ -66,7 +66,7 @@ main(argc, argv)
 	char *argv[];
 {
 	register char *filename, *t;
-#ifdef linux
+#ifdef __linux__
 	char p[512];
 #else /* linux */
 	char *p;
@@ -98,7 +98,7 @@ main(argc, argv)
 			}
 			filename = *argv++;
 		}
-#ifndef linux
+#ifndef __linux__
 		while (p = fgetline(fp, &len)) {
 			t = p + len - 1;
 			for (t = p + len - 1; t >= p; --t)

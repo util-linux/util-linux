@@ -1,14 +1,43 @@
 # MCONFIG -- Configuration stuff for util-linux
 # Created: Sat Feb  4 15:50:30 1995
-# Revised: Thu Oct 12 10:11:33 1995 by r.faith@ieee.org
+# Revised: Sun Nov 10 20:10:13 1996 by faith@cs.unc.edu
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 #
 
+# Not all utils work with all architectures, select yours here. 
+
+# NOTE: UTIL-LINUX has not been tested extensively on anything but
+# INTEL.  If you find problems in compiling on other architectures
+# please provide fix to util-linux@math.uio.no.
+
+CPU=intel
+#CPU=alpha
+#CPU=sparc
+#CPU=arm
+#CPU=m68k
+#CPU=mips
+
+# if HAVE_LIBCRYPT is "yes" -lcrypt will be used
+HAVE_LIBCRYPT=no
+#HAVE_LIBCRYPT=yes
+
+# If HAVE_PAM is set to "yes", then login, chfn, chsh, and newgrp
+# will use PAM for authentication. Additionally, passwd will not be
+# installed as it is not PAM aware.
+HAVE_PAM=no
+#HAVE_PAM=yes
+
 # If HAVE_SHADOW is set to "yes", then login, chfn, chsh, newgrp, passwd,
 # and vipw will not be built or installed from the login-utils
-# subdirectory.
+# subdirectory.  
 HAVE_SHADOW=no
 #HAVE_SHADOW=yes
+
+# If HAVE_PASSWD is set to "yes", then passwd will not be built or
+# installed from the login-utils subdirectory (but login, chfn, chsh,
+# newgrp, and vipw *will* be installed).
+HAVE_PASSWD=no
+#HAVE_PASSWD=yes
 
 # If you use chfn and chsh from this package, REQUIRE_PASSWORD will require
 # non-root users to enter the account password before updating /etc/passwd.
@@ -22,27 +51,21 @@ ONLY_LISTED_SHELLS=yes
 #ONLY_LISTED_SHELLS=no
 
 
-# If HAVE_PASSWD is set to "yes", then passwd will not be built or
-# installed from the login-utils subdirectory (but login, chfn, chsh,
-# newgrp, and vipw *will* be installed).
-HAVE_PASSWD=no
-#HAVE_PASSWD=yes
-
 # If HAVE_SYSVINIT is set to "yes", then simpleinit and shutdown will not
 # be built or installed from the login-utils subdirectory.  (The shutdown
 # and halt that come with the SysVinit package should be used with the init
 # found in that package.)
-HAVE_SYSVINIT=no
-#HAVE_SYSVINIT=yes
+#HAVE_SYSVINIT=no
+HAVE_SYSVINIT=yes
 
 # If HAVE_SYSVINIT_UTILS is set to "yes", then last, mesg, and wall will
 # not be built or installed from the login-utils subdirectory.  (The
 # shutdown and init from the SysVinit package do not depend on the last,
 # mesg, and wall from that package.)
-HAVE_SYSVINIT_UTILS=no
-#HAVE_SYSVINIT_UTILS=yes
+#HAVE_SYSVINIT_UTILS=no
+HAVE_SYSVINIT_UTILS=yes
 
-# If HAVE_ANOTHER_GETTY is set to "yes", then agetty will not be built or
+# If HAVE_GETTY is set to "yes", then agetty will not be built or
 # installed from the login-utils subdirectory.  Note that agetty can
 # co-exist with other gettys, so this option should never be used.
 HAVE_GETTY=no
@@ -60,34 +83,55 @@ USE_TTY_GROUP=yes
 # If HAVE_STRINGS is set to "yes", then strings won't be installed.  This
 # is the quick fix until the strings in GNU binutils is in wide use and has
 # internationalization support.
-HAVE_STRINGS=no
-#HAVE_STRINGS=yes
+#HAVE_STRINGS=no
+HAVE_STRINGS=yes
 
-# If HAVE_CLEAR is set to "yes", then clear won't be installed, since a
-# version of clear comes with the ncurses package.
-HAVE_CLEAR=no
-#HAVE_CLEAR=yes
+# If HAVE_RESET is set to "yes", then reset won't be installed.  The version
+# of reset that comes with the ncurses package is less aggressive.
+#HAVE_RESET=no
+HAVE_RESET=yes
 
-# If HAVE_SYSLOGD is set to "yes", then syslogd will not be built or
-# installed from the syslogd subdirectory.
-HAVE_SYSLOGD=no
-#HAVE_SYSLOGD=yes
-
-# If HAVE_ANOTHER_FDISK is set to "yes", then fdisk will not be built or
-# installed from the disk-utils subdirectory.  This anticipates the
-# replacement of fdisk 2.x by fdisk 3.x, which will be distributed
-# separately. 
-HAVE_FDISK=no
-#HAVE_FDISK=yes
+# If HAVE_MOUNT is set to "yes", then reset won't be installed, since many
+# folks grab mount independenty of util-linux
+# When util-linux is released it always contains the very latest mount.
+HAVE_MOUNT=no
+# HAVE_MOUNT=yes
 
 CC=		gcc
-OPT=		-pipe -O2 -m486 -fomit-frame-pointer
-LDFLAGS=	-s -N
-CFLAGS=		$(OPT) -I. -I$(BSD) \
+
+# Different optimizations for different cpus.
+ifeq "$(CPU)" "intel"
+  OPT=		-pipe -O3 -m486 -fomit-frame-pointer
+else 
+  ifeq "$(CPU)" "arm"
+    OPT=	-O2 -m3 -fomit-frame-pointer
+  else
+    OPT=	-O3 -fomit-frame-pointer
+  endif
+endif
+
+BSD= ../bsd
+
+LDFLAGS   = -s
+# WARNFLAGS = -Wall
+CFLAGS    = $(OPT) -I. -I$(BSD) $(WARNFLAGS) $(CURSESFLAGS) $(EXTRACFLAGS) \
 			-DSBINDIR=\"$(SBINDIR)\" \
 			-DUSRSBINDIR=\"$(USRSBINDIR)\" \
 			-DLOGDIR=\"$(LOGDIR)\" \
 			-DVARPATH=\"$(VARPATH)\"
+
+#
+# ncurses appears to be installed in three major ways.
+#
+# There is a subdirectory /usr/include/ncurses, with curses.h in
+#   CURSESFLAGS=-I/usr/include/ncurses -DNCH=0
+# No such subdirectory, but ncurses/curses.h is installed as ncurses.h
+#   CURSESFLAGS=-DNCH=1
+# No such subdirectory - <curses.h> is the ncurses one.
+#   CURSESFLAGS=-DNCH=0
+# Pick your choice.
+CURSESFLAGS=-DNCH=0
+LIBCURSES=-lncurses
 
 DEVDIR=		$(DESTDIR)/dev
 ETCDIR=		$(DESTDIR)/etc
@@ -122,7 +166,7 @@ BINMODE=	755
 MANMODE=	644
 DATMODE=	644
 INFOMODE=	644
-SUIDMODE=      4755
+SUIDMODE=      4711
 
 CHMOD=		chmod
 INSTALL=	install
@@ -132,10 +176,9 @@ INSTALLMAN=	$(INSTALL) -m $(MANMODE)
 INSTALLDAT=	$(INSTALL) -m $(DATMODE)
 INSTALLSUID=    $(INSTALL) -m $(SUIDMODE) -o root
 
-BSD=		../bsd
-
 %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $@
 
 %: %.cc
 	$(CXX) $(CFLAGS) $< -o $@
+

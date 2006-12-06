@@ -35,13 +35,12 @@
 static char sccsid[] = "@(#)conv.c	5.4 (Berkeley) 6/1/90";
 #endif /* not lint */
 
-#include <sys/types.h>
+#include <stdio.h>
 #include <ctype.h>
+#include <sys/types.h>
 #include "hexdump.h"
 
-conv_c(pr, p)
-	PR *pr;
-	u_char *p;
+void conv_c(PR *pr, u_char *p)
 {
 	extern int deprecated;
 	char buf[10], *str;
@@ -89,9 +88,7 @@ strpr:		*pr->cchar = 's';
 	}
 }
 
-conv_u(pr, p)
-	PR *pr;
-	u_char *p;
+void conv_u(PR *pr, u_char *p)
 {
 	extern int deprecated;
 	static char *list[] = {

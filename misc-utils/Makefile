@@ -1,6 +1,6 @@
 # Makefile -- Makefile for util-linux Linux utilities
 # Created: Sat Dec 26 20:09:40 1992
-# Revised: Fri Oct  6 20:27:07 1995 by r.faith@ieee.org
+# Revised: Mon Nov 11 10:12:16 1996 by faith@cs.unc.edu
 # Copyright 1992, 1993, 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
 # May be distirbuted under the GPL
 #
@@ -9,35 +9,40 @@ include ../MCONFIG
 
 # Where to put man pages?
 
-MAN1= 		cal.1 chkdupexe.1 ddate.1 dnsdomainname.1 domainname.1 \
-		dsplit.1 hostid.1 hostname.1 kill.1 logger.1 look.1 mcookie.1 \
-		namei.1 reset.1 script.1 setterm.1 tsort.1 \
-		whereis.1 write.1
-
-ifeq "$(HAVE_CLEAR)" "no"
-MAN1:=$(MAN1) clear.1
-endif
+MAN1= 		cal.1 chkdupexe.1 ddate.1 hostid.1 kill.1 \
+		logger.1 look.1 mcookie.1 namei.1 script.1 \
+		setterm.1 tsort.1 whereis.1 write.1
 
 # Where to put binaries?
 # See the "install" rule for the links. . .
 
-BIN=            domainname hostname kill
+BIN=            kill
 
-USRBIN=		cal chkdupexe ddate dsplit hostid logger look mcookie \
-		namei reset script setterm tsort whereis write
+USRBIN=		cal chkdupexe ddate hostid logger look mcookie \
+		namei script setterm tsort whereis write
 
 ifeq "$(HAVE_CLEAR)" "no"
 USRBIN:=$(USRBIN) clear
+MAN1:=$(MAN1) clear.1
 endif
+
+ifeq "$(HAVE_RESET)" "no"
+USRBIN:=$(USRBIN) reset
+MAN1:=$(MAN1) reset.1
+endif
+
+# ifeq "$(HAVE_SYSVINIT)" "no"
+# USRBIN:=$(USRBIN) pidof
+# endif
 
 # Programs requiring special compilation
 
-NEEDS_TERMCAP=  setterm
+NEEDS_CURSES=  setterm
 
 all: $(BIN) $(USRBIN) $(USRBIN.NONSHADOW) $(USRGAMES) getoptprog
 
-$(NEEDS_TERMCAP):
-	$(CC) $(LDFLAGS) $^ -o $@ -ltermcap
+$(NEEDS_CURSES):
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIBCURSES)
 
 %: %.sh
 	cp $@.sh $@
@@ -52,28 +57,25 @@ $(NEEDS_TERMCAP):
 cal: cal.o $(BSD)/getopt.o $(BSD)/err.o
 chkdupexe: chkdupexe.pl
 clear: clear.sh
-domainname: domainname.o
-dsplit: dsplit.o
 getoptprog: getoptprog.o $(BSD)/getopt.o
 hostid: hostid.o
-hostname: hostname.o
 kill: kill.o procs.o
 logger: logger.o $(BSD)/getopt.o
 mcookie: mcookie.o md5.o
-md5sum: md5sum.o md5.o
-md5.o: md5.h
+mcookie.o: mcookie.c md5.h
+md5.o: md5.c md5.h
 namei: namei.o
 reset: reset.sh
 script: script.o
 setterm: setterm.o
 tsort: tsort.o
+# pidof: pidof.o procs.o
 
 install: all
 	$(INSTALLDIR) $(BINDIR) $(USRBINDIR)
 	$(INSTALLBIN) $(BIN) $(BINDIR)
 	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
 	$(INSTALLBIN) getoptprog $(USRBINDIR)/getopt
-	(cd $(BINDIR); ln -sf hostname dnsdomainname)
 	$(INSTALLDIR) $(MAN1DIR) $(MAN8DIR)
 	$(INSTALLMAN) $(MAN1) $(MAN1DIR)
 	$(INSTALLMAN) getoptprog.1 $(MAN1DIR)/getopt.1

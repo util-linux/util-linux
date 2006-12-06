@@ -6,16 +6,25 @@
  *   modify it under the terms of the gnu general public license.
  *   there is no warranty.
  *
- *   $Author: faith $
- *   $Revision: 1.8 $
- *   $Date: 1995/10/12 14:46:35 $
+ *   $Author: aebr $
+ *   $Revision: 1.15 $
+ *   $Date: 1997/07/06 23:10:41 $
  *
  * Updated Thu Oct 12 09:19:26 1995 by faith@cs.unc.edu with security
  * patches from Zefram <A.Main@dcs.warwick.ac.uk>
  *
+ *  Hacked by Peter Breitenlohner, peb@mppmu.mpg.de,
+ *    to allow peaceful coexistence with yp: using the changes by
+ *     Alvaro Martinez Echevarria, alvaro@enano.etsit.upm.es, from
+ *     passwd.c (now moved to setpwnam.c);
+ *    to remove trailing empty fields.  Oct 5, 96.
+ *
  */
 
-static char rcsId[] = "$Version: $Id: chfn.c,v 1.8 1995/10/12 14:46:35 faith Exp $ $";
+static char rcsId[] = "$Version: $Id: chfn.c,v 1.15 1997/07/06 23:10:41 aebr Exp $ $";
+
+#define _XOPEN_SOURCE		/* for crypt() */
+#define _BSD_SOURCE           /* for strcasecmp() */
 
 #include <sys/types.h>
 #include <stdio.h>
@@ -26,6 +35,14 @@ static char rcsId[] = "$Version: $Id: chfn.c,v 1.8 1995/10/12 14:46:35 faith Exp
 #include <errno.h>
 #include <ctype.h>
 #include <getopt.h>
+#include "../version.h"
+
+#if REQUIRE_PASSWORD && USE_PAM
+#include <security/pam_appl.h>
+#include <security/pam_misc.h>
+#endif
+
+extern int is_local(char *);
 
 #undef P
 #if __STDC__
@@ -38,7 +55,6 @@ typedef unsigned char boolean;
 #define false 0
 #define true 1
 
-static char *version_string = "chfn 0.9a beta";
 static char *whoami;
 
 static char buf[1024];
@@ -62,10 +78,9 @@ static int check_gecos_string P((char *msg, char *gecos));
 static boolean set_changed_data P((struct finfo *oldfp, struct finfo *newfp));
 static int save_new_data P((struct finfo *pinfo));
 static void *xmalloc P((int bytes));
-#if 0
-extern int strcasecmp P((char *, char *));
+
 extern int setpwnam P((struct passwd *pwd));
-#endif
+
 #define memzero(ptr, size) memset((char *) ptr, 0, size)
 
 int main (argc, argv)
@@ -78,6 +93,11 @@ int main (argc, argv)
     boolean interactive;
     int status;
     extern int errno;
+#if REQUIRE_PASSWORD && USE_PAM
+    pam_handle_t *pamh = NULL;
+    int retcode;
+    struct pam_conv conv = { misc_conv, NULL };
+#endif
 
     /* whoami is the program name for error messages */
     whoami = argv[0];
@@ -114,7 +134,13 @@ int main (argc, argv)
 	    return (-1); }
     }
 
-    /* reality check */
+    if (!(is_local(oldf.username))) {
+       fprintf (stderr, "%s: can only change local entries; use yp%s instead.\n",
+           whoami, whoami);
+       exit(1);
+    }
+
+    /* Reality check */
     if (uid != 0 && uid != oldf.pw->pw_uid) {
 	errno = EACCES;
 	perror (whoami);
@@ -124,6 +150,31 @@ int main (argc, argv)
     printf ("Changing finger information for %s.\n", oldf.username);
 
 #if REQUIRE_PASSWORD
+# if USE_PAM
+    if(uid != 0) {
+        if (pam_start("chfn", oldf.username, &conv, &pamh)) {
+	    puts("Password error.");
+	    exit(1);
+	}
+        if (pam_authenticate(pamh, 0)) {
+	    puts("Password error.");
+	    exit(1);
+	}
+        retcode = pam_acct_mgmt(pamh, 0);
+        if (retcode == PAM_AUTHTOKEN_REQD) {
+	    retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+        } else if (retcode) {
+	    puts("Password error.");
+	    exit(1);
+	}
+        if (pam_setcred(pamh, 0)) {
+	    puts("Password error.");
+	    exit(1);
+	}
+        /* no need to establish a session; this isn't a session-oriented
+         * activity... */
+    }
+# else /* USE_PAM */
     /* require password, unless root */
     if(uid != 0 && oldf.pw->pw_passwd && oldf.pw->pw_passwd[0]) {
 	pwdstr = getpass("Password: ");
@@ -133,7 +184,8 @@ int main (argc, argv)
 	    exit(1);
 	}
     }
-#endif
+# endif /* USE_PAM */
+#endif /* REQUIRE_PASSWORD */
 
 
     if (interactive) ask_info (&oldf, &newf);
@@ -176,7 +228,7 @@ static boolean parse_argv (argc, argv, pinfo)
 	if (c == EOF) break;
 	/* version?  output version and exit. */
 	if (c == 'v') {
-	    printf ("%s\n", version_string);
+	    printf ("%s\n", util_linux_version);
 	    exit (0);
 	}
 	if (c == 'u') {
@@ -191,7 +243,10 @@ static boolean parse_argv (argc, argv, pinfo)
 	/* ok, we were given an argument */
 	info_given = true;
 	status = 0;
-	strcpy (buf, whoami); strcat (buf, ": ");
+
+	strncpy (buf, whoami, sizeof(buf)-128); 
+	buf[sizeof(buf)-128-1] = 0;
+	strcat (buf, ": ");
 
 	/* now store the argument */
 	switch (c) {
@@ -403,6 +458,12 @@ static int save_new_data (pinfo)
     gecos = (char *) xmalloc (len + 1);
     sprintf (gecos, "%s,%s,%s,%s,%s", pinfo->full_name, pinfo->office,
 	     pinfo->office_phone, pinfo->home_phone, pinfo->other);
+
+    /* remove trailing empty fields (but not subfields of pinfo->other) */
+    if (! pinfo->other[0] ) {
+       while (len > 0 && gecos[len-1] == ',') len--;
+       gecos[len] = 0;
+    }
 
     /* write the new struct passwd to the passwd file. */
     pinfo->pw->pw_gecos = gecos;

@@ -1,18 +1,30 @@
 /****************************************************************************\
-*	Copyright (C) 1992 by Michael K. Johnson, johnsonm@nigel.vnet.net    *
+*	Copyright (C) 1992-1997 Michael K. Johnson, johnsonm@redhat.com      *
 *									     *
-*	This file is placed under the conditions of the GNU public	     *
-*	license, version 2, or any later version.  See file COPYING	     *
+*	This file is licensed under the terms of the GNU General             *
+*	Public License, version 2, or any later version.  See file COPYING   *
 *	for information on distribution conditions.			     *
 \****************************************************************************/
 
-/* $Id: tunelp.c,v 1.6 1995/06/04 01:47:11 faith Exp $
+/* $Id: tunelp.c,v 1.8 1997/07/06 00:14:06 aebr Exp $
  * $Log: tunelp.c,v $
- * Revision 1.6  1995/06/04 01:47:11  faith
- * Changes for util-linux-2.4
+ * Revision 1.8  1997/07/06 00:14:06  aebr
+ * Fixes to silence -Wall.
  *
- * Revision 1.5  1995/03/12  01:29:50  faith
- * util-linux-2.1
+ * Revision 1.7  1997/06/20 16:10:38  janl
+ * tunelp refreshed from authors archive.
+ *
+ * Revision 1.9  1997/06/20 12:56:43  johnsonm
+ * Finished fixing license terms.
+ *
+ * Revision 1.8  1997/06/20 12:34:59  johnsonm
+ * Fixed copyright and license.
+ *
+ * Revision 1.7  1995/03/29 11:16:23  johnsonm
+ * TYPO fixed...
+ *
+ * Revision 1.6  1995/03/29  11:12:15  johnsonm
+ * Added third argument to ioctl needed with new kernels
  *
  * Revision 1.5  1995/01/13  10:33:43  johnsonm
  * Chris's changes for new ioctl numbers and backwards compatibility
@@ -74,7 +86,7 @@ void *mylloc(long size) {
 
 long get_val(char *val) {
   long ret;
-  if (!(sscanf(val, "%d", &ret) == 1)) {
+  if (!(sscanf(val, "%ld", &ret) == 1)) {
     perror("sscanf error");
     exit(3);
   }
@@ -198,6 +210,8 @@ int main (int argc, char ** argv) {
   }
 
   /* Allow for binaries compiled under a new kernel to work on the old ones */
+  /* The irq argument to ioctl isn't touched by the old kernels, but we don't */
+  /*  want to cause the kernel to complain if we are using a new kernel */
   if (LPGETIRQ >= 0x0600 && ioctl(fd, LPGETIRQ, &irq) < 0 && errno == EINVAL)
     offset = 0x0600;	/* We don't understand the new ioctls */
 

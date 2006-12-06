@@ -1,9 +1,19 @@
 /* Original author unknown, but may be "krishna balasub@cis.ohio-state.edu"
    Modified Sat Oct  9 10:55:28 1993 for 0.99.13 */
 
-/* Patches from Mike Jagdis (jaggy@purplet.demon.co.uk) applied Wed Feb 8
-12:12:21 1995 by faith@cs.unc.edu to print numeric uids if no passwd file
-entry. */
+/* 
+
+  Patches from Mike Jagdis (jaggy@purplet.demon.co.uk) applied Wed Feb
+  8 12:12:21 1995 by faith@cs.unc.edu to print numeric uids if no
+  passwd file entry.
+
+  Patch from arnolds@ifns.de (Heinz-Ado Arnolds) applied Mon Jul 1
+  19:30:41 1996 by janl@math.uio.no to add code missing in case PID:
+  clauses.
+
+  Patched to display the key field -- hy@picksys.com 12/18/96
+
+*/
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -18,6 +28,11 @@ entry. */
 #include <sys/msg.h>
 #include <sys/shm.h>
 
+#if defined (__GNU_LIBRARY__) && __GNU_LIBRARY__ > 1
+#define KEY __key
+#else
+#define KEY key
+#endif
 
 #define LIMITS 1
 #define STATUS 2
@@ -196,10 +211,10 @@ void do_shm (char format)
 	case STATUS:
 		printf ("------ Shared Memory Status --------\n");
 		printf ("segments allocated %d\n", shm_info.used_ids);
-		printf ("pages allocated %d\n", shm_info.shm_tot);
-		printf ("pages resident  %d\n", shm_info.shm_rss);
-		printf ("pages swapped   %d\n", shm_info.shm_swp);
-		printf ("Swap performance: %d attempts\t %d successes\n", 
+		printf ("pages allocated %ld\n", shm_info.shm_tot);
+		printf ("pages resident  %ld\n", shm_info.shm_rss);
+		printf ("pages swapped   %ld\n", shm_info.shm_swp);
+		printf ("Swap performance: %ld attempts\t %ld successes\n", 
 			shm_info.swap_attempts, shm_info.swap_successes);
 		return;
 
@@ -222,8 +237,8 @@ void do_shm (char format)
 
 	default:
 		printf ("------ Shared Memory Segments --------\n");
-		printf ("%-10s%-10s%-10s%-10s%-10s%-12s\n", "shmid","owner",
-			"perms","bytes","nattch","status");
+		printf ("%-11s%-10s%-10s%-10s%-10s%-10s%-12s\n", "key","shmid",
+			"owner","perms","bytes","nattch","status");
 		break;
 	}
 
@@ -257,6 +272,7 @@ void do_shm (char format)
 			break;
 			
 		default:
+		        printf( "0x%08x ",ipcp->KEY );
 			if (pw)
 				printf ("%-10d%-10.10s", shmid, pw->pw_name);
 			else
@@ -325,8 +341,8 @@ void do_sem (char format)
 
 	default:
 		printf ("------ Semaphore Arrays --------\n");
-		printf ("%-10s%-10s%-10s%-10s%-12s\n", 
-			"semid","owner","perms","nsems","status");
+		printf ("%-10s%-10s%-10s%-10s%-10s%-12s\n", 
+			"key","semid","owner","perms","nsems","status");
 		break;
 	}
 
@@ -354,6 +370,7 @@ void do_sem (char format)
 			break;
 			
 		default:
+		        printf( "0x%08x ",ipcp->KEY );
 			if (pw)
 				printf ("%-10d%-10.9s", semid, pw->pw_name);
 			else
@@ -412,12 +429,14 @@ void do_msg (char format)
 		break;
 
 	case PID:
+ 		printf ("------ Message Queues PIDs --------\n");
+ 		printf ("%-10s%-10s%-10s%-10s\n","msqid","owner","lspid","lrpid");
 		break;
 
 	default:
 		printf ("------ Message Queues --------\n");
-		printf ("%-10s%-10s%-10s%-12s%-12s\n", "msqid","owner",
-			"perms", "used-bytes", "messages");
+		printf ("%-10s%-10s%-10s%-10s%-12s%-12s\n", "key","msqid",
+			"owner", "perms", "used-bytes", "messages");
 		break;
 	}
 
@@ -442,9 +461,16 @@ void do_msg (char format)
 			msgque.msg_ctime ? ctime(&msgque.msg_ctime) + 4 : "Not set");
 			break;
 		case PID:
-			break;
-			
+ 			if (pw)
+ 				printf ("%-8d%-10.10s", msqid, pw->pw_name);
+ 			else
+ 				printf ("%-8d%-10d", msqid, ipcp->uid);
+ 			printf ("  %5d     %5d\n",
+ 			msgque.msg_lspid, msgque.msg_lrpid);
+  			break;
+
 		default:
+		        printf( "0x%08x ",ipcp->KEY );
 			if (pw)
 				printf ("%-10d%-10.10s", msqid, pw->pw_name);
 			else

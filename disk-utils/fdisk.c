@@ -225,7 +225,7 @@ void menu(void)
 	puts("Command action\n"
 		"   a   toggle a bootable flag\n"
                 "   b   edit bsd disklabel\n" /* bf */
-		"   c   toggle the dos compatiblity flag\n"
+		"   c   toggle the dos compatibility flag\n"
 		"   d   delete a partition\n"
 		"   l   list known partition types\n"
 		"   m   print this menu\n"
@@ -449,7 +449,7 @@ void read_extended(struct partition *p)
 	}
 }
 
-void get_boot(void)
+int get_boot(void)
 {
 	int i;
 	struct hd_geometry geometry;
@@ -464,6 +464,7 @@ void get_boot(void)
 	}
 	if (SECTOR_SIZE != read(fd, buffer, SECTOR_SIZE))
 		fatal(unable_to_read);
+
 #ifdef HDIO_REQ
 	if (!ioctl(fd, HDIO_REQ, &geometry)) {
 #else
@@ -479,6 +480,10 @@ void get_boot(void)
 	else update_units();
 	warn_geometry();
 
+	if (*(unsigned short *)  (0x1fe + buffer) != 0xAA55) {
+		return 0;	/* not a valid partition table */
+	}
+
 	for (i = 0; i < 4; i++)
 		if(part_table[i]->sys_ind == EXTENDED)
 			if (partitions != 4)
@@ -493,6 +498,8 @@ void get_boot(void)
 				*table_check(buffers[i]), i + 1);
 			changed[i] = 1;
 		}
+
+	return 1;
 }
 
 int read_line(void)
@@ -587,6 +594,7 @@ uint read_int(uint low, uint dflt, uint high, enum offset base, char *mesg)
 			case lower: i += low; break;
 			case upper: i += high; break;
 			case deflt: i += dflt; break;
+			case ignore:
 			}
 		}
 		else
@@ -805,12 +813,12 @@ static void check_consistency(struct partition *p, int partition)
 		return;		/* do not check extended partitions */
 
 /* physical beginning c, h, s */
-	pbc = p->cyl & 0xff | (p->sector << 2) & 0x300;
+	pbc = (p->cyl & 0xff) | ((p->sector << 2) & 0x300);
 	pbh = p->head;
 	pbs = p->sector & 0x3f;
 
 /* physical ending c, h, s */
-	pec = p->end_cyl & 0xff | (p->end_sector << 2) & 0x300;
+	pec = (p->end_cyl & 0xff) | ((p->end_sector << 2) & 0x300);
 	peh = p->end_head;
 	pes = p->end_sector & 0x3f;
 
@@ -902,7 +910,7 @@ void x_list_table(int extend)
 		disk_device, heads, sectors, cylinders);
         printf("Nr AF  Hd Sec  Cyl  Hd Sec  Cyl   Start    Size ID\n");
 	for (i = 0 ; i < partitions; i++)
-		if (p = q[i]) {
+		if ((p = q[i]) != NULL) {
                         printf("%2d %02x%4d%4d%5d%4d%4d%5d%8d%8d %02x\n",
 				i + 1, p->boot_ind, p->head,
 				sector(p->sector),
@@ -987,9 +995,8 @@ void verify(void)
 				last[i]);
 			total += last[i] + 1 - first[i];
 			for (j = 0; j < i; j++)
-			if (first[i] >= first[j] && first[i] <= last[j]
-					|| (last[i] <= last[j] &&
-					last[i] >= first[j])) {
+			if ((first[i] >= first[j] && first[i] <= last[j])
+			 || ((last[i] <= last[j] && last[i] >= first[j]))) {
 				printf("Warning: partition %d overlaps "
 					"partition %d.\n", j + 1, i + 1);
 				total += first[i] >= first[j] ?
@@ -1021,7 +1028,7 @@ void verify(void)
 	if (total > heads * sectors * cylinders)
 		printf("Total allocated sectors %d greater than the maximum "
 			"%d\n", total, heads * sectors * cylinders);
-	else if (total = heads * sectors * cylinders - total)
+	else if ((total = heads * sectors * cylinders - total) != 0)
 		printf("%d unallocated sectors\n", total);
 }
 
@@ -1219,11 +1226,10 @@ void write_table(void)
 
 	printf("The partition table has been altered!\n\n");
 
-	printf("Calling ioctl() to re-read partition table.\n"
-	       "(Reboot to ensure the partition table has been updated.)\n");
+	printf("Calling ioctl() to re-read partition table.\n");
 	sync();
 	sleep(2);
-	if (i = ioctl(fd, BLKRRPART)) {
+	if ((i = ioctl(fd, BLKRRPART)) != 0) {
                 error = errno;
         } else {
                 /* some kernel versions (1.2.x) seem to have trouble
@@ -1231,7 +1237,7 @@ void write_table(void)
 		   twice, the second time works. - biro@yggdrasil.com */
                 sync();
                 sleep(2);
-                if(i = ioctl(fd, BLKRRPART))
+                if((i = ioctl(fd, BLKRRPART)) != 0)
                         error = errno;
         }
 
@@ -1352,22 +1358,27 @@ void xselect(void)
 void try(char *device)
 {
 	disk_device = device;
-	if (!setjmp(listingbuf))
+	if (!setjmp(listingbuf)) {
 		if ((fd = open(disk_device, type_open)) >= 0) {
-			close(fd);
-			get_boot();
-			list_table();
-			if (partitions > 4)
+			if (get_boot()) {
+			    close(fd);
+			    list_table();
+			    if (partitions > 4)
 				delete_partition(ext_index);
-              } else {
+			} else {
+			    btrydev(device);
+			    close(fd);
+			}
+		} else {
 				/* Ignore other errors, since we try IDE
 				   and SCSI hard disks which may not be
 				   installed on the system. */
-		 if(errno == EACCES) {
-		    fprintf(stderr, "Cannot open %s\n", device);
-		    exit(1);
-		 }
-	      }
+			if(errno == EACCES) {
+			    fprintf(stderr, "Cannot open %s\n", device);
+			    exit(1);
+			}
+		}
+	}
 }
 
 void main(int argc, char **argv)

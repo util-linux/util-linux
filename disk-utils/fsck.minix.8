@@ -1,7 +1,7 @@
 .\" Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be freely distributed.
 .\" " for hilit19
-.TH FSCK 8 "10 January 1994" "Linux 0.99" "Linux Programmer's Manual"
+.TH FSCK 8 "2 July 1996" "Util-Linux 2.6" "Linux Programmer's Manual"
 .SH NAME
 fsck.minix \- a file system consistency checker for Linux
 .SH SYNOPSIS
@@ -22,10 +22,10 @@ searches for files).
 The device will usually have the following form:
 .nf
 .RS
-/dev/hda[1-8]
-/dev/hdb[1-8]
-/dev/sda[1-8]
-/dev/sdb[1-8]
+/dev/hda[1-63] (IDE disk 1)
+/dev/hdb[1-63] (IDE disk 2)
+/dev/sda[1-15] (SCSI disk 1)
+/dev/sdb[1-15] (SCSI disk 2)
 .RE
 .fi
 
@@ -126,3 +126,9 @@ Added support for file system valid flag: Dr. Wettstein
 .br
 Check to prevent fsck of mounted filesystem added by Daniel Quinlan
 (quinlan@yggdrasil.com)
+.br
+Minix v2 fs support by Andreas Schwab
+(schwab@issan.informatik.uni-dortmund.de), updated by Nicolai
+Langfeldt (janl@math.uio.no)
+.br
+Portability patch by Russell King (rmk@ecs.soton.ac.uk).

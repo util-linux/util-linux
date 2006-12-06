@@ -1,0 +1,22 @@
+# find out whether we can include <sys/swap.h>
+# and whether libc thinks that swapon() has two arguments.
+CC=${CC-cc}
+compile="$CC -o conftest conftest.c >/dev/null 2>&1"
+rm -f conftest conftest.c swapargs.h
+SWAPH=
+if [ -f /usr/include/sys/swap.h ]; then SWAPH="#include <sys/swap.h>"; fi
+echo $SWAPH > conftest.c
+echo '#include <unistd.h>
+main(){ exit(0); swapon("/dev/null", 0); }' >> conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+	echo "#define SWAPON_HAS_TWO_ARGS" > swapargs.h
+	echo $SWAPH >> swapargs.h
+else
+	echo > swapargs.h
+	echo "
+Your libc thinks that swapon has 1 arg only.
+Define SWAPON_NEEDS_TWO_ARGS in swapon.c if you want to use priorities.
+" 1>&2
+fi
+rm -f conftest conftest.c

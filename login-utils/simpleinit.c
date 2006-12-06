@@ -140,7 +140,7 @@ int main(int argc, char *argv[])
 		/* clear utmp entry, and append to wtmp if possible */
 		{
 		    struct utmp *ut;
-		    int ut_fd;
+		    int ut_fd, lf;
 
 		    utmpname(_PATH_UTMP);
 		    setutent();
@@ -152,13 +152,17 @@ int main(int argc, char *argv[])
 			    ut->ut_type = DEAD_PROCESS;
 			    ut->ut_pid = 0;
 			    ut->ut_addr = 0;
-			    endutent();
+			    /*endutent();*/
 			    pututline(ut);
-			    if((ut_fd = open(_PATH_WTMP, O_APPEND|O_WRONLY)) >= 0) {
-				flock(ut_fd, LOCK_EX|LOCK_NB);
-				write(ut_fd, ut, sizeof(struct utmp));
-				flock(ut_fd, LOCK_UN|LOCK_NB);
-				close(ut_fd);
+
+			    if ((lf = open(_PATH_WTMPLOCK, O_CREAT|O_WRONLY, 0660)) >= 0) {
+				flock(lf, LOCK_EX|LOCK_NB);
+				if((ut_fd = open(_PATH_WTMP, O_APPEND|O_WRONLY)) >= 0) {
+				    write(ut_fd, ut, sizeof(struct utmp));
+				    close(ut_fd);
+				}
+				flock(lf, LOCK_UN|LOCK_NB);
+				close(lf);
 			    }
 			    break;
 			}
@@ -431,7 +435,7 @@ void set_tz()
 
 void write_wtmp()
 {
-    int fd;
+    int fd, lf;
     struct utmp ut;
     
     memset((char *)&ut, 0, sizeof(ut));
@@ -439,11 +443,14 @@ void write_wtmp()
     memset(ut.ut_name, 0, sizeof(ut.ut_name));
     time(&ut.ut_time);
     ut.ut_type = BOOT_TIME;
-    
-    if((fd = open(_PATH_WTMP, O_WRONLY|O_APPEND)) >= 0) {
-	flock(fd, LOCK_EX|LOCK_NB); /* make sure init won't hang */
-	write(fd, (char *)&ut, sizeof(ut));
-	flock(fd, LOCK_UN|LOCK_NB);
-	close(fd);
+
+    if ((lf = open(_PATH_WTMPLOCK, O_CREAT|O_WRONLY, 0660)) >= 0) {
+	flock(lf, LOCK_EX|LOCK_NB); /* make sure init won't hang */
+	if((fd = open(_PATH_WTMP, O_WRONLY|O_APPEND)) >= 0) {
+	    write(fd, (char *)&ut, sizeof(ut));
+	    close(fd);
+	}
+	flock(lf, LOCK_UN|LOCK_NB);
+	close(lf);
     }
 }     

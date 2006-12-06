@@ -49,9 +49,9 @@ and translates occurrences of underscores to the sequence
 which indicates underlining for the terminal in use, as specified
 by the environment variable
 .Ev TERM .
-The file
-.Pa /etc/termcap
-is read to determine the appropriate sequences for underlining.
+The
+.Pa terminfo
+database is read to determine the appropriate sequences for underlining.
 If the terminal is incapable of underlining, but is capable of
 a standout mode then that is used instead.
 If the terminal can overstrike,
@@ -81,7 +81,7 @@ The
 .Ev TERM
 variable is used to relate a tty device
 with its device capability description (see
-.Xr termcap 5 ) .
+.Xr terminfo 5 ) .
 .Ev TERM
 is set at login time, either by the default terminal type
 specified in

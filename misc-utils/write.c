@@ -36,7 +36,10 @@
  * Modified for Linux, Mon Mar  8 18:16:24 1993, faith@cs.unc.edu
  * Wed Jun 22 21:41:56 1994, faith@cs.unc.edu:
  *      Added fix from Mike Grupenhoff (kashmir@umiacs.umd.edu)
- *
+ * Mon Jul  1 17:01:39 MET DST 1996, janl@math.uio.no:
+ *      - Added fix from David.Chapell@mail.trincoll.edu enabeling daemons
+ *	  to use write.
+ *      - ANSIed it since I was working on it anyway.
  */
 
 #ifndef lint
@@ -49,27 +52,35 @@ static char copyright[] =
 static char sccsid[] = "@(#)write.c	8.1 (Berkeley) 6/6/93";
 #endif /* not lint */
 
-#include <sys/param.h>
-#include <sys/signal.h>
-#include <sys/stat.h>
-#include <sys/file.h>
-#include <sys/time.h>
+#define _GNU_SOURCE		/* for snprintf */
+
+#include <unistd.h>
 #include <utmp.h>
 #include <ctype.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/param.h>
+#include <sys/signal.h>
+#include <sys/stat.h>
+#include <sys/file.h>
+#include <sys/time.h>
 #ifdef __linux__
 #include <paths.h>
 #include "pathnames.h"
 #include <locale.h>
 #endif
 
+void search_utmp(char *, char *, char *, uid_t);
+void do_write(char *, char *, uid_t);
+void wr_fputs(char *);
+int term_chk(char *, int *, time_t *, int);
+int utmp_chk(char *, char *);
+
 extern int errno;
 
-main(argc, argv)
-	int argc;
-	char **argv;
+void
+main(int argc, char **argv)
 {
 	register char *cp;
 	time_t atime;
@@ -90,21 +101,25 @@ main(argc, argv)
 	else if (isatty(fileno(stderr)))
 		myttyfd = fileno(stderr);
 	else {
-		(void)fprintf(stderr, "write: can't find your tty\n");
-		exit(1);
+	  	myttyfd = -1;
 	}
-	if (!(mytty = ttyname(myttyfd))) {
+	if (myttyfd != -1) {
+	  if (!(mytty = ttyname(myttyfd))) {
 		(void)fprintf(stderr, "write: can't find your tty's name\n");
 		exit(1);
-	}
-	if (cp = rindex(mytty, '/'))
+	  }
+	  if ((cp = rindex(mytty, '/')) != NULL)
 		mytty = cp + 1;
-	if (term_chk(mytty, &msgsok, &atime, 1))
+	  if (term_chk(mytty, &msgsok, &atime, 1))
 		exit(1);
-	if (!msgsok) {
+	  if (!msgsok) {
 		(void)fprintf(stderr,
 		    "write: you have write permission turned off.\n");
 		exit(1);
+	  }
+	
+	} else {
+	    mytty = "<no tty>";
 	}
 
 	myuid = getuid();
@@ -142,28 +157,32 @@ main(argc, argv)
 	/* NOTREACHED */
 }
 
+
 /*
  * utmp_chk - checks that the given user is actually logged in on
  *     the given tty
  */
-utmp_chk(user, tty)
-	char *user, *tty;
+int utmp_chk(char *user, char *tty)
+
 {
 	struct utmp u;
-	int ufd;
+	struct utmp *uptr;
+	int res = 1;
 
-	if ((ufd = open(_PATH_UTMP, O_RDONLY)) < 0)
-		return(0);	/* ignore error, shouldn't happen anyway */
+	utmpname(_PATH_UTMP);
+	setutent();
 
-	while (read(ufd, (char *) &u, sizeof(u)) == sizeof(u))
+	while ((uptr = getutent())) {
+		memcpy(&u, uptr, sizeof(u));
 		if (strncmp(user, u.ut_name, sizeof(u.ut_name)) == 0 &&
 		    strncmp(tty, u.ut_line, sizeof(u.ut_line)) == 0) {
-			(void)close(ufd);
-			return(0);
+			res = 0;
+			break;
 		}
+	}
 
-	(void)close(ufd);
-	return(1);
+	endutent();
+	return(res);
 }
 
 /*
@@ -177,28 +196,27 @@ utmp_chk(user, tty)
  * Special case for writing to yourself - ignore the terminal you're
  * writing from, unless that's the only terminal with messages enabled.
  */
-search_utmp(user, tty, mytty, myuid)
-	char *user, *tty, *mytty;
-	uid_t myuid;
+void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
+
 {
 	struct utmp u;
+	struct utmp *uptr;
 	time_t bestatime, atime;
-	int ufd, nloggedttys, nttys, msgsok, user_is_me;
+	int nloggedttys, nttys, msgsok, user_is_me;
 #ifdef __linux__
 	char atty[sizeof(u.ut_line) + 1];
 #else
 	char atty[UT_LINESIZE + 1];
 #endif
 
-	if ((ufd = open(_PATH_UTMP, O_RDONLY)) < 0) {
-		perror("utmp");
-		exit(1);
-	}
+	utmpname(_PATH_UTMP);
+	setutent();
 
 	nloggedttys = nttys = 0;
 	bestatime = 0;
 	user_is_me = 0;
-	while (read(ufd, (char *) &u, sizeof(u)) == sizeof(u))
+	while ((uptr = getutent())) {
+		memcpy(&u, uptr, sizeof(u));
 		if (strncmp(user, u.ut_name, sizeof(u.ut_name)) == 0) {
 			++nloggedttys;
 #ifdef __linux__
@@ -226,8 +244,9 @@ search_utmp(user, tty, mytty, myuid)
 				(void)strcpy(tty, atty);
 			}
 		}
+	}
 
-	(void)close(ufd);
+	endutent();
 	if (nloggedttys == 0) {
 		(void)fprintf(stderr, "write: %s is not logged in\n", user);
 		exit(1);
@@ -251,15 +270,13 @@ search_utmp(user, tty, mytty, myuid)
  * term_chk - check that a terminal exists, and get the message bit
  *     and the access time
  */
-term_chk(tty, msgsokP, atimeP, showerror)
-	char *tty;
-	int *msgsokP, showerror;
-	time_t *atimeP;
+int term_chk(char *tty, int *msgsokP, time_t *atimeP, int showerror)
+
 {
 	struct stat s;
 	char path[MAXPATHLEN];
 
-	(void)sprintf(path, "/dev/%s", tty);
+	(void)snprintf(path, sizeof(path), "/dev/%s", tty);
 	if (stat(path, &s) < 0) {
 		if (showerror)
 			(void)fprintf(stderr,
@@ -274,9 +291,8 @@ term_chk(tty, msgsokP, atimeP, showerror)
 /*
  * do_write - actually make the connection
  */
-do_write(tty, mytty, myuid)
-	char *tty, *mytty;
-	uid_t myuid;
+void do_write(char *tty, char *mytty, uid_t myuid)
+
 {
 	register char *login, *nows;
 	register struct passwd *pwd;
@@ -286,12 +302,12 @@ do_write(tty, mytty, myuid)
 
 	/* Determine our login name before the we reopen() stdout */
 	if ((login = getlogin()) == NULL)
-		if (pwd = getpwuid(myuid))
+		if ((pwd = getpwuid(myuid)) != NULL)
 			login = pwd->pw_name;
 		else
 			login = "???";
 
-	(void)sprintf(path, "/dev/%s", tty);
+	(void)snprintf(path, sizeof(path), "/dev/%s", tty);
 	if ((freopen(path, "w", stdout)) == NULL) {
 		(void)fprintf(stderr, "write: %s: %s\n", path, strerror(errno));
 		exit(1);
@@ -316,8 +332,7 @@ do_write(tty, mytty, myuid)
 /*
  * done - cleanup and exit
  */
-void
-done()
+void done(void)
 {
 	(void)printf("EOF\r\n");
 	exit(0);
@@ -327,10 +342,10 @@ done()
  * wr_fputs - like fputs(), but makes control characters visible and
  *     turns \n into \r\n
  */
-wr_fputs(s)
-	register char *s;
+void wr_fputs(char *s)
+
 {
-	register char c;
+	char c;
 
 #define	PUTC(c)	if (putchar(c) == EOF) goto err;
 

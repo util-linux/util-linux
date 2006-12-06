@@ -6,7 +6,7 @@
 #include <errno.h>
 #include <getopt.h>
 
-void main (int argc, char **argv)
+int main (int argc, char **argv)
 {
     int verbose = 0;
 
@@ -32,5 +32,5 @@ void main (int argc, char **argv)
 	    printf("Usage: %s hostid_number\n",*argv);
 	}
     }
-    exit(0);
+    return 0;
 }

@@ -1,0 +1,19 @@
+util-linux is maintained by a group of people, all reachable at
+util-linux@math.uio.no.
+
+Some have specific interests, others just do everything else.
+
+This is a partial list of interests:
+
+Rik: Founding father
+Andries: *fdisk, mount, ...
+Peter: login, passwd, simpleinit, agetty, last, newgrp, shutdown, hostid,
+	domainname, ctrlaltdel
+Michael: Spirit of advice
+Erik: General hackery
+Nicolai: mail queue processor (batch oriented)
+
+Bryan: hwclock master, he's not on the list but the mail queue
+  processor forwards mail to him.	
+
+Unassigned programs (defaulting to Nicolai): chfn, chsh, write, wall

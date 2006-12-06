@@ -1,6 +1,6 @@
 .\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
-.TH LOGIN 1 "1 February 1993" "Linux 0.99" "Linux Programmer's Manual"
+.TH LOGIN 1 "4 November 1996" "Util-linux 1.6" "Linux Programmer's Manual"
 .SH NAME
 login \- sign on
 .SH SYNOPSIS
@@ -42,8 +42,8 @@ Failures will be logged with the
 facility.
 
 After these conditions are checked, the password will be requested and
-checks (if a password is required for this username).  Ten attempts are
-allowed before
+checks (if a password is required for this username).  Ten attempts
+are allowed before
 .B login
 dies, but after the first three, the response starts to get very slow.
 Login failures are reported via the
@@ -52,27 +52,29 @@ facility.  This facility is also used to report any successful root logins.
 
 If the file
 .I .hushlogin
-exists, then a "quiet" login is performed (this disables the checking of
-the checking of mail and the printing of the last login time and message of
-the day).  Otherwise, if
+exists, then a "quiet" login is performed (this disables the checking
+of the checking of mail and the printing of the last login time and
+message of the day).  Otherwise, if
 .I /var/log/lastlog
-exists, the last login time is printed (and the current login is recorded).
+exists, the last login time is printed (and the current login is
+recorded).
 
-Random administrative things, such as setting the UID and GID of the tty
-are performed.  The TERM environment variable is preserved, if it exists
-(other environment variables are preserved if the
+Random administrative things, such as setting the UID and GID of the
+tty are performed.  The TERM environment variable is preserved, if it
+exists (other environment variables are preserved if the
 .B \-p
 option is used).  Then the HOME, PATH, SHELL, TERM, MAIL, and LOGNAME
 environment variables are set.  PATH defaults to
 .I /usr/local/bin:/bin:/usr/bin:.
 for normal users, and to
 .I /sbin:/bin:/usr/sbin:/usr/bin
-for root.  Last, if this is not a "quiet" login, the message of the day is
-printed and the file with the user's name in
+for root.  Last, if this is not a "quiet" login, the message of the
+day is printed and the file with the user's name in
 .I /usr/spool/mail
 will be checked, and a message printed if it has non-zero length.
 
-The user's shell is then started.  If no shell is specified for the user in
+The user's shell is then started.  If no shell is specified for the
+user in
 .BR /etc/passwd ,
 then
 .B /bin/sh
@@ -102,41 +104,43 @@ Used by other servers (i.e.,
 .BR telnetd (8))
 to pass the name of the remote host to
 .B login
-so that it may be placed in utmp and wtmp.  Only the superuser may use this
-option.
+so that it may be placed in utmp and wtmp.  Only the superuser may use
+this option.
 
 .SH "SPECIAL ACCESS RESTRICTIONS"
 The file
 .I /etc/securetty
-lists the names of the ttys where root is allowed to log in. One name of
-a tty device without the /dev/ prefix must be specified on each line.
-If the file does not exist, root is allowed to log in on any tty.
+lists the names of the ttys where root is allowed to log in. One name
+of a tty device without the /dev/ prefix must be specified on each
+line.  If the file does not exist, root is allowed to log in on any
+tty.
 .PP
 The file
 .I /etc/usertty
-specifies additional access restrictions for specific users. If this file
-does not exist, no additional access restrictions are imposed. The file
-consists of a sequence of sections. There are three possible section 
-types: CLASSES, GROUPS and USERS. A CLASSES section defines classes of
-ttys and hostname patterns, A GROUPS section defines allowed ttys and
-hosts on a per group basis, and a USERS section defines allowed ttys
-and hosts on a per user basis.
+specifies additional access restrictions for specific users. If this
+file does not exist, no additional access restrictions are
+imposed. The file consists of a sequence of sections. There are three
+possible section types: CLASSES, GROUPS and USERS. A CLASSES section
+defines classes of ttys and hostname patterns, A GROUPS section
+defines allowed ttys and hosts on a per group basis, and a USERS
+section defines allowed ttys and hosts on a per user basis.
 .PP
-Each line in this file in may be no longer than 255 characters. Comments
-start with # character and extend to the end of the line.
+Each line in this file in may be no longer than 255
+characters. Comments start with # character and extend to the end of
+the line.
 .PP
 .SS "The CLASSES Section"
-A CLASSES section begins with the word CLASSES at the start of a line in all
-upper case. Each following line until the start of a new section or the
-end of the file consists of a sequence of words separated by tabs or
-spaces. Each line defines a class of ttys and host patterns. 
+A CLASSES section begins with the word CLASSES at the start of a line
+in all upper case. Each following line until the start of a new
+section or the end of the file consists of a sequence of words
+separated by tabs or spaces. Each line defines a class of ttys and
+host patterns.
 .PP
-The word at
-the beginning of a line becomes defined as a collective name for the
-ttys and host patterns specified at the rest of the line. This collective
-name can be used in any subsequent GROUPS or USERS section. No such class
-name must occur as part of the definition of a class in order to avoid
-problems with recursive classes.
+The word at the beginning of a line becomes defined as a collective
+name for the ttys and host patterns specified at the rest of the
+line. This collective name can be used in any subsequent GROUPS or
+USERS section. No such class name must occur as part of the definition
+of a class in order to avoid problems with recursive classes.
 .PP
 An example CLASSES section:
 .PP
@@ -155,7 +159,7 @@ and
 as the corresponding right hand sides.
 .PP
 
-.SS "The GROUPS Section
+.SS "The GROUPS Section"
 A GROUPS section defines allowed ttys and hosts on a per Unix group basis. If
 a user is a member of a Unix group according to 
 .I /etc/passwd
@@ -184,9 +188,11 @@ stud		myclass1 tty4
 .PP
 This example specifies that members of group 
 .I sys
-may log in on tty1 and from hosts in the bar.edu domain. Users in group
+may log in on tty1 and from hosts in the bar.edu domain. Users in
+group
 .I stud
-may log in from hosts/ttys specified in the class myclass1 or from tty4.
+may log in from hosts/ttys specified in the class myclass1 or from
+tty4.
 .PP
 
 .SS "The USERS Section"
@@ -209,44 +215,48 @@ blue		tty3 myclass2
 .in -0.5
 .fi
 .PP
-This lets the user zacho login only on tty1 and from hosts with IP addreses
-in the range 130.225.16.0 \- 130.225.16.255, and user blue is allowed to
-log in from tty3 and whatever is specified in the class myclass2.
+This lets the user zacho login only on tty1 and from hosts with IP
+addreses in the range 130.225.16.0 \- 130.225.16.255, and user blue is
+allowed to log in from tty3 and whatever is specified in the class
+myclass2.
 .PP
-There may be a line in a USERS section starting with a username of *. This
-is a default rule and it will be applied to any user not matching any other
-line.
+There may be a line in a USERS section starting with a username of
+*. This is a default rule and it will be applied to any user not
+matching any other line.
 .PP
-If both a USERS line and GROUPS line match a user then the user is allowed
-access from the union of all the ttys/hosts mentioned in these specifications.
+If both a USERS line and GROUPS line match a user then the user is
+allowed access from the union of all the ttys/hosts mentioned in these
+specifications.
 
 .SS Origins
-The tty and host pattern specifications used in the specification of classes,
-group and user access are called origins. An origin string may have 
-one of these formats:
+The tty and host pattern specifications used in the specification of
+classes, group and user access are called origins. An origin string
+may have one of these formats:
 .IP o 
 The name of a tty device without the /dev/ prefix, for example tty1 or
 ttyS0.
 .PP
 .IP o
-The string @localhost, meaning that the user is allowed to telnet/rlogin
-from the local host to the same host. This also allows the user to for
-example run the command: xterm -e /bin/login.
+The string @localhost, meaning that the user is allowed to
+telnet/rlogin from the local host to the same host. This also allows
+the user to for example run the command: xterm -e /bin/login.
 .PP
 .IP o
 A domain name suffix such as @.some.dom, meaning that the user may
-rlogin/telnet from any host whose domain name has the suffix .some.dom.
+rlogin/telnet from any host whose domain name has the suffix
+.some.dom.
 .PP
 .IP o
-A range of IPv4 addresses, written @x.x.x.x/y.y.y.y where x.x.x.x
-is the IP address in the usual dotted quad decimal notation, and
-y.y.y.y is a bitmask in the same notation specifying which bits in the
-address to compare with the IP address of the remote host. For example
+A range of IPv4 addresses, written @x.x.x.x/y.y.y.y where x.x.x.x is
+the IP address in the usual dotted quad decimal notation, and y.y.y.y
+is a bitmask in the same notation specifying which bits in the address
+to compare with the IP address of the remote host. For example
 @130.225.16.0/255.255.254.0 means that the user may rlogin/telnet from
-any host whose IP address is in the range 130.225.16.0 \- 130.225.17.255.
+any host whose IP address is in the range 130.225.16.0 \-
+130.225.17.255.
 .PP
-Any of the above origins may be prefixed by a time specification according
-to the syntax:
+Any of the above origins may be prefixed by a time specification
+according to the syntax:
 .PP
 .nf
 timespec    ::= '[' <day-or-hour> [':' <day-or-hour>]* ']'
@@ -256,16 +266,16 @@ hourspec    ::= <hour> | <hour> '\-' <hour>
 day-or-hour ::= <day> | <hourspec>
 .fi
 .PP
-For example, the origin [mon:tue:wed:thu:fri:8\-17]tty3 means that log in is
-allowed on mondays through fridays between 8:00 and 17:59 (5:59 pm) on tty3.
-This also shows that an hour range a\-b includes all moments between a:00 and
-b:59. A single hour specification (such as 10) means the time span between 
-10:00 and 10:59.
+For example, the origin [mon:tue:wed:thu:fri:8\-17]tty3 means that log
+in is allowed on mondays through fridays between 8:00 and 17:59 (5:59
+pm) on tty3.  This also shows that an hour range a\-b includes all
+moments between a:00 and b:59. A single hour specification (such as
+10) means the time span between 10:00 and 10:59.
 .PP
-Not specifying any time prefix for a tty or host means log in from that origin
-is allowed any time. If you give a time prefix be sure to specify both a set
-of days and one or more hours or hour ranges. A time specification may
-not include any white space.
+Not specifying any time prefix for a tty or host means log in from
+that origin is allowed any time. If you give a time prefix be sure to
+specify both a set of days and one or more hours or hour ranges. A
+time specification may not include any white space.
 .PP
 If no default rule is given then users not matching any line
 .I /etc/usertty
@@ -292,7 +302,9 @@ are allowed to log in from anywhere as is standard behavior.
 .BR environ (7),
 .BR shutdown (8)
 .SH BUGS
-Linux, unlike other draconian operating systems, does not check quotas.
+
+Linux, unlike other draconian operating systems, does not check
+quotas.
 
 The undocumented BSD
 .B \-r
@@ -300,7 +312,7 @@ option is not supported.  This may be required by some
 .BR rlogind (8)
 programs.
 .SH AUTHOR
-Derived from BSD login 5.40 (5/9/89) by Michael Glad (glad@daimi.dk) for HP-UX
+Derived from BSD login 5.40 (5/9/89) by Michael Glad (glad@daimi.dk)
+for HP-UX
 .br
 Ported to Linux 0.12: Peter Orbaek (poe@daimi.aau.dk)
-

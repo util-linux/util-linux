@@ -48,6 +48,7 @@ static char sccsid[] = "@(#)column.c	8.3 (Berkeley) 4/2/94";
 #include <err.h>
 #include <limits.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 
@@ -85,7 +86,7 @@ main(argc, argv)
 #endif
 
 	if (ioctl(1, TIOCGWINSZ, &win) == -1 || !win.ws_col) {
-		if (p = getenv("COLUMNS"))
+		if ((p = getenv("COLUMNS")) != NULL)
 			termwidth = atoi(p);
 	} else
 		termwidth = win.ws_col;
@@ -115,7 +116,7 @@ main(argc, argv)
 	if (!*argv)
 		input(stdin);
 	else for (; *argv; ++argv)
-		if (fp = fopen(*argv, "r")) {
+		if ((fp = fopen(*argv, "r")) != NULL) {
 			input(fp);
 			(void)fclose(fp);
 		} else {
@@ -156,7 +157,7 @@ c_columnate()
 			endcol = maxlength;
 			putchar('\n');
 		} else {
-			while ((cnt = (chcnt + TAB & ~(TAB - 1))) <= endcol) {
+			while ((cnt = ((chcnt + TAB) & ~(TAB - 1))) <= endcol) {
 				(void)putchar('\t');
 				chcnt = cnt;
 			}
@@ -173,7 +174,10 @@ r_columnate()
 	int base, chcnt, cnt, col, endcol, numcols, numrows, row;
 
 	maxlength = (maxlength + TAB) & ~(TAB - 1);
+	/* This could be 0 */
 	numcols = termwidth / maxlength;
+	if (!numcols) 
+	  numcols = 1;
 	numrows = entries / numcols;
 	if (entries % numcols)
 		++numrows;
@@ -184,7 +188,7 @@ r_columnate()
 			chcnt += printf("%s", list[base]);
 			if ((base += numrows) >= entries)
 				break;
-			while ((cnt = (chcnt + TAB & ~(TAB - 1))) <= endcol) {
+			while ((cnt = ((chcnt + TAB) & ~(TAB - 1))) <= endcol) {
 				(void)putchar('\t');
 				chcnt = cnt;
 			}
@@ -224,8 +228,9 @@ maketbl()
 	cols = emalloc((maxcols = DEFCOLS) * sizeof(char *));
 	lens = emalloc(maxcols * sizeof(int));
 	for (cnt = 0, lp = list; cnt < entries; ++cnt, ++lp, ++t) {
-		for (coloff = 0, p = *lp; cols[coloff] = strtok(p, separator);
-		    p = NULL)
+		for (coloff = 0, p = *lp;
+		     (cols[coloff] = strtok(p, separator)) != NULL;
+		     p = NULL)
 			if (++coloff == maxcols) {
 				if (!(cols = realloc(cols, (u_int)maxcols +
 				    DEFCOLS * sizeof(char *))) ||

@@ -34,15 +34,18 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
 static char copyright[] =
 "@(#) Copyright (c) 1989, 1993, 1994\n\
 	The Regents of the University of California.  All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
 static char sccsid[] = "@(#)cal.c	8.4 (Berkeley) 4/2/94";
-#endif /* not lint */
+
+
+/* This defines _LINUX_C_LIB_VERSION_MAJOR, dunno about gnulibc.  We
+   don't want it to read /usr/i586-unknown-linux/include/_G_config.h
+   so we specify fill path.  Were we got /usr/i586-unknown-linux from?
+   Dunno. */
+
+#include "/usr/include/_G_config.h"
 
 #include <sys/types.h>
 
@@ -55,7 +58,15 @@ static char sccsid[] = "@(#)cal.c	8.4 (Berkeley) 4/2/94";
 #include <unistd.h>
 #include <locale.h>
 
-#if defined(__linux__) && _LINUX_C_LIB_VERSION_MAJOR > 4
+/* Test changes to deal with gnulibc, Linux libc 5. */
+/* #if defined(__linux__) && _LINUX_C_LIB_VERSION_MAJOR > 4 */
+#if _LINUX_C_LIB_VERSION_MAJOR - 0 > 4 || __GNU_LIBRARY__ - 0 >= 5
+# define LANGINFO 1
+#else
+# define LANGINFO 0
+#endif
+
+#if LANGINFO
 # include <langinfo.h>
 #else
 # include <localeinfo.h>
@@ -165,7 +176,7 @@ main(argc, argv)
 	argc -= optind;
 	argv += optind;
 
-	month = 0;
+	month = year = 0;
 	switch(argc) {
 	case 2:
 		if ((month = atoi(*argv++)) < 1 || month > 12)
@@ -210,7 +221,7 @@ void headers_init(void)
   strcpy(j_day_headings,"");
   
   for(i = 0 ; i < 7 ; i++ ) {
-#if defined(__linux__) && _LINUX_C_LIB_VERSION_MAJOR > 4
+#if defined(__linux__) && (_LINUX_C_LIB_VERSION_MAJOR > 4 || __GNU_LIBRARY__ > 1)
      strncat(day_headings,nl_langinfo(ABDAY_1+i),2);
      strcat(j_day_headings,nl_langinfo(ABDAY_1+i));
 #else
@@ -222,7 +233,7 @@ void headers_init(void)
   }
   
   for (i = 0; i < 12; i++) {
-#if defined(__linux__) && _LINUX_C_LIB_VERSION_MAJOR > 4
+#if defined(__linux__) && (_LINUX_C_LIB_VERSION_MAJOR > 4 || __GNU_LIBRARY__ > 1)
      full_month[i] = nl_langinfo(MON_1+i);
 #else
      full_month[i] = _time_info->full_month[i];

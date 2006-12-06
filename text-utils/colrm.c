@@ -47,9 +47,9 @@ COLRM removes unwanted columns from a file
 	Jeff Schriebman  UC Berkeley 11-74
 */
 
+int getn(char *ap);
 
-main(argc,argv)
-char **argv;
+int main(int argc, char **argv)
 {
 	register c, ct, first, last;
 
@@ -109,11 +109,10 @@ loop1:
 	}
 fin:
 	fflush(stdout);
-	exit(0);
+	return 0;
 }
 
-getn(ap)
-char *ap;
+int getn(char *ap)
 {
 	register int n,c;
 	register char *p;

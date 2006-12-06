@@ -1,1 +1,1 @@
-char version[] = "version from util-linux-2.5";
+char version[] = "mount-2.7e";

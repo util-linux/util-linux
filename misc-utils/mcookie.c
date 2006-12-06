@@ -4,7 +4,7 @@
  * Public Domain 1995 Rickard E. Faith (faith@cs.unc.edu)
  * This program comes with ABSOLUTELY NO WARRANTY.
  * 
- * $Id: mcookie.c,v 1.2 1995/10/07 01:32:00 faith Exp $
+ * $Id: mcookie.c,v 1.5 1997/07/06 00:13:06 aebr Exp $
  *
  * This program gathers some random bits of data and used the MD5
  * message-digest algorithm to generate a 128-bit hexadecimal number for
@@ -87,7 +87,7 @@ int main( int argc, char **argv )
       
       if (file[0] == '-' && !file[1]) fd = fileno(stdin);
       else if ((fd = open( file, O_RDONLY )) <0) {
-	 fprintf( stderr, "Could not open %s\n" );
+	 fprintf( stderr, "Could not open %s\n", file );
       }
 
       while ((r = read( fd, buf, sizeof( buf ) )) > 0) {

@@ -9,13 +9,24 @@
 #include <linux/unistd.h>
 #include <stdio.h>
 #include <getopt.h>
+#include <stdlib.h>
 
-#define __NR_klog __NR_syslog
+#if __GNU_LIBRARY__ < 5
 
-static inline _syscall3(int,klog,int,type,char *,b,int,len)
+#ifndef __alpha__
+# define __NR_klogctl __NR_syslog
+  static inline _syscall3(int, klogctl, int, type, char *, b, int, len);
+#else /* __alpha__ */
+#define klogctl syslog
+#endif
+
+#else
+# include <sys/klog.h>
+#endif
 
 static char *progname;
 
+void
 usage()
 {
    fprintf( stderr, "Usage: %s [-c] [-n level]\n", progname );
@@ -27,7 +38,7 @@ int main( int argc, char *argv[] )
    int  i;
    int  n;
    int  c;
-   int  level;
+   int  level = 0;
    int  lastc;
    int  cmd = 3;
 
@@ -56,17 +67,17 @@ int main( int argc, char *argv[] )
    }
 
    if (cmd == 8) {
-      n = klog( cmd, NULL, level );
+      n = klogctl( cmd, NULL, level );
       if (n < 0) {
-	 perror( "klog" );
+	 perror( "klogctl" );
 	 exit( 1 );
       }
       exit( 0 );
    }
 
-   n = klog( cmd, buf, sizeof( buf ) );
+   n = klogctl( cmd, buf, sizeof( buf ) );
    if (n < 0) {
-      perror( "klog" );
+      perror( "klogctl" );
       exit( 1 );
    }
 

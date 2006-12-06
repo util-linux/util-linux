@@ -6,9 +6,9 @@
  *   modify it under the terms of the gnu general public license.
  *   there is no warranty.
  *
- *   $Author: faith $
- *   $Revision: 1.2 $
- *   $Date: 1995/03/12 02:55:24 $
+ *   $Author: janl $
+ *   $Revision: 1.5 $
+ *   $Date: 1996/11/11 22:40:03 $
  *
  */
 
@@ -110,4 +110,13 @@ static char *parse_parens (char *buf)
 	}
     }
     return cp;
+}
+
+
+char *mybasename (char *path)
+{
+    char *cp;
+
+    cp = strrchr (path, '/');
+    return (cp ? cp + 1 : path);
 }

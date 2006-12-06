@@ -45,7 +45,9 @@ static char sccsid[] = "@(#)display.c	5.11 (Berkeley) 3/9/91";
 #include <string.h>
 #include "hexdump.h"
 
-#ifdef linux
+static void doskip(char *, int);
+
+#ifndef MIN
 #define MIN(a,b) ((a)<(b)?(a):(b))
 #endif
 
@@ -135,7 +137,23 @@ static off_t savaddress;		/* saved address/offset in stream */
 	} \
 }
 
-display()
+void bpad(PR *pr)
+{
+	static char *spec = " -0+#";
+	register char *p1, *p2;
+
+	/*
+	 * remove all conversion flags; '-' is the only one valid
+	 * with %s, and it's not useful here.
+	 */
+	pr->flags = F_BPAD;
+	*pr->cchar = 's';
+	for (p1 = pr->fmt; *p1 != '%'; ++p1);
+	for (p2 = ++p1; *p1 && index(spec, *p1); ++p1);
+	while ((*p2++ = *p1++) != 0) ;
+}
+
+void display()
 {
 	extern FU *endfu;
 	register FS *fs;
@@ -144,9 +162,9 @@ display()
 	register int cnt;
 	register u_char *bp;
 	off_t saveaddress;
-	u_char savech, *savebp, *get();
+	u_char savech = 0, *savebp, *get();
 
-	while (bp = get())
+	while ((bp = get()) != NULL)
 	    for (fs = fshead, savebp = bp, saveaddress = address; fs;
 		fs = fs->nextfs, bp = savebp, address = saveaddress)
 		    for (fu = fs->nextfu; fu; fu = fu->nextfu) {
@@ -189,23 +207,6 @@ display()
 	}
 }
 
-bpad(pr)
-	PR *pr;
-{
-	static char *spec = " -0+#";
-	register char *p1, *p2;
-
-	/*
-	 * remove all conversion flags; '-' is the only one valid
-	 * with %s, and it's not useful here.
-	 */
-	pr->flags = F_BPAD;
-	*pr->cchar = 's';
-	for (p1 = pr->fmt; *p1 != '%'; ++p1);
-	for (p2 = ++p1; *p1 && index(spec, *p1); ++p1);
-	while (*p2++ = *p1++);
-}
-
 static char **_argv;
 
 u_char *
@@ -234,7 +235,7 @@ get()
 		 * and no other files are available, zero-pad the rest of the
 		 * block and set the end flag.
 		 */
-		if (!length || ateof && !next((char **)NULL)) {
+		if (!length || (ateof && !next((char **)NULL))) {
 			if (need == blocksize)
 				return((u_char *)NULL);
 			if (vflag != ALL && !bcmp(curp, savp, nread)) {
@@ -277,10 +278,7 @@ get()
 	}
 }
 
-extern off_t skip;			/* bytes to skip */
-
-next(argv)
-	char **argv;
+int next(char **argv)
 {
 	extern int errno, exitval;
 	static int done;
@@ -315,9 +313,8 @@ next(argv)
 	/* NOTREACHED */
 }
 
-doskip(fname, statok)
-	char *fname;
-	int statok;
+static void
+doskip(char *fname, int statok)
 {
 	extern int errno;
 	struct stat sbuf;
@@ -328,7 +325,11 @@ doskip(fname, statok)
 			    fname, strerror(errno));
 			exit(1);
 		}
-		if (skip >= sbuf.st_size) {
+		if ( ( ! (S_ISCHR(sbuf.st_mode) ||
+ 			  S_ISBLK(sbuf.st_mode) ||
+ 			  S_ISFIFO(sbuf.st_mode)) ) &&
+		     skip >= sbuf.st_size) {
+		  /* If size valid and skip >= size */
 			skip -= sbuf.st_size;
 			address += sbuf.st_size;
 			return;
@@ -344,8 +345,7 @@ doskip(fname, statok)
 }
 
 char *
-emalloc(size)
-	int size;
+emalloc(int size)
 {
 	char *p;
 
@@ -355,7 +355,7 @@ emalloc(size)
 	return(p);
 }
 
-nomem()
+void nomem()
 {
 	extern int errno;
 

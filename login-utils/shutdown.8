@@ -5,11 +5,11 @@
 shutdown \- close down the system
 .SH SYNOPSIS
 .nf
-.BR "shutdown [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ]"
-.BR "reboot [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ]"
-.BR "fastboot [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ]"
-.BR "halt [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ]"
-.BR "fasthalt [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ]"
+.BR "shutdown [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ] [ " message " ]"
+.BR "reboot [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ] [ " message " ]"
+.BR "fastboot [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ] [ " message " ]"
+.BR "halt [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ] [ " message " ]"
+.BR "fasthalt [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ] [ " message " ]"
 .fi
 .SH DESCRIPTION
 .\" " for emacs hilit19
@@ -17,7 +17,11 @@ In general,
 .B shutdown
 prepares the system for a power down or reboot.  A absolute or delta time
 can be given, and periodic messages will be sent to all users warning of
-the shutdown.
+the shutdown. If no message is specified on the command line,
+.B shutdown
+will ask for a message to be sent, unless the 
+.B \-q
+option is set.
 
 .B halt
 is the same as

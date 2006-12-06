@@ -54,10 +54,19 @@ static char sccsid[] = "@(#)script.c	5.13 (Berkeley) 3/5/91";
 #include <stdio.h>
 #include <paths.h>
 
-#ifdef linux
+#ifdef __linux__
 #include <unistd.h>
 #include <string.h>
 #endif
+
+void done(void);
+void fail(void);
+void fixtty(void);
+void getmaster(void);
+void getslave(void);
+void doinput(void);
+void dooutput(void);
+void doshell(void);
 
 char	*shell;
 FILE	*fscript;
@@ -74,6 +83,7 @@ int	l;
 char	line[] = "/dev/ptyXX";
 int	aflg;
 
+void
 main(argc, argv)
 	int argc;
 	char *argv[];
@@ -134,6 +144,7 @@ main(argc, argv)
 	doinput();
 }
 
+void
 doinput()
 {
 	register int cc;
@@ -162,6 +173,7 @@ finish()
 		done();
 }
 
+void
 dooutput()
 {
 	register int cc;
@@ -181,11 +193,12 @@ dooutput()
 	done();
 }
 
+void
 doshell()
 {
+	/***
 	int t;
 
-	/***
 	t = open(_PATH_TTY, O_RDWR);
 	if (t >= 0) {
 		(void) ioctl(t, TIOCNOTTY, (char *)0);
@@ -199,7 +212,7 @@ doshell()
 	(void) dup2(slave, 1);
 	(void) dup2(slave, 2);
 	(void) close(slave);
-#ifdef linux
+#ifdef __linux__
 	execl(shell, strrchr(shell, '/') + 1, "-i", 0);
 #else
 	execl(shell, "sh", "-i", 0);
@@ -208,6 +221,7 @@ doshell()
 	fail();
 }
 
+void
 fixtty()
 {
 	struct termios rtt;
@@ -218,6 +232,7 @@ fixtty()
 	(void) tcsetattr(0, TCSAFLUSH, &rtt);
 }
 
+void
 fail()
 {
 
@@ -225,6 +240,7 @@ fail()
 	done();
 }
 
+void
 done()
 {
 	time_t tvec, time();
@@ -242,6 +258,7 @@ done()
 	exit(0);
 }
 
+void
 getmaster()
 {
 	char *pty, *bank, *cp;
@@ -278,6 +295,7 @@ getmaster()
 	fail();
 }
 
+void
 getslave()
 {
 

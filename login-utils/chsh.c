@@ -6,17 +6,27 @@
  *   modify it under the terms of the gnu general public license.
  *   there is no warranty.
  *
- *   $Author: faith $
- *   $Revision: 1.8 $
- *   $Date: 1995/10/12 14:46:35 $
+ *   $Author: aebr $
+ *   $Revision: 1.16 $
+ *   $Date: 1997/07/06 00:12:08 $
  *
  * Updated Thu Oct 12 09:33:15 1995 by faith@cs.unc.edu with security
- * patches from Zefram <A.Main@dcs.warwick.ac.uk>
+ *   patches from Zefram <A.Main@dcs.warwick.ac.uk>
+ *
+ * Updated Mon Jul  1 18:46:22 1996 by janl@math.uio.no with security
+ *   suggestion from Zefram.  Disallowing users with shells not in /etc/shells
+ *   from changing their shell.
+ *
+ *  Hacked by Peter Breitenlohner, peb@mppmu.mpg.de,
+ *    to allow peaceful coexistence with yp: using the changes by
+ *     Alvaro Martinez Echevarria, alvaro@enano.etsit.upm.es, from
+ *     passwd.c (now moved to setpwnam.c). Oct 5, 96.
  *
  */
 
-static char rcsId[] = "$Version: $Id: chsh.c,v 1.8 1995/10/12 14:46:35 faith Exp $ $";
+static char rcsId[] = "$Version: $Id: chsh.c,v 1.16 1997/07/06 00:12:08 aebr Exp $ $";
 
+#define _XOPEN_SOURCE		/* to get definition of crypt() */
 #if 0
 #define _POSIX_SOURCE 1
 #endif
@@ -30,6 +40,14 @@ static char rcsId[] = "$Version: $Id: chsh.c,v 1.8 1995/10/12 14:46:35 faith Exp
 #include <errno.h>
 #include <ctype.h>
 #include <getopt.h>
+#include "../version.h"
+
+#if REQUIRE_PASSWORD && USE_PAM
+#include <security/pam_appl.h>
+#include <security/pam_misc.h>
+#endif
+
+extern int is_local(char *);
 
 #undef P
 #if __STDC__
@@ -42,7 +60,10 @@ typedef unsigned char boolean;
 #define false 0
 #define true 1
 
-static char *version_string = "chsh 0.9a beta";
+/* Only root is allowed to assign a luser a non-listed shell, by default */
+#define ONLY_LISTED_SHELLS 1
+
+
 static char *whoami;
 
 static char buf[FILENAME_MAX];
@@ -70,6 +91,11 @@ int main (argc, argv)
     struct sinfo info;
     struct passwd *pw;
     extern int errno;
+#if REQUIRE_PASSWORD && USE_PAM
+    pam_handle_t *pamh = NULL;
+    int retcode;
+    struct pam_conv conv = { misc_conv, NULL };
+#endif
 
     /* whoami is the program name for error messages */
     whoami = argv[0];
@@ -96,21 +122,21 @@ int main (argc, argv)
 	    return (-1); }
     }
 
+    if (!(is_local(pw->pw_name))) {
+       fprintf (stderr, "%s: can only change local entries; use yp%s instead.\n
+",
+           whoami, whoami);
+       exit(1);
+    }
+
     oldshell = pw->pw_shell;
     if (!oldshell[0]) oldshell = "/bin/sh";
 
     /* reality check */
-#if 0
-				/* Require current shell to be in list.
-                                   This is not a reasonable expectation on
-                                   most Linux systems, and the error is
-                                   confusing.  */
     if (uid != 0 && (uid != pw->pw_uid || !get_shell_list(oldshell))) {
-#else
-    if (uid != 0 && uid != pw->pw_uid) {
-#endif
 	errno = EACCES;
-	perror (whoami);
+	fprintf(stderr,"%s: Your shell is not in /etc/shells, shell change"
+		" denied\n",whoami);
 	return (-1);
     }
     
@@ -118,16 +144,43 @@ int main (argc, argv)
 
     printf( "Changing shell for %s.\n", pw->pw_name );
 
-#ifdef REQUIRE_PASSWORD
+#if REQUIRE_PASSWORD
+# if USE_PAM
+    if(uid != 0) {
+        if (pam_start("chsh", pw->pw_name, &conv, &pamh)) {
+	    puts("Password error.");
+	    exit(1);
+	}
+        if (pam_authenticate(pamh, 0)) {
+	    puts("Password error.");
+	    exit(1);
+	}
+        retcode = pam_acct_mgmt(pamh, 0);
+        if (retcode == PAM_AUTHTOKEN_REQD) {
+	    retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+        } else if (retcode) {
+	    puts("Password error.");
+	    exit(1);
+	}
+        if (pam_setcred(pamh, 0)) {
+	    puts("Password error.");
+	    exit(1);
+	}
+        /* no need to establish a session; this isn't a session-oriented
+         * activity... */
+    }
+# else /* USE_PAM */
     /* require password, unless root */
     if(uid != 0 && pw->pw_passwd && pw->pw_passwd[0]) {
 	pwdstr = getpass("Password: ");
-	if(strncmp(pw->pw_passwd, crypt(pwdstr, pw->pw_passwd), 13)) {
+	if(strncmp(pw->pw_passwd,
+		   crypt(pwdstr, pw->pw_passwd), 13)) {
 	    puts("Incorrect password.");
 	    exit(1);
 	}
     }
-#endif
+# endif /* USE_PAM */
+#endif /* REQUIRE_PASSWORD */
 
     if (! shell) {
 	shell = prompt ("New shell", oldshell);
@@ -178,7 +231,7 @@ static void parse_argv (argc, argv, pinfo)
 	case EOF:
 	    break;
 	case 'v':
-	    printf ("%s\n", version_string);
+	    printf ("%s\n", util_linux_version);
 	    exit (0);
 	case 'u':
 	    usage (stdout);
@@ -246,7 +299,7 @@ static char *prompt (question, def_val)
     if (len <= 0) return NULL;
     ans[len] = 0;
     cp = (char *) xmalloc (len + 1);
-    strcpy (cp, buf);
+    strcpy (cp, ans);
     return cp;
 }
 
@@ -287,17 +340,17 @@ static int check_shell (shell)
 #if ONLY_LISTED_SHELLS
     if (! get_shell_list (shell)) {
        if (!getuid())
-	  printf ("Warning: \"%s\" is not listed as a valid shell.\n", shell);
+	  printf ("Warning: \"%s\" is not listed in /etc/shells\n", shell);
        else {
-	  printf ("%s: \"%s\" is not listed as a valid shell.\n",
+	  printf ("%s: \"%s\" is not listed in /etc/shells.\n",
 		  whoami, shell);
-	  printf( "%s: use -l option to see list\n" );
+	  printf( "%s: use -l option to see list\n", whoami );
 	  exit(1);
        }
     }
 #else
     if (! get_shell_list (shell)) {
-       printf ("Warning: \"%s\" is not listed as a valid shell.\n", shell);
+       printf ("Warning: \"%s\" is not listed in /etc/shells.\n", shell);
        printf( "Use %s -l to see list.\n", whoami );
     }
 #endif

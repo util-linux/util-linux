@@ -36,6 +36,8 @@
  * SUCH DAMAGE.
  *
  * Modified Fri Mar 10 20:27:19 1995, faith@cs.unc.edu, for Linux
+ * Modified Mon Jul  1 18:14:10 1996, janl@ifi.uio.no, writing to stdout
+ *	as suggested by Michael Meskes <meskes@Informatik.RWTH-Aachen.DE>
  * 
  */
 
@@ -84,10 +86,10 @@ main(argc, argv)
 
 	if (*argv == NULL) {
 		if (sb.st_mode & (S_IWGRP | S_IWOTH)) {
-			(void)fprintf(stderr, "is y\n");
+			(void)fprintf(stdout, "is y\n");
 			exit(0);
 		}
-		(void)fprintf(stderr, "is n\n");
+		(void)fprintf(stdout, "is n\n");
 		exit(1);
 	}
 

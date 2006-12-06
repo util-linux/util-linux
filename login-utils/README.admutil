@@ -1,11 +1,50 @@
-README file for the admutils V1.16 for Linux.
+README file for the admutils V1.23 for Linux.
 
 See installation instructions at the bottom. Currently the latest versions
-of this software is maintained at ftp://ftp.daimi.aau.dk/pub/linux/poe/
+of this software are maintained at ftp://ftp.daimi.aau.dk/pub/linux/poe/
 
 LICENSE:
 This software is distributed as is without any warranty what so ever.
 With respect to copyrights it is covered by the GNU Public License.
+
+Version 1.24 (20-Jun-97)
+	Small patches for glibc compat.
+
+Version 1.23 (6-Jun-97):
+	Patch by Christophe Thaelemans <thaele@chick.vub.ac.be> to last.c,
+	no longer considers all users logged out in case of a run-level
+	change.
+
+Version 1.22 (28-Jan-97):
+	Clean-up release.
+
+Version 1.21c (27-Jan-97):
+	Updated setpwnam.[hc] to be in sync with util-linux 2.6, this
+	also prevents passwd from copying the entire passwd YP/NIS map
+	into the local /etc/passwd. Edited setpwnam.c somewhat to
+	improve error checking, beautify the code, and remove output
+	to stderr.
+	Fixed a couple of buffer overrun nits in passwd.c, patches from
+	David Holland.
+
+Version 1.21b (23-Jan-97):
+	Shutdown now supports a message on the command line, a'la
+	"shutdown -f +5 'for some reason'"
+
+Version 1.20 (2-Nov-96):
+	Fix by Steffen Zahn <zahn@berlin.snafu.de> for shutdown.c so it 
+	prints its final message.
+
+Version 1.19 (8-Jul-96):
+	Fix by faith@cs.unc.edu to allow C-A-D after halting in shutdown.c
+
+Version 1.18 (19-Nov-95):
+	passwd almost completely rewritten by Martin Schulze 
+	<joey@infodrom.north.de> to use setpwnam() and support
+	more long options. There's a new man-page as well.
+	Hacked some more on Martins passwd.c to support -s and -f options.
+	The old passwd.c is in the Attic/ sub-directory.
+	Bugfix in shutdown.c to fix file modes.
 
 Version 1.17 (7-Oct-95):
 	Added setrlimit() calls to passwd.c and chsh.c to fix security hole

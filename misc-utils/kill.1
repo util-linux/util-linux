@@ -23,7 +23,26 @@ Specify the list of processes that
 .B kill
 should signal.  Each
 .I pid
-can be a process id, or a process name.
+can be one of four things.  A
+.I "process name"
+in which case processes called that will be signaled.
+.I n
+where
+.I n
+is larger than 0.  The process with pid
+.I n
+will be signaled.
+.I -1
+in which case all processes from MAX_INT to 2 will be signaled,
+as allowed by the issuing user.
+.I -n
+where 
+.I n 
+is larger than 1, in which case processes in process group
+.I n
+are signaled.  IFF a negative argument is given the signal
+.I must
+be specified first, otherwise it will be taken as the signal to send.
 .TP
 .BR \-s
 Specify the signal to send.

@@ -1,0 +1,497 @@
+.\" Copyright 1995 Andries E. Brouwer (aeb@cwi.nl)
+.\" May be distributed under the GNU General Public License
+.\" The `DOS 6.x Warning' was taken from the old fdisk.8, which says
+.\" -- Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" -- May be distributed under the GNU General Public License
+.\" The `DRDOS Warning' was taken from a net post by Stephen Tweedie.
+.\"
+.TH SFDISK 8 "1 September 1995" "Linux 1.3.23" "Linux Programmer's Manual"
+.SH NAME
+sfdisk \- Partition table manipulator for Linux
+.SH SYNOPSIS
+.BR sfdisk " [options] device"
+.br
+.BR "sfdisk \-s " [partition]
+.SH DESCRIPTION
+.B sfdisk
+has four (main) uses: list the size of a partition, list the partitions
+on a device, check the partitions on a device, and - very dangerous -
+repartition a device.
+
+.SS "List Sizes"
+.BI "sfdisk \-s " partition
+gives the size of
+.I partition
+in blocks. This may be useful in connection with programs like
+.B mkswap
+or so. Here
+.I partition
+is usually something like
+.I /dev/hda1
+or
+.IR /dev/sdb12 ,
+but may also be an entire disk, like
+.IR /dev/xda .
+.br
+.RS
+.nf
+.if t .ft CW
+% sfdisk \-s /dev/hda9
+81599
+%
+.if t .ft R
+.fi
+.RE
+If the partition argument is omitted,
+.B sfdisk
+will list the sizes of all disks, and the total:
+.br
+.RS
+.nf
+.if t .ft CW
+% sfdisk \-s
+/dev/hda: 208896
+/dev/hdb: 1025136
+/dev/hdc: 1031063
+/dev/sda: 8877895
+/dev/sdb: 1758927
+total: 12901917 blocks
+%
+.if t .ft R
+.fi
+.RE
+
+.SS "List Partitions"
+The second type of invocation:
+.BI "sfdisk \-l " "[options] device"
+will list the partitions on this device.
+If the device argument is omitted, the partitions on all hard disks
+are listed.
+.br
+.nf
+.if t .ft CW
+% sfdisk \-l /dev/hdc
+
+Disk /dev/hdc: 16 heads, 63 sectors, 2045 cylinders
+Units = cylinders of 516096 bytes, blocks of 1024 bytes, counting from 0
+
+   Device Boot Start     End   #cyls   #blocks   Id  System
+/dev/hdc1          0+    406     407\-   205096+  83  Linux native
+/dev/hdc2        407     813     407    205128   83  Linux native
+/dev/hdc3        814    2044    1231    620424   83  Linux native
+/dev/hdc4          0       \-       0         0    0  Empty
+%
+.if t .ft R
+.fi
+The trailing \- and + signs indicate that rounding has taken place,
+and that the actual value is slightly less (more).
+To see the exact values, ask for a listing with sectors as unit.
+
+.SS "Check partitions"
+The third type of invocation:
+.BI "sfdisk \-V " device
+will apply various consistency checks to the partition tables on
+.IR device .
+It prints `OK' or complains. The \-V option can be used together
+with \-l. In a shell script one might use
+.BI "sfdisk \-V \-q " device
+which only returns a status.
+
+.SS "Create partitions"
+The fourth type of invocation:
+.BI "sfdisk " device
+will cause
+.B sfdisk
+to read the specification for the desired partitioning of
+.I device
+from its standard input, and then to change the partition tables
+on that disk. Thus, it is possible to use
+.B sfdisk
+from a shell script. When
+.B sfdisk
+determines that its standard input is a terminal, it will be
+conversational; otherwise it will abort on any error.
+.LP
+BE EXTREMELY CAREFUL - ONE TYPING MISTAKE AND ALL YOUR DATA IS LOST
+.LP
+As a precaution, one can save the sectors changed by
+.BR sfdisk :
+.RS
+.nf
+.if t .ft CW
+% sfdisk /dev/hdd \-O hdd-partition-sectors.save
+%
+.if t .ft R
+.fi
+.RE
+.LP
+Then, if you discover that you did something stupid before anything
+else has been written to disk, it may be possible to recover
+the old situation with
+.RS
+.nf
+.if t .ft CW
+% sfdisk /dev/hdd \-I hdd-partition-sectors.save
+%
+.if t .ft R
+.fi
+.RE
+
+There are many options.
+
+.SH OPTIONS
+.TP
+.BR \-v " or " \-\-version
+Print version number of
+.B sfdisk
+and exit immediately.
+.TP
+.BR \-? " or " \-\-help
+Print a usage message and exit immediately.
+.TP
+.BR \-T " or " \-\-list-types
+Print the recognized types (system Id's).
+.TP
+.BR \-s " or " \-\-show\-size
+List the size of a partition.
+.TP
+.BR \-g " or " \-\-show\-geometry
+List the kernel's idea of the geometry of the indicated disk(s).
+.TP
+.BR \-l " or " \-\-list
+List the partitions of a device.
+.TP
+.BR \-d
+Dump the partitions of a device in a format useful as input
+to sfdisk. For example,
+.br
+.nf
+.if t .ft CW
+    % sfdisk -d /dev/hda > hda.out
+    % sfdisk /dev/hda < hda.out
+.if t .ft R
+.fi
+will correct the bad last extended partition that the OS/2
+sfdisk creates.
+.TP
+.BR \-V " or " \-\-verify
+Test whether partitions seem correct. (See above.)
+.TP
+.BR \-i " or " \-\-increment
+Number cylinders etc. starting from 1 instead of 0.
+.TP
+.BI \-N " number"
+Change only the single partition indicated. For example:
+.br
+.nf
+.if t .ft CW
+    % sfdisk /dev/hdb \-N5
+    ,,,*
+    %
+.if t .ft R
+.fi
+will make the fifth partition on /dev/hdb bootable (`active')
+and change nothing else. (Probably this fifth partition
+is called /dev/hdb5, but you are free to call it something else,
+like `/my_equipment/disks/2/5' or so).
+.TP
+.BI \-A " number"
+Make the indicated partition(s) active, and all others inactive.
+.TP
+.BI \-c " or " \-\-id " number [Id]"
+If no Id argument given: print the partition Id of the indicated
+partition. If an Id argument is present: change the type (Id) of
+the indicated partition to the given value.
+This option has the two very long forms \-\-print\-id and \-\-change\-id.
+For example:
+.br
+.nf
+.if t .ft CW
+    % sfdisk --print-id /dev/hdb 5
+    6
+    % sfdisk --change-id /dev/hdb 5 83
+    OK
+.if t .ft R
+.fi
+first reports that /dev/hdb5 has Id 6, and then changes that into 83.
+.TP
+.BR \-uS " or " \-uB " or " \-uC " or " \-uM
+Accept or report in units of sectors (blocks, cylinders, megabytes,
+respectively). The default is cylinders, at least when the geometry
+is known.
+.TP
+.BR \-x " or " \-\-show\-extended
+Also list non-primary extended partitions on output,
+and expect descriptors for them on input.
+.TP
+.BI \-C " cylinders"
+Specify the number of cylinders, possibly overriding what the kernel thinks.
+.TP
+.BI \-H " heads"
+Specify the number of heads, possibly overriding what the kernel thinks.
+.TP
+.BI \-S " sectors"
+Specify the number of sectors, possibly overriding what the kernel thinks.
+.TP
+.BR \-f " or " \-\-force
+Do what I say, even if it is stupid.
+.TP
+.BR \-q " or " \-\-quiet
+Suppress warning messages.
+.TP
+.BR \-L " or " \-\-Linux
+Do not complain about things irrelevant for Linux.
+.TP
+.BR \-D " or " \-\-DOS
+For DOS-compatibility: waste a little space.
+(More precisely: if a partition cannot contain sector 0,
+e.g. because that is the MBR of the device, or contains
+the partition table of an extended partition, then
+.B sfdisk
+would make it start the next sector. However, when this
+option is given it skips to the start of the next track,
+wasting for example 33 sectors (in case of 34 sectors/track),
+just like certain versions of DOS do.)
+Certain Disk Managers and boot loaders (such as OSBS, but not
+LILO or the OS/2 Boot Manager) also live in this empty space,
+so maybe you want this option if you use one.
+.TP
+.BR \-\-IBM " or " \-\-leave\-last
+Certain IBM diagnostic programs assume that they can use the
+last cylinder on a disk for disk-testing purposes. If you think
+you might ever run such programs, use this option to tell
+.B sfdisk
+that it should not allocate the last cylinder.
+Sometimes the last cylinder contains a bad sector table.
+.TP
+.B \-n
+Go through all the motions, but do not actually write to disk.
+.TP
+.B \-R
+Only execute the BLKRRPART ioctl (to make the kernel re-read
+the partition table). This can be useful for checking in advance
+that the final BLKRRPART will be successful, and also when you
+changed the partition table `by hand' (e.g., using dd from a backup).
+If the kernel complains (`device busy for revalidation (usage = 2)')
+then something still uses the device, and you still have to unmount
+some file system, or say swapoff to some swap partition.
+.TP
+.B \-\-no\-reread
+When starting a repartitioning of a disk, sfdisk checks that this disk
+is not mounted, or in use as a swap device, and refuses to continue
+if it is. This option suppresses the test. (On the other hand, the \-f
+option would force sfdisk to continue even when this test fails.)
+.TP
+.BI \-O " file"
+Just before writing the new partition, output the sectors
+that are going to be overwritten to
+.I file
+(where hopefully
+.I file
+resides on another disk, or on a floppy).
+.TP
+.BI \-I " file"
+After destroying your filesystems with an unfortunate
+.B sfdisk
+command, you would have been able to restore the old situation
+if only you had preserved it using the \-O flag.
+
+.SH THEORY
+Block 0 of a disk (the Master Boot Record) contains among
+other things four partition descriptors. The partitions
+described here are called
+.I primary
+partitions.
+.LP
+A partition descriptor has 6 fields:
+.br
+.nf
+.RS
+struct partition {
+    unsigned char bootable;		/* 0 or 0x80 */
+    hsc begin_hsc;
+    unsigned char id;
+    hsc end_hsc;
+    unsigned int starting_sector;
+    unsigned int nr_of_sectors;
+}
+.RE
+.fi
+.LP
+The two hsc fields indicate head, sector and cylinder of the
+begin and the end of the partition. Since each hsc field only
+takes 3 bytes, only 24 bits are available, which does not
+suffice for big disks (say > 8GB). In fact, due to the wasteful
+representation (that uses a byte for the number of heads, which
+is typically 16), problems already start with 0.5GB.
+However Linux does not use these fields, and problems can arise
+only at boot time, before Linux has been started. For more
+details, see the
+.B lilo
+documentation.
+.LP
+Each partition has a type, its `Id', and if this type is 5
+.IR "" "(`" "extended partition" "')"
+the starting sector of the partition
+again contains 4 partition descriptors. MSDOS only uses the
+first two of these: the first one an actual data partition,
+and the second one again an extended partition (or empty).
+In this way one gets a chain of extended partitions.
+Other operating systems have slightly different conventions.
+Linux also accepts type 85 as equivalent to 5 - this can be
+useful if one wants to have extended partitions under Linux past
+the 1024 cylinder boundary, without DOS FDISK hanging.
+(If there is no good reason, you should just use 5, which is
+understood by other systems.)
+.LP
+Partitions that are not primary or extended are called
+.IR logical .
+Often, one cannot boot from logical partitions (because the
+process of finding them is more involved than just looking
+at the MBR).
+Note that of an extended partition only the Id and the start
+are used. There are various conventions about what to write
+in the other fields. One should not try to use extended partitions
+for data storage or swap.
+
+.SH "INPUT FORMAT"
+.B sfdisk
+reads lines of the form
+.br
+.RS
+<start> <size> <id> <bootable> <c,h,s> <c,h,s>
+.RE
+where each line fills one partition descriptor.
+.LP
+Fields are separated by whitespace, or comma or semicolon possibly
+followed by whitespace; initial and trailing whitespace is ignored.
+Numbers can be octal, decimal or hexadecimal, decimal is default.
+When a field is absent or empty, a default value is used.
+.LP
+The <c,h,s> parts can (and probably should) be omitted -
+.B sfdisk
+computes them from <start> and <size> and the disk geometry
+as given by the kernel or specified using the \-H, \-S, \-C flags.
+.LP
+Bootable is specified as [*|\-], with as default not-bootable.
+(The value of this field is irrelevant for Linux - when Linux
+runs it has been booted already - but might play a role for
+certain boot loaders and for other operating systems.
+For example, when there are several primary DOS partitions,
+DOS assigns C: to the first among these that is bootable.)
+.LP
+Id is given in hex, without the 0x prefix, or is [E|S|L|X], where
+L (LINUX_NATIVE (83)) is the default, S is LINUX_SWAP (82), E
+is EXTENDED_PARTITION (5), and X is LINUX_EXTENDED (85).
+.LP
+The default value of start is the first nonassigned sector/cylinder/...
+.LP
+The default value of size is as much as possible (until next
+partition or end-of-disk).
+.LP
+However, for the four partitions inside an extended partition,
+the defaults are: Linux partition, Extended partition, Empty, Empty.
+.LP
+But when the \-N option (change a single partition only) is given,
+the default for each field is its previous value.
+
+.SH EXAMPLE
+The command
+.RS
+.nf
+.if t .ft CW
+sfdisk /dev/hdc << EOF
+0,407
+,407
+;
+;
+EOF
+.if t .ft R
+.fi
+.RE
+will partition /dev/hdc just as indicated above.
+
+With the \-x option, the number of input lines must be a multiple of 4:
+you have to list the two empty partitions that you never want
+using two blank lines. Without the \-x option, you give one line
+for the partitions inside a extended partition, instead of four,
+and terminate with end-of-file (^D).
+(And
+.B sfdisk
+will assume that your input line represents the first of four,
+that the second one is extended, and the 3rd and 4th are empty.)
+
+.SH "DOS 6.x WARNING"
+
+The DOS 6.x FORMAT command looks for some information in the first
+sector of the data area of the partition, and treats this information
+as more reliable than the information in the partition table.  DOS
+FORMAT expects DOS FDISK to clear the first 512 bytes of the data area
+of a partition whenever a size change occurs.  DOS FORMAT will look at
+this extra information even if the /U flag is given -- we consider
+this a bug in DOS FORMAT and DOS FDISK.
+.LP
+The bottom line is that if you use sfdisk to change the size of a
+DOS partition table entry, then you must also use
+.B dd
+to zero the first 512 bytes of that partition before using DOS FORMAT to
+format the partition.  For example, if you were using sfdisk to make a DOS
+partition table entry for /dev/hda1, then (after exiting sfdisk and
+rebooting Linux so that the partition table information is valid) you
+would use the command "dd if=/dev/zero of=/dev/hda1 bs=512 count=1" to zero
+the first 512 bytes of the partition.
+.B BE EXTREMELY CAREFUL
+if you use the
+.B dd
+command, since a small typo can make all of the data on your disk useless.
+
+For best results, you should always use an OS-specific partition table
+program.  For example, you should make DOS partitions with the DOS FDISK
+program and Linux partitions with the Linux sfdisk program.
+
+.SH "DRDOS WARNINGS"
+
+Stephen Tweedie reported (930515): `Most reports of superblock
+corruption turn out to be due to bad partitioning, with one filesystem
+overrunning the start of the next and corrupting its superblock.
+I have even had this problem with the supposedly-reliable DRDOS.  This
+was quite possibly due to DRDOS-6.0's FDISK command.  Unless I created
+a blank track or cylinder between the DRDOS partition and the
+immediately following one, DRDOS would happily stamp all over the
+start of the next partition.  Mind you, as long as I keep a little
+free disk space after any DRDOS partition, I don't have any other
+problems with the two coexisting on the one drive.'
+
+A. V. Le Blanc writes in README.esfdisk: `Dr. DOS 5.0 and 6.0 has been
+reported to have problems cooperating with Linux, and with this version
+of efdisk in particular.  This efdisk sets the system type
+to hexadecimal 81.  Dr. DOS seems to confuse
+this with hexadecimal 1, a DOS code.  If you use Dr. DOS, use the
+efdisk command 't' to change the system code of any Linux partitions
+to some number less than hexadecimal 80; I suggest 41 and 42 for
+the moment.'
+
+A. V. Le Blanc writes in his README.fdisk: `DR-DOS 5.0 and 6.0
+are reported to have difficulties with partition ID codes of 80 or more.
+The Linux `fdisk' used to set the system type
+of new partitions to hexadecimal 81.  DR-DOS seems to confuse this with
+hexadecimal 1, a DOS code.  The values 82 for swap and 83 for file
+systems should not cause problems with DR-DOS.  If they do, you may use
+the `fdisk' command `t' to change the system code of any Linux
+partitions to some number less than hexadecimal 80; I suggest 42 and 43
+for the moment.'
+
+In fact, it seems that only 4 bits are significant for the DRDOS FDISK,
+so that for example 11 and 21 are listed as DOS 2.0. However, DRDOS
+itself seems to use the full byte. I have not been able to reproduce
+any corruption with DRDOS or its fdisk.
+
+.SH BUGS
+A corresponding interactive
+.B cfdisk
+(with curses interface) is still lacking.
+.LP
+There are too many options.
+
+.SH AUTHOR
+A. E. Brouwer (aeb@cwi.nl)

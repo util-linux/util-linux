@@ -68,7 +68,7 @@ ttymsg(iov, iovcnt, line, tmout)
 	char *line;
 	int tmout;
 {
-	static char device[MAXNAMLEN] = _PATH_DEV;
+	static char device[MAXNAMLEN];
 	static char errbuf[1024];
 	register int cnt, fd, left, wret;
 	struct iovec localiov[6];
@@ -77,17 +77,13 @@ ttymsg(iov, iovcnt, line, tmout)
 	if (iovcnt > sizeof(localiov) / sizeof(localiov[0]))
 		return ("too many iov's (change code in wall/ttymsg.c)");
 
-	(void) strcpy(device + sizeof(_PATH_DEV) - 1, line);
-	if (strchr(device + sizeof(_PATH_DEV) - 1, '/')) {
+	if (strchr(line, '/')) {
 		/* A slash is an attempt to break security... */
-#ifdef __linux__
-		(void) sprintf(errbuf, "'/' in \"%s\"", device);
-#else
 		(void) snprintf(errbuf, sizeof(errbuf), "'/' in \"%s\"",
 		    device);
-#endif
 		return (errbuf);
 	}
+	(void) snprintf(device, sizeof(device), "%s%s", _PATH_DEV, line);
 
 	/*
 	 * open will fail on slip lines or exclusive-use lines
@@ -96,13 +92,8 @@ ttymsg(iov, iovcnt, line, tmout)
 	if ((fd = open(device, O_WRONLY|O_NONBLOCK, 0)) < 0) {
 		if (errno == EBUSY || errno == EACCES)
 			return (NULL);
-#ifdef __linux__
-		(void) sprintf(errbuf,
-		    "%s: %s", device, strerror(errno));
-#else
 		(void) snprintf(errbuf, sizeof(errbuf),
 		    "%s: %s", device, strerror(errno));
-#endif
 		return (errbuf);
 	}
 
@@ -140,13 +131,8 @@ ttymsg(iov, iovcnt, line, tmout)
 			}
 			cpid = fork();
 			if (cpid < 0) {
-#ifdef __linux__
-				(void) sprintf(errbuf,
-				    "fork: %s", strerror(errno));
-#else
 				(void) snprintf(errbuf, sizeof(errbuf),
 				    "fork: %s", strerror(errno));
-#endif
 				(void) close(fd);
 				return (errbuf);
 			}
@@ -172,13 +158,8 @@ ttymsg(iov, iovcnt, line, tmout)
 		(void) close(fd);
 		if (forked)
 			_exit(1);
-#ifdef __linux__
-		(void) sprintf(errbuf,
-		    "%s: %s", device, strerror(errno));
-#else
 		(void) snprintf(errbuf, sizeof(errbuf),
 		    "%s: %s", device, strerror(errno));
-#endif
 		return (errbuf);
 	}
 

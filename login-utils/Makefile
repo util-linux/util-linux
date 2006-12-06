@@ -1,6 +1,6 @@
 # Makefile -- Makefile for util-linux Linux utilities
 # Created: Sat Dec 26 20:09:40 1992
-# Revised: Thu Oct 12 10:10:32 1995 by r.faith@ieee.org
+# Revised: Sun Nov 10 20:28:43 1996 by faith@cs.unc.edu
 # Copyright 1992, 1993, 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
 #
 # Suggested changed from Bauke Jan Douma <bjdouma@xs4all.nl> have been
@@ -19,7 +19,7 @@ MAN8.GETTY=	agetty.8
 
 MAN8.INIT=	fastboot.8 fasthalt.8 halt.8 reboot.8 simpleinit.8 shutdown.8
 
-MAN8.PUTILS=	vipw.8
+MAN8.PUTILS=	vipw.8 vigr.8
 
 # Where to put binaries?
 # See the "install" rule for the links. . .
@@ -37,10 +37,21 @@ USRBIN.PASSWD=	passwd
 
 USRSBIN.PUTILS=	vipw
 
+ifeq "$(HAVE_LIBCRYPT)" "yes"
+CRYPT=-lcrypt
+endif
+
+ifeq "$(HAVE_PAM)" "yes"
+PAM=-lpam -ldl -lpam_misc
+PAMFL=-DUSE_PAM=1
+endif
+
 ifeq "$(HAVE_SHADOW)" "no"
+ifeq "$(HAVE_PAM)" "no"
 ifeq "$(HAVE_PASSWD)" "no"
 WHAT_TO_BUILD:=$(WHAT_TO_BUILD) all-passwd all-putils
 WHAT_TO_INSTALL:=$(WHAT_TO_INSTALL) install-passwd install-putils
+endif
 else
 WHAT_TO_BUILD:=$(WHAT_TO_BUILD) all-putils
 WHAT_TO_INSTALL:=$(WHAT_TO_INSTALL) install-putils
@@ -73,36 +84,52 @@ all-misc: $(USRBIN.MISC)
 
 agetty.o: $(BSD)/pathnames.h
 agetty: agetty.o
-chfn: chfn.o setpwnam.o
-chsh: chsh.o setpwnam.o
+chfn: chfn.o islocal.o setpwnam.o
+	$(CC) -o $@ $^ $(CRYPT) $(PAM)
+chsh: chsh.o islocal.o setpwnam.o
+	$(CC) -o $@ $^ $(CRYPT) $(PAM)
+islocal.o: $(BSD)/pathnames.h
 last.o: $(BSD)/pathnames.h
 last: last.o $(BSD)/getopt.o
-login: login.o checktty.o
+
+ifeq "$(HAVE_PAM)" "yes"
+login: login.o 
+	$(CC) -o $@ $^ $(CRYPT) $(PAM)
+else
+login: login.o checktty.o 
+	$(CC) -o $@ $^ $(CRYPT) 
+endif
+
 mesg: mesg.o $(BSD)/getopt.o $(BSD)/err.o
-newgrp.o: $(BSD)/pathnames.h
-newgrp: newgrp.o
+newgrp: newgrp.o 
+	$(CC) -o $@ $^ $(CRYPT) $(PAM)
 setpwnam.o: $(BSD)/pathnames.h
 shutdown.o: $(BSD)/pathnames.h
 shutdown: shutdown.o
 simpleinit.o: $(BSD)/pathnames.h
-simpleinit: simpleinit.o
+simpleinit: simpleinit.o $(CRYPT)
 vipw.o: $(BSD)/pathnames.h
 vipw: vipw.o
+
+newgrp.o: $(BSD)/pathnames.h
+	$(CC) -c $(CFLAGS) $(PAMFL) newgrp.c 
+
 wall: wall.o ttymsg.o
 
 ifeq "$(USE_TTY_GROUP)" "yes"
 login.o: login.c $(BSD)/pathnames.h
-	$(CC) -c $(CFLAGS) -DUSE_TTY_GROUP login.c
+	$(CC) -c $(CFLAGS) $(PAMFL) -DUSE_TTY_GROUP login.c
 mesg.o: mesg.c $(BSD)/err.h
 	$(CC) -c $(CFLAGS) -DUSE_TTY_GROUP mesg.c
 else
 login.o: $(BSD)/pathnames.h
+	$(CC) -c $(CFLAGS) $(PAMFL) login.c
 mesg.o: $(BSD)/err.h
 endif
 
-passwd: passwd.o islocal.o setpwnam.o
+passwd: passwd.o islocal.o setpwnam.o $(CRYPT)
 passwd.o: passwd.c
-	$(CC) -c $(CFLAGS) -DUSE_SETPWNAM passwd.c
+	$(CC) -c $(CFLAGS) passwd.c
 
 ifeq "$(REQUIRE_PASSWORD)" "yes"
 CHSH_FLAGS:=$(CHSH_FLAGS) -DREQUIRE_PASSWORD
@@ -113,10 +140,10 @@ CHSH_FLAGS:=$(CHSH_FLAGS) -DONLY_LISTED_SHELLS
 endif
 
 chsh.o: chsh.c
-	$(CC) -c $(CFLAGS) $(CHSH_FLAGS) chsh.c
+	$(CC) -c $(CFLAGS) $(PAMFL) $(CHSH_FLAGS) chsh.c
 
 chfn.o: chfn.c
-	$(CC) -c $(CFLAGS) $(CHSH_FLAGS) chfn.c
+	$(CC) -c $(CFLAGS) $(PAMFL) $(CHSH_FLAGS) chfn.c
 
 install: all $(WHAT_TO_INSTALL)
 
@@ -125,6 +152,7 @@ install-putils: $(BIN.PUTILS) $(USRBIN.PUTILS) $(USRSBIN.PUTILS)
 	$(INSTALLSUID) $(BIN.PUTILS) $(BINDIR)
 	$(INSTALLSUID) $(USRBIN.PUTILS) $(USRBINDIR)
 	$(INSTALLBIN) $(USRSBIN.PUTILS) $(USRSBINDIR)
+	(cd $(USRSBINDIR); ln -sf vipw vigr)
 	$(INSTALLDIR) $(MAN1DIR) $(MAN8DIR)
 	$(INSTALLMAN) $(MAN1.PUTILS) $(MAN1DIR)
 	$(INSTALLMAN) $(MAN8.PUTILS) $(MAN8DIR)

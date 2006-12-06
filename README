@@ -1,4 +1,4 @@
-util-linux 2.5
+util-linux 2.7
 
 WARNING: THE PROGRAMS IN THIS SUITE DO *NOT* SUPPORT SHADOW PASSWORD FILES!
 
@@ -8,36 +8,117 @@ WARNING: USE GNU TAR -- OTHER TARS WILL FAIL SILENTLY!
 
 WARNING: DO *NOT* INSTALL WITHOUT THINKING.
 
-WARNING: The agetty, simpleinit, login, passwd, and other programs in this
-         package are *NOT* System V compliant.  These utilities are meant
-         to be used by people who build their own systems.  If you are not
+WARNING: The simpleinit and some other programs in this package are
+	 *NOT* System V compliant.  These utilities are meant to be
+	 used by people who build their own systems.  If you are not
          a wizard, do *NOT* blindly install these utilities: they could
          prevent you from logging into your system.  Have a boot floppy
-         ready, especially if you don't know what you are doing.
-
-
+         ready, especially if you don't know what you are doing.  It's a
+	 great way to learn though ;-)
 
 To install from source:
 
 1) Get source distribution (see the .lsm file for locations)
-2) Untar util-linux-2.5.tar.gz in /usr/src
-3) cd util-linux-2.5
+2) Untar util-linux-2.7.tar.gz in /usr/src
+3) cd util-linux-2.7
 4) Edit MCONFIG
 5) make
-
-   Note that libc 4.5.26 headers need a small patch to be used with
-   recent kernels.  See the file uio.h-diff for the patch, if necessary.
-
 6) make install
 7) If you want to use simpleinit and agetty, then make softlinks from
    /sbin/init to simpleinit and from /sbin/getty to agetty, but make sure
    that your /etc/inittab is set up right (this is *NOT* the System V
    compatible init!), or you will be hosed.  If you are using the SysV
    init and/or some other getty, they you can keep using those.
-8) Remove all the old binaries from previous locations.
-9) See the HIGHLIGHTS below for links you need to make for the new FSSTND
-   compliance. 
 
+HIGLIGHTS for version 2.7:
+
+1) util-linux now _requires_ ncurses.  Several programs are completely
+   converted to use terminfo (instead of termcap).
+
+2) Removed progams:
+   - clock: Dropped entierly.  Use hwclock (included).
+   - sync: is in gnu fileutils.
+   - setserial: Is being maintained by Ted Ts'o, he recommends
+	setserial-2.12 (2.13 is bad luck)
+   - clear: Included in ncurses
+   - hostname, domainname, dnsdomainname: It's in net-utils.
+
+3) Bugfixes, additions:
+   - cfdisk: A much improved version. All known bugs have been fixed.
+   - sfdisk: A command line fdisk type utility, formerly called fdisk-3.04.
+   - SECURITY: All known holes in login, chfn, chsh and others have been
+     plugged.  UPGRADE NOW if you haven't already fixed them yourself.
+   - Should work with libc 4, 5 and 6 (gnulibc), on m68k, intel, alpha
+     and sparc.
+
+4) Problems.:
+   - The rpcgen that comes in NetKit-B-0.09 is broken.  At least as
+     packaged with RedHat 4.2 (NetKit-B-0.09-6).  There are several
+     ways to deal with this:
+     - Don't run rpcgen, the needed pre-generated sources are included
+       (nfsmount_xdr.c).  You must hack mount/Makefile to do this.
+     - Edit the source emited by rpcgen so it can compile.  This is very
+       simple if you know C.
+     - Disable the NFS parts of mount.  You have to edit mount/Makefile
+       to do this.
+     - Use some other rpcgen
+
+util-linux 2.6.1
+
+This release was never made public
+
+See notes for 2.6 for installation instructions.
+
+This is a incremental release containing some fixes.  A new release
+will be made later fixing the outstanding bugs.
+- Things compiles and works better with recent releases of kernel, 
+  ncurses, and so forth: fdisk, more
+- Some fixes to make things compile out of the box on alphas.
+- There has been reported a problem with login and /etc/usertty.  It
+  should be fixed.  If you still have problems get a recent MAKEDEV and 
+  use it to make new tty devices.  They were renumbered sometime during
+  the 1.3 phase of the kernel.
+- ipcs now displays the key of the structures.
+- A (harmless?) overflow bug was fixed in login.
+
+Outstanding bugs:
+- login/getty has a denial of service problem.
+- Several places needs a bit more polish.
+- There are a _lot_ of nonfatal warnings when compiling mount.  This will
+  not necesarily be fixed.
+
+
+util-linux 2.6
+
+HIGHLIGHTS for version 2.6:
+
+0) The first release with me at the helm.  PLEASE SEND PATCHES AND
+   UPDATES TO: util-linux@math.uio.no.
+
+1) Removed programs:
+   - md5sum: available in GNU textutils.
+   - syslogd: Sysklogd is now prefered.  It is available at 
+	tsx-11.mit.edu:/pub/sources/sbin
+	sunsite.unc.edu:/pub/Linux/system/Daemons
+
+2) Bugfixes, additions: 
+   - SECURITY: All known holes in mount have been fixed.  UPGRADE NOW
+     if you haven't already!
+   - Portability enhancments to the minix filesystem utils (m68k and
+     Arm patches).
+   - passwd/chsh/chfn will not mess up the passwd file on a NIS machine
+   - others too numerous to enumerate.
+
+3) New programs: 
+   - vigr (it's like vipw)
+   - Introducing hwclock.  A complete rewrite of the latest available
+     clock source.  It supports intel/CMOS, /dev/rtc and linux/m68k
+     system clock interfaces.  Clock supports the same things but is now
+     obsolete and will not be present in the next release.  Start using
+     hwclock now.  Please.
+
+
+util-linux 2.5
 
 HIGHLIGHTS for version 2.5:
 0) Nicolai Langfeldt is taking over maintenance of util-linux, with the

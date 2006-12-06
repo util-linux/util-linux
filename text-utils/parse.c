@@ -43,10 +43,15 @@ static char sccsid[] = "@(#)parse.c	5.6 (Berkeley) 3/9/91";
 #include <string.h>
 #include "hexdump.h"
 
+static void escape(register char *p1);
+static void badcnt(char *s);
+static void badsfmt(void);
+static void badfmt(char *fmt);
+static void badconv(char *ch);
+
 FU *endfu;					/* format at end-of-data */
 
-addfile(name)
-	char *name;
+void addfile(char *name)
 {
 	register char *p;
 	FILE *fp;
@@ -72,8 +77,7 @@ addfile(name)
 	(void)fclose(fp);
 }
 
-add(fmt)
-	char *fmt;
+void add(char *fmt)
 {
 	register char *p;
 	static FS **nextfs;
@@ -147,8 +151,8 @@ add(fmt)
 }
 
 static char *spec = ".#-+ 0123456789";
-size(fs)
-	FS *fs;
+
+int size(FS *fs)
 {
 	register FU *fu;
 	register int bcnt, cursize;
@@ -200,15 +204,14 @@ size(fs)
 	return(cursize);
 }
 
-rewrite(fs)
-	FS *fs;
+void rewrite(FS *fs)
 {
 	enum { NOTOKAY, USEBCNT, USEPREC } sokay;
-	register PR *pr, **nextpr;
+	register PR *pr, **nextpr = NULL;
 	register FU *fu;
 	register char *p1, *p2;
 	char savech, *fmtp;
-	int nconv, prec;
+	int nconv, prec = 0;
 
 	for (fu = fs->nextfu; fu; fu = fu->nextfu) {
 		/*
@@ -439,8 +442,7 @@ sw2:					switch(fu->bcnt) {
 }
 
 
-escape(p1)
-	register char *p1;
+static void escape(register char *p1)
 {
 	register char *p2;
 
@@ -481,30 +483,27 @@ escape(p1)
 	}
 }
 
-badcnt(s)
-	char *s;
+static void badcnt(char *s)
 {
 	(void)fprintf(stderr,
 	    "hexdump: bad byte count for conversion character %s.\n", s);
 	exit(1);
 }
 
-badsfmt()
+static void badsfmt()
 {
 	(void)fprintf(stderr,
 	    "hexdump: %%s requires a precision or a byte count.\n");
 	exit(1);
 }
 
-badfmt(fmt)
-	char *fmt;
+static void badfmt(char *fmt)
 {
 	(void)fprintf(stderr, "hexdump: bad format {%s}\n", fmt);
 	exit(1);
 }
 
-badconv(ch)
-	char *ch;
+static void badconv(char *ch)
 {
 	(void)fprintf(stderr, "hexdump: bad conversion character %%%s.\n", ch);
 	exit(1);

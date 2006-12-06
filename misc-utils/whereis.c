@@ -44,7 +44,19 @@ static char sccsid[] = "@(#)whereis.c	5.5 (Berkeley) 4/18/91";
 #include <sys/param.h>
 #include <sys/dir.h>
 #include <stdio.h>
+#include <string.h>
 #include <ctype.h>
+
+void zerof(void);
+void getlist(int *, char ***, char ***, int *);
+void lookup(char *);
+void looksrc(char *);
+void lookbin(char *);
+void lookman(char *);
+void findv(char **, int, char *);
+void find(char **, char *);
+void findin(char *, char *);
+int itsit(char *, char *);
 
 static char *bindirs[] = {
 #ifdef __linux__
@@ -66,6 +78,8 @@ static char *bindirs[] = {
    "/usr/lib/emacs/19.28/etc",
    "/usr/lib/emacs/19.29/etc",
    "/usr/lib/emacs/19.30/etc",
+   "/usr/lib/emacs/19.31/etc",
+   "/usr/lib/emacs/19.32/etc",
    "/usr/TeX/bin",
    "/usr/tex/bin",
    "/usr/interviews/bin/LINUX",
@@ -231,6 +245,7 @@ char	uflag;
  * whereis name
  * look for source, documentation and binaries
  */
+int
 main(argc, argv)
 	int argc;
 	char *argv[];
@@ -288,9 +303,10 @@ usage:
 		} else
 			lookup(*argv++);
 	while (--argc > 0);
-	exit(0);
+	return 0;
 }
 
+void
 getlist(argcp, argvp, flagp, cntp)
 	char ***argvp;
 	int *argcp;
@@ -308,16 +324,17 @@ getlist(argcp, argvp, flagp, cntp)
 }
 
 
+void
 zerof()
 {
-
 	if (sflag && bflag && mflag)
 		sflag = bflag = mflag = 0;
 }
+
 int	count;
 int	print;
 
-
+void
 lookup(cp)
 	register char *cp;
 {
@@ -369,6 +386,7 @@ again:
 		printf("\n");
 }
 
+void
 looksrc(cp)
 	char *cp;
 {
@@ -378,6 +396,7 @@ looksrc(cp)
 		findv(Sflag, Scnt, cp);
 }
 
+void
 lookbin(cp)
 	char *cp;
 {
@@ -387,6 +406,7 @@ lookbin(cp)
 		findv(Bflag, Bcnt, cp);
 }
 
+void
 lookman(cp)
 	char *cp;
 {
@@ -396,6 +416,7 @@ lookman(cp)
 		findv(Mflag, Mcnt, cp);
 }
 
+void
 findv(dirv, dirc, cp)
 	char **dirv;
 	int dirc;
@@ -406,6 +427,7 @@ findv(dirv, dirc, cp)
 		findin(*dirv++, cp), dirc--;
 }
 
+void
 find(dirs, cp)
 	char **dirs;
 	char *cp;
@@ -415,6 +437,7 @@ find(dirs, cp)
 		findin(*dirs++, cp);
 }
 
+void
 findin(dir, cp)
 	char *dir, *cp;
 {
@@ -434,6 +457,7 @@ findin(dir, cp)
 	closedir(dirp);
 }
 
+int
 itsit(cp, dp)
 	register char *cp, *dp;
 {

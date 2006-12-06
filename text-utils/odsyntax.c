@@ -38,18 +38,20 @@ static char sccsid[] = "@(#)odsyntax.c	5.4 (Berkeley) 3/8/91";
 #include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include <ctype.h>		/* for isdigit() */
+#include <unistd.h>		/* for getopt() */
 #include "hexdump.h"
+
+static void odoffset(int, char ***);
 
 int deprecated;
 
-oldsyntax(argc, argvp)
-	int argc;
-	char ***argvp;
+void
+oldsyntax(int argc, char ***argvp)
 {
 	extern enum _vflag vflag;
 	extern FS *fshead;
-	extern char *optarg;
-	extern int length, optind;
+	extern int optind;
 	int ch;
 	char **argv;
 	static void odprecede();
@@ -147,11 +149,10 @@ oldsyntax(argc, argvp)
 }
 
 #define	ishexdigit(c) \
-	(c >= '0' && c <= '9' || c >= 'a' && c <= 'f' || c >= 'A' && c <= 'F')
+	((c >= '0' && c <= '9') || (c >= 'a' && c <= 'f') || (c >= 'A' && c <= 'F'))
 
-odoffset(argc, argvp)
-	int argc;
-	char ***argvp;
+static void
+odoffset(int argc, char ***argvp)
 {
 	extern off_t skip;
 	register char *num, *p;

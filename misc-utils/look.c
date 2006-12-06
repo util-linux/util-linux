@@ -92,6 +92,7 @@ void	 print_from __P((char *, char *, char *));
 
 static void usage __P((void));
 
+void
 main(argc, argv)
 	int argc;
 	char *argv[];
@@ -102,6 +103,8 @@ main(argc, argv)
 
 	file = _PATH_WORDS;
 	termchar = '\0';
+	string = NULL;		/* just for gcc */
+
 	while ((ch = getopt(argc, argv, "adft:")) != EOF)
 		switch(ch) {
 		case 'a':
@@ -152,6 +155,7 @@ main(argc, argv)
 	exit(look(string, front, back));
 }
 
+int
 look(string, front, back)
 	char *string, *front, *back;
 {
@@ -159,7 +163,7 @@ look(string, front, back)
 	register char *readp, *writep;
 
 	/* Reformat string string to avoid doing it multiple times later. */
-	for (readp = writep = string; ch = *readp++;) {
+	for (readp = writep = string; (ch = *readp++) != 0;) {
 		if (fflag)
 			ch = FOLD(ch);
 		if (dflag)

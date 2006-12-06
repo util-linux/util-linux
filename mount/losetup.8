@@ -1,0 +1,87 @@
+.TH LOSETUP 8 "Nov 24 1993" "Linux" "MAINTENANCE COMMANDS"
+.SH NAME
+losetup \- set up and control loop devices
+.SH SYNOPSIS
+.ad l
+.B losetup
+[
+.B \-e
+.I encryption
+] [
+.B \-o
+.I offset
+]
+.I loop_device file
+.br
+.B losetup
+[
+.B \-d
+]
+.I loop_device
+.ad b
+.SH DESCRIPTION
+.B losetup
+is used to associate loop devices with regular files or block devices,
+to detach loop devices and to query the status of a loop device. If only the
+\fIloop_device\fP argument is given, the status of the corresponding loop
+device is shown.
+.SH OPTIONS
+.IP \fB\-d\fP
+detach the file or device associated with the specified loop device.
+.IP "\fB\-e \fIencryption\fP"
+.RS
+enable data encryption. The following keywords are recognized:
+.IP \fBNONE\fP
+use no encryption (default).
+.PD 0
+.IP \fBXOR\fP
+use a simple XOR encryption.
+.IP \fBDES\fP
+use DES encryption. DES encryption is only available if the optional
+DES package has been added to the kernel. DES encryption uses an additional
+start value that is used to protect passwords against dictionary
+attacks.
+.PD
+.RE
+.IP "\fB\-o \fIoffset\fP"
+the data start is moved \fIoffset\fP bytes into the specified file or
+device.
+.SH FILES
+.nf
+/dev/loop0,/dev/loop1,...   loop devices (major=7)
+.fi
+.SH EXAMPLE
+If you are using the loadable module you must have the module loaded
+first with the command
+.IP
+# insmod loop.o
+.LP
+The following commands can be used as an example of using the loop device.
+.nf
+.IP
+dd if=/dev/zero of=/file bs=1k count=100
+losetup -e des /dev/loop0 /file
+Password:
+Init (up to 16 hex digits):
+mkfs -t ext2 /dev/loop0 100
+mount -t ext2 /dev/loop0 /mnt
+ ...
+umount /dev/loop0
+losetup -d /dev/loop0
+.fi
+.LP
+If you are using the loadable module you may remove the module with
+the command
+.IP
+# rmmod loop
+.LP
+.fi
+.SH RESTRICTION
+DES encryption is painfully slow. On the other hand, XOR is terribly weak.
+.SH AUTHORS
+.nf
+Original version: Theodore Ts'o <tytso@athena.mit.edu>
+Maintained by: Werner Almesberger <almesber@bernina.ethz.ch>
+Original DES by: Eric Young <eay@psych.psy.uq.oz.au>
+Modularized and updated 28-5-94: Mitch DSouza <m.dsouza@mrc-apu.cam.ac.uk>
+.fi

@@ -49,10 +49,13 @@ char copyright[] =
 static char sccsid[] = "@(#)col.c	5.3 (Berkeley) 2/2/91";
 #endif /* not lint */
 
+#include <stdlib.h>
+#include <malloc.h>
 #include <errno.h>
 #include <ctype.h>
 #include <string.h>
 #include <stdio.h>
+#include <unistd.h>
 #include <locale.h>
 
 #define	BS	'\b'		/* backspace */
@@ -92,8 +95,15 @@ struct line_str {
 	int	l_max_col;		/* max column in the line */
 };
 
-LINE *alloc_line();
-void *xmalloc();
+void usage(void);
+void wrerr(void);
+void warn(int);
+void free_line(LINE *l);
+void flush_line(LINE *l);
+void flush_lines(int);
+void flush_blanks(void);
+void *xmalloc(void *p, size_t size);
+LINE *alloc_line(void);
 
 CSET last_set;			/* char_set of last char printed */
 LINE *lines;
@@ -107,9 +117,7 @@ int no_backspaces;		/* if not to output any backspaces */
 	if (putchar(ch) == EOF) \
 		wrerr();
 
-main(argc, argv)
-	int argc;
-	char **argv;
+int main(int argc, char **argv)
 {
 	extern int optind;
 	extern char *optarg;
@@ -313,11 +321,10 @@ main(argc, argv)
 		/* missing a \n on the last line? */
 		nblank_lines = 2;
 	flush_blanks();
-	exit(0);
+	return 0;
 }
 
-flush_lines(nflush)
-	int nflush;
+void flush_lines(int nflush)
 {
 	LINE *l;
 
@@ -342,7 +349,7 @@ flush_lines(nflush)
  * is the number of half line feeds, otherwise it is the number of whole line
  * feeds.
  */
-flush_blanks()
+void flush_blanks()
 {
 	int half, i, nb;
 
@@ -370,8 +377,7 @@ flush_blanks()
  * Write a line to stdout taking care of space to tab conversion (-h flag)
  * and character set shifts.
  */
-flush_line(l)
-	LINE *l;
+void flush_line(LINE *l)
 {
 	CHAR *c, *endc;
 	int nchars, last_col, this_col;
@@ -489,17 +495,14 @@ alloc_line()
 	return(l);
 }
 
-free_line(l)
-	LINE *l;
+void free_line(LINE *l)
 {
 	l->l_next = line_freelist;
 	line_freelist = l;
 }
 
 void *
-xmalloc(p, size)
-	void *p;
-	size_t size;
+xmalloc(void *p, size_t size)
 {
 	if (!(p = (void *)realloc(p, size))) {
 		(void)fprintf(stderr, "col: %s.\n", strerror(ENOMEM));
@@ -508,20 +511,19 @@ xmalloc(p, size)
 	return(p);
 }
 
-usage()
+void usage()
 {
 	(void)fprintf(stderr, "usage: col [-bfx] [-l nline]\n");
 	exit(1);
 }
 
-wrerr()
+void wrerr()
 {
 	(void)fprintf(stderr, "col: write error.\n");
 	exit(1);
 }
 
-warn(line)
-	int line;
+void warn(int line)
 {
 	(void)fprintf(stderr,
 	    "col: warning: can't back up %s.\n", line < 0 ?

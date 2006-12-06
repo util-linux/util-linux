@@ -201,72 +201,82 @@ wtmp()
 	(void)signal(SIGQUIT, onintr);
 
 	while (--bl >= 0) {
-		if (lseek(wfd, (long)(bl * sizeof(buf)), L_SET) == -1 ||
-		    (bytes = read(wfd, (char *)buf, sizeof(buf))) == -1) {
-			fprintf(stderr, "last: %s: ", file);
-			perror((char *)NULL);
-			exit(1);
-		}
-		for (bp = &buf[bytes / sizeof(buf[0]) - 1]; bp >= buf; --bp) {
-			/*
-			 * if the terminal line is '~', the machine stopped.
-			 * see utmp(5) for more info.
-			 */
-			if (!strncmp(bp->ut_line, "~", LMAX)) {
-				/* everybody just logged out */
-				for (T = ttylist; T; T = T->next)
-					T->logout = -bp->ut_time;
-				currentout = -bp->ut_time;
-				crmsg = strncmp(bp->ut_name, "shutdown", NMAX) ? "crash" : "down ";
-				if (!bp->ut_name[0])
-					(void)strcpy(bp->ut_name, "reboot");
-				if (want(bp, NO)) {
-					ct = ctime(&bp->ut_time);
-					if(bp->ut_type != LOGIN_PROCESS) {
-					    print_partial_line(bp);
-					    putchar('\n');
-					}
-					if (maxrec && !--maxrec)
-						return;
-				}
-				continue;
-			}
-			/* find associated tty */
-			for (T = ttylist;; T = T->next) {
-				if (!T) {
-					/* add new one */
-					T = addtty(bp->ut_line);
-					break;
-				}
-				if (!strncmp(T->tty, bp->ut_line, LMAX))
-					break;
-			}
-			if (bp->ut_name[0] && bp->ut_type != LOGIN_PROCESS
-			    && bp->ut_type != DEAD_PROCESS
-			    && want(bp, YES)) {
+	    if (lseek(wfd, (long)(bl * sizeof(buf)), L_SET) == -1 ||
+		(bytes = read(wfd, (char *)buf, sizeof(buf))) == -1) {
+		fprintf(stderr, "last: %s: ", file);
+		perror((char *)NULL);
+		exit(1);
+	    }
+	    for (bp = &buf[bytes / sizeof(buf[0]) - 1]; bp >= buf; --bp) {
+		/*
+		 * if the terminal line is '~', the machine stopped.
+		 * see utmp(5) for more info.
+		 */
+		if (!strncmp(bp->ut_line, "~", LMAX)) {
+		    /* 
+		     * utmp(5) also mentions that the user 
+		     * name should be 'shutdown' or 'reboot'.
+		     * Not checking the name causes i.e. runlevel
+		     * changes to be displayed as 'crash'. -thaele
+		     */
+		    if (!strncmp(bp->ut_user, "reboot", NMAX) ||
+			!strncmp(bp->ut_user, "shutdown", NMAX)) {	
+			/* everybody just logged out */
+			for (T = ttylist; T; T = T->next)
+			    T->logout = -bp->ut_time;
+		    }
 
-			       print_partial_line(bp);
-
-				if (!T->logout)
-					puts("  still logged in");
-				else {
-					if (T->logout < 0) {
-						T->logout = -T->logout;
-						printf("- %s", crmsg);
-					}
-					else
-						printf("- %5.5s", ctime(&T->logout)+11);
-					delta = T->logout - bp->ut_time;
-					if (delta < SECDAY)
-						printf("  (%5.5s)\n", asctime(gmtime(&delta))+11);
-					else
-						printf(" (%ld+%5.5s)\n", delta / SECDAY, asctime(gmtime(&delta))+11);
-				}
-				if (maxrec != -1 && !--maxrec)
-					return;
+		    currentout = -bp->ut_time;
+		    crmsg = strncmp(bp->ut_name, "shutdown", NMAX) ? "crash" : "down ";
+		    if (!bp->ut_name[0])
+			(void)strcpy(bp->ut_name, "reboot");
+		    if (want(bp, NO)) {
+			ct = ctime(&bp->ut_time);
+			if(bp->ut_type != LOGIN_PROCESS) {
+			    print_partial_line(bp);
+			    putchar('\n');
 			}
-			T->logout = bp->ut_time;
+			if (maxrec && !--maxrec)
+			    return;
+		    }
+		    continue;
 		}
+		/* find associated tty */
+		for (T = ttylist;; T = T->next) {
+		    if (!T) {
+			/* add new one */
+			T = addtty(bp->ut_line);
+			break;
+		    }
+		    if (!strncmp(T->tty, bp->ut_line, LMAX))
+			break;
+		}
+		if (bp->ut_name[0] && bp->ut_type != LOGIN_PROCESS
+		    && bp->ut_type != DEAD_PROCESS
+		    && want(bp, YES)) {
+
+		    print_partial_line(bp);
+
+		    if (!T->logout)
+			puts("  still logged in");
+		    else {
+			if (T->logout < 0) {
+			    T->logout = -T->logout;
+			    printf("- %s", crmsg);
+			}
+			else
+			    printf("- %5.5s", ctime(&T->logout)+11);
+			delta = T->logout - bp->ut_time;
+			if (delta < SECDAY)
+			    printf("  (%5.5s)\n", asctime(gmtime(&delta))+11);
+			else
+			    printf(" (%ld+%5.5s)\n", delta / SECDAY, asctime(gmtime(&delta))+11);
+		    }
+		    if (maxrec != -1 && !--maxrec)
+			return;
+		}
+		T->logout = bp->ut_time;
+	    }
 	}
 	ct = ctime(&buf[0].ut_time);
 	printf("\nwtmp begins %10.10s %5.5s \n", ct, ct + 11);

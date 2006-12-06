@@ -46,7 +46,7 @@ static char sccsid[] = "@(#)banner.c	8.3 (Berkeley) 4/2/94";
  * banner [-w#] [-d] [-t] message ...
  */
 
-#include <err.h>
+#include "err.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>

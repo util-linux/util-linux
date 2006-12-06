@@ -127,7 +127,7 @@ usage:
 		   continue;
 #endif
 		strncpy(line, utmp.ut_line, sizeof(utmp.ut_line));
-		line[sizeof(utmp.ut_line)] = '\0';
+		line[sizeof(utmp.ut_line)-1] = '\0';
 		if ((p = ttymsg(&iov, 1, line, 60*5)) != NULL)
 			(void)fprintf(stderr, "wall: %s\n", p);
 	}
@@ -145,11 +145,11 @@ makemsg(fname)
 	time_t now, time();
 	FILE *fp;
 	int fd;
-	char *p, *whom, hostname[MAXHOSTNAMELEN], lbuf[100], tmpname[15];
+	char *p, *whom, hostname[MAXHOSTNAMELEN], lbuf[100], tmpname[64];
 	char *getlogin(), *strcpy(), *ttyname();
 
-	(void)strcpy(tmpname, _PATH_TMP);
-	(void)strcat(tmpname, "/wall.XXXXXX");
+	(void)snprintf(tmpname, sizeof(tmpname), 
+		       "%s/wall.XXXXXX", _PATH_TMP);
 	if (!(fd = mkstemp(tmpname)) || !(fp = fdopen(fd, "r+"))) {
 		(void)fprintf(stderr, "wall: can't open temporary file.\n");
 		exit(1);
@@ -171,11 +171,13 @@ makemsg(fname)
 		 * in column 80, but that can't be helped.
 		 */
 		(void)fprintf(fp, "\r%79s\r\n", " ");
-		(void)sprintf(lbuf, "Broadcast Message from %s@%s",
-		    whom, hostname);
+		(void)snprintf(lbuf, sizeof(lbuf), 
+			       "Broadcast Message from %s@%s",
+			       whom, hostname);
 		(void)fprintf(fp, "%-79.79s\007\007\r\n", lbuf);
-		(void)sprintf(lbuf, "        (%s) at %d:%02d ...", ttyname(2),
-		    lt->tm_hour, lt->tm_min);
+		(void)snprintf(lbuf, sizeof(lbuf), 
+			       "        (%s) at %d:%02d ...", ttyname(2),
+			       lt->tm_hour, lt->tm_min);
 		(void)fprintf(fp, "%-79.79s\r\n", lbuf);
 	}
 	(void)fprintf(fp, "%79s\r\n", " ");

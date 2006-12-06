@@ -1,6 +1,12 @@
 /* checktty.c - linked into login, checks user against /etc/usertty
    Created 25-Aug-95 by Peter Orbaek <poe@daimi.aau.dk>
+   Fixed by JDS June 1996 to clear lists and close files
 */
+
+#define _GNU_SOURCE		/* for snprintf */
+
+#include <sys/types.h>
+#include <sys/param.h>
 
 #include <pwd.h>
 #include <grp.h>
@@ -14,7 +20,7 @@
 #include <netdb.h>
 #include <sys/syslog.h>
 
-#ifdef linux
+#ifdef __linux__
 #  include <sys/sysmacros.h>
 #  include <linux/major.h>
 #endif
@@ -22,7 +28,7 @@
 #include "pathnames.h"
 
 /* functions in login.c */
-void badlogin(char *s);
+void badlogin(const char *s);
 void sleepexit(int);
 extern struct hostent hostaddress;
 extern char *hostname;
@@ -32,7 +38,7 @@ struct hostent hostaddress;
 char *hostname;
 
 void 
-badlogin(char *s)
+badlogin(const char *s)
 {
     printf("badlogin: %s\n", s);
 }
@@ -45,6 +51,9 @@ sleepexit(int x)
 }
 #endif
 
+static gid_t mygroups[NGROUPS];
+static int   num_groups;
+
 #define NAMELEN 128
 
 /* linked list of names */
@@ -52,9 +61,7 @@ struct grplist {
     struct grplist *next;
     char name[NAMELEN];
 };
-
-struct grplist *mygroups = NULL;
-
+        
 enum State { StateUsers, StateGroups, StateClasses };
 
 #define CLASSNAMELEN 32
@@ -67,57 +74,25 @@ struct ttyclass {
 
 struct ttyclass *ttyclasses = NULL;
 
-static void
-add_group(char *group)
-{
-    struct grplist *ge;
-
-    ge = (struct grplist *)malloc(sizeof(struct grplist));
-
-    /* we can't just bail out at this stage! */
-    if (!ge) {
-	printf("login: memory low, login may fail\n");
-	syslog(LOG_WARNING, "can't malloc grplist");
-	return;
-    }
-
-    ge->next = mygroups;
-    strncpy(ge->name, group, NAMELEN);
-    mygroups = ge;
-}
-
 static int
 am_in_group(char *group)
 {
-    struct grplist *ge;
-
-    for (ge = mygroups; ge; ge = ge->next) {
-	if (strcmp(ge->name, group) == 0) return 1;
-    }
-    return 0;
+	struct group *g;
+	gid_t *ge;
+	
+	g = getgrnam(group);
+	if (g) {
+		for (ge = mygroups; ge < mygroups + num_groups; ge++) {
+			if (g->gr_gid== *ge) return 1;
+		}
+	}
+    	return 0;
 }
 
 static void
-find_groups(gid_t defgrp, char *user)
+find_groups(gid_t defgrp, const char *user)
 {
-    struct group *gp;
-    char **p;
-
-    setgrent();
-    while ((gp = getgrent())) {
-	if (gp->gr_gid == defgrp) {
-	    add_group(gp->gr_name);
-	} else {
-	    for(p = gp->gr_mem; *p; p++) {
-		if (strcmp(user, *p) == 0) {
-		    add_group(gp->gr_name);
-		    break;
-		}
-	    }
-	}
-	    
-    }
-    endgrent();
+	num_groups = getgroups(NGROUPS, mygroups);
 }
 
 static struct ttyclass *
@@ -135,6 +110,7 @@ new_class(char *class)
     tc->next = ttyclasses;
     tc->first = NULL;
     strncpy(tc->classname, class, CLASSNAMELEN);
+    tc->classname[CLASSNAMELEN-1] = 0;
     ttyclasses = tc;
     return tc;
 }
@@ -155,21 +131,30 @@ add_to_class(struct ttyclass *tc, char *tty)
 
     ge->next = tc->first;
     strncpy(ge->name, tty, NAMELEN);
+    ge->name[NAMELEN-1] = 0;
     tc->first = ge;
 }
 
 
 /* return true if tty is a pty. Very linux dependent */
 static int
-isapty(tty)
-     char *tty;
+isapty(const char *tty)
 {
     char devname[100];
     struct stat stb;
 
-#ifdef linux
-    strcpy(devname, "/dev/");
-    strncat(devname, tty, 80);
+    snprintf(devname, sizeof(devname), "/dev/%s", tty);
+
+#if defined(__linux__) && defined(PTY_SLAVE_MAJOR)
+    /* this is for linux 1.3 and newer */
+    if((stat(devname, &stb) >= 0)
+       && major(stb.st_rdev) == PTY_SLAVE_MAJOR) {
+	return 1;
+    }
+#endif
+
+#if defined(__linux__)
+    /* this is for linux versions before 1.3, backward compat. */
     if((stat(devname, &stb) >= 0)
        && major(stb.st_rdev) == TTY_MAJOR
        && minor(stb.st_rdev) >= 192) {
@@ -181,9 +166,7 @@ isapty(tty)
 
 /* match the hostname hn against the pattern pat */
 static int
-hnmatch(hn, pat)
-     char *hn;
-     char *pat;
+hnmatch(const char *hn, const char *pat)
 {
     int x1, x2, x3, x4, y1, y2, y3, y4;
     unsigned long p, mask, a;
@@ -260,7 +243,7 @@ timeok(struct tm *t, char *spec)
    Also return true if hostname matches the hostname pattern, class
    or a pattern in the class named by class. */
 static int
-in_class(char *tty, char *class)
+in_class(const char *tty, char *class)
 {
     struct ttyclass *tc;
     struct grplist *ge;
@@ -276,7 +259,8 @@ in_class(char *tty, char *class)
     if (class[0] == '[') {
 	if ((p = strchr(class, ']'))) {
 	    *p = 0;
-	    strcpy(timespec, class+1);
+	    strncpy(timespec, class+1, sizeof(timespec));
+	    timespec[sizeof(timespec)-1] = 0;
 	    *p = ']';
 	    if(!timeok(tm, timespec)) return 0;
 	    class = p+1;
@@ -297,7 +281,8 @@ in_class(char *tty, char *class)
 		if (n[0] == '[') {
 		    if ((p = strchr(n, ']'))) {
 			*p = 0;
-			strcpy(timespec, n+1);
+			strncpy(timespec, n+1, sizeof(timespec));
+			timespec[sizeof(timespec)-1] = 0;
 			*p = ']';
 			if(!timeok(tm, timespec)) continue;
 			n = p+1;
@@ -316,11 +301,41 @@ in_class(char *tty, char *class)
     return 0;
 }
 
+/* start JDS - SBA */
+void 
+free_group(struct grplist *ge)
+{
+    if (ge) {
+	memset(ge->name, 0, NAMELEN);
+	free_group(ge->next);
+	free(ge->next);
+	ge->next = NULL;
+    }
+}
+
+void 
+free_class(struct ttyclass *tc)
+{
+    if (tc) {
+	memset(tc->classname, 0, CLASSNAMELEN);
+	free_group(tc->first);
+	tc->first = NULL;
+	free_class(tc->next);
+	free(tc->next);
+	tc->next = NULL;
+    }
+}
+
+void 
+free_all(void)
+{
+    free_class(ttyclasses);
+    ttyclasses = NULL;
+}
+/* end JDS - SBA */
+
 void
-checktty(user, tty, pwd)
-     char *user;
-     char *tty;
-     struct passwd *pwd;
+checktty(const char *user, const char *tty, struct passwd *pwd)
 {
     FILE *f;
     char buf[256], defaultbuf[256];
@@ -335,7 +350,10 @@ checktty(user, tty, pwd)
     if (!(f = fopen(_PATH_USERTTY, "r"))) return;
 #endif
 
-    if (pwd == NULL) return;  /* misspelled username handled elsewhere */
+    if (pwd == NULL) {
+	fclose(f);
+	return;  /* misspelled username handled elsewhere */
+    }
 
     find_groups(pwd->pw_gid, user);
 
@@ -348,6 +366,7 @@ checktty(user, tty, pwd)
 
 	if (buf[0] == '*') {
 	    strncpy(defaultbuf, buf, 256);
+	    defaultbuf[255] = 0;
 	    continue;
 	}
 
@@ -369,6 +388,7 @@ checktty(user, tty, pwd)
 	    while((ptr = strtok(NULL, "\t\n "))) {
 		if (in_class(tty, ptr)) {
 		    fclose(f);
+		    free_all(); /* JDS */
 		    return;
 		}
 	    }
@@ -388,7 +408,10 @@ checktty(user, tty, pwd)
     if (defaultbuf[0]) {
 	strtok(defaultbuf, " \t");
 	while((ptr = strtok(NULL, "\t\n "))) {
-	    if (in_class(tty, ptr)) return;
+	    if (in_class(tty, ptr)) {
+		free_all(); /* JDS */
+		return;
+	    }
 	}
 
 	/* there was a default rule, but user didn't match, reject! */
@@ -410,6 +433,7 @@ checktty(user, tty, pwd)
 
     /* users not matched in /etc/usertty are by default allowed access
        on all tty's */
+    free_all(); /* JDS */
 }
 
 #ifdef TESTING

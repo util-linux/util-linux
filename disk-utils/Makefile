@@ -8,17 +8,20 @@ include ../MCONFIG
 
 # Where to put man pages?
 
-MAN8= 		cfdisk.8 fdformat.8 fsck.minix.8 \
-		mkfs.8 mkfs.minix.8 mkswap.8 setfdprm.8
+MAN8= 		fdformat.8 mkswap.8 setfdprm.8
 
-MAN8.FDISK=	fdisk.8
+ifneq "$(CPU)" "sparc"
+MAN8:=$(MAN8) fdisk.8 cfdisk.8 sfdisk.8 fsck.minix.8 mkfs.8 mkfs.minix.8
+endif
 
 # Where to put binaries?
 # See the "install" rule for the links. . .
 
-SBIN= 		cfdisk fsck.minix mkfs mkfs.minix mkswap
+SBIN= 		mkfs mkswap
 
-SBIN.FDISK=	fdisk
+ifneq "$(CPU)" "sparc"
+SBIN:=$(SBIN) fdisk cfdisk sfdisk fsck.minix mkfs.minix
+endif
 
 USRBIN=		fdformat setfdprm
 
@@ -26,27 +29,30 @@ USRBIN=		fdformat setfdprm
 
 ETC=		fdprm
 
-ifeq "$(HAVE_FDISK)" "no"
-SBIN:=$(SBIN) $(SBIN.FDISK)
-MAN8:=$(MAN8) $(MAN8.FDISK)
-endif
-
 all: $(SBIN) $(USRBIN) 
 
 cfdisk: cfdisk.o llseek.o
-	$(CC) $(LDFLAGS) $^ -o $@ -lcurses -ltermcap -lm
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIBCURSES) -lm
+
+# not installed by default
+activate: sfdisk
+	rm -f activate
+	ln -s sfdisk activate
 
 # Rules for everything else
 
 fdformat: fdformat.o
 fdisk: fdisk.o fdisklabel.o llseek.o
+sfdisk: sfdisk.o
 fsck.minix: fsck.minix.o
+fsck.minix.o: fsck.minix.c bitops.h
 mkfs: mkfs.o
 mkfs.minix: mkfs.minix.o
+mkfs.minix.o: mkfs.minix.c bitops.h
 mkswap: mkswap.o
 setfdprm: setfdprm.o
 fdisk.o: fdisk.c fdisk.h
-fdisklabel.o: fdisklabel.c fdisk.h
+fdisklabel.o: fdisklabel.c fdisk.h fdisklabel.h
 
 install: all
 	$(INSTALLDIR) $(SBINDIR) $(USRBINDIR) $(ETCDIR)

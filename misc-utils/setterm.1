@@ -2,7 +2,7 @@
 .\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
 .\" Most of this was copied from the source code.  Do not restrict distribution.
 .\" May be distributed under the GNU General Public License
-.TH SETTERM 1 "25 December 1992" "Linux 0.98" "Linux Programmer's Manual"
+.TH SETTERM 1 "2 July 1996" "Util-Linux 2.6" "Linux Programmer's Manual"
 .SH NAME
 setterm \- set terminal attributes
 .SH SYNOPSIS
@@ -36,21 +36,25 @@ setterm \- set terminal attributes
 .BR "setterm [ \-clrtabs [ tab1 tab2 tab3 ... ]" " where (tabn = 1-160)"
 .BR "setterm [ \-regtabs [" " 1-160 " "] ]"
 .BR "setterm [ \-blank [" " 0-60 " "] ]"
+.BR "setterm [ \-powersave [ on|vsync|hsync|powerdown|off ] ]"
+.BR "setterm [ \-powerdown [" " 0-60 " "] ]"
 .BR "setterm [ \-dump [" " 1-NR_CONS " "] ]"
 .BR "setterm [ \-append [" " 1-NR_CONS " "] ]"
 .BR "setterm [ \-file" " dumpfilename " ]
 .BR "setterm [ \-standout [" " attr " "] ]"
+.BR "setterm [ \-blength [" " 0-2000 " "] ]"
+.B  "setterm [ \-bfreq freqnumber ]"
 .fi
 .SH DESCRIPTION
 .B setterm
 writes to standard output a character string that will invoke the specified
 terminal capabilities.  Where possibile
-.I /etc/termcap
+.I terminfo
 is consulted to find the string to use.  Some options however do not
 correspond to a
-.BR termcap (5)
-capability.  In this case, if the terminal type is "minix-vc", or
-"minix-vcam" the string that invokes the specified capabilities on the PC
+.BR terminfo (5)
+capability.  In this case, if the terminal type is "con", or
+"linux" the string that invokes the specified capabilities on the PC
 Minix virtual console driver is output.  Options that are not implemented
 by the terminal are ignored.
 .SH OPTIONS
@@ -76,13 +80,15 @@ stores the terminal's current rendering options as the default values.
 .SH "SEE ALSO"
 .BR tput (1),
 .BR stty (1),
-.BR termcap (5),
+.BR terminfo (5),
 .BR tty (4)
 .SH BUGS
-Differences between the Minux and Linux versions are not documented.
+Differences between the Minix and Linux versions are not documented.
 .SH AUTHORS
 Gordon Irlam (gordoni@cs.ua.oz.au)
 .br
 Adaption to Linux by Peter MacDonald
 .br
 Enhancements by Mika Liljeberg (liljeber@cs.Helsinki.FI)
+.br
+Beep patch by Christophe Jolif (cjolif@storm.gatelink.fr.net)

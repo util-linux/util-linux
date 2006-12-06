@@ -41,7 +41,26 @@ static char copyright[] =
 static char sccsid[] = "@(#)ul.c	8.1 (Berkeley) 6/6/93";
 #endif /* not lint */
 
+/*
+**	modified by Kars de Jong <jongk@cs.utwente.nl> to use terminfo instead
+**	  of termcap.
+*/
+
 #include <stdio.h>
+#include <unistd.h>		/* for getopt(), isatty() */
+#include <string.h>		/* for bzero() */
+#include <term.h>		/* for setupterm() */
+
+void filter(FILE *f);
+void flushln(void);
+void overstrike(void);
+void iattr(void);
+void initbuf(void);
+void fwd(void);
+void reverse(void);
+void initinfo(void);
+void outc(int c);
+void setmode(int newmode);
 
 #define	IESC	'\033'
 #define	SO	'\016'
@@ -75,19 +94,15 @@ int	halfpos;
 int	upln;
 int	iflag;
 
-int	outchar();
-#define	PRINT(s)	if (s == NULL) /* void */; else tputs(s, 1, outchar)
+#define	PRINT(s)	if (s == NULL) /* void */; else putp(s)
 
-main(argc, argv)
-	int argc;
-	char **argv;
+int main(int argc, char **argv)
 {
 	extern int optind;
 	extern char *optarg;
-	int c;
+	int c, ret;
 	char *termtype;
 	FILE *f;
-	char termcap[1024];
 	char *getenv(), *strcpy();
 
 	termtype = getenv("TERM");
@@ -110,24 +125,24 @@ main(argc, argv)
 				argv[0]);
 			exit(1);
 		}
-
-	switch(tgetent(termcap, termtype)) {
+	setupterm(termtype, 1, &ret);
+	switch(ret) {
 
 	case 1:
 		break;
 
 	default:
-		fprintf(stderr,"trouble reading termcap");
+		fprintf(stderr,"trouble reading terminfo");
 		/* fall through to ... */
 
 	case 0:
 		/* No such terminal type - assume dumb */
-		(void)strcpy(termcap, "dumb:os:col#80:cr=^M:sf=^J:am:");
+	        setupterm("dumb", 1, (int *)0);
 		break;
 	}
-	initcap();
-	if (    (tgetflag("os") && ENTER_BOLD==NULL ) ||
-		(tgetflag("ul") && ENTER_UNDERLINE==NULL && UNDER_CHAR==NULL))
+	initinfo();
+	if (    (tigetflag("os") && ENTER_BOLD==NULL ) ||
+		(tigetflag("ul") && ENTER_UNDERLINE==NULL && UNDER_CHAR==NULL))
 			must_overstrike = 1;
 	initbuf();
 	if (optind == argc)
@@ -140,11 +155,10 @@ main(argc, argv)
 		} else
 			filter(f);
 	}
-	exit(0);
+	return 0;
 }
 
-filter(f)
-	FILE *f;
+void filter(FILE *f)
 {
 	register c;
 
@@ -256,7 +270,7 @@ filter(f)
 		flushln();
 }
 
-flushln()
+void flushln()
 {
 	register lastmode;
 	register i;
@@ -295,7 +309,7 @@ flushln()
  * For terminals that can overstrike, overstrike underlines and bolds.
  * We don't do anything with halfline ups and downs, or Greek.
  */
-overstrike()
+void overstrike()
 {
 	register int i;
 	char lbuf[256];
@@ -332,7 +346,7 @@ overstrike()
 	}
 }
 
-iattr()
+void iattr()
 {
 	register int i;
 	char lbuf[256];
@@ -355,7 +369,7 @@ iattr()
 	putchar('\n');
 }
 
-initbuf()
+void initbuf()
 {
 
 	bzero((char *)obuf, sizeof (obuf));	/* depends on NORMAL == 0 */
@@ -364,7 +378,7 @@ initbuf()
 	mode &= ALTSET;
 }
 
-fwd()
+void fwd()
 {
 	register oldcol, oldmax;
 
@@ -375,7 +389,7 @@ fwd()
 	maxcol = oldmax;
 }
 
-reverse()
+void reverse()
 {
 	upln++;
 	fwd();
@@ -384,31 +398,24 @@ reverse()
 	upln++;
 }
 
-initcap()
+void initinfo()
 {
-	static char tcapbuf[512];
-	char *bp = tcapbuf;
-	char *getenv(), *tgetstr();
+	char *getenv(), *tigetstr();
 
-	/* This nonsense attempts to work with both old and new termcap */
-	CURS_UP =		tgetstr("up", &bp);
-	CURS_RIGHT =		tgetstr("ri", &bp);
-	if (CURS_RIGHT == NULL)
-		CURS_RIGHT =	tgetstr("nd", &bp);
-	CURS_LEFT =		tgetstr("le", &bp);
+	CURS_UP =		tigetstr("cuu1");
+	CURS_RIGHT =		tigetstr("cuf1");
+	CURS_LEFT =		tigetstr("cub1");
 	if (CURS_LEFT == NULL)
-		CURS_LEFT =	tgetstr("bc", &bp);
-	if (CURS_LEFT == NULL && tgetflag("bs"))
 		CURS_LEFT =	"\b";
 
-	ENTER_STANDOUT =	tgetstr("so", &bp);
-	EXIT_STANDOUT =		tgetstr("se", &bp);
-	ENTER_UNDERLINE =	tgetstr("us", &bp);
-	EXIT_UNDERLINE =	tgetstr("ue", &bp);
-	ENTER_DIM =		tgetstr("mh", &bp);
-	ENTER_BOLD =		tgetstr("md", &bp);
-	ENTER_REVERSE =		tgetstr("mr", &bp);
-	EXIT_ATTRIBUTES =	tgetstr("me", &bp);
+	ENTER_STANDOUT =	tigetstr("smso");
+	EXIT_STANDOUT =		tigetstr("rmso");
+	ENTER_UNDERLINE =	tigetstr("smul");
+	EXIT_UNDERLINE =	tigetstr("rmul");
+	ENTER_DIM =		tigetstr("dim");
+	ENTER_BOLD =		tigetstr("bold");
+	ENTER_REVERSE =		tigetstr("rev");
+	EXIT_ATTRIBUTES =	tigetstr("sgr0");
 
 	if (!ENTER_BOLD && ENTER_REVERSE)
 		ENTER_BOLD = ENTER_REVERSE;
@@ -433,20 +440,13 @@ initcap()
 	 * letters the 37 has.
 	 */
 
-	UNDER_CHAR =		tgetstr("uc", &bp);
+	UNDER_CHAR =		tigetstr("uc");
 	must_use_uc = (UNDER_CHAR && !ENTER_UNDERLINE);
-}
-
-outchar(c)
-	int c;
-{
-	putchar(c & 0177);
 }
 
 static int curmode = 0;
 
-outc(c)
-	int c;
+void outc(int c)
 {
 	putchar(c);
 	if (must_use_uc && (curmode&UNDERL)) {
@@ -455,8 +455,7 @@ outc(c)
 	}
 }
 
-setmode(newmode)
-	int newmode;
+void setmode(int newmode)
 {
 	if (!iflag) {
 		if (curmode != NORMAL && newmode != NORMAL)

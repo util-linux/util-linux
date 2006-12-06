@@ -124,6 +124,11 @@ to map user names to user ID's
 .Sh BUGS
 Non super-users can not increase scheduling priorities of their own processes,
 even if they were the ones that decreased the priorities in the first place.
+.br
+The Linux kernel (at least version 2.0.0) and linux libc (at least
+version 5.2.18) does not agree entierly on what the specifics of the
+systemcall interface to set nice values is.  Thus causes renice to
+report bogus previous nice values.
 .Sh HISTORY
 The
 .Nm

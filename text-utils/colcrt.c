@@ -42,6 +42,13 @@ static char sccsid[] = "@(#)colcrt.c	8.1 (Berkeley) 6/6/93";
 #endif /* not lint */
 
 #include <stdio.h>
+#include <unistd.h>		/* for close() */
+#include <string.h>
+
+int plus(char c, char d);
+void move(int l, int m);
+void pflush(int ol);
+
 /*
  * colcrt - replaces col for crts with new nroff esp. when using tbl.
  * Bill Joy UCB July 14, 1977
@@ -67,9 +74,7 @@ char	printall;
 char	*progname;
 FILE	*f;
 
-main(argc, argv)
-	int argc;
-	char *argv[];
+int main(int argc, char **argv)
 {
 	register c;
 	register char *cp, *dp;
@@ -177,22 +182,20 @@ main(argc, argv)
 		}
 	} while (argc > 0);
 	fflush(stdout);
-	exit(0);
+	return 0;
 }
 
-plus(c, d)
-	char c, d;
+int plus(char c, char d)
 {
 
-	return (c == '|' && d == '-' || d == '_');
+	return (c == '|' && (d == '-' || d == '_'));
 }
 
 int first;
 
-pflush(ol)
-	int ol;
+void pflush(int ol)
 {
-	register int i, j;
+	register int i;
 	register char *cp;
 	char lastomit;
 	int l;
@@ -223,8 +226,7 @@ pflush(ol)
 	first = 1;
 }
 
-move(l, m)
-	int l, m;
+void move(int l, int m)
 {
 	register char *cp, *dp;
 

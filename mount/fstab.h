@@ -1,26 +1,29 @@
-/* The fsent(3) routines are obsoleted by mntent(3).  I use them for
-   convenience.  Since the implementation uses mntent(3), be very
-   careful with the static buffers returned.
-   $Header: /home/faith/cvs/util-linux/mount/fstab.h,v 1.2 1995/09/25 20:57:42 faith Exp $ */
-
-#ifndef _FSTAB_H
-#include <stdio.h>
-#include <mntent.h>
-
 #define _PATH_FSTAB	"/etc/fstab"
+#define MOUNTED_LOCK	"/etc/mtab~"
+#define MOUNTED_TEMP	"/etc/mtab.tmp"
+#define LOCK_BUSY	10
 
-/* Translate fsent(3) stuff into mntent(3) stuff.
-   In general this won't work, but it's good enough here.  */
-#define fstab mntent
-#define fs_type mnt_type
-#define fs_spec mnt_fsname
-#define fs_mntopts mnt_opts
-#define FSTAB_SW MNTTYPE_SWAP
+int mtab_is_writable(void);
+int mtab_does_not_exist(void);
+int mtab_is_a_symlink(void);
 
-struct fstab *getfsent (void);
-struct fstab *getfsspec (const char *spec);
-struct fstab *getfsfile (const char *file);
-int setfsent (void);
-void endfsent (void);
+struct mntentchn {
+     struct mntentchn *nxt, *prev;
+     char *mnt_fsname;
+     char *mnt_dir;
+     char *mnt_type;
+     char *mnt_opts;
+};
 
-#endif /* _FSTAB_H */
+struct mntentchn *mtab_head (void);
+struct mntentchn *getmntfile (const char *name);
+struct mntentchn *getmntoptfile (const char *file);
+
+struct mntentchn *fstab_head (void);
+struct mntentchn *getfsfile (const char *file);
+struct mntentchn *getfsspec (const char *spec);
+
+#include <mntent.h>
+void lock_mtab (void);
+void unlock_mtab (void);
+void update_mtab (const char *special, struct mntent *with);

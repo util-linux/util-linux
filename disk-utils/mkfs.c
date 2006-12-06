@@ -7,6 +7,9 @@
  * Authors:	David Engel, <david@ods.com>
  *		Fred N. van Kempen, <waltje@uWalt.NL.Mugnet.ORG>
  *		Ron Sommeling, <sommel@sci.kun.nl>
+ *
+ * Mon Jul  1 18:52:58 1996: janl@math.uio.no (Nicolai Langfeldt):
+ *	Incorporated fix by Jonathan Kamens <jik@annex-1-slip-jik.cam.ov.com>
  */
 
 
@@ -17,10 +20,10 @@
 #include <limits.h>
 
 
-#define VERSION		"1.9"
+#define VERSION		"1.10"
 
 #ifndef DEFAULT_FSTYPE
-# define DEFAULT_FSTYPE		"minix"
+# define DEFAULT_FSTYPE		"ext2"
 #endif
 
 #define SEARCH_PATH	"PATH=/sbin:/sbin/fs.d:/sbin/fs:/etc/fs:/etc"
@@ -44,6 +47,7 @@ int main(int argc, char *argv[])
       fstype = optarg;
       break;
     default:
+      optind--;
       more = 1;
       break;		/* start of specific arguments */
     }

@@ -35,11 +35,11 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/serial.h>
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <string.h>
 #include <fcntl.h>
 #include <errno.h>
 #include <linux/tty.h>
@@ -151,7 +151,7 @@ static int set_def_time_val = -1;
 int main(int argc, char *argv[]) {
 
   struct timeval lasttime, thistime;
-  struct timezone tz = {0,DST_NONE};
+  struct timezone tz = {0,0};
   double diff;
   int errflg = 0;
   int file;

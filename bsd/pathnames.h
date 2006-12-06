@@ -21,6 +21,8 @@
  *                                   from poe@daimi.aau.dk
  * Changed: Wed Jun 22 22:50:13 1994 by faith@cs.unc.edu
  * Changed: Sat Feb  4 16:02:10 1995 by faith@cs.unc.edu
+ * Changed: Tue Jul  2 09:37:36 1996 by janl@math.uio.no, axp patches
+ * Changed: Thu Nov  9 21:58:36 1995 by joey@infodrom.north.de
  */
 
 #ifndef __STDC__
@@ -53,14 +55,18 @@
 #define VARPATH			"/var"
 #endif
 
+#ifndef UT_NAMESIZE
+#define UT_NAMESIZE     	8
+#endif
+
 #define _PATH_BSHELL    	"/bin/sh"
 #define _PATH_CSHELL    	"/bin/csh"
-#define UT_NAMESIZE     	8
 #define _PATH_TTY       	"/dev/tty"
 #define TTYTYPES        	"/etc/ttytype"
 #define SECURETTY       	"/etc/securetty"
 #define _PATH_UTMP      	"/var/run/utmp"
 #define _PATH_WTMP      	LOGDIR "/wtmp"
+#define _PATH_WTMPLOCK		"/etc/wtmplock"
 
 #define	_PATH_DEFPATH	        "/usr/local/bin:/bin:/usr/bin:."
 #define	_PATH_DEFPATH_ROOT	SBINDIR ":/bin:" USRSBINDIR ":/usr/bin"
@@ -86,6 +92,10 @@
 #define _PATH_PASSWD            "/etc/passwd"
 #define _PATH_PTMP              "/etc/ptmp"
 #define _PATH_PTMPTMP           "/etc/ptmptmp"
+
+#define _PATH_GROUP             "/etc/group"
+#define _PATH_GTMP              "/etc/gtmp"
+#define _PATH_GTMPTMP           "/etc/gtmptmp"
 
 #define _PATH_WORDS             "/usr/dict/words"
 #define _PATH_WORDS_ALT         "/usr/dict/web2"

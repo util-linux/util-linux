@@ -56,6 +56,7 @@ int	opt_fast;	/* true if fast boot */
 char	message[90];	/* reason for shutdown if any... */
 int	opt_single = 0; /* true is we want to boot singleuser */
 char	*whom;		/* who is shutting the system down */
+int	opt_msgset = 0; /* message set on command line */
 
 /* #define DEBUGGING */
 
@@ -156,7 +157,7 @@ main(argc, argv)
 				timeout = 0;
 			} else if(argv[c][0] == '+') {
 				timeout = 60 * atoi(&argv[c][1]);
-			} else {
+			} else if (isdigit(argv[c][0])) {
 				char *colon;
 				int hour = 0;
 				int minute = 0;
@@ -180,11 +181,15 @@ main(argc, argv)
 				    fprintf(stderr, "That must be tomorrow, can't you wait till then?\n");
 				    exit(1);
 				}
+			} else {
+			    strncpy(message, argv[c], sizeof(message));
+			    message[sizeof(message)-1] = '\0';
+			    opt_msgset = 1;
 			}
 		}
 	}
 
-	if(!opt_quiet) {
+	if(!opt_quiet && !opt_msgset) {
 		/* now ask for message, gets() is insecure */
 		int cnt = sizeof(message)-1;
 		char *ptr;
@@ -196,8 +201,9 @@ main(argc, argv)
 			ptr++;
 		}
 		*ptr = '\0';
-	} else
+	} else if (!opt_msgset) {
 		strcpy(message, "for maintenance; bounce, bounce");
+	}
 
 #ifdef DEBUGGING
 	printf("timeout = %d, quiet = %d, reboot = %d\n",
@@ -221,7 +227,7 @@ main(argc, argv)
 	}
 
 	
-	if((fd = open(_PATH_NOLOGIN, O_WRONLY|O_CREAT)) >= 0) {
+	if((fd = open(_PATH_NOLOGIN, O_WRONLY|O_CREAT, 0644)) >= 0) {
 		WR("\r\nThe system is being shut down within 5 minutes\r\n");
 		write(fd, message, strlen(message));
 		WR("\r\nLogin is therefore prohibited.\r\n");
@@ -249,13 +255,13 @@ main(argc, argv)
 	closelog();
 
 	if(opt_fast)
-		if((fd = open("/fastboot", O_WRONLY|O_CREAT)) >= 0)
+		if((fd = open("/fastboot", O_WRONLY|O_CREAT, 0644)) >= 0)
 			close(fd);
 
 	kill(1, SIGTSTP);	/* tell init not to spawn more getty's */
 	write_wtmp();
 	if(opt_single)
-		close(open(_PATH_SINGLE, O_CREAT|O_WRONLY));
+		close(open(_PATH_SINGLE, O_CREAT|O_WRONLY, 0644));
 		
 	sync();
 
@@ -288,9 +294,12 @@ main(argc, argv)
 	if(opt_reboot) {
 		reboot(0xfee1dead, 672274793, 0x1234567);
 	} else {
+	        freopen(_PATH_CONSOLE, "w", stdout);
 		printf("\nNow you can turn off the power...\n");
-		/* allow C-A-D now, faith@cs.unc.edu */
+		fflush(stdout);
+		/* allow C-A-D now, faith@cs.unc.edu, re-fixed 8-Jul-96 */
 		reboot(0xfee1dead, 672274793, 0x89abcdef);
+		reboot(0xfee1dead, 672274793, 0xcdef0123);
 	}
 	/* NOTREACHED */
 	exit(0); /* to quiet gcc */
@@ -364,7 +373,7 @@ write_wtmp()
 	time(&ut.ut_time);
 	ut.ut_type = BOOT_TIME;
 	
-	if((fd = open(_PATH_WTMP, O_WRONLY|O_APPEND)) >= 0) {
+	if((fd = open(_PATH_WTMP, O_WRONLY|O_APPEND, 0644)) >= 0) {
 		write(fd, (char *)&ut, sizeof(ut));
 		close(fd);
 	}

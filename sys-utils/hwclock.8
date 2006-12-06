@@ -1,0 +1,246 @@
+.TH CLOCK 8 "23 September 1996"
+.SH NAME
+clock \- query and set the ISA hardware clock (RTC)
+.SH SYNOPSIS
+.B "hwclock --show [ --utc ] [ --test ] [ --debug ]"
+.br
+.B "hwclock --set --date=newdate [ --utc ] [ --test ] [ --debug ]"
+.br
+.B "hwclock --systohc [ --utc ] [ --test ] [ --debug ]"
+.br
+.B "hwclock --hctosys [ --utc ] [ --test ] [ --debug ]"
+.br
+.B "hwclock --adjust [ --utc ] [ --test ] [ --debug ]"
+.br
+.B "hwclock --version [ --debug ]
+.PP
+Minimum unique abbreviations of all options are acceptable.
+.PP
+Also, equivalent options -r, -w, -s, -a, -v, -u, and -D are accepted for
+compatibility with the program "clock".
+
+.SH DESCRIPTION
+.I hwclock
+is a tool for accessing the Hardware Clock.  You can display the
+current time, set the Hardware Clock to a specified time, set the
+Hardware Clock to the System Time, and set the System Time from the
+Hardware Clock.
+.PP
+You can also run 
+.I hwclock 
+periodically to insert or remove time from the Hardware Clock to
+compensate for systematic drift (where the clock consistently gains or
+loses time at a certain rate if left to run).
+
+.SH OPTIONS
+You need exactly one of the following options to tell 
+.I hwclock 
+what function to perform:
+.PP
+.TP
+.B \-\-show
+Read the Hardware Clock and print the time on Standard Output.
+.TP
+.B \-\-set
+Set the Hardware Clock to the time given by the 
+.B \-\-date
+option.
+.TP
+.B \-\-hctosys
+Set the System Time from the Hardware Clock.  This is a good option to use
+in one of the system startup scripts.
+.TP
+.B \-\-systohc
+Set the Hardware Clock to the current System Time.
+.TP
+.B \-\-adjust
+Add or subtract time from the Hardware Clock to account for systematic
+drift since the last time the clock was set or adjusted.  See discussion
+below.
+.TP
+.B \-\-version
+Print the version of 
+.I hwclock 
+on Standard Output.
+.br
+You need the following option if you specify 
+.B \-\-set
+option.  Otherwise, it is ignored.
+.TP
+.B \-\-date=date_string
+Specifies the time to which to set the Hardware Clock.  The value of this
+option is an argument to the
+.I date(1)
+program.  For example,
+.sp
+.I hwclock --set --date="9/22/96 16:45:05"
+.PP
+The following options apply to most functions.
+.TP
+.B \-\-utc
+Indicates that the Hardware Clock is kept in Universal Coordinated
+Time.  It is your choice whether to keep your clock in UTC or local
+time, but nothing in the clock tells which you've chosen.  So this
+option is how you give that information to 
+.I hwclock.
+.PP
+If you don't specify 
+.B --utc 
+when you should, or vice versa, both setting and querying of the
+Hardware Clock will be messed up.
+.TP
+.B \-\-test
+Do everything except actually updating the Hardware Clock.  This is 
+useful, especially in conjunction with 
+.B \-\-debug,
+in learning about 
+.I hwclock.
+.TP
+.B \-\-debug
+Display a lot of information about what 
+.I hwclock 
+is doing internally.  Some of its function is complex and this output
+can help you understand how the program works.
+
+
+.SH NOTES
+
+
+.SH Clocks in a Linux System
+.PP
+There are two main clocks in a Linux system:
+.PP
+.B The Hardware Clock: 
+This is a clock that runs independently of any control program running
+in the CPU and even when the machine is powered off.  It is specified
+as part of the ISA standard.  The control program can read or set this
+clock to a whole second, but the control program can also detect the
+edges of the 1 second clock ticks, so the clock actually has virtually
+infinite precision.
+.PP
+This clock is commonly called the hardware clock, the real time clock,
+the RTC, the BIOS clock, and the CMOS clock.  Hardware Clock, in its
+capitalized form, was coined for use by 
+.I hwclock 
+because all of the other names are inappropriate to the point of being
+misleading.
+.PP
+.B The System Time: 
+This is the time kept by a clock inside the Linux kernel and driven by
+the ISA timer interrupt.  It has meaning only while Linux is running
+on the machine.  The System Time is the number of seconds since
+00:00:00 January 1, 1970 UTC (or more succinctly, the number of
+seconds since 1969).  The System Time is not an integer, though.  It
+has virtually infinite precision.
+.PP
+The System Time is the time that matters.  The Hardware Clock's basic
+purpose in a Linux system is to keep time when Linux is not running.  You
+initialize the System Time to the time from the Hardware Clock when Linux
+starts up, and then never use the Hardware Clock again.  Note that in DOS,
+for which ISA was designed, the Hardware Clock is the only real time clock.
+.PP
+It is important that the System Time not have any discontinuities such as
+would happen if you used the 
+.I date(1L)
+program to set it while the system is running.  You can, however, do whatever
+you want to the Hardware Clock while the system is running, and the next
+time Linux starts up, it will do so with the adjusted time from the Hardware
+Clock.  You can also use the program 
+.I adjtimex(8)
+to smoothly adjust the System Time while the system runs.
+
+
+.SH The Adjust Function
+.PP
+The Hardware Clock is usually not very accurate.  However, much of its
+inaccuracy is completely predictable -- it gains or loses the same amount
+of time every day.  This is called systematic drift.
+.I Hwclock's 
+"adjust" function lets you make systematic corrections to correct the
+systematic drift.
+.PP
+It works like this:  
+.I Hwclock 
+keeps a file,
+.I /etc/adjtime,
+that keeps some historical information.  This is called the adjtime file.
+.PP
+Suppose you start with no adjtime file.  You issue a 
+.I hwclock --set
+command to set the Hardware Clock to the true current time.  
+.I Hwclock 
+creates the adjtime file and records in it the current time as the 
+last time the clock was calibrated.
+5 days
+later, the clock has gained 10 seconds, so you issue another
+.I hwclock --set
+command to set it back 10 seconds.  
+.I Hwclock 
+updates the adjtime file to show the current time as the last time the
+clock was calibrated, and records 2 seconds per day as the systematic
+drift rate.  24 hours go by, and then you issue a
+.I hwclock --adjust
+command.  
+.I Hwclock 
+consults the adjtime file and sees that the clock gains 2 seconds per
+day when left alone and that it has been left alone for exactly one
+day.  So it subtracts 2 seconds from the Hardware Clock.  It then
+records the current time as the last time the clock was adjusted.
+Another 24 hours goes by and you issue another
+.I hwclock --adjust.
+.I Hwclock 
+does the same thing: subtracts 2 seconds and updates the adjtime file
+with the current time as the last time the clock was adjusted.
+.PP
+Every time you calibrate (set) the clock, 
+.I hwclock 
+recalculates the systematic drift rate based on how long it has been
+since the last calibration, how long it has been since the last
+adjustment, what drift rate was assumed in any intervening
+adjustments, and the amount by which the clock is presently off.
+.PP
+A small amount of error creeps in any time 
+.I hwclock 
+sets the clock, so it refrains from making an adjustment that would be
+less than 1 second.  Later on, when you request an adjustment again,
+the accumulated drift will be more than a second and
+.I hwclock 
+will do the adjustment then.
+.PP
+It is good to do a 
+.I hwclock --adjust
+just before the 
+.I hwclock --set
+at system startup time, and maybe periodically while the system is
+running via cron.
+.PP
+The format of the adjtime file is:
+.PP
+Line 1: 3 numbers: 1) systematic drift rate in seconds per day,
+floating point decimal; 2) Resulting number of seconds since 1969 UTC
+of most recent adjustment or calibration, decimal integer; 3) zero
+(for compatibility with
+.I clock
+).
+.PP
+Line 2: 1 number: Resulting number of seconds since 1969 UTC of most
+recent calibration.
+.PP
+You can use an adjtime file that was previously used with the 
+.I clock
+program with 
+.I hwclock.
+
+.SH FILES
+.I /etc/adjtime
+
+.SH SEE ALSO
+adjtimex(8), date(1), gettimeofday(2), settimeofday(2), crontab(1)
+
+.SH AUTHORS
+Written By Bryan Henderson, September 1996, based on work done on the 
+.I clock
+program by Charles Hedrick, Rob Hooft, and Harald Koenig.  See the source
+code for complete history and credits.  
+
+

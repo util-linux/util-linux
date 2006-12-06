@@ -1,20 +1,33 @@
 .TH AGETTY 8 
-.ad
-.fi
 .SH NAME
 agetty \- alternative Linux getty
+
 .SH SYNOPSIS
-.na
-.nf
-agetty [-ihLmw] [-l login_program] [-I init] [-t timeout] port baud_rate,... [term]
-agetty [-ihLmw] [-l login_program] [-I init] [-t timeout] baud_rate,... port [term]
+.BR "agetty " [\-ihLmnw]
+.RI "[-f " issue_file ]
+.RI "[-l " login_program ]
+.RI "[-I " init ]
+.RI "[-t " timeout ]
+.I port
+.I baud_rate,...
+.RI [ term ]
+.br
+.BR "agetty " [\-ihLmnw]
+.RI "[-f " issue_file ]
+.RI "[-l " login_program ]
+.RI "[-I " init ]
+.RI "[-t " timeout ]
+.I baud_rate,...
+.I port
+.RI [ term ]
+
 .SH DESCRIPTION
 .ad
 .fi
-\fIagetty\fP opens a tty port, prompts for a login name and invokes
+\fBagetty\fP opens a tty port, prompts for a login name and invokes
 the /bin/login command. It is normally invoked by \fIinit(8)\fP.
 
-\fIagetty\fP has several \fInon-standard\fP features that are useful
+\fBagetty\fP has several \fInon-standard\fP features that are useful
 for hard-wired and for dial-in lines:
 .IP o
 Adapts the tty settings to parity bits and to erase, kill,
@@ -30,8 +43,11 @@ Hayes(tm)-compatible modems.
 Optionally does not hang up when it is given an already opened line
 (useful for call-back applications).
 .IP o
-Optionally does not display the contents of the \fI/etc/issue\fP file
-(System V only).
+Optionally does not display the contents of the \fI/etc/issue\fP file.
+.IP o
+Optionally displays an alternative issue file instead of \fI/etc/issue\fP.
+.IP o
+Optionally does not ask for a login name.
 .IP o
 Optionally invokes a non-standard login program instead of
 \fI/bin/login\fP.
@@ -50,7 +66,7 @@ This program does not use the \fI/etc/gettydefs\fP (System V) or
 .TP
 port
 A path name relative to the \fI/dev\fP directory. If a "-" is
-specified, \fIagetty\fP assumes that its standard input is
+specified, \fBagetty\fP assumes that its standard input is
 already connected to a tty port and that a connection to a
 remote user has already been established.
 .sp
@@ -59,7 +75,7 @@ by a "--".
 .TP
 baud_rate,...
 A comma-separated list of one or more baud rates. Each time
-\fIagetty\fP receives a BREAK character it advances through
+\fBagetty\fP receives a BREAK character it advances through
 the list, which is treated as if it were circular.
 .sp
 Baud rates should be specified in descending order, so that the
@@ -74,18 +90,23 @@ whatever init(8) may have set, and is inherited by login and the shell.
 .fi
 .ad
 .TP
--h
+\-h
 Enable hardware (RTS/CTS) flow control. It is left up to the
 application to disable software (XON/XOFF) flow protocol where
 appropriate.
 .TP
--i
-Do not display the contents of \fI/etc/issue\fP before writing the
+\-i
+Do not display the contents of \fI/etc/issue\fP (or other) before writing the
 login prompt. Terminals or communications hardware may become confused
 when receiving lots of text at the wrong baud rate; dial-up scripts
 may fail if the login prompt is preceded by too much text.
 .TP
--I initstring
+\-f \fIissue_file\fP
+Display the contents of \fIissue_file\fP instead of \fI/etc/issue\fP.
+This allows custom messages to be displayed on different terminals.
+The \-i option will override this option.
+.TP
+\-I \fIinitstring\fP
 Set an initial string to be sent to the tty or modem before sending
 anything else. This may be used to initialize a modem.  Non printable
 characters may be sent by writing their octal code preceded by a
@@ -93,59 +114,80 @@ backslash (\\). For example to send a linefeed character (ASCII 10,
 octal 012) write \\012.
 .PP
 .TP
--l login_program
+\-l \fIlogin_program\fP
 Invoke the specified \fIlogin_program\fP instead of /bin/login.
 This allows the use of a non-standard login program (for example,
 one that asks for a dial-up password or that uses a different
 password file).
 .TP
--m
-Try to extract the baud rate the \fIconnect\fP status message
-produced by some Hayes(tm)-compatible modems. These status
+\-m
+Try to extract the baud rate the CONNECT status message
+produced by Hayes(tm)\-compatible modems. These status
 messages are of the form: "<junk><speed><junk>".
-\fIagetty\fP assumes that the modem emits its status message at
+\fBagetty\fP assumes that the modem emits its status message at
 the same speed as specified with (the first) \fIbaud_rate\fP value
 on the command line.
 .sp
-Since the \fI-m\fP feature may fail on heavily-loaded systems,
+Since the \fI\-m\fP feature may fail on heavily-loaded systems,
 you still should enable BREAK processing by enumerating all
 expected baud rates on the command line.
+.TP 
+\-n 
+Do not prompt the user for a login name. This can be used in
+connection with \-l option to invoke a non-standard login process such
+as a BBS system. Note that with the \-n option, \fBagetty\fR gets no input from
+user who logs in and therefore won't be able to figure out parity,
+character size, and newline processing of the connection. It defaults to 
+space parity, 7 bit characters, and ASCII CR (13) end-of-line character.
+Beware that the program that \fBagetty\fR starts (usually /bin/login)
+is run as root.
 .TP
--t timeout
+\-t \fItimeout\fP
 Terminate if no user name could be read within \fItimeout\fP
 seconds. This option should probably not be used with hard-wired
 lines.
 .TP
--L
-Force the line to be local line with no need for carrier detect. This can
-be useful when you have locally attached terminal where the serial line
+\-L
+Force the line to be a local line with no need for carrier detect. This can
+be useful when you have a locally attached terminal where the serial line
 does not set the carrier detect signal.
 .TP
--w
-Wait for the user or the modem to send a carriage-return or a linefeed 
-character before sending the /etc/issue file and the login prompt.
+\-w 
+Wait for the user or the modem to send a carriage-return or a
+linefeed character before sending the \fI/etc/issue\fP (or other) file
+and the login prompt. Very useful in connection with the \-I option.
 .PP
 .SH EXAMPLES
 .na
 .nf
-This section shows sample entries for the \fI/etc/inittab\fP file.
+This section shows sample command entries for the \fI/etc/inittab\fP file.
 
-For a hard-wired line:
+For a hard-wired line or a console tty:
 .ti +5
-tty1:con80x60:/sbin/agetty 9600 tty1
+/sbin/agetty 9600 ttyS1
 
-For a dial-in line with a 9600/2400/1200 baud modem:
+For a directly connected terminal without proper carriage detect wiring:
+(try this if your terminal just sleeps instead of giving you a password:
+prompt.)
 .ti +5
-ttyS1:dumb:/sbin/agetty -mt60 ttyS1 9600,2400,1200
+/sbin/agetty \-L 9600 ttyS1 vt100
 
-These examples assume you use the simpleinit(8) init program for Linux.
-If you use a SysV like init (does /etc/inittab mention "respawn"?), refer
-to the appropriate manual page.
+For a old style dial-in line with a 9600/2400/1200 baud modem:
+.ti +5
+/sbin/agetty \-mt60 ttyS1 9600,2400,1200
+
+For a Hayes modem with a fixed 115200 bps interface to the machine:
+(the example init string turns off modem echo and result codes, makes
+modem/computer DCD track modem/modem DCD, makes a DTR drop cause a 
+dis-connection and turn on auto-answer after 1 ring.)
+.ti +5
+/sbin/agetty \-w \-I 'ATE0Q1&D2&C1S0=1\\015' 115200 ttyS1
 
 .SH ISSUE ESCAPES
-The \fI/etc/issue\fP file may contain certain escape codes to display the
-system name, date and time etc. All escape codes consist of a backslash
-(\\) immediately followed by one of the letters explained below.
+The issue-file (\fI/etc/issue\fP or the file set with the \-f option)
+may contain certain escape codes to display the system name, date and
+time etc. All escape codes consist of a backslash (\\) immediately
+followed by one of the letters explained below.
 
 .TP
 b
@@ -203,19 +245,19 @@ This is thingol.orcan.dk (Linux i386 1.1.9) 18:29:30
 .na
 .nf
 /var/run/utmp, the system status file.
-/etc/issue, printed before the login prompt (System V only).
+/etc/issue, printed before the login prompt.
 /dev/console, problem reports (if syslog(3) is not used).
-/etc/inittab (Linux simpleinit(8) configuration file).
+/etc/inittab, \fIinit\fP(8) configuration file.
 .SH BUGS
 .ad
 .fi
 The baud-rate detection feature (the \fI-m\fP option) requires that
-\fIagetty\fP be scheduled soon enough after completion of a dial-in
+\fBagetty\fP be scheduled soon enough after completion of a dial-in
 call (within 30 ms with modems that talk at 2400 baud). For robustness,
-always use the \fI-m\fP option in combination with a multiple baud
+always use the \fI\-m\fP option in combination with a multiple baud
 rate command-line argument, so that BREAK processing is enabled.
 
-The text in the /etc/issue file and the login prompt
+The text in the \fI/etc/issue\fP file (or other) and the login prompt
 are always output with 7-bit characters and space parity.
 
 The baud-rate detection feature (the \fI-m\fP option) requires that
@@ -237,7 +279,10 @@ Department of Mathematics and Computer Science
 Den Dolech 2, P.O. Box 513, 5600 MB Eindhoven, The Netherlands
 
 Peter Orbaek <poe@daimi.aau.dk>
-Linux port.
+Linux port and more options. Still maintains the code.
+
+Eric Rasmussen <ear@usfirst.org>
+Added \-f option to display custom login messages on different terminals.
 
 .SH CREATION DATE
 .na
@@ -246,8 +291,4 @@ Sat Nov 25 22:51:05 MET 1989
 .SH LAST MODIFICATION
 .na
 .nf
-91/09/01 23:22:00
-.SH VERSION/RELEASE
-.na
-.nf
-1.29
+96/07/20

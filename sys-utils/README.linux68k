@@ -1,0 +1,11 @@
+
+Here are the ports of the clock and kbdrate utilities that needed
+/dev/port in their original implementation. /dev/port does not exist
+under Linux/68k, so the needed functionalities are implemented as new
+ioctls in the kernel. The modified sources (in src/) first test if the
+kernel knows that ioctls. If it does, they are used. Else, /dev/port
+is tried the old way. The kernel patch necessary for clock and kbdrate
+is in kernel-patch/. (It is #14a of my patch list to 0.9pl4).
+
+Roman (Roman.Hodek@informatik.uni-erlangen.de)
+

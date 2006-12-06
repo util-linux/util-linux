@@ -45,3 +45,4 @@ extern char *const str_units(void);
 
 /* prototypes for fdisklabel.c */
 extern void bselect(void);
+extern void btrydev (char * dev);

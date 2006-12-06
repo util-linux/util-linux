@@ -2,6 +2,8 @@
    Ported to Linux by Peter Orbaek <poe@daimi.aau.dk>
    This program is freely distributable. The entire man-page used to
    be here. Now read the real man-page agetty.8 instead.
+
+   -f option added by Eric Rasmussen <ear@usfirst.org> - 12/28/95
 */
 
 #ifndef	lint
@@ -25,7 +27,7 @@ char sccsid[] = "@(#) agetty.c 1.29 9/1/91 23:22:00";
 #include <memory.h>
 #include <sys/file.h>
 
-#ifdef linux
+#ifdef __linux__
 #include "pathnames.h"
 #include <sys/param.h>
 #define USE_SYSLOG
@@ -111,8 +113,9 @@ extern void closelog();
   * executable small on systems that do not have shared libraries (System V
   * Release <3).
   */
-
+#ifndef BUFSIZ
 #define	BUFSIZ		1024
+#endif
 
  /*
   * When multiple baud rates are specified on the command line, the first one
@@ -129,10 +132,11 @@ struct options {
     int     flags;			/* toggle switches, see below */
     int     timeout;			/* time-out period */
     char   *login;			/* login program */
-    int     numspeed;			/* number of baud rates to try */
-    int     speeds[MAX_SPEED];		/* baud rates to be tried */
     char   *tty;			/* name of tty */
     char   *initstring;			/* modem init string */
+    char   *issue;			/* alternative issue file */
+    int     numspeed;			/* number of baud rates to try */
+    int     speeds[MAX_SPEED];		/* baud rates to be tried */
 };
 
 #define	F_PARSE		(1<<0)		/* process modem status messages */
@@ -141,6 +145,8 @@ struct options {
 #define F_LOCAL		(1<<3)		/* force local */
 #define F_INITSTRING    (1<<4)		/* initstring is set */
 #define F_WAITCRLF	(1<<5)		/* wait for CR or LF */
+#define F_CUSTISSUE	(1<<6)		/* give alternative issue file */
+#define F_NOPROMPT	(1<<7)		/* don't ask for login name! */
 
 /* Storage for things detected while the login name was read. */
 
@@ -157,9 +163,52 @@ struct chardata {
 struct chardata init_chardata = {
     DEF_ERASE,				/* default erase character */
     DEF_KILL,				/* default kill character */
-    0,					/* always filled in at runtime */
+    13,					/* default eol char */
     0,					/* space parity */
-    0,					/* always filled in at runtime */
+    0,					/* no capslock */
+};
+
+struct Speedtab {
+    long    speed;
+    int     code;
+};
+
+static struct Speedtab speedtab[] = {
+    { 50, B50 },
+    { 75, B75 },
+    { 110, B110 },
+    { 134, B134 },
+    { 150, B150 },
+    { 200, B200 },
+    { 300, B300 },
+    { 600, B600 },
+    { 1200, B1200 },
+    { 1800, B1800 },
+    { 2400, B2400 },
+    { 4800, B4800 },
+    { 9600, B9600 },
+#ifdef	B19200
+    { 19200, B19200 },
+#endif
+#ifdef	B38400
+    { 38400, B38400 },
+#endif
+#ifdef	EXTA
+    { 19200, EXTA },
+#endif
+#ifdef	EXTB
+    { 38400, EXTB },
+#endif
+#ifdef B57600
+    { 57600, B57600 },
+#endif
+#ifdef B115200
+    { 115200, B115200 },
+#endif
+#ifdef B230400
+    { 230400, B230400 },
+#endif
+    { 0, 0 },
 };
 
 #define P_(s) ()
@@ -196,13 +245,16 @@ main(argc, argv)
      int     argc;
      char  **argv;
 {
-    char   *logname;			/* login name, given to /bin/login */
+    char   *logname = NULL;		/* login name, given to /bin/login */
     struct chardata chardata;		/* set by get_logname() */
     struct termio termio;		/* terminal mode bits */
     static struct options options = {
 	F_ISSUE,			/* show /etc/issue (SYSV_STYLE) */
 	0,				/* no timeout */
 	_PATH_LOGIN,			/* default login program */
+	"tty1",				/* default tty line */
+	"",				/* modem init string */
+	ISSUE,				/* default issue file */
 	0,				/* no baud rates known yet */
     };
 
@@ -215,7 +267,7 @@ main(argc, argv)
 #endif
 
 #ifdef DEBUGGING
-	dbf = fopen("/dev/tty1", "w");
+	dbf = fopen("/dev/ttyp0", "w");
 
 	{	int i;
 	
@@ -229,7 +281,7 @@ main(argc, argv)
 
     parse_args(argc, argv, &options);
 
-#ifdef linux
+#ifdef __linux__
 	setsid();
 #endif
 	
@@ -239,10 +291,11 @@ main(argc, argv)
     update_utmp(options.tty);
 #endif
 
+    debug("calling open_tty\n");
     /* Open the tty as standard { input, output, error }. */
     open_tty(options.tty, &termio, options.flags & F_LOCAL);
 
-#ifdef linux
+#ifdef __linux__
 	{
 		int iv;
 		
@@ -251,39 +304,50 @@ main(argc, argv)
 	}
 #endif
     /* Initialize the termio settings (raw mode, eight-bit, blocking i/o). */
-
+    debug("calling termio_init\n");
     termio_init(&termio, options.speeds[FIRST_SPEED], options.flags & F_LOCAL);
 
-    /* write the modem init string and flush the buffers */
+    /* write the modem init string and DON'T flush the buffers */
     if (options.flags & F_INITSTRING) {
+	debug("writing init string\n");
 	write(1, options.initstring, strlen(options.initstring));
-	ioctl(1, TCFLSH, 2);
+    }
+
+    if (!(options.flags & F_LOCAL)) {
+	/* go to blocking write mode unless -L is specified */
+	fcntl(1, F_SETFL, fcntl(1, F_GETFL, 0) & ~O_NONBLOCK);
     }
 
     /* Optionally detect the baud rate from the modem status message. */
-
+    debug("before autobaud\n");
     if (options.flags & F_PARSE)
 	auto_baud(&termio);
 
     /* Set the optional timer. */
-
     if (options.timeout)
 	(void) alarm((unsigned) options.timeout);
- 
+
     /* optionally wait for CR or LF before writing /etc/issue */
     if (options.flags & F_WAITCRLF) {
 	char ch;
 
+	debug("waiting for cr-lf\n");
 	while(read(0, &ch, 1) == 1) {
 	    ch &= 0x7f;   /* strip "parity bit" */
+#ifdef DEBUGGING
+	    fprintf(dbf, "read %c\n", ch);
+#endif
 	    if (ch == '\n' || ch == '\r') break;
 	}
     }
 
-    /* Read the login name. */
-
-    while ((logname = get_logname(&options, &chardata, &termio)) == 0)
-	next_speed(&termio, &options);
+    chardata = init_chardata;
+    if (!(options.flags & F_NOPROMPT)) {
+	/* Read the login name. */
+	debug("reading login name\n");
+	while ((logname = get_logname(&options, &chardata, &termio)) == 0)
+	  next_speed(&termio, &options);
+    }
 
     /* Disable timer. */
 
@@ -317,7 +381,7 @@ parse_args(argc, argv, op)
     extern int optind;			/* getopt */
     int     c;
 
-    while (isascii(c = getopt(argc, argv, "I:Lhil:mt:w"))) {
+    while (isascii(c = getopt(argc, argv, "I:Lf:hil:mt:wn"))) {
 	switch (c) {
 	case 'I':
 	    if (!(op->initstring = malloc(strlen(optarg)))) {
@@ -362,6 +426,10 @@ parse_args(argc, argv, op)
 	case 'L':				/* force local */
  	    op->flags |= F_LOCAL;
  	    break;
+	case 'f':				/* custom issue file */
+	    op->flags |= F_CUSTISSUE;
+	    op->issue = optarg;
+	    break;
 	case 'h':				/* enable h/w flow control */
 	    op->flags |= F_RTSCTS;
 	    break;
@@ -373,6 +441,9 @@ parse_args(argc, argv, op)
 	    break;
 	case 'm':				/* parse modem status message */
 	    op->flags |= F_PARSE;
+	    break;
+	case 'n':
+	    op->flags |= F_NOPROMPT;
 	    break;
 	case 't':				/* time out */
 	    if ((op->timeout = atoi(optarg)) <= 0)
@@ -433,8 +504,8 @@ void
 update_utmp(line)
      char   *line;
 {
-    struct utmp ut;
-    long    ut_size = sizeof(ut);	/* avoid nonsense */
+    struct  utmp ut;
+    time_t  t;
     int     ut_fd;
     int     mypid = getpid();
     long    time();
@@ -451,7 +522,7 @@ update_utmp(line)
      * entry in the utmp file.
      */
 
-#ifdef linux
+#ifdef __linux__
     utmpname(_PATH_UTMP);
     setutent();
     while ((utp = getutent()) 
@@ -465,27 +536,37 @@ update_utmp(line)
 	memset(&ut, 0, sizeof(ut));
 	strncpy(ut.ut_id, line + 3, sizeof(ut.ut_id));
     }
-    endutent();
+    /*endutent();*/
 	
     strncpy(ut.ut_user, "LOGIN", sizeof(ut.ut_user));
     strncpy(ut.ut_line, line, sizeof(ut.ut_line));
-    time(&ut.ut_time);
+    time(&t);
+    ut.ut_time = t;
     ut.ut_type = LOGIN_PROCESS;
     ut.ut_pid = mypid;
 
     pututline(&ut);
     endutent();
 
-    if((ut_fd = open(_PATH_WTMP, O_APPEND|O_WRONLY)) >= 0) {
-	flock(ut_fd, LOCK_EX);
-	write(ut_fd, &ut, sizeof(ut));
-	flock(ut_fd, LOCK_UN);
-	close(ut_fd);
+    {
+	int lf;
+
+	if ((lf = open(_PATH_WTMPLOCK, O_CREAT|O_WRONLY, 0660)) >= 0) {
+	    flock(lf, LOCK_EX);
+	    if ((ut_fd = open(_PATH_WTMP, O_APPEND|O_WRONLY)) >= 0) {
+		write(ut_fd, &ut, sizeof(ut));
+		close(ut_fd);
+	    }
+	    flock(lf, LOCK_UN);
+	    close(lf);
+	}
     }
 #else
     if ((ut_fd = open(UTMP_FILE, 2)) < 0) {
 	error("%s: open for update: %m", UTMP_FILE);
     } else {
+	long    ut_size = sizeof(ut);       /* avoid nonsense */
+
 	while (read(ut_fd, (char *) &ut, sizeof(ut)) == sizeof(ut)) {
 	    if (ut.ut_type == INIT_PROCESS && ut.ut_pid == mypid) {
 		ut.ut_type = LOGIN_PROCESS;
@@ -500,7 +581,7 @@ update_utmp(line)
 	}
 	error("%s: no utmp entry", line);
     }
-#endif /* linux */
+#endif /* __linux__ */
 }
 
 #endif
@@ -537,7 +618,8 @@ open_tty(tty, tp, local)
 	(void) close(0);
 	errno = 0;				/* ignore close(2) errors */
 
-	if (open(tty, (local ? O_RDWR|O_NONBLOCK : O_RDWR), 0) != 0)
+	debug("open(2)\n");
+	if (open(tty, O_RDWR|O_NONBLOCK, 0) != 0)
 	    error("/dev/%s: cannot open as standard input: %m", tty);
 
     } else {
@@ -552,7 +634,7 @@ open_tty(tty, tp, local)
     }
 
     /* Set up standard output and standard error file descriptors. */
-
+    debug("duping\n");
     if (dup(0) != 1 || dup(0) != 2)		/* set up stdout and stderr */
 	error("%s: dup problem: %m", tty);	/* we have a problem */
 
@@ -598,9 +680,9 @@ termio_init(tp, speed, local)
      * reads will be done in raw mode anyway. Errors will be dealt with
      * lateron.
      */
-#ifdef linux
-	/* flush input and output queues, important for modems! */
-	(void) ioctl(0, TCFLSH, 2);
+#ifdef __linux__
+    /* flush input and output queues, important for modems! */
+    (void) ioctl(0, TCFLSH, TCIOFLUSH);
 #endif
 
     tp->c_cflag = CS8 | HUPCL | CREAD | speed;
@@ -612,9 +694,10 @@ termio_init(tp, speed, local)
     tp->c_cc[VMIN] = 1;
     tp->c_cc[VTIME] = 0;
     (void) ioctl(0, TCSETA, tp);
-    if (local) {
-	(void) fcntl(0, F_SETFL, fcntl(0, F_GETFL, 0) & ~O_NDELAY);
-    }
+
+    /* go to blocking input even in local mode */
+    fcntl(0, F_SETFL, fcntl(0, F_GETFL, 0) & ~O_NONBLOCK);
+
     debug("term_io 2\n");
 }
 
@@ -698,7 +781,7 @@ do_prompt(op, tp)
 
     (void) write(1, "\r\n", 2);			/* start a new line */
 #ifdef	ISSUE					/* optional: show /etc/issue */
-    if ((op->flags & F_ISSUE) && (fd = fopen(ISSUE, "r"))) {
+    if ((op->flags & F_ISSUE) && (fd = fopen(op->issue, "r"))) {
 	oflag = tp->c_oflag;			/* save current setting */
 	tp->c_oflag |= (ONLCR | OPOST);		/* map NL in output to CR-NL */
 	(void) ioctl(0, TCSETAW, tp);
@@ -733,8 +816,14 @@ do_prompt(op, tp)
 		    break;
 
 		  case 'o':
-		    (void) printf ("%s", uts.domainname);
-		    break;
+		   {
+		     char domainname[256];
+
+		     getdomainname(domainname, sizeof(domainname));
+		     domainname[sizeof(domainname)-1] = '\0';
+		     printf ("%s", domainname);
+		   }
+		  break;
 
 		  case 'd':
 		  case 't':
@@ -769,13 +858,15 @@ do_prompt(op, tp)
 
 		  case 'b':
 		    {
-		      char *zpeedz[] = { "0", "50", "75", "110", "134.5",
-					 "150", "200", "300", "600", "1200",
-					 "1800", "2400", "4800", "9600", 
-					 "19200", "38400" };
+			int i;
 
-		      (void) printf ("%s", zpeedz[tp->c_cflag & CBAUD]);
-		      break;
+			for (i = 0; speedtab[i].speed; i++) {
+			    if (speedtab[i].code == (tp->c_cflag & CBAUD)) {
+				printf("%ld", speedtab[i].speed);
+				break;
+			    }
+			}
+			break;
 		    }
 		  case 'u':
 		  case 'U':
@@ -806,7 +897,7 @@ do_prompt(op, tp)
 	(void) fclose(fd);
     }
 #endif
-#ifdef linux
+#ifdef __linux__
 	{
 		char hn[MAXHOSTNAMELEN+1];
 
@@ -858,7 +949,7 @@ char   *get_logname(op, cp, tp)
     /* Flush pending input (esp. after parsing or switching the baud rate). */
 
     (void) sleep(1);
-    (void) ioctl(0, TCFLSH, (struct termio *) 0);
+    (void) ioctl(0, TCFLSH, TCIFLUSH);
 
     /* Prompt for and read a login name. */
 
@@ -960,7 +1051,7 @@ termio_final(op, tp, cp)
     tp->c_cc[VQUIT] = DEF_QUIT;			/* default quit */
     tp->c_cc[VEOF] = DEF_EOF;			/* default EOF character */
     tp->c_cc[VEOL] = DEF_EOL;
-#ifdef linux
+#ifdef __linux__
     tp->c_cc[VSWTC] = DEF_SWITCH;		/* default switch character */
 #else
     tp->c_cc[VSWTCH] = DEF_SWITCH;		/* default switch character */
@@ -1033,38 +1124,6 @@ int
 bcode(s)
      char   *s;
 {
-    struct Speedtab {
-	long    speed;
-	int     code;
-    };
-    static struct Speedtab speedtab[] = {
-	50, B50,
-	75, B75,
-	110, B110,
-	134, B134,
-	150, B150,
-	200, B200,
-	300, B300,
-	600, B600,
-	1200, B1200,
-	1800, B1800,
-	2400, B2400,
-	4800, B4800,
-	9600, B9600,
-#ifdef	B19200
-	19200, B19200,
-#endif
-#ifdef	B38400
-	38400, B38400,
-#endif
-#ifdef	EXTA
-	19200, EXTA,
-#endif
-#ifdef	EXTB
-	38400, EXTB,
-#endif
-	0, 0,
-    };
     struct Speedtab *sp;
     long    speed = atol(s);
 
@@ -1079,15 +1138,11 @@ bcode(s)
 void
 usage()
 {
-#if defined(SYSV_STYLE) && !defined(linux)
     static char msg[] =
-    "[-i] [-l login_program] [-m] [-t timeout] line baud_rate,...";
-#else
-    static char msg[] =
-    "[-h] [-l login_program] [-m] [-t timeout] baud_rate,... line";
-#endif
+    "[-hiLmw] [-l login_program] [-t timeout] [-I initstring] baud_rate,... line [termtype]\nor\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] line baud_rate,... [termtype]";
 
-    error("usage: %s %s", progname, msg);
+    fprintf(stderr, "Usage: %s %s\n", progname, msg);
+    exit(1);
 }
 
 /* error - report errors to console or syslog; only understands %s and %m */
@@ -1157,7 +1212,7 @@ error(va_alist)
      */
 
 #ifdef	USE_SYSLOG
-    (void) openlog(progname, LOG_PID, LOG_AUTH);
+    (void) openlog(progname, LOG_PID, LOG_AUTHPRIV);
     (void) syslog(LOG_ERR, "%s", buf);
     closelog();
 #else

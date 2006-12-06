@@ -50,11 +50,10 @@ int blocksize;				/* data block size */
 int exitval;				/* final exit value */
 int length = -1;			/* max bytes to read */
 
-main(argc, argv)
+int main(argc, argv)
 	int argc;
 	char **argv;
 {
-	extern int errno;
 	register FS *tfs;
 	char *p, *rindex();
 
@@ -75,5 +74,5 @@ main(argc, argv)
 
 	(void)next(argv);
 	display();
-	exit(exitval);
+	return exitval;
 }

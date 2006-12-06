@@ -4,48 +4,20 @@
  */
 
 #include <sys/types.h>
-#include <sys/mount.h>
-#include <sys/stat.h>
-#include <stdio.h>
-#include <errno.h>
 #include <fcntl.h>
-#include <getopt.h>
 #include <limits.h>
-#include <mntent.h>
 #include <signal.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#include <string.h>
-#include <unistd.h>
-
-#if 0
-#include <linux/version.h>
-#if LINUX_VERSION_CODE >= 0x010302
-#define SUPPORT_PRIORITIES
+#ifndef bool_t
+#include <rpc/types.h>
 #endif
-#endif
-
-#ifdef SUPPORT_PRIORITIES
-#include <linux/swap.h>
-#endif
-
-#include "fstab.h"
 
 extern int mount_quiet;
+extern int verbose;
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
-
-#define MOUNTED_LOCK	"/etc/mtab~"
-#define MOUNTED_TEMP	"/etc/mtab.tmp"
-#define _PATH_FSTAB	"/etc/fstab"
-#define LOCK_BUSY	10
-
-/* File pointer for /etc/mtab.  */
-extern FILE *F_mtab;
-
-/* File pointer for temp mtab.  */
-extern FILE *F_temp;
 
 /* String list data structure.  */ 
 typedef struct string_list
@@ -62,24 +34,19 @@ string_list cons (char *a, const string_list);
 /* Quiet compilation with -Wmissing-prototypes.  */
 int main (int argc, char *argv[]);
 
-/* From mount_call.c.  */
-int mount5 (const char *, const char *, const char *, int, void *);
-
 /* Functions in sundries.c that are used in mount.c and umount.c  */ 
 void block_signals (int how);
 char *canonicalize (const char *path);
 char *realpath (const char *path, char *resolved_path);
-void close_mtab (void);
 void error (const char *fmt, ...);
-void lock_mtab (void);
 int matching_type (const char *type, string_list types);
-void open_mtab (const char *mode);
 string_list parse_list (char *strings);
-void unlock_mtab (void);
-void update_mtab (const char *special, struct mntent *with);
-struct mntent *getmntfile (const char *file);
 void *xmalloc (size_t size);
 char *xstrdup (const char *s);
+char *xstrndup (const char *s, int n);
+char *xstrconcat2 (const char *, const char *);
+char *xstrconcat3 (const char *, const char *, const char *);
+char *xstrconcat4 (const char *, const char *, const char *, const char *);
 
 /* Here is some serious cruft.  */
 #ifdef __GNUC__
@@ -97,6 +64,11 @@ int nfsmount (const char *spec, const char *node, int *flags,
 	      char **orig_opts, char **opt_args);
 #endif
 
-#define mount5(special, dir, type, flags, data) \
-  mount (special, dir, type, 0xC0ED0000 | (flags), data)
-
+/* exit status - bits below are ORed */
+#define EX_USAGE	1	/* incorrect invocation or permission */
+#define EX_SYSERR	2	/* out of memory, cannot fork, ... */
+#define EX_SOFTWARE	4	/* internal mount bug or wrong version */
+#define EX_USER		8	/* user interrupt */
+#define EX_FILEIO      16	/* problems writing, locking, ... mtab/fstab */
+#define EX_FAIL	       32	/* mount failure */
+#define EX_SOMEOK      64	/* some mount succeeded */

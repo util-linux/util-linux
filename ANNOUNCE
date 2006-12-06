@@ -1,71 +1,39 @@
+util-linux-2.7.tar.gz (source only distribution)
 
-util-linux-2.5.tar.gz     (source distribution only)
+READ the README file and the stuff below.
 
-    WARNING: THIS COLLECTION DOES *NOT* SUPPORT SHADOW PASSWORDS.
+util-linux-2.7.tar.gz (source only distribution)
 
-    WARNING: THIS COLLECTION DOES *NOT* SUPPORT SYSTEM V INITTAB.
+NOTE: Before installing util-linux. READ the README or risk nuking
+your system.  Thank you.
 
-    WARNING: DO *NOT* INSTALL WITHOUT THINKING.
+    Util-linux is a suite of essential utilities for any Linux system.
+It's primary audience is system integrators (like the people at
+RedHat) and DIY Linux hackers.  The rest of you will get a digested
+version of util-linux installed with no risk to your sanity.
 
-    This is a collection of many assorted utilities for Linux.  Some are
-    system utilities that are not easily available anywhere elsewhere
-    (e.g., mkfs.minix, mkswap, cfdisk, fdisk); others are BSD ports of
-    common utilities that are not yet contained in any FSF package (e.g.,
-    col); others are non-System-V alternatives to common utilities (e.g.,
-    simpleinit, agetty, login, passwd).
+    Version 2.7 of util-linux is mostly a bugfix release.  But several
+utilities that appear in other packages have been removed and
+hwclock(8) has replaced clock(8) entirely.
 
-    The arrangement, as nearly as I can determine, conforms to the Linux
-    Filesystem Structure, Interim Release 1.2, March 28, 1995, with *NO*
-    exceptions.  A copy of the standards document can be found at
-    tsx-11.mit.edu:/pub/linux/docs/linux-standards/fsstnd/*.
+    Util-linux is attempting to be portable, but the only platform it
+has been tested much on is linux/intel.  There have however been
+integrated several patches for Arm, m68k, and Alpha linux versions.
+The present version is known to compile on at least Linux 1.2/libc 4
+and Linux 2.0/Libc 5 and has also been tested with libc 6 on intel,
+alpha and sparc.  People are encouraged to make _nice_ patches to
+util-linux and submitting them to util-linux@math.uio.no.  Thank you.
 
-    Many people provided patches and suggestions.  I deeply appreciate
-    this.
+[To be more precise, earlier versions of util-linux did compile on
+Linux 1.2/libc 4. The present version contains at least one obstacle:
+the routine snprintf() is not available in libc 4.5.26, but it is in 4.6.27.]
 
-    This product includes software developed by the University of
-    California, Berkeley and its contributors.
+Util-Linux 2.7 is imediately available from
+  ftp.math.uio.no:/pub/linux, and
+  sunsite.uio.no:/pub/unix/linux/packages/util-linux,
+and will appear at
+  sunsite.unc.edu:/pub/Linux/system/Misc, as well as
+  tsx-11.mit.edu:/pub/linux/packages/utils 
+when the people in charge there get time.
 
-    IN THE FUTURE, SEND UPDATES AND PATCHES TO: util-linux@math.uio.no
-
-
-
-HIGHLIGHTS for version 2.5:
-
-0) Nicolai Langfeldt is taking over maintenance of util-linux, with the
-   help of a few others (Michael K. Johnson, Andries Brouwer, and Rik
-   Faith).
-
-   PLEASE SEND PATCHES AND UPDATES TO: util-linux@math.uio.no
-
-1) The following packages have been removed.  Please use the up-to-date,
-   canonical versions of these packages from the listed places:
-
-    timezone support (/usr/lib/zoneinfo, libz.a, zic, zdump):
-        elsie.nci.nih.gov:/pub/tzcode95d.tar.gz
-        elsie.nci.nih.gov:/pub/tzdata95h.tar.gz
-    MAKEDEV-C:
-        sunsite.unc.edu:/pub/Linux/system/Admin/MAKEDEV-C-1.5.tar.gz
-    MAKEDEV:
-        sunsite.unc.edu:/pub/Linux/system/Admin/MAKEDEV-2.2.tar.gz
-    md5sum:
-        prep.ai.mit.edu:/pub/gnu/textutils-1.3.tar.gz
-        [The GNU version is now compatible with the Plumb/Lankester
-        version.]
-    ksymoops:
-        Now bundled with the kernel in linux/scripts.
-
-2) update_state has been removed
-3) fdisk now supports NetBSD disklabels courtesy of Bernhard Fastenrath
-   <fasten@athene.informatik.uni-bonn.de> (and > 8GB disks, courtesy of
-   Andries Brouwer)
-4) mount improved -- many patches from Andries Brouwer for greatly improved
-   error reporting
-5) ddate, chkdupexe, and other programs have been improved and bug fixed
-6) util-linux is now a source-only distribution
-7) mcookie generates better random numbers and will use /dev/random or
-   /dev/audio if available
-8) chfn, chsh, passwd, and vipw have been updated with security patches
-   from Zefram <A.Main@dcs.warwick.ac.uk>.  Now, they all use the same
-   locking, and several security holes have been patched.  Further, chsh
-   and chfn can be configured at compile time to require a password before
-   updates and chsh can be configured to only use shells from /etc/shells.
+Nicolai Langfeldt

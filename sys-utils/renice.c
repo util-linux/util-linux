@@ -47,12 +47,16 @@ static char sccsid[] = "@(#)renice.c	8.1 (Berkeley) 6/9/93";
 
 #include <stdio.h>
 #include <pwd.h>
+#include <stdlib.h>
+
+int donice(int,int,int);
 
 /*
  * Change the priority (nice) of processes
  * or groups of processes which are already
  * running.
  */
+void
 main(argc, argv)
 	char **argv;
 {
@@ -106,6 +110,7 @@ main(argc, argv)
 	exit(errs != 0);
 }
 
+int
 donice(which, who, prio)
 	int which, who, prio;
 {

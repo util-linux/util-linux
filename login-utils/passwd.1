@@ -1,49 +1,112 @@
 .\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
-.TH PASSWD 1 "22 June 1994" "Linux 1.2" "Linux Programmer's Manual"
+.TH PASSWD 1 "11 November 1996" "Util-linux 2.6" "Linux Programmer's Manual"
 .SH NAME
 passwd \- change password
 .SH SYNOPSIS
-.BR "passwd [ " name " [ " password " ] ]"
+.BR "passwd"
+.RB [ " \-o " ]
+.RB [ " \-q " ]
+.RB [ " \-v " ]
+.RI [ " name " [ " password " ]]
+.br
+.BR "passwd \-f "
+.RI [ " arguments to chfn " ]
+.br
+.BR "passwd \-s "
+.RI [ " arguments to chsh " ]
+
 .SH DESCRIPTION
 Without arguments
 .B passwd
 will change the password for the current user. First the user is asked for
 the old password, then prompted twice for the new password in order to
-catch typing errors. The new password must be at least six characters long,
-and have both upper and lower case letters or non-letters. The new password
-must not be equal to the old password, and it must not match the username.
+catch typing errors.
 
 The one and two argument forms may only be used by the superuser. Using the
-one argument form, the superuser may change the password for that user.
-The superuser is not asked for the users old password, and the rules 
-for proper passwords are not applied since the superuser may have legitimate
+one argument form, the superuser may change the password for that
+.IR user .
+The superuser is not asked for the users old password, but the rules 
+for proper passwords are also applied unless the
+.B "\-o"
+option is used. The superuser may have legitimate
 reasons to choose a non-conformant password.
 
 The two argument form gives the 
-.I user
-the password stated as the second argument. This may be useful when
-giving many users an initial generated password.
+.IR user " the " password
+stated as the second argument. This may be useful when giving many
+users an initial generated password.  But it can also be extremely
+dangerous.  A simple script bug might change to root password to
+something unknown.
 
 Giving an empty string as the second argument erases the password for the
-user.
+user, but only in combination with the
+.B "\-o"
+option.
 
+Password changes may get logged using the 
+.BR syslog (3)
+facility, depending on compile-time defines (on by default).
+If so, every change will
+be logged at a low level as auth.notice, except for changing the root
+password with will be logged with auth.warning.
+
+.SH OPTIONS
+.TP
+.B "\-f, \-\-fullname"
+Change the user's full name (the GECOS field of the passwd entry).
+Invokes /usr/bin/chfn with the non-option command line arguments.
+.TP
+.B "\-o, \-\-force"
+Turn off simplicity checks on the new password. This option may only
+be used by the super user. This is intend to allow simple initial
+passwords given by the superuser.
+.TP
+.B "\-s, \-\-shell"
+Change the user's shell by invoking /usr/bin/chsh with the non-option
+command line arguments.
+.TP
+.B "\-q, \-\-quiet, \-\-silent"
+In this mode passwd won't tell that the passwd get's changed.
+.TP
+.B "\-v, \-V, \-\-version"
+Prints version information and exits.
+
+.SH PASSWORD RULES
+The new password must fulfill these rules:
+.TP
+o
+be at least six characters long;
+
+.TP
+o
+must not be equal to the old password;
+
+.TP
+o
+must contain characters out of at least two of the following classes:
+upper and lower case letters, digits and non alphanumeric characters;
+
+.TP
+o
+must not match neither the username nor any word of the realname,
+neither in normal nor in reverse order, neither at the beginning nor
+at the end.
 .SH FILES
+.TP
 .I /etc/passwd
-.br
-.I /etc/shells
+The password file.
 .SH "SEE ALSO"
 .BR chsh (1),
-.BR chfn (1)
-.SH BUGS
-A password consisting of all digits is allowed.
-.br
-No warnings are printed if the superuser chooses a poor password.
-.br
-The
-.B \-f
-and
-.B \-s
-options are not supported.
+.BR chfn (1),
+.BR syslog (3),
+.BR syslog.conf (5),
+.BR passwd (8).
 .SH AUTHOR
-Peter Orbaek (poe@daimi.aau.dk)
+Peter Orbaek (poe@daimi.aau.dk).
+.br
+Martin Schulze (joey@infodrom.north.de) with extensive rewriting and
+improving done.
+.br
+.SH MAINTAINER
+Nicolai Langfeldt (janl@math.uio.no)

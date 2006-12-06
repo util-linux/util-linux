@@ -33,6 +33,10 @@
  * Updated Thu Oct 12 09:56:55 1995 by faith@cs.unc.edu with security
  * patches from Zefram <A.Main@dcs.warwick.ac.uk>
  *
+ * Updated Thu Nov  9 21:58:53 1995 by Martin Schulze 
+ * <joey@finlandia.infodrom.north.de>.  Support for vigr.
+ *
+ * Martin Schulze's patches adapted to Util-Linux by Nicolai Langfeldt.
  */
 
 #ifndef lint
@@ -43,8 +47,10 @@ char copyright[] =
 
 #ifndef lint
 /*static char sccsid[] = "from: @(#)vipw.c	5.16 (Berkeley) 3/3/91";*/
-static char rcsid[] = "$Id: vipw.c,v 1.4 1995/10/12 14:46:36 faith Exp $";
+static char rcsid[] = "$Id: vipw.c,v 1.6 1997/07/06 00:12:23 aebr Exp $";
 #endif /* not lint */
+
+static char version_string[] = "vipw 1.4";
 
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -63,13 +69,20 @@ static char rcsid[] = "$Id: vipw.c,v 1.4 1995/10/12 14:46:36 faith Exp $";
 #include <paths.h>
 #include <unistd.h>
 
-#include "pathnames.h"
+#include "setpwnam.h"
 
+#define FILENAMELEN 67
 
-char *progname = "vipw";
+char *progname;
+enum { VIPW, VIGR };
+int program;
+char orig_file[FILENAMELEN];   /* original file /etc/passwd or /etc/group */
+char tmp_file[FILENAMELEN];    /* tmp file */
+char tmptmp_file[FILENAMELEN]; /* very tmp file */
+
 void pw_error __P((char *, int, int));
 
-
+void
 copyfile(from, to)
 	register int from, to;
 {
@@ -79,9 +92,10 @@ copyfile(from, to)
 	while ((nr = read(from, buf, sizeof(buf))) > 0)
 		for (off = 0; off < nr; nr -= nw, off += nw)
 			if ((nw = write(to, buf + off, nr)) < 0)
-				pw_error(_PATH_PTMP, 1, 1);
+			  pw_error(tmp_file, 1, 1);
+
 	if (nr < 0)
-		pw_error(_PATH_PASSWD, 1, 1);
+	  pw_error(orig_file, 1, 1);
 }
 
 
@@ -120,7 +134,6 @@ int
 pw_lock()
 {
 	int lockfd, fd, ret;
-	char *p;
 
 	/* 
 	 * If the password file doesn't exist, the system is hosed.
@@ -128,34 +141,37 @@ pw_lock()
 	 * that users can't get at the encrypted passwords while editing.
 	 * Open should allow flock'ing the file; see 4.4BSD.	XXX
 	 */
-	lockfd = open(_PATH_PASSWD, O_RDONLY, 0);
+	lockfd = open(orig_file, O_RDONLY, 0);
+
 	if (lockfd < 0) {
 		(void)fprintf(stderr, "%s: %s: %s\n",
-		    progname, _PATH_PASSWD, strerror(errno));
+		    progname, orig_file, strerror(errno));
 		exit(1);
 	}
 #if 0 /* flock()ing is superfluous here, with the ptmp/ptmptmp system. */
 	if (flock(lockfd, LOCK_EX|LOCK_NB)) {
 		(void)fprintf(stderr,
-		    "%s: the password file is busy.\n", progname);
+		    "%s: the %s file is busy.\n", progname, 
+			      program == VIPW ? "password" : "group" );
 		exit(1);
 	}
 #endif
 
-	if ((fd = open(_PATH_PTMPTMP, O_WRONLY|O_CREAT, 0644)) == -1) {
-		(void)fprintf(stderr,
-		    "%s: %s: %s\n", progname, _PATH_PTMPTMP, strerror(errno));
-		exit(1);
+	if ((fd = open(tmptmp_file, O_WRONLY|O_CREAT, 0644)) == -1) {
+	  (void)fprintf(stderr,
+		   "%s: %s: %s\n", progname, tmptmp_file, strerror(errno));
+	  exit(1);
 	}
-	ret = link(_PATH_PTMPTMP, _PATH_PTMP);
-	(void)unlink(_PATH_PTMPTMP);
+	ret = link(tmptmp_file, tmp_file);
+	(void)unlink(tmptmp_file);
 	if (ret == -1) {
 	    if (errno == EEXIST)
 		(void)fprintf(stderr, 
-		    "%s: the password file is busy\n", progname);
+			      "%s: the %s file is busy\n", progname,
+			      program == VIPW ? "password" : "group" );
 	    else
 		(void)fprintf(stderr, "%s: can't link %s: %s\n", progname,
-		    _PATH_PTMP, strerror(errno));
+			      tmp_file, strerror(errno));
 	    exit(1);
 	}
 	copyfile(lockfd, fd);
@@ -167,15 +183,18 @@ pw_lock()
 void
 pw_unlock()
 {
-	unlink(_PATH_PASSWD ".OLD");
-	link(_PATH_PASSWD, _PATH_PASSWD ".OLD" );
-	if (rename(_PATH_PTMP, _PATH_PASSWD) == -1) {
-	    (void)fprintf(stderr, 
-	    "%s: can't unlock %s: %s (your changes are still in %s)\n", 
-	    progname, _PATH_PASSWD, strerror(errno), _PATH_PTMP);
-	    exit(1);
-	}
-	(void)unlink(_PATH_PTMP);
+  char tmp[FILENAMELEN];
+  
+  sprintf(tmp, "%s%s", orig_file, ".OLD");
+  unlink(tmp);
+  link(orig_file, tmp);
+  if (rename(tmp_file, orig_file) == -1) {
+    (void)fprintf(stderr, 
+		  "%s: can't unlock %s: %s (your changes are still in %s)\n", 
+		  progname, orig_file, strerror(errno), tmp_file);
+    exit(1);
+  }
+  (void)unlink(tmp_file);
 }
 
 
@@ -199,7 +218,7 @@ pw_edit(notsetuid)
 			(void)setgid(getgid());
 			(void)setuid(getuid());
 		}
-		execlp(editor, p, _PATH_PTMP, NULL);
+		execlp(editor, p, tmp_file, NULL);
 		_exit(1);
 	}
 	for (;;) {
@@ -231,28 +250,48 @@ pw_error(name, err, eval)
 		(void)fprintf(stderr, "%s\n", strerror(sverrno));
 	}
 	(void)fprintf(stderr,
-	    "%s: %s unchanged\n", progname, _PATH_PASSWD);
-	(void)unlink(_PATH_PTMP);
+	    "%s: %s unchanged\n", progname, orig_file);
+	(void)unlink(tmp_file);
 	exit(eval);
 }
 
-main()
+int main(int argc, char *argv[])
 {
-	register int pfd, tfd;
-	struct stat begin, end;
+  struct stat begin, end;
 
-	pw_init();
-	pw_lock();
+  bzero(tmp_file, FILENAMELEN);
+  progname = (rindex(argv[0], '/')) ? rindex(argv[0], '/') + 1 : argv[0];
+  if (!strcmp(progname, "vigr")) {
+    program = VIGR;
+    strncpy(orig_file, GROUP_FILE, FILENAMELEN-1);
+    strncpy(tmp_file, GTMP_FILE, FILENAMELEN-1);
+    strncpy(tmptmp_file, GTMPTMP_FILE, FILENAMELEN-1);
+  }
+  else {
+    program = VIPW;
+    strncpy(orig_file, PASSWD_FILE, FILENAMELEN-1);
+    strncpy(tmp_file, PTMP_FILE, FILENAMELEN-1);
+    strncpy(tmptmp_file, PTMPTMP_FILE, FILENAMELEN-1);
+  }
 
-	if (stat(_PATH_PTMP, &begin))
-		pw_error(_PATH_PTMP, 1, 1);
-	pw_edit(0);
-	if (stat(_PATH_PTMP, &end))
-		pw_error(_PATH_PTMP, 1, 1);
-	if (begin.st_mtime == end.st_mtime) {
-		(void)fprintf(stderr, "vipw: no changes made\n");
-		pw_error((char *)NULL, 0, 0);
-	}
-	pw_unlock();
-	exit(0);
+  if ((argc > 1) && 
+      (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
+    printf("%s\n", version_string);
+    exit(0);
+  }
+
+  pw_init();
+  pw_lock();
+
+  if (stat(tmp_file, &begin))
+    pw_error(tmp_file, 1, 1);
+  pw_edit(0);
+  if (stat(tmp_file, &end))
+    pw_error(tmp_file, 1, 1);
+  if (begin.st_mtime == end.st_mtime) {
+    (void)fprintf(stderr, "%s: no changes made\n", progname);
+    pw_error((char *)NULL, 0, 0);
+  }
+  pw_unlock();
+  exit(0);
 }
