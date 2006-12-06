@@ -64,14 +64,14 @@
 #include <errno.h>
 #include <getopt.h>
 #include <fcntl.h>
-#ifdef SLCURSES
-  #include <slcurses.h>
-#else
-#if NCH
-  #include <ncurses.h>
-#else
-  #include <curses.h>
-#endif
+#ifdef HAVE_SLCURSES_H
+#include <slcurses.h>
+#elif defined(HAVE_SLANG_SLCURSES_H)
+#include <slang/slcurses.h>
+#elif defined(HAVE_NCURSES_H)
+#include <ncurses.h>
+#elif defined(HAVE_NCURSES_NCURSES_H)
+#include <ncurses/ncurses.h>
 #endif
 #include <signal.h>
 #include <math.h>
@@ -86,8 +86,6 @@
 
 extern long long ext2_llseek(unsigned int fd, long long offset,
 			     unsigned int origin);
-
-#define VERSION UTIL_LINUX_VERSION
 
 #define DEFAULT_DEVICE "/dev/hda"
 #define ALTERNATE_DEVICE "/dev/sda"
@@ -538,7 +536,7 @@ static void
 die_x(int ret) {
     signal(SIGINT, old_SIGINT);
     signal(SIGTERM, old_SIGTERM);
-#ifdef SLCURSES
+#if defined(HAVE_SLCURSES_H) || defined(HAVE_SLANG_SLCURSES_H)
     SLsmg_gotorc(LINES-1, 0);
     SLsmg_refresh();
 #else
@@ -717,7 +715,7 @@ get_linux_label(int i) {
 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE
 		+ REISERFS_DISK_OFFSET_IN_BYTES;
 	if (ext2_llseek(fd, offset, SEEK_SET) == offset
-	    && read(fd, &reiserfsb, sizeof(reiserfsb)) == sizeof(reiserfsb)
+	    && read(fd, &reiserfsb, 1024) == 1024
 	    && has_reiserfs_magic_string(&reiserfsb, &reiserfs_is_3_6)) {
 		if (reiserfs_is_3_6) {
 			/* label only on version 3.6 onward */
@@ -2100,7 +2098,7 @@ print_p_info(void) {
 	if (to_file) {
 	    if ((fp = fopen(fname, "w")) == NULL) {
 		char errstr[LINE_LENGTH];
-		sprintf(errstr, _("Cannot open file '%s'"), fname);
+		snprintf(errstr, LINE_LENGTH, _("Cannot open file '%s'"), fname);
 		print_warning(errstr);
 		return;
 	    }
@@ -2184,7 +2182,7 @@ print_part_table(void) {
 	if (to_file) {
 	    if ((fp = fopen(fname, "w")) == NULL) {
 		char errstr[LINE_LENGTH];
-		sprintf(errstr, _("Cannot open file '%s'"), fname);
+		snprintf(errstr, LINE_LENGTH, _("Cannot open file '%s'"), fname);
 		print_warning(errstr);
 		return;
 	    }
@@ -2638,9 +2636,9 @@ draw_screen(void) {
 	mvaddstr(WARNING_START, 0, line);
 
 
-    sprintf(line, "cfdisk %s", VERSION);
+    snprintf(line, COLS+1, "cfdisk %s", VERSION);
     mvaddstr(HEADER_START, (COLS-strlen(line))/2, line);
-    sprintf(line, _("Disk Drive: %s"), disk_device);
+    snprintf(line, COLS+1, _("Disk Drive: %s"), disk_device);
     mvaddstr(HEADER_START+2, (COLS-strlen(line))/2, line);
     {
 	    long long bytes = actual_size*(long long) SECTOR_SIZE;
@@ -2654,7 +2652,7 @@ draw_screen(void) {
 			    bytes, megabytes/K, (10*megabytes/K)%10);
     }
     mvaddstr(HEADER_START+3, (COLS-strlen(line))/2, line);
-    sprintf(line, _("Heads: %d   Sectors per Track: %d   Cylinders: %lld"),
+    snprintf(line, COLS+1, _("Heads: %d   Sectors per Track: %d   Cylinders: %lld"),
 	    heads, sectors, cylinders);
     mvaddstr(HEADER_START+4, (COLS-strlen(line))/2, line);
 

@@ -371,7 +371,7 @@ int main(int argc, char *argv[])
 	int opt;
 	int compatible=0;
 
-#if WITHOUT_GETTEXT
+#ifdef WITHOUT_GETTEXT
 #else
 	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);

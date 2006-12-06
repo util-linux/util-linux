@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!@PERL@ -w
 
 # "script -t" will output a typescript with timings
 # this script "scriptreplay" replays it

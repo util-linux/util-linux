@@ -82,7 +82,6 @@
 #include <getopt.h>
 #include <sysexits.h>
 
-#include "../defines.h"		/* for HAVE_tm_gmtoff */
 #include "clock.h"
 #include "nls.h"
 
@@ -690,7 +689,7 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
     tv.tv_usec = 0;
     
     broken = localtime(&newtime);
-#ifdef HAVE_tm_gmtoff
+#ifdef HAVE_TM_GMTOFF
     minuteswest = -broken->tm_gmtoff/60;		/* GNU extension */
 #else
     minuteswest = timezone/60;
@@ -1165,7 +1164,7 @@ manipulate_epoch(const bool getepoch, const bool setepoch,
 #endif
 }
 
-#if __ia64__
+#ifdef __ia64__
 #define RTC_DEV "/dev/efirtc"
 #else
 #define RTC_DEV "/dev/rtc"
@@ -1173,7 +1172,7 @@ manipulate_epoch(const bool getepoch, const bool setepoch,
 
 static void
 out_version(void) {
-	printf(_("%s from %s\n"), MYNAME, util_linux_version);
+	printf(_("%s from util-linux-%s\n"), MYNAME, PACKAGE_VERSION);
 }
 
 /*

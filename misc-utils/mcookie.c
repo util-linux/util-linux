@@ -28,7 +28,7 @@
 #include <stdlib.h>
 #include <fcntl.h>
 #include "md5.h"
-#if HAVE_GETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
 #include <sys/time.h>
 #include <unistd.h>
 #endif
@@ -79,7 +79,7 @@ int main( int argc, char **argv )
    pid_t             pid;
    char              *file = NULL;
    int               r;
-#if HAVE_GETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
    struct timeval    tv;
    struct timezone   tz;
 #else
@@ -98,7 +98,7 @@ int main( int argc, char **argv )
 
    MD5Init( &ctx );
    
-#if HAVE_GETTIMEOFDAY
+#ifdef HAVE_GETTIMEOFDAY
    gettimeofday( &tv, &tz );
    MD5Update( &ctx, (unsigned char *)&tv, sizeof( tv ) );
 #else

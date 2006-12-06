@@ -59,8 +59,7 @@
 #include <string.h>
 #endif
 
-#include "../defines.h"
-#ifdef HAVE_openpty
+#ifdef HAVE_LIBUTIL
 #include <pty.h>
 #endif
 
@@ -87,7 +86,7 @@ struct	termios tt;
 struct	winsize win;
 int	lb;
 int	l;
-#ifndef HAVE_openpty
+#ifndef HAVE_LIBUTIL
 char	line[] = "/dev/ptyXX";
 #endif
 int	aflg = 0;
@@ -140,8 +139,8 @@ main(int argc, char **argv) {
 	
 	if (argc == 2) {
 		if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
-			printf(_("%s from %s\n"),
-			       progname, util_linux_version);
+			printf(_("%s from %s%s\n"),
+			       progname, "util-linux-", VERSION);
 			return 0;
 		}
 	}
@@ -270,7 +269,7 @@ dooutput() {
 	double oldtime=time(NULL), newtime;
 
 	(void) close(0);
-#ifdef HAVE_openpty
+#ifdef HAVE_LIBUTIL
 	(void) close(slave);
 #endif
 	tvec = time((time_t *)NULL);
@@ -373,7 +372,7 @@ done() {
 
 void
 getmaster() {
-#ifdef HAVE_openpty
+#ifdef HAVE_LIBUTIL
 	(void) tcgetattr(0, &tt);
 	(void) ioctl(0, TIOCGWINSZ, (char *)&win);
 	if (openpty(&master, &slave, NULL, &tt, &win) < 0) {
@@ -413,12 +412,12 @@ getmaster() {
 	}
 	fprintf(stderr, _("Out of pty's\n"));
 	fail();
-#endif /* not HAVE_openpty */
+#endif /* not HAVE_LIBUTIL */
 }
 
 void
 getslave() {
-#ifndef HAVE_openpty
+#ifndef HAVE_LIBUTIL
 	line[strlen("/dev/")] = 't';
 	slave = open(line, O_RDWR);
 	if (slave < 0) {

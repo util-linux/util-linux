@@ -33,6 +33,7 @@ allow_setgid(struct passwd *pe, struct group *ge)
     int notfound = 1;
 	
     if (getuid() == 0) return TRUE;	/* root may do anything */
+    if (ge->gr_gid == pe->pw_gid) return TRUE; /* You can switch back to your default group */
 
     look = ge->gr_mem;
     while (*look && (notfound = strcmp(*look++,pe->pw_name)));

@@ -34,10 +34,8 @@ char *xstrconcat4 (const char *, const char *, const char *, const char *);
 
 void die (int errcode, const char *fmt, ...);
 
-#ifdef HAVE_NFS
 int nfsmount (const char *spec, const char *node, int *flags,
 	      char **orig_opts, char **opt_args, int *version, int running_bg);
-#endif
 
 /* exit status - bits below are ORed */
 #define EX_USAGE	1	/* incorrect invocation or permission */

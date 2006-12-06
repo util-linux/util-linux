@@ -42,12 +42,12 @@
 #include "nls.h"
 #include "env.h"
 
-#if REQUIRE_PASSWORD && USE_PAM
+#if defined(REQUIRE_PASSWORD) && defined(HAVE_SECURITY_PAM_MISC_H)
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
 #endif
 
-#ifdef WITH_SELINUX
+#ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
 #include <selinux/av_permissions.h>
 #include "selinux_utils.h"
@@ -85,7 +85,7 @@ main (int argc, char *argv[]) {
     uid_t uid;
     struct sinfo info;
     struct passwd *pw;
-#if REQUIRE_PASSWORD && USE_PAM
+#if defined(REQUIRE_PASSWORD) && defined(HAVE_SECURITY_PAM_MISC_H)
     pam_handle_t *pamh = NULL;
     int retcode;
     struct pam_conv conv = { misc_conv, NULL };
@@ -127,7 +127,7 @@ main (int argc, char *argv[]) {
        exit(1);
     }
 
-#ifdef WITH_SELINUX
+#ifdef HAVE_LIBSELINUX
     if (is_selinux_enabled()) {
       if(uid == 0) {
 	if (checkAccess(pw->pw_name,PASSWD__CHSH)!=0) {
@@ -169,8 +169,8 @@ main (int argc, char *argv[]) {
 
     printf( _("Changing shell for %s.\n"), pw->pw_name );
 
-#if REQUIRE_PASSWORD
-# if USE_PAM
+#ifdef REQUIRE_PASSWORD
+#ifdef HAVE_SECURITY_PAM_MISC_H
     if(uid != 0) {
         if (pam_start("chsh", pw->pw_name, &conv, &pamh)) {
 	    puts(_("Password error."));
@@ -194,7 +194,7 @@ main (int argc, char *argv[]) {
         /* no need to establish a session; this isn't a session-oriented
          * activity... */
     }
-# else /* USE_PAM */
+#else /* HAVE_SECURITY_PAM_MISC_H */
     /* require password, unless root */
     if(uid != 0 && pw->pw_passwd && pw->pw_passwd[0]) {
 	char *pwdstr = getpass(_("Password: "));
@@ -204,7 +204,7 @@ main (int argc, char *argv[]) {
 	    exit(1);
 	}
     }
-# endif /* USE_PAM */
+#endif /* HAVE_SECURITY_PAM_MISC_H */
 #endif /* REQUIRE_PASSWORD */
 
     if (! shell) {
@@ -253,7 +253,7 @@ parse_argv (int argc, char *argv[], struct sinfo *pinfo) {
 	case -1:
 	    break;
 	case 'v':
-	    printf ("%s\n", util_linux_version);
+	    printf ("%s\n", PACKAGE_STRING);
 	    exit (0);
 	case 'u':
 	    usage (stdout);
@@ -356,7 +356,7 @@ check_shell (char *shell) {
 	    return (-1);
 	}
     }
-#if ONLY_LISTED_SHELLS
+#ifdef ONLY_LISTED_SHELLS
     if (! get_shell_list (shell)) {
        if (!getuid())
 	  printf (_("Warning: \"%s\" is not listed in /etc/shells\n"), shell);

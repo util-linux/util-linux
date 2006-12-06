@@ -85,7 +85,7 @@ struct linux_rtc_time {
 
 /* ia64 uses /dev/efirtc (char 10,136) */
 /* devfs uses /dev/misc/rtc */
-#if __ia64__
+#ifdef __ia64__
 #define RTC_DEVN	"efirtc"
 #else
 #define RTC_DEVN	"rtc"

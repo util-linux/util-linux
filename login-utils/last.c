@@ -202,15 +202,10 @@ wtmp(void) {
 	long	delta;				/* time difference */
 	char *crmsg = NULL;
 	char *ct = NULL;
-#if USE_GETUTENT
-	struct utmp **utmplist = NULL;
-	int listlen = 0;
-#else
 	int fd;
 	struct utmp *utl;
 	struct stat st;
 	int utl_len;
-#endif
 	int listnr = 0;
 	int i;
 	
@@ -220,20 +215,6 @@ wtmp(void) {
 	(void)signal(SIGINT, onintr);
 	(void)signal(SIGQUIT, onintr);
 
-#if USE_GETUTENT
-	setutent();
-	while((bp = getutent())) {
-		if(listnr >= listlen) {
-			listlen += 10;
-			listlen *= 2; 	/* avoid quadratic behaviour */
-			utmplist = realloc(utmplist, sizeof(bp) * listlen);
-		}
-
-		utmplist[listnr] = malloc(sizeof(*bp));
-		memcpy(utmplist[listnr++], bp, sizeof(*bp));
-	}
-	endutent();
-#else
 	if ((fd = open(file,O_RDONLY)) < 0)
 		exit(1);
 	fstat(fd, &st);
@@ -243,21 +224,12 @@ wtmp(void) {
 	if (utl == NULL)
 		exit(1);
 	listnr = utl_len/sizeof(struct utmp);
-#endif
 
 	if(listnr) 
-#if USE_GETUTENT
-		ct = ctime(&utmplist[0]->ut_time);
-#else
 		ct = ctime(&utl[0].ut_time);
-#endif
 
 	for(i = listnr - 1; i >= 0; i--) {
-#if USE_GETUTENT
-		bp = utmplist[i];
-#else
 		bp = utl+i;
-#endif
 		/*
 		 * if the terminal line is '~', the machine stopped.
 		 * see utmp(5) for more info.
@@ -328,15 +300,9 @@ wtmp(void) {
 		}
 		T->logout = bp->ut_time;
 		utmpbuf.ut_time = bp->ut_time;
-#if USE_GETUTENT
-		free(bp);
-	}
-	if(utmplist) free(utmplist);
-#else
 	}
 	munmap(utl,utl_len);
 	close(fd);
-#endif
 	if(ct) printf(_("\nwtmp begins %s"), ct); 	/* ct already ends in \n */
 }
 

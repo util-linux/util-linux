@@ -21,9 +21,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <getopt.h>
-#include "nls.h"
-
-#define VERSION		UTIL_LINUX_VERSION
+#include <nls.h>
 
 #ifndef DEFAULT_FSTYPE
 # define DEFAULT_FSTYPE		"ext2"
@@ -51,7 +49,7 @@ int main(int argc, char *argv[])
 
   if (argc == 2 &&
       (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-	  printf(_("%s from %s\n"), program_name, util_linux_version);
+	  printf(_("%s from %s%s\n"), program_name, "util-linux-", VERSION);
 	  exit(0);
   }
 

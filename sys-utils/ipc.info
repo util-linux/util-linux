@@ -1,4 +1,4 @@
-This is ipc.info, produced by makeinfo version 4.0 from ipc.texi.
+This is ipc.info, produced by makeinfo version 4.7 from ipc.texi.
 
    This file documents the System V style inter process communication
 primitives available under linux.
@@ -16,13 +16,12 @@ END-INFO-DIR-ENTRY
 
 File: ipc.info,  Node: Top,  Next: Overview,  Prev: Notes,  Up: (dir)
 
-System V IPC.
-*************
+1 System V IPC.
+***************
 
-   These facilities are provided to maintain compatibility with
-programs developed on system V unix systems and others that rely on
-these system V mechanisms to accomplish inter process communication
-(IPC).
+These facilities are provided to maintain compatibility with programs
+developed on system V unix systems and others that rely on these system
+V mechanisms to accomplish inter process communication (IPC).
 
    The specifics described here are applicable to the Linux
 implementation.  Other implementations may do things slightly
@@ -39,8 +38,8 @@ differently.
 
 File: ipc.info,  Node: Overview,  Next: example,  Prev: Top,  Up: Top
 
-Overview
-========
+1.1 Overview
+============
 
 System V IPC consists of three mechanisms:
 
@@ -87,11 +86,11 @@ detailed in the following sections.
 
 File: ipc.info,  Node: example,  Next: perms,  Prev: Overview,  Up: Overview
 
-example
-=======
+1.2 example
+===========
 
-   Here is a code fragment with pointers on how to use shared memory.
-The same methods are applicable to other resources.
+Here is a code fragment with pointers on how to use shared memory. The
+same methods are applicable to other resources.
 
    In a typical access sequence the creator allocates a new instance of
 the resource with the `get' system call using the IPC_CREAT flag.
@@ -103,7 +102,7 @@ creator process:
      char proc_id = 'C';
      int size = 0x5000;	/* 20 K */
      int flags = 0664 | IPC_CREAT;		/* read-only for others */
-     
+
      key = ftok ("~creator/ipckey", proc_id);
      id = shmget (key, size, flags);
      exit (0);	/* quit leaving resource allocated */
@@ -115,19 +114,19 @@ Client process:
      int id;
      key_t key;
      char proc_id = 'C';
-     
+
      key = ftok ("~creator/ipckey", proc_id);
-     
+
      id = shmget (key, 0, 004);		/* default size   */
      if (id == -1)
            perror ("shmget ...");
-     
+
      shmaddr = shmat (id, 0, SHM_RDONLY); /* attach segment for reading */
      if (shmaddr == (char *) -1)
            perror ("shmat ...");
-     
+
      local_var = *(shmaddr + 3); 	/* read segment etc. */
-     
+
      shmdt (shmaddr);		/* detach segment */
 
 When the resource is no longer needed the creator should remove it.
@@ -139,10 +138,10 @@ Creator/owner process 2:
 
 File: ipc.info,  Node: perms,  Next: syscalls,  Prev: example,  Up: Overview
 
-Permissions
-===========
+1.3 Permissions
+===============
 
-   Each resource has an associated `ipc_perm' struct which defines the
+Each resource has an associated `ipc_perm' struct which defines the
 creator, owner and access perms for the resource.
 
      struct ipc_perm
@@ -179,10 +178,10 @@ user.
 
 File: ipc.info,  Node: syscalls,  Next: Messages,  Prev: perms,  Up: Overview
 
-IPC system calls
-================
+1.4 IPC system calls
+====================
 
-   This section provides an overview of the IPC system calls. See the
+This section provides an overview of the IPC system calls. See the
 specific sections on each type of resource for details.
 
    Each type of mechanism provides a "get", "ctl" and one or more "op"
@@ -190,13 +189,13 @@ system calls that allow the user to create or procure the resource
 (get), define its behaviour or destroy it (ctl) and manipulate the
 resources (op).
 
-The "get" system calls
-----------------------
+1.4.1 The "get" system calls
+----------------------------
 
-   The `get' call typically takes a KEY and returns a numeric ID that
-is used for further access.  The ID is an index into the resource
-table. A sequence number is maintained and incremented when a resource
-is destroyed so that access using an obsolete ID is likely to fail.
+The `get' call typically takes a KEY and returns a numeric ID that is
+used for further access.  The ID is an index into the resource table. A
+sequence number is maintained and incremented when a resource is
+destroyed so that access using an obsolete ID is likely to fail.
 
    The user also specifies the permissions and other behaviour
 charecteristics for the current access. The flags are or-ed with the
@@ -226,10 +225,10 @@ resource was initialized. It does not imply exclusive access.
 
 See Also : *Note msgget::, *Note semget::, *Note shmget::.
 
-The "ctl" system calls
-----------------------
+1.4.2 The "ctl" system calls
+----------------------------
 
-   Provides or alters the information stored in the structure that
+Provides or alters the information stored in the structure that
 describes the resource indexed by ID.
 
      #include <sys/msg.h>
@@ -260,10 +259,10 @@ the user to determine or set the values of the semaphores in an array.
 
 See Also: *Note msgctl::, *Note semctl::, *Note shmctl::.
 
-The "op" system calls
----------------------
+1.4.3 The "op" system calls
+---------------------------
 
-   Used to send or receive messages, read or alter semaphore values,
+Used to send or receive messages, read or alter semaphore values,
 attach or detach shared memory segments.  The IPC_NOWAIT flag will
 cause the operation to fail with error EAGAIN if the process has to
 wait on the call.
@@ -276,10 +275,10 @@ See Also: *Note msgsnd::,*Note msgrcv::,*Note semop::,*Note shmat::,
 
 File: ipc.info,  Node: Messages,  Next: msgget,  Prev: syscalls,  Up: Top
 
-Messages
-========
+1.5 Messages
+============
 
-   A message resource is described by a struct `msqid_ds' which is
+A message resource is described by a struct `msqid_ds' which is
 allocated and initialized when the resource is created. Some fields in
 `msqid_ds' can then be altered (if desired) by invoking `msgctl'.  The
 memory used by the resource is released when it is destroyed by a
@@ -328,8 +327,8 @@ this message and free the associated struct `msg'.
 
 File: ipc.info,  Node: msgget,  Next: msgsnd,  Prev: Messages,  Up: Messages
 
-msgget
-------
+1.5.1 msgget
+------------
 
 A message queue is allocated by a msgget system call :
 
@@ -367,8 +366,8 @@ ENOMEM : A new `msqid_ds' was to be created but ... nomem.
 
 File: ipc.info,  Node: msgsnd,  Next: msgrcv,  Prev: msgget,  Up: Messages
 
-msgsnd
-------
+1.5.2 msgsnd
+------------
 
      int msgsnd (int msqid, struct msgbuf *msgp, int msgsz, int msgflg);
 
@@ -397,8 +396,8 @@ ENOMEM : Could not allocate space for header and text.
 
 File: ipc.info,  Node: msgrcv,  Next: msgctl,  Prev: msgsnd,  Up: Messages
 
-msgrcv
-------
+1.5.3 msgrcv
+------------
 
      int msgrcv (int msqid, struct msgbuf *msgp, int msgsz, long msgtyp,
      			int msgflg);
@@ -450,8 +449,8 @@ ENOMSG : msg of requested type not found and IPC_NOWAIT specified.
 
 File: ipc.info,  Node: msgctl,  Next: msglimits,  Prev: msgrcv,  Up: Messages
 
-msgctl
-------
+1.5.4 msgctl
+------------
 
      int msgctl (int msqid, int cmd, struct msqid_ds *buf);
 
@@ -475,10 +474,8 @@ message queue beyond MSGMNB.
 incremented and all waiting readers and writers are awakened.  These
 processes will then return with `errno' set to EIDRM.
 
-Errors:
-
-EPERM  : Insufficient privilege to increase the size of the queue
-(IPC_SET) or remove it (IPC_RMID).
+Errors: EPERM  : Insufficient privilege to increase the size of the
+queue (IPC_SET) or remove it (IPC_RMID).
 EACCES : Do not have permission for reading the queue (IPC_STAT).
 EFAULT : buf not accessible (IPC_STAT, IPC_SET).
 EIDRM  : msg queue was removed.
@@ -487,8 +484,8 @@ EINVAL : invalid cmd, msqid < 0 or unused.
 
 File: ipc.info,  Node: msglimits,  Next: Semaphores,  Prev: msgctl,  Up: Messages
 
-Limis on Message Resources
---------------------------
+1.5.5 Limis on Message Resources
+--------------------------------
 
 Sizeof various structures:
      msqid_ds        52   /* 1 per message  queue .. dynamic */
@@ -515,11 +512,11 @@ MSGPOOL total size in bytes of msg pool.
 
 File: ipc.info,  Node: Semaphores,  Next: semget,  Prev: msglimits,  Up: Top
 
-Semaphores
-==========
+1.6 Semaphores
+==============
 
-   Each semaphore has a value >= 0. An id provides access to an array
-of `nsems' semaphores. Operations such as read, increment or decrement
+Each semaphore has a value >= 0. An id provides access to an array of
+`nsems' semaphores. Operations such as read, increment or decrement
 semaphores in a set are performed by the `semop' call which processes
 `nsops' operations at a time. Each operation is specified in a struct
 `sembuf' described below. The operations are applied only if all of
@@ -565,8 +562,8 @@ Each semaphore is described internally by :
 
 File: ipc.info,  Node: semget,  Next: semop,  Prev: Semaphores,  Up: Semaphores
 
-semget
-------
+1.6.1 semget
+------------
 
 A semaphore array is allocated by a semget system call:
 
@@ -611,8 +608,8 @@ EACCES : (procure) do not have permission for specified access.
 
 File: ipc.info,  Node: semop,  Next: semctl,  Prev: semget,  Up: Semaphores
 
-semop
------
+1.6.2 semop
+-----------
 
 Operations on semaphore arrays are performed by calling semop :
 
@@ -676,8 +673,8 @@ ERANGE : sem_op + semval > SEMVMX for some operation.
 
 File: ipc.info,  Node: semctl,  Next: semlimits,  Prev: semop,  Up: Semaphores
 
-semctl
-------
+1.6.3 semctl
+------------
 
      int semctl (int semid, int semnum, int cmd, union semun arg);
 
@@ -721,9 +718,7 @@ The last two operate on all semaphores in the set.
    * IPC_SET : sem_perm.uid, sem_perm.gid, sem_perm.mode are updated
      from user supplied values.
 
-Errors:
-
-EACCES : do not have permission for specified access.
+Errors: EACCES : do not have permission for specified access.
 EFAULT : arg is not accessible.
 EIDRM  : The resource was removed.
 EINVAL : semid < 0 or semnum < 0 or semnum >= nsems.
@@ -733,8 +728,8 @@ ERANGE : arg.array[i].semval > SEMVMX or < 0 for some i.
 
 File: ipc.info,  Node: semlimits,  Next: Shared Memory,  Prev: semctl,  Up: Semaphores
 
-Limits on Semaphore Resources
------------------------------
+1.6.4 Limits on Semaphore Resources
+-----------------------------------
 
 Sizeof various structures:
      semid_ds    44   /* 1 per semaphore array .. dynamic */
@@ -767,10 +762,10 @@ SEMUME  maximum number of undo entries per process.
 
 File: ipc.info,  Node: Shared Memory,  Next: shmget,  Prev: semlimits,  Up: Top
 
-Shared Memory
-=============
+1.7 Shared Memory
+=================
 
-   Shared memory is distinct from the sharing of read-only code pages or
+Shared memory is distinct from the sharing of read-only code pages or
 the sharing of unaltered data pages that is available due to the
 copy-on-write mechanism. The essential difference is that the shared
 pages are dirty (in the case of Shared memory) and can be made to
@@ -805,8 +800,8 @@ calling shmctl with IPC_RMID.
 
 File: ipc.info,  Node: shmget,  Next: shmat,  Prev: Shared Memory,  Up: Shared Memory
 
-shmget
-------
+1.7.1 shmget
+------------
 
 A shared memory segment is allocated by a shmget system call:
 
@@ -853,8 +848,8 @@ ENOMEM : (allocate) Could not allocate memory for shmid_ds or pg_table.
 
 File: ipc.info,  Node: shmat,  Next: shmdt,  Prev: shmget,  Up: Shared Memory
 
-shmat
------
+1.7.2 shmat
+-----------
 
 Maps a shared segment into the process' address space.
 
@@ -905,8 +900,8 @@ ENOMEM : Could not allocate memory for descriptor or page tables.
 
 File: ipc.info,  Node: shmdt,  Next: shmctl,  Prev: shmat,  Up: Shared Memory
 
-shmdt
------
+1.7.3 shmdt
+-----------
 
      int shmdt (char *shmaddr);
 
@@ -925,8 +920,8 @@ EINVAL : No shared memory segment attached at shmaddr.
 
 File: ipc.info,  Node: shmctl,  Next: shmlimits,  Prev: shmdt,  Up: Shared Memory
 
-shmctl
-------
+1.7.4 shmctl
+------------
 
 Destroys allocated segments. Reads/Writes the control structures.
 
@@ -962,8 +957,8 @@ EPERM  : not creator, owner or super-user (IPC_SET, IPC_RMID).
 
 File: ipc.info,  Node: shmlimits,  Next: Notes,  Prev: shmctl,  Up: Shared Memory
 
-Limits on Shared Memory Resources
----------------------------------
+1.7.5 Limits on Shared Memory Resources
+---------------------------------------
 
 Limits:
    * SHMMNI  max num of shared segments system wide ... 4096.
@@ -977,23 +972,22 @@ Limits:
 
    * SHMLBA  segment low boundary address multiple.  Must be page
      aligned. SHMLBA = PAGE_SIZE.
-
-Unused or unimplemented:
+   Unused or unimplemented:
 SHMSEG : maximum number of shared segments per process.
 
 
 File: ipc.info,  Node: Notes,  Next: Top,  Prev: shmlimits,  Up: Top
 
-Miscellaneous Notes
-===================
+1.8 Miscellaneous Notes
+=======================
 
-   The system calls are mapped into one - `sys_ipc'. This should be
+The system calls are mapped into one - `sys_ipc'. This should be
 transparent to the user.
 
-Semaphore `undo' requests
--------------------------
+1.8.1 Semaphore `undo' requests
+-------------------------------
 
-   There is one sem_undo structure associated with a process for each
+There is one sem_undo structure associated with a process for each
 semaphore which was altered (with an undo request) by the process.
 `sem_undo' structures are freed only when the process exits.
 
@@ -1008,13 +1002,12 @@ applied with the IPC_NOWAIT flag in effect?  Currently  those undo
 operations which go through immediately are applied and those that
 require a wait are ignored silently.
 
-Shared memory, `malloc' and the `brk'.
---------------------------------------
+1.8.2 Shared memory, `malloc' and the `brk'.
+--------------------------------------------
 
-   Note that since this section was written the implementation was
-changed so that non-specific attaches are done in the region 1G - 1.5G.
-However much of the following is still worth thinking about so I left
-it in.
+Note that since this section was written the implementation was changed
+so that non-specific attaches are done in the region 1G - 1.5G. However
+much of the following is still worth thinking about so I left it in.
 
    On many systems, the shared memory is allocated in a special region
 of the address space ... way up somewhere. As mentioned earlier, this
@@ -1048,11 +1041,11 @@ what is really a shared memory region. For example in the case of a
 read-only attach, you will not be able to write to the overlapped
 portion.
 
-Fork, exec and exit
--------------------
+1.8.3 Fork, exec and exit
+-------------------------
 
-   On a fork, the child inherits attached shared memory segments but
-not the semaphore undo information.
+On a fork, the child inherits attached shared memory segments but not
+the semaphore undo information.
 
    In the case of an exec, the attached shared segments are detached.
 The sem undo information however remains intact.
@@ -1061,11 +1054,11 @@ The sem undo information however remains intact.
 adjust values in the undo structures are added to the relevant semvals
 if the operations are permitted. Disallowed operations are ignored.
 
-Other Features
---------------
+1.8.4 Other Features
+--------------------
 
-   These features of the current implementation are likely to be
-modified in the future.
+These features of the current implementation are likely to be modified
+in the future.
 
    The SHM_LOCK and SHM_UNLOCK flag are available (super-user) for use
 with the `shmctl' call to prevent swapping of a shared segment. The user
@@ -1088,27 +1081,27 @@ And more thanks to Bruno.
 
 Tag Table:
 Node: Top469
-Node: Overview1170
-Node: example3004
-Node: perms4506
-Node: syscalls6066
-Node: Messages9519
-Node: msgget11554
-Node: msgsnd12938
-Node: msgrcv13906
-Node: msgctl15605
-Node: msglimits16814
-Node: Semaphores17691
-Node: semget19650
-Node: semop21203
-Node: semctl23767
-Node: semlimits25526
-Node: Shared Memory26668
-Node: shmget28153
-Node: shmat29948
-Node: shmdt31985
-Node: shmctl32518
-Node: shmlimits33649
-Node: Notes34298
+Node: Overview1171
+Node: example3013
+Node: perms4490
+Node: syscalls6055
+Node: Messages9540
+Node: msgget11580
+Node: msgsnd12976
+Node: msgrcv13956
+Node: msgctl15667
+Node: msglimits16887
+Node: Semaphores17776
+Node: semget19740
+Node: semop21305
+Node: semctl23881
+Node: semlimits25651
+Node: Shared Memory26805
+Node: shmget28295
+Node: shmat30102
+Node: shmdt32151
+Node: shmctl32696
+Node: shmlimits33839
+Node: Notes34502
 
 End Tag Table

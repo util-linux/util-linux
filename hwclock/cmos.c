@@ -47,11 +47,10 @@
 #include <unistd.h>		/* for geteuid() */
 #include <fcntl.h>		/* for O_RDWR */
 #include <errno.h>
-#include "../defines.h"		/* for HAVE_sys_io_h */
 #include "nls.h"
 
 #if defined(__i386__)
-#ifdef HAVE_sys_io_h
+#ifdef HAVE_SYS_IO_H
 #include <sys/io.h>
 #else
 #include <asm/io.h>		/* for inb, outb */
@@ -334,7 +333,7 @@ unsigned long cmos_write(unsigned long reg, unsigned long val)
   return 0;
 }
 
-unsigned long cmos_set_time(unsigned long arg)
+static unsigned long cmos_set_time(unsigned long arg)
 {
   unsigned char save_control, save_freq_select, pmbit = 0;
   struct tm tm = *(struct tm *) arg;

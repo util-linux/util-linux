@@ -1,0 +1,103 @@
+.\" chrt(1) manpage
+.\"
+.\" Copyright (C) 2004 Robert Love
+.\"
+.\" This is free documentation; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License as
+.\" published by the Free Software Foundation; either version 2 of
+.\" the License.
+.\"
+.\" The GNU General Public License's references to "object code"
+.\" and "executables" are to be interpreted as the output of any
+.\" document formatting or typesetting system, including
+.\" intermediate and printed output.
+.\"
+.\" This manual is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public
+.\" License along with this manual; if not, write to the Free
+.\" Software Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA 02111,
+.\" USA.
+.\"
+.\" 2002-05-11 Robert Love <rml@tech9.net>
+.\" 	Initial version
+.\"
+.TH CHRT "1" "Apr 2003" "schedutils" "Linux User's Manual"
+.SH NAME
+chrt \- manipulate real-time attributes of a process
+.SH SYNOPSIS
+.B chrt
+[\fIoptions\fR] [\fIprio\fR] [\fIpid\fR | \fIcommand\fR [\fIarg\fR]...]
+.SH DESCRIPTION
+.PP
+.BR chrt (1)
+sets or retrieves the real-time scheduling attributes of an existing PID or
+runs COMMAND with the given attributes.  Both policy (one of
+.BR SCHED_FIFO ,
+.BR SCHED_RR ,
+or
+.BR SCHED_OTHER )
+and priority can be set and retrieved.
+.SH OPTIONS
+.TP
+.B -p, --pid
+operate on an existing PID and do not launch a new task
+.TP
+
+.TP
+.B -f, --fifo
+set scheduling policy to
+.BR SCHED_FIFO
+.TP
+.B -m, --max
+show minimum and maximum valid priorities, then exit
+.TP
+.B -o, --other
+set policy scheduling policy to
+.BR SCHED_OTHER
+.TP
+.B -r, --rr
+set scheduling policy to
+.BR SCHED_RR
+(the default)
+.TP
+.B -h, --help
+display usage information and exit
+.TP
+.B -v, --version
+output version information and exit
+.SH USAGE
+.TP
+The default behavior is to run a new command::
+chrt [prio] -- [command] [arguments]
+.TP
+You can also retrieve the real-time attributes of an existing task:
+chrt -p [pid]
+.TP
+Or set them:
+chrt -p [prio] [pid]
+.SH PERMISSIONS
+A user must possess
+.BR CAP_SYS_NICE
+to change the scheduling attributes of a process.  Any user can retrieve the
+scheduling information.
+.SH AUTHOR
+Written by Robert M. Love.
+.SH "REPORTING BUGS"
+Report bugs to <rml@tech9.net>.
+.SH COPYRIGHT
+Copyright \(co 2004 Robert M. Love
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH "SEE ALSO"
+.BR taskset (1),
+.BR nice (1),
+.BR renice (1)
+.sp
+See
+.BR sched_setscheduler (2)
+for a description of the Linux scheduling scheme.

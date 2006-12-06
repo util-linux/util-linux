@@ -40,13 +40,13 @@
 #include "nls.h"
 #include "env.h"
 
-#ifdef WITH_SELINUX
+#ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
 #include <selinux/av_permissions.h>
 #include "selinux_utils.h"
 #endif
 
-#if REQUIRE_PASSWORD && USE_PAM
+#if defined(REQUIRE_PASSWORD) && defined(HAVE_SECURITY_PAM_MISC_H)
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
 #endif
@@ -90,7 +90,7 @@ int main (int argc, char **argv) {
     struct finfo oldf, newf;
     boolean interactive;
     int status;
-#if REQUIRE_PASSWORD && USE_PAM
+#if defined(REQUIRE_PASSWORD) && defined(HAVE_SECURITY_PAM_MISC_H)
     pam_handle_t *pamh = NULL;
     int retcode;
     struct pam_conv conv = { misc_conv, NULL };
@@ -142,7 +142,7 @@ int main (int argc, char **argv) {
        exit(1);
     }
 
-#ifdef WITH_SELINUX
+#ifdef HAVE_LIBSELINUX
     if (is_selinux_enabled()) {
       if(uid == 0) {
 	if (checkAccess(oldf.username,PASSWD__CHFN)!=0) {
@@ -172,8 +172,8 @@ int main (int argc, char **argv) {
 
     printf (_("Changing finger information for %s.\n"), oldf.username);
 
-#if REQUIRE_PASSWORD
-# if USE_PAM
+#ifdef REQUIRE_PASSWORD
+#ifdef HAVE_SECURITY_PAM_MISC_H
     if(uid != 0) {
         if (pam_start("chfn", oldf.username, &conv, &pamh)) {
 	    puts(_("Password error."));
@@ -197,7 +197,7 @@ int main (int argc, char **argv) {
         /* no need to establish a session; this isn't a session-oriented
          * activity... */
     }
-# else /* USE_PAM */
+# else /* HAVE_SECURITY_PAM_MISC_H */
     /* require password, unless root */
     if(uid != 0 && oldf.pw->pw_passwd && oldf.pw->pw_passwd[0]) {
 	char *pwdstr = getpass(_("Password: "));
@@ -207,7 +207,7 @@ int main (int argc, char **argv) {
 	    exit(1);
 	}
     }
-# endif /* USE_PAM */
+# endif /* HAVE_SECURITY_PAM_MISC_H */
 #endif /* REQUIRE_PASSWORD */
 
 
@@ -251,7 +251,7 @@ static boolean parse_argv (argc, argv, pinfo)
 	if (c == -1) break;
 	/* version?  output version and exit. */
 	if (c == 'v') {
-	    printf ("%s\n", util_linux_version);
+	    printf ("%s\n", PACKAGE_STRING);
 	    exit (0);
 	}
 	if (c == 'u') {

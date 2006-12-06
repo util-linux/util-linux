@@ -1,4 +1,4 @@
-#ifndef HAVE_BLKID
+#ifndef HAVE_LIBBLKID
 /*
  * Get label. Used by mount, umount and swapon.
  */

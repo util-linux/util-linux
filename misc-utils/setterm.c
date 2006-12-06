@@ -102,11 +102,13 @@
 #define NCURSES_CONST const	/* define before including term.h */
 #endif
 #include <term.h>
-#if NCH
+ 
+#ifdef HAVE_NCURSES_H
 #include <ncurses.h>
-#else
-#include <curses.h>
+#elif defined(HAVE_NCURSES_NCURSES_H) 
+#include <ncurses/ncurses.h>
 #endif
+
 #include <sys/param.h>		/* for MAXPATHLEN */
 #include <sys/ioctl.h>
 #include <sys/time.h>

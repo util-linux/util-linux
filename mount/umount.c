@@ -20,7 +20,6 @@
 #include "env.h"
 #include "nls.h"
 
-#ifdef HAVE_NFS
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <netdb.h>
@@ -29,7 +28,6 @@
 #include <rpc/pmap_prot.h>
 #include "nfsmount.h"
 #include <arpa/inet.h>
-#endif
 
 #if defined(MNT_FORCE) && !defined(__sparc__) && !defined(__arm__)
 /* Interesting ... it seems libc knows about MNT_FORCE and presumably
@@ -146,7 +144,6 @@ check_special_umountprog(const char *spec, const char *node,
 	return 0;
 }
 
-#ifdef HAVE_NFS
 static int xdr_dir(XDR *xdrsp, char *dirp)
 {
       return (xdr_string(xdrsp, &dirp, MNTPATHLEN));
@@ -238,7 +235,6 @@ nfs_umount_rpc_call(const char *spec, const char *opts)
 
       return 0;
 }
-#endif /* HAVE_NFS */
 
 /* complain about a failed umount */
 static void complain(int err, const char *dev) {
@@ -293,12 +289,10 @@ umount_one (const char *spec, const char *node, const char *type,
 	if (check_special_umountprog(spec, node, type, &status))
 		return status;
 
-#ifdef HAVE_NFS
 	/* Ignore any RPC errors, so that you can umount the filesystem
 	   if the server is down.  */
 	if (strcasecmp(type, "nfs") == 0)
 		nfs_umount_rpc_call(spec, opts);
-#endif
  
 	umnt_err = umnt_err2 = 0;
 	if (lazy) {
@@ -480,7 +474,6 @@ umount_all (char *types, char *test_opts) {
      return errors;
 }
 
-extern char version[];
 static struct option longopts[] =
 {
   { "all", 0, 0, 'a' },
@@ -697,7 +690,7 @@ main (int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf ("umount: %s\n", version);
+			printf ("umount: util-linux-%s\n", VERSION);
 			exit (0);
 		case 't':		/* specify file system type */
 			types = optarg;
@@ -714,7 +707,7 @@ main (int argc, char *argv[]) {
 
 	if (getuid () != geteuid ()) {
 		suid = 1;
-		if (all || types || nomtab || force || remount)
+		if (all || types || nomtab || force)
 			die (2, _("umount: only root can do that"));
 	}
 

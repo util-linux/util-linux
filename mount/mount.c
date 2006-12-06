@@ -839,7 +839,6 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
    * Also nfs requires a separate program, but it is built in.
    */
   if (!fake && types && streq (types, "nfs")) {
-#ifdef HAVE_NFS
 retry_nfs:
     mnt_err = nfsmount (spec, node, &flags, &extra_opts, &mount_opts,
 			&nfs_mount_version, bg);
@@ -847,10 +846,6 @@ retry_nfs:
 	res = mnt_err;
 	goto out;
     }
-#else
-    die (EX_SOFTWARE, _("mount: this version was compiled "
-		      "without support for the type `nfs'"));
-#endif
   }
 
   block_signals (SIG_BLOCK);
@@ -884,7 +879,6 @@ retry_nfs:
 
   block_signals (SIG_UNBLOCK);
 
-#ifdef HAVE_NFS
   if (mnt_err && types && streq (types, "nfs")) {
       if (nfs_mount_version == 4 && mnt_err != EBUSY && mnt_err != ENOENT) {
 	  if (verbose)
@@ -893,7 +887,6 @@ retry_nfs:
 	  goto retry_nfs;
       }
   }
-#endif
 
   /* Mount failed, complain, but don't die.  */
 
@@ -1308,14 +1301,12 @@ do_mount_all (char *types, char *options, char *test_opts) {
 						DISKMAJOR(statbuf.st_rdev));
 					g = major;
 				}
-#ifdef HAVE_NFS
 				if (strcmp(mc->m.mnt_type, "nfs") == 0) {
 					g = xstrdup(mc->m.mnt_fsname);
 					colon = strchr(g, ':');
 					if (colon)
 						*colon = '\0';
 				}
-#endif
 			}
 			if (g) {
 				for (cp = childhead.nxt; cp; cp = cp->nxt)
@@ -1389,7 +1380,6 @@ do_mount_all (char *types, char *options, char *test_opts) {
 	return status;
 }
 
-extern char version[];
 static struct option longopts[] = {
 	{ "all", 0, 0, 'a' },
 	{ "fake", 0, 0, 'f' },
@@ -1550,7 +1540,7 @@ main(int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf ("mount: %s\n", version);
+			printf ("mount: util-linux-%s\n", VERSION);
 			exit (0);
 		case 'w':		/* mount read/write */
 			readwrite = 1;

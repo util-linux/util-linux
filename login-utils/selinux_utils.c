@@ -1,6 +1,6 @@
-#ifdef WITH_SELINUX
 #include <sys/types.h>
 #include <stdio.h>
+#include <string.h>
 #include <selinux/selinux.h>
 #include <selinux/flask.h>
 #include <selinux/av_permissions.h>
@@ -52,4 +52,3 @@ int setupDefaultContext(char *orig_file) {
   }
   return 0;
 }
-#endif

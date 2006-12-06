@@ -81,7 +81,7 @@ print_usage(char *progname) {
 
 static void
 print_version(char *progname) {
-  printf("%s %s\n", progname, UTIL_LINUX_VERSION);
+  printf("%s %s\n", progname, VERSION);
 }
 
 static void *

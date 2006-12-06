@@ -21,8 +21,7 @@
 #include "nls.h"
 
 #include <endian.h>
-#include "../defines.h"		/* for HAVE_scsi_h */
-#ifdef HAVE_scsi_h
+#ifdef HAVE_SCSI_SCSI_H
 #define u_char	unsigned char
 #include <scsi/scsi.h>		/* SCSI_IOCTL_GET_IDLUN */
 #undef u_char

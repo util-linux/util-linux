@@ -46,7 +46,7 @@
 #define ETC_FILESYSTEMS		"/etc/filesystems"
 #define PROC_FILESYSTEMS	"/proc/filesystems"
 
-#ifdef HAVE_BLKID
+#ifdef HAVE_LIBBLKID
 
 char *
 do_guess_fstype(const char *device) 

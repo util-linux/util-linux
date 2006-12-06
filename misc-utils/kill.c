@@ -186,7 +186,7 @@ int main (int argc, char *argv[])
 	}
 	if (! strcmp (arg, "-v") || ! strcmp (arg, "-V") ||
 	    ! strcmp (arg, "--version")) {
-	    printf(_("%s from %s\n"), progname, util_linux_version);
+	    printf(_("%s from %s%s\n"), progname, "util-linux-", VERSION);
 	    return 0;
 	}
 	if (! strcmp (arg, "-a")) {

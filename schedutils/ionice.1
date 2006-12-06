@@ -1,0 +1,71 @@
+.TH ionice "1" "August 2005" ionice
+.SH NAME
+ionice \- get/set program io scheduling class and priority
+.SH SYNOPSIS
+.B ionice
+[\fI-c\fR] \fI[-n\fR] [\fI-p\fR] [COMMAND [ARG...]]
+
+.SH DESCRIPTION
+This program sets the io scheduling class and priority for a program. As of
+this writing, Linux supports 3 scheduling classes:
+
+\fBIdle\fR.
+A program running with idle io priority will only get disk time when no other
+program has asked for disk io for a defined grace period. The impact of idle
+io processes on normal system activity should be zero. This scheduling
+class does not take a priority argument.
+
+\fBBest effort\fR.
+This is the default scheduling class for any process that hasn't asked for
+a specific io priority. Programs inherit the CPU nice setting for io
+priorities. This class takes a priority argument from \fI0-7\fR, with lower
+number being higher priority. Programs running at the same best effort
+priority are served in a round-robin fashion.
+
+\fBReal time\fR.
+The RT scheduling class is given first access to the disk, regardless of
+what else is going on in the system. Thus the RT class needs to be used with
+some care, as it can starve other processes. As with the best effort class,
+8 priority levels are defined denoting how big a time slice a given process
+will receive on each scheduling window.
+
+If no arguments or just \fI-p\fR is given, \fIionice\fR will query the
+current io scheduling class and priority for that process.
+
+.SH OPTIONS
+.LP
+.TP 7
+\fB-c\fP
+The scheduling class. 1 for real time, 2 for best-effort, 3 for idle.
+.TP 7
+\fB-n\fP
+The scheduling class data. This defines the class data, if the class
+accepts an argument. For real time and best-effort, \fI0-7\fR is valid
+data.
+.TP 7
+\fB-p\fP
+Pass in a process pid to change an already running process. If this argument
+is not given, \fBionice\fP will run the listed program with the given
+parameters.
+
+.SH EXAMPLES
+.LP
+.TP 7
+# \fBionice\fP -c3 -p89
+.TP 7
+Sets process with PID 89 as an idle io process.
+.TP 7
+# \fBionice\fP -c2 -n0 bash
+.TP 7
+Runs 'bash' as a best-effort program with highest priority.
+.TP 7
+# \fBionice\fP -p89
+.TP 7
+Returns the class and priority of the process with PID 89.
+
+.SH NOTES
+Linux supports io scheduling priorities and classes since 2.6.13 with the CFQ
+io scheduler.
+
+.SH AUTHORS
+Jens Axboe <axboe@suse.de>

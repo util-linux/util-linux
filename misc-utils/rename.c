@@ -76,8 +76,8 @@ main(int argc, char **argv) {
 
 	if (argc == 2) {
 		if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
-			printf(_("%s from %s\n"),
-			       progname, util_linux_version);
+			printf(_("%s from %s%s\n"),
+			       progname, "util-linux-", VERSION);
 			return 0;
 		}
 	}

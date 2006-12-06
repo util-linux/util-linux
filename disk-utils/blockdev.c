@@ -171,7 +171,7 @@ main(int argc, char **argv) {
 
 	/* -V not together with commands */
 	if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
-		printf("%s from %s\n", progname, util_linux_version);
+		printf("%s from %s%s\n", progname, "util-linux-", VERSION);
 		exit(0);
 	}
 

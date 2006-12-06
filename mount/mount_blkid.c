@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include "mount_blkid.h"
 
-#ifdef HAVE_BLKID
+#ifdef HAVE_LIBBLKID
 
 blkid_cache blkid;
 

@@ -33,8 +33,6 @@
  */
 
 #define PROGNAME "sfdisk"
-#define VERSION "3.08"
-#define DATE "040824"
 
 #include <stdio.h>
 #include <stdlib.h>		/* atoi, free */
@@ -1725,7 +1723,7 @@ read_stdin(unsigned char **fields, unsigned char *line, int fieldssize, int line
     fno = 0;
 
     /* read a line from stdin */
-    lp = fgets(line+2, linesize, stdin);
+    lp = fgets(line+2, linesize-2, stdin);
     if (lp == NULL) {
 	eof = 1;
 	return RD_EOF;
@@ -2299,9 +2297,7 @@ read_input(char *dev, int interactive, struct disk_desc *z) {
  */
 
 static void version(void) {
-    printf("%s %s %s (aeb@cwi.nl, %s) from util-linux-"
-	   UTIL_LINUX_VERSION "\n",
-	   PROGNAME, _("version"), VERSION, DATE);
+    printf("sfdisk from util-linux-%s", VERSION);
 }
 
 static void

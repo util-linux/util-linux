@@ -3,6 +3,9 @@
 #include <fcntl.h>
 #include <stdlib.h>
 #include <sys/ioctl.h>
+#ifdef HAVE_LINUX_COMPILER_H
+#include <linux/compiler.h>
+#endif
 #include <linux/blkpg.h>
 
 int

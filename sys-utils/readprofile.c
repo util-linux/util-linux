@@ -195,7 +195,7 @@ main(int argc, char **argv) {
 			break;
 		case 'V':
 			printf(_("%s version %s\n"), prgname,
-			       UTIL_LINUX_VERSION);
+			       VERSION);
 			exit(0);
 		default:
 			usage();

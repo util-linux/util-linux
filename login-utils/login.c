@@ -77,13 +77,7 @@
  * login -f name	(for pre-authenticated login: datakit, xterm, etc.)
  */
 
-/* #define TESTING */
-
-#ifdef TESTING
-#include "param.h"
-#else
 #include <sys/param.h>
-#endif
 
 #include <stdio.h>
 #include <ctype.h>
@@ -118,22 +112,12 @@
 #include "xstrncpy.h"
 #include "nls.h"
 
-#ifdef __linux__
-#  include <sys/sysmacros.h>
-#  include <linux/major.h>
-#endif
+#include <sys/sysmacros.h>
+#include <linux/major.h>
 
-#ifdef TESTING
-#  include "utmp.h"
-#else
-#  include <utmp.h>
-#endif
+#include <utmp.h>
 
-#ifdef SHADOW_PWD
-#  include <shadow.h>
-#endif
-
-#ifdef USE_PAM
+#ifdef HAVE_SECURITY_PAM_MISC_H
 #  include <security/pam_appl.h>
 #  include <security/pam_misc.h>
 #  define PAM_MAX_LOGIN_TRIES	3
@@ -149,31 +133,13 @@
 }
 #endif
 
-#ifndef __linux__
-#  include <tzfile.h>
-#endif
 #include <lastlog.h>
 
 #define SLEEP_EXIT_TIMEOUT 5
 
-#ifdef __linux__
-#define DO_PS_FIDDLING
-#endif
-
-#ifdef DO_PS_FIDDLING
 #include "setproctitle.h"
-#endif
 
-#if 0
-/* from before we had a lastlog.h file in linux */
-struct  lastlog
-{ long ll_time;
-  char ll_line[12];
-  char ll_host[16];
-};
-#endif
-
-#ifndef USE_PAM
+#ifndef HAVE_SECURITY_PAM_MISC_H
 static void getloginname (void);
 static void checknologin (void);
 static int rootterm (char *ttyn);
@@ -182,17 +148,6 @@ static void timedout (int);
 static void sigint (int);
 static void motd (void);
 static void dolastlog (int quiet);
-
-#ifdef CRYPTOCARD
-#include "cryptocard.h"
-#endif
-
-#ifdef	KERBEROS
-#include <kerberos/krb.h>
-#include <sys/termios.h>
-char	realm[REALM_SZ];
-int	kerror = KSUCCESS, notickets = 1;
-#endif
 
 #ifdef USE_TTY_GROUP
 #  define TTY_MODE 0620
@@ -210,14 +165,11 @@ int	kerror = KSUCCESS, notickets = 1;
  * This bounds the time given to login.  Not a define so it can
  * be patched on machines where it's too small.
  */
-#ifndef __linux__
-int	timeout = 300;
-#else
-int     timeout = 60;		/* used in cryptocard.c */
-#endif
+int     timeout = 60;
 
-struct	passwd *pwd;		/* used in cryptocard.c */
-#if USE_PAM
+struct passwd *pwd;
+
+#ifdef HAVE_SECURITY_PAM_MISC_H
 static struct passwd pwdcopy;
 #endif
 char    hostaddress[4];		/* used in checktty.c */
@@ -226,16 +178,6 @@ static char	*username, *tty_name, *tty_number;
 static char	thishost[100];
 static int	failures = 1;
 static pid_t	pid;
-
-#ifndef __linux__
-struct	sgttyb sgttyb;
-struct	tchars tc = {
-	CINTR, CQUIT, CSTART, CSTOP, CEOT, CBRK
-};
-struct	ltchars ltc = {
-	CSUSP, CDSUSP, CRPRNT, CFLUSH, CWERASE, CLNEXT
-};
-#endif
 
 /* Nice and simple code provided by Linus Torvalds 16-Feb-93 */
 /* Nonblocking stuff by Maciej W. Rozycki, macro@ds2.pg.gda.pl, 1999.
@@ -288,10 +230,10 @@ check_ttyname(char *ttyn) {
 	}
 }
 
+#ifdef LOGIN_CHOWN_VCS
 /* true if the filedescriptor fd is a console tty, very Linux specific */
 static int
 consoletty(int fd) {
-#ifdef __linux__
     struct stat stb;
 
     if ((fstat(fd, &stb) >= 0) 
@@ -299,11 +241,11 @@ consoletty(int fd) {
 	&& (minor(stb.st_rdev) < 64)) {
 	return 1;
     }
-#endif
     return 0;
 }
+#endif
 
-#if USE_PAM
+#ifdef HAVE_SECURITY_PAM_MISC_H
 /*
  * Log failed login attempts in _PATH_BTMP if that exists.
  * Must be called only with username the name of an actual user.
@@ -339,11 +281,11 @@ logbtmp(const char *line, const char *username, const char *hostname) {
 		if (hostaddress[0])
 			memcpy(&ut.ut_addr, hostaddress, sizeof(ut.ut_addr));
 	}
-#ifdef HAVE_updwtmp		/* bad luck for ancient systems */
+#if HAVE_UPDWTMP		/* bad luck for ancient systems */
 	updwtmp(_PATH_BTMP, &ut);
 #endif
 }
-#endif	/* USE_PAM */
+#endif	/* HAVE_SECURITY_PAM_MISC_H */
 
 int
 main(int argc, char **argv)
@@ -361,7 +303,7 @@ main(int argc, char **argv)
     char *childArgv[10];
     char *buff;
     int childArgc = 0;
-#ifdef USE_PAM
+#ifdef HAVE_SECURITY_PAM_MISC_H
     int retcode;
     pam_handle_t *pamh = NULL;
     struct pam_conv conv = { misc_conv, NULL };
@@ -369,7 +311,7 @@ main(int argc, char **argv)
 #else
     char *salt, *pp;
 #endif
-#ifdef CHOWNVCS
+#ifdef LOGIN_CHOWN_VCS
     char vcsn[20], vcsan[20];
 #endif
 
@@ -385,12 +327,7 @@ main(int argc, char **argv)
     textdomain(PACKAGE);
     
     setpriority(PRIO_PROCESS, 0, 0);
-#ifdef HAVE_QUOTA
-    quota(Q_SETUID, 0, 0, 0);
-#endif
-#ifdef DO_PS_FIDDLING
     initproctitle(argc, argv);
-#endif
     
     /*
      * -p is used by getty to tell login not to destroy the environment
@@ -484,7 +421,7 @@ main(int argc, char **argv)
 	tty_number = p;
     }
 
-#ifdef CHOWNVCS
+#ifdef LOGIN_CHOWN_VCS
     /* find names of Virtual Console devices, for later mode change */
     snprintf(vcsn, sizeof(vcsn), "/dev/vcs%s", tty_number);
     snprintf(vcsan, sizeof(vcsan), "/dev/vcsa%s", tty_number);
@@ -526,7 +463,7 @@ main(int argc, char **argv)
     fprintf(stderr,"\033(K");
 #endif
 
-#ifdef USE_PAM
+#ifdef HAVE_SECURITY_PAM_MISC_H
     /*
      * username is initialized to NULL
      * and if specified on the command line it is set.
@@ -689,7 +626,7 @@ main(int argc, char **argv)
     retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED);
     PAM_FAIL_CHECK;
 
-#else /* ! USE_PAM */
+#else /* ! HAVE_SECURITY_PAM_MISC_H */
 
     for (cnt = 0;; ask = 1) {
 
@@ -823,33 +760,11 @@ main(int argc, char **argv)
 	    sleep((unsigned int)((cnt - 3) * 5));
 	}
     }
-#endif /* !USE_PAM */
+#endif /* !HAVE_SECURITY_PAM_MISC_H */
     
     /* committed to login -- turn off timeout */
     alarm((unsigned int)0);
     
-#ifdef HAVE_QUOTA
-    if (quota(Q_SETUID, pwd->pw_uid, 0, 0) < 0 && errno != EINVAL) {
-	switch(errno) {
-	  case EUSERS:
-	    fprintf(stderr,
-		    _("Too many users logged on already.\nTry again later.\n"));
-	    break;
-	  case EPROCLIM:
-	    fprintf(stderr,
-		    _("You have too many processes running.\n"));
-	    break;
-	  default:
-	    perror("quota (Q_SETUID)");
-	}
-	sleepexit(0);		/* %% */
-    }
-#endif
-    
-    /* paranoia... */
-#ifdef SHADOW_PWD
-    endspent();
-#endif
     endpwent();
     
     /* This requires some explanation: As root we may not be able to
@@ -943,7 +858,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	pututline(&ut);
 	endutent();
 
-#ifdef HAVE_updwtmp
+#if HAVE_UPDWTMP
 	updwtmp(_PATH_WTMP, &ut);
 #else
 #if 0
@@ -982,7 +897,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	  (gr = getgrnam(TTYGRPNAME)) ? gr->gr_gid : pwd->pw_gid);
     chmod(ttyn, TTY_MODE);
 
-#ifdef CHOWNVCS
+#ifdef LOGIN_CHOWN_VCS
     /* if tty is one of the VC's then change owner and mode of the 
        special /dev/vcs devices as well */
     if (consoletty(0)) {
@@ -994,10 +909,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
 #endif
 
     setgid(pwd->pw_gid);
-    
-#ifdef HAVE_QUOTA
-    quota(Q_DOWARN, pwd->pw_uid, (dev_t)-1, 0);
-#endif
     
     if (*pwd->pw_shell == '\0')
       pwd->pw_shell = _PATH_BSHELL;
@@ -1041,7 +952,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
        */
     setenv("LOGNAME", pwd->pw_name, 1);
 
-#ifdef USE_PAM
+#ifdef HAVE_SECURITY_PAM_MISC_H
     {
 	int i;
 	char ** env = pam_getenvlist(pamh);
@@ -1055,9 +966,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
     }
 #endif
 
-#ifdef DO_PS_FIDDLING
     setproctitle("login", username);
-#endif
     
     if (!strncmp(tty_name, "ttyS", 4))
       syslog(LOG_INFO, _("DIALUP AT %s BY %s"), tty_name, pwd->pw_name);
@@ -1083,7 +992,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
     if (!quietlog) {
 	motd();
 
-#ifdef DO_STAT_MAIL
+#ifdef LOGIN_STAT_MAIL
 	/*
 	 * This turns out to be a bad idea: when the mail spool
 	 * is NFS mounted, and the NFS connection hangs, the
@@ -1109,7 +1018,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
     signal(SIGQUIT, SIG_DFL);
     signal(SIGTSTP, SIG_IGN);
 
-#ifdef USE_PAM
+#ifdef HAVE_SECURITY_PAM_MISC_H
     /*
      * We must fork before setuid() because we need to call
      * pam_close_session() as root.
@@ -1215,7 +1124,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
     exit(0);
 }
 
-#ifndef USE_PAM
+#ifndef HAVE_SECURITY_PAM_MISC_H
 static void
 getloginname(void) {
     int ch, cnt, cnt2;
@@ -1293,7 +1202,7 @@ timedout(int sig) {
 	timedout2(0);
 }
 
-#ifndef USE_PAM
+#ifndef HAVE_SECURITY_PAM_MISC_H
 int
 rootterm(char * ttyn)
 { 
@@ -1323,7 +1232,7 @@ rootterm(char * ttyn)
   	}
     }
 }
-#endif /* !USE_PAM */
+#endif /* !HAVE_SECURITY_PAM_MISC_H */
 
 jmp_buf motdinterrupt;
 
@@ -1348,7 +1257,7 @@ sigint(int sig) {
     longjmp(motdinterrupt, 1);
 }
 
-#ifndef USE_PAM				/* PAM takes care of this */
+#ifndef HAVE_SECURITY_PAM_MISC_H			/* PAM takes care of this */
 void
 checknologin(void) {
     int fd, nchars;

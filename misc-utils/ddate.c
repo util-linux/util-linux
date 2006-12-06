@@ -62,7 +62,6 @@
 #include <time.h>
 #include <stdio.h>
 #include "nls.h"
-#include "../defines.h"		/* for util-linux-version */
 
 #ifndef __GNUC__
 #define inline /* foo */
@@ -177,7 +176,7 @@ main (int argc, char *argv[]) {
 	case '-': 
 	    switch(argv[pi][1]) {
 	    case 'V':
-		printf(_("%s from %s\n"), progname, util_linux_version);
+		printf(_("%s from %s%s\n"), progname, "util-linux-", VERSION);
 	    default: goto usage;
 	    }
 	default: goto thud;

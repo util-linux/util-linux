@@ -27,8 +27,10 @@
 #include "fdisksgilabel.h"
 #include "fdiskaixlabel.h"
 
-#include "../defines.h"
-#ifdef HAVE_blkpg_h
+#ifdef HAVE_LINUX_COMPILER_H
+#include <linux/compiler.h>
+#endif
+#ifdef HAVE_LINUX_BLKPG_H
 #include <linux/blkpg.h>
 #endif
 
@@ -2515,7 +2517,7 @@ main(int argc, char **argv) {
 			break;
 		case 'V':
 		case 'v':
-			printf("fdisk v" UTIL_LINUX_VERSION "\n");
+			printf("fdisk v" VERSION "\n");
 			exit(0);
 		default:
 			fatal(usage);

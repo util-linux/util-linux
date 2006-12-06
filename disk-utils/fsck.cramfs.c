@@ -51,7 +51,6 @@
 #include <sys/sysmacros.h>	/* for major, minor */
 
 #include "cramfs.h"
-#include "../defines.h"		/* for HAVE_lchown */
 #include "nls.h"
 
 #define BLKGETSIZE _IO(0x12,96) /* return device size */
@@ -205,10 +204,8 @@ static int uncompress_block(void *src, int len)
 	return stream.total_out;
 }
 
-#ifdef HAVE_lchown
-#define my_lchown lchown
-#else
-#define my_lchown chown
+#if !HAVE_LCHOWN
+#define lchown chown
 #endif
 
 static void change_file_status(char *path, struct cramfs_inode *i)
@@ -216,7 +213,7 @@ static void change_file_status(char *path, struct cramfs_inode *i)
 	struct utimbuf epoch = { 0, 0 };
 
 	if (euid == 0) {
-		if (my_lchown(path, i->uid, i->gid) < 0) {
+		if (lchown(path, i->uid, i->gid) < 0) {
 			perror(path);
 			exit(8);
 		}

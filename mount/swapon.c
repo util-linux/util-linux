@@ -34,7 +34,6 @@ int priority = -1;	/* non-prioritized swap by default */
 /* If true, don't complain if the device/file doesn't exist */
 int ifexists = 0;
 
-extern char version[];
 char *progname;
 
 static struct option longswaponopts[] = {
@@ -394,7 +393,7 @@ main_swapon(int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf("%s: %s\n", progname, version);
+			printf("%s: util-linux-%s\n", progname, VERSION);
 			exit(0);
 		case 0:
 			break;
@@ -446,7 +445,7 @@ main_swapoff(int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf("%s: %s\n", progname, version);
+			printf("%s: util-linux-%s\n", progname, VERSION);
 			exit(0);
 		case 'L':
 			addl(optarg);

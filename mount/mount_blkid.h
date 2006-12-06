@@ -1,4 +1,4 @@
-#ifdef HAVE_BLKID
+#ifdef HAVE_LIBBLKID
 #include <blkid/blkid.h>
 extern blkid_cache blkid;
 #endif

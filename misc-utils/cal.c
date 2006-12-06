@@ -66,15 +66,15 @@
 #include <locale.h>
 #include "errs.h"
 #include "nls.h"
-#include "../defines.h"
 
-#if defined(HAVE_ncurses)
+#if defined(HAVE_NCURSES)
 
-#if NCH
+#ifdef HAVE_NCURSES_H
 #include <ncurses.h>
-#else
-#include <curses.h>
+#elif defined(HAVE_NCURSES_NCURSES_H)
+#include <ncurses/ncurses.h>
 #endif
+
 #include <term.h>                       /* include after <curses.h> */
 
 static void
@@ -92,7 +92,7 @@ my_tgetstr(char *s, char *ss) {
      return tigetstr(ss);
 }
 
-#elif defined(HAVE_termcap)
+#elif defined(HAVE_LIBTERMCAP)
 
 #include <termcap.h>
 
@@ -119,7 +119,7 @@ my_tgetstr(char *s, char *ss) {
 const char	*term="";
 const char	*Senter="", *Sexit="";/* enter and exit standout mode */
 
-#ifdef HAVE_langinfo_h
+#ifdef HAVE_LANGINFO_H
 # include <langinfo.h>
 #else
 # include <localeinfo.h>	/* libc4 only */
@@ -255,7 +255,7 @@ main(int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-#if defined(HAVE_ncurses) || defined(HAVE_termcap)
+#if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
 	if ((term = getenv("TERM"))) {
 		int ret;
 		my_setupterm(term, 1, &ret);
@@ -283,7 +283,7 @@ main(int argc, char **argv) {
  * At some future time this may become -s for Sunday, -m for Monday,
  * no option for glibc-determined locale-dependent version.
  */
-#ifdef HAVE_langinfo_h
+#ifdef HAVE_LANGINFO_H
 	week1stday = (int)(nl_langinfo(_NL_TIME_FIRST_WEEKDAY))[0];
 #endif
 #endif
@@ -310,8 +310,8 @@ main(int argc, char **argv) {
 			yflag = 1;
 			break;
 		case 'V':
-			printf(_("%s from %s\n"),
-			       progname, util_linux_version);
+			printf(_("%s from %s%s\n"),
+			       progname, "util-linux-", VERSION);
 			return 0;
 		case '?':
 		default:
@@ -378,7 +378,7 @@ void headers_init(void)
   wcscpy(j_day_headings_wc,L"");
 #endif
 
-#ifdef HAVE_langinfo_h
+#ifdef HAVE_LANGINFO_H
 # define weekday(wd)	nl_langinfo(ABDAY_1+wd)
 #else
 # define weekday(wd)	_time_info->abbrev_wkday[wd]
@@ -414,7 +414,7 @@ void headers_init(void)
 #undef weekday
 
   for (i = 0; i < 12; i++) {
-#ifdef HAVE_langinfo_h
+#ifdef HAVE_LANGINFO_H
      full_month[i] = nl_langinfo(MON_1+i);
 #else
      full_month[i] = _time_info->full_month[i];
@@ -457,7 +457,7 @@ monthly(int day, int month, int year) {
 
 	do_monthly(day, month, year, &out);
 	for (i = 0; i < FMT_ST_LINES; i++) {
-#if defined(HAVE_ncurses) || defined(HAVE_termcap)
+#if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
 		my_putstring(out.s[i]);putchar('\n');
 #else
 		puts(out.s[i]);
@@ -502,7 +502,7 @@ monthly3(int day, int month, int year) {
 		       width, out_prev.s[i],
 		       width, out_curm.s[i],
 		       width, out_next.s[i]);
-#if defined(HAVE_ncurses) || defined(HAVE_termcap)
+#if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
 		my_putstring(lineout);
 #else
 		fputs(lineout,stdout);
@@ -539,7 +539,7 @@ j_yearly(int day, int year) {
 			}
 			*p = '\0';
 			trim_trailing_spaces(lineout);
-#if defined(HAVE_ncurses) || defined(HAVE_termcap)
+#if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
 			my_putstring(lineout);putchar('\n');
 #else
 			puts(lineout);
@@ -579,7 +579,7 @@ yearly(int day, int year) {
 			}
 			*p = '\0';
 			trim_trailing_spaces(lineout);
-#if defined(HAVE_ncurses) || defined(HAVE_termcap)
+#if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
                         my_putstring(lineout);putchar('\n');
 #else
                         puts(lineout);

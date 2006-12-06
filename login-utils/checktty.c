@@ -23,32 +23,12 @@
 #include <sys/syslog.h>
 #include "nls.h"
 
-#ifdef __linux__
-#  include <sys/sysmacros.h>
-#  include <linux/major.h>
-#endif
+#include <sys/sysmacros.h>
+#include <linux/major.h>
 
 #include "pathnames.h"
 #include "login.h"
 #include "xstrncpy.h"
-
-#ifdef TESTING
-char hostaddress[4];
-char *hostname;
-
-void 
-badlogin(const char *s)
-{
-    printf("badlogin: %s\n", s);
-}
-
-void
-sleepexit(int x)
-{
-    printf("sleepexit %d\n", x);
-    exit(1);
-}
-#endif
 
 static gid_t mygroups[NGROUPS];
 static int   num_groups;
@@ -145,7 +125,6 @@ isapty(const char *tty)
 	    return 0;
     sprintf(devname, "/dev/%s", tty);
 
-#if defined(__linux__)
     if((stat(devname, &stb) >= 0) && S_ISCHR(stb.st_mode)) {
 	    int majordev = major(stb.st_rdev);
 
@@ -167,7 +146,6 @@ isapty(const char *tty)
 #endif
 
     }
-#endif
     return 0;
 }
 
@@ -349,11 +327,7 @@ checktty(const char *user, const char *tty, struct passwd *pwd)
     int found_match = 0;
 
     /* no /etc/usertty, default to allow access */
-#ifdef TESTING
-    if (!(f = fopen("usertty", "r"))) return;
-#else
     if (!(f = fopen(_PATH_USERTTY, "r"))) return;
-#endif
 
     if (pwd == NULL) {
 	fclose(f);
@@ -439,13 +413,3 @@ checktty(const char *user, const char *tty, struct passwd *pwd)
        on all tty's */
     free_all(); /* JDS */
 }
-
-#ifdef TESTING
-main(int argc, char *argv[]) 
-{
-    struct passwd *pw;
-
-    pw = getpwnam(argv[1]);
-    checktty(argv[1], argv[2], pw);
-}
-#endif

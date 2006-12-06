@@ -67,7 +67,7 @@ static char version_string[] = "vipw 1.4";
 #include "xstrncpy.h"
 #include "nls.h"
 
-#ifdef WITH_SELINUX
+#ifdef HAVE_LIBSELINUX
 #include <selinux/selinux.h>
 #endif
 
@@ -194,7 +194,7 @@ pw_unlock(void) {
 	unlink(tmp);
 	link(orig_file, tmp);
 
-#ifdef WITH_SELINUX
+#ifdef HAVE_LIBSELINUX
 	if (is_selinux_enabled()) {
 	  security_context_t passwd_context=NULL;
 	  int ret=0;

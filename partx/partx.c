@@ -38,6 +38,9 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 #include <linux/hdreg.h>        /* HDIO_GETGEO */
+#ifdef HAVE_LINUX_COMPILER_H
+#include <linux/compiler.h>
+#endif
 #include <linux/blkpg.h>
 #define BLKGETSIZE _IO(0x12,96)    /* return device size */
 
@@ -316,7 +319,7 @@ main(int argc, char **argv){
 	return 0;
 }
 
-void *
+static void *
 xmalloc (size_t size) {
 	void *t;
 

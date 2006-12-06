@@ -1,4 +1,5 @@
 /* kd.c - KDGHWCLK stuff, possibly m68k only - deprecated */
+
 #ifndef __m68k__
 
 #include "clock.h"
@@ -16,7 +17,6 @@ probe_for_kd_clock() {
 #include <sysexits.h>
 #include <sys/ioctl.h>
 
-#include "../defines.h"		/* for HAVE_nanosleep */
 #include "clock.h"
 #include "nls.h"
 
@@ -68,7 +68,7 @@ synchronize_to_clock_tick_kd(void) {
     /* Christian T. Steigies: 1 instead of 1000000 is still sufficient
        to keep the machine from freezing. */
 
-#ifdef HAVE_nanosleep
+#ifdef HAVE_NANOSLEEP
     struct timespec xsleep = { 0, 1 };
     nanosleep( &xsleep, NULL );
 #else

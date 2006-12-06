@@ -31,15 +31,6 @@
 
 /* Sccsid @(#)pg.c 1.44 (gritter) 2/8/02 - modified for util-linux */
 
-/*
- * #define _XOPEN_SOURCE  500L
- *
- * Adding this define gives us the correct prototypes for fseeko, ftello,
- * but (for some glibc versions) conflicting prototype for wcwidth.
- * So, avoid defining _XOPEN_SOURCE, and give prototypes for fseeko, ftello
- * by hand.
- */
-
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <sys/stat.h>
@@ -61,16 +52,17 @@
 #include <locale.h>
 #include <nl_types.h>
 #include <libgen.h>
-#if NCH
+
+#ifdef HAVE_NCURSES_H
 #include <ncurses.h>
-#else
-#include <curses.h>
+#elif defined(HAVE_NCURSES_NCURSES_H)
+#include <ncurses/ncurses.h>
 #endif
+
 #include <term.h>
 
 #include "nls.h"
 #include "widechar.h"
-#include "../defines.h"		/* for HAVE_fseeko */
 
 #define	READBUF		LINE_MAX	/* size of input buffer */
 #define CMDBUF		255		/* size of command buffer */
@@ -176,23 +168,11 @@ Many commands accept preceding numbers, for example:\n\
 See pg(1) for more information.\n\
 -------------------------------------------------------\n";
 
-#ifdef HAVE_fseeko
-#if defined (_FILE_OFFSET_BITS) && (_FILE_OFFSET_BITS) == 64
-  extern int fseeko64(FILE *f, off_t off, int whence);
-  extern off_t ftello64(FILE *f);
-  #define      my_fseeko       fseeko64
-  #define      my_ftello       ftello64
-#else
-  extern int fseeko(FILE *f, off_t off, int whence);
-  extern off_t ftello(FILE *f);
-  #define	my_fseeko	fseeko
-  #define	my_ftello	ftello
-#endif
-#else
-  static int my_fseeko(FILE *f, off_t off, int whence) {
+#ifndef HAVE_FSEEKO
+  static int fseeko(FILE *f, off_t off, int whence) {
 	return fseek(f, (long) off, whence);
   }
-  static off_t my_ftello(FILE *f) {
+  static off_t ftello(FILE *f) {
 	return (off_t) ftell(f);
   }
 #endif
@@ -599,10 +579,10 @@ getstate(int c)
 	case 'm': case 'b': case 't':
 		return ADDON_FIN;
 	default:
-#ifndef	PGNOBELL
+#ifdef PG_BELL
 		if (bell)
 			tputs(bell, 1, outcap);
-#endif	/* PGNOBELL */
+#endif  /*  PG_BELL  */
 		return INVALID;
 	}
 }
@@ -1042,7 +1022,7 @@ pgfile(FILE *f, char *name)
 		}
 		return;
 	}
-	if ((fpos = my_fseeko(f, (off_t)0, SEEK_SET)) == -1)
+	if ((fpos = fseeko(f, (off_t)0, SEEK_SET)) == -1)
 		fbuf = tmpfile();
 	else {
 		fbuf = f;
@@ -1072,36 +1052,36 @@ pgfile(FILE *f, char *name)
 		 * Get a line from input file or buffer.
 		 */
 		if (line < bline) {
-			my_fseeko(find, line * sizeof pos, SEEK_SET);
+			fseeko(find, line * sizeof pos, SEEK_SET);
 			if (fread(&pos, sizeof pos, 1, find) == 0)
 				tmperr(find, "index");
-			my_fseeko(find, (off_t)0, SEEK_END);
-			my_fseeko(fbuf, pos, SEEK_SET);
+			fseeko(find, (off_t)0, SEEK_END);
+			fseeko(fbuf, pos, SEEK_SET);
 			if (fgets(b, READBUF, fbuf) == NULL)
 				tmperr(fbuf, "buffer");
 		} else if (eofline == 0) {
-			my_fseeko(find, (off_t)0, SEEK_END);
+			fseeko(find, (off_t)0, SEEK_END);
 			do {
 				if (!nobuf)
-					my_fseeko(fbuf, (off_t)0, SEEK_END);
-				pos = my_ftello(fbuf);
+					fseeko(fbuf, (off_t)0, SEEK_END);
+				pos = ftello(fbuf);
 				if ((sig = setjmp(jmpenv)) != 0) {
 					/*
 					 * We got a signal.
 					 */
 					canjump = 0;
 					my_sigrelse(sig);
-					my_fseeko(fbuf, pos, SEEK_SET);
+					fseeko(fbuf, pos, SEEK_SET);
 					*b = '\0';
 					dline = pagelen;
 					break;
 				} else {
 					if (nobuf)
-						my_fseeko(f, fpos, SEEK_SET);
+						fseeko(f, fpos, SEEK_SET);
 					canjump = 1;
 					p = fgets(b, READBUF, f);
 					if (nobuf)
-						if ((fpos = my_ftello(f)) == -1)
+						if ((fpos = ftello(f)) == -1)
 							pgerror(errno, name);
 					canjump = 0;
 				}
@@ -1276,12 +1256,12 @@ newcmd:
 				if (line <= 0)
 					goto notfound_bw;
 				while (line) {
-					my_fseeko(find, --line * sizeof pos,
+					fseeko(find, --line * sizeof pos,
 							SEEK_SET);
 					if(fread(&pos, sizeof pos, 1,find)==0)
 						tmperr(find, "index");
-					my_fseeko(find, (off_t)0, SEEK_END);
-					my_fseeko(fbuf, pos, SEEK_SET);
+					fseeko(find, (off_t)0, SEEK_END);
+					fseeko(fbuf, pos, SEEK_SET);
 					if (fgets(b, READBUF, fbuf) == NULL)
 						tmperr(fbuf, "buffer");
 					colb(b);
@@ -1334,11 +1314,11 @@ found_bw:
 				/*
 				 * Advance to EOF.
 				 */
-				my_fseeko(find, (off_t)0, SEEK_END);
+				fseeko(find, (off_t)0, SEEK_END);
 				for (;;) {
 					if (!nobuf)
-						my_fseeko(fbuf,(off_t)0,SEEK_END);
-					pos = my_ftello(fbuf);
+						fseeko(fbuf,(off_t)0,SEEK_END);
+					pos = ftello(fbuf);
 					if (fgets(b, READBUF, f) == NULL) {
 						eofline = fline;
 						break;
@@ -1363,7 +1343,7 @@ found_bw:
 					fline++;
 					bline++;
 				}
-				my_fseeko(fbuf, (off_t)0, SEEK_SET);
+				fseeko(fbuf, (off_t)0, SEEK_SET);
 				while ((sz = fread(b, sizeof *b, READBUF,
 							fbuf)) != 0) {
 					/*
@@ -1372,7 +1352,7 @@ found_bw:
 					fwrite(b, sizeof *b, sz, save);
 				}
 				fclose(save);
-				my_fseeko(fbuf, (off_t)0, SEEK_END);
+				fseeko(fbuf, (off_t)0, SEEK_END);
 				mesg(_("saved"));
 				goto newcmd;
 			case 'l':

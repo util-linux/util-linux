@@ -1,0 +1,206 @@
+/* config.h.in.  Generated from configure.ac by autoheader.  */
+
+/* Define to 1 if translation of program messages to the user's native
+   language is requested. */
+#undef ENABLE_NLS
+
+/* Define to 1 if you have the <asm/page.h> header file. */
+#undef HAVE_ASM_PAGE_H
+
+/* Define to 1 if you have the MacOS X function CFLocaleCopyCurrent in the
+   CoreFoundation framework. */
+#undef HAVE_CFLOCALECOPYCURRENT
+
+/* Define to 1 if you have the MacOS X function CFPreferencesCopyAppValue in
+   the CoreFoundation framework. */
+#undef HAVE_CFPREFERENCESCOPYAPPVALUE
+
+/* Define if the GNU dcgettext() function is already present or preinstalled.
+   */
+#undef HAVE_DCGETTEXT
+
+/* Define to 1 if you have the <dlfcn.h> header file. */
+#undef HAVE_DLFCN_H
+
+/* Define to 1 if fseeko (and presumably ftello) exists and is declared. */
+#undef HAVE_FSEEKO
+
+/* Define to 1 if you have the `fsync' function. */
+#undef HAVE_FSYNC
+
+/* Define to 1 if you have the `getdomainname' function. */
+#undef HAVE_GETDOMAINNAME
+
+/* Define if the GNU gettext() function is already present or preinstalled. */
+#undef HAVE_GETTEXT
+
+/* Define if you have the iconv() function. */
+#undef HAVE_ICONV
+
+/* Define to 1 if you have the `inet_aton' function. */
+#undef HAVE_INET_ATON
+
+/* Define to 1 if you have the <inttypes.h> header file. */
+#undef HAVE_INTTYPES_H
+
+/* Define to 1 if you have the <langinfo.h> header file. */
+#undef HAVE_LANGINFO_H
+
+/* Define to 1 if you have the `lchown' function. */
+#undef HAVE_LCHOWN
+
+/* Define to 1 if you have the `blkid' library (-lblkid). */
+#undef HAVE_LIBBLKID
+
+/* Define to 1 if you have the `selinux' library (-lselinux). */
+#undef HAVE_LIBSELINUX
+
+/* Define to 1 if you have the `termcap' library (-ltermcap). */
+#undef HAVE_LIBTERMCAP
+
+/* Define to 1 if you have the `util' library (-lutil). */
+#undef HAVE_LIBUTIL
+
+/* Define to 1 if you have the `uuid' library (-luuid). */
+#undef HAVE_LIBUUID
+
+/* Define to 1 if you have the `z' library (-lz). */
+#undef HAVE_LIBZ
+
+/* Define to 1 if you have the <linux/blkpg.h> header file. */
+#undef HAVE_LINUX_BLKPG_H
+
+/* Define to 1 if you have the <linux/compiler.h> header file. */
+#undef HAVE_LINUX_COMPILER_H
+
+/* Define to 1 if you have the <linux/raw.h> header file. */
+#undef HAVE_LINUX_RAW_H
+
+/* Define to 1 if you have the <memory.h> header file. */
+#undef HAVE_MEMORY_H
+
+/* Define to 1 if you have the `nanosleep' function. */
+#undef HAVE_NANOSLEEP
+
+/* Define to 1 if you have the <ncurses.h> header file. */
+#undef HAVE_NCURSES_H
+
+/* Define to 1 if you have the <ncurses/ncurses.h> header file. */
+#undef HAVE_NCURSES_NCURSES_H
+
+/* Define to 1 if you have the `personality' function. */
+#undef HAVE_PERSONALITY
+
+/* Define to 1 if you have the <pty.h> header file. */
+#undef HAVE_PTY_H
+
+/* Define to 1 if you have the <rpcsvc/nfs_prot.h> header file. */
+#undef HAVE_RPCSVC_NFS_PROT_H
+
+/* Define to 1 if you have the `rpmatch' function. */
+#undef HAVE_RPMATCH
+
+/* Define to 1 if you have the <scsi/scsi.h> header file. */
+#undef HAVE_SCSI_SCSI_H
+
+/* Define to 1 if you have the <security/pam_misc.h> header file. */
+#undef HAVE_SECURITY_PAM_MISC_H
+
+/* Define to 1 if you have the <slang/slcurses.h> header file. */
+#undef HAVE_SLANG_SLCURSES_H
+
+/* Define to 1 if you have the <slcurses.h> header file. */
+#undef HAVE_SLCURSES_H
+
+/* Define to 1 if you have the <stdint.h> header file. */
+#undef HAVE_STDINT_H
+
+/* Define to 1 if you have the <stdlib.h> header file. */
+#undef HAVE_STDLIB_H
+
+/* Define to 1 if you have the <strings.h> header file. */
+#undef HAVE_STRINGS_H
+
+/* Define to 1 if you have the <string.h> header file. */
+#undef HAVE_STRING_H
+
+/* Define to 1 if you have the <sys/io.h> header file. */
+#undef HAVE_SYS_IO_H
+
+/* Define to 1 if you have the <sys/stat.h> header file. */
+#undef HAVE_SYS_STAT_H
+
+/* Define to 1 if you have the <sys/types.h> header file. */
+#undef HAVE_SYS_TYPES_H
+
+/* Define to 1 if you have the <sys/user.h> header file. */
+#undef HAVE_SYS_USER_H
+
+/* Does struct tm have a field tm_gmtoff? */
+#undef HAVE_TM_GMTOFF
+
+/* Define to 1 if you have the <unistd.h> header file. */
+#undef HAVE_UNISTD_H
+
+/* Define to 1 if you have the `updwtmp' function. */
+#undef HAVE_UPDWTMP
+
+/* Do we have wide character support? */
+#undef HAVE_WIDECHAR
+
+/* Do we have __progname? */
+#undef HAVE___PROGNAME
+
+/* Should login chown /dev/vcsN? */
+#undef LOGIN_CHOWN_VCS
+
+/* Should login stat() the mailbox? */
+#undef LOGIN_STAT_MAIL
+
+/* Do we need -lcrypt? */
+#undef NEED_LIBCRYPT
+
+/* Should chsh allow only shells in /etc/shells? */
+#undef ONLY_LISTED_SHELLS
+
+/* Name of package */
+#undef PACKAGE
+
+/* Define to the address where bug reports for this package should be sent. */
+#undef PACKAGE_BUGREPORT
+
+/* Define to the full name of this package. */
+#undef PACKAGE_NAME
+
+/* Define to the full name and version of this package. */
+#undef PACKAGE_STRING
+
+/* Define to the one symbol short name of this package. */
+#undef PACKAGE_TARNAME
+
+/* Define to the version of this package. */
+#undef PACKAGE_VERSION
+
+/* Should pg ring the bell on invalid keys? */
+#undef PG_BELL
+
+/* Should chfn and chsh require the user to enter the password? */
+#undef REQUIRE_PASSWORD
+
+/* Define to 1 if you have the ANSI C header files. */
+#undef STDC_HEADERS
+
+/* Should wall and write be installed setgid tty? */
+#undef USE_TTY_GROUP
+
+/* Version number of package */
+#undef VERSION
+
+/* Number of bits in a file offset, on hosts where this is settable. */
+#undef _FILE_OFFSET_BITS
+
+/* Define to 1 to make fseeko visible on some hosts (e.g. glibc 2.2). */
+#undef _LARGEFILE_SOURCE
+
+/* Define for large files, on AIX-style hosts. */
+#undef _LARGE_FILES

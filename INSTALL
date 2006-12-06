@@ -1,101 +1,236 @@
+Installation Instructions
+*************************
 
-WARNING: THE PROGRAMS IN THIS SUITE DO *NOT* SUPPORT SHADOW PASSWORD FILES!
-	 UNLESS YOU USE PAM.
+Copyright (C) 1994, 1995, 1996, 1999, 2000, 2001, 2002, 2004, 2005 Free
+Software Foundation, Inc.
 
-WARNING: THIS COLLECTION CONFLICTS WITH SYSTEM V INITTAB.
-         UNLESS YOU CONFIGURE IT NOT TO.
+This file is free documentation; the Free Software Foundation gives
+unlimited permission to copy, distribute and modify it.
 
-WARNING: USE GNU TAR -- OTHER TARS WILL FAIL SILENTLY!
+Basic Installation
+==================
 
-WARNING: DO *NOT* INSTALL WITHOUT THINKING.
+These are generic installation instructions.
 
-WARNING: The simpleinit and some other programs in this package are
-	 *NOT* System V compliant.  These utilities are meant to be
-	 used by people who build their own systems.  If you are not
-         a wizard, do *NOT* blindly install these utilities: they could
-         prevent you from logging into your system.  Have a boot floppy
-         ready, especially if you don't know what you are doing.  It's a
-	 great way to learn though ;-)
+   The `configure' shell script attempts to guess correct values for
+various system-dependent variables used during compilation.  It uses
+those values to create a `Makefile' in each directory of the package.
+It may also create one or more `.h' files containing system-dependent
+definitions.  Finally, it creates a shell script `config.status' that
+you can run in the future to recreate the current configuration, and a
+file `config.log' containing compiler output (useful mainly for
+debugging `configure').
 
+   It can also use an optional file (typically called `config.cache'
+and enabled with `--cache-file=config.cache' or simply `-C') that saves
+the results of its tests to speed up reconfiguring.  (Caching is
+disabled by default to prevent problems with accidental use of stale
+cache files.)
 
-To install from source:
+   If you need to do unusual things to compile the package, please try
+to figure out how `configure' could check whether to do them, and mail
+diffs or instructions to the address given in the `README' so they can
+be considered for the next release.  If you are using the cache, and at
+some point `config.cache' contains results you don't want to keep, you
+may remove or edit it.
 
-1) Get source distribution (see the .lsm file for locations)
-2) Untar util-linux-2.11X.tar.gz somewhere
-3) cd util-linux-2.11X
-4) Edit MCONFIG
-5) ./configure
-6) Look at defines.h and make_include, and edit if necessary
-7) make
-8) make install
-9) If you want to use simpleinit and agetty, then make softlinks from
-   /sbin/init to simpleinit and from /sbin/getty to agetty, but make sure
-   that your /etc/inittab is set up right (this is *NOT* the System V
-   compatible init!), or you will be hosed.  If you are using the SysV
-   init and/or some other getty, they you can keep using those.
+   The file `configure.ac' (or `configure.in') is used to create
+`configure' by a program called `autoconf'.  You only need
+`configure.ac' if you want to change it or regenerate `configure' using
+a newer version of `autoconf'.
 
-People ask: I want to link statically and install in /foo. How?
-Answer: Try the following:
-	LDFLAGS="-static"
-	DESTDIR=/foo
-	export LDFLAGS DESTDIR
-	./configure
-	make
-	make install
+The simplest way to compile this package is:
 
-If you have compilation problems: tell util-linux@math.uio.no about it.
+  1. `cd' to the directory containing the package's source code and type
+     `./configure' to configure the package for your system.  If you're
+     using `csh' on an old version of System V, you might need to type
+     `sh ./configure' instead to prevent `csh' from trying to execute
+     `configure' itself.
 
-Compilation will fail on a minix filesystem with 14-byte filenames
-since for example mount_guess_fstype.h, mount_guess_fstype.c and
-mount_guess_fstype.o will be the same file. (However, 30 bytes suffice.)
+     Running `configure' takes awhile.  While running, it prints some
+     messages telling which features it is checking for.
 
-A glibc header bug causes
-  /usr/include/bits/string2.h:419: warning: pointer of type `void *'
-    used in arithmetic
-This is harmless.
+  2. Type `make' to compile the package.
 
-Users of libc5 may get warnings like
-  /usr/include/linux/byteorder/swab.h:100: warning: no previous prototype for `__fswab16'
-that they'll have to ignore. The Linux kernel includes are not meant to be
-included in user programs, but libc5 does precisely that and is inherently
-broken.
+  3. Optionally, type `make check' to run any self-tests that come with
+     the package.
 
-Several old libc have complaints like
-  /usr/include/sys/syslog.h:71: warning: missing braces around initializer
-  /usr/include/sys/syslog.h:87: warning: aggregate has a partly bracketed initializer
-  /usr/include/rpc/xdr.h:103: warning: function declaration isn't a prototype
-  /usr/include/rpc/auth.h:86: warning: function declaration isn't a prototype
-  /usr/include/rpc/svc.h:79: warning: function declaration isn't a prototype
-Also this is a libc/include problem.
+  4. Type `make install' to install the programs and any data files and
+     documentation.
 
-Warnings like
-  <sys/mman.h>:11: warning: `MAP_FILE' redefined
-  <asm/mman.h>:30: warning: this is the location of the previous definition
-are caused by the libc/kernel combination.
+  5. You can remove the program binaries and object files from the
+     source code directory by typing `make clean'.  To also remove the
+     files that `configure' created (so you can compile the package for
+     a different kind of computer), type `make distclean'.  There is
+     also a `make maintainer-clean' target, but that is intended mainly
+     for the package's developers.  If you use it, you may have to get
+     all sorts of other programs in order to regenerate files that came
+     with the distribution.
 
-Warnings like
-  setterm.c:805: warning: passing arg 1 of `tigetstr' discards qualifiers
-    from pointer target type
-  login.c:979: warning: passing arg 1 of `putenv' discards qualifiers
-    from pointer target type
-are caused by bad ncurses or glibc header files.
+Compilers and Options
+=====================
 
-Warnings like
-  script.c: In function `dooutput':
-  script.c:254: warning: `%c' yields only last 2 digits of year in some locales
-are caused by a broken gcc that warns about things that are not wrong,
-where the warning is not easily avoided.
+Some systems require unusual options for compilation or linking that the
+`configure' script does not know about.  Run `./configure --help' for
+details on some of the pertinent environment variables.
 
-All such warnings are harmless.
-There should be no compilation errors.
+   You can give `configure' initial values for configuration parameters
+by setting variables in the command line or in the environment.  Here
+is an example:
 
+     ./configure CC=c89 CFLAGS=-O2 LIBS=-lposix
 
-If you have runtime problems:
+   *Note Defining Variables::, for more details.
 
-- with non-ASCII characters: perhaps you forgot to set LC_CTYPE or LC_ALL?
-  (For example, in Norway one can say  LC_ALL=no_NO; export LC_ALL  and
-   then various utilities will treat Scandinavian non-ASCII letters as
-   letters.)
+Compiling For Multiple Architectures
+====================================
 
-otherwise: tell util-linux@math.uio.no about it.
+You can compile the package for more than one kind of computer at the
+same time, by placing the object files for each architecture in their
+own directory.  To do this, you must use a version of `make' that
+supports the `VPATH' variable, such as GNU `make'.  `cd' to the
+directory where you want the object files and executables to go and run
+the `configure' script.  `configure' automatically checks for the
+source code in the directory that `configure' is in and in `..'.
+
+   If you have to use a `make' that does not support the `VPATH'
+variable, you have to compile the package for one architecture at a
+time in the source code directory.  After you have installed the
+package for one architecture, use `make distclean' before reconfiguring
+for another architecture.
+
+Installation Names
+==================
+
+By default, `make install' installs the package's commands under
+`/usr/local/bin', include files under `/usr/local/include', etc.  You
+can specify an installation prefix other than `/usr/local' by giving
+`configure' the option `--prefix=PREFIX'.
+
+   You can specify separate installation prefixes for
+architecture-specific files and architecture-independent files.  If you
+pass the option `--exec-prefix=PREFIX' to `configure', the package uses
+PREFIX as the prefix for installing programs and libraries.
+Documentation and other data files still use the regular prefix.
+
+   In addition, if you use an unusual directory layout you can give
+options like `--bindir=DIR' to specify different values for particular
+kinds of files.  Run `configure --help' for a list of the directories
+you can set and what kinds of files go in them.
+
+   If the package supports it, you can cause programs to be installed
+with an extra prefix or suffix on their names by giving `configure' the
+option `--program-prefix=PREFIX' or `--program-suffix=SUFFIX'.
+
+Optional Features
+=================
+
+Some packages pay attention to `--enable-FEATURE' options to
+`configure', where FEATURE indicates an optional part of the package.
+They may also pay attention to `--with-PACKAGE' options, where PACKAGE
+is something like `gnu-as' or `x' (for the X Window System).  The
+`README' should mention any `--enable-' and `--with-' options that the
+package recognizes.
+
+   For packages that use the X Window System, `configure' can usually
+find the X include and library files automatically, but if it doesn't,
+you can use the `configure' options `--x-includes=DIR' and
+`--x-libraries=DIR' to specify their locations.
+
+Specifying the System Type
+==========================
+
+There may be some features `configure' cannot figure out automatically,
+but needs to determine by the type of machine the package will run on.
+Usually, assuming the package is built to be run on the _same_
+architectures, `configure' can figure that out, but if it prints a
+message saying it cannot guess the machine type, give it the
+`--build=TYPE' option.  TYPE can either be a short name for the system
+type, such as `sun4', or a canonical name which has the form:
+
+     CPU-COMPANY-SYSTEM
+
+where SYSTEM can have one of these forms:
+
+     OS KERNEL-OS
+
+   See the file `config.sub' for the possible values of each field.  If
+`config.sub' isn't included in this package, then this package doesn't
+need to know the machine type.
+
+   If you are _building_ compiler tools for cross-compiling, you should
+use the option `--target=TYPE' to select the type of system they will
+produce code for.
+
+   If you want to _use_ a cross compiler, that generates code for a
+platform different from the build platform, you should specify the
+"host" platform (i.e., that on which the generated programs will
+eventually be run) with `--host=TYPE'.
+
+Sharing Defaults
+================
+
+If you want to set default values for `configure' scripts to share, you
+can create a site shell script called `config.site' that gives default
+values for variables like `CC', `cache_file', and `prefix'.
+`configure' looks for `PREFIX/share/config.site' if it exists, then
+`PREFIX/etc/config.site' if it exists.  Or, you can set the
+`CONFIG_SITE' environment variable to the location of the site script.
+A warning: not all `configure' scripts look for a site script.
+
+Defining Variables
+==================
+
+Variables not defined in a site shell script can be set in the
+environment passed to `configure'.  However, some packages may run
+configure again during the build, and the customized values of these
+variables may be lost.  In order to avoid this problem, you should set
+them in the `configure' command line, using `VAR=value'.  For example:
+
+     ./configure CC=/usr/local2/bin/gcc
+
+causes the specified `gcc' to be used as the C compiler (unless it is
+overridden in the site shell script).  Here is a another example:
+
+     /bin/bash ./configure CONFIG_SHELL=/bin/bash
+
+Here the `CONFIG_SHELL=/bin/bash' operand causes subsequent
+configuration-related scripts to be executed by `/bin/bash'.
+
+`configure' Invocation
+======================
+
+`configure' recognizes the following options to control how it operates.
+
+`--help'
+`-h'
+     Print a summary of the options to `configure', and exit.
+
+`--version'
+`-V'
+     Print the version of Autoconf used to generate the `configure'
+     script, and exit.
+
+`--cache-file=FILE'
+     Enable the cache: use and save the results of the tests in FILE,
+     traditionally `config.cache'.  FILE defaults to `/dev/null' to
+     disable caching.
+
+`--config-cache'
+`-C'
+     Alias for `--cache-file=config.cache'.
+
+`--quiet'
+`--silent'
+`-q'
+     Do not print messages saying which checks are being made.  To
+     suppress all normal output, redirect it to `/dev/null' (any error
+     messages will still be shown).
+
+`--srcdir=DIR'
+     Look for the package's source code in directory DIR.  Usually
+     `configure' can determine that directory automatically.
+
+`configure' also accepts some other, not widely useful, options.  Run
+`configure --help' for more details.
 

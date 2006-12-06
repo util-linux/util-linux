@@ -1,4 +1,4 @@
-#ifndef HAVE_BLKID
+#ifndef HAVE_LIBBLKID
 /*
  * mount_by_label.c - aeb
  *

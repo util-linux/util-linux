@@ -32,8 +32,6 @@
  * nfsmount.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
  */
 
-#include "../defines.h"	/* for HAVE_rpcsvc_nfs_prot_h and HAVE_inet_aton */
-
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -53,7 +51,7 @@
 #include "sundries.h"
 #include "nfsmount.h"
 
-#ifdef HAVE_rpcsvc_nfs_prot_h
+#ifdef HAVE_RPCSVC_NFS_PROT_H
 #include <rpcsvc/nfs_prot.h>
 #else
 #include <linux/nfs.h>
@@ -259,7 +257,7 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	}
 
 	server_addr.sin_family = AF_INET;
-#ifdef HAVE_inet_aton
+#ifdef HAVE_INET_ATON
 	if (!inet_aton(hostname, &server_addr.sin_addr))
 #endif
 	{

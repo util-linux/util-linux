@@ -39,21 +39,20 @@
 #include <sys/ioctl.h>		/* for _IO */
 #include <sys/utsname.h>
 #include <sys/stat.h>
-#include "../defines.h"
 #include "swapheader.h"
 #include "xstrncpy.h"
 #include "nls.h"
 
-#ifdef HAVE_uuid_uuid_h
+#ifdef HAVE_UUID_UUID_H
 #include <uuid/uuid.h>
 #endif
 
 /* Try to get PAGE_SIZE from libc or kernel includes */
-#ifdef HAVE_sys_user_h
+#ifdef HAVE_SYS_USER_H
 				/* Note: <sys/user.h> says: for gdb only */
 #include <sys/user.h>		/* for PAGE_SIZE and PAGE_SHIFT */
 #else
-#ifdef HAVE_asm_page_h
+#ifdef HAVE_ASM_PAGE_H
 #include <asm/page.h>		/* for PAGE_SIZE and PAGE_SHIFT */
 				/* we also get PAGE_SIZE via getpagesize() */
 #endif
@@ -112,7 +111,7 @@ is_sparc64(void) {
 	if (strcmp(un.machine, "sparc"))
 		return 0; /* Should not happen */
 
-#ifdef HAVE_personality
+#ifdef HAVE_PERSONALITY
 	{
 		extern int personality(unsigned long);
 		int oldpers;
@@ -248,7 +247,7 @@ write_uuid_and_label(char *uuid, char *volume_name) {
 			printf("LABEL=%s, ", h->volume_name);
 		else
 			printf(_("no label, "));
-#ifdef HAVE_uuid_uuid_h
+#ifdef HAVE_UUID_UUID_H
 		if (uuid) {
 			char uuid_string[37];
 			uuid_unparse(uuid, uuid_string);
@@ -506,7 +505,7 @@ main(int argc, char ** argv) {
 	char *pp;
 	char *opt_label = NULL;
 	char *uuid = NULL;
-#ifdef HAVE_uuid_uuid_h
+#ifdef HAVE_UUID_UUID_H
 	uuid_t uuid_dat;
 #endif
 
@@ -520,7 +519,7 @@ main(int argc, char ** argv) {
 
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf(_("%s from %s\n"), program_name, util_linux_version);
+		printf(_("%s from %s%s\n"), program_name, "util-linux-", VERSION);
 		exit(0);
 	}
 
@@ -562,7 +561,7 @@ main(int argc, char ** argv) {
 			usage();
 	}
 
-#ifdef HAVE_uuid_uuid_h
+#ifdef HAVE_UUID_UUID_H
 	uuid_generate(uuid_dat);
 	uuid = uuid_dat;
 #endif
@@ -715,7 +714,7 @@ the -f option to force it.\n"),
 	 * A subsequent swapon() will fail if the signature
 	 * is not actually on disk. (This is a kernel bug.)
 	 */
-#ifdef HAVE_fsync
+#ifdef HAVE_FSYNC
 	if (fsync(DEV))
 		 die(_("fsync failed"));
 #endif

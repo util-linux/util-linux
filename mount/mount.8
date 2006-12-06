@@ -370,6 +370,7 @@ currently supported include:
 .IR coda ,
 .IR coherent ,
 .IR cramfs ,
+.IR debugfs ,
 .IR devpts ,
 .IR efs ,
 .IR ext ,
@@ -536,7 +537,7 @@ Some of these options are only useful when they appear in the
 file.  The following options apply to any file system that is being
 mounted (but not every file system actually honors them - e.g., the
 .B sync
-option today has effect only for ext2, ext3 and ufs):
+option today has effect only for ext2, ext3, fat, vfat and ufs):
 .RS
 .TP
 .B async
@@ -631,7 +632,8 @@ Allow set-user-identifier or set-group-identifier bits to take
 effect.
 .TP
 .B sync
-All I/O to the file system should be done synchronously.
+All I/O to the file system should be done synchronously. In case of media with limited number of write cycles 
+(e.g. some flash drives) "sync" may cause life-cycle shortening.
 .TP
 .B dirsync
 All directory updates within the file system should be done synchronously.
@@ -735,6 +737,13 @@ These options are accepted but ignored.
 
 .SH "Mount options for coherent"
 None.
+
+.SH "Mount options for debugfs"
+The debugfs file system is a pseudo file system, traditionally mounted on
+.IR /sys/kernel/debug .
+.\" or just /debug
+.\" present since 2.6.11
+There are no mount options.
 
 .SH "Mount options for devpts"
 The devpts file system is a pseudo file system, traditionally mounted on
@@ -1933,11 +1942,11 @@ It is possible for a corrupted file system to cause a crash.
 .PP
 Some Linux file systems don't support
 .B "\-o sync and \-o dirsync"
-(the ext2 and ext3 file systems
+(the ext2, ext3, fat and vfat file systems
 .I do
 support synchronous updates (a la BSD) when mounted with the
 .B sync
-option).
+option). 
 .PP
 The
 .B "\-o remount"

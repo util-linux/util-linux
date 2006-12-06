@@ -1,4 +1,4 @@
-#!/usr/bin/perl -w
+#!@PERL@ -w
 #
 # chkdupexe version 2.1.1
 #

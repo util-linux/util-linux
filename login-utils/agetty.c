@@ -604,7 +604,7 @@ update_utmp(line)
     endutent();
 
     {
-#ifdef HAVE_updwtmp
+#ifdef HAVE_UPDWTMP
 	updwtmp(_PATH_WTMP, &ut);
 #else
 	int ut_fd;
@@ -869,7 +869,7 @@ do_prompt(op, tp)
 		  case 'o':
 		   {
 		     char domainname[256];
-#ifdef HAVE_getdomainname
+#ifdef HAVE_GETDOMAINNAME
 		     getdomainname(domainname, sizeof(domainname));
 #else
 		     strcpy(domainname, "unknown_domain");

@@ -74,7 +74,7 @@ int main(int argc, char **argv)
 
 	if (argc < 2) {
 		fprintf(stderr,
-			_("Usage flock [--shared | --timeout=seconds] "
+			_("Usage flock [--shared] [--timeout=seconds] "
 			  "filename command {arg arg...}\n"));
 		exit(2);
 	}
