@@ -58,6 +58,7 @@ Wed Jun 22 21:12:29 1994: Applied patches from Dave
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include "nls.h"
 
 /* rdev.c  -  query/set root device. */
@@ -65,16 +66,14 @@ Wed Jun 22 21:12:29 1994: Applied patches from Dave
 static void
 usage(void) {
 
-    puts(_("usage: rdev [ -rsv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"));
+    puts(_("usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"));
     puts(_("  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"));
     puts(_("  rdev /dev/fd0 /dev/hda2         sets ROOT to /dev/hda2"));
     puts(_("  rdev -R /dev/fd0 1              set the ROOTFLAGS (readonly status)"));
-    puts(_("  rdev -s /dev/fd0 /dev/hda2      set the SWAP device"));
     puts(_("  rdev -r /dev/fd0 627            set the RAMDISK size"));
     puts(_("  rdev -v /dev/fd0 1              set the bootup VIDEOMODE"));
     puts(_("  rdev -o N ...                   use the byte offset N"));
     puts(_("  rootflags ...                   same as rdev -R"));
-    puts(_("  swapdev ...                     same as rdev -s"));
     puts(_("  ramsize ...                     same as rdev -r"));
     puts(_("  vidmode ...                     same as rdev -v"));
     puts(_("Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."));
@@ -103,19 +102,16 @@ die(char *msg) {
 }
 
 /* Earlier rdev fails on /dev/ida/c0d0p1 so we allow for
-   (limited) recursion in /dev. -- Paul Clements */
-
-#define MAX_DEPTH	1
+   recursion in /dev. -- Paul Clements */
+/* In fact devfs needs deep recursion. */
 
 static int
-find_dev_recursive(char *dirnamebuf, int number, int depth) {
+find_dev_recursive(char *dirnamebuf, int number) {
 	DIR *dp;
 	struct dirent *dir;
 	struct stat s;
 	int dirnamelen = 0;
 
-	if (depth < 0)
-		return 0;
 	if ((dp = opendir(dirnamebuf)) == NULL)
 		die("opendir");
 	dirnamelen = strlen(dirnamebuf);
@@ -131,7 +127,7 @@ find_dev_recursive(char *dirnamebuf, int number, int depth) {
 		if ((s.st_mode & S_IFMT) == S_IFBLK && s.st_rdev == number)
 			return 1;
 		if ((s.st_mode & S_IFMT) == S_IFDIR &&
-		    find_dev_recursive(dirnamebuf, number, depth-1))
+		    find_dev_recursive(dirnamebuf, number))
 			return 1;
 	}
 	dirnamebuf[dirnamelen] = 0;
@@ -145,32 +141,32 @@ find_dev(int number) {
 	if (!number)
 		return "Boot device";
 	strcpy(name, "/dev");
-	if (find_dev_recursive(name, number, MAX_DEPTH))
+	if (find_dev_recursive(name, number))
 		return name;
 	sprintf(name, "0x%04x", number);
 	return name;
 }
 
-/* enum { RDEV, SDEV, RAMSIZE, VIDMODE }; */
-enum { RDEV, VIDMODE, RAMSIZE, SDEV, __syssize__, ROOTFLAGS };
-char *cmdnames[6] = { "rdev", "vidmode",  "ramsize", "swapdev", 
+/* The enum values are significant, things are stored in this order,
+   see bootsect.S */
+enum { RDEV, VIDMODE, RAMSIZE, __swapdev__, __syssize__, ROOTFLAGS };
+char *cmdnames[6] = { "rdev", "vidmode",  "ramsize", "", 
 		      "", "rootflags"};
-char *desc[6] = { "Root device", "Video mode",  "Ramsize",  "Swap device",
+char *desc[6] = { "Root device", "Video mode",  "Ramsize",  "",
 		  "", "Root flags"};
 #define shift(n) argv+=n,argc-=n
 
 int
 main(int argc, char **argv) {
 	int image, offset, dev_nr, i, newoffset=-1;
-	char *device, *ptr;
+	char *ptr;
+	unsigned short val, have_val;
 	struct stat s;
-	int cmd = 0;
+	int cmd;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-
-	device = NULL;
 
 	/* use the command name to figure out what we have to do - ugly */
 	cmd = RDEV;
@@ -178,11 +174,12 @@ main(int argc, char **argv) {
 		ptr++;
 	else
 		ptr = argv[0];
-	for (i=0; i<=5; i++)
+	for (i=0; i<=5; i++) {
 		if (!strcmp(ptr,cmdnames[i])) {
 			cmd = i;
 			break;
 		}
+	}
 
 	while (argc > 1) { 
 		if (argv[1][0] != '-')
@@ -200,17 +197,13 @@ main(int argc, char **argv) {
 			cmd = VIDMODE;
 			shift(1);
 			break;
-		case 's':
-			cmd = SDEV;
-			shift(1);
-			break;
 		case 'o':
 			if (argv[1][2]) {
-				newoffset=atoi(argv[1]+2);
+				newoffset = atoi(argv[1]+2);
 				shift(1);
 				break;
 			} else if (argc > 2) {
-				newoffset=atoi(argv[2]);
+				newoffset = atoi(argv[2]);
 				shift(2);
 				break;
 			}
@@ -220,44 +213,56 @@ main(int argc, char **argv) {
 		}
 	}
 
+	/* Here the only sensible way of using rdev */
+	if (argc == 1) {
+		if (cmd == RDEV) {
+			if (stat("/",&s) < 0) die("/");
+			printf("%s /\n", find_dev(s.st_dev));
+			exit(0);
+		}
+		usage();
+	}
+
+	if (argc > 4)
+		usage();
+
+	/* Ancient garbage.. */
 	offset = DEFAULT_OFFSET-cmd*2;
 	if (newoffset >= 0)
 		offset = newoffset;
+	if (argc == 4)
+		offset = atoi(argv[3]);
 
-	if  ((cmd == RDEV) && (argc == 1 || argc > 4)) {
-		if (stat("/",&s) < 0) die("/");
-		printf("%s /\n", find_dev(s.st_dev));
-		exit(0);
-	} else if ((cmd != RDEV) && (argc == 1 || argc > 4))
-		usage();
+	have_val = 0;
 
-	if ((cmd == RDEV) || (cmd == SDEV)) {	
-		if (argc == 4) {
-			device = argv[2];
-			offset = atoi(argv[3]);
-		} else {
-			if (argc == 3) {
-				if (isdigit(*argv[2]))
-					offset = atoi(argv[2]);
-				else
-					device = argv[2];
+	if (argc >= 3) {
+		if (cmd == RDEV) {
+			if (isdigit(*argv[2])) {
+				/* earlier: specify offset */
+				/* now: specify major,minor */
+				char *p;
+				unsigned int ma,mi;
+				if ((p = strchr(argv[2], ',')) == NULL)
+					die(_("missing comma"));
+				ma = atoi(argv[2]);
+				mi = atoi(p+1);
+				val = ((ma<<8) | mi);
+			} else {
+				char *device = argv[2];
+				if (stat(device,&s) < 0)
+					die(device);
+				val = s.st_rdev;
 			}
+		} else {
+			val = atoi(argv[2]);
 		}
-	} else {
-		if (argc>=3)
-			device = argv[2];
-		if (argc==4)
-			offset = atoi(argv[3]);
+		have_val = 1;
 	}
-	if (device) {
-		if ((cmd == SDEV) || (cmd == RDEV)) {
-			if (stat(device,&s) < 0)
-				die(device);
-		} else
-			s.st_rdev=atoi(device);
+
+	if (have_val) {
 		if ((image = open(argv[1],O_WRONLY)) < 0) die(argv[1]);
 		if (lseek(image,offset,0) < 0) die("lseek");
-		if (write(image,(char *)&s.st_rdev,2) != 2) die(argv[1]);
+		if (write(image,(char *)&val,2) != 2) die(argv[1]);
 		if (close(image) < 0) die("close");
 	} else {
 		if ((image = open(argv[1],O_RDONLY)) < 0) die(argv[1]);
@@ -266,7 +271,7 @@ main(int argc, char **argv) {
 		if (read(image,(char *)&dev_nr,2) != 2) die(argv[1]);
 		if (close(image) < 0) die("close");
 		fputs(desc[cmd], stdout);
-		if ((cmd == SDEV) || (cmd == RDEV))
+		if (cmd == RDEV)
 			printf(" %s\n", find_dev(dev_nr));
 		else
 			printf(" %d\n", dev_nr);

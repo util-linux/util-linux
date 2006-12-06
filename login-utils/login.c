@@ -13,11 +13,7 @@
    - The program uses BSD command line options to be used
      in connection with e.g. 'rlogind' i.e. 'new login'.
    
-   - HP features left out:          logging of bad login attempts in /etc/btmp,
-                                    they are sent to syslog
-   
-				    password expiry
-   
+   - HP features left out:	    password expiry
 				    '*' as login shell, add it if you need it
 
    - BSD features left out:         quota checks
@@ -168,23 +164,6 @@
 #include "setproctitle.h"
 #endif
 
-/*
- * RedHat writes:
- * we've got a REAL HACK to avoid telling people that they have
- * mail because the imap server has left a turd in their inbox.
- * It works, but it sucks...
- * It turns out that the turd is always 523 bytes long, so we
- * just check for that size.
- */
-/*
- * If you want to turn this strange hack off, set
-	#define REDHAT_IGNORED_MAILSIZE 0
- * In case people complain, this may become a configuration option,
- * or perhaps this hack is thrown out again.
- * A better solution would be to check the contents of this file..
- */
-#define REDHAT_IGNORED_MAILSIZE	523
-
 #if 0
 /* from before we had a lastlog.h file in linux */
 struct  lastlog
@@ -243,24 +222,26 @@ int     timeout = 60;		/* used in cryptocard.c */
 #endif
 
 struct	passwd *pwd;		/* used in cryptocard.c */
-struct  hostent hostaddress;	/* used in checktty.c */
-char	term[64], *hostname, *username, *tty;
+char    hostaddress[4];		/* used in checktty.c */
+char	*hostname;		/* idem */
+static char	*username, *tty_name, *tty_number;
 static char	thishost[100];
 static int	failures = 1;
 
 #ifndef __linux__
 struct	sgttyb sgttyb;
 struct	tchars tc = {
-    CINTR, CQUIT, CSTART, CSTOP, CEOT, CBRK
-  };
+	CINTR, CQUIT, CSTART, CSTOP, CEOT, CBRK
+};
 struct	ltchars ltc = {
-    CSUSP, CDSUSP, CRPRNT, CFLUSH, CWERASE, CLNEXT
-  };
+	CSUSP, CDSUSP, CRPRNT, CFLUSH, CWERASE, CLNEXT
+};
 #endif
 
-const char *months[] =
-{ "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug",
-    "Sep", "Oct", "Nov", "Dec" };
+const char *months[] = {
+	"Jan", "Feb", "Mar", "Apr", "May", "Jun",
+	"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
+};
 
 /* Nice and simple code provided by Linus Torvalds 16-Feb-93 */
 /* Nonblocking stuff by Maciej W. Rozycki, macro@ds2.pg.gda.pl, 1999.
@@ -271,8 +252,7 @@ const char *months[] =
    leaving the decision to make a connection to getty (where it actually
    belongs). */
 static void
-opentty(const char * tty)
-{
+opentty(const char * tty) {
     int i;
     int fd = open(tty, O_RDWR | O_NONBLOCK);
     int flags = fcntl(fd, F_GETFL);
@@ -290,8 +270,7 @@ opentty(const char * tty)
 
 /* true if the filedescriptor fd is a console tty, very Linux specific */
 static int
-consoletty(int fd)
-{
+consoletty(int fd) {
 #ifdef __linux__
     struct stat stb;
 
@@ -304,6 +283,47 @@ consoletty(int fd)
     return 0;
 }
 
+#if USE_PAM
+/*
+ * Log failed login attempts in _PATH_BTMP if that exists.
+ * Must be called only with username the name of an actual user.
+ * The most common login failure is to give password instead of username.
+ */
+#define	_PATH_BTMP	"/var/log/btmp"
+static void
+logbtmp(const char *line, const char *username, const char *hostname) {
+	struct utmp ut;
+
+	memset(&ut, 0, sizeof(ut));
+
+	strncpy(ut.ut_user, username ? username : "(unknown)",
+		sizeof(ut.ut_user));
+
+	strncpy(ut.ut_id, line + 3, sizeof(ut.ut_id));
+	xstrncpy(ut.ut_line, line, sizeof(ut.ut_line));
+
+#if defined(_HAVE_UT_TV)	    /* in <utmpbits.h> included by <utmp.h> */
+	gettimeofday(&ut.ut_tv, NULL);
+#else
+	{
+		time_t t;
+		time(&t);
+		ut.ut_time = t;	    /* ut_time is not always a time_t */
+	}
+#endif
+
+	ut.ut_type = LOGIN_PROCESS; /* XXX doesn't matter */
+	ut.ut_pid = getpid();
+	if (hostname) {
+		xstrncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
+		if (hostaddress[0])
+			memcpy(&ut.ut_addr, hostaddress, sizeof(ut.ut_addr));
+	}
+#ifdef HAVE_updwtmp		/* bad luck for ancient systems */
+	updwtmp(_PATH_BTMP, &ut);
+#endif
+}
+#endif	/* USE_PAM */
 
 int
 main(int argc, char **argv)
@@ -363,7 +383,7 @@ main(int argc, char **argv)
     xstrncpy(thishost, tbuf, sizeof(thishost));
     domain = index(tbuf, '.');
     
-    username = tty = hostname = NULL;
+    username = tty_name = hostname = NULL;
     fflag = hflag = pflag = 0;
     passwd_req = 1;
 
@@ -383,14 +403,16 @@ main(int argc, char **argv)
 	  if (domain && (p = index(optarg, '.')) &&
 	      strcasecmp(p, domain) == 0)
 	    *p = 0;
+
 	  hostname = strdup(optarg); 	/* strdup: Ambrose C. Li */
-	  { 
-	      struct hostent *he = gethostbyname(hostname);
-	      if (he) {
-		  memcpy(&hostaddress, he, sizeof(hostaddress));
-	      } else {
-		  memset(&hostaddress, 0, sizeof(hostaddress));
-	      }
+	  {
+		  struct hostent *he = gethostbyname(hostname);
+
+		  /* he points to static storage; copy the part we use */
+		  hostaddress[0] = 0;
+		  if (he && he->h_addr_list && he->h_addr_list[0])
+			  memcpy(hostaddress, he->h_addr_list[0],
+				 sizeof(hostaddress));
 	  }
 	  break;
 	  
@@ -430,8 +452,7 @@ main(int argc, char **argv)
     ioctl(0, TIOCSETP, &sgttyb);
     
     /*
-     * Be sure that we're in
-     * blocking mode!!!
+     * Be sure that we're in blocking mode!!!
      * This is really for HPUX
      */
     ioctlval = 0;
@@ -448,16 +469,23 @@ main(int argc, char **argv)
 	ttyn = tname;
     }
 
+    if (strncmp(ttyn, "/dev/", 5) == 0)
+	tty_name = ttyn+5;
+    else
+	tty_name = ttyn;
+
+    if (strncmp(ttyn, "/dev/tty", 8) == 0)
+	tty_number = ttyn+8;
+    else {
+	char *p = ttyn;
+	while (*p && !isdigit(*p)) p++;
+	tty_number = p;
+    }
+
 #ifdef CHOWNVCS
     /* find names of Virtual Console devices, for later mode change */
-    {
-	char *p = ttyn;
-	/* find number of tty */
-	while (*p && !isdigit(*p)) p++;
-
-	strcpy(vcsn, "/dev/vcs"); strcat(vcsn, p);
-	strcpy(vcsan, "/dev/vcsa"); strcat(vcsan, p);
-    }
+    snprintf(vcsn, sizeof(vcsn), "/dev/vcs%s", tty_number);
+    snprintf(vcsan, sizeof(vcsan), "/dev/vcsa%s", tty_number);
 #endif
 
     setpgrp();
@@ -469,12 +497,15 @@ main(int argc, char **argv)
 	ttt = tt;
 	ttt.c_cflag &= ~HUPCL;
 
-	if((chown(ttyn, 0, 0) == 0) && (chmod(ttyn, TTY_MODE) == 0)) {
-	    tcsetattr(0,TCSAFLUSH,&ttt);
-	    signal(SIGHUP, SIG_IGN); /* so vhangup() wont kill us */
-	    vhangup();
-	    signal(SIGHUP, SIG_DFL);
-	}
+	/* These can fail, e.g. with ttyn on a read-only filesystem */
+	chown(ttyn, 0, 0);
+	chmod(ttyn, TTY_MODE);
+
+	/* Kill processes left on this tty */
+	tcsetattr(0,TCSAFLUSH,&ttt);
+	signal(SIGHUP, SIG_IGN); /* so vhangup() wont kill us */
+	vhangup();
+	signal(SIGHUP, SIG_DFL);
 	
 	setsid();
 	
@@ -483,11 +514,6 @@ main(int argc, char **argv)
 	opentty(ttyn);
 	tcsetattr(0,TCSAFLUSH,&tt);
     }
-
-    if (strncmp(ttyn, "/dev/", 5) == 0)
-	tty = ttyn+5;
-    else
-	tty = ttyn;
 
     openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
 
@@ -515,7 +541,7 @@ main(int argc, char **argv)
        depending on how much we know */
     retcode = pam_set_item(pamh, PAM_RHOST, hostname);
     PAM_FAIL_CHECK;
-    retcode = pam_set_item(pamh, PAM_TTY, tty);
+    retcode = pam_set_item(pamh, PAM_TTY, tty_name);
     PAM_FAIL_CHECK;
 
     /*
@@ -545,6 +571,11 @@ main(int argc, char **argv)
     if(passwd_req == 1) {
 	int failcount=0;
 
+	/* if we didn't get a user on the command line, set it to NULL */
+	pam_get_item(pamh,  PAM_USER, (const void **) &username);
+	if (!username)
+		pam_set_item(pamh, PAM_USER, NULL);
+
 	/* there may be better ways to deal with some of these
 	   conditions, but at least this way I don't think we'll
 	   be giving away information... */
@@ -558,8 +589,11 @@ main(int argc, char **argv)
 	       (retcode == PAM_CRED_INSUFFICIENT) ||
 	       (retcode == PAM_AUTHINFO_UNAVAIL))) {
 	    pam_get_item(pamh, PAM_USER, (const void **) &username);
+
 	    syslog(LOG_NOTICE,_("FAILED LOGIN %d FROM %s FOR %s, %s"),
-	    failcount, hostname, username, pam_strerror(pamh, retcode));
+		   failcount, hostname, username, pam_strerror(pamh, retcode));
+	    logbtmp(tty_name, username, hostname);
+
 	    fprintf(stderr,_("Login incorrect\n\n"));
 	    pam_set_item(pamh,PAM_USER,NULL);
 	    retcode = pam_authenticate(pamh, 0);
@@ -568,13 +602,14 @@ main(int argc, char **argv)
 	if (retcode != PAM_SUCCESS) {
 	    pam_get_item(pamh, PAM_USER, (const void **) &username);
 
-	    if (retcode == PAM_MAXTRIES) 
+	    if (retcode == PAM_MAXTRIES)
 		syslog(LOG_NOTICE,_("TOO MANY LOGIN TRIES (%d) FROM %s FOR "
 			"%s, %s"), failcount, hostname, username,
 			 pam_strerror(pamh, retcode));
 	    else
 		syslog(LOG_NOTICE,_("FAILED LOGIN SESSION FROM %s FOR %s, %s"),
 			hostname, username, pam_strerror(pamh, retcode));
+	    logbtmp(tty_name, username, hostname);
 
 	    fprintf(stderr,_("\nLogin incorrect\n"));
 	    pam_end(pamh, retcode);
@@ -651,7 +686,7 @@ main(int argc, char **argv)
 	
 	if (pwd) {
 	    initgroups(username, pwd->pw_gid);
-	    checktty(username, tty, pwd); /* in checktty.c */
+	    checktty(username, tty_name, pwd); /* in checktty.c */
 	}
 	
 	/* if user not super-user, check for disabled logins */
@@ -673,7 +708,7 @@ main(int argc, char **argv)
 	 * If trying to log in as root, but with insecure terminal,
 	 * refuse the login attempt.
 	 */
-	if (pwd && pwd->pw_uid == 0 && !rootterm(tty)) {
+	if (pwd && pwd->pw_uid == 0 && !rootterm(tty_name)) {
 	    fprintf(stderr,
 		    _("%s login refused on this terminal.\n"),
 		    pwd->pw_name);
@@ -681,11 +716,11 @@ main(int argc, char **argv)
 	    if (hostname)
 	      syslog(LOG_NOTICE,
 		     _("LOGIN %s REFUSED FROM %s ON TTY %s"),
-		     pwd->pw_name, hostname, tty);
+		     pwd->pw_name, hostname, tty_name);
 	    else
 	      syslog(LOG_NOTICE,
 		     _("LOGIN %s REFUSED ON TTY %s"),
-		     pwd->pw_name, tty);
+		     pwd->pw_name, tty_name);
 	    continue;
 	}
 
@@ -833,8 +868,8 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	if (utp == NULL) {
 	     setutent();
 	     ut.ut_type = LOGIN_PROCESS;
-	     strncpy(ut.ut_id, ttyn + 8, sizeof(ut.ut_id));
-	     strncpy(ut.ut_line, ttyn + 5, sizeof(ut.ut_line));
+	     strncpy(ut.ut_id, tty_number, sizeof(ut.ut_id));
+	     strncpy(ut.ut_line, tty_name, sizeof(ut.ut_line));
 	     utp = getutid(&ut);
 	}
 	
@@ -846,27 +881,26 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	}
 	
 	if (ut.ut_id[0] == 0)
-	  strncpy(ut.ut_id, ttyn + 8, sizeof(ut.ut_id));
+	  strncpy(ut.ut_id, tty_number, sizeof(ut.ut_id));
 	
 	strncpy(ut.ut_user, username, sizeof(ut.ut_user));
-	xstrncpy(ut.ut_line, ttyn + 5, sizeof(ut.ut_line));
+	xstrncpy(ut.ut_line, tty_name, sizeof(ut.ut_line));
 #ifdef _HAVE_UT_TV		/* in <utmpbits.h> included by <utmp.h> */
 	gettimeofday(&ut.ut_tv, NULL);
 #else
 	{
-	  time_t t;
-	  time(&t);
-	  ut.ut_time = t;	/* ut_time is not always a time_t */
+	    time_t t;
+	    time(&t);
+	    ut.ut_time = t;	/* ut_time is not always a time_t */
 				/* glibc2 #defines it as ut_tv.tv_sec */
 	}
 #endif
 	ut.ut_type = USER_PROCESS;
 	ut.ut_pid = mypid;
 	if (hostname) {
-	    xstrncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
-	    if (hostaddress.h_addr_list)
-	      memcpy(&ut.ut_addr, hostaddress.h_addr_list[0],
-		     sizeof(ut.ut_addr));
+		xstrncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
+		if (hostaddress[0])
+			memcpy(&ut.ut_addr, hostaddress, sizeof(ut.ut_addr));
 	}
 	
 	pututline(&ut);
@@ -980,14 +1014,12 @@ Michael Riepe <michael@stud.uni-hannover.de>
 #ifdef USE_PAM
     {
 	int i;
-	const char * const * env;
-
-	env = (const char * const *)pam_getenvlist(pamh);
+	char ** env = pam_getenvlist(pamh);
 
 	if (env != NULL) {
-	    for (i=0; env[i++]; ) {
-		putenv(env[i-1]);
-		/* D(("env[%d] = %s", i-1,env[i-1])); */
+	    for (i=0; env[i]; i++) {
+		putenv(env[i]);
+		/* D(("env[%d] = %s", i,env[i])); */
 	    }
 	}
     }
@@ -997,8 +1029,8 @@ Michael Riepe <michael@stud.uni-hannover.de>
     setproctitle("login", username);
 #endif
     
-    if (tty[sizeof("tty")-1] == 'S')
-      syslog(LOG_INFO, _("DIALUP AT %s BY %s"), tty, pwd->pw_name);
+    if (!strncmp(tty_name, "ttyS", 4))
+      syslog(LOG_INFO, _("DIALUP AT %s BY %s"), tty_name, pwd->pw_name);
     
     /* allow tracking of good logins.
        -steve philp (sphilp@mail.alliance.net) */
@@ -1006,15 +1038,15 @@ Michael Riepe <michael@stud.uni-hannover.de>
     if (pwd->pw_uid == 0) {
 	if (hostname)
 	  syslog(LOG_NOTICE, _("ROOT LOGIN ON %s FROM %s"),
-		 tty, hostname);
+		 tty_name, hostname);
 	else
-	  syslog(LOG_NOTICE, _("ROOT LOGIN ON %s"), tty);
+	  syslog(LOG_NOTICE, _("ROOT LOGIN ON %s"), tty_name);
     } else {
 	if (hostname) 
-	  syslog(LOG_INFO, _("LOGIN ON %s BY %s FROM %s"), tty, 
+	  syslog(LOG_INFO, _("LOGIN ON %s BY %s FROM %s"), tty_name, 
 		 pwd->pw_name, hostname);
 	else 
-	  syslog(LOG_INFO, _("LOGIN ON %s BY %s"), tty, 
+	  syslog(LOG_INFO, _("LOGIN ON %s BY %s"), tty_name, 
 		 pwd->pw_name);
     }
     
@@ -1024,8 +1056,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	
 	motd();
 	mail = getenv("MAIL");
-	if (mail && stat(mail, &st) == 0 && st.st_size != 0
-		 && st.st_size != REDHAT_IGNORED_MAILSIZE) {
+	if (mail && stat(mail, &st) == 0 && st.st_size != 0) {
 		printf(_("You have %smail.\n"),
 		       (st.st_mtime > st.st_atime) ? _("new ") : "");
 	}
@@ -1034,7 +1065,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
     signal(SIGALRM, SIG_DFL);
     signal(SIGQUIT, SIG_DFL);
     signal(SIGTSTP, SIG_IGN);
-    signal(SIGHUP, SIG_DFL);
 
 #ifdef USE_PAM
     /*
@@ -1048,6 +1078,8 @@ Michael Riepe <michael@stud.uni-hannover.de>
      * Solution: use TIOCNOTTY and setsid().
      */
     signal(SIGINT, SIG_IGN);
+    signal(SIGHUP, SIG_IGN);	/* ignore signal from TIOCNOTTY below */
+    
     childPid = fork();
     if (childPid < 0) {
        int errsv = errno;
@@ -1057,7 +1089,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
        exit(0);
     } else if (childPid) {
        /* parent - wait for child to finish, then cleanup session */
-       signal(SIGHUP, SIG_IGN);		/* ignore signal from TIOCNOTTY */
        ioctl(0, TIOCNOTTY, NULL);
        signal(SIGHUP, SIG_DFL);
 
@@ -1067,7 +1098,10 @@ Michael Riepe <michael@stud.uni-hannover.de>
     }
     /* child */
     setsid();
+    /* reopen, as we need controlling tty in the child */
+    opentty(ttyn);
 #endif
+    signal(SIGHUP, SIG_DFL);
     signal(SIGINT, SIG_DFL);
     
     /* discard permissions last so can't get killed and drop core */
@@ -1192,7 +1226,7 @@ rootterm(char * ttyn)
 {
     struct ttyent *t;
     
-    return((t = getttynam(ttyn)) && t->ty_status&TTY_SECURE);
+    return((t = getttynam(ttyn)) && (t->ty_status&TTY_SECURE));
 }
 #else
 { 
@@ -1286,7 +1320,7 @@ dolastlog(int quiet) {
 	}
 	memset((char *)&ll, 0, sizeof(ll));
 	time(&ll.ll_time);
-	xstrncpy(ll.ll_line, tty, sizeof(ll.ll_line));
+	xstrncpy(ll.ll_line, tty_name, sizeof(ll.ll_line));
 	if (hostname)
 	    xstrncpy(ll.ll_host, hostname, sizeof(ll.ll_host));
 
@@ -1296,22 +1330,21 @@ dolastlog(int quiet) {
 }
 
 void
-badlogin(const char *name)
-{
+badlogin(const char *name) {
     if (failures == 1) {
 	if (hostname)
 	  syslog(LOG_NOTICE, _("LOGIN FAILURE FROM %s, %s"),
 		 hostname, name);
 	else
 	  syslog(LOG_NOTICE, _("LOGIN FAILURE ON %s, %s"),
-		 tty, name);
+		 tty_name, name);
     } else {
 	if (hostname)
 	  syslog(LOG_NOTICE, _("%d LOGIN FAILURES FROM %s, %s"),
 		 failures, hostname, name);
 	else
 	  syslog(LOG_NOTICE, _("%d LOGIN FAILURES ON %s, %s"),
-		 failures, tty, name);
+		 failures, tty_name, name);
     }
 }
 

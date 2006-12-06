@@ -193,12 +193,12 @@ check_sgi_label() {
 void
 sgi_list_table( int xtra ) {
     int i, w;
+    int kpi = 0;		/* kernel partition ID */
     char *type;
 
     w = strlen( disk_device );
 
-    if( xtra )
-    {
+    if( xtra ) {
 	printf(_("\nDisk %s (SGI disk label): %d heads, %d sectors\n"
 	       "%d cylinders, %d physical cylinders\n"
 	       "%d extra sects/cyl, interleave %d:1\n"
@@ -210,8 +210,7 @@ sgi_list_table( int xtra ) {
 	       SSWAP16(sgiparam.ilfact),
 	       (char *)sgilabel,
 	       str_units(PLURAL), units_per_sector);
-    } else
-    {
+    } else {
 	printf( _("\nDisk %s (SGI disk label): "
 		"%d heads, %d sectors, %d cylinders\n"
 		"Units = %s of %d * 512 bytes\n\n"),
@@ -219,17 +218,17 @@ sgi_list_table( int xtra ) {
 	        str_units(PLURAL), units_per_sector );
     }
     printf(_("----- partitions -----\n"
-	   "%*s  Info      Start       End   Sectors  Id  System\n"),
+	   "Pt# %*s  Info     Start       End   Sectors  Id  System\n"),
 	   w + 1, _("Device"));
-    for (i = 0 ; i < partitions; i++)
-    {
-	if( sgi_get_num_sectors(i) || debug )
-	{
+    for (i = 0 ; i < partitions; i++) {
+	    if( sgi_get_num_sectors(i) || debug ) {
 	    __u32 start = sgi_get_start_sector(i);
 	    __u32 len = sgi_get_num_sectors(i);
+	    kpi++;		/* only count nonempty partitions */
 	    printf(
-		"%*s%-2d %4s %9ld %9ld %9ld  %2x  %s\n",
-/* device */              w, disk_device, i + 1,
+		"%2d: %s %4s %9ld %9ld %9ld  %2x  %s\n",
+/* fdisk part number */   i+1,
+/* device */              partname(disk_device, kpi, w+2),
 /* flags */               (sgi_get_swappartition() == i) ? "swap" :
 /* flags */               (sgi_get_bootpartition() == i) ? "boot" : "    ", 
 /* start */               (long) scround(start),
@@ -240,8 +239,8 @@ sgi_list_table( int xtra ) {
 		    ? type : _("Unknown"));
 	}
     }
-    printf(_("----- bootinfo -----\nBootfile: %s\n"
-	     "----- directory entries -----\n"),
+    printf(_("----- Bootinfo -----\nBootfile: %s\n"
+	     "----- Directory Entries -----\n"),
 	   sgilabel->boot_file );
     for (i = 0 ; i < volumes; i++)
     {
@@ -735,11 +734,9 @@ create_sgilabel(void)
 	_("Building a new SGI disklabel. Changes will remain in memory only,\n"
 	"until you decide to write them. After that, of course, the previous\n"
 	"content will be unrecoverably lost.\n\n"));
-#if BYTE_ORDER == LITTLE_ENDIAN
-    other_endian = 1;
-#else
-    other_endian = 0;
-#endif
+
+    other_endian = (BYTE_ORDER == LITTLE_ENDIAN);
+
 #ifdef HDIO_REQ
     if (!ioctl(fd, HDIO_REQ, &geometry))
 #else

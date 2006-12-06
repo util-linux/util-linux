@@ -48,12 +48,18 @@ struct ext_super_block {
 
 #define EXT2_PRE_02B_MAGIC  0xEF51
 #define EXT2_SUPER_MAGIC    0xEF53
+#define EXT3_FEATURE_COMPAT_HAS_JOURNAL 0x0004
 struct ext2_super_block {
-	u_char   s_dummy1[56];
-	u_char   s_magic[2];
-	u_char   s_dummy2[46];
-	u_char   s_uuid[16];
-	u_char   s_volume_name[16];
+	u_char 	s_dummy1[56];
+	u_char 	s_magic[2];
+	u_char	s_dummy2[34];
+	u_char	s_feature_compat[4];
+	u_char	s_feature_incompat[4];
+	u_char	s_feature_ro_compat[4];
+	u_char	s_uuid[16];
+	u_char 	s_volume_name[16];
+	u_char	s_dummy3[88];
+	u_char	s_journal_inum[4];	/* ext3 only */
 };
 #define ext2magic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8))
 
@@ -102,7 +108,6 @@ struct fat_super_block {
 };
 
 #define XFS_SUPER_MAGIC "XFSB"
-#define XFS_SUPER_MAGIC2 "BSFX"
 struct xfs_super_block {
     u_char    s_magic[4];
     u_char    s_dummy[28];

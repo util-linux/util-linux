@@ -18,17 +18,6 @@
 #include "nfsmount.h"
 #include "nls.h"
 
-/* String list constructor.  (car() and cdr() are defined in "sundries.h").  */
-string_list
-cons (char *a, const string_list b) {
-     string_list p;
-
-     p = xmalloc (sizeof *p);
-     car (p) = a;
-     cdr (p) = b;
-     return p;
-}
-
 void *
 xmalloc (size_t size) {
      void *t;
@@ -157,57 +146,43 @@ die (int err, const char *fmt, ...) {
      exit (err);
 }
 
-/* Parse a list of strings like str[,str]... into a string list.  */
-string_list
-parse_list (char *strings) {
-     string_list list;
-     char *s, *t;
-
-     if (strings == NULL)
-	  return NULL;
-
-     /* strtok() destroys its argument, so we have to use a copy */
-     s = xstrdup(strings);
-
-     list = cons (strtok (s, ","), NULL);
-
-     while ((t = strtok (NULL, ",")) != NULL)
-	  list = cons (t, list);
-
-     return list;
-}
-
 /* True if fstypes match.  Null *TYPES means match anything,
-   except that swap types always return false.
-   This routine has some ugliness to deal with ``no'' types.
-   Fixed bug: the `no' part comes at the end - aeb, 970216  */
+   except that swap types always return false. */
+/* Accept nonfs,proc,devpts and nonfs,noproc,nodevpts
+   with the same meaning. */
 int
-matching_type (const char *type, string_list types) {
-     char *notype;
-     int foundyes, foundno;
-     int no;			/* true if a "no" type match, eg -t nominix */
+matching_type (const char *type, const char *types) {
+     int no;			/* negated types list */
+     int len;
+     const char *p;
 
      if (streq (type, MNTTYPE_SWAP))
 	  return 0;
      if (types == NULL)
 	  return 1;
 
-     if ((notype = alloca (strlen (type) + 3)) == NULL)
-	  die (EX_SYSERR, _("%s: Out of memory!\n"), "mount");
-     sprintf (notype, "no%s", type);
-
-     foundyes = foundno = no = 0;
-     while (types != NULL) {
-	  if (cdr (types) == NULL)
-	       no = (car (types)[0] == 'n') && (car (types)[1] == 'o');
-	  if (streq (type, car (types)))
-	       foundyes = 1;
-	  else if (streq (notype, car (types)))
-	       foundno = 1;
-	  types = cdr (types);
+     no = 0;
+     if (!strncmp(types, "no", 2)) {
+	  no = 1;
+	  types += 2;
      }
 
-     return (foundno ? 0 : (no ^ foundyes));
+     /* Does type occur in types, separated by commas? */
+     len = strlen(type);
+     p = types;
+     while(1) {
+	     if (!strncmp(p, "no", 2) && !strncmp(p+2, type, len) &&
+		 (p[len+2] == 0 || p[len+2] == ','))
+		     return 0;
+	     if (strncmp(p, type, len) == 0 &&
+		 (p[len] == 0 || p[len] == ','))
+		     return !no;
+	     p = index(p,',');
+	     if (!p)
+		     break;
+	     p++;
+     }
+     return no;
 }
 
 /* Make a canonical pathname from PATH.  Returns a freshly malloced string.

@@ -1,4 +1,4 @@
-.\" Copyright (C) 2000  Richard Gooch
+.\" Copyright (C) 2000-2001  Richard Gooch
 .\"
 .\" This program is free software; you can redistribute it and/or modify
 .\" it under the terms of the GNU General Public License as published by
@@ -18,9 +18,9 @@
 .\" The postal address is:
 .\"   Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.
 .\"
-.\"	initctl.8		Richard Gooch	6-NOV-2000
+.\"	initctl.8		Richard Gooch	21-FEB-2001
 .\"
-.TH INITCTL 8 "6 Nov 2000" "Util-Linux Package"
+.TH INITCTL 8 "21 Feb 2001" "Util-Linux Package"
 .SH NAME
 initctl \- utility to control simpleinit(8)
 .SH SYNOPSIS
@@ -30,12 +30,12 @@ initctl \- utility to control simpleinit(8)
 \fBprovide service\fP
 .fi
 .SH OVERVIEW
-The \fBneed\fP programme is designed to help improve the robustness,
-scalability and readability of system boot scripts. It is now possible
-to write a modularised set of boot scripts without the complex and
-fragile numbered symlink scheme used in SysV-style boot scripts. Each
-script can simply declare, using \fBneed\fP(8), what must run before
-them.
+The \fBinitctl\fP programme is designed to help improve the
+robustness, scalability and readability of system boot scripts. It is
+now possible to write a modularised set of boot scripts without the
+complex and fragile numbered symlink scheme used in SysV-style boot
+scripts. Each script can simply declare, using \fBneed\fP(8), what
+must run before them.
 .SH DESCRIPTION for need
 The \fBneed\fP programme is a utility that tells \fBsimpleinit\fP(8)
 to start a \fIservice\fP (usually a script in \fI/sbin/init.d\fP) and
@@ -83,15 +83,15 @@ The exit code from \fBprovide\fP is 0 if the service may be provided,
 init. It may block waiting for another provider which is initialising
 the service.
 .SH SIGNALS
-\fBneed\fP(8) uses \fBSIGUSR1\fP, \fBSIGUSR2\fP and \fBSIGPOLL\fP for
-communication with \fBsimpleinit\fP(8). Don't send these signals to
-it.
+\fBinitctl\fP(8) uses \fBSIGUSR1\fP, \fBSIGUSR2\fP and \fBSIGPOLL\fP
+for communication with \fBsimpleinit\fP(8). Don't send these signals
+to it.
 .SH FILES
 .PD 0
 .TP 20
 .BI /dev/initctl
 This is the control FIFO, created by \fBsimpleinit\fP(8), which
-\fBneed\fP(8) writes commands to.
+\fBinitctl\fP(8) writes commands to.
 .SH SEE ALSO
 .BR simpleinit (8),
 .BR init (8)

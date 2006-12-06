@@ -38,7 +38,7 @@ endif
 endif
 
 ifeq "$(ARCH)" "intel"
-MAN8:=$(MAN8) rdev.8 ramsize.8 rootflags.8 swapdev.8 vidmode.8
+MAN8:=$(MAN8) rdev.8 ramsize.8 rootflags.8 vidmode.8
 USRSBIN:=$(USRSBIN) rdev
 endif
 
@@ -84,7 +84,6 @@ install: all
 	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
 	$(INSTALLBIN) $(USRSBIN) $(USRSBINDIR)
 ifeq "$(ARCH)" "intel"
-	(cd $(USRSBINDIR); ln -sf rdev swapdev)
 	(cd $(USRSBINDIR); ln -sf rdev ramsize)
 	(cd $(USRSBINDIR); ln -sf rdev vidmode)
 	(cd $(USRSBINDIR); ln -sf rdev rootflags)

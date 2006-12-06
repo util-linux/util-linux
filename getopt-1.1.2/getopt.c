@@ -438,7 +438,7 @@ int main(int argc, char *argv[])
 			quote=0;
 			break;
 		case 'V':
-			printf(_("getopt (enhanced) 1.1.0\n"));
+			printf(_("getopt (enhanced) 1.1.2\n"));
 			exit(0);
 		case '?':
 		case ':':

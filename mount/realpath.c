@@ -13,12 +13,17 @@
  * GNU Library Public License for more details.
  */
 
+#undef resolve_symlinks
+
 /*
  * This routine is part of libc.  We include it nevertheless,
  * since the libc version has some security flaws.
  */
 
 #include <limits.h>		/* for PATH_MAX */
+#ifndef PATH_MAX
+#define PATH_MAX 8192
+#endif
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
@@ -30,10 +35,14 @@
 /* this leaks some memory - unimportant for mount */
 char *
 myrealpath(const char *path, char *resolved_path, int maxreslth) {
-	char *npath, *buf;
-	char link_path[PATH_MAX+1];
 	int readlinks = 0;
-	int m, n;
+	char *npath;
+	char link_path[PATH_MAX+1];
+	int n;
+#ifdef resolve_symlinks
+	char *buf;
+	int m;
+#endif
 
 	npath = resolved_path;
 
@@ -85,7 +94,7 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 			return NULL;
 		}
 
-		/* See if latest pathname component is a symlink. */
+		/* See if last pathname component is a symlink. */
 		*npath = '\0';
 		n = readlink(resolved_path, link_path, PATH_MAX);
 		if (n < 0) {
@@ -93,6 +102,7 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 			if (errno != EINVAL)
 				return NULL;
 		} else {
+#ifdef resolve_symlinks		/* Richard Gooch dislikes sl resolution */
 			/* Note: readlink doesn't add the null byte. */
 			link_path[n] = '\0';
 			if (*link_path == '/')
@@ -109,8 +119,8 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 			memcpy(buf, link_path, n);
 			memcpy(buf + n, path, m + 1);
 			path = buf;
+#endif
 		}
-
 		*npath++ = '/';
 	}
 	/* Delete trailing slash but don't whomp a lone slash. */

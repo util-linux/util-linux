@@ -18,13 +18,6 @@
  * used a struct rtc_time different from that used in mc146818rtc.h.
  */
 
-/* ia64 uses /dev/efirtc (char 10,136) */
-#if __ia64__
-#define RTC_DEV "/dev/efirtc"
-#else
-#define RTC_DEV "/dev/rtc"
-#endif
-
 /* On Sparcs, there is a <asm/rtc.h> that defines different ioctls
    (that are required on my machine). However, this include file
    does not exist on other architectures. */
@@ -87,38 +80,67 @@ struct linux_rtc_time {
 #endif
 
 
+/* ia64 uses /dev/efirtc (char 10,136) */
+/* devfs uses /dev/misc/rtc */
+#if __ia64__
+#define RTC_DEVN	"efirtc"
+#else
+#define RTC_DEVN	"rtc"
+#endif
+
+static char rtc_dev_name[40];
+
+/* maybe we should not try /dev/misc/efirtc?
+   maybe we should reset rtc_dev_name to give better error messages */
+static int
+open_rtc(void) {
+	int rtc_fd;
+
+	sprintf(rtc_dev_name, "/dev/%s", RTC_DEVN);
+	rtc_fd = open(rtc_dev_name, O_RDONLY);
+	if (rtc_fd < 0) {
+		sprintf(rtc_dev_name, "/dev/misc/%s", RTC_DEVN);
+		rtc_fd = open(rtc_dev_name, O_RDONLY);
+	}
+	return rtc_fd;
+}
+
 static int
 do_rtc_read_ioctl(int rtc_fd, struct tm *tm) {
-  int rc;
-  char *ioctlname;
-#ifdef __sparc__
-  struct sparc_rtc_time stm;
+	int rc = -1;
+	char *ioctlname;
 
-  ioctlname = "RTCGET";
-  rc = ioctl(rtc_fd, RTCGET, &stm);
-#else
-  ioctlname = "RTC_RD_TIME";
-  rc = ioctl(rtc_fd, RTC_RD_TIME, tm);
-#endif
-  if (rc == -1) {
-    perror(ioctlname);
-    fprintf(stderr, _("ioctl() to %s to read the time failed.\n"),RTC_DEV);
-    exit(5);
-  }
 #ifdef __sparc__
-  tm->tm_sec = stm.sec;
-  tm->tm_min = stm.min;
-  tm->tm_hour = stm.hour;
-  tm->tm_mday = stm.dom;
-  tm->tm_mon = stm.month - 1;
-  tm->tm_year = stm.year - 1900;
-  tm->tm_wday = stm.dow - 1;
-  tm->tm_yday = -1;		/* day in the year */
-#endif
-  tm->tm_isdst = -1;          /* don't know whether it's daylight */
-  return 0;
-}  
+	/* some but not all sparcs use a different ioctl and struct */
+	struct sparc_rtc_time stm;
 
+	ioctlname = "RTCGET";
+	rc = ioctl(rtc_fd, RTCGET, &stm);
+	if (rc == 0) {
+		tm->tm_sec = stm.sec;
+		tm->tm_min = stm.min;
+		tm->tm_hour = stm.hour;
+		tm->tm_mday = stm.dom;
+		tm->tm_mon = stm.month - 1;
+		tm->tm_year = stm.year - 1900;
+		tm->tm_wday = stm.dow - 1;
+		tm->tm_yday = -1;		/* day in the year */
+	}
+#endif
+	if (rc == -1) {		/* no sparc, or RTCGET failed */
+		ioctlname = "RTC_RD_TIME";
+		rc = ioctl(rtc_fd, RTC_RD_TIME, tm);
+	}
+	if (rc == -1) {
+		perror(ioctlname);
+		fprintf(stderr, _("ioctl() to %s to read the time failed.\n"),
+			rtc_dev_name);
+		exit(5);
+	}
+
+	tm->tm_isdst = -1;          /* don't know whether it's dst */
+	return 0;
+}
 
 static int
 busywait_for_rtc_clock_tick(const int rtc_fd) {
@@ -133,7 +155,8 @@ busywait_for_rtc_clock_tick(const int rtc_fd) {
   int rc;
 
   if (debug)
-    printf(_("Waiting in loop for time from %s to change\n"),RTC_DEV);
+    printf(_("Waiting in loop for time from %s to change\n"),
+	   rtc_dev_name);
 
   rc = do_rtc_read_ioctl(rtc_fd, &start_time);
   if (rc)
@@ -167,9 +190,9 @@ synchronize_to_clock_tick_rtc(void) {
 int rtc_fd;  /* File descriptor of /dev/rtc */
 int ret;
 
-  rtc_fd = open(RTC_DEV,O_RDONLY);
+  rtc_fd = open(rtc_dev_name, O_RDONLY);
   if (rtc_fd == -1) {
-    outsyserr(_("open() of %s failed"),RTC_DEV);
+    outsyserr(_("open() of %s failed"), rtc_dev_name);
     ret = 1;
   } else {
     int rc;  /* Return code from ioctl */
@@ -187,7 +210,8 @@ int ret;
          kernel for the system clock, so aren't at the user's disposal.
          */
       if (debug)
-	      printf(_("%s does not have interrupt functions. "),RTC_DEV);
+	      printf(_("%s does not have interrupt functions. "),
+		     rtc_dev_name);
       ret = busywait_for_rtc_clock_tick(rtc_fd);
     } else if (rc == 0) {
       unsigned long dummy;
@@ -195,7 +219,8 @@ int ret;
       /* this blocks until the next update interrupt */
       rc = read(rtc_fd, &dummy, sizeof(dummy));
       if (rc == -1) {
-        outsyserr(_("read() to %s to wait for clock tick failed"),RTC_DEV);
+        outsyserr(_("read() to %s to wait for clock tick failed"),
+		  rtc_dev_name);
         ret = 1;
       } else {
         ret = 0;
@@ -203,11 +228,11 @@ int ret;
       /* Turn off update interrupts */
       rc = ioctl(rtc_fd, RTC_UIE_OFF, 0);
       if (rc == -1)
-        outsyserr(_("ioctl() to %s to turn off update interrupts "
-		    "failed"),RTC_DEV);
+        outsyserr(_("ioctl() to %s to turn off update interrupts failed"),
+		  rtc_dev_name);
     } else {
       outsyserr(_("ioctl() to %s to turn on update interrupts "
-		"failed unexpectedly"),RTC_DEV);
+		"failed unexpectedly"), rtc_dev_name);
       ret = 1;
     }
     close(rtc_fd);
@@ -218,69 +243,70 @@ int ret;
 
 static int
 read_hardware_clock_rtc(struct tm *tm) {
-/*----------------------------------------------------------------------------
-  Read the hardware clock and return the current time via <tm>
-  argument.  Use ioctls to "rtc" device /dev/rtc.
------------------------------------------------------------------------------*/
-  int rtc_fd;  /* File descriptor of /dev/rtc */
+	int rtc_fd;
 
-  rtc_fd = open(RTC_DEV,O_RDONLY);
-  if (rtc_fd == -1) {
-    outsyserr(_("open() of %s failed"),RTC_DEV);
-    exit(5);
-  }
+	rtc_fd = open_rtc();
+	if (rtc_fd == -1) {
+		outsyserr(_("open() of %s failed"), rtc_dev_name);
+		exit(5);
+	}
 
-  /* Read the RTC time/date */
-  do_rtc_read_ioctl(rtc_fd, tm);
+	/* Read the RTC time/date, return answer via tm */
+	do_rtc_read_ioctl(rtc_fd, tm);
 
-  close(rtc_fd);
-  return 0;
+	close(rtc_fd);
+	return 0;
 }
 
 
 static int
 set_hardware_clock_rtc(const struct tm *new_broken_time) {
-/*----------------------------------------------------------------------------
+/*-------------------------------------------------------------------------
   Set the Hardware Clock to the broken down time <new_broken_time>.
   Use ioctls to "rtc" device /dev/rtc.
-----------------------------------------------------------------------------*/
-  int rc;
-  int rtc_fd;
+  -------------------------------------------------------------------------*/
+	int rc = -1;
+	int rtc_fd;
+	char *ioctlname;
 
-  rtc_fd = open(RTC_DEV, O_RDONLY);
-  if (rtc_fd < 0) {
-    outsyserr(_("Unable to open %s"),RTC_DEV);
-    exit(5);
-  } else {
-    char *ioctlname;
+	rtc_fd = open_rtc();
+	if (rtc_fd < 0) {
+		outsyserr(_("Unable to open %s"), rtc_dev_name);
+		exit(5);
+	}
 #ifdef __sparc__
-    struct sparc_rtc_time stm;
+	{
+		struct sparc_rtc_time stm;
 
-    stm.sec = new_broken_time->tm_sec;
-    stm.min = new_broken_time->tm_min;
-    stm.hour = new_broken_time->tm_hour;
-    stm.dom = new_broken_time->tm_mday;
-    stm.month = new_broken_time->tm_mon + 1;
-    stm.year = new_broken_time->tm_year + 1900;
-    stm.dow = new_broken_time->tm_wday + 1;
+		stm.sec = new_broken_time->tm_sec;
+		stm.min = new_broken_time->tm_min;
+		stm.hour = new_broken_time->tm_hour;
+		stm.dom = new_broken_time->tm_mday;
+		stm.month = new_broken_time->tm_mon + 1;
+		stm.year = new_broken_time->tm_year + 1900;
+		stm.dow = new_broken_time->tm_wday + 1;
 
-    ioctlname = "RTCSET";
-    rc = ioctl(rtc_fd, RTCSET, &stm);
-#else
-    ioctlname = "RTC_SET_TIME";
-    rc = ioctl(rtc_fd, RTC_SET_TIME, new_broken_time);
+		ioctlname = "RTCSET";
+		rc = ioctl(rtc_fd, RTCSET, &stm);
+	}
 #endif
-    if (rc == -1) {
-      perror(ioctlname);
-      fprintf(stderr, _("ioctl() to %s to set the time failed.\n"),RTC_DEV);
-      exit(5);
-    } else {
-      if (debug)
-        printf(_("ioctl(%s) was successful.\n"), ioctlname);
-    }
-    close(rtc_fd);
-  }
-  return 0;
+	if (rc == -1) {		/* no sparc, or RTCSET failed */
+		ioctlname = "RTC_SET_TIME";
+		rc = ioctl(rtc_fd, RTC_SET_TIME, new_broken_time);
+	}
+
+	if (rc == -1) {
+		perror(ioctlname);
+		fprintf(stderr, _("ioctl() to %s to set the time failed.\n"),
+			rtc_dev_name);
+		exit(5);
+	}
+
+	if (debug)
+		printf(_("ioctl(%s) was successful.\n"), ioctlname);
+
+	close(rtc_fd);
+	return 0;
 }
 
 
@@ -290,7 +316,7 @@ get_permissions_rtc(void) {
 }
 
 static struct clock_ops rtc = {
-	RTC_DEV " interface to clock",
+	"/dev/" RTC_DEVN " interface to clock",
 	get_permissions_rtc,
 	read_hardware_clock_rtc,
 	set_hardware_clock_rtc,
@@ -300,14 +326,14 @@ static struct clock_ops rtc = {
 /* return &rtc if /dev/rtc can be opened, NULL otherwise */
 struct clock_ops *
 probe_for_rtc_clock(){
-    int rtc_fd = open(RTC_DEV, O_RDONLY);
-    if (rtc_fd > 0) {
-      close(rtc_fd);
-      return &rtc;
-    }
-    if (debug)
-      outsyserr(_("Open of %s failed"),RTC_DEV);
-    return NULL;
+	int rtc_fd = open_rtc();
+	if (rtc_fd > 0) {
+		close(rtc_fd);
+		return &rtc;
+	}
+	if (debug)
+		outsyserr(_("Open of %s failed"), rtc_dev_name);
+	return NULL;
 }
 
 
@@ -319,30 +345,31 @@ get_epoch_rtc(unsigned long *epoch_p, int silent) {
 ----------------------------------------------------------------------------*/
   int rtc_fd;
 
-  rtc_fd = open(RTC_DEV, O_RDONLY);
+  rtc_fd = open_rtc();
   if (rtc_fd < 0) {
     if (!silent) {
       if (errno == ENOENT) 
         fprintf(stderr, _(
 		"To manipulate the epoch value in the kernel, we must "
                 "access the Linux 'rtc' device driver via the device special "
-                "file %s.  This file does not exist on this system.\n"),RTC_DEV);
+                "file %s.  This file does not exist on this system.\n"),
+		rtc_dev_name);
       else 
-        outsyserr(_("Unable to open %s"),RTC_DEV);
+        outsyserr(_("Unable to open %s"), rtc_dev_name);
     }
     return 1;
   }
 
   if (ioctl(rtc_fd, RTC_EPOCH_READ, epoch_p) == -1) {
     if (!silent)
-      outsyserr(_("ioctl(RTC_EPOCH_READ) to %s failed"),RTC_DEV);
+      outsyserr(_("ioctl(RTC_EPOCH_READ) to %s failed"), rtc_dev_name);
     close(rtc_fd);
     return 1;
   }
 
   if (debug)
 	  printf(_("we have read epoch %ld from %s "
-		 "with RTC_EPOCH_READ ioctl.\n"), *epoch_p,RTC_DEV);
+		 "with RTC_EPOCH_READ ioctl.\n"), *epoch_p, rtc_dev_name);
 
   close(rtc_fd);
   return 0;
@@ -366,27 +393,28 @@ set_epoch_rtc(unsigned long epoch) {
     return 1;
   }
 
-  rtc_fd = open(RTC_DEV, O_RDONLY);
+  rtc_fd = open_rtc();
   if (rtc_fd < 0) {
     if (errno == ENOENT) 
       fprintf(stderr, _("To manipulate the epoch value in the kernel, we must "
               "access the Linux 'rtc' device driver via the device special "
-              "file %s.  This file does not exist on this system.\n"),RTC_DEV);
+              "file %s.  This file does not exist on this system.\n"),
+	      rtc_dev_name);
     else
-      outsyserr(_("Unable to open %s"),RTC_DEV);
+      outsyserr(_("Unable to open %s"), rtc_dev_name);
     return 1;
   }
 
   if (debug)
     printf(_("setting epoch to %ld "
-	   "with RTC_EPOCH_SET ioctl to %s.\n"), epoch, RTC_DEV);
+	   "with RTC_EPOCH_SET ioctl to %s.\n"), epoch, rtc_dev_name);
 
   if (ioctl(rtc_fd, RTC_EPOCH_SET, epoch) == -1) {
     if (errno == EINVAL)
       fprintf(stderr, _("The kernel device driver for %s "
-	      "does not have the RTC_EPOCH_SET ioctl.\n"),RTC_DEV);
+	      "does not have the RTC_EPOCH_SET ioctl.\n"), rtc_dev_name);
     else 
-      outsyserr(_("ioctl(RTC_EPOCH_SET) to %s failed"),RTC_DEV);
+      outsyserr(_("ioctl(RTC_EPOCH_SET) to %s failed"), rtc_dev_name);
     close(rtc_fd);
     return 1;
   }

@@ -47,8 +47,6 @@ will restore the partition table.
 In the absence of such good information, try each of the above
 utilities to get an idea of where your partitions were.
 Since gpart is the most elaborate one, it may be your best bet.
-If it misses some of your ext2 partitions, and you have gpart-0.1c,
-apply the above patch and try again.
 
 Note that if you in the course of history have deleted some partition
 and created something else on the same spot, then there will often

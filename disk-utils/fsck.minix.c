@@ -322,7 +322,7 @@ check_zone_nr(unsigned short * nr, int * corrected) {
 	else
 		return *nr;
 	print_current_name();
-	printf("'.");
+	printf(_("'."));
 	if (ask(_("Remove block"),1)) {
 		*nr = 0;
 		*corrected = 1;
@@ -342,7 +342,7 @@ check_zone_nr2 (unsigned int *nr, int *corrected) {
 	else
 		return *nr;
 	print_current_name ();
-	printf ("'.");
+	printf (_("'."));
 	if (ask (_("Remove block"), 1)) {
 		*nr = 0;
 		*corrected = 1;
@@ -363,13 +363,13 @@ read_block(unsigned int nr, char * addr) {
 	if (BLOCK_SIZE*nr != lseek(IN, BLOCK_SIZE*nr, SEEK_SET)) {
 		printf(_("Read error: unable to seek to block in file '"));
 		print_current_name();
-		printf("'\n");
+		printf(_("'\n"));
 		memset(addr,0,BLOCK_SIZE);
 		errors_uncorrected = 1;
 	} else if (BLOCK_SIZE != read(IN, addr, BLOCK_SIZE)) {
 		printf(_("Read error: bad block in file '"));
 		print_current_name();
-		printf("'\n");
+		printf(_("'\n"));
 		memset(addr,0,BLOCK_SIZE);
 		errors_uncorrected = 1;
 	}
@@ -393,7 +393,7 @@ write_block(unsigned int nr, char * addr) {
 	if (BLOCK_SIZE != write(IN, addr, BLOCK_SIZE)) {
 		printf(_("Write error: bad block in file '"));
 		print_current_name();
-		printf("'\n");
+		printf(_("'\n"));
 		errors_uncorrected = 1;
 	}
 }
@@ -637,10 +637,10 @@ get_inode(unsigned int nr) {
 	inode = Inode + nr;
 	if (!inode_count[nr]) {
 		if (!inode_in_use(nr)) {
-			printf(_("Inode %d marked not used, but used for file '"),
-				nr);
+			printf(_("Inode %d marked not used, "
+				 "but used for file '"), nr);
 			print_current_name();
-			printf("'\n");
+			printf(_("'\n"));
 			if (repair) {
 				if (ask(_("Mark in use"),1))
 					mark_inode(nr);
@@ -688,9 +688,10 @@ get_inode2 (unsigned int nr) {
 	inode = Inode2 + nr;
 	if (!inode_count[nr]) {
 		if (!inode_in_use (nr)) {
-			printf (_("Inode %d marked not used, but used for file '"), nr);
+			printf (_("Inode %d marked not used, "
+				  "but used for file '"), nr);
 			print_current_name ();
-			printf ("'\n");
+			printf (_("'\n"));
 			if (repair) {
 				if (ask (_("Mark in use"), 1))
 					mark_inode (nr);
@@ -755,7 +756,7 @@ add_zone(unsigned short * znr, int * corrected) {
 	if (zone_count[block]) {
 		printf(_("Block has been used before. Now in file `"));
 		print_current_name();
-		printf("'.");
+		printf(_("'."));
 		if (ask(_("Clear"),1)) {
 			*znr = 0;
 			block = 0;
@@ -789,7 +790,7 @@ add_zone2 (unsigned int *znr, int *corrected) {
 	if (zone_count[block]) {
 		printf (_("Block has been used before. Now in file `"));
 		print_current_name ();
-		printf ("'.");
+		printf (_("'."));
 		if (ask (_("Clear"), 1)) {
 			*znr = 0;
 			block = 0;
@@ -947,9 +948,10 @@ check_file(struct minix_inode * dir, unsigned int offset) {
 	name = blk + (offset % BLOCK_SIZE) + 2;
 	ino = * (unsigned short *) (name-2);
 	if (ino > INODES) {
+		printf(_("The directory '"));
 		print_current_name();
-		printf(_(" contains a bad inode number for file '"));
-		printf("%.*s'.",namelen,name);
+		printf(_("' contains a bad inode number for file '%.*s'."),
+		       namelen, name);
 		if (ask(_(" Remove"),1)) {
 			*(unsigned short *)(name-2) = 0;
 			write_block(block, blk);
@@ -982,7 +984,8 @@ check_file(struct minix_inode * dir, unsigned int offset) {
 	name_depth++;	
 	if (list) {
 		if (verbose)
-			printf("%6d %07o %3d ",ino,inode->i_mode,inode->i_nlinks);
+			printf("%6d %07o %3d ", ino,
+			       inode->i_mode, inode->i_nlinks);
 		print_current_name();
 		if (S_ISDIR(inode->i_mode))
 			printf(":\n");
@@ -1010,9 +1013,10 @@ check_file2 (struct minix2_inode *dir, unsigned int offset) {
 	name = blk + (offset % BLOCK_SIZE) + 2;
 	ino = *(unsigned short *) (name - 2);
 	if (ino > INODES) {
+		printf(_("The directory '"));
 		print_current_name ();
-		printf (_(" contains a bad inode number for file '"));
-		printf ("%.*s'.", namelen, name);
+		printf (_("' contains a bad inode number for file '%.*s'.",
+			  namelen, name);
 		if (ask (_(" Remove"), 1)) {
 			*(unsigned short *) (name - 2) = 0;
 			write_block (block, blk);
@@ -1070,7 +1074,7 @@ recursive_check(unsigned int ino) {
 		die(_("internal error"));
 	if (dir->i_size < 2 * dirsize) {
 		print_current_name();
-		printf(_(": bad directory: size<32"));
+		printf(_(": bad directory: size < 32"));
 		errors_uncorrected = 1;
 	}
 	for (offset = 0 ; offset < dir->i_size ; offset += dirsize)

@@ -90,15 +90,22 @@ swap (const char *special, int prio)
   if (streq (program_name, "swapon")) {
     if (stat(special, &st) < 0) {
     	int errsv = errno;
-        fprintf (stderr, _("swapon: cannot stat %s: %s\n"), special, strerror (errsv));
+        fprintf (stderr, _("swapon: cannot stat %s: %s\n"),
+		 special, strerror (errsv));
 	return -1;
     }
 
     /* people generally dislike this warning - now it is printed
        only when `verbose' is set */
-    if (verbose && (st.st_mode & 07077) != 0) {
-        fprintf(stderr, _("swapon: warning: %s has insecure permissions %04o, "
-		        "0600 suggested\n"), special, st.st_mode & 07777);
+    if (verbose) {
+	int permMask = (S_ISBLK(st.st_mode) ? 07007 : 07077);
+
+	if ((st.st_mode & permMask) != 0) {
+            fprintf(stderr,
+		    _("swapon: warning: %s has insecure permissions %04o, "
+		      "%04o suggested\n"),
+		    special, st.st_mode & 07777, ~permMask & 0666);
+	}
     }
 
     /* test for holes by LBT */

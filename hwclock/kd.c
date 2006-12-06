@@ -9,6 +9,7 @@
 
 static int con_fd = -1;		/* opened by probe_for_kd_clock() */
 				/* never closed */
+static char *con_fd_filename;	/* usually "/dev/tty1" */
 
 /* Get defines for KDGHWCLK and KDSHWCLK (m68k) */
 #include <linux/kd.h>
@@ -88,7 +89,7 @@ read_hardware_clock_kd(struct tm *tm) {
   struct hwclk_time t;
 
   if (ioctl(con_fd, KDGHWCLK, &t) == -1) {
-    outsyserr(_("ioctl() failed to read time from  /dev/tty1"));
+    outsyserr(_("ioctl() failed to read time from %s"), con_fd_filename);
     exit(5);
   }
 
@@ -146,22 +147,29 @@ static struct clock_ops kd = {
 /* return &kd if KDGHWCLK works, NULL otherwise */
 struct clock_ops *
 probe_for_kd_clock() {
-    struct clock_ops *ret = NULL;
-    struct hwclk_time t;
+	struct clock_ops *ret = NULL;
+	struct hwclk_time t;
 
-    if (con_fd < 0)
-      con_fd = open("/dev/tty1", O_RDONLY);
-    if (con_fd >= 0) {
-      if (ioctl( con_fd, KDGHWCLK, &t ) == -1) {
-        if (errno != EINVAL)
-	 outsyserr(_("KDGHWCLK ioctl failed"));
-      } else
-        ret = &kd;
-    } else {
-      /* probably KDGHWCLK exists on m68k only */
+	if (con_fd < 0) {	/* first time here */
+		con_fd_filename = "/dev/tty1";
+		con_fd = open(con_fd_filename, O_RDONLY);
+	}
+	if (con_fd < 0) {
+		/* perhaps they are using devfs? */
+		con_fd_filename = "/dev/vc/1";
+		con_fd = open(con_fd_filename, O_RDONLY);
+	}
+	if (con_fd < 0) {
+		/* probably KDGHWCLK exists on m68k only */
 #ifdef __m68k__
-      outsyserr(_("Can't open /dev/tty1"));
+		outsyserr(_("Can't open /dev/tty1 or /dev/vc/1"));
 #endif
-    }
-    return ret;
+	} else {
+		if (ioctl(con_fd, KDGHWCLK, &t) == -1) {
+			if (errno != EINVAL)
+				outsyserr(_("KDGHWCLK ioctl failed"));
+		} else
+			ret = &kd;
+	}
+	return ret;
 }

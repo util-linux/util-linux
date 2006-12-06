@@ -66,6 +66,7 @@
 #include "mount_guess_fstype.h"
 #include "mount_by_label.h"
 #include "getusername.h"
+#include "env.h"
 #include "nls.h"
 
 #define DO_PS_FIDDLING
@@ -244,7 +245,7 @@ print_one (const struct mntent *me) {
 
 /* Report on everything in mtab (of the specified types if any).  */
 static int
-print_all (string_list types) {
+print_all (char *types) {
      struct mntentchn *mc, *mc0;
 
      mc0 = mtab_head();
@@ -452,33 +453,51 @@ do_mount_syscall (struct mountargs *args) {
  *	Mount a single file system. Guess the type when unknown.
  * returns: 0: OK, -1: error in errno, 1: other error
  *	don't exit on non-fatal errors.
+ *	on return types is filled with the type used.
  */
 static int
-guess_fstype_and_mount (char *spec, char *node, char **type,
+guess_fstype_and_mount (char *spec, char *node, char **types,
 			int flags, char *mount_opts) {
    struct mountargs args = { spec, node, NULL, flags & ~MS_NOSYS, mount_opts };
    
-   if (*type && strcasecmp (*type, "auto") == 0)
-      *type = NULL;
+   if (*types && strcasecmp (*types, "auto") == 0)
+      *types = NULL;
 
-   if (!*type && (flags & (MS_BIND | MS_MOVE)))
-      *type = "none";		/* random, but not "bind" */
+   if (!*types && (flags & (MS_BIND | MS_MOVE)))
+      *types = "none";		/* random, but not "bind" */
 
-   if (!*type && !(flags & MS_REMOUNT)) {
-      *type = guess_fstype_from_superblock(spec);
-      if (*type && !strcmp(*type, "swap")) {
+   if (!*types && !(flags & MS_REMOUNT)) {
+      *types = guess_fstype_from_superblock(spec);
+      if (*types && !strcmp(*types, "swap")) {
 	  error(_("%s looks like swapspace - not mounted"), spec);
-	  *type = NULL;
+	  *types = NULL;
 	  return 1;
       }
    }
 
-   if (*type || (flags & MS_REMOUNT)) {
-      args.type = *type;
+   /* Accept a comma-separated list of types, and try them one by one */
+   /* A list like "nonfs,.." indicates types not to use */
+   if (*types && strncmp(*types, "no", 2) && index(*types,',')) {
+      char *t = strdup(*types);
+      char *p;
+
+      while((p = index(t,',')) != NULL) {
+	 *p = 0;
+	 args.type = *types = t;
+	 if(do_mount_syscall (&args) == 0)
+	    return 0;
+	 t = p+1;
+      }
+      /* do last type below */
+      *types = t;
+   }
+
+   if (*types || (flags & MS_REMOUNT)) {
+      args.type = *types;
       return do_mount_syscall (&args);
    }
 
-   return procfsloop(do_mount_syscall, &args, type);
+   return procfsloop(do_mount_syscall, &args, types);
 }
 
 /*
@@ -715,7 +734,7 @@ check_special_mountprog(char *spec, char *node, char *type, int flags,
  *      return status from wait
  */
 static int
-try_mount_one (const char *spec0, const char *node0, char *type0,
+try_mount_one (const char *spec0, const char *node0, char *types0,
 	       const char *opts0, int freq, int pass, int bg, int ro) {
   int res, status;
   int mnt5_res = 0;		/* only for gcc */
@@ -724,15 +743,16 @@ try_mount_one (const char *spec0, const char *node0, char *type0,
   char *extra_opts;		/* written in mtab */
   char *mount_opts;		/* actually used on system call */
   const char *opts;
-  char *spec, *node, *type;
+  char *spec, *node, *types;
   char *user = 0;
   int loop = 0;
   char *loopdev = 0, *loopfile = 0;
   struct stat statbuf;
+  int nfs_mount_version = 0;	/* any version */
 
   spec = xstrdup(spec0);
   node = xstrdup(node0);
-  type = xstrdup(type0);
+  types = xstrdup(types0);
   opts = xstrdup(opts0);
 
   parse_opts (xstrdup (opts), &flags, &extra_opts);
@@ -753,22 +773,27 @@ try_mount_one (const char *spec0, const char *node0, char *type0,
        * stale assignments of files to loop devices. Nasty when used for
        * encryption.
        */
-      res = loop_check (&spec, &type, &flags, &loop, &loopdev, &loopfile);
+      res = loop_check (&spec, &types, &flags, &loop, &loopdev, &loopfile);
       if (res)
 	  return res;
   }
 
   /*
    * Call mount.TYPE for types that require a separate mount program.
-   * For the moment these types are ncp and smb.
+   * For the moment these types are ncp and smb. Maybe also vxfs.
+   * All such special things must occur isolated in the types string.
    */
-  if (check_special_mountprog (spec, node, type, flags, extra_opts, &status))
+  if (check_special_mountprog (spec, node, types, flags, extra_opts, &status))
       return status;
 
-  if (!fake && type && streq (type, "nfs")) {
+  /*
+   * Also nfs requires a separate program, but it is built in.
+   */
+  if (!fake && types && streq (types, "nfs")) {
 #ifdef HAVE_NFS
 retry_nfs:
-    mnt_err = nfsmount (spec, node, &flags, &extra_opts, &mount_opts, bg);
+    mnt_err = nfsmount (spec, node, &flags, &extra_opts, &mount_opts,
+			&nfs_mount_version, bg);
     if (mnt_err)
       return mnt_err;
 #else
@@ -780,7 +805,7 @@ retry_nfs:
   block_signals (SIG_BLOCK);
 
   if (!fake)
-    mnt5_res = guess_fstype_and_mount (spec, node, &type, flags & ~MS_NOSYS,
+    mnt5_res = guess_fstype_and_mount (spec, node, &types, flags & ~MS_NOSYS,
 				       mount_opts);
 
   if (fake || mnt5_res == 0) {
@@ -790,7 +815,7 @@ retry_nfs:
 
       update_mtab_entry(loop ? loopfile : spec,
 			node,
-			type ? type : "unknown",
+			types ? types : "unknown",
 			fix_opts_string (flags & ~MS_NOMTAB, extra_opts, user),
 			flags,
 			freq,
@@ -808,8 +833,7 @@ retry_nfs:
   block_signals (SIG_UNBLOCK);
 
 #ifdef HAVE_NFS
-  if (mnt_err && type && streq (type, "nfs")) {
-      extern int nfs_mount_version;
+  if (mnt_err && types && streq (types, "nfs")) {
       if (nfs_mount_version == 4) {
 	  if (verbose)
 	    printf(_("mount: failed with nfs mount version 4, trying 3..\n"));
@@ -821,7 +845,7 @@ retry_nfs:
 
   /* Mount failed, complain, but don't die.  */
 
-  if (type == 0) {
+  if (types == 0) {
     if (suid)
       error (_("mount: I could not determine the filesystem type, "
 	       "and none was specified"));
@@ -844,7 +868,7 @@ retry_nfs:
     case EBUSY:
       if (flags & MS_REMOUNT) {
 	error (_("mount: %s is busy"), node);
-      } else if (!strcmp(type, "proc") && !strcmp(node, "/proc")) {
+      } else if (!strcmp(types, "proc") && !strcmp(node, "/proc")) {
 	/* heuristic: if /proc/version exists, then probably proc is mounted */
 	if (stat ("/proc/version", &statbuf))   /* proc mounted? */
 	   error (_("mount: %s is busy"), node);   /* no */
@@ -926,16 +950,16 @@ retry_nfs:
       error (_("mount: %s: can't read superblock"), spec); break;
     case ENODEV:
     { int pfs;
-      if ((pfs = is_in_procfs(type)) == 1 || !strcmp(type, "guess"))
+      if ((pfs = is_in_procfs(types)) == 1 || !strcmp(types, "guess"))
         error(_("mount: %s: unknown device"), spec);
       else if (pfs == 0) {
 	char *lowtype, *p;
 	int u;
 
-	error (_("mount: fs type %s not supported by kernel"), type);
+	error (_("mount: fs type %s not supported by kernel"), types);
 
 	/* maybe this loser asked for FAT or ISO9660 or isofs */
-	lowtype = xstrdup(type);
+	lowtype = xstrdup(types);
 	u = 0;
 	for(p=lowtype; *p; p++) {
 	  if(tolower(*p) != *p) {
@@ -950,7 +974,7 @@ retry_nfs:
 	free(lowtype);
       } else
 	error (_("mount: %s has wrong device number or fs type %s not supported"),
-	       spec, type);
+	       spec, types);
       break;
     }
     case ENOTBLK:
@@ -981,7 +1005,7 @@ retry_nfs:
       } else {
 	 if (loop) {
 	     opts = opts0;
-	     type = type0;
+	     types = types0;
 	 }
          if (opts) {
 	     char *opts1 = realloc(xstrdup(opts), strlen(opts)+4);
@@ -989,11 +1013,11 @@ retry_nfs:
 	     opts = opts1;
          } else
              opts = "ro";
-	 if (type && !strcmp(type, "guess"))
-	     type = 0;
+	 if (types && !strcmp(types, "guess"))
+	     types = 0;
          error (_("mount: %s%s is write-protected, mounting read-only"),
 		bd, spec0);
-	 return try_mount_one (spec0, node0, type, opts, freq, pass, bg, 1);
+	 return try_mount_one (spec0, node0, types, opts, freq, pass, bg, 1);
       }
       break;
     }
@@ -1051,7 +1075,7 @@ usersubst(const char *opts) {
  * Return 0 for success (either mounted sth or -a and NOAUTO was given)
  */
 static int
-mount_one (const char *spec, const char *node, char *type, const char *opts,
+mount_one (const char *spec, const char *node, char *types, const char *opts,
 	   char *cmdlineopts, int freq, int pass) {
   int status;
   int status2;
@@ -1087,9 +1111,9 @@ mount_one (const char *spec, const char *node, char *type, const char *opts,
       /* if -a then we may be rescued by a noauto option */
   }
 
-  if (type == NULL && !mounttype) {
+  if (types == NULL && !mounttype) {
       if (strchr (spec, ':') != NULL) {
-	type = "nfs";
+	types = "nfs";
 	if (verbose)
 	  printf(_("mount: no type was given - "
 		 "I'll assume nfs because of the colon\n"));
@@ -1100,7 +1124,7 @@ mount_one (const char *spec, const char *node, char *type, const char *opts,
    * Try to mount the file system. When the exit status is EX_BG,
    * we will retry in the background. Otherwise, we're done.
    */
-  status = try_mount_one (spec, node, type, opts, freq, pass, 0, 0);
+  status = try_mount_one (spec, node, types, opts, freq, pass, 0, 0);
   if (status != EX_BG)
     return status;
 
@@ -1113,10 +1137,10 @@ mount_one (const char *spec, const char *node, char *type, const char *opts,
     return 0;			/* parent returns "success" */
   spec = xstrdup(spec);		/* arguments will be destroyed */
   node = xstrdup(node);		/* by set_proc_name()          */
-  type = xstrdup(type);
+  types = xstrdup(types);
   opts = xstrdup(opts);
   set_proc_name (spec);		/* make a nice "ps" listing */
-  status2 = try_mount_one (spec, node, type, opts, freq, pass, 1, 0);
+  status2 = try_mount_one (spec, node, types, opts, freq, pass, 1, 0);
   if (verbose && status2)
     printf (_("mount: giving up \"%s\"\n"), spec);
   exit (0);			/* child stops here */
@@ -1153,7 +1177,7 @@ mounted (char *spec, char *node) {
 #define DISKMAJOR(m)	(((int) m) & ~0xf)
 
 static int
-mount_all (string_list types, char *options) {
+mount_all (char *types, char *options) {
      struct mntentchn *mc, *mc0, *mtmp;
      int status = 0;
      struct stat statbuf;
@@ -1330,10 +1354,11 @@ main (int argc, char *argv[]) {
 	char *options = NULL, *spec, *node;
 	char *volumelabel = NULL;
 	char *uuid = NULL;
-	string_list types = NULL;
+	char *types = NULL;
 	struct mntentchn *mc;
 	int fd;
 
+	sanitize_env();
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -1387,7 +1412,7 @@ main (int argc, char *argv[]) {
 			sloppy = 1;
 			break;
 		case 't':		/* specify file system types */
-			types = parse_list (optarg);
+			types = optarg;
 			break;
 		case 'U':
 			uuid = optarg;
@@ -1472,7 +1497,7 @@ main (int argc, char *argv[]) {
 		/* mount -a */
 		result = mount_all (types, options);
 		if (result == 0 && verbose)
-			error(_("not mounted anything"));
+			error(_("nothing was mounted"));
 		break;
 
 	case 1:
@@ -1524,14 +1549,7 @@ main (int argc, char *argv[]) {
 			spec = argv[0];
 			node = argv[1];
 		}
-		if (types == NULL)
-			result = mount_one (spec, node, NULL, NULL,
-					    options, 0, 0);
-		else if (cdr (types) == NULL)
-			result = mount_one (spec, node, car (types), NULL,
-					    options, 0, 0);
-		else
-			usage (stderr, EX_USAGE);
+		result = mount_one (spec, node, types, NULL, options, 0, 0);
 		break;
       
 	default:

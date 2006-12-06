@@ -57,6 +57,11 @@ swapped(unsigned short a) {
      return (a>>8) | (a<<8);
 }
 
+static inline int
+assemble4le(unsigned char *p) {
+	return (p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24));
+}
+
 /*
     char *guess_fstype_from_superblock(const char *device);
 
@@ -74,10 +79,11 @@ swapped(unsigned short a) {
     Added a very weak heuristic for vfat - aeb
     Added xfs - 2000-03-21 Martin K. Petersen <mkp@linuxcare.com>
     Added cramfs, hfs, hpfs, adfs - Sepp Wijnands <mrrazz@garbage-coderz.net>
+    Added ext3 - Andrew Morton
 */
 static char
 *magic_known[] = {
-	"adfs", "bfs", "cramfs", "ext", "ext2",
+	"adfs", "bfs", "cramfs", "ext", "ext2", "ext3",
 	"hfs", "hpfs", "iso9660", "minix", "ntfs",
 	"qnx4", "romfs", "swap", "udf", "ufs",
 	"xfs", "xiafs"
@@ -180,8 +186,15 @@ fstype(const char *device) {
        PPC ext2 systems */
     if (ext2magic(sb.e2s) == EXT2_SUPER_MAGIC
 	|| ext2magic(sb.e2s) == EXT2_PRE_02B_MAGIC
-	|| ext2magic(sb.e2s) == swapped(EXT2_SUPER_MAGIC))
+	|| ext2magic(sb.e2s) == swapped(EXT2_SUPER_MAGIC)) {
 	 type = "ext2";
+
+	 /* maybe even ext3? */
+	 if ((assemble4le(sb.e2s.s_feature_compat)
+	      & EXT3_FEATURE_COMPAT_HAS_JOURNAL) &&
+	     assemble4le(sb.e2s.s_journal_inum) != 0)
+		 type = "ext3,ext2";
+    }
 
     else if (minixmagic(sb.ms) == MINIX_SUPER_MAGIC
 	     || minixmagic(sb.ms) == MINIX_SUPER_MAGIC2
@@ -200,8 +213,7 @@ fstype(const char *device) {
 	      type = "xiafs";
 	 else if(!strncmp(xsb.romfs_magic, "-rom1fs-", 8))
 	      type = "romfs";
-	 else if(!strncmp(xsb.xfsb.s_magic, XFS_SUPER_MAGIC, 4) ||
-		 !strncmp(xsb.xfsb.s_magic, XFS_SUPER_MAGIC2, 4))
+	 else if(!strncmp(xsb.xfsb.s_magic, XFS_SUPER_MAGIC, 4))
 	      type = "xfs";
 	 else if(!strncmp(xsb.qnx4fs_magic+4, "QNX4FS", 6))
 	      type = "qnx4fs";
@@ -216,7 +228,10 @@ fstype(const char *device) {
 		   !strncmp(xsb.fatsb.s_os, "MSWIN", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "MTOOL", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "mkdosfs", 7) ||
-		   !strncmp(xsb.fatsb.s_os, "kmkdosfs", 8))
+		   !strncmp(xsb.fatsb.s_os, "kmkdosfs", 8) ||
+		   /* Michal Svec: created by fdformat, old msdos utility for
+		      formatting large (1.7) floppy disks. */
+		   !strncmp(xsb.fatsb.s_os, "CH-FOR18", 8))
 		  && (!strncmp(xsb.fatsb.s_fs, "FAT12   ", 8) ||
 		      !strncmp(xsb.fatsb.s_fs, "FAT16   ", 8) ||
 		      !strncmp(xsb.fatsb.s_fs2, "FAT32   ", 8)))
@@ -363,19 +378,28 @@ is_in_procfs(const char *type) {
     return ret;
 }
 
+/* Try all types in FILESYSTEMS, except those in *types,
+   in case *types starts with "no" */
 /* return: 0: OK, -1: error in errno, 1: type not found */
-/* when 1 is returned, *type is NULL */
+/* when 0 or -1 is returned, *types contains the type used */
+/* when 1 is returned, *types is NULL */
 int
 procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
-	   char **type) {
+	   char **types) {
 	char *files[2] = { ETC_FILESYSTEMS, PROC_FILESYSTEMS };
 	FILE *procfs;
 	char *fsname;
+	char *notypes = NULL;
+	int no = 0;
 	int ret = 1;
 	int errsv = 0;
 	int i;
 
-	*type = NULL;
+	if (!strncmp(*types, "no", 2)) {
+		no = 1;
+		notypes = (*types) + 2;
+	}
+	*types = NULL;
 
 	/* Use PROC_FILESYSTEMS only when ETC_FILESYSTEMS does not exist.
 	   In some cases trying a filesystem that the kernel knows about
@@ -396,18 +420,20 @@ procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
 			}
 			if (tested (fsname))
 				continue;
+			if (no && matching_type(fsname, notypes))
+				continue;
 			args->type = fsname;
 			if (verbose) {
 				printf(_("Trying %s\n"), fsname);
 				fflush(stdout);
 			}
 			if ((*mount_fn) (args) == 0) {
-				*type = fsname;
+				*types = fsname;
 				ret = 0;
 				break;
 			} else if (errno != EINVAL &&
 				   is_in_procfs(fsname) == 1) {
-				*type = "guess";
+				*types = "guess";
 				ret = -1;
 				errsv = errno;
 				break;

@@ -44,11 +44,11 @@ install: $(PROGS)
 
 mount: mount.o fstab.o sundries.o realpath.o mntent.o version.o \
        mount_guess_fstype.o mount_by_label.o getusername.o \
-       $(LIB)/setproctitle.o $(NFS_OBJS) $(LO_OBJS)
+       $(LIB)/setproctitle.o $(LIB)/env.o $(NFS_OBJS) $(LO_OBJS)
 	$(LINK) $^ -o $@
 
 umount: umount.o fstab.o sundries.o realpath.o mntent.o getusername.o \
-	version.o $(LO_OBJS)
+	version.o $(LIB)/env.o $(LO_OBJS)
 	$(LINK) $^ -o $@
 
 swapon:	swapon.o version.o

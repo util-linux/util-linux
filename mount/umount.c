@@ -39,6 +39,7 @@
 #include "lomount.h"
 #include "loop.h"
 #include "fstab.h"
+#include "env.h"
 #include "nls.h"
 
 #ifdef HAVE_NFS
@@ -52,7 +53,7 @@
 #include <arpa/inet.h>
 #endif
 
-#if defined(MNT_FORCE) && !defined(__sparc__) && !defined(__arm__) && !defined(__mips__)
+#if defined(MNT_FORCE) && !defined(__sparc__) && !defined(__arm__)
 /* Interesting ... it seems libc knows about MNT_FORCE and presumably
    about umount2 as well -- need not do anything */
 #else /* MNT_FORCE */
@@ -99,6 +100,16 @@ int verbose = 0;
 
 /* True if ruid != euid.  */
 int suid = 0;
+
+#ifdef USE_SPECIAL_UMOUNTPROG
+/* unimplemented so far */
+static int
+check_special_umountprog() {
+	/* find type from command line or /etc/mtab;
+	   stat /sbin/umount.%s
+	   if it exists, use it */
+}
+#endif
 
 #ifdef HAVE_NFS
 static int xdr_dir(XDR *xdrsp, char *dirp)
@@ -236,7 +247,6 @@ umount_one (const char *spec, const char *node, const char *type,
 		nfs_umount_rpc_call(spec, opts);
 #endif
  
-
 	umnt_err = umnt_err2 = 0;
 	if (force) {
 		/* completely untested;
@@ -383,7 +393,7 @@ umount_one_bw (const char *file, struct mntentchn *mc) {
    in any case it's important to umount mtab entries in reverse order
    to mount, e.g. /usr/spool before /usr.  */
 static int
-umount_all (string_list types) {
+umount_all (char *types) {
      struct mntentchn *mc, *hd;
      int errors = 0;
 
@@ -426,152 +436,195 @@ usage (FILE *fp, int n)
 
 int mount_quiet = 0;
 
-int
-main (int argc, char *argv[])
-{
-  int c;
-  int all = 0;
-  string_list types = NULL;
-  string_list options;
-  struct mntentchn *mc, *fs;
-  char *file;
-  int result = 0;
+/*=======================================================================*/
+/* string list stuff - no longer used by mount - will disappear entirely */
+typedef struct string_list {
+	char *hd;
+	struct string_list *tl;
+} *string_list;
 
-  setlocale(LC_ALL, "");
-  bindtextdomain(PACKAGE, LOCALEDIR);
-  textdomain(PACKAGE);
+#define car(p) ((p) -> hd)
+#define cdr(p) ((p) -> tl)
 
-  while ((c = getopt_long (argc, argv, "afhnrt:vV",
-			   longopts, NULL)) != EOF)
-    switch (c) {
-      case 'a':			/* umount everything */
-	++all;
-	break;
-	/* fall through? */
-      case 'd':			/* do losetup -d for unmounted loop devices */
-	++delloop;
-	break;
-      case 'f':			/* force umount */
-	++force;
-	break;
-      case 'h':			/* help */
-	usage (stdout, 0);
-	break;
-      case 'n':			/* do not write in /etc/mtab */
-	++nomtab;
-	break;
-      case 'r':			/* remount read-only if umount fails */
-	++remount;
-	break;
-      case 'v':			/* make noise */
-	++verbose;
-	break;
-      case 'V':			/* version */
-	printf ("umount: %s\n", version);
-	exit (0);
-      case 't':			/* specify file system type */
-	types = parse_list (optarg);
-	break;
-      case 0:
-	break;
-      case '?':
-      default:
-	usage (stderr, 1);
-    }
+static string_list
+cons (char *a, const string_list b) {
+	string_list p;
 
-  if (getuid () != geteuid ())
-    {
-      suid = 1;
-      if (all || types || nomtab || force)
-	die (2, _("umount: only root can do that"));
-    }
-
-  argc -= optind;
-  argv += optind;
-
-  if (all) {
-       if (types == NULL)
-	  types = parse_list("noproc");
-       result = umount_all (types);
-  } else if (argc < 1) {
-       usage (stderr, 2);
-  } else while (argc--) {
-       file = canonicalize (*argv); /* mtab paths are canonicalized */
-       if (verbose > 1)
-	  printf(_("Trying to umount %s\n"), file);
-
-       mc = getmntfilesbackward (file, NULL);
-       if (!mc && verbose)
-	  printf(_("Could not find %s in mtab\n"), file);
-
-       if (suid) {
-	  if (!mc)
-	    die (2, _("umount: %s is not mounted (according to mtab)"), file);
-	  if (getmntfilesbackward (file, mc))
-	    die (2, _("umount: it seems %s is mounted multiple times"), file);
-
-	  /* If fstab contains the two lines
-	       /dev/sda1 /mnt/zip auto user,noauto  0 0
-	       /dev/sda4 /mnt/zip auto user,noauto  0 0
-	     then "mount /dev/sda4" followed by "umount /mnt/zip"
-	     used to fail. So, we must not look for file, but for
-	     the pair (spec,file) in fstab. */
-	  fs = getfsspecfile(mc->m.mnt_fsname, mc->m.mnt_dir);
-	  if (!fs) {
-	    if (!getfsspec (file) && !getfsfile (file))
-	      die (2,
-		 _("umount: %s is not in the fstab (and you are not root)"),
-		 file);
-	    else
-	      die (2, _("umount: %s mount disagrees with the fstab"), file);
-	  }
-
-	  /* User mounting and unmounting is allowed only
-	     if fstab contains the option `user' or `users' */
-	  /* The option `users' allows arbitrary users to mount
-	     and unmount - this may be a security risk. */
-	  /* The option `user' only allows unmounting by the user
-	     that mounted. */
-	  /* The option `owner' only allows (un)mounting by the owner. */
-	  /* A convenient side effect is that the user who mounted
-	     is visible in mtab. */
-	  options = parse_list (fs->m.mnt_opts);
-	  while (options) {
-	      if (streq (car (options), "user") ||
-		  streq (car (options), "users") ||
-		  streq (car (options), "owner"))
-		break;
-	      options = cdr (options);
-	  }
-	  if (!options)
-	    die (2, _("umount: only root can unmount %s from %s"),
-		 fs->m.mnt_fsname, fs->m.mnt_dir);
-	  if (streq (car (options), "user") ||
-	      streq (car (options), "owner")) {
-	      char *user = getusername();
-
-	      options = parse_list (mc->m.mnt_opts);
-	      while (options) {
-		  char *co = car (options);
-		  if (!strncmp(co, "user=", 5)) {
-		      if (!user || !streq(co+5,user))
-			  die(2, _("umount: only %s can unmount %s from %s"),
-			      co+5, fs->m.mnt_fsname, fs->m.mnt_dir);
-		      break;
-		  }
-		  options = cdr (options);
-	      }
-	  }
-       }
-
-       if (mc)
-	    result = umount_one_bw (file, mc);
-       else
-	    result = umount_one (*argv, *argv, *argv, *argv, NULL);
-
-       argv++;
-
-  }
-  exit (result);
+	p = xmalloc (sizeof *p);
+	car (p) = a;
+	cdr (p) = b;
+	return p;
 }
 
+/* Parse a list of strings like str[,str]... into a string list.  */
+static string_list
+parse_list (char *strings) {
+	string_list list;
+	char *s, *t;
+
+	if (strings == NULL)
+		return NULL;
+
+	/* strtok() destroys its argument, so we have to use a copy */
+	s = xstrdup(strings);
+
+	list = cons (strtok (s, ","), NULL);
+
+	while ((t = strtok (NULL, ",")) != NULL)
+		list = cons (t, list);
+
+	return list;
+}
+/*=======================================================================*/
+
+static int
+umount_file (char *arg) {
+	struct mntentchn *mc, *fs;
+	char *file;
+	string_list options;
+
+	file = canonicalize (arg); /* mtab paths are canonicalized */
+	if (verbose > 1)
+		printf(_("Trying to umount %s\n"), file);
+
+	mc = getmntfilesbackward (file, NULL);
+	if (!mc && verbose)
+		printf(_("Could not find %s in mtab\n"), file);
+
+	if (suid) {
+		if (!mc)
+			die (2, _("umount: %s is not mounted (according to mtab)"), file);
+		if (getmntfilesbackward (file, mc))
+			die (2, _("umount: it seems %s is mounted multiple times"), file);
+
+		/* If fstab contains the two lines
+		   /dev/sda1 /mnt/zip auto user,noauto  0 0
+		   /dev/sda4 /mnt/zip auto user,noauto  0 0
+		   then "mount /dev/sda4" followed by "umount /mnt/zip"
+		   used to fail. So, we must not look for file, but for
+		   the pair (spec,file) in fstab. */
+		fs = getfsspecfile(mc->m.mnt_fsname, mc->m.mnt_dir);
+		if (!fs) {
+			if (!getfsspec (file) && !getfsfile (file))
+				die (2,
+				     _("umount: %s is not in the fstab (and you are not root)"),
+				     file);
+			else
+				die (2, _("umount: %s mount disagrees with the fstab"), file);
+		}
+
+		/* User mounting and unmounting is allowed only
+		   if fstab contains the option `user' or `users' */
+		/* The option `users' allows arbitrary users to mount
+		   and unmount - this may be a security risk. */
+		/* The option `user' only allows unmounting by the user
+		   that mounted. */
+		/* The option `owner' only allows (un)mounting by the owner. */
+		/* A convenient side effect is that the user who mounted
+		   is visible in mtab. */
+		options = parse_list (fs->m.mnt_opts);
+		while (options) {
+			if (streq (car (options), "user") ||
+			    streq (car (options), "users") ||
+			    streq (car (options), "owner"))
+				break;
+			options = cdr (options);
+		}
+		if (!options)
+			die (2, _("umount: only root can unmount %s from %s"),
+			     fs->m.mnt_fsname, fs->m.mnt_dir);
+		if (streq (car (options), "user") ||
+		    streq (car (options), "owner")) {
+			char *user = getusername();
+
+			options = parse_list (mc->m.mnt_opts);
+			while (options) {
+				char *co = car (options);
+				if (!strncmp(co, "user=", 5)) {
+					if (!user || !streq(co+5,user))
+						die(2, _("umount: only %s can unmount %s from %s"),
+						    co+5, fs->m.mnt_fsname, fs->m.mnt_dir);
+					break;
+				}
+				options = cdr (options);
+			}
+		}
+	}
+
+	if (mc)
+		return umount_one_bw (file, mc);
+	else
+		return umount_one (arg, arg, arg, arg, NULL);
+
+}
+
+int
+main (int argc, char *argv[]) {
+	int c;
+	int all = 0;
+	char *types = NULL;
+	int result = 0;
+
+	sanitize_env();
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
+	while ((c = getopt_long (argc, argv, "adfhnrt:vV",
+				 longopts, NULL)) != EOF)
+		switch (c) {
+		case 'a':		/* umount everything */
+			++all;
+			break;
+			/* fall through? */
+		case 'd':		/* do losetup -d for unmounted loop devices */
+			++delloop;
+			break;
+		case 'f':		/* force umount */
+			++force;
+			break;
+		case 'h':		/* help */
+			usage (stdout, 0);
+			break;
+		case 'n':		/* do not write in /etc/mtab */
+			++nomtab;
+			break;
+		case 'r':		/* remount read-only if umount fails */
+			++remount;
+			break;
+		case 'v':		/* make noise */
+			++verbose;
+			break;
+		case 'V':		/* version */
+			printf ("umount: %s\n", version);
+			exit (0);
+		case 't':		/* specify file system type */
+			types = optarg;
+			break;
+		case 0:
+			break;
+		case '?':
+		default:
+			usage (stderr, 1);
+		}
+
+	if (getuid () != geteuid ()) {
+		suid = 1;
+		if (all || types || nomtab || force)
+			die (2, _("umount: only root can do that"));
+	}
+
+	argc -= optind;
+	argv += optind;
+
+	if (all) {
+		if (types == NULL)
+			types = "noproc";
+		result = umount_all (types);
+	} else if (argc < 1) {
+		usage (stderr, 2);
+	} else while (argc--) {
+		result += umount_file(*argv++);
+	}
+	exit (result);		/* nonzero on at least one failure */
+}

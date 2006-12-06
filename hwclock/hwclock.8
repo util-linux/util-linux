@@ -20,7 +20,8 @@ hwclock \- query and set the hardware clock (RTC)
 .PP
 other options:
 .PP
-.B "[\-u|\-\-utc]  \-\-localtime \-\-directisa \-\-test \-\-debug"
+.B "[\-u|\-\-utc]  \-\-localtime  \-\-noadjfile \-\-directisa"
+.B "\-\-test [\-D|\-\-debug]"
 .PP
 and arcane options for DEC Alpha:
 .PP
@@ -28,9 +29,7 @@ and arcane options for DEC Alpha:
 .PP
 Minimum unique abbreviations of all options are acceptable.
 .PP
-Also, equivalent options \-r, \-w, \-s, \-a, \-v, \-u,
-\-D, \-A, \-J, \-S, and \-F are accepted for compatibility
-with the program "clock", while \-h asks for a help message.
+Also, \-h asks for a help message.
 
 .SH DESCRIPTION
 .B hwclock
@@ -170,6 +169,17 @@ or
 .B \-\-adjust
 options), as recorded in the adjtime file.  If the adjtime file doesn't
 exist, the default is local time.
+
+.TP
+.B \-\-noadjfile
+disables the facilities provided by
+.IR /etc/adjtime .
+.B hwclock
+will not read nor write to that file with this option. Either
+.B \-\-utc
+or
+.B \-\-localtime
+must be specified when using this option.
 
 .TP
 .B \-\-directisa

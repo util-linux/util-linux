@@ -40,7 +40,7 @@ usage(void) {
 int
 main( int argc, char *argv[] ) {
    char *buf;
-   int	bufsize=16392;
+   int	bufsize = 16392;
    int  i;
    int  n;
    int  c;

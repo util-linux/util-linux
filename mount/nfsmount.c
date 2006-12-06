@@ -37,6 +37,7 @@
 #include <string.h>
 #include <errno.h>
 #include <netdb.h>
+#include <time.h>
 #include <rpc/rpc.h>
 #include <rpc/pmap_prot.h>
 #include <rpc/pmap_clnt.h>
@@ -86,11 +87,6 @@ linux_version_code(void) {
 }
 
 /*
- * nfs_mount_version according to the sources seen at compile time.
- */
-int nfs_mount_version = NFS_MOUNT_VERSION;
-
-/*
  * Unfortunately, the kernel prints annoying console messages
  * in case of an unexpected nfs mount version (instead of
  * just returning some error).  Therefore we'll have to try
@@ -100,14 +96,13 @@ int nfs_mount_version = NFS_MOUNT_VERSION;
  *	NFS_MOUNT_VERSION: these nfsmount sources at compile time
  *	nfs_mount_version: version this source and running kernel can handle
  */
-static void
+static int
 find_kernel_nfs_mount_version(void) {
-	static int kernel_version = 0;
+	static int kernel_version = -1;
+	int nfs_mount_version = NFS_MOUNT_VERSION;
 
-	if (kernel_version)
-		return;
-
-	kernel_version = linux_version_code();
+	if (kernel_version == -1)
+		kernel_version = linux_version_code();
 
 	if (kernel_version) {
 	     if (kernel_version < MAKE_VERSION(2,1,32))
@@ -123,6 +118,7 @@ find_kernel_nfs_mount_version(void) {
 	}
 	if (nfs_mount_version > NFS_MOUNT_VERSION)
 	     nfs_mount_version = NFS_MOUNT_VERSION;
+	return nfs_mount_version;
 }
 
 static struct pmap *
@@ -130,7 +126,8 @@ get_mountport(struct sockaddr_in *server_addr,
       long unsigned prog,
       long unsigned version,
       long unsigned proto,
-      long unsigned port)
+      long unsigned port,
+      int nfs_mount_version)
 {
 	struct pmaplist *pmap;
 	static struct pmap p = {0, 0, 0, 0};
@@ -174,20 +171,19 @@ get_mountport(struct sockaddr_in *server_addr,
 }
 
 int nfsmount(const char *spec, const char *node, int *flags,
-	     char **extra_opts, char **mount_opts, int running_bg)
+	     char **extra_opts, char **mount_opts, int *nfs_mount_vers,
+	     int running_bg)
 {
 	static char *prev_bg_host;
 	char hostdir[1024];
 	CLIENT *mclient;
-	char *hostname;
-	char *dirname;
-	char *old_opts;
-	char *mounthost=NULL;
+	char *hostname, *dirname, *old_opts, *mounthost = NULL;
 	char new_opts[1024];
 	struct timeval total_timeout;
 	enum clnt_stat clnt_stat;
 	static struct nfs_mount_data data;
 	char *opt, *opteq;
+	int nfs_mount_version;
 	int val;
 	struct hostent *hp;
 	struct sockaddr_in server_addr;
@@ -201,29 +197,20 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	} status;
 	struct stat statbuf;
 	char *s;
-	int port;
-	int mountport;
-	int proto;
-	int bg;
-	int soft;
-	int intr;
-	int posix;
-	int nocto;
-	int noac;
-	int nolock;
-	int broken_suid;
-	int retry;
-	int tcp;
-	int mountprog;
-	int mountvers;
-	int nfsprog;
-	int nfsvers;
+	int port, mountport, proto, bg, soft, intr;
+	int posix, nocto, noac, nolock, broken_suid;
+	int retry, tcp;
+	int mountprog, mountvers, nfsprog, nfsvers;
 	int retval;
 	time_t t;
 	time_t prevt;
 	time_t timeout;
 
-	find_kernel_nfs_mount_version();
+	/* The version to try is either specified or 0
+	   In case it is 0 we tell the caller what we tried */
+	if (!*nfs_mount_vers)
+		*nfs_mount_vers = find_kernel_nfs_mount_version();
+	nfs_mount_version = *nfs_mount_vers;
 
 	retval = EX_FAIL;
 	msock = fsock = -1;
@@ -242,12 +229,14 @@ int nfsmount(const char *spec, const char *node, int *flags,
 		   until they can be fully supported. (mack@sgi.com) */
 		if ((s = strchr(hostdir, ','))) {
 			*s = '\0';
-			fprintf(stderr, _("mount: warning: "
-					  "multiple hostnames not supported\n"));
+			fprintf(stderr,
+				_("mount: warning: "
+				  "multiple hostnames not supported\n"));
 		}
 	} else {
-		fprintf(stderr, _("mount: "
-				  "directory to mount not in host:dir format\n"));
+		fprintf(stderr,
+			_("mount: "
+			  "directory to mount not in host:dir format\n"));
 		goto fail;
 	}
 
@@ -380,15 +369,14 @@ int nfsmount(const char *spec, const char *node, int *flags,
 				else
 #endif
 					printf(_("Warning: Option namlen is not supported.\n"));
-			} else if (!strcmp(opt, "addr"))
+			} else if (!strcmp(opt, "addr")) {
 				/* ignore */;
-			else {
+			} else {
 				printf(_("unknown nfs mount parameter: "
 					 "%s=%d\n"), opt, val);
 				goto fail;
 			}
-		}
-		else {
+		} else {
 			val = 1;
 			if (!strncmp(opt, "no", 2)) {
 				val = 0;
@@ -459,9 +447,8 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	}
 	if (nfsvers && !mountvers)
 		mountvers = (nfsvers < 3) ? 1 : nfsvers;
-	if (nfsvers && nfsvers < mountvers) {
+	if (nfsvers && nfsvers < mountvers)
 		mountvers = nfsvers;
-	}
 
 	/* Adjust options if none specified */
 	if (!data.timeo)
@@ -515,7 +502,7 @@ int nfsmount(const char *spec, const char *node, int *flags,
 		} else {
 			if ((hp = gethostbyname(mounthost)) == NULL) {
 				fprintf(stderr, _("mount: can't get address for %s\n"),
-					hostname);
+					mounthost);
 				goto fail;
 			} else {
 				if (hp->h_length > sizeof(struct in_addr)) {
@@ -573,7 +560,8 @@ int nfsmount(const char *spec, const char *node, int *flags,
 					       mountprog,
 					       mountvers,
 					       proto,
-					       mountport);
+					       mountport,
+					       nfs_mount_version);
 
 			/* contact the mount daemon via TCP */
 			mount_server_addr.sin_port = htons(pm_mnt->pm_port);
@@ -724,6 +712,18 @@ int nfsmount(const char *spec, const char *node, int *flags,
 		server_addr.sin_port = PMAPPORT;
 		port = pmap_getport(&server_addr, nfsprog, nfsvers,
 				    tcp ? IPPROTO_TCP : IPPROTO_UDP);
+#if 1
+		/* Here we check to see if user is mounting with the
+		 * tcp option.  If so, and if the portmap returns a
+		 * '0' for port (service unavailable), we then exit,
+		 * notifying the user, rather than hanging up mount.
+		 */
+		if (port == 0 && tcp == 1) {
+			perror(_("nfs server reported service unavailable"));
+			goto fail;
+		}
+#endif
+
 		if (port == 0)
 			port = NFS_PORT;
 #ifdef NFS_MOUNT_DEBUG

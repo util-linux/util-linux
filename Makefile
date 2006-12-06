@@ -10,7 +10,7 @@ include ./MCONFIG
 
 SUBDIRS=po \
 	lib \
-	getopt-1.1.0a \
+	getopt-1.1.2 \
 	disk-utils \
 	games \
 	login-utils \
@@ -44,7 +44,7 @@ install:
 
 clean:
 	-rm -f *.o *~ omake conftest conftest.c core
-	@for subdir in $(SUBDIRS); do \
+	@for subdir in $(SUBDIRS) partx; do \
 		(cd $$subdir && $(MAKE) $@) || exit 1; \
 	done
 

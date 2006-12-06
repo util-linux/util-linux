@@ -220,12 +220,12 @@ get_sector(char *dev, int fd, unsigned long sno) {
 
 static int
 msdos_signature (struct sector *s) {
-    if (*(unsigned short *) (s->data + 0x1fe) != 0xaa55) {
-	error(_("ERROR: sector %lu does not have an msdos signature\n"),
-	       s->sectornumber);
-	return 0;
-    }
-    return 1;
+    unsigned char *data = s->data;
+    if (data[510] == 0x55 && data[511] == 0xaa)
+	    return 1;
+    error(_("ERROR: sector %lu does not have an msdos signature\n"),
+	  s->sectornumber);
+    return 0;
 }
 
 static int
@@ -1146,9 +1146,10 @@ partitions_ok(struct disk_desc *z) {
         for (q = partitions; q < partitions+partno; q++)
           if (is_extended(q->p.sys_type))
             if (p->start <= q->start && p->start + p->size > q->start) {
-                warn(_("Warning: partition %s contains part of "), PNO(p));
-		warn(_("the partition table (sector %lu),\n"), q->start);
-		warn(_("and will destroy it when filled\n"));
+                warn(_("Warning: partition %s contains part of "
+		       "the partition table (sector %lu),\n"
+		       "and will destroy it when filled\n"),
+		     PNO(p), q->start);
 		return 0;
 	    }
 
@@ -1161,7 +1162,8 @@ partitions_ok(struct disk_desc *z) {
 	      return 0;
           }
           if (p->size && p->start + p->size > ds) {
-	      warn(_("Warning: partition %s extends past end of disk\n"), PNO(p));
+	      warn(_("Warning: partition %s extends past end of disk\n"),
+		   PNO(p));
 	      return 0;
           }
       }
@@ -1175,8 +1177,8 @@ partitions_ok(struct disk_desc *z) {
 	if (p->p.sys_type == EXTENDED_PARTITION)
 	  ect++;
       if (ect > 1 && !Linux) {
-	  warn(_("Among the primary partitions, at most one can be extended\n"));
-	  warn(_(" (although this is not a problem under Linux)\n"));
+	  warn(_("Among the primary partitions, at most one can be extended\n"
+		 " (although this is not a problem under Linux)\n"));
 	  return 0;
       }
     }
@@ -1284,13 +1286,15 @@ extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z)
 	/* This is BAD */
 	if (DOS_extended) {
 	    here = start -= (start % B.cylindersize);
-	    printf(_("Warning: shifted start of the extd partition from %ld to %ld\n"),
+	    printf(_("Warning: shifted start of the extd partition "
+		     "from %ld to %ld\n"
+		     "(For listing purposes only. "
+		     "Do not change its contents.)\n"),
 		   ep->start, start);
-	    printf(_("(For listing purposes only. Do not change its contents.)\n"));
 	} else {
 	    printf(_("Warning: extended partition does not start at a "
-		     "cylinder boundary.\n"));
-	    printf(_("DOS and Linux will interpret the contents differently.\n"));
+		     "cylinder boundary.\n"
+		     "DOS and Linux will interpret the contents differently.\n"));
 	}
     }
 
@@ -1542,7 +1546,8 @@ write_partitions(char *dev, int fd, struct disk_desc *z) {
 	if (!s) return 0;
 	s->to_be_written = 1;
 	copy_from_part(&(p->p), s->data + p->offset);
-	*(unsigned short *)(&(s->data[0x1fe])) = 0xaa55;
+	s->data[510] = 0x55;
+	s->data[511] = 0xaa;
     }
     if (save_sector_file) {
 	if (!save_sectors(dev, fd)) {
@@ -1701,13 +1706,23 @@ read_stdin(unsigned char **fields, unsigned char *line, int fieldssize, int line
 }
 
 /* read a number, use default if absent */
+/* a sign gives an offset from the default */
 static int
 get_ul(char *u, unsigned long *up, unsigned long def, int base) {
     char *nu;
+    int sign = 0;
+    unsigned long val;
 
+    if (*u == '+') {
+	sign = 1;
+	u++;
+    } else if (*u == '-') {
+	sign = -1;
+	u++;
+    }
     if (*u) {
 	errno = 0;
-	*up = strtoul(u, &nu, base);
+	val = strtoul(u, &nu, base);
 	if (errno == ERANGE) {
 	    printf(_("number too big\n"));
 	    return -1;
@@ -1716,6 +1731,11 @@ get_ul(char *u, unsigned long *up, unsigned long def, int base) {
 	    printf(_("trailing junk after number\n"));
 	    return -1;
 	}
+	if (sign == 1)
+		val = def + val;
+	else if (sign == -1)
+		val = def - val;
+	*up = val;
     } else
       *up = def;
     return 0;
@@ -2277,18 +2297,27 @@ static const struct option long_opts[] = {
     { NULL, 0, NULL, 0 }
 };
 
-/* default devices to list */
+/* default devices to list - will be removed */
 static struct devd {
     char *pref, *letters;
 } defdevs[] = {
     { "hd", "abcdefgh" },
     { "sd", "abcde" },
     { "xd", "ab" },
-    { "ed", "abcd" }
+    { "ed", "abcd" },
+    /* Compaq's SMART Array Controllers */
+    { "cciss/c0d", "01234567" },
+    { "cciss/c1d", "01234567" },
+    /* Compaq's SMART2 Intelligent Disk Array Controllers */
+    { "ida/c0d", "01234567" },
+    { "ida/c1d", "01234567" },
+    /* Mylex DAC960/AcceleRAID/eXtremeRAID PCI RAID Controllers */
+    { "rd/c0d", "01234567" },
+    { "rd/c1d", "01234567" }
 };
 
 static int
-is_ide_cdrom(char *device) {
+is_ide_cdrom_or_tape(char *device) {
     /* No device was given explicitly, and we are trying some
        likely things.  But opening /dev/hdc may produce errors like
            "hdc: tray open or drive not ready"
@@ -2302,7 +2331,7 @@ is_ide_cdrom(char *device) {
     sprintf(buf, "/proc/ide/%s/media", device+5);
     procf = fopen(buf, "r");
     if (procf != NULL && fgets(buf, sizeof(buf), procf))
-	return  !strncmp(buf, "cdrom", 5);
+	return  !strncmp(buf, "cdrom", 5) || !strncmp(buf, "tape", 4);
 
     /* Now when this proc file does not exist, skip the
        device when it is read-only. */
@@ -2456,7 +2485,7 @@ main(int argc, char **argv) {
 	    lp = dp->letters;
 	    while(*lp) {
 		sprintf(device, "/dev/%s%c", dp->pref, *lp++);
-		if (!strcmp(dp->pref, "hd") && is_ide_cdrom(device))
+		if (!strcmp(dp->pref, "hd") && is_ide_cdrom_or_tape(device))
 		  continue;
 		if (opt_out_geom)
 		  do_geom(device, 1);

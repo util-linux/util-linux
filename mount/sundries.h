@@ -19,26 +19,12 @@ extern int sloppy;
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
-
-/* String list data structure.  */ 
-typedef struct string_list
-{
-  char *hd;
-  struct string_list *tl;
-} *string_list;
-
-#define car(p) ((p) -> hd)
-#define cdr(p) ((p) -> tl)
-
-string_list cons (char *a, const string_list);
-
 /* Functions in sundries.c that are used in mount.c and umount.c  */ 
 void block_signals (int how);
 char *canonicalize (const char *path);
 char *realpath (const char *path, char *resolved_path);
 void error (const char *fmt, ...);
-int matching_type (const char *type, string_list types);
-string_list parse_list (char *strings);
+int matching_type (const char *type, const char *types);
 void *xmalloc (size_t size);
 char *xstrdup (const char *s);
 char *xstrndup (const char *s, int n);
@@ -50,7 +36,7 @@ void die (int errcode, const char *fmt, ...);
 
 #ifdef HAVE_NFS
 int nfsmount (const char *spec, const char *node, int *flags,
-	      char **orig_opts, char **opt_args, int running_bg);
+	      char **orig_opts, char **opt_args, int *version, int running_bg);
 #endif
 
 /* exit status - bits below are ORed */

@@ -58,8 +58,7 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 	}
 	else if (lseek(fd, 0, SEEK_SET) == 0
 	    && read(fd, (char *) &xfsb, sizeof(xfsb)) == sizeof(xfsb)
-	    && (strncmp((char *) &xfsb.s_magic, XFS_SUPER_MAGIC, 4) == 0 ||
-	        strncmp((char *) &xfsb.s_magic, XFS_SUPER_MAGIC2,4) == 0)) {
+	    && (strncmp(xfsb.s_magic, XFS_SUPER_MAGIC, 4) == 0)) {
 		memcpy(uuid, xfsb.s_uuid, sizeof(xfsb.s_uuid));
 		namesize = sizeof(xfsb.s_fname);
 		if ((*label = calloc(namesize + 1, 1)) != NULL)

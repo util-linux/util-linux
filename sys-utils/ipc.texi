@@ -30,7 +30,10 @@ Permission is granted to use this material and the accompanying
 programs within the terms of the GNU GPL.
 @end titlepage
 
-
+@dircategory Miscellaneous
+@direntry
+* ipc: (ipc).           System V style inter process communication
+@end direntry
 
 @node top, Overview, Notes, (dir)
 @chapter System V IPC.

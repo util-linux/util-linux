@@ -11,7 +11,7 @@ include ../MCONFIG
 
 MAN1= 		cal.1 chkdupexe.1 ddate.1 kill.1 \
 		logger.1 look.1 mcookie.1 namei.1 rename.1 script.1 \
-		whereis.1 write.1
+		whereis.1
 
 # Where to put binaries?
 # See the "install" rule for the links. . .
@@ -19,13 +19,18 @@ MAN1= 		cal.1 chkdupexe.1 ddate.1 kill.1 \
 BIN=            kill
 
 USRBIN=		cal chkdupexe ddate logger look mcookie \
-		namei rename script whereis write
+		namei rename script whereis
 
 MAYBE=		reset setterm
 
 ifeq "$(HAVE_RESET)" "no"
 USRBIN:=$(USRBIN) reset
 MAN1:=$(MAN1) reset.1
+endif
+
+ifeq "$(HAVE_WRITE)" "no"
+USRBIN:=$(USRBIN) write
+MAN1:=$(MAN1) write.1
 endif
 
 ifeq "$(HAVE_NCURSES)" "yes"
@@ -89,9 +94,11 @@ install: all
 	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
 	$(INSTALLDIR) $(MAN1DIR) $(MAN8DIR)
 	$(INSTALLMAN) $(MAN1) $(MAN1DIR)
+ifeq "$(HAVE_WRITE)" "no"
 ifeq "$(USE_TTY_GROUP)" "yes"
 	chgrp tty $(USRBINDIR)/write
 	chmod g+s $(USRBINDIR)/write
+endif
 endif
 
 .PHONY:	clean

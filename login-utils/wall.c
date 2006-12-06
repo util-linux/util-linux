@@ -199,7 +199,8 @@ makemsg(fname)
 			exit(1);
 		}
 		if (!freopen(fname, "r", stdin)) {
-			fprintf(stderr, _("%s: can't read %s.\n"), progname, fname);
+			fprintf(stderr, _("%s: can't read %s.\n"),
+				progname, fname);
 			exit(1);
 		}
 	}
@@ -212,16 +213,16 @@ makemsg(fname)
 				putc('\r', fp);
 				putc('\n', fp);
 				cnt = 0;
-			} else {
-				carefulputc(ch, fp);
 			}
+			carefulputc(ch, fp);
 		}
 	}
-	(void)fprintf(fp, "%79s\r\n", " ");
+	fprintf(fp, "%79s\r\n", " ");
 	rewind(fp);
 
 	if (fstat(fd, &sbuf)) {
-		(void)fprintf(stderr, _("%s: can't stat temporary file.\n"), progname);
+		fprintf(stderr, _("%s: can't stat temporary file.\n"),
+			progname);
 		exit(1);
 	}
 	mbufsize = sbuf.st_size;

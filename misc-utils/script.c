@@ -67,6 +67,7 @@
 void finish(int);
 void done(void);
 void fail(void);
+void resize(int);
 void fixtty(void);
 void getmaster(void);
 void getslave(void);
@@ -189,7 +190,8 @@ main(int argc, char **argv) {
 			dooutput();
 		else
 			doshell();
-	}
+	} else
+		(void) signal(SIGWINCH, resize);
 	doinput();
 
 	return 0;
@@ -201,9 +203,7 @@ doinput() {
 	char ibuf[BUFSIZ];
 
 	(void) fclose(fscript);
-#ifdef HAVE_openpty
-	(void) close(slave);
-#endif
+
 	while ((cc = read(0, ibuf, BUFSIZ)) > 0)
 		(void) write(master, ibuf, cc);
 	done();
@@ -223,6 +223,15 @@ finish(int dummy) {
 
 	if (die)
 		done();
+}
+
+void
+resize(int dummy) {
+	/* transmit window change information to the child */
+	(void) ioctl(0, TIOCGWINSZ, (char *)&win);
+	(void) ioctl(slave, TIOCSWINSZ, (char *)&win);
+
+	kill(child, SIGWINCH);
 }
 
 void

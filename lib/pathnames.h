@@ -148,5 +148,5 @@ Libc5 and glibc 2.0-2.1 have /var/spool/mail, but glibc 2.1.1 has /var/mail.
 #define _PATH_SHADOW_GTMPTMP    "/etc/sgtmptmp"
 
 /* used in misc-utils/look.c */
-#define _PATH_WORDS             "/usr/dict/words"
-#define _PATH_WORDS_ALT         "/usr/dict/web2"
+#define _PATH_WORDS             "/usr/share/dict/words"
+#define _PATH_WORDS_ALT         "/usr/share/dict/web2"

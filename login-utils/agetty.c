@@ -683,8 +683,12 @@ open_tty(tty, tp, local)
      * access for group tty) after the login has succeeded.
      */
 
+    /*
+     * Let us use 0600 for Linux for the period between getty and login
+     */
+
     (void) chown(tty, 0, 0);			/* root, sys */
-    (void) chmod(tty, 0622);			/* crw--w--w- */
+    (void) chmod(tty, 0600);			/* 0622: crw--w--w- */
     errno = 0;					/* ignore above errors */
 }
 

@@ -517,8 +517,17 @@ clear_partition(struct partition *p) {
 }
 
 static void
-set_partition(int i, struct partition *p, uint start, uint stop,
-	      int sysid, uint offset) {
+set_partition(int i, int doext, uint start, uint stop, int sysid) {
+	struct partition *p;
+	uint offset;
+
+	if (doext) {
+		p = ptes[i].ext_pointer;
+		offset = extended_offset;
+	} else {
+		p = ptes[i].part_table;
+		offset = ptes[i].offset;
+	}
 	p->boot_ind = 0;
 	p->sys_ind = sysid;
 	set_start_sect(p, start - offset);
@@ -1157,14 +1166,7 @@ delete_partition(int i) {
 		if (i > 4) {
 			/* delete this link in the chain */
 			p = ptes[i-1].ext_pointer;
-			p->boot_ind = 0;
-			p->head = q->head;
-			p->sector = q->sector;
-			p->cyl = q->cyl;
-			p->sys_ind = EXTENDED;
-			p->end_head = q->end_head;
-			p->end_sector = q->end_sector;
-			p->end_cyl = q->end_cyl;
+			*p = *q;
 			set_start_sect(p, get_start_sect(q));
 			set_nr_sects(p, get_nr_sects(q));
 			ptes[i-1].changed = 1;
@@ -1370,9 +1372,72 @@ wrong_p_order(int *prev) {
 	return 0;
 }
 
+/*
+ * Fix the chain of logicals.
+ * extended_offset is unchanged, the set of sectors used is unchanged
+ * The chain is sorted so that sectors increase, and so that
+ * starting sectors increase.
+ *
+ * After this it may still be that cfdisk doesnt like the table.
+ * (This is because cfdisk considers expanded parts, from link to
+ * end of partition, and these may still overlap.)
+ * Now
+ *   sfdisk /dev/hda > ohda; sfdisk /dev/hda < ohda
+ * may help.
+ */
+static void
+fix_chain_of_logicals(void) {
+	int j, oj, ojj, sj, sjj;
+	struct partition *pj,*pjj,tmp;
+
+	/* Stage 1: sort sectors but leave sector of part 4 */
+	/* (Its sector is the global extended_offset.) */
+ stage1:
+	for(j = 5; j < partitions-1; j++) {
+		oj = ptes[j].offset;
+		ojj = ptes[j+1].offset;
+		if (oj > ojj) {
+			ptes[j].offset = ojj;
+			ptes[j+1].offset = oj;
+			pj = ptes[j].part_table;
+			set_start_sect(pj, get_start_sect(pj)+oj-ojj);
+			pjj = ptes[j+1].part_table;
+			set_start_sect(pjj, get_start_sect(pjj)+ojj-oj);
+			set_start_sect(ptes[j-1].ext_pointer,
+				       ojj-extended_offset);
+			set_start_sect(ptes[j].ext_pointer,
+				       oj-extended_offset);
+			goto stage1;
+		}
+	}
+
+	/* Stage 2: sort starting sectors */
+ stage2:
+	for(j = 4; j < partitions-1; j++) {
+		pj = ptes[j].part_table;
+		pjj = ptes[j+1].part_table;
+		sj = get_start_sect(pj);
+		sjj = get_start_sect(pjj);
+		oj = ptes[j].offset;
+		ojj = ptes[j+1].offset;
+		if (oj+sj > ojj+sjj) {
+			tmp = *pj;
+			*pj = *pjj;
+			*pjj = tmp;
+			set_start_sect(pj, ojj+sjj-oj);
+			set_start_sect(pjj, oj+sj-ojj);
+			goto stage2;
+		}
+	}
+
+	/* Probably something was changed */
+	for(j = 4; j < partitions; j++)
+		ptes[j].changed = 1;
+}
+
 static void
 fix_partition_table_order(void) {
-	struct pte *pei, *pek, ptebuf;
+	struct pte *pei, *pek;
 	int i,k;
 
 	if(!wrong_p_order(NULL)) {
@@ -1380,34 +1445,32 @@ fix_partition_table_order(void) {
 		return;
 	}
 
-	while ((i = wrong_p_order(&k)) != 0) {
+	while ((i = wrong_p_order(&k)) != 0 && i < 4) {
 		/* partition i should have come earlier, move it */
+		/* We have to move data in the MBR */
+		struct partition *pi, *pk, *pe, pbuf;
 		pei = &ptes[i];
 		pek = &ptes[k];
 
-		if (i < 4) {
-			/* We have to move data in the MBR */
-			struct partition *pi, *pk, *pe, pbuf;
+		pe = pei->ext_pointer;
+		pei->ext_pointer = pek->ext_pointer;
+		pek->ext_pointer = pe;
 
-			pe = pei->ext_pointer;
-			pei->ext_pointer = pek->ext_pointer;
-			pek->ext_pointer = pe;
+		pi = pei->part_table;
+		pk = pek->part_table;
 
-			pi = pei->part_table;
-			pk = pek->part_table;
+		memmove(&pbuf, pi, sizeof(struct partition));
+		memmove(pi, pk, sizeof(struct partition));
+		memmove(pk, &pbuf, sizeof(struct partition));
 
-			memmove(&pbuf, pi, sizeof(struct partition));
-			memmove(pi, pk, sizeof(struct partition));
-			memmove(pk, &pbuf, sizeof(struct partition));
-		} else {
-			/* Only change is change in numbering */
-			ptebuf = *pei;
-			*pei = *pek;
-			*pek = ptebuf;
-		}
 		pei->changed = pek->changed = 1;
-
 	}
+
+	if (i)
+		fix_chain_of_logicals();
+
+	printf("Done.\n");
+
 }
 
 static void
@@ -1637,7 +1700,7 @@ add_partition(int n, int sys) {
 
 	if (p && p->sys_ind) {
 		printf(_("Partition %d is already defined.  Delete "
-			"it before re-adding it.\n"), n + 1);
+			 "it before re-adding it.\n"), n + 1);
 		return;
 	}
 	fill_bounds(first, last);
@@ -1693,9 +1756,9 @@ add_partition(int n, int sys) {
 
 		pe->offset = start - sector_offset;
 		if (pe->offset == extended_offset) { /* must be corrected */
-		     pe->offset++;
-		     if (sector_offset == 1)
-			  start++;
+			pe->offset++;
+			if (sector_offset == 1)
+				start++;
 		}
 	}
 
@@ -1728,7 +1791,9 @@ add_partition(int n, int sys) {
 		}
 	}
 
-	set_partition(n, p, start, stop, sys, ptes[n].offset);
+	set_partition(n, 0, start, stop, sys);
+	if (n > 4)
+		set_partition(n - 1, 1, ptes[n].offset, stop, EXTENDED);
 
 	if (IS_EXTENDED (sys)) {
 		struct pte *pe4 = &ptes[4];
@@ -1743,16 +1808,6 @@ add_partition(int n, int sys) {
 		pe4->ext_pointer = pe4->part_table + 1;
 		pe4->changed = 1;
 		partitions = 5;
-	} else {
-		if (n > 4)
-			set_partition(n - 1, ptes[n-1].ext_pointer,
-				ptes[n].offset, stop, EXTENDED,
-				extended_offset);
-#if 0
-		if ((limit = get_nr_sects(p)) & 1)
-			printf(_("Warning: partition %d has an odd "
-				"number of sectors.\n"), n + 1);
-#endif
 	}
 }
 

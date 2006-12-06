@@ -1,3 +1,85 @@
+util-linux 2.11f
+
+* Czech messages (Jiøí Pavlovský)
+* fdisk: fix for "reorder" expert command
+  (use of sfdisk afterwards is still recommended)
+* mount: minor fixes
+
+util-linux 2.11e
+
+* Danish messages (Claus Hindsgaul)
+* Brazilian Portuguese messages (Rodrigo Stulzer Lopes)
+* agetty: give tty mode 0600 instead of 0622
+* cal: improved manpage
+* cfdisk: add user-friendliness in case of empty disk (Matthew Wilcox)
+* dmesg: improved manpage
+* fdisk: SuperH fix (ISHIKAWA Mutsumi)
+* hwclock: accept alpha options in both upper and lower case
+  (so as to make the man page correct)
+* hwclock: add option --noadjtime (Henrique M Holschuh)
+* login: child must have controlling tty (Michal Moskal)
+* more: don't seek unseekable input (David Whedon)
+* mount: upon request by Richard Gooch: if the mount point is specified
+  as symlink, put symlink, not actual mount point in mtab.
+  (This avoids the long and ugly devfs names, but may break things.
+  Please complain in case of problems.)
+* mount: with mount -a -t nfs:
+  if we used fallback to nfs v3, don't do so for subsequent mounts
+* mount: add heuristics for ext3 (Andrew Morton)
+* mount: added quota info to mount.8
+* mount: allow comma-separated type lists, also in fstab
+* raw: small fix for ppc
+
+util-linux 2.11d
+
+* fdisk: fix for OSF (Will Woods)
+* chsh: compilation fix (Ronald Wahl)
+
+util-linux 2.11c
+
+* Czech messages (Jiøí Pavlovský)
+* German messages (Elrond)
+* Makefile/MCONFIG improvements (Peter Breitenlohner)
+* fdisk: added a few partition types
+* fdisk: correct partition numbering for sgi partitions (Nathan Scott)
+* fdisk: make it compile on hppa by arbitrarily treating hppa like powerpc
+  (Matt Taggart)
+* fsck.minix: improved localisation (Elrond)
+* getopt: updated to version 1.1.2 (Frodo Looijaard)
+* hwclock: fixes for IA64 (Thorsten Kukuk)
+* hwclock: use /dev/vc/1 when devfs is used (Thomas Koeller)
+* hwclock: more devfs support (e.g. /dev/misc/rtc)
+* ipcs: add spaces in output (DeWitt Clinton),
+  correct some error messages (Bobby de Vos)
+* login: fix TIOCNOTTY (Andreas Haumer, Adam J. Richter)
+* login: add btmp logging of unsuccessful login attempts (Erik Troan)
+* login: avoid a SIGHUP race with PAM enabled (Peter 'Luna' Runestig)
+* login: copy the static result returned by gethostbyname to avoid
+  corruption by pam_authenticate via pam_ldap (Andreas Damm)
+* login: removed the REDHAT_IGNORED_MAILSIZE hack
+* login: unconditionally do vhangup
+* login: zero PAM_USER when no username was given (Arkadiusz Miskiewicz)
+* look: dictionary now under /usr/share (Erik Troan)
+* mount: add sanitize_env() (Solar Designer)
+* mount: another heuristic for vfat (Michal Svec)
+* mount: xfs magic has only one endianness (Nathan Scott)
+* mount: return failure when tcp used and portmap returns 0 (H. J. Lu)
+* rdev: allow unlimited recursion to find the long devfs names
+  Also, allow major,minor pair the specify device (request by Russell Coker)
+* readprofile: array bound check (Andrew Morton)
+* script: transmit window changes to child (Joey Hess)
+* sfdisk: endian fix for ppc (Gregory Geiselhart)
+* sfdisk: new feature: sign is offset from default (Byron Stanoszek)
+* sfdisk: add some default devices to list (Luca Montecchiani)
+* sfdisk: no partition table on ide tape
+* shutdown: close files, unblock signals (Richard Gooch)
+* simpleinit: block signals in handlers; add no_reboot option (Richard Gooch)
+* swapdev: deleted, it was last used with Linux 0.12.
+* umount: mips does support umount2 (Maciej W. Rozycki)
+* umount: add sanitize_env() (Solar Designer)
+* umount: fix exit status
+* wall: do not forget 80th character (Thorsten Kukuk)
+
 util-linux 2.11b:
 
 * Danish messages (Claus Hindsgaul)

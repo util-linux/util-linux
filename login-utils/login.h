@@ -1,7 +1,7 @@
 /* defined in login.c */
 extern void badlogin(const char *s);
 extern void sleepexit(int);
-extern struct hostent hostaddress;
+extern char hostaddress[4];
 extern char *hostname;
 
 /* defined in checktty.c */

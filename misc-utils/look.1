@@ -64,7 +64,7 @@ is invoked with).
 If
 .Ar file
 is not specified, the file
-.Pa /usr/dict/words
+.Pa /usr/share/dict/words
 is used, only alphanumeric characters are compared and the case of
 alphabetic characters is ignored.
 .Pp
@@ -77,7 +77,7 @@ are compared.
 Ignore the case of alphabetic characters.
 .It Fl a
 Use the alternate dictionary
-.Pa /usr/dict/web2
+.Pa /usr/share/dict/web2
 .It Fl t
 Specify a string termination character, i.e. only the characters
 in
@@ -92,10 +92,10 @@ The
 utility exits 0 if one or more lines were found and displayed,
 1 if no lines were found, and >1 if an error occurred.
 .Sh FILES
-.Bl -tag -width /usr/dict/words -compact
-.It Pa /usr/dict/words
+.Bl -tag -width /usr/share/dict/words -compact
+.It Pa /usr/share/dict/words
 the dictionary
-.It Pa /usr/dict/web2
+.It Pa /usr/share/dict/web2
 the alternate dictionary
 .El
 .Sh SEE ALSO

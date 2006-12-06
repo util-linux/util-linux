@@ -259,6 +259,7 @@ read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
       char line1[81];           /* String: first line of adjtime file */
       char line2[81];           /* String: second line of adjtime file */
       char line3[81];           /* String: third line of adjtime file */
+      long timeval;
       
       line1[0] = '\0';          /* In case fgets fails */
       fgets(line1, sizeof(line1), adjfile);
@@ -274,13 +275,16 @@ read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
       adjtime_p->last_adj_time = 0;
       adjtime_p->not_adjusted = 0;
       adjtime_p->last_calib_time = 0;
+      timeval = 0;
       
-      sscanf(line1, "%f %d %f", 
+      sscanf(line1, "%f %ld %f", 
              &adjtime_p->drift_factor,
-             (int *) &adjtime_p->last_adj_time, 
+             &timeval, 
              &adjtime_p->not_adjusted);
-      
-      sscanf(line2, "%d", (int *) &adjtime_p->last_calib_time);
+      adjtime_p->last_adj_time = timeval;
+
+      sscanf(line2, "%ld", &timeval);
+      adjtime_p->last_calib_time = timeval;
 
       if (!strcmp(line3, "UTC\n"))
 	adjtime_p->local_utc = UTC;
@@ -300,10 +304,10 @@ read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
     adjtime_p->dirty = FALSE;
 
     if (debug) {
-      printf(_("Last drift adjustment done at %d seconds after 1969\n"), 
-             (int) adjtime_p->last_adj_time);
-      printf(_("Last calibration done at %d seconds after 1969\n"),
-             (int) adjtime_p->last_calib_time);
+      printf(_("Last drift adjustment done at %ld seconds after 1969\n"), 
+             (long) adjtime_p->last_adj_time);
+      printf(_("Last calibration done at %ld seconds after 1969\n"),
+             (long) adjtime_p->last_calib_time);
       printf(_("Hardware clock is on %s time\n"),
 	     (adjtime_p->local_utc == LOCAL) ? _("local") :
 	     (adjtime_p->local_utc == UTC) ? _("UTC") : _("unknown"));
@@ -447,9 +451,9 @@ set_hardware_clock(const time_t newtime,
 
   if (debug) 
     printf(_("Setting Hardware Clock to %.2d:%.2d:%.2d "
-           "= %d seconds since 1969\n"), 
+           "= %ld seconds since 1969\n"), 
            new_broken_time.tm_hour, new_broken_time.tm_min, 
-           new_broken_time.tm_sec, (int) newtime);
+           new_broken_time.tm_sec, (long) newtime);
 
   if (testing)
     printf(_("Clock not changed - testing only.\n"));
@@ -597,8 +601,8 @@ interpret_date_string(const char *date_opt, time_t * const time_p) {
                 MYNAME, date_command, date_resp);
         retcode = 8;
       } else {
-        int seconds_since_epoch;
-        rc = sscanf(date_resp + sizeof(magic)-1, "%d", &seconds_since_epoch);
+        long seconds_since_epoch;
+        rc = sscanf(date_resp + sizeof(magic)-1, "%ld", &seconds_since_epoch);
         if (rc < 1) {
           fprintf(stderr, _("The date command issued by %s returned "
                   "something other than an integer where the converted "
@@ -610,8 +614,8 @@ interpret_date_string(const char *date_opt, time_t * const time_p) {
           retcode = 0;
           *time_p = seconds_since_epoch;
           if (debug) 
-            printf(_("date string %s equates to %d seconds since 1969.\n"),
-                   date_opt, (int) *time_p);
+            printf(_("date string %s equates to %ld seconds since 1969.\n"),
+                   date_opt, (long) *time_p);
         }
       }
       fclose(date_child_fp);
@@ -719,7 +723,7 @@ adjust_drift_factor(struct adjtime *adjtime_p,
     if (debug) 
       printf(_("Not adjusting drift factor because it has been less than a "
              "day since the last calibration.\n"));
-  } else {
+  } else if (adjtime_p->last_calib_time != 0) {
     const float factor_adjust = 
       ((float) (nowtime - hclocktime) 
        / (hclocktime - adjtime_p->last_calib_time))
@@ -931,7 +935,7 @@ determine_clock_access_method(const bool user_requests_ISA) {
 }
 
 static void
-manipulate_clock(const bool show, const bool adjust, 
+manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
                  const bool set, const time_t set_time,
                  const bool hctosys, const bool systohc, 
                  const struct timeval startup_time, 
@@ -953,7 +957,7 @@ manipulate_clock(const bool show, const bool adjust,
 
   if (no_auth) *retcode_p = 1;
   else {
-    if (adjust || set || systohc || (!utc && !local_opt)) 
+    if (!noadjfile && (adjust || set || systohc || (!utc && !local_opt)))
       read_adjtime(&adjtime, &rc);
     else {
       /* A little trick to avoid reading the file if we don't have to */
@@ -1025,7 +1029,9 @@ manipulate_clock(const bool show, const bool adjust,
             *retcode_p = 1;
           } else *retcode_p = 0;
         }
-        save_adjtime(adjtime, testing);
+        if (!noadjfile) {
+         save_adjtime(adjtime, testing);
+       }
       }
     }
   }
@@ -1121,6 +1127,8 @@ usage( const char *fmt, ... ) {
     "  --date        specifies the time to which to set the hardware clock\n"
     "  --epoch=year  specifies the year which is the beginning of the \n"
     "                hardware clock's epoch value\n"
+    "  --noadjfile   do not access /etc/adjtime. Requires the use of\n"
+    "                either --utc or --localtime\n"
     ),RTC_DEV);
 #ifdef __alpha__
   fprintf( usageto, _(
@@ -1160,7 +1168,7 @@ main(int argc, char **argv) {
      may be modified after parsing is complete to effect an implied option.
      */
   bool help, show, set, systohc, hctosys, adjust, getepoch, setepoch, version;
-  bool ARCconsole, utc, testing, directisa, Jensen, SRM, funky_toy;
+  bool ARCconsole, utc, testing, directisa, Jensen, SRM, funky_toy, noadjfile;
   bool local_opt;
   char *date_opt;
 
@@ -1173,6 +1181,7 @@ main(int argc, char **argv) {
     { 0,   (char *) "getepoch",  OPT_FLAG,   &getepoch,  0 },
     { 0,   (char *) "setepoch",  OPT_FLAG,   &setepoch,  0 },
     { 'a', (char *) "adjust",    OPT_FLAG,   &adjust,    0 },
+    { 0,   (char *) "noadjfile", OPT_FLAG,   &noadjfile, 0 },
     { 'v', (char *) "version",   OPT_FLAG,   &version,   0 },
     { 'V', (char *) "version",   OPT_FLAG,   &version,   0 },
     { 0,   (char *) "date",      OPT_STRING, &date_opt,  0 },
@@ -1185,8 +1194,11 @@ main(int argc, char **argv) {
     { 'D', (char *) "debug",     OPT_FLAG,   &debug,     0 },
 #ifdef __alpha__
     { 'A', (char *) "ARC",       OPT_FLAG,   &ARCconsole,0 },
+    { 'A', (char *) "arc",       OPT_FLAG,   &ARCconsole,0 },
     { 'J', (char *) "Jensen",    OPT_FLAG,   &Jensen,    0 },
+    { 'J', (char *) "jensen",    OPT_FLAG,   &Jensen,    0 },
     { 'S', (char *) "SRM",       OPT_FLAG,   &SRM,       0 },
+    { 'S', (char *) "srm",       OPT_FLAG,   &SRM,       0 },
     { 'F', (char *) "funky-toy", OPT_FLAG,   &funky_toy, 0 },
 #endif
     { 0,   (char *) NULL,        OPT_END,    NULL,       0 }
@@ -1207,17 +1219,18 @@ main(int argc, char **argv) {
   textdomain(PACKAGE);
 
   /* set option defaults */
-  help = show = set = systohc = hctosys = adjust = getepoch = setepoch = 
-    version = utc = local_opt = ARCconsole = SRM = funky_toy =
-    directisa = badyear = Jensen = testing = debug = FALSE;
+  help = show = set = systohc = hctosys = adjust = noadjfile =
+    getepoch = setepoch = version = utc = local_opt =
+    ARCconsole = SRM = funky_toy = directisa = badyear = Jensen =
+    testing = debug = FALSE;
   date_opt = NULL;
 
   argc_parse = argc; argv_parse = argv;
   optParseOptions(&argc_parse, argv_parse, option_def, 0);
     /* Uses and sets argc_parse, argv_parse. 
        Sets show, systohc, hctosys, adjust, utc, local_opt, version,
-       testing, debug, set, date_opt, getepoch, setepoch, epoch_option
-       */
+       testing, debug, set, date_opt, getepoch, setepoch, epoch_option,
+       noadjtime */
     /* This is an ugly routine - for example, if I give an incorrect
        option, it only says "unrecognized option" without telling
        me what options are recognized. Rewrite with standard
@@ -1242,6 +1255,18 @@ main(int argc, char **argv) {
   if (utc && local_opt) {
     fprintf(stderr, _("%s: The --utc and --localtime options are mutually "
 		      "exclusive.  You specified both.\n"), MYNAME);
+    exit(100);
+  }
+
+  if (adjust && noadjfile) {
+    fprintf(stderr, _("%s: The --adjust and --noadjfile options are mutually "
+                     "exclusive.  You specified both.\n"), MYNAME);
+    exit(100);
+  }
+
+  if (noadjfile && !(utc || local_opt)) {
+    fprintf(stderr, _("%s: With --noadjfile, you must specify either "
+                     "--utc or --localtime\n"), MYNAME);
     exit(100);
   }
 
@@ -1302,8 +1327,9 @@ main(int argc, char **argv) {
 			_("Use the --debug option to see the details of our "
 			  "search for an access method.\n"));
       } else
-        manipulate_clock(show, adjust, set, set_time, hctosys, systohc, 
-                         startup_time, utc, local_opt, testing, &rc);
+        manipulate_clock(show, adjust, noadjfile, set, set_time,
+			 hctosys, systohc, startup_time, utc, local_opt,
+			 testing, &rc);
     }
   }
   exit(retcode);

@@ -52,6 +52,9 @@ struct systypes sun_sys_types[] = {
 	{LINUX_SWAP, N_("Linux swap")},
 	{LINUX_NATIVE, N_("Linux native")},
 	{0x8e, N_("Linux LVM")},
+	{0xfd, N_("Linux raid autodetect")},/* New (2.2.x) raid partition
+					       with autodetect using
+					       persistent superblock */
 	{ 0, NULL }
 };
 
@@ -531,6 +534,22 @@ add_sun_partition(int n, int sys) {
 			printf ("\
 It is highly recommended that the third partition covers the whole disk\n\
 and is of type `Whole disk'\n");
+		/* ewt asks to add: "don't start a partition at cyl 0"
+		   However, edmundo@rano.demon.co.uk writes:
+		   "In addition to having a Sun partition table, to be able to
+		   boot from the disc, the first partition, /dev/sdX1, must
+		   start at cylinder 0. This means that /dev/sdX1 contains
+		   the partition table and the boot block, as these are the
+		   first two sectors of the disc. Therefore you must be
+		   careful what you use /dev/sdX1 for. In particular, you must
+		   not use a partition starting at cylinder 0 for Linux swap,
+		   as that would overwrite the partition table and the boot
+		   block. You may, however, use such a partition for a UFS
+		   or EXT2 file system, as these file systems leave the first
+		   1024 bytes undisturbed. */
+		/* On the other hand, one should not use partitions
+		   starting at block 0 in an md, or the label will
+		   be trashed. */
 		for (i = 0; i < partitions; i++)
 			if (lens[i] && starts[i] <= first
 			            && starts[i] + lens[i] > first)

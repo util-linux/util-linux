@@ -1185,8 +1185,8 @@ msgstr ""
 msgid "Usage: mkfs [-V] [-t fstype] [fs-options] device [size]\n"
 msgstr "Uso: mkfs [-V] [-t tipo_sa] [opciones_sa] dispositivo [tamaño]\n"
 
-#: disk-utils/mkfs.c:90 fdisk/cfdisk.c:368 getopt-1.1.0a/getopt.c:89
-#: getopt-1.1.0a/getopt.c:99 login-utils/wall.c:218 mount/sundries.c:196
+#: disk-utils/mkfs.c:90 fdisk/cfdisk.c:368 getopt-1.1.2/getopt.c:89
+#: getopt-1.1.2/getopt.c:99 login-utils/wall.c:218 mount/sundries.c:196
 #, c-format
 msgid "%s: Out of memory!\n"
 msgstr "%s: No queda memoria\n"
@@ -5279,97 +5279,97 @@ msgstr "El carácter '%c' no pertenece al juego de caracteres del sistema"
 msgid "Message '%s' is OK\n"
 msgstr "El mensaje '%s' es correcto\n"
 
-#: getopt-1.1.0a/getopt.c:233
+#: getopt-1.1.2/getopt.c:233
 msgid "Try `getopt --help' for more information.\n"
 msgstr "Escriba `getopt --help' para obtener más información.\n"
 
-#: getopt-1.1.0a/getopt.c:299
+#: getopt-1.1.2/getopt.c:299
 msgid "empty long option after -l or --long argument"
 msgstr "Opción larga vacía tras argumento -l o --long"
 
-#: getopt-1.1.0a/getopt.c:319
+#: getopt-1.1.2/getopt.c:319
 msgid "unknown shell after -s or --shell argument"
 msgstr "Intérprete de comandos desconocido tras argumento -s o --shell"
 
-#: getopt-1.1.0a/getopt.c:324
+#: getopt-1.1.2/getopt.c:324
 msgid "Usage: getopt optstring parameters\n"
 msgstr "Uso: getopt cadenaopciones parámetros\n"
 
-#: getopt-1.1.0a/getopt.c:325
+#: getopt-1.1.2/getopt.c:325
 msgid "       getopt [options] [--] optstring parameters\n"
 msgstr "       getopt [opciones] [--] cadenaopciones parámetros\n"
 
-#: getopt-1.1.0a/getopt.c:326
+#: getopt-1.1.2/getopt.c:326
 msgid "       getopt [options] -o|--options optstring [options] [--]\n"
 msgstr "       getopt [opciones] -o|--options cadenaopciones [opciones] [--]\n"
 
-#: getopt-1.1.0a/getopt.c:327
+#: getopt-1.1.2/getopt.c:327
 msgid "              parameters\n"
 msgstr "              parámetros\n"
 
-#: getopt-1.1.0a/getopt.c:328
+#: getopt-1.1.2/getopt.c:328
 msgid ""
 "  -a, --alternative            Allow long options starting with single -\n"
 msgstr ""
 "  -a, --alternative            Permitir opciones largas con un solo - "
 "inicial\n"
 
-#: getopt-1.1.0a/getopt.c:329
+#: getopt-1.1.2/getopt.c:329
 msgid "  -h, --help                   This small usage guide\n"
 msgstr "  -h, --help                   Esta pequeña guía de uso\n"
 
-#: getopt-1.1.0a/getopt.c:330
+#: getopt-1.1.2/getopt.c:330
 msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr "  -l, --longoptions=opclargas  Opciones largas para reconocer\n"
 
-#: getopt-1.1.0a/getopt.c:331
+#: getopt-1.1.2/getopt.c:331
 msgid ""
 "  -n, --name=progname          The name under which errors are reported\n"
 msgstr ""
 "  -n, --name=nombreprograma    El nombre con el que se informa de los "
 "errores\n"
 
-#: getopt-1.1.0a/getopt.c:332
+#: getopt-1.1.2/getopt.c:332
 msgid "  -o, --options=optstring      Short options to be recognized\n"
 msgstr "  -o, --options=cadenaopciones Opciones cortas para reconocer\n"
 
-#: getopt-1.1.0a/getopt.c:333
+#: getopt-1.1.2/getopt.c:333
 msgid "  -q, --quiet                  Disable error reporting by getopt(3)\n"
 msgstr ""
 "  -q, --quiet                  Desactivar información de errores mediante "
 "getopt(3)\n"
 
-#: getopt-1.1.0a/getopt.c:334
+#: getopt-1.1.2/getopt.c:334
 msgid "  -Q, --quiet-output           No normal output\n"
 msgstr "  -Q, --quiet-output           No hay salida normal\n"
 
-#: getopt-1.1.0a/getopt.c:335
+#: getopt-1.1.2/getopt.c:335
 msgid "  -s, --shell=shell            Set shell quoting conventions\n"
 msgstr "  -s, --shell=intérpr.comandos Definir convenciones de intérprete\n"
 
-#: getopt-1.1.0a/getopt.c:336
+#: getopt-1.1.2/getopt.c:336
 msgid "  -T, --test                   Test for getopt(1) version\n"
 msgstr "  -T, --test                   Probar para versión getopt(1)\n"
 
-#: getopt-1.1.0a/getopt.c:337
+#: getopt-1.1.2/getopt.c:337
 #, fuzzy
 msgid "  -u, --unqote                 Do not quote the output\n"
 msgstr "  -Q, --quiet-output           No hay salida normal\n"
 
-#: getopt-1.1.0a/getopt.c:338
+#: getopt-1.1.2/getopt.c:338
 msgid "  -V, --version                Output version information\n"
 msgstr "  -V, --version                Mostrar información de versión\n"
 
-#: getopt-1.1.0a/getopt.c:392 getopt-1.1.0a/getopt.c:453
+#: getopt-1.1.2/getopt.c:392 getopt-1.1.2/getopt.c:453
 msgid "missing optstring argument"
 msgstr "Falta el argumento cadenaopciones"
 
-#: getopt-1.1.0a/getopt.c:441
+#: getopt-1.1.2/getopt.c:441
 #, fuzzy
 msgid "getopt (enhanced) 1.1.0\n"
 msgstr "getopt (mejorado) 1.0.3\n"
 
-#: getopt-1.1.0a/getopt.c:447
+#: getopt-1.1.2/getopt.c:447
 msgid "internal error, contact the author."
 msgstr "Error interno; contacte con el desarrollador."
 

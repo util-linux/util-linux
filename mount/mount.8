@@ -221,11 +221,7 @@ option below). It is possible to replace
 by a symbolic link to
 .IR /proc/mounts ,
 but some information is lost that way, and in particular
-working with the loop device will be less convenient. Also,
-pathnames containing spaces are handled correctly by
-.I /etc/mtab
-but not (yet) by
-.IR /proc/mounts .
+working with the loop device will be less convenient.
 
 .SH OPTIONS
 The full set of options used by an invocation of
@@ -442,7 +438,9 @@ flag followed by a comma separated string of options.
 Some of these options are only useful when they appear in the
 .I /etc/fstab
 file.  The following options apply to any file system that is being
-mounted:
+mounted (but not every file system actually honors them - e.g., the
+.B sync
+option today has effect only for ext2 and ufs):
 .RS
 .TP
 .B async
@@ -582,6 +580,8 @@ Give blocksize. Allowed values are 512, 1024, 2048, 4096.
 .TP
 .BR grpquota " / " noquota " / " quota " / " usrquota
 These options are accepted but ignored.
+(However, quota utilities may react to such strings in
+.IR /etc/fstab .)
 
 .SH "Mount options for coherent"
 None.
@@ -1149,7 +1149,7 @@ UFS is a file system widely used in different operating systems.
 The problem are differences among implementations. Features of some
 implementations are undocumented, so its hard to recognize the
 type of ufs automatically.
-That's why user must specify the type of ufs by mount option.
+That's why the user must specify the type of ufs by mount option.
 Possible values are:
 .RS
 .TP

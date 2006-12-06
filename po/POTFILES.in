@@ -20,7 +20,7 @@ fdisk/llseek.c
 fdisk/partname.c
 fdisk/sfdisk.c
 games/banner.c
-getopt-1.1.0a/getopt.c
+getopt-1.1.2/getopt.c
 hwclock/clock-ppc.c
 hwclock/cmos.c
 hwclock/hwclock.c

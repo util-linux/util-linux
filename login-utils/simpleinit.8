@@ -1,7 +1,7 @@
 .\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
 .\" " for emacs's hilit19 mode :-)
-.TH SIMPLEINIT 8 "4 November 2000" "Linux 0.99" "Linux Programmer's Manual"
+.TH SIMPLEINIT 8 "25 February 2001" "Linux 0.99" "Linux Programmer's Manual"
 .SH NAME
 simpleinit \- process control initialization
 .SH SYNOPSIS
@@ -97,12 +97,15 @@ parallel. See the \fBneed\fP(8) programme for details on how to
 elegantly control order of execution and manage dependencies.
 
 The \fBPATH\fP value is assigned to the PATH environment variable of
-child processes (boot scripts). The \fBINIT_PATH\fP value is used by
-simpleinit(8) itself to find the location of scripts to run (if an
-absolute path is not given). If unset the default value \fBPATH\fP is
-used. This separation allows boot scripts to invoke programmes of the
-same name without conflict and without needing to specify absolute
-paths.
+child processes (boot scripts).
+
+The \fBINIT_PATH\fP value is used by simpleinit(8) itself to find the
+location of scripts to run (if an absolute path is not given). If
+unset and the boot programme is a directory, that directory is used.
+Finally, if the script cannot be found in this path, the standard
+\fBPATH\fP is used. This separation allows boot scripts to invoke
+programmes of the same name without conflict and without needing to
+specify absolute paths.
 
 The \fBfinalprog\fP value specifies the path of the programme to run
 after all \fBgetty\fP(8) instances are spawned. At bootup, it is
@@ -151,7 +154,7 @@ remount (read-only) the root filesystem, even if the old inode for the
 .BR getty (8),
 .BR agetty (8),
 .BR shutdown (8),
-.BR need (8)
+.BR initctl (8)
 .SH BUGS
 This program is called
 .B simpleinit

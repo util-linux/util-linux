@@ -1153,8 +1153,8 @@ msgid "Usage: mkfs [-V] [-t fstype] [fs-options] device [size]\n"
 msgstr ""
 "使い方: mkfs [-V] [-t ファイルシステム型] [fs オプション] デバイス [サイズ]\n"
 
-#: disk-utils/mkfs.c:90 fdisk/cfdisk.c:368 getopt-1.1.0a/getopt.c:89
-#: getopt-1.1.0a/getopt.c:99 login-utils/wall.c:218 mount/sundries.c:196
+#: disk-utils/mkfs.c:90 fdisk/cfdisk.c:368 getopt-1.1.2/getopt.c:89
+#: getopt-1.1.2/getopt.c:99 login-utils/wall.c:218 mount/sundries.c:196
 #, c-format
 msgid "%s: Out of memory!\n"
 msgstr "%s: メモリが足りません！\n"
@@ -5146,91 +5146,91 @@ msgstr "文字 '%c' はキャラクタセット内にありません"
 msgid "Message '%s' is OK\n"
 msgstr "メッセージ '%s' は OK です\n"
 
-#: getopt-1.1.0a/getopt.c:233
+#: getopt-1.1.2/getopt.c:233
 msgid "Try `getopt --help' for more information.\n"
 msgstr "`getopt --help' で詳細情報を調べてください。\n"
 
-#: getopt-1.1.0a/getopt.c:299
+#: getopt-1.1.2/getopt.c:299
 msgid "empty long option after -l or --long argument"
 msgstr "-l や --long 引数の後のロングオプションが空です"
 
-#: getopt-1.1.0a/getopt.c:319
+#: getopt-1.1.2/getopt.c:319
 msgid "unknown shell after -s or --shell argument"
 msgstr "-s か --shell 引数の後のシェルを知りません"
 
-#: getopt-1.1.0a/getopt.c:324
+#: getopt-1.1.2/getopt.c:324
 msgid "Usage: getopt optstring parameters\n"
 msgstr "使い方: getopt オプション文字列 値\n"
 
-#: getopt-1.1.0a/getopt.c:325
+#: getopt-1.1.2/getopt.c:325
 msgid "       getopt [options] [--] optstring parameters\n"
 msgstr "       getopt [オプション] [--] オプション文字列 値\n"
 
-#: getopt-1.1.0a/getopt.c:326
+#: getopt-1.1.2/getopt.c:326
 msgid "       getopt [options] -o|--options optstring [options] [--]\n"
 msgstr ""
 "       getopt [オプション] -o|--options オプション文字列 [オプション] [--]\n"
 
-#: getopt-1.1.0a/getopt.c:327
+#: getopt-1.1.2/getopt.c:327
 msgid "              parameters\n"
 msgstr "              値\n"
 
-#: getopt-1.1.0a/getopt.c:328
+#: getopt-1.1.2/getopt.c:328
 msgid ""
 "  -a, --alternative            Allow long options starting with single -\n"
 msgstr ""
 "  -a, --alternative            ロングオプションが - 一つで始まるのを許す\n"
 
-#: getopt-1.1.0a/getopt.c:329
+#: getopt-1.1.2/getopt.c:329
 msgid "  -h, --help                   This small usage guide\n"
 msgstr "  -h, --help                   このちょっとした使い方を表示する\n"
 
-#: getopt-1.1.0a/getopt.c:330
+#: getopt-1.1.2/getopt.c:330
 msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr "  -l, --longoptions=longopts   ロングオプションを理解させる\n"
 
-#: getopt-1.1.0a/getopt.c:331
+#: getopt-1.1.2/getopt.c:331
 msgid ""
 "  -n, --name=progname          The name under which errors are reported\n"
 msgstr "  -n, --name=progname          エラー報告の際の名前\n"
 
-#: getopt-1.1.0a/getopt.c:332
+#: getopt-1.1.2/getopt.c:332
 msgid "  -o, --options=optstring      Short options to be recognized\n"
 msgstr "  -o, --options=optstring      ショーとオプションを理解させる\n"
 
-#: getopt-1.1.0a/getopt.c:333
+#: getopt-1.1.2/getopt.c:333
 msgid "  -q, --quiet                  Disable error reporting by getopt(3)\n"
 msgstr "  -q, --quiet                  getopt(3) のエラー報告を行わない\n"
 
-#: getopt-1.1.0a/getopt.c:334
+#: getopt-1.1.2/getopt.c:334
 msgid "  -Q, --quiet-output           No normal output\n"
 msgstr "  -Q, --quiet-output           通常の出力を行わない\n"
 
-#: getopt-1.1.0a/getopt.c:335
+#: getopt-1.1.2/getopt.c:335
 msgid "  -s, --shell=shell            Set shell quoting conventions\n"
 msgstr "  -s, --shell=shell            シェルの引用取り決めを設定する\n"
 
-#: getopt-1.1.0a/getopt.c:336
+#: getopt-1.1.2/getopt.c:336
 msgid "  -T, --test                   Test for getopt(1) version\n"
 msgstr "  -T, --test                   getopt(1) バージョンをテストする\n"
 
-#: getopt-1.1.0a/getopt.c:337
+#: getopt-1.1.2/getopt.c:337
 msgid "  -u, --unqote                 Do not quote the output\n"
 msgstr "  -u, --unqote                 出力を引用しない\n"
 
-#: getopt-1.1.0a/getopt.c:338
+#: getopt-1.1.2/getopt.c:338
 msgid "  -V, --version                Output version information\n"
 msgstr "  -V, --version                バージョン情報を出力する\n"
 
-#: getopt-1.1.0a/getopt.c:392 getopt-1.1.0a/getopt.c:453
+#: getopt-1.1.2/getopt.c:392 getopt-1.1.2/getopt.c:453
 msgid "missing optstring argument"
 msgstr "オプション文字列引数が足りません"
 
-#: getopt-1.1.0a/getopt.c:441
+#: getopt-1.1.2/getopt.c:441
 msgid "getopt (enhanced) 1.1.0\n"
 msgstr "getopt (enhanced) 1.1.0\n"
 
-#: getopt-1.1.0a/getopt.c:447
+#: getopt-1.1.2/getopt.c:447
 msgid "internal error, contact the author."
 msgstr "内部エラー、作者に連絡を。"
 

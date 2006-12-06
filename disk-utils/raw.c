@@ -58,7 +58,7 @@ static void usage(int err)
 
 int main(int argc, char *argv[])
 {
-	char c;
+	int  c;
 	char * raw_name;
 	char * block_name;
 	int  err;

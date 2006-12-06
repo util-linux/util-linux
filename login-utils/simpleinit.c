@@ -1,5 +1,5 @@
 /* simpleinit.c - poe@daimi.aau.dk */
-/* Version 2.0.1 */
+/* Version 2.0.2 */
 
 /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
@@ -9,6 +9,10 @@
  * - fixed race when reading from pipe and reaping children
  * 2001-02-18 sam@quux.dropbear.id.au
  * - fixed bug in <get_path>: multiple INIT_PATH components did not work
+ * 2001-02-21 Richard Gooch <rgooch@atnf.csiro.au>
+ * - block signals in handlers, so that longjmp() doesn't kill context
+ * 2001-02-25 Richard Gooch <rgooch@atnf.csiro.au>
+ * - make default INIT_PATH the boot_prog (if it is a directory) - YECCH
  */
 
 #include <sys/types.h>
@@ -76,6 +80,8 @@ static char script_prefix[PATH_SIZE] = "\0";
 static char final_prog[PATH_SIZE] = "\0";
 static char init_path[PATH_SIZE] = "\0";
 static int caught_sigint = 0;
+static int no_reboot = 0;
+static pid_t rc_child = -1;
 static const char *initctl_name = "/dev/initctl";
 static int initctl_fd = -1;
 static volatile int do_longjmp = 0;
@@ -89,9 +95,9 @@ static int process_path (const char *path, int (*func) (const char *path),
 static int preload_file (const char *path);
 static int run_file (const char *path);
 static void spawn (int i), read_inittab (void);
-static void hup_handler (int sig);
+static void sighup_handler (int sig);
 static void sigtstp_handler (int sig);
-static void int_handler (int sig);
+static void sigint_handler (int sig);
 static void sigchild_handler (int sig);
 static void sigquit_handler (int sig);
 static void sigterm_handler (int sig);
@@ -134,7 +140,7 @@ static void enter_single (void)
 
 int main(int argc, char *argv[])
 {
-	int			vec,i;
+	int			vec, i;
 	int			want_single = 0;
 	pid_t			pid;
 	struct sigaction	sa;
@@ -143,8 +149,10 @@ int main(int argc, char *argv[])
 #ifdef SET_TZ
 	set_tz();
 #endif
-	signal (SIGINT, int_handler);
-	sigemptyset (&sa.sa_mask);
+	sigfillset (&sa.sa_mask);  /*  longjmp and nested signals don't mix  */
+	sa.sa_flags = SA_ONESHOT;
+	sa.sa_handler = sigint_handler;
+	sigaction (SIGINT, &sa, NULL);
 	sa.sa_flags = 0;
 	sa.sa_handler = sigtstp_handler;
 	sigaction (SIGTSTP, &sa, NULL);
@@ -166,6 +174,7 @@ int main(int argc, char *argv[])
 	read_inittab ();
 	for (i = 1; i < argc; i++) {
 		if (strcmp (argv[i], "single") == 0) want_single = 1;
+		else if (strcmp (argv[i], "-noreboot") == 0) no_reboot = 1;
 		else {
 			char path[PATH_SIZE];
 
@@ -174,6 +183,17 @@ int main(int argc, char *argv[])
 			if (access (path, R_OK | X_OK) == 0)
 				strcpy (boot_prog, path);
 		}
+	}
+	if (init_path[0] == '\0')
+	{
+	    struct stat statbuf;
+
+	    if ( (stat (boot_prog, &statbuf) == 0) && S_ISDIR (statbuf.st_mode) )
+	    {
+		strcpy (init_path, boot_prog);
+		i = strlen (init_path);
+		if (init_path[i - 1] == '/') init_path[i - 1] = '\0';
+	    }
 	}
 
 	if ( ( initctl_fd = open (initctl_name, O_RDWR, 0) ) < 0 ) {
@@ -185,12 +205,12 @@ int main(int argc, char *argv[])
 	if ( want_single || (access (_PATH_SINGLE, R_OK) == 0) ) do_single ();
 
 	/*If we get a SIGTSTP before multi-user mode, do nothing*/
-	while(stopped)	
+	while (stopped)
 		pause();
 
 	if ( do_rc_tty (boot_prog) ) do_single ();
 
-	while(stopped)	/*Also if /etc/rc fails & we get SIGTSTP*/
+	while (stopped)  /*  Also if /etc/rc fails & we get SIGTSTP  */
 		pause();
 
 	write_wtmp();	/* write boottime record */
@@ -204,7 +224,7 @@ int main(int argc, char *argv[])
 	}
 	exit(0);
 #endif
-	signal(SIGHUP, hup_handler);
+	signal (SIGHUP, sighup_handler);  /* Better semantics with signal(2) */
 
 	for (i = 0; i < getdtablesize (); i++)
 		if (i != initctl_fd) close (i);
@@ -326,14 +346,14 @@ static void do_single (void)
 static int do_rc_tty (const char *path)
 {
     int status;
-    pid_t pid, child;
+    pid_t pid;
     sigset_t ss;
 
     if (caught_sigint) return 0;
     process_path (path, preload_file, 0);
     /*  Launch off a subprocess to start a new session (required for frobbing
 	the TTY) and capture control-C  */
-    switch ( child = fork () )
+    switch ( rc_child = fork () )
     {
       case 0:   /*  Child  */
 	for (status = 1; status < NSIG; status++) signal (status, SIG_DFL);
@@ -355,12 +375,12 @@ static int do_rc_tty (const char *path)
     process_path (path, run_file, 0);
     while (1)
     {
-	if ( ( pid = mywait (&status) ) == child )
+	if ( ( pid = mywait (&status) ) == rc_child )
 	    return (WTERMSIG (status) == SIGINT) ? 0 : 1;
 	if (pid < 0) break;
     }
-    kill (child, SIGKILL);
-    while (waitpid (child, NULL, 0) != child)  /*  Nothing  */;
+    kill (rc_child, SIGKILL);
+    while (waitpid (rc_child, NULL, 0) != rc_child)  /*  Nothing  */;
     return 0;
 }   /*  End Function do_rc_tty  */
 
@@ -601,17 +621,16 @@ static void read_inittab (void)
 		if (access (path, R_OK | X_OK) == 0)
 			strcpy (boot_prog, path);
 	}
-}
+}   /*  End Function read_inittab  */
 
-static void hup_handler (int sig)
+static void sighup_handler (int sig)
 {
 	int i,j;
 	int oldnum;
 	struct initline	savetab[NUMCMD];
 	int had_already;
 
-	(void) signal(SIGHUP, SIG_IGN);
-
+	signal (SIGHUP, SIG_IGN);
 	memcpy(savetab, inittab, NUMCMD * sizeof(struct initline));
 	oldnum = numcmd;		
 	read_inittab ();
@@ -625,16 +644,15 @@ static void hup_handler (int sig)
 					spawn(i);
 			}
 		}
-		if(!had_already) spawn(i);
+		if (!had_already) spawn (i);
 	}
-	
-	(void) signal(SIGHUP, hup_handler);
-}
+	signal (SIGHUP, sighup_handler);
+}   /*  End Function sighup_handler  */
 
 static void sigtstp_handler (int sig)
 {
     stopped = ~stopped;
-    if (!stopped) hup_handler (sig);
+    if (!stopped) sighup_handler (sig);
 }   /*  End Function sigtstp_handler  */
 
 static void sigterm_handler (int sig)
@@ -645,22 +663,23 @@ static void sigterm_handler (int sig)
 	if (inittab[i].pid > 0) kill (inittab[i].pid, SIGTERM);
 }   /*  End Function sigterm_handler  */
 
-static void int_handler (int sig)
+static void sigint_handler (int sig)
 {
-	pid_t pid;
-	
-	caught_sigint = 1;
-	sync();
-	sync();
-	pid = fork();
-	if (pid > 0)
-		return;
-	if (pid == 0) 	/* reboot properly... */
-		execl(_PATH_REBOOT, _PATH_REBOOT, (char *)0);
+    pid_t pid;
 
-	/* fork or exec failed, try the hard way... */
-	my_reboot(LINUX_REBOOT_CMD_RESTART);
-}
+    caught_sigint = 1;
+    kill (rc_child, SIGKILL);
+    if (no_reboot) _exit (1) /*kill (0, SIGKILL)*/;
+    sync ();
+    sync ();
+    pid = fork ();
+    if (pid > 0) return;  /*  Parent                     */
+    if (pid == 0) 	  /*  Child: reboot properly...  */
+	execl (_PATH_REBOOT, _PATH_REBOOT, (char *) 0);
+
+    /* fork or exec failed, try the hard way... */
+    my_reboot (LINUX_REBOOT_CMD_RESTART);
+}   /*  End Function sigint_handler  */
 
 static void sigchild_handler (int sig)
 {
@@ -708,7 +727,7 @@ static void write_wtmp (void)
 	flock(lf, LOCK_UN|LOCK_NB);
 	close(lf);
     }
-}     
+}   /*  End Function write_wtmp  */
 
 
 struct needer_struct
@@ -885,7 +904,9 @@ static void process_command (const struct command_struct *command)
 		dup2 (1, 2);
 		execlp (get_path (victim->first_service->name),
 			victim->first_service->name, "stop", NULL);
-		err ( _("error running programme\n") );
+		sprintf (txt, _("error stopping service: \"%s\""),
+			 victim->first_service->name);
+		err (txt);
 		_exit (SIG_NOT_STOPPED);
 	    }
 	    else if (pid == -1) break;      /*  Error   */

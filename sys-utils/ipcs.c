@@ -232,25 +232,25 @@ print_perms (int id, struct ipc_perm *ipcp) {
 	struct passwd *pw;
 	struct group *gr;
 
-	printf ("%-10d%-10o", id, ipcp->mode & 0777);
+	printf ("%-10d %-10o", id, ipcp->mode & 0777);
 
 	if ((pw = getpwuid(ipcp->cuid)))
-		printf("%-10s", pw->pw_name);
+		printf(" %-10s", pw->pw_name);
 	else
-		printf("%-10d", ipcp->cuid);
+		printf(" %-10d", ipcp->cuid);
 	if ((gr = getgrgid(ipcp->cgid)))
-		printf("%-10s", gr->gr_name);
+		printf(" %-10s", gr->gr_name);
 	else
-		printf("%-10d", ipcp->cgid);
+		printf(" %-10d", ipcp->cgid);
 
 	if ((pw = getpwuid(ipcp->uid)))
-		printf("%-10s", pw->pw_name);
+		printf(" %-10s", pw->pw_name);
 	else
-		printf("%-10d", ipcp->uid);
+		printf(" %-10d", ipcp->uid);
 	if ((gr = getgrgid(ipcp->gid)))
-		printf("%-10s\n", gr->gr_name);
+		printf(" %-10s\n", gr->gr_name);
 	else
-		printf("%-10d\n", ipcp->gid);
+		printf(" %-10d\n", ipcp->gid);
 }
 
 
@@ -298,31 +298,34 @@ void do_shm (char format)
 
 	case CREATOR:
 		printf (_("------ Shared Memory Segment Creators/Owners --------\n"));
-		printf (_("%-10s%-10s%-10s%-10s%-10s%-10s\n"),
+		printf (_("%-10s %-10s %-10s %-10s %-10s %-10s\n"),
 		 _("shmid"),_("perms"),_("cuid"),_("cgid"),_("uid"),_("gid"));
 		break;
 
 	case TIME:
 		printf (_("------ Shared Memory Attach/Detach/Change Times --------\n"));
-		printf (_("%-10s%-10s  %-20s%-20s%-20s\n"),
-			_("shmid"),_("owner"),_("attached"),_("detached"),_("changed"));
+		printf (_("%-10s %-10s %-20s %-20s %-20s\n"),
+			_("shmid"),_("owner"),_("attached"),_("detached"),
+			_("changed"));
 		break;
 
 	case PID:
 		printf (_("------ Shared Memory Creator/Last-op --------\n"));
-		printf (_("%-10s%-10s%-10s%-10s\n"),_("shmid"),_("owner"),_("cpid"),_("lpid"));
+		printf (_("%-10s %-10s %-10s %-10s\n"),
+			_("shmid"),_("owner"),_("cpid"),_("lpid"));
 		break;
 
 	default:
 		printf (_("------ Shared Memory Segments --------\n"));
-		printf (_("%-10s%-10s%-10s%-10s%-10s%-10s%-12s\n"), _("key"),_("shmid"),
-			_("owner"),_("perms"),_("bytes"),_("nattch"),_("status"));
+		printf (_("%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"),
+			_("key"),_("shmid"),_("owner"),_("perms"),_("bytes"),
+			_("nattch"),_("status"));
 		break;
 	}
 
 	for (id = 0; id <= maxid; id++) {
 		shmid = shmctl (id, SHM_STAT, &shmseg);
-		if (shmid  < 0) 
+		if (shmid < 0) 
 			continue;
 		if (format == CREATOR)  {
 			print_perms (shmid, ipcp);
@@ -332,33 +335,33 @@ void do_shm (char format)
 		switch (format) {
 		case TIME: 
 			if (pw)
-				printf ("%-10d%-10.10s", shmid, pw->pw_name);
+				printf ("%-10d %-10.10s", shmid, pw->pw_name);
 			else
-				printf ("%-10d%-10d", shmid, ipcp->uid);
+				printf ("%-10d %-10d", shmid, ipcp->uid);
 			/* ctime uses static buffer: use separate calls */
 			printf("  %-20.16s", shmseg.shm_atime
-			       ? ctime(&shmseg.shm_atime) + 4 : _("Not set\n"));
-			printf("%-20.16s", shmseg.shm_dtime
-			       ? ctime(&shmseg.shm_dtime) + 4 : _("Not set\n"));
-			printf("%-20.16s\n", shmseg.shm_ctime
-			       ? ctime(&shmseg.shm_ctime) + 4 : _("Not set\n"));
+			       ? ctime(&shmseg.shm_atime) + 4 : _("Not set"));
+			printf(" %-20.16s", shmseg.shm_dtime
+			       ? ctime(&shmseg.shm_dtime) + 4 : _("Not set"));
+			printf(" %-20.16s\n", shmseg.shm_ctime
+			       ? ctime(&shmseg.shm_ctime) + 4 : _("Not set"));
 			break;
 		case PID:
 			if (pw)
-				printf ("%-10d%-10.10s", shmid, pw->pw_name);
+				printf ("%-10d %-10.10s", shmid, pw->pw_name);
 			else
-				printf ("%-10d%-10d", shmid, ipcp->uid);
-			printf ("%-10d%-10d\n",
+				printf ("%-10d %-10d", shmid, ipcp->uid);
+			printf (" %-10d %-10d\n",
 				shmseg.shm_cpid, shmseg.shm_lpid);
 			break;
 			
 		default:
-		        printf( "0x%08x ",ipcp->KEY );
+		        printf("0x%08x ",ipcp->KEY );
 			if (pw)
-				printf ("%-10d%-10.10s", shmid, pw->pw_name);
+				printf ("%-10d %-10.10s", shmid, pw->pw_name);
 			else
-				printf ("%-10d%-10d", shmid, ipcp->uid);
-			printf ("%-10o%-10d%-10ld%-6s%-6s\n", 
+				printf ("%-10d %-10d", shmid, ipcp->uid);
+			printf ("%-10o %-10d %-10ld %-6s %-6s\n", 
 				ipcp->mode & 0777,
 				shmseg.shm_segsz,
 				/*
@@ -412,13 +415,13 @@ void do_sem (char format)
 
 	case CREATOR:
 		printf (_("------ Semaphore Arrays Creators/Owners --------\n"));
-		printf (_("%-10s%-10s%-10s%-10s%-10s%-10s\n"),
+		printf (_("%-10s %-10s %-10s %-10s %-10s %-10s\n"),
 		 _("semid"),_("perms"),_("cuid"),_("cgid"),_("uid"),("gid"));
 		break;
 
 	case TIME:
 		printf (_("------ Shared Memory Operation/Change Times --------\n"));
-		printf (_("%-8s%-10s  %-26.24s %-26.24s\n"),
+		printf (_("%-8s %-10s %-26.24s %-26.24s\n"),
 			_("shmid"),_("owner"),_("last-op"),_("last-changed"));
 		break;
 
@@ -427,15 +430,16 @@ void do_sem (char format)
 
 	default:
 		printf (_("------ Semaphore Arrays --------\n"));
-		printf (_("%-10s%-10s%-10s%-10s%-10s%-12s\n"), 
-			_("key"),_("semid"),_("owner"),_("perms"),_("nsems"),_("status"));
+		printf (_("%-10s %-10s %-10s %-10s %-10s %-12s\n"), 
+			_("key"),_("semid"),_("owner"),_("perms"),
+			_("nsems"),_("status"));
 		break;
 	}
 
 	for (id = 0; id <= maxid; id++) {
 		arg.buf = (struct semid_ds *) &semary;
 		semid = semctl (id, 0, SEM_STAT, arg);
-		if (semid < 0) 
+		if (semid < 0)
 			continue;
 		if (format == CREATOR)  {
 			print_perms (semid, ipcp);
@@ -445,13 +449,13 @@ void do_sem (char format)
 		switch (format) {
 		case TIME: 
 			if (pw)
-				printf ("%-8d%-10.10s", semid, pw->pw_name);
+				printf ("%-8d %-10.10s", semid, pw->pw_name);
 			else
-				printf ("%-8d%-10d", semid, ipcp->uid);
+				printf ("%-8d %-10d", semid, ipcp->uid);
 			printf ("  %-26.24s", semary.sem_otime
-				? ctime(&semary.sem_otime) : _("Not set\n"));
+				? ctime(&semary.sem_otime) : _("Not set"));
 			printf (" %-26.24s\n", semary.sem_ctime
-				? ctime(&semary.sem_ctime) : _("Not set\n"));
+				? ctime(&semary.sem_ctime) : _("Not set"));
 			break;
 		case PID:
 			break;
@@ -459,10 +463,10 @@ void do_sem (char format)
 		default:
 		        printf( "0x%08x ",ipcp->KEY );
 			if (pw)
-				printf ("%-10d%-10.9s", semid, pw->pw_name);
+				printf ("%-10d %-10.9s", semid, pw->pw_name);
 			else
-				printf ("%-10d%-9d", semid, ipcp->uid);
-			printf ("%-10o%-10ld\n",
+				printf ("%-10d %-9d", semid, ipcp->uid);
+			printf ("%-10o %-10ld\n",
 				ipcp->mode & 0777,
 				/*
 				 * glibc-2.1.3 and earlier has unsigned short;
@@ -488,7 +492,7 @@ void do_msg (char format)
 
 	maxid = msgctl (0, MSG_INFO, (struct msqid_ds *) &msginfo);
 	if (maxid < 0) {
-		printf (_("kernel not configured for shared memory\n"));
+		printf (_("kernel not configured for message queues\n"));
 		return;
 	}
 	
@@ -511,31 +515,33 @@ void do_msg (char format)
 
 	case CREATOR:
 		printf (_("------ Message Queues: Creators/Owners --------\n"));
-		printf (_("%-10s%-10s%-10s%-10s%-10s%-10s\n"),
+		printf (_("%-10s %-10s %-10s %-10s %-10s %-10s\n"),
 		 _("msqid"),_("perms"),_("cuid"),_("cgid"),_("uid"),_("gid"));
 		break;
 
 	case TIME:
 		printf (_("------ Message Queues Send/Recv/Change Times --------\n"));
-		printf (_("%-8s%-10s  %-20s%-20s%-20s\n"),
+		printf (_("%-8s %-10s %-20s %-20s %-20s\n"),
 			_("msqid"),_("owner"),_("send"),_("recv"),_("change"));
 		break;
 
 	case PID:
  		printf (_("------ Message Queues PIDs --------\n"));
- 		printf (_("%-10s%-10s%-10s%-10s\n"),_("msqid"),_("owner"),_("lspid"),_("lrpid"));
+ 		printf (_("%-10s %-10s %-10s %-10s\n"),
+			_("msqid"),_("owner"),_("lspid"),_("lrpid"));
 		break;
 
 	default:
 		printf (_("------ Message Queues --------\n"));
-		printf (_("%-10s%-10s%-10s%-10s%-12s%-12s\n"), _("key"),_("msqid"),
-			_("owner"), _("perms"), _("used-bytes"), _("messages"));
+		printf (_("%-10s %-10s %-10s %-10s %-12s %-12s\n"),
+			_("key"), _("msqid"), _("owner"), _("perms"),
+			_("used-bytes"), _("messages"));
 		break;
 	}
 
 	for (id = 0; id <= maxid; id++) {
 		msqid = msgctl (id, MSG_STAT, &msgque);
-		if (msqid  < 0) 
+		if (msqid < 0)
 			continue;
 		if (format == CREATOR)  {
 			print_perms (msqid, ipcp);
@@ -543,34 +549,34 @@ void do_msg (char format)
 		}
 		pw = getpwuid(ipcp->uid);
 		switch (format) {
-		case TIME: 
+		case TIME:
 			if (pw)
-				printf ("%-8d%-10.10s", msqid, pw->pw_name);
+				printf ("%-8d %-10.10s", msqid, pw->pw_name);
 			else
-				printf ("%-8d%-10d", msqid, ipcp->uid);
-			printf ("  %-20.16s", msgque.msg_stime
-				? ctime(&msgque.msg_stime) + 4 : _("Not set\n"));
-			printf ("%-20.16s", msgque.msg_rtime
-				? ctime(&msgque.msg_rtime) + 4 : _("Not set\n"));
-			printf ("%-20.16s\n", msgque.msg_ctime
-				? ctime(&msgque.msg_ctime) + 4 : _("Not set\n"));
+				printf ("%-8d %-10d", msqid, ipcp->uid);
+			printf (" %-20.16s", msgque.msg_stime
+				? ctime(&msgque.msg_stime) + 4 : _("Not set"));
+			printf (" %-20.16s", msgque.msg_rtime
+				? ctime(&msgque.msg_rtime) + 4 : _("Not set"));
+			printf (" %-20.16s\n", msgque.msg_ctime
+				? ctime(&msgque.msg_ctime) + 4 : _("Not set"));
 			break;
 		case PID:
  			if (pw)
- 				printf ("%-8d%-10.10s", msqid, pw->pw_name);
+ 				printf ("%-8d %-10.10s", msqid, pw->pw_name);
  			else
- 				printf ("%-8d%-10d", msqid, ipcp->uid);
+ 				printf ("%-8d %-10d", msqid, ipcp->uid);
  			printf ("  %5d     %5d\n",
- 			msgque.msg_lspid, msgque.msg_lrpid);
+				msgque.msg_lspid, msgque.msg_lrpid);
   			break;
 
 		default:
 		        printf( "0x%08x ",ipcp->KEY );
 			if (pw)
-				printf ("%-10d%-10.10s", msqid, pw->pw_name);
+				printf ("%-10d %-10.10s", msqid, pw->pw_name);
 			else
-				printf ("%-10d%-10d", msqid, ipcp->uid);
-			printf ("%-10o%-12ld%-12ld\n",
+				printf ("%-10d %-10d", msqid, ipcp->uid);
+			printf (" %-10o %-12ld %-12ld\n",
 				ipcp->mode & 0777,
 				/*
 				 * glibc-2.1.3 and earlier has unsigned short;
@@ -602,19 +608,18 @@ void print_shm (int shmid)
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid);
 	printf (_("mode=%#o\taccess_perms=%#o\n"),
 		ipcp->mode, ipcp->mode & 0777);
-	printf (_("bytes=%d\tlpid=%d\tcpid=%d\tnattch=%ld\n"), 
-		shmds.shm_segsz, shmds.shm_lpid, shmds.shm_cpid, 
+	printf (_("bytes=%d\tlpid=%d\tcpid=%d\tnattch=%ld\n"),
+		shmds.shm_segsz, shmds.shm_lpid, shmds.shm_cpid,
 		(long) shmds.shm_nattch);
-	printf (_("att_time=%s"), shmds.shm_atime ? ctime (&shmds.shm_atime) : 
-		_("Not set\n"));
-	printf (_("det_time=%s"), shmds.shm_dtime ? ctime (&shmds.shm_dtime) : 
-		_("Not set\n"));
-	printf (_("change_time=%s"), ctime (&shmds.shm_ctime));
+	printf (_("att_time=%-26.24s\n"),
+		shmds.shm_atime ? ctime (&shmds.shm_atime) : _("Not set"));
+	printf (_("det_time=%-26.24s\n"),
+		shmds.shm_dtime ? ctime (&shmds.shm_dtime) : _("Not set"));
+	printf (_("change_time=%-26.24s\n"), ctime (&shmds.shm_ctime));
 	printf ("\n");
 	return;
 }
 
- 
 
 void print_msg (int msqid)
 {
@@ -637,12 +642,12 @@ void print_msg (int msqid)
 		 */
 		(long) buf.msg_cbytes, (long) buf.msg_qbytes,
 		(long) buf.msg_qnum, buf.msg_lspid, buf.msg_lrpid);
-	printf (_("send_time=%s"),
-		buf.msg_stime? ctime (&buf.msg_stime) : _("Not set\n"));
-	printf (_("rcv_time=%s"),
-		buf.msg_rtime? ctime (&buf.msg_rtime) : _("Not set\n"));
-	printf (_("change_time=%s"),
-		buf.msg_ctime? ctime (&buf.msg_ctime) : _("Not set\n"));
+	printf (_("send_time=%-26.24s\n"),
+		buf.msg_stime ? ctime (&buf.msg_stime) : _("Not set"));
+	printf (_("rcv_time=%-26.24s\n"),
+		buf.msg_rtime ? ctime (&buf.msg_rtime) : _("Not set"));
+	printf (_("change_time=%-26.24s\n"),
+		buf.msg_ctime ? ctime (&buf.msg_ctime) : _("Not set"));
 	printf ("\n");
 	return;
 }
@@ -665,11 +670,11 @@ void print_sem (int semid)
 	printf (_("mode=%#o, access_perms=%#o\n"),
 		ipcp->mode, ipcp->mode & 0777);
 	printf (_("nsems = %ld\n"), (long) semds.sem_nsems);
-	printf (_("otime = %s"), semds.sem_otime ? ctime (&semds.sem_otime) : 
-		_("Not set\n"));
-	printf (_("ctime = %s"), ctime (&semds.sem_ctime));	
+	printf (_("otime = %-26.24s\n"),
+		semds.sem_otime ? ctime (&semds.sem_otime) : _("Not set"));
+	printf (_("ctime = %-26.24s\n"), ctime (&semds.sem_ctime));	
 
-	printf (_("%-10s%-10s%-10s%-10s%-10s\n"),
+	printf (_("%-10s %-10s %-10s %-10s %-10s\n"),
 		_("semnum"),_("value"),_("ncount"),_("zcount"),_("pid"));
 	arg.val = 0;
 	for (i=0; i< semds.sem_nsems; i++) {
@@ -682,9 +687,9 @@ void print_sem (int semid)
 			perror ("semctl ");
 			exit (1);
 		}
-		printf ("%-10d%-10d%-10d%-10d%-10d\n", i, val, ncnt, zcnt, pid);
+		printf ("%-10d %-10d %-10d %-10d %-10d\n",
+			i, val, ncnt, zcnt, pid);
 	}
 	printf ("\n");
 	return;
 }
-

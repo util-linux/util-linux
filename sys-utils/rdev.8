@@ -3,31 +3,29 @@
 .\" Changes from sct@dcs.ed.ac.uk added Sat Oct  9 09:54:00 1993.
 .TH RDEV 8 "20 November 1993" "Linux 0.99" "Linux Programmer's Manual"
 .SH NAME
-rdev \- query/set image root device, swap device, RAM disk size, or video mode
+rdev \- query/set image root device, RAM disk size, or video mode
 .SH SYNOPSIS
 .nf
-.BR "rdev [ \-rsvh ] [ \-o " offset " ] [ " image " [ " value " [ " offset " ] ] ]"
+.BR "rdev [ \-rvh ] [ \-o " offset " ] [ " image " [ " value " [ " offset " ] ] ]"
 .BR "rdev [ \-o " offset " ] [ " image " [ " root_device " [ " offset " ] ] ]"
-.BR "swapdev [ \-o " offset " ] [ " image " [ " swap_device " [ " offset " ] ] ]"
 .BR "ramsize [ \-o " offset " ] [ " image " [ " size " [ " offset " ] ] ]"
 .BR "vidmode [ \-o " offset " ] [ " image " [ " mode " [ " offset " ] ] ]"
 .BR "rootflags [ \-o " offset " ] [ " image " [ " flags " [ " offset " ] ] ]"
 .fi
 .SH DESCRIPTION
-.\" " for emacs hilit19
 With no arguments,
 .B rdev
 outputs an
 .I /etc/mtab
 line for the current root file system.
 With no arguments,
-.BR swapdev ", " ramsize ", " vidmode ", and " rootflags
+.BR ramsize ", " vidmode ", and " rootflags
 print usage information.
 
-In a bootable image for the Linux kernel, there are several pairs of bytes
-which specify the root device, the video mode, the size of the RAM disk,
-and the swap device.  These pairs of bytes, by default, begin at offset 504
-(decimal) in the kernel image:
+In a bootable image for the Linux kernel on i386, there are several pairs
+of bytes which specify the root device, the video mode, and the size of
+the RAM disk.  These pairs of bytes, by default, begin
+at offset 504 (decimal) in the kernel image:
 
 .nf
 .RS
@@ -58,9 +56,9 @@ parameter, which is a bootable Linux kernel image, might be:
 .fi
 
 When using the
-.BR rdev ", or " swapdev
-commands, the
-.IR root_device " or " swap_device
+.B rdev
+command, the
+.I root_device
 parameter might be something like:
 
 .nf
@@ -72,6 +70,10 @@ parameter might be something like:
 /dev/ida/c0d0p1
 .RE
 .fi
+
+One may also specify the device by a comma-separated pair
+of decimal integers
+.IR major , minor .
 
 For the
 .B ramsize
@@ -114,12 +116,6 @@ is not specified, the
 will be examined to determine the current settings.
 .SH OPTIONS
 .TP
-.B \-s
-Causes
-.B rdev
-to act like
-.BR swapdev .
-.TP
 .B \-r
 Causes
 .B rdev
@@ -141,23 +137,20 @@ to act like
 .B \-h
 Provides help.
 .SH BUGS
-For historical reasons, there are two methods for specifying alternative
-values for the offset.
-.sp
-The user interface is cumbersome, non-intuitive, and should probably be
-re-written from scratch, allowing multiple kernel image parameters to be
-changed or examined with a single command.
-.sp
-If LILO is used,
+The
 .B rdev
-is no longer needed for setting the root device and the VGA mode, since
-these parameters that
-.B rdev
-modifies can be set from the LILO prompt during a boot.  However,
-.B rdev
-is still needed at this time for setting the RAM disk size.  Users are
-encouraged to find the LILO documentation for more information, and to use
-LILO when booting their systems.
+utility, when used other than to find a name for the current root device,
+is an ancient hack that works by patching a kernel image at a magic offset
+with magic numbers. It does not work on architectures other than i386.
+Its use is strongly discouraged. Use a boot loader like SysLinux or LILO
+instead.
+.SH HISTORY
+At offset 502 there used to be the device number of the swap device
+(in Linux 0.12), and "rdev -s" or "swapdev" would set this.
+However, since Linux 0.95 this constant is not used any longer,
+and the swap device is specified using the
+.IR swapon ()
+system call.
 .SH AUTHORS
 .nf
 Originally by Werner Almesberger (almesber@nessie.cs.id.ethz.ch)

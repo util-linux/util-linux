@@ -52,6 +52,11 @@ HAVE_SYSVINIT=yes
 # mesg, and wall from that package.)
 HAVE_SYSVINIT_UTILS=yes
 
+# If HAVE_WRITE is set to "yes", then write will not be built or
+# installed from the misc-utils subdirectory.
+# (There is a network aware write in netwrite from NetKit 0.16 or later.)
+HAVE_WRITE=no
+
 # If HAVE_GETTY is set to "yes", then agetty will not be built or
 # installed from the login-utils subdirectory.  Note that agetty can
 # co-exist with other gettys, so this option should never be used.
@@ -82,6 +87,9 @@ HAVE_SLN=no
 
 # If HAVE_FDUTILS is set to "yes", then setfdprm won't be installed.
 HAVE_FDUTILS=no
+
+# This enables building of raw
+# ADD_RAW=yes
 
 # Different optimizations for different cpus.
 ifeq "$(ARCH)" "intel"
@@ -114,37 +122,55 @@ ERR_O=$(LIB)/err.o
 #   (no extra definition required).
 LIBSLANG=-lslang
 
-DEVDIR=		$(DESTDIR)/dev
-ETCDIR=		$(DESTDIR)/etc
-SBINDIR=	$(DESTDIR)/sbin
-USRSBINDIR=	$(DESTDIR)/usr/sbin
-USRLIBDIR=      $(DESTDIR)/usr/lib
-USRBINDIR=      $(DESTDIR)/usr/bin
-USRGAMESDIR=    $(DESTDIR)/usr/games
-USRSHAREMISCDIR=$(DESTDIR)/usr/share/misc
-LOCALEDIR=      $(DESTDIR)/usr/share/locale
-BINDIR=         $(DESTDIR)/bin
-VARPATH=	$(DESTDIR)/var
-LOGDIR=		$(DESTDIR)/var/log
-MANDIR=		$(DESTDIR)/usr/man
+#
+# Paths used for compilation (not all are actually used, see CFLAGS below)
+#
+DEV_DIR=	/dev
+ETC_DIR=	/etc
+SBIN_DIR=	/sbin
+USRSBIN_DIR=	/usr/sbin
+USRLIB_DIR=	/usr/lib
+USRBIN_DIR=	/usr/bin
+USRGAMES_DIR=	/usr/games
+USRSHAREMISC_DIR=/usr/share/misc
+LOCALE_DIR=	/usr/share/locale
+BIN_DIR=        /bin
+VAR_PATH=	/var
+LOG_DIR=	/var/log
+MAN_DIR=	/usr/share/man
+INFO_DIR=	/usr/share/info
+
+# Directory for help file for more.  Used to be /usr/lib.
+MOREHELP_DIR=	$(USRSHAREMISC_DIR)
+
+#
+# Paths used for install
+#
+DEVDIR=		$(DESTDIR)$(DEV_DIR)
+ETCDIR=		$(DESTDIR)$(ETC_DIR)
+SBINDIR=	$(DESTDIR)$(SBIN_DIR)
+USRSBINDIR=	$(DESTDIR)$(USRSBIN_DIR)
+USRLIBDIR=      $(DESTDIR)$(USRLIB_DIR)
+USRBINDIR=      $(DESTDIR)$(USRBIN_DIR)
+USRGAMESDIR=    $(DESTDIR)$(USRGAMES_DIR)
+USRSHAREMISCDIR=$(DESTDIR)$(USRSHAREMISC_DIR)
+LOCALEDIR=      $(DESTDIR)$(LOCALE_DIR)
+BINDIR=         $(DESTDIR)$(BIN_DIR)
+VARPATH=	$(DESTDIR)$(VAR_PATH)
+LOGDIR=		$(DESTDIR)$(LOG_DIR)
+MANDIR=		$(DESTDIR)$(MAN_DIR)
 MAN1DIR=	$(MANDIR)/man1
 MAN3DIR=	$(MANDIR)/man3
 MAN5DIR=	$(MANDIR)/man5
 MAN6DIR=	$(MANDIR)/man6
 MAN8DIR=	$(MANDIR)/man8
-INFODIR=	$(DESTDIR)/usr/info
+INFODIR=	$(DESTDIR)$(INFO_DIR)
 
 # Directory for shutdown, halt, reboot, etc.
 SHUTDOWNDIR=	$(SBINDIR)
 
-# Directory for fsck
-FSCKDIR=	$(SBINDIR)
-
-# Directory for passwd
-PASSWDDIR=	$(USRBINDIR)
-
 # Directory for help file for more.  Used to be /usr/lib.
-MOREHELPDIR=	$(USRSHAREMISCDIR)
+MOREHELPDIR=	$(DESTDIR)$(MOREHELP_DIR)
 
 # Modes
 DIRMODE=	755
@@ -165,11 +191,11 @@ INSTALLSUID=    $(INSTALL) -m $(SUIDMODE) -o root
 CFLAGS    := $(CFLAGS) $(OPT) -I$(LIB) $(WARNFLAGS) \
 			$(CURSESFLAGS) $(SLANGFLAGS) \
 			-D_FILE_OFFSET_BITS=64 \
-			-DSBINDIR=\"$(SBINDIR)\" \
-			-DUSRSBINDIR=\"$(USRSBINDIR)\" \
-			-DLOGDIR=\"$(LOGDIR)\" \
-			-DVARPATH=\"$(VARPATH)\" \
-			-DLOCALEDIR=\"$(LOCALEDIR)\"
+			-DSBINDIR=\"$(SBIN_DIR)\" \
+			-DUSRSBINDIR=\"$(USRSBIN_DIR)\" \
+			-DLOGDIR=\"$(LOG_DIR)\" \
+			-DVARPATH=\"$(VAR_PATH)\" \
+			-DLOCALEDIR=\"$(LOCALE_DIR)\"
 
 
 %.o: %.c

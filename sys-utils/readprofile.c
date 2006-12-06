@@ -218,6 +218,12 @@ main (int argc, char **argv) {
 		if (*mode == 'A' && total == 0) continue;
 		if (*mode!='T' && *mode!='t') break;/* only text is profiled */
 
+		if (indx >= len / sizeof(*buf)) {
+			fprintf(stderr, _("%s: profile address out of range. "
+					  "Wrong map file?\n"), prgname);
+			exit(1);
+		}
+
 		while (indx < (next_add-add0)/step)
 			this += buf[indx++];
 		total += this;

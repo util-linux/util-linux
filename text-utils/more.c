@@ -529,7 +529,7 @@ checkf (fs, clearfirst)
 	if (magic(f, fs))
 		return((FILE *)NULL);
 	c = Getc(f);
-	*clearfirst = c == '\f';
+	*clearfirst = (c == '\f');
 	Ungetc (c, f);
 	if ((file_size = stbuf.st_size) == 0)
 		file_size = LONG_MAX;
@@ -547,6 +547,10 @@ magic(f, fs)
 	char *fs;
 {
 	char twobytes[2];
+
+	/* don't try to look ahead if the input is unseekable */
+	if (fseek(f, 0L, SEEK_SET))
+		return(0);
 
 	if (fread(twobytes, 2, 1, f) == 1) {
 		switch(twobytes[0] + (twobytes[1]<<8)) {

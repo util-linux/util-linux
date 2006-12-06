@@ -33,7 +33,7 @@
 #include "xstrncpy.h"
 
 #ifdef TESTING
-struct hostent hostaddress;
+char hostaddress[4];
 char *hostname;
 
 void 
@@ -192,10 +192,10 @@ hnmatch(const char *hn, const char *pat)
 	mask = (((unsigned long)y1<<24)+((unsigned long)y2<<16)
 		+((unsigned long)y3<<8)+((unsigned long)y4));
 
-	if (!hostaddress.h_addr_list || !hostaddress.h_addr_list[0])
-	  return 0;
+	if (hostaddress[0] == 0)
+		return 0;
 
-	ha = (unsigned char *)hostaddress.h_addr_list[0];
+	ha = (unsigned char *)hostaddress;
 	a = (((unsigned long)ha[0]<<24)+((unsigned long)ha[1]<<16)
 	     +((unsigned long)ha[2]<<8)+((unsigned long)ha[3]));
 	return ((p & mask) == (a & mask));

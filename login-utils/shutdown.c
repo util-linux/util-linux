@@ -46,6 +46,9 @@
  * - do not unmount devfs (otherwise get harmless but annoying messages)
  * - created syncwait() for faster shutting down
  * - kill getty processes
+ * 2001-05-12 Richard Gooch <rgooch@atnf.csiro.au>
+ * - unblock all signals (sigmask from simpleinit(8) stopped sleep(3))
+ * - close all files
  */
 
 #include <stdio.h>
@@ -137,14 +140,18 @@ iswhitespace(int a) {
 int
 main(int argc, char *argv[])
 {
-	int c,i;	
-	int fd;
+	int c, i, fd;
 	char *ptr;
 
-	if (getpid () == 1) {
-		for (i = 0; i < getdtablesize (); i++) close (i);
-		while (1) wait (NULL);  /*  Grim reaper never stops  */
+	i = getdtablesize ();
+	for (fd = 3; fd < i; fd++) close (fd);
+	if (getpid () == 1)
+	{
+	    for (fd = 0; fd < 3; fd++) close (fd);
+	    while (1) wait (NULL);  /*  Grim reaper never stops  */
 	}
+	sigsetmask (0); /*  simpleinit(8) blocks all signals: undo for ALRM  */
+	for (i = 1; i < NSIG; i++) signal (i, SIG_DFL);
         setlocale(LC_ALL, "");
         bindtextdomain(PACKAGE, LOCALEDIR);
         textdomain(PACKAGE);
@@ -373,6 +380,7 @@ main(int argc, char *argv[])
 #ifndef DEBUGGING
 	/* a gentle kill of all other processes except init */
 	kill_mortals (SIGTERM);
+	for (fd = 0; fd < 3; fd++) close (fd);
 	stop_finalprog ();
 	sleep (1);                    /*  Time for saves to start           */
 	kill (1, SIGTERM);            /*  Tell init to kill spawned gettys  */
@@ -381,11 +389,10 @@ main(int argc, char *argv[])
 	system ("/sbin/initctl -r");  /*  Roll back services                */
 	syncwait (1);
 	my_puts ("Sending SIGTERM to all remaining processes...");
-	kill(-1, SIGTERM);
-	sleep(2);		/* default 2, some people need 5 */
+	kill (-1, SIGTERM);
+	sleep (2);                    /*  Default 2, some people need 5     */
 
-	/* now use brute force... */
-	kill(-1, SIGKILL);
+	kill (-1, SIGKILL);           /*  Now use brute force...            */
 
 	/* turn off accounting */
 	acct(NULL);
@@ -472,7 +479,8 @@ write_user(struct utmp *ut)
 	if((fd = open(term, O_WRONLY|O_NONBLOCK)) < 0)
 	        return;
 
-	sprintf(msg, _("\007URGENT: broadcast message from %s:"), whom);
+	msg[0] = '\007';	/* gettext crashes on \a */
+	sprintf(msg+1, _("URGENT: broadcast message from %s:"), whom);
 	WRCRLF;
 	WR(msg);
 	WRCRLF;

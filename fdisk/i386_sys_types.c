@@ -24,7 +24,7 @@ struct systypes i386_sys_types[] = {
 	{0x14, N_("Hidden FAT16 <32M")},
 	{0x16, N_("Hidden FAT16")},
 	{0x17, N_("Hidden HPFS/NTFS")},
-	{0x18, N_("AST Windows swapfile")},
+	{0x18, N_("AST SmartSleep")},
 	{0x1b, N_("Hidden Win95 FAT32")},
 	{0x1c, N_("Hidden Win95 FAT32 (LBA)")},
 	{0x1e, N_("Hidden Win95 FAT16 (LBA)")},
@@ -69,6 +69,7 @@ struct systypes i386_sys_types[] = {
 	{0xa7, N_("NeXTSTEP")},
 	{0xb7, N_("BSDI fs")},
 	{0xb8, N_("BSDI swap")},
+	{0xbb, N_("Boot Wizard hidden")},
 	{0xc1, N_("DRDOS/sec (FAT-12)")},
 	{0xc4, N_("DRDOS/sec (FAT-16 < 32M)")},
 	{0xc6, N_("DRDOS/sec (FAT-16)")},
@@ -77,6 +78,7 @@ struct systypes i386_sys_types[] = {
 	{0xdb, N_("CP/M / CTOS / ...")},/* CP/M or Concurrent CP/M or
 					   Concurrent DOS or CTOS */
 	{0xde, N_("Dell Utility")},	/* Dell PowerEdge Server utilities */
+	{0xdf, N_("BootIt")},		/* BootIt EMBRM */
 	{0xe1, N_("DOS access")},	/* DOS access or SpeedStor 12-bit FAT
 					   extended partition */
 	{0xe3, N_("DOS R/O")},		/* DOS R/O or SpeedStor */

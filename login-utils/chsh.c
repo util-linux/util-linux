@@ -201,11 +201,8 @@ main (int argc, char *argv[]) {
  *	parse the command line arguments, and fill in "pinfo" with any
  *	information from the command line.
  */
-static void parse_argv (argc, argv, pinfo)
-    int argc;
-    char *argv[];
-    struct sinfo *pinfo;
-{
+static void
+parse_argv (int argc, char *argv[], struct sinfo *pinfo) {
     int index, c;
 
     static struct option long_options[] = {
@@ -257,22 +254,20 @@ static void parse_argv (argc, argv, pinfo)
  *  usage () --
  *	print out a usage message.
  */
-static void usage (fp)
-    FILE *fp;
-{
-    fprintf (fp, _("Usage: %s [ -s shell ] "), whoami);
-    fprintf (fp, _("[ --list-shells ] [ --help ] [ --version ]\n"));
-    fprintf (fp, _("       [ username ]\n"));
+static void
+usage (FILE *fp) {
+    fprintf (fp,
+	     _("Usage: %s [ -s shell ] [ --list-shells ] "
+	       "[ --help ] [ --version ]\n"
+	       "       [ username ]\n"), whoami);
 }
 
 /*
  *  prompt () --
  *	ask the user for a given field and return it.
  */
-static char *prompt (question, def_val)
-    char *question;
-    char *def_val;
-{
+static char *
+prompt (char *question, char *def_val) {
     int len;
     char *ans, *cp;
   
@@ -300,9 +295,8 @@ static char *prompt (question, def_val)
  *	an error and return (-1).
  *	if the shell is a bad idea, print a warning.
  */
-static int check_shell (shell)
-    char *shell;
-{
+static int
+check_shell (char *shell) {
     int i, c;
 
     if (*shell != '/') {
@@ -354,9 +348,8 @@ static int check_shell (shell)
  *	return true.  if not, return false.
  *	if the given shell is NULL, /etc/shells is outputted to stdout.
  */
-static boolean get_shell_list (shell_name)
-    char *shell_name;
-{
+static boolean
+get_shell_list (char *shell_name) {
     FILE *fp;
     boolean found;
     int len;
@@ -391,9 +384,8 @@ static boolean get_shell_list (shell_name)
 /*
  *  xmalloc () -- malloc that never fails.
  */
-static void *xmalloc (bytes)
-    int bytes;
-{
+static void *
+xmalloc (int bytes) {
     void *vp;
 
     vp = malloc (bytes);

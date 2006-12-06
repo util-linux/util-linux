@@ -83,7 +83,7 @@ all-getty: $(SBIN.GETTY)
 all-misc: $(USRBIN.MISC)
 
 # Rules for everything else
-
+login.o: ../MCONFIG
 checktty.o login.o: login.h
 cryptocard.o login.o: cryptocard.h
 chfn.o chsh.o islocal.o passwd.o: islocal.h

@@ -1431,8 +1431,23 @@ get_partition_table_geometry(partition_table *bufp) {
     int bad = FALSE;
 
     if (bufp->p.magicflag[0] != PART_TABLE_FLAG0 ||
-	bufp->p.magicflag[1] != PART_TABLE_FLAG1)
-	fatal(_("Bad signature on partition table"), 3);
+	bufp->p.magicflag[1] != PART_TABLE_FLAG1) {
+	    /* Matthew Wilcox: slightly friendlier version of
+	       fatal(_("Bad signature on partition table"), 3);
+	    */
+	    int cont;
+	    mvaddstr(WARNING_START, 0,
+	      _("No partition table or unknown signature on partition table"));
+	    mvaddstr(WARNING_START+1, 0,
+	      _("Do you wish to start with a zero table [y/N] ?"));
+	    putchar(BELL);
+	    refresh();
+	    cont = getch();
+	    if ((cont != 'y') && (cont != 'Y'))
+		    die_x(3);
+	    zero_table = TRUE;
+	    return;
+    }
 
     hh = ss = 0;
     for (i=0; i<4; i++) {

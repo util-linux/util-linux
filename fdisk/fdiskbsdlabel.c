@@ -104,6 +104,7 @@ static struct xbsd_disklabel xbsd_dlabel;
 
 int
 check_osf_label(void) {
+    osf_label = 0;
     if (xbsd_readlabel (NULL, &xbsd_dlabel) == 0)
 	return 0;
     osf_label = 1;
@@ -265,10 +266,10 @@ xbsd_new_part (void)
   if (!xbsd_check_new_partition (&i))
     return;
 
-#if !defined (__alpha__) && !defined (__powerpc__)
+#if !defined (__alpha__) && !defined (__powerpc__) && !defined (__hppa__)
   begin = get_start_sect(xbsd_part);
   end = begin + get_nr_sects(xbsd_part) - 1;
-#elif defined (__alpha__) || defined (__powerpc__)
+#else
   begin = 0;
   end = xbsd_dlabel.d_secperunit - 1;
 #endif
@@ -419,7 +420,7 @@ xbsd_create_disklabel (void) {
 		c = read_char (_("Do you want to create a disklabel? (y/n) "));
 		if (tolower(c) == 'y') {
 			if (xbsd_initlabel (
-#if defined (__alpha__) || defined (__powerpc__)
+#if defined (__alpha__) || defined (__powerpc__) || defined (__hppa__)
 				NULL, &xbsd_dlabel, 0
 #else
 				xbsd_part, &xbsd_dlabel, xbsd_part_index
@@ -548,7 +549,7 @@ xbsd_write_bootstrap (void)
 
   bcopy (&dl, d, sizeof (struct xbsd_disklabel));
 
-#if defined (__powerpc__)
+#if defined (__powerpc__) || defined (__hppa__)
   sector = 0;
 #elif defined (__alpha__)
   sector = 0;
@@ -748,9 +749,9 @@ xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d)
 {
   int sector;
 
-#if !defined (__alpha__) && !defined (__powerpc__)
+#if !defined (__alpha__) && !defined (__powerpc__) && !defined (__hppa__)
   sector = get_start_sect(p) + BSD_LABELSECTOR;
-#elif defined (__alpha__) || defined (__powerpc__)
+#else
   sector = BSD_LABELSECTOR;
 #endif
 
