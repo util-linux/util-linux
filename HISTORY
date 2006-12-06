@@ -1,3 +1,9 @@
+util-linux 2.12q-pre1
+
+* new maintainer
+* sfdisk: add -G option (Andries Brouwer)
+* updated translations: de, es, ru, sv, tr
+
 util-linux 2.12p
 
 * cfdisk: fix number of new partition when partitions not in disk order

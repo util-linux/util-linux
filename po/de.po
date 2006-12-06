@@ -3,55 +3,49 @@
 # Michael Piefel <piefel@informatik.hu-berlin.de>, 2002, 2004.
 # Karl Eichwalder <ke@suse.de>, 2001-2002.
 # Elrond <Elrond@Wunder-Nett.org>, 1999-2001.
+# Adrian Bunk <bunk@kernel.org>, 2004.
 #
 # Note:
 # =====
 # Changes done by Karl Eichwalder are put into the Public Domain.
 # Mine too. MPi
-#
 # As requested here is the unmodified header:
-#
 # -=-=-=-=-=-=-=-=-=-=-=-=-=- cut here -=-=-=-=-=-=-=-=-=-=-=-=-=-
 # German translation for util-linux.
 # Copyright (C) 1999, 2000, 2001 Elrond <Elrond@Wunder-Nett.org>.
 # Elrond <Elrond@Wunder-Nett.org>, 1999-2001.
-#
 # $Revision: 1.42 $
-#
 # Permission is granted to freely copy and distribute
 # this file and modified versions, provided, that this
 # header is not removed and modified versions are marked
 # as such.
-#
 # If you have additions/changes/other requests, please
 # send them to me (Elrond <Elrond@Wunder-Nett.org>)!
-#
 # People who helped or contributed (in historical order):
-#   Martin Schulze <joey@infodrom.north.de>
-#   Daniel Egger <Daniel.Egger@suse.de>
-#   deliA <deliA@Wunder-Nett.org>
-#
+# Martin Schulze <joey@infodrom.north.de>
+# Daniel Egger <Daniel.Egger@suse.de>
+# deliA <deliA@Wunder-Nett.org>
 # Submitted to the TP 2001-07-18 14:32:47 CEST -ke-
-#
 # -=-=-=-=-=-=-=-=-=-=-=-=-=- cut here -=-=-=-=-=-=-=-=-=-=-=-=-=-
-#
 # Hinweise zur Übersetzung:
 # =========================
 # command – Befehl
 # bad     – beschädigt (z. B. „beschädigte Blöcke“)
-#           bzw. ungültig (z. B. „ungültige ‚magic number‘ im Superblock“)
-#
+# bzw. ungültig (z. B. „ungültige ‚magic number‘ im Superblock“)
+# Michael Piefel <piefel@informatik.hu-berlin.de>, 2004.
+# 
+# 
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.12j\n"
+"Project-Id-Version: util-linux 2.12q-pre1\n"
+"Report-Msgid-Bugs-To: \n"
 "POT-Creation-Date: 2004-12-22 10:56+0100\n"
-"PO-Revision-Date: 2004-12-13 14:51 +0100\n"
-"Last-Translator: Michael Piefel <piefel@informatik.hu-berlin.de>\n"
+"PO-Revision-Date: 2004-12-31 16:13+0100\n"
+"Last-Translator: Adrian Bunk <bunk@kernel.org>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
-"Content-Type: text/plain; charset=utf-8\n"
-"Content-Transfer-Encoding: 8bit\n"
-"Report-Msgid-Bugs-To: \n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit"
 
 #: disk-utils/blockdev.c:62
 msgid "set read-only"
@@ -8557,9 +8551,9 @@ msgid "%s on %s\n"
 msgstr "%s für %s\n"
 
 #: mount/swapon.c:178 mount/swapon.c:244
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot find the device for %s\n"
-msgstr "%s: Konnte „_stext“ nicht in %s finden\n"
+msgstr "%s: Kann das Gerät für %s nicht finden\n"
 
 # stat
 #: mount/swapon.c:185
@@ -8568,10 +8562,10 @@ msgid "%s: cannot stat %s: %s\n"
 msgstr "swapon: Konnte „stat“ nicht auf %s anwenden: %s\n"
 
 #: mount/swapon.c:196
-#, fuzzy, c-format
+#, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
 msgstr ""
-"swapon: Warnung: %s hat unsichere Zugriffsrechte %04o, %04o wird empfohlen\n"
+"%s: Warnung: %s hat unsichere Zugriffsrechte %04o, %04o wird empfohlen\n"
 
 # holes
 #: mount/swapon.c:208
@@ -8698,9 +8692,8 @@ msgstr ""
 
 #. "" would be expanded to `pwd`
 #: mount/umount.c:553
-#, fuzzy
 msgid "Cannot umount \"\"\n"
-msgstr "Kann nicht öffnen "
+msgstr "Kann nicht öffnen \"\"\n"
 
 #: mount/umount.c:559
 #, c-format

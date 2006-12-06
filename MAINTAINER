@@ -1,5 +1,4 @@
-Maintainer: Andries Brouwer <aeb@cwi.nl>
-Use a Subject line with  [util-linux] .
+Maintainer: Adrian Bunk <bunk@stusta.de>
 
 Maintainer of getopt: Frodo Looijaard <frodol@dds.nl>
 Maintainer of simpleinit: Richard Gooch <rgooch@atnf.csiro.au>

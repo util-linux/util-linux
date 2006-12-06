@@ -505,7 +505,7 @@ get_cylindersize(char *dev, int fd, int silent) {
 	      "[Use the --force option if you really want this]\n"), R.start);
 	exit(1);
     }
-
+#if 0
     if (R.heads && B.heads != R.heads)
 	warn(_("Warning: HDIO_GETGEO says that there are %lu heads\n"),
 	     R.heads);
@@ -516,6 +516,7 @@ get_cylindersize(char *dev, int fd, int silent) {
 	    && B.cylinders < 65536 && R.cylinders < 65536)
 	warn(_("Warning: BLKGETSIZE/HDIO_GETGEO says that there are %lu cylinders\n"),
 	     R.cylinders);
+#endif
 
     if (B.sectors > 63)
       warn(_("Warning: unlikely number of sectors (%lu) - usually at most 63\n"
@@ -2353,7 +2354,7 @@ unhide_usage(char *progn) {
     exit(1);
 }
 
-static char short_opts[] = "cdfgilnqsu:vx?1A::C:DH:I:LN:O:RS:TU::V";
+static char short_opts[] = "cdfgilnqsu:vx?1A::C:DGH:I:LN:O:RS:TU::V";
 
 #define PRINT_ID 0400
 #define CHANGE_ID 01000
@@ -2377,6 +2378,7 @@ static const struct option long_opts[] = {
     { "cylinders",  required_argument, NULL, 'C' },
     { "heads",      required_argument, NULL, 'H' },
     { "sectors",    required_argument, NULL, 'S' },
+    { "show-pt-geometry", no_argument, NULL, 'G' },
     { "activate",   optional_argument, NULL, 'A' },
     { "DOS",              no_argument, NULL, 'D' },
     { "DOS-extended",	  no_argument, NULL, 'E' },
@@ -2480,6 +2482,7 @@ nextproc(void) {
 static void do_list(char *dev, int silent);
 static void do_size(char *dev, int silent);
 static void do_geom(char *dev, int silent);
+static void do_pt_geom(char *dev, int silent);
 static void do_fdisk(char *dev);
 static void do_reread(char *dev);
 static void do_change_id(char *dev, char *part, char *id);
@@ -2495,6 +2498,7 @@ main(int argc, char **argv) {
     char *dev;
     int opt_size = 0;
     int opt_out_geom = 0;
+    int opt_out_pt_geom = 0;
     int opt_reread = 0;
     int activate = 0;
     int do_id = 0;
@@ -2528,6 +2532,8 @@ main(int argc, char **argv) {
 	    force = 1; break;	/* does not imply quiet */
 	  case 'g':
 	    opt_out_geom = 1; break;
+	  case 'G':
+	    opt_out_pt_geom = 1; break;
 	  case 'i':
 	    increment = 1; break;
 	  case 'c':
@@ -2610,7 +2616,8 @@ main(int argc, char **argv) {
 	}
     }
 
-    if (optind == argc && (opt_list || opt_out_geom || opt_size || verify)) {
+    if (optind == argc &&
+	(opt_list || opt_out_geom || opt_out_pt_geom || opt_size || verify)) {
 	/* try all known devices */
 	total_size = 0;
 	openproc();
@@ -2619,6 +2626,8 @@ main(int argc, char **argv) {
 		continue;
 	    if (opt_out_geom)
 		do_geom(dev, 1);
+	    if (opt_out_pt_geom)
+		do_pt_geom(dev, 1);
 	    if (opt_size)
 		do_size(dev, 1);
 	    if (opt_list || verify)
@@ -2640,10 +2649,12 @@ main(int argc, char **argv) {
 	  usage();
     }
 
-    if (opt_list || opt_out_geom || opt_size || verify) {
+    if (opt_list || opt_out_geom || opt_out_pt_geom || opt_size || verify) {
 	while (optind < argc) {
 	    if (opt_out_geom)
 	      do_geom(argv[optind], 0);
+	    if (opt_out_pt_geom)
+	      do_pt_geom(argv[optind], 0);
 	    if (opt_size)
 	      do_size(argv[optind], 0);
 	    if (opt_list || verify)
@@ -2743,6 +2754,37 @@ do_geom (char *dev, int silent) {
 	return;
 
     R = get_geometry(dev, fd, silent);
+    if (R.cylinders)
+	printf(_("%s: %ld cylinders, %ld heads, %ld sectors/track\n"),
+	       dev, R.cylinders, R.heads, R.sectors);
+}
+
+static void
+do_pt_geom (char *dev, int silent) {
+    int fd;
+    struct disk_desc *z;
+    struct geometry R;
+
+    fd = my_open(dev, 0, silent);
+    if (fd < 0)
+	return;
+
+    z = &oldp;
+
+    free_sectors();
+    get_cylindersize(dev, fd, 1);
+    get_partitions(dev, fd, z);
+
+    R = B;
+
+    if (z->partno != 0 && get_fdisk_geometry(z)) {
+	    R.heads = F.heads;
+	    R.sectors = F.sectors;
+	    R.cylindersize = R.heads * R.sectors;
+	    R.cylinders = (R.cylindersize == 0) ? 0 :
+		    R.total_size / R.cylindersize;
+    }
+
     if (R.cylinders)
 	printf(_("%s: %ld cylinders, %ld heads, %ld sectors/track\n"),
 	       dev, R.cylinders, R.heads, R.sectors);
