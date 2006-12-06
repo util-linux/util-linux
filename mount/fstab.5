@@ -35,6 +35,7 @@
 .\" Sat Oct  9 10:07:10 1993: converted to man format by faith@cs.unc.edu
 .\" Sat Nov 20 20:47:38 1993: hpfs documentation added
 .\" Sat Nov 27 20:23:32 1993: Updated authorship information
+.\" Wed Jul 26 00:00:00 1995: Updated some nfs stuff, joey@infodrom.north.de
 .\"
 .TH FSTAB 5 "27 November 1993" "Linux 0.99" "Linux Programmer's Manual"
 .SH NAME
@@ -115,8 +116,11 @@ describes the mount options associated with the filesystem.
 
 It is formatted as a comma separated list of options.  It contains at least
 the type of mount plus any additional options appropriate to the filesystem
-type.  For documentation on all of the available options, see
+type.  For documentation on the available options for non-nfs file systems,
+see
 .BR mount (8).
+For documentation on all nfs-specific options have a look at
+.BR nfs (5).
 
 The fifth field,
 .RI ( fs_freq ),
@@ -154,14 +158,11 @@ The file
 resides in
 .IR /etc .
 .SH BUGS
-Linux does not, currently, support the special fields for
-.BR dump " and " fsck .
-
 The documentation in
 .BR mount (8)
 is often more up-to-date.
 .SH "SEE ALSO"
-.BR getmntent "(3), " mount "(8), " swapon (8)
+.BR getmntent "(3), " mount "(8), " swapon "(8), " nfs (5)
 .SH HISTORY
 The
 .B fstab

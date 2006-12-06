@@ -114,7 +114,7 @@ Dividing up your disk
 
 It is a good idea to plan ahead before you start creating partitions
 on your disk.  If you set aside a partition for some purpose, it is not
-easy to change its size: you must all the data from the partition,
+easy to change its size: you must backup all the data from the partition,
 whether to floppies, to another partition, to another hard disk, or
 somewhere else; then you must edit the table which describes this
 partition, so changing its size; then you must reboot and initialise
@@ -309,8 +309,8 @@ display/entry units are sectors.
 
 The Verify command is useful because
 
-  1. It warns you if anything is wrong.  *Always* give a Verify command
-     before writing any changes to disk.
+  1. It warns you if anything is wrong.  *Always* do a Verify command
+     to check your work before writing any changes to disk.
 
   2. It reports how many unallocated sectors there are on the disk.
 
@@ -369,20 +369,22 @@ unless there are sectors available inside the extended partition.
 
 If space is available, you are prompted for the first cylinder:
 
-     First sector (237-977): _
+     First sector ([237]-977): _
 
 The limits are the lowest and the highest cylinders in which sectors
-are available in the appropriate part of the disk.  Not all numbers in
+are available in the appropriate part of the disk.  The square-bracketed
+number is what you'll get if you simply press enter.  Not all numbers in
 this range are necessarily available: they may fall inside an existing
 partition.  If you select a cylinder which is already in use, you are
 told off and prompted again for the first cylinder.  After selecting the
 first cylinder, you are prompted again:
 
-     Last cylinder or +size or +sizeM or +sizeK (237-836): _
+     Last cylinder or +size or +sizeM or +sizeK (237-[836]): _
 
 The limits are the cylinder you have chosen as the first cylinder,
 and the highest cylinder which contains a legitimate upper boundary for
-the new partition.  In other words, all numbers in the given range are
+the new partition.  The square-bracketed number is what you'll get if
+you simply press enter. In other words, all numbers in the given range are
 legitimate, unlike those in the first range of cylinders.  You may also
 specify the size of a partition in megabytes, kilobytes, or in the
 current units (cylinders or sectors).  A plus sign `+' indicates that
@@ -395,7 +397,7 @@ possible answers to the last cylinder request above are
      Make cylinder 700 the last cylinder in the partition.
 
 +300
-     Make cylinder 537 the last cylinder in the partition.
+     Make cylinder 237 + 300 = 537 the last cylinder in the partition.
 
 +15m
      Make the partition at least 15 megabytes in size.
@@ -404,7 +406,7 @@ possible answers to the last cylinder request above are
      Make the partition at least 12,500 kilobytes in size.
 
 If you specify a size which is too large or an end which is out of
-range, the prompt is simply repeated.
+range, fdisk complains and repeats the prompt.
 
 Adding or deleting partitions has no effect unless you subsequently
 give the Write command.  Please remember to give the Verify command
@@ -544,7 +546,7 @@ Warnings for `fdisk' users
 
 In general, you should not use this `fdisk' program to create
 partitions for other operating systems, only for Linux.  Nor should you
-use `fdisk' commands from other operating systems do create partitions
+use `fdisk' commands from other operating systems to create partitions
 for Linux.
 
 DR-DOS 5.0 and 6.0 are reported to have difficulties with partition

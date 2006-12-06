@@ -1,19 +1,22 @@
 /* File:
  *	sync.S
  * Compile:
- *	/lib/cpp sync.S > sync.s
- *	as -o sync.o sync.s
- *	ld -s -N -e _main sync.o -o sync
+ *     gcc -nostdlib sync.S -o sync
  * Author:
  *	Nick Holloway, with thanks to James Bonfield
+ *      Modified for ELF by Michael Shields
+ *      Rik Faith added __ASSEMBLY__ for gcc 2.5.8
  * Last Changed:
- *	September 1993.
+ *     1995-07-04
  */
-# include <sys/syscall.h>
+#include <sys/syscall.h>
+#ifndef __ASSEMBLY__
+#define __ASSEMBLY__
+#endif
+#include <linux/linkage.h>
 
         .text
-        .globl  _main
-_main:
+ENTRY(_start)
         movl    $(SYS_sync),%eax        /* sync () */
         int     $0x80
         movl    $(SYS_exit),%eax        /* exit ( 0 ) */

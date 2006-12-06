@@ -6,13 +6,16 @@
  *   modify it under the terms of the gnu general public license.
  *   there is no warranty.
  *
- *   faith
- *   1.1.1.1
- *   1995/02/22 19:09:24
+ *   $Author: faith $
+ *   $Revision: 1.8 $
+ *   $Date: 1995/10/12 14:46:35 $
+ *
+ * Updated Thu Oct 12 09:19:26 1995 by faith@cs.unc.edu with security
+ * patches from Zefram <A.Main@dcs.warwick.ac.uk>
  *
  */
 
-#define _POSIX_SOURCE 1
+static char rcsId[] = "$Version: $Id: chfn.c,v 1.8 1995/10/12 14:46:35 faith Exp $ $";
 
 #include <sys/types.h>
 #include <stdio.h>
@@ -35,7 +38,7 @@ typedef unsigned char boolean;
 #define false 0
 #define true 1
 
-static char *version_string = "chfn 0.9 beta";
+static char *version_string = "chfn 0.9a beta";
 static char *whoami;
 
 static char buf[1024];
@@ -59,15 +62,17 @@ static int check_gecos_string P((char *msg, char *gecos));
 static boolean set_changed_data P((struct finfo *oldfp, struct finfo *newfp));
 static int save_new_data P((struct finfo *pinfo));
 static void *xmalloc P((int bytes));
+#if 0
 extern int strcasecmp P((char *, char *));
 extern int setpwnam P((struct passwd *pwd));
+#endif
 #define memzero(ptr, size) memset((char *) ptr, 0, size)
 
 int main (argc, argv)
     int argc;
     char *argv[];
 {
-    char *cp;
+    char *cp, *pwdstr;
     uid_t uid;
     struct finfo oldf, newf;
     boolean interactive;
@@ -79,8 +84,6 @@ int main (argc, argv)
     if (! whoami) whoami = "chfn";
     for (cp = whoami; *cp; cp++)
 	if (*cp == '/') whoami = cp + 1;
-
-    umask (022);
 
     /*
      *	"oldf" contains the users original finger information.
@@ -117,7 +120,22 @@ int main (argc, argv)
 	perror (whoami);
 	return (-1);
     }
-    
+
+    printf ("Changing finger information for %s.\n", oldf.username);
+
+#if REQUIRE_PASSWORD
+    /* require password, unless root */
+    if(uid != 0 && oldf.pw->pw_passwd && oldf.pw->pw_passwd[0]) {
+	pwdstr = getpass("Password: ");
+	if(strncmp(oldf.pw->pw_passwd,
+		   crypt(pwdstr, oldf.pw->pw_passwd), 13)) {
+	    puts("Incorrect password.");
+	    exit(1);
+	}
+    }
+#endif
+
+
     if (interactive) ask_info (&oldf, &newf);
 
     if (! set_changed_data (&oldf, &newf)) {
@@ -268,7 +286,6 @@ static void ask_info (oldfp, newfp)
     struct finfo *oldfp;
     struct finfo *newfp;
 {
-    printf ("Changing finger information for %s.\n", oldfp->username);
     newfp->full_name = prompt ("Name", oldfp->full_name);
     newfp->office = prompt ("Office", oldfp->office);
     newfp->office_phone	= prompt ("Office Phone", oldfp->office_phone);
@@ -391,6 +408,7 @@ static int save_new_data (pinfo)
     pinfo->pw->pw_gecos = gecos;
     if (setpwnam (pinfo->pw) < 0) {
 	perror ("setpwnam");
+	printf( "Finger information *NOT* changed.  Try again later.\n" );
 	return (-1);
     }
     printf ("Finger information changed.\n");

@@ -6,8 +6,8 @@ agetty \- alternative Linux getty
 .SH SYNOPSIS
 .na
 .nf
-agetty [-ihL] [-l login_program] [-m] [-t timeout] port baud_rate,... [term]
-agetty [-ihL] [-l login_program] [-m] [-t timeout] baud_rate,...  port [term]
+agetty [-ihLmw] [-l login_program] [-I init] [-t timeout] port baud_rate,... [term]
+agetty [-ihLmw] [-l login_program] [-I init] [-t timeout] baud_rate,... port [term]
 .SH DESCRIPTION
 .ad
 .fi
@@ -85,6 +85,14 @@ login prompt. Terminals or communications hardware may become confused
 when receiving lots of text at the wrong baud rate; dial-up scripts
 may fail if the login prompt is preceded by too much text.
 .TP
+-I initstring
+Set an initial string to be sent to the tty or modem before sending
+anything else. This may be used to initialize a modem.  Non printable
+characters may be sent by writing their octal code preceded by a
+backslash (\\). For example to send a linefeed character (ASCII 10,
+octal 012) write \\012.
+.PP
+.TP
 -l login_program
 Invoke the specified \fIlogin_program\fP instead of /bin/login.
 This allows the use of a non-standard login program (for example,
@@ -112,7 +120,11 @@ lines.
 Force the line to be local line with no need for carrier detect. This can
 be useful when you have locally attached terminal where the serial line
 does not set the carrier detect signal.
-
+.TP
+-w
+Wait for the user or the modem to send a carriage-return or a linefeed 
+character before sending the /etc/issue file and the login prompt.
+.PP
 .SH EXAMPLES
 .na
 .nf
@@ -190,7 +202,7 @@ This is thingol.orcan.dk (Linux i386 1.1.9) 18:29:30
 .SH FILES
 .na
 .nf
-/etc/utmp, the system status file (System V only).
+/var/run/utmp, the system status file.
 /etc/issue, printed before the login prompt (System V only).
 /dev/console, problem reports (if syslog(3) is not used).
 /etc/inittab (Linux simpleinit(8) configuration file).
@@ -214,7 +226,7 @@ the modem emits its status message \fIafter\fP raising the DCD line.
 Depending on how the program was configured, all diagnostics are
 written to the console device or reported via the syslog(3) facility.
 Error messages are produced if the \fIport\fP argument does not
-specify a terminal device; if there is no /etc/utmp entry for the
+specify a terminal device; if there is no utmp entry for the
 current process (System V only); and so on.
 .SH AUTHOR(S)
 .na

@@ -25,8 +25,9 @@ selection.man:	selection.1
 		nroff -man selection.1 > selection.man
 
 install:	selection # selection.man
-	install -m 755 selection $(BINDIR)/selection
-	install -m 644 selection.1 $(MANDIR)/man$(MANEXT)/selection.$(MANEXT)
+	$(INSTALLDIR) $(USRBINDIR) $(MAN1DIR)
+	$(INSTALLBIN) selection $(USRBINDIR)
+	$(INSTALLMAN) selection.1 $(MAN1DIR)
 
 DIST = selection-1.5
 DATE = 17th June 1993

@@ -93,7 +93,7 @@ int main(int argc,char **argv)
 	argv++;
     }
     if (argc != 2) usage(name);
-    if (lstat(argv[1],&st) < 0) PERROR(argv[1]);
+    if (stat(argv[1],&st) < 0) PERROR(argv[1]);
     if (!S_ISBLK(st.st_mode) || MAJOR(st.st_rdev) != FLOPPY_MAJOR) {
 	fprintf(stderr,"%s: not a floppy device\n",argv[1]);
 	exit(1);

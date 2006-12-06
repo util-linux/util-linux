@@ -29,6 +29,10 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ * Updated Thu Oct 12 09:56:55 1995 by faith@cs.unc.edu with security
+ * patches from Zefram <A.Main@dcs.warwick.ac.uk>
+ *
  */
 
 #ifndef lint
@@ -39,7 +43,7 @@ char copyright[] =
 
 #ifndef lint
 /*static char sccsid[] = "from: @(#)vipw.c	5.16 (Berkeley) 3/3/91";*/
-static char rcsid[] = "vipw.c,v 1.1.1.1 1995/02/22 19:09:25 faith Exp";
+static char rcsid[] = "$Id: vipw.c,v 1.4 1995/10/12 14:46:36 faith Exp $";
 #endif /* not lint */
 
 #include <sys/types.h>
@@ -115,7 +119,6 @@ pw_init()
 int
 pw_lock()
 {
-	static char path[MAXPATHLEN] = _PATH_PTMP;
 	int lockfd, fd, ret;
 	char *p;
 
@@ -131,11 +134,13 @@ pw_lock()
 		    progname, _PATH_PASSWD, strerror(errno));
 		exit(1);
 	}
+#if 0 /* flock()ing is superfluous here, with the ptmp/ptmptmp system. */
 	if (flock(lockfd, LOCK_EX|LOCK_NB)) {
 		(void)fprintf(stderr,
 		    "%s: the password file is busy.\n", progname);
 		exit(1);
 	}
+#endif
 
 	if ((fd = open(_PATH_PTMPTMP, O_WRONLY|O_CREAT, 0644)) == -1) {
 		(void)fprintf(stderr,
@@ -162,8 +167,9 @@ pw_lock()
 void
 pw_unlock()
 {
-	(void)unlink(_PATH_PASSWD);
-	if (link(_PATH_PTMP, _PATH_PASSWD) == -1) {
+	unlink(_PATH_PASSWD ".OLD");
+	link(_PATH_PASSWD, _PATH_PASSWD ".OLD" );
+	if (rename(_PATH_PTMP, _PATH_PASSWD) == -1) {
 	    (void)fprintf(stderr, 
 	    "%s: can't unlock %s: %s (your changes are still in %s)\n", 
 	    progname, _PATH_PASSWD, strerror(errno), _PATH_PTMP);
@@ -183,7 +189,7 @@ pw_edit(notsetuid)
 
 	if (!(editor = getenv("EDITOR")))
 		editor = _PATH_VI;
-	if ((p = strrchr(editor, '/')) != NULL)
+	if ((p = strrchr(strtok(editor," \t"), '/')) != NULL)
 		++p;
 	else 
 		p = editor;

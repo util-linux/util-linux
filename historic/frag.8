@@ -1,0 +1,47 @@
+.\" Copyright 1992,1993,1994 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH FRAG 8 "8 January 1994" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+frag \- simple fragmentation checker
+.SH SYNOPSIS
+.B /usr/sbin/frag
+.B "[ \-s [ \-s ]]"
+filename ...
+.SH DESCRIPTION
+.B frag
+will report the file system fragmentation on a specified
+.IR filename .
+If the
+.I filename
+is a directory,
+.B frag
+will recursively descend the directory.
+.SH OPTIONS
+.TP
+.B \-s
+Silent (may be set to 1 or 2).  The first
+.B \-s
+eliminates the file by file statistics, and just prints the 
+examined directories and a summary.  The second
+.B \-s
+eliminates the printing of the directories, and just prints a
+summary.  This option is useful when
+.B frag
+is used on a directory.
+.SH "SEE ALSO"
+.BR mkfs (8),
+.BR fsck (8),
+.BR mkefs (8),
+.BR efsck (8)
+.SH BUGS
+.B frag
+will get caught in an infinite loop in the /proc filesystem.
+.SH AUTHORS
+V1.0 by Werner Almesberger
+.br
+V1.1 by Steffen Zahn, adding directory recursion
+.br
+V1.2 by Rob Hooft, adding hole counts
+.br
+V1.3 by Steffen Zahn, ignore symlinks,
+don't cross filesys borders, get filesystem block size at runtime

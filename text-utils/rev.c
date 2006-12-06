@@ -45,7 +45,7 @@ char copyright[] =
 
 #ifndef lint
 /*static char sccsid[] = "from: @(#)rev.c	5.2 (Berkeley) 3/21/92";*/
-static char rcsid[] = "rev.c,v 1.1.1.1 1995/02/22 19:09:19 faith Exp";
+static char rcsid[] = "$Id: rev.c,v 1.3 1995/10/07 01:32:14 faith Exp $";
 #endif /* not lint */
 
 #include <sys/types.h>
@@ -110,7 +110,7 @@ main(argc, argv)
                         t = p + len - 1 - (*(p+len-1)=='\r'
 					   || *(p+len-1)=='\n');
                         for ( ; t >= p; --t)
-				if(strcmp(t, '\0') != 0)
+				if(strcmp(t, "\0") != 0)
 				  putchar(*t);
 #endif /* linux */
 			putchar('\n');

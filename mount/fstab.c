@@ -1,11 +1,11 @@
-/* /home/faith/cvs/util-linux/mount/fstab.c,v 1.1.1.1 1995/02/22 19:09:21 faith Exp */
+/* $Header: /home/faith/cvs/util-linux/mount/fstab.c,v 1.2 1995/10/07 01:32:03 faith Exp $ */
 
 #include "fstab.h"
 #include <stdio.h>
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
-/* These routines are superceded by mntent(3), but I use them for
+/* These routines are superseded by mntent(3), but I use them for
    convenience.  Mntent(3) is used in the implementation, so be
    very careful about the static buffers that are returned.  */
 

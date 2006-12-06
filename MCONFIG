@@ -1,29 +1,87 @@
 # MCONFIG -- Configuration stuff for util-linux
 # Created: Sat Feb  4 15:50:30 1995
-# Revised: Sun Feb 26 21:33:32 1995 by faith@cs.unc.edu
+# Revised: Thu Oct 12 10:11:33 1995 by r.faith@ieee.org
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
 #
 
-# If HAVE_SHADOW is set to "yes", then login, chfn, chsh, newgrp, passwd, and
-# vipw will not be built or installed from the login-utils subdirectory.
+# If HAVE_SHADOW is set to "yes", then login, chfn, chsh, newgrp, passwd,
+# and vipw will not be built or installed from the login-utils
+# subdirectory.
 HAVE_SHADOW=no
 #HAVE_SHADOW=yes
 
-# If HAVE_SYSVINIT is set to "yes", then agetty, simpleinit, shutdown,
-# last, mesg, and wall will not be built or installed from the login-utils
-# subdirectory.
+# If you use chfn and chsh from this package, REQUIRE_PASSWORD will require
+# non-root users to enter the account password before updating /etc/passwd.
+REQUIRE_PASSWORD=yes
+#REQUIRE_PASSWORD=no
+
+# If you use chsh from this package, ONLY_LISTED_SHELLS will require that
+# the selected shell be listed in /etc/shells -- otherwise only a warning is
+# printed.  This prevents someone from setting their shell to /bin/false.
+ONLY_LISTED_SHELLS=yes
+#ONLY_LISTED_SHELLS=no
+
+
+# If HAVE_PASSWD is set to "yes", then passwd will not be built or
+# installed from the login-utils subdirectory (but login, chfn, chsh,
+# newgrp, and vipw *will* be installed).
+HAVE_PASSWD=no
+#HAVE_PASSWD=yes
+
+# If HAVE_SYSVINIT is set to "yes", then simpleinit and shutdown will not
+# be built or installed from the login-utils subdirectory.  (The shutdown
+# and halt that come with the SysVinit package should be used with the init
+# found in that package.)
 HAVE_SYSVINIT=no
 #HAVE_SYSVINIT=yes
 
+# If HAVE_SYSVINIT_UTILS is set to "yes", then last, mesg, and wall will
+# not be built or installed from the login-utils subdirectory.  (The
+# shutdown and init from the SysVinit package do not depend on the last,
+# mesg, and wall from that package.)
+HAVE_SYSVINIT_UTILS=no
+#HAVE_SYSVINIT_UTILS=yes
+
+# If HAVE_ANOTHER_GETTY is set to "yes", then agetty will not be built or
+# installed from the login-utils subdirectory.  Note that agetty can
+# co-exist with other gettys, so this option should never be used.
+HAVE_GETTY=no
+#HAVE_GETTY=yes
+
+# If USE_TTY_GROUP is set to "yes", then wall and write will be installed
+# setgid to the "tty" group, and mesg will only set the group write bit.
+# Note that this is only useful if login/xterm/etc. change the group of the
+# user's tty to "tty" [The login in util-linux does this correctly, and
+# xterm will do it correctly if X is compiled with USE_TTY_GROUP set
+# properly.]
+USE_TTY_GROUP=yes
+#USE_TTY_GROUP=no
+
 # If HAVE_STRINGS is set to "yes", then strings won't be installed.  This
 # is the quick fix until the strings in GNU binutils is in wide use and has
-# international support.
+# internationalization support.
 HAVE_STRINGS=no
 #HAVE_STRINGS=yes
 
+# If HAVE_CLEAR is set to "yes", then clear won't be installed, since a
+# version of clear comes with the ncurses package.
+HAVE_CLEAR=no
+#HAVE_CLEAR=yes
+
+# If HAVE_SYSLOGD is set to "yes", then syslogd will not be built or
+# installed from the syslogd subdirectory.
+HAVE_SYSLOGD=no
+#HAVE_SYSLOGD=yes
+
+# If HAVE_ANOTHER_FDISK is set to "yes", then fdisk will not be built or
+# installed from the disk-utils subdirectory.  This anticipates the
+# replacement of fdisk 2.x by fdisk 3.x, which will be distributed
+# separately. 
+HAVE_FDISK=no
+#HAVE_FDISK=yes
+
 CC=		gcc
 OPT=		-pipe -O2 -m486 -fomit-frame-pointer
-WFLAGS=		-Wall
 LDFLAGS=	-s -N
 CFLAGS=		$(OPT) -I. -I$(BSD) \
 			-DSBINDIR=\"$(SBINDIR)\" \
@@ -35,11 +93,12 @@ DEVDIR=		$(DESTDIR)/dev
 ETCDIR=		$(DESTDIR)/etc
 SBINDIR=	$(DESTDIR)/sbin
 USRSBINDIR=	$(DESTDIR)/usr/sbin
+USRLIBDIR=      $(DESTDIR)/usr/lib
 USRBINDIR=      $(DESTDIR)/usr/bin
 USRGAMESDIR=    $(DESTDIR)/usr/games
 BINDIR=         $(DESTDIR)/bin
 VARPATH=	$(DESTDIR)/var
-LOGDIR=		$(DESTDIR)/var/adm
+LOGDIR=		$(DESTDIR)/var/log
 MANDIR=		$(DESTDIR)/usr/man
 MAN1DIR=	$(DESTDIR)/usr/man/man1
 MAN3DIR=	$(DESTDIR)/usr/man/man3
@@ -53,9 +112,6 @@ SHUTDOWNDIR=	$(SBINDIR)
 
 # Directory for fsck
 FSCKDIR=	$(SBINDIR)
-
-# Directory for rdev, vidmode, etc.
-RDEVDIR=	$(USRBINDIR)
 
 # Directory for passwd
 PASSWDDIR=	$(USRBINDIR)
@@ -77,3 +133,9 @@ INSTALLDAT=	$(INSTALL) -m $(DATMODE)
 INSTALLSUID=    $(INSTALL) -m $(SUIDMODE) -o root
 
 BSD=		../bsd
+
+%.o: %.c
+	$(CC) -c $(CFLAGS) $< -o $@
+
+%: %.cc
+	$(CXX) $(CFLAGS) $< -o $@

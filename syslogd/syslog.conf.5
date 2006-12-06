@@ -52,12 +52,17 @@ line applies, and an
 .Em action
 field which specifies the action to be taken if a message
 .Xr syslogd
-received matches the selection criteria.
+received matches the selection criteria.  There may not be
+.Em any
+spaces in the action field.
 The
 .Em selector
 field is separated from the
 .Em action
-field by one or more tab characters.
+field by one or more tab or space characters (this is a departure from the
+standard BSD way of doing things: both tabs
+.Em and
+spaces may be used to separate the selector from the action).
 .Pp
 The
 .Em Selector

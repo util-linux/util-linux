@@ -1,6 +1,0 @@
-This version of makedev-1.4 has been altered by Rik Faith
-(faith@cs.unc.edu) to fit in with the util-linux suite of programs.
-
-The Makefile was re-written, a few programs were re-named, and the group
-for printer was changed to daemon, to conform with the original MAKEDEV
-script.

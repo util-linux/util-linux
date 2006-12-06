@@ -7,13 +7,13 @@
 .\" "
 .TH MKSWAP 8 "8 February 1995" "Linux 1.0" "Linux Programmer's Manual"
 .SH NAME
-mkswap \- set up a Linux swap device
+mkswap \- set up a Linux swap area
 .SH SYNOPSIS
 .B "mkswap [ \-c ]"
 .IB device  " [" size-in-blocks "]"
 .SH DESCRIPTION
 .B mkswap
-sets up a Linux swap area on a device (usually a disk partition).
+sets up a Linux swap area on a device or in a file.
 
 The
 .I device
@@ -31,23 +31,45 @@ is usually of the following form:
 The
 .I size-in-blocks
 parameter is the desired size of the file system, in blocks.  This
-information is determined automatically by mkswap if it is omitted.  Block
-counts are rounded down to pages of 4 kB each.  Only block counts equal to
-or greater than 40 and equal to or less than 131072 are allowed.  Block
-counts greater than 130752 are (silently) rounded down to 130752.
-
-As Nick Holloway explains, the actual maximum for each swap file/partition
-is:
-.RS
-(4096 - 10) * 8 * 4096 = 133890048 bytes = 130752 blocks =  127.6875 Mb
-.RE
-This is because a single page is used to hold the swap bitmap at the
-start of the partition, where each bit is a single 4K page.  The reason
-for the -10, is that the signature is "SWAP-SPACE" -- 10 characters.
-
+information is determined automatically by
 .B mkswap
-can also set up swap files, although the file has to be created first.  A
-sequence of commands similar to the following is reasonable for this
+if it is omitted.  Block counts are rounded down so that the total
+size is an integer multiple of the machine's page size.  Only block
+counts in the range MINCOUNT..MAXCOUNT are allowed.  If the block count
+exceeds the MAXCOUNT, it is truncated to that value and a warning
+message is issued.
+
+The MINCOUNT and MAXCOUNT values for a swap area are:
+
+.RS
+MINCOUNT = 10 * PAGE_SIZE / 1024
+.br
+MAXCOUNT = (PAGE_SIZE - 10) * 8 * PAGE_SIZE / 1024
+.RE
+
+For example, on a machine with 4kB pages (e.g., x86), we get:
+
+.RS
+MINCOUNT = 10 * 4096 / 1024 = 40
+.br
+MAXCOUNT = (4096 - 10) * 8 * 4096 / 1024 = 130752
+.RE
+
+As each block is 1kB large, the swap area in this example could have a
+size that is anywhere in the range from 40kB up to 127.6875MB.
+
+If you don't know the page size that your machine uses, you may be
+able to look it up with "cat /proc/cpuinfo".
+
+The reason for the limit on MAXCOUNT is that a single page is used to
+hold the swap bitmap at the start of the swap area, where each bit
+represents a single page.  The reason for the -10, is that the
+signature is "SWAP-SPACE" -- 10 characters.
+
+To setup a swap file, it is necessary to create that file before
+running
+.B mkswap .
+A sequence of commands similar to the following is reasonable for this
 purpose:
 
 .nf
@@ -59,9 +81,7 @@ purpose:
 .RE
 .fi
 
-Note that the regular file has to be created before running
-.B mkswap
-on the file, and that the file must not contain any holes (so, using
+Note that a swap file must not contain any holes (so, using
 .BR cp (1)
 to create the file is not acceptable).
 

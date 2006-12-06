@@ -1,6 +1,6 @@
 .\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
-.TH SHUTDOWN 8 "20 November 1993" "Linux 0.99" "Linux Programmer's Manual"
+.TH SHUTDOWN 8 "20 November 1993" "Linux 1.2" "Linux Programmer's Manual"
 .SH NAME
 shutdown \- close down the system
 .SH SYNOPSIS
@@ -53,7 +53,7 @@ notifies all users, tells
 not to spawn more
 .BR getty (8)'s,
 writes the shutdown time into the
-.I /var/adm/wtmp
+.I /var/log/wtmp
 file, kills all other processes on the system,
 .BR sync (2)'s,
 unmounts all the disks,
@@ -93,7 +93,7 @@ detects (and deletes).
 .I /fastboot
 .I /etc/singleboot
 .I /etc/nologin
-.I /var/adm/wtmp
+.I /var/log/wtmp
 .fi
 .SH "SEE ALSO"
 .BR umount (8),
@@ -106,7 +106,8 @@ Unlike the BSD
 .BR shutdown ,
 users are notified of shutdown only once or twice, instead of many times,
 and at shorter and shorter intervals as "apocalypse approaches."
+Some would construe this as a feature.
 .SH AUTHOR
-poe@daimi.aau.dk
+Peter Orbaek (poe@daimi.aau.dk)
 .br
 Modified by jrs@world.std.com

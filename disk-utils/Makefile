@@ -1,6 +1,6 @@
 # Makefile -- Makefile for util-linux Linux utilities
 # Created: Sat Dec 26 20:09:40 1992
-# Revised: Wed Feb 22 16:09:35 1995 by faith@cs.unc.edu
+# Revised: Fri Oct  6 21:02:21 1995 by r.faith@ieee.org
 # Copyright 1992, 1993, 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
 #
 
@@ -8,15 +8,17 @@ include ../MCONFIG
 
 # Where to put man pages?
 
-MAN8= 		cfdisk.8 fdformat.8 fdisk.8 frag.8 fsck.minix.8 \
-		mkfs.8 mkfs.minix.8 mkswap.8 setfdprm.8 
+MAN8= 		cfdisk.8 fdformat.8 fsck.minix.8 \
+		mkfs.8 mkfs.minix.8 mkswap.8 setfdprm.8
+
+MAN8.FDISK=	fdisk.8
 
 # Where to put binaries?
 # See the "install" rule for the links. . .
 
-SBIN= 		cfdisk fdisk fsck.minix mkfs mkfs.minix mkswap 
+SBIN= 		cfdisk fsck.minix mkfs mkfs.minix mkswap
 
-USRSBIN=	frag
+SBIN.FDISK=	fdisk
 
 USRBIN=		fdformat setfdprm
 
@@ -24,29 +26,31 @@ USRBIN=		fdformat setfdprm
 
 ETC=		fdprm
 
-all: $(SBIN) $(USRSBIN) $(USRBIN)
+ifeq "$(HAVE_FDISK)" "no"
+SBIN:=$(SBIN) $(SBIN.FDISK)
+MAN8:=$(MAN8) $(MAN8.FDISK)
+endif
 
-cfdisk: cfdisk.c llseek.o
-	$(CC) $(CFLAGS) $(LDFLAGS) $< llseek.o -o $@ -lcurses -ltermcap -lm
+all: $(SBIN) $(USRBIN) 
 
-%.o: %.c
-	$(CC) -c $(CFLAGS) $< -o $@
+cfdisk: cfdisk.o llseek.o
+	$(CC) $(LDFLAGS) $^ -o $@ -lcurses -ltermcap -lm
 
 # Rules for everything else
 
 fdformat: fdformat.o
-fdisk: fdisk.o llseek.o
-frag: frag.o
+fdisk: fdisk.o fdisklabel.o llseek.o
 fsck.minix: fsck.minix.o
 mkfs: mkfs.o
 mkfs.minix: mkfs.minix.o
 mkswap: mkswap.o
 setfdprm: setfdprm.o
+fdisk.o: fdisk.c fdisk.h
+fdisklabel.o: fdisklabel.c fdisk.h
 
 install: all
-	$(INSTALLDIR) $(SBINDIR) $(USRSBINDIR) $(ETCDIR)
+	$(INSTALLDIR) $(SBINDIR) $(USRBINDIR) $(ETCDIR)
 	$(INSTALLBIN) $(SBIN) $(SBINDIR)
-	$(INSTALLBIN) $(USRSBIN) $(USRSBINDIR)
 	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
 	$(INSTALLDAT) $(ETC) $(ETCDIR)
 	$(INSTALLDIR) $(MAN8DIR)
@@ -54,4 +58,4 @@ install: all
 
 .PHONY:	clean
 clean:
-	-rm -f *.o *~ core $(SBIN) $(USRSBIN) $(USRBIN)
+	-rm -f *.o *~ core $(SBIN) $(USRBIN)

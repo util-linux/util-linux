@@ -1,6 +1,6 @@
 README for init/getty/login, by poe@daimi.aau.dk
 
-This package contains init, getty, and login programs for Linux.
+This package contains simpleinit, agetty, and login programs for Linux.
 Additional utilities included are: hostname, who, write, wall, users
 domainname, hostid, cage and mesg.
 
@@ -9,11 +9,80 @@ ported the things to Linux.
 
 About installation: See the bottom of this file. Check the Makefile!
 Be sure you know what you are doing! You may well be able to lock
-yourself out from your machine.
+yourself out from your machine. Especially: The init provided here
+(simpleinit) is NOT a SYSV compatible init and the inittab format
+is different.
 
 If you are uncertain whether you got the latest version, check out
 
 	ftp://ftp.daimi.aau.dk:/pub/linux/poe/
+
+Version 1.37 (15-Sep-95):
+	Added -I <initstring> and -w options to agetty.c for those that
+	use agetty with modems.
+
+Version 1.36 (25-Aug-95): 
+	Enhanced /etc/usertty features with group support. Moved this part
+	of login.c to checktty.c. One can now define classes of hosts and
+	ttys and do access checking based on unix-group membership. See
+	login.1. Also time ranges for logins can be specified, for example
+	writing the line
+
+	joe	[mon:tue:wed:thu:fri:8-16]@barracuda [mon:tue:wed:thu:fri:0-7:17-23]@joes.pc.at.home [sat:sun:0-23]@joes.pc.at.home
+
+	says that during working hours, Joe may rlogin from the host
+	barracuda, whereas outside working hours and in weekends Joe may
+	rlogin from his networked PC at home.
+
+	login.c: failures was not properly initialized, it now is. Also
+	made sure ALL failures are really logged to syslog.
+
+Version 1.35 (7-Aug-95):
+	login.c: Much improved features for the usertty file, allows
+	access control based on both hostnames/addresses and line. See the 
+	about.usertty file and the man-page.
+
+	Fixed agetty so it doesn't fiddle with the ut_id field in the
+	utmp record, this should prevent growing utmps on systems with
+	more than 10 login lines. Fix suggested and checked by Alan Wendt 
+	<alan@ezlink.com> in his agetty.1.9.1a.
+
+	Agetty now installs as agetty again, not as getty.
+	Updated man-page for login(1) to document /etc/usertty changes.
+
+	This has been tested on Linux 1.2.5 with GCC 2.5.8 and libc 4.5.26.
+
+Version 1.33a (20-Jun-95):
+	rchatfie@cavern.nmsu.edu ("rc.") suggested that I should remove
+	the #ifndef linux around the special logging of dial-up 
+	logins. This is now done, so each login via a serial port 
+	generates a separate DIALUP syslog entry.
+
+Version 1.33 (5-Jun-95):
+	Patch by Ron Sommeling <sommel@sci.kun.nl> and
+	jlaiho@ichaos.nullnet.fi (Juha Laiho) for agetty.c, used
+	to return a pointer to an automatic variable in get_logname().
+	Many patches from or via Rickard Faith <faith@cs.unc.edu>, fixing
+	man-pages etc, now defaults to using /var/log/wtmp and /var/run/utmp
+	according to the new FSSTND.
+
+	Fix in login.c for CPU eating bug when a remote telnet client dies
+	while logging in.
+
+	This is for Linux 1.2, GCC 2.6.2 or later.
+
+Version 1.32b (12-Mar-95):
+	Login now sets the tty group to "tty" instead of "other". Depending
+	on compile-time define USE_TTY_GROUP the tty mode is set to 0620 or
+	0600 instead of 0622. All as per suggestion by Rik Faith and the
+	linux-security list.
+	Write/wall now strips control chars except BEL (\007). Again after
+	suggestion by Rik Faith.
+
+Version 1.32a
+	Urgent security patch from Alvaro M. Echevarria incorporated into
+	login.c. This is really needed on machines running YP until
+	the libraries are fixed.
 
 Version 1.32
 	Login now logs the ip-address of the connecting host to utmp as it

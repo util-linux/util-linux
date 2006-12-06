@@ -46,6 +46,7 @@
 
 void usage(), int_handler(), write_user(struct utmp *);
 void wall(), write_wtmp(), unmount_disks(), unmount_disks_ourselves();
+void swap_off();
 
 char	*prog;		/* name of the program */
 int	opt_reboot;	/* true if -r option or reboot command */
@@ -88,14 +89,14 @@ main(argc, argv)
 	
 #ifndef DEBUGGING
 	if(geteuid()) {
-		fprintf(stderr, "Only root can shut a system down.\n");
+		fprintf(stderr, "%s: Only root can shut a system down.\n", argv[0]);
 		exit(1);
 	}
 #endif
 
 	if(*argv[0] == '-') argv[0]++;	/* allow shutdown as login shell */
 	prog = argv[0];
-	if(ptr = strrchr(argv[0], '/')) prog = ++ptr;
+	if((ptr = strrchr(argv[0], '/'))) prog = ++ptr;
 	
 	if(!strcmp("halt", prog)) {
 		opt_reboot = 0;
@@ -163,7 +164,7 @@ main(argc, argv)
 				struct tm *tt;
 				int now, then;
 				
-				if(colon = strchr(argv[c], ':')) {
+				if((colon = strchr(argv[c], ':'))) {
 					*colon = '\0';
 					hour = atoi(argv[c]);
 					minute = atoi(++colon);
@@ -276,6 +277,9 @@ main(argc, argv)
 	sync();
 	sleep(2);
 
+	/* remove swap files and partitions using swapoff */
+	swap_off();
+
 	/* unmount disks... */
 	unmount_disks();
 	sync();
@@ -339,7 +343,7 @@ wall()
 	utmpname(_PATH_UTMP);
 	setutent();
 	
-	while(ut = getutent()) {
+	while((ut = getutent())) {
 		if(ut->ut_type == USER_PROCESS)
 			write_user(ut);
 	}
@@ -360,10 +364,39 @@ write_wtmp()
 	time(&ut.ut_time);
 	ut.ut_type = BOOT_TIME;
 	
-	if((fd = open(_PATH_WTMP, O_WRONLY|O_APPEND)) > 0) {
+	if((fd = open(_PATH_WTMP, O_WRONLY|O_APPEND)) >= 0) {
 		write(fd, (char *)&ut, sizeof(ut));
 		close(fd);
 	}
+}
+
+void
+swap_off()
+{
+	/* swapoff esp. swap FILES so the underlying partition can be
+	   unmounted. It you don't have swapoff(1) or use mount to
+	   add swapspace, this may not be necessary, but I guess it
+	   won't hurt */
+
+	int pid;
+	int result;
+	int status;
+
+	sync();
+	if ((pid = fork()) < 0) {
+		printf("Cannot fork for swapoff. Shrug!\n");
+		return;
+	}
+	if (!pid) {
+		execl("/sbin/swapoff", SWAPOFF_ARGS, NULL);
+		execl("/etc/swapoff", SWAPOFF_ARGS, NULL);
+		execl("/bin/swapoff", SWAPOFF_ARGS, NULL);
+		execlp("swapoff", SWAPOFF_ARGS, NULL);
+		puts("Cannot exec swapoff, hoping umount will do the trick.");
+		exit(0);
+	}
+	while ((result = wait(&status)) != -1 && result != pid)
+		;
 }
 
 void
@@ -385,16 +418,13 @@ unmount_disks()
 		execl(_PATH_UMOUNT, UMOUNT_ARGS, NULL);
 		printf("Cannot exec %s, trying umount.\n", _PATH_UMOUNT);
 		execlp("umount", UMOUNT_ARGS, NULL);
-		printf("Cannot exec umount, trying manually.\n");
-		unmount_disks_ourselves();
+		puts("Cannot exec umount, giving up on umount.");
 		exit(0);
 	}
 	while ((result = wait(&status)) != -1 && result != pid)
 		;
-	if (result == -1 || status) {
-		printf("Running umount failed, trying manually.\n");
-		unmount_disks_ourselves();
-	}
+	puts("Unmounting any remaining filesystems...");
+	unmount_disks_ourselves();
 }
 
 void
@@ -411,7 +441,7 @@ unmount_disks_ourselves()
 	
 	sync();
 	if (!(mtab = setmntent(_PATH_MTAB, "r"))) {
-		printf("Cannot open %s.\n", _PATH_MTAB);
+		printf("shutdown: Cannot open %s.\n", _PATH_MTAB);
 		return;
 	}
 	n = 0;
@@ -429,7 +459,7 @@ unmount_disks_ourselves()
 		printf("umount %s\n", filesys);
 #else
 		if (umount(mntlist[i]) < 0)
-			printf("Couldn't umount %s\n", filesys);
+			printf("shutdown: Couldn't umount %s\n", filesys);
 #endif
 	}
 }

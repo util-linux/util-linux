@@ -1,0 +1,20 @@
+--- /usr/include/sys/uio.h~	Sun Jan 24 20:02:24 1993
++++ /usr/include/sys/uio.h	Thu Oct 12 12:29:00 1995
+@@ -32,6 +32,7 @@
+ 
+ /* Structure describing a section of memory.  */
+ 
++#if 0
+ struct iovec
+   {
+     /* Starting address.  */
+@@ -39,6 +40,9 @@
+     /* Length in bytes.  */
+     size_t iov_len;
+   };
++#else
++#include <linux/uio.h>
++#endif
+ 
+ 
+ __BEGIN_DECLS

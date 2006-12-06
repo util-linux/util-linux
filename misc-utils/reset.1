@@ -14,7 +14,13 @@ with the
 arguments.  This causes
 .B tput
 to send appropriate reset strings to the terminal based on information in
-.IR /etc/termcap .
+.I /etc/termcap
+(for the GNU or BSD
+.BR tput )
+or in the terminfo database
+(for the
+.B ncurses
+.BR tput ).
 This sequence seems to be sufficient to reset the Linux VC's when they
 start printing "funny-looking" characters.  For good measure,
 .BR stty (1)

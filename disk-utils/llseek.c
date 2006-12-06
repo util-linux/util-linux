@@ -5,16 +5,19 @@
  * under the terms of the GNU Public License.
  */
 
+#define FOR_UTIL_LINUX
+
 #include <sys/types.h>
 
 #include <errno.h>
 #include <unistd.h>
 #include <linux/unistd.h>
-#if 0
+#ifndef FOR_UTIL_LINUX
 #include "et/com_err.h"
 #include "ext2fs/io.h"
 #endif
 
+#ifdef FOR_UTIL_LINUX
 #if defined(__GNUC__) || defined(HAS_LONG_LONG)
 typedef long long ext2_loff_t;
 #else
@@ -24,6 +27,7 @@ typedef long      ext2_loff_t;
 extern ext2_loff_t ext2_llseek(unsigned int fd,
 			       ext2_loff_t offset,
 			       unsigned int origin);
+#endif
 
 #ifdef __linux__
 
@@ -47,8 +51,15 @@ ext2_loff_t ext2_llseek (unsigned int fd, ext2_loff_t offset,
 	int retval;
 	static int do_compat = 0;
 
-	if (do_compat)
+	if (do_compat) {
+	compat_lseek:
+		if ((sizeof(off_t) < sizeof(ext2_loff_t)) &&
+		    (offset >= ((ext2_loff_t) 1 << ((sizeof(off_t)*8) -1)))) {
+			errno = -EINVAL;
+			return -1;
+		}
 		return lseek (fd, (off_t) offset, origin);
+	}
 	
 	offset_high = ((unsigned long long) offset) >> 32;
 	offset_low = ((unsigned long long) offset) & 0xffffffff;
@@ -59,7 +70,7 @@ ext2_loff_t ext2_llseek (unsigned int fd, ext2_loff_t offset,
 		 * which does not support the llseek system call
 		 */
 		do_compat++;
-		return lseek (fd, (off_t) offset, origin);
+		goto compat_lseek;
 	}
 	if (retval == -1)
 		result = -1;

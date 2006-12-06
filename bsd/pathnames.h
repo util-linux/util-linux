@@ -38,19 +38,19 @@
 #undef _PATH_MAILDIR
 
 #ifndef SBINDIR
-#define SBINDIR			"/etc"
+#define SBINDIR			"/sbin"
 #endif
 
 #ifndef USRSBINDIR
-#define USRSBINDIR              "/etc"
+#define USRSBINDIR              "/usr/sbin"
 #endif
 
 #ifndef LOGDIR
-#define LOGDIR                  "/etc"
+#define LOGDIR                  "/var/log"
 #endif
 
 #ifndef VARPATH
-#define VARPATH			"/usr"
+#define VARPATH			"/var"
 #endif
 
 #define _PATH_BSHELL    	"/bin/sh"
@@ -59,7 +59,7 @@
 #define _PATH_TTY       	"/dev/tty"
 #define TTYTYPES        	"/etc/ttytype"
 #define SECURETTY       	"/etc/securetty"
-#define _PATH_UTMP      	LOGDIR "/utmp"
+#define _PATH_UTMP      	"/var/run/utmp"
 #define _PATH_WTMP      	LOGDIR "/wtmp"
 
 #define	_PATH_DEFPATH	        "/usr/local/bin:/bin:/usr/bin:."
@@ -81,6 +81,7 @@
 #define _PATH_MTAB		"/etc/mtab"
 #define _PATH_UMOUNT		"/bin/umount"
 #define UMOUNT_ARGS		"umount", "-a"
+#define SWAPOFF_ARGS            "swapoff", "-a"
 
 #define _PATH_PASSWD            "/etc/passwd"
 #define _PATH_PTMP              "/etc/ptmp"

@@ -47,12 +47,18 @@
 .\"          Youngdale (eric@tantalus.nrl.navy.mil) and Remy Card
 .\"          (Remy.Card@masi.ibp.fr).
 .\" Sun Apr 24 19:25:59 1994: Updated per information supplied by Remy Card.
-.\" Thu Jul 14 07:44:36 1994: Updated absence of -t
-.\" option. (faith@cs.unc.edu)
+.\" Thu Jul 14 07:44:36 1994: Updated absence of -t option.
+.\"          (faith@cs.unc.edu)
 .\" Thu Jul 14 07:49:14 1994: Updated list of valid filesystems.
 .\" Wed Feb  8 09:25:48 1995: Updated man pages for Mike Grupenhoff's changes.
+.\" Sat Jul 22 01:45:58 1995: Updated list of binary extensions for
+.\"          msdos conversion. (sl14@cornell.edu)
+.\" Wed Jul 26 00:00:00 1995: Updated by Martin Schulze.
+.\"          (joey@infodrom.north.de)
+.\" Tue Sep 26 12:02:03 1995: Updated umount, nfs, proc parts of page.
+.\"          (aeb@cwi.nl)
 .\"
-.TH MOUNT 8 "8 February 1995" "Linux 1.1" "Linux Programmer's Manual"
+.TH MOUNT 8 "26 September 1995" "Linux 1.3" "Linux Programmer's Manual"
 .SH NAME
 mount, umount \- mount and dismount file systems
 .SH SYNOPSIS
@@ -62,9 +68,9 @@ mount, umount \- mount and dismount file systems
 .br
 .BI "mount [\-frwun] [\-t " vfstype "] [\-o " options "] " "special node"
 .br
-.BI "umount [\-an] [\-t " vfstype ]
+.BI "umount [\-ahvV] [\-t " vfstype ]
 .br
-.BI "umount " "special " | " node"
+.BI "umount [\-v] " "special " | " node " [...]
 .\" " for hilit19
 .SH DESCRIPTION
 The
@@ -79,13 +85,17 @@ If either
 .IR special " or " node
 are not provided, the appropriate information is taken from the
 .BR fstab (5)
-file.  The special keyword
-.I none
+file.  The
+.I proc
+file system is not associated with a special device, and when
+mounting it, an arbitrary keyword, such as
+.I proc
 can be used instead of a path or
 .I node
-specification.  This is useful when mounting the
-.I proc
-file system.
+specification. (The customary choice
+.I none
+is less fortunate: the error message `none busy' from umount
+can be confusing.)
 
 The system maintains a list of currently mounted file systems.  If no
 arguments are given to
@@ -196,7 +206,7 @@ or
 Tells the
 .I ext2
 file sysem kernel code to do some more checks while the file system is
-mounted.  Currently (0.99.15), the following values can be specified with
+mounted.  Currently (1.3.11), the following values can be specified with
 this option:
 .RS
 .TP
@@ -268,11 +278,12 @@ CRLF<-->NL translation is performed on all files that don't have a
 "well-known binary" extension. The list of known extensions can be found at
 the beginning of
 .I fs/msdos/misc.c
-(as of 09913r, the list is: exe, com, bin, app, sys, drv, ovl, ovr, obj,
+(as of 1.3.11, the list is: exe, com, bin, app, sys, drv, ovl, ovr, obj,
 lib, dll, pif, arc, zip, lha, lzh, zoo, tar, z, arj, tz, taz, tzp, tpz,
-gif, bmp, tif, gl, jpg, pcx, tfm, vf, gf, pk, pxl, dvi).
+gz, tgz, deb, gif, bmp, tif, gl, jpg, pcx, tfm, vf, gf, pk, pxl, dvi).
 .PP
 Programs that do computed lseeks won't like in-kernel text conversion.
+Several people have had their data ruined by this translation. Beware!
 
 For file systems mounted in
 .B binary
@@ -346,7 +357,7 @@ and
 file systems, give every file a gid equal to
 .IR value .
 .TP
-B grpid
+.B grpid
 Causes the
 .I ext2fs
 to use the BSD behavior when creating files: file are created with the
@@ -401,6 +412,19 @@ file system, turn on the
 .I quiet
 flag.  Attempts to chown or chmod files do not yield errors, although they
 fail. Use with caution!
+.TP
+.B soft
+For the
+.IR nfs
+file system this allows the kernel to time out if the nfs server is not
+responding for some time, otherwise it will try forever. The time can be
+specified with
+.BR timeo=time .
+For more information look at
+.IR nfs (5).
+
+This option is useful if your nfs server sometimes doesn't respond or will
+be rebooted while some process tries to get a file from the server.
 .TP
 .BI sb= value
 For the
@@ -459,8 +483,9 @@ The argument following the
 is used to indicate the file system type.  The file system types which are
 currently supported are listed in
 .IR linux/fs/filesystems.c :
-.IR minux ", " ext ", " ext2 ", " xiafs ", " msdos ", " hpfs ,
-.IR proc ", " nfs ", " iso9660 ", " sysv ", " xenix ", " coherent .
+.IR minix ", " ext ", " ext2 ", " xiafs ", " msdos ", " umsdos ,
+.IR hpfs ", " proc ", " nfs ", " iso9660 ", " smbfs ,
+.IR sysv ", " xenix ", " coherent .
 Note that that last three are equivalent and that "xenix" and "coherent"
 will be removed at some point in the future \(em use "sysv" instead.
 
@@ -468,12 +493,15 @@ The type
 .I minix
 is the default.  If no
 .B \-t
-option is given, the superblock is probed for the filesystem type (minix,
-ext, ext2, xia are supported).  If this probe fails and
+option is given, or if the "auto" type is specified, the superblock is
+probed for the filesystem type (minix, ext, ext2, xia are supported).  If
+this probe fails and
 .I /proc/filesystems
 exists, then all of the filesystems listed will be tried,
 .I except
 for those that are labeled "nodev" (e.g., "proc" and "nfs").
+
+Note that the "auto" type may be useful for user-mounted floppies.
 
 For example, the
 .B mount
@@ -503,9 +531,9 @@ Mount without writing in
 .B Umount
 removes the
 .I special
-device grafted at point
-.I node
-from file system tree.
+device, or the device grafted at point
+.IR node ,
+from the file system tree.
 
 Options for the
 .B umount
@@ -524,6 +552,15 @@ the file system types on which no action should be taken.  (See example
 above for the
 .B mount
 command.)
+.TP
+.B \-V
+Print version and exit.
+.TP
+.B \-h
+Print help message and exit.
+.TP
+.B \-v
+Verbose mode.
 
 .SH FILES
 .I /etc/fstab
@@ -535,7 +572,8 @@ lock file
 .I /etc/mtab.tmp
 temporary file
 .SH "SEE ALSO"
-.BR mount "(2), " umount "(2), " fstab "(5), " swapon (8)
+.BR mount "(2), " umount "(2), " fstab "(5), " swapon "(8), " nfs (5),
+.BR mountd "(8), " nfsd (8)
 .SH BUGS
 It is possible for a corrupted file system to cause a crash.
 .PP

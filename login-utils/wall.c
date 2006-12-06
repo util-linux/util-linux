@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 1988, 1990 Regents of the University of California.
- * All rights reserved.
+ * Copyright (c) 1988, 1990, 1993
+ *	The Regents of the University of California.  All rights reserved.
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -30,17 +30,17 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  *
- * Modified for Linux, Mon Mar  8 18:08:30 1993, faith@cs.unc.edu
+ * Modified Sun Mar 12 10:34:34 1995, faith@cs.unc.edu, for Linux
  */
 
 #ifndef lint
-char copyright[] =
-"@(#) Copyright (c) 1988 Regents of the University of California.\n\
- All rights reserved.\n";
+static char copyright[] =
+"@(#) Copyright (c) 1988, 1990, 1993\n\
+	The Regents of the University of California.  All rights reserved.\n";
 #endif /* not lint */
 
 #ifndef lint
-static char sccsid[] = "@(#)wall.c	5.14 (Berkeley) 3/2/91";
+static char sccsid[] = "@(#)wall.c	8.2 (Berkeley) 11/16/93";
 #endif /* not lint */
 
 /*
@@ -52,11 +52,20 @@ static char sccsid[] = "@(#)wall.c	5.14 (Berkeley) 3/2/91";
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <sys/uio.h>
-#include <utmp.h>
+
+#include <paths.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <paths.h>
+#include <string.h>
+#include <unistd.h>
+#include <utmp.h>
+#ifdef __linux__
+#include <locale.h>
+#include "pathnames.h"
+#endif
+
+void	makemsg __P((char *));
 
 #define	IGNOREUSER	"sleeper"
 
@@ -65,6 +74,7 @@ int mbufsize;
 char *mbuf;
 
 /* ARGSUSED */
+int
 main(argc, argv)
 	int argc;
 	char **argv;
@@ -75,7 +85,12 @@ main(argc, argv)
 	struct utmp utmp;
 	FILE *fp;
 	char *p, *ttymsg();
+	char line[sizeof(utmp.ut_line) + 1];
 
+#ifdef __linux__
+	setlocale(LC_CTYPE,"");
+#endif
+	
 	while ((ch = getopt(argc, argv, "n")) != EOF)
 		switch (ch) {
 		case 'n':
@@ -94,11 +109,6 @@ usage:
 	if (argc > 1)
 		goto usage;
 
-#ifdef __linux__
-	if (argc != 1)
-	      makemsg("");
-	else
-#endif
 	makemsg(*argv);
 
 	if (!(fp = fopen(_PATH_UTMP, "r"))) {
@@ -114,14 +124,17 @@ usage:
 			continue;
 #ifdef __linux__
 		if (utmp.ut_type != USER_PROCESS)
-		      continue;
+		   continue;
 #endif
-		if (p = ttymsg(&iov, 1, utmp.ut_line))
+		strncpy(line, utmp.ut_line, sizeof(utmp.ut_line));
+		line[sizeof(utmp.ut_line)] = '\0';
+		if ((p = ttymsg(&iov, 1, line, 60*5)) != NULL)
 			(void)fprintf(stderr, "wall: %s\n", p);
 	}
 	exit(0);
 }
 
+void
 makemsg(fname)
 	char *fname;
 {
@@ -167,20 +180,27 @@ makemsg(fname)
 	}
 	(void)fprintf(fp, "%79s\r\n", " ");
 
-	if (*fname && !(freopen(fname, "r", stdin))) {
+	if (fname && !(freopen(fname, "r", stdin))) {
 		(void)fprintf(stderr, "wall: can't read %s.\n", fname);
 		exit(1);
 	}
 	while (fgets(lbuf, sizeof(lbuf), stdin))
-		for (cnt = 0, p = lbuf; ch = *p; ++p, ++cnt) {
+		for (cnt = 0, p = lbuf; (ch = *p) != '\0'; ++p, ++cnt) {
 			if (cnt == 79 || ch == '\n') {
 				for (; cnt < 79; ++cnt)
 					putc(' ', fp);
 				putc('\r', fp);
 				putc('\n', fp);
 				cnt = 0;
-			} else
-				putc(ch, fp);
+			} else {
+			   /* Test for control chars added Fri Mar 10
+			      19:49:30 1995, faith@cs.unc.edu */
+			   if (!isprint(ch) && !isspace(ch) && ch != '\007') {
+			      putc('^', fp);
+			      putc(ch^0x40,fp); /* DEL to ?, others to alpha */
+			   } else
+			      putc(ch, fp);
+			}
 		}
 	(void)fprintf(fp, "%79s\r\n", " ");
 	rewind(fp);

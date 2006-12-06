@@ -1,41 +1,4 @@
-util-linux: Miscellaneous utilities for Linux
-%n util-linux
-%v 2.2
-%c *
-%l *
-%b *
-%d *
-%f ftp.cs.unc.edu:/pub/users/faith/linux
-%t util-linux-2.2.tar.gz
-%w utils
-%%
-# These lines describe an automated build procedure, please ignore them.
-%setup
-make
-%doc ANNOUNCE LSM README
-%doc COPYING.GPL COPYING.UCB
-%doc ./time/README.time ./disk-utils/README.cfdisk
-%doc ./disk-utils/README.fdisk ./disk-utils/README.bootutils-0.1
-%doc ./sys-utils/README.setserial ./makedev-1.4.1/README.MAKEDEV-C
-%doc ./misc-utils/README.script ./misc-utils/README.hostname
-%doc ./misc-utils/README.namei ./misc-utils/README.cal
-%doc ./misc-utils/README1.namei ./text-utils/README.col
-%doc ./mount/README.mount
-%doc ./login-utils/README.getty ./login-utils/README.admutil
-%doc ./login-utils/README.poeigl
-cp -a $BUILDDIR/$NAME-$VERSION/example.files /usr/doc/$WHERE/$NAME-$VERSION
-* rm -rf /usr/lib/zoneinfo
-* make install
-%i set -x
-%i /usr/sbin/zic -l US/Eastern
-%i /usr/sbin/zic -p America/New_York
-%i set +x
-%i echo 'WARNING: Check time zone!  (If necessary, change with zic).'
-%i echo 'WARNING: Check /etc/rc for initalization of /var/adm/utmp'
-%i echo 'WARNING: /etc/rc should run /sbin/update, *NOT* /sbin/bdflush'
-exit
-# Please ignore the previous lines. . .
-# The informative part of the notes file starts here:
+util-linux 2.5
 
 WARNING: THE PROGRAMS IN THIS SUITE DO *NOT* SUPPORT SHADOW PASSWORD FILES!
 
@@ -45,9 +8,6 @@ WARNING: USE GNU TAR -- OTHER TARS WILL FAIL SILENTLY!
 
 WARNING: DO *NOT* INSTALL WITHOUT THINKING.
 
-WARNING: Read the util-linux-2.2.bin.Notes file *BEFORE* and *AFTER*
-         installation: there are a few links you must make by hand.
-
 WARNING: The agetty, simpleinit, login, passwd, and other programs in this
          package are *NOT* System V compliant.  These utilities are meant
          to be used by people who build their own systems.  If you are not
@@ -55,64 +15,115 @@ WARNING: The agetty, simpleinit, login, passwd, and other programs in this
          prevent you from logging into your system.  Have a boot floppy
          ready, especially if you don't know what you are doing.
 
-WARNING: The binary distribution was tarred using GNU TAR AND THE -S OPTION!
-         This means that holes will be preserved, but that ONLY GNU TAR
-         WILL WORK ON THE BINARY DISTRIBUTION (in fact, other, inferior,
-         tar programs will fail silently).  YOU HAVE BEEN WARNED!
-
-WARNING: localtime and posixtime default to US/Eastern -- change these now.
-
-
-
-To install from the binary distribution:
-
-1) Get binary distribution (see the .lsm file for locations)
-2) cd /
-3) gtar zpxvf util-linux-2.2.bin.tar.gz
-   (or: pms -i util-linux-2.2.bin.tar.gz)
-4) *IF* you want to use agetty and simpleinit, then make softlinks from
-   /sbin/init to simpleinit and from /sbin/getty to agetty, but make sure
-   that your /etc/inittab is set up right (this is *NOT* the System V
-   compatible init!), or you will be hosed.
-5) Run zic -l and/or zic -p to set your timezone.  The distribution is set
-   up to use /usr/lib/zoneinfo/US/Eastern as the default.  This was
-   installed with "zic -l US/Eastern"
-6) Remove all the old binaries from previous locations.
-
 
 
 To install from source:
 
 1) Get source distribution (see the .lsm file for locations)
-2) Untar util-linux-2.2.tar.gz in /usr/src
-3) cd util-linux-2.2
-4) Edit MCONFIG:
-
-   If you use the shadow password suite and do _not_ want to install
-   programs like login and passwd that do not support shadow passwords,
-   then set HAVE_SHADOW to yes
-
-   If you use the System V init suite and do _not_ want to install programs
-   like agetty, simpleinit, and shutdown, then set HAVE_SYSVINIT to yes
-
-   If you don't like the compile-time options or the directories, then
-   change them.  Note that you also can say something like "make OPT=-g
-   LDFLAGS=" in order to make a complete debugging version without editing
-   the MCONFIG at all.
-
+2) Untar util-linux-2.5.tar.gz in /usr/src
+3) cd util-linux-2.5
+4) Edit MCONFIG
 5) make
+
+   Note that libc 4.5.26 headers need a small patch to be used with
+   recent kernels.  See the file uio.h-diff for the patch, if necessary.
+
 6) make install
 7) If you want to use simpleinit and agetty, then make softlinks from
    /sbin/init to simpleinit and from /sbin/getty to agetty, but make sure
    that your /etc/inittab is set up right (this is *NOT* the System V
    compatible init!), or you will be hosed.  If you are using the SysV
    init and/or some other getty, they you can keep using those.
-8) Run zic -l and/or zic -p to set your timezone.  The distribution is set
-   up to use /usr/lib/zoneinfo/US/Eastern as the default.  This was
-   installed with "zic -l US/Eastern"
-9) Remove all the old binaries from previous locations.
+8) Remove all the old binaries from previous locations.
+9) See the HIGHLIGHTS below for links you need to make for the new FSSTND
+   compliance. 
 
 
+HIGHLIGHTS for version 2.5:
+0) Nicolai Langfeldt is taking over maintenance of util-linux, with the
+   help of a few others (Michael K. Johnson, Andries Brouwer, and Rik
+   Faith).
+
+   PLEASE SEND PATCHES AND UPDATES TO: util-linux@math.uio.no
+
+1) The following packages have been removed.  Please use the up-to-date,
+   canonical versions of these packages from the listed places:
+
+    timezone support (/usr/lib/zoneinfo, libz.a, zic, zdump):
+        elsie.nci.nih.gov:/pub/tzcode95d.tar.gz
+        elsie.nci.nih.gov:/pub/tzdata95h.tar.gz
+    MAKEDEV-C:
+        sunsite.unc.edu:/pub/Linux/system/Admin/MAKEDEV-C-1.5.tar.gz
+    MAKEDEV:
+        sunsite.unc.edu:/pub/Linux/system/Admin/MAKEDEV-2.2.tar.gz
+    md5sum:
+        prep.ai.mit.edu:/pub/gnu/textutils-1.3.tar.gz
+        [The GNU version is now compatible with the Plumb/Lankester
+        version.]
+    ksymoops:
+        Now bundled with the kernel in linux/scripts.
+
+2) update_state has been removed
+3) fdisk now supports NetBSD disklabels courtesy of Bernhard Fastenrath
+   <fasten@athene.informatik.uni-bonn.de> (and > 8GB disks, courtesy of
+   Andries Brouwer)
+4) mount improved -- many patches from Andries Brouwer for greatly improved
+   error reporting
+5) ddate, chkdupexe, and other programs have been improved and bug fixed
+6) util-linux is now a source-only distribution
+7) mcookie generates better random numbers and will use /dev/random or
+   /dev/audio if available
+8) chfn, chsh, passwd, and vipw have been updated with security patches
+   from Zefram <A.Main@dcs.warwick.ac.uk>.  Now, they all use the same
+   locking, and several security holes have been patched.  Further, chsh
+   and chfn can be configured at compile time to require a password before
+   updates and chsh can be configured to only use shells from /etc/shells.
+        
+
+HIGHLIGHTS for version 2.4 (2.3 was never released):
+0) Michael K. Johnson <johnsonm@nigel.vnet.net> is the interim maintainer
+   while Rik Faith is working on PhD work.
+1) login now makes the login tty mode 600 and places it in group "tty"
+2) wall, and write will not write dangerous escape sequences
+3) wall and write can be run setgid "tty".  If util-linux is compiled for
+   this option, "mesg y" will only set group write instead of group/other
+   write.
+4) fdisk and cfdisk have been patched with the latest llseek.c.  Although I
+   had a lot of bug reports about fdisk from util-linux-2.2, I was unable
+   to reproduce any of the problems.  Some of the problems appeared to be
+   releated to a failure to reboot the machine after changing the partition
+   table, and some may have been due to a specific kernel revision problem.
+   However, this doesn't seem to account for all of the bug reports -- if
+   this version gives you problem, please send as complete a bug report as
+   possible.
+5) chkdupexe from Nicolai Langfeldt (janl@ifi.uio.no)
+6) ctrlaltdel now installs into /sbin instead of /usr/sbin
+7) mkfs replacement from Ron Sommeling (sommel@sci.kun.nl)
+8) lpcntl removed.  Use tunelp instead.
+9) ksymoops from Greg McGary <gkm@magilla.cichlid.com>
+10) mkfs.minix now clears the first 512 bytes of the file system so that
+    Minix disks won't be confused with MSDOS disks (Daniel Quinlan
+    (quinlan@yggdrasil.com))
+11) mkswap should now work on an Alpha running Linux
+12) frag removed.  See
+    sunsite.unc.edu:/pub/Linux/system/Filesystems/defrag-0.6.tar.gz for the
+    latest version.
+13) mount patches from Andries.Brouwer@cwi.nl and Dan Quinlan
+    (quinlan@yggdrasil.com).
+14) MAKEDEV and MAKEDEV-C updated to the latest versions.
+15) Paths updated for FSSTND 1.2.  This means that you may need to make
+    some links.  The links you need to make we system dependent.  The
+    ultimate goal is to rename /var/adm to /var/log and have a symbolic
+    link from /var/adm to /var/log during the transition period.  If you
+    are running an ELF system, you probably won't have to do anything.  The
+    bottom line is that the following files must exist or be pointers to
+    the old version (used internally by the a.out libraries):
+
+             New                 Old
+
+        /var/log/wtmp       /var/adm/wtmp
+        /var/log/lastlog    /var/adm/lastlog
+        /var/run/utmp       /var/adm/utmp
 
 HIGHLIGHTS for version 2.2:
 1) This is primarily a quick bug-fix release for version 2.1
@@ -168,74 +179,76 @@ disk-utils:
     fdisk: A. V. Le Blanc (LeBlanc@mcc.ac.uk) fdisk 1.5 release, with
            patched from Kevin Martin for DOS and OS/2 compatibility (1.5a);
            Rik Faith (1.5b, 2.0).
-    frag: Werner Almesberger (1.0), Steffen Zahn (1.1), Rob Hooft (1.2), 
-          Steffen Zahn (szahn%masterix@emndev.siemens.co.at) (1.3), Michael
-          Bischoff <mbi@mo.math.nat.tu-bs.de> (1.4).
     fsck.minix, mkfs.minix: Linus Torvalds, with modifications by: Rik
                             Faith (faith@cs.unc.edu), Scott Heavner
                             (sdh@po.cwru.edu), Dr. Wettstein
                             (greg%wind.uucp@plains.nodak.edu), Daniel
                             Quinlan (quinlan@yggdrasil.com).
+    mkfs: David Engel (david@ods.com) and Fred N. van Kempen
+          (waltje@uWalt.NL.Mugnet.ORG)
+          Version 1.9 from Ron Sommeling (sommel@sci.kun.nl)
     mkswap: Linus Torvalds, with modifications by Mike Jagdis
             (jaggy@purplet.demon.co.uk. )
+            Version for Alpha from
+            cage.cs.arizona.edu:/pub/davidm/linux/mkswap-axp-950503.tar.gz
     setfdprm: Werner Almesberger (almesber@nessie.cs.id.ethz.ch)
               Note that more floppy utilities are available from:
                 ftp.imag.fr:pub/Linux/ZLIBC/fdutils/fdutils-4.1.src.tar.gz
                 sunsite.unc.edu:/pub/Linux/system/Misc/fdutils-4.1.src.tar.gz
                 tsx-11.mit.edu:/pub/linux/sources/sbin/fdutils-4.1.src.tar.gz
-    llseek.c: from Remy Card's e2fsprogs-0.5b-WIP.tar.gz
+    llseek.c: from Remy Card's e2fsprogs-0.5b.tar.gz (21Mar95 version) from:
+                sunsite.unc.edu:/pub/Linux/system/Filesystems/ext2
 
 games:
     banner: (8.3 (Berkeley) 4/2/94)
-    ddate: Druel the Chaotic aka Jeremy Johnson aka mpython@gnu.ai.mit.edu,
-           with modifications by Lee Harvey Oswald Smith, K.S.C.
+            ftp.cdrom.com:/pub/bsd-sources/4.4BSD-Lite/usr/src/usr.bin
 
 login-utils:
     agetty: W. Z. Venema, ported by Peter Orbaek <poe@daimi.aau.dk>.
-            ftp.daimi.aau.dk:/pub/linux/poe/poeigl-1.32.tar.gz
+            ftp.daimi.aau.dk:/pub/linux/poe/poeigl-1.37.tar.gz
     chfn: Salvatore Valente <svalente@athena.mit.edu>
     chsh: Salvatore Valente <svalente@athena.mit.edu>
     last: 5.11 w/year (Berkeley) 6/29/88; Port by Michael Haardt with
           changes by Peter Orbaek.
-          ftp://ftp.daimi.aau.dk/pub/linux/poe/admutil-1.14.tar.gz
+          ftp://ftp.daimi.aau.dk/pub/linux/poe/admutil-1.16.tar.gz
     login: 5.40 (Berkeley) 5/9/89; with ports by Michael Glad and Peter Orbaek
-           ftp.daimi.aau.dk:/pub/linux/poe/poeigl-1.32.tar.gz
-    mesg: Miquel van Smoorenburg (miquels@htsa.aha.nl,
-          miquels@drinkel.nl.mugnet.org).  From his sysvinit.tar.Z package.
+           ftp.daimi.aau.dk:/pub/linux/poe/poeigl-1.37.tar.gz
+    mesg: 8.2 (Berkeley) 1/21/94
+          ftp.cdrom.com:/pub/bsd-sources/4.4BSD-Lite/usr/src/usr.bin
     newgrp: Michael Haardt, with modifications by Peter Orbaek.
-            ftp://ftp.daimi.aau.dk/pub/linux/poe/admutil-1.14.tar.gz
+            ftp://ftp.daimi.aau.dk/pub/linux/poe/admutil-1.16.tar.gz
     passwd: Peter Orbaek, with yp modifications by Alvaro Martinez
             Echevarria (alvaro@enano.etsit.upm.es)
-            ftp://ftp.daimi.aau.dk/pub/linux/poe/admutil-1.14.tar.gz
+            ftp://ftp.daimi.aau.dk/pub/linux/poe/admutil-1.16.tar.gz
     shutdown: Peter Orbaek, with new modifications by Stephen Tweedie, Rik
               Faith, and Dave (gentzel@nova.enet.dec.com).
-              ftp://ftp.daimi.aau.dk/pub/linux/poe/admutil-1.14.tar.gz
+              ftp://ftp.daimi.aau.dk/pub/linux/poe/admutil-1.16.tar.gz
     simpleinit: Peter Orbaek
-                ftp.daimi.aau.dk:/pub/linux/poe/poeigl-1.32.tar.gz
+                ftp.daimi.aau.dk:/pub/linux/poe/poeigl-1.37.tar.gz
     vipw: 5.16 (Berkeley) 3/3/91, with modifications by Mike Grupenhoff
           <kashmir@umiacs.UMD.EDU> 
-    wall: 5.14 (Berkeley) 3/2/91 [From the BSD NET-2 (4.3bsd-reno)
-          distribution at wuarchive.wustl.edu:/mirrors/4.3-reno]
-
-makedev-1.4:
-    MAKEDEV-C: David A. Holland (dholland@husc.harvard.edu)
-               This version MODIFIED by Rik Faith (faith@cs.unc.edu)
-               sunsite.unc.edu:/pub/Linux/system/Admin/MAKEDEV-C-1.4.tar.gz
+    wall: 8.2 (Berkeley) 11/16/93 (With changes so that damaging escape
+          sequences cannot be sent. 
+          ftp.cdrom.com:/pub/bsd-sources/4.4BSD-Lite/usr/src/usr.bin
 
 
 misc-utils:
     cal: 8.4 (Berkeley) 4/2/94, with modifications by Rik Faith and
          Hein@student.tu-clausthal.de (Jochen Hein).
          ftp.cdrom.com:/pub/bsd-sources/4.4BSD-Lite/usr/src/usr.bin
+    chkdupexe: Version 1.2 from "Nicolai Langfeldt" <janl@ifi.uio.no>
     clear: Rik Faith
+    ddate: Druel the Chaotic aka Jeremy Johnson aka mpython@gnu.ai.mit.edu,
+           with modifications by Lee Harvey Oswald Smith, K.S.C. and
+           substantial updates from Rev. Bro. Lee H:. O:. Smith, KYTP
     domainname: Peter Orbaek
-            ftp.daimi.aau.dk:/pub/linux/poe/poeigl-1.32.tar.gz
+            ftp.daimi.aau.dk:/pub/linux/poe/poeigl-1.37.tar.gz
     dsplit: David Arnstein (arnstein@netcom.com)
             gatekeeper.dec.com:/pub/usenet/comp.sources.misc/volume40/dsplit
     getopt (getoptprog): jhunix.hcf.jhu.edu:
            /pub/public_domain_software/NetBSD/usr/src/usr.bin/getopt
     hostid: Mitch DSouza (m.dsouza@mrc-apu.cam.ac.uk)
-            ftp.daimi.aau.dk:/pub/linux/poe/poeigl-1.32.tar.gz
+            ftp.daimi.aau.dk:/pub/linux/poe/poeigl-1.37.tar.gz
     hostname/dnsdomainname: Peter Tobias <tobias@server.et-inf.fho-emden.de>
               This version (1.6) should also be available soon in:
               nic.funet.fi:/pub/OS/Linux/PEOPLE/Linus/net-source/base/NetKit-A*
@@ -262,9 +275,11 @@ misc-utils:
            wuarchive.wustl.edu:/mirrors/4.3-reno
     whereis: 5.5 (Berkeley) 4/18/91
              wuarchive.wustl.edu:/mirrors/4.3-reno
-    write: 4.22 (Berkeley) 6/1/90, with modifications by Mike Grupenhoff
-           (kashmir@umiacs.umd.edu) .
-           wuarchive.wustl.edu:/mirrors/4.3-reno
+    write: 8.1 (Berkeley) 6/6/93, with modifications by Mike Grupenhoff
+           (kashmir@umiacs.umd.edu).  With changes so that damaging escape
+           sequences cannot be sent.
+           ftp.cdrom.com:/pub/bsd-sources/4.4BSD-Lite/usr/src/usr.bin
+
 
 mount:
     mount, umount, swapon
@@ -294,6 +309,9 @@ mount:
     before /proc/filesystems is checked.  Andries.Brouwer@cwi.nl fixed up
     error reporting.
 
+    Updated with patches from Andries.Brouwer@cwi.nl and Dan Quinlan
+    (quinlan@yggdrasil.com).  And more patches from Andries and others.
+
 historic/selection: The complete selection-1.5 package, by Andrew Haylett
     <ajh@gec-mrc.co.uk>, 17th June 1993, is included in the historic tree.
     Kernel patches are no longer necessary for modern kernels, but these
@@ -301,7 +319,6 @@ historic/selection: The complete selection-1.5 package, by Andrew Haylett
     modified for this distribution.  With changes from Rick Sladkey.
 
 sys-utils:
-    MAKEDEV: Nick Holloway <Nick.Holloway@alfie.demon.co.uk>
     arch: Rik Faith <faith@cs.unc.edu>
     chroot: Rick Sladkey <jrs@world.std.com>
     clock: Originally from the timesrc-1.2.tar.Z package, Charles Hedrick,
@@ -311,7 +328,8 @@ sys-utils:
            (hamish@zot.apana.org.au) (V1.2a); Alan Modra
            (alan@spri.levels.unisa.edu.au (V1.3, V1.4).
     ctrlaltdel: Peter Orbaek <poe@daimi.aau.dk>
-                ftp://ftp.daimi.aau.dk/pub/linux/poe/admutil-1.14.tar.gz
+                ftp://ftp.daimi.aau.dk/pub/linux/poe/admutil-1.16.tar.gz
+    cytune: Nick Simicish (njs@scifi.emi.net) and Rik Faith (faith@cs.unc.edu)
     dmesg: Theodore Ts'o (tytso@athena.mit.edu); Rick Sladkey
            (jrs@world.std.com)
     ipcrm: From the ipcdelta.tar.z distribution by krishna
@@ -323,7 +341,7 @@ sys-utils:
     kbdrate: Rik Faith (faith@cs.unc.edu), with patches from
              Andries.Brouwer@cwi.nl and John Bowman
              (bowman@hagar.ph.utexas.edu)
-    lpcntl: Nigel Gamble (nigel@gate.net)
+    ksymoops: 1.7 from Greg McGary <gkm@magilla.cichlid.com>
     rdev: almesber@nessie.cs.id.ethz.ch (Werner Almesberger), with
           modifications from Peter MacDonald, Stephen Tweedie
           (sct@dcs.ed.ac.uk), and Dave (gentzel@nova.enet.dec.com)
@@ -341,7 +359,7 @@ sys-utils:
     sln: Mike Parker and David MacKenzie (from Linux's libc)
     sync: Nick Holloway, with thanks to James Bonfield
     tunelp: Michael K. Johnson (johnsonm@nigel.vnet.net)
-    update_state: Rik Faith (faith@cs.unc.edu)
+
 
 syslogd:
    5.45 (Berkeley) 3/2/91
@@ -373,194 +391,3 @@ text-utils:
     ul: 8.1 (Berkeley) 6/6/93
         ftp.cdrom.com:/pub/bsd-sources/4.4BSD-Lite/usr/src/usr.bin
 
-time:
-    elsie.nci.nih.gov:/pub/classictzcode.tar.gz
-    elsie.nci.nih.gov:/pub/classictzdata.tar.gz
-    (The zoneinfo database was updated Dec 1994.)
-
-%%
-* bin/arch
-* bin/dmesg
-* bin/dnsdomainname
-* bin/domainname
-* bin/hostname
-* bin/kill
-* bin/login
-* bin/more
-* bin/mount
-* bin/setserial
-* bin/sync
-* bin/umount
-* dev/MAKEDEV
-* dev/MAKEDEV-C
-* etc/devinfo
-* etc/makedev.cfg
-* etc/fdprm
-* sbin/agetty
-* sbin/cfdisk
-* sbin/clock
-* sbin/fastboot
-* sbin/fasthalt
-* sbin/fdisk
-* sbin/fsck.minix
-* sbin/halt
-* sbin/kbdrate
-* sbin/mkfs
-* sbin/mkfs.minix
-* sbin/mkswap
-* sbin/reboot
-* sbin/shutdown
-* sbin/simpleinit
-* sbin/sln
-* sbin/swapoff
-* sbin/swapon
-* usr/bin/cal
-* usr/bin/chfn
-* usr/bin/chsh
-* usr/bin/clear
-* usr/bin/col
-* usr/bin/colcrt
-* usr/bin/colrm
-* usr/bin/column
-* usr/bin/dsplit
-* usr/bin/fdformat
-* usr/bin/getopt
-* usr/bin/hexdump
-* usr/bin/hostid
-* usr/bin/ipcrm
-* usr/bin/ipcs
-* usr/bin/last
-* usr/bin/logger
-* usr/bin/look
-* usr/bin/lpcntl
-* usr/bin/mcookie
-* usr/bin/md5sum
-* usr/bin/mesg
-* usr/bin/namei
-* usr/bin/newgrp
-* usr/bin/passwd
-* usr/bin/ramsize
-* usr/bin/rdev
-* usr/bin/readprofile
-* usr/bin/renice
-* usr/bin/reset
-* usr/bin/rev
-* usr/bin/rootflags
-* usr/bin/script
-* usr/bin/setfdprm
-* usr/bin/setsid
-* usr/bin/setterm
-* usr/bin/strings
-* usr/bin/swapdev
-* usr/bin/tsort
-* usr/bin/tunelp
-* usr/bin/ul
-* usr/bin/vidmode
-* usr/bin/wall
-* usr/bin/whereis
-* usr/bin/write
-* usr/info/ipc.info
-* usr/lib/libz.a
-* usr/lib/more.help
-* usr/lib/zoneinfo
-* usr/man/man1/arch.1
-* usr/man/man1/cal.1
-* usr/man/man1/chfn.1
-* usr/man/man1/chsh.1
-* usr/man/man1/clear.1
-* usr/man/man1/col.1
-* usr/man/man1/colcrt.1
-* usr/man/man1/colrm.1
-* usr/man/man1/column.1
-* usr/man/man1/dnsdomainname.1
-* usr/man/man1/domainname.1
-* usr/man/man1/dsplit.1
-* usr/man/man1/getopt.1
-* usr/man/man1/hexdump.1
-* usr/man/man1/hostid.1
-* usr/man/man1/hostname.1
-* usr/man/man1/kill.1
-* usr/man/man1/last.1
-* usr/man/man1/logger.1
-* usr/man/man1/login.1
-* usr/man/man1/look.1
-* usr/man/man1/md5sum.1
-* usr/man/man1/mesg.1
-* usr/man/man1/more.1
-* usr/man/man1/namei.1
-* usr/man/man1/newgrp.1
-* usr/man/man1/passwd.1
-* usr/man/man1/readprofile.1
-* usr/man/man1/reset.1
-* usr/man/man1/rev.1
-* usr/man/man1/script.1
-* usr/man/man1/setterm.1
-* usr/man/man1/strings.1
-* usr/man/man1/tsort.1
-* usr/man/man1/ul.1
-* usr/man/man1/wall.1
-* usr/man/man1/whereis.1
-* usr/man/man1/write.1
-* usr/man/man3/newctime.3
-* usr/man/man3/newtzset.3
-* usr/man/man5/devinfo.5
-* usr/man/man5/fstab.5
-* usr/man/man5/makedev.cfg.5
-* usr/man/man5/nfs.5
-* usr/man/man5/syslog.conf.5
-* usr/man/man5/tzfile.5
-* usr/man/man6/banner.6
-* usr/man/man6/ddate.6
-* usr/man/man8/MAKEDEV-C.8
-* usr/man/man8/MAKEDEV.8
-* usr/man/man8/agetty.8
-* usr/man/man8/cfdisk.8
-* usr/man/man8/chroot.8
-* usr/man/man8/clock.8
-* usr/man/man8/ctrlaltdel.8
-* usr/man/man8/dmesg.8
-* usr/man/man8/fastboot.8
-* usr/man/man8/fasthalt.8
-* usr/man/man8/fdformat.8
-* usr/man/man8/fdisk.8
-* usr/man/man8/frag.8
-* usr/man/man8/fsck.minix.8
-* usr/man/man8/halt.8
-* usr/man/man8/ipcrm.8
-* usr/man/man8/ipcs.8
-* usr/man/man8/kbdrate.8
-* usr/man/man8/lpcntl.8
-* usr/man/man8/mkfs.8
-* usr/man/man8/mkfs.minix.8
-* usr/man/man8/mkswap.8
-* usr/man/man8/mount.8
-* usr/man/man8/ramsize.8
-* usr/man/man8/rdev.8
-* usr/man/man8/reboot.8
-* usr/man/man8/renice.8
-* usr/man/man8/rootflags.8
-* usr/man/man8/setfdprm.8
-* usr/man/man8/setserial.8
-* usr/man/man8/setsid.8
-* usr/man/man8/shutdown.8
-* usr/man/man8/simpleinit.8
-* usr/man/man8/swapdev.8
-* usr/man/man8/swapoff.8
-* usr/man/man8/swapon.8
-* usr/man/man8/sync.8
-* usr/man/man8/syslogd.8
-* usr/man/man8/tunelp.8
-* usr/man/man8/umount.8
-* usr/man/man8/update_state.8
-* usr/man/man8/vidmode.8
-* usr/man/man8/vipw.8
-* usr/man/man8/zdump.8
-* usr/man/man8/zic.8
-* usr/sbin/chroot
-* usr/sbin/ctrlaltdel
-* usr/sbin/frag
-* usr/sbin/syslogd
-* usr/sbin/update_state
-* usr/sbin/vipw
-* usr/sbin/zdump
-* usr/sbin/zic

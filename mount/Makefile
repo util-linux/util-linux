@@ -1,6 +1,7 @@
 # To make "ext" the default file system type for mount
 #  (used when no other type is specified), replace \"minix\" by \"ext2\".
-DEFAULT_FSTYPE=\"minix\"
+# Use iso9660 instead, since CDROMs are popular.
+DEFAULT_FSTYPE=\"iso9660\"
 
 # you need rpcgen and libc-4.2 or rpclib to compile in the NFS support
 DEFINES = -DHAVE_NFS -DFSTYPE_DEFAULT=$(DEFAULT_FSTYPE)
@@ -57,7 +58,7 @@ install: $(PROGS)
 	$(INSTALLMAN) $(MAN5) $(MAN5DIR)
 	$(INSTALLMAN) $(MAN8) $(MAN8DIR)
 
-.c.o:
+%.o: %.c
 	$(COMPILE) $<
 
 mount: mount.o fstab.o sundries.o version.o $(NFS_OBJS) $(LO_OBJS)

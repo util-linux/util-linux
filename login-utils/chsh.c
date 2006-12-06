@@ -6,13 +6,20 @@
  *   modify it under the terms of the gnu general public license.
  *   there is no warranty.
  *
- *   faith
- *   1.1.1.1
- *   1995/02/22 19:09:23
+ *   $Author: faith $
+ *   $Revision: 1.8 $
+ *   $Date: 1995/10/12 14:46:35 $
+ *
+ * Updated Thu Oct 12 09:33:15 1995 by faith@cs.unc.edu with security
+ * patches from Zefram <A.Main@dcs.warwick.ac.uk>
  *
  */
 
+static char rcsId[] = "$Version: $Id: chsh.c,v 1.8 1995/10/12 14:46:35 faith Exp $ $";
+
+#if 0
 #define _POSIX_SOURCE 1
+#endif
 
 #include <sys/types.h>
 #include <stdio.h>
@@ -35,7 +42,7 @@ typedef unsigned char boolean;
 #define false 0
 #define true 1
 
-static char *version_string = "chsh 0.9 beta";
+static char *version_string = "chsh 0.9a beta";
 static char *whoami;
 
 static char buf[FILENAME_MAX];
@@ -58,7 +65,7 @@ int main (argc, argv)
     int argc;
     char *argv[];
 {
-    char *cp, *shell;
+    char *cp, *shell, *oldshell, *pwdstr;
     uid_t uid;
     struct sinfo info;
     struct passwd *pw;
@@ -69,8 +76,6 @@ int main (argc, argv)
     if (! whoami) whoami = "chsh";
     for (cp = whoami; *cp; cp++)
 	if (*cp == '/') whoami = cp + 1;
-
-    umask (022);
 
     uid = getuid ();
     memzero (&info, sizeof (info));
@@ -91,28 +96,55 @@ int main (argc, argv)
 	    return (-1); }
     }
 
+    oldshell = pw->pw_shell;
+    if (!oldshell[0]) oldshell = "/bin/sh";
+
     /* reality check */
+#if 0
+				/* Require current shell to be in list.
+                                   This is not a reasonable expectation on
+                                   most Linux systems, and the error is
+                                   confusing.  */
+    if (uid != 0 && (uid != pw->pw_uid || !get_shell_list(oldshell))) {
+#else
     if (uid != 0 && uid != pw->pw_uid) {
+#endif
 	errno = EACCES;
 	perror (whoami);
 	return (-1);
     }
     
     shell = info.shell;
+
+    printf( "Changing shell for %s.\n", pw->pw_name );
+
+#ifdef REQUIRE_PASSWORD
+    /* require password, unless root */
+    if(uid != 0 && pw->pw_passwd && pw->pw_passwd[0]) {
+	pwdstr = getpass("Password: ");
+	if(strncmp(pw->pw_passwd, crypt(pwdstr, pw->pw_passwd), 13)) {
+	    puts("Incorrect password.");
+	    exit(1);
+	}
+    }
+#endif
+
     if (! shell) {
-	printf ("Changing shell for %s.\n", pw->pw_name);
-	shell = prompt ("New shell", pw->pw_shell);
+	shell = prompt ("New shell", oldshell);
 	if (! shell) return 0;
     }
+    
     if (check_shell (shell) < 0) return (-1);
 
     if (! strcmp (pw->pw_shell, shell)) {
 	printf ("Shell not changed.\n");
 	return 0;
     }
+    if (!strcmp(shell, "/bin/sh")) shell = "";
     pw->pw_shell = shell;
     if (setpwnam (pw) < 0) {
 	perror ("setpwnam");
+	printf( "Shell *NOT* changed.  Try again later.\n" );
 	return (-1);
     }
     printf ("Shell changed.\n");
@@ -252,8 +284,23 @@ static int check_shell (shell)
 	    return (-1);
 	}
     }
-    if (! get_shell_list (shell))
-	printf ("warning: \"%s\" is not listed as a valid shell.\n", shell);
+#if ONLY_LISTED_SHELLS
+    if (! get_shell_list (shell)) {
+       if (!getuid())
+	  printf ("Warning: \"%s\" is not listed as a valid shell.\n", shell);
+       else {
+	  printf ("%s: \"%s\" is not listed as a valid shell.\n",
+		  whoami, shell);
+	  printf( "%s: use -l option to see list\n" );
+	  exit(1);
+       }
+    }
+#else
+    if (! get_shell_list (shell)) {
+       printf ("Warning: \"%s\" is not listed as a valid shell.\n", shell);
+       printf( "Use %s -l to see list.\n", whoami );
+    }
+#endif
     return 0;
 }
 

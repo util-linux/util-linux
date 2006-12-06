@@ -54,7 +54,12 @@ static char sccsid[] = "@(#)cal.c	8.4 (Berkeley) 4/2/94";
 #include <time.h>
 #include <unistd.h>
 #include <locale.h>
-#include <localeinfo.h>
+
+#if defined(__linux__) && _LINUX_C_LIB_VERSION_MAJOR > 4
+# include <langinfo.h>
+#else
+# include <localeinfo.h>
+#endif
 
 #define	THURSDAY		4		/* for reformation */
 #define	SATURDAY 		6		/* 1 Jan 1 was a Saturday */
@@ -93,13 +98,14 @@ int sep1752[MAXDAYS] = {
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 };
 
-char *day_headings = " S  M Tu  W Th  F  S ";
-char *j_day_headings = "  S   M  Tu   W  Th   F   S ";
+char day_headings[]   = " S  M Tu  W Th  F  S ";
+char j_day_headings[] = "  S   M  Tu   W  Th   F   S ";
+const char *full_month[12];
 
 /* leap year -- account for gregorian reformation in 1752 */
 #define	leap_year(yr) \
 	((yr) <= 1752 ? !((yr) % 4) : \
-	!((yr) % 4) && ((yr) % 100) || !((yr) % 400))
+	(!((yr) % 4) && ((yr) % 100)) || !((yr) % 400))
 
 /* number of centuries since 1700, not inclusive */
 #define	centuries_since_1700(yr) \
@@ -116,7 +122,7 @@ char *j_day_headings = "  S   M  Tu   W  Th   F   S ";
 int julian;
 
 void	ascii_day __P((char *, int));
-void	center __P((char *, int, int));
+void	center __P((const char *, int, int));
 void	day_array __P((int, int, int *));
 int	day_in_week __P((int, int, int));
 int	day_in_year __P((int, int, int));
@@ -201,17 +207,27 @@ void headers_init(void)
   int i;
 
   strcpy(day_headings,"");
-  for(i = 0 ; i < 7 ; i++ )
-    {
-      strncat(day_headings,_time_info->abbrev_wkday[i],2);
-      strcat(day_headings," ");
-    }
   strcpy(j_day_headings,"");
-  for(i = 0 ; i < 7 ; i++ )
-    {
-      strcat(j_day_headings,_time_info->abbrev_wkday[i]);
-      strcat(j_day_headings," ");
-    } 
+  
+  for(i = 0 ; i < 7 ; i++ ) {
+#if defined(__linux__) && _LINUX_C_LIB_VERSION_MAJOR > 4
+     strncat(day_headings,nl_langinfo(ABDAY_1+i),2);
+     strcat(j_day_headings,nl_langinfo(ABDAY_1+i));
+#else
+     strncat(day_headings,_time_info->abbrev_wkday[i],2);
+     strcat(j_day_headings,_time_info->abbrev_wkday[i]);
+#endif
+     strcat(day_headings," ");
+     strcat(j_day_headings," ");
+  }
+  
+  for (i = 0; i < 12; i++) {
+#if defined(__linux__) && _LINUX_C_LIB_VERSION_MAJOR > 4
+     full_month[i] = nl_langinfo(MON_1+i);
+#else
+     full_month[i] = _time_info->full_month[i];
+#endif
+  }
 }
 
 void
@@ -222,7 +238,7 @@ monthly(month, year)
 	char *p, lineout[30];
 
 	day_array(month, year, days);
-	len = sprintf(lineout, "%s %d", _time_info->full_month[month - 1], year);
+	len = sprintf(lineout, "%s %d", full_month[month - 1], year);
 	(void)printf("%*s%s\n%s\n",
 	    ((julian ? J_WEEK_LEN : WEEK_LEN) - len) / 2, "",
 	    lineout, julian ? j_day_headings : day_headings);
@@ -252,8 +268,8 @@ j_yearly(year)
 	(void)memset(lineout, ' ', sizeof(lineout) - 1);
 	lineout[sizeof(lineout) - 1] = '\0';
 	for (month = 0; month < 12; month += 2) {
-		center(_time_info->full_month[month], J_WEEK_LEN, J_HEAD_SEP);
-		center(_time_info->full_month[month + 1], J_WEEK_LEN, 0);
+		center(full_month[month], J_WEEK_LEN, J_HEAD_SEP);
+		center(full_month[month + 1], J_WEEK_LEN, 0);
 		(void)printf("\n%s%*s%s\n", j_day_headings, J_HEAD_SEP, "",
 		    j_day_headings);
 		for (row = 0; row < 6; row++) {
@@ -287,9 +303,9 @@ yearly(year)
 	(void)memset(lineout, ' ', sizeof(lineout) - 1);
 	lineout[sizeof(lineout) - 1] = '\0';
 	for (month = 0; month < 12; month += 3) {
-		center(_time_info->full_month[month], WEEK_LEN, HEAD_SEP);
-		center(_time_info->full_month[month + 1], WEEK_LEN, HEAD_SEP);
-		center(_time_info->full_month[month + 2], WEEK_LEN, 0);
+		center(full_month[month], WEEK_LEN, HEAD_SEP);
+		center(full_month[month + 1], WEEK_LEN, HEAD_SEP);
+		center(full_month[month + 2], WEEK_LEN, 0);
 		(void)printf("\n%s%*s%s%*s%s\n", day_headings, HEAD_SEP,
 		    "", day_headings, HEAD_SEP, "", day_headings);
 		for (row = 0; row < 6; row++) {
@@ -392,7 +408,7 @@ ascii_day(p, day)
 		return;
 	}
 	if (julian) {
-		if (val = day / 100) {
+		if ((val = day / 100)) {
 			day %= 100;
 			*p++ = val + '0';
 			display = 1;
@@ -430,7 +446,7 @@ trim_trailing_spaces(s)
 
 void
 center(str, len, separate)
-	char *str;
+	const char *str;
 	int len;
 	int separate;
 {

@@ -31,6 +31,25 @@
  * Modified, Wed Jun 22 21:05:30 1994, faith@cs.unc.edu:
  *    Added/changed a few partition type names to conform to cfdisk.
  *    (suggested by Sujal, smpatel@wam.umd.edu)
+ * Modified 3/5/95 leisner@sdsp.mc.xerox.com -- on -l only open
+ *    devices RDONLY (instead of RDWR).  This allows you to
+ *    have the disks as rw-r----- with group disk (and if you
+ *    want is safe to setguid fdisk to disk).
+ * Modified Sat Mar 11 10:02 1995 with more partition types, faith@cs.unc.edu
+ * Modified, Thu May  4 01:11:45 1995, esr@snark.thyrsus.com:
+ *	It's user-interface cleanup time.
+ *	Actual error messages for out-of-bounds values (what a concept!).
+ *	Enable read-only access to partition table for learners.
+ *	Smart defaults for most numeric prompts.
+ * Fixed a bug preventing a partition from crossing cylinder 8064, aeb, 950801.
+ * Read partition table twice to avoid kernel bug
+ *     (from Daniel Quinlan <quinlan@yggdrasil.com>), Tue Sep 26 10:25:28 1995
+ * Modified, Sat Jul  1 23:43:16 MET DST 1995, fasten@cs.bonn.edu:
+ *      editor for NetBSD/i386 (and Linux/Alpha?) disklabels.
+ * Tue Sep 26 17:07:54 1995: More patches from aeb.  Fix segfaults, all >4GB.
+ *   Don't destroy random data if extd partition starts past 4GB, aeb, 950818.
+ *   Don't segfault on bad partition created by previous fdisk.
+ *
  */
 
 
@@ -49,15 +68,7 @@
 #include <linux/hdreg.h>
 #include <linux/fs.h>
 
-#if defined(__GNUC__) || defined(HAS_LONG_LONG)
-typedef long long ext2_loff_t;
-#else
-typedef long      ext2_loff_t;
-#endif
-
-extern ext2_loff_t ext2_llseek(unsigned int fd,
-			       ext2_loff_t offset,
-			       unsigned int origin);
+#include "fdisk.h"
 
 #define hex_val(c)	({ \
 				char _c = (c); \
@@ -66,13 +77,12 @@ extern ext2_loff_t ext2_llseek(unsigned int fd,
 			})
 
 
-#define VERSION	"2.0a (>2GB)"
+#define VERSION	"2.1 (>4GB)"
 
 #define DEFAULT_DEVICE	"/dev/hda"
 #define ALTERNATE_DEVICE "/dev/sda"
 #define LINE_LENGTH	80
 #define MAXIMUM_PARTS	60
-#define SECTOR_SIZE	512
 #define PART_TABLE_FLAG	0xaa55
 #define table_check(b)	((unsigned short *)((b) + 0x1fe))
 #define offset(b, n)	((struct partition *)((b) + 0x1be + \
@@ -91,7 +101,6 @@ extern ext2_loff_t ext2_llseek(unsigned int fd,
 				s |= (sector >> 2) & 0xc0;	\
 			}
 
-#define cround(n)	(((n) + display_factor * unit_flag) / display_factor)
 #define ACTIVE_FLAG	0x80
 #define EXTENDED	5
 
@@ -99,8 +108,8 @@ extern ext2_loff_t ext2_llseek(unsigned int fd,
 #define LINUX_SWAP	0x82
 #define LINUX_NATIVE	0x83
 
-enum failure {usage, unable_to_open, unable_to_read, unable_to_seek,
-	unable_to_write, out_of_memory};
+/* normally O_RDWR, -l option gives O_RDONLY */
+static int type_open = O_RDWR;
 
 char	*disk_device = DEFAULT_DEVICE,	/* hda, unless specified */
 	*line_ptr,			/* interactive input */
@@ -113,7 +122,6 @@ char	*disk_device = DEFAULT_DEVICE,	/* hda, unless specified */
 int	fd,				/* the disk */
 	ext_index,			/* the prime extended partition */
 	listing = 0,			/* no aborts for fdisk -l */
-	size_flag = 0,
 	dos_compatible_flag = ~0,
 	partitions = 4;			/* maximum partition + 1 */
 
@@ -133,11 +141,8 @@ struct	partition *part_table[MAXIMUM_PARTS]	/* partitions */
 	*ext_pointers[MAXIMUM_PARTS]		/* link pointers */
 		= {NULL, NULL, NULL, NULL};
 
-struct systypes {
-	unsigned char index;
-	char *name;
-	} sys_types[] = {
-		{0, "Empty"},
+struct systypes sys_types[] = { /* struct systypes in fdisk.h *//* bf */
+                {0, "Empty"},
 		{1, "DOS 12-bit FAT"},
 		{2, "XENIX root"},
 		{3, "XENIX usr"},
@@ -152,7 +157,8 @@ struct systypes {
 		{0x51, "Novell?"},
 		{0x52, "Microport"},		/* or CPM? */
 		{0x63, "GNU HURD"},		/* or System V/386? */
-		{0x64, "Novell"},
+		{0x64, "Novell Netware 286"},
+		{0x65, "Novell Netware 386"},
 		{0x75, "PC/IX"},
 		{0x80, "Old MINIX"},		/* Minix 1.4a and earlier */
 
@@ -172,6 +178,8 @@ struct systypes {
 		{0xf2, "DOS secondary"},
 		{0xff, "BBT"}			/* (bad track table) */
 	};
+
+int nsys_types = sizeof (sys_types) / sizeof (struct systypes); /* bf */
 
 jmp_buf listingbuf;
 
@@ -216,6 +224,7 @@ void menu(void)
 {
 	puts("Command action\n"
 		"   a   toggle a bootable flag\n"
+                "   b   edit bsd disklabel\n" /* bf */
 		"   c   toggle the dos compatiblity flag\n"
 		"   d   delete a partition\n"
 		"   l   list known partition types\n"
@@ -244,6 +253,7 @@ void xmenu(void)
 		"   q   quit without saving changes\n"
 		"   r   return to main menu\n"
 		"   s   change number of sectors\n"
+		"   v   verify the partition table\n"
 		"   w   write table to disk and exit"
 	);
 }
@@ -265,10 +275,12 @@ char *partition_type(unsigned char type)
 	return NULL;
 }
 
-void list_types(void)
+/* added parameters to list_types() so fdisklabel
+   can pass another list of types.
+*//* bf */
+void list_types(struct systypes *sys, int size)
 {
-	uint last[4], done = 0, next = 0,
-		size = sizeof(sys_types) / sizeof(struct systypes);
+	uint last[4], done = 0, next = 0;
 	int i;
 
 	for (i = 3; i >= 0; i--)
@@ -277,8 +289,8 @@ void list_types(void)
 
 	do {
 		printf("%c%2x  %-15.15s", i ? ' ' : '\n',
-			sys_types[next].index, sys_types[next].name);
-		next = last[i++] + done;
+		        sys[next].index, sys[next].name);
+ 		next = last[i++] + done;
 		if (i > 3 || next >= last[i]) {
 			i = 0;
 			next = ++done;
@@ -399,7 +411,7 @@ void read_extended(struct partition *p)
 		offsets[partitions] = extended_offset + p->start_sect;
 		if (!extended_offset)
 			extended_offset = p->start_sect;
-		if (ext2_llseek(fd, offsets[partitions]
+		if (ext2_llseek(fd, (ext2_loff_t)offsets[partitions]
 			       * SECTOR_SIZE, SEEK_SET) < 0)
 			fatal(unable_to_seek);
 		if (!(buffers[partitions] = (char *) malloc(SECTOR_SIZE)))
@@ -443,11 +455,20 @@ void get_boot(void)
 	struct hd_geometry geometry;
 
 	partitions = 4;
-	if ((fd = open(disk_device, O_RDWR)) < 0)
+	if ((fd = open(disk_device, type_open)) < 0)
+	{
+	    if ((fd = open(disk_device, O_RDONLY)) < 0)
 		fatal(unable_to_open);
+	    else
+		printf("You will not be able to write the partition table.\n");
+	}
 	if (SECTOR_SIZE != read(fd, buffer, SECTOR_SIZE))
 		fatal(unable_to_read);
+#ifdef HDIO_REQ
 	if (!ioctl(fd, HDIO_REQ, &geometry)) {
+#else
+	if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
+#endif
 		heads = geometry.heads;
 		sectors = geometry.sectors;
 		cylinders = geometry.cylinders;
@@ -492,19 +513,61 @@ char read_char(char *mesg)
 	return *line_ptr;
 }
 
-uint read_int(uint low, uint high, char *mesg)
+/* new function *//* bf */
+int read_hex(struct systypes *sys, int size)
 {
-	uint i;
+        int hex;
+
+        while (1)
+        {
+           read_char("Hex code (type L to list codes): ");
+           if (tolower(*line_ptr) == 'l')
+               list_types(sys, size);
+	   else if (isxdigit (*line_ptr))
+	   {
+	      hex = 0;
+	      do
+		 hex = hex << 4 | hex_val(*line_ptr++);
+	      while (isxdigit(*line_ptr));
+	      return hex;
+	   }
+        }
+}
+
+
+uint read_int(uint low, uint dflt, uint high, enum offset base, char *mesg)
+{
+	uint i, use_default = 1;
 	char ms[70];
-	sprintf(ms, "%s (%d-%d): ", mesg, low, high);
+
+	switch(base) {
+	case lower:
+	    sprintf(ms, "%s ([%d]-%d): ", mesg, low, high);
+	    break;
+	case upper:
+	    sprintf(ms, "%s (%d-[%d]): ", mesg, low, high);
+	    break;
+	case deflt:
+	    sprintf(ms, "%s (%d-[%d]-%d): ", mesg, low, dflt, high);
+	    break;
+	default:
+	    sprintf(ms, "%s (%d-%d): ", mesg, low, high);
+	    break;
+	}
 
 	while (1) {
-		while (!isdigit(read_char(ms)) &&
-			(!size_flag || *line_ptr != '+'));
-		if (*line_ptr == '+') {
-			i = atoi(++line_ptr);
-			while (isdigit(*line_ptr))
-				line_ptr++;
+		while (!isdigit(read_char(ms))
+				&& (*line_ptr != '-' && *line_ptr != '+'))
+			continue;
+		if (*line_ptr == '+' || *line_ptr == '-') {
+			if (*line_ptr == '+')
+			    ++line_ptr;
+			i = atoi(line_ptr);
+ 			while (isdigit(*line_ptr))
+			{
+ 				line_ptr++;
+				use_default = 0;
+			}
 			switch (*line_ptr) {
 				case 'c':
 				case 'C': if (!unit_flag)
@@ -520,19 +583,38 @@ uint read_int(uint low, uint high, char *mesg)
 					break;
 				default: break;
 			}
-			i += low;
+			switch(base) {
+			case lower: i += low; break;
+			case upper: i += high; break;
+			case deflt: i += dflt; break;
+			}
 		}
-		else i = atoi(line_ptr);
+		else
+		{
+			i = atoi(line_ptr);
+			while (isdigit(*line_ptr))
+			{
+				line_ptr++;
+				use_default = 0;
+			}
+		}
+		if (use_default)
+		    printf("Using default value %d\n", i = dflt);
 		if (i >= low && i <= high)
 			break;
+		else
+			printf("Value out of range.\n");
 	}
-	size_flag = 0;
 	return i;
 }
 
 int get_partition(int warn, int max)
 {
-	int i = read_int(1, max, "Partition number") - 1;
+	/*
+	 * try to pick a default least likely to do damage,
+	 * in case luser just types a newline
+	 */
+	int i = read_int(1, max, max, ignore, "Partition number") - 1;
 
 	if (warn && !part_table[i]->sys_ind)
 		fprintf(stderr, "Warning: partition %d has empty type\n",
@@ -547,7 +629,7 @@ char *const str_units(void)
 
 void change_units(void)
 {
-	if (unit_flag = !unit_flag)
+	if ((unit_flag = !unit_flag))
 		display_factor = 1;
 	else display_factor = heads * sectors;
 	update_units();
@@ -622,7 +704,8 @@ void delete_partition(int i)
 			changed[i - 1] = 1;
 		}
 		else {
-			part_table[5]->start_sect +=
+                   if(part_table[5]) /* prevent SEGFAULT */
+		        part_table[5]->start_sect +=
 				offsets[5] - extended_offset;
 			offsets[5] = extended_offset;
 			changed[5] = 1;
@@ -655,6 +738,7 @@ void change_sysid(void)
 	else if (!sys)
 		printf("Partition %d does not exist yet!\n", i + 1);
 	else while (1) {
+#if 0
 		read_char("Hex code (type L to list codes): ");
 		if (tolower(*line_ptr) == 'l')
 			list_types();
@@ -663,6 +747,12 @@ void change_sysid(void)
 			do
 				sys = sys << 4 | hex_val(*line_ptr++);
 			while (isxdigit(*line_ptr));
+#endif
+			/* The above code has been moved to read_hex ()
+			   to avoid having the same code in fdisklabel.
+			 *//* bf */
+                        sys = read_hex (sys_types, nsys_types); /* bf */
+
 			if (!sys) {
 				delete_partition(i);
 				break;
@@ -683,7 +773,9 @@ void change_sysid(void)
 				changed[i] = 1;
 				break;
 			}
+#if 0 /* see above *//* bf */
 		}
+#endif
 	}
 }
 
@@ -744,6 +836,7 @@ static void check_consistency(struct partition *p, int partition)
 		printf("logical=(%d, %d, %d)\n",lec, leh, les);
 	}
 
+#if 0
 /* Beginning on cylinder boundary? */
 	if (pbh != !pbc || pbs != 1) {
 		printf("Partition %i does not start on cylinder "
@@ -751,6 +844,7 @@ static void check_consistency(struct partition *p, int partition)
 		printf("     phys=(%d, %d, %d) ", pbc, pbh, pbs);
 		printf("should be (%d, %d, 1)\n", pbc, !pbc);
 	}
+#endif
 
 /* Ending on cylinder boundary? */
 	if (peh != (heads - 1) || pes != sectors) {
@@ -773,22 +867,22 @@ void list_table(void)
 		cylinders, str_units(), display_factor);
 	if (w < 5)
 		w = 5;
-	printf("%*s Boot  Begin   Start     End  Blocks   Id  System\n",
+        printf("%*s Boot   Begin    Start      End   Blocks   Id  System\n",
 		w + 1, "Device");
 	for (i = 0 ; i < partitions; i++)
 		if ((p = part_table[i])->sys_ind) {
-			printf("%*s%-2d  %c%8d%8d%8d%8d%c  %2x  %s\n", w,
-			disk_device, i + 1,
-			!p->boot_ind ? ' ' : p->boot_ind == ACTIVE_FLAG
+                        printf("%*s%-2d  %c%9d%9d%9d%9d%c  %2x  %s\n", w,
+/* device */		disk_device, i + 1,
+/* boot flag */		!p->boot_ind ? ' ' : p->boot_ind == ACTIVE_FLAG
 			? '*' : '?',
-			cround(rounded( calculate(p->head, p->sector, p->cyl),
+/* begin */		cround(rounded( calculate(p->head, p->sector, p->cyl),
 				p->start_sect + offsets[i])),
-			cround(p->start_sect + offsets[i]),
-			cround(p->start_sect + offsets[i] + p->nr_sects
+/* start */		cround(p->start_sect + offsets[i]),
+/* end */		cround(p->start_sect + offsets[i] + p->nr_sects
 				- (p->nr_sects ? 1: 0)),
-			p->nr_sects / 2, p->nr_sects & 1 ? '+' : ' ',
-			p->sys_ind,
-			(type = partition_type(p->sys_ind)) ?
+/* odd flag on end */	p->nr_sects / 2, p->nr_sects & 1 ? '+' : ' ',
+/* type id */		p->sys_ind,
+/* type name */		(type = partition_type(p->sys_ind)) ?
 			type : "Unknown");
 			check_consistency(p, i);
 		}
@@ -824,7 +918,9 @@ void x_list_table(int extend)
 void check_bounds(uint *first, uint *last)
 {
 	int i;
-	uint max = 256 * 63 * 1024;
+	uint max = 0xffffffff;          /* used to be 256 * 63 * 1024
+					   but that made it impossible to add a
+					   partition crossing cylinder 8064 */
 	struct partition *p = part_table[0];
 
 	for (i = 0; i < partitions; p = part_table[++i])
@@ -863,7 +959,7 @@ void check(int n, uint h, uint s, uint c, uint start)
 	if (real_c >= cylinders)
 		fprintf(stderr, "Partitions %d: cylinder %d greater than "
 			"maximum %d\n", n, real_c + 1, cylinders);
-	if (start != total)
+	if (cylinders <= 1024 && start != total)
 		fprintf(stderr,
 			"Partition %d: previous sectors %d disagrees with "
 			"total %d\n", n, start, total);
@@ -980,9 +1076,9 @@ void add_partition(int n, int sys)
 		}
 		if (!read && start == temp) {
 			uint i;
-			temp = 0;
-			start = read_int(cround(i = (stop = start) + (n > 4)),
-				cround(limit), mesg);
+			i = (stop = start) + (n > 4);
+			start = read_int(cround(i), cround(i), cround(limit),
+					 ignore, mesg);
 			if (unit_flag) {
 				start = (start - 1) * display_factor;
 				if (start < i) start = i;
@@ -1012,8 +1108,8 @@ void add_partition(int n, int sys)
 	else {
 		sprintf(mesg, "Last %s or +size or +sizeM or +sizeK",
 			str_units());
-		size_flag = 1;
-		stop = read_int(cround(start), cround(limit), mesg);
+		stop = read_int(cround(start), cround(limit), cround(limit),
+				lower, mesg);
 		if (unit_flag) {
 			stop = stop * display_factor - 1;
 			if (stop >limit)
@@ -1099,6 +1195,10 @@ void new_partition(void)
 					EXTENDED);
 				return;
 			}
+			else
+				printf("Invalid partition number "
+				       "for type `%c'\n", c);
+		
 	}
 }
 
@@ -1110,7 +1210,7 @@ void write_table(void)
 	for (i = 3; i < partitions; i++)
 		if (changed[i]) {
 			*table_check(buffers[i]) = PART_TABLE_FLAG;
-			if (ext2_llseek(fd, offsets[i]
+			if (ext2_llseek(fd, (ext2_loff_t)offsets[i]
 				       * SECTOR_SIZE, SEEK_SET) < 0)
 				fatal(unable_to_seek);
 			if (write(fd, buffers[i], SECTOR_SIZE) != SECTOR_SIZE)
@@ -1123,15 +1223,25 @@ void write_table(void)
 	       "(Reboot to ensure the partition table has been updated.)\n");
 	sync();
 	sleep(2);
-	if (i = ioctl(fd, BLKRRPART))
-		error = errno;
+	if (i = ioctl(fd, BLKRRPART)) {
+                error = errno;
+        } else {
+                /* some kernel versions (1.2.x) seem to have trouble
+                   rereading the partition table, but if asked to do it
+		   twice, the second time works. - biro@yggdrasil.com */
+                sync();
+                sleep(2);
+                if(i = ioctl(fd, BLKRRPART))
+                        error = errno;
+        }
+
 	close(fd);
 
 	printf("Syncing disks.\n");
 	sync();
 	sleep(4);		/* for sync() */
 
-	if (i)
+	if (i < 0)
 		printf("Re-read table failed with error %d: %s.\nReboot your "
 			"system to ensure the partition table is updated.\n",
 			error, strerror(error));
@@ -1185,8 +1295,9 @@ void move_begin(int i)
 	}
 	first = rounded(calculate(p->head, p->sector, p->cyl), p->start_sect +
 		offsets[i]);
-	new = read_int(first, p->start_sect + p->nr_sects + offsets[i] - 1,
-		"New beginning of data") - offsets[i];
+	new = read_int(first, first, 
+		       p->start_sect + p->nr_sects + offsets[i] - 1,
+		       lower, "New beginning of data") - offsets[i];
 
 	if (new != p->nr_sects) {
 		first = p->nr_sects + p->start_sect - new;
@@ -1203,15 +1314,16 @@ void xselect(void)
 		switch (tolower(read_char("Expert command (m for help): "))) {
 			case 'b': move_begin(get_partition(0, partitions));
 				break;
-			case 'c': cylinders = read_int(1, 65535,
-					"Number of cylinders");
-				warn_cylinders();
+			case 'c': cylinders = read_int(1, cylinders, 65535,
+					deflt, "Number of cylinders");
+ 				warn_cylinders();
 				break;
 			case 'd': print_raw();
 				break;
 			case 'e': x_list_table(1);
 				break;
-			case 'h': heads = read_int(1, 256, "Number of heads");
+			case 'h': heads = read_int(1, heads, 256, deflt,
+						   "Number of heads");
 				update_units();
 				break;
 			case 'p': x_list_table(0);
@@ -1219,7 +1331,7 @@ void xselect(void)
 			case 'q': close(fd);
 				exit(0);
 			case 'r': return;
-			case 's': sectors = read_int(1, 63,
+			case 's': sectors = read_int(1, sectors, 63, deflt,
 					"Number of sectors");
 				if (dos_compatible_flag) {
 					sector_offset = sectors;
@@ -1228,6 +1340,8 @@ void xselect(void)
 						"compatiblity\n");
 				}
 				update_units();
+				break;
+			case 'v': verify();
 				break;
 			case 'w': write_table();
 			default: xmenu();
@@ -1239,13 +1353,21 @@ void try(char *device)
 {
 	disk_device = device;
 	if (!setjmp(listingbuf))
-		if ((fd = open(disk_device, O_RDWR)) >= 0) {
+		if ((fd = open(disk_device, type_open)) >= 0) {
 			close(fd);
 			get_boot();
 			list_table();
 			if (partitions > 4)
 				delete_partition(ext_index);
-		}
+              } else {
+				/* Ignore other errors, since we try IDE
+				   and SCSI hard disks which may not be
+				   installed on the system. */
+		 if(errno == EACCES) {
+		    fprintf(stderr, "Cannot open %s\n", device);
+		    exit(1);
+		 }
+	      }
 }
 
 void main(int argc, char **argv)
@@ -1259,6 +1381,7 @@ void main(int argc, char **argv)
 				exit(0);
 			case 'l':
 				listing = 1;
+				type_open = O_RDONLY;
 				try("/dev/hda");
 				try("/dev/hdb");
 				try("/dev/hdc");
@@ -1301,22 +1424,29 @@ void main(int argc, char **argv)
 		disk_device = ALTERNATE_DEVICE;
 	else close(fd);
 
-	get_boot();
 	if (argc == 1)
 		printf("Using %s as default device!\n", disk_device);
+	get_boot();
 
 	while (1) {
 		putchar('\n');
 		switch (tolower(read_char("Command (m for help): "))) {
 			case 'a': toggle_active(get_partition(1, partitions));
 				break;
+/* There should be a define which allows to turn off disklabel support so as
+   not to make fdisk larger than necessary on installation boot disks.
+*/
+#if 1 /* #ifndef NO_DISKLABEL_SUPPORT */
+                        case 'b': bselect(); /* bf */
+                                break;
+#endif
 			case 'c':
 				toggle_dos();
 				break;
 			case 'd': delete_partition(
 					get_partition(1, partitions));
 				break;
-			case 'l': list_types();
+                        case 'l': list_types(sys_types, nsys_types); /* bf */
 				break;
 			case 'n': new_partition();
 				break;

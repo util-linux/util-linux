@@ -15,6 +15,12 @@ argument.  This causes
 .B tput
 to attempt to clear the screen checking the data in
 .I /etc/termcap
+(for the GNU or BSD
+.BR tput )
+or in the terminfo database
+(for the
+.B ncurses
+.BR tput )
 and sending the appropriate sequence to the terminal.  This command can be
 redirected to clear the screen of some other terminal.
 .SH "SEE ALSO"

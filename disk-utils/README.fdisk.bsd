@@ -1,0 +1,28 @@
+
+All changes in fdisk.c are marked with this comment: /* bf */
+
+I added some explanatory comments to make it easier to see what
+changed and why. You'll probably want to remove them.
+
+There's a function sync_disks() in fdisklabel.c which could be called
+from write_table() in fdisk.c (line 1216) (and be moved to fdisk.c)
+to save a few bytes.
+
+There's a function edit_int() in fdisklabel.c which I added because read_int()
+had no default value. In fdisk v2.0d it has so edit_int could be replaces by
+read_int(). The function which uses edit_int() (bsd_edit_disklabel ()) is a
+bit crufty anyhow:
+- The disklabel contains some values which are probably meaningless for IDE or
+  SCSI drives, I made them editable but I don't know any sensible range of
+  values (bad for read_int()). (interleave, trackskew, cylskew)
+- I made the values secsize/nsectors/ntracks/ncylinders editable for Linux/Alpha
+  but not for Linux/i386 because under Linux/i386 the disklabel is inside a
+  DOS partition so the disklabel was written by an OS which got along with the
+  disk and should have left the correct values there.
+
+I've put the BSD copyright (which applies to fdisklabel.h and
+alpha_bootblock_checksum, bsd_dkcksum, bsd_print_disklabel in fdisklabel.c)
+into a separate man page. This way all Linux versions of BSD programs can refer
+to ths bsd.<n> man page.
+
+fasten@informatik.uni-bonn.de

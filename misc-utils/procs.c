@@ -6,9 +6,9 @@
  *   modify it under the terms of the gnu general public license.
  *   there is no warranty.
  *
- *   faith
- *   1.2
- *   1995/02/23 01:20:40
+ *   $Author: faith $
+ *   $Revision: 1.2 $
+ *   $Date: 1995/03/12 02:55:24 $
  *
  */
 

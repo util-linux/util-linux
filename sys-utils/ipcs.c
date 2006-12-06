@@ -13,6 +13,7 @@ entry. */
 #include <pwd.h>
 #include <grp.h>
 #define __KERNEL__
+#include <linux/linkage.h>
 #include <sys/sem.h>
 #include <sys/msg.h>
 #include <sys/shm.h>

@@ -1,4 +1,4 @@
-README.MAKEDEV,v 1.1.1.1 1995/02/22 19:09:12 faith Exp
+$Id: README.MAKEDEV,v 2.2 1995/06/04 16:32:02 faith Exp $
 
 Here is the original comment taken from the MAKEDEV script.  One day,
 I'll do this properly.
@@ -17,6 +17,8 @@ If you are aware of any glaring omissions or errors, please let me know.
 Also, if you are a developer who wants your devices supported by MAKEDEV,
 let me know.
 
-Thanks to Ian Jackson for the original help and encouragement.
+Thanks go to many people.  Ian Jackson for the original help and
+encouragement, to Matthias Urlichs for plugging "MAKEDEV update", and
+to the many others that have bought errors and omissions to my attention.
 
 	Nick Holloway <Nick.Holloway@alfie.demon.co.uk>  

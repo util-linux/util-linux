@@ -1,0 +1,24 @@
+.\" Original author: Miquel van Smoorenburg, miquels@drinkel.nl.mugnet.org
+.\" Updated by faith@cs.unc.edu, Fri Oct 29 23:22:16 1993
+.TH MESG 1 "29 October 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+mesg \- control write access to your terminal
+.SH SYNOPSIS
+.B mesg
+.RB [y|n]
+.br
+.SH DESCRIPTION
+.B Mesg
+controls the access to your terminal by others. It's typically used
+to allow/disallow others users to \fBwrite(1)\fP to your terminal.
+.SH FLAGS
+.IP y
+Allow write access to your terminal.
+.IP n
+Disallow write access to your terminal.
+.IP [none]
+Prints out the current access state of your terminal.
+.SH SEE ALSO
+.BR write (1), wall (1)
+.SH AUTHOR
+Miquel van Smoorenburg, miquels@drinkel.nl.mugnet.org

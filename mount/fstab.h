@@ -1,7 +1,7 @@
 /* The fsent(3) routines are obsoleted by mntent(3).  I use them for
    convenience.  Since the implementation uses mntent(3), be very
    careful with the static buffers returned.
-   /home/faith/cvs/util-linux/mount/fstab.h,v 1.1.1.1 1995/02/22 19:09:21 faith Exp */
+   $Header: /home/faith/cvs/util-linux/mount/fstab.h,v 1.2 1995/09/25 20:57:42 faith Exp $ */
 
 #ifndef _FSTAB_H
 #include <stdio.h>
@@ -14,6 +14,7 @@
 #define fstab mntent
 #define fs_type mnt_type
 #define fs_spec mnt_fsname
+#define fs_mntopts mnt_opts
 #define FSTAB_SW MNTTYPE_SWAP
 
 struct fstab *getfsent (void);

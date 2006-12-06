@@ -1,4 +1,4 @@
-README file for the admutils V1.14 for Linux.
+README file for the admutils V1.16 for Linux.
 
 See installation instructions at the bottom. Currently the latest versions
 of this software is maintained at ftp://ftp.daimi.aau.dk/pub/linux/poe/
@@ -6,6 +6,54 @@ of this software is maintained at ftp://ftp.daimi.aau.dk/pub/linux/poe/
 LICENSE:
 This software is distributed as is without any warranty what so ever.
 With respect to copyrights it is covered by the GNU Public License.
+
+Version 1.17 (7-Oct-95):
+	Added setrlimit() calls to passwd.c and chsh.c to fix security hole
+	caused by resource limitations. Inspired by Zefram 
+	<A.Main@dcs.warwick.ac.uk>. Also beefed up the ptmp locking in
+	chsh.c. 
+	Added swap_off() function to shutdown.c by baekgrd@ibm.net
+	(Anders Baekgaard).
+	Bugfix in shutdown.c that makes sure wtmp gets closed. By
+	Alexandre Julliard <julliard@sunsite.unc.edu>.
+	Fixed bug in passwd.c that made it impossible to change from having
+	no password into having one.
+
+Version 1.16 (18-Sep-95):
+	Added feature to passwd.c by Arpad Magossanyi (mag@tas.vein.hu),
+	so root can give a password for a user on the command line. This
+	might be useful in a shell script autogenerating passwords for
+	new users.
+
+	Added and updated manual pages for all commands by Rick Faith.
+
+Version 1.15d (21-Aug-95):
+	Fixed minor nit with salt generation in passwd.c
+	By Steven Reisman <sar@beehive.mn.org>.
+
+Version 1.15c (5-Jul-95):
+	passwd does not allow reuse of the old password when changing.
+	passwd returns 1 if the password is not changed. This was
+	suggested by Anibal Jodorcovsky <anibal@ee.mcgill.ca> who
+	also fixed my initial bug in this feature.
+
+	passwd uses O_EXCL for opening /etc/ptmp instead of access/fopen.
+	This was suggested by jorge@un1.satlink.com (Jorge).
+
+Version 1.15a (12-Jun-95):
+	Fix in last.c so it does not print wtmp entries marked DEAD_PROCESS.
+	By Andreas Schwab <schwab@issan.informatik.uni-dortmund.de>
+
+Version 1.15 (5-Jun-95):
+	Man-page fixes, fixes in pathnames.h to adhere to the FSSTND.
+	Fix by Rickard Faith <faith@cs.unc.edu> to passwd.c, so sanity
+	checks come before the second entry of the new password.
+	This is for Linux 1.2, GCC 2.6.2 or later.
+
+Version 1.14a (12-Mar-95):
+	Fixed passwd and chsh so a username that is a prefix of another
+	doesn't affect the other's password. After suggested patch
+	by Valtteri J. Karu <vatekaru@tuug.utu.fi>, but differently!
 
 Version 1.14 (12-Feb-95):
 	Added options -l, -y, -i to last.c. See last.man

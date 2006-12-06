@@ -144,7 +144,7 @@ int main(int argc, char *argv[])
 
 		    utmpname(_PATH_UTMP);
 		    setutent();
-		    while(ut = getutent()) {
+		    while((ut = getutent())) {
 			if(ut->ut_pid == pid) {
 			    time(&ut->ut_time);
 			    memset(&ut->ut_user, 0, UT_NAMESIZE);
@@ -265,7 +265,9 @@ void spawn(int i)
 	} else {
 		/* this is the child */
 		char term[40];
+#ifdef SET_TZ
 		char tz[CMDSIZ];
+#endif
 		char *env[3];
 		
 		setsid();
@@ -294,8 +296,10 @@ void read_inittab()
 	char buf[CMDSIZ];
 	int i,j,k;
 	char *ptr, *getty;
+#ifdef SPECIAL_CONSOLE_TERM
 	char tty[50];
 	struct stat stb;
+#endif
 	char *termenv, *getenv();
 	
 	termenv = getenv("TERM");	/* set by kernel */
@@ -332,7 +336,7 @@ void read_inittab()
 		(void) strtok(getty, " \t\n");
 		inittab[i].toks[0] = getty;
 		j = 1;
-		while(ptr = strtok((char *)0, " \t\n"))
+		while((ptr = strtok((char *)0, " \t\n")))
 			inittab[i].toks[j++] = ptr;
 		inittab[i].toks[j] = (char *)0;
 

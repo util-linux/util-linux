@@ -1,6 +1,6 @@
 # Makefile -- Makefile for util-linux Linux utilities
 # Created: Sat Dec 26 20:09:40 1992
-# Revised: Sun Feb 26 16:55:46 1995 by faith@cs.unc.edu
+# Revised: Sat Jun  3 14:11:08 1995 by r.faith@ieee.org
 # Copyright 1992, 1993, 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
 #
 
@@ -36,9 +36,6 @@ NEEDS_TERMCAP=  more ul
 
 all: $(BIN) $(USRBIN)
 
-%.o: %.c
-	$(CC) -c $(CFLAGS) $< -o $@
-
 $(NEEDS_TERMCAP):
 	$(CC) $(LDFLAGS) $^ -o $@ -ltermcap
 
@@ -66,11 +63,11 @@ strings: strings.o $(BSD)/getopt.o
 ul: ul.o
 
 install install.shadow install.text-utils: all
-	install -d -m 755 /bin /usr/bin /usr/lib /usr/man/man1
-	install -m 755 $(BIN) /bin
-	install -m 755 $(USRBIN) /usr/bin
-	install -m 644 $(USRLIB) /usr/lib
-	install -m 644 $(MAN1) /usr/man/man1
+	$(INSTALLDIR) $(BINDIR) $(USRBINDIR) $(USRLIBDIR) $(MAN1DIR)
+	$(INSTALLBIN) $(BIN) $(BINDIR)
+	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
+	$(INSTALLDAT) $(USRLIB) $(USRLIBDIR)
+	$(INSTALLMAN) $(MAN1) $(MAN1DIR)
 
 .PHONY: clean distclean
 clean:

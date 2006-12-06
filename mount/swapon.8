@@ -35,18 +35,23 @@
 .\" Sat Mar  6 20:46:02 1993: Modified by faith@cs.unc.edu
 .\" Sat Oct  9 09:35:30 1993: Converted to man format by faith@cs.unc.edu
 .\" Sat Nov 27 20:22:42 1993: Updated authorship information, faith@cs.unc.edu
+.\" Mon Sep 25 14:12:38 1995: Added -v and -p information
 .\"
-.TH SWAPON 8 "27 November 1993" "Linux 0.99" "Linux Programmer's Manual"
+.TH SWAPON 8 "25 September 1995" "Linux 1.x" "Linux Programmer's Manual"
 .SH NAME
 swapon, swapoff \- enable/disable devices and files for paging and swapping
 .SH SYNOPSIS
-.B /etc/swapon \-a
+.B /sbin/swapon [\-h \-V]
 .br
-.BI /etc/swapon " specialfile " ...
+.B /sbin/swapon \-a [\-v]
 .br
-.B /etc/swapoff \-a
+.BI "/sbin/swapon [\-v] [\-p " "priority" "] " " specialfile " ...
 .br
-.BI /etc/swapoff " specialfile " ...
+.B /sbin/swapoff [\-h \-V]
+.br
+.B /sbin/swapoff \-a
+.br
+.BI /sbin/swapoff " specialfile " ...
 .SH DESCRIPTION
 .B Swapon
 is used to specify devices on which paging and swapping are to take place.
@@ -59,10 +64,23 @@ is interleaved across several devices and files.
 
 Normally, the first form is used:
 .TP
+.B \-h
+Provide help
+.TP
+.B \-V
+Display version
+.TP
 .B \-a
 All devices marked as ``sw'' swap devices in
 .I /etc/fstab
 are made available.
+.TP
+.BI \-p " priority"
+Specify priority for
+.BR swapon .
+This option is only available if
+.B swapon
+was compiled under and is used under a 1.3.2 or later kernel.
 .PP
 .B Swapoff
 disables swapping on the specified devices and files, or on all swap
@@ -75,10 +93,10 @@ flag is given.
 .BR swapon "(2), " swapoff "(2), " fstab "(5), " init "(8), " mkswap (8),
 .BR rc "(8), " mount (8)
 .SH FILES
-.I /dev/hd[ab]?
+.I /dev/hd??
 standard paging devices
 .br
-.I /dev/sd[ab]?
+.I /dev/sd??
 standard (SCSI) paging devices
 .br
 .I /etc/fstab

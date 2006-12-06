@@ -1,5 +1,5 @@
 #ifdef lint
-   static char RCSid[] = "dsplit.c,v 1.1.1.1 1995/02/22 19:09:14";
+   static char RCSid[] = "$RCSfile: dsplit.c,v $ $Revision: 1.9 $ $Date: 1995/03/12 01:31:03 $";
 #endif
 /*
    Program dsplit:  Splits a large  file into pieces.

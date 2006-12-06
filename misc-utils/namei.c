@@ -42,7 +42,7 @@ chdir to /,  or if it encounters an unknown file type.
 -------------------------------------------------------------*/
 
 #ifndef lint
-static char *RCSid = "namei.c,v 1.1.1.1 1995/02/22 19:09:16 faith Exp";
+static char *RCSid = "$Id: namei.c,v 1.4 1995/03/12 01:35:45 faith Exp $";
 #endif
 
 #include <stdio.h>

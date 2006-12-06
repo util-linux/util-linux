@@ -1,6 +1,6 @@
 /*
- * Copyright (c) 1989 The Regents of the University of California.
- * All rights reserved.
+ * Copyright (c) 1989, 1993
+ *	The Regents of the University of California.  All rights reserved.
  *
  * This code is derived from software contributed to Berkeley by
  * Jef Poskanzer and Craig Leres of the Lawrence Berkeley Laboratory.
@@ -40,13 +40,13 @@
  */
 
 #ifndef lint
-char copyright[] =
-"@(#) Copyright (c) 1989 The Regents of the University of California.\n\
- All rights reserved.\n";
+static char copyright[] =
+"@(#) Copyright (c) 1989, 1993\n\
+	The Regents of the University of California.  All rights reserved.\n";
 #endif /* not lint */
 
 #ifndef lint
-static char sccsid[] = "@(#)write.c	4.22 (Berkeley) 6/1/90";
+static char sccsid[] = "@(#)write.c	8.1 (Berkeley) 6/6/93";
 #endif /* not lint */
 
 #include <sys/param.h>
@@ -61,6 +61,8 @@ static char sccsid[] = "@(#)write.c	4.22 (Berkeley) 6/1/90";
 #include <string.h>
 #ifdef __linux__
 #include <paths.h>
+#include "pathnames.h"
+#include <locale.h>
 #endif
 
 extern int errno;
@@ -75,6 +77,10 @@ main(argc, argv)
 	int msgsok, myttyfd;
 	char tty[MAXPATHLEN], *mytty, *ttyname();
 	void done();
+
+#ifdef __linux__
+	setlocale(LC_CTYPE,"");
+#endif
 
 	/* check that sender has write enabled */
 	if (isatty(fileno(stdin)))
@@ -329,7 +335,7 @@ wr_fputs(s)
 #define	PUTC(c)	if (putchar(c) == EOF) goto err;
 
 	for (; *s != '\0'; ++s) {
-		c = toascii(*s);
+		c = *s;
 		if (c == '\n') {
 			PUTC('\r');
 			PUTC('\n');

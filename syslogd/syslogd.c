@@ -38,7 +38,11 @@
  *    messages at a particular priority level, rather that all messages
  *    at or above a given priority level.
  *
- */
+ * Sat Jun 3 12:48:16 1995: Applied patches from
+ * Jochen.Hein@informatik.tu-clausthal.de to allow spaces *AND* tabs to
+ * separate the selector from the action. This means that no whitespace is
+ * allowed inside the selector.
+ * */
 
 #ifndef lint
 char copyright[] =
@@ -88,6 +92,8 @@ static char sccsid[] = "@(#)syslogd.c	5.45 (Berkeley) 3/2/91";
  * Rick <pclink@qus102.qld.npb.telecom.com.au>.  Anyone else
  * named Rick who wants to chip in?  :-)
  * More corrections by Neal Becker <neal@ctd.comsat.com> Sun Jan 16, 1994
+ * Patches from Jochen Hein (Jochen.Hein@informatik.tu-clausthal.de) to treat
+ *   spaces and tabs the same, applied Sat Mar 11 10:09:24 1995
  */
 
 #ifdef __linux__
@@ -145,7 +151,9 @@ char	*ConfFile = _PATH_LOGCONF;
 
 #ifdef __linux__
 #define CONFORM_TO_FSSTND
+#include "pathnames.h"
 #endif
+
 #ifdef CONFORM_TO_FSSTND
 char	*PidFile = "/var/run/syslog.pid";
 #else
@@ -451,7 +459,7 @@ main(argc, argv)
 				i = read(fd, line, MAXLINE);
 				if (i > 0) {
 					line[i] = '\0';
-					printline(LocalHostName, line);
+					printmulti(LocalHostName, line, i);
 				}
 				else if (i == 0) {
 					dprintf("stream closed (%d)\n", fd);
@@ -473,7 +481,7 @@ main(argc, argv)
 			    (struct sockaddr *) &fromunix, &len);
 			if (i > 0) {
 				line[i] = '\0';
-				printline(LocalHostName, line);
+				printmulti(LocalHostName, line,i);
 			} else if (i < 0 && errno != EINTR)
 				logerror("recvfrom unix");
 		}
@@ -489,7 +497,7 @@ main(argc, argv)
 				extern char *cvthname();
 
 				line[i] = '\0';
-				printline(cvthname(&frominet), line);
+				printmulti(cvthname(&frominet), line,i);
 			} else if (i < 0 && errno != EINTR)
 				logerror("recvfrom inet");
 		}
@@ -504,6 +512,27 @@ usage()
 	(void) fprintf(stderr,
 	    "usage: syslogd [-f conffile] [-m markinterval] [-p logpath]\n");
 	exit(1);
+}
+
+/*
+ * Break up null terminated lines for printline.
+ */
+
+printmulti(hname, msg, len)
+        char *hname;
+        char *msg;
+	int  len;
+{
+   int  i;
+   char *pt;
+
+   dprintf("strlen = %d, len = %d\n", strlen(msg), len );
+   for (pt = msg, i = 0; i < len; i++) {
+      if (msg[i] == '\0') {
+	 printline(hname,pt);
+	 pt = &msg[i+1];
+      }
+   }
 }
 
 /*
@@ -1167,19 +1196,19 @@ cfline(line, f)
 		f->f_pmask[i] = 0;
 
 	/* scan through the list of selectors */
-	for (p = line; *p && *p != '\t';) {
+	for (p = line; *p && *p != '\t' && *p != ' ';) {
 
 		/* find the end of this facility name list */
-		for (q = p; *q && *q != '\t' && *q++ != '.'; )
+		for (q = p; *q && *q != '\t' && *q != ' ' && *q++ != '.'; )
 			continue;
 
 		/* collect priority name */
-		for (bp = buf; *q && !index("\t,;", *q); )
+		for (bp = buf; *q && !index("\t,; ", *q); )
 			*bp++ = *q++;
 		*bp = '\0';
 
 		/* skip cruft */
-		while (index(", ;", *q))
+		while (index(",;", *q)) /* spaces no longer allowed! */
 			q++;
 
 		/* decode priority name */
@@ -1201,8 +1230,8 @@ cfline(line, f)
 		}
 
 		/* scan facilities */
-		while (*p && !index("\t.;", *p)) {
-			for (bp = buf; *p && !index("\t,;.", *p); )
+		while (*p && !index("\t.; ", *p)) {
+			for (bp = buf; *p && !index("\t,;. ", *p); )
 				*bp++ = *p++;
 			*bp = '\0';
 			if (*buf == '*')
@@ -1233,7 +1262,7 @@ cfline(line, f)
 	}
 
 	/* skip to action part */
-	while (*p == '\t')
+	while (*p == '\t' || *p == ' ')
 		p++;
 
 	switch (*p)

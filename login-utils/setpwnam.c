@@ -23,12 +23,12 @@
  *
  *  Thanks to "two guys named Ian".
  */
-/*   faith
- *   1.1.1.1
- *   1995/02/22 19:09:24
+/*   $Author: faith $
+ *   $Revision: 1.5 $
+ *   $Date: 1995/10/12 14:46:36 $
  */
 
-#define DEBUG 0
+#undef DEBUG
 
 /*  because I use getpwent(), putpwent(), etc... */
 #define _SVID_SOURCE
@@ -41,9 +41,14 @@
 #include <fcntl.h>
 #include <pwd.h>
 #include <errno.h>
+#include <signal.h>
+#include <sys/resource.h>
 #ifdef BSD43
 #include <sys/file.h>
 #endif
+#include <paths.h>
+
+#include "pathnames.h"
 
 extern int errno;
 
@@ -52,15 +57,18 @@ typedef int boolean;
 #define true 1
 
 #ifndef DEBUG
-#define PASSWD_FILE	"/etc/passwd"
-#define PTMP_FILE	"/etc/ptmp"
+#define PASSWD_FILE	_PATH_PASSWD
+#define PTMP_FILE	_PATH_PTMP
+#define PTMPTMP_FILE	_PATH_PTMPTMP
 #else
 #define PASSWD_FILE	"/tmp/passwd"
 #define PTMP_FILE	"/tmp/ptmp"
+#define PTMPTMP_FILE	"/tmp/ptmptmp"
 #endif
 
 static int copy_pwd (struct passwd *src, struct passwd *dest);
 static char *xstrdup (char *str);
+static void pw_init(void);
 
 /*
  *  setpwnam () --
@@ -70,14 +78,12 @@ static char *xstrdup (char *str);
  */
 int setpwnam (struct passwd *pwd)
 {
-    char *passwd = PASSWD_FILE;
-    char *ptmp = PTMP_FILE;
     FILE *fp;
-    int x, save_errno, fd;
+    int x, save_errno, fd, ret;
     struct passwd *entry;
     boolean found;
-    char buf[50];
     struct passwd spwd;
+    int oldumask;
 
     /*  getpwent() returns a pointer to a static buffer.
      *  "pwd" might have some from getpwent(), so we have to copy it to
@@ -86,16 +92,31 @@ int setpwnam (struct passwd *pwd)
     if (copy_pwd (pwd, &spwd) < 0)
 	return (-1);
 
+    oldumask = umask(0);   /* Create with exact permissions */
+    pw_init();
+
     /* sanity check */
     for (x = 0; x < 3; x++) {
         if (x > 0) sleep (1);
-	fd = open (ptmp, O_WRONLY|O_CREAT|O_EXCL, 00644);
-        if (fd >= 0) break;
+	fd = open (PTMPTMP_FILE, O_WRONLY|O_CREAT, 0644);
+	if(fd == -1) {
+	    perror(PTMPTMP_FILE);
+	    umask(oldumask);
+	    return (-1);
+	}
+	ret = link(PTMPTMP_FILE, PTMP_FILE);
+	unlink(PTMPTMP_FILE);
+	if(ret == -1)
+	    close(fd);
+	else
+	    break;
     }
-    if (fd < 0) return (-1);
+
+    umask(oldumask);
+    if (ret == -1) return (-1);
 
     /* ptmp should be owned by root.root or root.wheel */
-    if (chown (ptmp, (uid_t) 0, (gid_t) 0) < 0)
+    if (chown (PTMP_FILE, (uid_t) 0, (gid_t) 0) < 0)
 	perror ("chown");
 
     /* open ptmp for writing and passwd for reading */
@@ -122,25 +143,13 @@ int setpwnam (struct passwd *pwd)
 	goto fail;
     }
 
-    strcpy (buf, passwd);
-    strcat (buf, "~");
     /* we don't care if we can't remove the backup file */
-    remove (buf);
+    unlink (PASSWD_FILE".OLD");
     /* we don't care if we can't create the backup file */
-    link (passwd, buf);
-    /* we DO care if we can't erase the passwd file */
-    if (remove (passwd) < 0) {
-	/* if the file is still there, fail */
-	if (access (passwd, F_OK) == 0) goto fail;
-    }
-    /* if we can't link ptmp to passwd, all is lost */
-    if (link (ptmp, passwd) < 0) {
-	/* reinstall_system (); */
-	return (-1);
-    }
-    /* if we can't erase the ptmp file, we simply lose */
-    if (remove (ptmp) < 0)
-	return (-1);
+    link (PASSWD_FILE, PASSWD_FILE".OLD");
+    /* we DO care if we can't rename to the passwd file */
+    if (rename (PTMP_FILE, PASSWD_FILE) < 0)
+	goto fail;
     /* finally:  success */
     return 0;
 
@@ -149,7 +158,7 @@ int setpwnam (struct passwd *pwd)
     if (fp) fclose (fp);
     if (fd >= 0) close (fd);
     endpwent ();
-    remove (ptmp);
+    unlink (PTMP_FILE);
     errno = save_errno;
     return (-1);
 }
@@ -207,3 +216,34 @@ int putpwent (const struct passwd *p, FILE *stream)
 }
 
 #endif
+
+static void
+pw_init()
+{
+	struct rlimit rlim;
+
+	/* Unlimited resource limits. */
+	rlim.rlim_cur = rlim.rlim_max = RLIM_INFINITY;
+	(void)setrlimit(RLIMIT_CPU, &rlim);
+	(void)setrlimit(RLIMIT_FSIZE, &rlim);
+	(void)setrlimit(RLIMIT_STACK, &rlim);
+	(void)setrlimit(RLIMIT_DATA, &rlim);
+	(void)setrlimit(RLIMIT_RSS, &rlim);
+
+	/* Don't drop core (not really necessary, but GP's). */
+	rlim.rlim_cur = rlim.rlim_max = 0;
+	(void)setrlimit(RLIMIT_CORE, &rlim);
+
+	/* Turn off signals. */
+	(void)signal(SIGALRM, SIG_IGN);
+	(void)signal(SIGHUP, SIG_IGN);
+	(void)signal(SIGINT, SIG_IGN);
+	(void)signal(SIGPIPE, SIG_IGN);
+	(void)signal(SIGQUIT, SIG_IGN);
+	(void)signal(SIGTERM, SIG_IGN);
+	(void)signal(SIGTSTP, SIG_IGN);
+	(void)signal(SIGTTOU, SIG_IGN);
+
+	/* Create with exact permissions. */
+	(void)umask(0);
+}

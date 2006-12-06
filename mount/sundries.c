@@ -1,9 +1,12 @@
 /*
  * Support functions.  Exported functions are prototyped in sundries.h.
  * sundries.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
+ *
+ * added fcntl locking by Kjetil T. (kjetilho@math.uio.no) - aeb, 950927
  */
 
 #include "sundries.h"
+#include "mount.h"
 
 /* File pointer for /etc/mtab.  */
 FILE *F_mtab = NULL;
@@ -13,6 +16,9 @@ FILE *F_temp = NULL;
 
 /* File descriptor for lock.  Value tested in unlock_mtab() to remove race.  */
 static int lock = -1;
+
+/* Flag for already existing lock file. */
+static int old_lockfile = 1;
 
 /* String list constructor.  (car() and cdr() are defined in "sundries.h").  */
 string_list
@@ -75,6 +81,7 @@ error (const char *fmt, ...)
 {
   va_list args;
 
+  if (mount_quiet) return;
   va_start (args, fmt);
   vfprintf (stderr, fmt, args);
   fprintf (stderr, "\n");
@@ -103,6 +110,12 @@ handler (int sig)
   die (2, "%s", sys_siglist[sig]);
 }
 
+static void
+setlkw_timeout (int sig)
+{
+  /* nothing, fcntl will fail anyway */
+}
+
 /* Create the lock file.  The lock file will be removed if we catch a signal
    or when we exit.  The value of lock is tested to remove the race.  */
 void
@@ -110,20 +123,54 @@ lock_mtab (void)
 {
   int sig = 0;
   struct sigaction sa;
+  struct flock flock;
 
   /* If this is the first time, ensure that the lock will be removed.  */
   if (lock < 0)
     {
+      struct stat st;
       sa.sa_handler = handler;
       sa.sa_flags = 0;
       sigfillset (&sa.sa_mask);
   
       while (sigismember (&sa.sa_mask, ++sig) != -1)
-	sigaction (sig, &sa, (struct sigaction *) 0);
+	{
+	  if (sig == SIGALRM)
+	    sa.sa_handler = setlkw_timeout;
+	  else
+	    sa.sa_handler = handler;
+	  sigaction (sig, &sa, (struct sigaction *) 0);
+	}
 
-      if ((lock = open (MOUNTED_LOCK, O_WRONLY|O_CREAT|O_EXCL, 0)) < 0)
-	die (2, "can't create lock file %s: %s",
-	     MOUNTED_LOCK, strerror (errno));
+      /* This stat is performed so we know when not to be overly eager
+	 when cleaning up after signals. The window between stat and
+	 open is not significant. */
+      if (lstat (MOUNTED_LOCK, &st) < 0 && errno == ENOENT)
+	old_lockfile = 0;
+
+      lock = open (MOUNTED_LOCK, O_WRONLY|O_CREAT, 0);
+      if (lock < 0)
+        {
+          die (2, "can't create lock file %s: %s",
+	       MOUNTED_LOCK, strerror (errno));
+        }
+
+      flock.l_type = F_WRLCK;
+      flock.l_whence = SEEK_SET;
+      flock.l_start = 0;
+      flock.l_len = 0;
+
+      alarm(LOCK_BUSY);
+      if (fcntl (lock, F_SETLKW, &flock) < 0)
+	{
+	  close (lock);
+	  /* The file should not be removed */
+	  lock = -1;
+	  die (2, "can't lock lock file %s: %s",
+	       MOUNTED_LOCK, errno == EINTR ? "timed out" : strerror (errno));
+	}
+      /* We have now access to the lock, and it can always be removed */
+      old_lockfile = 0;
     }
 }
 
@@ -133,8 +180,9 @@ unlock_mtab (void)
 {
   if (lock != -1)
     {
-      close( lock );
-      unlink (MOUNTED_LOCK);
+      close (lock);
+      if (!old_lockfile)
+	unlink (MOUNTED_LOCK);
     }
 }
 

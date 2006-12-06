@@ -242,6 +242,7 @@ wtmp()
 					break;
 			}
 			if (bp->ut_name[0] && bp->ut_type != LOGIN_PROCESS
+			    && bp->ut_type != DEAD_PROCESS
 			    && want(bp, YES)) {
 
 			       print_partial_line(bp);

@@ -6,33 +6,39 @@
  */
 
 /*
- * 24.11.91  -	time began. Used the fsck sources to get started.
+ * DD.MM.YY
  *
- * 25.11.91  -	corrected some bugs. Added support for ".badblocks"
+ * 24.11.91  -	Time began. Used the fsck sources to get started.
+ *
+ * 25.11.91  -	Corrected some bugs. Added support for ".badblocks"
  *		The algorithm for ".badblocks" is a bit weird, but
  *		it should work. Oh, well.
  *
- * 25.01.92  -  Added the -l option for getting the list of bad blocks
- *              out of a named file. (Dave Rivers, rivers@ponds.uucp)
+ * 25.01.92  -	Added the -l option for getting the list of bad blocks
+ *		out of a named file. (Dave Rivers, rivers@ponds.uucp)
  *
- * 28.02.92  -	added %-information when using -c.
+ * 28.02.92  -	Added %-information when using -c.
  *
- * 28.02.93  -  added support for other namelengths than the original
+ * 28.02.93  -	Added support for other namelengths than the original
  *		14 characters so that I can test the new kernel routines..
  *
- * Sat Oct  9 11:48:31 1993, faith@cs.unc.edu: make exit status conform
- *                           to that required by fsutil
+ * 09.10.93  -	Make exit status conform to that required by fsutil
+ *		(Rik Faith, faith@cs.unc.edu)
  *
- * 31.10.93  -  added inode request feature, for backup floppies: use
- *              32 inodes, for a news partition use more.
- *              (Scott Heavner, sdh@po.cwru.edu)
+ * 31.10.93  -	Added inode request feature, for backup floppies: use
+ *		32 inodes, for a news partition use more.
+ *		(Scott Heavner, sdh@po.cwru.edu)
  *
- * Mon Jan  3 11:08:49 1994, Dr. Wettstein (greg%wind.uucp@plains.nodak.edu).
- *			     Added support for file system valid flag.
+ * 03.01.94  -	Added support for file system valid flag.
+ *		(Dr. Wettstein, greg%wind.uucp@plains.nodak.edu)
  * 
- * 9.11.94   -  added test to prevent overwrite of mounted fs adapted
- *              from Theodore Ts'o's (tytso@athena.mit.edu) mke2fs
- *              program.  (Daniel Quinlan, quinlan@yggdrasil.com)
+ * 09.11.94  -	Added test to prevent overwrite of mounted fs adapted
+ *		from Theodore Ts'o's (tytso@athena.mit.edu) mke2fs
+ *		program.  (Daniel Quinlan, quinlan@yggdrasil.com)
+ *
+ * 03.20.95  -	Clear first 512 bytes of filesystem to make certain that
+ *		the filesystem is not misidentified as a MS-DOS FAT filesystem.
+ *		(Daniel Quinlan, quinlan@yggdrasil.com)
  *
  * Usage:  mkfs [-c] [-nXX] [-iXX] device size-in-blocks
  *         mkfs [-l filename ] device size-in-blocks
@@ -98,6 +104,7 @@ static char root_block[BLOCK_SIZE] = "\0";
 static char * inode_buffer = NULL;
 #define Inode (((struct minix_inode *) inode_buffer)-1)
 static char super_block_buffer[BLOCK_SIZE];
+static char boot_block_buffer[512];
 #define Super (*(struct minix_super_block *)super_block_buffer)
 #define INODES ((unsigned long)Super.s_ninodes)
 #define ZONES ((unsigned long)Super.s_nzones)
@@ -181,16 +188,21 @@ void write_tables(void)
 	Super.s_state |= MINIX_VALID_FS;
 	Super.s_state &= ~MINIX_ERROR_FS;
 
+	if (lseek(DEV, 0, SEEK_SET))
+		die("seek to boot block failed in write_tables");
+	if (512 != write(DEV, boot_block_buffer, 512))
+		die("unable to clear boot sector");
 	if (BLOCK_SIZE != lseek(DEV, BLOCK_SIZE, SEEK_SET))
 		die("seek failed in write_tables");
 	if (BLOCK_SIZE != write(DEV, super_block_buffer, BLOCK_SIZE))
 		die("unable to write super-block");
 	if (IMAPS*BLOCK_SIZE != write(DEV,inode_map,IMAPS*BLOCK_SIZE))
-		die("Unable to write inode map");
+		die("unable to write inode map");
 	if (ZMAPS*BLOCK_SIZE != write(DEV,zone_map,ZMAPS*BLOCK_SIZE))
-		die("Unable to write zone map");
+		die("unable to write zone map");
 	if (INODE_BUFFER_SIZE != write(DEV,inode_buffer,INODE_BUFFER_SIZE))
-		die("Unable to write inodes");
+		die("unable to write inodes");
+	
 }
 
 void write_block(int blk, char * buffer)
@@ -314,6 +326,7 @@ void setup_tables(void)
 	memset(inode_map,0xff,sizeof(inode_map));
 	memset(zone_map,0xff,sizeof(zone_map));
 	memset(super_block_buffer,0,BLOCK_SIZE);
+	memset(boot_block_buffer,0,512);
 	MAGIC = magic;
 	ZONESIZE = 0;
 	MAXSIZE = (7+512+512*512)*1024;
@@ -339,7 +352,7 @@ void setup_tables(void)
 		unmark_inode(i);
 	inode_buffer = malloc(INODE_BUFFER_SIZE);
 	if (!inode_buffer)
-		die("Unable to allocate buffer for inodes");
+		die("unable to allocate buffer for inodes");
 	memset(inode_buffer,0,INODE_BUFFER_SIZE);
 	printf("%d inodes\n",INODES);
 	printf("%d blocks\n",ZONES);
@@ -424,7 +437,7 @@ char *filename;
 
 	listfile=fopen(filename,"r");
 	if(listfile == (FILE *)NULL) {
-		die("Can't open file of bad blocks");
+		die("can't open file of bad blocks");
 	}
 	while(!feof(listfile)) {
 		fscanf(listfile,"%d\n", &blockno);
@@ -519,7 +532,7 @@ int main(int argc, char ** argv)
 	if (!S_ISBLK(statbuf.st_mode))
 		check=0;
 	else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
-		die("Will not try to make filesystem on '%s'");
+		die("will not try to make filesystem on '%s'");
 	setup_tables();
 	if (check)
 		check_blocks();

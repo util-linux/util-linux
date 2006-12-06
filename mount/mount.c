@@ -2,7 +2,7 @@
  * A mount(8) for Linux 0.99.
  * mount.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
  *
- * Thu Jul 14 07:32:40 1994: faith@cs.unc.edu added changed from Adam
+ * Thu Jul 14 07:32:40 1994: faith@cs.unc.edu added changes from Adam
  * J. Richter (adam@adam.yggdrasil.com) so that /proc/filesystems is used
  * if no -t option is given.  I modified his patches so that, if
  * /proc/filesystems is not available, the behavior of mount is the same as
@@ -20,6 +20,8 @@
  * checked.
  *
  * Wed Feb  8 12:27:00 1995: Andries.Brouwer@cwi.nl fixed up error messages.
+ * Sat Jun  3 20:44:38 1995: Patches from Andries.Brouwer@cwi.nl applied.
+ * Tue Sep 26 22:38:20 1995: aeb@cwi.nl, many changes
  *
  */
 
@@ -32,6 +34,9 @@
 #include <linux/xia_fs.h>
 #include <sys/stat.h>
 #include <unistd.h>
+
+#define PROC_FILESYSTEMS	"/proc/filesystems"
+#define SIZE(a) (sizeof(a)/sizeof(a[0]))
 
 int del_loop (const char *);
 
@@ -100,14 +105,20 @@ const struct opt_map opt_map[] =
   { "sub",	1, MS_NOSUB	},	/* allow submounts */
   { "nosub",	0, MS_NOSUB	},	/* don't allow submounts */
 #endif
+#ifdef  MS_SILENT
+  { "quiet",    0, MS_SILENT    },      /* be quiet  */
+  { "loud",     1, MS_SILENT    },      /* print out messages. */
+#endif
   { NULL,	0, 0		}
 };
 
+int mount_quiet=0;
 
 /* Report on a single mount.  */
 static void
 print_one (const struct mntent *mnt)
 {
+  if (mount_quiet) return;
   printf ("%s on %s", mnt->mnt_fsname, mnt->mnt_dir);
   if ((mnt->mnt_type != NULL) && *mnt->mnt_type != '\0')
     printf (" type %s", mnt->mnt_type);
@@ -151,6 +162,12 @@ parse_opt (const char *opt, int *mask, char *extra_opts)
 	  *mask |= om->mask;
 	if (om->mask == MS_USER)
 	  *mask |= MS_SECURE;
+#ifdef MS_SILENT
+        if (om->mask == MS_SILENT && om->inv)  {
+          mount_quiet = 1;
+          verbose = 0;
+        }
+#endif
 	return;
       }
   if (*extra_opts)
@@ -218,97 +235,192 @@ fix_opts_string (int flags, char *extra_opts)
 /*
     char *fstype(const char *device);
 
-    probes the device and attempts to determine the type of filesystem
+    Probes the device and attempts to determine the type of filesystem
     contained within.
 
     Original routine by <jmorriso@bogomips.ww.ubc.ca>; made into a function
     for mount(8) by Mike Grupenhoff <kashmir@umiacs.umd.edu>.
+    Read the superblock only once - aeb
+    Added a test for iso9660 - aeb
 
-    Currently supports: minix, ext, ext2, xia
+    Currently supports: minix, ext, ext2, xiafs, iso9660
 */
+char *magic_known[] = { "minix", "ext", "ext2", "xiafs", "iso9660" };
+
+static int
+tested(const char *device) {
+    char **m;
+
+    for (m = magic_known; m - magic_known < SIZE(magic_known); m++)
+        if (!strcmp(*m, device))
+	    return 1;
+    return 0;
+}
 
 static char *
 fstype(const char *device)
 {
     int fd;
+    char ifs_magic[8];
+    union {
+	struct minix_super_block ms;
+	struct ext_super_block es;
+	struct ext2_super_block e2s;
+	struct xiafs_super_block xfs;
+    } sb;
+    struct stat statbuf;
 
-    /* MINIX */
-    struct minix_super_block ms;
-    /* extended fs */
-    struct ext_super_block es;
-    /* 2nd extended fs */
-    struct ext2_super_block e2s;
-    /* xia fs */
-    struct xiafs_super_block xfs;
+    /* opening and reading an arbitrary unknown path can have
+       undesired side effects - first check that `device' refers
+       to a block device */
+    if (stat (device, &statbuf))
+       error("mount: %s does not exist", device);
+    if (!S_ISBLK(statbuf.st_mode))
+       error("mount: %s is not a block device", device);
 
     fd = open(device, O_RDONLY);
-    if (fd < 0) {
+    if (fd < 0
+	|| lseek(fd, BLOCK_SIZE, SEEK_SET) < 0
+	|| read(fd, (char *) &sb, sizeof(sb)) < 0) {
 	perror(device);
 	return 0;
     }
-    lseek(fd, BLOCK_SIZE, SEEK_SET);
-    read(fd, (char *) &ms, sizeof(ms));
-    if (ms.s_magic == MINIX_SUPER_MAGIC || ms.s_magic == MINIX_SUPER_MAGIC2) {
-        close(fd);
+
+    if (sb.ms.s_magic == MINIX_SUPER_MAGIC
+	|| sb.ms.s_magic == MINIX_SUPER_MAGIC2) {
+	close (fd);
 	return("minix");
     }
 
-    lseek(fd, BLOCK_SIZE, SEEK_SET);
-    read(fd, (char *) &es, sizeof(es));
-    if (es.s_magic == EXT_SUPER_MAGIC) {
-        close(fd);
+    if (sb.es.s_magic == EXT_SUPER_MAGIC) {
+	close (fd);
 	return("ext");
     }
 
-    lseek(fd, BLOCK_SIZE, SEEK_SET);
-    read(fd, (char *) &e2s, sizeof(e2s));
-    if (e2s.s_magic == EXT2_SUPER_MAGIC || e2s.s_magic == EXT2_PRE_02B_MAGIC) {
-        close(fd);
+#ifndef EXT2_PRE_02B_MAGIC
+#define EXT2_PRE_02B_MAGIC    0xEF51
+#endif
+    if (sb.e2s.s_magic == EXT2_SUPER_MAGIC
+	|| sb.e2s.s_magic == EXT2_PRE_02B_MAGIC) {
+        close (fd);
 	return("ext2");
     }
 
-    lseek(fd, 0, SEEK_SET);
-    read(fd, (char *) &xfs, sizeof(xfs));
-    if (xfs.s_magic == _XIAFS_SUPER_MAGIC) {
-        close(fd);
+    if (sb.xfs.s_magic == _XIAFS_SUPER_MAGIC) {
+        close (fd);
 	return("xiafs");
     }
 
-    close(fd);
+    if (lseek (fd, 0100000, SEEK_SET) != -1
+        && read (fd, ifs_magic, 8) == 8
+        && !strncmp(ifs_magic, "\001CD001\001", 8)) { /* ECMA 119 */
+        close (fd);
+        return("iso9660");
+    }
 
+    close (fd);
     return(0);
-
 }
 
+FILE *procfs;
+
+static void
+procclose(void) {
+    if (procfs)
+        fclose (procfs);
+    procfs = 0;
+}
+
+static int
+procopen(void) {
+    return ((procfs = fopen(PROC_FILESYSTEMS, "r")) != NULL);
+}
+
+static char *
+procnext(void) {
+   char line[100];
+   static char fsname[50];
+
+   while (fgets(line, sizeof(line), procfs)) {
+      if (sscanf (line, "nodev %[^\n]\n", fsname) == 1) continue;
+      if (sscanf (line, " %[^ \n]\n", fsname) != 1) continue;
+      return fsname;
+   }
+   return 0;
+}
+
+static int
+is_in_proc(char *type) {
+    char *fsname;
+
+    if (procopen()) {
+	while ((fsname = procnext()) != NULL)
+	  if (!strcmp(fsname, type))
+	    return 1;
+    }
+    return 0;
+}
+
+static int
+already (char *spec, char *node) {
+    struct mntent *me;
+    int ret = 1;
+
+    if ((me = getmntfile(node)) != NULL)
+        error ("mount: according to mtab, %s is already mounted on %s",
+	       me->mnt_fsname, node);
+    else if ((me = getmntfile(spec)) != NULL)
+        error ("mount: according to mtab, %s is mounted on %s",
+	       spec, me->mnt_dir);
+    else
+        ret = 0;
+    return ret;
+}
 
 /* Mount a single file system.  Return status,
    so don't exit on non-fatal errors.  */
  
 static int
 try_mount5 (char *spec, char *node, char **type, int flags, char *mount_opts) {
-   FILE *procfs_file;
-   char line[100];
-   char fsname[50];
+   char *fsname;
    
-   if (*type) return mount5 (spec, node, *type, flags & ~MS_NOSYS, mount_opts);
-   if (( procfs_file = fopen("/proc/filesystems", "r")) == NULL) {
-				/* If /proc/filesystems is not available,
-				   preserve the old behavior of mount. */
-      return mount5 (spec,
-		     node,
-		     FSTYPE_DEFAULT,
-		     flags & ~MS_NOSYS, mount_opts);
-   }
-   while (fgets(line, sizeof(line), procfs_file)) {
-      if (sscanf (line, "nodev %[^\n]\n", fsname) == 1) continue;
-      if (sscanf (line, " %[^ \n]\n", fsname) != 1) continue;
-      if (mount5 (spec, node, fsname, flags & ~MS_NOSYS, mount_opts) == 0) {
-      *type=xstrdup(fsname);
-      fclose(procfs_file);
-      return 0;
+   if (strcasecmp (*type, "auto") == 0)
+      *type = NULL;
+
+   if (!*type) {
+      *type = fstype(spec);
+      if (!*type && !procopen())
+	  *type = FSTYPE_DEFAULT;
+      if (verbose) {
+	  printf ("mount: you didn't specify a filesystem type for %s\n",
+		  spec);
+	  if (*type)
+	    printf ("       I will try type %s\n", *type);
+	  else
+	    printf ("       I will try all types mentioned in %s\n",
+		    PROC_FILESYSTEMS);
       }
    }
-   fclose(procfs_file);
+
+   if (*type)
+      return mount5 (spec, node, *type, flags & ~MS_NOSYS, mount_opts);
+
+   while ((fsname = procnext()) != NULL) {
+      if (tested (fsname))
+	 continue;
+      if (mount5 (spec, node, fsname, flags & ~MS_NOSYS, mount_opts) == 0) {
+	 *type = xstrdup(fsname);
+	 procclose();
+	 return 0;
+      } else if (errno != EINVAL) {
+         *type = "guess";
+	 procclose();
+	 return 1;
+      }
+   }
+   procclose();
+   *type = NULL;
+
    return -1;
 }
 
@@ -321,7 +433,7 @@ mount_one (char *spec, char *node, char *type, char *opts, int freq, int pass)
   int flags;
   char *extra_opts;
   char *mount_opts;
-  int anti_recurse = 0;
+  static int added_ro = 0;
   int loop=0;
 
   if (type == NULL)
@@ -333,8 +445,12 @@ mount_one (char *spec, char *node, char *type, char *opts, int freq, int pass)
   parse_opts (xstrdup (opts), &flags, &extra_opts);
 
   /* root may allow certain types of mounts by ordinary users */
-  if (suid && !(flags & MS_USER))
-    die (3, "mount: only root can mount %s on %s", spec, node);
+  if (suid && !(flags & MS_USER)) {
+      if (already (spec, node))
+	die (3, "mount failed");
+      else
+        die (3, "mount: only root can mount %s on %s", spec, node);
+  }
 
   /* quietly succeed for fstab entries that don't get mounted automatically */
   if (all && (flags & MS_NOAUTO))
@@ -360,11 +476,8 @@ mount_one (char *spec, char *node, char *type, char *opts, int freq, int pass)
     if (nfsmount (spec, node, &flags, &extra_opts, &mount_opts) != 0)
       return 1;
 #else
-    die (1, "mount: this version doesn't support the type `nfs'");
+    die (1, "mount: this version was compiled without support for the type `nfs'");
 #endif
-
-  if (!type && !(type = fstype(spec)))
-  	return 1;
 
   block_signals (SIG_BLOCK);
 
@@ -376,7 +489,7 @@ mount_one (char *spec, char *node, char *type, char *opts, int freq, int pass)
 	{
 	  mnt.mnt_fsname = canonicalize (spec);
 	  mnt.mnt_dir = canonicalize (node);
-	  mnt.mnt_type = loop?"loop":type;
+	  mnt.mnt_type = loop ? "loop" : type;
 	  mnt.mnt_opts = fix_opts_string (flags & ~MS_NOMTAB, 
 					  loop?opts:extra_opts);
 	  mnt.mnt_freq = freq;
@@ -411,6 +524,10 @@ mount_one (char *spec, char *node, char *type, char *opts, int freq, int pass)
   block_signals (SIG_UNBLOCK);
 
   /* Mount failed, complain, but don't die.  */
+
+  if (type == 0)
+    error ("mount: you must specify the filesystem type");
+  else
   switch (mnt_err)
     {
     case EPERM:
@@ -421,11 +538,15 @@ mount_one (char *spec, char *node, char *type, char *opts, int freq, int pass)
       break;
     case EBUSY:
       error ("mount: %s already mounted or %s busy", spec, node);
+      already (spec, node);
       break;
     case ENOENT:
       { struct stat statbuf;
-	if (stat (node, &statbuf))
+	if (lstat (node, &statbuf))
 	      error ("mount: mount point %s does not exist", node);
+	else if (stat (node, &statbuf))
+	      error ("mount: mount point %s is a symbolic link to nowhere",
+		     node);
 	else if (stat (spec, &statbuf))
 	      error ("mount: special device %s does not exist", spec);
 	else {
@@ -433,7 +554,7 @@ mount_one (char *spec, char *node, char *type, char *opts, int freq, int pass)
            perror("mount");
 	}
 	break;
-     }
+      }
     case ENOTDIR:
       error ("mount: mount point %s is not a directory", node); break;
     case EINVAL:
@@ -443,31 +564,37 @@ mount_one (char *spec, char *node, char *type, char *opts, int freq, int pass)
     case EIO:
       error ("mount: %s: can't read superblock", spec); break;
     case ENODEV:
-      error ("mount: fs type %s not supported by kernel", type); break;
+      if (is_in_proc(type))
+        error("mount: %s has wrong major or minor number", spec);
+      else if (procfs)
+	error ("mount: fs type %s not supported by kernel", type);
+      else
+	error ("mount: %s has wrong device number or fs type %s not supported",
+	       spec, type);
+      break;
     case ENOTBLK:
       error ("mount: %s is not a block device", spec); break;
     case ENXIO:
       error ("mount: %s is not a valid block device", spec); break;
     case EACCES:  /* pre-linux 1.1.38 */
     case EROFS:   /* linux 1.1.38 and later */
-      if (anti_recurse)
-        {
-          error ("mount: block device %s is not permitted on its filesystem", spec);
+      if (added_ro) {
+          error ("mount: block device %s is not permitted on its filesystem",
+		 spec);
           break;
-        }
-      else
-        {
-         anti_recurse++;
-         if (opts)
-           {
-             opts = realloc(xstrdup(opts), strlen(opts)+3);
+      } else {
+         added_ro = 1;
+         if (opts) {
+             opts = realloc(xstrdup(opts), strlen(opts)+4);
              strcat(opts, ",ro");
-           }
-         else
-           opts = "ro";
-          error ("mount: block device %s is write-protected, mounting read-only", spec);
-          return mount_one (spec, node, type, opts, freq, pass);
-        }
+         } else
+             opts = "ro";
+	 if (type && !strcmp(type, "guess"))
+	     type = 0;
+         error ("mount: block device %s is write-protected, "
+		"mounting read-only", spec);
+	 return mount_one (spec, node, type, opts, freq, pass);
+      }
       break;
     default:
       error ("mount: %s", strerror (mnt_err)); break;
@@ -514,6 +641,7 @@ mount_all (string_list types)
       }
 
   status = 0;
+  if (!setfsent()) return 1;
   while ((fstab = getfsent ()) != NULL)
     if (matching_type (fstab->mnt_type, types)
 	 && !streq (fstab->mnt_dir, "/")
@@ -592,6 +720,7 @@ static void
 usage (FILE *fp, int n)
 {
   fprintf (fp, "%s", usage_string);
+  unlock_mtab();
   exit (n);
 }
 
@@ -629,7 +758,7 @@ main (int argc, char *argv[])
 	++verbose;
 	break;
       case 'V':			/* version */
-	printf ("%s\n", version);
+	printf ("mount: %s\n", version);
 	exit (0);
       case 'w':			/* mount read/write */
 	++readwrite;

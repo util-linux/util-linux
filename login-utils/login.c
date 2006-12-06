@@ -130,8 +130,11 @@ static char sccsid[] = "@(#)login.c	5.40 (Berkeley) 5/9/89";
 
 #ifndef linux
 #include <tzfile.h>
+#endif
 #include <lastlog.h>
-#else
+
+#if 0
+/* from before we had a lastlog.h file in linux */
 struct  lastlog
   { long ll_time;
     char ll_line[12];
@@ -152,7 +155,7 @@ void checknologin P_((void));
 void dolastlog P_((int quiet));
 void badlogin P_((char *name));
 char *stypeof P_((char *ttyid));
-void checktty P_((char *user, char *tty));
+void checktty P_((char *user, char *tty, struct passwd *pwd));
 void getstr P_((char *buf, int cnt, char *err));
 void sleepexit P_((int eval));
 #undef P_
@@ -164,13 +167,11 @@ char	realm[REALM_SZ];
 int	kerror = KSUCCESS, notickets = 1;
 #endif
 
-#ifndef linux
 #define	TTYGRPNAME	"tty"		/* name of group to own ttys */
-#else
-#  define TTYGRPNAME      "other"
-#  ifndef MAXPATHLEN
-#    define MAXPATHLEN 1024
-#  endif
+/**#  define TTYGRPNAME      "other" **/
+
+#ifndef MAXPATHLEN
+#  define MAXPATHLEN 1024
 #endif
 
 /*
@@ -184,9 +185,9 @@ int     timeout = 60;
 #endif
 
 struct	passwd *pwd;
-int	failures;
+int	failures = 1;
 char	term[64], *hostname, *username, *tty;
-
+struct  hostent hostaddress;
 char	thishost[100];
 
 #ifndef linux
@@ -265,6 +266,7 @@ main(argc, argv)
 	(void)strncpy(thishost, tbuf, sizeof(thishost)-1);
 	domain = index(tbuf, '.');
 
+	hostname = NULL;
 	fflag = hflag = pflag = 0;
 	passwd_req = 1;
 	while ((ch = getopt(argc, argv, "fh:p")) != EOF)
@@ -284,6 +286,14 @@ main(argc, argv)
 			    strcasecmp(p, domain) == 0)
 				*p = 0;
 			hostname = optarg;
+			{ 
+			    struct hostent *he = gethostbyname(hostname);
+			    if (he) {
+				memcpy(&hostaddress, he, sizeof(hostaddress));
+			    } else {
+				memset(&hostaddress, 0, sizeof(hostaddress));
+			    }
+			}
 			break;
 
 		case 'p':
@@ -357,7 +367,7 @@ main(argc, argv)
 	    tcsetattr(0,TCSAFLUSH,&tt);
 	}
 
-	if (tty = rindex(ttyn, '/'))
+	if ((tty = rindex(ttyn, '/')))
 		++tty;
 	else
 		tty = ttyn;
@@ -375,13 +385,26 @@ main(argc, argv)
 			getloginname();
 		}
 
-		checktty(username, tty);
+               /* Dirty patch to fix a gigantic security hole when using 
+                  yellow pages. This problem should be solved by the
+                  libraries, and not by programs, but this must be fixed
+                  urgently! If the first char of the username is '+', we 
+                  avoid login success.
+                  Feb 95 <alvaro@etsit.upm.es> */
+
+		if (username[0] == '+') {
+		    puts("Illegal username");
+		    badlogin(username);
+		    sleepexit(1);
+		}
 
 		(void)strcpy(tbuf, username);
-		if (pwd = getpwnam(username))
+		if ((pwd = getpwnam(username)))
 			salt = pwd->pw_passwd;
 		else
 			salt = "xx";
+
+		checktty(username, tty, pwd); /* in checktty.c */
 
 		/* if user not super-user, check for disabled logins */
 		if (pwd == NULL || pwd->pw_uid)
@@ -566,30 +589,38 @@ main(argc, argv)
 	/* for linux, write entries in utmp and wtmp */
 	{
 		struct utmp ut;
-		char *ttyabbrev;
 		int wtmp;
-		
-		memset((char *)&ut, 0, sizeof(ut));
-		ut.ut_type = USER_PROCESS;
-		ut.ut_pid = getpid();
-		strncpy(ut.ut_line, ttyn + sizeof("/dev/")-1, sizeof(ut.ut_line));
-		ttyabbrev = ttyn + sizeof("/dev/tty") - 1;
-		strncpy(ut.ut_id, ttyabbrev, sizeof(ut.ut_id));
-		(void)time(&ut.ut_time);
-		strncpy(ut.ut_user, username, sizeof(ut.ut_user));
-		
-		/* fill in host and ip-addr fields when we get networking */
-		if (hostname) {
-		    struct hostent *he;
+		struct utmp *utp;
+		pid_t mypid = getpid();
 
-		    strncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
-		    if ((he = gethostbyname(hostname)))
-		      memcpy(&ut.ut_addr, he->h_addr_list[0],
-			     sizeof(ut.ut_addr));
-		}
-		
 		utmpname(_PATH_UTMP);
 		setutent();
+		while ((utp = getutent()) 
+		       && !(utp->ut_pid == mypid)) /* nothing */;
+
+		if (utp) {
+		    memcpy(&ut, utp, sizeof(ut));
+		} else {
+		    /* some gettys/telnetds don't initialize utmp... */
+		    memset(&ut, 0, sizeof(ut));
+		}
+		endutent();
+
+		if (ut.ut_id[0] == 0)
+		  strncpy(ut.ut_id, ttyn + 8, sizeof(ut.ut_id));
+	
+		strncpy(ut.ut_user, username, sizeof(ut.ut_user));
+		strncpy(ut.ut_line, ttyn + 5, sizeof(ut.ut_line));
+		time(&ut.ut_time);
+		ut.ut_type = USER_PROCESS;
+		ut.ut_pid = mypid;
+		if (hostname) {
+		    strncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
+		    if (hostaddress.h_addr_list)
+		      memcpy(&ut.ut_addr, hostaddress.h_addr_list[0],
+			     sizeof(ut.ut_addr));
+		}
+
 		pututline(&ut);
 		endutent();
 		
@@ -600,7 +631,6 @@ main(argc, argv)
 			close(wtmp);
 		}
 	}
-        /* fix_utmp_type_and_user(username, ttyn, LOGIN_PROCESS); */
 #endif
 
 	dolastlog(quietlog);
@@ -615,9 +645,13 @@ main(argc, argv)
 	(void)chown(ttyn, pwd->pw_uid,
 	    (gr = getgrnam(TTYGRPNAME)) ? gr->gr_gid : pwd->pw_gid);
 
-	(void)chmod(ttyn, 0622);
-	(void)setgid(pwd->pw_gid);
+#ifdef USE_TTY_GROUP
+	chmod(ttyn, 0620);
+#else
+	chmod(ttyn, 0600);
+#endif
 
+	setgid(pwd->pw_gid);
 	initgroups(username, pwd->pw_gid);
 
 #ifdef HAVE_QUOTA
@@ -676,10 +710,9 @@ main(argc, argv)
 	(void)setenv("LOGNAME", pwd->pw_name, 1);
 #endif
 
-#ifndef linux
-	if (tty[sizeof("tty")-1] == 'd')
+	if (tty[sizeof("tty")-1] == 'S')
 		syslog(LOG_INFO, "DIALUP %s, %s", tty, pwd->pw_name);
-#endif
+
 	if (pwd->pw_uid == 0)
 		if (hostname)
 			syslog(LOG_NOTICE, "ROOT LOGIN ON %s FROM %s",
@@ -748,16 +781,26 @@ getloginname()
 	register int ch;
 	register char *p;
 	static char nbuf[UT_NAMESIZE + 1];
+	int cnt, cnt2;
 
+	cnt2 = 0;
 	for (;;) {
+	        cnt = 0;
 		(void)printf("\n%s login: ", thishost); fflush(stdout);
 		for (p = nbuf; (ch = getchar()) != '\n'; ) {
 			if (ch == EOF) {
-				badlogin(username);
+				badlogin("EOF");
 				exit(0);
 			}
 			if (p < nbuf + UT_NAMESIZE)
 				*p++ = ch;
+
+			cnt++;
+			if (cnt > UT_NAMESIZE + 20) {
+				fprintf(stderr, "login name much too long.\n");
+				badlogin("NAME too long");
+				exit(0);
+			}
 		}
 		if (p > nbuf)
 			if (nbuf[0] == '-')
@@ -768,6 +811,13 @@ getloginname()
 				username = nbuf;
 				break;
 			}
+
+		cnt2++;
+		if (cnt2 > 50) {
+			fprintf(stderr, "too many bare linefeeds.\n");
+			badlogin("EXCESSIVE linefeeds");
+			exit(0);
+		}
 	}
 }
 
@@ -898,9 +948,6 @@ void
 badlogin(name)
 	char *name;
 {
-	if (failures == 0)
-		return;
-
 	if (hostname)
 		syslog(LOG_NOTICE, "%d LOGIN FAILURE%s FROM %s, %s",
 		    failures, failures > 1 ? "S" : "", hostname, name);
@@ -922,62 +969,6 @@ stypeof(ttyid)
 	return(ttyid && (t = getttynam(ttyid)) ? t->ty_type : UNKNOWN);
 }
 #endif 
-
-void
-checktty(user, tty)
-     char *user;
-     char *tty;
-{
-    FILE *f;
-    char buf[256];
-    char *ptr;
-    char devname[50];
-    struct stat stb;
-
-    /* no /etc/usertty, default to allow access */
-    if(!(f = fopen(_PATH_USERTTY, "r"))) return;
-
-    while(fgets(buf, 255, f)) {
-
-	/* strip comments */
-	for(ptr = buf; ptr < buf + 256; ptr++) 
-	  if(*ptr == '#') *ptr = 0;
-
-	strtok(buf, " \t");
-	if(strncmp(user, buf, 8) == 0) {
-	    while((ptr = strtok(NULL, "\t\n "))) {
-		if(strncmp(tty, ptr, 10) == 0) {
-		    fclose(f);
-		    return;
-		}
-		if(strcmp("PTY", ptr) == 0) {
-#ifdef linux
-		    sprintf(devname, "/dev/%s", ptr);
-		    /* VERY linux dependent, recognize PTY as alias
-		       for all pseudo tty's */
-		    if((stat(devname, &stb) >= 0)
-		       && major(stb.st_rdev) == 4 
-		       && minor(stb.st_rdev) >= 192) {
-			fclose(f);
-			return;
-		    }
-#endif
-		}
-	    }
-	    /* if we get here, /etc/usertty exists, there's a line
-	       beginning with our username, but it doesn't contain the
-	       name of the tty where the user is trying to log in.
-	       So deny access! */
-	    fclose(f);
-	    printf("Login on %s denied.\n", tty);
-	    badlogin(user);
-	    sleepexit(1);
-	}
-    }
-    fclose(f);
-    /* users not mentioned in /etc/usertty are by default allowed access
-       on all tty's */
-}
 
 void
 getstr(buf, cnt, err)

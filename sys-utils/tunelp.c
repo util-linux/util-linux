@@ -6,10 +6,13 @@
 *	for information on distribution conditions.			     *
 \****************************************************************************/
 
-/* tunelp.c,v 1.1.1.1 1995/02/22 19:09:12 faith Exp
- * tunelp.c,v
- * Revision 1.1.1.1  1995/02/22  19:09:12  faith
- * Imported sources
+/* $Id: tunelp.c,v 1.6 1995/06/04 01:47:11 faith Exp $
+ * $Log: tunelp.c,v $
+ * Revision 1.6  1995/06/04 01:47:11  faith
+ * Changes for util-linux-2.4
+ *
+ * Revision 1.5  1995/03/12  01:29:50  faith
+ * util-linux-2.1
  *
  * Revision 1.5  1995/01/13  10:33:43  johnsonm
  * Chris's changes for new ioctl numbers and backwards compatibility
@@ -195,7 +198,7 @@ int main (int argc, char ** argv) {
   }
 
   /* Allow for binaries compiled under a new kernel to work on the old ones */
-  if (LPGETIRQ >= 0x0600 && ioctl(fd, LPGETIRQ) < 0 && errno == EINVAL)
+  if (LPGETIRQ >= 0x0600 && ioctl(fd, LPGETIRQ, &irq) < 0 && errno == EINVAL)
     offset = 0x0600;	/* We don't understand the new ioctls */
 
   cmds = cmdst;

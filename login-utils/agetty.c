@@ -132,12 +132,15 @@ struct options {
     int     numspeed;			/* number of baud rates to try */
     int     speeds[MAX_SPEED];		/* baud rates to be tried */
     char   *tty;			/* name of tty */
+    char   *initstring;			/* modem init string */
 };
 
 #define	F_PARSE		(1<<0)		/* process modem status messages */
 #define	F_ISSUE		(1<<1)		/* display /etc/issue */
 #define	F_RTSCTS	(1<<2)		/* enable RTS/CTS flow control */
 #define F_LOCAL		(1<<3)		/* force local */
+#define F_INITSTRING    (1<<4)		/* initstring is set */
+#define F_WAITCRLF	(1<<5)		/* wait for CR or LF */
 
 /* Storage for things detected while the login name was read. */
 
@@ -194,7 +197,6 @@ main(argc, argv)
      char  **argv;
 {
     char   *logname;			/* login name, given to /bin/login */
-    char   *get_logname();
     struct chardata chardata;		/* set by get_logname() */
     struct termio termio;		/* terminal mode bits */
     static struct options options = {
@@ -251,7 +253,13 @@ main(argc, argv)
     /* Initialize the termio settings (raw mode, eight-bit, blocking i/o). */
 
     termio_init(&termio, options.speeds[FIRST_SPEED], options.flags & F_LOCAL);
-	
+
+    /* write the modem init string and flush the buffers */
+    if (options.flags & F_INITSTRING) {
+	write(1, options.initstring, strlen(options.initstring));
+	ioctl(1, TCFLSH, 2);
+    }
+
     /* Optionally detect the baud rate from the modem status message. */
 
     if (options.flags & F_PARSE)
@@ -262,6 +270,16 @@ main(argc, argv)
     if (options.timeout)
 	(void) alarm((unsigned) options.timeout);
  
+    /* optionally wait for CR or LF before writing /etc/issue */
+    if (options.flags & F_WAITCRLF) {
+	char ch;
+
+	while(read(0, &ch, 1) == 1) {
+	    ch &= 0x7f;   /* strip "parity bit" */
+	    if (ch == '\n' || ch == '\r') break;
+	}
+    }
+
     /* Read the login name. */
 
     while ((logname = get_logname(&options, &chardata, &termio)) == 0)
@@ -299,8 +317,48 @@ parse_args(argc, argv, op)
     extern int optind;			/* getopt */
     int     c;
 
-    while (isascii(c = getopt(argc, argv, "Lhil:mt:"))) {
+    while (isascii(c = getopt(argc, argv, "I:Lhil:mt:w"))) {
 	switch (c) {
+	case 'I':
+	    if (!(op->initstring = malloc(strlen(optarg)))) {
+		error("can't malloc initstring");
+		break;
+	    }
+	    {
+		char ch, *p, *q;
+		int i;
+
+		/* copy optarg into op->initstring decoding \ddd
+		   octal codes into chars */
+		q = op->initstring;
+		p = optarg;
+		while (*p) {
+		    if (*p == '\\') {		/* know \\ means \ */
+			p++;
+			if (*p == '\\') {
+			    ch = '\\';
+			    p++;
+			} else {		/* handle \000 - \177 */
+			    ch = 0;
+			    for (i = 1; i <= 3; i++) {
+				if (*p >= '0' && *p <= '7') {
+				    ch <<= 3;
+				    ch += *p - '0';
+				    p++;
+				} else 
+				  break;
+			    }
+			}
+			*q++ = ch;
+		    } else {
+			*q++ = *p++;
+		    }
+		}
+		*q = '\0';
+	    }
+	    op->flags |= F_INITSTRING;
+	    break;
+
 	case 'L':				/* force local */
  	    op->flags |= F_LOCAL;
  	    break;
@@ -319,6 +377,9 @@ parse_args(argc, argv, op)
 	case 't':				/* time out */
 	    if ((op->timeout = atoi(optarg)) <= 0)
 		error("bad timeout value: %s", optarg);
+	    break;
+	case 'w':
+	    op->flags |= F_WAITCRLF;
 	    break;
 	default:
 	    usage();
@@ -379,10 +440,11 @@ update_utmp(line)
     long    time();
     long    lseek();
     char   *strncpy();
+    struct  utmp *utp;
 
     /*
      * The utmp file holds miscellaneous information about things started by
-     * /etc/init and other system-related events. Our purpose is to update
+     * /sbin/init and other system-related events. Our purpose is to update
      * the utmp entry for the current process, in particular the process type
      * and the tty line we are listening to. Return successfully only if the
      * utmp file can be opened for update, and if we are able to find our
@@ -390,24 +452,36 @@ update_utmp(line)
      */
 
 #ifdef linux
-	utmpname(_PATH_UTMP);
-        memset(&ut, 0, sizeof(ut));
-	(void) strncpy(ut.ut_user, "LOGIN", sizeof(ut.ut_user));
-	(void) strncpy(ut.ut_line, line, sizeof(ut.ut_line));
-	(void) strncpy(ut.ut_id, line + 3, sizeof(ut.ut_id));
-	(void) time(&ut.ut_time);
-	ut.ut_type = LOGIN_PROCESS;
-	ut.ut_pid = mypid;
+    utmpname(_PATH_UTMP);
+    setutent();
+    while ((utp = getutent()) 
+	   && !(utp->ut_type == INIT_PROCESS
+		&& utp->ut_pid == mypid)) /* nothing */;
 
-	pututline(&ut);
-	endutent();
+    if (utp) {
+	memcpy(&ut, utp, sizeof(ut));
+    } else {
+	/* some inits don't initialize utmp... */
+	memset(&ut, 0, sizeof(ut));
+	strncpy(ut.ut_id, line + 3, sizeof(ut.ut_id));
+    }
+    endutent();
+	
+    strncpy(ut.ut_user, "LOGIN", sizeof(ut.ut_user));
+    strncpy(ut.ut_line, line, sizeof(ut.ut_line));
+    time(&ut.ut_time);
+    ut.ut_type = LOGIN_PROCESS;
+    ut.ut_pid = mypid;
 
-        if((ut_fd = open(_PATH_WTMP, O_APPEND|O_WRONLY)) >= 0) {
-	    flock(ut_fd, LOCK_EX);
-	    write(ut_fd, &ut, sizeof(ut));
-	    flock(ut_fd, LOCK_UN);
-	    close(ut_fd);
-	}
+    pututline(&ut);
+    endutent();
+
+    if((ut_fd = open(_PATH_WTMP, O_APPEND|O_WRONLY)) >= 0) {
+	flock(ut_fd, LOCK_EX);
+	write(ut_fd, &ut, sizeof(ut));
+	flock(ut_fd, LOCK_UN);
+	close(ut_fd);
+    }
 #else
     if ((ut_fd = open(UTMP_FILE, 2)) < 0) {
 	error("%s: open for update: %m", UTMP_FILE);
@@ -592,7 +666,7 @@ auto_baud(tp)
 	buf[nread] = '\0';
 	for (bp = buf; bp < buf + nread; bp++) {
 	    if (isascii(*bp) && isdigit(*bp)) {
-		if (speed = bcode(bp)) {
+		if ((speed = bcode(bp))) {
 		    tp->c_cflag &= ~CBAUD;
 		    tp->c_cflag |= speed;
 		}
@@ -709,7 +783,7 @@ do_prompt(op, tp)
 		      int users = 0;
 		      struct utmp *ut;
 		      setutent();
-		      while (ut = getutent())
+		      while ((ut = getutent()))
 		        if (ut->ut_type == USER_PROCESS)
 			  users++;
 		      endutent();
@@ -764,7 +838,7 @@ char   *get_logname(op, cp, tp)
      struct chardata *cp;
      struct termio *tp;
 {
-    char    logname[BUFSIZ];
+    static char logname[BUFSIZ];
     char   *bp;
     char    c;				/* input character, full eight bits */
     char    ascval;			/* low 7 bits of input character */
@@ -860,7 +934,7 @@ char   *get_logname(op, cp, tp)
     }
     /* Handle names with upper case and no lower case. */
 
-    if (cp->capslock = caps_lock(logname)) {
+    if ((cp->capslock = caps_lock(logname))) {
 	for (bp = logname; *bp; bp++)
 	    if (isupper(*bp))
 		*bp = tolower(*bp);		/* map name to lower case */

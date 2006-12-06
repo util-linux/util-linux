@@ -5,6 +5,9 @@
  * Wed Sep 14 22:43:54 1994: Sebastian Lederer
  * (lederer@next-pc.informatik.uni-bonn.de) added support for sending an
  * unmount RPC call to the server when an NFS-filesystem is unmounted.
+ *
+ * Tue Sep 26 16:33:09 1995: Added patches from Greg Page (greg@caldera.com)
+ * so that NetWare filesystems can be unmounted.
  */
 
 #include "sundries.h"
@@ -44,7 +47,7 @@ static int xdr_dir(XDR *xdrsp, char *dirp)
 /* Umount a single device.  Return a status code, so don't exit
    on a non-fatal error.  We lock/unlock around each umount.  */
 static int
-umount_one (const char *spec, const char *node)
+umount_one (const char *spec, const char *node, const char *type)
 {
   int umnt_err;
   int isroot;
@@ -75,7 +78,7 @@ umount_one (const char *spec, const char *node)
 #ifdef HAVE_NFS
       strcpy(buffer,spec);
               /* spec is constant so must use own buffer */
-      if((p=strchr(buffer,':')))
+      if(!strcasecmp(type, "nfs") && (p=strchr(buffer,':')))
       {
               *p='\0';
               strcpy(hostname,buffer);
@@ -174,7 +177,9 @@ fail:
     case EIO:
       error ("umount: %s: can't write superblock", spec); break;
     case EBUSY:
-      error ("umount: %s: device is busy", spec); break;
+     /* Let us hope fstab has a line "proc /proc ..."
+	and not "none /proc ..."*/
+     error ("umount: %s: device is busy", spec); break;
     case ENOENT:
       error ("umount: %s: not mounted", spec); break;
     case EPERM:
@@ -197,6 +202,7 @@ umount_all (string_list types)
 {
   string_list spec_list = NULL;
   string_list node_list = NULL;
+  string_list type_list = NULL;
   struct mntent *mnt;
   int errors;
 
@@ -207,6 +213,7 @@ umount_all (string_list types)
       {
 	spec_list = cons (xstrdup (mnt->mnt_fsname), spec_list);
 	node_list = cons (xstrdup (mnt->mnt_dir), node_list);
+        type_list = cons (xstrdup (mnt->mnt_type), type_list);
       }
 
   close_mtab ();
@@ -214,9 +221,10 @@ umount_all (string_list types)
   errors = 0;
   while (spec_list != NULL)
     {
-      errors |= umount_one (car (spec_list), car (node_list));
+      errors |= umount_one (car (spec_list), car (node_list), car (type_list));
       spec_list = cdr (spec_list);
       node_list = cdr (node_list);
+      type_list = cdr (type_list);
     }
 
   sync ();
@@ -238,7 +246,7 @@ static struct option longopts[] =
 char *usage_string = "\
 usage: umount [-hV]\n\
        umount -a [-v] [-t vfstypes]\n\
-       umount [-v] special | node\n\
+       umount [-v] special | node...\n\
 ";
 
 static void
@@ -247,6 +255,8 @@ usage (FILE *fp, int n)
   fprintf (fp, "%s", usage_string);
   exit (n);
 }
+
+int mount_quiet = 0;
 
 int
 main (int argc, char *argv[])
@@ -281,7 +291,7 @@ main (int argc, char *argv[])
 	++verbose;
 	break;
       case 'V':			/* version */
-	printf ("%s\n", version);
+	printf ("umount: %s\n", version);
 	exit (0);
       case 't':			/* specify file system type */
 	types = parse_list (optarg);
@@ -305,9 +315,9 @@ main (int argc, char *argv[])
 
   if (all)
     result = umount_all (types);
-  else if (argc != 1)
+  else if (argc < 1)
     usage (stderr, 2);
-  else
+  else while (argc--)
     {
       file = canonicalize (*argv); /* mtab paths are canonicalized */
 
@@ -326,7 +336,7 @@ main (int argc, char *argv[])
       if (suid)
 	{
 	  if (!mnt)
-	    die (2, "umount: %s is not mounted", file);
+	    die (2, "umount: %s is not mounted (according to mtab)", file);
 	  if (!(fs = getfsspec (file)) && !(fs = getfsfile (file)))
 	    die (2, "umount: %s is not in the fstab", file);
 	  if (!streq (mnt->mnt_fsname, fs->mnt_fsname)
@@ -345,9 +355,11 @@ main (int argc, char *argv[])
 	}
 
       if (mnt)
-	result = umount_one (xstrdup (mnt->mnt_fsname), xstrdup(mnt->mnt_dir));
+	 result = umount_one (xstrdup (mnt->mnt_fsname), xstrdup(mnt->mnt_dir),
+			      xstrdup(mnt->mnt_type));
       else
-	result = umount_one (*argv, *argv);
+	 result = umount_one (*argv, *argv, *argv);
+
     }
   exit (result);
 }

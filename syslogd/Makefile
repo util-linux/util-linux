@@ -1,6 +1,6 @@
 # Makefile -- Makefile for syslogd utility for Linux
 # Created: Sat Oct  9 10:25:19 1993
-# Revised: Sat Feb 11 19:35:52 1995 by faith@cs.unc.edu
+# Revised: Fri Mar 10 21:21:51 1995 by faith@cs.unc.edu
 # Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
 #
 
@@ -15,9 +15,6 @@ MAN8=      syslogd.8
 ETC=       syslogd
 
 all: $(ETC)
-
-%.o: %.c
-	$(CC) -c $(CFLAGS) $< -o $@
 
 $(ETC):
 	$(CC) $(LDFLAGS) $^ -o $@ $(LDLIBS)

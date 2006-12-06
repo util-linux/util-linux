@@ -43,6 +43,7 @@
 #include <curses.h>
 #include <signal.h>
 #include <math.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <linux/genhd.h>
 #include <linux/hdreg.h>
@@ -59,7 +60,7 @@ extern ext2_loff_t ext2_llseek(unsigned int fd,
 			       unsigned int origin);
 
 
-#define VERSION "0.8a BETA (>2GB)"
+#define VERSION "0.8d BETA (>2GB)"
 
 #define DEFAULT_DEVICE "/dev/hda"
 #define ALTERNATE_DEVICE "/dev/sda"
@@ -236,7 +237,7 @@ char *partition_type[NUM_PART_TYPES] = {
 
 /* The rest of these are taken from A. V. Le Blanc's (LeBlanc@mcc.ac.uk)
  * fdisk program.  I do not know where they came from, but I include
- * them for completeness.
+ * them for completeness.  (With additions.)
  */
 
     [0x02]        = "XENIX root",
@@ -247,7 +248,8 @@ char *partition_type[NUM_PART_TYPES] = {
     [0x51]        = "Novell?",
     [0x52]        = "Microport",
     [0x63]        = "GNU HURD",
-    [0x64]        = "Novell",
+    [0x64]        = "Novell Netware 286",
+    [0x65]        = "Novell Netware 386",
     [0x75]        = "PC/IX",
     [0x80]        = "Old MINIX",
     [0x93]        = "Amoeba",

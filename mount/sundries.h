@@ -18,8 +18,20 @@
 #include <string.h>
 #include <unistd.h>
 
+#if 0
+#include <linux/version.h>
+#if LINUX_VERSION_CODE >= 0x010302
+#define SUPPORT_PRIORITIES
+#endif
+#endif
+
+#ifdef SUPPORT_PRIORITIES
+#include <linux/swap.h>
+#endif
+
 #include "fstab.h"
 
+extern int mount_quiet;
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
@@ -27,7 +39,7 @@
 #define MOUNTED_LOCK	"/etc/mtab~"
 #define MOUNTED_TEMP	"/etc/mtab.tmp"
 #define _PATH_FSTAB	"/etc/fstab"
-#define LOCK_BUSY	3
+#define LOCK_BUSY	10
 
 /* File pointer for /etc/mtab.  */
 extern FILE *F_mtab;
