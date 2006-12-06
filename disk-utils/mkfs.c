@@ -49,7 +49,7 @@ int main(int argc, char *argv[])
 
   if (argc == 2 &&
       (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-	  printf(_("%s from %s%s\n"), program_name, "util-linux-", VERSION);
+	  printf(_("%s (%s)\n"), program_name, PACKAGE_STRING);
 	  exit(0);
   }
 
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
   putenv(newpath);
 
   progname = (char *) malloc(sizeof(PROGNAME) + strlen(fstype) + 1);
-  if (!newpath) {
+  if (!progname) {
     fprintf(stderr, _("%s: Out of memory!\n"), "mkfs");
     exit(1);
   }
@@ -100,7 +100,7 @@ int main(int argc, char *argv[])
   argv[--optind] = progname;
 
   if (verbose) {
-    printf(_("mkfs version %s (%s)\n"), VERSION, __DATE__);
+    printf(_("mkfs (%s)\n"), PACKAGE_STRING);
     i = optind;
     while (argv[i])
       printf("%s ", argv[i++]);

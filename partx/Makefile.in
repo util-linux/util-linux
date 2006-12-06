@@ -38,8 +38,8 @@ build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/config/include-Makefile.am
-@BUILD_PARTX_TRUE@usrsbin_PROGRAMS = addpart$(EXEEXT) delpart$(EXEEXT) \
-@BUILD_PARTX_TRUE@	partx$(EXEEXT)
+@BUILD_PARTX_TRUE@usrsbinexec_PROGRAMS = addpart$(EXEEXT) \
+@BUILD_PARTX_TRUE@	delpart$(EXEEXT) partx$(EXEEXT)
 subdir = partx
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
@@ -52,9 +52,9 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/config/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-am__installdirs = "$(DESTDIR)$(usrsbindir)"
-usrsbinPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-PROGRAMS = $(usrsbin_PROGRAMS)
+am__installdirs = "$(DESTDIR)$(usrsbinexecdir)"
+usrsbinexecPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+PROGRAMS = $(usrsbinexec_PROGRAMS)
 addpart_SOURCES = addpart.c
 addpart_OBJECTS = addpart.$(OBJEXT)
 addpart_LDADD = $(LDADD)
@@ -73,12 +73,8 @@ depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = addpart.c delpart.c $(partx_SOURCES)
 DIST_SOURCES = addpart.c delpart.c $(am__partx_SOURCES_DIST)
 ETAGS = etags
@@ -88,7 +84,6 @@ ACLOCAL = @ACLOCAL@
 AMDEP_FALSE = @AMDEP_FALSE@
 AMDEP_TRUE = @AMDEP_TRUE@
 AMTAR = @AMTAR@
-AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -128,21 +123,14 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 DEPDIR = @DEPDIR@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FFLAGS = @FFLAGS@
 GMSGFMT = @GMSGFMT@
 HAVE_BLKID_FALSE = @HAVE_BLKID_FALSE@
 HAVE_BLKID_TRUE = @HAVE_BLKID_TRUE@
@@ -177,8 +165,6 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
-LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
@@ -211,16 +197,11 @@ USE_TTY_GROUP_FALSE = @USE_TTY_GROUP_FALSE@
 USE_TTY_GROUP_TRUE = @USE_TTY_GROUP_TRUE@
 VERSION = @VERSION@
 XGETTEXT = @XGETTEXT@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
-ac_ct_F77 = @ac_ct_F77@
 ac_ct_RANLIB = @ac_ct_RANLIB@
 ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -254,15 +235,15 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-usrbindir = $(prefix)/usr/bin
-usrsbindir = $(prefix)/usr/sbin
-AM_CPPFLAGS = -include ../config.h -I$(top_srcdir)/include
+usrbinexecdir = $(prefix)/usr/bin
+usrsbinexecdir = $(prefix)/usr/sbin
+AM_CPPFLAGS = -include $(top_srcdir)/config.h -I$(top_srcdir)/include
 DEFAULT_INCLUDES = 
 @BUILD_PARTX_TRUE@partx_SOURCES = bsd.c dos.c partx.c solaris.c unixware.c gpt.c crc32.c
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/config/include-Makefile.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -292,50 +273,29 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
-install-usrsbinPROGRAMS: $(usrsbin_PROGRAMS)
+install-usrsbinexecPROGRAMS: $(usrsbinexec_PROGRAMS)
 	@$(NORMAL_INSTALL)
-	test -z "$(usrsbindir)" || $(mkdir_p) "$(DESTDIR)$(usrsbindir)"
-	@list='$(usrsbin_PROGRAMS)'; for p in $$list; do \
+	test -z "$(usrsbinexecdir)" || $(mkdir_p) "$(DESTDIR)$(usrsbinexecdir)"
+	@list='$(usrsbinexec_PROGRAMS)'; for p in $$list; do \
 	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
 	  if test -f $$p \
-	     || test -f $$p1 \
 	  ; then \
 	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(usrsbinPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(usrsbindir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(usrsbinPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(usrsbindir)/$$f" || exit 1; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(usrsbinexecPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(usrsbinexecdir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(usrsbinexecPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(usrsbinexecdir)/$$f" || exit 1; \
 	  else :; fi; \
 	done
 
-uninstall-usrsbinPROGRAMS:
+uninstall-usrsbinexecPROGRAMS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(usrsbin_PROGRAMS)'; for p in $$list; do \
+	@list='$(usrsbinexec_PROGRAMS)'; for p in $$list; do \
 	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  echo " rm -f '$(DESTDIR)$(usrsbindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(usrsbindir)/$$f"; \
+	  echo " rm -f '$(DESTDIR)$(usrsbinexecdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(usrsbinexecdir)/$$f"; \
 	done
 
-clean-usrsbinPROGRAMS:
-	@list='$(usrsbin_PROGRAMS)'; for p in $$list; do \
-	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
-	  echo " rm -f $$p $$f"; \
-	  rm -f $$p $$f ; \
-	done
-
-installcheck-usrsbinPROGRAMS: $(usrsbin_PROGRAMS)
-	bad=0; pid=$$$$; list="$(usrsbin_PROGRAMS)"; for p in $$list; do \
-	  case ' $(AM_INSTALLCHECK_STD_OPTIONS_EXEMPT) ' in \
-	   *" $$p "* | *" $(srcdir)/$$p "*) continue;; \
-	  esac; \
-	  f=`echo "$$p" | \
-	     sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  for opt in --help --version; do \
-	    if "$(DESTDIR)$(usrsbindir)/$$f" $$opt >c$${pid}_.out \
-	         2>c$${pid}_.err </dev/null \
-		 && test -n "`cat c$${pid}_.out`" \
-		 && test -z "`cat c$${pid}_.err`"; then :; \
-	    else echo "$$f does not support $$opt" 1>&2; bad=1; fi; \
-	  done; \
-	done; rm -f c$${pid}_.???; exit $$bad
+clean-usrsbinexecPROGRAMS:
+	-test -z "$(usrsbinexec_PROGRAMS)" || rm -f $(usrsbinexec_PROGRAMS)
 addpart$(EXEEXT): $(addpart_OBJECTS) $(addpart_DEPENDENCIES) 
 	@rm -f addpart$(EXEEXT)
 	$(LINK) $(addpart_LDFLAGS) $(addpart_OBJECTS) $(addpart_LDADD) $(LIBS)
@@ -375,22 +335,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	if $(LTCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
@@ -473,7 +417,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS)
 installdirs:
-	for dir in "$(DESTDIR)$(usrsbindir)"; do \
+	for dir in "$(DESTDIR)$(usrsbinexecdir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
 install: install-am
@@ -502,14 +446,13 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-usrsbinPROGRAMS \
-	mostlyclean-am
+clean-am: clean-generic clean-usrsbinexecPROGRAMS mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-libtool distclean-tags
+	distclean-tags
 
 dvi: dvi-am
 
@@ -521,15 +464,15 @@ info: info-am
 
 info-am:
 
-install-data-am: install-usrsbinPROGRAMS
+install-data-am:
 
-install-exec-am:
+install-exec-am: install-usrsbinexecPROGRAMS
 
 install-info: install-info-am
 
 install-man:
 
-installcheck-am: installcheck-usrsbinPROGRAMS
+installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 	-rm -rf ./$(DEPDIR)
@@ -538,8 +481,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
 pdf: pdf-am
 
@@ -549,20 +491,19 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-info-am uninstall-usrsbinPROGRAMS
+uninstall-am: uninstall-info-am uninstall-usrsbinexecPROGRAMS
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-usrsbinPROGRAMS ctags distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-exec \
-	install-exec-am install-info install-info-am install-man \
-	install-strip install-usrsbinPROGRAMS installcheck \
-	installcheck-am installcheck-usrsbinPROGRAMS installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-info-am uninstall-usrsbinPROGRAMS
+	clean-usrsbinexecPROGRAMS ctags distclean distclean-compile \
+	distclean-generic distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-man install-strip \
+	install-usrsbinexecPROGRAMS installcheck installcheck-am \
+	installdirs maintainer-clean maintainer-clean-generic \
+	mostlyclean mostlyclean-compile mostlyclean-generic pdf pdf-am \
+	ps ps-am tags uninstall uninstall-am uninstall-info-am \
+	uninstall-usrsbinexecPROGRAMS
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

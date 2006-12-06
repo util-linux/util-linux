@@ -32,7 +32,7 @@
 
 static void show_usage(const char *cmd)
 {
-	fprintf(stderr, "chrt version " VERSION "\n");
+	fprintf(stderr, "chrt (%s)\n", PACKAGE_STRING);
 	fprintf(stderr, "usage: %s [options] [prio] [pid | cmd [args...]]\n",
 			cmd);
 	fprintf(stderr, "manipulate real-time attributes of a process\n");
@@ -171,7 +171,7 @@ int main(int argc, char *argv[])
 			verbose = 1;
 			break;
 		case 'V':
-			printf("chrt version " VERSION "\n");
+			printf("chrt (%s)\n", PACKAGE_STRING);
 			return 0;
 		case 'h':
 			ret = 0;

@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-usrbin_PROGRAMS = getopt
+usrbinexec_PROGRAMS = getopt
 
 getopt_CFLAGS = -DLIBCGETOPT=1
 

@@ -139,8 +139,8 @@ main(int argc, char **argv) {
 	
 	if (argc == 2) {
 		if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
-			printf(_("%s from %s%s\n"),
-			       progname, "util-linux-", VERSION);
+			printf(_("%s (%s)\n"),
+			       progname, PACKAGE_STRING);
 			return 0;
 		}
 	}

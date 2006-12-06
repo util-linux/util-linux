@@ -39,7 +39,7 @@
 
 static void show_usage(const char *cmd)
 {
-	fprintf(stderr, "taskset version " VERSION "\n");
+	fprintf(stderr, "taskset (%s)\n", PACKAGE_STRING);
 	fprintf(stderr, "usage: %s [options] [mask | cpu-list] [pid |"\
 		" cmd [args...]]\n", cmd);
 	fprintf(stderr, "set or get the affinity of a process\n\n");
@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
 			c_opt = 1;
 			break;
 		case 'V':
-			printf("taskset version " VERSION "\n");
+			printf("taskset (%s)\n", PACKAGE_STRING);
 			return 0;
 		case 'h':
 			ret = 0;

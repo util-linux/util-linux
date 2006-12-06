@@ -1,10 +1,10 @@
-usrbindir = $(prefix)/usr/bin
-usrsbindir = $(prefix)/usr/sbin
+usrbinexecdir = $(prefix)/usr/bin
+usrsbinexecdir = $(prefix)/usr/sbin
 datadir = $(prefix)/usr/share
 infodir = $(datadir)/info
 mandir = $(datadir)/man
 
-AM_CPPFLAGS = -include ../config.h -I$(top_srcdir)/include
+AM_CPPFLAGS = -include $(top_srcdir)/config.h -I$(top_srcdir)/include
 
 DEFAULT_INCLUDES =
 

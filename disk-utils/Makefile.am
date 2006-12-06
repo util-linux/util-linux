@@ -8,9 +8,7 @@ fsck_minix_SOURCES = fsck.minix.c
 mkfs_minix_SOURCES = mkfs.minix.c
 mkfs_bfs_SOURCES = mkfs.bfs.c
 
-usrbin_PROGRAMS = fdformat isosize
-
-dist_sysconf_DATA = fdprm
+usrbinexec_PROGRAMS = fdformat isosize
 
 if BUILD_ELVTUNE
 sbin_PROGRAMS += elvtune
@@ -19,7 +17,7 @@ endif
 
 if HAVE_RAW
 if BUILD_RAW
-usrbin_PROGRAMS += raw
+usrbinexec_PROGRAMS += raw
 man_MANS += raw.8
 endif
 endif
@@ -29,7 +27,7 @@ sbin_PROGRAMS += fsck.cramfs mkfs.cramfs
 fsck_cramfs_SOURCES = fsck.cramfs.c
 mkfs_cramfs_SOURCES = mkfs.cramfs.c
 fsck_cramfs_LDADD = -lz
-mkfs_cramfs_LDADD = -lz $(top_srcdir)/lib/libmd5.la
+mkfs_cramfs_LDADD = -lz $(top_srcdir)/lib/libmd5.a
 endif
 
 if HAVE_UUID

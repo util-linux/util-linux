@@ -176,7 +176,7 @@ main (int argc, char *argv[]) {
 	case '-': 
 	    switch(argv[pi][1]) {
 	    case 'V':
-		printf(_("%s from %s%s\n"), progname, "util-linux-", VERSION);
+		printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
 	    default: goto usage;
 	    }
 	default: goto thud;

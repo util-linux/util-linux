@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.12m\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
-"POT-Creation-Date: 2005-08-02 21:07+0200\n"
+"POT-Creation-Date: 2005-08-14 18:14+0200\n"
 "PO-Revision-Date: 2004-12-26 20:42+0100\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
@@ -163,11 +163,11 @@ msgstr "användning: %s [ -n ] enhet\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
-#: disk-utils/mkswap.c:522 misc-utils/cal.c:313 misc-utils/ddate.c:179
-#: misc-utils/kill.c:189 misc-utils/rename.c:79 misc-utils/script.c:142
+#: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: misc-utils/script.c:142 sys-utils/readprofile.c:197
 #, fuzzy, c-format
-msgid "%s from %s%s\n"
-msgstr "%s från %s\n"
+msgid "%s (%s)\n"
+msgstr "%s: %s (%s)\n"
 
 #: disk-utils/fdformat.c:130
 #, c-format
@@ -856,9 +856,9 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: Slut på minne!\n"
 
 #: disk-utils/mkfs.c:103
-#, c-format
-msgid "mkfs version %s (%s)\n"
-msgstr "mkfs version %s (%s)\n"
+#, fuzzy, c-format
+msgid "mkfs (%s)\n"
+msgstr "%s: %s (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:124
 #, c-format
@@ -7154,6 +7154,11 @@ msgstr "%s: kan inte ta status på temporär fil.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: kan inte läsa temporär fil.\n"
 
+#: misc-utils/cal.c:313
+#, fuzzy, c-format
+msgid "%s from %s\n"
+msgstr "%s från %s\n"
+
 #: misc-utils/cal.c:327
 msgid "illegal month value: use 1-12"
 msgstr "ogiltigt månadsvärde: använd 1-12"
@@ -7180,6 +7185,11 @@ msgstr "användning: %s [+format] [dag månad år]\n"
 #: misc-utils/ddate.c:250
 msgid "St. Tib's Day"
 msgstr "St. Tibs Dag"
+
+#: misc-utils/kill.c:189
+#, fuzzy, c-format
+msgid "%s from %s%s\n"
+msgstr "%s från %s\n"
 
 #: misc-utils/kill.c:207
 #, c-format
@@ -8749,17 +8759,6 @@ msgstr "   %f avbrott/sek; %f mott. (tecken/s)\n"
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
 msgstr "Användning: %s [-c] [-n nivå] [-s buffertstorlek]\n"
 
-#: sys-utils/flock.c:59
-#, fuzzy, c-format
-msgid "flock: unknown option, aborting.\n"
-msgstr "%s: okänd flagga \"-%c\"\n"
-
-#: sys-utils/flock.c:77
-#, c-format
-msgid ""
-"Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-msgstr ""
-
 #: sys-utils/ipcrm.c:66
 #, c-format
 msgid "invalid id: %s\n"
@@ -9517,11 +9516,6 @@ msgstr ""
 "\t -n              deaktivera automatisk detektering av byteordning\n"
 "\t -V              visa versionsinformation och avsluta\n"
 
-#: sys-utils/readprofile.c:197
-#, c-format
-msgid "%s version %s\n"
-msgstr "%s version %s\n"
-
 #: sys-utils/readprofile.c:284
 #, c-format
 msgid "Sampling_step: %i\n"
@@ -10101,6 +10095,20 @@ msgstr "Indataraden är för lång.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Slut på minne vid växande av buffert.\n"
+
+#, fuzzy
+#~ msgid "mkfs from %s\n"
+#~ msgstr "%s från %s\n"
+
+#~ msgid "mkfs version %s (%s)\n"
+#~ msgstr "mkfs version %s (%s)\n"
+
+#, fuzzy
+#~ msgid "flock: unknown option, aborting.\n"
+#~ msgstr "%s: okänd flagga \"-%c\"\n"
+
+#~ msgid "%s version %s\n"
+#~ msgstr "%s version %s\n"
 
 #~ msgid "Invalid number: %s\n"
 #~ msgstr "Ogiltigt tal: %s\n"

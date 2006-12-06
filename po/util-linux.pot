@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
-"POT-Creation-Date: 2005-08-02 21:07+0200\n"
+"POT-Creation-Date: 2005-08-14 18:14+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -158,10 +158,10 @@ msgstr ""
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
-#: disk-utils/mkswap.c:522 misc-utils/cal.c:313 misc-utils/ddate.c:179
-#: misc-utils/kill.c:189 misc-utils/rename.c:79 misc-utils/script.c:142
+#: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: misc-utils/script.c:142 sys-utils/readprofile.c:197
 #, c-format
-msgid "%s from %s%s\n"
+msgid "%s (%s)\n"
 msgstr ""
 
 #: disk-utils/fdformat.c:130
@@ -824,7 +824,7 @@ msgstr ""
 
 #: disk-utils/mkfs.c:103
 #, c-format
-msgid "mkfs version %s (%s)\n"
+msgid "mkfs (%s)\n"
 msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:124
@@ -6578,6 +6578,11 @@ msgstr ""
 msgid "%s: can't read temporary file.\n"
 msgstr ""
 
+#: misc-utils/cal.c:313
+#, c-format
+msgid "%s from %s\n"
+msgstr ""
+
 #: misc-utils/cal.c:327
 msgid "illegal month value: use 1-12"
 msgstr ""
@@ -6603,6 +6608,11 @@ msgstr ""
 
 #: misc-utils/ddate.c:250
 msgid "St. Tib's Day"
+msgstr ""
+
+#: misc-utils/kill.c:189
+#, c-format
+msgid "%s from %s%s\n"
 msgstr ""
 
 #: misc-utils/kill.c:207
@@ -8093,17 +8103,6 @@ msgstr ""
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
 msgstr ""
 
-#: sys-utils/flock.c:59
-#, c-format
-msgid "flock: unknown option, aborting.\n"
-msgstr ""
-
-#: sys-utils/flock.c:77
-#, c-format
-msgid ""
-"Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-msgstr ""
-
 #: sys-utils/ipcrm.c:66
 #, c-format
 msgid "invalid id: %s\n"
@@ -8819,11 +8818,6 @@ msgid ""
 "\t -r            reset all the counters (root only)\n"
 "\t -n            disable byte order auto-detection\n"
 "\t -V            print version and exit\n"
-msgstr ""
-
-#: sys-utils/readprofile.c:197
-#, c-format
-msgid "%s version %s\n"
 msgstr ""
 
 #: sys-utils/readprofile.c:284

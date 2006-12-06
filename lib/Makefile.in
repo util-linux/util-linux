@@ -50,30 +50,31 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/config/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-LTLIBRARIES = $(noinst_LTLIBRARIES)
-libenv_la_LIBADD =
-am_libenv_la_OBJECTS = env.lo
-libenv_la_OBJECTS = $(am_libenv_la_OBJECTS)
-libmd5_la_LIBADD =
-am_libmd5_la_OBJECTS = md5.lo
-libmd5_la_OBJECTS = $(am_libmd5_la_OBJECTS)
-libsetproctitle_la_LIBADD =
-am_libsetproctitle_la_OBJECTS = setproctitle.lo
-libsetproctitle_la_OBJECTS = $(am_libsetproctitle_la_OBJECTS)
+LIBRARIES = $(noinst_LIBRARIES)
+AR = ar
+ARFLAGS = cru
+libenv_a_AR = $(AR) $(ARFLAGS)
+libenv_a_LIBADD =
+am_libenv_a_OBJECTS = env.$(OBJEXT)
+libenv_a_OBJECTS = $(am_libenv_a_OBJECTS)
+libmd5_a_AR = $(AR) $(ARFLAGS)
+libmd5_a_LIBADD =
+am_libmd5_a_OBJECTS = md5.$(OBJEXT)
+libmd5_a_OBJECTS = $(am_libmd5_a_OBJECTS)
+libsetproctitle_a_AR = $(AR) $(ARFLAGS)
+libsetproctitle_a_LIBADD =
+am_libsetproctitle_a_OBJECTS = setproctitle.$(OBJEXT)
+libsetproctitle_a_OBJECTS = $(am_libsetproctitle_a_OBJECTS)
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
-SOURCES = $(libenv_la_SOURCES) $(libmd5_la_SOURCES) \
-	$(libsetproctitle_la_SOURCES)
-DIST_SOURCES = $(libenv_la_SOURCES) $(libmd5_la_SOURCES) \
-	$(libsetproctitle_la_SOURCES)
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
+SOURCES = $(libenv_a_SOURCES) $(libmd5_a_SOURCES) \
+	$(libsetproctitle_a_SOURCES)
+DIST_SOURCES = $(libenv_a_SOURCES) $(libmd5_a_SOURCES) \
+	$(libsetproctitle_a_SOURCES)
 ETAGS = etags
 CTAGS = ctags
 DISTFILES = $(DIST_COMMON) $(DIST_SOURCES) $(TEXINFOS) $(EXTRA_DIST)
@@ -81,7 +82,6 @@ ACLOCAL = @ACLOCAL@
 AMDEP_FALSE = @AMDEP_FALSE@
 AMDEP_TRUE = @AMDEP_TRUE@
 AMTAR = @AMTAR@
-AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -121,21 +121,14 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 DEPDIR = @DEPDIR@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FFLAGS = @FFLAGS@
 GMSGFMT = @GMSGFMT@
 HAVE_BLKID_FALSE = @HAVE_BLKID_FALSE@
 HAVE_BLKID_TRUE = @HAVE_BLKID_TRUE@
@@ -170,8 +163,6 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
-LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
@@ -204,16 +195,11 @@ USE_TTY_GROUP_FALSE = @USE_TTY_GROUP_FALSE@
 USE_TTY_GROUP_TRUE = @USE_TTY_GROUP_TRUE@
 VERSION = @VERSION@
 XGETTEXT = @XGETTEXT@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
-ac_ct_F77 = @ac_ct_F77@
 ac_ct_RANLIB = @ac_ct_RANLIB@
 ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -247,18 +233,18 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-usrbindir = $(prefix)/usr/bin
-usrsbindir = $(prefix)/usr/sbin
-AM_CPPFLAGS = -include ../config.h -I$(top_srcdir)/include
+usrbinexecdir = $(prefix)/usr/bin
+usrsbinexecdir = $(prefix)/usr/sbin
+AM_CPPFLAGS = -include $(top_srcdir)/config.h -I$(top_srcdir)/include
 DEFAULT_INCLUDES = 
-noinst_LTLIBRARIES = libmd5.la libenv.la libsetproctitle.la
-libmd5_la_SOURCES = md5.c
-libenv_la_SOURCES = env.c
-libsetproctitle_la_SOURCES = setproctitle.c
+noinst_LIBRARIES = libmd5.a libenv.a libsetproctitle.a
+libmd5_a_SOURCES = md5.c
+libenv_a_SOURCES = env.c
+libsetproctitle_a_SOURCES = setproctitle.c
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/config/include-Makefile.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -289,20 +275,20 @@ $(top_srcdir)/configure:  $(am__configure_deps)
 $(ACLOCAL_M4):  $(am__aclocal_m4_deps)
 	cd $(top_builddir) && $(MAKE) $(AM_MAKEFLAGS) am--refresh
 
-clean-noinstLTLIBRARIES:
-	-test -z "$(noinst_LTLIBRARIES)" || rm -f $(noinst_LTLIBRARIES)
-	@list='$(noinst_LTLIBRARIES)'; for p in $$list; do \
-	  dir="`echo $$p | sed -e 's|/[^/]*$$||'`"; \
-	  test "$$dir" != "$$p" || dir=.; \
-	  echo "rm -f \"$${dir}/so_locations\""; \
-	  rm -f "$${dir}/so_locations"; \
-	done
-libenv.la: $(libenv_la_OBJECTS) $(libenv_la_DEPENDENCIES) 
-	$(LINK)  $(libenv_la_LDFLAGS) $(libenv_la_OBJECTS) $(libenv_la_LIBADD) $(LIBS)
-libmd5.la: $(libmd5_la_OBJECTS) $(libmd5_la_DEPENDENCIES) 
-	$(LINK)  $(libmd5_la_LDFLAGS) $(libmd5_la_OBJECTS) $(libmd5_la_LIBADD) $(LIBS)
-libsetproctitle.la: $(libsetproctitle_la_OBJECTS) $(libsetproctitle_la_DEPENDENCIES) 
-	$(LINK)  $(libsetproctitle_la_LDFLAGS) $(libsetproctitle_la_OBJECTS) $(libsetproctitle_la_LIBADD) $(LIBS)
+clean-noinstLIBRARIES:
+	-test -z "$(noinst_LIBRARIES)" || rm -f $(noinst_LIBRARIES)
+libenv.a: $(libenv_a_OBJECTS) $(libenv_a_DEPENDENCIES) 
+	-rm -f libenv.a
+	$(libenv_a_AR) libenv.a $(libenv_a_OBJECTS) $(libenv_a_LIBADD)
+	$(RANLIB) libenv.a
+libmd5.a: $(libmd5_a_OBJECTS) $(libmd5_a_DEPENDENCIES) 
+	-rm -f libmd5.a
+	$(libmd5_a_AR) libmd5.a $(libmd5_a_OBJECTS) $(libmd5_a_LIBADD)
+	$(RANLIB) libmd5.a
+libsetproctitle.a: $(libsetproctitle_a_OBJECTS) $(libsetproctitle_a_DEPENDENCIES) 
+	-rm -f libsetproctitle.a
+	$(libsetproctitle_a_AR) libsetproctitle.a $(libsetproctitle_a_OBJECTS) $(libsetproctitle_a_LIBADD)
+	$(RANLIB) libsetproctitle.a
 
 mostlyclean-compile:
 	-rm -f *.$(OBJEXT)
@@ -310,9 +296,9 @@ mostlyclean-compile:
 distclean-compile:
 	-rm -f *.tab.c
 
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/env.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md5.Plo@am__quote@
-@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setproctitle.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/env.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/md5.Po@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/setproctitle.Po@am__quote@
 
 .c.o:
 @am__fastdepCC_TRUE@	if $(COMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
@@ -327,22 +313,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	if $(LTCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool
 uninstall-info-am:
 
 ID: $(HEADERS) $(SOURCES) $(LISP) $(TAGS_FILES)
@@ -423,7 +393,7 @@ distdir: $(DISTFILES)
 	done
 check-am: all-am
 check: check-am
-all-am: Makefile $(LTLIBRARIES)
+all-am: Makefile $(LIBRARIES)
 installdirs:
 install: install-am
 install-exec: install-exec-am
@@ -451,14 +421,13 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-generic clean-libtool clean-noinstLTLIBRARIES \
-	mostlyclean-am
+clean-am: clean-generic clean-noinstLIBRARIES mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-libtool distclean-tags
+	distclean-tags
 
 dvi: dvi-am
 
@@ -487,8 +456,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
 pdf: pdf-am
 
@@ -501,16 +469,15 @@ ps-am:
 uninstall-am: uninstall-info-am
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-generic \
-	clean-libtool clean-noinstLTLIBRARIES ctags distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-data install-data-am install-exec \
-	install-exec-am install-info install-info-am install-man \
-	install-strip installcheck installcheck-am installdirs \
-	maintainer-clean maintainer-clean-generic mostlyclean \
-	mostlyclean-compile mostlyclean-generic mostlyclean-libtool \
-	pdf pdf-am ps ps-am tags uninstall uninstall-am \
-	uninstall-info-am
+	clean-noinstLIBRARIES ctags distclean distclean-compile \
+	distclean-generic distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-data \
+	install-data-am install-exec install-exec-am install-info \
+	install-info-am install-man install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
+	maintainer-clean-generic mostlyclean mostlyclean-compile \
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-info-am
 
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.

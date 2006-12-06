@@ -2636,7 +2636,7 @@ draw_screen(void) {
 	mvaddstr(WARNING_START, 0, line);
 
 
-    snprintf(line, COLS+1, "cfdisk %s", VERSION);
+    snprintf(line, COLS+1, "cfdisk (%s)", PACKAGE_STRING);
     mvaddstr(HEADER_START, (COLS-strlen(line))/2, line);
     snprintf(line, COLS+1, _("Disk Drive: %s"), disk_device);
     mvaddstr(HEADER_START+2, (COLS-strlen(line))/2, line);
@@ -2953,7 +2953,7 @@ main(int argc, char **argv)
 	    }
 	    break;
 	case 'v':
-	    fprintf(stderr, "cfdisk %s\n", VERSION);
+	    fprintf(stderr, "cfdisk (%s)\n", PACKAGE_STRING);
 	    copyright();
 	    exit(0);
 	case 'z':

@@ -16,4 +16,8 @@ SUBDIRS = lib \
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = config/config.rpath config/mkinstalldirs config/include-Makefile.am
+EXTRA_DIST = config/mkinstalldirs config/include-Makefile.am
+
+distclean-local:
+	-for i in `find . -name \*~ -o -name \*.orig -o -name \*.rej`; do rm $$i; done
+	rm -rf autom4te.cache

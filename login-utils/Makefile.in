@@ -39,10 +39,10 @@ host_triplet = @host@
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/config/include-Makefile.am
 bin_PROGRAMS = $(am__EXEEXT_1)
-usrbin_PROGRAMS = $(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
+usrbinexec_PROGRAMS = $(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
 	$(am__EXEEXT_7) $(am__EXEEXT_8)
 sbin_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_3)
-usrsbin_PROGRAMS = $(am__EXEEXT_9)
+usrsbinexec_PROGRAMS = $(am__EXEEXT_9)
 @BUILD_AGETTY_TRUE@am__append_1 = agetty
 @BUILD_AGETTY_TRUE@am__append_2 = agetty
 @BUILD_INIT_TRUE@am__append_3 = simpleinit shutdown initctl
@@ -87,7 +87,7 @@ CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
 @BUILD_LOGIN_UTILS_TRUE@am__EXEEXT_1 = login$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(sbindir)" \
-	"$(DESTDIR)$(usrbindir)" "$(DESTDIR)$(usrsbindir)" \
+	"$(DESTDIR)$(usrbinexecdir)" "$(DESTDIR)$(usrsbinexecdir)" \
 	"$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man8dir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 @BUILD_AGETTY_TRUE@am__EXEEXT_2 = agetty$(EXEEXT)
@@ -100,11 +100,11 @@ sbinPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 @BUILD_LOGIN_UTILS_TRUE@@NEED_LIBCRYPT_TRUE@	newgrp$(EXEEXT)
 @BUILD_MESG_TRUE@am__EXEEXT_7 = mesg$(EXEEXT)
 @BUILD_WALL_TRUE@am__EXEEXT_8 = wall$(EXEEXT)
-usrbinPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+usrbinexecPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 @BUILD_LOGIN_UTILS_TRUE@am__EXEEXT_9 = vipw$(EXEEXT)
-usrsbinPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-PROGRAMS = $(bin_PROGRAMS) $(sbin_PROGRAMS) $(usrbin_PROGRAMS) \
-	$(usrsbin_PROGRAMS)
+usrsbinexecPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+PROGRAMS = $(bin_PROGRAMS) $(sbin_PROGRAMS) $(usrbinexec_PROGRAMS) \
+	$(usrsbinexec_PROGRAMS)
 agetty_SOURCES = agetty.c
 agetty_OBJECTS = agetty.$(OBJEXT)
 agetty_LDADD = $(LDADD)
@@ -115,7 +115,7 @@ am__chfn_SOURCES_DIST = chfn.c islocal.c setpwnam.c selinux_utils.c
 @BUILD_LOGIN_UTILS_TRUE@	$(am__objects_1)
 chfn_OBJECTS = $(am_chfn_OBJECTS)
 am__DEPENDENCIES_1 =
-@BUILD_LOGIN_UTILS_TRUE@chfn_DEPENDENCIES = ../lib/libenv.la \
+@BUILD_LOGIN_UTILS_TRUE@chfn_DEPENDENCIES = ../lib/libenv.a \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__DEPENDENCIES_1) \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__DEPENDENCIES_1) \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__DEPENDENCIES_1)
@@ -124,7 +124,7 @@ am__chsh_SOURCES_DIST = chsh.c islocal.c setpwnam.c selinux_utils.c
 @BUILD_LOGIN_UTILS_TRUE@	islocal.$(OBJEXT) setpwnam.$(OBJEXT) \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__objects_1)
 chsh_OBJECTS = $(am_chsh_OBJECTS)
-@BUILD_LOGIN_UTILS_TRUE@chsh_DEPENDENCIES = ../lib/libenv.la \
+@BUILD_LOGIN_UTILS_TRUE@chsh_DEPENDENCIES = ../lib/libenv.a \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__DEPENDENCIES_1) \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__DEPENDENCIES_1) \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__DEPENDENCIES_1)
@@ -141,8 +141,7 @@ am__login_SOURCES_DIST = login.c checktty.c
 @BUILD_LOGIN_UTILS_TRUE@@HAVE_PAM_TRUE@am_login_OBJECTS =  \
 @BUILD_LOGIN_UTILS_TRUE@@HAVE_PAM_TRUE@	login.$(OBJEXT)
 login_OBJECTS = $(am_login_OBJECTS)
-@BUILD_LOGIN_UTILS_TRUE@login_DEPENDENCIES =  \
-@BUILD_LOGIN_UTILS_TRUE@	../lib/libsetproctitle.la \
+@BUILD_LOGIN_UTILS_TRUE@login_DEPENDENCIES = ../lib/libsetproctitle.a \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__DEPENDENCIES_1) \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__DEPENDENCIES_1)
 mesg_SOURCES = mesg.c
@@ -168,12 +167,8 @@ depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = agetty.c $(chfn_SOURCES) $(chsh_SOURCES) initctl.c last.c \
 	$(login_SOURCES) mesg.c newgrp.c shutdown.c simpleinit.c \
 	vipw.c $(wall_SOURCES)
@@ -192,7 +187,6 @@ ACLOCAL = @ACLOCAL@
 AMDEP_FALSE = @AMDEP_FALSE@
 AMDEP_TRUE = @AMDEP_TRUE@
 AMTAR = @AMTAR@
-AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -232,21 +226,14 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 DEPDIR = @DEPDIR@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FFLAGS = @FFLAGS@
 GMSGFMT = @GMSGFMT@
 HAVE_BLKID_FALSE = @HAVE_BLKID_FALSE@
 HAVE_BLKID_TRUE = @HAVE_BLKID_TRUE@
@@ -281,8 +268,6 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
-LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
@@ -315,16 +300,11 @@ USE_TTY_GROUP_FALSE = @USE_TTY_GROUP_FALSE@
 USE_TTY_GROUP_TRUE = @USE_TTY_GROUP_TRUE@
 VERSION = @VERSION@
 XGETTEXT = @XGETTEXT@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
-ac_ct_F77 = @ac_ct_F77@
 ac_ct_RANLIB = @ac_ct_RANLIB@
 ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -358,9 +338,9 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-usrbindir = $(prefix)/usr/bin
-usrsbindir = $(prefix)/usr/sbin
-AM_CPPFLAGS = -include ../config.h -I$(top_srcdir)/include
+usrbinexecdir = $(prefix)/usr/bin
+usrsbinexecdir = $(prefix)/usr/sbin
+AM_CPPFLAGS = -include $(top_srcdir)/config.h -I$(top_srcdir)/include
 DEFAULT_INCLUDES = 
 man_MANS = $(am__append_2) $(am__append_4) $(am__append_6) \
 	$(am__append_10) $(am__append_12) $(am__append_26) \
@@ -370,11 +350,11 @@ man_MANS = $(am__append_2) $(am__append_4) $(am__append_6) \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__append_20)
 @BUILD_LOGIN_UTILS_TRUE@chsh_SOURCES = chsh.c islocal.c setpwnam.c \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__append_22)
-@BUILD_LOGIN_UTILS_TRUE@chfn_LDADD = ../lib/libenv.la $(am__append_13) \
+@BUILD_LOGIN_UTILS_TRUE@chfn_LDADD = ../lib/libenv.a $(am__append_13) \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__append_17) $(am__append_21)
-@BUILD_LOGIN_UTILS_TRUE@chsh_LDADD = ../lib/libenv.la $(am__append_14) \
+@BUILD_LOGIN_UTILS_TRUE@chsh_LDADD = ../lib/libenv.a $(am__append_14) \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__append_18) $(am__append_23)
-@BUILD_LOGIN_UTILS_TRUE@login_LDADD = ../lib/libsetproctitle.la \
+@BUILD_LOGIN_UTILS_TRUE@login_LDADD = ../lib/libsetproctitle.a \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__append_15) $(am__append_19)
 @BUILD_LOGIN_UTILS_TRUE@newgrp_LDADD = $(am__append_16)
 @BUILD_LOGIN_UTILS_TRUE@vipw_LDADD = $(am__append_24)
@@ -384,7 +364,7 @@ man_MANS = $(am__append_2) $(am__append_4) $(am__append_6) \
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/config/include-Makefile.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -420,11 +400,10 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	@list='$(bin_PROGRAMS)'; for p in $$list; do \
 	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
 	  if test -f $$p \
-	     || test -f $$p1 \
 	  ; then \
 	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(bindir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(bindir)/$$f" || exit 1; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(binPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(bindir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(binPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(bindir)/$$f" || exit 1; \
 	  else :; fi; \
 	done
 
@@ -437,38 +416,17 @@ uninstall-binPROGRAMS:
 	done
 
 clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
-	  echo " rm -f $$p $$f"; \
-	  rm -f $$p $$f ; \
-	done
-
-installcheck-binPROGRAMS: $(bin_PROGRAMS)
-	bad=0; pid=$$$$; list="$(bin_PROGRAMS)"; for p in $$list; do \
-	  case ' $(AM_INSTALLCHECK_STD_OPTIONS_EXEMPT) ' in \
-	   *" $$p "* | *" $(srcdir)/$$p "*) continue;; \
-	  esac; \
-	  f=`echo "$$p" | \
-	     sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  for opt in --help --version; do \
-	    if "$(DESTDIR)$(bindir)/$$f" $$opt >c$${pid}_.out \
-	         2>c$${pid}_.err </dev/null \
-		 && test -n "`cat c$${pid}_.out`" \
-		 && test -z "`cat c$${pid}_.err`"; then :; \
-	    else echo "$$f does not support $$opt" 1>&2; bad=1; fi; \
-	  done; \
-	done; rm -f c$${pid}_.???; exit $$bad
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 install-sbinPROGRAMS: $(sbin_PROGRAMS)
 	@$(NORMAL_INSTALL)
 	test -z "$(sbindir)" || $(mkdir_p) "$(DESTDIR)$(sbindir)"
 	@list='$(sbin_PROGRAMS)'; for p in $$list; do \
 	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
 	  if test -f $$p \
-	     || test -f $$p1 \
 	  ; then \
 	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(sbinPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(sbindir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(sbinPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(sbindir)/$$f" || exit 1; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(sbinPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(sbindir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(sbinPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(sbindir)/$$f" || exit 1; \
 	  else :; fi; \
 	done
 
@@ -481,115 +439,53 @@ uninstall-sbinPROGRAMS:
 	done
 
 clean-sbinPROGRAMS:
-	@list='$(sbin_PROGRAMS)'; for p in $$list; do \
-	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
-	  echo " rm -f $$p $$f"; \
-	  rm -f $$p $$f ; \
-	done
-
-installcheck-sbinPROGRAMS: $(sbin_PROGRAMS)
-	bad=0; pid=$$$$; list="$(sbin_PROGRAMS)"; for p in $$list; do \
-	  case ' $(AM_INSTALLCHECK_STD_OPTIONS_EXEMPT) ' in \
-	   *" $$p "* | *" $(srcdir)/$$p "*) continue;; \
-	  esac; \
-	  f=`echo "$$p" | \
-	     sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  for opt in --help --version; do \
-	    if "$(DESTDIR)$(sbindir)/$$f" $$opt >c$${pid}_.out \
-	         2>c$${pid}_.err </dev/null \
-		 && test -n "`cat c$${pid}_.out`" \
-		 && test -z "`cat c$${pid}_.err`"; then :; \
-	    else echo "$$f does not support $$opt" 1>&2; bad=1; fi; \
-	  done; \
-	done; rm -f c$${pid}_.???; exit $$bad
-install-usrbinPROGRAMS: $(usrbin_PROGRAMS)
+	-test -z "$(sbin_PROGRAMS)" || rm -f $(sbin_PROGRAMS)
+install-usrbinexecPROGRAMS: $(usrbinexec_PROGRAMS)
 	@$(NORMAL_INSTALL)
-	test -z "$(usrbindir)" || $(mkdir_p) "$(DESTDIR)$(usrbindir)"
-	@list='$(usrbin_PROGRAMS)'; for p in $$list; do \
+	test -z "$(usrbinexecdir)" || $(mkdir_p) "$(DESTDIR)$(usrbinexecdir)"
+	@list='$(usrbinexec_PROGRAMS)'; for p in $$list; do \
 	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
 	  if test -f $$p \
-	     || test -f $$p1 \
 	  ; then \
 	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(usrbinPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(usrbindir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(usrbinPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(usrbindir)/$$f" || exit 1; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(usrbinexecPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(usrbinexecdir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(usrbinexecPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(usrbinexecdir)/$$f" || exit 1; \
 	  else :; fi; \
 	done
 
-uninstall-usrbinPROGRAMS:
+uninstall-usrbinexecPROGRAMS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(usrbin_PROGRAMS)'; for p in $$list; do \
+	@list='$(usrbinexec_PROGRAMS)'; for p in $$list; do \
 	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  echo " rm -f '$(DESTDIR)$(usrbindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(usrbindir)/$$f"; \
+	  echo " rm -f '$(DESTDIR)$(usrbinexecdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(usrbinexecdir)/$$f"; \
 	done
 
-clean-usrbinPROGRAMS:
-	@list='$(usrbin_PROGRAMS)'; for p in $$list; do \
-	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
-	  echo " rm -f $$p $$f"; \
-	  rm -f $$p $$f ; \
-	done
-
-installcheck-usrbinPROGRAMS: $(usrbin_PROGRAMS)
-	bad=0; pid=$$$$; list="$(usrbin_PROGRAMS)"; for p in $$list; do \
-	  case ' $(AM_INSTALLCHECK_STD_OPTIONS_EXEMPT) ' in \
-	   *" $$p "* | *" $(srcdir)/$$p "*) continue;; \
-	  esac; \
-	  f=`echo "$$p" | \
-	     sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  for opt in --help --version; do \
-	    if "$(DESTDIR)$(usrbindir)/$$f" $$opt >c$${pid}_.out \
-	         2>c$${pid}_.err </dev/null \
-		 && test -n "`cat c$${pid}_.out`" \
-		 && test -z "`cat c$${pid}_.err`"; then :; \
-	    else echo "$$f does not support $$opt" 1>&2; bad=1; fi; \
-	  done; \
-	done; rm -f c$${pid}_.???; exit $$bad
-install-usrsbinPROGRAMS: $(usrsbin_PROGRAMS)
+clean-usrbinexecPROGRAMS:
+	-test -z "$(usrbinexec_PROGRAMS)" || rm -f $(usrbinexec_PROGRAMS)
+install-usrsbinexecPROGRAMS: $(usrsbinexec_PROGRAMS)
 	@$(NORMAL_INSTALL)
-	test -z "$(usrsbindir)" || $(mkdir_p) "$(DESTDIR)$(usrsbindir)"
-	@list='$(usrsbin_PROGRAMS)'; for p in $$list; do \
+	test -z "$(usrsbinexecdir)" || $(mkdir_p) "$(DESTDIR)$(usrsbinexecdir)"
+	@list='$(usrsbinexec_PROGRAMS)'; for p in $$list; do \
 	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
 	  if test -f $$p \
-	     || test -f $$p1 \
 	  ; then \
 	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(usrsbinPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(usrsbindir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(usrsbinPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(usrsbindir)/$$f" || exit 1; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(usrsbinexecPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(usrsbinexecdir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(usrsbinexecPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(usrsbinexecdir)/$$f" || exit 1; \
 	  else :; fi; \
 	done
 
-uninstall-usrsbinPROGRAMS:
+uninstall-usrsbinexecPROGRAMS:
 	@$(NORMAL_UNINSTALL)
-	@list='$(usrsbin_PROGRAMS)'; for p in $$list; do \
+	@list='$(usrsbinexec_PROGRAMS)'; for p in $$list; do \
 	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  echo " rm -f '$(DESTDIR)$(usrsbindir)/$$f'"; \
-	  rm -f "$(DESTDIR)$(usrsbindir)/$$f"; \
+	  echo " rm -f '$(DESTDIR)$(usrsbinexecdir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(usrsbinexecdir)/$$f"; \
 	done
 
-clean-usrsbinPROGRAMS:
-	@list='$(usrsbin_PROGRAMS)'; for p in $$list; do \
-	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
-	  echo " rm -f $$p $$f"; \
-	  rm -f $$p $$f ; \
-	done
-
-installcheck-usrsbinPROGRAMS: $(usrsbin_PROGRAMS)
-	bad=0; pid=$$$$; list="$(usrsbin_PROGRAMS)"; for p in $$list; do \
-	  case ' $(AM_INSTALLCHECK_STD_OPTIONS_EXEMPT) ' in \
-	   *" $$p "* | *" $(srcdir)/$$p "*) continue;; \
-	  esac; \
-	  f=`echo "$$p" | \
-	     sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  for opt in --help --version; do \
-	    if "$(DESTDIR)$(usrsbindir)/$$f" $$opt >c$${pid}_.out \
-	         2>c$${pid}_.err </dev/null \
-		 && test -n "`cat c$${pid}_.out`" \
-		 && test -z "`cat c$${pid}_.err`"; then :; \
-	    else echo "$$f does not support $$opt" 1>&2; bad=1; fi; \
-	  done; \
-	done; rm -f c$${pid}_.???; exit $$bad
+clean-usrsbinexecPROGRAMS:
+	-test -z "$(usrsbinexec_PROGRAMS)" || rm -f $(usrsbinexec_PROGRAMS)
 agetty$(EXEEXT): $(agetty_OBJECTS) $(agetty_DEPENDENCIES) 
 	@rm -f agetty$(EXEEXT)
 	$(LINK) $(agetty_LDFLAGS) $(agetty_OBJECTS) $(agetty_LDADD) $(LIBS)
@@ -664,22 +560,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
-
-.c.lo:
-@am__fastdepCC_TRUE@	if $(LTCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool
 uninstall-info-am:
 install-man1: $(man1_MANS) $(man_MANS)
 	@$(NORMAL_INSTALL)
@@ -852,7 +732,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(MANS)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(sbindir)" "$(DESTDIR)$(usrbindir)" "$(DESTDIR)$(usrsbindir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man8dir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(sbindir)" "$(DESTDIR)$(usrbinexecdir)" "$(DESTDIR)$(usrsbinexecdir)" "$(DESTDIR)$(man1dir)" "$(DESTDIR)$(man8dir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
 install: install-am
@@ -879,19 +759,19 @@ distclean-generic:
 maintainer-clean-generic:
 	@echo "This command is intended for maintainers to use"
 	@echo "it deletes files that may require special tools to rebuild."
-@BUILD_LOGIN_UTILS_FALSE@@BUILD_WALL_FALSE@install-data-hook:
-@BUILD_LOGIN_UTILS_FALSE@@USE_TTY_GROUP_FALSE@install-data-hook:
+@BUILD_INIT_FALSE@@BUILD_LOGIN_UTILS_FALSE@@BUILD_WALL_FALSE@install-exec-hook:
+@BUILD_INIT_FALSE@@BUILD_LOGIN_UTILS_FALSE@@USE_TTY_GROUP_FALSE@install-exec-hook:
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool \
-	clean-sbinPROGRAMS clean-usrbinPROGRAMS clean-usrsbinPROGRAMS \
+clean-am: clean-binPROGRAMS clean-generic clean-sbinPROGRAMS \
+	clean-usrbinexecPROGRAMS clean-usrsbinexecPROGRAMS \
 	mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-libtool distclean-tags
+	distclean-tags
 
 dvi: dvi-am
 
@@ -903,12 +783,10 @@ info: info-am
 
 info-am:
 
-install-data-am: install-man install-usrbinPROGRAMS \
-	install-usrsbinPROGRAMS
-	@$(NORMAL_INSTALL)
-	$(MAKE) $(AM_MAKEFLAGS) install-data-hook
+install-data-am: install-man
 
-install-exec-am: install-binPROGRAMS install-sbinPROGRAMS
+install-exec-am: install-binPROGRAMS install-sbinPROGRAMS \
+	install-usrbinexecPROGRAMS install-usrsbinexecPROGRAMS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 
@@ -916,8 +794,7 @@ install-info: install-info-am
 
 install-man: install-man1 install-man8
 
-installcheck-am: installcheck-binPROGRAMS installcheck-sbinPROGRAMS \
-	installcheck-usrbinPROGRAMS installcheck-usrsbinPROGRAMS
+installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 	-rm -rf ./$(DEPDIR)
@@ -926,8 +803,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
 pdf: pdf-am
 
@@ -938,50 +814,47 @@ ps: ps-am
 ps-am:
 
 uninstall-am: uninstall-binPROGRAMS uninstall-info-am uninstall-man \
-	uninstall-sbinPROGRAMS uninstall-usrbinPROGRAMS \
-	uninstall-usrsbinPROGRAMS
+	uninstall-sbinPROGRAMS uninstall-usrbinexecPROGRAMS \
+	uninstall-usrsbinexecPROGRAMS
 
 uninstall-man: uninstall-man1 uninstall-man8
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libtool clean-sbinPROGRAMS \
-	clean-usrbinPROGRAMS clean-usrsbinPROGRAMS ctags distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-data-hook install-exec install-exec-am \
+	clean-generic clean-sbinPROGRAMS clean-usrbinexecPROGRAMS \
+	clean-usrsbinexecPROGRAMS ctags distclean distclean-compile \
+	distclean-generic distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-exec install-exec-am \
 	install-exec-hook install-info install-info-am install-man \
 	install-man1 install-man8 install-sbinPROGRAMS install-strip \
-	install-usrbinPROGRAMS install-usrsbinPROGRAMS installcheck \
-	installcheck-am installcheck-binPROGRAMS \
-	installcheck-sbinPROGRAMS installcheck-usrbinPROGRAMS \
-	installcheck-usrsbinPROGRAMS installdirs maintainer-clean \
+	install-usrbinexecPROGRAMS install-usrsbinexecPROGRAMS \
+	installcheck installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-info-am uninstall-man uninstall-man1 uninstall-man8 \
-	uninstall-sbinPROGRAMS uninstall-usrbinPROGRAMS \
-	uninstall-usrsbinPROGRAMS
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-info-am \
+	uninstall-man uninstall-man1 uninstall-man8 \
+	uninstall-sbinPROGRAMS uninstall-usrbinexecPROGRAMS \
+	uninstall-usrsbinexecPROGRAMS
 
 
-@BUILD_LOGIN_UTILS_TRUE@install-data-hook::
-@BUILD_LOGIN_UTILS_TRUE@	cd $(DESTDIR)$(usrsbindir) && ln -sf vipw vigr
+@BUILD_LOGIN_UTILS_TRUE@install-exec-hook::
+@BUILD_LOGIN_UTILS_TRUE@	cd $(DESTDIR)$(usrsbinexecdir) && ln -sf vipw vigr
 
-@BUILD_WALL_TRUE@@USE_TTY_GROUP_TRUE@install-data-hook::
-@BUILD_WALL_TRUE@@USE_TTY_GROUP_TRUE@	chgrp tty $(DESTDIR)$(usrbindir)/wall
-@BUILD_WALL_TRUE@@USE_TTY_GROUP_TRUE@	chmod g+s $(DESTDIR)$(usrbindir)/wall
+@BUILD_WALL_TRUE@@USE_TTY_GROUP_TRUE@install-exec-hook::
+@BUILD_WALL_TRUE@@USE_TTY_GROUP_TRUE@	chgrp tty $(DESTDIR)$(usrbinexecdir)/wall
+@BUILD_WALL_TRUE@@USE_TTY_GROUP_TRUE@	chmod g+s $(DESTDIR)$(usrbinexecdir)/wall
 
-install-exec-hook::
-	cd $(DESTDIR)$(sbindir) && ln -sf shutdown reboot
-	cd $(DESTDIR)$(sbindir) && ln -sf shutdown fastboot
-	cd $(DESTDIR)$(sbindir) && ln -sf shutdown halt
-	cd $(DESTDIR)$(sbindir) && ln -sf shutdown fasthalt
-	cd $(DESTDIR)$(sbindir) && ln -sf initctl need
-	cd $(DESTDIR)$(sbindir) && ln -sf initctl display-services
-	cd $(DESTDIR)$(sbindir) && ln -sf initctl provide
-	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 need.8
-	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 display-services.8
-	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 provide.8
+@BUILD_INIT_TRUE@install-exec-hook::
+@BUILD_INIT_TRUE@	cd $(DESTDIR)$(sbindir) && ln -sf shutdown reboot
+@BUILD_INIT_TRUE@	cd $(DESTDIR)$(sbindir) && ln -sf shutdown fastboot
+@BUILD_INIT_TRUE@	cd $(DESTDIR)$(sbindir) && ln -sf shutdown halt
+@BUILD_INIT_TRUE@	cd $(DESTDIR)$(sbindir) && ln -sf shutdown fasthalt
+@BUILD_INIT_TRUE@	cd $(DESTDIR)$(sbindir) && ln -sf initctl need
+@BUILD_INIT_TRUE@	cd $(DESTDIR)$(sbindir) && ln -sf initctl display-services
+@BUILD_INIT_TRUE@	cd $(DESTDIR)$(sbindir) && ln -sf initctl provide
+@BUILD_INIT_TRUE@	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 need.8
+@BUILD_INIT_TRUE@	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 display-services.8
+@BUILD_INIT_TRUE@	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 provide.8
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

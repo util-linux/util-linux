@@ -690,7 +690,7 @@ main (int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf ("umount: util-linux-%s\n", VERSION);
+			printf ("umount (%s)\n", PACKAGE_STRING);
 			exit (0);
 		case 't':		/* specify file system type */
 			types = optarg;

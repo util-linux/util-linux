@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.11d\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
-"POT-Creation-Date: 2005-08-02 21:07+0200\n"
+"POT-Creation-Date: 2005-08-14 18:14+0200\n"
 "PO-Revision-Date: 2001-05-30 15:11+0200\n"
 "Last-Translator: Jiøí Pavlovský <pavlovsk@ff.cuni.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -160,10 +160,10 @@ msgstr "Pou¾ití: %s [ -n ] zaøízení\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
-#: disk-utils/mkswap.c:522 misc-utils/cal.c:313 misc-utils/ddate.c:179
-#: misc-utils/kill.c:189 misc-utils/rename.c:79 misc-utils/script.c:142
+#: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: misc-utils/script.c:142 sys-utils/readprofile.c:197
 #, fuzzy, c-format
-msgid "%s from %s%s\n"
+msgid "%s (%s)\n"
 msgstr "%s na %s\n"
 
 #: disk-utils/fdformat.c:130
@@ -843,9 +843,9 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: Nedostatek pamìti!\n"
 
 #: disk-utils/mkfs.c:103
-#, c-format
-msgid "mkfs version %s (%s)\n"
-msgstr "mkfs verze %s (%s)\n"
+#, fuzzy, c-format
+msgid "mkfs (%s)\n"
+msgstr "%s na %s\n"
 
 #: disk-utils/mkfs.cramfs.c:124
 #, c-format
@@ -7049,6 +7049,11 @@ msgstr "%s: volání stat pro doèasný soubor selhalo.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: doèasný soubor nelze èíst.\n"
 
+#: misc-utils/cal.c:313
+#, fuzzy, c-format
+msgid "%s from %s\n"
+msgstr "%s na %s\n"
+
 #: misc-utils/cal.c:327
 msgid "illegal month value: use 1-12"
 msgstr "chybná hodnota pro mìsíc: pou¾ijte 1-12"
@@ -7075,6 +7080,11 @@ msgstr "Pou¾ití: %s [+formát] [den mìsíc rok]\n"
 #: misc-utils/ddate.c:250
 msgid "St. Tib's Day"
 msgstr "Den svatého Tiba"
+
+#: misc-utils/kill.c:189
+#, fuzzy, c-format
+msgid "%s from %s%s\n"
+msgstr "%s na %s\n"
 
 #: misc-utils/kill.c:207
 #, c-format
@@ -8644,17 +8654,6 @@ msgstr "   %f pøer/sek; %f pøíj (znak/sek)\n"
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
 msgstr "Pou¾ití: %s [-c] [-n úroveò] [-s velikost bufferu]\n"
 
-#: sys-utils/flock.c:59
-#, fuzzy, c-format
-msgid "flock: unknown option, aborting.\n"
-msgstr "%s: neznámý signál %s\n"
-
-#: sys-utils/flock.c:77
-#, c-format
-msgid ""
-"Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-msgstr ""
-
 #: sys-utils/ipcrm.c:66
 #, c-format
 msgid "invalid id: %s\n"
@@ -9404,11 +9403,6 @@ msgstr ""
 "\t -r            vynuluje ve¹keré èítaèe (pouze root)\n"
 "\t -V            vypí¹e informace o verzi a skonèí\n"
 
-#: sys-utils/readprofile.c:197
-#, fuzzy, c-format
-msgid "%s version %s\n"
-msgstr "%s Verze %s\n"
-
 #: sys-utils/readprofile.c:284
 #, c-format
 msgid "Sampling_step: %i\n"
@@ -9997,6 +9991,21 @@ msgstr "Vstupní øádka je pøíli¹ dlouhá.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Nedostatek pamìti pro rostoucí buffer.\n"
+
+#, fuzzy
+#~ msgid "mkfs from %s\n"
+#~ msgstr "%s na %s\n"
+
+#~ msgid "mkfs version %s (%s)\n"
+#~ msgstr "mkfs verze %s (%s)\n"
+
+#, fuzzy
+#~ msgid "flock: unknown option, aborting.\n"
+#~ msgstr "%s: neznámý signál %s\n"
+
+#, fuzzy
+#~ msgid "%s version %s\n"
+#~ msgstr "%s Verze %s\n"
 
 #~ msgid "Invalid number: %s\n"
 #~ msgstr "Chybné èíslo: %s\n"

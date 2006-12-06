@@ -8,10 +8,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.12q\n"
+"Project-Id-Version: util-linux 2.13-pre1\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
-"POT-Creation-Date: 2005-08-02 21:07+0200\n"
-"PO-Revision-Date: 2005-01-28 08:00-0500\n"
+"POT-Creation-Date: 2005-08-14 18:14+0200\n"
+"PO-Revision-Date: 2005-08-09 08:00-0500\n"
 "Last-Translator: Michel Robitaille <robitail@IRO.UMontreal.CA>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "MIME-Version: 1.0\n"
@@ -163,11 +163,11 @@ msgstr "usage: %s [ -n ] périphérique\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
-#: disk-utils/mkswap.c:522 misc-utils/cal.c:313 misc-utils/ddate.c:179
-#: misc-utils/kill.c:189 misc-utils/rename.c:79 misc-utils/script.c:142
+#: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: misc-utils/script.c:142 sys-utils/readprofile.c:197
 #, fuzzy, c-format
-msgid "%s from %s%s\n"
-msgstr "%s de %s\n"
+msgid "%s (%s)\n"
+msgstr "%s: %s (%s)\n"
 
 #: disk-utils/fdformat.c:130
 #, c-format
@@ -867,9 +867,9 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: mémoire épuisée!\n"
 
 #: disk-utils/mkfs.c:103
-#, c-format
-msgid "mkfs version %s (%s)\n"
-msgstr "mkfs version %s (%s)\n"
+#, fuzzy, c-format
+msgid "mkfs (%s)\n"
+msgstr "%s: %s (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:124
 #, c-format
@@ -5878,9 +5878,9 @@ msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Incapable d'initialiser la valeur d'époque dans le kernel.\n"
 
 #: hwclock/hwclock.c:1175
-#, fuzzy, c-format
+#, c-format
 msgid "%s from util-linux-%s\n"
-msgstr "%s de %s\n"
+msgstr "%s de util-linux-%s\n"
 
 # hwclock/hwclock.c:1108
 #: hwclock/hwclock.c:1196
@@ -7255,6 +7255,11 @@ msgstr "%s: ne peut évaluer par stat() le fichier temporaire.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: ne peut lire du fichier temporaire.\n"
 
+#: misc-utils/cal.c:313
+#, fuzzy, c-format
+msgid "%s from %s\n"
+msgstr "%s de %s%s\n"
+
 #: misc-utils/cal.c:327
 msgid "illegal month value: use 1-12"
 msgstr "valeur de mois illégal: utiliser 1-12"
@@ -7281,6 +7286,11 @@ msgstr "usage: %s [+format] [jour mois année]\n"
 #: misc-utils/ddate.c:250
 msgid "St. Tib's Day"
 msgstr "Jour de la St. Tib"
+
+#: misc-utils/kill.c:189
+#, c-format
+msgid "%s from %s%s\n"
+msgstr "%s de %s%s\n"
 
 #: misc-utils/kill.c:207
 #, c-format
@@ -8876,19 +8886,6 @@ msgstr "   %f int/sec; %f rec (caractères/sec)\n"
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
 msgstr "Usage: %s [-c] [-n niveau] [-s taille-de-tampon]\n"
 
-#: sys-utils/flock.c:59
-#, c-format
-msgid "flock: unknown option, aborting.\n"
-msgstr "flock: option inconnue, annulation de l'opération \n"
-
-#: sys-utils/flock.c:77
-#, fuzzy, c-format
-msgid ""
-"Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-msgstr ""
-"Usage flock [--shared | --timeout=secondes] nom_de_fichier commandes {arg "
-"arg...}\n"
-
 #: sys-utils/ipcrm.c:66
 #, c-format
 msgid "invalid id: %s\n"
@@ -9654,11 +9651,6 @@ msgstr ""
 "octets\n"
 "\t -V                   afficher la version et quitter\n"
 
-#: sys-utils/readprofile.c:197
-#, c-format
-msgid "%s version %s\n"
-msgstr "%s Version %s\n"
-
 #: sys-utils/readprofile.c:284
 #, c-format
 msgid "Sampling_step: %i\n"
@@ -10244,6 +10236,25 @@ msgstr "Ligne d'entrée trop longue.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Mémoire épuisée lors de l'accroissement du tampon.\n"
+
+#, fuzzy
+#~ msgid "mkfs from %s\n"
+#~ msgstr "%s de %s%s\n"
+
+#~ msgid "mkfs version %s (%s)\n"
+#~ msgstr "mkfs version %s (%s)\n"
+
+#~ msgid "flock: unknown option, aborting.\n"
+#~ msgstr "flock: option inconnue, annulation de l'opération \n"
+
+#~ msgid ""
+#~ "Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
+#~ msgstr ""
+#~ "Usage flock [--shared [--timeout=secondes] nom_de_fichier commande {arg "
+#~ "arg...}\n"
+
+#~ msgid "%s version %s\n"
+#~ msgstr "%s Version %s\n"
 
 #~ msgid "Invalid number: %s\n"
 #~ msgstr "Nombre invalide: %s\n"

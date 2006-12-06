@@ -1,21 +1,20 @@
-# Translation of util-linux-2.12q.po to Russian
-# Translation of util-linux-2.12m.po to Russian
+# Translation of util-linux-2.13-pre1.po to Russian
 # Copyright (C) 2003 Free Software Foundation Inc.
 # This file is put in the public domain.
 # Pavel Maryanov <acid_jack@ukr.net>, 2003, 2004, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux-2.12q\n"
+"Project-Id-Version: util-linux 2.13-pre1\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
-"POT-Creation-Date: 2005-08-02 21:07+0200\n"
-"PO-Revision-Date: 2005-01-25 15:41+0200\n"
+"POT-Creation-Date: 2005-08-14 18:14+0200\n"
+"PO-Revision-Date: 2005-08-04 14:27+0300\n"
 "Last-Translator: Pavel Maryanov <acid_jack@ukr.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=KOI8-R\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: KBabel 1.3\n"
+"X-Generator: KBabel 1.10.2\n"
 
 #: disk-utils/blockdev.c:62
 msgid "set read-only"
@@ -161,11 +160,11 @@ msgstr "использование: %s [ -n ] устройство\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
-#: disk-utils/mkswap.c:522 misc-utils/cal.c:313 misc-utils/ddate.c:179
-#: misc-utils/kill.c:189 misc-utils/rename.c:79 misc-utils/script.c:142
+#: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: misc-utils/script.c:142 sys-utils/readprofile.c:197
 #, fuzzy, c-format
-msgid "%s from %s%s\n"
-msgstr "%s из %s\n"
+msgid "%s (%s)\n"
+msgstr "%s: %s (%s)\n"
 
 #: disk-utils/fdformat.c:130
 #, c-format
@@ -853,9 +852,9 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: Не хватает памяти!\n"
 
 #: disk-utils/mkfs.c:103
-#, c-format
-msgid "mkfs version %s (%s)\n"
-msgstr "mkfs версии %s (%s)\n"
+#, fuzzy, c-format
+msgid "mkfs (%s)\n"
+msgstr "%s: %s (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:124
 #, c-format
@@ -5788,9 +5787,9 @@ msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Невозможно установить в ядре значение века.\n"
 
 #: hwclock/hwclock.c:1175
-#, fuzzy, c-format
+#, c-format
 msgid "%s from util-linux-%s\n"
-msgstr "%s из %s\n"
+msgstr "%s из util-linux-%s\n"
 
 #: hwclock/hwclock.c:1196
 #, c-format
@@ -7152,6 +7151,11 @@ msgstr "%s: невозможно определить состояние временного файла.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: невозможно прочитать временный файл.\n"
 
+#: misc-utils/cal.c:313
+#, fuzzy, c-format
+msgid "%s from %s\n"
+msgstr "%s из %s%s\n"
+
 #: misc-utils/cal.c:327
 msgid "illegal month value: use 1-12"
 msgstr "запрещенное значение месяца: используйте 1-12"
@@ -7178,6 +7182,11 @@ msgstr "использование: %s [+формат] [день месяц год]\n"
 #: misc-utils/ddate.c:250
 msgid "St. Tib's Day"
 msgstr "День Св. Изабеллы"
+
+#: misc-utils/kill.c:189
+#, c-format
+msgid "%s from %s%s\n"
+msgstr "%s из %s%s\n"
 
 #: misc-utils/kill.c:207
 #, c-format
@@ -8766,19 +8775,6 @@ msgstr "   %f прерыв/сек; %f зап (симв/сек)\n"
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
 msgstr "Использование: %s [-c] [-n уровень] [-s разм_буфера]\n"
 
-#: sys-utils/flock.c:59
-#, c-format
-msgid "flock: unknown option, aborting.\n"
-msgstr "flock: неизвестная опция, выполняется прерывание.\n"
-
-#: sys-utils/flock.c:77
-#, fuzzy, c-format
-msgid ""
-"Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-msgstr ""
-"Использование flock [--shared | --timeout=секунды] имя_файла команда {арг "
-"арг...}\n"
-
 #: sys-utils/ipcrm.c:66
 #, c-format
 msgid "invalid id: %s\n"
@@ -9541,11 +9537,6 @@ msgstr ""
 "\t -n            отключение автоопределения порядка байтов\n"
 "\t -V            вывод номера версии выход\n"
 
-#: sys-utils/readprofile.c:197
-#, c-format
-msgid "%s version %s\n"
-msgstr "%s версия %s\n"
-
 #: sys-utils/readprofile.c:284
 #, c-format
 msgid "Sampling_step: %i\n"
@@ -10128,157 +10119,21 @@ msgstr "Строка входных данных слишком длинная.\n"
 msgid "Out of memory when growing buffer.\n"
 msgstr "Не хватает памяти при увеличении буфера.\n"
 
-#~ msgid "Invalid number: %s\n"
-#~ msgstr "Неверное число: %s\n"
+#, fuzzy
+#~ msgid "mkfs from %s\n"
+#~ msgstr "%s из %s%s\n"
 
-#~ msgid "Syntax error: '%s'\n"
-#~ msgstr "Ошибка синтаксиса: '%s'\n"
+#~ msgid "mkfs version %s (%s)\n"
+#~ msgstr "mkfs версии %s (%s)\n"
 
-#~ msgid "No such parameter set: '%s'\n"
-#~ msgstr "Нет такого набора параметров: '%s'\n"
-
-#~ msgid "   %s [ -p ] dev name\n"
-#~ msgstr "   %s [ -p ] dev имя\n"
+#~ msgid "flock: unknown option, aborting.\n"
+#~ msgstr "flock: неизвестная опция, выполняется прерывание.\n"
 
 #~ msgid ""
-#~ "   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
+#~ "Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
 #~ msgstr ""
-#~ "   %s [ -p ] dev имя сектор головки дорожки участок промежуток частота "
-#~ "спец 1 fmt_gap\n"
+#~ "Использование flock [--shared [--timeout=секунды] имя_файла команда {арг "
+#~ "арг...}\n"
 
-#~ msgid "   %s [ -c | -y | -n | -d ] dev\n"
-#~ msgstr "   %s [ -c | -y | -n | -d ] dev\n"
-
-#~ msgid "   %s [ -c | -y | -n ] dev\n"
-#~ msgstr "   %s [ -c | -y | -n ] dev\n"
-
-#~ msgid "version"
-#~ msgstr "версия"
-
-#~ msgid "couldn't open /dev/urandom"
-#~ msgstr "невозможно открыть /dev/urandom"
-
-#~ msgid "couldn't read random data from /dev/urandom"
-#~ msgstr "невозможно прочитать случайные данные из /dev/urandom"
-
-#~ msgid "can't open %s for reading"
-#~ msgstr "невозможно открыть %s для чтения"
-
-#~ msgid "can't stat(%s)"
-#~ msgstr "невозможно определить состояние (%s)"
-
-#~ msgid "%s doesn't have the correct filemodes"
-#~ msgstr "%s не имеет верных filemode'ов"
-
-#~ msgid "can't read data from %s"
-#~ msgstr "невозможно прочитать данные из %s"
-
-#~ msgid ""
-#~ "Too many users logged on already.\n"
-#~ "Try again later.\n"
-#~ msgstr ""
-#~ "Уже слишком много пользователей вошло в систему.\n"
-#~ "Попробуйте еще раз попозже.\n"
-
-#~ msgid "You have too many processes running.\n"
-#~ msgstr "У вас слишком много запущенных процессов.\n"
-
-#~ msgid "The password must have at least 6 characters, try again.\n"
-#~ msgstr ""
-#~ "Пароль должен содержать по крайней мере 6 символов, попробуйте еще раз.\n"
-
-#~ msgid ""
-#~ "The password must contain characters out of two of the following\n"
-#~ "classes:  upper and lower case letters, digits and non alphanumeric\n"
-#~ "characters. See passwd(1) for more information.\n"
-#~ msgstr ""
-#~ "Пароль должен содержать символы следующих двух классов:\n"
-#~ "символы верхнего и нижнего регистра, цифры и не буквенноцифровые\n"
-#~ "символы. См. passwd(1) для получения дополнительной информации.\n"
-
-#~ msgid "You cannot reuse the old password.\n"
-#~ msgstr "Вы не можете повторно использовать старый пароль.\n"
-
-#~ msgid "Please don't use something like your username as password!\n"
-#~ msgstr ""
-#~ "Пожалуйста, не используйте в качестве пароля что-то вроде своего имени "
-#~ "пользователя!\n"
-
-#~ msgid "Please don't use something like your realname as password!\n"
-#~ msgstr ""
-#~ "Пожалуйста, не используйте в качестве пароля что-то вроде своего "
-#~ "настоящего имени!\n"
-
-#~ msgid "Usage: passwd [username [password]]\n"
-#~ msgstr "Использование: passwd [имя_пользователя [пароль]]\n"
-
-#~ msgid "Only root may use the one and two argument forms.\n"
-#~ msgstr "Только root может использовать формы с одним и двумя аргументами.\n"
-
-#~ msgid "Usage: passwd [-foqsvV] [user [password]]\n"
-#~ msgstr "Использование: passwd [-foqsvV] [пользователь [пароль]]\n"
-
-#~ msgid "Can't exec %s: %s\n"
-#~ msgstr "Невозможно выполнить %s: %s\n"
-
-#~ msgid "Cannot find login name"
-#~ msgstr "Невозможно найти зарегистрированное имя"
-
-#~ msgid "Only root can change the password for others.\n"
-#~ msgstr "Только root может изменять чужие пароли.\n"
-
-#~ msgid "Too many arguments.\n"
-#~ msgstr "Слишком много аргументов.\n"
-
-#~ msgid "Can't find username anywhere. Is `%s' really a user?"
-#~ msgstr "Невозможно найти имя пользователя. `%s' действительно пользователь?"
-
-#~ msgid "Sorry, I can only change local passwords. Use yppasswd instead."
-#~ msgstr ""
-#~ "К сожалению я могу изменять только локальные пароли. Вместо этого "
-#~ "используйте yppasswd."
-
-#~ msgid "UID and username does not match, imposter!"
-#~ msgstr "UID и имя пользователя не совпадают, самозванец!"
-
-#~ msgid "Changing password for %s\n"
-#~ msgstr "Изменение пароля для %s\n"
-
-#~ msgid "Enter old password: "
-#~ msgstr "Введите старый пароль: "
-
-#~ msgid "Illegal password, imposter."
-#~ msgstr "Запрещенный пароль, самозванец."
-
-#~ msgid "Enter new password: "
-#~ msgstr "Введите новый пароль: "
-
-#~ msgid "Password not changed."
-#~ msgstr "Пароль не изменен."
-
-#~ msgid "Re-type new password: "
-#~ msgstr "Повторите новый пароль: "
-
-#~ msgid "You misspelled it. Password not changed."
-#~ msgstr "Вы ошиблись. Пароль не изменен."
-
-#~ msgid "password changed, user %s"
-#~ msgstr "пароль изменен, пользователь %s"
-
-#~ msgid "ROOT PASSWORD CHANGED"
-#~ msgstr "ПАРОЛЬ ROOT'A ИЗМЕНЕН"
-
-#~ msgid "password changed by root, user %s"
-#~ msgstr "пароль изменен root'ом, пользователь %s"
-
-#~ msgid "calling setpwnam to set password.\n"
-#~ msgstr "вызывается setpwnam для установки пароля.\n"
-
-#~ msgid "Password *NOT* changed.  Try again later.\n"
-#~ msgstr "Пароль *НЕ* изменен, Попробуйте еще раз попозже.\n"
-
-#~ msgid "Password changed.\n"
-#~ msgstr "Пароль изменен.\n"
-
-#~ msgid "mount: this version was compiled without support for the type `nfs'"
-#~ msgstr "mount: эта версия была откомпилирована без поддержки типа `nfs'"
+#~ msgid "%s version %s\n"
+#~ msgstr "%s версия %s\n"

@@ -11,13 +11,13 @@ mount_SOURCES = mount.c fstab.c sundries.c xmalloc.c realpath.c mntent.c \
 	nfsmount.c nfsmount_xdr.c nfsmount_clnt.c \
 	lomount.c
 
-mount_LDADD = $(top_srcdir)/lib/libenv.la $(top_srcdir)/lib/libsetproctitle.la
+mount_LDADD = $(top_srcdir)/lib/libenv.a $(top_srcdir)/lib/libsetproctitle.a
 
 umount_SOURCES = umount.c fstab.c sundries.c xmalloc.c realpath.c mntent.c \
 	getusername.c get_label_uuid.c mount_by_label.c mount_blkid.c \
 	lomount.c
 
-umount_LDADD = $(top_srcdir)/lib/libenv.la
+umount_LDADD = $(top_srcdir)/lib/libenv.a
 
 swapon_SOURCES = swapon.c xmalloc.c \
 	get_label_uuid.c mount_by_label.c mount_blkid.c

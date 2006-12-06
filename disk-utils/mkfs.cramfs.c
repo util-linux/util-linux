@@ -775,8 +775,8 @@ int main(int argc, char **argv)
 			/* old option, ignored */
 			break;
 		case 'V':
-			printf(_("%s from %s%s\n"),
-			       progname, "util-linux-", VERSION);
+			printf(_("%s (%s)\n"),
+			       progname, PACKAGE_STRING);
 			exit(0);
 		case 'v':
 			verbose = 1;

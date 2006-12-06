@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.12m\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
-"POT-Creation-Date: 2005-08-02 21:07+0200\n"
+"POT-Creation-Date: 2005-08-14 18:14+0200\n"
 "PO-Revision-Date: 2004-12-22 01:31+0100\n"
 "Last-Translator: Santiago Vila Doncel <sanvila@unex.es>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -166,11 +166,11 @@ msgstr "uso: %s [ -n ] dispositivo\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
-#: disk-utils/mkswap.c:522 misc-utils/cal.c:313 misc-utils/ddate.c:179
-#: misc-utils/kill.c:189 misc-utils/rename.c:79 misc-utils/script.c:142
+#: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: misc-utils/script.c:142 sys-utils/readprofile.c:197
 #, fuzzy, c-format
-msgid "%s from %s%s\n"
-msgstr "%s de %s\n"
+msgid "%s (%s)\n"
+msgstr "%s: %s (%s)\n"
 
 #: disk-utils/fdformat.c:130
 #, c-format
@@ -871,9 +871,9 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: ¡No queda memoria!\n"
 
 #: disk-utils/mkfs.c:103
-#, c-format
-msgid "mkfs version %s (%s)\n"
-msgstr "mkfs versión %s (%s)\n"
+#, fuzzy, c-format
+msgid "mkfs (%s)\n"
+msgstr "%s: %s (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:124
 #, c-format
@@ -7229,6 +7229,11 @@ msgstr "%s: no se puede ejecutar stat para fichero temporal.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: no se puede leer el fichero temporal.\n"
 
+#: misc-utils/cal.c:313
+#, fuzzy, c-format
+msgid "%s from %s\n"
+msgstr "%s de %s\n"
+
 #: misc-utils/cal.c:327
 msgid "illegal month value: use 1-12"
 msgstr "Valor de mes no permitido: utilice 1-12"
@@ -7255,6 +7260,11 @@ msgstr "uso: %s [+formato] [día mes año]\n"
 #: misc-utils/ddate.c:250
 msgid "St. Tib's Day"
 msgstr "Día de San Tibb"
+
+#: misc-utils/kill.c:189
+#, fuzzy, c-format
+msgid "%s from %s%s\n"
+msgstr "%s de %s\n"
 
 #: misc-utils/kill.c:207
 #, c-format
@@ -8850,17 +8860,6 @@ msgstr "   %f enteros/seg.; %f recepción (caracteres/seg.)\n"
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
 msgstr "Uso: %s [-c] [-n nivel] [-s tamañobúfer]\n"
 
-#: sys-utils/flock.c:59
-#, fuzzy, c-format
-msgid "flock: unknown option, aborting.\n"
-msgstr "%s: opción desconocida \"-%c\"\n"
-
-#: sys-utils/flock.c:77
-#, c-format
-msgid ""
-"Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-msgstr ""
-
 #: sys-utils/ipcrm.c:66
 #, c-format
 msgid "invalid id: %s\n"
@@ -9629,11 +9628,6 @@ msgstr ""
 "bytes\n"
 "         -V            Muestra la versión y sale\n"
 
-#: sys-utils/readprofile.c:197
-#, c-format
-msgid "%s version %s\n"
-msgstr "%s versión %s\n"
-
 #: sys-utils/readprofile.c:284
 #, c-format
 msgid "Sampling_step: %i\n"
@@ -10215,6 +10209,20 @@ msgstr "Línea de entrada demasiado larga.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
+
+#, fuzzy
+#~ msgid "mkfs from %s\n"
+#~ msgstr "%s de %s\n"
+
+#~ msgid "mkfs version %s (%s)\n"
+#~ msgstr "mkfs versión %s (%s)\n"
+
+#, fuzzy
+#~ msgid "flock: unknown option, aborting.\n"
+#~ msgstr "%s: opción desconocida \"-%c\"\n"
+
+#~ msgid "%s version %s\n"
+#~ msgstr "%s versión %s\n"
 
 #~ msgid "Invalid number: %s\n"
 #~ msgstr "Número inválido: %s\n"

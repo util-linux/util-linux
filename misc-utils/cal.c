@@ -310,8 +310,8 @@ main(int argc, char **argv) {
 			yflag = 1;
 			break;
 		case 'V':
-			printf(_("%s from %s%s\n"),
-			       progname, "util-linux-", VERSION);
+			printf(_("%s from %s\n"),
+			       progname, PACKAGE_STRING);
 			return 0;
 		case '?':
 		default:

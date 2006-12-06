@@ -393,7 +393,7 @@ main_swapon(int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf("%s: util-linux-%s\n", progname, VERSION);
+			printf("%s: (%s)\n", progname, PACKAGE_STRING);
 			exit(0);
 		case 0:
 			break;
@@ -445,7 +445,7 @@ main_swapoff(int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf("%s: util-linux-%s\n", progname, VERSION);
+			printf("%s (%s)\n", progname, PACKAGE_STRING);
 			exit(0);
 		case 'L':
 			addl(optarg);

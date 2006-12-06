@@ -1,9 +1,9 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS =
-usrbin_PROGRAMS =
+usrbinexec_PROGRAMS =
 sbin_PROGRAMS =
-usrsbin_PROGRAMS =
+usrsbinexec_PROGRAMS =
 man_MANS =
 
 if BUILD_AGETTY
@@ -25,28 +25,28 @@ endif
 endif
 
 if BUILD_LAST
-usrbin_PROGRAMS += last
+usrbinexec_PROGRAMS += last
 man_MANS += last.1
 endif
 
 if BUILD_LOGIN_UTILS
 
 bin_PROGRAMS += login
-usrbin_PROGRAMS += chfn chsh
-usrsbin_PROGRAMS += vipw
+usrbinexec_PROGRAMS += chfn chsh
+usrsbinexec_PROGRAMS += vipw
 man_MANS += chfn.1 chsh.1 login.1 vipw.8 vigr.8
 
 chfn_SOURCES = chfn.c islocal.c setpwnam.c
 chsh_SOURCES = chsh.c islocal.c setpwnam.c
 
-chfn_LDADD = ../lib/libenv.la
-chsh_LDADD = ../lib/libenv.la
-login_LDADD = ../lib/libsetproctitle.la
+chfn_LDADD = ../lib/libenv.a
+chsh_LDADD = ../lib/libenv.a
+login_LDADD = ../lib/libsetproctitle.a
 newgrp_LDADD =
 vipw_LDADD =
 
 if NEED_LIBCRYPT
-usrbin_PROGRAMS += newgrp
+usrbinexec_PROGRAMS += newgrp
 man_MANS += newgrp.1
 chfn_LDADD += -lcrypt
 chsh_LDADD += -lcrypt
@@ -73,30 +73,32 @@ vipw_LDADD += -lselinux
 endif
 
 
-install-data-hook::
-	cd $(DESTDIR)$(usrsbindir) && ln -sf vipw vigr
+install-exec-hook::
+	cd $(DESTDIR)$(usrsbinexecdir) && ln -sf vipw vigr
 
 endif
 
 if BUILD_MESG
-usrbin_PROGRAMS += mesg
+usrbinexec_PROGRAMS += mesg
 man_MANS += mesg.1
 endif
 
 if BUILD_WALL
 
-usrbin_PROGRAMS += wall
+usrbinexec_PROGRAMS += wall
 wall_SOURCES = wall.c ttymsg.c
 man_MANS += wall.1
 
 if USE_TTY_GROUP
-install-data-hook::
-	chgrp tty $(DESTDIR)$(usrbindir)/wall
-	chmod g+s $(DESTDIR)$(usrbindir)/wall
+install-exec-hook::
+	chgrp tty $(DESTDIR)$(usrbinexecdir)/wall
+	chmod g+s $(DESTDIR)$(usrbinexecdir)/wall
 endif
 
 endif
 
+
+if BUILD_INIT
 
 install-exec-hook::
 	cd $(DESTDIR)$(sbindir) && ln -sf shutdown reboot
@@ -110,3 +112,4 @@ install-exec-hook::
 	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 display-services.8
 	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 provide.8
 
+endif

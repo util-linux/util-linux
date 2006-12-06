@@ -73,8 +73,8 @@ am_mount_OBJECTS = mount.$(OBJEXT) fstab.$(OBJEXT) sundries.$(OBJEXT) \
 	lomount.$(OBJEXT)
 mount_OBJECTS = $(am_mount_OBJECTS)
 am__DEPENDENCIES_1 =
-mount_DEPENDENCIES = $(top_srcdir)/lib/libenv.la \
-	$(top_srcdir)/lib/libsetproctitle.la $(am__DEPENDENCIES_1)
+mount_DEPENDENCIES = $(top_srcdir)/lib/libenv.a \
+	$(top_srcdir)/lib/libsetproctitle.a $(am__DEPENDENCIES_1)
 pivot_root_SOURCES = pivot_root.c
 pivot_root_OBJECTS = pivot_root.$(OBJEXT)
 pivot_root_LDADD = $(LDADD)
@@ -89,18 +89,13 @@ am_umount_OBJECTS = umount.$(OBJEXT) fstab.$(OBJEXT) \
 	get_label_uuid.$(OBJEXT) mount_by_label.$(OBJEXT) \
 	mount_blkid.$(OBJEXT) lomount.$(OBJEXT)
 umount_OBJECTS = $(am_umount_OBJECTS)
-umount_DEPENDENCIES = $(top_srcdir)/lib/libenv.la \
-	$(am__DEPENDENCIES_1)
+umount_DEPENDENCIES = $(top_srcdir)/lib/libenv.a $(am__DEPENDENCIES_1)
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
 am__depfiles_maybe = depfiles
 COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 	$(CPPFLAGS) $(AM_CFLAGS) $(CFLAGS)
-LTCOMPILE = $(LIBTOOL) --tag=CC --mode=compile $(CC) $(DEFS) \
-	$(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) \
-	$(AM_CFLAGS) $(CFLAGS)
 CCLD = $(CC)
-LINK = $(LIBTOOL) --tag=CC --mode=link $(CCLD) $(AM_CFLAGS) $(CFLAGS) \
-	$(AM_LDFLAGS) $(LDFLAGS) -o $@
+LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(losetup_SOURCES) $(mount_SOURCES) pivot_root.c \
 	$(swapon_SOURCES) $(umount_SOURCES)
 DIST_SOURCES = $(losetup_SOURCES) $(mount_SOURCES) pivot_root.c \
@@ -116,7 +111,6 @@ ACLOCAL = @ACLOCAL@
 AMDEP_FALSE = @AMDEP_FALSE@
 AMDEP_TRUE = @AMDEP_TRUE@
 AMTAR = @AMTAR@
-AR = @AR@
 AUTOCONF = @AUTOCONF@
 AUTOHEADER = @AUTOHEADER@
 AUTOMAKE = @AUTOMAKE@
@@ -156,21 +150,14 @@ CCDEPMODE = @CCDEPMODE@
 CFLAGS = @CFLAGS@
 CPP = @CPP@
 CPPFLAGS = @CPPFLAGS@
-CXX = @CXX@
-CXXCPP = @CXXCPP@
-CXXDEPMODE = @CXXDEPMODE@
-CXXFLAGS = @CXXFLAGS@
 CYGPATH_W = @CYGPATH_W@
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 DEPDIR = @DEPDIR@
-ECHO = @ECHO@
 ECHO_C = @ECHO_C@
 ECHO_N = @ECHO_N@
 ECHO_T = @ECHO_T@
 EGREP = @EGREP@
 EXEEXT = @EXEEXT@
-F77 = @F77@
-FFLAGS = @FFLAGS@
 GMSGFMT = @GMSGFMT@
 HAVE_BLKID_FALSE = @HAVE_BLKID_FALSE@
 HAVE_BLKID_TRUE = @HAVE_BLKID_TRUE@
@@ -205,8 +192,6 @@ LIBICONV = @LIBICONV@
 LIBINTL = @LIBINTL@
 LIBOBJS = @LIBOBJS@
 LIBS = @LIBS@
-LIBTOOL = @LIBTOOL@
-LN_S = @LN_S@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
@@ -239,16 +224,11 @@ USE_TTY_GROUP_FALSE = @USE_TTY_GROUP_FALSE@
 USE_TTY_GROUP_TRUE = @USE_TTY_GROUP_TRUE@
 VERSION = @VERSION@
 XGETTEXT = @XGETTEXT@
-ac_ct_AR = @ac_ct_AR@
 ac_ct_CC = @ac_ct_CC@
-ac_ct_CXX = @ac_ct_CXX@
-ac_ct_F77 = @ac_ct_F77@
 ac_ct_RANLIB = @ac_ct_RANLIB@
 ac_ct_STRIP = @ac_ct_STRIP@
 am__fastdepCC_FALSE = @am__fastdepCC_FALSE@
 am__fastdepCC_TRUE = @am__fastdepCC_TRUE@
-am__fastdepCXX_FALSE = @am__fastdepCXX_FALSE@
-am__fastdepCXX_TRUE = @am__fastdepCXX_TRUE@
 am__include = @am__include@
 am__leading_dot = @am__leading_dot@
 am__quote = @am__quote@
@@ -282,9 +262,10 @@ sbindir = @sbindir@
 sharedstatedir = @sharedstatedir@
 sysconfdir = @sysconfdir@
 target_alias = @target_alias@
-usrbindir = $(prefix)/usr/bin
-usrsbindir = $(prefix)/usr/sbin
-AM_CPPFLAGS = -include ../config.h -I$(top_srcdir)/include -DHAVE_NFS
+usrbinexecdir = $(prefix)/usr/bin
+usrsbinexecdir = $(prefix)/usr/sbin
+AM_CPPFLAGS = -include $(top_srcdir)/config.h -I$(top_srcdir)/include \
+	-DHAVE_NFS
 DEFAULT_INCLUDES = 
 man_MANS = fstab.5 nfs.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8 \
 	$(am__append_4)
@@ -294,13 +275,13 @@ mount_SOURCES = mount.c fstab.c sundries.c xmalloc.c realpath.c mntent.c \
 	nfsmount.c nfsmount_xdr.c nfsmount_clnt.c \
 	lomount.c
 
-mount_LDADD = $(top_srcdir)/lib/libenv.la \
-	$(top_srcdir)/lib/libsetproctitle.la $(am__append_1)
+mount_LDADD = $(top_srcdir)/lib/libenv.a \
+	$(top_srcdir)/lib/libsetproctitle.a $(am__append_1)
 umount_SOURCES = umount.c fstab.c sundries.c xmalloc.c realpath.c mntent.c \
 	getusername.c get_label_uuid.c mount_by_label.c mount_blkid.c \
 	lomount.c
 
-umount_LDADD = $(top_srcdir)/lib/libenv.la $(am__append_2)
+umount_LDADD = $(top_srcdir)/lib/libenv.a $(am__append_2)
 swapon_SOURCES = swapon.c xmalloc.c \
 	get_label_uuid.c mount_by_label.c mount_blkid.c
 
@@ -310,7 +291,7 @@ losetup_CFLAGS = -DMAIN
 all: all-am
 
 .SUFFIXES:
-.SUFFIXES: .c .lo .o .obj
+.SUFFIXES: .c .o .obj
 $(srcdir)/Makefile.in:  $(srcdir)/Makefile.am $(top_srcdir)/config/include-Makefile.am $(am__configure_deps)
 	@for dep in $?; do \
 	  case '$(am__configure_deps)' in \
@@ -346,11 +327,10 @@ install-binPROGRAMS: $(bin_PROGRAMS)
 	@list='$(bin_PROGRAMS)'; for p in $$list; do \
 	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
 	  if test -f $$p \
-	     || test -f $$p1 \
 	  ; then \
 	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
-	   echo " $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(bindir)/$$f'"; \
-	   $(INSTALL_PROGRAM_ENV) $(LIBTOOL) --mode=install $(binPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(bindir)/$$f" || exit 1; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(binPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(bindir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(binPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(bindir)/$$f" || exit 1; \
 	  else :; fi; \
 	done
 
@@ -363,27 +343,7 @@ uninstall-binPROGRAMS:
 	done
 
 clean-binPROGRAMS:
-	@list='$(bin_PROGRAMS)'; for p in $$list; do \
-	  f=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
-	  echo " rm -f $$p $$f"; \
-	  rm -f $$p $$f ; \
-	done
-
-installcheck-binPROGRAMS: $(bin_PROGRAMS)
-	bad=0; pid=$$$$; list="$(bin_PROGRAMS)"; for p in $$list; do \
-	  case ' $(AM_INSTALLCHECK_STD_OPTIONS_EXEMPT) ' in \
-	   *" $$p "* | *" $(srcdir)/$$p "*) continue;; \
-	  esac; \
-	  f=`echo "$$p" | \
-	     sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
-	  for opt in --help --version; do \
-	    if "$(DESTDIR)$(bindir)/$$f" $$opt >c$${pid}_.out \
-	         2>c$${pid}_.err </dev/null \
-		 && test -n "`cat c$${pid}_.out`" \
-		 && test -z "`cat c$${pid}_.err`"; then :; \
-	    else echo "$$f does not support $$opt" 1>&2; bad=1; fi; \
-	  done; \
-	done; rm -f c$${pid}_.???; exit $$bad
+	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
 losetup$(EXEEXT): $(losetup_OBJECTS) $(losetup_DEPENDENCIES) 
 	@rm -f losetup$(EXEEXT)
 	$(LINK) $(losetup_LDFLAGS) $(losetup_OBJECTS) $(losetup_LDADD) $(LIBS)
@@ -440,13 +400,6 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(COMPILE) -c `$(CYGPATH_W) '$<'`
 
-.c.lo:
-@am__fastdepCC_TRUE@	if $(LTCOMPILE) -MT $@ -MD -MP -MF "$(DEPDIR)/$*.Tpo" -c -o $@ $<; \
-@am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/$*.Tpo" "$(DEPDIR)/$*.Plo"; else rm -f "$(DEPDIR)/$*.Tpo"; exit 1; fi
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='$<' object='$@' libtool=yes @AMDEPBACKSLASH@
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
-
 losetup-lomount.o: lomount.c
 @am__fastdepCC_TRUE@	if $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(losetup_CFLAGS) $(CFLAGS) -MT losetup-lomount.o -MD -MP -MF "$(DEPDIR)/losetup-lomount.Tpo" -c -o losetup-lomount.o `test -f 'lomount.c' || echo '$(srcdir)/'`lomount.c; \
 @am__fastdepCC_TRUE@	then mv -f "$(DEPDIR)/losetup-lomount.Tpo" "$(DEPDIR)/losetup-lomount.Po"; else rm -f "$(DEPDIR)/losetup-lomount.Tpo"; exit 1; fi
@@ -460,15 +413,6 @@ losetup-lomount.obj: lomount.c
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	source='lomount.c' object='losetup-lomount.obj' libtool=no @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(losetup_CFLAGS) $(CFLAGS) -c -o losetup-lomount.obj `if test -f 'lomount.c'; then $(CYGPATH_W) 'lomount.c'; else $(CYGPATH_W) '$(srcdir)/lomount.c'; fi`
-
-mostlyclean-libtool:
-	-rm -f *.lo
-
-clean-libtool:
-	-rm -rf .libs _libs
-
-distclean-libtool:
-	-rm -f libtool
 uninstall-info-am:
 install-man5: $(man5_MANS) $(man_MANS)
 	@$(NORMAL_INSTALL)
@@ -670,14 +614,13 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-libtool clean-local \
-	mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-local mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
 	-rm -f Makefile
 distclean-am: clean-am distclean-compile distclean-generic \
-	distclean-libtool distclean-tags
+	distclean-tags
 
 dvi: dvi-am
 
@@ -699,7 +642,7 @@ install-info: install-info-am
 
 install-man: install-man5 install-man8
 
-installcheck-am: installcheck-binPROGRAMS
+installcheck-am:
 
 maintainer-clean: maintainer-clean-am
 	-rm -rf ./$(DEPDIR)
@@ -708,8 +651,7 @@ maintainer-clean-am: distclean-am maintainer-clean-generic
 
 mostlyclean: mostlyclean-am
 
-mostlyclean-am: mostlyclean-compile mostlyclean-generic \
-	mostlyclean-libtool
+mostlyclean-am: mostlyclean-compile mostlyclean-generic
 
 pdf: pdf-am
 
@@ -724,18 +666,17 @@ uninstall-am: uninstall-binPROGRAMS uninstall-info-am uninstall-man
 uninstall-man: uninstall-man5 uninstall-man8
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-libtool clean-local ctags distclean \
-	distclean-compile distclean-generic distclean-libtool \
-	distclean-tags distdir dvi dvi-am html html-am info info-am \
-	install install-am install-binPROGRAMS install-data \
-	install-data-am install-exec install-exec-am install-exec-hook \
-	install-info install-info-am install-man install-man5 \
-	install-man8 install-strip installcheck installcheck-am \
-	installcheck-binPROGRAMS installdirs maintainer-clean \
+	clean-generic clean-local ctags distclean distclean-compile \
+	distclean-generic distclean-tags distdir dvi dvi-am html \
+	html-am info info-am install install-am install-binPROGRAMS \
+	install-data install-data-am install-exec install-exec-am \
+	install-exec-hook install-info install-info-am install-man \
+	install-man5 install-man8 install-strip installcheck \
+	installcheck-am installdirs maintainer-clean \
 	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic mostlyclean-libtool pdf pdf-am ps ps-am \
-	tags uninstall uninstall-am uninstall-binPROGRAMS \
-	uninstall-info-am uninstall-man uninstall-man5 uninstall-man8
+	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
+	uninstall-am uninstall-binPROGRAMS uninstall-info-am \
+	uninstall-man uninstall-man5 uninstall-man8
 
 
 swapon.c: swapargs.h

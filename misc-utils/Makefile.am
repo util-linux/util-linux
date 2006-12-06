@@ -2,12 +2,12 @@ include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS =
 
-usrbin_PROGRAMS = cal ddate logger look mcookie \
+usrbinexec_PROGRAMS = cal ddate logger look mcookie \
 	namei script whereis
 
-mcookie_LDADD = $(top_srcdir)/lib/libmd5.la
+mcookie_LDADD = $(top_srcdir)/lib/libmd5.a
 
-usrbin_SCRIPTS = chkdupexe scriptreplay
+usrbinexec_SCRIPTS = chkdupexe scriptreplay
 
 chkdupexe: chkdupexe.pl
 	sed -e 's,[@]PERL[@],$(PERL),g' < chkdupexe.pl > chkdupexe
@@ -33,7 +33,7 @@ script_LDADD = -lutil
 endif
 
 if HAVE_NCURSES
-usrbin_PROGRAMS += setterm
+usrbinexec_PROGRAMS += setterm
 man_MANS += setterm.1
 setterm_LDADD = -lncurses
 endif
@@ -45,24 +45,24 @@ man_MANS += kill.1
 endif
 
 if BUILD_RENAME
-usrbin_PROGRAMS += rename
+usrbinexec_PROGRAMS += rename
 man_MANS += rename.1
 endif
 
 if BUILD_RESET
-usrbin_SCRIPTS += reset
+usrbinexec_SCRIPTS += reset
 man_MANS += reset.1
 endif
 
 if BUILD_WRITE
 
-usrbin_PROGRAMS += write
+usrbinexec_PROGRAMS += write
 man_MANS += write.1
 
 if USE_TTY_GROUP
-install-data-hook::
-	chgrp tty $(DESTDIR)$(usrbindir)/write
-	chmod g+s $(DESTDIR)$(usrbindir)/write
+install-exec-hook::
+	chgrp tty $(DESTDIR)$(usrbinexecdir)/write
+	chmod g+s $(DESTDIR)$(usrbinexecdir)/write
 endif
 
 endif

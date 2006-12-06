@@ -1,4 +1,12 @@
+util-linux 2.13-pre2
+
+* flock: replaced with flock-2.0.2 by H. Peter Anvin
+* misc build system fixes, libtool is no longer used
+* misc code fixes
+* updated translations: ca, fi, fr, nl, ru, tr
+
 util-linux 2.13-pre1
+
 * use GNU autoconf/automake/libtool for building
 * added schedutils
 * removed support for curses implementations other than ncurses
@@ -9,6 +17,7 @@ util-linux 2.13-pre1
 * updated translations: ca, de, fi, fr, it, nl, ru, tr
 
 util-linux 2.12q
+
 * updated translation: nl
 
 util-linux 2.12q-pre2

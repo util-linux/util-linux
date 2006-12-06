@@ -11,10 +11,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux-2.12q\n"
+"Project-Id-Version: util-linux-2.13-pre1\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
-"POT-Creation-Date: 2005-08-02 21:07+0200\n"
-"PO-Revision-Date: 2005-01-31 20:23+0100\n"
+"POT-Creation-Date: 2005-08-14 18:14+0200\n"
+"PO-Revision-Date: 2005-08-04 14:23+0200\n"
 "Last-Translator: Jordi Mallach <jordi@gnu.org>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
 "MIME-Version: 1.0\n"
@@ -31,15 +31,15 @@ msgstr "estableix a lectura/escriptura"
 
 #: disk-utils/blockdev.c:66
 msgid "get read-only"
-msgstr "obtingues només lectura"
+msgstr "aconsegueix només lectura"
 
 #: disk-utils/blockdev.c:69
 msgid "get sectorsize"
-msgstr "obtingues la mida del sector"
+msgstr "aconsegueix la mida del sector"
 
 #: disk-utils/blockdev.c:72
 msgid "get blocksize"
-msgstr "obtingues la mida del bloc"
+msgstr "aconsegueix la mida del bloc"
 
 #: disk-utils/blockdev.c:75
 msgid "set blocksize"
@@ -47,11 +47,11 @@ msgstr "estableix la mida del bloc"
 
 #: disk-utils/blockdev.c:78
 msgid "get 32-bit sector count"
-msgstr "obtingues el compte de sectors de 32 bits"
+msgstr "aconsegueix el compte de sectors de 32 bits"
 
 #: disk-utils/blockdev.c:81
 msgid "get size in bytes"
-msgstr "obtingues la mida en octets"
+msgstr "aconsegueix la mida en octets"
 
 #: disk-utils/blockdev.c:84
 msgid "set readahead"
@@ -59,7 +59,7 @@ msgstr "estableix «readahead»"
 
 #: disk-utils/blockdev.c:87
 msgid "get readahead"
-msgstr "obtingues \"readahead\""
+msgstr "aconsegueix \"readahead\""
 
 #: disk-utils/blockdev.c:90
 msgid "flush buffers"
@@ -166,11 +166,11 @@ msgstr "forma d'ús: %s [ -n ] dispositiu\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
-#: disk-utils/mkswap.c:522 misc-utils/cal.c:313 misc-utils/ddate.c:179
-#: misc-utils/kill.c:189 misc-utils/rename.c:79 misc-utils/script.c:142
+#: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: misc-utils/script.c:142 sys-utils/readprofile.c:197
 #, fuzzy, c-format
-msgid "%s from %s%s\n"
-msgstr "%s des de %s\n"
+msgid "%s (%s)\n"
+msgstr "%s: %s (%s)\n"
 
 #: disk-utils/fdformat.c:130
 #, c-format
@@ -877,9 +877,9 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: No hi ha prou memòria\n"
 
 #: disk-utils/mkfs.c:103
-#, c-format
-msgid "mkfs version %s (%s)\n"
-msgstr "mkfs versió %s (%s)\n"
+#, fuzzy, c-format
+msgid "mkfs (%s)\n"
+msgstr "%s: %s (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:124
 #, c-format
@@ -5843,9 +5843,9 @@ msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "No es pot establir el valor d'època en el nucli.\n"
 
 #: hwclock/hwclock.c:1175
-#, fuzzy, c-format
+#, c-format
 msgid "%s from util-linux-%s\n"
-msgstr "%s des de %s\n"
+msgstr "%s d'util-linux-%s\n"
 
 #: hwclock/hwclock.c:1196
 #, c-format
@@ -7221,6 +7221,11 @@ msgstr "%s: no s'ha pogut executar stat al fitxer temporal.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: no s'hapogut llegir el fitxer temporal.\n"
 
+#: misc-utils/cal.c:313
+#, fuzzy, c-format
+msgid "%s from %s\n"
+msgstr "%s des de %s%s\n"
+
 #: misc-utils/cal.c:327
 msgid "illegal month value: use 1-12"
 msgstr "el valor del mes és il·legal: utilitzeu 1-12"
@@ -7247,6 +7252,11 @@ msgstr "forma d'ús: %s [+format] [dia mes any]\n"
 #: misc-utils/ddate.c:250
 msgid "St. Tib's Day"
 msgstr "Dia de Sant Tibb"
+
+#: misc-utils/kill.c:189
+#, c-format
+msgid "%s from %s%s\n"
+msgstr "%s des de %s%s\n"
 
 #: misc-utils/kill.c:207
 #, c-format
@@ -8839,19 +8849,6 @@ msgstr "   %f enters/seg.; %f rebut (caràcters/seg.)\n"
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
 msgstr "Forma d'ús: %s [-c] [-n nivell] [-s mida_memòria_temporal]\n"
 
-#: sys-utils/flock.c:59
-#, c-format
-msgid "flock: unknown option, aborting.\n"
-msgstr "flock: es desconeix l'opció, s'està avortant.\n"
-
-#: sys-utils/flock.c:77
-#, fuzzy, c-format
-msgid ""
-"Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-msgstr ""
-"Forma d'ús: flock [--shared | --timeout=segons] nom_fitxer ordre {arg "
-"arg...}\n"
-
 #: sys-utils/ipcrm.c:66
 #, c-format
 msgid "invalid id: %s\n"
@@ -9617,11 +9614,6 @@ msgstr ""
 "\t -n           inhabilita la detecció automàtica de l'ordre dels octets\n"
 "\t -V           mostra la versió i surt\n"
 
-#: sys-utils/readprofile.c:197
-#, c-format
-msgid "%s version %s\n"
-msgstr "%s versió %s\n"
-
 #: sys-utils/readprofile.c:284
 #, c-format
 msgid "Sampling_step: %i\n"
@@ -10205,6 +10197,25 @@ msgstr "Línia d'entrada massa llarga.\n"
 msgid "Out of memory when growing buffer.\n"
 msgstr ""
 "S'ha esgotat la memòria en augmentar la mida de la memòria intermèdia.\n"
+
+#, fuzzy
+#~ msgid "mkfs from %s\n"
+#~ msgstr "%s des de %s%s\n"
+
+#~ msgid "mkfs version %s (%s)\n"
+#~ msgstr "mkfs versió %s (%s)\n"
+
+#~ msgid "flock: unknown option, aborting.\n"
+#~ msgstr "flock: es desconeix l'opció, s'està avortant.\n"
+
+#~ msgid ""
+#~ "Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
+#~ msgstr ""
+#~ "Forma d'ús: flock [--shared | --timeout=segons] fitxer ordre {arg "
+#~ "arg...}\n"
+
+#~ msgid "%s version %s\n"
+#~ msgstr "%s versió %s\n"
 
 #~ msgid "Invalid number: %s\n"
 #~ msgstr "Nombre invàlid: %s\n"

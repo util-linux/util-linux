@@ -2517,7 +2517,7 @@ main(int argc, char **argv) {
 			break;
 		case 'V':
 		case 'v':
-			printf("fdisk v" VERSION "\n");
+			printf("fdisk (%s)\n", PACKAGE_STRING);
 			exit(0);
 		default:
 			fatal(usage);

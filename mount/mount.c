@@ -1540,7 +1540,7 @@ main(int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf ("mount: util-linux-%s\n", VERSION);
+			printf ("mount (%s)\n", PACKAGE_STRING);
 			exit (0);
 		case 'w':		/* mount read/write */
 			readwrite = 1;

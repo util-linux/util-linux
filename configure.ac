@@ -1,17 +1,17 @@
-AC_INIT(util-linux, 2.13-pre1, bunk@stusta.de)
+AC_INIT(util-linux, 2.13-pre2, bunk@stusta.de)
+
+AC_PREREQ(2.59)
 
 AC_CONFIG_AUX_DIR(config)
 
-AM_INIT_AUTOMAKE([check-news std-options -Wall foreign])
+AM_INIT_AUTOMAKE([check-news -Wall foreign 1.9])
 
 AC_CONFIG_SRCDIR(mount/mount.c)
 
 AC_PREFIX_DEFAULT(/)
 
 AC_PROG_CC_STDC
-
-AC_DISABLE_SHARED
-AC_PROG_LIBTOOL
+AC_PROG_RANLIB
 
 AC_PATH_PROG(PERL, perl)
 
@@ -184,172 +184,172 @@ AM_CONDITIONAL(SPARC, test x$sparc = xtrue)
 
 AC_ARG_ENABLE([agetty],
   AC_HELP_STRING([--disable-agetty], [do not build agetty]),
-  with_agetty=$withval, with_agetty=yes
+  enable_agetty=$enableval, enable_agetty=yes
 )
-AM_CONDITIONAL(BUILD_AGETTY, test x$with_agetty = xyes)
+AM_CONDITIONAL(BUILD_AGETTY, test x$enable_agetty = xyes)
 
 
 AC_ARG_ENABLE([elvtune],
   AC_HELP_STRING([--enable-elvtune], [build elvtune (only works with 2.2 and 2.4 kernels)]),
-  with_elvtune=$withval, with_elvtune=no
+  enable_elvtune=$enableval, enable_elvtune=no
 )
-AM_CONDITIONAL(BUILD_ELVTUNE, test x$with_elvtune = xyes)
+AM_CONDITIONAL(BUILD_ELVTUNE, test x$enable_elvtune = xyes)
 
 
 AC_ARG_ENABLE([init],
   AC_HELP_STRING([--enable-init], [build simpleinit, shutdown, initctl]),
-  with_init=$withval, with_init=no
+  enable_init=$enableval, enable_init=no
 )
-AM_CONDITIONAL(BUILD_INIT, test x$with_init = xyes)
+AM_CONDITIONAL(BUILD_INIT, test x$enable_init = xyes)
 
 
 AC_ARG_ENABLE([kill],
   AC_HELP_STRING([--enable-kill], [build kill]),
-  with_kill=$withval, with_kill=no
+  enable_kill=$enableval, enable_kill=no
 )
-AM_CONDITIONAL(BUILD_KILL, test x$with_kill = xyes)
+AM_CONDITIONAL(BUILD_KILL, test x$enable_kill = xyes)
 
 
 AC_ARG_ENABLE([last],
   AC_HELP_STRING([--enable-last], [build last]),
-  with_last=$withval, with_last=no
+  enable_last=$enableval, enable_last=no
 )
-AM_CONDITIONAL(BUILD_LAST, test x$with_last = xyes)
+AM_CONDITIONAL(BUILD_LAST, test x$enable_last = xyes)
 
 
 AC_ARG_ENABLE([mesg],
   AC_HELP_STRING([--enable-mesg], [build mesg]),
-  with_mesg=$withval, with_mesg=no
+  enable_mesg=$enableval, enable_mesg=no
 )
-AM_CONDITIONAL(BUILD_MESG, test x$with_mesg = xyes)
+AM_CONDITIONAL(BUILD_MESG, test x$enable_mesg = xyes)
 
 
 AC_ARG_ENABLE([partx],
   AC_HELP_STRING([--enable-partx], [build addpart, delpart, partx]),
-  with_partx=$withval, with_partx=no
+  enable_partx=$enableval, enable_partx=no
 )
-AM_CONDITIONAL(BUILD_PARTX, test x$with_partx = xyes)
+AM_CONDITIONAL(BUILD_PARTX, test x$enable_partx = xyes)
 
 
 AC_ARG_ENABLE([raw],
   AC_HELP_STRING([--enable-raw], [build raw]),
-  with_raw=$withval, with_raw=no
+  enable_raw=$enableval, enable_raw=no
 )
-AM_CONDITIONAL(BUILD_RAW, test x$with_raw = xyes)
+AM_CONDITIONAL(BUILD_RAW, test x$enable_raw = xyes)
 
 
 AC_ARG_ENABLE([rdev],
   AC_HELP_STRING([--enable-rdev], [build rdev on i386]),
-  with_rdev=$withval, with_rdev=no
+  enable_rdev=$enableval, enable_rdev=no
 )
-AM_CONDITIONAL(BUILD_RDEV, test x$with_rdev = xyes)
+AM_CONDITIONAL(BUILD_RDEV, test x$enable_rdev = xyes)
 
 
 AC_ARG_ENABLE([rename],
   AC_HELP_STRING([--disable-rename], [do not build rename]),
-  with_agetty=$withval, with_rename=yes
+  enable_agetty=$enableval, enable_rename=yes
 )
-AM_CONDITIONAL(BUILD_RENAME, test x$with_rename = xyes)
+AM_CONDITIONAL(BUILD_RENAME, test x$enable_rename = xyes)
 
 
 AC_ARG_ENABLE([reset],
   AC_HELP_STRING([--enable-reset], [build reset]),
-  with_reset=$withval, with_reset=no
+  enable_reset=$enableval, enable_reset=no
 )
-AM_CONDITIONAL(BUILD_RESET, test x$with_reset = xyes)
+AM_CONDITIONAL(BUILD_RESET, test x$enable_reset = xyes)
 
 
 AC_ARG_ENABLE([login-utils],
   AC_HELP_STRING([--enable-login-utils], [build chfn, chsh, login, newgrp, vipw]),
-  with_login_utils=$withval, with_login_utils=no
+  enable_login_utils=$enableval, enable_login_utils=no
 )
-AM_CONDITIONAL(BUILD_LOGIN_UTILS, test x$with_login_utils = xyes)
+AM_CONDITIONAL(BUILD_LOGIN_UTILS, test x$enable_login_utils = xyes)
 
 
 AC_ARG_ENABLE([schedutils],
   AC_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
-  with_schedutils=$withval, with_schedutils=yes
+  enable_schedutils=$enableval, enable_schedutils=yes
 )
-AM_CONDITIONAL(BUILD_SCHEDUTILS, test x$with_schedutils = xyes)
+AM_CONDITIONAL(BUILD_SCHEDUTILS, test x$enable_schedutils = xyes)
 
 
 AC_ARG_ENABLE([wall],
   AC_HELP_STRING([--disable-wall], [do not build wall]),
-  with_wall=$withval, with_wall=yes
+  enable_wall=$enableval, enable_wall=yes
 )
-AM_CONDITIONAL(BUILD_WALL, test x$with_wall = xyes)
+AM_CONDITIONAL(BUILD_WALL, test x$enable_wall = xyes)
 
 
 AC_ARG_ENABLE([write],
   AC_HELP_STRING([--enable-write], [build write]),
-  with_write=$withval, with_write=no
+  enable_write=$enableval, enable_write=no
 )
-AM_CONDITIONAL(BUILD_WRITE, test x$with_write = xyes)
+AM_CONDITIONAL(BUILD_WRITE, test x$enable_write = xyes)
 
 
 AC_ARG_ENABLE([chsh-only-listed],
   AC_HELP_STRING([--disable-chsh-only-listed], [chsh: allow shells not in /etc/shells]),
-  with_login_chsh_only_listed=$withval, with_chsh_only_listed=yes
+  enable_login_chsh_only_listed=$enableval, enable_chsh_only_listed=yes
 )
 
-if test x$with_chsh_only_listed = xyes; then
+if test x$enable_chsh_only_listed = xyes; then
   AC_DEFINE(ONLY_LISTED_SHELLS, 1, [Should chsh allow only shells in /etc/shells?])
 fi
 
 
 AC_ARG_ENABLE([login-chown-vcs],
   AC_HELP_STRING([--enable-login-chown-vcs], [let login chown /dev/vcsN]),
-  with_login_chown_vcs=$withval, with_login_chown_vcs=no
+  enable_login_chown_vcs=$enableval, enable_login_chown_vcs=no
 )
 
-if test x$with_login_chown_vcs = xyes; then
+if test x$enable_login_chown_vcs = xyes; then
   AC_DEFINE(LOGIN_CHOWN_VCS, 1, [Should login chown /dev/vcsN?])
 fi
 
 
 AC_ARG_ENABLE([login-stat-mail],
   AC_HELP_STRING([--enable-login-stat-mail], [let login stat() the mailbox]),
-  with_login_stat_mail=$withval, with_login_stat_mail=no
+  enable_login_stat_mail=$enableval, enable_login_stat_mail=no
 )
 
-if test x$with_login_stat_mail = xyes; then
+if test x$enable_login_stat_mail = xyes; then
   AC_DEFINE(LOGIN_STAT_MAIL, 1, [Should login stat() the mailbox?])
 fi
 
 
 AC_ARG_ENABLE([pg-bell],
   AC_HELP_STRING([--disable-pg-bell], [let pg not ring the bell on invalid keys]),
-  with_pg_bell=$withval, with_pg_bell=yes
+  enable_pg_bell=$enableval, enable_pg_bell=yes
 )
 
-if test x$with_pg_bell = xyes; then
+if test x$enable_pg_bell = xyes; then
   AC_DEFINE(PG_BELL, 1, [Should pg ring the bell on invalid keys?])
 fi
 
 
 AC_ARG_ENABLE([require-password],
   AC_HELP_STRING([--disable-require-password], [do not require the user to enter the password in chfn and chsh]),
-  with_require_password=$withval, with_require_password=yes
+  enable_require_password=$enableval, enable_require_password=yes
 )
 
-if test x$with_require_password = xyes; then
+if test x$enable_require_password = xyes; then
   AC_DEFINE(REQUIRE_PASSWORD, 1, [Should chfn and chsh require the user to enter the password?])
 fi
 
 
 AC_ARG_ENABLE([use-tty-group],
   AC_HELP_STRING([--disable-use-tty-group], [do not install wall and write setgid tty]),
-  with_use_tty_group=$withval, with_use_tty_group=yes
+  enable_use_tty_group=$enableval, enable_use_tty_group=yes
 )
-AM_CONDITIONAL(USE_TTY_GROUP, test x$with_use_tty_group = xyes)
+AM_CONDITIONAL(USE_TTY_GROUP, test x$enable_use_tty_group = xyes)
 
-if test x$with_use_tty_group = xyes; then
+if test x$enable_use_tty_group = xyes; then
   AC_DEFINE(USE_TTY_GROUP, 1, [Should wall and write be installed setgid tty?])
 fi
 
 
 
-CPPFLAGS="-fsigned-char -Wall -Wmissing-prototypes -Wstrict-prototypes -Wundef -Werror-implicit-function-declaration $CPPFLAGS"
+CPPFLAGS="-fsigned-char -Wall -Wmissing-prototypes -Wstrict-prototypes -Wundef -Werror-implicit-function-declaration -fomit-frame-pointer $CPPFLAGS"
 
 
 AC_CONFIG_HEADERS(config.h)

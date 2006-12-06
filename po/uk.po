@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.12\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
-"POT-Creation-Date: 2005-08-02 21:07+0200\n"
+"POT-Creation-Date: 2005-08-14 18:14+0200\n"
 "PO-Revision-Date: 2004-02-24 10:45+0200\n"
 "Last-Translator: Maxim V. Dziumanenko <mvd@mylinux.com.ua>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
@@ -160,11 +160,11 @@ msgstr "використання: %s [ -n ] пристрій\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
-#: disk-utils/mkswap.c:522 misc-utils/cal.c:313 misc-utils/ddate.c:179
-#: misc-utils/kill.c:189 misc-utils/rename.c:79 misc-utils/script.c:142
+#: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: misc-utils/script.c:142 sys-utils/readprofile.c:197
 #, fuzzy, c-format
-msgid "%s from %s%s\n"
-msgstr "%s з %s\n"
+msgid "%s (%s)\n"
+msgstr "%s: %s (%s)\n"
 
 #: disk-utils/fdformat.c:130
 #, c-format
@@ -854,9 +854,9 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: Недостатньо пам'яті!\n"
 
 #: disk-utils/mkfs.c:103
-#, c-format
-msgid "mkfs version %s (%s)\n"
-msgstr "mkfs версії %s (%s)\n"
+#, fuzzy, c-format
+msgid "mkfs (%s)\n"
+msgstr "%s: %s (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:124
 #, fuzzy, c-format
@@ -7108,6 +7108,11 @@ msgstr "%s: не вдається отримати інформацію про �
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: не вдається прочитати тимчасовий файл.\n"
 
+#: misc-utils/cal.c:313
+#, fuzzy, c-format
+msgid "%s from %s\n"
+msgstr "%s з %s\n"
+
 #: misc-utils/cal.c:327
 msgid "illegal month value: use 1-12"
 msgstr "неправильне значення місяця: використовуйте 1-12"
@@ -7134,6 +7139,11 @@ msgstr "використання: %s [+формат] [день місяць рі
 #: misc-utils/ddate.c:250
 msgid "St. Tib's Day"
 msgstr "День святого Tib"
+
+#: misc-utils/kill.c:189
+#, fuzzy, c-format
+msgid "%s from %s%s\n"
+msgstr "%s з %s\n"
 
 #: misc-utils/kill.c:207
 #, c-format
@@ -8712,17 +8722,6 @@ msgstr "   %f перерв/сек; %f отрим (симв/сек)\n"
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
 msgstr "Використання: %s [-c] [-n рівень] [-s розмір_буферу]\n"
 
-#: sys-utils/flock.c:59
-#, fuzzy, c-format
-msgid "flock: unknown option, aborting.\n"
-msgstr "%s: невідомий сигнал %s\n"
-
-#: sys-utils/flock.c:77
-#, c-format
-msgid ""
-"Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-msgstr ""
-
 #: sys-utils/ipcrm.c:66
 #, c-format
 msgid "invalid id: %s\n"
@@ -9482,11 +9481,6 @@ msgstr ""
 "\t -n            вимкнути автоматичне визначення порядку байтів\n"
 "\t -V            вивести версію та вийти\n"
 
-#: sys-utils/readprofile.c:197
-#, c-format
-msgid "%s version %s\n"
-msgstr "%s версія %s\n"
-
 #: sys-utils/readprofile.c:284
 #, c-format
 msgid "Sampling_step: %i\n"
@@ -10067,6 +10061,20 @@ msgstr "Вхідний рядок надто довгий.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Недостатньо пам'яті для збільшення буфера.\n"
+
+#, fuzzy
+#~ msgid "mkfs from %s\n"
+#~ msgstr "%s з %s\n"
+
+#~ msgid "mkfs version %s (%s)\n"
+#~ msgstr "mkfs версії %s (%s)\n"
+
+#, fuzzy
+#~ msgid "flock: unknown option, aborting.\n"
+#~ msgstr "%s: невідомий сигнал %s\n"
+
+#~ msgid "%s version %s\n"
+#~ msgstr "%s версія %s\n"
 
 #~ msgid "Invalid number: %s\n"
 #~ msgstr "Неправильне число: %s\n"

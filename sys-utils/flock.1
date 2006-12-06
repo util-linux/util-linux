@@ -1,47 +1,106 @@
-.TH FLOCK "1" "November 2004" "flock (util-linux)" "User Commands"
+.\" $Id: flock.1,v 1.2 2005/07/09 21:34:44 hpa Exp $
+.\" -----------------------------------------------------------------------
+.\"   
+.\"   Copyright 2003 H. Peter Anvin - All Rights Reserved
+.\"
+.\"   Permission is hereby granted, free of charge, to any person
+.\"   obtaining a copy of this software and associated documentation
+.\"   files (the "Software"), to deal in the Software without
+.\"   restriction, including without limitation the rights to use,
+.\"   copy, modify, merge, publish, distribute, sublicense, and/or
+.\"   sell copies of the Software, and to permit persons to whom
+.\"   the Software is furnished to do so, subject to the following
+.\"   conditions:
+.\"   
+.\"   The above copyright notice and this permission notice shall
+.\"   be included in all copies or substantial portions of the Software.
+.\"   
+.\"   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+.\"   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+.\"   OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+.\"   NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+.\"   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+.\"   WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+.\"   FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+.\"   OTHER DEALINGS IN THE SOFTWARE.
+.\"
+.\" -----------------------------------------------------------------------
+.TH FLOCK "1" "17 Mar 2003" "flock utility" "H. Peter Anvin"
 .SH NAME
-flock \- acquire a file lock and then execute a command with the lock held
+flock \- Manage locks from shell scripts
 .SH SYNOPSIS
-.BR flock
-.RB [ \-\-shared ]
-.RB [ \-\-timeout=\fP\fIseconds\fP ]
-.I lockfile command ...
+\fBflock\fP [\fB\-sxon\fP] [\fB\-w\fP \fItimeout\fP] \fIlockfile\fP [\fB\-c\fP] \fIcommand...\fP
+.PP
+\fBflock\fP [\fB\-sxun\fP] [\fB\-w\fP \fItimeout\fP] \fIfd\fP
 .SH DESCRIPTION
-.\" Add any additional description here
 .PP
-Acquire a file lock using the flock(2) system call and then execute
-the given command with the lock held.  Depending on the options given,
-the lock can be either exclusive or shared, and the behavior in the
-event of lock contention can be specified as either waiting
-indefinitely for the lock to become available (the default), or
-failing if the lock does not become available after a specific time,
-which can be specified as zero to make the command not wait at all.
+This utility manages
+.BR flock (2)
+locks from within shell scripts or the command line.
 .PP
+The first form wraps the lock around the executing a command, in a manner similar to
+.BR su (1)
+or
+.BR newgrp (1).
+It locks a specified file, which is created (assuming appropriate
+permissions), if it does not already exist.
+.PP
+The second form is conveninent inside shell scripts, and is usually
+used the following manner:
+.PP
+\fC(
+.br
+  flock -s 200
+.br
+  # ... commands executed under lock ...
+.br
+) 200>/var/lock/mylockfile\fP
+.PP
+The mode used to open the file doesn't matter to \fBflock\fP; using
+\fC>\fP or \fP>>\fP allows the lockfile to be created if it does not
+already exist, however, write permission is required; using \fC<\fP
+requires that the file already exists but only read permission is
+required.
+.PP
+By default, if the lock cannot be immediately acquired, \fBflock\fP
+waits until the lock is available.
+.SH OPTIONS
 .TP
-\fB\-\-shared\fR
-Acquire a shared lock.  Acquiring a shared lock does
-not stop others from acquiring a shared lock, but it will stop others
-from acquiring an exclusive lock.  Conversely, acquiring an exclusive
-lock (the default) stops both exclusive and shared attempts to acquire
-the lock.  Typically, a shared lock is used if a command is just going
-to read the locked data, and an exclusive lock is used if the command
-might write to it.
+\fB\-s\fP, \fB\-\-shared\fP
+Obtain a shared lock, sometimes called a read lock.
 .TP
-\fB\-\-timeout=n\fR
-Abort if the lock cannot be acquired before \fIn\fR seconds.
-For a completely non-blocking attempt to acquire a lock, specify
-\fB\-\-timeout=0\fR.
-The timer applies only to the attempt to acquire the lock.  As soon
-as the lock is acquired, the timeout is cancelled.  The command to
-be run is not subject to the timeout.
-.PP
-.SH "EXAMPLES (invoking some imaginary programs)"
-.hl
-.PP
-flock /etc/passwd read-and-write-to-passwd
-.PP
-flock \-\-shared /etc/passwd just-read-something-from-passwd
-.PP
-flock \-\-timeout=0 /sys /usr/local/bin/update-hotplug /sys
+\fB\-x\fP, \fB\-\-exclusive\fP
+Obtain an exclusive lock, sometimes called a write lock.  This is the
+default.
+.TP
+\fB\-u\fP, \fB\-\-unlock\fP
+Drop a lock.  This is usually not required, since a lock is
+automatically dropped when the file is closed.  However, it may be
+required in special cases, for example if the enclosed command group
+may have forked a background process which should not be holding the
+lock.
+.TP
+\fB\-n\fP, \fB\-\-nonblock\fP
+Fail (with an exit code of 1) rather than wait if the lock cannot be
+immediately acquired.
+.TP
+\fB\-w\fP, \fB\-\-timeout\fP \fIseconds\fP
+Fail (with an exit code of 1) if the lock cannot be acquired within
+\fIseconds\fP seconds.  Decimal fractional values are allowed.
+.TP
+\fB\-o\fP, \fB\-\-close\fP
+Close the file descriptor on which the lock is held before executing
+\fIcommand\fP.  This is useful if \fIcommand\fP spawns a child process
+which should not be hold ing the lock.
+.TP
+\fB\-h\fP, \fB\-\-help\fP
+Print a help message.
 .SH AUTHOR
-Written by Adam J. Richter
+Written by H. Peter Anvin <hpa@zytor.com>.
+.SH COPYRIGHT
+Copyright \(co 2003\-2005 H. Peter Anvin.
+.br
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+.SH "SEE ALSO"
+.BR flock (2)

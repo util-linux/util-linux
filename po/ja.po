@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11n\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
-"POT-Creation-Date: 2005-08-02 21:07+0200\n"
+"POT-Creation-Date: 2005-08-14 18:14+0200\n"
 "PO-Revision-Date: 2001-12-11 22:43+0900\n"
 "Last-Translator: Daisuke Yamashita <yamad@mb.infoweb.ne.jp>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -161,11 +161,11 @@ msgstr "使い方: %s [ -n ] デバイス\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
-#: disk-utils/mkswap.c:522 misc-utils/cal.c:313 misc-utils/ddate.c:179
-#: misc-utils/kill.c:189 misc-utils/rename.c:79 misc-utils/script.c:142
+#: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: misc-utils/script.c:142 sys-utils/readprofile.c:197
 #, fuzzy, c-format
-msgid "%s from %s%s\n"
-msgstr "%s from %s\n"
+msgid "%s (%s)\n"
+msgstr "%2$s に %1$s\n"
 
 #: disk-utils/fdformat.c:130
 #, fuzzy, c-format
@@ -848,9 +848,9 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: メモリが足りません！\n"
 
 #: disk-utils/mkfs.c:103
-#, c-format
-msgid "mkfs version %s (%s)\n"
-msgstr "mkfs バージョン %s (%s)\n"
+#, fuzzy, c-format
+msgid "mkfs (%s)\n"
+msgstr "%2$s に %1$s\n"
 
 #: disk-utils/mkfs.cramfs.c:124
 #, c-format
@@ -7046,6 +7046,11 @@ msgstr "%s: 一時ファイルの情報を取得できません。\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: 一時ファイルを読めません。\n"
 
+#: misc-utils/cal.c:313
+#, fuzzy, c-format
+msgid "%s from %s\n"
+msgstr "%s from %s\n"
+
 #: misc-utils/cal.c:327
 msgid "illegal month value: use 1-12"
 msgstr "不正な月: 1-12 を使ってください"
@@ -7072,6 +7077,11 @@ msgstr "使い方: %s [+書式] [日 月 年]\n"
 #: misc-utils/ddate.c:250
 msgid "St. Tib's Day"
 msgstr "聖 Tib の日"
+
+#: misc-utils/kill.c:189
+#, fuzzy, c-format
+msgid "%s from %s%s\n"
+msgstr "%s from %s\n"
 
 #: misc-utils/kill.c:207
 #, c-format
@@ -8640,17 +8650,6 @@ msgstr "   %f 整数/秒 -- %f 記録 (キャラクタ/秒)\n"
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
 msgstr "使い方: %s [-c] [-n レベル] [-s バッファサイズ]\n"
 
-#: sys-utils/flock.c:59
-#, fuzzy, c-format
-msgid "flock: unknown option, aborting.\n"
-msgstr "%s: 不明なシグナル %s\n"
-
-#: sys-utils/flock.c:77
-#, c-format
-msgid ""
-"Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-msgstr ""
-
 #: sys-utils/ipcrm.c:66
 #, c-format
 msgid "invalid id: %s\n"
@@ -9403,11 +9402,6 @@ msgstr ""
 "\t -n                   バイトオーダの自動検知を無効化する\n"
 "\t -V                   バージョン情報を表示して終了する\n"
 
-#: sys-utils/readprofile.c:197
-#, fuzzy, c-format
-msgid "%s version %s\n"
-msgstr "%s バージョン %s\n"
-
 #: sys-utils/readprofile.c:284
 #, c-format
 msgid "Sampling_step: %i\n"
@@ -9991,6 +9985,21 @@ msgstr "入力行が長すぎます。\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "バッファを拡大するときにメモリが足りなくなりました。\n"
+
+#, fuzzy
+#~ msgid "mkfs from %s\n"
+#~ msgstr "%s from %s\n"
+
+#~ msgid "mkfs version %s (%s)\n"
+#~ msgstr "mkfs バージョン %s (%s)\n"
+
+#, fuzzy
+#~ msgid "flock: unknown option, aborting.\n"
+#~ msgstr "%s: 不明なシグナル %s\n"
+
+#, fuzzy
+#~ msgid "%s version %s\n"
+#~ msgstr "%s バージョン %s\n"
 
 #~ msgid "Invalid number: %s\n"
 #~ msgstr "不正な数: %s\n"

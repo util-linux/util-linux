@@ -2297,7 +2297,7 @@ read_input(char *dev, int interactive, struct disk_desc *z) {
  */
 
 static void version(void) {
-    printf("sfdisk from util-linux-%s", VERSION);
+    printf("sfdisk (%s)", PACKAGE_STRING);
 }
 
 static void
