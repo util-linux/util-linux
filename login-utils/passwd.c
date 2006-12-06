@@ -3,17 +3,12 @@
  *
  * Initially written for Linux by Peter Orbaek <poe@daimi.aau.dk>
  * Currently maintained at ftp://ftp.daimi.aau.dk/pub/linux/poe/
-
- Hacked by Alvaro Martinez Echevarria, alvaro@enano.etsit.upm.es,
- to allow peaceful coexistence with yp. Nov 94.
-
- Hacked to allow root to set passwd from command line.
- by Arpad Magossanyi (mag@tas.vein.hu) 
-
- Hacked by Peter Breitenlohner, peb@mppmu.mpg.de,
- moved Alvaro's changes to setpwnam.c (so they get used
- by chsh and chfn as well). Oct 5, 96.
-
+ *
+ * Hacked by Alvaro Martinez Echevarria, alvaro@enano.etsit.upm.es,
+ * to allow peaceful coexistence with yp. Nov 94.
+ *
+ * Hacked to allow root to set passwd from command line.
+ * by Arpad Magossanyi (mag@tas.vein.hu)
  */
 
 /*
@@ -26,7 +21,7 @@
 	or running a background job that just collects all command lines)
 
  *	work and second I wanted simplicity checks to be done for
- *	root, too. Only root can turn this of using the -f
+ *	root, too. Only root can turn this off using the -f
  *	switch. Okay, I started with this to support -V version
  *	information, but one thing comes to the next. *sigh*
  *	In a later step perhaps we'll be able to support shadow

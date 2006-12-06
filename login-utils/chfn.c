@@ -14,9 +14,6 @@
  * patches from Zefram <A.Main@dcs.warwick.ac.uk>
  *
  *  Hacked by Peter Breitenlohner, peb@mppmu.mpg.de,
- *    to allow peaceful coexistence with yp: using the changes by
- *     Alvaro Martinez Echevarria, alvaro@enano.etsit.upm.es, from
- *     passwd.c (now moved to setpwnam.c);
  *    to remove trailing empty fields.  Oct 5, 96.
  *
  */
@@ -32,6 +29,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <getopt.h>
+#include <locale.h>
 #include "my_crypt.h"
 #include "../version.h"
 
@@ -81,6 +79,9 @@ extern int setpwnam P((struct passwd *pwd));
 
 #define memzero(ptr, size) memset((char *) ptr, 0, size)
 
+/* we do not accept gecos field sizes lengther than MAX_FIELD_SIZE */
+#define MAX_FIELD_SIZE		256
+
 int main (argc, argv)
     int argc;
     char *argv[];
@@ -102,6 +103,9 @@ int main (argc, argv)
     if (! whoami) whoami = "chfn";
     for (cp = whoami; *cp; cp++)
 	if (*cp == '/') whoami = cp + 1;
+
+    /* iscntrl() below should not reject actual names */
+    setlocale(LC_ALL,"");
 
     /*
      *	"oldf" contains the users original finger information.
@@ -392,6 +396,13 @@ static int check_gecos_string (msg, gecos)
     char *gecos;
 {
     int i, c;
+
+    if (strlen(gecos) > MAX_FIELD_SIZE) {
+	if (msg != NULL)
+	    printf("%s: ", msg);
+	printf("field is too long.\n");
+	return -1;
+    }
 
     for (i = 0; i < strlen (gecos); i++) {
 	c = gecos[i];

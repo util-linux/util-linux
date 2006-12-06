@@ -31,9 +31,10 @@ USRBIN:=$(USRBIN) reset
 MAN1:=$(MAN1) reset.1
 endif
 
-# ifeq "$(HAVE_SYSVINIT)" "no"
-# USRBIN:=$(USRBIN) pidof
-# endif
+# For script only
+ifeq "$(HAVE_OPENPTY)" "yes"
+CFLAGS:=$(CFLAGS) -DHAVE_OPENPTY
+endif
 
 # Programs requiring special compilation
 
@@ -58,16 +59,16 @@ endif
 
 # Rules for everything else
 
-cal: cal.o $(BSD)/getopt.o $(BSD)/err.o
+cal: cal.o $(ERR_O)
 chkdupexe: chkdupexe.pl
 clear: clear.sh
 kill: kill.o procs.o
-logger: logger.o $(BSD)/getopt.o
+logger: logger.o
 mcookie: mcookie.o md5.o
 mcookie.o: mcookie.c md5.h
 md5.o: md5.c md5.h
 reset: reset.sh
-# pidof: pidof.o procs.o
+
 ifeq "$(HAVE_NCURSES)" "yes"
 setterm: setterm.o
 endif

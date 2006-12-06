@@ -1,0 +1,14 @@
+980628: Bumped up version number to 1.0.3
+980628: Removed remaining incompatibility with tcsh-6.02 from parse.tcsh
+980626: Added separate Makefile for util-linux
+980625: Removed several bugs from parse.tcsh, partly thanks to Volker Kuhlmann
+        (v.kuhlmann@elec.canterbury.ac.nz).
+980612: Removed reference to getopt in util-linux
+980611: Bumped up version number to 1.0.2
+980611: Fixed --version bug (was not available, though documented!)
+980611: Removed compiler warnings.
+980603: Bumped up version number to 1.0.1
+980603: Fixed sizeof() bug (should be strlen) in getopt.c, thanks to Bob Proulx
+        (rwp@hprwp.fc.hp.com).
+980505: Changed date field in LSM to proper syntax
+980505: Released version 1.0

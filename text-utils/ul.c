@@ -41,6 +41,7 @@
 #include <string.h>		/* for bzero() */
 #include <term.h>		/* for setupterm() */
 #include <stdlib.h>		/* for getenv() */
+#include <limits.h>		/* for INT_MAX */
 
 void filter(FILE *f);
 void flushln(void);
@@ -52,6 +53,7 @@ void reverse(void);
 void initinfo(void);
 void outc(int c);
 void setmode(int newmode);
+void setcol(int newcol);
 
 #define	IESC	'\033'
 #define	SO	'\016'
@@ -59,7 +61,6 @@ void setmode(int newmode);
 #define	HFWD	'9'
 #define	HREV	'8'
 #define	FREV	'7'
-#define	MAXBUF	512
 
 #define	NORMAL	000
 #define	ALTSET	001	/* Reverse */
@@ -67,6 +68,7 @@ void setmode(int newmode);
 #define	SUBSC	004	/* Dim | Ul */
 #define	UNDERL	010	/* Ul */
 #define	BOLD	020	/* Bold */
+#define	INITBUF	512
 
 int	must_use_uc, must_overstrike;
 char	*CURS_UP, *CURS_RIGHT, *CURS_LEFT,
@@ -78,7 +80,8 @@ struct	CHAR	{
 	char	c_char;
 } ;
 
-struct	CHAR	obuf[MAXBUF];
+struct	CHAR	*obuf;
+int	obuflen;		/* Tracks number of elements in obuf. */
 int	col, maxcol;
 int	mode;
 int	halfpos;
@@ -150,23 +153,20 @@ int main(int argc, char **argv)
 
 void filter(FILE *f)
 {
-	register c;
+	int c;
 
 	while ((c = getc(f)) != EOF) switch(c) {
 
 	case '\b':
-		if (col > 0)
-			col--;
+		setcol(col - 1);
 		continue;
 
 	case '\t':
-		col = (col+8) & ~07;
-		if (col > maxcol)
-			maxcol = col;
+		setcol((col+8) & ~07);
 		continue;
 
 	case '\r':
-		col = 0;
+		setcol(0);
 		continue;
 
 	case SO:
@@ -224,9 +224,7 @@ void filter(FILE *f)
 		else
 			obuf[col].c_char = '_';
 	case ' ':
-		col++;
-		if (col > maxcol)
-			maxcol = col;
+		setcol(col + 1);
 		continue;
 
 	case '\n':
@@ -251,9 +249,7 @@ void filter(FILE *f)
 			obuf[col].c_mode |= BOLD|mode;
 		else
 			obuf[col].c_mode = mode;
-		col++;
-		if (col > maxcol)
-			maxcol = col;
+		setcol(col + 1);
 		continue;
 	}
 	if (maxcol)
@@ -262,8 +258,8 @@ void filter(FILE *f)
 
 void flushln()
 {
-	register lastmode;
-	register i;
+	int lastmode;
+	int i;
 	int hadmodes = 0;
 
 	lastmode = NORMAL;
@@ -274,9 +270,9 @@ void flushln()
 			lastmode = obuf[i].c_mode;
 		}
 		if (obuf[i].c_char == '\0') {
-			if (upln)
+			if (upln) {
 				PRINT(CURS_RIGHT);
-			else
+			} else
 				outc(' ');
 		} else
 			outc(obuf[i].c_char);
@@ -361,21 +357,30 @@ void iattr()
 
 void initbuf()
 {
+	if (obuf == NULL) {	/* First time. */
+		obuflen = INITBUF;
+		obuf = malloc(sizeof(struct CHAR) * obuflen);
+		if (obuf == NULL) {
+			fprintf(stderr, "Unable to allocate buffer.\n");
+			exit(1);
+		}
+	}
 
-	bzero((char *)obuf, sizeof (obuf));	/* depends on NORMAL == 0 */
-	col = 0;
+	/* assumes NORMAL == 0 */
+	bzero((char *)obuf, sizeof(struct CHAR) * obuflen);
+	setcol(0);
 	maxcol = 0;
 	mode &= ALTSET;
 }
 
 void fwd()
 {
-	register oldcol, oldmax;
+	int oldcol, oldmax;
 
 	oldcol = col;
 	oldmax = maxcol;
 	flushln();
-	col = oldcol;
+	setcol(oldcol);
 	maxcol = oldmax;
 }
 
@@ -390,7 +395,7 @@ void reverse()
 
 void initinfo()
 {
-	char *getenv(), *tigetstr();
+	char *tigetstr();
 
 	CURS_UP =		tigetstr("cuu1");
 	CURS_RIGHT =		tigetstr("cuf1");
@@ -494,4 +499,41 @@ void setmode(int newmode)
 		}
 	}
 	curmode = newmode;
+}
+
+
+
+
+void setcol(int newcol)
+{
+	col = newcol;
+
+	if (col < 0)
+		col = 0;
+	else if (col > maxcol) {
+		maxcol = col;
+
+		/* If col >= obuflen, expand obuf until obuflen > col. */
+		while (col >= obuflen) {
+			/* Paranoid check for obuflen == INT_MAX. */
+			if (obuflen == INT_MAX) {
+				fprintf(stderr,
+					"Input line too long.\n");
+				exit(1);
+			}
+
+			/* Similar paranoia: double only up to INT_MAX. */
+			obuflen = ((INT_MAX / 2) < obuflen)
+				? INT_MAX
+				: obuflen * 2;
+
+			/* Now we can try to expand obuf. */
+			obuf = realloc(obuf, sizeof(struct CHAR) * obuflen);
+			if (obuf == NULL) {
+				fprintf(stderr,
+					"Out of memory when growing buffer.\n");
+				exit(1);
+			}
+		}
+	}
 }

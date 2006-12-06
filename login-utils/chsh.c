@@ -17,11 +17,6 @@
  *   suggestion from Zefram.  Disallowing users with shells not in /etc/shells
  *   from changing their shell.
  *
- *  Hacked by Peter Breitenlohner, peb@mppmu.mpg.de,
- *    to allow peaceful coexistence with yp: using the changes by
- *     Alvaro Martinez Echevarria, alvaro@enano.etsit.upm.es, from
- *     passwd.c (now moved to setpwnam.c). Oct 5, 96.
- *
  */
 
 #if 0

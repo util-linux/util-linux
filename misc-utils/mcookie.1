@@ -19,10 +19,11 @@ process id, the parent process id, the contents of an input file (if
 .B \-f
 is specified), and several bytes of information from the first of the
 following devices which is present:
-.IR /dev/urandom ", " /dev/random ", " /dev/audio .
-Other files in
-.I /proc
-may be used as a last resort.
+.IR /dev/random ,
+.IR /dev/urandom ,
+files in
+.IR /proc ,
+.IR /dev/audio .
 .SH BUGS
 The entropy in the generated 128-bit is probably quite small (and,
 therefore, vulnerable to attack) unless a non-pseudorandom number generator

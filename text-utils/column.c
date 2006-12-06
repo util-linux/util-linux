@@ -164,7 +164,6 @@ r_columnate()
 	int base, chcnt, cnt, col, endcol, numcols, numrows, row;
 
 	maxlength = (maxlength + TAB) & ~(TAB - 1);
-	/* This could be 0 */
 	numcols = termwidth / maxlength;
 	if (!numcols) 
 	  numcols = 1;

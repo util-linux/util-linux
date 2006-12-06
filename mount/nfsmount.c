@@ -151,10 +151,17 @@ int nfsmount(const char *spec, const char *node, int *flags,
 		goto fail;
 	}
 	strcpy(hostdir, spec);
-	if ((s = (strchr(hostdir, ':')))) {
+	if ((s = strchr(hostdir, ':'))) {
 		hostname = hostdir;
 		dirname = s + 1;
 		*s = '\0';
+		/* Ignore all but first hostname in replicated mounts
+		   until they can be fully supported. (mack@sgi.com) */
+		if ((s = strchr(hostdir, ','))) {
+			*s = '\0';
+			fprintf(stderr, "mount: warning: "
+				"multiple hostnames not supported\n");
+		}
 	} else {
 		fprintf(stderr, "mount: "
 			"directory to mount not in host:dir format\n");
@@ -272,17 +279,24 @@ int nfsmount(const char *spec, const char *node, int *flags,
 				mountvers = val;
 			else if (!strcmp(opt, "nfsprog"))
 				nfsprog = val;
-			else if (!strcmp(opt, "nfsvers"))
+			else if (!strcmp(opt, "nfsvers") ||
+				 !strcmp(opt, "vers"))
 				nfsvers = val;
-			else if (!strcmp(opt, "namlen")) {
+			else if (!strcmp(opt, "proto")) {
+				if (!strncmp(opteq+1, "tcp", 3))
+					tcp = 1;
+				else if (!strncmp(opteq+1, "udp", 3))
+					tcp = 0;
+				else
+					printf("Warning: Unrecognized proto= option.\n");
+			} else if (!strcmp(opt, "namlen")) {
 #if NFS_MOUNT_VERSION >= 2
 				if (nfs_mount_version >= 2)
 					data.namlen = val;
 				else
 #endif
 				printf("Warning: Option namlen is not supported.\n");
-			}
-			else if (!strcmp(opt, "addr"))
+			} else if (!strcmp(opt, "addr"))
 				/* ignore */;
 			else {
 				printf("unknown nfs mount parameter: "

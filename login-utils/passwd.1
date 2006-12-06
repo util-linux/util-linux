@@ -34,10 +34,8 @@ reasons to choose a non-conformant password.
 
 The two argument form gives the 
 .IR user " the " password
-stated as the second argument. This may be useful when giving many
-users an initial generated password.  But it can also be extremely
-dangerous.  A simple script bug might change to root password to
-something unknown.
+stated as the second argument. Note that this password will
+be visible to people doing `ps' or so.  Avoid this form.
 
 Giving an empty string as the second argument erases the password for the
 user, but only in combination with the
@@ -111,6 +109,3 @@ Peter Orbaek (poe@daimi.aau.dk).
 .br
 Martin Schulze (joey@infodrom.north.de) with extensive rewriting and
 improving done.
-.br
-.SH MAINTAINER
-Nicolai Langfeldt (janl@math.uio.no)

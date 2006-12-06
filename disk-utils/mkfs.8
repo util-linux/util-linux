@@ -55,13 +55,8 @@ This is really only useful for testing.
 .TP
 .BI -t \ fstype
 Specifies the type of file system to be built.
-If not specified, the type is deduced by searching for
-.I filesys
-in
-.I /etc/fstab
-and using the corresponding entry.
-If the type can not be deduced, the default file system type
-(currently minix) is used.
+If not specified, the default file system type
+(currently ext2) is used.
 .TP
 .B fs-options
 File system-specific options to be passed to the real file 

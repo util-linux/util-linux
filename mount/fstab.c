@@ -1,9 +1,9 @@
 #include <unistd.h>
-#include <mntent.h>
 #include <errno.h>
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
+#include "mntent.h"
 #include "fstab.h"
 #include "sundries.h"		/* for xmalloc() etc */
 
@@ -88,30 +88,28 @@ fstab_head() {
 }
 
 static void
-read_mntentchn(FILE *fp, const char *fnam, struct mntentchn *mc0) {
-     struct mntentchn *mc = mc0;
-     struct mntent *mnt;
+read_mntentchn(mntFILE *mfp, const char *fnam, struct mntentchn *mc0) {
+	struct mntentchn *mc = mc0;
+	struct mntent *mnt;
 
-     while (!feof(fp) && !ferror(fp)) {
-	  if ((mnt = getmntent (fp)) != NULL 	       /* ignore blank lines */
-	       && *mnt->mnt_fsname != '#' 	       /* and comment lines */
-	       && !streq (mnt->mnt_type, MNTTYPE_IGNORE)) {
-	       mc->nxt = (struct mntentchn *) xmalloc(sizeof(*mc));
-	       mc->nxt->prev = mc;
-	       mc = mc->nxt;
-	       mc->mnt_fsname = xstrdup(mnt->mnt_fsname);
-	       mc->mnt_dir = xstrdup(mnt->mnt_dir);
-	       mc->mnt_type = xstrdup(mnt->mnt_type);
-	       mc->mnt_opts = xstrdup(mnt->mnt_opts);
-	       mc->nxt = NULL;
-	  }
-     }
-     mc0->prev = mc;
-     if (ferror (fp)) {
-	  error("warning: error reading %s: %s", fnam, strerror (errno));
-	  mc0->nxt = mc0->prev = NULL;
-     }
-     endmntent(fp);
+	while ((mnt = my_getmntent (mfp)) != NULL) {
+	    if (!streq (mnt->mnt_type, MNTTYPE_IGNORE)) {
+		mc->nxt = (struct mntentchn *) xmalloc(sizeof(*mc));
+		mc->nxt->prev = mc;
+		mc = mc->nxt;
+		mc->mnt_fsname = mnt->mnt_fsname;
+		mc->mnt_dir = mnt->mnt_dir;
+		mc->mnt_type = mnt->mnt_type;
+		mc->mnt_opts = mnt->mnt_opts;
+		mc->nxt = NULL;
+	    }
+	}
+	mc0->prev = mc;
+	if (ferror (mfp->mntent_fp)) {
+		error("warning: error reading %s: %s", fnam, strerror (errno));
+		mc0->nxt = mc0->prev = NULL;
+	}
+	my_endmntent(mfp);
 }
 
 /*
@@ -121,7 +119,7 @@ read_mntentchn(FILE *fp, const char *fnam, struct mntentchn *mc0) {
  */
 static void
 read_mounttable() {
-     FILE *fp = NULL;
+     mntFILE *mfp;
      const char *fnam;
      struct mntentchn *mc = &mounttable;
 
@@ -129,10 +127,12 @@ read_mounttable() {
      mc->nxt = mc->prev = NULL;
 
      fnam = MOUNTED;
-     if ((fp = setmntent (fnam, "r")) == NULL) {
+     mfp = my_setmntent (fnam, "r");
+     if (mfp == NULL || mfp->mntent_fp == NULL) {
 	  int errsv = errno;
 	  fnam = PROC_MOUNTS;
-	  if ((fp = setmntent (fnam, "r")) == NULL) {
+	  mfp = my_setmntent (fnam, "r");
+	  if (mfp == NULL || mfp->mntent_fp == NULL) {
 	       error("warning: can't open %s: %s", MOUNTED, strerror (errsv));
 	       return;
 	  }
@@ -140,12 +140,12 @@ read_mounttable() {
 	       printf ("mount: could not open %s - using %s instead\n",
 		       MOUNTED, PROC_MOUNTS);
      }
-     read_mntentchn(fp, fnam, mc);
+     read_mntentchn(mfp, fnam, mc);
 }
 
 static void
 read_fstab() {
-     FILE *fp = NULL;
+     mntFILE *mfp = NULL;
      const char *fnam;
      struct mntentchn *mc = &fstab;
 
@@ -153,11 +153,12 @@ read_fstab() {
      mc->nxt = mc->prev = NULL;
 
      fnam = _PATH_FSTAB;
-     if ((fp = setmntent (fnam, "r")) == NULL) {
+     mfp = my_setmntent (fnam, "r");
+     if (mfp == NULL || mfp->mntent_fp == NULL) {
 	  error("warning: can't open %s: %s", _PATH_FSTAB, strerror (errno));
 	  return;
      }
-     read_mntentchn(fp, fnam, mc);
+     read_mntentchn(mfp, fnam, mc);
 }
      
 
@@ -171,6 +172,24 @@ getmntfile (const char *name) {
 	    break;
 
     return mc;
+}
+
+/*
+ * Given the name NAME, and the place MCPREV we found it last time,
+ * try to find more occurrences.
+ */ 
+struct mntentchn *
+getmntfilesbackward (const char *name, struct mntentchn *mcprev) {
+    struct mntentchn *mc, *mh;
+
+    mh = mtab_head();
+    if (!mcprev)
+	mcprev = mh;
+    for (mc = mcprev->prev; mc && mc != mh; mc = mc->prev)
+        if (streq (mc->mnt_dir, name) || (streq (mc->mnt_fsname, name)))
+	    return mc;
+
+    return NULL;
 }
 
 /* Given the name FILE, try to find the option "loop=FILE" in mtab.  */ 
@@ -222,13 +241,41 @@ getfsspec (const char *spec)
     return mc;
 }
 
+/* Find the uuid UUID in fstab. */
+struct mntentchn *
+getfsuuidspec (const char *uuid)
+{
+    struct mntentchn *mc;
+
+    for (mc = fstab_head()->nxt; mc; mc = mc->nxt)
+	if (strncmp (mc->mnt_fsname, "UUID=", 5) == 0
+	    && streq(mc->mnt_fsname + 5, uuid))
+	    break;
+
+    return mc;
+}
+
+/* Find the label LABEL in fstab. */
+struct mntentchn *
+getfsvolspec (const char *label)
+{
+    struct mntentchn *mc;
+
+    for (mc = fstab_head()->nxt; mc; mc = mc->nxt)
+	if (strncmp (mc->mnt_fsname, "LABEL=", 6) == 0
+	    && streq(mc->mnt_fsname + 6, label))
+	    break;
+
+    return mc;
+}
+
 /* Updating mtab ----------------------------------------------*/
 
-/* File descriptor for lock.  Value tested in unlock_mtab() to remove race.  */
-static int lock = -1;
-
 /* Flag for already existing lock file. */
-static int old_lockfile = 1;
+static int we_created_lockfile = 0;
+
+/* Flag to indicate that signals have been set up. */
+static int signals_have_been_setup = 0;
 
 /* Ensure that the lock is released if we are interrupted.  */
 static void
@@ -241,69 +288,122 @@ setlkw_timeout (int sig) {
      /* nothing, fcntl will fail anyway */
 }
 
-/* Create the lock file.  The lock file will be removed if we catch a signal
-   or when we exit.  The value of lock is tested to remove the race.  */
+/* Create the lock file.
+   The lock file will be removed if we catch a signal or when we exit. */
+/* The old code here used flock on a lock file /etc/mtab~ and deleted
+   this lock file afterwards. However, as rgooch remarks, that has a
+   race: a second mount may be waiting on the lock and proceed as
+   soon as the lock file is deleted by the first mount, and immediately
+   afterwards a third mount comes, creates a new /etc/mtab~, applies
+   flock to that, and also proceeds, so that the second and third mount
+   now both are scribbling in /etc/mtab.
+   The new code uses a link() instead of a creat(), where we proceed
+   only if it was us that created the lock, and hence we always have
+   to delete the lock afterwards. Now the use of flock() is in principle
+   superfluous, but avoids an arbitrary sleep(). */
+
+/* Where does the link point to? Obvious choices are mtab and mtab~~.
+   Maybe the latter is preferable. */
+#define MOUNTLOCK_LINKTARGET	MOUNTED_LOCK "~"
+
 void
 lock_mtab (void) {
-     int sig = 0;
-     struct sigaction sa;
-     struct flock flock;
+	int tries = 3;
 
-     /* If this is the first time, ensure that the lock will be removed.  */
-     if (lock < 0) {
-	  struct stat st;
-	  sa.sa_handler = handler;
-	  sa.sa_flags = 0;
-	  sigfillset (&sa.sa_mask);
+	if (!signals_have_been_setup) {
+		int sig = 0;
+		struct sigaction sa;
+
+		sa.sa_handler = handler;
+		sa.sa_flags = 0;
+		sigfillset (&sa.sa_mask);
   
-	  while (sigismember (&sa.sa_mask, ++sig) != -1 && sig != SIGCHLD) {
-	       if (sig == SIGALRM)
-		    sa.sa_handler = setlkw_timeout;
-	       else
-		    sa.sa_handler = handler;
-	       sigaction (sig, &sa, (struct sigaction *) 0);
-	  }
+		while (sigismember (&sa.sa_mask, ++sig) != -1
+		       && sig != SIGCHLD) {
+			if (sig == SIGALRM)
+				sa.sa_handler = setlkw_timeout;
+			else
+				sa.sa_handler = handler;
+			sigaction (sig, &sa, (struct sigaction *) 0);
+		}
+		signals_have_been_setup = 1;
+	}
 
-	  /* This stat is performed so we know when not to be overly eager
-	     when cleaning up after signals. The window between stat and
-	     open is not significant. */
-	  if (lstat (MOUNTED_LOCK, &st) < 0 && errno == ENOENT)
-	       old_lockfile = 0;
+	/* Repeat until it was us who made the link */
+	while (!we_created_lockfile) {
+		struct flock flock;
+		int errsv, fd, i, j;
 
-	  lock = open (MOUNTED_LOCK, O_WRONLY|O_CREAT, 0);
-	  if (lock < 0) {
-	       die (EX_FILEIO, "can't create lock file %s: %s "
-		       "(use -n flag to override)",
-		    MOUNTED_LOCK, strerror (errno));
-	  }
+		i = open (MOUNTLOCK_LINKTARGET, O_WRONLY|O_CREAT, 0);
+		if (i < 0) {
+			/* MOUNTLOCK_LINKTARGET does not exist (as a file)
+			   and we cannot create it. Read-only filesystem?
+			   Too many files open in the system? Filesystem full? */
+			die (EX_FILEIO, "can't create lock file %s: %s "
+			     "(use -n flag to override)",
+			     MOUNTLOCK_LINKTARGET, strerror (errno));
+		}
+		close(i);
 
-	  flock.l_type = F_WRLCK;
-	  flock.l_whence = SEEK_SET;
-	  flock.l_start = 0;
-	  flock.l_len = 0;
+		j = link(MOUNTLOCK_LINKTARGET, MOUNTED_LOCK);
+		errsv = errno;
 
-	  alarm(LOCK_BUSY);
-	  if (fcntl (lock, F_SETLKW, &flock) < 0) {
-	       close (lock);
-	       /* The file should not be removed */
-	       lock = -1;
-	       die (EX_FILEIO, "can't lock lock file %s: %s",
-		    MOUNTED_LOCK,
-		    errno == EINTR ? "timed out" : strerror (errno));
-	  }
-	  /* We have now access to the lock, and it can always be removed */
-	  old_lockfile = 0;
-     }
+		(void) unlink(MOUNTLOCK_LINKTARGET);
+
+		if (j < 0 && errsv != EEXIST) {
+			die (EX_FILEIO, "can't link lock file %s: %s "
+			     "(use -n flag to override)",
+			     MOUNTED_LOCK, strerror (errsv));
+		}
+
+		fd = open (MOUNTED_LOCK, O_WRONLY);
+
+		if (fd < 0) {
+			/* Strange... Maybe the file was just deleted? */
+			if (errno == ENOENT && tries-- > 0)
+				continue;
+			die (EX_FILEIO, "can't open lock file %s: %s "
+			     "(use -n flag to override)",
+			     MOUNTED_LOCK, strerror (errno));
+		}
+
+		flock.l_type = F_WRLCK;
+		flock.l_whence = SEEK_SET;
+		flock.l_start = 0;
+		flock.l_len = 0;
+
+		if (j == 0) {
+			/* We made the link. Now claim the lock. */
+			if (fcntl (fd, F_SETLK, &flock) == -1) {
+				if (verbose)
+				    printf("Can't lock lock file %s: %s\n",
+					   MOUNTED_LOCK, strerror (errno));
+				/* proceed anyway */
+			}
+			we_created_lockfile = 1;
+		} else {
+			/* Someone else made the link. Wait. */
+			alarm(LOCK_TIMEOUT);
+			if (fcntl (fd, F_SETLKW, &flock) == -1) {
+				die (EX_FILEIO, "can't lock lock file %s: %s",
+				     MOUNTED_LOCK, (errno == EINTR) ?
+				     "timed out" : strerror (errno));
+			}
+			alarm(0);
+			/* Maybe limit the number of iterations? */
+		}
+
+		close(fd);
+	}
 }
 
 /* Remove lock file.  */
 void
 unlock_mtab (void) {
-     if (lock != -1) {
-	  close (lock);
-	  if (!old_lockfile)
-	       unlink (MOUNTED_LOCK);
-     }
+	if (we_created_lockfile) {
+		unlink (MOUNTED_LOCK);
+		we_created_lockfile = 0;
+	}
 }
 
 /*
@@ -322,27 +422,32 @@ update_mtab (const char *dir, struct mntent *instead) {
      struct mntent *next;
      struct mntent remnt;
      int added = 0;
-     FILE *fp, *ftmp;
+     mntFILE *mfp, *mftmp;
 
      if (mtab_does_not_exist() || mtab_is_a_symlink())
 	  return;
 
      lock_mtab();
 
-     if ((fp = setmntent(MOUNTED, "r")) == NULL) {
+     mfp = my_setmntent(MOUNTED, "r");
+     if (mfp == NULL || mfp->mntent_fp == NULL) {
 	  error ("cannot open %s (%s) - mtab not updated",
 		 MOUNTED, strerror (errno));
 	  goto leave;
      }
 
-     if ((ftmp = setmntent (MOUNTED_TEMP, "w")) == NULL) {
+     mftmp = my_setmntent (MOUNTED_TEMP, "w");
+     if (mftmp == NULL || mfp->mntent_fp == NULL) {
 	  error ("can't open %s (%s) - mtab not updated",
 		 MOUNTED_TEMP, strerror (errno));
 	  goto leave;
      }
   
-     while ((mnt = getmntent (fp))) {
-	  if (streq (mnt->mnt_dir, dir)) {
+     while ((mnt = my_getmntent (mfp))) {
+	  if (streq (mnt->mnt_dir, dir)
+	      /* Matthew Wilcox <willy@odie.barnet.ac.uk> */
+	      || (instead && instead->mnt_fsname &&
+		  (streq (mnt->mnt_fsname, instead->mnt_fsname)))) {
 	       added++;
 	       if (instead) {	/* a remount */
 		    remnt = *instead;
@@ -362,19 +467,19 @@ update_mtab (const char *dir, struct mntent *instead) {
 		    next = NULL;
 	  } else
 	       next = mnt;
-	  if (next && addmntent(ftmp, next) == 1)
+	  if (next && my_addmntent(mftmp, next) == 1)
 	       die (EX_FILEIO, "error writing %s: %s",
 		    MOUNTED_TEMP, strerror (errno));
      }
-     if (instead && !added && addmntent(ftmp, instead) == 1)
+     if (instead && !added && my_addmntent(mftmp, instead) == 1)
 	  die (EX_FILEIO, "error writing %s: %s",
 	       MOUNTED_TEMP, strerror (errno));
 
-     endmntent (fp);
-     if (fchmod (fileno (ftmp), S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0)
+     my_endmntent (mfp);
+     if (fchmod (fileno (mftmp->mntent_fp), S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0)
 	  fprintf(stderr, "error changing mode of %s: %s\n", MOUNTED_TEMP,
 		  strerror (errno));
-     endmntent (ftmp);
+     my_endmntent (mftmp);
 
      if (rename (MOUNTED_TEMP, MOUNTED) < 0)
 	  fprintf(stderr, "can't rename %s to %s: %s\n", MOUNTED_TEMP, MOUNTED,

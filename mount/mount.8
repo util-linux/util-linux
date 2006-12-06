@@ -31,6 +31,8 @@
 .\" 970114, aeb: xiafs and ext are dead; romfs is new
 .\" 970623, aeb: -F option
 .\" 970914, reg: -s option
+.\" 981111, K.Garloff: /etc/filesystems
+.\" 990111, aeb: documented /sbin/mount.smbfs
 .\"
 .TH MOUNT 8 "14 September 1997" "Linux 2.0" "Linux Programmer's Manual"
 .SH NAME
@@ -111,6 +113,8 @@ but there are other possibilities. For example, in the case of an NFS mount,
 .I device
 may look like
 .IR knuth.cwi.nl:/dir .
+It is possible to indicate a block special device using its
+volume label or UUID (see the \-L and \-U options below).
 
 The file
 .I /etc/fstab
@@ -163,6 +167,14 @@ or
 .RE
 For more details, see
 .BR fstab (5).
+Only the user that mounted a filesystem can unmount it again.
+If any user should be able to unmount, then use
+.B users
+instead of
+.B user
+in the
+.I fstab
+line.
 
 The programs
 .B mount
@@ -265,16 +277,46 @@ Mount the file system read-only. A synonym is
 Mount the file system read/write. This is the default. A synonym is
 .BR "\-o rw" .
 .TP
+.BI \-L " label"
+Mount the partition that has the specified
+.IR label .
+.TP
+.BI \-U " uuid"
+Mount the partition that has the specified
+.IR uuid .
+These two options require the file
+.I /proc/partitions
+(present since Linux 2.1.116) to exist.
+.TP
 .BI \-t " vfstype"
 The argument following the
 .B \-t
 is used to indicate the file system type.  The file system types which are
 currently supported are listed in
 .IR linux/fs/filesystems.c :
-.IR minix ", " ext ", " ext2 ", " xiafs ", " hpfs ,
-.IR msdos ", " umsdos ", " vfat ,
-.IR proc ", " nfs ", " iso9660 ", " smbfs ", " ncpfs ,
-.IR affs ", " ufs ", " romfs ,
+.IR minix ,
+.IR xiafs ,
+.IR ext ,
+.IR ext2 ,
+.IR msdos ,
+.IR umsdos ,
+.IR vfat ,
+.IR proc ,
+.IR autofs ,
+.IR devpts ,
+.IR nfs ,
+.IR iso9660 ,
+.IR smbfs ,
+.IR ncpfs ,
+.IR adfs ,
+.IR affs ,
+.IR coda ,
+.IR hfs ,
+.IR hpfs ,
+.IR ntfs ,
+.IR qnx4 ,
+.IR romfs ,
+.IR ufs ,
 .IR sysv ", " xenix ", " coherent .
 Note that the last three are equivalent and that
 .I xenix
@@ -288,6 +330,23 @@ and
 .I xiafs
 do not exist anymore.
 
+For most types all the
+.B mount
+program has to do is issue a simple
+.IR mount (2)
+system call, and no detailed knowledge of the filesystem type is required.
+For a few types however (like nfs, smbfs, ncpfs) ad hoc code is
+necessary. The nfs ad hoc code is built in, but smbfs and ncpfs
+have a separate mount program. In order to make it possible to
+treat all types in a uniform way, mount will execute the program
+.I /sbin/mount.TYPE
+(if that exists) when called with type smb or ncp.
+Since various versions of the
+.I smbmount
+program have different calling conventions,
+.I /sbin/mount.smb
+may have to be a shell script that sets up the desired call.
+
 The type
 .I iso9660
 is the default.  If no
@@ -297,9 +356,11 @@ option is given, or if the
 type is specified, the superblock is probed for the filesystem type
 .RI ( minix ", " ext ", " ext2 ", " xiafs ", " iso9660 ", " romfs
 are supported).
-If this probe fails and
-.I /proc/filesystems
-exists, then all of the filesystems listed there will be tried,
+If this probe fails, mount will try to read the file
+.IR /etc/filesystems ,
+or, if that does not exist,
+.IR /proc/filesystems .
+All of the filesystem types listed there will be tried,
 except for those that are labeled "nodev" (e.g.,
 .I proc
 and
@@ -308,6 +369,10 @@ and
 Note that the
 .B auto
 type may be useful for user-mounted floppies.
+Creating a file
+.I /etc/filesystems
+can be useful to change the probe order (e.g., to try vfat before msdos)
+or if you use a kernel module autoloader.
 Warning: the probing uses a heuristic (the presence of appropriate `magic'),
 and could recognize the wrong filesystem type.
 
@@ -381,7 +446,8 @@ binaries for architectures other than its own.
 .TP
 .B nosuid
 Do not allow set-user-identifier or set-group-identifier bits to take
-effect.
+effect. (This seems safe, but is in fact rather unsafe if you have
+suidperl(1) installed.)
 .TP
 .B nouser
 Forbid an ordinary (i.e., non-root) user to mount the file system.
@@ -1000,4 +1066,4 @@ for the
 .SH HISTORY
 A
 .B mount
-command appeared in Version 6 AT&T UNIX.
+command existed in Version 5 AT&T UNIX.

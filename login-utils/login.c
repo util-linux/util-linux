@@ -148,6 +148,14 @@
 
 #define SLEEP_EXIT_TIMEOUT 5
 
+#ifdef __linux__
+#define DO_PS_FIDDLING
+#endif
+
+#ifdef DO_PS_FIDDLING
+#include "setproctitle.h"
+#endif
+
 #if 0
 /* from before we had a lastlog.h file in linux */
 struct  lastlog
@@ -260,9 +268,7 @@ consoletty(int fd)
 
 
 int
-main(argc, argv)
-     int argc;
-     char **argv;
+main(int argc, char **argv)
 {
     extern int errno, optind;
     extern char *optarg, **environ;
@@ -270,8 +276,8 @@ main(argc, argv)
     register int ch;
     register char *p;
     int ask, fflag, hflag, pflag, cnt;
-    int quietlog, passwd_req, ioctlval;
-    char *domain, *salt, *ttyn, *pp;
+    int quietlog, passwd_req;
+    char *domain, *ttyn;
     char tbuf[MAXPATHLEN + 2], tname[sizeof(_PATH_TTY) + 10];
     char *ctime(), *ttyname(), *stypeof();
     time_t time();
@@ -286,7 +292,12 @@ main(argc, argv)
     pam_handle_t *pamh = NULL;
     struct pam_conv conv = { misc_conv, NULL };
     pid_t childPid;
-    int childStatus;
+    void (*oldSigHandler) ();
+#else
+    char *salt, *pp;
+#endif
+#ifndef __linux__
+    int ioctlval;
 #endif
 
     signal(SIGALRM, timedout);
@@ -297,6 +308,9 @@ main(argc, argv)
     setpriority(PRIO_PROCESS, 0, 0);
 #ifdef HAVE_QUOTA
     quota(Q_SETUID, 0, 0, 0);
+#endif
+#ifdef DO_PS_FIDDLING
+    initproctitle(argc, argv);
 #endif
     
     /*
@@ -313,6 +327,7 @@ main(argc, argv)
     username = tty = hostname = NULL;
     fflag = hflag = pflag = 0;
     passwd_req = 1;
+
     while ((ch = getopt(argc, argv, "fh:p")) != EOF)
       switch (ch) {
 	case 'f':
@@ -353,8 +368,13 @@ main(argc, argv)
     argc -= optind;
     argv += optind;
     if (*argv) {
-	username = *argv;
+	char *p = *argv;
+	username = strdup(p);
 	ask = 0;
+	/* wipe name - some people mistype their password here */
+	/* (of course we are too late, but perhaps this helps a little ..) */
+	while(*p)
+	    *p++ = ' ';
     } else
       ask = 1;
     
@@ -377,7 +397,7 @@ main(argc, argv)
      */
     ioctlval = 0;
     ioctl(0, FIOSNBIO, &ioctlval);
-#endif
+#endif /* ! __linux__ */
     
     for (cnt = getdtablesize(); cnt > 2; cnt--)
       close(cnt);
@@ -472,7 +492,7 @@ main(argc, argv)
 	       (retcode == PAM_AUTHINFO_UNAVAIL))) {
 	    pam_get_item(pamh, PAM_USER, (const void **) &username);
 	    syslog(LOG_NOTICE,"FAILED LOGIN %d FROM %s FOR %s, %s",
-	    failcount, hostname,username,pam_strerror(pamh, retcode));
+	    failcount, hostname, username, pam_strerror(pamh, retcode));
 	    fprintf(stderr,"Login incorrect\n\n");
 	    pam_set_item(pamh,PAM_USER,NULL);
 	    retcode = pam_authenticate(pamh, 0);
@@ -520,8 +540,8 @@ main(argc, argv)
 #else /* ! USE_PAM */
 
     for (cnt = 0;; ask = 1) {
-	ioctlval = 0;
 #  ifndef __linux__
+	ioctlval = 0;
 	ioctl(0, TIOCSETD, &ioctlval);
 #  endif
 	
@@ -770,7 +790,7 @@ main(argc, argv)
 	utmp.ut_line[sizeof(utmp.ut_line)-1] = 0;
 	login(&utmp);
     }
-#else
+#else /* __linux__ defined */
     /* for linux, write entries in utmp and wtmp */
     {
 	struct utmp ut;
@@ -781,8 +801,19 @@ main(argc, argv)
 	
 	utmpname(_PATH_UTMP);
 	setutent();
-	while ((utp = getutent()) 
-	       && !(utp->ut_pid == mypid)) /* nothing */;
+
+	/* Find mypid in utmp.
+login sometimes overwrites the runlevel entry in /var/run/utmp,
+confusing sysvinit. I added a test for the entry type, and the problem
+was gone. (In a runlevel entry, st_pid is not really a pid but some number
+calculated from the previous and current runlevel).
+Michael Riepe <michael@stud.uni-hannover.de>
+	*/
+	while ((utp = getutent()))
+		if (utp->ut_pid == mypid
+		    && utp->ut_type >= INIT_PROCESS
+		    && utp->ut_type <= DEAD_PROCESS)
+			break;
 	
 	if (utp) {
 	    memcpy(&ut, utp, sizeof(ut));
@@ -813,7 +844,20 @@ main(argc, argv)
 	
 	pututline(&ut);
 	endutent();
-	
+
+#if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 1)
+	updwtmp(_PATH_WTMP, &ut);
+#else
+#if 0
+	/* The O_APPEND open() flag should be enough to guarantee
+	   atomic writes at end of file. */
+	if((wtmp = open(_PATH_WTMP, O_APPEND|O_WRONLY)) >= 0) {
+		write(wtmp, (char *)&ut, sizeof(ut));
+		close(wtmp);
+	}
+#else
+	/* Probably all this locking below is just nonsense,
+	   and the short version is OK as well. */
 	{ 
 	    int lf;
 	    if ((lf = open(_PATH_WTMPLOCK, O_CREAT|O_WRONLY, 0660)) >= 0) {
@@ -826,8 +870,10 @@ main(argc, argv)
 		close(lf);
 	    }
 	}
-    }
 #endif
+#endif /* __GLIBC__ */
+    }
+#endif /* __linux__ */
     
     dolastlog(quietlog);
     
@@ -903,7 +949,8 @@ main(argc, argv)
     setenv("TERM", termenv, 1);
     
     /* mailx will give a funny error msg if you forget this one */
-    { char tmp[MAXPATHLEN];
+    {
+      char tmp[MAXPATHLEN];
       /* avoid snprintf */
       if (sizeof(_PATH_MAILDIR) + strlen(pwd->pw_name) + 1 < MAXPATHLEN) {
 	      sprintf(tmp, "%s/%s", _PATH_MAILDIR, pwd->pw_name);
@@ -932,6 +979,10 @@ main(argc, argv)
 	}
     }
 #endif
+
+#ifdef DO_PS_FIDDLING
+    setproctitle("login", username);
+#endif
     
     if (tty[sizeof("tty")-1] == 'S')
       syslog(LOG_INFO, "DIALUP AT %s BY %s", tty, pwd->pw_name);
@@ -956,41 +1007,53 @@ main(argc, argv)
     
     if (!quietlog) {
 	struct stat st;
+	char *mail;
 	
 	motd();
-	/* avoid snprintf */
-	if (sizeof(_PATH_MAILDIR) + strlen(pwd->pw_name) + 1 < sizeof(tbuf)) {
-		sprintf(tbuf, "%s/%s", _PATH_MAILDIR, pwd->pw_name);
-		if (stat(tbuf, &st) == 0 && st.st_size != 0)
-			printf("You have %smail.\n",
-			       (st.st_mtime > st.st_atime) ? "new " : "");
+	mail = getenv("MAIL");
+	if (mail && stat(mail, &st) == 0 && st.st_size != 0) {
+		printf("You have %smail.\n",
+		       (st.st_mtime > st.st_atime) ? "new " : "");
 	}
     }
     
     signal(SIGALRM, SIG_DFL);
     signal(SIGQUIT, SIG_DFL);
-    signal(SIGINT, SIG_DFL);
     signal(SIGTSTP, SIG_IGN);
     signal(SIGHUP, SIG_DFL);
+
+#ifdef USE_PAM
+    /* We must fork before setuid() because we need to call
+     * pam_close_session() as root.
+     */
+    signal(SIGINT, SIG_IGN);
+    childPid = fork();
+    if (childPid < 0) {
+       /* error in fork() */
+       fprintf(stderr,"login: failure forking: %s", strerror(errno));
+       PAM_END;
+       exit(0);
+    } else if (childPid) {
+       /* parent - wait for child to finish, then cleanup session */
+       wait(NULL);
+       PAM_END;
+       exit(0);
+    }
+    /* child */
+#endif
+    signal(SIGINT, SIG_DFL);
     
     /* discard permissions last so can't get killed and drop core */
     if(setuid(pwd->pw_uid) < 0 && pwd->pw_uid) {
 	syslog(LOG_ALERT, "setuid() failed");
-#ifdef USE_PAM
-	PAM_END;
-#endif
 	exit(1);
     }
     
     /* wait until here to change directory! */
     if (chdir(pwd->pw_dir) < 0) {
 	printf("No directory %s!\n", pwd->pw_dir);
-	if (chdir("/")) {
-#ifdef USE_PAM
-	  PAM_END;
-#endif
+	if (chdir("/"))
 	  exit(0);
-	}
 	pwd->pw_dir = "/";
 	printf("Logging in with home = \"/\".\n");
     }
@@ -1022,15 +1085,6 @@ main(argc, argv)
     }
 
     childArgv[childArgc++] = NULL;
-
-#ifdef USE_PAM 
-    /* There was some junk with fork()/exec()/signal()/wait() here
-       that was incorrect, and util-linux-2.7-11.src.rpm contains
-       a patch that makes the fork entirely useless.
-       If you introduce one again, please document in the source
-       what its purpose is. - aeb */
-    PAM_END;
-#endif /* USE_PAM */
 
     execvp(childArgv[0], childArgv + 1);
 
@@ -1070,7 +1124,7 @@ getloginname()
 		exit(0);
 	    }
 	}
-	if (p > nbuf)
+	if (p > nbuf) {
 	  if (nbuf[0] == '-')
 	    fprintf(stderr,
 		    "login names may not start with '-'.\n");
@@ -1079,6 +1133,7 @@ getloginname()
 	      username = nbuf;
 	      break;
 	  }
+	}
 	
 	cnt2++;
 	if (cnt2 > 50) {
@@ -1190,7 +1245,7 @@ dolastlog(quiet)
     int fd;
     
     if ((fd = open(_PATH_LASTLOG, O_RDWR, 0)) >= 0) {
-	lseek(fd, (off_t)pwd->pw_uid * sizeof(ll), L_SET);
+	lseek(fd, (off_t)pwd->pw_uid * sizeof(ll), SEEK_SET);
 	if (!quiet) {
 	    if (read(fd, (char *)&ll, sizeof(ll)) == sizeof(ll) &&
 		ll.ll_time != 0) {
@@ -1204,7 +1259,7 @@ dolastlog(quiet)
 		  printf("on %.*s\n",
 			 (int)sizeof(ll.ll_line), ll.ll_line);
 	    }
-	    lseek(fd, (off_t)pwd->pw_uid * sizeof(ll), L_SET);
+	    lseek(fd, (off_t)pwd->pw_uid * sizeof(ll), SEEK_SET);
 	}
 	memset((char *)&ll, 0, sizeof(ll));
 	time(&ll.ll_time);

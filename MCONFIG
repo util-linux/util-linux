@@ -1,32 +1,32 @@
 # MCONFIG -- Configuration stuff for util-linux
 # Created: Sat Feb  4 15:50:30 1995
-# Revised: Sun Nov 10 20:10:13 1996 by faith@cs.unc.edu
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
+
+# For a user-mode install, make (at least) three changes:
+#  - remove the `-o root' part in INSTALLSUID
+#  - set USE_TTY_GROUP=no
+#  - define DESTDIR
 
 # Select for CPU one of intel, alpha, sparc, arm, m68k, mips
 CPU=$(shell uname -m | sed s/i.86/intel/)
 
 # if HAVE_LIBCRYPT is "yes" -lcrypt will be used
-HAVE_LIBCRYPT=no
-# HAVE_LIBCRYPT=yes
+HAVE_LIBCRYPT=yes
 
 # If HAVE_PAM is set to "yes", then login, chfn, chsh, and newgrp
 # will use PAM for authentication. Additionally, passwd will not be
 # installed as it is not PAM aware.
 HAVE_PAM=no
-#HAVE_PAM=yes
 
 # If HAVE_SHADOW is set to "yes", then login, chfn, chsh, newgrp, passwd,
 # and vipw will not be built or installed from the login-utils
 # subdirectory.  
-HAVE_SHADOW=no
-#HAVE_SHADOW=yes
+HAVE_SHADOW=yes
 
 # If HAVE_PASSWD is set to "yes", then passwd will not be built or
 # installed from the login-utils subdirectory (but login, chfn, chsh,
 # newgrp, and vipw *will* be installed).
 HAVE_PASSWD=no
-#HAVE_PASSWD=yes
 
 # If you use chfn and chsh from this package, REQUIRE_PASSWORD will require
 # non-root users to enter the account password before updating /etc/passwd.
@@ -44,21 +44,18 @@ ONLY_LISTED_SHELLS=yes
 # be built or installed from the login-utils subdirectory.  (The shutdown
 # and halt that come with the SysVinit package should be used with the init
 # found in that package.)
-#HAVE_SYSVINIT=no
 HAVE_SYSVINIT=yes
 
 # If HAVE_SYSVINIT_UTILS is set to "yes", then last, mesg, and wall will
 # not be built or installed from the login-utils subdirectory.  (The
 # shutdown and init from the SysVinit package do not depend on the last,
 # mesg, and wall from that package.)
-#HAVE_SYSVINIT_UTILS=no
 HAVE_SYSVINIT_UTILS=yes
 
 # If HAVE_GETTY is set to "yes", then agetty will not be built or
 # installed from the login-utils subdirectory.  Note that agetty can
 # co-exist with other gettys, so this option should never be used.
 HAVE_GETTY=no
-#HAVE_GETTY=yes
 
 # If USE_TTY_GROUP is set to "yes", then wall and write will be installed
 # setgid to the "tty" group, and mesg will only set the group write bit.
@@ -67,24 +64,18 @@ HAVE_GETTY=no
 # xterm will do it correctly if X is compiled with USE_TTY_GROUP set
 # properly.]
 USE_TTY_GROUP=yes
-#USE_TTY_GROUP=no
 
-# If HAVE_STRINGS is set to "yes", then strings won't be installed.  This
-# is the quick fix until the strings in GNU binutils is in wide use and has
-# internationalization support.
-#HAVE_STRINGS=no
-HAVE_STRINGS=yes
+# If HAVE_OPENPTY is set to "yes", then script will use the Unix98 ptys
+HAVE_OPENPTY=no
 
 # If HAVE_RESET is set to "yes", then reset won't be installed.  The version
 # of reset that comes with the ncurses package is less aggressive.
-#HAVE_RESET=no
 HAVE_RESET=yes
 
-# If HAVE_MOUNT is set to "yes", then mount won't be installed, since many
-# folks grab mount independenty of util-linux
-# When util-linux is released it always contains the very latest mount.
-HAVE_MOUNT=no
-# HAVE_MOUNT=yes
+# If HAVE_SLN is set to "yes", then sln won't be installed
+# (but the man page sln.8 will be installed anyway).
+# sln also comes with libc and glibc.
+HAVE_SLN=no
 
 CC=		gcc
 
@@ -99,11 +90,15 @@ else
   endif
 endif
 
-BSD= ../bsd
+ERR_O=$(LIB)/err.o
+
+LIB=../lib
 
 LDFLAGS   = -s
 WARNFLAGS = -Wall
-CFLAGS    = $(OPT) -I. -I$(BSD) $(WARNFLAGS) $(CURSESFLAGS) $(SLANGFLAGS) \
+
+CFLAGS    = $(OPT) -I. -I$(LIB) $(WARNFLAGS) \
+			$(CURSESFLAGS) $(SLANGFLAGS) \
 			$(EXTRACFLAGS) \
 			-DSBINDIR=\"$(SBINDIR)\" \
 			-DUSRSBINDIR=\"$(USRSBINDIR)\" \
@@ -123,7 +118,7 @@ HAVE_NCURSES=yes
 # No such subdirectory - <curses.h> is the ncurses one.
 #   CURSESFLAGS=-DNCH=0
 # Pick your choice.
-CURSESFLAGS=-DNCH=0
+CURSESFLAGS=-I/usr/include/ncurses -DNCH=0
 LIBCURSES=-lncurses
 
 # Set HAVE_SLANG to yes if you have slang (and prefer to use that for cfdisk)
@@ -147,11 +142,11 @@ BINDIR=         $(DESTDIR)/bin
 VARPATH=	$(DESTDIR)/var
 LOGDIR=		$(DESTDIR)/var/log
 MANDIR=		$(DESTDIR)/usr/man
-MAN1DIR=	$(DESTDIR)/usr/man/man1
-MAN3DIR=	$(DESTDIR)/usr/man/man3
-MAN5DIR=	$(DESTDIR)/usr/man/man5
-MAN6DIR=	$(DESTDIR)/usr/man/man6
-MAN8DIR=	$(DESTDIR)/usr/man/man8
+MAN1DIR=	$(MANDIR)/man1
+MAN3DIR=	$(MANDIR)/man3
+MAN5DIR=	$(MANDIR)/man5
+MAN6DIR=	$(MANDIR)/man6
+MAN8DIR=	$(MANDIR)/man8
 INFODIR=	$(DESTDIR)/usr/info
 
 # Directory for shutdown, halt, reboot, etc.
@@ -169,7 +164,7 @@ BINMODE=	755
 MANMODE=	644
 DATMODE=	644
 INFOMODE=	644
-SUIDMODE=      4711
+SUIDMODE=      4755
 
 CHMOD=		chmod
 INSTALL=	install

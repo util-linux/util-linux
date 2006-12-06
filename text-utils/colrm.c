@@ -40,9 +40,10 @@ COLRM removes unwanted columns from a file
 
 int getn(char *ap);
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
-	register c, ct, first, last;
+	register int c, ct, first, last;
 
 	first = 0;
 	last = 0;

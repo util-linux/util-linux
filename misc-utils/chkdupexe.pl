@@ -1,4 +1,4 @@
-#!/usr/bin/perl5 -w
+#!/usr/bin/perl -w
 #
 # chkdupexe version 2.1.1
 #
@@ -27,7 +27,7 @@
 $execdirs='/bin /sbin /usr/bin /usr/sbin /usr/local/bin /usr/local/sbin '.
   '/usr/X11/bin /usr/bin/X11 /usr/local/X11/bin '.
   '/usr/TeX/bin /usr/tex/bin /usr/games '.
-  '/usr/local/games /usr/intervies/bin/LINUX';
+  '/usr/local/games';
 
 # Values from /usr/include/linux/errno.h.  Existence of linux/errno.ph is not
 # something to count on... :-(
@@ -96,6 +96,8 @@ while (($prog,$paths)=each %progs) {
 }
 close(LS);
 
+exit 0;
+
 @unchecked=();
 # Check if the users PATH contains something I've not checked. The site admin
 # might want to know about inconsistencies in user PATHs and chkdupexec 
@@ -108,6 +110,6 @@ foreach $dir (split(/:/,$ENV{'PATH'})) {
   $didthis{$device,$inode}=1;
 }
 
-print "Warning: Your path contanis these directories which chkdupexe have not checked:\n",join(',',@unchecked),
+print "Warning: Your path contains these directories which chkdupexe has not checked:\n",join(',',@unchecked),
   ".\nPlease review the execdirs list in chkdupexe.\n"
     if ($#unchecked>=$[);

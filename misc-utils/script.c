@@ -49,6 +49,10 @@
 #include <string.h>
 #endif
 
+#ifdef HAVE_OPENPTY
+#include <pty.h>
+#endif
+
 void done(void);
 void fail(void);
 void fixtty(void);
@@ -70,10 +74,12 @@ struct	termios tt;
 struct	winsize win;
 int	lb;
 int	l;
+#ifndef HAVE_OPENPTY
 char	line[] = "/dev/ptyXX";
+#endif
 int	aflg;
 
-void
+int
 main(argc, argv)
 	int argc;
 	char *argv[];
@@ -131,6 +137,8 @@ main(argc, argv)
 			doshell();
 	}
 	doinput();
+
+	return 0;
 }
 
 void
@@ -140,6 +148,9 @@ doinput()
 	char ibuf[BUFSIZ];
 
 	(void) fclose(fscript);
+#ifdef HAVE_OPENPTY
+	(void) close(slave);
+#endif
 	while ((cc = read(0, ibuf, BUFSIZ)) > 0)
 		(void) write(master, ibuf, cc);
 	done();
@@ -170,6 +181,9 @@ dooutput()
 	char obuf[BUFSIZ], *ctime();
 
 	(void) close(0);
+#ifdef HAVE_OPENPTY
+	(void) close(slave);
+#endif
 	tvec = time((time_t *)NULL);
 	fprintf(fscript, "Script started on %s", ctime(&tvec));
 	for (;;) {
@@ -250,6 +264,14 @@ done()
 void
 getmaster()
 {
+#ifdef HAVE_OPENPTY
+	(void) tcgetattr(0, &tt);
+	(void) ioctl(0, TIOCGWINSZ, (char *)&win);
+	if (openpty(&master, &slave, NULL, &tt, &win) < 0) {
+		fprintf(stderr, "openpty failed\n");
+		fail();
+	}
+#else
 	char *pty, *bank, *cp;
 	struct stat stb;
 
@@ -282,12 +304,13 @@ getmaster()
 	}
 	fprintf(stderr, "Out of pty's\n");
 	fail();
+#endif /* not HAVE_OPENPTY */
 }
 
 void
 getslave()
 {
-
+#ifndef HAVE_OPENPTY
 	line[strlen("/dev/")] = 't';
 	slave = open(line, O_RDWR);
 	if (slave < 0) {
@@ -296,6 +319,7 @@ getslave()
 	}
 	(void) tcsetattr(slave, TCSAFLUSH, &tt);
 	(void) ioctl(slave, TIOCSWINSZ, (char *)&win);
+#endif
 	(void) setsid();
 	(void) ioctl(slave, TIOCSCTTY, 0);
 }

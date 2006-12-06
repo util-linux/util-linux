@@ -1,83 +1,93 @@
-.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Copyright 1998 Andries E. Brouwer (aeb@cwi.nl)
+.\"
 .\" May be distributed under the GNU General Public License
-.\" Modified with suggestions from Linus, Mon Feb  1 21:40:49 1993
-.\" Modified with patches from Kai, Wed Jun 22 21:54:56 1994
-.\" Patches from jaggy@purplet.demon.co.uk (Mike Jagdis), Wed Feb 8 1995
-.\" Added comments from Nick Holloway, Sat Feb 11 1995, faith@cs.unc.edu
-.\" "
-.TH MKSWAP 8 "February 1995" "Linux 1.0" "Linux Programmer's Manual"
+.\" Rewritten for 2.1.117, aeb, 981010.
+.\"
+.TH MKSWAP 8 "1 December 1998" "Linux 2.1.117" "Linux Programmer's Manual"
 .SH NAME
 mkswap \- set up a Linux swap area
 .SH SYNOPSIS
-.B "mkswap [ \-c ]"
-.IB device  " [" size-in-blocks "]"
+.BI "mkswap [\-c] [\-v" N "] [\-f] " device  " [" size "]"
 .SH DESCRIPTION
 .B mkswap
 sets up a Linux swap area on a device or in a file.
 
+(After creating the swap area, you need the
+.B swapon
+command to start using it. Usually swap areas are listed in
+.I /etc/fstab
+so that they can be taken into use at boot time by a
+.B swapon -a
+command in some boot script.)
+
 The
 .I device
-is usually of the following form:
-
-.nf
-.RS
-/dev/hda[1-8]
-/dev/hdb[1-8]
-/dev/sda[1-8]
-/dev/sdb[1-8]
-.RE
-.fi
+argument will usually be a disk partition (something like
+.I /dev/hda4
+or
+.IR /dev/sdb7 )
+but can also be a file.
+The Linux kernel does not look at partition Id's, but
+many installation scripts will assume that partitions
+of hex type 82 (LINUX_SWAP) are meant to be swap partitions.
 
 The
-.I size-in-blocks
-parameter is the desired size of the file system, in blocks.  This
-information is determined automatically by
+.I size
+parameter is superfluous but retained for backwards compatibility.
+(It specifies the desired size of the swap area in 1024-byte blocks.
 .B mkswap
-if it is omitted.  Block counts are rounded down so that the total
-size is an integer multiple of the machine's page size.  Only block
-counts in the range MINCOUNT..MAXCOUNT are allowed.  If the block count
-exceeds the MAXCOUNT, it is truncated to that value and a warning
-message is issued.
+will use the entire partition or file if it is omitted.)
 
-The MINCOUNT and MAXCOUNT values for a swap area are:
+Linux knows about two styles of swap areas, old style and new style.
+The last 10 bytes of the first page of the swap area distinguishes
+them: old style has `SWAP_SPACE', new style has `SWAPSPACE2' as
+signature.
 
-.RS
-MINCOUNT = 10 * PAGE_SIZE / 1024
-.br
-MAXCOUNT = (PAGE_SIZE - 10) * 8 * PAGE_SIZE / 1024
-.RE
+In the old style, the rest of this first page was a bit map,
+with a 1 bit for each usable page of the swap area.
+Since the first page holds this bit map, the first bit is 0.
+Also, the last 10 bytes hold the signature. So, if the page
+size is S, an old style swap area can describe at most
+8*(S-10)-1 pages used for swapping.
+With S=4096 (as on i386), the useful area is at most 133890048 bytes
+(almost 128 MB if you believe in 1 MB=2^20 bytes), and the rest is wasted.
+On an alpha and sparc64, with S=8192, the useful area is at most
+535560992 bytes (almost 512 MB with the same proviso).
 
-For example, on a machine with 4kB pages (e.g., x86), we get:
+The old setup wastes most of this bitmap page, because zero bits
+denote bad blocks or blocks past the end of the swap space,
+and a simple integer suffices to indicate the size of the swap space,
+while the bad blocks, if any, can simply be listed. Nobody wants
+to use a swap space with hundreds of bad blocks. (I would not even
+use a swap space with 1 bad block.)
+In the new style swap area this is precisely what is done.
+The maximum useful size of a swap area is now (2^31 - 2*S) bytes,
+roughly 2 GB.
 
-.RS
-MINCOUNT = 10 * 4096 / 1024 = 40
-.br
-MAXCOUNT = (4096 - 10) * 8 * 4096 / 1024 = 130752
-.RE
+Note that before 2.1.117 the kernel allocated one byte for each page,
+while it now allocates two bytes, so that taking a swap area of 2 GB
+in use might require 2 MB of kernel memory.
 
-As each block is 1kB large, the swap area in this example could have a
-size that is anywhere in the range from 40kB up to 127.6875MB.
+Presently, Linux allows 8 swap areas. The areas in use can be seen
+in the file
+.I /proc/swaps
+(since 2.1.25).
+
+.B mkswap
+refuses areas smaller than 10 pages.
 
 If you don't know the page size that your machine uses, you may be
-able to look it up with "cat /proc/cpuinfo".
-
-The reason for the limit on MAXCOUNT is that a single page is used to
-hold the swap bitmap at the start of the swap area, where each bit
-represents a single page.  The reason for the -10, is that the
-signature is "SWAP-SPACE" -- 10 characters.
+able to look it up with "cat /proc/cpuinfo" (or you may not -
+the contents of this file depend on architecture and kernel version).
 
 To setup a swap file, it is necessary to create that file before
 running
-.B mkswap .
-A sequence of commands similar to the following is reasonable for this
-purpose:
+.B mkswap ,
+e.g. using a command like
 
 .nf
 .RS
-# dd if=/dev/zero of=swapfile bs=1024 count=8192
-# mkswap swapfile 8192
-# sync
-# swapon swapfile
+# dd if=/dev/zero of=swapfile bs=1024 count=65536
 .RE
 .fi
 
@@ -88,19 +98,34 @@ to create the file is not acceptable).
 .SH OPTIONS
 .TP
 .B \-c
-Check the device for bad blocks before creating the file system.  If any
-are found, the count is printed.  This option is meant to be used for swap
-partitions
-.BR only ,
-and should
-.B not
-be used for regular files!  To make sure that regular files do not contain
-bad blocks, the partition that contains the regular file should have been
-created with
-.BR "mkfs -c" .
+Check the device (if it is a block device) for bad blocks
+before creating the swap area.
+If any are found, the count is printed.
+.TP
+.B \-f
+On SPARC, force creation of the swap area.
+Without this option
+.B mkswap
+will refuse to create a v0 swap on a device with a valid SPARC superblock,
+as that probably means one is going to erase the partition table.
+.TP
+.B \-v0
+Create an old style swap area.
+.TP
+.B \-v1
+Create a new style swap area.
+
+.LP
+If no \-v option is given,
+.B mkswap
+will default to old style if the size of the swap area does not
+exceed the maximum size of an old style swap area, and also if
+the current kernel is older than 2.1.117 (and also if PAGE_SIZE
+is less than 2048).
+The new style header does not touch the first block, so may be
+preferable (also if the swap area is small), in case you have
+a boot loader or disk label there.
+
 .SH "SEE ALSO"
-.BR fsck (8),
-.BR mkfs (8),
-.BR fdisk (8)
-.SH AUTHOR
-Linus Torvalds (torvalds@cs.helsinki.fi)
+.BR fdisk (8),
+.BR swapon (8)

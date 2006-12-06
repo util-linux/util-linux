@@ -55,8 +55,17 @@ Set the Hardware Clock to the time given by the
 option.
 .TP
 .B \-\-hctosys
-Set the System Time from the Hardware Clock.  This is a good option to use
-in one of the system startup scripts.
+Set the System Time from the Hardware Clock.  
+
+Also set the kernel's timezone value to the local timezone as indicated by
+the TZ environment variable and/or /usr/lib/zoneinfo, as tzset(3) would
+interpret them.  EXCEPT: always set the Daylight Savings Time part of
+the kernel's timezone value to 0 ("not Daylight Savings Time").  If DST
+is indicated, just add an hour to the base part.
+
+See the discussion of timezones below.
+
+This is a good option to use in one of the system startup scripts.
 .TP
 .B \-\-systohc
 Set the Hardware Clock to the current System Time.
@@ -118,11 +127,19 @@ Time.  It is your choice whether to keep your clock in UTC or local
 time, but nothing in the clock tells which you've chosen.  So this
 option is how you give that information to 
 .I hwclock.
-.PP
-If you don't specify 
-.B --utc 
-when you should, or vice versa, both setting and querying of the
-Hardware Clock will be messed up.
+
+In order to avoid any possible misunderstandings: all conversation
+with the program
+.I hwclock
+is done in local time. If you have your clock in UTC
+(as is common on a Unix system) then the option
+.B --utc
+tells
+.I hwclock
+to do the appropriate conversions: `hwclock \-\-show \-\-utc'
+will tell you the local time, assuming the hardware clock is in UTC,
+and `hwclock \-\-set \-\-date="XXX" \-\-utc' will set the
+hardware clock to the UTC equivalent of the local time XXX.
 .TP
 .B \-\-directisa
 is meaningful only on an ISA machine.  For all other machines, it has
@@ -134,7 +151,7 @@ Without this option,
 will try to use the /dev/rtc device (which it assumes to be driven by the
 rtc device driver).  If it is unable to open the device (for read), it will
 use the explicit I/O instructions anyway.
-.PP
+
 The rtc device driver was new in Linux Release 2.
 .TP
 .B \-\-test
@@ -198,7 +215,42 @@ time Linux starts up, it will do so with the adjusted time from the Hardware
 Clock.  You can also use the program 
 .I adjtimex(8)
 to smoothly adjust the System Time while the system runs.
-
+.PP
+A Linux kernel maintains a concept of a local timezone for the system.
+But don't be misled -- almost nobody cares what timezone the kernel
+thinks it is in.  Instead, programs that care about the timezone
+(perhaps because they want to display a local time for you) almost
+always use a more traditional method of determining the timezone: They
+use the TZ environment variable and/or the /usr/local/timezone
+directory, as explained in the man page for tzset(3).  However, some
+programs and fringe parts of the Linux kernel such as filesystems use
+the kernel timezone value.  An example is the vfat filesystem.  If the
+kernel timezone value is wrong, the vfat filesystem will report and
+set the wrong timestamps on files.
+.PP
+.I hwclock
+sets the kernel timezone to the value indicated by TZ and/or
+/usr/local/timezone when you set the System Time using the 
+.B \-\-hctosys
+option.
+.PP
+A complication is that the timezone value actually consists of two
+parts: 1) how far from the Standard Meridian the locality is
+geographically, and 2) whether or not a Daylight Savings Time (DST)
+convention is in effect in the locality at the present time.  In
+practice, the DST part of the timezone value is almost never used, so
+if the geographical part were to be set to its correct value, the
+users of the timezone value would actually compute the wrong local
+time.
+.PP
+Therefore, 
+.I
+hwclock
+violates the definition of the kernel's timezone value and always sets
+the DST part to zero.  If DST is supposed to be in effect, 
+.I
+hwclock
+simply adds an hour to the geographical part.
 
 .SH How hwclock Accesses the Hardware Clock
 .PP
@@ -302,7 +354,11 @@ Another 24 hours goes by and you issue another
 does the same thing: subtracts 2 seconds and updates the adjtime file
 with the current time as the last time the clock was adjusted.
 .PP
-Every time you calibrate (set) the clock, 
+Every time you calibrate (set) the clock (using 
+.I --set
+or
+.I --systohc
+),
 .I hwclock 
 recalculates the systematic drift rate based on how long it has been
 since the last calibration, how long it has been since the last
@@ -324,12 +380,12 @@ just before the
 at system startup time, and maybe periodically while the system is
 running via cron.
 .PP
-The format of the adjtime file is:
+The format of the adjtime file is, in ASCII:
 .PP
-Line 1: 3 numbers: 1) systematic drift rate in seconds per day,
-floating point decimal; 2) Resulting number of seconds since 1969 UTC
-of most recent adjustment or calibration, decimal integer; 3) zero
-(for compatibility with
+Line 1: 3 numbers, separated by blanks: 1) systematic drift rate in
+seconds per day, floating point decimal; 2) Resulting number of
+seconds since 1969 UTC of most recent adjustment or calibration,
+decimal integer; 3) zero (for compatibility with
 .I clock
 ).
 .PP
@@ -341,11 +397,51 @@ You can use an adjtime file that was previously used with the
 program with 
 .I hwclock.
 
+
+.SH Automatic Hardware Clock Synchronization By the Kernel
+
+You should be aware of another way that the Hardware Clock is kept 
+synchronized in some systems.  The Linux kernel has a mode wherein it
+copies the System Time to the Hardware Clock every 11 minutes.  
+This is a good mode to use when you are using something sophisticated
+like ntp to keep your System Time synchronized. (ntp is a way to keep
+your System Time synchronized either to a time server somewhere on the
+network or to a radio clock hooked up to your system.  See RFC 1305).
+
+This mode (we'll call it "11 minute mode") is off until something
+turns it on.  The ntp daemon xntpd is one thing that turns it on.  You
+can turn it off by running anything, including
+.I hwclock --hctosys
+, that sets the System Time the old fashioned way.
+
+To see if it is on or
+off, use the command 
+.I adjtimex --print
+and look at the value of "status".  If the "64" bit of this number
+(expressed in binary) equal to 0, 11 minute mode is on.  Otherwise, it
+is off.
+
+If your system runs with 11 minute mode on, don't use 
+.I hwclock --adjust
+or
+.I hwclock --hctosys  .
+You'll just make a mess.  It is acceptable to use a
+.I hwclock --hctosys 
+at startup time to get a reasonable System Time until your system is
+able to set the System Time from the external source and start 11
+minute mode.
+
+
+.SH ENVIRONMENT VARIABLES
+.I TZ
+
 .SH FILES
 .I /etc/adjtime
+.I /usr/lib/zoneinfo/
 
 .SH SEE ALSO
-adjtimex(8), date(1), gettimeofday(2), settimeofday(2), crontab(1)
+adjtimex(8), date(1), gettimeofday(2), settimeofday(2), crontab(1),
+tzset(3)
 
 .SH AUTHORS
 Written By Bryan Henderson, September 1996 (bryanh@giraffe-data.com),
@@ -353,5 +449,3 @@ based on work done on the
 .I clock
 program by Charles Hedrick, Rob Hooft, and Harald Koenig.  See the source
 code for complete history and credits.  
-
-

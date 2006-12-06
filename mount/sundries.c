@@ -29,12 +29,12 @@ xmalloc (size_t size) {
      void *t;
 
      if (size == 0)
-	  return NULL;
+          return NULL;
 
      t = malloc (size);
      if (t == NULL)
-	  die (EX_SYSERR, "not enough memory");
-  
+          die (EX_SYSERR, "not enough memory");
+
      return t;
 }
 
@@ -43,12 +43,12 @@ xstrdup (const char *s) {
      char *t;
 
      if (s == NULL)
-	  return NULL;
- 
+          return NULL;
+
      t = strdup (s);
 
      if (t == NULL)
-	  die (EX_SYSERR, "not enough memory");
+          die (EX_SYSERR, "not enough memory");
 
      return t;
 }

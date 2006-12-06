@@ -56,9 +56,19 @@ static void verify_disk(char *name)
     fflush(stdout);
     if ((fd = open(name,O_RDONLY)) < 0) PERROR(name);
     for (cyl = 0; cyl < param.track; cyl++) {
+	int read_bytes;
+
 	printf("%3d\b\b\b",cyl);
 	fflush(stdout);
-	if (read(fd,data,cyl_size) != cyl_size) PERROR("read");
+	read_bytes = read(fd,data,cyl_size);
+	if(read_bytes != cyl_size) {
+	    if(read_bytes < 0)
+		    perror("Read: ");
+	    fprintf(stderr,
+		    "Problem reading cylinder %d, expected %d, read %d\n",
+		    cyl, cyl_size, read_bytes);
+	    exit(1);
+	}
 	for (count = 0; count < cyl_size; count++)
 	    if (data[count] != FD_FILL_BYTE) {
 		printf("bad data in cyl %d\nContinuing ... ",cyl);

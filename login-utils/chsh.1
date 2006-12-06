@@ -10,7 +10,7 @@
 .\"  $Revision: 1.1 $
 .\"  $Date: 1995/03/12 01:28:58 $
 .\"
-.TH CHSH 1 "October 13 1994" "chsh" "Linux Reference Manual"
+.TH CHSH 1 "7 October 1998" "chsh" "Linux Reference Manual"
 .SH NAME
 chsh \- change your login shell
 .SH SYNOPSIS
@@ -28,6 +28,8 @@ will accept the full pathname of any executable file on the system.
 However, it will issue a warning if the shell is not listed in the
 .I /etc/shells
 file.
+On the other hand, it can also be configured such that it will
+only accept shells listed in this file, unless you are root.
 .SH OPTIONS
 .TP
 .I "\-s, \-\-shell"

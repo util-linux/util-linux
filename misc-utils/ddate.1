@@ -43,8 +43,8 @@ Newline
 .IP %t 
 Tab
 .IP %X
-Number of days remaining until X-Day. (Not valid if the SubGenius options are not
-compiled in.)
+Number of days remaining until X-Day. (Not valid if the SubGenius options
+are not compiled in.)
 .IP %{
 .IP %}
 Used to enclose the part of the string which is to be replaced with the
@@ -80,6 +80,12 @@ will produce undefined behaviour if asked to produce the date for St. Tib's
 day and its format string does not contain the St. Tib's Day delimiters 
 %{ and %}.
 
+.SH NOTE
+
+After `X-Day' passed without incident, the Church of the SubGenius
+declared that it had got the year upside down - X-Day is actually in 8661 AD
+rather than 1998 AD.  Thus, the True X-Day is Cfn 40, 9827.
+
 .SH AUTHOR
 .nh
 Original program by Druel the Chaotic aka Jeremy Johnson (mpython@gnu.ai.mit.edu)
@@ -95,6 +101,8 @@ Public domain. All rites reversed.
 .SH SEE ALSO
 
 date(1),
+.br
+http://www.subgenius.com/
 .br
 Malaclypse the Younger, 
 .I "Principia Discordia, Or How I Found Goddess And What I Did To Her When I Found Her"

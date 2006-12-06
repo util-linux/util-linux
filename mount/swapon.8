@@ -74,7 +74,10 @@ Provide help
 Display version
 .TP
 .B \-s
-Display swap usage summary by device
+Display swap usage summary by device.
+This option is only available if
+.I /proc/swaps
+exists (probably not before kernel 2.1.25).
 .TP
 .B \-a
 All devices marked as ``sw'' swap devices in
@@ -104,6 +107,10 @@ entries in
 when the
 .B \-a
 flag is given.
+.SH NOTE
+You should not use
+.B swapon
+on a file with holes.
 .SH SEE ALSO
 .BR swapon "(2), " swapoff "(2), " fstab "(5), " init "(8), " mkswap (8),
 .BR rc "(8), " mount (8)
@@ -120,8 +127,3 @@ ascii filesystem description table
 The
 .B swapon
 command appeared in 4.0BSD.
-.SH AUTHORS
-See the Linux
-.BR mount (8)
-man page for a complete author list.  Primary contributors include Doug
-Quale, H. J. Lu, Rick Sladkey, and Stephen Tweedie.

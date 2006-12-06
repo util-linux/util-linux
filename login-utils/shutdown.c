@@ -1,6 +1,6 @@
 /* shutdown.c - shutdown a Linux system
  * Initially written by poe@daimi.aau.dk 
- * Currently maintained at ftp://ftp.daimi.aau.dk/pub/linux/poe/
+ * Currently maintained at ftp://ftp.daimi.aau.dk/pub/Software/Linux/
  */
 
 /*
@@ -24,6 +24,9 @@
  * Various changes and additions to resemble SunOS 4 shutdown/reboot/halt(8)
  * more closely by Scott Telford (s.telford@ed.ac.uk) 93/05/18.
  * (I butchered Scotts patches somewhat. - poe)
+ *
+ * Changes by Richard Gooch <rgooch@atnf.csiro.au> (butchered by aeb)
+ * introducing shutdown.conf.
  */
 
 #include <stdio.h>
@@ -35,6 +38,7 @@
 #include <string.h>
 #include <ctype.h>
 #include <signal.h>
+#include <errno.h>
 #include <sys/param.h>
 #include <termios.h>
 #include <mntent.h>
@@ -42,11 +46,12 @@
 #include <sys/wait.h>
 #include <syslog.h>
 #include <sys/resource.h>
+#include "linux_reboot.h"
 #include "pathnames.h"
 
-void usage(), int_handler(), write_user(struct utmp *);
-void wall(), write_wtmp(), unmount_disks(), unmount_disks_ourselves();
-void swap_off();
+static void usage(), int_handler(), write_user(struct utmp *);
+static void wall(), write_wtmp(), unmount_disks(), unmount_disks_ourselves();
+static void swap_off(), do_halt(char *);
 
 char	*prog;		/* name of the program */
 int	opt_reboot;	/* true if -r option or reboot command */
@@ -57,10 +62,15 @@ char	message[90];	/* reason for shutdown if any... */
 int	opt_single = 0; /* true is we want to boot singleuser */
 char	*whom;		/* who is shutting the system down */
 int	opt_msgset = 0; /* message set on command line */
+			/* change 1 to 0 if no file is to be used by default */
+int	opt_use_config_file = 1;	/* read _PATH_SHUTDOWN_CONF */
+char	halt_action[256];		/* to find out what to do upon halt */
 
 /* #define DEBUGGING */
 
 #define WR(s) write(fd, s, strlen(s))
+#define ERRSTRING sys_errlist[errno]
+
 
 void
 usage()
@@ -70,19 +80,31 @@ usage()
 	exit(1);
 }
 
+void
+my_puts(char *s)
+{
+	/* Use a fresh stdout after forking */
+	freopen(_PATH_CONSOLE, "w", stdout);
+	puts(s);
+	fflush(stdout);
+}
+
 void 
 int_handler()
 {
 	unlink(_PATH_NOLOGIN);
 	signal(SIGINT, SIG_DFL);
-	puts("Shutdown process aborted\n");
+	my_puts("Shutdown process aborted");
 	exit(1);
 }
 
 int
-main(argc, argv)
-	int argc;
-	char *argv[];
+iswhitespace(int a) {
+	return (a == ' ' || a == '\t');
+}
+
+int
+main(int argc, char *argv[])
 {
 	int c,i;	
 	int fd;
@@ -90,7 +112,8 @@ main(argc, argv)
 	
 #ifndef DEBUGGING
 	if(geteuid()) {
-		fprintf(stderr, "%s: Only root can shut a system down.\n", argv[0]);
+		fprintf(stderr, "%s: Only root can shut a system down.\n",
+			argv[0]);
 		exit(1);
 	}
 #endif
@@ -98,7 +121,10 @@ main(argc, argv)
 	if(*argv[0] == '-') argv[0]++;	/* allow shutdown as login shell */
 	prog = argv[0];
 	if((ptr = strrchr(argv[0], '/'))) prog = ++ptr;
-	
+
+	/* All names (halt, reboot, fasthalt, fastboot, shutdown)
+	   refer to the same program with the same options,
+	   only the defaults differ. */
 	if(!strcmp("halt", prog)) {
 		opt_reboot = 0;
 		opt_quiet = 1;
@@ -114,78 +140,105 @@ main(argc, argv)
 		opt_quiet = 1;
 		opt_fast = 0;
 		timeout = 0;
-		if(argc > 1 && !strcmp(argv[1], "-s")) opt_single = 1;
 	} else if(!strcmp("fastboot", prog)) {
 		opt_reboot = 1;
 		opt_quiet = 1;
 		opt_fast = 1;
 		timeout = 0;
-		if(argc > 1 && !strcmp(argv[1], "-s")) opt_single = 1;
 	} else {
 		/* defaults */
 		opt_reboot = 0;
 		opt_quiet = 0;
 		opt_fast = 0;
 		timeout = 2*60;
+	}
 		
-		c = 0;
-		while(++c < argc) {
-			if(argv[c][0] == '-') {
-			    for(i = 1; argv[c][i]; i++) {
+	c = 0;
+	while(++c < argc) {
+		if(argv[c][0] == '-') {
+			for(i = 1; argv[c][i]; i++) {
 				switch(argv[c][i]) {
-				  case 'h': 
-				    opt_reboot = 0;
-				    break;
-				  case 'r':
-				    opt_reboot = 1;
-				    break;
-				  case 'f':
-				    opt_fast = 1;
-				    break;
-				  case 'q':
-				    opt_quiet = 1;
-				    break;
-				  case 's':
-				    opt_single = 1;
-				    break;
+				case 'C':
+					opt_use_config_file = 1;
+					break;
+				case 'h': 
+					opt_reboot = 0;
+					break;
+				case 'r':
+					opt_reboot = 1;
+					break;
+				case 'f':
+					opt_fast = 1;
+					break;
+				case 'q':
+					opt_quiet = 1;
+					break;
+				case 's':
+					opt_single = 1;
+					break;
 				    
-				  default:
-				    usage();
+				default:
+					usage();
 				}
-			    }
-			} else if(!strcmp("now", argv[c])) {
-				timeout = 0;
-			} else if(argv[c][0] == '+') {
-				timeout = 60 * atoi(&argv[c][1]);
-			} else if (isdigit(argv[c][0])) {
-				char *colon;
-				int hour = 0;
-				int minute = 0;
-				time_t tics;
-				struct tm *tt;
-				int now, then;
-				
-				if((colon = strchr(argv[c], ':'))) {
-					*colon = '\0';
-					hour = atoi(argv[c]);
-					minute = atoi(++colon);
-				} else usage();
-				
-				(void) time(&tics);
-				tt = localtime(&tics);
-				
-				now = 3600 * tt->tm_hour + 60 * tt->tm_min;
-				then = 3600 * hour + 60 * minute;
-				timeout = then - now;
-				if(timeout < 0) {
-				    fprintf(stderr, "That must be tomorrow, can't you wait till then?\n");
-				    exit(1);
-				}
-			} else {
-			    strncpy(message, argv[c], sizeof(message));
-			    message[sizeof(message)-1] = '\0';
-			    opt_msgset = 1;
 			}
+		} else if(!strcmp("now", argv[c])) {
+			timeout = 0;
+		} else if(argv[c][0] == '+') {
+			timeout = 60 * atoi(&argv[c][1]);
+		} else if (isdigit(argv[c][0])) {
+			char *colon;
+			int hour = 0;
+			int minute = 0;
+			time_t tics;
+			struct tm *tt;
+			int now, then;
+				
+			if((colon = strchr(argv[c], ':'))) {
+				*colon = '\0';
+				hour = atoi(argv[c]);
+				minute = atoi(++colon);
+			} else usage();
+				
+			(void) time(&tics);
+			tt = localtime(&tics);
+				
+			now = 3600 * tt->tm_hour + 60 * tt->tm_min;
+			then = 3600 * hour + 60 * minute;
+			timeout = then - now;
+			if(timeout < 0) {
+				fprintf(stderr, "That must be tomorrow, "
+					"can't you wait till then?\n");
+				exit(1);
+			}
+		} else {
+			strncpy(message, argv[c], sizeof(message));
+			message[sizeof(message)-1] = '\0';
+			opt_msgset = 1;
+		}
+	}
+
+	halt_action[0] = 0;
+
+	/* No doubt we shall want to extend this some day
+	   and register a series of commands to be executed
+	   at various points during the shutdown sequence,
+	   and to define the number of milliseconds to sleep, etc. */
+	if (opt_use_config_file) {
+		char line[256], *p;
+		FILE *fp;
+
+		/*  Read and parse the config file */
+		halt_action[0] = '\0';
+		if ((fp = fopen (_PATH_SHUTDOWN_CONF, "r")) != NULL) {
+			if (fgets (line, sizeof(line), fp) != NULL &&
+			    strncasecmp (line, "HALT_ACTION", 11) == 0 &&
+			    iswhitespace(line[11])) {
+				p = line+11;
+				while(iswhitespace(*p))
+					p++;
+				strcpy(halt_action, p);
+			}
+			fclose (fp);
 		}
 	}
 
@@ -212,6 +265,7 @@ main(argc, argv)
 	
 	/* so much for option-processing, now begin termination... */
 	if(!(whom = getlogin())) whom = "ghost";
+	if(strlen(whom) > 40) whom[40] = 0; /* see write_user() */
 
 	setpriority(PRIO_PROCESS, 0, PRIO_MIN);
 	signal(SIGINT,  int_handler);
@@ -261,7 +315,8 @@ main(argc, argv)
 	kill(1, SIGTSTP);	/* tell init not to spawn more getty's */
 	write_wtmp();
 	if(opt_single)
-		close(open(_PATH_SINGLE, O_CREAT|O_WRONLY, 0644));
+		if((fd = open(_PATH_SINGLE, O_CREAT|O_WRONLY, 0644)) >= 0)
+			close(fd);
 		
 	sync();
 
@@ -272,7 +327,7 @@ main(argc, argv)
 #ifndef DEBUGGING
 	/* a gentle kill of all other processes except init */
 	kill(-1, SIGTERM);
-	sleep(2);
+	sleep(2);		/* default 2, some people need 5 */
 
 	/* now use brute force... */
 	kill(-1, SIGKILL);
@@ -292,20 +347,45 @@ main(argc, argv)
 	sleep(1);
 	
 	if(opt_reboot) {
-		reboot(0xfee1dead, 672274793, 0x1234567);
+		my_reboot(LINUX_REBOOT_CMD_RESTART); /* RB_AUTOBOOT */
+		my_puts("\nWhy am I still alive after reboot?");
 	} else {
-	        freopen(_PATH_CONSOLE, "w", stdout);
-		printf("\nNow you can turn off the power...\n");
-		fflush(stdout);
+		my_puts("\nNow you can turn off the power...");
+
 		/* allow C-A-D now, faith@cs.unc.edu, re-fixed 8-Jul-96 */
-		reboot(0xfee1dead, 672274793, 0x89abcdef);
-		reboot(0xfee1dead, 672274793, 0xcdef0123);
+		my_reboot(LINUX_REBOOT_CMD_CAD_ON); /* RB_ENABLE_CAD */
+		do_halt(halt_action);
 	}
 	/* NOTREACHED */
 	exit(0); /* to quiet gcc */
 }
 
 /*** end of main() ***/
+
+void
+do_halt(char *action) {
+	if (strcasecmp (action, "power_off") == 0) {
+		printf("Calling kernel power-off facility...\n");
+		fflush(stdout);
+		my_reboot(LINUX_REBOOT_CMD_POWER_OFF);
+		printf("Error powering off\t%s\n", ERRSTRING);
+		fflush(stdout);
+		sleep (2);
+	} else
+
+	/* This should be improved; e.g. Mike Jagdis wants "/sbin/mdstop -a" */
+	/* Maybe we should also fork and wait */
+	if (action[0] == '/') {
+		printf("Executing the program \"%s\" ...\n", action);
+		fflush(stdout);
+		execl(action, action, NULL);
+		printf("Error executing\t%s\n", ERRSTRING);
+		fflush(stdout);
+		sleep (2);
+	}
+
+	my_reboot(LINUX_REBOOT_CMD_HALT); /* RB_HALT_SYSTEM */
+}
 
 void
 write_user(struct utmp *ut)
@@ -319,7 +399,7 @@ write_user(struct utmp *ut)
 	(void) strncat(term, ut->ut_line, sizeof(ut->ut_line));
 
 	/* try not to get stuck on a mangled ut_line entry... */
-	if((fd = open(term, O_RDWR|O_NONBLOCK)) < 0)
+	if((fd = open(term, O_WRONLY|O_NONBLOCK)) < 0)
 	        return;
 
 	sprintf(msg, "\007\r\nURGENT: broadcast message from %s:\r\n", whom);
@@ -393,7 +473,7 @@ swap_off()
 
 	sync();
 	if ((pid = fork()) < 0) {
-		printf("Cannot fork for swapoff. Shrug!\n");
+		my_puts("Cannot fork for swapoff. Shrug!");
 		return;
 	}
 	if (!pid) {
@@ -401,7 +481,8 @@ swap_off()
 		execl("/etc/swapoff", SWAPOFF_ARGS, NULL);
 		execl("/bin/swapoff", SWAPOFF_ARGS, NULL);
 		execlp("swapoff", SWAPOFF_ARGS, NULL);
-		puts("Cannot exec swapoff, hoping umount will do the trick.");
+		my_puts("Cannot exec swapoff, "
+			  "hoping umount will do the trick.");
 		exit(0);
 	}
 	while ((result = wait(&status)) != -1 && result != pid)
@@ -419,20 +500,20 @@ unmount_disks()
 
 	sync();
 	if ((pid = fork()) < 0) {
-		printf("Cannot fork for umount, trying manually.\n");
+		my_puts("Cannot fork for umount, trying manually.");
 		unmount_disks_ourselves();
 		return;
 	}
 	if (!pid) {
 		execl(_PATH_UMOUNT, UMOUNT_ARGS, NULL);
-		printf("Cannot exec %s, trying umount.\n", _PATH_UMOUNT);
+		my_puts("Cannot exec " _PATH_UMOUNT ", trying umount.");
 		execlp("umount", UMOUNT_ARGS, NULL);
-		puts("Cannot exec umount, giving up on umount.");
+		my_puts("Cannot exec umount, giving up on umount.");
 		exit(0);
 	}
 	while ((result = wait(&status)) != -1 && result != pid)
 		;
-	puts("Unmounting any remaining filesystems...");
+	my_puts("Unmounting any remaining filesystems...");
 	unmount_disks_ourselves();
 }
 
@@ -450,7 +531,7 @@ unmount_disks_ourselves()
 	
 	sync();
 	if (!(mtab = setmntent(_PATH_MTAB, "r"))) {
-		printf("shutdown: Cannot open %s.\n", _PATH_MTAB);
+		my_puts("shutdown: Cannot open " _PATH_MTAB ".");
 		return;
 	}
 	n = 0;

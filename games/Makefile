@@ -20,7 +20,7 @@ all: $(USRGAMES)
 
 # Rules for everything else
 
-banner: banner.o $(BSD)/getopt.o $(BSD)/err.o
+banner: banner.o $(ERR_O)
 ddate: ddate.o
 
 install: all

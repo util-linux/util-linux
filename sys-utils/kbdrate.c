@@ -67,7 +67,7 @@ beats rebuilding the kernel!
 #include <sys/ioctl.h>
 #include <linux/version.h>
 #if LINUX_VERSION_CODE >= 131072
-/* Kd.h is not available with all linux versions.  131072 is equivalent
+/* kd.h is not available with all linux versions.  131072 is equivalent
    to linux 2.0.0 */
 #include <linux/kd.h>
 #endif
@@ -130,10 +130,15 @@ int main( int argc, char **argv )
    } else ioctl_possible = 1;
 
    if (ioctl_possible) {
-     kbdrep_s.rate  = 1000.0 / rate; /* convert cps to msec */
-     if (kbdrep_s.rate < 1) kbdrep_s.rate = 1;
+     if (rate == 0)				/* switch repeat off */
+       kbdrep_s.rate = 0;
+     else
+       kbdrep_s.rate  = 1000.0 / rate;		/* convert cps to msec */
+     if (kbdrep_s.rate < 1)
+       kbdrep_s.rate = 1;
      kbdrep_s.delay = delay;
-     if (kbdrep_s.delay < 1) kbdrep_s.delay = 1;
+     if (kbdrep_s.delay < 1)
+       kbdrep_s.delay = 1;
      
      if (ioctl( 0, KDKBDREP, &kbdrep_s )) {
        perror( "ioctl(KDKBDREP)" );
@@ -192,7 +197,7 @@ int main( int argc, char **argv )
                            valid_rates[value & 0x1f] / 10.0,
                            valid_delays[ (value & 0x60) >> 5 ] );
 
-#ifdef KDKBREP
+#ifdef KDKBDREP
    }
 #endif
 

@@ -135,6 +135,8 @@ add_to_class(struct ttyclass *tc, char *tty)
 
 
 /* return true if tty is a pty. Very linux dependent */
+/* Note that the new dynamic ptys (say /dev/pty/0 etc) have major in 128-135 */
+/* We might try TIOCGPTN or so to recognise these new ones, if desired */
 static int
 isapty(const char *tty)
 {
@@ -146,20 +148,18 @@ isapty(const char *tty)
 	    return 0;
     sprintf(devname, "/dev/%s", tty);
 
-#if defined(__linux__) && defined(PTY_SLAVE_MAJOR)
-    /* this is for linux 1.3 and newer */
-    if((stat(devname, &stb) >= 0)
-       && major(stb.st_rdev) == PTY_SLAVE_MAJOR) {
-	return 1;
-    }
+#if defined(__linux__)
+    if((stat(devname, &stb) >= 0) && S_ISCHR(stb.st_mode)) {
+
+#if defined(PTY_SLAVE_MAJOR)
+	    /* this is for linux 1.3 and newer */
+	    if(major(stb.st_rdev) == PTY_SLAVE_MAJOR)
+		    return 1;
 #endif
 
-#if defined(__linux__)
-    /* this is for linux versions before 1.3, backward compat. */
-    if((stat(devname, &stb) >= 0)
-       && major(stb.st_rdev) == TTY_MAJOR
-       && minor(stb.st_rdev) >= 192) {
-	return 1;
+	    /* this is for linux versions before 1.3, backward compat. */
+	    if(major(stb.st_rdev) == TTY_MAJOR && minor(stb.st_rdev) >= 192)
+		    return 1;
     }
 #endif
     return 0;

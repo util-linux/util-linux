@@ -1,22 +1,23 @@
 Begin3
 Title:          util-linux: Miscellaneous utilities for Linux
-Version:        2.8
+Version:        2.9g
 Description: 	agetty arch cal cfdisk chfn chkdupexe chsh
 		clear hwclock col colcrt colrm column ctrlaltdel
-		cytune ddate dmesg dsplit fastboot fasthalt fdformat
+		cytune ddate dmesg fastboot fasthalt fdformat
 		fdisk fsck.minix getopt halt hexdump ipcrm ipcs
 		kbdrate kill last logger login look mcookie mesg mkfs
 		mkfs.minix mkswap more mount namei passwd ramsize rdev
 		readprofile reboot renice reset rev rootflags script
                 setfdprm setsid setterm sfdisk shutdown simpleinit sln
-		strings swapdev swapoff swapon tsort tunelp ul umount
+		swapdev swapoff swapon tsort tunelp ul umount
 		vidmode vipw wall whereis write
 
 Keywords:       essential utilities
 Author:         several
-Maintained-by:  Nicolai Langfeldt <util-linux@math.uio.no> and others
-Primary-site:   ftp.math.uio.no /pub/linux
-                ~567k util-linux-2.8.tar.gz
+Maintained-by:  Andries Brouwer <util-linux@math.uio.no> and others
+Primary-site:   ftp.win.tue.nl /pub/linux/util
+Alternate-site: ftp.math.uio.no /pub/linux
+                ~567k util-linux-2.9g.tar.gz
 Alternate-site: sunsite.uio.no /pub/unix/linux/packages/util-linux
 Alternate-site: sunsite.unc.edu /pub/Linux/system/misc
 Alternate-site: tsx-11.mit.edu /pub/linux/packages/utils

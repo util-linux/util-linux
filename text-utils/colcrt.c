@@ -64,10 +64,11 @@ char	printall;
 char	*progname;
 FILE	*f;
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {
-	register c;
-	register char *cp, *dp;
+	int c;
+	char *cp, *dp;
 
 	argc--;
 	progname = *argv++;

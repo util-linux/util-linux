@@ -1,0 +1,46 @@
+48a49,51
+>  * 09.29.98  -  Modified to compile under DJGPP (minus mount-checking, etc.).
+>  *              (wjblack@yahoo.com)
+>  *
+69a73,78
+> 
+> /* DJGPP's IOCTL interface should probably not be trusted here.  It's not
+>    needed, anyway.  Nor does DJGPP have any clue about mounted filesystems.
+>    Oh, did I mention that the directory status, etc, doesn't match that of
+>    the Minix FS? */
+> #ifndef __DJGPP__
+74a84,91
+> #endif
+> 
+> /* For those defs that DJGPP doesn't have (or has wrong) */
+> #ifdef __DJGPP__
+> #include "mkmin-dj.h"
+> #endif
+> 
+> /* DJGPP requires that you stick a linux/minix_fs.h somewhere appropriate */
+172a190
+> #ifndef __DJGPP__
+173a192,194
+> #else
+> #define usage() fatal_error("Usage: %s [-c | -l filename] [-nXX] [-iXX] imagefile [blocks]\n",16)
+> #endif
+175a197
+> #ifndef __DJGPP__
+196a219
+> #endif				/* __DJGPP__ */
+238a262
+> #ifndef __DJGPP__
+242a267
+> #endif
+613a639
+> #ifndef __DJGPP__
+614a641
+> #endif
+694a722
+> #ifndef __DJGPP__
+695a724
+> #endif
+707a737
+> #ifndef __DJGPP__
+713a744
+> #endif

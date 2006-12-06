@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 1980 Regents Of the University of California.
+ * Copyright (C) 1980 The Regents of the University of California.
  * All rights reserved.
  *
  * Redistribution and use in source and binary forms are permitted
@@ -49,6 +49,7 @@
 #include <curses.h>
 #endif
 #include <term.h>
+#include <locale.h>
 
 #define HELPFILE	"/usr/lib/more.help"
 #define VI		"/usr/bin/vi"
@@ -93,6 +94,8 @@ int  get_line(register FILE *f, int *length);
 void prbuf (register char *s, register int n);
 int  xprintf (char *fmt, ...);
 void execute (char *filename, char *cmd, ...);
+void errwrite (char *txt);
+void errwrite1 (char *sym);
 
 #define TBUFSIZ	1024
 #define LINSIZ	256
@@ -149,7 +152,7 @@ int		soglitch;	/* terminal has standout mode glitch */
 int		ulglitch;	/* terminal has underline mode glitch */
 int		pstate = 0;	/* current UL state */
 char		*getenv();
-static		magic();
+static int	magic();
 struct {
     long chrctr, line;
 } context, screen_start;
@@ -165,7 +168,7 @@ int main(int argc, char **argv) {
     FILE	*f;
     char	*s;
     char	*p;
-    char	ch;
+    int		ch;
     int		left;
     int		prnames = 0;
     int		initopt = 0;
@@ -183,6 +186,7 @@ int main(int argc, char **argv) {
 
     nfiles = argc;
     fnames = argv;
+    setlocale(LC_ALL, "");
     initterm ();
     nscroll = Lpp/2 - 1;
     if (nscroll <= 0)
@@ -286,8 +290,7 @@ int main(int argc, char **argv) {
 	    if (firstf) setjmp (restore);
 	    if (firstf) {
 		firstf = 0;
-		if (srchopt)
-		{
+		if (srchopt) {
 		    search (initbuf, f, 1);
 		    if (noscroll)
 			left--;
@@ -300,11 +303,12 @@ int main(int argc, char **argv) {
 		left = command (fnames[fnum], f);
 	    }
 	    if (left != 0) {
-		if ((noscroll || clearit) && (file_size != LONG_MAX))
+		if ((noscroll || clearit) && (file_size != LONG_MAX)) {
 		    if (clreol)
 			home ();
 		    else
 			doclear ();
+		}
 		if (prnames) {
 		    if (bad_so)
 			erasep (0);
@@ -434,21 +438,23 @@ magic(f, fs)
 	FILE *f;
 	char *fs;
 {
-	struct exec ex;
+	char twobytes[2];
 
-	if (fread(&ex, sizeof(ex), 1, f) == 1)
-		switch(ex.a_info) {
-		case OMAGIC:
-		case NMAGIC:
-		case ZMAGIC:
+	if (fread(twobytes, 2, 1, f) == 1) {
+		switch(twobytes[0] + (twobytes[1]<<8)) {
+		case OMAGIC:	/* 0407 */
+		case NMAGIC:	/* 0410 */
+		case ZMAGIC:	/* 0413 */
 		case 0405:
 		case 0411:
 		case 0177545:
+		case 0x457f:		/* simple ELF detection */
 			xprintf("\n******** %s: Not a text file ********\n\n", fs);
 			(void)fclose(f);
 			return(1);
 		}
-	(void)fseek(f, 0L, L_SET);		/* rewind() not necessary */
+	}
+	(void)fseek(f, 0L, SEEK_SET);		/* rewind() not necessary */
 	return(0);
 }
 
@@ -547,7 +553,7 @@ void onquit()
 	    Pause++;
     }
     else if (!dum_opt && notell) {
-	write (2, "[Use q or Q to quit]", 20);
+	errwrite("[Use q or Q to quit]");
 	promptlen += 20;
 	notell = 0;
     }
@@ -597,7 +603,7 @@ void end_it ()
 	fflush (stdout);
     }
     else
-	write (2, "\n", 1);
+	errwrite("\n");
     _exit(0);
 }
 
@@ -682,7 +688,7 @@ void scanstr (int n, char *str)
     *sptr = '\0';
 }
 
-static char my_bell = ctrl('G');
+#define ringbell()	errwrite("\007");
 
 #ifdef undef
 strlen (s)
@@ -750,7 +756,7 @@ char *filename;
 	fflush(stdout);
     }
     else
-	write (2, &my_bell, 1);
+	ringbell();
     inwait++;
 }
 
@@ -787,7 +793,7 @@ int get_line(register FILE *f, int *length)
 	    break;
 	}
 	*p++ = c;
-	if (c == '\t')
+	if (c == '\t') {
 	    if (!hardtabs || (column < promptlen && !hard)) {
 		if (hardtabs && eraseln && !dumb) {
 		    column = 1 + (column | 7);
@@ -805,9 +811,9 @@ int get_line(register FILE *f, int *length)
 	    }
 	    else
 		column = 1 + (column | 7);
-	else if (c == '\b' && column > 0)
+	} else if (c == '\b' && column > 0) {
 	    column--;
-	else if (c == '\r') {
+	} else if (c == '\r') {
 	    int next = Getc(f);
 	    if (next == '\n') {
 		p--;
@@ -816,18 +822,16 @@ int get_line(register FILE *f, int *length)
 	    }
 	    Ungetc(next,f);
 	    column = 0;
-	}
-	else if (c == '\f' && stop_opt) {
+	} else if (c == '\f' && stop_opt) {
 		p[-1] = '^';
 		*p++ = 'L';
 		column += 2;
 		Pause++;
-	}
-	else if (c == EOF) {
+	} else if (c == EOF) {
 	    *length = p - Line;
 	    return (column);
 	}
-	else if (c >= ' ' && c != RUBOUT)
+	else if (isprint(c))
 	    column++;
 	if (column >= Mcol && fold_opt) break;
 	c = Getc (f);
@@ -988,7 +992,7 @@ int command (char *filename, register FILE *f)
 {
     register int nlines;
     register int retval = 0;
-    register char c;
+    register int c;
     char colonch;
     FILE *helpf;
     int done;
@@ -1030,7 +1034,7 @@ int command (char *filename, register FILE *f)
 		register int initline;
 
 		if (no_intty) {
-		    write(2, &my_bell, 1);
+		    ringbell();
 		    return (-1);
 		}
 
@@ -1122,7 +1126,7 @@ int command (char *filename, register FILE *f)
 		ret (dlines);
 	    }
 	    else {
-		write (2, &my_bell, 1);
+		ringbell();
 		break;
 	    }
 	case '\'':
@@ -1134,7 +1138,7 @@ int command (char *filename, register FILE *f)
 		ret (dlines);
 	    }
 	    else {
-		write (2, &my_bell, 1);
+		ringbell();
 		break;
 	    }
 	case '=':
@@ -1151,12 +1155,12 @@ int command (char *filename, register FILE *f)
 	    promptlen = 1;
 	    fflush (stdout);
 	    if (lastp) {
-		write (2,"\r", 1);
+		errwrite ("\r");
 		search (NULL, f, nlines);	/* Use previous r.e. */
 	    }
 	    else {
 		ttyin (cmdbuf, sizeof(cmdbuf)-2, '/');
-		write (2, "\r", 1);
+		errwrite("\r");
 		search (cmdbuf, f, nlines);
 	    }
 	    ret (dlines-1);
@@ -1195,7 +1199,7 @@ int command (char *filename, register FILE *f)
 		fflush (stdout);
 	    }
 	    else
-		write (2, &my_bell, 1);
+		ringbell();
 	    break;
 	}
 	if (done) break;
@@ -1243,7 +1247,7 @@ int colon (char *filename, int cmd, int nlines)
 		return (0);
 	case 'p':
 		if (no_intty) {
-			write (2, &my_bell, 1);
+			ringbell();
 			return (-1);
 		}
 		putchar ('\r');
@@ -1259,7 +1263,7 @@ int colon (char *filename, int cmd, int nlines)
 	case 'Q':
 		end_it ();
 	default:
-		write (2, &my_bell, 1);
+		ringbell();
 		return (-1);
 	}
 }
@@ -1276,7 +1280,7 @@ int number(char *cmd)
 	i = 0; ch = otty.c_cc[VKILL];
 	for (;;) {
 		ch = readch ();
-		if (ch >= '0' && ch <= '9')
+		if (isdigit(ch))
 			i = i*10 + ch - '0';
 		else if (ch == otty.c_cc[VKILL])
 			i = 0;
@@ -1306,7 +1310,7 @@ void do_shell (char *filename)
 		}
 	}
 	fflush (stdout);
-	write (2, "\n", 1);
+	errwrite("\n");
 	promptlen = 0;
 	shellp = 1;
 	execute (filename, shell, shell, "-c", shell_line, 0);
@@ -1337,7 +1341,7 @@ void search(char buf[], FILE *file, register int n)
 	line1 = Ftell (file);
 	rdline (file);
 	lncount++;
-	if ((rv = re_exec (Line)) == 1)
+	if ((rv = re_exec (Line)) == 1) {
 		if (--n == 0) {
 		    if (lncount > 3 || (lncount > 1 && no_intty))
 		    {
@@ -1349,29 +1353,31 @@ void search(char buf[], FILE *file, register int n)
 		    if (!no_intty) {
 			Currline -= (lncount >= 3 ? 3 : lncount);
 			Fseek (file, line3);
-			if (noscroll)
+			if (noscroll) {
 			    if (clreol) {
 				home ();
 				cleareol ();
 			    }
 			    else
 				doclear ();
+			}
 		    }
 		    else {
 			kill_line ();
-			if (noscroll)
+			if (noscroll) {
 			    if (clreol) {
 			        home ();
 			        cleareol ();
 			    }
 			    else
 				doclear ();
+			}
 			pr (Line);
 			putchar ('\n');
 		    }
 		    break;
 		}
-	else if (rv == -1)
+	} else if (rv == -1)
 	    error ("Regular expression botch");
     }
     if (feof (file)) {
@@ -1435,7 +1441,7 @@ void execute (char * filename, char * cmd, ...)
 	    va_end(argp);	/* balance {}'s for some UNIX's */
 	
 	    execv (cmd, args);
-	    write (2, "exec failed\n", 12);
+	    errwrite("exec failed\n");
 	    exit (1);
 	}
 	if (id > 0) {
@@ -1449,7 +1455,7 @@ void execute (char * filename, char * cmd, ...)
 	    if (catch_susp)
 		signal(SIGTSTP, onsusp);
 	} else
-	    write(2, "can't fork\n", 11);
+	    errwrite("can't fork\n");
 	set_tty ();
 	pr ("------------------------\n");
 	prompt (filename);
@@ -1460,7 +1466,7 @@ void execute (char * filename, char * cmd, ...)
 
 void skiplns (register int n, register FILE *f)
 {
-    register char c;
+    register int c;
 
     while (n > 0) {
 	while ((c = Getc (f)) != '\n')
@@ -1636,22 +1642,23 @@ int readch ()
 	extern int errno;
 
 	errno = 0;
-	if (read (2, &ch, 1) <= 0)
+	if (read (2, &ch, 1) <= 0) {
 		if (errno != EINTR)
 			end_it();
 		else
 			ch = otty.c_cc[VKILL];
+	}
 	return (ch);
 }
 
-static char BS = '\b';
+static char *BS = "\b";
 static char *BSB = "\b \b";
-static char CARAT = '^';
+static char *CARAT = "^";
 #define ERASEONECHAR \
     if (docrterase) \
-	write (2, BSB, sizeof(BSB)); \
+	errwrite(BSB); \
     else \
-	write (2, &BS, sizeof(BS));
+	errwrite(BS);
 
 void ttyin (char buf[], register int nmax, char pchar)
 {
@@ -1698,7 +1705,7 @@ void ttyin (char buf[], register int nmax, char pchar)
 		    erasep (1);
 		else if (docrtkill)
 		    while (promptlen-- > 1)
-			write (2, BSB, sizeof(BSB));
+			errwrite(BSB);
 		promptlen = 1;
 	    }
 	    sptr = buf;
@@ -1714,12 +1721,12 @@ void ttyin (char buf[], register int nmax, char pchar)
 	*sptr++ = ch;
 	if ((ch < ' ' && ch != '\n' && ch != ESC) || ch == RUBOUT) {
 	    ch += ch == RUBOUT ? -0100 : 0100;
-	    write (2, &CARAT, 1);
+	    errwrite(CARAT);
 	    promptlen++;
 	}
 	cbuf = ch;
 	if (ch != '\n' && ch != ESC) {
-	    write (2, &cbuf, 1);
+	    errwrite1(&cbuf);
 	    promptlen++;
 	}
 	else
@@ -1778,12 +1785,22 @@ void show (register char ch)
 
     if ((ch < ' ' && ch != '\n' && ch != ESC) || ch == RUBOUT) {
 	ch += ch == RUBOUT ? -0100 : 0100;
-	write (2, &CARAT, 1);
+	errwrite(CARAT);
 	promptlen++;
     }
     cbuf = ch;
-    write (2, &cbuf, 1);
+    errwrite1(&cbuf);
     promptlen++;
+}
+
+void errwrite (char *txt)
+{
+    write (fileno(stderr), txt, strlen(txt));
+}
+
+void errwrite1 (char *sym)
+{
+    write (fileno(stderr), sym, 1);
 }
 
 void error (char *mess)
@@ -1809,6 +1826,8 @@ void error (char *mess)
 void set_tty ()
 {
 	otty.c_lflag &= ~(ICANON|ECHO);
+	otty.c_cc[VMIN] = 1;	/* read at least 1 char */
+	otty.c_cc[VTIME] = 0;	/* no timeout */
 	stty(fileno(stderr), &otty);
 }
 
@@ -1826,12 +1845,14 @@ void reset_tty ()
 	pstate = 0;
     }
     otty.c_lflag |= ICANON|ECHO;
+    otty.c_cc[VMIN] = savetty0.c_cc[VMIN];
+    otty.c_cc[VTIME] = savetty0.c_cc[VTIME];
     stty(fileno(stderr), &savetty0);
 }
 
 void rdline (register FILE *f)
 {
-    register char c;
+    register int  c;
     register char *p;
 
     p = Line;

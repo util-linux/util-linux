@@ -3,6 +3,9 @@
  * It was generated using rpcgen.
  */
 
+#include <rpc/types.h>
+#include <rpc/xdr.h>
+
 #include "nfsmount.h"
 /*
  * Sun RPC is a product of Sun Microsystems, Inc. and is provided for
@@ -40,9 +43,7 @@
 /* from @(#)mount.x	1.3 91/03/11 TIRPC 1.0 */
 
 bool_t
-xdr_fhandle(xdrs, objp)
-	XDR *xdrs;
-	fhandle objp;
+xdr_fhandle(XDR *xdrs, fhandle objp)
 {
 
 	 register long *buf;
@@ -54,9 +55,7 @@ xdr_fhandle(xdrs, objp)
 }
 
 bool_t
-xdr_fhstatus(xdrs, objp)
-	XDR *xdrs;
-	fhstatus *objp;
+xdr_fhstatus(XDR *xdrs, fhstatus *objp)
 {
 
 	 register long *buf;
@@ -70,14 +69,14 @@ xdr_fhstatus(xdrs, objp)
 			 return (FALSE);
 		 }
 		break;
+	default:
+		break;
 	}
 	return (TRUE);
 }
 
 bool_t
-xdr_dirpath(xdrs, objp)
-	XDR *xdrs;
-	dirpath *objp;
+xdr_dirpath(XDR *xdrs, dirpath *objp)
 {
 
 	 register long *buf;
@@ -89,9 +88,7 @@ xdr_dirpath(xdrs, objp)
 }
 
 bool_t
-xdr_name(xdrs, objp)
-	XDR *xdrs;
-	name *objp;
+xdr_name(XDR *xdrs, name *objp)
 {
 
 	 register long *buf;
@@ -103,9 +100,7 @@ xdr_name(xdrs, objp)
 }
 
 bool_t
-xdr_mountlist(xdrs, objp)
-	XDR *xdrs;
-	mountlist *objp;
+xdr_mountlist(XDR *xdrs, mountlist *objp)
 {
 
 	 register long *buf;
@@ -117,9 +112,7 @@ xdr_mountlist(xdrs, objp)
 }
 
 bool_t
-xdr_mountbody(xdrs, objp)
-	XDR *xdrs;
-	mountbody *objp;
+xdr_mountbody(XDR *xdrs, mountbody *objp)
 {
 
 	 register long *buf;
@@ -137,9 +130,7 @@ xdr_mountbody(xdrs, objp)
 }
 
 bool_t
-xdr_groups(xdrs, objp)
-	XDR *xdrs;
-	groups *objp;
+xdr_groups(XDR *xdrs, groups *objp)
 {
 
 	 register long *buf;
@@ -151,9 +142,7 @@ xdr_groups(xdrs, objp)
 }
 
 bool_t
-xdr_groupnode(xdrs, objp)
-	XDR *xdrs;
-	groupnode *objp;
+xdr_groupnode(XDR *xdrs, groupnode *objp)
 {
 
 	 register long *buf;
@@ -168,9 +157,7 @@ xdr_groupnode(xdrs, objp)
 }
 
 bool_t
-xdr_exports(xdrs, objp)
-	XDR *xdrs;
-	exports *objp;
+xdr_exports(XDR *xdrs, exports *objp)
 {
 
 	 register long *buf;
@@ -182,9 +169,7 @@ xdr_exports(xdrs, objp)
 }
 
 bool_t
-xdr_exportnode(xdrs, objp)
-	XDR *xdrs;
-	exportnode *objp;
+xdr_exportnode(XDR *xdrs, exportnode *objp)
 {
 
 	 register long *buf;
@@ -202,9 +187,7 @@ xdr_exportnode(xdrs, objp)
 }
 
 bool_t
-xdr_ppathcnf(xdrs, objp)
-	XDR *xdrs;
-	ppathcnf *objp;
+xdr_ppathcnf(XDR *xdrs, ppathcnf *objp)
 {
 
 	 register long *buf;

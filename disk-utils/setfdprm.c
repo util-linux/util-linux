@@ -103,7 +103,7 @@ gap rate spec1 fmt_gap\n",name);
     exit(1);
 }
 
-void
+int
 main(int argc,char **argv)
 {
     int fd;
@@ -153,4 +153,5 @@ main(int argc,char **argv)
     else
 	find_params(cmd,fd,argv[2]);
     /* not reached */
+    return 0;
 }

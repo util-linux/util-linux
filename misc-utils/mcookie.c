@@ -101,9 +101,12 @@ int main( int argc, char **argv )
    }
 
    for (i = 0; i < RNGS; i++) {
-      if ((fd = open( rngs[i].path, O_RDONLY )) >= 0) {
+      if ((fd = open( rngs[i].path, O_RDONLY|O_NONBLOCK )) >= 0) {
 	 r = read( fd, buf, sizeof( buf ) );
-	 MD5Update( &ctx, buf, r );
+	 if (r > 0)
+	    MD5Update( &ctx, buf, r );
+	 else
+	    r = 0;
 	 close( fd );
 	 if (Verbose)
 	    fprintf( stderr, "Got %d bytes from %s\n", r, rngs[i].path );

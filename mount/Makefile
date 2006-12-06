@@ -3,18 +3,17 @@ include ../MCONFIG
 endif
 
 CC = gcc
-CFLAGS = -O2
+CFLAGS = -I$(LIB) $(OPT)
 WARNFLAGS = -Wall -Wstrict-prototypes -Wmissing-prototypes
 DEFINES = -DHAVE_NFS
-LDFLAGS =
 
 RPCSVCDIR = rpcsvc
 RPC_CFLAGS = -Wno-unused 
 RPCGEN = rpcgen
 #INSTALL = install
-#INSTALL_SUID = $(INSTALL) -m 4755 -o root
-#INSTALL_PROG = $(INSTALL) -m 755
-#INSTALL_DATA = $(INSTALL) -m 644
+#INSTALLSUID = $(INSTALL) -m 4755 -o root
+#INSTALLPROG = $(INSTALL) -m 755
+#INSTALLDATA = $(INSTALL) -m 644
 
 ## for suid progs (mount, umount)
 #BINDIR = /bin
@@ -54,31 +53,42 @@ install: $(PROGS)
 %.o: %.c
 	$(COMPILE) $<
 
-mount: mount.o fstab.o sundries.o realpath.o version.o $(NFS_OBJS) $(LO_OBJS)
-	$(LINK) $^ $(LDLIBS) -o $@
+mount: mount.o fstab.o sundries.o realpath.o mntent.o version.o \
+       mount_guess_fstype.o mount_by_label.o getusername.o \
+       $(LIB)/setproctitle.o $(NFS_OBJS) $(LO_OBJS)
+	$(LINK) $^ -o $@
 
-umount: umount.o fstab.o sundries.o realpath.o version.o $(LO_OBJS)
-	$(LINK) $^ $(LDLIBS) -o $@
+umount: umount.o fstab.o sundries.o realpath.o mntent.o getusername.o \
+	version.o $(LO_OBJS)
+	$(LINK) $^ -o $@
 
 swapon:	swapon.o version.o
-	$(LINK) $^ $(LDLIBS) -o $@
+	$(LINK) $^ -o $@
 
 losetup: losetup.o
-	$(LINK) $^ $(LDLIBS) -o $@
-
-mount.o: linux_fs.h
+	$(LINK) $^ -o $@
 
 mount.o umount.o nfsmount.o losetup.o fstab.o sundries.o: sundries.h
 
 mount.o umount.o fstab.o sundries.o: fstab.h
 
+mount.o fstab.o mntent.o: mntent.h
+
+mount.o mount_guess_fstype.o: mount_guess_fstype.h
+
+mount.o: $(LIB)/setproctitle.h
+
+mount.o umount.o getusername.o: getusername.h
+
 mount.o umount.o losetup.o lomount.o: lomount.h loop.h
 
-swapon.o: swap.h swapargs.h
+swapon.o: swap_constants.h swapargs.h
 
 sundries.o nfsmount.o nfsmount_xdr.o nfsmount_clnt.o: nfsmount.h
 
 umount.o: mount_constants.h
+
+mount.o mount_by_label.o mount_guess_fstype.o: linux_fs.h
 
 nfsmount_clnt.o: nfsmount_clnt.c
 	$(COMPILE) $(RPC_CFLAGS) nfsmount_clnt.c
@@ -109,11 +119,6 @@ nfs_mountversion.h:
 		echo '#define KERNEL_NFS_MOUNT_VERSION 0'; \
 	fi > nfs_mountversion.h
 
-SWAPH=/usr/include/linux/swap.h
-swap.h:
-	rm -f swap.h
-	if [ -f $(SWAPH) ]; then cp $(SWAPH) .; else touch swap.h; fi
-
 swapargs.h:
 	sh swap.configure
 
@@ -122,7 +127,7 @@ loop.h:
 
 clean:
 	rm -f a.out core *~ *.o swapargs.h $(PROGS) swapoff
-	rm -f swap.h loop.h nfs_mountversion.h
+	rm -f loop.h nfs_mountversion.h
 
 clobber distclean realclean: clean
 #	rm -f $(GEN_FILES)

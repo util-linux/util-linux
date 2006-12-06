@@ -1,0 +1,6 @@
+Other shells, like zsh and ash, should be supported (perhaps they will work
+already, depending on quoting conventions). (zsh seems OK).
+
+Perhaps a nice configure script?
+
+Add a `test' target in Makefile.

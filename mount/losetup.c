@@ -202,12 +202,12 @@ int main(int argc, char **argv)
 	if ((delete && (argc != optind+1 || encryption || offset)) ||
 	    (!delete && (argc < optind+1 || argc > optind+2)))
 		usage();
-	if (argc == optind+1)
+	if (argc == optind+1) {
 		if (delete)
 			del_loop(argv[optind]);
 		else
 			show_loop(argv[optind]);
-	else {
+	} else {
 		if (offset && sscanf(offset,"%d",&off) != 1)
 			usage();
 		set_loop(argv[optind],argv[optind+1],off,encryption,&ro);

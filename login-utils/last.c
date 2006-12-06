@@ -45,6 +45,16 @@ static struct utmp	buf[1024];		/* utmp read buffer */
 #define	LMAX	(int)sizeof(buf[0].ut_line)	/* size of utmp tty field */
 #define	NMAX	(int)sizeof(buf[0].ut_name)	/* size of utmp name field */
 
+#ifndef MIN
+#define MIN(a,b)	(((a) < (b)) ? (a) : (b))
+#endif
+
+/* maximum sizes used for printing */
+/* probably we want a two-pass version that computes the right length */
+int hmax = MIN(HMAX, 16);
+int lmax = MIN(LMAX, 8);
+int nmax = MIN(NMAX, 16);
+
 typedef struct arg {
 	char	*name;				/* argument */
 #define	HOST_TYPE	-2
@@ -142,19 +152,19 @@ print_partial_line(bp)
     char *ct;
 
     ct = ctime(&bp->ut_time);
-    printf("%-*.*s  %-*.*s ", NMAX, NMAX, bp->ut_name, 
-	   LMAX, LMAX, bp->ut_line);
+    printf("%-*.*s  %-*.*s ", nmax, nmax, bp->ut_name, 
+	   lmax, lmax, bp->ut_line);
 
     if (dolong) {
 	if (bp->ut_addr) {
 	    struct in_addr foo;
 	    foo.s_addr = bp->ut_addr;
-	    printf("%-*.*s ", HMAX, HMAX, inet_ntoa(foo));
+	    printf("%-*.*s ", hmax, hmax, inet_ntoa(foo));
 	} else {
-	    printf("%-*.*s ", HMAX, HMAX, "");
+	    printf("%-*.*s ", hmax, hmax, "");
 	}
     } else {
-	printf("%-*.*s ", HMAX, HMAX, bp->ut_host);
+	printf("%-*.*s ", hmax, hmax, bp->ut_host);
     }
 
     if (doyear) {
@@ -178,7 +188,7 @@ wtmp()
 		lseek(), time();
 	int	bytes, wfd;
 	void	onintr();
-	char	*ct, *crmsg;
+	char	*ct, *crmsg = NULL;
 
 	if ((wfd = open(file, O_RDONLY, 0)) < 0 || fstat(wfd, &stb) == -1) {
 		perror(file);
@@ -191,7 +201,7 @@ wtmp()
 	(void)signal(SIGQUIT, onintr);
 
 	while (--bl >= 0) {
-	    if (lseek(wfd, (long)(bl * sizeof(buf)), L_SET) == -1 ||
+	    if (lseek(wfd, (long)(bl * sizeof(buf)), SEEK_SET) == -1 ||
 		(bytes = read(wfd, (char *)buf, sizeof(buf))) == -1) {
 		fprintf(stderr, "last: %s: ", file);
 		perror((char *)NULL);
@@ -206,7 +216,7 @@ wtmp()
 		    /* 
 		     * utmp(5) also mentions that the user 
 		     * name should be 'shutdown' or 'reboot'.
-		     * Not checking the name causes i.e. runlevel
+		     * Not checking the name causes e.g. runlevel
 		     * changes to be displayed as 'crash'. -thaele
 		     */
 		    if (!strncmp(bp->ut_user, "reboot", NMAX) ||

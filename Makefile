@@ -5,21 +5,18 @@
 # May be distributed under the terms of the GNU GPL.
 #
 
-VERSION=2.8
+VERSION=2.9
 
 include ./MCONFIG
 
-ifeq "$(HAVE_MOUNT)" "no"
-	MOUNTDIR=mount
-endif
-
-SUBDIRS= bsd \
-	getopt \
+SUBDIRS=lib \
+	getopt-1.0.3a \
 	disk-utils \
 	games \
 	login-utils \
 	misc-utils \
-	$(MOUNTDIR) \
+	mount \
+	fdisk \
 	sys-utils \
 	text-utils
 

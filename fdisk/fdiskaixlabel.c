@@ -1,0 +1,64 @@
+#include <stdio.h>              /* stderr */
+#include <stdlib.h>             /* uint */
+#include <string.h>             /* strstr */
+#include <unistd.h>             /* write */
+
+#include <endian.h>
+
+#include "fdisk.h"
+#include "fdiskaixlabel.h"
+
+static	int     other_endian = 0;
+static  short	volumes=1;
+
+/*
+ * only dealing with free blocks here
+ */
+
+void
+aix_info( void )
+{
+    printf(
+	"\n\tThere is a valid AIX label on this disk.\n"
+	"\tUnfortunately Linux cannot handle these\n"
+	"\tdisks at the moment.  Nevertheless some\n"
+	"\tadvice:\n"
+	"\t1. fdisk will destroy its contents on write.\n"
+	"\t2. Be sure that this disk is NOT a still vital\n"
+	"\t   part of a volume group. (Otherwise you may\n"
+	"\t   erase the other disks as well, if unmirrored.)\n"
+	"\t3. Before deleting this physical volume be sure\n"
+	"\t   to remove the disk logically from your AIX\n"
+	"\t   machine.  (Otherwise you become an AIXpert).\n"
+    );
+}
+
+void
+aix_nolabel( void )
+{
+    aixlabel->magic = 0;
+    aix_label = 0;
+    partitions = 4;
+    memset( buffer, 0, sizeof(buffer) );	/* avoid fdisk cores */
+    return;
+}
+
+int
+check_aix_label( void )
+{
+    if (aixlabel->magic != AIX_LABEL_MAGIC &&
+	aixlabel->magic != AIX_LABEL_MAGIC_SWAPPED) {
+	aix_label = 0;
+	other_endian = 0;
+	return 0;
+    }
+    other_endian = (aixlabel->magic == AIX_LABEL_MAGIC_SWAPPED);
+    update_units();
+    aix_label = 1;
+    partitions= 1016;
+    volumes = 15;
+    aix_info();
+    aix_nolabel();		/* %% */
+    aix_label = 1;		/* %% */
+    return 1;
+}

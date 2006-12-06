@@ -11,20 +11,12 @@ include ../MCONFIG
 MAN1= 		col.1 colcrt.1 colrm.1 column.1 hexdump.1 more.1 rev.1 \
 		ul.1
 
-ifeq "$(HAVE_STRINGS)" "no"
-MAN1:=$(MAN1) strings.1
-endif
-
 # Where to put binaries?
 # See the "install" rule for the links. . .
 
 BIN=            more
 
 USRBIN=		col colcrt colrm column hexdump rev ul
-
-ifeq "$(HAVE_STRINGS)" "no"
-USRBIN:=$(USRBIN) strings
-endif
 
 # Where to put datebase files?
 
@@ -45,8 +37,7 @@ endif
 
 # Rules for hexdump
 
-hexdump: hexdump.o conv.o display.o hexsyntax.o odsyntax.o parse.o \
-	$(BSD)/getopt.o
+hexdump: hexdump.o conv.o display.o hexsyntax.o odsyntax.o parse.o
 hexdump.o: hexdump.c hexdump.h
 conv.o: conv.c hexdump.h
 display.o: display.c hexdump.h
@@ -56,13 +47,13 @@ parse.o: parse.c hexdump.h
 
 # Rules for everything else
 
-col: col.o $(BSD)/getopt.o
+col: col.o
 colcrt: colcrt.o
 colrm: colrm.o
-column: column.o $(BSD)/err.o
-more.o: more.c $(BSD)/pathnames.h
+column: column.o $(ERR_O)
+more.o: more.c $(LIB)/pathnames.h
 rev: rev.o
-strings: strings.o $(BSD)/getopt.o
+
 ifeq "$(HAVE_NCURSES)" "yes"
 more: more.o
 ul: ul.o

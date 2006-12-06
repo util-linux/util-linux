@@ -1,0 +1,68 @@
+# Makefile -- Makefile for util-linux Linux utilities
+# Created: Sat Dec 26 20:09:40 1992
+# Revised: Fri Oct  6 21:02:21 1995 by r.faith@ieee.org
+# Copyright 1992, 1993, 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
+#
+
+include ../MCONFIG
+
+MAN8=
+SBIN=
+
+ifneq "$(CPU)" "sparc"
+# fsck and mkfs will compile, but there is no kernel support on sparc
+ifneq "$(CPU)" "m68k"
+MAN8:=$(MAN8) fdisk.8 cfdisk.8 sfdisk.8
+SBIN:=$(SBIN) fdisk cfdisk sfdisk
+endif
+else
+MAN8:=$(MAN8) fdisk.8
+SBIN:=$(SBIN) fdisk
+endif
+
+all: $(SBIN)
+
+cfdisk.o: cfdisk.c
+ifeq "$(HAVE_SLANG)" "yes"
+	$(CC) -c $(CFLAGS) -DSLCURSES=1 $< -o $@
+else
+ifeq "$(HAVE_NCURSES)" "yes"
+	$(CC) -c $(CFLAGS) $< -o $@
+else
+	:
+endif
+endif
+
+cfdisk: cfdisk.o llseek.o
+ifeq "$(HAVE_SLANG)" "yes"
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIBSLANG)
+else
+ifeq "$(HAVE_NCURSES)" "yes"
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIBCURSES) -lm
+else
+	@echo $@ not made since it requires ncurses or slang
+endif
+endif
+
+# not installed by default
+activate: sfdisk
+	rm -f activate
+	ln -s sfdisk activate
+
+fdisk: fdisk.o llseek.o fdiskbsdlabel.o fdisksgilabel.o fdisksunlabel.o \
+	fdiskaixlabel.o
+fdisk.o: fdisk.c fdisk.h
+fdiskbsdlabel.o: fdiskbsdlabel.c fdisk.h fdiskbsdlabel.h
+fdisksunlabel.o: fdisksunlabel.c fdisksunlabel.h fdisk.h
+fdiskaixlabel.o: fdiskaixlabel.c fdiskaixlabel.h fdisk.h
+sfdisk: sfdisk.o
+
+install: all
+	$(INSTALLDIR) $(SBINDIR)
+	$(INSTALLBIN) $(SBIN) $(SBINDIR)
+	$(INSTALLDIR) $(MAN8DIR)
+	$(INSTALLMAN) $(MAN8) $(MAN8DIR)
+
+.PHONY:	clean
+clean:
+	-rm -f *.o *~ core $(SBIN)

@@ -16,10 +16,11 @@
 #include <sys/sysmacros.h>
 #include <utmp.h>
 #ifdef SHADOW_PWD
-#include <shadow.h>
+#  include <shadow.h>
 #endif
-
+#include "my_crypt.h"
 #include "pathnames.h"
+#include "linux_reboot.h"
 
 #define CMDSIZ 150	/* max size of a line in inittab */
 #define NUMCMD 30	/* max number of lines in inittab */
@@ -411,13 +412,14 @@ void int_handler()
 	
 	sync();
 	sync();
-	if((pid = fork()) == 0) {
-		/* reboot properly... */
+	pid = fork();
+	if (pid > 0)
+		return;
+	if (pid == 0) 	/* reboot properly... */
 		execl(_PATH_REBOOT, _PATH_REBOOT, (char *)0);
-		reboot(0xfee1dead, 672274793, 0x1234567);
-	} else if(pid < 0)
-		/* fork failed, try the hard way... */
-		reboot(0xfee1dead, 672274793, 0x1234567);
+
+	/* fork or exec failed, try the hard way... */
+	my_reboot(LINUX_REBOOT_CMD_RESTART);
 }
 
 void set_tz()

@@ -22,12 +22,38 @@
 #include <time.h>
 #include <pwd.h>
 #include <grp.h>
-#define __KERNEL__
+#if 0
+#define __KERNEL__		/* yuk */
 #include <linux/linkage.h>
+#endif
+/* X/OPEN tells us to use <sys/{types,ipc,sem}.h> for semctl() */
+/* X/OPEN tells us to use <sys/{types,ipc,msg}.h> for msgctl() */
+/* X/OPEN tells us to use <sys/{types,ipc,shm}.h> for shmctl() */
+#include <sys/types.h>
+#include <sys/ipc.h>
 #include <sys/sem.h>
 #include <sys/msg.h>
 #include <sys/shm.h>
+/* The last arg of semctl is a union semun, but where is it defined?
+   X/OPEN tells us to define it ourselves, but until recently
+   Linux include files would also define it. */
+#if defined (__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
+/* union semun is defined by including <sys/sem.h> */
+#else
+/* according to X/OPEN we have to define it ourselves */
+union semun {
+	int val;
+	struct semid_ds *buf;
+	unsigned short int *array;
+	struct seminfo *__buf;
+};
+#endif
 
+/* X/OPEN (Jan 1987) does not define fields key, seq in struct ipc_perm;
+   libc 4/5 does not mention struct ipc_term at all, but includes
+   <linux/ipc.h>, which defines a struct ipc_perm with such fields.
+   glibc-1.09 has no support for sysv ipc.
+   glibc 2 uses __key, __seq */
 #if defined (__GNU_LIBRARY__) && __GNU_LIBRARY__ > 1
 #define KEY __key
 #else
@@ -237,7 +263,7 @@ void do_shm (char format)
 
 	default:
 		printf ("------ Shared Memory Segments --------\n");
-		printf ("%-11s%-10s%-10s%-10s%-10s%-10s%-12s\n", "key","shmid",
+		printf ("%-10s%-10s%-10s%-10s%-10s%-10s%-12s\n", "key","shmid",
 			"owner","perms","bytes","nattch","status");
 		break;
 	}

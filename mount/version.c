@@ -1,1 +1,2 @@
-char version[] = "mount-2.8";
+#include "../version.h"
+char version[] = "mount-" UTIL_LINUX_VERSION;

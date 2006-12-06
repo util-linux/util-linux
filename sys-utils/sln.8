@@ -1,0 +1,23 @@
+.\" Nicolai Langfeldt (janl@math.uio.no)
+.\" In the public domain.
+.TH SLN 8 "20 June 1997" "Linux 2.0" "Linux Programmer's Manual"
+.SH NAME
+sln \- static ln
+.SH SYNOPSIS
+.BI sln " source dest"
+.SH DESCRIPTION
+.B sln
+symbolically links 
+.I dest
+to
+.IR source .
+It is statically linked, needing no dynamic linking at all.  Thus
+.B sln
+is useful to make symbolic links to dynamic libraries if the
+dynamic linking system for some reason is nonfunctional.
+.SH "SEE ALSO"
+.BR ln(1)
+.BR ldconfig(8)
+.BR ld.so(8)
+.\" .SH AUTHOR
+.\" Mike Parker and David MacKenzie.

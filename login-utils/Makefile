@@ -82,54 +82,53 @@ all-misc: $(USRBIN.MISC)
 
 # Rules for everything else
 
-agetty.o: $(BSD)/pathnames.h
+agetty.o: $(LIB)/pathnames.h
 agetty: agetty.o
 chfn: chfn.o islocal.o setpwnam.o
-	$(CC) -o $@ $^ $(CRYPT) $(PAM)
+	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
 chsh: chsh.o islocal.o setpwnam.o
-	$(CC) -o $@ $^ $(CRYPT) $(PAM)
-islocal.o: $(BSD)/pathnames.h
-last.o: $(BSD)/pathnames.h
-last: last.o $(BSD)/getopt.o
+	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
+islocal.o: $(LIB)/pathnames.h
+last.o: $(LIB)/pathnames.h
+last: last.o
 
 ifeq "$(HAVE_PAM)" "yes"
-login: login.o 
-	$(CC) -o $@ $^ $(CRYPT) $(PAM)
+login: login.o $(LIB)/setproctitle.o
+	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
 else
-login: login.o checktty.o 
-	$(CC) -o $@ $^ $(CRYPT) 
+login: login.o $(LIB)/setproctitle.o checktty.o 
+	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) 
 endif
 
-mesg: mesg.o $(BSD)/getopt.o $(BSD)/err.o
+mesg: mesg.o $(ERR_O)
 newgrp: newgrp.o 
-	$(CC) -o $@ $^ $(CRYPT) $(PAM)
-setpwnam.o: $(BSD)/pathnames.h
-shutdown.o: $(BSD)/pathnames.h
-shutdown: shutdown.o
-simpleinit.o: $(BSD)/pathnames.h
-simpleinit: simpleinit.o $(CRYPT)
-vipw.o: $(BSD)/pathnames.h
+	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
+setpwnam.o: $(LIB)/pathnames.h
+shutdown.o: $(LIB)/pathnames.h $(LIB)/linux_reboot.h
+shutdown: shutdown.o $(LIB)/my_reboot.o
+simpleinit.o: $(LIB)/pathnames.h $(LIB)/linux_reboot.h
+simpleinit: simpleinit.o $(LIB)/my_reboot.o
+vipw.o: $(LIB)/pathnames.h
 vipw: vipw.o
 
-newgrp.o: $(BSD)/pathnames.h
+newgrp.o: $(LIB)/pathnames.h
 	$(CC) -c $(CFLAGS) $(PAMFL) newgrp.c 
 
 wall: wall.o ttymsg.o
 
 ifeq "$(USE_TTY_GROUP)" "yes"
-login.o: login.c $(BSD)/pathnames.h
+login.o: login.c $(LIB)/pathnames.h $(LIB)/setproctitle.c $(LIB)/setproctitle.h
 	$(CC) -c $(CFLAGS) $(PAMFL) -DUSE_TTY_GROUP login.c
-mesg.o: mesg.c $(BSD)/err.h
+mesg.o: mesg.c $(LIB)/err.h
 	$(CC) -c $(CFLAGS) -DUSE_TTY_GROUP mesg.c
 else
-login.o: $(BSD)/pathnames.h
+login.o: $(LIB)/pathnames.h
 	$(CC) -c $(CFLAGS) $(PAMFL) login.c
-mesg.o: $(BSD)/err.h
+mesg.o: $(LIB)/err.h
 endif
 
-passwd: passwd.o islocal.o setpwnam.o $(CRYPT)
-passwd.o: passwd.c
-	$(CC) -c $(CFLAGS) passwd.c
+passwd: passwd.o islocal.o setpwnam.o
+	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT)
 
 ifeq "$(REQUIRE_PASSWORD)" "yes"
 CHSH_FLAGS:=$(CHSH_FLAGS) -DREQUIRE_PASSWORD

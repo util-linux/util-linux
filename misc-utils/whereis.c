@@ -99,6 +99,8 @@ static char *bindirs[] = {
    "/usr/libexec",
    "/usr/share",
 
+   "/opt/*/bin",
+
 	0
 };
 

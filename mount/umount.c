@@ -18,6 +18,10 @@
  * 960823: aeb - also try umount(spec) when umount(node) fails
  * 970307: aeb - canonise names from fstab
  * 970726: aeb - remount read-only in cases where umount fails
+ * 980810: aeb - umount2 support
+ * 981222: aeb - If mount point or special file occurs several times
+ *               in mtab, try them all, with last one tried first
+ *             - Differentiate "user" and "users" key words in fstab
  */
 
 #include <unistd.h>
@@ -28,6 +32,7 @@
 #include <sys/mount.h>
 #include "mount_constants.h"
 #include "sundries.h"
+#include "getusername.h"
 #include "lomount.h"
 #include "loop.h"
 #include "fstab.h"
@@ -43,11 +48,33 @@
 #include <arpa/inet.h>
 #endif
 
+static int umount2(const char *path, int flags);
 
-#ifdef notyet
-/* Nonzero for force umount (-f).  This needs kernel support we don't have.  */
+#ifdef MNT_FORCE
+/* Interesting ... it seems libc knows about MNT_FORCE and presumably
+   about umount2 as well -- need not do anything */
+#else /* MNT_FORCE */
+
+/* Does the present kernel source know about umount2? */
+#include <linux/unistd.h>
+#ifdef __NR_umount2
+_syscall2(int, umount2, const char *, path, int, flags);
+#else /* __NR_umount2 */
+static int
+umount2(const char *path, int flags) {
+	fprintf(stderr, "umount: compiled without support for -f\n");
+	errno = ENOSYS;
+	return -1;
+}
+#endif /* __NR_umount2 */
+
+/* dare not try to include <linux/mount.h> -- lots of errors */
+#define MNT_FORCE 1
+
+#endif /* MNT_FORCE */
+
+/* Nonzero for force umount (-f).  There is kernel support since 2.1.116.  */
 int force = 0;
-#endif
 
 /* When umount fails, attempt a read-only remount (-r). */
 int remount = 0;
@@ -169,7 +196,7 @@ static void complain(int err, const char *dev) {
    on a non-fatal error.  We lock/unlock around each umount.  */
 static int
 umount_one (const char *spec, const char *node, const char *type,
-	    const char *opts)
+	    const char *opts, struct mntentchn *mc)
 {
   int umnt_err, umnt_err2;
   int isroot;
@@ -195,7 +222,22 @@ umount_one (const char *spec, const char *node, const char *type,
  
 
   umnt_err = umnt_err2 = 0;
-  res = umount (node);
+  if (force) {
+       /* completely untested - 2.1.116 only has some support in nfs case */
+       /* probably this won't work */
+       int flags = MNT_FORCE;
+
+       res = umount2 (node, flags);
+       if (res == -1) {
+	       perror("umount2");
+	       if (errno == ENOSYS) {
+		       if (verbose)
+			       printf("no umount2, trying umount...\n");
+		       res = umount (node);
+	       }
+       }
+  } else
+       res = umount (node);
   if (res < 0) {
        umnt_err = errno;
        /* A device might have been mounted on a node that has since
@@ -238,11 +280,9 @@ umount_one (const char *spec, const char *node, const char *type,
 	printf ("%s umounted\n", spec);
 
       if (!nomtab && mtab_is_writable()) {
-	  struct mntentchn *mc;
 				/* Special stuff for loop devices */
-
-	  if ((mc = getmntfile (spec)) || (mc = getmntfile (node))) {
-	     char *opts;
+	  if (mc) {
+	     char *optl;
 
 	     /* old style mtab line? */
 	     if (streq(mc->mnt_type, "loop"))
@@ -250,10 +290,10 @@ umount_one (const char *spec, const char *node, const char *type,
 		      goto fail;
 
 	     /* new style mtab line? */
-	     opts = mc->mnt_opts ? xstrdup(mc->mnt_opts) : "";
-	     for (opts = strtok (opts, ","); opts; opts = strtok (NULL, ",")) {
-		 if (!strncmp(opts, "loop=", 5)) {
-		     if (del_loop(opts+5))
+	     optl = mc->mnt_opts ? xstrdup(mc->mnt_opts) : "";
+	     for (optl = strtok (optl, ","); optl; optl = strtok (NULL, ",")) {
+		 if (!strncmp(optl, "loop=", 5)) {
+		     if (del_loop(optl+5))
 		       goto fail;
 		     break;
 		 }
@@ -286,6 +326,28 @@ fail:
   return 1;
 }
 
+/*
+ * Why this loop?
+ * 1. People who boot a system with a bad fstab root entry
+ *    will get an incorrect "/dev/foo on /" in mtab.
+ *    If later /dev/foo is actually mounted elsewhere,
+ *    it will occur twice in mtab.
+ * 2. With overmounting one can get the situation that
+ *    the same filename is used as mount point twice.
+ * In both cases, it is best to try the last occurrence first.
+ */
+static int
+umount_one_bw (const char *file, struct mntentchn *mc) {
+     int res = 1;
+
+     while (res && mc) {
+	  res = umount_one(mc->mnt_fsname, mc->mnt_dir,
+			   mc->mnt_type, mc->mnt_opts, mc);
+	  mc = getmntfilesbackward (file, mc);
+     }
+     return res;
+}
+
 /* Unmount all filesystems of type VFSTYPES found in mtab.  Since we are
    concurrently updating mtab after every succesful umount, we have to
    slurp in the entire file before we start.  This isn't too bad, because
@@ -302,7 +364,7 @@ umount_all (string_list types) {
      for (mc = hd->prev; mc != hd; mc = mc->prev) {
 	  if (matching_type (mc->mnt_type, types)) {
 	       errors |= umount_one (mc->mnt_fsname, mc->mnt_dir,
-				     mc->mnt_type, mc->mnt_opts);
+				     mc->mnt_type, mc->mnt_opts, mc);
 	  }
      }
 
@@ -325,9 +387,9 @@ static struct option longopts[] =
 };
 
 char *usage_string = "\
-usage: umount [-hV]\n\
-       umount -a [-r] [-n] [-v] [-t vfstypes]\n\
-       umount [-r] [-n] [-v] special | node...\n\
+Usage: umount [-hV]\n\
+       umount -a [-f] [-r] [-n] [-v] [-t vfstypes]\n\
+       umount [-f] [-r] [-n] [-v] special | node...\n\
 ";
 
 static void
@@ -350,22 +412,19 @@ main (int argc, char *argv[])
   char *file;
   int result = 0;
 
-  while ((c = getopt_long (argc, argv, "afhnrvVt:", longopts, NULL)) != EOF)
+  while ((c = getopt_long (argc, argv, "afhnrt:vV",
+			   longopts, NULL)) != EOF)
     switch (c) {
       case 'a':			/* umount everything */
 	++all;
 	break;
-      case 'f':			/* force umount (needs kernel support) */
-#if 0
+      case 'f':			/* force umount */
 	++force;
-#else
-	die (2, "umount: forced umount not supported yet");
-#endif
 	break;
       case 'h':			/* help */
 	usage (stdout, 0);
 	break;
-      case 'n':
+      case 'n':			/* do not write in /etc/mtab */
 	++nomtab;
 	break;
       case 'r':			/* remount read-only if umount fails */
@@ -390,7 +449,7 @@ main (int argc, char *argv[])
   if (getuid () != geteuid ())
     {
       suid = 1;
-      if (all || types || nomtab)
+      if (all || types || nomtab || force)
 	die (2, "umount: only root can do that");
     }
 
@@ -408,13 +467,15 @@ main (int argc, char *argv[])
        if (verbose > 1)
 	  printf("Trying to umount %s\n", file);
 
-       mc = getmntfile (file);
+       mc = getmntfilesbackward (file, NULL);
        if (!mc && verbose)
 	  printf("Could not find %s in mtab\n", file);
 
        if (suid) {
 	  if (!mc)
 	    die (2, "umount: %s is not mounted (according to mtab)", file);
+	  if (getmntfilesbackward (file, mc))
+	    die (2, "umount: it seems %s is mounted multiple times", file);
 	  if (!(fs = getfsspec (file)) && !(fs = getfsfile (file)))
 	    die (2, "umount: %s is not in the fstab (and you are not root)",
 		 file);
@@ -424,22 +485,46 @@ main (int argc, char *argv[])
 		  !streq (mc->mnt_dir, canonicalize (fs->mnt_dir)))) {
 	    die (2, "umount: %s mount disagrees with the fstab", file);
 	  }
+
+	  /* User mounting and unmounting is allowed only
+	     if fstab contains the option `user' or `users' */
+	  /* The option `users' allows arbitrary users to mount
+	     and unmount - this may be a security risk. */
+	  /* The option `user' only allows unmounting by the user
+	     that mounted. */
+	  /* A convenient side effect is that the user who mounted
+	     is visible in mtab. */
 	  options = parse_list (fs->mnt_opts);
 	  while (options) {
-	      if (streq (car (options), "user"))
+	      if (streq (car (options), "user") ||
+		  streq (car (options), "users"))
 		break;
 	      options = cdr (options);
 	  }
 	  if (!options)
 	    die (2, "umount: only root can unmount %s from %s",
 		 fs->mnt_fsname, fs->mnt_dir);
+	  if (streq (car (options), "user")) {
+	      char *user = getusername();
+
+	      options = parse_list (mc->mnt_opts);
+	      while (options) {
+		  char *co = car (options);
+		  if (!strncmp(co, "user=", 5)) {
+		      if (!user || !streq(co+5,user))
+			  die(2, "umount: only %s can unmount %s from %s",
+			      co+5, fs->mnt_fsname, fs->mnt_dir);
+		      break;
+		  }
+		  options = cdr (options);
+	      }
+	  }
        }
 
        if (mc)
-	    result = umount_one (xstrdup(mc->mnt_fsname), xstrdup(mc->mnt_dir),
-				 xstrdup(mc->mnt_type), xstrdup(mc->mnt_opts));
+	    result = umount_one_bw (file, mc);
        else
-	    result = umount_one (*argv, *argv, *argv, *argv);
+	    result = umount_one (*argv, *argv, *argv, *argv, NULL);
 
        argv++;
 

@@ -545,6 +545,9 @@ update_utmp(line)
     endutent();
 
     {
+#if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 1)
+	updwtmp(_PATH_WTMP, &ut);
+#else
 	int lf;
 
 	if ((lf = open(_PATH_WTMPLOCK, O_CREAT|O_WRONLY, 0660)) >= 0) {
@@ -556,8 +559,9 @@ update_utmp(line)
 	    flock(lf, LOCK_UN);
 	    close(lf);
 	}
+#endif
     }
-#else
+#else /* not __linux__ */
     if ((ut_fd = open(UTMP_FILE, 2)) < 0) {
 	error("%s: open for update: %m", UTMP_FILE);
     } else {
@@ -769,7 +773,7 @@ do_prompt(op, tp)
 #ifdef	ISSUE
     FILE    *fd;
     int     oflag;
-    char    c;
+    int     c;
     struct utsname uts;
 
     (void) uname(&uts);

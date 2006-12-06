@@ -190,15 +190,14 @@ pw_unlock()
 
 
 void
-pw_edit(notsetuid)
-	int notsetuid;
+pw_edit(int notsetuid)
 {
 	int pstat;
 	pid_t pid;
 	char *p, *editor;
 
 	if (!(editor = getenv("EDITOR")))
-		editor = _PATH_VI;
+		editor = strdup(_PATH_VI); /* adia@egnatia.ee.auth.gr */
 	if ((p = strrchr(strtok(editor," \t"), '/')) != NULL)
 		++p;
 	else 

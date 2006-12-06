@@ -1,0 +1,57 @@
+
+WARNING: THE PROGRAMS IN THIS SUITE DO *NOT* SUPPORT SHADOW PASSWORD FILES!
+	 UNLESS YOU USE PAM.
+
+WARNING: THIS COLLECTION CONFLICTS WITH SYSTEM V INITTAB.
+         UNLESS YOU CONFIGURE IT NOT TO.
+
+WARNING: USE GNU TAR -- OTHER TARS WILL FAIL SILENTLY!
+
+WARNING: DO *NOT* INSTALL WITHOUT THINKING.
+
+WARNING: The simpleinit and some other programs in this package are
+	 *NOT* System V compliant.  These utilities are meant to be
+	 used by people who build their own systems.  If you are not
+         a wizard, do *NOT* blindly install these utilities: they could
+         prevent you from logging into your system.  Have a boot floppy
+         ready, especially if you don't know what you are doing.  It's a
+	 great way to learn though ;-)
+
+
+To install from source:
+
+1) Get source distribution (see the .lsm file for locations)
+2) Untar util-linux-2.9.tar.gz somewhere
+3) cd util-linux-2.9
+4) Edit MCONFIG
+5) make
+6) make install
+7) If you want to use simpleinit and agetty, then make softlinks from
+   /sbin/init to simpleinit and from /sbin/getty to agetty, but make sure
+   that your /etc/inittab is set up right (this is *NOT* the System V
+   compatible init!), or you will be hosed.  If you are using the SysV
+   init and/or some other getty, they you can keep using those.
+
+
+If you have compilation problems:
+
+- with -lcrypt: you forgot to edit MCONFIG and write HAVE_LIBCRYPT=no.
+- in cfdisk or setterm: you forgot to edit MCONFIG and write HAVE_NCURSES=no
+  (or you forgot to write CURSESFLAGS=-I/usr/include/ncurses -DNCH=0)?
+- in fdisksunlabel.c: change #if 1 into #if 0 if there is no <scsi/scsi.h>.
+- in mount/nfsmount.c: change #if 1 into #if 0 if there is no inet_aton().
+- in sys-utils/ipcs.c: change #if 0 into #if 1 if <linux/linkage.h> is needed.
+- in sys-utils/cytune.c: change #if 0 into #if 1 if <linux/tqueue.h> is needed.
+
+elsewhere: tell util-linux@math.uio.no about it.
+
+
+If you have runtime problems:
+
+- with non-ASCII characters: perhaps you forgot to set LC_CTYPE or LC_ALL?
+  (For example, in Norway one can say  LC_ALL=no_NO; export LC_ALL  and
+   then various utilities will treat Scandinavian non-ASCII letters as
+   letters.)
+
+otherwise: tell util-linux@math.uio.no about it.
+

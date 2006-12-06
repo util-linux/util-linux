@@ -10,7 +10,8 @@
 #include <string.h>
 #include <mntent.h>
 #include <errno.h>
-#include "swap.h"
+#include <sys/stat.h>
+#include "swap_constants.h"
 #include "swapargs.h"
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
@@ -18,7 +19,7 @@
 #define	_PATH_FSTAB     "/etc/fstab"
 #define PROC_SWAPS      "/proc/swaps"
 
-/* #define SWAPON_NEEDS_TWO_ARGS */
+#define SWAPON_NEEDS_TWO_ARGS
 
 /* Nonzero for chatty (-v).  This is a nonstandard flag (not in BSD).  */
 int verbose = 0;
@@ -77,12 +78,34 @@ static int
 swap (const char *special, int prio)
 {
   int status;
+  struct stat st;
 
   if (verbose)
-    printf("%s on device %s\n", program_name, special);
+    printf("%s on %s\n", program_name, special);
 
   if (streq (program_name, "swapon")) {
+    if (stat(special, &st) < 0) {
+        fprintf (stderr, "swapon: cannot stat %s: %s\n", special, strerror (errno));
+	return -1;
+    }
+
+    if ((st.st_mode & 07077) != 0) {
+        fprintf(stderr, "swapon: warning: %s has insecure permissions %04o, "
+		        "0600 suggested\n", special, st.st_mode & 07777);
+    }
+
+    /* test for holes by LBT */
+    if (S_ISREG(st.st_mode)) {
+	if (st.st_blocks * 512 < st.st_size) {
+	    fprintf(stderr,
+		    "swapon: Skipping file %s - it appears to have holes.\n",
+		    special);
+	    return -1;
+	}
+    }
+
 #ifdef SWAPON_NEEDS_TWO_ARGS
+    {
      int flags = 0;
 
 #ifdef SWAP_FLAG_PREFER
@@ -94,6 +117,7 @@ swap (const char *special, int prio)
      }
 #endif
      status = swapon (special, flags);
+    }
 #else
      status = swapon (special);
 #endif

@@ -317,7 +317,7 @@ int check_zone_nr(unsigned short * nr, int * corrected)
 	return 0;
 }
 
-
+#ifdef HAVE_MINIX2
 int check_zone_nr2 (unsigned int *nr, int *corrected)
 {
 	if (!*nr)
@@ -336,6 +336,7 @@ int check_zone_nr2 (unsigned int *nr, int *corrected)
 	}
 	return 0;
 }
+#endif
 
 /*
  * read-block reads block nr into the buffer at addr.
@@ -627,11 +628,12 @@ struct minix_inode * get_inode(unsigned int nr)
 				nr);
 			print_current_name();
 			printf("'\n");
-			if (repair)
+			if (repair) {
 				if (ask("Mark in use",1))
 					mark_inode(nr);
-			else
+			} else {
 			        errors_uncorrected = 1;
+			}
 		}
 		if (S_ISDIR(inode->i_mode))
 			directory++;
@@ -762,7 +764,7 @@ static int add_zone(unsigned short * znr, int * corrected)
 	return block;
 }
 
-
+#ifdef HAVE_MINIX2
 static int add_zone2 (unsigned int *znr, int *corrected)
 {
 	int result;
@@ -795,6 +797,7 @@ static int add_zone2 (unsigned int *znr, int *corrected)
 		zone_count[block]--;
 	return block;
 }
+#endif
 
 static void add_zone_ind(unsigned short * znr, int * corrected)
 {
@@ -812,7 +815,9 @@ static void add_zone_ind(unsigned short * znr, int * corrected)
 		write_block(block, blk);
 }
 
-static void add_zone_ind2 (unsigned int *znr, int *corrected)
+#ifdef HAVE_MINIX2
+static void
+add_zone_ind2 (unsigned int *znr, int *corrected)
 {
 	static char blk[BLOCK_SIZE];
 	int i, chg_blk = 0;
@@ -827,6 +832,7 @@ static void add_zone_ind2 (unsigned int *znr, int *corrected)
 	if (chg_blk)
 		write_block (block, blk);
 }
+#endif
 
 static void add_zone_dind(unsigned short * znr, int * corrected)
 {
@@ -844,6 +850,7 @@ static void add_zone_dind(unsigned short * znr, int * corrected)
 		write_block(block, blk);
 }
 
+#ifdef HAVE_MINIX2
 static void
 add_zone_dind2 (unsigned int *znr, int *corrected)
 {
@@ -877,6 +884,7 @@ add_zone_tind2 (unsigned int *znr, int *corrected)
 	if (blk_chg)
 		write_block (block, blk);
 }
+#endif
 
 void check_zones(unsigned int i)
 {
@@ -945,18 +953,20 @@ void check_file(struct minix_inode * dir, unsigned int offset)
 	name_depth++;
 	inode = get_inode(ino);
 	name_depth--;
-	if (!offset)
+	if (!offset) {
 		if (!inode || strcmp(".",name)) {
 			print_current_name();
 			printf(": bad directory: '.' isn't first\n");
 			errors_uncorrected = 1;
 		} else return;
-	if (offset == dirsize)
+	}
+	if (offset == dirsize) {
 		if (!inode || strcmp("..",name)) {
 			print_current_name();
 			printf(": bad directory: '..' isn't second\n");
 			errors_uncorrected = 1;
 		} else return;
+	}
 	if (!inode)
 		return;
 	if (name_depth < MAX_DEPTH)
@@ -1230,12 +1240,12 @@ int main(int argc, char ** argv)
 #endif
 	while (argc-- > 1) {
 		argv++;
-		if (argv[0][0] != '-')
+		if (argv[0][0] != '-') {
 			if (device_name)
 				usage();
 			else
 				device_name = argv[0];
-		else while (*++argv[0])
+		} else while (*++argv[0])
 			switch (argv[0][0]) {
 				case 'l': list=1; break;
 				case 'a': automatic=1; repair=1; break;

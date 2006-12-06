@@ -6,9 +6,24 @@
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+
+#include <sys/types.h>
+#include <sys/ipc.h>
 #include <sys/shm.h>
 #include <sys/msg.h>
 #include <sys/sem.h>
+#if defined (__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
+/* union semun is defined by including <sys/sem.h> */
+#else
+/* according to X/OPEN we have to define it ourselves */
+union semun {
+	int val;
+	struct semid_ds *buf;
+	unsigned short int *array;
+	struct seminfo *__buf;
+};
+#endif
+
 
 int main(int argc, char **argv)
 {

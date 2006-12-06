@@ -1,0 +1,47 @@
+Mkminix-0.1 by W. Black
+
+Description
+-----------
+This directory contains a hacked version of mkfs.minix from util-linux 2.8.
+The hack in question was primarily a bit of #ifndef-ing to make it compile
+successfully under DJGPP.  Due to DOS's brain-damaged 8.3 filename limitation,
+the executable has been renamed from mkfs.minix to mkminix.exe.
+[Executable deleted in the util-linux distribution.]
+
+Distribution
+------------
+This distribution should have come with both sources and executable.  If
+you're missing either, feel free to visit my site at 
+http://www.geocities.com/SiliconValley/Network/5508 to get a fresh one if
+you need it.
+
+This program and its source program in util-linux are protected by the GNU
+General Public License.  See the file COPYING for details.
+
+Why
+---
+Exactly why would anyone want to create a Minix filesystem under DOS?  The
+answer, as far as I am concerned, is in the interest of creating initial 
+ramdisks for Linux.  By being able to configure an initrd from DOS (or Win
+'95, etc.), you can make the transition to Linux that much easier (think
+Win '95 autoplay Linux distributions, for example).
+
+Phase II of this project would logically be to be able to populate this initrd
+with files.  That is my goal for mkminix-0.2.
+
+Installation
+------------
+At this point, everything is pretty much already installed.  Just run MKMINIX
+from the DOS prompt.  The source will compile under DJGPP if and only if you
+have a copy of linux/minix_fs.h.  I included the one from Linux kernel 2.0.30,
+but these files have a way of changing in annoying ways, so it's probably best
+to use one that matches whatever version of Linux you are going to be running
+concurrently.  This is if you have to be ABSOLUTELY sure that everything
+matches...  BTW, compile line is as follows for DJGPP:  
+
+  gcc -o mkminix.exe mkminix.c
+
+Desperate Plea for Attention
+----------------------------
+If you find this program useful (or silly, or a complete waste of time), please
+drop me a line at wjblack@yahoo.com.  Thanks!

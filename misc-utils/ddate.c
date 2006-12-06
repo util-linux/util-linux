@@ -307,12 +307,20 @@ struct disc_time convert(int nday, int nyear)
 
 #ifdef KILL_BOB
 
-/* Code for counting down to X-Day, X-Day being Cfn 40, 3164 */
+/* Code for counting down to X-Day, X-Day being Cfn 40, 3164 
+ *
+ * After `X-Day' passed without incident, the CoSG declared that it had 
+ * got the year upside down --- X-Day is actually in 8661 AD rather than 
+ * 1998 AD.
+ *
+ * Thus, the True X-Day is Cfn 40, 9827.
+ *
+ */
 
 int xday_countdown(int yday, int year) {
     int r=(185-yday)+(((yday<59)&&(leapp(year)))?1:0);
-    while(year<3164) r+=(leapp(++year)?366:365);
-    while(year>3164) r-=(leapp(year--)?366:365);
+    while(year<9827) r+=(leapp(++year)?366:365);
+    while(year>9827) r-=(leapp(year--)?366:365);
     return r;
 }
 

@@ -4,7 +4,13 @@
    in case no filesystem type was given. */
 
 #ifndef BLKGETSIZE
+#ifndef _IO
+/* pre-1.3.45 */
 #define BLKGETSIZE 0x1260		   /* return device size */
+#else
+/* same on i386, m68k, arm; different on alpha, mips, sparc, ppc */
+#define BLKGETSIZE _IO(0x12,96)
+#endif
 #endif
 
 #define MINIX_SUPER_MAGIC   0x137F         /* original minix fs */
@@ -43,8 +49,11 @@ struct ext_super_block {
 #define EXT2_PRE_02B_MAGIC  0xEF51
 #define EXT2_SUPER_MAGIC    0xEF53
 struct ext2_super_block {
-	u_char   s_dummy[56];
+	u_char   s_dummy1[56];
 	u_char   s_magic[2];
+	u_char   s_dummy2[46];
+	u_char   s_uuid[16];
+	u_char   s_volume_name[16];
 };
 #define ext2magic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8))
 
@@ -57,3 +66,13 @@ struct xiafs_super_block {
 #define xiafsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
 			(((uint) s.s_magic[2]) << 16) + \
 			(((uint) s.s_magic[3]) << 24))
+
+/* From jj@sunsite.ms.mff.cuni.cz Mon Mar 23 15:19:05 1998 */
+#define UFS_SUPER_MAGIC 0x00011954
+struct ufs_super_block {
+    u_char     s_dummy[0x55c];
+    u_char     s_magic[4];
+};
+#define ufsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
+			 (((uint) s.s_magic[2]) << 16) + \
+			 (((uint) s.s_magic[3]) << 24))

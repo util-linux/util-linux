@@ -95,6 +95,9 @@
 #include <termios.h>
 #include <string.h>
 #include <fcntl.h>
+#ifndef NCURSES_CONST
+#define NCURSES_CONST const	/* define before including term.h */
+#endif
 #include <term.h>
 #if NCH
 #include <ncurses.h>
@@ -928,11 +931,12 @@ int vcterm;			/* Set if terminal is a virtual console. */
   /* -inversescreen [on|off].  Vc only (vt102).
    */
   if (opt_inversescreen) {
-	if (vcterm)
+	if (vcterm) {
 		if (opt_invsc_on)
 			printf("\033[?5h");
 		else
 			printf("\033[?5l");
+	}
   }
 
   /* -bold [on|off].  Vc behaves as expected, otherwise off turns off

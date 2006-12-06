@@ -42,7 +42,7 @@
 .Nd displays a calendar
 .Sh SYNOPSIS
 .Nm cal
-.Op Fl jy
+.Op Fl mjy
 .Op Ar month Op Ar year
 .Sh DESCRIPTION
 .Nm Cal
@@ -51,6 +51,8 @@ If arguments are not specified,
 the current month is displayed.
 The options are as follows:
 .Bl -tag -width Ds
+.It Fl m
+Display monday as the first day of the week.
 .It Fl j
 Display julian dates (days one-based, numbered from January 1).
 .It Fl y

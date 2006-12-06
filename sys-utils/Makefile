@@ -11,9 +11,9 @@ include ../MCONFIG
 
 MAN1=		arch.1 readprofile.1
 
-MAN8= 		ctrlaltdel.8 cytune.8 dmesg.8 \
+MAN8= 		ctrlaltdel.8 cytune.8 dmesg.8 hwclock.8 \
 		ipcrm.8 ipcs.8 kbdrate.8 ramsize.8 renice.8 \
-		rootflags.8 setsid.8 swapdev.8 tunelp.8 \
+		rootflags.8 setsid.8 sln.8 swapdev.8 tunelp.8 \
 		vidmode.8 
 
 # Where to put binaries?
@@ -23,15 +23,14 @@ BIN=            arch dmesg
 
 USRBIN=		cytune ipcrm ipcs renice readprofile setsid tunelp
 
-SBIN= 		sln ctrlaltdel kbdrate
+SBIN= 		ctrlaltdel hwclock kbdrate
 
-ifneq "$(CPU)" "sparc"
-MAN8:= $(MAN8) hwclock.8
-SBIN:=$(SBIN) hwclock
+ifeq "$(HAVE_SLN)" "no"
+SBIN:=$(SBIN) sln
 endif
 
 ifeq "$(CPU)" "intel"
-MAN8:= $(MAN8) rdev.8
+MAN8:=$(MAN8) rdev.8
 USRBIN:=$(USRBIN) rdev
 endif
 
@@ -49,7 +48,8 @@ sln: sln.c
 arch: arch.o
 hwclock.o: hwclock.c shhopt.h
 hwclock: hwclock.o shhopt.o
-ctrlaltdel: ctrlaltdel.o
+ctrlaltdel.o: ctrlaltdel.c $(LIB)/linux_reboot.h
+ctrlaltdel: ctrlaltdel.o $(LIB)/my_reboot.o
 ipcrm: ipcrm.o
 ipcs: ipcs.o
 kbdrate: kbdrate.o

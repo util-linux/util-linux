@@ -624,7 +624,7 @@ int main(int argc, char ** argv)
 #endif
   while (argc-- > 1) {
     argv++;
-    if (argv[0][0] != '-')
+    if (argv[0][0] != '-') {
       if (device_name) {
 	BLOCKS = strtol(argv[0],&tmp,0);
 	if (*tmp) {
@@ -634,7 +634,7 @@ int main(int argc, char ** argv)
 	}
       } else
 	device_name = argv[0];
-    else { 
+    } else { 
       if(argv[0][1] == 'l') {
 	listfile = argv[1];
 	argv++;

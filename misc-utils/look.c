@@ -54,42 +54,36 @@
 #include <string.h>
 #include <ctype.h>
 #include <getopt.h>
+#include <locale.h>
 #include "pathnames.h"
 
-/*
- * FOLD and DICT convert characters to a normal form for comparison,
- * according to the user specified flags.
- * 
- * DICT expects integers because it uses a non-character value to
- * indicate a character which should not participate in comparisons.
- */
 #define	EQUAL		0
 #define	GREATER		1
 #define	LESS		(-1)
-#define NO_COMPARE	(-2)
-
-#define	FOLD(c)	(isascii(c) && isupper(c) ? tolower(c) : (c))
-#define	DICT(c)	(isascii(c) && isalnum(c) ? (c) : NO_COMPARE)
 
 int dflag, fflag;
+/* uglified the source a bit with globals, so that we only need
+   to allocate comparbuf once */
+int stringlen;
+char *string;
+char *comparbuf;
 
-char	*binary_search __P((char *, char *, char *));
-int	 compare __P((char *, char *, char *));
-void	 err __P((const char *fmt, ...));
-char	*linear_search __P((char *, char *, char *));
-int	 look __P((char *, char *, char *));
-void	 print_from __P((char *, char *, char *));
+static char *binary_search (char *, char *);
+static int compare (char *, char *, int);
+static void err (const char *fmt, ...);
+static char *linear_search (char *, char *);
+static int look (char *, char *);
+static void print_from (char *, char *);
+static void usage (void);
 
-static void usage __P((void));
-
-void
-main(argc, argv)
-	int argc;
-	char *argv[];
+int
+main(int argc, char *argv[])
 {
 	struct stat sb;
 	int ch, fd, termchar;
-	char *back, *file, *front, *string, *p;
+	char *back, *file, *front, *p;
+
+	setlocale(LC_ALL, "");
 
 	file = _PATH_WORDS;
 	termchar = '\0';
@@ -142,32 +136,35 @@ main(argc, argv)
 				  (off_t)0)) <= (void *)0)
 		err("%s: %s", file, strerror(errno));
 	back = front + sb.st_size;
-	exit(look(string, front, back));
+	return look(front, back);
 }
 
 int
-look(string, front, back)
-	char *string, *front, *back;
+look(char *front, char *back)
 {
-	register int ch;
-	register char *readp, *writep;
+	int ch;
+	char *readp, *writep;
 
 	/* Reformat string string to avoid doing it multiple times later. */
-	for (readp = writep = string; (ch = *readp++) != 0;) {
-		if (fflag)
-			ch = FOLD(ch);
-		if (dflag)
-			ch = DICT(ch);
-		if (ch != NO_COMPARE)
-			*(writep++) = ch;
-	}
-	*writep = '\0';
+	if (dflag) {
+		for (readp = writep = string; (ch = *readp++) != 0;) {
+			if (isalnum(ch))
+				*(writep++) = ch;
+		}
+		*writep = '\0';
+		stringlen = writep - string;
+	} else
+		stringlen = strlen(string);
 
-	front = binary_search(string, front, back);
-	front = linear_search(string, front, back);
+	comparbuf = malloc(stringlen+1);
+	if (comparbuf == NULL)
+		err("Out of memory");
+
+	front = binary_search(front, back);
+	front = linear_search(front, back);
 
 	if (front)
-		print_from(string, front, back);
+		print_from(front, back);
 	return (front ? 0 : 1);
 }
 
@@ -214,10 +211,9 @@ look(string, front, back)
 	while (p < back && *p++ != '\n');
 
 char *
-binary_search(string, front, back)
-	register char *string, *front, *back;
+binary_search(char *front, char *back)
 {
-	register char *p;
+	char *p;
 
 	p = front + (back - front) / 2;
 	SKIP_PAST_NEWLINE(p, back);
@@ -227,7 +223,7 @@ binary_search(string, front, back)
 	 * infinitely loop.
 	 */
 	while (p < back && back > front) {
-		if (compare(string, p, back) == GREATER)
+		if (compare(p, back, 1) == GREATER)
 			front = p;
 		else
 			back = p;
@@ -249,11 +245,10 @@ binary_search(string, front, back)
  *	o front is before or at the first line to be printed.
  */
 char *
-linear_search(string, front, back)
-	char *string, *front, *back;
+linear_search(char *front, char *back)
 {
 	while (front < back) {
-		switch (compare(string, front, back)) {
+		switch (compare(front, back, 1)) {
 		case EQUAL:		/* Found it. */
 			return (front);
 			break;
@@ -272,20 +267,26 @@ linear_search(string, front, back)
  * Print as many lines as match string, starting at front.
  */
 void 
-print_from(string, front, back)
-	register char *string, *front, *back;
+print_from(char *front, char *back)
 {
-	for (; front < back && compare(string, front, back) == EQUAL; ++front) {
-		for (; front < back && *front != '\n'; ++front)
-			if (putchar(*front) == EOF)
-				err("stdout: %s", strerror(errno));
-		if (putchar('\n') == EOF)
-			err("stdout: %s", strerror(errno));
+	int eol;
+
+	while (front < back && compare(front, back, 1) == EQUAL) {
+		if (compare(front, back, fflag) == EQUAL) {
+			eol = 0;
+			while (front < back && !eol) {
+				if (putchar(*front) == EOF)
+					err("stdout: %s", strerror(errno));
+				if (*front++ == '\n')
+					eol = 1;
+			}
+		} else
+			SKIP_PAST_NEWLINE(front, back);
 	}
 }
 
 /*
- * Return LESS, GREATER, or EQUAL depending on how the string1 compares with
+ * Return LESS, GREATER, or EQUAL depending on how  string  compares with
  * string2 (s1 ??? s2).
  * 
  * 	o Matches up to len(s1) are EQUAL. 
@@ -294,32 +295,34 @@ print_from(string, front, back)
  * Compare understands about the -f and -d flags, and treats comparisons
  * appropriately.
  * 
- * The string "s1" is null terminated.  The string s2 is '\n' terminated (or
- * "back" terminated).
+ * The string "string" is null terminated.  The string "s2" is '\n' terminated
+ * (or "s2end" terminated).
+ *
+ * We use strcasecmp etc, since it knows how to ignore case also
+ * in other locales.
  */
 int
-compare(s1, s2, back)
-	register char *s1, *s2, *back;
-{
-	register int ch;
+compare(char *s2, char *s2end, int nocase) {
+	int i;
+	char *p;
 
-	for (; *s1 && s2 < back && *s2 != '\n';) {
-		ch = *s2;
-		if (fflag)
-			ch = FOLD(ch);
-		if (dflag)
-			ch = DICT(ch);
-
-		if (ch == NO_COMPARE) {
-			++s2;		/* Ignore character in comparison. */
-			continue;
-		}
-		if (*s1 != ch)
-			return (*s1 < ch ? LESS : GREATER);
-		++s1;
-		++s2;
+	/* copy, ignoring things that should be ignored */
+	p = comparbuf;
+	i = stringlen;
+	while(s2 < s2end && *s2 != '\n' && i--) {
+		if (!dflag || isalnum(*s2))
+			*p++ = *s2;
+		s2++;
 	}
-	return (*s1 ? GREATER : EQUAL);
+	*p = 0;
+
+	/* and compare */
+	if (nocase)
+		i = strncasecmp(comparbuf, string, stringlen);
+	else
+		i = strncmp(comparbuf, string, stringlen);
+
+	return ((i > 0) ? LESS : (i < 0) ? GREATER : EQUAL);
 }
 
 static void

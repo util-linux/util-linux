@@ -48,6 +48,7 @@
 #include <pwd.h>
 #include <stdio.h>
 #include <string.h>
+#include <locale.h>
 #include <sys/param.h>
 #include <sys/signal.h>
 #include <sys/stat.h>
@@ -56,7 +57,6 @@
 #ifdef __linux__
 #include <paths.h>
 #include "pathnames.h"
-#include <locale.h>
 #endif
 
 void search_utmp(char *, char *, char *, uid_t);
@@ -67,7 +67,7 @@ int utmp_chk(char *, char *);
 
 extern int errno;
 
-void
+int
 main(int argc, char **argv)
 {
 	register char *cp;
@@ -77,9 +77,7 @@ main(int argc, char **argv)
 	char tty[MAXPATHLEN], *mytty, *ttyname();
 	void done();
 
-#ifdef __linux__
 	setlocale(LC_CTYPE,"");
-#endif
 
 	/* check that sender has write enabled */
 	if (isatty(fileno(stdin)))
@@ -143,6 +141,7 @@ main(int argc, char **argv)
 	}
 	done();
 	/* NOTREACHED */
+	return 0;
 }
 
 
@@ -291,11 +290,12 @@ void do_write(char *tty, char *mytty, uid_t myuid)
 	void done();
 
 	/* Determine our login name before the we reopen() stdout */
-	if ((login = getlogin()) == NULL)
+	if ((login = getlogin()) == NULL) {
 		if ((pwd = getpwuid(myuid)) != NULL)
 			login = pwd->pw_name;
 		else
 			login = "???";
+	}
 
 	if (strlen(tty) + 6 > sizeof(path))
 		exit(1);
@@ -347,8 +347,13 @@ void wr_fputs(char *s)
 			PUTC('\r');
 			PUTC('\n');
 		} else if (!isprint(c) && !isspace(c) && c != '\007') {
-			PUTC('^');
-			PUTC(c^0x40);	/* DEL to ?, others to alpha */
+			if (c & 0x80) {
+				/* use some fallback? */
+				(void)printf("\\%3o", (unsigned char) c);
+			} else {
+				PUTC('^');
+				PUTC(c^0x40);	/* DEL to ?, others to alpha */
+			}
 		} else
 			PUTC(c);
 	}

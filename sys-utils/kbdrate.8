@@ -49,6 +49,13 @@ Not all keyboards have the rates mapped in the same way.
 Setting the repeat rate on the Gateway AnyKey keyboard does not work.  If
 someone with a Gateway figures out how to program the keyboard, please send
 mail to faith@cs.unc.edu.
+.PP
+The above description is for i386 machines, and writing to some io port
+won't work on other architectures. Nowadays
+.B kbdrate
+first tries if the KDKBDREP ioctl is available. If it is, it is used,
+otherwise the old method is applied.
+
 .SH FILES
 .I /etc/rc.local
 .br

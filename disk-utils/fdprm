@@ -24,3 +24,5 @@
 1680/1440	3360	21   2  80    0 0x0C 0x00 0xCF     0x6C # ?????
 
 # Add user-specific formats here
+cbm1581         1600    10   2  80    2 0x2A 0x02 0xDF     0x2E
+800/720         1600    10   2  80    0 0x2A 0x02 0xDF     0x2E

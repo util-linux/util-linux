@@ -34,6 +34,10 @@
  * SUCH DAMAGE.
  */
 
+/* 1999-02-01	Jean-Francois Bignolles: added option '-m' to display
+ * 		monday as the first day of the week.
+ */
+
 /* This defines _LINUX_C_LIB_VERSION_MAJOR, dunno about gnulibc.  We
    don't want it to read /usr/i586-unknown-linux/include/_G_config.h
    so we specify fill path.  Were we got /usr/i586-unknown-linux from?
@@ -72,7 +76,7 @@
 #define	FIRST_MISSING_DAY 	639787		/* 3 Sep 1752 */
 #define	NUMBER_MISSING_DAYS 	11		/* 11 day correction */
 
-#define	MAXDAYS			42		/* max slots in a month array */
+#define	MAXDAYS			43		/* max slots in a month array */
 #define	SPACE			-1		/* used in day array */
 
 static int days_in_month[2][13] = {
@@ -87,6 +91,7 @@ int sep1752[MAXDAYS] = {
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
+	SPACE
 }, j_sep1752[MAXDAYS] = {
 	SPACE,	SPACE,	245,	246,	258,	259,	260,
 	261,	262,	263,	264,	265,	266,	267,
@@ -94,6 +99,7 @@ int sep1752[MAXDAYS] = {
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
+	SPACE
 }, empty[MAXDAYS] = {
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
@@ -101,10 +107,13 @@ int sep1752[MAXDAYS] = {
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
+	SPACE
 };
 
 char day_headings[]   = " S  M Tu  W Th  F  S ";
+/* week1stday = 1  =>   " M Tu  W Th  F  S  S " */
 char j_day_headings[] = "  S   M  Tu   W  Th   F   S ";
+/* week1stday = 1  =>   "  M  Tu   W  Th   F   S   S " */
 const char *full_month[12];
 
 /* leap year -- account for gregorian reformation in 1752 */
@@ -124,6 +133,8 @@ const char *full_month[12];
 #define	leap_years_since_year_1(yr) \
 	((yr) / 4 - centuries_since_1700(yr) + quad_centuries_since_1700(yr))
 
+/* 0 => sunday (default), 1 => monday */
+int week1stday;
 int julian;
 
 void	ascii_day __P((char *, int));
@@ -153,10 +164,12 @@ main(argc, argv)
 #endif
 
 	setlocale(LC_ALL,"");
-	headers_init();
 	yflag = 0;
-	while ((ch = getopt(argc, argv, "jy")) != EOF)
+	while ((ch = getopt(argc, argv, "mjy")) != EOF)
 		switch(ch) {
+		case 'm':
+			week1stday = 1;
+			break;
 		case 'j':
 			julian = 1;
 			break;
@@ -190,6 +203,7 @@ main(argc, argv)
 	default:
 		usage();
 	}
+	headers_init();
 
 	if (month)
 		monthly(month, year);
@@ -209,22 +223,28 @@ main(argc, argv)
 
 void headers_init(void)
 {
-  int i;
+  int i, wd;
 
   strcpy(day_headings,"");
   strcpy(j_day_headings,"");
+
+#if defined(__linux__) && (_LINUX_C_LIB_VERSION_MAJOR > 4 || __GNU_LIBRARY__ > 1)
+# define weekday(wd)	nl_langinfo(ABDAY_1+wd)
+#else
+# define weekday(wd)	_time_info->abbrev_wkday[wd]
+#endif
   
   for(i = 0 ; i < 7 ; i++ ) {
-#if defined(__linux__) && (_LINUX_C_LIB_VERSION_MAJOR > 4 || __GNU_LIBRARY__ > 1)
-     strncat(day_headings,nl_langinfo(ABDAY_1+i),2);
-     strcat(j_day_headings,nl_langinfo(ABDAY_1+i));
-#else
-     strncat(day_headings,_time_info->abbrev_wkday[i],2);
-     strcat(j_day_headings,_time_info->abbrev_wkday[i]);
-#endif
+     wd = (i + week1stday) % 7;
+     strncat(day_headings,weekday(wd),2);
+     strcat(j_day_headings,weekday(wd));
+     if (strlen(weekday(wd)) == 2)
+	strcat(j_day_headings," ");
      strcat(day_headings," ");
      strcat(j_day_headings," ");
   }
+
+#undef weekday
   
   for (i = 0; i < 12; i++) {
 #if defined(__linux__) && (_LINUX_C_LIB_VERSION_MAJOR > 4 || __GNU_LIBRARY__ > 1)
@@ -341,15 +361,16 @@ day_array(month, year, days)
 	int *days;
 {
 	int day, dw, dm;
+	int *d_sep1752;
 
 	if (month == 9 && year == 1752) {
-		memmove(days,
-			julian ? j_sep1752 : sep1752, MAXDAYS * sizeof(int));
+		d_sep1752 = julian ? j_sep1752 : sep1752;
+		memcpy(days, d_sep1752 + week1stday, MAXDAYS * sizeof(int));
 		return;
 	}
-	memmove(days, empty, MAXDAYS * sizeof(int));
+	memcpy(days, empty, MAXDAYS * sizeof(int));
 	dm = days_in_month[leap_year(year)][month];
-	dw = day_in_week(1, month, year);
+	dw = (day_in_week(1, month, year) - week1stday + 7) % 7;
 	day = julian ? day_in_year(1, month, year) : 1;
 	while (dm--)
 		days[dw++] = day++;
@@ -466,6 +487,6 @@ void
 usage()
 {
 
-	(void)fprintf(stderr, "usage: cal [-jy] [[month] year]\n");
+	(void)fprintf(stderr, "usage: cal [-mjy] [[month] year]\n");
 	exit(1);
 }

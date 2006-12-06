@@ -1,7 +1,7 @@
 #define _PATH_FSTAB	"/etc/fstab"
 #define MOUNTED_LOCK	"/etc/mtab~"
 #define MOUNTED_TEMP	"/etc/mtab.tmp"
-#define LOCK_BUSY	10
+#define LOCK_TIMEOUT	10
 
 int mtab_is_writable(void);
 int mtab_does_not_exist(void);
@@ -18,10 +18,13 @@ struct mntentchn {
 struct mntentchn *mtab_head (void);
 struct mntentchn *getmntfile (const char *name);
 struct mntentchn *getmntoptfile (const char *file);
+struct mntentchn *getmntfilesbackward (const char *file, struct mntentchn *mc);
 
 struct mntentchn *fstab_head (void);
 struct mntentchn *getfsfile (const char *file);
 struct mntentchn *getfsspec (const char *spec);
+struct mntentchn *getfsuuidspec (const char *uuid);
+struct mntentchn *getfsvolspec (const char *label);
 
 #include <mntent.h>
 void lock_mtab (void);
