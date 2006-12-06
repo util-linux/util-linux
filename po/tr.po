@@ -9,9 +9,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.11t\n"
-"POT-Creation-Date: 2002-08-04 02:14+0200\n"
-"PO-Revision-Date: 2002-07-11 10:20+0300\n"
+"Project-Id-Version: util-linux 2.11u\n"
+"POT-Creation-Date: 2002-08-05 07:00-0400\n"
+"PO-Revision-Date: 2002-09-11 17:26+0300\n"
 "Last-Translator: Nilgün Belma Bugüner <nilgun@superonline.com>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -284,9 +284,7 @@ msgstr "%s: geçersiz cramfs -- hatalı süperblok\n"
 #: disk-utils/fsck.cramfs.c:608
 #, c-format
 msgid "%s: invalid cramfs--directory data end (%ld) != file data start (%ld)\n"
-msgstr ""
-"%s: geçersiz cramfs -- dizin verisi sonu (%ld) != dosya verisi başlangıcı (%"
-"ld)\n"
+msgstr "%s: geçersiz cramfs -- dizin verisi sonu (%ld) != dosya verisi başlangıcı (%ld)\n"
 
 #: disk-utils/fsck.cramfs.c:616
 #, c-format
@@ -830,8 +828,7 @@ msgstr "%s kapatılırken hata"
 
 #: disk-utils/mkfs.c:76
 msgid "Usage: mkfs [-V] [-t fstype] [fs-options] device [size]\n"
-msgstr ""
-"Kullanımı: mkfs [-V] [-t dsySistTürü] [dsySist-seçenekleri] aygıt [uzunluk]\n"
+msgstr "Kullanımı: mkfs [-V] [-t dsySistTürü] [dsySist-seçenekleri] aygıt [uzunluk]\n"
 
 #: disk-utils/mkfs.c:90 fdisk/cfdisk.c:372 getopt-1.1.2/getopt.c:89
 #: getopt-1.1.2/getopt.c:99 login-utils/wall.c:237
@@ -866,8 +863,7 @@ msgstr ""
 " -E        uyarılar hata olarak verilir (sıfırdan farklı çıkış kodu)\n"
 " -e baskı  baskı numarasını ayarlar (dosyasistemi kimliğinin bir parçası)\n"
 " -i dosya  dosya sistemine bir dosya eşlemi sokuşturur (>= 2.4.0 gerekir)\n"
-" -n isim   cramfs dosya sistemi ismi ayarlanırr  -p        önyükleme koduna %"
-"d baytlık adımlama uygulanır\n"
+" -n isim   cramfs dosya sistemi ismi ayarlanırr  -p        önyükleme koduna %d baytlık adımlama uygulanır\n"
 " -s        dizin içeriğini sıralar (eski seçenek, yoksayılır)\n"
 " -z        belirgin delikler yapar (>= 2.3.39 gerekir)\n"
 " dizinismi sıkıştırılan dosya sisteminin kökü\n"
@@ -880,20 +876,15 @@ msgid ""
 " Please increase MAX_INPUT_NAMELEN in mkcramfs.c and recompile.  Exiting.\n"
 msgstr ""
 "Çok uzun (%u baytlık) dosya ismi `%s' bulundu.\n"
-"mkcramfs.c içinde MAX_INPUT_NAMELEN değerini arttırın ve tekrar derleyin.   "
-"Çıkılıyor.\n"
+"mkcramfs.c içinde MAX_INPUT_NAMELEN değerini arttırın ve tekrar derleyin.   Çıkılıyor.\n"
 
 #: disk-utils/mkfs.cramfs.c:371
 msgid "filesystem too big.  Exiting.\n"
 msgstr "dosya sistemi çok büyük.  Çıklıyor.\n"
 
 #: disk-utils/mkfs.cramfs.c:422
-msgid ""
-"Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  "
-"Exiting.\n"
-msgstr ""
-"MAXENTRIES aşıldı.  mkcramfs.c içinde bu değeri yükseltin ve yeniden "
-"derleyin.   Çıkılıyor.\n"
+msgid "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  Exiting.\n"
+msgstr "MAXENTRIES aşıldı.  mkcramfs.c içinde bu değeri yükseltin ve yeniden derleyin.   Çıkılıyor.\n"
 
 #. (I don't think this can happen with zlib.)
 #: disk-utils/mkfs.cramfs.c:520
@@ -908,12 +899,8 @@ msgstr "%%%6.2f (%+d bayt)\t%s\n"
 
 #: disk-utils/mkfs.cramfs.c:705
 #, c-format
-msgid ""
-"warning: guestimate of required size (upper bound) is %LdMB, but maximum "
-"image size is %uMB.  We might die prematurely.\n"
-msgstr ""
-"uyarı: gereken tahmini boyut (üst sınır) %Ld MB, ama en büyük bellekeşlem "
-"boyu %u MB.   Vakitsiz ölüm.\n"
+msgid "warning: guestimate of required size (upper bound) is %LdMB, but maximum image size is %uMB.  We might die prematurely.\n"
+msgstr "uyarı: gereken tahmini boyut (üst sınır) %Ld MB, ama en büyük bellekeşlem boyu %u MB.   Vakitsiz ölüm.\n"
 
 #: disk-utils/mkfs.cramfs.c:747
 #, c-format
@@ -943,8 +930,7 @@ msgstr "CRC: %x\n"
 #: disk-utils/mkfs.cramfs.c:778
 #, c-format
 msgid "not enough space allocated for ROM image (%Ld allocated, %d used)\n"
-msgstr ""
-"ROM bellekeşlemi için ayrılan alan yetersiz (%Ld ayrıldı, %d kullanıldı)\n"
+msgstr "ROM bellekeşlemi için ayrılan alan yetersiz (%Ld ayrıldı, %d kullanıldı)\n"
 
 #: disk-utils/mkfs.cramfs.c:790
 #, c-format
@@ -970,34 +956,25 @@ msgstr "uyarı: dosya boyutları %luMB'a düşürüldü (eksi 1 bayt).\n"
 
 #: disk-utils/mkfs.cramfs.c:810
 #, c-format
-msgid ""
-"warning: uids truncated to %u bits.  (This may be a security concern.)\n"
-msgstr ""
-"uyarı: kullanıcı kimlikleri %u bite düşürüldü. (Bu bir güvenlik kaygısı "
-"olabilir.)\n"
+msgid "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
+msgstr "uyarı: kullanıcı kimlikleri %u bite düşürüldü. (Bu bir güvenlik kaygısı olabilir.)\n"
 
 #: disk-utils/mkfs.cramfs.c:815
 #, c-format
-msgid ""
-"warning: gids truncated to %u bits.  (This may be a security concern.)\n"
-msgstr ""
-"uyarı: grup kimlikleri %u bite düşürüldü. (Bu bir güvenlik kaygısı "
-"olabilir.)\n"
+msgid "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
+msgstr "uyarı: grup kimlikleri %u bite düşürüldü. (Bu bir güvenlik kaygısı olabilir.)\n"
 
 #: disk-utils/mkfs.cramfs.c:820
 #, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
 "that some device files will be wrong.\n"
-msgstr ""
-"UYARI: aygıt numaraları %u bitle sınırlandı. Bu işlem bazı aygıt "
-"dosyalarının isimlerinin yanlış olmasına sebep olacak.\n"
+msgstr "UYARI: aygıt numaraları %u bitle sınırlandı. Bu işlem bazı aygıt dosyalarının isimlerinin yanlış olmasına sebep olacak.\n"
 
 #: disk-utils/mkfs.minix.c:181
 #, c-format
 msgid "Usage: %s [-c | -l filename] [-nXX] [-iXX] /dev/name [blocks]\n"
-msgstr ""
-"Kullanımı: %s [-c | -l dosyaismi] [-nXX] [-iXX] /dev/isim [blokSayısı]\n"
+msgstr "Kullanımı: %s [-c | -l dosyaismi] [-nXX] [-iXX] /dev/isim [blokSayısı]\n"
 
 #: disk-utils/mkfs.minix.c:205
 #, c-format
@@ -1132,8 +1109,7 @@ msgstr "Sayfa uzunluğu olarak %d kullanılıyor (%d değil)\n"
 #: disk-utils/mkswap.c:322
 #, c-format
 msgid "Usage: %s [-c] [-v0|-v1] [-pPAGESZ] /dev/name [blocks]\n"
-msgstr ""
-"Kullanımı: %s [-c] [-v0|-v1] [-pSayfaUzunluğu] /dev/isim [blokSayısı]\n"
+msgstr "Kullanımı: %s [-c] [-v0|-v1] [-pSayfaUzunluğu] /dev/isim [blokSayısı]\n"
 
 #: disk-utils/mkswap.c:345
 msgid "too many bad pages"
@@ -1243,11 +1219,8 @@ msgstr "   %s [ -p ] aygıt isim\n"
 
 #: disk-utils/setfdprm.c:102
 #, c-format
-msgid ""
-"   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
-msgstr ""
-"   %s [ -p ] aygıt uzunluk sektor kafa iz gerilme boşluk oran özellik1 "
-"fmt_gap\n"
+msgid "   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
+msgstr "   %s [ -p ] aygıt uzunluk sektor kafa iz gerilme boşluk oran özellik1 fmt_gap\n"
 
 #: disk-utils/setfdprm.c:105
 #, c-format
@@ -1375,14 +1348,11 @@ msgid "enlarged logical partitions overlap"
 msgstr "büyütülen mantıksal bölümler içiçe geçiyor"
 
 #: fdisk/cfdisk.c:966
-msgid ""
-"!!!! Internal error creating logical drive with no extended partition !!!!"
-msgstr ""
-"!!!! Ek disk bölümü içermeyen mantıksal bölüm oluşturulurken iç hata !!!!"
+msgid "!!!! Internal error creating logical drive with no extended partition !!!!"
+msgstr "!!!! Ek disk bölümü içermeyen mantıksal bölüm oluşturulurken iç hata !!!!"
 
 #: fdisk/cfdisk.c:977 fdisk/cfdisk.c:989
-msgid ""
-"Cannot create logical drive here -- would create two extended partitions"
+msgid "Cannot create logical drive here -- would create two extended partitions"
 msgstr "Burada mantıksal bölüm oluşturulamıyor -- iki ek bölüm oluşacaktı"
 
 #: fdisk/cfdisk.c:1137
@@ -1457,9 +1427,7 @@ msgstr "Ek disk bölümünü oluşturacak yer yok"
 
 #: fdisk/cfdisk.c:1509
 msgid "No partition table or unknown signature on partition table"
-msgstr ""
-"Ya disk bölümleme tablosu yok ya da disk bölümleme tablosunda bilinmeyen "
-"imza var"
+msgstr "Ya disk bölümleme tablosu yok ya da disk bölümleme tablosunda bilinmeyen imza var"
 
 #: fdisk/cfdisk.c:1511
 msgid "Do you wish to start with a zero table [y/N] ?"
@@ -1522,24 +1490,16 @@ msgid "Wrote partition table to disk"
 msgstr "Disk bölümleme tablosu diske yazıldı"
 
 #: fdisk/cfdisk.c:1833
-msgid ""
-"Wrote partition table, but re-read table failed.  Reboot to update table."
-msgstr ""
-"Bölümleme tablosu yazıldı ama tablo yeniden okunamadı. Sistemi yeniden "
-"başlatın."
+msgid "Wrote partition table, but re-read table failed.  Reboot to update table."
+msgstr "Bölümleme tablosu yazıldı ama tablo yeniden okunamadı. Sistemi yeniden başlatın."
 
 #: fdisk/cfdisk.c:1843
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
-msgstr ""
-"Önyükleme için imlenmiş hiç birincil disk bölümü yok. DOS MBR bunu "
-"başlatamayabilir."
+msgstr "Önyükleme için imlenmiş hiç birincil disk bölümü yok. DOS MBR bunu başlatamayabilir."
 
 #: fdisk/cfdisk.c:1845
-msgid ""
-"More than one primary partition is marked bootable. DOS MBR cannot boot this."
-msgstr ""
-"Önyükleme için imlenmiş çok sayıda birincil disk bölümü var. DOS MBR bunu "
-"başlatamayabilir."
+msgid "More than one primary partition is marked bootable. DOS MBR cannot boot this."
+msgstr "Önyükleme için imlenmiş çok sayıda birincil disk bölümü var. DOS MBR bunu başlatamayabilir."
 
 #: fdisk/cfdisk.c:1903 fdisk/cfdisk.c:2022 fdisk/cfdisk.c:2106
 msgid "Enter filename or press RETURN to display on screen: "
@@ -1613,19 +1573,12 @@ msgid "            First    Last\n"
 msgstr " Bölüm       İlk      Son              Sektör     Dosya\n"
 
 #: fdisk/cfdisk.c:2044
-msgid ""
-" # Type     Sector   Sector   Offset  Length   Filesystem Type (ID)   Flags\n"
-msgstr ""
-" # Türü     Sektör   Sektör    Başl    Sayısı    Sistemi     Kimlik   "
-"Flamalar\n"
+msgid " # Type     Sector   Sector   Offset  Length   Filesystem Type (ID)   Flags\n"
+msgstr " # Türü     Sektör   Sektör    Başl    Sayısı    Sistemi     Kimlik   Flamalar\n"
 
 #: fdisk/cfdisk.c:2045
-msgid ""
-"-- ------- -------- --------- ------ --------- ---------------------- "
-"---------\n"
-msgstr ""
-"-- ------- -------- --------- ------ --------- ---------------------- "
-"---------\n"
+msgid "-- ------- -------- --------- ------ --------- ---------------------- ---------\n"
+msgstr "-- ------- -------- --------- ------ --------- ---------------------- ---------\n"
 
 #. Three-line heading. Read "Start Sector" etc vertically.
 #: fdisk/cfdisk.c:2128
@@ -1674,13 +1627,11 @@ msgstr "cfdisk Yardım Ekranı"
 
 #: fdisk/cfdisk.c:2196
 msgid "This is cfdisk, a curses based disk partitioning program, which"
-msgstr ""
-"Sabit diskinizdeki disk bölümlerini oluşturabilmenizi, silebilmenizi ve"
+msgstr "Sabit diskinizdeki disk bölümlerini oluşturabilmenizi, silebilmenizi ve"
 
 #: fdisk/cfdisk.c:2197
 msgid "allows you to create, delete and modify partitions on your hard"
-msgstr ""
-"değiştirebilmenizi sağlayan etkileşimli bir disk bölümleme uygulamasıdır."
+msgstr "değiştirebilmenizi sağlayan etkileşimli bir disk bölümleme uygulamasıdır."
 
 #: fdisk/cfdisk.c:2198
 msgid "disk drive."
@@ -1744,8 +1695,7 @@ msgstr "  p          Disk bölümleme tablosunu ekrana ya da bir dosyaya yazar"
 
 #: fdisk/cfdisk.c:2215
 msgid "             There are several different formats for the partition"
-msgstr ""
-"             Disk bölümleme tablosunu farklı biçemlerde elde edebilirsiniz."
+msgstr "             Disk bölümleme tablosunu farklı biçemlerde elde edebilirsiniz."
 
 #: fdisk/cfdisk.c:2216
 msgid "             that you can choose from:"
@@ -1765,8 +1715,7 @@ msgstr "                t - Geleneksel disk bölümleme tablosu"
 
 #: fdisk/cfdisk.c:2220
 msgid "  q          Quit program without writing partition table"
-msgstr ""
-"  q          Disk bölümleme tablosu diskteki yerine kaydedilmeden çıkılır"
+msgstr "  q          Disk bölümleme tablosu diskteki yerine kaydedilmeden çıkılır"
 
 #: fdisk/cfdisk.c:2221
 msgid "  t          Change the filesystem type"
@@ -1790,8 +1739,7 @@ msgstr "             Diskteki veriyi yanlışlıkla kaybetmemek için "
 
 #: fdisk/cfdisk.c:2226
 msgid "             either confirm or deny the write by entering `yes' or"
-msgstr ""
-"             'evet' ya da 'hayır' yazmanız istenerek veriyi diske yazdırıp,"
+msgstr "             'evet' ya da 'hayır' yazmanız istenerek veriyi diske yazdırıp,"
 
 #: fdisk/cfdisk.c:2227
 msgid "             `no'"
@@ -2045,9 +1993,7 @@ msgstr "Kaydet"
 
 #: fdisk/cfdisk.c:2663
 msgid "Write partition table to disk (this might destroy data)"
-msgstr ""
-"Disk bölümleme tablosunu diske kaydeder (bu işlem verilerin kaybına sebep "
-"olur)"
+msgstr "Disk bölümleme tablosunu diske kaydeder (bu işlem verilerin kaybına sebep olur)"
 
 #: fdisk/cfdisk.c:2709
 msgid "Cannot make this partition bootable"
@@ -2435,8 +2381,7 @@ msgid ""
 "content won't be recoverable.\n"
 "\n"
 msgstr ""
-"Yeni bir DOS disk etiketi kurgulanıyor. Siz onları yazana kadar "
-"değişiklikler\n"
+"Yeni bir DOS disk etiketi kurgulanıyor. Siz onları yazana kadar değişiklikler\n"
 "bellekte bekleyecek. Aksi takdirde, önceki içerik kurtarılamayacak.\n"
 
 #: fdisk/fdisk.c:753
@@ -2457,12 +2402,8 @@ msgstr ""
 "BSD kipine geçmek için 'b' komutunu verin.\n"
 
 #: fdisk/fdisk.c:924
-msgid ""
-"Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
-"disklabel\n"
-msgstr ""
-"Aygıt ne geçerli bir DOS disk bölümleme tablosu ne de Sun, SGI ya da OSF "
-"disk etiketleri içeriyor.\n"
+msgid "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"
+msgstr "Aygıt ne geçerli bir DOS disk bölümleme tablosu ne de Sun, SGI ya da OSF disk etiketleri içeriyor.\n"
 
 #: fdisk/fdisk.c:941
 msgid "Internal error\n"
@@ -2475,12 +2416,8 @@ msgstr "Fazladan ek disk bölümü %d yoksayılıyor\n"
 
 #: fdisk/fdisk.c:966
 #, c-format
-msgid ""
-"Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
-"(rite)\n"
-msgstr ""
-"Uyarı: geçersiz bayrak 0x%04x %d. disk bölümleme tablosunda w(yaz) ile "
-"düzeltilmiş olacak\n"
+msgid "Warning: invalid flag 0x%04x of partition table %d will be corrected by w(rite)\n"
+msgstr "Uyarı: geçersiz bayrak 0x%04x %d. disk bölümleme tablosunda w(yaz) ile düzeltilmiş olacak\n"
 
 #: fdisk/fdisk.c:988
 msgid ""
@@ -2594,9 +2531,7 @@ msgstr "%d disk bölümünün sistem türü %x (%s) olarak değiştirildi\n"
 #: fdisk/fdisk.c:1369
 #, c-format
 msgid "Partition %d has different physical/logical beginnings (non-Linux?):\n"
-msgstr ""
-"%d disk bölümü farklı fiziksel/mantıksal başlangıçlara sahip (Linux "
-"değil?):\n"
+msgstr "%d disk bölümü farklı fiziksel/mantıksal başlangıçlara sahip (Linux değil?):\n"
 
 #: fdisk/fdisk.c:1371 fdisk/fdisk.c:1379 fdisk/fdisk.c:1388 fdisk/fdisk.c:1397
 #, c-format
@@ -2694,20 +2629,17 @@ msgstr "Uyarı: %d disk bölümü 0. sektörü içeriyor\n"
 #: fdisk/fdisk.c:1674
 #, c-format
 msgid "Partition %d: head %d greater than maximum %d\n"
-msgstr ""
-"%d disk bölümü: kafa sayısı %d en çok olabileceği %d değerinden büyük\n"
+msgstr "%d disk bölümü: kafa sayısı %d en çok olabileceği %d değerinden büyük\n"
 
 #: fdisk/fdisk.c:1677
 #, c-format
 msgid "Partition %d: sector %d greater than maximum %d\n"
-msgstr ""
-"%d disk bölümü: sektör sayısı %d en çok olabileceği %d değerinden büyük\n"
+msgstr "%d disk bölümü: sektör sayısı %d en çok olabileceği %d değerinden büyük\n"
 
 #: fdisk/fdisk.c:1680
 #, c-format
 msgid "Partitions %d: cylinder %d greater than maximum %d\n"
-msgstr ""
-"%d disk bölümü: silindir sayısı %d en çok olabileceği %d değerinden büyük\n"
+msgstr "%d disk bölümü: silindir sayısı %d en çok olabileceği %d değerinden büyük\n"
 
 #: fdisk/fdisk.c:1684
 #, c-format
@@ -2737,8 +2669,7 @@ msgstr "Mantıksal disk bölümü %d tamamen %d disk bölümünün içinde deği
 #: fdisk/fdisk.c:1755
 #, c-format
 msgid "Total allocated sectors %d greater than the maximum %d\n"
-msgstr ""
-"Tahsis edilen sektör sayısı %d en fazla olması gereken %d değerinden büyük\n"
+msgstr "Tahsis edilen sektör sayısı %d en fazla olması gereken %d değerinden büyük\n"
 
 #: fdisk/fdisk.c:1758
 #, c-format
@@ -2788,8 +2719,7 @@ msgstr "Oluşturulabilecek disk bölümlerinin tümü oluşturuldu\n"
 
 #: fdisk/fdisk.c:1936
 msgid "You must delete some partition and add an extended partition first\n"
-msgstr ""
-"Önce bazı disk bölümlerini silip ondan sonra ek disk bölümünü eklemelisiniz\n"
+msgstr "Önce bazı disk bölümlerini silip ondan sonra ek disk bölümünü eklemelisiniz\n"
 
 #: fdisk/fdisk.c:1941
 #, c-format
@@ -2907,23 +2837,17 @@ msgstr "%c: komut bilinmiyor\n"
 
 #: fdisk/fdisk.c:2351
 msgid "This kernel finds the sector size itself - -b option ignored\n"
-msgstr ""
-"Bu çekirdek sektör uzunluğunu kendisi bulur. - -b seçeneği yoksayıldı\n"
+msgstr "Bu çekirdek sektör uzunluğunu kendisi bulur. - -b seçeneği yoksayıldı\n"
 
 #: fdisk/fdisk.c:2355
-msgid ""
-"Warning: the -b (set sector size) option should be used with one specified "
-"device\n"
-msgstr ""
-"Uyarı: -b (sektör uzunluğu ayarı) seçeneği tek aygıt ile kullanılmış "
-"olmalıydı\n"
+msgid "Warning: the -b (set sector size) option should be used with one specified device\n"
+msgstr "Uyarı: -b (sektör uzunluğu ayarı) seçeneği tek aygıt ile kullanılmış olmalıydı\n"
 
 #. OSF label, and no DOS label
 #: fdisk/fdisk.c:2414
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
-msgstr ""
-"%s üzerinde OSF/1 disk etiketi saptandı, disk etiketi kipine giriliyor.\n"
+msgstr "%s üzerinde OSF/1 disk etiketi saptandı, disk etiketi kipine giriliyor.\n"
 
 #: fdisk/fdisk.c:2424
 msgid "Command (m for help): "
@@ -3334,11 +3258,8 @@ msgid "Linux RAID"
 msgstr "Linux RAID"
 
 #: fdisk/fdisksgilabel.c:158
-msgid ""
-"According to MIPS Computer Systems, Inc the Label must not contain more than "
-"512 bytes\n"
-msgstr ""
-"MIPS Computer Systems, Inc'e göre, Etiket 512 bayttan fazlasını içeremez\n"
+msgid "According to MIPS Computer Systems, Inc the Label must not contain more than 512 bytes\n"
+msgstr "MIPS Computer Systems, Inc'e göre, Etiket 512 bayttan fazlasını içeremez\n"
 
 #: fdisk/fdisksgilabel.c:177
 msgid "Detected sgi disklabel with wrong checksum.\n"
@@ -4252,9 +4173,7 @@ msgstr "disk bölümü tekrar oluşturma dosyası (%s) durum bilgileri alınamı
 
 #: fdisk/sfdisk.c:319
 msgid "partition restore file has wrong size - not restoring\n"
-msgstr ""
-"disk bölümü tekrar oluşturma dosyasının uzunluğu hatalı - tekrar "
-"oluşturulamıyor\n"
+msgstr "disk bölümü tekrar oluşturma dosyasının uzunluğu hatalı - tekrar oluşturulamıyor\n"
 
 #: fdisk/sfdisk.c:323
 msgid "out of memory?\n"
@@ -4323,8 +4242,7 @@ msgid ""
 "This will give problems with all software that uses C/H/S addressing.\n"
 msgstr ""
 "Uyarı: sektör sayısı (%lu) en fazla 63 olabileceğinden pek sektör\n"
-"sayısına benzemiyor. Bu chs adresleme kullanılan yazılımlarla sorun "
-"çıkarır.\n"
+"sayısına benzemiyor. Bu chs adresleme kullanılan yazılımlarla sorun çıkarır.\n"
 
 #: fdisk/sfdisk.c:456
 #, c-format
@@ -4337,29 +4255,18 @@ msgstr ""
 
 #: fdisk/sfdisk.c:538
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
-msgstr ""
-"%s (%s disk bölümündeki) yanlış kafa sayısı içeriyor: %lu (0-%lu arasında "
-"olmalıydı)\n"
+msgid "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
+msgstr "%s (%s disk bölümündeki) yanlış kafa sayısı içeriyor: %lu (0-%lu arasında olmalıydı)\n"
 
 #: fdisk/sfdisk.c:543
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for sector: %lu (should be in 1-%"
-"lu)\n"
-msgstr ""
-"%s (%s disk bölümündeki) yanlış sektör sayısı içeriyor: %lu (1-%lu arasında "
-"olmalıydı)\n"
+msgid "%s of partition %s has impossible value for sector: %lu (should be in 1-%lu)\n"
+msgstr "%s (%s disk bölümündeki) yanlış sektör sayısı içeriyor: %lu (1-%lu arasında olmalıydı)\n"
 
 #: fdisk/sfdisk.c:548
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for cylinders: %lu (should be in 0-%"
-"lu)\n"
-msgstr ""
-"%s (%s disk bölümündeki) yanlış silindir sayısı içeriyor: %lu (0-%lu "
-"arasında olmalıydı)\n"
+msgid "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%lu)\n"
+msgstr "%s (%s disk bölümündeki) yanlış silindir sayısı içeriyor: %lu (0-%lu arasında olmalıydı)\n"
 
 #: fdisk/sfdisk.c:588
 msgid ""
@@ -4468,15 +4375,12 @@ msgstr ""
 #: fdisk/sfdisk.c:1047
 #, c-format
 msgid "\t\tstart: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"\t\tbaşlangıç: (sld,kafa,sekt) (%ld,%ld,%ld) gerekirken (%ld,%ld,%ld) "
-"bulundu\n"
+msgstr "\t\tbaşlangıç: (sld,kafa,sekt) (%ld,%ld,%ld) gerekirken (%ld,%ld,%ld) bulundu\n"
 
 #: fdisk/sfdisk.c:1054
 #, c-format
 msgid "\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"\t\tbitiş: (sld,kafa,sekt) (%ld,%ld,%ld) gerekirken (%ld,%ld,%ld) bulundu\n"
+msgstr "\t\tbitiş: (sld,kafa,sekt) (%ld,%ld,%ld) gerekirken (%ld,%ld,%ld) bulundu\n"
 
 #: fdisk/sfdisk.c:1057
 #, c-format
@@ -4605,8 +4509,7 @@ msgstr ""
 
 #: fdisk/sfdisk.c:1275
 #, c-format
-msgid ""
-"partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
+msgid "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "%s: başlangıç: (sld,kafa,sekt) sırasıyla (%ld,%ld,%ld) olmalıydı\n"
 "(%ld,%ld,%ld) bulundu\n"
@@ -4771,8 +4674,7 @@ msgid ""
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
 "Usually you only need to specify <start> and <size> (and perhaps <type>).\n"
 msgstr ""
-"Girdi biçemi aşağıdaki gibidir; verilmeyen alanlara öntanımlı değerler "
-"atanır.\n"
+"Girdi biçemi aşağıdaki gibidir; verilmeyen alanlara öntanımlı değerler atanır.\n"
 "<başlangıç> <uzunluk> <türü [E,S,L,X,hex]> <önyükleme [-,*]>\n"
 "<sld,kafa,sekt> <sld,kafa,sekt>\n"
 "Genellikle <başlangıç> ve <uzunluk> değerleri (ve tabii ki <türü>)\n"
@@ -4801,8 +4703,7 @@ msgstr "    -s  --show-size     disk bölümü uzunlukları listelenir"
 
 #: fdisk/sfdisk.c:2235
 msgid "    -c [or --id]:        print or change partition Id"
-msgstr ""
-"    -c  --id            disk bölümü kimliği değiştirilir ya da gösterilir"
+msgstr "    -c  --id            disk bölümü kimliği değiştirilir ya da gösterilir"
 
 #: fdisk/sfdisk.c:2236
 msgid "    -l [or --list]:      list partitions of each device"
@@ -4810,20 +4711,15 @@ msgstr "    -l  --list          aygıtların disk bölümlerini listeler"
 
 #: fdisk/sfdisk.c:2237
 msgid "    -d [or --dump]:      idem, but in a format suitable for later input"
-msgstr ""
-"    -d  --dump          dökümler, ama sonraki girdiler için uygun biçemde"
+msgstr "    -d  --dump          dökümler, ama sonraki girdiler için uygun biçemde"
 
 #: fdisk/sfdisk.c:2238
 msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
 msgstr "    -i  --increment     silindir sayısı v.s. 0 yerine 1 den itibaren"
 
 #: fdisk/sfdisk.c:2239
-msgid ""
-"    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
-"MB"
-msgstr ""
-"    -uS, -uB, -uC, -uM  sektör/blok/silindir/MB birimleriyle değer alır/"
-"gösterir"
+msgid "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB"
+msgstr "    -uS, -uB, -uC, -uM  sektör/blok/silindir/MB birimleriyle değer alır/gösterir"
 
 #: fdisk/sfdisk.c:2240
 msgid "    -T [or --list-types]:list the known partition types"
@@ -4831,8 +4727,7 @@ msgstr "    -T  --list-types    bilinen disk bölümü türlerini listeler"
 
 #: fdisk/sfdisk.c:2241
 msgid "    -D [or --DOS]:       for DOS-compatibility: waste a little space"
-msgstr ""
-"    -D  --DOS           DOS-uyumluluğu için: bir disk bölümünü çoraklaştırır"
+msgstr "    -D  --DOS           DOS-uyumluluğu için: bir disk bölümünü çoraklaştırır"
 
 #: fdisk/sfdisk.c:2242
 msgid "    -R [or --re-read]:   make kernel reread partition table"
@@ -4847,8 +4742,7 @@ msgid "    -n :                 do not actually write to disk"
 msgstr "    -n                  gerçekte diske yazılmaz"
 
 #: fdisk/sfdisk.c:2245
-msgid ""
-"    -O file :            save the sectors that will be overwritten to file"
+msgid "    -O file :            save the sectors that will be overwritten to file"
 msgstr "    -O dosya            üstüne yazarak sektörleri dosyaya kaydeder"
 
 #: fdisk/sfdisk.c:2246
@@ -4880,10 +4774,8 @@ msgstr ""
 "                        betimleyicileri için girdi bekler"
 
 #: fdisk/sfdisk.c:2253
-msgid ""
-"    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
-msgstr ""
-"    -L  --Linux         Linux ile alakasız şeyler hakkında hata üretmez"
+msgid "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
+msgstr "    -L  --Linux         Linux ile alakasız şeyler hakkında hata üretmez"
 
 #: fdisk/sfdisk.c:2254
 msgid "    -q  [or --quiet]:      suppress warning messages"
@@ -4932,9 +4824,7 @@ msgstr ""
 #: fdisk/sfdisk.c:2269
 #, c-format
 msgid "%s -An device\t activate partition n, inactivate the other ones\n"
-msgstr ""
-"%s -An aygıt\t n. disk bölümünü etkinleştirilir, diğerlerini "
-"etkisizleştirilir\n"
+msgstr "%s -An aygıt\t n. disk bölümünü etkinleştirilir, diğerlerini etkisizleştirilir\n"
 
 #: fdisk/sfdisk.c:2421
 msgid "no command?\n"
@@ -5120,8 +5010,7 @@ msgid ""
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
 "(See fdisk(8).)\n"
 msgstr ""
-"Bir DOS disk bölümünü (örn. /dev/foo7) oluşturduysanız ya da "
-"değiştirdiyseniz\n"
+"Bir DOS disk bölümünü (örn. /dev/foo7) oluşturduysanız ya da değiştirdiyseniz\n"
 "ilk 512 baytını sıfırlamak için dd kullanın:\n"
 "dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
 "(daha fazla bilgi için: fdisk(8).)\n"
@@ -5148,16 +5037,14 @@ msgstr "       getopt [seçenekler] [--] seçenek-dizgesi parametreler\n"
 
 #: getopt-1.1.2/getopt.c:326
 msgid "       getopt [options] -o|--options optstring [options] [--]\n"
-msgstr ""
-"       getopt [seçenekler] -o|--options seçenek-dizgesi [seçenekler] [--]\n"
+msgstr "       getopt [seçenekler] -o|--options seçenek-dizgesi [seçenekler] [--]\n"
 
 #: getopt-1.1.2/getopt.c:327
 msgid "              parameters\n"
 msgstr "              parametreler\n"
 
 #: getopt-1.1.2/getopt.c:328
-msgid ""
-"  -a, --alternative            Allow long options starting with single -\n"
+msgid "  -a, --alternative            Allow long options starting with single -\n"
 msgstr ""
 "  -a, --alternative             tek - ile başlayan uzun seçeneklere izin\n"
 "                                verilir\n"
@@ -5171,8 +5058,7 @@ msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr "  -l, --longoptions=uzunSeçnk   tanınacak uzun seçenek belirtilir\n"
 
 #: getopt-1.1.2/getopt.c:331
-msgid ""
-"  -n, --name=progname          The name under which errors are reported\n"
+msgid "  -n, --name=progname          The name under which errors are reported\n"
 msgstr "  -n, --name=uygismi            Hatalar bu isim altında raporlanır\n"
 
 #: getopt-1.1.2/getopt.c:332
@@ -5181,8 +5067,7 @@ msgstr "  -o, --options=sçnkdizgesi     Tanınacak kısa seçenekler belirtilir
 
 #: getopt-1.1.2/getopt.c:333
 msgid "  -q, --quiet                  Disable error reporting by getopt(3)\n"
-msgstr ""
-"  -q, --quiet                   getopt(3)'un ürettiği hatalar gösterilmez\n"
+msgstr "  -q, --quiet                   getopt(3)'un ürettiği hatalar gösterilmez\n"
 
 #: getopt-1.1.2/getopt.c:334
 msgid "  -Q, --quiet-output           No normal output\n"
@@ -5313,9 +5198,7 @@ msgstr "Donanım saatinde geçersiz değerler: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 #: hwclock/hwclock.c:407
 #, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr ""
-"Donanım zamanı: %4d/%.2d/%.2d %.2d:%.2d:%.2d = 1969 yılından beri %ld "
-"saniye\n"
+msgstr "Donanım zamanı: %4d/%.2d/%.2d %.2d:%.2d:%.2d = 1969 yılından beri %ld saniye\n"
 
 #: hwclock/hwclock.c:435
 #, c-format
@@ -5325,8 +5208,7 @@ msgstr "Donanım saatinden okunan: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 #: hwclock/hwclock.c:462
 #, c-format
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr ""
-"Donanım Saati %.2d:%.2d:%.2d = 1969 dan beri %ld saniye olarak ayarlanıyor\n"
+msgstr "Donanım Saati %.2d:%.2d:%.2d = 1969 dan beri %ld saniye olarak ayarlanıyor\n"
 
 #: hwclock/hwclock.c:468
 msgid "Clock not changed - testing only.\n"
@@ -5342,12 +5224,8 @@ msgstr ""
 "Gecikme sonraki tam saniyeye kadar olandan daha fazla.\n"
 
 #: hwclock/hwclock.c:540
-msgid ""
-"The Hardware Clock registers contain values that are either invalid (e.g. "
-"50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
-msgstr ""
-"Donanım saati yazmaçları hem geçersiz (ayın 50. günü gibi) hem de elde "
-"edilebilir olmayan bir aralıkta (2500 yılı gibi) değerler içeriyor.\n"
+msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
+msgstr "Donanım saati yazmaçları hem geçersiz (ayın 50. günü gibi) hem de elde edilebilir olmayan bir aralıkta (2500 yılı gibi) değerler içeriyor.\n"
 
 #: hwclock/hwclock.c:550
 #, c-format
@@ -5377,8 +5255,7 @@ msgstr "Verilen date komutu: %s\n"
 
 #: hwclock/hwclock.c:609
 msgid "Unable to run 'date' program in /bin/sh shell. popen() failed"
-msgstr ""
-"'date' uygulaması /bin/sh kabuğunda çalıştırılamıyor. popen() başarısız"
+msgstr "'date' uygulaması /bin/sh kabuğunda çalıştırılamıyor. popen() başarısız"
 
 #: hwclock/hwclock.c:617
 #, c-format
@@ -5403,15 +5280,13 @@ msgstr ""
 #: hwclock/hwclock.c:631
 #, c-format
 msgid ""
-"The date command issued by %s returned something other than an integer where "
-"the converted time value was expected.\n"
+"The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
 "The command was:\n"
 "  %s\n"
 "The response was:\n"
 " %s\n"
 msgstr ""
-"%s tarafından verilen date komutu dönüştürülmüş zaman değeri olarak bir "
-"tamsayı yerine farklı birşeylerle sonuçlandı.\n"
+"%s tarafından verilen date komutu dönüştürülmüş zaman değeri olarak bir tamsayı yerine farklı birşeylerle sonuçlandı.\n"
 "Komut:\n"
 "  %s\n"
 "Sonuç:\n"
@@ -5423,12 +5298,8 @@ msgid "date string %s equates to %ld seconds since 1969.\n"
 msgstr "tarih dizgesi %s 1969 dan beri %ld saniyeye eşittir.\n"
 
 #: hwclock/hwclock.c:674
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot set the "
-"System Time from it.\n"
-msgstr ""
-"Donanım Saati geçerli bir zaman değeri içermediğinden Sistem Zamanı o değere "
-"ayarlanamaz.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it.\n"
+msgstr "Donanım Saati geçerli bir zaman değeri içermediğinden Sistem Zamanı o değere ayarlanamaz.\n"
 
 #: hwclock/hwclock.c:696
 msgid "Calling settimeofday:\n"
@@ -5457,12 +5328,8 @@ msgid "settimeofday() failed"
 msgstr "settimeofday() başarısız"
 
 #: hwclock/hwclock.c:744
-msgid ""
-"Not adjusting drift factor because the Hardware Clock previously contained "
-"garbage.\n"
-msgstr ""
-"Donanım saatinin önceki değerleri bozuk olduğundan sapma faktörü "
-"ayarlanamıyor.\n"
+msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
+msgstr "Donanım saatinin önceki değerleri bozuk olduğundan sapma faktörü ayarlanamıyor.\n"
 
 #: hwclock/hwclock.c:749
 msgid ""
@@ -5473,22 +5340,16 @@ msgstr ""
 "yani geçmiş hatalı ve bir düzeltme başlangıcı gerekiyor.\n"
 
 #: hwclock/hwclock.c:755
-msgid ""
-"Not adjusting drift factor because it has been less than a day since the "
-"last calibration.\n"
-msgstr ""
-"Son düzeltmeden beri 1 günden az zaman geçtiğinden sapma faktörü "
-"ayarlanamıyor.\n"
+msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
+msgstr "Son düzeltmeden beri 1 günden az zaman geçtiğinden sapma faktörü ayarlanamıyor.\n"
 
 #: hwclock/hwclock.c:803
 #, c-format
 msgid ""
-"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
-"of %f seconds/day.\n"
+"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
-"%3$f saniye/gün sapma faktörüne rağmen, %2$d saniye içinde saat %1$.1f "
-"saniye saptı.\n"
+"%3$f saniye/gün sapma faktörüne rağmen, %2$d saniye içinde saat %1$.1f saniye saptı.\n"
 "Sapma faktörü %4$f saniye/gün olarak ayarlanıyor\n"
 
 #: hwclock/hwclock.c:854
@@ -5519,8 +5380,7 @@ msgid "Drift adjustment parameters not updated.\n"
 msgstr "Sapma ayar parametreleri güncellenmedi.\n"
 
 #: hwclock/hwclock.c:951
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
 msgstr "Donanım saati geçerli bir zaman içermediğinden ayarlanamıyor.\n"
 
 #: hwclock/hwclock.c:983
@@ -5542,13 +5402,11 @@ msgstr "Sistem saati ayarlanamıyor.\n"
 
 #: hwclock/hwclock.c:1137
 msgid ""
-"The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
-"machine.\n"
+"The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken.\n"
 msgstr ""
-"Çekirdek sadece Alpha makina üstünde Donanım Saati için bir dönemsellik "
-"değeri saklar.\n"
+"Çekirdek sadece Alpha makina üstünde Donanım Saati için bir dönemsellik değeri saklar.\n"
 "hwclock'un bu kopyası bir Alpha için derlenmemiş. Bir şey yapılmadı.\n"
 
 #: hwclock/hwclock.c:1146
@@ -5561,12 +5419,8 @@ msgid "Kernel is assuming an epoch value of %lu\n"
 msgstr "Çekirdek dönemsellik değerini %lu varsayıyor\n"
 
 #: hwclock/hwclock.c:1151
-msgid ""
-"To set the epoch value, you must use the 'epoch' option to tell to what "
-"value to set it.\n"
-msgstr ""
-"Dönemsellik değerinin ayarlanabilmesi için, ayarlanacak değeri 'epoch' "
-"seçeneği ile vermelisiniz.\n"
+msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it.\n"
+msgstr "Dönemsellik değerinin ayarlanabilmesi için, ayarlanacak değeri 'epoch' seçeneği ile vermelisiniz.\n"
 
 #: hwclock/hwclock.c:1154
 #, c-format
@@ -5660,18 +5514,12 @@ msgstr ""
 
 #: hwclock/hwclock.c:1405
 #, c-format
-msgid ""
-"%s: The --utc and --localtime options are mutually exclusive.  You specified "
-"both.\n"
-msgstr ""
-"%s: --utc ve --localtime seçenekleri birbiriyle çelişiyor.  İkisi de "
-"belirtilmiş.\n"
+msgid "%s: The --utc and --localtime options are mutually exclusive.  You specified both.\n"
+msgstr "%s: --utc ve --localtime seçenekleri birbiriyle çelişiyor.  İkisi de belirtilmiş.\n"
 
 #: hwclock/hwclock.c:1412
 #, c-format
-msgid ""
-"%s: The --adjust and --noadjfile options are mutually exclusive.  You "
-"specified both.\n"
+msgid "%s: The --adjust and --noadjfile options are mutually exclusive.  You specified both.\n"
 msgstr ""
 "%s:  --adjust ve --noadjfile seçenekleri birbiriyle çelişir.\n"
 "Siz ikisini de belirtmişsiniz.\n"
@@ -5694,24 +5542,16 @@ msgid "Sorry, only the superuser can change the System Clock.\n"
 msgstr "Sistem saati sadece root tarafından değiştirilebilir.\n"
 
 #: hwclock/hwclock.c:1459
-msgid ""
-"Sorry, only the superuser can change the Hardware Clock epoch in the "
-"kernel.\n"
-msgstr ""
-"Çekirdekteki Donanım Saati dönemsellik değeri sadece root tarafından "
-"değiştirilebilir.\n"
+msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel.\n"
+msgstr "Çekirdekteki Donanım Saati dönemsellik değeri sadece root tarafından değiştirilebilir.\n"
 
 #: hwclock/hwclock.c:1479
 msgid "Cannot access the Hardware Clock via any known method.\n"
 msgstr "Bilinen her hangi bir yöntemle Donanım Saatine erişilemiyor.\n"
 
 #: hwclock/hwclock.c:1483
-msgid ""
-"Use the --debug option to see the details of our search for an access "
-"method.\n"
-msgstr ""
-"Bir erişim yöntemi için arama ayrıntılarını görmek için --debug seçeneğini "
-"kullanın.\n"
+msgid "Use the --debug option to see the details of our search for an access method.\n"
+msgstr "Bir erişim yöntemi için arama ayrıntılarını görmek için --debug seçeneğini kullanın.\n"
 
 #: hwclock/kd.c:43
 msgid "Waiting in loop for time from KDGHWCLK to change\n"
@@ -5798,14 +5638,8 @@ msgstr "%s açılamadı"
 
 #: hwclock/rtc.c:359 hwclock/rtc.c:405
 #, c-format
-msgid ""
-"To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
-"device driver via the device special file %s.  This file does not exist on "
-"this system.\n"
-msgstr ""
-"Çekirdekteki dönemsellik değerini değiştirmek için aygıt özel dosyası %s "
-"üzerinden Linux 'rtc' aygıt sürücüsüne erişilmelidir.   Bu dosya sistemde "
-"yok.\n"
+msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system.\n"
+msgstr "Çekirdekteki dönemsellik değerini değiştirmek için aygıt özel dosyası %s üzerinden Linux 'rtc' aygıt sürücüsüne erişilmelidir.   Bu dosya sistemde yok.\n"
 
 #: hwclock/rtc.c:364 hwclock/rtc.c:410
 #, c-format
@@ -5828,8 +5662,7 @@ msgstr "RTC_EPOCH_READ ioctl ile dönemsellik %ld %s den okunabilir.\n"
 #: hwclock/rtc.c:397
 #, c-format
 msgid "The epoch value may not be less than 1900.  You requested %ld\n"
-msgstr ""
-"Dönemsellik değerinin başlangıcı 1900 yılından önce olamaz.  %ld istendi.\n"
+msgstr "Dönemsellik değerinin başlangıcı 1900 yılından önce olamaz.  %ld istendi.\n"
 
 #: hwclock/rtc.c:415
 #, c-format
@@ -5838,8 +5671,7 @@ msgstr "RTC_EPOCH_SET ioctl ile dönemsellik %ld %s den ayarlanıyor.\n"
 
 #: hwclock/rtc.c:420
 #, c-format
-msgid ""
-"The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
+msgid "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
 msgstr "%s için çekirdek aygıt sürücüsünde RTC_EPOCH_SET ioctl yok.\n"
 
 #: hwclock/rtc.c:423
@@ -5979,10 +5811,8 @@ msgstr "%s: girdi geçersiz"
 #: login-utils/agetty.c:1195
 #, c-format
 msgid ""
-"Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
-"login_host] baud_rate,... line [termtype]\n"
-"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
-"line baud_rate,... [termtype]\n"
+"Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\n"
+"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"
 msgstr ""
 "Kullanımı: %s [-hiLmw] [-l giriş,_uygulaması] [-t zamanAşımı]\n"
 "              [-I başlatmaDizgesi] [-H giriş_makinası] bağlantı_hızı,...\n"
@@ -6232,8 +6062,7 @@ msgstr "%s okunamıyor, bırakılıyor."
 
 #: login-utils/last.c:148
 msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
-msgstr ""
-"Kullanımı: last [-#] [-f dosya] [-t tty] [-h makinaAdı] [kullanıcı ...]\n"
+msgstr "Kullanımı: last [-#] [-f dosya] [-t tty] [-h makinaAdı] [kullanıcı ...]\n"
 
 #: login-utils/last.c:312
 msgid "  still logged in"
@@ -6345,8 +6174,7 @@ msgstr "%s işlevinin %d. satırında kullanıcı ismi yok (NULL)."
 #: login-utils/login.c:660
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
-msgstr ""
-"%2$s işlevinin %3$d. satırında kullanıcı ismi \"%1$s\" geçersiz. Çıkılıyor."
+msgstr "%2$s işlevinin %3$d. satırında kullanıcı ismi \"%1$s\" geçersiz. Çıkılıyor."
 
 #: login-utils/login.c:679
 msgid "login: Out of memory\n"
@@ -6621,14 +6449,11 @@ msgstr "Çok fazla argüman belirtildi.\n"
 #: login-utils/passwd.c:339
 #, c-format
 msgid "Can't find username anywhere. Is `%s' really a user?"
-msgstr ""
-"Kullanıcı ismi hiçbir yerde bulunamıyor. `%s' gerçekten bir kullanıcı ismi "
-"mi?"
+msgstr "Kullanıcı ismi hiçbir yerde bulunamıyor. `%s' gerçekten bir kullanıcı ismi mi?"
 
 #: login-utils/passwd.c:343
 msgid "Sorry, I can only change local passwords. Use yppasswd instead."
-msgstr ""
-"Sadece yerel parolalar değiştirilebilir. Bunun yerine yppasswd kullanın."
+msgstr "Sadece yerel parolalar değiştirilebilir. Bunun yerine yppasswd kullanın."
 
 #: login-utils/passwd.c:349
 msgid "UID and username does not match, imposter!"
@@ -6944,8 +6769,7 @@ msgstr "%s: %s için bağ oluşturulamıyor: %s\n"
 #: login-utils/vipw.c:195
 #, c-format
 msgid "%s: can't unlock %s: %s (your changes are still in %s)\n"
-msgstr ""
-"%s: %s için bağ kaldırılamıyor: %s (değişiklikleriniz hala %s içinde)\n"
+msgstr "%s: %s için bağ kaldırılamıyor: %s (değişiklikleriniz hala %s içinde)\n"
 
 #: login-utils/vipw.c:218
 #, c-format
@@ -7083,11 +6907,8 @@ msgid "logger: unknown priority name: %s.\n"
 msgstr "logger: bilinmeyen öncelik ismi: %s.\n"
 
 #: misc-utils/logger.c:286
-msgid ""
-"usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
-msgstr ""
-"kullanımı: logger [-is] [-f dosya] [-p pri] [-t başlık] [-u soket] "
-"[ ileti ... ]\n"
+msgid "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
+msgstr "kullanımı: logger [-is] [-f dosya] [-p pri] [-t başlık] [-u soket] [ ileti ... ]\n"
 
 #: misc-utils/look.c:348
 msgid "usage: look [-dfa] [-t char] string [file]\n"
@@ -7478,15 +7299,12 @@ msgstr "mount: %s açılamadı - yerine %s kullanılıyor\n"
 #: mount/fstab.c:374
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
-msgstr ""
-"kilit dosyası %s oluşturulamıyor: %s (zorlamak için -n seçeneğini kullanın)"
+msgstr "kilit dosyası %s oluşturulamıyor: %s (zorlamak için -n seçeneğini kullanın)"
 
 #: mount/fstab.c:386
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
-msgstr ""
-"%s kilit dosyası için bağ oluşturulamıyor: %s (zorlamak için -n seçeneğini "
-"kullanın)"
+msgstr "%s kilit dosyası için bağ oluşturulamıyor: %s (zorlamak için -n seçeneğini kullanın)"
 
 #: mount/fstab.c:398
 #, c-format
@@ -7583,8 +7401,7 @@ msgid ""
 msgstr ""
 "mount: Hiç bir loop aygıtı bulunamadı. Bu çekirdek ya loop aygıtı hakkında\n"
 "       bilgiye sahip değil (`insmod loop.o' deneyin, sonuç alamazsanız\n"
-"       çekirdeği yeniden derleyin.) ya da /dev/loop# yanlış majör "
-"numarasına\n"
+"       çekirdeği yeniden derleyin.) ya da /dev/loop# yanlış majör numarasına\n"
 "       sahip olabilir?"
 
 #: mount/lomount.c:194
@@ -7761,8 +7578,7 @@ msgid "mount: failed with nfs mount version 4, trying 3..\n"
 msgstr "mount: nfs mount sürüm 4 ile başarısız, 3 deneniyor...\n"
 
 #: mount/mount.c:852
-msgid ""
-"mount: I could not determine the filesystem type, and none was specified"
+msgid "mount: I could not determine the filesystem type, and none was specified"
 msgstr "mount: Dosya sistemi türü saptanamadı ve belirtilmemiş"
 
 #: mount/mount.c:855
@@ -7874,17 +7690,13 @@ msgstr "mount: iso9660 kastetmiş olabilir misiniz?"
 #: mount/mount.c:978
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
-msgstr ""
-"mount: %s yanlış aygıt numarasına sahip ya da dosya sistemi türü %s "
-"desteklenmiyor"
+msgstr "mount: %s yanlış aygıt numarasına sahip ya da dosya sistemi türü %s desteklenmiyor"
 
 #. strange ...
 #: mount/mount.c:984
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
-msgstr ""
-"mount: %s bir blok aygıtı olmayabilir mi ve durum bilgileri alınamayabilir "
-"mi?"
+msgstr "mount: %s bir blok aygıtı olmayabilir mi ve durum bilgileri alınamayabilir mi?"
 
 #: mount/mount.c:986
 #, c-format
@@ -7924,8 +7736,7 @@ msgstr "mount: %s%s salt-okunur bağlanamıyor"
 #: mount/mount.c:1004
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
-msgstr ""
-"mount: %s%s yazma korumalı olduğu halde alenen `-w' seçeneği belirtilmiş"
+msgstr "mount: %s%s yazma korumalı olduğu halde alenen `-w' seçeneği belirtilmiş"
 
 #: mount/mount.c:1020
 #, c-format
@@ -8068,8 +7879,7 @@ msgstr "mount: %s  %s ya da %s içinde bulunamıyor"
 
 #: mount/mount_by_label.c:240
 #, c-format
-msgid ""
-"mount: could not open %s, so UUID and LABEL conversion cannot be done.\n"
+msgid "mount: could not open %s, so UUID and LABEL conversion cannot be done.\n"
 msgstr "mount: %s açılamadı, UUID ve ETİKET dönüşümü yapılmış olmayabilir.\n"
 
 #: mount/mount_by_label.c:366
@@ -8350,8 +8160,7 @@ msgstr ""
 "  -v          çıktı ayrıntı içerir\n"
 "  -n          /etc/mtab dosyasına yazmaz\n"
 "  -r          ayırma başarısız olursa salt-okunur olarak bağlamayı dener\n"
-"  -f          dosya sistemi erişilebilir değilse bile dosya sistemini "
-"ayırır\n"
+"  -f          dosya sistemi erişilebilir değilse bile dosya sistemini ayırır\n"
 "  -l          dosya sistemini mutlaka ayırır. (en az linux-2.4.11 gerekir)\n"
 "  -t ds-türü  -a seçeneği ile kullanıldığında sadece türü belirtilen dosya\n"
 "              sistemlerini ayırır\n"
@@ -8400,8 +8209,7 @@ msgstr "umount: bu sadece root tarafından yapılabilir"
 
 #: sys-utils/ctrlaltdel.c:27
 msgid "You must be root to set the Ctrl-Alt-Del behaviour.\n"
-msgstr ""
-"Ctrl-Alt-Del davranışının belirlenmesi sadece root tarafından yapılabilir.\n"
+msgstr "Ctrl-Alt-Del davranışının belirlenmesi sadece root tarafından yapılabilir.\n"
 
 #: sys-utils/ctrlaltdel.c:42
 msgid "Usage: ctrlaltdel hard|soft\n"
@@ -8419,8 +8227,7 @@ msgstr ""
 #: sys-utils/cytune.c:131
 #, c-format
 msgid ""
-"File %s, For threshold value %lu and timrout value %lu, Maximum characters "
-"in fifo were %d,\n"
+"File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
 "Dosya %s, eşik değeri %lu, zaman aşımı değeri %lu,\n"
@@ -8454,12 +8261,8 @@ msgstr "Öntanımlı zaman değeri geçersiz: %s\n"
 
 #: sys-utils/cytune.c:244
 #, c-format
-msgid ""
-"Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
-"[-g|-G] file [file...]\n"
-msgstr ""
-"Kullanımı: %s [-q [-i aralık]] ([-s değer]|[-S değer]) ([-t değer]|[-T "
-"değer]) [-g|-G] dosya [dosya...]\n"
+msgid "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) [-g|-G] file [file...]\n"
+msgstr "Kullanımı: %s [-q [-i aralık]] ([-s değer]|[-S değer]) ([-t değer]|[-T değer]) [-g|-G] dosya [dosya...]\n"
 
 #: sys-utils/cytune.c:256 sys-utils/cytune.c:275 sys-utils/cytune.c:295
 #: sys-utils/cytune.c:345
@@ -8512,11 +8315,8 @@ msgstr "%s üzerinde CYGETMON uygulanamıyor: %s\n"
 
 #: sys-utils/cytune.c:424
 #, c-format
-msgid ""
-"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
-msgstr ""
-"%s: %lu kesme, %lu/%lu karkt; fifo: %lu eşik, %lu zam.aş, ençok %lu, şuan %"
-"lu\n"
+msgid "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgstr "%s: %lu kesme, %lu/%lu karkt; fifo: %lu eşik, %lu zam.aş, ençok %lu, şuan %lu\n"
 
 #: sys-utils/cytune.c:430
 #, c-format
@@ -8525,11 +8325,8 @@ msgstr "   %f kesme/s; %f kayıt, %f gönderi (karkt/s)\n"
 
 #: sys-utils/cytune.c:435
 #, c-format
-msgid ""
-"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
-msgstr ""
-"%s: %lu kesme, %lu karakter; fifo: eşik %lu, zaman aşımı %lu, en fazla %lu, "
-"şimdiki %lu\n"
+msgid "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgstr "%s: %lu kesme, %lu karakter; fifo: eşik %lu, zaman aşımı %lu, en fazla %lu, şimdiki %lu\n"
 
 #: sys-utils/cytune.c:441
 #, c-format
@@ -8645,8 +8442,7 @@ msgstr "           %s -h yardım almak için.\n"
 
 #: sys-utils/ipcs.c:129
 #, c-format
-msgid ""
-"%s provides information on ipc facilities for which you have read access.\n"
+msgid "%s provides information on ipc facilities for which you have read access.\n"
 msgstr "%s okuma erişiminiz olan ipc yetenekleri hakkında bilgi sağlar.\n"
 
 #: sys-utils/ipcs.c:131
@@ -8689,8 +8485,7 @@ msgstr ""
 
 #: sys-utils/ipcs.c:135
 msgid "-i id [-s -q -m] : details on resource identified by id\n"
-msgstr ""
-"-i kimlik [-s -q -m] : kimlik ile belirtilen özkaynak hakkında bilgi verir\n"
+msgstr "-i kimlik [-s -q -m] : kimlik ile belirtilen özkaynak hakkında bilgi verir\n"
 
 #: sys-utils/ipcs.c:267
 msgid "kernel not configured for shared memory\n"
@@ -9184,8 +8979,7 @@ msgid "usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
 msgstr "kullanımı: rdev [ -rv ] [ -o KONUM ] [ YANSI [ DEĞER [ KONUM ] ] ]"
 
 #: sys-utils/rdev.c:70
-msgid ""
-"  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
+msgid "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
 msgstr "  rdev /dev/fd0  (veya rdev /linux, vb.) KÖK aygıtı gösterir"
 
 #: sys-utils/rdev.c:71
@@ -9194,8 +8988,7 @@ msgstr "  rdev /dev/fd0 /dev/hda2         KÖKü /dev/hda2 'ye ayarlar"
 
 #: sys-utils/rdev.c:72
 msgid "  rdev -R /dev/fd0 1              set the ROOTFLAGS (readonly status)"
-msgstr ""
-"  rdev -R /dev/fd0 1              KÖK Bayrakları belirlenir (salt-okunur)"
+msgstr "  rdev -R /dev/fd0 1              KÖK Bayrakları belirlenir (salt-okunur)"
 
 #: sys-utils/rdev.c:73
 msgid "  rdev -r /dev/fd0 627            set the RAMDISK size"
@@ -9207,8 +9000,7 @@ msgstr "  rdev -v /dev/fd0 1              önyükleme VIDEOMODE belirlenir"
 
 #: sys-utils/rdev.c:75
 msgid "  rdev -o N ...                   use the byte offset N"
-msgstr ""
-"  rdev -o N ...                   bayt göreli konumu N olarak belirlenir"
+msgstr "  rdev -o N ...                   bayt göreli konumu N olarak belirlenir"
 
 #: sys-utils/rdev.c:76
 msgid "  rootflags ...                   same as rdev -R"
@@ -9223,10 +9015,8 @@ msgid "  vidmode ...                     same as rdev -v"
 msgstr "  vidmode ...                     rdev -v ile aynı"
 
 #: sys-utils/rdev.c:79
-msgid ""
-"Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
-msgstr ""
-"Bilgi: video kipleri: -3=Sor, -2=Gelişmiş, -1=NormalVga, 1=tuş1, 2=tuş2,..."
+msgid "Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
+msgstr "Bilgi: video kipleri: -3=Sor, -2=Gelişmiş, -1=NormalVga, 1=tuş1, 2=tuş2,..."
 
 #: sys-utils/rdev.c:80
 msgid "      use -R 1 to mount root readonly, -R 0 for read/write."
@@ -9237,7 +9027,7 @@ msgid "missing comma"
 msgstr "virgül eksik"
 
 #: sys-utils/readprofile.c:60
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s: Usage: \"%s [options]\n"
 "\t -m <mapfile>  (default = \"%s\")\n"
@@ -9255,9 +9045,10 @@ msgstr ""
 "\t -m <eşlemdosyası>  (öntanımlı = \"%s\")\n"
 "\t -p <prodosyası>    (öntanımlı = \"%s\")\n"
 "\t -M <çarpan>        profil çoğullayıcı belirtilir\n"
-"\t -i                 örnekleme adımı hakkında bilgi verilir\n"
-"\t -v                 ayrıntılı bilgi verilir\n"
+"\t -i                 örnekleme adımı hakkında bilgi verir\n"
+"\t -v                 ayrıntılı bilgi verir\n"
 "\t -a                 sayısı 0 bile olsa tüm sembolleri gösterir\n"
+"\t -b                 histogram-bin sayılarını tek tek gösterir\n"
 "\t -r                 tüm sayaçlar sıfırlanır (sadece root)\n"
 "\t -n                 bayt sıralamasının saptanmasını önler\n"
 "\t -V                 sürüm bilgilerini gösterir ve çıkar\n"
@@ -9298,11 +9089,8 @@ msgid "total"
 msgstr "toplam"
 
 #: sys-utils/renice.c:68
-msgid ""
-"usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
-msgstr ""
-"kullanımı: renice öncelik [ [ -p ] pid ] [ [ -g ] pgrp ] [ [ -u ] "
-"kullanıcı ]\n"
+msgid "usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
+msgstr "kullanımı: renice öncelik [ [ -p ] pid ] [ [ -g ] pgrp ] [ [ -u ] kullanıcı ]\n"
 
 #: sys-utils/renice.c:97
 #, c-format
@@ -9339,8 +9127,7 @@ msgid ""
 "          -a [on|off] | -o [on|off] | -C [on|off] | -q [on|off] | -s | \n"
 "          -T [on|off] ]\n"
 msgstr ""
-"Kullanımı: %s <aygıt> [ -i <IRQ> | -t <ZAMAN> | -c <KARKT> | -w <GECİKME> "
-"| \n"
+"Kullanımı: %s <aygıt> [ -i <IRQ> | -t <ZAMAN> | -c <KARKT> | -w <GECİKME> | \n"
 "          -a [on|off] | -o [on|off] | -C [on|off] | -q [on|off] | -s | \n"
 "          -T [on|off] ]\n"
 
@@ -9445,11 +9232,8 @@ msgid "hexdump: bad skip value.\n"
 msgstr "hexdump: atlama değeri hatalı.\n"
 
 #: text-utils/hexsyntax.c:131
-msgid ""
-"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
-msgstr ""
-"hexdump: [-bcCdovx] [-e biçem] [-f biçemDosyası] [-n uzunluk] [-s atlanan] "
-"[dosya ...]\n"
+msgid "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
+msgstr "hexdump: [-bcCdovx] [-e biçem] [-f biçemDosyası] [-n uzunluk] [-s atlanan] [dosya ...]\n"
 
 #: text-utils/more.c:264
 #, c-format
@@ -9638,11 +9422,8 @@ msgstr "hexdump: dönüşüm karakteri %%%s hatalı.\n"
 
 #: text-utils/pg.c:246
 #, c-format
-msgid ""
-"%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
-msgstr ""
-"%s: Kullanımı: %s [-number] [-p dizge] [-cefnrs] [+satır] [+/kalıp/] "
-"[dosyalar]\n"
+msgid "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
+msgstr "%s: Kullanımı: %s [-number] [-p dizge] [-cefnrs] [+satır] [+/kalıp/] [dosyalar]\n"
 
 #: text-utils/pg.c:255
 #, c-format

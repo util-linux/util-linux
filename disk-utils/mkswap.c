@@ -203,10 +203,16 @@ write_signature(char *sig) {
 	strncpy(sp+pagesize-10, sig, 10);
 }
 
+/*
+ * Find out what the maximum amount of swap space is that the kernel will
+ * handle.  This wouldn't matter if the kernel just used as much of the
+ * swap space as it can handle, but until 2.3.4 it would return an error
+ * to swapon() if the swapspace was too large.
+ */
 #define V0_MAX_PAGES	(8 * (pagesize - 10))
 /* Before 2.2.0pre9 */
 #define V1_OLD_MAX_PAGES	((0x7fffffff / pagesize) - 1)
-/* Since 2.2.0pre9:
+/* Since 2.2.0pre9, before 2.3.4:
    error if nr of pages >= SWP_OFFSET(SWP_ENTRY(0,~0UL))
    with variations on
 	#define SWP_ENTRY(type,offset) (((type) << 1) | ((offset) << 8))
@@ -280,8 +286,7 @@ bit_set (unsigned long *addr, unsigned int nr) {
 
 		bitmap += bitnum / (8 * sizeof(long long));
 		rl = *bitmap;
-		ml = 1ULL << (bitnum &
-			      (8ULL * (unsigned long long)sizeof(long long) - 1ULL));
+		ml = 1ULL << (bitnum & (8ULL * sizeof(long long) - 1ULL));
 		*bitmap = rl | ml;
 		return;
 	}
@@ -303,8 +308,7 @@ bit_test_and_clear (unsigned long *addr, unsigned int nr) {
 
 		bitmap += bitnum / (8 * sizeof(long long));
 		rl = *bitmap;
-		ml = 1ULL << (bitnum &
-			      (8ULL * (unsigned long long)sizeof(long long) - 1ULL));
+		ml = 1ULL << (bitnum & (8ULL * sizeof(long long) - 1ULL));
 		*bitmap = rl & ~ml;
 		return ((rl & ml) != 0ULL);
 	}
@@ -535,29 +539,28 @@ main(int argc, char ** argv) {
 			program_name, version);
 		usage();
 	}
+
 	if (PAGES < 10) {
 		fprintf(stderr,
 			_("%s: error: swap area needs to be at least %ldkB\n"),
-			program_name, (long)(10 * pagesize / 1024));
+			program_name, (long)(10 * pagesize / 1000));
 		usage();
 	}
-#if 0
-	maxpages = ((version == 0) ? V0_MAX_PAGES : V1_MAX_PAGES);
-#else
-	if (!version)
+
+	if (version == 0)
 		maxpages = V0_MAX_PAGES;
+	else if (linux_version_code() >= MAKE_VERSION(2,3,4))
+		maxpages = PAGES;
 	else if (linux_version_code() >= MAKE_VERSION(2,2,1))
 		maxpages = V1_MAX_PAGES;
-	else {
+	else
 		maxpages = V1_OLD_MAX_PAGES;
-		if (maxpages > V1_MAX_PAGES)
-			maxpages = V1_MAX_PAGES;
-	}
-#endif
+
 	if (PAGES > maxpages) {
 		PAGES = maxpages;
-		fprintf(stderr, _("%s: warning: truncating swap area to %ldkB\n"),
-			program_name, PAGES * pagesize / 1024);
+		fprintf(stderr,
+			_("%s: warning: truncating swap area to %ldkB\n"),
+			program_name, PAGES * pagesize / 1000);
 	}
 
 	DEV = open(device_name,O_RDWR);
@@ -608,8 +611,8 @@ the -f option to force it.\n"),
 	goodpages = PAGES - badpages - 1;
 	if (goodpages <= 0)
 		die(_("Unable to set up swap-space: unreadable"));
-	printf(_("Setting up swapspace version %d, size = %lu KiB\n"),
-		version, (unsigned long)goodpages * pagesize / 1024);
+	printf(_("Setting up swapspace version %d, size = %llu kB\n"),
+		version, (unsigned long long)goodpages * pagesize / 1000);
 	write_signature((version == 0) ? "SWAP-SPACE" : "SWAPSPACE2");
 
 	offset = ((version == 0) ? 0 : 1024);

@@ -5,9 +5,10 @@
 .SH NAME
 fdisk \- Partition table manipulator for Linux
 .SH SYNOPSIS
-.BI "fdisk [\-u] [\-b sectorsize]" device
+.BI "fdisk [\-u] [\-b " sectorsize ]
+.BI "[\-C " cyls "] [\-H " heads "] [\-S " sects "] " device
 .sp
-.BI "fdisk \-l [\-u] [\-b sectorsize] [" "device ..." ]
+.BI "fdisk \-l [\-u] [" "device ..." ]
 .sp
 .BI "fdisk \-s " "partition ..."
 .sp
@@ -173,6 +174,21 @@ program and Linux partitions with the Linux fdisk or Linux cfdisk program.
 Specify the sector size of the disk. Valid values are 512, 1024, or 2048.
 (Recent kernels know the sector size. Use this only on old kernels or
 to override the kernel's ideas.)
+.TP
+.BI "\-C " cyls
+Specify the number of cylinders of the disk.
+I have no idea why anybody would want to do so.
+.TP
+.BI "\-H " heads
+Specify the number of heads of the disk. (Not the physical number,
+of course, but the number used for partition tables.)
+Reasonable values are 255 and 16.
+.TP
+.BI "\-S " sects
+Specify the number of sectors per track of the disk.
+(Not the physical number, of course, but the number used for
+partition tables.)
+A reasonable value is 63.
 .TP
 .B \-l
 List the partition tables for the specified devices and then exit.

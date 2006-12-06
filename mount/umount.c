@@ -614,6 +614,8 @@ main (int argc, char *argv[]) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
+	umask(033);
+
 	while ((c = getopt_long (argc, argv, "adfhlnrt:vV",
 				 longopts, NULL)) != -1)
 		switch (c) {

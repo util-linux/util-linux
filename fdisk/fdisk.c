@@ -1269,7 +1269,9 @@ change_sysid(void) {
 
 	origsys = sys = get_sysid(i);
 
-	if (!sys && !sgi_label && !sun_label)
+	/* if changing types T to 0 is allowed, then
+	   the reverse change must be allowed, too */
+	if (!sys && !sgi_label && !sun_label && !get_nr_sects(p))
                 printf(_("Partition %d does not exist yet!\n"), i + 1);
         else while (1) {
 		sys = read_hex (get_sys_types());
@@ -1304,7 +1306,7 @@ change_sysid(void) {
 				       "partition 11 as entire volume (6)"
 				       "as IRIX expects it.\n\n"));
                         if (sys == origsys)
-                            break;
+				break;
 			if (sun_label) {
 				sun_change_sysid(i, sys);
 			} else
@@ -2316,18 +2318,36 @@ main(int argc, char **argv) {
 	 *  fdisk -l [-b sectorsize] [-u] device ...
 	 *  fdisk -s [partition] ...
 	 *  fdisk [-b sectorsize] [-u] device
+	 *
+	 * Options -C, -H, -S set the geometry.
+	 * 
 	 */
-	while ((c = getopt(argc, argv, "b:lsuvV")) != -1) {
+	while ((c = getopt(argc, argv, "b:C:H:lsS:uvV")) != -1) {
 		switch (c) {
 		case 'b':
-			/* ugly: this sector size is really per device,
-			   so cannot be combined with multiple disks */
+			/* Ugly: this sector size is really per device,
+			   so cannot be combined with multiple disks,
+			   and te same goes for the C/H/S options.
+			*/
 			sector_size = atoi(optarg);
 			if (sector_size != 512 && sector_size != 1024 &&
 			    sector_size != 2048)
 				fatal(usage);
 			sector_offset = 2;
 			user_set_sector_size = 1;
+			break;
+		case 'C':
+			user_cylinders = atoi(optarg);
+			break;
+		case 'H':
+			user_heads = atoi(optarg);
+			if (user_heads <= 0 || user_heads >= 256)
+				user_heads = 0;
+			break;
+		case 'S':
+			user_sectors = atoi(optarg);
+			if (user_sectors <= 0 || user_sectors >= 64)
+				user_sectors = 0;
 			break;
 		case 'l':
 			optl = 1;

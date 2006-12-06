@@ -290,7 +290,8 @@ do_guess_fstype(const char *device) {
 	 else if(!strncmp(xsb.ntfssb.s_magic, NTFS_SUPER_MAGIC,
 			  sizeof(xsb.ntfssb.s_magic)))
 	      type = "ntfs";
-	 else if(cramfsmagic(xsb.cramfssb) == CRAMFS_SUPER_MAGIC)
+	 else if(cramfsmagic(xsb.cramfssb) == CRAMFS_SUPER_MAGIC ||
+		 cramfsmagic(xsb.cramfssb) == CRAMFS_SUPER_MAGIC_BE)
 	      type = "cramfs";
 	 else if ((!strncmp(xsb.fatsb.s_os, "MSDOS", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "MSWIN", 5) ||

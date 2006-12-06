@@ -43,9 +43,9 @@ INCLUDES = -I.. -I$(INTL)
 COMPILE = $(CC) -c $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(XCFLAGS)
 
 # Enter here all .po files
-POFILES = cs.po da.po de.po es.po et.po fr.po it.po ja.po nl.po pt_BR.po sv.po tr.po
+POFILES = ca.po cs.po da.po de.po es.po et.po fi.po fr.po it.po ja.po nl.po pt_BR.po sl.po sv.po tr.po
 # the same but with .gmo
-GMOFILES = cs.gmo da.gmo de.gmo es.gmo et.gmo fr.gmo it.gmo ja.gmo nl.gmo pt_BR.gmo sv.gmo tr.gmo
+GMOFILES = ca.gmo cs.gmo da.gmo de.gmo es.gmo et.gmo fi.gmo fr.gmo it.gmo ja.gmo nl.gmo pt_BR.gmo sl.gmo sv.gmo tr.gmo
 
 CATALOGS = $(GMOFILES)
 CATOBJEXT = .gmo

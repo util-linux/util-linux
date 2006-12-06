@@ -38,7 +38,7 @@
 .Os BSD 4.3
 .Sh NAME
 .Nm logger
-.Nd make entries in the system log
+.Nd a shell command interface to the syslog(3) system log module
 .Sh SYNOPSIS
 .Nm logger
 .Op Fl isd
@@ -49,7 +49,8 @@
 .Op Ar message ...
 .Sh DESCRIPTION
 .Nm Logger
-provides a shell command interface to the
+makes entries in the system log.
+It provides a shell command interface to the
 .Xr syslog  3
 system log module.
 .Pp

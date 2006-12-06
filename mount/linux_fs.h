@@ -141,6 +141,7 @@ struct xfs_super_block {
 };
 
 #define CRAMFS_SUPER_MAGIC 0x28cd3d45
+#define CRAMFS_SUPER_MAGIC_BE 0x453dcd28
 struct cramfs_super_block {
 	u_char    s_magic[4];
 	u_char    s_dummy[12];
@@ -204,6 +205,21 @@ struct mdp_super_block {
 };
 #define MD_SB_MAGIC	0xa92b4efc
 #define mdsbmagic(s)	assemble4le(s.md_magic)
+
+struct ocfs_volume_header {
+	u_char  minor_version[4];
+	u_char  major_version[4];
+	u_char  signature[128];
+};
+
+struct ocfs_volume_label {
+	u_char  disk_lock[48];
+	u_char  label[64];
+	u_char  label_len[2];
+};
+
+#define ocfslabellen(o)	assemble2le(o.label_len)
+#define OCFS_MAGIC	"OracleCFS"
 
 static inline int
 assemble2le(unsigned char *p) {

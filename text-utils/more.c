@@ -1311,11 +1311,10 @@ int command (char *filename, register FILE *f)
 	    xprintf ("\n");
 	    if (clreol)
 		cleareol ();
-	    xprintf (_("...skipping %d line"), nlines);
-	    if (nlines > 1)
-		pr ("s\n");
+	    if (nlines == 1)
+		    xprintf (_("...skipping one line"));
 	    else
-		pr ("\n");
+		    xprintf (_("...skipping %d lines"), nlines);
 
 	    if (clreol)
 		cleareol ();

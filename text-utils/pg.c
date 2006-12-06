@@ -173,10 +173,17 @@ See pg(1) for more information.\n\
 -------------------------------------------------------\n";
 
 #ifdef HAVE_fseeko
+#if defined (_FILE_OFFSET_BITS) && (_FILE_OFFSET_BITS) == 64
+  extern int fseeko64(FILE *f, off_t off, int whence);
+  extern off_t ftello64(FILE *f);
+  #define      my_fseeko       fseeko64
+  #define      my_ftello       ftello64
+#else
   extern int fseeko(FILE *f, off_t off, int whence);
   extern off_t ftello(FILE *f);
   #define	my_fseeko	fseeko
   #define	my_ftello	ftello
+#endif
 #else
   static int my_fseeko(FILE *f, off_t off, int whence) {
 	return fseek(f, (long) off, whence);

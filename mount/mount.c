@@ -1411,6 +1411,8 @@ main (int argc, char *argv[]) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
+	umask(033);
+
 	/* People report that a mount called from init without console
 	   writes error messages to /etc/mtab
 	   Let us try to avoid getting fd's 0,1,2 */

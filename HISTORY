@@ -1,3 +1,22 @@
+util-linux 2.11v
+
+* Catalan messages (Antoni Bella Perez)
+* Finnish messages (Lauri Nurmi)
+* No French messages with permission to distribute (Michel Robitaille)
+* Very few Russian messages (panivan@yandex.ru)
+* Slovenian messages (Primoz Peterlin)
+* Spanish messages (Santiago Vila Doncel)
+* Swedish messages (Christian Rose)
+* Turkish messages (Nilgün Belma Bugüner)
+* fdisk: add -C, -H, -S command line options
+* fdisk: allow changing type 0
+* mkswap: enable use of > 2GB swapspace
+* more: translation fix
+* mount: set umask (Sebastian Krahmer)
+* mount: test both le and be version of cramfs magic (Olaf Hering)
+* mount: recognize Oracle magic
+* pg: use fseeko64 and ftello64 when available
+
 util-linux 2.11u
 
 * Danish messages (Claus Hindsgaul)

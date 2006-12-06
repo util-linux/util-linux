@@ -48,9 +48,15 @@ static struct uuidCache_s {
 /*
  * See whether this device has (the magic of) a RAID superblock at the end.
  * If so, it probably is, or has been, part of a RAID array.
+ *
+ * For the moment this test is switched off - it causes problems.
+ * "Checking for a disk label should only be done on the full raid,
+ *  not on the disks that form the raid array. This test causes a lot of
+ *  problems when run on my striped promise fasttrak 100 array."
  */
 static int
 is_raid_partition(int fd) {
+#if 0
 	struct mdp_super_block mdsb;
 	int n;
 
@@ -67,20 +73,22 @@ is_raid_partition(int fd) {
 	if (read(fd, &mdsb, n) != n)
 		return 1;		/* error */
 	return (mdsbmagic(mdsb) == MD_SB_MAGIC);
+#else
+	return 0;
+#endif
 }
 
-/* for now, only ext2, ext3 and xfs are supported */
+/* for now, only ext2, ext3, xfs, ocfs are supported */
 static int
 get_label_uuid(const char *device, char **label, char *uuid) {
-
-	/* start with ext2/3 and xfs tests, taken from mount_guess_fstype */
-	/* should merge these later */
 	int fd;
 	int rv = 1;
 	size_t namesize;
 	struct ext2_super_block e2sb;
 	struct xfs_super_block xfsb;
 	struct jfs_super_block jfssb;
+	struct ocfs_volume_header ovh;	/* Oracle */
+	struct ocfs_volume_label olbl;
 
 	fd = open(device, O_RDONLY);
 	if (fd < 0)
@@ -110,23 +118,34 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 			memcpy(*label, xfsb.s_fname, namesize);
 		rv = 0;
 	}
+	else if (lseek(fd, 0, SEEK_SET) == 0
+	    && read(fd, (char *) &ovh, sizeof(ovh)) == sizeof(ovh)
+	    && (strncmp(ovh.signature, OCFS_MAGIC, sizeof(OCFS_MAGIC)) == 0)
+	    && (lseek(fd, 512, SEEK_SET) == 512)
+	    && read(fd, (char *) &olbl, sizeof(olbl)) == sizeof(olbl)) {
+		uuid[0] = '\0';
+		namesize = ocfslabellen(olbl);
+		if ((*label = calloc(namesize + 1, 1)) != NULL)
+			memcpy(*label, olbl.label, namesize);
+		rv = 0;
+	}
 	else if (lseek(fd, JFS_SUPER1_OFF, SEEK_SET) == JFS_SUPER1_OFF
 	    && read(fd, (char *) &jfssb, sizeof(jfssb)) == sizeof(jfssb)
-		&& (strncmp(jfssb.s_magic, JFS_MAGIC, 4) == 0)) {
-		    if (assemble4le(jfssb.s_version) == 1) {
+	    && (strncmp(jfssb.s_magic, JFS_MAGIC, 4) == 0)) {
+		if (assemble4le(jfssb.s_version) == 1) {
 			/* old (OS/2 compatible) jfs filesystems don't
 			   have UUIDs and only have a very small label. */
 			memset(uuid, 0, 16);
 			namesize = sizeof(jfssb.s_fpack);
 			if ((*label = calloc(namesize + 1, 1)) != NULL)
 				memcpy(*label, jfssb.s_fpack, namesize);
-		    } else {
+		} else {
 			memcpy(uuid, jfssb.s_uuid, sizeof(jfssb.s_uuid));
 			namesize = sizeof(jfssb.s_label);
 			if ((*label = calloc(namesize + 1, 1)) != NULL)
 			    memcpy(*label, jfssb.s_label, namesize);
-		    }
-		    rv = 0;
+		}
+		rv = 0;
 	}
 
 	close(fd);

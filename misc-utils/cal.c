@@ -364,7 +364,7 @@ do_monthly(month, year, out)
 	
 	day_array(month, year, days);
 	/* %s is the month name, %d the year number.
-	 * you can change the order and/or add something her; eg for
+	 * you can change the order and/or add something here; eg for
 	 * Basque the translation should be: "%2$dko %1$s", and
 	 * the Vietnamese should be "%s na(m %d", etc.
 	 */

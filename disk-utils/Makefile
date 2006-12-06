@@ -39,10 +39,10 @@ endif
 all: $(SBIN) $(USRBIN)
 
 fsck.cramfs: fsck.cramfs.o
-	cc -o fsck.cramfs fsck.cramfs.o -lz
+	$(CC) $(LDFLAGS) -o fsck.cramfs fsck.cramfs.o -lz
 
 mkfs.cramfs: mkfs.cramfs.o
-	cc -o mkfs.cramfs mkfs.cramfs.o -lz
+	$(CC) $(LDFLAGS) -o mkfs.cramfs mkfs.cramfs.o -lz
 
 fsck.cramfs.o mkfs.cramfs.o: cramfs.h
 

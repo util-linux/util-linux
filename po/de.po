@@ -44,7 +44,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11t\n"
-"POT-Creation-Date: 2002-08-04 02:14+0200\n"
+"POT-Creation-Date: 2002-08-04 02:25+0200\n"
 "PO-Revision-Date: 2002-07-09 17:33:18+0200\n"
 "Last-Translator: Michael Piefel <piefel@informatik.hu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"

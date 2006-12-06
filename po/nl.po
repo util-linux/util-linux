@@ -6,7 +6,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.9n\n"
-"POT-Creation-Date: 2002-08-04 02:14+0200\n"
+"POT-Creation-Date: 2002-08-04 02:25+0200\n"
 "PO-Revision-Date: 1999-02-25 20:46+0100\n"
 "Last-Translator: Andries Brouwer <aeb@cwi.nl>\n"
 "MIME-Version: 1.0\n"
