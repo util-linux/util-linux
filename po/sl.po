@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11y\n"
-"POT-Creation-Date: 2004-12-22 11:00+0100\n"
+"POT-Creation-Date: 2004-12-22 10:56+0100\n"
 "PO-Revision-Date: 2003-01-28 16:30+0100\n"
 "Last-Translator: Primo¾ Peterlin <primoz.peterlin@biofiz.mf.uni-lj.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"

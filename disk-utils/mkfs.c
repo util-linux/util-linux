@@ -21,7 +21,6 @@
 #include <unistd.h>
 #include <string.h>
 #include <getopt.h>
-#include <limits.h>
 #include "nls.h"
 
 #define VERSION		UTIL_LINUX_VERSION
@@ -36,7 +35,7 @@
 
 int main(int argc, char *argv[])
 {
-  char progname[NAME_MAX];
+  char *progname;	/* name of executable to be called */
   char *fstype = NULL;
   int i, more = 0, verbose = 0;
   char *oldpath, *newpath;
@@ -85,6 +84,7 @@ int main(int argc, char *argv[])
   oldpath = getenv("PATH");
   if (!oldpath)
 	  oldpath = "/bin";
+
   newpath = (char *) malloc(strlen(oldpath) + sizeof(SEARCH_PATH) + 3);
   if (!newpath) {
     fprintf(stderr, _("%s: Out of memory!\n"), "mkfs");
@@ -92,7 +92,13 @@ int main(int argc, char *argv[])
   }
   sprintf(newpath, "%s:%s\n", SEARCH_PATH, oldpath);
   putenv(newpath);
-  snprintf(progname, sizeof(progname), PROGNAME, fstype);
+
+  progname = (char *) malloc(sizeof(PROGNAME) + strlen(fstype) + 1);
+  if (!newpath) {
+    fprintf(stderr, _("%s: Out of memory!\n"), "mkfs");
+    exit(1);
+  }
+  sprintf(progname, PROGNAME, fstype);
   argv[--optind] = progname;
 
   if (verbose) {

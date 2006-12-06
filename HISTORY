@@ -1,3 +1,10 @@
+util-linux 2.12p
+
+* cfdisk: fix number of new partition when partitions not in disk order
+* fdisk: fix Sun label handling in sector mode
+* mkfs: never truncate filename (not that that ever happened)
+* more: fix redraw flaw
+
 util-linux 2.12n,o
 
 * lomount: revert patch from 2.12j

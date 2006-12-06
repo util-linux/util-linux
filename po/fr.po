@@ -9,7 +9,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.12j\n"
-"POT-Creation-Date: 2004-12-22 11:00+0100\n"
+"POT-Creation-Date: 2004-12-22 10:56+0100\n"
 "PO-Revision-Date: 2004-12-08 08:00-0500\n"
 "Last-Translator: Michel Robitaille <robitail@IRO.UMontreal.CA>\n"
 "Language-Team: French <traduc@traduc.org>\n"

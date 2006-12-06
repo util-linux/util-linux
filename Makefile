@@ -53,13 +53,11 @@ distclean: make_include clean
 	-rm -f defines.h make_include
 
 tar: make_include clean
+	cd po && make util-linux.pot && make distclean
 	cd mount && make distclean
-	cd po && make update-po && make util-linux.pot && \
-	 mv util-linux.pot ../../util-linux-$(VERSION).pot && \
-	 make distclean
 	-rm -f defines.h make_include
 	cd .. && tar cvfz util-linux-$(VERSION).tar.gz ./util-linux-$(VERSION)
-	@echo = made util-linux-$(VERSION).pot and util-linux-$(VERSION).tar.gz
+	ls -l ../util-linux-$(VERSION).tar.gz
 
 # dist:
 #	(cd /tmp; \

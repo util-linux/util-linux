@@ -125,11 +125,15 @@ uninstall:
 cat-id-tbl.o: $(INTL)/libgettext.h
 
 clean:
-	rm -f core core.* *~ *.o util-linux.pot cat-id-tbl.c cat-id-tbl.tmp
+	rm -f core core.* *~ *.o cat-id-tbl.c cat-id-tbl.tmp
 
 distclean: clean
 	rm -f POTFILES *.gmo *.mo *.msg *.cat *.cat.m
 
+# also util-linux.pot is a generated file
+# however, the translation robot likes it
+
+# only for translators not using the robot
 update-po: 
 	rm -f util-linux.pot
 	$(MAKE) util-linux.pot

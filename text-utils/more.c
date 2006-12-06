@@ -318,8 +318,7 @@ int main(int argc, char **argv) {
     /* allow clreol only if Home and eraseln and EodClr strings are
      *  defined, and in that case, make sure we are in noscroll mode
      */
-    if(clreol)
-    {
+    if (clreol) {
         if((Home == NULL) || (*Home == '\0') ||
 	   (eraseln == NULL) || (*eraseln == '\0') ||
            (EodClr == NULL) || (*EodClr == '\0') )
@@ -327,7 +326,7 @@ int main(int argc, char **argv) {
 	else noscroll = 1;
     }
     if (dlines == 0)
-	dlines = Lpp - (noscroll ? 1 : 2);
+	    dlines = Lpp - 1;	/* was: Lpp - (noscroll ? 1 : 2) */
     left = dlines;
     if (nfiles > 1)
 	prnames++;
@@ -681,7 +680,7 @@ void chgwinsz(int dummy) {
 	    nscroll = Lpp/2 - 1;
 	    if (nscroll <= 0)
 		nscroll = 1;
-	    dlines = Lpp - (noscroll ? 1 : 2);
+	    dlines = Lpp - 1;	/* was: Lpp - (noscroll ? 1 : 2) */
 	}
 	if (win.ws_col != 0)
 	    Mcol = win.ws_col;

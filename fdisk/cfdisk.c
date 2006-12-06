@@ -405,8 +405,10 @@ fdexit(int ret) {
 
     if (changed) {
 	fprintf(stderr, _("Disk has been changed.\n"));
+#if 0
 	fprintf(stderr, _("Reboot the system to ensure the partition "
 			"table is correctly updated.\n"));
+#endif
 	
 	fprintf( stderr, _("\nWARNING: If you have created or modified any\n"
 		         "DOS 6.x partitions, please see the cfdisk manual\n"
@@ -958,6 +960,8 @@ add_part(int num, int id, int flags, long long first, long long last,
 		  p_info[i].first_sector + p_info[i].offset <= last)
 	      *errmsg = _("logical partitions overlap");
 	 else
+	      /* the enlarged logical partition starts at the
+		 partition table sector that defines it */
 	      *errmsg = _("enlarged logical partitions overlap");
 	 return -1;
     }
@@ -1087,16 +1091,10 @@ find_logical(int i) {
     return num;
 }
 
-static void
-inc_logical(int i) {
-    int j;
-
-    for (j = i; j < num_parts; j++)
-	if (p_info[j].id > 0 && IS_LOGICAL(p_info[j].num))
-	    p_info[j].num++;
-}
-
-/* Command menu support by Janne Kukonlehto <jtklehto@phoenix.oulu.fi> September 1994 */
+/*
+ * Command menu support by Janne Kukonlehto <jtklehto@phoenix.oulu.fi>
+ * September 1994
+ */
 
 /* Constants for menuType parameter of menuSelect function */
 #define MENU_HORIZ 1
@@ -1500,8 +1498,20 @@ new_part(int i) {
 	first = ext_info.first_sector + ext_info.offset;
     }
 
-    if (IS_LOGICAL(num))
-	inc_logical(i);
+    /* increment number of all partitions past this one */
+    if (IS_LOGICAL(num)) {
+#if 0
+	/* original text - ok, but fails when partitions not in disk order */
+	for (j = i; j < num_parts; j++)
+	    if (p_info[j].id > 0 && IS_LOGICAL(p_info[j].num))
+		p_info[j].num++;
+#else
+	/* always ok */
+	for (j = 0; j < num_parts; j++)
+	    if (p_info[j].id > 0 && p_info[j].num >= num)
+		p_info[j].num++;
+#endif
+    }
 
     /* Now we have a complete partition to ourselves */
     if (first == 0 || IS_LOGICAL(num))
