@@ -1015,7 +1015,7 @@ check_file2 (struct minix2_inode *dir, unsigned int offset) {
 	if (ino > INODES) {
 		printf(_("The directory '"));
 		print_current_name ();
-		printf (_("' contains a bad inode number for file '%.*s'.",
+		printf (_("' contains a bad inode number for file '%.*s'."),
 			  namelen, name);
 		if (ask (_(" Remove"), 1)) {
 			*(unsigned short *) (name - 2) = 0;
@@ -1155,8 +1155,12 @@ check_counts(void) {
 				unmark_zone(i);
 			continue;
 		}
-		printf(_("Zone %d: %sin use, counted=%d\n"),
-		i,zone_in_use(i)?"":_("not "),zone_count[i]);
+		if (zone_in_use(i))
+			printf(_("Zone %d: in use, counted=%d\n"),
+			       i, zone_count[i]);
+		else
+			printf(_("Zone %d: not in use, counted=%d\n"),
+			       i, zone_count[i]);
 	}
 }
 
@@ -1201,13 +1205,18 @@ check_counts2 (void) {
 		if (!zone_count[i]) {
 			if (bad_zone (i))
 				continue;
-			printf (_("Zone %d: marked in use, no file uses it."), i);
+			printf (_("Zone %d: marked in use, no file uses it."),
+				i);
 			if (ask (_("Unmark"), 1))
 				unmark_zone (i);
 			continue;
 		}
-		printf (_("Zone %d: %sin use, counted=%d\n"),
-			i, zone_in_use (i) ? "" : _("not "), zone_count[i]);
+		if (zone_in_use (i))
+			printf (_("Zone %d: in use, counted=%d\n"),
+				i, zone_count[i]);
+		else
+			printf (_("Zone %d: not in use, counted=%d\n"),
+				i, zone_count[i]);
 	}
 }
 #endif

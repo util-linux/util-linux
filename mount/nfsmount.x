@@ -48,7 +48,6 @@
 #endif
 %#include <asm/types.h>
 
-const MOUNTPORT = 635;
 const MNTPATHLEN = 1024;	/* maximum bytes in a pathname argument */
 const MNTNAMLEN = 255;		/* maximum bytes in a name argument */
 const FHSIZE = 32;		/* size in bytes of a file handle */

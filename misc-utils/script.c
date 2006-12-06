@@ -93,6 +93,7 @@ char	line[] = "/dev/ptyXX";
 int	aflg = 0;
 int	fflg = 0;
 int	qflg = 0;
+int	tflg = 0;
 
 static char *progname;
 
@@ -134,7 +135,7 @@ main(int argc, char **argv) {
 		}
 	}
 
-	while ((ch = getopt(argc, argv, "afq")) != EOF)
+	while ((ch = getopt(argc, argv, "afqt")) != EOF)
 		switch((char)ch) {
 		case 'a':
 			aflg++;
@@ -145,10 +146,13 @@ main(int argc, char **argv) {
 		case 'q':
 			qflg++;
 			break;
+		case 't':
+			tflg++;
+			break;
 		case '?':
 		default:
 			fprintf(stderr,
-				_("usage: script [-a] [-f] [-q] [file]\n"));
+				_("usage: script [-a] [-f] [-q] [-t] [file]\n"));
 			exit(1);
 		}
 	argc -= optind;
@@ -239,6 +243,8 @@ dooutput() {
 	register int cc;
 	time_t tvec;
 	char obuf[BUFSIZ];
+	struct timeval tv;
+	double oldtime=time(NULL), newtime;
 
 	(void) close(0);
 #ifdef HAVE_openpty
@@ -247,9 +253,16 @@ dooutput() {
 	tvec = time((time_t *)NULL);
 	fprintf(fscript, _("Script started on %s"), ctime(&tvec));
 	for (;;) {
+		if (tflg)
+			gettimeofday(&tv, NULL);
 		cc = read(master, obuf, sizeof (obuf));
 		if (cc <= 0)
 			break;
+		if (tflg) {
+			newtime=tv.tv_sec + (double) tv.tv_usec / 1000000;
+			fprintf(stderr, "%f %i\n", newtime - oldtime, cc);
+			oldtime=newtime;
+		}
 		(void) write(1, obuf, cc);
 		(void) fwrite(obuf, 1, cc, fscript);
 		if (fflg)

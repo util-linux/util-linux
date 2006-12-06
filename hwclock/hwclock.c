@@ -293,7 +293,8 @@ read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
       else {
 	adjtime_p->local_utc = UNKNOWN;
 	if (line3[0]) {
-	  fprintf(stderr, _("%s: Warning: unrecognized third line in adjtime file\n"),
+	  fprintf(stderr,
+		  _("%s: Warning: unrecognized third line in adjtime file\n"),
 		  MYNAME);
 	  fprintf(stderr, _("(Expected: `UTC' or `LOCAL' or nothing.)\n"));
 	}
@@ -564,64 +565,80 @@ interpret_date_string(const char *date_opt, time_t * const time_p) {
   10 and arbitrary *time_p.  Otherwise, return code is 0 and *time_p
   is valid.
 ----------------------------------------------------------------------------*/
-  FILE *date_child_fp;
-  char date_resp[100];
-  const char magic[]="seconds-into-epoch=";
-  char date_command[100];  
-  int retcode;  /* our eventual return code */
-  int rc;  /* local return code */
+	FILE *date_child_fp;
+	char date_resp[100];
+	const char magic[]="seconds-into-epoch=";
+	char date_command[100];  
+	int retcode;  /* our eventual return code */
+	int rc;  /* local return code */
 
-  if (date_opt == NULL) {
-    fprintf(stderr, _("No --date option specified.\n"));
-    retcode = 14;
-  } else if (strchr(date_opt, '"') != NULL) {
-    /* Quotation marks in date_opt would ruin the date command we construct.
-       */
-    fprintf(stderr, _("The value of the --date option is not a valid date.\n"
-            "In particular, it contains quotation marks.\n"));
-    retcode = 12;
-  } else {
-    sprintf(date_command, "date --date=\"%s\" +seconds-into-epoch=%%s", 
-            date_opt);
-    if (debug) printf(_("Issuing date command: %s\n"), date_command);
+	if (date_opt == NULL) {
+		fprintf(stderr, _("No --date option specified.\n"));
+		return 14;
+	}
 
-    date_child_fp = popen(date_command, "r");
-    if (date_child_fp == NULL) {
-      outsyserr(_("Unable to run 'date' program in /bin/sh shell. "
-                "popen() failed"));
-      retcode = 10;
-    } else {
-      date_resp[0] = '\0';  /* in case fgets fails */
-      fgets(date_resp, sizeof(date_resp), date_child_fp);
-      if (debug) printf(_("response from date command = %s\n"), date_resp);
-      if (strncmp(date_resp, magic, sizeof(magic)-1) != 0) {
-        fprintf(stderr, _("The date command issued by %s returned "
-                "unexpected results.\n"
-                "The command was:\n  %s\nThe response was:\n  %s\n"), 
-                MYNAME, date_command, date_resp);
-        retcode = 8;
-      } else {
-        long seconds_since_epoch;
-        rc = sscanf(date_resp + sizeof(magic)-1, "%ld", &seconds_since_epoch);
-        if (rc < 1) {
-          fprintf(stderr, _("The date command issued by %s returned "
-                  "something other than an integer where the converted "
-                  "time value was expected.\n"
-                  "The command was:\n  %s\nThe response was:\n %s\n"),
-                  MYNAME, date_command, date_resp);
-          retcode = 6;
-        } else {
-          retcode = 0;
-          *time_p = seconds_since_epoch;
-          if (debug) 
-            printf(_("date string %s equates to %ld seconds since 1969.\n"),
-                   date_opt, (long) *time_p);
-        }
-      }
-      fclose(date_child_fp);
-    }
-  }
-  return(retcode);
+	/* prevent overflow - a security risk */
+	if (strlen(date_opt) > sizeof(date_command) - 50) {
+		fprintf(stderr, _("--date argument too long\n"));
+		return 13;
+	}
+
+	/* Quotes in date_opt would ruin the date command we construct. */
+	if (strchr(date_opt, '"') != NULL) {
+		fprintf(stderr,
+			_("The value of the --date option is not a valid date.\n"
+			  "In particular, it contains quotation marks.\n"));
+		return 12;
+	}
+
+	sprintf(date_command, "date --date=\"%s\" +seconds-into-epoch=%%s", 
+		date_opt);
+	if (debug)
+		printf(_("Issuing date command: %s\n"), date_command);
+
+	date_child_fp = popen(date_command, "r");
+	if (date_child_fp == NULL) {
+		outsyserr(_("Unable to run 'date' program in /bin/sh shell. "
+			    "popen() failed"));
+		return 10;
+	}
+
+	date_resp[0] = '\0';  /* in case fgets fails */
+	fgets(date_resp, sizeof(date_resp), date_child_fp);
+	if (debug)
+		printf(_("response from date command = %s\n"), date_resp);
+	if (strncmp(date_resp, magic, sizeof(magic)-1) != 0) {
+		fprintf(stderr, _("The date command issued by %s returned "
+				  "unexpected results.\n"
+				  "The command was:\n  %s\n"
+				  "The response was:\n  %s\n"), 
+			MYNAME, date_command, date_resp);
+		retcode = 8;
+	} else {
+		long seconds_since_epoch;
+		rc = sscanf(date_resp + sizeof(magic)-1, "%ld",
+			    &seconds_since_epoch);
+		if (rc < 1) {
+			fprintf(stderr,
+				_("The date command issued by %s returned "
+				  "something other than an integer where the "
+				  "converted time value was expected.\n"
+				  "The command was:\n  %s\n"
+				  "The response was:\n %s\n"),
+				MYNAME, date_command, date_resp);
+			retcode = 6;
+		} else {
+			retcode = 0;
+			*time_p = seconds_since_epoch;
+			if (debug) 
+				printf(_("date string %s equates to "
+					 "%ld seconds since 1969.\n"),
+				       date_opt, (long) *time_p);
+		}
+	}
+	fclose(date_child_fp);
+
+	return(retcode);
 }
 
  

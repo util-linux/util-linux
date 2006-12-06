@@ -92,12 +92,20 @@ HAVE_FDUTILS=no
 # ADD_RAW=yes
 
 # Different optimizations for different cpus.
+# gcc 3.0 likes options -mcpu=i486 instead of -m486
 ifeq "$(ARCH)" "intel"
-  ifeq "$(CPU)" "i386"
-    OPT=	-pipe -O2 -m386 -fomit-frame-pointer
+  ifeq "$(HAVE_OLD_GCC)" "yes"
+    CPUHEAD=-m
   else
-    OPT=	-pipe -O2 -m486 -fomit-frame-pointer
+    CPUHEAD=-mcpu=i
   endif
+  ifeq "$(CPU)" "i386"
+    CPUTAIL=386
+  else
+    CPUTAIL=486
+  endif
+  CPUOPT= $(CPUHEAD)$(CPUTAIL)
+  OPT=          -pipe -O2 $(CPUOPT) -fomit-frame-pointer
 else 
   ifeq "$(ARCH)" "arm"
     OPT=	-pipe -O2 -fsigned-char -fomit-frame-pointer

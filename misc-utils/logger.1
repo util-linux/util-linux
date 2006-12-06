@@ -102,9 +102,12 @@ a sensitive nature), cron, daemon, ftp, kern, lpr, mail, news,
 security (deprecated synonym for auth), syslog, user, uucp, and local0
 to local7, inclusive.
 .Pp
-Valid level names are: alert, crit, debug, emerg, err, error
-(deprecated synonym for err), info, notice, panic (deprecated synonym
-for emerg), warning, warn (deprecated synonym for warning).
+Valid level names are):
+alert, crit, debug, emerg, err, error (deprecated synonym for err),
+info, notice, panic (deprecated synonym for emerg), warning,
+warn (deprecated synonym for warning).
+For the priority order and intended purposes of these levels, see
+.Xr syslog 3 .
 .Sh EXAMPLES
 .Bd -literal -offset indent -compact
 logger System rebooted

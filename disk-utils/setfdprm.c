@@ -97,13 +97,14 @@ usage(char *name) {
     char *this;
 
     if ((this = strrchr(name,'/')) != NULL) name = this+1;
-    fprintf(stderr,_("usage: %s [ -p ] dev name\n"),name);
-    fprintf(stderr,_("       %s [ -p ] dev size sect heads tracks stretch \
-gap rate spec1 fmt_gap\n"),name);
+    fprintf(stderr,_("usage:\n"));
+    fprintf(stderr,_("   %s [ -p ] dev name\n"),name);
+    fprintf(stderr,_("   %s [ -p ] dev size sect heads tracks stretch "
+		     "gap rate spec1 fmt_gap\n"),name);
 #ifdef FDMEDCNG
-    fprintf(stderr,_("       %s [ -c | -y | -n | -d ] dev\n"),name);
+    fprintf(stderr,_("   %s [ -c | -y | -n | -d ] dev\n"),name);
 #else
-    fprintf(stderr,_("       %s [ -c | -y | -n ] dev\n"),name);
+    fprintf(stderr,_("   %s [ -c | -y | -n ] dev\n"),name);
 #endif
     exit(1);
 }

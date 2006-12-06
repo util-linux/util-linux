@@ -25,6 +25,8 @@
 #define BLKRASET   _IO(0x12,98)
 #define BLKRAGET   _IO(0x12,99)
 #define BLKSSZGET  _IO(0x12,104)
+#define BLKBSZGET  _IOR(0x12,112,sizeof(int))
+#define BLKBSZSET  _IOW(0x12,113,sizeof(int))
 #endif
 
 const char *progname;
@@ -36,9 +38,10 @@ struct bdc {
 	int argtype;
 #define ARGNONE	0
 #define ARGINTA	1
-#define	ARGINTP	2
-#define ARGINTG	3
-#define ARGLINTG 4
+#define ARGINTAP 2
+#define	ARGINTP	3
+#define ARGINTG	4
+#define ARGLINTG 5
 	long argval;
 	char *argname;
 	char *help;
@@ -52,6 +55,12 @@ struct bdc {
 #endif
 #ifdef BLKSSZGET
 	{ "--getss", "BLKSSZGET", BLKSSZGET, ARGINTG, -1, NULL, N_("get sectorsize") },
+#endif
+#ifdef BLKBSZGET
+	{ "--getbsz", "BLKBSZGET", BLKBSZGET, ARGINTG, -1, NULL, N_("get blocksize") },
+#endif
+#ifdef BLKBSZSET
+	{ "--setbsz", "BLKBSZSET", BLKBSZSET, ARGINTAP, 0, "BLOCKSIZE", N_("set blocksize") },
 #endif
 #ifdef BLKGETSIZE
 	{ "--getsize", "BLKGETSIZE", BLKGETSIZE, ARGLINTG, -1, NULL, N_("get size") },
@@ -132,7 +141,8 @@ main(int argc, char **argv) {
 	for (d = 1; d < argc; d++) {
 		j = find_cmd(argv[d]);
 		if (j >= 0) {
-			if (bdcms[j].argtype == ARGINTA)
+			if (bdcms[j].argtype == ARGINTA ||
+			    bdcms[j].argtype == ARGINTAP)
 				d++;
 			continue;
 		}
@@ -154,6 +164,7 @@ main(int argc, char **argv) {
 			exit(1);
 		}
 		do_commands(fd, argv, d);
+		close(fd);
 	}
 	return 0;
 }
@@ -194,6 +205,15 @@ do_commands(int fd, char **argv, int d) {
 			}
 			iarg = atoi(argv[++i]);
 			res = ioctl(fd, bdcms[j].ioc, iarg);
+			break;
+		case ARGINTAP:
+			if (i == d-1) {
+				fprintf(stderr, _("%s requires an argument\n"),
+					bdcms[j].name);
+				usage();
+			}
+			iarg = atoi(argv[++i]);
+			res = ioctl(fd, bdcms[j].ioc, &iarg);
 			break;
 		case ARGINTP:
 		case ARGINTG:

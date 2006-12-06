@@ -290,10 +290,10 @@ par_color(int argc, char **argv, int *option, int *opt_color, int *bad_arg) {
 			*opt_color = DEFAULT;
 		else if (isdigit(argv[0][0]))
 			*opt_color = atoi(argv[0]);
-		else    
+		else 
 			*bad_arg = TRUE;
     
-		if(*opt_color < 0 || *opt_color > 7)
+		if(*opt_color < 0 || *opt_color > 9 || *opt_color == 8)
 			*bad_arg = TRUE;
 	}
 }

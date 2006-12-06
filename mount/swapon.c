@@ -158,9 +158,11 @@ display_summary(void)
 			strerror (errsv));
                return -1 ; 
        }
+
        while ( fgets(line, sizeof(line), swaps))
                printf ("%s", line);
 
+       fclose(swaps);
        return 0 ;
 }
 

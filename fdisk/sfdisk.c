@@ -568,6 +568,7 @@ chs_ok (chs a, char *v, char *w) {
 #define LINUX_NATIVE	        0x83
 #define LINUX_EXTENDED		0x85
 #define BSD_PARTITION		0xa5
+#define NETBSD_PARTITION	0xa9
 
 /* List of partition types now in i386_sys_types.c */
 
@@ -599,7 +600,7 @@ is_extended(unsigned char type) {
 
 static int
 is_bsd(unsigned char type) {
-	return (type == BSD_PARTITION);
+	return (type == BSD_PARTITION || type == NETBSD_PARTITION);
 }
 
 /*
@@ -701,7 +702,7 @@ is_parent(struct part_desc *pp, struct part_desc *p) {
 }
 
 struct disk_desc {
-    struct part_desc partitions[128];
+    struct part_desc partitions[512];
     int partno;
 } oldp, newp;
 
@@ -2318,27 +2319,35 @@ static struct devd {
 
 static int
 is_ide_cdrom_or_tape(char *device) {
-    /* No device was given explicitly, and we are trying some
-       likely things.  But opening /dev/hdc may produce errors like
+	FILE *procf;
+	char buf[100];
+	struct stat statbuf;
+	int is_ide = 0;
+
+	/* No device was given explicitly, and we are trying some
+	   likely things.  But opening /dev/hdc may produce errors like
            "hdc: tray open or drive not ready"
-       if it happens to be a CD-ROM drive. So try to be careful.
-       This only works since 2.1.73. */
+	   if it happens to be a CD-ROM drive. It even happens that
+	   the process hangs on the attempt to read a music CD.
+	   So try to be careful. This only works since 2.1.73. */
 
-    FILE *procf;
-    char buf[100];
-    struct stat statbuf;
+	if (strncmp("/dev/hd", device, 7))
+		return 0;
 
-    sprintf(buf, "/proc/ide/%s/media", device+5);
-    procf = fopen(buf, "r");
-    if (procf != NULL && fgets(buf, sizeof(buf), procf))
-	return  !strncmp(buf, "cdrom", 5) || !strncmp(buf, "tape", 4);
+	snprintf(buf, sizeof(buf), "/proc/ide/%s/media", device+5);
+	procf = fopen(buf, "r");
+	if (procf != NULL && fgets(buf, sizeof(buf), procf))
+		is_ide = (!strncmp(buf, "cdrom", 5) ||
+			  !strncmp(buf, "tape", 4));
+	else
+		/* Now when this proc file does not exist, skip the
+		   device when it is read-only. */
+		if (stat(device, &statbuf) == 0)
+			is_ide = ((statbuf.st_mode & 0222) == 0);
 
-    /* Now when this proc file does not exist, skip the
-       device when it is read-only. */
-    if (stat(device, &statbuf) == 0)
-	return (statbuf.st_mode & 0222) == 0;
-
-    return 0;
+	if (procf)
+		fclose(procf);
+	return is_ide;
 }
 
 static void do_list(char *dev, int silent);
@@ -2570,7 +2579,10 @@ my_open (char *dev, int rw, int silent) {
     fd = open(dev, mode);
     if (fd < 0 && !silent) {
 	perror(dev);
-	fatal(_("cannot open %s %s\n"), dev, rw ? _("read-write") : _("for reading"));
+	if (rw)
+		fatal(_("cannot open %s read-write\n"), dev);
+	else
+		fatal(_("cannot open %s for reading\n"), dev);
     }
     return fd;
 }

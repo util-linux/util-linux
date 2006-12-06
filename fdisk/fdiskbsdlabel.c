@@ -59,7 +59,8 @@
 
 #include "common.h"
 #include "fdisk.h"
-#define NETBSD_PARTITION 0xa5
+#define FREEBSD_PARTITION	0xa5
+#define NETBSD_PARTITION	0xa9
 #define DKTYPENAMES
 #include "fdiskbsdlabel.h"
 
@@ -148,8 +149,11 @@ hidden(int type) {
 }
 
 static int
-is_netbsd_partition_type(int type) {
-	return (type == NETBSD_PARTITION || type == hidden(NETBSD_PARTITION));
+is_bsd_partition_type(int type) {
+	return (type == FREEBSD_PARTITION ||
+		type == hidden(FREEBSD_PARTITION) ||
+		type == NETBSD_PARTITION ||
+		type == hidden(NETBSD_PARTITION));
 }
 #endif
 
@@ -161,7 +165,7 @@ bselect (void) {
 
   for (t=0; t<4; t++) {
     p = get_part_table(t);
-    if (p && is_netbsd_partition_type(p->sys_ind)) {
+    if (p && is_bsd_partition_type(p->sys_ind)) {
       xbsd_part = p;
       xbsd_part_index = t;
       ss = get_start_sect(xbsd_part);

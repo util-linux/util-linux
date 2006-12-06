@@ -77,4 +77,4 @@ install: all
 
 .PHONY:	clean
 clean:
-	-rm -f *.o *~ core $(SBIN)
+	-rm -f *.o *~ core $(SBIN) partitiontype

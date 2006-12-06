@@ -2,6 +2,7 @@
 #include <string.h>
 #include "xstrncpy.h"
 
+/* caller guarantees n > 0 */
 void
 xstrncpy(char *dest, const char *src, size_t n) {
 	strncpy(dest, src, n-1);

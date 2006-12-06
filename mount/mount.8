@@ -35,6 +35,7 @@
 .\" 990111, aeb: documented /sbin/mount.smbfs
 .\" 990730, Yann Droneaud <lch@multimania.com>: updated page
 .\" 991214, Elrond <Elrond@Wunder-Nett.org>: added some docs on devpts
+.\" 010725, Nikita Danilov <NikitaDanilov@Yahoo.COM>: reiserfs options
 .\"
 .TH MOUNT 8 "14 September 1997" "Linux 2.0" "Linux Programmer's Manual"
 .SH NAME
@@ -95,7 +96,7 @@ prints a version string; and just
 .RE
 lists all mounted file systems (of type
 .IR type ).
-The option \-l adds the (ext2 and XFS) labels in this listing.
+The option \-l adds the (ext2, ext3 and XFS) labels in this listing.
 See below.
 
 .\" In fact since 2.3.99. At first the syntax was mount -t bind.
@@ -276,9 +277,9 @@ command is trying to do. It can also be used to add entries for devices
 that were mounted earlier with the -n option.
 .TP
 .B \-l
-Add the ext2 and XFS labels in the mount output. Mount must have permission to
-read the disk device (e.g. be suid root) for this to work.
-One can set such a label for ext2 using the
+Add the ext2, ext3 and XFS labels in the mount output. Mount must have
+permission to read the disk device (e.g. be suid root) for this to work.
+One can set such a label for ext2 or ext3 using the
 .BR e2label (8)
 utility, or for XFS using
 .BR xfs_admin (8).
@@ -330,9 +331,11 @@ currently supported are:
 .IR efs ,
 .IR ext ,
 .IR ext2 ,
+.IR ext3 ,
 .IR hfs ,
 .IR hpfs ,
 .IR iso9660 ,
+.IR jfs ,
 .IR minix ,
 .IR msdos ,
 .IR ncpfs ,
@@ -340,6 +343,7 @@ currently supported are:
 .IR ntfs ,
 .IR proc ,
 .IR qnx4 ,
+.IR reiserfs ,
 .IR romfs ,
 .IR smbfs ,
 .IR sysv ,
@@ -387,9 +391,9 @@ is the default.  If no
 option is given, or if the
 .B auto
 type is specified, the superblock is probed for the filesystem type
-.RI ( minix ", " ext ", " ext2 ", " xiafs ", " iso9660 ", " romfs
-.RI , ufs ", " ntfs  ", " qnx4 ", " bfs ", " xfs ", " cramfs ", " hfs
-.RI , hpfs ", " adfs
+.RI ( minix ", " ext ", " ext2 ", " ext3 ", " xiafs ", " iso9660 ,
+.IR jfs ", " reiserfs ", " romfs ", " ufs ", " ntfs  ", " qnx4 ", " bfs ,
+.IR xfs ", " cramfs ", " hfs ", " hpfs ", " adfs ", " vxfs
 are supported).
 If this probe fails, mount will try to read the file
 .IR /etc/filesystems ,
@@ -440,7 +444,7 @@ Some of these options are only useful when they appear in the
 file.  The following options apply to any file system that is being
 mounted (but not every file system actually honors them - e.g., the
 .B sync
-option today has effect only for ext2 and ufs):
+option today has effect only for ext2, ext3 and ufs):
 .RS
 .TP
 .B async
@@ -510,11 +514,20 @@ effect.
 All I/O to the file system should be done synchronously.
 .TP
 .B user
-Allow an ordinary user to mount the file system.  This option implies
-the options
+Allow an ordinary user to mount the file system.
+The name of the mounting user is written to mtab so that he can unmount
+the file system again.
+This option implies the options
 .BR noexec ", " nosuid ", and " nodev
 (unless overridden by subsequent options, as in the option line
 .BR user,exec,dev,suid ).
+.TP
+.B users
+Allow every user to mount and unmount the file system.
+This option implies the options
+.BR noexec ", " nosuid ", and " nodev
+(unless overridden by subsequent options, as in the option line
+.BR users,exec,dev,suid ).
 .RE
 
 .SH "FILESYSTEM SPECIFIC MOUNT OPTIONS"
@@ -706,10 +719,58 @@ superblocks, and since version 1.15 this is the default. Note
 that this may mean that ext2 filesystems created by a recent
 .B mke2fs
 cannot be mounted r/w under Linux 2.0.*.)
+The block number here uses 1k units. Thus, if you want to use logical
+block 32768 on a filesystem with 4k blocks, use "sb=131072".
 .TP
 .BR grpquota " / " noquota " / " quota " / " usrquota
 These options are accepted but ignored.
 
+.TP
+.BR nouid32
+Disables 32-bit UIDs and GIDs.  This is for interoperability with older
+kernels which only store and expect 16-bit values.
+
+
+.SH "Mount options for ext3"
+The `ext3' file system is version of the ext2 file system which has been
+enhanced with journalling.  It supports the same options as ext2 as
+well as the following additions:
+.\" .TP
+.\" .BR abort
+.\" Mount the file system in abort mode, as if a fatal error has occurred.
+.TP
+.BR journal=update
+Update the ext3 file system's journal to the current format.
+.TP
+.BR journal=inum
+When a journal already exists, this option is ignored. Otherwise, it
+specifies the number of the inode which will represent the ext3 file system's
+journal file;  ext3 will create a new journal, overwriting the old contents
+of the file whose inode number is
+.IR inum .
+.TP
+.BR noload
+Do not load the ext3 file system's journal on mounting.
+.TP
+.BR data=journal " / " data=ordered " / " data=writeback
+Specifies the journalling mode for file data.  Metadata is always journaled.
+.RS
+.TP
+.B journal
+All data is committed into the journal prior to being written into the
+main file system.
+.TP
+.B ordered
+This is the default mode.  All data is forced directly out to the main file
+system prior to its metadata being committed to the journal.
+.TP
+.B writeback
+Data ordering is not preserved - data may be written into the main
+file system after its metadata has been committed to the journal.
+This is rumoured to be the highest-throughput option.  It guarantees
+internal file system integrity, however it can allow old data to appear
+in files after a crash and journal recovery.
+ 
 .SH "Mount options for fat"
 (Note:
 .I fat
@@ -1054,9 +1115,11 @@ unconvertible characters.
 Use UTF-8 for converting file names.
 .TP
 .B uni_xlate=[0|1|2]
-For 0 (or `no' or `false') or 1 (or `yes' or `true'):
-use the VFAT-style encoding for file names outside the current
-character set. A value of 2 will disable the encoding with ":".
+For 0 (or `no' or `false'), do not use escape sequences
+for unknown Unicode characters.
+For 1 (or `yes' or `true') or 2, use vfat-style 4-byte escape sequences
+starting with ":". Here 2 give a little-endian encoding
+and 1 a byteswapped bigendian encoding.
 .TP
 .B posix=[0|1]
 If enabled (posix=1), the file system distinguishes between
@@ -1071,6 +1134,89 @@ By default, the files are owned by root and not readable by somebody else.
 .TP
 \fBuid=\fP\fIvalue\fP and \fBgid=\fP\fIvalue\fP
 These options are recognized, but have no effect as far as I can see.
+
+.SH "Mount options for reiserfs"
+The reiserfs mount options are more fully described at
+.IR http://www.namesys.com/mount-options.html .
+.TP
+.BR conv
+Instructs version 3.6 reiserfs software to mount a version 3.5 file system,
+using the 3.6 format for newly created objects. This file system will no
+longer be compatible with reiserfs 3.5 tools.
+.TP
+.BR hash=rupasov " / " hash=tea " / " hash=r5 " / " hash=detect
+Choose which hash function reiserfs will use to find files within directories.
+.RS
+.TP
+.B rupasov
+A hash invented by Yury Yu. Rupasov.  It is fast and preserves locality,
+mapping lexicographically close file names to close hash values.
+This option should not be used, as it causes a high probability of hash
+collisions. 
+.TP
+.B tea
+A Davis-Meyer function implemented by Jeremy Fitzhardinge.
+It uses hash permuting bits in the name.  It gets high randomness
+and, therefore, low probability of hash collisions at come CPU cost.
+This may be used if EHASHCOLLISION errors are experienced with the r5 hash. 
+.TP
+.B r5
+A modified version of the rupasov hash. It is used by default and is
+the best choice unless the file system has huge directories and
+unusual file-name patterns. 
+.TP
+.B detect
+Instructs
+.IR mount
+to detect which hash function is in use by examining
+the file system being mounted,  and to write this information into
+the reiserfs superblock. This is only useful on the first mount of
+an old format file system. 
+.RE
+.TP
+.BR hashed_relocation
+Tunes the block allocator. This may provide performance improvements
+in some situations. 
+.TP
+.BR no_unhashed_relocation
+Tunes the block allocator. This may provide performance improvements
+in some situations.
+.TP
+.BR noborder
+Disable the border allocator algorithm invented by Yury Yu. Rupasov.
+This may provide performance improvements in some situations.
+.TP
+.BR nolog
+Disable journalling. This will provide slight performance improvements in
+some situations at the cost of losing reiserfs's fast recovery from crashes.
+Even with this option turned on, reiserfs still performs all journalling
+operations, save for actual writes into its journalling area.  Implementation
+of
+.IR nolog
+is a work in progress.
+.TP
+.BR notail
+By default, reiserfs stores small files and `file tails' directly into its
+tree. This confuses some utilities such as
+.BR LILO (8) .
+This option is used to disable packing of files into the tree. 
+.TP
+.BR replayonly
+Replay the transactions which are in the journal, but do not actually
+mount the file system. Mainly used by
+.IR reiserfsck .
+.TP
+.BI resize= number
+A remount option which permits online expansion of reiserfs partitions.
+Instructs reiserfs to assume that the device has
+.I number
+blocks.
+This option is designed for use with devices which are under logical
+volume management (LVM).
+There is a special
+.I resizer
+utility which can be obtained from
+.IR ftp://ftp.namesys.com/pub/reiserfsprogs .
 
 .SH "Mount options for romfs"
 None.
@@ -1396,8 +1542,8 @@ It is possible for a corrupted file system to cause a crash.
 .PP
 Some Linux file systems don't support
 .B "\-o sync"
-(the ext2fs
-.I does
+(the ext2 and ext3 file systems
+.I do
 support synchronous updates (a la BSD) when mounted with the
 .B sync
 option).

@@ -64,16 +64,36 @@ usage(void) {
   exit(1);
 }
 
+static void *
+xmalloc (size_t size) {
+	void *t;
+
+	if (size == 0)
+		return NULL;
+
+	t = malloc (size);
+	if (t == NULL) {
+		fprintf(stderr, _("out of memory"));
+		exit(1);
+	}
+
+	return t;
+}
+
 static FILE *
 myopen(char *name, char *mode, int *flag) {
-	static char cmdline[S_LEN];
+	int len = strlen(name);
 
-	if (!strcmp(name+strlen(name)-3,".gz")) {
-		*flag=1;
-		sprintf(cmdline,"zcat %s", name);
-		return popen(cmdline,mode);
+	if (!strcmp(name+len-3,".gz")) {
+		FILE *res;
+		char *cmdline = xmalloc(len+6);
+		sprintf(cmdline, "zcat %s", name);
+		res = popen(cmdline,mode);
+		free(cmdline);
+		*flag = 1;
+		return res;
 	}
-	*flag=0;
+	*flag = 0;
 	return fopen(name,mode);
 }
 

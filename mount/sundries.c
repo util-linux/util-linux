@@ -193,7 +193,7 @@ matching_type (const char *type, const char *types) {
 char *
 canonicalize (const char *path) {
      char *canonical;
-  
+
      if (path == NULL)
 	  return NULL;
 

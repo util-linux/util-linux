@@ -50,7 +50,6 @@ extern "C" {
 #ifndef _rpcsvc_mount_h
 #define _rpcsvc_mount_h
 #include <asm/types.h>
-#define MOUNTPORT 635
 #define MNTPATHLEN 1024
 #define MNTNAMLEN 255
 #define FHSIZE 32

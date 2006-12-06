@@ -131,6 +131,7 @@ find_dev_recursive(char *dirnamebuf, int number) {
 			return 1;
 	}
 	dirnamebuf[dirnamelen] = 0;
+	closedir(dp);
 	return 0;
 }
 

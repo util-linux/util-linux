@@ -50,11 +50,14 @@ struct minix_super_block {
 #define NAME_MAX         255   /* # chars in a file name */
 
 #define MINIX_INODES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct minix_inode)))
+#define MINIX2_INODES_PER_BLOCK ((BLOCK_SIZE)/(sizeof (struct minix2_inode)))
 
 #define MINIX_VALID_FS               0x0001          /* Clean fs. */
 #define MINIX_ERROR_FS               0x0002          /* fs has errors. */
 
 #define MINIX_SUPER_MAGIC    0x137F          /* original minix fs */
 #define MINIX_SUPER_MAGIC2   0x138F          /* minix fs, 30 char names */
+#define MINIX2_SUPER_MAGIC   0x2468	     /* minix V2 fs */
+#define MINIX2_SUPER_MAGIC2  0x2478	     /* minix V2 fs, 30 char names */
 
 #endif /* KERNEL_INCLUDES_ARE_CLEAN */

@@ -69,15 +69,21 @@ char *
 mount_guess_rootdev() {
 	FILE *cf;
 	char line[1024];
-	char *p;
+	char *p, *ret = NULL;
 
 	cf = fopen(PROC_CMDLINE, "r");
-	if (cf && fgets(line, sizeof(line), cf)) {
-		for (p = line; *p; p++)
-			if (!strncmp(p, " root=", 6))
-				return rootdev(p+6);
+	if (cf) {
+		if (fgets(line, sizeof(line), cf)) {
+			for (p = line; *p; p++) {
+				if (!strncmp(p, " root=", 6)) {
+					ret = rootdev(p+6);
+					break;
+				}
+			}
+		}
+		fclose(cf);
 	}
-	return NULL;
+	return ret;
 }
 
 #if 0

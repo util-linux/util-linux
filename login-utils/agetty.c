@@ -30,6 +30,7 @@
 #include <getopt.h>
 #include <time.h>
 #include <sys/file.h>
+#include "xstrncpy.h"
 #include "nls.h"
 
 #ifdef __linux__
@@ -273,9 +274,14 @@ main(argc, argv)
     /* The BSD-style init command passes us a useless process name. */
 
 #ifdef	SYSV_STYLE
-    progname = argv[0];
+       {
+	       char *ptr;
+	       progname = argv[0];
+	       if ((ptr = strrchr(argv[0], '/')))
+		       progname = ++ptr;
+       }
 #else
-    progname = "agetty";
+       progname = "agetty";
 #endif
 
 #ifdef DEBUGGING
@@ -1220,13 +1226,13 @@ error(const char *fmt, ...) {
      */
 
     va_start(ap, fmt);
-    while (*fmt) {
+    while (*fmt && bp < &buf[BUFSIZ-1]) {
 	if (strncmp(fmt, "%s", 2) == 0) {
-	    (void) strcpy(bp, va_arg(ap, char *));
+	    xstrncpy(bp, va_arg(ap, char *), &buf[BUFSIZ-1] - bp);
 	    bp += strlen(bp);
 	    fmt += 2;
 	} else if (strncmp(fmt, "%m", 2) == 0) {
-	    (void) strcpy(bp, strerror(errno));
+	    xstrncpy(bp, strerror(errno), &buf[BUFSIZ-1] - bp);
 	    bp += strlen(bp);
 	    fmt += 2;
 	} else {

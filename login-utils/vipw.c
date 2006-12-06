@@ -135,14 +135,17 @@ pw_lock(void) {
 	 */
 #if 0 /* flock()ing is superfluous here, with the ptmp/ptmptmp system. */
 	if (flock(lockfd, LOCK_EX|LOCK_NB)) {
-		(void)fprintf(stderr,
-		    _("%s: the %s file is busy.\n"), progname, 
-			      program == VIPW ? "password" : "group" );
+		if (program == VIPW)
+			fprintf(stderr, _("%s: the password file is busy.\n"),
+				progname);
+		else
+			fprintf(stderr, _("%s: the group file is busy.\n"),
+				progname);
 		exit(1);
 	}
 #endif
 
-	if ((fd = open(tmptmp_file, O_WRONLY|O_CREAT, 0644)) == -1) {
+	if ((fd = open(tmptmp_file, O_WRONLY|O_CREAT, 0600)) == -1) {
 	  (void)fprintf(stderr,
 		   "%s: %s: %s\n", progname, tmptmp_file, strerror(errno));
 	  exit(1);
@@ -181,19 +184,19 @@ pw_lock(void) {
 
 static void
 pw_unlock(void) {
-  char tmp[FILENAMELEN];
+	char tmp[FILENAMELEN+4];
   
-  sprintf(tmp, "%s%s", orig_file, ".OLD");
-  unlink(tmp);
-  link(orig_file, tmp);
-  if (rename(tmp_file, orig_file) == -1) {
-    int errsv = errno;
-    (void)fprintf(stderr, 
-		  _("%s: can't unlock %s: %s (your changes are still in %s)\n"), 
-		  progname, orig_file, strerror(errsv), tmp_file);
-    exit(1);
-  }
-  (void)unlink(tmp_file);
+	sprintf(tmp, "%s%s", orig_file, ".OLD");
+	unlink(tmp);
+	link(orig_file, tmp);
+	if (rename(tmp_file, orig_file) == -1) {
+		int errsv = errno;
+		fprintf(stderr, 
+			_("%s: can't unlock %s: %s (your changes are still in %s)\n"), 
+			progname, orig_file, strerror(errsv), tmp_file);
+		exit(1);
+	}
+	unlink(tmp_file);
 }
 
 
@@ -238,27 +241,23 @@ pw_edit(int notsetuid) {
 }
 
 void
-pw_error(name, err, eval)
-	char *name;
-	int err, eval;
-{
-	int sverrno;
-
+pw_error(char *name, int err, int eval) {
 	if (err) {
-		sverrno = errno;
-		(void)fprintf(stderr, "%s: ", progname);
+		int sverrno = errno;
+
+		fprintf(stderr, "%s: ", progname);
 		if (name)
 			(void)fprintf(stderr, "%s: ", name);
-		(void)fprintf(stderr, "%s\n", strerror(sverrno));
+		fprintf(stderr, "%s\n", strerror(sverrno));
 	}
-	(void)fprintf(stderr,
+	fprintf(stderr,
 	    _("%s: %s unchanged\n"), progname, orig_file);
-	(void)unlink(tmp_file);
+	unlink(tmp_file);
 	exit(eval);
 }
 
 static void
-edit_file(void)
+edit_file(int is_shadow)
 {
 	struct stat begin, end;
 
@@ -274,62 +273,68 @@ edit_file(void)
 		(void)fprintf(stderr, _("%s: no changes made\n"), progname);
 		pw_error((char *)NULL, 0, 0);
 	}
+	if (!is_shadow)
+		chmod(tmp_file, 0644);
+#if 0
+	/* if shadow file, then mode is 0600 now */
+	else
+		chmod(tmp_file, 0400);
+#endif
 	pw_unlock();
 }
 
-int main(int argc, char *argv[])
-{
+int main(int argc, char *argv[]) {
 
-  setlocale(LC_ALL, "");
-  bindtextdomain(PACKAGE, LOCALEDIR);
-  textdomain(PACKAGE);
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
-  bzero(tmp_file, FILENAMELEN);
-  progname = (rindex(argv[0], '/')) ? rindex(argv[0], '/') + 1 : argv[0];
-  if (!strcmp(progname, "vigr")) {
-    program = VIGR;
-    xstrncpy(orig_file, GROUP_FILE, sizeof(orig_file));
-    xstrncpy(tmp_file, GTMP_FILE, sizeof(tmp_file));
-    xstrncpy(tmptmp_file, GTMPTMP_FILE, sizeof(tmptmp_file));
-  } else {
-    program = VIPW;
-    xstrncpy(orig_file, PASSWD_FILE, sizeof(orig_file));
-    xstrncpy(tmp_file, PTMP_FILE, sizeof(tmp_file));
-    xstrncpy(tmptmp_file, PTMPTMP_FILE, sizeof(tmptmp_file));
-  }
+	bzero(tmp_file, FILENAMELEN);
+	progname = (rindex(argv[0], '/')) ? rindex(argv[0], '/') + 1 : argv[0];
+	if (!strcmp(progname, "vigr")) {
+		program = VIGR;
+		xstrncpy(orig_file, GROUP_FILE, sizeof(orig_file));
+		xstrncpy(tmp_file, GTMP_FILE, sizeof(tmp_file));
+		xstrncpy(tmptmp_file, GTMPTMP_FILE, sizeof(tmptmp_file));
+	} else {
+		program = VIPW;
+		xstrncpy(orig_file, PASSWD_FILE, sizeof(orig_file));
+		xstrncpy(tmp_file, PTMP_FILE, sizeof(tmp_file));
+		xstrncpy(tmptmp_file, PTMPTMP_FILE, sizeof(tmptmp_file));
+	}
 
-  if ((argc > 1) && 
-      (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-    printf("%s\n", version_string);
-    exit(0);
-  }
+	if ((argc > 1) && 
+	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
+		printf("%s\n", version_string);
+		exit(0);
+	}
 
-  edit_file();
+	edit_file(0);
 
-  if (program == VIGR) {
-    strncpy(orig_file, SGROUP_FILE, FILENAMELEN-1);
-    strncpy(tmp_file, SGTMP_FILE, FILENAMELEN-1);
-    strncpy(tmptmp_file, SGTMPTMP_FILE, FILENAMELEN-1);
-  } else {
-    strncpy(orig_file, SHADOW_FILE, FILENAMELEN-1);
-    strncpy(tmp_file, SPTMP_FILE, FILENAMELEN-1);
-    strncpy(tmptmp_file, SPTMPTMP_FILE, FILENAMELEN-1);
-  }
+	if (program == VIGR) {
+		strncpy(orig_file, SGROUP_FILE, FILENAMELEN-1);
+		strncpy(tmp_file, SGTMP_FILE, FILENAMELEN-1);
+		strncpy(tmptmp_file, SGTMPTMP_FILE, FILENAMELEN-1);
+	} else {
+		strncpy(orig_file, SHADOW_FILE, FILENAMELEN-1);
+		strncpy(tmp_file, SPTMP_FILE, FILENAMELEN-1);
+		strncpy(tmptmp_file, SPTMPTMP_FILE, FILENAMELEN-1);
+	}
 
-  if (!access(orig_file, X_OK)) {
-    char response[80];
+	if (access(orig_file, F_OK) == 0) {
+		char response[80];
 
-    printf((program == VIGR)
-	   ? _("You are using shadow groups on this system.\n")
-	   : _("You are using shadow passwords on this system.\n"));
-    printf(_("Would you like to edit %s now [y/n]? "), orig_file);
+		printf((program == VIGR)
+		       ? _("You are using shadow groups on this system.\n")
+		       : _("You are using shadow passwords on this system.\n"));
+		printf(_("Would you like to edit %s now [y/n]? "), orig_file);
 
-    /* EOF means no */
-    if (fgets(response, sizeof(response), stdin)) {
-	if (response[0] == 'y' || response[0] == 'Y')
-	    edit_file();
-    }
-  }
+		/* EOF means no */
+		if (fgets(response, sizeof(response), stdin)) {
+			if (response[0] == 'y' || response[0] == 'Y')
+				edit_file(1);
+		}
+	}
 
-  exit(0);
+	exit(0);
 }

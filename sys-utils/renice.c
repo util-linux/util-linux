@@ -71,10 +71,12 @@ main(int argc, char **argv)
 	}
 	prio = atoi(*argv);
 	argc--, argv++;
+#if 0
 	if (prio > PRIO_MAX)
 		prio = PRIO_MAX;
 	if (prio < PRIO_MIN)
 		prio = PRIO_MIN;
+#endif
 	for (; argc > 0; argc--, argv++) {
 		if (strcmp(*argv, "-g") == 0) {
 			which = PRIO_PGRP;
@@ -111,12 +113,11 @@ main(int argc, char **argv)
 }
 
 int
-donice(which, who, prio)
-	int which, who, prio;
-{
-	int oldprio;
+donice(int which, int who, int prio) {
+	int oldprio, newprio;
 
-	errno = 0, oldprio = getpriority(which, who);
+	errno = 0;
+	oldprio = getpriority(which, who);
 	if (oldprio == -1 && errno) {
 		fprintf(stderr, "renice: %d: ", who);
 		perror(_("getpriority"));
@@ -127,6 +128,15 @@ donice(which, who, prio)
 		perror(_("setpriority"));
 		return (1);
 	}
-	printf(_("%d: old priority %d, new priority %d\n"), who, oldprio, prio);
-	return (0);
+	errno = 0;
+	newprio = getpriority(which, who);
+	if (newprio == -1 && errno) {
+		fprintf(stderr, "renice: %d: ", who);
+		perror(_("getpriority"));
+		return (1);
+	}
+
+	printf(_("%d: old priority %d, new priority %d\n"),
+	       who, oldprio, newprio);
+	return 0;
 }

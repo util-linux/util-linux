@@ -63,6 +63,31 @@ struct ext2_super_block {
 };
 #define ext2magic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8))
 
+struct reiserfs_super_block
+{
+	u_char		s_block_count[4];
+	u_char		s_free_blocks[4];
+	u_char		s_root_block[4];
+	u_char		s_journal_block[4];
+	u_char		s_journal_dev[4];
+	u_char		s_orig_journal_size[4];
+	u_char		s_journal_trans_max[4];
+	u_char		s_journal_block_count[4];
+	u_char		s_journal_max_batch[4];
+	u_char		s_journal_max_commit_age[4];
+	u_char		s_journal_max_trans_age[4];
+	u_char		s_blocksize[2];
+	u_char		s_oid_maxsize[2];
+	u_char		s_oid_cursize[2];
+	u_char		s_state[2];
+	u_char		s_magic[12];
+};
+#define REISERFS_SUPER_MAGIC_STRING "ReIsErFs"
+#define REISER2FS_SUPER_MAGIC_STRING "ReIsEr2Fs"
+#define REISERFS_DISK_OFFSET_IN_BYTES (64 * 1024)
+/* the spot for the super in versions 3.5 - 3.5.10 (inclusive) */
+#define REISERFS_OLD_DISK_OFFSET_IN_BYTES (8 * 1024)
+
 #define _XIAFS_SUPER_MAGIC 0x012FD16D
 struct xiafs_super_block {
     u_char     s_boot_segment[512];     /*  1st sector reserved for boot */
@@ -154,3 +179,30 @@ struct adfs_super_block {
 	u_char    s_checksum[1];
 };
 #define adfsblksize(s)	((uint) s.s_blksize[0])
+
+/* found in first 4 bytes of block 1 */
+struct vxfs_super_block {
+	u_char	s_magic[4];
+};
+#define vxfsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
+			 (((uint) s.s_magic[2]) << 16) + \
+			 (((uint) s.s_magic[3]) << 24))
+#define VXFS_SUPER_MAGIC 0xa501FCF5
+
+struct jfs_super_block {
+	char s_magic[4];
+};
+#define JFS_SUPER1_OFF 0x8000
+#define JFS_MAGIC "JFS1"
+
+#define SYSV_SUPER_MAGIC	0xfd187e20
+
+struct sysv_super_block {
+	u_char  s_dummy1[504];
+	u_char  s_magic[4];
+	u_char  type[4];
+};
+
+#define sysvmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
+			 (((uint) s.s_magic[2]) << 16) + \
+			 (((uint) s.s_magic[3]) << 24))

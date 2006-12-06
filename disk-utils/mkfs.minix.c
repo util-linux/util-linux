@@ -160,11 +160,13 @@ static unsigned long req_nr_inodes = 0;
 #define mark_zone(x) (setbit(zone_map,(x)-FIRSTZONE+1))
 #define unmark_zone(x) (clrbit(zone_map,(x)-FIRSTZONE+1))
 
+#ifndef HAVE_MINIX2
 static void
 fatal_error(const char * fmt_string,int status) {
 	fprintf(stderr,fmt_string,program_name,device_name);
 	exit(status);
 }
+#endif
 
 static void
 die(char *str) {
@@ -600,22 +602,24 @@ check_blocks(void) {
 
 static void
 get_list_blocks(char *filename) {
-  FILE *listfile;
-  unsigned long blockno;
+	FILE *listfile;
+	unsigned long blockno;
 
-  listfile=fopen(filename,"r");
-  if(listfile == (FILE *)NULL) {
-    die(_("can't open file of bad blocks"));
-  }
-  while(!feof(listfile)) {
-    fscanf(listfile,"%ld\n", &blockno);
-    mark_zone(blockno);
-    badblocks++;
-  }
-  if(badblocks > 1)
-    printf(_("%d bad blocks\n"), badblocks);
-  else if (badblocks == 1)
-    printf(_("one bad block\n"));
+	listfile = fopen(filename,"r");
+	if (listfile == NULL)
+		die(_("can't open file of bad blocks"));
+
+	while (!feof(listfile)) {
+		fscanf(listfile,"%ld\n", &blockno);
+		mark_zone(blockno);
+		badblocks++;
+	}
+	fclose(listfile);
+
+	if(badblocks > 1)
+		printf(_("%d bad blocks\n"), badblocks);
+	else if (badblocks == 1)
+		printf(_("one bad block\n"));
 }
 
 int

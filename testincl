@@ -17,7 +17,10 @@ echo "
 main(){ exit(0); }
 " > conftest.c
 eval $COMPILE
-if test -s conftest && ./conftest 2>/dev/null; then
+# Brian Murphy asks not to run conftest since that fails on cross-compilation.
+# Maybe just testing for the existence of conftest suffices.
+# if test -s conftest && ./conftest 2>/dev/null; then
+if test -s conftest 2>/dev/null; then
 	res=0
 	$echo "You have $IFILE"
 else

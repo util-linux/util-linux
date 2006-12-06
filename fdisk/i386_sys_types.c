@@ -64,9 +64,10 @@ struct systypes i386_sys_types[] = {
 	{0x94, N_("Amoeba BBT")},	/* (bad block table) */
 	{0x9f, N_("BSD/OS")},		/* BSDI */
 	{0xa0, N_("IBM Thinkpad hibernation")},
-	{0xa5, N_("BSD/386")},
+	{0xa5, N_("FreeBSD")},		/* various BSD flavours */
 	{0xa6, N_("OpenBSD")},
 	{0xa7, N_("NeXTSTEP")},
+	{0xa9, N_("NetBSD")},
 	{0xb7, N_("BSDI fs")},
 	{0xb8, N_("BSDI swap")},
 	{0xbb, N_("Boot Wizard hidden")},
@@ -87,6 +88,7 @@ struct systypes i386_sys_types[] = {
 	{0xeb, N_("BeOS fs")},
 	{0xee, N_("EFI GPT")},		/* Intel EFI GUID Partition Table */
 	{0xef, N_("EFI (FAT-12/16/32)")},/* Intel EFI System Partition */
+	{0xf0, N_("Linux/PA-RISC boot")},/* Linux/PA-RISC boot loader */
 	{0xf1, N_("SpeedStor")},
 	{0xf4, N_("SpeedStor")},	/* SpeedStor large partition */
 	{0xf2, N_("DOS secondary")},	/* DOS 3.3+ secondary */

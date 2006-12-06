@@ -42,6 +42,7 @@
 .Op Fl a
 .Op Fl f
 .Op Fl q
+.Op Fl t
 .Op Ar file
 .Sh DESCRIPTION
 .Nm Script
@@ -74,6 +75,12 @@ One person does `mkfifo foo; script -f foo' and another can
 supervise real-time what is being done using `cat foo'.
 .It Fl q
 Be quiet.
+.It Fl t
+Output timeing data to standard error. This data contains two fields,
+separated by a space. The first field indicates how much time elapsed since
+the previous output. The second field indicates how many characters were
+output this time. This information can be used to replay typescripts with
+realistic typing and output delays.
 .El
 .Pp
 The script ends when the forked shell exits (a

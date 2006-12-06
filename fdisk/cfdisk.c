@@ -47,6 +47,8 @@
  *  Some more i18n.
  * Sun Jul 18 03:19:42 MEST 1999 <aeb@cwi.nl>
  *  Terabyte-sized disks.
+ * Sat Jun 30 05:23:19 EST 2001 <nathans@sgi.com>
+ *  XFS label recognition.
  *
  ****************************************************************************/
 
@@ -397,6 +399,8 @@ partition_type_text(int i) {
     else if (p_info[i].id == LINUX) {
 	 if (!strcmp(p_info[i].fstype, "ext2"))
 	      return _("Linux ext2");
+	 else if (!strcmp(p_info[i].fstype, "xfs"))
+	      return _("Linux XFS");
 	 else
 	      return _("Linux");
     } else if (p_info[i].id == OS2_OR_NTFS) {
@@ -612,7 +616,8 @@ get_dos_label(int i) {
 }
 
 static void
-get_ext2_label(int i) {
+get_linux_label(int i) {
+
 #define EXT2_SUPER_MAGIC 0xEF53
 #define EXT2LABELSZ 16
     struct ext2_super_block {
@@ -622,22 +627,49 @@ get_ext2_label(int i) {
 	char  s_volume_name[EXT2LABELSZ];
 	char  s_last_mounted[64];
 	char  s_dummy2[824];
-    } sb;
-    char *label = sb.s_volume_name;
+    } e2fsb;
+
+#define XFS_SUPER_MAGIC "XFSB"
+#define XFSLABELSZ 12
+    struct xfs_super_block {
+	unsigned char   s_magic[4];
+	unsigned char   s_dummy0[104];
+	unsigned char   s_fname[XFSLABELSZ];
+	unsigned char   s_dummy1[904];
+    } xfsb;
+
+    char *label;
     ext2_loff_t offset;
     int j;
 
     offset = ((ext2_loff_t) p_info[i].first_sector + p_info[i].offset)
 	 * SECTOR_SIZE + 1024;
     if (ext2_llseek(fd, offset, SEEK_SET) == offset
-	&& read(fd, &sb, sizeof(sb)) == sizeof(sb)
-	&& sb.s_magic[0] + 256*sb.s_magic[1] == EXT2_SUPER_MAGIC) {
+	&& read(fd, &e2fsb, sizeof(e2fsb)) == sizeof(e2fsb)
+	&& e2fsb.s_magic[0] + 256*e2fsb.s_magic[1] == EXT2_SUPER_MAGIC) {
+	 label = e2fsb.s_volume_name;
 	 for(j=0; j<EXT2LABELSZ; j++)
 	      if(!isprint(label[j]))
 		   label[j] = 0;
 	 label[EXT2LABELSZ] = 0;
 	 strncpy(p_info[i].volume_label, label, LABELSZ);
 	 strncpy(p_info[i].fstype, "ext2", FSTYPESZ);
+	 return;
+    }
+
+    offset = ((ext2_loff_t) p_info[i].first_sector + p_info[i].offset)
+	 * SECTOR_SIZE + 0;
+    if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	&& read(fd, &xfsb, sizeof(xfsb)) == sizeof(xfsb)
+	&& !strcmp(xfsb.s_magic, XFS_SUPER_MAGIC)) {
+	 label = xfsb.s_fname;
+	 for(j=0; j<XFSLABELSZ; j++)
+	     if(!isprint(label[j]))
+		  label[j] = 0;
+	 label[XFSLABELSZ] = 0;
+	 strncpy(p_info[i].volume_label, label, LABELSZ);
+	 strncpy(p_info[i].fstype, "xfs", FSTYPESZ);
+	 return;
     }
 }
 
@@ -948,7 +980,7 @@ add_part(int num, int id, int flags, int first, int last, int offset,
 	 if (may_have_dos_label(id))
 	      get_dos_label(i);
 	 else if (id == LINUX)
-	      get_ext2_label(i);
+	      get_linux_label(i);
     }
 
     check_part_info();
@@ -1068,7 +1100,7 @@ menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
             print_warning(_("Menu item too long. Menu may look odd."));
 #endif
 	if (lenName >= sizeof(buff)) {	/* truncate ridiculously long string */
-	    xstrncpy( buff, mi, sizeof(buff));
+	    xstrncpy(buff, mi, sizeof(buff));
 	} else {
             snprintf(buff, sizeof(buff),
 		     (menuType & MENU_BUTTON) ? "[%*s%-*s]" : "%*s%-*s",
@@ -1447,6 +1479,12 @@ get_partition_table_geometry(partition_table *bufp) {
 		    die_x(3);
 	    zero_table = TRUE;
 	    return;
+
+	    /* Oskar Liljeblad suggested:
+	         Bad signature blah blah
+		 If this is a brand new harddrive that has not been partitioned
+		 before, please run cfdisk -z.
+	    */
     }
 
     hh = ss = 0;
@@ -2049,6 +2087,7 @@ print_part_table(void) {
 
     fp_printf(fp, _("Partition Table for %s\n"), disk_device);
     fp_printf(fp, "\n");
+    /* Three-line heading. Read "Start Sector" etc vertically. */
     fp_printf(fp, _("         ---Starting---      ----Ending----    Start Number of\n"));
     fp_printf(fp, _(" # Flags Head Sect Cyl   ID  Head Sect Cyl    Sector  Sectors\n"));
     fp_printf(fp, _("-- ----- ---- ---- ---- ---- ---- ---- ---- -------- ---------\n"));

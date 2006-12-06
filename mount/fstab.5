@@ -76,7 +76,7 @@ For NFS mounts one will have <host>:<dir>, e.g., `knuth.aeb.nl:/'.
 For procfs, use `proc'.
 .LP
 Instead of giving the device explicitly, one may indicate
-the (ext2 or XFS) filesystem that is to be mounted by its UUID or
+the (ext2 or xfs) filesystem that is to be mounted by its UUID or
 volume label (cf.
 .BR e2label (8)
 or
@@ -151,8 +151,9 @@ see
 For documentation on all nfs-specific options have a look at
 .BR nfs (5).
 Common for all types of file system are the options ``noauto''
-(do not mount when "mount -a" is given, e.g., at boot time),
-and ``user'' (allow a user to mount). For more details, see
+(do not mount when "mount -a" is given, e.g., at boot time), ``user''
+(allow a user to mount), and ``owner''
+(allow device owner to mount). For more details, see
 .BR mount (8).
 
 The fifth field,

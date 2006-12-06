@@ -171,9 +171,11 @@ check_passwd(char *passwd, char *oldpasswd, char *user, char *gecos) {
     }
 	
     if ( (other + digit + ucase + lcase) < 2) {
-	printf(_("The password must contain characters out of two of the following\n"));
-	printf(_("classes:  upper and lower case letters, digits and non alphanumeric\n"));
-	printf(_("characters. See passwd(1) for more information.\n"));
+	printf(_("The password must contain characters out of two of "
+		 "the following\n"
+		 "classes:  upper and lower case letters, digits and "
+		 "non alphanumeric\n"
+		 "characters. See passwd(1) for more information.\n"));
 	return 0;
     }
 	
@@ -235,7 +237,7 @@ main(int argc, char *argv[]) {
     char salt[2];
     int force_passwd = 0;
     int silent = 0;
-    char c;
+    int c;
     int opt_index;
     int fullname = 0, shell = 0;
     static const struct option long_options[] =

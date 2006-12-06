@@ -45,6 +45,14 @@
  *             get traditional output when -3 is the default.  I hope that
  *             enough people will like -3 as the default that one day the
  *             product can be shipped that way.
+ *
+ * 2001-05-07  Pablo Saratxaga <pablo@mandrakesoft.com>
+ *             Fixed the bugs with multi-byte charset (zg: cjk, utf-8)
+ *             displaying. made the 'month year' ("%s %d") header translatable
+ *             so it can be adapted to conventions used by different languages
+ *             added support to read "first_weekday" locale information
+ *             still to do: support for 'cal_direction' (will require a major
+ *             rewrite of the displaying) and proper handling of RTL scripts
  */
 
 #include <sys/types.h>
@@ -66,6 +74,8 @@
 # include <localeinfo.h>	/* libc4 only */
 #endif
 
+#include "widechar.h"
+ 
 /* allow compile-time define to over-ride default */
 #ifndef NUM_MONTHS
 #define NUM_MONTHS 1
@@ -115,9 +125,17 @@ int sep1752[MAXDAYS] = {
 	SPACE
 };
 
-char day_headings[]   = " S  M Tu  W Th  F  S ";
+#define	DAY_LEN		3		/* 3 spaces per day */
+#define	J_DAY_LEN	4		/* 4 spaces per day */
+#define	WEEK_LEN	21		/* 7 days * 3 characters */
+#define	J_WEEK_LEN	28		/* 7 days * 4 characters */
+#define	HEAD_SEP	2		/* spaces between day headings */
+#define	J_HEAD_SEP	2
+
+/* utf-8 can have up to 6 bytes per char; and an extra byte for ending \0 */
+char day_headings[WEEK_LEN*6+1];
 /* week1stday = 1  =>   " M Tu  W Th  F  S  S " */
-char j_day_headings[] = "Sun Mon Tue Wed Thu Fri Sat ";
+char j_day_headings[J_WEEK_LEN*6+1];
 /* week1stday = 1  =>   "  M  Tu   W  Th   F   S   S " */
 const char *full_month[12];
 
@@ -139,7 +157,7 @@ const char *full_month[12];
 	((yr) / 4 - centuries_since_1700(yr) + quad_centuries_since_1700(yr))
 
 /* 0 => sunday (default), 1 => monday */
-int week1stday;
+int week1stday=0;
 int julian;
 
 #define FMT_ST_LINES 8
@@ -180,6 +198,12 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+
+#if 0				/* setting week1stday is against man page */
+#ifdef HAVE_langinfo_h
+	week1stday = (int)(nl_langinfo(_NL_TIME_FIRST_WEEKDAY))[0];
+#endif
+#endif
 	
 	yflag = 0;
 	while ((ch = getopt(argc, argv, "13mjyV")) != EOF)
@@ -243,19 +267,28 @@ main(int argc, char **argv) {
 	exit(0);
 }
 
-#define	DAY_LEN		3		/* 3 spaces per day */
-#define	J_DAY_LEN	4		/* 4 spaces per day */
-#define	WEEK_LEN	21		/* 7 days * 3 characters */
-#define	J_WEEK_LEN	28		/* 7 days * 4 characters */
-#define	HEAD_SEP	2		/* spaces between day headings */
-#define	J_HEAD_SEP	2
+#ifndef ENABLE_WIDECHAR
+static char *eos(char *s) {
+	while (s && *s)
+		s++;
+	return s;
+}
+#endif
 
 void headers_init(void)
 {
   int i, wd;
+#ifdef ENABLE_WIDECHAR
+  wchar_t day_headings_wc[22],j_day_headings_wc[29];
+  wchar_t wd_wc[10];
+#endif
 
   strcpy(day_headings,"");
   strcpy(j_day_headings,"");
+#ifdef ENABLE_WIDECHAR
+  wcscpy(day_headings_wc,L"");
+  wcscpy(j_day_headings_wc,L"");
+#endif
 
 #ifdef HAVE_langinfo_h
 # define weekday(wd)	nl_langinfo(ABDAY_1+wd)
@@ -265,13 +298,28 @@ void headers_init(void)
   
   for(i = 0 ; i < 7 ; i++ ) {
      wd = (i + week1stday) % 7;
-     strncat(day_headings,weekday(wd),2);
-     strncat(j_day_headings,weekday(wd),3);
-     if (strlen(weekday(wd)) == 2)
-	strcat(j_day_headings," ");
-     strcat(day_headings," ");
-     strcat(j_day_headings," ");
+#ifdef ENABLE_WIDECHAR
+     mbstowcs(wd_wc,weekday(wd),10);
+     if (wcslen(wd_wc) < 3)
+	     wcscat(j_day_headings_wc,L" ");
+     if (wcslen(wd_wc) < 2) {
+	     wcscat(day_headings_wc, L" ");
+	     wcscat(j_day_headings_wc, L" ");
+     }
+     wcsncat(day_headings_wc,wd_wc,2);
+     wcsncat(j_day_headings_wc,wd_wc,3);
+     wcscat(day_headings_wc, L" ");
+     wcscat(j_day_headings_wc, L" ");
+#else
+     sprintf(eos(day_headings), "%2.2s ", weekday(wd));
+     sprintf(eos(j_day_headings), "%3.3s ", weekday(wd));
+#endif
   }
+
+#ifdef ENABLE_WIDECHAR
+  wcstombs(day_headings,day_headings_wc,sizeof(day_headings));
+  wcstombs(j_day_headings,j_day_headings_wc,sizeof(j_day_headings));
+#endif
 
 #undef weekday
   
@@ -291,9 +339,20 @@ do_monthly(month, year, out)
 {
 	int col, row, len, days[MAXDAYS];
 	char *p, lineout[300];
-
+#ifdef ENABLE_WIDECHAR
+	wchar_t lineout_wc[300];
+#endif
+	
 	day_array(month, year, days);
-	len = sprintf(lineout, "%s %d", full_month[month - 1], year);
+	/* %s is the month name, %d the year number.
+	 * you can change the order and/or add something her; eg for
+	 * Basque the translation should be: "%2$dko %1$s", and
+	 * the Vietnamese should be "%s na(m %d", etc.
+	 */
+	len = sprintf(lineout, _("%s %d"), full_month[month - 1], year);
+#ifdef ENABLE_WIDECHAR
+	len = mbstowcs(lineout_wc,lineout,len);
+#endif
 	(void)sprintf(out->s[0],"%*s%s",
 	    ((julian ? J_WEEK_LEN : WEEK_LEN) - len) / 2, "", lineout );
 	(void)sprintf(out->s[1],"%s",
@@ -567,8 +626,15 @@ center(str, len, separate)
 	int len;
 	int separate;
 {
+#ifdef ENABLE_WIDECHAR
+	wchar_t str_wc[300];
+	int str_len;
 
+	str_len = mbstowcs(str_wc,str,300);
+	len -= str_len;
+#else
 	len -= strlen(str);
+#endif
 	(void)printf("%*s%s%*s", len / 2, "", str, len / 2 + len % 2, "");
 	if (separate)
 		(void)printf("%*s", separate, "");

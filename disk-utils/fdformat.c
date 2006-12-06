@@ -21,14 +21,13 @@
 /* cannot include <linux/fs.h> */
 #define MAJOR(a)	((a)>>8)
 
-static int ctrl;
 struct floppy_struct param;
 
 #define FLOPPY_MAJOR 2
 #define SECTOR_SIZE 512
 #define PERROR(msg) { perror(msg); exit(1); }
 
-static void format_disk(char *name)
+static void format_disk(int ctrl, char *name)
 {
     struct format_descr descr;
     int track;
@@ -103,6 +102,7 @@ static void usage(char *name)
 
 int main(int argc,char **argv)
 {
+    int ctrl;
     int verify;
     struct stat st;
     char *progname, *p;
@@ -135,13 +135,19 @@ int main(int argc,char **argv)
 	exit(1);
     }
     if (access(argv[1],W_OK) < 0) PERROR(argv[1]);
-    if ((ctrl = open(argv[1],O_WRONLY)) < 0) PERROR(argv[1]);
+
+    ctrl = open(argv[1],O_WRONLY);
+    if (ctrl < 0)
+	    PERROR(argv[1]);
     if (ioctl(ctrl,FDGETPRM,(long) &param) < 0) 
-      PERROR(_("Could not determine current format type"));
+	    PERROR(_("Could not determine current format type"));
     printf(_("%s-sided, %d tracks, %d sec/track. Total capacity %d kB.\n"),
 	   (param.head == 2) ? _("Double") : _("Single"),
 	   param.track, param.sect,param.size >> 1);
-    format_disk(argv[1]);
-    if (verify) verify_disk(argv[1]);
+    format_disk(ctrl, argv[1]);
+    close(ctrl);
+
+    if (verify)
+	    verify_disk(argv[1]);
     return 0;
 }

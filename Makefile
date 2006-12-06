@@ -12,7 +12,6 @@ SUBDIRS=po \
 	lib \
 	getopt-1.1.2 \
 	disk-utils \
-	games \
 	login-utils \
 	misc-utils \
 	mount \

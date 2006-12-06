@@ -3,6 +3,8 @@
 #
 # We need to find out the following things:
 #
+# Version of gcc
+#
 # Existence of header files:
 # H1. For fdisksunlabel.c: is there a <scsi/scsi.h>?
 # H2. For fdisk.c: is there a <linux/blkpg.h>?
@@ -61,6 +63,18 @@ export COMPILE
 
 rm -f conftest.c conftest
 
+#
+# Old gcc wants options like -m486, but gcc 3.0 says
+# `-m486' is deprecated. Use `-march=i486' or `-mcpu=i486' instead.
+#
+echo "
+main(){ exit(0); }
+" > conftest.c
+gccout=`$CC $CFLAGS -m386 conftest.c -o conftest 2>&1 | grep "march="`
+if test -z "$gccout"; then
+    echo "HAVE_OLD_GCC=yes" >> make_include
+fi
+rm -f conftest conftest.c
 
 #
 # Find out about the existence of header files

@@ -7,6 +7,8 @@
 include ../make_include
 include ../MCONFIG
 
+# replay not added yet
+
 # Where to put man pages?
 
 MAN1= 		cal.1 chkdupexe.1 ddate.1 kill.1 \
@@ -49,7 +51,7 @@ endif
 NEEDS_CURSES=  setterm
 NEEDS_OPENPTY= script
 
-all: $(BIN) $(USRBIN) $(USRBIN.NONSHADOW) $(USRGAMES) 
+all: $(BIN) $(USRBIN) $(USRBIN.NONSHADOW)
 
 $(NEEDS_CURSES):
 ifeq "$(HAVE_NCURSES)" "yes"
@@ -74,6 +76,7 @@ $(NEEDS_OPENPTY):
 cal.o: $(LIB)/errs.h
 cal: cal.o $(ERR_O)
 chkdupexe: chkdupexe.pl
+ddate: ddate.o
 kill: kill.o procs.o
 logger: logger.o
 mcookie: mcookie.o md5.o
@@ -92,7 +95,7 @@ install: all
 	$(INSTALLDIR) $(BINDIR) $(USRBINDIR)
 	$(INSTALLBIN) $(BIN) $(BINDIR)
 	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
-	$(INSTALLDIR) $(MAN1DIR) $(MAN8DIR)
+	$(INSTALLDIR) $(MAN1DIR)
 	$(INSTALLMAN) $(MAN1) $(MAN1DIR)
 ifeq "$(HAVE_WRITE)" "no"
 ifeq "$(USE_TTY_GROUP)" "yes"

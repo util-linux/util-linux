@@ -53,7 +53,7 @@ enum failure {usage, usage2, ioctl_error,
 	unable_to_open, unable_to_read, unable_to_seek,
 	unable_to_write, out_of_memory};
 
-enum action {fdisk, require, try_only, create_empty};
+enum action {fdisk, require, try_only, create_empty_dos, create_empty_sun};
 
 struct geom {
 	unsigned int heads;

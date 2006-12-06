@@ -250,7 +250,7 @@ int main(int argc, char *argv[]) {
   global_optind = optind;	/* For signal routine. */
 
   if (set || set_def) {
-    for(i = optind;i < argc;i ++) {
+    for(i = optind; i < argc; i++) {
       file = open(argv[i],O_RDONLY);
       if(file == -1) {
         int errsv = errno;
@@ -265,10 +265,11 @@ int main(int argc, char *argv[]) {
 		argv[i],set?set_val:set_def_val,strerror(errsv));
 	exit(1);
       }
+      close(file);
     }
   }
   if (set_time || set_def_time) {
-    for(i = optind;i < argc;i ++) {
+    for(i = optind; i < argc; i++) {
       file = open(argv[i],O_RDONLY);
       if(file == -1) {
         int errsv = errno;
@@ -283,11 +284,12 @@ int main(int argc, char *argv[]) {
 		argv[i],set_time?set_time_val:set_def_time_val,strerror(errsv));
 	exit(1);
       }
+      close(file);
     }
   }
 
   if (get || get_def) {
-    for(i = optind;i < argc;i ++) {
+    for(i = optind; i < argc; i++) {
       file = open(argv[i],O_RDONLY);
       if(file == -1) {
         int errsv = errno;
@@ -306,11 +308,13 @@ int main(int argc, char *argv[]) {
 		argv[i],strerror(errsv));
 	exit(1);
       }
-      printf(_("%s: %ld %s threshold and %ld %s timeout\n"),
-	     argv[i], threshold_value, 
-	     get?_("current"):_("default"),
-	     timeout_value,
-	     get?_("current"):_("default"));
+      close(file);
+      if (get)
+	      printf(_("%s: %ld current threshold and %ld current timeout\n"),
+		     argv[i], threshold_value, timeout_value);
+      else
+	      printf(_("%s: %ld default threshold and %ld default timeout\n"),
+		     argv[i], threshold_value, timeout_value);
     }
   }
 
@@ -418,9 +422,8 @@ int main(int argc, char *argv[]) {
       }
 
 #ifdef XMIT
-      printf(_("%s: %lu ints, %lu/%lu chars; ")
-	     _("fifo: %lu thresh, %lu tmout, ")
-	     _("%lu max, %lu now\n"),
+      printf(_("%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, "
+	       "%lu max, %lu now\n"),
 	     argv[i],
 	     cywork.int_count,cywork.char_count,cywork.send_count,
 	     threshold_value,timeout_value,
@@ -430,7 +433,8 @@ int main(int argc, char *argv[]) {
 	     xfer_rate,
 	     xmit_rate);
 #else
-      printf(_("%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"),
+      printf(_("%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, "
+	       "%lu max, %lu now\n"),
 	     argv[i],
 	     cywork.int_count,cywork.char_count,
 	     threshold_value,timeout_value,

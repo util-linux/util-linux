@@ -127,8 +127,8 @@ usage(void) {
 
 static void
 help (void) {
-	printf (_("%s provides information on ipc facilities for"), progname);
-        printf (_(" which you have read access.\n")); 
+	printf (_("%s provides information on ipc facilities for"
+		  " which you have read access.\n"), progname);
 	printf (_("Resource Specification:\n\t-m : shared_mem\n\t-q : messages\n"));
 	printf (_("\t-s : semaphores\n\t-a : all (default)\n"));
 	printf (_("Output Format:\n\t-t : time\n\t-p : pid\n\t-c : creator\n"));

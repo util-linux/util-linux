@@ -173,9 +173,11 @@ int main(int argc, char *argv[])
 	for (i = 0; i < NUMCMD; i++) inittab[i].pid = -1;
 	read_inittab ();
 	for (i = 1; i < argc; i++) {
-		if (strcmp (argv[i], "single") == 0) want_single = 1;
-		else if (strcmp (argv[i], "-noreboot") == 0) no_reboot = 1;
-		else {
+		if (strcmp (argv[i], "single") == 0)
+			want_single = 1;
+		else if (strcmp (argv[i], "-noreboot") == 0)
+			no_reboot = 1;
+		else if (strlen(script_prefix) + strlen(argv[i]) < PATH_SIZE) {
 			char path[PATH_SIZE];
 
 			strcpy (path, script_prefix);

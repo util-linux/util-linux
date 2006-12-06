@@ -31,11 +31,11 @@ static struct uuidCache_s {
 	char *device;
 } *uuidCache = NULL;
 
-/* for now, only ext2 and xfs are supported */
+/* for now, only ext2, ext3 and xfs are supported */
 static int
 get_label_uuid(const char *device, char **label, char *uuid) {
 
-	/* start with ext2 and xfs tests, taken from mount_guess_fstype */
+	/* start with ext2/3 and xfs tests, taken from mount_guess_fstype */
 	/* should merge these later */
 	int fd;
 	int rv = 1;

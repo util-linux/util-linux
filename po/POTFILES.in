@@ -19,7 +19,6 @@ fdisk/i386_sys_types.c
 fdisk/llseek.c
 fdisk/partname.c
 fdisk/sfdisk.c
-games/banner.c
 getopt-1.1.2/getopt.c
 hwclock/clock-ppc.c
 hwclock/cmos.c

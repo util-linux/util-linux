@@ -29,15 +29,17 @@ umount \- unmount file systems
 .SH SYNOPSIS
 .BI "umount [\-hV]"
 .LP
-.BI "umount -a [\-nrv] [\-t " vfstype ]
+.BI "umount -a [\-dflnrv] [\-t " vfstype ]
 .br
-.BI "umount [\-nrv] " "device " | " dir " [...]
+.BI "umount [\-dflnrv] " "dir " | " device " [...]
 .SH DESCRIPTION
 The
 .B umount
 command detaches the file system(s) mentioned from the file hierarchy.
-A file system is specified either by giving the directory where it
-has been mounted, or by giving the special device on which it lives.
+A file system is specified by giving the directory where it
+has been mounted. Giving the special device on which the file system lives
+may also work, but is obsolete, mainly because it will fail
+in case this device was mounted on more than one directory.
 
 Note that a file system cannot be unmounted when it is `busy' -
 for example, when there are open files on it, or when some process
@@ -46,6 +48,7 @@ The offending process could even be
 .B umount
 itself - it opens libc, and libc in its turn may open for example
 locale files.
+A lazy unmount avoids this problem.
 
 Options for the
 .B umount
@@ -90,6 +93,12 @@ to specify the file system types on which no action should be taken.
 .B \-f
 Force unmount (in case of an unreachable NFS system).
 (Requires kernel 2.1.116 or later.)
+.TP
+.B \-l
+Lazy unmount. Detach the filesystem from the filesystem hierarchy now,
+and cleanup all references to the filesystem as soon as it is not busy
+anymore.
+(Requires kernel 2.4.11 or later.)
 
 .SH "THE LOOP DEVICE"
 The
@@ -100,7 +109,6 @@ with the mount, in case it finds the option `loop=...' in
 or when the \-d option was given.
 Any pending loop devices can be freed using `losetup -d', see
 .BR losetup (8).
-
 
 .SH FILES
 .I /etc/mtab

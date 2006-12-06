@@ -135,8 +135,7 @@ sgi_get_pcylcount(void) {
 }
 
 void
-sgi_nolabel()
-{
+sgi_nolabel() {
     sgilabel->magic = 0;
     sgi_label = 0;
     partitions = 4;
@@ -579,7 +578,7 @@ sgi_change_sysid( int i, int sys )
 	"retrieve from its directory standalone tools like sash and fx.\n"
 	"Only the \"SGI volume\" entire disk section may violate this.\n"
 	"Type YES if you are sure about tagging this partition differently.\n"));
-	if (strcmp (line_ptr, "YES\n"))
+	if (strcmp (line_ptr, _("YES\n")))
                     return;
     }
     sgilabel->partitions[i].id = SSWAP32(sys);

@@ -152,6 +152,7 @@ main(int argc, char *argv[])
 	}
 	sigsetmask (0); /*  simpleinit(8) blocks all signals: undo for ALRM  */
 	for (i = 1; i < NSIG; i++) signal (i, SIG_DFL);
+
         setlocale(LC_ALL, "");
         bindtextdomain(PACKAGE, LOCALEDIR);
         textdomain(PACKAGE);
@@ -357,8 +358,12 @@ main(int argc, char *argv[])
 
 	/* do syslog message... */
 	openlog(prog, LOG_CONS, LOG_AUTH);
-	syslog(LOG_NOTICE, _("%s by %s: %s"), 
-	       opt_reboot ? _("rebooted") : _("halted"), whom, message);
+	if (opt_reboot)
+		syslog(LOG_NOTICE, _("rebooted by %s: %s"), 
+		       whom, message);
+	else
+		syslog(LOG_NOTICE, _("halted by %s: %s"), 
+		       whom, message);
 	closelog();
 
 	if(opt_fast)

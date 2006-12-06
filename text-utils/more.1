@@ -141,6 +141,7 @@ Skip forward k lines of text.  Defaults to 1.
 Skip forward k screenfuls of text.  Defaults to 1.
 .It Ic b No or Ic \&^B
 Skip backwards k screenfuls of text.  Defaults to 1.
+Only works with files, not pipes.
 .It Ic '
 Go to place where previous search started.
 .It Ic =
@@ -152,7 +153,10 @@ Search for kth occurrence of last r.e.  Defaults to 1.
 .It Ic !<cmd> No or Ic :!<cmd>
 Execute <cmd> in a subshell
 .It Ic v
-Start up /usr/bin/vi at current line
+Start up an editor at current line.
+The editor is taken from the environment variable VISUAL if defined,
+or EDITOR if VISUAL is not defined,
+or defaults to "vi" if neither VISUAL nor EDITOR is defined.
 .It Ic \&^L
 Redraw screen
 .It Ic :n

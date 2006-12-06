@@ -8,26 +8,13 @@
  * (at your option) any later version.
  *
  * For detailed old history, see older versions.
- * Contributions before 2000 by faith@cs.unc.edu, Michael Bischoff,
+ * Contributions before 2001 by faith@cs.unc.edu, Michael Bischoff,
  * LeBlanc@mcc.ac.uk, martin@cs.unc.edu, leisner@sdsp.mc.xerox.com,
  * esr@snark.thyrsus.com, aeb@cwi.nl, quinlan@yggdrasil.com,
  * fasten@cs.bonn.edu, orschaer@cip.informatik.uni-erlangen.de,
  * jj@sunsite.mff.cuni.cz, fasten@shw.com, ANeuper@GUUG.de,
- * kgw@suse.de.
- * 
- * Modified, Sun Feb 20 2000, kalium@gmx.de
- * Added fix operation allowing to reorder primary/extended partition
- * entries within the partition table. Some programs or OSes have
- * problems using a partition table with entries not ordered
- * according to their positions on disk.
- * Munged this patch to also make it work for logical partitions.
- * aeb, 2000-02-20.
- *
- * Wed Mar 1 14:34:53 EST 2000 David Huggins-Daines <dhuggins@linuxcare.com>
- * Better support for OSF/1 disklabels on Alpha.
- *
- * 2000-04-06, Michal Jaegermann (michal@ellpspace.math.ualberta.ca)
- * fixed and added some alpha stuff.
+ * kgw@suse.de, kalium@gmx.de, dhuggins@linuxcare.com,
+ * michal@ellpspace.math.ualberta.ca and probably others.
  */
 
 
@@ -170,6 +157,7 @@ int	fd,				/* the disk */
 	listing = 0,			/* no aborts for fdisk -l */
 	nowarn = 0,			/* no warnings for fdisk -l/-s */
 	dos_compatible_flag = ~0,
+	dos_changed = 0,
 	partitions = 4;			/* maximum partition + 1 */
 
 uint	user_cylinders, user_heads, user_sectors;
@@ -209,7 +197,7 @@ void fatal(enum failure why) {
 "Here DISK is something like /dev/hdb or /dev/sda\n"
 "and PARTITION is something like /dev/hda7\n"
 "-u: give Start and End in sector (instead of cylinder) units\n"
-"-b 2048: (for certain MO drives) use 2048-byte sectors\n");
+"-b 2048: (for certain MO disks) use 2048-byte sectors\n");
 			break;
 		case usage2:
 		  /* msg in cases where fdisk used to probe */
@@ -312,6 +300,21 @@ set_changed(int i) {
 	ptes[i].changed = 1;
 }
 
+/*
+ * Avoid warning about DOS partitions when no DOS partition was changed.
+ * Here a heuristic "is probably dos partition".
+ * We might also do the opposite and warn in all cases except
+ * for "is probably nondos partition".
+ */
+static int
+is_dos_partition(int t) {
+	return (t == 1 || t == 4 || t == 6 ||
+		t == 0x0b || t == 0x0c || t == 0x0e ||
+		t == 0x11 || t == 0x12 || t == 0x14 || t == 0x16 ||
+		t == 0x1b || t == 0x1c || t == 0x1e || t == 0x24 ||
+		t == 0xc1 || t == 0xc4 || t == 0xc6);
+}
+
 static void
 menu(void) {
 	if (sun_label) {
@@ -405,7 +408,7 @@ xmenu(void) {
 	   puts(_("   c   change number of cylinders"));
 	   puts(_("   d   print the raw data in the partition table"));
 	   puts(_("   e   list extended partitions"));		/* !sun */
-	   puts(_("   g   create an IRIX partition table"));	/* sgi */
+	   puts(_("   g   create an IRIX (SGI) partition table"));/* sgi */
 	   puts(_("   h   change number of heads"));
 	   puts(_("   m   print this menu"));
 	   puts(_("   p   print the partition table"));
@@ -421,7 +424,7 @@ xmenu(void) {
 	   puts(_("   c   change number of cylinders"));
 	   puts(_("   d   print the raw data in the partition table"));
 	   puts(_("   e   list extended partitions"));		/* !sun */
-	   puts(_("   g   create an IRIX partition table"));	/* sgi */
+	   puts(_("   g   create an IRIX (SGI) partition table"));/* sgi */
 	   puts(_("   h   change number of heads"));
 	   puts(_("   m   print this menu"));
 	   puts(_("   p   print the partition table"));
@@ -438,7 +441,7 @@ xmenu(void) {
 	   puts(_("   d   print the raw data in the partition table"));
 	   puts(_("   e   list extended partitions"));		/* !sun */
 	   puts(_("   f   fix partition order"));		/* !sun, !aix, !sgi */
-	   puts(_("   g   create an IRIX partition table"));	/* sgi */
+	   puts(_("   g   create an IRIX (SGI) partition table"));/* sgi */
 	   puts(_("   h   change number of heads"));
 	   puts(_("   m   print this menu"));
 	   puts(_("   p   print the partition table"));
@@ -498,6 +501,13 @@ void list_types(struct systypes *sys)
 		}
 	} while (done < last[0]);
 	putchar('\n');
+}
+
+static int
+is_cleared_partition(struct partition *p) {
+	return !(!p || p->boot_ind || p->head || p->sector || p->cyl ||
+		 p->sys_ind || p->end_head || p->end_sector || p->end_cyl ||
+		 get_start_sect(p) || get_nr_sects(p));
 }
 
 static void
@@ -698,6 +708,8 @@ create_doslabel(void) {
 
 	sun_nolabel();  /* otherwise always recognised as sun */
 	sgi_nolabel();  /* otherwise always recognised as sgi */
+	aix_label = osf_label = 0;
+	partitions = 4;
 
 	for (i = 510-64; i < 510; i++)
 		MBRbuffer[i] = 0;
@@ -705,7 +717,7 @@ create_doslabel(void) {
 	extended_offset = 0;
 	set_all_unchanged();
 	set_changed(0);
-	get_boot(create_empty);
+	get_boot(create_empty_dos);
 }
 
 #include <sys/utsname.h>
@@ -804,6 +816,7 @@ get_geometry(int fd, struct geom *g) {
  * Read MBR.  Returns:
  *   -1: no 0xaa55 flag present (possibly entire disk BSD)
  *    0: found or created label
+ *    1: I/O error
  */
 int
 get_boot(enum action what) {
@@ -811,13 +824,17 @@ get_boot(enum action what) {
 
 	partitions = 4;
 
-	if (what == create_empty)
-		goto got_table;		/* skip reading disk */
+	if (what == create_empty_dos)
+		goto got_dos_table;		/* skip reading disk */
+	if (what == create_empty_sun)
+		goto got_table;
 
 	if ((fd = open(disk_device, type_open)) < 0) {
-	    if ((fd = open(disk_device, O_RDONLY)) < 0)
+	    if ((fd = open(disk_device, O_RDONLY)) < 0) {
+		if (what == try_only)
+		    return 1;
 		fatal(unable_to_open);
-	    else
+	    } else
 		printf(_("You will not be able to write the partition table.\n"));
 	}
 
@@ -825,8 +842,11 @@ get_boot(enum action what) {
 
 	update_units();
 
-	if (sector_size != read(fd, MBRbuffer, sector_size))
+	if (sector_size != read(fd, MBRbuffer, sector_size)) {
+		if (what == try_only)
+			return 1;
 		fatal(unable_to_read);
+	}
 
 got_table:
 
@@ -841,6 +861,8 @@ got_table:
 
 	if (check_osf_label())
 		return 0;
+
+got_dos_table:
 
 	if (!valid_part_table_flag(MBRbuffer)) {
 		switch(what) {
@@ -858,7 +880,8 @@ got_table:
 			return -1;
 		case try_only:
 		        return -1;
-		case create_empty:
+		case create_empty_dos:
+		case create_empty_sun:
 			break;
 		}
 
@@ -876,7 +899,7 @@ got_table:
 		pe->ext_pointer = NULL;
 		pe->offset = 0;
 		pe->sectorbuffer = MBRbuffer;
-		pe->changed = (what == create_empty);
+		pe->changed = (what == create_empty_dos);
 	}
 
 	for (i = 0; i < 4; i++) {
@@ -1132,7 +1155,7 @@ delete_partition(int i) {
  */
 
 	if (warn_geometry())
-		return;
+		return;		/* C/H/S not set */
 	pe->changed = 1;
 
 	if (sun_label) {
@@ -1251,6 +1274,9 @@ change_sysid(void) {
                                 (temp = partition_type(sys)) ? temp :
                                 _("Unknown"));
                         ptes[i].changed = 1;
+			if (is_dos_partition(origsys) ||
+			    is_dos_partition(sys))
+				dos_changed = 1;
                         break;
                 }
         }
@@ -1512,7 +1538,7 @@ list_table(int xtra) {
 		struct pte *pe = &ptes[i];
 
 		p = pe->part_table;
-		if (p && p->sys_ind) {
+		if (p && !is_cleared_partition(p)) {
 			unsigned int psects = get_nr_sects(p);
 			unsigned int pblocks = psects;
 			unsigned int podd = 0;
@@ -1844,6 +1870,15 @@ new_partition(void) {
 		return;
 	}
 
+	if (aix_label) {
+		printf(_("\tSorry - this fdisk cannot handle AIX disk labels."
+			 "\n\tIf you want to add DOS-type partitions, create"
+			 "\n\ta new empty DOS partition table first. (Use o.)"
+			 "\n\tWARNING: "
+			 "This will destroy the present disk contents.\n"));
+		return;
+	}
+
 	if (partitions >= MAXIMUM_PARTS) {
 		printf(_("The maximum number of partitions has been created\n"));
 		return;
@@ -1938,12 +1973,16 @@ reread_partition_table(int leave) {
                         error = errno;
         }
 
-	if (i < 0)
-		printf(_("Re-read table failed with error %d: %s.\nReboot your "
-			"system to ensure the partition table is updated.\n"),
+	if (i) {
+		printf(_("\nWARNING: Re-reading the partition table "
+			 "failed with error %d: %s.\n"
+			 "The kernel still uses the old table.\n"
+			 "The new table will be used "
+			 "at the next reboot.\n"),
 			error, strerror(error));
+	}
 
-	if (!sun_label && !sgi_label)
+	if (dos_changed)
 	    printf(
 		_("\nWARNING: If you have created or modified any DOS 6.x\n"
 		"partitions, please see the fdisk manual page for additional\n"
@@ -2110,43 +2149,53 @@ xselect(void) {
 }
 
 static int
-is_ide_cdrom(char *device) {
+is_ide_cdrom_or_tape(char *device) {
+	FILE *procf;
+	char buf[100];
+	struct stat statbuf;
+	int is_ide = 0;
+
 	/* No device was given explicitly, and we are trying some
-       likely things.  But opening /dev/hdc may produce errors like
+	   likely things.  But opening /dev/hdc may produce errors like
            "hdc: tray open or drive not ready"
-       if it happens to be a CD-ROM drive. It even happens that
-       the process hangs on the attempt to read a music CD.
-       So try to be careful. This only works since 2.1.73. */
+	   if it happens to be a CD-ROM drive. It even happens that
+	   the process hangs on the attempt to read a music CD.
+	   So try to be careful. This only works since 2.1.73. */
 
-    FILE *procf;
-    char buf[100];
-    struct stat statbuf;
+	if (strncmp("/dev/hd", device, 7))
+		return 0;
 
-    if (strncmp("/dev/hd", device, 7))
-	return 0;
-    snprintf(buf, sizeof(buf), "/proc/ide/%s/media", device+5);
-    procf = fopen(buf, "r");
-    if (procf != NULL && fgets(buf, sizeof(buf), procf))
-        return  !strncmp(buf, "cdrom", 5);
+	snprintf(buf, sizeof(buf), "/proc/ide/%s/media", device+5);
+	procf = fopen(buf, "r");
+	if (procf != NULL && fgets(buf, sizeof(buf), procf))
+		is_ide = (!strncmp(buf, "cdrom", 5) ||
+			  !strncmp(buf, "tape", 4));
+	else
+		/* Now when this proc file does not exist, skip the
+		   device when it is read-only. */
+		if (stat(device, &statbuf) == 0)
+			is_ide = ((statbuf.st_mode & 0222) == 0);
 
-    /* Now when this proc file does not exist, skip the
-       device when it is read-only. */
-    if (stat(device, &statbuf) == 0)
-        return (statbuf.st_mode & 0222) == 0;
-
-    return 0;
+	if (procf)
+		fclose(procf);
+	return is_ide;
 }
 
 static void
 try(char *device, int user_specified) {
+	int gb;
+
 	disk_device = device;
 	if (setjmp(listingbuf))
 		return;
 	if (!user_specified)
-		if (is_ide_cdrom(device))
+		if (is_ide_cdrom_or_tape(device))
 			return;
 	if ((fd = open(disk_device, type_open)) >= 0) {
-		if (get_boot(try_only) < 0) {
+		gb = get_boot(try_only);
+		if (gb > 0) {	/* I/O error */
+			close(fd);
+		} else if (gb < 0) { /* no DOS signature */
 			list_disk_geometry();
 			if (aix_label)
 				return;
@@ -2196,6 +2245,7 @@ tryprocpt(void) {
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
 		try(devname, 0);
 	}
+	fclose(procpt);
 }
 
 static void
@@ -2312,8 +2362,6 @@ main(int argc, char **argv) {
 		fatal(usage2);
 
 	get_boot(fdisk);
-	if (aix_label)
-		exit(0);
 
 #ifdef __alpha__
 	/* On alpha, if we detect a disklabel, go directly to

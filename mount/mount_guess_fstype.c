@@ -18,10 +18,13 @@
  *  so useful anymore.]
  *
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
- * - added Native Language Support
+ * added Native Language Support
  *
- * Fri Dec  1 23:31:00 2000: Sepp Wijnands <mrrazz@garbage-coderz.net>
+ * 2000-12-01 Sepp Wijnands <mrrazz@garbage-coderz.net>
  * added probes for cramfs, hfs, hpfs and adfs.
+ *
+ * 2001-10-26 Tim Launchbury
+ * added sysv magic.
  *
  * aeb - many changes.
  *
@@ -70,23 +73,25 @@ assemble4le(unsigned char *p) {
 
     Original routine by <jmorriso@bogomips.ww.ubc.ca>; made into a function
     for mount(8) by Mike Grupenhoff <kashmir@umiacs.umd.edu>.
-    Read the superblock only once - aeb
-    Added iso9660, romfs, qnx4, udf, swap - aeb
-    Added a test for high sierra (iso9660) - quinlan@bucknell.edu
     Corrected the test for xiafs - aeb
+    Read the superblock only once - aeb
+    Added a very weak heuristic for vfat - aeb
+    Added iso9660, romfs, qnx4, udf, vxfs, swap - aeb
+    Added a test for high sierra (iso9660) - quinlan@bucknell.edu
     Added ufs from a patch by jj. But maybe there are several types of ufs?
     Added ntfs from a patch by Richard Russon.
-    Added a very weak heuristic for vfat - aeb
     Added xfs - 2000-03-21 Martin K. Petersen <mkp@linuxcare.com>
     Added cramfs, hfs, hpfs, adfs - Sepp Wijnands <mrrazz@garbage-coderz.net>
     Added ext3 - Andrew Morton
+    Added jfs - Christoph Hellwig
+    Added sysv - Tim Launchbury
 */
 static char
 *magic_known[] = {
 	"adfs", "bfs", "cramfs", "ext", "ext2", "ext3",
-	"hfs", "hpfs", "iso9660", "minix", "ntfs",
-	"qnx4", "romfs", "swap", "udf", "ufs",
-	"xfs", "xiafs"
+	"hfs", "hpfs", "iso9660", "jfs", "minix", "ntfs",
+	"qnx4", "reiserfs", "romfs", "swap", "sysv", "udf", "ufs",
+	"vxfs", "xfs", "xiafs"
 };
 
 static int
@@ -138,6 +143,14 @@ may_be_adfs(const u_char *s) {
 	return (sum == p[511]);
 }
 
+static int is_reiserfs_magic_string (struct reiserfs_super_block * rs)
+{
+    return (!strncmp (rs->s_magic, REISERFS_SUPER_MAGIC_STRING, 
+		      strlen ( REISERFS_SUPER_MAGIC_STRING)) ||
+	    !strncmp (rs->s_magic, REISER2FS_SUPER_MAGIC_STRING, 
+		      strlen ( REISER2FS_SUPER_MAGIC_STRING)));
+}
+
 static char *
 fstype(const char *device) {
     int fd;
@@ -146,7 +159,8 @@ fstype(const char *device) {
 	struct minix_super_block ms;
 	struct ext_super_block es;
 	struct ext2_super_block e2s;
-    } sb;
+	struct vxfs_super_block vs;
+    } sb;			/* stuff at 1024 */
     union {
 	struct xiafs_super_block xiasb;
 	char romfs_magic[8];
@@ -162,9 +176,12 @@ fstype(const char *device) {
 	struct iso_volume_descriptor iso;
 	struct hs_volume_descriptor hs;
     } isosb;
+    struct reiserfs_super_block reiserfssb;	/* block 64 or 8 */
+    struct jfs_super_block jfssb;		/* block 32 */
     struct hfs_super_block hfssb;
     struct hpfs_super_block hpfssb;
     struct adfs_super_block adfssb;
+    struct sysv_super_block svsb;
     struct stat statbuf;
 
     /* opening and reading an arbitrary unknown path can have
@@ -204,7 +221,33 @@ fstype(const char *device) {
     else if (extmagic(sb.es) == EXT_SUPER_MAGIC)
 	 type = "ext";
 
+    else if (vxfsmagic(sb.vs) == VXFS_SUPER_MAGIC)
+	 type = "vxfs";
+
     if (!type) {
+	/* block 64 */
+	if (lseek(fd, REISERFS_DISK_OFFSET_IN_BYTES, SEEK_SET) !=
+		REISERFS_DISK_OFFSET_IN_BYTES
+	    || read(fd, (char *) &reiserfssb, sizeof(reiserfssb)) !=
+		sizeof(reiserfssb))
+	    goto io_error;
+	if (is_reiserfs_magic_string(&reiserfssb))
+	    type = "reiserfs";
+    }
+
+    if (!type) {
+	/* block 8 */
+	if (lseek(fd, REISERFS_OLD_DISK_OFFSET_IN_BYTES, SEEK_SET) !=
+				REISERFS_OLD_DISK_OFFSET_IN_BYTES
+	    || read(fd, (char *) &reiserfssb, sizeof(reiserfssb)) !=
+		sizeof(reiserfssb))
+	    goto io_error;
+	if (is_reiserfs_magic_string(&reiserfssb))
+	    type = "reiserfs";
+    }
+
+    if (!type) {
+	 /* block 0 */
 	 if (lseek(fd, 0, SEEK_SET) != 0
 	     || read(fd, (char *) &xsb, sizeof(xsb)) != sizeof(xsb))
 	      goto io_error;
@@ -216,7 +259,7 @@ fstype(const char *device) {
 	 else if(!strncmp(xsb.xfsb.s_magic, XFS_SUPER_MAGIC, 4))
 	      type = "xfs";
 	 else if(!strncmp(xsb.qnx4fs_magic+4, "QNX4FS", 6))
-	      type = "qnx4fs";
+	      type = "qnx4";
 	 else if(xsb.bfs_magic == 0x1badface)
 	      type = "bfs";
 	 else if(!strncmp(xsb.ntfssb.s_magic, NTFS_SUPER_MAGIC,
@@ -236,6 +279,24 @@ fstype(const char *device) {
 		      !strncmp(xsb.fatsb.s_fs, "FAT16   ", 8) ||
 		      !strncmp(xsb.fatsb.s_fs2, "FAT32   ", 8)))
 	      type = "vfat";	/* only guessing - might as well be fat or umsdos */
+    }
+
+    if (!type) {
+	    /* sector 1 */
+	    if (lseek(fd, 512 , SEEK_SET) != 512
+		|| read(fd, (char *) &svsb, sizeof(svsb)) != sizeof(svsb))
+		    goto io_error;
+	    if (sysvmagic(svsb) == SYSV_SUPER_MAGIC )
+		    type = "sysv";
+    }
+
+    if (!type) {
+	 /* block 32 */
+	 if (lseek(fd, JFS_SUPER1_OFF, SEEK_SET) != JFS_SUPER1_OFF
+	     || read(fd, (char *) &jfssb, sizeof(jfssb)) != sizeof(jfssb))
+	      goto io_error;
+	 if (!strncmp(jfssb.s_magic, JFS_MAGIC, 4))
+	      type = "jfs";
     }
 
     if (!type) {
@@ -395,7 +456,7 @@ procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
 	int errsv = 0;
 	int i;
 
-	if (!strncmp(*types, "no", 2)) {
+	if (*types && !strncmp(*types, "no", 2)) {
 		no = 1;
 		notypes = (*types) + 2;
 	}

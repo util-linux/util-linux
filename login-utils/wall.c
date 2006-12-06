@@ -124,6 +124,13 @@ usage:
 		if (utmpptr->ut_type != USER_PROCESS)
 			continue;
 #endif
+
+		/* Joey Hess reports that use-sessreg in /etc/X11/wdm/
+		   produces ut_line entries like :0, and a write
+		   to /dev/:0 fails. */
+		if (utmpptr->ut_line[0] == ':')
+			continue;
+
 		xstrncpy(line, utmpptr->ut_line, sizeof(utmpptr->ut_line));
 		if ((p = ttymsg(&iov, 1, line, 60*5)) != NULL)
 			(void)fprintf(stderr, "%s: %s\n", progname, p);

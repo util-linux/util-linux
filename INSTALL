@@ -21,8 +21,8 @@ WARNING: The simpleinit and some other programs in this package are
 To install from source:
 
 1) Get source distribution (see the .lsm file for locations)
-2) Untar util-linux-2.10X.tar.gz somewhere
-3) cd util-linux-2.10X
+2) Untar util-linux-2.11X.tar.gz somewhere
+3) cd util-linux-2.11X
 4) Edit MCONFIG
 5) ./configure
 6) Look at defines.h and make_include, and edit if necessary
@@ -34,6 +34,14 @@ To install from source:
    compatible init!), or you will be hosed.  If you are using the SysV
    init and/or some other getty, they you can keep using those.
 
+People ask: I want to link statically and install in /foo. How?
+Answer: Try the following:
+	LDFLAGS="-static"
+	DESTDIR=/foo
+	export LDFLAGS DESTDIR
+	./configure
+	make
+	make install
 
 If you have compilation problems: tell util-linux@math.uio.no about it.
 

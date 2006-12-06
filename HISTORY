@@ -1,3 +1,95 @@
+util-linux 2.11m
+
+* Danish messages (Claus Hindsgaul)
+* German messages (Karl Eichwalder)
+* Swedish messages (Christian Rose)
+* Turkish messages (Nilgün Belma Bugüner)
+* fdisk: added netbsd type (Steven J. Hill)
+* more: fix for unsigned char (Rusty Russell)
+* mount: added sysv magic (Tim Launchbury)
+* setterm: fixed "setterm -foreground default"
+
+util-linux 2.11l
+
+* Danish messages (Claus Hindsgaul)
+* banner: removed - it is in bsdgames
+* fdisk: show partitions with empty type but some other nonzero field
+* login: copy the static struct that getpwnam() returns before calling
+  PAM routines that might themselves use getpwnam(). Abort on problems.
+  (Olaf Kirch)
+* mount: added jfs magic (Christoph Hellwig)
+* renice: report the correct new priority after a setpriority()
+* umount: add lazy unmount (Christoph Hellwig)
+
+util-linux 2.11k
+
+  Various potential buffer overflows were pointed out by awayzzz@digibel.org.
+  Fixes in agetty, hwclock, namei, readprofile, simpleinit, vipw.
+  (Also added a few [f]close() calls - entirely superfluously.)
+
+* agetty: avoid possible buffer overflow
+* cfdisk: recognize xfs (Nathan Scott)
+* cytune: added close()
+* fdformat: added close()
+* fdisk: added fclose()
+* hwclock: avoid possible buffer overflow
+* mkfs.minix: added fclose()
+* mount: remove the assumption that 635 is the default mount port
+* namei: avoid possible buffer overflow
+* rdev: added closedir()
+* readprofile: avoid possible buffer overflow
+* sfdisk: added fclose()
+* simpleinit: avoid possible buffer overflow
+* swapon: added fclose()
+* umount: use tcp when mount was done using tcp (James D Strandboge)
+* vipw: avoid possible buffer overflow
+
+util-linux 2.11j
+
+* No new French messages yet
+* fdisk: fix for AIX label (Olaf Hering)
+* fdisk: fix for creating DOS label when BSD label is present
+* mount.8: added remark about blocksize to ext2 sb= mount option description.
+* partitiontype: new, not installed
+
+util-linux 2.11i
+
+* testincl: do not run conftest (Brian Murphy)
+* blockdev: corrected ioctl numbers now that BLKBSZGET is in 2.4.10pre3
+* cal: fixed for Hungarian locale
+* cal: fixed for multibyte locales (Pablo Saratxaga)
+* fdisk: avoid superfluous warning about DOS partitions
+* line: new, to support SCO shell scripts (Christoph Hellwig)
+* mount: added vxfs magic
+* passwd: tiny fix for ARM (Ken Cox)
+* replay: replay typescript with timings (Joey Hess)
+* script: add -t flag for timing (Joey Hess)
+
+util-linux 2.11h
+
+* Turkish messages (Nilgün Belma Bugüner)
+* Danish messages (Claus Hindsgaul)
+* banner: minor fix (awayzzz@digibel.org)
+* mkfs.minix: minix v2 fix
+* more.1: improved (Edward Betts)
+* mount.8: corrected description of the nwfs uni_xlate mount option
+* vipw: make temp files of mode 0600 (Bill Nottingham)
+* wall: avoid writing to /dev/:0
+
+util-linux 2.11g
+
+* MCONFIG & configure: fix for gcc 3.0
+  Note that nfsmount_xdr.c may give warnings with gcc 3.0, essentially
+  because of defines in <rpc/xdr.h> that use things like ntohl(*buf++)
+  where ntohl(x) is a macro with several occurrences of x.
+* blockdev: support for the get/set blocksize ioctls
+  [not yet in the 2.4.5 kernel]
+* fdisk: added Linux/PA-RISC type (Matt Taggart)
+* mount: minor fix (Andrey J. Melnikoff)
+* mount: added some ext3 stuff (Andrew Morton)
+* mount: added heuristics for reiserfs (Andrew Morton)
+* mount.8: added ext3 and reiserfs docs (Andrew Morton)
+
 util-linux 2.11f
 
 * Czech messages (Jiøí Pavlovský)

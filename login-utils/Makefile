@@ -95,7 +95,7 @@ agetty.o islocal.o last.o setpwnam.o shutdown.o simpleinit.o \
 shutdown.o simpleinit.o: $(LIB)/linux_reboot.h
 wall.o: ttymsg.h $(LIB)/carefulputc.h
 
-agetty: agetty.o
+agetty: agetty.o $(LIB)/xstrncpy.o
 chfn: chfn.o islocal.o setpwnam.o $(LIB)/env.o $(LIB)/xstrncpy.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
 chsh: chsh.o islocal.o setpwnam.o $(LIB)/env.o

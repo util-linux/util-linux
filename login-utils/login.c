@@ -222,6 +222,9 @@ int     timeout = 60;		/* used in cryptocard.c */
 #endif
 
 struct	passwd *pwd;		/* used in cryptocard.c */
+#if USE_PAM
+static struct passwd pwdcopy;
+#endif
 char    hostaddress[4];		/* used in checktty.c */
 char	*hostname;		/* idem */
 static char	*username, *tty_name, *tty_number;
@@ -532,9 +535,10 @@ main(int argc, char **argv)
 
     retcode = pam_start("login",username, &conv, &pamh);
     if(retcode != PAM_SUCCESS) {
-	fprintf(stderr,_("login: PAM Failure, aborting: %s\n"),
+	fprintf(stderr, _("login: PAM Failure, aborting: %s\n"),
 	pam_strerror(pamh, retcode));
-	syslog(LOG_ERR,_("Couldn't initialize PAM: %s"), pam_strerror(pamh, retcode));
+	syslog(LOG_ERR, _("Couldn't initialize PAM: %s"),
+	       pam_strerror(pamh, retcode));
 	exit(99);
     }
     /* hostname & tty are either set to NULL or their correct values,
@@ -629,16 +633,52 @@ main(int argc, char **argv)
        First get the username that we are actually using, though.
     */
     retcode = pam_get_item(pamh, PAM_USER, (const void **) &username);
-    if (retcode == PAM_SUCCESS && username && *username) {
-      pwd = getpwnam(username);
+    PAM_FAIL_CHECK;
+
+    if (!username || !*username) {
+	    fprintf(stderr, _("\nSession setup problem, abort.\n"));
+	    syslog(LOG_ERR, _("NULL user name in %s:%d. Abort."),
+		   __FUNCTION__, __LINE__);
+	    pam_end(pamh, PAM_SYSTEM_ERR);
+	    exit(1);
     }
+    if (!(pwd = getpwnam(username))) {
+	    fprintf(stderr, _("\nSession setup problem, abort.\n"));
+	    syslog(LOG_ERR, _("Invalid user name \"%s\" in %s:%d. Abort."),
+		   __FUNCTION__, __LINE__);
+	    pam_end(pamh, PAM_SYSTEM_ERR);
+	    exit(1);
+    }
+
+    /* Create a copy of the pwd struct - otherwise it may get
+     * clobbered by PAM */
+    memcpy(&pwdcopy, pwd, sizeof(*pwd));
+    pwd = &pwdcopy;
+    pwd->pw_name   = strdup(pwd->pw_name);
+    pwd->pw_passwd = strdup(pwd->pw_passwd);
+    pwd->pw_gecos  = strdup(pwd->pw_gecos);
+    pwd->pw_dir    = strdup(pwd->pw_dir);
+    pwd->pw_shell  = strdup(pwd->pw_shell);
+    if (!pwd->pw_name || !pwd->pw_passwd || !pwd->pw_gecos ||
+	!pwd->pw_dir || !pwd->pw_shell) {
+	    fprintf(stderr, _("login: Out of memory\n"));
+	    syslog(LOG_ERR, "Out of memory");
+	    pam_end(pamh, PAM_SYSTEM_ERR);
+	    exit(1);
+    }
+    username = pwd->pw_name;
 
     /*
      * Initialize the supplementary group list.
      * This should be done before pam_setcred because
      * the PAM modules might add groups during pam_setcred.
      */
-    if (pwd) initgroups(username, pwd->pw_gid);
+    if (initgroups(username, pwd->pw_gid) < 0) {
+	    syslog(LOG_ERR, "initgroups: %m");
+	    fprintf(stderr, _("\nSession setup problem, abort.\n"));
+	    pam_end(pamh, PAM_SYSTEM_ERR);
+	    exit(1);
+    }
 
     retcode = pam_open_session(pamh, 0);
     PAM_FAIL_CHECK;
@@ -803,7 +843,7 @@ main(int argc, char **argv)
 	  default:
 	    perror("quota (Q_SETUID)");
 	}
-	sleepexit(0);
+	sleepexit(0);		/* %% */
     }
 #endif
     
@@ -1057,8 +1097,10 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	motd();
 	mail = getenv("MAIL");
 	if (mail && stat(mail, &st) == 0 && st.st_size != 0) {
-		printf(_("You have %smail.\n"),
-		       (st.st_mtime > st.st_atime) ? _("new ") : "");
+		if (st.st_mtime > st.st_atime)
+			printf(_("You have new mail.\n"));
+		else
+			printf(_("You have mail.\n"));
 	}
     }
     
@@ -1216,7 +1258,7 @@ timedout(int sig) {
     ioctl(0, TCGETA, &ti);
     ti.c_lflag |= ECHO;
     ioctl(0, TCSETA, &ti);
-    exit(0);
+    exit(0);			/* %% */
 }
 
 #ifndef USE_PAM
@@ -1285,12 +1327,13 @@ sigint(int sig) {
 #ifndef USE_PAM				/* PAM takes care of this */
 void
 checknologin(void) {
-    register int fd, nchars;
+    int fd, nchars;
     char tbuf[8192];
     
     if ((fd = open(_PATH_NOLOGIN, O_RDONLY, 0)) >= 0) {
 	while ((nchars = read(fd, tbuf, sizeof(tbuf))) > 0)
 	  write(fileno(stdout), tbuf, nchars);
+	close(fd);
 	sleepexit(0);
     }
 }
@@ -1360,7 +1403,7 @@ stypeof(char *ttyid) {
 }
 #endif 
 
-/* should not be called from PAM code... Why? */
+/* Should not be called from PAM code... */
 void
 sleepexit(int eval) {
     sleep(SLEEP_EXIT_TIMEOUT);

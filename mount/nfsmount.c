@@ -132,9 +132,6 @@ get_mountport(struct sockaddr_in *server_addr,
 	struct pmaplist *pmap;
 	static struct pmap p = {0, 0, 0, 0};
 
-	server_addr->sin_port = PMAPPORT;
-	pmap = pmap_getmaps(server_addr);
-
 	if (version > MAX_NFSPROT)
 		version = MAX_NFSPROT;
 	if (!prog)
@@ -143,6 +140,9 @@ get_mountport(struct sockaddr_in *server_addr,
 	p.pm_vers = version;
 	p.pm_prot = proto;
 	p.pm_port = port;
+
+	server_addr->sin_port = PMAPPORT;
+	pmap = pmap_getmaps(server_addr);
 
 	while (pmap) {
 		if (pmap->pml_map.pm_prog != prog)
@@ -163,10 +163,22 @@ get_mountport(struct sockaddr_in *server_addr,
 	}
 	if (!p.pm_vers)
 		p.pm_vers = MOUNTVERS;
-	if (!p.pm_port)
-		p.pm_port = MOUNTPORT;
 	if (!p.pm_prot)
 		p.pm_prot = IPPROTO_TCP;
+#if 0
+	if (!p.pm_port) {
+		p.pm_port = pmap_getport(server_addr, p.pm_prog, p.pm_vers,
+					 p.pm_prot);
+	}
+#endif
+#if 0
+#define MOUNTPORT 635
+	/* HJLu wants to remove all traces of the old default port.
+	   Are there still people running a mount RPC service on this
+	   port without having a portmapper? */
+	if (!p.pm_port)
+		p.pm_port = MOUNTPORT;
+#endif
 	return &p;
 }
 
@@ -188,7 +200,7 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	struct hostent *hp;
 	struct sockaddr_in server_addr;
 	struct sockaddr_in mount_server_addr;
-	struct pmap* pm_mnt;
+	struct pmap *pm_mnt;
 	int msock, fsock;
 	struct timeval retry_timeout;
 	union {
@@ -576,7 +588,8 @@ int nfsmount(const char *spec, const char *node, int *flags,
 							 &msock);
 				if (mclient)
 					break;
-				mount_server_addr.sin_port = htons(pm_mnt->pm_port);
+				mount_server_addr.sin_port =
+					htons(pm_mnt->pm_port);
 				msock = RPC_ANYSOCK;
 			case IPPROTO_TCP:
 				mclient = clnttcp_create(&mount_server_addr,

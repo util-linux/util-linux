@@ -98,7 +98,9 @@ main(int argc, char **argv) {
     }
 
     if(getcwd(curdir, sizeof(curdir)) == NULL){
-	(void)fprintf(stderr, _("namei: unable to get current directory - %s\n"), curdir);
+	(void)fprintf(stderr,
+		      _("namei: unable to get current directory - %s\n"),
+		      curdir);
 	exit(1);
     }
 
@@ -109,7 +111,9 @@ main(int argc, char **argv) {
 	namei(argv[optind], 0);
 
 	if(chdir(curdir) == -1){
-	    (void)fprintf(stderr, _("namei: unable to chdir to %s - %s (%d)\n"), curdir, ERR);
+	    (void)fprintf(stderr,
+			  _("namei: unable to chdir to %s - %s (%d)\n"),
+			  curdir, ERR);
 	    exit(1);
 	}
     }
@@ -162,6 +166,11 @@ namei(char *file, int lev) {
     }
 
     for(;;){
+
+	if (strlen(file) >= BUFSIZ) {
+		fprintf(stderr,_("namei: buf overflow\n"));
+		return;
+	}
 
 	/*
 	 * Copy up to the next / (or nil) into buf
@@ -228,7 +237,7 @@ namei(char *file, int lev) {
 
 	    case S_IFLNK:
 		/*
-		 * Sigh, another symlink.  Read it's contents and
+		 * Sigh, another symlink.  Read its contents and
 		 * call namei()
 		 */
 		

@@ -508,7 +508,7 @@ checkf (fs, clearfirst)
 {
 	struct stat stbuf;
 	register FILE *f;
-	char c;
+	int c;
 
 	if (stat (fs, &stbuf) == -1) {
 		(void)fflush(stdout);
@@ -1186,12 +1186,10 @@ int command (char *filename, register FILE *f)
 		xprintf ("\n");
 		if (clreol)
 			cleareol ();
-		xprintf (_("...back %d page"), nlines);
-		if (nlines > 1)
-			pr ("s\n");
+		if (nlines != 1)
+			xprintf (_("...back %d pages"), nlines);
 		else
-			pr ("\n");
-
+			xprintf (_("...back 1 page"));
 		if (clreol)
 			cleareol ();
 		pr ("\n");
@@ -1680,8 +1678,10 @@ void skipf (register int nskip)
     pr ("\n");
     if (clreol)
 	cleareol ();
-    pr (_("...Skipping "));
-    pr (nskip > 0 ? _("to file ") : _("back to file "));
+    if (nskip > 0)
+	    pr (_("...Skipping to file "));
+    else
+	    pr (_("...Skipping back to file "));
     pr (fnames[fnum]);
     pr ("\n");
     if (clreol)

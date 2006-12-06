@@ -23,6 +23,8 @@
  *               in mtab, try them all, with last one tried first
  *             - Differentiate "user" and "users" key words in fstab
  * 001202: aeb - remove at most one line from /etc/mtab
+ * 010914: Jamie Strandboge - use tcp if that was used for mount
+ * 011005: hch - add lazy umount support
  */
 
 #include <stdio.h>
@@ -83,8 +85,15 @@ umount2(const char *path, int flags) {
 
 #endif /* MNT_FORCE */
 
+#if !defined(MNT_DETACH)
+#define MNT_DETACH 2
+#endif
+
 /* Nonzero for force umount (-f).  There is kernel support since 2.1.116.  */
 int force = 0;
+
+/* Nonzero for lazy umount (-l).  There is kernel support since 2.4.11.  */
+int lazy = 0;
 
 /* When umount fails, attempt a read-only remount (-r). */
 int remount = 0;
@@ -171,10 +180,20 @@ nfs_umount_rpc_call(const char *spec, const char *opts)
       saddr.sin_port = htons(port);
       pertry.tv_sec = 3;
       pertry.tv_usec = 0;
-      if ((clp = clntudp_create(&saddr, MOUNTPROG, MOUNTVERS,
-				pertry, &so)) == NULL) {
-	   clnt_pcreateerror("Cannot MOUNTPROG RPC");
-	   return (1);
+      if (opts && (p = strstr(opts, "tcp"))) {
+	   /* possibly: make sure option is not "notcp"
+	      possibly: try udp if tcp fails */
+	   if ((clp = clnttcp_create(&saddr, MOUNTPROG, MOUNTVERS,
+				     &so, 0, 0)) == NULL) {
+		clnt_pcreateerror("Cannot MOUNTPROG RPC (tcp)");
+		return 1;
+	   }
+      } else {
+           if ((clp = clntudp_create(&saddr, MOUNTPROG, MOUNTVERS,
+				     pertry, &so)) == NULL) {
+		clnt_pcreateerror("Cannot MOUNTPROG RPC");
+		return 1;
+	   }
       }
       clp->cl_auth = authunix_create_default();
       try.tv_sec = 20;
@@ -186,12 +205,12 @@ nfs_umount_rpc_call(const char *spec, const char *opts)
 
       if (clnt_stat != RPC_SUCCESS) {
 	   clnt_perror(clp, "Bad UMNT RPC");
-	   return (1);
+	   return 1;
       }
       auth_destroy(clp->cl_auth);
       clnt_destroy(clp);
 
-      return (0);
+      return 0;
 }
 #endif /* HAVE_NFS */
 
@@ -248,13 +267,16 @@ umount_one (const char *spec, const char *node, const char *type,
 #endif
  
 	umnt_err = umnt_err2 = 0;
-	if (force) {
-		/* completely untested;
-		   2.1.116 only has some support in nfs case */
-		/* probably this won't work */
-		int flags = MNT_FORCE;
-
-		res = umount2 (node, flags);
+	if (lazy) {
+		res = umount2 (node, MNT_DETACH);
+		if (res < 0) {
+			complain(errno, node);
+			return 1;
+		} else
+			return 0;
+	}
+	if (force) {		/* only supported for NFS */
+		res = umount2 (node, MNT_FORCE);
 		if (res == -1) {
 			perror("umount2");
 			if (errno == ENOSYS) {
@@ -570,7 +592,7 @@ main (int argc, char *argv[]) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt_long (argc, argv, "adfhnrt:vV",
+	while ((c = getopt_long (argc, argv, "adfhlnrt:vV",
 				 longopts, NULL)) != EOF)
 		switch (c) {
 		case 'a':		/* umount everything */
@@ -585,6 +607,9 @@ main (int argc, char *argv[]) {
 			break;
 		case 'h':		/* help */
 			usage (stdout, 0);
+			break;
+		case 'l':		/* lazy umount */
+			++lazy;
 			break;
 		case 'n':		/* do not write in /etc/mtab */
 			++nomtab;
