@@ -1171,10 +1171,10 @@ mount_one (const char *spec, const char *node, const char *types,
 					 "I'll assume nfs because of "
 					 "the colon\n"));
 		} else if(!strncmp(spec, "//", 2)) {
-			types = "smbfs";
+			types = "cifs";
 			if (verbose)
 				printf(_("mount: no type was given - "
-					 "I'll assume smbfs because of "
+					 "I'll assume cifs because of "
 					 "the // prefix\n"));
 		}
 	}

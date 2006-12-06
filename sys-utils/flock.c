@@ -61,10 +61,10 @@ static void usage(int ex)
 {
   fprintf(stderr,
 	  "flock (%s)\n"
-	  "Usage: %s [-seun][-w #] fd#\n"
-	  "       %s [-seon][-w #] file [-c] command...\n"
+	  "Usage: %s [-sxun][-w #] fd#\n"
+	  "       %s [-sxon][-w #] file [-c] command...\n"
 	  "  -s  --shared     Get a shared lock\n"
-	  "  -e  --exclusive  Get an exclusive lock\n"
+	  "  -x  --exclusive  Get an exclusive lock\n"
 	  "  -u  --unlock     Remove a lock\n"
 	  "  -n  --nonblock   Fail rather than wait\n"
 	  "  -w  --timeout    Wait for a limited amount of time\n"

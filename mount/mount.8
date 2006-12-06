@@ -367,6 +367,7 @@ currently supported include:
 .IR adfs ,
 .IR affs ,
 .IR autofs ,
+.IR cifs ,
 .IR coda ,
 .IR coherent ,
 .IR cramfs ,
@@ -421,8 +422,8 @@ For most types all the
 program has to do is issue a simple
 .IR mount (2)
 system call, and no detailed knowledge of the filesystem type is required.
-For a few types however (like nfs, smbfs, ncpfs) ad hoc code is
-necessary. The nfs ad hoc code is built in, but smbfs and ncpfs
+For a few types however (like nfs, cifs, smbfs, ncpfs) ad hoc code is
+necessary. The nfs ad hoc code is built in, but cifs, smbfs, and ncpfs
 have a separate mount program. In order to make it possible to
 treat all types in a uniform way, mount will execute the program
 .I /sbin/mount.TYPE
@@ -737,6 +738,11 @@ Give blocksize. Allowed values are 512, 1024, 2048, 4096.
 These options are accepted but ignored.
 (However, quota utilities may react to such strings in
 .IR /etc/fstab .)
+
+.SH "Mount options for cifs"
+See the options section of the
+.BR mount.cifs (8)
+man page (cifs-mount package must be installed).
 
 .SH "Mount options for coherent"
 None.

@@ -7,10 +7,10 @@
 # partition table: tavola delle partizioni? tabella delle partizioni?
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.13-pre5\n"
+"Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
 "POT-Creation-Date: 2005-08-14 18:14+0200\n"
-"PO-Revision-Date: 2005-10-26 22:18+0100\n"
+"PO-Revision-Date: 2005-11-18 20:20+0000\n"
 "Last-Translator: Marco Colombo <m.colombo@ed.ac.uk>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -280,12 +280,12 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:571
 #, c-format
 msgid "%s: invalid cramfs--crc error\n"
-msgstr "%s: cramfs non valido -- errore crc\n"
+msgstr "%s: cramfs non valido -- errore CRC\n"
 
 #: disk-utils/fsck.cramfs.c:577
 #, c-format
 msgid "%s: warning--old cramfs image, no CRC\n"
-msgstr ""
+msgstr "%s: attenzione -- vecchia immagine cramfs, nessun CRC\n"
 
 #: disk-utils/fsck.cramfs.c:599
 #, c-format
@@ -811,7 +811,7 @@ msgstr "Blocchi: %ld\n"
 #: disk-utils/mkfs.bfs.c:239
 #, c-format
 msgid "Inode end: %d, Data end: %d\n"
-msgstr ""
+msgstr "Fine inode: %d, fine dati: %d\n"
 
 #: disk-utils/mkfs.bfs.c:244
 msgid "error writing superblock"
@@ -978,7 +978,7 @@ msgstr ""
 #: disk-utils/mkfs.minix.c:163
 #, c-format
 msgid "Usage: %s [-c | -l filename] [-nXX] [-iXX] /dev/name [blocks]\n"
-msgstr " Uso: %s [-c | -l nomefile] [-nXX] [-iXX] /dev/name [blocchi]\n"
+msgstr "Uso: %s [-c | -l nomefile] [-nXX] [-iXX] /dev/name [blocchi]\n"
 
 #: disk-utils/mkfs.minix.c:187
 #, c-format
@@ -4939,15 +4939,15 @@ msgstr "totale: %llu blocchi\n"
 
 #: fdisk/sfdisk.c:2674
 msgid "usage: sfdisk --print-id device partition-number\n"
-msgstr "uso: sfdisk --print-id numero partizione dispositivo\n"
+msgstr "Uso: sfdisk --print-id numero partizione dispositivo\n"
 
 #: fdisk/sfdisk.c:2676
 msgid "usage: sfdisk --change-id device partition-number Id\n"
-msgstr " uso: sfdisk --change-id numero partizione dispositivo Id\n"
+msgstr "Uso: sfdisk --change-id numero partizione dispositivo Id\n"
 
 #: fdisk/sfdisk.c:2678
 msgid "usage: sfdisk --id device partition-number [Id]\n"
-msgstr "uso: sfdisk --id numero partizione dispositivo [Id]\n"
+msgstr "Uso: sfdisk --id numero partizione dispositivo [Id]\n"
 
 #: fdisk/sfdisk.c:2685
 msgid "can specify only one device (except with -l or -s)\n"
@@ -6006,7 +6006,7 @@ msgstr "%s: è possibile modificare solo le voci locali; utilizzare invece yp%s.
 
 #: login-utils/chfn.c:151 login-utils/chsh.c:136
 msgid "Unknown user context"
-msgstr ""
+msgstr "Contesto utente sconosciuto"
 
 #: login-utils/chfn.c:152
 #, c-format
@@ -6211,7 +6211,7 @@ msgstr "Impossibile leggere %s, uscita."
 
 #: login-utils/last.c:148
 msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
-msgstr "uso: last [-#] [-f file] [-t tty] [-h hostname] [utente ...]\n"
+msgstr "Uso: last [-#] [-f file] [-t tty] [-h hostname] [utente ...]\n"
 
 #: login-utils/last.c:284
 msgid "  still logged in"
@@ -6260,12 +6260,12 @@ msgstr "login: -h solamente per super-user.\n"
 #: login-utils/login.c:382
 #, c-format
 msgid "usage: login [-fp] [username]\n"
-msgstr "uso: login [-fp] [nomeutente]\n"
+msgstr "Uso: login [-fp] [nomeutente]\n"
 
 #: login-utils/login.c:475
 #, c-format
 msgid "login: PAM Failure, aborting: %s\n"
-msgstr "logine: errore PAM, interruzione in corso: %s\n"
+msgstr "login: errore PAM, interruzione in corso: %s\n"
 
 #: login-utils/login.c:477
 #, c-format
@@ -6514,7 +6514,7 @@ msgstr "è n\n"
 #: login-utils/mesg.c:112
 #, c-format
 msgid "usage: mesg [y | n]\n"
-msgstr "uso: mesg [s | n]\n"
+msgstr "Uso: mesg [s | n]\n"
 
 #: login-utils/newgrp.c:69
 msgid "newgrp: Who are you?"
@@ -6849,7 +6849,7 @@ msgstr "Volete modificare %s adesso [y/n]?"
 #: login-utils/wall.c:104
 #, c-format
 msgid "usage: %s [file]\n"
-msgstr "uso: %s [file]\n"
+msgstr "Uso: %s [file]\n"
 
 #: login-utils/wall.c:159
 #, c-format
@@ -6864,7 +6864,7 @@ msgstr "Messaggio broadcast da %s@%s"
 #: login-utils/wall.c:204
 #, c-format
 msgid "%s: will not read %s - use stdin.\n"
-msgstr ""
+msgstr "%s: non verrà letto %s - usare stdin.\n"
 
 #: login-utils/wall.c:209
 #, c-format
@@ -6903,12 +6903,12 @@ msgstr "%s %d"
 #: misc-utils/cal.c:780
 #, c-format
 msgid "usage: cal [-13smjyV] [[month] year]\n"
-msgstr "uso: cal [-13smjyV] [[mese] anno]\n"
+msgstr "Uso: cal [-13smjyV] [[mese] anno]\n"
 
 #: misc-utils/ddate.c:203
 #, c-format
 msgid "usage: %s [+format] [day month year]\n"
-msgstr " uso: %s [+formato] [giorno mese anno]\n"
+msgstr "Uso: %s [+formato] [giorno mese anno]\n"
 
 #: misc-utils/ddate.c:250
 msgid "St. Tib's Day"
@@ -6937,7 +6937,7 @@ msgstr "%s: segnale sconosciuto %s; segnali validi:\n"
 #: misc-utils/kill.c:354
 #, c-format
 msgid "usage: %s [ -s signal | -p ] [ -a ] pid ...\n"
-msgstr "uso: %s [ -s segnale | -p ] [ -a ] pid ...\n"
+msgstr "Uso: %s [ -s segnale | -p ] [ -a ] pid ...\n"
 
 #: misc-utils/kill.c:355
 #, c-format
@@ -6962,12 +6962,12 @@ msgstr "logger: nome priorità sconosciuto: %s.\n"
 #: misc-utils/logger.c:287
 #, c-format
 msgid "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
-msgstr "uso: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ messaggio .. ]\n"
+msgstr "Uso: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ messaggio .. ]\n"
 
 #: misc-utils/look.c:349
 #, c-format
 msgid "usage: look [-dfa] [-t char] string [file]\n"
-msgstr " uso: look [-dfa] [-t char] stringa [file]\n"
+msgstr "Uso: look [-dfa] [-t char] stringa [file]\n"
 
 #: misc-utils/mcookie.c:122 misc-utils/mcookie.c:149
 #, c-format
@@ -6992,7 +6992,7 @@ msgstr "namei: impossibile eseguire chdir su %s - %s (%d)\n"
 #: misc-utils/namei.c:126
 #, c-format
 msgid "usage: namei [-mx] pathname [pathname ...]\n"
-msgstr "uso: namei [-mx] nome percorso [nome percorso ...]\n"
+msgstr "Uso: namei [-mx] nome percorso [nome percorso ...]\n"
 
 #: misc-utils/namei.c:151
 #, c-format
@@ -7058,7 +7058,7 @@ msgstr ""
 #: misc-utils/script.c:168
 #, c-format
 msgid "usage: script [-a] [-f] [-q] [-t] [file]\n"
-msgstr "uso: script [-a] [-f] [-q] [-t] [file]\n"
+msgstr "Uso: script [-a] [-f] [-q] [-t] [file]\n"
 
 #: misc-utils/script.c:191
 #, c-format
@@ -7358,7 +7358,7 @@ msgstr "write: %s ha i messaggi disattivati su %s\n"
 #: misc-utils/write.c:146
 #, c-format
 msgid "usage: write user [tty]\n"
-msgstr "uso: write utente [tty]\n"
+msgstr "Uso: write utente [tty]\n"
 
 #: misc-utils/write.c:234
 #, c-format
@@ -8151,7 +8151,7 @@ msgstr "%s: file %s ignorato - sembra avere dei buchi.\n"
 #: mount/swapon.c:275
 #, c-format
 msgid "Not superuser.\n"
-msgstr ""
+msgstr "Non superutente.\n"
 
 #: mount/swapon.c:309 mount/swapon.c:501
 #, c-format
@@ -8438,7 +8438,7 @@ msgstr "   %f int/sec; %f rec (car/sec)\n"
 #: sys-utils/dmesg.c:56
 #, c-format
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
-msgstr " Uso: %s [-c] [-n livello] [-s bufsize]\n"
+msgstr "Uso: %s [-c] [-n livello] [-s bufsize]\n"
 
 #: sys-utils/ipcrm.c:66
 #, c-format
@@ -8471,7 +8471,7 @@ msgid ""
 "usage: %s [ [-q msqid] [-m shmid] [-s semid]\n"
 "          [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"
 msgstr ""
-"uso: %s [ [-q msqid] [-m shmid] [-s semid]\n"
+"Uso: %s [ [-q msqid] [-m shmid] [-s semid]\n"
 "        [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"
 
 #: sys-utils/ipcrm.c:181
@@ -9100,7 +9100,7 @@ msgstr "pid"
 
 #: sys-utils/rdev.c:69
 msgid "usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
-msgstr "uso: rdev [ -rv ] [ -o OFFSET ] [ IMMAGINE [ VALORE [ OFFSET ] ] ]"
+msgstr "Uso: rdev [ -rv ] [ -o OFFSET ] [ IMMAGINE [ VALORE [ OFFSET ] ] ]"
 
 #: sys-utils/rdev.c:70
 msgid "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
@@ -9213,7 +9213,7 @@ msgstr "totale"
 #: sys-utils/renice.c:68
 #, c-format
 msgid "usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
-msgstr "uso: renice priorità [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] utenti ]\n"
+msgstr "Uso: renice priorità [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] utenti ]\n"
 
 #: sys-utils/renice.c:97
 #, c-format
@@ -9241,7 +9241,7 @@ msgstr "%d: vecchia priorità %d, nuova priorità %d\n"
 #: sys-utils/setsid.c:26
 #, c-format
 msgid "usage: %s program [arg ...]\n"
-msgstr "uso: %s programma [arg ...]\n"
+msgstr "Uso: %s programma [arg ...]\n"
 
 #: sys-utils/tunelp.c:75
 #, c-format
@@ -9320,7 +9320,7 @@ msgstr "col: argomento -l non valido per %s.\n"
 #: text-utils/col.c:535
 #, c-format
 msgid "usage: col [-bfpx] [-l nline]\n"
-msgstr "uso: col [-bfpx] [-l nline]\n"
+msgstr "Uso: col [-bfpx] [-l nline]\n"
 
 #: text-utils/col.c:541
 #, c-format
@@ -9343,7 +9343,7 @@ msgstr "-- linea già svuotata"
 #: text-utils/colcrt.c:97
 #, c-format
 msgid "usage: %s [ - ] [ -2 ] [ file ... ]\n"
-msgstr "uso: %s [ - ] [ -2 ] [ file ... ]\n"
+msgstr "Uso: %s [ - ] [ -2 ] [ file ... ]\n"
 
 #: text-utils/column.c:297
 msgid "line too long"
@@ -9352,7 +9352,7 @@ msgstr "linea troppo lunga"
 #: text-utils/column.c:374
 #, c-format
 msgid "usage: column [-tx] [-c columns] [file ...]\n"
-msgstr "uso: column [-tx] [-c colonne] [file ...]\n"
+msgstr "Uso: column [-tx] [-c colonne] [file ...]\n"
 
 #: text-utils/hexsyntax.c:82
 #, c-format
@@ -9398,7 +9398,7 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"******** %s: non è un file di testo********\n"
+"******** %s: non è un file di testo ********\n"
 "\n"
 
 #: text-utils/more.c:617
@@ -9686,7 +9686,7 @@ msgstr "Impossibile allocare lo spazio buffer\n"
 #: text-utils/rev.c:156
 #, c-format
 msgid "usage: rev [file ...]\n"
-msgstr "uso: rev [file ...]\n"
+msgstr "Uso: rev [file ...]\n"
 
 #: text-utils/tailf.c:53 text-utils/tailf.c:105
 #, c-format

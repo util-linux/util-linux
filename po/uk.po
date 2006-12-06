@@ -1,14 +1,14 @@
 # Ukrainian translation to util-linux.
-# Copyright (C) 2004 Free Software Foundation
+# Copyright (C) 2004 Free Software Foundation, Inc
 # This file is put in the public domain.
-# Maxim V. Dziumanenko <mvd@mylinux.com.ua>, 2004.
+# Maxim V. Dziumanenko <mvd@mylinux.com.ua>, 2004-2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.12\n"
+"Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
 "POT-Creation-Date: 2005-08-14 18:14+0200\n"
-"PO-Revision-Date: 2004-02-24 10:45+0200\n"
+"PO-Revision-Date: 2005-11-30 10:45+0200\n"
 "Last-Translator: Maxim V. Dziumanenko <mvd@mylinux.com.ua>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -41,12 +41,11 @@ msgstr "встановити розмір блоку"
 
 #: disk-utils/blockdev.c:78
 msgid "get 32-bit sector count"
-msgstr ""
+msgstr "отримати 32-бітну кількість секторів"
 
 #: disk-utils/blockdev.c:81
-#, fuzzy
 msgid "get size in bytes"
-msgstr "отримати розмір"
+msgstr "отримати розмір у байтах"
 
 #: disk-utils/blockdev.c:84
 msgid "set readahead"
@@ -162,9 +161,9 @@ msgstr "використання: %s [ -n ] пристрій\n"
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
 #: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:142 sys-utils/readprofile.c:197
-#, fuzzy, c-format
+#, c-format
 msgid "%s (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "%s (%s)\n"
 
 #: disk-utils/fdformat.c:130
 #, c-format
@@ -246,7 +245,7 @@ msgstr "%s: неправильний cramfs - помилкова довжина 
 #: disk-utils/fsck.cramfs.c:479
 #, c-format
 msgid "%s: compiled without -x support\n"
-msgstr "%s: скомпільовано без підтримки -x\n"
+msgstr "%s: зібрано без підтримки -x\n"
 
 #: disk-utils/fsck.cramfs.c:505
 #, c-format
@@ -281,7 +280,7 @@ msgstr "%s: неправильний cramfs - помилка контрольн�
 #: disk-utils/fsck.cramfs.c:577
 #, c-format
 msgid "%s: warning--old cramfs image, no CRC\n"
-msgstr "%s: попередження - старий тип cramfs образу, немає контрольної суми\n"
+msgstr "%s: попередження - старий тип образу cramfs, немає контрольної суми\n"
 
 #: disk-utils/fsck.cramfs.c:599
 #, c-format
@@ -291,9 +290,7 @@ msgstr "%s: неправильний cramfs - неправильний супе�
 #: disk-utils/fsck.cramfs.c:615
 #, c-format
 msgid "%s: invalid cramfs--directory data end (%ld) != file data start (%ld)\n"
-msgstr ""
-"%s: неправильний cramfs - кінець даних каталогу (%ld) != початку файлових "
-"даних (%ld)\n"
+msgstr "%s: неправильний cramfs - кінець даних каталогу (%ld) != початку файлових даних (%ld)\n"
 
 #: disk-utils/fsck.cramfs.c:623
 #, c-format
@@ -383,7 +380,7 @@ msgstr "Не вдається записати вузли"
 
 #: disk-utils/fsck.minix.c:557
 msgid "seek failed"
-msgstr "помилка при позиціюванні"
+msgstr "помилка при встановленні позиції"
 
 #: disk-utils/fsck.minix.c:559
 msgid "unable to read super block"
@@ -570,8 +567,7 @@ msgstr "Права доступу вузла %d не очищені."
 #: disk-utils/fsck.minix.c:1119 disk-utils/fsck.minix.c:1174
 #, c-format
 msgid "Inode %d not used, marked used in the bitmap."
-msgstr ""
-"Вузол %d не використовується, але позначений використовуваним у бітовій мапі."
+msgstr "Вузол %d не використовується, але позначений використовуваним у бітовій мапі."
 
 #: disk-utils/fsck.minix.c:1125 disk-utils/fsck.minix.c:1180
 #, c-format
@@ -590,8 +586,7 @@ msgstr "Встановити i_nlinks у значення лічильника"
 #: disk-utils/fsck.minix.c:1145 disk-utils/fsck.minix.c:1199
 #, c-format
 msgid "Zone %d: marked in use, no file uses it."
-msgstr ""
-"Зона %d: позначена використовуваною, але вона не використовується файлами."
+msgstr "Зона %d: позначена використовуваною, але вона не використовується файлами."
 
 #: disk-utils/fsck.minix.c:1146 disk-utils/fsck.minix.c:1201
 msgid "Unmark"
@@ -854,15 +849,14 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: Недостатньо пам'яті!\n"
 
 #: disk-utils/mkfs.c:103
-#, fuzzy, c-format
+#, c-format
 msgid "mkfs (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "mkfs (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:124
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"usage: %s [-h] [-v] [-b blksz] [-e edition] [-i file] [-n name] dirname "
-"outfile\n"
+"usage: %s [-h] [-v] [-b blksz] [-e edition] [-i file] [-n name] dirname outfile\n"
 " -h         print this help\n"
 " -v         be verbose\n"
 " -E         make all warnings errors (non-zero exit status)\n"
@@ -876,13 +870,11 @@ msgid ""
 " dirname    root of the filesystem to be compressed\n"
 " outfile    output file\n"
 msgstr ""
-"використання: %s [-v] [-b розм_бл] [-e видання] [-i файл] [-n назва] "
-"назв_кат файл_вив\n"
+"використання: %s [-h] [-v] [-b розм_бл] [-e видання] [-i файл] [-n назва] назв_кат файл_вив\n"
 " -h         вивести цю довідку\n"
 " -v         докладніший вивід\n"
 " -E         вважати всі попередження помилками (ненульовий код завершення)\n"
-" -b розм_бл використовувати цей розмір блоку, повинен дорівнювати розміру "
-"сторінки\n"
+" -b розм_бл використовувати цей розмір блоку, повинен дорівнювати розміру сторінки\n"
 " -e видання встановити номер видання (частина від fsid)\n"
 " -i файл    вставити файл образу у файлову систему (вимагає >= 2.4.0)\n"
 " -n назва   встановити назву файлової системи cramfs\n"
@@ -909,9 +901,7 @@ msgstr "файлова система надто велика. Завершен�
 
 #: disk-utils/mkfs.cramfs.c:514
 #, c-format
-msgid ""
-"Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  "
-"Exiting.\n"
+msgid "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  Exiting.\n"
 msgstr ""
 "Перевищено MAXENTRIES. Збільште це значення у mkcramfs.c та перекомпілюйте.\n"
 "Завершення.\n"
@@ -928,12 +918,8 @@ msgstr "%6.2f%% (%+d байтів)\t%s\n"
 
 #: disk-utils/mkfs.cramfs.c:819
 #, c-format
-msgid ""
-"warning: guestimate of required size (upper bound) is %LdMB, but maximum "
-"image size is %uMB.  We might die prematurely.\n"
-msgstr ""
-"Попередження: очікуваний необхідний розмір (верхня межа) складає %LdМб, але "
-"максимальний розмір образу %uМб.  Можливе передчасне аварійне завершення.\n"
+msgid "warning: guestimate of required size (upper bound) is %LdMB, but maximum image size is %uMB.  We might die prematurely.\n"
+msgstr "Попередження: очікуваний необхідний розмір (верхня межа) складає %LdМб, але максимальний розмір образу %uМб.  Можливе передчасне аварійне завершення.\n"
 
 #: disk-utils/mkfs.cramfs.c:860
 #, c-format
@@ -987,14 +973,12 @@ msgstr "Попередження: розміри файлів обрізані �
 
 #: disk-utils/mkfs.cramfs.c:923
 #, c-format
-msgid ""
-"warning: uids truncated to %u bits.  (This may be a security concern.)\n"
+msgid "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr "Попередження: uid обрізані до %u біт. (Це може загрожувати безпеці.)\n"
 
 #: disk-utils/mkfs.cramfs.c:928
 #, c-format
-msgid ""
-"warning: gids truncated to %u bits.  (This may be a security concern.)\n"
+msgid "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr "Попередження: gid обрізані до %u біт. (Це може загрожувати безпеці.)\n"
 
 #: disk-utils/mkfs.cramfs.c:933
@@ -1009,8 +993,7 @@ msgstr ""
 #: disk-utils/mkfs.minix.c:163
 #, c-format
 msgid "Usage: %s [-c | -l filename] [-nXX] [-iXX] /dev/name [blocks]\n"
-msgstr ""
-"Використання: %s [-c | -l назва_файлу] [-nXX] [-iXX] /dev/назва [блоки]\n"
+msgstr "Використання: %s [-c | -l назва_файлу] [-nXX] [-iXX] /dev/назва [блоки]\n"
 
 #: disk-utils/mkfs.minix.c:187
 #, c-format
@@ -1019,7 +1002,7 @@ msgstr "%s підключений; тут не можна створювати �
 
 #: disk-utils/mkfs.minix.c:248
 msgid "seek to boot block failed in write_tables"
-msgstr "помилка позиціювання на завантажувальний блок у функції"
+msgstr "помилка позиціювання на завантажувальний блок у функції write_tables"
 
 #: disk-utils/mkfs.minix.c:250
 msgid "unable to clear boot sector"
@@ -1130,9 +1113,7 @@ msgstr "Неправильний вказаний користувачем ро�
 #: disk-utils/mkswap.c:186
 #, c-format
 msgid "Using user-specified page size %d, instead of the system values %d/%d\n"
-msgstr ""
-"Використовується вказаний користувачем розмір сторінки %d, замість системних "
-"значень %d/%d\n"
+msgstr "Використовується вказаний користувачем розмір сторінки %d, замість системних значень %d/%d\n"
 
 #: disk-utils/mkswap.c:190
 #, c-format
@@ -1142,27 +1123,27 @@ msgstr "Передбачається розмір сторінки %d (а не %
 #: disk-utils/mkswap.c:233
 #, c-format
 msgid "Bad swap header size, no label written.\n"
-msgstr ""
+msgstr "Неправильний розмір заголовку розділу підкачки, етикетку не записано.\n"
 
 #: disk-utils/mkswap.c:243
 #, c-format
 msgid "Label was truncated.\n"
-msgstr ""
+msgstr "Етикетку обрізано.\n"
 
 #: disk-utils/mkswap.c:249
-#, fuzzy, c-format
+#, c-format
 msgid "no label, "
-msgstr "етикетка"
+msgstr "немає етикетки, "
 
 #: disk-utils/mkswap.c:257
 #, c-format
 msgid "no uuid\n"
-msgstr ""
+msgstr "немає uuid\n"
 
 #: disk-utils/mkswap.c:381
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [-c] [-v0|-v1] [-pPAGESZ] [-L label] /dev/name [blocks]\n"
-msgstr "Використання: %s [-c] [-v0|-v1] [-pPAGESZ] /dev/назва [блоки]\n"
+msgstr "Використання: %s [-c] [-v0|-v1] [-pPAGESZ] [-L етикетка] /dev/назва [блоки]\n"
 
 #: disk-utils/mkswap.c:404
 msgid "too many bad pages"
@@ -1179,19 +1160,19 @@ msgid "one bad page\n"
 msgstr "одна пошкоджена сторінка\n"
 
 #: disk-utils/mkswap.c:437
-#, fuzzy, c-format
+#, c-format
 msgid "%lu bad pages\n"
-msgstr "%d пошкоджених сторінок\n"
+msgstr "%lu пошкоджених сторінок\n"
 
 #: disk-utils/mkswap.c:573
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
-msgstr "%s: помилка: Не вказано де створити підкачку?\n"
+msgstr "%s: помилка: Не вказано де створити область підкачки?\n"
 
 #: disk-utils/mkswap.c:591
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error: size %lu is larger than device size %lu\n"
-msgstr "%s: помилка: розмір %ld більший ніж розмір пристрою %d\n"
+msgstr "%s: помилка: розмір %lu більший ніж розмір пристрою %lu\n"
 
 #: disk-utils/mkswap.c:614
 #, c-format
@@ -1209,9 +1190,9 @@ msgid "%s: warning: truncating swap area to %ldkB\n"
 msgstr "%s: попередження: область підкачки відсікається до %ldкб\n"
 
 #: disk-utils/mkswap.c:644
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error: label only with v1 swap area\n"
-msgstr "%s: помилка: Не вказано де створити підкачку?\n"
+msgstr "%s: помилка: етикетка лише з областю підкачки v1\n"
 
 #: disk-utils/mkswap.c:659
 #, c-format
@@ -1232,9 +1213,8 @@ msgid ""
 msgstr ""
 "%s: Пристрій '%s' містить правильну Sun етикетку диску.\n"
 "Можливо це означає, що створення v0 підкачки зруйнує таблицю розділів.\n"
-"Розділ підкачки не створено. Якщо ви дійсно бажаєте створити v0 підкачку\n"
-"на цьому розділі, тоді використовуйте параметр -f для примусового "
-"створення.\n"
+"Розділ підкачки не створено. Якщо ви дійсно бажаєте створити область підкачки v0\n"
+"на цьому розділі, тоді використовуйте параметр -f для примусового створення.\n"
 
 #: disk-utils/mkswap.c:698
 msgid "Unable to set up swap-space: unreadable"
@@ -1247,7 +1227,7 @@ msgstr "Встановлюється область підкачки версі�
 
 #: disk-utils/mkswap.c:708
 msgid "unable to rewind swap-device"
-msgstr "помилка позиціювання на початок пристрою підкачки"
+msgstr "помилка встановлення позиції на початок пристрою підкачки"
 
 #: disk-utils/mkswap.c:711
 msgid "unable to write signature page"
@@ -1278,9 +1258,8 @@ msgid "Linux XFS"
 msgstr "Linux XFS"
 
 #: fdisk/cfdisk.c:381
-#, fuzzy
 msgid "Linux JFS"
-msgstr "Linux XFS"
+msgstr "Linux JFS"
 
 #: fdisk/cfdisk.c:383
 msgid "Linux ReiserFS"
@@ -1310,9 +1289,7 @@ msgstr "Диск було змінено.\n"
 #: fdisk/cfdisk.c:407
 #, c-format
 msgid "Reboot the system to ensure the partition table is correctly updated.\n"
-msgstr ""
-"Перезавантажте систему щоб впевнитись, що таблиця розділів коректно "
-"оновлена.\n"
+msgstr "Перезавантажте систему щоб впевнитись, що таблиця розділів коректно оновлена.\n"
 
 #: fdisk/cfdisk.c:411
 #, c-format
@@ -1384,18 +1361,12 @@ msgid "enlarged logical partitions overlap"
 msgstr "збільшені логічні розділи перекриваються"
 
 #: fdisk/cfdisk.c:993
-msgid ""
-"!!!! Internal error creating logical drive with no extended partition !!!!"
-msgstr ""
-"!!!! Внутрішня помилка створення логічного пристрою без розширеного "
-"розділу !!!!"
+msgid "!!!! Internal error creating logical drive with no extended partition !!!!"
+msgstr "!!!! Внутрішня помилка створення логічного пристрою без розширеного розділу !!!!"
 
 #: fdisk/cfdisk.c:1004 fdisk/cfdisk.c:1016
-msgid ""
-"Cannot create logical drive here -- would create two extended partitions"
-msgstr ""
-"не вдається створити тут логічний пристрій -- буде створено два розширених "
-"розділи"
+msgid "Cannot create logical drive here -- would create two extended partitions"
+msgstr "не вдається створити тут логічний пристрій -- буде створено два розширених розділи"
 
 #: fdisk/cfdisk.c:1158
 msgid "Menu item too long. Menu may look odd."
@@ -1468,24 +1439,20 @@ msgid "No room to create the extended partition"
 msgstr "Недостатньо простору для створення розширеного розділу"
 
 #: fdisk/cfdisk.c:1563
-#, fuzzy
 msgid "No partition table.\n"
-msgstr "відсутня таблиця розділів.\n"
+msgstr "Відсутня таблиця розділів.\n"
 
 #: fdisk/cfdisk.c:1567
-#, fuzzy
 msgid "No partition table. Starting with zero table."
-msgstr "Немає таблиці розділів або невідома сигнатура таблиці розділів"
+msgstr "Відсутня таблиця розділів або невідома сигнатура таблиці розділів."
 
 #: fdisk/cfdisk.c:1577
-#, fuzzy
 msgid "Bad signature on partition table"
-msgstr "Просто вивести таблицю розділів"
+msgstr "Неправильна сигнатура таблиці розділів"
 
 #: fdisk/cfdisk.c:1581
-#, fuzzy
 msgid "Unknown partition table type"
-msgstr "відсутня таблиця розділів.\n"
+msgstr "Таблиця розділів невідомого типу"
 
 #: fdisk/cfdisk.c:1583
 msgid "Do you wish to start with a zero table [y/N] ?"
@@ -1521,8 +1488,7 @@ msgstr "Увага!! Це може знищити дані на диску!"
 
 #: fdisk/cfdisk.c:1861
 msgid "Are you sure you want write the partition table to disk? (yes or no): "
-msgstr ""
-"Ви впевнені, що бажаєте записати таблицю розділів на диск? (yes або no): "
+msgstr "Ви впевнені, що бажаєте записати таблицю розділів на диск? (yes або no): "
 
 #: fdisk/cfdisk.c:1867
 msgid "no"
@@ -1549,24 +1515,16 @@ msgid "Wrote partition table to disk"
 msgstr "Таблиця розділів записана на диск"
 
 #: fdisk/cfdisk.c:1904
-msgid ""
-"Wrote partition table, but re-read table failed.  Reboot to update table."
-msgstr ""
-"Таблиця розділів записана, але виникла помилка при її перечитуванні. "
-"Перезавантажтесь для оновлення таблиці."
+msgid "Wrote partition table, but re-read table failed.  Reboot to update table."
+msgstr "Таблиця розділів записана, але виникла помилка при її перечитуванні. Перезавантажтесь для оновлення таблиці."
 
 #: fdisk/cfdisk.c:1914
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
-msgstr ""
-"Немає первинних розділів позначених як завантажувальні. DOS MBR не зможе "
-"завантажуватись."
+msgstr "Немає первинних розділів позначених як завантажувальні. DOS MBR не зможе завантажуватись."
 
 #: fdisk/cfdisk.c:1916
-msgid ""
-"More than one primary partition is marked bootable. DOS MBR cannot boot this."
-msgstr ""
-"Більш ніж один розділ позначений як завантажувальний. DOS MBR не зможе "
-"завантажуватись."
+msgid "More than one primary partition is marked bootable. DOS MBR cannot boot this."
+msgstr "Більш ніж один розділ позначений як завантажувальний. DOS MBR не зможе завантажуватись."
 
 #: fdisk/cfdisk.c:1974 fdisk/cfdisk.c:2093 fdisk/cfdisk.c:2177
 msgid "Enter filename or press RETURN to display on screen: "
@@ -1635,19 +1593,12 @@ msgid "               First       Last\n"
 msgstr "            Перший    Останній\n"
 
 #: fdisk/cfdisk.c:2115
-msgid ""
-" # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
-"Flag\n"
-msgstr ""
-" # Тип      Сектор   Сектор   Зсув    Довжина  Тип файл. системи(ID) Ознаки\n"
+msgid " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) Flag\n"
+msgstr " # Тип      Сектор   Сектор   Зсув    Довжина  Тип файл. системи(ID) Ознаки\n"
 
 #: fdisk/cfdisk.c:2116
-msgid ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
-msgstr ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
+msgid "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
+msgstr "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
 
 #: fdisk/cfdisk.c:2199
 msgid "         ---Starting---      ----Ending----    Start     Number of\n"
@@ -1771,9 +1722,7 @@ msgstr " "
 
 #: fdisk/cfdisk.c:2288
 msgid "                r - Raw data (exactly what would be written to disk)"
-msgstr ""
-"                r - не форматовані дані (у вигляді, в якому вони запишуться "
-"на диск)"
+msgstr "                r - не форматовані дані (у вигляді, в якому вони запишуться на диск)"
 
 #: fdisk/cfdisk.c:2289
 msgid "                s - Table ordered by sectors"
@@ -1801,9 +1750,7 @@ msgstr "             Перемикає між Мб, секторами та ц�
 
 #: fdisk/cfdisk.c:2295
 msgid "  W          Write partition table to disk (must enter upper case W)"
-msgstr ""
-"  W          Записати таблицю розділів на диск ( W повинен бути в верхньому "
-"регістрі)"
+msgstr "  W          Записати таблицю розділів на диск ( W повинен бути в верхньому регістрі)"
 
 #: fdisk/cfdisk.c:2296
 msgid "             Since this might destroy data on the disk, you must"
@@ -2754,6 +2701,8 @@ msgid ""
 "Warning: omitting partitions after #%d.\n"
 "They will be deleted if you save this partition table.\n"
 msgstr ""
+"Попередження: розділи після #%d пропускаються.\n"
+"Вони будуть видалені, якщо ви збережете цю таблицю розділів.\n"
 
 #: fdisk/fdisk.c:671
 #, c-format
@@ -2799,12 +2748,8 @@ msgstr ""
 
 #: fdisk/fdisk.c:964
 #, c-format
-msgid ""
-"Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
-"disklabel\n"
-msgstr ""
-"Пристрій не містить ані правильної DOS таблиці розділів, ані Sun, SGI чи OSF "
-"етикетки диску\n"
+msgid "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"
+msgstr "Пристрій не містить ані правильної DOS таблиці розділів, ані Sun, SGI чи OSF етикетки диску\n"
 
 #: fdisk/fdisk.c:981
 #, c-format
@@ -2818,12 +2763,8 @@ msgstr "Додаткові розширені розділи ігнорують�
 
 #: fdisk/fdisk.c:1006
 #, c-format
-msgid ""
-"Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
-"(rite)\n"
-msgstr ""
-"Попередження: неправильна ознака 0x%04x таблиці розділів %d буде виправлена "
-"при w(запису)\n"
+msgid "Warning: invalid flag 0x%04x of partition table %d will be corrected by w(rite)\n"
+msgstr "Попередження: неправильна ознака 0x%04x таблиці розділів %d буде виправлена при w(запису)\n"
 
 #: fdisk/fdisk.c:1028
 #, c-format
@@ -3052,6 +2993,9 @@ msgid ""
 "Probably you selected the wrong device.\n"
 "\n"
 msgstr ""
+"Не схоже на таблицю розділів\n"
+"Можливо ви вибрали неправильний пристрій.\n"
+"\n"
 
 #: fdisk/fdisk.c:1723
 #, c-format
@@ -3110,8 +3054,7 @@ msgstr "Розділ %d: циліндр %d перевищує максимум %
 #: fdisk/fdisk.c:1831
 #, c-format
 msgid "Partition %d: previous sectors %d disagrees with total %d\n"
-msgstr ""
-"Розділ %d: кількість попередніх секторів %d відрізняється від загальної %d\n"
+msgstr "Розділ %d: кількість попередніх секторів %d відрізняється від загальної %d\n"
 
 #: fdisk/fdisk.c:1863
 #, c-format
@@ -3134,14 +3077,14 @@ msgid "Logical partition %d not entirely in partition %d\n"
 msgstr "Логічний розділ %d не вміщується цілком у розділ %d\n"
 
 #: fdisk/fdisk.c:1902
-#, fuzzy, c-format
+#, c-format
 msgid "Total allocated sectors %d greater than the maximum %lld\n"
-msgstr "Загальна кількість розподілених секторів %d перевищує максимум %d\n"
+msgstr "Загальна кількість розподілених секторів %d перевищує максимум %lld\n"
 
 #: fdisk/fdisk.c:1905
-#, fuzzy, c-format
+#, c-format
 msgid "%lld unallocated sectors\n"
-msgstr "%d нерозподілених секторів\n"
+msgstr "%lld нерозподілених секторів\n"
 
 #: fdisk/fdisk.c:1920 fdisk/fdisksgilabel.c:631 fdisk/fdisksunlabel.c:502
 #, c-format
@@ -3174,18 +3117,17 @@ msgstr ""
 #: fdisk/fdisk.c:2092
 #, c-format
 msgid "You must delete some partition and add an extended partition first\n"
-msgstr ""
-"Спочатку необхідно видалити деякий розділ та додати розширений розділ\n"
+msgstr "Спочатку необхідно видалити деякий розділ та додати розширений розділ\n"
 
 #: fdisk/fdisk.c:2095
-#, fuzzy, c-format
+#, c-format
 msgid "All logical partitions are in use\n"
-msgstr "логічні розділи не у тому порядку як на диску"
+msgstr "Усі логічні розділи зайняті\n"
 
 #: fdisk/fdisk.c:2096
-#, fuzzy, c-format
+#, c-format
 msgid "Adding a primary partition\n"
-msgstr "Неправильний первинний розділ"
+msgstr "Додається первинний розділ\n"
 
 #: fdisk/fdisk.c:2101
 #, c-format
@@ -3252,11 +3194,13 @@ msgstr ""
 "інформації.\n"
 
 #: fdisk/fdisk.c:2199
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Error closing file\n"
-msgstr "Помилка закривання %s\n"
+msgstr ""
+"\n"
+"Помилка закривання файлу\n"
 
 #: fdisk/fdisk.c:2203
 #, c-format
@@ -3316,17 +3260,12 @@ msgstr "%c: невідома команда\n"
 #: fdisk/fdisk.c:2528
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
-msgstr ""
-"Це ядро визначає розмір сектору саме, тому -b параметри проігноровано\n"
+msgstr "Це ядро визначає розмір сектору саме, тому -b параметри проігноровано\n"
 
 #: fdisk/fdisk.c:2532
 #, c-format
-msgid ""
-"Warning: the -b (set sector size) option should be used with one specified "
-"device\n"
-msgstr ""
-"Попередження: з вказаним пристроєм повинен використовуватись параметр -b "
-"(встановити розмір сектора)\n"
+msgid "Warning: the -b (set sector size) option should be used with one specified device\n"
+msgstr "Попередження: з вказаним пристроєм повинен використовуватись параметр -b (встановити розмір сектора)\n"
 
 #: fdisk/fdisk.c:2591
 #, c-format
@@ -3440,12 +3379,8 @@ msgstr "Linux RAID"
 
 #: fdisk/fdisksgilabel.c:163
 #, c-format
-msgid ""
-"According to MIPS Computer Systems, Inc the Label must not contain more than "
-"512 bytes\n"
-msgstr ""
-"Згідно MIPS Computer Systems, Inc етикетка не повинна містити більше ніж 512 "
-"байт\n"
+msgid "According to MIPS Computer Systems, Inc the Label must not contain more than 512 bytes\n"
+msgstr "Згідно MIPS Computer Systems, Inc етикетка не повинна містити більше ніж 512 байт\n"
 
 #: fdisk/fdisksgilabel.c:182
 #, c-format
@@ -3453,7 +3388,7 @@ msgid "Detected sgi disklabel with wrong checksum.\n"
 msgstr "Знайдено sgi етикетку диска з неправильною контрольною сумою.\n"
 
 #: fdisk/fdisksgilabel.c:200
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Disk %s (SGI disk label): %d heads, %d sectors\n"
@@ -3468,11 +3403,11 @@ msgstr ""
 "%d циліндрів, %d фізичних циліндрів\n"
 "%d додаткових секторів/цил, чергування %d:1\n"
 "%s\n"
-"Одиниці виміру = %s з %d * 512 байт\n"
+"Одиниці виміру = %s з %d * %d байт\n"
 "\n"
 
 #: fdisk/fdisksgilabel.c:213
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Disk %s (SGI disk label): %d heads, %d sectors, %d cylinders\n"
@@ -3481,7 +3416,7 @@ msgid ""
 msgstr ""
 "\n"
 "Диск %s (SGI етикетка диску): %d головок, %d секторів, %d циліндрів\n"
-"Одиниці виміру = %s з %d * 512 байт\n"
+"Одиниці виміру = %s з %d * %d байт\n"
 "\n"
 
 #: fdisk/fdisksgilabel.c:220
@@ -3728,12 +3663,10 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:728
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
-"d.\n"
+"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %d.\n"
 "This value may be truncated for devices > 33.8 GB.\n"
 msgstr ""
-"Попередження: BLKGETSIZE ioctl завершився аварійно на %s. Використовується "
-"значення геометрії циліндру %d.\n"
+"Попередження: BLKGETSIZE ioctl завершився аварійно на %s. Використовується значення геометрії циліндру %d.\n"
 "Це значення може бути відсічене для пристроїв > 33.8 ГБ.\n"
 
 #: fdisk/fdisksgilabel.c:741
@@ -3914,8 +3847,7 @@ msgid ""
 "If you want to maintain SunOS/Solaris compatibility, consider leaving this\n"
 "partition as Whole disk (5), starting at 0, with %u sectors\n"
 msgstr ""
-"Якщо ви бажаєте підтримувати сумісність з SunOS/Solaris, створіть цей розділ "
-"як\n"
+"Якщо ви бажаєте підтримувати сумісність з SunOS/Solaris, створіть цей розділ як\n"
 "весь диск(5), починаючи з 0, розміром %u секторів\n"
 
 #: fdisk/fdisksunlabel.c:627
@@ -4175,9 +4107,8 @@ msgid "Minix / old Linux"
 msgstr "Minix / old Linux"
 
 #: fdisk/i386_sys_types.c:56
-#, fuzzy
 msgid "Linux swap / Solaris"
-msgstr "Linux swap"
+msgstr "Linux swap / Solaris"
 
 #: fdisk/i386_sys_types.c:58
 msgid "OS/2 hidden C: drive"
@@ -4192,9 +4123,8 @@ msgid "NTFS volume set"
 msgstr "NTFS volume set"
 
 #: fdisk/i386_sys_types.c:62
-#, fuzzy
 msgid "Linux plaintext"
-msgstr "Linux ext3"
+msgstr "Linux plaintext"
 
 #: fdisk/i386_sys_types.c:64
 msgid "Amoeba"
@@ -4253,9 +4183,8 @@ msgid "Solaris boot"
 msgstr "Solaris завантажувальний"
 
 #: fdisk/i386_sys_types.c:78
-#, fuzzy
 msgid "Solaris"
-msgstr "Solaris завантажувальний"
+msgstr "Solaris"
 
 #: fdisk/i386_sys_types.c:79
 msgid "DRDOS/sec (FAT-12)"
@@ -4371,8 +4300,7 @@ msgstr "не вдається отримати інформацію про фа�
 
 #: fdisk/sfdisk.c:363
 msgid "partition restore file has wrong size - not restoring\n"
-msgstr ""
-"файл відновлення розділу має неправильний розмір - відміна відновлення\n"
+msgstr "файл відновлення розділу має неправильний розмір - відміна відновлення\n"
 
 #: fdisk/sfdisk.c:367
 msgid "out of memory?\n"
@@ -4440,8 +4368,7 @@ msgid ""
 "Warning: unlikely number of sectors (%lu) - usually at most 63\n"
 "This will give problems with all software that uses C/H/S addressing.\n"
 msgstr ""
-"Попередження: неправильна кількість секторів (%lu) - зазвичай щонайбільше "
-"63\n"
+"Попередження: неправильна кількість секторів (%lu) - зазвичай щонайбільше 63\n"
 "Це буде спричиняти проблеми з усім ПЗ, яке використовує C/H/S адресацію.\n"
 
 #: fdisk/sfdisk.c:524
@@ -4455,29 +4382,18 @@ msgstr ""
 
 #: fdisk/sfdisk.c:606
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
-msgstr ""
-"%s з розділу %s має неможливе значення кількості головок: %lu (мусить бути 0-"
-"%lu)\n"
+msgid "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
+msgstr "%s з розділу %s має неможливе значення кількості головок: %lu (мусить бути 0-%lu)\n"
 
 #: fdisk/sfdisk.c:611
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for sector: %lu (should be in 1-%"
-"lu)\n"
-msgstr ""
-"%s з розділу %s має неможливе значення кількості секторів: %lu (мусить бути "
-"1-%lu)\n"
+msgid "%s of partition %s has impossible value for sector: %lu (should be in 1-%lu)\n"
+msgstr "%s з розділу %s має неможливе значення кількості секторів: %lu (мусить бути 1-%lu)\n"
 
 #: fdisk/sfdisk.c:616
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for cylinders: %lu (should be in 0-%"
-"lu)\n"
-msgstr ""
-"%s з розділу %s має неможливе значення кількості циліндрів: %lu (мусить бути "
-"0-%lu)\n"
+msgid "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%lu)\n"
+msgstr "%s з розділу %s має неможливе значення кількості циліндрів: %lu (мусить бути 0-%lu)\n"
 
 #: fdisk/sfdisk.c:656
 #, c-format
@@ -4573,8 +4489,7 @@ msgid ""
 "Units = mebibytes of 1048576 bytes, blocks of 1024 bytes, counting from %d\n"
 "\n"
 msgstr ""
-"Одиниці виміру = mebi-байти по 1048576 байт, блоки по 1024 байт, рахуючи від "
-"%d\n"
+"Одиниці виміру = mebi-байти по 1048576 байт, блоки по 1024 байт, рахуючи від %d\n"
 "\n"
 
 #: fdisk/sfdisk.c:958
@@ -4585,8 +4500,7 @@ msgstr "  Пристрій Завант Початок Кінець Мб     Б�
 #: fdisk/sfdisk.c:1118
 #, c-format
 msgid "\t\tstart: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"\t\tпочаток: (c,h,s) очікувалось (%ld,%ld,%ld) знайдено (%ld,%ld,%ld)\n"
+msgstr "\t\tпочаток: (c,h,s) очікувалось (%ld,%ld,%ld) знайдено (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1125
 #, c-format
@@ -4699,10 +4613,8 @@ msgid ""
 "Warning: more than one primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
 msgstr ""
-"Попередження: більш ніж один первинний розділ позначений завантажувальним "
-"(активним)\n"
-"Це не має значення для Lilo, але DOS MBR не зможе завантажуватись з цього "
-"диску.\n"
+"Попередження: більш ніж один первинний розділ позначений завантажувальним (активним)\n"
+"Це не має значення для Lilo, але DOS MBR не зможе завантажуватись з цього диску.\n"
 
 #: fdisk/sfdisk.c:1323
 msgid ""
@@ -4717,8 +4629,7 @@ msgid ""
 "Warning: no primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
 msgstr ""
-"Попередження: немає первинного розділу позначеного завантажувальним "
-"(активним)\n"
+"Попередження: немає первинного розділу позначеного завантажувальним (активним)\n"
 "Це несуттєво для LILO, але DOS MBR не зможе завантажуватись з цього диску.\n"
 
 #: fdisk/sfdisk.c:1343
@@ -4727,11 +4638,8 @@ msgstr "початок"
 
 #: fdisk/sfdisk.c:1346
 #, c-format
-msgid ""
-"partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"розділ %s: початок: (c,h,s) очікувалось (%ld,%ld,%ld) знайдено (%ld,%ld,%"
-"ld)\n"
+msgid "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
+msgstr "розділ %s: початок: (c,h,s) очікувалось (%ld,%ld,%ld) знайдено (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1352
 msgid "end"
@@ -4740,8 +4648,7 @@ msgstr "кінець"
 #: fdisk/sfdisk.c:1355
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"розділ %s: кінець: (c,h,s) очікувалось (%ld,%ld,%ld) знайдено (%ld,%ld,%ld)\n"
+msgstr "розділ %s: кінець: (c,h,s) очікувалось (%ld,%ld,%ld) знайдено (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1358
 #, c-format
@@ -4791,9 +4698,9 @@ msgid "strange..., a BSD partition of size 0?\n"
 msgstr "дивно..., BSD розмір нульового розміру?\n"
 
 #: fdisk/sfdisk.c:1622
-#, fuzzy, c-format
+#, c-format
 msgid " %s: unrecognized partition table type\n"
-msgstr " %s: нерозпізнаний розділ\n"
+msgstr " %s: невідомий тип таблиці розділів\n"
 
 #: fdisk/sfdisk.c:1634
 msgid "-n flag was given: Nothing changed\n"
@@ -4858,8 +4765,7 @@ msgstr "Недопустимий тип\n"
 #: fdisk/sfdisk.c:2119
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
-msgstr ""
-"Попередження: вказаний розмір (%lu) перевищує допустимий розмір (%lu)\n"
+msgstr "Попередження: вказаний розмір (%lu) перевищує допустимий розмір (%lu)\n"
 
 #: fdisk/sfdisk.c:2125
 msgid "Warning: empty partition\n"
@@ -4897,10 +4803,8 @@ msgid ""
 "Usually you only need to specify <start> and <size> (and perhaps <type>).\n"
 msgstr ""
 "Ввід у наступному форматі; відсутні поля отримують типове значення.\n"
-"<початок> <розмір> <тип [E,S,L,X,hex]> <озн.завантаж. [-,*]> <c,h,s> <c,h,"
-"s>\n"
-"Зазвичай, вам необхідно лише вказати <початок> та <розмір> (та можливо "
-"<тип>).\n"
+"<початок> <розмір> <тип [E,S,L,X,hex]> <озн.завантаж. [-,*]> <c,h,s> <c,h,s>\n"
+"Зазвичай, вам необхідно лише вказати <початок> та <розмір> (та можливо <тип>).\n"
 
 #: fdisk/sfdisk.c:2306
 #, c-format
@@ -4929,21 +4833,15 @@ msgstr "    -l [або --list]:      вивести розділи кожног�
 
 #: fdisk/sfdisk.c:2312
 msgid "    -d [or --dump]:      idem, but in a format suitable for later input"
-msgstr ""
-"    -d [або --dump]:      те ж саме, але у форматі прийнятному для "
-"подальшого вводу"
+msgstr "    -d [або --dump]:      те ж саме, але у форматі прийнятному для подальшого вводу"
 
 #: fdisk/sfdisk.c:2313
 msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
-msgstr ""
-"    -i [або --increment]: кількість циліндрів починається з 1, а не з 0"
+msgstr "    -i [або --increment]: кількість циліндрів починається з 1, а не з 0"
 
 #: fdisk/sfdisk.c:2314
-msgid ""
-"    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
-"MB"
-msgstr ""
-"    -uS, -uB, -uC, -uM:   ввід/вивід у одиницях сектори/блоки/циліндри/Мб"
+msgid "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB"
+msgstr "    -uS, -uB, -uC, -uM:   ввід/вивід у одиницях сектори/блоки/циліндри/Мб"
 
 #: fdisk/sfdisk.c:2315
 msgid "    -T [or --list-types]:list the known partition types"
@@ -4951,8 +4849,7 @@ msgstr "    -T [або --list-types]:вивести всі відомі типи
 
 #: fdisk/sfdisk.c:2316
 msgid "    -D [or --DOS]:       for DOS-compatibility: waste a little space"
-msgstr ""
-"    -D [або --DOS]:       для DOS-сумісності: втрачається трохи простору"
+msgstr "    -D [або --DOS]:       для DOS-сумісності: втрачається трохи простору"
 
 #: fdisk/sfdisk.c:2317
 msgid "    -R [or --re-read]:   make kernel reread partition table"
@@ -4967,10 +4864,8 @@ msgid "    -n :                 do not actually write to disk"
 msgstr "    -n :                  не записувати нічого на диск"
 
 #: fdisk/sfdisk.c:2320
-msgid ""
-"    -O file :            save the sectors that will be overwritten to file"
-msgstr ""
-"    -O file :             зберегти у файл сектори, які будуть перезаписані"
+msgid "    -O file :            save the sectors that will be overwritten to file"
+msgstr "    -O file :             зберегти у файл сектори, які будуть перезаписані"
 
 #: fdisk/sfdisk.c:2321
 msgid "    -I file :            restore these sectors again"
@@ -4993,11 +4888,8 @@ msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
 msgstr "    -g [або --show-geometry]: вивести видану ядром геометрію"
 
 #: fdisk/sfdisk.c:2326
-#, fuzzy
-msgid ""
-"    -G [or --show-pt-geometry]: print geometry guessed from the partition "
-"table"
-msgstr "    -g [або --show-geometry]: вивести видану ядром геометрію"
+msgid "    -G [or --show-pt-geometry]: print geometry guessed from the partition table"
+msgstr "    -G [or --show-pt-geometry]: вивести видану, яку визначено з таблиці розділів"
 
 #: fdisk/sfdisk.c:2327
 msgid ""
@@ -5008,8 +4900,7 @@ msgstr ""
 "                              або очікувати їх дескриптори при вводі"
 
 #: fdisk/sfdisk.c:2329
-msgid ""
-"    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
+msgid "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
 msgstr "    -L  [або --Linux]:      не скаржитись на несуттєві для Linux речі"
 
 #: fdisk/sfdisk.c:2330
@@ -5038,8 +4929,7 @@ msgstr "Ви можете вимкнути перевірку логічност
 
 #: fdisk/sfdisk.c:2336
 msgid "    -f  [or --force]:      do what I say, even if it is stupid"
-msgstr ""
-"    -f  [або --force]:      виконувати команди примусово, навіть безглузді"
+msgstr "    -f  [або --force]:      виконувати команди примусово, навіть безглузді"
 
 #: fdisk/sfdisk.c:2342
 msgid "Usage:"
@@ -5065,9 +4955,9 @@ msgid "no command?\n"
 msgstr "немає команди?\n"
 
 #: fdisk/sfdisk.c:2635
-#, fuzzy, c-format
+#, c-format
 msgid "total: %llu blocks\n"
-msgstr "загалом: %d блоків\n"
+msgstr "загалом: %llu блоків\n"
 
 #: fdisk/sfdisk.c:2674
 msgid "usage: sfdisk --print-id device partition-number\n"
@@ -5106,9 +4996,9 @@ msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s: %ld циліндрів, %ld головок, %ld секторів/трек\n"
 
 #: fdisk/sfdisk.c:2803
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot get size of %s\n"
-msgstr "не вдається отримати розмір %s"
+msgstr "Не вдається отримати розмір %s\n"
 
 #: fdisk/sfdisk.c:2881
 #, c-format
@@ -5169,8 +5059,7 @@ msgid ""
 msgstr ""
 "\n"
 "Цей диск наразі використовується - зміна розділів, можливо, погана ідея.\n"
-"Демонтуйте всі файлові системи, та відключіть всі розділи підкачки на цьому "
-"диску.\n"
+"Демонтуйте всі файлові системи, та відключіть всі розділи підкачки на цьому диску.\n"
 "Використовуйте параметр --no-reread щоб обминути цю перевірку.\n"
 
 #: fdisk/sfdisk.c:3026
@@ -5251,10 +5140,8 @@ msgid ""
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
 "(See fdisk(8).)\n"
 msgstr ""
-"Якщо ви створили або змінили DOS розділ, скажімо /dev/foo7, тоді "
-"використовуйте dd(1)\n"
-"для заповнення нулями перших 512 байт:  dd if=/dev/zero of=/dev/foo7 bs=512 "
-"count=1\n"
+"Якщо ви створили або змінили DOS розділ, скажімо /dev/foo7, тоді використовуйте dd(1)\n"
+"для заповнення нулями перших 512 байт:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
 "(Дивіться fdisk(8).)\n"
 
 #: getopt/getopt.c:233
@@ -5279,19 +5166,15 @@ msgstr "       getopt [аргументи] [--] специф_арг параме
 
 #: getopt/getopt.c:326
 msgid "       getopt [options] -o|--options optstring [options] [--]\n"
-msgstr ""
-"       getopt [аргументи] -o|--options спецмф_арг параметри [аргументи] "
-"[--]\n"
+msgstr "       getopt [аргументи] -o|--options спецмф_арг параметри [аргументи] [--]\n"
 
 #: getopt/getopt.c:327
 msgid "              parameters\n"
 msgstr "              параметри\n"
 
 #: getopt/getopt.c:328
-msgid ""
-"  -a, --alternative            Allow long options starting with single -\n"
-msgstr ""
-"  -a, --alternative            Довгі аргументи можуть починались з одного -\n"
+msgid "  -a, --alternative            Allow long options starting with single -\n"
+msgstr "  -a, --alternative            Довгі аргументи можуть починались з одного -\n"
 
 #: getopt/getopt.c:329
 msgid "  -h, --help                   This small usage guide\n"
@@ -5302,10 +5185,8 @@ msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr "  -l, --longoptions=довгі_арг  Специфікація довгих аргументів\n"
 
 #: getopt/getopt.c:331
-msgid ""
-"  -n, --name=progname          The name under which errors are reported\n"
-msgstr ""
-"  -n, --name=назва_програми    Помилки виводити від імені цієї програми\n"
+msgid "  -n, --name=progname          The name under which errors are reported\n"
+msgstr "  -n, --name=назва_програми    Помилки виводити від імені цієї програми\n"
 
 #: getopt/getopt.c:332
 msgid "  -o, --options=optstring      Short options to be recognized\n"
@@ -5313,9 +5194,7 @@ msgstr "  -o, --options=специф_арг     Специфікація кор�
 
 #: getopt/getopt.c:333
 msgid "  -q, --quiet                  Disable error reporting by getopt(3)\n"
-msgstr ""
-"  -q, --quiet                  Вимкнути повідомлення про помилки від getopt"
-"(3)\n"
+msgstr "  -q, --quiet                  Вимкнути повідомлення про помилки від getopt(3)\n"
 
 #: getopt/getopt.c:334
 msgid "  -Q, --quiet-output           No normal output\n"
@@ -5323,8 +5202,7 @@ msgstr "  -Q, --quiet-output           Без звичайного виводу\
 
 #: getopt/getopt.c:335
 msgid "  -s, --shell=shell            Set shell quoting conventions\n"
-msgstr ""
-"  -s, --shell=оболонка         Встановити стиль цитування як у оболонці\n"
+msgstr "  -s, --shell=оболонка         Встановити стиль цитування як у оболонці\n"
 
 #: getopt/getopt.c:336
 msgid "  -T, --test                   Test for getopt(1) version\n"
@@ -5389,9 +5267,7 @@ msgstr "не вдається отримати дозвіл, тому-що не 
 #: hwclock/cmos.c:601
 #, c-format
 msgid "%s is unable to get I/O port access:  the iopl(3) call failed.\n"
-msgstr ""
-"%s не вдається отримати доступ до порту I/O:  помилка системного виклику iopl"
-"(3).\n"
+msgstr "%s не вдається отримати доступ до порту I/O:  помилка системного виклику iopl(3).\n"
 
 #: hwclock/cmos.c:604
 #, c-format
@@ -5453,15 +5329,12 @@ msgstr "...отримано сигнал годинника\n"
 #: hwclock/hwclock.c:399
 #, c-format
 msgid "Invalid values in hardware clock: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
-msgstr ""
-"Неправильне значення у апаратному годиннику: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
+msgstr "Неправильне значення у апаратному годиннику: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 
 #: hwclock/hwclock.c:407
 #, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr ""
-"Час апаратного годинника: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld секунд після "
-"1969\n"
+msgstr "Час апаратного годинника: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld секунд після 1969\n"
 
 #: hwclock/hwclock.c:435
 #, c-format
@@ -5471,8 +5344,7 @@ msgstr "Час прочитаний з апаратного годинника: 
 #: hwclock/hwclock.c:462
 #, c-format
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr ""
-"Апаратний годинник встановлюється у %.2d:%.2d:%.2d = %ld секунд після 1969\n"
+msgstr "Апаратний годинник встановлюється у %.2d:%.2d:%.2d = %ld секунд після 1969\n"
 
 #: hwclock/hwclock.c:468
 #, c-format
@@ -5490,13 +5362,8 @@ msgstr ""
 
 #: hwclock/hwclock.c:545
 #, c-format
-msgid ""
-"The Hardware Clock registers contain values that are either invalid (e.g. "
-"50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
-msgstr ""
-"Регістри апаратного годинника містять значення, яке або неправильне "
-"(наприклад 50-й день місяця), або за межами, які може обробити програма "
-"(наприклад 2095рік).\n"
+msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
+msgstr "Регістри апаратного годинника містять значення, яке або неправильне (наприклад 50-й день місяця), або за межами, які може обробити програма (наприклад 2095рік).\n"
 
 #: hwclock/hwclock.c:555
 #, c-format
@@ -5529,8 +5396,7 @@ msgstr "Виконується команда date: %s\n"
 
 #: hwclock/hwclock.c:614
 msgid "Unable to run 'date' program in /bin/sh shell. popen() failed"
-msgstr ""
-"не вдається виконати команду 'date' у оболонці /bin/sh. Помилка popen()"
+msgstr "не вдається виконати команду 'date' у оболонці /bin/sh. Помилка popen()"
 
 #: hwclock/hwclock.c:622
 #, c-format
@@ -5555,15 +5421,13 @@ msgstr ""
 #: hwclock/hwclock.c:636
 #, c-format
 msgid ""
-"The date command issued by %s returned something other than an integer where "
-"the converted time value was expected.\n"
+"The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
 "The command was:\n"
 "  %s\n"
 "The response was:\n"
 " %s\n"
 msgstr ""
-"Команда date виконана %s повернула результат відмінний від цілого числа, яке "
-"мало б бути конвертованим значенням часу.\n"
+"Команда date виконана %s повернула результат відмінний від цілого числа, яке мало б бути конвертованим значенням часу.\n"
 "Команда:\n"
 "  %s\n"
 "Результат:\n"
@@ -5576,12 +5440,8 @@ msgstr "рядок дати %s дорівнює %ld секундам з 1969.\n"
 
 #: hwclock/hwclock.c:679
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot set the "
-"System Time from it.\n"
-msgstr ""
-"Апаратний годинник містить неправильний час, програма не може встановити по "
-"ньому системний час.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it.\n"
+msgstr "Апаратний годинник містить неправильний час, програма не може встановити по ньому системний час.\n"
 
 #: hwclock/hwclock.c:701
 #, c-format
@@ -5601,14 +5461,12 @@ msgstr "\ttz.tz_minuteswest = %d\n"
 #: hwclock/hwclock.c:707
 #, c-format
 msgid "Not setting system clock because running in test mode.\n"
-msgstr ""
-"Системний час не встановлюється, тому що запущений у тестовому режимі.\n"
+msgstr "Системний час не встановлюється, тому що запущений у тестовому режимі.\n"
 
 #: hwclock/hwclock.c:716
 #, c-format
 msgid "Must be superuser to set system clock.\n"
-msgstr ""
-"Для встановлення системного часу необхідно мати права адміністратора.\n"
+msgstr "Для встановлення системного часу необхідно мати права адміністратора.\n"
 
 #: hwclock/hwclock.c:719
 msgid "settimeofday() failed"
@@ -5616,12 +5474,8 @@ msgstr "помилка у settimeofday()"
 
 #: hwclock/hwclock.c:749
 #, c-format
-msgid ""
-"Not adjusting drift factor because the Hardware Clock previously contained "
-"garbage.\n"
-msgstr ""
-"Коефіцієнт відхилення не корегується, тому що попереднє значення апаратного "
-"годинника було неправильним.\n"
+msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
+msgstr "Коефіцієнт відхилення не корегується, тому що попереднє значення апаратного годинника було неправильним.\n"
 
 #: hwclock/hwclock.c:754
 #, c-format
@@ -5629,28 +5483,21 @@ msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
 "so history is bad and calibration startover is necessary.\n"
 msgstr ""
-"Коефіцієнт відхилення не корегується, тому що час останнього калібрування "
-"дорівнює нулю,\n"
+"Коефіцієнт відхилення не корегується, тому що час останнього калібрування дорівнює нулю,\n"
 "тому попереднє значення неправильне та необхідне рекалібрування.\n"
 
 #: hwclock/hwclock.c:760
 #, c-format
-msgid ""
-"Not adjusting drift factor because it has been less than a day since the "
-"last calibration.\n"
-msgstr ""
-"Коефіцієнт відхилення не корегується, тому що минуло менше доби з моменту "
-"останнього калібрування.\n"
+msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
+msgstr "Коефіцієнт відхилення не корегується, тому що минуло менше доби з моменту останнього калібрування.\n"
 
 #: hwclock/hwclock.c:808
 #, c-format
 msgid ""
-"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
-"of %f seconds/day.\n"
+"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
-"Відхилення годинника %.1f секунд за останні %d секунд незважаючи на "
-"поправочний коефіцієнт відхилення %f секунд/добу.\n"
+"Відхилення годинника %.1f секунд за останні %d секунд незважаючи на поправочний коефіцієнт відхилення %f секунд/добу.\n"
 "Коефіцієнт відхилення корегується на %f секунд/добу\n"
 
 #: hwclock/hwclock.c:859
@@ -5661,9 +5508,7 @@ msgstr "З моменту останнього корегування минул
 #: hwclock/hwclock.c:861
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
-msgstr ""
-"Необхідно вставити %d секунд та знову перевірити час знову %.6f секунд "
-"назад\n"
+msgstr "Необхідно вставити %d секунд та знову перевірити час знову %.6f секунд назад\n"
 
 #: hwclock/hwclock.c:890
 #, c-format
@@ -5686,17 +5531,13 @@ msgstr "Параметри корекції відхилення не оновл
 
 #: hwclock/hwclock.c:956
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
-msgstr ""
-"У апаратному годиннику встановлено некоректний час, тому його не "
-"вдаєтьсяскорегувати.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
+msgstr "У апаратному годиннику встановлено некоректний час, тому його не вдаєтьсяскорегувати.\n"
 
 #: hwclock/hwclock.c:988
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
-msgstr ""
-"Необхідна корекція менше ніж на одну секунду, тому годинник не оновлюється.\n"
+msgstr "Необхідна корекція менше ніж на одну секунду, тому годинник не оновлюється.\n"
 
 #: hwclock/hwclock.c:1014
 #, c-format
@@ -5716,8 +5557,7 @@ msgstr "не вдається встановити системний час.\n"
 #: hwclock/hwclock.c:1142
 #, c-format
 msgid ""
-"The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
-"machine.\n"
+"The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken.\n"
 msgstr ""
@@ -5737,12 +5577,8 @@ msgstr "Ядро вважає, що значення епохи - %lu\n"
 
 #: hwclock/hwclock.c:1156
 #, c-format
-msgid ""
-"To set the epoch value, you must use the 'epoch' option to tell to what "
-"value to set it.\n"
-msgstr ""
-"Щоб встановити значення епохи, необхідно використовувати параметр 'epoch' із "
-"зазначенням встановлюваного значення.\n"
+msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it.\n"
+msgstr "Щоб встановити значення епохи, необхідно використовувати параметр 'epoch' із зазначенням встановлюваного значення.\n"
 
 #: hwclock/hwclock.c:1159
 #, c-format
@@ -5755,9 +5591,9 @@ msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "не вдається встановити значення епохи у ядрі.\n"
 
 #: hwclock/hwclock.c:1175
-#, fuzzy, c-format
+#, c-format
 msgid "%s from util-linux-%s\n"
-msgstr "%s з %s\n"
+msgstr "%s з util-linux-%s\n"
 
 #: hwclock/hwclock.c:1196
 #, c-format
@@ -5802,8 +5638,7 @@ msgstr ""
 "  --systohc     встановити у апаратному годиннику значення поточного\n"
 "                системного часу\n"
 "  --adjust      скорегувати апаратний годинник на значення систематичного\n"
-"                відхилення з моменту коли годинник був останній раз "
-"оновлений\n"
+"                відхилення з моменту коли годинник був останній раз оновлений\n"
 "  --getepoch    вивести отримане від годинника ядра значення епохи\n"
 "  --setepoch    встановити значення епохи годинника ядра у значення казане\n"
 "                в --epoch\n"
@@ -5826,8 +5661,7 @@ msgid ""
 "                tell hwclock the type of alpha you have (see hwclock(8))\n"
 msgstr ""
 "  --jensen, --arc, --srm, --funky-toy\n"
-"                вказати hwclock тип вашої системи alpha (дивіться hwclock"
-"(8))\n"
+"                вказати hwclock тип вашої системи alpha (дивіться hwclock(8))\n"
 
 #: hwclock/hwclock.c:1397
 #, c-format
@@ -5845,27 +5679,18 @@ msgstr ""
 
 #: hwclock/hwclock.c:1410
 #, c-format
-msgid ""
-"%s: The --utc and --localtime options are mutually exclusive.  You specified "
-"both.\n"
-msgstr ""
-"%s: Параметри --utc та --localtime виключають одне одного. А ви вказали "
-"обидва.\n"
+msgid "%s: The --utc and --localtime options are mutually exclusive.  You specified both.\n"
+msgstr "%s: Параметри --utc та --localtime виключають одне одного. А ви вказали обидва.\n"
 
 #: hwclock/hwclock.c:1417
 #, c-format
-msgid ""
-"%s: The --adjust and --noadjfile options are mutually exclusive.  You "
-"specified both.\n"
-msgstr ""
-"%s: Параметри --adjust та --noadjfile виключають одне одного. А ви вказали "
-"обидва.\n"
+msgid "%s: The --adjust and --noadjfile options are mutually exclusive.  You specified both.\n"
+msgstr "%s: Параметри --adjust та --noadjfile виключають одне одного. А ви вказали обидва.\n"
 
 #: hwclock/hwclock.c:1424
 #, c-format
 msgid "%s: With --noadjfile, you must specify either --utc or --localtime\n"
-msgstr ""
-"%s: Разом з --noadjfile, необхідно вказувати або --utc, або --localtime\n"
+msgstr "%s: Разом з --noadjfile, необхідно вказувати або --utc, або --localtime\n"
 
 #: hwclock/hwclock.c:1438
 #, c-format
@@ -5884,25 +5709,17 @@ msgstr "Змінювати системний час може лише адмі�
 
 #: hwclock/hwclock.c:1464
 #, c-format
-msgid ""
-"Sorry, only the superuser can change the Hardware Clock epoch in the "
-"kernel.\n"
-msgstr ""
-"Змінювати значення епохи апаратного годинника у ядрі може лише "
-"адміністратор.\n"
+msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel.\n"
+msgstr "Змінювати значення епохи апаратного годинника у ядрі може лише адміністратор.\n"
 
 #: hwclock/hwclock.c:1484
 #, c-format
 msgid "Cannot access the Hardware Clock via any known method.\n"
-msgstr ""
-"не вдається отримати доступ до апаратного годинника використовуючи будь-який "
-"відомий метод.\n"
+msgstr "не вдається отримати доступ до апаратного годинника використовуючи будь-який відомий метод.\n"
 
 #: hwclock/hwclock.c:1488
 #, c-format
-msgid ""
-"Use the --debug option to see the details of our search for an access "
-"method.\n"
+msgid "Use the --debug option to see the details of our search for an access method.\n"
 msgstr "Щоб переглянути подробиці пошуку методу доступу вкажіть --debug.\n"
 
 #: hwclock/kd.c:55
@@ -5966,14 +5783,14 @@ msgid "read() to %s to wait for clock tick failed"
 msgstr "помилка очікування у циклі в read() для %s"
 
 #: hwclock/rtc.c:256
-#, fuzzy, c-format
+#, c-format
 msgid "select() to %s to wait for clock tick failed"
-msgstr "помилка очікування у циклі в read() для %s"
+msgstr "помилка очікування у циклі в select() для %s"
 
 #: hwclock/rtc.c:259
-#, fuzzy, c-format
+#, c-format
 msgid "select() to %s to wait for clock tick timed out\n"
-msgstr "помилка очікування у циклі в read() для %s"
+msgstr "помилка очікування у циклі в select() для %s\n"
 
 #: hwclock/rtc.c:268
 #, c-format
@@ -6002,13 +5819,8 @@ msgstr "Помилка відкривання %s"
 
 #: hwclock/rtc.c:383 hwclock/rtc.c:429
 #, c-format
-msgid ""
-"To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
-"device driver via the device special file %s.  This file does not exist on "
-"this system.\n"
-msgstr ""
-"для маніпулювання значенням епохи у ядрі необхідно отримати доступ до Linux "
-"'rtc' пристрою через спеціальний файл %s. Цей файл не існує у цій системі.\n"
+msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system.\n"
+msgstr "для маніпулювання значенням епохи у ядрі необхідно отримати доступ до Linux 'rtc' пристрою через спеціальний файл %s. Цей файл не існує у цій системі.\n"
 
 #: hwclock/rtc.c:388 hwclock/rtc.c:434
 #, c-format
@@ -6037,10 +5849,8 @@ msgstr "встановлюється епоха = %ld через RTC_EPOCH_SET i
 
 #: hwclock/rtc.c:444
 #, c-format
-msgid ""
-"The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
-msgstr ""
-"Драйвер ядра для %s не підтримує системний виклик RTC_EPOCH_SET ioctl.\n"
+msgid "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
+msgstr "Драйвер ядра для %s не підтримує системний виклик RTC_EPOCH_SET ioctl.\n"
 
 #: hwclock/rtc.c:447
 #, c-format
@@ -6175,16 +5985,11 @@ msgstr "%s: переповнення вводу"
 #: login-utils/agetty.c:1195
 #, c-format
 msgid ""
-"Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
-"login_host] baud_rate,... line [termtype]\n"
-"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
-"line baud_rate,... [termtype]\n"
+"Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\n"
+"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"
 msgstr ""
-"Використання: %s [-hiLmw] [-l програма_входу] [-t час_очікування] [-I "
-"рядок_ініц] [-H реєстрац_вузол] швидкість_передачі,... рядок "
-"[тип_терміналу]\n"
-"або\t[-hiLmw] [-l програма_входу] [-t час_очікування] [-I рядок_ініц] [-H "
-"реєстрац_вузол] рядок швидкість_передачі,... [тип_терміналу]\n"
+"Використання: %s [-hiLmw] [-l програма_входу] [-t час_очікування] [-I рядок_ініц] [-H реєстрац_вузол] швидкість_передачі,... рядок [тип_терміналу]\n"
+"або\t[-hiLmw] [-l програма_входу] [-t час_очікування] [-I рядок_ініц] [-H реєстрац_вузол] рядок швидкість_передачі,... [тип_терміналу]\n"
 
 #: login-utils/checktty.c:84 login-utils/checktty.c:105
 #, c-format
@@ -6222,23 +6027,21 @@ msgstr "%s: користувач \"%s\" не існує.\n"
 #: login-utils/chfn.c:140 login-utils/chsh.c:125
 #, c-format
 msgid "%s: can only change local entries; use yp%s instead.\n"
-msgstr ""
-"%s: може змінювати лише локальні записи; використовуйте yp%s натомість.\n"
+msgstr "%s: може змінювати лише локальні записи; використовуйте yp%s натомість.\n"
 
 #: login-utils/chfn.c:151 login-utils/chsh.c:136
-#, fuzzy
 msgid "Unknown user context"
-msgstr "невідома помилка у ключі"
+msgstr "Невідомий контекст користувача"
 
 #: login-utils/chfn.c:152
 #, c-format
 msgid "%s: %s is not authorized to change the finger info of %s\n"
-msgstr ""
+msgstr "%s: %s не авторизований для зміни інформації finger у %s\n"
 
 #: login-utils/chfn.c:159 login-utils/chsh.c:144
 #, c-format
 msgid "%s: Can't set default context for /etc/passwd"
-msgstr ""
+msgstr "%s: Не вдається встановити типовий контекст для /etc/passwd"
 
 #: login-utils/chfn.c:173
 #, c-format
@@ -6324,16 +6127,14 @@ msgid "malloc failed"
 msgstr "помилка виділення пам'яті"
 
 #: login-utils/chsh.c:137
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s is not authorized to change the shell of %s\n"
-msgstr "%s: \"%s\" не зі списку /etc/shells.\n"
+msgstr "%s: %s не авторизований для зміни оболонки %s\n"
 
 #: login-utils/chsh.c:157
 #, c-format
-msgid ""
-"%s: Running UID doesn't match UID of user we're altering, shell change "
-"denied\n"
-msgstr ""
+msgid "%s: Running UID doesn't match UID of user we're altering, shell change denied\n"
+msgstr "%s: UID запущеної програми не відповідає UID користувача, параметри якого змінюються, зміну оболонки заборонено\n"
 
 #: login-utils/chsh.c:163
 #, c-format
@@ -6435,9 +6236,7 @@ msgstr "не вдається прочитати %s, завершення."
 
 #: login-utils/last.c:148
 msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
-msgstr ""
-"Використання: last [-#] [-f file] [-t tty] [-h назва_вузла] "
-"[користувач ...]\n"
+msgstr "Використання: last [-#] [-f file] [-t tty] [-h назва_вузла] [користувач ...]\n"
 
 #: login-utils/last.c:284
 msgid "  still logged in"
@@ -7029,14 +6828,14 @@ msgid "%s: can't link %s: %s\n"
 msgstr "%s: помилка створення посилання %s: %s\n"
 
 #: login-utils/vipw.c:202
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Can't get context for %s"
-msgstr "не вдається отримати таймаут для %s: %s\n"
+msgstr "%s: не вдається отримати контекст для %s"
 
 #: login-utils/vipw.c:208
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Can't set context for %s"
-msgstr "не вдається отримати таймаут для %s: %s\n"
+msgstr "%s: не вдається встановити контекст для %s"
 
 #: login-utils/vipw.c:217
 #, c-format
@@ -7109,7 +6908,7 @@ msgid "%s: can't read temporary file.\n"
 msgstr "%s: не вдається прочитати тимчасовий файл.\n"
 
 #: misc-utils/cal.c:313
-#, fuzzy, c-format
+#, c-format
 msgid "%s from %s\n"
 msgstr "%s з %s\n"
 
@@ -7141,9 +6940,9 @@ msgid "St. Tib's Day"
 msgstr "День святого Tib"
 
 #: misc-utils/kill.c:189
-#, fuzzy, c-format
+#, c-format
 msgid "%s from %s%s\n"
-msgstr "%s з %s\n"
+msgstr "%s від %s%s\n"
 
 #: misc-utils/kill.c:207
 #, c-format
@@ -7187,11 +6986,8 @@ msgstr "logger: невідома назва пріоритету: %s.\n"
 
 #: misc-utils/logger.c:287
 #, c-format
-msgid ""
-"usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
-msgstr ""
-"використання: logger [-is] [-f файл] [-p пріор] [-t тег] [-u сокет] "
-"[ повідомлення ... ]\n"
+msgid "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
+msgstr "використання: logger [-is] [-f файл] [-p пріор] [-t тег] [-u сокет] [ повідомлення ... ]\n"
 
 #: misc-utils/look.c:349
 #, c-format
@@ -7281,8 +7077,7 @@ msgid ""
 "Script not started.\n"
 msgstr ""
 "Попередження: `%s' - це посилання.\n"
-"Використовуйте `%s [параметри] %s', якщо ви дійсно бажаєте його "
-"використовувати.\n"
+"Використовуйте `%s [параметри] %s', якщо ви дійсно бажаєте його використовувати.\n"
 "Сценарій не запущено.\n"
 
 #: misc-utils/script.c:168
@@ -7633,23 +7428,17 @@ msgstr "mount: не вдається відкрити %s - натомість в
 #: mount/fstab.c:484
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
-msgstr ""
-"не вдається створити файл блокування %s: %s (для перевизначення "
-"використовуйте -n)"
+msgstr "не вдається створити файл блокування %s: %s (для перевизначення використовуйте -n)"
 
 #: mount/fstab.c:499
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
-msgstr ""
-"не вдається створити посилання на файл блокування %s: %s (для перевизначення "
-"використовуйте -n)"
+msgstr "не вдається створити посилання на файл блокування %s: %s (для перевизначення використовуйте -n)"
 
 #: mount/fstab.c:511
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
-msgstr ""
-"не вдається відкрити файл блокування %s: %s (для перевизначення "
-"використовуйте -n)"
+msgstr "не вдається відкрити файл блокування %s: %s (для перевизначення використовуйте -n)"
 
 #: mount/fstab.c:526
 #, c-format
@@ -7730,29 +7519,29 @@ msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: не вдається отримати інформацію про пристрій %s: %s\n"
 
 #: mount/lomount.c:179
-#, fuzzy, c-format
+#, c-format
 msgid "%s: could not find any device /dev/loop#"
-msgstr "mount: не вдається знайти жодний пристрій /dev/loop#"
+msgstr "%s: не вдається знайти жодний пристрій /dev/loop#"
 
 #: mount/lomount.c:181
 #, c-format
 msgid "%s: no permission to look at /dev/loop#"
-msgstr ""
+msgstr "%s: немає прав доступу до /dev/loop#"
 
 #: mount/lomount.c:184
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
 "       about the loop device? (If so, recompile or `modprobe loop'.)"
 msgstr ""
-"mount: Не вдається знайти жоден loop-пристрій. Можливо це ядро не \n"
+"%s: Не вдається знайти жоден loop-пристрій. Можливо це ядро не \n"
 "       підтримує роботу з loop-пристроями (Якщо це так - перекомпілюйте\n"
 "       його або виконайте `modprobe loop')."
 
 #: mount/lomount.c:189
-#, fuzzy, c-format
+#, c-format
 msgid "%s: could not find any free loop device"
-msgstr "mount: не вдається знайти жодний вільний loop-пристрій"
+msgstr "%s: не вдається знайти жодний вільний loop-пристрій"
 
 #: mount/lomount.c:287
 #, c-format
@@ -7760,9 +7549,9 @@ msgid "Couldn't lock into memory, exiting.\n"
 msgstr "не вдається заблокувати у пам'яті, завершення.\n"
 
 #: mount/lomount.c:340
-#, fuzzy, c-format
+#, c-format
 msgid "set_loop(%s,%s,%llu): success\n"
-msgstr "set_loop(%s,%s,%d): успішно завершено\n"
+msgstr "set_loop(%s,%s,%llu): успішно завершено\n"
 
 #: mount/lomount.c:351
 #, c-format
@@ -7777,12 +7566,10 @@ msgstr "del_loop(%s): успішно завершено\n"
 #: mount/lomount.c:369
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
-msgstr ""
-"Програма mount була скомпільована без підтримки loop-пристроїв. "
-"Перекомпілюйте її \n"
+msgstr "Програма mount була скомпільована без підтримки loop-пристроїв. Перекомпілюйте її \n"
 
 #: mount/lomount.c:406
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "usage:\n"
 "  %s loop_device                                       # give info\n"
@@ -7793,6 +7580,7 @@ msgstr ""
 "використання:\n"
 "  %s loop_пристрій                                    # отримати інформацію\n"
 "  %s -d loop_пристрій                                 # видалити\n"
+"  %s -f                                               # знайти вільний\n"
 "  %s [ -e шифрування ] [ -o зсув ] loop_пристрій файл # встановити\n"
 
 #: mount/lomount.c:425 mount/sundries.c:205 mount/xmalloc.c:29
@@ -7803,8 +7591,7 @@ msgstr "недостатньо пам'яті"
 #: mount/lomount.c:540
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
-msgstr ""
-"При компіляції не було ввімкнено підтримку loop-пристроїв. Перекомпілюйте.\n"
+msgstr "При компіляції не було ввімкнено підтримку loop-пристроїв. Перекомпілюйте.\n"
 
 #: mount/mntent.c:166
 #, c-format
@@ -7821,30 +7608,29 @@ msgid "; rest of file ignored"
 msgstr "; залишок файлу ігнорується"
 
 #: mount/mount_blkid.c:87
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error: the label %s occurs on both %s and %s\n"
-msgstr "mount: етикетка %s зустрічається як у %s, так і у %s\n"
+msgstr "%s: етикетка %s зустрічається як у %s, так і у %s\n"
 
 #: mount/mount_blkid.c:99
-#, fuzzy, c-format
+#, c-format
 msgid "mount: going to mount %s by UUID\n"
-msgstr "mount: спроба підключити %s у %s\n"
+msgstr "mount: спроба підключити %s за UUID\n"
 
 #: mount/mount_blkid.c:103
-#, fuzzy, c-format
+#, c-format
 msgid "mount: going to mount %s by label\n"
-msgstr "mount: спроба підключити %s у %s\n"
+msgstr "mount: спроба підключити %s за етикеткою\n"
 
 #: mount/mount_by_label.c:192
-#, fuzzy, c-format
+#, c-format
 msgid "%s: could not open %s, so UUID and LABEL conversion cannot be done.\n"
-msgstr ""
-"mount: не вдається відкрити %s, тому конвертація UUID та LABEL неможлива.\n"
+msgstr "%s: не вдається відкрити %s, тому конвертація UUID та LABEL неможлива.\n"
 
 #: mount/mount_by_label.c:315
-#, fuzzy, c-format
+#, c-format
 msgid "%s: bad UUID"
-msgstr "mount: неправильний UUID"
+msgstr "%s: неправильний UUID"
 
 #: mount/mount.c:382
 #, c-format
@@ -7943,10 +7729,8 @@ msgid "mount: failed with nfs mount version 4, trying 3..\n"
 msgstr "mount: помилка підключення nfs версії 4, пробується 3..\n"
 
 #: mount/mount.c:895
-msgid ""
-"mount: I could not determine the filesystem type, and none was specified"
-msgstr ""
-"mount: не вдається визначити тип файлової системи, та тип явно не вказаний"
+msgid "mount: I could not determine the filesystem type, and none was specified"
+msgstr "mount: не вдається визначити тип файлової системи, та тип явно не вказаний"
 
 #: mount/mount.c:898
 msgid "mount: you must specify the filesystem type"
@@ -8013,32 +7797,37 @@ msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s ще не підключений, або неправильний параметр"
 
 #: mount/mount.c:959
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
 "       missing codepage or other error"
 msgstr ""
-"mount: неправильний тип файлової системи, неправильний параметр, "
-"неправильний суперблок на %s,\n"
-"       або підключено надто багато файлових систем"
+"mount: неправильний тип файлової системи, неправильний параметр, неправильний суперблок на %s,\n"
+"       відсутня кодова сторінка або інша помилка"
 
 #: mount/mount.c:969
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
 msgstr ""
+"       (може це пристрій IDE, для якого ви фактично використовуєте\n"
+"       ide-scsi, тому потрібні sr0, або sda чи щось подібне?)"
 
 #: mount/mount.c:975
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
 msgstr ""
+"       (чи не намагаєтесь ви aren't you trying to mount an extended partition,\n"
+"       instead of some logical partition inside?)"
 
 #: mount/mount.c:992
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
 msgstr ""
+"       У деяких випадках корисну інформацію можні знайти у системному журналі\n"
+"       спробуйте - dmesg | tail  чи щось подібне\n"
 
 #: mount/mount.c:998
 msgid "mount table full"
@@ -8055,9 +7844,9 @@ msgid "mount: %s: unknown device"
 msgstr "mount: %s: невідомий пристрій"
 
 #: mount/mount.c:1009
-#, fuzzy, c-format
+#, c-format
 msgid "mount: unknown filesystem type '%s'"
-msgstr "   l   перелік відомих типів файлових систем"
+msgstr "mount: невідомий тип файлової системи '%s'"
 
 #: mount/mount.c:1021
 #, c-format
@@ -8065,21 +7854,17 @@ msgid "mount: probably you meant %s"
 msgstr "mount: можливо ви мали на увазі %s"
 
 #: mount/mount.c:1023
-#, fuzzy
 msgid "mount: maybe you meant 'iso9660'?"
-msgstr "mount: можливо ви мали на увазі iso9660 ?"
+msgstr "mount: можливо ви мали на увазі 'iso9660'?"
 
 #: mount/mount.c:1025
-#, fuzzy
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: можливо ви мали на увазі iso9660 ?"
 
 #: mount/mount.c:1028
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
-msgstr ""
-"mount: %s має неправильний номер пристрою або файлова система типу %s не "
-"підтримується"
+msgstr "mount: %s має неправильний номер пристрою або файлова система типу %s не підтримується"
 
 #: mount/mount.c:1034
 #, c-format
@@ -8137,8 +7922,7 @@ msgstr "mount: не вказано тип - вважається nfs, через
 #: mount/mount.c:1176
 #, c-format
 msgid "mount: no type was given - I'll assume smbfs because of the // prefix\n"
-msgstr ""
-"mount: не вказано тип - вважається smbfs, через наявність префіксу //\n"
+msgstr "mount: не вказано тип - вважається smbfs, через наявність префіксу //\n"
 
 #: mount/mount.c:1193
 #, c-format
@@ -8182,14 +7966,12 @@ msgid ""
 msgstr ""
 "Використання: mount -V          : вивести версію\n"
 "       mount -h                 : вивести цю довідку\n"
-"       mount                    : вивести перелік підключених файлових "
-"систем\n"
+"       mount                    : вивести перелік підключених файлових систем\n"
 "       mount -l                 : те ж саме, але також виводити імена томів\n"
 "Досі була інформаційна частина. Далі про підключення файлових систем.\n"
 "Команда - `mount [-t тип_фс] що куди'.\n"
 "Подробиці вказані у /etc/fstab можна пропускати.\n"
-"       mount -a [-t|-O] ...     : підключити всі файлові системи з /etc/"
-"fstab\n"
+"       mount -a [-t|-O] ...     : підключити всі файлові системи з /etc/fstab\n"
 "       mount пристрій           : підключити пристрій у відоме місце\n"
 "       mount каталог            : підключити у цей каталог відомий пристрій\n"
 "       mount -t тип пристр кат  : звичайна команда підключення\n"
@@ -8367,7 +8149,7 @@ msgid "bug in xstrndup call"
 msgstr "помилка при виклику xstrndup"
 
 #: mount/swapon.c:56
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "usage: %s [-hV]\n"
 "       %s -a [-e] [-v]\n"
@@ -8376,7 +8158,7 @@ msgid ""
 msgstr ""
 "використання: %s [-hV]\n"
 "       %s -a [-e] [-v]\n"
-"       %s [-v] [-p пріоритет] спец_файл ...\n"
+"       %s [-v] [-p пріоритет] спецфайл|LABEL=назва_тому ...\n"
 "       %s [-s]\n"
 
 #: mount/swapon.c:66
@@ -8396,25 +8178,24 @@ msgid "%s on %s\n"
 msgstr "%s на %s\n"
 
 #: mount/swapon.c:177 mount/swapon.c:243
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot find the device for %s\n"
-msgstr "%s: не вдається знайти \"_stext\" у %s\n"
+msgstr "%s: не вдається знайти пристрій для %s\n"
 
 #: mount/swapon.c:184
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot stat %s: %s\n"
-msgstr "swapon: не вдається отримати статистику %s: %s\n"
+msgstr "%s: не вдається отримати статистику %s: %s\n"
 
 #: mount/swapon.c:195
-#, fuzzy, c-format
+#, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
-msgstr ""
-"swapon: попередження: %s має небезпечні права %04o, пропонується %04o\n"
+msgstr "%s: попередження: %s має небезпечні права %04o, пропонується %04o\n"
 
 #: mount/swapon.c:207
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Skipping file %s - it appears to have holes.\n"
-msgstr "swapon: пропускається файл %s - схоже, що він містить дірки.\n"
+msgstr "%s: пропускається файл %s - схоже, що він містить дірки.\n"
 
 #: mount/swapon.c:275
 #, c-format
@@ -8429,12 +8210,12 @@ msgstr "%s: не вдається відкрити %s: %s\n"
 #: mount/umount.c:49
 #, c-format
 msgid "umount: compiled without support for -f\n"
-msgstr "umount: скомпільовано без підтримки -f\n"
+msgstr "umount: зібрано без підтримки -f\n"
 
 #: mount/umount.c:139
-#, fuzzy, c-format
+#, c-format
 msgid "umount: cannot fork: %s"
-msgstr "mount: помилка створення процесу: %s"
+msgstr "umount: не вдається запустити дочірній процес: %s"
 
 #: mount/umount.c:171
 #, c-format
@@ -8479,8 +8260,7 @@ msgstr "umount: %s: не існує"
 #: mount/umount.c:255
 #, c-format
 msgid "umount: %s: must be superuser to umount"
-msgstr ""
-"umount: %s: для використання umount необхідно мати права адміністратора"
+msgstr "umount: %s: для використання umount необхідно мати права адміністратора"
 
 #: mount/umount.c:257
 #, c-format
@@ -8533,9 +8313,8 @@ msgstr ""
 "       umount [-f] [-r] [-n] [-v] спец_файл | каталог...\n"
 
 #: mount/umount.c:546
-#, fuzzy
 msgid "Cannot umount \"\"\n"
-msgstr "не вдається відкрити "
+msgstr "Не вдається відключити \"\"\n"
 
 #: mount/umount.c:552
 #, c-format
@@ -8568,9 +8347,9 @@ msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: підключений %s відрізняється від fstab"
 
 #: mount/umount.c:630
-#, fuzzy, c-format
+#, c-format
 msgid "umount: only %s can unmount %s from %s"
-msgstr "umount: лише адміністратор може відключити %s від %s"
+msgstr "umount: лише %s може відключити %s від %s"
 
 #: mount/umount.c:711
 msgid "umount: only root can do that"
@@ -8579,8 +8358,7 @@ msgstr "umount: це може робити лише адміністратор(r
 #: sys-utils/ctrlaltdel.c:27
 #, c-format
 msgid "You must be root to set the Ctrl-Alt-Del behaviour.\n"
-msgstr ""
-"Для визначення поведінки Ctrl-Alt-Del необхідно мати права адміністратора.\n"
+msgstr "Для визначення поведінки Ctrl-Alt-Del необхідно мати права адміністратора.\n"
 
 #: sys-utils/ctrlaltdel.c:42
 #, c-format
@@ -8593,19 +8371,16 @@ msgid ""
 "File %s, For threshold value %lu, Maximum characters in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
-"Файл %s, для граничного значення %lu, максимальна кількість символів у fifo "
-"була %d,\n"
+"Файл %s, для граничного значення %lu, максимальна кількість символів у fifo була %d,\n"
 "та максимальна швидкість передачі у символах/секунду була %f\n"
 
 #: sys-utils/cytune.c:126
 #, c-format
 msgid ""
-"File %s, For threshold value %lu and timrout value %lu, Maximum characters "
-"in fifo were %d,\n"
+"File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
-"Файл %s, для граничного значення %lu та значення таймауту %lu, максимальна "
-"кількість символів у fifo була %d,\n"
+"Файл %s, для граничного значення %lu та значення таймауту %lu, максимальна кількість символів у fifo була %d,\n"
 "та максимальна швидкість передачі у символах/секунду була %f\n"
 
 #: sys-utils/cytune.c:190
@@ -8635,12 +8410,8 @@ msgstr "Неправильне значення типового часу: %s\n"
 
 #: sys-utils/cytune.c:239
 #, c-format
-msgid ""
-"Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
-"[-g|-G] file [file...]\n"
-msgstr ""
-"Використання: %s [-q [-i інтервал]] ([-s значення]|[-S значення]) ([-t "
-"значення]|[-T значення]) [-g|-G] файл [файл...]\n"
+msgid "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) [-g|-G] file [file...]\n"
+msgstr "Використання: %s [-q [-i інтервал]] ([-s значення]|[-S значення]) ([-t значення]|[-T значення]) [-g|-G] файл [файл...]\n"
 
 #: sys-utils/cytune.c:251 sys-utils/cytune.c:270 sys-utils/cytune.c:290
 #: sys-utils/cytune.c:340
@@ -8693,11 +8464,8 @@ msgstr "не вдається дати CYGETMON на %s: %s\n"
 
 #: sys-utils/cytune.c:419
 #, c-format
-msgid ""
-"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
-msgstr ""
-"%s: %lu переривань, %lu/%lu симв.; fifo: %lu межа, %lu таймаут, %lu макс, %"
-"lu зараз\n"
+msgid "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgstr "%s: %lu переривань, %lu/%lu симв.; fifo: %lu межа, %lu таймаут, %lu макс, %lu зараз\n"
 
 #: sys-utils/cytune.c:425
 #, c-format
@@ -8706,11 +8474,8 @@ msgstr "   %f перерв/сек; %f отрим, %f відпр (симв/сек
 
 #: sys-utils/cytune.c:430
 #, c-format
-msgid ""
-"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
-msgstr ""
-"%s: %lu переривань, %lu симв; fifo: %lu межа, %lu таймаут, %lu макс, %lu "
-"зараз\n"
+msgid "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgstr "%s: %lu переривань, %lu симв; fifo: %lu межа, %lu таймаут, %lu макс, %lu зараз\n"
 
 #: sys-utils/cytune.c:436
 #, c-format
@@ -8825,10 +8590,8 @@ msgstr "\t%s -h виводить довідку.\n"
 
 #: sys-utils/ipcs.c:129
 #, c-format
-msgid ""
-"%s provides information on ipc facilities for which you have read access.\n"
-msgstr ""
-"%s надає інформацію про ipc ресурси, для яких у вас є доступ для читання.\n"
+msgid "%s provides information on ipc facilities for which you have read access.\n"
+msgstr "%s надає інформацію про ipc ресурси, для яких у вас є доступ для читання.\n"
 
 #: sys-utils/ipcs.c:131
 #, c-format
@@ -8888,24 +8651,24 @@ msgid "------ Shared Memory Limits --------\n"
 msgstr "------ Обмеження спільної пам'яті --------\n"
 
 #: sys-utils/ipcs.c:278
-#, fuzzy, c-format
+#, c-format
 msgid "max number of segments = %lu\n"
-msgstr "максимальна кількість сегментів = %ld\n"
+msgstr "максимальна кількість сегментів = %lu\n"
 
 #: sys-utils/ipcs.c:280
-#, fuzzy, c-format
+#, c-format
 msgid "max seg size (kbytes) = %lu\n"
-msgstr "максимальний розмір сегмента (кілобайт) = %ld\n"
+msgstr "максимальний розмір сегмента (кілобайт) = %lu\n"
 
 #: sys-utils/ipcs.c:282
-#, fuzzy, c-format
+#, c-format
 msgid "max total shared memory (pages) = %lu\n"
-msgstr "максимум загалом спільної пам'яті (кілобайт) = %ld\n"
+msgstr "максимум загалом спільної пам'яті (кілобайт) = %lu\n"
 
 #: sys-utils/ipcs.c:284
-#, fuzzy, c-format
+#, c-format
 msgid "min seg size (bytes) = %lu\n"
-msgstr "мінімальний розмір сегменту (байт) = %ld\n"
+msgstr "мінімальний розмір сегменту (байт) = %lu\n"
 
 #: sys-utils/ipcs.c:289
 #, c-format
@@ -9384,14 +9147,11 @@ msgstr "pid"
 
 #: sys-utils/rdev.c:69
 msgid "usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
-msgstr ""
-"використання: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
+msgstr "використання: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
 
 #: sys-utils/rdev.c:70
-msgid ""
-"  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
-msgstr ""
-"  rdev /dev/fd0  (або rdev /linux, тощо.) відображає поточний ROOT пристрій"
+msgid "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
+msgstr "  rdev /dev/fd0  (або rdev /linux, тощо.) відображає поточний ROOT пристрій"
 
 #: sys-utils/rdev.c:71
 msgid "  rdev /dev/fd0 /dev/hda2         sets ROOT to /dev/hda2"
@@ -9399,9 +9159,7 @@ msgstr "  rdev /dev/fd0 /dev/hda2         встановлює ROOT у /dev/hda2
 
 #: sys-utils/rdev.c:72
 msgid "  rdev -R /dev/fd0 1              set the ROOTFLAGS (readonly status)"
-msgstr ""
-"  rdev -R /dev/fd0 1              встановлює ROOTFLAGS (стан лише-для-"
-"читання)"
+msgstr "  rdev -R /dev/fd0 1              встановлює ROOTFLAGS (стан лише-для-читання)"
 
 #: sys-utils/rdev.c:73
 msgid "  rdev -r /dev/fd0 627            set the RAMDISK size"
@@ -9409,8 +9167,7 @@ msgstr "  rdev -r /dev/fd0 627            встановлює розмір RAMD
 
 #: sys-utils/rdev.c:74
 msgid "  rdev -v /dev/fd0 1              set the bootup VIDEOMODE"
-msgstr ""
-"  rdev -v /dev/fd0 1              встановлює VIDEOMODE при завантаженні"
+msgstr "  rdev -v /dev/fd0 1              встановлює VIDEOMODE при завантаженні"
 
 #: sys-utils/rdev.c:75
 msgid "  rdev -o N ...                   use the byte offset N"
@@ -9429,17 +9186,12 @@ msgid "  vidmode ...                     same as rdev -v"
 msgstr "  vidmode ...                     те ж саме, що rdev -v"
 
 #: sys-utils/rdev.c:79
-msgid ""
-"Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
-msgstr ""
-"Зауваження: відео режими: -3=Питати, -2=РозширенийVGA, -1=ЗвичайнийVga, "
-"1=key1, 2=key2,..."
+msgid "Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
+msgstr "Зауваження: відео режими: -3=Питати, -2=РозширенийVGA, -1=ЗвичайнийVga, 1=key1, 2=key2,..."
 
 #: sys-utils/rdev.c:80
 msgid "      use -R 1 to mount root readonly, -R 0 for read/write."
-msgstr ""
-"      використовуйте -R 1 для підключення лише-для-читання, -R 0 для читання/"
-"запису."
+msgstr "      використовуйте -R 1 для підключення лише-для-читання, -R 0 для читання/запису."
 
 #: sys-utils/rdev.c:247
 msgid "missing comma"
@@ -9451,7 +9203,7 @@ msgid "out of memory"
 msgstr "недостатньо пам'яті"
 
 #: sys-utils/readprofile.c:118
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s: Usage: \"%s [options]\n"
 "\t -m <mapfile>  (defaults: \"%s\" and\n"
@@ -9475,8 +9227,8 @@ msgstr ""
 "\t -i            вивести лише інформацію про крок профілювання\n"
 "\t -v            виводити розширену інформацію\n"
 "\t -a            виводити всі символи, навіть якщо їх число ненульове\n"
-"\t -b            вивести гістограму з індивідуальними стовпчиками "
-"лічильників\n"
+"\t -b            вивести гістограму з індивідуальними стовпчиками лічильників\n"
+"\t -s            вивести індивідуальні лічильники функцій\n"
 "\t -r            скинути всі лічильники (лише root)\n"
 "\t -n            вимкнути автоматичне визначення порядку байтів\n"
 "\t -V            вивести версію та вийти\n"
@@ -9484,7 +9236,7 @@ msgstr ""
 #: sys-utils/readprofile.c:284
 #, c-format
 msgid "Sampling_step: %i\n"
-msgstr "Крок профілювання: %i\n"
+msgstr "Крок_профілювання: %i\n"
 
 #: sys-utils/readprofile.c:305 sys-utils/readprofile.c:329
 #, c-format
@@ -9507,11 +9259,8 @@ msgstr "загалом"
 
 #: sys-utils/renice.c:68
 #, c-format
-msgid ""
-"usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
-msgstr ""
-"використання: renice пріоритет [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] "
-"користувачі ]\n"
+msgid "usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
+msgstr "використання: renice пріоритет [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] користувачі ]\n"
 
 #: sys-utils/renice.c:97
 #, c-format
@@ -9548,8 +9297,7 @@ msgid ""
 "          -a [on|off] | -o [on|off] | -C [on|off] | -q [on|off] | -s | \n"
 "          -T [on|off] ]\n"
 msgstr ""
-"Використання: %s <пристрій> [ -i <IRQ> | -t <ЧАС> | -c <СИМВОЛИ> | -w "
-"<ПАУЗА> | \n"
+"Використання: %s <пристрій> [ -i <IRQ> | -t <ЧАС> | -c <СИМВОЛИ> | -w <ПАУЗА> | \n"
 "          -a [on|off] | -o [on|off] | -C [on|off] | -q [on|off] | -s | \n"
 "          -T [on|off] ]\n"
 
@@ -9665,11 +9413,8 @@ msgstr "hexdump: неправильне значення зсуву.\n"
 
 #: text-utils/hexsyntax.c:131
 #, c-format
-msgid ""
-"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
-msgstr ""
-"hexdump: [-bcCdovx] [-e формат] [-f файл_формату] [-n довжина] [-s зсув] "
-"[файл ...]\n"
+msgid "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
+msgstr "hexdump: [-bcCdovx] [-e формат] [-f файл_формату] [-n довжина] [-s зсув] [файл ...]\n"
 
 #: text-utils/more.c:216
 #, c-format
@@ -9677,9 +9422,9 @@ msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr "використання: %s [-dflpcsu] [+linenum | +/pattern] назва1 назва2 ...\n"
 
 #: text-utils/more.c:439
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unknown option \"-%c\"\n"
-msgstr "%s: невідомий сигнал %s\n"
+msgstr "%s: невідомий параметр \"-%c\"\n"
 
 #: text-utils/more.c:471
 #, c-format
@@ -9754,13 +9499,11 @@ msgstr ""
 #: text-utils/more.c:1237
 msgid ""
 "\n"
-"Most commands optionally preceded by integer argument k.  Defaults in "
-"brackets.\n"
+"Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 "\n"
-"Більшість команд можуть мати необов'язковий числовий параметр k.  Типові "
-"значення у кутових дужках.\n"
+"Більшість команд можуть мати необов'язковий числовий параметр k.  Типові значення у кутових дужках.\n"
 "Зірочка (*) означає, що параметр стає новим типовим значенням.\n"
 
 #: text-utils/more.c:1244
@@ -9785,23 +9528,18 @@ msgid ""
 ":f                      Display current file name and line number\n"
 ".                       Repeat previous command\n"
 msgstr ""
-"<space>                 Вивід наступних k рядків тексту [поточний розмір "
-"екрану]\n"
-"z                       Вивід наступних k рядків тексту [поточний розмір "
-"екрану]*\n"
+"<space>                 Вивід наступних k рядків тексту [поточний розмір екрану]\n"
+"z                       Вивід наступних k рядків тексту [поточний розмір екрану]*\n"
 "<enter>                 Вивід наступних k рядків тексту [1]*\n"
-"d або ctrl-D            Прокрутити k рядків [поточний розмір прокрутки, "
-"спочатку 11]*\n"
+"d або ctrl-D            Прокрутити k рядків [поточний розмір прокрутки, спочатку 11]*\n"
 "q або Q або <interrupt> Вийти з more\n"
 "s                       Перейти вперед на k рядків тексту [1]\n"
 "f                       Перейти вперед на k екранів тексту [1]\n"
 "b або ctrl-B            Перейти назад на k екранів тексту [1]\n"
 "'                       Перейти у місце початку попереднього пошуку\n"
 "=                       Відобразити поточний номер рядка\n"
-"/<регулярний вираз>     Знайти k-й випадок співпадання з регулярним виразом "
-"[1]\n"
-"n                       Знайти k-й випадок співпадання з останнім рег."
-"виразом [1]\n"
+"/<регулярний вираз>     Знайти k-й випадок співпадання з регулярним виразом [1]\n"
+"n                       Знайти k-й випадок співпадання з останнім рег.виразом [1]\n"
 "!<кмнд> або :!<кмнд>    Виконати <кмнд> у оболонці\n"
 "v                       Запустити /usr/bin/vi з поточного рядка\n"
 "ctrl-L                  Оновити вміст екрану\n"
@@ -9928,11 +9666,8 @@ msgstr "hexdump: неправильний символ перетворення 
 
 #: text-utils/pg.c:237
 #, c-format
-msgid ""
-"%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
-msgstr ""
-"%s: Використання: %s [-number] [-p рядок] [-cefnrs] [+line] [+/pattern/] "
-"[файли]\n"
+msgid "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
+msgstr "%s: Використання: %s [-number] [-p рядок] [-cefnrs] [+line] [+/pattern/] [файли]\n"
 
 #: text-utils/pg.c:246
 #, c-format
@@ -10023,14 +9758,14 @@ msgid "usage: rev [file ...]\n"
 msgstr "використання: rev [файл ...]\n"
 
 #: text-utils/tailf.c:53 text-utils/tailf.c:105
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot open \"%s\" for read\n"
-msgstr "неможливі відкрити %s для читання\n"
+msgstr "Не вдається відкрити \"%s\" для читання\n"
 
 #: text-utils/tailf.c:93
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: tailf logfile\n"
-msgstr "використання: %s [файл]\n"
+msgstr "Використання: tailf файл_журналу\n"
 
 #: text-utils/ul.c:141
 #, c-format
@@ -10062,19 +9797,8 @@ msgstr "Вхідний рядок надто довгий.\n"
 msgid "Out of memory when growing buffer.\n"
 msgstr "Недостатньо пам'яті для збільшення буфера.\n"
 
-#, fuzzy
-#~ msgid "mkfs from %s\n"
-#~ msgstr "%s з %s\n"
-
-#~ msgid "mkfs version %s (%s)\n"
-#~ msgstr "mkfs версії %s (%s)\n"
-
-#, fuzzy
-#~ msgid "flock: unknown option, aborting.\n"
-#~ msgstr "%s: невідомий сигнал %s\n"
-
-#~ msgid "%s version %s\n"
-#~ msgstr "%s версія %s\n"
+#~ msgid "%s: not compiled with minix v2 support\n"
+#~ msgstr "%s: скомпільовано без підтримки minix v2\n"
 
 #~ msgid "Invalid number: %s\n"
 #~ msgstr "Неправильне число: %s\n"
@@ -10088,11 +9812,8 @@ msgstr "Недостатньо пам'яті для збільшення буф�
 #~ msgid "   %s [ -p ] dev name\n"
 #~ msgstr "   %s [ -p ] пристрій назва\n"
 
-#~ msgid ""
-#~ "   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
-#~ msgstr ""
-#~ "   %s [ -p ] пристрій розмір сект головок доріжок stretch gap rate spec1 "
-#~ "fmt_gap\n"
+#~ msgid "   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
+#~ msgstr "   %s [ -p ] пристрій розмір сект головок доріжок stretch gap rate spec1 fmt_gap\n"
 
 #~ msgid "   %s [ -c | -y | -n | -d ] dev\n"
 #~ msgstr "   %s [ -c | -y | -n | -d ] пристрій\n"
@@ -10100,8 +9821,14 @@ msgstr "Недостатньо пам'яті для збільшення буф�
 #~ msgid "   %s [ -c | -y | -n ] dev\n"
 #~ msgstr "   %s [ -c | -y | -n ] пристрій\n"
 
+#~ msgid "Warning: deleting partitions after %d\n"
+#~ msgstr "Попередження: видалення розділів після %d\n"
+
 #~ msgid "version"
 #~ msgstr "версія"
+
+#~ msgid "BLKGETSIZE ioctl failed for %s\n"
+#~ msgstr "помилка у системному виклику BLKGETSIZE на %s\n"
 
 #~ msgid "couldn't open /dev/urandom"
 #~ msgstr "не вдається відкрити /dev/urandom"
@@ -10132,8 +9859,7 @@ msgstr "Недостатньо пам'яті для збільшення буф�
 #~ msgstr "Ви запустили надто багато процесів.\n"
 
 #~ msgid "The password must have at least 6 characters, try again.\n"
-#~ msgstr ""
-#~ "Пароль повинен складатися принаймні з 6 символів, спробуйте ще раз.\n"
+#~ msgstr "Пароль повинен складатися принаймні з 6 символів, спробуйте ще раз.\n"
 
 #~ msgid ""
 #~ "The password must contain characters out of two of the following\n"
@@ -10157,9 +9883,7 @@ msgstr "Недостатньо пам'яті для збільшення буф�
 #~ msgstr "Використання: passwd [ім'я_користувача [пароль]]\n"
 
 #~ msgid "Only root may use the one and two argument forms.\n"
-#~ msgstr ""
-#~ "Лише адміністратор може використовувати варіант з одним чи двома "
-#~ "параметрами.\n"
+#~ msgstr "Лише адміністратор може використовувати варіант з одним чи двома параметрами.\n"
 
 #~ msgid "Usage: passwd [-foqsvV] [user [password]]\n"
 #~ msgstr "Використання: passwd [-foqsvV] [користувач [пароль]]\n"
@@ -10177,13 +9901,10 @@ msgstr "Недостатньо пам'яті для збільшення буф�
 #~ msgstr "Надто багато параметрів.\n"
 
 #~ msgid "Can't find username anywhere. Is `%s' really a user?"
-#~ msgstr ""
-#~ "не вдається ніде знайти ім'я користувача. Чи `%s' справді ім'я "
-#~ "користувача?"
+#~ msgstr "не вдається ніде знайти ім'я користувача. Чи `%s' справді ім'я користувача?"
 
 #~ msgid "Sorry, I can only change local passwords. Use yppasswd instead."
-#~ msgstr ""
-#~ "Можна змінювати лише локальні паролі. Використовуйте yppasswd натомість."
+#~ msgstr "Можна змінювати лише локальні паролі. Використовуйте yppasswd натомість."
 
 #~ msgid "UID and username does not match, imposter!"
 #~ msgstr "UID та ім'я користувача не відповідають одне одному, ви шахрай!"
@@ -10230,18 +9951,8 @@ msgstr "Недостатньо пам'яті для збільшення буф�
 #~ msgid "mount: this version was compiled without support for the type `nfs'"
 #~ msgstr "mount: цю версію програми скомпільовано без підтримки `nfs'"
 
-#, fuzzy
-#~ msgid "Warning: omitting partitions after %d\n"
-#~ msgstr "Попередження: видалення розділів після %d\n"
-
 #~ msgid "mount: fs type %s not supported by kernel"
 #~ msgstr "mount: файлова система типу %s не підтримується ядром"
-
-#~ msgid "BLKGETSIZE ioctl failed for %s\n"
-#~ msgstr "помилка у системному виклику BLKGETSIZE на %s\n"
-
-#~ msgid "%s: not compiled with minix v2 support\n"
-#~ msgstr "%s: скомпільовано без підтримки minix v2\n"
 
 #~ msgid "mount: %s duplicate - not mounted"
 #~ msgstr "mount: %s дубльована - не підключається"
@@ -10250,8 +9961,10 @@ msgstr "Недостатньо пам'яті для збільшення буф�
 #~ msgstr "UUID"
 
 #~ msgid "mount: the label %s occurs on both %s and %s - not mounted\n"
-#~ msgstr ""
-#~ "mount: ім'я %s зустрічається як на %s, так і на %s - не підключено\n"
+#~ msgstr "mount: ім'я %s зустрічається як на %s, так і на %s - не підключено\n"
+
+#~ msgid "%s version %s\n"
+#~ msgstr "%s версія %s\n"
 
 #~ msgid "Boot (%02X)"
 #~ msgstr "Завантаження (%02X)"

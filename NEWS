@@ -1,3 +1,11 @@
+util-linux 2.13-pre7
+
+* mount: default to cifs instead of smbfs for sources
+         starting with // Lars Mueller()
+* flock: documentation updates (H. Peter Anvin)
+* new translation: id
+* updated translations: de, it, sl, uk
+
 util-linux 2.13-pre6
 
 * getopt: updated to 1.1.4
