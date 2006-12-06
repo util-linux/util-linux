@@ -6,8 +6,11 @@
 *	for information on distribution conditions.			     *
 \****************************************************************************/
 
-/* $Id: tunelp.c,v 1.8 1997/07/06 00:14:06 aebr Exp $
+/* $Id: tunelp.c,v 1.9 1998/06/08 19:37:11 janl Exp $
  * $Log: tunelp.c,v $
+ * Revision 1.9  1998/06/08 19:37:11  janl
+ * Thus compiles tunelp with 2.1.103 kernels
+ *
  * Revision 1.8  1997/07/06 00:14:06  aebr
  * Fixes to silence -Wall.
  *
@@ -45,6 +48,8 @@
 #include<unistd.h>
 #include<stdio.h>
 #include<fcntl.h>
+/* This is for (some) 2.1 kernels */
+#define LP_NEED_CAREFUL
 #include<linux/lp.h>
 #include<linux/fs.h>
 #include<sys/ioctl.h>

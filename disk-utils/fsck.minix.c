@@ -50,7 +50,7 @@
  *
  * 02.07.96  - Added C bit fiddling routines from rmk@ecs.soton.ac.uk 
  *             (Russell King).  He made them for ARM.  It would seem
- *	       that the ARM is powerfull enough to do this in C whereas
+ *	       that the ARM is powerful enough to do this in C whereas
  *             i386 and m64k must use assembly to get it fast >:-)
  *	       This should make minix fsck systemindependent.
  *	       (janl@math.uio.no, Nicolai Langfeldt)
@@ -160,8 +160,8 @@ static char super_block_buffer[BLOCK_SIZE];
 #define MAGIC (Super.s_magic)
 #define NORM_FIRSTZONE (2+IMAPS+ZMAPS+INODE_BLOCKS)
 
-static char inode_map[BLOCK_SIZE * MINIX_I_MAP_SLOTS];
-static char zone_map[BLOCK_SIZE * MINIX_Z_MAP_SLOTS];
+static char *inode_map;
+static char *zone_map;
 
 static unsigned char * inode_count = NULL;
 static unsigned char * zone_count = NULL;
@@ -566,20 +566,26 @@ void read_superblock(void)
 		die("bad magic number in super-block");
 	if (ZONESIZE != 0 || BLOCK_SIZE != 1024)
 		die("Only 1k blocks/zones supported");
-	if (!IMAPS || IMAPS > MINIX_I_MAP_SLOTS)
+	if (IMAPS * BLOCK_SIZE * 8 < INODES + 1)
 		die("bad s_imap_blocks field in super-block");
-	if (!ZMAPS || ZMAPS > MINIX_Z_MAP_SLOTS)
+	if (ZMAPS * BLOCK_SIZE * 8 < ZONES - FIRSTZONE + 1)
 		die("bad s_zmap_blocks field in super-block");
 }
 
 void read_tables(void)
 {
+	inode_map = malloc(IMAPS * BLOCK_SIZE);
+	if (!inode_map)
+		die("Unable to allocate buffer for inode map");
+	zone_map = malloc(ZMAPS * BLOCK_SIZE);
+	if (!inode_map)
+		die("Unable to allocate buffer for zone map");
 	memset(inode_map,0,sizeof(inode_map));
 	memset(zone_map,0,sizeof(zone_map));
 	inode_buffer = malloc(INODE_BUFFER_SIZE);
 	if (!inode_buffer)
 		die("Unable to allocate buffer for inodes");
-	inode_count = malloc(INODES);
+	inode_count = malloc(INODES + 1);
 	if (!inode_count)
 		die("Unable to allocate buffer for inode count");
 	zone_count = malloc(ZONES);
@@ -611,7 +617,7 @@ struct minix_inode * get_inode(unsigned int nr)
 {
 	struct minix_inode * inode;
 
-	if (!nr || nr >= INODES)
+	if (!nr || nr > INODES)
 		return NULL;
 	total++;
 	inode = Inode + nr;
@@ -662,7 +668,7 @@ get_inode2 (unsigned int nr)
 {
 	struct minix2_inode *inode;
 
-	if (!nr || nr >= INODES)
+	if (!nr || nr > INODES)
 		return NULL;
 	total++;
 	inode = Inode2 + nr;
@@ -876,7 +882,7 @@ void check_zones(unsigned int i)
 {
 	struct minix_inode * inode;
 
-	if (!i || i >= INODES)
+	if (!i || i > INODES)
 		return;
 	if (inode_count[i] > 1)	/* have we counted this file already? */
 		return;
@@ -896,7 +902,7 @@ check_zones2 (unsigned int i)
 {
 	struct minix2_inode *inode;
 
-	if (!i || i >= INODES)
+	if (!i || i > INODES)
 		return;
 	if (inode_count[i] > 1)	/* have we counted this file already? */
 		return;
@@ -924,7 +930,7 @@ void check_file(struct minix_inode * dir, unsigned int offset)
 	read_block(block, blk);
 	name = blk + (offset % BLOCK_SIZE) + 2;
 	ino = * (unsigned short *) (name-2);
-	if (ino >= INODES) {
+	if (ino > INODES) {
 		print_current_name();
 		printf(" contains a bad inode number for file '");
 		printf("%.*s'.",namelen,name);
@@ -986,7 +992,7 @@ check_file2 (struct minix2_inode *dir, unsigned int offset)
 	read_block (block, blk);
 	name = blk + (offset % BLOCK_SIZE) + 2;
 	ino = *(unsigned short *) (name - 2);
-	if (ino >= INODES) {
+	if (ino > INODES) {
 		print_current_name ();
 		printf (" contains a bad inode number for file '");
 		printf ("%.*s'.", namelen, name);
@@ -1087,7 +1093,7 @@ void check_counts(void)
 {
 	int i;
 
-	for (i=1 ; i < INODES ; i++) {
+	for (i=1 ; i <= INODES ; i++) {
 		if (!inode_in_use(i) && Inode[i].i_mode && warn_mode) {
 			printf("Inode %d mode not cleared.",i);
 			if (ask("Clear",1)) {
@@ -1140,7 +1146,7 @@ check_counts2 (void)
 {
 	int i;
 
-	for (i = 1; i < INODES; i++) {
+	for (i = 1; i <= INODES; i++) {
 		if (!inode_in_use (i) && Inode2[i].i_mode && warn_mode) {
 			printf ("Inode %d mode not cleared.", i);
 			if (ask ("Clear", 1)) {
@@ -1189,7 +1195,7 @@ check_counts2 (void)
 
 void check(void)
 {
-	memset(inode_count,0,INODES*sizeof(*inode_count));
+	memset(inode_count,0,(INODES + 1) * sizeof(*inode_count));
 	memset(zone_count,0,ZONES*sizeof(*zone_count));
 	check_zones(ROOT_INO);
 	recursive_check(ROOT_INO);
@@ -1200,7 +1206,7 @@ void check(void)
 void
 check2 (void)
 {
-	memset (inode_count, 0, INODES * sizeof (*inode_count));
+	memset (inode_count, 0, (INODES + 1) * sizeof (*inode_count));
 	memset (zone_count, 0, ZONES * sizeof (*zone_count));
 	check_zones2 (ROOT_INO);
 	recursive_check2 (ROOT_INO);
@@ -1299,11 +1305,11 @@ int main(int argc, char ** argv)
 	if (verbose) {
 		int i, free;
 
-		for (i=1,free=0 ; i < INODES ; i++)
+		for (i=1,free=0 ; i <= INODES ; i++)
 			if (!inode_in_use(i))
 				free++;
-		printf("\n%6ld inodes used (%ld%%)\n",(INODES-free-1),
-			100*(INODES-free-1)/(INODES-1));
+		printf("\n%6ld inodes used (%ld%%)\n",(INODES-free),
+			100*(INODES-free)/INODES);
 		for (i=FIRSTZONE,free=0 ; i < ZONES ; i++)
 			if (!zone_in_use(i))
 				free++;

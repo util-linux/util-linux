@@ -4,6 +4,8 @@
  * Copyright 1993 Theodore Ts'o (tytso@athena.mit.edu)
  * This program comes with ABSOLUTELY NO WARRANTY.
  * Modifications by Rick Sladkey (jrs@world.std.com)
+ * Larger buffersize 3 June 1998 by Nicolai Langfeldt, based on a patch
+ * by Peeter Joot.  This was also suggested by John Hudson.
  */
 
 #include <linux/unistd.h>
@@ -29,12 +31,13 @@ static char *progname;
 void
 usage()
 {
-   fprintf( stderr, "Usage: %s [-c] [-n level]\n", progname );
+   fprintf( stderr, "Usage: %s [-c] [-n level] [-s bufsize]\n", progname );
 }
 
 int main( int argc, char *argv[] )
 {
-   char buf[4096];
+   char *buf;
+   int	bufsize=8196;
    int  i;
    int  n;
    int  c;
@@ -43,7 +46,7 @@ int main( int argc, char *argv[] )
    int  cmd = 3;
 
    progname = argv[0];
-   while ((c = getopt( argc, argv, "cn:" )) != EOF) {
+   while ((c = getopt( argc, argv, "cn:s:" )) != EOF) {
       switch (c) {
       case 'c':
 	 cmd = 4;
@@ -52,6 +55,9 @@ int main( int argc, char *argv[] )
 	 cmd = 8;
 	 level = atoi(optarg);
 	 break;
+      case 's':
+	bufsize = atoi(optarg);
+	break;
       case '?':
       default:
 	 usage();
@@ -75,7 +81,9 @@ int main( int argc, char *argv[] )
       exit( 0 );
    }
 
-   n = klogctl( cmd, buf, sizeof( buf ) );
+   if (bufsize < 4096) bufsize = 4096;
+   buf = (char*)malloc(bufsize);
+   n = klogctl( cmd, buf, bufsize );
    if (n < 0) {
       perror( "klogctl" );
       exit( 1 );

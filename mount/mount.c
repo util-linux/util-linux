@@ -27,6 +27,9 @@
  * Fri Apr  5 01:13:33 1996: quinlan@bucknell.edu, fixed up iso9660 autodetect
  *
  * Since then, many changes - aeb.
+ *
+ * Wed Oct  1 23:55:28 1997: Dick Streefland <dick_streefland@tasking.com>
+ * Implemented the "bg", "fg" and "retry" mount options for NFS.
  */
 
 #include <unistd.h>
@@ -34,6 +37,7 @@
 #include <errno.h>
 #include <string.h>
 #include <getopt.h>
+#include <stdio.h>
 
 #include <sys/types.h>
 #include <sys/ioctl.h>
@@ -41,26 +45,25 @@
 #include <sys/wait.h>
 #include <sys/mount.h>
 
-#if !defined(__GLIBC__)
-#define _LINUX_TYPES_H		/* kludge to prevent inclusion */
-#endif /* __GLIBC */
-#define _LINUX_WAIT_H		/* idem */
-#define _I386_BITOPS_H		/* idem */
-#include <linux/fs.h>
-#include <linux/minix_fs.h>
-#include <linux/ext2_fs.h>
-#include <linux/iso_fs.h>
-
-#if defined(__GLIBC__)
-#define _SOCKETBITS_H
-#endif /* __GLIBC */
+#include "mount_constants.h"
 #include "sundries.h"
 #include "fstab.h"
 #include "lomount.h"
 #include "loop.h"
+#include "linux_fs.h"
 
 #define PROC_FILESYSTEMS	"/proc/filesystems"
 #define SIZE(a) (sizeof(a)/sizeof(a[0]))
+
+#define DO_PS_FIDDLING
+
+#ifdef DO_PS_FIDDLING
+#define PROC_NAME		"mount: "
+static int argc0;
+static char** argv0;
+static char** envp0;
+extern char** environ;
+#endif
 
 /* True for fake mount (-f).  */
 int fake = 0;
@@ -73,6 +76,9 @@ int readonly = 0;
 
 /* Nonzero for chatty (-v).  */
 int verbose = 0;
+
+/* Nonzero for sloppy (-s).  */
+int sloppy = 0;
 
 /* True for explicit read/write (-w).  */
 int readwrite = 0;
@@ -145,6 +151,10 @@ const struct opt_map opt_map[] = {
 #ifdef MS_NOATIME
   { "atime",	0, 1, MS_NOATIME },	/* Update access time */
   { "noatime",	0, 0, MS_NOATIME },	/* Do not update access time */
+#endif
+#ifdef MS_NODIRATIME
+  { "diratime",	0, 1, MS_NODIRATIME },	/* Update dir access times */
+  { "nodiratime", 0, 0, MS_NODIRATIME },/* Do not update dir access times */
 #endif
   { NULL,	0, 0, 0		}
 };
@@ -307,30 +317,6 @@ fix_opts_string (int flags, char *extra_opts)
    xiafs does not touch the 1st sector and has its magic in
    the 2nd sector; ext2 does not touch the first two sectors. */
 
-/* ext definitions - required since 2.1.21 */
-#ifndef EXT_SUPER_MAGIC
-#define EXT_SUPER_MAGIC 0x137D
-struct ext_super_block {
-	unsigned long s_dummy[14];
-	unsigned short s_magic;
-};
-#endif
-
-/* xiafs definitions - required since they were removed from
-   the kernel since 2.1.21 */
-#ifndef _XIAFS_SUPER_MAGIC
-#define _XIAFS_SUPER_MAGIC 0x012FD16D
-struct xiafs_super_block {
-    u_char  s_boot_segment[512];	/*  1st sector reserved for boot */
-    u_long  s_dummy[15];
-    u_long  s_magic;			/* 15: magic number for xiafs    */
-};
-#endif
-
-#ifndef EXT2_PRE_02B_MAGIC
-#define EXT2_PRE_02B_MAGIC    0xEF51
-#endif
-
 static inline unsigned short
 swapped(unsigned short a) {
      return (a>>8) | (a<<8);
@@ -348,7 +334,7 @@ swapped(unsigned short a) {
     Added a test for iso9660 - aeb
     Added a test for high sierra (iso9660) - quinlan@bucknell.edu
     Corrected the test for xiafs - aeb
-    added romfs - aeb
+    Added romfs - aeb
 
     Currently supports: minix, ext, ext2, xiafs, iso9660, romfs
 */
@@ -394,20 +380,20 @@ fstype(const char *device)
     if (fd < 0)
       return 0;
 
-    if (lseek(fd, BLOCK_SIZE, SEEK_SET) != BLOCK_SIZE
+    if (lseek(fd, 1024, SEEK_SET) != 1024
 	|| read(fd, (char *) &sb, sizeof(sb)) != sizeof(sb))
 	 goto io_error;
 
-    if (sb.e2s.s_magic == EXT2_SUPER_MAGIC
-	|| sb.e2s.s_magic == EXT2_PRE_02B_MAGIC
-	|| sb.e2s.s_magic == swapped(EXT2_SUPER_MAGIC))
+    if (ext2magic(sb.e2s) == EXT2_SUPER_MAGIC
+	|| ext2magic(sb.e2s) == EXT2_PRE_02B_MAGIC
+	|| ext2magic(sb.e2s) == swapped(EXT2_SUPER_MAGIC))
 	 type = "ext2";
 
-    else if (sb.ms.s_magic == MINIX_SUPER_MAGIC
-	     || sb.ms.s_magic == MINIX_SUPER_MAGIC2)
+    else if (minixmagic(sb.ms) == MINIX_SUPER_MAGIC
+	     || minixmagic(sb.ms) == MINIX_SUPER_MAGIC2)
 	 type = "minix";
 
-    else if (sb.es.s_magic == EXT_SUPER_MAGIC)
+    else if (extmagic(sb.es) == EXT_SUPER_MAGIC)
 	 type = "ext";
 
     if (!type) {
@@ -415,7 +401,7 @@ fstype(const char *device)
 	     || read(fd, (char *) &xsb, sizeof(xsb)) != sizeof(xsb))
 	      goto io_error;
 
-	 if (xsb.xiasb.s_magic == _XIAFS_SUPER_MAGIC)
+	 if (xiafsmagic(xsb.xiasb) == _XIAFS_SUPER_MAGIC)
 	      type = "xiafs";
 	 else if(!strncmp(xsb.romfs_magic, "-rom1fs-", 8))
 	      type = "romfs";
@@ -590,9 +576,16 @@ try_mount5 (char *spec, char *node, char **type, int flags, char *mount_opts) {
    return -1;
 }
 
+/*
+ * try_mount_one()
+ *	Try to mount one file system. When "bg" is 1, this is a retry
+ *	in the background. One additional exit code EX_BG is used here.
+ *	It is used to instruct the caller to retry the mount in the
+ *	background.
+ */
 static int
-mount_one (char *spec0, char *node0, char *type0, char *opts0,
-	   int freq, int pass)
+try_mount_one (char *spec0, char *node0, char *type0, char *opts0,
+	       int freq, int pass, int bg)
 {
   struct mntentchn mcn;
   struct mntent mnt;
@@ -603,30 +596,12 @@ mount_one (char *spec0, char *node0, char *type0, char *opts0,
   static int added_ro = 0;
   int loop, looptype, offset;
   char *spec, *node, *type, *opts, *loopdev, *loopfile;
+  struct stat statbuf;
 
   spec = xstrdup(spec0);
   node = xstrdup(node0);
   type = xstrdup(type0);
   opts = xstrdup(opts0);
-
-/*
- * There are two special cases: nfs mounts and loop mounts.
- * In the case of nfs mounts spec is probably of the form machine:path.
- * In the case of a loop mount, either type is of the form lo@/dev/loop5
- * or the option "-o loop=/dev/loop5" or just "-o loop" is given, or
- * mount just has to figure things out for itself from the fact that
- * spec is not a block device. We do not test for a block device
- * immediately: maybe later other types of mountable objects will occur.
- */
-
-  if (type == NULL) {
-      if (strchr (spec, ':') != NULL) {
-	type = "nfs";
-	if (verbose)
-	  printf("mount: no type was given - "
-		 "I'll assume nfs because of the colon\n");
-      }
-  }
 
   parse_opts (xstrdup (opts), &flags, &extra_opts);
 
@@ -645,10 +620,13 @@ mount_one (char *spec0, char *node0, char *type0, char *opts0,
   mount_opts = extra_opts;
 
   /*
-   * A loop mount?
-   * Only test for explicitly specified loop here,
-   * and try implicit loop if the mount fails.
+   * In the case of a loop mount, either type is of the form lo@/dev/loop5
+   * or the option "-o loop=/dev/loop5" or just "-o loop" is given, or
+   * mount just has to figure things out for itself from the fact that
+   * spec is not a block device. We do not test for a block device
+   * immediately: maybe later other types of mountable objects will occur.
    */
+
   loopdev = opt_loopdev;
 
   looptype = (type && strncmp("lo@", type, 3) == 0);
@@ -691,14 +669,16 @@ mount_one (char *spec0, char *node0, char *type0, char *opts0,
     }
   }
 
-  if (!fake && type && streq (type, "nfs"))
+  if (!fake && type && streq (type, "nfs")) {
 #ifdef HAVE_NFS
-    if (nfsmount (spec, node, &flags, &extra_opts, &mount_opts) != 0)
-      return EX_FAIL;
+    mnt_err = nfsmount (spec, node, &flags, &extra_opts, &mount_opts, bg);
+    if (mnt_err)
+      return mnt_err;
 #else
     die (EX_SOFTWARE, "mount: this version was compiled "
 	              "without support for the type `nfs'");
 #endif
+  }
 
   /*
    * Call mount.TYPE for types that require a separate
@@ -711,7 +691,6 @@ mount_one (char *spec0, char *node0, char *type0, char *opts0,
   if (strlen (type) < 100)
 #endif
   {
-       struct stat statbuf;
        char mountprog[120];
 
        sprintf(mountprog, "/sbin/mount.%s", type);
@@ -805,7 +784,6 @@ mount_one (char *spec0, char *node0, char *type0, char *opts0,
     {
     case EPERM:
       if (geteuid() == 0) {
-	   struct stat statbuf;
 	   if (stat (node, &statbuf) || !S_ISDIR(statbuf.st_mode))
 		error ("mount: mount point %s is not a directory", node);
 	   else
@@ -822,29 +800,26 @@ mount_one (char *spec0, char *node0, char *type0, char *opts0,
       }
       break;
     case ENOENT:
-      { struct stat statbuf;
-	if (lstat (node, &statbuf))
-	      error ("mount: mount point %s does not exist", node);
-	else if (stat (node, &statbuf))
-	      error ("mount: mount point %s is a symbolic link to nowhere",
-		     node);
-	else if (stat (spec, &statbuf))
-	      error ("mount: special device %s does not exist", spec);
-	else {
+      if (lstat (node, &statbuf))
+	   error ("mount: mount point %s does not exist", node);
+      else if (stat (node, &statbuf))
+	   error ("mount: mount point %s is a symbolic link to nowhere",
+		  node);
+      else if (stat (spec, &statbuf))
+	   error ("mount: special device %s does not exist", spec);
+      else {
            errno = mnt_err;
            perror("mount");
-	}
-	break;
       }
+      break;
     case ENOTDIR:
       error ("mount: mount point %s is not a directory", node);
       break;
     case EINVAL:
     { int fd, size;
-      struct stat statbuf;
 
       if (flags & MS_REMOUNT) {
-	error ("mount: %s not mounted already, or bad option\n", node);
+	error ("mount: %s not mounted already, or bad option", node);
       } else {
 	error ("mount: wrong fs type, bad option, bad superblock on %s,\n"
 	       "       or too many mounted file systems",
@@ -854,7 +829,7 @@ mount_one (char *spec0, char *node0, char *type0, char *opts0,
 	   && (fd = open(spec, O_RDONLY)) >= 0) {
 	  if(ioctl(fd, BLKGETSIZE, &size) == 0 && size <= 2)
 	  error ("       (aren't you trying to mount an extended partition,\n"
-		 "       instead of some logical partition inside?)\n");
+		 "       instead of some logical partition inside?)");
 	  close(fd);
 	}
       }
@@ -892,19 +867,16 @@ mount_one (char *spec0, char *node0, char *type0, char *opts0,
 	       spec, type);
       break;
     case ENOTBLK:
-      { struct stat statbuf;
-
-	if (stat (spec, &statbuf)) /* strange ... */
-	  error ("mount: %s is not a block device, and stat fails?", spec);
-	else if (S_ISBLK(statbuf.st_mode))
-	  error ("mount: the kernel does not recognize %s as a block device\n"
-		 "       (maybe `insmod driver'?)", spec);
-	else if (S_ISREG(statbuf.st_mode))
-	  error ("mount: %s is not a block device (maybe try `-o loop'?)",
+      if (stat (spec, &statbuf)) /* strange ... */
+	error ("mount: %s is not a block device, and stat fails?", spec);
+      else if (S_ISBLK(statbuf.st_mode))
+        error ("mount: the kernel does not recognize %s as a block device\n"
+	       "       (maybe `insmod driver'?)", spec);
+      else if (S_ISREG(statbuf.st_mode))
+	error ("mount: %s is not a block device (maybe try `-o loop'?)",
 		 spec);
-	else
-	  error ("mount: %s is not a block device", spec);
-      }
+      else
+	error ("mount: %s is not a block device", spec);
       break;
     case ENXIO:
       error ("mount: %s is not a valid block device", spec); break;
@@ -929,13 +901,97 @@ mount_one (char *spec0, char *node0, char *type0, char *opts0,
 	     type = 0;
          error ("mount: %s%s is write-protected, mounting read-only",
 		loop ? "" : "block device ", spec0);
-	 return mount_one (spec0, node0, type, opts, freq, pass);
+	 return try_mount_one (spec0, node0, type, opts, freq, pass, bg);
       }
       break;
     default:
       error ("mount: %s", strerror (mnt_err)); break;
     }
   return EX_FAIL;
+}
+
+/*
+ * set_proc_name()
+ *	Update the argument vector, so that this process may be easily
+ *	identified in a "ps" listing.
+ */
+static void
+set_proc_name (char *spec)
+{
+#ifdef DO_PS_FIDDLING
+  int i, l;
+
+  /*
+   * Move the environment so we can reuse the memory.
+   * (Code borrowed from sendmail.)
+   * WARNING: ugly assumptions on memory layout here; if this ever causes
+   *          problems, #undef DO_PS_FIDDLING
+   */
+  for (i = 0; envp0[i] != NULL; i++)
+    continue;
+  environ = (char **) xmalloc(sizeof(char *) * (i + 1));
+  for (i = 0; envp0[i] != NULL; i++)
+    environ[i] = xstrdup(envp0[i]);
+  environ[i] = NULL;
+
+  if (i > 0)
+    l = envp0[i-1] + strlen(envp0[i-1]) - argv0[0];
+  else
+    l = argv0[argc0-1] + strlen(argv0[argc0-1]) - argv0[0];
+  if (l > sizeof(PROC_NAME)) {
+    strcpy(argv0[0], PROC_NAME);
+    strncpy(argv0[0] + sizeof(PROC_NAME) - 1, spec, l - sizeof(PROC_NAME) - 1);
+    argv0[1] = NULL;
+  }
+#endif
+}
+
+static int
+mount_one (char *spec, char *node, char *type, char *opts, char *cmdlineopts,
+	   int freq, int pass)
+{
+  int status;
+  int status2;
+
+  /* Merge the fstab and command line options.  */
+  if (opts == NULL)
+       opts = cmdlineopts;
+  else if (cmdlineopts != NULL)
+       opts = xstrconcat3(opts, ",", cmdlineopts);
+
+  if (type == NULL) {
+      if (strchr (spec, ':') != NULL) {
+	type = "nfs";
+	if (verbose)
+	  printf("mount: no type was given - "
+		 "I'll assume nfs because of the colon\n");
+      }
+  }
+
+  /*
+   * Try to mount the file system. When the exit status is EX_BG,
+   * we will retry in the background. Otherwise, we're done.
+   */
+  status = try_mount_one (spec, node, type, opts, freq, pass, 0);
+  if (status != EX_BG)
+    return status;
+
+  /*
+   * Retry in the background.
+   */
+  printf ("mount: backgrounding \"%s\"\n", spec);
+  fflush( stdout );		/* prevent duplicate output */
+  if (fork() > 0)
+    return 0;			/* parent returns "success" */
+  spec = xstrdup(spec);		/* arguments will be destroyed */
+  node = xstrdup(node);		/* by set_proc_name()          */
+  type = xstrdup(type);
+  opts = xstrdup(opts);
+  set_proc_name (spec);		/* make a nice "ps" listing */
+  status2 = try_mount_one (spec, node, type, opts, freq, pass, 1);
+  if (verbose && status2)
+    printf ("mount: giving up \"%s\"\n", spec);
+  exit (0);			/* child stops here */
 }
 
 /* Check if an fsname/dir pair was already in the old mtab.  */
@@ -956,23 +1012,25 @@ mounted (char *spec, char *node) {
 /* With the --fork option: fork and let different incarnations of
    mount handle different filesystems.  However, try to avoid several
    simultaneous mounts on the same physical disk, since that is very slow. */
-#define DISKMAJOR(m)	((m) & ~0xf)
+#define DISKMAJOR(m)	(((int) m) & ~0xf)
 
 static int
-mount_all (string_list types) {
+mount_all (string_list types, char *options) {
      struct mntentchn *mc, *mtmp;
-     int status = 0, m;
+     int status = 0;
      struct stat statbuf;
      struct child {
 	  pid_t pid;
-	  dev_t major;
+	  char *group;
 	  struct mntentchn *mec;
 	  struct mntentchn *meclast;
 	  struct child *nxt;
      } childhead, *childtail, *cp;
+     char major[22];
+     char *g, *colon;
 
      /* build a chain of what we have to do, or maybe
-	several chains, one for each major */
+	several chains, one for each major or NFS host */
      childhead.nxt = 0;
      childtail = &childhead;
      for (mc = fstab_head()->nxt; mc; mc = mc->nxt) {
@@ -987,13 +1045,25 @@ mount_all (string_list types) {
 		    mtmp = (struct mntentchn *) xmalloc(sizeof(*mtmp));
 		    *mtmp = *mc;
 		    mtmp->nxt = 0;
-		    m = 0;
-		    if (optfork && stat(mc->mnt_fsname, &statbuf) == 0
-			        && S_ISBLK(statbuf.st_mode))
-			 m = DISKMAJOR(statbuf.st_rdev);
-		    if (m) {
+		    g = NULL;
+		    if (optfork) {
+			 if (stat(mc->mnt_fsname, &statbuf) == 0 &&
+			     S_ISBLK(statbuf.st_mode)) {
+			      sprintf(major, "#%x", DISKMAJOR(statbuf.st_rdev));
+			      g = major;
+			 }
+#ifdef HAVE_NFS
+			 if (strcmp(mc->mnt_type, "nfs") == 0) {
+			      g = xstrdup(mc->mnt_fsname);
+			      colon = strchr(g, ':');
+			      if (colon)
+				   *colon = '\0';
+			 }
+#endif
+		    }
+		    if (g) {
 			 for (cp = childhead.nxt; cp; cp = cp->nxt)
-			      if (cp->major == m) {
+			      if (cp->group && strcmp(cp->group, g) == 0) {
 				   cp->meclast->nxt = mtmp;
 				   cp->meclast = mtmp;
 				   goto fnd;
@@ -1002,7 +1072,7 @@ mount_all (string_list types) {
 		    cp = (struct child *) xmalloc(sizeof *cp);
 		    cp->nxt = 0;
 		    cp->mec = cp->meclast = mtmp;
-		    cp->major = m;
+		    cp->group = xstrdup(g);
 		    cp->pid = 0;
 		    childtail->nxt = cp;
 		    childtail = cp;
@@ -1026,7 +1096,8 @@ mount_all (string_list types) {
 	  if (p == 0 || p == -1) {
 	       for (mc = cp->mec; mc; mc = mc->nxt)
 		    status |= mount_one (mc->mnt_fsname, mc->mnt_dir,
-					 mc->mnt_type, mc->mnt_opts, 0, 0);
+					 mc->mnt_type, mc->mnt_opts,
+					 options, 0, 0);
 	       if (mountcount)
 		    status |= EX_SOMEOK;
 	       if (p == 0)
@@ -1076,9 +1147,9 @@ static struct option longopts[] =
 
 const char *usage_string = "\
 usage: mount [-hV]\n\
-       mount -a [-nfFrvw] [-t vfstypes]\n\
-       mount [-nfrvw] [-o options] special | node\n\
-       mount [-nfrvw] [-t vfstype] [-o options] special node\n\
+       mount -a [-nfFrsvw] [-t vfstypes]\n\
+       mount [-nfrsvw] [-o options] special | node\n\
+       mount [-nfrsvw] [-t vfstype] [-o options] special node\n\
 ";
 
 static void
@@ -1096,7 +1167,13 @@ main (int argc, char *argv[]) {
   string_list types = NULL;
   struct mntentchn *mc;
 
-  while ((c = getopt_long (argc, argv, "afFhno:rvVwt:", longopts, NULL))
+#ifdef DO_PS_FIDDLING
+  argc0 = argc;
+  argv0 = argv;
+  envp0 = environ;
+#endif
+
+  while ((c = getopt_long (argc, argv, "afFhno:rsvVwt:", longopts, NULL))
 	 != EOF)
     switch (c) {
       case 'a':			/* mount everything in fstab */
@@ -1124,6 +1201,9 @@ main (int argc, char *argv[]) {
 	readonly = 1;
 	readwrite = 0;
 	break;
+      case 's':			/* allow sloppy mount options */
+	sloppy = 1;
+	break;
       case 't':			/* specify file system types */
 	types = parse_list (optarg);
 	break;
@@ -1147,11 +1227,10 @@ main (int argc, char *argv[]) {
   argc -= optind;
   argv += optind;
 
-  if (argc == 0) {
+  if (argc == 0 && !all) {
       if (options)
 	usage (stderr, EX_USAGE);
-      if (!all)
-	return print_all (types);
+      return print_all (types);
   }
 
   if (getuid () != geteuid ()) {
@@ -1169,7 +1248,7 @@ main (int argc, char *argv[]) {
   switch (argc) {
     case 0:
       /* mount -a */
-      result = mount_all (types);
+      result = mount_all (types, options);
       if (result == 0 && verbose)
 	   error("not mounted anything");
       break;
@@ -1186,22 +1265,18 @@ main (int argc, char *argv[]) {
 	   die (EX_USAGE, "mount: can't find %s in %s or %s",
 		spec, MOUNTED, _PATH_FSTAB);
 
-      /* Merge the fstab and command line options.  */
-      if (options == NULL)
-	   options = mc->mnt_opts;
-      else
-	   options = xstrconcat3(mc->mnt_opts, ",", options);
-
       result = mount_one (xstrdup (mc->mnt_fsname), xstrdup (mc->mnt_dir),
-			  xstrdup (mc->mnt_type), options, 0, 0);
+			  xstrdup (mc->mnt_type), mc->mnt_opts, options, 0, 0);
       break;
 
     case 2:
       /* mount [-nfrvw] [-t vfstype] [-o options] special node */
       if (types == NULL)
-	result = mount_one (argv[0], argv[1], NULL, options, 0, 0);
+	result = mount_one (argv[0], argv[1],
+			    NULL, NULL, options, 0, 0);
       else if (cdr (types) == NULL)
-	result = mount_one (argv[0], argv[1], car (types), options, 0, 0);
+	result = mount_one (argv[0], argv[1],
+			    car (types), NULL, options, 0, 0);
       else
 	usage (stderr, EX_USAGE);
       break;

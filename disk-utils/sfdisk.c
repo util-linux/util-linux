@@ -28,8 +28,8 @@
  */
 
 #define PROGNAME "sfdisk"
-#define VERSION "3.06"
-#define DATE "970626"
+#define VERSION "3.07"
+#define DATE "980518"
 
 #include <stdio.h>
 #include <stdlib.h>		/* atoi, free */
@@ -523,13 +523,15 @@ chs_ok (chs a, char *v, char *w) {
 
 #define EMPTY_PARTITION		0
 #define EXTENDED_PARTITION	5
-#define DM6_PARTITION		0x54
-#define EZD_PARTITION		0x55
+#define WIN98_EXTENDED		0x0f
 #define DM6_AUX1PARTITION	0x51
 #define DM6_AUX3PARTITION	0x53
+#define DM6_PARTITION		0x54
+#define EZD_PARTITION		0x55
 #define LINUX_SWAP              0x82
 #define LINUX_NATIVE	        0x83
 #define LINUX_EXTENDED		0x85
+#define BSD_PARTITION		0xa5
 
 /*
  * List of system Id's, adapted from fdisk 2.0d and <linux/genhd.h>
@@ -596,6 +598,7 @@ struct systypes {
     {0x94, "Amoeba BBT"},		/* (bad block table) */
     {0xa0, "IBM Thinkpad hibernation"}, /* according to dan@fch.wimsey.bc.ca */
     {0xa5, "BSD/386"},			/* 386BSD */
+    {0xa6, "OpenBSD"},
     {0xa7, "NeXTSTEP 486"},
     {0xb7, "BSDI fs"},
     {0xb8, "BSDI swap"},
@@ -636,7 +639,14 @@ list_types(void) {
 
 int
 is_extended(unsigned char type) {
-	return (type == EXTENDED_PARTITION || type == LINUX_EXTENDED);
+	return (type == EXTENDED_PARTITION
+		|| type == LINUX_EXTENDED
+		|| type == WIN98_EXTENDED);
+}
+
+int
+is_bsd(unsigned char type) {
+	return (type == BSD_PARTITION);
 }
 
 /*
@@ -715,6 +725,9 @@ struct part_desc {
     unsigned long sector, offset; /* disk location of this info */
     struct partition p;
     struct part_desc *ep;	  /* extended partition containing this one */
+    int ptype;
+#define DOS_TYPE	0
+#define BSD_TYPE	1
 } zero_part_desc;
 
 struct part_desc *
@@ -966,17 +979,19 @@ out_partition(char *dev, int format, struct part_desc *p, struct disk_desc *z) {
     if (dump) {
 	printf(" start=%9lu", start);
 	printf(", size=%8lu", size);
-	printf(", Id=%2x", p->p.sys_type);
-	if (p->p.bootable == 0x80)
-	  printf(", bootable");
+	if (p->ptype == DOS_TYPE) {
+	    printf(", Id=%2x", p->p.sys_type);
+	    if (p->p.bootable == 0x80)
+		printf(", bootable");
+	}
 	printf("\n");
 	return;
     }
 
-    if(p->p.bootable == 0x80)
-      printf(" * ");
-    else if(p->p.bootable == 0)
+    if(p->ptype != DOS_TYPE || p->p.bootable == 0)
       printf("   ");
+    else if(p->p.bootable == 0x80)
+      printf(" * ");
     else
       printf(" ? ");		/* garbage */
 
@@ -1012,11 +1027,15 @@ out_partition(char *dev, int format, struct part_desc *p, struct disk_desc *z) {
 	out_rounddown(8, size, 2, 0);
 	break;
     }
-    printf(" %2x  %s\n",
+    if (p->ptype == DOS_TYPE) {
+        printf(" %2x  %s\n",
 	   p->p.sys_type, sysname(p->p.sys_type));
+    } else {
+	printf("\n");
+    }
 
     /* Is chs as we expect? */
-    if (!quiet) {
+    if (!quiet && p->ptype == DOS_TYPE) {
 	chs a, b;
 	longchs aa, bb;
 	a = (size ? ulong_to_chs(start) : zero_chs);
@@ -1113,6 +1132,7 @@ partitions_ok(struct disk_desc *z) {
 
     /* Are the logical partitions contained in their extended partitions? */
     for (p = partitions+4; p < partitions+partno; p++)
+      if (p->ptype == DOS_TYPE)
       if (p->size && !is_extended(p->p.sys_type)) {
 	  q = p->ep;
 	  if (p->start < q->start || p->start + p->size > q->start + q->size) {
@@ -1130,6 +1150,19 @@ partitions_ok(struct disk_desc *z) {
 	    if(!((p->start > q-> start) ? disj(q,p) : disj(p,q))) {
 		warn("Warning: partitions %s ", PNO(p));
 		warn("and %s overlap\n", PNO(q));
+		return 0;
+	    }
+
+    /* Are the data partitions and the extended partition
+       table sectors disjoint? */
+    for (p = partitions; p < partitions+partno; p++)
+      if (p->size && !is_extended(p->p.sys_type))
+        for (q = partitions; q < partitions+partno; q++)
+          if (is_extended(q->p.sys_type))
+            if (p->start <= q->start && p->start + p->size > q->start) {
+                warn("Warning: partition %s contains part of ", PNO(p));
+		warn("the partition table (sector %lu),\n", q->start);
+		warn("and will destroy it when filled\n");
 		return 0;
 	    }
 
@@ -1217,7 +1250,8 @@ partitions_ok(struct disk_desc *z) {
     }
 
     /* Is chs as we expect? */
-    for(p = partitions; p < partitions+partno; p++) {
+    for(p = partitions; p < partitions+partno; p++)
+      if(p->ptype == DOS_TYPE) {
 	chs a, b;
 	longchs aa, bb;
 	a = p->size ? ulong_to_chs(p->start) : zero_chs;
@@ -1293,12 +1327,76 @@ extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z)
 		partitions[pno].start = here + p.start_sect;
 	    }
 	    partitions[pno].size = p.nr_sects;
-	    partitions[pno++].p = p;
+	    partitions[pno].ptype = DOS_TYPE;
+	    partitions[pno].p = p;
+	    pno++;
         }
 	here = next;
     }
 
     z->partno = pno;
+}
+
+#define BSD_DISKMAGIC   (0x82564557UL)
+#define BSD_MAXPARTITIONS       8
+#define BSD_FS_UNUSED           0
+typedef unsigned char u8;
+typedef unsigned short u16;
+typedef unsigned int u32;
+struct bsd_disklabel {
+	u32	d_magic;
+	char	d_junk1[4];
+        char    d_typename[16];
+        char    d_packname[16];
+	char	d_junk2[92];
+        u32	d_magic2;
+	char	d_junk3[2];
+        u16	d_npartitions;          /* number of partitions in following */
+	char	d_junk4[8];
+     struct  bsd_partition {         /* the partition table */
+                u32   p_size;         /* number of sectors in partition */
+                u32   p_offset;       /* starting sector */
+                u32   p_fsize;        /* filesystem basic fragment size */
+                u8    p_fstype;       /* filesystem type, see below */
+                u8    p_frag;         /* filesystem fragments per block */
+                u16   p_cpg;          /* filesystem cylinders per group */
+     } d_partitions[BSD_MAXPARTITIONS];      /* actually may be more */
+};
+
+static void
+bsd_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z) {
+	struct bsd_disklabel *l;
+	struct bsd_partition *bp, *bp0;
+	unsigned long start = ep->start;
+	struct sector *s;
+	struct part_desc *partitions = &(z->partitions[0]);
+	int pno = z->partno;
+
+	if (!(s = get_sector(dev,fd,start+1)))
+		return;
+	l = (struct bsd_disklabel *) (s->data);
+	if (l->d_magic != BSD_DISKMAGIC)
+		return;
+
+	bp = bp0 = &l->d_partitions[0];
+	while (bp - bp0 <= BSD_MAXPARTITIONS) {
+		if (pno+1 >= SIZE(z->partitions)) {
+			printf("too many partitions - ignoring those "
+			       "past nr (%d)\n", pno-1);
+			break;
+		}
+		if (bp->p_fstype != BSD_FS_UNUSED) {
+			partitions[pno].start = bp->p_offset;
+			partitions[pno].size = bp->p_size;
+			partitions[pno].sector = start+1;
+			partitions[pno].offset = (char *)bp - (char *)bp0;
+			partitions[pno].ep = 0;
+			partitions[pno].ptype = BSD_TYPE;
+			pno++;
+		}
+		bp++;
+	}
+	z->partno = pno;
 }
 
 static int
@@ -1349,7 +1447,7 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
 
     z->partno = pno;
 
-    for (i=0; i<4; i++)
+    for (i=0; i<4; i++) {
 	if (is_extended(partitions[i].p.sys_type)) {
 	    if (!partitions[i].size) {
 		printf("strange..., an extended partition of size 0?\n");
@@ -1357,7 +1455,14 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
 	    }
 	    extended_partition(dev, fd, &partitions[i], z);
 	}
-
+	if (is_bsd(partitions[i].p.sys_type)) {
+	    if (!partitions[i].size) {
+		printf("strange..., a BSD partition of size 0?\n");
+		continue;
+	    }
+	    bsd_partition(dev, fd, &partitions[i], z);
+	}
+    }
     return 1;
 }
 
@@ -1366,11 +1471,24 @@ osf_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
 	return 0;
 }
 
+static int
+sun_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
+	return 0;
+}
+
+static int
+amiga_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
+	return 0;
+}
+
 void
 get_partitions(char *dev, int fd, struct disk_desc *z) {
     z->partno = 0;
 
-    if (!msdos_partition(dev, fd, 0, z) && !osf_partition(dev, fd, 0, z)) {
+    if (!msdos_partition(dev, fd, 0, z)
+	&& !osf_partition(dev, fd, 0, z)
+	&& !sun_partition(dev, fd, 0, z)
+	&& !amiga_partition(dev, fd, 0, z)) {
 	printf(" %s: unrecognized partition\n", dev);
 	return;
     }
@@ -2139,6 +2257,31 @@ static struct devd {
     { "xd", "ab" }
 };
 
+int
+is_ide_cdrom(char *device) {
+    /* No device was given explicitly, and we are trying some
+       likely things.  But opening /dev/hdc may produce errors like
+           "hdc: tray open or drive not ready"
+       if it happens to be a CD-ROM drive. So try to be careful.
+       This only works since 2.1.73. */
+
+    FILE *procf;
+    char buf[100];
+    struct stat statbuf;
+
+    sprintf(buf, "/proc/ide/%s/media", device+5);
+    procf = fopen(buf, "r");
+    if (procf != NULL && fgets(buf, sizeof(buf), procf))
+	return  !strncmp(buf, "cdrom", 5);
+
+    /* Now when this proc file does not exist, skip the
+       device when it is read-only. */
+    if (stat(device, &statbuf) == 0)
+	return (statbuf.st_mode & 0222) == 0;
+
+    return 0;
+}
+
 void do_list(char *dev, int silent);
 void do_size(char *dev, int silent);
 void do_geom(char *dev, int silent);
@@ -2277,6 +2420,8 @@ main(int argc, char **argv) {
 	    lp = dp->letters;
 	    while(*lp) {
 		sprintf(device, "/dev/%s%c", dp->pref, *lp++);
+		if (!strcmp(dp->pref, "hd") && is_ide_cdrom(device))
+		  continue;
 		if (opt_out_geom)
 		  do_geom(device, 1);
 		if (opt_size)
@@ -2427,7 +2572,7 @@ do_size (char *dev, int silent) {
 
     size /= 2;			/* convert sectors to blocks */
     if (silent)
-      printf("%s: %d\n", dev, size);
+      printf("%s: %9d\n", dev, size);
     else
       printf("%d\n", size);
 

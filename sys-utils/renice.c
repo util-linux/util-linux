@@ -31,16 +31,6 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
-static char copyright[] =
-"@(#) Copyright (c) 1983, 1989, 1993\n\
-	The Regents of the University of California.  All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)renice.c	8.1 (Berkeley) 6/9/93";
-#endif /* not lint */
-
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -56,9 +46,8 @@ int donice(int,int,int);
  * or groups of processes which are already
  * running.
  */
-void
-main(argc, argv)
-	char **argv;
+int
+main(int argc, char **argv)
 {
 	int which = PRIO_PROCESS;
 	int who = 0, prio, errs = 0;
@@ -107,7 +96,7 @@ main(argc, argv)
 		}
 		errs += donice(which, who, prio);
 	}
-	exit(errs != 0);
+	return (errs != 0);
 }
 
 int

@@ -34,16 +34,6 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
-static char copyright[] =
-"@(#) Copyright (c) 1991, 1993\n\
-	The Regents of the University of California.  All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)look.c	8.1 (Berkeley) 6/14/93";
-#endif /* not lint */
-
 /*
  * look -- find lines in a sorted list.
  * 

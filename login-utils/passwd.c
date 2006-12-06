@@ -19,8 +19,12 @@
 /*
  * Sun Oct 15 13:18:34 1995  Martin Schulze  <joey@finlandia.infodrom.north.de>
  *
- *	I have completely rewritten the whole argument handlig (what?)
+ *	I have completely rewritten the whole argument handling (what?)
  *	to support two things. First I wanted "passwd $user $pw" to
+
+        (a very bad idea; command lines are visible to people doing ps
+	or running a background job that just collects all command lines)
+
  *	work and second I wanted simplicity checks to be done for
  *	root, too. Only root can turn this of using the -f
  *	switch. Okay, I started with this to support -V version
@@ -59,10 +63,7 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/resource.h>
-
-#if defined (__GNU_LIBRARY__) && __GNU_LIBRARY__ > 1
-#include <crypt.h>
-#endif
+#include "my_crypt.h"
 
 #if 0
 #  include "../version.h"

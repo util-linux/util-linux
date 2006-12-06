@@ -1,10 +1,10 @@
 Begin3
 Title:          util-linux: Miscellaneous utilities for Linux
-Version:        2.7.1
-Description: 	agetty arch cal cfdisk chfn chkdupexe chroot chsh
+Version:        2.8
+Description: 	agetty arch cal cfdisk chfn chkdupexe chsh
 		clear hwclock col colcrt colrm column ctrlaltdel
 		cytune ddate dmesg dsplit fastboot fasthalt fdformat
-		fdisk fsck.minix getopt halt hexdump hostid ipcrm ipcs
+		fdisk fsck.minix getopt halt hexdump ipcrm ipcs
 		kbdrate kill last logger login look mcookie mesg mkfs
 		mkfs.minix mkswap more mount namei passwd ramsize rdev
 		readprofile reboot renice reset rev rootflags script
@@ -14,12 +14,12 @@ Description: 	agetty arch cal cfdisk chfn chkdupexe chroot chsh
 
 Keywords:       essential utilities
 Author:         several
-Maintained-by:  Nicolai Langfeldt <util-linux@math.uio.no>
+Maintained-by:  Nicolai Langfeldt <util-linux@math.uio.no> and others
 Primary-site:   ftp.math.uio.no /pub/linux
-                ~520k util-linux-2.7.1.tar.gz
+                ~567k util-linux-2.8.tar.gz
 Alternate-site: sunsite.uio.no /pub/unix/linux/packages/util-linux
-Alternate-site: sunsite.unc.edu /pub/Linux/system/Misc
+Alternate-site: sunsite.unc.edu /pub/Linux/system/misc
 Alternate-site: tsx-11.mit.edu /pub/linux/packages/utils
-Platforms:      Linux 1.2.x/1.3.x/2.x/Libc 4/5/6
+Platforms:      Linux 1.2.x/1.3.x/2.x/Libc 4/5/6, all CPUs
 Copying-policy: GPL, BSD, others
 End

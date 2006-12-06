@@ -62,53 +62,7 @@ Prefixes of
 resulting from use of source code control are also dealt with.
 .B whereis
 then attempts to locate the desired program in
-a list of standard Linux places:
-.IP
-.nf
-.ft B
-/bin
-/usr/bin
-/etc
-/usr/etc
-/sbin
-/usr/sbin
-/usr/games
-/usr/games/bin
-/usr/emacs/etc
-/usr/lib/emacs/19.22/etc
-/usr/lib/emacs/19.23/etc
-/usr/lib/emacs/19.24/etc
-/usr/lib/emacs/19.25/etc
-/usr/lib/emacs/19.26/etc
-/usr/lib/emacs/19.27/etc
-/usr/lib/emacs/19.28/etc
-/usr/lib/emacs/19.29/etc
-/usr/lib/emacs/19.30/etc
-/usr/TeX/bin
-/usr/tex/bin
-/usr/interviews/bin/LINUX
-/usr/bin/X11
-/usr/X11/bin
-/usr/X11R5/bin
-/usr/X11R6/bin
-/usr/X386/bin
-/usr/local/bin
-/usr/local/etc
-/usr/local/sbin
-/usr/local/games
-/usr/local/games/bin
-/usr/local/emacs/etc
-/usr/local/TeX/bin
-/usr/local/tex/bin
-/usr/local/bin/X11
-
-/usr/contrib",
-/usr/hosts",
-/usr/include",
-
-/usr/g++-include",
-.ft R
-.fi
+a list of standard Linux places.
 .SH OPTIONS
 .TP
 \fB\-b
@@ -170,19 +124,14 @@ example% whereis \-u \-M /usr/man/man1 \-S /usr/src \-f *
 .fi
 .ft R
 .SH FILES
-.PD 0
 .TP 20
 .B /{bin,sbin,etc}
 .TP
 .B /usr/{lib,bin,old,new,local,games,include,etc,src,man,sbin,
 .B X386,TeX,g++-include}
 .TP
-.B /usr/local/{X386,TeX,X11,include,lib,man,etc,bin,games,
-.B emacs}
-.TP
-.B 
-.PD
-.SH SEE ALSO
+.B /usr/local/{X386,TeX,X11,include,lib,man,etc,bin,games,emacs}
+.SH "SEE ALSO"
 .BR chdir (2V)
 .SH BUGS
 Since
@@ -196,3 +145,7 @@ or
 .B \-B
 must be full; that is, they must begin with a
 .RB ` / '.
+.PP
+.B whereis
+has a hard-coded path, so may not always find what
+you're looking for.

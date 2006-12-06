@@ -6,13 +6,10 @@
    -f option added by Eric Rasmussen <ear@usfirst.org> - 12/28/95
 */
 
-#ifndef	lint
-char sccsid[] = "@(#) agetty.c 1.29 9/1/91 23:22:00";
-#endif
-
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/ioctl.h>
 #include <termio.h>
 #include <signal.h>
@@ -510,7 +507,6 @@ update_utmp(line)
     int     mypid = getpid();
     long    time();
     long    lseek();
-    char   *strncpy();
     struct  utmp *utp;
 
     /*
@@ -1161,9 +1157,6 @@ error(va_alist)
 #endif
     char    buf[BUFSIZ];
     char   *bp;
-
-    char   *strcpy();
-    char   *strcat();
 
     /*
      * If the diagnostic is reported via syslog(3), the process name is

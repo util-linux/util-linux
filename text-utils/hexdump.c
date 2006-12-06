@@ -31,16 +31,6 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
-char copyright[] =
-"@(#) Copyright (c) 1989 The Regents of the University of California.\n\
- All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)hexdump.c	5.5 (Berkeley) 6/1/90";
-#endif /* not lint */
-
 #include <sys/types.h>
 #include <stdio.h>
 #include "hexdump.h"

@@ -56,7 +56,7 @@ static void show_loop(const char *device)
 {
 	struct	loop_info	loopinfo;
 	int			fd;
-	
+
 	if ((fd = open(device, O_RDWR)) < 0) {
 		perror(device);
 		return;
@@ -80,7 +80,7 @@ int set_loop(const char *device, const char *file, int offset,
 	struct loop_info loopinfo;
 	int	fd, ffd, mode, i;
 	char	*pass;
-	
+
 	mode = *loopro ? O_RDONLY : O_RDWR;
 	if ((ffd = open (file, mode)) < 0 && !*loopro
 	    && (errno != EROFS || (ffd = open (file, mode = O_RDONLY)) < 0)) {
@@ -98,7 +98,7 @@ int set_loop(const char *device, const char *file, int offset,
 	loopinfo.lo_name[LO_NAME_SIZE-1] = 0;
 	if (encryption && (loopinfo.lo_encrypt_type = crypt_type(encryption))
 	    < 0) {
-		fprintf(stderr,"Unsupported encryption type %s",encryption);
+		fprintf(stderr,"Unsupported encryption type %s\n",encryption);
 		exit(1);
 	}
 	loopinfo.lo_offset = offset;

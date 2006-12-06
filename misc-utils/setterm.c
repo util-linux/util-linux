@@ -118,6 +118,7 @@ _syscall3(int, klogctl, int, type, char*, buf, int, len);
 #define klogctl syslog
 #endif
 #endif
+extern int klogctl(int type, char *buf, int len);
 
 /* Constants. */
 

@@ -46,9 +46,6 @@ extern char *realpath(const char *path, char *resolved_path);
 #include <sys/param.h>			/* for MAXPATHLEN */
 #endif
 #include <errno.h>
-#ifndef STDC_HEADERS
-extern int errno;
-#endif
 
 #include <sys/stat.h>			/* for S_IFLNK */
 
@@ -183,4 +180,3 @@ char *resolved_path;
 	*new_path = '\0';
 	return resolved_path;
 }
-

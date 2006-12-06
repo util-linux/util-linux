@@ -39,17 +39,6 @@
  * Martin Schulze's patches adapted to Util-Linux by Nicolai Langfeldt.
  */
 
-#ifndef lint
-char copyright[] =
-"@(#) Copyright (c) 1987 Regents of the University of California.\n\
- All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-/*static char sccsid[] = "from: @(#)vipw.c	5.16 (Berkeley) 3/3/91";*/
-static char rcsid[] = "$Id: vipw.c,v 1.6 1997/07/06 00:12:23 aebr Exp $";
-#endif /* not lint */
-
 static char version_string[] = "vipw 1.4";
 
 #include <sys/types.h>
@@ -167,8 +156,10 @@ pw_lock()
 	if (ret == -1) {
 	    if (errno == EEXIST)
 		(void)fprintf(stderr, 
-			      "%s: the %s file is busy\n", progname,
-			      program == VIPW ? "password" : "group" );
+			      "%s: the %s file is busy (%s present)\n",
+			      progname,
+			      program == VIPW ? "password" : "group",
+			      tmp_file);
 	    else
 		(void)fprintf(stderr, "%s: can't link %s: %s\n", progname,
 			      tmp_file, strerror(errno));
@@ -213,7 +204,12 @@ pw_edit(notsetuid)
 	else 
 		p = editor;
 
-	if (!(pid = vfork())) {
+	pid = fork();
+	if (pid < 0) {
+		(void)fprintf(stderr, "%s: Cannot fork\n", progname);
+		exit(1);
+	}
+	if (!pid) {
 		if (notsetuid) {
 			(void)setgid(getgid());
 			(void)setuid(getuid());

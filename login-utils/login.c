@@ -70,23 +70,11 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef lint
-char copyright[] =
-  "@(#) Copyright (c) 1980, 1987, 1988 The Regents of the University of California.\n\
- All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)login.c	5.40 (Berkeley) 5/9/89";
-#endif /* not lint */
-
 /*
  * login [ name ]
  * login -h hostname	(for telnetd, etc.)
  * login -f name	(for pre-authenticated login: datakit, xterm, etc.)
  */
-
-#define _GNU_SOURCE		/* to get definition of snprintf */
 
 /* #define TESTING */
 
@@ -123,6 +111,7 @@ static char sccsid[] = "@(#)login.c	5.40 (Berkeley) 5/9/89";
 #include <sys/syslog.h>
 #include <sys/sysmacros.h>
 #include <netdb.h>
+#include "my_crypt.h"
 
 #ifdef __linux__
 #  include <sys/sysmacros.h>
@@ -144,15 +133,12 @@ static char sccsid[] = "@(#)login.c	5.40 (Berkeley) 5/9/89";
 #  include <security/pam_misc.h>
 #  define PAM_MAX_LOGIN_TRIES	3
 #  define PAM_FAIL_CHECK if (retcode != PAM_SUCCESS) { \
-       fprintf(stderr,"\n%s\n",pam_strerror(retcode)); \
-       syslog(LOG_ERR,"%s",pam_strerror(retcode)); \
+       fprintf(stderr,"\n%s\n",pam_strerror(pamh, retcode)); \
+       syslog(LOG_ERR,"%s",pam_strerror(pamh, retcode)); \
        pam_end(pamh, retcode); exit(1); \
    }
 #  define PAM_END { retcode = pam_close_session(pamh,0); \
 		    pam_end(pamh,retcode); }
-#  define PAM_END { \
-       retcode = pam_close_session(pamh,0); pam_end(pamh,retcode); \
-}
 #endif
 
 #ifndef __linux__
@@ -295,23 +281,14 @@ main(argc, argv)
     char * childArgv[10];
     char * buff;
     int childArgc = 0;
-    int error = 0;
 #ifdef USE_PAM
     int retcode;
     pam_handle_t *pamh = NULL;
     struct pam_conv conv = { misc_conv, NULL };
     pid_t childPid;
     int childStatus;
-    void * oldSigHandler;
 #endif
 
-
-#ifdef __linux__
-    char tmp[100];
-    /* Just as arbitrary as mountain time: */
-    /* (void)setenv("TZ", "MET-1DST",0); */
-#endif
-    
     signal(SIGALRM, timedout);
     alarm((unsigned int)timeout);
     signal(SIGQUIT, SIG_IGN);
@@ -407,7 +384,8 @@ main(argc, argv)
     
     ttyn = ttyname(0);
     if (ttyn == NULL || *ttyn == '\0') {
-	snprintf(tname, sizeof(tname), "%s??", _PATH_TTY);
+	/* no snprintf required - see definition of tname */
+	sprintf(tname, "%s??", _PATH_TTY);
 	ttyn = tname;
     }
 
@@ -461,8 +439,8 @@ main(argc, argv)
     retcode = pam_start("login",username, &conv, &pamh);
     if(retcode != PAM_SUCCESS) {
 	fprintf(stderr,"login: PAM Failure, aborting: %s\n",
-	pam_strerror(retcode));
-	syslog(LOG_ERR,"Couldn't initialize PAM: %s", pam_strerror(retcode));
+	pam_strerror(pamh, retcode));
+	syslog(LOG_ERR,"Couldn't initialize PAM: %s", pam_strerror(pamh, retcode));
 	exit(99);
     }
     /* hostname & tty are either set to NULL or their correct values,
@@ -494,7 +472,7 @@ main(argc, argv)
 	       (retcode == PAM_AUTHINFO_UNAVAIL))) {
 	    pam_get_item(pamh, PAM_USER, (const void **) &username);
 	    syslog(LOG_NOTICE,"FAILED LOGIN %d FROM %s FOR %s, %s",
-	    failcount, hostname,username,pam_strerror(retcode));
+	    failcount, hostname,username,pam_strerror(pamh, retcode));
 	    fprintf(stderr,"Login incorrect\n\n");
 	    pam_set_item(pamh,PAM_USER,NULL);
 	    retcode = pam_authenticate(pamh, 0);
@@ -506,10 +484,10 @@ main(argc, argv)
 	    if (retcode == PAM_MAXTRIES) 
 		syslog(LOG_NOTICE,"TOO MANY LOGIN TRIES (%d) FROM %s FOR "
 			"%s, %s", failcount, hostname, username,
-			 pam_strerror(retcode));
+			 pam_strerror(pamh, retcode));
 	    else
 		syslog(LOG_NOTICE,"FAILED LOGIN SESSION FROM %s FOR %s, %s",
-			hostname, username, pam_strerror(retcode));
+			hostname, username, pam_strerror(pamh, retcode));
 
 	    fprintf(stderr,"\nLogin incorrect\n");
 	    pam_end(pamh, retcode);
@@ -518,7 +496,7 @@ main(argc, argv)
 
 	retcode = pam_acct_mgmt(pamh, 0);
 
-	if(retcode == PAM_AUTHTOKEN_REQD) {
+	if(retcode == PAM_NEW_AUTHTOK_REQD) {
 	    retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
 	}
 
@@ -533,7 +511,7 @@ main(argc, argv)
     pwd = getpwnam(username);
     if (pwd) initgroups(username, pwd->pw_gid);
 
-    retcode = pam_setcred(pamh, PAM_CRED_ESTABLISH);
+    retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED);
     PAM_FAIL_CHECK;
 
     retcode = pam_open_session(pamh, 0);
@@ -717,16 +695,20 @@ main(argc, argv)
 	char tmpstr[MAXPATHLEN];
 	uid_t ruid = getuid();
 	gid_t egid = getegid();
-	
-	snprintf(tmpstr, sizeof(tmpstr), 
-		 "%s/%s", pwd->pw_dir, _PATH_HUSHLOGIN);
-	
-	setregid(-1, pwd->pw_gid);
-	setreuid(0, pwd->pw_uid);
-	quietlog = (access(tmpstr, R_OK) == 0);
-	setuid(0); /* setreuid doesn't do it alone! */
-	setreuid(ruid, 0);
-	setregid(-1, egid);
+
+	/* avoid snprintf - old systems do not have it, or worse,
+	   have a libc in which snprintf is the same as sprintf */
+	if (strlen(pwd->pw_dir) + sizeof(_PATH_HUSHLOGIN) + 2 > MAXPATHLEN)
+		quietlog = 0;
+	else {
+		sprintf(tmpstr, "%s/%s", pwd->pw_dir, _PATH_HUSHLOGIN);
+		setregid(-1, pwd->pw_gid);
+		setreuid(0, pwd->pw_uid);
+		quietlog = (access(tmpstr, R_OK) == 0);
+		setuid(0); /* setreuid doesn't do it alone! */
+		setreuid(ruid, 0);
+		setregid(-1, egid);
+	}
     }
     
 #ifndef __linux__
@@ -921,8 +903,13 @@ main(argc, argv)
     setenv("TERM", termenv, 1);
     
     /* mailx will give a funny error msg if you forget this one */
-    snprintf(tmp, sizeof(tmp), "%s/%s", _PATH_MAILDIR, pwd->pw_name);
-    setenv("MAIL",tmp,0);
+    { char tmp[MAXPATHLEN];
+      /* avoid snprintf */
+      if (sizeof(_PATH_MAILDIR) + strlen(pwd->pw_name) + 1 < MAXPATHLEN) {
+	      sprintf(tmp, "%s/%s", _PATH_MAILDIR, pwd->pw_name);
+	      setenv("MAIL",tmp,0);
+      }
+    }
     
     /* LOGNAME is not documented in login(1) but
        HP-UX 6.5 does it. We'll not allow modifying it.
@@ -971,11 +958,13 @@ main(argc, argv)
 	struct stat st;
 	
 	motd();
-	snprintf(tbuf, sizeof(tbuf),
-		 "%s/%s", _PATH_MAILDIR, pwd->pw_name);
-	if (stat(tbuf, &st) == 0 && st.st_size != 0)
-	  printf("You have %smail.\n",
-		 (st.st_mtime > st.st_atime) ? "new " : "");
+	/* avoid snprintf */
+	if (sizeof(_PATH_MAILDIR) + strlen(pwd->pw_name) + 1 < sizeof(tbuf)) {
+		sprintf(tbuf, "%s/%s", _PATH_MAILDIR, pwd->pw_name);
+		if (stat(tbuf, &st) == 0 && st.st_size != 0)
+			printf("You have %smail.\n",
+			       (st.st_mtime > st.st_atime) ? "new " : "");
+	}
     }
     
     signal(SIGALRM, SIG_DFL);
@@ -1034,38 +1023,22 @@ main(argc, argv)
 
     childArgv[childArgc++] = NULL;
 
-#ifndef USE_PAM 
-    execvp(childArgv[0], childArgv + 1);
-    error = 1;
-#else /* USE_PAM */
-    oldSigHandler = signal(SIGINT, SIG_IGN);
-    childPid = fork();
-    if (childPid < 0) {
-	/* error in fork() */
-	fprintf(stderr,"login: failure forking: %s", strerror(errno));
-	PAM_END;
-	exit(0);
-    } else if (childPid) {
-	/* parent */
-	wait(&childStatus);
-	signal(SIGINT, oldSigHandler);
-	PAM_END;
-
-	if (!WIFEXITED(&childStatus)) error = 1;
-    } else {
-	/* child */
-	execvp(childArgv[0], childArgv + 1);
-	exit(1);
-    }
+#ifdef USE_PAM 
+    /* There was some junk with fork()/exec()/signal()/wait() here
+       that was incorrect, and util-linux-2.7-11.src.rpm contains
+       a patch that makes the fork entirely useless.
+       If you introduce one again, please document in the source
+       what its purpose is. - aeb */
+    PAM_END;
 #endif /* USE_PAM */
 
-    if (error) {
-	if (!strcmp(childArgv[0], "/bin/sh")) 
+    execvp(childArgv[0], childArgv + 1);
+
+    if (!strcmp(childArgv[0], "/bin/sh")) 
 	    fprintf(stderr, "login: couldn't exec shell script: %s.\n",
 		    strerror(errno));
-	else 
+    else
 	    fprintf(stderr, "login: no shell: %s.\n", strerror(errno));
-    }
 
     exit(0);
 }

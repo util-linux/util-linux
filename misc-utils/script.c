@@ -31,16 +31,6 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
-char copyright[] =
-"@(#) Copyright (c) 1980 Regents of the University of California.\n\
- All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)script.c	5.13 (Berkeley) 3/5/91";
-#endif /* not lint */
-
 /*
  * script
  */
@@ -88,7 +78,6 @@ main(argc, argv)
 	int argc;
 	char *argv[];
 {
-	extern char *optarg;
 	extern int optind;
 	int ch;
 	void finish();

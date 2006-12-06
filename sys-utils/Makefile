@@ -11,35 +11,27 @@ include ../MCONFIG
 
 MAN1=		arch.1 readprofile.1
 
-MAN8= 		chroot.8 ctrlaltdel.8 cytune.8 dmesg.8 \
+MAN8= 		ctrlaltdel.8 cytune.8 dmesg.8 \
 		ipcrm.8 ipcs.8 kbdrate.8 ramsize.8 renice.8 \
 		rootflags.8 setsid.8 swapdev.8 tunelp.8 \
 		vidmode.8 
 
-ifneq "$(CPU)" "sparc"
-MAN8:= $(MAN8) hwclock.8
-endif
-
-ifeq "$(CPU)" "intel"
-MAN8:= $(MAN8) rdev.8
-endif
-
 # Where to put binaries?
 # See the "install" rule for the links. . .
+
+BIN=            arch dmesg
+
+USRBIN=		cytune ipcrm ipcs renice readprofile setsid tunelp
 
 SBIN= 		sln ctrlaltdel kbdrate
 
 ifneq "$(CPU)" "sparc"
+MAN8:= $(MAN8) hwclock.8
 SBIN:=$(SBIN) hwclock
 endif
 
-BIN=            arch dmesg
-
-USRSBIN=	chroot
-
-USRBIN=		cytune ipcrm ipcs renice readprofile setsid tunelp
-
 ifeq "$(CPU)" "intel"
+MAN8:= $(MAN8) rdev.8
 USRBIN:=$(USRBIN) rdev
 endif
 
@@ -47,7 +39,7 @@ endif
 
 USRINFO=        ipc.info
 
-all: $(SBIN) $(BIN) $(USRSBIN) $(USRBIN)
+all: $(SBIN) $(BIN) $(USRBIN)
 
 sln: sln.c
 	$(CC) -static $(CFLAGS) $(LDFLAGS) $< -o $@
@@ -55,7 +47,6 @@ sln: sln.c
 # Rules for everything else
 
 arch: arch.o
-chroot: chroot.o
 hwclock.o: hwclock.c shhopt.h
 hwclock: hwclock.o shhopt.o
 ctrlaltdel: ctrlaltdel.o
@@ -68,10 +59,9 @@ readprofile: readprofile.o
 setsid: setsid.o
 
 install: all
-	$(INSTALLDIR) $(SBINDIR) $(BINDIR) $(USRSBINDIR) $(USRBINDIR)
+	$(INSTALLDIR) $(SBINDIR) $(BINDIR) $(USRBINDIR)
 	$(INSTALLBIN) $(SBIN) $(SBINDIR)
 	$(INSTALLBIN) $(BIN) $(BINDIR)
-	$(INSTALLBIN) $(USRSBIN) $(USRSBINDIR)
 	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
 	(cd $(USRBINDIR); ln -sf rdev swapdev)
 	(cd $(USRBINDIR); ln -sf rdev ramsize)
@@ -83,4 +73,4 @@ install: all
 	$(INSTALLMAN) $(USRINFO) $(INFODIR)
 
 clean:
-	-rm -f *.o *~ core $(SBIN) $(BIN) $(USRSBIN) $(USRBIN)
+	-rm -f *.o *~ core $(SBIN) $(BIN) $(USRBIN)

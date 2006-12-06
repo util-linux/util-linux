@@ -34,16 +34,6 @@
  *     Added internationalization patches from Vitor Duarte <vad@fct.unl.pt>
  */
 
-#ifndef lint
-char copyright[] =
-"@(#) Copyright (c) 1980, 1987 The Regents of the University of California.\n\
- All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)strings.c	5.10 (Berkeley) 5/23/91";
-#endif /* not lint */
-
 #include <sys/types.h>
 #include <fcntl.h>
 #include <errno.h>

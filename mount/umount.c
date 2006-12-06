@@ -100,13 +100,18 @@ nfs_umount_rpc_call(const char *spec, const char *opts)
 
       if (hostname[0] >= '0' && hostname[0] <= '9')
 	   saddr.sin_addr.s_addr = inet_addr(hostname);
-      else
+      else {
 	   if ((hostp = gethostbyname(hostname)) == NULL) {
-		fprintf(stderr, "mount: can't get address for %s\n",
+		fprintf(stderr, "umount: can't get address for %s\n",
 			hostname);
 		return 1;
-	   } else
-		memcpy(&saddr.sin_addr, hostp->h_addr, hostp->h_length);
+	   }
+	   if (hostp->h_length > sizeof(struct in_addr)) {
+		fprintf(stderr, "umount: got bad hostp->h_length\n");
+		hostp->h_length = sizeof(struct in_addr);
+	   }
+	   memcpy(&saddr.sin_addr, hostp->h_addr, hostp->h_length);
+      }
 
       saddr.sin_family = AF_INET;
       saddr.sin_port = 0;

@@ -66,7 +66,9 @@ mountproc_mnt_1(argp, clnt)
 	static fhstatus clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_MNT, (xdrproc_t) xdr_dirpath, argp, (xdrproc_t) xdr_fhstatus, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, MOUNTPROC_MNT, (xdrproc_t) xdr_dirpath,
+		      (caddr_t) argp, (xdrproc_t) xdr_fhstatus,
+		      (caddr_t) &clnt_res, TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return (&clnt_res);
@@ -80,7 +82,9 @@ mountproc_dump_1(argp, clnt)
 	static mountlist clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_DUMP, (xdrproc_t) xdr_void, argp, (xdrproc_t) xdr_mountlist, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, MOUNTPROC_DUMP, (xdrproc_t) xdr_void,
+		      (caddr_t) argp, (xdrproc_t) xdr_mountlist,
+		      (caddr_t) &clnt_res, TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return (&clnt_res);
@@ -94,7 +98,9 @@ mountproc_umnt_1(argp, clnt)
 	static char clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_UMNT, (xdrproc_t) xdr_dirpath, argp, (xdrproc_t) xdr_void, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, MOUNTPROC_UMNT, (xdrproc_t) xdr_dirpath,
+		      (caddr_t) argp, (xdrproc_t) xdr_void,
+		      (caddr_t) &clnt_res, TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return ((void *)&clnt_res);
@@ -108,7 +114,9 @@ mountproc_umntall_1(argp, clnt)
 	static char clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_UMNTALL, (xdrproc_t) xdr_void, argp, (xdrproc_t) xdr_void, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, MOUNTPROC_UMNTALL, (xdrproc_t) xdr_void,
+		      (caddr_t) argp, (xdrproc_t) xdr_void,
+		      (caddr_t) &clnt_res, TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return ((void *)&clnt_res);
@@ -122,7 +130,9 @@ mountproc_export_1(argp, clnt)
 	static exports clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_EXPORT, (xdrproc_t) xdr_void, argp, (xdrproc_t) xdr_exports, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, MOUNTPROC_EXPORT, (xdrproc_t) xdr_void,
+		      (caddr_t) argp, (xdrproc_t) xdr_exports,
+		      (caddr_t) &clnt_res, TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return (&clnt_res);
@@ -136,8 +146,10 @@ mountproc_exportall_1(argp, clnt)
 	static exports clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_EXPORTALL, (xdrproc_t) xdr_void, argp, (xdrproc_t) xdr_exports, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
-		return (NULL);
+	if (clnt_call(clnt, MOUNTPROC_EXPORTALL, (xdrproc_t) xdr_void,
+		      (caddr_t) argp, (xdrproc_t) xdr_exports,
+		      (caddr_t) &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	  return (NULL);
 	}
 	return (&clnt_res);
 }
@@ -164,7 +176,9 @@ mountproc_mnt_2(argp, clnt)
 	static fhstatus clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_MNT, (xdrproc_t) xdr_dirpath, argp, (xdrproc_t) xdr_fhstatus, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, MOUNTPROC_MNT, (xdrproc_t) xdr_dirpath,
+		      (caddr_t) argp, (xdrproc_t) xdr_fhstatus,
+		      (caddr_t) &clnt_res, TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return (&clnt_res);
@@ -178,7 +192,9 @@ mountproc_dump_2(argp, clnt)
 	static mountlist clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_DUMP, (xdrproc_t) xdr_void, argp, (xdrproc_t) xdr_mountlist, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, MOUNTPROC_DUMP, (xdrproc_t) xdr_void, argp,
+		      (xdrproc_t) xdr_mountlist, (caddr_t) &clnt_res,
+		      TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return (&clnt_res);
@@ -192,7 +208,9 @@ mountproc_umnt_2(argp, clnt)
 	static char clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_UMNT, (xdrproc_t) xdr_dirpath, argp, (xdrproc_t) xdr_void, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, MOUNTPROC_UMNT, (xdrproc_t) xdr_dirpath,
+		      (caddr_t) argp, (xdrproc_t) xdr_void,
+		      (caddr_t) &clnt_res, TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return ((void *)&clnt_res);
@@ -206,7 +224,9 @@ mountproc_umntall_2(argp, clnt)
 	static char clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_UMNTALL, (xdrproc_t) xdr_void, argp, (xdrproc_t) xdr_void, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, MOUNTPROC_UMNTALL, (xdrproc_t) xdr_void,
+		      (caddr_t) argp, (xdrproc_t) xdr_void,
+		      (caddr_t) &clnt_res, TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return ((void *)&clnt_res);
@@ -220,7 +240,9 @@ mountproc_export_2(argp, clnt)
 	static exports clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_EXPORT, (xdrproc_t) xdr_void, argp, (xdrproc_t) xdr_exports, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, MOUNTPROC_EXPORT, (xdrproc_t) xdr_void,
+		      argp, (xdrproc_t) xdr_exports, (caddr_t) &clnt_res,
+		      TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return (&clnt_res);
@@ -234,7 +256,9 @@ mountproc_exportall_2(argp, clnt)
 	static exports clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_EXPORTALL, (xdrproc_t) xdr_void, argp, (xdrproc_t) xdr_exports, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, MOUNTPROC_EXPORTALL, (xdrproc_t) xdr_void, argp,
+		      (xdrproc_t) xdr_exports, (caddr_t) &clnt_res,
+		      TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return (&clnt_res);
@@ -248,7 +272,9 @@ mountproc_pathconf_2(argp, clnt)
 	static ppathcnf clnt_res;
 
 	memset((char *)&clnt_res, 0, sizeof(clnt_res));
-	if (clnt_call(clnt, MOUNTPROC_PATHCONF, (xdrproc_t) xdr_dirpath, argp, (xdrproc_t) xdr_ppathcnf, &clnt_res, TIMEOUT) != RPC_SUCCESS) {
+	if (clnt_call(clnt, MOUNTPROC_PATHCONF, (xdrproc_t) xdr_dirpath,
+		      (caddr_t) argp, (xdrproc_t) xdr_ppathcnf,
+		      (caddr_t) &clnt_res, TIMEOUT) != RPC_SUCCESS) {
 		return (NULL);
 	}
 	return (&clnt_res);

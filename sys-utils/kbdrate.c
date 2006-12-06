@@ -62,6 +62,7 @@ beats rebuilding the kernel!
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <errno.h>
 #include <sys/file.h>
 #include <sys/ioctl.h>
 #include <linux/version.h>
@@ -99,7 +100,6 @@ int main( int argc, char **argv )
    int         c;
    int         i;
    extern char *optarg;
-   extern int  optind;
 
    while ( (c = getopt( argc, argv, "r:d:sv" )) != EOF )
          switch (c) {

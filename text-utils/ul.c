@@ -31,16 +31,6 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
-static char copyright[] =
-"@(#) Copyright (c) 1980, 1993\n\
-	The Regents of the University of California.  All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)ul.c	8.1 (Berkeley) 6/6/93";
-#endif /* not lint */
-
 /*
 **	modified by Kars de Jong <jongk@cs.utwente.nl> to use terminfo instead
 **	  of termcap.
@@ -50,6 +40,7 @@ static char sccsid[] = "@(#)ul.c	8.1 (Berkeley) 6/6/93";
 #include <unistd.h>		/* for getopt(), isatty() */
 #include <string.h>		/* for bzero() */
 #include <term.h>		/* for setupterm() */
+#include <stdlib.h>		/* for getenv() */
 
 void filter(FILE *f);
 void flushln(void);
@@ -103,7 +94,6 @@ int main(int argc, char **argv)
 	int c, ret;
 	char *termtype;
 	FILE *f;
-	char *getenv(), *strcpy();
 
 	termtype = getenv("TERM");
 	if (termtype == NULL || (argv[0][0] == 'c' && !isatty(1)))

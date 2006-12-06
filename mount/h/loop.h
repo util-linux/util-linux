@@ -25,19 +25,11 @@ struct loop_info {
 	char		reserved[4];
 };
 
-/*
- * Loop encryption types --- LO_CRYPT_IDEA isn't supported yet
- */
-
 #define LO_CRYPT_NONE	0
 #define LO_CRYPT_XOR	1
 #define LO_CRYPT_DES	2
 #define LO_CRYPT_IDEA	3
 #define MAX_LO_CRYPT	4
-
-/*
- * IOCTL commands --- we will commandeer 0x4C ('L')
- */
 
 #define LOOP_SET_FD	0x4C00
 #define LOOP_CLR_FD	0x4C01

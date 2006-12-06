@@ -1,8 +1,10 @@
-util-linux 2.7
+util-linux 2.8:
 
 WARNING: THE PROGRAMS IN THIS SUITE DO *NOT* SUPPORT SHADOW PASSWORD FILES!
+	 UNLESS YOU USE PAM.
 
-WARNING: THIS COLLECTION DOES *NOT* SUPPORT SYSTEM V INITTAB.
+WARNING: THIS COLLECTION CONFLICTS WITH SYSTEM V INITTAB.
+         UNLESS YOU CONFIGURE IT NOT TO.
 
 WARNING: USE GNU TAR -- OTHER TARS WILL FAIL SILENTLY!
 
@@ -16,11 +18,12 @@ WARNING: The simpleinit and some other programs in this package are
          ready, especially if you don't know what you are doing.  It's a
 	 great way to learn though ;-)
 
+
 To install from source:
 
 1) Get source distribution (see the .lsm file for locations)
-2) Untar util-linux-2.7.tar.gz in /usr/src
-3) cd util-linux-2.7
+2) Untar util-linux-2.8.tar.gz in /usr/src
+3) cd util-linux-2.8
 4) Edit MCONFIG
 5) make
 6) make install
@@ -29,6 +32,32 @@ To install from source:
    that your /etc/inittab is set up right (this is *NOT* the System V
    compatible init!), or you will be hosed.  If you are using the SysV
    init and/or some other getty, they you can keep using those.
+
+HIGHLIGHTS for version 2.8:
+
+0a) It's been way to long since the last release.  My fault.
+0b) NO PAM patches.
+1) New programs:
+   - getopt(1) by Frodo Looijaard replaces the older bsd based version.
+     Keywords: Backward compatible, supports --long options.
+1) Removed programs: 
+   - chroot: is no longer in util-linux.  Get it free with GNU sh-utils
+   - frag: 
+   - lpcntl: This was removed in an earlier release (2.7) but I forgot to
+       mention it.
+   - hostid: No-one could figure out the right way for this program to
+		work.  Another hostid program is included in poeigl
+		(see the LSM, Primary-site: ftp.daimi.aau.dk /pub/linux/poe)
+2) Various portability enhancements.  Among other things hwclock now works
+   a lot better on non Intel architectures.  Should compile with libc 4, 5
+   and 6 as well as old and recent kernels.  People using non-intel hardware
+   are encouraged to send patches.
+3) rev now only limits linelength to memory capacity
+4) dmesg now uses a buffer that matches the kernel buffer in size (8KB)
+0xF) Send questions and/or patches to util-linux@math.uio.no
+
+
+util-linux 2.7:
 
 HIGLIGHTS for version 2.7:
 
@@ -51,7 +80,7 @@ HIGLIGHTS for version 2.7:
    - Should work with libc 4, 5 and 6 (gnulibc), on m68k, intel, alpha
      and sparc.
 
-4) Problems.:
+4) Problems:
    - The rpcgen that comes in NetKit-B-0.09 is broken.  At least as
      packaged with RedHat 4.2 (NetKit-B-0.09-6).  There are several
      ways to deal with this:

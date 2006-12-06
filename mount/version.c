@@ -1,1 +1,1 @@
-char version[] = "mount-2.7e";
+char version[] = "mount-2.8";

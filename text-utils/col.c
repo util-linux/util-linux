@@ -39,16 +39,6 @@
  *                           (cchris@connected.com)
  */
 
-#ifndef lint
-char copyright[] =
-"@(#) Copyright (c) 1990 The Regents of the University of California.\n\
- All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)col.c	5.3 (Berkeley) 2/2/91";
-#endif /* not lint */
-
 #include <stdlib.h>
 #include <malloc.h>
 #include <errno.h>

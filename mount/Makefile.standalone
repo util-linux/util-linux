@@ -135,9 +135,7 @@ loop.h:
 
 clean:
 	rm -f a.out core *~ *.o swapargs.h $(PROGS) swapoff
-
-cleaner: clean
 	rm -f swap.h loop.h nfs_mountversion.h
 
-clobber distclean realclean: cleaner
+clobber distclean realclean: clean
 	rm -f $(GEN_FILES)

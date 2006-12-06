@@ -37,9 +37,11 @@ In actuality,
 is simply a front-end for the various file system builders
 (\fBmkfs\fR.\fIfstype\fR)
 available under Linux.
-The file system-specific builder is searched for in /etc/fs first,
-then in /etc and finally in the directories listed in the PATH
-enviroment variable.
+The file system-specific builder is searched for in a number
+of directories like /sbin, /sbin/fs, /sbin/fs.d, /etc/fs, /etc
+(the precise list is defined at compile time but at least
+contains /sbin and /sbin/fs), and finally in the directories
+listed in the PATH enviroment variable.
 Please see the file system-specific builder manual pages for
 further details.
 .SH OPTIONS

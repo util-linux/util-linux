@@ -29,7 +29,9 @@
  * >2GB patches: Sat Feb 11 09:08:10 1995, faith@cs.unc.edu
  * Prettier menus: Sat Feb 11 09:08:25 1995, Janne Kukonlehto
  *                                           <jtklehto@stekt.oulu.fi>
- * Versions 0.8e-h: aeb@cwi.nl
+ * Versions 0.8e-l: aeb@cwi.nl
+ *  Recognition of NTFS / HPFS difference inspired by patches
+ *  from Marty Leisner <leisner@sdsp.mc.xerox.com>
  *
  ****************************************************************************/
 
@@ -41,12 +43,22 @@
 #include <errno.h>
 #include <getopt.h>
 #include <fcntl.h>
-#include <curses.h>
+#ifdef SLCURSES
+  #include <slcurses.h>
+#else
+#if NCH
+  #include <ncurses.h>
+#else
+  #include <curses.h>
+#endif
+#endif
 #include <signal.h>
 #include <math.h>
+#include <locale.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
+#include <linux/types.h>
 #include <linux/genhd.h>
 #include <linux/hdreg.h>
 #include <linux/fs.h>		/* for BLKRRPART */
@@ -60,7 +72,7 @@ typedef long      ext2_loff_t;
 extern ext2_loff_t ext2_llseek(unsigned int fd, ext2_loff_t offset,
 			       unsigned int origin);
 
-#define VERSION "0.8i"
+#define VERSION "0.8l"
 
 #define DEFAULT_DEVICE "/dev/hda"
 #define ALTERNATE_DEVICE "/dev/sda"
@@ -78,12 +90,14 @@ extern ext2_loff_t ext2_llseek(unsigned int fd, ext2_loff_t offset,
 #define PART_TABLE_FLAG 0xAA55
 
 #define UNUSABLE -1
-#define FREE_SPACE 0x00
-#define DOS_EXTENDED 0x05
+#define FREE_SPACE     0x00
+#define DOS_EXTENDED   0x05
+#define OS2_OR_NTFS    0x07
+#define WIN98_EXTENDED 0x0f
 #define LINUX_EXTENDED 0x85
-#define LINUX_MINIX 0x81
-#define LINUX_SWAP 0x82
-#define LINUX 0x83
+#define LINUX_MINIX    0x81
+#define LINUX_SWAP     0x82
+#define LINUX          0x83
 
 #define ADD_EXISTS "This partition is already in use"
 #define ADD_UNUSABLE "This partition is unusable"
@@ -157,10 +171,13 @@ extern ext2_loff_t ext2_llseek(unsigned int fd, ext2_loff_t offset,
       s |= (sector >> 2) & 0xC0;\
 }
 
-#define is_extended(x)	((x) == DOS_EXTENDED || (x) == LINUX_EXTENDED)
+#define is_extended(x)	((x) == DOS_EXTENDED || (x) == WIN98_EXTENDED || \
+			 (x) == LINUX_EXTENDED)
 
-/* we might also want to recognise 0xe and 0xf */
 #define is_dos_partition(x) ((x) == 1 || (x) == 4 || (x) == 6)
+#define may_have_dos_label(x) (is_dos_partition(x) \
+   || (x) == 7 || (x) == 0xb || (x) == 0xc || (x) == 0xe \
+   || (x) == 0x11 || (x) == 0x14 || (x) == 0x16 || (x) == 0x17)
 
 #define ALIGNMENT 2
 typedef union {
@@ -183,8 +200,12 @@ typedef struct {
     int flags;		/* active == 0x80 */
     int id;		/* filesystem type */
     int num;		/* number of partition -- primary vs. logical */
-#define LABELSZ 11
-    char dos_label[LABELSZ+1];
+#define LABELSZ 16
+    char volume_label[LABELSZ+1];
+#define OSTYPESZ 8
+    char ostype[OSTYPESZ+1];
+#define FSTYPESZ 8
+    char fstype[FSTYPESZ+1];
 } partition_info;
 
 char *disk_device = DEFAULT_DEVICE;
@@ -227,8 +248,9 @@ int COMMAND_LINE_Y = 21;
 /* X coordinates */
 int NAME_START = 4;
 int FLAGS_START = 16;
-int PTYPE_START = 30;
-int FSTYPE_START = 45;
+int PTYPE_START = 28;
+int FSTYPE_START = 38;
+int LABEL_START = 54;
 int SIZE_START = 70;
 int COMMAND_LINE_X = 5;
 
@@ -241,9 +263,13 @@ char *partition_type[NUM_PART_TYPES] = {
     [DOS_EXTENDED]= "Extended",
     [LINUX_EXTENDED] = "Linux extended",
     [0x01]        = "DOS FAT12",
+    [0x02]        = "XENIX root",
+    [0x03]        = "XENIX usr",
     [0x04]        = "DOS FAT16",
     [0x06]        = "DOS FAT16 (big)",
-    [0x07]        = "OS/2 HPFS or NTFS",
+    [OS2_OR_NTFS] = "OS/2 HPFS or NTFS",
+    [0x08]        = "AIX",
+    [0x09]        = "AIX bootable",
     [0x0A]        = "OS/2 Boot Manager",
     [0x0B]        = "Win95 FAT32",
     [0x0C]        = "Win95 FAT32 (LBA)",
@@ -252,17 +278,7 @@ char *partition_type[NUM_PART_TYPES] = {
     [0x11]        = "Hidden DOS FAT12",
     [0x14]        = "Hidden DOS FAT16",
     [0x16]        = "Hidden DOS FAT16 (big)",
-    [0xA5]        = "BSD/386",
-
-/* The rest of these are taken from A. V. Le Blanc's (LeBlanc@mcc.ac.uk)
- * fdisk program.  I do not know where they came from, but I include
- * them for completeness.  (With additions.)
- */
-
-    [0x02]        = "XENIX root",
-    [0x03]        = "XENIX usr",
-    [0x08]        = "AIX",
-    [0x09]        = "AIX bootable",
+    [0x17]        = "Hidden OS/2 HPFS or NTFS",
     [0x40]        = "Venix 80286",
     [0x51]        = "Novell?",
     [0x52]        = "Microport",
@@ -273,6 +289,9 @@ char *partition_type[NUM_PART_TYPES] = {
     [0x80]        = "Old MINIX",
     [0x93]        = "Amoeba",
     [0x94]        = "Amoeba BBT",
+    [0xA5]        = "BSD/386",
+    [0xA6]        = "OpenBSD",
+    [0xA7]        = "NEXTSTEP",
     [0xB7]        = "BSDI fs",
     [0xB8]        = "BSDI swap",
     [0xC7]        = "Syrinx",
@@ -282,6 +301,37 @@ char *partition_type[NUM_PART_TYPES] = {
     [0xF2]        = "DOS secondary",
     [0xFF]        = "BBT"
 };
+
+/* Some libc's have their own basename() */
+char *my_basename(char *devname)
+{
+    char *s = rindex(devname, '/');
+    return s ? s+1 : devname;
+}
+
+char *partition_type_text(int i)
+{
+    if (p_info[i].id == UNUSABLE)
+	 return "Unusable";
+    else if (p_info[i].id == FREE_SPACE)
+	 return "Free Space";
+    else if (p_info[i].id == LINUX) {
+	 if (!strcmp(p_info[i].fstype, "ext2"))
+	      return "Linux ext2";
+	 else
+	      return "Linux";
+    } else if (p_info[i].id == OS2_OR_NTFS) {
+	 if (!strncmp(p_info[i].fstype, "HPFS", 4))
+	      return "OS/2 HPFS";
+	 else if (!strncmp(p_info[i].ostype, "OS2", 3))
+	      return "OS/2 IFS";
+	 else if (!p_info[i].ostype)
+	      return p_info[i].ostype;
+	 else
+	      return "NTFS";
+    } else
+	 return partition_type[p_info[i].id];
+}
 
 void fdexit(int ret)
 {
@@ -416,7 +466,12 @@ void die_x(int ret)
 {
     signal(SIGINT, old_SIGINT);
     signal(SIGTERM, old_SIGTERM);
+#ifdef SLCURSES
+    SLsmg_gotorc(LINES-1, 0);
+    SLsmg_refresh();
+#else
     mvcur(0, COLS-1, LINES-1, 0);
+#endif
     nl();
     endwin();
     printf("\n");
@@ -439,21 +494,65 @@ void write_sector(char *buffer, int sect_num)
 	fatal(BAD_WRITE);
 }
 
+void dos_copy_to_info(char *to, int tosz, char *from, int fromsz) {
+     int i;
+
+     for(i=0; i<tosz && i<fromsz && isascii(from[i]); i++)
+	  to[i] = from[i];
+     to[i] = 0;
+}
+
 void get_dos_label(int i)
 {
-    char label[LABELSZ+1];
+    char sector[128];
+#define DOS_OSTYPE_OFFSET 3
+#define DOS_LABEL_OFFSET 43
+#define DOS_FSTYPE_OFFSET 54
+#define DOS_OSTYPE_SZ 8
+#define DOS_LABEL_SZ 11
+#define DOS_FSTYPE_SZ 8
+    ext2_loff_t offset;
+
+    offset = ((ext2_loff_t) p_info[i].first_sector + p_info[i].offset)
+	 * SECTOR_SIZE;
+    if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	&& read(fd, &sector, sizeof(sector)) == sizeof(sector)) {
+	 dos_copy_to_info(p_info[i].ostype, OSTYPESZ,
+			  sector+DOS_OSTYPE_OFFSET, DOS_OSTYPE_SZ);
+	 dos_copy_to_info(p_info[i].volume_label, LABELSZ,
+			  sector+DOS_LABEL_OFFSET, DOS_LABEL_SZ);
+	 dos_copy_to_info(p_info[i].fstype, FSTYPESZ,
+			  sector+DOS_FSTYPE_OFFSET, DOS_FSTYPE_SZ);
+    }
+}
+
+void get_ext2_label(int i)
+{
+#define EXT2_SUPER_MAGIC 0xEF53
+#define EXT2LABELSZ 16
+    struct ext2_super_block {
+	char  s_dummy0[56];
+	unsigned char  s_magic[2];
+	char  s_dummy1[62];
+	char  s_volume_name[EXT2LABELSZ];
+	char  s_last_mounted[64];
+	char  s_dummy2[824];
+    } sb;
+    char *label = sb.s_volume_name;
     ext2_loff_t offset;
     int j;
 
     offset = ((ext2_loff_t) p_info[i].first_sector + p_info[i].offset)
-	 * SECTOR_SIZE + 43;
+	 * SECTOR_SIZE + 1024;
     if (ext2_llseek(fd, offset, SEEK_SET) == offset
-	&& read(fd, &label, LABELSZ) == LABELSZ) {
-	 for(j=0; j<LABELSZ; j++)
-	      if(!isascii(label[j]))
+	&& read(fd, &sb, sizeof(sb)) == sizeof(sb)
+	&& sb.s_magic[0] + 256*sb.s_magic[1] == EXT2_SUPER_MAGIC) {
+	 for(j=0; j<EXT2LABELSZ; j++)
+	      if(!isprint(label[j]))
 		   label[j] = 0;
-	 label[LABELSZ] = 0;
-	 strcpy(p_info[i].dos_label, label);
+	 label[EXT2LABELSZ] = 0;
+	 strncpy(p_info[i].volume_label, label, LABELSZ);
+	 strncpy(p_info[i].fstype, "ext2", FSTYPESZ);
     }
 }
 
@@ -560,7 +659,9 @@ void insert_empty_part(int i, int first, int last)
     p_info[i].flags = 0;
     p_info[i].id = FREE_SPACE;
     p_info[i].num = PRI_OR_LOG;
-    p_info[i].dos_label[0] = 0;
+    p_info[i].volume_label[0] = 0;
+    p_info[i].fstype[0] = 0;
+    p_info[i].ostype[0] = 0;
 
     num_parts++;
 }
@@ -665,7 +766,9 @@ int add_part(int num, int id, int flags, int first, int last, int offset,
 	    ext_info.flags = flags;
 	    ext_info.id = id;
 	    ext_info.num = num;
-	    ext_info.dos_label[0] = 0;
+	    ext_info.volume_label[0] = 0;
+	    ext_info.fstype[0] = 0;
+	    ext_info.ostype[0] = 0;
 	    return 0;
 	} else {
 	    return -1;		/* explicit extended logical */
@@ -721,9 +824,15 @@ int add_part(int num, int id, int flags, int first, int last, int offset,
     p_info[i].flags = flags;
     p_info[i].id = id;
     p_info[i].num = num;
-    p_info[i].dos_label[0] = 0;
-    if (want_label && is_dos_partition(id))
-	 get_dos_label(i);
+    p_info[i].volume_label[0] = 0;
+    p_info[i].fstype[0] = 0;
+    p_info[i].ostype[0] = 0;
+    if (want_label) {
+	 if (may_have_dos_label(id))
+	      get_dos_label(i);
+	 else if (id == LINUX)
+	      get_ext2_label(i);
+    }
 
     check_part_info();
 
@@ -881,7 +990,8 @@ int menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength, char *
     while( !key )
     {
         /* Display the menu */
-        ylast = menuUpdate( y, x, menuItems, itemLength, available, menuType, current );
+        ylast = menuUpdate( y, x, menuItems, itemLength, available,
+			    menuType, current );
         refresh();
         key = getch();
         /* Clear out all prompts and such */
@@ -996,8 +1106,9 @@ int menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength, char *
     return key;
 }
 
-/* A function which displays "Press a key to continue" and waits for a keypress *
- * Perhaps calling function menuSelect is a bit overkill but who cares?         */
+/* A function which displays "Press a key to continue"                  *
+ * and waits for a keypress.                                            *
+ * Perhaps calling function menuSelect is a bit overkill but who cares? */
 
 void menuContinue(void)
 {
@@ -1176,7 +1287,15 @@ void fill_p_info(void)
 	 opentype = O_RDWR;
     opened = TRUE;
 
-    read_sector(buffer.c.b, 0);
+    /* Blocks are visible in more than one way:
+       e.g. as block on /dev/hda and as block on /dev/hda3
+       By a bug in the Linux buffer cache, we will see the old
+       contents of /dev/hda when the change was made to /dev/hda3.
+       In order to avoid this, discard all blocks on /dev/hda.
+       Note that partition table blocks do not live in /dev/hdaN,
+       so this only plays a role if we want to show volume labels. */
+    ioctl(fd, BLKFLSBUF);	/* ignore errors */
+				/* e.g. Permission Denied */
 
     if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
 	if (!heads)
@@ -1188,7 +1307,9 @@ void fill_p_info(void)
     }
 
     if (!heads || !sectors || !cylinders)
-	fatal(BAD_GEOMETRY);
+	fatal(BAD_GEOMETRY);	/* probably a file or cdrom */
+
+    read_sector(buffer.c.b, 0);
 
     clear_p_info();
 
@@ -1651,7 +1772,7 @@ void print_part_entry(FILE *fp, int num, partition_info *pi)
 	ec = end / heads;
     }
 
-    fp_printf(fp, "%2d  0x%02X %4d %4d %4d 0x%02X %4d %4d %4d %7d %9d\n",
+    fp_printf(fp, "%2d  0x%02X %4d %4d %4d 0x%02X %4d %4d %4d %8d %9d\n",
 	      num+1, flags, sh, ss, sc, id, eh, es, ec, first, size);
 }
 
@@ -1688,9 +1809,9 @@ void print_part_table(void)
 
     fp_printf(fp, "Partition Table for %s\n", disk_device);
     fp_printf(fp, "\n");
-    fp_printf(fp, "         ---Starting---      ----Ending----   Start Number of\n");
-    fp_printf(fp, " # Flags Head Sect Cyl   ID  Head Sect Cyl   Sector  Sectors\n");
-    fp_printf(fp, "-- ----- ---- ---- ---- ---- ---- ---- ---- ------- ---------\n");
+    fp_printf(fp, "         ---Starting---      ----Ending----    Start Number of\n");
+    fp_printf(fp, " # Flags Head Sect Cyl   ID  Head Sect Cyl    Sector  Sectors\n");
+    fp_printf(fp, "-- ----- ---- ---- ---- ---- ---- ---- ---- -------- ---------\n");
 
     for (i = 0; i < 4; i++) {
 	for (j = 0;
@@ -1761,7 +1882,7 @@ void display_help()
 	"allows you to create, delete and modify partitions on your hard",
 	"disk drive.",
 	"",
-	"Copyright (C) 1994-1997 Kevin E. Martin & aeb",
+	"Copyright (C) 1994-1998 Kevin E. Martin & aeb",
 	"",
 	"Command      Meaning",
 	"-------      -------",
@@ -1984,6 +2105,7 @@ void draw_partition(int i)
 {
     int size, j;
     int y = i + DISK_TABLE_START + 2 - (cur_part/NUM_ON_SCREEN)*NUM_ON_SCREEN;
+    char *t;
 
     if (!arrow_cursor) {
 	move(y, 0);
@@ -1993,7 +2115,7 @@ void draw_partition(int i)
 
     if (p_info[i].id > 0) {
 	mvprintw(y, NAME_START,
-		 "%s%d", disk_device, p_info[i].num+1);
+		 "%s%d", my_basename(disk_device), p_info[i].num+1);
 	if (p_info[i].flags) {
 	    if (p_info[i].flags == ACTIVE_FLAG)
 		mvaddstr(y, FLAGS_START, "Boot");
@@ -2022,18 +2144,18 @@ void draw_partition(int i)
 	       (p_info[i].num >= 0 ? "Primary" :
 		(p_info[i].num == PRI_OR_LOG ? "Pri/Log" :
 		 (p_info[i].num == PRIMARY ? "Primary" : "Logical"))))));
-    if (p_info[i].id == UNUSABLE)
-	mvaddstr(y, FSTYPE_START, "Unusable");
-    else if (p_info[i].id == FREE_SPACE)
-	mvaddstr(y, FSTYPE_START, "Free Space");
-    else if (partition_type[p_info[i].id])
-	mvaddstr(y, FSTYPE_START, partition_type[p_info[i].id]);
-    else
-	mvprintw(y, FSTYPE_START, "Unknown (%02X)", p_info[i].id);
 
-    if (p_info[i].dos_label[0]) {
-	int l = strlen(p_info[i].dos_label);
-	mvprintw(y, SIZE_START-5-l, " [%s]  ", p_info[i].dos_label);
+    t = partition_type_text(i);
+    if (t)
+	 mvaddstr(y, FSTYPE_START, t);
+    else
+	 mvprintw(y, FSTYPE_START, "Unknown (%02X)", p_info[i].id);
+
+    if (p_info[i].volume_label[0]) {
+	int l = strlen(p_info[i].volume_label);
+	int s = SIZE_START-5-l;
+	mvprintw(y, (s > LABEL_START) ? LABEL_START : s,
+		 " [%s]  ", p_info[i].volume_label);
     }
 
     size = p_info[i].last_sector - p_info[i].first_sector + 1;
@@ -2056,6 +2178,7 @@ void init_const(void)
 	FLAGS_START = (((float)FLAGS_START)/COLUMNS)*COLS;
 	PTYPE_START = (((float)PTYPE_START)/COLUMNS)*COLS;
 	FSTYPE_START = (((float)FSTYPE_START)/COLUMNS)*COLS;
+	LABEL_START = (((float)LABEL_START)/COLUMNS)*COLS;
 	SIZE_START = (((float)SIZE_START)/COLUMNS)*COLS;
 	COMMAND_LINE_X = (((float)COMMAND_LINE_X)/COLUMNS)*COLS;
 
@@ -2101,8 +2224,9 @@ void draw_screen(void)
 
     mvaddstr(DISK_TABLE_START, NAME_START, "Name");
     mvaddstr(DISK_TABLE_START, FLAGS_START, "Flags");
-    mvaddstr(DISK_TABLE_START, PTYPE_START, "Part Type");
+    mvaddstr(DISK_TABLE_START, PTYPE_START-1, "Part Type");
     mvaddstr(DISK_TABLE_START, FSTYPE_START, "FS Type");
+    mvaddstr(DISK_TABLE_START, LABEL_START+1, "[Label]");
     if (display_units == SECTORS)
 	mvaddstr(DISK_TABLE_START, SIZE_START, "  Sectors");
     else if (display_units == CYLINDERS)
@@ -2178,6 +2302,8 @@ void do_curses_fdisk(void)
     };
     curses_started = 1;
     initscr();
+    init_const();
+
     old_SIGINT = signal(SIGINT, die);
     old_SIGTERM = signal(SIGTERM, die);
 #ifdef DEBUG
@@ -2188,8 +2314,6 @@ void do_curses_fdisk(void)
     cbreak();
     noecho();
     nonl();
-
-    init_const();
 
     fill_p_info();
 
@@ -2353,6 +2477,8 @@ int main(int argc, char **argv)
     char c;
     int i, len;
 
+    setlocale(LC_CTYPE, "");
+
     while ((c = getopt(argc, argv, "ac:h:s:vzP:")) != EOF)
 	switch (c) {
 	case 'a':
@@ -2429,5 +2555,6 @@ int main(int argc, char **argv)
 	    print_part_table();
     } else
 	do_curses_fdisk();
+
     return 0;
 }

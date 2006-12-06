@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include <getopt.h>
 #include <limits.h>
 
@@ -26,7 +27,7 @@
 # define DEFAULT_FSTYPE		"ext2"
 #endif
 
-#define SEARCH_PATH	"PATH=/sbin:/sbin/fs.d:/sbin/fs:/etc/fs:/etc"
+#define SEARCH_PATH	"PATH=/sbin:/sbin/fs:/sbin/fs.d:/etc/fs:/etc"
 #define PROGNAME	"mkfs.%s"
 
 
@@ -35,6 +36,7 @@ int main(int argc, char *argv[])
   char progname[NAME_MAX];
   char *fstype = NULL;
   int i, more = 0, verbose = 0;
+  char *oldpath, *newpath;
 
   /* Check commandline options. */
   opterr = 0;
@@ -62,7 +64,16 @@ int main(int argc, char *argv[])
     fstype = DEFAULT_FSTYPE;
 
   /* Set PATH and program name */
-  putenv(SEARCH_PATH);
+  oldpath = getenv("PATH");
+  if (!oldpath)
+	  oldpath = "/bin";
+  newpath = (char *) malloc(strlen(oldpath) + sizeof(SEARCH_PATH) + 2);
+  if (!newpath) {
+    fputs("mkfs: out of memory\n", stderr);
+    exit(1);
+  }
+  sprintf(newpath, "%s:%s\n", SEARCH_PATH, oldpath);
+  putenv(newpath);
   sprintf(progname, PROGNAME, fstype);
   argv[--optind] = progname;
 

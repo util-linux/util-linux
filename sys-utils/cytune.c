@@ -44,7 +44,10 @@
 #include <errno.h>
 #include <linux/tty.h>
 #include <termios.h>
-#include <linux/tqueue.h>
+#if 0
+#include <linux/tqueue.h>	/* required for old kernels */
+				/* compilation errors on other kernels */
+#endif
 #include <linux/cyclades.h>
 #include <signal.h>
 

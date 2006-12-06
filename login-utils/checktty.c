@@ -3,8 +3,6 @@
    Fixed by JDS June 1996 to clear lists and close files
 */
 
-#define _GNU_SOURCE		/* for snprintf */
-
 #include <sys/types.h>
 #include <sys/param.h>
 
@@ -143,7 +141,10 @@ isapty(const char *tty)
     char devname[100];
     struct stat stb;
 
-    snprintf(devname, sizeof(devname), "/dev/%s", tty);
+    /* avoid snprintf - old systems do not have it */
+    if (strlen(tty) + 6 > sizeof(devname))
+	    return 0;
+    sprintf(devname, "/dev/%s", tty);
 
 #if defined(__linux__) && defined(PTY_SLAVE_MAJOR)
     /* this is for linux 1.3 and newer */

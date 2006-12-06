@@ -42,18 +42,6 @@
  *      - ANSIed it since I was working on it anyway.
  */
 
-#ifndef lint
-static char copyright[] =
-"@(#) Copyright (c) 1989, 1993\n\
-	The Regents of the University of California.  All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)write.c	8.1 (Berkeley) 6/6/93";
-#endif /* not lint */
-
-#define _GNU_SOURCE		/* for snprintf */
-
 #include <unistd.h>
 #include <utmp.h>
 #include <ctype.h>
@@ -276,7 +264,9 @@ int term_chk(char *tty, int *msgsokP, time_t *atimeP, int showerror)
 	struct stat s;
 	char path[MAXPATHLEN];
 
-	(void)snprintf(path, sizeof(path), "/dev/%s", tty);
+	if (strlen(tty) + 6 > sizeof(path))
+		return(1);
+	(void)sprintf(path, "/dev/%s", tty);
 	if (stat(path, &s) < 0) {
 		if (showerror)
 			(void)fprintf(stderr,
@@ -307,7 +297,9 @@ void do_write(char *tty, char *mytty, uid_t myuid)
 		else
 			login = "???";
 
-	(void)snprintf(path, sizeof(path), "/dev/%s", tty);
+	if (strlen(tty) + 6 > sizeof(path))
+		exit(1);
+	(void)sprintf(path, "/dev/%s", tty);
 	if ((freopen(path, "w", stdout)) == NULL) {
 		(void)fprintf(stderr, "write: %s: %s\n", path, strerror(errno));
 		exit(1);

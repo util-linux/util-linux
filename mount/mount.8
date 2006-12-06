@@ -27,21 +27,22 @@
 .\" Software Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139,
 .\" USA.
 .\"
-.\" 960705, aeb: version for mount-2.5k
+.\" 960705, aeb: version for mount-2.7g
 .\" 970114, aeb: xiafs and ext are dead; romfs is new
 .\" 970623, aeb: -F option
+.\" 970914, reg: -s option
 .\"
-.TH MOUNT 8 "5 July 1996" "Linux 2.0" "Linux Programmer's Manual"
+.TH MOUNT 8 "14 September 1997" "Linux 2.0" "Linux Programmer's Manual"
 .SH NAME
 mount \- mount a file system
 .SH SYNOPSIS
 .BI "mount [\-hV]"
 .LP
-.BI "mount \-a [\-fFnrvw] [\-t " vfstype ]
+.BI "mount \-a [\-fFnrsvw] [\-t " vfstype ]
 .br
-.BI "mount [\-fnrvw] [\-o " options " [,...]] " "device " | " dir"
+.BI "mount [\-fnrsvw] [\-o " options " [,...]] " "device " | " dir"
 .br
-.BI "mount [\-fnrvw] [\-t " vfstype "] [\-o " options "] " "device dir"
+.BI "mount [\-fnrsvw] [\-t " vfstype "] [\-o " options "] " "device dir"
 .SH DESCRIPTION
 All files accessible in a Unix system are arranged in one big
 tree, the file hierarchy, rooted at
@@ -224,7 +225,8 @@ Mount all filesystems (of the given types) mentioned in
 (Used in conjunction with
 .BR \-a .)
 Fork off a new incarnation of mount for each device.
-This will do the mounts on different devices in parallel.
+This will do the mounts on different devices or different NFS servers
+in parallel.
 This has the advantage that it is faster; also NFS timeouts go in
 parallel. A disadvantage is that the mounts are done in undefined order.
 Thus, you cannot use this option if you want to mount both
@@ -248,6 +250,12 @@ Mount without writing in
 This is necessary for example when
 .I /etc
 is on a read-only file system.
+.TP
+.B \-s
+Tolerate sloppy mount options rather than failing. This will ignore
+mount options not supported by a filesystem type. Not all filesystems
+support this option. This option exists for support of the Linux
+autofs\-based automounter.
 .TP
 .B \-r
 Mount the file system read-only. A synonym is

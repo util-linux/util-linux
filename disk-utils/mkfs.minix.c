@@ -141,8 +141,8 @@ static char boot_block_buffer[512];
 #define MAGIC (Super.s_magic)
 #define NORM_FIRSTZONE (2+IMAPS+ZMAPS+INODE_BLOCKS)
 
-static char inode_map[BLOCK_SIZE * MINIX_I_MAP_SLOTS];
-static char zone_map[BLOCK_SIZE * MINIX_Z_MAP_SLOTS];
+static char *inode_map;
+static char *zone_map;
 
 static unsigned short good_blocks_table[MAX_GOOD_BLOCKS];
 static int used_good_blocks = 0;
@@ -432,6 +432,9 @@ void make_root_inode(void)
 		inode->i_size = 2*dirsize;
 	}
 	inode->i_mode = S_IFDIR + 0755;
+	inode->i_uid = getuid();
+	if (inode->i_uid)
+		inode->i_gid = getgid();
 	write_block(inode->i_zone[0],root_block);
 }
 
@@ -453,6 +456,9 @@ make_root_inode2 (void)
 		inode->i_size = 2 * dirsize;
 	}
 	inode->i_mode = S_IFDIR + 0755;
+	inode->i_uid = getuid();
+	if (inode->i_uid)
+		inode->i_gid = getgid();
 	write_block (inode->i_zone[0], root_block);
 }
 #endif
@@ -462,8 +468,6 @@ void setup_tables(void)
 	int i;
 	unsigned long inodes;
 
-	memset(inode_map,0xff,sizeof(inode_map));
-	memset(zone_map,0xff,sizeof(zone_map));
 	memset(super_block_buffer,0,BLOCK_SIZE);
 	memset(boot_block_buffer,0,512);
 	MAGIC = magic;
@@ -475,24 +479,32 @@ void setup_tables(void)
 		inodes = BLOCKS/3;
 	else
 		inodes = req_nr_inodes;
+	/* Round up inode count to fill block size */
+#ifdef HAVE_MINIX2
+	if (version2)
+		inodes = ((inodes + MINIX2_INODES_PER_BLOCK - 1) &
+			  ~(MINIX2_INODES_PER_BLOCK - 1));
+	else
+#endif
+		inodes = ((inodes + MINIX_INODES_PER_BLOCK - 1) &
+			  ~(MINIX_INODES_PER_BLOCK - 1));
 	if (inodes > 65535)
 		inodes = 65535;
 	INODES = inodes;
-/* I don't want some off-by-one errors, so this hack... */
-	if ((INODES & 8191) > 8188)
-		INODES -= 5;
-	if ((INODES & 8191) < 10)
-		INODES -= 20;
-	IMAPS = UPPER(INODES,BITS_PER_BLOCK);
+	IMAPS = UPPER(INODES + 1,BITS_PER_BLOCK);
 	ZMAPS = 0;
-	while (ZMAPS != UPPER(BLOCKS - NORM_FIRSTZONE,BITS_PER_BLOCK))
-		ZMAPS = UPPER(BLOCKS - NORM_FIRSTZONE,BITS_PER_BLOCK);
-	if (ZMAPS > 64)
-		die ("Filesystem too big for Linux to handle");
+	while (ZMAPS != UPPER(BLOCKS - NORM_FIRSTZONE + 1,BITS_PER_BLOCK))
+		ZMAPS = UPPER(BLOCKS - NORM_FIRSTZONE + 1,BITS_PER_BLOCK);
 	FIRSTZONE = NORM_FIRSTZONE;
+	inode_map = malloc(IMAPS * BLOCK_SIZE);
+	zone_map = malloc(ZMAPS * BLOCK_SIZE);
+	if (!inode_map || !zone_map)
+		die("unable to allocate buffers for maps");
+	memset(inode_map,0xff,IMAPS * BLOCK_SIZE);
+	memset(zone_map,0xff,ZMAPS * BLOCK_SIZE);
 	for (i = FIRSTZONE ; i<ZONES ; i++)
 		unmark_zone(i);
-	for (i = MINIX_ROOT_INO ; i<INODES ; i++)
+	for (i = MINIX_ROOT_INO ; i<=INODES ; i++)
 		unmark_inode(i);
 	inode_buffer = malloc(INODE_BUFFER_SIZE);
 	if (!inode_buffer)

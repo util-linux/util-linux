@@ -41,10 +41,6 @@ chdir to /,  or if it encounters an unknown file type.
 
 -------------------------------------------------------------*/
 
-#ifndef lint
-static char *RCSid = "$Id: namei.c,v 1.6 1997/07/06 00:13:09 aebr Exp $";
-#endif
-
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
@@ -75,7 +71,6 @@ int argc;
 char *argv[];
 {
     void namei(), usage();
-    char *getwd();
     int getopt();
     extern int optind;
     register int c;
@@ -100,7 +95,7 @@ char *argv[];
 	}
     }
 
-    if(getwd(curdir) == NULL){
+    if(getcwd(curdir, sizeof(curdir)) == NULL){
 	(void)fprintf(stderr, "namei: unable to get current directory - %s\n", curdir);
 	exit(1);
     }

@@ -8,7 +8,7 @@
 
   See man page for details.
 
-  By Bryan Henderson, 96.09.19
+  By Bryan Henderson, 96.09.19.  bryanh@giraffe-data.com
 
   Based on work by others; see history at end of source code.
 
@@ -26,7 +26,7 @@
   
   The program is designed to run setuid superuser, since we need to be
   able to do direct I/O.  (More to the point: we need permission to 
-  execute the iopl() system call.)  (However, if you use one of the 
+  execute the iopl() system call).  (However, if you use one of the 
   methods other than direct ISA I/O to access the clock, no setuid is
   required).
  
@@ -59,9 +59,9 @@
   integral number of seconds.  N.B. The Hardware Clock can only be set
   in integral seconds.
 
-  If we're setting the clock to the system clock value, we wait for it
-  to reach the top of a second, and then set the Hardware Clock to the
-  system clock's value.
+  If we're setting the clock to the system clock value, we wait for
+  the system clock to reach the top of a second, and then set the
+  Hardware Clock to the system clock's value.
 
   Here's an interesting point about setting the Hardware Clock:  On my
   machine, when you set it, it sets to that precise time.  But one can
@@ -71,6 +71,23 @@
   complications that might cause, we set the clock as soon as possible
   after an oscillator tick.
 
+  
+  About synchronizing to the Hardware Clock when reading the time: The
+  precision of the Hardware Clock counters themselves is one second.
+  You can't read the counters and find out that is 12:01:02.5.  But if
+  you consider the location in time of the counter's ticks as part of
+  its value, then its precision is as infinite as time is continuous!
+  What I'm saying is this: To find out the _exact_ time in the
+  hardware clock, we wait until the next clock tick (the next time the
+  second counter changes) and measure how long we had to wait.  We
+  then read the value of the clock counters and subtract the wait time
+  and we know precisely what time it was when we set out to query the
+  time.
+
+  hwclock uses this method, and considers the Hardware Clock to have
+  infinite precision.
+
+
   Enhancements needed:
 
    - When waiting for whole second boundary in set_hardware_clock_exact,
@@ -78,8 +95,6 @@
      we get pre-empted (by the kernel dispatcher).
 
 ****************************************************************************/ 
-
-#define _GNU_SOURCE             /* for snprintf */
 
 #include <string.h>
 #include <stdio.h>
@@ -96,7 +111,7 @@
 #include "../version.h"
 
 #define MYNAME "hwclock"
-#define VERSION "2.1"
+#define VERSION "2.2"
 
 #define FLOOR(arg) ((arg >= 0 ? (int) arg : ((int) arg) - 1));
 
@@ -129,7 +144,7 @@ struct adjtime {
 };
 
 
-enum clock_access_method {ISA, RTC_IOCTL, KD};
+enum clock_access_method {ISA, RTC_IOCTL, KD, NOCLOCK};
   /* A method for accessing (reading, writing) the hardware clock:
      
      ISA: 
@@ -140,14 +155,14 @@ enum clock_access_method {ISA, RTC_IOCTL, KD};
        via the rtc device driver, using device special file /dev/rtc.
 
      KD:
-       via the console driver, using device special file /dev/console.
-       This is the m64k ioctl interface.
+       via the console driver, using device special file /dev/tty1.
+       This is the m68k ioctl interface, known as KDGHWCLK.
 
      NO_CLOCK:
-       Unable to determine a accessmethod for the system clock.
+       Unable to determine a usable access method for the system clock.
    */
        
-
+#ifdef __i386__
 /* The following are just constants.  Oddly, this program will not
    compile if the inb() and outb() functions use something even
    slightly different from these variables.  This is probably at least
@@ -157,11 +172,23 @@ enum clock_access_method {ISA, RTC_IOCTL, KD};
 */
 static unsigned short clock_ctl_addr = 0x70;
 static unsigned short clock_data_addr = 0x71;
+#endif
 
 bool debug;
   /* We are running in debug mode, wherein we put a lot of information about
-     what we're doing to standard error.  Because of the pervasive and yet
+     what we're doing to standard output.  Because of the pervasive and yet
      background nature of this value, this is a global variable.  */
+
+bool interrupts_enabled;
+  /* Interrupts are enabled as normal.  We, unfortunately, turn interrupts
+     on the machine off in some places where we do the direct ISA accesses
+     to the Hardware Clock.  It is in extremely poor form for a user space
+     program to do this, but that's the price we have to pay to run on an
+     ISA machine without the rtc driver in the kernel.
+
+     Code which turns interrupts off uses this value to determine if they
+     need to be turned back on.
+     */
 
 
 #include <linux/version.h>
@@ -173,11 +200,35 @@ bool debug;
 #include <linux/kd.h>
 static const bool got_rtc = TRUE;
 #else
-/* Dummy to make it compile */
-#define RTC_SET_TIME 0
 static const bool got_rtc = FALSE;
+/* Dummy definitions to make it compile.  If any lines containing these
+   macros ever execute, there is a bug in the code.
+   */
+#define RTC_SET_TIME -1
+#define RTC_RD_TIME -1
+#define RTC_UIE_ON -1
+#define RTC_UIE_OFF -1
 #endif
 
+/* The RTC_EPOCH_READ and RTC_EPOCH_SET macros are supposed to be
+   defined by linux/mc146818rtc.h, included above.  However, these are
+   recent inventions and at the time of this writing, not in any
+   official Linux.  Since these values aren't even necessary for most
+   uses of hwclock, we don't want compilation to depend on the user 
+   having some arcane version of this header file on his system.  Thus,
+   we define the macros ourselves if the header file failed to do so.
+   98.03.03.
+*/
+   
+#ifndef RTC_EPOCH_READ
+#define RTC_EPOCH_READ	_IOR('p', 0x0d, unsigned long)	 /* Read epoch      */
+  /* Not all kernels have this ioctl */
+#endif
+
+#ifndef RTC_EPOCH_SET
+#define RTC_EPOCH_SET	_IOW('p', 0x0e, unsigned long)	 /* Set epoch       */
+  /* Not all kernels have this ioctl */
+#endif
 
 
 #if defined(KDGHWCLK)
@@ -187,13 +238,54 @@ static const int kdshwclk_ioctl = KDSHWCLK;
 #else
 static const bool got_kdghwclk = FALSE;
 static const int kdghwclk_ioctl;  /* Never used; just to make compile work */
-struct hwclk_time {char dummy;};  
+struct hwclk_time {int sec;};  
   /* Never used; just to make compile work */
 #endif
 
 
+/* We're going to assume that if the CPU is in the Intel x86 family, 
+   this is an ISA family machine.  For all practical purposes, this is 
+   the case at the time of this writing, especially after we assume a
+   Linux kernel is running on it.
+   */
+const bool isa_machine = 
+#ifdef __i386__
+TRUE
+#else
+FALSE;
+#endif
+;
 
-float 
+const bool alpha_machine = 
+#ifdef __alpha__
+TRUE
+#else
+FALSE;
+#endif
+;
+
+
+
+static int
+i386_iopl(const int level) {
+/*----------------------------------------------------------------------------
+   When compiled for an Intel target, this is just the iopl() kernel call.
+   When compiled for any other target, this is a dummy function.
+
+   We do it this way in order to keep the conditional compilation stuff
+   out of the way so it doesn't mess up readability of the code.
+-----------------------------------------------------------------------------*/
+#ifdef __i386__
+  extern int iopl(const int level);
+  return iopl(level);
+#else
+  return -1;
+#endif
+}
+
+
+
+static float 
 time_diff(struct timeval subtrahend, struct timeval subtractor) {
 /*---------------------------------------------------------------------------
   The difference in seconds between two times in "timeval" format.
@@ -203,7 +295,7 @@ time_diff(struct timeval subtrahend, struct timeval subtractor) {
 }
 
 
-struct timeval
+static struct timeval
 time_inc(struct timeval addend, float increment) {
 /*----------------------------------------------------------------------------
   The time, in "timeval" format, which is <increment> seconds after
@@ -231,18 +323,28 @@ static inline unsigned char
 hclock_read(unsigned char reg) {
 /*---------------------------------------------------------------------------
   Relative byte <reg> of the Hardware Clock value.
+
+  On non-ISA machine, just return 0.
 ---------------------------------------------------------------------------*/
-#ifdef __i386__
   register unsigned char ret;
+#ifdef __i386__
+  const bool interrupts_were_enabled = interrupts_enabled;
+
   __asm__ volatile ("cli");
+  interrupts_enabled = FALSE;
   /* & 0x7f ensures that we are not disabling NMI while we read.
      Setting on Bit 7 here would disable NMI
      */
   outb(reg & 0x7f, clock_ctl_addr);
   ret = inb(clock_data_addr);
-  __asm__ volatile ("sti");
-  return ret;
+  if (interrupts_were_enabled) {
+    __asm__ volatile ("sti");
+    interrupts_enabled = TRUE;
+  }
+#else
+  ret = 0;  
 #endif
+  return ret;
 }
 
 
@@ -251,6 +353,8 @@ static inline void
 hclock_write(unsigned char reg, unsigned char val) {
 /*----------------------------------------------------------------------------
   Set relative byte <reg> of the Hardware Clock value to <val>.
+
+  On non-ISA machine, do nothing.
 ----------------------------------------------------------------------------*/
 #ifdef __i386__
   /* & 0x7f ensures that we are not disabling NMI while we read.
@@ -276,7 +380,7 @@ hclock_write_bcd(int addr, int value) {
 }
 
 
-void
+static void
 read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
 /*----------------------------------------------------------------------------
   Read the adjustment parameters out of the /etc/adjtime file.
@@ -348,7 +452,7 @@ read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
 
 
 
-void
+static void
 synchronize_to_clock_tick_ISA(int *retcode_p) {
 /*----------------------------------------------------------------------------
   Same as synchronize_to_clock_tick(), but just for ISA.
@@ -371,14 +475,56 @@ synchronize_to_clock_tick_ISA(int *retcode_p) {
 
 
 
-void
+static void
+busywait_for_rtc_clock_tick(const int rtc_fd, int *retcode_p) {
+/*----------------------------------------------------------------------------
+   Wait for the top of a clock tick by reading /dev/rtc in a busy loop until
+   we see it.  
+-----------------------------------------------------------------------------*/
+  struct tm start_time;
+    /* The time when we were called (and started waiting) */
+  int rc;
+
+  if (debug)
+    printf("Waiting in loop for time from /dev/rtc to change\n");
+
+  rc = ioctl(rtc_fd, RTC_RD_TIME, &start_time);
+  if (rc == -1) {
+    fprintf(stderr, "ioctl() to /dev/rtc to read time failed, "
+            "errno = %s (%d).\n", strerror(errno), errno);
+    *retcode_p = 1;
+  } else {
+    /* Wait for change.  Should be within a second, but in case something
+       weird happens, we have a limit on this loop to reduce the impact
+       of this failure.
+       */
+    struct tm nowtime;
+    int i;  /* local loop index */
+    int rc;  /* Return code from ioctl */
+
+    for (i = 0; 
+         (rc = ioctl(rtc_fd, RTC_RD_TIME, &nowtime)) != -1
+         && start_time.tm_sec == nowtime.tm_sec && i < 1000000; 
+         i++);
+    if (i >= 1000000) {
+      fprintf(stderr, "Timed out waiting for time change.\n");
+      *retcode_p = 2;
+    } else if (rc == -1) {
+      fprintf(stderr, "ioctl() to /dev/rtc to read time failed, "
+              "errno = %s (%d).\n", strerror(errno), errno);
+      *retcode_p = 3;
+    } else *retcode_p = 0;
+  }
+}
+
+
+
+static void
 synchronize_to_clock_tick_RTC(int *retcode_p) {
 /*----------------------------------------------------------------------------
   Same as synchronize_to_clock_tick(), but just for /dev/rtc.
 -----------------------------------------------------------------------------*/
-#if defined(_MC146818RTC_H)
-  int rc;  /* local return code */
-  int rtc_fd;  /* File descriptor of /dev/rtc */
+int rtc_fd;  /* File descriptor of /dev/rtc */
 
   rtc_fd = open("/dev/rtc",O_RDONLY);
   if (rtc_fd == -1) {
@@ -386,45 +532,97 @@ synchronize_to_clock_tick_RTC(int *retcode_p) {
             strerror(errno), errno);
     *retcode_p = 1;
   } else {
+    int rc;  /* Return code from ioctl */
     /* Turn on update interrupts (one per second) */
     rc = ioctl(rtc_fd, RTC_UIE_ON, 0);
-    if (rc == -1) {
-      fprintf(stderr, "ioctl() to /dev/rtc to turn on update interrupts "
-              "failed, errno = %s (%d).\n", strerror(errno), errno);
-      *retcode_p = 1;
-    } else {
+    if (rc == -1 && errno == EINVAL) {
+      /* This rtc device doesn't have interrupt functions.  This is typical
+         on an Alpha, where the Hardware Clock interrupts are used by the
+         kernel for the system clock, so aren't at the user's disposal.
+         */
+      if (debug) printf("/dev/rtc does not have interrupt functions. ");
+      busywait_for_rtc_clock_tick(rtc_fd, retcode_p);
+    } else if (rc != -1) {
+      int rc;  /* return code from ioctl */
       unsigned long dummy;
 
-      /* this blocks */
-      rc = read(rtc_fd, &dummy, sizeof(unsigned long));
+      /* this blocks until the next update interrupt */
+      rc = read(rtc_fd, &dummy, sizeof(dummy));
       if (rc == -1) {
         fprintf(stderr, "read() to /dev/rtc to wait for clock tick failed, "
                 "errno = %s (%d).\n", strerror(errno), errno);
         *retcode_p = 1;
       } else {
         *retcode_p = 0;
-        
-        /* Turn off update interrupts */
-        rc = ioctl(rtc_fd, RTC_UIE_OFF, 0);
-        if (rc == -1) {
-          fprintf(stderr, "ioctl() to /dev/rtc to turn off update interrupts "
-                  "failed, errno = %s (%d).\n", strerror(errno), errno);
-        }
       }
+      /* Turn off update interrupts */
+      rc = ioctl(rtc_fd, RTC_UIE_OFF, 0);
+      if (rc == -1) {
+        fprintf(stderr, "ioctl() to /dev/rtc to turn off update interrupts "
+                "failed, errno = %s (%d).\n", strerror(errno), errno);
+      }
+    } else {
+      fprintf(stderr, "ioctl() to /dev/rtc to turn on update interrupts "
+              "failed unexpectedly, errno = %s (%d).\n", 
+              strerror(errno), errno);
+      *retcode_p = 1;
     }
     close(rtc_fd);
   }
-#else
-/* This function should never be called.  It is here just to make the 
-   program compile.
-*/
-#endif
 }
 
-  
 
-int
-synchronize_to_clock_tick(enum clock_access_method clock_access) {
+
+static void
+synchronize_to_clock_tick_KD(int *retcode_p) {
+/*----------------------------------------------------------------------------
+   Wait for the top of a clock tick by calling KDGHWCLK in a busy loop until
+   we see it.  
+-----------------------------------------------------------------------------*/
+  int con_fd;
+
+  if (debug)
+    printf("Waiting in loop for time from KDGHWCLK to change\n");
+
+  con_fd = open("/dev/tty1", O_RDONLY);
+  if (con_fd < 0) {
+    fprintf(stderr, "open() failed to open /dev/tty1, errno = %s (%d).\n",
+            strerror(errno), errno);
+    *retcode_p = 1;
+  } else {
+    int rc;  /* return code from ioctl() */
+    int i;  /* local loop index */
+    /* The time when we were called (and started waiting) */
+	struct hwclk_time start_time, nowtime;
+
+	rc = ioctl(con_fd, kdghwclk_ioctl, &start_time);
+	if (rc == -1) {
+      fprintf(stderr, "KDGHWCLK to read time failed, "
+              "errno = %s (%d).\n", strerror(errno), errno);
+      *retcode_p = 3;
+    }
+	
+    for (i = 0; 
+         (rc = ioctl(con_fd, kdghwclk_ioctl, &nowtime)) != -1
+         && start_time.sec == nowtime.sec && i < 1000000; 
+         i++);
+    if (i >= 1000000) {
+      fprintf(stderr, "Timed out waiting for time change.\n");
+      *retcode_p = 2;
+    } else if (rc == -1) {
+      fprintf(stderr, "KDGHWCLK to read time failed, "
+              "errno = %s (%d).\n", strerror(errno), errno);
+      *retcode_p = 3;
+    } else *retcode_p = 0;
+    close(con_fd);
+  }
+}
+
+
+
+static void
+synchronize_to_clock_tick(enum clock_access_method clock_access,
+                          int *retcode_p) {
 /*-----------------------------------------------------------------------------
   Wait until the falling edge of the Hardware Clock's update flag so
   that any time that is read from the clock immediately after we
@@ -440,35 +638,27 @@ synchronize_to_clock_tick(enum clock_access_method clock_access) {
   just return immediately.  This will mess some things up, but it's the
   best we can do.
 
-  Return 1 if something weird goes wrong (nothing can normally go wrong),
-  0 if everything OK.
+  Return *retcode_p == 0 if it worked, nonzero if it didn't.
 
 -----------------------------------------------------------------------------*/
-  int retcode;  /* our eventual return code */
-
   if (debug) printf("Waiting for clock tick...\n");
 
   switch (clock_access) {
-  case ISA: synchronize_to_clock_tick_ISA(&retcode); break;
-  case RTC_IOCTL: synchronize_to_clock_tick_RTC(&retcode); break;
-  case KD:
-    if (debug) 
-      printf("Can't wait for clock tick because we're using the Alpha "
-             "/dev/console clock!  Assuming a clock tick.\n");
-    retcode = 1;
-    break;
+  case ISA: synchronize_to_clock_tick_ISA(retcode_p); break;
+  case RTC_IOCTL: synchronize_to_clock_tick_RTC(retcode_p); break;
+  case KD: synchronize_to_clock_tick_KD(retcode_p); break;
   default:
     fprintf(stderr, "Internal error in synchronize_to_clock_tick.  Invalid "
             "value for clock_access argument.\n");
-    retcode = 1;
+    *retcode_p = 1;
   }
   if (debug) printf("...got clock tick\n");
-  return(retcode);
+  return;
 }
 
 
 
-time_t
+static time_t
 mktime_tz(struct tm tm, const bool universal) {
 /*-----------------------------------------------------------------------------
   Convert a time in broken down format (hours, minutes, etc.) into standard
@@ -489,7 +679,7 @@ mktime_tz(struct tm tm, const bool universal) {
 
   if (universal) {
     /* Set timezone to UTC */
-    (void) putenv("TZ=");
+    setenv("TZ", "", TRUE);
     /* Note: tzset() gets called implicitly by the time code, but only the
        first time.  When changing the environment variable, better call
        tzset() explicitly.
@@ -504,10 +694,8 @@ mktime_tz(struct tm tm, const bool universal) {
   }
   
   /* now put back the original zone.  */
-  if (zone)
-    setenv ("TZ", zone, 1);
-  else
-    putenv ("TZ");
+  if (zone) setenv("TZ", zone, TRUE);
+  else unsetenv("TZ");
   tzset();
 
   if (debug) 
@@ -519,20 +707,23 @@ mktime_tz(struct tm tm, const bool universal) {
 
 
 
-void
+static void
 read_hardware_clock_kd(struct tm *tm) {
 /*----------------------------------------------------------------------------
   Read the hardware clock and return the current time via <tm>
-  argument.  Use ioctls to /dev/console on what we assume is an Alpha
+  argument.  Use ioctls to /dev/tty1 on what we assume is an m68k
   machine.
+  
+  Note that we don't use /dev/console here.  That might be a serial
+  console.
 -----------------------------------------------------------------------------*/
 #ifdef KDGHWCLK
   int con_fd;
   struct hwclk_time t;
 
-  con_fd = open("/dev/console", O_RDONLY);
+  con_fd = open("/dev/tty1", O_RDONLY);
   if (con_fd < 0) {
-    fprintf(stderr, "open() failed to open /dev/console, errno = %s (%d).\n",
+    fprintf(stderr, "open() failed to open /dev/tty1, errno = %s (%d).\n",
             strerror(errno), errno);
     exit(5);
   } else {
@@ -540,7 +731,7 @@ read_hardware_clock_kd(struct tm *tm) {
 
     rc = ioctl(con_fd, kdghwclk_ioctl, &t);
     if (rc == -1) {
-      fprintf(stderr, "ioctl() failed to read time from  /dev/console, "
+      fprintf(stderr, "ioctl() failed to read time from  /dev/tty1, "
               "errno = %s (%d).\n",
               strerror(errno), errno);
       exit(5);
@@ -565,7 +756,7 @@ read_hardware_clock_kd(struct tm *tm) {
 
 
 
-void
+static void
 read_hardware_clock_rtc_ioctl(struct tm *tm) {
 /*----------------------------------------------------------------------------
   Read the hardware clock and return the current time via <tm>
@@ -600,52 +791,85 @@ read_hardware_clock_rtc_ioctl(struct tm *tm) {
 
 
 
-void
+static void
 read_hardware_clock_isa(struct tm *tm) {
 /*----------------------------------------------------------------------------
   Read the hardware clock and return the current time via <tm> argument.
   Assume we have an ISA machine and read the clock directly with CPU I/O
   instructions.
------------------------------------------------------------------------------*/
-  /* The loop here is just for integrity.  In theory it should never run 
-     more than once 
-     */
-  do { 
-    tm->tm_sec = hclock_read_bcd(0);
-    tm->tm_min = hclock_read_bcd(2);
-    tm->tm_hour = hclock_read_bcd(4);
-    tm->tm_wday = hclock_read_bcd(6);
-    tm->tm_mday = hclock_read_bcd(7);
-    tm->tm_mon = hclock_read_bcd(8);
-    tm->tm_year = hclock_read_bcd(9);
-    if (hclock_read_bcd(50) == 0) {
-      /* I suppose Linux could run on an old machine that doesn't implement
-         the Byte 50 century value, and that if it does, that machine puts
-         zero in Byte 50.  If so, this could could be useful, in that it
-         makes values 70-99 -> 1970-1999 and 00-69 -> 2000-2069.
-         */
-      if (hclock_read_bcd(9) >= 70) tm->tm_year = hclock_read_bcd(9);
-      else tm->tm_year = hclock_read_bcd(9) + 100;
-    } else {
-      tm->tm_year = hclock_read_bcd(50) * 100 + hclock_read_bcd(9) - 1900;
-      /* Note: Byte 50 contains centuries since A.D.  Byte 9 contains
-         years since beginning of century.  tm_year contains years
-         since 1900.  At least we _assume_ that's what tm_year
-         contains.  It is documented only as "year", and it could
-         conceivably be years since the beginning of the current
-         century.  If so, this code won't work after 1999.  
-         */
-    }
-  } while (tm->tm_sec != hclock_read_bcd (0));
 
-  tm->tm_mon--;	           /* DOS uses 1 base */
-  tm->tm_wday -= 3;         /* DOS uses 3 - 9 for week days */
+  This function is not totally reliable.  It takes a finite and
+  unpredictable amount of time to execute the code below.  During that
+  time, the clock may change and we may even read an invalid value in
+  the middle of an update.  We do a few checks to minimize this
+  possibility, but only the kernel can actually read the clock
+  properly, since it can execute code in a short and predictable
+  amount of time (by turning of interrupts).
+
+  In practice, the chance of this function returning the wrong time is
+  extremely remote.
+
+-----------------------------------------------------------------------------*/
+  bool got_time;
+    /* We've successfully read a time from the Hardware Clock */
+
+  got_time = FALSE;
+  while (!got_time) {
+    /* Bit 7 of Byte 10 of the Hardware Clock value is the Update In Progress
+       (UIP) bit, which is on while and 244 uS before the Hardware Clock 
+       updates itself.  It updates the counters individually, so reading 
+       them during an update would produce garbage.  The update takes 2mS,
+       so we could be spinning here that long waiting for this bit to turn
+       off.
+
+       Furthermore, it is pathologically possible for us to be in this
+       code so long that even if the UIP bit is not on at first, the
+       clock has changed while we were running.  We check for that too,
+       and if it happens, we start over.
+       */
+
+    if ((hclock_read(10) & 0x80) == 0) {
+      /* No clock update in progress, go ahead and read */
+      tm->tm_sec = hclock_read_bcd(0);
+      tm->tm_min = hclock_read_bcd(2);
+      tm->tm_hour = hclock_read_bcd(4);
+      tm->tm_wday = hclock_read_bcd(6) - 3;
+      tm->tm_mday = hclock_read_bcd(7);
+      tm->tm_mon = hclock_read_bcd(8) - 1;
+      tm->tm_year = hclock_read_bcd(9);
+      if (hclock_read_bcd(50) == 0) {
+        /* I suppose Linux could run on an old machine that doesn't implement
+           the Byte 50 century value, and that if it does, that machine puts
+           zero in Byte 50.  If so, this could could be useful, in that it
+           makes values 70-99 -> 1970-1999 and 00-69 -> 2000-2069.
+           */
+        if (hclock_read_bcd(9) >= 70) tm->tm_year = hclock_read_bcd(9);
+        else tm->tm_year = hclock_read_bcd(9) + 100;
+      } else {
+        tm->tm_year = hclock_read_bcd(50) * 100 + hclock_read_bcd(9) - 1900;
+        /* Note: Byte 50 contains centuries since A.D.  Byte 9 contains
+           years since beginning of century.  tm_year contains years
+           since 1900.  At least we _assume_ that's what tm_year
+           contains.  It is documented only as "year", and it could
+           conceivably be years since the beginning of the current
+           century.  If so, this code won't work after 1999.  
+           */
+      }
+      /* Unless the clock changed while we were reading, consider this 
+         a good clock read .
+         */
+      if (tm->tm_sec == hclock_read_bcd (0)) got_time = TRUE;
+        /* Yes, in theory we could have been running for 60 seconds and
+           the above test wouldn't work!
+           */
+    }
+  }
   tm->tm_isdst = -1;        /* don't know whether it's daylight */
 }
 
 
 
-void
+static void
 read_hardware_clock(const enum clock_access_method method, struct tm *tm){
 /*----------------------------------------------------------------------------
   Read the hardware clock and return the current time via <tm> argument.
@@ -674,39 +898,41 @@ read_hardware_clock(const enum clock_access_method method, struct tm *tm){
 
 
 
-void
+static void
 set_hardware_clock_kd(const struct tm new_broken_time, 
                       const bool testing) {
 /*----------------------------------------------------------------------------
   Set the Hardware Clock to the time <new_broken_time>.  Use ioctls to
-  /dev/console on what we assume is an Alpha machine.
+  /dev/tty1 on what we assume is an m68k machine.
+
+  Note that we don't use /dev/console here.  That might be a serial console.
 ----------------------------------------------------------------------------*/
 #ifdef KDGHWCLK
-  int con_fd;  /* File descriptor of /dev/console */
+  int con_fd;  /* File descriptor of /dev/tty1 */
   struct hwclk_time t;
 
-  con_fd = open("/dev/console", O_RDONLY);
+  con_fd = open("/dev/tty1", O_RDONLY);
   if (con_fd < 0) {
-    fprintf(stderr, "Error opening /dev/console.  Errno: %s (%d)\n",
+    fprintf(stderr, "Error opening /dev/tty1.  Errno: %s (%d)\n",
             strerror(errno), errno);
     exit(1);
   } else {
     int rc;  /* locally used return code */
 
-    t.sec  = new_broken_time->tm_sec;
-    t.min  = new_broken_time->tm_min;
-    t.hour = new_broken_time->tm_hour;
-    t.day  = new_broken_time->tm_mday;
-    t.mon  = new_broken_time->tm_mon;
-    t.year = new_broken_time->tm_year;
-    t.wday = new_broken_time->tm_wday;
+    t.sec  = new_broken_time.tm_sec;
+    t.min  = new_broken_time.tm_min;
+    t.hour = new_broken_time.tm_hour;
+    t.day  = new_broken_time.tm_mday;
+    t.mon  = new_broken_time.tm_mon;
+    t.year = new_broken_time.tm_year;
+    t.wday = new_broken_time.tm_wday;
 
     if (testing) 
       printf("Not setting Hardware Clock because running in test mode.\n");
     else {
       rc = ioctl(con_fd, kdshwclk_ioctl, &t );
       if (rc < 0) {
-        fprintf(stderr, "ioctl() to open /dev/console failed.  "
+        fprintf(stderr, "ioctl() to open /dev/tty1 failed.  "
                 "Errno: %s (%d)\n",
                 strerror(errno), errno);
         exit(1);
@@ -723,7 +949,7 @@ set_hardware_clock_kd(const struct tm new_broken_time,
 
 
 
-void
+static void
 set_hardware_clock_rtc_ioctl(const struct tm new_broken_time, 
                              const bool testing) {
 /*----------------------------------------------------------------------------
@@ -739,14 +965,19 @@ set_hardware_clock_rtc_ioctl(const struct tm new_broken_time,
             strerror(errno), errno);
     exit(5);
   } else {
-    rc = ioctl(rtc_fd, RTC_SET_TIME, &new_broken_time);
-    if (rc == -1) {
-      fprintf(stderr, "ioctl() (RTC_SET_TIME) to /dev/rtc to set time failed, "
-              "errno = %s (%d).\n", strerror(errno), errno);
-      exit(5);
-    } else {
-      if (debug)
-        fprintf(stderr, "ioctl(RTC_SET_TIME) was successful.\n");
+    if (testing) 
+      printf("Not setting Hardware Clock because running in test mode.\n");
+    else {
+      rc = ioctl(rtc_fd, RTC_SET_TIME, &new_broken_time);
+      if (rc == -1) {
+        fprintf(stderr, 
+                "ioctl() (RTC_SET_TIME) to /dev/rtc to set time failed, "
+                "errno = %s (%d).\n", strerror(errno), errno);
+        exit(5);
+      } else {
+        if (debug)
+          printf("ioctl(RTC_SET_TIME) was successful.\n");
+      }
     }
     close(rtc_fd);
   }
@@ -754,7 +985,7 @@ set_hardware_clock_rtc_ioctl(const struct tm new_broken_time,
 
 
 
-void
+static void
 set_hardware_clock_isa(const struct tm new_broken_time, 
                        const bool testing) {
 /*----------------------------------------------------------------------------
@@ -763,12 +994,16 @@ set_hardware_clock_isa(const struct tm new_broken_time,
   an ISA Hardware Clock.
 ----------------------------------------------------------------------------*/
   unsigned char save_control, save_freq_select;
+#ifdef __i386__
+  const bool interrupts_were_enabled = interrupts_enabled;
+#endif
 
   if (testing) 
     printf("Not setting Hardware Clock because running in test mode.\n");
   else {
 #ifdef __i386__
     __asm__ volatile ("cli");
+    interrupts_enabled = FALSE;
 #endif
     save_control = hclock_read(11);   /* tell the clock it's being set */
     hclock_write(11, (save_control | 0x80));
@@ -801,13 +1036,16 @@ set_hardware_clock_isa(const struct tm new_broken_time,
     hclock_write (11, save_control);
     hclock_write (10, save_freq_select);
 #ifdef __i386__
-    __asm__ volatile ("sti");
+    if (interrupts_were_enabled) {
+      __asm__ volatile ("sti");
+      interrupts_enabled = TRUE;
+    }
 #endif
   }
 }
 
 
-void
+static void
 set_hardware_clock(const enum clock_access_method method,
                    const time_t newtime, 
                    const bool universal, 
@@ -852,7 +1090,7 @@ set_hardware_clock(const enum clock_access_method method,
 
 
 
-void
+static void
 set_hardware_clock_exact(const time_t settime, 
                          const struct timeval ref_time,
                          const enum clock_access_method clock_access,
@@ -897,7 +1135,91 @@ set_hardware_clock_exact(const time_t settime,
 
 
 
-void
+static void
+get_epoch(unsigned long *epoch_p, int *retcode_p) {
+/*----------------------------------------------------------------------------
+  Get the Hardware Clock epoch setting from the kernel.
+----------------------------------------------------------------------------*/
+  int rtc_fd;
+
+  rtc_fd = open("/dev/rtc", O_RDONLY);
+  if (rtc_fd < 0) {
+    if (errno == ENOENT) 
+      fprintf(stderr, "To manipulate the epoch value in the kernel, we must "
+              "access the Linux 'rtc' device driver via the device special "
+              "file /dev/rtc.  This file does not exist on this system.\n");
+    else 
+      fprintf(stderr, "Unable to open /dev/rtc, open() errno = %s (%d)\n",
+              strerror(errno), errno);
+    *retcode_p = 1;
+  } else {
+    int rc;  /* return code from ioctl */
+    rc = ioctl(rtc_fd, RTC_EPOCH_READ, epoch_p);
+    if (rc == -1) {
+      fprintf(stderr, "ioctl(RTC_EPOCH_READ) to /dev/rtc failed, "
+              "errno = %s (%d).\n", strerror(errno), errno);
+      *retcode_p = 1;
+    } else {
+      *retcode_p = 0;
+      if (debug) printf("we have read epoch %ld from /dev/rtc "
+                        "with RTC_EPOCH_READ ioctl.\n", *epoch_p);
+    }
+    close(rtc_fd);
+  }
+  return;
+}
+
+
+
+static void
+set_epoch(unsigned long epoch, const bool testing, int *retcode_p) {
+/*----------------------------------------------------------------------------
+  Set the Hardware Clock epoch in the kernel.
+----------------------------------------------------------------------------*/
+  if (epoch < 1900)
+    /* kernel would not accept this epoch value */
+    fprintf(stderr, "The epoch value may not be less than 1900.  "
+            "You requested %ld\n", epoch);
+  else {
+    int rtc_fd;
+    
+    rtc_fd = open("/dev/rtc", O_RDONLY);
+    if (rtc_fd < 0) {
+      if (errno == ENOENT) 
+        fprintf(stderr, "To manipulate the epoch value in the kernel, we must "
+                "access the Linux 'rtc' device driver via the device special "
+                "file /dev/rtc.  This file does not exist on this system.\n");
+      fprintf(stderr, "Unable to open /dev/rtc, open() errno = %s (%d)\n",
+              strerror(errno), errno);
+      *retcode_p = 1;
+    } else {
+      if (debug) printf("setting epoch to %ld "
+                        "with RTC_EPOCH_SET ioctl to /dev/rtc.\n", epoch);
+      if (testing) {
+        printf("Not setting epoch because running in test mode.\n");
+        *retcode_p = 0;
+      } else {
+        int rc;                 /* return code from ioctl */
+        rc = ioctl(rtc_fd, RTC_EPOCH_SET, epoch);
+        if (rc == -1) {
+          if (errno == EINVAL)
+            fprintf(stderr, "The kernel (specifically, the device driver "
+                    "for /dev/rtc) does not have the RTC_EPOCH_SET ioctl.  "
+                    "Get a newer driver.\n");
+          else 
+            fprintf(stderr, "ioctl(RTC_EPOCH_SET) to /dev/rtc failed, "
+                    "errno = %s (%d).\n", strerror(errno), errno);
+          *retcode_p = 1;
+        } else *retcode_p = 0;
+      }
+      close(rtc_fd);
+    }
+  }
+}
+
+
+
+static void
 display_time(const time_t systime, const float sync_duration) {
 /*----------------------------------------------------------------------------
   Put the time "systime" on standard output in display format.
@@ -917,8 +1239,8 @@ display_time(const time_t systime, const float sync_duration) {
 
 
 
-int
-interpret_date_string(const char *date_opt, const time_t *time_p) {
+static int
+interpret_date_string(const char *date_opt, time_t * const time_p) {
 /*----------------------------------------------------------------------------
   Interpret the value of the --date option, which is something like
   "13:05:01".  In fact, it can be any of the myriad ASCII strings that specify
@@ -927,16 +1249,16 @@ interpret_date_string(const char *date_opt, const time_t *time_p) {
 
   The specified time is in the local time zone.
 
-  Our output, "*newtime", is a seconds-into-epoch time.
+  Our output, "*time_p", is a seconds-into-epoch time.
 
   We use the "date" program to interpret the date string.  "date" must be
   runnable by issuing the command "date" to the /bin/sh shell.  That means
   in must be in the current PATH.
 
-  If anything goes wrong (and many things can), we return return code 10.
-  Otherwise, return code is 0 and *newtime is valid.
+  If anything goes wrong (and many things can), we return return code
+  10 and arbitrary *time_p.  Otherwise, return code is 0 and *time_p
+  is valid.
 ----------------------------------------------------------------------------*/
-
   FILE *date_child_fp;
   char date_resp[100];
   const char magic[]="seconds-into-epoch=";
@@ -974,7 +1296,8 @@ interpret_date_string(const char *date_opt, const time_t *time_p) {
                 date_command, date_resp);
         retcode = 8;
       } else {
-        rc = sscanf(date_resp + sizeof(magic)-1, "%d", (int *) time_p);
+        int seconds_since_epoch;
+        rc = sscanf(date_resp + sizeof(magic)-1, "%d", &seconds_since_epoch);
         if (rc < 1) {
           fprintf(stderr, "The date command issued by " MYNAME " returned"
                   "something other than an integer where the converted"
@@ -984,6 +1307,7 @@ interpret_date_string(const char *date_opt, const time_t *time_p) {
           retcode = 6;
         } else {
           retcode = 0;
+          *time_p = seconds_since_epoch;
           if (debug) 
             printf("date string %s equates to %d seconds since 1969.\n",
                    date_opt, (int) *time_p);
@@ -997,8 +1321,8 @@ interpret_date_string(const char *date_opt, const time_t *time_p) {
 
  
 
-int 
-set_system_clock(const time_t newtime, const int testing) {
+static int 
+set_system_clock(const time_t newtime, const bool testing) {
 
   struct timeval tv;
   int retcode;  /* our eventual return code */
@@ -1009,9 +1333,8 @@ set_system_clock(const time_t newtime, const int testing) {
   
   if (debug) {
     printf( "Calling settimeofday:\n" );
-    /* Note: In Linux 1.2, tv_sec and tv_usec were long int */
-    printf( "\ttv.tv_sec = %d, tv.tv_usec = %d\n",
-           tv.tv_sec, tv.tv_usec );
+    printf( "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n",
+           (long) tv.tv_sec, (long) tv.tv_usec );
   }
   if (testing) {
     printf("Not setting system clock because running in test mode.\n");
@@ -1032,7 +1355,7 @@ set_system_clock(const time_t newtime, const int testing) {
 }
 
 
-void
+static void
 adjust_drift_factor(struct adjtime *adjtime_p,
                     const time_t nowtime, 
                     const time_t hclocktime   ) {
@@ -1081,7 +1404,7 @@ adjust_drift_factor(struct adjtime *adjtime_p,
 
 
 
-void
+static void
 calculate_adjustment(
                      const float factor,
                      const time_t last_time, 
@@ -1121,7 +1444,7 @@ calculate_adjustment(
 
 
 
-void
+static void
 save_adjtime(const struct adjtime adjtime, const bool testing) {
 /*-----------------------------------------------------------------------------
   Write the contents of the <adjtime> structure to its disk file.
@@ -1130,16 +1453,18 @@ save_adjtime(const struct adjtime adjtime, const bool testing) {
   bother.
 -----------------------------------------------------------------------------*/
   FILE *adjfile;
-  char newfile[162];   /* Stuff to write to disk file */
+  char newfile[405];   /* Stuff to write to disk file */
 
   int rc;   /* locally used: return code from a function */
 
   if (adjtime.dirty) {
-    snprintf(newfile, sizeof(newfile), "%f %d %f\n%d\n",
+    /* snprintf is not always available, but this is safe
+       as long as libc does not use more than 100 positions for %ld or %f */
+    sprintf(newfile, "%f %ld %f\n%ld\n",
              adjtime.drift_factor,
-             adjtime.last_adj_time,
+             (long) adjtime.last_adj_time,
              adjtime.not_adjusted,
-             adjtime.last_calib_time  );
+             (long) adjtime.last_calib_time  );
 
     if (testing) {
       printf("Not updating adjtime file because of testing mode.\n");
@@ -1180,7 +1505,7 @@ save_adjtime(const struct adjtime adjtime, const bool testing) {
 
 
 
-void
+static void
 do_adjustment(struct adjtime *adjtime_p,
               const time_t hclocktime, const struct timeval read_time,
               const enum clock_access_method clock_access,
@@ -1236,7 +1561,7 @@ do_adjustment(struct adjtime *adjtime_p,
 
 
 
-void
+static void
 determine_clock_access_method(const bool user_requests_ISA,
                               enum clock_access_method *clock_access_p) {
 /*----------------------------------------------------------------------------
@@ -1245,6 +1570,8 @@ determine_clock_access_method(const bool user_requests_ISA,
   using compile-time constants.
 
   <user_requests_ISA> means the user explicitly asked for the ISA method.
+  Even if he did, we will not select the ISA method if this is not an 
+  ISA machine.
 -----------------------------------------------------------------------------*/
   bool rtc_works;
     /* The /dev/rtc method is available and seems to work on this machine */
@@ -1261,15 +1588,20 @@ determine_clock_access_method(const bool user_requests_ISA,
                "falling back to more primitive clock access method.\n",
                strerror(errno), errno);
     }
-  } else rtc_works = TRUE;
+  } else {
+    if (debug)
+      printf("The Linux kernel for which this copy of hwclock() was built "
+             "is too old to have /dev/rtc\n");
+    rtc_works = FALSE;
+  }
 
-  if (user_requests_ISA) *clock_access_p = ISA;
+  if (user_requests_ISA && isa_machine) *clock_access_p = ISA;
   else if (rtc_works) *clock_access_p = RTC_IOCTL;
   else if (got_kdghwclk) {
     int con_fd;
     struct hwclk_time t;
 
-    con_fd = open("/dev/console", O_RDONLY);
+    con_fd = open("/dev/tty1", O_RDONLY);
     if (con_fd >= 0) {
       if (ioctl( con_fd, kdghwclk_ioctl, &t ) >= 0) 
         *clock_access_p = KD;
@@ -1287,17 +1619,18 @@ determine_clock_access_method(const bool user_requests_ISA,
     } else {
       *clock_access_p = KD;
       fprintf(stderr, 
-              "Can't open /dev/console.  open() errno = %s (%d).\n",
+              "Can't open /dev/tty1.  open() errno = %s (%d).\n",
               strerror(errno), errno);
     }
     close(con_fd);
-  } else {
+  } else if (isa_machine) {
     *clock_access_p = ISA;
-  }
+  } else
+    *clock_access_p = NOCLOCK;
   if (debug) {
     switch (*clock_access_p) {
     case ISA: printf("Using direct I/O instructions to ISA clock.\n"); break;
-    case KD: printf("Using /dev/console interface to Alpha clock.\n"); break;
+    case KD: printf("Using KDGHWCLK interface to m68k clock.\n"); break;
     case RTC_IOCTL: printf("Using /dev/rtc interface to clock.\n"); break;
     default:  
       printf("determine_clock_access_method() returned invalid value: %d.\n",
@@ -1308,14 +1641,14 @@ determine_clock_access_method(const bool user_requests_ISA,
 
 
 
-void
+static void
 manipulate_clock(const bool show, const bool adjust, 
                  const bool set, const time_t set_time,
                  const bool hctosys, const bool systohc, 
                  const struct timeval startup_time, 
                  const enum clock_access_method clock_access,
                  const bool universal, const bool testing,
-                 int *retcode
+                 int *retcode_p
                  ) {
 /*---------------------------------------------------------------------------
   Do all the normal work of hwclock - read, set clock, etc.
@@ -1338,10 +1671,10 @@ manipulate_clock(const bool show, const bool adjust,
   bool no_auth;  /* User lacks necessary authorization to access the clock */
 
   if (clock_access == ISA) {
-    rc = iopl(3);
+    rc = i386_iopl(3);
     if (rc != 0) {
       fprintf(stderr, MYNAME " is unable to get I/O port access.  "
-              "I.e. iopl(3) returned nonzero return code %d.\n"
+              "I.e. iopl(2) returned nonzero return code %d.\n"
               "This is often because the program isn't running "
               "with superuser privilege, which it needs.\n", 
               rc);
@@ -1349,56 +1682,108 @@ manipulate_clock(const bool show, const bool adjust,
     } else no_auth = FALSE;
   } else no_auth = FALSE;
 
-  if (no_auth) *retcode = 1;
+  if (no_auth) *retcode_p = 1;
   else {
-    if (adjust || set) 
+    if (adjust || set || systohc) 
       read_adjtime(&adjtime, &rc);
     else {
       /* A little trick to avoid reading the file if we don't have to */
       adjtime.dirty = FALSE; 
       rc = 0;
     }
-    if (rc != 0) *retcode = 2;
+    if (rc != 0) *retcode_p = 2;
     else {
-      synchronize_to_clock_tick(clock_access);  /* this takes up to 1 second */
-      
-      /* Get current time from Hardware Clock, in case we need it */
-      gettimeofday(&read_time, NULL);
-      read_hardware_clock(clock_access, &tm); 
-      hclocktime = mktime_tz(tm, universal);
-      
-      if (show) {
-        display_time(hclocktime, time_diff(read_time, startup_time));
-        *retcode = 0;
-      } else if (set) {
-        set_hardware_clock_exact(set_time, startup_time, 
-                                 clock_access, universal, testing);
-        adjust_drift_factor(&adjtime, set_time, hclocktime);
-        *retcode = 0;
-      } else if (adjust) {
-        do_adjustment(&adjtime, hclocktime, read_time, clock_access,
-                      universal, testing);
-        *retcode = 0;
-      } else if (systohc) {
-        struct timeval nowtime, reftime;
-        /* We can only set_hardware_clock_exact to a whole seconds time, so we
-           set it with reference to the most recent whole seconds time.
-           */
-        gettimeofday(&nowtime, NULL);
-        reftime.tv_sec = nowtime.tv_sec;
-        reftime.tv_usec = 0;
-    
-        set_hardware_clock_exact((time_t) reftime.tv_sec, reftime, 
-                                 clock_access, universal, testing);
-        *retcode = 0;
-      } else if (hctosys) {
-        rc = set_system_clock(hclocktime, testing);
-        if (rc != 0) {
-          printf("Unable to set system clock.\n");
-          *retcode = 1;
-        } else *retcode = 0;
+      synchronize_to_clock_tick(clock_access, retcode_p);  
+        /* this takes up to 1 second */
+      if (*retcode_p == 0) {
+        /* Get current time from Hardware Clock, in case we need it */
+        gettimeofday(&read_time, NULL);
+        read_hardware_clock(clock_access, &tm); 
+        hclocktime = mktime_tz(tm, universal);
+        
+        if (show) {
+          display_time(hclocktime, time_diff(read_time, startup_time));
+          *retcode_p = 0;
+        } else if (set) {
+          set_hardware_clock_exact(set_time, startup_time, 
+                                   clock_access, universal, testing);
+          adjust_drift_factor(&adjtime, set_time, hclocktime);
+          *retcode_p = 0;
+        } else if (adjust) {
+          do_adjustment(&adjtime, hclocktime, read_time, clock_access,
+                        universal, testing);
+          *retcode_p = 0;
+        } else if (systohc) {
+          struct timeval nowtime, reftime;
+          /* We can only set_hardware_clock_exact to a whole seconds
+             time, so we set it with reference to the most recent
+             whole seconds time.  
+             */
+          gettimeofday(&nowtime, NULL);
+          reftime.tv_sec = nowtime.tv_sec;
+          reftime.tv_usec = 0;
+          
+          set_hardware_clock_exact((time_t) reftime.tv_sec, reftime, 
+                                   clock_access, universal, testing);
+          *retcode_p = 0;
+          adjust_drift_factor(&adjtime, (time_t) reftime.tv_sec, hclocktime);
+        } else if (hctosys) {
+          rc = set_system_clock(hclocktime, testing);
+          if (rc != 0) {
+            printf("Unable to set system clock.\n");
+            *retcode_p = 1;
+          } else *retcode_p = 0;
+        }
+        save_adjtime(adjtime, testing);
       }
-      save_adjtime(adjtime, testing);
+    }
+  }
+}
+
+
+
+static void
+manipulate_epoch(const bool getepoch, const bool setepoch, 
+                 const int epoch_opt, const bool testing) {
+/*----------------------------------------------------------------------------
+   Get or set the Hardware Clock epoch value in the kernel, as appropriate.
+   <getepoch>, <setepoch>, and <epoch> are hwclock invocation options.
+
+   <epoch> == -1 if the user did not specify an "epoch" option.
+
+-----------------------------------------------------------------------------*/
+  /*
+   Maintenance note:  This should work on non-Alpha machines, but the 
+   evidence today (98.03.04) indicates that the kernel only keeps the
+   epoch value on Alphas.  If that is ever fixed, this function should be
+   changed.
+   */
+
+  if (!alpha_machine)
+    fprintf(stderr, "The kernel keeps an epoch value for the Hardware Clock "
+            "only on an Alpha machine.\nThis copy of hwclock was built for "
+            "a machine other than Alpha\n(and thus is presumably not running "
+            "on an Alpha now).  No action taken.\n");
+  else {
+    if (getepoch) {
+      unsigned long epoch;
+      int retcode;
+
+      get_epoch(&epoch, &retcode);
+      if (retcode != 0)
+        printf("Unable to get the epoch value from the kernel.\n");
+      else 
+        printf("Kernel is assuming an epoch value of %lu\n", epoch);
+    } else if (setepoch) {
+      if (epoch_opt == -1)
+        fprintf(stderr, "To set the epoch value, you must use the 'epoch' "
+                "option to tell to what value to set it.\n");
+      else {
+        int rc;
+        set_epoch(epoch_opt, testing, &rc);
+        if (rc != 0)
+          printf("Unable to set the epoch value in the kernel.\n");
+      }
     }
   }
 }
@@ -1430,38 +1815,47 @@ main(int argc, char **argv, char **envp) {
      are given by the option_def.  The only exception is <show>, which
      may be modified after parsing is complete to effect an implied option.
      */
-  bool show, set, systohc, hctosys, adjust, version;
+  bool show, set, systohc, hctosys, adjust, getepoch, setepoch, version;
   bool universal, testing, directisa;
   char *date_opt;
+  int epoch_opt;
 
   const optStruct option_def[] = {
     { 'r', (char *) "show",      OPT_FLAG,   &show,      0 },
     { 0,   (char *) "set",       OPT_FLAG,   &set,       0 },
     { 'w', (char *) "systohc",   OPT_FLAG,   &systohc,   0 },
     { 's', (char *) "hctosys",   OPT_FLAG,   &hctosys,   0 },
+    { 0,   (char *) "getepoch",  OPT_FLAG,   &getepoch,  0 },
+    { 0,   (char *) "setepoch",  OPT_FLAG,   &setepoch,  0 },
     { 'a', (char *) "adjust",    OPT_FLAG,   &adjust,    0 },
     { 'v', (char *) "version",   OPT_FLAG,   &version,   0 },
     { 0,   (char *) "date",      OPT_STRING, &date_opt,  0 },
+    { 0,   (char *) "epoch",     OPT_UINT,   &epoch_opt, 0 },
     { 'u', (char *) "utc",       OPT_FLAG,   &universal, 0 },
     { 0,   (char *) "directisa", OPT_FLAG,   &directisa, 0 },
     { 0,   (char *) "test",      OPT_FLAG,   &testing,   0 },
-    { 'D', (char *) "debug",     OPT_FLAG,   &debug,     0 }
+    { 'D', (char *) "debug",     OPT_FLAG,   &debug,     0 },
+    { 0,   (char *) NULL,        OPT_END,    NULL,       0 }
   };
   int argc_parse;       /* argc, except we modify it as we parse */
   char **argv_parse;    /* argv, except we modify it as we parse */
 
+  interrupts_enabled = TRUE;  /* Since we haven't messed with them yet */
+
   gettimeofday(&startup_time, NULL);  /* Remember what time we were invoked */
 
   /* set option defaults */
-  show = set = systohc = hctosys = adjust = version = universal = 
+  show = set = systohc = hctosys = adjust = getepoch = setepoch = 
+    version = universal = 
     directisa = testing = debug = FALSE;
   date_opt = NULL;
+  epoch_opt = -1; 
 
   argc_parse = argc; argv_parse = argv;
   optParseOptions(&argc_parse, argv_parse, option_def, 0);
     /* Uses and sets argc_parse, argv_parse. 
        Sets show, systohc, hctosys, adjust, universal, version, testing, 
-       debug, set, date_opt
+       debug, set, date_opt, getepoch, setepoch, epoch_opt
        */
   
   if (argc_parse - 1 > 0) {
@@ -1471,7 +1865,8 @@ main(int argc, char **argv, char **envp) {
     exit(100);
   }
 
-  if (show + set + systohc + hctosys + adjust + version > 1) {
+  if (show + set + systohc + hctosys + adjust + 
+      getepoch + setepoch + version > 1) {
     fprintf(stderr, "You have specified multiple function options.\n"
             "You can only perform one function at a time.\n");
     exit(100);
@@ -1485,29 +1880,50 @@ main(int argc, char **argv, char **envp) {
     }
   }
 
-  if (!(show | set | systohc | hctosys | adjust | version)) 
+  if (directisa && !isa_machine) {
+    fprintf(stderr, "You have requested direct access to the ISA Hardware "
+            "Clock using machine instructions from the user process.  "
+            "But this method only works on an ISA machine with an x86 "
+            "CPU, and this is not one!\n");
+    exit(100);
+  }
+
+  if (!(show | set | systohc | hctosys | adjust | getepoch | setepoch |
+        version)) 
     show = 1; /* default to show */
 
-  if (set || hctosys || systohc || adjust) {
-    /* program is designed to run setuid, be secure! */
-
-    if (getuid() != 0) {			
+  
+  if (getuid() == 0) permitted = TRUE;
+  else {
+    /* program is designed to run setuid (in some situations) -- be secure! */
+    if (set || hctosys || systohc || adjust) {
       fprintf(stderr, 
-              "Sorry, only superuser can change the Hardware Clock.\n");
+              "Sorry, only the superuser can change the Hardware Clock.\n");
+      permitted = FALSE;
+    } else if (setepoch) {
+      fprintf(stderr, 
+              "Sorry, only the superuser can change "
+              "the Hardware Clock epoch in the kernel.\n");
       permitted = FALSE;
     } else permitted = TRUE;
-  } else permitted = TRUE;
+  }
 
   if (!permitted) retcode = 2;
   else {
     retcode = 0;
     if (version) {
       printf(MYNAME " " VERSION "/%s\n",util_linux_version);
+    } else if (getepoch || setepoch) {
+      manipulate_epoch(getepoch, setepoch, epoch_opt, testing);
     } else {
       determine_clock_access_method(directisa, &clock_access);
-
-      manipulate_clock(show, adjust, set, set_time, hctosys, systohc, 
-                       startup_time, clock_access, universal, testing, &rc);
+      if (clock_access == NOCLOCK)
+        fprintf(stderr, "Cannot access the Hardware Clock via any known "
+                "method.  Use --debug option to see the details of our "
+                "search for an access method.\n");
+      else
+        manipulate_clock(show, adjust, set, set_time, hctosys, systohc, 
+                         startup_time, clock_access, universal, testing, &rc);
     }
   }
   exit(retcode);
@@ -1517,6 +1933,18 @@ main(int argc, char **argv, char **envp) {
 /****************************************************************************
 
   History of this program:
+
+  98.03.05 BJH.  Version 2.2.  
+
+  Add --getepoch and --setepoch.  
+
+  Fix some word length things so it works on Alpha.
+
+  Make it work when /dev/rtc doesn't have the interrupt functions.
+  In this case, busywait for the top of a second instead of blocking and
+  waiting for the update complete interrupt.
+
+  Fix a bunch of bugs too numerous to mention.
 
   97.06.01: BJH.  Version 2.1.  Read and write the century byte (Byte
   50) of the ISA Hardware Clock when using direct ISA I/O.  Problem

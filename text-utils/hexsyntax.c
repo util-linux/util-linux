@@ -31,10 +31,6 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)hexsyntax.c	5.2 (Berkeley) 5/8/90";
-#endif /* not lint */
-
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdlib.h>

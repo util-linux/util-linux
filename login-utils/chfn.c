@@ -7,8 +7,8 @@
  *   there is no warranty.
  *
  *   $Author: aebr $
- *   $Revision: 1.15 $
- *   $Date: 1997/07/06 23:10:41 $
+ *   $Revision: 1.18 $
+ *   $Date: 1998/06/11 22:30:11 $
  *
  * Updated Thu Oct 12 09:19:26 1995 by faith@cs.unc.edu with security
  * patches from Zefram <A.Main@dcs.warwick.ac.uk>
@@ -21,9 +21,6 @@
  *
  */
 
-static char rcsId[] = "$Version: $Id: chfn.c,v 1.15 1997/07/06 23:10:41 aebr Exp $ $";
-
-#define _XOPEN_SOURCE		/* for crypt() */
 #define _BSD_SOURCE           /* for strcasecmp() */
 
 #include <sys/types.h>
@@ -35,6 +32,7 @@ static char rcsId[] = "$Version: $Id: chfn.c,v 1.15 1997/07/06 23:10:41 aebr Exp
 #include <errno.h>
 #include <ctype.h>
 #include <getopt.h>
+#include "my_crypt.h"
 #include "../version.h"
 
 #if REQUIRE_PASSWORD && USE_PAM
@@ -161,7 +159,7 @@ int main (argc, argv)
 	    exit(1);
 	}
         retcode = pam_acct_mgmt(pamh, 0);
-        if (retcode == PAM_AUTHTOKEN_REQD) {
+        if (retcode == PAM_NEW_AUTHTOK_REQD) {
 	    retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
         } else if (retcode) {
 	    puts("Password error.");

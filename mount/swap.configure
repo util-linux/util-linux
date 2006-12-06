@@ -1,5 +1,7 @@
-# find out whether we can include <sys/swap.h>
+# Find out whether we can include <sys/swap.h>
 # and whether libc thinks that swapon() has two arguments.
+# Of course this will fail if <sys/swap.h> exists but belongs
+# to a libc that is not in use at present.
 CC=${CC-cc}
 compile="$CC -o conftest conftest.c >/dev/null 2>&1"
 rm -f conftest conftest.c swapargs.h

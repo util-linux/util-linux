@@ -2,24 +2,13 @@
 # Created: Sat Feb  4 15:50:30 1995
 # Revised: Sun Nov 10 20:10:13 1996 by faith@cs.unc.edu
 # Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
-#
 
-# Not all utils work with all architectures, select yours here. 
-
-# NOTE: UTIL-LINUX has not been tested extensively on anything but
-# INTEL.  If you find problems in compiling on other architectures
-# please provide fix to util-linux@math.uio.no.
-
-CPU=intel
-#CPU=alpha
-#CPU=sparc
-#CPU=arm
-#CPU=m68k
-#CPU=mips
+# Select for CPU one of intel, alpha, sparc, arm, m68k, mips
+CPU=$(shell uname -m | sed s/i.86/intel/)
 
 # if HAVE_LIBCRYPT is "yes" -lcrypt will be used
 HAVE_LIBCRYPT=no
-#HAVE_LIBCRYPT=yes
+# HAVE_LIBCRYPT=yes
 
 # If HAVE_PAM is set to "yes", then login, chfn, chsh, and newgrp
 # will use PAM for authentication. Additionally, passwd will not be
@@ -91,7 +80,7 @@ HAVE_STRINGS=yes
 #HAVE_RESET=no
 HAVE_RESET=yes
 
-# If HAVE_MOUNT is set to "yes", then reset won't be installed, since many
+# If HAVE_MOUNT is set to "yes", then mount won't be installed, since many
 # folks grab mount independenty of util-linux
 # When util-linux is released it always contains the very latest mount.
 HAVE_MOUNT=no
@@ -113,14 +102,18 @@ endif
 BSD= ../bsd
 
 LDFLAGS   = -s
-# WARNFLAGS = -Wall
-CFLAGS    = $(OPT) -I. -I$(BSD) $(WARNFLAGS) $(CURSESFLAGS) $(EXTRACFLAGS) \
+WARNFLAGS = -Wall
+CFLAGS    = $(OPT) -I. -I$(BSD) $(WARNFLAGS) $(CURSESFLAGS) $(SLANGFLAGS) \
+			$(EXTRACFLAGS) \
 			-DSBINDIR=\"$(SBINDIR)\" \
 			-DUSRSBINDIR=\"$(USRSBINDIR)\" \
 			-DLOGDIR=\"$(LOGDIR)\" \
 			-DVARPATH=\"$(VARPATH)\"
 
-#
+# Set HAVE_NCURSES to "yes" if you have ncurses
+# (without it, more, ul and setterm are not made)
+HAVE_NCURSES=yes
+
 # ncurses appears to be installed in three major ways.
 #
 # There is a subdirectory /usr/include/ncurses, with curses.h in
@@ -132,6 +125,16 @@ CFLAGS    = $(OPT) -I. -I$(BSD) $(WARNFLAGS) $(CURSESFLAGS) $(EXTRACFLAGS) \
 # Pick your choice.
 CURSESFLAGS=-DNCH=0
 LIBCURSES=-lncurses
+
+# Set HAVE_SLANG to yes if you have slang (and prefer to use that for cfdisk)
+# (If neither HAVE_NCURSES nor HAVE_SLANG is defined, cfdisk is not made.)
+# HAVE_SLANG=yes
+
+# There is a subdirectory /usr/include/slang containing slcurses.h
+# SLANGFLAGS=-I/usr/include/slang
+# No such subdirectory - slcurses.h lives in /usr/include
+#   (no extra definition required).
+LIBSLANG=-lslang
 
 DEVDIR=		$(DESTDIR)/dev
 ETCDIR=		$(DESTDIR)/etc

@@ -31,18 +31,11 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
-char copyright[] =
-"@(#) Copyright (c) 1980 The Regents of the University of California.\n\
- All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)whereis.c	5.5 (Berkeley) 4/18/91";
-#endif /* not lint */
+/* *:aeb */
 
 #include <sys/param.h>
 #include <sys/dir.h>
+#include <sys/stat.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -59,40 +52,33 @@ void findin(char *, char *);
 int itsit(char *, char *);
 
 static char *bindirs[] = {
-#ifdef __linux__
    "/bin",
    "/usr/bin",
-   "/etc",
-   "/usr/etc",
    "/sbin",
    "/usr/sbin",
+   "/etc",
+   "/usr/etc",
+   "/lib",
+   "/usr/lib",
    "/usr/games",
    "/usr/games/bin",
+   "/usr/games/lib",
    "/usr/emacs/etc",
-   "/usr/lib/emacs/19.22/etc",
-   "/usr/lib/emacs/19.23/etc",
-   "/usr/lib/emacs/19.24/etc",
-   "/usr/lib/emacs/19.25/etc",
-   "/usr/lib/emacs/19.26/etc",
-   "/usr/lib/emacs/19.27/etc",
-   "/usr/lib/emacs/19.28/etc",
-   "/usr/lib/emacs/19.29/etc",
-   "/usr/lib/emacs/19.30/etc",
-   "/usr/lib/emacs/19.31/etc",
-   "/usr/lib/emacs/19.32/etc",
+   "/usr/lib/emacs/*/etc",
    "/usr/TeX/bin",
    "/usr/tex/bin",
    "/usr/interviews/bin/LINUX",
    
+   "/usr/X11R6/bin",
+   "/usr/X386/bin",
    "/usr/bin/X11",
    "/usr/X11/bin",
    "/usr/X11R5/bin",
-   "/usr/X11R6/bin",
-   "/usr/X386/bin",
 
    "/usr/local/bin",
-   "/usr/local/etc",
    "/usr/local/sbin",
+   "/usr/local/etc",
+   "/usr/local/lib",
    "/usr/local/games",
    "/usr/local/games/bin",
    "/usr/local/emacs/etc",
@@ -105,129 +91,33 @@ static char *bindirs[] = {
    "/usr/include",
 
    "/usr/g++-include",
-#else
-	"/bin",
-	"/sbin",
-	"/usr/ucb",
-	"/usr/bin",
-	"/usr/sbin",
-	"/usr/old",
-	"/usr/contrib",
-	"/usr/games",
-	"/usr/local",
-	"/usr/libexec",
-	"/usr/include",
-	"/usr/hosts",
-	"/usr/share", /*?*/
-	"/etc",
-#ifdef notdef
-	/* before reorg */
-	"/etc",
-	"/bin",
-	"/usr/bin",
-	"/usr/games",
-	"/lib",
-	"/usr/ucb",
-	"/usr/lib",
-	"/usr/local",
-	"/usr/new",
-	"/usr/old",
-	"/usr/hosts",
-	"/usr/include",
-#endif
-#endif
+
+   "/usr/ucb",
+   "/usr/old",
+   "/usr/new",
+   "/usr/local",
+   "/usr/libexec",
+   "/usr/share",
+
 	0
 };
-/* This needs to be redone - man pages live with sources */
+
 static char *mandirs[] = {
-	"/usr/man/man1",
-	"/usr/man/man2",
-	"/usr/man/man3",
-	"/usr/man/man4",
-	"/usr/man/man5",
-	"/usr/man/man6",
-	"/usr/man/man7",
-	"/usr/man/man8",
-#ifdef __linux__
-	"/usr/man/man9",
-#endif
-	"/usr/man/manl",
-	"/usr/man/mann",
-	"/usr/man/mano",
-#ifdef __linux__
-	"/usr/X386/man/man1",
-	"/usr/X386/man/man2",
-	"/usr/X386/man/man3",
-	"/usr/X386/man/man4",
-	"/usr/X386/man/man5",
-	"/usr/X386/man/man6",
-	"/usr/X386/man/man7",
-	"/usr/X386/man/man8",
-	"/usr/X11/man/man1",
-	"/usr/X11/man/man2",
-	"/usr/X11/man/man3",
-	"/usr/X11/man/man4",
-	"/usr/X11/man/man5",
-	"/usr/X11/man/man6",
-	"/usr/X11/man/man7",
-	"/usr/X11/man/man8",
-	"/usr/TeX/man/man1",
-	"/usr/TeX/man/man2",
-	"/usr/TeX/man/man3",
-	"/usr/TeX/man/man4",
-	"/usr/TeX/man/man5",
-	"/usr/TeX/man/man6",
-	"/usr/TeX/man/man7",
-	"/usr/TeX/man/man8",
+	"/usr/man/*",
+	"/usr/X386/man/*",
+	"/usr/X11/man/*",
+	"/usr/TeX/man/*",
 	"/usr/interviews/man/mann",
-#endif
 	0
 };
+
 static char *srcdirs[]  = {
-	"/usr/src/bin",
-	"/usr/src/sbin",
-	"/usr/src/etc",
-	"/usr/src/pgrm",
-	"/usr/src/usr.bin",
-	"/usr/src/usr.sbin",
-	"/usr/src/usr.ucb",
-	"/usr/src/usr.new",
-	"/usr/src/usr.lib",
-	"/usr/src/libexec",
-	"/usr/src/libdata",
-	"/usr/src/share",
-	"/usr/src/contrib",
-	"/usr/src/athena",
-	"/usr/src/devel",
-	"/usr/src/games",
-	"/usr/src/local",
-	"/usr/src/man",
-	"/usr/src/root",
-	"/usr/src/old",
-	"/usr/src/include",
-	/* still need libs */
-#ifdef notdef /* before reorg */
-	"/usr/src/bin",
-	"/usr/src/usr.bin",
-	"/usr/src/etc",
-	"/usr/src/ucb",
-	"/usr/src/games",
-	"/usr/src/usr.lib",
-	"/usr/src/lib",
-	"/usr/src/local",
-	"/usr/src/new",
-	"/usr/src/old",
-	"/usr/src/include",
-	"/usr/src/lib/libc/gen",
-	"/usr/src/lib/libc/stdio",
-	"/usr/src/lib/libc/sys",
-	"/usr/src/lib/libc/net/common",
-	"/usr/src/lib/libc/net/inet",
-	"/usr/src/lib/libc/net/misc",
+	"/usr/src/*",
+	"/usr/src/lib/libc/*",
+	"/usr/src/lib/libc/net/*",
 	"/usr/src/ucb/pascal",
 	"/usr/src/ucb/pascal/utilities",
 	"/usr/src/undoc",
-#endif
 	0
 };
 
@@ -307,13 +197,7 @@ usage:
 }
 
 void
-getlist(argcp, argvp, flagp, cntp)
-	char ***argvp;
-	int *argcp;
-	char ***flagp;
-	int *cntp;
-{
-
+getlist(int *argcp, char ***argvp, char ***flagp, int *cntp) {
 	(*argvp)++;
 	*flagp = *argvp;
 	*cntp = 0;
@@ -335,9 +219,7 @@ int	count;
 int	print;
 
 void
-lookup(cp)
-	register char *cp;
-{
+lookup(char *cp) {
 	register char *dp;
 
 	for (dp = cp; *dp; dp++)
@@ -387,9 +269,7 @@ again:
 }
 
 void
-looksrc(cp)
-	char *cp;
-{
+looksrc(char *cp) {
 	if (Sflag == 0) {
 		find(srcdirs, cp);
 	} else
@@ -397,9 +277,7 @@ looksrc(cp)
 }
 
 void
-lookbin(cp)
-	char *cp;
-{
+lookbin(char *cp) {
 	if (Bflag == 0)
 		find(bindirs, cp);
 	else
@@ -407,9 +285,7 @@ lookbin(cp)
 }
 
 void
-lookman(cp)
-	char *cp;
-{
+lookman(char *cp) {
 	if (Mflag == 0) {
 		find(mandirs, cp);
 	} else
@@ -417,33 +293,54 @@ lookman(cp)
 }
 
 void
-findv(dirv, dirc, cp)
-	char **dirv;
-	int dirc;
-	char *cp;
-{
-
+findv(char **dirv, int dirc, char *cp) {
 	while (dirc > 0)
 		findin(*dirv++, cp), dirc--;
 }
 
 void
-find(dirs, cp)
-	char **dirs;
-	char *cp;
-{
-
+find(char **dirs, char *cp) {
 	while (*dirs)
 		findin(*dirs++, cp);
 }
 
 void
-findin(dir, cp)
-	char *dir, *cp;
-{
+findin(char *dir, char *cp) {
 	DIR *dirp;
 	struct direct *dp;
+	char *d, *dd;
+	int l;
+	char dirbuf[1024];
+	struct stat statbuf;
 
+	dd = index(dir, '*');
+	if (!dd)
+		goto noglob;
+
+	l = strlen(dir);
+	if (l < sizeof(dirbuf)) { 	/* refuse excessively long names */
+		strcpy (dirbuf, dir);
+		d = index(dirbuf, '*');
+		*d = 0;
+		dirp = opendir(dirbuf);
+		if (dirp == NULL)
+			return;
+		while ((dp = readdir(dirp)) != NULL) {
+			if (strlen(dp->d_name) + l > sizeof(dirbuf))
+				continue;
+			sprintf(d, "%s", dp->d_name);
+			if (stat(dirbuf, &statbuf))
+				continue;
+			if (!S_ISDIR(statbuf.st_mode))
+				continue;
+			strcat(d, dd+1);
+			findin(dirbuf, cp);
+		}
+		closedir(dirp);
+	}
+	return;
+
+    noglob:
 	dirp = opendir(dir);
 	if (dirp == NULL)
 		return;
@@ -458,13 +355,17 @@ findin(dir, cp)
 }
 
 int
-itsit(cp, dp)
-	register char *cp, *dp;
-{
-	register int i = strlen(dp);
+itsit(char *cp, char *dp) {
+	int i = strlen(dp);
 
 	if (dp[0] == 's' && dp[1] == '.' && itsit(cp, dp+2))
 		return (1);
+	if (!strcmp(dp+i-2, ".Z"))
+		i -= 2;
+	else if (!strcmp(dp+i-3, ".gz"))
+		i -= 3;
+	else if (!strcmp(dp+i-4, ".bz2"))
+		i -= 4;
 	while (*cp && *dp && *cp == *dp)
 		cp++, dp++, i--;
 	if (*cp == 0 && *dp == 0)

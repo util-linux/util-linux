@@ -33,16 +33,6 @@
  * Modified Sun Mar 12 10:34:34 1995, faith@cs.unc.edu, for Linux
  */
 
-#ifndef lint
-static char copyright[] =
-"@(#) Copyright (c) 1988, 1990, 1993\n\
-	The Regents of the University of California.  All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)wall.c	8.2 (Berkeley) 11/16/93";
-#endif /* not lint */
-
 /*
  * This program is not related to David Wall, whose Stanford Ph.D. thesis
  * is entitled "Mechanisms for Broadcast and Selective Broadcast".
@@ -145,11 +135,12 @@ makemsg(fname)
 	time_t now, time();
 	FILE *fp;
 	int fd;
-	char *p, *whom, hostname[MAXHOSTNAMELEN], lbuf[100], tmpname[64];
+	char *p, *whom, *where, hostname[MAXHOSTNAMELEN],
+		lbuf[MAXHOSTNAMELEN + 320],
+		tmpname[sizeof(_PATH_TMP) + 20];
 	char *getlogin(), *strcpy(), *ttyname();
 
-	(void)snprintf(tmpname, sizeof(tmpname), 
-		       "%s/wall.XXXXXX", _PATH_TMP);
+	(void)sprintf(tmpname, "%s/wall.XXXXXX", _PATH_TMP);
 	if (!(fd = mkstemp(tmpname)) || !(fp = fdopen(fd, "r+"))) {
 		(void)fprintf(stderr, "wall: can't open temporary file.\n");
 		exit(1);
@@ -159,6 +150,11 @@ makemsg(fname)
 	if (!nobanner) {
 		if (!(whom = getlogin()))
 			whom = (pw = getpwuid(getuid())) ? pw->pw_name : "???";
+		if (!whom || strlen(whom) > 100)
+			whom = "someone";
+		where = ttyname(2);
+		if (!where || strlen(where) > 100)
+			where = "somewhere";
 		(void)gethostname(hostname, sizeof(hostname));
 		(void)time(&now);
 		lt = localtime(&now);
@@ -170,14 +166,14 @@ makemsg(fname)
 		 * Which means that we may leave a non-blank character
 		 * in column 80, but that can't be helped.
 		 */
+		/* snprintf is not always available, but the sprintf's here
+		   will not overflow as long as %d takes at most 100 chars */
 		(void)fprintf(fp, "\r%79s\r\n", " ");
-		(void)snprintf(lbuf, sizeof(lbuf), 
-			       "Broadcast Message from %s@%s",
-			       whom, hostname);
+		(void)sprintf(lbuf, "Broadcast Message from %s@%s",
+			      whom, hostname);
 		(void)fprintf(fp, "%-79.79s\007\007\r\n", lbuf);
-		(void)snprintf(lbuf, sizeof(lbuf), 
-			       "        (%s) at %d:%02d ...", ttyname(2),
-			       lt->tm_hour, lt->tm_min);
+		(void)sprintf(lbuf, "        (%s) at %d:%02d ...",
+			      where, lt->tm_hour, lt->tm_min);
 		(void)fprintf(fp, "%-79.79s\r\n", lbuf);
 	}
 	(void)fprintf(fp, "%79s\r\n", " ");

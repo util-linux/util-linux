@@ -3,7 +3,6 @@
 /* Vesa Roukonen added code for asking password */
 /* Currently maintained at ftp://ftp.daimi.aau.dk/pub/linux/poe/ */
 
-#define _XOPEN_SOURCE		/* for crypt() */
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
@@ -11,6 +10,7 @@
 #include <stdio.h>
 #include <errno.h>
 #include "pathnames.h"
+#include "my_crypt.h"
 
 #ifndef TRUE
 # define TRUE 1

@@ -85,7 +85,9 @@ get_key()
     int rfd;
     struct stat statbuf;
 
-    snprintf(keyfile, sizeof(keyfile), "%s/.cryptocard", pwd->pw_dir);
+    if (strlen(pwd->pw_dir) + 13 > sizeof(keyfile))
+	goto bail_out;
+    sprintf(keyfile, "%s/.cryptocard", pwd->pw_dir);
 
     if ((rfd = open(keyfile, O_RDONLY)) < 0) {
 	syslog(LOG_NOTICE, "can't open %s for reading", keyfile);
@@ -182,7 +184,8 @@ cryptocard(void)
     challenge = generate_challenge();
     if (challenge == NULL) return 0;
 
-    snprintf(prompt, sizeof(prompt), "%s Password: ", challenge);
+    if (strlen(challenge) + 13 > sizeof(prompt)) return 0;
+    sprintf(prompt, "%s Password: ", challenge);
 
     alarm((unsigned int)timeout);  /* give user time to fiddle with card */
     response = getpass(prompt);  /* presents challenge and gets response */

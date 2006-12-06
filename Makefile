@@ -5,7 +5,7 @@
 # May be distributed under the terms of the GNU GPL.
 #
 
-VERSION=2.7.1
+VERSION=2.8
 
 include ./MCONFIG
 
@@ -14,6 +14,7 @@ ifeq "$(HAVE_MOUNT)" "no"
 endif
 
 SUBDIRS= bsd \
+	getopt \
 	disk-utils \
 	games \
 	login-utils \

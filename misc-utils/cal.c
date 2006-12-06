@@ -34,12 +34,6 @@
  * SUCH DAMAGE.
  */
 
-static char copyright[] =
-"@(#) Copyright (c) 1989, 1993, 1994\n\
-	The Regents of the University of California.  All rights reserved.\n";
-static char sccsid[] = "@(#)cal.c	8.4 (Berkeley) 4/2/94";
-
-
 /* This defines _LINUX_C_LIB_VERSION_MAJOR, dunno about gnulibc.  We
    don't want it to read /usr/i586-unknown-linux/include/_G_config.h
    so we specify fill path.  Were we got /usr/i586-unknown-linux from?

@@ -31,6 +31,8 @@
  * SUCH DAMAGE.
  */
 
+#include <linux/types.h>	/* for __u32 etc */
+
 #ifndef BSD_DISKMAGIC	/* perhaps from <linux/genhd.h> */
 #define BSD_DISKMAGIC     ((__u32) 0x82564557)
 #endif
@@ -41,19 +43,18 @@
 
 #define BSD_LINUX_BOOTDIR "/usr/ucb/mdec"
 
-#if defined (i386)
+#if defined (i386) || defined (sparc)
 #define BSD_LABELSECTOR   1
 #define BSD_LABELOFFSET   0
-#define	BSD_BBSIZE        8192		/* size of boot area, with label */
-#define	BSD_SBSIZE        8192		/* max size of fs superblock */
 #elif defined (__alpha__)
 #define BSD_LABELSECTOR   0
 #define BSD_LABELOFFSET   64
-#define	BSD_BBSIZE        8192
-#define	BSD_SBSIZE        8192
 #else
 #error unknown architecture
 #endif
+
+#define	BSD_BBSIZE        8192		/* size of boot area, with label */
+#define	BSD_SBSIZE        8192		/* max size of fs superblock */
 
 struct xbsd_disklabel {
 	__u32	d_magic;		/* the magic number */
@@ -210,10 +211,11 @@ static struct systypes xbsd_fstypes[] = {
 	{BSD_FS_ISO9660,"ISO-9660"},
 	{BSD_FS_BOOT,   "boot"},
 	{BSD_FS_ADOS,   "ADOS"},
-	{BSD_FS_HFS,    "HFS"}
+	{BSD_FS_HFS,    "HFS"},
+	{ 0, NULL }
 };
+#define BSD_FSMAXTYPES (SIZE(xbsd_fstypes)-1)
 
-#define BSD_FSMAXTYPES	(sizeof(xbsd_fstypes) / sizeof(struct systypes))
 #endif
 
 /*

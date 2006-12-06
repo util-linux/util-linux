@@ -21,7 +21,7 @@ Here is an example from an \fI/etc/fstab\fP file from an NFS mount.
 .sp
 .nf
 .ta 2.5i +0.75i +0.75i +1.0i
-server:/usr/local/pub	/pub	nfs	timeo=14,intr
+server:/usr/local/pub	/pub	nfs	rsize=8192,wsize=8192,timeo=14,intr
 .fi
 .DT
 .SS Options
@@ -29,10 +29,14 @@ server:/usr/local/pub	/pub	nfs	timeo=14,intr
 .I rsize=n
 The number of bytes NFS uses when reading files from an NFS server.
 The default value is dependent on the kernel, currently 1024 bytes.
+(However, throughput is improved greatly by asking for
+.IR rsize=8192 .)
 .TP 1.5i
 .I wsize=n
 The number of bytes NFS uses when writing files to an NFS server.
 The default value is dependent on the kernel, currently 1024 bytes.
+(However, throughput is improved greatly by asking for
+.IR wsize=8192 .)
 .TP 1.5i
 .I timeo=n
 The value in tenths of a second before sending the
@@ -85,9 +89,9 @@ to the same value.
 There is no default value.
 .TP 1.5i
 .I retry=n
-The number of times to retry a backgrounded NFS mount operation
-before giving up.
-The default value is 10000 times.
+The number of minutes to retry an NFS mount operation
+in the foreground or background before giving up.
+The default value is 10000 minutes, which is roughly one week.
 .TP 1.5i
 .I namlen=n
 When an NFS server does not support version two of the
@@ -140,13 +144,20 @@ for hosts that can run multiple NFS servers.
 The default value is version 2.
 .TP 1.5i
 .I bg
-If the first NFS mount attempt times out, continue trying the mount
+If the first NFS mount attempt times out, retry the mount
 in the background.
-The default is to not to background the mount on timeout but fail.
+After a mount operation is backgrounded, all subsequent mounts
+on the same NFS server will be backgrounded immediately, without
+first attempting the mount.
+A missing mount point is treated as a timeout,
+to allow for nested NFS mounts.
 .TP 1.5i
 .I fg
-If the first NFS mount attempt times out, fail immediately.
-This is the default.
+If the first NFS mount attempt times out, retry the mount
+in the foreground.
+This is the complement of the
+.I bg
+option, and also the default behavior.
 .TP 1.5i
 .I soft
 If an NFS file operation has a major timeout then report an I/O error to
@@ -173,7 +184,7 @@ two of the RPC mount protocol.  Many NFS servers support only
 version one.
 .TP 1.5i
 .I nocto
-Supress the retrieval of new attributes when creating a file.
+Suppress the retrieval of new attributes when creating a file.
 .TP 1.5i
 .I noac
 Disable all forms of attribute caching entirely.  This extracts a
@@ -199,7 +210,7 @@ interrupted.
 .SH AUTHOR
 "Rick Sladkey" <jrs@world.std.com>
 .SH BUGS
-The bg, fg, retry, posix, and nocto options are parsed by mount
+The posix, and nocto options are parsed by mount
 but currently are silently ignored.
 .P
 The tcp and namlen options are implemented but are not currently

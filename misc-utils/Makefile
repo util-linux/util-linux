@@ -9,7 +9,7 @@ include ../MCONFIG
 
 # Where to put man pages?
 
-MAN1= 		cal.1 chkdupexe.1 ddate.1 hostid.1 kill.1 \
+MAN1= 		cal.1 chkdupexe.1 ddate.1 kill.1 \
 		logger.1 look.1 mcookie.1 namei.1 script.1 \
 		setterm.1 tsort.1 whereis.1 write.1
 
@@ -18,7 +18,7 @@ MAN1= 		cal.1 chkdupexe.1 ddate.1 hostid.1 kill.1 \
 
 BIN=            kill
 
-USRBIN=		cal chkdupexe ddate hostid logger look mcookie \
+USRBIN=		cal chkdupexe ddate logger look mcookie \
 		namei script setterm tsort whereis write
 
 ifeq "$(HAVE_CLEAR)" "no"
@@ -39,10 +39,14 @@ endif
 
 NEEDS_CURSES=  setterm
 
-all: $(BIN) $(USRBIN) $(USRBIN.NONSHADOW) $(USRGAMES) getoptprog
+all: $(BIN) $(USRBIN) $(USRBIN.NONSHADOW) $(USRGAMES) 
 
 $(NEEDS_CURSES):
+ifeq "$(HAVE_NCURSES)" "yes"
 	$(CC) $(LDFLAGS) $^ -o $@ $(LIBCURSES)
+else
+	@echo $@ not made since it requires ncurses
+endif
 
 %: %.sh
 	cp $@.sh $@
@@ -57,28 +61,24 @@ $(NEEDS_CURSES):
 cal: cal.o $(BSD)/getopt.o $(BSD)/err.o
 chkdupexe: chkdupexe.pl
 clear: clear.sh
-getoptprog: getoptprog.o $(BSD)/getopt.o
-hostid: hostid.o
 kill: kill.o procs.o
 logger: logger.o $(BSD)/getopt.o
 mcookie: mcookie.o md5.o
 mcookie.o: mcookie.c md5.h
 md5.o: md5.c md5.h
-namei: namei.o
 reset: reset.sh
-script: script.o
-setterm: setterm.o
-tsort: tsort.o
 # pidof: pidof.o procs.o
+ifeq "$(HAVE_NCURSES)" "yes"
+setterm: setterm.o
+endif
+
 
 install: all
 	$(INSTALLDIR) $(BINDIR) $(USRBINDIR)
 	$(INSTALLBIN) $(BIN) $(BINDIR)
 	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
-	$(INSTALLBIN) getoptprog $(USRBINDIR)/getopt
 	$(INSTALLDIR) $(MAN1DIR) $(MAN8DIR)
 	$(INSTALLMAN) $(MAN1) $(MAN1DIR)
-	$(INSTALLMAN) getoptprog.1 $(MAN1DIR)/getopt.1
 ifeq "$(USE_TTY_GROUP)" "yes"
 	chgrp tty $(USRBINDIR)/write
 	chmod g+s $(USRBINDIR)/write
@@ -86,4 +86,4 @@ endif
 
 .PHONY:	clean
 clean:
-	-rm -f *.o *~ core $(BIN) $(USRBIN) getoptprog
+	-rm -f *.o *~ core $(BIN) $(USRBIN)

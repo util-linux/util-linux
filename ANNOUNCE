@@ -1,20 +1,16 @@
-util-linux-2.7.tar.gz (source only distribution)
+util-linux-2.8.tar.gz (source only distribution)
 
 READ the README file and the stuff below.
 
-util-linux-2.7.tar.gz (source only distribution)
+util-linux-2.8.tar.gz (source only distribution)
 
 NOTE: Before installing util-linux. READ the README or risk nuking
 your system.  Thank you.
 
     Util-linux is a suite of essential utilities for any Linux system.
-It's primary audience is system integrators (like the people at
-RedHat) and DIY Linux hackers.  The rest of you will get a digested
+It's primary audience is system integrators (like the people at Debian
+and RedHat) and DIY Linux hackers. The rest of you will get a digested
 version of util-linux installed with no risk to your sanity.
-
-    Version 2.7 of util-linux is mostly a bugfix release.  But several
-utilities that appear in other packages have been removed and
-hwclock(8) has replaced clock(8) entirely.
 
     Util-linux is attempting to be portable, but the only platform it
 has been tested much on is linux/intel.  There have however been
@@ -24,11 +20,7 @@ and Linux 2.0/Libc 5 and has also been tested with libc 6 on intel,
 alpha and sparc.  People are encouraged to make _nice_ patches to
 util-linux and submitting them to util-linux@math.uio.no.  Thank you.
 
-[To be more precise, earlier versions of util-linux did compile on
-Linux 1.2/libc 4. The present version contains at least one obstacle:
-the routine snprintf() is not available in libc 4.5.26, but it is in 4.6.27.]
-
-Util-Linux 2.7 is imediately available from
+Util-Linux 2.8 is imediately available from
   ftp.math.uio.no:/pub/linux, and
   sunsite.uio.no:/pub/unix/linux/packages/util-linux,
 and will appear at

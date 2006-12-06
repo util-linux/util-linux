@@ -15,16 +15,6 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
-#ifndef lint
-char copyright[] =
-"@(#) Copyright (c) 1980 Regents of the University of California.\n\
- All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)more.c	5.19 (Berkeley) 6/29/88";
-#endif /* not lint */
-
 /*
 ** more.c - General purpose tty output filter and file perusal program
 **
@@ -69,7 +59,7 @@ static char sccsid[] = "@(#)more.c	5.19 (Berkeley) 6/29/88";
 #define Getc(f)		(++file_pos, getc(f))
 #define Ungetc(c,f)	(--file_pos, ungetc(c,f))
 
-#define stty(fd,argp)	ioctl(fd,TCSETSF,argp)
+#define stty(fd,argp)  tcsetattr(fd,TCSANOW,argp)
 
 /* some function declarations */
 void initterm(void);
@@ -165,20 +155,31 @@ struct {
 } context, screen_start;
 /* extern */ char	PC;		/* pad character */
 
+void
+idummy(int *kk) {}
+
+void
+Fdummy(FILE **ff) {}
 
 int main(int argc, char **argv) {
-    register FILE	*f;
-    register char	*s;
-    register char	*p;
-    register char	ch;
-    register int	left;
-    int			prnames = 0;
-    int			initopt = 0;
-    int			srchopt = 0;
-    int			clearit = 0;
-    int			initline = 0;
-    char		initbuf[80];
-    FILE		*checkf();
+    FILE	*f;
+    char	*s;
+    char	*p;
+    char	ch;
+    int		left;
+    int		prnames = 0;
+    int		initopt = 0;
+    int		srchopt = 0;
+    int		clearit = 0;
+    int		initline = 0;
+    char	initbuf[80];
+    FILE	*checkf();
+
+    /* avoid gcc complaints about register variables that
+       may be clobbered by a longjmp, by forcing our variables here
+       to be non-register */
+    Fdummy(&f); idummy(&left); idummy(&prnames);
+    idummy(&initopt); idummy(&srchopt); idummy(&initline);
 
     nfiles = argc;
     fnames = argv;
@@ -806,8 +807,16 @@ int get_line(register FILE *f, int *length)
 		column = 1 + (column | 7);
 	else if (c == '\b' && column > 0)
 	    column--;
-	else if (c == '\r')
+	else if (c == '\r') {
+	    int next = Getc(f);
+	    if (next == '\n') {
+		p--;
+		Currline++;
+		break;
+	    }
+	    Ungetc(next,f);
 	    column = 0;
+	}
 	else if (c == '\f' && stop_opt) {
 		p[-1] = '^';
 		*p++ = 'L';
@@ -1505,7 +1514,7 @@ void initterm()
 #ifdef do_SIGTTOU
 retry:
 #endif
-    no_tty = ioctl(fileno(stdout), TCGETS, &otty);
+    no_tty = tcgetattr(fileno(stdout), &otty);
     if (!no_tty) {	
 	docrterase = (otty.c_cc[VERASE] != 255);
 	docrtkill =  (otty.c_cc[VKILL] != 255);
@@ -1551,6 +1560,7 @@ retry:
 		hard++;	/* Hard copy terminal */
 		Lpp = 24;
 	    }
+
 	    if (tigetflag("xenl"))
 		eatnl++; /* Eat newline at last column + 1; dec, concept */
 	    if (Mcol <= 0)
@@ -1608,13 +1618,16 @@ retry:
 	if ((shell = getenv("SHELL")) == NULL)
 	    shell = "/bin/sh";
     }
-    no_intty = ioctl(fileno(stdin), TCGETS, &otty);
-    ioctl(fileno(stderr), TCGETS, &otty);
+    no_intty = tcgetattr(fileno(stdin), &otty);
+    tcgetattr(fileno(stderr), &otty);
     savetty0 = otty;
     slow_tty = (otty.c_cflag & CBAUD) < B1200;
     hardtabs = (otty.c_oflag & TABDLY) != XTABS;
-    if (!no_tty) 
+    if (!no_tty) {
 	otty.c_lflag &= ~(ICANON|ECHO);
+	otty.c_cc[VMIN] = 1;
+	otty.c_cc[VTIME] = 0;
+    }
 }
 
 int readch ()
@@ -1833,6 +1846,8 @@ void rdline (register FILE *f)
 
 void onsusp ()
 {
+    sigset_t signals, oldmask;
+
     /* ignore SIGTTOU so we don't get stopped if csh grabs the tty */
     signal(SIGTTOU, SIG_IGN);
     reset_tty ();
@@ -1840,9 +1855,16 @@ void onsusp ()
     signal(SIGTTOU, SIG_DFL);
     /* Send the TSTP signal to suspend our process group */
     signal(SIGTSTP, SIG_DFL);
-/*    sigsetmask(0);*/
+
+    /* unblock SIGTSTP or we won't be able to suspend ourself */
+    sigemptyset(&signals);
+    sigaddset(&signals, SIGTSTP);
+    sigprocmask(SIG_UNBLOCK, &signals, &oldmask);
+
     kill (0, SIGTSTP);
     /* Pause for station break */
+
+    sigprocmask(SIG_SETMASK, &oldmask, NULL);
 
     /* We're back */
     signal (SIGTSTP, onsusp);

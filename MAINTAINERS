@@ -7,13 +7,13 @@ This is a partial list of interests:
 
 Rik: Founding father
 Andries: *fdisk, mount, ...
-Peter: login, passwd, simpleinit, agetty, last, newgrp, shutdown, hostid,
+Peter: login, passwd, simpleinit, agetty, last, newgrp, shutdown,
 	domainname, ctrlaltdel
 Michael: Spirit of advice
 Erik: General hackery
-Nicolai: mail queue processor (batch oriented)
+Nicolai: mail-queue processor (batch oriented)
 
 Bryan: hwclock master, he's not on the list but the mail queue
   processor forwards mail to him.	
 
-Unassigned programs (defaulting to Nicolai): chfn, chsh, write, wall
+Unassigned programs (defaulting to Nicolai): chfn, chsh, write, wall, ...

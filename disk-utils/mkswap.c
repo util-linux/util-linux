@@ -193,11 +193,11 @@ int main(int argc, char ** argv)
 	if (PAGES < 10) {
 		fprintf(stderr,
 			"%s: error: swap area needs to be at least %ldkB\n",
-			program_name, 10 * PAGE_SIZE / 1024);
+			program_name, (long)(10 * PAGE_SIZE / 1024));
 		usage();
 	}
 	if (PAGES > 8 * (PAGE_SIZE - 10)) {
-	        PAGES = 8 * (PAGE_SIZE - 10);
+		PAGES = 8 * (PAGE_SIZE - 10);
 		fprintf(stderr, "%s: warning: truncating swap area to %ldkB\n",
 			program_name, PAGES * PAGE_SIZE / 1024);
 	}
@@ -217,11 +217,17 @@ int main(int argc, char ** argv)
 	if (goodpages <= 0)
 		die("Unable to set up swap-space: unreadable");
 	printf("Setting up swapspace, size = %ld bytes\n",
-	       goodpages*PAGE_SIZE);
+		(long)(goodpages*PAGE_SIZE));
 	strncpy((char*)signature_page+PAGE_SIZE-10, "SWAP-SPACE", 10);
 	if (lseek(DEV, 0, SEEK_SET))
 		die("unable to rewind swap-device");
 	if (PAGE_SIZE != write(DEV, signature_page, PAGE_SIZE))
 		die("unable to write signature page");
+	/*
+	 * A subsequent swapon() will fail if the signature
+	 * is not actually on disk. (This is a kernel bug.)
+	 */
+	if (fsync(DEV))
+		 die("fsync failed");
 	return 0;
 }

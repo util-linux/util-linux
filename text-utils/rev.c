@@ -35,27 +35,16 @@
  *
  * Wed Sep 14 22:26:00 1994: Patch from bjdouma <bjdouma@xs4all.nl> to handle
  *                           last line that has no newline correctly.
+ * 3-Jun-1998: Patched by Nicolai Langfeldt to work better on Linux:
+ * 	Handle any-length-lines.  Code copied from util-linux' setpwnam.c
  */
-
-#ifndef lint
-char copyright[] =
-"@(#) Copyright (c) 1987, 1992 The Regents of the University of California.\n\
- All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-/*static char sccsid[] = "from: @(#)rev.c	5.2 (Berkeley) 3/21/92";*/
-static char rcsid[] = "$Id: rev.c,v 1.4 1996/07/02 20:08:07 janl Exp $";
-#endif /* not lint */
 
 #include <sys/types.h>
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#ifdef __linux__
 #include <unistd.h>
-#endif /* linux */
 
 void usage __P((void));
 void warn __P((const char *, ...));
@@ -65,63 +54,76 @@ main(argc, argv)
 	int argc;
 	char *argv[];
 {
-	register char *filename, *t;
-#ifdef __linux__
-	char p[512];
-#else /* linux */
-	char *p;
-#endif /* linux */
-	FILE *fp;
-	size_t len;
-	int ch, rval;
+  register char *filename, *t;
+  size_t buflen=512;
+  char *p=malloc(buflen);
+  size_t len;
+  FILE *fp;
+  int ch, rval;
 
-	while ((ch = getopt(argc, argv, "")) != EOF)
-		switch(ch) {
-		case '?':
-		default:
-			usage();
-		}
+  while ((ch = getopt(argc, argv, "")) != EOF)
+    switch(ch) {
+    case '?':
+    default:
+      usage();
+    }
 
-	argc -= optind;
-	argv += optind;
+  argc -= optind;
+  argv += optind;
 
-	fp = stdin;
-	filename = "stdin";
-	rval = 0;
-	do {
-		if (*argv) {
-			if ((fp = fopen(*argv, "r")) == NULL) {
-				warn("%s: %s", *argv, strerror(errno));
-				rval = 1;
-				++argv;
-				continue;
-			}
-			filename = *argv++;
-		}
-#ifndef __linux__
-		while (p = fgetline(fp, &len)) {
-			t = p + len - 1;
-			for (t = p + len - 1; t >= p; --t)
-				putchar(*t);
-		}
-#else /* linux */
-		while (fgets(p, 511, fp)) {
-			len = strlen(p);
-                        t = p + len - 1 - (*(p+len-1)=='\r'
-					   || *(p+len-1)=='\n');
-                        for ( ; t >= p; --t)
-				if(strcmp(t, "\0") != 0)
-				  putchar(*t);
-#endif /* linux */
-			putchar('\n');
-		}
-		if (ferror(fp)) {
-			warn("%s: %s", filename, strerror(errno));
-			rval = 1;
-		}
-		(void)fclose(fp);
-	} while(*argv);
-	exit(rval);
+  fp = stdin;
+  filename = "stdin";
+  rval = 0;
+  do {
+    if (*argv) {
+      if ((fp = fopen(*argv, "r")) == NULL) {
+	warn("%s: %s", *argv, strerror(errno));
+	rval = 1;
+	++argv;
+	continue;
+      }
+      filename = *argv++;
+    }
+
+    while (fgets(p, buflen, fp)) {
+
+      len = strlen(p);
+
+      /* This is my hack from setpwnam.c -janl */
+      while (p[len-1] != '\n' && !feof(fp)) {
+	/* Extend input buffer if it failed getting the whole line */
+
+	/* So now we double the buffer size */
+	buflen *= 2;
+
+	p = realloc(p, buflen);
+	if (p == NULL) {
+	  fprintf(stderr,"Unable to allocate bufferspace\n");
+	  exit(1);
+	}
+
+	/* And fill the rest of the buffer */
+	if (fgets(&p[len], buflen/2, fp) == NULL) break;
+
+	len = strlen(p);
+      
+	/* That was a lot of work for nothing.  Gimme perl! */
+      }
+		  
+      t = p + len - 1 - (*(p+len-1)=='\r'
+			 || *(p+len-1)=='\n');
+      for ( ; t >= p; --t)
+	if(strcmp(t, "\0") != 0)
+	  putchar(*t);
+      putchar('\n');
+    }
+    if (ferror(fp)) {
+      warn("%s: %s", filename, strerror(errno));
+      rval = 1;
+    }
+    (void)fclose(fp);
+  } while(*argv);
+  exit(rval);
 }
 
 #if __STDC__

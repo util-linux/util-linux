@@ -1,18 +1,26 @@
-.TH CLOCK 8 "23 September 1996"
+.TH CLOCK 8 "02 March 1998"
 .SH NAME
-clock \- query and set the ISA hardware clock (RTC)
+clock \- query and set the hardware clock (RTC)
 .SH SYNOPSIS
-.B "hwclock --show [ --utc ] [ --test ] [ --debug ]"
+.B "hwclock --show"
 .br
-.B "hwclock --set --date=newdate [ --utc ] [ --test ] [ --debug ]"
+.B "hwclock --set --date=newdate"
 .br
-.B "hwclock --systohc [ --utc ] [ --test ] [ --debug ]"
+.B "hwclock --systohc"
 .br
-.B "hwclock --hctosys [ --utc ] [ --test ] [ --debug ]"
+.B "hwclock --hctosys" 
 .br
-.B "hwclock --adjust [ --utc ] [ --test ] [ --debug ]"
+.B "hwclock --getepoch"
 .br
-.B "hwclock --version [ --debug ]
+.B "hwclock --setepoch --epoch=year"
+.br
+.B "hwclock --adjust"
+.br
+.B "hwclock --version"
+.PP
+other options:
+.PP
+.B "--utc  --directisa --test --debug"
 .PP
 Minimum unique abbreviations of all options are acceptable.
 .PP
@@ -58,6 +66,23 @@ Add or subtract time from the Hardware Clock to account for systematic
 drift since the last time the clock was set or adjusted.  See discussion
 below.
 .TP
+.B \-\-getepoch
+Print out standard output the kernel's Hardware Clock epoch value.
+This is the number of years into AD to which a zero year value in the
+Hardware Clock refers.  For example, if you are using the convention
+that the year counter in your Hardware Clock contains the number of
+full years since 1952, then the kernel's Hardware Counter epoch value
+must be 1952.
+
+This epoch value is used whenever hwclock reads or sets the Hardware Clock.
+.TP
+.B \-\-setepoch
+Set the kernel's Hardware Clock epoch value to the value specified by the
+.B \-\-epoch
+option.  See the
+.B \-\-getepoch
+option for details.
+.TP
 .B \-\-version
 Print the version of 
 .I hwclock 
@@ -74,11 +99,21 @@ option is an argument to the
 program.  For example,
 .sp
 .I hwclock --set --date="9/22/96 16:45:05"
+.TP
+.B \-\-epoch=year
+Specifies the year which is the beginning of the Hardware Clock's
+epoch.  I.e. the number of years into AD to which a zero value in the
+Hardware Clock's year counter refers.  
+
+For example,
+.sp
+.I hwclock --setepoch --epoch=1952
+
 .PP
 The following options apply to most functions.
 .TP
 .B \-\-utc
-Indicates that the Hardware Clock is kept in Universal Coordinated
+Indicates that the Hardware Clock is kept in Coordinated Universal
 Time.  It is your choice whether to keep your clock in UTC or local
 time, but nothing in the clock tells which you've chosen.  So this
 option is how you give that information to 
@@ -89,9 +124,22 @@ If you don't specify
 when you should, or vice versa, both setting and querying of the
 Hardware Clock will be messed up.
 .TP
+.B \-\-directisa
+is meaningful only on an ISA machine.  For all other machines, it has
+no effect.  This option tells
+.I hwclock
+to use explicit I/O instructions to access the Hardware Clock.
+Without this option, 
+.I hwclock
+will try to use the /dev/rtc device (which it assumes to be driven by the
+rtc device driver).  If it is unable to open the device (for read), it will
+use the explicit I/O instructions anyway.
+.PP
+The rtc device driver was new in Linux Release 2.
+.TP
 .B \-\-test
-Do everything except actually updating the Hardware Clock.  This is 
-useful, especially in conjunction with 
+Do everything except actually updating the Hardware Clock or anything
+else.  This is useful, especially in conjunction with
 .B \-\-debug,
 in learning about 
 .I hwclock.
@@ -112,11 +160,12 @@ There are two main clocks in a Linux system:
 .PP
 .B The Hardware Clock: 
 This is a clock that runs independently of any control program running
-in the CPU and even when the machine is powered off.  It is specified
-as part of the ISA standard.  The control program can read or set this
-clock to a whole second, but the control program can also detect the
-edges of the 1 second clock ticks, so the clock actually has virtually
-infinite precision.
+in the CPU and even when the machine is powered off.
+
+On an ISA system, this clock is specified as part of the ISA standard.
+The control program can read or set this clock to a whole second, but
+the control program can also detect the edges of the 1 second clock
+ticks, so the clock actually has virtually infinite precision.
 .PP
 This clock is commonly called the hardware clock, the real time clock,
 the RTC, the BIOS clock, and the CMOS clock.  Hardware Clock, in its
@@ -127,11 +176,12 @@ misleading.
 .PP
 .B The System Time: 
 This is the time kept by a clock inside the Linux kernel and driven by
-the ISA timer interrupt.  It has meaning only while Linux is running
-on the machine.  The System Time is the number of seconds since
-00:00:00 January 1, 1970 UTC (or more succinctly, the number of
-seconds since 1969).  The System Time is not an integer, though.  It
-has virtually infinite precision.
+a timer interrupt.  (On an ISA machine, the timer interrupt is part of
+the ISA standard).  It has meaning only while Linux is running on the
+machine.  The System Time is the number of seconds since 00:00:00
+January 1, 1970 UTC (or more succinctly, the number of seconds since
+1969).  The System Time is not an integer, though.  It has virtually
+infinite precision.
 .PP
 The System Time is the time that matters.  The Hardware Clock's basic
 purpose in a Linux system is to keep time when Linux is not running.  You
@@ -148,6 +198,66 @@ time Linux starts up, it will do so with the adjusted time from the Hardware
 Clock.  You can also use the program 
 .I adjtimex(8)
 to smoothly adjust the System Time while the system runs.
+
+
+.SH How hwclock Accesses the Hardware Clock
+.PP
+.I
+hwclock 
+Uses many different ways to get and set Hardware Clock values.
+The most normal way is to do I/O to the device special file /dev/rtc,
+which is presumed to be driven by the rtc device driver.  However,
+this method is not always available.  For one thing, the rtc driver is
+a relatively recent addition to Linux.  Older systems don't have it.
+.PP
+On older systems, the method of accessing the Hardware Clock depends on
+the system hardware. 
+.PP
+On an ISA system, 
+.I
+hwclock
+can directly access the "CMOS memory" registers that constitute the clock,
+by doing I/O to Ports 0x70 and 0x71.  It can only do this if running with
+superuser effective userid.
+
+This is a really poor method of accessing the clock, for all the
+reasons that user space programs are generally not supposed to do
+direct I/O and disable interrupts.  Hwclock provides it because it is
+the only method available with older Linux kernels for ISA machines.
+
+.PP
+On an m68k system,
+.I
+hwclock
+can access the clock via the console driver, via the device special
+file /dev/tty1.
+.PP
+On an Alpha,
+.I
+/dev/rtc 
+is the only choice.  
+
+There are or were some Alpha Linux systems that don't have /dev/rtc
+and there are or were programs that accessed the clock via almost
+direct I/O using /dev/port.  However, this is not as good a method as
+/dev/rtc and such programs were not widely enough used that hwclock
+has any need to be backward compatible with them.  So hwclock does not
+provide the /dev/port method and consequently will not work on an
+Alpha that doesn't have /dev/rtc.
+
+.PP
+.I
+hwclock 
+tries to use /dev/rtc.  If it is compiled for a kernel that doesn't have
+that function or it is unable to open /dev/rtc, 
+.I
+hwclock 
+will fall back to another method, if available.  On an ISA
+machine, you can force
+.I
+hwclock
+to use the direct manipulation of the CMOS registers without even trying
+/dev/rtc by specifying the --directisa option.
 
 
 .SH The Adjust Function
@@ -210,7 +320,7 @@ will do the adjustment then.
 It is good to do a 
 .I hwclock --adjust
 just before the 
-.I hwclock --set
+.I hwclock --hctosys
 at system startup time, and maybe periodically while the system is
 running via cron.
 .PP
@@ -238,7 +348,8 @@ program with
 adjtimex(8), date(1), gettimeofday(2), settimeofday(2), crontab(1)
 
 .SH AUTHORS
-Written By Bryan Henderson, September 1996, based on work done on the 
+Written By Bryan Henderson, September 1996 (bryanh@giraffe-data.com),
+based on work done on the
 .I clock
 program by Charles Hedrick, Rob Hooft, and Harald Koenig.  See the source
 code for complete history and credits.  

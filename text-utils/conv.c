@@ -31,10 +31,6 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)conv.c	5.4 (Berkeley) 6/1/90";
-#endif /* not lint */
-
 #include <stdio.h>
 #include <ctype.h>
 #include <sys/types.h>

@@ -372,12 +372,12 @@ update_mtab (const char *dir, struct mntent *instead) {
 
      endmntent (fp);
      if (fchmod (fileno (ftmp), S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0)
-	  fprintf(stderr, "error changing mode of %s: %s", MOUNTED_TEMP,
+	  fprintf(stderr, "error changing mode of %s: %s\n", MOUNTED_TEMP,
 		  strerror (errno));
      endmntent (ftmp);
 
      if (rename (MOUNTED_TEMP, MOUNTED) < 0)
-	  fprintf(stderr, "can't rename %s to %s: %s", MOUNTED_TEMP, MOUNTED,
+	  fprintf(stderr, "can't rename %s to %s: %s\n", MOUNTED_TEMP, MOUNTED,
 		  strerror(errno));
 
 leave:

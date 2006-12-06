@@ -1,10 +1,10 @@
 .\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
-.TH DMESG 8 "28 October 1993" "Linux 0.99" "Linux Programmer's Manual"
+.TH DMESG 8 
 .SH NAME
 dmesg \- print or control the kernel ring buffer
 .SH SYNOPSIS
-.BI "dmesg [ \-c ] [ \-n " level " ]"
+.BI "dmesg [ \-c ] [ \-n " level " ] [ \-s " bufsize " ]"
 .SH DESCRIPTION
 .B dmesg
 is used to examine or control the kernel ring buffer.
@@ -21,6 +21,12 @@ file to whoever can debug their problem.
 .TP
 .B \-c
 clear the ring buffer contents after printing.
+.TP
+.BI \-s bufsize
+use a buffer of bufsize to query the kernel ring buffer.  This is
+8196 by default (this matches the default kernel syslog buffer size in
+2.0.33 and 2.1.103).  If you have set the kernel buffer to larger than
+the default then this option can be used to view the entire buffer.
 .TP
 .BI \-n level
 set the

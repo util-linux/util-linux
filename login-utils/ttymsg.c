@@ -34,10 +34,6 @@
  *
  */
 
-#ifndef lint
-static char sccsid[] = "@(#)ttymsg.c	8.2 (Berkeley) 11/16/93";
-#endif /* not lint */
-
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <signal.h>
@@ -69,7 +65,7 @@ ttymsg(iov, iovcnt, line, tmout)
 	int tmout;
 {
 	static char device[MAXNAMLEN];
-	static char errbuf[1024];
+	static char errbuf[MAXNAMLEN+1024];
 	register int cnt, fd, left, wret;
 	struct iovec localiov[6];
 	int forked = 0;
@@ -79,11 +75,15 @@ ttymsg(iov, iovcnt, line, tmout)
 
 	if (strchr(line, '/')) {
 		/* A slash is an attempt to break security... */
-		(void) snprintf(errbuf, sizeof(errbuf), "'/' in \"%s\"",
-		    device);
+		(void) sprintf(errbuf, "'/' in \"%s\"", device);
+		errbuf[1024] = 0; 	/* protect caller */
 		return (errbuf);
 	}
-	(void) snprintf(device, sizeof(device), "%s%s", _PATH_DEV, line);
+	if (strlen(line) + sizeof(_PATH_DEV) + 1 > sizeof(device)) {
+		(void) sprintf(errbuf, "excessively long line arg");
+		return (errbuf);
+	}
+	(void) sprintf(device, "%s%s", _PATH_DEV, line);
 
 	/*
 	 * open will fail on slip lines or exclusive-use lines
@@ -92,8 +92,10 @@ ttymsg(iov, iovcnt, line, tmout)
 	if ((fd = open(device, O_WRONLY|O_NONBLOCK, 0)) < 0) {
 		if (errno == EBUSY || errno == EACCES)
 			return (NULL);
-		(void) snprintf(errbuf, sizeof(errbuf),
-		    "%s: %s", device, strerror(errno));
+		if (strlen(strerror(errno)) > 1000)
+			return (NULL);
+		(void) sprintf(errbuf, "%s: %s", device, strerror(errno));
+		errbuf[1024] = 0;
 		return (errbuf);
 	}
 
@@ -131,8 +133,11 @@ ttymsg(iov, iovcnt, line, tmout)
 			}
 			cpid = fork();
 			if (cpid < 0) {
-				(void) snprintf(errbuf, sizeof(errbuf),
-				    "fork: %s", strerror(errno));
+				if (strlen(strerror(errno)) > 1000)
+					(void) sprintf(errbuf, "cannot fork");
+				else
+					(void) sprintf(errbuf,
+						 "fork: %s", strerror(errno));
 				(void) close(fd);
 				return (errbuf);
 			}
@@ -158,8 +163,12 @@ ttymsg(iov, iovcnt, line, tmout)
 		(void) close(fd);
 		if (forked)
 			_exit(1);
-		(void) snprintf(errbuf, sizeof(errbuf),
-		    "%s: %s", device, strerror(errno));
+		if (strlen(strerror(errno)) > 1000)
+			(void) sprintf(errbuf, "%s: BAD ERROR", device);
+		else
+			(void) sprintf(errbuf, "%s: %s", device,
+				       strerror(errno));
+		errbuf[1024] = 0;
 		return (errbuf);
 	}
 

@@ -36,6 +36,7 @@
 .\" Sat Nov 20 20:47:38 1993: hpfs documentation added
 .\" Sat Nov 27 20:23:32 1993: Updated authorship information
 .\" Wed Jul 26 00:00:00 1995: Updated some nfs stuff, joey@infodrom.north.de
+.\" Tue Apr  2 00:38:28 1996: added info about "noauto", "user", etc.
 .\"
 .TH FSTAB 5 "27 November 1993" "Linux 0.99" "Linux Programmer's Manual"
 .SH NAME
@@ -53,7 +54,10 @@ is described on a separate line; fields on each line are separated by tabs
 or spaces.  The order of records in
 .B fstab
 is important because
-.BR fsck "(8), " mount "(8), and " umount "(8)
+.BR fsck (8),
+.BR mount (8),
+and 
+.BR umount (8)
 sequentially iterate through
 .B fstab
 doing their thing.
@@ -122,6 +126,10 @@ see
 .BR mount (8).
 For documentation on all nfs-specific options have a look at
 .BR nfs (5).
+Common for all types of file system are the options ``noauto''
+(do not mount when "mount -a" is given, e.g., at boot time),
+and ``user'' (allow a user to mount). For more details, see
+.BR mount (8).
 
 The fifth field,
 .RI ( fs_freq ),

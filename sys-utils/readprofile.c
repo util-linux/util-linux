@@ -121,7 +121,7 @@ int popenMap;   /* flag to tell if popen() has been used */
    * Use an fd for the profiling buffer, to skip stdio overhead
    */
   if ( ((proFd=open(proFile,O_RDONLY)) < 0)
-      || ((len=lseek(proFd,0,SEEK_END)) < 0)
+      || ((int)(len=lseek(proFd,0,SEEK_END)) < 0)
       || (lseek(proFd,0,SEEK_SET)<0) )
     {
     fprintf(stderr,"%s: %s: %s\n",prgname,proFile,strerror(errno));

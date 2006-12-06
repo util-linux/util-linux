@@ -31,17 +31,8 @@
  * SUCH DAMAGE.
  */
 
-#ifndef lint
-char copyright[] =
-"@(#) Copyright (c) 1980 Regents of the University of California.\n\
- All rights reserved.\n";
-#endif /* not lint */
-
-#ifndef lint
-static char sccsid[] = "@(#)colrm.c	5.4 (Berkeley) 6/1/90";
-#endif /* not lint */
-
 #include <stdio.h>
+
 /*
 COLRM removes unwanted columns from a file
 	Jeff Schriebman  UC Berkeley 11-74

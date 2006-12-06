@@ -37,7 +37,11 @@ NEEDS_NCURSES=  more ul
 all: $(BIN) $(USRBIN)
 
 $(NEEDS_NCURSES):
+ifeq "$(HAVE_NCURSES)" "yes"
 	$(CC) $(LDFLAGS) $^ -o $@ $(LIBCURSES)
+else
+	@echo $@ not made since it requires ncurses
+endif
 
 # Rules for hexdump
 
@@ -57,10 +61,12 @@ colcrt: colcrt.o
 colrm: colrm.o
 column: column.o $(BSD)/err.o
 more.o: more.c $(BSD)/pathnames.h
-more: more.o
 rev: rev.o
 strings: strings.o $(BSD)/getopt.o
+ifeq "$(HAVE_NCURSES)" "yes"
+more: more.o
 ul: ul.o
+endif
 
 install install.shadow install.text-utils: all
 	$(INSTALLDIR) $(BINDIR) $(USRBINDIR) $(USRLIBDIR) $(MAN1DIR)

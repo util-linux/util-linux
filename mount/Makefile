@@ -66,15 +66,19 @@ swapon:	swapon.o version.o
 losetup: losetup.o
 	$(LINK) $^ $(LDLIBS) -o $@
 
+mount.o: linux_fs.h
+
 mount.o umount.o nfsmount.o losetup.o fstab.o sundries.o: sundries.h
 
 mount.o umount.o fstab.o sundries.o: fstab.h
 
-mount.o umount.o losetup.o: lomount.h loop.h
+mount.o umount.o losetup.o lomount.o: lomount.h loop.h
 
 swapon.o: swap.h swapargs.h
 
 sundries.o nfsmount.o nfsmount_xdr.o nfsmount_clnt.o: nfsmount.h
+
+umount.o: mount_constants.h
 
 nfsmount_clnt.o: nfsmount_clnt.c
 	$(COMPILE) $(RPC_CFLAGS) nfsmount_clnt.c
@@ -95,8 +99,6 @@ nfsmount.x:
 nfsmount.o: nfs_mountversion.h nfs_mount3.h
 
 NFSMOUNTH=/usr/include/linux/nfs_mount.h
-SWAPH=/usr/include/linux/swap.h
-LOOPH=/usr/include/linux/loop.h
 
 nfs_mountversion.h:
 	rm -f nfs_mountversion.h
@@ -107,6 +109,7 @@ nfs_mountversion.h:
 		echo '#define KERNEL_NFS_MOUNT_VERSION 0'; \
 	fi > nfs_mountversion.h
 
+SWAPH=/usr/include/linux/swap.h
 swap.h:
 	rm -f swap.h
 	if [ -f $(SWAPH) ]; then cp $(SWAPH) .; else touch swap.h; fi
@@ -115,14 +118,11 @@ swapargs.h:
 	sh swap.configure
 
 loop.h:
-	rm -f loop.h
-	if [ -f $(LOOPH) ]; then cp $(LOOPH) .; else touch loop.h; fi
+	sh mk_loop_h
 
 clean:
-	rm -f a.out core *~ *.o swapargs.h $(PROGS)
-
-cleaner: clean
+	rm -f a.out core *~ *.o swapargs.h $(PROGS) swapoff
 	rm -f swap.h loop.h nfs_mountversion.h
 
-clobber distclean realclean: cleaner
+clobber distclean realclean: clean
 #	rm -f $(GEN_FILES)
