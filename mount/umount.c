@@ -714,7 +714,7 @@ main (int argc, char *argv[]) {
 
 	if (getuid () != geteuid ()) {
 		suid = 1;
-		if (all || types || nomtab || force)
+		if (all || types || nomtab || force || remount)
 			die (2, _("umount: only root can do that"));
 	}
 

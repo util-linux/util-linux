@@ -717,7 +717,7 @@ get_linux_label(int i) {
 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE
 		+ REISERFS_DISK_OFFSET_IN_BYTES;
 	if (ext2_llseek(fd, offset, SEEK_SET) == offset
-	    && read(fd, &reiserfsb, 1024) == 1024
+	    && read(fd, &reiserfsb, sizeof(reiserfsb)) == sizeof(reiserfsb)
 	    && has_reiserfs_magic_string(&reiserfsb, &reiserfs_is_3_6)) {
 		if (reiserfs_is_3_6) {
 			/* label only on version 3.6 onward */

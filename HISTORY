@@ -1,4 +1,10 @@
+util-linux 2.12r-pre1
+
+* cfdisk: fix a segfault with ReiserFS partitions
+* umount: disallow -r option for non-root users
+
 util-linux 2.12q
+
 * updated translation: nl
 
 util-linux 2.12q-pre2
