@@ -1,0 +1,50 @@
+.\" -*- nroff -*-
+.TH MAKEDEV.cfg 5 "January 1995" "Version 1.4"
+.SH NAME
+MAKEDEV.cfg \- configuration for MAKEDEV(8)
+.SH DESCRIPTION
+.B MAKEDEV.cfg
+is a text file that tells
+.BR MAKEDEV (8)
+what to do (and, equally importantly, what not to do.)
+Unlike
+.BR DEVINFO (5),
+which is meant to be centrally maintained, it contains all local
+configuration for a particular site and all customization.
+There are basically two kinds of declaration in this file: a "class"
+declaration and an "omit" declaration.
+.LP
+A class declaration has the form 
+.RS
+
+.RI class " name " : " owner group-owner permissions"
+
+.RE
+This says that any devices placed in the specified class by 
+.B DEVINFO 
+should be created with this ownership and these permissions. A sample
+entry might be
+.RS
+.nf
+
+class public:	root	system	0666
+
+.fi
+.RE
+This says that devices marked "public" should be owned by root.system
+and have mode 666.
+.LP
+An omit declaration has the form
+.RS
+
+.RI "omit { " device... " }"
+
+.RE
+This causes the specified devices to never be created, 
+.B "EVEN IF EXPLICITLY SPECIFIED."
+Use caution when setting this up.  The intent is to be able to run
+.B "\"MAKEDEV update\""
+and not have it create all sorts of useless devices you'd never use. 
+.SH "SEE ALSO"
+.BR MAKEDEV (8),
+.BR DEVINFO (5)

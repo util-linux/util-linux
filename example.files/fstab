@@ -1,0 +1,22 @@
+# /etc/fstab
+# static file system information
+#
+# This file is not used by the kernel, but rather by mount(8) and umount(8)
+# (and some day fsck(8)).  Comment lines have "#" in the first column.
+# Entries that are to be ignored should have "none" in the directory field,
+# and have type "ignore" or options "xx".  Frequency and pass are numeric
+# fields for dump(8) and fsck(8) that are not used yet in Linux.  You can
+# leave them empty if want.
+
+# device	directory	type	options		freq pass
+/dev/sda2	/		ext2	defaults        1    1
+none		/proc		proc	defaults        0    0
+/dev/sdb1	none		swap	sw              0    0
+/dev/sdb2	/var		ext2	defaults        1    1
+/dev/sdc1	/usr		ext2	defaults        1    1
+/dev/sdc3	/usr/src	ext2	defaults        1    1
+/dev/sdc2	/home		ext2	defaults        1    1
+/dev/sdc4	/playpen	ext2	defaults        1    1
+
+/dev/sda1       /dos            msdos   noexec,conv=binary,gid=20,umask=007 0 0
+/dev/sdb3       /dos/usr        msdos   noexec,conv=binary,gid=20,umask=007 0 0

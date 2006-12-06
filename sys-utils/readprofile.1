@@ -1,0 +1,159 @@
+.TH READPROFILE 1 "January 1995"
+.UC 4
+.SH NAME
+readprofile - a tool to read kernel profiling information
+.SH SYNOPSIS
+.B readprofile
+[
+.I options
+]
+
+.SH VERSION
+This manpage documents version 1.1 of the program.
+
+.SH DESCRIPTION
+
+.LP
+The
+.B readprofile
+command uses the 
+.B /proc/profile
+information to print ascii data on standard output.
+The output is
+organized in three columns: the first is the number of clock ticks,
+the second is the name of the C function in the kernel where those many
+ticks occurred, and the third is the normalized `load' of the procedure,
+calculated as a ratio between the number of thicks and the lenght of
+the procedure. The output is filled with blanks to ease readability.
+
+.LP
+Available command line options are the following:
+
+.TP
+.RB -m " mapfile"
+Specify a mapfile, which by default is
+.B /usr/src/linux/System.map.
+To ease use of
+.B readprofile
+with kernels in the 1.1.7x series, if the default file can't be opened,
+the alternate file
+.B /usr/src/linux/zSystem.map
+is tried.
+You should specify the map file on cmdline if your current kernel isn't the
+last one you compiled. If the name of the map file ends with `.gz' it
+is decompressed on the fly.
+
+.TP
+.RB -p " pro-file"
+Specify a different profiling buffer, which by default is
+.B /proc/profile.
+Using a different pro-file is useful if you want to `freeze' the
+kernel profiling at some time and read it later. The
+.B /proc/profile
+file can be copied using `cat' or `cp'. If the name of the pro-file
+ends by `.gz' it is decompressed on the fly. The pro-file is such that
+.B gzip
+shrinks it by 50-100 times.
+
+.TP
+.B -i
+Info. This makes 
+.B readprofile
+only print the profiling step used by the kernel.
+The profiling step is the resolution of the profiling buffer, and
+is chosen during kernel configuration (through `make config').
+If the 
+.B -t
+(terse) switch is used together with
+.B -i
+only the decimal number is printed.
+
+.TP
+.B -a
+Print all symbols in the mapfile. By default the procedures with 0 reported
+ticks are not printed.
+
+.TP
+.B -r
+Reset the profiling buffer. This can only be invoked by root, because
+.B /proc/profile
+is readable by everybody but writable only by the superuser.
+
+.TP
+.B -t
+Terse. This causes the output to be unfilled. It is the format used in the
+first release of 
+.B readprofile.
+
+.TP
+.B -v
+Verbose. The output is organized in four columns and filled with blanks.
+The first column is the RAM address of a kernel function, the second is
+the name of the function, the third is the number of clock ticks and the
+last is the normalized load.
+
+.TP
+.B -V
+Version. This makes
+.B readprofile
+print its version number and exit.
+
+.SH EXAMPLES
+Browse the profiling buffer ordering by clock ticks:
+.nf
+   readprofile | sort -nr | less
+
+.fi
+Print the 20 most loaded procedures:
+.nf
+   readprofile | sort -nr +2 | head -20
+
+.fi
+Print only filesystem profile:
+.nf
+   readprofile | grep _ext2
+
+.fi
+Look at all the kernel information, with ram addresses"
+.nf
+   readprofile -av | less
+
+.fi
+Browse a gzipped `freezed' profile buffer for a non current kernel:
+.nf
+   readprofile -p ~/profile.freeze.gz -m /zImage.map
+
+.fi
+
+.SH BUGS
+
+.LP
+.B readprofile
+needs a kernel version 1.1.73 or newer, because
+.B /proc/profile
+is absent
+in older versions.
+
+.LP
+To enable profiling, the kernel must be reconfigured, recompiled, and
+rebooted. No profiling module is available, and it wouldn't be easy to
+build. So this can be construed as a feature.
+
+.LP
+Profiling is disabled when interrupts are inhibited. This means that many
+profiling ticks happen when interrupts are re-enabled. Watch out for
+misleading information.
+
+.SH AUTHOR
+
+Readprofile and /proc/profile are by Alessandro Rubini (rubini@ipvvis.unipv.it)
+
+.SH FILES
+.nf
+/proc/profile              A binary snapshot of the profiling buffer.
+/usr/src/linux/System.map  The symbol table for the kernel.
+/usr/src/linux/zSystem.map Old name for the symbol table. 
+
+/usr/src/linux/*           The program being profiled :-)
+.fi
+

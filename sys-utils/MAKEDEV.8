@@ -1,0 +1,147 @@
+.\" MAKEDEV.8,v 1.1.1.1 1995/02/22 19:09:12 faith Exp
+.TH MAKEDEV 8 "14th August 1994" Linux "Linux Programmer's Manual"
+.SH NAME
+MAKEDEV \- create devices
+.SH SYNOPSIS
+.B "cd dev; ./MAKEDEV [ -n ] [ -v ] update"
+.br
+.BI "cd dev; ./MAKEDEV [ -n ] [ -v ]" "device"
+.SH DESCRIPTION
+.B MAKEDEV
+is a script that will create the devices in \fC/dev\fP used to interface
+with drivers in the kernel.
+.PP
+Note that programs giving the error \(*QENOENT: No such file or
+directory\(*U normally means that the device file is missing, whereas
+\(*QENODEV: No such device\(*U normally means the kernel does not have the
+driver configured or loaded.
+.SH OPTIONS
+.TP
+.B \-V
+Print out version (actually RCS version information) and exit.
+.TP
+.B \-n
+Do not actually update the devices, just print the actions that would be
+performed.
+.TP
+.B \-d
+Delete the devices.  The main use for this flag is by
+.I MAKEDEV
+itself.
+.TP
+.B \-v
+Be verbose.  Print out the actions as they are performed.  This is the
+same output as produced by
+.BR \-n .
+.SH CUSTOMISATION
+Since there is no standardisation in what names are used for system users
+and groups, it is possible that you may need to modify
+.B MAKEDEV
+to reflect your site's settings.  Near the top of the file is a mapping
+from device type to user, group and permissions (e.g. all CD-ROM devices
+are set from the \fC$cdrom\fP variable).  If you wish to change the
+defaults, this is the section to edit.
+.SH DEVICES
+.TP
+.B General Options
+.TP
+.B update
+This only works on kernels which have \fC/proc/interrupts\fP (introduced
+during 1.1.x).  This file is scanned to see what devices are currently
+configured into the kernel, and this is compared with the previous
+settings stored in the file called \fCDEVICES\fP.
+Devices which are new since then or have a different major number are
+created, and those which are no longer configured are deleted.
+.TP
+.B generic
+Create a generic subset of devices.
+.TP
+.B
+std
+Standard devices.
+.TP 
+.B local
+.TP
+.B Virtual Terminals
+.TP
+.B console
+Also known as tty0.
+.TP
+.B tty{0..63}
+Virtual consoles
+.TP
+.B Serial Devices
+.TP
+.I ttyS{0..63}
+serial ports and corresponding dialout device
+.TP
+.I cyclades
+Dial-in and dial-out devices for the cyclades intelligent I/O serial card.
+.TP
+.B Pseudo Terminals
+.TP
+.I pty[p-s]
+banks of of master and slave pseudo terminals
+.TP
+.B Parallel Ports
+.TP
+.I par[0-3] lp[0-3]
+parallel ports
+.TP
+.B Bus Mice
+.TP
+.I busmice
+The various bus mice devices.
+.TP
+.B Joystick Devices
+.TP
+.I js
+Joystick.  Creates \fCjs0\fP and \fCjs1\fP.
+.TP
+.B Disks Devices
+.TP
+.I fd[0-4]
+floppy disks
+.TP
+.I hd[a-d]
+AT hard disks (1st controller)
+.TP
+.I hd1[a-d]
+2nd AT controller hard disks
+.TP
+.I xd[a-d] 
+XT hard disks
+.TP
+.I sd[a-i]
+SCSI hard disks
+.TP
+.I loop
+Loopback disk devices
+.TP
+.B Tape Devices
+.TP
+.I st[0-7]
+SCSI tapes
+.TP
+.I qic
+QIC-80 tapes
+.TP
+.I ftape
+floppy driver tapes (QIC-117)
+.TP
+.B CDROM Devices
+.TP
+.I scd[0-7]
+SCSI CD players
+.TP
+.I sonycd
+Sony CDU-31A CD player
+.TP
+.I mcd
+Mitsumi CD player
+.TP
+.I cdu535
+Sony CDU-535 CD player
+.TP
+.I lmscd
+LMS/Philips CD player	(nee

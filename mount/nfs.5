@@ -1,0 +1,209 @@
+.\" nfs.5 "Rick Sladkey" <jrs@world.std.com>
+.\" Wed Feb  8 12:52:42 1995, faith@cs.unc.edu: updates for Ross Biro's
+.\" patches. "
+.TH NFS 5 "20 November 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+nfs \- nfs fstab format and options
+.SH SYNOPSIS
+.B /etc/fstab
+.SH DESCRIPTION
+The
+.I fstab
+file contains information about which filesystems
+to mount where and with what options.
+For NFS mounts, it contains the server name and
+exported server directory to mount from,
+the local directory that is the mount point,
+and the NFS specific options that control
+the way the filesystem is mounted.
+.P
+Here is an example from an \fI/etc/fstab\fP file from an NFS mount.
+.sp
+.nf
+.ta 2.5i +0.75i +0.75i +1.0i
+server:/usr/local/pub	/pub	nfs	timeo=14,intr
+.fi
+.DT
+.SS Options
+.TP 1.5i
+.I rsize=n
+The number of bytes NFS uses when reading files from an NFS server.
+The default value is dependent on the kernel, currently 1024 bytes.
+.TP 1.5i
+.I wsize=n
+The number of bytes NFS uses when writing files to an NFS server.
+The default value is dependent on the kernel, currently 1024 bytes.
+.TP 1.5i
+.I timeo=n
+The value in tenths of a second before sending the
+first retransmission after an RPC timeout.
+The default value is 7 tenths of a second.  After the first timeout,
+the timeout is doubled after each successive timeout until a maximum
+timeout of 60 seconds is reached or the enough retransmissions
+have occured to cause a major timeout.  Then, if the filesystem
+is hard mounted, each new timeout cascade restarts at twice the
+initial value of the previous cascade, again doubling at each
+retransmission.  The maximum timeout is always 60 seconds.
+Better overall performance may be achieved by increasing the
+timeout when mounting on a busy network, to a slow server, or through
+several routers or gateways.
+.TP 1.5i
+.I retrans=n
+The number of minor timeouts and retransmissions that must occur before
+a major timeout occurs.  The default is 3 timeouts.  When a major timeout
+occurs, the file operation is either aborted or a "server not responding"
+message is printed on the console.
+.TP 1.5i
+.I acregmin=n
+The minimum time in seconds that attributes of a regular file should
+be cached before requesting fresh information from a server.
+The default is 3 seconds.
+.TP 1.5i
+.I acregmax=n
+The maximum time in seconds that attributes of a regular file can
+be cached before requesting fresh information from a server.
+The default is 60 seconds.
+.TP 1.5i
+.I acdirmin=n
+The minimum time in seconds that attributes of a directory should
+be cached before requesting fresh information from a server.
+The default is 30 seconds.
+.TP 1.5i
+.I acdirmax=n
+The maximum time in seconds that attributes of a directory can
+be cached before requesting fresh information from a server.
+The default is 60 seconds.
+.TP 1.5i
+.I actimeo=n
+Using actimeo sets all of
+.I acregmin,
+.I acregmax,
+.I acdirmin,
+and
+.I acdirmax
+to the same value.
+There is no default value.
+.TP 1.5i
+.I retry=n
+The number of times to retry a backgrounded NFS mount operation
+before giving up.
+The default value is 10000 times.
+.TP 1.5i
+.I namlen=n
+When an NFS server does not support version two of the
+RPC mount protocol, this option can be used to specify
+the maximum length of a filename that is supported on
+the remote filesystem.  This is used to support the
+POSIX pathconf functions.  The default is 255 characters.
+.TP 1.5i
+.I port=n
+The numeric value of the port to connect to the NFS server on.
+If the port number is 0 (the default) then query the
+remote host's portmapper for the port number to use.
+If the remote host's NFS daemon is not registered with
+its portmapper, the standard NFS port number 2049 is
+used instead.
+.TP 1.5i
+.I mountport=n
+The numeric value of the
+.B mountd
+port.
+.TP 1.5i
+.I mounthost=name
+The name of the host running
+.B mountd .
+.TP 1.5i
+.I mountprog=n
+Use an alternate RPC program number to contact the
+mount daemon on the remote host.  This option is useful
+for hosts that can run multiple NFS servers.
+The default value is 100005 which is the standard RPC
+mount daemon program number.
+.TP 1.5i
+.I mountvers=n
+Use an alternate RPC version number to contact the
+mount daemon on the remote host.  This option is useful
+for hosts that can run multiple NFS servers.
+The default value is version 1.
+.TP 1.5i
+.I nfsprog=n
+Use an alternate RPC program number to contact the
+NFS daemon on the remote host.  This option is useful
+for hosts that can run multiple NFS servers.
+The default value is 100003 which is the standard RPC
+NFS daemon program number.
+.TP 1.5i
+.I nfsvers=n
+Use an alternate RPC version number to contact the
+NFS daemon on the remote host.  This option is useful
+for hosts that can run multiple NFS servers.
+The default value is version 2.
+.TP 1.5i
+.I bg
+If the first NFS mount attempt times out, continue trying the mount
+in the background.
+The default is to not to background the mount on timeout but fail.
+.TP 1.5i
+.I fg
+If the first NFS mount attempt times out, fail immediately.
+This is the default.
+.TP 1.5i
+.I soft
+If an NFS file operation has a major timeout then report an I/O error to
+the calling program.
+The default is to continue retrying NFS file operations indefinitely.
+.TP 1.5i
+.I hard
+If an NFS file operation has a major timeout then report
+"server not responding" on the console and continue retrying indefinitely.
+This is the default.
+.TP 1.5i
+.I intr
+If an NFS file operation has a major timeout and it is hard mounted,
+then allow signals to interupt the file operation and cause it to
+return EINTR to the calling program.  The default is to not
+allow file operations to be interrupted.
+.TP 1.5i
+.I posix
+Mount the NFS filesystem using POSIX semantics.  This allows
+an NFS filesystem to properly support the POSIX pathconf
+command by querying the mount server for the maximum length
+of a filename.  To do this, the remote host must support version
+two of the RPC mount protocol.  Many NFS servers support only
+version one.
+.TP 1.5i
+.I nocto
+Supress the retrieval of new attributes when creating a file.
+.TP 1.5i
+.I noac
+Disable all forms of attribute caching entirely.  This extracts a
+server performance penalty but it allows two different NFS clients
+to get reasonable good results when both clients are actively
+writing to common filesystem on the server.
+.TP 1.5i
+.I tcp
+Mount the NFS filesystem using the TCP protocol instead of the
+default UDP protocol.  Many NFS severs only support UDP.
+.TP 1.5i
+.I udp
+Mount the NFS filesystem using the UDP protocol.  This
+is the default.
+.P
+All of the non-value options have corresponding nooption forms.
+For example, nointr means don't allow file operations to be
+interrupted.
+.SH FILES
+.I /etc/fstab
+.SH "SEE ALSO"
+.BR fstab "(5), " mount "(8), " umount (8)
+.SH AUTHOR
+"Rick Sladkey" <jrs@world.std.com>
+.SH BUGS
+The bg, fg, retry, posix, and nocto options are parsed by mount
+but currently are silently ignored.
+.P
+The tcp and namlen options are implemented but are not currently
+supported by the Linux kernel.
+.P
+The umount command should notify the server
+when an NFS filesystem is unmounted.

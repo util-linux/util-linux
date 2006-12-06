@@ -1,0 +1,43 @@
+.\" Copyright 1992, 1995 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH DOMAINNAME 1 "16 February 1995" "Linux 1.0" "Linux Programmer's Manual"
+.SH NAME
+domainname \- set or print NIS domain of current host
+.SH SYNOPSIS
+.BR "domainname [ " name " ]"
+.SH DESCRIPTION
+.B domainname
+prints the NIS domainname of the current host, from the
+.BR getdomainname (3)
+library call.  If an argument is present and the effective UID is 0,
+.B domainname
+changes the NIS domainname of the host, with the
+.BR setdomainname (2)
+system call.  This is usually done at boot time in the
+.I /etc/rc.local
+script.
+.PP
+.B Note:
+This command sets the NIS (Network Information Services) domain,
+.I not
+the DNS (Domain Name System) domain.  Unless you are running NIS
+(formerly known as Sun Yellow Pages (YP)), you should
+.I not
+use the
+.B domainname
+command to set your domain.  You probably want to set the DNS domain, which
+is used to map human-readable machine names into IP addresses on the
+InterNet.  See
+.BR dnsdomainname (1)
+for more information.
+.SH FILES
+.I /etc/rc.local
+.SH "SEE ALSO"
+.BR hostname (1),
+.BR dnsdomainname (1),
+.BR named (8),
+.BR sendmail (8),
+.bR ypinit (8)
+.SH AUTHOR
+Lars Wirzenius by substituting in hostname.c
+

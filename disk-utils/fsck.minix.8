@@ -1,0 +1,125 @@
+.\" Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be freely distributed.
+.\" " for hilit19
+.TH FSCK 8 "10 January 1994" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+fsck.minix \- a file system consistency checker for Linux
+.SH SYNOPSIS
+.B "fsck.minix [ \-larvsmf ]"
+device
+.SH DESCRIPTION
+.B fsck.minix
+performs a consistency check for the Linux MINIX filesystem.  The current
+version supports the 14 character and 30 character filename options.
+
+The program
+assumes the file system is quiescent.
+.B fsck.minix
+should not be used on a mounted device unless you can be sure nobody is
+writing to it (and remember that the kernel can write to it when it
+searches for files).
+
+The device will usually have the following form:
+.nf
+.RS
+/dev/hda[1-8]
+/dev/hdb[1-8]
+/dev/sda[1-8]
+/dev/sdb[1-8]
+.RE
+.fi
+
+If the file system was changed (i.e., repaired), then
+.B fsck.minix
+will print "FILE SYSTEM HAS CHANGED" and will
+.BR sync (2)
+three times before exiting.  Since Linux does not currently have raw
+devices, there is
+.I no
+need to reboot at this time (versus a system which
+.I does
+have raw devices).
+.SH WARNING
+.B fsck.minix
+should
+.B not
+be used on a mounted filesystem.  Using
+.B fsck.minix
+on a mounted filesystem is very dangerous, due to the possibility that
+deleted files are still in use, and can seriously damage a perfectly good
+filesystem!  If you absolutely have to run
+.B fsck.minix
+on a mounted filesystem (i.e., the root filesystem), make sure nothing is
+writing to the disk, and that no files are "zombies" waiting for deletion.
+.SH OPTIONS
+.TP
+.B \-l
+Lists all filenames
+.TP
+.B \-r
+Performs interactive repairs
+.TP
+.B \-a
+Performs automatic repairs (this option implies
+.BR \-r ),
+and serves to answer all of the questions asked with the default.  Note
+that this can be extremely dangerous in the case of extensive file system
+damage.
+.TP
+.B \-v
+Verbose
+.TP
+.B \-s
+Outputs super-block information
+.TP
+.B \-m
+Activates MINIX-like "mode not cleared" warnings
+.TP
+.B \-f
+Force file system check even if the file system was marked as valid (this
+marking is done by the kernel when the file system is unmounted).
+.SH "SEE ALSO"
+.BR fsck (8),
+.BR fsck.ext (8),
+.BR fsck.ext2 (8),
+.BR fsck.xiafs (8),
+.BR mkfs (8),
+.BR mkfs.minix (8),
+.BR mkfs.ext (8),
+.BR mkfs.ext2 (8),
+.BR mkfs.xiafs (8).
+.BR reboot (8)
+.SH DIAGNOSTICS
+There are numerous diagnostic messages.  The ones mentioned here are the
+most commonly seen in normal usage.
+
+If the device does not exist,
+.B fsck.minix
+will print "unable to read super block".  If the device exists, but is not
+a MINIX file system,
+.B fsck.minix
+will print "bad magic number in super-block".
+.SH "EXIT CODES"
+The exit code returned by
+.B fsck.minix
+is the sum of the following:
+.IP 0
+No errors
+.IP 3
+File system errors corrected, system should be rebooted if file system was
+mounted
+.IP 4
+File system errors left uncorrected
+.IP 8
+Operational error
+.IP 16
+Usage or syntax error
+.PP
+In point of fact, only 0, 3, 4, 7, 8, and 16 can ever be returned.
+.SH AUTHOR
+Linus Torvalds (torvalds@cs.helsinki.fi)
+.br
+Error code values by Rik Faith (faith@cs.unc.edu)
+.br
+Added support for file system valid flag: Dr. Wettstein
+(greg%wind.uucp@plains.nodak.edu)

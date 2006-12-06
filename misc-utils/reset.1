@@ -1,0 +1,29 @@
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH RESET 1 "10 October 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+reset \- reset the terminal
+.SH SYNOPSIS
+.BR clear
+.SH DESCRIPTION
+.B reset
+calls
+.BR tput (1)
+with the
+.IR clear , rmacs , rmm , rmul , rs1 , rs2 ", and " rs3
+arguments.  This causes
+.B tput
+to send appropriate reset strings to the terminal based on information in
+.IR /etc/termcap .
+This sequence seems to be sufficient to reset the Linux VC's when they
+start printing "funny-looking" characters.  For good measure,
+.BR stty (1)
+is called with the
+.I sane
+argument in an attempt to get cooked mode back.
+.SH "SEE ALSO"
+.BR reset (1),
+.BR stty (1),
+.BR tput (1)
+.SH AUTHOR
+Rik Faith (faith@cs.unc.edu)

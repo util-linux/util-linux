@@ -1,0 +1,194 @@
+#
+# /etc/rc.serial 
+#	Initializes the serial ports on your system
+#
+# Distributed with setserial version 2.10
+#
+
+# Standard flags you want your serial devices to have
+# Examples: SAK, pgrp_lockout, session_lockout
+#
+STD_FLAGS="session_lockout"
+
+SETSERIAL=/sbin/setserial
+
+echo -n "Configuring serial ports...."
+
+# Do wild interrupt detection
+#
+${SETSERIAL} -W /dev/cua0
+
+###############################################################
+#
+# AUTOMATIC CONFIGURATION 
+#
+# Uncomment the appropriate lines below to enable auto-configuration
+# of a particular board.  Or comment them out to disable them....
+#
+# NOTE!  Although the automatic configuration is enabled by default,
+# I strongly suggest that you comment out this section and use the 
+# manual configuration section instead.  It's more work to set up, but 
+# it's more reliable.
+#
+###############################################################
+
+# Do AUTOMATIC_IRQ probing
+#
+AUTO_IRQ=auto_irq
+
+# These are the standard COM1 through COM4 devices
+#
+# If you have an internal modeme with a Rockwell Chipset, add a "skip_test"
+# to the /dev/cua3 line below.  (It's not added by default because it will
+# screw up people with 8514 displays).
+#
+${SETSERIAL} /dev/cua0 ${AUTO_IRQ} skip_test autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua1 ${AUTO_IRQ} skip_test autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua2 ${AUTO_IRQ} skip_test autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua3 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+
+# These are for the first AST Fourport board (base address 0x1A0)
+#
+${SETSERIAL} /dev/cua4 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua5 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua6 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua7 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+
+# These are for the second AST Fourport board (base address 0x2A0)
+#
+${SETSERIAL} /dev/cua8 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua9 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua10 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua11 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+
+# These are the 3rd and 4th ports on the Accent Async board.
+#
+#${SETSERIAL} /dev/cua12 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua13 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+
+# Usenet Serial Board II (base address 0x100)
+#
+#${SETSERIAL} /dev/cua16 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua17 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua18 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua19 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+
+
+# BocaBoard 4 port (BB-1004) (base address 0x100)
+#
+#${SETSERIAL} /dev/cua16 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua17 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua18 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua19 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+
+# BocaBoard 8 port (BB-1008) (base address 0x100),
+# or two BB-1004's (base addresses 0x100 and 0x120)
+#
+#${SETSERIAL} /dev/cua16 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua17 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua18 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua19 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua20 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua21 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua22 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+#${SETSERIAL} /dev/cua23 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+
+# BocaBoard 16 port (BB-1008), (base address 0x100),
+# or two BB-1008's (base addresses 0x100 and 0x140),
+# or four BB-1004's (base address 0x100, 0x120, 0x140, and 0x160)
+#
+# Warning --- some of these ports may conflict with the Future Domain
+# SCSI controller.  If you want to run both the BocaBoards and the 
+# Future Domain controller, you may need to change the port assignment
+# of the Bocaboards -- see below in the section on manual configuration.
+#
+${SETSERIAL} /dev/cua16 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua17 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua18 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua19 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua20 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua21 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua22 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua23 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua24 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua25 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua26 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua27 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua28 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua29 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua30 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+${SETSERIAL} /dev/cua31 ${AUTO_IRQ} autoconfig ${STD_FLAGS}
+
+###############################################################
+#
+# MANUAL CONFIGURATION 
+#
+# If you want to do manual configuration of one or more of your 
+# serial ports, uncomment and modify the relevant lines.
+#
+###############################################################
+
+# These are the standard COM1 through COM4 devices
+#
+#${SETSERIAL} /dev/cua0 uart 16450 port 0x3F8 irq 4 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua1 uart 16450 port 0x2F8 irq 3 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua2 uart 16450 port 0x3E8 irq 4 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua3 uart 16450 port 0x2E8 irq 3 ${STD_FLAGS}
+
+# These are the first set of AST Fourport ports
+#
+#${SETSERIAL} /dev/cua4 uart 16450 port 0x1A0 irq 9 fourport ${STD_FLAGS}
+#${SETSERIAL} /dev/cua5 uart 16450 port 0x1A8 irq 9 fourport ${STD_FLAGS}
+#${SETSERIAL} /dev/cua6 uart 16450 port 0x1B0 irq 9 fourport ${STD_FLAGS}
+#${SETSERIAL} /dev/cua7 uart 16450 port 0x1B8 irq 9 fourport ${STD_FLAGS}
+
+# These are the second set of AST Fourport ports
+#
+#${SETSERIAL} /dev/cua8 uart 16450 port 0x2A0 irq 5 fourport ${STD_FLAGS}
+#${SETSERIAL} /dev/cua9 uart 16450 port 0x2A8 irq 5 fourport ${STD_FLAGS}
+#${SETSERIAL} /dev/cua10 uart 16450 port 0x2B0 irq 5 fourport ${STD_FLAGS}
+#${SETSERIAL} /dev/cua11 uart 16450 port 0x2B8 irq 5 fourport ${STD_FLAGS}
+
+# These are the 3rd and 4th ports on the Accent Async board.
+#
+#${SETSERIAL} /dev/cua12 uart 16450 port 0x330 irq 4 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua13 uart 16450 port 0x338 irq 4 ${STD_FLAGS}
+
+# These are two spare devices you can use to customize for 
+# some board which is not supported above....
+#${SETSERIAL} /dev/cua14 uart XXXXX port XXXX irq X ${STD_FLAGS}
+#${SETSERIAL} /dev/cua15 uart XXXXX port XXXX irq X ${STD_FLAGS}
+
+# These are the ports used for either the Usenet Serial II
+# board, or the Boca Board 4, 8, or 16 port boards.
+#
+# Uncomment only the first 4 lines for the Usenet Serial II board,
+# and uncomment the first 4, 8, or all 16 lines for the
+# Boca Board BB-1004, BB-1008, and BB-2016 respectively.
+#
+#${SETSERIAL} /dev/cua16 uart 16550A port 0x100 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua17 uart 16550A port 0x108 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua18 uart 16550A port 0x110 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua19 uart 16550A port 0x118 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua20 uart 16550A port 0x120 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua21 uart 16550A port 0x128 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua22 uart 16550A port 0x130 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua23 uart 16550A port 0x138 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua24 uart 16550A port 0x140 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua25 uart 16550A port 0x148 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua26 uart 16550A port 0x150 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua27 uart 16550A port 0x158 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua28 uart 16550A port 0x160 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua29 uart 16550A port 0x168 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua30 uart 16550A port 0x170 irq 12 ${STD_FLAGS}
+#${SETSERIAL} /dev/cua31 uart 16550A port 0x178 irq 12 ${STD_FLAGS}
+
+###########################################################
+#
+# Print the results of the serial configuration process
+#
+###########################################################
+
+echo "done."
+
+${SETSERIAL} -bg /dev/cua? /dev/cua??

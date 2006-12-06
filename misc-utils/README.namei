@@ -1,0 +1,31 @@
+Tired of running into "Too many levels of symlinks" problems on
+your 4.2 BSD derivitive machine?  
+
+We sure did... our NFS'ed network of lots of Suns, Vaxen and so forth
+made it impossible at times to trace down where a file REALLY lived.
+I mean ls -l is nice, but wouldn't you like to follow things like
+the namei routine in the kernel does?
+
+Well here it is.... the namei program.  It follows things out until
+a terminal state is found.
+
+This program compiles and runs under:
+
+    SunOS 4.0.1 (sun3's)
+    SunOS 4.0.3 (sun4's)
+    SunOS 4.1.1 (sun4's)
+    Ultrix 3.1
+    BSD 4.3
+
+and probably a host of other 4.2 derived systems (but probably not
+System V).
+
+Anyway, if anyone has any bugs (or enhancements), please send them to
+me in E-mail form.
+
+And, by the way, if you make LOTS of money off of this program, please
+don't tell me :-).
+
+    -Roger      (rogers@fangorn.wr.tek.com)
+		UUCP:	...!uunet!tektronix!fangorn.wr.tek.com!rogers
+		ARPA:	<rogers%fangorn.wr.tek.com@RELAY.CS.NET>

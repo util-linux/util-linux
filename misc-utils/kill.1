@@ -1,0 +1,49 @@
+.\" Copyright 1994 Salvatore Valente (svalente@mit.edu)
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH KILL 1 "14 October 1994" "Linux Utilities" "Linux Programmer's Manual"
+.SH NAME
+kill \- terminate a process
+.SH SYNOPSIS
+.BR "kill" " [ \-s signal | \-p ] " " [ -a ] " "pid ..."
+.br
+.B "kill -l [ signal ]"
+.SH DESCRIPTION
+.B kill
+sends the specified signal to the specified process.  If no signal is
+specified, the TERM signal is sent.  The TERM signal will kill processes
+which do not catch this signal.  For other processes, if may be necessary
+to use the KILL (9) signal, since this signal cannot be caught.
+
+Most modern shells have a builtin kill function.
+.SH OPTIONS
+.TP
+.BR "pid ..."
+Specify the list of processes that
+.B kill
+should signal.  Each
+.I pid
+can be a process id, or a process name.
+.TP
+.BR \-s
+Specify the signal to send.
+The signal may be given as a signal name or number.
+.TP
+.BR \-p
+Specify that
+.B kill
+should only print the process id
+.I (pid)
+of the named process, and should not send it a signal.
+.TP
+.BR \-l
+Print a list of signal names.  These are found in
+.I /usr/include/linux/signal.h
+.SH "SEE ALSO"
+.BR bash (1),
+.BR tcsh (1),
+.BR kill (2),
+.BR sigvec (2)
+.SH AUTHOR
+Taken from BSD 4.4.  The ability to translate process names to process
+ids was added by Salvatore Valente <svalente@mit.edu>.

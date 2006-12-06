@@ -1,0 +1,66 @@
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH SETFDPRM 8 "20 November 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+setfdprm \- sets user-provided floppy disk parameters
+.SH SYNOPSIS
+.B "setfdprm [ \-p ]"
+device name
+.br
+.B "setfdprm [ \-p ]"
+device size sectors heads tracks stretch gap rate spec1 fmt_gap
+.br
+.B "setfdprm [ \-c ]"
+device
+.br
+.B "setfdprm [ \-y ]"
+device
+.br
+.B "setfdprm [ \-n ]"
+device
+.SH DESCRIPTION
+.B setfdprm
+is a utility that can be used to load disk parameters into the
+auto-detecting floppy devices, to clear old parameter sets and to disable
+or enable diagnostic messages.
+
+Without any options,
+.B setfdprm
+loads the
+.I device
+(usually
+.I /dev/fd0
+or
+.IR /dev/fd1 )
+with a new parameter set with the
+.I name
+entry found in
+.I /etc/fdprm
+(usually named 360/360, etc.).  These parameters stay in effect until the
+media is changed.
+.OPTIONS
+.TP
+.BI \-p " device name"
+Permanently loads a new parameter set for the specified auto-configuring
+floppy device for the configuration with
+.I name
+in
+.IR /etc/fdprm .
+Alternatively, the parameters can be given directly from the command line.
+.TP
+.BI \-c " device"
+Clears the parameter set of the specified auto-configuring floppy device.
+.TP
+.BI -y " device"
+Enables format detection messages for the specified auto-configuring floppy
+device.
+.TP
+.BI -n " device"
+Disables format detection messages for the specified auto-configuring
+floppy device.
+.SH BUGS
+This documentation is grossly incomplete.
+.SH FILES
+.I /etc/fdprm
+.SH AUTHOR
+Werner Almesberger (almesber@nessie.cs.id.ethz.ch)

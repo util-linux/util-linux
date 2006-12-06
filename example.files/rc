@@ -1,0 +1,79 @@
+# rc file for The Linux BOGUS Release, version 1.0.1
+
+                                echo "Running /etc/rc. . ."
+
+PATH=/sbin:/usr/sbin:/bin:/usr/bin; export PATH
+
+# Update (bdflush) performs flushes dirty buffers back to disk and
+# performs a sync every 30 seconds.
+                                echo "Starting update"
+update &
+
+if [ -f /fastboot ]
+then
+                                echo "Skipping file system check"
+else
+                                echo "Performing file system check"
+    fsck -AV -a
+    # If there was a failure, drop into single-user mode.
+    # NOTE: This is not secure.  If security is needed, make sure than
+    #       /etc/securesingle exists and "reboot single".  simipleinit
+    #       will then prompt for root's password.
+    if [ $? -gt 1 ]
+    then
+        echo "Warning: fsck FAILED"
+        echo "         Starting single user shell"
+        echo "         Fix filesystem and REBOOT"
+        sh -si < /dev/console > /dev/console 2>&1
+    fi
+fi
+
+                                echo "Mounting file systems"
+# Remount the root filesystem in read-write mode
+mount -n -o rw,remount /
+
+# Remove the fastboot check file
+rm -f /fastboot
+
+# Remove /etc/mtab* so mount creates the /etc/mtab file
+rm -f /etc/mtab*
+
+# Mount all partitions specified in /etc/fstab
+mount -avt nonfs,nomsdos,nohpfs
+
+# Mount swap partition specified in /etc/fstab
+swapon -a
+
+                                echo -n "Initialization: "
+# Update ps database
+if [ -f /usr/sbin/psupdate -a -f /usr/src/linux/vmlinux ]; then
+                                echo -n "psdatabase "
+	/usr/sbin/psupdate /usr/src/linux/vmlinux
+fi
+
+# tmp and usr may be mounted, so we do these rm's after mount
+                                echo -n "locks "
+rm -f /var/lock/LCK*
+                                echo -n "pids "
+rm -f /var/run/*
+                                echo -n "/tmp "
+rm -rf /tmp; mkdir /tmp; chmod 1777 /tmp
+
+# Remove /var/adm/utmp and touch it
+                                echo -n "utmp "
+if [ ! -e /var ]; then mkdir /var; chmod 755 /var; fi
+if [ ! -e /var/adm ]; then mkdir /var/adm; chmod 755 /var/adm; fi
+rm -f /var/adm/utmp
+touch /var/adm/utmp
+chmod 644 /var/adm/utmp
+
+                                echo ""
+                                echo "Running rc.local. . ."
+sh /etc/rc.local
+
+# Allow logins
+                                echo "Allowing logins"
+rm -f /etc/nologin
+
+date
+exit 0

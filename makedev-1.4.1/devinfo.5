@@ -1,0 +1,122 @@
+.\" -*- nroff -*-
+.TH DEVINFO 5 "January 1995" "Version 1.4"
+.SH NAME
+DEVINFO \- device entry database
+.SH DESCRIPTION
+.B DEVINFO 
+is a text file that describes all the possible devices for a system.
+It is used by
+.BR MAKEDEV (8)
+to create special file entries in 
+.BR /dev .
+It may be named either
+.BR /dev/DEVINFO " or " /etc/devinfo .
+Information about custom local devices, if any, should be placed in
+.BR DEVINFO.local " or " /etc/devinfo.local ,
+which has the same syntax.
+.LP
+The file format is free-form. Both C, C++, and shell comments are
+understood. There are basically four statements:
+.TP
+.RI "ignore { " proc-device... " }"
+This causes the specified names to be ignored if found in
+.BR /proc/devices .
+.TP
+.RI "batch { " device... " }"
+This creates a "batch" \- a collection of devices which will all be
+created when the batch is invoked. For example, in the standard 
+.BR DEVINFO ,
+"generic" is a batch.
+.TP
+.RI "block " device-spec
+This defines one or more block devices.
+.TP
+.RI "char " device-spec
+This defines one or more character devices.
+.LP
+Here is a sample
+.IR device-spec :
+.RS
+.nf
+(std, 1) {
+    mem (kmem) : 1
+    null (public) : 3
+    core -> "/proc/kcore"
+}
+.fi
+.RE
+.LP
+This example defines a group of devices called "std", with major
+number 1. Running
+.B "\"MAKEDEV std\""
+will create all the devices in the group; running, for example,
+.B "\"MAKEDEV null\""
+would make just the one device "null".
+.LP
+It is possible to specify, instead of just "std", something like
+"std=foo". In this case, the stuff on the right-hand side of the
+equals sign specifies a name from 
+.BR /proc/devices ,
+and the major number will be retrieved from there if present. If an
+entry from 
+.BR /proc/devices
+is specified, the explicit major number may be omitted. In this case,
+if the number is not found in /proc/devices, attempts to create the
+device will be rejected.
+.LP
+Inside the braces is a list of specific devices. The name in
+parenthesis is the "class" - this is something specified in 
+.B MAKEDEV.cfg
+(q.v.) that determines the ownership and permissions of the special
+file created. In the above example, the device "mem" was set to have
+the class "kmem", but "null" was set to be "public". Ordinarily you'd
+define "public" to be mode 666, but "kmem" to be mode 660 and owned by
+group kmem. The number after the colon is the minor number for this
+particular device \- for instance, 3 for "null".
+.LP
+You may also specify a symbolic link with "->". For instance, above,
+"core" was made a link to 
+.BR /proc/kcore .
+Note that names may contain any characters, but names that contain
+things other than alphanumerics, dash, and underscore should be put in
+double quotes.
+.LP
+An entire range of devices can be created: you may specify a range of
+numbers in brackets, like this:
+.RS
+.nf
+
+tty[1-8] (tty) : 1
+
+.fi
+.RE
+This creates tty1\-tty8 with minor device numbers starting with 1.
+If you specify the range in hex (prefixed by 0x) the device names will
+be created numbered in hex, as is normal for ptys. The range may
+appear inside the name string, but there may only be one range.
+.LP
+There is a special syntax for creating the entire banks of devices for
+a hard drive:
+.RS
+.nf
+
+    hd[a-d] 8/64
+
+.fi
+.RE
+What this means is as follows: create hda, and 8 partitions on hda
+(hda1 through hda8), starting with minor number 0. Then create hdb,
+and 8 partitions, starting with minor number 64. Then hdc, etc., with
+minor number 64*2 = 128. And so forth. These are automatically placed
+in the class "disk". The necessary groups and batches are created so
+you can ask 
+.B MAKEDEV
+to create "hd" or "hda" or "hda1" and expect it to do the correct
+thing. 
+.LP
+Note that simple arithmetic is permitted for specifying the minor
+device number, as this often makes things much clearer and less likely
+to be accidentally broken.
+.SH "SEE ALSO"
+.BR MAKEDEV (8),
+.BR MAKEDEV.cfg (5)

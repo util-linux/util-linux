@@ -1,0 +1,59 @@
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH FDFORMAT 8 "1 February 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+fdformat \- Low-level formats a floppy disk
+.SH SYNOPSIS
+.B fdformat
+.B "[ \-n ]"
+device
+.SH DESCRIPTION
+.B fdformat
+does a low level format on a floppy disk.
+.I device
+is usually one of the following (for floppy devices, the major = 2, and the
+minor is shown for informational purposes only):
+.sp
+.nf
+.RS
+/dev/fd0d360  (minor = 4)
+/dev/fd0h1200 (minor = 8)
+/dev/fd0D360  (minor = 12)
+/dev/fd0H360  (minor = 12)
+/dev/fd0D720  (minor = 16)
+/dev/fd0H720  (minor = 16)
+/dev/fd0h360  (minor = 20)
+/dev/fd0h720  (minor = 24)
+/dev/fd0H1440 (minor = 28)
+
+/dev/fd1d360  (minor = 5)
+/dev/fd1h1200 (minor = 9)
+/dev/fd1D360  (minor = 13)
+/dev/fd1H360  (minor = 13)
+/dev/fd1D720  (minor = 17)
+/dev/fd1H720  (minor = 17)
+/dev/fd1h360  (minor = 21)
+/dev/fd1h720  (minor = 25)
+/dev/fd1H1440 (minor = 29)
+.RE
+.fi
+
+The generic floppy devices, /dev/fd0 and /dev/fd1, will fail to work with
+.B fdformat
+when a non-standard format is being used, or if the format has not been
+autodetected earlier.  In this case, use
+.BR setfdprm (8)
+to load the disk parameters.
+
+.SH OPTIONS
+.TP
+.B \-n
+No verify.  This option will disable the verification that is performed
+after the format.
+.SH "SEE ALSO"
+.BR fd (4),
+.BR setfdprm (8),
+.BR mkfs (8),
+.BR emkfs (8)
+.SH AUTHOR
+Werner Almesberger (almesber@nessie.cs.id.ethz.ch)

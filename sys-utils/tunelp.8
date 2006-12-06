@@ -1,0 +1,84 @@
+.\" This file Copyright 1992 Michael K. Johnson (johnsonm@nigel.vnet.net)
+.\" It may be distributed under the GNU Public License, version 2, or
+.\" any higher version.  See section COPYING of the GNU Public license
+.\" for conditions under which this file may be redistributed.
+.\" tunelp.8,v 1.1.1.1 1995/02/22 19:09:12 faith Exp
+.TH tunelp 8 "26 August 1992" "Cohesive Systems" "Linux Programmer's Manual"
+.SH NAME
+tunelp \- set various parameters for the lp device
+.SH SYNOPSIS
+\fBtunelp\fP \fI<device>\fP [-i \fI<IRQ>\fP | -t \fI<TIME>\fP | -c \fI<CHARS>\fP | -w \fI<WAIT>\fP | -a [on|off] | -o [on|off] | -C [on|off] | -r | -s | -q [on|off] ]
+.SH DESCRIPTION
+\fBtunelp\fP sets several parameters for the /dev/lp\fI?\fP devices, for better
+performance (or for any performance at all, if your printer won't work
+without it...)  Without parameters, tells whether the device is using
+interrups, and if so, which one.  With parameters, sets the device
+characteristics accordingly.  The parameters are as follows:
+
+-i \fI<IRQ>\fP is the IRQ to use for the parallel port in question.  If this
+is set to something non-zero, -t and -c have no effect.  If your port
+does not use interrupts, this option will make printing stop.
+.B tunelp -i 0
+restores non-interrupt driven (polling) action, and your printer should
+work again.  If your parallel port does support interrupts,
+interrupt-driven printing should be somewhat faster and efficient, and
+will probably be desireable.
+
+-t \fI<TIME>\fP is the amount of time in jiffies that the driver waits if the
+printer doesn't take a character for the number of tries dictated by
+the -c parameter.  10 is the default value.  If you want fastest
+possible printing, and don't care about system load, you may set this
+to 0.  If you don't care how fast your printer goes, or are printing
+text on a slow printer with a buffer, then 500 (5 seconds) should be
+fine, and will give you very low system load.  This value generally
+should be lower for printing graphics than text, by a factor of
+approximately 10, for best performance.
+
+-c \fI<CHARS>\fP is the number of times to try to output a character to the
+printer before sleeping for -t \fI<TIME>\fP.  It is the number of times around
+a loop that tries to send a character to the printer.  120 appears to
+be a good value for most printers.  250 is the default, because there
+are some printers that require a wait this long, but feel free to
+change this.  If you have a very fast printer like an HP laserjet 4, a
+value of 10 might make more sense.  If you have a \fIreally\fP old
+printer, you can increase this farther.
+
+Setting -t \fI<TIME>\fP to 0 is equivalent to setting -c \fI<CHARS>\fP
+to infinity.
+
+-w \fI<WAIT>\fP is the a busy loop counter for the strobe signal.  While most
+printers appear to be able to deal with an extremely short strobe,
+some printers demand a longer one.  Increasing this from the default
+0 may make it possible to print with those printers.  This may also
+make it possible to use longer cables.
+
+-a [on|off] This is whether to abort on printer error -- the default
+is not to.  If you are sitting at your computer, you probably want to
+be able to see an error and fix it, and have the printer go on
+printing.  On the other hand, if you aren't, you might rather that
+your printer spooler find out that the printer isn't ready, quit
+trying, and send you mail about it.  The choice is yours.
+
+-o [on|off] This option is much like -a.  It makes any open() of this
+device check to see that the device is on-line and not reporting any
+out of paper or other errors.  This is the correct setting for most
+versions of lpd.
+
+-C [on|off] This option adds extra ("careful") error checking.  When
+this option is on, the printer driver will ensure that the printer is
+on-line and not reporting any out of paper or other errors before
+sending data.  This is particularly useful for printers that normally
+appear to accept data when turned off.
+
+-s This option returns the current printer status, both as a 
+decimal number from 0..255, and as a list of active flags.  When
+this option is specified, -q off, turning off the display of the
+current IRQ, is implied.
+
+-o, -C, and -s all require a Linux kernel version of 1.1.76 or later.
+
+-r This option resets the port.  It requires a Linux kernel version of
+1.1.80 or later.
+
+-q [on|off] This option sets printing the display of the current IRQ
+setting.

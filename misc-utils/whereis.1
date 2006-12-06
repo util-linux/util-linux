@@ -1,0 +1,198 @@
+.\" Copyright (c) 1980, 1990 The Regents of the University of California.
+.\" All rights reserved.
+.\"
+.\" Redistribution and use in source and binary forms, with or without
+.\" modification, are permitted provided that the following conditions
+.\" are met:
+.\" 1. Redistributions of source code must retain the above copyright
+.\"    notice, this list of conditions and the following disclaimer.
+.\" 2. Redistributions in binary form must reproduce the above copyright
+.\"    notice, this list of conditions and the following disclaimer in the
+.\"    documentation and/or other materials provided with the distribution.
+.\" 3. All advertising materials mentioning features or use of this software
+.\"    must display the following acknowledgement:
+.\"     This product includes software developed by the University of
+.\"     California, Berkeley and its contributors.
+.\" 4. Neither the name of the University nor the names of its contributors
+.\"    may be used to endorse or promote products derived from this software
+.\"    without specific prior written permission.
+.\"
+.\" THIS SOFTWARE IS PROVIDED BY THE REGENTS AND CONTRIBUTORS ``AS IS'' AND
+.\" ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+.\" IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+.\" ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR CONTRIBUTORS BE LIABLE
+.\" FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL
+.\" DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS
+.\" OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION)
+.\" HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT
+.\" LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
+.\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
+.\" SUCH DAMAGE.
+.\"
+.\" @(#)whereis.1 from UCB 4.2
+.TH WHEREIS 1 "8 May 1994"
+.SH NAME
+whereis \- locate the binary, source, and manual page files for a command
+.SH SYNOPSIS
+.B whereis
+[
+.B \-bmsu
+] [
+.B \-BMS
+.IR directory .\|.\|.
+.B \-f
+]
+\fIfilename\fP\|
+\&.\|.\|.
+.IX  "whereis command"  ""  "\fLwhereis\fP \(em find program"
+.IX  find "program \(em \fLwhereis\fP"
+.IX  "locate program"  ""   "locate program \(em \fLwhereis\fP"
+.IX  command  locate  ""   "locate \(em \fLwhereis\fP"
+.SH DESCRIPTION
+.B whereis
+locates source/binary and manuals sections for specified
+files.
+The supplied names are first stripped of leading pathname components
+and any (single) trailing extension of the form
+.BI . ext,
+for example,
+.BR .c .
+Prefixes of
+.B s.
+resulting from use of source code control are also dealt with.
+.B whereis
+then attempts to locate the desired program in
+a list of standard Linux places:
+.IP
+.nf
+.ft B
+/bin
+/usr/bin
+/etc
+/usr/etc
+/sbin
+/usr/sbin
+/usr/games
+/usr/games/bin
+/usr/emacs/etc
+/usr/lib/emacs/19.22/etc
+/usr/lib/emacs/19.23/etc
+/usr/lib/emacs/19.24/etc
+/usr/lib/emacs/19.25/etc
+/usr/lib/emacs/19.26/etc
+/usr/lib/emacs/19.27/etc
+/usr/lib/emacs/19.28/etc
+/usr/lib/emacs/19.29/etc
+/usr/lib/emacs/19.30/etc
+/usr/TeX/bin
+/usr/tex/bin
+/usr/interviews/bin/LINUX
+/usr/bin/X11
+/usr/X11/bin
+/usr/X11R5/bin
+/usr/X11R6/bin
+/usr/X386/bin
+/usr/local/bin
+/usr/local/etc
+/usr/local/sbin
+/usr/local/games
+/usr/local/games/bin
+/usr/local/emacs/etc
+/usr/local/TeX/bin
+/usr/local/tex/bin
+/usr/local/bin/X11
+
+/usr/contrib",
+/usr/hosts",
+/usr/include",
+
+/usr/g++-include",
+.ft R
+.fi
+.SH OPTIONS
+.TP
+\fB\-b
+Search only for binaries.
+.TP
+.B \-m
+Search only for manual sections.
+.TP
+.B \-s
+Search only for sources.
+.TP
+.B \-u
+Search for unusual entries.  A file is said to be unusual if it does
+not have one entry of each requested type.
+Thus
+.RB ` "whereis\ \ \-m\ \ \-u\ \ *" '
+asks for those files in the current
+directory which have no documentation.
+.TP
+.B \-B
+Change or otherwise limit the places where
+.B whereis
+searches for binaries.
+.TP
+.B \-M
+Change or otherwise limit the places where
+.B whereis
+searches for
+manual sections.
+.TP
+.B \-S
+Change or otherwise limit the places where
+.B whereis
+searches for sources.
+.TP
+.B \-f
+Terminate the last directory list and signals the start of file names,
+and
+.I must
+be used when any of the
+.BR \-B ,
+.BR \-M ,
+or
+.B \-S
+options are used.
+.SH EXAMPLE
+Find all files in
+.B /usr/bin
+which are not documented
+in
+.B /usr/man/man1
+with source in
+.BR /usr/src :
+.IP
+.nf
+.ft B
+example% cd /usr/bin
+example% whereis \-u \-M /usr/man/man1 \-S /usr/src \-f *
+.fi
+.ft R
+.SH FILES
+.PD 0
+.TP 20
+.B /{bin,sbin,etc}
+.TP
+.B /usr/{lib,bin,old,new,local,games,include,etc,src,man,sbin,
+.B X386,TeX,g++-include}
+.TP
+.B /usr/local/{X386,TeX,X11,include,lib,man,etc,bin,games,
+.B emacs}
+.TP
+.B 
+.PD
+.SH SEE ALSO
+.BR chdir (2V)
+.SH BUGS
+Since
+.B whereis
+uses
+.BR chdir (2V)
+to run faster, pathnames given with the
+.BR \-M ,
+.BR \-S ,
+or
+.B \-B
+must be full; that is, they must begin with a
+.RB ` / '.

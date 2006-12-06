@@ -1,0 +1,151 @@
+     selection 1.5: Copy and paste for Linux Virtual Consoles using mouse
+     --------------------------------------------------------------------
+
+This package implements mouse-driven selection of text from a VC and pasting
+of the text into the same or a different VC, the user interface being based
+loosely on the equivalent xterm facility.
+
+Version 1.5
+-----------
+ -  fixed support for bus mice.
+ -  added support for PS/2 and Mouse Systems 3-byte mice.
+ -  command line options added.
+ -  updated for kernel version 0.99.pl10.
+ -  cooperates with XFree86 1.2, for serial mice at least.
+ -  enabled as part of normal kernel configuration process.
+
+Version 1.4
+-----------
+ -  added manual page.
+ -  updated for kernel version 0.99.pl0.
+
+Version 1.3
+-----------
+ -  improved support for Logitech mice (speed set correctly).
+ -  optional flag for left-handed users.
+ -  corrected bug in Mouse Systems handling code.
+
+Version 1.2
+-----------
+ -  disabled when console in graphics mode, eg. under X11 or MGR.
+ -  uses default screen size if ioctl TIOCGWINSZ fails.
+
+Version 1.1
+-----------
+ -  support for some common mouse types.
+ -  selection by word or line as well as by character.
+ -  changes in the interface to make it behave more like xterm.
+
+Manifest
+--------
+    README
+    Makefile
+    selection.1		manual page
+    selection.man	formatted manual page
+    patch-0.99.10	patches to kernel
+    mouse.c		source for mouse driver
+    mouse.h		mouse driver interface
+    selection.c		source for selection manager
+    test-mouse.c	test code for mouse compatibility
+
+Mouse support
+-------------
+
+The following types of mouse are supported.
+
+ -  Microsoft
+ -  MouseSystems 3-byte and 5-byte
+ -  MM Series
+ -  Logitech
+ -  BusMouse
+ -  PS/2
+
+The code has been tested with various types of mice, including
+Microsoft-compatible and Logitech, a three-button Mouse Systems, and with bus
+and PS/2 mice; please tell me if it doesn't work with yours and you think it
+ought to.
+
+Installation
+------------
+
+1. Check it out
+---------------
+
+ -  Make the mouse device. If you have a serial mouse, either use `mknod' to
+    make /dev/mouse reference the appropriate serial driver or create a
+    symbolic link from /dev/ttys? to /dev/mouse. If you have a bus mouse,
+    use `mknod' to create the bus mouse device if it doesn't already exist.
+    Make sure that your kernel is configured to support the appropriate
+    bus mouse device (specified during `make config').
+
+e.g.	mknod /dev/mouse c 4 64
+or	ln -s /dev/ttys1 /dev/mouse	(for serial mouse)
+
+	mknod /dev/busmouse c 10 0	(for Logitech bus mouse)
+
+ -  Test your mouse for compatibility by using the test-mouse facility
+    supplied. Build it by typing `make test-mouse', then run `test-mouse'.
+    You may need to supply it with certain options; try `test-mouse -?'.
+    If your mouse device is not /dev/mouse, use the -m option.  You should
+    be able to move the cursor over the entire screen, and draw
+    asterisks in different colours by moving the mouse while pressing
+    different buttons. Press both the left and right buttons while the mouse
+    is not moving to quit the program. The options that you find work with
+    `test-mouse' should also work with `selection'.
+
+2. Patch the kernel
+-------------------
+
+    [ NOTE: Precompiled versions of the kernel supplied with the SLS
+      package should already have the patch applied, in which case this
+      section may be skipped. ]
+
+ -  Apply the kernel patches, by going into the directory in which the
+    kernel source is located (eg. /usr/src/linux) and typing:
+
+	patch < patch-0.99.10
+
+    The patches were generated against the standard 0.99.pl10 kernel.
+
+The following files are patched:
+
+    config.in			to add the selection mechanism as a
+				configuration option.
+
+    kernel/chr_drv/tty_ioctl.c	to provide the interface to the selection
+				mechanism via ioctl(..., TCIOLINUX, ...).
+    
+    kernel/chr_drv/console.c	to implement the selection mechanism itself.
+
+ -  Reconfigure the kernel by typing 'make config', remembering to include
+    the selection mechanism by answering 'y' to the appropriate question.
+
+ -  To be safe, rebuild the kernel dependencies using 'make dep'.
+
+ -  Rebuild the kernel and reboot.
+
+ -  Make sure you have the /dev/tty0 (current VC) device. If not, make it using
+
+	mknod /dev/tty0 c 4 0
+
+3. Build the program
+--------------------
+
+ -  Type `make' in the directory in which you unpacked the selection code;
+    this will build the `selection' executable. It has been tested with
+    gcc 2.3.3 and libc.so.4.3.3.
+
+ -  Run `selection &' to test it out. Use `selection -?' to see what
+    options are supported. Then type `make install', which installs the
+    executable in /etc and the manual page in /usr/man, and start it up
+    from /etc/rc.local. Consult the manual page for usage. It should
+    work with text screens of various sizes, e.g. 80x28, 80x50, etc.
+
+The default size of the paste buffer is 2048 bytes. This may be changed by
+altering the value of SEL_BUFFER_SIZE in kernel/chr_drv/console.c.
+
+And that's all there is to it, hopefully. See the manual page for a more
+detailed description of operation. Please let me know of any problems,
+suggestions for enhancements, etc, etc.
+
+Andrew Haylett <ajh@gec-mrc.co.uk>, 17th June 1993

@@ -1,0 +1,131 @@
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH LOGIN 1 "1 February 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+login \- sign on
+.SH SYNOPSIS
+.BR "login [ " name " ]"
+.br
+.B "login \-p"
+.br
+.BR "login \-h " hostname
+.br
+.BR "login \-f " name
+.SH DESCRIPTION
+.B login
+is used when signing onto a system.  It can also be used to switch from one
+user to another at any time (most modern shells have support for this
+feature built into them, however).
+
+If an argument is not given,
+.B login
+prompts for the username.
+
+If the user is
+.I not
+root, and if
+.I /etc/nologin
+exists, the contents of of this file are printed to the screen, and the
+login is terminated.  This is typically used to prevent logins when the
+system is being taken down.
+
+If the user is root, then the login must be occuring on a tty listed in
+.IR /etc/securetty .
+Failures will be logged with the
+.B syslog
+facility.
+
+After these conditions are checked, the password will be requested and
+checks (if a password is required for this username).  Ten attempts are
+allowed before
+.B login
+dies, but after the first three, the response starts to get very slow.
+Login failures are reported via the
+.B syslog
+facility.  This facility is also used to report any successful root logins.
+
+If the file
+.I .hushlogin
+exists, then a "quiet" login is performed (this disables the checking of
+the checking of mail and the printing of the last login time and message of
+the day).  Otherwise, if
+.I /var/adm/lastlog
+exists, the last login time is printed (and the current login is recorded).
+
+Random administrative things, such as setting the UID and GID of the tty
+are performed.  The TERM environment variable is preserved, if it exists
+(other environment variables are preserved if the
+.B \-p
+option is used).  Then the HOME, PATH, SHELL, TERM, MAIL, and LOGNAME
+environment variables are set.  PATH defaults to
+.I /usr/local/bin:/bin:/usr/bin:.
+for normal users, and to
+.I /sbin:/bin:/usr/sbin:/usr/bin
+for root.  Last, if this is not a "quiet" login, the message of the day is
+printed and the file with the user's name in
+.I /usr/spool/mail
+will be checked, and a message printed if it has non-zero length.
+
+The user's shell is then started.  If no shell is specified for the user in
+.BR /etc/passwd ,
+then
+.B /bin/sh
+is used.  If there is no directory specified in
+.IR /etc/passwd ,
+then
+.I /
+is used (the home directory is checked for the
+.I .hushlogin
+file described above).
+.SH OPTIONS
+.TP
+.B \-p
+Used by
+.BR getty (8)
+to tell
+.B login
+not to destroy the environment
+.TP
+.B \-f
+Used to skip a second login authentication.  This specifically does
+.B not
+work for root, and does not appear to work well under Linux.
+.TP
+.B \-h
+Used by other servers (i.e.,
+.BR telnetd (8))
+to pass the name of the remote host to
+.B login
+so that it may be placed in utmp and wtmp.  Only the superuser may use this
+option.
+.SH FILES
+.nf
+.I /etc/utmp
+.I /etc/wtmp
+.I /usr/spool/mail/*
+.I /etc/motd
+.I /etc/passwd
+.I /etc/nologin
+.I .hushlogin
+.fi
+.SH "SEE ALSO"
+.BR init (8),
+.BR getty (8),
+.BR mail (1),
+.BR passwd (1),
+.BR passwd (5),
+.BR environ (7),
+.BR shutdown (8)
+.SH BUGS
+Linux, unlike other draconian operating systems, does not check quotas.
+
+The undocumented BSD
+.B \-r
+option is not supported.  This may be required by some
+.BR rlogind (8)
+programs.
+.SH AUTHOR
+Derived from BSD login 5.40 (5/9/89) by Michael Glad (glad@daimi.dk) for HP-UX
+.br
+Ported to Linux 0.12: Peter Orbaek (poe@daimi.aau.dk)
+

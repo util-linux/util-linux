@@ -1,0 +1,88 @@
+.\" Copyright 1992, 1993, 1994 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be freely distributed.
+.\" " for emacs hilit19 mode
+.TH MKFS 8 "10 January 1994" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+mkfs \- make a Linux MINIX filesystem
+.SH SYNOPSIS
+.BR "mkfs [ \-c ] [ \-n"
+namelength
+.B ] [ \-i
+inodecount
+.B ]
+device size-in-blocks
+.br
+.B "mkfs [ \-l"
+filename
+.B ]
+device size-in-blocks
+.SH DESCRIPTION
+.B mkfs
+creates a Linux MINIX file-system on a device (usually a disk partition).
+
+The
+.I device
+is usually of the following form:
+
+.nf
+.RS
+/dev/hda[1-8]
+/dev/hdb[1-8]
+/dev/sda[1-8]
+/dev/sdb[1-8]
+.RE
+.fi
+
+The
+.I size-in-blocks
+parameter is the desired size of the file system, in blocks.  This
+information can be determined from the
+.BR fdisk (8)
+program.  Only block counts strictly greater than 10 and strictly less than
+65536 are allowed.
+.SH OPTIONS
+.TP
+.B \-c
+Check the device for bad blocks before creating the file system.  If any
+are found, the count is printed.
+.TP
+.BI \-n " namelength"
+Specify the maximum length of filenames.  No space is allowed between the
+.B \-n
+and the
+.IR namelength.  Currently, the only allowable
+values are 14 and 30.
+.B 30 is the default.
+.TP
+.BI \-i " inodecount"
+Specify the number of inodes for the filesystem.
+.TP
+.BI \-l " filename"
+Read the bad blocks list from
+.IR filename .
+The file has one bad block number per line.  The count of bad blocks read
+is printed.
+.SH "EXIT CODES"
+The exit code returned by
+.B mkfs.minix
+is one of the following:
+.IP 0
+No errors
+.IP 8
+Operational error
+.IP 16
+Usage or syntax error
+.SH "SEE ALSO"
+.BR fsck (8),
+.BR mkefs (8),
+.BR efsck (8),
+.BR reboot (8)
+.SH AUTHOR
+Linus Torvalds (torvalds@cs.helsinki.fi)
+.br
+Error code values by Rik Faith (faith@cs.unc.edu)
+.br
+Inode request feature by Scott Heavner (sdh@po.cwru.edu)
+.br
+Support for the file system valid flag by Dr. Wettstein
+(greg%wind.uucp@plains.nodak.edu)

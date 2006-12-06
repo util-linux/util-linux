@@ -1,0 +1,23 @@
+Begin3
+Title:          util-linux: Miscellaneous utilities for Linux
+Version:        2.2
+Entered-date:   Sun Feb 26 16:05:47 1995
+Description:    reboot shutdown simpleinit sln swapoff swapon cal chfn chsh
+                clear col colcrt colrm column dnsdomainname domainname
+                dsplit fdformat getopt hexdump hostid hostname ipcrm ipcs
+                last logger look lpcntl mcookie md5sum mesg namei newgrp
+                passwd ramsize rdev readprofile renice reset rev rootflags
+                script selection setfdprm setsid setterm strings swapdev
+                tsort tunelp ul vidmode wall whereis write chroot
+                ctrlaltdel frag syslogd update_state vipw zdump zic
+Keywords:       essential utilities
+Author:         several
+Maintained-by:  faith@cs.unc.edu (Rik Faith)
+Primary-site:   ftp.cs.unc.edu /pub/users/faith/linux
+                592k util-linux-2.2.tar.gz
+                571k util-linux-2.2.bin.tar.gz
+Alternate-site: tsx-11.mit.edu /pub/linux/packages/utils
+Alternate-site: sunsite.unc.edu /pub/Linux/system/Misc
+Platforms:      Linux 1.1.9x, GNU tar
+Copying-policy: GPL, BSD, others
+End

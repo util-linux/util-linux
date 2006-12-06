@@ -1,0 +1,35 @@
+.\" Copyright 1994 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.\" "
+.TH update_state 8 "8 July 1994" "Linux 1.0" "Linux Programmer's Manual"
+.SH NAME
+update_state \- update system state
+.SH SYNOPSIS
+.BR update_state
+.SH DESCRIPTION
+.B update_state
+updates a bunch of system state.  It takes a long time to execute, and
+would be suitable for execution in a cron job.
+
+Currently,
+.B update_state
+performs the following functions: updates the locate database (in
+.IR /usr/lib/locate ), updates the whatis database (in
+.IR /usr/man ", " /usr/local/man ", " /usr/X386/man ", and "
+.IR /usr/interviews/man ),
+and updates the TeX ls-R cache file (in
+.IR /usr/lib/texmf ).
+.SH BUGS
+The script expects things to be where the FSSTND says they are.
+example, if you have
+.BR makewhatis (8)
+in
+.IR /usr/lib ,
+where it would be traditionally, then you lose, because it should be in
+.IR /usr/bin .
+.SH "SEE ALSO"
+.BR cron(8),
+.BR find(1),
+.BR locate(1),
+.SH AUTHOR
+Rik Faith (faith@cs.unc.edu)

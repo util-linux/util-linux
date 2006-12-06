@@ -1,0 +1,30 @@
+.\" Public Domain 1994 Rik Faith (faith@cs.unc.edu)
+.\" "
+.TH LPCNTL 8 "18 July 1994" "Linux 1.1" "Linux Programmer's Manual"
+.SH NAME
+lpcntl \- interface to line printer ioctl
+.SH SYNOPSIS
+.BI "lpcntl " device " [ " irq " ]"
+.SH DESCRIPTION
+.B lpcntl
+is used to manipulate the line printer driver.
+.PP
+.I device
+specifies a line printer device (e.g.,
+.IR /dev/lp1 ).
+.PP
+If
+.I irq
+is specified, then the line printer driver is set to use that IRQ.  If the
+.I irq
+is zero, then the polling driver is selected.  Only the super user may
+change the IRQ.
+.PP
+If no
+.I irq
+is specified, then
+.B lpcntl
+will report the interrupt number currently in use, or will report that the
+polling driver is currently being used.
+.SH AUTHOR
+Nigel Gamble (nigel@gate.net)

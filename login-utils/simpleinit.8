@@ -1,0 +1,142 @@
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.\" " for emacs's hilit19 mode :-)
+.TH SIMPLEINIT 8 "20 November 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+simpleinit \- process control initialization
+.SH SYNOPSIS
+.B "init [ single ]"
+.SH DESCRIPTION
+.B init
+is invoked as the last step in the Linux boot sequence.  If the
+.B single
+option is used, or if the file
+.I /etc/singleboot
+exists, then single user mode will be entered, by starting
+.IR /bin/sh .
+If the file
+.I /etc/securesingle
+exists, then the root password will be required to start single user mode.
+If the root password does not exist, or if
+.I /etc/passwd
+does not exist, the checking of the password will be skipped.
+
+If the file
+.I /etc/TZ
+exists, then the contents of that file will be read, and used to set the TZ
+environment variable for each process started by
+.BR simpleinit .
+This "feature" is only available if it's configured at compile-time. It's
+not normally needed.
+
+After single user mode is terminated, the
+.I /etc/rc
+file is executed, and the information in
+.I /etc/inittab
+will be used to start processes.
+
+While
+.B init
+is running, several signals are trapped, with special action taken.  Since
+.B init
+has PID 1, sending signals to the
+.B init
+process is easy with the
+.BR kill (1)
+command.
+
+If
+.B init
+catches a SIGHUP (hangup) signal, the
+.I /etc/inittab
+will be read again.
+
+If
+.B init
+catches a SIGTSTP (terminal stop) signal, no more processes will be
+spawned.  This is a toggle, which is reset is
+.B init
+catches another SIGTSTP signal.
+
+If
+.B init
+catches a SIGINT (interrupt) signal,
+.B init
+will sync a few times, and try to start
+.IR reboot .
+Failing this,
+.B init
+will execute the system
+.BR reboot (2)
+call.  Under Linux, it is possible to configure the Ctrl-Alt-Del sequence
+to send a signal to
+.B init
+instead of rebooting the system.
+.SH "THE INITTAB FILE"
+Because of the number of init programs which are appearing in the Linux
+community, the documentation for the
+.I /etc/inittab
+file, which is usually found with the
+.BR inittab (5)
+man page, is presented here:
+
+The format is
+
+.RS
+.B "ttyline:termcap-entry:getty-command"
+.RE
+
+An example is as follows:
+
+.nf
+.RS
+tty1:console:/sbin/getty 9600 tty1
+tty2:console:/sbin/getty 9600 tty2
+tty3:console:/sbin/getty 9600 tty3
+tty4:console:/sbin/getty 9600 tty4
+# tty5:console:/sbin/getty 9600 tty5
+# ttyS1:dumb:/sbin/getty 9600 ttyS1
+# ttyS2:dumb:/sbin/getty -m -t60 2400 ttyS2
+.RE
+.fi
+
+Lines beginning with the
+.B #
+character are treated as comments.  Please see documentation for the
+.B getty (8)
+command that you are using, since there are several of these in the Linux
+community at this time.
+.SH FILES
+.I /etc/inittab
+.br
+.I /etc/singleboot
+.br
+.I /etc/securesingle
+.br
+.I /etc/TZ
+.br
+.I /etc/passwd
+.br
+.I /etc/rc
+.SH "SEE ALSO"
+.BR inittab (5),
+.BR ctrlaltdel (8)
+.BR reboot (8),
+.BR termcap (5),
+.BR getty (8),
+.BR agetty (8),
+.BR shutdown (8)
+.SH BUGS
+This program is called
+.B simpleinit
+to distinguish it from the System V compatible versions of init which are
+starting to appear in the Linux community.
+.B simpleinit
+should be linked to, or made identical with,
+.I init
+for correct functionality.
+.SH AUTHOR
+Peter Orbaek (poe@daimi.aau.dk)
+.br
+Version 1.20, with patches for singleuser mode by Werner Almesberger
+

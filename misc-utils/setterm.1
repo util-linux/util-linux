@@ -1,0 +1,88 @@
+.\" Copyright 1990 Gordon Irlam (gordoni@cs.ua.oz.au)
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\" Most of this was copied from the source code.  Do not restrict distribution.
+.\" May be distributed under the GNU General Public License
+.TH SETTERM 1 "25 December 1992" "Linux 0.98" "Linux Programmer's Manual"
+.SH NAME
+setterm \- set terminal attributes
+.SH SYNOPSIS
+.nf
+.BR "setterm [ \-term " terminal_name " ]"
+.B  "setterm [ \-reset ]"
+.B  "setterm [ \-initialize ]"
+.B  "setterm [ \-cursor [on|off] ]"
+.B  "setterm [ \-keyboard pc|olivetti|dutch|extended ]"
+.B  "setterm [ \-repeat [on|off] ]"
+.B  "setterm [ \-appcursorkeys [on|off] ]"
+.B  "setterm [ \-linewrap [on|off] ]"
+.B  "setterm [ \-snow [on|off] ]"
+.B  "setterm [ \-softscroll [on|off] ]"
+.B  "setterm [ \-defaults ]"
+.B  "setterm [ \-foreground black|red|green|yellow|blue|magenta|cyan|white|default ]"
+.B  "setterm [ \-background black|red|green|yellow|blue|magenta|cyan|white|default ]"
+.B  "setterm [ \-ulcolor black|grey|red|green|yellow|blue|magenta|cyan|white ]"
+.B  "setterm [ \-ulcolor bright red|green|yellow|blue|magenta|cyan|white ]"
+.B  "setterm [ \-hbcolor black|grey|red|green|yellow|blue|magenta|cyan|white ]"
+.B  "setterm [ \-hbcolor bright red|green|yellow|blue|magenta|cyan|white ]"
+.B  "setterm [ \-inversescreen [on|off] ]"
+.B  "setterm [ \-bold [on|off] ]"
+.B  "setterm [ \-half-bright [on|off] ]"
+.B  "setterm [ \-blink [on|off] ]"
+.B  "setterm [ \-reverse [on|off] ]"
+.B  "setterm [ \-underline [on|off] ]"
+.B  "setterm [ \-store ]"
+.B  "setterm [ \-clear [ all|rest ] ]"
+.BR "setterm [ \-tabs [tab1 tab2 tab3 ... ] ]" " where (tabn = 1-160)"
+.BR "setterm [ \-clrtabs [ tab1 tab2 tab3 ... ]" " where (tabn = 1-160)"
+.BR "setterm [ \-regtabs [" " 1-160 " "] ]"
+.BR "setterm [ \-blank [" " 0-60 " "] ]"
+.BR "setterm [ \-dump [" " 1-NR_CONS " "] ]"
+.BR "setterm [ \-append [" " 1-NR_CONS " "] ]"
+.BR "setterm [ \-file" " dumpfilename " ]
+.BR "setterm [ \-standout [" " attr " "] ]"
+.fi
+.SH DESCRIPTION
+.B setterm
+writes to standard output a character string that will invoke the specified
+terminal capabilities.  Where possibile
+.I /etc/termcap
+is consulted to find the string to use.  Some options however do not
+correspond to a
+.BR termcap (5)
+capability.  In this case, if the terminal type is "minix-vc", or
+"minix-vcam" the string that invokes the specified capabilities on the PC
+Minix virtual console driver is output.  Options that are not implemented
+by the terminal are ignored.
+.SH OPTIONS
+Most options are self explanatory.  The less obvious options are as
+follows:
+.TP
+.B \-term
+can be used to override the TERM environment variable.
+.TP
+.B \-reset
+displays the terminal reset string, which typically resets the terminal to
+its power on state.
+.TP
+.B \-initialize
+displays the terminal initialization string, which typically sets the
+terminal's rendering options, and other attributes to the default values.
+.TP
+.B \-default
+sets the terminal's rendering options to the default values.
+.TP
+.B \-store
+stores the terminal's current rendering options as the default values.
+.SH "SEE ALSO"
+.BR tput (1),
+.BR stty (1),
+.BR termcap (5),
+.BR tty (4)
+.SH BUGS
+Differences between the Minux and Linux versions are not documented.
+.SH AUTHORS
+Gordon Irlam (gordoni@cs.ua.oz.au)
+.br
+Adaption to Linux by Peter MacDonald
+.br
+Enhancements by Mika Liljeberg (liljeber@cs.Helsinki.FI)

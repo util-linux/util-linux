@@ -1,0 +1,67 @@
+
+[Please note that the latest fdisk is "v2.0a (>2GB)" and the latest cfdisk
+is "0.8a BETA (>2GB)".  The cannonical versions of both are in this
+package, and both should work with disks > 2GB if you have Linux 1.1.46 or
+above.]
+
+util-linux-2.2.tar.gz     (source distribution)
+util-linux-2.2.bin.tar.gz (binary distribution)
+
+    WARNING: THIS COLLECTION DOES *NOT* SUPPORT SHADOW PASSWORDS.
+
+    WARNING: THIS COLLECTION DOES *NOT* SUPPORT SYSTEM V INITTAB.
+
+    WARNING: USE GNU TAR -- OTHER TARS WILL FAIL SILENTLY!
+
+    WARNING: DO *NOT* INSTALL WITHOUT THINKING.
+
+    WARNING: *READ* the util-linux-2.2.bin.Notes file *BEFORE* and *AFTER*
+             installation: there are a few links you must make by hand.
+
+    This is a collection of many assorted utilities for Linux.  Some are
+    system utilities that are not easily available anywhere elsewhere
+    (e.g., mkfs.minix, mkswap); others are BSD ports of common utilities
+    that are not yet contained in any FSF package (e.g., col); others are
+    non-System-V alternatives to common utilities (e.g., simpleinit,
+    agetty, login, passwd).
+
+    The arrangement, as nearly as I can determine, conforms to the Linux
+    Filesystem Structure, Interim Release 1.1, October 9, 1994, with *NO*
+    exceptions.  A copy of the standards document can be found at
+    tsx-11.mit.edu:/pub/linux/docs/linux-standards/fsstnd/*.
+
+    Many people provided patches and suggestions.  I deeply appreciate
+    this.
+
+
+HIGHLIGHTS for version 2.2:
+1) This is primarily a quick bug-fix release for version 2.1
+2) mkfs wrapper added back in, since e2fsprogs only supplies an fsck wrapper
+3) selection removed, since someone appears to be maintaining it now.  See
+   sunsite.unc.edu:/pub/linux/kernel/patches/console for recent sources.
+   For the time being, I'm keeping a copy in the historic subdirectory of
+   util-linux.  A "make install" should work find from within that
+   directory.
+4) Note that other floppy utilities are available from:
+    ftp.imag.fr:pub/Linux/ZLIBC/fdutils/fdutils-4.1.src.tar.gz
+    sunsite.unc.edu:/pub/Linux/system/Misc/fdutils-4.1.src.tar.gz
+    tsx-11.mit.edu:/pub/linux/sources/sbin/fdutils-4.1.src.tar.gz
+
+
+HIGHLIGHTS for version 2.1:
+
+1) Directory structure rearrange, with configuration support for those who
+   use shadow passwords and System V init (no support is provided for these
+   things, but your utilities won't get overwritten if you do a "make
+   install" after you properly edit MCONFIG).
+2) fdisk and cfdisk should work as expected with 2GB+ disk drives
+3) As usual, lots of stuff was updated and added, including mount, vipw,
+   readprofile
+4) Some stuff was also deleted, and can now be found elsewhere:
+    fsck wrapper: tsx-11.mit.edu:/pub/linux/ALPHA/ext2fs/e2fsprogs*
+    pwd, su: prep.ai.mit.edu:/pub/gnu/sh-utils*
+    ed: prep.ai.mit.edu:/pub/gnu/ed*
+    od: prep.ai.mit.edu:/pub/gnu/textutils*
+    uudecode/uuencode: prep.ai.mit.edu:/pub/gnu/sharutils*
+    bdflush/update: ftp.funet.fi:/pub/OS/Linux/PEOPLE/Linus/v1.1/bdflush*
+

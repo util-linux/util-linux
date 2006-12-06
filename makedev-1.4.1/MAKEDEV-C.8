@@ -1,0 +1,80 @@
+.\" -*- nroff -*-
+.TH MAKEDEV 8 "January 1995" "Version 1.4"
+.SH NAME
+MAKEDEV \- create and maintain filesystem device entries
+.SH SYNOPSIS
+.B MAKEDEV
+[
+.I \-vcdnhV
+]
+device or device-group name(s)
+.SH DESCRIPTION
+.B MAKEDEV
+is used to maintain the special filesystem entries found in /dev. It
+creates, or optionally removes, one or more device entries. The names 
+and device numbers are defined in the DEVINFO file (q.v.);
+site-specific configuration is found in the file MAKEDEV.cfg. 
+.B MAKEDEV
+itself has no knowledge of device information.
+.SH OPTIONS
+.TP
+.I -v 
+Verbose mode; print out exactly what's being done.
+.TP
+.I -c
+Create; create the specified devices. [default]
+.TP
+.I -d
+Delete; remove the specified devices instead of creating them.
+.TP
+.I -n
+Do nothing; only print what would be done. Implies -v as well.
+.TP
+.I -h
+Print a usage message.
+.TP
+.I -V
+Print the version string.
+.SS " "
+The following targets are special:
+.TP
+.I update
+Run MAKEDEV in update mode. This reads the list of devices currently
+available from /proc/devices, and updates all entries in /dev to match
+the device numbers found there.
+.TP
+.I local
+Run MAKEDEV to create local devices. This option is obsolete and just
+prints a warning message. Use DEVINFO.local and MAKEDEV.cfg to achieve
+the same results.
+.SH FILES
+.TP 20
+.I /etc/devinfo
+If ./DEVINFO is not found
+.TP
+.I /etc/devinfo.local
+Alternate location for local info
+.TP
+.I /etc/makedev.cfg
+If ./MAKEDEV.cfg is not found
+.TP
+.I MAKEDEV.cache
+Cached data for `update'
+.TP
+.I /proc/devices
+The kernel's list of current devices
+.SH AUTHOR
+David A. Holland (dholland@husc.harvard.edu)
+.br
+.br
+Based on the older
+.B MAKEDEV
+shell script written by Nick Holloway.
+Additional ideas were contributed by Rik Faith.
+.SH NOTES
+The LALR(1) parser generator used to build makedev.c from makedev.syn
+is a commercial product. You won't be able to do a complete rebuild 
+unless you have it.
+.SH SEE ALSO
+.BR DEVINFO (5),
+.BR MAKEDEV.cfg (5)

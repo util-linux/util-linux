@@ -1,0 +1,994 @@
+{
+/*
+ * makedev.c: Generate /dev entries
+ *
+ * Based on the MAKEDEV shell script, version 2.0, distributed with
+ * util-linux 1.10 and written by Nick Holloway. 
+ *
+ * A number of bugs were fixed, and some additional features added.
+ * Written 10-Dec-94 by David A. Holland, dholland@husc.harvard.edu
+ *
+ * Copyright 1994, 1995. All rights reserved. 
+ * See the file LEGAL.NOTICE for conditions of redistribution.
+ *
+ * Bugs:
+ *    None known right now.
+ *
+ * History:
+ *
+ * Version 1.4: 15-Jan-95  Wrote man pages. Now reads DEVINFO.local.
+ * Version 1.3: 31-Dec-94  Bug fixes. Added batches. Added omits.
+ * Version 1.2: 11-Dec-94  Add configuration file parsing.
+ * Version 1.1: 11-Dec-94  Distinguish block and character devices in the
+ *    table of major device numbers. Changed the name and format of the
+ *    update cache file to include the type. It appears that the old script
+ *    was broken in this regard.
+ * Version 1.0: 10-Dec-94  Initial version.
+ */
+
+static const char *version = "MAKEDEV-C version 1.4";
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+#include <unistd.h>
+#include <fcntl.h>
+#include <pwd.h>
+#include <grp.h>
+#include <sys/stat.h>
+
+#define YES 1
+#define NO 0
+
+static int isverbose=NO;  /* flag: print out what we do? */
+static int deletion=NO;   /* flag: delete instead of create */
+static int donothing=NO;  /* flag: don't actually do anything */
+
+/*
+ * Proto for main operative function.
+ */
+typedef enum { M_CREATE, M_OMIT } makeopts;
+static void make(const char *batch_or_grp_or_devname, makeopts);
+
+/*
+ * Roll over and die.
+ */
+static void crash(const char *msg) {
+  fprintf(stderr, "MAKEDEV: %s\n", msg);
+  exit(1);
+}
+
+/*
+ * Print a warning.
+ */
+static void warn(const char *format, ...) {
+  va_list ap;
+  va_start(ap, format);
+  fprintf(stderr, "MAKEDEV: ");
+  vfprintf(stderr, format, ap);
+  fprintf(stderr, "\n");
+  va_end(ap);
+}
+
+/*
+ * Translate string name to uid.
+ */
+static uid_t name2uid(const char *name) {
+  struct passwd *p = getpwnam(name);
+  if (!p) warn("undefined user: %s, using uid 0", name);
+  return p ? p->pw_uid : 0;  /* make things owned by root by default */
+}
+
+/*
+ * Translate string name to gid.
+ */
+static gid_t name2gid(const char *name) {
+  struct group *g = getgrnam(name);
+  if (!g) warn("undefined group: %s, using gid 0", name);
+  return g ? g->gr_gid : 0;  /* group 0 is a good default too */
+}
+
+/*
+ * Proto for parser.
+ */
+static void doparse(FILE *f, int filetype, const char *filename);
+
+/************************* device classes *************************/
+
+/*
+ * A device class is a string attached to the device which tells us
+ * what set of permissions and ownership should be used. This is the
+ * table of classes.
+ */
+
+typedef struct {
+    const char *classname;
+    const char *owner;
+    const char *group;
+    int mode;
+} devclass;
+
+#define MAXCLASSES 32
+static devclass classes[MAXCLASSES];
+static int nclasses=0;
+
+static void addclass(const char *name, const char *o, const char *g, int m) {
+  if (nclasses>=MAXCLASSES) crash("out of space for device classes");
+  classes[nclasses].classname = name;
+  classes[nclasses].owner = o;
+  classes[nclasses].group = g;
+  classes[nclasses].mode = m;
+  nclasses++;
+  name2uid(o);  /* check for undefined users/groups */
+  name2gid(g);
+}
+
+static void loadclasses(void) {
+  FILE *f = fopen("MAKEDEV.cfg", "r");
+  if (!f) f = fopen("../MAKEDEV.cfg", "r");
+  if (!f) f = fopen("/etc/makedev.cfg", "r");
+  if (!f) crash("can't find MAKEDEV.cfg");
+  doparse(f, 4, "MAKEDEV.cfg");
+  fclose(f);
+}
+
+/*
+ * Return the index into the above table for a particular class name.
+ */
+static int which_class(const char *name) {
+  int i;
+  for (i=0; i<nclasses; i++)
+    if (!strcmp(classes[i].classname, name)) return i;
+  return 0;
+}
+
+/*
+ * Produce an "ls -l"-ish mode string.
+ */
+static const char *modestring(int mode) {
+  static char rv[12];
+  int i,z;
+  strcpy(rv, "rwxrwxrwx");
+  for (i=8,z=1; i>=0; i--, z<<=1) if (!(mode&z)) rv[i]='-';
+  return rv;
+}
+
+/*
+ * Create (or delete, or update) a block or character device.
+ */
+static void class_makedev(const char *name, const char *class,
+			  int major, int minor, char type) {
+  int x = which_class(class), mode = classes[x].mode;
+  const char *owner = classes[x].owner, *group = classes[x].group;
+  if (isverbose) {
+    if (deletion) printf("rm -f %s\n", name);
+    else printf("%c%s   1 %-8s %-8s %3d, %3d for %s\n", type,
+		modestring(mode), owner, group, major, minor, name);
+  }
+  if (donothing) return;
+  if (unlink(name) && deletion) warn("Couldn't remove %s\n", name);
+  if (!deletion) {
+    dev_t q = (major<<8) | minor;
+    if (mknod(name, type=='c' ? S_IFCHR : S_IFBLK,  q) ||
+	chown(name, name2uid(owner), name2gid(group)) ||
+	chmod(name, mode)) {
+      warn("couldn't create %s: %s", name, strerror(errno));
+    }
+  }
+}
+
+/************************* major number list *************************/
+
+/*
+ * In Linux device major numbers can be allocated dynamically, so we go
+ * look in /proc/devices to see what they are. This keeps track of things.
+ */
+
+typedef struct {
+    const char *procname;
+    int flag;
+} majorentry;
+
+#define MAXMAJORS 256
+static majorentry cmajors[MAXMAJORS];  /* initialized to 0 */
+static majorentry bmajors[MAXMAJORS];  /* initialized to 0 */
+static int no_proc=0;   /* true if we didn't find /proc/devices */
+
+/*
+ * Store the name associated with a particular major device number.
+ */
+static void set_major(const char *procname, int ischar, int num) {
+  if (num<0 || num>255) {
+    warn("warning: got bogus major number %d for %s", num, procname);
+    return;
+  }
+  if (ischar) cmajors[num].procname=procname;
+  else bmajors[num].procname=procname;
+}
+
+/*
+ * Look up a major device number by name; return the default value
+ * if provided. A default value of -1 implies the device is only
+ * dynamic, and so if there's no entry we shouldn't even note its
+ * existence.
+ */
+static int get_major(const char *procname, int ischar, int defaalt) {
+  int i;
+  if (!procname) return defaalt;
+  if (ischar) {
+    for (i=0; i<MAXMAJORS; i++)
+      if (cmajors[i].procname && !strcmp(cmajors[i].procname, procname))
+	return i;
+  }
+  else {
+    for (i=0; i<MAXMAJORS; i++)
+      if (bmajors[i].procname && !strcmp(bmajors[i].procname, procname))
+	return i;
+  }
+  return defaalt;
+}
+
+/*
+ * Read /proc/devices.
+ */
+static void setup_majors(void) {
+  FILE *f = fopen("/proc/devices", "r");
+  if (!f) {
+    fprintf(stderr, "MAKEDEV: warning: can't read /proc/devices\n");
+    no_proc = 1;
+    return;
+  }
+  doparse(f, 1, "/proc/devices");
+  fclose(f);
+}
+
+/************************** procname list *************************/
+
+/*
+ * The names found in /proc/devices aren't usually quite the same
+ * as the names we use. This is a mapping between the two namespaces.
+ */
+typedef struct {
+    const char *procname;
+    const char *groupname;
+} namealias;
+
+#define MAXALIASES 100
+static namealias aliases[MAXALIASES];
+static int naliases=0;
+
+static void addalias(const char *procname, const char *groupname) {
+  if (naliases>=MAXALIASES) crash("out of space for aliases");
+  aliases[naliases].procname = procname;
+  aliases[naliases].groupname = groupname;
+  naliases++;
+}
+
+static void ignore_procname(const char *procname) {
+  addalias(procname, NULL);
+}
+
+static const char *procnameof(const char *groupname) {
+  int i;
+  for (i=0; i<naliases; i++) if (!strcmp(groupname, aliases[i].groupname))
+    return aliases[i].procname;
+  return NULL;
+}
+
+static const char *groupnameof(const char *procname) {
+  int i;
+  for (i=0; i<naliases; i++) if (!strcmp(procname, aliases[i].procname))
+    return aliases[i].groupname;
+  return NULL;
+}
+
+/************************* batch list *************************/
+/*
+ * Create a device "batch" - a bunch of devices or groups.
+ * This is used for "generic" and automatically for disk entries.
+ * (Disk entries for "hd" come up with groups hda, hdb, etc., but
+ * "hd" itself needs to run these too.)
+ */
+#define MAXTARGETS 32
+#define MAXBATCHES 16
+
+typedef struct {
+    const char *name;  /* name of batch */
+    const char *targets[MAXTARGETS];
+    int ntargets;
+    int busy;
+} batch;
+
+static batch batches[MAXBATCHES];
+static int nbatches=0;
+
+/*
+ * Start a new batch.
+ */
+static batch *addbatch(const char *name) {
+  batch *b;
+  if (nbatches>=MAXBATCHES) crash("Out of space for batches");
+  b = &batches[nbatches++];
+  b->name = name;
+  b->busy = NO;
+  return b;
+}
+
+/*
+ * Add something to a batch.
+ */
+static batch *add2batch(batch *b, const char *target) {
+  if (b->ntargets>=MAXTARGETS) {
+    warn("Too many targets for batch %s (max %d)", b->name, MAXTARGETS);
+    return b;
+  }
+  b->targets[b->ntargets++] = target;
+  return b;
+}
+
+/*
+ * Run a batch.
+ */
+static void run_batch(const batch *b, makeopts m) {
+  int i;
+  for (i=0; i<b->ntargets; i++) make(b->targets[i], m);
+}
+
+/*
+ * Try to run a batch; returns YES if it found one.
+ */
+static int try_run_batch(const char *name, makeopts m) {
+  int i;
+  for (i=0; i<nbatches; i++) {
+    if (!strcmp(name, batches[i].name)) {
+      if (batches[i].busy) {
+	warn("Found recursive batch definition for %s", batches[i].name);
+	continue;
+      }
+      batches[i].busy=YES;
+      run_batch(&batches[i], m);
+      batches[i].busy=NO;
+      return YES;
+    }
+  }
+  return NO;
+}
+
+/************************* device list *************************/
+
+/*
+ * Structure to remember the properties of an individual device.
+ * NOTE: if the device is actually a symbolic link, the "class"
+ * member is used to store the thing it should be linked to.
+ */
+typedef struct {
+    const char *name;   /* file name to create */
+    const char *grp;    /* device "group" name (e.g. "busmice") */
+    const char *class;  /* device class ( -> owner and permissions) */
+    int major, minor;   /* device number */
+    char type;          /* 'c', 'b', or 'l' for symbolic link */
+    int omit;           /* don't make me if this is nonzero */
+} device;
+
+/*
+ * Create a device (link or actual "special file") - special files are
+ * passed on to class_makedev().
+ */
+void makedev(device *d, makeopts m) {
+  if (m==M_OMIT) {
+    d->omit=1;
+  }
+  if (d->omit==1) return;
+  if (d->type=='l') {
+    if (isverbose) {
+      if (deletion) printf("rm -f %s\n", d->name);
+      else printf("lrwxrwxrwx   %s -> %s\n", d->name, d->class);
+    }
+    if (donothing) return;
+    if (unlink(d->name) && deletion) warn("Couldn't remove %s\n", d->name);
+    if (!deletion) {
+      if (symlink(d->class, d->name)) /* class holds thing pointed to */
+	warn("couldn't link %s -> %s: %s", d->name, d->class, strerror(errno));
+    }
+  }
+  else class_makedev(d->name, d->class, d->major, d->minor, d->type);
+}
+
+/*
+ * Array of devices. We allocate it once from main(); it doesn't grow.
+ * Should maybe make it growable sometime. This keeps track of all possible
+ * devices. We build this thing first, and then create devices from it as
+ * requested.
+ */
+static device *devices = NULL;
+static int maxdevices, ndevices;
+
+/*
+ * Allocate space for the device array.
+ */
+static void allocate_devs(int nd) {
+  devices = malloc(nd * sizeof(device));
+  if (!devices) crash("Out of memory");
+  ndevices = 0;
+  maxdevices = nd;
+}
+
+/*
+ * Check all the devices for having valid device classes.
+ */
+static void check_classes(void) {
+  int i;
+  const char *q=NULL;
+  for (i=0; i<ndevices; i++) 
+    if (devices[i].type!='l' && !devices[i].omit &&
+	which_class(devices[i].class)<0) {
+      if (!q || strcmp(q, devices[i].class)) {
+	warn("Invalid device class %s for %s", 
+	     devices[i].class, devices[i].name);
+	q = devices[i].class;
+      }
+      devices[i].class = "default";
+    }
+}
+
+/*
+ * Create an entry in the device table for a single device.
+ */
+static void init(const char *name, const char *grp, const char *class,
+		 int major, int minor, int type) {
+  if (major < 0) return;
+  if (!strchr("bcl", type)) {
+    warn("invalid device type %c for %s (skipping)", type, name);
+    return;
+  }
+  if (ndevices>=maxdevices) crash("out of space for devices");
+  devices[ndevices].name = name;
+  devices[ndevices].grp = grp;
+  devices[ndevices].class = class;
+  devices[ndevices].major = major;
+  devices[ndevices].minor = minor;
+  devices[ndevices].type = type;
+  devices[ndevices].omit = 0;
+  ndevices++;
+}
+
+/*
+ * Create an entry for a symbolic link "device", such as /dev/fd
+ * (which is a symbolic link to /proc/self/fd)
+ */
+static void initlink(const char *name, const char *grp, const char *target) {
+  init(name, grp, target, 0, 0, 'l');
+}
+
+/*
+ * Init lots of devices. This creates a number of devices, numbered between
+ * lo and hi. The idea is that "base" contains a %d or %x (or something like
+ * that) in it which pulls in the number. The device group can also do this,
+ * though this will in most cases not be useful. "baseminor" is the minor
+ * number of the first device created.
+ */
+static void initlots(const char *base, int lo, int hi, const char *grp,
+		     const char *class,
+		     int maj, int baseminor, int type) {
+  char buf[32], gbuf[32];
+  int i;
+  if (maj<0) return;
+  for (i=lo; i<hi; i++) {
+    sprintf(buf, base, i);
+    if (grp) sprintf(gbuf, grp, i);  /* grp is permitted to contain a %d */
+    init(strdup(buf), grp ? strdup(gbuf) : NULL, class, 
+	 maj, baseminor+i-lo, type);
+  }
+}
+
+/*
+ * Init a whole (hard) disk's worth of devices - given `hd', it makes
+ * hda1...hda8 through hdd1...hdd8 in one fell swoop. "low" and "high"
+ * are the letters to use ('a' and 'd' for the previous example).
+ * "nparts" is the number of partitions to create, ordinarily 8.
+ * "maj" is the major device number; minmult is the multiplier for the
+ * minor number. That is, if hda starts at 0, and hdb starts at 64, minmult
+ * is 64.
+ *
+ * Note that it creates "hda", "hdb", etc. too, and puts things in the
+ * groups "hda", "hdb", etc. as appropriate. The class is set to "disk".
+ */
+static void initdisk(const char *base, int low, int high, int nparts,
+	      int maj, int minmult) {
+  char buf[16], buf2[16];
+  int i;
+  batch *b;
+  if (maj<0) return;
+  if (low>=high) return;
+  b = addbatch(base);
+  for (i=low; i<=high; i++) {
+    char *q;
+    sprintf(buf, "%s%c", base, i);
+    q = strdup(buf);
+    init(q, q, "disk", maj, (i-low)*minmult,   'b');
+    strcpy(buf2, buf);
+    strcat(buf2, "%d");
+    initlots(buf2, 1, nparts, buf, "disk", maj, (i-low)*minmult+1, 'b');
+    add2batch(b, q);
+  }
+}
+
+static void initdevs(void) {
+  FILE *f = fopen("DEVINFO", "r");
+  if (!f) f = fopen("../DEVINFO", "r");
+  if (!f) f = fopen("/etc/devinfo", "r");
+  if (!f) crash("Can't find DEVINFO");
+  doparse(f,3, "DEVINFO");
+  fclose(f);
+  f = fopen("DEVINFO.local", "r");
+  if (!f) f = fopen("../DEVINFO.local", "r");
+  if (!f) f = fopen("/etc/devinfo.local", "r");
+  if (!f) f = fopen("/usr/local/etc/devinfo.local", "r");
+  if (f) {
+    doparse(f,3, "DEVINFO.local");
+    fclose(f);
+  }
+}
+
+/************************** update *************************/
+
+/*
+ * Call make() with our names for something that appeared in /proc/devices.
+ */
+
+static void transmake(const char *procname, makeopts m) {
+  const char *gname = groupnameof(procname);
+  if (gname) make(gname, m);
+}
+
+/*
+ * Update a device that appeared in MAKEDEV.cache. Whenever we update,
+ * we save what we did into MAKEDEV.cache; this lets us avoid doing
+ * them over the next time. We only do something if the device has
+ * disappeared or the major number has changed.
+ *
+ * Note that this caching made the shell version go much faster (it took
+ * around 15 seconds with the cache, vs. over a minute if the cache was
+ * blown away.) For us, it still does, but it hardly matters: it shaves
+ * one second off a two-second execution.
+ *
+ * Also note the old script used DEVICES instead of MAKEDEV.cache. We
+ * changed because the old file didn't record whether something was
+ * a block or character device; since the sets of numbers are independent,
+ * this was bound to break.
+ */
+static void update2(const char *name, int ischar, int major) {
+  int now = get_major(name, ischar, -1);
+  if (now<0) {
+    deletion = 1;   /* must have been zero if we're doing an update */
+    transmake(name, M_CREATE);
+    deletion = 0;
+  }
+  else if (now!=major) { /* oops, it moved; remake it */
+    transmake(name, M_CREATE);
+    if (ischar) cmajors[now].flag=1;
+    else bmajors[now].flag=1;
+  }
+  else {
+    if (ischar) cmajors[now].flag=1; /* unchanged; inhibit remaking it */
+    else bmajors[now].flag=1; /* unchanged; inhibit remaking it */
+  }
+}
+
+static void updatefromcache(const char *name, int major, int type) {
+  update2(name, type=='c', major);
+}
+
+
+/*
+ * Update. Read the information stored in MAKEDEV.cache from the last
+ * update; fix anything that changed; then create any new devices that
+ * weren't listed the last time. (We use the "flag" field in the
+ * majors array to check this.) At that point, write out a new
+ * cache file.
+ */
+#define CACHEFILE "MAKEDEV.cache"
+
+static void update(void) {
+  FILE *f;
+  int i;
+  if (no_proc) { warn("Couldn't read anything from /proc/devices"); return; }
+  if (deletion) { warn("update and -d are incompatible"); return; }
+  f = fopen(CACHEFILE, "r");
+  if (f) {
+    doparse(f, 2, CACHEFILE);
+    fclose(f);
+  }
+  for (i=0; i<MAXMAJORS; i++) {
+    if (cmajors[i].procname && !cmajors[i].flag) {
+      transmake(cmajors[i].procname, M_CREATE);
+      cmajors[i].flag=1;
+    }
+    if (bmajors[i].procname && !bmajors[i].flag) {
+      transmake(bmajors[i].procname, M_CREATE);
+      bmajors[i].flag=1;
+    }
+  }
+  if (donothing) return;
+  f = fopen(CACHEFILE, "w");
+  if (f) {
+    for (i=0; i<MAXMAJORS; i++)  {
+      if (cmajors[i].procname) fprintf(f, "%s %d char\n", cmajors[i].procname, i);
+      if (bmajors[i].procname) fprintf(f, "%s %d block\n", bmajors[i].procname, i);
+    }
+    fclose(f);
+  }
+  else warn("warning: can't write MAKEDEV.cache");
+}
+
+/************************* work *************************/
+
+/*
+ * Create (or delete, etc. according to flags) a device or device group.
+ * The "generic" group is handled specially by recursing once.
+ * "update" is handled specially; see update() below.
+ * "local" issues a warning; people should use DEVINFO.local instead.
+ */
+static void make(const char *what, makeopts m) {
+  int i;
+  if (!strcmp(what, "update")) {
+    if (m!=M_CREATE) warn("update not compatible with those options");
+    else update();
+  }
+  else if (!strcmp(what, "local")) {
+    warn("The local target is obsolete.");
+  }
+  else if (!try_run_batch(what, m)) {
+    int found=0;
+    for (i=0; i<ndevices; i++) {
+      if ((devices[i].grp && !strcmp(what, devices[i].grp)) ||
+          !strcmp(what, devices[i].name)) {
+        makedev(&devices[i], m);
+        found = 1;
+      }
+    }
+    if (!found) warn("unknown device or device group %s", what);
+  }
+}
+
+/*
+ * A major improvement over the shell version...
+ */
+static void usage(void) {
+  printf("MAKEDEV usage:\n");
+  printf("    MAKEDEV [-vdcn] device [device...]\n");
+  printf("      -v                 Verbose output\n");
+  printf("      -d                 Remove specified devices\n");
+  printf("      -c                 Create devices (default)\n");
+  printf("      -n                 Don't actually do anything (implies -v)\n");
+  printf("      -V                 Print version information\n");
+  printf("\n");
+}
+
+/*
+ * We should use getopt one of these days.
+ */
+int main(int argc, char **argv) {
+  int i,j, done=0;
+  for (i=1; i<argc && argv[i][0]=='-' && !done; i++)
+    for (j=1; argv[i][j] && !done; j++) switch(argv[i][j]) {
+        case '-': done=1; break;
+	case 'v': isverbose = 1; break;
+	case 'd': deletion = 1; break;
+	case 'c': deletion = 0; break;
+	case 'n': donothing = 1; isverbose = 1; break;
+	case 'h': usage(); exit(0);
+	case 'V': printf("MAKEDEV: %s\n", version); exit(0);
+	default: fprintf(stderr, "MAKEDEV: unknown flag %c\n", argv[i][j]);
+	  exit(1);
+    }
+  setup_majors();      /* read major device numbers from /proc */
+  allocate_devs(1500); /* make space to hold devices */
+  initdevs();          /* set up device structures */
+  loadclasses();       /* load device classes from config file */
+  check_classes();     /* make sure no devices have bogus classes */
+  if (i==argc) warn("didn't do anything; try -h for help.");
+  else for (; i<argc; i++) make(argv[i], M_CREATE);
+  return 0;
+}
+
+}
+{
+/************************* parsing support *************************/
+
+/*
+ * Don't use the built-in error printing.
+ */
+#define SYNTAX_ERROR
+#define PARSER_STACK_OVERFLOW
+#define REDUCTION_TOKEN_ERROR
+
+static void doparse(FILE *f, int filetype, const char *filename) {
+  char *x;
+  int i=0, len;
+  if (filetype<1 || filetype>4) crash("tried to parse a bad file type");
+  if (filetype!=1) { /* /proc/devices won't stat intelligently */
+    struct stat buf;
+    if (fstat(fileno(f), &buf)) crash("fstat failed?!?");
+    len = buf.st_size;
+  }
+  else len=1023;
+  x = malloc(len+1);
+  if (!x) crash("Out of memory");
+
+  len = fread(x, 1, len, f);  /* it shouldn't return a short count... */
+  if (len<0) crash("fread failed?!?");
+  x[len]=0;
+
+  init_parse();
+  PCB.input_code = filetype+'0';
+  parse();
+  PCB.column--; /* correct for the filetype token */
+  while (!PCB.exit_flag) {
+    PCB.input_code = x[i++];
+    parse();
+  }
+  if (PCB.exit_flag == AG_SYNTAX_ERROR_CODE) {
+    warn("syntax error: %s, line %d, column %d in file %s",
+         PCB.error_message, PCB.line, PCB.column, filename);
+    crash("Sorry, can't continue.");
+  }
+  else if (PCB.exit_flag != AG_SUCCESS_CODE) {
+    crash("parser stack overflow!");
+  }
+}
+
+#define STRINGSIZE 8192
+static char string_space[STRINGSIZE];
+static int stringptr=0;
+
+static const char *string_start(int c) {
+  if (stringptr>=STRINGSIZE) crash("out of string space");
+  return string_space[stringptr]=c, string_space+stringptr++;
+}
+
+static void string_push(int c) {
+  if (stringptr>=STRINGSIZE) crash("out of string space");
+  string_space[stringptr++] = c;
+}
+
+static void string_finish(void) {
+  string_push(0);
+}
+
+}
+/************************* syntax begins here *************************/
+
+/*
+ * We read four different file formats here:
+ *     /proc/devices   1
+ *     MAKEDEV.cache   2
+ *     DEVINFO         3
+ *     MAKEDEV.config  4
+ */
+
+
+[
+  sticky {identifier}
+  disregard white space
+  lexeme {identifier, simple eol, quoted string}
+  distinguish keywords {'a-z' + 'A-Z'}
+  event driven
+  parser name = parse
+  line numbers
+]
+
+(void) file format $
+  -> '1', devices
+  -> '2', cache
+  -> '3', devinfo
+  -> '4', config
+
+
+/************************* /proc/devices *************************/
+
+(void) devices
+  -> eol?, device list..., eof
+
+(void) device list
+  -> "Character devices:", eol, character device...
+  -> "Block devices:", eol, block device...
+
+(void) character device
+  -> number:n, name:s, eol = set_major(s,YES,n);
+
+(void) block device
+  -> number:n, name:s, eol = set_major(s,NO,n);
+
+/************************* cache *************************/
+
+(void) cache
+  -> eol?, cachedevice..., eof
+
+(void) cachedevice
+  -> name:n, number:maj, devicetype:t, eol = updatefromcache(n,maj,t);
+
+(char) devicetype
+  -> 'b'       = 'b';
+  -> 'c'       = 'c';
+  -> "block"   = 'b';
+  -> "char"    = 'c';
+
+/************************* devinfo *************************/
+
+(void) devinfo
+  -> eol?, device block..., eof
+
+(void) device block
+  -> device header spec, '{', eol?, device decl?..., '}', eol?
+  -> device header spec, eol?, device decl
+  -> "ignore", '{', eol?, ignoramus..., '}', eol?
+  -> "batch", batch list, '}', eol?
+
+(batch *) batch list
+  -> name:n, '{', eol?, batch item:i, eol?  = add2batch(addbatch(n), i);
+  -> batch list:b, [',', eol?], batch item:i, eol? = add2batch(b,i);
+
+(const char *) batch item
+  -> name:n = n;
+
+(void) ignoramus
+  -> name:n, eol?, [',', eol?] = ignore_procname(n);
+
+{
+  static const char *cur_group=NULL, *cur_class=NULL;
+  static int cur_type;
+  static int cur_maj=0, cur_min=0, cur_bot=0, cur_top=0, ishex=0;
+
+  static void dhsproc(const char *g, const char *p, int t, int m) {
+    cur_group = g;
+    cur_type = t;
+    cur_maj = get_major(p, (t=='c'), m);
+    cur_min = 0;
+    cur_bot = cur_top = ishex = 0;
+    if (p) addalias(p,g);
+  }
+
+  static void newdev(const char *n) {
+    if (cur_maj<0) return;
+    init(n, cur_group, cur_class, cur_maj, cur_min, cur_type);
+  }
+  static void devrange(const char *n, const char *n1) {
+    char temp[32];
+    if (cur_maj<0) return;
+    sprintf(temp, "%s%%d%s", n, n1 ? n1 : "");
+    initlots(temp, cur_bot, cur_top, cur_group, cur_class,
+	     cur_maj, cur_min, cur_type);
+  }
+  static void doinitlink(const char *src, const char *tg) {
+    if (cur_maj>=0) initlink(src, cur_group, tg);
+  }
+}
+
+(void) device header spec
+  -> devicetype:t, '(', groupname:g, '=', procname:p, ')' = dhsproc(g,p,t,-1);
+  -> devicetype:t, '(', groupname:g, '=', procname:p,
+                  ',', number:m, ')'                    = dhsproc(g,p,t,m);
+  -> devicetype:t, '(', groupname:g, ',', number:m, ')' = dhsproc(g,NULL,t,m);
+
+(const char *) class
+  -> '(', name:classname, ')' = classname;
+
+(void) device tail
+  -> class:c, ':', expr:min, eol = (cur_class=c, cur_min=min);
+
+(void) device range
+  -> '[', number:a, '-', number:b, ']'       = cur_bot=a, cur_top=b, ishex=0;
+  -> '[', hex number:a, '-', auto hex:b, ']' = cur_bot=a, cur_top=b, ishex=1;
+
+(void) device decl
+  -> devname:n,                           device tail = newdev(n);
+  -> devname:n, device range, devname:n1, device tail = devrange(n,n1);
+  -> devname:n, device range,             device tail = devrange(n,NULL);
+  -> devname:n, '[', letter:a, '-', letter:b,']', number:p,'/',number:m, eol =
+        initdisk(n, a, b, p, cur_maj, m);
+  -> devname:n, "->", name:tg, eol = doinitlink(n, tg);
+
+(const char *) devname -> name:n = n;
+(const char *) groupname -> name:n = n;
+(const char *) procname -> name:n = n;
+
+
+/************************* config *************************/
+
+(void) config
+  -> eol?, config decl..., eof
+
+(void) config decl
+  -> class decl
+  -> omit decl
+
+(void) class decl
+  -> "class", name:n, ':', name:o, name:g, mode:m, eol = addclass(n,o,g,m);
+
+(void) omit decl
+  -> "omit", name:n, eol = make(n, M_OMIT);
+  -> "omit", '{', eol?, single omit..., '}', eol?
+
+(void) single omit
+  -> name:n, eol?, [',', eol?] = make(n, M_OMIT);
+
+(int) mode
+ -> octal number:n = n;
+
+/************************* support *************************/
+
+eof         = -1 + 0
+digit       = '0-9'
+letter      = 'a-z' + 'A-Z' + '-' + '_'
+octal digit = '0-7'
+qchar       = 32..126 - '\\' - '"'
+
+(void) white space
+ -> ' ' + '\t' + '\r'
+ -> "/*", ~eof?..., "*/"
+
+
+(void) eol
+ -> simple eol...
+
+(void) simple eol
+ -> [{"//" | '#'}, ~'\n'?...], '\n'
+
+(const char *) name
+  -> identifier:s = string_finish(), s;
+  -> quoted string:s = s;
+
+(const char *) identifier
+  -> letter:c                       = string_start(c);
+  -> identifier:s, letter+digit:c   = string_push(c), s;
+
+(const char *) quoted string
+  -> '"', qstring:s, '"' = string_finish(), s;
+
+(const char *) qstring
+  -> qstring char:c            = string_start(c);
+  -> qstring:s, qstring char:c = string_push(c), s;
+
+(char) qstring char
+  -> qchar:c     = c;
+  -> '\\', '\\'  = '\\';
+  -> '\\', '"'   = '"';
+
+(int) number
+  -> digit:d           = d-'0';
+  -> number:n, digit:d = n*10 + d-'0';
+
+(int) hex number
+  -> {"0x" | "0X"}, hex digit:d    =d;
+  -> hex number:n, hex digit:d     =16*n+d;
+
+(int) auto hex
+  -> hex digit:d    =d;
+  -> auto hex:n, hex digit:d     =16*n+d;
+
+
+(int) hex digit
+  -> digit:d                       =d-'0';
+  -> 'a-f' + 'A-F' :d              =10 + (d&7);
+
+(int) octal number
+ -> octal digit:d                  = d-'0';
+ -> octal number:n, octal digit:d  = n*8+d-'0';
+
+(int) expr
+ -> term
+ -> expr:x, '+', term:t         =x+t;
+ -> expr:x, '-', term:t         =x-t;
+
+(int) term
+ -> factor
+ -> term:t, '*', factor:f       =t*f;
+// -> term:t, '/', factor:f       =t/f;
+
+(int) factor
+ -> number
+ -> hex number
+ -> '-', factor:f               =-f;
+ -> '(', expr:x, ')'            =x;

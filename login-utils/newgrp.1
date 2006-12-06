@@ -1,0 +1,24 @@
+.\" Original author unknown.  This man page is in the public domain.
+.\" Modified Sat Oct  9 17:46:48 1993 by faith@cs.unc.edu
+.TH NEWGRP 1 "9 October 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+newgrp \- log in to a new group
+.SH SYNOPSIS
+.BI "newgrp [ " group " ]"
+.SH DESCRIPTION
+.B Newgrp
+changes the group identification of its caller, analogously to
+.BR login (1).
+The same person remains logged in, and the current directory
+is unchanged, but calculations of access permissions to files are performed
+with respect to the new group ID.
+.LP
+If no group is specified, the GID is changed to the login GID.
+.LP
+.SH FILES
+.I /etc/group
+.br
+.I /etc/passwd
+
+.SH "SEE ALSO"
+.BR login "(1), " group (5)

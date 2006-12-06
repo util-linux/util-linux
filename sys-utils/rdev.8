@@ -1,0 +1,166 @@
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.\" Changes from sct@dcs.ed.ac.uk added Sat Oct  9 09:54:00 1993.
+.TH RDEV 8 "20 November 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+rdev \- query/set image root device, swap device, RAM disk size, or video mode
+.SH SYNOPSIS
+.nf
+.BR "rdev [ \-rsvh ] [ \-o " offset " ] [ " image " [ " value " [ " offset " ] ] ]"
+.BR "rdev [ \-o " offset " ] [ " image " [ " root_device " [ " offset " ] ] ]"
+.BR "swapdev [ \-o " offset " ] [ " image " [ " swap_device " [ " offset " ] ] ]"
+.BR "ramsize [ \-o " offset " ] [ " image " [ " size " [ " offset " ] ] ]"
+.BR "vidmode [ \-o " offset " ] [ " image " [ " mode " [ " offset " ] ] ]"
+.BR "rootflags [ \-o " offset " ] [ " image " [ " flags " [ " offset " ] ] ]"
+.fi
+.SH DESCRIPTION
+.\" " for emacs hilit19
+With no arguments,
+.B rdev
+outputs an
+.I /etc/mtab
+line for the current root file system.
+With no arguments,
+.BR swapdev ", " ramsize ", " vidmode ", and " rootflags
+print usage information.
+
+In a bootable image for the Linux kernel, there are several pairs of bytes
+which specify the root device, the video mode, the size of the RAM disk,
+and the swap device.  These pairs of bytes, by default, begin at offset 504
+(decimal) in the kernel image:
+
+.nf
+.RS
+ 498 Root flags
+(500 and 502 Reserved)
+ 504 RAM Disk Size
+ 506 VGA Mode
+ 508 Root Device
+(510 Boot Signature)
+.RE
+.fi
+
+.B rdev
+will change these values.
+
+Typical values for the
+.I image
+parameter, which is a bootable Linux kernel image, are as follows:
+
+.nf
+.RS
+/vmlinux
+/vmlinux.test
+/vmunix
+/vmunix.test
+/dev/fd0
+/dev/fd1
+.RE
+.fi
+
+When using the
+.BR rdev ", or " swapdev
+commands, the
+.IR root_device " or " swap_device
+parameter are as follows:
+
+.nf
+.RS
+/dev/hda[1-8]
+/dev/hdb[1-8]
+/dev/sda[1-8]
+/dev/sdb[1-8]
+.RE
+.fi
+
+For the
+.B ramsize
+command, the
+.B size
+parameter specifies the size of the RAM disk in kilobytes.
+
+For the
+.B rootflags
+command, the
+.B flags
+parameter contains extra information used when mounting root.
+Currently the only effect of these flags is to force the kernel to
+mount the root filesystem in readonly mode if 
+.B flags
+is non-zero.
+
+For the
+.B vidmode
+command, the
+.B mode
+parameter specifies the video mode:
+
+.nf
+.RS
+-3 = Prompt
+-2 = Extended VGA
+-1 = Normal VGA
+ 0 = as if "0" was pressed at the prompt
+ 1 = as if "1" was pressed at the prompt
+ 2 = as if "2" was pressed at the prompt
+ n = as if "n" was pressed at the prompt
+.RE
+.fi
+
+If the
+.I value
+is not specified, the
+.I image
+will be examined to determine the current settings.
+.SH OPTIONS
+.TP
+.B \-s
+Causes
+.B rdev
+to act like
+.BR swapdev .
+.TP
+.B \-r
+Causes
+.B rdev
+to act like
+.BR ramsize .
+.TP
+.B \-R
+Causes
+.B rdev
+to act like
+.BR rootflags .
+.TP
+.B \-v
+Causes
+.B rdev
+to act like
+.BR vidmode .
+.TP
+.B \-h
+Provides help.
+.SH BUGS
+For historical reasons, there are two methods for specifying alternative
+values for the offset.
+.sp
+The user interface is cumbersome, non-intuitive, and should probably be
+re-written from scratch, allowing multiple kernel image parameters to be
+changed or examined with a single command.
+.sp
+If LILO is used,
+.B rdev
+is no longer needed for setting the root device and the VGA mode, since
+these parameters that
+.B rdev
+modifies can be set from the LILO prompt during a boot.  However,
+.B rdev
+is still needed at this time for setting the RAM disk size.  Users are
+encouraged to find the LILO documentation for more information, and to use
+LILO when booting their systems.
+.SH AUTHORS
+.nf
+Originally by Werner Almesberger (almesber@nessie.cs.id.ethz.ch)
+Modified by Peter MacDonald (pmacdona@sanjuan.UVic.CA)
+rootflags support added by Stephen Tweedie (sct@dcs.ed.ac.uk)
+.fi

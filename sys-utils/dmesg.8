@@ -1,0 +1,49 @@
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH DMESG 8 "28 October 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+dmesg \- print or control the kernel ring buffer
+.SH SYNOPSIS
+.BI "dmesg [ \-c ] [ \-n " level " ]"
+.SH DESCRIPTION
+.B dmesg
+is used to examine or control the kernel ring buffer.
+
+The program helps users to print out their bootup messages.  Instead of
+copying the messages by hand, the user need only:
+.RS
+dmesg > boot.messages
+.RE
+and mail the
+.I boot.messages
+file to whoever can debug their problem.
+.SH OPTIONS
+.TP
+.B \-c
+clear the ring buffer contents after printing.
+.TP
+.BI \-n level
+set the
+.I level
+at which logging of messages is done to the console.  For example,
+.B \-n 1
+prevents all messages, expect panic messages, from appearing on the
+console.  All levels of messages are still written to
+.IR /proc/kmsg ,
+so
+.BR syslogd (8)
+can still be used to control exactly where kernel messages appear.  When
+the
+.B \-n
+option is used,
+.B dmesg
+will
+.I not
+print or clear the kernel ring buffer.
+
+When both options are used, only the last option on the command line will
+have an effect.
+.SH SEE ALSO
+.BR syslogd (8)
+.SH AUTHOR
+Theodore Ts'o (tytso@athena.mit.edu)

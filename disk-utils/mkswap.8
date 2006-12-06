@@ -1,0 +1,86 @@
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.\" Modified with suggestions from Linus, Mon Feb  1 21:40:49 1993
+.\" Modified with patches from Kai, Wed Jun 22 21:54:56 1994
+.\" Patches from jaggy@purplet.demon.co.uk (Mike Jagdis), Wed Feb 8 1995
+.\" Added comments from Nick Holloway, Sat Feb 11 1995, faith@cs.unc.edu
+.\" "
+.TH MKSWAP 8 "8 February 1995" "Linux 1.0" "Linux Programmer's Manual"
+.SH NAME
+mkswap \- set up a Linux swap device
+.SH SYNOPSIS
+.B "mkswap [ \-c ]"
+.IB device  " [" size-in-blocks "]"
+.SH DESCRIPTION
+.B mkswap
+sets up a Linux swap area on a device (usually a disk partition).
+
+The
+.I device
+is usually of the following form:
+
+.nf
+.RS
+/dev/hda[1-8]
+/dev/hdb[1-8]
+/dev/sda[1-8]
+/dev/sdb[1-8]
+.RE
+.fi
+
+The
+.I size-in-blocks
+parameter is the desired size of the file system, in blocks.  This
+information is determined automatically by mkswap if it is omitted.  Block
+counts are rounded down to pages of 4 kB each.  Only block counts equal to
+or greater than 40 and equal to or less than 131072 are allowed.  Block
+counts greater than 130752 are (silently) rounded down to 130752.
+
+As Nick Holloway explains, the actual maximum for each swap file/partition
+is:
+.RS
+(4096 - 10) * 8 * 4096 = 133890048 bytes = 130752 blocks =  127.6875 Mb
+.RE
+This is because a single page is used to hold the swap bitmap at the
+start of the partition, where each bit is a single 4K page.  The reason
+for the -10, is that the signature is "SWAP-SPACE" -- 10 characters.
+
+.B mkswap
+can also set up swap files, although the file has to be created first.  A
+sequence of commands similar to the following is reasonable for this
+purpose:
+
+.nf
+.RS
+# dd if=/dev/zero of=swapfile bs=1024 count=8192
+# mkswap swapfile 8192
+# sync
+# swapon swapfile
+.RE
+.fi
+
+Note that the regular file has to be created before running
+.B mkswap
+on the file, and that the file must not contain any holes (so, using
+.BR cp (1)
+to create the file is not acceptable).
+
+.SH OPTIONS
+.TP
+.B \-c
+Check the device for bad blocks before creating the file system.  If any
+are found, the count is printed.  This option is meant to be used for swap
+partitions
+.BR only ,
+and should
+.B not
+be used for regular files!  To make sure that regular files do not contain
+bad blocks, the partition that contains the regular file should have been
+created with
+.BR "mkfs -c" .
+.SH "SEE ALSO"
+.BR fsck (8),
+.BR mkfs (8),
+.BR fdisk (8)
+.SH AUTHOR
+Linus Torvalds (torvalds@cs.helsinki.fi)

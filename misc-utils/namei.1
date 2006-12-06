@@ -1,0 +1,60 @@
+.\" 
+.\" Version 1.4 of namei
+.\"
+.TH NAMEI 1 "Local"
+.SH NAME
+namei - follow a pathname until a terminal point is found
+.SH SYNOPSIS
+.B namei
+.I [-mx]
+.I pathname
+.I "[ pathname ... ]"
+.SH DESCRIPTION
+.I Namei
+uses its arguments as pathnames to any type
+of Unix file (symlinks, files, directories, and so forth). 
+.I Namei
+then follows each pathname until a terminal 
+point is found (a file, directory, char device, etc).
+If it finds a symbolic link, we show the link, and start
+following it, indenting the output to show the context.
+.PP
+This program is useful for finding a "too many levels of
+symbolic links" problems.
+.PP
+For each line output,
+.I namei
+outputs a the following characters to identify the file types found:
+.LP
+.nf
+   f: = the pathname we are currently trying to resolve
+    d = directory
+    l = symbolic link (both the link and it's contents are output)
+    s = socket
+    b = block device
+    c = character device
+    - = regular file
+    ? = an error of some kind
+.fi
+.PP
+.I Namei
+prints an informative message when
+the maximum number of symbolic links this system can have has been exceeded.
+.SH OPTIONS
+.TP 8
+.B -x
+Show mount point directories with a 'D', rather than a 'd'.
+.TP 8
+.B -m
+Show the mode bits of each file type in the style of ls(1),
+for example 'rwxr-xr-x'.
+.SH AUTHOR
+Roger Southwick  (rogers@amadeus.wr.tek.com)
+.SH BUGS
+To be discovered.
+.SH CAVEATS
+.I Namei
+will follow an infinite loop of symbolic links forever.  To escape, use
+SIGINT (usually ^C).
+.SH "SEE ALSO"
+ls(1), stat(1)

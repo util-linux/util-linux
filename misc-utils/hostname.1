@@ -1,0 +1,77 @@
+.TH HOSTNAME 1 "28 July 1994" "Linux" "Linux Programmer's Manual"
+.SH NAME
+hostname \- show or set the system's host name
+.br
+dnsdomainname \- show the system's domain name
+.SH SYNOPSIS
+.B hostname
+.RB [ \-d ]
+.RB [ \-\-domain ]
+.RB [ \-F\ filename ]
+.RB [ \-\-file\ filename ]
+.RB [ \-f ]
+.RB [ \-\-fqdn ]
+.RB [ \-h ]
+.RB [ \-\-help ]
+.RB [ \-\-long ]
+.RB [ \-s ]
+.RB [ \-\-short ]
+.RB [ \-v ]
+.RB [ \-\-version ]
+.RB [ name ]
+.br
+.B dnsdomainname
+.SH DESCRIPTION
+.B Hostname
+is the program that is used to either set the host name or display
+the current host or domain name of the system.  This name is used
+by many of the networking programs to identify the machine.
+.LP
+When called without any arguments, the program displays the current
+name as set by the
+.B hostname
+command. You can change the output format to display always the short
+or the long host name (FQDN). When called with arguments, the program will
+set the value of the host name to the value specified.  This usually is
+done only once, at system startup time, by the
+.I /etc/rc.d/rc.inet1
+configuration script.
+.LP
+Note, that only the super-user can change the host name.
+.LP
+If the program was called as
+.B dnsdomainname
+it will show the DNS domain name. You can't change the DNS domain name with
+.B dnsdomainname
+(see below).
+.SH OPTIONS
+.TP
+.I "\-d, \-\-domain"
+Display the name of the DNS domain. Don't use the command
+.B domainname
+to get the DNS domain name because it will show the NIS domain name and
+not the DNS domain name.
+.TP
+.I "\-F, \-\-file filename"
+Read the host name from the specified file. Comments (lines starting with
+a `#') are ignored.
+.TP
+.I "\-f, \-\-fqdn, \-\-long"
+Display the FQDN (Fully Qualified Domain Name). A FQDN consists of a
+short host name and the DNS domain name. Unless you are using bind or NIS
+for host lookups you can change the FQDN and the DNS domain name (which is
+part of the FQDN) in the \fI/etc/hosts\fR file.
+.TP
+.I "\-h, \-\-help"
+Print a usage message on standard output and exit successfully.
+.TP
+.I "\-s, \-\-short"
+Display the short host name.
+.TP
+.I "\-v, \-\-version"
+Print version information on standard output and exit successfully.
+.SH FILES
+.B /etc/hosts
+.SH AUTHOR
+Peter Tobias, <tobias@server.et-inf.fho-emden.de>
+

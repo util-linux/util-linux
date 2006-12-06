@@ -1,0 +1,7 @@
+Here is a working version of the BSD script command which captures
+the output of a terminal session in a file.
+
+If you have libc-4.2 you don't need cfmakeraw.c or paths.h
+
+Rick Sladkey
+jrs@world.std.com

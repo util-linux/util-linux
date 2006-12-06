@@ -1,0 +1,36 @@
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH PASSWD 1 "22 June 1994" "Linux 1.0" "Linux Programmer's Manual"
+.SH NAME
+passwd \- change password
+.SH SYNOPSIS
+.BR "passwd [ " name " ]"
+.SH DESCRIPTION
+.B passwd
+will change the specified user's password.  Only the superuser is allowed
+to change other user's passwords.  If the user is not root, then the old
+password is prompted for and verified.
+
+A new password is prompted for twice, to avoid typing mistakes.  Unless the
+user is the superuser, the new password must have more than six characters,
+and must have either both upper and lower case letters, or non-letters.
+Some passwords which are similar to the user's name are not allowed.
+.SH FILES
+.I /etc/passwd
+.br
+.I /etc/shells
+.SH "SEE ALSO"
+.BR chsh (1),
+.BR chfn (1)
+.SH BUGS
+A password consisting of all digits is allowed.
+.br
+No warnings are printed if the superuser chooses a poor password.
+.br
+The
+.B \-f
+and
+.B \-s
+options are not supported.
+.SH AUTHOR
+Peter Orbaek (poe@daimi.aau.dk)

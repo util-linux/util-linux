@@ -1,0 +1,23 @@
+.TH hostid 1
+.SH NAME
+hostid \- set or print system's host id.
+.SH SYNTAX
+.B hostid
+[\-v] [\|\fIdecimal-id\fR\|]
+.SH DESCRIPTION
+.\".NXR "hostid command"
+The
+.B hostid
+command prints the current host id number in hexadecimal and both
+decimal and hexadecimal in parenthesis if the \-v option is given.
+This numeric value is expected to be unique across all hosts
+and is normally set to resemble the host's Internet address.
+
+Only the super-user can set the hostid by giving an argument. This value is
+stored in the file /etc/hostid and need only be performed once.
+
+.SH AUTHOR
+Hostid is written by Mitch DSouza \- (m.dsouza@mrc-apu.cam.ac.uk)
+
+.SH SEE ALSO
+gethostid(2), sethostid(2)

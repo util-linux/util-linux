@@ -1,0 +1,166 @@
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH FDISK 8 "Tue Mar 22 01:00:00 1994" "Linux 1.0" "Linux Programmer's Manual"
+.SH NAME
+fdisk \- Partition table manipulator for Linux
+.SH SYNOPSIS
+.B fdisk
+.B "[ \-l ] [ \-v ] [ \-s partition] ["
+device
+.B ]
+.SH DESCRIPTION
+.B fdisk
+is a menu driven program for manipulation of the hard disk partition table.
+The
+.I device
+is usually one of the following:
+.sp
+.nf
+.RS
+/dev/hda
+/dev/hdb
+/dev/sda
+/dev/sdb
+.RE
+.fi
+The
+.I partition
+is a
+.I device
+name followed by a partition number.  For example,
+.B /dev/hda1
+is the first partition on the first hard disk in the system.
+
+If possible,
+.B fdisk
+will obtain the disk geometry automatically.  This is
+.I not
+necessarily the
+.I physical
+disk geometry, but is the disk geometry that MS-DOS uses for the partition
+table.  If
+.B fdisk
+warns you that you need to set the disk geometry, please believe this
+statement, and set the geometry.  This should only be necessary with
+certain SCSI host adapters (the drivers for which are rapidly being
+modified to provide geometry information automatically).
+
+Whenever a partition table is printed out, a consistency check is performed
+on the partition table entries.  This check verifies that the physical and
+logical start and end points are identical, and that the partition starts
+and ends on a cylinder boundary (except for the first partition).
+
+Old versions of fdisk (all versions prior to 1.1r [including 0.93])
+incorrectly mapped the cylinder/head/sector specification onto absolute
+sectors.  This may result in the first partition on a drive failing the
+consistency check.  If you use LILO to boot, this situation can be ignored.
+However, there are reports that the OS/2 boot manager will not boot a
+partition with inconsistent data.
+
+Some versions of MS-DOS create a first partition which does not begin
+on a cylinder boundary, but on sector 2 of the first cylinder.
+Partitions beginning in cylinder 1 cannot begin on a cylinder boundary, but
+this is unlikely to cause difficulty unless you have OS/2 on your machine.
+
+In version 1.1r, a BLKRRPART ioctl() is performed before exiting when the
+partition table is updated.  This is primarily to ensure that removable
+SCSI disks have their partition table information updated.  If the kernel
+does not update its partition table information, fdisk warns you to
+reboot.  If you do not reboot your system after receiving such a warning,
+you may lose or corrupt the data on the disk.  Sometimes BLKRRPART fails
+silently, when installing Linux, you should
+.I always
+reboot after editing the partition table.
+
+.SH "DOS 6.x WARNING"
+
+The DOS 6.x FORMAT command looks for some information in the first
+sector of the data area of the partition, and treats this information
+as more reliable than the information in the partition table.  DOS
+FORMAT expects DOS FDISK to clear the first 512 bytes of the data area
+of a partition whenever a size change occurs.  DOS FORMAT will look at
+this extra information even if the /U flag is given -- we consider
+this a bug in DOS FORMAT and DOS FDISK.
+
+The bottom line is that if you use cfdisk or fdisk to change the size of a
+DOS partition table entry, then you must also use
+.B dd
+to zero the first 512 bytes of that partition before using DOS FORMAT to
+format the partition.  For example, if you were using cfdisk to make a DOS
+partition table entry for /dev/hda1, then (after exiting fdisk or cfdisk
+and rebooting Linux so that the partition table information is valid) you
+would use the command "dd if=/dev/zero of=/dev/hda1 bs=512 count=1" to zero
+the first 512 bytes of the partition.
+.B BE EXTREMELY CAREFUL
+if you use the
+.B dd
+command, since a small typo can make all of the data on your disk useless.
+
+.B BE EXTREMELY CAREFUL
+if you use the
+.B dd
+command, since a small typo can make all of the data on your disk useless.
+
+For best resutls, you should always use an OS-specific partition table
+program.  For example, you should make DOS partitions with the DOS FDISK
+program and Linux partitions with the Linux fdisk or Linux cfdisk program.
+
+.SH OPTIONS
+.TP
+.B \-v
+Prints version number of
+.B fdisk
+program.
+.TP
+.B \-l
+Lists the partition tables for
+.BR /dev/hda ,
+.BR /dev/hdb ,
+.BR /dev/sda ,
+.BR /dev/sdb ,
+.BR /dev/sdc ,
+.BR /dev/sdd ,
+.BR /dev/sde ,
+.BR /dev/sdf ,
+.BR /dev/sdg ,
+.BR /dev/sdh ,
+and then exits.
+.TP
+.BI \-s partition
+If the
+.I partition
+is not a DOS partition (i.e., the partition id is greater than 10), then
+the
+.I size
+of that partition is printed on the standard output.  This value is
+normally used as an argument to the
+.BR mkfs (8)
+program to specify the size of the partition which will be formatted.
+.SH BUGS
+Although this man page (written by faith@cs.unc.edu) is poor, there is
+.I excellent
+documentation in the README.fdisk file (written by LeBlanc@mcc.ac.uk) that
+should always be with the fdisk distribution.  If you cannot find this file
+in the
+.I util-linux-*
+directory or with the
+.I fdisk.c
+source file, then you should write to the distributor of your version of
+.B fdisk
+and complain that you do not have all of the available documentation.
+.SH AUTHOR
+A. V. Le Blanc (LeBlanc@mcc.ac.uk)
+.br
+v1.0r: SCSI and extfs support added by Rik Faith (faith@cs.unc.edu)
+.br
+v1.1r: Bug fixes and enhancements by Rik Faith (faith@cs.unc.edu), with
+special thanks to Michael Bischoff (i1041905@ws.rz.tu-bs.de or
+mbi@mo.math.nat.tu-bs.de).
+.br
+v1.3: Latest enhancements and bug fixes by A. V. Le Blanc, including the
+addition of the
+.B \-s
+option.
+.bt
+v2.0: Disks larger than 2GB are now fully supported, thanks to Remy Card's
+llseek support.

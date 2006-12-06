@@ -1,0 +1,343 @@
+/*
+ * DEVINFO: device information for MAKEDEV
+ *
+ * MANY THANKS to those who have sent in corrections - I don't have most
+ * of the hardware listed in here, so it won't get fixed if nobody tells me.
+ * Mail to: David A. Holland <dholland@husc.harvard.edu>
+ *
+ * Version 1.4: 21-Feb-94  Corrected proc entry for ibcs2.
+ *              27-Feb-94  Make 12 VCs by default.
+ * Version 1.3: 14-Feb-94  Corrections from perusing the 1.1.91 source tree.
+ *    hd1[a-b] becomes hd[c-d]; see comments below.
+ *    Corrected idecd entry. Added entry for Aztech cdrom.
+ *    Corrected sbpcd entries. 
+ *    Invented new [and better] names for the QIC tape entries.
+ *    There appear to be up to 32 cyclades devices supported in 1.1.91.
+ * Version 1.2: 14-Feb-94  Revisions snarfed from shell MAKEDEV 2.1.
+ *    Added cyclades, idecd, apm, dcf, /proc entry for joysticks, 
+ *    scanner becomes logiscan/m105scan/ac4096, some new audio devices,
+ *    high-number floppy entries, scsi tapes+cds now go 0-7, 
+ *    corrected a comment erroneously indicating fd4 was possible,
+ *    removed default major numbers for cdu31a, pcaudio, ibcs2.
+ * Version 1.1: 13-Feb-94  Corrected scsi tapes (which were totally wrong)
+ * Version 1.0: 11-Dec-94  Initial version
+ */
+
+/* ignore when /proc/devices mentions these: */
+/* (this is how it was before; couldn't we use mem? */
+ignore { mem, tty, pcmcia }
+
+/* make a batch called generic, standard set of stuff */
+batch generic {
+      std, fd0, fd1, hda, hdb, xda, xdb, sda, sdb,
+      ptyp, ptyq, ptyr, ptys, console, vts, serial,
+      busmice, printers, fd
+}
+
+// The "std" group - basic devices */
+char (std, 1) {
+	mem (kmem): 1
+	kmem (kmem): 2
+	null (public) : 3
+	port (kmem) : 4
+       	zero (public) : 5
+	core -> "/proc/kcore"
+	full (public) : 7
+}
+block (std, 1) {
+	ram (disk) : 1
+}
+char (std, 5) {
+	tty (public) : 0
+}
+
+/* the "console" group - system console */
+char (consoles,4) {
+	console (cons) : 0       # /dev/console
+	tty0 (cons) : 0          # tty0 == console
+}
+
+/* VTs tty1-tty63 (tty0 is special) */
+/* group "vts" is tty1-8; "vts2" is the rest */
+char (vts, 4) tty[1-12] (tty) : 1
+char (vts2, 4) tty [13-63] (tty) : 9
+
+
+/* serial ports, ttyS0-ttyS63 and cua0-cua63 */
+/* group "serial" is just ttyS0-3 and cua0-3; "serial2" is the rest */
+char (serial, 4) ttyS[0-3]  (tty)     : 64
+char (serial2,4) ttyS[4-63] (tty)     : 64+4
+char (serial, 5) cua[0-3]   (dialout) : 64
+char (serial2,5) cua[4-63]  (dialout) : 64 + 4
+
+/* ptys: pty[pqrs][0-9a-f] and tty[pqrs][0-9][a-f] */
+/* grouped as ptyp, ptyq, ptyr, and ptys */
+char (ptyp, 4) {
+        ptyp[0x0-f] (pty) : 128+0*16
+        ttyp[0x0-f] (tty) : 192+0*16
+}
+char (ptyq, 4) {
+        ptyq[0x0-f] (pty) : 128+1*16
+        ttyq[0x0-f] (tty) : 192+1*16
+}
+char (ptyr, 4) {
+        ptyr[0x0-f] (pty) : 128+2*16
+        ttyr[0x0-f] (tty) : 192+2*16
+}
+char (ptys, 4) {
+        ptys[0x0-f] (pty) : 128+3*16
+        ttys[0x0-f] (tty) : 192+3*16
+}
+
+/* cyclades serial multiplexer */
+char (cyclades=ttyC, 19) {
+	ttyC[0-31] (tty) : 32
+}
+char (cyclades=cub, 20) {
+	cub[0-31] (dialout) : 32
+}
+
+/* parallel ports par0-3 and printers lp0-3 (which are merely aliases) */
+/* group is "printers" */
+char (printers=lp, 6) {
+	par[0-3] (printer) : 0
+	lp[0-3] (printer) : 0
+}
+
+/* busmice: logibm, psaux, inportbm, atibm */
+char (busmice=mouse, 10) {
+	logibm   (mouse) : 0
+	psaux    (mouse) : 1
+	inportbm (mouse) : 2
+	atibm    (mouse) : 3
+	# sejin  (mouse) : 4
+}
+
+/* joysticks: js0, js1; group "js" */
+char (js=Joystick) js[0-1] (mouse) : 0
+
+/* floppies: fd0-3, with lots of modes */
+block (floppies=fd, 2) {
+	fd[0-3]       (floppy) : 0
+	fd[0-3]d360   (floppy) : 4
+	fd[0-3]h1200  (floppy) : 8
+	fd[0-3]D360   (floppy) : 12
+	fd[0-3]H360   (floppy) : 12
+	fd[0-3]D720   (floppy) : 16
+	fd[0-3]H720   (floppy) : 16
+	fd[0-3]h360   (floppy) : 20
+	fd[0-3]h720   (floppy) : 24
+	fd[0-3]H1440  (floppy) : 28
+	fd[0-3]H2880  (floppy) : 32
+	fd[0-3]CompaQ (floppy) : 36
+	fd[0-3]h1440  (floppy) : 40
+	fd[0-3]H1680  (floppy) : 44
+	fd[0-3]h410   (floppy) : 48
+	fd[0-3]H820   (floppy) : 52
+	fd[0-3]H1476  (floppy) : 56
+	fd[0-3]H1722  (floppy) : 60
+	fd[0-3]h420   (floppy) : 64
+	fd[0-3]h830   (floppy) : 68
+	fd[0-3]h1494  (floppy) : 72
+	fd[0-3]h1743  (floppy) : 76
+}
+
+// There is a controversy regarding whether these should be either
+//  (1) hda-hdd are major number 3, hda1-hd1d are major number 22
+//  (2) hda-hdb are major number 3, hdc-hdd are major number 22
+//
+// Case (1) is commented out, as case (2) seems to be more popular.
+// Case (2) also appears to make more sense in terms of the way
+// the drivers are actually implemented.
+
+// /* AT hard disks hda-hdd (partitions 1-8 and main) */
+// block(hd=hd,3) hd[a-d] 8/64
+// /* AT hard disks on second controller */
+// block(hd1,22) hd1[a-d] 8/64
+
+/* AT hard disks hda-b (partitions 1-8 and main) */
+block(hd=hd,3) hd[a-b] 8/64
+/* and 2nd controller */
+block(hd1,22) hd[c-d] 8/64
+
+// Ordinarily, the use of the syntax above would automatically create
+// this batch. Because of the way it's done (this is a bug, and hopefully
+// will be fixed in a future release) the batch for the hd1 devices is
+// also created as "hd". This cannot be accessed, but does no harm as
+// long as the order of the above two declarations isn't reversed. sigh.
+// Anyway, this line works around the problem.
+batch hd1 { hdc hdd }
+
+
+/* XT hard drives */
+block(xd=xd,13) xd[a-d] 8/64
+
+/* scsi hard disks sda-sdh */
+block(sd=sd,8) sd[a-h] 8/16
+
+/* loopback disk devices; group "loop" */
+block(loop=loop) loop[0-7] (disk) : 0
+
+/* scsi tapes st0-7 */
+char(st=st, 9) {
+	st[0-7] (tape) : 0
+	nst[0-7] (tape) : 128
+}
+
+/* qic tapes - group "qic" */
+// The following is what came with the shell MAKEDEV.
+//char (qic=tpqic02, 12) {
+//	rmt8       (tape) : 6
+//	rmt16      (tape) : 8
+//	tape-d     (tape) : 136
+//	tape-reset (tape) : 255
+//}
+// This, on the other hand, appears to be more correct.
+
+/*
+ *  By the authority vested in me as the maintainer of this file, 
+ *  I have made up the device names. The "n" versions don't rewind,
+ *  as with other tape devices. The number specifies the model/capacity.
+ *  There's not really room left for unit numbers, but I suppose there
+ *  probably aren't many people with multiple QIC drives either...
+ */
+char (qic=tpqic02, 12) {
+	nqt11	(tape) : 2
+	qt11	(tape) : 3
+	nqt24	(tape) : 4
+	qt24	(tape) : 5
+	nqt120	(tape) : 6
+	qt120	(tape) : 7
+	nqt150	(tape) : 8
+	qt150	(tape) : 9
+	qt-reset (tape) : 255
+}
+
+/* ftapes - group ftape */
+char (ftape=mt, 27) {
+	rft[0-3]  (tape) : 0
+	nrft[0-3] (tape) : 4
+	ftape -> rft0
+	nftape -> nrft0
+}
+
+/* scsi cd */
+block(sr=sr, 11) scd[0-7] (cdrom) : 0
+
+/* sony cd */
+block(sonycd=cdu31a) sonycd (cdrom) : 0
+
+/* mitsumi cd */
+block(mcd=mcd, 23) mcd (cdrom) : 0
+
+/* Sony cdu535 */
+block(cdu535="cdu-535", 24) cdu535 (cdrom) : 0
+
+/* LMS/Philips CD player (needs new major number) */
+block(lmscd, 24) lmscd (cdrom) : 0
+
+/* Aztech CDROM */
+block(aztcd, 29) aztcd0 (cdrom) : 0
+
+/* soundblaster CD, 1st controller */
+block(sbpcd=sbpcd, 25) {
+	sbpcd      (cdrom) : 0
+	sbpcd[0-3] (cdrom) : 0
+}
+/* 2nd, 3rd, 4th */
+block(sbpcd=sbpcd2, 26) sbpcd[4-7] (cdrom) : 0
+block(sbpcd=sbpcd3, 27) sbpcd[8-11] (cdrom) : 0
+block(sbpcd=sbpcd4, 28) sbpcd[12-15] (cdrom) : 0
+
+/* ide cd */
+block (idecd=idecd) {
+	idecd	(cdrom) : 0
+}
+
+/* Logitech scanner */
+char (logiscan=logiscan) {
+	logiscan (scanner) : 0
+}
+
+char (m105scan=m105) {
+	m105scan (scanner) : 0
+}
+
+char (ac4096=ac4096) {
+	ac4096 (scanner) : 0
+}
+
+// this is apparently obsolete?
+//char (scan=Scanner) {
+//	scan  (scanner) : 0
+//	scand (scanner) : 1
+//}
+
+/* audio */
+char (audio=sound, 14) {
+	mixer	  (audio) : 0
+	sequencer (audio) : 1
+	midi00	  (audio) : 2
+	midi -> midi00
+	dsp	  (audio) : 3
+	audio	  (audio) : 4
+	sndstat	  (audio) : 6
+#	sequencer2(audio) : 8
+	mixer1	  (audio) : 16
+#	patmgr0   (audio) : 17
+	midi01	  (audio) : 18
+	dsp1	  (audio) : 19
+	audio1	  (audio) : 20
+#	patmgr1	  (audio) : 33
+	midi02	  (audio) : 34
+	midi03	  (audio) : 50
+}
+
+/* pcaudio */
+char (pcaudio=pcsp) {
+	pcmixer (audio) : 0
+	pcsp    (audio) : 3
+	pcaudio (audio) : 4
+}
+
+/* sg: generic scsi devices */
+char (sg=sg, 21) {
+	sga (scsi) : 0
+	sgb (scsi) : 1
+	sgc (scsi) : 2
+	sgd (scsi) : 3
+	sge (scsi) : 4
+	sgf (scsi) : 5
+	sgg (scsi) : 6
+	sgh (scsi) : 7
+}
+
+/* fd: file descriptors */
+char (fd, 0) {  // the 0 is not used - there are only links in here!
+	fd     -> "/proc/self/fd"
+	stdin  -> "fd/0"
+	stdout -> "fd/1"
+	stderr -> "fd/2"
+}
+
+/* ibcs2: coff emulation stuff */
+char (ibcs2=socksys, 30) {
+	socksys (ibcs2) : 0
+	spx     (ibcs2) : 2
+	nfsd -> socksys
+	XOR -> null
+}
+
+char (apm=apm_bios) {
+	apm (system) : 0
+}
+
+char (dcf=dcf) {
+	dcf (system) : 0
+}
+
+/* demo device for module stuff */
+char (hw=hw) {
+	helloworld (public) : 0
+}
+

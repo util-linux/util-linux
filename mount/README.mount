@@ -1,0 +1,147 @@
+mount/umount for Linux 0.99.14
+==============================
+
+Enhance nfsmount.c to allow the program number or port number
+to be specified for both the mount daemon and the nfs daemon.
+Also anticipate tcp and namelen support.
+
+Rewrite canonicalize in terms of realpath.  Don't be obsessive about
+the path pre-existing for nfs, ifs, none, etc.
+
+Fix memory overwriting bug in the new remount code.
+
+Fix mtab handling in the new remount code so entries appear
+exactly once and in their proper mounting order.
+
+Fix defaults, remount and noauto so these options don't appear in the mtab.
+
+Repair extra options handling that got damaged with the remount code.
+
+Handle combining -o from the command line with options specified
+in /etc/mtab or /etc/fstab.
+
+Fix completely broken file-locking.
+
+Beautify the options field so it contains no duplicates or redundancies.
+
+Added long-style options to all programs.
+
+Added version and help options to all programs.
+
+Brought the Makefile up to GNU standards regarding CFLAGS and LDLFLAGS.
+
+Added support for the `user' option where mount and umount run suid to root.
+
+Rick Sladkey <jrs@world.std.com>
+
+mount/umount for Linux 0.99.10
+==============================
+
+[Stephen Tweedie <sct@dcs.ed.ac.uk>]
+
+A number of changes introduced to cater for new kernel facilities.
+mount can now remount an already-mounted filesystem, and umount
+attempts to unmount even root filesystems.  Supercedes the [u]mount
+previously available in the bootutils-0.1 collection.
+
+Fixed a minor bug in canonicalise().
+
+mount/umount/swapon/swapoff(8) for Linux 0.99.6
+===============================================
+
+Here is a minor update to the previous version that fixes
+a longstanding "off by one" bug in parsing fs-specific
+options.  No other real changes.
+
+mount/umount/swapon/swapoff(8) for Linux 0.99.2
+===============================================
+
+Here is a new version of Doug Quale's mount/umount package that
+includes support for mounting and unmount NFS filesystems.  It is
+still possible to compile it without NFS support by modifying the
+Makefile.  Even if you don't have rpcgen, but do have libc-4.2
+you can "cp -p" the pre-generated files in the rpcsvc directory
+into the mount source directory.
+
+The primary difference besides the actual NFS mounting code is that
+mount understands hostname:/path syntax for the "device" as well as
+the new keyword "none" which is useful for the proc filesystem.  Also,
+umount had to be trained to specify the mount-point instead of the
+device when unmounting such filesystems.  For compatibility,
+filesystems with true devices are unmounted using their device name
+which will still work with older kernels.  However, all umounts could
+just as well be done by specifying the mount point instead of the
+device.
+
+Other changes since the beta NFS mount are:
+
+* incorportated H.J. Lu's changes for mtab permissions and errno handling
+* corrected the error message for unhandled errors from mount and umount
+* improved (a little :-) the reporting of handled mount and umount errors
+* added the ability to NFS mount from a IP address as well as a hostname
+* added a string error message instead of numeric for failed NFS mounts
+* changed 32 to _NSIG when setting all signals (should be using sigismember)
+* eliminated the obsolete HAVE_MOUNT5 and HAVE_SWAPOFF ifdefs
+* added support for the sync and async mount options
+* added the noauto option for fstab entries that shouldn't get mounted with -a
+* changed mount -a to check the mtab for already mounted filesystems
+* eliminated a few new warning messages from gcc 2.3.3
+* wrote an nfs man page
+
+Features still missing:
+
+* ability to background NFS mounts that have timed out
+* notify the NFS server of umounts (but addr=ip-addr support is in there)
+* add the possibility of interrupting an in-progress mount
+* man pages for the other Linux filesystem types
+
+Rick Sladkey
+jrs@world.std.com
+===============================================
+mount/umount/swapon/swapoff(8) for Linux 0.98.5
+===============================================
+
+This version fixed the umask of root. fchmod () is called
+before close /etc/mtab. This version should work with
+0.97.3 or above, although I only tested it under 0.98.5.
+I also fixed the error report.
+
+H.J. Lu
+hlu@eecs.wsu.edu
+11/25/92
+===============================================
+mount/umount/swapon/swapoff(8) for Linux 0.97.3
+===============================================
+
+The most significant improvement over the first release is the repair of
+at least a half dozen really dumb bugs, mostly involving null pointers. 
+These bugs caused frequent core dumps and really made the code unusable.
+
+Some race conditions in the lock handling code have been removed.
+
+Swapoff is available for 0.97.3 and later kernels.
+
+Swapon supports multiple swap files.  In particular, swapon -a will try
+to enable swapping on all the swap entries in /etc/fstab.
+
+File system specific mount options are now supported.  This is of particular
+utility with Werner Almesberger's msdos fs.
+
+Umount -a now reads /etc/mtab instead of /etc/fstab (thanks to David
+Engel for a valuable discussion on this and other points).  In addition,
+it umounts the entries in reverse order, ensuring that it tries to umount
+/usr/spool before /usr, for instance.
+
+Mount will now print mtab for ordinary users as well as for the superuser.
+Several people pointed out this deficiency, and it was a real no-brainer
+that broke it in the first release.
+
+Thanks to Linus, for another great release.  0.97.3 compiled the first time
+out and is working flawlessly.  Thanks also to Ross Biro, for his work on
+Linux TCP/IP which has made it much easier to get this little thing off my
+machine.  Special thanks to everyone who put up with my bugs.
+
+Brickbats etc. to
+
+Doug Quale
+quale@saavik.cs.wisc.edu

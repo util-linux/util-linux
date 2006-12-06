@@ -1,0 +1,112 @@
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH SHUTDOWN 8 "20 November 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+shutdown \- close down the system
+.SH SYNOPSIS
+.nf
+.BR "shutdown [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ]"
+.BR "reboot [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ]"
+.BR "fastboot [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ]"
+.BR "halt [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ]"
+.BR "fasthalt [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ]"
+.fi
+.SH DESCRIPTION
+.\" " for emacs hilit19
+In general,
+.B shutdown
+prepares the system for a power down or reboot.  A absolute or delta time
+can be given, and periodic messages will be sent to all users warning of
+the shutdown.
+
+.B halt
+is the same as
+.B "shutdown -h -q now"
+
+.B fasthalt
+is the same as
+.B "shutdown -h -q -f now"
+
+.B reboot
+is the same as
+.B "shutdown -r -q now"
+
+.B fastboot
+is the same as
+.B "shutdown -r -q -f now"
+
+The default delta time, if none is specified, is 2 minutes.
+
+Five minutes before shutdown (or immediately, if shutdown is less than five
+minutes away), the
+.I /etc/nologin
+file is created with a message stating that the system is going down and
+that logins are no longer permitted.  The
+.B login (1)
+program will not allow non-superusers to login during this period.  A
+message will be sent to all users at this time.
+
+When the shutdown time arrives,
+.B shutdown
+notifies all users, tells
+.BR init (8)
+not to spawn more
+.BR getty (8)'s,
+writes the shutdown time into the
+.I /var/adm/wtmp
+file, kills all other processes on the system,
+.BR sync (2)'s,
+unmounts all the disks,
+.BR sync (2)'s
+again, waits for a second, and then either terminates or reboots the
+system.
+.SH OPTIONS
+.TP
+.B \-h
+Halt the system.  Do not reboot.  This option is used when powering down
+the system.
+.TP
+.B \-r
+Reboot the system.
+.TP
+.B \-f
+Fast.  When the system is rebooted, the file systems will not be checked.
+This is arranged by creating
+.IR /fastboot ,
+which
+.I /etc/rc
+must detect (and delete).
+.TP
+.B \-q
+Quiet.  This uses a default broadcast message, and does not prompt the user
+for one.
+.TP
+.B \-s
+Reboot in single user mode.  This is arranged by creating
+.IR /etc/singleboot ,
+which
+.BR simpleinit (8)
+detects (and deletes).
+.SH FILES
+.nf
+.I /etc/rc
+.I /fastboot
+.I /etc/singleboot
+.I /etc/nologin
+.I /var/adm/wtmp
+.fi
+.SH "SEE ALSO"
+.BR umount (8),
+.BR login (1),
+.BR reboot (2),
+.BR simpleinit (8),
+.BR init (8)
+.SH BUGS
+Unlike the BSD
+.BR shutdown ,
+users are notified of shutdown only once or twice, instead of many times,
+and at shorter and shorter intervals as "apocalypse approaches."
+.SH AUTHOR
+poe@daimi.aau.dk
+.br
+Modified by jrs@world.std.com

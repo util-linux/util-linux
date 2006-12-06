@@ -1,0 +1,38 @@
+.\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH SYNC 8 "20 November 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+sync \- flush Linux filesystem buffers
+.SH SYNOPSIS
+.B sync
+.SH DESCRIPTION
+.B sync
+executes
+.BR sync (2),
+which flushes the filesystem buffers to disk.
+.B sync
+should be called before the processor is halted in an unusual manner (i.e.,
+before causing a kernel panic when debugging new kernel code).  In general,
+the processor should be halted using the
+.BR reboot "(8), or " halt (8)
+commands, which will attempt to put the system in a quiescent state before
+calling
+.BR sync (2).
+
+From Linus: "Note that
+.B sync
+is only guaranteed to schedule the dirty blocks for writing: it can
+actually take a short time before all the blocks are finally written.  If
+you are doing the
+.B sync
+with the expectation of killing the machine soon after, please take this
+into account and sleep for a few seconds.  [The
+.BR reboot (8)
+command takes these precautions.]
+.SH "SEE ALSO"
+.BR sync (2),
+.BR update (8),
+.BR reboot (8),
+.BR halt (8)
+.SH AUTHOR
+Linus Torvalds (torvalds@cs.helsinki.fi)

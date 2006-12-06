@@ -1,0 +1,26 @@
+@(#) README 1.8 9/1/91 23:32:37
+
+This is a SYSV/SunOS4 getty program with useful features for hardwired
+and dial-in tty lines.
+
+- The program adapts the tty modes to parity bits and to erase, kill
+end-of-line and upper-case characters when it reads a login name.
+
+- The baud rate can be established by BREAK character processing and by
+parsing the CONNECT status messages from Hayes-compatible modems.
+
+Other features: RTS/CTS flow control (SunOS4, suggested by John Harkin,
+<jh@moon.nbn.com>), alternate login program, does not use /etc/gettytab
+or /etc/gettydefs.
+
+The program works without modification under System V release 2 and
+SunOS 4.1/4.1.1. It probably also works with later System V releases.
+
+In the Makefile you will have to specify whether diagnostics should be
+reported through the syslog daemon; the alternative is that all error
+reports go directly to /dev/console.
+
+The command-line interface was cleaned up a bit; it is slightly
+incompatible with earlier agetty versions.
+
+		Wietse Venema (wietse@wzv.win.tue.nl)

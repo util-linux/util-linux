@@ -1,0 +1,162 @@
+README file for the admutils V1.14 for Linux.
+
+See installation instructions at the bottom. Currently the latest versions
+of this software is maintained at ftp://ftp.daimi.aau.dk/pub/linux/poe/
+
+LICENSE:
+This software is distributed as is without any warranty what so ever.
+With respect to copyrights it is covered by the GNU Public License.
+
+Version 1.14 (12-Feb-95):
+	Added options -l, -y, -i to last.c. See last.man
+
+Version 1.13d (26-Jan-95):
+	Added some comments on request from Rik Faith. Compiled succesfully
+	on Linux 1.1.73, GCC 2.5.8, libc 4.5.26
+
+Version 1.13c (6-Dec-94):
+	New versions of passwd and chsh due to Alvaro Martinez Echevarria
+	<alvaro@enano.etsit.upm.es>, so they will coexist with YP/NIS
+	passwords.
+
+Version 1.13b (7-Nov-94):
+	Use fgets() + atoi() in chsh.c instead of scanf().
+
+Version 1.12 (17-Sep-94):
+	Rik Faith provided patches for passwd.c to let non-alphabetics count
+	as digits as well, allows more obscure passwords.
+
+	Applied patches from Dave Gentzel <gentzel@nova.enet.dec.com>
+	to prevent dereferencing a NULL pointer, and turn off accounting
+	in shutdown.c
+
+Version 1.11 (18-Aug-94):
+	Finally got around to making it a non-alpha version. Just a
+	little cleanup in Makefile
+
+Version 1.10b (8-Jun-94):
+	David A. Holland <dholland@husc.harvard.edu> made me aware of a
+	security leak in passwd and chsh. /etc/ptmp could be forced to
+	be world-writeable. Fixed by hardwiring an umask of 022 into
+	passwd and chsh.
+
+	Vesa Ruokonen <ruokonen@taivas.lut.fi> sent me a new pathnames.h
+	file that shouldn't conflict with paths.h.
+
+	Cleaned the source a bit for -Wall
+
+Version 1.10a (31-May-94):
+	Vesa Ruokonen <ruokonen@taivas.lut.fi> provided a patch for
+	passwd.c such that it will work for multiple usernames for
+	the same uid. I mimicked his actions on chsh.c. In both cases
+	I added a check to ensure that even if utmp is hacked, one can
+	only change the password for users with the same uid.
+
+Version 1.9 (9-Feb-94):
+	Vesa Ruokonen suggested that newgrp should support passwords in
+	/etc/group. It now does. I mostly rewrote newgrp to make it
+	cleaner.
+
+Version 1.8 (19-Jan-94):
+	Rik Faith provided several patches, especially for passwd.c and
+	some man-pages.
+
+Version 1.7 (3-Nov-93): changes since 1.6
+	Shutdown can now be used as a login shell. I forget who sent me the
+	patch. Example /etc/passwd entry:
+
+	shutdown:dLbVbIMx7bVHw:0:0:Stopper:/:/etc/halt
+
+	The package should now be prepared to have shutdown in /sbin as well
+	as in /etc. utmp and wtmp are allowed in /usr/adm too. Both things 
+	are configurable in the Makefile.
+
+	<flebbe@cygnus.tat.physik.uni-tuebingen.de> Olaf Flebbe provided a
+	patch for chsh.c to make it work.
+
+	This version is built under linux 0.99.13 with gcc 2.4.3 and 
+	libc 4.4.1
+
+Version 1.6 (1-Jun-93)
+	Shutdown now looks more like shutdown on SunOS, but not quite. Most
+	of this was done by Scott Telford (s.telford@ed.ac.uk), but I 
+	butchered his patches somewhat. This version was built under Linux
+	0.99.9 with GCC 2.3.3 and libc 4.3.3.
+
+	"make install" will now install shutdown in /etc instead of /usr/bin
+
+Version 1.5 (13-Dec-92)
+	This version is tested and built under Linux 0.98P6 with gcc-2.2.2d7
+	You will have a hard time making it work with the older compilers and
+	libraries.
+
+	Su is now deprecated. I believe that the GNU/FSF version is better.
+
+CONTENTS.
+last	-	A new and better last command, a port from BSD done by
+		Michael Haardt.
+		I put a couple of if's in so LOGIN_PROCESS entries in wtmp
+		are not printed.
+
+chsh	-	CHangeSHell changes the shell entry in the passwd file.
+		Written from scratch by me.
+
+passwd	-	Changes the password in the passwd file.
+		Also done from scratch by me.
+
+su	-	A su(1) command by me.
+
+newgrp	-	Sets the gid if possible, ala su(1), written by Michael
+		Haardt.
+
+shutdown -	Shuts down linux. Supports timed shutdowns, and sends
+		warnings to all users currently logged in. It then
+		kills all processes and unmounts file-systems etc.
+
+		Shutdown also doubles as halt and reboot commands.
+
+		Shutdown leaves the file /etc/nologin behind after shutdown,
+		it is wise to have a "rm -f /etc/nologin" in ones /etc/rc
+
+		Shutdown now supports a -s switch, that works in connection 
+		with the init program in poeigl-1.7 or later, so a singleuser
+		reboot is possible.
+
+		Rick Sladkey <jrs@world.std.com> provided patches for better
+		umounting code, needed in connection with NFS.
+
+		Remy Card <card@masi.ibp.fr> provided patches for support for
+		fastboot/fasthalt. These create a /fastboot file on shutdown,
+		and /etc/rc may check for the existance of this file, to 
+		optionally skip fsck.
+
+example.rc	An example of an /etc/rc file. Edit it to suit your own setup.
+
+ctrlaltdel -	Sets the behaviour of the Ctrl-Alt-Del combination.
+		"ctrlaltdel hard" makes the key-combination instantly reboot
+		the machine without syncing the disk or anything. This may
+		very well corrupt the data on the disk.
+
+		"ctrlaltdel soft" makes the key-combination send a SIGINT to
+		the init process. Such a command would typically be in /etc/rc.
+		For this to make sense you must run the init from the
+		poeigl-1.4 package or later. The System V compatible init in
+		this package won't reboot the machine when it gets a SIGINT.
+		Linux version 0.96b-PL1 or later is also needed for this
+		feature to work.
+
+init is gone as of V1.5, it was outdated and buggy. If you want a 
+SYSV compatible init get the newest one from Mike Smoorenburg, called
+sysvinit.tar.Z
+
+INSTALLATION.
+Simply do a
+
+	make
+
+and then (optionally) as root:
+
+	make install
+
+
+	- Peter (poe@daimi.aau.dk)

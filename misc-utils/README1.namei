@@ -1,0 +1,14 @@
+
+** NAMEI has local modifications, do not delete source when cleaning up **
+
+"You're in a twisty maze of symbolic links, all different"
+
+namei - a utility to chase down a pathname and print details at each
+level, especialy when following symbolic links.  Very useful for figuring
+out whats really going on in our large environment.  Named after the routine
+in the kernel that does essentialy the same thing whenever anyone tries to
+find a file.
+
+Local modifications by Steve Tell include: changing the -m option to print
+the file mode in a readable fashion, like "ls -l" does, instead of in octal.
+

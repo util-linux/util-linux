@@ -1,0 +1,104 @@
+bootutils-0.1
+
+* ALPHA RELEASE: Use at your own risk! *
+
+* You MUST have 0.99pl10 or later kernel to make use of all of the
+  facilities of this package.  If you can live without the unmount-root
+  feature, then 0.99pl9 will work. *
+
+This is the first release of a set of utilities designed to automate
+the management and checking of filesystems at boot time and shutdown.
+It supports automatic and safe 'fsck' of all filesystems (including
+root) at boot time by booting with root readonly; if the fsck succeeds
+then root is remounted read-write and booting can continue.
+
+Why bother?
+
+Well, many people like to have a safe and reliable check of all their
+filesystems during boot.  This is especially true for ext2fs, because
+all ext2fs filesystems have a special 'clean' flag which gets set when
+the filesystem is cleaned (by e2fsck) or is unmounted cleanly, and
+which gets unset when the filesystem is active.  e2fsck can sense this
+flag, and will skip over filesystems which are clean.
+
+This means that e2fsck won't bother you with a laborious filesystem
+check at each startup, as long as you always shut down cleanly; but it
+will check your filesystems automatically if you ever have a crash,
+because afterwards the filesystem 'clean' flags will not be set.  You
+*can* still mount an unclean filesystem, but ext2fs will give you a
+warning and will not mark it clean when it gets unmounted.
+
+One of the problems with automatic fsck'ing is that it is unsafe to
+check mounted, active filesystems.  The solution is to initially mount
+only the root filesystem, and to mount it in readonly mode.  In this
+situation, fsck can run safely on all filesystems, without the danger
+that the kernel might start conflicting with the repairs being done to
+the filesystem.
+
+If any repairs were done, it is unsafe to proceed any further because
+the kernel might have cached old information about the filesystems
+which has been updated by fsck.  However, if the fsck succeeded, then
+we can remount the root filesystem in read-write mode and proceed to
+mount all of the other filesystems.
+
+Finally, in order to ensure that filesystems are correctly tidied up
+on shutdown, we need to unmount the root at shutdown.  This is usually
+done automatically; the standard Linux shutdown programs do a 'umount
+- -a' command to unmount all mounted filesystems.  You MUST have a
+0.99pl10 or later kernel for this to work.  Many versions of umount
+explicitly do not try to unmount the root, since pre-99pl10 kernels
+forbade this.  The umount included here will unmount even the root
+filesystem.  (A special kernel trick in pl10 allows this to work by
+keeping the filesystem alive in readonly mode after it has been tidied
+up.)
+
+The bootup operation of this package is invoked by the /etc/rc shell
+script, an example of which is in mount/etc/rc.  It contains the
+following important lines:
+
+    # Check the integrity of all filesystems
+    /bin/fsck -A -a
+    # If there was a failure, drop into single-user mode.
+    if [ $? -gt 1 ] ; then
+            echo fsck failed.  Please reboot.
+            sh
+    fi
+
+    # Remount the root filesystem in read-write mode
+    /etc/mount -n -o remount /dev/hda3 /
+
+    # remove /etc/mtab* so that mount will create it with a root entry
+    /bin/rm -f /etc/mtab* /etc/nologin /etc/utmp
+
+    # mount file systems in fstab (and create an entry for /)
+    # but not NFS because TCP/IP is not yet configured
+    /etc/mount -avt nonfs
+
+
+This is the first attempt at a complete package for automated clean
+fsck support, so you may well find that you would like a slightly
+different behaviour.  Please feel free to send me comments, bug
+reports and improvements!
+
+
+This package includes three separate items, shamelessly adapted from
+other, more or less standard Linux programs.
+
+* rdev.c: a modified rdev which is extended to allow the
+  readonly/readwrite status of the kernel image to be altered.  Use
+        rdev -R <kernel> 1
+  to make the kernel mount in readonly mode.  This can be overridden
+  by the use of the 'read-only' or 'read-write' keywords of the most
+  recent version of LILO.
+
+* Mount/umount package: This was recently posted to the net, and
+  implements the '-o remount' mount option which allows filesystems to
+  be remounted.  Unlike the previous post, the version included here
+  also attempts to unmount the root filesystem on 'umount -a'.  I have
+  also tried to clean up the man-pages.
+
+* fsck package: David Engel's fsck front-end.  Read the README for it.
+  This package implements the 'fsck -A' command which will check all
+  filesystems in /etc/fstab automatically.
+
+Stephen Tweedie <sct@dcs.ed.ac.uk>

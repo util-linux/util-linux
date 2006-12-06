@@ -1,0 +1,58 @@
+.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH IPCS 8 "9 October 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+ipcs \- provide information on ipc facilities
+.SH SYNOPSIS
+.B ipcs [ \-asmq ] [ \-tclup ]
+.br
+.BI "ipcs [ \-smq ] \-i " id
+.br
+.B ipcs \-h
+.SH DESCRIPTION
+.B ipcs
+provides information on the ipc facilities for which the calling process
+has read acccess.
+
+The
+.B \-i
+option allows a specific resource
+.I id
+to be specified.  Only information on this
+.I id
+will be printed.
+
+Resources may be specified as follows:
+.TP
+.B \-m
+shared memory segments
+.TP
+.B \-q
+message queues
+.TP
+.B \-s
+semaphore arrays
+.TP
+.B \-a
+all (this is the default)
+.PP
+The output format may be specified as follows:
+.TP
+.B \-t
+time
+.TP
+.B \-p
+pid
+.TP
+.B \-c
+creator
+.TP
+.B \-l
+limits
+.TP
+.B \-u
+summary
+.SH SEE ALSO
+.BR ipcrm (8)
+.SH AUTHOR
+krishna balasubramanian (balasub@cis.ohio-state.edu)

@@ -1,0 +1,79 @@
+# MCONFIG -- Configuration stuff for util-linux
+# Created: Sat Feb  4 15:50:30 1995
+# Revised: Sun Feb 26 21:33:32 1995 by faith@cs.unc.edu
+# Copyright 1995 Rickard E. Faith (faith@cs.unc.edu)
+#
+
+# If HAVE_SHADOW is set to "yes", then login, chfn, chsh, newgrp, passwd, and
+# vipw will not be built or installed from the login-utils subdirectory.
+HAVE_SHADOW=no
+#HAVE_SHADOW=yes
+
+# If HAVE_SYSVINIT is set to "yes", then agetty, simpleinit, shutdown,
+# last, mesg, and wall will not be built or installed from the login-utils
+# subdirectory.
+HAVE_SYSVINIT=no
+#HAVE_SYSVINIT=yes
+
+# If HAVE_STRINGS is set to "yes", then strings won't be installed.  This
+# is the quick fix until the strings in GNU binutils is in wide use and has
+# international support.
+HAVE_STRINGS=no
+#HAVE_STRINGS=yes
+
+CC=		gcc
+OPT=		-pipe -O2 -m486 -fomit-frame-pointer
+WFLAGS=		-Wall
+LDFLAGS=	-s -N
+CFLAGS=		$(OPT) -I. -I$(BSD) \
+			-DSBINDIR=\"$(SBINDIR)\" \
+			-DUSRSBINDIR=\"$(USRSBINDIR)\" \
+			-DLOGDIR=\"$(LOGDIR)\" \
+			-DVARPATH=\"$(VARPATH)\"
+
+DEVDIR=		$(DESTDIR)/dev
+ETCDIR=		$(DESTDIR)/etc
+SBINDIR=	$(DESTDIR)/sbin
+USRSBINDIR=	$(DESTDIR)/usr/sbin
+USRBINDIR=      $(DESTDIR)/usr/bin
+USRGAMESDIR=    $(DESTDIR)/usr/games
+BINDIR=         $(DESTDIR)/bin
+VARPATH=	$(DESTDIR)/var
+LOGDIR=		$(DESTDIR)/var/adm
+MANDIR=		$(DESTDIR)/usr/man
+MAN1DIR=	$(DESTDIR)/usr/man/man1
+MAN3DIR=	$(DESTDIR)/usr/man/man3
+MAN5DIR=	$(DESTDIR)/usr/man/man5
+MAN6DIR=	$(DESTDIR)/usr/man/man6
+MAN8DIR=	$(DESTDIR)/usr/man/man8
+INFODIR=	$(DESTDIR)/usr/info
+
+# Directory for shutdown, halt, reboot, etc.
+SHUTDOWNDIR=	$(SBINDIR)
+
+# Directory for fsck
+FSCKDIR=	$(SBINDIR)
+
+# Directory for rdev, vidmode, etc.
+RDEVDIR=	$(USRBINDIR)
+
+# Directory for passwd
+PASSWDDIR=	$(USRBINDIR)
+
+# Modes
+DIRMODE=	755
+BINMODE=	755
+MANMODE=	644
+DATMODE=	644
+INFOMODE=	644
+SUIDMODE=      4755
+
+CHMOD=		chmod
+INSTALL=	install
+INSTALLDIR=	$(INSTALL) -d -m $(DIRMODE)
+INSTALLBIN=	$(INSTALL) -m $(BINMODE)
+INSTALLMAN=	$(INSTALL) -m $(MANMODE)
+INSTALLDAT=	$(INSTALL) -m $(DATMODE)
+INSTALLSUID=    $(INSTALL) -m $(SUIDMODE) -o root
+
+BSD=		../bsd

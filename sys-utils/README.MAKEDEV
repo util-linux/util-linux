@@ -1,0 +1,22 @@
+README.MAKEDEV,v 1.1.1.1 1995/02/22 19:09:12 faith Exp
+
+Here is the original comment taken from the MAKEDEV script.  One day,
+I'll do this properly.
+
+=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+
+This is my attempt at a MAKEDEV script.  IMHO it cleans up many areas.
+It can be used to determine the necessary info for a device without
+actually creating it using the '-n' flag.
+
+It makes less individual devices and tends to make classes of devices
+(eg "MAKEDEV hda" will create "hda" and the 8 partitions; "MAKEDEV ptyp"
+will create the ptyp[0-f] master and ttyp[0-f] slave devices).
+
+If you are aware of any glaring omissions or errors, please let me know.
+Also, if you are a developer who wants your devices supported by MAKEDEV,
+let me know.
+
+Thanks to Ian Jackson for the original help and encouragement.
+
+	Nick Holloway <Nick.Holloway@alfie.demon.co.uk>  
