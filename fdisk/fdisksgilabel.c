@@ -190,9 +190,11 @@ check_sgi_label() {
 
 void
 sgi_list_table(int xtra) {
-	int i, w, wd;
+	int i, w;
 	int kpi = 0;		/* kernel partition ID */
 	char *type;
+
+	w = strlen(disk_device);
 
 	if (xtra) {
 		printf(_("\nDisk %s (SGI disk label): %d heads, %d sectors\n"
@@ -213,15 +215,9 @@ sgi_list_table(int xtra) {
 		       disk_device, heads, sectors, cylinders,
 		       str_units(PLURAL), units_per_sector);
 	}
-
-	w = strlen(disk_device);
-	wd = strlen(_("Device"));
-	if (w < wd)
-		w = wd;
-
 	printf(_("----- partitions -----\n"
 		 "Pt# %*s  Info     Start       End   Sectors  Id  System\n"),
-	       w + 2, _("Device"));
+	       w + 1, _("Device"));
 	for (i = 0 ; i < partitions; i++) {
 		if (sgi_get_num_sectors(i) || debug) {
 			__u32 start = sgi_get_start_sector(i);
@@ -230,7 +226,7 @@ sgi_list_table(int xtra) {
 			printf(
 				"%2d: %s %4s %9ld %9ld %9ld  %2x  %s\n",
 /* fdisk part number */   i+1,
-/* device */              partname(disk_device, kpi, w+3),
+/* device */              partname(disk_device, kpi, w+2),
 /* flags */               (sgi_get_swappartition() == i) ? "swap" :
 /* flags */               (sgi_get_bootpartition() == i) ? "boot" : "    ", 
 /* start */               (long) scround(start),

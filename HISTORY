@@ -1,11 +1,3 @@
-util-linux 2.12
-
-* losetup: -p option specifies fd for passphrase
-* fdisk: sgi layout fix
-* mount: -p option specifies fd for passphrase
-* mount: recognize some PCDOS floppies
-* umount: in "umount name", first try to interpret "name" as a mount point
-
 util-linux 2.12pre
 
 * Catalan messages (Antoni Bella Perez)

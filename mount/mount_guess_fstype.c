@@ -297,8 +297,6 @@ do_guess_fstype(const char *device) {
 	 else if ((!strncmp(xsb.fatsb.s_os, "MSDOS", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "MSWIN", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "MTOOL", 5) ||
-		   !strncmp(xsb.fatsb.s_os, "IBM", 3) ||
-		   !strncmp(xsb.fatsb.s_os, "DRDOS", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "mkdosfs", 7) ||
 		   !strncmp(xsb.fatsb.s_os, "kmkdosfs", 8) ||
 		   /* Michal Svec: created by fdformat, old msdos utility for

@@ -100,7 +100,7 @@ read_mntentchn(mntFILE *mfp, const char *fnam, struct mntentchn *mc0) {
 	struct mntent *mnt;
 
 	while ((mnt = my_getmntent (mfp)) != NULL) {
-		if (!streq(mnt->mnt_type, MNTTYPE_IGNORE)) {
+		if (!streq (mnt->mnt_type, MNTTYPE_IGNORE)) {
 			mc->nxt = (struct mntentchn *) xmalloc(sizeof(*mc));
 			mc->nxt->prev = mc;
 			mc = mc->nxt;
@@ -179,60 +179,28 @@ getmntfile (const char *name) {
 
 	mc0 = mtab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if (streq(mc->m.mnt_dir, name) ||
-		    streq(mc->m.mnt_fsname, name))
+		if (streq (mc->m.mnt_dir, name) ||
+		    streq (mc->m.mnt_fsname, name))
 			return mc;
 	return NULL;
 }
 
 /*
- * Given the directory name NAME, and the place MCPREV we found it last time,
+ * Given the name NAME, and the place MCPREV we found it last time,
  * try to find more occurrences.
  */ 
 struct mntentchn *
-getmntdirbackward (const char *name, struct mntentchn *mcprev) {
+getmntfilesbackward (const char *name, struct mntentchn *mcprev) {
 	struct mntentchn *mc, *mc0;
 
 	mc0 = mtab_head();
 	if (!mcprev)
 		mcprev = mc0;
 	for (mc = mcprev->prev; mc && mc != mc0; mc = mc->prev)
-		if (streq(mc->m.mnt_dir, name))
+		if (streq (mc->m.mnt_dir, name) ||
+		    streq (mc->m.mnt_fsname, name))
 			return mc;
 	return NULL;
-}
-
-/*
- * Given the device name NAME, and the place MCPREV we found it last time,
- * try to find more occurrences.
- */ 
-struct mntentchn *
-getmntdevbackward (const char *name, struct mntentchn *mcprev) {
-	struct mntentchn *mc, *mc0;
-
-	mc0 = mtab_head();
-	if (!mcprev)
-		mcprev = mc0;
-	for (mc = mcprev->prev; mc && mc != mc0; mc = mc->prev)
-		if (streq(mc->m.mnt_fsname, name))
-			return mc;
-	return NULL;
-}
-
-/*
- * Given the name NAME, check that it occurs precisely once as dir or dev.
- */
-int
-is_mounted_once(const char *name) {
-	struct mntentchn *mc, *mc0;
-	int ct = 0;
-
-	mc0 = mtab_head();
-	for (mc = mc0->prev; mc && mc != mc0; mc = mc->prev)
-		if (streq(mc->m.mnt_dir, name) ||
-		    streq(mc->m.mnt_fsname, name))
-			ct++;
-	return (ct == 1);
 }
 
 /* Given the name FILE, try to find the option "loop=FILE" in mtab.  */ 
@@ -285,29 +253,29 @@ getfsspecfile (const char *spec, const char *file) {
 
 	/* first attempt: names occur precisely as given */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if (streq(mc->m.mnt_dir, file) &&
-		    streq(mc->m.mnt_fsname, spec))
+		if (streq (mc->m.mnt_dir, file) &&
+		    streq (mc->m.mnt_fsname, spec))
 			return mc;
 
 	/* second attempt: names found after symlink resolution */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if ((streq(mc->m.mnt_dir, file) ||
-		     streq(canonicalize(mc->m.mnt_dir), file))
-		    && (streq(mc->m.mnt_fsname, spec) ||
-			streq(canonicalize(mc->m.mnt_fsname), spec)))
+		if ((streq (mc->m.mnt_dir, file) ||
+		     streq (canonicalize(mc->m.mnt_dir), file))
+		    && (streq (mc->m.mnt_fsname, spec) ||
+			streq (canonicalize(mc->m.mnt_fsname), spec)))
 			return mc;
 
 	/* third attempt: names found after LABEL= or UUID= resolution */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
 		if (!strncmp (mc->m.mnt_fsname, "LABEL=", 6) &&
-		    (streq(mc->m.mnt_dir, file) ||
-		     streq(canonicalize(mc->m.mnt_dir), file))) {
+		    (streq (mc->m.mnt_dir, file) ||
+		     streq (canonicalize(mc->m.mnt_dir), file))) {
 			if (has_label(spec, mc->m.mnt_fsname+6))
 				return mc;
 		}
 		if (!strncmp (mc->m.mnt_fsname, "UUID=", 5) &&
-		    (streq(mc->m.mnt_dir, file) ||
-		     streq(canonicalize(mc->m.mnt_dir), file))) {
+		    (streq (mc->m.mnt_dir, file) ||
+		     streq (canonicalize(mc->m.mnt_dir), file))) {
 			if (has_uuid(spec, mc->m.mnt_fsname+5))
 				return mc;
 		}
@@ -322,7 +290,7 @@ getfsfile (const char *file) {
 
 	mc0 = fstab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if (streq(mc->m.mnt_dir, file))
+		if (streq (mc->m.mnt_dir, file))
 			return mc;
 	return NULL;
 }
@@ -334,7 +302,7 @@ getfsspec (const char *spec) {
 
 	mc0 = fstab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if (streq(mc->m.mnt_fsname, spec))
+		if (streq (mc->m.mnt_fsname, spec))
 			return mc;
 	return NULL;
 }
@@ -563,7 +531,7 @@ update_mtab (const char *dir, struct mntent *instead) {
 
 	/* find last occurrence of dir */
 	for (mc = mc0->prev; mc && mc != mc0; mc = mc->prev)
-		if (streq(mc->m.mnt_dir, dir))
+		if (streq (mc->m.mnt_dir, dir))
 			break;
 	if (mc && mc != mc0) {
 		if (instead == NULL) {
