@@ -1,4 +1,4 @@
-.\" Copyright (c) 1996 Andries Brouwer
+.\" Copyright (c) 1996-2004 Andries Brouwer
 .\"
 .\" This page is somewhat derived from a page that was
 .\" (c) 1980, 1989, 1991 The Regents of the University of California
@@ -39,7 +39,7 @@
 .\" 010725, Nikita Danilov <NikitaDanilov@Yahoo.COM>: reiserfs options
 .\" 011124, Karl Eichwalder <ke@gnu.franken.de>: tmpfs options
 .\"
-.TH MOUNT 8 "14 September 1997" "Linux 2.0" "Linux Programmer's Manual"
+.TH MOUNT 8 "2004-12-16" "Linux 2.6" "Linux Programmer's Manual"
 .SH NAME
 mount \- mount a file system
 .SH SYNOPSIS
@@ -183,7 +183,7 @@ However, when
 .I fstab
 contains the
 .B user
-option on a line, then anybody can mount the corresponding system.
+option on a line, anybody can mount the corresponding system.
 .LP
 Thus, given a line
 .RS
@@ -317,7 +317,9 @@ permission to read the disk device (e.g. be suid root) for this to work.
 One can set such a label for ext2 or ext3 using the
 .BR e2label (8)
 utility, or for XFS using
-.BR xfs_admin (8).
+.BR xfs_admin (8),
+or for reiserfs using
+.BR reiserfstune (8).
 .TP
 .B \-n
 Mount without writing in
@@ -361,7 +363,7 @@ These two options require the file
 The argument following the
 .B \-t
 is used to indicate the file system type.  The file system types which are
-currently supported are:
+currently supported include:
 .IR adfs ,
 .IR affs ,
 .IR autofs ,
@@ -566,6 +568,10 @@ This option implies the options
 (unless overridden by subsequent options, as in the option line
 .BR group,dev,suid ).
 .TP
+.B mand
+Allow mandatory locks on this filesystem. See
+.BR fcntl (2).
+.TP
 .B _netdev
 The filesystem resides on a device that requires network access
 (used to prevent the system from attempting to mount these filesystems
@@ -588,6 +594,9 @@ system.
 Do not allow direct execution of any binaries on the mounted file system.
 (Until recently it was possible to run binaries anyway using a command like
 /lib/ld*.so /mnt/binary. This trick fails since Linux 2.4.25 / 2.6.0.)
+.TP
+.B nomand
+Do not allow mandatory locks on this filesystem.
 .TP
 .B nosuid
 Do not allow set-user-identifier or set-group-identifier bits to take
@@ -658,6 +667,11 @@ The following options apply only to certain file systems.
 We sort them by file system. They all follow the
 .B \-o
 flag.
+
+What options are supported depends a bit on the running kernel.
+More info may be found in the kernel source subdirectory
+.IR Documentation/filesystems .
+
 .SH "Mount options for adfs"
 .TP
 \fBuid=\fP\fIvalue\fP and \fBgid=\fP\fIvalue\fP
@@ -877,7 +891,7 @@ Support "user." extended attributes (or not).
 
 
 .SH "Mount options for ext3"
-The `ext3' file system is version of the ext2 file system which has been
+The `ext3' file system is a version of the ext2 file system which has been
 enhanced with journalling.  It supports the same options as ext2 as
 well as the following additions:
 .\" .TP
@@ -899,6 +913,10 @@ Do not load the ext3 file system's journal on mounting.
 .TP
 .BR data=journal " / " data=ordered " / " data=writeback
 Specifies the journalling mode for file data.  Metadata is always journaled.
+To use modes other than
+.B ordered
+on the root file system, pass the mode to the kernel as boot parameter, e.g.
+.IR rootflags=data=journal .
 .RS
 .TP
 .B journal
@@ -915,6 +933,12 @@ file system after its metadata has been committed to the journal.
 This is rumoured to be the highest-throughput option.  It guarantees
 internal file system integrity, however it can allow old data to appear
 in files after a crash and journal recovery.
+.RE
+.TP
+.BI commit= nrsec
+Sync all data and metadata every
+.I nrsec
+seconds. The default value is 5 seconds. Zero means default.
  
 .SH "Mount options for fat"
 (Note:
@@ -930,8 +954,8 @@ filesystems.)
 Set blocksize (default 512).
 .TP
 \fBuid=\fP\fIvalue\fP and \fBgid=\fP\fIvalue\fP
-Set the owner and group of all files. (Default: the uid and gid
-of the current process.)
+Set the owner and group of all files.
+(Default: the uid and gid of the current process.)
 .TP
 .BI umask= value
 Set the umask (the bitmask of the permissions that are
@@ -942,12 +966,14 @@ The value is given in octal.
 .BI dmask= value
 Set the umask applied to directories only.
 The default is the umask of the current process.
-The value is given in octal. Present since 2.5.43.
+The value is given in octal.
+.\" Present since Linux 2.5.43.
 .TP
 .BI fmask= value
 Set the umask applied to regular files only.
 The default is the umask of the current process.
-The value is given in octal. Present since 2.5.43.
+The value is given in octal.
+.\" Present since Linux 2.5.43.
 .TP
 .BI check= value 
 Three different levels of pickyness can be chosen:
@@ -1039,6 +1065,33 @@ although they fail. Use with caution!
 .B "sys_immutable, showexec, dots, nodots, dotsOK=[yes|no]"
 Various misguided attempts to force Unix or DOS conventions
 onto a FAT file system.
+
+.SH "Mount options for hfs"
+.TP
+.BI creator= cccc ", type=" cccc
+Set the creator/type values as shown by the MacOS finder
+used for creating new files.  Default values: '????'.
+.TP
+.BI uid= n ", gid=" n
+Set the owner and group of all files.
+(Default: the uid and gid of the current process.)
+.TP
+.BI dir_umask= n ", file_umask=" n ", umask=" n
+Set the umask used for all directories, all regular files, or all
+files and directories.  Defaults to the umask of the current process.
+.TP
+.BI session= n
+Select the CDROM session to mount.
+Defaults to leaving that decision to the CDROM driver.
+This option will fail with anything but a CDROM as underlying device.
+.TP
+.BI part= n
+Select partition number n from the device.
+Only makes sense for CDROMS.
+Defaults to not parsing the partition table at all.
+.TP
+.B quiet
+Don't complain about invalid mount options.
 
 .SH "Mount options for hpfs"
 .TP
@@ -1316,7 +1369,13 @@ Do not use locking. Do not start lockd.
 .BI iocharset= name
 Character set to use when returning file names.
 Unlike VFAT, NTFS suppresses names that contain
-unconvertible characters.
+unconvertible characters. Deprecated.
+.\" since 2.5.11
+.TP
+.BI nls= name
+New name for the option earlier called
+.IR iocharset .
+.\" since 2.5.11
 .TP
 .BR utf8
 Use UTF-8 for converting file names.
@@ -1371,7 +1430,7 @@ collisions.
 .B tea
 A Davis-Meyer function implemented by Jeremy Fitzhardinge.
 It uses hash permuting bits in the name.  It gets high randomness
-and, therefore, low probability of hash collisions at come CPU cost.
+and, therefore, low probability of hash collisions at some CPU cost.
 This may be used if EHASHCOLLISION errors are experienced with the r5 hash. 
 .TP
 .B r5
@@ -1458,7 +1517,7 @@ or
 for Ki, Mi, Gi (binary kilo, mega and giga) and can be changed on remount.
 .TP
 .BI size= nbytes
-Override default size of the filesystem.
+Override default maximum size of the filesystem.
 The size is given in bytes, and rounded down to entire pages.
 The default is half of the memory.
 .TP
@@ -1493,14 +1552,14 @@ Show otherwise hidden files.
 .B undelete
 Show deleted files in lists.
 .TP
-.B strict
-Set strict conformance (unused).
-.TP
-.B utf8
-(unused).
+.B nostrict
+Unset strict conformance.
+.\" .TP
+.\" .B utf8
+.\" (unused).
 .TP
 .B iocharset
-(unused).
+Set the NLS character set.
 .TP
 .B bs=
 Set the block size. (May not work unless 2048.)
@@ -1724,6 +1783,9 @@ Filesystems mounted
 .B norecovery
 must be mounted read-only or the mount will fail.
 .TP
+.B nouuid
+Ignore the filesystem uuid. This avoids errors for duplicate uuids.
+.TP
 .B osyncisdsync
 Make writes to files opened with the O_SYNC flag set behave
 as if the O_DSYNC flag had been used instead.
@@ -1778,10 +1840,14 @@ to correspond to the file
 .IR /tmp/fdimage ,
 and then mount this device on
 .IR /mnt .
+
 This type of mount knows about three options, namely
 .BR loop ", " offset " and " encryption ,
 that are really options to
-.BR losetup (8).
+.BR \%losetup (8).
+(These options can be used in addition to those specific
+to the filesystem type.)
+
 If no explicit loop device is mentioned
 (but just an option `\fB\-o loop\fP' is given), then
 .B mount
@@ -1885,6 +1951,11 @@ or
 .B umask
 for the
 .IR fatfs ).
+.PP
+Mount by label or uuid will work only if your devices have the names listed in
+.IR /proc/partitions .
+In particular, it may well fail if the kernel was compiled with devfs
+but devfs is not mounted.
 .SH HISTORY
 A
 .B mount

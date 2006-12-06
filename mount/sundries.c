@@ -32,6 +32,17 @@ xmalloc (size_t size) {
      return t;
 }
 
+void *
+xrealloc (void *p, size_t size) {
+     void *t;
+
+     t = realloc(p, size);
+     if (t == NULL)
+	  die (EX_SYSERR, _("not enough memory"));
+
+     return t;
+}
+
 char *
 xstrdup (const char *s) {
      char *t;
@@ -278,11 +289,12 @@ canonicalize (const char *path) {
 	if (path == NULL)
 		return NULL;
 
+#if 1
 	if (streq(path, "none") ||
 	    streq(path, "proc") ||
 	    streq(path, "devpts"))
 		return xstrdup(path);
-
+#endif
 	if (myrealpath (path, canonical, PATH_MAX+1))
 		return xstrdup(canonical);
 

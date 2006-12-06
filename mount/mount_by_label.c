@@ -211,6 +211,9 @@ uuidcache_init(void) {
 	    fseek(procpt, 0, SEEK_SET);
 
 	    while (fgets(line, sizeof(line), procpt)) {
+		if (!index(line, '\n'))
+			break;
+
 		if (sscanf (line, " %d %d %d %[^\n ]",
 			    &ma, &mi, &sz, ptname) != 4)
 			continue;
@@ -229,7 +232,7 @@ uuidcache_init(void) {
 		/* heuristic: partition name ends in a digit */
 		/* devfs has .../disc and .../part1 etc. */
 
-		for(s = ptname; *s; s++);
+		for (s = ptname; *s; s++);
 		if (isdigit(s[-1]) || is_xvm(ptname)) {
 			
 		/*

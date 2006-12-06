@@ -51,6 +51,8 @@
  *  XFS label recognition.
  * Thu Nov 22 15:42:56 CET 2001 <flavio.stanchina@tin.it>
  *  ext3 and ReiserFS recognition.
+ * Sun Oct 12 17:43:43 CEST 2003 <flavio.stanchina@tin.it>
+ *  JFS recognition; ReiserFS label recognition.
  *
  ****************************************************************************/
 
@@ -377,6 +379,8 @@ partition_type_text(int i) {
 	      return _("Linux ext3");
 	 else if (!strcmp(p_info[i].fstype, "xfs"))
 	      return _("Linux XFS");
+	 else if (!strcmp(p_info[i].fstype, "jfs"))
+	      return _("Linux JFS");
 	 else if (!strcmp(p_info[i].fstype, "reiserfs"))
 	      return _("Linux ReiserFS");
 	 else
@@ -595,17 +599,26 @@ get_dos_label(int i) {
 #define REISERFS_SUPER_MAGIC_STRING "ReIsErFs"
 #define REISER2FS_SUPER_MAGIC_STRING "ReIsEr2Fs"
 struct reiserfs_super_block {
-	char s_dummy0[ 52];
-	char s_magic [ 12];
-	char s_dummy1[140];
+	char s_dummy0[52];
+	char s_magic [10];
+	char s_dummy1[38];
+	u_char s_label[16];
 };
+#define REISERFSLABELSZ sizeof(reiserfsb.s_label)
 
 static int
-is_reiserfs_magic_string(const struct reiserfs_super_block *rs) {
-	return (!strncmp(rs->s_magic, REISERFS_SUPER_MAGIC_STRING,
-			 strlen(REISERFS_SUPER_MAGIC_STRING)) ||
-		!strncmp(rs->s_magic, REISER2FS_SUPER_MAGIC_STRING,
-			 strlen(REISER2FS_SUPER_MAGIC_STRING)));
+has_reiserfs_magic_string(const struct reiserfs_super_block *rs, int *is_3_6) {
+	if (!strncmp(rs->s_magic, REISERFS_SUPER_MAGIC_STRING,
+		     strlen(REISERFS_SUPER_MAGIC_STRING))) {
+		*is_3_6 = 0;
+		return 1;
+	}
+	if (!strncmp(rs->s_magic, REISER2FS_SUPER_MAGIC_STRING,
+		     strlen(REISER2FS_SUPER_MAGIC_STRING))) {
+		*is_3_6 = 1;
+		return 1;
+	}
+	return 0;
 }
 
 static void
@@ -627,6 +640,20 @@ get_linux_label(int i) {
 
 #define REISERFS_DISK_OFFSET_IN_BYTES (64 * 1024)
 	struct reiserfs_super_block reiserfsb;
+	int reiserfs_is_3_6;
+
+#define JFS_SUPER1_OFF	0x8000
+#define JFS_MAGIC	"JFS1"
+#define JFSLABELSZ	16
+	struct jfs_super_block {
+		char    s_magic[4];
+		u_char  s_version[4];
+		u_char  s_dummy1[93];
+		char    s_fpack[11];
+		u_char  s_dummy2[24];
+		u_char  s_uuid[16];
+		char    s_label[JFSLABELSZ];
+	} jfsb;
 
 #define XFS_SUPER_MAGIC "XFSB"
 #define XFSLABELSZ 12
@@ -661,7 +688,7 @@ get_linux_label(int i) {
 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE + 0;
 	if (ext2_llseek(fd, offset, SEEK_SET) == offset
 	    && read(fd, &xfsb, sizeof(xfsb)) == sizeof(xfsb)
-	    && !strcmp(xfsb.s_magic, XFS_SUPER_MAGIC)) {
+	    && !strncmp(xfsb.s_magic, XFS_SUPER_MAGIC, 4)) {
 		label = xfsb.s_fname;
 		for(j=0; j<XFSLABELSZ && j<LABELSZ && isprint(label[j]); j++)
 			p_info[i].volume_label[j] = label[j];
@@ -670,12 +697,34 @@ get_linux_label(int i) {
 		return;
 	}
 
+	/* jfs? */
+	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE
+		+ JFS_SUPER1_OFF;
+	if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	    && read(fd, &jfsb, sizeof(jfsb)) == sizeof(jfsb)
+	    && !strncmp(jfsb.s_magic, JFS_MAGIC, strlen(JFS_MAGIC))) {
+		label = jfsb.s_label;
+		for(j=0; j<JFSLABELSZ && j<LABELSZ && isprint(label[j]); j++)
+			p_info[i].volume_label[j] = label[j];
+		p_info[i].volume_label[j] = 0;
+		strncpy(p_info[i].fstype, "jfs", FSTYPESZ);
+		return;
+	}
+
 	/* reiserfs? */
 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE
 		+ REISERFS_DISK_OFFSET_IN_BYTES;
 	if (ext2_llseek(fd, offset, SEEK_SET) == offset
 	    && read(fd, &reiserfsb, 1024) == 1024
-	    && is_reiserfs_magic_string(&reiserfsb)) {
+	    && has_reiserfs_magic_string(&reiserfsb, &reiserfs_is_3_6)) {
+		if (reiserfs_is_3_6) {
+			/* label only on version 3.6 onward */
+			label = reiserfsb.s_label;
+			for(j=0; j<REISERFSLABELSZ && j<LABELSZ &&
+				    isprint(label[j]); j++)
+				p_info[i].volume_label[j] = label[j];
+			p_info[i].volume_label[j] = 0;
+		}
 		strncpy(p_info[i].fstype, "reiserfs", FSTYPESZ);
 		return;
 	}
@@ -2917,7 +2966,7 @@ main(int argc, char **argv)
 		    break;
 		default:
 		    usage(argv[0]);
-		    break;
+		    exit(1);
 		}
 	    }
 	    break;

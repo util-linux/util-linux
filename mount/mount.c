@@ -254,7 +254,7 @@ my_free(const void *s) {
  * For the options uid= and gid= replace user or group name by its value.
  */
 static inline void
-parse_opt (const char *opt, int *mask, char *extra_opts) {
+parse_opt(const char *opt, int *mask, char *extra_opts, int len) {
 	const struct opt_map *om;
 
 	for (om = opt_map; om->opt != NULL; om++)
@@ -278,7 +278,9 @@ parse_opt (const char *opt, int *mask, char *extra_opts) {
 			return;
 		}
 
-	if (*extra_opts)
+	len -= strlen(extra_opts);
+
+	if (*extra_opts && --len > 0)
 		strcat(extra_opts, ",");
 
 	/* convert nonnumeric ids to numeric */
@@ -288,7 +290,8 @@ parse_opt (const char *opt, int *mask, char *extra_opts) {
 
 		if (pw) {
 			sprintf(uidbuf, "uid=%d", pw->pw_uid);
-			strcat(extra_opts, uidbuf);
+			if ((len -= strlen(uidbuf)) > 0)
+				strcat(extra_opts, uidbuf);
 			return;
 		}
 	}
@@ -298,12 +301,14 @@ parse_opt (const char *opt, int *mask, char *extra_opts) {
 
 		if (gr) {
 			sprintf(gidbuf, "gid=%d", gr->gr_gid);
-			strcat(extra_opts, gidbuf);
+			if ((len -= strlen(gidbuf)) > 0)
+				strcat(extra_opts, gidbuf);
 			return;
 		}
 	}
 
-	strcat(extra_opts, opt);
+	if ((len -= strlen(opt)) > 0)
+		strcat(extra_opts, opt);
 }
   
 /* Take -o options list and compute 4th and 5th args to mount(2).  flags
@@ -318,13 +323,14 @@ parse_opts (const char *options, int *flags, char **extra_opts) {
 	if (options != NULL) {
 		char *opts = xstrdup(options);
 		char *opt;
+		int len = strlen(opts) + 20;
 
-		*extra_opts = xmalloc (strlen (opts) + 1); 
+		*extra_opts = xmalloc(len); 
 		**extra_opts = '\0';
 
-		for (opt = strtok (opts, ","); opt; opt = strtok (NULL, ","))
-			if (!parse_string_opt (opt))
-				parse_opt (opt, flags, *extra_opts);
+		for (opt = strtok(opts, ","); opt; opt = strtok(NULL, ","))
+			if (!parse_string_opt(opt))
+				parse_opt(opt, flags, *extra_opts, len);
 
 		free(opts);
 	}
@@ -957,7 +963,7 @@ retry_nfs:
 	error (_("mount: %s not mounted already, or bad option"), node);
       } else {
 	error (_("mount: wrong fs type, bad option, bad superblock on %s,\n"
-	       "       missing codepage, or too many mounted file systems"),
+	       "       missing codepage or other error"),
 	       spec);
 
 	if (stat(spec, &statbuf) == 0 && S_ISBLK(statbuf.st_mode)
@@ -965,13 +971,15 @@ retry_nfs:
 	  if (ioctl(fd, BLKGETSIZE, &size) == 0) {
 	    if (size == 0 && !loop) {
 	      warned++;
-	  error ("       (could this be the IDE device where you in fact use\n"
-		 "       ide-scsi so that sr0 or sda or so is needed?)");
+	      error(_(
+		 "       (could this be the IDE device where you in fact use\n"
+		 "       ide-scsi so that sr0 or sda or so is needed?)"));
 	    }
 	    if (size && size <= 2) {
 	      warned++;
-	  error ("       (aren't you trying to mount an extended partition,\n"
-		 "       instead of some logical partition inside?)");
+	      error(_(
+		  "       (aren't you trying to mount an extended partition,\n"
+		  "       instead of some logical partition inside?)"));
 	    }
 	  close(fd);
 	  }
@@ -986,6 +994,9 @@ retry_nfs:
 	  }
 #endif
 	}
+	error(_(
+		"       In some cases useful info is found in syslog - try\n"
+		"       dmesg | tail  or so\n"));
       }
       break;
     }
@@ -1055,7 +1066,7 @@ retry_nfs:
 	     types = types0;
 	 }
          if (opts) {
-	     char *opts2 = realloc(xstrdup(opts), strlen(opts)+4);
+	     char *opts2 = xrealloc(xstrdup(opts), strlen(opts)+4);
              strcat(opts2, ",ro");
 	     my_free(opts1);
 	     opts = opts1 = opts2;

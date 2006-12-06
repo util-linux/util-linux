@@ -87,8 +87,7 @@ Devices that are already running as swap are silently skipped.
 When 
 .B \-a 
 is used with swapon, 
-.B
-\-e 
+.B \-e 
 makes swapon silently skip devices that
 do not exist.
 .TP
@@ -107,6 +106,9 @@ to the option field of
 .I /etc/fstab
 for use with
 .BR "swapon -a" .
+.TP
+.B \-v
+Be verbose.
 .PP
 .B Swapoff
 disables swapping on the specified devices and files.

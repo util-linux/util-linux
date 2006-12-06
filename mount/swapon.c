@@ -101,7 +101,7 @@ static void
 read_proc_swaps(void) {
 	FILE *swaps;
 	char line[1024];
-	char *p;
+	char *p, **q;
 
 	numSwaps = 0;
 	swapFiles = NULL;
@@ -121,10 +121,12 @@ read_proc_swaps(void) {
 		for (p = line; *p && *p != ' '; p++);
 		*p = 0;
 
-		numSwaps++;
-		swapFiles = realloc(swapFiles,
-				    numSwaps * sizeof(*swapFiles));
-		swapFiles[numSwaps-1] = strdup(line);
+		q = realloc(swapFiles, (numSwaps+1) * sizeof(*swapFiles));
+		if (q == NULL)
+			break;
+		swapFiles = q;
+
+		swapFiles[numSwaps++] = strdup(line);
 	}
 	fclose(swaps);
 }
@@ -134,7 +136,7 @@ is_in_proc_swaps(char *fname) {
 	int i;
 
 	for (i = 0; i < numSwaps; i++)
-		if (!strcmp(fname, swapFiles[i]))
+		if (swapFiles[i] && !strcmp(fname, swapFiles[i]))
 			return 1;
 	return 0;
 }
@@ -377,7 +379,7 @@ main_swapoff(int argc, char *argv[]) {
 
 	if (all) {
 		/*
-		 * In case /proc/swaps exists, unmount stuff listed there.
+		 * In case /proc/swaps exists, unswap stuff listed there.
 		 * We are quiet but report errors in status.
 		 * Errors might mean that /proc/swaps
 		 * exists as ordinary file, not in procfs.
@@ -388,7 +390,7 @@ main_swapoff(int argc, char *argv[]) {
 			status |= do_swapoff(swapFiles[i], QUIET);
 
 		/*
-		 * Unmount stuff mentioned in /etc/fstab.
+		 * Unswap stuff mentioned in /etc/fstab.
 		 * Probably it was unmounted already, so errors are not bad.
 		 * Doing swapoff -a twice should not give error messages.
 		 */

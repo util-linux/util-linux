@@ -580,6 +580,9 @@ static int
 warn_geometry(void) {
 	char *m = NULL;
 	int prev = 0;
+
+	if (sgi_label)	/* cannot set cylinders etc anyway */
+		return 0;
 	if (!heads)
 		prev = test_c(&m, _("heads"));
 	if (!sectors)
@@ -2190,7 +2193,10 @@ reread_partition_table(int leave) {
 		"information.\n"));
 
 	if (leave) {
-		close(fd);
+		if (fsync(fd) || close(fd)) {
+			fprintf(stderr, _("\nError closing file\n"));
+			exit(1);
+		}
 
 		printf(_("Syncing disks.\n"));
 		sync();

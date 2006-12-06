@@ -59,6 +59,7 @@ struct systypes i386_sys_types[] = {
 	{0x85, N_("Linux extended")},
 	{0x86, N_("NTFS volume set")},
 	{0x87, N_("NTFS volume set")},
+	{0x88, N_("Linux plaintext")},
 	{0x8e, N_("Linux LVM")},
 	{0x93, N_("Amoeba")},
 	{0x94, N_("Amoeba BBT")},	/* (bad block table) */

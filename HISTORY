@@ -1,3 +1,10 @@
+util-linux 2.12m
+
+* cfdisk: recognize JFS, support reiserfs labels (flavio.stanchina@tin.it)
+* mount: fix option parsing bug
+* mount.8: several updates
+* swapon.8: document -v option
+
 util-linux 2.12l
 
 * Makefile: remove cat-id-tbl.c upon make clean
