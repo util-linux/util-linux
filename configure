@@ -3,27 +3,35 @@
 #
 # We need to find out the following things:
 #
-#  1. For mount/nfsmount.c: is inet_aton() available?
-#  2. For fdisk/fdisksunlabel.c: is there a <scsi/scsi.h>?
-#     For fdisk/fdisk.c: is there a <linux/blkpg.h>?
-#  4. For sys-utils/cytune.c: do we need <linux/tqueue.h>?
-#  5. For sys-utils/kbd_rate.c: does <linux/kd.h> exist?
-#  6. For cfdisk, setterm, more, ul: do we have ncurses? How installed?
-#     For more: do we have libtermcap?
-#  7. For chfn, chsh, login, newgrp, passwd: do we need -lcrypt?
-#  8. For sln: does static compilation work?
-#  9. For lib/nls.h: do we have <locale.h>?
-# 10. For lib/nls.h: do we have <libintl.h> and gettext()?
-# 11. For xgettext: does it take the option --foreign-user?
-# 12. For cal.c: do we have <langinfo.h>?
-# 13. For err.c: do we have __progname?
-# 14. For script.c: do we have <pty.h> and openpty()?
-# 15. For lib/widechar.h: do we have wide character support?
-# 16. For clock/kd.c: do we have nanosleep()?
-# 17. For mkswap: do we have personality()?
-# 18. For pivot_root.c: does <linux/unistd.h> define __NR_pivot_root?
-# 19. For hwclock.c: does struct tm have a field tm_gmtoff?
-# 20. For nfsmount: does the output of rpcgen compile?
+# Existence of header files:
+# H1. For fdisksunlabel.c: is there a <scsi/scsi.h>?
+# H2. For fdisk.c: is there a <linux/blkpg.h>?
+# H3. For kbd_rate.c: does <linux/kd.h> exist?
+# H4. For nls.h: do we have <locale.h>?
+# H5. For cal.c: do we have <langinfo.h>?
+# H6. For mkswap.c: do we have <asm/page.h>?
+# H7. For nfsmount.h (nfsmount_xdr.c: int32_t): do we have <asm/types.h>?
+#
+# Existence of functions:
+# F1. For nfsmount.c: is inet_aton() available?
+# F2. For mkswap.c: is fsync() available?
+# F3. For agetty.c: is getdomainname() available?
+# F4. For hwclock/kd.c: do we have nanosleep()?
+# F5. For mkswap.c: do we have personality()?
+#
+#  1. For sys-utils/cytune.c: do we need <linux/tqueue.h>?
+#  2. For cfdisk, setterm, more, ul: do we have ncurses? How installed?
+#  3. For more: do we have libtermcap?
+#  4. For chfn, chsh, login, newgrp, passwd: do we need -lcrypt?
+#  5. For sln: does static compilation work?
+#  6. For lib/nls.h: do we have <libintl.h> and gettext()?
+#  7. For xgettext: does it take the option --foreign-user?
+#  8. For err.c: do we have __progname?
+#  9. For script.c: do we have <pty.h> and openpty()?
+# 10. For lib/widechar.h: do we have wide character support?
+# 11. For pivot_root.c: does <linux/unistd.h> define __NR_pivot_root?
+# 12. For hwclock.c: does struct tm have a field tm_gmtoff?
+# 13. For nfsmount: does the output of rpcgen compile?
 
 rm -f make_include defines.h
 
@@ -36,24 +44,13 @@ echo '#define UTIL_LINUX_VERSION "'$VERSION'"' > defines.h
 echo '#define util_linux_version "util-linux-'$VERSION'"' >> defines.h
 echo >> defines.h
 
-if test -z "$CC"
-then
-  if test "$RANDOM" = "$RANDOM"; then
-    # Plain old Bourne shell.
-    echo checking for gcc
-    test -z "$CC" -a -n "`gcc 2>&1`" && CC="gcc -O"
-  else
-    # ksh, bash or zsh.  ksh and zsh write "command not found" to stderr.
-    echo checking for gcc
-    test -z "$CC" && type gcc && CC="gcc -O"
-  fi
-else
-  echo "Using CC=\"$CC\""
-  echo
-fi
-
 CC=${CC-cc}
 CFLAGS=${CFLAGS-"-O"}
+LDFLAGS=${LDFLAGS-"-s"}
+echo CC=$CC >> make_include
+echo CFLAGS=$CFLAGS >> make_include
+echo LDFLAGS=$LDFLAGS >> make_include
+
 DEFS=
 LIBS=
 compile='$CC $CFLAGS $DEFS conftest.c -o conftest $LIBS >/dev/null 2>&1'
@@ -63,8 +60,80 @@ export COMPILE
 
 rm -f conftest.c conftest
 
+
 #
-# 1. For mount/nfsmount.c: is inet_aton() available?
+# Find out about the existence of header files
+#
+
+#
+# H1. For fdisk/fdisksunlabel.c: is <scsi/scsi.h> available?
+#     Some kernels have <scsi/scsi.h> that uses u_char
+#     But maybe there is already a typedef. Let us use a #define
+#
+echo "
+#define u_char	unsigned char
+#include <scsi/scsi.h>
+#undef u_char
+main(){ exit(0); }
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+        echo "#define HAVE_scsi_h" >> defines.h
+        echo "You have <scsi/scsi.h>"
+else
+        echo "You don't have <scsi/scsi.h>"
+fi
+rm -f conftest conftest.c
+
+#
+# H2. For fdisk/fdisk.c: is <linux/blkpg.h> available?
+#
+if ./testincl "linux/blkpg.h"; then
+        echo "#define HAVE_blkpg_h" >> defines.h
+fi
+
+#
+# H3. Does <linux/kd.h> exist?
+#
+if ./testincl "linux/kd.h"; then
+	echo "#define HAVE_kd_h" >> defines.h
+fi
+
+#
+# H4. For lib/nls.h: do we have <locale.h>?
+#
+if ./testincl "locale.h"; then
+        echo "#define HAVE_locale_h" >> defines.h
+fi
+
+#
+# H5. For cal.c: do we have <langinfo.h>?
+#
+if ./testincl "langinfo.h"; then
+        echo "#define HAVE_langinfo_h" >> defines.h
+fi
+
+#
+# H6. For mkswap.c: do we have <asm/page.h>?
+#
+if ./testincl "asm/page.h"; then
+        echo "#define HAVE_asm_page_h" >> defines.h
+fi
+
+#
+# H7. For nfsmount.h: do we have <asm/types.h>?
+#
+if ./testincl "asm/types.h"; then
+        echo "#define HAVE_asm_types_h" >> defines.h
+fi
+
+
+#
+# Find out about the existence of functions
+#
+
+#
+# F1. For mount/nfsmount.c: is inet_aton() available?
 #
 echo "
 #include <sys/socket.h>
@@ -86,34 +155,88 @@ fi
 rm -f conftest conftest.c
 
 #
-# 2. For fdisk/fdisksunlabel.c: is <scsi/scsi.h> available?
-#    Some kernels have <scsi/scsi.h> that uses u_char
-#    But maybe there is already a typedef. Let us use a #define
+# F2. For mkswap.c: is fsync() available?
 #
 echo "
-#define u_char	unsigned char
-#include <scsi/scsi.h>
-#undef u_char
-main(){ exit(0); }
+#include <unistd.h>
+main(int a, char **v){
+  if (a == -1)  /* false */
+    fsync(0);
+  exit(0);
+}
 " > conftest.c
 eval $compile
 if test -s conftest && ./conftest 2>/dev/null; then
-        echo "#define HAVE_scsi_h" >> defines.h
-        echo "You have <scsi/scsi.h>"
+	echo "#define HAVE_fsync" >> defines.h
+	echo "You have fsync()"
 else
-        echo "You don't have <scsi/scsi.h>"
+	echo "You don't have fsync()"
 fi
 rm -f conftest conftest.c
 
 #
-# 2A. For fdisk/fdisk.c: is <linux/blkpg.h> available?
+# F3. For agetty.c: is getdomainname() available?
 #
-if ./testincl "linux/blkpg.h"; then
-        echo "#define HAVE_blkpg_h" >> defines.h
+echo "
+#include <unistd.h>
+main(int a, char **v){
+  char buf[1];
+  if (a == -1)  /* false */
+    getdomainname(buf, sizeof buf);
+  exit(0);
+}
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+        echo "#define HAVE_getdomainname" >> defines.h
+        echo "You have getdomainname()"
+else
+        echo "You don't have getdomainname()"
 fi
+rm -f conftest conftest.c
 
 #
-# 4. cytune.c may need struct tq_struct
+# F4. For hwclock/kd.c: do we have nanosleep?
+#
+echo "
+#include <time.h>
+int main () {
+  struct timespec sleep = { 0, 1 };
+  nanosleep( &sleep, NULL );
+  exit(0);
+}
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+	echo "#define HAVE_nanosleep" >> defines.h
+	echo "You have nanosleep()"
+else
+	echo "You don't have nanosleep()"
+fi
+rm -f conftest conftest.c
+
+#
+# F5. For mkswap.c: do we have personality()?
+#
+echo "
+int main () {
+  extern int personality(unsigned long);
+  personality(0);
+  exit(0);
+}
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+	echo "#define HAVE_personality" >> defines.h
+	echo "You have personality()"
+else
+	echo "You don't have personality()"
+fi
+rm -f conftest conftest.c
+
+
+#
+# 1. cytune.c may need struct tq_struct
 #
 echo "
 #include <sys/types.h>
@@ -130,14 +253,7 @@ fi
 rm -f conftest conftest.c
 
 #
-# 5. Does <linux/kd.h> exist?
-#
-if ./testincl "linux/kd.h"; then
-	echo "#define HAVE_kd_h" >> defines.h
-fi
-
-#
-# 6. How is [n]curses installed?
+# 2. How is [n]curses installed?
 #
 test_curses_h=0
 have_ncurses=1
@@ -214,7 +330,7 @@ fi
 rm -f conftest conftest.c
 
 #
-# 7. Do we need -lcrypt?
+# 4. Do we need -lcrypt?
 #
 echo '
 #define _XOPEN_SOURCE
@@ -232,7 +348,7 @@ fi
 rm -f conftest conftest.c
 
 #
-# 8. Does static compilation work?
+# 5. Does static compilation work?
 #
 echo "
 main(){ return 0; }
@@ -244,17 +360,10 @@ else
 	echo "CAN_DO_STATIC=no" >> make_include
 	echo "Strange... Static compilation fails here."
 fi
+rm -f conftest.c conftest
 
 #
-# 9. For lib/nls.h: do we have <locale.h>?
-#
-if ./testincl "locale.h"; then
-        echo "#define HAVE_locale_h" >> defines.h
-fi
-
-
-#
-# 10. For lib/nls.h: do we have <libintl.h> and gettext() ?
+# 6. For lib/nls.h: do we have <libintl.h> and gettext() ?
 #
 echo '
 #include <libintl.h>
@@ -280,7 +389,7 @@ rm -f conftest conftest.c
 
 
 #
-# 11. Does xgettext exist and take the option --foreign-user?
+# 7. Does xgettext exist and take the option --foreign-user?
 #
 if (test $ENABLE_NLS = yes && type xgettext > /dev/null 2>&1); then
 	msg=`xgettext --foreign-user 2>&1 | grep unrecognized`
@@ -294,16 +403,9 @@ else
 	echo "HAVE_XGETTEXT=no" >> make_include
 fi
 
-#
-# 12. For cal.c: do we have <langinfo.h>?
-#
-if ./testincl "langinfo.h"; then
-        echo "#define HAVE_langinfo_h" >> defines.h
-fi
-
 
 #
-# 13. For err.c: do we have __progname?
+# 8. For err.c: do we have __progname?
 # [make sure gcc -O does not optimize the access away]
 #
 echo "
@@ -321,7 +423,7 @@ fi
 rm -f conftest conftest.c
 
 #
-# 14. For script.c: do we have <pty.h> and openpty()?
+# 9. For script.c: do we have <pty.h> and openpty()?
 #
 echo "
 #include <pty.h>
@@ -340,7 +442,7 @@ fi
 rm -f conftest conftest.c
 
 #
-# 15. For lib/widechar.h: do we have wide character support?
+# 10. For lib/widechar.h: do we have wide character support?
 # [Do we have the headers <wchar.h>, <wctype.h>, the types wchar_t, wint_t
 # and the fgetwc, fputwc, WEOF functions/macros?]
 #
@@ -368,46 +470,7 @@ fi
 rm -f conftest conftest.c
 
 #
-# 16. For clock/kd.c: do we have nanosleep?
-#
-echo "
-#include <time.h>
-int main () {
-  struct timespec sleep = { 0, 1 };
-  nanosleep( &sleep, NULL );
-  exit(0);
-}
-" > conftest.c
-eval $compile
-if test -s conftest && ./conftest 2>/dev/null; then
-	echo "#define HAVE_nanosleep" >> defines.h
-	echo "You have nanosleep()"
-else
-	echo "You don't have nanosleep()"
-fi
-rm -f conftest conftest.c
-
-#
-# 17. For mkswap.c: do we have personality()?
-#
-echo "
-int main () {
-  extern int personality(unsigned long);
-  personality(0);
-  exit(0);
-}
-" > conftest.c
-eval $compile
-if test -s conftest && ./conftest 2>/dev/null; then
-	echo "#define HAVE_personality" >> defines.h
-	echo "You have personality()"
-else
-	echo "You don't have personality()"
-fi
-rm -f conftest conftest.c
-
-#
-# 18. For pivot_root.c: does <linux/unistd.h> define __NR_pivot_root?
+# 11. For pivot_root.c: does <linux/unistd.h> define __NR_pivot_root?
 #
 echo "
 #include <linux/unistd.h>
@@ -426,7 +489,7 @@ fi
 rm -f conftest conftest.c
 
 #
-# 19. For hwclock.c: does struct tm have a field tm_gmtoff?
+# 12. For hwclock.c: does struct tm have a field tm_gmtoff?
 #
 echo "
 #include <time.h>
@@ -449,9 +512,15 @@ fi
 rm -f conftest conftest.c
 
 #
-# 20. For nfsmount: does the output of rpcgen compile?
+# 13. For nfsmount: does the output of rpcgen compile?
+#
+# On some systems the output of rpcgen compiles with warnings
+# Here we conclude "Your rpcgen output does not compile"
+# and use pregenerated files. If one wishes to use rpcgen anyway,
+# just add the line "HAVE_GOOD_RPC=yes" to make_include.
 #
 rm -f conftest conftestx.c conftestl.c conftest.h conftest.x
+rm -f conftestx.o conftestl.o
 echo "
 #ifdef RPC_CLNT
 %#include <string.h>            /* for memset() */
@@ -476,10 +545,10 @@ program MOUNTPROG {
     } = 2;
 } = 100005;
 " > conftest.x
-if rpcgen -h -o conftest.h conftest.x && \
-   rpcgen -c -o conftestx.c conftest.x && \
-   rpcgen -l -o conftestl.c conftest.x && \
-   cc -c conftestx.c 2> conferrs && cc -c conftestl.c 2>> conferrs && \
+if rpcgen -h -o conftest.h conftest.x 2> conferrs && \
+   rpcgen -c -o conftestx.c conftest.x 2>> conferrs && \
+   rpcgen -l -o conftestl.c conftest.x 2>> conferrs && \
+   cc -c conftestx.c 2>> conferrs && cc -c conftestl.c 2>> conferrs && \
    test ! -s conferrs
 then
         echo "HAVE_GOOD_RPC=yes" >> make_include
@@ -488,3 +557,4 @@ else
         echo "Your rpcgen output does not compile"
 fi
 rm -f conftest conftestx.c conftestl.c conftest.h conftest.x conferrs
+rm -f conftestx.o conftestl.o

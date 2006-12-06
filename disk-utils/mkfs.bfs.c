@@ -15,13 +15,12 @@
 #include <errno.h>
 #include <string.h>
 #include <time.h>
+#include "nls.h"
 
 /* cannot include <linux/fs.h> */
 #ifndef BLKGETSIZE
 #define BLKGETSIZE _IO(0x12,96)    /* return device size */
 #endif
-
-#include "../defines.h"		/* for util_linux_version */
 
 #define BFS_ROOT_INO		2
 #define BFS_NAMELEN		14
@@ -85,9 +84,9 @@ fatal(char *s, ...) {
 
 static void
 usage(void) {
-	fprintf(stderr,
+	fprintf(stderr, _(
 		"Usage: %s [-v] [-N nr-of-inodes] [-V volume-name]\n"
-		"       [-F fsname] device [block-count]\n",
+		"       [-F fsname] device [block-count]\n"),
 		progname);
 	exit(1);
 }
@@ -117,7 +116,7 @@ main(int argc, char *argv[]) {
 
 	if (argc == 2 &&
 	    (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version"))) {
-		printf("%s from %s\n", progname, util_linux_version);
+		printf(_("%s from %s\n"), progname, util_linux_version);
 		exit(0);
 	}
 
@@ -133,14 +132,14 @@ main(int argc, char *argv[]) {
 		case 'V':
 			len = strlen(optarg);
 			if (len <= 0 || len > 6)
-				fatal("volume name too long");
+				fatal(_("volume name too long"));
 			volume = strdup(optarg);
 			break;
 
 		case 'F':
 			len = strlen(optarg);
 			if (len <= 0 || len > 6)
-				fatal("fsname name too long");
+				fatal(_("fsname name too long"));
 			fsname = strdup(optarg);
 			break;
 
@@ -165,16 +164,16 @@ main(int argc, char *argv[]) {
 
 	if (stat(device, &statbuf) == -1) {
 		perror(device);
-		fatal("cannot stat device %s", device);
+		fatal(_("cannot stat device %s"), device);
 	}
 
 	if (!S_ISBLK(statbuf.st_mode))
-		fatal("%s is not a block special device", device);
+		fatal(_("%s is not a block special device"), device);
 
 	fd = open(device, O_RDWR);
 	if (fd == -1) {
 		perror(device);
-		fatal("cannot open %s", device);
+		fatal(_("cannot open %s"), device);
 	}
 
 	if (optind == argc-1)
@@ -185,12 +184,12 @@ main(int argc, char *argv[]) {
 	if (ioctl(fd, BLKGETSIZE, &total_blocks) == -1) {
 		if (!user_specified_total_blocks) {
 			perror("BLKGETSIZE");
-			fatal("cannot get size of %s", device);
+			fatal(_("cannot get size of %s"), device);
 		}
 		total_blocks = user_specified_total_blocks;
 	} else if (user_specified_total_blocks) {
 		if (user_specified_total_blocks > total_blocks)
-			fatal("blocks argument too large, max is %d",
+			fatal(_("blocks argument too large, max is %lu"),
 			      total_blocks);
 		total_blocks = user_specified_total_blocks;
 	}
@@ -205,7 +204,7 @@ main(int argc, char *argv[]) {
 	} else {
 		/* believe the user */
 		if (inodes > 512)
-			fatal("too many inodes - max is 512");
+			fatal(_("too many inodes - max is 512"));
 	}
 
 	ino_bytes = inodes * sizeof(struct bfsi);
@@ -214,7 +213,7 @@ main(int argc, char *argv[]) {
 
 	/* mimic the behaviour of SCO's mkfs - maybe this limit is needed */
 	if (data_blocks < 32)
-		fatal("not enough space, need at least %d blocks",
+		fatal(_("not enough space, need at least %lu blocks"),
 		      ino_blocks + 33);
 
 	memset(&sb, 0, sizeof(sb));
@@ -226,19 +225,23 @@ main(int argc, char *argv[]) {
 	memcpy(sb.s_volume, volume, 6);
 
 	if (verbose) {
-		fprintf(stderr, "Device: %s\n", device);
-		fprintf(stderr, "Volume: <%-6s>\n", volume);
-		fprintf(stderr, "FSname: <%-6s>\n", fsname);
-		fprintf(stderr, "BlockSize: %d\n", BFS_BLOCKSIZE);
-		fprintf(stderr, "Inodes: %d (in %ld block%s)\n",
-			inodes, ino_blocks, (ino_blocks==1) ? "" : "s");
-		fprintf(stderr, "Blocks: %ld\n", total_blocks);
-		fprintf(stderr, "Inode end: %d, Data end: %d\n",
+		fprintf(stderr, _("Device: %s\n"), device);
+		fprintf(stderr, _("Volume: <%-6s>\n"), volume);
+		fprintf(stderr, _("FSname: <%-6s>\n"), fsname);
+		fprintf(stderr, _("BlockSize: %d\n"), BFS_BLOCKSIZE);
+		if (ino_blocks==1)
+			fprintf(stderr, _("Inodes: %d (in 1 block)\n"),
+				inodes);
+		else
+			fprintf(stderr, _("Inodes: %d (in %ld blocks)\n"),
+				inodes, ino_blocks);
+		fprintf(stderr, _("Blocks: %ld\n"), total_blocks);
+		fprintf(stderr, _("Inode end: %d, Data end: %d\n"),
 			sb.s_start-1, sb.s_end);
 	}
 
 	if (write(fd, &sb, sizeof(sb)) != sizeof(sb))
-		fatal("error writing superblock");
+		fatal(_("error writing superblock"));
 
 	memset(&ri, 0, sizeof(ri));
 	ri.i_ino = BFS_ROOT_INO;
@@ -258,29 +261,29 @@ main(int argc, char *argv[]) {
 	ri.i_ctime = now;
 
 	if (write(fd, &ri, sizeof(ri)) != sizeof(ri))
-		fatal("error writing root inode");
+		fatal(_("error writing root inode"));
 
 	memset(&ri, 0, sizeof(ri));
 	for (i=1; i<inodes; i++)
 		if (write(fd, &ri, sizeof(ri)) != sizeof(ri))
-			fatal("error writing inode");
+			fatal(_("error writing inode"));
 
 	if (lseek(fd, (1 + ino_blocks)*BFS_BLOCKSIZE, SEEK_SET) == -1)
-		fatal("seek error");
+		fatal(_("seek error"));
 
 	memset(&de, 0, sizeof(de));
 	de.d_ino = BFS_ROOT_INO;
 	memcpy(de.d_name, ".", 1);
 	if (write(fd, &de, sizeof(de)) != sizeof(de))
-		fatal("error writing . entry");
+		fatal(_("error writing . entry"));
 
 	memcpy(de.d_name, "..", 2);
 	if (write(fd, &de, sizeof(de)) != sizeof(de))
-		fatal("error writing .. entry");
+		fatal(_("error writing .. entry"));
 
 	if (close(fd) == -1) {
 		perror(device);
-		fatal("error closing %s", device);
+		fatal(_("error closing %s"), device);
 	}
 
 	return 0;

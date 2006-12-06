@@ -6,7 +6,7 @@
 #include <stdio.h>
 #include <linux/unistd.h>
 
-
+static
 _syscall2(int,pivot_root,const char *,new_root,const char *,put_old)
 
 

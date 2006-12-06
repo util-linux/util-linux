@@ -45,14 +45,13 @@ will change these values.
 
 Typical values for the
 .I image
-parameter, which is a bootable Linux kernel image, are as follows:
+parameter, which is a bootable Linux kernel image, might be:
 
 .nf
 .RS
 /vmlinux
-/vmlinux.test
 /vmunix
-/vmunix.test
+/boot/bzImage-2.4.0
 /dev/fd0
 /dev/fd1
 .RE
@@ -62,14 +61,15 @@ When using the
 .BR rdev ", or " swapdev
 commands, the
 .IR root_device " or " swap_device
-parameter are as follows:
+parameter might be something like:
 
 .nf
 .RS
-/dev/hda[1-8]
-/dev/hdb[1-8]
-/dev/sda[1-8]
-/dev/sdb[1-8]
+/dev/hda1
+/dev/hdf13
+/dev/sda2
+/dev/sdc4
+/dev/ida/c0d0p1
 .RE
 .fi
 

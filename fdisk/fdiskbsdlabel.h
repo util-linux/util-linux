@@ -31,7 +31,7 @@
  * SUCH DAMAGE.
  */
 
-#include <linux/types.h>	/* for __u32 etc */
+#include <linux/types.h>	/* for __u32, __u16, __u8, __s16 */
 
 #ifndef BSD_DISKMAGIC	/* perhaps from <linux/genhd.h> */
 #define BSD_DISKMAGIC     ((__u32) 0x82564557)

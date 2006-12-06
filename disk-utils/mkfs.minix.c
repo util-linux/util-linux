@@ -32,8 +32,8 @@
  * 03.01.94  -	Added support for file system valid flag.
  *		(Dr. Wettstein, greg%wind.uucp@plains.nodak.edu)
  *
- * 30.10.94 - added support for v2 filesystem
- *	      (Andreas Schwab, schwab@issan.informatik.uni-dortmund.de)
+ * 30.10.94  -  Added support for v2 filesystem
+ *		(Andreas Schwab, schwab@issan.informatik.uni-dortmund.de)
  * 
  * 09.11.94  -	Added test to prevent overwrite of mounted fs adapted
  *		from Theodore Ts'o's (tytso@athena.mit.edu) mke2fs
@@ -538,8 +538,8 @@ do_check(char * buffer, int try, unsigned int current_block) {
 	
 	/* Seek to the correct loc. */
 	if (lseek(DEV, current_block * BLOCK_SIZE, SEEK_SET) !=
-                       current_block * BLOCK_SIZE ) {
-                 die(_("seek failed during testing of blocks"));
+		       current_block * BLOCK_SIZE ) {
+		 die(_("seek failed during testing of blocks"));
 	}
 
 
@@ -653,7 +653,7 @@ main(int argc, char ** argv) {
       case 'c':
 	check=1; break;
       case 'i':
-        req_nr_inodes = (unsigned long) atol(optarg);
+	req_nr_inodes = (unsigned long) atol(optarg);
 	break;
       case 'l':
 	listfile = optarg; break;

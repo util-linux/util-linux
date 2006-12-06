@@ -1,6 +1,6 @@
 /*
     getopt.c - Enhanced implementation of BSD getopt(1)
-    Copyright (c) 1997, 1998  Frodo Looijaard <frodol@dds.nl>
+    Copyright (c) 1997, 1998, 1999, 2000  Frodo Looijaard <frodol@dds.nl>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -28,10 +28,13 @@
  * Version 1.0.2: Thu Jun 11 1998 (not present)
  *   Fixed gcc-2.8.1 warnings
  *   Fixed --version/-V option (not present)
- * Version 1.0.3
- *   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
- *   - added Native Language Support
- *   
+ * Version 1.0.5: Tue Jun 22 1999
+ *   Make -u option work (not present)
+ * Version 1.0.6: Tue Jun 27 2000
+ *   No important changes
+ * Version 1.1.0: Tue Jun 30 2000
+ *   Added NLS support (partly written by Arkadiusz Mi<B6>kiewicz 
+ *     <misiek@misiek.eu.org>)
  */
 
 #include <stdio.h>
@@ -39,13 +42,14 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
-#include "../lib/nls.h"
 
 #if LIBCGETOPT
 #include <getopt.h>
 #else
 #include "getopt.h"
 #endif
+
+#include "../lib/nls.h"
 
 /* NON_OPT is the code that is returned when a non-option is found in '+' 
    mode */
@@ -90,12 +94,12 @@ void *our_malloc(size_t size)
 
 void *our_realloc(void *ptr, size_t size)
 {
-        void *ret=realloc(ptr,size);
-        if (! ret && size) {
-		fprintf(stderr,_("%s: Out of memory!\n"), "getopt");
-                exit(3);
-        }
-        return(ret);
+	void *ret=realloc(ptr,size);
+	if (! ret && size) {
+		fprintf(stderr,_("%s: Out of memory!\n"),"getopt");
+		exit(3);
+	}
+	return(ret);
 }
 
 /*
@@ -113,8 +117,8 @@ const char *normalize(const char *arg)
 	const char *argptr=arg;
 	char *bufptr;
 
-        if (BUFFER != NULL)
-                free(BUFFER);
+	if (BUFFER != NULL)
+		free(BUFFER);
 
 	if (!quote) { /* Just copy arg */
 		BUFFER=our_malloc(strlen(arg)+1);
@@ -320,16 +324,17 @@ void print_help(void)
 	fputs(_("Usage: getopt optstring parameters\n"),stderr);
 	fputs(_("       getopt [options] [--] optstring parameters\n"),stderr);
 	fputs(_("       getopt [options] -o|--options optstring [options] [--]\n"),stderr);
-        fputs(_("              parameters\n"),stderr);
+	fputs(_("              parameters\n"),stderr);
 	fputs(_("  -a, --alternative            Allow long options starting with single -\n"),stderr);
 	fputs(_("  -h, --help                   This small usage guide\n"),stderr);
 	fputs(_("  -l, --longoptions=longopts   Long options to be recognized\n"),stderr);
 	fputs(_("  -n, --name=progname          The name under which errors are reported\n"),stderr);
 	fputs(_("  -o, --options=optstring      Short options to be recognized\n"),stderr);
-        fputs(_("  -q, --quiet                  Disable error reporting by getopt(3)\n"),stderr);
+	fputs(_("  -q, --quiet                  Disable error reporting by getopt(3)\n"),stderr);
 	fputs(_("  -Q, --quiet-output           No normal output\n"),stderr);
 	fputs(_("  -s, --shell=shell            Set shell quoting conventions\n"),stderr);	
 	fputs(_("  -T, --test                   Test for getopt(1) version\n"),stderr);
+	fputs(_("  -u, --unqote                 Do not quote the output\n"),stderr);
 	fputs(_("  -V, --version                Output version information\n"),stderr);
 	exit(2);
 }
@@ -366,7 +371,7 @@ int main(int argc, char *argv[])
 	int opt;
 	int compatible=0;
 
-	setlocale(LC_ALL, "");
+	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
@@ -429,8 +434,11 @@ int main(int argc, char *argv[])
 			break;
 		case 'T':
 			exit(4);
+		case 'u':
+			quote=0;
+			break;
 		case 'V':
-			printf(_("getopt (enhanced) 1.0.3\n"));
+			printf(_("getopt (enhanced) 1.1.0\n"));
 			exit(0);
 		case '?':
 		case ':':

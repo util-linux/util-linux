@@ -100,3 +100,52 @@ struct fat_super_block {
     u_char    s_label2[11];	/* for Windows? */
     u_char    s_fs2[8];	        /* garbage or "FAT32   " */
 };
+
+#define XFS_SUPER_MAGIC "XFSB"
+#define XFS_SUPER_MAGIC2 "BSFX"
+struct xfs_super_block {
+    u_char    s_magic[4];
+    u_char    s_dummy[28];
+    u_char    s_uuid[16];
+    u_char    s_dummy2[60];
+    u_char    s_fname[12];
+};
+
+#define CRAMFS_SUPER_MAGIC 0x28cd3d45
+struct cramfs_super_block {
+	u_char    s_magic[4];
+	u_char    s_dummy[12];
+	u_char    s_id[16];
+};
+#define cramfsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
+			 (((uint) s.s_magic[2]) << 16) + \
+			 (((uint) s.s_magic[3]) << 24))
+
+#define HFS_SUPER_MAGIC 0x4244
+struct hfs_super_block {
+	u_char    s_magic[2];
+	u_char    s_dummy[18];
+	u_char    s_blksize[4];
+};
+#define hfsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8))
+#define hfsblksize(s)	((uint) s.s_blksize[0] + \
+			 (((uint) s.s_blksize[1]) << 8) + \
+			 (((uint) s.s_blksize[2]) << 16) + \
+			 (((uint) s.s_blksize[3]) << 24))
+
+#define HPFS_SUPER_MAGIC 0xf995e849
+struct hpfs_super_block {
+	u_char    s_magic[4];
+	u_char    s_magic2[4];
+};
+#define hpfsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
+			 (((uint) s.s_magic[2]) << 16) + \
+			 (((uint) s.s_magic[3]) << 24))
+
+struct adfs_super_block {
+	u_char    s_dummy[448];
+	u_char    s_blksize[1];
+	u_char    s_dummy2[62];
+	u_char    s_checksum[1];
+};
+#define adfsblksize(s)	((uint) s.s_blksize[0])

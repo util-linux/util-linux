@@ -18,25 +18,29 @@
 .\" The postal address is:
 .\"   Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.
 .\"
-.\"	need.8		Richard Gooch	28-FEB-2000
+.\"	initctl.8		Richard Gooch	6-NOV-2000
 .\"
-.TH NEED 8 "28 Feb 2000" "Util-Linux Package"
+.TH INITCTL 8 "6 Nov 2000" "Util-Linux Package"
 .SH NAME
-need \- utility to tell simpleinit(8) to start a service
+initctl \- utility to control simpleinit(8)
 .SH SYNOPSIS
 .nf
-\fBneed\fP [\fB-r\fP] [\fBservice\fP]
+\fBneed\fP [\fB-r\fP] \fBservice\fP
 .BR display-services
+\fBprovide service\fP
 .fi
-.SH DESCRIPTION
+.SH OVERVIEW
+The \fBneed\fP programme is designed to help improve the robustness,
+scalability and readability of system boot scripts. It is now possible
+to write a modularised set of boot scripts without the complex and
+fragile numbered symlink scheme used in SysV-style boot scripts. Each
+script can simply declare, using \fBneed\fP(8), what must run before
+them.
+.SH DESCRIPTION for need
 The \fBneed\fP programme is a utility that tells \fBsimpleinit\fP(8)
 to start a \fIservice\fP (usually a script in \fI/sbin/init.d\fP) and
 will wait for the service to become available. If the service is
 already available, it will not be started again.
-
-When invoked as \fBdisplay-services\fP it will write the list of
-currently available services and the list of failed services to the
-standard output.
 
 The \fB-r\fP option is used to tell \fBsimpleinit\fP(8) to "roll back"
 (stop) services up to (but not including) \fIservice\fP. If
@@ -45,12 +49,24 @@ option thus allows the system to be partially or wholly shut down in
 an orderly fashion. The \fBshutdown\fP(8) programme still needs to be
 run.
 
-The \fBneed\fP programme is designed to help improve the robustness,
-scalability and readability of system boot scripts. It is now possible
-to write a modularised set of boot scripts without the complex and
-fragile numbered symlink scheme used in SysV-style boot scripts. Each
-script can simply declare, using \fBneed\fP(8), what must run before
-them.
+.SH DESCRIPTION for display-services
+When invoked as \fBdisplay-services\fP it will write the list of
+currently available services and the list of failed services to the
+standard output.
+
+.SH DESCRIPTION for provide
+When invoked as \fBprovide\fP it tells \fBsimpleinit\fP(8) that the
+parent (calling) process will be providing a service with name
+\fIservice\fP. If the calling process exits successfully (status 0)
+the service is deemed to be available. Only one instance of
+\fIservice\fP may be started, so alternate providers will block and
+may fail.
+
+Using \fBprovide\fP it is possible to have multiple potential
+providers for the same (generic) service (e.g. \fBsendmail\fP and
+\fBqmail\fP both provide a \fBmta\fP service), where only one actually
+provides the service. This may be used by service startup scripts
+which check for configuration files.
 .SH EXIT CODE
 The exit code from \fBneed\fP is 0 if the service was successfully
 started, 1 if the service failed badly, and 2 if the service is
@@ -61,6 +77,11 @@ The exit code from \fBneed -r\fP is 0 if the service was successfully
 stopped, 1 if the service could not be stopped, and 2 if the service
 was not available to start with. The service shutdown scripts may only
 return 0 (for success) or 1 (for failure).
+
+The exit code from \fBprovide\fP is 0 if the service may be provided,
+1 if it may not, and 2 if the parent process is not a child of
+init. It may block waiting for another provider which is initialising
+the service.
 .SH SIGNALS
 \fBneed\fP(8) uses \fBSIGUSR1\fP, \fBSIGUSR2\fP and \fBSIGPOLL\fP for
 communication with \fBsimpleinit\fP(8). Don't send these signals to

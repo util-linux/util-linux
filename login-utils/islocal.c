@@ -17,10 +17,12 @@
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #include "nls.h"
 #include "pathnames.h"
+#include "islocal.h"
 
 #define MAX_LENGTH	1024
 

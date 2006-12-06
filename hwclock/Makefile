@@ -23,7 +23,8 @@ hwclock: hwclock.o shhopt.o cmos.o rtc.o kd.o
 CWFLAGS := $(subst -Wmissing-prototypes,,$(CFLAGS))
 
 cmos.o: cmos.c
-	$(CC) $(CWFLAGS) -c $< -o $@
+	$(CC) $(CWFLAGS) -c cmos.c -o $@
+# $< expands to clock.h on some systems
 
 install: all
 	$(INSTALLDIR) $(SBINDIR) $(BINDIR) $(USRBINDIR)

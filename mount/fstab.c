@@ -99,21 +99,19 @@ read_mntentchn(mntFILE *mfp, const char *fnam, struct mntentchn *mc0) {
 	struct mntent *mnt;
 
 	while ((mnt = my_getmntent (mfp)) != NULL) {
-	    if (!streq (mnt->mnt_type, MNTTYPE_IGNORE)) {
-		mc->nxt = (struct mntentchn *) xmalloc(sizeof(*mc));
-		mc->nxt->prev = mc;
-		mc = mc->nxt;
-		mc->mnt_fsname = mnt->mnt_fsname;
-		mc->mnt_dir = mnt->mnt_dir;
-		mc->mnt_type = mnt->mnt_type;
-		mc->mnt_opts = mnt->mnt_opts;
-		mc->nxt = NULL;
-	    }
+		if (!streq (mnt->mnt_type, MNTTYPE_IGNORE)) {
+			mc->nxt = (struct mntentchn *) xmalloc(sizeof(*mc));
+			mc->nxt->prev = mc;
+			mc = mc->nxt;
+			mc->m = *mnt;
+			mc->nxt = mc0;
+		}
 	}
 	mc0->prev = mc;
 	if (ferror (mfp->mntent_fp)) {
 		int errsv = errno;
-		error(_("warning: error reading %s: %s"), fnam, strerror (errsv));
+		error(_("warning: error reading %s: %s"),
+		      fnam, strerror (errsv));
 		mc0->nxt = mc0->prev = NULL;
 	}
 	my_endmntent(mfp);
@@ -163,7 +161,8 @@ read_fstab() {
      mfp = my_setmntent (fnam, "r");
      if (mfp == NULL || mfp->mntent_fp == NULL) {
      	  int errsv = errno;
-	  error(_("warning: can't open %s: %s"), _PATH_FSTAB, strerror (errsv));
+	  error(_("warning: can't open %s: %s"),
+		_PATH_FSTAB, strerror (errsv));
 	  return;
      }
      read_mntentchn(mfp, fnam, mc);
@@ -173,13 +172,14 @@ read_fstab() {
 /* Given the name NAME, try to find it in mtab.  */ 
 struct mntentchn *
 getmntfile (const char *name) {
-    struct mntentchn *mc;
+	struct mntentchn *mc, *mc0;
 
-    for (mc = mtab_head()->nxt; mc; mc = mc->nxt)
-        if (streq (mc->mnt_dir, name) || (streq (mc->mnt_fsname, name)))
-	    break;
-
-    return mc;
+	mc0 = mtab_head();
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
+		if (streq (mc->m.mnt_dir, name) ||
+		    streq (mc->m.mnt_fsname, name))
+			return mc;
+	return NULL;
 }
 
 /*
@@ -188,110 +188,108 @@ getmntfile (const char *name) {
  */ 
 struct mntentchn *
 getmntfilesbackward (const char *name, struct mntentchn *mcprev) {
-    struct mntentchn *mc, *mh;
+	struct mntentchn *mc, *mc0;
 
-    mh = mtab_head();
-    if (!mcprev)
-	mcprev = mh;
-    for (mc = mcprev->prev; mc && mc != mh; mc = mc->prev)
-        if (streq (mc->mnt_dir, name) || (streq (mc->mnt_fsname, name)))
-	    return mc;
-
-    return NULL;
+	mc0 = mtab_head();
+	if (!mcprev)
+		mcprev = mc0;
+	for (mc = mcprev->prev; mc && mc != mc0; mc = mc->prev)
+		if (streq (mc->m.mnt_dir, name) ||
+		    streq (mc->m.mnt_fsname, name))
+			return mc;
+	return NULL;
 }
 
 /* Given the name FILE, try to find the option "loop=FILE" in mtab.  */ 
 struct mntentchn *
-getmntoptfile (const char *file)
-{
-     struct mntentchn *mc;
-     char *opts, *s;
-     int l;
+getmntoptfile (const char *file) {
+	struct mntentchn *mc, *mc0;
+	char *opts, *s;
+	int l;
 
-     if (!file)
-	  return NULL;
+	if (!file)
+		return NULL;
 
-     l = strlen(file);
+	l = strlen(file);
 
-     for (mc = mtab_head()->nxt; mc; mc = mc->nxt)
-	  if ((opts = mc->mnt_opts) != NULL
-	      && (s = strstr(opts, "loop="))
-	      && !strncmp(s+5, file, l)
-	      && (s == opts || s[-1] == ',')
-	      && (s[l+5] == 0 || s[l+5] == ','))
-	       return mc;
-
-     return NULL;
+	mc0 = mtab_head();
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
+		if ((opts = mc->m.mnt_opts) != NULL
+		    && (s = strstr(opts, "loop="))
+		    && !strncmp(s+5, file, l)
+		    && (s == opts || s[-1] == ',')
+		    && (s[l+5] == 0 || s[l+5] == ','))
+			return mc;
+	return NULL;
 }
 
 /* Find the entry (SPEC,FILE) in fstab */
 struct mntentchn *
 getfsspecfile (const char *spec, const char *file) {
-    struct mntentchn *mc;
+	struct mntentchn *mc, *mc0;
 
-    for (mc = fstab_head()->nxt; mc; mc = mc->nxt)
-	if (streq (mc->mnt_dir, file) && streq (mc->mnt_fsname, spec))
-	     return mc;
-    for (mc = fstab_head()->nxt; mc; mc = mc->nxt)
-	if ((streq (mc->mnt_dir, file) ||
-	     streq (canonicalize(mc->mnt_dir), file))
-	    && (streq (mc->mnt_fsname, spec) ||
-		streq (canonicalize(mc->mnt_fsname), spec)))
-	     break;
-    return mc;
+	mc0 = fstab_head();
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
+		if (streq (mc->m.mnt_dir, file) &&
+		    streq (mc->m.mnt_fsname, spec))
+			return mc;
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
+		if ((streq (mc->m.mnt_dir, file) ||
+		     streq (canonicalize(mc->m.mnt_dir), file))
+		    && (streq (mc->m.mnt_fsname, spec) ||
+			streq (canonicalize(mc->m.mnt_fsname), spec)))
+			return mc;
+	return NULL;
 }
 
 /* Find the dir FILE in fstab.  */
 struct mntentchn *
 getfsfile (const char *file) {
-    struct mntentchn *mc;
+	struct mntentchn *mc, *mc0;
 
-    for (mc = fstab_head()->nxt; mc; mc = mc->nxt)
-        if (streq (mc->mnt_dir, file))
-	    break;
-
-    return mc;
+	mc0 = fstab_head();
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
+		if (streq (mc->m.mnt_dir, file))
+			return mc;
+	return NULL;
 }
 
 /* Find the device SPEC in fstab.  */
 struct mntentchn *
-getfsspec (const char *spec)
-{
-    struct mntentchn *mc;
+getfsspec (const char *spec) {
+	struct mntentchn *mc, *mc0;
 
-    for (mc = fstab_head()->nxt; mc; mc = mc->nxt)
-        if (streq (mc->mnt_fsname, spec))
-	    break;
-
-    return mc;
+	mc0 = fstab_head();
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
+		if (streq (mc->m.mnt_fsname, spec))
+			return mc;
+	return NULL;
 }
 
 /* Find the uuid UUID in fstab. */
 struct mntentchn *
-getfsuuidspec (const char *uuid)
-{
-    struct mntentchn *mc;
+getfsuuidspec (const char *uuid) {
+	struct mntentchn *mc, *mc0;
 
-    for (mc = fstab_head()->nxt; mc; mc = mc->nxt)
-	if (strncmp (mc->mnt_fsname, "UUID=", 5) == 0
-	    && streq(mc->mnt_fsname + 5, uuid))
-	    break;
-
-    return mc;
+	mc0 = fstab_head();
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
+		if (strncmp (mc->m.mnt_fsname, "UUID=", 5) == 0
+		    && streq(mc->m.mnt_fsname + 5, uuid))
+			return mc;
+	return NULL;
 }
 
 /* Find the label LABEL in fstab. */
 struct mntentchn *
-getfsvolspec (const char *label)
-{
-    struct mntentchn *mc;
+getfsvolspec (const char *label) {
+	struct mntentchn *mc, *mc0;
 
-    for (mc = fstab_head()->nxt; mc; mc = mc->nxt)
-	if (strncmp (mc->mnt_fsname, "LABEL=", 6) == 0
-	    && streq(mc->mnt_fsname + 6, label))
-	    break;
-
-    return mc;
+	mc0 = fstab_head();
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
+		if (strncmp (mc->m.mnt_fsname, "LABEL=", 6) == 0
+		    && streq(mc->m.mnt_fsname + 6, label))
+			return mc;
+	return NULL;
 }
 
 /* Updating mtab ----------------------------------------------*/
@@ -371,7 +369,8 @@ lock_mtab (void) {
 			int errsv = errno;
 			/* linktargetfile does not exist (as a file)
 			   and we cannot create it. Read-only filesystem?
-			   Too many files open in the system? Filesystem full? */
+			   Too many files open in the system?
+			   Filesystem full? */
 			die (EX_FILEIO, _("can't create lock file %s: %s "
 			     "(use -n flag to override)"),
 			     linktargetfile, strerror (errsv));
@@ -455,7 +454,7 @@ unlock_mtab (void) {
 
 /*
  * Update the mtab.
- *  Used by umount with null INSTEAD: remove any DIR entries.
+ *  Used by umount with null INSTEAD: remove the last DIR entry.
  *  Used by mount upon a remount: update option part,
  *   and complain if a wrong device or type was given.
  *   [Note that often a remount will be a rw remount of /
@@ -465,90 +464,87 @@ unlock_mtab (void) {
 
 void
 update_mtab (const char *dir, struct mntent *instead) {
-     struct mntent *mnt;
-     struct mntent *next;
-     struct mntent remnt;
-     int added = 0;
-     mntFILE *mfp, *mftmp;
+	mntFILE *mfp, *mftmp;
+	const char *fnam = MOUNTED;
+	struct mntentchn mtabhead;	/* dummy */
+	struct mntentchn *mc, *mc0, absent;
 
-     if (mtab_does_not_exist() || mtab_is_a_symlink())
-	  return;
+	if (mtab_does_not_exist() || mtab_is_a_symlink())
+		return;
 
-     lock_mtab();
+	lock_mtab();
 
-     mfp = my_setmntent(MOUNTED, "r");
-     if (mfp == NULL || mfp->mntent_fp == NULL) {
-     	  int errsv = errno;
-	  error (_("cannot open %s (%s) - mtab not updated"),
-		 MOUNTED, strerror (errsv));
-	  goto leave;
-     }
+	/* having locked mtab, read it again */
+	mc0 = mc = &mtabhead;
+	mc->nxt = mc->prev = NULL;
 
-     mftmp = my_setmntent (MOUNTED_TEMP, "w");
-     if (mftmp == NULL || mfp->mntent_fp == NULL) {
-     	  int errsv = errno;
-	  error (_("cannot open %s (%s) - mtab not updated"),
-		 MOUNTED_TEMP, strerror (errsv));
-	  goto leave;
-     }
-  
-     while ((mnt = my_getmntent (mfp))) {
-	  if (streq (mnt->mnt_dir, dir)
-#if 0
-	      /* Matthew Wilcox <willy@odie.barnet.ac.uk> */
-	      /* This is meant for Patch 212 on Jitterbug,
-		 still in incoming, to allow remounting
-		 on a different directory. */
-	      || (instead && instead->mnt_fsname &&
-		  (!streq (instead->mnt_fsname, "none")) &&
-		  (streq (mnt->mnt_fsname, instead->mnt_fsname)))
-#endif
-		  ) {
-	       added++;
-	       if (instead) {	/* a remount */
-		    remnt = *instead;
-		    next = &remnt;
-		    remnt.mnt_fsname = mnt->mnt_fsname;
-		    remnt.mnt_type = mnt->mnt_type;
-		    if (instead->mnt_fsname
-			&& !streq(mnt->mnt_fsname, instead->mnt_fsname))
-			 printf(_("mount: warning: cannot change "
-				"mounted device with a remount\n"));
-		    else if (instead->mnt_type
-			     && !streq(instead->mnt_type, "unknown")
-			     && !streq(mnt->mnt_type, instead->mnt_type))
-			 printf(_("mount: warning: cannot change "
-				"filesystem type with a remount\n"));
-	       } else
-		    next = NULL;
-	  } else
-	       next = mnt;
-	  if (next && my_addmntent(mftmp, next) == 1) {
-	       int errsv = errno;
-	       die (EX_FILEIO, _("error writing %s: %s"),
-		    MOUNTED_TEMP, strerror (errsv));
-	  }
-     }
-     if (instead && !added && my_addmntent(mftmp, instead) == 1) {
-     	  int errsv = errno;
-	  die (EX_FILEIO, _("error writing %s: %s"),
-	       MOUNTED_TEMP, strerror (errsv));
-    }
+	mfp = my_setmntent(fnam, "r");
+	if (mfp == NULL || mfp->mntent_fp == NULL) {
+		int errsv = errno;
+		error (_("cannot open %s (%s) - mtab not updated"),
+		       fnam, strerror (errsv));
+		goto leave;
+	}
 
-     my_endmntent (mfp);
-     if (fchmod (fileno (mftmp->mntent_fp), S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0) {
-     	  int errsv = errno;
-	  fprintf(stderr, _("error changing mode of %s: %s\n"), MOUNTED_TEMP,
-		  strerror (errsv));
-     }
-     my_endmntent (mftmp);
+	read_mntentchn(mfp, fnam, mc);
 
-     if (rename (MOUNTED_TEMP, MOUNTED) < 0) {
-     	  int errsv = errno;
-	  fprintf(stderr, _("can't rename %s to %s: %s\n"), MOUNTED_TEMP, MOUNTED,
-		  strerror(errsv));
-     }
+	/* find last occurrence of dir */
+	for (mc = mc0->prev; mc && mc != mc0; mc = mc->prev)
+		if (streq (mc->m.mnt_dir, dir))
+			break;
+	if (mc && mc != mc0) {
+		if (instead == NULL) {
+			/* An umount - remove entry */
+			if (mc && mc != mc0) {
+				mc->prev->nxt = mc->nxt;
+				mc->nxt->prev = mc->prev;
+			}
+		} else {
+			/* A remount */
+			mc->m.mnt_opts = instead->mnt_opts;
+		}
+	} else if (instead) {
+		/* not found, add a new entry */
+		absent.m = *instead;
+		absent.nxt = mc0;
+		absent.prev = mc0->prev;
+		mc0->prev = &absent;
+		if (mc0->nxt == NULL)
+			mc0->nxt = &absent;
+	}
 
-leave:
-     unlock_mtab();
+	/* write chain to mtemp */
+	mftmp = my_setmntent (MOUNTED_TEMP, "w");
+	if (mftmp == NULL || mfp->mntent_fp == NULL) {
+		int errsv = errno;
+		error (_("cannot open %s (%s) - mtab not updated"),
+		       MOUNTED_TEMP, strerror (errsv));
+		goto leave;
+	}
+
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
+		if (my_addmntent(mftmp, &(mc->m)) == 1) {
+			int errsv = errno;
+			die (EX_FILEIO, _("error writing %s: %s"),
+			     MOUNTED_TEMP, strerror (errsv));
+		}
+	}
+
+	if (fchmod (fileno (mftmp->mntent_fp),
+		    S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0) {
+		int errsv = errno;
+		fprintf(stderr, _("error changing mode of %s: %s\n"),
+			MOUNTED_TEMP, strerror (errsv));
+	}
+	my_endmntent (mftmp);
+
+	/* rename mtemp to mtab */
+	if (rename (MOUNTED_TEMP, MOUNTED) < 0) {
+		int errsv = errno;
+		fprintf(stderr, _("can't rename %s to %s: %s\n"),
+			MOUNTED_TEMP, MOUNTED, strerror(errsv));
+	}
+
+ leave:
+	unlock_mtab();
 }

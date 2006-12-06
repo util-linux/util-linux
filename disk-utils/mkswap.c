@@ -39,9 +39,14 @@
 #include <sys/ioctl.h>		/* for _IO */
 #include <sys/utsname.h>
 #include <sys/stat.h>
+#include "nls.h"
+
+#ifdef HAVE_asm_page_h
 #include <asm/page.h>		/* for PAGE_SIZE and PAGE_SHIFT */
 				/* we also get PAGE_SIZE via getpagesize() */
-#include "nls.h"
+/* recent glibc systems also define this in <sys/user.h> */
+#endif
+
 
 #ifndef _IO
 /* pre-1.3.45 */
@@ -609,7 +614,9 @@ the -f option to force it.\n"),
 	 * A subsequent swapon() will fail if the signature
 	 * is not actually on disk. (This is a kernel bug.)
 	 */
+#ifdef HAVE_fsync
 	if (fsync(DEV))
 		 die(_("fsync failed"));
+#endif
 	return 0;
 }

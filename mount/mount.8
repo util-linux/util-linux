@@ -98,6 +98,14 @@ lists all mounted file systems (of type
 The option \-l adds the (ext2) labels in this listing.
 See below.
 
+.\" In fact since 2.3.99. At first the syntax was mount -t bind.
+Since Linux 2.4.0 it is possible to remount part of the
+file hierarchy somewhere else. The call is
+.RS
+.br
+.B "mount --bind olddir newdir"
+.RE
+
 The
 .I proc
 file system is not associated with a special device, and when
@@ -367,7 +375,8 @@ necessary. The nfs ad hoc code is built in, but smbfs and ncpfs
 have a separate mount program. In order to make it possible to
 treat all types in a uniform way, mount will execute the program
 .I /sbin/mount.TYPE
-(if that exists) when called with type smb or ncp.
+(if that exists) when called with type
+.IR TYPE .
 Since various versions of the
 .I smbmount
 program have different calling conventions,

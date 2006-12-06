@@ -5,6 +5,7 @@
 #define BLKRRPART  _IO(0x12,95)    /* re-read partition table */
 #define BLKGETSIZE _IO(0x12,96)    /* return device size */
 #define BLKFLSBUF  _IO(0x12,97)    /* flush buffer cache */
+#define BLKSSZGET  _IO(0x12,104)   /* get block device sector size */
 
 struct systypes {
 	unsigned char type;

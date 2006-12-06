@@ -1,0 +1,9 @@
+util-linux is a random collection of Linux utilities
+
+The stuff in the subdirectories mount, fdisk, disk-utils, text-utils,
+misc-utils, sys-utils, getopt-* should be rather distribution-neutral,
+and installing it does no harm.
+On the other hand, the stuff in login-utils defines initial boot-time
+stuff, things that are done in different ways by different distributions.
+If you install it, your machine may not boot anymore.
+No RPMs are provided - get yours from your distributor.

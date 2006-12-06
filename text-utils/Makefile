@@ -17,6 +17,8 @@ BIN=            more
 
 USRBIN=		col colcrt colrm column hexdump rev
 
+MAYBE=		ul
+
 ifeq "$(HAVE_NCURSES)" "yes"
 USRBIN:=$(USRBIN) ul
 MAN1:=$(MAN1) ul.1
@@ -78,6 +80,6 @@ install install.shadow install.text-utils: all
 
 .PHONY: clean distclean
 clean:
-	-rm -f *.o *~ core $(BIN) $(USRBIN)
+	-rm -f *.o *~ core $(BIN) $(USRBIN) $(MAYBE)
 
 distclean: clean

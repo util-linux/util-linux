@@ -153,8 +153,7 @@ struct disc_time convert(int,int);
 struct disc_time makeday(int,int,int);
 
 int
-main (int argc, char *argv[]) 
-{
+main (int argc, char *argv[]) {
     long t;
     struct tm *eris;
     int bob,raw;

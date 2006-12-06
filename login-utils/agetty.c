@@ -489,6 +489,38 @@ parse_args(argc, argv, op)
     if (argc > optind && argv[optind])
 	setenv ("TERM", argv[optind], 1);
 
+#ifdef DO_DEVFS_FIDDLING
+    /*
+     * some devfs junk, following Goswin Brederlow:
+     *   turn ttyS<n> into tts/<n>
+     *   turn tty<n> into vc/<n>
+     */
+    if (op->tty && strlen(op->tty) < 90) {
+	    char dev_name[100];
+	    struct stat st;
+
+	    if (strncmp(op->tty, "ttyS", 4) == 0) {
+		    strcpy(dev_name, "/dev/");
+		    strcat(dev_name, op->tty);
+		    if (stat(dev_name, &st) < 0) {
+			    strcpy(dev_name, "/dev/tts/");
+			    strcat(dev_name, op->tty + 4);
+			    if (stat(dev_name, &st) == 0)
+				    op->tty = strdup(dev_name + 5);
+		    }
+	    } else if (strncmp(op->tty, "tty", 3) == 0) {
+		    strcpy(dev_name, "/dev/");
+		    strncat(dev_name, op->tty, 90);
+		    if (stat(dev_name, &st) < 0) {
+			    strcpy(dev_name, "/dev/vc/");
+			    strcat(dev_name, op->tty + 3);
+			    if (stat(dev_name, &st) == 0)
+				    op->tty = strdup(dev_name + 5);
+		    }
+	    }
+    }
+#endif
+
     debug(_("exiting parseargs\n"));
 }
 
@@ -505,7 +537,7 @@ parse_speeds(op, arg)
     for (cp = strtok(arg, ","); cp != 0; cp = strtok((char *) 0, ",")) {
 	if ((op->speeds[op->numspeed++] = bcode(cp)) <= 0)
 	    error(_("bad speed: %s"), cp);
-	if (op->numspeed > MAX_SPEED)
+	if (op->numspeed >= MAX_SPEED)
 	    error(_("too many alternate speeds"));
     }
     debug(_("exiting parsespeeds\n"));
@@ -847,8 +879,11 @@ do_prompt(op, tp)
 		  case 'o':
 		   {
 		     char domainname[256];
-
+#ifdef HAVE_getdomainname
 		     getdomainname(domainname, sizeof(domainname));
+#else
+		     strcpy(domainname, "unknown_domain");
+#endif
 		     domainname[sizeof(domainname)-1] = '\0';
 		     printf ("%s", domainname);
 		   }

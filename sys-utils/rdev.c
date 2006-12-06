@@ -57,6 +57,7 @@ Wed Jun 22 21:12:29 1994: Applied patches from Dave
 */
 
 #include <stdio.h>
+#include <stdlib.h>
 #include "nls.h"
 
 /* rdev.c  -  query/set root device. */
@@ -95,32 +96,59 @@ usage(void) {
 #define DEFAULT_OFFSET 508
 
 
-static void die(char *msg)
-{
-    perror(msg);
-    exit(1);
+static void
+die(char *msg) {
+	perror(msg);
+	exit(1);
 }
 
+/* Earlier rdev fails on /dev/ida/c0d0p1 so we allow for
+   (limited) recursion in /dev. -- Paul Clements */
 
-static char *find_dev(int number)
-{
-    DIR *dp;
-    struct dirent *dir;
-    static char name[PATH_MAX+1];
-    struct stat s;
+#define MAX_DEPTH	1
 
-    if (!number) return "Boot device";
-    if ((dp = opendir("/dev")) == NULL) die("opendir /dev");
-    strcpy(name,"/dev/");
-    while ((dir = readdir(dp)) != NULL) {
-	strcpy(name+5,dir->d_name);
-	if (stat(name,&s) < 0)
-	    continue;
-	if ((s.st_mode & S_IFMT) == S_IFBLK && s.st_rdev == number)
-	    return name;
-    }
-    sprintf(name,"0x%04x",number);
-    return name;
+static int
+find_dev_recursive(char *dirnamebuf, int number, int depth) {
+	DIR *dp;
+	struct dirent *dir;
+	struct stat s;
+	int dirnamelen = 0;
+
+	if (depth < 0)
+		return 0;
+	if ((dp = opendir(dirnamebuf)) == NULL)
+		die("opendir");
+	dirnamelen = strlen(dirnamebuf);
+	while ((dir = readdir(dp)) != NULL) {
+		if (!strcmp(dir->d_name, ".") || !strcmp(dir->d_name, ".."))
+			continue;
+		if (dirnamelen + 1 + strlen(dir->d_name) > PATH_MAX)
+			continue;
+		dirnamebuf[dirnamelen] = '/';
+		strcpy(dirnamebuf+dirnamelen+1, dir->d_name);
+		if (lstat(dirnamebuf, &s) < 0)
+			continue;
+		if ((s.st_mode & S_IFMT) == S_IFBLK && s.st_rdev == number)
+			return 1;
+		if ((s.st_mode & S_IFMT) == S_IFDIR &&
+		    find_dev_recursive(dirnamebuf, number, depth-1))
+			return 1;
+	}
+	dirnamebuf[dirnamelen] = 0;
+	return 0;
+}
+
+static char *
+find_dev(int number) {
+	static char name[PATH_MAX+1];
+
+	if (!number)
+		return "Boot device";
+	strcpy(name, "/dev");
+	if (find_dev_recursive(name, number, MAX_DEPTH))
+		return name;
+	sprintf(name, "0x%04x", number);
+	return name;
 }
 
 /* enum { RDEV, SDEV, RAMSIZE, VIDMODE }; */
@@ -131,60 +159,53 @@ char *desc[6] = { "Root device", "Video mode",  "Ramsize",  "Swap device",
 		  "", "Root flags"};
 #define shift(n) argv+=n,argc-=n
 
-int main(int argc,char **argv)
-{
-    int image,offset,dev_nr, i, newoffset=-1;
-    char *device, *ptr;
-    struct stat s;
-    int cmd = 0;
+int
+main(int argc, char **argv) {
+	int image, offset, dev_nr, i, newoffset=-1;
+	char *device, *ptr;
+	struct stat s;
+	int cmd = 0;
 
-    setlocale(LC_ALL, "");
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    textdomain(PACKAGE);
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
-    device = NULL;
-    if ((ptr = strrchr(argv[0],'/')) != NULL)
-    	ptr++;
-    else
-    	ptr = argv[0];
-    for (i=0; i<=5; i++)
-    	if (!strcmp(ptr,cmdnames[i]))
-	    break;
-    cmd = i;
-    if (cmd>5)
-    	cmd=RDEV;
-    offset = DEFAULT_OFFSET-cmd*2;
+	device = NULL;
 
-    while (argc > 1)
-    { 
-    	if (argv[1][0] != '-')
-   	    break;
+	/* use the command name to figure out what we have to do - ugly */
+	cmd = RDEV;
+	if ((ptr = strrchr(argv[0],'/')) != NULL)
+		ptr++;
 	else
-	    switch (argv[1][1])
-	    {
-		case 'R':
-			cmd=ROOTFLAGS;
-		        offset = DEFAULT_OFFSET-cmd*2;
-	    		shift(1);
+		ptr = argv[0];
+	for (i=0; i<=5; i++)
+		if (!strcmp(ptr,cmdnames[i])) {
+			cmd = i;
 			break;
-	    	case 'r': 
-	    		cmd=RAMSIZE;
-		        offset = DEFAULT_OFFSET-cmd*2;
-	    		shift(1);
+		}
+
+	while (argc > 1) { 
+		if (argv[1][0] != '-')
+			break;
+		switch (argv[1][1]) {
+		case 'R':
+			cmd = ROOTFLAGS;
+			shift(1);
+			break;
+		case 'r': 
+			cmd = RAMSIZE;
+			shift(1);
 			break;
 		case 'v':
-	    		cmd=VIDMODE;
-		        offset = DEFAULT_OFFSET-cmd*2;
-	    		shift(1);
+			cmd = VIDMODE;
+			shift(1);
 			break;
 		case 's':
-	    		cmd=SDEV;
-		        offset = DEFAULT_OFFSET-cmd*2;
-	    		shift(1);
+			cmd = SDEV;
+			shift(1);
 			break;
 		case 'o':
-			if (argv[1][2])
-			{
+			if (argv[1][2]) {
 				newoffset=atoi(argv[1]+2);
 				shift(1);
 				break;
@@ -196,60 +217,59 @@ int main(int argc,char **argv)
 			/* Fall through. . . */
 		default:
 			usage();
-	     }
-    }
-    if (newoffset >= 0)
-	offset = newoffset;
-
-    if  ((cmd==RDEV) && (argc == 1 || argc > 4)) {
-	if (stat("/",&s) < 0) die("/");
-	printf("%s /\n",find_dev(s.st_dev));
-	exit(0);
-    } else if ((cmd != RDEV) && (argc == 1 || argc > 4)) usage();
-
-    if ((cmd==RDEV) || (cmd==SDEV))
-    {	
-	    if (argc == 4) {
-		device = argv[2];
-		offset = atoi(argv[3]);
-	    }
-	    else {
-		if (argc == 3) {
-		    if (isdigit(*argv[2])) offset = atoi(argv[2]);
-		    else device = argv[2];
 		}
-	    }
-    }
-    else
-    {
-    	if (argc>=3)
-		device = argv[2];
-    	if (argc==4)
-		offset = atoi(argv[3]);
-    }
-    if (device) {
-    	if ((cmd==SDEV) || (cmd==RDEV))
-	{	if (stat(device,&s) < 0) die(device);
-	} else
-		s.st_rdev=atoi(device);
-	if ((image = open(argv[1],O_WRONLY)) < 0) die(argv[1]);
-	if (lseek(image,offset,0) < 0) die("lseek");
-	if (write(image,(char *)&s.st_rdev,2) != 2) die(argv[1]);
-	if (close(image) < 0) die("close");
-    }
-    else {
-	if ((image = open(argv[1],O_RDONLY)) < 0) die(argv[1]);
-	if (lseek(image,offset,0) < 0) die("lseek");
-	dev_nr = 0;
-	if (read(image,(char *)&dev_nr,2) != 2) die(argv[1]);
-	if (close(image) < 0) die("close");
-	printf(desc[cmd]);
-	if ((cmd==SDEV) || (cmd==RDEV))
-		printf(" %s\n", find_dev(dev_nr));
-	else
-		printf(" %d\n", dev_nr);
-    }
-    return 0;
+	}
+
+	offset = DEFAULT_OFFSET-cmd*2;
+	if (newoffset >= 0)
+		offset = newoffset;
+
+	if  ((cmd == RDEV) && (argc == 1 || argc > 4)) {
+		if (stat("/",&s) < 0) die("/");
+		printf("%s /\n", find_dev(s.st_dev));
+		exit(0);
+	} else if ((cmd != RDEV) && (argc == 1 || argc > 4))
+		usage();
+
+	if ((cmd == RDEV) || (cmd == SDEV)) {	
+		if (argc == 4) {
+			device = argv[2];
+			offset = atoi(argv[3]);
+		} else {
+			if (argc == 3) {
+				if (isdigit(*argv[2]))
+					offset = atoi(argv[2]);
+				else
+					device = argv[2];
+			}
+		}
+	} else {
+		if (argc>=3)
+			device = argv[2];
+		if (argc==4)
+			offset = atoi(argv[3]);
+	}
+	if (device) {
+		if ((cmd == SDEV) || (cmd == RDEV)) {
+			if (stat(device,&s) < 0)
+				die(device);
+		} else
+			s.st_rdev=atoi(device);
+		if ((image = open(argv[1],O_WRONLY)) < 0) die(argv[1]);
+		if (lseek(image,offset,0) < 0) die("lseek");
+		if (write(image,(char *)&s.st_rdev,2) != 2) die(argv[1]);
+		if (close(image) < 0) die("close");
+	} else {
+		if ((image = open(argv[1],O_RDONLY)) < 0) die(argv[1]);
+		if (lseek(image,offset,0) < 0) die("lseek");
+		dev_nr = 0;
+		if (read(image,(char *)&dev_nr,2) != 2) die(argv[1]);
+		if (close(image) < 0) die("close");
+		fputs(desc[cmd], stdout);
+		if ((cmd == SDEV) || (cmd == RDEV))
+			printf(" %s\n", find_dev(dev_nr));
+		else
+			printf(" %d\n", dev_nr);
+	}
+	return 0;
 }
-
-

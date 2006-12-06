@@ -274,10 +274,16 @@ void do_shm (char format)
 		printf (_("------ Shared Memory Limits --------\n"));
 		if ((shmctl (0, IPC_INFO, (struct shmid_ds *) &shminfo)) < 0 )
 			return;
-		printf (_("max number of segments = %d\n"), shminfo.shmmni);
-		printf (_("max seg size (kbytes) = %d\n"), shminfo.shmmax >> 10);
-		printf (_("max total shared memory (kbytes) = %d\n"), shminfo.shmall << 2);
-		printf (_("min seg size (bytes) = %d\n"), shminfo.shmmin);
+		/* glibc 2.1.3 and all earlier libc's have ints as fields
+		   of struct shminfo; glibc 2.1.91 has unsigned long; ach */
+		printf (_("max number of segments = %ld\n"),
+			(long) shminfo.shmmni);
+		printf (_("max seg size (kbytes) = %ld\n"),
+			(long) (shminfo.shmmax >> 10));
+		printf (_("max total shared memory (kbytes) = %ld\n"),
+			(long) shminfo.shmall << 2);
+		printf (_("min seg size (bytes) = %ld\n"),
+			(long) shminfo.shmmin);
 		return;
 
 	case STATUS:
@@ -349,9 +355,14 @@ void do_shm (char format)
 				printf ("%-10d%-10.10s", shmid, pw->pw_name);
 			else
 				printf ("%-10d%-10d", shmid, ipcp->uid);
-			printf ("%-10o%-10d%-10d%-6s%-6s\n", 
-				ipcp->mode & 0777, 
-				shmseg.shm_segsz, shmseg.shm_nattch,
+			printf ("%-10o%-10d%-10ld%-6s%-6s\n", 
+				ipcp->mode & 0777,
+				shmseg.shm_segsz,
+				/*
+				 * glibc-2.1.3 and earlier has unsigned short;
+				 * Austin has shmatt_t
+				 */
+				(long) shmseg.shm_nattch,
 				ipcp->mode & SHM_DEST ? _("dest") : " ",
 				ipcp->mode & SHM_LOCKED ? _("locked") : " ");
 			break;
@@ -447,9 +458,15 @@ void do_sem (char format)
 				printf ("%-10d%-10.9s", semid, pw->pw_name);
 			else
 				printf ("%-10d%-9d", semid, ipcp->uid);
-			printf ("%-10o%-10d\n", 
+			printf ("%-10o%-10ld\n",
 				ipcp->mode & 0777,
-				semary.sem_nsems);
+				/*
+				 * glibc-2.1.3 and earlier has unsigned short;
+				 * glibc-2.1.91 has variation between
+				 * unsigned short and unsigned long
+				 * Austin prescribes unsigned short.
+				 */
+				(long) semary.sem_nsems);
 			break;
 		}
 	}
@@ -547,9 +564,16 @@ void do_msg (char format)
 				printf ("%-10d%-10.10s", msqid, pw->pw_name);
 			else
 				printf ("%-10d%-10d", msqid, ipcp->uid);
-			printf ("%-10o%-12d%-12d\n", 
-			ipcp->mode & 0777, msgque.msg_cbytes,
-				msgque.msg_qnum);
+			printf ("%-10o%-12ld%-12ld\n",
+				ipcp->mode & 0777,
+				/*
+				 * glibc-2.1.3 and earlier has unsigned short;
+				 * glibc-2.1.91 has variation between
+				 * unsigned short, unsigned long
+				 * Austin has msgqnum_t
+				 */
+				(long) msgque.msg_cbytes,
+				(long) msgque.msg_qnum);
 			break;
 		}
 	}
@@ -570,10 +594,11 @@ void print_shm (int shmid)
 	printf (_("\nShared memory Segment shmid=%d\n"), shmid);
 	printf (_("uid=%d\tgid=%d\tcuid=%d\tcgid=%d\n"),
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid);
-	printf (_("mode=%#o\taccess_perms=%#o\n"), ipcp->mode, ipcp->mode & 0777);
-	printf (_("bytes=%d\tlpid=%d\tcpid=%d\tnattch=%d\n"), 
+	printf (_("mode=%#o\taccess_perms=%#o\n"),
+		ipcp->mode, ipcp->mode & 0777);
+	printf (_("bytes=%d\tlpid=%d\tcpid=%d\tnattch=%ld\n"), 
 		shmds.shm_segsz, shmds.shm_lpid, shmds.shm_cpid, 
-		shmds.shm_nattch);
+		(long) shmds.shm_nattch);
 	printf (_("att_time=%s"), shmds.shm_atime ? ctime (&shmds.shm_atime) : 
 		_("Not set\n"));
 	printf (_("det_time=%s"), shmds.shm_dtime ? ctime (&shmds.shm_dtime) : 
@@ -597,9 +622,15 @@ void print_msg (int msqid)
 	printf (_("\nMessage Queue msqid=%d\n"), msqid);
 	printf (_("uid=%d\tgid=%d\tcuid=%d\tcgid=%d\tmode=%#o\n"),
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid, ipcp->mode);
-	printf (_("cbytes=%d\tqbytes=%d\tqnum=%d\tlspid=%d\tlrpid=%d\n"),
-		buf.msg_cbytes, buf.msg_qbytes, buf.msg_qnum, buf.msg_lspid, 
-		buf.msg_lrpid);
+	printf (_("cbytes=%ld\tqbytes=%ld\tqnum=%ld\tlspid=%d\tlrpid=%d\n"),
+		/*
+		 * glibc-2.1.3 and earlier has unsigned short;
+		 * glibc-2.1.91 has variation between
+		 * unsigned short, unsigned long
+		 * Austin has msgqnum_t (for msg_qbytes)
+		 */
+		(long) buf.msg_cbytes, (long) buf.msg_qbytes,
+		(long) buf.msg_qnum, buf.msg_lspid, buf.msg_lrpid);
 	printf (_("send_time=%srcv_time=%schange_time=%s"), 
 		buf.msg_rtime? ctime (&buf.msg_rtime) : _("Not Set\n"),
 		buf.msg_stime? ctime (&buf.msg_stime) : _("Not Set\n"),
@@ -623,14 +654,15 @@ void print_sem (int semid)
 	printf (_("\nSemaphore Array semid=%d\n"), semid);
 	printf (_("uid=%d\t gid=%d\t cuid=%d\t cgid=%d\n"),
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid);
-	printf (_("mode=%#o, access_perms=%#o\n"), ipcp->mode, ipcp->mode & 0777);
-	printf (_("nsems = %d\n"), semds.sem_nsems);
+	printf (_("mode=%#o, access_perms=%#o\n"),
+		ipcp->mode, ipcp->mode & 0777);
+	printf (_("nsems = %ld\n"), (long) semds.sem_nsems);
 	printf (_("otime = %s"), semds.sem_otime ? ctime (&semds.sem_otime) : 
 		_("Not set\n"));
 	printf (_("ctime = %s"), ctime (&semds.sem_ctime));	
 
-	printf (_("%-10s%-10s%-10s%-10s%-10s\n"), _("semnum"),_("value"),_("ncount"),
-		_("zcount"),_("pid"));
+	printf (_("%-10s%-10s%-10s%-10s%-10s\n"),
+		_("semnum"),_("value"),_("ncount"),_("zcount"),_("pid"));
 	arg.val = 0;
 	for (i=0; i< semds.sem_nsems; i++) {
 		int val, ncnt, zcnt, pid;

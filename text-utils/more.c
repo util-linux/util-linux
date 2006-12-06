@@ -62,7 +62,7 @@
 #undef _REGEX_RE_COMP
 
 /* #define MOREHELPFILE "/usr/lib/more.help" */
-#define VI		"/usr/bin/vi"
+#define VI		"vi"	/* found on the user's path */
 
 #define Fopen(s,m)	(Currline = 0,file_pos=0,fopen(s,m))
 #define Ftell(f)	file_pos
@@ -83,7 +83,7 @@ void error (char *mess);
 void do_shell (char *filename);
 int  colon (char *filename, int cmd, int nlines);
 int  expand (char **outbuf, char *inbuf);
-void argscan(char *s);
+void argscan(char *s,char *argv0);
 void rdline (register FILE *f);
 void copy_file(register FILE *f);
 void search(char buf[], FILE *file, register int n);
@@ -142,9 +142,8 @@ char		**fnames;	/* The list of file names */
 int		nfiles;		/* Number of files left to process */
 char		*shell;		/* The name of the shell to use */
 int		shellp;		/* A previous shell command exists */
-char		ch;
 sigjmp_buf	restore;
-char		Line[LINSIZ];	/* Line buffer */
+char		Line[LINSIZ+2];	/* Line buffer */
 int		Lpp = 24;	/* lines per page */
 char		*Clear;		/* clear screen */
 char		*eraseln;	/* erase line */
@@ -256,6 +255,14 @@ idummy(int *kk) {}
 static void
 Fdummy(FILE **ff) {}
 
+static void
+usage(char *s) {
+	char *p = strrchr(s, '/');
+	fprintf(stderr,
+		_("usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"),
+		p ? p + 1 : s);
+}
+
 int main(int argc, char **argv) {
     FILE	*f;
     char	*s;
@@ -286,10 +293,10 @@ int main(int argc, char **argv) {
     nscroll = Lpp/2 - 1;
     if (nscroll <= 0)
 	nscroll = 1;
-    if((s = getenv("MORE")) != NULL) argscan(s);
+    if((s = getenv("MORE")) != NULL) argscan(s,argv[0]);
     while (--nfiles > 0) {
 	if ((ch = (*++fnames)[0]) == '-') {
-	    argscan(*fnames+1);
+	    argscan(*fnames+1,argv[0]);
 	}
 	else if (ch == '+') {
 	    s = *fnames;
@@ -326,10 +333,7 @@ int main(int argc, char **argv) {
     if (nfiles > 1)
 	prnames++;
     if (!no_intty && nfiles == 0) {
-	p = strrchr(argv[0], '/');
-	fprintf(stderr,
-		_("usage: %s [-dfln] [+linenum | +/pattern] name1 name2 ...\n"),
-		p ? p + 1 : argv[0]);
+	usage(argv[0]);
 	exit(1);
     }
     else
@@ -439,7 +443,7 @@ int main(int argc, char **argv) {
     exit(0);
 }
 
-void argscan(char *s) {
+void argscan(char *s, char *argv0) {
 	int seen_num = 0;
 
 	while (*s != '\0') {
@@ -474,6 +478,16 @@ void argscan(char *s) {
 			break;
 		  case 'u':
 			ul_opt = 0;
+			break;
+		  case '-': case ' ': case '\t':
+			break;
+		  default:
+			fputs(argv0,stderr);
+			fputs(": unknown option \"-",stderr);
+			putc(*s,stderr);
+			fputs("\"\n",stderr);
+			usage(argv0);
+			exit(1);
 			break;
 		}
 		s++;
@@ -645,8 +659,9 @@ void onquit(int dummy) {
 	    Pause++;
     }
     else if (!dum_opt && notell) {
-	errwrite(_("[Use q or Q to quit]"));
-	promptlen += 20;
+	char *s = _("[Use q or Q to quit]");
+	errwrite(s);
+	promptlen += strlen(s);
 	notell = 0;
     }
     signal(SIGQUIT, onquit);
@@ -705,11 +720,10 @@ void copy_file(register FILE *f) {
 
 /* Simplified printf function */
 
-int xprintf (char *fmt, ...)
-{
+int xprintf (char *fmt, ...) {
 	va_list ap;
-	register char ch;
-	register int ccount;
+	char ch;
+	int ccount;
 
 	ccount = 0;
 	va_start(ap, fmt);
@@ -801,8 +815,8 @@ static int tailequ (char *path, register char *string)
 	register char *tail;
 
 	tail = path + strlen(path);
-	while (tail >= path)
-		if (*(--tail) == '/')
+	while (--tail >= path)
+		if (*tail == '/')
 			break;
 	++tail;
 	while (*tail++ == *string++)
@@ -818,19 +832,19 @@ static void prompt (char *filename)
     else if (promptlen > 0)
 	kill_line ();
     if (!hard) {
-	promptlen = 8;
+	promptlen = 0;
 	if (Senter && Sexit) {
 	    my_putstring (Senter);
 	    promptlen += (2 * soglitch);
 	}
 	if (clreol)
 	    cleareol ();
-	pr(_("--More--"));
+	promptlen += pr(_("--More--"));
 	if (filename != NULL) {
 	    promptlen += xprintf (_("(Next file: %s)"), filename);
-	}
-	else if (!no_intty) {
-	    promptlen += xprintf ("(%d%%)", (int)((file_pos * 100) / file_size));
+	} else if (!no_intty) {
+	    promptlen += xprintf ("(%d%%)",
+				  (int)((file_pos * 100) / file_size));
 	}
 	if (dum_opt) {
 	    promptlen += pr(_("[Press space to continue, 'q' to quit.]"));
@@ -879,6 +893,20 @@ int get_line(register FILE *f, int *length)
 	    break;
 	}
 	*p++ = c;
+#if 0
+	if (c == '\033') {      /* ESC */
+		c = Getc(f);
+		while (c > ' ' && c < '0' && p < &Line[LINSIZ - 1]) {
+			*p++ = c;
+			c = Getc(f);
+		}
+		if (c >= '0' && c < '\177' && p < &Line[LINSIZ - 1]) {
+			*p++ = c;
+			c = Getc(f);
+			continue;
+		}
+	}
+#endif
 	if (c == '\t') {
 	    if (!hardtabs || (column < promptlen && !hard)) {
 		if (hardtabs && eraseln && !dumb) {
@@ -917,9 +945,31 @@ int get_line(register FILE *f, int *length)
 	    *length = p - Line;
 	    return (column);
 	}
+#if 0
+	else {
+		char ch[2]; /* for mblen() */
+
+		ch[0] = c;
+		ch[1] = '\0';
+		if (mblen(ch, 1) <= 0) {    /* multibyte, maybe 2 columns */
+			if (column == Mcol-1 && fold_opt) {
+				p--;
+				Ungetc(c, f);
+				break;
+			}
+			*p++ = Getc(f);
+			column += 2;
+		} else if (c & 0x80) {      /* maybe SJIS KANA, or utf-8 ? */
+			column++;
+		} else if (isprint(c))
+			column++;
+	}
+#else
 	else if (isprint(c))
-	    column++;
-	if (column >= Mcol && fold_opt) break;
+		column++;
+#endif
+	if (column >= Mcol && fold_opt)
+		break;
 	c = Getc (f);
     }
     if (column >= Mcol && Mcol > 0) {
@@ -1255,7 +1305,26 @@ int command (char *filename, register FILE *f)
 	    break;
 	case '?':
 	case 'h':
-	    if ((helpf = fopen (MOREHELPFILE, "r")) == NULL)
+	    helpf = NULL;
+	    {
+		    char *lang;
+		    char hlpfile[sizeof(MOREHELPFILE)+4];
+
+		    lang = getenv("LANGUAGE");
+		    if (!lang || *lang == '\0')
+			    lang = setlocale(LC_MESSAGES, "");
+		    if (!lang || *lang == '\0')
+			    lang = getenv("LANG");
+		    if (lang && strlen(lang) > 1) {
+			    strcpy(hlpfile, MOREHELPFILE);
+			    strcat(hlpfile, ".");
+			    strncat(hlpfile, lang, 2);
+			    helpf = fopen (hlpfile, "r");
+		    }
+	    }
+	    if (helpf == NULL)
+		    helpf = fopen (MOREHELPFILE, "r");
+	    if (helpf == NULL)
 		error (_("Can't open help file"));
 	    if (noscroll) doclear ();
 	    copy_file (helpf);
@@ -1264,13 +1333,22 @@ int command (char *filename, register FILE *f)
 	    break;
 	case 'v':	/* This case should go right before default */
 	    if (!no_intty) {
-		kill_line ();
-		cmdbuf[0] = '+';
-		scanstr (Currline - dlines < 0 ? 0
-				: Currline - (dlines + 1) / 2, &cmdbuf[1]);
-		pr ("vi "); pr (cmdbuf); putchar (' '); pr (fnames[fnum]);
-		execute (filename, VI, "vi", cmdbuf, fnames[fnum], 0);
-		break;
+		    char *editor;
+
+		    editor = getenv("VISUAL");
+		    if (editor == NULL || *editor == '\0')
+			    editor = getenv("EDITOR");
+		    if (editor == NULL || *editor == '\0')
+			    editor = VI;
+
+		    kill_line ();
+		    cmdbuf[0] = '+';
+		    scanstr (Currline - dlines <= 0 ? 1
+			     : Currline - (dlines + 1) / 2, &cmdbuf[1]);
+		    pr (editor); putchar (' ');
+		    pr (cmdbuf); putchar (' '); pr (fnames[fnum]);
+		    execute (filename, editor, editor, cmdbuf, fnames[fnum], 0);
+		    break;
 	    }
 	default:
 	    if (dum_opt) {
@@ -1297,7 +1375,7 @@ endsw:
     return (retval);
 }
 
-char ch;
+static char ch;
 
 /*
  * Execute a colon-prefixed command.
@@ -1305,8 +1383,7 @@ char ch;
  * more of the file to be printed.
  */
 
-int colon (char *filename, int cmd, int nlines)
-{
+int colon (char *filename, int cmd, int nlines) {
 	if (cmd == 0)
 		ch = readch ();
 	else
@@ -1540,7 +1617,7 @@ void execute (char * filename, char * cmd, ...)
 	    }
 	    va_end(argp);
 	
-	    execv (cmd, args);
+	    execvp (cmd, args);
 	    errwrite(_("exec failed\n"));
 	    exit (1);
 	}
@@ -1678,7 +1755,7 @@ retry:
 	    bad_so = my_tgetflag ("xs","xhp");
 	    eraseln = my_tgetstr("ce","el");
 	    Clear = my_tgetstr("cl","clear");
-	    Senter = my_tgetstr("co","smso");
+	    Senter = my_tgetstr("so","smso");
 	    Sexit = my_tgetstr("se","rmso");
 	    if ((soglitch = my_tgetnum("sg","xmc")) < 0)
 		soglitch = 0;
@@ -1738,18 +1815,17 @@ retry:
     }
 }
 
-int readch ()
-{
-	char ch;
+int readch () {
+	char c;
 
 	errno = 0;
-	if (read (2, &ch, 1) <= 0) {
+	if (read (2, &c, 1) <= 0) {
 		if (errno != EINTR)
 			end_it(0);
 		else
-			ch = otty.c_cc[VKILL];
+			c = otty.c_cc[VKILL];
 	}
-	return (ch);
+	return (c);
 }
 
 static char *BS = "\b";
@@ -1761,28 +1837,27 @@ static char *CARAT = "^";
     else \
 	errwrite(BS);
 
-void ttyin (char buf[], register int nmax, char pchar)
-{
-    register char *sptr;
-    register char ch;
-    register int slash = 0;
+void ttyin (char buf[], register int nmax, char pchar) {
+    char *sp;
+    char c;
+    int slash = 0;
     int	maxlen;
     char cbuf;
 
-    sptr = buf;
+    sp = buf;
     maxlen = 0;
-    while (sptr - buf < nmax) {
+    while (sp - buf < nmax) {
 	if (promptlen > maxlen) maxlen = promptlen;
-	ch = readch ();
-	if (ch == '\\') {
+	c = readch ();
+	if (c == '\\') {
 	    slash++;
 	}
-	else if (((cc_t) ch == otty.c_cc[VERASE]) && !slash) {
-	    if (sptr > buf) {
+	else if (((cc_t) c == otty.c_cc[VERASE]) && !slash) {
+	    if (sp > buf) {
 		--promptlen;
 		ERASEONECHAR
-		--sptr;
-		if ((*sptr < ' ' && *sptr != '\n') || *sptr == RUBOUT) {
+		--sp;
+		if ((*sp < ' ' && *sp != '\n') || *sp == RUBOUT) {
 		    --promptlen;
 		    ERASEONECHAR
 		}
@@ -1793,9 +1868,9 @@ void ttyin (char buf[], register int nmax, char pchar)
 		siglongjmp (restore, 1);
 	    }
 	}
-	else if (((cc_t) ch == otty.c_cc[VKILL]) && !slash) {
+	else if (((cc_t) c == otty.c_cc[VKILL]) && !slash) {
 	    if (hard) {
-		show (ch);
+		show (c);
 		putchar ('\n');
 		putchar (pchar);
 	    }
@@ -1809,43 +1884,42 @@ void ttyin (char buf[], register int nmax, char pchar)
 			errwrite(BSB);
 		promptlen = 1;
 	    }
-	    sptr = buf;
+	    sp = buf;
 	    fflush (stdout);
 	    continue;
 	}
-	if (slash && ((cc_t) ch == otty.c_cc[VKILL]
-		   || (cc_t) ch == otty.c_cc[VERASE])) {
+	if (slash && ((cc_t) c == otty.c_cc[VKILL]
+		   || (cc_t) c == otty.c_cc[VERASE])) {
 	    ERASEONECHAR
-	    --sptr;
+	    --sp;
 	}
-	if (ch != '\\')
+	if (c != '\\')
 	    slash = 0;
-	*sptr++ = ch;
-	if ((ch < ' ' && ch != '\n' && ch != ESC) || ch == RUBOUT) {
-	    ch += ch == RUBOUT ? -0100 : 0100;
+	*sp++ = c;
+	if ((c < ' ' && c != '\n' && c != ESC) || c == RUBOUT) {
+	    c += (c == RUBOUT) ? -0100 : 0100;
 	    errwrite(CARAT);
 	    promptlen++;
 	}
-	cbuf = ch;
-	if (ch != '\n' && ch != ESC) {
+	cbuf = c;
+	if (c != '\n' && c != ESC) {
 	    errwrite1(&cbuf);
 	    promptlen++;
 	}
 	else
 	    break;
     }
-    *--sptr = '\0';
+    *--sp = '\0';
     if (!eraseln) promptlen = maxlen;
-    if (sptr - buf >= nmax - 1)
+    if (sp - buf >= nmax - 1)
 	error (_("Line too long"));
 }
 
 /* return: 0 - unchanged, 1 - changed, -1 - overflow (unchanged) */
-int expand (char **outbuf, char *inbuf)
-{
-    char *instr;
+int expand (char **outbuf, char *inbuf) {
+    char *inpstr;
     char *outstr;
-    char ch;
+    char c;
     char *temp;
     int changed = 0;
     int tempsz, xtra, offset;
@@ -1857,9 +1931,9 @@ int expand (char **outbuf, char *inbuf)
 	    error (_("Out of memory"));
 	    return -1;
     }
-    instr = inbuf;
+    inpstr = inbuf;
     outstr = temp;
-    while ((ch = *instr++) != '\0'){
+    while ((c = *inpstr++) != '\0'){
 	offset = outstr-temp;
 	if (tempsz-offset-1 < xtra) {
 		tempsz += 200 + xtra;
@@ -1870,14 +1944,14 @@ int expand (char **outbuf, char *inbuf)
 		}
 		outstr = temp + offset;
 	}
-	switch (ch) {
+	switch (c) {
 	case '%':
 	    if (!no_intty) {
 		strcpy (outstr, fnames[fnum]);
 		outstr += strlen (fnames[fnum]);
 		changed++;
 	    } else
-		*outstr++ = ch;
+		*outstr++ = c;
 	    break;
 	case '!':
 	    if (!shellp)
@@ -1887,12 +1961,12 @@ int expand (char **outbuf, char *inbuf)
 	    changed++;
 	    break;
 	case '\\':
-	    if (*instr == '%' || *instr == '!') {
-		*outstr++ = *instr++;
+	    if (*inpstr == '%' || *inpstr == '!') {
+		*outstr++ = *inpstr++;
 		break;
 	    }
 	default:
-	    *outstr++ = ch;
+	    *outstr++ = c;
 	}
     }
     *outstr++ = '\0';
@@ -1900,16 +1974,15 @@ int expand (char **outbuf, char *inbuf)
     return (changed);
 }
 
-void show (register char ch)
-{
+void show (char c) {
     char cbuf;
 
-    if ((ch < ' ' && ch != '\n' && ch != ESC) || ch == RUBOUT) {
-	ch += ch == RUBOUT ? -0100 : 0100;
+    if ((c < ' ' && c != '\n' && c != ESC) || c == RUBOUT) {
+	c += (c == RUBOUT) ? -0100 : 0100;
 	errwrite(CARAT);
 	promptlen++;
     }
-    cbuf = ch;
+    cbuf = c;
     errwrite1(&cbuf);
     promptlen++;
 }
@@ -1944,20 +2017,20 @@ void error (char *mess)
 }
 
 
-void set_tty ()
-{
+void set_tty () {
 	otty.c_lflag &= ~(ICANON|ECHO);
 	otty.c_cc[VMIN] = 1;	/* read at least 1 char */
 	otty.c_cc[VTIME] = 0;	/* no timeout */
 	stty(fileno(stderr), &otty);
 }
 
-static int ourputch(int ch) {
-    return putc(ch, stdout);
+static int
+ourputch(int c) {
+    return putc(c, stdout);
 }
 
-void reset_tty ()
-{
+void
+reset_tty () {
     if (no_tty)
 	return;
     if (pstate) {

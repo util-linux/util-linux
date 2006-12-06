@@ -31,15 +31,17 @@
 .\"
 .\"	@(#)script.1	6.5 (Berkeley) 7/27/91
 .\"
-.Dd July 27, 1991
+.Dd July 30, 2000
 .Dt SCRIPT 1
-.Os BSD 4
+.Os Linux
 .Sh NAME
 .Nm script
 .Nd make typescript of terminal session
 .Sh SYNOPSIS
 .Nm script
 .Op Fl a
+.Op Fl f
+.Op Fl q
 .Op Ar file
 .Sh DESCRIPTION
 .Nm Script
@@ -58,7 +60,7 @@ saves all dialogue in
 If no file name is given, the typescript is saved in the file
 .Pa typescript  .
 .Pp
-Option:
+Options:
 .Bl -tag -width Ds
 .It Fl a
 Append the output to
@@ -66,6 +68,12 @@ Append the output to
 or
 .Pa typescript ,
 retaining the prior contents.
+.It Fl f
+Flush output after each write. This is nice for telecooperation:
+One person does `mkfifo foo; script -f foo' and another can
+supervise real-time what is being done using `cat foo'.
+.It Fl q
+Be quiet.
 .El
 .Pp
 The script ends when the forked shell exits (a

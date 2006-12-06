@@ -1,3 +1,76 @@
+util-linux 2.10s:
+
+* Danish messages (Claus Hindsgaul)
+* fixes to make gcc happy (Joseph S. Myers)
+* fix for more on parisc (Richard Hirst)
+* change rdev to search subdirectories of /dev (Paul Clements)
+* ul fix (Masao Kawamura) - set columns correctly
+* cal fix (Brendan Kehoe) - don't overflow weekday array in Gaelic
+* fdisk fix (niles@scyld.com) - flush stdout
+* fdisk fix - don't forget to write out empty label
+* login: make default tty mode 0600
+* script: refuse to write typescript if that is a symlink
+* script: accept -V to output version
+* whereis: also search /usr/share/man.
+* hwclock: improve locale handling
+* hwclock: fix for Nautilus (Neoklis Kyriazis)
+* isosize: new
+
+util-linux 2.10r:
+
+* mount: support mount by uuid or label for xfs (Nathan Scott)
+* mount: added probe for minix on bigendian systems (Nathan Scott)
+* mount: added probes for cramfs, hfs, hpfs and adfs (Sepp Wijnands)
+* mount: change setup; let umount remove at most one line from /etc/mtab
+* mount: improve man page
+* more, col, colcrt, colrm, column, ul: nls improvements (Masao Kawamura)
+
+util-linux 2.10q:
+
+* mount: accept nonnumeric uid= and gid= options
+* write and wall: security improvement
+* fixed fdformat flaw (Werner Almesberger)
+* use right mountport upon umount (Glenn Lingle)
+* simpleinit / need / initctl stuff (Richard Gooch)
+* Portuguese messages (Rodrigo Stulzer Lopes et al.)
+
+util-linux 2.10p:
+
+* mount: don't set up a loop file with -o loop,remount (Marc Mutz)
+* fdisk: changes for sectorsize different from 512
+* more: standout fix (Paul Vojta)
+* more: improve usage message (Lincoln Myers)
+* logger: Added -d option to use datagrams (Gerwin Pfab)
+* cal: Added -3 option to also print prev/next month (Michael Charles Pruznick)
+* French messages (Christophe Merlet)
+* Japanese messages (Daisuke Yamashita)
+
+util-linux 2.10o:
+
+* fdformat: fixed to work with kernel 2.4.0test6 (Marek Wojtowicz)
+* losetup: also return status when only showing loop device status (ewt)
+* mount: do not retry ro if mount was ro; improve error message
+* login: not installed suid
+* getopt: by default install aux files in /usr/share/misc
+
+util-linux 2.10n:
+
+* added blockdev.8
+* change to elvtune (andrea)
+* fixed overrun in agetty (vii@penguinpowered.com)
+* shutdown: prefer umounting by mount point (rgooch)
+* fdisk: added plan9
+* fdisk: remove empty links in chain of extended partitions
+* mount: define ALWAYS_STAT
+* mount: add replace, after, before, over, bind
+* umount: also free loop device when not writing mtab
+* lomount: try both /dev/loopN and /dev/loop/N
+* hwclock: handle both /dev/rtc and /dev/efirtc (Bill Nottingham)
+* script: added -f (flush) option (Ivan Schreter)
+* script: added -q (quiet) option (Per Andreas Buer)
+* getopt: updated to version 1.1.0 (Frodo Looijaard)
+* Czech messages (Jiri Pavlovsky)
+
 util-linux 2.10m:
 
 * chfn fix when PAM is used (Martin-D. Lacasse)
@@ -6,6 +79,7 @@ util-linux 2.10m:
 * mount new option -l: also print label when listing mounts
 * mount add heuristic for xfs (Martin K. Petersen)
 * mount UUID and label cache (Erik Troan)
+* mount improve check for `already mounted' in case of label or uuid
 * fdisk partition names more devfs-friendly
 * fdisk bsdlabel large disk support
 * setterm.1: options documented (Colin Watson)

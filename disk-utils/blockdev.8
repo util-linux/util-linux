@@ -1,0 +1,55 @@
+.\" -*- nroff -*-
+.\" Copyright 1998 Andries E. Brouwer (aeb@cwi.nl)
+.\"
+.\" May be distributed under the GNU General Public License
+.TH BLOCKDEV 8 "May 2000" ""
+.SH NAME
+blockdev \- call block device ioctls from the command line
+.SH SYNOPSIS
+.B blockdev
+.RI [ options ]
+.I commands devices
+.SH DESCRIPTION
+The utility
+.B blockdev
+allows one to call block device ioctls from the command line.
+.SH OPTIONS
+.TP
+.B \-V
+Print version and exit.
+.TP
+.B \-q
+Be quiet.
+.TP
+.B \-v
+Be verbose.
+.SH COMMANDS
+.TP
+.B \--setro
+Set read-only.
+.TP
+.B \--setrw
+Set read-write.
+.TP
+.B \--getro
+Get read-only. Print 1 if the device is read-only, 0 otherwise.
+.TP
+.B \--getss
+Print sectorsize in bytes - usually 512.
+.TP
+.B \--getsize
+Print device capacity (in 512-byte sectors).
+.TP
+.BI \--setra " N"
+Set readahead to
+.I N
+512-byte sectors.
+.TP
+.B \--getra
+Print readahead (in 512-byte sectors).
+.TP
+.B \--flushbufs
+Flush buffers.
+.TP
+.B \--rereadpt
+Reread partition table.

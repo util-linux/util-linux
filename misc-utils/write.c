@@ -53,6 +53,7 @@
 #include <time.h>
 #include <pwd.h>
 #include <string.h>
+#include <stdlib.h>
 #include <locale.h>
 #include <signal.h>
 #include <sys/param.h>
@@ -60,10 +61,9 @@
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <sys/time.h>
-#ifdef __linux__
 #include <paths.h>
 #include "pathnames.h"
-#endif
+#include "carefulputc.h"
 #include "nls.h"
  
 void search_utmp(char *, char *, char *, uid_t);
@@ -72,7 +72,6 @@ void wr_fputs(char *);
 static void done(int);
 int term_chk(char *, int *, time_t *, int);
 int utmp_chk(char *, char *);
-
 
 int
 main(int argc, char **argv) {
@@ -289,24 +288,25 @@ int term_chk(char *tty, int *msgsokP, time_t *atimeP, int showerror)
  * do_write - actually make the connection
  */
 void do_write(char *tty, char *mytty, uid_t myuid) {
-	register char *login, *nows;
-	register struct passwd *pwd;
+	char *login, *pwuid, *nows;
+	struct passwd *pwd;
 	time_t now;
 	char path[MAXPATHLEN], host[MAXHOSTNAMELEN], line[512];
 
-	/* Determine our login name before the we reopen() stdout */
-	if ((login = getlogin()) == NULL) {
-		if ((pwd = getpwuid(myuid)) != NULL)
-			login = pwd->pw_name;
-		else
-			login = "???";
-	}
+	/* Determine our login name(s) before the we reopen() stdout */
+	if ((pwd = getpwuid(myuid)) != NULL)
+		pwuid = pwd->pw_name;
+	else
+		pwuid = "???";
+	if ((login = getlogin()) == NULL)
+		login = pwuid;
 
 	if (strlen(tty) + 6 > sizeof(path))
 		exit(1);
 	(void)sprintf(path, "/dev/%s", tty);
 	if ((freopen(path, "w", stdout)) == NULL) {
-		(void)fprintf(stderr, "write: %s: %s\n", path, strerror(errno));
+		(void)fprintf(stderr, "write: %s: %s\n",
+			      path, strerror(errno));
 		exit(1);
 	}
 
@@ -320,8 +320,12 @@ void do_write(char *tty, char *mytty, uid_t myuid) {
 	nows = ctime(&now);
 	nows[16] = '\0';
 	printf("\r\n\007\007\007");
-	(void)printf(_("Message from %s@%s on %s at %s ..."),
-	    login, host, mytty, nows + 11);
+	if (strcmp(login, pwuid))
+		(void)printf(_("Message from %s@%s (as %s) on %s at %s ..."),
+			     login, host, pwuid, mytty, nows + 11);
+	else
+		(void)printf(_("Message from %s@%s on %s at %s ..."),
+			     login, host, mytty, nows + 11);
 	printf("\r\n");
 
 	while (fgets(line, sizeof(line), stdin) != NULL)
@@ -339,34 +343,24 @@ done(int dummy) {
 
 /*
  * wr_fputs - like fputs(), but makes control characters visible and
- *     turns \n into \r\n
+ *     turns \n into \r\n.
  */
-void wr_fputs(char *s)
-
-{
+void
+wr_fputs(char *s) {
 	char c;
 
-#define	PUTC(c)	if (putchar(c) == EOF) goto err;
+#define	PUTC(c)	if (carefulputc(c,stdout) == EOF) goto err;
 
-	for (; *s != '\0'; ++s) {
-		c = *s;
-		if (c == '\n') {
+	while(*s) {
+		c = *s++;
+		if (c == '\n')
 			PUTC('\r');
-			PUTC('\n');
-		} else if (!isprint(c) && !isspace(c) && c != '\007') {
-			if (c & 0x80) {
-				/* use some fallback? */
-				(void)printf("\\%3o", (unsigned char) c);
-			} else {
-				PUTC('^');
-				PUTC(c^0x40);	/* DEL to ?, others to alpha */
-			}
-		} else
-			PUTC(c);
+		PUTC(c);
 	}
 	return;
 
-err:	(void)fprintf(stderr, "write: %s\n", strerror(errno));
+err:
+	fprintf(stderr, "write: %s\n", strerror(errno));
 	exit(1);
 #undef PUTC
 }

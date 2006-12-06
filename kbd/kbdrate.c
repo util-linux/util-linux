@@ -273,7 +273,8 @@ int main( int argc, char **argv )
 
       close( fd );
 
-      if (!silent) printf( _("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
+      if (!silent)
+	      printf( _("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
                            valid_rates[value & 0x1f] / 10.0,
                            valid_delays[ (value & 0x60) >> 5 ] );
 

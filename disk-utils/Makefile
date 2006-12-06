@@ -8,16 +8,17 @@ include ../MCONFIG
 
 # Where to put man pages?
 
-MAN8= 		fdformat.8 mkfs.8 mkswap.8 elvtune.8 fsck.minix.8 mkfs.minix.8 mkfs.bfs.8
+MAN8= 	blockdev.8 fdformat.8 isosize.8 mkfs.8 mkswap.8 elvtune.8 \
+	fsck.minix.8 mkfs.minix.8 mkfs.bfs.8
 
 # Where to put binaries?
 # See the "install" rule for the links. . .
 
-SBIN= 		mkfs mkswap blockdev elvtune fsck.minix mkfs.minix mkfs.bfs
+SBIN= 	mkfs mkswap blockdev elvtune fsck.minix mkfs.minix mkfs.bfs
 
-USRBIN=		fdformat
+USRBIN=	fdformat isosize
 
-ETC=		fdprm
+ETC=	fdprm
 
 ifneq "$(HAVE_FDUTILS)" "yes"
 USRBIN:=$(USRBIN) setfdprm
@@ -47,4 +48,4 @@ endif
 
 .PHONY:	clean
 clean:
-	-rm -f *.o *~ core $(SBIN) $(USRBIN)
+	-rm -f *.o *~ core $(SBIN) $(USRBIN) raw

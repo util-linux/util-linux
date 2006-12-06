@@ -432,25 +432,25 @@ get_cylindersize(char *dev, int fd, int silent) {
 
     if (R.start && !force) {
 	warn(
-	    _("Warning: start=%d - this looks like a partition rather than\n"
+	    _("Warning: start=%lu - this looks like a partition rather than\n"
 	      "the entire disk. Using fdisk on it is probably meaningless.\n"
 	      "[Use the --force option if you really want this]\n"), R.start);
 	exit(1);
     }
 
     if (R.heads && B.heads != R.heads)
-	warn(_("Warning: HDIO_GETGEO says that there are %d heads\n"),
+	warn(_("Warning: HDIO_GETGEO says that there are %lu heads\n"),
 	     R.heads);
     if (R.sectors && B.sectors != R.sectors)
-	warn(_("Warning: HDIO_GETGEO says that there are %d sectors\n"),
+	warn(_("Warning: HDIO_GETGEO says that there are %lu sectors\n"),
 	     R.sectors);
     if (R.cylinders && B.cylinders != R.cylinders
 	    && B.cylinders < 65536 && R.cylinders < 65536)
-	warn(_("Warning: BLKGETSIZE/HDIO_GETGEO says that there are %d cylinders\n"),
+	warn(_("Warning: BLKGETSIZE/HDIO_GETGEO says that there are %lu cylinders\n"),
 	     R.cylinders);
 
     if (B.sectors > 63)
-      warn(_("Warning: unlikely number of sectors (%d) - usually at most 63\n"
+      warn(_("Warning: unlikely number of sectors (%lu) - usually at most 63\n"
 	   "This will give problems with all software that uses C/H/S addressing.\n"),
 	   B.sectors);
     if (!silent)
@@ -537,17 +537,17 @@ chs_ok (chs a, char *v, char *w) {
       return 1;
     if (B.heads && aa.h >= B.heads) {
 	warn(_("%s of partition %s has impossible value for head: "
-	     "%d (should be in 0-%d)\n"), w, v, aa.h, B.heads-1);
+	     "%lu (should be in 0-%lu)\n"), w, v, aa.h, B.heads-1);
 	ret = 0;
     }
     if (B.sectors && (aa.s == 0 || aa.s > B.sectors)) {
 	warn(_("%s of partition %s has impossible value for sector: "
-	     "%d (should be in 1-%d)\n"), w, v, aa.s, B.sectors);
+	     "%lu (should be in 1-%lu)\n"), w, v, aa.s, B.sectors);
 	ret = 0;
     }
     if (B.cylinders && aa.c >= B.cylinders) {
 	warn(_("%s of partition %s has impossible value for cylinders: "
-	     "%d (should be in 0-%d)\n"), w, v, aa.c, B.cylinders-1);
+	     "%lu (should be in 0-%lu)\n"), w, v, aa.c, B.cylinders-1);
 	ret = 0;
     }
     return ret;
@@ -2774,7 +2774,7 @@ do_change_id(char *dev, char *pnam, char *id) {
     }
     i = strtoul(id, NULL, 16);
     if (i > 255)
-      fatal(_("Bad Id %x\n"), i);
+      fatal(_("Bad Id %lx\n"), i);
     z->partitions[pno].p.sys_type = i;
 
     if(write_partitions(dev, fd, z))

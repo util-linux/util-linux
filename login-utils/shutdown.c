@@ -33,6 +33,19 @@
  *
  * 2000-03-02 Richard Gooch <rgooch@atnf.csiro.au>
  * - pause forever if (pid == 1) and send SIGQUIT to pid = 1
+ *
+ * 2000-11-04 Richard Gooch <rgooch@atnf.csiro.au>
+ * - continue reaping if (pid == 1)
+ *
+ * 2000-11-06 Richard Gooch <rgooch@atnf.csiro.au>
+ * - shut down "finalprog" from /etc/inittab
+ * - kill normal user (non-root and non-daemon) processes first with SIGTERM
+ *
+ * 2000-11-08 Richard Gooch <rgooch@atnf.csiro.au>
+ * - rollback services
+ * - do not unmount devfs (otherwise get harmless but annoying messages)
+ * - created syncwait() for faster shutting down
+ * - kill getty processes
  */
 
 #include <stdio.h>
@@ -52,13 +65,22 @@
 #include <sys/wait.h>
 #include <syslog.h>
 #include <sys/resource.h>
+#include <sys/types.h>
+#include <dirent.h>
+#include <sys/stat.h>
+#include <sys/utsname.h>
 #include "linux_reboot.h"
 #include "pathnames.h"
 #include "nls.h"
 
-static void usage(), int_handler(), write_user(struct utmp *);
-static void wall(), write_wtmp(), unmount_disks(), unmount_disks_ourselves();
-static void swap_off(), do_halt(char *);
+static void usage(void), int_handler(int), write_user(struct utmp *);
+static void wall(void), write_wtmp(void), unmount_disks(void);
+static void unmount_disks_ourselves(void);
+static void swap_off(void), do_halt(char *);
+static void kill_mortals (int sig);
+static void stop_finalprog (void);
+static void syncwait (int timeval);
+
 
 char	*prog;		/* name of the program */
 int	opt_reboot;	/* true if -r option or reboot command */
@@ -81,14 +103,14 @@ char	halt_action[256];		/* to find out what to do upon halt */
 
 
 void
-usage()
+usage(void)
 {
 	fprintf(stderr,
 		_("Usage: shutdown [-h|-r] [-fqs] [now|hh:ss|+mins]\n"));
 	exit(1);
 }
 
-void
+static void
 my_puts(char *s)
 {
 	/* Use a fresh stdout after forking */
@@ -98,7 +120,7 @@ my_puts(char *s)
 }
 
 void 
-int_handler()
+int_handler(int sig)
 {
 	unlink(_PATH_NOLOGIN);
 	signal(SIGINT, SIG_DFL);
@@ -106,7 +128,7 @@ int_handler()
 	exit(1);
 }
 
-int
+static int
 iswhitespace(int a) {
 	return (a == ' ' || a == '\t');
 }
@@ -120,14 +142,14 @@ main(int argc, char *argv[])
 
 	if (getpid () == 1) {
 		for (i = 0; i < getdtablesize (); i++) close (i);
-		while (1) pause ();
+		while (1) wait (NULL);  /*  Grim reaper never stops  */
 	}
         setlocale(LC_ALL, "");
         bindtextdomain(PACKAGE, LOCALEDIR);
         textdomain(PACKAGE);
 
 #ifndef DEBUGGING
-	if(geteuid()) {
+	if(setreuid (0, 0)) {
 		fprintf(stderr, _("%s: Only root can shut a system down.\n"),
 			argv[0]);
 		exit(1);
@@ -350,6 +372,15 @@ main(int argc, char *argv[])
 
 #ifndef DEBUGGING
 	/* a gentle kill of all other processes except init */
+	kill_mortals (SIGTERM);
+	stop_finalprog ();
+	sleep (1);                    /*  Time for saves to start           */
+	kill (1, SIGTERM);            /*  Tell init to kill spawned gettys  */
+	usleep (100000);              /*  Wait for gettys to die            */
+	my_puts ("");                 /*  Get past the login prompt         */
+	system ("/sbin/initctl -r");  /*  Roll back services                */
+	syncwait (1);
+	my_puts ("Sending SIGTERM to all remaining processes...");
 	kill(-1, SIGTERM);
 	sleep(2);		/* default 2, some people need 5 */
 
@@ -371,17 +402,16 @@ main(int argc, char *argv[])
 	    required. Need to sleep before remounting root read-only  */
 	kill (1, SIGQUIT);
 
-	sync();
-	sleep(2);
+	sleep (1);	/* Time for processes to die and close files */
+	syncwait (2);
 
 	/* remove swap files and partitions using swapoff */
 	swap_off();
 
 	/* unmount disks... */
 	unmount_disks();
-	sync();
-	sleep(1);
-	
+	syncwait (1);
+
 	if(opt_reboot) {
 		my_reboot(LINUX_REBOOT_CMD_RESTART); /* RB_AUTOBOOT */
 		my_puts(_("\nWhy am I still alive after reboot?"));
@@ -390,6 +420,7 @@ main(int argc, char *argv[])
 
 		/* allow C-A-D now, faith@cs.unc.edu, re-fixed 8-Jul-96 */
 		my_reboot(LINUX_REBOOT_CMD_CAD_ON); /* RB_ENABLE_CAD */
+		sleep (1);  /*  Wait for devices to finish writing to media  */
 		do_halt(halt_action);
 	}
 	/* NOTREACHED */
@@ -432,6 +463,9 @@ write_user(struct utmp *ut)
 	char msg[100];
 
 	minutes = timeout / 60;
+	hours = minutes / 60;
+	minutes %= 60;
+
 	(void) strncat(term, ut->ut_line, sizeof(ut->ut_line));
 
 	/* try not to get stuck on a mangled ut_line entry... */
@@ -443,16 +477,20 @@ write_user(struct utmp *ut)
 	WR(msg);
 	WRCRLF;
 
-	if(minutes == 0) {
-	    sprintf(msg, _("System going down IMMEDIATELY!\n"));
-	} else if(minutes > 60) {
-	    hours = minutes / 60;
-	    sprintf(msg, _("System going down in %d hour%s %d minutes"),
-		    hours, hours == 1 ? "" : _("s"), minutes - 60*hours);
-	} else {
-	    sprintf(msg, _("System going down in %d minute%s\n"),
-		    minutes, minutes == 1 ? "" : _("s"));
-	}
+	if (hours > 1)
+		sprintf(msg, _("System going down in %d hours %d minutes"),
+			hours, minutes);
+	else if (hours == 1)
+		sprintf(msg, _("System going down in 1 hour %d minutes"),
+			minutes);
+	else if (minutes > 1)
+		sprintf(msg, _("System going down in %d minutes\n"),
+			minutes);
+	else if (minutes == 1)
+		sprintf(msg, _("System going down in 1 minute\n"));
+	else
+		sprintf(msg, _("System going down IMMEDIATELY!\n"));
+
 	WR(msg);
 	WRCRLF;
 
@@ -464,7 +502,7 @@ write_user(struct utmp *ut)
 }
 
 void
-wall()
+wall(void)
 {
 	/* write to all users, that the system is going down. */
 	struct utmp *ut;
@@ -480,7 +518,7 @@ wall()
 }
 
 void
-write_wtmp()
+write_wtmp(void)
 {
 	/* write in wtmp that we are dying */
 	int fd;
@@ -500,7 +538,7 @@ write_wtmp()
 }
 
 void
-swap_off()
+swap_off(void)
 {
 	/* swapoff esp. swap FILES so the underlying partition can be
 	   unmounted. It you don't have swapoff(1) or use mount to
@@ -530,7 +568,7 @@ swap_off()
 }
 
 void
-unmount_disks()
+unmount_disks(void)
 {
 	/* better to use umount directly because it may be smarter than us */
 
@@ -563,7 +601,7 @@ unmount_disks()
 }
 
 void
-unmount_disks_ourselves()
+unmount_disks_ourselves(void)
 {
 	/* unmount all disks */
 
@@ -581,8 +619,8 @@ unmount_disks_ourselves()
 	}
 	n = 0;
 	while (n < 100 && (mnt = getmntent(mtab))) {
-		mntlist[n++] = strdup(mnt->mnt_fsname[0] == '/' ?
-			mnt->mnt_fsname : mnt->mnt_dir);
+		if (strcmp (mnt->mnt_type, "devfs") == 0) continue;
+		mntlist[n++] = strdup(mnt->mnt_dir);
 	}
 	endmntent(mtab);
 
@@ -594,7 +632,96 @@ unmount_disks_ourselves()
 		printf("umount %s\n", filesys);
 #else
 		if (umount(mntlist[i]) < 0)
-			printf(_("shutdown: Couldn't umount %s\n"), filesys);
+			printf(_("shutdown: Couldn't umount %s: %s\n"),
+			       filesys, ERRSTRING);
 #endif
 	}
 }
+
+static void kill_mortals (int sig)
+{
+    int npids = 0;
+    int index = 0;
+    int pid;
+    struct stat statbuf;
+    DIR *dp;
+    struct dirent *de;
+    pid_t *pids = NULL;
+    char path[256];
+
+    if ( ( dp = opendir ("/proc") ) == NULL ) return;
+    while ( ( de = readdir (dp) ) != NULL )
+    {
+	if ( !isdigit (de->d_name[0]) ) continue;
+	pid = atoi (de->d_name);
+	sprintf (path, "/proc/%d", pid);
+	if (stat (path, &statbuf) != 0) continue;
+	if (statbuf.st_uid < 100) continue;
+	if (index <= npids)
+	{
+	    pids = realloc (pids, npids + 16384);
+	    if (pids == NULL) return;
+	    npids += 16384;
+	}
+	pids[index++] = pid;
+    }
+    fputs ("Sending SIGTERM to mortals...", stderr);
+    for (--index; index >= 0; --index) kill (pids[index], sig);
+    free (pids);
+    closedir (dp);
+}   /*  End Function kill_mortals  */
+
+static void stop_finalprog (void)
+{
+    char *p1, *p2;
+    FILE *fp;
+    char line[256];
+
+    if ( ( fp = fopen (_PATH_INITTAB, "r") ) == NULL ) return;
+    while (fgets (line, 256, fp) != NULL)
+    {
+	pid_t pid;
+
+	line[strlen (line) - 1] = '\0';
+	p1 = line;
+	while ( isspace (*p1) ) ++p1;
+	if (strncmp (p1, "finalprog", 9) != 0) continue;
+	if ( ( p1 = strchr (p1 + 9, '=') ) == NULL ) continue;
+	for (++p1; isspace (*p1); ++p1);
+	if (*p1 == '\0') continue;
+	for (p2 = p1; !isspace (*p2); ++p2);
+	*p2 = '\0';
+	switch ( pid = fork () )
+	{
+	  case 0:   /*  Child   */
+	    execl (p1, p1, "stop", NULL);
+	    break;
+	  case -1:  /*  Error   */
+	    break;
+	  default:  /*  Parent  */
+	    waitpid (pid, NULL, 0);
+	    break;
+	}
+	fclose (fp);
+	return;
+    }
+    fclose (fp);
+}   /*  End Function stop_finalprog  */
+
+static void syncwait (int timeval)
+{
+    static int do_wait = 0;
+    static int first_time = 1;
+
+    sync ();
+    /*  Kernel version 1.3.20 and after are supposed to wait automatically  */
+    if (first_time)
+    {
+	struct utsname uts;
+
+	first_time = 0;
+	uname (&uts);
+	if (uts.release[0] < '2') do_wait = 1;
+    }
+    if (do_wait) sleep (timeval);
+}   /*  End Function syncwait  */

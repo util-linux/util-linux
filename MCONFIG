@@ -7,11 +7,11 @@
 #  - set USE_TTY_GROUP=no
 #  - define DESTDIR
 
-# Select for CPU one of intel, alpha, sparc, arm, m68k, mips
-CPU=$(shell uname -m | sed 's/i.86/intel/;s/arm.*/arm/')
-
-# define where is locale directrory (default /usr/share/locale)
-LOCALEDIR=/usr/share/locale
+# Select for ARCH one of intel, alpha, sparc, arm, m68k, mips
+# Select for CPU i386 if the binaries must be able to run on an intel 386
+# (by default i486 code is generated, see below)
+CPU=$(shell uname -m)
+ARCH=$(shell echo $(CPU) | sed 's/i.86/intel/;s/arm.*/arm/')
 
 # If HAVE_PAM is set to "yes", then login, chfn, chsh, and newgrp
 # will use PAM for authentication. Additionally, passwd will not be
@@ -65,6 +65,12 @@ HAVE_GETTY=no
 # properly.]
 USE_TTY_GROUP=yes
 
+# If ALLOW_VCS_USE is set to "yes", then login will chown /dev/vcsN
+# to the current user, allowing her to make a screendump and do other
+# nifty things on the console, but also allowing him to keep an open
+# file descriptor after logging out to trick the next user.
+ALLOW_VCS_USE=yes
+
 # If HAVE_RESET is set to "yes", then reset won't be installed.  The version
 # of reset that comes with the ncurses package is less aggressive.
 HAVE_RESET=yes
@@ -81,39 +87,26 @@ HAVE_TSORT=no
 # If HAVE_FDUTILS is set to "yes", then setfdprm won't be installed.
 HAVE_FDUTILS=no
 
-# Get CC from environment if defined
-ifeq "$(CC)" ""
-  CC=		gcc
-endif
-
 # Different optimizations for different cpus.
-# Change the -m486 part if you have a 386.
-ifeq "$(CPU)" "intel"
-  OPT=		-pipe -O2 -m486 -fomit-frame-pointer
+ifeq "$(ARCH)" "intel"
+  ifeq "$(CPU)" "i386"
+    OPT=	-pipe -O2 -m386 -fomit-frame-pointer
+  else
+    OPT=	-pipe -O2 -m486 -fomit-frame-pointer
+  endif
 else 
-  ifeq "$(CPU)" "arm"
+  ifeq "$(ARCH)" "arm"
     OPT=	-pipe -O2 -fsigned-char -fomit-frame-pointer
   else
     OPT=	-O2 -fomit-frame-pointer
   endif
 endif
 
-LDFLAGS   = -s
-
 WARNFLAGS = -Wall -Wmissing-prototypes -Wstrict-prototypes
 
 LIB=../lib
 
 ERR_O=$(LIB)/err.o
-
-CFLAGS    = $(OPT) -I. -I$(LIB) $(WARNFLAGS) \
-			$(CURSESFLAGS) $(SLANGFLAGS) \
-			$(EXTRACFLAGS) \
-			-DSBINDIR=\"$(SBINDIR)\" \
-			-DUSRSBINDIR=\"$(USRSBINDIR)\" \
-			-DLOGDIR=\"$(LOGDIR)\" \
-			-DVARPATH=\"$(VARPATH)\" \
-			-DLOCALEDIR=\"$(LOCALEDIR)\"
 
 # Set HAVE_SLANG to yes if you have slang (and prefer to use that for cfdisk)
 # (If neither HAVE_NCURSES nor HAVE_SLANG is defined, cfdisk is not made.)
@@ -125,7 +118,6 @@ CFLAGS    = $(OPT) -I. -I$(LIB) $(WARNFLAGS) \
 #   (no extra definition required).
 LIBSLANG=-lslang
 
-
 DEVDIR=		$(DESTDIR)/dev
 ETCDIR=		$(DESTDIR)/etc
 SBINDIR=	$(DESTDIR)/sbin
@@ -133,6 +125,8 @@ USRSBINDIR=	$(DESTDIR)/usr/sbin
 USRLIBDIR=      $(DESTDIR)/usr/lib
 USRBINDIR=      $(DESTDIR)/usr/bin
 USRGAMESDIR=    $(DESTDIR)/usr/games
+USRSHAREMISCDIR=$(DESTDIR)/usr/share/misc
+LOCALEDIR=      $(DESTDIR)/usr/share/locale
 BINDIR=         $(DESTDIR)/bin
 VARPATH=	$(DESTDIR)/var
 LOGDIR=		$(DESTDIR)/var/log
@@ -153,8 +147,8 @@ FSCKDIR=	$(SBINDIR)
 # Directory for passwd
 PASSWDDIR=	$(USRBINDIR)
 
-# Directory for help file for more.  Some may want /usr/share/misc .
-MOREHELPDIR=	$(USRLIBDIR)
+# Directory for help file for more.  Used to be /usr/lib.
+MOREHELPDIR=	$(USRSHAREMISCDIR)
 
 # Modes
 DIRMODE=	755
@@ -171,6 +165,15 @@ INSTALLBIN=	$(INSTALL) -m $(BINMODE)
 INSTALLMAN=	$(INSTALL) -m $(MANMODE)
 INSTALLDAT=	$(INSTALL) -m $(DATMODE)
 INSTALLSUID=    $(INSTALL) -m $(SUIDMODE) -o root
+
+CFLAGS    := $(CFLAGS) $(OPT) -I$(LIB) $(WARNFLAGS) \
+			$(CURSESFLAGS) $(SLANGFLAGS) \
+			-DSBINDIR=\"$(SBINDIR)\" \
+			-DUSRSBINDIR=\"$(USRSBINDIR)\" \
+			-DLOGDIR=\"$(LOGDIR)\" \
+			-DVARPATH=\"$(VARPATH)\" \
+			-DLOCALEDIR=\"$(LOCALEDIR)\"
+
 
 %.o: %.c
 	$(CC) -c $(CFLAGS) $< -o $@

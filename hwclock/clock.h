@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <errno.h>		/* for errno, EPERM, EINVAL, ENOENT */
 #include <time.h>
@@ -23,7 +24,7 @@ typedef int bool;
 extern char *progname;
 extern int debug;
 extern int epoch_option;
-extern void outsyserr(char *msg);
+extern void outsyserr(char *msg, ...);
 
 /* cmos.c */
 extern void set_cmos_epoch(int ARCconsole, int SRM);

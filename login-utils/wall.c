@@ -55,8 +55,11 @@
 #include <string.h>
 #include <unistd.h>
 #include <utmp.h>
+
 #include "nls.h"
+#include "ttymsg.h"
 #include "pathnames.h"
+#include "carefulputc.h"
 
 void	makemsg __P((char *));
 
@@ -68,17 +71,13 @@ char *mbuf;
 
 char *progname = "wall";
 
-/* ARGSUSED */
 int
-main(argc, argv)
-	int argc;
-	char **argv;
-{
+main(int argc, char **argv) {
 	extern int optind;
 	int ch;
 	struct iovec iov;
 	struct utmp *utmpptr;
-	char *p, *ttymsg();
+	char *p;
 	char line[sizeof(utmpptr->ut_line) + 1];
 
 	setlocale(LC_ALL, "");
@@ -139,7 +138,7 @@ makemsg(fname)
 	struct tm *lt;
 	struct passwd *pw;
 	struct stat sbuf;
-	time_t now, time();
+	time_t now;
 	FILE *fp;
 	int fd;
 	char *p, *whom, *where, hostname[MAXHOSTNAMELEN],
@@ -184,11 +183,26 @@ makemsg(fname)
 	}
 	(void)fprintf(fp, "%79s\r\n", " ");
 
-	if (fname && !(freopen(fname, "r", stdin))) {
-		(void)fprintf(stderr, _("%s: can't read %s.\n"), progname, fname);
-		exit(1);
+	if (fname) {
+		/*
+		 * When we are not root, but suid or sgid, refuse to read files
+		 * (e.g. device files) that the user may not have access to.
+		 * After all, our invoker can easily do "wall < file"
+		 * instead of "wall file".
+		 */
+		int uid = getuid();
+		if (uid && (uid != geteuid() || getgid() != getegid())) {
+			fprintf(stderr, _("%s: will not read %s - use stdin.\n"),
+				progname, fname);
+			exit(1);
+		}
+		if (!freopen(fname, "r", stdin)) {
+			fprintf(stderr, _("%s: can't read %s.\n"), progname, fname);
+			exit(1);
+		}
 	}
-	while (fgets(lbuf, sizeof(lbuf), stdin))
+
+	while (fgets(lbuf, sizeof(lbuf), stdin)) {
 		for (cnt = 0, p = lbuf; (ch = *p) != '\0'; ++p, ++cnt) {
 			if (cnt == 79 || ch == '\n') {
 				for (; cnt < 79; ++cnt)
@@ -197,15 +211,10 @@ makemsg(fname)
 				putc('\n', fp);
 				cnt = 0;
 			} else {
-			   /* Test for control chars added Fri Mar 10
-			      19:49:30 1995, faith@cs.unc.edu */
-			   if (!isprint(ch) && !isspace(ch) && ch != '\007') {
-			      putc('^', fp);
-			      putc(ch^0x40,fp); /* DEL to ?, others to alpha */
-			   } else
-			      putc(ch, fp);
+				carefulputc(ch, fp);
 			}
 		}
+	}
 	(void)fprintf(fp, "%79s\r\n", " ");
 	rewind(fp);
 

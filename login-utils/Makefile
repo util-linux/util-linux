@@ -19,7 +19,7 @@ MAN1.PASSWD=    passwd.1
 MAN8.GETTY=	agetty.8
 
 MAN8.INIT=	fastboot.8 fasthalt.8 halt.8 reboot.8 simpleinit.8 shutdown.8 \
-		need.8
+		initctl.8
 
 MAN8.PUTILS=	vipw.8 vigr.8
 
@@ -28,7 +28,7 @@ MAN8.PUTILS=	vipw.8 vigr.8
 
 SBIN.GETTY=	agetty
 
-SBIN.INIT=	simpleinit shutdown need
+SBIN.INIT=	simpleinit shutdown initctl
 
 BIN.PUTILS=	login
 
@@ -84,14 +84,22 @@ all-misc: $(USRBIN.MISC)
 
 # Rules for everything else
 
-agetty.o: $(LIB)/pathnames.h
+checktty.o login.o: login.h
+cryptocard.o login.o: cryptocard.h
+chfn.o chsh.o islocal.o passwd.o: islocal.h
+chfn.o chsh.o passwd.o setpwnam.o vipw.o: setpwnam.h
+chfn.o chsh.o login.o newgrp.o passwd.o simpleinit.o: my_crypt.h
+initctl.o simpleinit.o: simpleinit.h
+agetty.o islocal.o last.o setpwnam.o shutdown.o simpleinit.o \
+	vipw.o: $(LIB)/pathnames.h
+shutdown.o simpleinit.o: $(LIB)/linux_reboot.h
+wall.o: ttymsg.h $(LIB)/carefulputc.h
+
 agetty: agetty.o
 chfn: chfn.o islocal.o setpwnam.o $(LIB)/env.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
 chsh: chsh.o islocal.o setpwnam.o $(LIB)/env.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
-islocal.o: $(LIB)/pathnames.h
-last.o: $(LIB)/pathnames.h
 last: last.o
 
 ifeq "$(HAVE_PAM)" "yes"
@@ -107,36 +115,35 @@ mesg: mesg.o $(ERR_O)
 newgrp: newgrp.o 
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
 
-setpwnam.o: $(LIB)/pathnames.h
-shutdown.o: $(LIB)/pathnames.h $(LIB)/linux_reboot.h
 shutdown: shutdown.o $(LIB)/my_reboot.o
-simpleinit.o: $(LIB)/pathnames.h $(LIB)/linux_reboot.h simpleinit.h
-need.o: simpleinit.h
 
 simpleinit: simpleinit.o $(LIB)/my_reboot.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT)
 
-need: need.o
+initctl: initctl.o
 	$(CC) $(LDFLAGS) -o $@ $^
 
-vipw.o: $(LIB)/pathnames.h
 vipw: vipw.o
 
 newgrp.o: $(LIB)/pathnames.h
 	$(CC) -c $(CFLAGS) $(PAMFL) newgrp.c 
 
-wall: wall.o ttymsg.o
+wall: wall.o ttymsg.o $(LIB)/carefulputc.o
 
+LOGINFLAGS=
 ifeq "$(USE_TTY_GROUP)" "yes"
-login.o: login.c $(LIB)/pathnames.h $(LIB)/setproctitle.c $(LIB)/setproctitle.h
-	$(CC) -c $(CFLAGS) $(PAMFL) -DUSE_TTY_GROUP login.c
-mesg.o: mesg.c $(LIB)/errs.h
-	$(CC) -c $(CFLAGS) -DUSE_TTY_GROUP mesg.c
-else
-login.o: $(LIB)/pathnames.h
-	$(CC) -c $(CFLAGS) $(PAMFL) login.c
-mesg.o: $(LIB)/errs.h
+	LOGINFLAGS += -DUSE_TTY_GROUP
 endif
+ifeq "$(ALLOW_VCS_USE)" "yes"
+	LOGINFLAGS += -DCHOWNVCS
+endif
+
+login.o: login.c $(LIB)/pathnames.h $(LIB)/setproctitle.c $(LIB)/setproctitle.h
+	$(CC) -c $(CFLAGS) $(PAMFL) $(LOGINFLAGS) login.c
+
+# LOGINFLAGS here only for -DUSE_TTY_GROUP
+mesg.o: mesg.c $(LIB)/errs.h
+	$(CC) -c $(CFLAGS) $(LOGINFLAGS) mesg.c
 
 passwd: passwd.o islocal.o setpwnam.o $(LIB)/env.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT)
@@ -159,7 +166,7 @@ install: all $(WHAT_TO_INSTALL)
 
 install-putils: $(BIN.PUTILS) $(USRBIN.PUTILS) $(USRSBIN.PUTILS)
 	$(INSTALLDIR) $(BINDIR) $(USRBINDIR) $(USRSBINDIR)
-	$(INSTALLSUID) $(BIN.PUTILS) $(BINDIR)
+	$(INSTALLBIN) $(BIN.PUTILS) $(BINDIR)
 	$(INSTALLSUID) $(USRBIN.PUTILS) $(USRBINDIR)
 	$(INSTALLBIN) $(USRSBIN.PUTILS) $(USRSBINDIR)
 	(cd $(USRSBINDIR); ln -sf vipw vigr)
@@ -183,7 +190,12 @@ install-init: $(SBIN.INIT)
 	(cd $(SHUTDOWNDIR); ln -sf shutdown fastboot)
 	(cd $(SHUTDOWNDIR); ln -sf shutdown halt)
 	(cd $(SHUTDOWNDIR); ln -sf shutdown fasthalt)
-	(cd $(SHUTDOWNDIR); ln -sf need display-services)
+	(cd $(SHUTDOWNDIR); ln -sf initctl need)
+	(cd $(SHUTDOWNDIR); ln -sf initctl display-services)
+	(cd $(SHUTDOWNDIR); ln -sf initctl provide)
+	(cd $(MAN8DIR);     ln -sf initctl.8 need.8)
+	(cd $(MAN8DIR);     ln -sf initctl.8 display-services.8)
+	(cd $(MAN8DIR);     ln -sf initctl.8 provide.8)
 
 
 install-getty: $(SBIN.GETTY)

@@ -41,6 +41,7 @@
 #include <sys/dir.h>
 #include <sys/stat.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 #include "nls.h"
@@ -111,6 +112,7 @@ static char *bindirs[] = {
 
 static char *mandirs[] = {
 	"/usr/man/*",
+	"/usr/share/man/*",
 	"/usr/X386/man/*",
 	"/usr/X11/man/*",
 	"/usr/TeX/man/*",

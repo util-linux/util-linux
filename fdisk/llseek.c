@@ -35,9 +35,23 @@ extern ext2_loff_t ext2_llseek (unsigned int, ext2_loff_t, unsigned int);
 static int _llseek (unsigned int, unsigned long,
 		   unsigned long, ext2_loff_t *, unsigned int);
 
+#ifdef __NR__llseek
+
 static _syscall5(int,_llseek,unsigned int,fd,unsigned long,offset_high,
 		 unsigned long, offset_low,ext2_loff_t *,result,
 		 unsigned int, origin)
+
+#else
+
+/* no __NR__llseek on compilation machine - might give it explicitly */
+static int _llseek (unsigned int fd, unsigned long oh,
+		    unsigned long ol, ext2_loff_t *result,
+		    unsigned int origin) {
+	errno = ENOSYS;
+	return -1;
+}
+
+#endif
 
 static ext2_loff_t my_llseek (unsigned int fd, ext2_loff_t offset,
 		unsigned int origin)

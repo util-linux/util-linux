@@ -26,28 +26,33 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 #include <stdlib.h>
-
-#define BLKELVGET   _IO(0x12,106)/* elevator get */
-#define BLKELVSET   _IO(0x12,107)/* elevator set */
+#include "nls.h"
 
 /* this has to match with the kernel structure */
+/* current version for ac19 and 2.2.16 */
 typedef struct blkelv_ioctl_arg_s {
-	void * queue_ID;
+	int queue_ID;
 	int read_latency;
 	int write_latency;
 	int max_bomb_segments;
 } blkelv_ioctl_arg_t;
 
+#define BLKELVGET   _IOR(0x12,106,sizeof(blkelv_ioctl_arg_t))
+#define BLKELVSET   _IOW(0x12,107,sizeof(blkelv_ioctl_arg_t))
+
 static void
 usage(void) {
-	fprintf(stderr, "usage:\n\telvtune [-r r_lat] [-w w_lat] [-b b_lat] /dev/blkdev1 [/dev/blkdev2...]\n");
+	fprintf(stderr, "elvtune (%s)\n", util_linux_version);
+	fprintf(stderr, _("usage:\n"));
+	fprintf(stderr, "\telvtune [-r r_lat] [-w w_lat] [-b b_lat]"
+		        " /dev/blkdev1 [/dev/blkdev2...]\n");
 	fprintf(stderr, "\telvtune -h\n");
 	fprintf(stderr, "\telvtune -v\n");
 }
 
 static void
 version(void) {
-	fprintf(stderr, "elvtune: version 1.0\n");
+	fprintf(stderr, "elvtune (%s)\n", util_linux_version);
 }
 
 int
@@ -128,7 +133,7 @@ main(int argc, char * argv[]) {
 			}
 		}
 
-		printf("\n%s elevator ID %p\n", devname, elevator.queue_ID);
+		printf("\n%s elevator ID\t\t%d\n", devname, elevator.queue_ID);
 		printf("\tread_latency:\t\t%d\n", elevator.read_latency);
 		printf("\twrite_latency:\t\t%d\n", elevator.write_latency);
 		printf("\tmax_bomb_segments:\t%d\n\n", elevator.max_bomb_segments);

@@ -101,21 +101,21 @@ static int global_argc, global_optind;
 static char ***global_argv;
 
 static void
-summary(int signal) {
+summary(int sig) {
   struct cyclades_control *cc;
 
-  int argc, optind;
+  int argc, local_optind;
   char **argv;
 
   int i,j;
 
   argc = global_argc;
   argv = *global_argv;
-  optind = global_optind;
+  local_optind = global_optind;
 
-  if (signal > 0) {
-    for(i = optind; i < argc; i ++) {
-      j = i - optind;
+  if (sig > 0) {
+    for(i = local_optind; i < argc; i ++) {
+      j = i - local_optind;
       cc = &cmon[cmon_index];
       fprintf(stderr, _("File %s, For threshold value %lu, Maximum characters in fifo were %d,\nand the maximum transfer rate in characters/second was %f\n"), 
 	      argv[i],
@@ -127,9 +127,9 @@ summary(int signal) {
     exit(0);
   }
   cc = &cmon[cmon_index];
-  if (cc->threshold_value > 0 && signal != -1) {
+  if (cc->threshold_value > 0 && sig != -1) {
     fprintf(stderr, _("File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\nand the maximum transfer rate in characters/second was %f\n"),
-	    argv[cmon_index+optind],
+	    argv[cmon_index+local_optind],
 	    cc->threshold_value,
 	    cc->timeout_value,
 	    cc->maxmax,
@@ -170,8 +170,6 @@ int main(int argc, char *argv[]) {
   struct cyclades_monitor cywork;
   
   int i;
-  extern char *optarg;
-  extern int optind;
   unsigned long threshold_value;
   unsigned long timeout_value;
   double xfer_rate;

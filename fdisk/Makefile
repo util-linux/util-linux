@@ -18,12 +18,13 @@ NOTMADE=cfdisk
 endif
 endif
 
-ifeq "$(CPU)" "m68k"
+ifeq "$(ARCH)" "m68k"
 # It seems the m68k people do not want *fdisk
 else
 SBIN:=$(SBIN) fdisk
 MAN8:=$(MAN8) fdisk.8
-ifneq "$(CPU)" "sparc"
+
+ifneq "$(ARCH)" "sparc"
 SBIN:=$(SBIN) $(CFDISK) sfdisk
 MAN8:=$(MAN8) cfdisk.8 sfdisk.8
 endif

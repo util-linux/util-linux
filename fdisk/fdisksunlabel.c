@@ -67,6 +67,12 @@ get_num_sectors(struct sun_partition p) {
 	return SSWAP32(p.num_sectors);
 }
 
+#ifndef IDE0_MAJOR
+#define IDE0_MAJOR 3
+#endif
+#ifndef IDE1_MAJOR
+#define IDE1_MAJOR 22
+#endif
 void guess_device_type(int fd) {
 	struct stat bootstat;
 

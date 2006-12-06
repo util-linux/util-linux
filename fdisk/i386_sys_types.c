@@ -29,6 +29,7 @@ struct systypes i386_sys_types[] = {
 	{0x1c, N_("Hidden Win95 FAT32 (LBA)")},
 	{0x1e, N_("Hidden Win95 FAT16 (LBA)")},
 	{0x24, N_("NEC DOS")},
+	{0x39, N_("Plan 9")},
 	{0x3c, N_("PartitionMagic recovery")},
 	{0x40, N_("Venix 80286")},
 	{0x41, N_("PPC PReP Boot")},
@@ -72,16 +73,21 @@ struct systypes i386_sys_types[] = {
 	{0xc4, N_("DRDOS/sec (FAT-16 < 32M)")},
 	{0xc6, N_("DRDOS/sec (FAT-16)")},
 	{0xc7, N_("Syrinx")},
-	{0xdb, N_("CP/M / CTOS / ...")},/* CP/M or Concurrent CP/M or Concurrent DOS or CTOS */
-	{0xe1, N_("DOS access")},	/* DOS access or SpeedStor 12-bit FAT extended partition */
+	{0xda, N_("Non-FS data")},
+	{0xdb, N_("CP/M / CTOS / ...")},/* CP/M or Concurrent CP/M or
+					   Concurrent DOS or CTOS */
+	{0xe1, N_("DOS access")},	/* DOS access or SpeedStor 12-bit FAT
+					   extended partition */
 	{0xe3, N_("DOS R/O")},		/* DOS R/O or SpeedStor */
-	{0xe4, N_("SpeedStor")},	/* SpeedStor 16-bit FAT extended partition < 1024 cyl. */
+	{0xe4, N_("SpeedStor")},	/* SpeedStor 16-bit FAT extended
+					   partition < 1024 cyl. */
 	{0xeb, N_("BeOS fs")},
 	{0xf1, N_("SpeedStor")},
 	{0xf4, N_("SpeedStor")},	/* SpeedStor large partition */
 	{0xf2, N_("DOS secondary")},	/* DOS 3.3+ secondary */
-	{0xfd, N_("Linux raid autodetect")},/* New (2.2.x) raid partition with autodetect
-					       using persistent superblock */
+	{0xfd, N_("Linux raid autodetect")},/* New (2.2.x) raid partition with
+					       autodetect using persistent
+					       superblock */
 	{0xfe, N_("LANstep")},		/* SpeedStor >1024 cyl. or LANstep */
 	{0xff, N_("BBT")},		/* Xenix Bad Block Table */
 	{ 0, 0 }

@@ -39,6 +39,12 @@
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
  * - added Native Language Support
  *
+ * 2000-09-01  Michael Charles Pruznick <dummy@netwiz.net> 
+ *             Added "-3" option to print prev/next month with current.
+ *             Added over-ridable default NUM_MONTHS and "-1" option to
+ *             get traditional output when -3 is the default.  I hope that
+ *             enough people will like -3 as the default that one day the
+ *             product can be shipped that way.
  */
 
 #include <sys/types.h>
@@ -58,6 +64,15 @@
 # include <langinfo.h>
 #else
 # include <localeinfo.h>	/* libc4 only */
+#endif
+
+/* allow compile-time define to over-ride default */
+#ifndef NUM_MONTHS
+#define NUM_MONTHS 1
+#endif
+
+#if ( NUM_MONTHS != 1 && NUM_MONTHS !=3 )
+#error NUM_MONTHS must be 1 or 3
 #endif
 
 #define	THURSDAY		4		/* for reformation */
@@ -102,7 +117,7 @@ int sep1752[MAXDAYS] = {
 
 char day_headings[]   = " S  M Tu  W Th  F  S ";
 /* week1stday = 1  =>   " M Tu  W Th  F  S  S " */
-char j_day_headings[] = "  S   M  Tu   W  Th   F   S ";
+char j_day_headings[] = "Sun Mon Tue Wed Thu Fri Sat ";
 /* week1stday = 1  =>   "  M  Tu   W  Th   F   S   S " */
 const char *full_month[12];
 
@@ -127,13 +142,22 @@ const char *full_month[12];
 int week1stday;
 int julian;
 
+#define FMT_ST_LINES 8
+#define FMT_ST_CHARS 300	/* 90 suffices in most locales */
+struct fmt_st
+{
+  char s[FMT_ST_LINES][FMT_ST_CHARS];
+};
+
 void	ascii_day __P((char *, int));
 void	center __P((const char *, int, int));
 void	day_array __P((int, int, int *));
 int	day_in_week __P((int, int, int));
 int	day_in_year __P((int, int, int));
 void	j_yearly __P((int));
+void	do_monthly __P((int, int, struct fmt_st*));
 void	monthly __P((int, int));
+void	monthly3 __P((int, int));
 void	trim_trailing_spaces __P((char *));
 void	usage __P((void));
 void	yearly __P((int));
@@ -146,6 +170,7 @@ main(int argc, char **argv) {
 	time_t now;
 	int ch, month, year, yflag;
 	char *progname, *p;
+	int num_months = NUM_MONTHS;
 
 	progname = argv[0];
 	if ((p = strrchr(progname, '/')) != NULL)
@@ -157,8 +182,14 @@ main(int argc, char **argv) {
 	textdomain(PACKAGE);
 	
 	yflag = 0;
-	while ((ch = getopt(argc, argv, "mjy")) != EOF)
+	while ((ch = getopt(argc, argv, "13mjyV")) != EOF)
 		switch(ch) {
+ 		case '1':
+ 			num_months = 1;
+ 			break;
+ 		case '3':
+ 			num_months = 3;
+ 			break;
 		case 'm':
 			week1stday = 1;
 			break;
@@ -201,8 +232,10 @@ main(int argc, char **argv) {
 	}
 	headers_init();
 
-	if (month)
+	if (month && num_months == 1)
 		monthly(month, year);
+	else if (month && num_months == 3)
+		monthly3(month, year);
 	else if (julian)
 		j_yearly(year);
 	else
@@ -233,7 +266,7 @@ void headers_init(void)
   for(i = 0 ; i < 7 ; i++ ) {
      wd = (i + week1stday) % 7;
      strncat(day_headings,weekday(wd),2);
-     strcat(j_day_headings,weekday(wd));
+     strncat(j_day_headings,weekday(wd),3);
      if (strlen(weekday(wd)) == 2)
 	strcat(j_day_headings," ");
      strcat(day_headings," ");
@@ -252,24 +285,86 @@ void headers_init(void)
 }
 
 void
-monthly(month, year)
+do_monthly(month, year, out)
 	int month, year;
+	struct fmt_st* out;
 {
 	int col, row, len, days[MAXDAYS];
 	char *p, lineout[300];
 
 	day_array(month, year, days);
 	len = sprintf(lineout, "%s %d", full_month[month - 1], year);
-	(void)printf("%*s%s\n%s\n",
-	    ((julian ? J_WEEK_LEN : WEEK_LEN) - len) / 2, "",
-	    lineout, julian ? j_day_headings : day_headings);
+	(void)sprintf(out->s[0],"%*s%s",
+	    ((julian ? J_WEEK_LEN : WEEK_LEN) - len) / 2, "", lineout );
+	(void)sprintf(out->s[1],"%s",
+	    julian ? j_day_headings : day_headings);
 	for (row = 0; row < 6; row++) {
 		for (col = 0, p = lineout; col < 7; col++,
 		    p += julian ? J_DAY_LEN : DAY_LEN)
 			ascii_day(p, days[row * 7 + col]);
 		*p = '\0';
 		trim_trailing_spaces(lineout);
-		(void)printf("%s\n", lineout);
+		(void)sprintf(out->s[row+2],"%s", lineout);
+	}
+}
+
+void
+monthly(month, year)
+	int month, year;
+{
+	int i;
+	struct fmt_st out;
+
+	do_monthly(month, year, &out);
+	for ( i = 0; i < FMT_ST_LINES; i++ )
+	{
+	  printf("%s\n", out.s[i]);
+	}
+}
+
+void
+monthly3(month, year)
+	int month, year;
+{
+	int i;
+	int width;
+	struct fmt_st out_prev;
+	struct fmt_st out_curm;
+	struct fmt_st out_next;
+	int prev_month, prev_year;
+	int next_month, next_year;
+
+	if ( month == 1 )
+	{
+	  prev_month = 12;
+	  prev_year  = year - 1;
+	}
+	else
+	{
+	  prev_month = month - 1;
+	  prev_year  = year;
+	}
+	if ( month == 12 )
+	{
+	  next_month = 1;
+	  next_year  = year + 1;
+	}
+	else
+	{
+	  next_month = month + 1;
+	  next_year  = year;
+	}
+
+	do_monthly(prev_month, prev_year, &out_prev);
+	do_monthly(month,      year,      &out_curm);
+	do_monthly(next_month, next_year, &out_next);
+        width = (julian ? J_WEEK_LEN : WEEK_LEN);
+	for ( i = 0; i < FMT_ST_LINES; i++ )
+	{
+	  printf("%-*.*s %-*.*s %-*.*s\n", 
+	      width, width, out_prev.s[i], 
+	      width, width, out_curm.s[i], 
+	      width, width, out_next.s[i] );
 	}
 }
 

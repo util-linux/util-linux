@@ -77,11 +77,9 @@ char tmptmp_file[FILENAMELEN]; /* very tmp file */
 
 void pw_error __P((char *, int, int));
 
-void
-copyfile(from, to)
-	register int from, to;
-{
-	register int nr, nw, off;
+static void
+copyfile(int from, int to) {
+	int nr, nw, off;
 	char buf[8*1024];
 	
 	while ((nr = read(from, buf, sizeof(buf))) > 0)
@@ -94,9 +92,8 @@ copyfile(from, to)
 }
 
 
-void
-pw_init()
-{
+static void
+pw_init(void) {
 	struct rlimit rlim;
 
 	/* Unlimited resource limits. */
@@ -125,9 +122,8 @@ pw_init()
 	(void)umask(0);
 }
 
-int
-pw_lock()
-{
+static int
+pw_lock(void) {
 	int lockfd, fd, ret;
 
 	/* 
@@ -179,9 +175,8 @@ pw_lock()
 	return(1);
 }
 
-void
-pw_unlock()
-{
+static void
+pw_unlock(void) {
   char tmp[FILENAMELEN];
   
   sprintf(tmp, "%s%s", orig_file, ".OLD");
@@ -198,9 +193,8 @@ pw_unlock()
 }
 
 
-void
-pw_edit(int notsetuid)
-{
+static void
+pw_edit(int notsetuid) {
 	int pstat;
 	pid_t pid;
 	char *p, *editor;

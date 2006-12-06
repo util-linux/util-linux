@@ -31,8 +31,11 @@
  * SUCH DAMAGE.
  */
 
-/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+/*
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
  * - added Native Language Support
+ *
+ * 2000-07-30 Per Andreas Buer <per@linpro.no> - added "q"-option
  */
 
 /*
@@ -86,25 +89,65 @@ int	l;
 #ifndef HAVE_openpty
 char	line[] = "/dev/ptyXX";
 #endif
-int	aflg;
+int	aflg = 0;
+int	fflg = 0;
+int	qflg = 0;
+
+static char *progname;
+
+static void
+die_if_symlink(char *fn) {
+	struct stat s;
+
+	if (lstat(fn, &s) == 0 && S_ISLNK(s.st_mode)) {
+		fprintf(stderr,
+			_("Warning: `%s' is a symlink.\n"
+			  "Use `%s [options] %s' if you really "
+			  "want to use it.\n"
+			  "Script not started.\n"),
+			fn, progname, fn);
+		exit(1);
+	}
+}
 
 int
 main(int argc, char **argv) {
 	extern int optind;
+	char *p;
 	int ch;
+
+	progname = argv[0];
+	if ((p = strrchr(progname, '/')) != NULL)
+		progname = p+1;
+
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	
-	while ((ch = getopt(argc, argv, "a")) != EOF)
+	if (argc == 2) {
+		if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
+			printf(_("%s from %s\n"),
+			       progname, util_linux_version);
+			return 0;
+		}
+	}
+
+	while ((ch = getopt(argc, argv, "afq")) != EOF)
 		switch((char)ch) {
 		case 'a':
 			aflg++;
 			break;
+		case 'f':
+			fflg++;
+			break;
+		case 'q':
+			qflg++;
+			break;
 		case '?':
 		default:
-			fprintf(stderr, _("usage: script [-a] [file]\n"));
+			fprintf(stderr,
+				_("usage: script [-a] [-f] [-q] [file]\n"));
 			exit(1);
 		}
 	argc -= optind;
@@ -112,8 +155,10 @@ main(int argc, char **argv) {
 
 	if (argc > 0)
 		fname = argv[0];
-	else
+	else {
 		fname = "typescript";
+		die_if_symlink(fname);
+	}
 	if ((fscript = fopen(fname, aflg ? "a" : "w")) == NULL) {
 		perror(fname);
 		fail();
@@ -124,7 +169,8 @@ main(int argc, char **argv) {
 		shell = _PATH_BSHELL;
 
 	getmaster();
-	printf(_("Script started, file is %s\n"), fname);
+	if (!qflg)
+		printf(_("Script started, file is %s\n"), fname);
 	fixtty();
 
 	(void) signal(SIGCHLD, finish);
@@ -167,11 +213,11 @@ doinput() {
 
 void
 finish(int dummy) {
-	union wait status;
+	int status;
 	register int pid;
 	register int die = 0;
 
-	while ((pid = wait3((int *)&status, WNOHANG, 0)) > 0)
+	while ((pid = wait3(&status, WNOHANG, 0)) > 0)
 		if (pid == child)
 			die = 1;
 
@@ -197,6 +243,8 @@ dooutput() {
 			break;
 		(void) write(1, obuf, cc);
 		(void) fwrite(obuf, 1, cc, fscript);
+		if (fflg)
+			(void) fflush(fscript);
 	}
 	done();
 }
@@ -250,13 +298,17 @@ done() {
 	time_t tvec;
 
 	if (subchild) {
-		tvec = time((time_t *)NULL);
-		fprintf(fscript,_("\nScript done on %s"), ctime(&tvec));
+		if (!qflg) {
+			tvec = time((time_t *)NULL);
+			fprintf(fscript, _("\nScript done on %s"),
+				ctime(&tvec));
+		}
 		(void) fclose(fscript);
 		(void) close(master);
 	} else {
 		(void) tcsetattr(0, TCSAFLUSH, &tt);
-		printf(_("Script done, file is %s\n"), fname);
+		if (!qflg)
+			printf(_("Script done, file is %s\n"), fname);
 	}
 	exit(0);
 }

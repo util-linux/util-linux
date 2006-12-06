@@ -10,14 +10,14 @@ include ./MCONFIG
 
 SUBDIRS=po \
 	lib \
-	getopt-1.0.3b \
+	getopt-1.1.0a \
 	disk-utils \
 	games \
 	login-utils \
 	misc-utils \
 	mount \
 	fdisk \
-	clock \
+	hwclock \
 	sys-utils \
 	text-utils \
 	kbd

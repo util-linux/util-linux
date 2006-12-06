@@ -184,10 +184,12 @@ set_cmos_access(int Jensen, int funky_toy) {
 
   /* see whether we are dealing with PC164/LX164/SX164, as they have a TOY
      that must be accessed differently to work correctly. */
+  /* Nautilus stuff reported by Neoklis Kyriazis */
   if (funky_toy ||
       is_in_cpuinfo("system variation", "PC164") ||
       is_in_cpuinfo("system variation", "LX164") ||
-      is_in_cpuinfo("system variation", "SX164")) {
+      is_in_cpuinfo("system variation", "SX164") ||
+      is_in_cpuinfo("system type", "Nautilus")) {
       funkyTOY = 1;
       if (debug) printf (_("funky TOY!\n"));
   }
@@ -553,7 +555,7 @@ set_hardware_clock_cmos(const struct tm *new_broken_time) {
 static int
 i386_iopl(const int level) {
 #if defined(__i386__) || defined(__alpha__)
-  extern int iopl(const int level);
+  extern int iopl(const int lvl);
   return iopl(level);
 #else
   return -2;

@@ -7,6 +7,8 @@
  * - Added error message if /proc/partitions cannot be opened
  * 2000-05-09 Erik Troan <ewt@redhat.com>
  * - Added cache for UUID and disk labels
+ * 2000-11-07 Nathan Scott <nathans@sgi.com>
+ * - Added XFS support
  */
 
 #include <stdio.h>
@@ -29,33 +31,44 @@ static struct uuidCache_s {
 	char *device;
 } *uuidCache = NULL;
 
-/* for now, only ext2 is supported */
+/* for now, only ext2 and xfs are supported */
 static int
 get_label_uuid(const char *device, char **label, char *uuid) {
 
-	/* start with a test for ext2, taken from mount_guess_fstype */
+	/* start with ext2 and xfs tests, taken from mount_guess_fstype */
 	/* should merge these later */
 	int fd;
+	int rv = 1;
+	size_t namesize;
 	struct ext2_super_block e2sb;
+	struct xfs_super_block xfsb;
 
 	fd = open(device, O_RDONLY);
 	if (fd < 0)
-		return 1;
+		return rv;
 
-	if (lseek(fd, 1024, SEEK_SET) != 1024
-	    || read(fd, (char *) &e2sb, sizeof(e2sb)) != sizeof(e2sb)
-	    || (ext2magic(e2sb) != EXT2_SUPER_MAGIC)) {
-		close(fd);
-		return 1;
+	if (lseek(fd, 1024, SEEK_SET) == 1024
+	    && read(fd, (char *) &e2sb, sizeof(e2sb)) == sizeof(e2sb)
+	    && (ext2magic(e2sb) == EXT2_SUPER_MAGIC)) {
+		memcpy(uuid, e2sb.s_uuid, sizeof(e2sb.s_uuid));
+		namesize = sizeof(e2sb.s_volume_name);
+		if ((*label = calloc(namesize + 1, 1)) != NULL)
+			memcpy(*label, e2sb.s_volume_name, namesize);
+		rv = 0;
+	}
+	else if (lseek(fd, 0, SEEK_SET) == 0
+	    && read(fd, (char *) &xfsb, sizeof(xfsb)) == sizeof(xfsb)
+	    && (strncmp((char *) &xfsb.s_magic, XFS_SUPER_MAGIC, 4) == 0 ||
+	        strncmp((char *) &xfsb.s_magic, XFS_SUPER_MAGIC2,4) == 0)) {
+		memcpy(uuid, xfsb.s_uuid, sizeof(xfsb.s_uuid));
+		namesize = sizeof(xfsb.s_fname);
+		if ((*label = calloc(namesize + 1, 1)) != NULL)
+			memcpy(*label, xfsb.s_fname, namesize);
+		rv = 0;
 	}
 
 	close(fd);
-
-	/* superblock is ext2 - now what is its label? */
-	memcpy(uuid, e2sb.s_uuid, sizeof(e2sb.s_uuid));
-	*label = strdup(e2sb.s_volume_name);
-
-	return 0;
+	return rv;
 }
 
 static void
@@ -91,8 +104,14 @@ uuidcache_init(void) {
 		return;
 
 	procpt = fopen(PROC_PARTITIONS, "r");
-	if (!procpt)
+	if (!procpt) {
+		static int warn = 0;
+		if (!warn++)
+		    error (_("mount: could not open %s, so UUID and LABEL "
+			     "conversion cannot be done.\n"),
+		       PROC_PARTITIONS);
 		return;
+	}
 
 	for (firstPass = 1; firstPass >= 0; firstPass--) {
 	    fseek(procpt, 0, SEEK_SET);

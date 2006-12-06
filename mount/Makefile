@@ -1,15 +1,13 @@
 include ../make_include
 include ../MCONFIG
 
-CFLAGS = -I$(LIB) $(OPT)
-WARNFLAGS = -Wall -Wstrict-prototypes -Wmissing-prototypes
 DEFINES = -DHAVE_NFS
 
 RPCSVCDIR = rpcsvc
 RPC_CFLAGS = -Wno-unused 
 RPCGEN = rpcgen
 
-COMPILE = $(CC) -c $(WARNFLAGS) $(CFLAGS) $(DEFINES)
+COMPILE = $(CC) -c $(CFLAGS) $(DEFINES)
 LINK = $(CC) $(LDFLAGS)
 
 SUID_PROGS = mount umount
@@ -23,6 +21,8 @@ MAN8 := $(MAN8) pivot_root.8
 endif
 
 PROGS = $(SUID_PROGS) $(NOSUID_PROGS)
+
+MAYBE = pivot_root swapoff
 
 # comment these out if you are not compiling in NFS support
 NFS_OBJS = nfsmount.o nfsmount_xdr.o nfsmount_clnt.o
@@ -59,8 +59,7 @@ swapon:	swapon.o version.o
 	$(LINK) $^ -o $@
 
 losetup.o: lomount.c
-	$(COMPILE) -DMAIN lomount.c
-	mv lomount.o losetup.o
+	$(COMPILE) -DMAIN lomount.c -o $@
 
 losetup: losetup.o
 	$(LINK) $^ -o $@
@@ -117,7 +116,7 @@ loop.h:
 	sh mk_loop_h
 
 clean:
-	rm -f a.out core *~ *.o swapargs.h $(PROGS) swapoff
+	rm -f a.out core *~ *.o swapargs.h $(PROGS) $(MAYBE)
 	rm -f loop.h nfs_mountversion.h
 
 clobber distclean realclean: clean

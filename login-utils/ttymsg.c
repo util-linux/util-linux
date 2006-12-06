@@ -53,9 +53,8 @@
 #include <stdlib.h>
 #include "nls.h"
 
-#ifdef __linux__
 #include "pathnames.h"
-#endif
+#include "ttymsg.h"
 
 /*
  * Display the contents of a uio structure on a terminal.  Used by wall(1),
@@ -65,12 +64,7 @@
  * ignored (exclusive-use, lack of permission, etc.).
  */
 char *
-ttymsg(iov, iovcnt, line, tmout)
-	struct iovec *iov;
-	int iovcnt;
-	char *line;
-	int tmout;
-{
+ttymsg(struct iovec *iov, int iovcnt, char *line, int tmout) {
 	static char device[MAXNAMLEN];
 	static char errbuf[MAXNAMLEN+1024];
 	register int cnt, fd, left, wret;

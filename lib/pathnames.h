@@ -128,7 +128,7 @@ Libc5 and glibc 2.0-2.1 have /var/spool/mail, but glibc 2.1.1 has /var/mail.
 /* used in login-utils/shutdown.c */
 #define _PATH_MTAB		"/etc/mtab"
 #define _PATH_UMOUNT		"/bin/umount"
-#define UMOUNT_ARGS		"umount", "-a"
+#define UMOUNT_ARGS		"umount", "-a", "-t", "nodevfs"
 #define SWAPOFF_ARGS            "swapoff", "-a"
 
 /* used in login-utils/setpwnam.h and login-utils/islocal.c */

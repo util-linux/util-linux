@@ -54,6 +54,8 @@ main(int argc, char **argv)
 {
 	register int ct, first, last;
 	register wint_t c;
+	int i, w;
+	int padding;
 
 	setlocale(LC_ALL, "");
 
@@ -71,11 +73,15 @@ loop1:
 	if (feof(stdin))
 		goto fin;
 	if (c == '\t')
-		ct = (ct + 8) & ~7;
+		w = ((ct + 8) & ~7) - ct;
 	else if (c == '\b')
-		ct = ct ? ct - 1 : 0;
-	else
-		ct++;
+		w = (ct ? ct - 1 : 0) - ct;
+	else {
+		w = wcwidth(c);
+		if (w < 0)
+			w = 0;
+	}
+	ct += w;
 	if (c == '\n') {
 		putwc(c, stdout);
 		goto start;
@@ -84,6 +90,8 @@ loop1:
 		putwc(c, stdout);
 		goto loop1;
 	}
+	for (i = ct-w+1; i < first; i++)
+		putwc(' ', stdout);
 
 /* Loop getting rid of characters */
 	while (!last || ct < last) {
@@ -98,18 +106,31 @@ loop1:
 			ct = (ct + 8) & ~7;
 		else if (c == '\b')
 			ct = ct ? ct - 1 : 0;
-		else
-			ct++;
+		else {
+			w = wcwidth(c);
+			if (w < 0)
+				w = 0;
+			ct += w;
+		}
 	}
+
+	padding = 0;
 
 /* Output last of the line */
 	for (;;) {
 		c = getwc(stdin);
 		if (feof(stdin))
 			break;
-		putwc(c, stdout);
-		if (c == '\n')
+		if (c == '\n') {
+			putwc(c, stdout);
 			goto start;
+		}
+		if (padding == 0 && last < ct) {
+			for (i = last; i <ct; i++)
+				putwc(' ', stdout);
+			padding = 1;
+		}
+		putwc(c, stdout);
 	}
 fin:
 	fflush(stdout);

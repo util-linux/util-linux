@@ -1,3 +1,4 @@
+#include <mntent.h>
 #define _PATH_FSTAB	"/etc/fstab"
 #ifdef _PATH_MOUNTED
 #define MOUNTED_LOCK	_PATH_MOUNTED "~"
@@ -13,11 +14,8 @@ int mtab_does_not_exist(void);
 int mtab_is_a_symlink(void);
 
 struct mntentchn {
-     struct mntentchn *nxt, *prev;
-     char *mnt_fsname;
-     char *mnt_dir;
-     char *mnt_type;
-     char *mnt_opts;
+	struct mntentchn *nxt, *prev;
+	struct mntent m;
 };
 
 struct mntentchn *mtab_head (void);

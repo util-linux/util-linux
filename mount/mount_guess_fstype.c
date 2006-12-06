@@ -20,6 +20,9 @@
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
  * - added Native Language Support
  *
+ * Fri Dec  1 23:31:00 2000: Sepp Wijnands <mrrazz@garbage-coderz.net>
+ * added probes for cramfs, hfs, hpfs and adfs.
+ *
  * aeb - many changes.
  *
  */
@@ -63,24 +66,21 @@ swapped(unsigned short a) {
     Original routine by <jmorriso@bogomips.ww.ubc.ca>; made into a function
     for mount(8) by Mike Grupenhoff <kashmir@umiacs.umd.edu>.
     Read the superblock only once - aeb
-    Added a test for iso9660 - aeb
+    Added iso9660, romfs, qnx4, udf, swap - aeb
     Added a test for high sierra (iso9660) - quinlan@bucknell.edu
     Corrected the test for xiafs - aeb
-    Added romfs - aeb
     Added ufs from a patch by jj. But maybe there are several types of ufs?
     Added ntfs from a patch by Richard Russon.
     Added a very weak heuristic for vfat - aeb
-    Added qnx4 - aeb
-    Added swap - aeb
     Added xfs - 2000-03-21 Martin K. Petersen <mkp@linuxcare.com>
-
-    Currently supports: minix, ext, ext2, xiafs, iso9660, romfs,
-    ufs, ntfs, vfat, qnx4, bfs, xfs
+    Added cramfs, hfs, hpfs, adfs - Sepp Wijnands <mrrazz@garbage-coderz.net>
 */
 static char
-*magic_known[] = { "minix", "ext", "ext2", "xiafs", "iso9660", "romfs",
-		   "ufs", "ntfs", "qnx4", "bfs", "udf", "xfs",
-		   "swap"	/* last - just to warn the user */
+*magic_known[] = {
+	"adfs", "bfs", "cramfs", "ext", "ext2",
+	"hfs", "hpfs", "iso9660", "minix", "ntfs",
+	"qnx4", "romfs", "swap", "udf", "ufs",
+	"xfs", "xiafs"
 };
 
 static int
@@ -97,7 +97,6 @@ tested(const char *device) {
    causes a very large kernel delay, almost killing the machine.
    So, we do not try udf unless there is positive evidence that it
    might work. Try iso9660 first, it is much more likely.
-
    Strings below taken from ECMA 167. */
 static char
 *udf_magic[] = { "BEA01", "BOOT2", "CD001", "CDW02", "NSR02",
@@ -119,6 +118,20 @@ may_be_swap(const char *s) {
 		strncmp(s-10, "SWAPSPACE2", 10) == 0);
 }
 
+/* rather weak necessary condition */
+static int
+may_be_adfs(const u_char *s) {
+	u_char *p;
+	int sum;
+
+	p = (u_char *) s + 511;
+	sum = 0;
+	while(--p != s)
+		sum = (sum >> 8) + (sum & 0xff) + *p;
+
+	return (sum == p[511]);
+}
+
 static char *
 fstype(const char *device) {
     int fd;
@@ -131,17 +144,21 @@ fstype(const char *device) {
     union {
 	struct xiafs_super_block xiasb;
 	char romfs_magic[8];
-	char xfs_magic[4];
 	char qnx4fs_magic[10];	/* ignore first 4 bytes */
 	long bfs_magic;
 	struct ntfs_super_block ntfssb;
 	struct fat_super_block fatsb;
+	struct xfs_super_block xfsb;
+	struct cramfs_super_block cramfssb;
     } xsb;
     struct ufs_super_block ufssb;
     union {
 	struct iso_volume_descriptor iso;
 	struct hs_volume_descriptor hs;
     } isosb;
+    struct hfs_super_block hfssb;
+    struct hpfs_super_block hpfssb;
+    struct adfs_super_block adfssb;
     struct stat statbuf;
 
     /* opening and reading an arbitrary unknown path can have
@@ -164,7 +181,8 @@ fstype(const char *device) {
 	 type = "ext2";
 
     else if (minixmagic(sb.ms) == MINIX_SUPER_MAGIC
-	     || minixmagic(sb.ms) == MINIX_SUPER_MAGIC2)
+	     || minixmagic(sb.ms) == MINIX_SUPER_MAGIC2
+	     || minixmagic(sb.ms) == swapped(MINIX_SUPER_MAGIC2))
 	 type = "minix";
 
     else if (extmagic(sb.es) == EXT_SUPER_MAGIC)
@@ -179,8 +197,8 @@ fstype(const char *device) {
 	      type = "xiafs";
 	 else if(!strncmp(xsb.romfs_magic, "-rom1fs-", 8))
 	      type = "romfs";
-	 else if(!strncmp(xsb.xfs_magic, "XFSB", 4) ||
-		 !strncmp(xsb.xfs_magic, "BSFX", 4))
+	 else if(!strncmp(xsb.xfsb.s_magic, XFS_SUPER_MAGIC, 4) ||
+		 !strncmp(xsb.xfsb.s_magic, XFS_SUPER_MAGIC2, 4))
 	      type = "xfs";
 	 else if(!strncmp(xsb.qnx4fs_magic+4, "QNX4FS", 6))
 	      type = "qnx4fs";
@@ -189,6 +207,8 @@ fstype(const char *device) {
 	 else if(!strncmp(xsb.ntfssb.s_magic, NTFS_SUPER_MAGIC,
 			  sizeof(xsb.ntfssb.s_magic)))
 	      type = "ntfs";
+	 else if(cramfsmagic(xsb.cramfssb) == CRAMFS_SUPER_MAGIC)
+	      type = "cramfs";
 	 else if ((!strncmp(xsb.fatsb.s_os, "MSDOS", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "MSWIN", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "MTOOL", 5) ||
@@ -219,6 +239,43 @@ fstype(const char *device) {
 	      type = "iso9660";
 	 else if (may_be_udf(isosb.iso.id))
 	      type = "udf";
+    }
+
+    if (!type) {
+        if (lseek(fd, 0x400, SEEK_SET) != 0x400
+            || read(fd, (char *) &hfssb, sizeof(hfssb)) != sizeof(hfssb))
+             goto io_error;
+
+        /* also check if block size is equal to 512 bytes,
+           since the hfs driver currently only has support
+           for block sizes of 512 bytes long, and to be
+           more accurate (sb magic is only a short int) */
+        if ((hfsmagic(hfssb) == HFS_SUPER_MAGIC &&
+	     hfsblksize(hfssb) == 0x20000) ||
+            (swapped(hfsmagic(hfssb)) == HFS_SUPER_MAGIC &&
+             hfsblksize(hfssb) == 0x200))
+             type = "hfs";
+    }
+
+    if (!type) {
+        if (lseek(fd, 0x2000, SEEK_SET) != 0x2000
+            || read(fd, (char *) &hpfssb, sizeof(hpfssb)) != sizeof(hpfssb))
+             goto io_error;
+
+        if (hpfsmagic(hpfssb) == HPFS_SUPER_MAGIC)
+             type = "hpfs";
+    }
+
+    if (!type) {
+        if (lseek(fd, 0xc00, SEEK_SET) != 0xc00
+            || read(fd, (char *) &adfssb, sizeof(adfssb)) != sizeof(adfssb))
+             goto io_error;
+
+	/* only a weak test */
+        if (may_be_adfs((u_char *) &adfssb)
+            && (adfsblksize(adfssb) >= 8 &&
+                adfsblksize(adfssb) <= 10))
+             type = "adfs";
     }
 
     if (!type) {
@@ -267,46 +324,40 @@ guess_fstype_from_superblock(const char *spec) {
 	return type;
 }
 
-static FILE *procfs;
-
-static void
-procfsclose(void) {
-	if (procfs)
-		fclose (procfs);
-	procfs = 0;
-}
-
-static int
-procfsopen(void) {
-	procfs = fopen(ETC_FILESYSTEMS, "r");
-	if (!procfs)
-		procfs = fopen(PROC_FILESYSTEMS, "r");
-	return (procfs != NULL);
-}
-
 static char *
-procfsnext(void) {
+procfsnext(FILE *procfs) {
    char line[100];
-   static char fsname[100];
+   char fsname[100];
 
    while (fgets(line, sizeof(line), procfs)) {
       if (sscanf (line, "nodev %[^\n]\n", fsname) == 1) continue;
       if (sscanf (line, " %[^ \n]\n", fsname) != 1) continue;
-      return fsname;
+      return strdup(fsname);
    }
    return 0;
 }
 
+/* Only use /proc/filesystems here, this is meant to test what
+   the kernel knows about, so /etc/filesystems is irrelevant.
+   Return: 1: yes, 0: no, -1: cannot open procfs */
 int
 is_in_procfs(const char *type) {
+    FILE *procfs;
     char *fsname;
+    int ret = -1;
 
-    if (procfsopen()) {
-	while ((fsname = procfsnext()) != NULL)
-	  if (!strcmp(fsname, type))
-	    return 1;
+    procfs = fopen(PROC_FILESYSTEMS, "r");
+    if (procfs) {
+	ret = 0;
+	while ((fsname = procfsnext(procfs)) != NULL)
+	    if (!strcmp(fsname, type)) {
+		ret = 1;
+		break;
+	    }
+	fclose(procfs);
+	procfs = NULL;
     }
-    return 0;
+    return ret;
 }
 
 /* return: 0: OK, -1: error in errno, 1: type not found */
@@ -314,12 +365,20 @@ is_in_procfs(const char *type) {
 int
 procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
 	   char **type) {
+   FILE *procfs;
    char *fsname;
+   int ret = 1;
+   int errsv = 0;
 
    *type = NULL;
-   if (!procfsopen())
-     return 1;
-   while ((fsname = procfsnext()) != NULL) {
+
+   procfs = fopen(ETC_FILESYSTEMS, "r");
+   if (!procfs) {
+	procfs = fopen(PROC_FILESYSTEMS, "r");
+	if (!procfs)
+             return 1;
+   }
+   while ((fsname = procfsnext(procfs)) != NULL) {
       if (tested (fsname))
 	 continue;
       args->type = fsname;
@@ -328,20 +387,17 @@ procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
 	 fflush(stdout);
       }
       if ((*mount_fn) (args) == 0) {
-	 *type = xstrdup(fsname);
-	 procfsclose();
-	 return 0;
-      } else if (errno != EINVAL) {
+	 *type = fsname;
+	 ret = 0;
+	 break;
+      } else if (errno != EINVAL && is_in_procfs(fsname) == 1) {
          *type = "guess";
-	 procfsclose();
-	 return -1;
+	 ret = -1;
+	 errsv = errno;
+	 break;
       }
    }
-   procfsclose();
-   return 1;
-}
-
-int
-have_procfs(void) {
-	return procfs != NULL;
+   fclose(procfs);
+   errno = errsv;
+   return ret;
 }

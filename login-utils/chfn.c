@@ -34,21 +34,14 @@
 #include <ctype.h>
 #include <getopt.h>
 #include "my_crypt.h"
+#include "islocal.h"
+#include "setpwnam.h"
 #include "nls.h"
 #include "env.h"
 
 #if REQUIRE_PASSWORD && USE_PAM
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
-#endif
-
-extern int is_local(char *);
-
-#undef P
-#if __STDC__
-#define P(foo) foo
-#else
-#define P(foo) ()
 #endif
 
 typedef unsigned char boolean;
@@ -69,17 +62,15 @@ struct finfo {
     char *other;
 };
 
-static boolean parse_argv P((int argc, char *argv[], struct finfo *pinfo));
-static void usage P((FILE *fp));
-static void parse_passwd P((struct passwd *pw, struct finfo *pinfo));
-static void ask_info P((struct finfo *oldfp, struct finfo *newfp));
-static char *prompt P((char *question, char *def_val));
-static int check_gecos_string P((char *msg, char *gecos));
-static boolean set_changed_data P((struct finfo *oldfp, struct finfo *newfp));
-static int save_new_data P((struct finfo *pinfo));
-static void *xmalloc P((int bytes));
-
-extern int setpwnam P((struct passwd *pwd));
+static boolean parse_argv (int argc, char *argv[], struct finfo *pinfo);
+static void usage (FILE *fp);
+static void parse_passwd (struct passwd *pw, struct finfo *pinfo);
+static void ask_info (struct finfo *oldfp, struct finfo *newfp);
+static char *prompt (char *question, char *def_val);
+static int check_gecos_string (char *msg, char *gecos);
+static boolean set_changed_data (struct finfo *oldfp, struct finfo *newfp);
+static int save_new_data (struct finfo *pinfo);
+static void *xmalloc (int bytes);
 
 #define memzero(ptr, size) memset((char *) ptr, 0, size)
 

@@ -18,6 +18,13 @@
  * used a struct rtc_time different from that used in mc146818rtc.h.
  */
 
+/* ia64 uses /dev/efirtc (char 10,136) */
+#if __ia64__
+#define RTC_DEV "/dev/efirtc"
+#else
+#define RTC_DEV "/dev/rtc"
+#endif
+
 /* On Sparcs, there is a <asm/rtc.h> that defines different ioctls
    (that are required on my machine). However, this include file
    does not exist on other architectures. */
@@ -95,7 +102,7 @@ do_rtc_read_ioctl(int rtc_fd, struct tm *tm) {
 #endif
   if (rc == -1) {
     perror(ioctlname);
-    fprintf(stderr, _("ioctl() to /dev/rtc to read the time failed.\n"));
+    fprintf(stderr, _("ioctl() to %s to read the time failed.\n"),RTC_DEV);
     exit(5);
   }
 #ifdef __sparc__
@@ -126,7 +133,7 @@ busywait_for_rtc_clock_tick(const int rtc_fd) {
   int rc;
 
   if (debug)
-    printf(_("Waiting in loop for time from /dev/rtc to change\n"));
+    printf(_("Waiting in loop for time from %s to change\n"),RTC_DEV);
 
   rc = do_rtc_read_ioctl(rtc_fd, &start_time);
   if (rc)
@@ -160,9 +167,9 @@ synchronize_to_clock_tick_rtc(void) {
 int rtc_fd;  /* File descriptor of /dev/rtc */
 int ret;
 
-  rtc_fd = open("/dev/rtc",O_RDONLY);
+  rtc_fd = open(RTC_DEV,O_RDONLY);
   if (rtc_fd == -1) {
-    outsyserr(_("open() of /dev/rtc failed"));
+    outsyserr(_("open() of %s failed"),RTC_DEV);
     ret = 1;
   } else {
     int rc;  /* Return code from ioctl */
@@ -179,16 +186,16 @@ int ret;
          on an Alpha, where the Hardware Clock interrupts are used by the
          kernel for the system clock, so aren't at the user's disposal.
          */
-      if (debug) printf(_("/dev/rtc does not have interrupt functions. "));
+      if (debug)
+	      printf(_("%s does not have interrupt functions. "),RTC_DEV);
       ret = busywait_for_rtc_clock_tick(rtc_fd);
-    } else if (rc != -1) {
-      int rc;  /* return code from ioctl */
+    } else if (rc == 0) {
       unsigned long dummy;
 
       /* this blocks until the next update interrupt */
       rc = read(rtc_fd, &dummy, sizeof(dummy));
       if (rc == -1) {
-        outsyserr(_("read() to /dev/rtc to wait for clock tick failed"));
+        outsyserr(_("read() to %s to wait for clock tick failed"),RTC_DEV);
         ret = 1;
       } else {
         ret = 0;
@@ -196,11 +203,11 @@ int ret;
       /* Turn off update interrupts */
       rc = ioctl(rtc_fd, RTC_UIE_OFF, 0);
       if (rc == -1)
-        outsyserr(_("ioctl() to /dev/rtc to turn off update interrupts "
-		    "failed"));
+        outsyserr(_("ioctl() to %s to turn off update interrupts "
+		    "failed"),RTC_DEV);
     } else {
-      outsyserr(_("ioctl() to /dev/rtc to turn on update interrupts "
-		"failed unexpectedly"));
+      outsyserr(_("ioctl() to %s to turn on update interrupts "
+		"failed unexpectedly"),RTC_DEV);
       ret = 1;
     }
     close(rtc_fd);
@@ -217,9 +224,9 @@ read_hardware_clock_rtc(struct tm *tm) {
 -----------------------------------------------------------------------------*/
   int rtc_fd;  /* File descriptor of /dev/rtc */
 
-  rtc_fd = open("/dev/rtc",O_RDONLY);
+  rtc_fd = open(RTC_DEV,O_RDONLY);
   if (rtc_fd == -1) {
-    outsyserr(_("open() of /dev/rtc failed"));
+    outsyserr(_("open() of %s failed"),RTC_DEV);
     exit(5);
   }
 
@@ -240,9 +247,9 @@ set_hardware_clock_rtc(const struct tm *new_broken_time) {
   int rc;
   int rtc_fd;
 
-  rtc_fd = open("/dev/rtc", O_RDONLY);
+  rtc_fd = open(RTC_DEV, O_RDONLY);
   if (rtc_fd < 0) {
-    outsyserr(_("Unable to open /dev/rtc"));
+    outsyserr(_("Unable to open %s"),RTC_DEV);
     exit(5);
   } else {
     char *ioctlname;
@@ -265,7 +272,7 @@ set_hardware_clock_rtc(const struct tm *new_broken_time) {
 #endif
     if (rc == -1) {
       perror(ioctlname);
-      fprintf(stderr, _("ioctl() to /dev/rtc to set the time failed.\n"));
+      fprintf(stderr, _("ioctl() to %s to set the time failed.\n"),RTC_DEV);
       exit(5);
     } else {
       if (debug)
@@ -293,13 +300,13 @@ static struct clock_ops rtc = {
 /* return &rtc if /dev/rtc can be opened, NULL otherwise */
 struct clock_ops *
 probe_for_rtc_clock(){
-    int rtc_fd = open("/dev/rtc", O_RDONLY);
+    int rtc_fd = open(RTC_DEV, O_RDONLY);
     if (rtc_fd > 0) {
       close(rtc_fd);
       return &rtc;
     }
     if (debug)
-      outsyserr(_("Open of /dev/rtc failed"));
+      outsyserr(_("Open of %s failed"),RTC_DEV);
     return NULL;
 }
 
@@ -312,30 +319,30 @@ get_epoch_rtc(unsigned long *epoch_p, int silent) {
 ----------------------------------------------------------------------------*/
   int rtc_fd;
 
-  rtc_fd = open("/dev/rtc", O_RDONLY);
+  rtc_fd = open(RTC_DEV, O_RDONLY);
   if (rtc_fd < 0) {
     if (!silent) {
       if (errno == ENOENT) 
         fprintf(stderr, _(
 		"To manipulate the epoch value in the kernel, we must "
                 "access the Linux 'rtc' device driver via the device special "
-                "file /dev/rtc.  This file does not exist on this system.\n"));
+                "file %s.  This file does not exist on this system.\n"),RTC_DEV);
       else 
-        outsyserr(_("Unable to open /dev/rtc"));
+        outsyserr(_("Unable to open %s"),RTC_DEV);
     }
     return 1;
   }
 
   if (ioctl(rtc_fd, RTC_EPOCH_READ, epoch_p) == -1) {
     if (!silent)
-      outsyserr(_("ioctl(RTC_EPOCH_READ) to /dev/rtc failed"));
+      outsyserr(_("ioctl(RTC_EPOCH_READ) to %s failed"),RTC_DEV);
     close(rtc_fd);
     return 1;
   }
 
   if (debug)
-	  printf(_("we have read epoch %ld from /dev/rtc "
-		 "with RTC_EPOCH_READ ioctl.\n"), *epoch_p);
+	  printf(_("we have read epoch %ld from %s "
+		 "with RTC_EPOCH_READ ioctl.\n"), *epoch_p,RTC_DEV);
 
   close(rtc_fd);
   return 0;
@@ -359,27 +366,27 @@ set_epoch_rtc(unsigned long epoch) {
     return 1;
   }
 
-  rtc_fd = open("/dev/rtc", O_RDONLY);
+  rtc_fd = open(RTC_DEV, O_RDONLY);
   if (rtc_fd < 0) {
     if (errno == ENOENT) 
       fprintf(stderr, _("To manipulate the epoch value in the kernel, we must "
               "access the Linux 'rtc' device driver via the device special "
-              "file /dev/rtc.  This file does not exist on this system.\n"));
+              "file %s.  This file does not exist on this system.\n"),RTC_DEV);
     else
-      outsyserr(_("Unable to open /dev/rtc"));
+      outsyserr(_("Unable to open %s"),RTC_DEV);
     return 1;
   }
 
   if (debug)
     printf(_("setting epoch to %ld "
-	   "with RTC_EPOCH_SET ioctl to /dev/rtc.\n"), epoch);
+	   "with RTC_EPOCH_SET ioctl to %s.\n"), epoch, RTC_DEV);
 
   if (ioctl(rtc_fd, RTC_EPOCH_SET, epoch) == -1) {
     if (errno == EINVAL)
-      fprintf(stderr, _("The kernel device driver for /dev/rtc "
-	      "does not have the RTC_EPOCH_SET ioctl.\n"));
+      fprintf(stderr, _("The kernel device driver for %s "
+	      "does not have the RTC_EPOCH_SET ioctl.\n"),RTC_DEV);
     else 
-      outsyserr(_("ioctl(RTC_EPOCH_SET) to /dev/rtc failed"));
+      outsyserr(_("ioctl(RTC_EPOCH_SET) to %s failed"),RTC_DEV);
     close(rtc_fd);
     return 1;
   }

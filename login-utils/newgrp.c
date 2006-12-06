@@ -12,6 +12,7 @@
 #include <grp.h>
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <errno.h>
 #include "pathnames.h"
 #include "my_crypt.h"

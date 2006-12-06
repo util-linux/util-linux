@@ -64,7 +64,10 @@
 #include <string.h>
 #include <errno.h>
 #include <sys/resource.h>
+#include <stdlib.h>
 #include "my_crypt.h"
+#include "setpwnam.h"
+#include "islocal.h"
 #include "nls.h"
 #include "env.h"
 
@@ -78,9 +81,6 @@
 #ifdef LOGALL
 #include <syslog.h>
 #endif /* LOGALL */
-
-extern int is_local(char *);		/* islocal.c */
-extern int setpwnam(struct passwd *);	/* setpwnam.c */
 
 #define ascii_to_bin(c) ((c)>='a'?(c-59):(c)>='A'?((c)-53):(c)-'.')
 #define bin_to_ascii(c) ((c)>=38?((c)-38+'a'):(c)>=12?((c)-12+'A'):(c)+'.')
@@ -104,9 +104,8 @@ pexit(char *str, ...)
  * This would probably be the best place for checking against 
  * dictionaries. :-)
  */
-
-int check_passwd_string(char *passwd, char *string)
-{
+static int
+check_passwd_string(char *passwd, char *string) {
     int r;
     char *p, *q;
 
@@ -152,8 +151,8 @@ int check_passwd_string(char *passwd, char *string)
     return 1;
 }
 	
-int check_passwd(char *passwd, char *oldpasswd, char *user, char *gecos)
-{
+static int
+check_passwd(char *passwd, char *oldpasswd, char *user, char *gecos) {
     int ucase, lcase, digit, other;
     char *c, *g, *p;
 
@@ -216,17 +215,16 @@ int check_passwd(char *passwd, char *oldpasswd, char *user, char *gecos)
     return 1; /* fine */
 }
 
-void usage()
-{
+#if 0
+static void
+usage(void) {
     printf (_("Usage: passwd [username [password]]\n"));
     printf(_("Only root may use the one and two argument forms.\n"));
 }
+#endif
 
 int
-main(argc, argv)
-     int argc;
-     char *argv[];
-{
+main(int argc, char *argv[]) {
     struct passwd *pe;
     uid_t gotuid = getuid();
     char *pwdstr = NULL, *cryptstr, *oldstr;

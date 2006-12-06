@@ -3,7 +3,7 @@
 include ../make_include
 include ../MCONFIG
 
-GETOPTDIR=$(USRLIBDIR)/getopt
+GETOPTDIR=$(USRSHAREMISCDIR)/getopt
 
 # Define this to 0 to use the getopt(3) routines in this package.
 LIBCGETOPT=1
@@ -26,7 +26,7 @@ WARNINGS=-Wall \
          -W -Wshadow -Wpointer-arith -Wcast-qual \
          -Wwrite-strings -Wstrict-prototypes -Wmissing-prototypes \
          -Wnested-externs -Winline
-CFLAGS=$(WARNINGS) $(OPT)
+# CFLAGS= $(WARNINGS) $(OPT)
 
 SOURCES=getopt.c
 ifeq ($(LIBCGETOPT),0)

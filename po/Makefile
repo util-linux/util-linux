@@ -13,12 +13,8 @@ INTL = /usr/share/gettext/intl
 
 SHELL = /bin/sh
 
-prefix = $(DESTDIR)/usr
-exec_prefix = ${prefix}
-datadir = $(prefix)/share
-localedir = $(datadir)/locale
-gnulocaledir = $(prefix)/share/locale
-gettextsrcdir = $(prefix)/share/gettext/po
+localedir = $(LOCALEDIR)
+gnulocaledir = $(LOCALEDIR)
 
 # Not giving an explicit path improves the chances of finding this
 INSTALL = install -c
@@ -26,7 +22,7 @@ INSTALL_DATA = ${INSTALL} -m 644
 
 # Not giving an explicit path improves the chances of finding these
 GENCAT = gencat
-MSGFMT = msgfmt
+MSGFMT = msgfmt -c	# -c: undocumented, but useful option
 XGETTEXT = xgettext
 MSGMERGE = msgmerge
 
@@ -38,9 +34,9 @@ INCLUDES = -I.. -I$(INTL)
 COMPILE = $(CC) -c $(DEFS) $(INCLUDES) $(CPPFLAGS) $(CFLAGS) $(XCFLAGS)
 
 # Enter here all .po files
-POFILES = cs.po de.po es.po fr.po it.po ja.po nl.po pt_BR.po
+POFILES = cs.po da.po de.po es.po fr.po it.po ja.po nl.po pt_BR.po
 # the same but with .gmo
-GMOFILES = cs.gmo de.gmo es.gmo fr.gmo it.gmo ja.gmo nl.gmo pt_BR.gmo
+GMOFILES = cs.gmo da.gmo de.gmo es.gmo fr.gmo it.gmo ja.gmo nl.gmo pt_BR.gmo
 
 CATALOGS = $(GMOFILES)
 CATOBJEXT = .gmo
@@ -90,7 +86,6 @@ stamp-cat-id: util-linux.pot
 install: install-data-$(HAVE_XGETTEXT)
 install-data-no: all
 install-data-yes: all
-	../mkinstalldirs $(datadir);
 	@catalogs='$(CATALOGS)'; \
 	for cat in $$catalogs; do \
 	  case "$$cat" in \
@@ -117,7 +112,6 @@ uninstall:
 	  rm -f $(gnulocaledir)/$$lang/LC_MESSAGES/util-linux$(INSTOBJEXT); \
 	  rm -f $(gnulocaledir)/$$lang/LC_MESSAGES/util-linux$(INSTOBJEXT).m; \
 	done
-	rm -f $(gettextsrcdir)/po-Makefile.in.in
 
 cat-id-tbl.o: $(INTL)/libgettext.h
 

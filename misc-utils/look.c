@@ -137,13 +137,25 @@ main(int argc, char *argv[])
 
 	if ((fd = open(file, O_RDONLY, 0)) < 0 || fstat(fd, &sb))
 		err("%s: %s", file, strerror(errno));
-	if ((void *)(front = mmap(NULL,
-				  (size_t)sb.st_size,
-				  PROT_READ,
-				  MAP_FILE|MAP_SHARED,
-				  fd,
-				  (off_t)0)) <= (void *)0)
+	front = mmap(NULL, (size_t) sb.st_size, PROT_READ,
+#ifdef MAP_FILE
+		     MAP_FILE |
+#endif
+		     MAP_SHARED, fd, (off_t) 0);
+	if
+#ifdef MAP_FAILED
+	   (front == MAP_FAILED)
+#else
+	   ((void *)(front) <= (void *)0)
+#endif
 		err("%s: %s", file, strerror(errno));
+
+#if 0
+	/* workaround for mmap problem (rmiller@duskglow.com) */
+	if (front == (void *)0)
+		return 1;
+#endif
+
 	back = front + sb.st_size;
 	return look(front, back);
 }

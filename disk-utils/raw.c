@@ -161,6 +161,7 @@ int main(int argc, char *argv[])
 		break;
 		
 	default:
+		block_major = block_minor = 0; /* just to keep gcc happy */
 		usage(1);
 	}
 	

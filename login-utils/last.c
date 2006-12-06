@@ -90,16 +90,16 @@ static char	*file = _PATH_WTMP;		/* wtmp file */
 static int	doyear = 0;			/* output year in dates */
 static int	dolong = 0;			/* print also ip-addr */
 
-static void wtmp(), addarg(), hostconv();
-static int want();
-TTY *addtty();
-static char *ttyconv();
+static void wtmp(void);
+static void addarg(int, char *);
+static void hostconv(char *);
+static void onintr(int);
+static int want(struct utmp *, int);
+TTY *addtty(char *);
+static char *ttyconv(char *);
 
 int
-main(argc, argv)
-	int	argc;
-	char	**argv;
-{
+main(int argc, char **argv) {
 	extern int	optind;
 	extern char	*optarg;
 	int	ch;
@@ -159,10 +159,8 @@ main(argc, argv)
  * print_partial_line --
  *	print the first part of each output line according to specified format
  */
-void
-print_partial_line(bp)
-     struct utmp *bp;
-{
+static void
+print_partial_line(struct utmp *bp) {
     char *ct;
 
     ct = ctime(&bp->ut_time);
@@ -193,12 +191,10 @@ print_partial_line(bp)
  *	read through the wtmp file
  */
 static void
-wtmp()
-{
+wtmp(void) {
 	register struct utmp	*bp;		/* current structure */
 	register TTY	*T;			/* tty list entry */
 	long	delta;				/* time difference */
-	void	onintr();
 	char *crmsg = NULL;
 	char *ct = NULL;
 	struct utmp **utmplist = NULL;
@@ -310,10 +306,7 @@ wtmp()
  *	see if want this entry
  */
 static int
-want(bp, check)
-	register struct utmp	*bp;
-	int	check;
-{
+want(struct utmp *bp, int check) {
 	register ARG	*step;
 
 	if (check) {
@@ -357,10 +350,7 @@ want(bp, check)
  *	add an entry to a linked list of arguments
  */
 static void
-addarg(type, arg)
-	int	type;
-	char	*arg;
-{
+addarg(int type, char *arg) {
 	register ARG	*cur;
 
 	if (!(cur = (ARG *)malloc((unsigned int)sizeof(ARG)))) {
@@ -378,9 +368,7 @@ addarg(type, arg)
  *	add an entry to a linked list of ttys
  */
 TTY *
-addtty(ttyname)
-	char	*ttyname;
-{
+addtty(char *ttyname) {
 	register TTY	*cur;
 
 	if (!(cur = (TTY *)malloc((unsigned int)sizeof(TTY)))) {
@@ -400,9 +388,7 @@ addtty(ttyname)
  *	off the domain suffix since that's what login(1) does.
  */
 static void
-hostconv(arg)
-	char	*arg;
-{
+hostconv(char *arg) {
 	static int	first = 1;
 	static char	*hostdot,
 			name[MAXHOSTNAMELEN];
@@ -427,9 +413,7 @@ hostconv(arg)
  *	convert tty to correct name.
  */
 static char *
-ttyconv(arg)
-	char	*arg;
-{
+ttyconv(char *arg) {
 	char	*mval;
 
 	/*
@@ -459,10 +443,8 @@ ttyconv(arg)
  * onintr --
  *	on interrupt, we inform the user how far we've gotten
  */
-void
-onintr(signo)
-	int	signo;
-{
+static void
+onintr(int signo) {
 	char	*ct;
 
 	ct = ctime(&utmpbuf.ut_time);

@@ -55,8 +55,8 @@ synchronize_to_clock_tick_kd(void) {
        to keep the machine from freezing. */
 
 #ifdef HAVE_nanosleep
-    struct timespec sleep = { 0, 1 };
-    nanosleep( &sleep, NULL );
+    struct timespec xsleep = { 0, 1 };
+    nanosleep( &xsleep, NULL );
 #else
     usleep(1);
 #endif

@@ -14,11 +14,6 @@
 
 #include "pathnames.h"
 
-#define false 0
-#define true 1
-
-typedef int boolean;
-
 #ifndef DEBUG
 #define PASSWD_FILE    _PATH_PASSWD
 #define PTMP_FILE      _PATH_PTMP
@@ -36,3 +31,5 @@ typedef int boolean;
 #define GTMP_FILE      "/tmp/gtmp"
 #define GTMPTMP_FILE   "/tmp/gtmptmp"
 #endif
+
+extern int setpwnam (struct passwd *pwd);

@@ -1,4 +1,4 @@
-#include <linux/types.h>   /* for __u32 etc */
+#include <linux/types.h>   /* for __u16, __u32 */
 
 typedef struct {
 	unsigned char info[128];   /* Informative text string */

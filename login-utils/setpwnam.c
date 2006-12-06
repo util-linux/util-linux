@@ -64,6 +64,11 @@
 
 #include "setpwnam.h"
 
+#define false 0
+#define true 1
+
+typedef int boolean;
+
 static void pw_init(void);
 
 /*

@@ -78,6 +78,7 @@ typedef struct char_str {
 	short		c_column;	/* column character is in */
 	CSET		c_set;		/* character set (currently only 2) */
 	wchar_t		c_char;		/* character in question */
+	int		c_width;	/* character width */
 } CHAR;
 
 typedef struct line_str LINE;
@@ -225,6 +226,11 @@ int main(int argc, char **argv)
 				cur_line -= 2;
 				continue;
 			}
+			if (iswspace(ch)) {
+				if (wcwidth(ch) > 0)
+					cur_col += wcwidth(ch);
+				continue;
+			}
 			if (!pass_unknown_seqs)
 				continue;
 		}
@@ -297,6 +303,7 @@ int main(int argc, char **argv)
 		c->c_char = ch;
 		c->c_set = cur_set;
 		c->c_column = cur_col;
+		c->c_width = wcwidth(ch);
 		/*
 		 * If things are put in out of order, they will need sorting
 		 * when it is flushed.
@@ -305,7 +312,8 @@ int main(int argc, char **argv)
 			l->l_needs_sort = 1;
 		else
 			l->l_max_col = cur_col;
-		cur_col++;
+		if (c->c_width > 0)
+			cur_col += c->c_width;
 	}
 	/* goto the last line that had a character on it */
 	for (; l->l_next; l = l->l_next)
@@ -435,8 +443,12 @@ void flush_line(LINE *l)
 		} while (--nchars > 0 && this_col == endc->c_column);
 
 		/* if -b only print last character */
-		if (no_backspaces)
+		if (no_backspaces) {
 			c = endc - 1;
+			if (nchars > 0 &&
+			    this_col + c->c_width > endc->c_column)
+				continue;
+		}
 
 		if (this_col > last_col) {
 			int nspace = this_col - last_col;
@@ -455,7 +467,6 @@ void flush_line(LINE *l)
 				PUTC(' ');
 			last_col = this_col;
 		}
-		last_col++;
 
 		for (;;) {
 			if (c->c_set != last_set) {
@@ -469,10 +480,15 @@ void flush_line(LINE *l)
 				last_set = c->c_set;
 			}
 			PUTC(c->c_char);
+			if ((c+1) < endc) {
+				int i;
+				for (i=0; i < c->c_width; i++)
+					PUTC('\b');
+			}
 			if (++c >= endc)
 				break;
-			PUTC('\b');
 		}
+		last_col += (c-1)->c_width;
 	}
 }
 

@@ -41,7 +41,7 @@
 .Nd make entries in the system log
 .Sh SYNOPSIS
 .Nm logger
-.Op Fl is
+.Op Fl isd
 .Op Fl f Ar file
 .Op Fl p Ar pri
 .Op Fl t Ar tag
@@ -80,11 +80,12 @@ Mark every line in the log with the specified
 Write to socket as specified with
 .Ar socket
 instead of builtin syslog routines.
+.It Fl d
+Use a datagram instead of a stream connection to this socket.
 .It --
 End the argument list. This is to allow the
 .Ar message
-to start with a hyphen (\-).  This feature was not present in the
-original BSD logger command; it is a GNU-specific extra.
+to start with a hyphen (\-).
 .It Ar message
 Write the message to log; if not specified, and the
 .Fl f

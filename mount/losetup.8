@@ -46,6 +46,15 @@ attacks.
 .IP "\fB\-o \fIoffset\fP"
 the data start is moved \fIoffset\fP bytes into the specified file or
 device.
+.SH RETURN VALUE
+.B losetup
+returns 0 on success, nonzero on failure. When
+.B losetup
+displays the status of a loop device, it returns 1 if the device
+is not configured and 2 if an error occurred which prevented
+.B losetup
+from determining the status of the device.
+
 .SH FILES
 .nf
 /dev/loop0,/dev/loop1,...   loop devices (major=7)
@@ -81,7 +90,5 @@ DES encryption is painfully slow. On the other hand, XOR is terribly weak.
 .SH AUTHORS
 .nf
 Original version: Theodore Ts'o <tytso@athena.mit.edu>
-Maintained by: Werner Almesberger <almesber@bernina.ethz.ch>
 Original DES by: Eric Young <eay@psych.psy.uq.oz.au>
-Modularized and updated 28-5-94: Mitch DSouza <m.dsouza@mrc-apu.cam.ac.uk>
 .fi

@@ -1,3 +1,4 @@
+int main(int argc, char *argv[]);
 
 #include "../defines.h"		/* for HAVE_locale_h */
 

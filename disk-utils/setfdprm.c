@@ -20,28 +20,29 @@
 #define MAXLINE   200
 
 
-static int convert(char *arg)
-{
+static int
+convert(char *arg) {
     long result;
     char *end;
 
     result = strtol(arg,&end,0);
-    if (!*end) return (int) result;
+    if (!*end)
+	    return (int) result;
     fprintf(stderr,_("Invalid number: %s\n"),arg);
     exit(1);
 }
 
-
-static void cmd_without_param(int cmd,int fd)
-{
-    if (ioctl(fd,cmd,NULL) >= 0) exit(0);
+static void
+cmd_without_param(int cmd,int fd) {
+    if (ioctl(fd,cmd,NULL) >= 0)
+	    exit(0);
     perror("ioctl");
     exit(1);
 }
 
-
-static void set_params(int cmd,int fd,char **params)
-{
+/* set given fd parameters */
+static void
+set_params(int cmd,int fd,char **params) {
     struct floppy_struct ft;
 
     ft.size = convert(params[0]);
@@ -59,9 +60,9 @@ static void set_params(int cmd,int fd,char **params)
     exit(1);
 }
 
-
-static void find_params(int cmd,int fd,char *name)
-{
+/* find parameter set in file, and use it */
+static void
+find_params(int cmd,int fd,char *name) {
     FILE *file;
     char line[MAXLINE+2],this[MAXLINE+2],param[9][MAXLINE+2];
     char *params[9],*start;
@@ -91,9 +92,8 @@ static void find_params(int cmd,int fd,char *name)
     exit(1);
 }
 
-
-static void usage(char *name)
-{
+static void
+usage(char *name) {
     char *this;
 
     if ((this = strrchr(name,'/')) != NULL) name = this+1;
@@ -109,8 +109,7 @@ gap rate spec1 fmt_gap\n"),name);
 }
 
 int
-main(int argc, char **argv)
-{
+main(int argc, char **argv) {
     int fd;
     unsigned int cmd;
     char *progname, *p;
@@ -129,7 +128,8 @@ main(int argc, char **argv)
 	    exit(0);
     }
 
-    if (argc < 3) usage(progname);
+    if (argc < 2)
+	    usage(progname);
     cmd = FDSETPRM;
     if (*argv[1] == '-') {
 	switch (argv[1][1]) {
@@ -156,7 +156,7 @@ main(int argc, char **argv)
 	argc--;
 	argv++;
     }
-    if ((fd = open(argv[1],3)) < 0) { /* 3 == no access at all */
+    if ((fd = open(argv[1],3)) < 0) { /* O_WRONLY needed in a few kernels */
 	perror(argv[1]);
 	exit(1);
     }

@@ -68,7 +68,7 @@ crypt_name (int id) {
 	return "undefined";
 }
 
-static void 
+static int
 show_loop (char *device) {
 	struct loop_info loopinfo;
 	int fd;
@@ -77,22 +77,53 @@ show_loop (char *device) {
 		int errsv = errno;
 		fprintf(stderr, _("loop: can't open device %s: %s\n"),
 			device, strerror (errsv));
-		return;
+		return 2;
 	}
 	if (ioctl (fd, LOOP_GET_STATUS, &loopinfo) < 0) {
 		int errsv = errno;
 		fprintf(stderr, _("loop: can't get info on device %s: %s\n"),
 			device, strerror (errsv));
 		close (fd);
-		return;
+		return 1;
 	}
 	printf (_("%s: [%04x]:%ld (%s) offset %d, %s encryption\n"),
 		device, loopinfo.lo_device, loopinfo.lo_inode,
 		loopinfo.lo_name, loopinfo.lo_offset,
 		crypt_name (loopinfo.lo_encrypt_type));
 	close (fd);
+
+	return 0;
 }
 #endif
+
+int
+is_loop_device (const char *device) {
+	struct stat statbuf;
+	int loopmajor;
+#if 1
+	loopmajor = 7;
+#else
+	FILE *procdev;
+	char line[100], *cp;
+
+	loopmajor = 0;
+	if ((procdev = fopen(PROC_DEVICES, "r")) != NULL) {
+		while (fgets (line, sizeof(line), procdev)) {
+			if ((cp = strstr (line, " loop\n")) != NULL) {
+				*cp='\0';
+				loopmajor=atoi(line);
+				break;
+			}
+		}
+		fclose(procdev);
+	}
+#endif
+	return (loopmajor && stat(device, &statbuf) == 0 &&
+		S_ISBLK(statbuf.st_mode) &&
+		(statbuf.st_rdev>>8) == loopmajor);
+}
+
+#define SIZE(a) (sizeof(a)/sizeof(a[0]))
 
 char *
 find_unused_loop_device (void) {
@@ -100,13 +131,15 @@ find_unused_loop_device (void) {
 	   people might have problems with backup or so.
 	   So, we just try /dev/loop[0-7]. */
 	char dev[20];
-	int i, fd, somedev = 0, someloop = 0, loop_known = 0;
+	char *loop_formats[] = { "/dev/loop%d", "/dev/loop/%d" };
+	int i, j, fd, somedev = 0, someloop = 0, loop_known = 0;
 	struct stat statbuf;
 	struct loop_info loopinfo;
 	FILE *procdev;
 
-	for(i = 0; i < 256; i++) {
-		sprintf(dev, "/dev/loop%d", i);
+	for (j = 0; j < SIZE(loop_formats); j++) {
+	    for(i = 0; i < 256; i++) {
+		sprintf(dev, loop_formats[j], i);
 		if (stat (dev, &statbuf) == 0 && S_ISBLK(statbuf.st_mode)) {
 			somedev++;
 			fd = open (dev, O_RDONLY);
@@ -121,8 +154,8 @@ find_unused_loop_device (void) {
 			}
 			continue;/* continue trying as long as devices exist */
 		}
-		if (i >= 7)
-			break;
+		break;
+	    }
 	}
 
 	/* Nothing found. Why not? */
@@ -393,7 +426,7 @@ main(int argc, char **argv) {
 		if (delete)
 			res = del_loop(argv[optind]);
 		else
-			show_loop(argv[optind]);
+			res = show_loop(argv[optind]);
 	} else {
 		if (offset && sscanf(offset,"%d",&off) != 1)
 			usage();

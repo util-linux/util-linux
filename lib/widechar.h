@@ -38,4 +38,6 @@
 # define wcsdup strdup
 # define wcslen strlen
 
+# define wcwidth(c) 1
+
 #endif

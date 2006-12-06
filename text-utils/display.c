@@ -209,7 +209,6 @@ static char **_argv;
 static u_char *
 get(void)
 {
-	extern enum _vflag vflag;
 	extern int length;
 	static int ateof = 1;
 	static u_char *curp, *savp;
@@ -341,19 +340,16 @@ doskip(char *fname, int statok)
 }
 
 char *
-emalloc(int size)
-{
+emalloc(int sz) {
 	char *p;
 
-	if (!(p = malloc((u_int)size)))
+	if (!(p = malloc((u_int)sz)))
 		nomem();
-	bzero(p, size);
+	bzero(p, sz);
 	return(p);
 }
 
-void nomem()
-{
-
+void nomem() {
 	(void)fprintf(stderr, "hexdump: %s.\n", strerror(errno));
 	exit(1);
 }

@@ -21,6 +21,8 @@ BIN=            kill
 USRBIN=		cal chkdupexe ddate logger look mcookie \
 		namei rename script whereis write
 
+MAYBE=		reset setterm tsort
+
 ifeq "$(HAVE_RESET)" "no"
 USRBIN:=$(USRBIN) reset
 MAN1:=$(MAN1) reset.1
@@ -79,6 +81,8 @@ mcookie.o: mcookie.c md5.h
 md5.o: md5.c md5.h
 reset: reset.sh
 script: script.o
+write.o: $(LIB)/carefulputc.h
+write: write.o $(LIB)/carefulputc.o
 
 ifeq "$(HAVE_NCURSES)" "yes"
 setterm: setterm.o
@@ -97,4 +101,4 @@ endif
 
 .PHONY:	clean
 clean:
-	-rm -f *.o *~ core $(BIN) $(USRBIN)
+	-rm -f *.o *~ core $(BIN) $(USRBIN) $(MAYBE)

@@ -1,4 +1,4 @@
-/* fdformat.c  -  Low-level formats a floppy disk. */
+/* fdformat.c  -  Low-level formats a floppy disk - Werner Almesberger */
 
 /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
  * - added Native Language Support
@@ -135,11 +135,11 @@ int main(int argc,char **argv)
 	exit(1);
     }
     if (access(argv[1],W_OK) < 0) PERROR(argv[1]);
-    if ((ctrl = open(argv[1],3)) < 0) PERROR(argv[1]);
+    if ((ctrl = open(argv[1],O_WRONLY)) < 0) PERROR(argv[1]);
     if (ioctl(ctrl,FDGETPRM,(long) &param) < 0) 
       PERROR(_("Could not determine current format type"));
     printf(_("%s-sided, %d tracks, %d sec/track. Total capacity %d kB.\n"),
-	   param.head ? _("Double") : _("Single"),
+	   (param.head == 2) ? _("Double") : _("Single"),
 	   param.track, param.sect,param.size >> 1);
     format_disk(argv[1]);
     if (verify) verify_disk(argv[1]);

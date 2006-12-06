@@ -50,4 +50,5 @@ struct nfs_mount_data {
 #define NFS_MOUNT_VER3		0x0080	/* 3 */
 #define NFS_MOUNT_KERBEROS	0x0100	/* 3 */
 #define NFS_MOUNT_NONLM		0x0200	/* 3 */
+#define NFS_MOUNT_BROKEN_SUID	0x0400	/* 4 */
 

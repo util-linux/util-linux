@@ -81,7 +81,7 @@ main (int argc, char **argv) {
   FILE *map;
   int proFd;
   char *mapFile, *proFile;
-  unsigned long len=0, add0=0, index=0;
+  unsigned long len=0, add0=0, indx=0;
   unsigned int step;
   unsigned int *buf, total, fn_len;
   unsigned long fn_add, next_add;           /* current and next address */
@@ -201,8 +201,8 @@ main (int argc, char **argv) {
     if (*mode == 'A' && total == 0) continue;
     if (*mode!='T' && *mode!='t') break; /* only text is profiled */
 
-    while (index < (next_add-add0)/step)
-      this += buf[index++];
+    while (indx < (next_add-add0)/step)
+      this += buf[indx++];
     total += this;
 
     fn_len = next_add-fn_add;

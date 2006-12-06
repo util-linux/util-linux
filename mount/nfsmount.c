@@ -58,6 +58,13 @@
 
 #include "../defines.h"		/* for HAVE_inet_aton */
 
+#ifndef NFS_PORT
+#define NFS_PORT 2049
+#endif
+#ifndef NFS_FHSIZE
+#define NFS_FHSIZE 32
+#endif
+
 static char *nfs_strerror(int stat);
 
 #define MAKE_VERSION(p,q,r)	(65536*(p) + 256*(q) + (r))
@@ -90,7 +97,6 @@ int nfs_mount_version = NFS_MOUNT_VERSION;
  * and figure out what version the kernel expects.
  *
  * Variables:
- *	KERNEL_NFS_MOUNT_VERSION: kernel sources at compile time
  *	NFS_MOUNT_VERSION: these nfsmount sources at compile time
  *	nfs_mount_version: version this source and running kernel can handle
  */
@@ -106,6 +112,10 @@ find_kernel_nfs_mount_version(void) {
 	if (kernel_version) {
 	     if (kernel_version < MAKE_VERSION(2,1,32))
 		  nfs_mount_version = 1;
+	     else if (kernel_version < MAKE_VERSION(2,2,18))
+		  nfs_mount_version = 3;
+	     else if (kernel_version < MAKE_VERSION(2,3,0))
+		  nfs_mount_version = 4; /* since 2.2.18pre9 */
 	     else if (kernel_version < MAKE_VERSION(2,3,99))
 		  nfs_mount_version = 3;
 	     else
@@ -201,6 +211,7 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	int nocto;
 	int noac;
 	int nolock;
+	int broken_suid;
 	int retry;
 	int tcp;
 	int mountprog;
@@ -297,6 +308,7 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	posix = 0;
 	nocto = 0;
 	nolock = 0;
+	broken_suid = 0;
 	noac = 0;
 	retry = 10000;		/* 10000 minutes ~ 1 week */
 	tcp = 0;
@@ -407,6 +419,8 @@ int nfsmount(const char *spec, const char *node, int *flags,
 					nolock = !val;
 				else
 					printf(_("Warning: option nolock is not supported.\n"));
+			} else if (!strcmp(opt, "broken_suid")) {
+				broken_suid = val;
 			} else {
 				if (!sloppy) {
 					printf(_("unknown nfs mount option: "
@@ -430,6 +444,10 @@ int nfsmount(const char *spec, const char *node, int *flags,
 #if NFS_MOUNT_VERSION >= 3
 	if (nfs_mount_version >= 3)
 		data.flags |= (nolock ? NFS_MOUNT_NONLM : 0);
+#endif
+#if NFS_MOUNT_VERSION >= 4
+	if (nfs_mount_version >= 4)
+		data.flags |= (broken_suid ? NFS_MOUNT_BROKEN_SUID : 0);
 #endif
 	if (nfsvers > MAX_NFSPROT) {
 		fprintf(stderr, "NFSv%d not supported!\n", nfsvers);

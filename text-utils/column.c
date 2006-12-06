@@ -302,7 +302,7 @@ input(fp)
 			continue;
 		}
 		*p = '\0';
-		len = p - buf;
+		len = wcs_width(buf);	/* len = p - buf; */
 		if (maxlength < len)
 			maxlength = len;
 		if (entries == maxentry) {

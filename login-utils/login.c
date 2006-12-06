@@ -116,7 +116,9 @@
 #include <sys/syslog.h>
 #include <sys/sysmacros.h>
 #include <netdb.h>
+#include "pathnames.h"
 #include "my_crypt.h"
+#include "login.h"
 #include "nls.h"
 
 #ifdef __linux__
@@ -188,25 +190,22 @@ struct  lastlog
 };
 #endif
 
-#include "pathnames.h"
 
-#define P_(s) ()
-void opentty P_((const char *tty));
-void getloginname P_((void));
-void timedout P_((void));
-int rootterm P_((char *ttyn));
-void motd P_((void));
-void sigint P_((void));
-void checknologin P_((void));
-void dolastlog P_((int quiet));
-void badlogin P_((const char *name));
-char *stypeof P_((char *ttyid));
-void checktty P_((char *user, char *tty, struct passwd *pwd));
-void sleepexit P_((int eval));
-#ifdef CRYPTOCARD
-int cryptocard P_((void));
+static void getloginname (void);
+static void timedout (int);
+static void sigint (int);
+static int rootterm (char *ttyn);
+static void motd (void);
+static void checknologin (void);
+static void dolastlog (int quiet);
+
+#ifndef __linux__
+static char *stypeof (char *ttyid);
 #endif
-#undef P_
+
+#ifdef CRYPTOCARD
+#include "cryptocard.h"
+#endif
 
 #ifdef	KERBEROS
 #include <kerberos/krb.h>
@@ -235,14 +234,14 @@ int	kerror = KSUCCESS, notickets = 1;
 #ifndef __linux__
 int	timeout = 300;
 #else
-int     timeout = 60;
+int     timeout = 60;		/* used in cryptocard.c */
 #endif
 
-struct	passwd *pwd;
-int	failures = 1;
+struct	passwd *pwd;		/* used in cryptocard.c */
+struct  hostent hostaddress;	/* used in checktty.c */
 char	term[64], *hostname, *username, *tty;
-struct  hostent hostaddress;
-char	thishost[100];
+static char	thishost[100];
+static int	failures = 1;
 
 #ifndef __linux__
 struct	sgttyb sgttyb;
@@ -266,7 +265,7 @@ const char *months[] =
    connection. I believe login should open the line in the non-blocking mode
    leaving the decision to make a connection to getty (where it actually
    belongs). */
-void 
+static void
 opentty(const char * tty)
 {
     int i;
@@ -313,11 +312,7 @@ main(int argc, char **argv)
     int quietlog, passwd_req;
     char *domain, *ttyn;
     char tbuf[MAXPATHLEN + 2], tname[sizeof(_PATH_TTY) + 10];
-    char *ctime(), *ttyname(), *stypeof();
-    time_t time();
-    void timedout();
     char *termenv;
-    char vcsn[20], vcsan[20];
     char * childArgv[10];
     char * buff;
     int childArgc = 0;
@@ -328,6 +323,9 @@ main(int argc, char **argv)
     pid_t childPid;
 #else
     char *salt, *pp;
+#endif
+#ifdef CHOWNVCS
+    char vcsn[20], vcsan[20];
 #endif
 #ifndef __linux__
     int ioctlval;
@@ -446,6 +444,7 @@ main(int argc, char **argv)
 	ttyn = tname;
     }
 
+#ifdef CHOWNVCS
     /* find names of Virtual Console devices, for later mode change */
     {
 	char *p = ttyn;
@@ -455,6 +454,7 @@ main(int argc, char **argv)
 	strcpy(vcsn, "/dev/vcs"); strcat(vcsn, p);
 	strcpy(vcsan, "/dev/vcsa"); strcat(vcsan, p);
     }
+#endif
 
     setpgrp();
     
@@ -464,8 +464,8 @@ main(int argc, char **argv)
 	tcgetattr(0, &tt);
 	ttt = tt;
 	ttt.c_cflag &= ~HUPCL;
-	
-	if((chown(ttyn, 0, 0) == 0) && (chmod(ttyn, 0622) == 0)) {
+
+	if((chown(ttyn, 0, 0) == 0) && (chmod(ttyn, TTY_MODE) == 0)) {
 	    tcsetattr(0,TCSAFLUSH,&ttt);
 	    signal(SIGHUP, SIG_IGN); /* so vhangup() wont kill us */
 	    vhangup();
@@ -816,8 +816,8 @@ main(int argc, char **argv)
 	    else if (tp.tv_sec - pwd->pw_change < TWOWEEKS && !quietlog) {
 		struct tm *ttp;
 		ttp = localtime(&pwd->pw_change);
-		printf(_("Warning: your password expires on %s %d, %d\n"),
-		       months[ttp->tm_mon], ttp->tm_mday,
+		printf(_("Warning: your password expires on %d %s %d.\n"),
+		       ttp->tm_mday, months[ttp->tm_mon],
 		       TM_YEAR_BASE + ttp->tm_year);
 	    }
 	}
@@ -830,8 +830,8 @@ main(int argc, char **argv)
 	    else if (tp.tv_sec - pwd->pw_expire < TWOWEEKS && !quietlog) {
 		struct tm *ttp;
 		ttp = localtime(&pwd->pw_expire);
-		printf(_("Warning: your account expires on %s %d, %d\n"),
-		       months[ttp->tm_mon], ttp->tm_mday,
+		printf(_("Warning: your account expires on %d %s %d.\n"),
+		       ttp->tm_mday, months[ttp->tm_mon],
 		       TM_YEAR_BASE + ttp->tm_year);
 	    }
 	}
@@ -970,6 +970,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	  (gr = getgrnam(TTYGRPNAME)) ? gr->gr_gid : pwd->pw_gid);
     chmod(ttyn, TTY_MODE);
 
+#ifdef CHOWNVCS
     /* if tty is one of the VC's then change owner and mode of the 
        special /dev/vcs devices as well */
     if (consoletty(0)) {
@@ -978,6 +979,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	chmod(vcsn, TTY_MODE);
 	chmod(vcsan, TTY_MODE);
     }
+#endif
 
     setgid(pwd->pw_gid);
     
@@ -1184,12 +1186,10 @@ Michael Riepe <michael@stud.uni-hannover.de>
 }
 
 void
-getloginname()
-{
-    register int ch;
-    register char *p;
+getloginname(void) {
+    int ch, cnt, cnt2;
+    char *p;
     static char nbuf[UT_NAMESIZE + 1];
-    int cnt, cnt2;
     
     cnt2 = 0;
     for (;;) {
@@ -1231,8 +1231,7 @@ getloginname()
 }
 
 void
-timedout()
-{
+timedout(int sig) {
     struct termio ti;
     
     fprintf(stderr, _("Login timed out after %d seconds\n"), timeout);
@@ -1245,8 +1244,7 @@ timedout()
 }
 
 int
-rootterm(ttyn)
-     char *ttyn;
+rootterm(char * ttyn)
 #ifndef __linux__
 {
     struct ttyent *t;
@@ -1286,10 +1284,9 @@ rootterm(ttyn)
 jmp_buf motdinterrupt;
 
 void
-motd()
-{
-    register int fd, nchars;
-    void (*oldint)(), sigint();
+motd(void) {
+    int fd, nchars;
+    void (*oldint)(int);
     char tbuf[8192];
     
     if ((fd = open(_PATH_MOTDFILE, O_RDONLY, 0)) < 0)
@@ -1303,15 +1300,13 @@ motd()
 }
 
 void
-sigint()
-{
+sigint(int sig) {
     longjmp(motdinterrupt, 1);
 }
 
 #ifndef USE_PAM				/* PAM takes care of this */
 void
-checknologin()
-{
+checknologin(void) {
     register int fd, nchars;
     char tbuf[8192];
     
@@ -1324,9 +1319,7 @@ checknologin()
 #endif
 
 void
-dolastlog(quiet)
-     int quiet;
-{
+dolastlog(int quiet) {
     struct lastlog ll;
     int fd;
     
@@ -1385,9 +1378,7 @@ badlogin(const char *name)
 
 #ifndef __linux__
 char *
-stypeof(ttyid)
-     char *ttyid;
-{
+stypeof(char *ttyid) {
     struct ttyent *t;
 
     return(ttyid && (t = getttynam(ttyid)) ? t->ty_type : UNKNOWN);
@@ -1396,9 +1387,7 @@ stypeof(ttyid)
 
 /* should not be called from PAM code... Why? */
 void
-sleepexit(eval)
-     int eval;
-{
+sleepexit(int eval) {
     sleep(SLEEP_EXIT_TIMEOUT);
     exit(eval);
 }

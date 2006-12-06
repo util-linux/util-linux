@@ -1,0 +1,19 @@
+Begin3
+Title: Getopt
+Version: 1.0.6
+Entered-date: 27JUN00
+Description: An improved implementation of getopt(1), a program to parse
+             options within a shell script. Fully compatible with other
+             getopt(1) implementations, but with many additions like
+             long options and mixing of options and parameters.
+Keywords: getopt script parse bash tcsh
+Author: frodol@dds.nl (Frodo Looijaard)
+Primary-site: http://huizen.dds.nl/~frodol
+              28kB getopt-1.0.6.tar.gz
+              600  getopt-1.0.6.lsm
+Alternate-site: sunsite.unc.edu /pub/Linux/utils/shell
+              28kB getopt-1.0.6.tar.gz
+              600  getopt-1.0.6.lsm
+Copying-policy: GPL
+End
+

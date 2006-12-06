@@ -20,6 +20,8 @@
  *
  * Fix for Award 2094 bug, Dave Coffin  (dcoffin@shore.net)  11/12/98
  * Change of local time handling, Stefan Ring <e9725446@stud3.tuwien.ac.at>
+ *
+ * Distributed under GPL
  */
 
 /*
@@ -75,9 +77,9 @@
 #include <time.h>
 #include <sys/time.h>
 #include <sys/stat.h>
-#include <shhopt.h>
 #include <stdarg.h>
 
+#include "shhopt.h"
 #include "clock.h"
 #include "nls.h"
 
@@ -526,14 +528,12 @@ display_time(const bool hclock_valid, const time_t systime,
             "either invalid (e.g. 50th day of month) or beyond the range "
             "we can handle (e.g. Year 2095).\n"));
   else {
-    char *ctime_now;  /* Address of static storage containing time string */
+    struct tm *lt;
+    char *format = "%c";
+    char ctime_now[200];
 
-    /* For some strange reason, ctime() is designed to include a newline
-       character at the end.  We have to remove that.
-       */
-    ctime_now = ctime(&systime);    /* Compute display value for time */
-    *(ctime_now+strlen(ctime_now)-1) = '\0';  /* Cut off trailing newline */
-    
+    lt = localtime(&systime);
+    strftime(ctime_now, sizeof(ctime_now), format, lt);
     printf(_("%s  %.6f seconds\n"), ctime_now, -(sync_duration));
   }
 }
@@ -821,7 +821,7 @@ save_adjtime(const struct adjtime adjtime, const bool testing) {
                "in it (" ADJPATH ") for writing");
 	err = 1;
       } else {
-        if (fprintf(adjfile, newfile) < 0) {
+        if (fputs(newfile, adjfile) < 0) {
 	  outsyserr("Could not update file with the clock adjustment "
 		    "parameters (" ADJPATH ") in it");
 	  err = 1;
@@ -1075,6 +1075,12 @@ manipulate_epoch(const bool getepoch, const bool setepoch,
 #endif
 }
 
+#if __ia64__
+#define RTC_DEV "/dev/efirtc"
+#else
+#define RTC_DEV "/dev/rtc"
+#endif
+
 /*
     usage - Output (error and) usage information
 
@@ -1110,12 +1116,12 @@ usage( const char *fmt, ... ) {
     "\nOptions: \n"
     "  --utc         the hardware clock is kept in coordinated universal time\n"
     "  --localtime   the hardware clock is kept in local time\n"
-    "  --directisa   access the ISA bus directly instead of /dev/rtc\n"
+    "  --directisa   access the ISA bus directly instead of %s\n"
     "  --badyear     ignore rtc's year because the bios is broken\n"
     "  --date        specifies the time to which to set the hardware clock\n"
     "  --epoch=year  specifies the year which is the beginning of the \n"
     "                hardware clock's epoch value\n"
-    ));
+    ),RTC_DEV);
 #ifdef __alpha__
   fprintf( usageto, _(
     "  --jensen, --arc, --srm, --funky-toy\n"
@@ -1136,7 +1142,7 @@ usage( const char *fmt, ... ) {
 }
 
 int 
-main(int argc, char **argv, char **envp) {
+main(int argc, char **argv) {
 
   struct timeval startup_time;
     /* The time we started up, in seconds into the epoch, including fractions.
@@ -1190,9 +1196,13 @@ main(int argc, char **argv, char **envp) {
 
   gettimeofday(&startup_time, NULL);  /* Remember what time we were invoked */
 
-  /* not LC_ALL - the LC_NUMERIC part gives problems when
-     writing to /etc/adjtime - gqueri@mail.dotcom.fr */
-  setlocale(LC_MESSAGES, "");
+  setlocale(LC_ALL, "");
+#ifdef LC_NUMERIC
+  /* We need LC_CTYPE and LC_TIME and LC_MESSAGES, but must avoid
+     LC_NUMERIC since it gives problems when we write to /etc/adjtime.
+     - gqueri@mail.dotcom.fr */
+  setlocale(LC_NUMERIC, "C");
+#endif
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
 
@@ -1301,9 +1311,16 @@ main(int argc, char **argv, char **envp) {
 
 /* A single routine for greater uniformity */
 void
-outsyserr(char *msg) {
-	fprintf(stderr, "%s: %s, errno=%d: %s.\n",
-		progname, msg, errno, strerror(errno));
+outsyserr(char *msg, ...) {
+	va_list args;
+	int errsv = errno;
+	
+	fprintf(stderr, "%s: ", progname);
+	va_start(args, msg);
+	vfprintf(stderr, msg, args);
+	va_end(args);
+	fprintf(stderr, ", errno=%d: %s.\n",
+		errsv, strerror(errsv));
 }
 
 /****************************************************************************

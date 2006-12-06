@@ -54,9 +54,7 @@
 #include "../libdes/des.h"
 #endif /* EAY_LIBDES */
 
-extern char *getpass(const char *prompt);
-extern struct passwd *pwd;
-extern int timeout;
+#include "cryptocard.h"
 
 static char *
 generate_challenge(void)

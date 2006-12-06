@@ -1,7 +1,7 @@
 .\" Copyright 1992, 1993 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
 .\" " for emacs's hilit19 mode :-)
-.TH SIMPLEINIT 8 "20 November 1993" "Linux 0.99" "Linux Programmer's Manual"
+.TH SIMPLEINIT 8 "4 November 2000" "Linux 0.99" "Linux Programmer's Manual"
 .SH NAME
 simpleinit \- process control initialization
 .SH SYNOPSIS
@@ -33,7 +33,9 @@ After single user mode is terminated, the
 .I /etc/rc
 file is executed, and the information in
 .I /etc/inittab
-will be used to start processes.
+will be used to start processes. Alternatively, the \fI/etc/inittab\fP
+file may be configured to run a different boot script. See below for
+details.
 
 .SH "THE INITTAB FILE"
 Because of the number of init programs which are appearing in the Linux
@@ -52,16 +54,21 @@ The format is
 
 .B PATH=search path
 
+.B INIT_PATH=search path
+
 .B "ttyline:termcap-entry:getty-command"
+
+.B finalprog=path
 .RE
 
 An example is as follows:
 
 .nf
 .RS
-bootprog    = rc
-fileprefix  = /sbin/
-PATH        = /sbin:/bin
+bootprog     =
+fileprefix   =  /sbin/init.d/
+PATH         =  /usr/sbin:/usr/bin:/sbin:/bin
+INIT_PATH    =  /sbin/init.d
 
 tty1:linux:/sbin/getty 9600 tty1
 tty2:linux:/sbin/getty 9600 tty2
@@ -70,6 +77,8 @@ tty4:linux:/sbin/getty 9600 tty4
 # tty5:linux:/sbin/getty 9600 tty5
 # ttyS1:dumb:/sbin/getty 9600 ttyS1
 # ttyS2:dumb:/sbin/getty -m -t60 2400 ttyS2
+
+finalprog   = /sbin/rc.xdm
 .RE
 .fi
 
@@ -79,6 +88,26 @@ character are treated as comments.  Please see documentation for the
 .B getty (8)
 command that you are using, since there are several of these in the Linux
 community at this time.
+
+The \fBbootprog\fP value is appended to the \fBfileprefix\fP value,
+and the result specifies the boot programme (script) to run. If
+unspecified, the default is \fI/etc/rc\fP. If the boot programme is a
+directory, then all scripts in that directory tree are executed, in
+parallel. See the \fBneed\fP(8) programme for details on how to
+elegantly control order of execution and manage dependencies.
+
+The \fBPATH\fP value is assigned to the PATH environment variable of
+child processes (boot scripts). The \fBINIT_PATH\fP value is used by
+simpleinit(8) itself to find the location of scripts to run (if an
+absolute path is not given). If unset the default value \fBPATH\fP is
+used. This separation allows boot scripts to invoke programmes of the
+same name without conflict and without needing to specify absolute
+paths.
+
+The \fBfinalprog\fP value specifies the path of the programme to run
+after all \fBgetty\fP(8) instances are spawned. At bootup, it is
+passed a single argument: "start". At shutdown, it is called again,
+this time with the argument: "stop".
 .SH SIGNALS
 \fBsimpleinit\fP(8) responds to signals in a variety of ways:
 .TP
@@ -121,7 +150,8 @@ remount (read-only) the root filesystem, even if the old inode for the
 .BR termcap (5),
 .BR getty (8),
 .BR agetty (8),
-.BR shutdown (8)
+.BR shutdown (8),
+.BR need (8)
 .SH BUGS
 This program is called
 .B simpleinit
@@ -135,4 +165,7 @@ for correct functionality.
 Peter Orbaek (poe@daimi.aau.dk)
 .br
 Version 1.20, with patches for singleuser mode by Werner Almesberger
-
+.br
+Richard Gooch <rgooch@atnf.csiro.au>
+.br
+Dependency support

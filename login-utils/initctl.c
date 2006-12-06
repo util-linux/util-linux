@@ -1,6 +1,6 @@
-/*  need.c
+/*  initctl.c
 
-    Source file for  need  (init(8) dependency tool).
+    Source file for  initctl  (init(8) control tool).
 
     Copyright (C) 2000  Richard Gooch
 
@@ -24,16 +24,19 @@
 */
 
 /*
-    This tool will request init(8) to start a service and will wait for that
-    service to be available. If the service is already available, init(8) will
-    not start it again.
+    This tool will send control messages to init(8). For example, it may
+    request init(8) to start a service and will wait for that service to be
+    available. If the service is already available, init(8) will not start it
+    again.
     This tool may also be used to inspect the list of currently available
     services.
 
 
     Written by      Richard Gooch   28-FEB-2000
 
-    Last updated by Richard Gooch   28-FEB-2000
+    Updated by      Richard Gooch   11-OCT-2000: Added provide support.
+
+    Last updated by Richard Gooch   6-NOV-2000: Renamed to initctl.c
 
 
 */
@@ -44,6 +47,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <signal.h>
+#include <stdlib.h>
 #include <string.h>
 #include "simpleinit.h"
 
@@ -60,7 +64,7 @@ int main (int argc, char **argv)
     struct sigaction sa;
     sigset_t ss;
     char *ptr;
-    long buffer[COMMAND_SIZE / sizeof (long)];
+    long buffer[COMMAND_SIZE / sizeof (long) + 1];
     struct command_struct *command = (struct command_struct *) buffer;
 
     sigemptyset (&ss);
@@ -75,11 +79,55 @@ int main (int argc, char **argv)
     sigaction (SIG_NOT_PRESENT, &sa, NULL);
     sigaction (SIG_FAILED, &sa, NULL);
     command->pid = getpid ();
+    command->ppid = getppid ();
     if ( ( ptr = strrchr (argv[0], '/') ) == NULL ) ptr = argv[0];
     else ++ptr;
+    /*  First generate command number by looking at invocation name  */
     if (strcmp (ptr, "display-services") == 0)
-    {
 	command->command = COMMAND_DUMP_LIST;
+    else if (strcmp (ptr, "need") == 0) command->command = COMMAND_NEED;
+    else if (strcmp (ptr, "provide") == 0) command->command = COMMAND_PROVIDE;
+    else command->command = COMMAND_TEST;
+    /*  Now check for switches  */
+    if ( (argc > 1) && (argv[1][0] == '-') )
+    {
+	switch (argv[1][1])
+	{
+	  case 'n':
+	    command->command = COMMAND_NEED;
+	    break;
+	  case 'r':
+	    command->command = COMMAND_ROLLBACK;
+	    break;
+	  case 'd':
+	    command->command = COMMAND_DUMP_LIST;
+	    break;
+	  case 'p':
+	    command->command = COMMAND_PROVIDE;
+	    break;
+	  default:
+	    fprintf (stderr, "Illegal switch: \"%s\"\n", argv[1]);
+	    exit (1);
+	    /*break;*/
+	}
+	--argc;
+	++argv;
+    }
+    switch (command->command)
+    {
+      case COMMAND_NEED:
+      case COMMAND_PROVIDE:
+	if (argc < 2)
+	{
+	    fprintf (stderr, "Usage:\tneed|provide programme\n");
+	    exit (1);
+	}
+	/*  Fall through  */
+      case COMMAND_ROLLBACK:
+	if (argc > 1) strcpy (command->name, argv[1]);
+	else command->name[0] = '\0';
+	break;
+      case COMMAND_DUMP_LIST:
 	if (tmpnam (command->name) == NULL)
 	{
 	    fprintf (stderr, "Unable to create a unique filename\t%s\n",
@@ -92,26 +140,7 @@ int main (int argc, char **argv)
 		     command->name, ERRSTRING);
 	    exit (1);
 	}
-    }
-    else
-    {
-	if ( (argc > 1) && (strcmp (argv[1], "-r") == 0) )
-	{
-	    command->command = COMMAND_ROLLBACK;
-	    --argc;
-	    ++argv;
-	}
-	else command->command = COMMAND_NEED;
-	if (argc == 2) strcpy (command->name, argv[1]);
-	else
-	{
-	    if (command->command == COMMAND_ROLLBACK) command->name[0] = '\0';
-	    else
-	    {
-		fprintf (stderr, "Usage:\tneed programme\n");
-		exit (1);
-	    }
-	}
+	break;
     }
     if ( ( fd = open ("/dev/initctl", O_WRONLY, 0) ) < 0 )
     {
@@ -128,14 +157,35 @@ int main (int argc, char **argv)
     {
 	sigemptyset (&ss);
 	while (caught_signal == 0) sigsuspend (&ss);
-	switch (caught_signal)
+	switch (command->command)
 	{
-	  case SIG_PRESENT:
-	    return 0;
-	  case SIG_NOT_PRESENT:
-	    return 2;
-	  case SIG_FAILED:
-	    return 1;
+	  case COMMAND_PROVIDE:
+	    switch (caught_signal)
+	    {
+	      case SIG_PRESENT:
+		return 1;
+	      case SIG_NOT_PRESENT:
+		return 0;
+	      case SIG_NOT_CHILD:
+		fprintf (stderr, "Error\n");
+		return 2;
+	      default:
+		return 3;
+	    }
+	    break;
+	  default:
+	    switch (caught_signal)
+	    {
+	      case SIG_PRESENT:
+		return 0;
+	      case SIG_NOT_PRESENT:
+		return 2;
+	      case SIG_FAILED:
+		return 1;
+	      default:
+		return 3;
+	    }
+	    break;
 	}
 	return 3;
     }

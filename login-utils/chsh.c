@@ -37,21 +37,14 @@
 #include <ctype.h>
 #include <getopt.h>
 #include "my_crypt.h"
+#include "islocal.h"
+#include "setpwnam.h"
 #include "nls.h"
 #include "env.h"
 
 #if REQUIRE_PASSWORD && USE_PAM
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
-#endif
-
-extern int is_local(char *);
-
-#undef P
-#if __STDC__
-#define P(foo) foo
-#else
-#define P(foo) ()
 #endif
 
 typedef unsigned char boolean;
@@ -71,19 +64,17 @@ struct sinfo {
     char *shell;
 };
 
-static void parse_argv P((int argc, char *argv[], struct sinfo *pinfo));
-static void usage P((FILE *fp));
-static char *prompt P((char *question, char *def_val));
-static int check_shell P((char *shell));
-static boolean get_shell_list P((char *shell));
-static void *xmalloc P((int bytes));
-extern int setpwnam P((struct passwd *pwd));
+static void parse_argv (int argc, char *argv[], struct sinfo *pinfo);
+static void usage (FILE *fp);
+static char *prompt (char *question, char *def_val);
+static int check_shell (char *shell);
+static boolean get_shell_list (char *shell);
+static void *xmalloc (int bytes);
+
 #define memzero(ptr, size) memset((char *) ptr, 0, size)
 
-int main (argc, argv)
-    int argc;
-    char *argv[];
-{
+int
+main (int argc, char *argv[]) {
     char *cp, *shell, *oldshell;
     uid_t uid;
     struct sinfo info;

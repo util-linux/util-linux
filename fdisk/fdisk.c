@@ -57,6 +57,8 @@
 #include <linux/blkpg.h>
 #endif
 
+static void delete_partition(int i);
+
 #define hex_val(c)	({ \
 				char _c = (c); \
 				isdigit(_c) ? _c - '0' : \
@@ -176,6 +178,7 @@ uint	heads,
 	sectors,
 	cylinders,
 	sector_size = DEFAULT_SECTOR_SIZE,
+	user_set_sector_size = 0,
 	sector_offset = 1,
 	units_per_sector = 1,
 	display_in_cyl_units = 1,
@@ -567,13 +570,13 @@ void update_units(void)
 static void
 warn_cylinders(void) {
 	if (dos_label && cylinders > 1024 && !nowarn)
-		fprintf(stderr, "\n\
-The number of cylinders for this disk is set to %d.\n\
-There is nothing wrong with that, but this is larger than 1024,\n\
-and could in certain setups cause problems with:\n\
-1) software that runs at boot time (e.g., old versions of LILO)\n\
-2) booting and partitioning software from other OSs\n\
-   (e.g., DOS FDISK, OS/2 FDISK)\n",
+		fprintf(stderr, _("\n"
+"The number of cylinders for this disk is set to %d.\n"
+"There is nothing wrong with that, but this is larger than 1024,\n"
+"and could in certain setups cause problems with:\n"
+"1) software that runs at boot time (e.g., old versions of LILO)\n"
+"2) booting and partitioning software from other OSs\n"
+"   (e.g., DOS FDISK, OS/2 FDISK)\n"),
 			cylinders);
 }
 
@@ -588,9 +591,13 @@ read_extended(int ext) {
 	pex->ext_pointer = pex->part_table;
 
 	p = pex->part_table;
-	if (!get_start_sect(p))
-		fprintf(stderr, _("Bad offset in primary extended partition\n"));
-	else while (IS_EXTENDED (p->sys_ind)) {
+	if (!get_start_sect(p)) {
+		fprintf(stderr,
+			_("Bad offset in primary extended partition\n"));
+		return;
+	}
+
+	while (IS_EXTENDED (p->sys_ind)) {
 		struct pte *pe = &ptes[partitions];
 
 		if (partitions >= MAXIMUM_PARTS) {
@@ -613,7 +620,7 @@ read_extended(int ext) {
 			extended_offset = get_start_sect(p);
 
 		q = p = pt_offset(pe->sectorbuffer, 0);
-		for (i = 0; i < 4; i++, p++) {
+		for (i = 0; i < 4; i++, p++) if (get_nr_sects(p)) {
 			if (IS_EXTENDED (p->sys_ind)) {
 				if (pe->ext_pointer)
 					fprintf(stderr, _("Warning: extra link"
@@ -649,6 +656,18 @@ read_extended(int ext) {
 		p = pe->ext_pointer;
 		partitions++;
 	}
+
+	/* remove empty links */
+ remove:
+	for (i = 4; i < partitions; i++) {
+		struct pte *pe = &ptes[i];
+
+		if (!get_nr_sects(pe->part_table)) {
+			printf("omitting empty partition (%d)\n", i+1);
+			delete_partition(i);
+			goto remove; 	/* numbering changed */
+		}
+	}
 }
 
 static void
@@ -672,19 +691,39 @@ create_doslabel(void) {
 	get_boot(create_empty);
 }
 
+#include <sys/utsname.h>
+#define MAKE_VERSION(p,q,r)     (65536*(p) + 256*(q) + (r))
+
+static int
+linux_version_code(void) {
+	static int kernel_version = 0;
+        struct utsname my_utsname;
+        int p, q, r;
+
+        if (!kernel_version && uname(&my_utsname) == 0) {
+                p = atoi(strtok(my_utsname.release, "."));
+                q = atoi(strtok(NULL, "."));
+                r = atoi(strtok(NULL, "."));
+                kernel_version = MAKE_VERSION(p,q,r);
+        }
+        return kernel_version;
+}
+
 static void
 get_sectorsize(int fd) {
-#if defined(BLKSSZGET) && defined(HAVE_blkpg_h)
-	/* For a short while BLKSSZGET gave a wrong sector size */
-	{ int arg;
-	if (ioctl(fd, BLKSSZGET, &arg) == 0)
-		sector_size = arg;
-	if (sector_size != DEFAULT_SECTOR_SIZE)
-		printf(_("Note: sector size is %d (not %d)\n"),
-		       sector_size, DEFAULT_SECTOR_SIZE);
+#if defined(BLKSSZGET)
+	if (!user_set_sector_size &&
+	    linux_version_code() >= MAKE_VERSION(2,3,3)) {
+		int arg;
+		if (ioctl(fd, BLKSSZGET, &arg) == 0)
+			sector_size = arg;
+		if (sector_size != DEFAULT_SECTOR_SIZE)
+			printf(_("Note: sector size is %d (not %d)\n"),
+			       sector_size, DEFAULT_SECTOR_SIZE);
 	}
 #else
-	sector_size = DEFAULT_SECTOR_SIZE;
+	/* maybe the user specified it; and otherwise we still
+	   have the DEFAULT_SECTOR_SIZE default */
 #endif
 }
 
@@ -818,9 +857,9 @@ got_table:
 
 		pe->part_table = pt_offset(MBRbuffer, i);
 		pe->ext_pointer = NULL;
-		pe->changed = 0;
 		pe->offset = 0;
 		pe->sectorbuffer = MBRbuffer;
+		pe->changed = (what == create_empty);
 	}
 
 	for (i = 0; i < 4; i++) {
@@ -877,6 +916,7 @@ read_char(char *mesg)
 {
 	do {
 		fputs(mesg, stdout);
+		fflush (stdout);	 /* requested by niles@scyld.com */
 	} while (!read_line());
 	return *line_ptr;
 }
@@ -885,6 +925,7 @@ char
 read_chars(char *mesg)
 {
         fputs(mesg, stdout);
+	fflush (stdout);	/* niles@scyld.com */
         if (!read_line()) {
 		*line_ptr = '\n';
 		line_ptr[1] = 0;
@@ -1079,10 +1120,12 @@ delete_partition(int i) {
 		sun_delete_partition(i);
 		return;
 	}
+
 	if (sgi_label) {
 		sgi_delete_partition(i);
 		return;
 	}
+
 	if (i < 4) {
 		if (IS_EXTENDED (p->sys_ind) && i == ext_index) {
 			partitions = 4;
@@ -1090,14 +1133,15 @@ delete_partition(int i) {
 			extended_offset = 0;
 		}
 		clear_partition(p);
+		return;
 	}
-	else if (!q->sys_ind && i > 4) {
+
+	if (!q->sys_ind && i > 4) {
 		--partitions;
 		--i;
 		clear_partition(ptes[i].ext_pointer);
 		ptes[i].changed = 1;
-	}
-	else if (i > 3) {
+	} else {
 		if (i > 4) {
 			p = ptes[i-1].ext_pointer;
 			p->boot_ind = 0;
@@ -1111,7 +1155,7 @@ delete_partition(int i) {
 			set_start_sect(p, get_start_sect(q));
 			set_nr_sects(p, get_nr_sects(q));
 			ptes[i-1].changed = 1;
-		} else {
+		} else if (partitions > 5) {    /* 5 will be moved to 4 */
 			struct pte *pe = &ptes[5];
 
 			if(pe->part_table) /* prevent SEGFAULT */
@@ -1121,6 +1165,7 @@ delete_partition(int i) {
 			pe->offset = extended_offset;
 			pe->changed = 1;
 		}
+
 		if (partitions > 5) {
 			partitions--;
 			while (i < partitions) {
@@ -1389,7 +1434,7 @@ list_table(int xtra) {
 		struct pte *pe = &ptes[i];
 
 		p = pe->part_table;
-		if (p->sys_ind) {
+		if (p && p->sys_ind) {
 			unsigned int psects = get_nr_sects(p);
 			unsigned int pblocks = psects;
 			unsigned int podd = 0;
@@ -2030,6 +2075,8 @@ try(char *device, int user_specified) {
 		if ((fd = open(disk_device, type_open)) >= 0) {
 			if (get_boot(try_only) < 0) {
 				list_disk_geometry();
+				if (aix_label)
+					return;
 				if (btrydev(device) < 0)
 					fprintf(stderr,
 						_("Disk %s doesn't contain a valid "
@@ -2075,7 +2122,7 @@ tryprocpt(void) {
 		if (isdigit(s[-1]))
 			continue;
 		sprintf(devname, "/dev/%s", ptname);
-		try(devname, 1);
+		try(devname, 0);
 	}
 }
 
@@ -2091,7 +2138,6 @@ int
 main(int argc, char **argv) {
 	int j, c;
 	int optl = 0, opts = 0;
-	int user_set_sector_size = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -2194,6 +2240,8 @@ main(int argc, char **argv) {
 		fatal(usage2);
 
 	get_boot(fdisk);
+	if (aix_label)
+		exit(0);
 
 #ifdef __alpha__
 	/* On alpha, if we detect a disklabel, go directly to

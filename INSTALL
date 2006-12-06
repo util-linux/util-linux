@@ -37,6 +37,10 @@ To install from source:
 
 If you have compilation problems: tell util-linux@math.uio.no about it.
 
+Compilation will fail on a minix filesystem with 14-byte filenames
+since for example mount_guess_fstype.h, mount_guess_fstype.c and
+mount_guess_fstype.o will be the same file. (However, 30 bytes suffice.)
+
 A glibc header bug causes
   /usr/include/bits/string2.h:419: warning: pointer of type `void *'
     used in arithmetic
@@ -50,6 +54,7 @@ broken.
 
 Several old libc have complaints like
   /usr/include/sys/syslog.h:71: warning: missing braces around initializer
+  /usr/include/sys/syslog.h:87: warning: aggregate has a partly bracketed initializer
   /usr/include/rpc/xdr.h:103: warning: function declaration isn't a prototype
   /usr/include/rpc/auth.h:86: warning: function declaration isn't a prototype
   /usr/include/rpc/svc.h:79: warning: function declaration isn't a prototype

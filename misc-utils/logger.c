@@ -45,6 +45,7 @@
 #include <string.h>
 #include <sys/types.h>
 #include <sys/socket.h>
+#include <sys/un.h>
 #include "nls.h"
 
 #define	SYSLOG_NAMES
@@ -54,20 +55,27 @@ int	decode __P((char *, CODE *));
 int	pencode __P((char *));
 void	usage __P((void));
 
+static int optd = 0;
+
 static int
 myopenlog(const char *sock) {
        int fd;
-       static struct sockaddr s_addr;     /* AF_UNIX address of local logger */
+       static struct sockaddr_un s_addr; /* AF_UNIX address of local logger */
 
-       s_addr.sa_family = AF_UNIX;
-       (void)strncpy(s_addr.sa_data, sock, sizeof(s_addr.sa_data));
+       if (strlen(sock) >= sizeof(s_addr.sun_path)) {
+	       printf ("logger: openlog: pathname too long\n");
+	       exit(1);
+       }
 
-       if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+       s_addr.sun_family = AF_UNIX;
+       (void)strcpy(s_addr.sun_path, sock);
+
+       if ((fd = socket(AF_UNIX, optd ? SOCK_DGRAM : SOCK_STREAM, 0)) == -1) {
                printf ("socket: %s.\n", strerror(errno));
                exit (1);
        }
 
-       if (connect(fd, &s_addr, sizeof(s_addr.sa_family)+strlen(s_addr.sa_data)) == -1) {
+       if (connect(fd, (struct sockaddr *) &s_addr, sizeof(s_addr)) == -1) {
                printf ("connect: %s.\n", strerror(errno));
                exit (1);
        }
@@ -80,7 +88,6 @@ mysyslog(int fd, int logflags, int pri, char *tag, char *msg) {
        time_t now;
 
        if (fd > -1) {
-	       /* there was a gethostname call here, but its output was not used */
 	       /* avoid snprintf - it does not exist on ancient systems */
                if (logflags & LOG_PID)
                        sprintf (pid, "[%d]", getpid());
@@ -125,7 +132,7 @@ main(int argc, char **argv) {
 	tag = NULL;
 	pri = LOG_NOTICE;
 	logflags = 0;
-	while ((ch = getopt(argc, argv, "f:ip:st:u:")) != EOF)
+	while ((ch = getopt(argc, argv, "f:ip:st:u:d")) != EOF)
 		switch((char)ch) {
 		case 'f':		/* file to log */
 			if (freopen(optarg, "r", stdin) == NULL) {
@@ -149,6 +156,9 @@ main(int argc, char **argv) {
 			break;
 		case 'u':		/* unix socket */
 			usock = optarg;
+			break;
+		case 'd':
+			optd = 1;	/* use datagrams */
 			break;
 		case '?':
 		default:

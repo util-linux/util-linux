@@ -19,11 +19,30 @@
 #ifndef MS_MANDLOCK
 #define MS_MANDLOCK	64	/* Allow mandatory locks on an FS */
 #endif
+#ifndef MS_ACTION_MASK
+#define	MS_ACTION_MASK	0x380
+/* Remount, but new filesystem may be different from old. Atomic
+   (i.e. there is no interval when nothing is mounted at the mountpoint).
+   If new fs differs from the old one and old is busy - -EBUSY. */
+#define	MS_REPLACE	0x080	/* 128 */
+/* After, Before: as soon as we get unions these will add a new member
+   in the end or beginning of the chain. Fail if there is a stack
+   on the mountpoint. */
+#define	MS_AFTER	0x100	/* 256 */
+#define	MS_BEFORE	0x180
+/* Over: if nothing mounted on a mountpoint - same as if none of these
+flags had been set; if we have a union with more than one element - fail;
+if we have a stack or plain mount - mount atop of it, forming a stack. */
+#define	MS_OVER		0x200	/* 512 */
+#endif
 #ifndef MS_NOATIME
 #define MS_NOATIME	1024	/* Do not update access times. */
 #endif
 #ifndef MS_NODIRATIME
 #define MS_NODIRATIME   2048    /* Do not update directory access times */
+#endif
+#ifndef MS_BIND
+#define	MS_BIND		4096
 #endif
 /*
  * Magic mount flag number. Has to be or-ed to the flag values.

@@ -64,8 +64,10 @@ struct initline {
 struct initline inittab[NUMCMD];
 int numcmd;
 int stopped = 0;	/* are we stopped */
-static char boot_script[PATH_SIZE] = _PATH_RC;
+static char boot_prog[PATH_SIZE] = _PATH_RC;
 static char script_prefix[PATH_SIZE] = "\0";
+static char final_prog[PATH_SIZE] = "\0";
+static char init_path[PATH_SIZE] = "\0";
 static int caught_sigint = 0;
 static const char *initctl_name = "/dev/initctl";
 static int initctl_fd = -1;
@@ -73,23 +75,27 @@ static volatile int do_longjmp = 0;
 static sigjmp_buf jmp_env;
 
 
-static void do_single ();
+static void do_single (void);
 static int do_rc_tty (const char *path);
 static int process_path ( const char *path, int (*func) (const char *path) );
 static int preload_file (const char *path);
 static int run_file (const char *path);
-void spawn(), hup_handler(), read_inittab();
-void tstp_handler ();
-void int_handler ();
+static void spawn (int i), read_inittab (void);
+static void hup_handler (int sig);
+static void sigtstp_handler (int sig);
+static void int_handler (int sig);
 static void sigchild_handler (int sig);
 static void sigquit_handler (int sig);
-void set_tz(), write_wtmp();
-static pid_t mywaitpid (pid_t pid, int *status, int *rc_status);
-static int run_command (const char *path, const char *name, pid_t pid);
-static void forget_those_not_present ();
+static void sigterm_handler (int sig);
+#ifdef SET_TZ
+static void set_tz (void);
+#endif
+static void write_wtmp (void);
+static pid_t mywaitpid (pid_t pid, int *status);
+static int run_command (const char *file, const char *name, pid_t pid);
 
 
-void err(char *s)
+static void err (char *s)
 {
 	int fd;
 	
@@ -100,8 +106,7 @@ void err(char *s)
 	close(fd);
 }
 
-void
-enter_single()
+static void enter_single (void)
 {
     pid_t pid;
     int i;
@@ -130,10 +135,13 @@ int main(int argc, char *argv[])
 #ifdef SET_TZ
 	set_tz();
 #endif
+	signal (SIGINT, int_handler);
 	sigemptyset (&sa.sa_mask);
 	sa.sa_flags = 0;
-	signal (SIGTSTP, tstp_handler);
-	signal (SIGINT, int_handler);
+	sa.sa_handler = sigtstp_handler;
+	sigaction (SIGTSTP, &sa, NULL);
+	sa.sa_handler = sigterm_handler;
+	sigaction (SIGTERM, &sa, NULL);
 	sa.sa_handler = sigchild_handler;
 	sigaction (SIGCHLD, &sa, NULL);
 	sa.sa_handler = sigquit_handler;
@@ -156,7 +164,7 @@ int main(int argc, char *argv[])
 			strcpy (path, script_prefix);
 			strcat (path, argv[i]);
 			if (access (path, R_OK | X_OK) == 0)
-				strcpy (boot_script, path);
+				strcpy (boot_prog, path);
 		}
 	}
 
@@ -172,7 +180,7 @@ int main(int argc, char *argv[])
 	while(stopped)	
 		pause();
 
-	if ( do_rc_tty (boot_script) ) do_single ();
+	if ( do_rc_tty (boot_prog) ) do_single ();
 
 	while(stopped)	/*Also if /etc/rc fails & we get SIGTSTP*/
 		pause();
@@ -195,10 +203,26 @@ int main(int argc, char *argv[])
 
 	for(i = 0; i < numcmd; i++)
 		spawn(i);
-	
+
+	if (final_prog[0] != '\0') {
+		switch ( fork () )
+		{
+		  case 0:   /*  Child   */
+		    execl (final_prog, final_prog, "start", NULL);
+		    err ( _("error running finalprog\n") );
+		    _exit (1);
+		    break;
+		  case -1:  /*  Error   */
+		    err ( _("error forking finalprog\n") );
+		    break;
+		  default:  /*  Parent  */
+		    break;
+		}
+	}
+
 	for ever {
-		pid = mywaitpid (-1, &vec, NULL);
-		if (pid == 0) continue;
+		pid = mywaitpid (-1, &vec);
+		if (pid < 1) continue;
 
 		/* clear utmp entry, and append to wtmp if possible */
 		{
@@ -249,7 +273,7 @@ int main(int argc, char *argv[])
  * return true if singleuser mode is allowed.
  * If /etc/securesingle exists ask for root password, otherwise always OK.
  */
-static int check_single_ok ()
+static int check_single_ok (void)
 {
     char *pass, *rootpass = NULL;
     struct passwd *pwd;
@@ -273,7 +297,7 @@ static int check_single_ok ()
     return 0;
 }
 
-static void do_single ()
+static void do_single (void)
 {
     char path[PATH_SIZE];
 
@@ -293,15 +317,15 @@ static void do_single ()
  */
 static int do_rc_tty (const char *path)
 {
-    int status, rc_status = 0;
-    pid_t pid;
+    int status;
+    pid_t pid, child;
     sigset_t ss;
 
     if (caught_sigint) return 0;
     process_path (path, preload_file);
     /*  Launch off a subprocess to start a new session (required for frobbing
 	the TTY) and capture control-C  */
-    switch ( pid = fork () )
+    switch ( child = fork () )
     {
       case 0:   /*  Child  */
 	for (status = 1; status < NSIG; status++) signal (status, SIG_DFL);
@@ -312,7 +336,7 @@ static int do_rc_tty (const char *path)
 	setsid ();
 	ioctl (0, TIOCSCTTY, 0);  /*  I want my control-C  */
 	sigsuspend (&ss);  /*  Should never return, should just be killed  */
-	break;             /*  No-one is controlled by this TTY now       */
+	break;             /*  No-one else is controlled by this TTY now   */
       case -1:  /*  Error  */
 	return (1);
 	/*break;*/
@@ -321,13 +345,15 @@ static int do_rc_tty (const char *path)
     }
     /*  Parent  */
     process_path (path, run_file);
-    while (rc_status == 0)
-	if (mywaitpid (-1, &status, &rc_status) == pid)
+    while (1)
+    {
+	if ( ( pid = mywaitpid (-1, &status) ) == child )
 	    return (WTERMSIG (status) == SIGINT) ? 0 : 1;
-    forget_those_not_present ();
-    kill (pid, SIGKILL);
-    while (waitpid (pid, NULL, 0) != pid)  /*  Nothing  */;
-    return (rc_status < 0) ? 1 : 0;
+	if (pid < 0) break;
+    }
+    kill (child, SIGKILL);
+    while (waitpid (child, NULL, 0) != child)  /*  Nothing  */;
+    return 0;
 }   /*  End Function do_rc_tty  */
 
 static int process_path ( const char *path, int (*func) (const char *path) )
@@ -368,7 +394,7 @@ static int preload_file (const char *path)
     char ch;
 
     if ( ( fd = open (path, O_RDONLY, 0) ) < 0) return 0;
-    while (read (fd, &ch, 1) == 1) lseek (fd, 1023, SEEK_CUR);
+    while (read (fd, &ch, 1) == 1) lseek (fd, 1024, SEEK_CUR);
     close (fd);
     return 0;
 }   /*  End Function preload_file  */
@@ -380,9 +406,9 @@ static int run_file (const char *path)
     if ( ( ptr = strrchr ( (char *) path, '/' ) ) == NULL ) ptr = path;
     else ++ptr;
     return (run_command (path, ptr, 0) == SIG_FAILED) ? 1 : 0;
-}   /*  End Function preload_file  */
+}   /*  End Function run_file  */
 
-void spawn(int i)
+static void spawn (int i)
 {
 	pid_t pid;
 	int j;
@@ -419,6 +445,7 @@ void spawn(int i)
 		/* this is the parent */
 		inittab[i].pid = pid;
 		inittab[i].last_start = ct;
+		sched_yield ();
 		return;
 	} else {
 		/* this is the child */
@@ -448,7 +475,7 @@ void spawn(int i)
 	}
 }
 
-void read_inittab()
+static void read_inittab (void)
 {
 	FILE *f;
 	char buf[CMDSIZ];
@@ -460,7 +487,7 @@ void read_inittab()
 	char tty[50];
 	struct stat stb;
 #endif
-	char *termenv, *getenv();
+	char *termenv;
 	
 	termenv = getenv("TERM");	/* set by kernel */
 	/* termenv = "vt100"; */
@@ -500,6 +527,16 @@ void read_inittab()
 			if ( !strncmp (buf, "PATH", 4) ) {
 				while ( isspace (*ptr) ) ++ptr;
 				setenv ("PATH", ptr, 1);
+				continue;
+			}
+			if ( !strncmp (buf, "INIT_PATH", 9) ) {
+				while ( isspace (*ptr) ) ++ptr;
+				strcpy (init_path, ptr);
+				continue;
+			}
+			if ( !strncmp (buf, "finalprog", 8) ) {
+				while ( isspace (*ptr) ) ++ptr;
+				strcpy (final_prog, ptr);
 				continue;
 			}
 		}
@@ -549,11 +586,11 @@ void read_inittab()
 		len = strlen (path);
 		if (path[len - 1] == '/') path[len - 1] = '\0';
 		if (access (path, R_OK | X_OK) == 0)
-			strcpy (boot_script, path);
+			strcpy (boot_prog, path);
 	}
 }
 
-void hup_handler()
+static void hup_handler (int sig)
 {
 	int i,j;
 	int oldnum;
@@ -564,7 +601,7 @@ void hup_handler()
 
 	memcpy(savetab, inittab, NUMCMD * sizeof(struct initline));
 	oldnum = numcmd;		
-	read_inittab();
+	read_inittab ();
 	
 	for(i = 0; i < numcmd; i++) {
 		had_already = 0;
@@ -581,15 +618,21 @@ void hup_handler()
 	(void) signal(SIGHUP, hup_handler);
 }
 
-void tstp_handler()
+static void sigtstp_handler (int sig)
 {
-	stopped = ~stopped;
-	if(!stopped) hup_handler();
+    stopped = ~stopped;
+    if (!stopped) hup_handler (sig);
+}   /*  End Function sigtstp_handler  */
 
-	signal(SIGTSTP, tstp_handler);
-}
+static void sigterm_handler (int sig)
+{
+    int i;
 
-void int_handler()
+    for (i = 0; i < numcmd; i++)
+	if (inittab[i].pid > 0) kill (inittab[i].pid, SIGTERM);
+}   /*  End Function sigterm_handler  */
+
+static void int_handler (int sig)
 {
 	pid_t pid;
 	
@@ -617,7 +660,8 @@ static void sigquit_handler (int sig)
     execl (_PATH_REBOOT, _PATH_REBOOT, NULL); /*  It knows pid=1 must sleep  */
 }
 
-void set_tz()
+#ifdef SET_TZ
+static void set_tz (void)
 {
 	FILE *f;
 	int len;
@@ -629,8 +673,9 @@ void set_tz()
 	tzone[len-1] = 0; /* get rid of the '\n' */
 	setenv("TZ", tzone, 0);
 }
+#endif
 
-void write_wtmp()
+static void write_wtmp (void)
 {
     int fd, lf;
     struct utmp ut;
@@ -653,44 +698,66 @@ void write_wtmp()
 }     
 
 
-struct waiter_struct
+struct needer_struct
 {
-    struct waiter_struct *next;
+    struct needer_struct *next;
     pid_t pid;
+};
+
+struct service_struct
+{
+    struct service_struct *prev, *next;    /*  Script services chain         */
+    struct needer_struct *needers;         /*  Needers waiting for service   */
+    struct script_struct *attempting_providers;
+    int failed;                /*  TRUE if attempting provider failed badly  */
+    char name[1];
 };
 
 struct script_struct
 {
     pid_t pid;
-    struct script_struct *prev, *next;
-    struct waiter_struct *first_waiter;
-    char name[1];
+    struct script_struct *prev, *next;              /*  For the list         */
+    struct service_struct *first_service, *last_service; /*First is true name*/
+    struct script_struct *next_attempting_provider; /*  Provider chain       */
 };
 
 struct list_head
 {
     struct script_struct *first, *last;
+    unsigned int num_entries;
 };
 
 
-static struct list_head available_list = {NULL, NULL};
-static struct list_head starting_list = {NULL, NULL};
-static struct list_head failed_list = {NULL, NULL};
-static struct list_head unavailable_list = {NULL, NULL};
+static struct list_head available_list = {NULL, NULL, 0};
+static struct list_head starting_list = {NULL, NULL, 0};
+static struct service_struct *unavailable_services = NULL;  /*  For needers  */
+static int num_needers = 0;
 
 
-static void process_pidstat (pid_t pid, int status, int *rc_status);
-static struct script_struct *find_script (const char *name,
-					  struct list_head *head);
+static int process_pidstat (pid_t pid, int status);
+static void process_command (const struct command_struct *command);
+static struct service_struct *find_service_in_list (const char *name,
+						    struct service_struct *sv);
+static struct script_struct *find_script_byname
+    (const char *name,struct list_head *head, struct service_struct **service);
+static struct script_struct *find_script_bypid (pid_t pid,
+						struct list_head *head);
 static void insert_entry (struct list_head *head, struct script_struct *entry);
 static void remove_entry (struct list_head *head, struct script_struct *entry);
-static void signal_waiters (struct script_struct *script, int sig);
+static void signal_needers (struct service_struct *service, int sig);
+static void handle_nonworking (struct script_struct *script);
+static int force_progress (void);
+static void show_scripts (FILE *fp, const struct script_struct *script,
+			  const char *type);
+static const char *get_path (const char *file);
 
 
-static pid_t mywaitpid (pid_t pid, int *status, int *rc_status)
+static pid_t mywaitpid (pid_t pid, int *status)
+/*  [RETURNS] The pid for a process to be reaped, 0 if no process is to be
+    reaped, and less than 0 if the boot scripts appear to have finished.
+*/
 {
     int ival;
-    struct script_struct *script;
     sigset_t ss_new, ss_old;
     long buffer[COMMAND_SIZE / sizeof (long)];
     struct command_struct *command = (struct command_struct *) buffer;
@@ -699,8 +766,7 @@ static pid_t mywaitpid (pid_t pid, int *status, int *rc_status)
     if (status == NULL) status = &ival;
     if ( ( pid = waitpid (pid, status, WNOHANG) ) > 0 )
     {
-	process_pidstat (pid, *status, rc_status);
-	return pid;
+	return process_pidstat (pid, *status);
     }
     /*  Some magic to avoid races  */
     command->command = -1;
@@ -717,23 +783,76 @@ static pid_t mywaitpid (pid_t pid, int *status, int *rc_status)
     }
     if (command->command < 0) read (initctl_fd, buffer, COMMAND_SIZE);
     do_longjmp = 0;
+    process_command (command);
+    return 0;
+}   /*  End Function mywaitpid  */
+
+static pid_t process_pidstat (pid_t pid, int status)
+/*  [RETURNS] The pid for a process to be reaped, 0 if no process is to be
+    reaped, and less than 0 if the boot scripts appear to have finished.
+*/
+{
+    int failed;
+    struct script_struct *script;
+    struct service_struct *service;
+
+    if ( ( script = find_script_bypid (pid, &starting_list) ) == NULL )
+	return pid;
+    remove_entry (&starting_list, script);
+    if ( WIFEXITED (status) && (WEXITSTATUS (status) == 0) )
+    {
+	struct script_struct *provider;
+
+	/*  Notify needers and other providers  */
+	for (service = script->first_service; service != NULL;
+	     service = service->next)
+	{
+	    signal_needers (service, SIG_PRESENT);
+	    for (provider = service->attempting_providers; provider != NULL;
+		 provider = provider->next_attempting_provider)
+		kill (provider->pid, SIG_PRESENT);
+	    service->attempting_providers = NULL;
+	}
+	insert_entry (&available_list, script);
+	return force_progress ();
+    }
+    failed = ( WIFEXITED (status) && (WEXITSTATUS (status) == 2) ) ? 0 : 1;
+    for (service = script->first_service; service != NULL;
+	 service = service->next)
+	service->failed = failed;
+    handle_nonworking (script);
+    return force_progress ();
+}   /*  End Function process_pidstat  */
+
+static void process_command (const struct command_struct *command)
+{
+    int ival;
+    struct script_struct *script;
+    struct service_struct *service;
+
     switch (command->command)
     {
       case COMMAND_TEST:
 	kill (command->pid,
-	      (find_script (command->name, &available_list) == NULL) ?
+	      (find_script_byname (command->name, &available_list,
+				   NULL) == NULL) ?
 	      SIG_NOT_PRESENT : SIG_PRESENT);
 	break;
       case COMMAND_NEED:
 	ival = run_command (command->name, command->name, command->pid);
-	if (ival != 0) kill (command->pid, ival);
+	if (ival == 0)
+	{
+	    ++num_needers;
+	    force_progress ();
+	}
+	else kill (command->pid, ival);
 	break;
       case COMMAND_ROLLBACK:
 	if (command->name[0] == '\0') script = NULL;
 	else
 	{
-	    if ( ( script = find_script (command->name, &available_list) )
-		 == NULL )
+	    if ( ( script = find_script_byname (command->name, &available_list,
+						NULL) ) == NULL )
 	    {
 		kill (command->pid, SIG_NOT_PRESENT);
 		break;
@@ -741,7 +860,9 @@ static pid_t mywaitpid (pid_t pid, int *status, int *rc_status)
 	}
 	while (script != available_list.first)
 	{
+	    pid_t pid;
 	    struct script_struct *victim = available_list.first;
+	    char txt[256];
 
 	    if ( ( pid = fork () ) == 0 )   /*  Child   */
 	    {
@@ -749,7 +870,8 @@ static pid_t mywaitpid (pid_t pid, int *status, int *rc_status)
 		open ("/dev/console", O_RDONLY, 0);
 		open ("/dev/console", O_RDWR, 0);
 		dup2 (1, 2);
-		execlp (victim->name, victim->name, "stop", NULL);
+		execlp (get_path (victim->first_service->name),
+			victim->first_service->name, "stop", NULL);
 		err ( _("error running programme\n") );
 		_exit (SIG_NOT_STOPPED);
 	    }
@@ -759,8 +881,11 @@ static pid_t mywaitpid (pid_t pid, int *status, int *rc_status)
 		while (waitpid (pid, &ival, 0) != pid) /*  Nothing  */;
 		if ( WIFEXITED (ival) && (WEXITSTATUS (ival) == 0) )
 		{
+		    sprintf (txt, "Stopped service: %s\n",
+			     victim->first_service->name);
 		    remove_entry (&available_list, victim);
 		    free (victim);
+		    err (txt);
 		}
 		else break;
 	    }
@@ -769,119 +894,187 @@ static pid_t mywaitpid (pid_t pid, int *status, int *rc_status)
 	      (script ==available_list.first) ? SIG_STOPPED : SIG_NOT_STOPPED);
 	break;
       case COMMAND_DUMP_LIST:
-	if (fork () == 0)
+	if (fork () == 0) /* Do it in a child process so pid=1 doesn't block */
 	{
 	    FILE *fp;
 
 	    if ( ( fp = fopen (command->name, "w") ) == NULL ) _exit (1);
-	    fputs ("AVAILABLE SERVICES:\n", fp);
-	    for (script = available_list.first; script != NULL;
-		 script = script->next) fprintf (fp, "%s\n", script->name);
-	    fputs ("FAILED SERVICES:\n", fp);
-	    for (script = failed_list.first; script != NULL;
-		 script = script->next) fprintf (fp, "%s\n", script->name);
+	    show_scripts (fp, available_list.first, "AVAILABLE");
+	    show_scripts (fp, starting_list.first, "STARTING");
+	    fputs ("UNAVAILABLE SERVICES:\n", fp);
+	    for (service = unavailable_services; service != NULL;
+		 service = service->next)
+		fprintf (fp, "%s (%s)\n", service->name,
+			 service->failed ? "FAILED" : "not configured");
 	    fclose (fp);
 	    _exit (0);
 	}
+	break;
+      case COMMAND_PROVIDE:
+	/*  Sanity check  */
+	if ( ( script = find_script_bypid (command->ppid, &starting_list) )
+	     == NULL )
+	{
+	    kill (command->pid, SIG_NOT_CHILD);
+	    break;
+	}
+	if (find_script_byname (command->name, &available_list, NULL) != NULL)
+	{
+	    kill (command->pid, SIG_PRESENT);
+	    break;
+	}
+	if (find_script_byname (command->name, &starting_list, &service)
+	    != NULL)
+	{   /*  Someone else is trying to provide  */
+	    script->next_attempting_provider = service->attempting_providers;
+	    service->attempting_providers = script;
+	    break;
+	}
+	if ( ( service = find_service_in_list (command->name,
+					       unavailable_services) )
+	     == NULL )
+	{   /*  We're the first to try and provide: create it  */
+	    if ( ( service =
+		   calloc (1, strlen (command->name) + sizeof *service) )
+		 == NULL )
+	    {
+		kill (command->pid, SIG_NOT_CHILD);
+		break;
+	    }
+	    strcpy (service->name, command->name);
+	}
+	else
+	{   /*  Orphaned service: unhook and grab it  */
+	    if (service->prev == NULL) unavailable_services = service->next;
+	    else service->prev->next = service->next;
+	    if (service->next != NULL) service->next->prev = service->prev;
+	    service->next = NULL;
+	}
+	service->prev = script->last_service;
+	script->last_service->next = service;
+	script->last_service = service;
+	kill (command->pid, SIG_NOT_PRESENT);
 	break;
       case -1:
       default:
 	break;
     }
-    return 0;
-}   /*  End Function mywaitpid  */
+}   /*  End Function process_command  */
 
-static void process_pidstat (pid_t pid, int status, int *rc_status)
+static int run_command (const char *file, const char *name, pid_t pid)
 {
     struct script_struct *script;
+    struct needer_struct *needer = NULL;
+    struct service_struct *service;
 
-    if (initctl_fd < 0) return;
-    if (pid < 1) return;
-    for (script = starting_list.first; script != NULL; script = script->next)
-	if (script->pid == pid) break;
-    if (script == NULL) return;
-    remove_entry (&starting_list, script);
-    if ( WIFEXITED (status) && (WEXITSTATUS (status) == 0) )
-    {
-	signal_waiters (script, SIG_PRESENT);
-	insert_entry (&available_list, script);
-    }
-    else if ( WIFEXITED (status) && (WEXITSTATUS (status) == 2) )
-    {
-	signal_waiters (script, SIG_NOT_PRESENT);
-	insert_entry (&unavailable_list, script);
-    }
-    else
-    {
-	signal_waiters (script, SIG_FAILED);
-	insert_entry (&failed_list, script);
-    }
-    if ( (rc_status == NULL) || (starting_list.first != NULL) ) return;
-    *rc_status = (failed_list.first == NULL) ? 1 : -1;
-}   /*  End Function process_pidstat  */
-
-static int run_command (const char *path, const char *name, pid_t pid)
-{
-    struct script_struct *script;
-    struct waiter_struct *waiter = NULL;
-
-    if (find_script (name, &available_list) != NULL) return SIG_PRESENT;
-    if (find_script (name, &failed_list) != NULL) return SIG_FAILED;
-    if (find_script (name, &unavailable_list) != NULL) return SIG_NOT_PRESENT;
+    if (find_script_byname (name, &available_list, NULL) != NULL)
+	return SIG_PRESENT;
     if (pid != 0)
     {
-	waiter = calloc (1, sizeof *waiter);
-	if (waiter == NULL) return SIG_FAILED;
-	waiter->pid = pid;
+	needer = calloc (1, sizeof *needer);
+	if (needer == NULL) return SIG_FAILED;
+	needer->pid = pid;
     }
-    script = find_script (name, &starting_list);
+    script = find_script_byname (name, &starting_list, &service);
+    if (script == NULL)
+	service = find_service_in_list (name, unavailable_services);
     if (script == NULL)
     {
 	int i;
+	char txt[1024];
 
-	script = calloc (1, strlen (name) + sizeof *script);
-	if (script == NULL)
+	if ( ( script = calloc (1, sizeof *script) ) == NULL )
 	{
-	    if (waiter != NULL) free (waiter);
+	    if (needer != NULL) free (needer);
 	    return SIG_FAILED;
 	}
-	strcpy (script->name, name);
+	if (service == NULL)
+	{
+	    service = calloc (1, strlen (name) + sizeof *service);
+	    if (service == NULL)
+	    {
+		free (script);
+		return SIG_FAILED;
+	    }
+	    strcpy (service->name, name);
+	}
+	else  /*  Unhook service from unavailable list  */
+	{
+	    if (service->prev == NULL) unavailable_services = service->next;
+	    else service->prev->next = service->next;
+	    if (service->next != NULL) service->next->prev = service->prev;
+	    service->prev = NULL;
+	    service->next = NULL;
+	}
 	switch ( script->pid = fork () )
 	{
 	  case 0:   /*  Child   */
 	    for (i = 1; i < NSIG; i++) signal (i, SIG_DFL);
-	    execlp (path, script->name, "start", NULL);
-	    err ( _("error running programme\n") );
+	    execlp (get_path (file), service->name, "start", NULL);
+	    sprintf (txt, "error running programme: \"%s\"\n", service->name);
+	    err ( _(txt) );
 	    _exit (SIG_FAILED);
 	    break;
 	  case -1:  /*  Error   */
+	    service->next = unavailable_services;
+	    if (unavailable_services != NULL)
+		unavailable_services->prev = service;
+	    unavailable_services = service;
 	    free (script);
-	    if (waiter != NULL) free (waiter);
+	    if (needer != NULL) free (needer);
 	    return SIG_FAILED;
 	    /*break;*/
 	  default:  /*  Parent  */
+	    script->first_service = service;
+	    script->last_service = service;
 	    insert_entry (&starting_list, script);
 	    sched_yield ();
 	    break;
 	}
     }
-    if (waiter == NULL) return 0;
-    waiter->next = script->first_waiter;
-    script->first_waiter = waiter;
+    if (needer == NULL) return 0;
+    needer->next = service->needers;
+    service->needers = needer;
     return 0;
 }   /*  End Function run_command  */
 
-static struct script_struct *find_script (const char *name,
-					  struct list_head *head)
+static struct service_struct *find_service_in_list (const char *name,
+						    struct service_struct *sv)
 {
-    struct script_struct *entry;
+    for (; sv != NULL; sv = sv->next)
+	if (strcmp (sv->name, name) == 0) return (sv);
+    return NULL;
+}   /*  End Function find_service_in_list  */
 
-    for (entry = head->first; entry != NULL; entry = entry->next)
+static struct script_struct *find_script_byname (const char *name,
+						 struct list_head *head,
+						 struct service_struct **service)
+{
+    struct script_struct *script;
+
+    for (script = head->first; script != NULL; script = script->next)
     {
-	if (strcmp (entry->name, name) == 0) return (entry);
+	struct service_struct *sv;
+
+	if ( ( sv = find_service_in_list (name, script->first_service) )
+	     != NULL )
+	{
+	    if (service != NULL) *service = sv;
+	    return (script);
+	}
     }
     return NULL;
-}   /*  End Function find_script  */
+}   /*  End Function find_script_byname  */
+
+static struct script_struct *find_script_bypid (pid_t pid,
+						struct list_head *head)
+{
+    struct script_struct *script;
+
+    for (script = head->first; script != NULL; script = script->next)
+	if (script->pid == pid) return (script);
+    return NULL;
+}   /*  End Function find_script_bypid  */
 
 static void insert_entry (struct list_head *head, struct script_struct *entry)
 {
@@ -891,6 +1084,7 @@ static void insert_entry (struct list_head *head, struct script_struct *entry)
     if (head->first != NULL) head->first->prev = entry;
     head->first = entry;
     if (head->last == NULL) head->last = entry;
+    ++head->num_entries;
 }   /*  End Function insert_entry  */
 
 static void remove_entry (struct list_head *head, struct script_struct *entry)
@@ -899,37 +1093,96 @@ static void remove_entry (struct list_head *head, struct script_struct *entry)
     else entry->prev->next = entry->next;
     if (entry->next == NULL) head->last = entry->prev;
     else entry->next->prev = entry->prev;
+    --head->num_entries;
 }   /*  End Function remove_entry  */
 
-static void signal_waiters (struct script_struct *script, int sig)
+static void signal_needers (struct service_struct *service, int sig)
 {
-    struct waiter_struct *waiter, *next_waiter;
+    struct needer_struct *needer, *next_needer;
 
-    for (waiter = script->first_waiter; waiter != NULL; waiter = next_waiter)
+    for (needer = service->needers; needer != NULL; needer = next_needer)
     {
-	kill (waiter->pid, sig);
-	next_waiter = waiter->next;
-	free (waiter);
+	kill (needer->pid, sig);
+	next_needer = needer->next;
+	free (needer);
+	--num_needers;
     }
-    script->first_waiter = NULL;
-}   /*  End Function signal_waiters  */
+    service->needers = NULL;
+}   /*  End Function signal_needers  */
 
-static void forget_those_not_present ()
+static void handle_nonworking (struct script_struct *script)
 {
-    struct script_struct *curr, *next;
+    struct service_struct *service, *next;
 
-    for (curr = failed_list.first; curr != NULL; curr = next)
+    for (service = script->first_service; service != NULL; service = next)
     {
-	next = curr->next;
-	free (curr);
+	struct script_struct *provider = service->attempting_providers;
+
+	next = service->next;
+	if (provider == NULL)
+	{
+	    service->next = unavailable_services;
+	    if (unavailable_services != NULL)
+		unavailable_services->prev = service;
+	    unavailable_services = service;
+	    continue;
+	}
+	service->attempting_providers = provider->next_attempting_provider;
+	provider->last_service->next = service;
+	service->prev = provider->last_service;
+	provider->last_service = service;
+	service->next = NULL;
+	kill (provider->pid, SIG_NOT_PRESENT);
     }
-    failed_list.first = NULL;
-    failed_list.last = NULL;
-    for (curr = unavailable_list.first; curr != NULL; curr = next)
+    free (script);
+}   /*  End Function handle_nonworking  */
+
+static int force_progress (void)
+/*  [RETURNS] 0 if boot scripts are still running, else -1.
+*/
+{
+    struct service_struct *service;
+
+    if (starting_list.num_entries > num_needers) return 0;
+    /*  No progress can be made: signal needers  */
+    for (service = unavailable_services; service != NULL;
+	 service = service->next)
+	signal_needers (service,
+			service->failed ? SIG_FAILED : SIG_NOT_PRESENT);
+    return (starting_list.num_entries < 1) ? -1 : 0;
+}   /*  End Function force_progress  */
+
+static void show_scripts (FILE *fp, const struct script_struct *script,
+			  const char *type)
+{
+    fprintf (fp, "%s SERVICES:\n", type);
+    for (; script != NULL; script = script->next)
     {
-	next = curr->next;
-	free (curr);
+	struct service_struct *service = script->first_service;
+
+	fputs (service->name, fp);
+	for (service = service->next; service != NULL; service = service->next)
+	    fprintf (fp, "  (%s)", service->name);
+	putc ('\n', fp);
     }
-    unavailable_list.first = NULL;
-    unavailable_list.last = NULL;
-}   /*  End Function forget_those_not_present  */
+}   /*  End Function show_scripts  */
+
+static const char *get_path (const char *file)
+{
+    char *p1, *p2;
+    static char path[PATH_SIZE];
+
+    if (file[0] == '/') return file;
+    if (init_path[0] == '\0') return file;
+    for (p1 = init_path; *p1 != '\0'; p1 = p2)
+    {
+	if ( ( p2 = strchr (p1, ':') ) == NULL )
+	    p2 = p1 + strlen (p1);
+	strncpy (path, p1, p2 - p1);
+	path[p2 - p1] = '/';
+	strcat (path + (p2 - p1) + 1, file);
+	if (*p2 == ':') ++p2;
+	if (access (path, X_OK) == 0) return path;
+    }
+    return file;
+}   /*  End Function get_path  */

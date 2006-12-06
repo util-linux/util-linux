@@ -71,9 +71,10 @@ void initbuf(void);
 void fwd(void);
 void reverse(void);
 void initinfo(void);
-void outc(wint_t c);
+void outc(wint_t c, int width);
 void setmode(int newmode);
-void setcol(int newcol);
+static void setcol(int newcol);
+static void needcol(int col);
 
 #define	IESC	'\033'
 #define	SO	'\016'
@@ -98,6 +99,7 @@ char	*CURS_UP, *CURS_RIGHT, *CURS_LEFT,
 struct	CHAR	{
 	char	c_mode;
 	wchar_t	c_char;
+	int	c_width;
 } ;
 
 struct	CHAR	*obuf;
@@ -180,6 +182,7 @@ int main(int argc, char **argv)
 void filter(FILE *f)
 {
 	wint_t c;
+	int i, w;
 
 	while ((c = getwc(f)) != WEOF) switch(c) {
 
@@ -245,10 +248,18 @@ void filter(FILE *f)
 		continue;
 
 	case '_':
-		if (obuf[col].c_char)
-			obuf[col].c_mode |= UNDERL | mode;
-		else
-			obuf[col].c_char = '_';
+		if (obuf[col].c_char || obuf[col].c_width < 0) {
+			while(col > 0 && obuf[col].c_width < 0)
+				col--;
+			w = obuf[col].c_width;
+			for (i = 0; i < w; i++)
+				obuf[col++].c_mode |= UNDERL | mode;
+			setcol(col);
+			continue;
+		}
+		obuf[col].c_char = '_';
+		obuf[col].c_width = 1;
+		/* fall through */
 	case ' ':
 		setcol(col + 1);
 		continue;
@@ -265,17 +276,31 @@ void filter(FILE *f)
 	default:
 		if (!iswprint(c))	/* non printing */
 			continue;
+		w = wcwidth(c);
+		needcol(col + w);
 		if (obuf[col].c_char == '\0') {
 			obuf[col].c_char = c;
-			obuf[col].c_mode = mode;
+			for (i = 0; i < w; i++)
+				obuf[col+i].c_mode = mode;
+			obuf[col].c_width = w;
+			for (i = 1; i < w; i++)
+				obuf[col+i].c_width = -1;
 		} else if (obuf[col].c_char == '_') {
 			obuf[col].c_char = c;
-			obuf[col].c_mode |= UNDERL|mode;
-		} else if (obuf[col].c_char == c)
-			obuf[col].c_mode |= BOLD|mode;
-		else
-			obuf[col].c_mode = mode;
-		setcol(col + 1);
+			for (i = 0; i < w; i++)
+				obuf[col+i].c_mode |= UNDERL|mode;
+			obuf[col].c_width = w;
+			for (i = 1; i < w; i++)
+				obuf[col+i].c_width = -1;
+		} else if (obuf[col].c_char == c) {
+			for (i = 0; i < w; i++)
+				obuf[col+i].c_mode |= BOLD|mode;
+		} else {
+			w = obuf[col].c_width;
+			for (i = 0; i < w; i++)
+				obuf[col+i].c_mode = mode;
+		}
+		setcol(col + w);
 		continue;
 	}
 	if (maxcol)
@@ -299,9 +324,11 @@ void flushln(void)
 			if (upln) {
 				PRINT(CURS_RIGHT);
 			} else
-				outc(' ');
+				outc(' ', 1);
 		} else
-			outc(obuf[i].c_char);
+			outc(obuf[i].c_char, obuf[i].c_width);
+		if (obuf[i].c_width > 1)
+			i += obuf[i].c_width -1;
 	}
 	if (lastmode != NORMAL) {
 		setmode(0);
@@ -344,6 +371,8 @@ void overstrike(void)
 			break;
 		case BOLD:
 			*cp++ = obuf[i].c_char;
+			if (obuf[i].c_width > 1)
+				i += obuf[i].c_width - 1;
 			hadbold=1;
 			break;
 		}
@@ -473,12 +502,16 @@ void initinfo(void)
 
 static int curmode = 0;
 
-void outc(wint_t c)
-{
+void
+outc(wint_t c, int width) {
+	int i;
+
 	putwchar(c);
 	if (must_use_uc && (curmode&UNDERL)) {
-		PRINT(CURS_LEFT);
-		PRINT(UNDER_CHAR);
+		for (i=0; i<width; i++)
+			PRINT(CURS_LEFT);
+		for (i=0; i<width; i++)
+			PRINT(UNDER_CHAR);
 	}
 }
 
@@ -533,39 +566,40 @@ void setmode(int newmode)
 	curmode = newmode;
 }
 
-
-
-
-void setcol(int newcol)
-{
+static void
+setcol(int newcol) {
 	col = newcol;
 
 	if (col < 0)
 		col = 0;
-	else if (col > maxcol) {
-		maxcol = col;
+	else if (col > maxcol)
+		needcol(col);
+}
 
-		/* If col >= obuflen, expand obuf until obuflen > col. */
-		while (col >= obuflen) {
-			/* Paranoid check for obuflen == INT_MAX. */
-			if (obuflen == INT_MAX) {
-				fprintf(stderr,
-					_("Input line too long.\n"));
-				exit(1);
-			}
+static void
+needcol(int col) {
+	maxcol = col;
 
-			/* Similar paranoia: double only up to INT_MAX. */
-			obuflen = ((INT_MAX / 2) < obuflen)
-				? INT_MAX
-				: obuflen * 2;
+	/* If col >= obuflen, expand obuf until obuflen > col. */
+	while (col >= obuflen) {
+		/* Paranoid check for obuflen == INT_MAX. */
+		if (obuflen == INT_MAX) {
+			fprintf(stderr,
+				_("Input line too long.\n"));
+			exit(1);
+		}
 
-			/* Now we can try to expand obuf. */
-			obuf = realloc(obuf, sizeof(struct CHAR) * obuflen);
-			if (obuf == NULL) {
-				fprintf(stderr,
-					_("Out of memory when growing buffer.\n"));
-				exit(1);
-			}
+		/* Similar paranoia: double only up to INT_MAX. */
+		obuflen = ((INT_MAX / 2) < obuflen)
+			? INT_MAX
+			: obuflen * 2;
+
+		/* Now we can try to expand obuf. */
+		obuf = realloc(obuf, sizeof(struct CHAR) * obuflen);
+		if (obuf == NULL) {
+			fprintf(stderr,
+				_("Out of memory when growing buffer.\n"));
+			exit(1);
 		}
 	}
 }

@@ -29,12 +29,7 @@
 #endif
 
 #include "pathnames.h"
-
-/* functions in login.c */
-void badlogin(const char *s);
-void sleepexit(int);
-extern struct hostent hostaddress;
-extern char *hostname;
+#include "login.h"
 
 #ifdef TESTING
 struct hostent hostaddress;
@@ -43,13 +38,13 @@ char *hostname;
 void 
 badlogin(const char *s)
 {
-    printf(_("badlogin: %s\n"), s);
+    printf("badlogin: %s\n", s);
 }
 
 void
 sleepexit(int x)
 {
-    printf(_("sleepexit %d\n"), x);
+    printf("sleepexit %d\n", x);
     exit(1);
 }
 #endif
@@ -315,7 +310,7 @@ in_class(const char *tty, char *class)
 }
 
 /* start JDS - SBA */
-void 
+static void 
 free_group(struct grplist *ge)
 {
     if (ge) {
@@ -326,7 +321,7 @@ free_group(struct grplist *ge)
     }
 }
 
-void 
+static void 
 free_class(struct ttyclass *tc)
 {
     if (tc) {
@@ -339,7 +334,7 @@ free_class(struct ttyclass *tc)
     }
 }
 
-void 
+static void 
 free_all(void)
 {
     free_class(ttyclasses);

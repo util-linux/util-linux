@@ -67,6 +67,10 @@ Unmount without writing in
 .B \-r
 In case unmounting fails, try to remount read-only.
 .TP
+.B \-d
+In case the unmounted device was a loop device, also
+free this loop device.
+.TP
 .B \-a
 All of the file systems described in
 .I /etc/mtab
@@ -92,7 +96,8 @@ The
 .B umount
 command will free the loop device (if any) associated
 with the mount, in case it finds the option `loop=...' in
-.IR /etc/mtab .
+.IR /etc/mtab ,
+or when the \-d option was given.
 Any pending loop devices can be freed using `losetup -d', see
 .BR losetup (8).
 
