@@ -67,10 +67,13 @@ struct systypes i386_sys_types[] = {
 	{0xa5, N_("FreeBSD")},		/* various BSD flavours */
 	{0xa6, N_("OpenBSD")},
 	{0xa7, N_("NeXTSTEP")},
+	{0xa8, N_("Darwin UFS")},
 	{0xa9, N_("NetBSD")},
+	{0xab, N_("Darwin boot")},
 	{0xb7, N_("BSDI fs")},
 	{0xb8, N_("BSDI swap")},
 	{0xbb, N_("Boot Wizard hidden")},
+	{0xbe, N_("Solaris boot")},
 	{0xc1, N_("DRDOS/sec (FAT-12)")},
 	{0xc4, N_("DRDOS/sec (FAT-16 < 32M)")},
 	{0xc6, N_("DRDOS/sec (FAT-16)")},

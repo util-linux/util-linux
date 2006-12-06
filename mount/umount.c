@@ -25,6 +25,7 @@
  * 001202: aeb - remove at most one line from /etc/mtab
  * 010914: Jamie Strandboge - use tcp if that was used for mount
  * 011005: hch - add lazy umount support
+ * 020105: aeb - permission test owner umount
  */
 
 #include <stdio.h>
@@ -497,6 +498,30 @@ parse_list (char *strings) {
 
 	return list;
 }
+
+static int
+contains(string_list list, char *s) {
+	while (list) {
+		if (streq (car (list), s))
+			return 1;
+		list = cdr (list);
+	}
+	return 0;
+}
+
+/*
+ * If list contains "user=peter" and we ask for "user=", return "peter"
+ */
+static char *
+get_value(string_list list, char *s) {
+	int n = strlen(s);
+	while (list) {
+		if (strncmp (car (list), s, n) == 0)
+			return car(list)+n;
+		list = cdr (list);
+	}
+	return 0;
+}
 /*=======================================================================*/
 
 static int
@@ -504,6 +529,7 @@ umount_file (char *arg) {
 	struct mntentchn *mc, *fs;
 	char *file;
 	string_list options;
+	int fstab_has_user, fstab_has_users, fstab_has_owner, ok;
 
 	file = canonicalize (arg); /* mtab paths are canonicalized */
 	if (verbose > 1)
@@ -536,7 +562,8 @@ umount_file (char *arg) {
 		}
 
 		/* User mounting and unmounting is allowed only
-		   if fstab contains the option `user' or `users' */
+		   if fstab contains one of the options `user',
+		   `users' or `owner'. */
 		/* The option `users' allows arbitrary users to mount
 		   and unmount - this may be a security risk. */
 		/* The option `user' only allows unmounting by the user
@@ -544,40 +571,35 @@ umount_file (char *arg) {
 		/* The option `owner' only allows (un)mounting by the owner. */
 		/* A convenient side effect is that the user who mounted
 		   is visible in mtab. */
+
 		options = parse_list (fs->m.mnt_opts);
-		while (options) {
-			if (streq (car (options), "user") ||
-			    streq (car (options), "users") ||
-			    streq (car (options), "owner"))
-				break;
-			options = cdr (options);
-		}
-		if (!options)
-			die (2, _("umount: only root can unmount %s from %s"),
-			     fs->m.mnt_fsname, fs->m.mnt_dir);
-		if (streq (car (options), "user") ||
-		    streq (car (options), "owner")) {
+		fstab_has_user = contains(options, "user");
+		fstab_has_users = contains(options, "users");
+		fstab_has_owner = contains(options, "owner");
+		ok = 0;
+
+		if (fstab_has_users)
+			ok = 1;
+
+		if (!ok && (fstab_has_user || fstab_has_owner)) {
 			char *user = getusername();
+			char *mtab_user;
 
 			options = parse_list (mc->m.mnt_opts);
-			while (options) {
-				char *co = car (options);
-				if (!strncmp(co, "user=", 5)) {
-					if (!user || !streq(co+5,user))
-						die(2, _("umount: only %s can unmount %s from %s"),
-						    co+5, fs->m.mnt_fsname, fs->m.mnt_dir);
-					break;
-				}
-				options = cdr (options);
-			}
+			mtab_user = get_value(options, "user=");
+
+			if (user && mtab_user && streq (user, mtab_user))
+				ok = 1;
 		}
+		if (!ok)
+			die (2, _("umount: only root can unmount %s from %s"),
+			     fs->m.mnt_fsname, fs->m.mnt_dir);
 	}
 
 	if (mc)
 		return umount_one_bw (file, mc);
 	else
 		return umount_one (arg, arg, arg, arg, NULL);
-
 }
 
 int
@@ -593,7 +615,7 @@ main (int argc, char *argv[]) {
 	textdomain(PACKAGE);
 
 	while ((c = getopt_long (argc, argv, "adfhlnrt:vV",
-				 longopts, NULL)) != EOF)
+				 longopts, NULL)) != -1)
 		switch (c) {
 		case 'a':		/* umount everything */
 			++all;

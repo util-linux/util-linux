@@ -13,6 +13,7 @@
 # H5. For cal.c: do we have <langinfo.h>?
 # H6. For mkswap.c: do we have <sys/user.h> or <asm/page.h>?
 # H7. For nfsmount.h (nfsmount_xdr.c: int32_t): do we have <asm/types.h>?
+# H8. For raw.c: do we have <linux/raw.h>?
 #
 # Existence of functions:
 # F1. For nfsmount.c: is inet_aton() available?
@@ -142,6 +143,13 @@ fi fi
 #
 if ./testincl "asm/types.h"; then
         echo "#define HAVE_asm_types_h" >> defines.h
+fi
+
+#
+# H8. For raw.c: do we have <linux/raw.h>?
+#
+if ./testincl "linux/raw.h"; then
+        echo "HAVE_RAW_H=yes" >> make_include
 fi
 
 
@@ -344,7 +352,7 @@ else
 fi
 
 #
-# Some systems have /usr/lib/termcap.so -> /usr/lib/termcap.so.2
+# 3. Some systems have /usr/lib/termcap.so -> /usr/lib/termcap.so.2
 # where however the latter file does not exist. When termcap does
 # not exist, we can try to compile more with curses instead.
 #
@@ -357,6 +365,7 @@ eval $compile
 LIBS=
 if test -s conftest && ./conftest 2>/dev/null; then
 	echo "#define HAVE_termcap" >> defines.h
+	echo "HAVE_TERMCAP=yes" >> make_include
 	echo "LIBTERMCAP=-ltermcap" >> make_include
 	echo "You have termcap"
 else
@@ -430,6 +439,11 @@ rm -f conftest conftest.c
 
 #
 # 7. Does xgettext exist and take the option --foreign-user?
+#
+# We use the bash builtin "type" here.
+# I don't see an easy way to avoid it.
+# Many Linux systems do not have "which". Maybe "env" can be used.
+# Writing /usr/bin/xgettext is no good: one may have xgettext elsewhere.
 #
 if (test $ENABLE_NLS = yes && type xgettext > /dev/null 2>&1); then
 	msg=`xgettext --foreign-user 2>&1 | grep unrecognized`
@@ -594,7 +608,7 @@ then
         echo "HAVE_GOOD_RPC=yes" >> make_include
         echo "Your rpcgen seems to work"
 else
-        echo "Your rpcgen output does not compile"
+        echo "Your rpcgen output does not compile - using pregenerated code"
 fi
 rm -f conftest conftestx.c conftestl.c conftest.h conftest.x conferrs
 rm -f conftestx.o conftestl.o

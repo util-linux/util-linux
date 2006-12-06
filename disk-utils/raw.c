@@ -29,6 +29,7 @@
 #define RAWCTLDEV "/dev/rawctl"
 #define RAWDEVDIR "/dev/raw/"
 #endif
+#define DEVFS_RAWCTLDEV "/dev/raw/rawctl"
 
 
 char *	progname;
@@ -69,7 +70,7 @@ int main(int argc, char *argv[])
 	
 	progname = argv[0];
 	
-	while ((c = getopt(argc, argv, "ahq")) != EOF) {
+	while ((c = getopt(argc, argv, "ahq")) != -1) {
 		switch (c) {
 		case 'a':
 			do_query_all = 1;
@@ -173,12 +174,19 @@ int main(int argc, char *argv[])
 
 void open_raw_ctl(void)
 {
+	int errsv;
+
 	master_fd = open(RAWCTLDEV, O_RDWR, 0);
 	if (master_fd < 0) {
-		fprintf (stderr, 
-			 "Cannot open master raw device '" RAWCTLDEV "' (%s)\n",
-			 strerror(errno));
-		exit(2);
+		errsv = errno;
+		master_fd = open(DEVFS_RAWCTLDEV, O_RDWR, 0);
+		if (master_fd < 0) {
+			fprintf (stderr, 
+				 "Cannot open master raw device '"
+				 RAWCTLDEV
+				 "' (%s)\n", strerror(errsv));
+			exit(2);
+		}
 	}
 }
 

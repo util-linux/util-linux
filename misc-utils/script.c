@@ -98,12 +98,12 @@ int	tflg = 0;
 static char *progname;
 
 static void
-die_if_symlink(char *fn) {
+die_if_link(char *fn) {
 	struct stat s;
 
-	if (lstat(fn, &s) == 0 && S_ISLNK(s.st_mode)) {
+	if (lstat(fn, &s) == 0 && (S_ISLNK(s.st_mode) || s.st_nlink > 1)) {
 		fprintf(stderr,
-			_("Warning: `%s' is a symlink.\n"
+			_("Warning: `%s' is a link.\n"
 			  "Use `%s [options] %s' if you really "
 			  "want to use it.\n"
 			  "Script not started.\n"),
@@ -135,7 +135,7 @@ main(int argc, char **argv) {
 		}
 	}
 
-	while ((ch = getopt(argc, argv, "afqt")) != EOF)
+	while ((ch = getopt(argc, argv, "afqt")) != -1)
 		switch((char)ch) {
 		case 'a':
 			aflg++;
@@ -162,7 +162,7 @@ main(int argc, char **argv) {
 		fname = argv[0];
 	else {
 		fname = "typescript";
-		die_if_symlink(fname);
+		die_if_link(fname);
 	}
 	if ((fscript = fopen(fname, aflg ? "a" : "w")) == NULL) {
 		perror(fname);

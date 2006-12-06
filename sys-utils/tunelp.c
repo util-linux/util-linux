@@ -135,7 +135,7 @@ main (int argc, char ** argv) {
   cmds->next = 0;
 
   show_irq = 1;
-  while ((c = getopt(argc, argv, "t:c:w:a:i:ho:C:sq:rT:vV")) != EOF) {
+  while ((c = getopt(argc, argv, "t:c:w:a:i:ho:C:sq:rT:vV")) != -1) {
     switch (c) {
     case 'h':
       print_usage(progname);

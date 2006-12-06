@@ -36,10 +36,11 @@
 #include <sys/types.h>
 #include "hexdump.h"
 
-void conv_c(PR *pr, u_char *p)
+void
+conv_c(PR *pr, u_char *p)
 {
-	extern int deprecated;
-	char buf[10], *str;
+	char buf[10];
+	char const *str;
 
 	switch(*p) {
 	case '\0':
@@ -78,16 +79,17 @@ void conv_c(PR *pr, u_char *p)
 		*pr->cchar = 'c';
 		(void)printf(pr->fmt, *p);
 	} else {
-		(void)sprintf(str = buf, "%03o", (int)*p);
+		(void)sprintf(buf, "%03o", (int)*p);
+		str = buf;
 strpr:		*pr->cchar = 's';
 		(void)printf(pr->fmt, str);
 	}
 }
 
-void conv_u(PR *pr, u_char *p)
+void
+conv_u(PR *pr, u_char *p)
 {
-	extern int deprecated;
-	static char *list[] = {
+	static const char *list[] = {
 		"nul", "soh", "stx", "etx", "eot", "enq", "ack", "bel",
 		 "bs",  "ht",  "lf",  "vt",  "ff",  "cr",  "so",  "si",
 		"dle", "dcl", "dc2", "dc3", "dc4", "nak", "syn", "etb",
@@ -104,7 +106,7 @@ void conv_u(PR *pr, u_char *p)
 	} else if (*p == 0x7f) {
 		*pr->cchar = 's';
 		(void)printf(pr->fmt, "del");
-	} else if (deprecated && *p == 0x20) {	/* od replace space with sp */
+	} else if (deprecated && *p == 0x20) {	/* od replaced space with sp */
 		*pr->cchar = 's';
 		(void)printf(pr->fmt, " sp");
 	} else if (isprint(*p)) {

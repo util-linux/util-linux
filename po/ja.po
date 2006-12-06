@@ -1,4 +1,4 @@
-# Japanese messages for util-linux 2.11m
+# Japanese messages for util-linux 2.11n
 # Copyright (C) 2001 Free Software Foundation, Inc.
 # Daisuke Yamashita <yamad@mb.infoweb.ne.jp>, 1999-2001.
 #   includes cfdisk original translation by
@@ -6,106 +6,105 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.11m\n"
-"POT-Creation-Date: 2001-12-10 01:34+0100\n"
-"PO-Revision-Date: 2001-12-04 01:28+0900\n"
+"Project-Id-Version: util-linux 2.11n\n"
+"POT-Creation-Date: 2002-03-08 23:54+0100\n"
+"PO-Revision-Date: 2001-12-11 22:43+0900\n"
 "Last-Translator: Daisuke Yamashita <yamad@mb.infoweb.ne.jp>\n"
 "Language-Team: Japanese <ja@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=EUC-JP\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: disk-utils/blockdev.c:61
+#: disk-utils/blockdev.c:60
 msgid "set read-only"
 msgstr "読み込み専用に設定"
 
-#: disk-utils/blockdev.c:62
+#: disk-utils/blockdev.c:61
 msgid "set read-write"
 msgstr "読み書き可能に設定"
 
-#: disk-utils/blockdev.c:65
+#: disk-utils/blockdev.c:64
 msgid "get read-only"
 msgstr "読み書き可能かどうかをテスト"
 
-#: disk-utils/blockdev.c:68
+#: disk-utils/blockdev.c:67
 msgid "get sectorsize"
 msgstr "セクタ数を取得"
 
-#: disk-utils/blockdev.c:71
+#: disk-utils/blockdev.c:70
 msgid "get blocksize"
 msgstr "ブロックサイズを取得"
 
-#: disk-utils/blockdev.c:74
+#: disk-utils/blockdev.c:73
 msgid "set blocksize"
 msgstr "ブロックサイズを設定"
 
-#: disk-utils/blockdev.c:77
+#: disk-utils/blockdev.c:76
 msgid "get size"
 msgstr "サイズを取得"
 
-#: disk-utils/blockdev.c:80
+#: disk-utils/blockdev.c:79
 msgid "set readahead"
 msgstr "readahead 値を設定"
 
-#: disk-utils/blockdev.c:83
+#: disk-utils/blockdev.c:82
 msgid "get readahead"
 msgstr "readahead 値を取得"
 
-#: disk-utils/blockdev.c:86
+#: disk-utils/blockdev.c:85
 msgid "flush buffers"
 msgstr "バッファをフラッシュする"
 
-#: disk-utils/blockdev.c:90
+#: disk-utils/blockdev.c:89
 msgid "reread partition table"
 msgstr "領域テーブルを再読み込み"
 
-#: disk-utils/blockdev.c:99
-#, fuzzy
+#: disk-utils/blockdev.c:98
 msgid "Usage:\n"
-msgstr "使い方:"
+msgstr "使い方:\n"
+
+#: disk-utils/blockdev.c:100
+#, c-format
+msgid "  %s --report [devices]\n"
+msgstr "  %s --report [デバイス]\n"
 
 #: disk-utils/blockdev.c:101
 #, c-format
-msgid "  %s --report [devices]\n"
-msgstr ""
+msgid "  %s [-v|-q] commands devices\n"
+msgstr "  %s [-v|-q] コマンド デバイス\n"
 
 #: disk-utils/blockdev.c:102
-#, fuzzy, c-format
-msgid "  %s [-v|-q] commands devices\n"
-msgstr "使い方: %s [-V] [-v|-q] コマンド デバイス\n"
-
-#: disk-utils/blockdev.c:103
 msgid "Available commands:\n"
 msgstr "利用可能コマンド:\n"
 
-#: disk-utils/blockdev.c:220
+#: disk-utils/blockdev.c:219
 #, c-format
 msgid "%s: Unknown command: %s\n"
 msgstr "%s: 不明なコマンド: %s\n"
 
-#: disk-utils/blockdev.c:232 disk-utils/blockdev.c:241
+#: disk-utils/blockdev.c:231 disk-utils/blockdev.c:240
 #, c-format
 msgid "%s requires an argument\n"
 msgstr "%s は引数を要求します\n"
 
-#: disk-utils/blockdev.c:279
+#: disk-utils/blockdev.c:278
 #, c-format
 msgid "%s succeeded.\n"
-msgstr ""
+msgstr "%s が成功しました。\n"
 
-#: disk-utils/blockdev.c:297 disk-utils/blockdev.c:322
-#, fuzzy, c-format
+#: disk-utils/blockdev.c:296 disk-utils/blockdev.c:321
+#, c-format
 msgid "%s: cannot open %s\n"
-msgstr "%s: %s を開けません: %s\n"
+msgstr "%s: %s を開けません\n"
 
-#: disk-utils/blockdev.c:339
-#, fuzzy, c-format
+#: disk-utils/blockdev.c:338
+#, c-format
 msgid "%s: ioctl error on %s\n"
-msgstr "%s: %s で read エラー\n"
+msgstr "%s: %s で ioctl エラー\n"
 
-#: disk-utils/blockdev.c:346
+#: disk-utils/blockdev.c:345
 msgid "RO    RA   SSZ   BSZ   StartSec     Size    Device\n"
-msgstr ""
+msgstr "RO    RA   SSZ   BSZ   開始Sec    サイズ   デバイス\n"
 
 #: disk-utils/elvtune.c:46 disk-utils/setfdprm.c:100
 msgid "usage:\n"
@@ -149,7 +148,7 @@ msgstr "使い方: %s [ -n ] デバイス\n"
 #: disk-utils/fdformat.c:120 disk-utils/fsck.minix.c:1291
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:55
 #: disk-utils/mkfs.minix.c:644 disk-utils/mkswap.c:452
-#: disk-utils/setfdprm.c:128 misc-utils/cal.c:243 misc-utils/ddate.c:181
+#: disk-utils/setfdprm.c:128 misc-utils/cal.c:246 misc-utils/ddate.c:181
 #: misc-utils/kill.c:188 misc-utils/rename.c:79 misc-utils/script.c:132
 #, c-format
 msgid "%s from %s\n"
@@ -196,28 +195,28 @@ msgid "check aborted.\n"
 msgstr "チェックを中止しました\n"
 
 #: disk-utils/fsck.minix.c:332 disk-utils/fsck.minix.c:356
-#, fuzzy, c-format
+#, c-format
 msgid "Zone nr < FIRSTZONE in file `%s'."
-msgstr "Zone nr < FIRSTZONE in file `"
+msgstr "ファイル `%s' 内で Zone nr < FIRSTZONE。"
 
 #: disk-utils/fsck.minix.c:336 disk-utils/fsck.minix.c:360
-#, fuzzy, c-format
+#, c-format
 msgid "Zone nr >= ZONES in file `%s'."
-msgstr "Zone nr >= ZONES in file `"
+msgstr "ファイル `%s' 内で Zone nr >= ZONES。"
 
 #: disk-utils/fsck.minix.c:341 disk-utils/fsck.minix.c:365
 msgid "Remove block"
 msgstr "ブロックの削除"
 
 #: disk-utils/fsck.minix.c:384
-#, fuzzy, c-format
+#, c-format
 msgid "Read error: unable to seek to block in file '%s'\n"
-msgstr "読込エラー: ファイル中のブロックに移動できません '"
+msgstr "読込エラー: ファイル '%s' 中のブロックへ seek できません\n"
 
 #: disk-utils/fsck.minix.c:390
-#, fuzzy, c-format
+#, c-format
 msgid "Read error: bad block in file '%s'\n"
-msgstr "読込エラー: ファイルに不正ブロックがあります '"
+msgstr "読込エラー: ファイル '%s' に不正ブロックがあります\n"
 
 #: disk-utils/fsck.minix.c:405
 msgid ""
@@ -229,12 +228,12 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:411 disk-utils/mkfs.minix.c:285
 msgid "seek failed in write_block"
-msgstr "書き込みブロック内のシークに失敗しました"
+msgstr "書き込みブロック内の seek に失敗しました"
 
 #: disk-utils/fsck.minix.c:414
-#, fuzzy, c-format
+#, c-format
 msgid "Write error: bad block in file '%s'\n"
-msgstr "書き込みエラー: ファイルの中に不正ブロックがあります '"
+msgstr "書き込みエラー: ファイルの中 '%s' に不正ブロックがあります\n"
 
 #: disk-utils/fsck.minix.c:532
 msgid "seek failed in write_super_block"
@@ -352,18 +351,19 @@ msgstr ""
 "\n"
 
 #: disk-utils/fsck.minix.c:660 disk-utils/fsck.minix.c:712
-#, fuzzy, c-format
+#, c-format
 msgid "Inode %d marked unused, but used for file '%s'\n"
-msgstr "Inode %d は不使用マークされていますが、次のファイルが利用しています '"
+msgstr ""
+"Inode %d は不使用マークされていますが、ファイル '%s' が利用しています\n"
 
 #: disk-utils/fsck.minix.c:664 disk-utils/fsck.minix.c:716
 msgid "Mark in use"
 msgstr "使用マーク"
 
 #: disk-utils/fsck.minix.c:686 disk-utils/fsck.minix.c:736
-#, fuzzy, c-format
+#, c-format
 msgid "The file `%s' has mode %05o\n"
-msgstr " はモード %05o\n"
+msgstr "ファイル `%s' はモード %05o です\n"
 
 #: disk-utils/fsck.minix.c:693 disk-utils/fsck.minix.c:742
 msgid "Warning: inode count too big.\n"
@@ -374,9 +374,9 @@ msgid "root inode isn't a directory"
 msgstr "root inode がディレクトリではありません"
 
 #: disk-utils/fsck.minix.c:779 disk-utils/fsck.minix.c:813
-#, fuzzy, c-format
+#, c-format
 msgid "Block has been used before. Now in file `%s'."
-msgstr "ブロックは以前から利用されています。現在はファイル `"
+msgstr "ブロックは以前から利用されています。現在はファイル `%s' 内です。"
 
 #: disk-utils/fsck.minix.c:781 disk-utils/fsck.minix.c:815
 #: disk-utils/fsck.minix.c:1149 disk-utils/fsck.minix.c:1158
@@ -385,55 +385,55 @@ msgid "Clear"
 msgstr "クリア"
 
 #: disk-utils/fsck.minix.c:791 disk-utils/fsck.minix.c:825
-#, fuzzy, c-format
+#, c-format
 msgid "Block %d in file `%s' is marked not in use."
-msgstr "' が不使用マーク"
+msgstr "ファイル `%2$s' のブロック %1$d は未使用マークされています。"
 
 #: disk-utils/fsck.minix.c:793 disk-utils/fsck.minix.c:827
 msgid "Correct"
 msgstr "正しい"
 
 #: disk-utils/fsck.minix.c:973 disk-utils/fsck.minix.c:1041
-#, fuzzy, c-format
+#, c-format
 msgid "The directory '%s' contains a bad inode number for file '%.*s'."
-msgstr " はファイル '%.*s' の不正 inode 番号を含みます。"
+msgstr "ディレクトリ '%s' はファイル '%.*s' の不正 inode 番号を含みます。"
 
 #: disk-utils/fsck.minix.c:976 disk-utils/fsck.minix.c:1044
 msgid " Remove"
 msgstr " 削除"
 
 #: disk-utils/fsck.minix.c:990
-#, fuzzy, c-format
+#, c-format
 msgid "`%s': bad directory: '.' isn't first\n"
-msgstr ": 不正なディレクトリ: '.' が最初ではありません\n"
+msgstr "`%s': 不正なディレクトリ: '.' が最初ではありません\n"
 
 #: disk-utils/fsck.minix.c:998
-#, fuzzy, c-format
+#, c-format
 msgid "`%s': bad directory: '..' isn't second\n"
-msgstr ": 不正なディレクトリ: '..' が 2 番目ではありません\n"
+msgstr "`%s': 不正なディレクトリ: '..' が 2 番目ではありません\n"
 
 #: disk-utils/fsck.minix.c:1058
-#, fuzzy, c-format
+#, c-format
 msgid "%s: bad directory: '.' isn't first\n"
-msgstr ": 不正なディレクトリ: '.' が最初ではありません\n"
+msgstr "%s: 不正なディレクトリ: '.' が最初ではありません\n"
 
 #: disk-utils/fsck.minix.c:1067
-#, fuzzy, c-format
+#, c-format
 msgid "%s: bad directory: '..' isn't second\n"
-msgstr ": 不正なディレクトリ: '..' が 2 番目ではありません\n"
+msgstr "%s: 不正なディレクトリ: '..' が 2 番目ではありません\n"
 
 #: disk-utils/fsck.minix.c:1102
 msgid "internal error"
 msgstr "内部エラー"
 
 #: disk-utils/fsck.minix.c:1105 disk-utils/fsck.minix.c:1124
-#, fuzzy, c-format
+#, c-format
 msgid "%s: bad directory: size < 32"
-msgstr ": 不正なディレクトリ: サイズが 32 未満"
+msgstr "%s: 不正なディレクトリ: サイズが 32 未満"
 
 #: disk-utils/fsck.minix.c:1138
 msgid "seek failed in bad_zone"
-msgstr "bad_zone でのシークに失敗"
+msgstr "bad_zone での seek に失敗"
 
 #: disk-utils/fsck.minix.c:1148 disk-utils/fsck.minix.c:1204
 #, c-format
@@ -530,7 +530,7 @@ msgid "%6ld zones used (%ld%%)\n"
 msgstr "%6ld zone が使われた (%ld%%)\n"
 
 #: disk-utils/fsck.minix.c:1386
-#, c-format, ycp-format
+#, c-format
 msgid ""
 "\n"
 "%6d regular files\n"
@@ -871,7 +871,7 @@ msgstr "使い方: %s [-c] [-v0|-v1] [-pページサイズ] /dev/name [ブロック数]\n"
 msgid "too many bad pages"
 msgstr "不正ページが多すぎます"
 
-#: disk-utils/mkswap.c:353 misc-utils/look.c:182 misc-utils/setterm.c:1129
+#: disk-utils/mkswap.c:353 misc-utils/look.c:182 misc-utils/setterm.c:1130
 #: text-utils/more.c:1934 text-utils/more.c:1945
 msgid "Out of memory"
 msgstr "メモリが足りません"
@@ -1003,18 +1003,16 @@ msgid "Linux ext2"
 msgstr "Linux ext2"
 
 #: fdisk/cfdisk.c:405
-#, fuzzy
 msgid "Linux ext3"
-msgstr "Linux ext2"
+msgstr "Linux ext3"
 
 #: fdisk/cfdisk.c:407
 msgid "Linux XFS"
 msgstr "Linux XFS"
 
 #: fdisk/cfdisk.c:409
-#, fuzzy
 msgid "Linux ReiserFS"
-msgstr "Linux XFS"
+msgstr "Linux ReiserFS"
 
 #. also Solaris
 #: fdisk/cfdisk.c:411 fdisk/i386_sys_types.c:57
@@ -1544,7 +1542,7 @@ msgstr "注意: コマンドはすべて大文字、小文字どちらでも使用できます"
 msgid "case letters (except for Writes)."
 msgstr "(書き込みを除く)。"
 
-#: fdisk/cfdisk.c:2265 fdisk/cfdisk.c:2587 fdisk/fdisksunlabel.c:321
+#: fdisk/cfdisk.c:2265 fdisk/cfdisk.c:2595 fdisk/fdisksunlabel.c:321
 #: fdisk/fdisksunlabel.c:323
 msgid "Cylinders"
 msgstr "シリンダ"
@@ -1577,7 +1575,7 @@ msgstr "ジオメトリを変更して終了"
 msgid "Enter the number of cylinders: "
 msgstr "シリンダ数を入力してください: "
 
-#: fdisk/cfdisk.c:2293 fdisk/cfdisk.c:2855
+#: fdisk/cfdisk.c:2293 fdisk/cfdisk.c:2863
 msgid "Illegal cylinders value"
 msgstr "不正なシリンダ数"
 
@@ -1585,7 +1583,7 @@ msgstr "不正なシリンダ数"
 msgid "Enter the number of heads: "
 msgstr "ヘッダ数を入力してください: "
 
-#: fdisk/cfdisk.c:2306 fdisk/cfdisk.c:2865
+#: fdisk/cfdisk.c:2306 fdisk/cfdisk.c:2873
 msgid "Illegal heads value"
 msgstr "不正なヘッド数"
 
@@ -1593,7 +1591,7 @@ msgstr "不正なヘッド数"
 msgid "Enter the number of sectors per track: "
 msgstr "トラック当たりのセクタ数を入力してください: "
 
-#: fdisk/cfdisk.c:2319 fdisk/cfdisk.c:2872
+#: fdisk/cfdisk.c:2319 fdisk/cfdisk.c:2880
 msgid "Illegal sectors value"
 msgstr "不正なセクタ数"
 
@@ -1635,175 +1633,180 @@ msgstr "基本/論理"
 msgid "Disk Drive: %s"
 msgstr "ディスクドライブ: %s"
 
-#: fdisk/cfdisk.c:2573
-#, c-format
-msgid "Size: %lld bytes"
+#: fdisk/cfdisk.c:2576
+#, fuzzy, c-format
+msgid "Size: %lld bytes, %ld MB"
 msgstr "サイズ: %lld バイト"
 
-#: fdisk/cfdisk.c:2575
+#: fdisk/cfdisk.c:2579
+#, fuzzy, c-format
+msgid "Size: %lld bytes, %ld.%ld GB"
+msgstr "サイズ: %lld バイト"
+
+#: fdisk/cfdisk.c:2583
 #, c-format
 msgid "Heads: %d   Sectors per Track: %d   Cylinders: %d"
 msgstr "ヘッド: %d   トラック当たりのセクタ: %d   シリンダ: %d"
 
-#: fdisk/cfdisk.c:2579
+#: fdisk/cfdisk.c:2587
 msgid "Name"
 msgstr "名前"
 
-#: fdisk/cfdisk.c:2580
+#: fdisk/cfdisk.c:2588
 msgid "Flags"
 msgstr "フラグ"
 
-#: fdisk/cfdisk.c:2581
+#: fdisk/cfdisk.c:2589
 msgid "Part Type"
 msgstr "領域タイプ"
 
-#: fdisk/cfdisk.c:2582
+#: fdisk/cfdisk.c:2590
 msgid "FS Type"
 msgstr "FSタイプ"
 
-#: fdisk/cfdisk.c:2583
+#: fdisk/cfdisk.c:2591
 msgid "[Label]"
 msgstr "[ラベル]"
 
-#: fdisk/cfdisk.c:2585
+#: fdisk/cfdisk.c:2593
 msgid "  Sectors"
 msgstr "  セクタ"
 
-#: fdisk/cfdisk.c:2589
+#: fdisk/cfdisk.c:2597
 msgid "Size (MB)"
 msgstr "サイズ (MB)"
 
-#: fdisk/cfdisk.c:2591
+#: fdisk/cfdisk.c:2599
 msgid "Size (GB)"
 msgstr "サイズ (GB)"
 
-#: fdisk/cfdisk.c:2646
+#: fdisk/cfdisk.c:2654
 msgid "Bootable"
 msgstr "ブート可"
 
-#: fdisk/cfdisk.c:2646
+#: fdisk/cfdisk.c:2654
 msgid "Toggle bootable flag of the current partition"
 msgstr "カーソル上の領域のブートフラグを切り替える"
 
-#: fdisk/cfdisk.c:2647
+#: fdisk/cfdisk.c:2655
 msgid "Delete"
 msgstr "削除"
 
-#: fdisk/cfdisk.c:2647
+#: fdisk/cfdisk.c:2655
 msgid "Delete the current partition"
 msgstr "カーソル上の領域を削除"
 
-#: fdisk/cfdisk.c:2648
+#: fdisk/cfdisk.c:2656
 msgid "Geometry"
 msgstr "ジオメトリ"
 
-#: fdisk/cfdisk.c:2648
+#: fdisk/cfdisk.c:2656
 msgid "Change disk geometry (experts only)"
 msgstr "ディスクジオメトリを変更する(エキスパート用)"
 
-#: fdisk/cfdisk.c:2649
+#: fdisk/cfdisk.c:2657
 msgid "Help"
 msgstr "ヘルプ"
 
-#: fdisk/cfdisk.c:2649
+#: fdisk/cfdisk.c:2657
 msgid "Print help screen"
 msgstr "ヘルプ画面を表示"
 
-#: fdisk/cfdisk.c:2650
+#: fdisk/cfdisk.c:2658
 msgid "Maximize"
 msgstr "最大化"
 
-#: fdisk/cfdisk.c:2650
+#: fdisk/cfdisk.c:2658
 msgid "Maximize disk usage of the current partition (experts only)"
 msgstr "カーソル上の領域のディスク使用量を最大化(エキスパート用)"
 
-#: fdisk/cfdisk.c:2651
+#: fdisk/cfdisk.c:2659
 msgid "New"
 msgstr "新規作成"
 
-#: fdisk/cfdisk.c:2651
+#: fdisk/cfdisk.c:2659
 msgid "Create new partition from free space"
 msgstr "空き領域から新しく領域を作成"
 
-#: fdisk/cfdisk.c:2652
+#: fdisk/cfdisk.c:2660
 msgid "Print"
 msgstr "表示"
 
-#: fdisk/cfdisk.c:2652
+#: fdisk/cfdisk.c:2660
 msgid "Print partition table to the screen or to a file"
 msgstr "領域情報を画面またはファイルに出力"
 
-#: fdisk/cfdisk.c:2653
+#: fdisk/cfdisk.c:2661
 msgid "Quit"
 msgstr "終了"
 
-#: fdisk/cfdisk.c:2653
+#: fdisk/cfdisk.c:2661
 msgid "Quit program without writing partition table"
 msgstr "領域情報を書き込まずにプログラムを終了"
 
-#: fdisk/cfdisk.c:2654
+#: fdisk/cfdisk.c:2662
 msgid "Type"
 msgstr "FSタイプ"
 
-#: fdisk/cfdisk.c:2654
+#: fdisk/cfdisk.c:2662
 msgid "Change the filesystem type (DOS, Linux, OS/2 and so on)"
 msgstr "ファイルシステムのタイプを変更する(DOS, Linux, OS/2 など)"
 
-#: fdisk/cfdisk.c:2655
+#: fdisk/cfdisk.c:2663
 msgid "Units"
 msgstr "単位"
 
-#: fdisk/cfdisk.c:2655
+#: fdisk/cfdisk.c:2663
 msgid "Change units of the partition size display (MB, sect, cyl)"
 msgstr "表示する領域サイズの単位(MB, セクタ, シリンダ)を変更する"
 
-#: fdisk/cfdisk.c:2656
+#: fdisk/cfdisk.c:2664
 msgid "Write"
 msgstr "書き込み"
 
-#: fdisk/cfdisk.c:2656
+#: fdisk/cfdisk.c:2664
 msgid "Write partition table to disk (this might destroy data)"
 msgstr "領域情報をディスクに書き込む(データを破壊する可能性あり)"
 
-#: fdisk/cfdisk.c:2702
+#: fdisk/cfdisk.c:2710
 msgid "Cannot make this partition bootable"
 msgstr "この領域をブート可能にはできません"
 
-#: fdisk/cfdisk.c:2712
+#: fdisk/cfdisk.c:2720
 msgid "Cannot delete an empty partition"
 msgstr "空の領域を削除することはできません"
 
-#: fdisk/cfdisk.c:2732 fdisk/cfdisk.c:2734
+#: fdisk/cfdisk.c:2740 fdisk/cfdisk.c:2742
 msgid "Cannot maximize this partition"
 msgstr "この領域を最大化することはできません"
 
-#: fdisk/cfdisk.c:2742
+#: fdisk/cfdisk.c:2750
 msgid "This partition is unusable"
 msgstr "この領域は使用できません"
 
-#: fdisk/cfdisk.c:2744
+#: fdisk/cfdisk.c:2752
 msgid "This partition is already in use"
 msgstr "このディスクは現在使用中です。"
 
-#: fdisk/cfdisk.c:2761
+#: fdisk/cfdisk.c:2769
 msgid "Cannot change the type of an empty partition"
 msgstr "空の領域のタイプを変更することはできません"
 
-#: fdisk/cfdisk.c:2788 fdisk/cfdisk.c:2794
+#: fdisk/cfdisk.c:2796 fdisk/cfdisk.c:2802
 msgid "No more partitions"
 msgstr "これ以上の領域はありません"
 
-#: fdisk/cfdisk.c:2801
+#: fdisk/cfdisk.c:2809
 msgid "Illegal command"
 msgstr "不正なコマンド"
 
-#: fdisk/cfdisk.c:2811
+#: fdisk/cfdisk.c:2819
 msgid "Copyright (C) 1994-2000 Kevin E. Martin & aeb\n"
 msgstr "Copyright (C) 1994-2000 Kevin E. Martin & aeb\n"
 
 #. Unfortunately, xgettext does not handle multi-line strings
 #. so, let's use explicit \n's instead
-#: fdisk/cfdisk.c:2818
+#: fdisk/cfdisk.c:2826
 #, c-format
 msgid ""
 "\n"
@@ -2591,7 +2594,7 @@ msgstr "ディスク %s は正常な領域テーブルを含んでいません\n"
 msgid "Cannot open %s\n"
 msgstr "%s を開けません\n"
 
-#: fdisk/fdisk.c:2234
+#: fdisk/fdisk.c:2234 fdisk/sfdisk.c:2364
 #, c-format
 msgid "cannot open %s\n"
 msgstr "%s を開けません\n"
@@ -3340,7 +3343,7 @@ msgid "SunOS home"
 msgstr "SunOS home"
 
 #. DOS 3.3+ secondary
-#: fdisk/fdisksunlabel.c:55 fdisk/i386_sys_types.c:95
+#: fdisk/fdisksunlabel.c:55 fdisk/i386_sys_types.c:98
 msgid "Linux raid autodetect"
 msgstr "Linux raid 自動検出"
 
@@ -3707,8 +3710,8 @@ msgid "Priam Edisk"
 msgstr "Priam Edisk"
 
 #. DOS R/O or SpeedStor
-#: fdisk/i386_sys_types.c:48 fdisk/i386_sys_types.c:86
-#: fdisk/i386_sys_types.c:92 fdisk/i386_sys_types.c:93
+#: fdisk/i386_sys_types.c:48 fdisk/i386_sys_types.c:89
+#: fdisk/i386_sys_types.c:95 fdisk/i386_sys_types.c:96
 msgid "SpeedStor"
 msgstr "SpeedStor"
 
@@ -3786,101 +3789,113 @@ msgid "NeXTSTEP"
 msgstr "NeXTSTEP"
 
 #: fdisk/i386_sys_types.c:70
+msgid "Darwin UFS"
+msgstr ""
+
+#: fdisk/i386_sys_types.c:71
 msgid "NetBSD"
 msgstr "NetBSD"
 
-#: fdisk/i386_sys_types.c:71
+#: fdisk/i386_sys_types.c:72
+msgid "Darwin boot"
+msgstr ""
+
+#: fdisk/i386_sys_types.c:73
 msgid "BSDI fs"
 msgstr "BSDI fs"
 
-#: fdisk/i386_sys_types.c:72
+#: fdisk/i386_sys_types.c:74
 msgid "BSDI swap"
 msgstr "BSDI スワップ"
 
-#: fdisk/i386_sys_types.c:73
+#: fdisk/i386_sys_types.c:75
 msgid "Boot Wizard hidden"
 msgstr "隠し Boot Wizard"
 
-#: fdisk/i386_sys_types.c:74
+#: fdisk/i386_sys_types.c:76
+msgid "Solaris boot"
+msgstr ""
+
+#: fdisk/i386_sys_types.c:77
 msgid "DRDOS/sec (FAT-12)"
 msgstr "DRDOS/sec (FAT-12)"
 
-#: fdisk/i386_sys_types.c:75
+#: fdisk/i386_sys_types.c:78
 msgid "DRDOS/sec (FAT-16 < 32M)"
 msgstr "DRDOS/sec (FAT-16 < 32M)"
 
-#: fdisk/i386_sys_types.c:76
+#: fdisk/i386_sys_types.c:79
 msgid "DRDOS/sec (FAT-16)"
 msgstr "DRDOS/sec (FAT-16)"
 
-#: fdisk/i386_sys_types.c:77
+#: fdisk/i386_sys_types.c:80
 msgid "Syrinx"
 msgstr "Syrinx"
 
-#: fdisk/i386_sys_types.c:78
+#: fdisk/i386_sys_types.c:81
 msgid "Non-FS data"
 msgstr "非 FS データ"
 
-#: fdisk/i386_sys_types.c:79
+#: fdisk/i386_sys_types.c:82
 msgid "CP/M / CTOS / ..."
 msgstr "CP/M / CTOS / ..."
 
 #. CP/M or Concurrent CP/M or
 #. Concurrent DOS or CTOS
-#: fdisk/i386_sys_types.c:81
+#: fdisk/i386_sys_types.c:84
 msgid "Dell Utility"
 msgstr "Dell ユーティリティ"
 
 #. Dell PowerEdge Server utilities
-#: fdisk/i386_sys_types.c:82
+#: fdisk/i386_sys_types.c:85
 msgid "BootIt"
 msgstr "BootIt"
 
 #. BootIt EMBRM
-#: fdisk/i386_sys_types.c:83
+#: fdisk/i386_sys_types.c:86
 msgid "DOS access"
 msgstr "DOS access"
 
 #. DOS access or SpeedStor 12-bit FAT
 #. extended partition
-#: fdisk/i386_sys_types.c:85
+#: fdisk/i386_sys_types.c:88
 msgid "DOS R/O"
 msgstr "DOS R/O"
 
 #. SpeedStor 16-bit FAT extended
 #. partition < 1024 cyl.
-#: fdisk/i386_sys_types.c:88
+#: fdisk/i386_sys_types.c:91
 msgid "BeOS fs"
 msgstr "BeOS fs"
 
-#: fdisk/i386_sys_types.c:89
+#: fdisk/i386_sys_types.c:92
 msgid "EFI GPT"
 msgstr "EFI GPT"
 
 #. Intel EFI GUID Partition Table
-#: fdisk/i386_sys_types.c:90
+#: fdisk/i386_sys_types.c:93
 msgid "EFI (FAT-12/16/32)"
 msgstr "EFI (FAT-12/16/32)"
 
 #. Intel EFI System Partition
-#: fdisk/i386_sys_types.c:91
+#: fdisk/i386_sys_types.c:94
 msgid "Linux/PA-RISC boot"
 msgstr "Linux/PA-RISC ブート"
 
 #. SpeedStor large partition
-#: fdisk/i386_sys_types.c:94
+#: fdisk/i386_sys_types.c:97
 msgid "DOS secondary"
 msgstr "DOS セカンダリ"
 
 #. New (2.2.x) raid partition with
 #. autodetect using persistent
 #. superblock
-#: fdisk/i386_sys_types.c:98
+#: fdisk/i386_sys_types.c:101
 msgid "LANstep"
 msgstr "LANstep"
 
 #. SpeedStor >1024 cyl. or LANstep
-#: fdisk/i386_sys_types.c:99
+#: fdisk/i386_sys_types.c:102
 msgid "BBT"
 msgstr "BBT"
 
@@ -4093,7 +4108,8 @@ msgstr ""
 "\n"
 
 #: fdisk/sfdisk.c:871
-msgid "   Device Boot Start     End   #cyls   #blocks   Id  System\n"
+#, fuzzy
+msgid "   Device Boot Start     End   #cyls    #blocks   Id  System\n"
 msgstr "デバイス ブート 始点   終点   #シリンダ #ブロック ID   システム\n"
 
 #: fdisk/sfdisk.c:876
@@ -4106,7 +4122,8 @@ msgstr ""
 "\n"
 
 #: fdisk/sfdisk.c:878
-msgid "   Device Boot    Start       End  #sectors  Id  System\n"
+#, fuzzy
+msgid "   Device Boot    Start       End   #sectors  Id  System\n"
 msgstr " デバイス ブート  始点      終点   #セクタ   ID  システム\n"
 
 #: fdisk/sfdisk.c:881
@@ -4119,7 +4136,8 @@ msgstr ""
 "\n"
 
 #: fdisk/sfdisk.c:883
-msgid "   Device Boot   Start       End   #blocks   Id  System\n"
+#, fuzzy
+msgid "   Device Boot   Start       End    #blocks   Id  System\n"
 msgstr " デバイス ブート 始点        終点  #ブロック ID  システム\n"
 
 #: fdisk/sfdisk.c:886
@@ -4132,32 +4150,33 @@ msgstr ""
 "\n"
 
 #: fdisk/sfdisk.c:888
-msgid "   Device Boot Start   End     MB   #blocks   Id  System\n"
+#, fuzzy
+msgid "   Device Boot Start   End     MB    #blocks   Id  System\n"
 msgstr "デバイス ブート 始点   終点    MB   #ブロック ID  システム\n"
 
-#: fdisk/sfdisk.c:1020
+#: fdisk/sfdisk.c:1048
 #, c-format
 msgid "\t\tstart: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr "\t\t開始: (c,h,s) 期待値 (%ld,%ld,%ld)  (%ld,%ld,%ld) を発見\n"
 
-#: fdisk/sfdisk.c:1027
+#: fdisk/sfdisk.c:1055
 #, c-format
 msgid "\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr "\t\t終点: (c,h,s) 期待値 (%ld,%ld,%ld)  (%ld,%ld,%ld) を発見\n"
 
-#: fdisk/sfdisk.c:1030
+#: fdisk/sfdisk.c:1058
 #, c-format
 msgid "partition ends on cylinder %ld, beyond the end of the disk\n"
 msgstr "シリンダ %ld にパーティションの終点、ディスクの最後を越えています\n"
 
-#: fdisk/sfdisk.c:1041
+#: fdisk/sfdisk.c:1068
 msgid "No partitions found\n"
 msgstr "パーティションが見つかりません\n"
 
-#: fdisk/sfdisk.c:1048
-#, c-format
+#: fdisk/sfdisk.c:1072
+#, fuzzy, c-format
 msgid ""
-"Warning: The first partition looks like it was made\n"
+"Warning: The partition table looks like it was made\n"
 "  for C/H/S=*/%ld/%ld (instead of %ld/%ld/%ld).\n"
 "For this listing I'll assume that geometry.\n"
 msgstr ""
@@ -4165,52 +4184,52 @@ msgstr ""
 "  (%ld/%ld/%ld のかわりに)。\n"
 "このリストは、そのジオメトリと見なします。\n"
 
-#: fdisk/sfdisk.c:1098
+#: fdisk/sfdisk.c:1121
 msgid "no partition table present.\n"
 msgstr "現在パーティション情報はありません。\n"
 
-#: fdisk/sfdisk.c:1100
+#: fdisk/sfdisk.c:1123
 #, c-format
 msgid "strange, only %d partitions defined.\n"
 msgstr "変です、%d つのパーティションしか定義されていません。\n"
 
-#: fdisk/sfdisk.c:1109
+#: fdisk/sfdisk.c:1132
 #, c-format
 msgid "Warning: partition %s has size 0 but is not marked Empty\n"
 msgstr ""
 "警告: パーティション %s はサイズ 0 ですが、空としてマークされていません\n"
 
-#: fdisk/sfdisk.c:1112
+#: fdisk/sfdisk.c:1135
 #, c-format
 msgid "Warning: partition %s has size 0 and is bootable\n"
 msgstr "警告: パーティション %s はサイズ 0 なのにブート可能です。\n"
 
-#: fdisk/sfdisk.c:1115
+#: fdisk/sfdisk.c:1138
 #, c-format
 msgid "Warning: partition %s has size 0 and nonzero start\n"
 msgstr "警告: パーティション %s はサイズ 0 で、非ゼロの開始位置です\n"
 
-#: fdisk/sfdisk.c:1126
+#: fdisk/sfdisk.c:1149
 #, c-format
 msgid "Warning: partition %s "
 msgstr "警告: パーティション %s は、"
 
-#: fdisk/sfdisk.c:1127
+#: fdisk/sfdisk.c:1150
 #, c-format
 msgid "is not contained in partition %s\n"
 msgstr "パーティション %s に含まれていません\n"
 
-#: fdisk/sfdisk.c:1138
+#: fdisk/sfdisk.c:1161
 #, c-format
 msgid "Warning: partitions %s "
 msgstr "警告: パーティション %s "
 
-#: fdisk/sfdisk.c:1139
+#: fdisk/sfdisk.c:1162
 #, c-format
 msgid "and %s overlap\n"
 msgstr "と %s が重なっています\n"
 
-#: fdisk/sfdisk.c:1150
+#: fdisk/sfdisk.c:1173
 #, c-format
 msgid ""
 "Warning: partition %s contains part of the partition table (sector %lu),\n"
@@ -4219,17 +4238,17 @@ msgstr ""
 "警告: 領域 %s は領域テーブル (セクタ %lu) の一部を含んでおり、\n"
 "それが埋められる時点で破壊される事になります\n"
 
-#: fdisk/sfdisk.c:1162
+#: fdisk/sfdisk.c:1185
 #, c-format
 msgid "Warning: partition %s starts at sector 0\n"
 msgstr "警告: パーティション %s がセクタ 0 から始まっています\n"
 
-#: fdisk/sfdisk.c:1166
+#: fdisk/sfdisk.c:1189
 #, c-format
 msgid "Warning: partition %s extends past end of disk\n"
 msgstr "警告: パーティション %s はディスクの終りを越えています\n"
 
-#: fdisk/sfdisk.c:1181
+#: fdisk/sfdisk.c:1204
 msgid ""
 "Among the primary partitions, at most one can be extended\n"
 " (although this is not a problem under Linux)\n"
@@ -4237,17 +4256,17 @@ msgstr ""
 "基本領域パーティションでは、拡張パーティションを一つだけ作れます\n"
 " （Linux では問題とはなりませんけれども）\n"
 
-#: fdisk/sfdisk.c:1199
+#: fdisk/sfdisk.c:1222
 #, c-format
 msgid "Warning: partition %s does not start at a cylinder boundary\n"
 msgstr "警告: パーティション %s はシリンダ境界から始まっていません\n"
 
-#: fdisk/sfdisk.c:1205
+#: fdisk/sfdisk.c:1228
 #, c-format
 msgid "Warning: partition %s does not end at a cylinder boundary\n"
 msgstr "警告: パーティション %s はシリンダ境界で終わっていません\n"
 
-#: fdisk/sfdisk.c:1223
+#: fdisk/sfdisk.c:1246
 msgid ""
 "Warning: more than one primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -4256,7 +4275,7 @@ msgstr ""
 "LILO にとっては問題ありませんが、DOS の MBR はこのディスクをブートできなく\n"
 "なってしまいます。\n"
 
-#: fdisk/sfdisk.c:1230
+#: fdisk/sfdisk.c:1253
 msgid ""
 "Warning: usually one can boot from primary partitions only\n"
 "LILO disregards the `bootable' flag.\n"
@@ -4264,7 +4283,7 @@ msgstr ""
 "警告: 普通はプライマリパーティション一つをブートできるようにします。\n"
 "LILO は `ブート可能' フラグを無視しますけども。\n"
 
-#: fdisk/sfdisk.c:1236
+#: fdisk/sfdisk.c:1259
 msgid ""
 "Warning: no primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -4273,27 +4292,27 @@ msgstr ""
 "LILO にとっては問題ありませんが、DOS MBR はこのディスクをブートできなく\n"
 "なってしまいます。\n"
 
-#: fdisk/sfdisk.c:1253
+#: fdisk/sfdisk.c:1276
 #, c-format
 msgid ""
 "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "パーティション %s: 始点: (c,h,s) 期待値 (%ld,%ld,%ld)  (%ld,%ld,%ld) を発見\n"
 
-#: fdisk/sfdisk.c:1262
+#: fdisk/sfdisk.c:1285
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "パーティション %s: 終点: (c,h,s) 期待値 (%ld,%ld,%ld)  (%ld,%ld,%ld) を発見\n"
 
-#: fdisk/sfdisk.c:1265
+#: fdisk/sfdisk.c:1288
 #, c-format
 msgid "partition %s ends on cylinder %ld, beyond the end of the disk\n"
 msgstr ""
 "シリンダ %2$ld にあるパーティション %1$s の終点はディスクの最後を越えていま"
 "す\n"
 
-#: fdisk/sfdisk.c:1290
+#: fdisk/sfdisk.c:1313
 #, c-format
 msgid ""
 "Warning: shifted start of the extd partition from %ld to %ld\n"
@@ -4302,7 +4321,7 @@ msgstr ""
 "警告: 拡張領域の開始位置が %ld から %ld に移されました\n"
 "（リスト表示の為だけです。その内容に変更はありません。）\n"
 
-#: fdisk/sfdisk.c:1296
+#: fdisk/sfdisk.c:1319
 msgid ""
 "Warning: extended partition does not start at a cylinder boundary.\n"
 "DOS and Linux will interpret the contents differently.\n"
@@ -4310,133 +4329,133 @@ msgstr ""
 "警告: 拡張領域がシリンダ境界から始まっていません\n"
 "DOS と Linux は中身を異なって解釈するでしょう。\n"
 
-#: fdisk/sfdisk.c:1314 fdisk/sfdisk.c:1391
+#: fdisk/sfdisk.c:1337 fdisk/sfdisk.c:1414
 #, c-format
 msgid "too many partitions - ignoring those past nr (%d)\n"
 msgstr "パーティションが多すぎます -- nr (%d) 以降を無視します\n"
 
-#: fdisk/sfdisk.c:1329
+#: fdisk/sfdisk.c:1352
 msgid "tree of partitions?\n"
 msgstr "パーティションのツリー？\n"
 
-#: fdisk/sfdisk.c:1450
+#: fdisk/sfdisk.c:1473
 msgid "detected Disk Manager - unable to handle that\n"
 msgstr "Disk Manager を検出 -- これを捕捉できません\n"
 
-#: fdisk/sfdisk.c:1457
+#: fdisk/sfdisk.c:1480
 msgid "DM6 signature found - giving up\n"
 msgstr "DM6 署名を発見 -- 諦めます\n"
 
-#: fdisk/sfdisk.c:1477
+#: fdisk/sfdisk.c:1500
 msgid "strange..., an extended partition of size 0?\n"
 msgstr "変です..., サイズ 0 の拡張パーティション ？\n"
 
-#: fdisk/sfdisk.c:1484 fdisk/sfdisk.c:1495
+#: fdisk/sfdisk.c:1507 fdisk/sfdisk.c:1518
 msgid "strange..., a BSD partition of size 0?\n"
 msgstr "変です..., サイズ 0 の BSD パーティション？\n"
 
-#: fdisk/sfdisk.c:1529
+#: fdisk/sfdisk.c:1552
 #, c-format
 msgid " %s: unrecognized partition\n"
 msgstr " %s: 認識できないパーティション\n"
 
-#: fdisk/sfdisk.c:1541
+#: fdisk/sfdisk.c:1564
 msgid "-n flag was given: Nothing changed\n"
 msgstr "-n フラグが与えられました: 何も変更しませんでした\n"
 
-#: fdisk/sfdisk.c:1555
+#: fdisk/sfdisk.c:1578
 msgid "Failed saving the old sectors - aborting\n"
 msgstr "古いセクタの保存に失敗 -- 中断します\n"
 
-#: fdisk/sfdisk.c:1560
+#: fdisk/sfdisk.c:1583
 #, c-format
 msgid "Failed writing the partition on %s\n"
 msgstr "%s のパーティション書き込みに失敗\n"
 
-#: fdisk/sfdisk.c:1637
+#: fdisk/sfdisk.c:1660
 msgid "long or incomplete input line - quitting\n"
 msgstr "長いか不完全な行の入力 -- 中止します\n"
 
-#: fdisk/sfdisk.c:1673
+#: fdisk/sfdisk.c:1696
 #, c-format
 msgid "input error: `=' expected after %s field\n"
 msgstr "入力エラー: `=' は %s フィールドの後にしてください\n"
 
-#: fdisk/sfdisk.c:1680
+#: fdisk/sfdisk.c:1703
 #, c-format
 msgid "input error: unexpected character %c after %s field\n"
 msgstr "入力エラー: %2$s フィールドの後の予期しない文字 `%1$c'\n"
 
-#: fdisk/sfdisk.c:1686
+#: fdisk/sfdisk.c:1709
 #, c-format
 msgid "unrecognized input: %s\n"
 msgstr "認識できない入力: %s\n"
 
-#: fdisk/sfdisk.c:1728
+#: fdisk/sfdisk.c:1751
 msgid "number too big\n"
 msgstr "数字が大きすぎます\n"
 
-#: fdisk/sfdisk.c:1732
+#: fdisk/sfdisk.c:1755
 msgid "trailing junk after number\n"
 msgstr "数字の後ろにゴミが付いています\n"
 
-#: fdisk/sfdisk.c:1853
+#: fdisk/sfdisk.c:1876
 msgid "no room for partition descriptor\n"
 msgstr "パーティション記述子の空きがありません\n"
 
-#: fdisk/sfdisk.c:1886
+#: fdisk/sfdisk.c:1909
 msgid "cannot build surrounding extended partition\n"
 msgstr "拡張パーティションの囲いを構築できません\n"
 
-#: fdisk/sfdisk.c:1937
+#: fdisk/sfdisk.c:1960
 msgid "too many input fields\n"
 msgstr "入力フィールドが多すぎます\n"
 
 #. no free blocks left - don't read any further
-#: fdisk/sfdisk.c:1971
+#: fdisk/sfdisk.c:1994
 msgid "No room for more\n"
 msgstr "これ以上の空きがありません\n"
 
-#: fdisk/sfdisk.c:1990
+#: fdisk/sfdisk.c:2013
 msgid "Illegal type\n"
 msgstr "不正なタイプ\n"
 
-#: fdisk/sfdisk.c:2022
+#: fdisk/sfdisk.c:2045
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
 msgstr ""
 "警告: 与えられたサイズ (%lu) は、許容できる最大サイズ (%lu) を越えています\n"
 
-#: fdisk/sfdisk.c:2028
+#: fdisk/sfdisk.c:2051
 msgid "Warning: empty partition\n"
 msgstr "警告: 空のパーティション\n"
 
-#: fdisk/sfdisk.c:2042
+#: fdisk/sfdisk.c:2065
 #, c-format
 msgid "Warning: bad partition start (earliest %lu)\n"
 msgstr "警告: 不正なパーティションが始まっています (一番最初 %lu)\n"
 
-#: fdisk/sfdisk.c:2055
+#: fdisk/sfdisk.c:2078
 msgid "unrecognized bootable flag - choose - or *\n"
 msgstr "認識できないブート可能フラグ -- - か * を選んでください\n"
 
-#: fdisk/sfdisk.c:2072 fdisk/sfdisk.c:2085
+#: fdisk/sfdisk.c:2095 fdisk/sfdisk.c:2108
 msgid "partial c,h,s specification?\n"
 msgstr "c,h,s の一部を指定？\n"
 
-#: fdisk/sfdisk.c:2096
+#: fdisk/sfdisk.c:2119
 msgid "Extended partition not where expected\n"
 msgstr "拡張パーティションが予期した場所にありません\n"
 
-#: fdisk/sfdisk.c:2128
+#: fdisk/sfdisk.c:2151
 msgid "bad input\n"
 msgstr "不正な入力\n"
 
-#: fdisk/sfdisk.c:2150
+#: fdisk/sfdisk.c:2173
 msgid "too many partitions\n"
 msgstr "パーティションが多すぎます\n"
 
-#: fdisk/sfdisk.c:2183
+#: fdisk/sfdisk.c:2206
 msgid ""
 "Input in the following format; absent fields get a default value.\n"
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
@@ -4447,96 +4466,96 @@ msgstr ""
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
 "普通は <start> と <size> (そして恐らく <type>)を指定するだけで構いません。\n"
 
-#: fdisk/sfdisk.c:2203
+#: fdisk/sfdisk.c:2226
 msgid "version"
 msgstr "バージョン"
 
-#: fdisk/sfdisk.c:2209
+#: fdisk/sfdisk.c:2232
 #, c-format
 msgid "Usage: %s [options] device ...\n"
 msgstr "使い方: %s [オプション] デバイス名...\n"
 
-#: fdisk/sfdisk.c:2210
+#: fdisk/sfdisk.c:2233
 msgid "device: something like /dev/hda or /dev/sda"
 msgstr "デバイス: /dev/hda や /dev/sda の様な何か"
 
-#: fdisk/sfdisk.c:2211
+#: fdisk/sfdisk.c:2234
 msgid "useful options:"
 msgstr "有益なオプション:"
 
-#: fdisk/sfdisk.c:2212
+#: fdisk/sfdisk.c:2235
 msgid "    -s [or --show-size]: list size of a partition"
 msgstr "    -s [or --show-size]: 領域サイズのリスト"
 
-#: fdisk/sfdisk.c:2213
+#: fdisk/sfdisk.c:2236
 msgid "    -c [or --id]:        print or change partition Id"
 msgstr "    -c [or --id]:        領域 ID の表示または変更"
 
-#: fdisk/sfdisk.c:2214
+#: fdisk/sfdisk.c:2237
 msgid "    -l [or --list]:      list partitions of each device"
 msgstr "    -l [or --list]:      デバイス毎の領域リスト"
 
-#: fdisk/sfdisk.c:2215
+#: fdisk/sfdisk.c:2238
 msgid "    -d [or --dump]:      idem, but in a format suitable for later input"
 msgstr "    -d [or --dump]:      前に同じだが、後の入力書式に沿うようにする"
 
-#: fdisk/sfdisk.c:2216
+#: fdisk/sfdisk.c:2239
 msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
 msgstr "    -i [or --increment]: シリンダ数など。0 ではなく 1 から"
 
-#: fdisk/sfdisk.c:2217
+#: fdisk/sfdisk.c:2240
 msgid ""
 "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
 "MB"
 msgstr ""
 "    -uS, -uB, -uC, -uM:  セクタ/ブロック/シリンダ/MB のユニットの受理/報告"
 
-#: fdisk/sfdisk.c:2218
+#: fdisk/sfdisk.c:2241
 msgid "    -T [or --list-types]:list the known partition types"
 msgstr "    -T [or --list-types]:既知の領域タイプのリスト"
 
-#: fdisk/sfdisk.c:2219
+#: fdisk/sfdisk.c:2242
 msgid "    -D [or --DOS]:       for DOS-compatibility: waste a little space"
 msgstr "    -D [or --DOS]:       DOS 互換モード -- 空間が少し無駄になります"
 
-#: fdisk/sfdisk.c:2220
+#: fdisk/sfdisk.c:2243
 msgid "    -R [or --re-read]:   make kernel reread partition table"
 msgstr "    -R [or --re-read]:   カーネルに領域テーブルを再読込みさせる"
 
-#: fdisk/sfdisk.c:2221
+#: fdisk/sfdisk.c:2244
 msgid "    -N# :                change only the partition with number #"
 msgstr "    -N# :                指定番号# の領域のみ変更する"
 
-#: fdisk/sfdisk.c:2222
+#: fdisk/sfdisk.c:2245
 msgid "    -n :                 do not actually write to disk"
 msgstr "    -n :                 ディスクへの実際の書込みを行わない"
 
-#: fdisk/sfdisk.c:2223
+#: fdisk/sfdisk.c:2246
 msgid ""
 "    -O file :            save the sectors that will be overwritten to file"
 msgstr "    -O file :            上書きされるセクタをファイルに保存する"
 
-#: fdisk/sfdisk.c:2224
+#: fdisk/sfdisk.c:2247
 msgid "    -I file :            restore these sectors again"
 msgstr "    -I file :            セクタをファイルから復元する"
 
-#: fdisk/sfdisk.c:2225
+#: fdisk/sfdisk.c:2248
 msgid "    -v [or --version]:   print version"
 msgstr "    -v [or --version]:   バージョンを表示する"
 
-#: fdisk/sfdisk.c:2226
+#: fdisk/sfdisk.c:2249
 msgid "    -? [or --help]:      print this message"
 msgstr "    -? [or --help]:      このメッセージを表示する"
 
-#: fdisk/sfdisk.c:2227
+#: fdisk/sfdisk.c:2250
 msgid "dangerous options:"
 msgstr "危険なオプション:"
 
-#: fdisk/sfdisk.c:2228
+#: fdisk/sfdisk.c:2251
 msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
 msgstr "    -g [or --show-geometry]: カーネルのジオメトリ情報を表示する"
 
-#: fdisk/sfdisk.c:2229
+#: fdisk/sfdisk.c:2252
 msgid ""
 "    -x [or --show-extended]: also list extended partitions on output\n"
 "                             or expect descriptors for them on input"
@@ -4544,115 +4563,115 @@ msgstr ""
 "    -x [or --show-extended]: 拡張領域リストも表示する\n"
 "                             またはそれらの記述子の入力を得る"
 
-#: fdisk/sfdisk.c:2231
+#: fdisk/sfdisk.c:2254
 msgid ""
 "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
 msgstr "    -L  [or --Linux]:      Linux にそぐわなくても文句を云わない"
 
-#: fdisk/sfdisk.c:2232
+#: fdisk/sfdisk.c:2255
 msgid "    -q  [or --quiet]:      suppress warning messages"
 msgstr "    -q  [or --quiet]:      警告メッセージを抑制する"
 
-#: fdisk/sfdisk.c:2233
+#: fdisk/sfdisk.c:2256
 msgid "    You can override the detected geometry using:"
 msgstr "    ジオメトリ検出を強制指定できます:"
 
-#: fdisk/sfdisk.c:2234
+#: fdisk/sfdisk.c:2257
 msgid "    -C# [or --cylinders #]:set the number of cylinders to use"
 msgstr "    -C# [or --cylinders #]:使用するシリンダ数を設定する"
 
-#: fdisk/sfdisk.c:2235
+#: fdisk/sfdisk.c:2258
 msgid "    -H# [or --heads #]:    set the number of heads to use"
 msgstr "    -H# [or --heads #]:    使用するヘッド数を設定する"
 
-#: fdisk/sfdisk.c:2236
+#: fdisk/sfdisk.c:2259
 msgid "    -S# [or --sectors #]:  set the number of sectors to use"
 msgstr "    -S# [or --sectors #]:  使用するセクタ数を設定する"
 
-#: fdisk/sfdisk.c:2237
+#: fdisk/sfdisk.c:2260
 msgid "You can disable all consistency checking with:"
 msgstr "矛盾のチェックを行わないようにできます:"
 
-#: fdisk/sfdisk.c:2238
+#: fdisk/sfdisk.c:2261
 msgid "    -f  [or --force]:      do what I say, even if it is stupid"
 msgstr "    -f  [or --force]:      おかしな指定を行っても、そのまま実行します"
 
-#: fdisk/sfdisk.c:2244
+#: fdisk/sfdisk.c:2267
 msgid "Usage:"
 msgstr "使い方:"
 
-#: fdisk/sfdisk.c:2245
+#: fdisk/sfdisk.c:2268
 #, c-format
 msgid "%s device\t\t list active partitions on device\n"
 msgstr "%s デバイス\t\t デバイス上のアクティヴ領域をリストします\n"
 
-#: fdisk/sfdisk.c:2246
+#: fdisk/sfdisk.c:2269
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
 msgstr ""
 "%s デバイス n1 n2 ... n1 をアクティヴにして..., 残りを非アクティヴにします\n"
 
-#: fdisk/sfdisk.c:2247
+#: fdisk/sfdisk.c:2270
 #, c-format
 msgid "%s -An device\t activate partition n, inactivate the other ones\n"
 msgstr "%s -An デバイス\t n をアクティヴにし、それ以外を非アクティヴにします\n"
 
-#: fdisk/sfdisk.c:2384
+#: fdisk/sfdisk.c:2422
 msgid "no command?\n"
 msgstr "コマンドなし？\n"
 
-#: fdisk/sfdisk.c:2509
+#: fdisk/sfdisk.c:2540
 #, c-format
 msgid "total: %d blocks\n"
 msgstr "合計: %d ブロック\n"
 
-#: fdisk/sfdisk.c:2546
+#: fdisk/sfdisk.c:2577
 msgid "usage: sfdisk --print-id device partition-number\n"
 msgstr "使い方: sfdisk --print-id デバイス パーティション番号\n"
 
-#: fdisk/sfdisk.c:2548
+#: fdisk/sfdisk.c:2579
 msgid "usage: sfdisk --change-id device partition-number Id\n"
 msgstr "使い方: sfdisk --change-id デバイス パーティション番号 ID\n"
 
-#: fdisk/sfdisk.c:2550
+#: fdisk/sfdisk.c:2581
 msgid "usage: sfdisk --id device partition-number [Id]\n"
 msgstr "使い方: sfdisk --id デバイス パーティション番号 [ID]\n"
 
-#: fdisk/sfdisk.c:2557
+#: fdisk/sfdisk.c:2588
 msgid "can specify only one device (except with -l or -s)\n"
 msgstr "一つのデバイスのみ指定できます (-l や -s を除く)\n"
 
-#: fdisk/sfdisk.c:2583
+#: fdisk/sfdisk.c:2614
 #, c-format
 msgid "cannot open %s read-write\n"
 msgstr "%s を読み書きモードで開けません\n"
 
-#: fdisk/sfdisk.c:2585
+#: fdisk/sfdisk.c:2616
 #, c-format
 msgid "cannot open %s for reading\n"
 msgstr "%s を読込み用に開けません\n"
 
-#: fdisk/sfdisk.c:2610
+#: fdisk/sfdisk.c:2641
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: OK\n"
 
-#: fdisk/sfdisk.c:2627
+#: fdisk/sfdisk.c:2658
 #, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s: シリンダ数 %ld、ヘッド数 %ld、%ld セクタ/トラック\n"
 
-#: fdisk/sfdisk.c:2644
+#: fdisk/sfdisk.c:2675
 #, c-format
 msgid "BLKGETSIZE ioctl failed for %s\n"
 msgstr "%s への BLKGETSIZE ioctl に失敗\n"
 
-#: fdisk/sfdisk.c:2721
+#: fdisk/sfdisk.c:2752
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "不正なブートフラグ: 0x80 でなく 0x%x です\n"
 
-#: fdisk/sfdisk.c:2738 fdisk/sfdisk.c:2791 fdisk/sfdisk.c:2822
+#: fdisk/sfdisk.c:2769 fdisk/sfdisk.c:2822 fdisk/sfdisk.c:2853
 msgid ""
 "Done\n"
 "\n"
@@ -4660,7 +4679,7 @@ msgstr ""
 "終了\n"
 "\n"
 
-#: fdisk/sfdisk.c:2747
+#: fdisk/sfdisk.c:2778
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -4670,35 +4689,35 @@ msgstr ""
 "LILO では問題ありませんが、DOS MBR は 1 つのアクティブなパーティションしか\n"
 "ブートできません。\n"
 
-#: fdisk/sfdisk.c:2761
+#: fdisk/sfdisk.c:2792
 #, c-format
 msgid "partition %s has id %x and is not hidden\n"
 msgstr "パーティション %s には ID %x があり、隠されていません\n"
 
-#: fdisk/sfdisk.c:2818
+#: fdisk/sfdisk.c:2849
 #, c-format
 msgid "Bad Id %lx\n"
 msgstr "不正な ID %lx\n"
 
-#: fdisk/sfdisk.c:2833
+#: fdisk/sfdisk.c:2864
 msgid "This disk is currently in use.\n"
 msgstr "このディスクは現在使用中です。\n"
 
-#: fdisk/sfdisk.c:2850
+#: fdisk/sfdisk.c:2881
 #, c-format
 msgid "Fatal error: cannot find %s\n"
 msgstr "致命的なエラー: %s が見つかりません\n"
 
-#: fdisk/sfdisk.c:2853
+#: fdisk/sfdisk.c:2884
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "警告: %s はブロックデバイスではありません\n"
 
-#: fdisk/sfdisk.c:2859
+#: fdisk/sfdisk.c:2890
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr "現在、誰もこのディスクを使っていないかを調べます...\n"
 
-#: fdisk/sfdisk.c:2861
+#: fdisk/sfdisk.c:2892
 msgid ""
 "\n"
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -4712,28 +4731,28 @@ msgstr ""
 "   があれば swapoff してください。\n"
 "   ちなみに --no-reread フラグでこのチェックを抑制できます。\n"
 
-#: fdisk/sfdisk.c:2865
+#: fdisk/sfdisk.c:2896
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "全てのチェックを超越させるには --force フラグを使ってください。\n"
 
-#: fdisk/sfdisk.c:2869
+#: fdisk/sfdisk.c:2900
 msgid "OK\n"
 msgstr "OK\n"
 
-#: fdisk/sfdisk.c:2878
+#: fdisk/sfdisk.c:2909
 msgid "Old situation:\n"
 msgstr "古い場面:\n"
 
-#: fdisk/sfdisk.c:2882
+#: fdisk/sfdisk.c:2913
 #, c-format
 msgid "Partition %d does not exist, cannot change it\n"
 msgstr "パーティション %d は存在しませんので、変更できません\n"
 
-#: fdisk/sfdisk.c:2890
+#: fdisk/sfdisk.c:2921
 msgid "New situation:\n"
 msgstr "新たな場面:\n"
 
-#: fdisk/sfdisk.c:2895
+#: fdisk/sfdisk.c:2926
 msgid ""
 "I don't like these partitions - nothing changed.\n"
 "(If you really want this, use the --force option.)\n"
@@ -4741,19 +4760,19 @@ msgstr ""
 "私はこれらのパーティションに関与したくありません -- 変更しません。\n"
 "(本当にこれを行ないたければ、--force オプションを使ってください)\n"
 
-#: fdisk/sfdisk.c:2898
+#: fdisk/sfdisk.c:2929
 msgid "I don't like this - probably you should answer No\n"
 msgstr "私はこれに関与したくありません -- 恐らく No と答えるべきでしょう\n"
 
-#: fdisk/sfdisk.c:2903
+#: fdisk/sfdisk.c:2934
 msgid "Are you satisfied with this? [ynq] "
 msgstr "これであなたの要求は満たされますか？ [ynq] "
 
-#: fdisk/sfdisk.c:2905
+#: fdisk/sfdisk.c:2936
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "ディスクへの書き込みを行ないますか？ [ynq] "
 
-#: fdisk/sfdisk.c:2910
+#: fdisk/sfdisk.c:2941
 msgid ""
 "\n"
 "sfdisk: premature end of input\n"
@@ -4761,15 +4780,15 @@ msgstr ""
 "\n"
 "sfdisk: 入力が短すぎます\n"
 
-#: fdisk/sfdisk.c:2912
+#: fdisk/sfdisk.c:2943
 msgid "Quitting - nothing changed\n"
 msgstr "中断 -- 何も変更しません\n"
 
-#: fdisk/sfdisk.c:2918
+#: fdisk/sfdisk.c:2949
 msgid "Please answer one of y,n,q\n"
 msgstr "y,n,q のいずれかで答えてください\n"
 
-#: fdisk/sfdisk.c:2926
+#: fdisk/sfdisk.c:2957
 msgid ""
 "Successfully wrote the new partition table\n"
 "\n"
@@ -4777,7 +4796,7 @@ msgstr ""
 "新たなパーティションの書き込みに成功\n"
 "\n"
 
-#: fdisk/sfdisk.c:2932
+#: fdisk/sfdisk.c:2963
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -4876,43 +4895,43 @@ msgstr "getopt (enhanced) 1.1.2\n"
 msgid "internal error, contact the author."
 msgstr "内部エラー、作者に連絡を。"
 
-#: hwclock/cmos.c:164
+#: hwclock/cmos.c:168
 msgid "booted from MILO\n"
 msgstr "MILO からブートされました\n"
 
-#: hwclock/cmos.c:173
+#: hwclock/cmos.c:177
 msgid "Ruffian BCD clock\n"
 msgstr "粗忽な BCD クロック\n"
 
-#: hwclock/cmos.c:189
+#: hwclock/cmos.c:193
 #, c-format
 msgid "clockport adjusted to 0x%x\n"
 msgstr "クロックポートを 0x%x に修正しました\n"
 
-#: hwclock/cmos.c:201
+#: hwclock/cmos.c:205
 msgid "funky TOY!\n"
 msgstr "イカした TOY!\n"
 
-#: hwclock/cmos.c:255
+#: hwclock/cmos.c:259
 #, c-format
 msgid "%s: atomic %s failed for 1000 iterations!"
 msgstr "%s: 不可分な%sの 1000 回の反復が失敗!"
 
-#: hwclock/cmos.c:579
+#: hwclock/cmos.c:583
 #, c-format
 msgid "Cannot open /dev/port: %s"
 msgstr "/dev/port を開けません: %s"
 
-#: hwclock/cmos.c:586
+#: hwclock/cmos.c:590
 msgid "I failed to get permission because I didn't try.\n"
 msgstr "許可の取得を試さなかったので、許可の取得に失敗しました。\n"
 
-#: hwclock/cmos.c:589
+#: hwclock/cmos.c:593
 #, c-format
 msgid "%s is unable to get I/O port access:  the iopl(3) call failed.\n"
 msgstr "%s は I/O ポートアクセスができません: iopl(3) コールに失敗。\n"
 
-#: hwclock/cmos.c:592
+#: hwclock/cmos.c:596
 msgid "Probably you need root privileges.\n"
 msgstr "恐らくルート権限が必要です。\n"
 
@@ -5798,7 +5817,7 @@ msgstr "finger 情報は変更 *されませんでした*。またあとで試してください。\n"
 msgid "Finger information changed.\n"
 msgstr "finger 情報を変更しました。\n"
 
-#: login-utils/chfn.c:493 login-utils/chsh.c:393 sys-utils/cytune.c:328
+#: login-utils/chfn.c:493 login-utils/chsh.c:393 sys-utils/cytune.c:327
 msgid "malloc failed"
 msgstr "malloc に失敗"
 
@@ -5952,7 +5971,7 @@ msgid "last: gethostname"
 msgstr "last: gethostname"
 
 #: login-utils/last.c:490
-#, c-format, ycp-format
+#, c-format
 msgid ""
 "\n"
 "interrupted %10.10s %5.5s \n"
@@ -6281,94 +6300,94 @@ msgstr "使い方: passwd [ユーザ名 [パスワード]]\n"
 msgid "Only root may use the one and two argument forms.\n"
 msgstr "root だけが一つまたは二つの引数形式で実行できます\n"
 
-#: login-utils/passwd.c:279
+#: login-utils/passwd.c:280
 msgid "Usage: passwd [-foqsvV] [user [password]]\n"
 msgstr "使い方: passwd [-foqsvV] [ユーザ [パスワード]]\n"
 
-#: login-utils/passwd.c:300
+#: login-utils/passwd.c:301
 #, c-format
 msgid "Can't exec %s: %s\n"
 msgstr "%s を実行できません: %s\n"
 
-#: login-utils/passwd.c:311
+#: login-utils/passwd.c:312
 msgid "Cannot find login name"
 msgstr "ログイン名が見つけられません"
 
-#: login-utils/passwd.c:318 login-utils/passwd.c:325
+#: login-utils/passwd.c:319 login-utils/passwd.c:326
 msgid "Only root can change the password for others.\n"
 msgstr "root だけが他人のパスワードを変更できます\n"
 
-#: login-utils/passwd.c:333
+#: login-utils/passwd.c:334
 msgid "Too many arguments.\n"
 msgstr "引数が多すぎます。\n"
 
-#: login-utils/passwd.c:338
+#: login-utils/passwd.c:339
 #, c-format
 msgid "Can't find username anywhere. Is `%s' really a user?"
 msgstr "ユーザ名がどこにも見つかりません。`%s' は本当にユーザですか？"
 
-#: login-utils/passwd.c:342
+#: login-utils/passwd.c:343
 msgid "Sorry, I can only change local passwords. Use yppasswd instead."
 msgstr ""
 "残念ながら、ローカルのパスワードの変更しかできません。\n"
 "かわりに yppasswd を使ってください。"
 
-#: login-utils/passwd.c:348
+#: login-utils/passwd.c:349
 msgid "UID and username does not match, imposter!"
 msgstr "ユーザID 番号とユーザ名が一致しません。詐称だ！"
 
-#: login-utils/passwd.c:353
+#: login-utils/passwd.c:354
 #, c-format
 msgid "Changing password for %s\n"
 msgstr "%s のパスワードを変更します\n"
 
-#: login-utils/passwd.c:357
+#: login-utils/passwd.c:358
 msgid "Enter old password: "
 msgstr "球パスワードを入力してください: "
 
-#: login-utils/passwd.c:359
+#: login-utils/passwd.c:360
 msgid "Illegal password, imposter."
 msgstr "不正なパスワード、詐称です。"
 
-#: login-utils/passwd.c:371
+#: login-utils/passwd.c:372
 msgid "Enter new password: "
 msgstr "新パスワードを入力してください。"
 
-#: login-utils/passwd.c:373
+#: login-utils/passwd.c:374
 msgid "Password not changed."
 msgstr "パスワードは変更されませんでした。"
 
-#: login-utils/passwd.c:382
+#: login-utils/passwd.c:383
 msgid "Re-type new password: "
 msgstr "新パスワードをもう一度入力してください: "
 
-#: login-utils/passwd.c:385
+#: login-utils/passwd.c:386
 msgid "You misspelled it. Password not changed."
 msgstr "綴りが違います。後でもう一度試してください。"
 
-#: login-utils/passwd.c:400
+#: login-utils/passwd.c:401
 #, c-format
 msgid "password changed, user %s"
 msgstr "パスワードは変更されました。ユーザ %s"
 
-#: login-utils/passwd.c:403
+#: login-utils/passwd.c:404
 msgid "ROOT PASSWORD CHANGED"
 msgstr "* root のパスワードが変更されました *"
 
-#: login-utils/passwd.c:405
+#: login-utils/passwd.c:406
 #, c-format
 msgid "password changed by root, user %s"
 msgstr "パスワードはルートによって変更されました、ユーザ %s"
 
-#: login-utils/passwd.c:412
+#: login-utils/passwd.c:413
 msgid "calling setpwnam to set password.\n"
 msgstr "パスワードを設定するため setpwnam を呼び出し中。\n"
 
-#: login-utils/passwd.c:416
+#: login-utils/passwd.c:417
 msgid "Password *NOT* changed.  Try again later.\n"
 msgstr "パスワードは変更 *されませんでした*。後でもう一度試してください。\n"
 
-#: login-utils/passwd.c:422
+#: login-utils/passwd.c:423
 msgid "Password changed.\n"
 msgstr "パスワードは変更されました。\n"
 
@@ -6692,11 +6711,11 @@ msgstr "%s: 一時ファイルの情報を取得できません。\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: 一時ファイルを読めません。\n"
 
-#: misc-utils/cal.c:257
+#: misc-utils/cal.c:260
 msgid "illegal month value: use 1-12"
 msgstr "不正な月: 1-12 を使ってください"
 
-#: misc-utils/cal.c:261
+#: misc-utils/cal.c:264
 msgid "illegal year value: use 1-9999"
 msgstr "不正な年: 1-9999 を使ってください"
 
@@ -6705,13 +6724,14 @@ msgstr "不正な年: 1-9999 を使ってください"
 #. * Basque the translation should be: "%2$dko %1$s", and
 #. * the Vietnamese should be "%s na(m %d", etc.
 #.
-#: misc-utils/cal.c:368
+#: misc-utils/cal.c:371
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:671
-msgid "usage: cal [-mjyV] [[month] year]\n"
+#: misc-utils/cal.c:674
+#, fuzzy
+msgid "usage: cal [-13smjyV] [[month] year]\n"
 msgstr "使い方: cal [-mjyV] [日 月 年]\n"
 
 #: misc-utils/ddate.c:205
@@ -6846,9 +6866,9 @@ msgid "call: %s from to files...\n"
 msgstr "call: %s from to files...\n"
 
 #: misc-utils/script.c:106
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Warning: `%s' is a symlink.\n"
+"Warning: `%s' is a link.\n"
 "Use `%s [options] %s' if you really want to use it.\n"
 "Script not started.\n"
 msgstr ""
@@ -7059,30 +7079,30 @@ msgstr "  [ -blength [0-2000] ]\n"
 msgid "  [ -bfreq freqnumber ]\n"
 msgstr "  [ -bfreq freqnumber ]\n"
 
-#: misc-utils/setterm.c:1047
+#: misc-utils/setterm.c:1048
 msgid "cannot (un)set powersave mode\n"
 msgstr "パワーセーブモードに設定(又は解除)できません\n"
 
-#: misc-utils/setterm.c:1086 misc-utils/setterm.c:1094
+#: misc-utils/setterm.c:1087 misc-utils/setterm.c:1095
 #, c-format
 msgid "klogctl error: %s\n"
 msgstr "klogctl エラー: %s\n"
 
-#: misc-utils/setterm.c:1133
+#: misc-utils/setterm.c:1134
 #, c-format
 msgid "Error reading %s\n"
 msgstr "%s の読込みエラー\n"
 
-#: misc-utils/setterm.c:1148
+#: misc-utils/setterm.c:1149
 msgid "Error writing screendump\n"
 msgstr "スクリーンダンプ書き込みエラー\n"
 
-#: misc-utils/setterm.c:1162
+#: misc-utils/setterm.c:1163
 #, c-format
 msgid "couldn't read %s, and cannot ioctl dump\n"
 msgstr "%s を読めません、そして ioctl ダンプができません\n"
 
-#: misc-utils/setterm.c:1228
+#: misc-utils/setterm.c:1229
 #, c-format
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: $TERM が定義されていません。\n"
@@ -7420,7 +7440,7 @@ msgid "mount: can't open %s: %s"
 msgstr "mount: %s がオープンできません: %s"
 
 #: mount/mount.c:656
-#, fuzzy, c-format
+#, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: %s を速度設定用にオープンできません"
 
@@ -7627,7 +7647,7 @@ msgstr "UUID"
 msgid "label"
 msgstr "ラベル"
 
-#: mount/mount.c:1110 mount/mount.c:1489
+#: mount/mount.c:1110 mount/mount.c:1502
 msgid "mount: no such partition found"
 msgstr "mount: そのようなパーティションは見つかりません"
 
@@ -7653,7 +7673,8 @@ msgstr "mount: 諦めました \"%s\"\n"
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s は %s にマウント済です\n"
 
-#: mount/mount.c:1323
+#: mount/mount.c:1324
+#, fuzzy
 msgid ""
 "Usage: mount -V                 : print version\n"
 "       mount -h                 : print this help\n"
@@ -7670,6 +7691,8 @@ msgid ""
 "a filesystem (of the given type) found on the device.\n"
 "One can also mount an already visible directory tree elsewhere:\n"
 "       mount --bind olddir newdir\n"
+"or move a subtree:\n"
+"       mount --move olddir newdir\n"
 "A device can be given by name, say /dev/hda1 or /dev/cdrom,\n"
 "or by label, using  -L label  or by uuid, using  -U uuid .\n"
 "Other options: [-nfFrsvw] [-o options].\n"
@@ -7695,30 +7718,30 @@ msgstr ""
 "その他のオプション: [-nfFrsvw] [-o オプション]\n"
 "もっと詳しいことを知りたければ、man 8 mount と唱えてみましょう。\n"
 
-#: mount/mount.c:1473
+#: mount/mount.c:1486
 msgid "mount: only root can do that"
 msgstr "mount: root だけがそれを行なえます"
 
-#: mount/mount.c:1478
+#: mount/mount.c:1491
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s が見つかりません -- 作成します..\n"
 
-#: mount/mount.c:1491
+#: mount/mount.c:1504
 #, c-format
 msgid "mount: mounting %s\n"
 msgstr "mount: %s をマウントします\n"
 
-#: mount/mount.c:1500
+#: mount/mount.c:1513
 msgid "nothing was mounted"
 msgstr "何もマウントされませんでした"
 
-#: mount/mount.c:1515
+#: mount/mount.c:1528
 #, c-format
 msgid "mount: cannot find %s in %s"
 msgstr "mount: %2$s 内に %1$s を見つけられません"
 
-#: mount/mount.c:1530
+#: mount/mount.c:1543
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %2$s や %3$s 内に %1$s を見つけられません"
@@ -7734,31 +7757,30 @@ msgstr ""
 msgid "mount: bad UUID"
 msgstr "mount: 不正な UUID"
 
-#: mount/mount_guess_fstype.c:433
-#, fuzzy
+#: mount/mount_guess_fstype.c:487
 msgid "mount: error while guessing filesystem type\n"
-msgstr "mount: ファイルシステムタイプを指定する必要があります"
+msgstr "mount: ファイルシステム型推定中にエラーが発生\n"
 
-#: mount/mount_guess_fstype.c:442
+#: mount/mount_guess_fstype.c:496
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: %s へのファイルシステムタイプの指定がありません\n"
 
-#: mount/mount_guess_fstype.c:445
+#: mount/mount_guess_fstype.c:499
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       %s 又は %s のタイプを試してみます\n"
 
-#: mount/mount_guess_fstype.c:448
+#: mount/mount_guess_fstype.c:502
 msgid "       and it looks like this is swapspace\n"
 msgstr "       そして、それはスワップ空間の様です。\n"
 
-#: mount/mount_guess_fstype.c:450
+#: mount/mount_guess_fstype.c:504
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       タイプ %s を試してみます\n"
 
-#: mount/mount_guess_fstype.c:538
+#: mount/mount_guess_fstype.c:592
 #, c-format
 msgid "Trying %s\n"
 msgstr "%s を試します\n"
@@ -7892,95 +7914,95 @@ msgstr "swapon: ファイル %s をスキップ -- ホールを検出。\n"
 msgid "%s: cannot open %s: %s\n"
 msgstr "%s: %s を開けません: %s\n"
 
-#: mount/umount.c:75
+#: mount/umount.c:76
 msgid "umount: compiled without support for -f\n"
 msgstr "mount: -f オプションのサポート無しでコンパイルされています\n"
 
-#: mount/umount.c:148
+#: mount/umount.c:149
 #, c-format
 msgid "host: %s, directory: %s\n"
 msgstr "ホスト: %s, ディレクトリ: %s\n"
 
-#: mount/umount.c:168
+#: mount/umount.c:169
 #, c-format
 msgid "umount: can't get address for %s\n"
 msgstr "umount: %s のアドレスが取得できません\n"
 
-#: mount/umount.c:173
+#: mount/umount.c:174
 msgid "umount: got bad hostp->h_length\n"
 msgstr "umount: 不正な hostp->h_length 値を取得しました\n"
 
-#: mount/umount.c:221
+#: mount/umount.c:222
 #, c-format
 msgid "umount: %s: invalid block device"
 msgstr "umount: %s は不正なブロックデバイスです"
 
-#: mount/umount.c:223
+#: mount/umount.c:224
 #, c-format
 msgid "umount: %s: not mounted"
 msgstr "umount: %s: マウントされていません"
 
-#: mount/umount.c:225
+#: mount/umount.c:226
 #, c-format
 msgid "umount: %s: can't write superblock"
 msgstr "umount: %s: スーパーブロックに書き込めません"
 
 #. Let us hope fstab has a line "proc /proc ..."
 #. and not "none /proc ..."
-#: mount/umount.c:229
+#: mount/umount.c:230
 #, c-format
 msgid "umount: %s: device is busy"
 msgstr "umount: %s: デバイスを使用中です"
 
-#: mount/umount.c:231
+#: mount/umount.c:232
 #, c-format
 msgid "umount: %s: not found"
 msgstr "umount: %s: 見つかりません"
 
-#: mount/umount.c:233
+#: mount/umount.c:234
 #, c-format
 msgid "umount: %s: must be superuser to umount"
 msgstr "umount: %s: アンマウントするにはスーパーユーザでなければなりません"
 
-#: mount/umount.c:235
+#: mount/umount.c:236
 #, c-format
 msgid "umount: %s: block devices not permitted on fs"
 msgstr "umount: %s: ブロックデバイスはファイルシステム上で許可されません"
 
-#: mount/umount.c:237
+#: mount/umount.c:238
 #, c-format
 msgid "umount: %s: %s"
 msgstr "umount: %s: %s"
 
-#: mount/umount.c:284
+#: mount/umount.c:285
 msgid "no umount2, trying umount...\n"
 msgstr "umount2 がありません、umount してみます...\n"
 
-#: mount/umount.c:300
+#: mount/umount.c:301
 #, c-format
 msgid "could not umount %s - trying %s instead\n"
 msgstr "%s をアンマウントできませんでした -- 代りに %s を使ってみます\n"
 
-#: mount/umount.c:318
+#: mount/umount.c:319
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr "umount: %s は使用中です -- 読込み専用として再マウントします\n"
 
-#: mount/umount.c:328
+#: mount/umount.c:329
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr "umount: %s を読込み専用で再マウントできませんでした\n"
 
-#: mount/umount.c:337
+#: mount/umount.c:338
 #, c-format
 msgid "%s umounted\n"
 msgstr "%s はアンマウントされました\n"
 
-#: mount/umount.c:424
+#: mount/umount.c:425
 msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: アンマウントのためのファイルシステムリストを見つけられません"
 
-#: mount/umount.c:453
+#: mount/umount.c:454
 msgid ""
 "Usage: umount [-hV]\n"
 "       umount -a [-f] [-r] [-n] [-v] [-t vfstypes]\n"
@@ -7990,48 +8012,43 @@ msgstr ""
 "        umount -a [-f] [-r] [-n] [-v] [-t ファイルシステムタイプ]\n"
 "        umount [-f] [-r] [-n] [-v] special | node...\n"
 
-#: mount/umount.c:510
+#: mount/umount.c:536
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr "%s をアンマウントします\n"
 
-#: mount/umount.c:514
+#: mount/umount.c:540
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "mtab に %s が見つかりません\n"
 
-#: mount/umount.c:518
+#: mount/umount.c:544
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s マウントされていません (mtab によると)"
 
-#: mount/umount.c:520
+#: mount/umount.c:546
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: %s は複数マウントされているようです"
 
-#: mount/umount.c:532
+#: mount/umount.c:558
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr ""
 "umount: %s は fstab にありません (さらに、あなたは root ではありません)"
 
-#: mount/umount.c:535
+#: mount/umount.c:561
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: %s は fstab と一致しないマウントです"
 
-#: mount/umount.c:556
+#: mount/umount.c:595
 #, c-format
 msgid "umount: only root can unmount %s from %s"
 msgstr "umount: root だけが %s を %s からアンマウントできます"
 
-#: mount/umount.c:567
-#, c-format
-msgid "umount: only %s can unmount %s from %s"
-msgstr "umount: %s だけが %s を %s からアンマウントできます"
-
-#: mount/umount.c:639
+#: mount/umount.c:661
 msgid "umount: only root can do that"
 msgstr "umount: root だけがそれを行なえます"
 
@@ -8063,32 +8080,32 @@ msgstr ""
 "ファイル %s、しきい値 %lu 及びタイムアウト値 %lu、パイプ内の最大キャラクタ\n"
 "数は、%d でした。秒間最大キャラクタ転送レートは %f でした。\n"
 
-#: sys-utils/cytune.c:196
+#: sys-utils/cytune.c:195
 #, c-format
 msgid "Invalid interval value: %s\n"
 msgstr "不正な内部値: %s\n"
 
-#: sys-utils/cytune.c:204
+#: sys-utils/cytune.c:203
 #, c-format
 msgid "Invalid set value: %s\n"
 msgstr "不正な設定値: %s\n"
 
-#: sys-utils/cytune.c:212
+#: sys-utils/cytune.c:211
 #, c-format
 msgid "Invalid default value: %s\n"
 msgstr "不正な初期値: %s\n"
 
-#: sys-utils/cytune.c:220
+#: sys-utils/cytune.c:219
 #, c-format
 msgid "Invalid set time value: %s\n"
 msgstr "不正な設定時刻: %s\n"
 
-#: sys-utils/cytune.c:228
+#: sys-utils/cytune.c:227
 #, c-format
 msgid "Invalid default time value: %s\n"
 msgstr "不正な初期時刻: %s\n"
 
-#: sys-utils/cytune.c:245
+#: sys-utils/cytune.c:244
 #, c-format
 msgid ""
 "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
@@ -8097,56 +8114,56 @@ msgstr ""
 "使い方: %s [-q [-i 間隔]] ([-s 値]|[-S 値]) ([-t 値]|[-T 値]) [-g|-G] ファイ"
 "ル [ファイル...]\n"
 
-#: sys-utils/cytune.c:257 sys-utils/cytune.c:276 sys-utils/cytune.c:296
-#: sys-utils/cytune.c:346
+#: sys-utils/cytune.c:256 sys-utils/cytune.c:275 sys-utils/cytune.c:295
+#: sys-utils/cytune.c:345
 #, c-format
 msgid "Can't open %s: %s\n"
 msgstr "%s を開けません: %s\n"
 
-#: sys-utils/cytune.c:264
+#: sys-utils/cytune.c:263
 #, c-format
 msgid "Can't set %s to threshold %d: %s\n"
 msgstr "%s をしきい値 %d に設定できません: %s\n"
 
-#: sys-utils/cytune.c:283
+#: sys-utils/cytune.c:282
 #, c-format
 msgid "Can't set %s to time threshold %d: %s\n"
 msgstr "%s を時間しきい値 %d に設定できません: %s\n"
 
-#: sys-utils/cytune.c:301 sys-utils/cytune.c:358 sys-utils/cytune.c:389
+#: sys-utils/cytune.c:300 sys-utils/cytune.c:357 sys-utils/cytune.c:388
 #, c-format
 msgid "Can't get threshold for %s: %s\n"
 msgstr "%s へのしきい値が取得できません: %s\n"
 
-#: sys-utils/cytune.c:307 sys-utils/cytune.c:364 sys-utils/cytune.c:395
+#: sys-utils/cytune.c:306 sys-utils/cytune.c:363 sys-utils/cytune.c:394
 #, c-format
 msgid "Can't get timeout for %s: %s\n"
 msgstr "%s へのタイムアウトを取得できません: %s\n"
 
-#: sys-utils/cytune.c:313
+#: sys-utils/cytune.c:312
 #, c-format
 msgid "%s: %ld current threshold and %ld current timeout\n"
 msgstr "%s: 現在の閾値 %ld 及び現在のタイムアウト %ld\n"
 
-#: sys-utils/cytune.c:316
+#: sys-utils/cytune.c:315
 #, c-format
 msgid "%s: %ld default threshold and %ld default timeout\n"
 msgstr "%s: デフォルト閾値 %ld 及びデフォルトタイムアウト %ld\n"
 
-#: sys-utils/cytune.c:334
+#: sys-utils/cytune.c:333
 msgid "Can't set signal handler"
 msgstr "シグナルハンドラを設定できません"
 
-#: sys-utils/cytune.c:338 sys-utils/cytune.c:373
+#: sys-utils/cytune.c:337 sys-utils/cytune.c:372
 msgid "gettimeofday failed"
 msgstr "gettimeofday が失敗"
 
-#: sys-utils/cytune.c:351 sys-utils/cytune.c:383
+#: sys-utils/cytune.c:350 sys-utils/cytune.c:382
 #, c-format
 msgid "Can't issue CYGETMON on %s: %s\n"
 msgstr "%s で CYGETMON が発行できません: %s\n"
 
-#: sys-utils/cytune.c:425
+#: sys-utils/cytune.c:424
 #, c-format
 msgid ""
 "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
@@ -8154,12 +8171,12 @@ msgstr ""
 "%s: 整数 %lu、キャラクタ %lu/%lu -- fifo: 閾値 %lu、タイムアウト %lu、\n"
 "    最大 %lu、現在 %lu\n"
 
-#: sys-utils/cytune.c:431
+#: sys-utils/cytune.c:430
 #, c-format
 msgid "   %f int/sec; %f rec, %f send (char/sec)\n"
 msgstr "   %f 整数/秒; %f 記録, %f 送信 (キャラクタ/秒)\n"
 
-#: sys-utils/cytune.c:436
+#: sys-utils/cytune.c:435
 #, c-format
 msgid ""
 "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
@@ -8167,7 +8184,7 @@ msgstr ""
 "%s: 整数 %lu、キャラクタ %lu -- fifo: しきい値 %lu、タイムアウト %lu、\n"
 "    最大 %lu、現在 %lu\n"
 
-#: sys-utils/cytune.c:442
+#: sys-utils/cytune.c:441
 #, c-format
 msgid "   %f int/sec; %f rec (char/sec)\n"
 msgstr "   %f 整数/秒 -- %f 記録 (キャラクタ/秒)\n"
@@ -8815,7 +8832,7 @@ msgid "missing comma"
 msgstr "カンマを欠いています"
 
 #: sys-utils/readprofile.c:58
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s: Usage: \"%s [options]\n"
 "\t -m <mapfile>  (default = \"%s\")\n"
@@ -8836,6 +8853,7 @@ msgstr ""
 "\t -v                   詳細情報を表示\n"
 "\t -a                   カウントが 0 でも、すべてのシンボルを表示\n"
 "\t -r                   すべてのカウンタをリセットする (root のみ)\n"
+"\t -n                   バイトオーダの自動検知を無効化する\n"
 "\t -V                   バージョン情報を表示して終了する\n"
 
 #: sys-utils/readprofile.c:81
@@ -8970,29 +8988,29 @@ msgstr "%s は IRQ %d を使います\n"
 msgid "%s using polling\n"
 msgstr "%s はポーリングを行います\n"
 
-#: text-utils/col.c:155
+#: text-utils/col.c:153
 #, c-format
 msgid "col: bad -l argument %s.\n"
 msgstr "col: 不正な -l の引数 %s です。\n"
 
-#: text-utils/col.c:537
+#: text-utils/col.c:535
 msgid "usage: col [-bfpx] [-l nline]\n"
 msgstr "使い方: col [-bfpx] [-l 行数]\n"
 
-#: text-utils/col.c:543
+#: text-utils/col.c:541
 msgid "col: write error.\n"
 msgstr "col: 書き込みエラー。\n"
 
-#: text-utils/col.c:550
+#: text-utils/col.c:548
 #, c-format
 msgid "col: warning: can't back up %s.\n"
 msgstr "col: 警告: %sバックアップできません。\n"
 
-#: text-utils/col.c:551
+#: text-utils/col.c:549
 msgid "past first line"
 msgstr "最初の行以前を"
 
-#: text-utils/col.c:551
+#: text-utils/col.c:549
 msgid "-- line already flushed"
 msgstr "行は既に書き込まれたので"
 
@@ -9001,25 +9019,26 @@ msgstr "行は既に書き込まれたので"
 msgid "usage: %s [ - ] [ -2 ] [ file ... ]\n"
 msgstr "使い方: %s [ - ] [ -2 ] [ ファイル ... ]\n"
 
-#: text-utils/column.c:300
+#: text-utils/column.c:298
 msgid "line too long"
 msgstr "行が長すぎます"
 
-#: text-utils/column.c:377
+#: text-utils/column.c:375
 msgid "usage: column [-tx] [-c columns] [file ...]\n"
 msgstr "使い方: column [-tx] [-c カラム数] [ファイル ...]\n"
 
-#: text-utils/hexsyntax.c:80
+#: text-utils/hexsyntax.c:82
 msgid "hexdump: bad length value.\n"
 msgstr "hexdump: 不正な長さの値。\n"
 
-#: text-utils/hexsyntax.c:91
+#: text-utils/hexsyntax.c:93
 msgid "hexdump: bad skip value.\n"
 msgstr "hexdump: 不正なスキップ値です。\n"
 
-#: text-utils/hexsyntax.c:129
+#: text-utils/hexsyntax.c:131
+#, fuzzy
 msgid ""
-"hexdump: [-bcdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
+"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
 msgstr ""
 "hexdump: [-bcdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
 
@@ -9162,16 +9181,16 @@ msgstr "行が長すぎます"
 msgid "No previous command to substitute for"
 msgstr "大体のための以前のコマンドがありません"
 
-#: text-utils/odsyntax.c:133
+#: text-utils/odsyntax.c:130
 msgid "od: od(1) has been deprecated for hexdump(1).\n"
 msgstr "od: od(1) は hexdump(1) に取って代わられました。\n"
 
-#: text-utils/odsyntax.c:136
+#: text-utils/odsyntax.c:133
 #, c-format
 msgid "od: hexdump(1) compatibility doesn't support the -%c option%s\n"
 msgstr "od: hexdump(1) 互換は -%c オプションをサポートしません%s\n"
 
-#: text-utils/odsyntax.c:137
+#: text-utils/odsyntax.c:134
 msgid "; see strings(1)."
 msgstr " -- string(1) を参照。"
 
@@ -9184,27 +9203,27 @@ msgstr "hexdump: %s を読めません。\n"
 msgid "hexdump: line too long.\n"
 msgstr "hexdump: 行が長すぎます。\n"
 
-#: text-utils/parse.c:406
+#: text-utils/parse.c:401
 msgid "hexdump: byte count with multiple conversion characters.\n"
 msgstr "hexdump: 複数の文字のバイト数カウント\n"
 
-#: text-utils/parse.c:490
+#: text-utils/parse.c:483
 #, c-format
 msgid "hexdump: bad byte count for conversion character %s.\n"
 msgstr ""
 "hexdump: 文字 %s の変換について不正なバイト数のカウントを行いました。\n"
 
-#: text-utils/parse.c:497
-#, c-format, ycp-format
+#: text-utils/parse.c:490
+#, c-format
 msgid "hexdump: %%s requires a precision or a byte count.\n"
 msgstr "hexdump: %%s は精度か、バイト数を要求します。\n"
 
-#: text-utils/parse.c:503
+#: text-utils/parse.c:496
 #, c-format
 msgid "hexdump: bad format {%s}\n"
 msgstr "hexdump: 不正な書式 {%s}\n"
 
-#: text-utils/parse.c:509
+#: text-utils/parse.c:502
 #, c-format
 msgid "hexdump: bad conversion character %%%s.\n"
 msgstr "hexdump: 不正な変換キャラクタ %%%s。\n"
@@ -9217,31 +9236,34 @@ msgstr "バッファ空間を確保できません\n"
 msgid "usage: rev [file ...]\n"
 msgstr "使い方: rev [ ファイル ...]\n"
 
-#: text-utils/ul.c:143
+#: text-utils/ul.c:141
 #, c-format
 msgid "usage: %s [ -i ] [ -tTerm ] file...\n"
 msgstr "使い方: %s [ -i ] [ -t端末 ] ファイル...\n"
 
-#: text-utils/ul.c:154
+#: text-utils/ul.c:152
 msgid "trouble reading terminfo"
 msgstr "terminfo の読み込み中にトラブル発生"
 
-#: text-utils/ul.c:244
+#: text-utils/ul.c:242
 #, c-format
 msgid "Unknown escape sequence in input: %o, %o\n"
 msgstr "不明なエスケープシーケンスが入力されました: %o, %o\n"
 
-#: text-utils/ul.c:427
+#: text-utils/ul.c:425
 msgid "Unable to allocate buffer.\n"
 msgstr "バッファの確保ができません。\n"
 
-#: text-utils/ul.c:588
+#: text-utils/ul.c:586
 msgid "Input line too long.\n"
 msgstr "入力行が長すぎます。\n"
 
-#: text-utils/ul.c:601
+#: text-utils/ul.c:599
 msgid "Out of memory when growing buffer.\n"
 msgstr "バッファを拡大するときにメモリが足りなくなりました。\n"
+
+#~ msgid "umount: only %s can unmount %s from %s"
+#~ msgstr "umount: %s だけが %s を %s からアンマウントできます"
 
 #~ msgid "'."
 #~ msgstr "'."

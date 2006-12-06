@@ -70,7 +70,7 @@ start:
 	ct = 0;
 loop1:
 	c = getwc(stdin);
-	if (feof(stdin))
+	if (c == WEOF)
 		goto fin;
 	if (c == '\t')
 		w = ((ct + 8) & ~7) - ct;
@@ -96,7 +96,7 @@ loop1:
 /* Loop getting rid of characters */
 	while (!last || ct < last) {
 		c = getwc(stdin);
-		if (feof(stdin))
+		if (c == WEOF)
 			goto fin;
 		if (c == '\n') {
 			putwc(c, stdout);
@@ -119,7 +119,7 @@ loop1:
 /* Output last of the line */
 	for (;;) {
 		c = getwc(stdin);
-		if (feof(stdin))
+		if (c == WEOF)
 			break;
 		if (c == '\n') {
 			putwc(c, stdout);

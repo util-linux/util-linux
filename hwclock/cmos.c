@@ -49,8 +49,12 @@
 
 #include "nls.h"
 
-#if defined(__i386__) || defined(__alpha__)
+#if defined(__i386__)
 #include <asm/io.h>		/* for inb, outb */
+#elif defined(__alpha__)
+/* <asm/io.h> fails to compile, probably because of u8 etc */
+extern unsigned int     inb(unsigned long port);
+extern void             outb(unsigned char b,unsigned long port);
 #else
 void outb(int a, int b){}
 int inb(int c){ return 0; }

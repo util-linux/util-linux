@@ -802,7 +802,8 @@ static char *ti_entry(const char *name) {
 
 	char *buf_ptr;
 
-	if ((buf_ptr = tigetstr(name)) == (char *)-1) buf_ptr = NULL;
+	if ((buf_ptr = tigetstr((char *)name)) == (char *)-1)
+		buf_ptr = NULL;
 	return buf_ptr;
 }
 

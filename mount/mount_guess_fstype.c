@@ -66,7 +66,7 @@ assemble4le(unsigned char *p) {
 }
 
 /*
-    char *guess_fstype_from_superblock(const char *device);
+    char *guess_fstype(const char *device);
 
     Probes the device and attempts to determine the type of filesystem
     contained within.
@@ -85,6 +85,7 @@ assemble4le(unsigned char *p) {
     Added ext3 - Andrew Morton
     Added jfs - Christoph Hellwig
     Added sysv - Tim Launchbury
+    Added udf - Bryce Nesbitt
 */
 static char
 *magic_known[] = {
@@ -137,14 +138,21 @@ free_tested(void) {
 	tried = NULL;
 }
 
-/* udf magic - I find that trying to mount garbage as an udf fs
-   causes a very large kernel delay, almost killing the machine.
-   So, we do not try udf unless there is positive evidence that it
-   might work. Try iso9660 first, it is much more likely.
-   Strings below taken from ECMA 167. */
+/*
+ * udf magic - I find that trying to mount garbage as an udf fs
+ * causes a very large kernel delay, almost killing the machine.
+ * So, we do not try udf unless there is positive evidence that it
+ * might work. Strings below taken from ECMA 167.
+ */
+/*
+ * It seems that before udf 2.00 the volume descriptor was not well
+ * defined.  For 2.00 you're supposed to keep scanning records until
+ * you find one NOT in this list.  (See ECMA 2/8.3.1).
+ */
 static char
 *udf_magic[] = { "BEA01", "BOOT2", "CD001", "CDW02", "NSR02",
 		 "NSR03", "TEA01" };
+
 
 static int
 may_be_udf(const char *id) {
@@ -154,6 +162,43 @@ may_be_udf(const char *id) {
        if (!strncmp(*m, id, 5))
 	  return 1;
     return 0;
+}
+
+/* we saw "CD001" - may be iso9660 or udf - Bryce Nesbitt */
+static int
+is_really_udf(int fd) {
+	int j, bs;
+	struct iso_volume_descriptor isosb;
+
+	/* determine the block size by scanning in 2K increments
+	   (block sizes larger than 2K will be null padded) */
+	for (bs = 1; bs < 16; bs++) {
+		lseek(fd, bs*2048+32768, SEEK_SET);
+		if (read(fd, (char *)&isosb, sizeof(isosb)) != sizeof(isosb))
+			return 0;
+		if (isosb.id[0])
+			break;
+	}
+
+	/* Scan up to another 64 blocks looking for additional VSD's */
+	for (j = 1; j < 64; j++) {
+		if (j > 1) {
+			lseek(fd, j*bs*2048+32768, SEEK_SET);
+			if (read(fd, (char *)&isosb, sizeof(isosb))
+			    != sizeof(isosb))
+				return 0;
+		}
+		/* If we find NSR0x then call it udf:
+		   NSR01 for UDF 1.00
+		   NSR02 for UDF 1.50
+		   NSR03 for UDF 2.00 */
+		if (!strncmp(isosb.id, "NSR0", 4))
+			return 1;
+		if (!may_be_udf(isosb.id))
+			return 0;
+	}
+
+	return 0;
 }
 
 static int
@@ -184,8 +229,8 @@ static int is_reiserfs_magic_string (struct reiserfs_super_block * rs)
 		      strlen ( REISER2FS_SUPER_MAGIC_STRING)));
 }
 
-static char *
-fstype(const char *device) {
+char *
+do_guess_fstype(const char *device) {
     int fd;
     char *type = NULL;
     union {
@@ -292,7 +337,7 @@ fstype(const char *device) {
 	     if ((assemble4le(sb.e2s.s_feature_compat)
 		  & EXT3_FEATURE_COMPAT_HAS_JOURNAL) &&
 		 assemble4le(sb.e2s.s_journal_inum) != 0)
-		     type = "ext3,ext2";
+		     type = "ext3";	/* "ext3,ext2" */
 	}
 
 	else if (minixmagic(sb.ms) == MINIX_SUPER_MAGIC ||
@@ -340,12 +385,15 @@ fstype(const char *device) {
     }
 
     if (!type) {
+	 int mag;
+
 	 /* block 8 */
 	 if (lseek(fd, 8192, SEEK_SET) != 8192
 	     || read(fd, (char *) &ufssb, sizeof(ufssb)) != sizeof(ufssb))
 	      goto io_error;
 
-	 if (ufsmagic(ufssb) == UFS_SUPER_MAGIC) /* also test swapped version? */
+	 mag = ufsmagic(ufssb);
+	 if (mag == UFS_SUPER_MAGIC_LE || mag == UFS_SUPER_MAGIC_BE)
 	      type = "ufs";
     }
 
@@ -385,11 +433,17 @@ fstype(const char *device) {
 	     || read(fd, (char *) &isosb, sizeof(isosb)) != sizeof(isosb))
 	      goto io_error;
 
-	 if(strncmp(isosb.iso.id, ISO_STANDARD_ID, sizeof(isosb.iso.id)) == 0
-	    || strncmp(isosb.hs.id, HS_STANDARD_ID, sizeof(isosb.hs.id)) == 0)
-	      type = "iso9660";
-	 else if (may_be_udf(isosb.iso.id))
-	      type = "udf";
+	 if (strncmp(isosb.hs.id, HS_STANDARD_ID, sizeof(isosb.hs.id)) == 0) {
+		 /* "CDROM" */
+		 type = "iso9660";
+	 } else if (strncmp(isosb.iso.id, ISO_STANDARD_ID,
+			  sizeof(isosb.iso.id)) == 0) {
+		 /* CD001 */
+		 type = "iso9660";
+		 if (is_really_udf(fd))
+			 type = "udf";
+	 } else if (may_be_udf(isosb.iso.id))
+		 type = "udf";
     }
 
     if (!type) {
@@ -436,8 +490,8 @@ io_error:
 }
 
 char *
-guess_fstype_from_superblock(const char *spec) {
-	char *type = fstype(spec);
+guess_fstype(const char *spec) {
+	char *type = do_guess_fstype(spec);
 	if (verbose) {
 	    printf (_("mount: you didn't specify a filesystem type for %s\n"),
 		    spec);

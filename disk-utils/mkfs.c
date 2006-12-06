@@ -58,7 +58,7 @@ int main(int argc, char *argv[])
 
   /* Check commandline options. */
   opterr = 0;
-  while ((more == 0) && ((i = getopt(argc, argv, "Vt:")) != EOF))
+  while ((more == 0) && ((i = getopt(argc, argv, "Vt:")) != -1))
     switch (i) {
     case 'V':
       verbose++;

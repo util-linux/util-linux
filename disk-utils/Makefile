@@ -25,9 +25,7 @@ USRBIN:=$(USRBIN) setfdprm
 MAN8:=$(MAN8) setfdprm.8
 endif
 
-# raw.c does not compile on 2.2.*.
-# find out later where it does and add tests to config
-ifeq "$(ADD_RAW)" "yes"
+ifeq "$(HAVE_RAW_H)" "yes"
 USRBIN:=$(USRBIN) raw
 MAN8:=$(MAN8) raw.8
 endif

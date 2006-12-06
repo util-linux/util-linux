@@ -53,6 +53,9 @@ Only the super-user can write on the
 terminals of users who have chosen
 to deny messages or are using a program which
 automatically denies messages.
+.Pp
+Reading from a file is refused when the invoker is not superuser
+and the program is suid or sgid.
 .Sh SEE ALSO
 .Xr mesg 1 ,
 .Xr talk 1 ,

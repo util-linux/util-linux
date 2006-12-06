@@ -90,7 +90,7 @@ int main( int argc, char **argv )
    bindtextdomain(PACKAGE, LOCALEDIR);
    textdomain(PACKAGE);
 
-   while ((c = getopt( argc, argv, "vf:" )) != EOF)
+   while ((c = getopt( argc, argv, "vf:" )) != -1)
       switch (c) {
       case 'v': ++Verbose;     break;
       case 'f': file = optarg; break;

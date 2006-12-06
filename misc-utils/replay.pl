@@ -16,7 +16,7 @@ replay timingfile [typescript [divisor]]
 
 This program replays a typescript, using timing information to ensure that
 output happens at the same speed as it originally appeared when the script
-was recorded. It is only guaranteed to work preperly if run on the same
+was recorded. It is only guaranteed to work properly if run on the same
 terminal the script was recorded on.
 
 The timings information is what script outputs to standard error if it is
@@ -68,6 +68,10 @@ while (<TIMING>) {
         $oldblock=$block;
 }
 print $oldblock;
+
+=head1 SEE ALSO
+
+script(1)
 
 =head1 COPYRIGHT
 

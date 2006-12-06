@@ -369,7 +369,7 @@ mktime_tz(struct tm tm, const bool universal,
      local time zone input, we may have to fake it out by temporarily 
      changing the local time zone to UTC.
      */
-  zone = (char *) getenv("TZ");	/* remember original time zone */
+  zone = getenv("TZ");	/* remember original time zone */
   if (universal) {
     /* Set timezone to UTC */
     setenv("TZ", "", TRUE);

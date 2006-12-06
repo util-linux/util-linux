@@ -222,14 +222,17 @@ main(int argc, char **argv) {
 #endif
 	
 	yflag = 0;
-	while ((ch = getopt(argc, argv, "13mjyV")) != EOF)
+	while ((ch = getopt(argc, argv, "13mjyV")) != -1)
 		switch(ch) {
  		case '1':
- 			num_months = 1;
+ 			num_months = 1;		/* default */
  			break;
  		case '3':
  			num_months = 3;
  			break;
+		case 's':
+			week1stday = 0;		/* default */
+			break;
 		case 'm':
 			week1stday = 1;
 			break;
@@ -668,6 +671,6 @@ void
 usage()
 {
 
-	(void)fprintf(stderr, _("usage: cal [-mjyV] [[month] year]\n"));
+	(void)fprintf(stderr, _("usage: cal [-13smjyV] [[month] year]\n"));
 	exit(1);
 }

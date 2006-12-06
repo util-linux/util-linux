@@ -183,7 +183,7 @@ main (int argc, char *argv[])
   else
     program_name = argv[0];
 
-  while ((c = getopt_long (argc, argv, "ahp:svV", longopts, NULL)) != EOF)
+  while ((c = getopt_long (argc, argv, "ahp:svV", longopts, NULL)) != -1)
     switch (c)
       {
       case 'a':			/* all */

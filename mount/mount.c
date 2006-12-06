@@ -467,7 +467,7 @@ guess_fstype_and_mount (char *spec, char *node, char **types,
       *types = "none";		/* random, but not "bind" */
 
    if (!*types && !(flags & MS_REMOUNT)) {
-      *types = guess_fstype_from_superblock(spec);
+      *types = guess_fstype(spec);
       if (*types && !strcmp(*types, "swap")) {
 	  error(_("%s looks like swapspace - not mounted"), spec);
 	  *types = NULL;
@@ -1312,6 +1312,7 @@ static struct option longopts[] = {
 	{ "before", 0, 0, 131 },
 	{ "over", 0, 0, 132 },
 	{ "move", 0, 0, 133 },
+	{ "guess-fstype", 1, 0, 134 },
 	{ NULL, 0, 0, 0 }
 };
 
@@ -1335,6 +1336,8 @@ usage (FILE *fp, int n) {
 	  "a filesystem (of the given type) found on the device.\n"
 	  "One can also mount an already visible directory tree elsewhere:\n"
 	  "       mount --bind olddir newdir\n"
+	  "or move a subtree:\n"
+	  "       mount --move olddir newdir\n"
 	  "A device can be given by name, say /dev/hda1 or /dev/cdrom,\n"
 	  "or by label, using  -L label  or by uuid, using  -U uuid .\n"
 	  "Other options: [-nfFrsvw] [-o options].\n"
@@ -1375,7 +1378,7 @@ main (int argc, char *argv[]) {
 #endif
 
 	while ((c = getopt_long (argc, argv, "afFhlL:no:rsU:vVwt:",
-				 longopts, NULL)) != EOF) {
+				 longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':		/* mount everything in fstab */
 			++all;
@@ -1448,7 +1451,17 @@ main (int argc, char *argv[]) {
 		case 133: /* move */
 			mounttype = MS_MOVE;
 			break;
-	      
+		case 134:
+			/* undocumented, may go away again:
+			   call: mount --guess-fstype device
+			   use only for testing purposes -
+			   the guessing is not reliable at all */
+		    {
+			char *fstype;
+			fstype = do_guess_fstype(optarg);
+			printf("%s\n", fstype ? fstype : "unknown");
+			exit(fstype ? 0 : EX_FAIL);
+		    }
 		case '?':
 		default:
 			usage (stderr, EX_USAGE);

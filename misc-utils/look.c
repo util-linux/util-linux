@@ -98,7 +98,7 @@ main(int argc, char *argv[])
 	termchar = '\0';
 	string = NULL;		/* just for gcc */
 
-	while ((ch = getopt(argc, argv, "adft:")) != EOF)
+	while ((ch = getopt(argc, argv, "adft:")) != -1)
 		switch(ch) {
 		case 'a':
    		        file = _PATH_WORDS_ALT;

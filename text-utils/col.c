@@ -117,8 +117,6 @@ int pass_unknown_seqs;		/* whether to pass unknown control sequences */
 
 int main(int argc, char **argv)
 {
-	extern int optind;
-	extern char *optarg;
 	register wint_t ch;
 	CHAR *c;
 	CSET cur_set;			/* current character set */

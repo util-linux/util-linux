@@ -44,17 +44,14 @@
 
 off_t skip;				/* bytes to skip */
 
-void newsyntax(int argc, char ***argvp)
+void
+newsyntax(int argc, char ***argvp)
 {
-	extern enum _vflag vflag;
-	extern FS *fshead;
-	extern char *optarg;
-	extern int length, optind;
 	int ch;
 	char *p, **argv;
 
 	argv = *argvp;
-	while ((ch = getopt(argc, argv, "bcde:f:n:os:vx")) != EOF)
+	while ((ch = getopt(argc, argv, "bcCde:f:n:os:vx")) != -1)
 		switch (ch) {
 		case 'b':
 			add("\"%07.7_Ax\n\"");
@@ -63,6 +60,11 @@ void newsyntax(int argc, char ***argvp)
 		case 'c':
 			add("\"%07.7_Ax\n\"");
 			add("\"%07.7_ax \" 16/1 \"%3_c \" \"\\n\"");
+			break;
+		case 'C':
+			add("\"%08.8_Ax\n\"");
+			add("\"%08.8_ax  \" 8/1 \"%02x \" \"  \" 8/1 \"%02x \" ");
+			add("\"  |\" 16/1 \"%_p\" \"|\\n\"");
 			break;
 		case 'd':
 			add("\"%07.7_Ax\n\"");
@@ -76,7 +78,7 @@ void newsyntax(int argc, char ***argvp)
 			break;
 		case 'n':
 			if ((length = atoi(optarg)) < 0) {
-				(void)fprintf(stderr,
+				fprintf(stderr,
 				    _("hexdump: bad length value.\n"));
 				exit(1);
 			}
@@ -87,7 +89,7 @@ void newsyntax(int argc, char ***argvp)
 			break;
 		case 's':
 			if ((skip = strtol(optarg, &p, 0)) < 0) {
-				(void)fprintf(stderr,
+				fprintf(stderr,
 				    _("hexdump: bad skip value.\n"));
 				exit(1);
 			}
@@ -112,7 +114,6 @@ void newsyntax(int argc, char ***argvp)
 			break;
 		case '?':
 			usage();
-			exit(1);
 		}
 
 	if (!fshead) {
@@ -123,9 +124,10 @@ void newsyntax(int argc, char ***argvp)
 	*argvp += optind;
 }
 
-void usage()
+void
+usage()
 {
-	(void)fprintf(stderr,
-_("hexdump: [-bcdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"));
+	fprintf(stderr,
+_("hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"));
 	exit(1);
 }

@@ -2272,7 +2272,7 @@ main(int argc, char **argv) {
 	 *  fdisk -s [partition] ...
 	 *  fdisk [-b sectorsize] [-u] device
 	 */
-	while ((c = getopt(argc, argv, "b:lsuvV")) != EOF) {
+	while ((c = getopt(argc, argv, "b:lsuvV")) != -1) {
 		switch (c) {
 		case 'b':
 			/* ugly: this sector size is really per device,

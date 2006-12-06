@@ -652,7 +652,7 @@ main(int argc, char ** argv) {
     die(_("bad inode size"));
 #endif
   opterr = 0;
-  while ((i = getopt(argc, argv, "ci:l:n:v")) != EOF)
+  while ((i = getopt(argc, argv, "ci:l:n:v")) != -1)
     switch (i) {
       case 'c':
 	check=1; break;

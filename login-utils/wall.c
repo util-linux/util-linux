@@ -91,7 +91,7 @@ main(int argc, char **argv) {
 	if (p)
 	     progname = p+1;
 
-	while ((ch = getopt(argc, argv, "n")) != EOF)
+	while ((ch = getopt(argc, argv, "n")) != -1)
 		switch (ch) {
 		case 'n':
 			/* undoc option for shutdown: suppress banner */

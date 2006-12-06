@@ -53,7 +53,7 @@ main( int argc, char *argv[] ) {
    textdomain(PACKAGE);
 
    progname = argv[0];
-   while ((c = getopt( argc, argv, "cn:s:" )) != EOF) {
+   while ((c = getopt( argc, argv, "cn:s:" )) != -1) {
       switch (c) {
       case 'c':
 	 cmd = 4;

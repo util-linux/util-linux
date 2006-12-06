@@ -2569,8 +2569,16 @@ draw_screen(void) {
     mvaddstr(HEADER_START, (COLS-strlen(line))/2, line);
     sprintf(line, _("Disk Drive: %s"), disk_device);
     mvaddstr(HEADER_START+2, (COLS-strlen(line))/2, line);
-    { long long bytes = actual_size*(long long) SECTOR_SIZE;
-    sprintf(line, _("Size: %lld bytes"), bytes); }
+    {
+	    long long bytes = actual_size*(long long) SECTOR_SIZE;
+	    long megabytes = bytes/1000000;
+	    if (megabytes < 10000)
+		    sprintf(line, _("Size: %lld bytes, %ld MB"),
+			    bytes, megabytes);
+	    else
+		    sprintf(line, _("Size: %lld bytes, %ld.%ld GB"),
+			    bytes, megabytes/1000, (megabytes/100)%10);
+    }
     mvaddstr(HEADER_START+3, (COLS-strlen(line))/2, line);
     sprintf(line, _("Heads: %d   Sectors per Track: %d   Cylinders: %d"),
 	    heads, sectors, cylinders);
@@ -2844,7 +2852,7 @@ main(int argc, char **argv)
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
 
-    while ((c = getopt(argc, argv, "ac:gh:s:vzP:")) != EOF)
+    while ((c = getopt(argc, argv, "ac:gh:s:vzP:")) != -1)
 	switch (c) {
 	case 'a':
 	    arrow_cursor = TRUE;

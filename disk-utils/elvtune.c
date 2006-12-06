@@ -69,7 +69,7 @@ main(int argc, char * argv[]) {
 		int opt;
 
 		opt = getopt(argc, argv, "r:w:b:hv");
-		if (opt < 0)
+		if (opt == -1)
 			break;
 		switch (opt) {
 		case 'r':

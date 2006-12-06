@@ -11,14 +11,13 @@ include ../MCONFIG
 
 # Where to put man pages?
 
-MAN1= 		cal.1 chkdupexe.1 ddate.1 kill.1 \
-		logger.1 look.1 mcookie.1 namei.1 rename.1 script.1 \
-		whereis.1
+MAN1= 		cal.1 chkdupexe.1 ddate.1 logger.1 look.1 mcookie.1 \
+		namei.1 rename.1 script.1 whereis.1
 
 # Where to put binaries?
 # See the "install" rule for the links. . .
 
-BIN=            kill
+BIN=
 
 USRBIN=		cal chkdupexe ddate logger look mcookie \
 		namei rename script whereis
@@ -33,6 +32,11 @@ endif
 ifeq "$(HAVE_WRITE)" "no"
 USRBIN:=$(USRBIN) write
 MAN1:=$(MAN1) write.1
+endif
+
+ifeq "$(HAVE_KILL)" "no"
+BIN:=$(BIN) kill
+MAN1:=$(MAN1) kill.1
 endif
 
 ifeq "$(HAVE_NCURSES)" "yes"

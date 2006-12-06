@@ -868,24 +868,24 @@ out_partition_header(char *dev, int format, struct geometry G) {
 	  printf(_("Units = cylinders of %lu bytes, blocks of 1024 bytes"
 		 ", counting from %d\n\n"),
 		 G.cylindersize<<9, increment);
-	    printf(_("   Device Boot Start     End   #cyls   #blocks   Id  System\n"));
+	    printf(_("   Device Boot Start     End   #cyls    #blocks   Id  System\n"));
 	    break;
 	}
 	/* fall through */
       case F_SECTOR:
 	printf(_("Units = sectors of 512 bytes, counting from %d\n\n"),
 	       increment);
-	printf(_("   Device Boot    Start       End  #sectors  Id  System\n"));
+	printf(_("   Device Boot    Start       End   #sectors  Id  System\n"));
 	break;
       case F_BLOCK:
 	printf(_("Units = blocks of 1024 bytes, counting from %d\n\n"),
 	       increment);
-	printf(_("   Device Boot   Start       End   #blocks   Id  System\n"));
+	printf(_("   Device Boot   Start       End    #blocks   Id  System\n"));
 	break;
       case F_MEGABYTE:
 	printf(_("Units = megabytes of 1048576 bytes, blocks of 1024 bytes"
 	       ", counting from %d\n\n"), increment);
-	printf(_("   Device Boot Start   End     MB   #blocks   Id  System\n"));
+	printf(_("   Device Boot Start   End     MB    #blocks   Id  System\n"));
 	break;
     }
 }
@@ -917,13 +917,41 @@ out_roundup_size(int width, unsigned long n, unsigned long unit) {
     putchar(' ');
 }
 
-static int
-get_fdisk_geometry(struct part_desc *p) {
+static struct geometry
+get_fdisk_geometry_one(struct part_desc *p) {
+    struct geometry G;
+
     chs b = p->p.end_chs;
     longchs bb = chs_to_longchs(b);
-    F.heads = bb.h+1;
-    F.sectors = bb.s;
-    F.cylindersize = F.heads*F.sectors;
+    G.heads = bb.h+1;
+    G.sectors = bb.s;
+    G.cylindersize = G.heads*G.sectors;
+    G.cylinders = G.start = 0;
+    return G;
+}
+
+static int
+get_fdisk_geometry(struct disk_desc *z) {
+    struct part_desc *p;
+    int pno, agree;
+    struct geometry G0, G;
+
+    agree = 0;
+    G0.heads = G0.sectors = 0;
+    for (pno=0; pno < z->partno; pno++) {
+	p = &(z->partitions[pno]);
+	if (p->size != 0 && p->p.sys_type != 0) {
+	    G = get_fdisk_geometry_one(p);
+	    if (!G0.heads) {
+		G0 = G;
+		agree = 1;
+	    } else if (G.heads != G0.heads || G.sectors != G0.sectors) {
+		agree = 0;
+		break;
+	    }
+	}
+    }
+    F = (agree ? G0 : B);
     return (F.sectors != B.sectors || F.heads != B.heads);
 }
 
@@ -952,7 +980,7 @@ out_partition(char *dev, int format, struct part_desc *p,
 
     if (dump) {
 	printf(" start=%9lu", start);
-	printf(", size=%8lu", size);
+	printf(", size=%9lu", size);
 	if (p->ptype == DOS_TYPE) {
 	    printf(", Id=%2x", p->p.sys_type);
 	    if (p->p.bootable == 0x80)
@@ -975,7 +1003,7 @@ out_partition(char *dev, int format, struct part_desc *p,
 	    out_rounddown(6, start, G.cylindersize, increment);
 	    out_roundup(6, end, G.cylindersize, increment);
 	    out_roundup_size(6, size, G.cylindersize);
-	    out_rounddown(8, size, 2, 0);
+	    out_rounddown(9, size, 2, 0);
 	    break;
 	}
 	/* fall through */
@@ -983,7 +1011,7 @@ out_partition(char *dev, int format, struct part_desc *p,
       case F_SECTOR:
 	out_rounddown(9, start, 1, increment);
 	out_roundup(9, end, 1, increment);
-	out_rounddown(9, size, 1, 0);
+	out_rounddown(10, size, 1, 0);
 	break;
       case F_BLOCK:
 #if 0
@@ -992,17 +1020,17 @@ out_partition(char *dev, int format, struct part_desc *p,
 #endif
 	out_rounddown(8, start, 2, increment);
 	out_roundup(8, end, 2, increment);
-	out_rounddown(8, size, 2, 0);
+	out_rounddown(9, size, 2, 0);
 	break;
       case F_MEGABYTE:
 	out_rounddown(5, start, 2048, increment);
 	out_roundup(5, end, 2048, increment);
 	out_roundup_size(5, size, 2048);
-	out_rounddown(8, size, 2, 0);
+	out_rounddown(9, size, 2, 0);
 	break;
     }
     if (p->ptype == DOS_TYPE) {
-        printf(" %2x  %s\n",
+	printf(" %2x  %s\n",
 	   p->p.sys_type, sysname(p->p.sys_type));
     } else {
 	printf("\n");
@@ -1034,24 +1062,19 @@ out_partition(char *dev, int format, struct part_desc *p,
 
 static void
 out_partitions(char *dev, struct disk_desc *z) {
-    struct part_desc *p;
     int pno, format = 0;
 
     if (z->partno == 0)
 	printf(_("No partitions found\n"));
     else {
-	for (pno=0; pno < z->partno; pno++) {
-	    p = &(z->partitions[pno]);
-	    if (p->size != 0 && p->p.sys_type != 0) {
-		if (get_fdisk_geometry(p) && !dump)
-		    printf(
-		   _("Warning: The first partition looks like it was made\n"
-		     "  for C/H/S=*/%ld/%ld (instead of %ld/%ld/%ld).\n"
-		     "For this listing I'll assume that geometry.\n"),
-		   F.heads, F.sectors, B.cylinders, B.heads, B.sectors);
-		break;
-	    }
+	if (get_fdisk_geometry(z) && !dump) {
+	    printf(
+	   _("Warning: The partition table looks like it was made\n"
+	     "  for C/H/S=*/%ld/%ld (instead of %ld/%ld/%ld).\n"
+	     "For this listing I'll assume that geometry.\n"),
+	   F.heads, F.sectors, B.cylinders, B.heads, B.sectors);
 	}
+
 	out_partition_header(dev, format, F);
 	for(pno=0; pno < z->partno; pno++) {
 	    out_partition(dev, format, &(z->partitions[pno]), z, F);
@@ -1094,7 +1117,7 @@ partitions_ok(struct disk_desc *z) {
 
     /* Have at least 4 partitions been defined? */
     if (partno < 4) {
-         if (!partno)
+	 if (!partno)
 	      fatal(_("no partition table present.\n"));
 	 else
 	      fatal(_("strange, only %d partitions defined.\n"), partno);
@@ -1144,10 +1167,10 @@ partitions_ok(struct disk_desc *z) {
        table sectors disjoint? */
     for (p = partitions; p < partitions+partno; p++)
       if (p->size && !is_extended(p->p.sys_type))
-        for (q = partitions; q < partitions+partno; q++)
-          if (is_extended(q->p.sys_type))
-            if (p->start <= q->start && p->start + p->size > q->start) {
-                warn(_("Warning: partition %s contains part of "
+	for (q = partitions; q < partitions+partno; q++)
+	  if (is_extended(q->p.sys_type))
+	    if (p->start <= q->start && p->start + p->size > q->start) {
+		warn(_("Warning: partition %s contains part of "
 		       "the partition table (sector %lu),\n"
 		       "and will destroy it when filled\n"),
 		     PNO(p), q->start);
@@ -1161,12 +1184,12 @@ partitions_ok(struct disk_desc *z) {
 	  if(p->start == 0) {
 	      warn(_("Warning: partition %s starts at sector 0\n"), PNO(p));
 	      return 0;
-          }
-          if (p->size && p->start + p->size > ds) {
+	  }
+	  if (p->size && p->start + p->size > ds) {
 	      warn(_("Warning: partition %s extends past end of disk\n"),
 		   PNO(p));
 	      return 0;
-          }
+	  }
       }
     }
 
@@ -1225,12 +1248,12 @@ partitions_ok(struct disk_desc *z) {
 		   "This does not matter for LILO, but the DOS MBR will "
 		   "not boot this disk.\n"));
 	      break;
-          }
+	  }
 	  if (p - partitions >= 4) {
 	      warn(_("Warning: usually one can boot from primary partitions "
 		   "only\nLILO disregards the `bootable' flag.\n"));
 	      break;
-          }
+	  }
       }
       if (pno == -1 || pno >= 4)
 	warn(_("Warning: no primary partition is marked bootable (active)\n"
@@ -1337,7 +1360,7 @@ extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z)
 	    partitions[pno].ptype = DOS_TYPE;
 	    partitions[pno].p = p;
 	    pno++;
-        }
+	}
 	here = next;
     }
 
@@ -1346,19 +1369,19 @@ extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z)
 
 #define BSD_DISKMAGIC   (0x82564557UL)
 #define BSD_MAXPARTITIONS       8
-#define BSD_FS_UNUSED           0
+#define BSD_FS_UNUSED	   0
 typedef unsigned char u8;
 typedef unsigned short u16;
 typedef unsigned int u32;
 struct bsd_disklabel {
 	u32	d_magic;
 	char	d_junk1[4];
-        char    d_typename[16];
-        char    d_packname[16];
+	char    d_typename[16];
+	char    d_packname[16];
 	char	d_junk2[92];
-        u32	d_magic2;
+	u32	d_magic2;
 	char	d_junk3[2];
-        u16	d_npartitions;          /* number of partitions in following */
+	u16	d_npartitions;          /* number of partitions in following */
 	char	d_junk4[8];
      struct  bsd_partition {         /* the partition table */
                 u32   p_size;         /* number of sectors in partition */
@@ -2298,25 +2321,6 @@ static const struct option long_opts[] = {
     { NULL, 0, NULL, 0 }
 };
 
-/* default devices to list - will be removed */
-static struct devd {
-    char *pref, *letters;
-} defdevs[] = {
-    { "hd", "abcdefgh" },
-    { "sd", "abcde" },
-    { "xd", "ab" },
-    { "ed", "abcd" },
-    /* Compaq's SMART Array Controllers */
-    { "cciss/c0d", "01234567" },
-    { "cciss/c1d", "01234567" },
-    /* Compaq's SMART2 Intelligent Disk Array Controllers */
-    { "ida/c0d", "01234567" },
-    { "ida/c1d", "01234567" },
-    /* Mylex DAC960/AcceleRAID/eXtremeRAID PCI RAID Controllers */
-    { "rd/c0d", "01234567" },
-    { "rd/c1d", "01234567" }
-};
-
 static int
 is_ide_cdrom_or_tape(char *device) {
 	FILE *procf;
@@ -2349,6 +2353,40 @@ is_ide_cdrom_or_tape(char *device) {
 		fclose(procf);
 	return is_ide;
 }
+
+#define PROC_PARTITIONS	"/proc/partitions"
+static FILE *procf = NULL;
+
+static void
+openproc(void) {
+	procf = fopen(PROC_PARTITIONS, "r");
+	if (procf == NULL)
+		fprintf(stderr, _("cannot open %s\n"), PROC_PARTITIONS);
+}
+
+static char *
+nextproc(void) {
+	static char devname[120];
+	char line[100], ptname[100], *s;
+	int ma, mi, sz;
+
+	if (procf == NULL)
+		return NULL;
+	while (fgets(line, sizeof(line), procf) != NULL) {
+		if (sscanf (line, " %d %d %d %[^\n ]",
+			    &ma, &mi, &sz, ptname) != 4)
+			continue;
+		for(s = ptname; *s; s++);
+		if (isdigit(s[-1]))
+			continue;
+		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
+		return devname;
+	}
+
+	fclose(procf);
+	procf = NULL;
+	return NULL;
+}	
 
 static void do_list(char *dev, int silent);
 static void do_size(char *dev, int silent);
@@ -2484,25 +2522,18 @@ main(int argc, char **argv) {
     }
 
     if (optind == argc && (opt_list || opt_out_geom || opt_size || verify)) {
-	struct devd *dp;
-	char *lp;
-	char device[10];
-
+	/* try all known devices */
 	total_size = 0;
-
-	for(dp = defdevs; dp-defdevs < SIZE(defdevs); dp++) {
-	    lp = dp->letters;
-	    while(*lp) {
-		sprintf(device, "/dev/%s%c", dp->pref, *lp++);
-		if (!strcmp(dp->pref, "hd") && is_ide_cdrom_or_tape(device))
-		  continue;
-		if (opt_out_geom)
-		  do_geom(device, 1);
-		if (opt_size)
-		  do_size(device, 1);
-		if (opt_list || verify)
-		  do_list(device, 1);
-	    }
+	openproc();
+	while ((dev = nextproc()) != NULL) {
+	    if (!strncmp(dev, "hd", 2) && is_ide_cdrom_or_tape(dev))
+		continue;
+	    if (opt_out_geom)
+		do_geom(dev, 1);
+	    if (opt_size)
+		do_size(dev, 1);
+	    if (opt_list || verify)
+		do_list(dev, 1);
 	}
 
 	if (opt_size)

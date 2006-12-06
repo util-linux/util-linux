@@ -70,6 +70,11 @@ HAVE_GETTY=no
 # properly.]
 USE_TTY_GROUP=yes
 
+# If HAVE_KILL is set to "yes", then kill will not be built or
+# installed from the misc-utils subdirectory.
+# (There is also a kill in the procps package.)
+HAVE_KILL=no
+
 # If ALLOW_VCS_USE is set to "yes", then login will chown /dev/vcsN
 # to the current user, allowing her to make a screendump and do other
 # nifty things on the console, but also allowing him to keep an open
@@ -87,9 +92,6 @@ HAVE_SLN=no
 
 # If HAVE_FDUTILS is set to "yes", then setfdprm won't be installed.
 HAVE_FDUTILS=no
-
-# This enables building of raw
-ADD_RAW=yes
 
 # Different optimizations for different cpus.
 # gcc 3.0 likes options -mcpu=i486 instead of -m486

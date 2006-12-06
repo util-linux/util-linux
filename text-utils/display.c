@@ -41,7 +41,7 @@
 #include <string.h>
 #include "hexdump.h"
 
-static void doskip(char *, int);
+static void doskip(const char *, int);
 static u_char *get(void);
 
 #ifndef MIN
@@ -52,99 +52,116 @@ enum _vflag vflag = FIRST;
 
 static off_t address;			/* address/offset in stream */
 static off_t eaddress;			/* end address */
-static off_t savaddress;		/* saved address/offset in stream */
 
-#define PRINT { \
-	switch(pr->flags) { \
-	case F_ADDRESS: \
-		(void)printf(pr->fmt, address); \
-		break; \
-	case F_BPAD: \
-		(void)printf(pr->fmt, ""); \
-		break; \
-	case F_C: \
-		conv_c(pr, bp); \
-		break; \
-	case F_CHAR: \
-		(void)printf(pr->fmt, *bp); \
-		break; \
-	case F_DBL: { \
-		double dval; \
-		float fval; \
-		switch(pr->bcnt) { \
-		case 4: \
-			bcopy((char *)bp, (char *)&fval, sizeof(fval)); \
-			(void)printf(pr->fmt, fval); \
-			break; \
-		case 8: \
-			bcopy((char *)bp, (char *)&dval, sizeof(dval)); \
-			(void)printf(pr->fmt, dval); \
-			break; \
-		} \
-		break; \
-	} \
-	case F_INT: { \
-		int ival; \
-		short sval; \
-		switch(pr->bcnt) { \
-		case 1: \
-			(void)printf(pr->fmt, (int)*bp); \
-			break; \
-		case 2: \
-			bcopy((char *)bp, (char *)&sval, sizeof(sval)); \
-			(void)printf(pr->fmt, (int)sval); \
-			break; \
-		case 4: \
-			bcopy((char *)bp, (char *)&ival, sizeof(ival)); \
-			(void)printf(pr->fmt, ival); \
-			break; \
-		} \
-		break; \
-	} \
-	case F_P: \
-		(void)printf(pr->fmt, isprint(*bp) ? *bp : '.'); \
-		break; \
-	case F_STR: \
-		(void)printf(pr->fmt, (char *)bp); \
-		break; \
-	case F_TEXT: \
-		(void)printf(pr->fmt); \
-		break; \
-	case F_U: \
-		conv_u(pr, bp); \
-		break; \
-	case F_UINT: { \
-		u_int ival; \
-		u_short sval; \
-		switch(pr->bcnt) { \
-		case 1: \
-			(void)printf(pr->fmt, (u_int)*bp); \
-			break; \
-		case 2: \
-			bcopy((char *)bp, (char *)&sval, sizeof(sval)); \
-			(void)printf(pr->fmt, (u_int)sval); \
-			break; \
-		case 4: \
-			bcopy((char *)bp, (char *)&ival, sizeof(ival)); \
-			(void)printf(pr->fmt, ival); \
-			break; \
-		} \
-		break; \
-	} \
-	} \
+static inline void
+print(PR *pr, u_char *bp) {
+
+	switch(pr->flags) {
+	case F_ADDRESS:
+		(void)printf(pr->fmt, (quad_t)address);
+		break;
+	case F_BPAD:
+		(void)printf(pr->fmt, "");
+		break;
+	case F_C:
+		conv_c(pr, bp);
+		break;
+	case F_CHAR:
+		(void)printf(pr->fmt, *bp);
+		break;
+	case F_DBL:
+	    {
+		double dval;
+		float fval;
+		switch(pr->bcnt) {
+		case 4:
+			memmove(&fval, bp, sizeof(fval));
+			(void)printf(pr->fmt, fval);
+			break;
+		case 8:
+			memmove(&dval, bp, sizeof(dval));
+			(void)printf(pr->fmt, dval);
+			break;
+		}
+		break;
+	    }
+	case F_INT:
+	    {
+		short sval;	/* int16_t */
+		int ival;	/* int32_t */
+		long long Lval;	/* int64_t, quad_t */
+
+		switch(pr->bcnt) {
+		case 1:
+			(void)printf(pr->fmt, (quad_t)*bp);
+			break;
+		case 2:
+			memmove(&sval, bp, sizeof(sval));
+			(void)printf(pr->fmt, (quad_t)sval);
+			break;
+		case 4:
+			memmove(&ival, bp, sizeof(ival));
+			(void)printf(pr->fmt, (quad_t)ival);
+			break;
+		case 8:
+			memmove(&Lval, bp, sizeof(Lval));
+			(void)printf(pr->fmt, (quad_t)Lval);
+			break;
+		}
+		break;
+	    }
+	case F_P:
+		(void)printf(pr->fmt, isprint(*bp) ? *bp : '.');
+		break;
+	case F_STR:
+		(void)printf(pr->fmt, (char *)bp);
+		break;
+	case F_TEXT:
+		(void)printf("%s", pr->fmt);
+		break;
+	case F_U:
+		conv_u(pr, bp);
+		break;
+	case F_UINT:
+	    {
+		unsigned short sval;	/* u_int16_t */
+		unsigned int ival;	/* u_int32_t */
+		unsigned long long Lval;/* u_int64_t, u_quad_t */
+
+		switch(pr->bcnt) {
+		case 1:
+			(void)printf(pr->fmt, (u_quad_t)*bp);
+			break;
+		case 2:
+			memmove(&sval, bp, sizeof(sval));
+			(void)printf(pr->fmt, (u_quad_t)sval);
+			break;
+		case 4:
+			memmove(&ival, bp, sizeof(ival));
+			(void)printf(pr->fmt, (u_quad_t)ival);
+			break;
+		case 8:
+			memmove(&Lval, bp, sizeof(Lval));
+			(void)printf(pr->fmt, (u_quad_t)Lval);
+			break;
+		}
+		break;
+	    }
+	}
 }
 
 static void bpad(PR *pr)
 {
-	static char *spec = " -0+#";
-	register char *p1, *p2;
+	static const char *spec = " -0+#";
+	char *p1, *p2;
 
 	/*
 	 * remove all conversion flags; '-' is the only one valid
 	 * with %s, and it's not useful here.
 	 */
 	pr->flags = F_BPAD;
-	*pr->cchar = 's';
+	pr->cchar[0] = 's';
+	pr->cchar[1] = 0;
 	for (p1 = pr->fmt; *p1 != '%'; ++p1);
 	for (p2 = ++p1; *p1 && index(spec, *p1); ++p1);
 	while ((*p2++ = *p1++) != 0) ;
@@ -152,7 +169,6 @@ static void bpad(PR *pr)
 
 void display(void)
 {
-	extern FU *endfu;
 	register FS *fs;
 	register FU *fu;
 	register PR *pr;
@@ -177,7 +193,7 @@ void display(void)
 					savech = *pr->nospace;
 					*pr->nospace = '\0';
 				    }
-				    PRINT;
+				    print(pr, bp);
 				    if (cnt == 1 && pr->nospace)
 					*pr->nospace = savech;
 			    }
@@ -195,10 +211,10 @@ void display(void)
 		for (pr = endfu->nextpr; pr; pr = pr->nextpr)
 			switch(pr->flags) {
 			case F_ADDRESS:
-				(void)printf(pr->fmt, eaddress);
+				(void)printf(pr->fmt, (quad_t)eaddress);
 				break;
 			case F_TEXT:
-				(void)printf(pr->fmt);
+				(void)printf("%s", pr->fmt);
 				break;
 			}
 	}
@@ -209,21 +225,20 @@ static char **_argv;
 static u_char *
 get(void)
 {
-	extern int length;
 	static int ateof = 1;
 	static u_char *curp, *savp;
-	register int n;
+	int n;
 	int need, nread;
 	u_char *tmpp;
 
 	if (!curp) {
-		curp = (u_char *)emalloc(blocksize);
-		savp = (u_char *)emalloc(blocksize);
+		curp = emalloc(blocksize);
+		savp = emalloc(blocksize);
 	} else {
 		tmpp = curp;
 		curp = savp;
 		savp = tmpp;
-		address = savaddress += blocksize;
+		address += blocksize;
 	}
 	for (need = blocksize, nread = 0;;) {
 		/*
@@ -231,15 +246,16 @@ get(void)
 		 * and no other files are available, zero-pad the rest of the
 		 * block and set the end flag.
 		 */
-		if (!length || (ateof && !next((char **)NULL))) {
+		if (!length || (ateof && !next(NULL))) {
 			if (need == blocksize)
-				return((u_char *)NULL);
-			if (vflag != ALL && !bcmp(curp, savp, nread)) {
+				return(NULL);
+			if (!need && vflag != ALL &&
+			    !memcmp(curp, savp, nread)) {
 				if (vflag != DUP)
 					(void)printf("*\n");
-				return((u_char *)NULL);
+				return(NULL);
 			}
-			bzero((char *)curp + nread, need);
+			memset((char *)curp + nread, 0, need);
 			eaddress = address + nread;
 			return(curp);
 		}
@@ -257,7 +273,7 @@ get(void)
 			length -= n;
 		if (!(need -= n)) {
 			if (vflag == ALL || vflag == FIRST ||
-			    bcmp(curp, savp, blocksize)) {
+			    memcmp(curp, savp, blocksize)) {
 				if (vflag == DUP || vflag == FIRST)
 					vflag = WAIT;
 				return(curp);
@@ -265,7 +281,7 @@ get(void)
 			if (vflag == WAIT)
 				(void)printf("*\n");
 			vflag = DUP;
-			address = savaddress += blocksize;
+			address += blocksize;
 			need = blocksize;
 			nread = 0;
 		}
@@ -276,7 +292,6 @@ get(void)
 
 int next(char **argv)
 {
-	extern int exitval;
 	static int done;
 	int statok;
 
@@ -310,7 +325,7 @@ int next(char **argv)
 }
 
 static void
-doskip(char *fname, int statok)
+doskip(const char *fname, int statok)
 {
 	struct stat sbuf;
 
@@ -320,32 +335,30 @@ doskip(char *fname, int statok)
 			    fname, strerror(errno));
 			exit(1);
 		}
-		if ( ( ! (S_ISCHR(sbuf.st_mode) ||
- 			  S_ISBLK(sbuf.st_mode) ||
- 			  S_ISFIFO(sbuf.st_mode)) ) &&
-		     skip >= sbuf.st_size) {
+		if (S_ISREG(sbuf.st_mode) && skip >= sbuf.st_size) {
 		  /* If size valid and skip >= size */
 			skip -= sbuf.st_size;
 			address += sbuf.st_size;
 			return;
 		}
 	}
+	/* sbuf may be undefined here - do not test it */
 	if (fseek(stdin, skip, SEEK_SET)) {
 		(void)fprintf(stderr, "hexdump: %s: %s.\n",
 		    fname, strerror(errno));
 		exit(1);
 	}
-	savaddress = address += skip;
+	address += skip;
 	skip = 0;
 }
 
-char *
+void *
 emalloc(int sz) {
-	char *p;
+	void *p;
 
 	if (!(p = malloc((u_int)sz)))
 		nomem();
-	bzero(p, sz);
+	memset(p, 0, sz);
 	return(p);
 }
 

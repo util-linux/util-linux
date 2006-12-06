@@ -29,16 +29,16 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"	@(#)od.1	8.1 (Berkeley) 6/6/93
+.\"	from: @(#)od.1	8.1 (Berkeley) 6/6/93
 .\"
-.Dd %Q
+.Dd June 8, 1998
 .Os
 .Dt OD 1
 .Sh NAME
 .Nm od
 .Nd octal, decimal, hex, ascii dump
 .Sh SYNOPSIS
-.Nm od
+.Nm ""
 .Op Fl aBbcDdeFfHhIiLlOovXx
 .Sm off
 .Oo
@@ -49,13 +49,13 @@
 .Oc
 .Ar file
 .Sh DESCRIPTION
-.Nm Od
+.Nm
 has been deprecated in favor of
 .Xr hexdump 1 .
 .Pp
 .Xr Hexdump ,
 if called as
-.Nm od ,
+.Nm "" ,
 provides compatibility for the options listed above.
 .Pp
 It does not provide compatibility for the
@@ -72,5 +72,3 @@ of the offset syntax.
 .Sh SEE ALSO
 .Xr hexdump 1 ,
 .Xr strings 1
-.Sh BUGS
-Quite a few.

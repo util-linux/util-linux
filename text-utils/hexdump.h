@@ -73,13 +73,17 @@ typedef struct _fs {			/* format strings */
 extern FU *endfu;
 extern FS *fshead;			/* head of format strings list */
 extern int blocksize;			/* data block size */
-extern int deprecated;
+extern int deprecated;			/* od compatibility */
+extern int exitval;			/* final exit value */
+extern int length;			/* max bytes to read */
 extern off_t skip;                      /* bytes to skip */
-enum _vflag { ALL, DUP, FIRST, WAIT };	/* -v values */
 
-char *emalloc(int);
+enum _vflag { ALL, DUP, FIRST, WAIT };	/* -v values */
+extern enum _vflag vflag;
+
+void *emalloc(int);
 int size(FS *);
-void add(char *);
+void add(const char *);
 void rewrite(FS *);
 void addfile(char *);
 void display(void);

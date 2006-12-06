@@ -81,7 +81,7 @@ main(int argc, char **argv) {
     if(argc < 2)
 	usage();
 
-    while((c = getopt(argc, argv, "mx")) != EOF){
+    while((c = getopt(argc, argv, "mx")) != -1){
 	switch(c){
 	    case 'm':
 		mflag = !mflag;

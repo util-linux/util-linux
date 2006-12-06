@@ -184,8 +184,7 @@ int main(int argc, char *argv[]) {
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
 
-  while (EOF != (i = getopt(argc, argv, 
-			    "qs:S:t:T:gGi:"))) {
+  while ((i = getopt(argc, argv, "qs:S:t:T:gGi:")) != -1) {
     switch (i) {
     case 'q':
       query = 1;

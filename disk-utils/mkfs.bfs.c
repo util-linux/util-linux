@@ -123,7 +123,7 @@ main(int argc, char *argv[]) {
 	volume = fsname = "      ";	/* is there a default? */
 	inodes = 0;
 
-	while (EOF != (c = getopt(argc, argv, "vF:N:V:cl:"))) {
+	while ((c = getopt(argc, argv, "vF:N:V:cl:")) != -1) {
 		switch (c) {
 		case 'N':
 			inodes = atol(optarg);

@@ -107,6 +107,14 @@ file hierarchy somewhere else. The call is
 .br
 .B "mount --bind olddir newdir"
 .RE
+After this call the same contents is accessible in two places.
+
+Since Linux 2.5.1 it is possible to atomically move a subtree
+to another place. The call is
+.RS
+.br
+.B "mount --move olddir newdir"
+.RE
 
 The
 .I proc
@@ -408,6 +416,7 @@ type is specified, the superblock is probed for the filesystem type
 .IR qnx4 ,
 .IR reiserfs ,
 .IR romfs ,
+.IR udf ,
 .IR ufs ,
 .IR vxfs ,
 .IR xfs ,
@@ -423,8 +432,13 @@ except for those that are labeled "nodev" (e.g.,
 .I proc
 and
 .IR nfs ).
+If
+.I /etc/filesystems
+ends in a line with a single * only, mount will read
+.I /proc/filesystems
+afterwards.
 
-Note that the
+The
 .B auto
 type may be useful for user-mounted floppies.
 Creating a file
@@ -432,7 +446,10 @@ Creating a file
 can be useful to change the probe order (e.g., to try vfat before msdos)
 or if you use a kernel module autoloader.
 Warning: the probing uses a heuristic (the presence of appropriate `magic'),
-and could recognize the wrong filesystem type.
+and could recognize the wrong filesystem type, possibly with catastrophic
+consequences. If your data is valuable, don't ask
+.B mount
+to guess.
 
 More than one type may be specified in a comma separated
 list.  The list of file system types can be prefixed with
@@ -547,6 +564,13 @@ This option implies the options
 (unless overridden by subsequent options, as in the option line
 .BR users,exec,dev,suid ).
 .RE
+.TP
+.B \-\-bind
+Remount a subtree somewhere else (so that its contents are available
+in both places). See above.
+.TP
+.B \-\-move
+Move a subtree to some other place. See above.
 
 .SH "FILESYSTEM SPECIFIC MOUNT OPTIONS"
 The following options apply only to certain file systems.
@@ -937,6 +961,11 @@ just read what is in the file. This is the default.
 Do not abort mounting when certain consistency checks fail.
 
 .SH "Mount options for iso9660"
+ISO 9660 is a standard describing a filesystem structure to be used
+on CD-ROMs. (This filesystem type is also seen on some DVDs. See also the
+.I udf
+filesystem.)
+
 Normal
 .I iso9660
 filenames appear in a 8.3 format (i.e., DOS-like restrictions on filename
@@ -1154,6 +1183,7 @@ By default, the files are owned by root and not readable by somebody else.
 These options are recognized, but have no effect as far as I can see.
 
 .SH "Mount options for reiserfs"
+Reiserfs is a journaling filesystem.
 The reiserfs mount options are more fully described at
 .IR http://www.namesys.com/mount-options.html .
 .TP
@@ -1276,6 +1306,10 @@ Set number of inodes.
 Set initial permissions of the root directory.
 
 .SH "Mount options for udf"
+udf is the "Universal Disk Format" filesystem defined by the Optical
+Storage Technology Association, and is often used for DVD-ROM.
+See also
+.IR iso9660 .
 .TP
 .B gid=
 Set the default group.
@@ -1359,6 +1393,7 @@ For NextStep CDROMs (block_size == 2048), read-only.
 .TP
 .B openstep
 For filesystems created by OpenStep (currently read only).
+The same filesystem type is also used by Mac OS X.
 .RE
 
 .TP
@@ -1412,6 +1447,17 @@ before trying
 UTF8 is the filesystem safe 8-bit encoding of Unicode that is used
 by the console. It can be be enabled for the filesystem with this option.
 If `uni_xlate' gets set, UTF8 gets disabled.
+.TP
+.B shortname=[lower|win95|winnt|mixed]
+Option (available since 2.4.13) that sets how short filenames are to be
+created and displayed.
+.nf
+   lower = display lower, create win95 filenames
+   win95 = display win95, create win95 filenames
+   winnt = display winnt, create winnt filenames
+   mixed = display winnt, create win95 filenames
+.fi
+Default is "lower".
 
 .SH "Mount options for xenix"
 None.
@@ -1549,6 +1595,39 @@ will be freed by
 .BR umount .
 You can also free a loop device by hand, using `losetup -d', see
 .BR losetup (8).
+
+.SH RETURN CODES
+.B mount
+has the following return codes (the bits can be ORed):
+.TP
+.BR 0
+success
+.TP
+.BR 1
+incorrect invocation or permissions
+.TP
+.BR 2
+system error (out of memory, cannot fork, no more loop devices)
+.TP
+.BR 4
+internal
+.B mount
+bug or missing
+.BR nfs
+support in
+.B mount
+.TP
+.BR 8
+user interrupt
+.TP
+.BR 16
+problems writing or locking /etc/mtab
+.TP
+.BR 32
+mount failure
+.TP
+.BR 64
+some mount succeeded
 
 .SH FILES
 .I /etc/fstab

@@ -129,7 +129,7 @@ main (int argc, char **argv) {
 	proFile=defaultpro;
 	mapFile=defaultmap;
 
-	while ((c=getopt(argc,argv,optstring))!=-1) {
+	while ((c = getopt(argc,argv,optstring)) != -1) {
 		switch(c) {
 		case 'm': mapFile=optarg; break;
 		case 'n': optNative++;	  break;

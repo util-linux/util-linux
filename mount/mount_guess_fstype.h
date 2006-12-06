@@ -8,7 +8,8 @@ struct mountargs {
 
 extern int verbose;
 
-char *guess_fstype_from_superblock(const char *device);
+char *guess_fstype(const char *device);
+char *do_guess_fstype(const char *device);
 int procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
 	       char **type);
 int is_in_procfs(const char *fstype);

@@ -149,7 +149,7 @@ main (int argc, char **argv) {
 	textdomain(PACKAGE);
 
 	progname = argv[0];
-	while ((opt = getopt (argc, argv, options)) != EOF) {
+	while ((opt = getopt (argc, argv, options)) != -1) {
 		switch (opt) {
 		case 'i':
 			id = atoi (optarg);

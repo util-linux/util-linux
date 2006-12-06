@@ -48,7 +48,7 @@ int length = -1;			/* max bytes to read */
 
 int main(int argc, char **argv)
 {
-	register FS *tfs;
+	FS *tfs;
 	char *p;
 
 	setlocale(LC_ALL, "");

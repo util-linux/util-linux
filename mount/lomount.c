@@ -399,7 +399,7 @@ main(int argc, char **argv) {
 	delete = off = 0;
 	offset = encryption = NULL;
 	progname = argv[0];
-	while ((c = getopt(argc,argv,"de:o:v")) != EOF) {
+	while ((c = getopt(argc,argv,"de:o:v")) != -1) {
 		switch (c) {
 		case 'd':
 			delete = 1;

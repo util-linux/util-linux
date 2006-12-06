@@ -217,7 +217,7 @@ parse_argv (int argc, char *argv[], struct sinfo *pinfo) {
     while (c != EOF) {
 	c = getopt_long (argc, argv, "s:luv", long_options, &index);
 	switch (c) {
-	case EOF:
+	case -1:
 	    break;
 	case 'v':
 	    printf ("%s\n", util_linux_version);

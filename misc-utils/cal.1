@@ -42,7 +42,7 @@
 .Nd displays a calendar
 .Sh SYNOPSIS
 .Nm cal
-.Op Fl mjy13
+.Op Fl smjy13
 .Op [ Ar month ] Ar year
 .Sh DESCRIPTION
 .Nm Cal
@@ -52,14 +52,15 @@ the current month is displayed.
 The options are as follows:
 .Bl -tag -width Ds
 .It Fl 1
-Display single month output (use if cal was built with -3 as default to get 
-older traditional output)
+Display single month output.
+(This is the default.)
 .It Fl 3
-Display prev/current/next month output (use if cal was built with traditional
--1 as default to get newer improved output)
+Display prev/current/next month output.
+.It Fl s
+Display Sunday as the first day of the week.
+(This is the default.)
 .It Fl m
 Display Monday as the first day of the week.
-(The default is Sunday.)
 .It Fl j
 Display Julian dates (days one-based, numbered from January 1).
 .It Fl y
@@ -88,3 +89,9 @@ calendar for that month is a bit unusual.
 A
 .Nm
 command appeared in Version 6 AT&T UNIX.
+.Sh OTHER VERSIONS
+Several much more elaborate versions of this program exist,
+with support for colors, holidays, birthdays, reminders and
+appointments, etc. For example, try the cal from
+http://home.sprynet.com/~cbagwell/projects.html
+or GNU gcal.

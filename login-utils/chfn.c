@@ -221,7 +221,7 @@ static boolean parse_argv (argc, argv, pinfo)
     info_given = false;
     while (true) {
 	c = getopt_long (argc, argv, "f:r:p:h:o:uv", long_options, &index);
-	if (c == EOF) break;
+	if (c == -1) break;
 	/* version?  output version and exit. */
 	if (c == 'v') {
 	    printf ("%s\n", util_linux_version);

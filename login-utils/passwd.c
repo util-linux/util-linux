@@ -257,7 +257,8 @@ main(int argc, char *argv[]) {
     textdomain(PACKAGE);
 
     optind = 0;
-    while ( (c = getopt_long(argc, argv, "foqsvV", long_options, &opt_index)) != -1 ) {
+    while ((c = getopt_long(argc, argv, "foqsvV",
+			    long_options, &opt_index)) != -1) {
 	switch (c) {
 	case 'f':
 	    fullname = 1;

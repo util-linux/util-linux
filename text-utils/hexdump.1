@@ -29,7 +29,7 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"	@(#)hexdump.1	8.2 (Berkeley) 4/18/94
+.\"	from: @(#)hexdump.1	8.2 (Berkeley) 4/18/94
 .\"
 .Dd April 18, 1994
 .Dt HEXDUMP 1
@@ -38,15 +38,21 @@
 .Nm hexdump
 .Nd ascii, decimal, hexadecimal, octal dump
 .Sh SYNOPSIS
-.Nm hexdump
-.Op Fl bcdovx
+.Nm ""
+.Op Fl bcCdovx
+.Bk -words
 .Op Fl e Ar format_string
+.Ek
+.Bk -words
 .Op Fl f Ar format_file
+.Ek
+.Bk -words
 .Op Fl n Ar length
+.Ek
 .Bk -words
 .Op Fl s Ar skip
 .Ek
-.Ar file  ...
+.Ar file ...
 .Sh DESCRIPTION
 The hexdump utility is a filter which displays the specified files, or
 the standard input, if no files are specified, in a user specified
@@ -64,8 +70,13 @@ in octal, per line.
 Display the input offset in hexadecimal, followed by sixteen
 space-separated, three column, space-filled, characters of input
 data per line.
+.It Fl C
+.Em Canonical hex+ASCII display .
+Display the input offset in hexadecimal, followed by sixteen
+space-separated, two column, hexadecimal bytes, followed by the
+same sixteen bytes in %_p format enclosed in ``|'' characters.
 .It Fl d
-.Em Two-byte decimal display.
+.Em Two-byte decimal display .
 Display the input offset in hexadecimal, followed by eight
 space-separated, five column, zero-filled, two-byte units
 of input data, in unsigned decimal, per line.
@@ -81,7 +92,7 @@ Interpret only
 .Ar length
 bytes of input.
 .It Fl o
-.Em Two-byte octal display.
+.Em Two-byte octal display .
 Display the input offset in hexadecimal, followed by eight
 space-separated, six column, zero-filled, two byte quantities of
 input data, in octal, per line.
@@ -126,14 +137,14 @@ identical to the immediately preceding group of output lines (except
 for the input offsets), are replaced with a line comprised of a
 single asterisk.
 .It Fl x
-.Em Two-byte hexadecimal display.
+.Em Two-byte hexadecimal display .
 Display the input offset in hexadecimal, followed by eight, space
 separated, four column, zero-filled, two-byte quantities of input
 data, in hexadecimal, per line.
 .El
 .Pp
 For each input file,
-.Nm hexdump
+.Nm
 sequentially copies the input to standard output, transforming the
 data according to the format strings specified by the
 .Fl e
@@ -195,7 +206,7 @@ described in the C standard are supported:
 .Ed
 .El
 .Pp
-Hexdump also supports the the following additional conversion strings:
+Hexdump also supports the following additional conversion strings:
 .Bl -tag -width Fl
 .It Cm \&_a Ns Op Cm dox 
 Display the input offset, cumulative across input files, of the
@@ -305,7 +316,7 @@ to specifying the
 .Fl x
 option.
 .Pp
-.Nm hexdump
+.Nm
 exits 0 on success and >0 if an error occurred.
 .Sh EXAMPLES
 Display the input in perusal format:
@@ -320,5 +331,9 @@ Implement the \-x option:
 "%07.7_Ax\en"
 "%07.7_ax  " 8/2 "%04x " "\en"
 .Ed
-.Sh SEE ALSO
-.Xr adb 1
+.Sh STANDARDS
+The
+.Nm
+utility is expected to be
+.St -p1003.2
+compatible.

@@ -101,7 +101,8 @@ struct xiafs_super_block {
 			(((uint) s.s_magic[3]) << 24))
 
 /* From jj@sunsite.ms.mff.cuni.cz Mon Mar 23 15:19:05 1998 */
-#define UFS_SUPER_MAGIC 0x00011954
+#define UFS_SUPER_MAGIC_LE 0x00011954
+#define UFS_SUPER_MAGIC_BE 0x54190100
 struct ufs_super_block {
     u_char     s_dummy[0x55c];
     u_char     s_magic[4];

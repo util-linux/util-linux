@@ -46,7 +46,7 @@ else
 ul:
 	@echo $@ not made since it requires ncurses
 ifeq "$(HAVE_TERMCAP)" "yes"
-more: more.o
+more: more.o $(LIB)/xstrncpy.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LIBTERMCAP)
 else
 more:

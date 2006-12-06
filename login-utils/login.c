@@ -390,7 +390,7 @@ main(int argc, char **argv)
     fflag = hflag = pflag = 0;
     passwd_req = 1;
 
-    while ((ch = getopt(argc, argv, "fh:p")) != EOF)
+    while ((ch = getopt(argc, argv, "fh:p")) != -1)
       switch (ch) {
 	case 'f':
 	  fflag = 1;

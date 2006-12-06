@@ -184,7 +184,7 @@ main(int argc, char * argv[]) {
 		int opt;
 
 		opt = getopt(argc, argv, "xd:");
-		if (opt < 0)
+		if (opt == -1)
 			break;
 		switch (opt) {
 		case 'd':

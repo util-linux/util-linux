@@ -52,7 +52,7 @@ contains descriptive information about the various file systems.
 is only read by programs, and not written; it is the duty of the system
 administrator to properly create and maintain this file.  Each filesystem
 is described on a separate line; fields on each line are separated by tabs
-or spaces.  The order of records in
+or spaces.  Lines starting with '#' are comments.  The order of records in
 .B fstab
 is important because
 .BR fsck (8),
@@ -94,50 +94,53 @@ contains spaces these can be escaped as `\\040'.
 
 The third field,
 .RI ( fs_vfstype ),
-describes the type of the filesystem.  The system currently supports these
-types of filesystems (and possibly others - consult
-.IR /proc/filesystems ):
-.TP
-.I minix
-a local filesystem, supporting filenames of length 14 or 30 characters.
-.TP
-.I ext
-a local filesystem with longer filenames and larger inodes.  This
-filesystem has been replaced by the
-.I ext2
-file system, and should no longer be used.
-.TP
-.I ext2
-a local filesystem with longer filenames, larger inodes, and lots of other
-features.
-.TP
-.I xiafs
-a local filesystem with longer filenames, larger inodes, and lots of other
-features.
-.TP
-.I xfs
-a local filesystem with journaling, scalability and lots of other
-features.
-.TP
-.I msdos
-a local filesystem for MS-DOS partitions.
-.TP
-.I hpfs
-a local filesystem for HPFS partitions.
-.TP
-.I iso9660
-a local filesystem used for CD-ROM drives.
-.TP
-.I nfs
-a filesystem for mounting partitions from remote systems.
-.TP
-.I swap 
-a disk partition to be used for swapping.
-.PP
-If
-.I fs_vfstype
-is specified as ``ignore'' the entry is ignored.  This is useful to show
-disk partitions which are currently unused.
+describes the type of the filesystem.  Linux supports lots
+of filesystem types, such as
+.IR adfs ,
+.IR affs ,
+.IR autofs ,
+.IR coda ,
+.IR coherent ,
+.IR cramfs ,
+.IR devpts ,
+.IR efs ,
+.IR ext2 ,
+.IR ext3 ,
+.IR hfs ,
+.IR hpfs ,
+.IR iso9660 ,
+.IR jfs ,
+.IR minix ,
+.IR msdos ,
+.IR ncpfs ,
+.IR nfs ,
+.IR ntfs ,
+.IR proc ,
+.IR qnx4 ,
+.IR reiserfs ,
+.IR romfs ,
+.IR smbfs ,
+.IR sysv ,
+.IR tmpfs ,
+.IR udf ,
+.IR ufs ,
+.IR umsdos ,
+.IR vfat ,
+.IR xenix ,
+.IR xfs ,
+and possibly others. For more details, see
+.BR mount (8).
+For the filesystems currently supported by the running kernel, see
+.IR /proc/filesystems .
+An entry
+.I swap
+denotes a file or partition to be used
+for swapping, cf.\&
+.BR swapon (8).
+An entry
+.I ignore
+causes the line to be ignored.  This is useful
+to show disk partitions which are currently unused.
 
 The fourth field,
 .RI ( fs_mntops ),
@@ -187,14 +190,6 @@ is to use the routines
 .BR getmntent (3).
 .SH FILES
 .I /etc/fstab
-The file
-.B fstab
-resides in
-.IR /etc .
-.SH BUGS
-The documentation in
-.BR mount (8)
-is often more up-to-date.
 .SH "SEE ALSO"
 .BR getmntent (3),
 .BR mount (8),
@@ -202,6 +197,8 @@ is often more up-to-date.
 .BR fs (5)
 .BR nfs (5)
 .SH HISTORY
-The
+The ancestor of this
 .B fstab
 file format appeared in 4.0BSD.
+.\" But without comment convention, and options and vfs_type.
+.\" Instead there was a type rw/ro/rq/sw/xx, where xx is the present 'ignore'.
