@@ -1,7 +1,33 @@
+util-linux 2.11q
+
+* fdisk: geometry improvement
+* login: open tty fix (Denis Vlasenko)
+* more: wide character patches (Mitsuru Chinen)
+* mount: complain on mount-by-label when label is not unique (Matt Copping)
+* partx: add GUID Partition Tables (Matt Domsch)
+
+util-linux 2.11p
+
+* Danish messages (Claus Hindsgaul)
+* No French messages with permission to distribute (Michel Robitaille)
+* German messages (Karl Eichwalder)
+* Spanish messages (Santiago Vila Doncel)
+* Swedish messages (Christian Rose)
+* Turkish messages (Nilgün Belma Bugüner)
+* ipcrm: make POSIX compatible (Andre Corwin Mazzone)
+* ipcrm.8: idem
+* kill: fixed Makefile
+* login: setsid fixes(?)
+* mkswap: max size of swap space is very large (Peter Chubb)
+* mount: JFS support for mount-by-label (hch)
+* nfsmount: check for <rpcsvc/nfs_prot.h> (hch)
+* readprofile: keep track of line numbers (John Levon)
+* umount: fix for MNT_DETACH
+
 util-linux 2.11o
 
 * Estonian messages (Meelis Roos)
-* No new French messages yet (Michel Robitaille)
+* No French messages with permission to distribute (Michel Robitaille)
 * Japanese messages (Daisuke Yamashita)
 * Spanish messages (Santiago Vila Doncel)
 * cal: option -s: Sunday is first day of the week
@@ -10,6 +36,7 @@ util-linux 2.11o
 * colrm: wide character fix (Elliot Lee)
 * *fdisk: added Darwin types (Vincent Bourgonjen)
 * fstab.5: updated
+* hexdump: -C option
 * hwclock: cmos.c: do not include <asm/io.h> on alpha
 * mount: improved detection of ufs (and slowdown of detection of iso9660)
 * mount.8: added info on * in /etc/filesystems, shortname option of vfat,
@@ -27,7 +54,7 @@ util-linux 2.11o
 util-linux 2.11n
 
 * Danish messages (Claus Hindsgaul)
-* No new French messages yet (Michel Robitaille)
+* No French messages with permission to distribute (Michel Robitaille)
 * German messages (Karl Eichwalder)
 * Swedish messages (Christian Rose)
 * Turkish messages now in UTF-8 (Nilgün Belma Bugüner)
@@ -92,7 +119,7 @@ util-linux 2.11k
 
 util-linux 2.11j
 
-* No new French messages yet (Michel Robitaille)
+* No French messages with permission to distribute (Michel Robitaille)
 * fdisk: fix for AIX label (Olaf Hering)
 * fdisk: fix for creating DOS label when BSD label is present
 * mount.8: added remark about blocksize to ext2 sb= mount option description.

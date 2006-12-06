@@ -161,6 +161,8 @@ int	fd,				/* the disk */
 	partitions = 4;			/* maximum partition + 1 */
 
 uint	user_cylinders, user_heads, user_sectors;
+uint	pt_heads, pt_sectors;
+uint	kern_heads, kern_sectors;
 
 uint	heads,
 	sectors,
@@ -756,52 +758,84 @@ get_sectorsize(int fd) {
 #endif
 }
 
-/*
- * Ask kernel about geometry. Invent something reasonable
- * in case the kernel has no opinion.
- */
+static void
+get_kernel_geometry(int fd) {
+#ifdef HDIO_GETGEO
+	struct hd_geometry geometry;
+
+	if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
+		kern_heads = geometry.heads;
+		kern_sectors = geometry.sectors;
+		/* never use geometry.cylinders - it is truncated */
+	}
+#endif
+}
+
+static void
+get_partition_table_geometry(void) {
+	unsigned char *bufp = MBRbuffer;
+	struct partition *p;
+	int i, h, s, hh, ss;
+	int first = 1;
+	int bad = 0;
+
+	if (!(valid_part_table_flag(bufp)))
+		return;
+
+	hh = ss = 0;
+	for (i=0; i<4; i++) {
+		p = pt_offset(bufp, i);
+		if (p->sys_ind != 0) {
+			h = p->end_head + 1;
+			s = (p->end_sector & 077);
+			if (first) {
+				hh = h;
+				ss = s;
+				first = 0;
+			} else if (hh != h || ss != s)
+				bad = 1;
+		}
+	}
+
+	if (!first && !bad) {
+		pt_heads = hh;
+		pt_sectors = ss;
+	}
+}
+
 void
 get_geometry(int fd, struct geom *g) {
 	int sec_fac;
 	long longsectors;
-	struct hd_geometry geometry;
-	int res1, res2;
 
 	get_sectorsize(fd);
 	sec_fac = sector_size / 512;
 
 	guess_device_type(fd);
 
-	res1 = ioctl(fd, BLKGETSIZE, &longsectors);
-#ifdef HDIO_REQ
-	res2 = ioctl(fd, HDIO_REQ, &geometry);
-#else
-	res2 = ioctl(fd, HDIO_GETGEO, &geometry);
-#endif
-
-	/* never use geometry.cylinders - it is truncated */
 	heads = cylinders = sectors = 0;
-	sector_offset = 1;
-	if (res2 == 0) {
-		heads = geometry.heads;
-		sectors = geometry.sectors;
-		if (heads * sectors == 0)
-			res2 = -1;
-		else if (dos_compatible_flag)
-			sector_offset = sectors;
-	}
-	if (res1 == 0 && res2 == 0) { 	/* normal case */
-		cylinders = longsectors / (heads * sectors);
-		cylinders /= sec_fac;   /* do not round up */
-	} else if (res1 == 0) {		/* size but no geometry */
-		heads = cylinders = 1;
-		sectors = longsectors / sec_fac;
-	}
+	kern_heads = kern_sectors = 0;
+	pt_heads = pt_sectors = 0;
 
-	if (!sectors)
-		sectors = user_sectors;
-	if (!heads)
-		heads = user_heads;
+	get_kernel_geometry(fd);
+	get_partition_table_geometry();
+
+	heads = user_heads ? user_heads :
+		pt_heads ? pt_heads :
+		kern_heads ? kern_heads : 255;
+	sectors = user_sectors ? user_sectors :
+		pt_sectors ? pt_sectors :
+		kern_sectors ? kern_sectors : 63;
+
+	if (ioctl(fd, BLKGETSIZE, &longsectors))
+		longsectors = 0;
+
+	sector_offset = 1;
+	if (dos_compatible_flag)
+		sector_offset = sectors;
+
+	cylinders = longsectors / (heads * sectors);
+	cylinders /= sec_fac;
 	if (!cylinders)
 		cylinders = user_cylinders;
 
@@ -838,15 +872,15 @@ get_boot(enum action what) {
 		printf(_("You will not be able to write the partition table.\n"));
 	}
 
-	get_geometry(fd, NULL);
-
-	update_units();
-
-	if (sector_size != read(fd, MBRbuffer, sector_size)) {
+	if (512 != read(fd, MBRbuffer, 512)) {
 		if (what == try_only)
 			return 1;
 		fatal(unable_to_read);
 	}
+
+	get_geometry(fd, NULL);
+
+	update_units();
 
 got_table:
 

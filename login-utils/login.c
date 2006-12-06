@@ -230,6 +230,7 @@ char	*hostname;		/* idem */
 static char	*username, *tty_name, *tty_number;
 static char	thishost[100];
 static int	failures = 1;
+static pid_t	pid;
 
 #ifndef __linux__
 struct	sgttyb sgttyb;
@@ -256,19 +257,27 @@ const char *months[] = {
    belongs). */
 static void
 opentty(const char * tty) {
-    int i;
-    int fd = open(tty, O_RDWR | O_NONBLOCK);
-    int flags = fcntl(fd, F_GETFL);
+	int i, fd, flags;
 
-    flags &= ~O_NONBLOCK;
-    fcntl(fd, F_SETFL, flags);
+	fd = open(tty, O_RDWR | O_NONBLOCK);
+	if (fd == -1) {
+		syslog(LOG_ERR, _("FATAL: can't reopen tty: %s"),
+		       strerror(errno));
+		sleep(1);
+		exit(1);
+	}
+
+	flags = fcntl(fd, F_GETFL);
+	flags &= ~O_NONBLOCK;
+	fcntl(fd, F_SETFL, flags);
     
-    for (i = 0 ; i < fd ; i++)
-      close(i);
-    for (i = 0 ; i < 3 ; i++)
-      dup2(fd, i);
-    if (fd >= 3)
-      close(fd);
+	for (i = 0; i < fd; i++)
+		close(i);
+	for (i = 0; i < 3; i++)
+		if (fd != i)
+			dup2(fd, i);
+	if (fd >= 3)
+		close(fd);
 }
 
 /* true if the filedescriptor fd is a console tty, very Linux specific */
@@ -316,7 +325,7 @@ logbtmp(const char *line, const char *username, const char *hostname) {
 #endif
 
 	ut.ut_type = LOGIN_PROCESS; /* XXX doesn't matter */
-	ut.ut_pid = getpid();
+	ut.ut_pid = pid;
 	if (hostname) {
 		xstrncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
 		if (hostaddress[0])
@@ -358,6 +367,8 @@ main(int argc, char **argv)
 #ifndef __linux__
     int ioctlval;
 #endif
+
+    pid = getpid();
 
     signal(SIGALRM, timedout);
     alarm((unsigned int)timeout);
@@ -491,7 +502,9 @@ main(int argc, char **argv)
     snprintf(vcsan, sizeof(vcsan), "/dev/vcsa%s", tty_number);
 #endif
 
+    /* set pgid to pid */
     setpgrp();
+    /* this means that setsid() will fail */
     
     {
 	struct termios tt, ttt;
@@ -509,12 +522,11 @@ main(int argc, char **argv)
 	signal(SIGHUP, SIG_IGN); /* so vhangup() wont kill us */
 	vhangup();
 	signal(SIGHUP, SIG_DFL);
-	
-	setsid();
-	
-	/* re-open stdin,stdout,stderr after vhangup() closed them */
-	/* if it did, after 0.99.5 it doesn't! */
+
+	/* open stdin,stdout,stderr to the tty */
 	opentty(ttyn);
+	
+	/* restore tty modes */
 	tcsetattr(0,TCSAFLUSH,&tt);
     }
 
@@ -536,7 +548,7 @@ main(int argc, char **argv)
     retcode = pam_start("login",username, &conv, &pamh);
     if(retcode != PAM_SUCCESS) {
 	fprintf(stderr, _("login: PAM Failure, aborting: %s\n"),
-	pam_strerror(pamh, retcode));
+		pam_strerror(pamh, retcode));
 	syslog(LOG_ERR, _("Couldn't initialize PAM: %s"),
 	       pam_strerror(pamh, retcode));
 	exit(99);
@@ -629,9 +641,10 @@ main(int argc, char **argv)
 	PAM_FAIL_CHECK;
     }
 
-    /* Grab the user information out of the password file for future usage
-       First get the username that we are actually using, though.
-    */
+    /*
+     * Grab the user information out of the password file for future usage
+     * First get the username that we are actually using, though.
+     */
     retcode = pam_get_item(pamh, PAM_USER, (const void **) &username);
     PAM_FAIL_CHECK;
 
@@ -650,8 +663,10 @@ main(int argc, char **argv)
 	    exit(1);
     }
 
-    /* Create a copy of the pwd struct - otherwise it may get
-     * clobbered by PAM */
+    /*
+     * Create a copy of the pwd struct - otherwise it may get
+     * clobbered by PAM
+     */
     memcpy(&pwdcopy, pwd, sizeof(*pwd));
     pwd = &pwdcopy;
     pwd->pw_name   = strdup(pwd->pw_name);
@@ -885,12 +900,11 @@ main(int argc, char **argv)
     {
 	struct utmp ut;
 	struct utmp *utp;
-	pid_t mypid = getpid();
 	
 	utmpname(_PATH_UTMP);
 	setutent();
 
-	/* Find mypid in utmp.
+	/* Find pid in utmp.
 login sometimes overwrites the runlevel entry in /var/run/utmp,
 confusing sysvinit. I added a test for the entry type, and the problem
 was gone. (In a runlevel entry, st_pid is not really a pid but some number
@@ -898,7 +912,7 @@ calculated from the previous and current runlevel).
 Michael Riepe <michael@stud.uni-hannover.de>
 	*/
 	while ((utp = getutent()))
-		if (utp->ut_pid == mypid
+		if (utp->ut_pid == pid
 		    && utp->ut_type >= INIT_PROCESS
 		    && utp->ut_type <= DEAD_PROCESS)
 			break;
@@ -936,7 +950,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	}
 #endif
 	ut.ut_type = USER_PROCESS;
-	ut.ut_pid = mypid;
+	ut.ut_pid = pid;
 	if (hostname) {
 		xstrncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
 		if (hostaddress[0])
@@ -1004,13 +1018,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
     
     if (*pwd->pw_shell == '\0')
       pwd->pw_shell = _PATH_BSHELL;
-#ifndef __linux__
-    /* turn on new line discipline for the csh */
-    else if (!strcmp(pwd->pw_shell, _PATH_CSHELL)) {
-	ioctlval = NTTYDISC;
-	ioctl(0, TIOCSETD, &ioctlval);
-    }
-#endif
     
     /* preserve TERM even without -p flag */
     {
@@ -1113,37 +1120,50 @@ Michael Riepe <michael@stud.uni-hannover.de>
      * We must fork before setuid() because we need to call
      * pam_close_session() as root.
      */
-    /*
-     * Problem: if the user's shell is a shell like ash that doesnt do
-     * setsid() or setpgrp(), then a ctrl-\, sending SIGQUIT to every
-     * process in the pgrp, will kill us.
-     * Solution: use TIOCNOTTY and setsid().
-     */
-    signal(SIGINT, SIG_IGN);
-    signal(SIGHUP, SIG_IGN);	/* ignore signal from TIOCNOTTY below */
     
     childPid = fork();
     if (childPid < 0) {
        int errsv = errno;
        /* error in fork() */
-       fprintf(stderr,_("login: failure forking: %s"), strerror(errsv));
+       fprintf(stderr, _("login: failure forking: %s"), strerror(errsv));
        PAM_END;
        exit(0);
-    } else if (childPid) {
+    }
+
+    if (childPid) {
        /* parent - wait for child to finish, then cleanup session */
-       ioctl(0, TIOCNOTTY, NULL);
-       signal(SIGHUP, SIG_DFL);
+       signal(SIGHUP, SIG_IGN);
+       signal(SIGINT, SIG_IGN);
+       signal(SIGQUIT, SIG_IGN);
+       signal(SIGTSTP, SIG_IGN);
+       signal(SIGTTIN, SIG_IGN);
+       signal(SIGTTOU, SIG_IGN);
 
        wait(NULL);
        PAM_END;
        exit(0);
     }
+
     /* child */
+    /*
+     * Problem: if the user's shell is a shell like ash that doesnt do
+     * setsid() or setpgrp(), then a ctrl-\, sending SIGQUIT to every
+     * process in the pgrp, will kill us.
+     */
+
+    /* start new session */
     setsid();
-    /* reopen, as we need controlling tty in the child */
+
+    /* make sure we have a controlling tty */
     opentty(ttyn);
+    openlog("login", LOG_ODELAY, LOG_AUTHPRIV);	/* reopen */
+
+    /*
+     * TIOCSCTTY: steal tty from other process group.
+     */
+    if (ioctl(0, TIOCSCTTY, 1))
+	    syslog(LOG_ERR, _("TIOCSCTTY failed: %m"));
 #endif
-    signal(SIGHUP, SIG_DFL);
     signal(SIGINT, SIG_DFL);
     
     /* discard permissions last so can't get killed and drop core */

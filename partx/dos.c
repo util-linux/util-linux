@@ -1,14 +1,6 @@
 #include <stdio.h>
 #include "partx.h"
-
-struct partition {
-        unsigned char boot_ind;         /* 0x80 - active */
-        unsigned char bh, bs, bc;
-        unsigned char sys_type;
-        unsigned char eh, es, ec;
-        unsigned int start_sect;
-        unsigned int nr_sects;
-};
+#include "dos.h"
 
 static int
 is_extended(int type) {
@@ -17,9 +9,10 @@ is_extended(int type) {
 
 static int
 read_extended_partition(int fd, struct partition *ep,
-			struct slice *sp, int ns) {
+			struct slice *sp, int ns)
+{
 	struct partition *p;
-	unsigned long start, here, next;
+	unsigned long start, here;
 	unsigned char *bp;
 	int loopct = 0;
 	int moretodo = 1;
@@ -68,6 +61,11 @@ read_extended_partition(int fd, struct partition *ep,
 	return n;
 }
 
+static int
+is_gpt(int type) {
+	return (type == 0xEE);
+}
+
 int
 read_dos_pt(int fd, struct slice all, struct slice *sp, int ns) {
 	struct partition *p;
@@ -82,6 +80,13 @@ read_dos_pt(int fd, struct slice all, struct slice *sp, int ns) {
 	if (bp[510] != 0x55 || bp[511] != 0xaa)
 		return -1;
 
+	p = (struct partition *) (bp + 0x1be);
+	for (i=0; i<4; i++) {
+		if (is_gpt(p->sys_type)) {
+			return 0;
+		}
+		p++;
+	}
 	p = (struct partition *) (bp + 0x1be);
 	for (i=0; i<4; i++) {
 		/* always add, even if zero length */

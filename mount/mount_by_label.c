@@ -11,6 +11,8 @@
  * - Added XFS support
  * 2001-11-22 Kirby Bohling <kbohling@birddog.com>
  * - Added support of labels on LVM
+ * 2002-03-21 Christoph Hellwig <hch@infradead.org>
+ * - Added JFS support
  */
 
 #include <stdio.h>
@@ -48,6 +50,7 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 	size_t namesize;
 	struct ext2_super_block e2sb;
 	struct xfs_super_block xfsb;
+	struct jfs_super_block jfssb;
 
 	fd = open(device, O_RDONLY);
 	if (fd < 0)
@@ -71,6 +74,16 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 			memcpy(*label, xfsb.s_fname, namesize);
 		rv = 0;
 	}
+	else if (lseek(fd, JFS_SUPER1_OFF, SEEK_SET) == JFS_SUPER1_OFF
+	    && read(fd, (char *) &jfssb, sizeof(jfssb)) == sizeof(jfssb)
+		&& (strncmp(jfssb.s_magic, JFS_MAGIC, 4) == 0)) {
+		/* what to do with non-existant UUID?  --hch */
+		memset(uuid, 0, 16);
+		namesize = sizeof(jfssb.s_fpack);
+		if ((*label = calloc(namesize + 1, 1)) != NULL)
+			memcpy(*label, jfssb.s_fpack, namesize);
+		rv = 0;
+	}
 
 	close(fd);
 	return rv;
@@ -83,7 +96,7 @@ uuidcache_addentry(char *device, char *label, char *uuid) {
 	if (!uuidCache) {
 		last = uuidCache = malloc(sizeof(*uuidCache));
 	} else {
-		for (last = uuidCache; last->next; last = last->next) ;
+		for (last = uuidCache; last->next; last = last->next);
 		last->next = malloc(sizeof(*uuidCache));
 		last = last->next;
 	}
@@ -142,6 +155,9 @@ uuidcache_init(void) {
 	char device[110];
 	int firstPass;
 	int handleOnFirst;
+#if 0
+	char *iobuf = 0;
+#endif
 
 	if (uuidCache)
 		return;
@@ -155,6 +171,24 @@ uuidcache_init(void) {
 		       PROC_PARTITIONS);
 		return;
 	}
+#if 0
+/* Ugly kludge - the contents of /proc/partitions change in time,
+   and this causes failures when the file is not read in one go.
+   In particular, one cannot use stdio on /proc/partitions.
+   Doing this ourselves is not easy either, since stat returns 0
+   so the size is unknown. We might try increasing buffer sizes
+   until a single read gets all. For now only pick a largish buffer size. */
+/* All these troubles are mainly caused by people who patch the kernel
+   to keep statistics in /proc/partitions. Of course, statistics belong
+   in some /proc/diskstats, not in some /proc file that happened to
+   exist already. */
+   {
+#define CBBUF	(16 * 1024)
+	iobuf = (char *) malloc(CBBUF);
+	if (iobuf)
+		setvbuf(procpt, iobuf, _IOFBF, CBBUF);
+   }
+#endif
 
 	for (firstPass = 1; firstPass >= 0; firstPass--) {
 	    fseek(procpt, 0, SEEK_SET);
@@ -176,6 +210,7 @@ uuidcache_init(void) {
 		/* skip entire disk (minor 0, 64, ... on ide;
 		   0, 16, ... on sd) */
 		/* heuristic: partition name ends in a digit */
+		/* devfs has .../disc and .../part1 etc. */
 
 		for(s = ptname; *s; s++);
 		if (isdigit(s[-1])) {
@@ -196,7 +231,10 @@ uuidcache_init(void) {
 	}
 
 	fclose(procpt);
-
+#if 0
+	if (iobuf)
+		free(iobuf);
+#endif
 	uuidcache_init_lvm();
 }
 
@@ -273,7 +311,32 @@ get_volume_label_by_spec(const char *spec) {
 	while(uc) {
 		if (!strcmp(spec, uc->device))
 			return uc->label;
-		uc = uc->next;
+ 		uc = uc->next;
 	}
 	return NULL;
 }
+
+/*
+ * second_occurrence_of_vol_label()
+ * As labels are user defined they are not necessarily 
+ * system-wide unique. Make sure that they are.
+ */
+const char *
+second_occurrence_of_vol_label (const char *label) {
+  	struct uuidCache_s *last;
+        int occurrences = 0;
+
+        uuidcache_init();
+
+        for (last = uuidCache; last->next; last = last->next) {
+		if (!strcmp(last->label, label)) {
+			occurrences++;
+			if (occurrences == 2)
+				return last->device;
+		}
+        }
+        
+        return NULL;
+}
+
+          

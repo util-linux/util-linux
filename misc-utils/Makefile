@@ -97,7 +97,9 @@ endif
 
 install: all
 	$(INSTALLDIR) $(BINDIR) $(USRBINDIR)
+ifneq "$(BIN)" ""
 	$(INSTALLBIN) $(BIN) $(BINDIR)
+endif
 	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
 	$(INSTALLDIR) $(MAN1DIR)
 	$(INSTALLMAN) $(MAN1) $(MAN1DIR)

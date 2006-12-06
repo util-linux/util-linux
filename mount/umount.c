@@ -270,12 +270,11 @@ umount_one (const char *spec, const char *node, const char *type,
 	umnt_err = umnt_err2 = 0;
 	if (lazy) {
 		res = umount2 (node, MNT_DETACH);
-		if (res < 0) {
-			complain(errno, node);
-			return 1;
-		} else
-			return 0;
+		if (res < 0)
+			umnt_err = errno;
+		goto writemtab;
 	}
+
 	if (force) {		/* only supported for NFS */
 		res = umount2 (node, MNT_FORCE);
 		if (res == -1) {
@@ -373,6 +372,7 @@ umount_one (const char *spec, const char *node, const char *type,
 	if (loopdev)
 		del_loop(loopdev);
 
+ writemtab:
 	if (!nomtab && mtab_is_writable() &&
 	    (umnt_err == 0 || umnt_err == EINVAL || umnt_err == ENOENT)) {
 		update_mtab (node, NULL);

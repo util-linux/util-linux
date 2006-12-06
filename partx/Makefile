@@ -1,4 +1,5 @@
-OBJ = bsd.o dos.o partx.o solaris.o unixware.o
+OBJ = bsd.o dos.o partx.o solaris.o unixware.o gpt.o crc32.o
+CFLAGS += -Wall
 
 all: addpart delpart partx
 

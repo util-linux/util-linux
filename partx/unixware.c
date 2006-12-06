@@ -3,8 +3,8 @@
 
 #define UNIXWARE_FS_UNUSED     0
 #define UNIXWARE_NUMSLICE      16
-#define UNIXWARE_DISKMAGIC     (0xCA5E600DUL)
-#define UNIXWARE_DISKMAGIC2    (0x600DDEEEUL)
+#define UNIXWARE_DISKMAGIC     (0xCA5E600D)
+#define UNIXWARE_DISKMAGIC2    (0x600DDEEE)
 
 struct unixware_slice {
 	unsigned short s_label;		/* label */

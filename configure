@@ -12,8 +12,9 @@
 # H4. For nls.h: do we have <locale.h>?
 # H5. For cal.c: do we have <langinfo.h>?
 # H6. For mkswap.c: do we have <sys/user.h> or <asm/page.h>?
-# H7. For nfsmount.h (nfsmount_xdr.c: int32_t): do we have <asm/types.h>?
-# H8. For raw.c: do we have <linux/raw.h>?
+# H7. For nfsmount.c: do we have <rpcsvc/nfs_prot.h>?
+# H8. For nfsmount.h (nfsmount_xdr.c: int32_t): do we have <asm/types.h>?
+# H9. For raw.c: do we have <linux/raw.h>?
 #
 # Existence of functions:
 # F1. For nfsmount.c: is inet_aton() available?
@@ -139,14 +140,21 @@ else if ./testincl "asm/page.h"; then
 fi fi
 
 #
-# H7. For nfsmount.h: do we have <asm/types.h>?
+# H7. For nfsmount.c: do we have <rpcsvc/nfs_prot.h>?
+#
+if ./testincl "rpcsvc/nfs_prot.h"; then
+	echo "#define HAVE_rpcsvc_nfs_prot_h" >> defines.h
+fi
+
+#
+# H8. For nfsmount.h: do we have <asm/types.h>?
 #
 if ./testincl "asm/types.h"; then
         echo "#define HAVE_asm_types_h" >> defines.h
 fi
 
 #
-# H8. For raw.c: do we have <linux/raw.h>?
+# H9. For raw.c: do we have <linux/raw.h>?
 #
 if ./testincl "linux/raw.h"; then
         echo "HAVE_RAW_H=yes" >> make_include

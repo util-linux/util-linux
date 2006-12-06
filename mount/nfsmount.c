@@ -32,6 +32,8 @@
  * nfsmount.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
  */
 
+#include "../defines.h"	/* for HAVE_rpcsvc_nfs_prot_h and HAVE_inet_aton */
+
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
@@ -51,13 +53,17 @@
 #include "sundries.h"
 #include "nfsmount.h"
 
+#ifdef HAVE_rpcsvc_nfs_prot_h
+#include <rpcsvc/nfs_prot.h>
+#else
 #include <linux/nfs.h>
+#define nfsstat nfs_stat
+#endif
+
 #include "mount_constants.h"
 #include "nfs_mount4.h"
 
 #include "nls.h"
-
-#include "../defines.h"		/* for HAVE_inet_aton */
 
 #ifndef NFS_PORT
 #define NFS_PORT 2049
@@ -802,7 +808,7 @@ int nfsmount(const char *spec, const char *node, int *flags,
 #endif
 
 static struct {
-	enum nfs_stat stat;
+	enum nfsstat stat;
 	int errnum;
 } nfs_errtbl[] = {
 	{ NFS_OK,		0		},

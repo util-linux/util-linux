@@ -1,15 +1,89 @@
-.\" Copyright 1993 Rickard E. Faith (faith@cs.unc.edu)
+.\" Copyright 2002 Andre C. Mazzone (linuxdev@karagee.com)
 .\" May be distributed under the GNU General Public License
-.TH IPCRM 8 "9 October 1993" "Linux 0.99" "Linux Programmer's Manual"
+.TH IPCRM 8 "last change: 19 March 2002" "ipcrm" "Linux Programmer's Manual"
 .SH NAME
-ipcs \- provide information on ipc facilities
+ipcrm \- remove a message queue, semaphore set or shared memory id
 .SH SYNOPSIS
-.BI "ipcrm [ shm | msg | sem ] " id ...
-.SH DESCRIPTION
 .B ipcrm
-will remove the resource(s) specified by
-.IR id .
+[
+.I options
+]
+
+deprecated usage
+
+.BI ipcrm
+[
+.I shm
+|
+.I msg
+|
+.I sem
+]
+.IR id ...
+.SH DESCRIPTION
+.I ipcrm
+will remove messages, semphores or shared memory segments specified by
+.IR key " or" " id" .
+.SH OPTIONS
+The identifiers are specified thus:
+.TP
+.BI \-q " msgid"
+removes the message queue identified by
+.I msgid
+from the system along with its associated data structures.
+.TP
+.BI \-m " shmid"
+removes the shared memory segment identified by
+.I shmid
+from the system along with its associated data structures after the last
+detach is performed.
+.TP
+.BI \-s " semid"
+removes the semaphore identified by
+.IR semid
+from the system along with its associated data structures.
+.TP
+.BI \-Q " msgkey"
+removes the message queue created with
+.I msgkey
+from the system along with its associated data structures.
+.TP
+.BI \-M " shmkey"
+removes the shared memory segment created with
+.I shmkey
+from the system along with its associated data structures after the last
+detach is performed.
+.TP
+.BI \-S " semkey"
+removes the semaphore created with
+.IR semkey
+from the system along with its associated data structures.
+.LP
+The details of the removes are described in
+.IR msgctl (2),
+.IR shmctl (2),
+and
+.IR semctl (2).
+The identifiers and keys may be found by using
+.IR ipcs (8).
+.SH NOTES
+In its first implementation, ipcrm used the deprecated syntax shown in the
+.BR SYNOPSIS .
+Functionality present in other *nix implementations of ipcrm has since
+been added, namely the ability to delete resources by key (not just
+identifier), and to respect the same command-line syntax. For backward
+compatibility the previous syntax is still supported.
+.SH AUTHORS
+Andre C. Mazzone (linuxdev@karagee.com)
+.br
+Krishna Balasubramanian (balasub@cis.ohio-state.edu)
+.nh
 .SH SEE ALSO
-.BR ipcs (8)
-.SH AUTHOR
-krishna balasubramanian (balasub@cis.ohio-state.edu)
+.BR ipcs (8),
+.BR msgctl (2),
+.BR msgget (2),
+.BR semctl (2),
+.BR semget (2),
+.BR shmctl (2),
+.BR shmget (2)
+

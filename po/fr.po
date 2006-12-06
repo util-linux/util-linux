@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.10o\n"
-"POT-Creation-Date: 2002-03-08 23:54+0100\n"
+"POT-Creation-Date: 2002-04-06 01:28+0200\n"
 "PO-Revision-Date: 2000-09-07 19:17+0100\n"
 "Last-Translator: Christophe Merlet (RedFox) <christophe@merlet.net>\n"
 "Language-Team: Vincent Renardias <vincent@ldsol.com>\n"
@@ -153,7 +153,7 @@ msgstr "Usage : %s [ -n ] périphérique\n"
 
 #: disk-utils/fdformat.c:120 disk-utils/fsck.minix.c:1291
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:55
-#: disk-utils/mkfs.minix.c:644 disk-utils/mkswap.c:452
+#: disk-utils/mkfs.minix.c:644 disk-utils/mkswap.c:457
 #: disk-utils/setfdprm.c:128 misc-utils/cal.c:246 misc-utils/ddate.c:181
 #: misc-utils/kill.c:188 misc-utils/rename.c:79 misc-utils/script.c:132
 #, c-format
@@ -807,7 +807,7 @@ msgstr "La recherche lors du test des blocs a échoué."
 msgid "Weird values in do_check: probably bugs\n"
 msgstr "Valeurs étranges dans do_check : sans doute des bogues.\n"
 
-#: disk-utils/mkfs.minix.c:583 disk-utils/mkswap.c:362
+#: disk-utils/mkfs.minix.c:583 disk-utils/mkswap.c:368
 msgid "seek failed in check_blocks"
 msgstr "La recherche dans check_blocks a échoué."
 
@@ -869,66 +869,66 @@ msgstr ""
 msgid "Assuming pages of size %d (not %d)\n"
 msgstr "Pages de format %d (pas %d) attendues.\n"
 
-#: disk-utils/mkswap.c:316
+#: disk-utils/mkswap.c:322
 #, c-format
 msgid "Usage: %s [-c] [-v0|-v1] [-pPAGESZ] /dev/name [blocks]\n"
 msgstr "Usage : %s [-c] [-v0|-v1] [-pTAILLEPG] /dev/nom [taille en blocs]\n"
 
-#: disk-utils/mkswap.c:339
+#: disk-utils/mkswap.c:345
 msgid "too many bad pages"
 msgstr "Trop de mauvaises pages"
 
-#: disk-utils/mkswap.c:353 misc-utils/look.c:182 misc-utils/setterm.c:1130
+#: disk-utils/mkswap.c:359 misc-utils/look.c:182 misc-utils/setterm.c:1130
 #: text-utils/more.c:1934 text-utils/more.c:1945
 msgid "Out of memory"
 msgstr "A court de mémoire"
 
-#: disk-utils/mkswap.c:370
+#: disk-utils/mkswap.c:376
 msgid "one bad page\n"
 msgstr "une mauvaise page\n"
 
-#: disk-utils/mkswap.c:372
+#: disk-utils/mkswap.c:378
 #, c-format
 msgid "%d bad pages\n"
 msgstr "%d mauvaises pages\n"
 
-#: disk-utils/mkswap.c:492
+#: disk-utils/mkswap.c:497
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s : erreur  : aucun endroit défini pour l'échange ?\n"
 
-#: disk-utils/mkswap.c:510
+#: disk-utils/mkswap.c:515
 #, c-format
 msgid "%s: error: size %ld is larger than device size %d\n"
 msgstr ""
 "%s : erreur : la taille %ld est plus grande que celle du périphérique : %d\n"
 
-#: disk-utils/mkswap.c:529
+#: disk-utils/mkswap.c:534
 #, c-format
 msgid "%s: error: unknown version %d\n"
 msgstr "%s : erreur : version inconnue %d\n"
 
-#: disk-utils/mkswap.c:535
+#: disk-utils/mkswap.c:540
 #, c-format
 msgid "%s: error: swap area needs to be at least %ldkB\n"
 msgstr ""
 "%s : erreur : la taille de la zone d'échange doit être d'au moins %ldKo\n"
 
-#: disk-utils/mkswap.c:554
+#: disk-utils/mkswap.c:559
 #, c-format
 msgid "%s: warning: truncating swap area to %ldkB\n"
 msgstr "%s : avertissement : troncature de la zone d'échange à %ldKo\n"
 
-#: disk-utils/mkswap.c:566
+#: disk-utils/mkswap.c:571
 #, c-format
 msgid "Will not try to make swapdevice on '%s'"
 msgstr "Pas d'essai de création de périphérique d'échange sur '%s'"
 
-#: disk-utils/mkswap.c:575 disk-utils/mkswap.c:596
+#: disk-utils/mkswap.c:580 disk-utils/mkswap.c:601
 msgid "fatal: first page unreadable"
 msgstr "Erreur bloquante : première page illisible."
 
-#: disk-utils/mkswap.c:581
+#: disk-utils/mkswap.c:586
 #, c-format
 msgid ""
 "%s: Device '%s' contains a valid Sun disklabel.\n"
@@ -943,24 +943,24 @@ msgstr ""
 "périphérique, utilisez\n"
 "l'option -f pour forcer celui-ci.\n"
 
-#: disk-utils/mkswap.c:605
+#: disk-utils/mkswap.c:610
 msgid "Unable to set up swap-space: unreadable"
 msgstr "Impossible de configurer l'espace d'échange : illisible."
 
-#: disk-utils/mkswap.c:606
-#, c-format
-msgid "Setting up swapspace version %d, size = %ld bytes\n"
+#: disk-utils/mkswap.c:611
+#, fuzzy, c-format
+msgid "Setting up swapspace version %d, size = %lu bytes\n"
 msgstr "Configuration de l'espace d'échange version %d, taille = %ld octets\n"
 
-#: disk-utils/mkswap.c:612
+#: disk-utils/mkswap.c:617
 msgid "unable to rewind swap-device"
 msgstr "Impossible de rembobiner le périphérique d'échange."
 
-#: disk-utils/mkswap.c:615
+#: disk-utils/mkswap.c:620
 msgid "unable to write signature page"
 msgstr "Impossible d'écrire la page de signature."
 
-#: disk-utils/mkswap.c:623
+#: disk-utils/mkswap.c:628
 msgid "fsync failed"
 msgstr "Échec de fsync."
 
@@ -5864,7 +5864,7 @@ msgstr "Changement des informations utilisateur pour %s.\n"
 msgid "Password error."
 msgstr "Erreur de mot de passe."
 
-#: login-utils/chfn.c:176 login-utils/chsh.c:167 login-utils/login.c:775
+#: login-utils/chfn.c:176 login-utils/chsh.c:167 login-utils/login.c:787
 #: login-utils/newgrp.c:48 login-utils/simpleinit.c:320 mount/lomount.c:248
 #: mount/lomount.c:253
 msgid "Password: "
@@ -6085,20 +6085,25 @@ msgstr ""
 "\n"
 "%10.10s %5.5s interrompu\n"
 
-#: login-utils/login.c:402
+#: login-utils/login.c:264
+#, fuzzy, c-format
+msgid "FATAL: can't reopen tty: %s"
+msgstr "mount : impossible d'ouvrir %s: %s"
+
+#: login-utils/login.c:413
 msgid "login: -h for super-user only.\n"
 msgstr "connexion : -h pour superutilisateur uniquement.\n"
 
-#: login-utils/login.c:429
+#: login-utils/login.c:440
 msgid "usage: login [-fp] [username]\n"
 msgstr "usage : connexion [-fp] [nom-utilisateur]\n"
 
-#: login-utils/login.c:538
+#: login-utils/login.c:547
 #, c-format
 msgid "login: PAM Failure, aborting: %s\n"
 msgstr "connexion : échec de PAM, abandon : %s\n"
 
-#: login-utils/login.c:540
+#: login-utils/login.c:549
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "Initialisation de PAM impossible : %s"
@@ -6109,16 +6114,16 @@ msgstr "Initialisation de PAM impossible : %s"
 #. * PAM doesn't have an interface to specify the "Password: " string
 #. * (yet).
 #.
-#: login-utils/login.c:557
+#: login-utils/login.c:566
 msgid "login: "
 msgstr "connexion : "
 
-#: login-utils/login.c:597
+#: login-utils/login.c:606
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "ECHEC DE LA CONNEXION %d DEPUIS %s POUR %s, %s"
 
-#: login-utils/login.c:601
+#: login-utils/login.c:610
 msgid ""
 "Login incorrect\n"
 "\n"
@@ -6126,17 +6131,17 @@ msgstr ""
 "Connexion incorrecte\n"
 "\n"
 
-#: login-utils/login.c:610
+#: login-utils/login.c:619
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "TENTATIVES DE CONNEXION TROP NOMBREUSES (%d) DEPUIS %s POUR %s, %s"
 
-#: login-utils/login.c:614
+#: login-utils/login.c:623
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "ÉCHEC DE LA SESSION DE CONNEXION DEPUIS %s POUR %s, %s"
 
-#: login-utils/login.c:618
+#: login-utils/login.c:627
 msgid ""
 "\n"
 "Login incorrect\n"
@@ -6144,51 +6149,51 @@ msgstr ""
 "\n"
 "Connexion incorrecte\n"
 
-#: login-utils/login.c:639 login-utils/login.c:646 login-utils/login.c:678
+#: login-utils/login.c:649 login-utils/login.c:656 login-utils/login.c:690
 msgid ""
 "\n"
 "Session setup problem, abort.\n"
 msgstr ""
 
-#: login-utils/login.c:640
+#: login-utils/login.c:650
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr ""
 
-#: login-utils/login.c:647
+#: login-utils/login.c:657
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr ""
 
-#: login-utils/login.c:664
+#: login-utils/login.c:676
 #, fuzzy
 msgid "login: Out of memory\n"
 msgstr "%s : A court de mémoire !\n"
 
-#: login-utils/login.c:710
+#: login-utils/login.c:722
 msgid "Illegal username"
 msgstr "Nom utilisateur non valide"
 
-#: login-utils/login.c:753
+#: login-utils/login.c:765
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "Connexion %s refusée sur ce terminal.\n"
 
-#: login-utils/login.c:758
+#: login-utils/login.c:770
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "CONNEXION %s REFUSÉE DEPUIS %s SUR TTY %s"
 
-#: login-utils/login.c:762
+#: login-utils/login.c:774
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "CONNEXION %s REFUSÉE SUR TTY %s"
 
-#: login-utils/login.c:815
+#: login-utils/login.c:827
 msgid "Login incorrect\n"
 msgstr "Connexion incorrecte\n"
 
-#: login-utils/login.c:837
+#: login-utils/login.c:849
 msgid ""
 "Too many users logged on already.\n"
 "Try again later.\n"
@@ -6196,79 +6201,84 @@ msgstr ""
 "Trop d'utilisateurs déjà connectés.\n"
 "Essayez de nouveau plus tard.\n"
 
-#: login-utils/login.c:841
+#: login-utils/login.c:853
 msgid "You have too many processes running.\n"
 msgstr "Trop de processus en cours d'exécution.\n"
 
-#: login-utils/login.c:1073
+#: login-utils/login.c:1077
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "ACCÈS DISTANT À %s PAR %s"
 
-#: login-utils/login.c:1080
+#: login-utils/login.c:1084
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "CONNEXION ROOT À %s DEPUIS %s"
 
-#: login-utils/login.c:1083
+#: login-utils/login.c:1087
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "CONNEXION ROOT À %s"
 
-#: login-utils/login.c:1086
+#: login-utils/login.c:1090
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "CONNEXION À %s PAR %s DEPUIS %s"
 
-#: login-utils/login.c:1089
+#: login-utils/login.c:1093
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "CONNEXION À %s PAR %s"
 
-#: login-utils/login.c:1101
+#: login-utils/login.c:1105
 #, fuzzy
 msgid "You have new mail.\n"
 msgstr "Vous avez %smail.\n"
 
-#: login-utils/login.c:1103
+#: login-utils/login.c:1107
 #, fuzzy
 msgid "You have mail.\n"
 msgstr "Vous avez %smail.\n"
 
 #. error in fork()
-#: login-utils/login.c:1129
+#: login-utils/login.c:1125
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "Connexion : échec de fork : %s"
 
-#: login-utils/login.c:1151
+#: login-utils/login.c:1162
+#, c-format
+msgid "TIOCSCTTY failed: %m"
+msgstr ""
+
+#: login-utils/login.c:1168
 msgid "setuid() failed"
 msgstr "setuid() a échoué"
 
-#: login-utils/login.c:1157
+#: login-utils/login.c:1174
 #, c-format
 msgid "No directory %s!\n"
 msgstr "Aucun répertoire %s !\n"
 
-#: login-utils/login.c:1161
+#: login-utils/login.c:1178
 msgid "Logging in with home = \"/\".\n"
 msgstr "Connexion avec home = \"/\".\n"
 
-#: login-utils/login.c:1169
+#: login-utils/login.c:1186
 msgid "login: no memory for shell script.\n"
 msgstr "Connexion : mémoire insuffisante pour le script de shell.\n"
 
-#: login-utils/login.c:1196
+#: login-utils/login.c:1213
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr "Connexion : impossible d'exécuter le script de shell : %s.\n"
 
-#: login-utils/login.c:1199
+#: login-utils/login.c:1216
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "Connexion : aucun shell : %s.\n"
 
-#: login-utils/login.c:1214
+#: login-utils/login.c:1231
 #, c-format
 msgid ""
 "\n"
@@ -6277,62 +6287,62 @@ msgstr ""
 "\n"
 "Connexion %s : "
 
-#: login-utils/login.c:1225
+#: login-utils/login.c:1242
 msgid "login name much too long.\n"
 msgstr "nom de connexion beaucoup trop long.\n"
 
-#: login-utils/login.c:1226
+#: login-utils/login.c:1243
 msgid "NAME too long"
 msgstr "NOM trop long"
 
-#: login-utils/login.c:1233
+#: login-utils/login.c:1250
 msgid "login names may not start with '-'.\n"
 msgstr "Les noms de connexion ne peuvent pas commencer par '-'.\n"
 
-#: login-utils/login.c:1243
+#: login-utils/login.c:1260
 msgid "too many bare linefeeds.\n"
 msgstr "Trop de sauts de ligne vides.\n"
 
-#: login-utils/login.c:1244
+#: login-utils/login.c:1261
 msgid "EXCESSIVE linefeeds"
 msgstr "Sauts de ligne EXCESSIFS"
 
-#: login-utils/login.c:1255
+#: login-utils/login.c:1272
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "Temporisation de la connexion après %d secondes.\n"
 
-#: login-utils/login.c:1352
+#: login-utils/login.c:1369
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Dernière connexion : %.*s "
 
-#: login-utils/login.c:1356
+#: login-utils/login.c:1373
 #, c-format
 msgid "from %.*s\n"
 msgstr "depuis %.*s\n"
 
-#: login-utils/login.c:1359
+#: login-utils/login.c:1376
 #, c-format
 msgid "on %.*s\n"
 msgstr "à %.*s\n"
 
-#: login-utils/login.c:1379
+#: login-utils/login.c:1396
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "ÉCHEC DE LA CONNEXION DEPUIS %s, %s"
 
-#: login-utils/login.c:1382
+#: login-utils/login.c:1399
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "ÉCHEC DE LA CONNEXION À %s, %s"
 
-#: login-utils/login.c:1386
+#: login-utils/login.c:1403
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "%d ÉCHECS DE CONNEXION DEPUIS %s, %s"
 
-#: login-utils/login.c:1389
+#: login-utils/login.c:1406
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%d ÉCHECS DE CONNEXION À %s, %s"
@@ -7875,7 +7885,7 @@ msgstr "mount : impossible de trouver %s dans %s"
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount : impossible de trouver %s dans %s ou %s"
 
-#: mount/mount_by_label.c:153
+#: mount/mount_by_label.c:169
 #, c-format
 msgid ""
 "mount: could not open %s, so UUID and LABEL conversion cannot be done.\n"
@@ -7883,7 +7893,7 @@ msgstr ""
 "mount : impossible d'ouvrir %s, tant que la conversion UUID et LABEL n'a pas "
 "été faite.\n"
 
-#: mount/mount_by_label.c:257
+#: mount/mount_by_label.c:295
 msgid "mount: bad UUID"
 msgstr "mount : UUID incorrect"
 
@@ -7916,87 +7926,87 @@ msgstr "      Essayer avec le type %s\n"
 msgid "Trying %s\n"
 msgstr "Essaye %s\n"
 
-#: mount/nfsmount.c:231
+#: mount/nfsmount.c:237
 msgid "mount: excessively long host:dir argument\n"
 msgstr "mount : argument hôte:dir beaucoup trop long\n"
 
-#: mount/nfsmount.c:245
+#: mount/nfsmount.c:251
 msgid "mount: warning: multiple hostnames not supported\n"
 msgstr "mount : avertissement: noms d'hôtes multiples non pris en charge\n"
 
-#: mount/nfsmount.c:250
+#: mount/nfsmount.c:256
 msgid "mount: directory to mount not in host:dir format\n"
 msgstr "mount : le répertoire à monter n'est pas au format hôte:dir.\n"
 
-#: mount/nfsmount.c:261 mount/nfsmount.c:516
+#: mount/nfsmount.c:267 mount/nfsmount.c:522
 #, c-format
 msgid "mount: can't get address for %s\n"
 msgstr "mount : impossible d'obtenir l'adresse pour %s\n"
 
-#: mount/nfsmount.c:267
+#: mount/nfsmount.c:273
 msgid "mount: got bad hp->h_length\n"
 msgstr "mount : hp->h_length incorrect reçu\n"
 
-#: mount/nfsmount.c:284
+#: mount/nfsmount.c:290
 msgid "mount: excessively long option argument\n"
 msgstr "mount : argument option beaucoup trop long\n"
 
-#: mount/nfsmount.c:376
+#: mount/nfsmount.c:382
 msgid "Warning: Unrecognized proto= option.\n"
 msgstr "Avertissement : option proto= non reconnue.\n"
 
-#: mount/nfsmount.c:383
+#: mount/nfsmount.c:389
 msgid "Warning: Option namlen is not supported.\n"
 msgstr "Avertissement : option namlen non prise en charge.\n"
 
-#: mount/nfsmount.c:387
+#: mount/nfsmount.c:393
 #, c-format
 msgid "unknown nfs mount parameter: %s=%d\n"
 msgstr "Paramètre de montage nfs inconnu : %s=%d\n"
 
-#: mount/nfsmount.c:421
+#: mount/nfsmount.c:427
 msgid "Warning: option nolock is not supported.\n"
 msgstr "Avertissement : option nolock non prise en charge.\n"
 
-#: mount/nfsmount.c:426
+#: mount/nfsmount.c:432
 #, c-format
 msgid "unknown nfs mount option: %s%s\n"
 msgstr "Option de montage nfs inconnue : %s%s\n"
 
-#: mount/nfsmount.c:522
+#: mount/nfsmount.c:528
 msgid "mount: got bad hp->h_length?\n"
 msgstr "mount : hp->h_length incorrect reçu ?\n"
 
-#: mount/nfsmount.c:710
+#: mount/nfsmount.c:716
 msgid "NFS over TCP is not supported.\n"
 msgstr "NFS sur TCP non pris en charge.\n"
 
-#: mount/nfsmount.c:717
+#: mount/nfsmount.c:723
 msgid "nfs socket"
 msgstr "nfs socket"
 
-#: mount/nfsmount.c:721
+#: mount/nfsmount.c:727
 msgid "nfs bindresvport"
 msgstr "nfs bindresvport"
 
-#: mount/nfsmount.c:735
+#: mount/nfsmount.c:741
 msgid "nfs server reported service unavailable"
 msgstr ""
 
-#: mount/nfsmount.c:744
+#: mount/nfsmount.c:750
 msgid "used portmapper to find NFS port\n"
 msgstr "Mappeur de port utilisé pour trouver le port NFS\n"
 
-#: mount/nfsmount.c:748
+#: mount/nfsmount.c:754
 #, c-format
 msgid "using port %d for nfs deamon\n"
 msgstr "Utilisation du port %d pour le daemon nfs\n"
 
-#: mount/nfsmount.c:759
+#: mount/nfsmount.c:765
 msgid "nfs connect"
 msgstr "nfs connect"
 
-#: mount/nfsmount.c:846
+#: mount/nfsmount.c:852
 #, c-format
 msgid "unknown nfs status return value: %d"
 msgstr "Valeur de l'état nfs renvoyée inconnue : %d"
@@ -8106,26 +8116,26 @@ msgstr "umount : %s : périphériques de blocs non autorisés sur fs"
 msgid "umount: %s: %s"
 msgstr "umount : %s : %s"
 
-#: mount/umount.c:285
+#: mount/umount.c:284
 msgid "no umount2, trying umount...\n"
 msgstr "Aucun umount2, essai avec umount...\n"
 
-#: mount/umount.c:301
+#: mount/umount.c:300
 #, c-format
 msgid "could not umount %s - trying %s instead\n"
 msgstr "umount %s impossible - essai avec %s à la place\n"
 
-#: mount/umount.c:319
+#: mount/umount.c:318
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr "umount : %s en cours d'utilisation - remonté en lecture seule\n"
 
-#: mount/umount.c:329
+#: mount/umount.c:328
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr "umount : impossible de remonter %s en lecture seule\n"
 
-#: mount/umount.c:338
+#: mount/umount.c:337
 #, c-format
 msgid "%s umounted\n"
 msgstr "%s démonté\n"
@@ -8331,29 +8341,92 @@ msgstr "   %f int/sec ; %f reçus (car/sec)\n"
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
 msgstr "Usage : %s [-c] [-n niveau] [-s taille-tampon]\n"
 
-#: sys-utils/ipcrm.c:59
+#: sys-utils/ipcrm.c:66
 #, c-format
 msgid "invalid id: %s\n"
 msgstr "id invalide : %s\n"
 
-#: sys-utils/ipcrm.c:77
+#: sys-utils/ipcrm.c:84
 #, c-format
 msgid "cannot remove id %s (%s)\n"
 msgstr "Impossible de supprimer l'id %s (%s)\n"
 
-#: sys-utils/ipcrm.c:91
-#, c-format
-msgid "usage: %s {shm | msg | sem} id ...\n"
+#: sys-utils/ipcrm.c:99
+#, fuzzy, c-format
+msgid "deprecated usage: %s {shm | msg | sem} id ...\n"
 msgstr "Usage : %s {shm | msg | sem} id...\n"
 
-#: sys-utils/ipcrm.c:124
+#: sys-utils/ipcrm.c:126
 #, c-format
 msgid "unknown resource type: %s\n"
 msgstr "Type de ressource inconnu : %s\n"
 
-#: sys-utils/ipcrm.c:128
+#: sys-utils/ipcrm.c:130
 msgid "resource(s) deleted\n"
 msgstr "Ressource(s) supprimée(s)\n"
+
+#: sys-utils/ipcrm.c:140
+#, c-format
+msgid ""
+"usage: %s [ [-q msqid] [-m shmid] [-s semid]\n"
+"          [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"
+msgstr ""
+
+#: sys-utils/ipcrm.c:181
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr ""
+
+#: sys-utils/ipcrm.c:192
+#, fuzzy, c-format
+msgid "%s: illegal key (%s)\n"
+msgstr "Touche non valide"
+
+#: sys-utils/ipcrm.c:207 sys-utils/ipcrm.c:239
+#, fuzzy
+msgid "permission denied for key"
+msgstr "mount : permission refusée."
+
+#: sys-utils/ipcrm.c:210 sys-utils/ipcrm.c:249
+msgid "already removed key"
+msgstr ""
+
+#: sys-utils/ipcrm.c:213 sys-utils/ipcrm.c:244
+#, fuzzy
+msgid "invalid key"
+msgstr "id invalide : %s\n"
+
+#: sys-utils/ipcrm.c:216 sys-utils/ipcrm.c:254
+msgid "unknown error in key"
+msgstr ""
+
+#: sys-utils/ipcrm.c:240
+#, fuzzy
+msgid "permission denied for id"
+msgstr "mount : permission refusée."
+
+#: sys-utils/ipcrm.c:245
+#, fuzzy
+msgid "invalid id"
+msgstr "id invalide : %s\n"
+
+#: sys-utils/ipcrm.c:250
+msgid "already removed id"
+msgstr ""
+
+#: sys-utils/ipcrm.c:255
+msgid "unknown error in id"
+msgstr ""
+
+#: sys-utils/ipcrm.c:258
+#, fuzzy, c-format
+msgid "%s: %s (%s)\n"
+msgstr "%s sur %s\n"
+
+#: sys-utils/ipcrm.c:266
+#, fuzzy, c-format
+msgid "%s: unknown argument: %s\n"
+msgstr "%s : signal %s inconnu\n"
 
 #: sys-utils/ipcs.c:122
 #, c-format
@@ -8980,7 +9053,7 @@ msgstr ""
 msgid "missing comma"
 msgstr ""
 
-#: sys-utils/readprofile.c:58
+#: sys-utils/readprofile.c:60
 #, fuzzy, c-format
 msgid ""
 "%s: Usage: \"%s [options]\n"
@@ -9004,37 +9077,37 @@ msgstr ""
 "\t -r            Remet tous les compteurs à zéro (root uniquement)\n"
 "\t -V            Affiche le numéro de version et quitte le programme\n"
 
-#: sys-utils/readprofile.c:81
+#: sys-utils/readprofile.c:83
 #, fuzzy
 msgid "out of memory"
 msgstr "A court de mémoire ?\n"
 
-#: sys-utils/readprofile.c:142
+#: sys-utils/readprofile.c:144
 #, c-format
 msgid "%s Version %s\n"
 msgstr "%s Version %s\n"
 
-#: sys-utils/readprofile.c:226
+#: sys-utils/readprofile.c:228
 #, c-format
 msgid "Sampling_step: %i\n"
 msgstr "Phase_prélèv : %i\n"
 
-#: sys-utils/readprofile.c:239 sys-utils/readprofile.c:262
+#: sys-utils/readprofile.c:241 sys-utils/readprofile.c:265
 #, c-format
 msgid "%s: %s(%i): wrong map line\n"
 msgstr "%s: %s(%i) : ligne de mappe incorrecte\n"
 
-#: sys-utils/readprofile.c:250
+#: sys-utils/readprofile.c:253
 #, c-format
 msgid "%s: can't find \"_stext\" in %s\n"
 msgstr "%s : impossible de trouver \"_stext\" dans %s\n"
 
-#: sys-utils/readprofile.c:273
+#: sys-utils/readprofile.c:276
 #, c-format
 msgid "%s: profile address out of range. Wrong map file?\n"
 msgstr ""
 
-#: sys-utils/readprofile.c:299
+#: sys-utils/readprofile.c:304
 msgid "total"
 msgstr "total"
 

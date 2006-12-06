@@ -7,7 +7,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11n\n"
-"POT-Creation-Date: 2002-03-08 23:54+0100\n"
+"POT-Creation-Date: 2002-04-06 01:28+0200\n"
 "PO-Revision-Date: 2001-12-11 22:43+0900\n"
 "Last-Translator: Daisuke Yamashita <yamad@mb.infoweb.ne.jp>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -147,7 +147,7 @@ msgstr "使い方: %s [ -n ] デバイス\n"
 
 #: disk-utils/fdformat.c:120 disk-utils/fsck.minix.c:1291
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:55
-#: disk-utils/mkfs.minix.c:644 disk-utils/mkswap.c:452
+#: disk-utils/mkfs.minix.c:644 disk-utils/mkswap.c:457
 #: disk-utils/setfdprm.c:128 misc-utils/cal.c:246 misc-utils/ddate.c:181
 #: misc-utils/kill.c:188 misc-utils/rename.c:79 misc-utils/script.c:132
 #, c-format
@@ -801,7 +801,7 @@ msgstr "ブロックのテスト中にシークが失敗しました"
 msgid "Weird values in do_check: probably bugs\n"
 msgstr "do_check に変な値があります: 多分バグでしょう\n"
 
-#: disk-utils/mkfs.minix.c:583 disk-utils/mkswap.c:362
+#: disk-utils/mkfs.minix.c:583 disk-utils/mkswap.c:368
 msgid "seek failed in check_blocks"
 msgstr "check_blocks でのシークに失敗しました"
 
@@ -862,64 +862,64 @@ msgstr ""
 msgid "Assuming pages of size %d (not %d)\n"
 msgstr "サイズ %d (%d ではなく) のページを試します\n"
 
-#: disk-utils/mkswap.c:316
+#: disk-utils/mkswap.c:322
 #, c-format
 msgid "Usage: %s [-c] [-v0|-v1] [-pPAGESZ] /dev/name [blocks]\n"
 msgstr "使い方: %s [-c] [-v0|-v1] [-pページサイズ] /dev/name [ブロック数]\n"
 
-#: disk-utils/mkswap.c:339
+#: disk-utils/mkswap.c:345
 msgid "too many bad pages"
 msgstr "不正ページが多すぎます"
 
-#: disk-utils/mkswap.c:353 misc-utils/look.c:182 misc-utils/setterm.c:1130
+#: disk-utils/mkswap.c:359 misc-utils/look.c:182 misc-utils/setterm.c:1130
 #: text-utils/more.c:1934 text-utils/more.c:1945
 msgid "Out of memory"
 msgstr "メモリが足りません"
 
-#: disk-utils/mkswap.c:370
+#: disk-utils/mkswap.c:376
 msgid "one bad page\n"
 msgstr "不正なページ数\n"
 
-#: disk-utils/mkswap.c:372
+#: disk-utils/mkswap.c:378
 #, c-format
 msgid "%d bad pages\n"
 msgstr "不正なページ数 %d\n"
 
-#: disk-utils/mkswap.c:492
+#: disk-utils/mkswap.c:497
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: エラー: スワップを有効に設定するための場所がない？\n"
 
-#: disk-utils/mkswap.c:510
+#: disk-utils/mkswap.c:515
 #, c-format
 msgid "%s: error: size %ld is larger than device size %d\n"
 msgstr "%s: エラー: サイズ %ld がデバイスのサイズ %d よりも大きいです\n"
 
-#: disk-utils/mkswap.c:529
+#: disk-utils/mkswap.c:534
 #, c-format
 msgid "%s: error: unknown version %d\n"
 msgstr "%s: エラー: 不明なバージョン %d\n"
 
-#: disk-utils/mkswap.c:535
+#: disk-utils/mkswap.c:540
 #, c-format
 msgid "%s: error: swap area needs to be at least %ldkB\n"
 msgstr "%s: エラー: スワップ領域は少なくとも %ldkB 必要です\n"
 
-#: disk-utils/mkswap.c:554
+#: disk-utils/mkswap.c:559
 #, c-format
 msgid "%s: warning: truncating swap area to %ldkB\n"
 msgstr "%s: 警告: スワップ領域を %ldkB に切り詰めました\n"
 
-#: disk-utils/mkswap.c:566
+#: disk-utils/mkswap.c:571
 #, c-format
 msgid "Will not try to make swapdevice on '%s'"
 msgstr "'%s' にはスワップデヴァイスを作らないようにします"
 
-#: disk-utils/mkswap.c:575 disk-utils/mkswap.c:596
+#: disk-utils/mkswap.c:580 disk-utils/mkswap.c:601
 msgid "fatal: first page unreadable"
 msgstr "致命エラー: 最初のページを読込めません"
 
-#: disk-utils/mkswap.c:581
+#: disk-utils/mkswap.c:586
 #, c-format
 msgid ""
 "%s: Device '%s' contains a valid Sun disklabel.\n"
@@ -932,24 +932,24 @@ msgstr ""
 "しまうことを意味します。もしあなたが本当にそのデバイスに v0 スワップ\n"
 "をを作成したければ、-f オプションで強要してください。\n"
 
-#: disk-utils/mkswap.c:605
+#: disk-utils/mkswap.c:610
 msgid "Unable to set up swap-space: unreadable"
 msgstr "スワップ空間を設定できません: 読込めません"
 
-#: disk-utils/mkswap.c:606
-#, c-format
-msgid "Setting up swapspace version %d, size = %ld bytes\n"
+#: disk-utils/mkswap.c:611
+#, fuzzy, c-format
+msgid "Setting up swapspace version %d, size = %lu bytes\n"
 msgstr "スワップ空間バージョン %d を設定します、サイズ = %ld バイト\n"
 
-#: disk-utils/mkswap.c:612
+#: disk-utils/mkswap.c:617
 msgid "unable to rewind swap-device"
 msgstr "スワップデヴァイスを巻き戻せません"
 
-#: disk-utils/mkswap.c:615
+#: disk-utils/mkswap.c:620
 msgid "unable to write signature page"
 msgstr "署名ページを書き込めません"
 
-#: disk-utils/mkswap.c:623
+#: disk-utils/mkswap.c:628
 msgid "fsync failed"
 msgstr "fsync に失敗"
 
@@ -5757,7 +5757,7 @@ msgstr "%s の finger 情報を変更します。\n"
 msgid "Password error."
 msgstr "パスワードエラー。"
 
-#: login-utils/chfn.c:176 login-utils/chsh.c:167 login-utils/login.c:775
+#: login-utils/chfn.c:176 login-utils/chsh.c:167 login-utils/login.c:787
 #: login-utils/newgrp.c:48 login-utils/simpleinit.c:320 mount/lomount.c:248
 #: mount/lomount.c:253
 msgid "Password: "
@@ -5979,20 +5979,25 @@ msgstr ""
 "\n"
 "割り込みが入りました %10.10s %5.5s \n"
 
-#: login-utils/login.c:402
+#: login-utils/login.c:264
+#, fuzzy, c-format
+msgid "FATAL: can't reopen tty: %s"
+msgstr "mount: %s がオープンできません: %s"
+
+#: login-utils/login.c:413
 msgid "login: -h for super-user only.\n"
 msgstr "login: -h はスーパーユーザ専用です。\n"
 
-#: login-utils/login.c:429
+#: login-utils/login.c:440
 msgid "usage: login [-fp] [username]\n"
 msgstr "使い方: login [-fp] [ユーザ名]\n"
 
-#: login-utils/login.c:538
+#: login-utils/login.c:547
 #, c-format
 msgid "login: PAM Failure, aborting: %s\n"
 msgstr "login: PAM 失敗。中断します: %s\n"
 
-#: login-utils/login.c:540
+#: login-utils/login.c:549
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "PAM の初期化ができません: %s"
@@ -6003,16 +6008,16 @@ msgstr "PAM の初期化ができません: %s"
 #. * PAM doesn't have an interface to specify the "Password: " string
 #. * (yet).
 #.
-#: login-utils/login.c:557
+#: login-utils/login.c:566
 msgid "login: "
 msgstr "ログイン: "
 
-#: login-utils/login.c:597
+#: login-utils/login.c:606
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "FAILED LOGIN %d FROM %s FOR %s, %s"
 
-#: login-utils/login.c:601
+#: login-utils/login.c:610
 msgid ""
 "Login incorrect\n"
 "\n"
@@ -6020,17 +6025,17 @@ msgstr ""
 "Login が間違っています\n"
 "\n"
 
-#: login-utils/login.c:610
+#: login-utils/login.c:619
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "*ログイントライが多すぎます* (%d) %s から %s へ, %s"
 
-#: login-utils/login.c:614
+#: login-utils/login.c:623
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "失敗したログインセッション %s から %s へ, %s"
 
-#: login-utils/login.c:618
+#: login-utils/login.c:627
 msgid ""
 "\n"
 "Login incorrect\n"
@@ -6038,7 +6043,7 @@ msgstr ""
 "\n"
 "Login が間違っています\n"
 
-#: login-utils/login.c:639 login-utils/login.c:646 login-utils/login.c:678
+#: login-utils/login.c:649 login-utils/login.c:656 login-utils/login.c:690
 msgid ""
 "\n"
 "Session setup problem, abort.\n"
@@ -6046,44 +6051,44 @@ msgstr ""
 "\n"
 "セッションセットアップに問題。中断します。\n"
 
-#: login-utils/login.c:640
+#: login-utils/login.c:650
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "NULL ユーザ名が %s:%d にあります。中断します。"
 
-#: login-utils/login.c:647
+#: login-utils/login.c:657
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "無効なユーザ名 \"%s\" が %s:%d にあります。中断します"
 
-#: login-utils/login.c:664
+#: login-utils/login.c:676
 msgid "login: Out of memory\n"
 msgstr "login: メモリが足りません\n"
 
-#: login-utils/login.c:710
+#: login-utils/login.c:722
 msgid "Illegal username"
 msgstr "不正なユーザ名"
 
-#: login-utils/login.c:753
+#: login-utils/login.c:765
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "%s のログインはこの端末では拒否されました。\n"
 
-#: login-utils/login.c:758
+#: login-utils/login.c:770
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "ログイン %s を拒絶、%s から TTY %s 上で"
 
-#: login-utils/login.c:762
+#: login-utils/login.c:774
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "ログイン %s を拒絶、TTY %s 上で"
 
-#: login-utils/login.c:815
+#: login-utils/login.c:827
 msgid "Login incorrect\n"
 msgstr "Login が間違っています\n"
 
-#: login-utils/login.c:837
+#: login-utils/login.c:849
 msgid ""
 "Too many users logged on already.\n"
 "Try again later.\n"
@@ -6091,77 +6096,82 @@ msgstr ""
 "既にログインしているユーザー数が多すぎます。\n"
 "また後で試してください。\n"
 
-#: login-utils/login.c:841
+#: login-utils/login.c:853
 msgid "You have too many processes running.\n"
 msgstr "あなたが実行しているプロセスが多すぎます。\n"
 
-#: login-utils/login.c:1073
+#: login-utils/login.c:1077
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "ダイアルアップで %s に、%s による"
 
-#: login-utils/login.c:1080
+#: login-utils/login.c:1084
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "%s に ROOT がログイン、%s から"
 
-#: login-utils/login.c:1083
+#: login-utils/login.c:1087
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "%s に ROOT がログイン"
 
-#: login-utils/login.c:1086
+#: login-utils/login.c:1090
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "%s に %s がログイン、%s から"
 
-#: login-utils/login.c:1089
+#: login-utils/login.c:1093
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "%s に %s がログイン"
 
-#: login-utils/login.c:1101
+#: login-utils/login.c:1105
 msgid "You have new mail.\n"
 msgstr "新しいメイルが届いています。\n"
 
-#: login-utils/login.c:1103
+#: login-utils/login.c:1107
 msgid "You have mail.\n"
 msgstr "メイルが届いています。\n"
 
 #. error in fork()
-#: login-utils/login.c:1129
+#: login-utils/login.c:1125
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "login: fork に失敗: %s"
 
-#: login-utils/login.c:1151
+#: login-utils/login.c:1162
+#, c-format
+msgid "TIOCSCTTY failed: %m"
+msgstr ""
+
+#: login-utils/login.c:1168
 msgid "setuid() failed"
 msgstr "setuid() に失敗"
 
-#: login-utils/login.c:1157
+#: login-utils/login.c:1174
 #, c-format
 msgid "No directory %s!\n"
 msgstr "ディレクトリ %s がありません！\n"
 
-#: login-utils/login.c:1161
+#: login-utils/login.c:1178
 msgid "Logging in with home = \"/\".\n"
 msgstr "ホームディレクトリ \"/\" でログインします。\n"
 
-#: login-utils/login.c:1169
+#: login-utils/login.c:1186
 msgid "login: no memory for shell script.\n"
 msgstr "login: シェルスクリプト用のメモリがありません。\n"
 
-#: login-utils/login.c:1196
+#: login-utils/login.c:1213
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr "login: シェルスクリプトを実行できませんでした: %s\n"
 
-#: login-utils/login.c:1199
+#: login-utils/login.c:1216
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "login: シェルがありません: %s.\n"
 
-#: login-utils/login.c:1214
+#: login-utils/login.c:1231
 #, c-format
 msgid ""
 "\n"
@@ -6170,62 +6180,62 @@ msgstr ""
 "\n"
 "%s ログイン: "
 
-#: login-utils/login.c:1225
+#: login-utils/login.c:1242
 msgid "login name much too long.\n"
 msgstr "ログイン名が長すぎます。\n"
 
-#: login-utils/login.c:1226
+#: login-utils/login.c:1243
 msgid "NAME too long"
 msgstr "名前が長すぎます"
 
-#: login-utils/login.c:1233
+#: login-utils/login.c:1250
 msgid "login names may not start with '-'.\n"
 msgstr "ログイン名は '-' で始まっていてはいけません。\n"
 
-#: login-utils/login.c:1243
+#: login-utils/login.c:1260
 msgid "too many bare linefeeds.\n"
 msgstr "行送り(linefeed) が多すぎます。\n"
 
-#: login-utils/login.c:1244
+#: login-utils/login.c:1261
 msgid "EXCESSIVE linefeeds"
 msgstr "過大な行送り(linefeed)"
 
-#: login-utils/login.c:1255
+#: login-utils/login.c:1272
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "%d 秒後にログインの時間切れ\n"
 
-#: login-utils/login.c:1352
+#: login-utils/login.c:1369
 #, c-format
 msgid "Last login: %.*s "
 msgstr "最終ログイン: %.*s "
 
-#: login-utils/login.c:1356
+#: login-utils/login.c:1373
 #, c-format
 msgid "from %.*s\n"
 msgstr " %.*s から\n"
 
-#: login-utils/login.c:1359
+#: login-utils/login.c:1376
 #, c-format
 msgid "on %.*s\n"
 msgstr " %.*s 上\n"
 
-#: login-utils/login.c:1379
+#: login-utils/login.c:1396
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "%s からのログインが失敗, %s"
 
-#: login-utils/login.c:1382
+#: login-utils/login.c:1399
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "%s でのログインが失敗, %s"
 
-#: login-utils/login.c:1386
+#: login-utils/login.c:1403
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "%d 回 %s からのログインが失敗, %s"
 
-#: login-utils/login.c:1389
+#: login-utils/login.c:1406
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%d 回 %s でのログインが失敗, %s"
@@ -7746,14 +7756,14 @@ msgstr "mount: %2$s 内に %1$s を見つけられません"
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %2$s や %3$s 内に %1$s を見つけられません"
 
-#: mount/mount_by_label.c:153
+#: mount/mount_by_label.c:169
 #, c-format
 msgid ""
 "mount: could not open %s, so UUID and LABEL conversion cannot be done.\n"
 msgstr ""
 "mount: %s をオープンできなかったので、UUID と LABEL の変換も行えません。\n"
 
-#: mount/mount_by_label.c:257
+#: mount/mount_by_label.c:295
 msgid "mount: bad UUID"
 msgstr "mount: 不正な UUID"
 
@@ -7785,88 +7795,88 @@ msgstr "       タイプ %s を試してみます\n"
 msgid "Trying %s\n"
 msgstr "%s を試します\n"
 
-#: mount/nfsmount.c:231
+#: mount/nfsmount.c:237
 msgid "mount: excessively long host:dir argument\n"
 msgstr "mount: 極端に長い ホスト:ディレクトリ 引数\n"
 
-#: mount/nfsmount.c:245
+#: mount/nfsmount.c:251
 msgid "mount: warning: multiple hostnames not supported\n"
 msgstr "mount: 警告: 複数のホスト名はサポートされていません\n"
 
-#: mount/nfsmount.c:250
+#: mount/nfsmount.c:256
 msgid "mount: directory to mount not in host:dir format\n"
 msgstr ""
 "mount: マウント先ディレクトリが ホスト:ディレクトリ 形式になっていません\n"
 
-#: mount/nfsmount.c:261 mount/nfsmount.c:516
+#: mount/nfsmount.c:267 mount/nfsmount.c:522
 #, c-format
 msgid "mount: can't get address for %s\n"
 msgstr "mount: %s のアドレスが取得できません\n"
 
-#: mount/nfsmount.c:267
+#: mount/nfsmount.c:273
 msgid "mount: got bad hp->h_length\n"
 msgstr "mount: 不正な hp->h_length 値を取得しました\n"
 
-#: mount/nfsmount.c:284
+#: mount/nfsmount.c:290
 msgid "mount: excessively long option argument\n"
 msgstr "mount: オプション引数が長すぎます\n"
 
-#: mount/nfsmount.c:376
+#: mount/nfsmount.c:382
 msgid "Warning: Unrecognized proto= option.\n"
 msgstr "警告: proto= オプションが理解できません。\n"
 
-#: mount/nfsmount.c:383
+#: mount/nfsmount.c:389
 msgid "Warning: Option namlen is not supported.\n"
 msgstr "警告: namlen オプションはサポートされていません。\n"
 
-#: mount/nfsmount.c:387
+#: mount/nfsmount.c:393
 #, c-format
 msgid "unknown nfs mount parameter: %s=%d\n"
 msgstr "不明な nfs マウントパラメータ: %s=%d\n"
 
-#: mount/nfsmount.c:421
+#: mount/nfsmount.c:427
 msgid "Warning: option nolock is not supported.\n"
 msgstr "警告: nolock オプションはサポートされていません。\n"
 
-#: mount/nfsmount.c:426
+#: mount/nfsmount.c:432
 #, c-format
 msgid "unknown nfs mount option: %s%s\n"
 msgstr "不明な nfs マウントオプション: %s%s\n"
 
-#: mount/nfsmount.c:522
+#: mount/nfsmount.c:528
 msgid "mount: got bad hp->h_length?\n"
 msgstr "mount: 不正な hp->h_length 値を取得？\n"
 
-#: mount/nfsmount.c:710
+#: mount/nfsmount.c:716
 msgid "NFS over TCP is not supported.\n"
 msgstr "TCP 経由の NFS はサポートされていません。\n"
 
-#: mount/nfsmount.c:717
+#: mount/nfsmount.c:723
 msgid "nfs socket"
 msgstr "nfs ソケット"
 
-#: mount/nfsmount.c:721
+#: mount/nfsmount.c:727
 msgid "nfs bindresvport"
 msgstr "nfs bindresvport"
 
-#: mount/nfsmount.c:735
+#: mount/nfsmount.c:741
 msgid "nfs server reported service unavailable"
 msgstr "nfs サーバはサービスが利用できないと報告しました"
 
-#: mount/nfsmount.c:744
+#: mount/nfsmount.c:750
 msgid "used portmapper to find NFS port\n"
 msgstr "NFS ポートを見つけるために portmapper を利用\n"
 
-#: mount/nfsmount.c:748
+#: mount/nfsmount.c:754
 #, c-format
 msgid "using port %d for nfs deamon\n"
 msgstr "nfs デーモンのために %d 番ポートを利用\n"
 
-#: mount/nfsmount.c:759
+#: mount/nfsmount.c:765
 msgid "nfs connect"
 msgstr "nfs 接続"
 
-#: mount/nfsmount.c:846
+#: mount/nfsmount.c:852
 #, c-format
 msgid "unknown nfs status return value: %d"
 msgstr "不明な nfs ステータス値を返しました: %d"
@@ -7974,26 +7984,26 @@ msgstr "umount: %s: ブロックデバイスはファイルシステム上で許可されません"
 msgid "umount: %s: %s"
 msgstr "umount: %s: %s"
 
-#: mount/umount.c:285
+#: mount/umount.c:284
 msgid "no umount2, trying umount...\n"
 msgstr "umount2 がありません、umount してみます...\n"
 
-#: mount/umount.c:301
+#: mount/umount.c:300
 #, c-format
 msgid "could not umount %s - trying %s instead\n"
 msgstr "%s をアンマウントできませんでした -- 代りに %s を使ってみます\n"
 
-#: mount/umount.c:319
+#: mount/umount.c:318
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr "umount: %s は使用中です -- 読込み専用として再マウントします\n"
 
-#: mount/umount.c:329
+#: mount/umount.c:328
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr "umount: %s を読込み専用で再マウントできませんでした\n"
 
-#: mount/umount.c:338
+#: mount/umount.c:337
 #, c-format
 msgid "%s umounted\n"
 msgstr "%s はアンマウントされました\n"
@@ -8194,29 +8204,92 @@ msgstr "   %f 整数/秒 -- %f 記録 (キャラクタ/秒)\n"
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
 msgstr "使い方: %s [-c] [-n レベル] [-s バッファサイズ]\n"
 
-#: sys-utils/ipcrm.c:59
+#: sys-utils/ipcrm.c:66
 #, c-format
 msgid "invalid id: %s\n"
 msgstr "不正な id: %s\n"
 
-#: sys-utils/ipcrm.c:77
+#: sys-utils/ipcrm.c:84
 #, c-format
 msgid "cannot remove id %s (%s)\n"
 msgstr "id %s (%s) を削除できません\n"
 
-#: sys-utils/ipcrm.c:91
-#, c-format
-msgid "usage: %s {shm | msg | sem} id ...\n"
+#: sys-utils/ipcrm.c:99
+#, fuzzy, c-format
+msgid "deprecated usage: %s {shm | msg | sem} id ...\n"
 msgstr "使い方: %s {shm | msg | sem} id ...\n"
 
-#: sys-utils/ipcrm.c:124
+#: sys-utils/ipcrm.c:126
 #, c-format
 msgid "unknown resource type: %s\n"
 msgstr "不明なリソースタイプ: %s\n"
 
-#: sys-utils/ipcrm.c:128
+#: sys-utils/ipcrm.c:130
 msgid "resource(s) deleted\n"
 msgstr "リソースを削除しました\n"
+
+#: sys-utils/ipcrm.c:140
+#, c-format
+msgid ""
+"usage: %s [ [-q msqid] [-m shmid] [-s semid]\n"
+"          [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"
+msgstr ""
+
+#: sys-utils/ipcrm.c:181
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr ""
+
+#: sys-utils/ipcrm.c:192
+#, fuzzy, c-format
+msgid "%s: illegal key (%s)\n"
+msgstr "不正なキー"
+
+#: sys-utils/ipcrm.c:207 sys-utils/ipcrm.c:239
+#, fuzzy
+msgid "permission denied for key"
+msgstr "mount: 許可がありません"
+
+#: sys-utils/ipcrm.c:210 sys-utils/ipcrm.c:249
+msgid "already removed key"
+msgstr ""
+
+#: sys-utils/ipcrm.c:213 sys-utils/ipcrm.c:244
+#, fuzzy
+msgid "invalid key"
+msgstr "不正な id: %s\n"
+
+#: sys-utils/ipcrm.c:216 sys-utils/ipcrm.c:254
+msgid "unknown error in key"
+msgstr ""
+
+#: sys-utils/ipcrm.c:240
+#, fuzzy
+msgid "permission denied for id"
+msgstr "mount: 許可がありません"
+
+#: sys-utils/ipcrm.c:245
+#, fuzzy
+msgid "invalid id"
+msgstr "不正な id: %s\n"
+
+#: sys-utils/ipcrm.c:250
+msgid "already removed id"
+msgstr ""
+
+#: sys-utils/ipcrm.c:255
+msgid "unknown error in id"
+msgstr ""
+
+#: sys-utils/ipcrm.c:258
+#, fuzzy, c-format
+msgid "%s: %s (%s)\n"
+msgstr "%2$s に %1$s\n"
+
+#: sys-utils/ipcrm.c:266
+#, fuzzy, c-format
+msgid "%s: unknown argument: %s\n"
+msgstr "%s: 不明なシグナル %s\n"
 
 #: sys-utils/ipcs.c:122
 #, c-format
@@ -8831,7 +8904,7 @@ msgstr ""
 msgid "missing comma"
 msgstr "カンマを欠いています"
 
-#: sys-utils/readprofile.c:58
+#: sys-utils/readprofile.c:60
 #, c-format
 msgid ""
 "%s: Usage: \"%s [options]\n"
@@ -8856,36 +8929,36 @@ msgstr ""
 "\t -n                   バイトオーダの自動検知を無効化する\n"
 "\t -V                   バージョン情報を表示して終了する\n"
 
-#: sys-utils/readprofile.c:81
+#: sys-utils/readprofile.c:83
 msgid "out of memory"
 msgstr "メモリが足りません"
 
-#: sys-utils/readprofile.c:142
+#: sys-utils/readprofile.c:144
 #, c-format
 msgid "%s Version %s\n"
 msgstr "%s バージョン %s\n"
 
-#: sys-utils/readprofile.c:226
+#: sys-utils/readprofile.c:228
 #, c-format
 msgid "Sampling_step: %i\n"
 msgstr "サンプリングステップ: %i\n"
 
-#: sys-utils/readprofile.c:239 sys-utils/readprofile.c:262
+#: sys-utils/readprofile.c:241 sys-utils/readprofile.c:265
 #, c-format
 msgid "%s: %s(%i): wrong map line\n"
 msgstr "%s: %s(%i): 間違ったマップ行\n"
 
-#: sys-utils/readprofile.c:250
+#: sys-utils/readprofile.c:253
 #, c-format
 msgid "%s: can't find \"_stext\" in %s\n"
 msgstr "%s: %s に \"_stext\" が見つかりません\n"
 
-#: sys-utils/readprofile.c:273
+#: sys-utils/readprofile.c:276
 #, c-format
 msgid "%s: profile address out of range. Wrong map file?\n"
 msgstr "%s: プロファイルアドレスが範囲外です。間違った map ファイル?\n"
 
-#: sys-utils/readprofile.c:299
+#: sys-utils/readprofile.c:304
 msgid "total"
 msgstr "合計"
 

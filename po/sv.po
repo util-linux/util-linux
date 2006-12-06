@@ -1,6 +1,6 @@
 # Swedish messages for util-linux.
-# Copyright (C) 2001 Free Software Foundation, Inc.
-# Christian Rose <menthos@menthos.com>, 2001.
+# Copyright (C) 2001, 2002 Free Software Foundation, Inc.
+# Christian Rose <menthos@menthos.com>, 2001, 2002.
 #
 # Permission is granted to freely copy and distribute
 # this file and modified versions, provided that this
@@ -9,9 +9,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.11m\n"
-"POT-Creation-Date: 2002-03-08 23:54+0100\n"
-"PO-Revision-Date: 2001-11-27 15:27+0100\n"
+"Project-Id-Version: util-linux 2.11o\n"
+"POT-Creation-Date: 2002-04-06 01:28+0200\n"
+"PO-Revision-Date: 2002-03-16 23:15+0100\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -63,19 +63,18 @@ msgid "reread partition table"
 msgstr "läs om partitionstabellen"
 
 #: disk-utils/blockdev.c:98
-#, fuzzy
 msgid "Usage:\n"
-msgstr "Användning:"
+msgstr "Användning:\n"
 
 #: disk-utils/blockdev.c:100
 #, c-format
 msgid "  %s --report [devices]\n"
-msgstr ""
+msgstr "  %s --report [enheter]\n"
 
 #: disk-utils/blockdev.c:101
-#, fuzzy, c-format
+#, c-format
 msgid "  %s [-v|-q] commands devices\n"
-msgstr "Användning: %s [-V] [-v|-q] kommandon enheter\n"
+msgstr "  %s [-v|-q] kommandon enheter\n"
 
 #: disk-utils/blockdev.c:102
 msgid "Available commands:\n"
@@ -94,21 +93,21 @@ msgstr "%s kräver ett argument\n"
 #: disk-utils/blockdev.c:278
 #, c-format
 msgid "%s succeeded.\n"
-msgstr ""
+msgstr "%s lyckades.\n"
 
 #: disk-utils/blockdev.c:296 disk-utils/blockdev.c:321
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot open %s\n"
-msgstr "%s: kan inte öppna %s: %s\n"
+msgstr "%s: kan inte öppna %s\n"
 
 #: disk-utils/blockdev.c:338
-#, fuzzy, c-format
+#, c-format
 msgid "%s: ioctl error on %s\n"
-msgstr "%s: läsfel på %s\n"
+msgstr "%s: ioctl-fel på %s\n"
 
 #: disk-utils/blockdev.c:345
 msgid "RO    RA   SSZ   BSZ   StartSec     Size    Device\n"
-msgstr ""
+msgstr "RO    RA   SSZ   BSZ   Startsektor  Storlek Enhet\n"
 
 #: disk-utils/elvtune.c:46 disk-utils/setfdprm.c:100
 msgid "usage:\n"
@@ -151,7 +150,7 @@ msgstr "användning: %s [ -n ] enhet\n"
 
 #: disk-utils/fdformat.c:120 disk-utils/fsck.minix.c:1291
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:55
-#: disk-utils/mkfs.minix.c:644 disk-utils/mkswap.c:452
+#: disk-utils/mkfs.minix.c:644 disk-utils/mkswap.c:457
 #: disk-utils/setfdprm.c:128 misc-utils/cal.c:246 misc-utils/ddate.c:181
 #: misc-utils/kill.c:188 misc-utils/rename.c:79 misc-utils/script.c:132
 #, c-format
@@ -199,28 +198,28 @@ msgid "check aborted.\n"
 msgstr "kontroll avbruten.\n"
 
 #: disk-utils/fsck.minix.c:332 disk-utils/fsck.minix.c:356
-#, fuzzy, c-format
+#, c-format
 msgid "Zone nr < FIRSTZONE in file `%s'."
-msgstr "Zonnummer < \"FIRSTZONE\" i filen \""
+msgstr "Zonnummer < \"FIRSTZONE\" i filen \"%s\"."
 
 #: disk-utils/fsck.minix.c:336 disk-utils/fsck.minix.c:360
-#, fuzzy, c-format
+#, c-format
 msgid "Zone nr >= ZONES in file `%s'."
-msgstr "Zonnummer >= \"ZONES\" i filen \""
+msgstr "Zonnummer >= \"ZONES\" i filen \"%s\"."
 
 #: disk-utils/fsck.minix.c:341 disk-utils/fsck.minix.c:365
 msgid "Remove block"
 msgstr "Ta bort block"
 
 #: disk-utils/fsck.minix.c:384
-#, fuzzy, c-format
+#, c-format
 msgid "Read error: unable to seek to block in file '%s'\n"
-msgstr "Läsfel: kan inte söka till blocket i filen \""
+msgstr "Läsfel: kan inte söka till blocket i filen \"%s\"\n"
 
 #: disk-utils/fsck.minix.c:390
-#, fuzzy, c-format
+#, c-format
 msgid "Read error: bad block in file '%s'\n"
-msgstr "Läsfel: felaktigt block i filen \""
+msgstr "Läsfel: felaktigt block i filen \"%s\"\n"
 
 #: disk-utils/fsck.minix.c:405
 msgid ""
@@ -235,9 +234,9 @@ msgid "seek failed in write_block"
 msgstr "sökning misslyckades i \"write_block\""
 
 #: disk-utils/fsck.minix.c:414
-#, fuzzy, c-format
+#, c-format
 msgid "Write error: bad block in file '%s'\n"
-msgstr "Skrivfel: felaktigt block i filen \""
+msgstr "Skrivfel: felaktigt block i filen \"%s\"\n"
 
 #: disk-utils/fsck.minix.c:532
 msgid "seek failed in write_super_block"
@@ -355,18 +354,18 @@ msgstr ""
 "\n"
 
 #: disk-utils/fsck.minix.c:660 disk-utils/fsck.minix.c:712
-#, fuzzy, c-format
+#, c-format
 msgid "Inode %d marked unused, but used for file '%s'\n"
-msgstr "Inod %d är markerad som oanvänd, men används för filen \""
+msgstr "Inod %d är markerad som oanvänd, men används för filen \"%s\"\n"
 
 #: disk-utils/fsck.minix.c:664 disk-utils/fsck.minix.c:716
 msgid "Mark in use"
 msgstr "Märk som använd"
 
 #: disk-utils/fsck.minix.c:686 disk-utils/fsck.minix.c:736
-#, fuzzy, c-format
+#, c-format
 msgid "The file `%s' has mode %05o\n"
-msgstr " har rättigheterna %05o\n"
+msgstr "Filen \"%s\" har rättigheterna %05o\n"
 
 #: disk-utils/fsck.minix.c:693 disk-utils/fsck.minix.c:742
 msgid "Warning: inode count too big.\n"
@@ -377,9 +376,9 @@ msgid "root inode isn't a directory"
 msgstr "rotinoden är inte en katalog"
 
 #: disk-utils/fsck.minix.c:779 disk-utils/fsck.minix.c:813
-#, fuzzy, c-format
+#, c-format
 msgid "Block has been used before. Now in file `%s'."
-msgstr "Blocket har använts tidigare. Nu i filen \""
+msgstr "Blocket har använts tidigare. Nu i filen \"%s\"."
 
 #: disk-utils/fsck.minix.c:781 disk-utils/fsck.minix.c:815
 #: disk-utils/fsck.minix.c:1149 disk-utils/fsck.minix.c:1158
@@ -388,51 +387,52 @@ msgid "Clear"
 msgstr "Töm"
 
 #: disk-utils/fsck.minix.c:791 disk-utils/fsck.minix.c:825
-#, fuzzy, c-format
+#, c-format
 msgid "Block %d in file `%s' is marked not in use."
-msgstr "\" är markerat som oanvänt."
+msgstr "Block %d i filen \"%s\" är markerat som oanvänt."
 
 #: disk-utils/fsck.minix.c:793 disk-utils/fsck.minix.c:827
 msgid "Correct"
 msgstr "Korrigera"
 
 #: disk-utils/fsck.minix.c:973 disk-utils/fsck.minix.c:1041
-#, fuzzy, c-format
+#, c-format
 msgid "The directory '%s' contains a bad inode number for file '%.*s'."
-msgstr "\" innehåller ett felaktigt inodsnummer för filen \"%.*s\"."
+msgstr ""
+"Katalogen \"%s\" innehåller ett felaktigt inodsnummer för filen \"%.*s\"."
 
 #: disk-utils/fsck.minix.c:976 disk-utils/fsck.minix.c:1044
 msgid " Remove"
 msgstr " Ta bort"
 
 #: disk-utils/fsck.minix.c:990
-#, fuzzy, c-format
+#, c-format
 msgid "`%s': bad directory: '.' isn't first\n"
-msgstr ": felaktig katalog: \".\" är inte på första plats\n"
+msgstr "\"%s\": felaktig katalog: \".\" kommer inte först\n"
 
 #: disk-utils/fsck.minix.c:998
-#, fuzzy, c-format
+#, c-format
 msgid "`%s': bad directory: '..' isn't second\n"
-msgstr ": felaktig katalog: \"..\" är inte på andra plats\n"
+msgstr "\"%s\": felaktig katalog: \"..\" kommer inte på andra plats\n"
 
 #: disk-utils/fsck.minix.c:1058
-#, fuzzy, c-format
+#, c-format
 msgid "%s: bad directory: '.' isn't first\n"
-msgstr ": felaktig katalog: \".\" är inte på första plats\n"
+msgstr "%s: felaktig katalog: \".\" kommer inte först\n"
 
 #: disk-utils/fsck.minix.c:1067
-#, fuzzy, c-format
+#, c-format
 msgid "%s: bad directory: '..' isn't second\n"
-msgstr ": felaktig katalog: \"..\" är inte på andra plats\n"
+msgstr "%s: felaktig katalog: \"..\" kommer inte på andra plats\n"
 
 #: disk-utils/fsck.minix.c:1102
 msgid "internal error"
 msgstr "internt fel"
 
 #: disk-utils/fsck.minix.c:1105 disk-utils/fsck.minix.c:1124
-#, fuzzy, c-format
+#, c-format
 msgid "%s: bad directory: size < 32"
-msgstr ": felaktig katalog: storlek < 32"
+msgstr "%s: felaktig katalog: storlek < 32"
 
 #: disk-utils/fsck.minix.c:1138
 msgid "seek failed in bad_zone"
@@ -805,7 +805,7 @@ msgstr "sökning misslyckades under test av block"
 msgid "Weird values in do_check: probably bugs\n"
 msgstr "Konstiga värden i \"do_check\": troligtvis programfel\n"
 
-#: disk-utils/mkfs.minix.c:583 disk-utils/mkswap.c:362
+#: disk-utils/mkfs.minix.c:583 disk-utils/mkswap.c:368
 msgid "seek failed in check_blocks"
 msgstr "sökning misslyckades i \"check_blocks\""
 
@@ -867,64 +867,64 @@ msgstr ""
 msgid "Assuming pages of size %d (not %d)\n"
 msgstr "Antar sidstorleken %d (inte %d)\n"
 
-#: disk-utils/mkswap.c:316
+#: disk-utils/mkswap.c:322
 #, c-format
 msgid "Usage: %s [-c] [-v0|-v1] [-pPAGESZ] /dev/name [blocks]\n"
 msgstr "Användning: %s [-c] [-v0|-v1] [-pSIDSTORLEK] /dev/namn [block]\n"
 
-#: disk-utils/mkswap.c:339
+#: disk-utils/mkswap.c:345
 msgid "too many bad pages"
 msgstr "för många felaktiga sidor"
 
-#: disk-utils/mkswap.c:353 misc-utils/look.c:182 misc-utils/setterm.c:1130
+#: disk-utils/mkswap.c:359 misc-utils/look.c:182 misc-utils/setterm.c:1130
 #: text-utils/more.c:1934 text-utils/more.c:1945
 msgid "Out of memory"
 msgstr "Slut på minne"
 
-#: disk-utils/mkswap.c:370
+#: disk-utils/mkswap.c:376
 msgid "one bad page\n"
 msgstr "en felaktig sida\n"
 
-#: disk-utils/mkswap.c:372
+#: disk-utils/mkswap.c:378
 #, c-format
 msgid "%d bad pages\n"
 msgstr "%d felaktiga sidor\n"
 
-#: disk-utils/mkswap.c:492
+#: disk-utils/mkswap.c:497
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: fel: Ingenstans att skapa växlingsutrymme?\n"
 
-#: disk-utils/mkswap.c:510
+#: disk-utils/mkswap.c:515
 #, c-format
 msgid "%s: error: size %ld is larger than device size %d\n"
 msgstr "%s: fel: storleken %ld är större än enhetsstorleken %d\n"
 
-#: disk-utils/mkswap.c:529
+#: disk-utils/mkswap.c:534
 #, c-format
 msgid "%s: error: unknown version %d\n"
 msgstr "%s: fel: version %d är okänd\n"
 
-#: disk-utils/mkswap.c:535
+#: disk-utils/mkswap.c:540
 #, c-format
 msgid "%s: error: swap area needs to be at least %ldkB\n"
 msgstr "%s: fel: växlingsutrymmet måste vara minst %ld kB\n"
 
-#: disk-utils/mkswap.c:554
+#: disk-utils/mkswap.c:559
 #, c-format
 msgid "%s: warning: truncating swap area to %ldkB\n"
 msgstr "%s: varning: trunkerar växlingsutrymmet till %ld kB\n"
 
-#: disk-utils/mkswap.c:566
+#: disk-utils/mkswap.c:571
 #, c-format
 msgid "Will not try to make swapdevice on '%s'"
 msgstr "Kommer inte att försöka skapa växlingsenhet på \"%s\""
 
-#: disk-utils/mkswap.c:575 disk-utils/mkswap.c:596
+#: disk-utils/mkswap.c:580 disk-utils/mkswap.c:601
 msgid "fatal: first page unreadable"
 msgstr "ödesdigert: första sidan är oläsbar"
 
-#: disk-utils/mkswap.c:581
+#: disk-utils/mkswap.c:586
 #, c-format
 msgid ""
 "%s: Device '%s' contains a valid Sun disklabel.\n"
@@ -939,24 +939,24 @@ msgstr ""
 "växlingsutrymme på den enheten kan du använda flaggan -f för att tvinga\n"
 "fram det.\n"
 
-#: disk-utils/mkswap.c:605
+#: disk-utils/mkswap.c:610
 msgid "Unable to set up swap-space: unreadable"
 msgstr "Kan inte ställa in växlingsutrymme: oläsbart"
 
-#: disk-utils/mkswap.c:606
-#, c-format
-msgid "Setting up swapspace version %d, size = %ld bytes\n"
+#: disk-utils/mkswap.c:611
+#, fuzzy, c-format
+msgid "Setting up swapspace version %d, size = %lu bytes\n"
 msgstr "Ställer in växlingsutrymme version %d, storlek = %ld byte\n"
 
-#: disk-utils/mkswap.c:612
+#: disk-utils/mkswap.c:617
 msgid "unable to rewind swap-device"
 msgstr "kan inte spola tillbaka växlingsenheten"
 
-#: disk-utils/mkswap.c:615
+#: disk-utils/mkswap.c:620
 msgid "unable to write signature page"
 msgstr "kan inte skriva signatursida"
 
-#: disk-utils/mkswap.c:623
+#: disk-utils/mkswap.c:628
 msgid "fsync failed"
 msgstr "fsync misslyckades"
 
@@ -1011,18 +1011,16 @@ msgid "Linux ext2"
 msgstr "Linux ext2"
 
 #: fdisk/cfdisk.c:405
-#, fuzzy
 msgid "Linux ext3"
-msgstr "Linux ext2"
+msgstr "Linux ext3"
 
 #: fdisk/cfdisk.c:407
 msgid "Linux XFS"
 msgstr "Linux XFS"
 
 #: fdisk/cfdisk.c:409
-#, fuzzy
 msgid "Linux ReiserFS"
-msgstr "Linux XFS"
+msgstr "Linux ReiserFS"
 
 #. also Solaris
 #: fdisk/cfdisk.c:411 fdisk/i386_sys_types.c:57
@@ -1669,14 +1667,14 @@ msgid "Disk Drive: %s"
 msgstr "Diskenhet: %s"
 
 #: fdisk/cfdisk.c:2576
-#, fuzzy, c-format
+#, c-format
 msgid "Size: %lld bytes, %ld MB"
-msgstr "Storlek: %lld byte"
+msgstr "Storlek: %lld byte, %ld MB"
 
 #: fdisk/cfdisk.c:2579
-#, fuzzy, c-format
+#, c-format
 msgid "Size: %lld bytes, %ld.%ld GB"
-msgstr "Storlek: %lld byte"
+msgstr "Storlek: %lld byte, %ld,%ld GB"
 
 #: fdisk/cfdisk.c:2583
 #, c-format
@@ -3846,7 +3844,7 @@ msgstr "NeXTSTEP"
 
 #: fdisk/i386_sys_types.c:70
 msgid "Darwin UFS"
-msgstr ""
+msgstr "Darwin UFS"
 
 #: fdisk/i386_sys_types.c:71
 msgid "NetBSD"
@@ -3854,7 +3852,7 @@ msgstr "NetBSD"
 
 #: fdisk/i386_sys_types.c:72
 msgid "Darwin boot"
-msgstr ""
+msgstr "Darwin start"
 
 #: fdisk/i386_sys_types.c:73
 msgid "BSDI fs"
@@ -3870,7 +3868,7 @@ msgstr "Boot Wizard dold"
 
 #: fdisk/i386_sys_types.c:76
 msgid "Solaris boot"
-msgstr ""
+msgstr "Solaris start"
 
 #: fdisk/i386_sys_types.c:77
 msgid "DRDOS/sec (FAT-12)"
@@ -4162,9 +4160,8 @@ msgstr ""
 "\n"
 
 #: fdisk/sfdisk.c:871
-#, fuzzy
 msgid "   Device Boot Start     End   #cyls    #blocks   Id  System\n"
-msgstr "   Enhet  Start Början   Slut  Cyl.    Block     Id  System\n"
+msgstr "   Enhet  Start Början   Slut  Cyl.     Block     Id  System\n"
 
 #: fdisk/sfdisk.c:876
 #, c-format
@@ -4176,9 +4173,8 @@ msgstr ""
 "\n"
 
 #: fdisk/sfdisk.c:878
-#, fuzzy
 msgid "   Device Boot    Start       End   #sectors  Id  System\n"
-msgstr "   Enhet  Start   Början      Slut Sektorer  Id  System\n"
+msgstr "   Enhet  Start   Början      Slut  Sektorer  Id  System\n"
 
 #: fdisk/sfdisk.c:881
 #, c-format
@@ -4190,9 +4186,8 @@ msgstr ""
 "\n"
 
 #: fdisk/sfdisk.c:883
-#, fuzzy
 msgid "   Device Boot   Start       End    #blocks   Id  System\n"
-msgstr "   Enhet  Start  Början      Slut  Block     Id  System\n"
+msgstr "   Enhet  Start  Början      Slut   Block     Id  System\n"
 
 #: fdisk/sfdisk.c:886
 #, c-format
@@ -4204,9 +4199,8 @@ msgstr ""
 "\n"
 
 #: fdisk/sfdisk.c:888
-#, fuzzy
 msgid "   Device Boot Start   End     MB    #blocks   Id  System\n"
-msgstr "   Enhet  Start Början Slut    MB   Block     Id  System\n"
+msgstr "   Enhet  Start Början Slut    MB    Block     Id  System\n"
 
 #: fdisk/sfdisk.c:1048
 #, c-format
@@ -4228,15 +4222,15 @@ msgid "No partitions found\n"
 msgstr "Inga partitioner hittades\n"
 
 #: fdisk/sfdisk.c:1072
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: The partition table looks like it was made\n"
 "  for C/H/S=*/%ld/%ld (instead of %ld/%ld/%ld).\n"
 "For this listing I'll assume that geometry.\n"
 msgstr ""
-"Varning: Den första partitionen ser ut som om den gjordes\n"
+"Varning: Partitionstabellen ser ut som om den gjordes\n"
 "  för C/H/S=*/%ld/%ld (istället för %ld/%ld/%ld).\n"
-"I denna visning kommer jag att anta den senare geometrin.\n"
+"I denna visning kommer jag att antaga den geometrin.\n"
 
 #: fdisk/sfdisk.c:1121
 msgid "no partition table present.\n"
@@ -5816,7 +5810,7 @@ msgstr "Ändrar fingerinformation för %s.\n"
 msgid "Password error."
 msgstr "Lösenordsfel."
 
-#: login-utils/chfn.c:176 login-utils/chsh.c:167 login-utils/login.c:775
+#: login-utils/chfn.c:176 login-utils/chsh.c:167 login-utils/login.c:787
 #: login-utils/newgrp.c:48 login-utils/simpleinit.c:320 mount/lomount.c:248
 #: mount/lomount.c:253
 msgid "Password: "
@@ -6037,20 +6031,25 @@ msgstr ""
 "\n"
 "avbruten %10.10s %5.5s \n"
 
-#: login-utils/login.c:402
+#: login-utils/login.c:264
+#, fuzzy, c-format
+msgid "FATAL: can't reopen tty: %s"
+msgstr "mount: kan inte öppna %s: %s"
+
+#: login-utils/login.c:413
 msgid "login: -h for super-user only.\n"
 msgstr "login: -h endast för superanvändaren.\n"
 
-#: login-utils/login.c:429
+#: login-utils/login.c:440
 msgid "usage: login [-fp] [username]\n"
 msgstr "användning: login [-fp] [användarnamn]\n"
 
-#: login-utils/login.c:538
+#: login-utils/login.c:547
 #, c-format
 msgid "login: PAM Failure, aborting: %s\n"
 msgstr "login: PAM-fel, avbryter: %s\n"
 
-#: login-utils/login.c:540
+#: login-utils/login.c:549
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "Kunde inte initiera PAM: %s"
@@ -6061,16 +6060,16 @@ msgstr "Kunde inte initiera PAM: %s"
 #. * PAM doesn't have an interface to specify the "Password: " string
 #. * (yet).
 #.
-#: login-utils/login.c:557
+#: login-utils/login.c:566
 msgid "login: "
 msgstr "användarnamn: "
 
-#: login-utils/login.c:597
+#: login-utils/login.c:606
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "MISSLYCKAD INLOGGNING %d FRÅN %s FÖR %s, %s"
 
-#: login-utils/login.c:601
+#: login-utils/login.c:610
 msgid ""
 "Login incorrect\n"
 "\n"
@@ -6078,17 +6077,17 @@ msgstr ""
 "Felaktig inloggning\n"
 "\n"
 
-#: login-utils/login.c:610
+#: login-utils/login.c:619
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "FÖR MÅNGA INLOGGNINGSFÖRSÖK (%d) FRÅN %s FÖR %s, %s"
 
-#: login-utils/login.c:614
+#: login-utils/login.c:623
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "MISSLYCKAD INLOGGNINGSSESSION FRÅN %s FÖR %s, %s"
 
-#: login-utils/login.c:618
+#: login-utils/login.c:627
 msgid ""
 "\n"
 "Login incorrect\n"
@@ -6096,7 +6095,7 @@ msgstr ""
 "\n"
 "Felaktig inloggning\n"
 
-#: login-utils/login.c:639 login-utils/login.c:646 login-utils/login.c:678
+#: login-utils/login.c:649 login-utils/login.c:656 login-utils/login.c:690
 msgid ""
 "\n"
 "Session setup problem, abort.\n"
@@ -6104,45 +6103,45 @@ msgstr ""
 "\n"
 "Problem med konfiguration av session, avbryter.\n"
 
-#: login-utils/login.c:640
+#: login-utils/login.c:650
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "Användarnamnet är NULL i %s:%d. Avbryter."
 
-#: login-utils/login.c:647
+#: login-utils/login.c:657
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Ogiltigt användarnamn \"%s\" i %s:%d. Avbryter."
 
-#: login-utils/login.c:664
+#: login-utils/login.c:676
 msgid "login: Out of memory\n"
 msgstr "login: Slut på minne\n"
 
-#: login-utils/login.c:710
+#: login-utils/login.c:722
 msgid "Illegal username"
 msgstr "Ogiltigt användarnamn"
 
 # %s blir här "root" i de flesta fall vad jag förstår
-#: login-utils/login.c:753
+#: login-utils/login.c:765
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "%s-inloggning nekas på denna terminal.\n"
 
-#: login-utils/login.c:758
+#: login-utils/login.c:770
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "INLOGGNING AV %s NEKAS FRÅN %s PÅ TTY %s"
 
-#: login-utils/login.c:762
+#: login-utils/login.c:774
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "INLOGGNING AV %s NEKAS PÅ TTY %s"
 
-#: login-utils/login.c:815
+#: login-utils/login.c:827
 msgid "Login incorrect\n"
 msgstr "Felaktig inloggning\n"
 
-#: login-utils/login.c:837
+#: login-utils/login.c:849
 msgid ""
 "Too many users logged on already.\n"
 "Try again later.\n"
@@ -6150,77 +6149,82 @@ msgstr ""
 "För många användare är redan inloggade.\n"
 "Försök igen senare.\n"
 
-#: login-utils/login.c:841
+#: login-utils/login.c:853
 msgid "You have too many processes running.\n"
 msgstr "Du har för många processer körande.\n"
 
-#: login-utils/login.c:1073
+#: login-utils/login.c:1077
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "UPPRINGNING PÅ %s AV %s"
 
-#: login-utils/login.c:1080
+#: login-utils/login.c:1084
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "ROOT-INLOGGNING PÅ %s FRÅN %s"
 
-#: login-utils/login.c:1083
+#: login-utils/login.c:1087
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "ROOT-INLOGGNING PÅ %s"
 
-#: login-utils/login.c:1086
+#: login-utils/login.c:1090
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "INLOGGNING PÅ %s AV %s FRÅN %s"
 
-#: login-utils/login.c:1089
+#: login-utils/login.c:1093
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "INLOGGNING PÅ %s AV %s"
 
-#: login-utils/login.c:1101
+#: login-utils/login.c:1105
 msgid "You have new mail.\n"
 msgstr "Du har ny post.\n"
 
-#: login-utils/login.c:1103
+#: login-utils/login.c:1107
 msgid "You have mail.\n"
 msgstr "Du har post.\n"
 
 #. error in fork()
-#: login-utils/login.c:1129
+#: login-utils/login.c:1125
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "login: grenande misslyckades: %s"
 
-#: login-utils/login.c:1151
+#: login-utils/login.c:1162
+#, c-format
+msgid "TIOCSCTTY failed: %m"
+msgstr ""
+
+#: login-utils/login.c:1168
 msgid "setuid() failed"
 msgstr "setuid() misslyckades"
 
-#: login-utils/login.c:1157
+#: login-utils/login.c:1174
 #, c-format
 msgid "No directory %s!\n"
 msgstr "Katalogen %s finns inte!\n"
 
-#: login-utils/login.c:1161
+#: login-utils/login.c:1178
 msgid "Logging in with home = \"/\".\n"
 msgstr "Loggar in med hemkatalog = \"/\".\n"
 
-#: login-utils/login.c:1169
+#: login-utils/login.c:1186
 msgid "login: no memory for shell script.\n"
 msgstr "login: inget minne för skalskript.\n"
 
-#: login-utils/login.c:1196
+#: login-utils/login.c:1213
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr "login: kunde inte köra skalskript: %s.\n"
 
-#: login-utils/login.c:1199
+#: login-utils/login.c:1216
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "login: inget skal: %s.\n"
 
-#: login-utils/login.c:1214
+#: login-utils/login.c:1231
 #, c-format
 msgid ""
 "\n"
@@ -6229,62 +6233,62 @@ msgstr ""
 "\n"
 "%s användarnamn: "
 
-#: login-utils/login.c:1225
+#: login-utils/login.c:1242
 msgid "login name much too long.\n"
 msgstr "användarnamnet är alldeles för långt.\n"
 
-#: login-utils/login.c:1226
+#: login-utils/login.c:1243
 msgid "NAME too long"
 msgstr "NAMNET är för långt"
 
-#: login-utils/login.c:1233
+#: login-utils/login.c:1250
 msgid "login names may not start with '-'.\n"
 msgstr "användarnamn får inte börja med \"-\".\n"
 
-#: login-utils/login.c:1243
+#: login-utils/login.c:1260
 msgid "too many bare linefeeds.\n"
 msgstr "för många tomma nyrader.\n"
 
-#: login-utils/login.c:1244
+#: login-utils/login.c:1261
 msgid "EXCESSIVE linefeeds"
 msgstr "FÖR MÅNGA nyrader"
 
-#: login-utils/login.c:1255
+#: login-utils/login.c:1272
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "Inloggning gjorde time-out efter %d sekunder\n"
 
-#: login-utils/login.c:1352
+#: login-utils/login.c:1369
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Senaste inloggning: %.*s "
 
-#: login-utils/login.c:1356
+#: login-utils/login.c:1373
 #, c-format
 msgid "from %.*s\n"
 msgstr "från %.*s\n"
 
-#: login-utils/login.c:1359
+#: login-utils/login.c:1376
 #, c-format
 msgid "on %.*s\n"
 msgstr "på %.*s\n"
 
-#: login-utils/login.c:1379
+#: login-utils/login.c:1396
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "MISSLYCKAD INLOGGNING FRÅN %s, %s"
 
-#: login-utils/login.c:1382
+#: login-utils/login.c:1399
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "MISSLYCKAD INLOGGNING PÅ %s, %s"
 
-#: login-utils/login.c:1386
+#: login-utils/login.c:1403
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "%d MISSLYCKADE INLOGGNINGAR FRÅN %s, %s"
 
-#: login-utils/login.c:1389
+#: login-utils/login.c:1406
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%d MISSLYCKADE INLOGGNINGAR PÅ %s, %s"
@@ -6801,9 +6805,8 @@ msgid "%s %d"
 msgstr "%s %d"
 
 #: misc-utils/cal.c:674
-#, fuzzy
 msgid "usage: cal [-13smjyV] [[month] year]\n"
-msgstr "användning: cal [-mjyV] [[månad] år]\n"
+msgstr "användning: cal [-13smjyV] [[månad] år]\n"
 
 #: misc-utils/ddate.c:205
 #, c-format
@@ -6937,14 +6940,14 @@ msgid "call: %s from to files...\n"
 msgstr "anropa: %s från till filer...\n"
 
 #: misc-utils/script.c:106
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Warning: `%s' is a link.\n"
 "Use `%s [options] %s' if you really want to use it.\n"
 "Script not started.\n"
 msgstr ""
-"Varning: \"%s\" är en symbolisk länk.\n"
-"Använd \"%s [flaggor] %s\" om du verkligen vill använda det.\n"
+"Varning: \"%s\" är en länk.\n"
+"Använd \"%s [flaggor] %s\" om du verkligen vill använda den.\n"
 "Skriptet startades inte.\n"
 
 #: misc-utils/script.c:155
@@ -7507,7 +7510,7 @@ msgid "mount: can't open %s: %s"
 msgstr "mount: kan inte öppna %s: %s"
 
 #: mount/mount.c:656
-#, fuzzy, c-format
+#, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: kan inte öppna %s för inställning av hastighet"
 
@@ -7738,7 +7741,6 @@ msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s är redan monterad på %s\n"
 
 #: mount/mount.c:1324
-#, fuzzy
 msgid ""
 "Usage: mount -V                 : print version\n"
 "       mount -h                 : print this help\n"
@@ -7777,6 +7779,8 @@ msgstr ""
 "filsystem (av angiven typ) som finns på enheten.\n"
 "Man kan också montera ett redan synligt katalogträd någon annanstans:\n"
 "       mount --bind gammalkatalog nykatalog\n"
+"eller flytta ett underträd:\n"
+"       mount --move gammalkatalog nykatalog\n"
 "En enhet kan anges med namn, exempelvis /dev/hda1 eller /dev/cdrom,\n"
 "eller med etikett, genom att använda  -L etikett  eller med uuid,\n"
 "genom att använda  -U uuid . Andra flaggor: [-nfFrsvw] [-o flaggor].\n"
@@ -7810,7 +7814,7 @@ msgstr "mount: kan inte hitta %s i %s"
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: kan inte hitta %s i %s eller %s"
 
-#: mount/mount_by_label.c:153
+#: mount/mount_by_label.c:169
 #, c-format
 msgid ""
 "mount: could not open %s, so UUID and LABEL conversion cannot be done.\n"
@@ -7818,14 +7822,13 @@ msgstr ""
 "mount: kunde inte öppna %s, så UUID och ETIKETT-konvertering kan inte "
 "utföras.\n"
 
-#: mount/mount_by_label.c:257
+#: mount/mount_by_label.c:295
 msgid "mount: bad UUID"
 msgstr "mount: felaktig UUID"
 
 #: mount/mount_guess_fstype.c:487
-#, fuzzy
 msgid "mount: error while guessing filesystem type\n"
-msgstr "mount: du måste ange filsystemstypen"
+msgstr "mount: fel vid gissning av filsystemstypen\n"
 
 #: mount/mount_guess_fstype.c:496
 #, c-format
@@ -7851,87 +7854,87 @@ msgstr "       Jag kommer att försöka med typen %s\n"
 msgid "Trying %s\n"
 msgstr "Försöker med %s\n"
 
-#: mount/nfsmount.c:231
+#: mount/nfsmount.c:237
 msgid "mount: excessively long host:dir argument\n"
 msgstr "mount: överdrivet långt värd:katalog-argument\n"
 
-#: mount/nfsmount.c:245
+#: mount/nfsmount.c:251
 msgid "mount: warning: multiple hostnames not supported\n"
 msgstr "mount: varning: flera samtidiga värdnamn stöds inte\n"
 
-#: mount/nfsmount.c:250
+#: mount/nfsmount.c:256
 msgid "mount: directory to mount not in host:dir format\n"
 msgstr "mount: katalog att montera är inte på formatet värd:katalog\n"
 
-#: mount/nfsmount.c:261 mount/nfsmount.c:516
+#: mount/nfsmount.c:267 mount/nfsmount.c:522
 #, c-format
 msgid "mount: can't get address for %s\n"
 msgstr "mount: kan inte få tag i adress för %s\n"
 
-#: mount/nfsmount.c:267
+#: mount/nfsmount.c:273
 msgid "mount: got bad hp->h_length\n"
 msgstr "mount: fick felaktig hp->h_length\n"
 
-#: mount/nfsmount.c:284
+#: mount/nfsmount.c:290
 msgid "mount: excessively long option argument\n"
 msgstr "mount: överdrivet långt flaggargument\n"
 
-#: mount/nfsmount.c:376
+#: mount/nfsmount.c:382
 msgid "Warning: Unrecognized proto= option.\n"
 msgstr "Varning: Okänd \"proto=\"-flagga.\n"
 
-#: mount/nfsmount.c:383
+#: mount/nfsmount.c:389
 msgid "Warning: Option namlen is not supported.\n"
 msgstr "Varning: Flaggan namlen stöds inte.\n"
 
-#: mount/nfsmount.c:387
+#: mount/nfsmount.c:393
 #, c-format
 msgid "unknown nfs mount parameter: %s=%d\n"
 msgstr "okänd nfs-monteringsparameter: %s=%d\n"
 
-#: mount/nfsmount.c:421
+#: mount/nfsmount.c:427
 msgid "Warning: option nolock is not supported.\n"
 msgstr "Varning: flaggan nolock stöds inte.\n"
 
-#: mount/nfsmount.c:426
+#: mount/nfsmount.c:432
 #, c-format
 msgid "unknown nfs mount option: %s%s\n"
 msgstr "okänd nfs-monteringsflagga: %s%s\n"
 
-#: mount/nfsmount.c:522
+#: mount/nfsmount.c:528
 msgid "mount: got bad hp->h_length?\n"
 msgstr "mount: fick felaktig hp->h_length?\n"
 
-#: mount/nfsmount.c:710
+#: mount/nfsmount.c:716
 msgid "NFS over TCP is not supported.\n"
 msgstr "NFS över TCP stöds inte.\n"
 
-#: mount/nfsmount.c:717
+#: mount/nfsmount.c:723
 msgid "nfs socket"
 msgstr "nfs-uttag"
 
-#: mount/nfsmount.c:721
+#: mount/nfsmount.c:727
 msgid "nfs bindresvport"
 msgstr "nfs-bindresvport"
 
-#: mount/nfsmount.c:735
+#: mount/nfsmount.c:741
 msgid "nfs server reported service unavailable"
 msgstr "nfs-servern rapporterade att tjänsten var otillgänglig"
 
-#: mount/nfsmount.c:744
+#: mount/nfsmount.c:750
 msgid "used portmapper to find NFS port\n"
 msgstr "använde portmapper för att hitta NFS-porten\n"
 
-#: mount/nfsmount.c:748
+#: mount/nfsmount.c:754
 #, c-format
 msgid "using port %d for nfs deamon\n"
 msgstr "använder port %d för nfs-demonen\n"
 
-#: mount/nfsmount.c:759
+#: mount/nfsmount.c:765
 msgid "nfs connect"
 msgstr "nfs-anslut"
 
-#: mount/nfsmount.c:846
+#: mount/nfsmount.c:852
 #, c-format
 msgid "unknown nfs status return value: %d"
 msgstr "okänt nfs-statusreturvärde: %d"
@@ -8038,26 +8041,26 @@ msgstr "umount: %s: blockenheter är inte tillåtna på filsystem"
 msgid "umount: %s: %s"
 msgstr "umount: %s: %s"
 
-#: mount/umount.c:285
+#: mount/umount.c:284
 msgid "no umount2, trying umount...\n"
 msgstr "ingen umount2, försöker med umount...\n"
 
-#: mount/umount.c:301
+#: mount/umount.c:300
 #, c-format
 msgid "could not umount %s - trying %s instead\n"
 msgstr "kunde inte avmontera %s - försöker med %s istället\n"
 
-#: mount/umount.c:319
+#: mount/umount.c:318
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr "umount: %s är upptagen - monterade om som endast läsbar\n"
 
-#: mount/umount.c:329
+#: mount/umount.c:328
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr "umount: kunde inte montera om %s som endast läsbar\n"
 
-#: mount/umount.c:338
+#: mount/umount.c:337
 #, c-format
 msgid "%s umounted\n"
 msgstr "%s avmonterad\n"
@@ -8257,29 +8260,92 @@ msgstr "   %f avbrott/sek; %f mott. (tecken/s)\n"
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
 msgstr "Användning: %s [-c] [-n nivå] [-s buffertstorlek]\n"
 
-#: sys-utils/ipcrm.c:59
+#: sys-utils/ipcrm.c:66
 #, c-format
 msgid "invalid id: %s\n"
 msgstr "ogiltigt id: %s\n"
 
-#: sys-utils/ipcrm.c:77
+#: sys-utils/ipcrm.c:84
 #, c-format
 msgid "cannot remove id %s (%s)\n"
 msgstr "kan inte ta bort id %s (%s)\n"
 
-#: sys-utils/ipcrm.c:91
-#, c-format
-msgid "usage: %s {shm | msg | sem} id ...\n"
+#: sys-utils/ipcrm.c:99
+#, fuzzy, c-format
+msgid "deprecated usage: %s {shm | msg | sem} id ...\n"
 msgstr "användning: %s {shm | msg | sem} id ...\n"
 
-#: sys-utils/ipcrm.c:124
+#: sys-utils/ipcrm.c:126
 #, c-format
 msgid "unknown resource type: %s\n"
 msgstr "okänd typ av resurs: %s\n"
 
-#: sys-utils/ipcrm.c:128
+#: sys-utils/ipcrm.c:130
 msgid "resource(s) deleted\n"
 msgstr "resurser borttagna\n"
+
+#: sys-utils/ipcrm.c:140
+#, c-format
+msgid ""
+"usage: %s [ [-q msqid] [-m shmid] [-s semid]\n"
+"          [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"
+msgstr ""
+
+#: sys-utils/ipcrm.c:181
+#, c-format
+msgid "%s: illegal option -- %c\n"
+msgstr ""
+
+#: sys-utils/ipcrm.c:192
+#, fuzzy, c-format
+msgid "%s: illegal key (%s)\n"
+msgstr "Ogiltig tangent"
+
+#: sys-utils/ipcrm.c:207 sys-utils/ipcrm.c:239
+#, fuzzy
+msgid "permission denied for key"
+msgstr "mount: åtkomst nekas"
+
+#: sys-utils/ipcrm.c:210 sys-utils/ipcrm.c:249
+msgid "already removed key"
+msgstr ""
+
+#: sys-utils/ipcrm.c:213 sys-utils/ipcrm.c:244
+#, fuzzy
+msgid "invalid key"
+msgstr "ogiltigt id: %s\n"
+
+#: sys-utils/ipcrm.c:216 sys-utils/ipcrm.c:254
+msgid "unknown error in key"
+msgstr ""
+
+#: sys-utils/ipcrm.c:240
+#, fuzzy
+msgid "permission denied for id"
+msgstr "mount: åtkomst nekas"
+
+#: sys-utils/ipcrm.c:245
+#, fuzzy
+msgid "invalid id"
+msgstr "ogiltigt id: %s\n"
+
+#: sys-utils/ipcrm.c:250
+msgid "already removed id"
+msgstr ""
+
+#: sys-utils/ipcrm.c:255
+msgid "unknown error in id"
+msgstr ""
+
+#: sys-utils/ipcrm.c:258
+#, fuzzy, c-format
+msgid "%s: %s (%s)\n"
+msgstr "%s på %s\n"
+
+#: sys-utils/ipcrm.c:266
+#, fuzzy, c-format
+msgid "%s: unknown argument: %s\n"
+msgstr "%s: okänd signal %s\n"
 
 #: sys-utils/ipcs.c:122
 #, c-format
@@ -8898,8 +8964,8 @@ msgstr ""
 msgid "missing comma"
 msgstr "komma saknas"
 
-#: sys-utils/readprofile.c:58
-#, fuzzy, c-format
+#: sys-utils/readprofile.c:60
+#, c-format
 msgid ""
 "%s: Usage: \"%s [options]\n"
 "\t -m <mapfile>  (default = \"%s\")\n"
@@ -8920,38 +8986,39 @@ msgstr ""
 "\t -v              visa utförlig data\n"
 "\t -a              visa alla symboler, även om antalet är 0\n"
 "\t -r              nollställ alla räknare (endast root)\n"
+"\t -n              deaktivera automatisk detektering av byteordning\n"
 "\t -V              visa versionsinformation och avsluta\n"
 
-#: sys-utils/readprofile.c:81
+#: sys-utils/readprofile.c:83
 msgid "out of memory"
 msgstr "slut på minne"
 
-#: sys-utils/readprofile.c:142
+#: sys-utils/readprofile.c:144
 #, c-format
 msgid "%s Version %s\n"
 msgstr "%s version %s\n"
 
-#: sys-utils/readprofile.c:226
+#: sys-utils/readprofile.c:228
 #, c-format
 msgid "Sampling_step: %i\n"
 msgstr "Samplingssteg: %i\n"
 
-#: sys-utils/readprofile.c:239 sys-utils/readprofile.c:262
+#: sys-utils/readprofile.c:241 sys-utils/readprofile.c:265
 #, c-format
 msgid "%s: %s(%i): wrong map line\n"
 msgstr "%s: %s(%i): felaktig tabellrad\n"
 
-#: sys-utils/readprofile.c:250
+#: sys-utils/readprofile.c:253
 #, c-format
 msgid "%s: can't find \"_stext\" in %s\n"
 msgstr "%s: kan inte hitta \"_stext\" i %s\n"
 
-#: sys-utils/readprofile.c:273
+#: sys-utils/readprofile.c:276
 #, c-format
 msgid "%s: profile address out of range. Wrong map file?\n"
 msgstr "%s: profiladressen är utanför intervallet. Fel tabellfil?\n"
 
-#: sys-utils/readprofile.c:299
+#: sys-utils/readprofile.c:304
 msgid "total"
 msgstr "totalt"
 
@@ -9104,11 +9171,10 @@ msgid "hexdump: bad skip value.\n"
 msgstr "hexdump: felaktigt överhoppningsvärde.\n"
 
 #: text-utils/hexsyntax.c:131
-#, fuzzy
 msgid ""
 "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
 msgstr ""
-"hexdump: [-bcdovx] [-e fmt] [-f fmtfil] [-n längd] [-s överhopp] [fil ...]\n"
+"hexdump: [-bcCdovx] [-e fmt] [-f fmtfil] [-n längd] [-s överhopp] [fil ...]\n"
 
 #: text-utils/more.c:263
 #, c-format

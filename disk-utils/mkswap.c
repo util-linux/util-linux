@@ -238,6 +238,12 @@ write_signature(char *sig) {
 #define V1_MAX_PAGES           ((1 << 17) - 1)
 #elif defined(__sparc__)
 #define V1_MAX_PAGES           (is_sparc64() ? ((3 << 29) - 1) : ((1 << 18) - 1))
+#elif defined(__ia64__)
+/* 
+ * The actual size will depend on the amount of virtual address space
+ * available to vmalloc the swap map.
+ */
+#define V1_MAX_PAGES          ((1UL << 54) - 1)
 #else
 #define V1_MAX_PAGES           V1_OLD_MAX_PAGES
 #endif
@@ -373,7 +379,7 @@ check_blocks(void) {
 }
 
 static long
-valid_offset (int fd, int offset) {
+valid_offset (int fd, off_t offset) {
 	char ch;
 
 	if (lseek (fd, offset, 0) < 0)
@@ -383,16 +389,15 @@ valid_offset (int fd, int offset) {
 	return 1;
 }
 
-static int
+static off_t
 find_size (int fd) {
-	unsigned int high, low;
+	off_t high, low;
 
 	low = 0;
 	for (high = 1; high > 0 && valid_offset (fd, high); high *= 2)
 		low = high;
-	while (low < high - 1)
-	{
-		const int mid = (low + high) / 2;
+	while (low < high - 1) {
+		const off_t mid = (low + high) / 2;
 
 		if (valid_offset (fd, mid))
 			low = mid;
@@ -432,9 +437,9 @@ int
 main(int argc, char ** argv) {
 	struct stat statbuf;
 	int i, sz;
-	int maxpages;
-	int goodpages;
-	int offset;
+	long maxpages;
+	long goodpages;
+	off_t offset;
 	int force = 0;
 	char *block_count = 0;
 	char *pp;
@@ -603,8 +608,8 @@ the -f option to force it.\n"),
 	goodpages = PAGES - badpages - 1;
 	if (goodpages <= 0)
 		die(_("Unable to set up swap-space: unreadable"));
-	printf(_("Setting up swapspace version %d, size = %ld bytes\n"),
-		version, (long)(goodpages*pagesize));
+	printf(_("Setting up swapspace version %d, size = %lu bytes\n"),
+		version, (unsigned long)goodpages * pagesize);
 	write_signature((version == 0) ? "SWAP-SPACE" : "SWAPSPACE2");
 
 	offset = ((version == 0) ? 0 : 1024);

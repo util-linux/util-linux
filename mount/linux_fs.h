@@ -193,7 +193,9 @@ struct vxfs_super_block {
 #define VXFS_SUPER_MAGIC 0xa501FCF5
 
 struct jfs_super_block {
-	char s_magic[4];
+	char	s_magic[4];
+	u_char	s_dummy1[97];
+	char	s_fpack[11];
 };
 #define JFS_SUPER1_OFF 0x8000
 #define JFS_MAGIC "JFS1"

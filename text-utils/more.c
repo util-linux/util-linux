@@ -57,6 +57,7 @@
 #include <locale.h>
 #include "xstrncpy.h"
 #include "nls.h"
+#include "widechar.h"
 
 #define _REGEX_RE_COMP
 #include <regex.h>
@@ -98,7 +99,7 @@ int  pr(char *s1);
 int  printd (int n);
 void set_tty(void);
 void reset_tty(void);
-void ttyin (char buf[], register int nmax, char pchar);
+void ttyin (unsigned char buf[], register int nmax, char pchar);
 int  number(char *cmd);
 int  readch (void);
 int  get_line(register FILE *f, int *length);
@@ -866,15 +867,30 @@ static void prompt (char *filename)
 }
 
 /*
-** Get a logical line
-*/
+ * Get a logical line
+ */
 
 int get_line(register FILE *f, int *length)
 {
-    register int	c;
-    register char	*p;
-    register int	column;
-    static int		colflg;
+    int	c;
+    char *p;
+    int	column;
+    static int colflg;
+
+#ifdef ENABLE_WIDECHAR
+    int i;
+    wchar_t wc;
+    int wc_width;
+    mbstate_t state, state_bak;		/* Current status of the stream. */
+    unsigned char mbc[MB_LEN_MAX];	/* Buffer for one multibyte char. */
+    size_t mblength;			/* Byte length of multibyte char. */
+    size_t mbc_pos = 0;			/* Postion of the MBC. */
+    int use_mbc_buffer_flag = 0;	/* If 1, mbc has data. */
+    int break_flag = 0;			/* If 1, exit while(). */
+    long file_pos_bak = Ftell (f);
+
+    memset (&state, '\0', sizeof (mbstate_t));
+#endif
 
     p = Line;
     column = 0;
@@ -884,6 +900,58 @@ int get_line(register FILE *f, int *length)
 	c = Getc (f);
     }
     while (p < &Line[LINSIZ - 1]) {
+#ifdef ENABLE_WIDECHAR
+	if (fold_opt && use_mbc_buffer_flag && MB_CUR_MAX > 1) {
+	    use_mbc_buffer_flag = 0;
+	    state_bak = state;
+	    mbc[mbc_pos++] = c;
+process_mbc:
+	    mblength = mbrtowc (&wc, mbc, mbc_pos, &state);
+
+	    switch (mblength) {
+	      case (size_t)-2:	  /* Incomplete multibyte character. */
+		use_mbc_buffer_flag = 1;
+		state = state_bak;
+		break;
+
+	      case (size_t)-1:	  /* Invalid as a multibyte character. */
+		*p++ = mbc[0];
+		state = state_bak;
+		column++;
+		file_pos_bak++;
+		
+		if (column >= Mcol) {
+		    Fseek (f, file_pos_bak);
+		} else {
+		    memmove (mbc, mbc + 1, --mbc_pos);
+		    if (mbc_pos > 0) {
+			mbc[mbc_pos] = '\0';
+			goto process_mbc;
+		    }
+		}
+		break;
+
+	      default:
+		wc_width = wcwidth (wc);
+
+		if (column + wc_width > Mcol) {
+		    Fseek (f, file_pos_bak);
+		    break_flag = 1;
+		} else {
+		    for (i = 0; i < mbc_pos; i++)
+		      *p++ = mbc[i];
+		    if (wc_width > 0)
+		      column += wc_width;
+		}
+	    }
+
+	    if (break_flag || column >= Mcol)
+	      break;
+
+	    c = Getc (f);
+	    continue;
+	}
+#endif 
 	if (c == EOF) {
 	    if (p > Line) {
 		*p = '\0';
@@ -897,6 +965,7 @@ int get_line(register FILE *f, int *length)
 	    Currline++;
 	    break;
 	}
+
 	*p++ = c;
 #if 0
 	if (c == '\033') {      /* ESC */
@@ -927,8 +996,7 @@ int get_line(register FILE *f, int *length)
 		    }
 		    if (column >= promptlen) promptlen = 0;
 		}
-	    }
-	    else
+	    } else
 		column = 1 + (column | 7);
 	} else if (c == '\b' && column > 0) {
 	    column--;
@@ -949,30 +1017,43 @@ int get_line(register FILE *f, int *length)
 	} else if (c == EOF) {
 	    *length = p - Line;
 	    return (column);
-	}
-#if 0
-	else {
-		char ch[2]; /* for mblen() */
+	} else {
+#ifdef ENABLE_WIDECHAR
+	    if (fold_opt && MB_CUR_MAX > 1) {
+		memset (mbc, '\0', MB_LEN_MAX);
+		mbc_pos = 0;
+		mbc[mbc_pos++] = c;
+		state_bak = state;
 
-		ch[0] = c;
-		ch[1] = '\0';
-		if (mblen(ch, 1) <= 0) {    /* multibyte, maybe 2 columns */
-			if (column == Mcol-1 && fold_opt) {
-				p--;
-				Ungetc(c, f);
-				break;
-			}
-			*p++ = Getc(f);
-			column += 2;
-		} else if (c & 0x80) {      /* maybe SJIS KANA, or utf-8 ? */
-			column++;
-		} else if (isprint(c))
-			column++;
-	}
-#else
-	else if (isprint(c))
-		column++;
+		mblength = mbrtowc (&wc, mbc, mbc_pos, &state);
+
+		/* The value of mblength is always less than 2 here. */
+		switch (mblength) {
+		  case (size_t)-2:
+		    p--;
+		    file_pos_bak = Ftell (f) - 1;
+		    state = state_bak;
+		    use_mbc_buffer_flag = 1;
+		    break;
+
+		  case (size_t)-1:
+		    state = state_bak;
+		    column++;
+		    break;
+
+		  default:
+		    wc_width = wcwidth (wc);
+		    if (wc_width > 0)
+		      column += wc_width;
+		}
+	    } else
 #endif
+	      {
+		if (isprint(c))
+		   column++;
+	      }
+	}
+
 	if (column >= Mcol && fold_opt)
 		break;
 	c = Getc (f);
@@ -1819,7 +1900,7 @@ retry:
 }
 
 int readch () {
-	char c;
+	unsigned char c;
 
 	errno = 0;
 	if (read (2, &c, 1) <= 0) {
@@ -1834,18 +1915,18 @@ int readch () {
 static char *BS = "\b";
 static char *BSB = "\b \b";
 static char *CARAT = "^";
-#define ERASEONECHAR \
+#define ERACEONECOLUMN \
     if (docrterase) \
 	errwrite(BSB); \
     else \
 	errwrite(BS);
 
-void ttyin (char buf[], register int nmax, char pchar) {
-    char *sp;
-    char c;
+void ttyin (unsigned char buf[], register int nmax, char pchar) {
+    unsigned char *sp;
+    int c;
     int slash = 0;
     int	maxlen;
-    char cbuf;
+    int cbuf;
 
     sp = buf;
     maxlen = 0;
@@ -1857,12 +1938,59 @@ void ttyin (char buf[], register int nmax, char pchar) {
 	}
 	else if (((cc_t) c == otty.c_cc[VERASE]) && !slash) {
 	    if (sp > buf) {
-		--promptlen;
-		ERASEONECHAR
-		--sp;
+#ifdef ENABLE_WIDECHAR
+		if (MB_CUR_MAX > 1)
+		  {
+		    wchar_t wc;
+		    size_t pos = 0, mblength;
+		    mbstate_t state, state_bak;
+
+		    memset (&state, '\0', sizeof (mbstate_t));
+
+		    while (1) {
+			 state_bak = state;
+			 mblength = mbrtowc (&wc, buf + pos, sp - buf, &state);
+
+			 state = (mblength == (size_t)-2
+				 || mblength == (size_t)-1) ? state_bak : state;
+			 mblength = (mblength == (size_t)-2
+				     || mblength == (size_t)-1
+				     || mblength == 0) ? 1 : mblength;
+
+			 if (buf + pos + mblength >= sp)
+			 break;
+
+			 pos += mblength;
+		    }
+
+		    if (mblength == 1) {
+		      ERACEONECOLUMN
+		    }
+		    else {
+			int wc_width;
+			wc_width = wcwidth (wc);
+			wc_width = (wc_width < 1) ? 1 : wc_width;
+			while (wc_width--) {
+			    ERACEONECOLUMN
+			}
+		    }
+
+		    while (mblength--) {
+			--promptlen;
+			--sp;
+		    }
+		  }
+		else
+#endif
+		  {
+		    --promptlen;
+		    ERACEONECOLUMN
+		    --sp;
+		  }
+
 		if ((*sp < ' ' && *sp != '\n') || *sp == RUBOUT) {
 		    --promptlen;
-		    ERASEONECHAR
+		    ERACEONECOLUMN
 		}
 		continue;
 	    }
@@ -1893,7 +2021,7 @@ void ttyin (char buf[], register int nmax, char pchar) {
 	}
 	if (slash && ((cc_t) c == otty.c_cc[VKILL]
 		   || (cc_t) c == otty.c_cc[VERASE])) {
-	    ERASEONECHAR
+	    ERACEONECOLUMN
 	    --sp;
 	}
 	if (c != '\\')
@@ -1906,7 +2034,7 @@ void ttyin (char buf[], register int nmax, char pchar) {
 	}
 	cbuf = c;
 	if (c != '\n' && c != ESC) {
-	    errwrite1(&cbuf);
+	    errwrite1((char *)(&cbuf));
 	    promptlen++;
 	}
 	else

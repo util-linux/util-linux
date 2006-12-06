@@ -1092,11 +1092,22 @@ mount_one (const char *spec, const char *node, char *types, const char *opts,
        opts = xstrconcat3(opts, ",", cmdlineopts);
 
   if (!strncmp(spec, "UUID=", 5)) {
-      nspec = get_spec_by_uuid(spec+5);
       specset = 1;
+      nspec = get_spec_by_uuid(spec+5);
   } else if (!strncmp(spec, "LABEL=", 6)) {
-      nspec = get_spec_by_volume_label(spec+6);
+      const char *nspec2;
       specset = 2;
+      nspec = get_spec_by_volume_label(spec+6);
+      nspec2 = second_occurrence_of_vol_label(spec+6);
+      if (nspec2) {
+	      if (verbose)
+		      printf(_("mount: the label %s occurs on "
+			       "both %s and %s\n"),
+			     spec+6, nspec, nspec2);
+	      die (EX_FAIL,
+		   _("mount: %s duplicate - not mounted"),
+		   spec, _PATH_FSTAB);
+      }
   } else
       nspec = 0;		/* just for gcc */
 
@@ -1496,8 +1507,16 @@ main (int argc, char *argv[]) {
 	if (specseen) {
 		if (uuid)
 			spec = get_spec_by_uuid(uuid);
-		else
+		else {
+			const char *spec2;
 			spec = get_spec_by_volume_label(volumelabel);
+			spec2 = second_occurrence_of_vol_label(volumelabel);
+			if (spec2)
+				die (EX_FAIL,
+				     _("mount: the label %s occurs on "
+				       "both %s and %s - not mounted\n"),
+				     volumelabel, spec, spec2);
+		}
 		if (!spec)
 			die (EX_USAGE, _("mount: no such partition found"));
 		if (verbose)

@@ -9,7 +9,7 @@
  *
  * Call:
  *	partx [-{l|a|d}] [--type TYPE] [--nr M-N] [partition] wholedisk
- * where TYPE is {dos|bsd|solaris|unixware}.
+ * where TYPE is {dos|bsd|solaris|unixware|gpt}.
  *
  * Read wholedisk and add all partitions:
  *	partx -a wholedisk
@@ -35,12 +35,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <unistd.h>
 #include <sys/ioctl.h>
 #include <linux/hdreg.h>        /* HDIO_GETGEO */
 #include <linux/blkpg.h>
 #define BLKGETSIZE _IO(0x12,96)    /* return device size */
 
 #include "partx.h"
+#include "crc32.h"
 static void errmerge(int err, int m, char *msg1, char *msg2);
 
 #define SIZE(a) (sizeof(a)/sizeof((a)[0]))
@@ -58,7 +60,9 @@ struct pt {
 } pts[MAXTYPES];
 int ptct;
 
-addpts(char *t, ptreader f) {
+static void
+addpts(char *t, ptreader f)
+{
 	if (ptct >= MAXTYPES) {
 		fprintf(stderr, "addpts: too many types\n");
 		exit(1);
@@ -68,19 +72,26 @@ addpts(char *t, ptreader f) {
 	ptct++;
 }
 
-initpts(){
+static void
+initpts(void)
+{
+	addpts("gpt", read_gpt_pt);
 	addpts("dos", read_dos_pt);
 	addpts("bsd", read_bsd_pt);
 	addpts("solaris", read_solaris_pt);
 	addpts("unixware", read_unixware_pt);
 }
 
-static char short_opts[] = "ladvn:t:";
+static char short_opts[] = "ladgvn:t:";
 static const struct option long_opts[] = {
+	{ "gpt",	no_argument,	        NULL,	'g' },
 	{ "type",	required_argument,	NULL,	't' },
 	{ "nr",		required_argument,	NULL,	'n' },
 	{ NULL, 0, NULL, 0 }
 };
+
+/* Used in gpt.c */
+int force_gpt=0;
 
 int
 main(int argc, char **argv){
@@ -98,6 +109,7 @@ main(int argc, char **argv){
 	int ret = 0;
 
 	initpts();
+	init_crc32();
 
 	lower = upper = 0;
 	type = device = diskdevice = NULL;
@@ -110,6 +122,8 @@ main(int argc, char **argv){
 		what = ADD; break;
 	case 'd':
 		what = DELETE; break;
+	case 'g':
+		force_gpt=1; break;
 	case 'n':
 		p = optarg;
 		lower = atoi(p);
@@ -256,8 +270,8 @@ main(int argc, char **argv){
 				       slices[j].start,
 				       slices[j].start+slices[j].size-1,
 				       slices[j].size,
-				       ((512 * (long long) slices[j].size)
-					       / 1000000));
+				       (int)((512 * (long long) slices[j].size)
+					/ 1000000));
 			}
 			if (n > 0 && what == ADD) {
 			    /* test for overlap, as in the case of an

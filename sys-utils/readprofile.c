@@ -29,6 +29,8 @@
  * - byte order auto-detection and -n option
  * 2001-11-09 Werner Almesberger <wa@almesberger.net>
  * - skip step size (index 0)
+ * 2002-03-09 John Levon <moz@compsoc.man.ac.uk>
+ * - make maplineno do something
  */
 
 #include <errno.h>
@@ -234,16 +236,17 @@ main (int argc, char **argv) {
 		exit(1);
 	}
 
-	while(fgets(mapline,S_LEN,map)) {
-		if (sscanf(mapline,"%lx %s %s",&fn_add,mode,fn_name)!=3) {
+	while (fgets(mapline,S_LEN,map)) {
+		if (sscanf(mapline,"%lx %s %s",&fn_add,mode,fn_name) != 3) {
 			fprintf(stderr,_("%s: %s(%i): wrong map line\n"),
-				prgname,mapFile, maplineno);
+				prgname, mapFile, maplineno);
 			exit(1);
 		}
 		if (!strcmp(fn_name,"_stext")) /* only elf works like this */ {
-			add0=fn_add;
+			add0 = fn_add;
 			break;
 		}
+		maplineno++;
 	}
 
 	if (!add0) {
@@ -255,7 +258,7 @@ main (int argc, char **argv) {
 	/*
 	 * Main loop.
 	 */
-	while(fgets(mapline,S_LEN,map)) {
+	while (fgets(mapline,S_LEN,map)) {
 		unsigned int this=0;
 
 		if (sscanf(mapline,"%lx %s %s",&next_add,mode,next_name)!=3) {
@@ -289,6 +292,8 @@ main (int argc, char **argv) {
 				       this,fn_name,this/(double)fn_len);
 		}
 		fn_add=next_add; strcpy(fn_name,next_name);
+
+		maplineno++;
 	}
 	/* trailer */
 	if (optVerbose)
