@@ -21,7 +21,7 @@ typedef struct {
 #define aixlabel ((aix_partition *)MBRbuffer)
 extern char MBRbuffer[MAX_SECTOR_SIZE];
 extern char changed[MAXIMUM_PARTS];
-extern uint heads, sectors, cylinders;
+extern unsigned int heads, sectors, cylinders;
 extern int show_begin;
 extern int aix_label;
 extern char *partition_type(unsigned char type);

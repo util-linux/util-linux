@@ -332,7 +332,7 @@ static struct clock_ops rtc = {
 struct clock_ops *
 probe_for_rtc_clock(){
 	int rtc_fd = open_rtc();
-	if (rtc_fd > 0) {
+	if (rtc_fd >= 0) {
 		close(rtc_fd);
 		return &rtc;
 	}

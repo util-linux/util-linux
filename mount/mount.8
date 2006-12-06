@@ -224,6 +224,7 @@ maintain a list of currently mounted file systems in the file
 If no arguments are given to
 .BR mount ,
 this list is printed.
+
 When the
 .I proc
 filesystem is mounted (say at
@@ -241,7 +242,8 @@ option below). It is possible to replace
 by a symbolic link to
 .IR /proc/mounts ,
 but some information is lost that way, and in particular
-working with the loop device will be less convenient.
+working with the loop device will be less convenient,
+and using the "user" option will fail.
 
 .SH OPTIONS
 The full set of options used by an invocation of
@@ -295,6 +297,9 @@ flag to determine what the
 command is trying to do. It can also be used to add entries for devices
 that were mounted earlier with the -n option.
 .TP
+.B \-i
+Don't call the /sbin/mount.<filesystem> helper even if it exists.
+.TP
 .B \-l
 Add the ext2, ext3 and XFS labels in the mount output. Mount must have
 permission to read the disk device (e.g. be suid root) for this to work.
@@ -309,6 +314,12 @@ Mount without writing in
 This is necessary for example when
 .I /etc
 is on a read-only file system.
+.TP
+.BI \-p " num"
+In case of a loop mount with encryption, read the passphrase from
+file descriptor
+.I num
+instead of from the terminal.
 .TP
 .B \-s
 Tolerate sloppy mount options rather than failing. This will ignore
@@ -402,7 +413,7 @@ treat all types in a uniform way, mount will execute the program
 Since various versions of the
 .I smbmount
 program have different calling conventions,
-.I /sbin/mount.smb
+.I /sbin/mount.smbfs
 may have to be a shell script that sets up the desired call.
 
 The type
@@ -1095,6 +1106,8 @@ decimal. (Octal is indicated by a leading 0.)
 .TP
 .B unhide
 Also show hidden and associated files.
+(If the ordinary files and the associated or hidden files have
+the same filenames, this may make the ordinary files inaccessible.)
 .TP
 .B block=[512|1024|2048]
 Set the block size to the indicated value.
@@ -1116,11 +1129,21 @@ The `cruft' option is set automatically if the entire CDROM
 has a weird size (negative, or more than 800MB). It is also
 set when volume sequence numbers other than 0 or 1 are seen.
 .TP
-.B session=x
+.BI session= x
 Select number of session on multisession CD. (Since 2.3.4.)
 .TP
-.B sbsector=xxx
+.BI sbsector= xxx
 Session begins from sector xxx. (Since 2.3.4.)
+.LP
+The following options are the same as for vfat and specifying them only makes
+sense when using discs encoded using Microsoft's Joliet extensions.
+.TP
+.BI iocharset= value
+Character set to use for converting 16 bit Unicode characters on CD
+to 8 bit characters. The default is iso8859-1.
+.TP
+.B utf8
+Convert 16 bit Unicode characters on CD to UTF-8.
 
 .SH "Mount options for minix"
 None.
@@ -1133,16 +1156,16 @@ file system detects an inconsistency, it reports an error and sets the file
 system read-only. The file system can be made writeable again by remounting
 it.
 
-.SH "Mount options for ncp"
+.SH "Mount options for ncpfs"
 Just like
-.IR nfs ", the " ncp
+.IR nfs ", the " ncpfs
 implementation expects a binary argument (a
 .IR "struct ncp_mount_data" )
 to the mount system call. This argument is constructed by
 .BR ncpmount (8)
 and the current version of
 .B mount
-(2.6h) does not know anything about ncp.
+(2.12) does not know anything about ncpfs.
 
 .SH "Mount options for nfs"
 Instead of a textual option string, parsed by the kernel, the
@@ -1346,14 +1369,14 @@ None.
 
 .SH "Mount options for smbfs"
 Just like
-.IR nfs ", the " smb
+.IR nfs ", the " smbfs
 implementation expects a binary argument (a
 .IR "struct smb_mount_data" )
 to the mount system call. This argument is constructed by
 .BR smbmount (8)
 and the current version of
 .B mount
-(2.9w) does not know anything about smb.
+(2.12) does not know anything about smbfs.
 
 .SH "Mount options for sysv"
 None.

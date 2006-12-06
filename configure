@@ -25,6 +25,7 @@
 # F6. For agetty.c: is updwtmp() available?
 # F7. For pg.c: are fseeko() and ftello() available?
 # F8. For fsck.cramfs.c: is lchown() available?
+# F9. For cfdisk.c: is rpmatch() available?
 #
 #  1. For sys-utils/cytune.c: do we need <linux/tqueue.h>?
 #  2. For cfdisk, setterm, more, ul: do we have ncurses? How installed?
@@ -53,7 +54,7 @@ echo '#define util_linux_version "util-linux-'$VERSION'"' >> defines.h
 echo >> defines.h
 
 CC=${CC-cc}
-CFLAGS=${CFLAGS-"-O"}
+CFLAGS=${CFLAGS-"-O2"}
 LDFLAGS=${LDFLAGS-"-s"}
 echo CC=$CC >> make_include
 echo CFLAGS=$CFLAGS >> make_include
@@ -331,6 +332,26 @@ if test -s conftest -a -z "$gccout"; then
         echo "You have lchown()"
 else
         echo "You don't have lchown()"
+fi
+rm -f conftest conftest.c
+
+#
+# F9. For cfdisk.c: is rpmatch() available?
+#
+echo '
+#define _SVID_SOURCE
+#include <stdlib.h>
+int main(int a, char **v){
+  rpmatch("y");
+  exit(0);
+}
+' > conftest.c
+eval $compile
+if test -s conftest; then
+        echo "#define HAVE_rpmatch" >> defines.h
+        echo "You have rpmatch()"
+else
+        echo "You don't have rpmatch()"
 fi
 rm -f conftest conftest.c
 
@@ -651,7 +672,8 @@ program MOUNTPROG {
 if rpcgen -h -o conftest.h conftest.x 2> conferrs && \
    rpcgen -c -o conftestx.c conftest.x 2>> conferrs && \
    rpcgen -l -o conftestl.c conftest.x 2>> conferrs && \
-   cc -c conftestx.c 2>> conferrs && cc -c conftestl.c 2>> conferrs && \
+   $CC $CFLAGS -c conftestx.c 2>> conferrs && \
+   $CC $CFLAGS -c conftestl.c 2>> conferrs && \
    test ! -s conferrs
 then
         echo "HAVE_GOOD_RPC=yes" >> make_include

@@ -2,13 +2,18 @@
 /* Added vfs mount options - aeb - 960223 */
 /* Removed lomount - aeb - 960224 */
 
-/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
+/*
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
- * Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+ * 1999-03-21 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
  * - fixed strerr(errno) in gettext calls
+ * 2000-09-24 Marc Mutz <Marc@Mutz.com>
+ * - added -p option to pass passphrases via fd's to losetup/mount.
+ *   Used for encryption in non-interactive environments.
+ *   The idea behind xgetpass() is stolen from GnuPG, v.1.0.3.
  */
 
-#define PROC_DEVICES	"/proc/devices"
+#define LOOPMAJOR	7
 
 /*
  * losetup.c - setup and control loop devices
@@ -36,93 +41,114 @@ extern char *xstrdup (const char *s);	/* not: #include "sundries.h" */
 extern void error (const char *fmt, ...);	/* idem */
 
 #ifdef LOOP_SET_FD
-struct crypt_type_struct {
-	int id;
-	char *name;
-} crypt_type_tbl[] = {
-	{ LO_CRYPT_NONE, "no" },
-	{ LO_CRYPT_NONE, "none" },
-	{ LO_CRYPT_XOR, "xor" },
-	{ LO_CRYPT_DES, "DES" },
-	{ -1, NULL   }
-};
 
-static int 
-crypt_type (const char *name) {
-	int i;
+static int
+loop_info64_to_old(const struct loop_info64 *info64, struct loop_info *info)
+{
+        memset(info, 0, sizeof(*info));
+        info->lo_number = info64->lo_number;
+        info->lo_device = info64->lo_device;
+        info->lo_inode = info64->lo_inode;
+        info->lo_rdevice = info64->lo_rdevice;
+        info->lo_offset = info64->lo_offset;
+        info->lo_encrypt_type = info64->lo_encrypt_type;
+        info->lo_encrypt_key_size = info64->lo_encrypt_key_size;
+        info->lo_flags = info64->lo_flags;
+        info->lo_init[0] = info64->lo_init[0];
+        info->lo_init[1] = info64->lo_init[1];
+        if (info->lo_encrypt_type == LO_CRYPT_CRYPTOAPI)
+                memcpy(info->lo_name, info64->lo_crypt_name, LO_NAME_SIZE);
+        else
+                memcpy(info->lo_name, info64->lo_file_name, LO_NAME_SIZE);
+        memcpy(info->lo_encrypt_key, info64->lo_encrypt_key, LO_KEY_SIZE);
 
-	if (name) {
-		for (i = 0; crypt_type_tbl[i].id != -1; i++)
-			if (!strcasecmp (name, crypt_type_tbl[i].name))
-				return crypt_type_tbl[i].id;
-	}
-	return -1;
+        /* error in case values were truncated */
+        if (info->lo_device != info64->lo_device ||
+            info->lo_rdevice != info64->lo_rdevice ||
+            info->lo_inode != info64->lo_inode ||
+            info->lo_offset != info64->lo_offset)
+                return -EOVERFLOW;
+
+        return 0;
 }
 
 #ifdef MAIN
-static char *
-crypt_name (int id) {
-	int i;
-
-	for (i = 0; crypt_type_tbl[i].id != -1; i++)
-		if (id == crypt_type_tbl[i].id)
-			return crypt_type_tbl[i].name;
-	return "undefined";
-}
 
 static int
-show_loop (char *device) {
+show_loop(char *device) {
 	struct loop_info loopinfo;
-	int fd;
+	struct loop_info64 loopinfo64;
+	int fd, errsv;
 
-	if ((fd = open (device, O_RDONLY)) < 0) {
+	if ((fd = open(device, O_RDONLY)) < 0) {
 		int errsv = errno;
 		fprintf(stderr, _("loop: can't open device %s: %s\n"),
 			device, strerror (errsv));
 		return 2;
 	}
-	if (ioctl (fd, LOOP_GET_STATUS, &loopinfo) < 0) {
-		int errsv = errno;
-		fprintf(stderr, _("loop: can't get info on device %s: %s\n"),
-			device, strerror (errsv));
-		close (fd);
-		return 1;
-	}
-	printf (_("%s: [%04x]:%ld (%s) offset %d, %s encryption\n"),
-		device, loopinfo.lo_device, loopinfo.lo_inode,
-		loopinfo.lo_name, loopinfo.lo_offset,
-		crypt_name (loopinfo.lo_encrypt_type));
-	close (fd);
 
-	return 0;
+	if (ioctl(fd, LOOP_GET_STATUS64, &loopinfo64) == 0) {
+
+		loopinfo64.lo_file_name[LO_NAME_SIZE-2] = '*';
+		loopinfo64.lo_file_name[LO_NAME_SIZE-1] = 0;
+		loopinfo64.lo_crypt_name[LO_NAME_SIZE-1] = 0;
+
+		printf("%s: [%04llx]:%llu (%s)",
+		       device, loopinfo64.lo_device, loopinfo64.lo_inode,
+		       loopinfo64.lo_file_name);
+
+		if (loopinfo64.lo_offset)
+			printf(_(", offset %lld"), loopinfo64.lo_offset);
+
+		if (loopinfo64.lo_sizelimit)
+			printf(_(", sizelimit %lld"), loopinfo64.lo_sizelimit);
+
+		if (loopinfo64.lo_encrypt_type ||
+		    loopinfo64.lo_crypt_name[0]) {
+			char *e = loopinfo64.lo_crypt_name;
+
+			if (*e == 0 && loopinfo64.lo_encrypt_type == 1)
+				e = "XOR";
+			printf(_(", encryption %s (type %d)"),
+			       e, loopinfo64.lo_encrypt_type);
+		}
+		printf("\n");
+		close (fd);
+		return 0;
+	}
+
+	if (ioctl(fd, LOOP_GET_STATUS, &loopinfo) == 0) {
+		printf ("%s: [%04x]:%ld (%s)",
+			device, loopinfo.lo_device, loopinfo.lo_inode,
+			loopinfo.lo_name);
+
+		if (loopinfo.lo_offset)
+			printf(_(", offset %d"), loopinfo.lo_offset);
+
+		if (loopinfo.lo_encrypt_type)
+			printf(_(", encryption type %d\n"),
+			       loopinfo.lo_encrypt_type);
+
+		printf("\n");
+		close (fd);
+		return 0;
+	}
+
+	errsv = errno;
+	fprintf(stderr, _("loop: can't get info on device %s: %s\n"),
+		device, strerror (errsv));
+	close (fd);
+	return 1;
 }
 #endif
 
 int
 is_loop_device (const char *device) {
 	struct stat statbuf;
-	int loopmajor;
-#if 1
-	loopmajor = 7;
-#else
-	FILE *procdev;
-	char line[100], *cp;
 
-	loopmajor = 0;
-	if ((procdev = fopen(PROC_DEVICES, "r")) != NULL) {
-		while (fgets (line, sizeof(line), procdev)) {
-			if ((cp = strstr (line, " loop\n")) != NULL) {
-				*cp='\0';
-				loopmajor=atoi(line);
-				break;
-			}
-		}
-		fclose(procdev);
-	}
-#endif
-	return (loopmajor && stat(device, &statbuf) == 0 &&
+	return (stat(device, &statbuf) == 0 &&
 		S_ISBLK(statbuf.st_mode) &&
-		major(statbuf.st_rdev) == loopmajor);
+		major(statbuf.st_rdev) == LOOPMAJOR);
 }
 
 #define SIZE(a) (sizeof(a)/sizeof(a[0]))
@@ -134,10 +160,9 @@ find_unused_loop_device (void) {
 	   So, we just try /dev/loop[0-7]. */
 	char dev[20];
 	char *loop_formats[] = { "/dev/loop%d", "/dev/loop/%d" };
-	int i, j, fd, somedev = 0, someloop = 0, loop_known = 0;
+	int i, j, fd, somedev = 0, someloop = 0;
 	struct stat statbuf;
 	struct loop_info loopinfo;
-	FILE *procdev;
 
 	for (j = 0; j < SIZE(loop_formats); j++) {
 	    for(i = 0; i < 256; i++) {
@@ -160,73 +185,103 @@ find_unused_loop_device (void) {
 	    }
 	}
 
-	/* Nothing found. Why not? */
-	if ((procdev = fopen(PROC_DEVICES, "r")) != NULL) {
-		char line[100];
-		while (fgets (line, sizeof(line), procdev))
-			if (strstr (line, " loop\n")) {
-				loop_known = 1;
-				break;
-			}
-		fclose(procdev);
-		if (!loop_known)
-			loop_known = -1;
-	}
-
 	if (!somedev)
 		error(_("mount: could not find any device /dev/loop#"));
 	else if (!someloop) {
-	    if (loop_known == 1)
 		error(_(
-		    "mount: Could not find any loop device.\n"
-		    "       Maybe /dev/loop# has a wrong major number?"));
-	    else if (loop_known == -1)
-		error(_(
-		    "mount: Could not find any loop device, and, according to %s,\n"
-		    "       this kernel does not know about the loop device.\n"
-		    "       (If so, then recompile or `insmod loop.o'.)"),
-		      PROC_DEVICES);
-	    else
-		error(_(
-		    "mount: Could not find any loop device. Maybe this kernel does not know\n"
-		    "       about the loop device (then recompile or `insmod loop.o'), or\n"
-		    "       maybe /dev/loop# has the wrong major number?"));
+		    "mount: Could not find any loop device. Maybe this kernel "
+		    "does not know\n"
+		    "       about the loop device? (If so, recompile or "
+		    "`modprobe loop'.)"));
 	} else
 		error(_("mount: could not find any free loop device"));
 	return 0;
 }
 
+/*
+ * A function to read the passphrase either from the terminal or from
+ * an open file descriptor.
+ */
+static char *
+xgetpass(int pfd, const char *prompt) {
+	char *pass;
+	int buflen, i;
+
+        if (pfd < 0) /* terminal */
+		return getpass(prompt);
+
+	pass = NULL;
+	buflen = 0;
+	for (i=0; ; i++) {
+		if (i >= buflen-1) {
+				/* we're running out of space in the buffer.
+				 * Make it bigger: */
+			char *tmppass = pass;
+			buflen += 128;
+			pass = realloc(tmppass, buflen);
+			if (pass == NULL) {
+				/* realloc failed. Stop reading. */
+				error("Out of memory while reading passphrase");
+				pass = tmppass; /* the old buffer hasn't changed */
+				break;
+			}
+		}
+		if (read(pfd, pass+i, 1) != 1 || pass[i] == '\n')
+			break;
+	}
+	if (pass == NULL)
+		return "";
+	else {
+		pass[i] = 0;
+		return pass;
+	}
+}
+
+static int
+digits_only(const char *s) {
+	while (*s)
+		if (!isdigit(*s++))
+			return 0;
+	return 1;
+}
+
 int
-set_loop (const char *device, const char *file, int offset,
-	  const char *encryption, int *loopro) {
-	struct loop_info loopinfo;
-	int fd, ffd, mode, i;
+set_loop(const char *device, const char *file, int offset,
+	 const char *encryption, int pfd, int *loopro) {
+	struct loop_info64 loopinfo64;
+	int fd, ffd, mode;
 	char *pass;
 
 	mode = (*loopro ? O_RDONLY : O_RDWR);
-	if ((ffd = open (file, mode)) < 0) {
+	if ((ffd = open(file, mode)) < 0) {
 		if (!*loopro && errno == EROFS)
-			ffd = open (file, mode = O_RDONLY);
+			ffd = open(file, mode = O_RDONLY);
 		if (ffd < 0) {
-			perror (file);
+			perror(file);
 			return 1;
 		}
 	}
-	if ((fd = open (device, mode)) < 0) {
+	if ((fd = open(device, mode)) < 0) {
 		perror (device);
 		return 1;
 	}
 	*loopro = (mode == O_RDONLY);
 
-	memset (&loopinfo, 0, sizeof (loopinfo));
-	xstrncpy (loopinfo.lo_name, file, LO_NAME_SIZE);
-	if (encryption && (loopinfo.lo_encrypt_type = crypt_type (encryption))
-	    < 0) {
-		fprintf (stderr, _("Unsupported encryption type %s\n"),
-			 encryption);
-		return 1;
+	memset(&loopinfo64, 0, sizeof(loopinfo64));
+
+	xstrncpy(loopinfo64.lo_file_name, file, LO_NAME_SIZE);
+
+	if (encryption && *encryption) {
+		if (digits_only(encryption)) {
+			loopinfo64.lo_encrypt_type = atoi(encryption);
+		} else {
+			loopinfo64.lo_encrypt_type = LO_CRYPT_CRYPTOAPI;
+			snprintf(loopinfo64.lo_crypt_name, LO_NAME_SIZE,
+				 "%s", encryption);
+		}
 	}
-	loopinfo.lo_offset = offset;
+
+	loopinfo64.lo_offset = offset;
 
 #ifdef MCL_FUTURE  
 	/*
@@ -241,53 +296,55 @@ set_loop (const char *device, const char *file, int offset,
 	}
 #endif
 
-	switch (loopinfo.lo_encrypt_type) {
+	switch (loopinfo64.lo_encrypt_type) {
 	case LO_CRYPT_NONE:
-		loopinfo.lo_encrypt_key_size = 0;
+		loopinfo64.lo_encrypt_key_size = 0;
 		break;
 	case LO_CRYPT_XOR:
-		pass = getpass (_("Password: "));
-		xstrncpy (loopinfo.lo_encrypt_key, pass, LO_KEY_SIZE);
-		loopinfo.lo_encrypt_key_size = strlen(loopinfo.lo_encrypt_key);
-		break;
-	case LO_CRYPT_DES:
-		pass = getpass (_("Password: "));
-		strncpy (loopinfo.lo_encrypt_key, pass, 8);
-		loopinfo.lo_encrypt_key[8] = 0;
-		loopinfo.lo_encrypt_key_size = 8;
-		pass = getpass (_("Init (up to 16 hex digits): "));
-		for (i = 0; i < 16 && pass[i]; i++)
-			if (isxdigit (pass[i])) {
-				loopinfo.lo_init[i >> 3] |= (pass[i] > '9' ?
-				  (islower (pass[i]) ? toupper (pass[i]) :
-				   pass[i])-'A'+10 : pass[i]-'0') << (i&7) * 4;
-			} else {
-				fprintf (stderr, _("Non-hex digit '%c'.\n"),
-					 pass[i]);
-				return 1;
-			}
+		pass = getpass(_("Password: "));
+		xstrncpy(loopinfo64.lo_encrypt_key, pass, LO_KEY_SIZE);
+		loopinfo64.lo_encrypt_key_size =
+			strlen(loopinfo64.lo_encrypt_key);
 		break;
 	default:
-		fprintf (stderr,
-			 _("Don't know how to get key for encryption system %d\n"),
-			 loopinfo.lo_encrypt_type);
+		pass = xgetpass(pfd, _("Password: "));
+		xstrncpy(loopinfo64.lo_encrypt_key, pass, LO_KEY_SIZE);
+		loopinfo64.lo_encrypt_key_size = LO_KEY_SIZE;
+	}
+
+	if (ioctl(fd, LOOP_SET_FD, ffd) < 0) {
+		perror("ioctl: LOOP_SET_FD");
 		return 1;
 	}
-	if (ioctl (fd, LOOP_SET_FD, ffd) < 0) {
-		perror ("ioctl: LOOP_SET_FD");
-		return 1;
-	}
-	if (ioctl (fd, LOOP_SET_STATUS, &loopinfo) < 0) {
-		(void) ioctl (fd, LOOP_CLR_FD, 0);
-		perror ("ioctl: LOOP_SET_STATUS");
-		return 1;
-	}
-	close (fd);
 	close (ffd);
+
+	if (ioctl(fd, LOOP_SET_STATUS64, &loopinfo64) < 0) {
+		struct loop_info loopinfo;
+		int errsv = errno;
+
+		errno = loop_info64_to_old(&loopinfo64, &loopinfo);
+		if (errno) {
+			errno = errsv;
+			perror("ioctl: LOOP_SET_STATUS64");
+			goto fail;
+		}
+
+		if (ioctl(fd, LOOP_SET_STATUS, &loopinfo) < 0) {
+			perror("ioctl: LOOP_SET_STATUS");
+			goto fail;
+		}
+	}
+
+	close (fd);
 	if (verbose > 1)
 		printf(_("set_loop(%s,%s,%d): success\n"),
 		       device, file, offset);
 	return 0;
+
+ fail:
+	(void) ioctl (fd, LOOP_CLR_FD, 0);
+	close (fd);
+	return 1;
 }
 
 int 
@@ -388,28 +445,33 @@ error (const char *fmt, ...) {
 
 int
 main(int argc, char **argv) {
-	char *offset, *encryption;
-	int delete,off,c;
+	char *offset, *encryption, *passfd;
+	int delete, off, c;
 	int res = 0;
 	int ro = 0;
+	int pfd = -1;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
 	delete = off = 0;
-	offset = encryption = NULL;
+	offset = encryption = passfd = NULL;
 	progname = argv[0];
-	while ((c = getopt(argc,argv,"de:o:v")) != -1) {
+	while ((c = getopt(argc,argv,"de:E:o:p:v")) != -1) {
 		switch (c) {
 		case 'd':
 			delete = 1;
 			break;
+		case 'E':
 		case 'e':
 			encryption = optarg;
 			break;
 		case 'o':
 			offset = optarg;
+			break;
+		case 'p':
+			passfd = optarg;
 			break;
 		case 'v':
 			verbose = 1;
@@ -430,7 +492,10 @@ main(int argc, char **argv) {
 	} else {
 		if (offset && sscanf(offset,"%d",&off) != 1)
 			usage();
-		res = set_loop(argv[optind],argv[optind+1],off,encryption,&ro);
+		if (passfd && sscanf(passfd,"%d",&pfd) != 1)
+			usage();
+		res = set_loop(argv[optind], argv[optind+1], off,
+			       encryption, pfd, &ro);
 	}
 	return res;
 }

@@ -1,11 +1,11 @@
 #!/bin/csh
 #
-# /sbin/mount.smb
+# /sbin/mount.smbfs
 # by Greg Galperin, MAR99 <grg@ai.mit.edu>
 # ver 1.1 MAR99	GRG	docs update: must escape special chars like $
 # ver 1.0 MAR99	GRG	original version
 #
-# Intent is to allow calls to mount with -t smb to work properly
+# Intent is to allow calls to mount with -t smbfs to work properly
 # (either manually or from an automounter).
 #
 # bugs:
@@ -17,7 +17,7 @@
 # To use this from autofs:
 #
 # have an entry of the form
-#	key	-fstype=smb,-Uadministrator,-Ppassword	://host/share
+#	key	-fstype=smbfs,-Uadministrator,-Ppassword	://host/share
 # in the appropriate /etc/auto.mountpoint file.
 #
 # This makes access to /mountpoint/key/ access smb //host/share/ 
@@ -32,7 +32,7 @@
 #
 ###########################################################################
 #
-# I get called in the form: /sbin/mount.smb //host/shr /mnt/tmp -o rw,arg1,arg2
+# I get called as: /sbin/mount.smbfs //host/shr /mnt/tmp -o rw,arg1,arg2
 #
 # It looks like mount tacks on either "rw" or "ro" as the first argument,
 # so I'm going to count on having exactly 5 arguments.

@@ -2,10 +2,11 @@
 
 /* including <linux/fs.h> fails */
 #include <sys/ioctl.h>
-#define BLKRRPART  _IO(0x12,95)    /* re-read partition table */
-#define BLKGETSIZE _IO(0x12,96)    /* return device size */
-#define BLKFLSBUF  _IO(0x12,97)    /* flush buffer cache */
-#define BLKSSZGET  _IO(0x12,104)   /* get block device sector size */
+#define BLKRRPART    _IO(0x12,95)    /* re-read partition table */
+#define BLKGETSIZE   _IO(0x12,96)    /* return device size */
+#define BLKFLSBUF    _IO(0x12,97)    /* flush buffer cache */
+#define BLKSSZGET    _IO(0x12,104)   /* get block device sector size */
+#define BLKGETSIZE64 _IOR(0x12,114,8)	/* 8 = sizeof(u64) */
 
 /* including <linux/hdreg.h> also fails */
 struct hd_geometry {

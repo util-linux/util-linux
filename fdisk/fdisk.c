@@ -6,17 +6,7 @@
  * modify it under the terms of the GNU General Public License as
  * published by the Free Software Foundation: either version 1 or
  * (at your option) any later version.
- *
- * For detailed old history, see older versions.
- * Contributions before 2001 by faith@cs.unc.edu, Michael Bischoff,
- * LeBlanc@mcc.ac.uk, martin@cs.unc.edu, leisner@sdsp.mc.xerox.com,
- * esr@snark.thyrsus.com, aeb@cwi.nl, quinlan@yggdrasil.com,
- * fasten@cs.bonn.edu, orschaer@cip.informatik.uni-erlangen.de,
- * jj@sunsite.mff.cuni.cz, fasten@shw.com, ANeuper@GUUG.de,
- * kgw@suse.de, kalium@gmx.de, dhuggins@linuxcare.com,
- * michal@ellpspace.math.ualberta.ca and probably others.
  */
-
 
 #include <unistd.h>
 #include <stdio.h>
@@ -71,7 +61,7 @@ static void delete_partition(int i);
 /* A valid partition table sector ends in 0x55 0xaa */
 static unsigned int
 part_table_flag(char *b) {
-	return ((uint) b[510]) + (((uint) b[511]) << 8);
+	return ((unsigned int) b[510]) + (((unsigned int) b[511]) << 8);
 }
 
 int
@@ -97,8 +87,9 @@ store4_little_endian(unsigned char *cp, unsigned int val) {
 
 static unsigned int
 read4_little_endian(unsigned char *cp) {
-	return (uint)(cp[0]) + ((uint)(cp[1]) << 8)
-		+ ((uint)(cp[2]) << 16) + ((uint)(cp[3]) << 24);
+	return (unsigned int)(cp[0]) + ((unsigned int)(cp[1]) << 8)
+		+ ((unsigned int)(cp[2]) << 16)
+		+ ((unsigned int)(cp[3]) << 24);
 }
 
 static void
@@ -141,9 +132,9 @@ char MBRbuffer[MAX_SECTOR_SIZE];
 struct pte {
 	struct partition *part_table;	/* points into sectorbuffer */
 	struct partition *ext_pointer;	/* points into sectorbuffer */
-	char changed;		/* boolean */
-	uint offset;		/* disk sector number */
-	char *sectorbuffer;	/* disk sector contents */
+	char changed;			/* boolean */
+	unsigned int offset;		/* disk sector number */
+	char *sectorbuffer;		/* disk sector contents */
 } ptes[MAXIMUM_PARTS];
 
 char	*disk_device,			/* must be specified */
@@ -158,11 +149,11 @@ int	fd,				/* the disk */
 	dos_changed = 0,
 	partitions = 4;			/* maximum partition + 1 */
 
-uint	user_cylinders, user_heads, user_sectors;
-uint	pt_heads, pt_sectors;
-uint	kern_heads, kern_sectors;
+unsigned int	user_cylinders, user_heads, user_sectors;
+unsigned int	pt_heads, pt_sectors;
+unsigned int	kern_heads, kern_sectors;
 
-uint	heads,
+unsigned int	heads,
 	sectors,
 	cylinders,
 	sector_size = DEFAULT_SECTOR_SIZE,
@@ -172,7 +163,7 @@ uint	heads,
 	display_in_cyl_units = 1,
 	extended_offset = 0;		/* offset of link pointers */
 
-unsigned long total_number_of_sectors;
+unsigned long long total_number_of_sectors;
 
 #define dos_label (!sun_label && !sgi_label && !aix_label && !osf_label)
 int     sun_label = 0;                  /* looking at sun disklabel */
@@ -247,21 +238,21 @@ void fatal(enum failure why) {
 }
 
 static void
-seek_sector(int fd, uint secno) {
-	ext2_loff_t offset = (ext2_loff_t) secno * sector_size;
-	if (ext2_llseek(fd, offset, SEEK_SET) == (ext2_loff_t) -1)
+seek_sector(int fd, unsigned int secno) {
+	long long offset = (long long) secno * sector_size;
+	if (ext2_llseek(fd, offset, SEEK_SET) == (long long) -1)
 		fatal(unable_to_seek);
 }
 
 static void
-read_sector(int fd, uint secno, char *buf) {
+read_sector(int fd, unsigned int secno, char *buf) {
 	seek_sector(fd, secno);
 	if (read(fd, buf, sector_size) != sector_size)
 		fatal(unable_to_read);
 }
 
 static void
-write_sector(int fd, uint secno, char *buf) {
+write_sector(int fd, unsigned int secno, char *buf) {
 	seek_sector(fd, secno);
 	if (write(fd, buf, sector_size) != sector_size)
 		fatal(unable_to_write);
@@ -269,7 +260,7 @@ write_sector(int fd, uint secno, char *buf) {
 
 /* Allocate a buffer and read a partition table sector */
 static void
-read_pte(int fd, int pno, uint offset) {
+read_pte(int fd, int pno, unsigned int offset) {
 	struct pte *pe = &ptes[pno];
 
 	pe->offset = offset;
@@ -487,7 +478,7 @@ char *partition_type(unsigned char type)
 
 void list_types(struct systypes *sys)
 {
-	uint last[4], done = 0, next = 0, size;
+	unsigned int last[4], done = 0, next = 0, size;
 	int i;
 
 	for (i = 0; sys[i].name; i++);
@@ -533,9 +524,10 @@ clear_partition(struct partition *p) {
 }
 
 static void
-set_partition(int i, int doext, uint start, uint stop, int sysid) {
+set_partition(int i, int doext, unsigned int start, unsigned int stop,
+	      int sysid) {
 	struct partition *p;
-	uint offset;
+	unsigned int offset;
 
 	if (doext) {
 		p = ptes[i].ext_pointer;
@@ -809,7 +801,7 @@ get_partition_table_geometry(void) {
 void
 get_geometry(int fd, struct geom *g) {
 	int sec_fac;
-	unsigned long longsectors;
+	unsigned long long bytes;	/* really u64 */
 
 	get_sectorsize(fd);
 	sec_fac = sector_size / 512;
@@ -828,15 +820,23 @@ get_geometry(int fd, struct geom *g) {
 		pt_sectors ? pt_sectors :
 		kern_sectors ? kern_sectors : 63;
 
-	if (ioctl(fd, BLKGETSIZE, &longsectors))
-		longsectors = 0;
+	if (ioctl(fd, BLKGETSIZE64, &bytes) == 0) {
+		/* got bytes */
+	} else {
+		unsigned long longsectors;
+
+		if (ioctl(fd, BLKGETSIZE, &longsectors))
+			longsectors = 0;
+		bytes = ((unsigned long long) longsectors) << 9;
+	}
+
+	total_number_of_sectors = (bytes >> 9);
 
 	sector_offset = 1;
 	if (dos_compatible_flag)
 		sector_offset = sectors;
 
-	cylinders = longsectors / (heads * sectors);
-	cylinders /= sec_fac;
+	cylinders = total_number_of_sectors / (heads * sectors * sec_fac);
 	if (!cylinders)
 		cylinders = user_cylinders;
 
@@ -845,8 +845,6 @@ get_geometry(int fd, struct geom *g) {
 		g->sectors = sectors;
 		g->cylinders = cylinders;
 	}
-
-	total_number_of_sectors = longsectors;
 }
 
 /*
@@ -1048,10 +1046,11 @@ read_hex(struct systypes *sys)
  *
  * There is no default if DFLT is not between LOW and HIGH.
  */
-uint
-read_int(uint low, uint dflt, uint high, uint base, char *mesg)
+unsigned int
+read_int(unsigned int low, unsigned int dflt, unsigned int high,
+	 unsigned int base, char *mesg)
 {
-	uint i;
+	unsigned int i;
 	int default_ok = 1;
 	static char *ms = NULL;
 	static int mslen = 0;
@@ -1066,10 +1065,10 @@ read_int(uint low, uint dflt, uint high, uint base, char *mesg)
 		default_ok = 0;
 
 	if (default_ok)
-		snprintf(ms, mslen, _("%s (%d-%d, default %d): "),
+		snprintf(ms, mslen, _("%s (%u-%u, default %u): "),
 			 mesg, low, high, dflt);
 	else
-		snprintf(ms, mslen, "%s (%d-%d): ",
+		snprintf(ms, mslen, "%s (%u-%u): ",
 			 mesg, low, high);
 
 	while (1) {
@@ -1095,8 +1094,10 @@ read_int(uint low, uint dflt, uint high, uint base, char *mesg)
 					if (!display_in_cyl_units)
 						i *= heads * sectors;
 					break;
-				case 'k':
 				case 'K':
+					absolute = 1024;
+					break;
+				case 'k':
 					absolute = 1000;
 					break;
 				case 'm':
@@ -1131,7 +1132,7 @@ read_int(uint low, uint dflt, uint high, uint base, char *mesg)
 			}
 		}
 		if (use_default)
-			printf(_("Using default value %d\n"), i = dflt);
+			printf(_("Using default value %u\n"), i = dflt);
 		if (i >= low && i <= high)
 			break;
 		else
@@ -1335,7 +1336,15 @@ change_sysid(void) {
 	int i, sys, origsys;
 	struct partition *p;
 
-	i = get_existing_partition(0, partitions);
+	/* If sgi_label then don't use get_existing_partition,
+	   let the user select a partition, since get_existing_partition()
+	   only works for Linux like partition tables. */
+	if (!sgi_label) { 
+		i = get_existing_partition(0, partitions);
+	} else {
+		i = get_partition(0, partitions);
+	}
+
 	if (i == -1)
 		return;
 	p = ptes[i].part_table;
@@ -1404,8 +1413,9 @@ change_sysid(void) {
  * Jan.  1990 (version 1.2.1 by Gordon W. Ross Aug. 1990; Modified by S.
  * Lubkin Oct.  1991). */
 
-static void long2chs(ulong ls, uint *c, uint *h, uint *s) {
-	int	spc = heads * sectors;
+static void
+long2chs(ulong ls, unsigned int *c, unsigned int *h, unsigned int *s) {
+	int spc = heads * sectors;
 
 	*c = ls / spc;
 	ls = ls % spc;
@@ -1414,10 +1424,10 @@ static void long2chs(ulong ls, uint *c, uint *h, uint *s) {
 }
 
 static void check_consistency(struct partition *p, int partition) {
-	uint	pbc, pbh, pbs;		/* physical beginning c, h, s */
-	uint	pec, peh, pes;		/* physical ending c, h, s */
-	uint	lbc, lbh, lbs;		/* logical beginning c, h, s */
-	uint	lec, leh, les;		/* logical ending c, h, s */
+	unsigned int pbc, pbh, pbs;	/* physical beginning c, h, s */
+	unsigned int pec, peh, pes;	/* physical ending c, h, s */
+	unsigned int lbc, lbh, lbs;	/* logical beginning c, h, s */
+	unsigned int lec, leh, les;	/* logical ending c, h, s */
 
 	if (!heads || !sectors || (partition >= 4))
 		return;		/* do not check extended partitions */
@@ -1478,7 +1488,7 @@ static void check_consistency(struct partition *p, int partition) {
 
 static void
 list_disk_geometry(void) {
-	long long bytes = (long long) total_number_of_sectors * 512;
+	long long bytes = (total_number_of_sectors << 9);
 	long megabytes = bytes/1000000;
 
 	if (megabytes < 10000)
@@ -1490,7 +1500,7 @@ list_disk_geometry(void) {
 	printf(_("%d heads, %d sectors/track, %d cylinders"),
 	       heads, sectors, cylinders);
 	if (units_per_sector == 1)
-		printf(_(", total %lu sectors"),
+		printf(_(", total %llu sectors"),
 		       total_number_of_sectors / (sector_size/512));
 	printf("\n");
 	printf(_("Units = %s of %d * %d = %d bytes\n\n"),
@@ -1507,7 +1517,7 @@ static int
 wrong_p_order(int *prev) {
 	struct pte *pe;
 	struct partition *p;
-	uint last_p_start_pos = 0, p_start_pos;
+	unsigned int last_p_start_pos = 0, p_start_pos;
 	int i, last_i = 0;
 
 	for (i = 0 ; i < partitions; i++) {
@@ -1665,7 +1675,7 @@ list_table(int xtra) {
 	if (w < 5)
 		w = 5;
 
-	printf(_("%*s Boot    Start       End    Blocks   Id  System\n"),
+	printf(_("%*s Boot      Start         End      Blocks   Id  System\n"),
 	       w+1, _("Device"));
 
 	for (i = 0; i < partitions; i++) {
@@ -1684,14 +1694,14 @@ list_table(int xtra) {
 			if (sector_size > 1024)
 				pblocks *= (sector_size / 1024);
                         printf(
-			    "%s  %c %9ld %9ld %9ld%c  %2x  %s\n",
+			    "%s  %c %11lu %11lu %11lu%c  %2x  %s\n",
 			partname(disk_device, i+1, w+2),
 /* boot flag */		!p->boot_ind ? ' ' : p->boot_ind == ACTIVE_FLAG
 			? '*' : '?',
-/* start */		(long) cround(get_partition_start(pe)),
-/* end */		(long) cround(get_partition_start(pe) + psects
+/* start */		(unsigned long) cround(get_partition_start(pe)),
+/* end */		(unsigned long) cround(get_partition_start(pe) + psects
 				- (psects ? 1 : 0)),
-/* odd flag on end */	(long) pblocks, podd ? '+' : ' ',
+/* odd flag on end */	(unsigned long) pblocks, podd ? '+' : ' ',
 /* type id */		p->sys_ind,
 /* type name */		(type = partition_type(p->sys_ind)) ?
 			type : _("Unknown"));
@@ -1715,12 +1725,12 @@ x_list_table(int extend) {
 
 	printf(_("\nDisk %s: %d heads, %d sectors, %d cylinders\n\n"),
 		disk_device, heads, sectors, cylinders);
-        printf(_("Nr AF  Hd Sec  Cyl  Hd Sec  Cyl    Start     Size ID\n"));
+        printf(_("Nr AF  Hd Sec  Cyl  Hd Sec  Cyl     Start      Size ID\n"));
 	for (i = 0 ; i < partitions; i++) {
 		pe = &ptes[i];
 		p = (extend ? pe->ext_pointer : pe->part_table);
 		if (p != NULL) {
-                        printf("%2d %02x%4d%4d%5d%4d%4d%5d%9d%9d %02x\n",
+                        printf("%2d %02x%4d%4d%5d%4d%4d%5d%11u%11u %02x\n",
 				i + 1, p->boot_ind, p->head,
 				sector(p->sector),
 				cylinder(p->sector, p->cyl), p->end_head,
@@ -1734,7 +1744,7 @@ x_list_table(int extend) {
 }
 
 static void
-fill_bounds(uint *first, uint *last) {
+fill_bounds(unsigned int *first, unsigned int *last) {
 	int i;
 	struct pte *pe = &ptes[0];
 	struct partition *p;
@@ -1752,8 +1762,9 @@ fill_bounds(uint *first, uint *last) {
 }
 
 static void
-check(int n, uint h, uint s, uint c, uint start) {
-	uint total, real_s, real_c;
+check(int n, unsigned int h, unsigned int s, unsigned int c,
+      unsigned int start) {
+	unsigned int total, real_s, real_c;
 
 	real_s = sector(s) - 1;
 	real_c = cylinder(s, c);
@@ -1779,8 +1790,8 @@ check(int n, uint h, uint s, uint c, uint start) {
 static void
 verify(void) {
 	int i, j;
-	uint total = 1;
-	uint first[partitions], last[partitions];
+	unsigned int total = 1;
+	unsigned int first[partitions], last[partitions];
 	struct partition *p;
 
 	if (warn_geometry())
@@ -1824,7 +1835,7 @@ verify(void) {
 
 	if (extended_offset) {
 		struct pte *pex = &ptes[ext_index];
-		uint e_last = get_start_sect(pex->part_table) +
+		unsigned int e_last = get_start_sect(pex->part_table) +
 			get_nr_sects(pex->part_table) - 1;
 
 		for (i = 4; i < partitions; i++) {
@@ -1855,7 +1866,8 @@ add_partition(int n, int sys) {
 	int i, read = 0;
 	struct partition *p = ptes[n].part_table;
 	struct partition *q = ptes[ext_index].part_table;
-	uint start, stop = 0, limit, temp,
+	long long llimit;
+	unsigned int start, stop = 0, limit, temp,
 		first[partitions], last[partitions];
 
 	if (p && p->sys_ind) {
@@ -1866,10 +1878,13 @@ add_partition(int n, int sys) {
 	fill_bounds(first, last);
 	if (n < 4) {
 		start = sector_offset;
-		if (display_in_cyl_units)
-			limit = heads * sectors * cylinders - 1;
+		if (display_in_cyl_units || !total_number_of_sectors)
+			llimit = heads * sectors * cylinders - 1;
 		else
-			limit = total_number_of_sectors - 1;
+			llimit = total_number_of_sectors - 1;
+		limit = llimit;
+		if (limit != llimit)
+			limit = 0x7fffffff;
 		if (extended_offset) {
 			first[ext_index] = extended_offset;
 			last[ext_index] = get_start_sect(q) +
@@ -1903,8 +1918,8 @@ add_partition(int n, int sys) {
 			read = 0;
 		}
 		if (!read && start == temp) {
-			uint i;
-			i = start;
+			unsigned int i = start;
+
 			start = read_int(cround(i), cround(i), cround(limit),
 					 0, mesg);
 			if (display_in_cyl_units) {
@@ -2174,7 +2189,7 @@ static void
 move_begin(int i) {
 	struct pte *pe = &ptes[i];
 	struct partition *p = pe->part_table;
-	uint new, first;
+	unsigned int new, first;
 
 	if (warn_geometry())
 		return;
@@ -2575,7 +2590,15 @@ main(int argc, char **argv) {
 				unknown_command(c);
 			break;
 		case 'd':
-			j = get_existing_partition(1, partitions);
+        		/* If sgi_label then don't use get_existing_partition,
+			   let the user select a partition, since
+			   get_existing_partition() only works for Linux-like
+			   partition tables */
+        		if (!sgi_label) {
+                		j = get_existing_partition(1, partitions);
+        		} else {
+                		j = get_partition(1, partitions);
+        		}
 			if (j >= 0)
 				delete_partition(j);
 			break;

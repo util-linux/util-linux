@@ -297,6 +297,8 @@ do_guess_fstype(const char *device) {
 	 else if ((!strncmp(xsb.fatsb.s_os, "MSDOS", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "MSWIN", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "MTOOL", 5) ||
+		   !strncmp(xsb.fatsb.s_os, "IBM", 3) ||
+		   !strncmp(xsb.fatsb.s_os, "DRDOS", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "mkdosfs", 7) ||
 		   !strncmp(xsb.fatsb.s_os, "kmkdosfs", 8) ||
 		   /* Michal Svec: created by fdformat, old msdos utility for
@@ -359,13 +361,10 @@ do_guess_fstype(const char *device) {
              goto io_error;
 
         /* also check if block size is equal to 512 bytes,
-           since the hfs driver currently only has support
-           for block sizes of 512 bytes long, and to be
-           more accurate (sb magic is only a short int) */
-        if ((hfsmagic(hfssb) == HFS_SUPER_MAGIC &&
-	     hfsblksize(hfssb) == 0x20000) ||
-            (swapped(hfsmagic(hfssb)) == HFS_SUPER_MAGIC &&
-             hfsblksize(hfssb) == 0x200))
+	   or a multiple. (I see 1536 here.) */
+        if (hfsmagic(hfssb) == HFS_SUPER_MAGIC &&	/* always BE */
+	    hfsblksize(hfssb) != 0 &&
+	    (hfsblksize(hfssb) & 0x1ff) == 0)
              type = "hfs";
     }
 

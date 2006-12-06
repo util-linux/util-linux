@@ -4,7 +4,6 @@
   	Internationalization
 */
 #include <stdio.h>              /* stderr */
-#include <stdlib.h>             /* uint */
 #include <string.h>             /* strstr */
 #include <unistd.h>             /* write */
 

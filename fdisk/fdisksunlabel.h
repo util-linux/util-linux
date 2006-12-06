@@ -38,7 +38,7 @@ typedef struct {
 				 
 /* fdisk.c */
 extern char MBRbuffer[MAX_SECTOR_SIZE];
-extern uint heads, sectors, cylinders;
+extern unsigned int heads, sectors, cylinders;
 extern int show_begin;
 extern int sun_label;
 extern char *partition_type(unsigned char type);

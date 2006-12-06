@@ -132,8 +132,8 @@ fatal(char *s, ...) {
  */
 #if !defined (__alpha__) && !defined (__ia64__) && !defined (__x86_64__) && !defined (__s390x__)
 static
-_syscall5(int,  _llseek,  uint,  fd, ulong, hi, ulong, lo,
-       loff_t *, res, uint, wh);
+_syscall5(int,  _llseek,  unsigned int,  fd, ulong, hi, ulong, lo,
+       loff_t *, res, unsigned int, wh);
 #endif
 
 static int
@@ -154,8 +154,8 @@ sseek(char *dev, unsigned int fd, unsigned long s) {
 
     if (in != out) {
 	error(_("seek error: wanted 0x%08x%08x, got 0x%08x%08x\n"),
-	       (uint)(in>>32), (uint)(in & 0xffffffff),
-	       (uint)(out>>32), (uint)(out & 0xffffffff));
+	       (unsigned int)(in>>32), (unsigned int)(in & 0xffffffff),
+	       (unsigned int)(out>>32), (unsigned int)(out & 0xffffffff));
 	return 0;
     }
     return 1;
@@ -882,9 +882,9 @@ out_partition_header(char *dev, int format, struct geometry G) {
 	printf(_("   Device Boot   Start       End    #blocks   Id  System\n"));
 	break;
       case F_MEGABYTE:
-	printf(_("Units = megabytes of 1048576 bytes, blocks of 1024 bytes"
+	printf(_("Units = mebibytes of 1048576 bytes, blocks of 1024 bytes"
 	       ", counting from %d\n\n"), increment);
-	printf(_("   Device Boot Start   End     MB    #blocks   Id  System\n"));
+	printf(_("   Device Boot Start   End    MiB    #blocks   Id  System\n"));
 	break;
     }
 }
@@ -1269,7 +1269,7 @@ partitions_ok(struct disk_desc *z) {
 	b = p->p.begin_chs;
 	aa = chs_to_longchs(a);
 	bb = chs_to_longchs(b);
-	if (!chs_ok(b, PNO(p), "start"))
+	if (!chs_ok(b, PNO(p), _("start")))
 	  return 0;
 	if(a.s && !is_equal_chs(a, b))
 	  warn(_("partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
@@ -1278,7 +1278,7 @@ partitions_ok(struct disk_desc *z) {
 	b = p->p.end_chs;
 	aa = chs_to_longchs(a);
 	bb = chs_to_longchs(b);
-	if (!chs_ok(b, PNO(p), "end"))
+	if (!chs_ok(b, PNO(p), _("end")))
 	  return 0;
 	if(a.s && !is_equal_chs(a, b))
 	  warn(_("partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
@@ -1568,9 +1568,11 @@ write_partitions(char *dev, int fd, struct disk_desc *z) {
 	s = get_sector(dev, fd, p->sector);
 	if (!s) return 0;
 	s->to_be_written = 1;
-	copy_from_part(&(p->p), s->data + p->offset);
-	s->data[510] = 0x55;
-	s->data[511] = 0xaa;
+	if (p->ptype == DOS_TYPE) {
+	    copy_from_part(&(p->p), s->data + p->offset);
+	    s->data[510] = 0x55;
+	    s->data[511] = 0xaa;
+	}
     }
     if (save_sector_file) {
 	if (!save_sectors(dev, fd)) {
@@ -2719,7 +2721,8 @@ set_active (struct disk_desc *z, char *pnam) {
     int pno;
 
     pno = asc_to_index(pnam, z);
-    z->partitions[pno].p.bootable = 0x80;
+    if (z->partitions[pno].ptype == DOS_TYPE)
+	    z->partitions[pno].p.bootable = 0x80;
 }
 
 static void
@@ -2755,7 +2758,8 @@ do_activate (char **av, int ac, char *arg) {
     } else {
 	/* clear `active byte' everywhere */
 	for (pno=0; pno < z->partno; pno++)
-	    z->partitions[pno].p.bootable = 0;
+	    if (z->partitions[pno].ptype == DOS_TYPE)
+		z->partitions[pno].p.bootable = 0;
 
 	/* then set where desired */
 	if (ac == 1)

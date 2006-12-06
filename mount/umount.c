@@ -400,15 +400,23 @@ umount_one (const char *spec, const char *node, const char *type,
  * In both cases, it is best to try the last occurrence first.
  */
 static int
-umount_one_bw (const char *file, struct mntentchn *mc) {
-     int res = 1;
+umount_one_bw (const char *file, struct mntentchn *mc0) {
+	struct mntentchn *mc;
+	int res = 1;
 
-     while (res && mc) {
-	  res = umount_one(mc->m.mnt_fsname, mc->m.mnt_dir,
-			   mc->m.mnt_type, mc->m.mnt_opts, mc);
-	  mc = getmntfilesbackward (file, mc);
-     }
-     return res;
+	mc = mc0;
+	while (res && mc) {
+		res = umount_one(mc->m.mnt_fsname, mc->m.mnt_dir,
+				 mc->m.mnt_type, mc->m.mnt_opts, mc);
+		mc = getmntdirbackward(file, mc);
+	}
+	mc = mc0;
+	while (res && mc) {
+		res = umount_one(mc->m.mnt_fsname, mc->m.mnt_dir,
+				 mc->m.mnt_type, mc->m.mnt_opts, mc);
+		mc = getmntdevbackward(file, mc);
+	}
+	return res;
 }
 
 /* Unmount all filesystems of type VFSTYPES found in mtab.  Since we are
@@ -525,7 +533,6 @@ get_value(string_list list, char *s) {
 	}
 	return 0;
 }
-/*=======================================================================*/
 
 static int
 umount_file (char *arg) {
@@ -534,19 +541,25 @@ umount_file (char *arg) {
 	string_list options;
 	int fstab_has_user, fstab_has_users, fstab_has_owner, ok;
 
-	file = canonicalize (arg); /* mtab paths are canonicalized */
+	file = canonicalize(arg); /* mtab paths are canonicalized */
 	if (verbose > 1)
 		printf(_("Trying to umount %s\n"), file);
 
-	mc = getmntfilesbackward (file, NULL);
+	mc = getmntdirbackward(file, NULL);
+	if (!mc)
+		mc = getmntdevbackward(file, NULL);
 	if (!mc && verbose)
 		printf(_("Could not find %s in mtab\n"), file);
 
 	if (suid) {
 		if (!mc)
-			die (2, _("umount: %s is not mounted (according to mtab)"), file);
-		if (getmntfilesbackward (file, mc))
-			die (2, _("umount: it seems %s is mounted multiple times"), file);
+			die(2,
+			    _("umount: %s is not mounted (according to mtab)"),
+			    file);
+		if (!is_mounted_once(file))
+			die(2,
+			    _("umount: it seems %s is mounted multiple times"),
+			    file);
 
 		/* If fstab contains the two lines
 		   /dev/sda1 /mnt/zip auto user,noauto  0 0

@@ -104,7 +104,7 @@ typedef struct {
 #define sgilabel ((sgi_partition *)MBRbuffer)
 #define sgiparam (sgilabel->devparam)
 extern char MBRbuffer[MAX_SECTOR_SIZE];
-extern uint heads, sectors, cylinders;
+extern unsigned int heads, sectors, cylinders, sector_size;
 extern int show_begin;
 extern int sgi_label;
 extern char *partition_type(unsigned char type);
@@ -118,8 +118,8 @@ extern void 	sgi_nolabel( void );
 extern int 	check_sgi_label( void );
 extern void	sgi_list_table( int xtra );
 extern void	sgi_change_sysid( int i, int sys );
-extern int	sgi_get_start_sector( int i );
-extern int	sgi_get_num_sectors( int i );
+extern unsigned int	sgi_get_start_sector( int i );
+extern unsigned int	sgi_get_num_sectors( int i );
 extern int	sgi_get_sysid( int i );
 extern void	sgi_delete_partition( int i );
 extern void	sgi_add_partition( int n, int sys );

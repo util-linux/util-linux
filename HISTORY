@@ -1,3 +1,67 @@
+util-linux 2.12
+
+* losetup: -p option specifies fd for passphrase
+* fdisk: sgi layout fix
+* mount: -p option specifies fd for passphrase
+* mount: recognize some PCDOS floppies
+* umount: in "umount name", first try to interpret "name" as a mount point
+
+util-linux 2.12pre
+
+* Catalan messages (Antoni Bella Perez)
+* Danish messages (Claus Hindsgaul)
+* Dutch messages (Taco Witte)
+* Finnish messages (Lauri Nurmi)
+* French messages (Michel Robitaille)
+* German messages (Michael Piefel)
+* Slovenian messages (Primoz Peterlin)
+* Spanish messages (Santiago Vila Doncel)
+* Swedish messages (Christian Rose)
+* Turkish messages (Nilgün Belma Bugüner)
+* cfdisk: localize the Y/N answer, improve printing localized messages
+* cfdisk: make various variables long long - some disks are close to 2 TB
+* cfdisk: use BLKGETSIZE64
+* fdisk: make various variables unsigned to lengthen the life of 32-bit vars
+* fdisk: some sgi fixes (Phillip Kesling)
+* fdisk: k=1000, K=1024
+* fdisk: removed last occurrences of HDIO_REQ
+* fdisk: use BLKGETSIZE64
+* hwclock: fix rtc test (Heiko Zuerker)
+* login: set a timeout on printing the timeout message (Robert Ambrose)
+* md5: x86_64 fix (mmj)
+* more: POSIX fixes
+* mount: do not supply MS_MGC_VAL when there are conflicting flags
+* mount: ncp and smb are called smbfs and ncpfs - global change
+* mount: add support for xvm mount by label (Eric Sandeen)
+* mount: correct hfs magic recognition
+* mount: keep original umask - it influences the mount call (mmj)
+* raw.8: documented unbinding of raw devices
+* readprofile: fixed off-by eight error (Werner Almesberger)
+* script: add -c option (Wayne Davison)
+* sfdisk.8: added an example of partitioning with logical partitions
+* sfdisk: only add a AA55 signature for DOS-type partition tables
+* tailf: new (Rik Faith)
+
+util-linux 2.11z
+
+* Catalan messages (Antoni Bella Perez)
+* Danish messages (Claus Hindsgaul)
+* Dutch messages (Taco Witte)
+* Finnish messages (Lauri Nurmi)
+* French messages (Michel Robitaille) - HURRAY!
+* German messages (Michael Piefel)
+* Slovenian messages (Primoz Peterlin)
+* Spanish messages (Santiago Vila Doncel)
+* Swedish messages (Christian Rose)
+* Turkish messages (Nilgün Belma Bugüner)
+* getopt: replaced getopt-1.1.2 by getopt-1.1.3 (Frodo Looijaard)
+* mkcramfs: change default blocksize for ia64 and alpha
+* more.help: removed (it is built-in now, and translated)
+* mount: add -i option (inhibit calling external mount programs)
+* mount: change default: do resolve symlinks
+* readprofile: look for System.map also in /boot/System.map-`uname -r` (mmj)
+* sfdisk: also translate "start" and "end"; s/MB/MiB/
+
 util-linux 2.11y
 
 * Danish messages (Claus Hindsgaul)

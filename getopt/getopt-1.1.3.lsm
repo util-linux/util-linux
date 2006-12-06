@@ -1,7 +1,7 @@
 Begin3
 Title: Getopt
-Version: 1.1.2
-Entered-date: 29MAR01
+Version: 1.1.3
+Entered-date: 23JAN02
 Description: An improved implementation of getopt(1), a program to parse
              options within a shell script. Fully compatible with other
              getopt(1) implementations, but with many additions like
@@ -9,11 +9,8 @@ Description: An improved implementation of getopt(1), a program to parse
 Keywords: getopt script parse bash tcsh
 Author: frodol@dds.nl (Frodo Looijaard)
 Primary-site: http://huizen.dds.nl/~frodol
-              28kB getopt-1.1.2.tar.gz
-              689  getopt-1.1.2.lsm
-Alternate-site: sunsite.unc.edu /pub/Linux/utils/shell
-              28kB getopt-1.1.2.tar.gz
-              689  getopt-1.1.2.lsm
+              28kB getopt-1.1.3.tar.gz
+              689  getopt-1.1.3.lsm
 Copying-policy: GPL
 End
 

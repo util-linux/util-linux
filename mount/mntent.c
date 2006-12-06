@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <string.h>		/* for index */
 #include <ctype.h>		/* for isdigit */
+#include <sys/stat.h>		/* for umask */
 #include "mntent.h"
 #include "sundries.h"		/* for xmalloc */
 #include "nls.h"
@@ -95,8 +96,10 @@ unmangle(char *s) {
 mntFILE *
 my_setmntent (const char *file, char *mode) {
 	mntFILE *mfp = xmalloc(sizeof(*mfp));
+	mode_t old_umask = umask(077);
 
 	mfp->mntent_fp = fopen (file, mode);
+	umask(old_umask);
 	mfp->mntent_file = xstrdup(file);
 	mfp->mntent_errs = (mfp->mntent_fp == NULL);
 	mfp->mntent_softerrs = 0;

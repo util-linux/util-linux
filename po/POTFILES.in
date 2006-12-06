@@ -21,7 +21,7 @@ fdisk/i386_sys_types.c
 fdisk/llseek.c
 fdisk/partname.c
 fdisk/sfdisk.c
-getopt-1.1.2/getopt.c
+getopt/getopt.c
 hwclock/clock-ppc.c
 hwclock/cmos.c
 hwclock/hwclock.c
@@ -65,7 +65,6 @@ misc-utils/script.c
 misc-utils/setterm.c
 misc-utils/whereis.c
 misc-utils/write.c
-mount/bind.c
 mount/fstab.c
 mount/getusername.c
 mount/lomount.c

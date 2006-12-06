@@ -2,8 +2,8 @@
 
 /* Written 2000 by Werner Almesberger */
 
-
 #include <stdio.h>
+#include <errno.h>	/* needed for <linux/unistd.h> below */
 
 #ifdef __ia64__
 # include <sys/syscall.h>

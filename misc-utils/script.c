@@ -91,6 +91,7 @@ int	l;
 char	line[] = "/dev/ptyXX";
 #endif
 int	aflg = 0;
+char	*cflg = NULL;
 int	fflg = 0;
 int	qflg = 0;
 int	tflg = 0;
@@ -135,10 +136,13 @@ main(int argc, char **argv) {
 		}
 	}
 
-	while ((ch = getopt(argc, argv, "afqt")) != -1)
+	while ((ch = getopt(argc, argv, "ac:fqt")) != -1)
 		switch((char)ch) {
 		case 'a':
 			aflg++;
+			break;
+		case 'c':
+			cflg = optarg;
 			break;
 		case 'f':
 			fflg++;
@@ -284,7 +288,9 @@ dooutput() {
 
 void
 doshell() {
-	/***
+	char *shname;
+
+#if 0
 	int t;
 
 	t = open(_PATH_TTY, O_RDWR);
@@ -292,7 +298,8 @@ doshell() {
 		(void) ioctl(t, TIOCNOTTY, (char *)0);
 		(void) close(t);
 	}
-	***/
+#endif
+
 	getslave();
 	(void) close(master);
 	(void) fclose(fscript);
@@ -300,11 +307,18 @@ doshell() {
 	(void) dup2(slave, 1);
 	(void) dup2(slave, 2);
 	(void) close(slave);
-#ifdef __linux__
-	execl(shell, strrchr(shell, '/') + 1, "-i", 0);
-#else
-	execl(shell, "sh", "-i", 0);
-#endif
+
+	shname = strrchr(shell, '/');
+	if (shname)
+		shname++;
+	else
+		shname = shell;
+
+	if (cflg)
+		execl(shell, shname, "-c", cflg, 0);
+	else
+		execl(shell, shname, "-i", 0);
+
 	perror(shell);
 	fail();
 }

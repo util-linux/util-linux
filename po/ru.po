@@ -689,8 +689,8 @@ msgstr ""
 msgid "Usage: mkfs [-V] [-t fstype] [fs-options] device [size]\n"
 msgstr ""
 
-#: disk-utils/mkfs.c:90 fdisk/cfdisk.c:373 getopt-1.1.2/getopt.c:89
-#: getopt-1.1.2/getopt.c:99 login-utils/wall.c:237
+#: disk-utils/mkfs.c:90 fdisk/cfdisk.c:373 getopt/getopt.c:89
+#: getopt/getopt.c:99 login-utils/wall.c:237
 #, c-format
 msgid "%s: Out of memory!\n"
 msgstr "%s: Недостаточно памяти!\n"
@@ -4474,89 +4474,89 @@ msgid ""
 "(See fdisk(8).)\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:233
+#: getopt/getopt.c:233
 msgid "Try `getopt --help' for more information.\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:299
+#: getopt/getopt.c:299
 msgid "empty long option after -l or --long argument"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:319
+#: getopt/getopt.c:319
 msgid "unknown shell after -s or --shell argument"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:324
+#: getopt/getopt.c:324
 msgid "Usage: getopt optstring parameters\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:325
+#: getopt/getopt.c:325
 msgid "       getopt [options] [--] optstring parameters\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:326
+#: getopt/getopt.c:326
 msgid "       getopt [options] -o|--options optstring [options] [--]\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:327
+#: getopt/getopt.c:327
 msgid "              parameters\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:328
+#: getopt/getopt.c:328
 msgid ""
 "  -a, --alternative            Allow long options starting with single -\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:329
+#: getopt/getopt.c:329
 msgid "  -h, --help                   This small usage guide\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:330
+#: getopt/getopt.c:330
 msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:331
+#: getopt/getopt.c:331
 msgid ""
 "  -n, --name=progname          The name under which errors are reported\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:332
+#: getopt/getopt.c:332
 msgid "  -o, --options=optstring      Short options to be recognized\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:333
+#: getopt/getopt.c:333
 msgid "  -q, --quiet                  Disable error reporting by getopt(3)\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:334
+#: getopt/getopt.c:334
 msgid "  -Q, --quiet-output           No normal output\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:335
+#: getopt/getopt.c:335
 msgid "  -s, --shell=shell            Set shell quoting conventions\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:336
+#: getopt/getopt.c:336
 msgid "  -T, --test                   Test for getopt(1) version\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:337
+#: getopt/getopt.c:337
 msgid "  -u, --unqote                 Do not quote the output\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:338
+#: getopt/getopt.c:338
 msgid "  -V, --version                Output version information\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:392 getopt-1.1.2/getopt.c:453
+#: getopt/getopt.c:392 getopt/getopt.c:453
 msgid "missing optstring argument"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:441
+#: getopt/getopt.c:441
 msgid "getopt (enhanced) 1.1.2\n"
 msgstr ""
 
-#: getopt-1.1.2/getopt.c:447
+#: getopt/getopt.c:447
 msgid "internal error, contact the author."
 msgstr ""
 

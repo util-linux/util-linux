@@ -6,9 +6,9 @@
 include ../make_include
 include ../MCONFIG
 
-MAN1= 		col.1 colcrt.1 colrm.1 column.1 hexdump.1 rev.1 line.1
+MAN1= 		col.1 colcrt.1 colrm.1 column.1 hexdump.1 rev.1 line.1 tailf.1
 
-USRBIN=		col colcrt colrm column hexdump rev line
+USRBIN=		col colcrt colrm column hexdump rev line tailf
 
 BIN=
 
@@ -72,6 +72,7 @@ column: column.o $(ERR_O)
 more.o: more.c $(LIB)/pathnames.h
 rev: rev.o
 line: line.o
+tailf: tailf.o
 
 colcrt.o colrm.o column.o rev.o ul.o: $(LIB)/widechar.h
 

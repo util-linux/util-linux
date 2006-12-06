@@ -46,7 +46,14 @@
 static const char *progname = "mkcramfs";
 static int verbose = 0;
 
+#ifdef __ia64__
+#define PAGE_CACHE_SIZE (16384)
+#elif defined __alpha__
+#define PAGE_CACHE_SIZE (8192)
+#else
 #define PAGE_CACHE_SIZE (4096)
+#endif
+
 /* The kernel assumes PAGE_CACHE_SIZE as block size. */
 static unsigned int blksize = PAGE_CACHE_SIZE; /* settable via -b option */
 static long total_blocks = 0, total_nodes = 1; /* pre-count the root node */

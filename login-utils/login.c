@@ -1252,17 +1252,35 @@ getloginname(void) {
 }
 #endif
 
-void
+/*
+ * Robert Ambrose writes:
+ * A couple of my users have a problem with login processes hanging around
+ * soaking up pts's.  What they seem to hung up on is trying to write out the
+ * message 'Login timed out after %d seconds' when the connection has already
+ * been dropped.
+ * What I did was add a second timeout while trying to write the message so
+ * the process just exits if the second timeout expires.
+ */
+
+static void
+timedout2(int sig) {
+	struct termio ti;
+    
+	/* reset echo */
+	ioctl(0, TCGETA, &ti);
+	ti.c_lflag |= ECHO;
+	ioctl(0, TCSETA, &ti);
+	exit(0);			/* %% */
+}
+
+static void
 timedout(int sig) {
-    struct termio ti;
-    
-    fprintf(stderr, _("Login timed out after %d seconds\n"), timeout);
-    
-    /* reset echo */
-    ioctl(0, TCGETA, &ti);
-    ti.c_lflag |= ECHO;
-    ioctl(0, TCSETA, &ti);
-    exit(0);			/* %% */
+	signal(SIGALRM, timedout2);
+	alarm(10);
+	fprintf(stderr, _("Login timed out after %d seconds\n"), timeout);
+	signal(SIGALRM, SIG_IGN);
+	alarm(0);
+	timedout2(0);
 }
 
 #ifndef USE_PAM

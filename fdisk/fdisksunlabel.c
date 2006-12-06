@@ -11,7 +11,7 @@
  */
 
 #include <stdio.h>		/* stderr */
-#include <stdlib.h>		/* uint */
+#include <stdlib.h>		/* qsort */
 #include <string.h>		/* strstr */
 #include <unistd.h>		/* write */
 #include <sys/ioctl.h>		/* ioctl */
@@ -99,7 +99,7 @@ void guess_device_type(int fd) {
 }
 
 static void
-set_sun_partition(int i, uint start, uint stop, int sysid) {
+set_sun_partition(int i, unsigned int start, unsigned int stop, int sysid) {
 	sunlabel->infos[i].id = sysid;
 	sunlabel->partitions[i].start_cylinder =
 		SSWAP32(start / (heads * sectors));
@@ -296,11 +296,7 @@ void create_sunlabel(void)
 	    }
 	}
 	if (!p || floppy) {
-#ifdef HDIO_REQ
-	    if (!ioctl(fd, HDIO_REQ, &geometry)) {
-#else
 	    if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
-#endif
 	        heads = geometry.heads;
 	        sectors = geometry.sectors;
 	        cylinders = geometry.cylinders;
@@ -396,7 +392,7 @@ toggle_sunflags(int i, unsigned char mask) {
 }
 
 static void
-fetch_sun(uint *starts, uint *lens, uint *start, uint *stop) {
+fetch_sun(unsigned int *starts, unsigned int *lens, unsigned int *start, unsigned int *stop) {
 	int i, continuous = 1;
 	*start = 0; *stop = cylinders * heads * sectors;
 	for (i = 0; i < partitions; i++) {
@@ -422,7 +418,7 @@ fetch_sun(uint *starts, uint *lens, uint *start, uint *stop) {
 	}
 }
 
-static uint *verify_sun_starts;
+static unsigned int *verify_sun_starts;
 
 static int
 verify_sun_cmp(int *a, int *b) {
@@ -434,7 +430,7 @@ verify_sun_cmp(int *a, int *b) {
 
 void
 verify_sun(void) {
-    uint starts[8], lens[8], start, stop;
+    unsigned int starts[8], lens[8], start, stop;
     int i,j,k,starto,endo;
     int array[8];
 
@@ -496,8 +492,8 @@ verify_sun(void) {
 
 void
 add_sun_partition(int n, int sys) {
-	uint start, stop, stop2;
-	uint starts[8], lens[8];
+	unsigned int start, stop, stop2;
+	unsigned int starts[8], lens[8];
 	int whole_disk = 0;
 		
 	char mesg[256];
@@ -606,15 +602,16 @@ and is of type `Whole disk'\n");
 
 void
 sun_delete_partition(int i) {
+	unsigned int nsec;
+
 	if (i == 2 && sunlabel->infos[i].id == WHOLE_DISK && 
 	    !sunlabel->partitions[i].start_cylinder && 
-	    SSWAP32(sunlabel->partitions[i].num_sectors)
+	    (nsec = SSWAP32(sunlabel->partitions[i].num_sectors))
 	      == heads * sectors * cylinders)
 		printf(_("If you want to maintain SunOS/Solaris compatibility, "
 		       "consider leaving this\n"
 		       "partition as Whole disk (5), starting at 0, with %u "
-		       "sectors\n"),
-		       (uint) SSWAP32(sunlabel->partitions[i].num_sectors));
+		       "sectors\n"), nsec);
 	sunlabel->infos[i].id = 0;
 	sunlabel->partitions[i].num_sectors = 0;
 }

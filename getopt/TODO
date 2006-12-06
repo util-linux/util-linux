@@ -4,3 +4,5 @@ already, depending on quoting conventions). (zsh seems OK).
 Perhaps a nice configure script?
 
 Add a `test' target in Makefile.
+
+Resync po-files with util-linux

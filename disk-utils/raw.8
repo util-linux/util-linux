@@ -43,6 +43,8 @@ device, or with the
 .I \-a
 option to query all bound raw devices.
 .PP
+Unbinding can be done by specifying major and minor 0.
+.PP
 Once bound to a block device, a raw device can be opened, read and
 written, just like the block device it is bound to.  However, the raw
 device does not behave exactly like the block device.  In particular,

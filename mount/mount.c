@@ -80,6 +80,9 @@
 /* True for fake mount (-f).  */
 static int fake = 0;
 
+/* True if we are allowed to call /sbin/mount.${FSTYPE} */
+static int external_allowed = 1;
+
 /* Don't write a entry in /etc/mtab (-n).  */
 static int nomtab = 0;
 
@@ -109,6 +112,9 @@ static int mounttype = 0;
 
 /* True if ruid != euid.  */
 static int suid = 0;
+
+/* Contains the fd to read the passphrase from, if any. */
+static int pfd = -1;
 
 /* Map from -o and fstab option strings to the flag argument to mount(2).  */
 struct opt_map {
@@ -447,11 +453,16 @@ static int mountcount = 0;
  */
 static int
 do_mount_syscall (struct mountargs *args) {
-     int ret = mount (args->spec, args->node, args->type,
-		      MS_MGC_VAL | (args->flags), args->data);
-     if (ret == 0)
-	  mountcount++;
-     return ret;
+	int flags = args->flags;
+	int ret;
+
+	if ((flags & MS_MGC_MSK) == 0)
+		flags |= MS_MGC_VAL;
+
+	ret = mount (args->spec, args->node, args->type, flags, args->data);
+	if (ret == 0)
+		mountcount++;
+	return ret;
 }
 
 /*
@@ -593,7 +604,8 @@ loop_check(char **spec, char **type, int *flags,
       if (verbose)
 	printf(_("mount: going to use the loop device %s\n"), *loopdev);
       offset = opt_offset ? strtoul(opt_offset, NULL, 0) : 0;
-      if (set_loop (*loopdev, *loopfile, offset, opt_encryption, &loopro)) {
+      if (set_loop(*loopdev, *loopfile, offset,
+		   opt_encryption, pfd, &loopro)) {
 	if (verbose)
 	  printf(_("mount: failed setting up loop device\n"));
 	return EX_FAIL;
@@ -652,6 +664,14 @@ update_mtab_entry(char *spec, char *node, char *type, char *opts,
 }
 
 static void
+set_pfd(char *s) {
+	if (!isdigit(*s))
+		die(EX_USAGE,
+		    _("mount: argument to -p or --pass-fd must be a number"));
+	pfd = atoi(optarg);
+}
+
+static void
 cdrom_setspeed(char *spec) {
 #define CDROM_SELECT_SPEED      0x5322  /* Set the CD-ROM speed */
     if (opt_speed) {
@@ -673,7 +693,6 @@ cdrom_setspeed(char *spec) {
  *	If there is a special mount program for this type, exec it.
  * returns: 0: no exec was done, 1: exec was done, status has result
  */
-#define ALWAYS_STAT
 
 static int
 check_special_mountprog(char *spec, char *node, char *type, int flags,
@@ -682,16 +701,10 @@ check_special_mountprog(char *spec, char *node, char *type, int flags,
   struct stat statbuf;
   int res;
 
-  if (type &&
-#ifndef ALWAYS_STAT
-     (streq (type, "smb") || streq (type, "ncp")
-      /* these are incorrect but perhaps used by smbmount or so */
-       || streq (type, "smbfs") || streq (type, "ncpfs")
-     )
-#else
-     (strlen (type) < 100)
-#endif
-  ) {
+  if (!external_allowed)
+      return 0;
+
+  if (type && strlen(type) < 100) {
        sprintf(mountprog, "/sbin/mount.%s", type);
        if (stat(mountprog, &statbuf) == 0) {
 	    res = fork();
@@ -767,7 +780,7 @@ try_mount_one (const char *spec0, const char *node0, char *types0,
   if (mount_all && (flags & MS_NOAUTO))
     return 0;
 
-  suid_check (spec, node, &flags, &user);
+  suid_check(spec, node, &flags, &user);
 
   mount_opts = extra_opts;
 
@@ -775,18 +788,19 @@ try_mount_one (const char *spec0, const char *node0, char *types0,
       cdrom_setspeed(spec);
 
   if (!(flags & MS_REMOUNT)) {
-      /* don't set up a (new) loop device if we only remount - this left
+      /*
+       * Don't set up a (new) loop device if we only remount - this left
        * stale assignments of files to loop devices. Nasty when used for
        * encryption.
        */
-      res = loop_check (&spec, &types, &flags, &loop, &loopdev, &loopfile);
+      res = loop_check(&spec, &types, &flags, &loop, &loopdev, &loopfile);
       if (res)
 	  return res;
   }
 
   /*
    * Call mount.TYPE for types that require a separate mount program.
-   * For the moment these types are ncp and smb. Maybe also vxfs.
+   * For the moment these types are ncpfs and smbfs. Maybe also vxfs.
    * All such special things must occur isolated in the types string.
    */
   if (check_special_mountprog (spec, node, types, flags, extra_opts, &status))
@@ -1136,10 +1150,10 @@ mount_one (const char *spec, const char *node, char *types, const char *opts,
 	  printf(_("mount: no type was given - "
 		 "I'll assume nfs because of the colon\n"));
       } else if(!strncmp(spec, "//", 2)) {
-	types = "smb";
+	types = "smbfs";
 	if (verbose)
 	  printf(_("mount: no type was given - "
-		   "I'll assume smb because of the // prefix\n"));
+		   "I'll assume smbfs because of the // prefix\n"));
       }
   }
 
@@ -1356,6 +1370,7 @@ static struct option longopts[] = {
 	{ "rw", 0, 0, 'w' },
 	{ "options", 1, 0, 'o' },
 	{ "test-opts", 1, 0, 'O' },
+	{ "pass-fd", 1, 0, 'p' },
 	{ "types", 1, 0, 't' },
 	{ "bind", 0, 0, 128 },
 	{ "replace", 0, 0, 129 },
@@ -1365,6 +1380,7 @@ static struct option longopts[] = {
 	{ "move", 0, 0, 133 },
 	{ "guess-fstype", 1, 0, 134 },
 	{ "rbind", 0, 0, 135 },
+	{ "internal-only", 0, 0, 'i' },
 	{ NULL, 0, 0, 0 }
 };
 
@@ -1392,7 +1408,7 @@ usage (FILE *fp, int n) {
 	  "       mount --move olddir newdir\n"
 	  "A device can be given by name, say /dev/hda1 or /dev/cdrom,\n"
 	  "or by label, using  -L label  or by uuid, using  -U uuid .\n"
-	  "Other options: [-nfFrsvw] [-o options].\n"
+	  "Other options: [-nfFrsvw] [-o options] [-p passwdfd].\n"
 	  "For many more details, say  man 8 mount .\n"
 	));
 /*
@@ -1431,7 +1447,7 @@ main (int argc, char *argv[]) {
 	initproctitle(argc, argv);
 #endif
 
-	while ((c = getopt_long (argc, argv, "afFhlL:no:O:rsU:vVwt:",
+	while ((c = getopt_long (argc, argv, "afFhilL:no:O:p:rsU:vVwt:",
 				 longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':	       /* mount everything in fstab */
@@ -1445,6 +1461,9 @@ main (int argc, char *argv[]) {
 			break;
 		case 'h':		/* help */
 			usage (stdout, 0);
+			break;
+		case 'i':
+			external_allowed = 0;
 			break;
 		case 'l':
 			list_with_volumelabel = 1;
@@ -1466,6 +1485,9 @@ main (int argc, char *argv[]) {
 				test_opts = xstrconcat3(test_opts, ",", optarg);
 			else
 				test_opts = xstrdup(optarg);
+			break;
+		case 'p':		/* fd on which to read passwd */
+			set_pfd(optarg);
 			break;
 		case 'r':		/* mount readonly */
 			readonly = 1;

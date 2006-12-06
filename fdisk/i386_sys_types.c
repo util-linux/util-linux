@@ -14,10 +14,10 @@ struct systypes i386_sys_types[] = {
 	{0x08, N_("AIX")},		/* AIX boot (AIX -- PS/2 port) or SplitDrive */
 	{0x09, N_("AIX bootable")},	/* AIX data or Coherent */
 	{0x0a, N_("OS/2 Boot Manager")},/* OS/2 Boot Manager */
-	{0x0b, N_("Win95 FAT32")},
-	{0x0c, N_("Win95 FAT32 (LBA)")},/* LBA really is `Extended Int 13h' */
-	{0x0e, N_("Win95 FAT16 (LBA)")},
-	{0x0f, N_("Win95 Ext'd (LBA)")},
+	{0x0b, N_("W95 FAT32")},
+	{0x0c, N_("W95 FAT32 (LBA)")},/* LBA really is `Extended Int 13h' */
+	{0x0e, N_("W95 FAT16 (LBA)")},
+	{0x0f, N_("W95 Ext'd (LBA)")},
 	{0x10, N_("OPUS")},
 	{0x11, N_("Hidden FAT12")},
 	{0x12, N_("Compaq diagnostics")},
@@ -25,9 +25,9 @@ struct systypes i386_sys_types[] = {
 	{0x16, N_("Hidden FAT16")},
 	{0x17, N_("Hidden HPFS/NTFS")},
 	{0x18, N_("AST SmartSleep")},
-	{0x1b, N_("Hidden Win95 FAT32")},
-	{0x1c, N_("Hidden Win95 FAT32 (LBA)")},
-	{0x1e, N_("Hidden Win95 FAT16 (LBA)")},
+	{0x1b, N_("Hidden W95 FAT32")},
+	{0x1c, N_("Hidden W95 FAT32 (LBA)")},
+	{0x1e, N_("Hidden W95 FAT16 (LBA)")},
 	{0x24, N_("NEC DOS")},
 	{0x39, N_("Plan 9")},
 	{0x3c, N_("PartitionMagic recovery")},

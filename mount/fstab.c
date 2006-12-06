@@ -27,49 +27,49 @@ static int var_mtab_is_a_symlink = 0;
 
 static void
 get_mtab_info(void) {
-     struct stat mtab_stat;
+	struct stat mtab_stat;
 
-     if (!have_mtab_info) {
-	  if (lstat(MOUNTED, &mtab_stat))
-	       var_mtab_does_not_exist = 1;
-	  else if (S_ISLNK(mtab_stat.st_mode))
-	       var_mtab_is_a_symlink = 1;
-	  have_mtab_info = 1;
-     }
+	if (!have_mtab_info) {
+		if (lstat(MOUNTED, &mtab_stat))
+			var_mtab_does_not_exist = 1;
+		else if (S_ISLNK(mtab_stat.st_mode))
+			var_mtab_is_a_symlink = 1;
+		have_mtab_info = 1;
+	}
 }
 
 int
 mtab_does_not_exist(void) {
-     get_mtab_info();
-     return var_mtab_does_not_exist;
+	get_mtab_info();
+	return var_mtab_does_not_exist;
 }
 
 int
 mtab_is_a_symlink(void) {
-     get_mtab_info();
-     return var_mtab_is_a_symlink;
+	get_mtab_info();
+	return var_mtab_is_a_symlink;
 }
 
 int
 mtab_is_writable() {
-     static int ret = -1;
+	static int ret = -1;
 
-     /* Should we write to /etc/mtab upon an update?
-	Probably not if it is a symlink to /proc/mounts, since that
-	would create a file /proc/mounts in case the proc filesystem
-	is not mounted. */
-     if (mtab_is_a_symlink())
-	  return 0;
+	/* Should we write to /etc/mtab upon an update?
+	   Probably not if it is a symlink to /proc/mounts, since that
+	   would create a file /proc/mounts in case the proc filesystem
+	   is not mounted. */
+	if (mtab_is_a_symlink())
+		return 0;
 
-     if (ret == -1) {
-	  int fd = open(MOUNTED, O_RDWR | O_CREAT, 0644);
-	  if (fd >= 0) {
-	       close(fd);
-	       ret = 1;
-	  } else
-	       ret = 0;
-     }
-     return ret;
+	if (ret == -1) {
+		int fd = open(MOUNTED, O_RDWR | O_CREAT, 0644);
+		if (fd >= 0) {
+			close(fd);
+			ret = 1;
+		} else
+			ret = 0;
+	}
+	return ret;
 }
 
 /* Contents of mtab and fstab ---------------------------------*/
@@ -82,16 +82,16 @@ static void read_mounttable(void), read_fstab(void);
 
 struct mntentchn *
 mtab_head() {
-     if (!got_mtab)
-	  read_mounttable();
-     return &mounttable;
+	if (!got_mtab)
+		read_mounttable();
+	return &mounttable;
 }
 
 struct mntentchn *
 fstab_head() {
-     if (!got_fstab)
-	  read_fstab();
-     return &fstab;
+	if (!got_fstab)
+		read_fstab();
+	return &fstab;
 }
 
 static void
@@ -100,7 +100,7 @@ read_mntentchn(mntFILE *mfp, const char *fnam, struct mntentchn *mc0) {
 	struct mntent *mnt;
 
 	while ((mnt = my_getmntent (mfp)) != NULL) {
-		if (!streq (mnt->mnt_type, MNTTYPE_IGNORE)) {
+		if (!streq(mnt->mnt_type, MNTTYPE_IGNORE)) {
 			mc->nxt = (struct mntentchn *) xmalloc(sizeof(*mc));
 			mc->nxt->prev = mc;
 			mc = mc->nxt;
@@ -125,48 +125,50 @@ read_mntentchn(mntFILE *mfp, const char *fnam, struct mntentchn *mc0) {
  */
 static void
 read_mounttable() {
-     mntFILE *mfp;
-     const char *fnam;
-     struct mntentchn *mc = &mounttable;
+	mntFILE *mfp;
+	const char *fnam;
+	struct mntentchn *mc = &mounttable;
 
-     got_mtab = 1;
-     mc->nxt = mc->prev = NULL;
+	got_mtab = 1;
+	mc->nxt = mc->prev = NULL;
 
-     fnam = MOUNTED;
-     mfp = my_setmntent (fnam, "r");
-     if (mfp == NULL || mfp->mntent_fp == NULL) {
-	  int errsv = errno;
-	  fnam = PROC_MOUNTS;
-	  mfp = my_setmntent (fnam, "r");
-	  if (mfp == NULL || mfp->mntent_fp == NULL) {
-	       error(_("warning: can't open %s: %s"), MOUNTED, strerror (errsv));
-	       return;
-	  }
-	  if (verbose)
-	       printf (_("mount: could not open %s - using %s instead\n"),
-		       MOUNTED, PROC_MOUNTS);
-     }
-     read_mntentchn(mfp, fnam, mc);
+	fnam = MOUNTED;
+	mfp = my_setmntent (fnam, "r");
+	if (mfp == NULL || mfp->mntent_fp == NULL) {
+		int errsv = errno;
+		fnam = PROC_MOUNTS;
+		mfp = my_setmntent (fnam, "r");
+		if (mfp == NULL || mfp->mntent_fp == NULL) {
+			error(_("warning: can't open %s: %s"),
+			      MOUNTED, strerror (errsv));
+			return;
+		}
+		if (verbose)
+			printf (_("mount: could not open %s - "
+				  "using %s instead\n"),
+				MOUNTED, PROC_MOUNTS);
+	}
+	read_mntentchn(mfp, fnam, mc);
 }
 
 static void
 read_fstab() {
-     mntFILE *mfp = NULL;
-     const char *fnam;
-     struct mntentchn *mc = &fstab;
+	mntFILE *mfp = NULL;
+	const char *fnam;
+	struct mntentchn *mc = &fstab;
 
-     got_fstab = 1;
-     mc->nxt = mc->prev = NULL;
+	got_fstab = 1;
+	mc->nxt = mc->prev = NULL;
 
-     fnam = _PATH_FSTAB;
-     mfp = my_setmntent (fnam, "r");
-     if (mfp == NULL || mfp->mntent_fp == NULL) {
-     	  int errsv = errno;
-	  error(_("warning: can't open %s: %s"),
-		_PATH_FSTAB, strerror (errsv));
-	  return;
-     }
-     read_mntentchn(mfp, fnam, mc);
+	fnam = _PATH_FSTAB;
+	mfp = my_setmntent (fnam, "r");
+	if (mfp == NULL || mfp->mntent_fp == NULL) {
+		int errsv = errno;
+		error(_("warning: can't open %s: %s"),
+		      _PATH_FSTAB, strerror (errsv));
+		return;
+	}
+	read_mntentchn(mfp, fnam, mc);
 }
      
 
@@ -177,28 +179,60 @@ getmntfile (const char *name) {
 
 	mc0 = mtab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if (streq (mc->m.mnt_dir, name) ||
-		    streq (mc->m.mnt_fsname, name))
+		if (streq(mc->m.mnt_dir, name) ||
+		    streq(mc->m.mnt_fsname, name))
 			return mc;
 	return NULL;
 }
 
 /*
- * Given the name NAME, and the place MCPREV we found it last time,
+ * Given the directory name NAME, and the place MCPREV we found it last time,
  * try to find more occurrences.
  */ 
 struct mntentchn *
-getmntfilesbackward (const char *name, struct mntentchn *mcprev) {
+getmntdirbackward (const char *name, struct mntentchn *mcprev) {
 	struct mntentchn *mc, *mc0;
 
 	mc0 = mtab_head();
 	if (!mcprev)
 		mcprev = mc0;
 	for (mc = mcprev->prev; mc && mc != mc0; mc = mc->prev)
-		if (streq (mc->m.mnt_dir, name) ||
-		    streq (mc->m.mnt_fsname, name))
+		if (streq(mc->m.mnt_dir, name))
 			return mc;
 	return NULL;
+}
+
+/*
+ * Given the device name NAME, and the place MCPREV we found it last time,
+ * try to find more occurrences.
+ */ 
+struct mntentchn *
+getmntdevbackward (const char *name, struct mntentchn *mcprev) {
+	struct mntentchn *mc, *mc0;
+
+	mc0 = mtab_head();
+	if (!mcprev)
+		mcprev = mc0;
+	for (mc = mcprev->prev; mc && mc != mc0; mc = mc->prev)
+		if (streq(mc->m.mnt_fsname, name))
+			return mc;
+	return NULL;
+}
+
+/*
+ * Given the name NAME, check that it occurs precisely once as dir or dev.
+ */
+int
+is_mounted_once(const char *name) {
+	struct mntentchn *mc, *mc0;
+	int ct = 0;
+
+	mc0 = mtab_head();
+	for (mc = mc0->prev; mc && mc != mc0; mc = mc->prev)
+		if (streq(mc->m.mnt_dir, name) ||
+		    streq(mc->m.mnt_fsname, name))
+			ct++;
+	return (ct == 1);
 }
 
 /* Given the name FILE, try to find the option "loop=FILE" in mtab.  */ 
@@ -251,29 +285,29 @@ getfsspecfile (const char *spec, const char *file) {
 
 	/* first attempt: names occur precisely as given */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if (streq (mc->m.mnt_dir, file) &&
-		    streq (mc->m.mnt_fsname, spec))
+		if (streq(mc->m.mnt_dir, file) &&
+		    streq(mc->m.mnt_fsname, spec))
 			return mc;
 
 	/* second attempt: names found after symlink resolution */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if ((streq (mc->m.mnt_dir, file) ||
-		     streq (canonicalize(mc->m.mnt_dir), file))
-		    && (streq (mc->m.mnt_fsname, spec) ||
-			streq (canonicalize(mc->m.mnt_fsname), spec)))
+		if ((streq(mc->m.mnt_dir, file) ||
+		     streq(canonicalize(mc->m.mnt_dir), file))
+		    && (streq(mc->m.mnt_fsname, spec) ||
+			streq(canonicalize(mc->m.mnt_fsname), spec)))
 			return mc;
 
 	/* third attempt: names found after LABEL= or UUID= resolution */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
 		if (!strncmp (mc->m.mnt_fsname, "LABEL=", 6) &&
-		    (streq (mc->m.mnt_dir, file) ||
-		     streq (canonicalize(mc->m.mnt_dir), file))) {
+		    (streq(mc->m.mnt_dir, file) ||
+		     streq(canonicalize(mc->m.mnt_dir), file))) {
 			if (has_label(spec, mc->m.mnt_fsname+6))
 				return mc;
 		}
 		if (!strncmp (mc->m.mnt_fsname, "UUID=", 5) &&
-		    (streq (mc->m.mnt_dir, file) ||
-		     streq (canonicalize(mc->m.mnt_dir), file))) {
+		    (streq(mc->m.mnt_dir, file) ||
+		     streq(canonicalize(mc->m.mnt_dir), file))) {
 			if (has_uuid(spec, mc->m.mnt_fsname+5))
 				return mc;
 		}
@@ -288,7 +322,7 @@ getfsfile (const char *file) {
 
 	mc0 = fstab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if (streq (mc->m.mnt_dir, file))
+		if (streq(mc->m.mnt_dir, file))
 			return mc;
 	return NULL;
 }
@@ -300,7 +334,7 @@ getfsspec (const char *spec) {
 
 	mc0 = fstab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if (streq (mc->m.mnt_fsname, spec))
+		if (streq(mc->m.mnt_fsname, spec))
 			return mc;
 	return NULL;
 }
@@ -529,7 +563,7 @@ update_mtab (const char *dir, struct mntent *instead) {
 
 	/* find last occurrence of dir */
 	for (mc = mc0->prev; mc && mc != mc0; mc = mc->prev)
-		if (streq (mc->m.mnt_dir, dir))
+		if (streq(mc->m.mnt_dir, dir))
 			break;
 	if (mc && mc != mc0) {
 		if (instead == NULL) {

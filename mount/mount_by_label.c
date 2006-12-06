@@ -125,6 +125,40 @@ uuidcache_init_evms(void) {
 	return 1;
 }
 
+/*
+ * xvm is a proprietary sgi volume manager, it goes into /proc/partitions
+ * like this:
+ *
+ *   4     0    2210817 xvm/local/vol/myvolume/data/block
+ *   4     1    2210817 xvm/local/vol/myvolume/rt/block
+ *   4     2    2210817 xvm/local/vol/myvolume/log/block
+ *   4     3    2210818 xvm/local/vol/discs3/data/block
+ *
+ * The heuristics here are that the device should start with "xvm,"
+ * but should not end in "log/block" or "rt/block" - those are
+ * special devices for the xfs filesystem external log & realtime device.
+ */
+
+/*
+ * XVM support - Eric Sandeen
+ * Return 1 if this looks like an xvm device that should be scanned
+ */
+static int
+is_xvm(char *ptname)
+{
+	/*
+	 * Scan anything with "xvm" and "data" in its name.
+	 * That might pick up non-data xvm subvols if the
+	 * volumename contains the string 'data' but
+	 * that should be harmless.
+	 */
+
+	if (strstr(ptname, "xvm") && strstr(ptname, "data"))
+		return 1;
+
+	return 0;
+}
+
 static void
 uuidcache_init(void) {
 	char line[100];
@@ -193,7 +227,8 @@ uuidcache_init(void) {
 		/* devfs has .../disc and .../part1 etc. */
 
 		for(s = ptname; *s; s++);
-		if (isdigit(s[-1])) {
+		if (isdigit(s[-1]) || is_xvm(ptname)) {
+			
 		/*
 		 * Note: this is a heuristic only - there is no reason
 		 * why these devices should live in /dev.

@@ -266,7 +266,7 @@ xbsd_delete_part (void)
 static void
 xbsd_new_part (void)
 {
-  uint begin, end;
+  unsigned int begin, end;
   char mesg[256];
   int i;
 
@@ -566,7 +566,7 @@ xbsd_write_bootstrap (void)
   sector = get_start_sect(xbsd_part);
 #endif
 
-  if (ext2_llseek (fd, (ext2_loff_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
+  if (ext2_llseek (fd, (long long) sector * SECTOR_SIZE, SEEK_SET) == -1)
     fatal (unable_to_seek);
   if (BSD_BBSIZE != write (fd, disklabelbuffer, BSD_BBSIZE))
     fatal (unable_to_write);
@@ -735,7 +735,7 @@ xbsd_readlabel (struct partition *p, struct xbsd_disklabel *d)
 	sector = 0;
 #endif
 
-	if (ext2_llseek (fd, (ext2_loff_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
+	if (ext2_llseek (fd, (long long) sector * SECTOR_SIZE, SEEK_SET) == -1)
 		fatal (unable_to_seek);
 	if (BSD_BBSIZE != read (fd, disklabelbuffer, BSD_BBSIZE))
 		fatal (unable_to_read);
@@ -762,7 +762,7 @@ xbsd_readlabel (struct partition *p, struct xbsd_disklabel *d)
 static int
 xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d)
 {
-  int sector;
+  unsigned int sector;
 
 #if !defined (__alpha__) && !defined (__powerpc__) && !defined (__hppa__)
   sector = get_start_sect(p) + BSD_LABELSECTOR;
@@ -781,12 +781,12 @@ xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d)
 
 #if defined (__alpha__) && BSD_LABELSECTOR == 0
   alpha_bootblock_checksum (disklabelbuffer);
-  if (ext2_llseek (fd, (ext2_loff_t) 0, SEEK_SET) == -1)
+  if (ext2_llseek (fd, (long long) 0, SEEK_SET) == -1)
     fatal (unable_to_seek);
   if (BSD_BBSIZE != write (fd, disklabelbuffer, BSD_BBSIZE))
     fatal (unable_to_write);
 #else
-  if (ext2_llseek (fd, (ext2_loff_t) sector * SECTOR_SIZE + BSD_LABELOFFSET,
+  if (ext2_llseek (fd, (long long) sector * SECTOR_SIZE + BSD_LABELOFFSET,
 		   SEEK_SET) == -1)
     fatal (unable_to_seek);
   if (sizeof (struct xbsd_disklabel) != write (fd, d, sizeof (struct xbsd_disklabel)))

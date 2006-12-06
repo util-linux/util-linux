@@ -34,7 +34,7 @@
  *   No important changes
  * Version 1.1.0: Tue Jun 30 2000
  *   Added NLS support (partly written by Arkadiusz Mi<B6>kiewicz 
- *     <misiek@pld.ORG.PL>)
+ *     <misiek@pld.org.pl>)
  */
 
 #include <stdio.h>
@@ -49,7 +49,7 @@
 #include "getopt.h"
 #endif
 
-#include "../lib/nls.h"
+#include "nls.h"
 
 /* NON_OPT is the code that is returned when a non-option is found in '+' 
    mode */
@@ -371,9 +371,12 @@ int main(int argc, char *argv[])
 	int opt;
 	int compatible=0;
 
+#if WITHOUT_GETTEXT
+#else
 	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+#endif
 
 	init_longopt();
 
@@ -438,7 +441,7 @@ int main(int argc, char *argv[])
 			quote=0;
 			break;
 		case 'V':
-			printf(_("getopt (enhanced) 1.1.2\n"));
+			printf(_("getopt (enhanced) 1.1.3\n"));
 			exit(0);
 		case '?':
 		case ':':

@@ -1099,11 +1099,11 @@ void erasep (register int col)
 ** Erase the current line entirely
 */
 
-void kill_line ()
+void kill_line()
 {
-    erasep (0);
+    erasep(0);
     if (!eraseln || dumb)
-	putchar ('\r');
+	putchar('\r');
 }
 
 /*
@@ -1301,6 +1301,7 @@ int command (char *filename, register FILE *f)
 	    end_it (0);
 	case 's':
 	case 'f':
+	case ctrl('F'):
 	    if (nlines == 0) nlines++;
 	    if (comchar == 'f')
 		nlines *= dlines;
@@ -1387,40 +1388,46 @@ int command (char *filename, register FILE *f)
 	case '?':
 	case 'h':
 	    if (noscroll) doclear();
-	    xprintf(_("\nMost commands optionally preceded by integer argument"
-		" k.  Defaults in brackets.\n"
-		"Star (*) indicates argument becomes new default.\n"));
+	    xprintf(_("\n"
+"Most commands optionally preceded by integer argument k.  "
+"Defaults in brackets.\n"
+"Star (*) indicates argument becomes new default.\n"));
 	    xprintf("---------------------------------------"
 		"----------------------------------------\n");
-	    xprintf(_("<space>\t\t\t"
-			"Display next k lines of text [current screen size]\n"
-		"z\t\t\tDisplay next k lines of text [current screen size]*\n"
-		"<return>\t\tDisplay next k lines of text [1]*\n"
-		"d or ctrl-D\t\t"
-			"Scroll k lines [current scroll size, initially 11]*\n"
-		"q or Q or <interrupt>\tExit from more\n"
-		"s\t\t\tSkip forward k lines of text [1]\n"
-		"f\t\t\tSkip forward k screenfuls of text [1]\n"
-		"b or ctrl-B\t\tSkip backwards k screenfuls of text [1]\n"
-		"'\t\t\tGo to place where previous search started\n"
-		"=\t\t\tDisplay current line number\n"
-		"/<regular expression>\t"
-			"Search for kth occurrence of regular expression [1]\n"
-		"n\t\t\tSearch for kth occurrence of last r.e [1]\n"
-		"!<cmd> or :!<cmd>\tExecute <cmd> in a subshell\n"
-		"v\t\t\tStart up /usr/bin/vi at current line\n"
-		"ctrl-L\t\t\tRedraw screen\n"
-		":n\t\t\tGo to kth next file [1]\n"
-		":p\t\t\tGo to kth previous file [1]\n"
-		":f\t\t\tDisplay current file name and line number\n"
-		".\t\t\tRepeat previous command\n"));
+	    xprintf(_(
+"<space>                 Display next k lines of text [current screen size]\n"
+"z                       Display next k lines of text [current screen size]*\n"
+"<return>                Display next k lines of text [1]*\n"
+"d or ctrl-D             Scroll k lines [current scroll size, initially 11]*\n"
+"q or Q or <interrupt>   Exit from more\n"
+"s                       Skip forward k lines of text [1]\n"
+"f                       Skip forward k screenfuls of text [1]\n"
+"b or ctrl-B             Skip backwards k screenfuls of text [1]\n"
+"'                       Go to place where previous search started\n"
+"=                       Display current line number\n"
+"/<regular expression>   Search for kth occurrence of regular expression [1]\n"
+"n                       Search for kth occurrence of last r.e [1]\n"
+"!<cmd> or :!<cmd>       Execute <cmd> in a subshell\n"
+"v                       Start up /usr/bin/vi at current line\n"
+"ctrl-L                  Redraw screen\n"
+":n                      Go to kth next file [1]\n"
+":p                      Go to kth previous file [1]\n"
+":f                      Display current file name and line number\n"
+".                       Repeat previous command\n"));
 	    xprintf("---------------------------------------"
 		"----------------------------------------\n");
 	    prompt(filename);
 	    break;
 	case 'v':	/* This case should go right before default */
 	    if (!no_intty) {
-		    char *editor;
+		    /*
+		     * Earlier: call vi +n file. This also works for emacs.
+		     * POSIX: call vi -c n file (when editor is vi or ex).
+		     */
+		    char *editor, *p;
+		    int n = (Currline - dlines <= 0 ? 1 :
+			     Currline - (dlines + 1) / 2);
+		    int split = 0;
 
 		    editor = getenv("VISUAL");
 		    if (editor == NULL || *editor == '\0')
@@ -1428,15 +1435,33 @@ int command (char *filename, register FILE *f)
 		    if (editor == NULL || *editor == '\0')
 			    editor = VI;
 
-		    kill_line ();
-		    cmdbuf[0] = '+';
-		    scanstr (Currline - dlines <= 0 ? 1
-			     : Currline - (dlines + 1) / 2, &cmdbuf[1]);
-		    pr (editor); putchar (' ');
-		    pr (cmdbuf); putchar (' '); pr (fnames[fnum]);
-		    execute (filename, editor, editor, cmdbuf, fnames[fnum], 0);
+		    p = strrchr(editor, '/');
+		    if (p)
+			    p++;
+		    else
+			    p = editor;
+		    if (!strcmp(p, "vi") || !strcmp(p, "ex")) {
+			    strcpy(cmdbuf, "-c ");
+			    scanstr(n, &cmdbuf[3]);
+			    split = 1;
+		    } else {
+			    cmdbuf[0] = '+';
+			    scanstr(n, &cmdbuf[1]);
+		    }
+
+		    kill_line();
+		    pr(editor); putchar(' ');
+		    pr(cmdbuf); putchar(' '); pr(fnames[fnum]);
+		    if (split) {
+			    cmdbuf[2] = 0;
+			    execute(filename, editor, editor, cmdbuf,
+				    cmdbuf+3, fnames[fnum], (char *)0);
+		    } else
+			    execute(filename, editor, editor,
+				    cmdbuf, fnames[fnum], (char *)0);
 		    break;
 	    }
+	    /* fall through */
 	default:
 	    if (dum_opt) {
    		kill_line ();
@@ -1664,7 +1689,7 @@ void search(char buf[], FILE *file, register int n)
 }
 
 /*VARARGS2*/
-void execute (char * filename, char * cmd, ...)
+void execute (char *filename, char *cmd, ...)
 {
 	int id;
 	int n;

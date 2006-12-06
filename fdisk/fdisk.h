@@ -26,15 +26,8 @@
 #define cround(n)	(display_in_cyl_units ? ((n)/units_per_sector)+1 : (n))
 #define scround(x)	(((x)+units_per_sector-1)/units_per_sector)
 
-#if defined(__GNUC__) || defined(HAS_LONG_LONG)
-typedef long long ext2_loff_t;
-#else
-typedef long      ext2_loff_t;
-#endif
-
-extern ext2_loff_t ext2_llseek(unsigned int fd,
-			       ext2_loff_t offset,
-			       unsigned int origin);
+extern long long ext2_llseek(unsigned int fd, long long offset,
+			     unsigned int origin);
 
 struct partition {
 	unsigned char boot_ind;         /* 0x80 - active */
@@ -62,12 +55,9 @@ struct geom {
 };
 
 /* prototypes for fdisk.c */
-extern char *disk_device,
-            *line_ptr;
-extern int fd,
-           partitions;
-extern uint display_in_cyl_units,
-            units_per_sector;
+extern char *disk_device, *line_ptr;
+extern int fd, partitions;
+extern unsigned int display_in_cyl_units, units_per_sector;
 extern void change_units(void);
 extern void fatal(enum failure why);
 extern void get_geometry(int fd, struct geom *);
@@ -80,7 +70,8 @@ extern int read_hex(struct systypes *sys);
 extern void reread_partition_table(int leave);
 extern struct partition *get_part_table(int);
 extern int valid_part_table_flag(unsigned char *b);
-extern uint read_int(uint low, uint dflt, uint high, uint base, char *mesg);
+extern unsigned int read_int(unsigned int low, unsigned int dflt,
+			     unsigned int high, unsigned int base, char *mesg);
 
 
 #define PLURAL	0

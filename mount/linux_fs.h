@@ -151,12 +151,12 @@ struct cramfs_super_block {
 
 #define HFS_SUPER_MAGIC 0x4244
 struct hfs_super_block {
-	u_char    s_magic[2];
+	u_char    s_magic[2];		/* drSigWord */
 	u_char    s_dummy[18];
-	u_char    s_blksize[4];
+	u_char    s_blksize[4];		/* drAlBlkSiz */
 };
-#define hfsmagic(s)	assemble2le(s.s_magic)
-#define hfsblksize(s)	assemble4le(s.s_blksize)
+#define hfsmagic(s)	assemble2be(s.s_magic)
+#define hfsblksize(s)	assemble4be(s.s_blksize)
 
 #define HPFS_SUPER_MAGIC 0xf995e849
 struct hpfs_super_block {
@@ -227,6 +227,16 @@ assemble2le(unsigned char *p) {
 }
 
 static inline int
+assemble2be(unsigned char *p) {
+	return (p[1] | (p[0] << 8));
+}
+
+static inline int
 assemble4le(unsigned char *p) {
 	return (p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24));
+}
+
+static inline int
+assemble4be(unsigned char *p) {
+	return (p[3] | (p[2] << 8) | (p[1] << 16) | (p[0] << 24));
 }

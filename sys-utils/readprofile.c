@@ -31,19 +31,22 @@
  * - skip step size (index 0)
  * 2002-03-09 John Levon <moz@compsoc.man.ac.uk>
  * - make maplineno do something
+ * 2002-11-28 Mads Martin Joergensen +
+ * - also try /boot/System.map-`uname -r`
+ * 2003-04-09 Werner Almesberger <wa@almesberger.net>
+ * - fixed off-by eight error and improved heuristics in byte order detection
  */
 
 #include <errno.h>
 #include <stdio.h>
+#include <fcntl.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-#include <fcntl.h>
+#include <sys/utsname.h>
 #include "nls.h"
-
-#define RELEASE "2.0, May 1996"
 
 #define S_LEN 128
 
@@ -53,24 +56,6 @@ static char *prgname;
 static char defaultmap[]="/usr/src/linux/System.map";
 static char defaultpro[]="/proc/profile";
 static char optstring[]="M:m:np:itvarVb";
-
-static void
-usage(void) {
-  fprintf(stderr,
-		  _("%s: Usage: \"%s [options]\n"
-		  "\t -m <mapfile>  (default = \"%s\")\n"
-		  "\t -p <pro-file> (default = \"%s\")\n"
-		  "\t -M <mult>     set the profiling multiplier to <mult>\n"
-		  "\t -i            print only info about the sampling step\n"
-		  "\t -v            print verbose data\n"
-		  "\t -a            print all symbols, even if count is 0\n"
-		  "\t -b            print individual histogram-bin counts\n"
-		  "\t -r            reset all the counters (root only)\n"
-		  "\t -n            disable byte order auto-detection\n"
-		  "\t -V            print version and exit\n")
-		  ,prgname,prgname,defaultmap,defaultpro);
-  exit(1);
-}
 
 static void *
 xmalloc (size_t size) {
@@ -105,8 +90,45 @@ myopen(char *name, char *mode, int *flag) {
 	return fopen(name,mode);
 }
 
+#ifndef BOOT_SYSTEM_MAP
+#define BOOT_SYSTEM_MAP "/boot/System.map-"
+#endif
+
+static char *
+boot_uname_r_str(void) {
+	struct utsname uname_info;
+	char *s;
+	size_t len;
+
+	if (uname(&uname_info))
+		return "";
+	len = strlen(BOOT_SYSTEM_MAP) + strlen(uname_info.release) + 1;
+	s = xmalloc(len);
+	strcpy(s, BOOT_SYSTEM_MAP);
+	strcat(s, uname_info.release);
+	return s;
+}
+
+static void
+usage(void) {
+	fprintf(stderr,
+		_("%s: Usage: \"%s [options]\n"
+		  "\t -m <mapfile>  (defaults: \"%s\" and\n\t\t\t\t  \"%s\")\n"
+		  "\t -p <pro-file> (default: \"%s\")\n"
+		  "\t -M <mult>     set the profiling multiplier to <mult>\n"
+		  "\t -i            print only info about the sampling step\n"
+		  "\t -v            print verbose data\n"
+		  "\t -a            print all symbols, even if count is 0\n"
+		  "\t -b            print individual histogram-bin counts\n"
+		  "\t -r            reset all the counters (root only)\n"
+		  "\t -n            disable byte order auto-detection\n"
+		  "\t -V            print version and exit\n"),
+		prgname, prgname, defaultmap, boot_uname_r_str(), defaultpro);
+	exit(1);
+}
+
 int
-main (int argc, char **argv) {
+main(int argc, char **argv) {
 	FILE *map;
 	int proFd;
 	char *mapFile, *proFile, *mult=0;
@@ -129,24 +151,45 @@ main (int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	prgname=argv[0];
-	proFile=defaultpro;
-	mapFile=defaultmap;
+	prgname = argv[0];
+	proFile = defaultpro;
+	mapFile = defaultmap;
 
-	while ((c = getopt(argc,argv,optstring)) != -1) {
+	while ((c = getopt(argc, argv, optstring)) != -1) {
 		switch(c) {
-		case 'm': mapFile=optarg; break;
-		case 'n': optNative++;	  break;
-		case 'p': proFile=optarg; break;
-		case 'a': optAll++;       break;
-		case 'b': optBins++;	  break;
-		case 'i': optInfo++;      break;
-		case 'M': mult=optarg;    break;
-		case 'r': optReset++;     break;
-		case 'v': optVerbose++;   break;
-		case 'V': printf(_("%s Version %s\n"),prgname,RELEASE);
+		case 'm':
+			mapFile = optarg;
+			break;
+		case 'n':
+			optNative++;
+			break;
+		case 'p':
+			proFile = optarg;
+			break;
+		case 'a':
+			optAll++;
+			break;
+		case 'b':
+			optBins++;
+			break;
+		case 'i':
+			optInfo++;
+			break;
+		case 'M':
+			mult = optarg;
+			break;
+		case 'r':
+			optReset++;
+			break;
+		case 'v':
+			optVerbose++;
+			break;
+		case 'V':
+			printf(_("%s version %s\n"), prgname,
+			       UTIL_LINUX_VERSION);
 			exit(0);
-		default: usage();
+		default:
+			usage();
 		}
 	}
 
@@ -183,15 +226,15 @@ main (int argc, char **argv) {
 	/*
 	 * Use an fd for the profiling buffer, to skip stdio overhead
 	 */
-	if ( ((proFd=open(proFile,O_RDONLY)) < 0)
+	if (((proFd=open(proFile,O_RDONLY)) < 0)
 	     || ((int)(len=lseek(proFd,0,SEEK_END)) < 0)
-	     || (lseek(proFd,0,SEEK_SET)<0) ) {
+	     || (lseek(proFd,0,SEEK_SET) < 0)) {
 		fprintf(stderr,"%s: %s: %s\n",prgname,proFile,strerror(errno));
 		exit(1);
 	}
 
-	if ( !(buf=malloc(len)) ) {
-		fprintf(stderr,"%s: malloc(): %s\n",prgname, strerror(errno));
+	if (!(buf=malloc(len))) {
+		fprintf(stderr,"%s: malloc(): %s\n", prgname, strerror(errno));
 		exit(1);
 	}
 
@@ -206,11 +249,12 @@ main (int argc, char **argv) {
 		int big = 0,small = 0,i;
 		unsigned *p;
 
-		for (p = buf+1; p < buf+entries; p++)
-			if (*p) {
-				if (*p >= 1 << (sizeof(*buf)/2)) big++;
-				else small++;
-			}
+		for (p = buf+1; p < buf+entries; p++) {
+			if (*p & ~0U << (sizeof(*buf)*4))
+				big++;
+			if (*p & ((1 << (sizeof(*buf)*4))-1))
+				small++;
+		}
 		if (big > small) {
 			fprintf(stderr,"Assuming reversed byte order. "
 			   "Use -n to force native byte order.\n");
@@ -226,16 +270,24 @@ main (int argc, char **argv) {
 		}
 	}
 
-	step=buf[0];
+	step = buf[0];
 	if (optInfo) {
-		printf(_("Sampling_step: %i\n"),step);
+		printf(_("Sampling_step: %i\n"), step);
 		exit(0);
 	} 
 
-	total=0;
+	total = 0;
 
-	if (!(map=myopen(mapFile,"r",&popenMap))) {
-		fprintf(stderr,"%s: ",prgname);perror(mapFile);
+	map = myopen(mapFile, "r", &popenMap);
+	if (map == NULL && mapFile == defaultmap) {
+		mapFile = boot_uname_r_str();
+		map = myopen(mapFile, "r", &popenMap);
+	}
+	if (map == NULL) {
+		int errsv = errno;
+		fprintf(stderr, "%s: ", prgname);
+		errno = errsv;
+		perror(mapFile);
 		exit(1);
 	}
 
@@ -273,7 +325,7 @@ main (int argc, char **argv) {
 
 		/* ignore any LEADING (before a '[tT]' symbol is found)
 		   Absolute symbols */
-		if (*mode == 'A' && total == 0) continue;
+		if ((*mode == 'A' || *mode == '?') && total == 0) continue;
 		if (*mode != 'T' && *mode != 't' &&
 		    *mode != 'W' && *mode != 'w')
 			break;	/* only text is profiled */

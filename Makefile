@@ -10,7 +10,7 @@ include ./MCONFIG
 
 SUBDIRS=po \
 	lib \
-	getopt-1.1.2 \
+	getopt \
 	disk-utils \
 	login-utils \
 	misc-utils \

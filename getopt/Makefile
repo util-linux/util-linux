@@ -50,4 +50,5 @@ install: getopt
 	$(INSTALLDIR) $(USRBINDIR) $(MAN1DIR) $(GETOPTDIR)
 	$(INSTALLBIN) getopt $(USRBINDIR)
 	$(INSTALLMAN) getopt.1 $(MAN1DIR)
-	$(INSTALLBIN) parse.bash parse.tcsh test.bash test.tcsh $(GETOPTDIR)
+	$(INSTALLBIN) getopt-parse.bash getopt-parse.tcsh \
+	              getopt-test.bash getopt-test.tcsh $(GETOPTDIR)

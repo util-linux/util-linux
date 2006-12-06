@@ -13,7 +13,7 @@
  * GNU Library Public License for more details.
  */
 
-#undef resolve_symlinks
+#define resolve_symlinks
 
 /*
  * This routine is part of libc.  We include it nevertheless,
