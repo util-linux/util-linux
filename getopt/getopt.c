@@ -1,6 +1,6 @@
 /*
     getopt.c - Enhanced implementation of BSD getopt(1)
-    Copyright (c) 1997, 1998, 1999, 2000  Frodo Looijaard <frodol@dds.nl>
+    Copyright (c) 1997-2005 Frodo Looijaard <frodo@frodo.looijaard.name>
 
     This program is free software; you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
@@ -35,6 +35,8 @@
  * Version 1.1.0: Tue Jun 30 2000
  *   Added NLS support (partly written by Arkadiusz Mi<B6>kiewicz 
  *     <misiek@pld.org.pl>)
+ * Version 1.1.4: Mon Nov 7 2005
+ *   Fixed a few type's in the manpage
  */
 
 #include <stdio.h>
@@ -371,7 +373,7 @@ int main(int argc, char *argv[])
 	int opt;
 	int compatible=0;
 
-#ifdef WITHOUT_GETTEXT
+#if WITHOUT_GETTEXT
 #else
 	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -441,7 +443,7 @@ int main(int argc, char *argv[])
 			quote=0;
 			break;
 		case 'V':
-			printf(_("getopt (enhanced) 1.1.3\n"));
+			printf(_("getopt (enhanced) 1.1.4\n"));
 			exit(0);
 		case '?':
 		case ':':

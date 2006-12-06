@@ -291,7 +291,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 usrbinexecdir = $(prefix)/usr/bin
 usrsbinexecdir = $(prefix)/usr/sbin
-AM_CPPFLAGS = -include $(top_srcdir)/config.h -I$(top_srcdir)/include
+AM_CPPFLAGS = -include $(top_builddir)/config.h -I$(top_srcdir)/include
 DEFAULT_INCLUDES = 
 man_MANS = flock.1 readprofile.1 ctrlaltdel.8 cytune.8 dmesg.8 ipcrm.8 \
 	ipcs.8 renice.8 setsid.8 tunelp.8 $(am__append_2)

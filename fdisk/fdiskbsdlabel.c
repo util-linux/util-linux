@@ -566,7 +566,7 @@ xbsd_write_bootstrap (void)
   sector = get_start_sect(xbsd_part);
 #endif
 
-  if (ext2_llseek (fd, (long long) sector * SECTOR_SIZE, SEEK_SET) == -1)
+  if (lseek (fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
     fatal (unable_to_seek);
   if (BSD_BBSIZE != write (fd, disklabelbuffer, BSD_BBSIZE))
     fatal (unable_to_write);
@@ -735,7 +735,7 @@ xbsd_readlabel (struct partition *p, struct xbsd_disklabel *d)
 	sector = 0;
 #endif
 
-	if (ext2_llseek (fd, (long long) sector * SECTOR_SIZE, SEEK_SET) == -1)
+	if (lseek (fd, (off_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
 		fatal (unable_to_seek);
 	if (BSD_BBSIZE != read (fd, disklabelbuffer, BSD_BBSIZE))
 		fatal (unable_to_read);
@@ -781,12 +781,12 @@ xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d)
 
 #if defined (__alpha__) && BSD_LABELSECTOR == 0
   alpha_bootblock_checksum (disklabelbuffer);
-  if (ext2_llseek (fd, (long long) 0, SEEK_SET) == -1)
+  if (lseek (fd, (off_t) 0, SEEK_SET) == -1)
     fatal (unable_to_seek);
   if (BSD_BBSIZE != write (fd, disklabelbuffer, BSD_BBSIZE))
     fatal (unable_to_write);
 #else
-  if (ext2_llseek (fd, (long long) sector * SECTOR_SIZE + BSD_LABELOFFSET,
+  if (lseek (fd, (off_t) sector * SECTOR_SIZE + BSD_LABELOFFSET,
 		   SEEK_SET) == -1)
     fatal (unable_to_seek);
   if (sizeof (struct xbsd_disklabel) != write (fd, d, sizeof (struct xbsd_disklabel)))

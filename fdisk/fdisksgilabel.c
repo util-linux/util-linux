@@ -379,7 +379,7 @@ sgi_write_table(void) {
 		 */
 		sgiinfo *info = fill_sgiinfo();
 		int infostartblock = SSWAP32(sgilabel->directory[0].vol_file_start);
-		if (ext2_llseek(fd, (long long)infostartblock*
+		if (lseek(fd, (off_t) infostartblock*
 				SECTOR_SIZE, SEEK_SET) < 0)
 			fatal(unable_to_seek);
 		if (write(fd, info, SECTOR_SIZE) != SECTOR_SIZE)

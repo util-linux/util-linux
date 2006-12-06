@@ -1,3 +1,10 @@
+util-linux 2.13-pre6
+
+* getopt: updated to 1.1.4
+* replaced all *llseek variants with lseek
+* misc build system, code and docs cleanups and fixes
+* updated translations: fr, it
+
 util-linux 2.13-pre5
 
 * {fsck,mkfs}.cramfs: updated to cramfs-1.1

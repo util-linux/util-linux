@@ -818,20 +818,6 @@ to the options given in
 .IR /etc/fstab .)
 
 .TP
-.\" Before Linux 2.3.99-pre3:
-.\" .BR check " / " check=normal " / " check=strict
-.\" Set checking level. When at least one of these options is set (and
-.\" .B check=normal
-.\" is set by default) the inodes and blocks bitmaps are checked upon mount
-.\" (which can take half a minute or so on a big disk, and is rather useless).
-.\" With strict checking, block deallocation checks that the block to free
-.\" is in the data zone.
-.\" Since 2.3.99-pre3 but before 2.6.0-test7 every string check=foo
-.\" was equivalent to just check. Since 2.6.0-test7 only check is accepted.
-.BR check
-Check filesystem (block and inode bitmaps) at mount time.
-.\" requires CONFIG_EXT2_CHECK
-.TP
 .BR check=none " / " nocheck
 No checking is done at mount time. This is the default. This is fast.
 It is wise to invoke

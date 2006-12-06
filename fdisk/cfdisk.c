@@ -84,9 +84,6 @@
 #include "xstrncpy.h"
 #include "common.h"
 
-extern long long ext2_llseek(unsigned int fd, long long offset,
-			     unsigned int origin);
-
 #define DEFAULT_DEVICE "/dev/hda"
 #define ALTERNATE_DEVICE "/dev/sda"
 
@@ -550,7 +547,7 @@ die_x(int ret) {
 
 static void
 read_sector(char *buffer, long long sect_num) {
-    if (ext2_llseek(fd, sect_num*SECTOR_SIZE, SEEK_SET) < 0)
+    if (lseek(fd, sect_num*SECTOR_SIZE, SEEK_SET) < 0)
 	fatal(_("Cannot seek on disk drive"), 2);
     if (read(fd, buffer, SECTOR_SIZE) != SECTOR_SIZE)
 	fatal(_("Cannot read disk drive"), 2);
@@ -558,7 +555,7 @@ read_sector(char *buffer, long long sect_num) {
 
 static void
 write_sector(char *buffer, long long sect_num) {
-    if (ext2_llseek(fd, sect_num*SECTOR_SIZE, SEEK_SET) < 0)
+    if (lseek(fd, sect_num*SECTOR_SIZE, SEEK_SET) < 0)
 	fatal(_("Cannot seek on disk drive"), 2);
     if (write(fd, buffer, SECTOR_SIZE) != SECTOR_SIZE)
 	fatal(_("Cannot write disk drive"), 2);
@@ -585,7 +582,7 @@ get_dos_label(int i) {
 	long long offset;
 
 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE;
-	if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	if (lseek(fd, offset, SEEK_SET) == offset
 	    && read(fd, &sector, sizeof(sector)) == sizeof(sector)) {
 		dos_copy_to_info(p_info[i].ostype, OSTYPESZ,
 				 sector+DOS_OSTYPE_OFFSET, DOS_OSTYPE_SZ);
@@ -670,7 +667,7 @@ get_linux_label(int i) {
 
 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE
 		+ 1024;
-	if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	if (lseek(fd, offset, SEEK_SET) == offset
 	    && read(fd, &e2fsb, sizeof(e2fsb)) == sizeof(e2fsb)
 	    && e2fsb.s_magic[0] + (e2fsb.s_magic[1]<<8) == EXT2_SUPER_MAGIC) {
 		label = e2fsb.s_volume_name;
@@ -686,7 +683,7 @@ get_linux_label(int i) {
 	}
 
 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE + 0;
-	if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	if (lseek(fd, offset, SEEK_SET) == offset
 	    && read(fd, &xfsb, sizeof(xfsb)) == sizeof(xfsb)
 	    && !strncmp(xfsb.s_magic, XFS_SUPER_MAGIC, 4)) {
 		label = xfsb.s_fname;
@@ -700,7 +697,7 @@ get_linux_label(int i) {
 	/* jfs? */
 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE
 		+ JFS_SUPER1_OFF;
-	if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	if (lseek(fd, offset, SEEK_SET) == offset
 	    && read(fd, &jfsb, sizeof(jfsb)) == sizeof(jfsb)
 	    && !strncmp(jfsb.s_magic, JFS_MAGIC, strlen(JFS_MAGIC))) {
 		label = jfsb.s_label;
@@ -714,7 +711,7 @@ get_linux_label(int i) {
 	/* reiserfs? */
 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE
 		+ REISERFS_DISK_OFFSET_IN_BYTES;
-	if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	if (lseek(fd, offset, SEEK_SET) == offset
 	    && read(fd, &reiserfsb, sizeof(reiserfsb)) == sizeof(reiserfsb)
 	    && has_reiserfs_magic_string(&reiserfsb, &reiserfs_is_3_6)) {
 		if (reiserfs_is_3_6) {
@@ -1858,7 +1855,7 @@ write_part_table(void) {
 
 	 while (!done) {
 	      mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X,
-		       _("Are you sure you want write the partition table "
+		       _("Are you sure you want to write the partition table "
 		       "to disk? (yes or no): "));
 	      len = get_string(response, LINE_LENGTH, NULL);
 	      clear_warning();

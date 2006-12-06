@@ -1,3 +1,7 @@
+20051107: Bumped up version number to 1.1.4
+20051107: Makefile: package target
+20051107: Changed email and website to current ones
+20051107: Fixed a few typos in the manpage (sync with util-linux (2.12r)
 20030123: Bumped up version number to 1.1.3
 20030123: Changed WITH_GETTEXT option to WITHOUT_GETTEXT
 20030123: Renamed example programs to have the string getopt- prepended

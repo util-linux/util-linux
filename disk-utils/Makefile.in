@@ -287,7 +287,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 usrbinexecdir = $(prefix)/usr/bin
 usrsbinexecdir = $(prefix)/usr/sbin
-AM_CPPFLAGS = -include $(top_srcdir)/config.h -I$(top_srcdir)/include
+AM_CPPFLAGS = -include $(top_builddir)/config.h -I$(top_srcdir)/include
 DEFAULT_INCLUDES = 
 man_MANS = blockdev.8 fdformat.8 isosize.8 mkfs.8 mkswap.8 \
 	fsck.minix.8 mkfs.minix.8 mkfs.bfs.8 $(am__append_2) \

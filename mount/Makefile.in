@@ -267,8 +267,8 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 usrbinexecdir = $(prefix)/usr/bin
 usrsbinexecdir = $(prefix)/usr/sbin
-AM_CPPFLAGS = -include $(top_srcdir)/config.h -I$(top_srcdir)/include \
-	-DHAVE_NFS
+AM_CPPFLAGS = -include $(top_builddir)/config.h \
+	-I$(top_srcdir)/include -DHAVE_NFS
 DEFAULT_INCLUDES = 
 man_MANS = fstab.5 nfs.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8 \
 	$(am__append_4)

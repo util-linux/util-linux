@@ -241,8 +241,8 @@ void fatal(enum failure why) {
 
 static void
 seek_sector(int fd, unsigned int secno) {
-	long long offset = (long long) secno * sector_size;
-	if (ext2_llseek(fd, offset, SEEK_SET) == (long long) -1)
+	off_t offset = (off_t) secno * sector_size;
+	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
 		fatal(unable_to_seek);
 }
 

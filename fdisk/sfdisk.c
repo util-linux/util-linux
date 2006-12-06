@@ -162,36 +162,17 @@ fatal(char *s, ...) {
 /*
  * sseek: seek to specified sector - return 0 on failure
  *
- * For >4GB disks lseek needs a > 32bit arg, and we have to use llseek.
- * On the other hand, a 32 bit sector number is OK until 2TB.
- * The routines _llseek and sseek below are the only ones that
- * know about the loff_t type.
- *
  * Note: we use 512-byte sectors here, irrespective of the hardware ss.
  */
-#undef use_lseek
-#if defined (__alpha__) || defined (__ia64__) || defined (__x86_64__) || defined (__s390x__)
-#define use_lseek
-#endif
-
-#ifndef use_lseek
-static __attribute__used
-_syscall5(int,  _llseek,  unsigned int,  fd, ulong, hi, ulong, lo,
-       loff_t *, res, unsigned int, wh);
-#endif
 
 static int
 sseek(char *dev, unsigned int fd, unsigned long s) {
-    loff_t in, out;
-    in = ((loff_t) s << 9);
+    off_t in, out;
+    in = ((off_t) s << 9);
     out = 1;
 
-#ifndef use_lseek
-    if (_llseek (fd, in>>32, in & 0xffffffff, &out, SEEK_SET) != 0) {
-#else
     if ((out = lseek(fd, in, SEEK_SET)) != in) {
-#endif
-	perror("llseek");
+	perror("lseek");
 	error(_("seek error on %s - cannot seek to %lu\n"), dev, s);
 	return 0;
     }

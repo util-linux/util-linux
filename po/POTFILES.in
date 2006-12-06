@@ -18,7 +18,6 @@ fdisk/fdisk.c
 fdisk/fdisksgilabel.c
 fdisk/fdisksunlabel.c
 fdisk/i386_sys_types.c
-fdisk/llseek.c
 fdisk/partitiontype.c
 fdisk/partname.c
 fdisk/sfdisk.c

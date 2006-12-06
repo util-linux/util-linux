@@ -26,9 +26,6 @@
 #define cround(n)	(display_in_cyl_units ? ((n)/units_per_sector)+1 : (n))
 #define scround(x)	(((x)+units_per_sector-1)/units_per_sector)
 
-extern long long ext2_llseek(unsigned int fd, long long offset,
-			     unsigned int origin);
-
 #if defined(__GNUC__) && (defined(__arm__) || defined(__alpha__))
 # define PACKED __attribute__ ((packed))
 #else

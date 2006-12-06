@@ -237,7 +237,7 @@ sysconfdir = @sysconfdir@
 target_alias = @target_alias@
 usrbinexecdir = $(prefix)/usr/bin
 usrsbinexecdir = $(prefix)/usr/sbin
-AM_CPPFLAGS = -include $(top_srcdir)/config.h -I$(top_srcdir)/include
+AM_CPPFLAGS = -include $(top_builddir)/config.h -I$(top_srcdir)/include
 DEFAULT_INCLUDES = 
 @BUILD_SCHEDUTILS_TRUE@man_MANS = chrt.1 ionice.1 taskset.1
 all: all-am

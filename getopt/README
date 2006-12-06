@@ -69,12 +69,13 @@ COPYING
 
 This program comes under the GNU general public licence version 2. See the 
 file COPYING included in this package. Note that though you may freely
-copy it, it is copyright (c) 1997 by Frodo Looijaard <frodol@dds.nl>.
+copy it, it is copyright (c) 1997-2005 by Frodo Looijaard 
+<frodo@frodo.looijaard.name>.
 Files in the gnu directory are from glibc-2.0.4: copyright (C) 1987, 88, 
 89, 90, 91, 92, 93, 94, 95, 96, 97 Free Software Foundation, Inc.
 
 
 DOWNLOADING
 
-You can find the latest version of this program at 
-<http://huizen.dds.nl/~frodol>.
+You can find the latest version of this program at:
+  http://software.frodo.looijaard.name/getopt/
