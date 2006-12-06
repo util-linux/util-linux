@@ -1,4 +1,4 @@
-AC_INIT(util-linux, 2.13-pre4, bunk@stusta.de)
+AC_INIT(util-linux, 2.13-pre5, bunk@stusta.de)
 
 AC_PREREQ(2.59)
 
@@ -67,7 +67,7 @@ AC_CHECK_HEADERS(ncurses.h)
 AC_CHECK_HEADERS(ncurses/ncurses.h)
 
 
-if test x$ac_cv_header_ncurses_h = xyes || x$ac_cv_header_ncurses_ncurses_h = xyes; then
+if test x$ac_cv_header_ncurses_h = xyes || test x$ac_cv_header_ncurses_ncurses_h = xyes; then
   have_ncurses=yes
   AC_MSG_NOTICE([you have ncurses])
 else
@@ -85,7 +85,7 @@ AC_ARG_WITH([slang],
 if test x$with_slang = xyes; then
   AC_CHECK_HEADERS(slcurses.h)
   AC_CHECK_HEADERS(slang/slcurses.h)
-  if test x$ac_cv_header_slcurses_h = xyes || x$ac_cv_header_slang_slcurses_h = xyes; then
+  if test x$ac_cv_header_slcurses_h = xyes || test x$ac_cv_header_slang_slcurses_h = xyes; then
     use_slang=yes
   else
     AC_MSG_ERROR([slang selected but slcurses.h not found])
@@ -379,10 +379,9 @@ if test x$enable_use_tty_group = xyes; then
   AC_DEFINE(USE_TTY_GROUP, 1, [Should wall and write be installed setgid tty?])
 fi
 
+CPPFLAGS="-fsigned-char -fomit-frame-pointer $CPPFLAGS"
 
 LIBS=""
-
-CPPFLAGS="-fsigned-char -Wall -Wmissing-prototypes -Wstrict-prototypes -Wundef -Werror-implicit-function-declaration -fomit-frame-pointer $CPPFLAGS"
 
 
 AC_CONFIG_HEADERS(config.h)

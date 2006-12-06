@@ -46,7 +46,7 @@ mtab_does_not_exist(void) {
 	return var_mtab_does_not_exist;
 }
 
-int
+static int
 mtab_is_a_symlink(void) {
 	get_mtab_info();
 	return var_mtab_is_a_symlink;
@@ -54,7 +54,7 @@ mtab_is_a_symlink(void) {
 
 int
 mtab_is_writable() {
-	static int ret = -1;
+	int fd;
 
 	/* Should we write to /etc/mtab upon an update?
 	   Probably not if it is a symlink to /proc/mounts, since that
@@ -63,15 +63,12 @@ mtab_is_writable() {
 	if (mtab_is_a_symlink())
 		return 0;
 
-	if (ret == -1) {
-		int fd = open(MOUNTED, O_RDWR | O_CREAT, 0644);
-		if (fd >= 0) {
-			close(fd);
-			ret = 1;
-		} else
-			ret = 0;
-	}
-	return ret;
+	fd = open(MOUNTED, O_RDWR | O_CREAT, 0644);
+	if (fd >= 0) {
+		close(fd);
+		return 1;
+	} else
+		return 0;
 }
 
 /* Contents of mtab and fstab ---------------------------------*/
@@ -572,7 +569,7 @@ update_mtab (const char *dir, struct my_mntent *instead) {
 	struct mntentchn mtabhead;	/* dummy */
 	struct mntentchn *mc, *mc0, *absent = NULL;
 
-	if (mtab_does_not_exist() || mtab_is_a_symlink())
+	if (mtab_does_not_exist() || !mtab_is_writable())
 		return;
 
 	lock_mtab();

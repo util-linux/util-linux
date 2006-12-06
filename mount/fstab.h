@@ -1,7 +1,6 @@
 #include "mntent.h"
 int mtab_is_writable(void);
 int mtab_does_not_exist(void);
-int mtab_is_a_symlink(void);
 int is_mounted_once(const char *name);
 
 struct mntentchn {

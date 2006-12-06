@@ -1,3 +1,11 @@
+util-linux 2.13-pre5
+
+* {fsck,mkfs}.cramfs: updated to cramfs-1.1
+* {fsck,mkfs}.cramfs: removed PAGE_CACHE_SIZE usage
+* umount: fix "umount -n -r" (Derick Swanepoel)
+* misc build system and code cleanups and fixes
+* updated translation: ca
+
 util-linux 2.13-pre4
 
 * don't build fdisk on m68k (Mike Frysinger)

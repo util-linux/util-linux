@@ -1,7 +1,7 @@
 /*
  * mkcramfs - make a cramfs file system
  *
- * Copyright (C) 1999-2001 Transmeta Corporation
+ * Copyright (C) 1999-2002 Transmeta Corporation
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,27 +35,25 @@
 #include <string.h>
 #include <assert.h>
 #include <getopt.h>
+#include <stdarg.h>
 #include <zlib.h>
 
 #include "cramfs.h"
 #include "md5.h"
 #include "nls.h"
 
-#define PAD_SIZE 512		/* only 0 and 512 supported by kernel */
+/* Exit codes used by mkfs-type programs */
+#define MKFS_OK          0     /* No errors */
+#define MKFS_ERROR       8     /* Operational error */
+#define MKFS_USAGE       16    /* Usage or syntax error */
+
+/* The kernel only supports PAD_SIZE of 0 and 512. */
+#define PAD_SIZE 512
 
 static const char *progname = "mkcramfs";
 static int verbose = 0;
 
-#ifdef __ia64__
-#define PAGE_CACHE_SIZE (16384)
-#elif defined __alpha__
-#define PAGE_CACHE_SIZE (8192)
-#else
-#define PAGE_CACHE_SIZE (4096)
-#endif
-
-/* The kernel assumes PAGE_CACHE_SIZE as block size. */
-static unsigned int blksize = PAGE_CACHE_SIZE; /* settable via -b option */
+static unsigned int blksize; /* settable via -b option */
 static long total_blocks = 0, total_nodes = 1; /* pre-count the root node */
 static int image_length = 0;
 
@@ -88,7 +86,7 @@ static int warn_uid = 0;
 /* In-core version of inode / directory entry. */
 struct entry {
 	/* stats */
-	char *name;
+	unsigned char *name;
 	unsigned int mode, size, uid, gid;
 	unsigned char md5sum[16];
 	unsigned char flags;
@@ -97,6 +95,7 @@ struct entry {
 
 	/* FS data */
 	char *path;
+	int fd;			    /* temporarily open files while mmapped */
         struct entry *same;	    /* points to other identical file */
         unsigned int offset;        /* pointer to compressed data in archive */
 	unsigned int dir_offset;    /* offset of directory entry in archive */
@@ -121,13 +120,13 @@ usage(int status) {
 	FILE *stream = status ? stderr : stdout;
 
 	fprintf(stream,
-		_("usage: %s [-h] [-v] [-b blksz] [-e edition] [-i file] "
+		_("usage: %s [-h] [-v] [-b blksize] [-e edition] [-i file] "
 		  "[-n name] dirname outfile\n"
 		  " -h         print this help\n"
 		  " -v         be verbose\n"
 		  " -E         make all warnings errors "
 		    "(non-zero exit status)\n"
-		  " -b blksz   use this blocksize, must equal page size\n"
+		  " -b blksize use this blocksize, must equal page size\n"
 		  " -e edition set edition number (part of fsid)\n"
 		  " -i file    insert a file image into the filesystem "
 		    "(requires >= 2.4.0)\n"
@@ -730,6 +729,7 @@ int main(int argc, char **argv)
 	u32 crc = crc32(0L, Z_NULL, 0);
 	int c;
 
+	blksize = sysconf(_SC_PAGESIZE);
 	total_blocks = 0;
 
 	if (argc) {
