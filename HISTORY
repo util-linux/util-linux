@@ -1,3 +1,7 @@
+util-linux 2.12r
+
+* no changes
+
 util-linux 2.12r-pre1
 
 * cfdisk: fix a segfault with ReiserFS partitions
