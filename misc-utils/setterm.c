@@ -16,6 +16,10 @@
  *
  * Converted to terminfo by Kars de Jong (jongk@cs.utwente.nl)
  *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
+ *
  * Syntax:
  *
  * setterm
@@ -106,6 +110,7 @@
 #endif
 #include <sys/ioctl.h>
 #include <sys/time.h>
+#include "nls.h"
 
 #ifndef TCGETS
 /* TCGETS is either defined in termios.h, or here: */
@@ -737,58 +742,58 @@ char *prog_name;		/* Name of this program. */
 {
 /* Print error message about arguments, and the command's syntax. */
 
-  fprintf(stderr, "%s: Argument error, usage\n", prog_name);
+  fprintf(stderr, _("%s: Argument error, usage\n"), prog_name);
   fprintf(stderr, "\n");
   fprintf(stderr, "%s\n", prog_name);
-  fprintf(stderr, "  [ -term terminal_name ]\n");
-  fprintf(stderr, "  [ -reset ]\n");
-  fprintf(stderr, "  [ -initialize ]\n");
-  fprintf(stderr, "  [ -cursor [on|off] ]\n");
+  fprintf(stderr, _("  [ -term terminal_name ]\n"));
+  fprintf(stderr, _("  [ -reset ]\n"));
+  fprintf(stderr, _("  [ -initialize ]\n"));
+  fprintf(stderr, _("  [ -cursor [on|off] ]\n"));
 #if 0
-  fprintf(stderr, "  [ -snow [on|off] ]\n");
-  fprintf(stderr, "  [ -softscroll [on|off] ]\n");
-  fprintf(stderr, "  [ -keyboard pc|olivetti|dutch|extended ]\n");
+  fprintf(stderr, _("  [ -snow [on|off] ]\n"));
+  fprintf(stderr, _("  [ -softscroll [on|off] ]\n"));
+  fprintf(stderr, _("  [ -keyboard pc|olivetti|dutch|extended ]\n"));
 #endif
-  fprintf(stderr, "  [ -repeat [on|off] ]\n");
-  fprintf(stderr, "  [ -appcursorkeys [on|off] ]\n");
-  fprintf(stderr, "  [ -linewrap [on|off] ]\n");
-  fprintf(stderr, "  [ -default ]\n");
-  fprintf(stderr, "  [ -foreground black|blue|green|cyan");
-  fprintf(stderr, "|red|magenta|yellow|white|default ]\n");
-  fprintf(stderr, "  [ -background black|blue|green|cyan");
-  fprintf(stderr, "|red|magenta|yellow|white|default ]\n");
-  fprintf(stderr, "  [ -ulcolor black|grey|blue|green|cyan");
-  fprintf(stderr, "|red|magenta|yellow|white ]\n");
-  fprintf(stderr, "  [ -ulcolor bright blue|green|cyan");
-  fprintf(stderr, "|red|magenta|yellow|white ]\n");
-  fprintf(stderr, "  [ -hbcolor black|grey|blue|green|cyan");
-  fprintf(stderr, "|red|magenta|yellow|white ]\n");
-  fprintf(stderr, "  [ -hbcolor bright blue|green|cyan");
-  fprintf(stderr, "|red|magenta|yellow|white ]\n");
+  fprintf(stderr, _("  [ -repeat [on|off] ]\n"));
+  fprintf(stderr, _("  [ -appcursorkeys [on|off] ]\n"));
+  fprintf(stderr, _("  [ -linewrap [on|off] ]\n"));
+  fprintf(stderr, _("  [ -default ]\n"));
+  fprintf(stderr, _("  [ -foreground black|blue|green|cyan"));
+  fprintf(stderr, _("|red|magenta|yellow|white|default ]\n"));
+  fprintf(stderr, _("  [ -background black|blue|green|cyan"));
+  fprintf(stderr, _("|red|magenta|yellow|white|default ]\n"));
+  fprintf(stderr, _("  [ -ulcolor black|grey|blue|green|cyan"));
+  fprintf(stderr, _("|red|magenta|yellow|white ]\n"));
+  fprintf(stderr, _("  [ -ulcolor bright blue|green|cyan"));
+  fprintf(stderr, _("|red|magenta|yellow|white ]\n"));
+  fprintf(stderr, _("  [ -hbcolor black|grey|blue|green|cyan"));
+  fprintf(stderr, _("|red|magenta|yellow|white ]\n"));
+  fprintf(stderr, _("  [ -hbcolor bright blue|green|cyan"));
+  fprintf(stderr, _("|red|magenta|yellow|white ]\n"));
 #if 0
-  fprintf(stderr, "  [ -standout [ attr ] ]\n");
+  fprintf(stderr, _("  [ -standout [ attr ] ]\n"));
 #endif
-  fprintf(stderr, "  [ -inversescreen [on|off] ]\n");
-  fprintf(stderr, "  [ -bold [on|off] ]\n");
-  fprintf(stderr, "  [ -half-bright [on|off] ]\n");
-  fprintf(stderr, "  [ -blink [on|off] ]\n");
-  fprintf(stderr, "  [ -reverse [on|off] ]\n");
-  fprintf(stderr, "  [ -underline [on|off] ]\n");
-  fprintf(stderr, "  [ -store ]\n");
-  fprintf(stderr, "  [ -clear [all|rest] ]\n");
-  fprintf(stderr, "  [ -tabs [ tab1 tab2 tab3 ... ] ]      (tabn = 1-160)\n");
-  fprintf(stderr, "  [ -clrtabs [ tab1 tab2 tab3 ... ] ]   (tabn = 1-160)\n");
-  fprintf(stderr, "  [ -regtabs [1-160] ]\n");
-  fprintf(stderr, "  [ -blank [0-60] ]\n");
-  fprintf(stderr, "  [ -dump   [1-NR_CONSOLES] ]\n");
-  fprintf(stderr, "  [ -append [1-NR_CONSOLES] ]\n");
-  fprintf(stderr, "  [ -file dumpfilename ]\n");
-  fprintf(stderr, "  [ -msg [on|off] ]\n");
-  fprintf(stderr, "  [ -msglevel [0-8] ]\n");
-  fprintf(stderr, "  [ -powersave [on|vsync|hsync|powerdown|off] ]\n");
-  fprintf(stderr, "  [ -powerdown [0-60] ]\n");
-  fprintf(stderr, "  [ -blength [0-2000] ]\n");
-  fprintf(stderr, "  [ -bfreq freqnumber ]\n");
+  fprintf(stderr, _("  [ -inversescreen [on|off] ]\n"));
+  fprintf(stderr, _("  [ -bold [on|off] ]\n"));
+  fprintf(stderr, _("  [ -half-bright [on|off] ]\n"));
+  fprintf(stderr, _("  [ -blink [on|off] ]\n"));
+  fprintf(stderr, _("  [ -reverse [on|off] ]\n"));
+  fprintf(stderr, _("  [ -underline [on|off] ]\n"));
+  fprintf(stderr, _("  [ -store ]\n"));
+  fprintf(stderr, _("  [ -clear [all|rest] ]\n"));
+  fprintf(stderr, _("  [ -tabs [ tab1 tab2 tab3 ... ] ]      (tabn = 1-160)\n"));
+  fprintf(stderr, _("  [ -clrtabs [ tab1 tab2 tab3 ... ] ]   (tabn = 1-160)\n"));
+  fprintf(stderr, _("  [ -regtabs [1-160] ]\n"));
+  fprintf(stderr, _("  [ -blank [0-60] ]\n"));
+  fprintf(stderr, _("  [ -dump   [1-NR_CONSOLES] ]\n"));
+  fprintf(stderr, _("  [ -append [1-NR_CONSOLES] ]\n"));
+  fprintf(stderr, _("  [ -file dumpfilename ]\n"));
+  fprintf(stderr, _("  [ -msg [on|off] ]\n"));
+  fprintf(stderr, _("  [ -msglevel [0-8] ]\n"));
+  fprintf(stderr, _("  [ -powersave [on|vsync|hsync|powerdown|off] ]\n"));
+  fprintf(stderr, _("  [ -powerdown [0-60] ]\n"));
+  fprintf(stderr, _("  [ -blength [0-2000] ]\n"));
+  fprintf(stderr, _("  [ -bfreq freqnumber ]\n"));
 }
 
 char *ti_entry(name)
@@ -833,16 +838,16 @@ int vcterm;			/* Set if terminal is a virtual console. */
   if (opt_keyboard && vcterm) {
 	switch (opt_ke_type) {
 	    case PC:
-		printf("%s%s%s", DCS, "keyboard.pc", ST);
+		printf("%s%s%s", DCS, _("keyboard.pc"), ST);
 		break;
 	    case OLIVETTI:
-		printf("%s%s%s", DCS, "keyboard.olivetti", ST);
+		printf("%s%s%s", DCS, _("keyboard.olivetti"), ST);
 		break;
 	    case DUTCH:
-		printf("%s%s%s", DCS, "keyboard.dutch", ST);
+		printf("%s%s%s", DCS, _("keyboard.dutch"), ST);
 		break;
 	    case EXTENDED:
-		printf("%s%s%s", DCS, "keyboard.extended", ST);
+		printf("%s%s%s", DCS, _("keyboard.extended"), ST);
 		break;
 	}
   }
@@ -876,17 +881,17 @@ int vcterm;			/* Set if terminal is a virtual console. */
   /* -snow [on|off].  Vc only. */
   if (opt_snow && vcterm) {
 	if (opt_sn_on)
-		printf("%s%s%s", DCS, "snow.on", ST);
+		printf("%s%s%s", DCS, _("snow.on"), ST);
 	else
-		printf("%s%s%s", DCS, "snow.off", ST);
+		printf("%s%s%s", DCS, _("snow.off"), ST);
   }
 
   /* -softscroll [on|off].  Vc only. */
   if (opt_softscroll && vcterm) {
 	if (opt_so_on)
-		printf("%s%s%s", DCS, "softscroll.on", ST);
+		printf("%s%s%s", DCS, _("softscroll.on"), ST);
 	else
-		printf("%s%s%s", DCS, "softscroll.off", ST);
+		printf("%s%s%s", DCS, _("softscroll.off"), ST);
   }
 #endif
 
@@ -1061,7 +1066,7 @@ int vcterm;			/* Set if terminal is a virtual console. */
 	ioctlarg[0] = 10;	/* powersave */
 	ioctlarg[1] = opt_ps_mode;
         if (ioctl(0,TIOCLINUX,ioctlarg))
-	    fprintf(stderr,"cannot (un)set powersave mode\n");
+	    fprintf(stderr,_("cannot (un)set powersave mode\n"));
   }
 
   /* -powerdown [0-60]. */
@@ -1082,7 +1087,7 @@ int vcterm;			/* Set if terminal is a virtual console. */
       F = fopen(opt_sn_name, opt_snap ? "w" : "a");
       if (!F) {
 	  perror(opt_sn_name);
-	  fprintf(stderr,"setterm: can not open dump file %s for output\n",
+	  fprintf(stderr,("setterm: can not open dump file %s for output\n"),
 		  opt_sn_name); 
 	  exit(-1);
       }
@@ -1100,7 +1105,7 @@ int vcterm;			/* Set if terminal is a virtual console. */
                result = klogctl(6, NULL, 0);
 
        if (result != 0)
-               printf("klogctl error: %s\n", strerror(result));
+               printf(_("klogctl error: %s\n"), strerror(result));
   }
 
   /* -msglevel [0-8] */
@@ -1108,7 +1113,7 @@ int vcterm;			/* Set if terminal is a virtual console. */
        /* 8 -- Set level of messages printed to console */
        result = klogctl(8, NULL, opt_msglevel_num);
        if (result != 0)
-               printf("klogctl error: %s\n", strerror(result));
+               printf(_("klogctl error: %s\n"), strerror(result));
    }
 
   /* -blength [0-2000] */
@@ -1145,11 +1150,11 @@ screendump(int vcnum, FILE *F){
     inbuf = malloc(rows*cols*2);
     outbuf = malloc(rows*(cols+1));
     if(!inbuf || !outbuf) {
-	fprintf(stderr, "Out of memory\n");
+	fputs(_("Out of memory"), stderr);
 	exit(1);
     }
     if (read(fd, inbuf, rows*cols*2) != rows*cols*2) {
-	fprintf(stderr, "Error reading %s\n", infile);
+	fprintf(stderr, _("Error reading %s\n"), infile);
 	exit(1);
     }
     p = inbuf;
@@ -1164,7 +1169,7 @@ screendump(int vcnum, FILE *F){
 	*q++ = '\n';
     }
     if (fwrite(outbuf, 1, q-outbuf, F) != q-outbuf) {
-	fprintf(stderr, "Error writing screendump\n");
+	fprintf(stderr, _("Error writing screendump\n"));
 	exit(1);
     }
     return;
@@ -1178,7 +1183,7 @@ try_ioctl:
 	screenbuf[0] = 0;
 	screenbuf[1] = (unsigned char) vcnum;
 	if (ioctl(0,TIOCLINUX,screenbuf) < 0) {
-	    fprintf(stderr,"couldn't read %s, and cannot ioctl dump\n",
+	    fprintf(stderr,_("couldn't read %s, and cannot ioctl dump\n"),
 		    infile);
 	    exit(1);
 	}
@@ -1203,6 +1208,10 @@ int main(int argc, char **argv)
   char *term;			/* Terminal type. */
   int vcterm;			/* Set if terminal is a virtual console. */
 
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
+  
   if (argc < 2) bad_arg = TRUE;
 
   /* Parse arguments. */
@@ -1239,7 +1248,7 @@ int main(int argc, char **argv)
   } else {
 	term = getenv("TERM");
 	if (term == NULL) {
-		fprintf(stderr, "%s: $TERM is not defined.\n", argv[0]);
+		fprintf(stderr, _("%s: $TERM is not defined.\n"), argv[0]);
 		exit(1);
 	}
   }

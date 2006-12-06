@@ -5,6 +5,9 @@
  * Copyright (C) Andreas Neuper, Sep 1998.
  *	This file may be modified and redistributed under
  *	the terms of the GNU Public License.
+ *
+ * Sat Mar 20 EST 1999 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+ *	Internationalization
  */
 #include <stdio.h>              /* stderr */
 #include <stdlib.h>             /* uint */
@@ -15,9 +18,11 @@
 #include <assert.h>             /* assert */
 
 #include <endian.h>
+#include "nls.h"
 #include <linux/major.h>        /* FLOPPY_MAJOR */
 #include <linux/hdreg.h>        /* HDIO_GETGEO */
 
+#include "common.h"
 #include "fdisk.h"
 #include "fdisksgilabel.h"
 
@@ -47,23 +52,22 @@ int  isinfreelist( int b )		\
 /*
  * end of free blocks section
  */
-
 struct systypes sgi_sys_types[] = {
-    {SGI_VOLHDR,  "SGI volhdr"},
-    {0x01,	  "SGI trkrepl"},
-    {0x02,	  "SGI secrepl"},
-    {SGI_SWAP,	  "SGI raw"},
-    {0x04,	  "SGI bsd"},
-    {0x05,	  "SGI sysv"},
-    {ENTIRE_DISK, "SGI volume"},
-    {SGI_EFS,	  "SGI efs"},
-    {0x08,	  "SGI lvol"},
-    {0x09,	  "SGI rlvol"},
-    {0x0A,	  "SGI xfs"},
-    {0x0B,	  "SGI xlvol"},
-    {0x0C,	  "SGI rxlvol"},
-    {LINUX_SWAP,  "Linux swap"},
-    {LINUX_NATIVE,"Linux native"},
+    {SGI_VOLHDR,  N_("SGI volhdr")},
+    {0x01,	  N_("SGI trkrepl")},
+    {0x02,	  N_("SGI secrepl")},
+    {SGI_SWAP,	  N_("SGI raw")},
+    {0x04,	  N_("SGI bsd")},
+    {0x05,	  N_("SGI sysv")},
+    {ENTIRE_DISK, N_("SGI volume")},
+    {SGI_EFS,	  N_("SGI efs")},
+    {0x08,	  N_("SGI lvol")},
+    {0x09,	  N_("SGI rlvol")},
+    {0x0A,	  N_("SGI xfs")},
+    {0x0B,	  N_("SGI xlvol")},
+    {0x0C,	  N_("SGI rxlvol")},
+    {LINUX_SWAP,  N_("Linux swap")},
+    {LINUX_NATIVE,N_("Linux native")},
     {0, NULL }
 };
 
@@ -136,8 +140,8 @@ int check_sgi_label()
 {
     if (sizeof(sgilabel) > 512) {
 	    fprintf(stderr,
-		    "According to MIPS Computer Systems, Inc the "
-		    "Label must not contain more than 512 bytes\n");
+		    _("According to MIPS Computer Systems, Inc the "
+		    "Label must not contain more than 512 bytes\n"));
 	    exit(1);
     }
 
@@ -155,7 +159,7 @@ int check_sgi_label()
     if( two_s_complement_32bit_sum( (unsigned int*)sgilabel,
 			sizeof(*sgilabel) ) )
     {
-	fprintf( stderr, "Detected sgi disklabel with wrong checksum.\n" );
+	fprintf( stderr, _("Detected sgi disklabel with wrong checksum.\n"));
     } else
     {
 	heads = sgi_get_ntrks();
@@ -179,27 +183,28 @@ sgi_list_table( int xtra )
 
     if( xtra )
     {
-	printf( "\nDisk %s (SGI disk label): %d heads, %d sectors\n"
+	printf(_("\nDisk %s (SGI disk label): %d heads, %d sectors\n"
 	       "%d cylinders, %d physical cylinders\n"
 	       "%d extra sects/cyl, interleave %d:1\n"
 	       "%s\n"
-	       "Units = %ss of %d * 512 bytes\n\n",
+	       "Units = %s of %d * 512 bytes\n\n"),
 	       disk_device, heads, sectors, cylinders,
 	       SSWAP16(sgiparam.pcylcount),
 	       SSWAP16(sgiparam.sparecyl),
 	       SSWAP16(sgiparam.ilfact),
 	       (char *)sgilabel,
-	       str_units(), display_factor);
+	       str_units(PLURAL), units_per_sector);
     } else
     {
-	printf( "\nDisk %s (SGI disk label): %d heads, %d sectors, %d cylinders\n"
-	        "Units = %ss of %d * 512 bytes\n\n",
+	printf( _("\nDisk %s (SGI disk label): "
+		"%d heads, %d sectors, %d cylinders\n"
+		"Units = %s of %d * 512 bytes\n\n"),
 	        disk_device, heads, sectors, cylinders,
-	        str_units(), display_factor );
+	        str_units(PLURAL), units_per_sector );
     }
-    printf("----- partitions -----\n"
-	   "%*s  Info      Start       End   Sectors  Id  System\n",
-	   w + 1, "Device");
+    printf(_("----- partitions -----\n"
+	   "%*s  Info      Start       End   Sectors  Id  System\n"),
+	   w + 1, _("Device"));
     for (i = 0 ; i < partitions; i++)
     {
 	if( sgi_get_num_sectors(i) || debug )
@@ -216,12 +221,12 @@ sgi_list_table( int xtra )
 /* no odd flag on end */  (long) len, 
 /* type id */             sgi_get_sysid(i),
 /* type name */           (type = partition_type(sgi_get_sysid(i)))
-		    ? type : "Unknown");
+		    ? type : _("Unknown"));
 	}
     }
-    printf(	"----- bootinfo -----\nBootfile: %s\n"
-		"----- directory entries -----\n",
-		sgilabel->boot_file );
+    printf(_("----- bootinfo -----\nBootfile: %s\n"
+	     "----- directory entries -----\n"),
+	   sgilabel->boot_file );
     for (i = 0 ; i < volumes; i++)
     {
 	if (sgilabel->directory[i].vol_file_size)
@@ -229,7 +234,7 @@ sgi_list_table( int xtra )
 	    __u32 start = SSWAP32(sgilabel->directory[i].vol_file_start);
 	    __u32 len = SSWAP32(sgilabel->directory[i].vol_file_size);
 	    char*name = sgilabel->directory[i].vol_file_name;
-	    printf("%2d: %-10s sector%5u size%8u\n",
+	    printf(_("%2d: %-10s sector%5u size%8u\n"),
 		    i, name, (unsigned int) start, (unsigned int) len);
 	}
     }
@@ -290,25 +295,25 @@ sgi_check_bootfile( const char* aFile )
 {
     if( strlen( aFile ) < 3 ) /* "/a\n" is minimum */
     {
-	printf( "\nInvalid Bootfile!\n"
+	printf( _("\nInvalid Bootfile!\n"
 		"\tThe bootfile must be an absolute non-zero pathname,\n"
-		"\te.g. \"/unix\" or \"/unix.save\".\n" );
+		"\te.g. \"/unix\" or \"/unix.save\".\n") );
 	return 0;
     } else
     if( strlen( aFile ) > 16 )
     {
-	printf( "\n\tName of Bootfile too long:  16 bytes maximum.\n" );
+	printf( _("\n\tName of Bootfile too long:  16 bytes maximum.\n") );
 	return 0;
     } else
     if( aFile[0] != '/' )
     {
-	printf( "\n\tBootfile must have a fully qualified pathname.\n" );
+	printf( _("\n\tBootfile must have a fully qualified pathname.\n") );
 	return 0;
     }
     if( strncmp( aFile, sgilabel->boot_file, 16 ) )
     {
-	printf( "\n\tBe aware, that the bootfile is not checked for existence.\n\t"
-		"SGI's default is \"/unix\" and for backup \"/unix.save\".\n" );
+	printf( _("\n\tBe aware, that the bootfile is not checked for existence.\n\t"
+		"SGI's default is \"/unix\" and for backup \"/unix.save\".\n") );
 	/* filename is correct and did change */
 	return 1;
     }
@@ -335,7 +340,7 @@ sgi_set_bootfile( const char* aFile )
 		sgilabel->boot_file[i] = 0;
 	    i++;
 	}
-	printf( "\n\tBootfile is changed to \"%s\".\n", sgilabel->boot_file );
+	printf( _("\n\tBootfile is changed to \"%s\".\n"), sgilabel->boot_file );
     }
     return;
 }
@@ -385,7 +390,7 @@ sgi_write_table( void )
 
 static
 int
-compare_start( int*x, int*y )
+compare_start( int *x, int *y )
 {
     /*
      * sort according to start sectors
@@ -423,7 +428,6 @@ verify_sgi( int verbose )
 {
     int Index[16];	/* list of valid partitions */
     int sortcount = 0;	/* number of used partitions, i.e. non-zero lengths */
-    int compare_start();/* comparison function above */
     int entire = 0, i = 0;	/* local counters */
     int start = 0;
     int gap = 0;	/* count unused blocks */
@@ -441,7 +445,7 @@ verify_sgi( int verbose )
 		if( entire++ == 1 )
 		{
 		    if(verbose)
-			printf("More than one entire disk entriy present.\n");
+			printf(_("More than one entire disk entry present.\n"));
 		}
 	    }
 	}
@@ -449,27 +453,27 @@ verify_sgi( int verbose )
     if( sortcount == 0 )
     {
 	if(verbose)
-	    printf("No partitions defined\n");
+	    printf(_("No partitions defined\n"));
         return lastblock;
     }
     qsort( Index, sortcount, sizeof(Index[0]), (void*)compare_start );
     if( sgi_get_sysid( Index[0] ) == ENTIRE_DISK )
     {
 	if( ( Index[0] != 10 ) && verbose )
-	    printf( "IRIX likes when Partition 11 covers the entire disk.\n" );
+	    printf( _("IRIX likes when Partition 11 covers the entire disk.\n") );
 	if( ( sgi_get_start_sector( Index[0] ) != 0 ) && verbose )
-	    printf( "The entire disk partition should start at block 0,\nnot "
-		    "at diskblock %d.\n", sgi_get_start_sector(Index[0] ) );
+	    printf( _("The entire disk partition should start at block 0,\nnot "
+		    "at diskblock %d.\n"), sgi_get_start_sector(Index[0] ) );
     if(debug)	/* I do not understand how some disks fulfil it */
 	if( ( sgi_get_num_sectors( Index[0] ) != lastblock ) && verbose )
-	    printf( "The entire disk partition is only %d diskblock large,\n"
-		    "but the disk is %d diskblocks long.\n",
+	    printf( _("The entire disk partition is only %d diskblock large,\n"
+		    "but the disk is %d diskblocks long.\n"),
 		    sgi_get_num_sectors( Index[0] ), lastblock );
 	lastblock = sgi_get_num_sectors( Index[0] );
     } else
     {
 	if( verbose )
-	    printf( "One Partition (#11) should cover the entire disk.\n" );
+	    printf( _("One Partition (#11) should cover the entire disk.\n") );
 	if(debug>2)
 	    printf( "sysid=%d\tpartition=%d\n",
 			sgi_get_sysid( Index[0] ), Index[0]+1 );
@@ -481,14 +485,14 @@ verify_sgi( int verbose )
 	{
 	if(debug)	/* I do not understand how some disks fulfil it */
 	    if( verbose )
-		printf( "Partition %d does not start on cylinder boundary.\n",
+		printf( _("Partition %d does not start on cylinder boundary.\n"),
 			Index[i]+1 );
 	}
 	if( sgi_get_num_sectors( Index[i] ) % cylsize != 0 )
 	{
 	if(debug)	/* I do not understand how some disks fulfil it */
 	    if( verbose )
-		printf( "Partition %d does not end on cylinder boundary.\n",
+		printf( _("Partition %d does not end on cylinder boundary.\n"),
 			Index[i]+1 );
 	}
 	/* We cannot handle several "entire disk" entries. */
@@ -496,7 +500,7 @@ verify_sgi( int verbose )
 	if( start > sgi_get_start_sector( Index[i] ) )
 	{
 	    if( verbose )
-		printf( "The Partition %d and %d overlap by %d sectors.\n",
+		printf( _("The Partition %d and %d overlap by %d sectors.\n"),
 			Index[i-1]+1, Index[i]+1,
 			start - sgi_get_start_sector( Index[i] ) );
 	    if( gap >  0 ) gap = -gap;
@@ -505,7 +509,7 @@ verify_sgi( int verbose )
 	if( start < sgi_get_start_sector( Index[i] ) )
 	{
 	    if( verbose )
-		printf( "Unused gap of %8d sectors - sectors %8d-%d\n",
+		printf( _("Unused gap of %8d sectors - sectors %8d-%d\n"),
 			sgi_get_start_sector( Index[i] ) - start,
 			start, sgi_get_start_sector( Index[i] )-1 );
 	    gap += sgi_get_start_sector( Index[i] ) - start;
@@ -525,7 +529,7 @@ verify_sgi( int verbose )
     if( ( start < lastblock ) )
     {
 	if( verbose )
-	    printf( "Unused gap of %8d sectors - sectors %8d-%d\n",
+	    printf( _("Unused gap of %8d sectors - sectors %8d-%d\n"),
 		    lastblock - start, start, lastblock-1 );
 	gap += lastblock - start;
 	add2freelist( start, lastblock );
@@ -538,20 +542,20 @@ verify_sgi( int verbose )
     {
 	if( !sgi_get_num_sectors( sgi_get_bootpartition() ) )
 	{
-	    printf( "\nThe boot partition does not exist.\n" );
+	    printf( _("\nThe boot partition does not exist.\n") );
 	}
 	if( !sgi_get_num_sectors( sgi_get_swappartition() ) )
 	{
-	    printf( "\nThe swap partition does not exist.\n" );
+	    printf( _("\nThe swap partition does not exist.\n") );
 	} else
 	if( ( sgi_get_sysid( sgi_get_swappartition() ) != SGI_SWAP )
 	&&  ( sgi_get_sysid( sgi_get_swappartition() ) != LINUX_SWAP ) )
 	{
-	    printf( "\nThe swap partition has no swap type.\n" );
+	    printf( _("\nThe swap partition has no swap type.\n") );
 	}
 	if( sgi_check_bootfile( "/unix" ) )
 	{
-	    printf( "\tYou have chosen an unusual boot file name.\n" );
+	    printf( _("\tYou have chosen an unusual boot file name.\n") );
 	}
     }
     return gap;
@@ -562,18 +566,18 @@ sgi_change_sysid( int i, int sys )
 {
     if( sgi_get_num_sectors(i) == 0 ) /* caught already before, ... */
     {
-	printf("Sorry You may change the Tag of non-empty partitions.\n");
+	printf(_("Sorry You may change the Tag of non-empty partitions.\n"));
 	return;
     }
     if( ((sys != ENTIRE_DISK ) && (sys != SGI_VOLHDR))
      && (sgi_get_start_sector(i)<1) )
     {
 	read_chars(
-	"It is highly recommended that the partition at offset 0\n"
+	_("It is highly recommended that the partition at offset 0\n"
 	"is of type \"SGI volhdr\", the IRIX system will rely on it to\n"
 	"retrieve from its directory standalone tools like sash and fx.\n"
 	"Only the \"SGI volume\" entire disk section may violate this.\n"
-	"Type YES if you are sure about tagging this partition differently.\n" );
+	"Type YES if you are sure about tagging this partition differently.\n"));
 	if (strcmp (line_ptr, "YES\n"))
                     return;
     }
@@ -614,9 +618,7 @@ sgi_set_partition( int i, uint start, uint length, int sys )
 	    SSWAP32( start );
     changed[i] = 1;
     if( sgi_gaps(0) < 0 )	/* rebuild freelist */
-    {
-	printf( "Do You know, You got a partition overlap on the disk?\n" );
-    }
+	printf(_("Do You know, You got a partition overlap on the disk?\n"));
     return;
 }
 
@@ -679,38 +681,36 @@ sgi_add_partition( int n, int sys )
     }
     if( sgi_get_num_sectors(n) )
     {
-	printf( "Partition %d is already defined.  Delete "
-		"it before re-adding it.\n", n + 1);
+	printf(_("Partition %d is already defined.  Delete "
+		"it before re-adding it.\n"), n + 1);
 	return;
     }
     if( (sgi_entire() == -1)
     &&  (sys != SGI_VOLUME) )
     {
-	printf( "Attempting to generate entire disk entry automatically.\n" );
+	printf(_("Attempting to generate entire disk entry automatically.\n"));
 	sgi_set_entire();
 	sgi_set_volhdr();
     }
     if( (sgi_gaps() == 0)
     &&  (sys != SGI_VOLUME) )
     {
-	printf( "The entire disk is already covered with partitions.\n" );
+	printf(_("The entire disk is already covered with partitions.\n"));
 	return;
     }
     if( sgi_gaps() < 0 )
     {
-	printf( "You got a partition overlap on the disk. Fix it first!\n" );
+	printf(_("You got a partition overlap on the disk. Fix it first!\n"));
 	return;
     }
-    sprintf(mesg, "First %s", str_units());
-    for(;;)
-    {
-	if(sys == SGI_VOLUME)
-	{
+    sprintf(mesg, _("First %s"), str_units(SINGULAR));
+    for(;;) {
+	if(sys == SGI_VOLUME) {
 	    last = sgi_get_lastblock();
 	    first = read_int(0, 0, last-1, 0, mesg);
 	    if( first != 0 ) {
-		printf( "It is highly recommended that eleventh partition\n"
-			"covers the entire disk and is of type `SGI volume'\n");
+		printf(_("It is highly recommended that eleventh partition\n"
+		       "covers the entire disk and is of type `SGI volume'\n"));
 	    }
 	} else {
 	    first = freelist[0].first;
@@ -718,30 +718,28 @@ sgi_add_partition( int n, int sys )
 	    first = read_int(scround(first), scround(first), scround(last)-1,
 			     0, mesg);
 	}
-	if (unit_flag)
-	    first *= display_factor;
+	if (display_in_cyl_units)
+	    first *= units_per_sector;
 	else
 	    first = first; /* align to cylinder if you know how ... */
 	if( !last )
 	    last = isinfreelist(first);
 	if( last == 0 ) {
-	    printf( "You will get a partition overlap on the disk. "
-		    "Fix it first!\n" );
+	    printf(_("You will get a partition overlap on the disk. "
+		    "Fix it first!\n"));
 	} else
 	    break;
     }
-    sprintf(mesg, " Last %s", str_units());
+    sprintf(mesg, _(" Last %s"), str_units(SINGULAR));
     last = read_int(scround(first), scround(last)-1, scround(last)-1,
 		    scround(first), mesg)+1;
-    if (unit_flag)                                                   
-	last *= display_factor;                                     
+    if (display_in_cyl_units)
+	last *= units_per_sector;                                     
     else                                                             
 	last = last; /* align to cylinder if You know how ... */
     if( (sys == SGI_VOLUME) && ( first != 0 || last != sgi_get_lastblock() ) )
-    {
-	printf( "It is highly recommended that eleventh partition\n"
-		"covers the entire disk and is of type `SGI volume'\n");
-    }
+	printf(_("It is highly recommended that eleventh partition\n"
+		"covers the entire disk and is of type `SGI volume'\n"));
     sgi_set_partition( n, first, last-first, sys );
     return;
 }
@@ -755,9 +753,9 @@ create_sgilabel( void )
 	     int sysid; } old[4];
     int i=0;
     fprintf( stderr,
-	"Building a new SGI disklabel. Changes will remain in memory only,\n"
+	_("Building a new SGI disklabel. Changes will remain in memory only,\n"
 	"until you decide to write them. After that, of course, the previous\n"
-	"content will be unrecoverable lost.\n\n");
+	"content will be unrecoverable lost.\n\n"));
 #if BYTE_ORDER == LITTLE_ENDIAN
     other_endian = 1;
 #else
@@ -783,9 +781,9 @@ create_sgilabel( void )
 		old[i].sysid = part_table[i]->sys_ind;
 		old[i].start = get_start_sect( part_table[i] );
 		old[i].nsect = get_nr_sects( part_table[i] );
-		printf( "Trying to keep parameters of partition %d.\n", i );
+		printf( _("Trying to keep parameters of partition %d.\n"), i );
 		if( debug )
-		    printf( "ID=%02x\tSTART=%d\tLENGTH=%d\n",
+		    printf( _("ID=%02x\tSTART=%d\tLENGTH=%d\n"),
 			    old[i].sysid, old[i].start, old[i].nsect );
 	    }
 	}

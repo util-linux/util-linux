@@ -1,0 +1,20 @@
+RedHat and SuSE take the program reset from ncurses,
+ where reset is a name for the program tset.
+ It is approximately equivalent to
+	stty sane; tputs rs1; tputs rs2; tputs rf
+ with `tputs rf' replaced by `tputs if' when there is an
+ init_file but no reset_file. In the comments it wonders
+ whether also sending rs3, rmacs, rmul, rmm might be a good idea.
+
+Slackware uses the small script given here.
+ The part `echo -e \\033c' is the canonical reset of the kernel
+ console status, and is equivalent to `tputs rs1' for a linux
+ terminal.
+
+So, both versions are approximately the same.
+
+
+[A disadvantage of `echo -e \\033c' might be that it is potentially
+wrong on a non-vt100, non-xterm, non-linux terminal.
+An advantage is that there are terminfo entries for xterm around
+that only use rs1=^O as reset, and then \Ec is much better.]

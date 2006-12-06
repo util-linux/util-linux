@@ -2,6 +2,12 @@
  * A swapon(8)/swapoff(8) for Linux 0.99.
  * swapon.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
  * Added '-s' (Summary option) <Vincent.Renardias@waw.com> 02/1997.
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ * Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+ * - fixed strerr(errno) in gettext calls
+ *
  */
 
 #include <stdlib.h>
@@ -13,6 +19,7 @@
 #include <sys/stat.h>
 #include "swap_constants.h"
 #include "swapargs.h"
+#include "nls.h"
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
@@ -38,17 +45,14 @@ static struct option longopts[] =
   { NULL, 0, 0, 0 }
 };
 
-const char *usage_string = "\
-usage: %s [-hV]\n\
-       %s -a [-v]\n\
-       %s [-v] [-p priority] special ...\n\
-       %s [-s]\n\
-";
-
 static void
 usage (FILE *fp, int n)
 {
-  fprintf (fp, usage_string, program_name, program_name, program_name, program_name);
+  fprintf (fp, _("usage: %s [-hV]\n"
+	       "       %s -a [-v]\n"
+	       "       %s [-v] [-p priority] special ...\n"
+	       "       %s [-s]\n"),
+	       program_name, program_name, program_name, program_name);
   exit (n);
 }
 
@@ -81,24 +85,27 @@ swap (const char *special, int prio)
   struct stat st;
 
   if (verbose)
-    printf("%s on %s\n", program_name, special);
+    printf(_("%s on %s\n"), program_name, special);
 
   if (streq (program_name, "swapon")) {
     if (stat(special, &st) < 0) {
-        fprintf (stderr, "swapon: cannot stat %s: %s\n", special, strerror (errno));
+    	int errsv = errno;
+        fprintf (stderr, _("swapon: cannot stat %s: %s\n"), special, strerror (errsv));
 	return -1;
     }
 
-    if ((st.st_mode & 07077) != 0) {
-        fprintf(stderr, "swapon: warning: %s has insecure permissions %04o, "
-		        "0600 suggested\n", special, st.st_mode & 07777);
+    /* people generally dislike this warning - now it is printed
+       only when `verbose' is set */
+    if (verbose && (st.st_mode & 07077) != 0) {
+        fprintf(stderr, _("swapon: warning: %s has insecure permissions %04o, "
+		        "0600 suggested\n"), special, st.st_mode & 07777);
     }
 
     /* test for holes by LBT */
     if (S_ISREG(st.st_mode)) {
 	if (st.st_blocks * 512 < st.st_size) {
 	    fprintf(stderr,
-		    "swapon: Skipping file %s - it appears to have holes.\n",
+		    _("swapon: Skipping file %s - it appears to have holes.\n"),
 		    special);
 	    return -1;
 	}
@@ -124,8 +131,10 @@ swap (const char *special, int prio)
   } else
      status = swapoff (special);
 
-  if (status < 0)
-    fprintf (stderr, "%s: %s: %s\n", program_name, special, strerror (errno));
+  if (status < 0) {
+    int errsv = errno;
+    fprintf (stderr, "%s: %s: %s\n", program_name, special, strerror (errsv));
+  }
 
   return status;
 }
@@ -137,8 +146,9 @@ display_summary(void)
        char line[200] ;
 
        if ((swaps = fopen(PROC_SWAPS, "r")) == NULL) {
+       	       int errsv = errno;
                fprintf (stderr, "%s: %s: %s\n", program_name, PROC_SWAPS,
-			strerror (errno));
+			strerror (errsv));
                return -1 ; 
        }
        while ( fgets(line, sizeof(line), swaps))
@@ -155,6 +165,10 @@ main (int argc, char *argv[])
   int all = 0;
   int c;
 
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
+  
   if (strrchr (argv[0], '/') != NULL)
     program_name = strrchr (argv[0], '/') + 1;
   else
@@ -195,8 +209,9 @@ main (int argc, char *argv[])
   if (all) {
        FILE *fp = setmntent(_PATH_FSTAB, "r");
        if (fp == NULL) {
-	    fprintf(stderr, "%s: cannot open %s: %s\n", program_name,
-		    _PATH_FSTAB, strerror(errno));
+            int errsv = errno;
+	    fprintf(stderr, _("%s: cannot open %s: %s\n"), program_name,
+		    _PATH_FSTAB, strerror(errsv));
 	    exit(2);
        }
        while ((fstab = getmntent(fp)) != NULL) {

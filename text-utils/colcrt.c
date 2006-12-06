@@ -31,9 +31,14 @@
  * SUCH DAMAGE.
  */
 
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  * - added Native Language Support
+  */
+
 #include <stdio.h>
 #include <unistd.h>		/* for close() */
 #include <string.h>
+#include "nls.h"
 
 int plus(char c, char d);
 void move(int l, int m);
@@ -70,6 +75,10 @@ main(int argc, char **argv)
 	int c;
 	char *cp, *dp;
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	argc--;
 	progname = *argv++;
 	while (argc > 0 && argv[0][0] == '-') {
@@ -81,7 +90,7 @@ main(int argc, char **argv)
 				printall = 1;
 				break;
 			default:
-				printf("usage: %s [ - ] [ -2 ] [ file ... ]\n", progname);
+				printf(_("usage: %s [ - ] [ -2 ] [ file ... ]\n"), progname);
 				fflush(stdout);
 				exit(1);
 		}

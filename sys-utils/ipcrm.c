@@ -1,5 +1,9 @@
 /*
  * krishna balasubramanian 1993
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  */
 
 #include <stdio.h>
@@ -12,6 +16,8 @@
 #include <sys/shm.h>
 #include <sys/msg.h>
 #include <sys/sem.h>
+#include "nls.h"
+
 #if defined (__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
 /* union semun is defined by including <sys/sem.h> */
 #else
@@ -30,10 +36,14 @@ int main(int argc, char **argv)
 	int id;
 	union semun arg;
 
-	arg.val = 0; 
+	arg.val = 0;
+	
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	if (argc != 3 || strlen(argv[1]) < 3) {
-		printf ("usage: %s [shm | msg | sem] id\n", argv[0]);
+		printf (_("usage: %s [shm | msg | sem] id\n"), argv[0]);
 		exit (1);
 	}
 	id = atoi (argv[2]);
@@ -57,10 +67,10 @@ int main(int argc, char **argv)
 		exit (1);
 
 	default:
-		printf ("usage: %s [-shm | -msg | -sem] id\n", argv[0]);
+		printf (_("usage: %s [-shm | -msg | -sem] id\n"), argv[0]);
 		exit (1);
 	}
-	printf ("resource deleted\n");
+	printf (_("resource deleted\n"));
 	return 0;
 }
 			

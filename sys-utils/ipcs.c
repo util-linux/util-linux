@@ -13,6 +13,10 @@
 
   Patched to display the key field -- hy@picksys.com 12/18/96
 
+  1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  - added Native Language Support
+
+
 */
 
 #include <stdio.h>
@@ -22,9 +26,12 @@
 #include <time.h>
 #include <pwd.h>
 #include <grp.h>
-#if 0
-#define __KERNEL__		/* yuk */
-#include <linux/linkage.h>
+#include "nls.h"
+
+#include "../defines.h"		/* for NEED_linkage_h */
+#ifdef NEED_linkage_h
+#define __KERNEL__		/* required for SHM_DEST etc. */
+#include <linux/linkage.h>	/* required for the keyword asmlinkage */
 #endif
 /* X/OPEN tells us to use <sys/{types,ipc,sem}.h> for semctl() */
 /* X/OPEN tells us to use <sys/{types,ipc,msg}.h> for msgctl() */
@@ -34,6 +41,10 @@
 #include <sys/sem.h>
 #include <sys/msg.h>
 #include <sys/shm.h>
+#ifdef NEED_linkage_h
+#undef __KERNEL__
+#endif
+
 /* The last arg of semctl is a union semun, but where is it defined?
    X/OPEN tells us to define it ourselves, but until recently
    Linux include files would also define it. */
@@ -77,21 +88,21 @@ static char *progname;
 
 void usage(void)
 {
-	printf ("usage : %s -asmq -tclup \n", progname);
-	printf ("\t%s [-s -m -q] -i id\n", progname);
-	printf ("\t%s -h for help.\n", progname); 
+	printf (_("usage : %s -asmq -tclup \n"), progname);
+	printf (_("\t%s [-s -m -q] -i id\n"), progname);
+	printf (_("\t%s -h for help.\n"), progname); 
 	return;
 }
 
 void help (void)
 {
-	printf ("%s provides information on ipc facilities for", progname);
-        printf (" which you have read access.\n"); 
-	printf ("Resource Specification:\n\t-m : shared_mem\n\t-q : messages\n");
-	printf ("\t-s : semaphores\n\t-a : all (default)\n");
-	printf ("Output Format:\n\t-t : time\n\t-p : pid\n\t-c : creator\n");
-	printf ("\t-l : limits\n\t-u : summary\n");
-	printf ("-i id [-s -q -m] : details on resource identified by id\n");
+	printf (_("%s provides information on ipc facilities for"), progname);
+        printf (_(" which you have read access.\n")); 
+	printf (_("Resource Specification:\n\t-m : shared_mem\n\t-q : messages\n"));
+	printf (_("\t-s : semaphores\n\t-a : all (default)\n"));
+	printf (_("Output Format:\n\t-t : time\n\t-p : pid\n\t-c : creator\n"));
+	printf (_("\t-l : limits\n\t-u : summary\n"));
+	printf (_("-i id [-s -q -m] : details on resource identified by id\n"));
 	usage();
 	return;
 }
@@ -101,6 +112,10 @@ int main (int argc, char **argv)
 	int opt, msg = 0, sem = 0, shm = 0, id=0, print=0; 
 	char format = 0;
 	char options[] = "atcluphsmqi:";
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	progname = argv[0];
 	while ((opt = getopt (argc, argv, options)) != EOF) {
@@ -219,52 +234,52 @@ void do_shm (char format)
 
 	maxid = shmctl (0, SHM_INFO, (struct shmid_ds *) &shm_info);
 	if (maxid < 0) {
-		printf ("kernel not configured for shared memory\n");
+		printf (_("kernel not configured for shared memory\n"));
 		return;
 	}
 	
 	switch (format) {
 	case LIMITS:
-		printf ("------ Shared Memory Limits --------\n");
+		printf (_("------ Shared Memory Limits --------\n"));
 		if ((shmctl (0, IPC_INFO, (struct shmid_ds *) &shminfo)) < 0 )
 			return;
-		printf ("max number of segments = %d\n", shminfo.shmmni);
-		printf ("max seg size (kbytes) = %d\n", shminfo.shmmax >> 10);
-		printf ("max total shared memory (kbytes) = %d\n", shminfo.shmall << 2);
-		printf ("min seg size (bytes) = %d\n", shminfo.shmmin);
+		printf (_("max number of segments = %d\n"), shminfo.shmmni);
+		printf (_("max seg size (kbytes) = %d\n"), shminfo.shmmax >> 10);
+		printf (_("max total shared memory (kbytes) = %d\n"), shminfo.shmall << 2);
+		printf (_("min seg size (bytes) = %d\n"), shminfo.shmmin);
 		return;
 
 	case STATUS:
-		printf ("------ Shared Memory Status --------\n");
-		printf ("segments allocated %d\n", shm_info.used_ids);
-		printf ("pages allocated %ld\n", shm_info.shm_tot);
-		printf ("pages resident  %ld\n", shm_info.shm_rss);
-		printf ("pages swapped   %ld\n", shm_info.shm_swp);
-		printf ("Swap performance: %ld attempts\t %ld successes\n", 
+		printf (_("------ Shared Memory Status --------\n"));
+		printf (_("segments allocated %d\n"), shm_info.used_ids);
+		printf (_("pages allocated %ld\n"), shm_info.shm_tot);
+		printf (_("pages resident  %ld\n"), shm_info.shm_rss);
+		printf (_("pages swapped   %ld\n"), shm_info.shm_swp);
+		printf (_("Swap performance: %ld attempts\t %ld successes\n"), 
 			shm_info.swap_attempts, shm_info.swap_successes);
 		return;
 
 	case CREATOR:
-		printf ("------ Shared Memory Segment Creators/Owners --------\n");
-		printf ("%-10s%-10s%-10s%-10s%-10s%-10s\n",
-		 "shmid","perms","cuid","cgid","uid","gid");
+		printf (_("------ Shared Memory Segment Creators/Owners --------\n"));
+		printf (_("%-10s%-10s%-10s%-10s%-10s%-10s\n"),
+		 _("shmid"),_("perms"),_("cuid"),_("cgid"),_("uid"),_("gid"));
 		break;
 
 	case TIME:
-		printf ("------ Shared Memory Attach/Detach/Change Times --------\n");
-		printf ("%-10s%-10s  %-20s%-20s%-20s\n",
-			"shmid","owner","attached","detached","changed");
+		printf (_("------ Shared Memory Attach/Detach/Change Times --------\n"));
+		printf (_("%-10s%-10s  %-20s%-20s%-20s\n"),
+			_("shmid"),_("owner"),_("attached"),_("detached"),_("changed"));
 		break;
 
 	case PID:
-		printf ("------ Shared Memory Creator/Last-op --------\n");
-		printf ("%-10s%-10s%-10s%-10s\n","shmid","owner","cpid","lpid");
+		printf (_("------ Shared Memory Creator/Last-op --------\n"));
+		printf (_("%-10s%-10s%-10s%-10s\n"),_("shmid"),_("owner"),_("cpid"),_("lpid"));
 		break;
 
 	default:
-		printf ("------ Shared Memory Segments --------\n");
-		printf ("%-10s%-10s%-10s%-10s%-10s%-10s%-12s\n", "key","shmid",
-			"owner","perms","bytes","nattch","status");
+		printf (_("------ Shared Memory Segments --------\n"));
+		printf (_("%-10s%-10s%-10s%-10s%-10s%-10s%-12s\n"), _("key"),_("shmid"),
+			_("owner"),_("perms"),_("bytes"),_("nattch"),_("status"));
 		break;
 	}
 
@@ -284,9 +299,9 @@ void do_shm (char format)
 			else
 				printf ("%-10d%-10d", shmid, ipcp->uid);
 			printf("  %-20.16s%-20.16s%-20.16s\n",
-			shmseg.shm_atime ? ctime(&shmseg.shm_atime) + 4 : "Not set",
-		 	shmseg.shm_dtime ? ctime(&shmseg.shm_dtime) + 4 : "Not set",
-			shmseg.shm_ctime ? ctime(&shmseg.shm_ctime) + 4 : "Not set");
+			shmseg.shm_atime ? ctime(&shmseg.shm_atime) + 4 : _("Not set"),
+		 	shmseg.shm_dtime ? ctime(&shmseg.shm_dtime) + 4 : _("Not set"),
+			shmseg.shm_ctime ? ctime(&shmseg.shm_ctime) + 4 : _("Not set"));
 			break;
 		case PID:
 			if (pw)
@@ -306,8 +321,8 @@ void do_shm (char format)
 			printf ("%-10o%-10d%-10d%-6s%-6s\n", 
 				ipcp->mode & 0777, 
 				shmseg.shm_segsz, shmseg.shm_nattch,
-				ipcp->mode & SHM_DEST ? "dest" : " ",
-				ipcp->mode & SHM_LOCKED ? "locked" : " ");
+				ipcp->mode & SHM_DEST ? _("dest") : " ",
+				ipcp->mode & SHM_LOCKED ? _("locked") : " ");
 			break;
 		}
 	}
@@ -327,48 +342,48 @@ void do_sem (char format)
 	arg.array = (ushort *)  &seminfo;
 	maxid = semctl (0, 0, SEM_INFO, arg);
 	if (maxid < 0) {
-		printf ("kernel not configured for semaphores\n");
+		printf (_("kernel not configured for semaphores\n"));
 		return;
 	}
 	
 	switch (format) {
 	case LIMITS:
-		printf ("------ Semaphore Limits --------\n");
+		printf (_("------ Semaphore Limits --------\n"));
 		arg.array = (ushort *) &seminfo; /* damn union */
 		if ((semctl (0, 0, IPC_INFO, arg)) < 0 )
 			return;
-		printf ("max number of arrays = %d\n", seminfo.semmni);
-		printf ("max semaphores per array = %d\n", seminfo.semmsl);
-		printf ("max semaphores system wide = %d\n", seminfo.semmns);
-		printf ("max ops per semop call = %d\n", seminfo.semopm);
-		printf ("semaphore max value = %d\n", seminfo.semvmx);
+		printf (_("max number of arrays = %d\n"), seminfo.semmni);
+		printf (_("max semaphores per array = %d\n"), seminfo.semmsl);
+		printf (_("max semaphores system wide = %d\n"), seminfo.semmns);
+		printf (_("max ops per semop call = %d\n"), seminfo.semopm);
+		printf (_("semaphore max value = %d\n"), seminfo.semvmx);
 		return;
 
 	case STATUS:
-		printf ("------ Semaphore Status --------\n");
-		printf ("used arrays = %d\n", seminfo.semusz);
-		printf ("allocated semaphores = %d\n", seminfo.semaem);
+		printf (_("------ Semaphore Status --------\n"));
+		printf (_("used arrays = %d\n"), seminfo.semusz);
+		printf (_("allocated semaphores = %d\n"), seminfo.semaem);
 		return;
 
 	case CREATOR:
-		printf ("------ Semaphore Arrays Creators/Owners --------\n");
-		printf ("%-10s%-10s%-10s%-10s%-10s%-10s\n",
-		 "semid","perms","cuid","cgid","uid","gid");
+		printf (_("------ Semaphore Arrays Creators/Owners --------\n"));
+		printf (_("%-10s%-10s%-10s%-10s%-10s%-10s\n"),
+		 _("semid"),_("perms"),_("cuid"),_("cgid"),_("uid"),("gid"));
 		break;
 
 	case TIME:
-		printf ("------ Shared Memory Operation/Change Times --------\n");
-		printf ("%-8s%-10s  %-26.24s %-26.24s\n",
-			"shmid","owner","last-op","last-changed");
+		printf (_("------ Shared Memory Operation/Change Times --------\n"));
+		printf (_("%-8s%-10s  %-26.24s %-26.24s\n"),
+			_("shmid"),_("owner"),_("last-op"),_("last-changed"));
 		break;
 
 	case PID:
 		break;
 
 	default:
-		printf ("------ Semaphore Arrays --------\n");
-		printf ("%-10s%-10s%-10s%-10s%-10s%-12s\n", 
-			"key","semid","owner","perms","nsems","status");
+		printf (_("------ Semaphore Arrays --------\n"));
+		printf (_("%-10s%-10s%-10s%-10s%-10s%-12s\n"), 
+			_("key"),_("semid"),_("owner"),_("perms"),_("nsems"),_("status"));
 		break;
 	}
 
@@ -389,8 +404,8 @@ void do_sem (char format)
 			else
 				printf ("%-8d%-10d", semid, ipcp->uid);
 			printf ("  %-26.24s %-26.24s\n", 
-				semary.sem_otime ? ctime(&semary.sem_otime) : "Not set",
-				semary.sem_ctime ? ctime(&semary.sem_ctime) : "Not set");
+				semary.sem_otime ? ctime(&semary.sem_otime) : _("Not set"),
+				semary.sem_ctime ? ctime(&semary.sem_ctime) : _("Not set"));
 			break;
 		case PID:
 			break;
@@ -421,7 +436,7 @@ void do_msg (char format)
 
 	maxid = msgctl (0, MSG_INFO, (struct msqid_ds *) &msginfo);
 	if (maxid < 0) {
-		printf ("kernel not configured for shared memory\n");
+		printf (_("kernel not configured for shared memory\n"));
 		return;
 	}
 	
@@ -429,40 +444,40 @@ void do_msg (char format)
 	case LIMITS:
 		if ((msgctl (0, IPC_INFO, (struct msqid_ds *) &msginfo)) < 0 )
 			return;
-		printf ("------ Messages: Limits --------\n");
-		printf ("max queues system wide = %d\n", msginfo.msgmni);
-		printf ("max size of message (bytes) = %d\n", msginfo.msgmax);
-		printf ("default max size of queue (bytes) = %d\n", msginfo.msgmnb);
+		printf (_("------ Messages: Limits --------\n"));
+		printf (_("max queues system wide = %d\n"), msginfo.msgmni);
+		printf (_("max size of message (bytes) = %d\n"), msginfo.msgmax);
+		printf (_("default max size of queue (bytes) = %d\n"), msginfo.msgmnb);
 		return;
 
 	case STATUS:
-		printf ("------ Messages: Status --------\n");
-		printf ("allocated queues = %d\n", msginfo.msgpool);
-		printf ("used headers = %d\n", msginfo.msgmap);
-		printf ("used space = %d bytes\n", msginfo.msgtql);
+		printf (_("------ Messages: Status --------\n"));
+		printf (_("allocated queues = %d\n"), msginfo.msgpool);
+		printf (_("used headers = %d\n"), msginfo.msgmap);
+		printf (_("used space = %d bytes\n"), msginfo.msgtql);
 		return;
 
 	case CREATOR:
-		printf ("------ Message Queues: Creators/Owners --------\n");
-		printf ("%-10s%-10s%-10s%-10s%-10s%-10s\n",
-		 "msqid","perms","cuid","cgid","uid","gid");
+		printf (_("------ Message Queues: Creators/Owners --------\n"));
+		printf (_("%-10s%-10s%-10s%-10s%-10s%-10s\n"),
+		 _("msqid"),_("perms"),_("cuid"),_("cgid"),_("uid"),_("gid"));
 		break;
 
 	case TIME:
-		printf ("------ Message Queues Send/Recv/Change Times --------\n");
-		printf ("%-8s%-10s  %-20s%-20s%-20s\n",
-			"msqid","owner","send","recv","change");
+		printf (_("------ Message Queues Send/Recv/Change Times --------\n"));
+		printf (_("%-8s%-10s  %-20s%-20s%-20s\n"),
+			_("msqid"),_("owner"),_("send"),_("recv"),_("change"));
 		break;
 
 	case PID:
- 		printf ("------ Message Queues PIDs --------\n");
- 		printf ("%-10s%-10s%-10s%-10s\n","msqid","owner","lspid","lrpid");
+ 		printf (_("------ Message Queues PIDs --------\n"));
+ 		printf (_("%-10s%-10s%-10s%-10s\n"),_("msqid"),_("owner"),_("lspid"),_("lrpid"));
 		break;
 
 	default:
-		printf ("------ Message Queues --------\n");
-		printf ("%-10s%-10s%-10s%-10s%-12s%-12s\n", "key","msqid",
-			"owner", "perms", "used-bytes", "messages");
+		printf (_("------ Message Queues --------\n"));
+		printf (_("%-10s%-10s%-10s%-10s%-12s%-12s\n"), _("key"),_("msqid"),
+			_("owner"), _("perms"), _("used-bytes"), _("messages"));
 		break;
 	}
 
@@ -482,9 +497,9 @@ void do_msg (char format)
 			else
 				printf ("%-8d%-10d", msqid, ipcp->uid);
 			printf ("  %-20.16s%-20.16s%-20.16s\n", 
-			msgque.msg_stime ? ctime(&msgque.msg_stime) + 4 : "Not set",
-		 	msgque.msg_rtime ? ctime(&msgque.msg_rtime) + 4 : "Not set",
-			msgque.msg_ctime ? ctime(&msgque.msg_ctime) + 4 : "Not set");
+			msgque.msg_stime ? ctime(&msgque.msg_stime) + 4 : _("Not set"),
+		 	msgque.msg_rtime ? ctime(&msgque.msg_rtime) + 4 : _("Not set"),
+			msgque.msg_ctime ? ctime(&msgque.msg_ctime) + 4 : _("Not set"));
 			break;
 		case PID:
  			if (pw)
@@ -521,18 +536,18 @@ void print_shm (int shmid)
 		return;
 	}
 
-	printf ("\nShared memory Segment shmid=%d\n", shmid);
-	printf ("uid=%d\tgid=%d\tcuid=%d\tcgid=%d\n",
+	printf (_("\nShared memory Segment shmid=%d\n"), shmid);
+	printf (_("uid=%d\tgid=%d\tcuid=%d\tcgid=%d\n"),
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid);
-	printf ("mode=%#o\taccess_perms=%#o\n", ipcp->mode, ipcp->mode & 0777);
-	printf ("bytes=%d\tlpid=%d\tcpid=%d\tnattch=%d\n", 
+	printf (_("mode=%#o\taccess_perms=%#o\n"), ipcp->mode, ipcp->mode & 0777);
+	printf (_("bytes=%d\tlpid=%d\tcpid=%d\tnattch=%d\n"), 
 		shmds.shm_segsz, shmds.shm_lpid, shmds.shm_cpid, 
 		shmds.shm_nattch);
-	printf ("att_time=%s", shmds.shm_atime ? ctime (&shmds.shm_atime) : 
-		"Not set\n");
-	printf ("det_time=%s", shmds.shm_dtime ? ctime (&shmds.shm_dtime) : 
-		"Not set\n");
-	printf ("change_time=%s", ctime (&shmds.shm_ctime));
+	printf (_("att_time=%s"), shmds.shm_atime ? ctime (&shmds.shm_atime) : 
+		_("Not set\n"));
+	printf (_("det_time=%s"), shmds.shm_dtime ? ctime (&shmds.shm_dtime) : 
+		_("Not set\n"));
+	printf (_("change_time=%s"), ctime (&shmds.shm_ctime));
 	printf ("\n");
 	return;
 }
@@ -548,16 +563,16 @@ void print_msg (int msqid)
 		perror ("msgctl ");
 		return;
 	}
-	printf ("\nMessage Queue msqid=%d\n", msqid);
-	printf ("uid=%d\tgid=%d\tcuid=%d\tcgid=%d\tmode=%#o\n",
+	printf (_("\nMessage Queue msqid=%d\n"), msqid);
+	printf (_("uid=%d\tgid=%d\tcuid=%d\tcgid=%d\tmode=%#o\n"),
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid, ipcp->mode);
-	printf ("cbytes=%d\tqbytes=%d\tqnum=%d\tlspid=%d\tlrpid=%d\n",
+	printf (_("cbytes=%d\tqbytes=%d\tqnum=%d\tlspid=%d\tlrpid=%d\n"),
 		buf.msg_cbytes, buf.msg_qbytes, buf.msg_qnum, buf.msg_lspid, 
 		buf.msg_lrpid);
-	printf ("send_time=%srcv_time=%schange_time=%s", 
-		buf.msg_rtime? ctime (&buf.msg_rtime) : "Not Set\n",
-		buf.msg_stime? ctime (&buf.msg_stime) : "Not Set\n",
-		buf.msg_ctime? ctime (&buf.msg_ctime) : "Not Set\n");
+	printf (_("send_time=%srcv_time=%schange_time=%s"), 
+		buf.msg_rtime? ctime (&buf.msg_rtime) : _("Not Set\n"),
+		buf.msg_stime? ctime (&buf.msg_stime) : _("Not Set\n"),
+		buf.msg_ctime? ctime (&buf.msg_ctime) : _("Not Set\n"));
 	printf ("\n");
 	return;
 }
@@ -574,17 +589,17 @@ void print_sem (int semid)
 		perror ("semctl ");
 		return;
 	}
-	printf ("\nSemaphore Array semid=%d\n", semid);
-	printf ("uid=%d\t gid=%d\t cuid=%d\t cgid=%d\n",
+	printf (_("\nSemaphore Array semid=%d\n"), semid);
+	printf (_("uid=%d\t gid=%d\t cuid=%d\t cgid=%d\n"),
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid);
-	printf ("mode=%#o, access_perms=%#o\n", ipcp->mode, ipcp->mode & 0777);
-	printf ("nsems = %d\n", semds.sem_nsems);
-	printf ("otime = %s", semds.sem_otime ? ctime (&semds.sem_otime) : 
-		"Not set\n");
-	printf ("ctime = %s", ctime (&semds.sem_ctime));	
+	printf (_("mode=%#o, access_perms=%#o\n"), ipcp->mode, ipcp->mode & 0777);
+	printf (_("nsems = %d\n"), semds.sem_nsems);
+	printf (_("otime = %s"), semds.sem_otime ? ctime (&semds.sem_otime) : 
+		_("Not set\n"));
+	printf (_("ctime = %s"), ctime (&semds.sem_ctime));	
 
-	printf ("%-10s%-10s%-10s%-10s%-10s\n", "semnum","value","ncount",
-		"zcount","pid");
+	printf (_("%-10s%-10s%-10s%-10s%-10s\n"), _("semnum"),_("value"),_("ncount"),
+		_("zcount"),_("pid"));
 	arg.val = 0;
 	for (i=0; i< semds.sem_nsems; i++) {
 		int val, ncnt, zcnt, pid;

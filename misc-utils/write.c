@@ -40,6 +40,9 @@
  *      - Added fix from David.Chapell@mail.trincoll.edu enabeling daemons
  *	  to use write.
  *      - ANSIed it since I was working on it anyway.
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  */
 
 #include <unistd.h>
@@ -58,7 +61,8 @@
 #include <paths.h>
 #include "pathnames.h"
 #endif
-
+#include "nls.h"
+ 
 void search_utmp(char *, char *, char *, uid_t);
 void do_write(char *, char *, uid_t);
 void wr_fputs(char *);
@@ -70,14 +74,15 @@ extern int errno;
 int
 main(int argc, char **argv)
 {
-	register char *cp;
 	time_t atime;
 	uid_t myuid;
 	int msgsok, myttyfd;
 	char tty[MAXPATHLEN], *mytty, *ttyname();
 	void done();
 
-	setlocale(LC_CTYPE,"");
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	/* check that sender has write enabled */
 	if (isatty(fileno(stdin)))
@@ -91,16 +96,18 @@ main(int argc, char **argv)
 	}
 	if (myttyfd != -1) {
 	  if (!(mytty = ttyname(myttyfd))) {
-		(void)fprintf(stderr, "write: can't find your tty's name\n");
+		(void)fprintf(stderr, _("write: can't find your tty's name\n"));
 		exit(1);
 	  }
-	  if ((cp = rindex(mytty, '/')) != NULL)
-		mytty = cp + 1;
+	  /* We may have /dev/ttyN but also /dev/pts/xx.
+	     Below, term_chk() will put "/dev/" in front, so remove that part. */
+	  if (!strncmp(mytty, "/dev/", 5))
+		mytty += 5;
 	  if (term_chk(mytty, &msgsok, &atime, 1))
 		exit(1);
 	  if (!msgsok) {
 		(void)fprintf(stderr,
-		    "write: you have write permission turned off.\n");
+		    _("write: you have write permission turned off.\n"));
 		exit(1);
 	  }
 	
@@ -121,7 +128,7 @@ main(int argc, char **argv)
 			argv[2] += 5;
 		if (utmp_chk(argv[1], argv[2])) {
 			(void)fprintf(stderr,
-			    "write: %s is not logged in on %s.\n",
+			    _("write: %s is not logged in on %s.\n"),
 			    argv[1], argv[2]);
 			exit(1);
 		}
@@ -129,14 +136,14 @@ main(int argc, char **argv)
 			exit(1);
 		if (myuid && !msgsok) {
 			(void)fprintf(stderr,
-			    "write: %s has messages disabled on %s\n",
+			    _("write: %s has messages disabled on %s\n"),
 			    argv[1], argv[2]);
 			exit(1);
 		}
 		do_write(argv[2], mytty, myuid);
 		break;
 	default:
-		(void)fprintf(stderr, "usage: write user [tty]\n");
+		(void)fprintf(stderr, _("usage: write user [tty]\n"));
 		exit(1);
 	}
 	done();
@@ -235,7 +242,7 @@ void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
 
 	endutent();
 	if (nloggedttys == 0) {
-		(void)fprintf(stderr, "write: %s is not logged in\n", user);
+		(void)fprintf(stderr, _("write: %s is not logged in\n"), user);
 		exit(1);
 	}
 	if (nttys == 0) {
@@ -244,11 +251,11 @@ void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
 			return;
 		}
 		(void)fprintf(stderr,
-		    "write: %s has messages disabled\n", user);
+		    _("write: %s has messages disabled\n"), user);
 		exit(1);
 	} else if (nttys > 1) {
 		(void)fprintf(stderr,
-		    "write: %s is logged in more than once; writing to %s\n",
+		    _("write: %s is logged in more than once; writing to %s\n"),
 		    user, tty);
 	}
 }
@@ -314,8 +321,10 @@ void do_write(char *tty, char *mytty, uid_t myuid)
 	now = time((time_t *)NULL);
 	nows = ctime(&now);
 	nows[16] = '\0';
-	(void)printf("\r\n\007\007\007Message from %s@%s on %s at %s ...\r\n",
+	printf("\r\n\007\007\007");
+	(void)printf(_("Message from %s@%s on %s at %s ..."),
 	    login, host, mytty, nows + 11);
+	printf("\r\n");
 
 	while (fgets(line, sizeof(line), stdin) != NULL)
 		wr_fputs(line);

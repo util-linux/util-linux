@@ -27,6 +27,10 @@
  *
  * Changes by Richard Gooch <rgooch@atnf.csiro.au> (butchered by aeb)
  * introducing shutdown.conf.
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  */
 
 #include <stdio.h>
@@ -48,6 +52,7 @@
 #include <sys/resource.h>
 #include "linux_reboot.h"
 #include "pathnames.h"
+#include "nls.h"
 
 static void usage(), int_handler(), write_user(struct utmp *);
 static void wall(), write_wtmp(), unmount_disks(), unmount_disks_ourselves();
@@ -69,6 +74,7 @@ char	halt_action[256];		/* to find out what to do upon halt */
 /* #define DEBUGGING */
 
 #define WR(s) write(fd, s, strlen(s))
+#define WRCRLF	write(fd, "\r\n", 2)
 #define ERRSTRING sys_errlist[errno]
 
 
@@ -76,7 +82,7 @@ void
 usage()
 {
 	fprintf(stderr,
-		"Usage: shutdown [-h|-r] [-fqs] [now|hh:ss|+mins]\n");
+		_("Usage: shutdown [-h|-r] [-fqs] [now|hh:ss|+mins]\n"));
 	exit(1);
 }
 
@@ -94,7 +100,7 @@ int_handler()
 {
 	unlink(_PATH_NOLOGIN);
 	signal(SIGINT, SIG_DFL);
-	my_puts("Shutdown process aborted");
+	my_puts(_("Shutdown process aborted"));
 	exit(1);
 }
 
@@ -110,9 +116,13 @@ main(int argc, char *argv[])
 	int fd;
 	char *ptr;
 	
+        setlocale(LC_ALL, "");
+        bindtextdomain(PACKAGE, LOCALEDIR);
+        textdomain(PACKAGE);
+
 #ifndef DEBUGGING
 	if(geteuid()) {
-		fprintf(stderr, "%s: Only root can shut a system down.\n",
+		fprintf(stderr, _("%s: Only root can shut a system down.\n"),
 			argv[0]);
 		exit(1);
 	}
@@ -206,8 +216,8 @@ main(int argc, char *argv[])
 			then = 3600 * hour + 60 * minute;
 			timeout = then - now;
 			if(timeout < 0) {
-				fprintf(stderr, "That must be tomorrow, "
-					"can't you wait till then?\n");
+				fprintf(stderr, _("That must be tomorrow, "
+					          "can't you wait till then?\n"));
 				exit(1);
 			}
 		} else {
@@ -233,6 +243,9 @@ main(int argc, char *argv[])
 			if (fgets (line, sizeof(line), fp) != NULL &&
 			    strncasecmp (line, "HALT_ACTION", 11) == 0 &&
 			    iswhitespace(line[11])) {
+				p = index(line, '\n');
+				if (p)
+					*p = 0;		/* strip final '\n' */
 				p = line+11;
 				while(iswhitespace(*p))
 					p++;
@@ -255,16 +268,16 @@ main(int argc, char *argv[])
 		}
 		*ptr = '\0';
 	} else if (!opt_msgset) {
-		strcpy(message, "for maintenance; bounce, bounce");
+		strcpy(message, _("for maintenance; bounce, bounce"));
 	}
 
 #ifdef DEBUGGING
-	printf("timeout = %d, quiet = %d, reboot = %d\n",
+	printf(_("timeout = %d, quiet = %d, reboot = %d\n"),
 		timeout, opt_quiet, opt_reboot);
 #endif
 	
 	/* so much for option-processing, now begin termination... */
-	if(!(whom = getlogin())) whom = "ghost";
+	if(!(whom = getlogin()) || !*whom) whom = "ghost";
 	if(strlen(whom) > 40) whom[40] = 0; /* see write_user() */
 
 	setpriority(PRIO_PROCESS, 0, PRIO_MIN);
@@ -282,9 +295,14 @@ main(int argc, char *argv[])
 
 	
 	if((fd = open(_PATH_NOLOGIN, O_WRONLY|O_CREAT, 0644)) >= 0) {
-		WR("\r\nThe system is being shut down within 5 minutes\r\n");
+		/* keep xgettext happy and leave \r\n outside strings */
+		WRCRLF;
+		WR(_("The system is being shut down within 5 minutes"));
+		WRCRLF;
 		write(fd, message, strlen(message));
-		WR("\r\nLogin is therefore prohibited.\r\n");
+		WRCRLF;
+		WR(_("Login is therefore prohibited."));
+		WRCRLF;
 		close(fd);
 	}
 	
@@ -304,8 +322,8 @@ main(int argc, char *argv[])
 
 	/* do syslog message... */
 	openlog(prog, LOG_CONS, LOG_AUTH);
-	syslog(LOG_NOTICE, "%s by %s: %s", 
-	       opt_reboot ? "rebooted" : "halted", whom, message);
+	syslog(LOG_NOTICE, _("%s by %s: %s"), 
+	       opt_reboot ? _("rebooted") : _("halted"), whom, message);
 	closelog();
 
 	if(opt_fast)
@@ -335,6 +353,14 @@ main(int argc, char *argv[])
 	/* turn off accounting */
 	acct(NULL);
 #endif
+	/* RedHat and SuSE like to remove /etc/nologin.
+	   Perhaps the usual sequence is
+	      touch nologin; shutdown -h; fiddle with hardware;
+	      boot; fiddle with software; rm nologin
+	   and removing it here will be counterproductive.
+	   Let us see whether people complain. */
+	unlink(_PATH_NOLOGIN);
+
 	sync();
 	sleep(2);
 
@@ -348,9 +374,9 @@ main(int argc, char *argv[])
 	
 	if(opt_reboot) {
 		my_reboot(LINUX_REBOOT_CMD_RESTART); /* RB_AUTOBOOT */
-		my_puts("\nWhy am I still alive after reboot?");
+		my_puts(_("\nWhy am I still alive after reboot?"));
 	} else {
-		my_puts("\nNow you can turn off the power...");
+		my_puts(_("\nNow you can turn off the power..."));
 
 		/* allow C-A-D now, faith@cs.unc.edu, re-fixed 8-Jul-96 */
 		my_reboot(LINUX_REBOOT_CMD_CAD_ON); /* RB_ENABLE_CAD */
@@ -365,10 +391,10 @@ main(int argc, char *argv[])
 void
 do_halt(char *action) {
 	if (strcasecmp (action, "power_off") == 0) {
-		printf("Calling kernel power-off facility...\n");
+		printf(_("Calling kernel power-off facility...\n"));
 		fflush(stdout);
 		my_reboot(LINUX_REBOOT_CMD_POWER_OFF);
-		printf("Error powering off\t%s\n", ERRSTRING);
+		printf(_("Error powering off\t%s\n"), ERRSTRING);
 		fflush(stdout);
 		sleep (2);
 	} else
@@ -376,10 +402,10 @@ do_halt(char *action) {
 	/* This should be improved; e.g. Mike Jagdis wants "/sbin/mdstop -a" */
 	/* Maybe we should also fork and wait */
 	if (action[0] == '/') {
-		printf("Executing the program \"%s\" ...\n", action);
+		printf(_("Executing the program \"%s\" ...\n"), action);
 		fflush(stdout);
 		execl(action, action, NULL);
-		printf("Error executing\t%s\n", ERRSTRING);
+		printf(_("Error executing\t%s\n"), ERRSTRING);
 		fflush(stdout);
 		sleep (2);
 	}
@@ -402,23 +428,27 @@ write_user(struct utmp *ut)
 	if((fd = open(term, O_WRONLY|O_NONBLOCK)) < 0)
 	        return;
 
-	sprintf(msg, "\007\r\nURGENT: broadcast message from %s:\r\n", whom);
+	sprintf(msg, _("\007URGENT: broadcast message from %s:"), whom);
+	WRCRLF;
 	WR(msg);
+	WRCRLF;
 
 	if(minutes == 0) {
-	    sprintf(msg, "System going down IMMEDIATELY!\r\n\n");
+	    sprintf(msg, _("System going down IMMEDIATELY!\n"));
 	} else if(minutes > 60) {
 	    hours = minutes / 60;
-	    sprintf(msg, "System going down in %d hour%s %d minutes\r\n",
-		    hours, hours == 1 ? "" : "s", minutes - 60*hours);
+	    sprintf(msg, _("System going down in %d hour%s %d minutes"),
+		    hours, hours == 1 ? "" : _("s"), minutes - 60*hours);
 	} else {
-	    sprintf(msg, "System going down in %d minute%s\r\n\n",
-		    minutes, minutes == 1 ? "" : "s");
+	    sprintf(msg, _("System going down in %d minute%s\n"),
+		    minutes, minutes == 1 ? "" : _("s"));
 	}
 	WR(msg);
+	WRCRLF;
 
-	sprintf(msg, "\t... %s ...\r\n\n", message);
+	sprintf(msg, _("\t... %s ...\n"), message);
 	WR(msg);
+	WRCRLF;
 
 	close(fd);
 }
@@ -473,7 +503,7 @@ swap_off()
 
 	sync();
 	if ((pid = fork()) < 0) {
-		my_puts("Cannot fork for swapoff. Shrug!");
+		my_puts(_("Cannot fork for swapoff. Shrug!"));
 		return;
 	}
 	if (!pid) {
@@ -481,8 +511,8 @@ swap_off()
 		execl("/etc/swapoff", SWAPOFF_ARGS, NULL);
 		execl("/bin/swapoff", SWAPOFF_ARGS, NULL);
 		execlp("swapoff", SWAPOFF_ARGS, NULL);
-		my_puts("Cannot exec swapoff, "
-			  "hoping umount will do the trick.");
+		my_puts(_("Cannot exec swapoff, "
+			  "hoping umount will do the trick."));
 		exit(0);
 	}
 	while ((result = wait(&status)) != -1 && result != pid)
@@ -500,20 +530,25 @@ unmount_disks()
 
 	sync();
 	if ((pid = fork()) < 0) {
-		my_puts("Cannot fork for umount, trying manually.");
+		my_puts(_("Cannot fork for umount, trying manually."));
 		unmount_disks_ourselves();
 		return;
 	}
 	if (!pid) {
 		execl(_PATH_UMOUNT, UMOUNT_ARGS, NULL);
-		my_puts("Cannot exec " _PATH_UMOUNT ", trying umount.");
+
+		/* need my_printf instead of my_puts here */
+		freopen(_PATH_CONSOLE, "w", stdout);
+		printf(_("Cannot exec %s, trying umount.\n"), _PATH_UMOUNT);
+		fflush(stdout);
+
 		execlp("umount", UMOUNT_ARGS, NULL);
-		my_puts("Cannot exec umount, giving up on umount.");
+		my_puts(_("Cannot exec umount, giving up on umount."));
 		exit(0);
 	}
 	while ((result = wait(&status)) != -1 && result != pid)
 		;
-	my_puts("Unmounting any remaining filesystems...");
+	my_puts(_("Unmounting any remaining filesystems..."));
 	unmount_disks_ourselves();
 }
 
@@ -549,7 +584,7 @@ unmount_disks_ourselves()
 		printf("umount %s\n", filesys);
 #else
 		if (umount(mntlist[i]) < 0)
-			printf("shutdown: Couldn't umount %s\n", filesys);
+			printf(_("shutdown: Couldn't umount %s\n"), filesys);
 #endif
 	}
 }

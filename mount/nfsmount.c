@@ -20,6 +20,10 @@
  *
  * Wed Oct  1 23:55:28 1997: Dick Streefland <dick_streefland@tasking.com>
  * Implemented the "bg", "fg" and "retry" mount options for NFS.
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ * 
  */
 
 /*
@@ -38,6 +42,7 @@
 #include <sys/time.h>
 #include <sys/utsname.h>
 #include <sys/stat.h>
+#include <netinet/in.h>
 #include <arpa/inet.h>
 
 #include "sundries.h"
@@ -46,6 +51,9 @@
 #include <linux/nfs.h>
 #include "mount_constants.h"
 #include "nfs_mount3.h"
+#include "nls.h"
+
+#include "../defines.h"		/* for HAVE_inet_aton */
 
 static char *nfs_strerror(int stat);
 
@@ -146,8 +154,8 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	msock = fsock = -1;
 	mclient = NULL;
 	if (strlen(spec) >= sizeof(hostdir)) {
-		fprintf(stderr, "mount: "
-			"excessively long host:dir argument\n");
+		fprintf(stderr, _("mount: "
+			"excessively long host:dir argument\n"));
 		goto fail;
 	}
 	strcpy(hostdir, spec);
@@ -159,28 +167,28 @@ int nfsmount(const char *spec, const char *node, int *flags,
 		   until they can be fully supported. (mack@sgi.com) */
 		if ((s = strchr(hostdir, ','))) {
 			*s = '\0';
-			fprintf(stderr, "mount: warning: "
-				"multiple hostnames not supported\n");
+			fprintf(stderr, _("mount: warning: "
+				"multiple hostnames not supported\n"));
 		}
 	} else {
-		fprintf(stderr, "mount: "
-			"directory to mount not in host:dir format\n");
+		fprintf(stderr, _("mount: "
+			"directory to mount not in host:dir format\n"));
 		goto fail;
 	}
 
 	server_addr.sin_family = AF_INET;
-#if 1		/* old libc's do not have inet_aton() -- change 1 to 0 */
+#ifdef HAVE_inet_aton
 	if (!inet_aton(hostname, &server_addr.sin_addr))
 #endif
 	{
 		if ((hp = gethostbyname(hostname)) == NULL) {
-			fprintf(stderr, "mount: can't get address for %s\n",
+			fprintf(stderr, _("mount: can't get address for %s\n"),
 				hostname);
 			goto fail;
 		} else {
 			if (hp->h_length > sizeof(struct in_addr)) {
 				fprintf(stderr,
-					"mount: got bad hp->h_length\n");
+					_("mount: got bad hp->h_length\n"));
 				hp->h_length = sizeof(struct in_addr);
 			}
 			memcpy(&server_addr.sin_addr,
@@ -197,8 +205,8 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	if (!old_opts)
 		old_opts = "";
 	if (strlen(old_opts) + strlen(s) + 10 >= sizeof(new_opts)) {
-		fprintf(stderr, "mount: "
-			"excessively long option argument\n");
+		fprintf(stderr, _("mount: "
+			"excessively long option argument\n"));
 		goto fail;
 	}
 	sprintf(new_opts, "%s%saddr=%s",
@@ -288,19 +296,19 @@ int nfsmount(const char *spec, const char *node, int *flags,
 				else if (!strncmp(opteq+1, "udp", 3))
 					tcp = 0;
 				else
-					printf("Warning: Unrecognized proto= option.\n");
+					printf(_("Warning: Unrecognized proto= option.\n"));
 			} else if (!strcmp(opt, "namlen")) {
 #if NFS_MOUNT_VERSION >= 2
 				if (nfs_mount_version >= 2)
 					data.namlen = val;
 				else
 #endif
-				printf("Warning: Option namlen is not supported.\n");
+				printf(_("Warning: Option namlen is not supported.\n"));
 			} else if (!strcmp(opt, "addr"))
 				/* ignore */;
 			else {
-				printf("unknown nfs mount parameter: "
-				       "%s=%d\n", opt, val);
+				printf(_("unknown nfs mount parameter: "
+				       "%s=%d\n"), opt, val);
 				goto fail;
 			}
 		}
@@ -334,11 +342,11 @@ int nfsmount(const char *spec, const char *node, int *flags,
 				if (nfs_mount_version >= 3)
 					nolock = !val;
 				else
-					printf("Warning: option nolock is not supported.\n");
+					printf(_("Warning: option nolock is not supported.\n"));
 			} else {
 				if (!sloppy) {
-					printf("unknown nfs mount option: "
-					       "%s%s\n", val ? "" : "no", opt);
+					printf(_("unknown nfs mount option: "
+					       "%s%s\n"), val ? "" : "no", opt);
 					goto fail;
 				}
 			}
@@ -409,13 +417,13 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	    mount_server_addr.sin_addr.s_addr = inet_addr(hostname);
 	  } else {
 		  if ((hp = gethostbyname(mounthost)) == NULL) {
-			  fprintf(stderr, "mount: can't get address for %s\n",
+			  fprintf(stderr, _("mount: can't get address for %s\n"),
 				  hostname);
 			  goto fail;
 		  } else {
 			  if (hp->h_length > sizeof(struct in_addr)) {
 				  fprintf(stderr,
-					  "mount: got bad hp->h_length?\n");
+					  _("mount: got bad hp->h_length?\n"));
 				  hp->h_length = sizeof(struct in_addr);
 			  }
 			  mount_server_addr.sin_family = AF_INET;
@@ -517,7 +525,7 @@ int nfsmount(const char *spec, const char *node, int *flags,
 
 	if (status.fhs_status != 0) {
 		fprintf(stderr,
-			"mount: %s:%s failed, reason given by server: %s\n",
+			_("mount: %s:%s failed, reason given by server: %s\n"),
 			hostname, dirname, nfs_strerror(status.fhs_status));
 		goto fail;
 	}
@@ -528,18 +536,18 @@ int nfsmount(const char *spec, const char *node, int *flags,
 
 	if (tcp) {
 		if (nfs_mount_version < 3) {
-	     		printf("NFS over TCP is not supported.\n");
+	     		printf(_("NFS over TCP is not supported.\n"));
 			goto fail;
 		}
 		fsock = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
 	} else
 		fsock = socket(AF_INET, SOCK_DGRAM, IPPROTO_UDP);
 	if (fsock < 0) {
-		perror("nfs socket");
+		perror(_("nfs socket"));
 		goto fail;
 	}
 	if (bindresvport(fsock, 0) < 0) {
-		perror("nfs bindresvport");
+		perror(_("nfs bindresvport"));
 		goto fail;
 	}
 	if (port == 0) {
@@ -550,11 +558,11 @@ int nfsmount(const char *spec, const char *node, int *flags,
 			port = NFS_PORT;
 #ifdef NFS_MOUNT_DEBUG
 		else
-			printf("used portmapper to find NFS port\n");
+			printf(_("used portmapper to find NFS port\n"));
 #endif
 	}
 #ifdef NFS_MOUNT_DEBUG
-	printf("using port %d for nfs deamon\n", port);
+	printf(_("using port %d for nfs deamon\n"), port);
 #endif
 	server_addr.sin_port = htons(port);
 	 /*
@@ -565,7 +573,7 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	if (linux_version_code() <= 66314
 	    && connect(fsock, (struct sockaddr *) &server_addr,
 		       sizeof (server_addr)) < 0) {
-		perror("nfs connect");
+		perror(_("nfs connect"));
 		goto fail;
 	}
 
@@ -654,7 +662,7 @@ static char *nfs_strerror(int stat)
 		if (nfs_errtbl[i].stat == stat)
 			return strerror(nfs_errtbl[i].errnum);
 	}
-	sprintf(buf, "unknown nfs status return value: %d", stat);
+	sprintf(buf, _("unknown nfs status return value: %d"), stat);
 	return buf;
 }
 

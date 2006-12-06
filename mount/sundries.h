@@ -46,16 +46,7 @@ char *xstrconcat2 (const char *, const char *);
 char *xstrconcat3 (const char *, const char *, const char *);
 char *xstrconcat4 (const char *, const char *, const char *, const char *);
 
-/* Here is some serious cruft.  */
-#ifdef __GNUC__
-#if defined(__GNUC_MINOR__) && __GNUC__ == 2 && __GNUC_MINOR__ >= 5
-void die (int errcode, const char *fmt, ...) __attribute__ ((noreturn));
-#else /* GNUC < 2.5 */
-void volatile die (int errcode, const char *fmt, ...);
-#endif /* GNUC < 2.5 */
-#else /* !__GNUC__ */
 void die (int errcode, const char *fmt, ...);
-#endif /* !__GNUC__ */
 
 #ifdef HAVE_NFS
 int nfsmount (const char *spec, const char *node, int *flags,

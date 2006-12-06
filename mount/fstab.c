@@ -1,3 +1,9 @@
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ * Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+ * - fixed strerr(errno) in gettext calls
+ */
+
 #include <unistd.h>
 #include <errno.h>
 #include <stdio.h>
@@ -6,7 +12,7 @@
 #include "mntent.h"
 #include "fstab.h"
 #include "sundries.h"		/* for xmalloc() etc */
-
+#include "nls.h"
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
@@ -106,7 +112,8 @@ read_mntentchn(mntFILE *mfp, const char *fnam, struct mntentchn *mc0) {
 	}
 	mc0->prev = mc;
 	if (ferror (mfp->mntent_fp)) {
-		error("warning: error reading %s: %s", fnam, strerror (errno));
+		int errsv = errno;
+		error(_("warning: error reading %s: %s"), fnam, strerror (errsv));
 		mc0->nxt = mc0->prev = NULL;
 	}
 	my_endmntent(mfp);
@@ -133,11 +140,11 @@ read_mounttable() {
 	  fnam = PROC_MOUNTS;
 	  mfp = my_setmntent (fnam, "r");
 	  if (mfp == NULL || mfp->mntent_fp == NULL) {
-	       error("warning: can't open %s: %s", MOUNTED, strerror (errsv));
+	       error(_("warning: can't open %s: %s"), MOUNTED, strerror (errsv));
 	       return;
 	  }
 	  if (verbose)
-	       printf ("mount: could not open %s - using %s instead\n",
+	       printf (_("mount: could not open %s - using %s instead\n"),
 		       MOUNTED, PROC_MOUNTS);
      }
      read_mntentchn(mfp, fnam, mc);
@@ -155,7 +162,8 @@ read_fstab() {
      fnam = _PATH_FSTAB;
      mfp = my_setmntent (fnam, "r");
      if (mfp == NULL || mfp->mntent_fp == NULL) {
-	  error("warning: can't open %s: %s", _PATH_FSTAB, strerror (errno));
+     	  int errsv = errno;
+	  error(_("warning: can't open %s: %s"), _PATH_FSTAB, strerror (errsv));
 	  return;
      }
      read_mntentchn(mfp, fnam, mc);
@@ -303,12 +311,14 @@ setlkw_timeout (int sig) {
    superfluous, but avoids an arbitrary sleep(). */
 
 /* Where does the link point to? Obvious choices are mtab and mtab~~.
-   Maybe the latter is preferable. */
-#define MOUNTLOCK_LINKTARGET	MOUNTED_LOCK "~"
+   HJLu points out that the latter leads to races. Right now we use
+   mtab~.<pid> instead. */
+#define MOUNTLOCK_LINKTARGET	MOUNTED_LOCK "%d"
 
 void
 lock_mtab (void) {
 	int tries = 3;
+	char *linktargetfile;
 
 	if (!signals_have_been_setup) {
 		int sig = 0;
@@ -329,42 +339,49 @@ lock_mtab (void) {
 		signals_have_been_setup = 1;
 	}
 
+	/* somewhat clumsy, but some ancient systems do not have snprintf() */
+	/* use 20 as upper bound for the length of %d output */
+	linktargetfile = xmalloc(strlen(MOUNTLOCK_LINKTARGET) + 20);
+	sprintf(linktargetfile, MOUNTLOCK_LINKTARGET, getpid ());
+
 	/* Repeat until it was us who made the link */
 	while (!we_created_lockfile) {
 		struct flock flock;
 		int errsv, fd, i, j;
 
-		i = open (MOUNTLOCK_LINKTARGET, O_WRONLY|O_CREAT, 0);
+		i = open (linktargetfile, O_WRONLY|O_CREAT, 0);
 		if (i < 0) {
-			/* MOUNTLOCK_LINKTARGET does not exist (as a file)
+			int errsv = errno;
+			/* linktargetfile does not exist (as a file)
 			   and we cannot create it. Read-only filesystem?
 			   Too many files open in the system? Filesystem full? */
-			die (EX_FILEIO, "can't create lock file %s: %s "
-			     "(use -n flag to override)",
-			     MOUNTLOCK_LINKTARGET, strerror (errno));
+			die (EX_FILEIO, _("can't create lock file %s: %s "
+			     "(use -n flag to override)"),
+			     linktargetfile, strerror (errsv));
 		}
 		close(i);
 
-		j = link(MOUNTLOCK_LINKTARGET, MOUNTED_LOCK);
+		j = link(linktargetfile, MOUNTED_LOCK);
 		errsv = errno;
 
-		(void) unlink(MOUNTLOCK_LINKTARGET);
+		(void) unlink(linktargetfile);
 
 		if (j < 0 && errsv != EEXIST) {
-			die (EX_FILEIO, "can't link lock file %s: %s "
-			     "(use -n flag to override)",
+			die (EX_FILEIO, _("can't link lock file %s: %s "
+			     "(use -n flag to override)"),
 			     MOUNTED_LOCK, strerror (errsv));
 		}
 
 		fd = open (MOUNTED_LOCK, O_WRONLY);
 
 		if (fd < 0) {
+			int errsv = errno;
 			/* Strange... Maybe the file was just deleted? */
 			if (errno == ENOENT && tries-- > 0)
 				continue;
-			die (EX_FILEIO, "can't open lock file %s: %s "
-			     "(use -n flag to override)",
-			     MOUNTED_LOCK, strerror (errno));
+			die (EX_FILEIO, _("can't open lock file %s: %s "
+			     "(use -n flag to override)"),
+			     MOUNTED_LOCK, strerror (errsv));
 		}
 
 		flock.l_type = F_WRLCK;
@@ -375,9 +392,11 @@ lock_mtab (void) {
 		if (j == 0) {
 			/* We made the link. Now claim the lock. */
 			if (fcntl (fd, F_SETLK, &flock) == -1) {
-				if (verbose)
-				    printf("Can't lock lock file %s: %s\n",
-					   MOUNTED_LOCK, strerror (errno));
+				if (verbose) {
+				    int errsv = errno;
+				    printf(_("Can't lock lock file %s: %s\n"),
+					   MOUNTED_LOCK, strerror (errsv));
+				}
 				/* proceed anyway */
 			}
 			we_created_lockfile = 1;
@@ -385,9 +404,10 @@ lock_mtab (void) {
 			/* Someone else made the link. Wait. */
 			alarm(LOCK_TIMEOUT);
 			if (fcntl (fd, F_SETLKW, &flock) == -1) {
-				die (EX_FILEIO, "can't lock lock file %s: %s",
+				int errsv = errno;
+				die (EX_FILEIO, _("can't lock lock file %s: %s"),
 				     MOUNTED_LOCK, (errno == EINTR) ?
-				     "timed out" : strerror (errno));
+				     _("timed out") : strerror (errsv));
 			}
 			alarm(0);
 			/* Maybe limit the number of iterations? */
@@ -431,23 +451,32 @@ update_mtab (const char *dir, struct mntent *instead) {
 
      mfp = my_setmntent(MOUNTED, "r");
      if (mfp == NULL || mfp->mntent_fp == NULL) {
-	  error ("cannot open %s (%s) - mtab not updated",
-		 MOUNTED, strerror (errno));
+     	  int errsv = errno;
+	  error (_("cannot open %s (%s) - mtab not updated"),
+		 MOUNTED, strerror (errsv));
 	  goto leave;
      }
 
      mftmp = my_setmntent (MOUNTED_TEMP, "w");
      if (mftmp == NULL || mfp->mntent_fp == NULL) {
-	  error ("can't open %s (%s) - mtab not updated",
-		 MOUNTED_TEMP, strerror (errno));
+     	  int errsv = errno;
+	  error (_("cannot open %s (%s) - mtab not updated"),
+		 MOUNTED_TEMP, strerror (errsv));
 	  goto leave;
      }
   
      while ((mnt = my_getmntent (mfp))) {
 	  if (streq (mnt->mnt_dir, dir)
+#if 0
 	      /* Matthew Wilcox <willy@odie.barnet.ac.uk> */
+	      /* This is meant for Patch 212 on Jitterbug,
+		 still in incoming, to allow remounting
+		 on a different directory. */
 	      || (instead && instead->mnt_fsname &&
-		  (streq (mnt->mnt_fsname, instead->mnt_fsname)))) {
+		  (!streq (instead->mnt_fsname, "none")) &&
+		  (streq (mnt->mnt_fsname, instead->mnt_fsname)))
+#endif
+		  ) {
 	       added++;
 	       if (instead) {	/* a remount */
 		    remnt = *instead;
@@ -456,34 +485,42 @@ update_mtab (const char *dir, struct mntent *instead) {
 		    remnt.mnt_type = mnt->mnt_type;
 		    if (instead->mnt_fsname
 			&& !streq(mnt->mnt_fsname, instead->mnt_fsname))
-			 printf("mount: warning: cannot change "
-				"mounted device with a remount\n");
+			 printf(_("mount: warning: cannot change "
+				"mounted device with a remount\n"));
 		    else if (instead->mnt_type
 			     && !streq(instead->mnt_type, "unknown")
 			     && !streq(mnt->mnt_type, instead->mnt_type))
-			 printf("mount: warning: cannot change "
-				"filesystem type with a remount\n");
+			 printf(_("mount: warning: cannot change "
+				"filesystem type with a remount\n"));
 	       } else
 		    next = NULL;
 	  } else
 	       next = mnt;
-	  if (next && my_addmntent(mftmp, next) == 1)
-	       die (EX_FILEIO, "error writing %s: %s",
-		    MOUNTED_TEMP, strerror (errno));
+	  if (next && my_addmntent(mftmp, next) == 1) {
+	       int errsv = errno;
+	       die (EX_FILEIO, _("error writing %s: %s"),
+		    MOUNTED_TEMP, strerror (errsv));
+	  }
      }
-     if (instead && !added && my_addmntent(mftmp, instead) == 1)
-	  die (EX_FILEIO, "error writing %s: %s",
-	       MOUNTED_TEMP, strerror (errno));
+     if (instead && !added && my_addmntent(mftmp, instead) == 1) {
+     	  int errsv = errno;
+	  die (EX_FILEIO, _("error writing %s: %s"),
+	       MOUNTED_TEMP, strerror (errsv));
+    }
 
      my_endmntent (mfp);
-     if (fchmod (fileno (mftmp->mntent_fp), S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0)
-	  fprintf(stderr, "error changing mode of %s: %s\n", MOUNTED_TEMP,
-		  strerror (errno));
+     if (fchmod (fileno (mftmp->mntent_fp), S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0) {
+     	  int errsv = errno;
+	  fprintf(stderr, _("error changing mode of %s: %s\n"), MOUNTED_TEMP,
+		  strerror (errsv));
+     }
      my_endmntent (mftmp);
 
-     if (rename (MOUNTED_TEMP, MOUNTED) < 0)
-	  fprintf(stderr, "can't rename %s to %s: %s\n", MOUNTED_TEMP, MOUNTED,
-		  strerror(errno));
+     if (rename (MOUNTED_TEMP, MOUNTED) < 0) {
+     	  int errsv = errno;
+	  fprintf(stderr, _("can't rename %s to %s: %s\n"), MOUNTED_TEMP, MOUNTED,
+		  strerror(errsv));
+     }
 
 leave:
      unlock_mtab();

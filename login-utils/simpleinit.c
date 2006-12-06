@@ -1,6 +1,10 @@
 /* simpleinit.c - poe@daimi.aau.dk */
 /* Version 1.21 */
 
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ */
+
 #include <sys/types.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -21,6 +25,7 @@
 #include "my_crypt.h"
 #include "pathnames.h"
 #include "linux_reboot.h"
+#include "nls.h"
 
 #define CMDSIZ 150	/* max size of a line in inittab */
 #define NUMCMD 30	/* max number of lines in inittab */
@@ -71,15 +76,15 @@ enter_single()
     pid_t pid;
     int i;
 
-    err("Booting to single user mode.\n");
+    err(_("Booting to single user mode.\n"));
     if((pid = fork()) == 0) {
 	/* the child */
 	execl(_PATH_BSHELL, _PATH_BSHELL, NULL);
-	err("exec of single user shell failed\n");
+	err(_("exec of single user shell failed\n"));
     } else if(pid > 0) {
 	while(wait(&i) != pid) /* nothing */;
     } else if(pid < 0) {
-	err("fork of single user shell failed\n");
+	err(_("fork of single user shell failed\n"));
     }
     unlink(_PATH_SINGLE);
 }
@@ -94,6 +99,11 @@ int main(int argc, char *argv[])
 #endif
 	signal(SIGTSTP, tstp_handler);
 	signal(SIGINT, int_handler);
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 
 	/* 
 	 * start up in single user mode if /etc/singleboot exists or if
@@ -206,14 +216,14 @@ int boot_single(int singlearg, int argc, char *argv[])
 			  return 1; /* a bad /etc/passwd should not lock out */
 
 			for(i = 0; i < MAXTRIES; i++) {
-				pass = getpass("Password: ");
+				pass = getpass(_("Password: "));
 				if(pass == NULL) continue;
 				
 				if(!strcmp(crypt(pass, rootpass), rootpass)) {
 					return 1;
 				}
 
-				puts("\nWrong password.\n");
+				puts(_("\nWrong password.\n"));
 			}
 		} else return 1;
 	}
@@ -239,16 +249,16 @@ int do_rc()
 		close(0);
 		if(open(_PATH_RC, O_RDONLY, 0) == 0) {
 			execv(_PATH_BSHELL, argv);
-			err("exec rc failed\n");
+			err(_("exec rc failed\n"));
 			_exit(2);
 		}
-		err("open of rc file failed\n");
+		err(_("open of rc file failed\n"));
 		_exit(1);
 	} else if(pid > 0) {
 		/* parent, wait till rc process dies before spawning */
 		while(wait(&stat) != pid) /* nothing */;
 	} else if(pid < 0) {
-		err("fork of rc shell failed\n");
+		err(_("fork of rc shell failed\n"));
 	}
 	return WEXITSTATUS(stat);
 }
@@ -260,7 +270,7 @@ void spawn(int i)
 	
 	if((pid = fork()) < 0) {
 		inittab[i].pid = -1;
-		err("fork failed\n");
+		err(_("fork failed\n"));
 		return;
 	}
 	if(pid) {
@@ -289,7 +299,7 @@ void spawn(int i)
 		env[2] = (char *)0;
 
 		execve(inittab[i].toks[0], inittab[i].toks, env);
-		err("exec failed\n");
+		err(_("exec failed\n"));
 		sleep(5);
 		_exit(1);
 	}
@@ -311,7 +321,7 @@ void read_inittab()
 	/* termenv = "vt100"; */
 			
 	if(!(f = fopen(_PATH_INITTAB, "r"))) {
-		err("cannot open inittab\n");
+		err(_("cannot open inittab\n"));
 		_exit(1);
 	}
 
@@ -349,7 +359,7 @@ void read_inittab()
 		/* special-case termcap for the console ttys */
 		(void) sprintf(tty, "/dev/%s", inittab[i].tty);
 		if(!termenv || stat(tty, &stb) < 0) {
-			err("no TERM or cannot stat tty\n");
+			err(_("no TERM or cannot stat tty\n"));
 		} else {
 			/* is it a console tty? */
 			if(major(stb.st_rdev) == 4 && minor(stb.st_rdev) < 64) {

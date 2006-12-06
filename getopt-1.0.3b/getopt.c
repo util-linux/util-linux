@@ -28,6 +28,10 @@
  * Version 1.0.2: Thu Jun 11 1998 (not present)
  *   Fixed gcc-2.8.1 warnings
  *   Fixed --version/-V option (not present)
+ * Version 1.0.3
+ *   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ *   - added Native Language Support
+ *   
  */
 
 #include <stdio.h>
@@ -35,6 +39,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
+#include "../lib/nls.h"
 
 #if LIBCGETOPT
 #include <getopt.h>
@@ -77,7 +82,7 @@ void *our_malloc(size_t size)
 {
 	void *ret=malloc(size);
 	if (! ret) {
-		fputs("getopt: Out of memory!",stderr);
+		fprintf(stderr,_("%s: Out of memory!\n"),"getopt");
 		exit(3);
 	}
 	return(ret);
@@ -87,7 +92,7 @@ void *our_realloc(void *ptr, size_t size)
 {
         void *ret=realloc(ptr,size);
         if (! ret && size) {
-                fputs("getopt: Out of memory!",stderr);
+		fprintf(stderr,_("%s: Out of memory!\n"), "getopt");
                 exit(3);
         }
         return(ret);
@@ -221,7 +226,7 @@ void parse_error(const char *message)
 {
 	if (message)
 		fprintf(stderr,"getopt: %s\n",message);
-	fputs("Try `getopt --help' for more information.\n",stderr);
+	fputs(_("Try `getopt --help' for more information.\n"),stderr);
 	exit(2);
 }
 
@@ -287,8 +292,8 @@ void add_long_options(char *options)
 					arg_opt=required_argument;
 				}
 				if (strlen(tokptr) == 0)
-					parse_error("empty long option after "
-					              "-l or --long argument");
+					parse_error(_("empty long option after "
+					              "-l or --long argument"));
 			}
 			add_longopt(tokptr,arg_opt);
 		}
@@ -307,25 +312,25 @@ void set_shell(const char *new_shell)
 	else if (!strcmp(new_shell,"csh"))
 		shell=TCSH;
 	else
-		parse_error("unknown shell after -s or --shell argument");
+		parse_error(_("unknown shell after -s or --shell argument"));
 }
 
 void print_help(void)
 {
-	fputs("Usage: getopt optstring parameters\n",stderr);
-	fputs("       getopt [options] [--] optstring parameters\n",stderr);
-	fputs("       getopt [options] -o|--options optstring [options] [--]\n",stderr);
-        fputs("              parameters\n",stderr);
-	fputs("  -a, --alternative            Allow long options starting with single -\n",stderr);
-	fputs("  -h, --help                   This small usage guide\n",stderr);
-	fputs("  -l, --longoptions=longopts   Long options to be recognized\n",stderr);
-	fputs("  -n, --name=progname          The name under which errors are reported\n",stderr);
-	fputs("  -o, --options=optstring      Short options to be recognized\n",stderr);
-        fputs("  -q, --quiet                  Disable error reporting by getopt(3)\n",stderr);
-	fputs("  -Q, --quiet-output           No normal output\n",stderr);
-	fputs("  -s, --shell=shell            Set shell quoting conventions\n",stderr);	
-	fputs("  -T, --test                   Test for getopt(1) version\n",stderr);
-	fputs("  -V, --version                Output version information\n",stderr);
+	fputs(_("Usage: getopt optstring parameters\n"),stderr);
+	fputs(_("       getopt [options] [--] optstring parameters\n"),stderr);
+	fputs(_("       getopt [options] -o|--options optstring [options] [--]\n"),stderr);
+        fputs(_("              parameters\n"),stderr);
+	fputs(_("  -a, --alternative            Allow long options starting with single -\n"),stderr);
+	fputs(_("  -h, --help                   This small usage guide\n"),stderr);
+	fputs(_("  -l, --longoptions=longopts   Long options to be recognized\n"),stderr);
+	fputs(_("  -n, --name=progname          The name under which errors are reported\n"),stderr);
+	fputs(_("  -o, --options=optstring      Short options to be recognized\n"),stderr);
+        fputs(_("  -q, --quiet                  Disable error reporting by getopt(3)\n"),stderr);
+	fputs(_("  -Q, --quiet-output           No normal output\n"),stderr);
+	fputs(_("  -s, --shell=shell            Set shell quoting conventions\n"),stderr);	
+	fputs(_("  -T, --test                   Test for getopt(1) version\n"),stderr);
+	fputs(_("  -V, --version                Output version information\n"),stderr);
 	exit(2);
 }
 	
@@ -361,6 +366,10 @@ int main(int argc, char *argv[])
 	int opt;
 	int compatible=0;
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	init_longopt();
 
 	if (getenv("GETOPT_COMPATIBLE")) 
@@ -375,7 +384,7 @@ int main(int argc, char *argv[])
 			exit(0);
 		}
 		else
-			parse_error("missing optstring argument");
+			parse_error(_("missing optstring argument"));
 	}
 	
 	if (argv[1][0] != '-' || compatible) {
@@ -421,19 +430,19 @@ int main(int argc, char *argv[])
 		case 'T':
 			exit(4);
 		case 'V':
-			printf("getopt (enhanced) 1.0.3\n");
+			printf(_("getopt (enhanced) 1.0.3\n"));
 			exit(0);
 		case '?':
 		case ':':
 			parse_error(NULL);
 		default:
-			parse_error("internal error, contact the author.");
+			parse_error(_("internal error, contact the author."));
 		}
 	
 	if (!optstr) 
 	{
 		if (optind >= argc)
-			parse_error("missing optstring argument");
+			parse_error(_("missing optstring argument"));
 		else {
 			optstr=our_malloc(strlen(argv[optind])+1);
 			strcpy(optstr,argv[optind]);

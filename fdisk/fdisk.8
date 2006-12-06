@@ -5,9 +5,9 @@
 .SH NAME
 fdisk \- Partition table manipulator for Linux
 .SH SYNOPSIS
-.BI "fdisk [\-u] [" device ]
+.BI "fdisk [\-u] " device
 .sp
-.BI "fdisk \-l [\-u] [" "device ..." ]
+.BI "fdisk \-l [\-u] " "device ..."
 .sp
 .BI "fdisk \-s " "partition ..."
 .sp
@@ -189,20 +189,6 @@ of cylinders.
 The
 .I size
 of the partition (in blocks) is printed on the standard output.
-This value is normally used as an argument to the
-.BR mkfs (8)
-program to specify the size of the partition which will be formatted.
-(Older versions of fdisk would do this only if the partition id is
-greater than 10, in an attempt to refuse DOS partitions;
-this test has been deleted.)
-Note that
-.B "sfdisk -s"
-gives different (namely, correct) answers.
-Reasons for the difference are that the kernel and
-.B fdisk
-need not have the same idea about partition numbering
-(e.g., in case you have BSD slices), and have different
-ideas about the size of an extended partition.
 .SH BUGS
 There are several *fdisk programs around.
 Each has its problems and strengths.
@@ -210,6 +196,20 @@ Try them in the order
 .BR cfdisk ,
 .BR fdisk ,
 .BR sfdisk .
+(Indeed,
+.B cfdisk
+is a beautiful program that has strict requirements on
+the partition tables it accepts, and produces high quality partition
+tables. Use it if you can. 
+.B fdisk
+is a buggy program that does fuzzy things - usually it happens to
+produce reasonable results. Its single advantage is that it has
+some support for BSD disk labels and other non-DOS partition tables.
+Avoid it if you can.
+.B sfdisk
+is for hackers only - the user interface is terrible, but it is
+more correct than fdisk and more powerful than both fdisk and cfdisk.
+Moreover, it can be used noninteractively.)
 .PP
 The IRIX/SGI type disklabel is currently not supported by the kernel.
 Moreover, IRIX/SGI header directories are not fully supported yet.

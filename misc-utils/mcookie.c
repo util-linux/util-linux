@@ -1,7 +1,7 @@
 /* mcookie.c -- Generates random numbers for xauth
  * Created: Fri Feb  3 10:42:48 1995 by faith@cs.unc.edu
- * Revised: Mon Sep 25 23:44:43 1995 by r.faith@ieee.org
- * Public Domain 1995 Rickard E. Faith (faith@cs.unc.edu)
+ * Revised: Fri Mar 19 07:48:01 1999 by faith@acm.org
+ * Public Domain 1995, 1999 Rickard E. Faith (faith@acm.org)
  * This program comes with ABSOLUTELY NO WARRANTY.
  * 
  * $Id: mcookie.c,v 1.5 1997/07/06 00:13:06 aebr Exp $
@@ -13,6 +13,11 @@
  * NOTE: Unless /dev/random is available, this program does not actually
  * gather 128 bits of random information, so the magic cookie generated
  * will be considerably easier to guess than one might expect.
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ * 1999-03-21 aeb: Added some fragments of code from Colin Plumb.
+ *
  */
 
 #ifdef __linux__
@@ -27,29 +32,48 @@
 #include <sys/time.h>
 #include <unistd.h>
 #endif
+#include "nls.h"
 
-#define MAXBUFFERSIZE 512
+#define BUFFERSIZE 4096
 
 struct rngs {
    const char *path;
-   int        length;
+   int minlength, maxlength;
 } rngs[] = {
-   { "/dev/random",              16 },
-   { "/dev/urandom",            128 },
-   { "/proc/stat",    MAXBUFFERSIZE },
-   { "/proc/loadavg", MAXBUFFERSIZE },
-   { "/dev/audio",    MAXBUFFERSIZE },
+   { "/dev/random",              16,  16 }, /* 16 bytes = 128 bits suffice */
+   { "/proc/interrupts",          0,   0 },
+   { "/proc/slabinfo",            0,   0 },
+   { "/proc/stat",                0,   0 },
+   { "/dev/urandom",             32,  64 },
 };
 #define RNGS (sizeof(rngs)/sizeof(struct rngs))
 
 int Verbose = 0;
+
+/* The basic function to hash a file */
+static off_t
+hash_file(struct MD5Context *ctx, int fd)
+{
+   off_t count = 0;
+   ssize_t r;
+   unsigned char buf[BUFFERSIZE];
+
+   while ((r = read(fd, buf, sizeof(buf))) > 0) {
+      MD5Update(ctx, buf, r);
+      count += r;
+   }
+   /* Separate files with a null byte */
+   buf[0] = 0;
+   MD5Update(ctx, buf, 1);
+   return count;
+}
 
 int main( int argc, char **argv )
 {
    int               i;
    struct MD5Context ctx;
    unsigned char     digest[16];
-   unsigned char     buf[MAXBUFFERSIZE];
+   unsigned char     buf[BUFFERSIZE];
    int               fd;
    int               c;
    pid_t             pid;
@@ -61,6 +85,10 @@ int main( int argc, char **argv )
 #else
    long int          t;
 #endif
+
+   setlocale(LC_ALL, "");
+   bindtextdomain(PACKAGE, LOCALEDIR);
+   textdomain(PACKAGE);
 
    while ((c = getopt( argc, argv, "vf:" )) != EOF)
       switch (c) {
@@ -85,39 +113,52 @@ int main( int argc, char **argv )
    if (file) {
       int count = 0;
       
-      if (file[0] == '-' && !file[1]) fd = fileno(stdin);
-      else if ((fd = open( file, O_RDONLY )) <0) {
-	 fprintf( stderr, "Could not open %s\n", file );
-      }
+      if (file[0] == '-' && !file[1])
+	 fd = fileno(stdin);
+      else
+	 fd = open( file, O_RDONLY );
 
-      while ((r = read( fd, buf, sizeof( buf ) )) > 0) {
-	 MD5Update( &ctx, buf, r );
-	 count += r;
+      if (fd < 0) {
+	 fprintf( stderr, _("Could not open %s\n"), file );
+      } else {
+         count = hash_file( &ctx, fd );
+	 if (Verbose)
+	    fprintf( stderr, _("Got %d bytes from %s\n"), count, file );
+
+	 if (file[0] != '-' || file[1]) close( fd );
       }
-      if (Verbose)
-	 fprintf( stderr, "Got %d bytes from %s\n", count, file );
-      
-      if (file[0] != '-' || file[1]) close( fd );
    }
 
    for (i = 0; i < RNGS; i++) {
       if ((fd = open( rngs[i].path, O_RDONLY|O_NONBLOCK )) >= 0) {
-	 r = read( fd, buf, sizeof( buf ) );
+	 int count = sizeof(buf);
+
+	 if (rngs[i].maxlength && count > rngs[i].maxlength)
+	    count = rngs[i].maxlength;
+	 r = read( fd, buf, count );
 	 if (r > 0)
 	    MD5Update( &ctx, buf, r );
 	 else
 	    r = 0;
 	 close( fd );
 	 if (Verbose)
-	    fprintf( stderr, "Got %d bytes from %s\n", r, rngs[i].path );
-	 if (r >= rngs[i].length) break;
+	    fprintf( stderr, _("Got %d bytes from %s\n"), r, rngs[i].path );
+	 if (rngs[i].minlength && r >= rngs[i].minlength)
+	    break;
       } else if (Verbose)
-	 fprintf( stderr, "Could not open %s\n", rngs[i].path );
+	 fprintf( stderr, _("Could not open %s\n"), rngs[i].path );
    }
 
    MD5Final( digest, &ctx );
    for (i = 0; i < 16; i++) printf( "%02x", digest[i] );
    putchar ( '\n' );
    
+   /*
+    * The following is important for cases like disk full, so shell scripts
+    * can bomb out properly rather than think they succeeded.
+    */
+   if (fflush(stdout) < 0 || fclose(stdout) < 0)
+      return 1;
+
    return 0;
 }

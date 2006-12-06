@@ -6,12 +6,16 @@
  * Modifications by Rick Sladkey (jrs@world.std.com)
  * Larger buffersize 3 June 1998 by Nicolai Langfeldt, based on a patch
  * by Peeter Joot.  This was also suggested by John Hudson.
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  */
 
 #include <linux/unistd.h>
 #include <stdio.h>
 #include <getopt.h>
 #include <stdlib.h>
+#include "nls.h"
 
 #if __GNU_LIBRARY__ < 5
 
@@ -31,7 +35,7 @@ static char *progname;
 void
 usage()
 {
-   fprintf( stderr, "Usage: %s [-c] [-n level] [-s bufsize]\n", progname );
+   fprintf( stderr, _("Usage: %s [-c] [-n level] [-s bufsize]\n"), progname );
 }
 
 int main( int argc, char *argv[] )
@@ -44,6 +48,10 @@ int main( int argc, char *argv[] )
    int  level = 0;
    int  lastc;
    int  cmd = 3;
+
+   setlocale(LC_ALL, "");
+   bindtextdomain(PACKAGE, LOCALEDIR);
+   textdomain(PACKAGE);
 
    progname = argv[0];
    while ((c = getopt( argc, argv, "cn:s:" )) != EOF) {

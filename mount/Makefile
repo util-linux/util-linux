@@ -1,6 +1,5 @@
-ifeq (../MCONFIG,$(wildcard ../MCONFIG))
+include ../make_include
 include ../MCONFIG
-endif
 
 CC = gcc
 CFLAGS = -I$(LIB) $(OPT)

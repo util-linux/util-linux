@@ -49,12 +49,15 @@ Tue Mar 30 09:31:52 1993: rdev -Rn to set root readonly flag, sct@dcs.ed.ac.uk
 Wed Jun 22 21:12:29 1994: Applied patches from Dave
                           (gentzel@nova.enet.dec.com) to prevent dereferencing
 			  the NULL pointer, faith@cs.unc.edu
+1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+- added Native Language Support
 
 -------------------------------------------------------------------------
 
 */
 
 #include <stdio.h>
+#include "nls.h"
 
 /* rdev.c  -  query/set root device. */
 
@@ -62,20 +65,20 @@ void
 usage()
 {
 
-    puts("usage: rdev [ -rsv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]");
-    puts("  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device");
-    puts("  rdev /dev/fd0 /dev/hda2         sets ROOT to /dev/hda2");
-    puts("  rdev -R /dev/fd0 1              set the ROOTFLAGS (readonly status)");
-    puts("  rdev -s /dev/fd0 /dev/hda2      set the SWAP device");
-    puts("  rdev -r /dev/fd0 627            set the RAMDISK size");
-    puts("  rdev -v /dev/fd0 1              set the bootup VIDEOMODE");
-    puts("  rdev -o N ...                   use the byte offset N");
-    puts("  rootflags ...                   same as rdev -R");
-    puts("  swapdev ...                     same as rdev -s");
-    puts("  ramsize ...                     same as rdev -r");
-    puts("  vidmode ...                     same as rdev -v");
-    puts("Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,...");
-    puts("      use -R 1 to mount root readonly, -R 0 for read/write.");
+    puts(_("usage: rdev [ -rsv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"));
+    puts(_("  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"));
+    puts(_("  rdev /dev/fd0 /dev/hda2         sets ROOT to /dev/hda2"));
+    puts(_("  rdev -R /dev/fd0 1              set the ROOTFLAGS (readonly status)"));
+    puts(_("  rdev -s /dev/fd0 /dev/hda2      set the SWAP device"));
+    puts(_("  rdev -r /dev/fd0 627            set the RAMDISK size"));
+    puts(_("  rdev -v /dev/fd0 1              set the bootup VIDEOMODE"));
+    puts(_("  rdev -o N ...                   use the byte offset N"));
+    puts(_("  rootflags ...                   same as rdev -R"));
+    puts(_("  swapdev ...                     same as rdev -s"));
+    puts(_("  ramsize ...                     same as rdev -r"));
+    puts(_("  vidmode ...                     same as rdev -v"));
+    puts(_("Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."));
+    puts(_("      use -R 1 to mount root readonly, -R 0 for read/write."));
     exit(-1);
 }
 
@@ -89,7 +92,6 @@ usage()
 #include <stdlib.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
 
 #define DEFAULT_OFFSET 508
 
@@ -134,6 +136,10 @@ int main(int argc,char **argv)
     char *device, *ptr;
     struct stat s;
     int cmd = 0;
+
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
 
     device = NULL;
     if ((ptr = strrchr(argv[0],'/')) != NULL)

@@ -1,6 +1,10 @@
 /* setfdprm.c  -  Sets user-provided floppy disk parameters, re-activates
 		  autodetection and switches diagnostic messages. */
 
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ */
+
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -10,6 +14,7 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <linux/fd.h>
+#include "nls.h"
 
 #define FDPRMFILE "/etc/fdprm"
 #define MAXLINE   200
@@ -22,7 +27,7 @@ static int convert(char *arg)
 
     result = strtol(arg,&end,0);
     if (!*end) return (int) result;
-    fprintf(stderr,"Invalid number: %s\n",arg);
+    fprintf(stderr,_("Invalid number: %s\n"),arg);
     exit(1);
 }
 
@@ -72,7 +77,7 @@ static void find_params(int cmd,int fd,char *name)
 	    if (sscanf(start,"%s %s %s %s %s %s %s %s %s %s",this,param[0],
 	      param[1],param[2],param[3],param[4],param[5],param[6],param[7],
 	      param[8]) != 10) {
-		fprintf(stderr,"Syntax error: '%s'\n",line);
+		fprintf(stderr,_("Syntax error: '%s'\n"),line);
 		exit(1);
 	    }
 	    if (!strcmp(this,name)) {
@@ -82,7 +87,7 @@ static void find_params(int cmd,int fd,char *name)
 	    }
 	}
     }
-    fprintf(stderr,"No such parameter set: '%s'\n",name);
+    fprintf(stderr,_("No such parameter set: '%s'\n"),name);
     exit(1);
 }
 
@@ -92,13 +97,13 @@ static void usage(char *name)
     char *this;
 
     if ((this = strrchr(name,'/')) != NULL) name = this+1;
-    fprintf(stderr,"usage: %s [ -p ] dev name\n",name);
-    fprintf(stderr,"       %s [ -p ] dev size sect heads tracks stretch \
-gap rate spec1 fmt_gap\n",name);
+    fprintf(stderr,_("usage: %s [ -p ] dev name\n"),name);
+    fprintf(stderr,_("       %s [ -p ] dev size sect heads tracks stretch \
+gap rate spec1 fmt_gap\n"),name);
 #ifdef FDMEDCNG
-    fprintf(stderr,"       %s [ -c | -y | -n | -d ] dev\n",name);
+    fprintf(stderr,_("       %s [ -c | -y | -n | -d ] dev\n"),name);
 #else
-    fprintf(stderr,"       %s [ -c | -y | -n ] dev\n",name);
+    fprintf(stderr,_("       %s [ -c | -y | -n ] dev\n"),name);
 #endif
     exit(1);
 }
@@ -109,6 +114,10 @@ main(int argc,char **argv)
     int fd;
     unsigned int cmd;
     char *name;
+
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
 
     name = argv[0];
     if (argc < 3) usage(name);

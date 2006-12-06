@@ -25,7 +25,7 @@ If the user is
 .I not
 root, and if
 .I /etc/nologin
-exists, the contents of of this file are printed to the screen, and the
+exists, the contents of this file are printed to the screen, and the
 login is terminated.  This is typically used to prevent logins when the
 system is being taken down.
 
@@ -243,7 +243,8 @@ the user to for example run the command: xterm -e /bin/login.
 .PP
 .IP o
 A domain name suffix such as @.some.dom, meaning that the user may
-rlogin/telnet from any host whose domain name has the suffix .some.dom.
+rlogin/telnet from any host whose domain name has the suffix
+\&.some.dom.
 .PP
 .IP o
 A range of IPv4 addresses, written @x.x.x.x/y.y.y.y where x.x.x.x is
@@ -307,6 +308,16 @@ The undocumented BSD
 option is not supported.  This may be required by some
 .BR rlogind (8)
 programs.
+
+A recursive login, as used to be possible in the good old days,
+no longer works; for most purposes
+.BR su (1)
+is a satisfactory substitute. Indeed, for security reasons,
+login does a vhangup() system call to remove any possible
+listening processes on the tty. This is to avoid password
+sniffing. If one uses the command "login", then the surrounding shell
+gets killed by vhangup() because it's no longer the true owner of the tty.
+This can be avoided by using "exec login" in a top-level shell or xterm.
 .SH AUTHOR
 Derived from BSD login 5.40 (5/9/89) by Michael Glad (glad@daimi.dk)
 for HP-UX

@@ -34,14 +34,18 @@
 /*
 **	modified by Kars de Jong <jongk@cs.utwente.nl> to use terminfo instead
 **	  of termcap.
+	1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+	- added Native Language Support
+
 */
 
 #include <stdio.h>
 #include <unistd.h>		/* for getopt(), isatty() */
-#include <string.h>		/* for bzero() */
+#include <string.h>		/* for bzero(), strcpy() */
 #include <term.h>		/* for setupterm() */
 #include <stdlib.h>		/* for getenv() */
 #include <limits.h>		/* for INT_MAX */
+#include "nls.h"
 
 void filter(FILE *f);
 void flushln(void);
@@ -98,6 +102,10 @@ int main(int argc, char **argv)
 	char *termtype;
 	FILE *f;
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	termtype = getenv("TERM");
 	if (termtype == NULL || (argv[0][0] == 'c' && !isatty(1)))
 		termtype = "lpr";
@@ -114,7 +122,7 @@ int main(int argc, char **argv)
 
 		default:
 			fprintf(stderr,
-				"usage: %s [ -i ] [ -tTerm ] file...\n",
+				_("usage: %s [ -i ] [ -tTerm ] file...\n"),
 				argv[0]);
 			exit(1);
 		}
@@ -125,7 +133,7 @@ int main(int argc, char **argv)
 		break;
 
 	default:
-		fprintf(stderr,"trouble reading terminfo");
+		fprintf(stderr,_("trouble reading terminfo"));
 		/* fall through to ... */
 
 	case 0:
@@ -212,7 +220,7 @@ void filter(FILE *f)
 
 		default:
 			fprintf(stderr,
-				"Unknown escape sequence in input: %o, %o\n",
+				_("Unknown escape sequence in input: %o, %o\n"),
 				IESC, c);
 			exit(1);
 		}
@@ -361,7 +369,7 @@ void initbuf()
 		obuflen = INITBUF;
 		obuf = malloc(sizeof(struct CHAR) * obuflen);
 		if (obuf == NULL) {
-			fprintf(stderr, "Unable to allocate buffer.\n");
+			fprintf(stderr, _("Unable to allocate buffer.\n"));
 			exit(1);
 		}
 	}
@@ -518,7 +526,7 @@ void setcol(int newcol)
 			/* Paranoid check for obuflen == INT_MAX. */
 			if (obuflen == INT_MAX) {
 				fprintf(stderr,
-					"Input line too long.\n");
+					_("Input line too long.\n"));
 				exit(1);
 			}
 
@@ -531,7 +539,7 @@ void setcol(int newcol)
 			obuf = realloc(obuf, sizeof(struct CHAR) * obuflen);
 			if (obuf == NULL) {
 				fprintf(stderr,
-					"Out of memory when growing buffer.\n");
+					_("Out of memory when growing buffer.\n"));
 				exit(1);
 			}
 		}

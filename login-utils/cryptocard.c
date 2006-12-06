@@ -16,6 +16,10 @@
    The sources for this code are maintained in
 
       ftp://ftp.daimi.aau.dk/pub/linux/poe/poeigl-X.XX.tar.gz
+
+      1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+      - added Native Language Support
+
 */
 #ifdef CRYPTOCARD
 
@@ -40,6 +44,7 @@
 #include <pwd.h>
 #include <sys/param.h>
 #include <sys/stat.h>
+#include "nls.h"
 
 #ifdef KOONTZ_DES
 #include "../koontz-des/des.h"
@@ -62,12 +67,12 @@ generate_challenge(void)
 
     /* create and present a challenge string */
     if ((rfd = open("/dev/urandom", O_RDONLY)) < 0) {
-	syslog(LOG_NOTICE, "couldn't open /dev/urandom");
+	syslog(LOG_NOTICE, _("couldn't open /dev/urandom"));
 	return NULL;
     }
     if (read(rfd, &clong, 4) < 4) {
 	close(rfd);
-	syslog(LOG_NOTICE, "couldn't read random data from /dev/urandom");
+	syslog(LOG_NOTICE, _("couldn't read random data from /dev/urandom"));
 	return NULL;
     }
     close(rfd);
@@ -90,22 +95,22 @@ get_key()
     sprintf(keyfile, "%s/.cryptocard", pwd->pw_dir);
 
     if ((rfd = open(keyfile, O_RDONLY)) < 0) {
-	syslog(LOG_NOTICE, "can't open %s for reading", keyfile);
+	syslog(LOG_NOTICE, _("can't open %s for reading"), keyfile);
 	goto bail_out;
     }
     if (fstat(rfd, &statbuf) < 0) {
-	syslog(LOG_NOTICE, "can't stat(%s)", keyfile);
+	syslog(LOG_NOTICE, _("can't stat(%s)"), keyfile);
 	goto close_and_bail_out;
     }
     if ((statbuf.st_uid != pwd->pw_uid)
 	|| ((statbuf.st_mode & S_IFMT) != S_IFREG)
 	|| (statbuf.st_mode & (S_IRWXU|S_IRWXG|S_IRWXO))) {
-	syslog(LOG_NOTICE, "%s doesn't have the correct filemodes", keyfile);
+	syslog(LOG_NOTICE, _("%s doesn't have the correct filemodes"), keyfile);
 	goto close_and_bail_out;
     }
     
     if (read(rfd, key, 8) < 8) {
-	syslog(LOG_NOTICE, "can't read data from %s", keyfile);
+	syslog(LOG_NOTICE, _("can't read data from %s"), keyfile);
 	goto close_and_bail_out;
     }
 

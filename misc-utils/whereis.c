@@ -33,12 +33,17 @@
 
 /* *:aeb */
 
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ */
+
 #include <sys/param.h>
 #include <sys/dir.h>
 #include <sys/stat.h>
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
+#include "nls.h"
 
 void zerof(void);
 void getlist(int *, char ***, char ***, int *);
@@ -142,11 +147,15 @@ main(argc, argv)
 	int argc;
 	char *argv[];
 {
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	
 
 	argc--, argv++;
 	if (argc == 0) {
 usage:
-		fprintf(stderr, "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n");
+		fprintf(stderr, _("whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"));
 		exit(1);
 	}
 	do
@@ -328,6 +337,9 @@ findin(char *dir, char *cp) {
 		if (dirp == NULL)
 			return;
 		while ((dp = readdir(dirp)) != NULL) {
+			if (!strcmp(dp->d_name, ".") ||
+			    !strcmp(dp->d_name, ".."))
+				continue;
 			if (strlen(dp->d_name) + l > sizeof(dirbuf))
 				continue;
 			sprintf(d, "%s", dp->d_name);

@@ -1015,6 +1015,16 @@ If no explicit loop device is mentioned
 (but just an option `\fB\-o loop\fP' is given), then
 .B mount
 will try to find some unused loop device and use that.
+If you are not so unwise as to make
+.I /etc/mtab
+a symbolic link to
+.I /proc/mounts
+then any loop device allocated by
+.B mount
+will be freed by
+.BR umount .
+You can also free a loop device by hand, using `losetup -d', see
+.BR losetup (8).
 
 .SH FILES
 .I /etc/fstab

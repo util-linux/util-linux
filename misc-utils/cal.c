@@ -36,14 +36,10 @@
 
 /* 1999-02-01	Jean-Francois Bignolles: added option '-m' to display
  * 		monday as the first day of the week.
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  */
-
-/* This defines _LINUX_C_LIB_VERSION_MAJOR, dunno about gnulibc.  We
-   don't want it to read /usr/i586-unknown-linux/include/_G_config.h
-   so we specify fill path.  Were we got /usr/i586-unknown-linux from?
-   Dunno. */
-
-#include "/usr/include/_G_config.h"
 
 #include <sys/types.h>
 
@@ -55,19 +51,13 @@
 #include <time.h>
 #include <unistd.h>
 #include <locale.h>
+#include "nls.h"
+#include "../defines.h"
 
-/* Test changes to deal with gnulibc, Linux libc 5. */
-/* #if defined(__linux__) && _LINUX_C_LIB_VERSION_MAJOR > 4 */
-#if _LINUX_C_LIB_VERSION_MAJOR - 0 > 4 || __GNU_LIBRARY__ - 0 >= 5
-# define LANGINFO 1
-#else
-# define LANGINFO 0
-#endif
-
-#if LANGINFO
+#ifdef HAVE_langinfo_h
 # include <langinfo.h>
 #else
-# include <localeinfo.h>
+# include <localeinfo.h>	/* libc4 only */
 #endif
 
 #define	THURSDAY		4		/* for reformation */
@@ -162,7 +152,11 @@ main(argc, argv)
 	extern char *__progname;
 	__progname = argv[0];
 #endif
-
+	
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	
 	setlocale(LC_ALL,"");
 	yflag = 0;
 	while ((ch = getopt(argc, argv, "mjy")) != EOF)
@@ -187,11 +181,11 @@ main(argc, argv)
 	switch(argc) {
 	case 2:
 		if ((month = atoi(*argv++)) < 1 || month > 12)
-			errx(1, "illegal month value: use 1-12");
+			errx(1, _("illegal month value: use 1-12"));
 		/* FALLTHROUGH */
 	case 1:
 		if ((year = atoi(*argv)) < 1 || year > 9999)
-			errx(1, "illegal year value: use 1-9999");
+			errx(1, _("illegal year value: use 1-9999"));
 		break;
 	case 0:
 		(void)time(&now);
@@ -228,7 +222,7 @@ void headers_init(void)
   strcpy(day_headings,"");
   strcpy(j_day_headings,"");
 
-#if defined(__linux__) && (_LINUX_C_LIB_VERSION_MAJOR > 4 || __GNU_LIBRARY__ > 1)
+#ifdef HAVE_langinfo_h
 # define weekday(wd)	nl_langinfo(ABDAY_1+wd)
 #else
 # define weekday(wd)	_time_info->abbrev_wkday[wd]
@@ -247,7 +241,7 @@ void headers_init(void)
 #undef weekday
   
   for (i = 0; i < 12; i++) {
-#if defined(__linux__) && (_LINUX_C_LIB_VERSION_MAJOR > 4 || __GNU_LIBRARY__ > 1)
+#ifdef HAVE_langinfo_h
      full_month[i] = nl_langinfo(MON_1+i);
 #else
      full_month[i] = _time_info->full_month[i];
@@ -487,6 +481,6 @@ void
 usage()
 {
 
-	(void)fprintf(stderr, "usage: cal [-mjy] [[month] year]\n");
+	(void)fprintf(stderr, _("usage: cal [-mjy] [[month] year]\n"));
 	exit(1);
 }

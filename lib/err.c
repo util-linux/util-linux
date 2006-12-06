@@ -43,9 +43,11 @@
 #include <varargs.h>
 #endif
 
+#include "../defines.h"
+#ifdef HAVE_progname
 extern char *__progname;		/* Program name, from crt0. */
-#ifdef __linux__
-char *__progname;
+#else
+char *__progname = "foo";		/* probably libc4 */
 #endif
 
 __dead void

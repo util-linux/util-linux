@@ -36,6 +36,10 @@
 /*
  * This program is not related to David Wall, whose Stanford Ph.D. thesis
  * is entitled "Mechanisms for Broadcast and Selective Broadcast".
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  */
 
 #include <sys/param.h>
@@ -44,12 +48,14 @@
 #include <sys/uio.h>
 
 #include <paths.h>
+#include <ctype.h>
 #include <pwd.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <utmp.h>
+#include "nls.h"
 #ifdef __linux__
 #include <locale.h>
 #include "pathnames.h"
@@ -63,6 +69,8 @@ int nobanner;
 int mbufsize;
 char *mbuf;
 
+char *progname = "wall";
+
 /* ARGSUSED */
 int
 main(argc, argv)
@@ -72,15 +80,19 @@ main(argc, argv)
 	extern int optind;
 	int ch;
 	struct iovec iov;
-	struct utmp utmp;
-	FILE *fp;
+	struct utmp *utmpptr;
 	char *p, *ttymsg();
-	char line[sizeof(utmp.ut_line) + 1];
+	char line[sizeof(utmpptr->ut_line) + 1];
 
-#ifdef __linux__
-	setlocale(LC_CTYPE,"");
-#endif
-	
+	setlocale(LC_ALL, "");
+        bindtextdomain(PACKAGE, LOCALEDIR);
+        textdomain(PACKAGE);
+
+	progname = argv[0];
+	p = rindex(progname, '/');
+	if (p)
+	     progname = p+1;
+
 	while ((ch = getopt(argc, argv, "n")) != EOF)
 		switch (ch) {
 		case 'n':
@@ -91,7 +103,7 @@ main(argc, argv)
 		case '?':
 		default:
 usage:
-			(void)fprintf(stderr, "usage: wall [file]\n");
+			(void)fprintf(stderr, _("usage: %s [file]\n"), progname);
 			exit(1);
 		}
 	argc -= optind;
@@ -101,26 +113,24 @@ usage:
 
 	makemsg(*argv);
 
-	if (!(fp = fopen(_PATH_UTMP, "r"))) {
-		(void)fprintf(stderr, "wall: cannot read %s.\n", _PATH_UTMP);
-		exit(1);
-	}
+	setutent();
+
 	iov.iov_base = mbuf;
 	iov.iov_len = mbufsize;
-	/* NOSTRICT */
-	while (fread((char *)&utmp, sizeof(utmp), 1, fp) == 1) {
-		if (!utmp.ut_name[0] ||
-		    !strncmp(utmp.ut_name, IGNOREUSER, sizeof(utmp.ut_name)))
+	while((utmpptr = getutent())) {
+		if (!utmpptr->ut_name[0] ||
+		    !strncmp(utmpptr->ut_name, IGNOREUSER, sizeof(utmpptr->ut_name)))
 			continue;
-#ifdef __linux__
-		if (utmp.ut_type != USER_PROCESS)
-		   continue;
+#ifdef USER_PROCESS
+		if (utmpptr->ut_type != USER_PROCESS)
+			continue;
 #endif
-		strncpy(line, utmp.ut_line, sizeof(utmp.ut_line));
-		line[sizeof(utmp.ut_line)-1] = '\0';
+		strncpy(line, utmpptr->ut_line, sizeof(utmpptr->ut_line));
+		line[sizeof(utmpptr->ut_line)-1] = '\0';
 		if ((p = ttymsg(&iov, 1, line, 60*5)) != NULL)
-			(void)fprintf(stderr, "wall: %s\n", p);
+			(void)fprintf(stderr, "%s: %s\n", progname, p);
 	}
+	endutent();
 	exit(0);
 }
 
@@ -138,17 +148,16 @@ makemsg(fname)
 	char *p, *whom, *where, hostname[MAXHOSTNAMELEN],
 		lbuf[MAXHOSTNAMELEN + 320],
 		tmpname[sizeof(_PATH_TMP) + 20];
-	char *getlogin(), *strcpy(), *ttyname();
 
 	(void)sprintf(tmpname, "%s/wall.XXXXXX", _PATH_TMP);
 	if (!(fd = mkstemp(tmpname)) || !(fp = fdopen(fd, "r+"))) {
-		(void)fprintf(stderr, "wall: can't open temporary file.\n");
+		(void)fprintf(stderr, _("%s: can't open temporary file.\n"), progname);
 		exit(1);
 	}
 	(void)unlink(tmpname);
 
 	if (!nobanner) {
-		if (!(whom = getlogin()))
+		if (!(whom = getlogin()) || !*whom)
 			whom = (pw = getpwuid(getuid())) ? pw->pw_name : "???";
 		if (!whom || strlen(whom) > 100)
 			whom = "someone";
@@ -169,7 +178,7 @@ makemsg(fname)
 		/* snprintf is not always available, but the sprintf's here
 		   will not overflow as long as %d takes at most 100 chars */
 		(void)fprintf(fp, "\r%79s\r\n", " ");
-		(void)sprintf(lbuf, "Broadcast Message from %s@%s",
+		(void)sprintf(lbuf, _("Broadcast Message from %s@%s"),
 			      whom, hostname);
 		(void)fprintf(fp, "%-79.79s\007\007\r\n", lbuf);
 		(void)sprintf(lbuf, "        (%s) at %d:%02d ...",
@@ -179,7 +188,7 @@ makemsg(fname)
 	(void)fprintf(fp, "%79s\r\n", " ");
 
 	if (fname && !(freopen(fname, "r", stdin))) {
-		(void)fprintf(stderr, "wall: can't read %s.\n", fname);
+		(void)fprintf(stderr, _("%s: can't read %s.\n"), progname, fname);
 		exit(1);
 	}
 	while (fgets(lbuf, sizeof(lbuf), stdin))
@@ -204,16 +213,16 @@ makemsg(fname)
 	rewind(fp);
 
 	if (fstat(fd, &sbuf)) {
-		(void)fprintf(stderr, "wall: can't stat temporary file.\n");
+		(void)fprintf(stderr, _("%s: can't stat temporary file.\n"), progname);
 		exit(1);
 	}
 	mbufsize = sbuf.st_size;
 	if (!(mbuf = malloc((u_int)mbufsize))) {
-		(void)fprintf(stderr, "wall: out of memory.\n");
+		(void)fprintf(stderr, _("%s: Out of memory!\n"), progname);
 		exit(1);
 	}
 	if (fread(mbuf, sizeof(*mbuf), mbufsize, fp) != mbufsize) {
-		(void)fprintf(stderr, "wall: can't read temporary file.\n");
+		(void)fprintf(stderr, _("%s: can't read temporary file.\n"), progname);
 		exit(1);
 	}
 	(void)close(fd);

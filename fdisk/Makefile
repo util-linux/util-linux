@@ -3,24 +3,33 @@
 # Revised: Fri Oct  6 21:02:21 1995 by r.faith@ieee.org
 # Copyright 1992, 1993, 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
 #
-
+include ../make_include
 include ../MCONFIG
 
 MAN8=
 SBIN=
+CFDISK=cfdisk
+NOTMADE=
 
-ifneq "$(CPU)" "sparc"
-# fsck and mkfs will compile, but there is no kernel support on sparc
-ifneq "$(CPU)" "m68k"
-MAN8:=$(MAN8) fdisk.8 cfdisk.8 sfdisk.8
-SBIN:=$(SBIN) fdisk cfdisk sfdisk
+ifneq "$(HAVE_SLANG)" "yes"
+ifneq "$(HAVE_NCURSES)" "yes"
+CFDISK=
+NOTMADE=cfdisk
 endif
+endif
+
+ifeq "$(CPU)" "m68k"
+# It seems the m68k people do not want *fdisk
 else
-MAN8:=$(MAN8) fdisk.8
 SBIN:=$(SBIN) fdisk
+MAN8:=$(MAN8) fdisk.8
+ifneq "$(CPU)" "sparc"
+SBIN:=$(SBIN) $(CFDISK) sfdisk
+MAN8:=$(MAN8) cfdisk.8 sfdisk.8
+endif
 endif
 
-all: $(SBIN)
+all: $(SBIN) $(NOTMADE)
 
 cfdisk.o: cfdisk.c
 ifeq "$(HAVE_SLANG)" "yes"
@@ -33,12 +42,12 @@ else
 endif
 endif
 
-cfdisk: cfdisk.o llseek.o
+cfdisk: cfdisk.o llseek.o i386_sys_types.o
 ifeq "$(HAVE_SLANG)" "yes"
 	$(CC) $(LDFLAGS) $^ -o $@ $(LIBSLANG)
 else
 ifeq "$(HAVE_NCURSES)" "yes"
-	$(CC) $(LDFLAGS) $^ -o $@ $(LIBCURSES) -lm
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIBCURSES)
 else
 	@echo $@ not made since it requires ncurses or slang
 endif
@@ -50,12 +59,14 @@ activate: sfdisk
 	ln -s sfdisk activate
 
 fdisk: fdisk.o llseek.o fdiskbsdlabel.o fdisksgilabel.o fdisksunlabel.o \
-	fdiskaixlabel.o
+	fdiskaixlabel.o i386_sys_types.o
 fdisk.o: fdisk.c fdisk.h
 fdiskbsdlabel.o: fdiskbsdlabel.c fdisk.h fdiskbsdlabel.h
 fdisksunlabel.o: fdisksunlabel.c fdisksunlabel.h fdisk.h
 fdiskaixlabel.o: fdiskaixlabel.c fdiskaixlabel.h fdisk.h
-sfdisk: sfdisk.o
+fdisk.o cfdisk.o sfdisk.o fdiskbsdlabel.o fdisksunlabel.o \
+	fdisksgilabel.o fdiskaixlabel.o i386_sys_types.o: common.h
+sfdisk: sfdisk.o i386_sys_types.o
 
 install: all
 	$(INSTALLDIR) $(SBINDIR)
@@ -65,4 +76,4 @@ install: all
 
 .PHONY:	clean
 clean:
-	-rm -f *.o *~ core $(SBIN)
+	-rm -f *.o *~ core $(SBIN) addpart delpart

@@ -29,15 +29,24 @@
  * >2GB patches: Sat Feb 11 09:08:10 1995, faith@cs.unc.edu
  * Prettier menus: Sat Feb 11 09:08:25 1995, Janne Kukonlehto
  *                                           <jtklehto@stekt.oulu.fi>
- * Versions 0.8e-n: aeb@cwi.nl
+ * Versions 0.8e-p: aeb@cwi.nl
+ * Rebaptised 2.9p, following util-linux versioning.
+ *
  *  Recognition of NTFS / HPFS difference inspired by patches
  *  from Marty Leisner <leisner@sdsp.mc.xerox.com>
  *  Exit codes by Enrique Zanardi <ezanardi@ull.es>:
  *     0: all went well
- *     1: command line error
- *     2: hardware problems [BAD_SEEK, BAD_READ, BAD_WRITE or BAD_OPEN].
- *     3: ioctl(fd, HDIO_GETGEO,...) failed [BAD_GEOMETRY].
- *     4: bad partition table on disk. [BAD_PRIMARY or BAD_LOGICAL].
+ *     1: command line error, out of memory
+ *     2: hardware problems [Cannot open/seek/read/write disk drive].
+ *     3: ioctl(fd, HDIO_GETGEO,...) failed. (Probably it is not a disk.)
+ *     4: bad partition table on disk. [Bad primary/logical partition].
+ *
+ * Sat, 23 Jan 1999 19:34:45 +0100 <Vincent.Renardias@ldsol.com>
+ *  Internationalized + provided initial French translation.
+ * Sat Mar 20 09:26:34 EST 1999 <acme@conectiva.com.br>
+ *  Some more i18n.
+ * Sun Jul 18 03:19:42 MEST 1999 <aeb@cwi.nl>
+ *  Terabyte-sized disks.
  *
  ****************************************************************************/
 
@@ -66,7 +75,10 @@
 #include <sys/ioctl.h>
 #include <linux/types.h>
 #include <linux/hdreg.h>
-#include <linux/fs.h>		/* for BLKRRPART */
+#include <linux/fs.h>		/* for BLKRRPART, BLKGETSIZE */
+
+#include "nls.h"
+#include "common.h"
 
 #if defined(__GNUC__) || defined(HAS_LONG_LONG)
 typedef long long ext2_loff_t;
@@ -77,17 +89,25 @@ typedef long      ext2_loff_t;
 extern ext2_loff_t ext2_llseek(unsigned int fd, ext2_loff_t offset,
 			       unsigned int origin);
 
-#define VERSION "0.8n"
+#include "../version.h"
+#define VERSION UTIL_LINUX_VERSION
 
 #define DEFAULT_DEVICE "/dev/hda"
 #define ALTERNATE_DEVICE "/dev/sda"
+
+/* With K=1024 we have `binary' megabytes, gigabytes, etc.
+   Some misguided hackers like that.
+   With K=1000 we have MB and GB that follow the standards
+   [SI, ATA, IEEE etc] and the disk manufacturers and the law. */
+#define K	1000
 
 #define LINE_LENGTH 80
 #define MAXIMUM_PARTS 60
 
 #define SECTOR_SIZE 512
 
-#define MAX_CYLINDERS 65535
+#define MAX_CYLINDERS 65535	/* there is no maximum anymore */
+				/* the kernel max is 65535 */
 #define MAX_HEADS 255
 #define MAX_SECTORS 63
 
@@ -105,55 +125,48 @@ extern ext2_loff_t ext2_llseek(unsigned int fd, ext2_loff_t offset,
 #define LINUX_SWAP     0x82
 #define LINUX          0x83
 
-#define ADD_EXISTS "This partition is already in use"
-#define ADD_UNUSABLE "This partition is unusable"
-#define DEL_EMPTY "Cannot delete an empty partition"
-#define ID_EMPTY "Cannot change FS Type to empty"
-#define ID_EXT "Cannot change FS Type to extended"
-#define NEED_EXT "No room to create the extended partition"
-#define NO_FLAGS "Cannot make this partition bootable"
-#define NO_MORE_PARTS "No more partitions"
-#define PRINT_OPEN_ERR "Cannot open file '%s'"
-#define TWO_EXTENDEDS "Cannot create logical drive here -- would create two extended partitions"
-#define TYPE_EMPTY "Cannot change the type of an empty partition"
-#define BAD_COMMAND "Illegal command"
-#define MAX_UNMAXABLE "Cannot maximize this partition"
-#define BAD_OPEN "Cannot open disk drive"
-#define BAD_SEEK "Cannot seek on disk drive"
-#define BAD_READ "Cannot read disk drive"
-#define BAD_WRITE "Cannot write disk drive"
-#define BAD_GEOMETRY "Cannot read disk drive geometry"
-#define BAD_PRIMARY "Bad primary partition"
-#define BAD_LOGICAL "Bad logical partition"
-#define BAD_CYLINDERS "Illegal cylinders value"
-#define BAD_HEADS "Illegal heads value"
-#define BAD_SECTORS "Illegal sectors value"
-#define READONLY_WARN "Opened disk read-only - you have no permission to write"
-#define WRITE_WARN "Warning!!  This may destroy data on your disk!"
-#define YES_NO "Please enter `yes' or `no'"
-#define WRITING_PART "Writing partition table to disk..."
-#define YES_WRITE "Wrote partition table to disk"
-#define NO_WRITE "Did not write partition table to disk"
-#define RRPART_FAILED "Wrote partition table, but re-read table failed.  Reboot to update table."
-#define NOT_DOS_MBR_BOOTABLE "Not precisely one primary partition is bootable. DOS MBR cannot boot this."
+/* There used to be defined error messages here. However, it turns out
+ * that gettext cannot handle constructions like
+ *
+ * #define ADD_EXISTS _("This partition is already in use")
+ * ...
+ * 	print_warning(ADD_EXISTS);
+ *
+ * So, now the messages are spread over the source again.
+ * Another thing which gettext cannot cope with are multi-line strings:
+ *
+ *	printf("Usage:
+ * Print version:
+ *	cfdisk -v
+ * Print partition table:
+ *	cfdisk -P{r|s|t} device
+ * ");
+ *
+ * (This is a commonly used gnu extension of the C syntax, but not ANSI-C.)
+ * Another reason to uglify the source a little.
+ */
+
 
 #define PRI_OR_LOG -1
 #define PRIMARY -2
 #define LOGICAL -3
 
-#define COL_ID_WIDTH 20
+#define COL_ID_WIDTH 25
 
 #define CR '\015'
 #define ESC '\033'
 #define DEL '\177'
 #define BELL '\007'
-/* '\014' == ^L */
-#define REDRAWKEY '\014'
+#define TAB '\011'
+#define REDRAWKEY '\014'	/* ^L */
+#define UPKEY '\020'		/* ^P */
+#define DOWNKEY '\016'		/* ^N */
 
 /* Display units */
-#define MEGABYTES 1
-#define SECTORS 2
-#define CYLINDERS 3
+#define GIGABYTES 1
+#define MEGABYTES 2
+#define SECTORS 3
+#define CYLINDERS 4
 
 #define GS_DEFAULT -1
 #define GS_ESCAPE -2
@@ -168,24 +181,6 @@ extern ext2_loff_t ext2_llseek(unsigned int fd, ext2_loff_t offset,
 #define round_int(d) ((double)((int)(d+0.5)))
 #define ceiling(d) ((double)(((d) != (int)(d)) ? (int)(d+1.0) : (int)(d)))
 
-#define set_hsc(h,s,c,sector) \
-{ \
-      s = sector % sectors + 1;	\
-      sector /= sectors;	\
-      h = sector % heads;	\
-      sector /= heads;		\
-      c = sector & 0xFF;	\
-      s |= (sector >> 2) & 0xC0;\
-}
-
-#define is_extended(x)	((x) == DOS_EXTENDED || (x) == WIN98_EXTENDED || \
-			 (x) == LINUX_EXTENDED)
-
-#define is_dos_partition(x) ((x) == 1 || (x) == 4 || (x) == 6)
-#define may_have_dos_label(x) (is_dos_partition(x) \
-   || (x) == 7 || (x) == 0xb || (x) == 0xc || (x) == 0xe \
-   || (x) == 0x11 || (x) == 0x14 || (x) == 0x16 || (x) == 0x17)
-
 struct partition {
         unsigned char boot_ind;         /* 0x80 - active */
         unsigned char head;             /* starting head */
@@ -198,6 +193,58 @@ struct partition {
         unsigned char start4[4];        /* starting sector counting from 0 */
         unsigned char size4[4];         /* nr of sectors in partition */
 };
+
+int heads = 0;
+int sectors = 0;
+int cylinders = 0;
+int cylinder_size = 0;		/* heads * sectors */
+int total_size = 0;		/* actual_size rounded down */
+long actual_size = 0;		/* set using ioctl */
+				/* explicitly given user values */
+int user_heads = 0, user_sectors = 0, user_cylinders = 0;
+				/* kernel values; ignore the cylinders */
+int kern_heads = 0, kern_sectors = 0;
+				/* partition-table derived values */
+int pt_heads = 0, pt_sectors = 0;
+
+
+void
+set_hsc0(unsigned char *h, unsigned char *s, int *c, int sector) {
+	if (sector >= 1024*cylinder_size)
+		sector = 1024*cylinder_size - 1;
+	*s = sector % sectors + 1;
+	sector /= sectors;
+	*h = sector % heads;
+	sector /= heads;
+	*c = sector;
+}
+
+void
+set_hsc(unsigned char *h, unsigned char *s, unsigned char *c, int sector) {
+	int cc;
+
+	set_hsc0(h, s, &cc, sector);
+	*c = cc & 0xFF;
+	*s |= (cc >> 2) & 0xC0;
+}
+
+void
+set_hsc_begin(struct partition *p, int sector) {
+	set_hsc(& p->head, & p->sector, & p->cyl, sector);
+}
+
+void
+set_hsc_end(struct partition *p, int sector) {
+	set_hsc(& p->end_head, & p->end_sector, & p->end_cyl, sector);
+}
+
+#define is_extended(x)	((x) == DOS_EXTENDED || (x) == WIN98_EXTENDED || \
+			 (x) == LINUX_EXTENDED)
+
+#define is_dos_partition(x) ((x) == 1 || (x) == 4 || (x) == 6)
+#define may_have_dos_label(x) (is_dos_partition(x) \
+   || (x) == 7 || (x) == 0xb || (x) == 0xc || (x) == 0xe \
+   || (x) == 0x11 || (x) == 0x14 || (x) == 0x16 || (x) == 0x17)
 
 /* start_sect and nr_sects are stored little endian on all machines */
 /* moreover, they are not aligned correctly */
@@ -266,9 +313,6 @@ typedef struct {
 
 char *disk_device = DEFAULT_DEVICE;
 int fd;
-int heads = 0;
-int sectors = 0;
-int cylinders = 0;
 int changed = FALSE;
 int opened = FALSE;
 int opentype;
@@ -286,6 +330,7 @@ __sighandler_t old_SIGINT, old_SIGTERM;
 int arrow_cursor = FALSE;
 int display_units = MEGABYTES;
 int zero_table = FALSE;
+int use_partition_table_geometry = FALSE;
 int print_only = 0;
 
 /* Curses screen information */
@@ -297,7 +342,7 @@ int NUM_ON_SCREEN = 1;
 
 /* Y coordinates */
 int HEADER_START = 0;
-int DISK_TABLE_START = 5;
+int DISK_TABLE_START = 6;
 int WARNING_START = 23;
 int COMMAND_LINE_Y = 21;
 
@@ -310,55 +355,24 @@ int LABEL_START = 54;
 int SIZE_START = 70;
 int COMMAND_LINE_X = 5;
 
-#define NUM_PART_TYPES 256
-char *partition_type[NUM_PART_TYPES] = {
-    [LINUX_MINIX] = "Linux/MINIX",
-    [LINUX_SWAP]  = "Linux Swap",
-    [LINUX]       = "Linux",
-    [FREE_SPACE]  = "Free Space",
-    [DOS_EXTENDED]= "Extended",
-    [LINUX_EXTENDED] = "Linux extended",
-    [0x01]        = "DOS FAT12",
-    [0x02]        = "XENIX root",
-    [0x03]        = "XENIX usr",
-    [0x04]        = "DOS FAT16",
-    [0x06]        = "DOS FAT16 (big)",
-    [OS2_OR_NTFS] = "OS/2 HPFS or NTFS",
-    [0x08]        = "AIX",
-    [0x09]        = "AIX bootable",
-    [0x0A]        = "OS/2 Boot Manager",
-    [0x0B]        = "Win95 FAT32",
-    [0x0C]        = "Win95 FAT32 (LBA)",
-    [0x0E]        = "Win95 FAT16 (LBA)",
-    [0x0F]        = "Win95 Extended (LBA)",
-    [0x11]        = "Hidden DOS FAT12",
-    [0x14]        = "Hidden DOS FAT16",
-    [0x16]        = "Hidden DOS FAT16 (big)",
-    [0x17]        = "Hidden OS/2 HPFS or NTFS",
-    [0x40]        = "Venix 80286",
-    [0x41]	  = "PPC PReP boot",
-    [0x51]        = "Novell?",
-    [0x52]        = "Microport",
-    [0x63]        = "GNU HURD",
-    [0x64]        = "Novell Netware 286",
-    [0x65]        = "Novell Netware 386",
-    [0x75]        = "PC/IX",
-    [0x80]        = "Old MINIX",
-    [0x93]        = "Amoeba",
-    [0x94]        = "Amoeba BBT",
-    [0xA5]        = "BSD/386",
-    [0xA6]        = "OpenBSD",
-    [0xA7]        = "NEXTSTEP",
-    [0xB7]        = "BSDI fs",
-    [0xB8]        = "BSDI swap",
-    [0xC7]        = "Syrinx",
-    [0xDB]        = "CP/M",
-    [0xE1]        = "DOS access",
-    [0xE3]        = "DOS R/O",
-    [0xEB]	  = "BeOS fs",
-    [0xF2]        = "DOS secondary",
-    [0xFF]        = "BBT"
-};
+void die_x(int ret);
+void draw_screen(void);
+
+/* Guaranteed alloc */
+void *
+xmalloc (size_t size) {
+     void *t;
+
+     if (size == 0)
+          return NULL;
+
+     t = malloc (size);
+     if (t == NULL) {
+          fprintf (stderr, _("%s: Out of memory!\n"), "cfdisk");
+	  die_x(1);
+     }
+     return t;
+}
 
 /* Some libc's have their own basename() */
 char *my_basename(char *devname)
@@ -367,28 +381,37 @@ char *my_basename(char *devname)
     return s ? s+1 : devname;
 }
 
+char *partition_type_name(unsigned char type)
+{
+    struct systypes *s = i386_sys_types;
+
+    while(s->name && s->type != type)
+	    s++;
+    return s->name;
+}
+
 char *partition_type_text(int i)
 {
     if (p_info[i].id == UNUSABLE)
-	 return "Unusable";
+	 return _("Unusable");
     else if (p_info[i].id == FREE_SPACE)
-	 return "Free Space";
+	 return _("Free Space");
     else if (p_info[i].id == LINUX) {
 	 if (!strcmp(p_info[i].fstype, "ext2"))
-	      return "Linux ext2";
+	      return _("Linux ext2");
 	 else
-	      return "Linux";
+	      return _("Linux");
     } else if (p_info[i].id == OS2_OR_NTFS) {
 	 if (!strncmp(p_info[i].fstype, "HPFS", 4))
-	      return "OS/2 HPFS";
+	      return _("OS/2 HPFS");
 	 else if (!strncmp(p_info[i].ostype, "OS2", 3))
-	      return "OS/2 IFS";
+	      return _("OS/2 IFS");
 	 else if (!p_info[i].ostype)
 	      return p_info[i].ostype;
 	 else
-	      return "NTFS";
+	      return _("NTFS");
     } else
-	 return partition_type[p_info[i].id];
+	 return partition_type_name(p_info[i].id);
 }
 
 void fdexit(int ret)
@@ -397,13 +420,13 @@ void fdexit(int ret)
 	close(fd);
 
     if (changed) {
-	fprintf(stderr, "Disk has been changed.\n");
-	fprintf(stderr, "Reboot the system to ensure the partition "
-			"table is correctly updated.\n");
+	fprintf(stderr, _("Disk has been changed.\n"));
+	fprintf(stderr, _("Reboot the system to ensure the partition "
+			"table is correctly updated.\n"));
 	
-	fprintf( stderr, "\nWARNING: If you have created or modified any\n"
+	fprintf( stderr, _("\nWARNING: If you have created or modified any\n"
 		         "DOS 6.x partitions, please see the cfdisk manual\n"
-		         "page for additional information.\n" );
+		         "page for additional information.\n") );
     }
 
     exit(ret);
@@ -494,23 +517,25 @@ void print_warning(char *s)
     }
 }
 
-void die_x(int ret);
-
 void fatal(char *s, int ret)
 {
-    char str[LINE_LENGTH];
+    char *err = _("FATAL ERROR");
 
     if (curses_started) {
-	 sprintf(str, "FATAL ERROR: %s", s);
+	 char *str = xmalloc(strlen(s) + strlen(err) + 10);
+	 /* snprintf does not compile on all libc's */
+	 sprintf(str, "%s: %s", err, s);
+	 if (strlen(str) > COLS)
+		 str[COLS] = 0;
 	 mvaddstr(WARNING_START, (COLS-strlen(str))/2, str);
-	 sprintf(str, "Press any key to exit fdisk");
+	 sprintf(str, _("Press any key to exit cfdisk"));
 	 mvaddstr(WARNING_START+1, (COLS-strlen(str))/2, str);
 	 putchar(BELL); /* CTRL-G */
 	 refresh();
 	 (void)getch();
 	 die_x(ret);
     } else {
-	 fprintf(stderr, "FATAL ERROR: %s\n", s);
+	 fprintf(stderr, "%s: %s\n", err, s);
 	 exit(ret);
     }
 }
@@ -539,17 +564,17 @@ void die_x(int ret)
 void read_sector(char *buffer, int sect_num)
 {
     if (ext2_llseek(fd, ((ext2_loff_t) sect_num)*SECTOR_SIZE, SEEK_SET) < 0)
-	fatal(BAD_SEEK, 2);
+	fatal(_("Cannot seek on disk drive"), 2);
     if (read(fd, buffer, SECTOR_SIZE) != SECTOR_SIZE)
-	fatal(BAD_READ, 2);
+	fatal(_("Cannot read disk drive"), 2);
 }
 
 void write_sector(char *buffer, int sect_num)
 {
     if (ext2_llseek(fd, ((ext2_loff_t) sect_num)*SECTOR_SIZE, SEEK_SET) < 0)
-	fatal(BAD_SEEK, 2);
+	fatal(_("Cannot seek on disk drive"), 2);
     if (write(fd, buffer, SECTOR_SIZE) != SECTOR_SIZE)
-	fatal(BAD_WRITE, 2);
+	fatal(_("Cannot write disk drive"), 2);
 }
 
 void dos_copy_to_info(char *to, int tosz, char *from, int fromsz) {
@@ -703,6 +728,8 @@ void remove_part(int i)
 	p_info[p] = p_info[p+1];
 
     num_parts--;
+    if (cur_part == num_parts)
+	cur_part--;
 }
 
 void insert_empty_part(int i, int first, int last)
@@ -751,7 +778,7 @@ void del_part(int i)
     if (i < num_parts - 1)
 	p_info[i].last_sector = p_info[i+1].first_sector - 1;
     else
-	p_info[i].last_sector = sectors*heads*cylinders - 1;
+	p_info[i].last_sector = total_size - 1;
 
     p_info[i].offset = 0;
     p_info[i].flags = 0;
@@ -781,23 +808,41 @@ void del_part(int i)
 }
 
 int add_part(int num, int id, int flags, int first, int last, int offset,
-	     int want_label)
+	     int want_label, char **errmsg)
 {
     int i, pri = 0, log = 0;
 
-    if (num_parts == MAXIMUM_PARTS ||
-	first < 0 ||
-	first >= cylinders*heads*sectors ||
-	last < 0 ||
-	last >= cylinders*heads*sectors) {
-	return -1;		/* bad start or end */
+    if (num_parts == MAXIMUM_PARTS) {
+	*errmsg = _("Too many partitions");
+	return -1;
     }
 
-    for (i = 0; i < num_parts; i++)
+    if (first < 0) {
+	*errmsg = _("Partition begins before sector 0");
+	return -1;
+    }
+
+    if (last < 0) {
+	*errmsg = _("Partition ends before sector 0");
+	return -1;
+    }
+
+    if (first >= total_size) {
+	*errmsg = _("Partition begins after end-of-disk");
+	return -1;
+    }
+
+    if (last >= total_size) {
+	*errmsg = _("Partition ends after end-of-disk");
+	return -1;
+    }
+
+    for (i = 0; i < num_parts; i++) {
 	if (p_info[i].id > 0 && IS_PRIMARY(p_info[i].num))
 	    pri++;
 	else if (p_info[i].id > 0 && IS_LOGICAL(p_info[i].num))
 	    log++;
+    }
     if (is_extended(ext_info.id) && log > 0)
 	pri++;
 
@@ -810,8 +855,18 @@ int add_part(int num, int id, int flags, int first, int last, int offset,
 
     for (i = 0; i < num_parts && p_info[i].last_sector < first; i++);
 
-    if (i == num_parts || p_info[i].id != FREE_SPACE
-	|| last > p_info[i].last_sector) {
+    if (i < num_parts && p_info[i].id != FREE_SPACE) {
+	 if (last < p_info[i].first_sector)
+	      *errmsg = _("logical partitions not in disk order");
+	 else if (first + offset <= p_info[i].last_sector &&
+		  p_info[i].first_sector + p_info[i].offset <= last)
+	      *errmsg = _("logical partitions overlap");
+	 else
+	      *errmsg = _("enlarged logical partitions overlap");
+	 return -1;
+    }
+
+    if (i == num_parts || last > p_info[i].last_sector) {
 	return -1;
     }
 
@@ -837,8 +892,8 @@ int add_part(int num, int id, int flags, int first, int last, int offset,
 
     if (IS_LOGICAL(num)) {
 	if (!is_extended(ext_info.id)) {
-	    print_warning("!!!! Internal error creating logical "
-			  "drive with no extended partition !!!!");
+	    print_warning(_("!!!! Internal error creating logical "
+			  "drive with no extended partition !!!!"));
 	} else {
 	    /* We might have a logical partition outside of the extended
 	     * partition's range --> we have to extend the extended
@@ -848,7 +903,7 @@ int add_part(int num, int id, int flags, int first, int last, int offset,
 	     */
 	    if (first < ext_info.first_sector) {
 		if (i < num_parts-1 && IS_PRIMARY(p_info[i+1].num)) {
-		    print_warning(TWO_EXTENDEDS);
+		    print_warning(_("Cannot create logical drive here -- would create two extended partitions"));
 		    return -1;
 		} else {
 		    if (first == 0) {
@@ -860,7 +915,7 @@ int add_part(int num, int id, int flags, int first, int last, int offset,
 		}
 	    } else if (last > ext_info.last_sector) {
 		if (i > 0 && IS_PRIMARY(p_info[i-1].num)) {
-		    print_warning(TWO_EXTENDEDS);
+		    print_warning(_("Cannot create logical drive here -- would create two extended partitions"));
 		    return -1;
 		} else {
 		    ext_info.last_sector = last;
@@ -976,36 +1031,57 @@ int menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
 		char *available, int menuType, int current )
 {
     int i, lmargin = x, ymargin = y;
+    char *mcd;
+
     /* Print available buttons */
     move( y, x ); clrtoeol();
+
     for( i = 0; menuItems[i].key; i++ )
     {
         char buff[20];
         int lenName;
+	const char *mi;
+
         /* Search next available button */
         while( menuItems[i].key && !strchr(available, menuItems[i].key) )
         {
             i++;
         }
         if( !menuItems[i].key ) break; /* No more menu items */
+
         /* If selected item is not available and we have bypassed it,
 	   make current item selected */
         if( current < i && menuItems[current].key < 0 ) current = i;
+
         /* If current item is selected, highlight it */
         if( current == i ) /*attron( A_REVERSE )*/ standout ();
+
         /* Print item */
-        lenName = strlen( menuItems[i].name );
-        if(lenName > itemLength)
-            print_warning("Menu item too long. Menu may look odd.");
+	/* Because of a bug in gettext() we must not translate empty strings */
+	if (menuItems[i].name[0])
+		mi = _(menuItems[i].name);
+	else
+		mi = "";
+        lenName = strlen( mi );
+#if 0
+        if(lenName > itemLength || lenName >= sizeof(buff))
+            print_warning(_("Menu item too long. Menu may look odd."));
+#endif
+	if (lenName >= sizeof(buff)) {	/* truncate ridiculously long string */
+	    strncpy( buff, mi, sizeof(buff)-1);
+	    buff[sizeof(buff)-1] = 0;
+	} else
         if( menuType & MENU_BUTTON )
             sprintf( buff, "[%*s%-*s]", (itemLength - lenName) / 2, "",
-                (itemLength - lenName + 1) / 2 + lenName, menuItems[i].name );
+                (itemLength - lenName + 1) / 2 + lenName, mi );
         else
             sprintf( buff, "%*s%-*s", (itemLength - lenName) / 2, "",
-                (itemLength - lenName + 1) / 2 + lenName, menuItems[i].name );
+                (itemLength - lenName + 1) / 2 + lenName, mi );
         mvaddstr( y, x, buff );
+
         /* Lowlight after selected item */
         if( current == i ) /*attroff( A_REVERSE )*/ standend ();
+
         /* Calculate position for the next item */
         if( menuType & MENU_VERT )
         {
@@ -1028,30 +1104,34 @@ int menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
             }
         }
     }
+
     /* Print the description of selected item */
-    mvaddstr( WARNING_START + 1,
-	      (COLUMNS - strlen( menuItems[current].desc )) / 2,
-	      menuItems[current].desc );
+    mcd = _(menuItems[current].desc);
+    mvaddstr( WARNING_START + 1, (COLUMNS - strlen( mcd )) / 2, mcd );
     return y;
 }
 
-/* This function takes a list of menu items, lets the user choose one of them *
- * and returns the value keyboard shortcut of the selected menu item          */
+/* This function takes a list of menu items, lets the user choose one *
+ * and returns the value keyboard shortcut of the selected menu item  */
 
-int menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength, char *available, int menuType, int menuDefault )
+int menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
+		char *available, int menuType, int menuDefault )
 {
     int i, ylast = y, key = 0, current = menuDefault;
+
     if( !( menuType & ( MENU_HORIZ | MENU_VERT ) ) )	
     {
-        print_warning("Menu without direction. Defaulting horizontal.");
+        print_warning(_("Menu without direction. Defaulting horizontal."));
         menuType |= MENU_HORIZ;
     }
+
     /* Make sure that the current is one of the available items */
     while( !strchr(available, menuItems[current].key) )
     {
         current ++ ;
         if( !menuItems[current].key ) current = 0;
     }
+
     /* Repeat until allowable choice has been made */
     while( !key )
     {
@@ -1087,67 +1167,80 @@ int menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength, char *
                 switch( getch() )
                 {
                     case 'A': /* Up arrow */
-                        if( menuType & MENU_VERT )
-                        {
-                            do {
-                                current -- ;
-                                if( current < 0 ) while( menuItems[current+1].key ) current ++ ;
-                            } while( !strchr( available, menuItems[current].key ) );
-                            key = 0;
-                        }
-                        else
-                            key = MENU_UP;
+			key = MENU_UP;
                         break;
                     case 'B': /* Down arrow */
-                        if( menuType & MENU_VERT )
-                        {
-                            do {
-                                current ++ ;
-                                if( !menuItems[current].key ) current = 0 ;
-                            } while( !strchr( available, menuItems[current].key ) );
-                            key = 0;
-                        }
-                        else
-                            key = MENU_DOWN;
+                        key = MENU_DOWN;
                         break;
                     case 'C': /* Right arrow */
-                        if( menuType & MENU_HORIZ )
-                        {
-                            do {
-                                current ++ ;
-                                if( !menuItems[current].key ) 
-                                {
-                                    current = 0 ;
-                                }
-                            } while( !strchr( available, menuItems[current].key ) );
-                            key = 0;
-                        }
-                        else
-                            key = MENU_RIGHT;
+                        key = MENU_RIGHT;
                         break;
                     case 'D': /* Left arrow */
-                        if( menuType & MENU_HORIZ )
-                        {
-                            do {
-                                current -- ;
-                                if( current < 0 )
-                                {
-                                    while( menuItems[current + 1].key ) current ++ ;
-                                }
-                            } while( !strchr( available, menuItems[current].key ) );
-                            key = 0;
-                        }
-                        else
-                            key = MENU_LEFT;
+                        key = MENU_LEFT;
                         break;
                 }
             }
         }
+
         /* Enter equals to the keyboard shortcut of current menu item */
-        if( key == 13 )
-        {
+        if( key == CR)
             key = menuItems[current].key;
-        }
+
+	/* Give alternatives for arrow keys in case the window manager
+	   swallows these */
+	if ( key == TAB )
+	    key = MENU_RIGHT;
+        if ( key == UPKEY )	/* ^P */
+	    key = MENU_UP;
+	if ( key == DOWNKEY )	/* ^N */
+	    key = MENU_DOWN;
+
+	if (key == MENU_UP) {
+	    if( menuType & MENU_VERT ) {
+                do {
+                    current -- ;
+                    if( current < 0 )
+			while( menuItems[current+1].key )
+			    current ++ ;
+                } while( !strchr( available, menuItems[current].key ));
+                key = 0;
+            }
+	}
+
+	if (key == MENU_DOWN) {
+            if( menuType & MENU_VERT ) {
+                do {
+                    current ++ ;
+		    if( !menuItems[current].key ) current = 0 ;
+		} while( !strchr( available, menuItems[current].key ));
+		key = 0;
+	    }
+	}
+
+	if (key == MENU_RIGHT) {
+	    if( menuType & MENU_HORIZ ) {
+		do {
+		    current ++ ;
+		    if( !menuItems[current].key )
+			current = 0 ;
+		} while( !strchr( available, menuItems[current].key ));
+		key = 0;
+	    }
+	}
+
+	if (key == MENU_LEFT) {
+	     if( menuType & MENU_HORIZ ) {
+		 do {
+		     current -- ;
+		     if( current < 0 ) {
+			 while( menuItems[current + 1].key )
+			      current ++ ;
+		     }
+		 } while( !strchr( available, menuItems[current].key ));
+		 key = 0;
+	     }
+	}
+
         /* Should all keys to be accepted? */
         if( key && (menuType & MENU_ACCEPT_OTHERS) ) break;
         /* Is pressed key among acceptable ones */
@@ -1158,7 +1251,7 @@ int menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength, char *
         {
             key = 0;
             putchar( BELL );
-            print_warning("Illegal key");
+            print_warning(_("Illegal key"));
         }
     }
     /* Clear out prompts and such */
@@ -1181,7 +1274,7 @@ void menuContinue(void)
 {
     static struct MenuItem menuContinueBtn[]=
     {
-        { 'c', "", "Press a key to continue" },
+        { 'c', "", N_("Press a key to continue") },
         { 0, NULL, NULL }
     };
 
@@ -1196,9 +1289,10 @@ int menuSimple(struct MenuItem *menuItems, int menuDefault)
 {
     int i, j, itemLength = 0;
     char available[MENU_MAX_ITEMS];
+
     for(i = 0; menuItems[i].key; i++)
     {
-        j = strlen( menuItems[i].name );
+        j = strlen( _(menuItems[i].name) );
         if( j > itemLength ) itemLength = j;
         available[i] = menuItems[i].key;
     }
@@ -1221,13 +1315,15 @@ void new_part(int i)
     int num = -1;
     int num_sects = last - first + 1;
     int len, ext, j;
+    char *errmsg;
+
 
     if (p_info[i].num == PRI_OR_LOG) {
         static struct MenuItem menuPartType[]=
         {
-            { 'p', "Primary", "Create a new primary partition" },
-            { 'l', "Logical", "Create a new logical partition" },
-            { ESC, "Cancel", "Don't create a partition" },
+            { 'p', N_("Primary"), N_("Create a new primary partition") },
+            { 'l', N_("Logical"), N_("Create a new logical partition") },
+            { ESC, N_("Cancel"), N_("Don't create a partition") },
             { 0, NULL, NULL }
         };
         
@@ -1243,28 +1339,30 @@ void new_part(int i)
     else if (p_info[i].num == LOGICAL)
 	num = find_logical(i);
     else
-	print_warning("!!! Internal error !!!");
+	print_warning(_("!!! Internal error !!!"));
 
-    sprintf(def, "%.2f", ceiling(num_sects/20.48)/100);
-    mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X, "Size (in MB): ");
+    sprintf(def, "%.2f", ceiling(num_sects/(K*0.02))/100);
+    mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X, _("Size (in MB): "));
     if ((len = get_string(response, LINE_LENGTH, def)) <= 0 &&
 	len != GS_DEFAULT)
 	return;
     else if (len > 0) {
-#define num_cyls(bytes) (round_int(bytes/SECTOR_SIZE/(sectors*heads)))
+#define num_cyls(bytes) (round_int(bytes/SECTOR_SIZE/cylinder_size))
 	for (j = 0;
 	     j < len-1 && (isdigit(response[j]) || response[j] == '.');
 	     j++);
 	if (toupper(response[j]) == 'K') {
-	    num_sects = num_cyls(atof(response)*1024)*sectors*heads;
+	    num_sects = num_cyls(atof(response)*K)*cylinder_size;
 	} else if (toupper(response[j]) == 'M') {
-	    num_sects = num_cyls(atof(response)*1024*1024)*sectors*heads;
+	    num_sects = num_cyls(atof(response)*K*K)*cylinder_size;
+	} else if (toupper(response[j]) == 'G') {
+	    num_sects = num_cyls(atof(response)*K*K*K)*cylinder_size;
 	} else if (toupper(response[j]) == 'C') {
-	    num_sects = round_int(atof(response))*sectors*heads;
+	    num_sects = round_int(atof(response))*cylinder_size;
 	} else if (toupper(response[j]) == 'S') {
 	    num_sects = round_int(atof(response));
 	} else {
-	    num_sects = num_cyls(atof(response)*1024*1024)*sectors*heads;
+	    num_sects = num_cyls(atof(response)*K*K)*cylinder_size;
 	}
     }
 
@@ -1278,9 +1376,9 @@ void new_part(int i)
 	 */
 	static struct MenuItem menuPlace[]=
 	{
-	    { 'b', "Beginning", "Add partition at beginning of free space" },
-	    { 'e', "End", "Add partition at end of free space" },
-	    { ESC, "Cancel", "Don't create a partition" },
+	    { 'b', N_("Beginning"), N_("Add partition at beginning of free space") },
+	    { 'e', N_("End"), N_("Add partition at end of free space") },
+	    { ESC, N_("Cancel"), N_("Don't create a partition") },
 	    { 0, NULL, NULL }
 	};
 	c = menuSimple( menuPlace, 0 );
@@ -1297,11 +1395,11 @@ void new_part(int i)
 	 * extended partition first.
 	 */
 	if ((ext = find_primary()) < 0) {
-	    print_warning(NEED_EXT);
+	    print_warning(_("No room to create the extended partition"));
 	    return;
 	}
 	(void) add_part(ext, DOS_EXTENDED, 0, first, last,
-		       (first == 0 ? sectors : 0), 0);
+		       (first == 0 ? sectors : 0), 0, &errmsg);
 	first = ext_info.first_sector + ext_info.offset;
     }
 
@@ -1312,14 +1410,76 @@ void new_part(int i)
     if (first == 0 || IS_LOGICAL(num))
 	offset = sectors;
 
-    (void) add_part(num, id, flags, first, last, offset, 0);
+    (void) add_part(num, id, flags, first, last, offset, 0, &errmsg);
+}
+
+void get_kernel_geometry(void)
+{
+#ifdef HDIO_GETGEO
+    struct hd_geometry geometry;
+
+    if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
+	kern_heads = geometry.heads;
+	kern_sectors = geometry.sectors;
+    }
+#endif
+}
+
+void get_partition_table_geometry(partition_table *bufp)
+{
+    struct partition *p;
+    int i,h,s,hh,ss;
+    int first = TRUE;
+    int bad = FALSE;
+
+    if (bufp->p.magicflag[0] != PART_TABLE_FLAG0 ||
+	bufp->p.magicflag[1] != PART_TABLE_FLAG1)
+	fatal(_("Bad signature on partition table"), 3);
+
+    hh = ss = 0;
+    for (i=0; i<4; i++) {
+	p = &(bufp->p.part[i]);
+	if (p->sys_ind != 0) {
+	    h = p->end_head + 1;
+	    s = (p->end_sector & 077);
+	    if (first) {
+		hh = h;
+		ss = s;
+		first = FALSE;
+	    } else if (hh != h || ss != s)
+		bad = TRUE;
+	}
+    }
+
+    if (!first && !bad) {
+	pt_heads = hh;
+	pt_sectors = ss;
+    }
+}
+
+void decide_on_geometry(void)
+{
+    heads = (user_heads ? user_heads :
+	     pt_heads ? pt_heads :
+	     kern_heads ? kern_heads : 255);
+    sectors = (user_sectors ? user_sectors :
+	       pt_sectors ? pt_sectors :
+	       kern_sectors ? kern_sectors : 63);
+    cylinder_size = heads*sectors;
+    cylinders = actual_size/cylinder_size;
+    if (user_cylinders > 0 && user_cylinders <= 0x7fffffff/cylinder_size)
+	    cylinders = user_cylinders;
+
+    total_size = cylinder_size*cylinders;
+    if (total_size > actual_size)
+	    print_warning(_("You specified more cylinders than fit on disk"));
 }
 
 void clear_p_info(void)
 {
     num_parts = 1;
     p_info[0].first_sector = 0;
-    p_info[0].last_sector = sectors*heads*cylinders - 1;
+    p_info[0].last_sector = total_size - 1;
     p_info[0].offset = 0;
     p_info[0].flags = 0;
     p_info[0].id = FREE_SPACE;
@@ -1337,15 +1497,14 @@ void fill_p_info(void)
 {
     int pn, i, bs, bsz;
     struct partition *p;
-    struct hd_geometry geometry;
     partition_table buffer;
     partition_info tmp_ext = { 0, 0, 0, 0, FREE_SPACE, PRIMARY };
 
     if ((fd = open(disk_device, O_RDWR)) < 0) {
 	 if ((fd = open(disk_device, O_RDONLY)) < 0)
-	      fatal(BAD_OPEN, 2);
+	      fatal(_("Cannot open disk drive"), 2);
 	 opentype = O_RDONLY;
-	 print_warning(READONLY_WARN);
+	 print_warning(_("Opened disk read-only - you have no permission to write"));
 	 if (curses_started) {
 	      refresh();
 	      getch();
@@ -1365,23 +1524,23 @@ void fill_p_info(void)
     ioctl(fd, BLKFLSBUF);	/* ignore errors */
 				/* e.g. Permission Denied */
 
-    if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
-	if (!heads)
-	    heads = geometry.heads;
-	if (!sectors)
-	    sectors = geometry.sectors;
-	if (!cylinders)
-	    cylinders = geometry.cylinders;
-    }
-
-    if (!heads || !sectors || !cylinders)
-	fatal(BAD_GEOMETRY, 3);	/* probably a file or cdrom */
+    if (ioctl(fd, BLKGETSIZE, &actual_size))
+	fatal(_("Cannot get disk size"), 3);
 
     read_sector(buffer.c.b, 0);
+
+    get_kernel_geometry();
+
+    if (!zero_table || use_partition_table_geometry)
+	get_partition_table_geometry(& buffer);
+
+    decide_on_geometry();
 
     clear_p_info();
 
     if (!zero_table) {
+	char *errmsg = "";
+
 	for (i = 0; i < 4; i++) {
 	    p = & buffer.p.part[i];
 	    bs = get_start_sect(p);
@@ -1389,11 +1548,13 @@ void fill_p_info(void)
 
 	    if (p->sys_ind > 0 &&
 		add_part(i, p->sys_ind, p->boot_ind,
-			 ((bs <= sectors) ? 0 : bs),
-			 bs + bsz - 1,
-			 ((bs <= sectors) ? bs : 0),
-			 1)) {
-		fatal(BAD_PRIMARY, 4);
+			 ((bs <= sectors) ? 0 : bs), bs + bsz - 1,
+			 ((bs <= sectors) ? bs : 0), 1, &errmsg)) {
+		    /* avoid snprintf - it does not exist on ancient systems */
+		    char *bad = _("Bad primary partition");
+		    char *msg = (char *) xmalloc(strlen(bad) + strlen(errmsg) + 30);
+		    sprintf(msg, "%s %d: %s", bad, i, errmsg);
+		    fatal(msg, 4);
 	    }
 	    if (is_extended(buffer.p.part[i].sys_ind))
 		tmp_ext = ext_info;
@@ -1419,8 +1580,13 @@ void fill_p_info(void)
 			if (add_part(i++, p->sys_ind, p->boot_ind,
 			     logical_sectors[logical-1],
 			     logical_sectors[logical-1] + bs + bsz - 1,
-			     bs, 1))
-				fatal(BAD_LOGICAL, 4);
+			     bs, 1, &errmsg)) {
+				/* avoid snprintf */
+				char *bad = _("Bad logical partition");
+				char *msg = (char *) xmalloc(strlen(bad) + strlen(errmsg) + 30);
+				sprintf(msg, "%s %d: %s", bad, i-1, errmsg);
+				fatal(msg, 4);
+			}
 		}
 
 		for (pn = 0;
@@ -1440,21 +1606,18 @@ void fill_p_info(void)
 
 void fill_part_table(struct partition *p, partition_info *pi)
 {
-    int sects;
+    int begin;
 
     p->boot_ind = pi->flags;
     p->sys_ind = pi->id;
+    begin = pi->first_sector + pi->offset;
     if (IS_LOGICAL(pi->num))
 	set_start_sect(p,pi->offset);
     else
-	set_start_sect(p,pi->first_sector + pi->offset);
-    set_nr_sects(p, pi->last_sector - (pi->first_sector+pi->offset) + 1);
-    sects = (((pi->first_sector+pi->offset)/(sectors*heads) > 1023) ?
-	     heads*sectors*1024 - 1 : pi->first_sector+pi->offset);
-    set_hsc(p->head, p->sector, p->cyl, sects);
-    sects = ((pi->last_sector/(sectors*heads) > 1023) ?
-	     heads*sectors*1024 - 1 : pi->last_sector);
-    set_hsc(p->end_head, p->end_sector, p->end_cyl, sects);
+	set_start_sect(p,begin);
+    set_nr_sects(p, pi->last_sector - begin + 1);
+    set_hsc_begin(p, begin);
+    set_hsc_end(p, pi->last_sector);
 }
 
 void fill_primary_table(partition_table *buffer)
@@ -1479,7 +1642,7 @@ void fill_primary_table(partition_table *buffer)
 void fill_logical_table(partition_table *buffer, partition_info *pi)
 {
     struct partition *p;
-    int i, sects;
+    int i;
 
     for (i = 0; i < logical && pi->first_sector != logical_sectors[i]; i++);
     if (i == logical || buffer->p.magicflag[0] != PART_TABLE_FLAG0
@@ -1505,12 +1668,8 @@ void fill_logical_table(partition_table *buffer, partition_info *pi)
 	p->sys_ind = DOS_EXTENDED;
 	set_start_sect(p, pi->first_sector - ext_info.first_sector - ext_info.offset);
 	set_nr_sects(p, pi->last_sector - pi->first_sector + 1);
-	sects = ((pi->first_sector/(sectors*heads) > 1023) ?
-		 heads*sectors*1024 - 1 : pi->first_sector);
-	set_hsc(p->head, p->sector, p->cyl, sects);
-	sects = ((pi->last_sector/(sectors*heads) > 1023) ?
-		 heads*sectors*1024 - 1 : pi->last_sector);
-	set_hsc(p->end_head, p->end_sector, p->end_cyl, sects);
+	set_hsc_begin(p, pi->first_sector);
+	set_hsc_end(p, pi->last_sector);
     }
 
     buffer->p.magicflag[0] = PART_TABLE_FLAG0;
@@ -1526,7 +1685,7 @@ void write_part_table(void)
     char response[LINE_LENGTH];
 
     if (opentype == O_RDONLY) {
-	 print_warning(READONLY_WARN);
+	 print_warning(_("Opened disk read-only - you have no permission to write"));
 	 refresh();
 	 getch();
 	 clear_warning();
@@ -1538,32 +1697,27 @@ void write_part_table(void)
 	 is_bdev = 1;
 
     if (is_bdev) {
-	 print_warning(WRITE_WARN);
+	 print_warning(_("Warning!!  This may destroy data on your disk!"));
 
 	 while (!done) {
 	      mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X,
-		       "Are you sure you want write the partition table "
-		       "to disk? (yes or no): ");
+		       _("Are you sure you want write the partition table "
+		       "to disk? (yes or no): "));
 	      len = get_string(response, LINE_LENGTH, NULL);
 	      clear_warning();
 	      if (len == GS_ESCAPE)
 		   return;
-	      else if (len == 2 &&
-		       toupper(response[0]) == 'N' &&
-		       toupper(response[1]) == 'O') {
-		   print_warning(NO_WRITE);
+	      else if (strcasecmp(response, _("no")) == 0) {
+		   print_warning(_("Did not write partition table to disk"));
 		   return;
-	      } else if (len == 3 &&
-			 toupper(response[0]) == 'Y' &&
-			 toupper(response[1]) == 'E' &&
-			 toupper(response[2]) == 'S')
+	      } else if (strcasecmp(response, _("yes")) == 0)
 		   done = TRUE;
 	      else
-		   print_warning(YES_NO);
+		   print_warning(_("Please enter `yes' or `no'"));
 	 }
 
 	 clear_warning();
-	 print_warning(WRITING_PART);
+	 print_warning(_("Writing partition table to disk..."));
 	 refresh();
     }
 
@@ -1588,11 +1742,11 @@ void write_part_table(void)
 
 	 clear_warning();
 	 if (changed)
-	      print_warning(YES_WRITE);
+	      print_warning(_("Wrote partition table to disk"));
 	 else
-	      print_warning(RRPART_FAILED);
+	      print_warning(_("Wrote partition table, but re-read table failed.  Reboot to update table."));
     } else
-	 print_warning(YES_WRITE);
+	 print_warning(_("Wrote partition table to disk"));
 
     /* Check: unique bootable primary partition? */
     ct = 0;
@@ -1600,7 +1754,7 @@ void write_part_table(void)
 	if (IS_PRIMARY(i) && p_info[i].flags == ACTIVE_FLAG)
 	    ct++;
     if (ct != 1)
-	print_warning(NOT_DOS_MBR_BOOTABLE);
+	print_warning(_("Not precisely one primary partition is bootable. DOS MBR cannot boot this."));
 }
 
 void fp_printf(FILE *fp, char *format, ...)
@@ -1658,7 +1812,7 @@ void print_raw_table(void)
 	to_file = TRUE;
     } else {
 	mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X,
-		 "Enter filename or press RETURN to display on screen: ");
+		 _("Enter filename or press RETURN to display on screen: "));
 
 	if ((to_file = get_string(fname, LINE_LENGTH, NULL)) < 0)
 	    return;
@@ -1666,7 +1820,7 @@ void print_raw_table(void)
 	if (to_file) {
 	    if ((fp = fopen(fname, "w")) == NULL) {
 		char errstr[LINE_LENGTH];
-		sprintf(errstr, PRINT_OPEN_ERR, fname);
+		sprintf(errstr, _("Cannot open file '%s'"), fname);
 		print_warning(errstr);
 		return;
 	    }
@@ -1677,16 +1831,16 @@ void print_raw_table(void)
 	}
     }
 
-    fp_printf(fp, "Disk Drive: %s\n", disk_device);
+    fp_printf(fp, _("Disk Drive: %s\n"), disk_device);
 
-    fp_printf(fp, "Sector 0:\n");
+    fp_printf(fp, _("Sector 0:\n"));
     read_sector(buffer.c.b, 0);
     fill_primary_table(&buffer);
     print_file_buffer(fp, buffer.c.b);
 
     for (i = 0; i < num_parts; i++)
 	if (IS_LOGICAL(p_info[i].num)) {
-	    fp_printf(fp, "Sector %d:\n", p_info[i].first_sector);
+	    fp_printf(fp, _("Sector %d:\n"), p_info[i].first_sector);
 	    read_sector(buffer.c.b, p_info[i].first_sector);
 	    fill_logical_table(&buffer, &(p_info[i]));
 	    print_file_buffer(fp, buffer.c.b);
@@ -1706,27 +1860,27 @@ void print_p_info_entry(FILE *fp, partition_info *p)
     char part_str[40];
 
     if (p->id == UNUSABLE)
-	fp_printf(fp, "   None   ");
+	fp_printf(fp, _("   None   "));
     else if (p->id == FREE_SPACE && p->num == PRI_OR_LOG)
-	fp_printf(fp, "   Pri/Log");
+	fp_printf(fp, _("   Pri/Log"));
     else if (p->id == FREE_SPACE && p->num == PRIMARY)
-	fp_printf(fp, "   Primary");
+	fp_printf(fp, _("   Primary"));
     else if (p->id == FREE_SPACE && p->num == LOGICAL)
-	fp_printf(fp, "   Logical");
+	fp_printf(fp, _("   Logical"));
     else
 	fp_printf(fp, "%2d %-7.7s", p->num+1,
-		  IS_LOGICAL(p->num) ? "Logical" : "Primary");
+		  IS_LOGICAL(p->num) ? _("Logical") : _("Primary"));
 
     fp_printf(fp, " ");
 
     fp_printf(fp, "%8d%c", p->first_sector,
-	      ((p->first_sector/(sectors*heads)) !=
-	       ((float)p->first_sector/(sectors*heads)) ?
+	      ((p->first_sector/cylinder_size) !=
+	       ((float)p->first_sector/cylinder_size) ?
 	       '*' : ' '));
 
     fp_printf(fp, "%8d%c", p->last_sector,
-	      (((p->last_sector+1)/(sectors*heads)) !=
-	       ((float)(p->last_sector+1)/(sectors*heads)) ?
+	      (((p->last_sector+1)/cylinder_size) !=
+	       ((float)(p->last_sector+1)/cylinder_size) ?
 	       '*' : ' '));
 
     fp_printf(fp, "%7d%c", p->offset,
@@ -1738,29 +1892,29 @@ void print_p_info_entry(FILE *fp, partition_info *p)
 
     size = p->last_sector - p->first_sector + 1;
     fp_printf(fp, "%8d%c", size,
-	      ((size/(sectors*heads)) != ((float)size/(sectors*heads)) ?
+	      ((size/cylinder_size) != ((float)size/cylinder_size) ?
 	       '*' : ' '));
 
     fp_printf(fp, " ");
 
     if (p->id == UNUSABLE)
-	sprintf(part_str, "%.17s", "Unusable");
+	sprintf(part_str, "%.17s", _("Unusable"));
     else if (p->id == FREE_SPACE)
-	sprintf(part_str, "%.17s", "Free Space");
-    else if (partition_type[p->id])
-	sprintf(part_str, "%.17s (%02X)", partition_type[p->id], p->id);
+	sprintf(part_str, "%.17s", _("Free Space"));
+    else if (partition_type_name(p->id))
+	sprintf(part_str, "%.17s (%02X)", partition_type_name(p->id), p->id);
     else
-	sprintf(part_str, "%.17s (%02X)", "Unknown", p->id);
+	sprintf(part_str, "%.17s (%02X)", _("Unknown"), p->id);
     fp_printf(fp, "%-22.22s", part_str);
 
     fp_printf(fp, " ");
 
     if (p->flags == ACTIVE_FLAG)
-	fp_printf(fp, "Boot (%02X)", p->flags);
+	fp_printf(fp, _("Boot (%02X)"), p->flags);
     else if (p->flags != 0)
-	fp_printf(fp, "Unknown (%02X)", p->flags);
+	fp_printf(fp, _("Unknown (%02X)"), p->flags);
     else
-	fp_printf(fp, "None (%02X)", p->flags);
+	fp_printf(fp, _("None (%02X)"), p->flags);
 
     fp_printf(fp, "\n");
 }
@@ -1776,7 +1930,7 @@ void print_p_info(void)
 	to_file = TRUE;
     } else {
 	mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X,
-		 "Enter filename or press RETURN to display on screen: ");
+		 _("Enter filename or press RETURN to display on screen: "));
 
 	if ((to_file = get_string(fname, LINE_LENGTH, NULL)) < 0)
 	    return;
@@ -1784,7 +1938,7 @@ void print_p_info(void)
 	if (to_file) {
 	    if ((fp = fopen(fname, "w")) == NULL) {
 		char errstr[LINE_LENGTH];
-		sprintf(errstr, PRINT_OPEN_ERR, fname);
+		sprintf(errstr, _("Cannot open file '%s'"), fname);
 		print_warning(errstr);
 		return;
 	    }
@@ -1795,11 +1949,11 @@ void print_p_info(void)
 	}
     }
 
-    fp_printf(fp, "Partition Table for %s\n", disk_device);
+    fp_printf(fp, _("Partition Table for %s\n"), disk_device);
     fp_printf(fp, "\n");
-    fp_printf(fp, "            First    Last\n");
-    fp_printf(fp, " # Type     Sector   Sector   Offset  Length   Filesystem Type (ID)   Flags\n");
-    fp_printf(fp, "-- ------- -------- --------- ------ --------- ---------------------- ---------\n");
+    fp_printf(fp, _("            First    Last\n"));
+    fp_printf(fp, _(" # Type     Sector   Sector   Offset  Length   Filesystem Type (ID)   Flags\n"));
+    fp_printf(fp, _("-- ------- -------- --------- ------ --------- ---------------------- ---------\n"));
 
     for (i = 0; i < num_parts; i++) {
 	if (pext && (p_info[i].first_sector >= ext_info.first_sector)) {
@@ -1820,9 +1974,12 @@ void print_p_info(void)
 void print_part_entry(FILE *fp, int num, partition_info *pi)
 {
     int first = 0, start = 0, end = 0, size = 0;
-    int ss = 0, sh = 0, sc = 0;
-    int es = 0, eh = 0, ec = 0;
+    unsigned char ss, es, sh, eh;
+    int sc, ec;
     int flags = 0, id = 0;
+
+    ss = sh = es = eh = 0;
+    sc = ec = 0;
 
     if (pi != NULL) {
 	flags = pi->flags;
@@ -1836,20 +1993,9 @@ void print_part_entry(FILE *fp, int num, partition_info *pi)
 	start = pi->first_sector + pi->offset;
 	end = pi->last_sector;
 	size = end - start + 1;
-	if ((start/(sectors*heads)) > 1023)
-	    start = heads*sectors*1024 - 1;
-	if ((end/(sectors*heads)) > 1023)
-	    end = heads*sectors*1024 - 1;
 
-	ss = start % sectors + 1;
-	start /= sectors;
-	sh = start % heads;
-	sc = start / heads;
-
-	es = end % sectors + 1;
-	end /= sectors;
-	eh = end % heads;
-	ec = end / heads;
+	set_hsc0(&sh, &ss, &sc, start);
+	set_hsc0(&eh, &es, &ec, end);
     }
 
     fp_printf(fp, "%2d  0x%02X %4d %4d %4d 0x%02X %4d %4d %4d %8d %9d\n",
@@ -1868,7 +2014,7 @@ void print_part_table(void)
 	to_file = TRUE;
     } else {
 	mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X,
-		 "Enter filename or press RETURN to display on screen: ");
+		 _("Enter filename or press RETURN to display on screen: "));
 
 	if ((to_file = get_string(fname, LINE_LENGTH, NULL)) < 0)
 	    return;
@@ -1876,7 +2022,7 @@ void print_part_table(void)
 	if (to_file) {
 	    if ((fp = fopen(fname, "w")) == NULL) {
 		char errstr[LINE_LENGTH];
-		sprintf(errstr, PRINT_OPEN_ERR, fname);
+		sprintf(errstr, _("Cannot open file '%s'"), fname);
 		print_warning(errstr);
 		return;
 	    }
@@ -1887,11 +2033,11 @@ void print_part_table(void)
 	}
     }
 
-    fp_printf(fp, "Partition Table for %s\n", disk_device);
+    fp_printf(fp, _("Partition Table for %s\n"), disk_device);
     fp_printf(fp, "\n");
-    fp_printf(fp, "         ---Starting---      ----Ending----    Start Number of\n");
-    fp_printf(fp, " # Flags Head Sect Cyl   ID  Head Sect Cyl    Sector  Sectors\n");
-    fp_printf(fp, "-- ----- ---- ---- ---- ---- ---- ---- ---- -------- ---------\n");
+    fp_printf(fp, _("         ---Starting---      ----Ending----    Start Number of\n"));
+    fp_printf(fp, _(" # Flags Head Sect Cyl   ID  Head Sect Cyl    Sector  Sectors\n"));
+    fp_printf(fp, _("-- ----- ---- ---- ---- ---- ---- ---- ---- -------- ---------\n"));
 
     for (i = 0; i < 4; i++) {
 	for (j = 0;
@@ -1924,10 +2070,10 @@ void print_tables(void)
 
     static struct MenuItem menuFormat[]=
     {
-        { 'r', "Raw", "Print the table using raw data format" },
-        { 's', "Sectors", "Print the table ordered by sectors" },
-        { 't', "Table", "Just print the partition table" },
-        { ESC, "Cancel", "Don't print the table" },
+        { 'r', N_("Raw"), N_("Print the table using raw data format") },
+        { 's', N_("Sectors"), N_("Print the table ordered by sectors") },
+        { 't', N_("Table"), N_("Just print the partition table") },
+        { ESC, N_("Cancel"), N_("Don't print the table") },
         { 0, NULL, NULL }
     };
     
@@ -1952,51 +2098,50 @@ void print_tables(void)
 }
 
 #define END_OF_HELP "EOHS!"
-#define NEW_HELP_SCREEN "SNHS!"
 void display_help()
 {
     char *help_text[] = {
-	"Help Screen for cfdisk " VERSION,
+	N_("Help Screen for cfdisk"),
 	"",
-	"This is cfdisk, a curses based disk partitioning programs, which",
-	"allows you to create, delete and modify partitions on your hard",
-	"disk drive.",
+	N_("This is cfdisk, a curses based disk partitioning program, which"),
+	N_("allows you to create, delete and modify partitions on your hard"),
+	N_("disk drive."),
 	"",
-	"Copyright (C) 1994-1998 Kevin E. Martin & aeb",
+	N_("Copyright (C) 1994-1999 Kevin E. Martin & aeb"),
 	"",
-	"Command      Meaning",
-	"-------      -------",
-	"  b          Toggle bootable flag of the current partition",
-	"  d          Delete the current partition",
-	"  g          Change cylinders, heads, sectors-per-track parameters",
-	"             WARNING: This option should only be used by people who",
-	"             know what they are doing.",
-	"  h          Print this screen",
-	"  m          Maximize disk usage of the current partition",
-	"             Note: This may make the partition incompatible with",
-	"             DOS, OS/2, ...",
-	"  n          Create new partition from free space",
-	"  p          Print partition table to the screen or to a file",
-	"             There are several different formats for the partition",
-	"             that you can choose from:",
-	"                r - Raw data (exactly what would be written to disk)",
-	"                s - Table ordered by sectors",
-	"                t - Table in raw format",
-	"  q          Quit program without writing partition table",
-	"  t          Change the filesystem type",
-	"  u          Change units of the partition size display",
-	"             Rotates through Mb, sectors and cylinders",
-	"  W          Write partition table to disk (must enter upper case W)",
-        "             Since this might destroy data on the disk, you must",
-	"             either confirm or deny the write by entering `yes' or",
-	"             `no'",
-	"Up Arrow     Move cursor to the previous partition",
-	"Down Arrow   Move cursor to the next partition",
-	"CTRL-L       Redraws the screen",
-	"  ?          Print this screen",
+	N_("Command      Meaning"),
+	N_("-------      -------"),
+	N_("  b          Toggle bootable flag of the current partition"),
+	N_("  d          Delete the current partition"),
+	N_("  g          Change cylinders, heads, sectors-per-track parameters"),
+	N_("             WARNING: This option should only be used by people who"),
+	N_("             know what they are doing."),
+	N_("  h          Print this screen"),
+	N_("  m          Maximize disk usage of the current partition"),
+	N_("             Note: This may make the partition incompatible with"),
+	N_("             DOS, OS/2, ..."),
+	N_("  n          Create new partition from free space"),
+	N_("  p          Print partition table to the screen or to a file"),
+	N_("             There are several different formats for the partition"),
+	N_("             that you can choose from:"),
+	N_("                r - Raw data (exactly what would be written to disk)"),
+	N_("                s - Table ordered by sectors"),
+	N_("                t - Table in raw format"),
+	N_("  q          Quit program without writing partition table"),
+	N_("  t          Change the filesystem type"),
+	N_("  u          Change units of the partition size display"),
+	N_("             Rotates through MB, sectors and cylinders"),
+	N_("  W          Write partition table to disk (must enter upper case W)"),
+        N_("             Since this might destroy data on the disk, you must"),
+	N_("             either confirm or deny the write by entering `yes' or"),
+	N_("             `no'"),
+	N_("Up Arrow     Move cursor to the previous partition"),
+	N_("Down Arrow   Move cursor to the next partition"),
+	N_("CTRL-L       Redraws the screen"),
+	N_("  ?          Print this screen"),
 	"",
-	"Note: All of the commands can be entered with either upper or lower",
-	"case letters (except for Writes).",
+	N_("Note: All of the commands can be entered with either upper or lower"),
+	N_("case letters (except for Writes)."),
 	END_OF_HELP
     };
 
@@ -2005,15 +2150,13 @@ void display_help()
 
     erase();
     move(0, 0);
-    while (strcmp(help_text[cur_line], END_OF_HELP))
-	if (!strcmp(help_text[cur_line], NEW_HELP_SCREEN)) {
-	    menuContinue();
-	    erase();
-	    move(0, 0);
-	    cur_line++;
-	} else
-	    fp_printf(fp, "%s\n", help_text[cur_line++]);
-
+    while (strcmp(help_text[cur_line], END_OF_HELP)) {
+	if (help_text[cur_line][0])
+	    fp_printf(fp, "%s\n", _(help_text[cur_line]));
+	else
+	    fp_printf(fp, "\n");
+	cur_line++;
+    }
     menuContinue();
 }
 
@@ -2023,15 +2166,15 @@ int change_geometry(void)
     int done = FALSE;
     char def[LINE_LENGTH];
     char response[LINE_LENGTH];
-    int tmp_val;
+    int tmp_val, max_cyls, i;
 
     while (!done) {
         static struct MenuItem menuGeometry[]=
         {
-            { 'c', "Cylinders", "Change cylinder geometry" },
-            { 'h', "Heads", "Change head geometry" },
-            { 's', "Sectors", "Change sector geometry" },
-            { 'd', "Done", "Done with changing geometry" },
+            { 'c', N_("Cylinders"), N_("Change cylinder geometry") },
+            { 'h', N_("Heads"), N_("Change head geometry") },
+            { 's', N_("Sectors"), N_("Change sector geometry") },
+            { 'd', N_("Done"), N_("Done with changing geometry") },
             { 0, NULL, NULL }
         };
 	move(COMMAND_LINE_Y, COMMAND_LINE_X);
@@ -2042,42 +2185,47 @@ int change_geometry(void)
 
 	switch (toupper( menuSimple(menuGeometry, 3) )) {
 	case 'C':
-	    sprintf(def, "%d", cylinders);
+	    sprintf(def, "%ld", actual_size/cylinder_size);
 	    mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X,
-		     "Enter the number of cylinders: ");
-	    if (get_string(response, LINE_LENGTH, def) > 0) {
+		     _("Enter the number of cylinders: "));
+	    i = get_string(response, LINE_LENGTH, def);
+	    if (i == GS_DEFAULT) {
+		user_cylinders = actual_size/cylinder_size;
+		ret_val = TRUE;
+	    } else if (i > 0) {
 		tmp_val = atoi(response);
-		if (tmp_val > 0 && tmp_val <= MAX_CYLINDERS) {
-		    cylinders = tmp_val;
+		max_cyls = 0x7fffffff / cylinder_size;
+		if (tmp_val > 0 && tmp_val <= max_cyls) {
+		    user_cylinders = tmp_val;
 		    ret_val = TRUE;
 		} else
-		    print_warning(BAD_CYLINDERS);
+		    print_warning(_("Illegal cylinders value"));
 	    }
 	    break;
 	case 'H':
 	    sprintf(def, "%d", heads);
 	    mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X,
-		     "Enter the number of heads: ");
+		     _("Enter the number of heads: "));
 	    if (get_string(response, LINE_LENGTH, def) > 0) {
 		tmp_val = atoi(response);
 		if (tmp_val > 0 && tmp_val <= MAX_HEADS) {
-		    heads = tmp_val;
+		    user_heads = tmp_val;
 		    ret_val = TRUE;
 		} else
-		    print_warning(BAD_HEADS);
+		    print_warning(_("Illegal heads value"));
 	    }
 	    break;
 	case 'S':
 	    sprintf(def, "%d", sectors);
 	    mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X,
-		     "Enter the number of sectors per track: ");
+		     _("Enter the number of sectors per track: "));
 	    if (get_string(response, LINE_LENGTH, def) > 0) {
 		tmp_val = atoi(response);
 		if (tmp_val > 0 && tmp_val <= MAX_SECTORS) {
-		    sectors = tmp_val;
+		    user_sectors = tmp_val;
 		    ret_val = TRUE;
 		} else
-		    print_warning(BAD_SECTORS);
+		    print_warning(_("Illegal sectors value"));
 	    }
 	    break;
 	case ESC:
@@ -2088,10 +2236,17 @@ int change_geometry(void)
 	    putchar(BELL);
 	    break;
 	}
+
+	if (ret_val) {
+	    decide_on_geometry();
+	    draw_screen();
+	}
     }
 
     if (ret_val) {
-	int disk_end = heads*sectors*cylinders-1;
+	int disk_end;
+
+	disk_end = total_size-1;
 
 	if (p_info[num_parts-1].last_sector > disk_end) {
 	    while (p_info[num_parts-1].first_sector > disk_end) {
@@ -2130,34 +2285,50 @@ void change_id(int i)
     int num_types = 0;
     int num_across, num_down;
     int len, new_id = ((p_info[i].id == LINUX) ? LINUX_SWAP : LINUX);
-    int y_start, y_end;
-    int j, pos;
+    int y_start, y_end, row, row_min, row_max, row_offset, j, needmore;
 
-    for (num_types = 0, j = 1; j < NUM_PART_TYPES; j++)
-	if (partition_type[j])
-	    num_types++;
+    for (j = 1; i386_sys_types[j].name; j++) ;
+    num_types = j-1;		/* do not count the Empty type */
 
     num_across = COLS/COL_ID_WIDTH;
     num_down = (((float)num_types)/num_across + 1);
     y_start = COMMAND_LINE_Y - 1 - num_down;
-    if (y_start > DISK_TABLE_START+cur_part+4)
-	y_start = DISK_TABLE_START+cur_part+4;
-    y_end = y_start + num_down - 1;
-
-    for (j = y_start - 1; j <= y_end + 1; j++) {
-	move(j, 0);
-	clrtoeol();
+    if (y_start < 1) {
+	y_start = 1;
+	y_end = COMMAND_LINE_Y - 2;
+    } else {
+	if (y_start > DISK_TABLE_START+cur_part+4)
+	    y_start = DISK_TABLE_START+cur_part+4;
+	y_end = y_start + num_down - 1;
     }
 
-    for (pos = 0, j = 1; j < NUM_PART_TYPES; j++)
-	if (partition_type[j]) {
-	    move(y_start + pos % num_down, (pos/num_down)*COL_ID_WIDTH + 1);
-	    printw("%02X %-16.16s", j, partition_type[j]);
-	    pos++;
+    row_min = 1;
+    row_max = COMMAND_LINE_Y - 2;
+    row_offset = 0;
+    do {
+	for (j = y_start - 1; j <= y_end + 1; j++) {
+	    move(j, 0);
+	    clrtoeol();
 	}
+	needmore = 0;
+	for (j = 1; i386_sys_types[j].name; j++) {
+	    row = y_start + (j-1) % num_down - row_offset;
+	    if (row >= row_min && row <= row_max) {
+		move(row, ((j-1)/num_down)*COL_ID_WIDTH + 1);
+		printw("%02X %-20.20s",
+		       i386_sys_types[j].type,
+		       i386_sys_types[j].name);
+	    }
+	    if (row > row_max)
+		needmore = 1;
+	}
+	if (needmore)
+		menuContinue();
+	row_offset += (row_max - row_min + 1);
+    } while(needmore);
 
     sprintf(def, "%02X", new_id);
-    mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X, "Enter filesystem type: ");
+    mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X, _("Enter filesystem type: "));
     if ((len = get_string(id, 2, def)) <= 0 && len != GS_DEFAULT)
 	return;
 
@@ -2175,9 +2346,9 @@ void change_id(int i)
     }
 
     if (new_id == 0)
-	print_warning(ID_EMPTY);
+	print_warning(_("Cannot change FS Type to empty"));
     else if (is_extended(new_id))
-	print_warning(ID_EXT);
+	print_warning(_("Cannot change FS Type to extended"));
     else
 	p_info[i].id = new_id;
 }
@@ -2187,6 +2358,7 @@ void draw_partition(int i)
     int size, j;
     int y = i + DISK_TABLE_START + 2 - (cur_part/NUM_ON_SCREEN)*NUM_ON_SCREEN;
     char *t;
+    double fsize;
 
     if (!arrow_cursor) {
 	move(y, 0);
@@ -2199,38 +2371,38 @@ void draw_partition(int i)
 		 "%s%d", my_basename(disk_device), p_info[i].num+1);
 	if (p_info[i].flags) {
 	    if (p_info[i].flags == ACTIVE_FLAG)
-		mvaddstr(y, FLAGS_START, "Boot");
+		mvaddstr(y, FLAGS_START, _("Boot"));
 	    else
-		mvprintw(y, FLAGS_START, "Unk(%02X)", p_info[i].flags);
+		mvprintw(y, FLAGS_START, _("Unk(%02X)"), p_info[i].flags);
 	    if (p_info[i].first_sector == 0 || IS_LOGICAL(p_info[i].num)) {
 		if (p_info[i].offset != sectors)
-		    addstr(", NC");
+		    addstr(_(", NC"));
 	    } else {
 		if (p_info[i].offset != 0)
-		    addstr(", NC");
+		    addstr(_(", NC"));
 	    }
 	} else {
 	    if (p_info[i].first_sector == 0 || IS_LOGICAL(p_info[i].num)) {
 		if (p_info[i].offset != sectors)
-		    mvaddstr(y, FLAGS_START, "NC");
+		    mvaddstr(y, FLAGS_START, _("NC"));
 	    } else {
 		if (p_info[i].offset != 0)
-		    mvaddstr(y, FLAGS_START, "NC");
+		    mvaddstr(y, FLAGS_START, _("NC"));
 	    }
 	}
     }
     mvaddstr(y, PTYPE_START,
 	     (p_info[i].id == UNUSABLE ? "" :
-	      (IS_LOGICAL(p_info[i].num) ? "Logical" :
-	       (p_info[i].num >= 0 ? "Primary" :
-		(p_info[i].num == PRI_OR_LOG ? "Pri/Log" :
-		 (p_info[i].num == PRIMARY ? "Primary" : "Logical"))))));
+	      (IS_LOGICAL(p_info[i].num) ? _("Logical") :
+	       (p_info[i].num >= 0 ? _("Primary") :
+		(p_info[i].num == PRI_OR_LOG ? _("Pri/Log") :
+		 (p_info[i].num == PRIMARY ? _("Primary") : _("Logical")))))));
 
     t = partition_type_text(i);
     if (t)
 	 mvaddstr(y, FSTYPE_START, t);
     else
-	 mvprintw(y, FSTYPE_START, "Unknown (%02X)", p_info[i].id);
+	 mvprintw(y, FSTYPE_START, _("Unknown (%02X)"), p_info[i].id);
 
     if (p_info[i].volume_label[0]) {
 	int l = strlen(p_info[i].volume_label);
@@ -2240,15 +2412,17 @@ void draw_partition(int i)
     }
 
     size = p_info[i].last_sector - p_info[i].first_sector + 1;
+    fsize = (double) size * SECTOR_SIZE;
     if (display_units == SECTORS)
 	mvprintw(y, SIZE_START, "%9d", size);
     else if (display_units == CYLINDERS)
-	mvprintw(y, SIZE_START, "%9d", size/(sectors*heads));
-    else
-	mvprintw(y, SIZE_START, "%9.2f", ceiling(size/20.48)/100);
-    if (((size/(sectors*heads)) != ceiling(size/(sectors*(float)heads))) ||
-	((p_info[i].first_sector/(sectors*heads)) !=
-	 ceiling(p_info[i].first_sector/(sectors*heads))))
+	mvprintw(y, SIZE_START, "%9d", size/cylinder_size);
+    else if (display_units == MEGABYTES)
+	mvprintw(y, SIZE_START, "%9.2f", ceiling((100*fsize)/(K*K))/100);
+    else if (display_units == GIGABYTES)
+	mvprintw(y, SIZE_START, "%9.2f", ceiling((100*fsize)/(K*K*K))/100);
+    if (size % cylinder_size != 0 ||
+	p_info[i].first_sector % cylinder_size != 0)
 	mvprintw(y, COLUMNS-1, "*");
 }
 
@@ -2279,7 +2453,7 @@ void draw_screen(void)
     int i;
     char *line;
 
-    line = (char *)malloc((COLS+1)*sizeof(char));
+    line = (char *) xmalloc((COLS+1)*sizeof(char));
 
     if (warning_last_time) {
 	for (i = 0; i < COLS; i++) {
@@ -2297,23 +2471,28 @@ void draw_screen(void)
 
     sprintf(line, "cfdisk %s", VERSION);
     mvaddstr(HEADER_START, (COLS-strlen(line))/2, line);
-    sprintf(line, "Disk Drive: %s", disk_device);
+    sprintf(line, _("Disk Drive: %s"), disk_device);
     mvaddstr(HEADER_START+2, (COLS-strlen(line))/2, line);
-    sprintf(line, "Heads: %d   Sectors per Track: %d   Cylinders: %d",
-	    heads, sectors, cylinders);
+    { long long bytes = actual_size*(long long) SECTOR_SIZE;
+    sprintf(line, _("Size: %lld bytes"), bytes); }
     mvaddstr(HEADER_START+3, (COLS-strlen(line))/2, line);
+    sprintf(line, _("Heads: %d   Sectors per Track: %d   Cylinders: %d"),
+	    heads, sectors, cylinders);
+    mvaddstr(HEADER_START+4, (COLS-strlen(line))/2, line);
 
-    mvaddstr(DISK_TABLE_START, NAME_START, "Name");
-    mvaddstr(DISK_TABLE_START, FLAGS_START, "Flags");
-    mvaddstr(DISK_TABLE_START, PTYPE_START-1, "Part Type");
-    mvaddstr(DISK_TABLE_START, FSTYPE_START, "FS Type");
-    mvaddstr(DISK_TABLE_START, LABEL_START+1, "[Label]");
+    mvaddstr(DISK_TABLE_START, NAME_START, _("Name"));
+    mvaddstr(DISK_TABLE_START, FLAGS_START, _("Flags"));
+    mvaddstr(DISK_TABLE_START, PTYPE_START-1, _("Part Type"));
+    mvaddstr(DISK_TABLE_START, FSTYPE_START, _("FS Type"));
+    mvaddstr(DISK_TABLE_START, LABEL_START+1, _("[Label]"));
     if (display_units == SECTORS)
-	mvaddstr(DISK_TABLE_START, SIZE_START, "  Sectors");
+	mvaddstr(DISK_TABLE_START, SIZE_START, _("  Sectors"));
     else if (display_units == CYLINDERS)
-	mvaddstr(DISK_TABLE_START, SIZE_START, "Cylinders");
-    else
-	mvaddstr(DISK_TABLE_START, SIZE_START, "Size (MB)");
+	mvaddstr(DISK_TABLE_START, SIZE_START, _("Cylinders"));
+    else if (display_units == MEGABYTES)
+	mvaddstr(DISK_TABLE_START, SIZE_START, _("Size (MB)"));
+    else if (display_units == GIGABYTES)
+	mvaddstr(DISK_TABLE_START, SIZE_START, _("Size (GB)"));
 
     move(DISK_TABLE_START+1, 1);
     for (i = 1; i < COLS-1; i++)
@@ -2368,17 +2547,17 @@ void do_curses_fdisk(void)
 
     static struct MenuItem menuMain[]=
     {
-        { 'b', "Bootable", "Toggle bootable flag of the current partition" },
-        { 'd', "Delete", "Delete the current partition" },
-        { 'g', "Geometry", "Change disk geometry (experts only)" },
-        { 'h', "Help", "Print help screen" },
-        { 'm', "Maximize", "Maximize disk usage of the current partition (experts only)" },
-        { 'n', "New", "Create new partition from free space" },
-        { 'p', "Print", "Print partition table to the screen or to a file" },
-        { 'q', "Quit", "Quit program without writing partition table" },
-        { 't', "Type", "Change the filesystem type (DOS, Linux, OS/2 and so on)" },
-        { 'u', "Units", "Change units of the partition size display (MB, sect, cyl)" },
-        { 'W', "Write", "Write partition table to disk (this might destroy data)" },
+        { 'b', N_("Bootable"), N_("Toggle bootable flag of the current partition") },
+        { 'd', N_("Delete"), N_("Delete the current partition") },
+        { 'g', N_("Geometry"), N_("Change disk geometry (experts only)") },
+        { 'h', N_("Help"), N_("Print help screen") },
+        { 'm', N_("Maximize"), N_("Maximize disk usage of the current partition (experts only)") },
+        { 'n', N_("New"), N_("Create new partition from free space") },
+        { 'p', N_("Print"), N_("Print partition table to the screen or to a file") },
+        { 'q', N_("Quit"), N_("Quit program without writing partition table") },
+        { 't', N_("Type"), N_("Change the filesystem type (DOS, Linux, OS/2 and so on)") },
+        { 'u', N_("Units"), N_("Change units of the partition size display (MB, sect, cyl)") },
+        { 'W', N_("Write"), N_("Write partition table to disk (this might destroy data)") },
         { 0, NULL, NULL }
     };
     curses_started = 1;
@@ -2424,7 +2603,7 @@ void do_curses_fdisk(void)
 	    if (p_info[cur_part].id > 0)
 		p_info[cur_part].flags ^= 0x80;
 	    else
-		print_warning(NO_FLAGS);
+		print_warning(_("Cannot make this partition bootable"));
 	    break;
 	case 'D':
 	case 'd':
@@ -2434,7 +2613,7 @@ void do_curses_fdisk(void)
 		    cur_part = num_parts - 1;
 		draw_screen();
 	    } else
-		print_warning(DEL_EMPTY);
+		print_warning(_("Cannot delete an empty partition"));
 	    break;
 	case 'G':
 	case 'g':
@@ -2454,9 +2633,9 @@ void do_curses_fdisk(void)
 		} else if (p_info[cur_part].offset != 0)
 		    p_info[cur_part].offset = 0;
 		else
-		    print_warning(MAX_UNMAXABLE);
+		    print_warning(_("Cannot maximize this partition"));
 	    } else
-		print_warning(MAX_UNMAXABLE);
+		print_warning(_("Cannot maximize this partition"));
 	    break;
 	case 'N':
 	case 'n':
@@ -2464,9 +2643,9 @@ void do_curses_fdisk(void)
 		new_part(cur_part);
 		draw_screen();
 	    } else if (p_info[cur_part].id == UNUSABLE)
-		print_warning(ADD_UNUSABLE);
+		print_warning(_("This partition is unusable"));
 	    else
-		print_warning(ADD_EXISTS);
+		print_warning(_("This partition is already in use"));
 	    break;
 	case 'P':
 	case 'p':
@@ -2483,16 +2662,18 @@ void do_curses_fdisk(void)
 		change_id(cur_part);
 		draw_screen();
 	    } else
-		print_warning(TYPE_EMPTY);
+		print_warning(_("Cannot change the type of an empty partition"));
 	    break;
 	case 'U':
 	case 'u':
-	    if (display_units == MEGABYTES)
+	    if (display_units == GIGABYTES)
+		display_units = MEGABYTES;
+	    else if (display_units == MEGABYTES)
 		display_units = SECTORS;
 	    else if (display_units == SECTORS)
 		display_units = CYLINDERS;
 	    else if (display_units == CYLINDERS)
-		display_units = MEGABYTES;
+		display_units = MEGABYTES; 	/* not yet GIGA */
 	    draw_screen();
 	    break;
 	case 'W':
@@ -2508,20 +2689,20 @@ void do_curses_fdisk(void)
 	    if (!draw_cursor(-1))
 		command = 0;
 	    else
-		print_warning(NO_MORE_PARTS);
+		print_warning(_("No more partitions"));
 	    break;
 	case MENU_DOWN : /* Down arrow */
 	    if (!draw_cursor(1))
 		command = 0;
 	    else
-		print_warning(NO_MORE_PARTS);
+		print_warning(_("No more partitions"));
 	    break;
 	case REDRAWKEY:
 	    clear();
 	    draw_screen();
 	    break;
 	default:
-	    print_warning(BAD_COMMAND);
+	    print_warning(_("Illegal command"));
 	    putchar(BELL); /* CTRL-G */
 	}
     }
@@ -2531,24 +2712,28 @@ void do_curses_fdisk(void)
 
 void copyright(void)
 {
-    fprintf(stderr, "Copyright (C) 1994-1997 Kevin E. Martin & aeb\n");
+    fprintf(stderr, _("Copyright (C) 1994-1999 Kevin E. Martin & aeb\n"));
 }
 
 void usage(char *prog_name)
 {
-    fprintf(stderr, "\nUsage:\n");
-    fprintf(stderr, "Print version:\n");
-    fprintf(stderr, "\t%s -v\n", prog_name);
-    fprintf(stderr, "Print partition table:\n");
-    fprintf(stderr, "\t%s -P {r|s|t} [options] device\n", prog_name);
-    fprintf(stderr, "Interactive use:\n");
-    fprintf(stderr, "\t%s [options] device\n", prog_name);
-    fprintf(stderr, "
-Options:
--a: Use arrow instead of highlighting;
--z: Start with a zero partition table, instead of reading the pt from disk;
--c C -h H -s S: Override the kernel's idea of the number of cylinders,
-                the number of heads and the number of sectors/track.\n\n");
+    /* Unfortunately, xgettext does not handle multi-line strings */
+    /* so, let's use explicit \n's instead */
+    fprintf(stderr, _("\n"
+"Usage:\n"
+"Print version:\n"
+"        %s -v\n"
+"Print partition table:\n"
+"        %s -P {r|s|t} [options] device\n"
+"Interactive use:\n"
+"        %s [options] device\n"
+"\n"
+"Options:\n"
+"-a: Use arrow instead of highlighting;\n"
+"-z: Start with a zero partition table, instead of reading the pt from disk;\n"
+"-c C -h H -s S: Override the kernel's idea of the number of cylinders,\n"
+"                the number of heads and the number of sectors/track.\n\n"),
+    prog_name, prog_name, prog_name);
 
     copyright();
 }
@@ -2559,31 +2744,36 @@ main(int argc, char **argv)
     int c;
     int i, len;
 
-    setlocale(LC_CTYPE, "");
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
 
-    while ((c = getopt(argc, argv, "ac:h:s:vzP:")) != EOF)
+    while ((c = getopt(argc, argv, "ac:gh:s:vzP:")) != EOF)
 	switch (c) {
 	case 'a':
 	    arrow_cursor = TRUE;
 	    break;
 	case 'c':
-	    cylinders = atoi(optarg);
-	    if (cylinders <= 0 || cylinders > MAX_CYLINDERS) {
-		fprintf(stderr, "%s: %s\n", argv[0], BAD_CYLINDERS);
+	    user_cylinders = cylinders = atoi(optarg);
+	    if (cylinders <= 0) {
+		fprintf(stderr, "%s: %s\n", argv[0], _("Illegal cylinders value"));
 		exit(1);
 	    }
 	    break;
+	case 'g':
+	    use_partition_table_geometry = TRUE;
+	    break;
 	case 'h':
-	    heads = atoi(optarg);
+	    user_heads = heads = atoi(optarg);
 	    if (heads <= 0 || heads > MAX_HEADS) {
-		fprintf(stderr, "%s: %s\n", argv[0], BAD_HEADS);
+		fprintf(stderr, "%s: %s\n", argv[0], _("Illegal heads value"));
 		exit(1);
 	    }
 	    break;
 	case 's':
-	    sectors = atoi(optarg);
+	    user_sectors = sectors = atoi(optarg);
 	    if (sectors <= 0 || sectors > MAX_SECTORS) {
-		fprintf(stderr, "%s: %s\n", argv[0], BAD_SECTORS);
+		fprintf(stderr, "%s: %s\n", argv[0], _("Illegal sectors value"));
 		exit(1);
 	    }
 	    break;

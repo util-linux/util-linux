@@ -29,14 +29,23 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ * Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+ * - fixed strerr(errno) in gettext calls
  */
 
 #include <errno.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <time.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include "nls.h"
 
 #define	SYSLOG_NAMES
 #include <syslog.h>
@@ -44,6 +53,65 @@
 int	decode __P((char *, CODE *));
 int	pencode __P((char *));
 void	usage __P((void));
+
+int
+myopenlog(sock)
+     const char *sock;
+{
+       int fd;
+       static struct sockaddr s_addr;      /* AF_UNIX address of local logger */
+
+       s_addr.sa_family = AF_UNIX;
+       (void)strncpy(s_addr.sa_data, sock, sizeof(s_addr.sa_data));
+
+       if ((fd = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+               printf ("socket: %s.\n", strerror(errno));
+               exit (1);
+       }
+
+       if (connect(fd, &s_addr, sizeof(s_addr.sa_family)+strlen(s_addr.sa_data)) == -1) {
+               printf ("connect: %s.\n", strerror(errno));
+               exit (1);
+       }
+       return fd;
+}
+
+void
+mysyslog(fd, logflags, pri, tag, msg)
+     int fd;
+     int logflags;
+     int pri;
+     char *tag;
+     char *msg;
+{
+       char buf[1000], pid[30], *cp, *tp;
+       time_t now;
+
+       if (fd > -1) {
+	       /* there was a gethostname call here, but its output was not used */
+	       /* avoid snprintf - it does not exist on ancient systems */
+               if (logflags & LOG_PID)
+                       sprintf (pid, "[%d]", getpid());
+	       else
+		       pid[0] = 0;
+               if (tag)
+		       cp = tag;
+	       else {
+		       cp = getlogin();
+		       if (!cp)
+			       cp = "<someone>";
+	       }
+               (void)time(&now);
+	       tp = ctime(&now)+4;
+
+	       /* do snprintf by hand - ugly, but for once... */
+               sprintf(buf, "<%d>%.15s %.200s%s: %.400s",
+			pri, tp, cp, pid, msg);
+
+               if (write(fd, buf, strlen(buf)+1) < 0)
+                       return; /* error */
+       }
+}
 
 /*
  * logger -- read and log utility
@@ -58,16 +126,23 @@ main(argc, argv)
 {
 	int ch, logflags, pri;
 	char *tag, buf[1024];
+	char *usock = NULL;
+	int LogSock = -1;
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	tag = NULL;
 	pri = LOG_NOTICE;
 	logflags = 0;
-	while ((ch = getopt(argc, argv, "f:ip:st:")) != EOF)
+	while ((ch = getopt(argc, argv, "f:ip:st:u:")) != EOF)
 		switch((char)ch) {
 		case 'f':		/* file to log */
 			if (freopen(optarg, "r", stdin) == NULL) {
-				(void)fprintf(stderr, "logger: %s: %s.\n",
-				    optarg, strerror(errno));
+				int errsv = errno;
+				(void)fprintf(stderr, _("logger: %s: %s.\n"),
+				    optarg, strerror(errsv));
 				exit(1);
 			}
 			break;
@@ -83,6 +158,9 @@ main(argc, argv)
 		case 't':		/* tag */
 			tag = optarg;
 			break;
+		case 'u':		/* unix socket */
+			usock = optarg;
+			break;
 		case '?':
 		default:
 			usage();
@@ -91,7 +169,11 @@ main(argc, argv)
 	argv += optind;
 
 	/* setup for logging */
-	openlog(tag ? tag : getlogin(), logflags, 0);
+	if (!usock)
+		openlog(tag ? tag : getlogin(), logflags, 0);
+	else
+		LogSock = myopenlog(usock);
+
 	(void) fclose(stdout);
 
 	/* log input line if appropriate */
@@ -102,23 +184,41 @@ main(argc, argv)
 		for (p = buf, endp = buf + sizeof(buf) - 2; *argv;) {
 			len = strlen(*argv);
 			if (p + len > endp && p > buf) {
+			    if (!usock)
 				syslog(pri, "%s", buf);
+			    else
+				mysyslog(LogSock, logflags, pri, tag, buf);
 				p = buf;
 			}
-			if (len > sizeof(buf) - 1)
+			if (len > sizeof(buf) - 1) {
+			    if (!usock)
 				syslog(pri, "%s", *argv++);
-			else {
+			    else
+				mysyslog(LogSock, logflags, pri, tag, *argv++);
+			} else {
 				if (p != buf)
 					*p++ = ' ';
 				bcopy(*argv++, p, len);
 				*(p += len) = '\0';
 			}
 		}
-		if (p != buf)
+		if (p != buf) {
+		    if (!usock)
 			syslog(pri, "%s", buf);
+		    else
+			mysyslog(LogSock, logflags, pri, tag, buf);
+		}
 	} else
-		while (fgets(buf, sizeof(buf), stdin) != NULL)
+		while (fgets(buf, sizeof(buf), stdin) != NULL) {
+		    if (!usock)
 			syslog(pri, "%s", buf);
+		    else
+			mysyslog(LogSock, logflags, pri, tag, buf);
+		}
+	if (!usock)
+		closelog();
+	else
+		close(LogSock);
 	exit(0);
 }
 
@@ -138,19 +238,19 @@ pencode(s)
 		fac = decode(save, facilitynames);
 		if (fac < 0) {
 			(void)fprintf(stderr,
-			    "logger: unknown facility name: %s.\n", save);
+			    _("logger: unknown facility name: %s.\n"), save);
 			exit(1);
 		}
 		*s++ = '.';
 	}
 	else {
-		fac = 0;
+		fac = LOG_USER;
 		s = save;
 	}
 	lev = decode(s, prioritynames);
 	if (lev < 0) {
 		(void)fprintf(stderr,
-		    "logger: unknown priority name: %s.\n", save);
+		    _("logger: unknown priority name: %s.\n"), save);
 		exit(1);
 	}
 	return ((lev & LOG_PRIMASK) | (fac & LOG_FACMASK));
@@ -177,6 +277,6 @@ void
 usage()
 {
 	(void)fprintf(stderr,
-	    "logger: [-is] [-f file] [-p pri] [-t tag] [ message ... ]\n");
+	    _("usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"));
 	exit(1);
 }

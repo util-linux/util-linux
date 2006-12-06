@@ -38,6 +38,10 @@
  * Modified Fri Mar 10 20:27:19 1995, faith@cs.unc.edu, for Linux
  * Modified Mon Jul  1 18:14:10 1996, janl@ifi.uio.no, writing to stdout
  *	as suggested by Michael Meskes <meskes@Informatik.RWTH-Aachen.DE>
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  * 
  */
 
@@ -50,6 +54,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "nls.h"
 
 int
 main(argc, argv)
@@ -59,6 +64,11 @@ main(argc, argv)
 	struct stat sb;
 	char *tty;
 	int ch;
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 
 	while ((ch = getopt(argc, argv, "")) != EOF)
 		switch (ch) {
@@ -76,10 +86,10 @@ main(argc, argv)
 
 	if (*argv == NULL) {
 		if (sb.st_mode & (S_IWGRP | S_IWOTH)) {
-			(void)fprintf(stdout, "is y\n");
+			(void)fprintf(stdout, _("is y\n"));
 			exit(0);
 		}
-		(void)fprintf(stdout, "is n\n");
+		(void)fprintf(stdout, _("is n\n"));
 		exit(1);
 	}
 
@@ -99,6 +109,6 @@ main(argc, argv)
 		exit(1);
 	}
 
-usage:	(void)fprintf(stderr, "usage: mesg [y | n]\n");
+usage:	(void)fprintf(stderr, _("usage: mesg [y | n]\n"));
 	exit(2);
 }

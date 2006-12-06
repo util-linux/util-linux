@@ -1,0 +1,31 @@
+.\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
+.\" May be distributed under the GNU General Public License
+.TH CLEAR 1 "10 October 1993" "Linux 0.99" "Linux Programmer's Manual"
+.SH NAME
+clear \- clear terminal screen
+.SH SYNOPSIS
+.BR clear
+.SH DESCRIPTION
+.B clear
+calls
+.BR tput (1)
+with the
+.I clear
+argument.  This causes
+.B tput
+to attempt to clear the screen checking the data in
+.I /etc/termcap
+(for the GNU or BSD
+.BR tput )
+or in the terminfo database
+(for the
+.B ncurses
+.BR tput )
+and sending the appropriate sequence to the terminal.  This command can be
+redirected to clear the screen of some other terminal.
+.SH "SEE ALSO"
+.BR reset (1),
+.BR stty (1),
+.BR tput (1)
+.SH AUTHOR
+Rik Faith (faith@cs.unc.edu)

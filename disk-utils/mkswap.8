@@ -3,7 +3,7 @@
 .\" May be distributed under the GNU General Public License
 .\" Rewritten for 2.1.117, aeb, 981010.
 .\"
-.TH MKSWAP 8 "1 December 1998" "Linux 2.1.117" "Linux Programmer's Manual"
+.TH MKSWAP 8 "25 March 1999" "Linux 2.2.4" "Linux Programmer's Manual"
 .SH NAME
 mkswap \- set up a Linux swap area
 .SH SYNOPSIS
@@ -36,7 +36,8 @@ The
 parameter is superfluous but retained for backwards compatibility.
 (It specifies the desired size of the swap area in 1024-byte blocks.
 .B mkswap
-will use the entire partition or file if it is omitted.)
+will use the entire partition or file if it is omitted.
+Specifying it is unwise - a typo may destroy your disk.)
 
 Linux knows about two styles of swap areas, old style and new style.
 The last 10 bytes of the first page of the swap area distinguishes
@@ -61,8 +62,9 @@ while the bad blocks, if any, can simply be listed. Nobody wants
 to use a swap space with hundreds of bad blocks. (I would not even
 use a swap space with 1 bad block.)
 In the new style swap area this is precisely what is done.
-The maximum useful size of a swap area is now (2^31 - 2*S) bytes,
-roughly 2 GB.
+The maximum useful size of a swap area now depends on the architecture.
+It is roughly 2GB on i386, PPC, m68k, ARM, 1GB on sparc, 512MB on mips,
+128GB on alpha and 3TB on sparc64.
 
 Note that before 2.1.117 the kernel allocated one byte for each page,
 while it now allocates two bytes, so that taking a swap area of 2 GB
@@ -103,6 +105,9 @@ before creating the swap area.
 If any are found, the count is printed.
 .TP
 .B \-f
+Force - go ahead even if the command is stupid.
+This allows the creation of a swap area larger than the file
+or partition it resides on.
 On SPARC, force creation of the swap area.
 Without this option
 .B mkswap

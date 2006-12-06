@@ -4,14 +4,14 @@
 # Copyright 1992, 1993, 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
 # May be distirbuted under the GPL
 #
-
+include ../make_include
 include ../MCONFIG
 
 # Where to put man pages?
 
 MAN1= 		cal.1 chkdupexe.1 ddate.1 kill.1 \
 		logger.1 look.1 mcookie.1 namei.1 script.1 \
-		setterm.1 tsort.1 whereis.1 write.1
+		tsort.1 whereis.1 write.1
 
 # Where to put binaries?
 # See the "install" rule for the links. . .
@@ -19,7 +19,7 @@ MAN1= 		cal.1 chkdupexe.1 ddate.1 kill.1 \
 BIN=            kill
 
 USRBIN=		cal chkdupexe ddate logger look mcookie \
-		namei script setterm tsort whereis write
+		namei script tsort whereis write
 
 ifeq "$(HAVE_CLEAR)" "no"
 USRBIN:=$(USRBIN) clear
@@ -31,14 +31,21 @@ USRBIN:=$(USRBIN) reset
 MAN1:=$(MAN1) reset.1
 endif
 
+ifeq "$(HAVE_NCURSES)" "yes"
+USRBIN:=$(USRBIN) setterm
+MAN1:=$(MAN1) setterm.1
+endif
+
 # For script only
+LIBPTY=
 ifeq "$(HAVE_OPENPTY)" "yes"
-CFLAGS:=$(CFLAGS) -DHAVE_OPENPTY
+LIBPTY:=$(LIBPTY) -lutil
 endif
 
 # Programs requiring special compilation
 
 NEEDS_CURSES=  setterm
+NEEDS_OPENPTY= script
 
 all: $(BIN) $(USRBIN) $(USRBIN.NONSHADOW) $(USRGAMES) 
 
@@ -48,6 +55,9 @@ ifeq "$(HAVE_NCURSES)" "yes"
 else
 	@echo $@ not made since it requires ncurses
 endif
+
+$(NEEDS_OPENPTY):
+	$(CC) $(LDFLAGS) $^ -o $@ $(LIBPTY)
 
 %: %.sh
 	cp $@.sh $@
@@ -68,11 +78,11 @@ mcookie: mcookie.o md5.o
 mcookie.o: mcookie.c md5.h
 md5.o: md5.c md5.h
 reset: reset.sh
+script: script.o
 
 ifeq "$(HAVE_NCURSES)" "yes"
 setterm: setterm.o
 endif
-
 
 install: all
 	$(INSTALLDIR) $(BINDIR) $(USRBINDIR)

@@ -31,6 +31,10 @@
  * SUCH DAMAGE.
  */
 
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  * - added Native Language Support
+  */
+
 #include <sys/types.h>
 #include <sys/file.h>
 #include <stdio.h>
@@ -38,6 +42,7 @@
 #include <ctype.h>
 #include <string.h>
 #include "hexdump.h"
+#include "nls.h"
 
 static void escape(register char *p1);
 static void badcnt(char *s);
@@ -55,12 +60,12 @@ void addfile(char *name)
 	char buf[2048 + 1];
 
 	if (!(fp = fopen(name, "r"))) {
-		(void)fprintf(stderr, "hexdump: can't read %s.\n", name);
+		(void)fprintf(stderr, _("hexdump: can't read %s.\n"), name);
 		exit(1);
 	}
 	while (fgets(buf, sizeof(buf), fp)) {
 		if (!(p = index(buf, '\n'))) {
-			(void)fprintf(stderr, "hexdump: line too long.\n");
+			(void)fprintf(stderr, _("hexdump: line too long.\n"));
 			while ((ch = getchar()) != '\n' && ch != EOF);
 			continue;
 		}
@@ -398,7 +403,7 @@ sw2:					switch(fu->bcnt) {
 			/* only one conversion character if byte count */
 			if (!(pr->flags&F_ADDRESS) && fu->bcnt && nconv++) {
 				(void)fprintf(stderr,
-				    "hexdump: byte count with multiple conversion characters.\n");
+				    _("hexdump: byte count with multiple conversion characters.\n"));
 				exit(1);
 			}
 		}
@@ -482,25 +487,25 @@ static void escape(register char *p1)
 static void badcnt(char *s)
 {
 	(void)fprintf(stderr,
-	    "hexdump: bad byte count for conversion character %s.\n", s);
+	    _("hexdump: bad byte count for conversion character %s.\n"), s);
 	exit(1);
 }
 
 static void badsfmt()
 {
 	(void)fprintf(stderr,
-	    "hexdump: %%s requires a precision or a byte count.\n");
+	    _("hexdump: %%s requires a precision or a byte count.\n"));
 	exit(1);
 }
 
 static void badfmt(char *fmt)
 {
-	(void)fprintf(stderr, "hexdump: bad format {%s}\n", fmt);
+	(void)fprintf(stderr, _("hexdump: bad format {%s}\n"), fmt);
 	exit(1);
 }
 
 static void badconv(char *ch)
 {
-	(void)fprintf(stderr, "hexdump: bad conversion character %%%s.\n", ch);
+	(void)fprintf(stderr, _("hexdump: bad conversion character %%%s.\n"), ch);
 	exit(1);
 }

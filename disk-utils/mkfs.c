@@ -10,6 +10,9 @@
  *
  * Mon Jul  1 18:52:58 1996: janl@math.uio.no (Nicolai Langfeldt):
  *	Incorporated fix by Jonathan Kamens <jik@annex-1-slip-jik.cam.ov.com>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *	
  */
 
 
@@ -19,9 +22,10 @@
 #include <string.h>
 #include <getopt.h>
 #include <limits.h>
+#include "nls.h"
 
-
-#define VERSION		"1.10"
+#include "../version.h"
+#define VERSION		UTIL_LINUX_VERSION
 
 #ifndef DEFAULT_FSTYPE
 # define DEFAULT_FSTYPE		"ext2"
@@ -37,6 +41,10 @@ int main(int argc, char *argv[])
   char *fstype = NULL;
   int i, more = 0, verbose = 0;
   char *oldpath, *newpath;
+
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
 
   /* Check commandline options. */
   opterr = 0;
@@ -55,7 +63,7 @@ int main(int argc, char *argv[])
     }
   if (optind == argc) {
     fprintf(stderr,
-      "Usage: mkfs [-V] [-t fstype] [fs-options] device [size]\n");
+      _("Usage: mkfs [-V] [-t fstype] [fs-options] device [size]\n"));
     return -1;
   }
   
@@ -69,7 +77,7 @@ int main(int argc, char *argv[])
 	  oldpath = "/bin";
   newpath = (char *) malloc(strlen(oldpath) + sizeof(SEARCH_PATH) + 2);
   if (!newpath) {
-    fputs("mkfs: out of memory\n", stderr);
+    fprintf(stderr, _("%s: Out of memory!\n"), "mkfs");
     exit(1);
   }
   sprintf(newpath, "%s:%s\n", SEARCH_PATH, oldpath);
@@ -78,7 +86,7 @@ int main(int argc, char *argv[])
   argv[--optind] = progname;
 
   if (verbose) {
-    puts("mkfs version " VERSION " (" __DATE__ ")");
+    puts(_("mkfs version " VERSION " (" __DATE__ ")"));
     i = optind;
     while (argv[i])
       printf("%s ", argv[i++]);

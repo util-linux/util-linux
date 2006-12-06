@@ -29,9 +29,12 @@
  * LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
  */
 
-/*
+/* 
  * banner - prints large signs
  * banner [-w#] [-d] [-t] message ...
  */
@@ -41,6 +44,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "nls.h"
 
 #define MAXMSG 1024
 #define DWIDTH 132
@@ -1019,11 +1023,12 @@ main(argc, argv)
 	char **argv;
 { 
 	int ch;
-
-#ifdef __linux__
 	extern char *__progname;
 	__progname = argv[0];
-#endif
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	while ((ch = getopt(argc, argv, "w:td")) != EOF)
 		switch(ch) {
@@ -1040,7 +1045,7 @@ main(argc, argv)
 			break;
 		case '?':
 		default:
-			fprintf(stderr, "usage: banner [-w width]\n");
+			fprintf(stderr, _("usage: banner [-w width]\n"));
 			exit(1);
 		}
 	argc -= optind;
@@ -1060,7 +1065,7 @@ main(argc, argv)
 		}
 		nchars = strlen(message);
 	} else {
-		fprintf(stderr,"Message: ");
+		fprintf(stderr,_("Message: "));
 		(void)fgets(message, sizeof(message), stdin);
 		nchars = strlen(message);
 		message[nchars--] = '\0';	/* get rid of newline */
@@ -1094,7 +1099,7 @@ main(argc, argv)
 	for (i = 0; i < nchars; i++)
 		if ((u_char) message[i] >= NCHARS ||
 		    asc_ptr[(u_char) message[i]] == 0) {
-			warnx("The character '%c' is not in my character set",
+			warnx(_("The character '%c' is not in my character set"),
 				message[i]);
 			j++;
 		}
@@ -1102,7 +1107,7 @@ main(argc, argv)
 		exit(1);
 
 	if (trace)
-		printf("Message '%s' is OK\n",message);
+		printf(_("Message '%s' is OK\n"),message);
 	/* Now have message. Print it one character at a time.  */
 
 	for (i = 0; i < nchars; i++) {

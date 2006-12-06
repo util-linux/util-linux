@@ -7,24 +7,31 @@
 
 VERSION=2.9
 
+include ./make_include
 include ./MCONFIG
 
-SUBDIRS=lib \
-	getopt-1.0.3a \
+SUBDIRS=po \
+	lib \
+	getopt-1.0.3b \
 	disk-utils \
 	games \
 	login-utils \
 	misc-utils \
 	mount \
 	fdisk \
+	clock \
 	sys-utils \
-	text-utils
+	text-utils \
+	kbd
 
 .PHONEY: all install clean
-all:
+all:	defines.h
 	@for subdir in $(SUBDIRS); do \
 		(cd $$subdir && $(MAKE) $@) || exit 1; \
 	done
+
+defines.h make_include:
+	./configure
 
 install:
 	@if [ "`whoami`" = "root" ]; then umask 022; fi
@@ -33,10 +40,14 @@ install:
 	done
 
 clean:
-	-rm -f *.o *~ core poe.diffs
+	-rm -f *.o *~ omake conftest conftest.c core
 	@for subdir in $(SUBDIRS); do \
 		(cd $$subdir && $(MAKE) $@) || exit 1; \
 	done
+
+distclean: make_include clean
+	cd po && make distclean
+	-rm -f defines.h make_include
 
 dist:
 	(cd /tmp; \

@@ -8,7 +8,7 @@
 /*
  * 20.12.91  -	time began. Got VM working yesterday by doing this by hand.
  *
- * Usuage: mkswap [-c] [-vN] [-f] device [size-in-blocks]
+ * Usage: mkswap [-c] [-vN] [-f] device [size-in-blocks]
  *
  *	-c   for readability checking. (Use it unless you are SURE!)
  *	-vN  for swap areas version N. (Only N=0,1 known today.)
@@ -23,6 +23,11 @@
  * Version 1 swap area code (for kernel 2.1.117), aeb, 981010.
  *
  * Sparc fixes, jj@ultra.linux.cz (Jakub Jelinek), 981201 - mangled by aeb.
+ * V1_MAX_PAGES fixes, jj, 990325.
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ * 
  */
 
 #include <stdio.h>
@@ -34,6 +39,8 @@
 #include <sys/utsname.h>
 #include <sys/stat.h>
 #include <asm/page.h>		/* for PAGE_SIZE and PAGE_SHIFT */
+				/* we also get PAGE_SIZE via getpagesize() */
+#include "nls.h"
 
 #ifndef _IO
 /* pre-1.3.45 */
@@ -91,7 +98,7 @@ init_signature_page() {
 
 #ifdef PAGE_SIZE
 	if (pagesize != PAGE_SIZE)
-		fprintf(stderr, "Assuming pages of size %d\n", pagesize);
+		fprintf(stderr, _("Assuming pages of size %d\n"), pagesize);
 #endif
 	signature_page = (int *) malloc(pagesize);
 	memset(signature_page,0,pagesize);
@@ -106,7 +113,48 @@ write_signature(char *sig) {
 }
 
 #define V0_MAX_PAGES	(8 * (pagesize - 10))
-#define V1_MAX_PAGES	((0x7fffffff / pagesize) - 1)
+/* Before 2.2.0pre9 */
+#define V1_OLD_MAX_PAGES	((0x7fffffff / pagesize) - 1)
+/* Since 2.2.0pre9:
+   error if nr of pages >= SWP_OFFSET(SWP_ENTRY(0,~0UL))
+   with variations on
+	#define SWP_ENTRY(type,offset) (((type) << 1) | ((offset) << 8))
+	#define SWP_OFFSET(entry) ((entry) >> 8)
+   on the various architectures. Below the result - yuk.
+
+   Machine	pagesize	SWP_ENTRY	SWP_OFFSET	bound+1	oldbound+2
+   i386		2^12		o<<8		e>>8		1<<24	1<<19
+   mips		2^12		o<<15		e>>15		1<<17	1<<19
+   alpha	2^13		o<<40		e>>40		1<<24	1<<18
+   m68k		2^12		o<<12		e>>12		1<<20	1<<19
+   sparc	2^{12,13}	(o&0x3ffff)<<9	(e>>9)&0x3ffff	1<<18	1<<{19,18}
+   sparc64	2^13		o<<13		e>>13		1<<51	1<<18
+   ppc		2^12		o<<8		e>>8		1<<24	1<<19
+   armo		2^{13,14,15}	o<<8		e>>8		1<<24	1<<{18,17,16}
+   armv		2^12		o<<9		e>>9		1<<23	1<<19
+
+   assuming that longs have 64 bits on alpha and sparc64 and 32 bits elsewhere.
+
+   The bad part is that we need to know this since the kernel will
+   refuse a swap space if it is too large.
+*/
+/* patch from jj - why does this differ from the above? */
+#if defined(__alpha__)
+#define V1_MAX_PAGES           ((1 << 24) - 1)
+#elif defined(__mips__)
+#define V1_MAX_PAGES           ((1 << 17) - 1)
+#elif defined(__sparc_v9__)
+#define V1_MAX_PAGES           ((3 << 29) - 1)
+#elif defined(__sparc__)
+#define V1_MAX_PAGES           (pagesize == 8192 ? ((3 << 29) - 1) : ((1 << 18) - 1))
+#else
+#define V1_MAX_PAGES           V1_OLD_MAX_PAGES
+#endif
+/* man page now says:
+The maximum useful size of a swap area now depends on the architecture.
+It is roughly 2GB on i386, PPC, m68k, ARM, 1GB on sparc, 512MB on mips,
+128GB on alpha and 3TB on sparc64.
+*/
 
 #define MAX_BADPAGES	((pagesize-1024-128*sizeof(int)-10)/sizeof(int))
 
@@ -137,8 +185,8 @@ void fatal_error(const char * fmt_string)
 	exit(1);
 }
 
-#define usage() fatal_error("Usage: %s [-c] [-v0|-v1] /dev/name [blocks]\n")
-#define die(str) fatal_error("%s: " str "\n")
+#define usage() fatal_error(_("Usage: %s [-c] [-v0|-v1] /dev/name [blocks]\n"))
+#define die(str) fatal_error(_("%s: " str "\n"))
 
 void
 page_ok(int page) {
@@ -182,8 +230,10 @@ check_blocks(void) {
 		}
 		page_ok(current_page++);
 	}
-	if (badpages)
-		printf("%d bad page%s\n",badpages,(badpages>1)?"s":"");
+	if (badpages == 1)
+		printf(_("one bad page\n"));
+	else if (badpages > 1)
+		printf(_("%d bad pages\n"), badpages);
 }
 
 static long valid_offset (int fd, int offset)
@@ -218,11 +268,11 @@ find_size (int fd)
 }
 
 /* return size in pages, to avoid integer overflow */
-static int
+static long
 get_size(const char  *file)
 {
 	int	fd;
-	int	size;
+	long	size;
 
 	fd = open(file, O_RDONLY);
 	if (fd < 0) {
@@ -243,10 +293,16 @@ int main(int argc, char ** argv)
 {
 	char * tmp;
 	struct stat statbuf;
+	int sz;
 	int maxpages;
 	int goodpages;
 	int offset;
 	int force = 0;
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	
 
 	if (argc && *argv)
 		program_name = *argv;
@@ -281,12 +337,20 @@ int main(int argc, char ** argv)
 	}
 	if (!device_name) {
 		fprintf(stderr,
-			"%s: error: Nowhere to set up swap on?\n",
+			_("%s: error: Nowhere to set up swap on?\n"),
 			program_name);
 		usage();
 	}
+	sz = get_size(device_name);
 	if (!PAGES) {
-		PAGES = get_size(device_name);
+		PAGES = sz;
+	} else if (PAGES > sz && !force) {
+		fprintf(stderr,
+			_("%s: error: "
+			  "size %ld is larger than device size %d\n"),
+			program_name,
+			PAGES*(pagesize/1024), sz*(pagesize/1024));
+		exit(1);
 	}
 
 	if (version == -1) {
@@ -300,20 +364,32 @@ int main(int argc, char ** argv)
 			version = 1;
 	}
 	if (version != 0 && version != 1) {
-		fprintf(stderr, "%s: error: unknown version %d\n",
+		fprintf(stderr, _("%s: error: unknown version %d\n"),
 			program_name, version);
 		usage();
 	}
 	if (PAGES < 10) {
 		fprintf(stderr,
-			"%s: error: swap area needs to be at least %ldkB\n",
+			_("%s: error: swap area needs to be at least %ldkB\n"),
 			program_name, (long)(10 * pagesize / 1024));
 		usage();
 	}
+#if 0
 	maxpages = ((version == 0) ? V0_MAX_PAGES : V1_MAX_PAGES);
+#else
+	if (!version)
+		maxpages = V0_MAX_PAGES;
+	else if (linux_version_code() >= MAKE_VERSION(2,2,1))
+		maxpages = V1_MAX_PAGES;
+	else {
+		maxpages = V1_OLD_MAX_PAGES;
+		if (maxpages > V1_MAX_PAGES)
+			maxpages = V1_MAX_PAGES;
+	}
+#endif
 	if (PAGES > maxpages) {
 		PAGES = maxpages;
-		fprintf(stderr, "%s: warning: truncating swap area to %ldkB\n",
+		fprintf(stderr, _("%s: warning: truncating swap area to %ldkB\n"),
 			program_name, PAGES * pagesize / 1024);
 	}
 
@@ -340,11 +416,11 @@ int main(int argc, char ** argv)
 			for (sum = 0; q >= (unsigned short *) buffer;)
 				sum ^= *q--;
 			if (!sum) {
-				fprintf(stderr, "\
+				fprintf(stderr, _("\
 %s: Device '%s' contains a valid Sun disklabel.\n\
 This probably means creating v0 swap would destroy your partition table\n\
 No swap created. If you really want to create swap v0 on that device, use\n\
-the -f option to force it.\n",
+the -f option to force it.\n"),
 					program_name, device_name);
 				exit(1);
 			}
@@ -365,7 +441,7 @@ the -f option to force it.\n",
 	goodpages = PAGES - badpages - 1;
 	if (goodpages <= 0)
 		die("Unable to set up swap-space: unreadable");
-	printf("Setting up swapspace version %d, size = %ld bytes\n",
+	printf(_("Setting up swapspace version %d, size = %ld bytes\n"),
 		version, (long)(goodpages*pagesize));
 	write_signature((version == 0) ? "SWAP-SPACE" : "SWAPSPACE2");
 

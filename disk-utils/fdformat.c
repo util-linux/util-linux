@@ -1,5 +1,11 @@
 /* fdformat.c  -  Low-level formats a floppy disk. */
 
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ * 1999-03-20 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+ & - more i18n/nls translatable strings marked
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
@@ -10,6 +16,7 @@
 #include <sys/ioctl.h>
 #include <linux/fd.h>
 #include <linux/fs.h>
+#include "nls.h"
 
 static int ctrl;
 struct floppy_struct param;
@@ -23,7 +30,7 @@ static void format_disk(char *name)
     struct format_descr descr;
     int track;
 
-    printf("Formatting ... ");
+    printf(_("Formatting ... "));
     fflush(stdout);
     if (ioctl(ctrl,FDFMTBEG,NULL) < 0) PERROR("\nioctl(FDFMTBEG)");
     for (track = 0; track < param.track; track++) {
@@ -41,7 +48,7 @@ static void format_disk(char *name)
 	}
     }
     if (ioctl(ctrl,FDFMTEND,NULL) < 0) PERROR("\nioctl(FDFMTEND)");
-    printf("done\n");
+    printf(_("done\n"));
 }
 
 
@@ -52,7 +59,7 @@ static void verify_disk(char *name)
 
     cyl_size = param.sect*param.head*512;
     if ((data = (unsigned char *) malloc(cyl_size)) == NULL) PERROR("malloc");
-    printf("Verifying ... ");
+    printf(_("Verifying ... "));
     fflush(stdout);
     if ((fd = open(name,O_RDONLY)) < 0) PERROR(name);
     for (cyl = 0; cyl < param.track; cyl++) {
@@ -63,20 +70,20 @@ static void verify_disk(char *name)
 	read_bytes = read(fd,data,cyl_size);
 	if(read_bytes != cyl_size) {
 	    if(read_bytes < 0)
-		    perror("Read: ");
+		    perror(_("Read: "));
 	    fprintf(stderr,
-		    "Problem reading cylinder %d, expected %d, read %d\n",
+		    _("Problem reading cylinder %d, expected %d, read %d\n"),
 		    cyl, cyl_size, read_bytes);
 	    exit(1);
 	}
 	for (count = 0; count < cyl_size; count++)
 	    if (data[count] != FD_FILL_BYTE) {
-		printf("bad data in cyl %d\nContinuing ... ",cyl);
+		printf(_("bad data in cyl %d\nContinuing ... "),cyl);
 		fflush(stdout);
 		break;
 	    }
     }
-    printf("done\n");
+    printf(_("done\n"));
     if (close(fd) < 0) PERROR("close");
 }
 
@@ -86,7 +93,7 @@ static void usage(char *name)
     char *this;
 
     if ((this = strrchr(name,'/')) != NULL) name = this+1;
-    fprintf(stderr,"usage: %s [ -n ] device\n",name);
+    fprintf(stderr,_("usage: %s [ -n ] device\n"),name);
     exit(1);
 }
 
@@ -96,6 +103,10 @@ int main(int argc,char **argv)
     int verify;
     char *name;
     struct stat st;
+
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
 
     name = argv[0];
     verify = 1;
@@ -108,15 +119,15 @@ int main(int argc,char **argv)
     if (argc != 2) usage(name);
     if (stat(argv[1],&st) < 0) PERROR(argv[1]);
     if (!S_ISBLK(st.st_mode) || MAJOR(st.st_rdev) != FLOPPY_MAJOR) {
-	fprintf(stderr,"%s: not a floppy device\n",argv[1]);
+	fprintf(stderr,_("%s: not a floppy device\n"),argv[1]);
 	exit(1);
     }
     if (access(argv[1],W_OK) < 0) PERROR(argv[1]);
     if ((ctrl = open(argv[1],3)) < 0) PERROR(argv[1]);
     if (ioctl(ctrl,FDGETPRM,(long) &param) < 0) 
-      PERROR("Could not determine current format type");
-    printf("%sle-sided, %d tracks, %d sec/track. Total capacity %d kB.\n",
-      param.head ? "Doub" : "Sing",param.track,param.sect,param.size >> 1);
+      PERROR(_("Could not determine current format type"));
+    printf(_("%s-sided, %d tracks, %d sec/track. Total capacity %d kB.\n"),
+      param.head ? _("Double") : _("Single"),param.track,param.sect,param.size >> 1);
     format_disk(argv[1]);
     if (verify) verify_disk(argv[1]);
     return 0;

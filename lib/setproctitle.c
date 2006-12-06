@@ -20,10 +20,6 @@
 #include <stdarg.h>
 #include "setproctitle.h"
 
-#ifndef SPT_PADCHAR
-#define SPT_PADCHAR     ' '
-#endif
-
 #ifndef SPT_BUFSIZE
 #define SPT_BUFSIZE     2048
 #endif
@@ -65,7 +61,6 @@ initproctitle (int argc, char **argv) {
 /* Nice code, but many places do not know about vsnprintf ... */
 void
 setproctitle (const char *fmt,...) {
-	char       *p;
 	int        i;
 	char       buf[SPT_BUFSIZE];
 	va_list    ap;
@@ -82,16 +77,14 @@ setproctitle (const char *fmt,...) {
 		i = argv_lth - 2;
 		buf[i] = '\0';
 	}
+	memset(argv0[0], '\0', argv_lth);       /* clear the memory area */
 	(void) strcpy (argv0[0], buf);
-	p = &argv0[0][i];
-	while (i < argv_lth)
-		*p++ = SPT_PADCHAR, i++;
+
 	argv0[1] = NULL;
 }
 #else
 void
 setproctitle (const char *prog, const char *txt) {
-        char       *p;
         int        i;
         char       buf[SPT_BUFSIZE];
 
@@ -108,10 +101,9 @@ setproctitle (const char *prog, const char *txt) {
                 i = argv_lth - 2;
                 buf[i] = '\0';
         }
+	memset(argv0[0], '\0', argv_lth);       /* clear the memory area */
         (void) strcpy (argv0[0], buf);
-        p = &argv0[0][i];
-        while (i < argv_lth)
-                *p++ = SPT_PADCHAR, i++;
+
         argv0[1] = NULL;
 }
 #endif

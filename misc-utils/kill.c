@@ -34,6 +34,10 @@
  *  oct 5 1994 -- almost entirely re-written to allow for process names.
  *  modifications (c) salvatore valente <svalente@mit.edu>
  *  may be used / modified / distributed under the same terms as the original.
+ *
+ *  1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ *  - added Native Language Support
+ *
  */
 
 #include <stdio.h>
@@ -42,6 +46,7 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <signal.h>
+#include "nls.h"
 
 #define SIZE(a)	(sizeof(a)/sizeof(a[0]))
 
@@ -151,6 +156,10 @@ int main (int argc, char *argv[])
     int do_pid, do_kill, check_all;
     int *pids, *ip;
 
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
+
     whoami = mybasename (*argv);
     numsig = SIGTERM;
     do_pid = (! strcmp (whoami, "pid"));
@@ -187,7 +196,7 @@ int main (int argc, char *argv[])
 	    /* argc == 2 */
 	    arg = argv[1];
 	    if ((numsig = arg_to_signum (arg)) < 0) {
-		fprintf (stderr, "%s: unknown signal %s\n", whoami, arg);
+		fprintf (stderr, _("%s: unknown signal %s\n"), whoami, arg);
 		return 1;
 	    }
 	    printsig (numsig);
@@ -249,7 +258,7 @@ int main (int argc, char *argv[])
 	    pids = get_pids (arg, check_all);
 	    if (! pids) {
 		errors++;
-		fprintf (stderr, "%s: can't find process \"%s\"\n",
+		fprintf (stderr, _("%s: can't find process \"%s\"\n"),
 			 whoami, arg);
 		continue;
 	    }
@@ -291,7 +300,7 @@ int arg_to_signum (char *arg)
 
 void nosig (char *name)
 {
-    fprintf (stderr, "%s: unknown signal %s; valid signals:\n", whoami, name);
+    fprintf (stderr, _("%s: unknown signal %s; valid signals:\n"), whoami, name);
     printsignals (stderr);
 }
 
@@ -331,8 +340,8 @@ int usage (int status)
     FILE *fp;
 
     fp = (status == 0 ? stdout : stderr);
-    fprintf (fp, "usage: %s [ -s signal | -p ] [ -a ] pid ...\n", whoami);
-    fprintf (fp, "       %s -l [ signal ]\n", whoami);
+    fprintf (fp, _("usage: %s [ -s signal | -p ] [ -a ] pid ...\n"), whoami);
+    fprintf (fp, _("       %s -l [ signal ]\n"), whoami);
     return status;
 }
 

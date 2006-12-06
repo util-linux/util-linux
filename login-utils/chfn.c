@@ -13,8 +13,12 @@
  * Updated Thu Oct 12 09:19:26 1995 by faith@cs.unc.edu with security
  * patches from Zefram <A.Main@dcs.warwick.ac.uk>
  *
- *  Hacked by Peter Breitenlohner, peb@mppmu.mpg.de,
- *    to remove trailing empty fields.  Oct 5, 96.
+ * Hacked by Peter Breitenlohner, peb@mppmu.mpg.de,
+ * to remove trailing empty fields.  Oct 5, 96.
+ *
+ *  1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ *  - added Native Language Support
+ *    
  *
  */
 
@@ -32,6 +36,8 @@
 #include <locale.h>
 #include "my_crypt.h"
 #include "../version.h"
+#include "nls.h"
+#include "env.h"
 
 #if REQUIRE_PASSWORD && USE_PAM
 #include <security/pam_appl.h>
@@ -79,14 +85,14 @@ extern int setpwnam P((struct passwd *pwd));
 
 #define memzero(ptr, size) memset((char *) ptr, 0, size)
 
-/* we do not accept gecos field sizes lengther than MAX_FIELD_SIZE */
+/* we do not accept gecos field sizes longer than MAX_FIELD_SIZE */
 #define MAX_FIELD_SIZE		256
 
 int main (argc, argv)
     int argc;
     char *argv[];
 {
-    char *cp, *pwdstr;
+    char *cp;
     uid_t uid;
     struct finfo oldf, newf;
     boolean interactive;
@@ -98,14 +104,16 @@ int main (argc, argv)
     struct pam_conv conv = { misc_conv, NULL };
 #endif
 
+    sanitize_env();
+    setlocale(LC_ALL, "");	/* both for messages and for iscntrl() below */
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
+
     /* whoami is the program name for error messages */
     whoami = argv[0];
     if (! whoami) whoami = "chfn";
     for (cp = whoami; *cp; cp++)
 	if (*cp == '/') whoami = cp + 1;
-
-    /* iscntrl() below should not reject actual names */
-    setlocale(LC_ALL,"");
 
     /*
      *	"oldf" contains the users original finger information.
@@ -125,19 +133,19 @@ int main (argc, argv)
     if (! newf.username) {
 	parse_passwd (getpwuid (uid), &oldf);
 	if (! oldf.username) {
-	    fprintf (stderr, "%s: you (user %d) don't exist.\n", whoami, uid);
+	    fprintf (stderr, _("%s: you (user %d) don't exist.\n"), whoami, uid);
 	    return (-1); }
     }
     else {
 	parse_passwd (getpwnam (newf.username), &oldf);
 	if (! oldf.username) {
 	    cp = newf.username;
-	    fprintf (stderr, "%s: user \"%s\" does not exist.\n", whoami, cp);
+	    fprintf (stderr, _("%s: user \"%s\" does not exist.\n"), whoami, cp);
 	    return (-1); }
     }
 
     if (!(is_local(oldf.username))) {
-       fprintf (stderr, "%s: can only change local entries; use yp%s instead.\n",
+       fprintf (stderr, _("%s: can only change local entries; use yp%s instead.\n"),
            whoami, whoami);
        exit(1);
     }
@@ -149,28 +157,28 @@ int main (argc, argv)
 	return (-1);
     }
 
-    printf ("Changing finger information for %s.\n", oldf.username);
+    printf (_("Changing finger information for %s.\n"), oldf.username);
 
 #if REQUIRE_PASSWORD
 # if USE_PAM
     if(uid != 0) {
         if (pam_start("chfn", oldf.username, &conv, &pamh)) {
-	    puts("Password error.");
+	    puts(_("Password error."));
 	    exit(1);
 	}
         if (pam_authenticate(pamh, 0)) {
-	    puts("Password error.");
+	    puts(_("Password error."));
 	    exit(1);
 	}
         retcode = pam_acct_mgmt(pamh, 0);
         if (retcode == PAM_NEW_AUTHTOK_REQD) {
 	    retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
         } else if (retcode) {
-	    puts("Password error.");
+	    puts(_("Password error."));
 	    exit(1);
 	}
         if (pam_setcred(pamh, 0)) {
-	    puts("Password error.");
+	    puts(_("Password error."));
 	    exit(1);
 	}
         /* no need to establish a session; this isn't a session-oriented
@@ -179,10 +187,10 @@ int main (argc, argv)
 # else /* USE_PAM */
     /* require password, unless root */
     if(uid != 0 && oldf.pw->pw_passwd && oldf.pw->pw_passwd[0]) {
-	pwdstr = getpass("Password: ");
+	char *pwdstr = getpass(_("Password: "));
 	if(strncmp(oldf.pw->pw_passwd,
 		   crypt(pwdstr, oldf.pw->pw_passwd), 13)) {
-	    puts("Incorrect password.");
+	    puts(_("Incorrect password."));
 	    exit(1);
 	}
     }
@@ -193,7 +201,7 @@ int main (argc, argv)
     if (interactive) ask_info (&oldf, &newf);
 
     if (! set_changed_data (&oldf, &newf)) {
-	printf ("Finger information not changed.\n");
+	printf (_("Finger information not changed.\n"));
 	return 0;
     }
     status = save_new_data (&oldf);
@@ -296,9 +304,9 @@ static boolean parse_argv (argc, argv, pinfo)
 static void usage (fp)
     FILE *fp;
 {
-    fprintf (fp, "Usage: %s [ -f full-name ] [ -o office ] ", whoami);
-    fprintf (fp, "[ -p office-phone ]\n	[ -h home-phone ] ");
-    fprintf (fp, "[ --help ] [ --version ]\n");
+    fprintf (fp, _("Usage: %s [ -f full-name ] [ -o office ] "), whoami);
+    fprintf (fp, _("[ -p office-phone ]\n	[ -h home-phone ] "));
+    fprintf (fp, _("[ --help ] [ --version ]\n"));
 }
 
 /*
@@ -367,7 +375,7 @@ static char *prompt (question, def_val)
 	printf("%s [%s]: ", question, def_val);
 	*buf = 0;
 	if (fgets (buf, sizeof (buf), stdin) == NULL) {
-	    printf ("\nAborted.\n");
+	    printf (_("\nAborted.\n"));
 	    exit (-1);
 	}
 	/* remove the newline at the end of buf. */
@@ -400,7 +408,7 @@ static int check_gecos_string (msg, gecos)
     if (strlen(gecos) > MAX_FIELD_SIZE) {
 	if (msg != NULL)
 	    printf("%s: ", msg);
-	printf("field is too long.\n");
+	printf(_("field is too long.\n"));
 	return -1;
     }
 
@@ -408,12 +416,12 @@ static int check_gecos_string (msg, gecos)
 	c = gecos[i];
 	if (c == ',' || c == ':' || c == '=' || c == '"' || c == '\n') {
 	    if (msg) printf ("%s: ", msg);
-	    printf ("'%c' is not allowed.\n", c);
+	    printf (_("'%c' is not allowed.\n"), c);
 	    return (-1);
 	}
 	if (iscntrl (c)) {
 	    if (msg) printf ("%s: ", msg);
-	    printf ("Control characters are not allowed.\n");
+	    printf (_("Control characters are not allowed.\n"));
 	    return (-1);
 	}
     }
@@ -478,10 +486,10 @@ static int save_new_data (pinfo)
     pinfo->pw->pw_gecos = gecos;
     if (setpwnam (pinfo->pw) < 0) {
 	perror ("setpwnam");
-	printf( "Finger information *NOT* changed.  Try again later.\n" );
+	printf( _("Finger information *NOT* changed.  Try again later.\n" ));
 	return (-1);
     }
-    printf ("Finger information changed.\n");
+    printf (_("Finger information changed.\n"));
     return 0;
 }
 
@@ -495,7 +503,7 @@ static void *xmalloc (bytes)
 
     vp = malloc (bytes);
     if (! vp && bytes > 0) {
-	perror ("malloc failed");
+	perror (_("malloc failed"));
 	exit (-1);
     }
     return vp;

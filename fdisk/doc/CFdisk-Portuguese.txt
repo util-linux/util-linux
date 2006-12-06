@@ -1,0 +1,1236 @@
+          CFdisk-Portuguese Copyright (C) 1999 Gleydson M. da Silva
+
+
+
+
+
+
+
+              Gleydson M. da Silva - gleydson@linuxbr.com.br
+                             Versão: 1.68
+
+
+
+
+
+
+
+[ Indice ]
+
+1 - Introdução ao CFdisk
+ 1.1 - O que é uma partição de disco
+ 1.2 - O que é a tabela de partição
+ 1.3 - Introdução ao Particionamento de Discos
+ 1.4 - Identificadores utilizados neste manual
+ 1.5 - Identificação de discos e partições no Sistema Linux
+ 1.6 - Tipos de partições de disco
+ 1.7 - Observações sobre o formato DOS 6.xx(FAT16)
+
+2 - Iniciando o programa CFdisk
+ 2.1 - Opções de Linha de comando
+ 2.2 - Conhecendo a tela do CFdisk
+ 2.3 - Descrição dos comandos
+  2.3.1 - Setas Acima/Abaixo - Esquerda/Direita
+  2.3.2 - <CTRL>+<l>
+  2.3.3 - Boot
+  2.3.4 - Delete
+  2.3.5 - Geometry
+  2.3.6 - Help
+  2.3.7 - Maximize
+  2.3.8 - New
+  2.3.9 - Print
+  2.3.10 - Quit
+  2.3.11 - Type
+  2.3.12 - Units
+  2.3.13 - Write
+
+3 - Tipos de partições compatíveis com o CFdisk
+
+4 - Direitos Autorais
+
+5 - Licenças e Garantias sobre este documento
+
+6 - Notas sobre marcas registradas
+
+7 - Agradecimentos
+
+
+
+
+
+
+
+
+
+
+
+1-) Introdução ao CFdisk
+
+CFdisk é um programa utilizado para fazer o particionamento de discos, 
+utilizando uma interface em modo texto.
+
+A grande características deste programa, além de sua interface de comunicação
+com o usuário e a enorme quantidade de partições que manipula, é a grande
+facilidade de operação, o seu poder de manipulação de partições e a sua
+precisão que fazem com que o usuário tenha mais confiança durante o 
+particionamento de disco.
+
+É recomendável a leitura deste texto, mesmo que tenha uma noção sobre o
+particionamento de discos, exceto para os gurus que já conhecem a fundo a
+forma de trabalho, em geral, de programas deste tipo, pois o particionamento
+de disco pode destruir os seus arquivos e partições já existentes, se for
+usado de forma incorreta.
+
+O programa CFdisk pode ser utilizado em qualquer sistema operacional que 
+esteja de acordo com o padrão POSIX (Linux, UNIX, FreeBSD, HPUX, etc).
+
+A versão do CFdisk utilizada nas explicações deste manual é a 0.8, mas 
+isto não impede que este manual seja utilizado com versões futuras ou 
+anteriores deste programa. As características principais 
+do programa CFdisk e as explicações sobre particionamento, são válidas para 
+quaisquer versões deste programa.
+
+Este documento é distribuído com a itenção de ser útil ao seu utilizador,
+no entanto NÃO TEM NENHUMA GARANTIA,  EXPLÍCITAS OU IMPLÍCITAS , COMERCIAIS
+OU DE ATENDIMENTO A UMA DETERMINADA FINALIDADE. Consulte a Licença Pública 
+Geral  GNU para maiores detalhes. 
+
+
+1.1-) Partição de Disco
+
+Uma partição de disco é o local onde o sistema operacional armazena seu
+sistema de arquivos(arquivos, diretórios, FAT, boot sector, etc). 
+
+
+
+1.2-) Tabela de partição
+
+A Tabela de partição é o local do disco rígido onde se localizam os dados sobre
+todas as partições existentes no disco como o sistema de arquivos utilizado, se
+ela é inicializável, a cabeça inicial/final, setor inicial/final, cilindro
+inicial/final, número de setores ocupados por ela no disco.
+
+
+1.3-) Introdução ao particionamento de discos
+
+Particionar o disco rígido é dividir ele em partes para armazenamento 
+de arquivos e programas. As partições criadas no disco podem ter o tamanho 
+que desejar (desde que esteja dentro da capacidade máxima do disco rígido).
+
+Uma partição não interfere em outras partições do mesmo disco(é como 
+se tivessemos vários discos rígidos dentro de um), e nem em outros discos
+rígidos(caso possuir mais que um disco rígido instalado em seu computador).
+
+Pode ser criada uma partição única, que neste caso todo o disco rígido
+é usado para armazenar os arquivos(que é o caso mais comum caso voce tenha 
+o DOS), ou várias partições, que podem ser usadas pelo mesmo SO(Sistema 
+Operacional) ou outros sistemas operacionais diferentes(um exemplo de várias
+partições: se for usar o DOS e o Linux no mesmo disco, os dois sistemas vão 
+estar no mesmo disco mas um não interfere no outro).
+
+ATENÇÃO : A OPERAÇÃO DE PARTICIONAMENTO DE DISCOS PODE FAZER COM QUE OS DADOS
+          ARMAZENADOS EM SEU DISCO RÍGIDO SEJAM PERDIDOS, SE FOR USADA 
+          INCORRETAMENTE. É SEMPRE RECOMENDADO RETIRAR UMA CÓPIA DE SEGURANÇA
+          DOS SEUS ARQUIVOS EXISTENTES NO MICRO ANTES DE SE EXECUTAR UM
+          PROGRAMA DESTE TIPO, A NÃO SER QUE TENHA CONFIANÇA NO QUE ESTA
+          FAZENDO E QUE ENTENDEU AS EXPLICAÇÕES SOBRE A IDENTIFICAÇÃO DE
+          DISCOS RÍGIDOS E SUAS PARTIÇÕES NO SISTEMA.
+
+Neste manual voce aprenderá como deve particionar seu disco rígido para 
+a instalação do SO usando o programa CFdisk.
+
+
+1.4-) Algumas identificações utilizadas neste manual para facilitar a 
+      compreensão do texto
+
+Esta parte descreve algumas características de organização deste manual e
+algumas identificações que utilizei para facilitar o seu entendimento, e as
+explicações que serão dadas.
+
+Explicação de nomes e comandos, sera seguida da palavra "onde:" e abaixo
+dela as explicações sobre os comandos, exemplo:
+
+onde:
+nome a ser explicado1  : Descrição 
+nome a ser explicado2  : Descrição 
+nome a ser explicado3  : Descrição 
+
+ou
+
+onde:
+nome a ser explicado1  - Descrição 
+nome a ser explicado2  - Descrição 
+nome a ser explicado3  - Descrição 
+
+
+Quando for feita alguma referência com tecla do teclado, por exemplo, 
+pressione p para listar as partições, a letra sera colocada entre <> para
+que seja melhor entendida:
+
+pressione <d> para deletar uma partição...
+...pressione <Enter> para escolher a opção do menu.
+pressione <t> para listar os tipos de partições disponíveis...
+
+
+    As linhas pontilhadas que aparecem na tela, veja abaixo,
+----------------------------------------------------------------------------
+----------------------------------------------------------------------------
+servem para identificar que o que esta entre as linhas é um exemplo de como 
+será a resposta do comando para a tela de seu computador.
+
+
+
+1.5-) Identificação de discos e partições no Linux
+
+Antes de descrever como se utiliza o programa CFdisk, é importante fazer
+algumas explicações sobre a identificação das partições e unidades de disco
+no sistema Linux( e outros *nix). 
+
+Se voce for um usuário que já conhece a interpretação de discos e partições
+neste sistema, voce não precisará ler esta parte.
+
+No sistema operacional Linux, os dispositivos existentes no computador
+(como impressoras, unidades de disquetes, discos rígidos, monitor, placa de
+som, etc...) são identificados por um nome referente a este dispositivo e
+colocado no diretório /dev (que é utilizado para identificar os dispositivos
+ou periféricos existentes no computador).
+
+   A identificação dos discos rígidos segue a seguinte forma:
+
+  /dev/hda1
+  |    | ||
+  |    | ||_Número que identifica a partição do disco rígido(1=Primeira, 2=segunda)
+  |    | |
+  |    | |_Letra que identifica o disco rígido(a=primeiro disco, b=segundo disco, etc..)
+  |    |
+  |    |_Sigla HD - Significa que é um disco rígido IDE(Se tiver um SD significa SCSI)
+  |
+  |_ Identificação do diretório onde os dispositivos do sistema são armazenados
+
+OBS: As unidades de disco rígido SCSI, são identificadas com as letras SD 
+     seguida pela letra da unidade e número da partição e os discos IDE são
+     identificados por HD seguida pela letra da unidade de disco e o número
+     da partição do disco(como visto acima).
+
+Abaixo, algumas identificações de disco do sistema Linux:
+
+/dev/hda1    -   Disco rígido IDE primário principal - Primeira partição
+/dev/hda2    -   Disco rígido IDE primário principal - Segunda partição
+/dev/hda3    -   Disco rígido IDE primário principal - Terceira partição
+/dev/hdb1    -   Disco rígido IDE primário escravo - Primeira partição
+/dev/hdb2    -   Disco rígido IDE primário escravo - Segunda partição
+/dev/hdb3    -   Disco rígido IDE primário escravo - Terceira partição
+/dev/hdc1    -   Disco rígido IDE secundário principal - Primeira partição
+/dev/hdc2    -   Disco rígido IDE secundário principal - Segunda partição
+/dev/hdc3    -   Disco rígido IDE secundário principal - Terceira partição
+/dev/hdd1    -   Disco rígido IDE secundário escravo - Primeira partição
+/dev/hdd2    -   Disco rígido IDE secundário escravo - Segunda partição
+/dev/hdd3    -   Disco rígido IDE secundário escravo - Terceira partição
+/dev/sda1    -   Primeiro disco rígido SCSI - Primeira partição
+/dev/sda2    -   Primeiro disco rígido SCSI - Segunda partição
+/dev/sda3    -   Primeiro disco rígido SCSI - Terceira partição
+/dev/sdb1    -   Segundo disco rígido SCSI - Primeira partição
+/dev/sdb2    -   Segundo disco rígido SCSI - Segunda partição
+/dev/sdb3    -   Segundo disco rígido SCSI - Terceira partição
+
+No exemplo acima foram usadas 3 partições por disco, mas podem existir mais 
+partições no mesmo disco, um exemplo é se o disco rígido possuir partições 
+Lógicas, que são identificadas no sistemas a partir de /dev/hdx5.
+
+
+
+Abaixo um exemplo de como o Linux identifica as partições em cada disco 
+existente em seu computador:
+
+Vamos supor que eu tenha 2 discos rígidos: 
+o 1ºdisco de 2GB e o 2ºdisco  de 1GB(Giga Byte ou 1.000 Megas!) 
+
+No primeiro disco(de 2GB), a primeira partição é de 800MB do tipo 
+FAT16(DOS), a segunda partição é de 1.2GB do tipo EXT2(Linux)(1.2GB+800MB=2GB
+que é a capacidade total do disco). Então as partições seriam identificadas 
+da seguinte forma no Linux:
+
+/dev/hda - Disco rígido Primário Principal 
+/dev/hda1 - Primeira partição do primeiro disco rígido (de 800MB do tipo DOS)
+/dev/hda2 - Segunda partição do primeiro disco rígido( de 1.2GB do tipo Linux)
+
+Neste caso estariam disponíveis 800MB para serem usados com o DOS e 
+1.2GB para o Linux. 
+
+Por exemplo, se voce particionar um disco rígido em duas partes e usar 
+as duas partições no DOS, ele reconhecerá as partições como sendo C: e D:.
+
+Lembre-se: Quando um disco é particionado, nenhuma partição interfere 
+           na outra, repare que quando voce particiona(divide) um disco,
+           é como se tivesse dois discos rígidos(o único cuidado que 
+           voce deve tomar é com as cópias de segurança, porque se der
+           um problema de parte eletrônica no disco rígido, por exemplo,
+           a sua placa controladora queimar ou o cabeçote dele ir pro 
+           espaço, voce perderá as suas 2 partições que estão armazenadas
+           nele.
+
+
+Voltando ao exemplo das classificações das partições do disco, vamos 
+para o segundo disco: 
+
+No segundo disco(1GB), eu tenho uma partição de 950MB do tipo FAT16(DOS),
+que costumo usar para armazenar arquivos temporários e cópias de segurança 
+de meu sistema, etc..., e outra de 50MB SWAP(Partição de memória virtual 
+como descrevi acima)(950MB+50MB=1GB). Então as partições deste disco seriam
+identificadas da seguinte forma no Linux: 
+
+/dev/hdb - Disco rígido principal escravo 
+/dev/hdb1 - Primeira partição do disco acima ( de 950MB do tipo DOS) 
+/dev/hdb2 - Segunda partição do disco acima ( de 50MB do tipo SWAP) 
+
+No disco acima, 950MB estão disponíveis para serem usados pelo DOS e 
+50 MB pela memória virtual (SWAP) do Linux. 
+
+Note que se voce utiliza o MS-DOS, voce não conseguirá ver as partições
+do Linux e SWAP, porque são imcompatíveis com o formato aceito pelo DOS (ele
+identificaria a primeira partição do primeiro disco(800MB) como a unidade C:
+e a primeira partição do segundo disco(950MB) como unidade D), mas o 
+contrário não acontece; O Linux tem total compatibilidade com a partição 
+DOS FAT12, FAT16, FAT32, OS/2 HPFS, e muitas outras.
+
+
+
+1.6-)Tipos de partições de discos
+
+As partições de disco são divididas em tres tipos: Primária, Extendida
+e Lógica.    
+Pode se ter, no máximo, 4 partições Primárias e Extendidas no mesmo disco
+(3 Primárias e 1 Extendida ou 4 partições Primárias em cada disco). 
+A partição Primária permite o armazenamento de arquivos e diretórios.
+
+Todos os computadores que possuem somente a unidade C(supondo que utilize
+o DOS), utilizam este tipo de partição para armazenamento de arquivos e
+inicialização do sistema operacional.
+
+Se for preciso criar mais que 4 partições no mesmo disco, será necessário
+criar uma partição Extendida. A partição Extendida não pode ser utilizada
+para armazenar arquivos. Ela é usada para a criação de outras partições,
+dentro dela, que são chamadas de partições Lógicas. 
+
+Uma partição extendida podem conter várias partições Lógicas. As partições 
+Lógicas podem armazenar arquivos e diretórios(como as partições primárias).
+
+Um mesmo disco rígido pode armazenar mais de 64 partições independentes
+uma das outras.
+
+LEMBRE-SE: Os arquivos e diretórios podem ser armazenados somente em
+           partições de disco primárias ou lógicas, a partição extendida não
+           é usada para armazanamento de arquivos e diretórios.
+
+Se possuir duas partições em seu computador (C: e D: no DOS), e não 
+estiver usando a partição D:, a instalação pode ser feita nesta partição 
+desde que ela tenha o espaço necessário para o sistema operacional Linux, 
+os programas que desejar instalar, mais a partição SWAP.
+
+
+
+1.7-) Observações sobre o formato DOS 6.XX(FAT 16)
+
+No formato DOS 6.XX(FAT16), o primeiro setor da área de dados da partição
+é utilizado frequentemente pelo DOS para armazenamento de dados sobre a
+partição de disco, e estes dados são usados pelo sistema para se ter maior
+confiabilidade do que os dados armazenados na tabela de partição. O sistema
+de arquivos DOS, faz o FDISK(do DOS) limpar os primeiros 512 bytes da área
+de dados da partição sempre que uma mudança de tamanho acontecer.
+
+O formatador do DOS(format) verifica este primeiro setor toda vez que
+a upção /U (que é utilizada para não salvar dados para se fazer a desformatação
+do disco) é utilizada.
+
+Isto é considerado uma FALHA no Format(do DOS) e no Fdisk(do DOS).
+A opção abaixo deve ser utilizada caso voce crie uma partição do DOS FAT16
+com o CFdisk, que faz com que os primeiros 512 bytes daquela partição
+sejam "limpos", para manter a compatibilidade com o DOS. Utilize esta opção
+dentro do Linux, após criar a partição com o CFdisk e reiniciar o seu 
+computador. Foi notado que esta opção só funciona corretamente somente quando
+o Sistema Linux estiver instalado em seu computador. Não me responsabilizo 
+caso utiliza-la a partir de um disquete de recuperação.
+
+dd if=/dev/zero of=/dev/hdx1 bs=512 count=1
+
+onde: 
+hdx1 - É a identificação da unidade de disco e a partição que foi criada
+       pelo CFdisk utilizando o sistema de arquivos DOS que terá seu 
+       primeiro setor "limpo".
+
+
+OBS1: Cuidado ao utilizar esta opção, um pequeno descuido pode resultar na
+     perda de dados do seu disco rígido ou outras partição.
+
+OBS2: Não utilize este comando com partições que utilizam o sistema de arquivos
+     FAT32(utilizada nos sistemas operacionais Windows 95 OSR/2 e superiores)
+     se for utilizada em um disco com este sistema, sua FAT será corrompida,
+     se isto acontecer, será necessária a re-formatação da partição.
+
+OBS3: É extremamente recomendado que se utilize o programa de particionamento
+     que acompanha o seu sistema operacional. Por exemplo, se deseja criar
+     uma partição DOS 6.XX, utilize o FDisk qua acompanha o DOS.
+
+
+
+2-) Iniciando o programa CFdisk
+
+Para entrar no programa CFdisk digite:
+cfdisk <unidade>
+
+onde:
+unidade - é a unidade de disco que deseja utilizar para fazer o particionamento
+          a unidade pode ser: /dev/hda, /dev/hdb, /dev/hdc ..., /dev/sda, 
+          /dev/sdb...,etc
+
+NOTA: Se voce não digitar a unidade, o cfdisk utilizará a unidade /dev/hda 
+      como padrão.
+
+
+
+2.1-) Opções de linha de comando utilizadas com o CFdisk
+
+Opções de linha de comando fazem com que o programa inicie de forma 
+específica ou personalizada. As opções devem ser digitadas após o nome do
+programa (cfdisk).
+
+       cfdisk <unidade> < -avz > < -c cilindros > < -h cabeçotes >  
+              < -s  setores_por trilha > < -P opt > < dispositivo >
+
+onde:
+-a        Usa um cursor seta ao invés de video reverso para destacar a
+          partição atual.
+-v        Mostra a versão do programa e Coyright(Direitos Reservados).
+-z        Ignora a leitura da tabela das partições existentes no disco 
+          ao iniciar o CFdisk.
+
+-c Número de Cilindros do disco
+-h Número de Cabeçotes do disco
+-s Setores por trilha existentes no disco.
+-P OPC    Mostra a tabela de partição no formato especifico.
+          OPC - Pode ser: r - Mostra a tabela de partição em Formato RAW
+                          s - Mostra a tabela de partição em Format de Setores
+                          t - Mostra a tabela de partição classificada por 
+                              setores
+          Para maiores detalhes, veja O comando Print <p>.
+
+OBS: A utilização dos parâmetros -c -h -s, substituirão os parâmetros da BIOS
+     da placa, utilize estas opções se sua bios não utilizar estes parâmetros
+     ou se mostrar valores incorretos.
+
+Após entrar o programa CFdisk, ele verificará automaticamente o 
+tamanho do Disco Rígido, se não conseguir, o programa será terminado. 
+Para resolver este problema, especifique o tamanho do disco em cilindros, 
+cabeças, e setores na linha de comando que inicia o programa.
+Este problema geralmente acontece quando se tenta particionar uma unidade de
+disco SCSI que esteja conectada a uma placa controladora que não possui BIOS,
+e  quando  uma  BIOS  mostra  os  valores  da  geometria  do  disco(tamanho) 
+incorretamente.
+
+O próximo passo do CFdisk é fazer a leitura das partições atuais do 
+disco, se não conseguir, o programa será terminado. O único motivo para o 
+CFdisk mostrar esta mensagem de erro, é se voce digitar parâmetros 
+incorretos para o tamanho do disco, caso tenha acontecido o problema 
+descrito no paragrafo anterior. Verifique se os parâmetros foram digitados 
+incorretamente, se os parâmetros estiverem digitados corretamente e mesmo 
+assim o programa continua dando erro na leitura das partições, utilize a 
+opção -z na linha de comando do programa, que faz com que ele ignore a 
+leitura das partições existentes no disco ao iniciar.
+
+
+
+2.2-) Conhecendo a Tela do CFdisk
+   
+Após digitar CFdisk, será mostrada a tela principal onde voce poderá 
+acionar os comandos para manipulação das partições de disco, e visualizar
+as partições de disco atuais e outros dados. Abaixo o exemplo e explicações
+sobre esta tela.
+
+O disco utilizado para os exemplos é um disco de 5157 MB de Capacidade com:
+- 10672 Cilindros  15 Cabeças  63 Setores (no modo C/H/S)
+- 627 Cilindros   255 Cabeças  63 Setores (no modo LBA)
+
+   A unidade de medida utilizada pelo CFdisk para mostrar os parâmetros do 
+disco será o mesmo configurado na BIOS, ou seja, se estiver utilizando o 
+disco com o modo de operação em LBA, os valores de cilindros, cabeças e 
+setores motrados pelo CFdisk sera em LBA.
+
+
+----------------------------------------------------------------------------
+                              CFdisk 0.8l
+
+                         Disk Drive: /dev/hda
+            Heads:255  Sectores per track:63  Cylinders:627
+-----------------------------------------------------------------------------
+Name       Flags        Part Type   FSType           [LABEL]    Size(MB)
+hda1       Boot         Primary     Win 95 FAT 32               1953.12
+hda5                    Logical     DOS FAT 16 (BIG) GLEYDSON    172.58
+                        Pri/Log     Free Space                  2910.55
+
+
+
+
+
+
+
+
+
+
+[Bootable]  [Delete]  [Help]  [Maximize]  [Print]
+[Quit]      [Type]    [Units] [Write]
+----------------------------------------------------------------------------
+No cabeçalho da tela, é mostrada a versão do programa, a unidade de disco
+que será usada no particionamento e os parâmetros de tamanho do disco(cabeçotes,
+cilindros e setores).
+Abaixo do cabeçalho após a linha pontilhada, se encontra a área das partições.
+
+onde:
+- Name  : é o nome da(s) partição(ões) de Disco.
+- Flags : Se estiver marcada como BOOT, será possível iniciar o sistema
+          a partir desta partição(quando não se utiliza um Boot Manager).
+          Se estiver marcada como NC (Não compatível) significa que esta
+          partição não é compatível com o DOS, OS/2, etc. Para maiores
+          detalhes, veja O comando Maximize <m>.
+- Type  : O tipo da partição pode ser Primária ou Lógica. Para espaço não 
+          utilizado no Disco, o tipo da partição pode ser Primário/Log.
+- FileSystems : Tipo de Sistema de Arquivos que é usado naquela partição.
+          Se o sistema de arquivos for desconhecido, ele será mostrado como 
+          um valor Hexadecimal.
+          Um caso especial ocorre quando há Partições do Disco Rígido que
+          não podem ser usadas ( porque toda a partição primária esta em uso).
+          Quando isto é detectado, o tipo de FileSystems é mostrado como não
+          usável(Unusable) para criação de novas partições.
+- Label : Nome de volume da partição de disco. Os nomes de partições FAT32,
+          não são mostrados com esta versão do CFdisk.
+- Size  : Mostra o tamanho que cada partição ocupa no disco rígido em 
+          MegaBytes (por padrão). Também pode mostrar o tamanho ocupado por
+          Setores ou Cilindros. Se for mostrado um asterisco (*) após o 
+          tamanho, isto diz que a partição não esta alinhada com Cilindro.
+
+
+O espaço livre existente no disco para criação de novas partições, é 
+mostrado como uma outra partição, com o FSType(sistema de arquivos) Free 
+Space(espaço Livre).
+
+OBS: As partições de disco Extendidas não são mostradas na tela do CFdisk 
+     durante o particionamento, mesmo assim, as partições lógicas que este
+     tipo de partição armazena, serão mostradas.
+
+No rodapé da tela, encontramos os comandos utilizados pelo CFdisk para
+manipular as partições de disco. Os comandos são mostrados entre Chaves [].
+
+Todos os comandos no rodapé da tela, são aplicaveis somente para a
+partição que estiver destacada com a barra(video reverso).  Veja descrições 
+dos comandos do CFdisk para mais detalhes.
+
+Abaixo do rodapé da tela, é mostrada a descrição do comando que estiver
+em destaque com o cursor em video reverso.
+
+    Veja abaixo a tradução da tela principal do programa CFdisk:
+----------------------------------------------------------------------------
+                              CFdisk 0.8l
+
+                       Unidade de Disco: /dev/hda
+            Cabeças:255  Setores por trilha:63  Cilindros:627
+-----------------------------------------------------------------------------
+Nome    Opções    Tipo Part.  Tipo Sist. Arquivos   [VOLUME]    Tamanho(MB)
+hda1     Boot      Primary     Win 95 FAT 32                     1953.12
+hda5               Logical     DOS FAT 16 (BIG)     GLEYDSON      172.58
+                   Pri/Log     Espaço Livre                      2910.55
+
+
+
+
+
+
+
+
+
+
+[Inicializável]  [Apagar]  [Ajuda]   [Maximizar]  [Imprimir]
+[Sair]           [Tipo]    [Unidades][Gravar]
+----------------------------------------------------------------------------
+
+
+
+2.3-) Descrição dos comandos do CFdisk
+
+Os comandos do programa são utilizados criar partições, entrar na ajuda do
+programa, alterar o tipo da partição, apagar uma partição, etc.
+
+Pode ser utilizado Seta p/ Esquerda e Seta p/ direita para se movimentar
+entre os comandos, quando o cursor estiver em cima do comando que deseja
+executar, pressione <Enter>. 
+
+Outro método que se pode utilizar para acionar uma opção do CFdisk, é
+pressionando a primeira letra de cada opção, automaticamente a opção é 
+executada(sem ter que pressionar <Enter>). Neste método, todos os comandos
+aceitam letras maiúsculas e minúsculas, exceto o comando Write(gravar 
+partição) que é executado somente se pressionar <W> maiúscula, para evitar
+gravações acidentais o disco.
+
+Quando estiver em um Sub-Menu e desejar retornar ao menu principal,
+pressione a tecla <Esc>.
+
+
+
+2.3.1-) Setas Acima e Abaixo/ Esquerda e Direita (Movimentação do Cursor)
+
+Setas Acima e Abaixo são utilizadas para se movimentar entre as partições
+existentes no disco e espaço livre, selecionando-a para que seja utilizada
+as opções do CFdisk.
+
+Setas Esquerda e Direita são utilizadas para selecionar entre as opções
+diponíveis do programa(que serão explicadas abaixo). Para confirmar uma
+opção, pressione <Enter>.
+
+
+
+2.3.2-) O comando <CTRL>+<l>
+
+Este comando é utilizado para atualizar a tela manualmente caso a
+atualização automática falhar, por exemplo, quando uma partição for
+excluida, e continuar a ser mostrada na tela.
+   
+
+
+2.3.3-) O comando Boot <b>
+
+Este comando permite escolher se a partição Primária atual será utilizada
+para iniciar o sistema(BOOT). Selecione esta opção para selecionar entre 
+partição inicializável ou não inializável. Quando uma partição estiver 
+marcada como inicializável, aparecerá a palavra BOOT na coluna Flags(na tela
+principal do programa).
+   
+OBS: Não será necessário marcar a partição Linux como inicializável, caso se
+     esteja utilizando um Boot Manager para escolher qual sistema operacional
+     sera utilizado para inicializar o sistema.
+
+
+
+2.3.4-) O comando Delete <d>
+
+Este comando apaga a partição selecionada do disco. Após apagar a partição,
+o espaço ocupado por ela é convertido para espaço livre. 
+A partição marcada atualmente como Free Space ou como Unusable não pode 
+ser apagada.
+
+
+
+2.3.5-) O comando Geometry <g>
+
+Este comando não é mostrado no menu, pois é utilizado para alterar o 
+tamanho (Cilindros, Cabeças e Setores do disco). Este comando só pode
+ser acionado se for pressionada a tecla <g>. 
+
+ALERTA: Esta opção é recomendada somente para aqueles que sabem os riscos
+        que o uso desta opção pode fazer, e se a situação que estão, requerem
+        o seu uso.
+
+Uma situação que esta opção é util, é se o BIOS do seu computador não
+mostrar corretamente os parâmetros do disco(Cilindros, Cabeçotes ou Setores),
+sendo necessário que se passe manualmente o tamanho do disco para que seja
+feito o correto particionamento do disco. 
+
+OBS: Caso seu disco rígido for SCSI e placa controladora dele não tiver BIOS,
+     provavelmente o CFdisk não será iniciado. Se este problema ocorrer,
+     digite os parâmetros do disco na linha de comando ao iniciar o programa.
+     Para maiores detalhes, veja opções de linha de comando do CFdisk.
+
+Após pressionar <g> será mostrada a seguinte tela:
+
+----------------------------------------------------------------------------
+                              CFdisk 0.8l
+
+                         Disk Drive: /dev/hda
+                Heads:255  Sectors:63  Cilinders:627
+-----------------------------------------------------------------------------
+Name    Flags     Part Type    File System          [LABEL]     Size(MB)
+hda1     Boot      Primary     Win 95 FAT 32                     1953.12
+hda5               Logical     DOS FAT 16 (BIG)     GLEYDSON      172.58
+                   Pri/Log     Espaço Livre                      2910.55
+
+
+
+
+
+
+
+
+
+[ Cylinders]  [Heads]  [Sectors]  [Done]
+
+----------------------------------------------------------------------------
+onde:
+Cylinders: Altera o número de Cilindros do disco atual durante o particionamento.
+Heads    : Altera o número de Cabeças do disco atual durante o particionamento.
+Sectors  : Altera o número de Setores do disco atual durante o particionamento.
+Done     : Quando finalizar as alterações, tecle <d> ou selecione Done para
+           que o CFdisk modifique os valores de Cilindros, Cabeças e Setores
+           que utiliza para particionar o disco e retorne a tela anterior.
+
+
+     Quando escolher algum parâmetro acima para alteração(Cilindros, cabeçotes 
+ou Setores do disco), será vista uma tela como esta:
+----------------------------------------------------------------------------
+                              CFdisk 0.8l
+
+                       Unidade de Disco: /dev/hda
+            Cabeças:255  Setores por trilha:63  Cilindros:627
+-----------------------------------------------------------------------------
+Nome    Opções    Tipo Part.  Tipo Sist. Arquivos   [VOLUME]    Tamanho(MB)
+hda1     Boot      Primary     Win 95 FAT 32                     1953.12
+hda5               Logical     DOS FAT 16 (BIG)     GLEYDSON      172.58
+                   Pri/Log     Espaço Livre                      2910.55
+
+
+
+
+
+
+
+
+
+Enter the number of Cylinders: 627
+
+----------------------------------------------------------------------------
+O valor que aparece ao selecionar a opção, é o valor que o disco esta
+utilizando atualmente(cilindros), e será pedido que digite um valor para os 
+Cilindros, que substituirá os da BIOS durante a seção de particionamento. 
+Para sair desta tela sem alterar o valor, pressione <ESC>. A mesma tela e 
+explicação se aplicam para as alterações de Cabeças e Setores.
+
+OBS: Se por acaso digitar um valor incorretamente para o tamanho do disco e 
+    não se lembrar mais do valor antigo ou original, selecione a opção Done, e
+    tecle <q> para sair do CFdisk sem gravar as alterações feitas para o 
+    disco, pois se continuar a utilizar o CFdisk com o tamanho do disco
+    incorreto, os dados existentes nele e até mesmo partições poderão ser
+    perdidos(as).
+
+Se aumentar o tamanho do disco, setores adicionais são acrescentados no 
+final do disco, e são mostrados como espaço livre.
+Se diminuir o tamanho do disco, as partições que estavam localizadas após
+o setor/cilindro que foi excluido(se existir alguma), será apagada e a
+última partição(ou espaço livre ao final do disco rígido), terá seu
+tamanho alterado e terminará neste "novo" último setor do disco.
+
+
+
+2.3.6-) O comando Help <h> ou <?>
+
+O comando Help mostra a tela de ajuda do programa, que descreve as funções
+das teclas utilizadas pelo programa e suas funções.
+
+
+
+2.3.7-) O comando Maximize <m>
+
+Este comando aumenta a utilização de espaço do disco na partição atual. 
+Isto porque o DOS, OS/2 e outros sistemas operacionais utilizam o primeiro 
+setor da primeira trilha da partição do disco e em todas as partições Lógicas
+para iniciar o sistema operacional, utilizando a segunda trilha em diante 
+daquela partição para fazer o armazenamento de arquivos. Este espaço perdido
+entre o segundo e o último Setor da primeira trilha da primeira cabeça, pode
+ser recuperado com a utilizando este comando.
+
+Este comando faz com que a partição se torne imcompatível com DOS, OS/2 
+e outros Sistemas Operacionais que utilizam este primeiro Setor do disco 
+para iniciar o sistema operacional.
+
+Se este comando for utilizado, será colocada uma opção chamada NC(não
+compatível) em Flags(na tela principal do CFdisk).
+
+Esta opção faz o uso máximo do disco e a incompatibilidade com o DOS/OS/2, 
+etc. O padrão quando criando uma Partição, é criando Partições compativeis 
+com o DOS, OS/2, etc.
+
+OBS: O Fdisk(8) e partições formatadas com o sistema de arquivos FAT32, fazem
+     a utilização completa deste espaço entre o segundo e o último Setor da
+     primeira trilha do disco, eliminando o desperdício de espaço.
+
+
+
+2.3.8-) O comando New <n>
+
+O comando New<n>, cria uma nova partição usando o espaço livre(FreeSpace)
+existente no disco. Após escolher esta opção, o CFdisk perguntará se deseja
+criar uma partição Primária, Lógica ou Cancelar o comando. 
+
+Escolhendo criar uma partição Primária ou Lógica, o sistema perguntará o
+tamanho da partição que deseja criar, por padrão, o CFdisk mostrará o espaço
+livre total disponível no disco para a criação da nova partição(em MegaBytes).
+Tecle <Enter> para criar uma partição do tipo escolhido com este tamanho ou
+digite um tamamho menor. O CFdisk permite que seja digitados valores em:
+
+- MegaBytes(M - o padrão do programa)
+- KiloBytes(K)
+- Cilindros(C)
+- Setores(S)
+
+Digitando-se o tamanho da partição seguida de uma das letras acima. Se a 
+letra não for digitada, o programa assumirá o tamanho que digitou em MegaBytes.
+
+OBS1: Quando criar uma partição Lógica, automaticamente será criada uma 
+      partição extendida, entre hdx1 e hdx4, e a partição Extendida não é
+      mostrada na tela de particionamento de disco. Se desejar exibir a 
+      partição extendida, execute o comando PRINT <p> e escolha a opção
+      Sector para verificar qual é a identificação da partição Extendida
+      no disco. Para maiores detalhes, veja o comando PRINT <p>.
+
+OBS2: São permitidas, no máximo, 4 partições Primárias e Extendidas(3 Primárias
+      e 1 Extendida ou 4 partições Primárias em cada disco). O CFdisk 
+      calculará automaticamente os valores das partições lógicas caso
+      as primeiras 4 partições forem ocupadas.
+
+O próximo passo, é a localização da partição no espaço livre existente no 
+disco. As duas opções disponíveis são:
+
+- Beginning : A partição é colocada a partir do inicio do espaço livre no
+              disco, ocupando o espaço livre de acordo com o seu tamanho
+              (do início para o fim do espaço livre ), este é o padrão para
+              a criação de novas partições e o mais utilizado. Veja o exemplo,
+              a criação de uma partição de 30MB em um disco com 50MB de
+              espaço não particionado, sendo que este disco já possui uma
+              partição de 120MB(com espaço total de 170MB)
+
+              ##################################MMMMMMMMMMMMMMMMMMMMMMMMMM
+                    |                                   |
+               Partição existente(120MB)           Espaço Livre(50MB)
+
+
+              com a nova partição criada:
+
+              ###################################################MMMMMMMMM
+                        |                            |            |
+              Partição existente(120MB)         Nova partição   Espaço
+                                                   (30MB)        Livre
+
+- End       : A partição é criada subtraindo-se o espaço livre total do disco
+              pelo tamanho da partição que será criada, começando a criar
+              esta partição a partir do ponto que resultou esta subtração.
+              Veja abaixo no exemplo, a partição que será criada terá o
+              tamanho de 30MB e existe no disco um espaço não particionado
+              de 50MB, com 120MB já ocupados por uma partição existente:
+
+              ##################################MMMMMMMMMMMMMMMMMMMMMMMMMM
+                    |                                   |
+               Partição existente(120MB)           Espaço Livre(50MB)
+
+
+              com a nova partição criada (Selecionando a opção End):
+
+              ##################################MMMMMMMMMM#################
+                        |                            |            |
+              Partição existente(120MB)           Espaço    Nova partição
+                                                   Livre        (30MB)
+                
+              A partição que será criada utilizara o espaço livre entre o
+              último Setor do disco e o setor resultante da subtração(170MB-30MB).
+              Mesmo assim, a ordem que será criada esta partição partição
+              será criada do Setor inicial(que é o resultado da subtração)
+              para o último Setor do disco. Existirá um espaço livre de 20MB
+              entre a primeira partição (de 120MB) e a nova partição de 30MB.
+              
+
+
+2.3.9-) O comando Print <p>
+
+Este comando mostra a tabela de partição no formato selecionado na tela,
+ou permite que seja gravado um arquivo no disco. Todas as partições são
+classificadas na ordem que foram gravadas no disco.
+
+Os formatos aceitos para visualização de partições são:
+
+RAW <r> : Formato de dados do disco, mostra os setores que serão gravados 
+          para o disco, caso seja escolhido o comando WRITE <W>. O formato
+          mostrado é exatamente aquele que será gravado para ao disco. 
+          Abaixo um exemplo deste formato:
+        --------------------------------------------------------------------  
+          Disk Drive: /dev/hda
+          Sector 0:
+          0x000: EB 69 4C 49 4C 4F 01 00 14 00 D7 02 00 00 00 00
+          0x010: FB 1B CF 36 74 D8 80 23 01 75 D8 80 23 01 73 D8
+          0x020: 80 23 01 01 77 01 77 D8 80 23 01 78 D8 80 23 01
+          0x030: 64 D8 80 23 01 65 D8 80 23 01 66 D8 80 23 01 67
+          0x040: D8 80 23 01 68 D8 80 23 01 69 D8 80 23 01 6A D8
+          0x050: 80 23 01 6B D8 80 23 01 00 00 00 00 00 00 00 00
+          0x060: 00 00 00 00 00 00 00 00 00 00 00 B8 C0 07 8E D8
+          0x070: 8C 06 66 00 89 36 64 00 89 1E 68 00 88 16 6A 00
+          0x080: B8 00 9A 8E C0 B9 00 01 29 F6 29 FF FC F3 A5 EA
+          0x090: 94 00 00 9A FA 8E D8 8E C0 BC 00 B0 B8 00 90 8E
+          0x0A0: D0 FB B0 0D E8 57 00 B0 0A E8 52 00 B0 4C E8 4D
+          0x0B0: 00 BE 30 00 BB 00 10 FC AD 89 C1 AD 89 C2 09 C8
+          0x0C0: 74 20 46 E8 43 00 72 06 81 C3 00 02 EB EA 50 B0
+          0x0D0: 20 E8 2A 00 58 88 E0 E8 12 00 31 C0 88 C2 CD 13
+          0x0E0: EB CF B0 49 E8 17 00 EA 00 00 00 9B 50 C0 E8 04
+          0x0F0: E8 01 00 58 24 0F 04 30 3C 3A 72 02 04 07 30 FF
+          0x100: B4 0E CD 10 C3 5A 59 5B C3 F6 C2 40 74 52 80 E2
+          0x110: BF 53 51 52 B4 08 CD 13 72 EB 88 F3 5A 88 16 6D
+          0x120: 01 88 F2 30 F6 88 F7 58 51 86 CD D0 C5 D0 C5 80
+          0x130: E5 03 89 0E 6B 01 59 83 E1 3F F7 F1 FE C2 88 16
+          0x140: 6E 01 31 D2 43 F7 F3 88 D6 8A 16 6D 01 3B 06 6B
+          0x150: 01 77 13 86 C4 D0 C8 D0 C8 0A 06 6E 01 89 C1 5B
+          0x160: B8 01 02 CD 13 C3 5B 31 C0 F9 C3 00 00 00 00 00
+          0x170: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x190: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x1A0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x1B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 80 01
+          0x1C0: 01 00 0B FE 3F 8F 3F 00 00 00 51 4C 23 00 00 00
+          0x1D0: 41 D7 83 FE BF 6F 17 75 73 00 59 81 25 00 00 00
+          0x1E0: 01 98 05 FE 7F D6 98 42 25 00 7F 32 4E 00 00 00
+          0x1F0: 81 70 82 FE BF 72 70 F6 98 00 43 BC 00 00 55 AA
+          
+          Sector 2441880:
+          0x000: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x010: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x020: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x030: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x040: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x050: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x060: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x070: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x080: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x090: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x0A0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x0B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x0C0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x0D0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x0E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x0F0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x100: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x110: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x120: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x130: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x140: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x150: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x160: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x170: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x180: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x190: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x1A0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x1B0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 01
+          0x1C0: 01 98 0B FE 7F D6 3F 00 00 00 40 32 4E 00 00 00
+          0x1D0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x1E0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00
+          0x1F0: 00 00 00 00 00 00 00 00 00 00 00 00 00 00 55 AA
+          -----------------------------------------------------------------
+          A primeira tabela de partição mostrada é a Primária, depois
+          as tabelas de partições ligadas com cada partição lógica. Como
+          no exemplo, os dados são mostrados em bytes Hexadecimais(na 
+          primeira coluna) seguidos de 16 bytes por linha.
+
+Sector <s>: Mostra a tabela de partição classificada por setores. Esta 
+          opção mostra o espaço não particionado no disco e a partição
+          Extendida, que é mostrada antes das partições Lógicas. 
+          Abaixo um exemplo deste formato:
+          ------------------------------------------------------------------
+          Partition Table for /dev/hda
+
+                      First    Last
+           # Type     Sector   Sector   Offset  Length   Filesystem Type (ID)   Flags
+          -- ------- -------- --------- ------ --------- ---------------------- ---------
+           1 Primary        0  2313359      63  2313360  Win95 FAT32 (0B)       Boot (80)
+             Logical  2313360  2441879       0   128520  Free Space             None (00)
+           3 Primary  2441880  7566614       0  5124735  Extended (05)          None (00)
+           5 Logical  2441880  7566614      63  5124735  Win95 FAT32 (0B)       None (00)
+           2 Primary  7566615 10024559       0  2457945  Linux (83)             None (00)
+           4 Primary 10024560 10072754       0    48195  Linux Swap (82)        None (00)
+          ------------------------------------------------------------------
+
+          onde:
+          #            - Identificação da partição no disco /dev/hda
+          Type         - Tipo da partição(veja o exemplo)
+          First Sector - Primeiro Setor utilizado para o armazanamento da partição.
+          Last Sector  - Último Setor utilizado para o armazenamento da partição.
+          Offset       - 
+          Lenght       - Tamanho total da partição em setores (Last Sector - First 
+                         Sector).
+          FileSystem Type (ID) - Identificação do Sistema de Arquivos da partição, 
+                        seguido do seu código hexadecimal no CFDisk. A partição
+                        Extendida é identificada como um sistema de arquivos
+                        com o código 05 (veja o exemplo).
+          Flags        - Opções da partição seguido de seu valor em
+                         hexadecimal.
+
+Table <t> : Mostra a tabela de partição classificada pelo número da partição. 
+            Esta opção deixa fora todo espaço livre e não usado na partição.
+            Abaixo um exemplo deste formato.
+            ----------------------------------------------------------------
+            Partition Table for /dev/hda
+
+                     ---Starting---      ----Ending----    Start Number of
+             # Flags Head Sect Cyl   ID  Head Sect Cyl    Sector  Sectors
+            -- ----- ---- ---- ---- ---- ---- ---- ---- -------- ---------
+             1  0x80    1    1    0 0x0B  254   63  143       63   2313297
+             2  0x00    0    1  471 0x83  254   63  623  7566615   2457945
+             3  0x00    0    1  152 0x05  254   63  470  2441880   5124735
+             4  0x00    0    1  624 0x82  254   63  626 10024560     48195
+             5  0x00    1    1  152 0x0B  254   63  470       63   5124672
+             ---------------------------------------------------------------
+
+             onde:
+             #                 - Número da partição de disco
+             Flags             - As opções utilizadas com a partição (em 
+                                 valor Hexadecimal).
+                                 O valor 0x80 equivale a BOOT.
+                                 O valor 0x00 equivale a nenhuma opção 
+                                 utilizada naquela partição.
+             Starting
+             Head              - Cabeçote Inicial             
+             Sector            - Setor Inicial
+             Cyl               - Cilindro Inicial
+             ID                - Identificação do Sistema de arquivos(em 
+                                 hexadecimal, conforme a tabela do CFdisk).
+             Ending
+             Head              - Cabeçote Final
+             Sector            - Setor Final
+             Cyl               - Cilindro Final
+             Start Sector      - Setor inicial da partição
+             Number of Sectors - Número de setores ocupados pela partição.  
+
+Se a partição não inicia ou não termina em um cilindro limite do disco
+ou se o seu tamanho não é divisível pelo tamanho do cilindro, um * é será
+mostrado após o setor não alinhado. Este problema normalmente ocorre quando
+a partição é criada por um Sistema operacional em que o limite da partição
+não é alinhada com o cilindro ou que utiliza a contagem do tamanho do disco
+de forma diferente. 
+
+ A tabela de partição somente tem 10 bits disponível para identificar o 
+cilindro inicial e final. Assim, quando o setor inicial absoluto é um 
+cilindro maior que 1023(final do disco), o valor máximo para a cabeça 
+inicial, setor e cilindro são mostrados. Este metodo é usado pelo OS/2, e
+e corrige os problemas associados com OS/2 caso o Fdisk regrava a tabela de
+partição quanto ela não esta neste formato.
+
+Desde então Linux e OS/2 utilizam esta contagem de setores absolutos, os
+valores na cabeça inicial e final, Setor e Cilindro não são usadas.
+
+
+
+2.3.10-) O comando quit <q>
+
+Esta opção faz com que o CFdisk abandonar todas as alterações e
+retornar para o Aviso de comando. Quando esta opção é escolhida, o programa
+retorna deixando o disco como estava antes de se iniciar o particionamento.
+
+Se escolher esta opção o CFdisk abandonará o particionamento de disco
+e voltará para a linha de comandos imediatamente. Se alterar/criar/excluir
+alguma partição de disco e escolher esta opção, o programa emitirá um Beep
+indicando que alguma alteração feita no disco foi abandonada.
+
+OBS: Esta opção é útil caso tenha se cometido algum engano durante o
+     particionamento do disco, como apagar por uma partição que contém 
+     arquivos, alterar o tamanho do disco(geometria), etc. Lembre-se que
+     tudo o que fez será abandonado, durante o particionamento, se escolher
+     esta opção.
+
+
+
+2.3.11-) O comando type <t>
+
+Comando usado para alterar o tipo do sistema de arquivos utilizado
+pela partição. As partições, quando criadas, recebem o sistema de arquivos
+Linux Native(ou simplesmente Linux - tipo 83). O CFdisk pode criar, manipular,
+excluir, uma grande variedade de Sistemas de arquivos para os mais diversos
+tipos de sistemas operacionais existentes, veja o final deste manual para
+ver as partições compatíveis com este programa. 
+
+Para alterar o tipo do sistema de arquivos (File System) utilizado pela
+partição, tecle <t>, e digite o valor de acordo com a lista de partições
+disponíveis no programa.
+
+Por exemplo, para mudar a partição do tipo Linux para Linux Swap, selecione
+esta partição, e tecle <t>, e digite o número 82(que corresponde a Linux
+Native) e tecle <Enter>, e a partição terá seu sistema de arquivos alterado.
+
+
+
+2.3.12-) O comando units <u>
+
+A função deste comando é alterar as unidades de medida do tamanho da 
+partição que é mostrado na tela, por padrão, ele é mostrado em MegaBytes.
+As unidades de medida do tamanho da partição são em MegaBytes, Cilindros e
+Setores ocupados pela partição de disco.
+Abaixo um exemplo da mudança da unidade de medida para Cilindros.
+----------------------------------------------------------------------------
+                              CFdisk 0.8l
+
+                         Disk Drive: /dev/hda
+            Heads:255  Sectores per track:63  Cylinders:627
+-----------------------------------------------------------------------------
+Name       Flags        Part Type   FSType           [LABEL]    Cilinders
+hda1       Boot         Primary     Win 95 FAT 32                  249
+hda5                    Logical     DOS FAT 16 (BIG) GLEYDSON       22 
+                        Pri/Log     Free Space                     371
+
+
+
+
+
+
+
+
+
+
+[Bootable]  [Delete]  [Help]  [Maximize]  [Print]
+[Quit]      [Type]    [Units] [Write]
+----------------------------------------------------------------------------
+Será mostrada a quantidade de cilindros que a partição ocupa no disco ao
+invés do espaço em MB.
+
+
+
+2.3.13-) O comando Write <W>
+
+Este comando grava todas as tabelas de partições criadas/modificadas e
+excluidas para o disco. Só é aceita a tecla <W> em maiúscula para gravação 
+da partição de disco, por motivos de segurança para que não seja feita a
+gravação acidental das partições enquando estiver utilizando o programa. 
+Para quem utiliza as setas do teclado, o método é o mesmo que as outras 
+opções.
+
+Após selecionar esta opção, o CFdisk perguntará se confirma a gravação
+das partições para o disco. 
+
+Para gravar a partição, digite "yes" e tecle <Enter>.
+Para cancelar o comando, pressione <Esc> ou digite "no" e tecle <Enter>.
+
+Após confirmar com "yes", o CFdisk gravará a tabela de partição no disco
+e fara o Kernel re-ler a tabela de partição do disco, para se evitar 
+reiniciar o sistema para utilizar a nova tabela de partição. 
+
+A tentativa de re-leitura da tabela de partição pode falhar. Para 
+solucionar este problema, é preciso reiniciar o computador, quando o
+computador é reiniciado, o sistema operacional faz uma nova leitura das
+tabelas de partições existentes no disco, fazendo com que sejam reconhecidas
+corretamente.
+
+
+
+3-) Tipos de partições compatíveis com o CFdisk
+
+Abaixo uma listagem das partições compatíveis com o programa CFdisk e 
+seus respectivos códigos Hexadecimais, para consulta técnica ou utilização
+durante o particionamento de disco.
+
+Código Nome
+01 - 	 DOS FAT12
+02 - 	 Xenix root
+03 - 	 Xenix usr
+04 - 	 DOS FAT16 (<32MB)
+05 - 	 Extendida
+06 - 	 DOS FAT16 (>=32MB)
+07 - 	 OS/2 HPFS ou NTFS
+08 - 	 AIX
+09 - 	 AIX inicializável
+0A - 	 OS/2 Boot Manager
+0B - 	 Windows 95 FAT32
+0C - 	 Windows 95 FAT32(LBA)
+0E - 	 Windows 95 FAT16(LBA)
+0F - 	 Windows 95 Extendida
+11 - 	 DOS FAT12 oculta
+12 - 	 DOS FAT16 oculta
+16 - 	 DOS FAT16 oculta
+17 - 	 HPFS OS/2 oculta
+40 - 	 Venix 80286
+51 - 	 Novell
+52 - 	 Microport
+63 - 	 GNU Hurd
+64 - 	 Novell Netware 286
+65 - 	 Novell Netware 386
+75 - 	 PC/IX
+80 - 	 Minix Antigo
+81 - 	 Linux / Minix
+82 - 	 Linux Swap
+83 - 	 Linux Nativa
+85 - 	 Linux Extendida
+93 - 	 Amoeba
+94 - 	 Amoeba BBT
+A5 - 	 BSD/386
+A6 - 	 Open BSD
+A7 - 	 NextStep
+B7 - 	 BSDI Sistema de Arquivos
+B8 - 	 BSDI Swap
+C7 - 	 Syrinx
+DB - 	 CP/M
+E1 - 	 DOS access
+E3 - 	 DOS R/O
+F2 - 	 DOS secundária
+FF - 	 BBT
+
+
+
+
+4- ) Direitos Autorais
+
+Este documento foi desenvolvido com base em minha experiência e conhecimento em
+discos e partições, e mediante pesquisa em alguns documentos como os How-TO do
+Linux tendo como objetivo a contribuição para a comunidade Linux em geral.
+
+Gleydson M. da Silva (gleydson_s@yahoo.com ou gleydson@linuxbr.com.br)
+
+Qualquer dúvida, sugestão ou reclamação podem ser mandadas para um dos
+E-Mail's Acima. Conto com sua contribuição para a melhoria deste Manual.
+
+Autorizo a reprodução Total ou parcial deste texto para que seja utilizado para
+fins educativos, autoaprendizado, colocação em Home pages e qualquer outra 
+forma de distribuição não comercial do documento desde que sejam mantidos os 
+meus créditos pela pesquisa e desenvolvimento deste documento de acordo com os
+termos da GNU (veja abaixo).
+
+
+
+
+5- ) Licenças e Garantias sobre este documento
+
+ 
+CFdisk-Portuguese Copyright (C) 1999 Gleydson M. da Silva
+ 
+Este é um documento de livre distribuição, que pode ser copiado e 
+distribuído sob os termos da Licença Pública Geral  GNU, conforme publicada
+pela Free Software Foundation, versão 2 da licença ou (a critério do autor)
+qualquer versão posterior. 
+
+Este documento é distribuído com a itenção de ser útil ao seu utilizador,
+no entanto NÃO TEM NENHUMA GARANTIA,  EXPLÍCITAS OU IMPLÍCITAS , COMERCIAIS
+OU DE ATENDIMENTO A UMA DETERMINADA FINALIDADE. Consulte a Licença Pública 
+Geral  GNU para maiores detalhes. 
+
+gleydson_s@yahoo.com
+gleydson@linuxbr.com.br
+
+
+
+6- )Nota sobre Marcas Registradas
+
+Os programas mencionados neste manual são de propriedade dos seus respectivos
+donos:
+
+MS-DOS, Windows 3.1x, Windows 9x, Windows NT são de propriedade da Microsoft.
+OS/2 e OS/2 Warp são de propriedade da IBM
+
+
+7- ) Agradecimentos
+
+Agradeço a todas as pessoas que me mandam correções, comentários, críticas, 
+elogios, dúvidas sobre este documento, pois através destas mensagens, estão 
+contribuindo para a melhoria deste projeto e me icentivando em sua continuação.
+ 
+
+Agradecimentos especiais a:
+
+Eduardo Marcel Macan <macan@thecore.com.br> - Pelo apoio e interesse na 
+         divulgação deste projeto e outros documentos relacionados com a 
+         tradução e divulgação de documentos sobre o Linux no Brasil.
+
+Jorge Godoy <jorge@bestway.com.br> - Pela revisão deste documento e primeiras
+         orientações para a conversão deste para SGML.
+
+Adam di Carlo <adam@onshore.com> - Que me deu apoio na colocação deste documento
+         na documentação da distribuição Debian.
+
+E a voce pelo interesse em conhecer mais sobre o Linux.
+
+
+<EOF>

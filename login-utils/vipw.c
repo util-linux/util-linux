@@ -37,6 +37,11 @@
  * <joey@finlandia.infodrom.north.de>.  Support for vigr.
  *
  * Martin Schulze's patches adapted to Util-Linux by Nicolai Langfeldt.
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ * Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+ * - fixed strerr(errno) in gettext calls
  */
 
 static char version_string[] = "vipw 1.4";
@@ -59,6 +64,7 @@ static char version_string[] = "vipw 1.4";
 #include <unistd.h>
 
 #include "setpwnam.h"
+#include "nls.h"
 
 #define FILENAMELEN 67
 
@@ -140,7 +146,7 @@ pw_lock()
 #if 0 /* flock()ing is superfluous here, with the ptmp/ptmptmp system. */
 	if (flock(lockfd, LOCK_EX|LOCK_NB)) {
 		(void)fprintf(stderr,
-		    "%s: the %s file is busy.\n", progname, 
+		    _("%s: the %s file is busy.\n"), progname, 
 			      program == VIPW ? "password" : "group" );
 		exit(1);
 	}
@@ -156,13 +162,15 @@ pw_lock()
 	if (ret == -1) {
 	    if (errno == EEXIST)
 		(void)fprintf(stderr, 
-			      "%s: the %s file is busy (%s present)\n",
+			      _("%s: the %s file is busy (%s present)\n"),
 			      progname,
 			      program == VIPW ? "password" : "group",
 			      tmp_file);
-	    else
-		(void)fprintf(stderr, "%s: can't link %s: %s\n", progname,
-			      tmp_file, strerror(errno));
+	    else {
+		int errsv = errno;
+		(void)fprintf(stderr, _("%s: can't link %s: %s\n"), progname,
+			      tmp_file, strerror(errsv));
+	    }
 	    exit(1);
 	}
 	copyfile(lockfd, fd);
@@ -180,9 +188,10 @@ pw_unlock()
   unlink(tmp);
   link(orig_file, tmp);
   if (rename(tmp_file, orig_file) == -1) {
+    int errsv = errno;
     (void)fprintf(stderr, 
-		  "%s: can't unlock %s: %s (your changes are still in %s)\n", 
-		  progname, orig_file, strerror(errno), tmp_file);
+		  _("%s: can't unlock %s: %s (your changes are still in %s)\n"), 
+		  progname, orig_file, strerror(errsv), tmp_file);
     exit(1);
   }
   (void)unlink(tmp_file);
@@ -205,7 +214,7 @@ pw_edit(int notsetuid)
 
 	pid = fork();
 	if (pid < 0) {
-		(void)fprintf(stderr, "%s: Cannot fork\n", progname);
+		(void)fprintf(stderr, _("%s: Cannot fork\n"), progname);
 		exit(1);
 	}
 	if (!pid) {
@@ -245,7 +254,7 @@ pw_error(name, err, eval)
 		(void)fprintf(stderr, "%s\n", strerror(sverrno));
 	}
 	(void)fprintf(stderr,
-	    "%s: %s unchanged\n", progname, orig_file);
+	    _("%s: %s unchanged\n"), progname, orig_file);
 	(void)unlink(tmp_file);
 	exit(eval);
 }
@@ -253,6 +262,10 @@ pw_error(name, err, eval)
 int main(int argc, char *argv[])
 {
   struct stat begin, end;
+
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
 
   bzero(tmp_file, FILENAMELEN);
   progname = (rindex(argv[0], '/')) ? rindex(argv[0], '/') + 1 : argv[0];
@@ -284,7 +297,7 @@ int main(int argc, char *argv[])
   if (stat(tmp_file, &end))
     pw_error(tmp_file, 1, 1);
   if (begin.st_mtime == end.st_mtime) {
-    (void)fprintf(stderr, "%s: no changes made\n", progname);
+    (void)fprintf(stderr, _("%s: no changes made\n"), progname);
     pw_error((char *)NULL, 0, 0);
   }
   pw_unlock();

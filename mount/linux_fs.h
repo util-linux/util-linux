@@ -76,3 +76,26 @@ struct ufs_super_block {
 #define ufsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
 			 (((uint) s.s_magic[2]) << 16) + \
 			 (((uint) s.s_magic[3]) << 24))
+
+/* From Richard.Russon@ait.co.uk Wed Feb 24 08:05:27 1999 */
+#define NTFS_SUPER_MAGIC "NTFS"
+struct ntfs_super_block {
+    u_char    s_dummy[3];
+    u_char    s_magic[4];
+};
+
+/* From inspection of a few FAT filesystems - aeb */
+/* Unfortunately I find almost the same thing on an extended partition;
+   it looks like a primary has some directory entries where the extended
+   has a partition table: IO.SYS, MSDOS.SYS, WINBOOT.SYS */
+struct fat_super_block {
+    u_char    s_dummy[3];
+    u_char    s_os[8];		/* "MSDOS5.0" or "MSWIN4.0" or "MSWIN4.1" */
+    u_char    s_dummy2[32];
+    u_char    s_label[11];	/* for DOS? */
+    u_char    s_fs[8];		/* "FAT12   " or "FAT16   " or all zero   */
+                                /* OS/2 BM has "FAT     " here. */
+    u_char    s_dummy3[9];
+    u_char    s_label2[11];	/* for Windows? */
+    u_char    s_fs2[8];	        /* garbage or "FAT32   " */
+};

@@ -31,9 +31,14 @@
  * SUCH DAMAGE.
  */
 
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  * - added Native Language Support
+  */
+
 #include <sys/types.h>
 #include <stdio.h>
 #include "hexdump.h"
+#include "nls.h"
 
 FS *fshead;				/* head of format strings */
 int blocksize;				/* data block size */
@@ -46,6 +51,10 @@ int main(argc, argv)
 {
 	register FS *tfs;
 	char *p, *rindex();
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	if (!(p = rindex(argv[0], 'o')) || strcmp(p, "od"))
 		newsyntax(argc, &argv);

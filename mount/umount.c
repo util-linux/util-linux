@@ -36,6 +36,7 @@
 #include "lomount.h"
 #include "loop.h"
 #include "fstab.h"
+#include "nls.h"
 
 #ifdef HAVE_NFS
 #include <sys/socket.h>
@@ -48,12 +49,11 @@
 #include <arpa/inet.h>
 #endif
 
-static int umount2(const char *path, int flags);
-
 #ifdef MNT_FORCE
 /* Interesting ... it seems libc knows about MNT_FORCE and presumably
    about umount2 as well -- need not do anything */
 #else /* MNT_FORCE */
+static int umount2(const char *path, int flags);
 
 /* Does the present kernel source know about umount2? */
 #include <linux/unistd.h>
@@ -62,7 +62,7 @@ _syscall2(int, umount2, const char *, path, int, flags);
 #else /* __NR_umount2 */
 static int
 umount2(const char *path, int flags) {
-	fprintf(stderr, "umount: compiled without support for -f\n");
+	fprintf(stderr, _("umount: compiled without support for -f\n"));
 	errno = ENOSYS;
 	return -1;
 }
@@ -112,7 +112,7 @@ nfs_umount_rpc_call(const char *spec, const char *opts)
       hostname = xstrndup(spec, p-spec);
       dirname = xstrdup(p+1);
 #ifdef DEBUG
-      printf("host: %s, directory: %s\n", hostname, dirname);
+      printf(_("host: %s, directory: %s\n"), hostname, dirname);
 #endif
 
       if (opts && (p = strstr(opts, "addr="))) {
@@ -129,12 +129,12 @@ nfs_umount_rpc_call(const char *spec, const char *opts)
 	   saddr.sin_addr.s_addr = inet_addr(hostname);
       else {
 	   if ((hostp = gethostbyname(hostname)) == NULL) {
-		fprintf(stderr, "umount: can't get address for %s\n",
+		fprintf(stderr, _("umount: can't get address for %s\n"),
 			hostname);
 		return 1;
 	   }
 	   if (hostp->h_length > sizeof(struct in_addr)) {
-		fprintf(stderr, "umount: got bad hostp->h_length\n");
+		fprintf(stderr, _("umount: got bad hostp->h_length\n"));
 		hostp->h_length = sizeof(struct in_addr);
 	   }
 	   memcpy(&saddr.sin_addr, hostp->h_addr, hostp->h_length);
@@ -172,23 +172,23 @@ nfs_umount_rpc_call(const char *spec, const char *opts)
 static void complain(int err, const char *dev) {
   switch (err) {
     case ENXIO:
-      error ("umount: %s: invalid block device", dev); break;
+      error (_("umount: %s: invalid block device"), dev); break;
     case EINVAL:
-      error ("umount: %s: not mounted", dev); break;
+      error (_("umount: %s: not mounted"), dev); break;
     case EIO:
-      error ("umount: %s: can't write superblock", dev); break;
+      error (_("umount: %s: can't write superblock"), dev); break;
     case EBUSY:
      /* Let us hope fstab has a line "proc /proc ..."
 	and not "none /proc ..."*/
-      error ("umount: %s: device is busy", dev); break;
+      error (_("umount: %s: device is busy"), dev); break;
     case ENOENT:
-      error ("umount: %s: not found", dev); break;
+      error (_("umount: %s: not found"), dev); break;
     case EPERM:
-      error ("umount: %s: must be superuser to umount", dev); break;
+      error (_("umount: %s: must be superuser to umount"), dev); break;
     case EACCES:
-      error ("umount: %s: block devices not permitted on fs", dev); break;
+      error (_("umount: %s: block devices not permitted on fs"), dev); break;
     default:
-      error ("umount: %s: %s", dev, strerror (err)); break;
+      error (_("umount: %s: %s"), dev, strerror (err)); break;
   }
 }
 
@@ -232,7 +232,7 @@ umount_one (const char *spec, const char *node, const char *type,
 	       perror("umount2");
 	       if (errno == ENOSYS) {
 		       if (verbose)
-			       printf("no umount2, trying umount...\n");
+			       printf(_("no umount2, trying umount...\n"));
 		       res = umount (node);
 	       }
        }
@@ -245,7 +245,7 @@ umount_one (const char *spec, const char *node, const char *type,
        /* if (umnt_err == ENOENT || umnt_err == EINVAL) */
        if (umnt_err != EBUSY && strcmp(node, spec)) {
 	    if (verbose)
-		 printf ("could not umount %s - trying %s instead\n",
+		 printf (_("could not umount %s - trying %s instead\n"),
 			 node, spec);
 	    res = umount (spec);
 	    if (res < 0)
@@ -261,7 +261,7 @@ umount_one (const char *spec, const char *node, const char *type,
        res=mount(spec, node, NULL, MS_MGC_VAL | MS_REMOUNT | MS_RDONLY, NULL);
        if (res == 0) {
 	    struct mntent remnt;
-	    fprintf(stderr, "umount: %s busy - remounted read-only\n", spec);
+	    fprintf(stderr, _("umount: %s busy - remounted read-only\n"), spec);
 	    remnt.mnt_type = remnt.mnt_fsname = NULL;
 	    remnt.mnt_dir = xstrdup(node);
 	    remnt.mnt_opts = "ro";
@@ -269,7 +269,7 @@ umount_one (const char *spec, const char *node, const char *type,
 	    return 0;
        } else if (errno != EBUSY) { 	/* hmm ... */
 	    perror("remount");
-	    fprintf(stderr, "umount: could not remount %s read-only\n",
+	    fprintf(stderr, _("umount: could not remount %s read-only\n"),
 		    spec);
        }
   }
@@ -277,7 +277,7 @@ umount_one (const char *spec, const char *node, const char *type,
   if (res >= 0) {
       /* Umount succeeded, update mtab.  */
       if (verbose)
-	printf ("%s umounted\n", spec);
+	printf (_("%s umounted\n"), spec);
 
       if (!nomtab && mtab_is_writable()) {
 				/* Special stuff for loop devices */
@@ -360,7 +360,7 @@ umount_all (string_list types) {
 
      hd = mtab_head();
      if (!hd->prev)
-	  die (2, "umount: cannot find list of filesystems to unmount");
+	  die (2, _("umount: cannot find list of filesystems to unmount"));
      for (mc = hd->prev; mc != hd; mc = mc->prev) {
 	  if (matching_type (mc->mnt_type, types)) {
 	       errors |= umount_one (mc->mnt_fsname, mc->mnt_dir,
@@ -386,16 +386,12 @@ static struct option longopts[] =
   { NULL, 0, 0, 0 }
 };
 
-char *usage_string = "\
-Usage: umount [-hV]\n\
-       umount -a [-f] [-r] [-n] [-v] [-t vfstypes]\n\
-       umount [-f] [-r] [-n] [-v] special | node...\n\
-";
-
 static void
 usage (FILE *fp, int n)
 {
-  fprintf (fp, "%s", usage_string);
+  fprintf (fp, _("Usage: umount [-hV]\n"
+	       "       umount -a [-f] [-r] [-n] [-v] [-t vfstypes]\n"
+	       "       umount [-f] [-r] [-n] [-v] special | node...\n"));
   exit (n);
 }
 
@@ -411,6 +407,10 @@ main (int argc, char *argv[])
   struct mntentchn *mc, *fs;
   char *file;
   int result = 0;
+
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
 
   while ((c = getopt_long (argc, argv, "afhnrt:vV",
 			   longopts, NULL)) != EOF)
@@ -450,7 +450,7 @@ main (int argc, char *argv[])
     {
       suid = 1;
       if (all || types || nomtab || force)
-	die (2, "umount: only root can do that");
+	die (2, _("umount: only root can do that"));
     }
 
   argc -= optind;
@@ -458,32 +458,32 @@ main (int argc, char *argv[])
 
   if (all) {
        if (types == NULL)
-	  types = parse_list(xstrdup("noproc"));
+	  types = parse_list("noproc");
        result = umount_all (types);
   } else if (argc < 1) {
        usage (stderr, 2);
   } else while (argc--) {
        file = canonicalize (*argv); /* mtab paths are canonicalized */
        if (verbose > 1)
-	  printf("Trying to umount %s\n", file);
+	  printf(_("Trying to umount %s\n"), file);
 
        mc = getmntfilesbackward (file, NULL);
        if (!mc && verbose)
-	  printf("Could not find %s in mtab\n", file);
+	  printf(_("Could not find %s in mtab\n"), file);
 
        if (suid) {
 	  if (!mc)
-	    die (2, "umount: %s is not mounted (according to mtab)", file);
+	    die (2, _("umount: %s is not mounted (according to mtab)"), file);
 	  if (getmntfilesbackward (file, mc))
-	    die (2, "umount: it seems %s is mounted multiple times", file);
+	    die (2, _("umount: it seems %s is mounted multiple times"), file);
 	  if (!(fs = getfsspec (file)) && !(fs = getfsfile (file)))
-	    die (2, "umount: %s is not in the fstab (and you are not root)",
+	    die (2, _("umount: %s is not in the fstab (and you are not root)"),
 		 file);
 	  if ((!streq (mc->mnt_fsname, fs->mnt_fsname) &&
 	       !streq (mc->mnt_fsname, canonicalize (fs->mnt_fsname)))
 	      || (!streq (mc->mnt_dir, fs->mnt_dir) &&
 		  !streq (mc->mnt_dir, canonicalize (fs->mnt_dir)))) {
-	    die (2, "umount: %s mount disagrees with the fstab", file);
+	    die (2, _("umount: %s mount disagrees with the fstab"), file);
 	  }
 
 	  /* User mounting and unmounting is allowed only
@@ -502,7 +502,7 @@ main (int argc, char *argv[])
 	      options = cdr (options);
 	  }
 	  if (!options)
-	    die (2, "umount: only root can unmount %s from %s",
+	    die (2, _("umount: only root can unmount %s from %s"),
 		 fs->mnt_fsname, fs->mnt_dir);
 	  if (streq (car (options), "user")) {
 	      char *user = getusername();
@@ -512,7 +512,7 @@ main (int argc, char *argv[])
 		  char *co = car (options);
 		  if (!strncmp(co, "user=", 5)) {
 		      if (!user || !streq(co+5,user))
-			  die(2, "umount: only %s can unmount %s from %s",
+			  die(2, _("umount: only %s can unmount %s from %s"),
 			      co+5, fs->mnt_fsname, fs->mnt_dir);
 		      break;
 		  }

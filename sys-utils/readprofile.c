@@ -18,6 +18,11 @@
  *   Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
  */
 
+/*
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ */
+
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
@@ -26,6 +31,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include "nls.h"
 
 #define RELEASE "2.0, May 1996"
 
@@ -41,14 +47,14 @@ static char optstring[]="m:p:itvarV";
 void usage()
 {
   fprintf(stderr,
-		  "%s: Usage: \"%s [options]\n"
+		  _("%s: Usage: \"%s [options]\n"
 		  "\t -m <mapfile>  (default = \"%s\")\n"
 		  "\t -p <pro-file> (default = \"%s\")\n"
 		  "\t -i            print only info about the sampling step\n"
 		  "\t -v            print verbose data\n"
 		  "\t -a            print all symbols, even if count is 0\n"
 		  "\t -r            reset all the counters (root only)\n"
-		  "\t -V            print version and exit\n"
+		  "\t -V            print version and exit\n")
 		  ,prgname,prgname,defaultmap,defaultpro);
   exit(1);
 }
@@ -73,7 +79,7 @@ FILE *pro;
 FILE *map;
 int proFd;
 char *mapFile, *proFile;
-unsigned int len, add0=0, step, index=0;
+unsigned int len=0, add0=0, step, index=0;
 unsigned int *buf, total, fn_len;
 unsigned int fn_add, next_add;           /* current and next address */
 char fn_name[S_LEN], next_name[S_LEN];   /* current and next name */
@@ -85,6 +91,10 @@ int maplineno=1;
 int popenMap;   /* flag to tell if popen() has been used */
 
 #define next (current^1)
+
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
 
   prgname=argv[0];
   proFile=defaultpro;
@@ -100,7 +110,7 @@ int popenMap;   /* flag to tell if popen() has been used */
       case 'i': optInfo++;      break;
       case 'r': optReset++;     break;
       case 'v': optVerbose++;   break;
-      case 'V': printf("%s Version %s\n",prgname,RELEASE); exit(0);
+      case 'V': printf(_("%s Version %s\n"),prgname,RELEASE); exit(0);
       default: usage();
       }
     }
@@ -112,7 +122,7 @@ int popenMap;   /* flag to tell if popen() has been used */
     pro=fopen(defaultpro,"w");
     if (!pro)
       {perror(proFile); exit(1);}
-    fprintf(pro,"anything\n");
+    fprintf(pro,_("anything\n"));
     fclose(pro);
     exit(0);
     }
@@ -141,7 +151,7 @@ int popenMap;   /* flag to tell if popen() has been used */
   step=buf[0];
   if (optInfo)
     {
-    printf("Sampling_step: %i\n",step);
+    printf(_("Sampling_step: %i\n"),step);
     exit(0);
     } 
 
@@ -154,7 +164,7 @@ int popenMap;   /* flag to tell if popen() has been used */
     {
     if (sscanf(mapline,"%x %s %s",&fn_add,mode,fn_name)!=3)
       {
-      fprintf(stderr,"%s: %s(%i): wrong map line\n",
+      fprintf(stderr,_("%s: %s(%i): wrong map line\n"),
 	      prgname,mapFile, maplineno);
       exit(1);
       }
@@ -167,7 +177,7 @@ int popenMap;   /* flag to tell if popen() has been used */
 
   if (!add0)
     {
-    fprintf(stderr,"%s: can't find \"_stext\" in %s\n",prgname, mapFile);
+    fprintf(stderr,_("%s: can't find \"_stext\" in %s\n"),prgname, mapFile);
     exit(1);
     }
 
@@ -180,7 +190,7 @@ int popenMap;   /* flag to tell if popen() has been used */
 
     if (sscanf(mapline,"%x %s %s",&next_add,mode,next_name)!=3)
       {
-      fprintf(stderr,"%s: %s(%i): wrong map line\n",
+      fprintf(stderr,_("%s: %s(%i): wrong map line\n"),
 	      prgname,mapFile, maplineno);
       exit(1);
       }
@@ -208,7 +218,7 @@ int popenMap;   /* flag to tell if popen() has been used */
 	   0,"total",total,total/(double)(fn_add-add0));
   else
     printf("%6i %-40s %8.4f\n",
-	   total,"total",total/(double)(fn_add-add0));
+	   total,_("total"),total/(double)(fn_add-add0));
 	
   popenMap ? pclose(map) : fclose(map);
   exit(0);

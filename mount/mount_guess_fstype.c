@@ -14,7 +14,11 @@
  * Wed Nov  11 11:33:55 1998: K.Garloff@ping.de, try /etc/filesystems before
  * /proc/filesystems
  *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  * aeb - many changes.
+ *
  */
 
 #include <stdio.h>
@@ -27,6 +31,7 @@
 #include "linux_fs.h"
 #include "mount_guess_fstype.h"
 #include "sundries.h"		/* for xstrdup */
+#include "nls.h"
 
 #define ETC_FILESYSTEMS		"/etc/filesystems"
 #define PROC_FILESYSTEMS	"/proc/filesystems"
@@ -60,12 +65,14 @@ swapped(unsigned short a) {
     Corrected the test for xiafs - aeb
     Added romfs - aeb
     Added ufs from a patch by jj. But maybe there are several types of ufs?
+    Added ntfs from a patch by Richard Russon.
+    Added a very weak heuristic for vfat - aeb
 
-    Currently supports: minix, ext, ext2, xiafs, iso9660, romfs, ufs
+    Currently supports: minix, ext, ext2, xiafs, iso9660, romfs, ufs, ntfs, vfat
 */
 static char
 *magic_known[] = { "minix", "ext", "ext2", "xiafs", "iso9660", "romfs",
-		   "ufs" };
+		   "ufs", "ntfs" };
 
 static int
 tested(const char *device) {
@@ -89,6 +96,8 @@ fstype(const char *device) {
     union {
 	struct xiafs_super_block xiasb;
 	char romfs_magic[8];
+	struct ntfs_super_block ntfssb;
+	struct fat_super_block fatsb;
     } xsb;
     struct ufs_super_block ufssb;
     union {
@@ -132,6 +141,15 @@ fstype(const char *device) {
 	      type = "xiafs";
 	 else if(!strncmp(xsb.romfs_magic, "-rom1fs-", 8))
 	      type = "romfs";
+	 else if(!strncmp(xsb.ntfssb.s_magic, NTFS_SUPER_MAGIC,
+			  sizeof(xsb.ntfssb.s_magic)))
+	      type = "ntfs";
+	 else if ((!strncmp(xsb.fatsb.s_os, "MSDOS", 5) ||
+		   !strncmp(xsb.fatsb.s_os, "MSWIN", 5))
+		  && (!strncmp(xsb.fatsb.s_fs, "FAT12   ", 8) ||
+		      !strncmp(xsb.fatsb.s_fs, "FAT16   ", 8) ||
+		      !strncmp(xsb.fatsb.s_fs2, "FAT32   ", 8)))
+	      type = "vfat";	/* only guessing - might as well be fat or umsdos */
     }
 
     if (!type) {
@@ -166,12 +184,12 @@ char *
 guess_fstype_from_superblock(const char *spec) {
       char *type = fstype(spec);
       if (verbose) {
-	  printf ("mount: you didn't specify a filesystem type for %s\n",
+	  printf (_("mount: you didn't specify a filesystem type for %s\n"),
 		  spec);
 	  if (type)
-	    printf ("       I will try type %s\n", type);
+	    printf (_("       I will try type %s\n"), type);
 	  else
-	    printf ("       I will try all types mentioned in %s or %s\n",
+	    printf (_("       I will try all types mentioned in %s or %s\n"),
 		    ETC_FILESYSTEMS, PROC_FILESYSTEMS);
       }
       return type;
@@ -197,7 +215,7 @@ procfsopen(void) {
 static char *
 procfsnext(void) {
    char line[100];
-   static char fsname[50];
+   static char fsname[100];
 
    while (fgets(line, sizeof(line), procfs)) {
       if (sscanf (line, "nodev %[^\n]\n", fsname) == 1) continue;

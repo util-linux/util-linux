@@ -26,6 +26,9 @@
    59 Bcy, 3161:       PRAISE_BOB and KILL_BOB options split, other minor
                        changes.
 
+   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+   - added Native Language Support
+
 */
 
 
@@ -57,6 +60,7 @@
 #include <string.h>
 #include <time.h>
 #include <stdio.h>
+#include "nls.h"
 
 #ifndef __GNUC__
 #define inline /* foo */
@@ -147,6 +151,10 @@ main (int argc, char *argv[])
     char schwa[23*17], *fnord=0;
     int pi;
 
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
+
     srandom(time(NULL));
     /* do args here */
     for(pi=1; pi<argc; pi++) {
@@ -173,7 +181,7 @@ main (int argc, char *argv[])
 	fnord=fnord?fnord:default_fmt;
     } else if (argc!=pi) { 
       usage:
-	fprintf(stderr,"usage: %s [+format] [day month year]\n", argv[0]);
+	fprintf(stderr,_("usage: %s [+format] [day month year]\n"), argv[0]);
 	exit(1);
     } else {
 	t= time(NULL);
@@ -219,7 +227,7 @@ void format(char *buf, const char* fmt, struct disc_time dt)
     for(i=0; i<fmtlen; i++) {
 	if((i==tib_start) && (dt.day==-1)) {
 	    /* handle St. Tib's Day */
-	    strcpy(bufptr, "St. Tib's Day"); bufptr += 13;
+	    strcpy(bufptr, _("St. Tib's Day")); bufptr += 13;
 	    i=tib_end;
 	} else {
 	    if(fmt[i]=='%') {

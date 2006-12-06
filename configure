@@ -1,0 +1,362 @@
+#!/bin/sh
+# Configure script for util-linux - aeb, 990205
+#
+# We need to find out the following things:
+#
+# 1. For mount/nfsmount.c: is inet_aton() available?
+# 2. For fdisk/fdisksunlabel.c: is there a <scsi/scsi.h>?
+#    For fdisk/fdisk.c: is there a <linux/blkpg.h>?
+# 3. For sys-utils/ipcs.c: do we need __KERNEL__ and <linux/linkage.h>?
+# 4. For sys-utils/cytune.c: do we need <linux/tqueue.h>?
+# 5. For sys-utils/kbd_rate.c: does <linux/kd.h> exist?
+# 6. For cfdisk, setterm, more, ul: do we have ncurses? How installed?
+#    For more: do we have libtermcap?
+# 7. For chfn, chsh, login, newgrp, passwd: do we need -lcrypt?
+# 8. For sln: does static compilation work?
+#  9. For lib/nls.h: do we have <locale.h>?
+# 10. For lib/nls.h: do we have <libintl.h> and gettext()?
+# 11. For xgettext: does it take the option --foreign-user?
+# 12. For cal.c: do we have <langinfo.h>?
+# 13. For err.c: do we have __progname?
+# 14. For script.c: do we have <pty.h> and openpty()?
+
+if test "$RANDOM" = "$RANDOM"; then
+  # Plain old Bourne shell.
+  echo checking for gcc
+  test -z "$CC" -a -n "`gcc 2>&1`" && CC="gcc -O"
+else
+  # ksh, bash or zsh.  ksh and zsh write "command not found" to stderr.
+  echo checking for gcc
+  test -z "$CC" && type gcc && CC="gcc -O"
+fi
+
+CC=${CC-cc}
+CFLAGS=${CFLAGS-"-O"}
+DEFS=
+LIBS=
+compile='$CC $CFLAGS $DEFS conftest.c -o conftest $LIBS >/dev/null 2>&1'
+static_compile='$CC -static $DEFS conftest.c -o conftest $LIBS >/dev/null 2>&1'
+
+rm -f make_include defines.h conftest.c conftest
+
+#
+# 1. For mount/nfsmount.c: is inet_aton() available?
+#
+echo "
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
+main(int a, char **v){
+  if (a == -1)	/* false */
+	inet_aton((const char *) 0, (struct in_addr *) 0);
+  exit(0);
+}
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+	echo "#define HAVE_inet_aton" >> defines.h
+	echo "You have inet_aton()"
+else
+	echo "You don't have inet_aton()"
+fi
+rm -f conftest conftest.c
+
+#
+# 2. For fdisk/fdisksunlabel.c: is <scsi/scsi.h> available?
+#    Some kernels have <scsi/scsi.h> that uses u_char
+#    But maybe there is already a typedef. Let us use a #define
+#
+echo "
+#define u_char	unsigned char
+#include <scsi/scsi.h>
+#undef u_char
+main(){ exit(0); }
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+        echo "#define HAVE_scsi_h" >> defines.h
+        echo "You have <scsi/scsi.h>"
+else
+        echo "You don't have <scsi/scsi.h>"
+fi
+rm -f conftest conftest.c
+
+#
+# 2A. For fdisk/fdisk.c: is <linux/blkpg.h> available?
+#
+echo "
+#include <linux/blkpg.h>
+main(){ exit(0); }
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+        echo "#define HAVE_blkpg_h" >> defines.h
+        echo "You have <linux/blkpg.h>"
+else
+        echo "You don't have <linux/blkpg.h>"
+fi
+rm -f conftest conftest.c
+
+#
+# 3. ipcs.c includes <sys/shm.h> and family
+# Do we need __KERNEL__ and asmlinkage for SHM_DEST?
+#
+echo "
+#include <sys/shm.h>
+main(){ int i=SHM_DEST; exit(0); }
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+	echo "You don't need <linux/linkage.h>"
+else
+	echo "#define NEED_linkage_h" >> defines.h
+	echo "You need <linux/linkage.h>"
+fi
+rm -f conftest conftest.c
+
+#
+# 4. cytune.c may need struct tq_struct
+#
+echo "
+#include <sys/types.h>
+#include <linux/cyclades.h>
+main(){ exit(0); }
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+	echo "You don't need <linux/tqueue.h>"
+else
+	echo "#define NEED_tqueue_h" >> defines.h
+	echo "You need <linux/tqueue.h>"
+fi
+rm -f conftest conftest.c
+
+#
+# 5. Does <linux/kd.h> exist?
+#
+echo "
+#include <linux/kd.h>
+main(){ exit(0); }
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+	echo "#define HAVE_kd_h" >> defines.h
+	echo "You have <linux/kd.h>"
+else
+	echo "You don't have <linux/kd.h>"
+fi
+rm -f conftest conftest.c
+
+#
+# 6. How is [n]curses installed?
+#
+test_curses_h=0
+have_ncurses=1
+if [ -f /usr/include/ncurses/curses.h ]; then
+	echo "HAVE_NCURSES=yes" >> make_include
+	echo "CURSESFLAGS=-I/usr/include/ncurses -DNCH=0" >> make_include
+	echo "You have ncurses. Using <ncurses/curses.h>."
+elif [ -f /usr/include/ncurses.h ]; then
+	echo "HAVE_NCURSES=yes" >> make_include
+	echo "CURSESFLAGS=-DNCH=1" >> make_include
+	echo "You have ncurses. Using <ncurses.h>."
+elif [ -f /usr/local/include/ncurses.h ]; then
+	echo "HAVE_NCURSES=yes" >> make_include
+	echo "CURSESFLAGS=-I/usr/local/include -DNCH=1" >> make_include
+	echo "You have ncurses. Using /usr/local/include/ncurses.h."
+elif [ -f /usr/include/curses.h ]; then
+	test_curses_h=1
+else
+	have_ncurses=0
+fi
+#
+# If we found a curses.h, test whether it is ncurses
+# (It should define __NCURSES_H and NCURSES_VERSION and NCURSES_CONST ...)
+#
+if [ $test_curses_h = 1 ]; then
+  echo "
+  #include <curses.h>
+  main(){ char *c = NCURSES_VERSION; exit(0); }
+  " > conftest.c
+  eval $compile
+  if test -s conftest && ./conftest 2>/dev/null; then
+	echo "HAVE_NCURSES=yes" >> make_include
+	echo "CURSESFLAGS=-DNCH=0" >> make_include
+	echo "You have ncurses. Using <curses.h>."
+  else
+	have_ncurses=0
+  fi
+  rm -f conftest conftest.c
+fi
+
+if [ $have_ncurses = 0 ]; then
+	echo "HAVE_NCURSES=no" >> make_include
+	echo "You don't have ncurses - I will not make ul and setterm."
+else
+	echo "LIBCURSES=-lncurses" >> make_include
+fi
+
+#
+# Some systems have /usr/lib/termcap.so -> /usr/lib/termcap.so.2
+# where however the latter file does not exist. When termcap does
+# not exist, we can try to compile more with curses instead.
+#
+echo '
+#include <termcap.h>
+main(){ exit(0); tgetnum("li"); }
+' > conftest.c
+LIBS=-ltermcap
+eval $compile
+LIBS=
+if test -s conftest && ./conftest 2>/dev/null; then
+	echo "#define HAVE_termcap" >> defines.h
+	echo "LIBTERMCAP=-ltermcap" >> make_include
+	echo "You have termcap"
+else
+	echo "HAVE_TERMCAP=no" >> make_include
+	echo "You don't have termcap"
+fi
+rm -f conftest conftest.c
+
+#
+# 7. Do we need -lcrypt?
+#
+echo '
+#define _XOPEN_SOURCE
+#include <unistd.h>
+main(){ char *c = crypt("abc","pw"); exit(0); }
+' > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+	echo "NEED_LIBCRYPT=no" >> make_include
+	echo "You don't need -lcrypt"
+else
+	echo "NEED_LIBCRYPT=yes" >> make_include
+	echo "You need -lcrypt"
+fi
+rm -f conftest conftest.c
+
+#
+# 8. Does static compilation work?
+#
+echo "
+main(){ return 0; }
+" > conftest.c
+eval $static_compile
+if test -s conftest && ./conftest 2>/dev/null; then
+	: OK, nothing special
+else
+	echo "CAN_DO_STATIC=no" >> make_include
+	echo "Strange... Static compilation fails here."
+fi
+
+#
+# 9. For lib/nls.h: do we have <locale.h>?
+#
+echo "
+#include <locale.h>
+main(){ exit(0); }
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+        echo "#define HAVE_locale_h" >> defines.h
+        echo "You have <locale.h>"
+else
+        echo "You don't have <locale.h>"
+fi
+rm -f conftest conftest.c
+
+
+#
+# 10. For lib/nls.h: do we have <libintl.h> and gettext() ?
+#
+echo '
+#include <libintl.h>
+main(int a, char **v){
+  if (a == -1)  /* false */
+        gettext("There is no gettext man page\n");
+  exit(0);
+}
+' > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+        echo '#define HAVE_libintl_h' >> defines.h
+        echo "You have <libintl.h> and gettext()"
+        echo '#define ENABLE_NLS' >> defines.h
+        echo "Assuming that you want to enable NLS support."
+        echo "(Otherwise, edit defines.h)"
+        ENABLE_NLS=yes
+else
+        echo "You don't have <libintl.h>"
+        ENABLE_NLS=no
+fi
+rm -f conftest conftest.c
+
+
+#
+# 11. Does xgettext exist and take the option --foreign-user?
+#
+if (test $ENABLE_NLS = yes && type xgettext > /dev/null 2>&1); then
+	msg=`xgettext --foreign-user 2>&1 | grep unrecognized`
+	if test -n "$msg"; then
+		echo "FOREIGN = " >> make_include
+	else
+		echo "FOREIGN = --foreign-user" >> make_include
+	fi
+	echo "HAVE_XGETTEXT=yes" >> make_include
+else
+	echo "HAVE_XGETTEXT=no" >> make_include
+fi
+
+#
+# 12. For cal.c: do we have <langinfo.h>?
+#
+echo "
+#include <langinfo.h>
+main(){ exit(0); }
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+        echo "#define HAVE_langinfo_h" >> defines.h
+        echo "You have <langinfo.h>"
+else
+        echo "You don't have <langinfo.h>"
+fi
+rm -f conftest conftest.c
+
+
+#
+# 13. For err.c: do we have __progname?
+# [make sure gcc -O does not optimize the access away]
+#
+echo "
+#include <stdio.h>
+extern char *__progname;
+main(){ printf(__progname); exit(0); }
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest > /dev/null 2>/dev/null; then
+        echo "#define HAVE_progname" >> defines.h
+        echo "You have __progname"
+else
+        echo "You don't have __progname"
+fi
+rm -f conftest conftest.c
+
+
+#
+# 14. For script.c: do we have <pty.h> and openpty()?
+#
+echo "
+#include <pty.h>
+main(){ exit(0); openpty(0, 0, 0, 0, 0); }
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+	echo "HAVE_OPENPTY=yes" >> make_include
+	echo "#define HAVE_openpty" >> defines.h
+	echo "You have <pty.h> and openpty()"
+else
+	echo "You don't have <pty.h> and openpty()"
+fi
+rm -f conftest conftest.c

@@ -30,6 +30,10 @@
  * OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
  * SUCH DAMAGE.
  */
+ 
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ */
 
 #include <sys/types.h>
 #include <sys/ioctl.h>
@@ -41,6 +45,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include "nls.h"
 
 void  c_columnate __P((void));
 void *emalloc __P((int));
@@ -74,6 +79,9 @@ main(argc, argv)
 	extern char *__progname;
 	__progname = argv[0];
 #endif
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	if (ioctl(1, TIOCGWINSZ, &win) == -1 || !win.ws_col) {
 		if ((p = getenv("COLUMNS")) != NULL)
@@ -265,7 +273,7 @@ input(fp)
 		if (!*p)
 			continue;
 		if (!(p = strchr(p, '\n'))) {
-			warnx("line too long");
+			warnx(_("line too long"));
 			eval = 1;
 			continue;
 		}
@@ -300,6 +308,6 @@ usage()
 {
 
 	(void)fprintf(stderr,
-	    "usage: column [-tx] [-c columns] [file ...]\n");
+	    _("usage: column [-tx] [-c columns] [file ...]\n"));
 	exit(1);
 }

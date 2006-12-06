@@ -31,6 +31,10 @@
  * SUCH DAMAGE.
  */
 
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  * - added Native Language Support
+  */
+
 #include <stdio.h>
 
 /*

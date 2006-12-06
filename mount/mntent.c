@@ -1,11 +1,16 @@
 /* Private version of the libc *mntent() routines. */
 /* Note slightly different prototypes. */
 
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ */
+
 #include <stdio.h>
 #include <string.h>		/* for index */
 #include <ctype.h>		/* for isdigit */
 #include "mntent.h"
 #include "sundries.h"		/* for xmalloc */
+#include "nls.h"
 
 /* Unfortunately the classical Unix /etc/mtab and /etc/fstab
    do not handle directory names containing spaces.
@@ -157,8 +162,8 @@ my_getmntent (mntFILE *mfp) {
 			/* Missing final newline?  Otherwise extremely */
 			/* long line - assume file was corrupted */
 			if (feof(mfp->mntent_fp)) {
-				fprintf(stderr, "[mntent]: warning: no final "
-					"newline at the end of %s\n",
+				fprintf(stderr, _("[mntent]: warning: no final "
+					"newline at the end of %s\n"),
 					mfp->mntent_file);
 				s = index (buf, 0);
 			} else {
@@ -167,6 +172,8 @@ my_getmntent (mntFILE *mfp) {
 			}
 		}
 		*s = 0;
+		if (--s >= buf && *s == '\r')
+			*s = 0;
 		s = skip_spaces(buf);
 	} while (*s == '\0' || *s == '#');
 
@@ -206,9 +213,9 @@ my_getmntent (mntFILE *mfp) {
 
  err:
 	mfp->mntent_softerrs++;
-	fprintf(stderr, "[mntent]: line %d in %s is bad%s\n",
+	fprintf(stderr, _("[mntent]: line %d in %s is bad%s\n"),
 		mfp->mntent_lineno, mfp->mntent_file,
 		(mfp->mntent_errs || mfp->mntent_softerrs >= ERR_MAX) ?
-		"; rest of file ignored" : "");
+		_("; rest of file ignored") : "");
 	goto again;
 }

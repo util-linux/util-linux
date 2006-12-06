@@ -21,7 +21,8 @@
 
 #define SIZE(a)	(sizeof(a)/sizeof((a)[0]))
 
-#define cround(n)	(((n) + display_factor * unit_flag) / display_factor)
+#define cround(n)	(display_in_cyl_units ? ((n)/units_per_sector)+1 : (n))
+#define scround(x)	(((x)+units_per_sector-1)/units_per_sector)
 
 #if defined(__GNUC__) || defined(HAS_LONG_LONG)
 typedef long long ext2_loff_t;
@@ -46,23 +47,19 @@ struct partition {
 	unsigned char size4[4];         /* nr of sectors in partition */
 };
 
-enum failure {usage, unable_to_open, unable_to_read, unable_to_seek,
+enum failure {usage, usage2, ioctl_error,
+	unable_to_open, unable_to_read, unable_to_seek,
 	unable_to_write, out_of_memory, no_partition, no_device};
 
 enum action {fdisk, require, try_only, create_empty};
-
-struct systypes {
-  unsigned char index;
-  char *name;
-};
 
 /* prototypes for fdisk.c */
 extern char *disk_device,
             *line_ptr;
 extern int fd,
            partitions;
-extern uint unit_flag,
-            display_factor;
+extern uint display_in_cyl_units,
+            units_per_sector;
 extern struct partition *part_table[];
 extern void fatal(enum failure why);
 extern int get_boot(enum action what);
@@ -72,7 +69,10 @@ extern int read_line (void);
 extern char read_char(char *mesg);
 extern int read_hex(struct systypes *sys);
 uint read_int(uint low, uint dflt, uint high, uint base, char *mesg);
-extern char *const str_units(void);
+
+#define PLURAL	0
+#define SINGULAR 1
+extern char *const str_units(int);
 
 extern unsigned int get_start_sect(struct partition *p);
 extern unsigned int get_nr_sects(struct partition *p);

@@ -15,10 +15,10 @@ will start to repeat.
 
 Usage examples:
 
-kbdrate                 set rate to IBM default (10.9 cps, 250mS delay)
-kbdrate -r 30.0         set rate to 30 cps and delay to 250mS
-kbdrate -r 20.0 -s      set rate to 20 cps (delay 250mS) -- don't print message
-kbdrate -r 0 -d 0       set rate to 2.0 cps and delay to 250 mS
+kbdrate                 set rate to IBM default (10.9 cps, 250ms delay)
+kbdrate -r 30.0         set rate to 30 cps and delay to 250ms
+kbdrate -r 20.0 -s      set rate to 20 cps (delay 250ms) -- don't print message
+kbdrate -r 0 -d 0       set rate to 2.0 cps and delay to 250 ms
 
 I find it useful to put kbdrate in my /etc/rc file so that the keyboard
 rate is set to something that I find comfortable at boot time.  This sure
@@ -57,6 +57,15 @@ beats rebuilding the kernel!
   kbdrate now first tries if the KDKBDREP ioctl is available. If it
   is, it is used, else the old method is applied.
 
+  1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  - added Native Language Support
+
+  1999-03-17
+  Linux/SPARC modifications by Jeffrey Connell <ankh@canuck.gen.nz>:
+  It seems that the KDKBDREP ioctl is not available on this platform.
+  However, Linux/SPARC has its own ioctl for this, with yet another
+  different measurement system.  Thus, try for KIOCSRATE, too.
+
 */
 
 #include <stdio.h>
@@ -65,14 +74,18 @@ beats rebuilding the kernel!
 #include <errno.h>
 #include <sys/file.h>
 #include <sys/ioctl.h>
-#include <linux/version.h>
-#if LINUX_VERSION_CODE >= 131072
-/* kd.h is not available with all linux versions.  131072 is equivalent
-   to linux 2.0.0 */
+
+#include "../defines.h"
+#ifdef HAVE_kd_h
 #include <linux/kd.h>
 #endif
+#ifdef __sparc__
+#include <asm/param.h>
+#include <asm/kbio.h>
+#endif
 
-#define VERSION "1.3"
+#include "nls.h"
+#include "../version.h"
 
 static int valid_rates[] = { 300, 267, 240, 218, 200, 185, 171, 160, 150,
                                    133, 120, 109, 100, 92, 86, 80, 75, 67,
@@ -83,15 +96,98 @@ static int valid_rates[] = { 300, 267, 240, 218, 200, 185, 171, 160, 150,
 static int valid_delays[] = { 250, 500, 750, 1000 };
 #define DELAY_COUNT (sizeof( valid_delays ) / sizeof( int ))
 
+int
+KDKBDREP_ioctl_ok(double rate, int delay, int silent) {
 #ifdef KDKBDREP
-static int ioctl_possible = 0;
-struct kbd_repeat kbdrep_s;
-#endif
+     /* This ioctl is defined in <linux/kd.h> but is not
+	implemented anywhere - must be in some m68k patches. */
+   struct kbd_repeat kbdrep_s;
+
+   /* don't change, just test */
+   kbdrep_s.rate = -1;
+   kbdrep_s.delay = -1;
+   if (ioctl( 0, KDKBDREP, &kbdrep_s )) {
+     if (errno == EINVAL)
+       return 0;
+     perror( "ioctl(KDKBDREP)" );
+     exit( 1 );
+   }
+
+   /* do the change */
+   if (rate == 0)				/* switch repeat off */
+     kbdrep_s.rate = 0;
+   else
+     kbdrep_s.rate  = 1000.0 / rate;		/* convert cps to msec */
+   if (kbdrep_s.rate < 1)
+     kbdrep_s.rate = 1;
+   kbdrep_s.delay = delay;
+   if (kbdrep_s.delay < 1)
+     kbdrep_s.delay = 1;
+   
+   if (ioctl( 0, KDKBDREP, &kbdrep_s )) {
+     perror( "ioctl(KDKBDREP)" );
+     exit( 1 );
+   }
+
+   /* report */
+   if (kbdrep_s.rate == 0)
+     rate = 0;
+   else
+     rate = 1000.0 / (double) kbdrep_s.rate;
+
+   if (!silent)
+     printf( _("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
+	     rate, kbdrep_s.delay );
+
+   return 1;			/* success! */
+
+#else /* no KDKBDREP */
+   return 0;
+#endif /* KDKBDREP */
+}
+
+int
+KIOCSRATE_ioctl_ok(double rate, int delay, int silent) {
+#ifdef KIOCSRATE
+   struct kbd_rate kbdrate_s;
+   int fd;
+
+   fd = open("/dev/kbd", O_RDONLY);
+   if (fd == -1) {
+     perror( "open(/dev/kbd)" );
+     exit( 1 );
+   }
+
+   kbdrate_s.rate = (int) (rate + 0.5);  /* must be integer, so round up */
+   kbdrate_s.delay = delay * HZ / 1000;  /* convert ms to Hz */
+   if (kbdrate_s.rate > 50)
+     kbdrate_s.rate = 50;
+
+   if (ioctl( fd, KIOCSRATE, &kbdrate_s )) {
+     perror( "ioctl(KIOCSRATE)" );
+     exit( 1 );
+   }
+   close( fd );
+
+   if (!silent)
+     printf( "Typematic Rate set to %d cps (delay = %d ms)\n",
+	     kbdrate_s.rate, kbdrate_s.delay * 1000 / HZ );
+
+   return 1;
+#else /* no KIOCSRATE */
+   return 0;
+#endif /* KIOCSRATE */
+}
 
 int main( int argc, char **argv )
 {
+#ifdef __sparc__
+   double      rate = 5.0;      /* Default rate */
+   int         delay = 200;     /* Default delay */
+#else
    double      rate = 10.9;     /* Default rate */
    int         delay = 250;     /* Default delay */
+#endif
    int         value = 0x7f;    /* Maximum delay with slowest rate */
                                 /* DO NOT CHANGE this value */
    int         silent = 0;
@@ -101,7 +197,12 @@ int main( int argc, char **argv )
    int         i;
    extern char *optarg;
 
-   while ( (c = getopt( argc, argv, "r:d:sv" )) != EOF )
+   setlocale(LC_ALL, "");
+   bindtextdomain(PACKAGE, LOCALEDIR);
+   textdomain(PACKAGE);
+   
+
+   while ( (c = getopt( argc, argv, "r:d:sv" )) != EOF ) {
          switch (c) {
          case 'r':
             rate = atof( optarg );
@@ -113,43 +214,17 @@ int main( int argc, char **argv )
             silent = 1;
             break;
 	 case 'v':
-	    fprintf( stderr, "util-linux kbdrate " VERSION "\n");
+	    fprintf( stderr, "util-linux %s kbdrate\n", UTIL_LINUX_VERSION);
 	    exit(0);
          }
+   }
 
-#ifdef KDKBDREP
-   kbdrep_s.rate = -1; /* don't change, just test */
-   kbdrep_s.delay = -1;
-   if (ioctl( 0, KDKBDREP, &kbdrep_s )) {
-     if (errno == EINVAL)
-       ioctl_possible = 0;
-     else {
-       perror( "ioctl(KDKBDREP)" );
-       exit( 1 );
-     }
-   } else ioctl_possible = 1;
+   if(KDKBDREP_ioctl_ok(rate, delay, silent)) 	/* m68k? */
+	return 0;
 
-   if (ioctl_possible) {
-     if (rate == 0)				/* switch repeat off */
-       kbdrep_s.rate = 0;
-     else
-       kbdrep_s.rate  = 1000.0 / rate;		/* convert cps to msec */
-     if (kbdrep_s.rate < 1)
-       kbdrep_s.rate = 1;
-     kbdrep_s.delay = delay;
-     if (kbdrep_s.delay < 1)
-       kbdrep_s.delay = 1;
-     
-     if (ioctl( 0, KDKBDREP, &kbdrep_s )) {
-       perror( "ioctl(KDKBDREP)" );
-       exit( 1 );
-     }
-          
-     if (!silent)
-       printf( "Typematic Rate set to %.1f cps (delay = %d mS)\n",
-	       1000.0 / (double)kbdrep_s.rate, kbdrep_s.delay );
-   } else {
-#endif
+   if(KIOCSRATE_ioctl_ok(rate, delay, silent))	/* sparc? */
+	return 0;
+
 
     /* The ioport way */
 
@@ -169,7 +244,7 @@ int main( int argc, char **argv )
 	}
 
       if ( (fd = open( "/dev/port", O_RDWR )) < 0) {
-	perror( "Cannot open /dev/port" );
+	perror( _("Cannot open /dev/port") );
 	exit( 1 );
       }
 
@@ -193,13 +268,9 @@ int main( int argc, char **argv )
 
       close( fd );
 
-      if (!silent) printf( "Typematic Rate set to %.1f cps (delay = %d mS)\n",
+      if (!silent) printf( _("Typematic Rate set to %.1f cps (delay = %d ms)\n"),
                            valid_rates[value & 0x1f] / 10.0,
                            valid_delays[ (value & 0x60) >> 5 ] );
-
-#ifdef KDKBDREP
-   }
-#endif
 
    return 0;
 }

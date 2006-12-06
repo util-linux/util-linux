@@ -1,6 +1,10 @@
 /* checktty.c - linked into login, checks user against /etc/usertty
    Created 25-Aug-95 by Peter Orbaek <poe@daimi.aau.dk>
    Fixed by JDS June 1996 to clear lists and close files
+
+   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+   - added Native Language Support
+
 */
 
 #include <sys/types.h>
@@ -17,6 +21,7 @@
 #include <malloc.h>
 #include <netdb.h>
 #include <sys/syslog.h>
+#include "nls.h"
 
 #ifdef __linux__
 #  include <sys/sysmacros.h>
@@ -38,13 +43,13 @@ char *hostname;
 void 
 badlogin(const char *s)
 {
-    printf("badlogin: %s\n", s);
+    printf(_("badlogin: %s\n"), s);
 }
 
 void
 sleepexit(int x)
 {
-    printf("sleepexit %d\n", x);
+    printf(_("sleepexit %d\n"), x);
     exit(1);
 }
 #endif
@@ -100,8 +105,8 @@ new_class(char *class)
 
     tc = (struct ttyclass *)malloc(sizeof(struct ttyclass));
     if (tc == NULL) {
-	printf("login: memory low, login may fail\n");
-	syslog(LOG_WARNING, "can't malloc for ttyclass");
+	printf(_("login: memory low, login may fail\n"));
+	syslog(LOG_WARNING, _("can't malloc for ttyclass"));
 	return NULL;
     }
 
@@ -122,8 +127,8 @@ add_to_class(struct ttyclass *tc, char *tty)
 
     ge = (struct grplist *)malloc(sizeof(struct grplist));
     if (ge == NULL) {
-	printf("login: memory low, login may fail\n");
-	syslog(LOG_WARNING, "can't malloc for grplist");
+	printf(_("login: memory low, login may fail\n"));
+	syslog(LOG_WARNING, _("can't malloc for grplist"));
 	return;
     }
 
@@ -135,8 +140,6 @@ add_to_class(struct ttyclass *tc, char *tty)
 
 
 /* return true if tty is a pty. Very linux dependent */
-/* Note that the new dynamic ptys (say /dev/pty/0 etc) have major in 128-135 */
-/* We might try TIOCGPTN or so to recognise these new ones, if desired */
 static int
 isapty(const char *tty)
 {
@@ -150,16 +153,25 @@ isapty(const char *tty)
 
 #if defined(__linux__)
     if((stat(devname, &stb) >= 0) && S_ISCHR(stb.st_mode)) {
+	    int majordev = major(stb.st_rdev);
+
+	    /* this is for linux versions before 1.3: use major 4 */
+	    if(majordev == TTY_MAJOR && minor(stb.st_rdev) >= 192)
+		    return 1;
 
 #if defined(PTY_SLAVE_MAJOR)
-	    /* this is for linux 1.3 and newer */
-	    if(major(stb.st_rdev) == PTY_SLAVE_MAJOR)
+	    /* this is for linux 1.3 and newer: use major 3 */
+	    if(majordev == PTY_SLAVE_MAJOR)
 		    return 1;
 #endif
 
-	    /* this is for linux versions before 1.3, backward compat. */
-	    if(major(stb.st_rdev) == TTY_MAJOR && minor(stb.st_rdev) >= 192)
+#if defined(UNIX98_PTY_SLAVE_MAJOR) && defined(UNIX98_PTY_MAJOR_COUNT)
+	    /* this is for linux 2.1.116 and newer: use majors 136-143 */
+	    if(majordev >= UNIX98_PTY_SLAVE_MAJOR &&
+	       majordev < UNIX98_PTY_SLAVE_MAJOR + UNIX98_PTY_MAJOR_COUNT)
 		    return 1;
+#endif
+
     }
 #endif
     return 0;
@@ -416,7 +428,7 @@ checktty(const char *user, const char *tty, struct passwd *pwd)
 	}
 
 	/* there was a default rule, but user didn't match, reject! */
-	printf("Login on %s from %s denied by default.\n", tty, hostname);
+	printf(_("Login on %s from %s denied by default.\n"), tty, hostname);
 	badlogin(user);
 	sleepexit(1);
     }
@@ -427,7 +439,7 @@ checktty(const char *user, const char *tty, struct passwd *pwd)
 	   name of the tty where the user is trying to log in.
 	   So deny access! */
 
-	printf("Login on %s from %s denied.\n", tty, hostname);
+	printf(_("Login on %s from %s denied.\n"), tty, hostname);
 	badlogin(user);
 	sleepexit(1);
     }

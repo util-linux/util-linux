@@ -1,0 +1,827 @@
+# Translation for util-linux.
+# Copyright (C) 1999 Marco d'Itri
+# Marco d'Itri <md@linux.it>, 1999.
+#
+#: fdisk/cfdisk.c:2554
+msgid ""
+msgstr ""
+"Project-Id-Version: util-linux 2.9i\n"
+"POT-Creation-Date: 1999-02-21 22:08+0100\n"
+"PO-Revision-Date: 1999-04-04 21:12+02:00\n"
+"Last-Translator: Marco d'Itri <md@linux.it>\n"
+"Language-Team: Italian <it@li.org>\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=iso-8859-1\n"
+"Content-Transfer-Encoding: 8-bit\n"
+
+#: fdisk/cfdisk.c:323
+msgid "Linux/MINIX"
+msgstr "Linux/MINIX"
+
+#: fdisk/cfdisk.c:324
+msgid "Linux Swap"
+msgstr "Linux Swap"
+
+#: fdisk/cfdisk.c:325 fdisk/cfdisk.c:388
+msgid "Linux"
+msgstr "Linux"
+
+#: fdisk/cfdisk.c:326 fdisk/cfdisk.c:383 fdisk/cfdisk.c:1757
+msgid "Free Space"
+msgstr "Spazio Libero"
+
+#: fdisk/cfdisk.c:327
+msgid "Extended"
+msgstr "Estesa"
+
+#: fdisk/cfdisk.c:328
+msgid "Linux extended"
+msgstr "Estesa linux"
+
+#: fdisk/cfdisk.c:329
+msgid "DOS FAT12"
+msgstr "DOS FAT12"
+
+#: fdisk/cfdisk.c:330
+msgid "XENIX root"
+msgstr "XENIX root"
+
+#: fdisk/cfdisk.c:331
+msgid "XENIX usr"
+msgstr "XENIX usr"
+
+#: fdisk/cfdisk.c:332
+msgid "DOS FAT16"
+msgstr "DOS FAT16"
+
+#: fdisk/cfdisk.c:333
+msgid "DOS FAT16 (big)"
+msgstr "DOS FAT16 (big)"
+
+#: fdisk/cfdisk.c:334
+msgid "OS/2 HPFS or NTFS"
+msgstr "OS/2 HPFS o NTFS"
+
+#: fdisk/cfdisk.c:335
+msgid "AIX"
+msgstr "AIX"
+
+#: fdisk/cfdisk.c:336
+msgid "AIX bootable"
+msgstr "AIX bootabile"
+
+#: fdisk/cfdisk.c:337
+msgid "OS/2 Boot Manager"
+msgstr "OS/2 Boot Manager"
+
+#: fdisk/cfdisk.c:338
+msgid "Win95 FAT32"
+msgstr "Win95 FAT32"
+
+#: fdisk/cfdisk.c:339
+msgid "Win95 FAT32 (LBA)"
+msgstr "Win95 FAT32 (LBA)"
+
+#: fdisk/cfdisk.c:340
+msgid "Win95 FAT16 (LBA)"
+msgstr "Win95 FAT16 (LBA)"
+
+#: fdisk/cfdisk.c:341
+msgid "Win95 Extended (LBA)"
+msgstr "Win95 Estesa (LBA)"
+
+#: fdisk/cfdisk.c:342
+msgid "Hidden DOS FAT12"
+msgstr "DOS FAT12 nascosta"
+
+#: fdisk/cfdisk.c:343
+msgid "Hidden DOS FAT16"
+msgstr "DOS FAT16 nascosta"
+
+#: fdisk/cfdisk.c:344
+msgid "Hidden DOS FAT16 (big)"
+msgstr "DOS FAT16 (big) nascosta"
+
+#: fdisk/cfdisk.c:345
+msgid "Hidden OS/2 HPFS or NTFS"
+msgstr "OS/2 HPFS o NTFS nascosta"
+
+#: fdisk/cfdisk.c:346
+msgid "Venix 80286"
+msgstr "Venix 80286"
+
+#: fdisk/cfdisk.c:347
+msgid "PPC PReP boot"
+msgstr "PPC PReP boot"
+
+#: fdisk/cfdisk.c:348
+msgid "Novell?"
+msgstr "Novell?"
+
+#: fdisk/cfdisk.c:349
+msgid "Microport"
+msgstr "Microport"
+
+#: fdisk/cfdisk.c:350
+msgid "GNU HURD"
+msgstr "GNU HURD"
+
+#: fdisk/cfdisk.c:351
+msgid "Novell Netware 286"
+msgstr "Novell Netware 286"
+
+#: fdisk/cfdisk.c:352
+msgid "Novell Netware 386"
+msgstr "Novell Netware 386"
+
+#: fdisk/cfdisk.c:353
+msgid "PC/IX"
+msgstr "PC/IX"
+
+#: fdisk/cfdisk.c:354
+msgid "Old MINIX"
+msgstr "Vecchio MINIX"
+
+#: fdisk/cfdisk.c:355
+msgid "Amoeba"
+msgstr "Amoeba"
+
+#: fdisk/cfdisk.c:356
+msgid "Amoeba BBT"
+msgstr "Amoeba BBT"
+
+#: fdisk/cfdisk.c:357
+msgid "BSD/386"
+msgstr "BSD/386"
+
+#: fdisk/cfdisk.c:358
+msgid "OpenBSD"
+msgstr "OpenBSD"
+
+#: fdisk/cfdisk.c:359
+msgid "NEXTSTEP"
+msgstr "NEXTSTEP"
+
+#: fdisk/cfdisk.c:360
+msgid "BSDI fs"
+msgstr "BSDI fs"
+
+#: fdisk/cfdisk.c:361
+msgid "BSDI swap"
+msgstr "BSDI swap"
+
+#: fdisk/cfdisk.c:362
+msgid "Syrinx"
+msgstr "Syrinx"
+
+#: fdisk/cfdisk.c:363
+msgid "CP/M"
+msgstr "CP/M"
+
+#: fdisk/cfdisk.c:364
+msgid "DOS access"
+msgstr "DOS access"
+
+#: fdisk/cfdisk.c:365
+msgid "DOS R/O"
+msgstr "DOS R/O"
+
+#: fdisk/cfdisk.c:366
+msgid "BeOS fs"
+msgstr "BeOS fs"
+
+#: fdisk/cfdisk.c:367
+msgid "DOS secondary"
+msgstr "DOS secondary"
+
+#: fdisk/cfdisk.c:368
+msgid "BBT"
+msgstr "BBT"
+
+#: fdisk/cfdisk.c:381 fdisk/cfdisk.c:1755
+msgid "Unusable"
+msgstr "Inutilizzabile"
+
+#: fdisk/cfdisk.c:386
+msgid "Linux ext2"
+msgstr "Linux ext2"
+
+#: fdisk/cfdisk.c:391
+msgid "OS/2 HPFS"
+msgstr "OS/2 HPFS"
+
+#: fdisk/cfdisk.c:393
+msgid "OS/2 IFS"
+msgstr "OS/2 IFS"
+
+#: fdisk/cfdisk.c:397
+msgid "NTFS"
+msgstr "NTFS"
+
+#: fdisk/cfdisk.c:408
+msgid "Disk has been changed.\n"
+msgstr "Il disco è stato modificato.\n"
+
+#: fdisk/cfdisk.c:409
+msgid "Reboot the system to ensure the partition table is correctly updated.\n"
+msgstr ""
+"Riavviare il sistema per essere sicuri che la tabella delle partizioni sia\n"
+"stata aggiornata correttamente.\n"
+
+#: fdisk/cfdisk.c:412
+msgid ""
+"\n"
+"WARNING: If you have created or modified any\n"
+"DOS 6.x partitions, please see the cfdisk manual\n"
+"page for additional information.\n"
+msgstr ""
+"\n"
+"ATTENZIONE: Se sono state create o modificate\n"
+"partizioni del DOS 6.x consultare il manuale di\n"
+"cfdisk per ulteriori informazioni.\n"
+
+#: fdisk/cfdisk.c:848
+msgid ""
+"!!!! Internal error creating logical drive with no extended partition !!!!"
+msgstr ""
+"!!!! Errore interno durante la creazione di un drive logico senza partizione\n"
+"estesa !!!!"
+
+#: fdisk/cfdisk.c:1007
+msgid "Menu item too long. Menu may look odd."
+msgstr "Voce del menù troppo lunga. Il menù può apparire strano."
+
+#: fdisk/cfdisk.c:1009
+#, c-format
+msgid "[%*s%-*s]"
+msgstr "[%*s%-*s]"
+
+#: fdisk/cfdisk.c:1012
+#, c-format
+msgid "%*s%-*s"
+msgstr "%*s%-*s"
+
+#: fdisk/cfdisk.c:1054
+msgid "Menu without direction. Defaulting horizontal."
+msgstr "Menù senza direzione. Predefinita l'orizzontale."
+
+#: fdisk/cfdisk.c:1169
+msgid "Illegal key"
+msgstr "Tasto non valido"
+
+#: fdisk/cfdisk.c:1192
+msgid "Press a key to continue"
+msgstr "Premere un tasto per continuare"
+
+#: fdisk/cfdisk.c:1236 fdisk/cfdisk.c:1726 fdisk/cfdisk.c:2233
+#: fdisk/cfdisk.c:2235
+msgid "Primary"
+msgstr "Primaria"
+
+#: fdisk/cfdisk.c:1236
+msgid "Create a new primary partition"
+msgstr "Crea una nuova partizione primaria"
+
+#: fdisk/cfdisk.c:1237 fdisk/cfdisk.c:1726 fdisk/cfdisk.c:2232
+#: fdisk/cfdisk.c:2235
+msgid "Logical"
+msgstr "Logica"
+
+#: fdisk/cfdisk.c:1237
+msgid "Create a new logical partition"
+msgstr "Crea una nuova partizione logica"
+
+#: fdisk/cfdisk.c:1238 fdisk/cfdisk.c:1291 fdisk/cfdisk.c:1938
+msgid "Cancel"
+msgstr "Annulla"
+
+#: fdisk/cfdisk.c:1238 fdisk/cfdisk.c:1291
+msgid "Don't create a partition"
+msgstr "Non crea partizioni"
+
+#: fdisk/cfdisk.c:1254
+msgid "!!! Internal error !!!"
+msgstr "!!! Errore interno !!!"
+
+#: fdisk/cfdisk.c:1256
+#, c-format
+msgid "%.2f"
+msgstr "%.2f"
+
+#: fdisk/cfdisk.c:1289
+msgid "Beginning"
+msgstr "Inizio"
+
+#: fdisk/cfdisk.c:1289
+msgid "Add partition at beginning of free space"
+msgstr "Aggiunge la partizione all'inizio dello spazio libero"
+
+#: fdisk/cfdisk.c:1290
+msgid "End"
+msgstr "Fine"
+
+#: fdisk/cfdisk.c:1290
+msgid "Add partition at end of free space"
+msgstr "Aggiunge la partizione alla fine dello spazio libero"
+
+#: fdisk/cfdisk.c:1553
+msgid "Are you sure you want write the partition table to disk? (yes or no): "
+msgstr "Sicuro di volere scrivere sul disco la tabella delle part.? (yes o no): "
+
+#: fdisk/cfdisk.c:1669 fdisk/cfdisk.c:1787 fdisk/cfdisk.c:1879
+msgid "Enter filename or press RETURN to display on screen: "
+msgstr "Inserire il nome del file o premere INVIO per mostrarlo sullo schermo: "
+
+#: fdisk/cfdisk.c:1688
+#, c-format
+msgid "Disk Drive: %s\n"
+msgstr "Disk Drive: %s\n"
+
+#: fdisk/cfdisk.c:1690
+msgid "Sector 0:\n"
+msgstr "Settore 0:\n"
+
+#: fdisk/cfdisk.c:1697
+#, c-format
+msgid "Sector %d:\n"
+msgstr "Settore %d:\n"
+
+#: fdisk/cfdisk.c:1717
+msgid "   None   "
+msgstr "  Nessuno "
+
+#: fdisk/cfdisk.c:1719
+msgid "   Pri/Log"
+msgstr "   Pri/Log"
+
+#: fdisk/cfdisk.c:1721
+msgid "   Primary"
+msgstr "  Primaria"
+
+#: fdisk/cfdisk.c:1723
+msgid "   Logical"
+msgstr "    Logica"
+
+#: fdisk/cfdisk.c:1761
+msgid "Unknown"
+msgstr "Sconosciuta"
+
+#: fdisk/cfdisk.c:1767
+#, c-format
+msgid "Boot (%02X)"
+msgstr "Boot (%02X)"
+
+#: fdisk/cfdisk.c:1769 fdisk/cfdisk.c:2241
+#, c-format
+msgid "Unknown (%02X)"
+msgstr "Sconosciuta (%02X)"
+
+#: fdisk/cfdisk.c:1771
+#, c-format
+msgid "None (%02X)"
+msgstr "No (%02X)"
+
+#: fdisk/cfdisk.c:1806 fdisk/cfdisk.c:1898
+#, c-format
+msgid "Partition Table for %s\n"
+msgstr "Tabella delle partizioni per %s\n"
+
+#: fdisk/cfdisk.c:1807 fdisk/cfdisk.c:1899
+msgid "\n"
+msgstr "\n"
+
+#: fdisk/cfdisk.c:1808
+msgid "            First    Last\n"
+msgstr "            Primo    Ultimo\n"
+
+#: fdisk/cfdisk.c:1809
+msgid ""
+" # Type     Sector   Sector   Offset  Length   Filesystem Type (ID)   Flags\n"
+msgstr " # Tipo    Settore   Settore  Offset Lunghezza Tipo filesystem (ID)   Flag\n"
+
+#: fdisk/cfdisk.c:1810
+msgid ""
+"-- ------- -------- --------- ------ --------- ---------------------- "
+"---------\n"
+msgstr "-- ------- -------- --------- ------ --------- ---------------------- ---------\n"
+
+#: fdisk/cfdisk.c:1900
+msgid "         ---Starting---      ----Ending----    Start Number of\n"
+msgstr "         ---Iniziale---      ----Finale----  Settore Numero di\n"
+
+#: fdisk/cfdisk.c:1901
+msgid " # Flags Head Sect Cyl   ID  Head Sect Cyl    Sector  Sectors\n"
+msgstr " # Flag  Head Sect Cyl   ID  Head Sect Cyl  Iniziale  Settori\n"
+
+#: fdisk/cfdisk.c:1902
+msgid "-- ----- ---- ---- ---- ---- ---- ---- ---- -------- ---------\n"
+msgstr "-- ----- ---- ---- ---- ---- ---- ---- ---- -------- ---------\n"
+
+#: fdisk/cfdisk.c:1935
+msgid "Raw"
+msgstr "Raw"
+
+#: fdisk/cfdisk.c:1935
+msgid "Print the table using raw data format"
+msgstr "Stampa la tabella in formato grezzo"
+
+#: fdisk/cfdisk.c:1936 fdisk/cfdisk.c:2041
+msgid "Sectors"
+msgstr "Settori"
+
+#: fdisk/cfdisk.c:1936
+msgid "Print the table ordered by sectors"
+msgstr "Stampa la tabella ordinata secondo i settori"
+
+#: fdisk/cfdisk.c:1937
+msgid "Table"
+msgstr "Tabella"
+
+#: fdisk/cfdisk.c:1937
+msgid "Just print the partition table"
+msgstr "Stampa solo la tabella delle partizioni"
+
+#: fdisk/cfdisk.c:1938
+msgid "Don't print the table"
+msgstr "Non stampa la tabella"
+
+#: fdisk/cfdisk.c:1967
+msgid "Help Screen for cfdisk 0.8l"
+msgstr "Schermo di aiuto di cfdisk 0.8l"
+
+#: fdisk/cfdisk.c:1969
+msgid "This is cfdisk, a curses based disk partitioning program, which"
+msgstr "Questo è cfdisk, un programma di partizionamento del disco basato su"
+
+#: fdisk/cfdisk.c:1970
+msgid "allows you to create, delete and modify partitions on your hard"
+msgstr "curses che permette di creare, cancellare e modificare le partizioni"
+
+#: fdisk/cfdisk.c:1971
+msgid "disk drive."
+msgstr "sull'hard disk."
+
+#: fdisk/cfdisk.c:1973
+msgid "Copyright (C) 1994-1998 Kevin E. Martin & aeb"
+msgstr "Copyright (C) 1994-1998 Kevin E. Martin & aeb"
+
+#: fdisk/cfdisk.c:1975
+msgid "Command      Meaning"
+msgstr "Comando      Significato"
+
+#: fdisk/cfdisk.c:1976
+msgid "-------      -------"
+msgstr "-------      -----------"
+
+#: fdisk/cfdisk.c:1977
+msgid "  b          Toggle bootable flag of the current partition"
+msgstr "  b          Cambia il flag di bootabilità dalla partizione corrente"
+
+#: fdisk/cfdisk.c:1978
+msgid "  d          Delete the current partition"
+msgstr "  d          Cancella la partizione corrente"
+
+#: fdisk/cfdisk.c:1979
+msgid "  g          Change cylinders, heads, sectors-per-track parameters"
+msgstr "  g          Cambia i parametri di cilindri, testine e settori per traccia"
+
+#: fdisk/cfdisk.c:1980
+msgid "             WARNING: This option should only be used by people who"
+msgstr "             ATTENZIONE: Questa opzione dovrebbe essere usata solo da"
+
+#: fdisk/cfdisk.c:1981
+msgid "             know what they are doing."
+msgstr "             persone che sanno cosa stanno facendo."
+
+#: fdisk/cfdisk.c:1982
+msgid "  h          Print this screen"
+msgstr "  h          Stampa questa schermata"
+
+#: fdisk/cfdisk.c:1983
+msgid "  m          Maximize disk usage of the current partition"
+msgstr "  m          Massimizza l'uso del disco da parte della partizione corrente"
+
+#: fdisk/cfdisk.c:1984
+msgid "             Note: This may make the partition incompatible with"
+msgstr "             Nota: Questo può rendere la partizione incompatibile con"
+
+#: fdisk/cfdisk.c:1985
+msgid "             DOS, OS/2, ..."
+msgstr "             DOS, OS/2, ..."
+
+#: fdisk/cfdisk.c:1986
+msgid "  n          Create new partition from free space"
+msgstr "  n          Crea una nuova partizione dallo spazio libero"
+
+#: fdisk/cfdisk.c:1987
+msgid "  p          Print partition table to the screen or to a file"
+msgstr "  p          Stampa la tabella delle partizioni sullo schermo o su un file"
+
+#: fdisk/cfdisk.c:1988
+msgid "             There are several different formats for the partition"
+msgstr "             Ci sono diversi formati di visualizzazione"
+
+#: fdisk/cfdisk.c:1989
+msgid "             that you can choose from:"
+msgstr "             tra cui scegliere:"
+
+#: fdisk/cfdisk.c:1990
+msgid "                r - Raw data (exactly what would be written to disk)"
+msgstr "                r - Dati grezzi (quello che sarebbe scritto sul disco)"
+
+#: fdisk/cfdisk.c:1991
+msgid "                s - Table ordered by sectors"
+msgstr "                s - Tabella ordinata per settori"
+
+#: fdisk/cfdisk.c:1992
+msgid "                t - Table in raw format"
+msgstr "                t - Tabella in formato grezzo"
+
+#: fdisk/cfdisk.c:1993
+msgid "  q          Quit program without writing partition table"
+msgstr "  q          Abbandona il programma senza scrivere la tabella"
+
+#: fdisk/cfdisk.c:1994
+msgid "  t          Change the filesystem type"
+msgstr "  t          Cambia il tipo di filesystem"
+
+#: fdisk/cfdisk.c:1995
+msgid "  u          Change units of the partition size display"
+msgstr "  u          Cambia l'unità di dimensione usata"
+
+#: fdisk/cfdisk.c:1996
+msgid "             Rotates through Mb, sectors and cylinders"
+msgstr "             Cambia tra Mb, settori e cilindri"
+
+#: fdisk/cfdisk.c:1997
+msgid "  W          Write partition table to disk (must enter upper case W)"
+msgstr "  W          Scrive la tabella sul disco (deve essere usata una W maiuscola)"
+
+#: fdisk/cfdisk.c:1998
+msgid "             Since this might destroy data on the disk, you must"
+msgstr "             Poichè questo può distruggere i dati sul disco bisogna"
+
+#: fdisk/cfdisk.c:1999
+msgid "             either confirm or deny the write by entering `yes' or"
+msgstr "             confermare o annullare la scrittura digitando `yes' o"
+
+#: fdisk/cfdisk.c:2000
+msgid "             `no'"
+msgstr "             `no'"
+
+#: fdisk/cfdisk.c:2001
+msgid "Up Arrow     Move cursor to the previous partition"
+msgstr "Freccia su   Sposta il cursore alla partizione precedente"
+
+#: fdisk/cfdisk.c:2002
+msgid "Down Arrow   Move cursor to the next partition"
+msgstr "Freccia giù  Sposta il cursore alla partizione seguente"
+
+#: fdisk/cfdisk.c:2003
+msgid "CTRL-L       Redraws the screen"
+msgstr "CTRL-L       Ridisegna lo schermo"
+
+#: fdisk/cfdisk.c:2004
+msgid "  ?          Print this screen"
+msgstr "  ?          Stampa questa schermata"
+
+#: fdisk/cfdisk.c:2006
+msgid "Note: All of the commands can be entered with either upper or lower"
+msgstr "Nota: tutti i comandi (tranne Write) possono essere immessi sia in lettere"
+
+#: fdisk/cfdisk.c:2007
+msgid "case letters (except for Writes)."
+msgstr "maiuscole che minuscole"
+
+#: fdisk/cfdisk.c:2039 fdisk/cfdisk.c:2322
+msgid "Cylinders"
+msgstr "Cilindri"
+
+#: fdisk/cfdisk.c:2039
+msgid "Change cylinder geometry"
+msgstr "Cambia la geometria del cilindro"
+
+#: fdisk/cfdisk.c:2040
+msgid "Heads"
+msgstr "Testine"
+
+#: fdisk/cfdisk.c:2040
+msgid "Change head geometry"
+msgstr "Cambia la geometria della testina"
+
+#: fdisk/cfdisk.c:2041
+msgid "Change sector geometry"
+msgstr "Cambia la geometria del settore"
+
+#: fdisk/cfdisk.c:2042
+msgid "Done"
+msgstr "Fatto"
+
+#: fdisk/cfdisk.c:2042
+msgid "Done with changing geometry"
+msgstr "Basta cambiamenti di geometria"
+
+#: fdisk/cfdisk.c:2055
+msgid "Enter the number of cylinders: "
+msgstr "Inserire il numero di cilindri: "
+
+#: fdisk/cfdisk.c:2068
+msgid "Enter the number of heads: "
+msgstr "Inserire il numero di testine: "
+
+#: fdisk/cfdisk.c:2081
+msgid "Enter the number of sectors per track: "
+msgstr "Inserire il numero di settori per traccia: "
+
+#: fdisk/cfdisk.c:2168
+msgid "Enter filesystem type: "
+msgstr "Inserire il tipo di filesystem: "
+
+#: fdisk/cfdisk.c:2210
+msgid "Boot"
+msgstr "Boot"
+
+#: fdisk/cfdisk.c:2212
+#, c-format
+msgid "Unk(%02X)"
+msgstr "Scon(%02X)"
+
+#: fdisk/cfdisk.c:2215 fdisk/cfdisk.c:2218
+msgid ", NC"
+msgstr ", NC"
+
+#: fdisk/cfdisk.c:2223 fdisk/cfdisk.c:2226
+msgid "NC"
+msgstr "NC"
+
+#: fdisk/cfdisk.c:2234
+msgid "Pri/Log"
+msgstr "Pri/Log"
+
+#: fdisk/cfdisk.c:2306
+#, c-format
+msgid "cfdisk %s"
+msgstr "cfdisk %s"
+
+#: fdisk/cfdisk.c:2308
+#, c-format
+msgid "Disk Drive: %s"
+msgstr "Disk Drive: %s"
+
+#: fdisk/cfdisk.c:2310
+#, c-format
+msgid "Heads: %d   Sectors per Track: %d   Cylinders: %d"
+msgstr "Testine: %d    Settori per traccia: %d   Cilindri: %d"
+
+#: fdisk/cfdisk.c:2314
+msgid "Name"
+msgstr "Nome"
+
+#: fdisk/cfdisk.c:2315
+msgid "Flags"
+msgstr "Flag"
+
+#: fdisk/cfdisk.c:2316
+msgid "Part Type"
+msgstr "Tipo Part"
+
+#: fdisk/cfdisk.c:2317
+msgid "FS Type"
+msgstr "Tipo FS"
+
+#: fdisk/cfdisk.c:2318
+msgid "[Label]"
+msgstr "[Etichetta]"
+
+#: fdisk/cfdisk.c:2320
+msgid "  Sectors"
+msgstr "Settori"
+
+#: fdisk/cfdisk.c:2324
+msgid "Size (MB)"
+msgstr "Dim (MB)"
+
+#: fdisk/cfdisk.c:2379
+msgid "Bootable"
+msgstr "Bootable"
+
+#: fdisk/cfdisk.c:2379
+msgid "Toggle bootable flag of the current partition"
+msgstr "Cambia il flag di bootabilità dalla partizione corrente"
+
+#: fdisk/cfdisk.c:2380
+msgid "Delete"
+msgstr "Delete"
+
+#: fdisk/cfdisk.c:2380
+msgid "Delete the current partition"
+msgstr "Cancella la partizione corrente"
+
+#: fdisk/cfdisk.c:2381
+msgid "Geometry"
+msgstr "Geometria"
+
+#: fdisk/cfdisk.c:2381
+msgid "Change disk geometry (experts only)"
+msgstr "Cambia la geometria del disco (solo per esperti)"
+
+#: fdisk/cfdisk.c:2382
+msgid "Help"
+msgstr "Help"
+
+#: fdisk/cfdisk.c:2382
+msgid "Print help screen"
+msgstr "Stampa la schermata di aiuto"
+
+#: fdisk/cfdisk.c:2383
+msgid "Maximize"
+msgstr "Massim."
+
+#: fdisk/cfdisk.c:2383
+msgid "Maximize disk usage of the current partition (experts only)"
+msgstr "Massimizza lo spazio usato dalla partizione corrente (solo per esperti)"
+
+#: fdisk/cfdisk.c:2384
+msgid "New"
+msgstr "Nuova"
+
+#: fdisk/cfdisk.c:2384
+msgid "Create new partition from free space"
+msgstr "Crea una nuova partizione dallo spazio libero"
+
+#: fdisk/cfdisk.c:2385
+msgid "Print"
+msgstr "Print"
+
+#: fdisk/cfdisk.c:2385
+msgid "Print partition table to the screen or to a file"
+msgstr "Stampa la tabella delle partizioni sullo schermo o su un file"
+
+#: fdisk/cfdisk.c:2386
+msgid "Quit"
+msgstr "Quit"
+
+#: fdisk/cfdisk.c:2386
+msgid "Quit program without writing partition table"
+msgstr "Abbandona il programma senza scrivere la tabella delle partizioni"
+
+#: fdisk/cfdisk.c:2387
+msgid "Type"
+msgstr "Tipo"
+
+#: fdisk/cfdisk.c:2387
+msgid "Change the filesystem type (DOS, Linux, OS/2 and so on)"
+msgstr "Cambia il tipo di filesystem (DOS, Linux, OS/2 ecc...)"
+
+#: fdisk/cfdisk.c:2388
+msgid "Units"
+msgstr "Unità"
+
+#: fdisk/cfdisk.c:2388
+msgid "Change units of the partition size display (MB, sect, cyl)"
+msgstr "Cambia l'unità di misura usata per le dimensioni (MB, sett, cil)"
+
+#: fdisk/cfdisk.c:2389
+msgid "Write"
+msgstr "Write"
+
+#: fdisk/cfdisk.c:2389
+msgid "Write partition table to disk (this might destroy data)"
+msgstr "Scrive la tabella delle partizioni sul disco (può distruggere dati)"
+
+#: fdisk/cfdisk.c:2542
+msgid "Copyright (C) 1994-1997 Kevin E. Martin & aeb\n"
+msgstr "Copyright (C) 1994-1997 Kevin E. Martin & aeb\n"
+
+#: fdisk/cfdisk.c:2547
+msgid ""
+"\n"
+"Usage:\n"
+msgstr "\nUso:\n"
+
+#: fdisk/cfdisk.c:2548
+msgid "Print version:\n"
+msgstr "Stampa la versione:\n"
+
+#: fdisk/cfdisk.c:2549
+#, c-format
+msgid "\t%s -v\n"
+msgstr "\t%s -v\n"
+
+#: fdisk/cfdisk.c:2550
+msgid "Print partition table:\n"
+msgstr "Stampa la tabella delle partizioni:\n"
+
+#: fdisk/cfdisk.c:2551
+#, c-format
+msgid "\t%s -P {r|s|t} [options] device\n"
+msgstr "\t%s -P {r|s|t} [opzioni] dispositivo\n"
+
+#: fdisk/cfdisk.c:2552
+msgid "Interactive use:\n"
+msgstr "Uso interattivo:\n"
+
+#: fdisk/cfdisk.c:2553
+#, c-format
+msgid "\t%s [options] device\n"
+msgstr "\t%s [opzioni] dispositivo\n"

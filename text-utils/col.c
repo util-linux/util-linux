@@ -37,6 +37,9 @@
  *                           patches from Andries.Brouwer@cwi.nl
  * Wed Sep 14 22:31:17 1994: patches from Carl Christofferson
  *                           (cchris@connected.com)
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  */
 
 #include <stdlib.h>
@@ -46,6 +49,7 @@
 #include <string.h>
 #include <stdio.h>
 #include <unistd.h>
+#include "nls.h"
 #include <locale.h>
 
 #define	BS	'\b'		/* backspace */
@@ -123,9 +127,10 @@ int main(int argc, char **argv)
 	int nflushd_lines;		/* number of lines that were flushed */
 	int adjust, opt, warned;
 
-	/* we discard characters that do not pass isgraph() */
-	setlocale(LC_CTYPE, "");
-
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	
 	max_bufd_lines = 128;
 	compress_spaces = 1;		/* compress spaces into tabs */
 	while ((opt = getopt(argc, argv, "bfhl:x")) != EOF)
@@ -142,7 +147,7 @@ int main(int argc, char **argv)
 		case 'l':		/* buffered line count */
 			if ((max_bufd_lines = atoi(optarg)) <= 0) {
 				(void)fprintf(stderr,
-				    "col: bad -l argument %s.\n", optarg);
+				    _("col: bad -l argument %s.\n"), optarg);
 				exit(1);
 			}
 			break;
@@ -503,19 +508,19 @@ xmalloc(void *p, size_t size)
 
 void usage()
 {
-	(void)fprintf(stderr, "usage: col [-bfx] [-l nline]\n");
+	(void)fprintf(stderr, _("usage: col [-bfx] [-l nline]\n"));
 	exit(1);
 }
 
 void wrerr()
 {
-	(void)fprintf(stderr, "col: write error.\n");
+	(void)fprintf(stderr, _("col: write error.\n"));
 	exit(1);
 }
 
 void warn(int line)
 {
 	(void)fprintf(stderr,
-	    "col: warning: can't back up %s.\n", line < 0 ?
-	    "past first line" : "-- line already flushed");
+	    _("col: warning: can't back up %s.\n"), line < 0 ?
+	    _("past first line") : _("-- line already flushed"));
 }

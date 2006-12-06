@@ -34,11 +34,16 @@
  * SUCH DAMAGE.
  */
 
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  * - added Native Language Support
+  */
+
 #include <sys/types.h>
 #include <errno.h>
 #include <stdio.h>
 #include <ctype.h>
 #include <string.h>
+#include "nls.h"
 
 /*
  *  Topological sort.  Input is a list of pairs of strings seperated by
@@ -102,12 +107,16 @@ main(argc, argv)
 	int bsize, nused;
 	BUF bufs[2];
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	
 	if (argc < 2)
 		fp = stdin;
 	/* == becomes > in next line per Volker Meyer_zu_Bexten
 	   <vmzb@ims.fhg.de> -- faith@cs.unc.edu, Sat Feb  4 21:25:09 1995 */
 	else if (argc > 2) {
-		(void)fprintf(stderr, "usage: tsort [ inputfile ]\n");
+		(void)fprintf(stderr, _("usage: tsort [ inputfile ]\n"));
 		exit(1);
 	} else if (!(fp = fopen(argv[1], "r"))) {
 		(void)fprintf(stderr, "tsort: %s.\n", strerror(errno));
@@ -144,7 +153,7 @@ main(argc, argv)
 	}
 	(void)fclose(fp);
 	if (n) {
-		(void)fprintf(stderr, "tsort: odd data count.\n");
+		(void)fprintf(stderr, _("tsort: odd data count.\n"));
 		exit(1);
 	}
 
@@ -309,7 +318,7 @@ tsort()
 					register int i;
 
 					(void)fprintf(stderr,
-					    "tsort: cycle in data.\n");
+					    _("tsort: cycle in data.\n"));
 					for (i = 0; i < cnt; i++)
 						(void)fprintf(stderr,
 				"tsort: %s.\n", longest_cycle[i]->n_name);
@@ -322,7 +331,7 @@ tsort()
 
 		if (!n) {
 			(void)fprintf(stderr,
-			    "tsort: internal error -- could not find cycle.\n");
+			    _("tsort: internal error -- could not find cycle.\n"));
 			exit(1);
 		}
 	}

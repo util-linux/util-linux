@@ -2,6 +2,12 @@
 /* Added vfs mount options - aeb - 960223 */
 /* Removed lomount - aeb - 960224 */
 
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ * Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+ * - fixed strerr(errno) in gettext calls
+ */
+
 #define PROC_DEVICES	"/proc/devices"
 
 /*
@@ -20,6 +26,7 @@
 
 #include "loop.h"
 #include "lomount.h"
+#include "nls.h"
 
 char *xstrdup (const char *s);		/* not: #include "sundries.h" */
 void error (const char *fmt, ...);	/* idem */
@@ -67,17 +74,19 @@ show_loop (char *device)
   int fd;
 
   if ((fd = open (device, O_RDONLY)) < 0) {
-    fprintf(stderr, "loop: can't open device %s: %s\n",
-	    device, strerror (errno));
+    int errsv = errno;
+    fprintf(stderr, _("loop: can't open device %s: %s\n"),
+	    device, strerror (errsv));
     return;
   }
   if (ioctl (fd, LOOP_GET_STATUS, &loopinfo) < 0) {
-    fprintf(stderr, "loop: can't get info on device %s: %s\n",
-	    device, strerror (errno));
+    int errsv = errno;
+    fprintf(stderr, _("loop: can't get info on device %s: %s\n"),
+	    device, strerror (errsv));
     close (fd);
     return;
   }
-  printf ("%s: [%04x]:%ld (%s) offset %d, %s encryption\n",
+  printf (_("%s: [%04x]:%ld (%s) offset %d, %s encryption\n"),
 	  device, loopinfo.lo_device, loopinfo.lo_inode,
 	  loopinfo.lo_name, loopinfo.lo_offset,
 	  crypt_name (loopinfo.lo_encrypt_type));
@@ -131,24 +140,24 @@ find_unused_loop_device (void)
     }
 
     if (!somedev)
-      error("mount: could not find any device /dev/loop#");
+      error(_("mount: could not find any device /dev/loop#"));
     else if(!someloop) {
       if (loop_known == 1)
-	error(
+	error(_(
 "mount: Could not find any loop device.\n"
-"       Maybe /dev/loop# has a wrong major number?");
+"       Maybe /dev/loop# has a wrong major number?"));
       else if (loop_known == -1)
-	error(
+	error(_(
 "mount: Could not find any loop device, and, according to %s,\n"
 "       this kernel does not know about the loop device.\n"
-"       (If so, then recompile or `insmod loop.o'.)", PROC_DEVICES);
+"       (If so, then recompile or `insmod loop.o'.)"), PROC_DEVICES);
       else
-	error(
+	error(_(
 "mount: Could not find any loop device. Maybe this kernel does not know\n"
 "       about the loop device (then recompile or `insmod loop.o'), or\n"
-"       maybe /dev/loop# has the wrong major number?");
+"       maybe /dev/loop# has the wrong major number?"));
     } else
-      error("mount: could not find any free loop device");
+      error(_("mount: could not find any free loop device"));
     return 0;
 }
 
@@ -179,7 +188,7 @@ set_loop (const char *device, const char *file, int offset,
   loopinfo.lo_name[LO_NAME_SIZE - 1] = 0;
   if (encryption && (loopinfo.lo_encrypt_type = crypt_type (encryption))
       < 0) {
-    fprintf (stderr, "Unsupported encryption type %s\n", encryption);
+    fprintf (stderr, _("Unsupported encryption type %s\n"), encryption);
     return 1;
   }
   loopinfo.lo_offset = offset;
@@ -188,30 +197,30 @@ set_loop (const char *device, const char *file, int offset,
     loopinfo.lo_encrypt_key_size = 0;
     break;
   case LO_CRYPT_XOR:
-    pass = getpass ("Password: ");
+    pass = getpass (_("Password: "));
     strncpy (loopinfo.lo_encrypt_key, pass, LO_KEY_SIZE);
     loopinfo.lo_encrypt_key[LO_KEY_SIZE - 1] = 0;
     loopinfo.lo_encrypt_key_size = strlen (loopinfo.lo_encrypt_key);
     break;
   case LO_CRYPT_DES:
-    pass = getpass ("Password: ");
+    pass = getpass (_("Password: "));
     strncpy (loopinfo.lo_encrypt_key, pass, 8);
     loopinfo.lo_encrypt_key[8] = 0;
     loopinfo.lo_encrypt_key_size = 8;
-    pass = getpass ("Init (up to 16 hex digits): ");
+    pass = getpass (_("Init (up to 16 hex digits): "));
     for (i = 0; i < 16 && pass[i]; i++)
       if (isxdigit (pass[i]))
 	loopinfo.lo_init[i >> 3] |= (pass[i] > '9' ?
 				     (islower (pass[i]) ? toupper (pass[i]) :
 			pass[i]) - 'A' + 10 : pass[i] - '0') << (i & 7) * 4;
       else {
-	fprintf (stderr, "Non-hex digit '%c'.\n", pass[i]);
+	fprintf (stderr, _("Non-hex digit '%c'.\n"), pass[i]);
 	return 1;
       }
     break;
   default:
     fprintf (stderr,
-	     "Don't know how to get key for encryption system %d\n",
+	     _("Don't know how to get key for encryption system %d\n"),
 	     loopinfo.lo_encrypt_type);
     return 1;
   }
@@ -227,7 +236,7 @@ set_loop (const char *device, const char *file, int offset,
   close (fd);
   close (ffd);
   if (verbose > 1)
-    printf("set_loop(%s,%s,%d): success\n", device, file, offset);
+    printf(_("set_loop(%s,%s,%d): success\n"), device, file, offset);
   return 0;
 }
 
@@ -237,8 +246,9 @@ del_loop (const char *device)
   int fd;
 
   if ((fd = open (device, O_RDONLY)) < 0) {
-    fprintf(stderr, "loop: can't delete device %s: %s\n",
-	    device, strerror (errno));
+    int errsv = errno;
+    fprintf(stderr, _("loop: can't delete device %s: %s\n"),
+	    device, strerror (errsv));
     return 1;
   }
   if (ioctl (fd, LOOP_CLR_FD, 0) < 0) {
@@ -247,7 +257,7 @@ del_loop (const char *device)
   }
   close (fd);
   if (verbose > 1)
-    printf("del_loop(%s): success\n", device);
+    printf(_("del_loop(%s): success\n"), device);
   return 0;
 }
 
@@ -255,7 +265,7 @@ del_loop (const char *device)
 static void
 mutter(void) {
   fprintf(stderr,
-	  "This mount was compiled without loop support. Please recompile.\n");
+	  _("This mount was compiled without loop support. Please recompile.\n"));
 }  
 
 int

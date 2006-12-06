@@ -33,6 +33,9 @@
    LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY
    OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
    SUCH DAMAGE.
+
+   Changes:
+   19990319 - Arnaldo Carvalho de Melo <acme@conectiva.com.br> - i18n/nls
 */
 
 #include <unistd.h>
@@ -43,12 +46,14 @@
 #include <ctype.h>
 #include <setjmp.h>
 #include <errno.h>
+#include "nls.h"
 
 #include <sys/ioctl.h>
 #include <sys/param.h>
 
 #include <linux/hdreg.h>	/* for HDIO_GETGEO */
 
+#include "common.h"
 #include "fdisk.h"
 #define NETBSD_PARTITION 0xa5
 #define DKTYPENAMES
@@ -89,7 +94,7 @@ int
 btrydev (char * dev) {
     if (xbsd_readlabel (NULL, &xbsd_dlabel) == 0)
       return -1;
-    printf("\nBSD label for device: %s\n", dev);
+    printf(_("\nBSD label for device: %s\n"), dev);
     xbsd_print_disklabel (0);
     return 0;
 }
@@ -97,25 +102,24 @@ btrydev (char * dev) {
 void
 bmenu (void)
 {
-  puts ("Command action\n"
-	"   d   delete a BSD partition\n"
-	"   e   edit drive data\n"
-	"   i   install bootstrap\n"
-	"   l   list known filesystem types\n"
-	"   m   print this menu\n"
-	"   n   add a new BSD partition\n"
-	"   p   print BSD partition table\n"
-	"   q   quit without saving changes\n"
+  puts (_("Command action"));
+  puts (_("   d   delete a BSD partition"));
+  puts (_("   e   edit drive data"));
+  puts (_("   i   install bootstrap"));
+  puts (_("   l   list known filesystem types"));
+  puts (_("   m   print this menu"));
+  puts (_("   n   add a new BSD partition"));
+  puts (_("   p   print BSD partition table"));
+  puts (_("   q   quit without saving changes"));
 #if defined (i386) || defined (sparc)
-	"   r   return to main menu\n"
+  puts (_("   r   return to main menu"));
 #endif
-	"   s   show complete disklabel\n"
-	"   t   change a partition's filesystem id\n"
-	"   w   write disklabel to disk\n"
+  puts (_("   s   show complete disklabel"));
+  puts (_("   t   change a partition's filesystem id"));
+  puts (_("   w   write disklabel to disk"));
 #if defined (i386) || defined (sparc)
-	"   x   link BSD partition to non-BSD partition"
+  puts (_("   x   link BSD partition to non-BSD partition"));
 #endif
-	);
 }
 
 int
@@ -139,11 +143,11 @@ bselect (void) {
       xbsd_part_index = t;
       ss = get_start_sect(xbsd_part);
       if (ss == 0) {
-        fprintf (stderr, "Partition %s%d has invalid starting sector 0.\n",
+        fprintf (stderr, _("Partition %s%d has invalid starting sector 0.\n"),
         	 disk_device, t+1);
         return;
       }
-      printf ("Reading disklabel of %s%d at sector %d.\n",
+      printf (_("Reading disklabel of %s%d at sector %d.\n"),
 	      disk_device, t+1, ss + BSD_LABELSECTOR);
       if (xbsd_readlabel (xbsd_part, &xbsd_dlabel) == 0)
         if (xbsd_create_disklabel () == 0)
@@ -152,7 +156,7 @@ bselect (void) {
     }
 
   if (t == 4) {
-    printf ("There is no *BSD partition on %s.\n", disk_device);
+    printf (_("There is no *BSD partition on %s.\n"), disk_device);
     return;
   }
 
@@ -167,7 +171,7 @@ bselect (void) {
   while (1)
   {
     putchar ('\n');
-    switch (tolower (read_char ("BSD disklabel command (m for help): ")))
+    switch (tolower (read_char (_("BSD disklabel command (m for help): "))))
     {
       case 'd':
         xbsd_delete_part ();
@@ -245,18 +249,18 @@ xbsd_new_part (void)
   end = xbsd_dlabel.d_secperunit;
 #endif
 
-  sprintf (mesg, "First %s", str_units());
+  sprintf (mesg, _("First %s"), str_units(SINGULAR));
   begin = read_int (cround (begin), cround (begin), cround (end),
 		    0, mesg);
 
-  sprintf (mesg, "Last %s or +size or +sizeM or +sizeK", str_units());
+  sprintf (mesg, _("Last %s or +size or +sizeM or +sizeK"), str_units(SINGULAR));
   end = read_int (cround (begin), cround (end), cround (end),
 		  cround (begin), mesg);
 
-  if (unit_flag)
+  if (display_in_cyl_units)
   {
-    begin = (begin - 1) * display_factor;
-    end = end * display_factor - 1;
+    begin = (begin - 1) * units_per_sector;
+    end = end * units_per_sector - 1;
   }
   xbsd_dlabel.d_partitions[i].p_size   = end - begin + 1;
   xbsd_dlabel.d_partitions[i].p_offset = begin;
@@ -279,33 +283,33 @@ xbsd_print_disklabel (int show_all)
     fprintf(f, "# %s:\n", disk_device);
 #endif
     if ((unsigned) lp->d_type < BSD_DKMAXTYPES)
-      fprintf(f, "type: %s\n", xbsd_dktypenames[lp->d_type]);
+      fprintf(f, _("type: %s\n"), xbsd_dktypenames[lp->d_type]);
     else
-      fprintf(f, "type: %d\n", lp->d_type);
-    fprintf(f, "disk: %.*s\n", (int) sizeof(lp->d_typename), lp->d_typename);
-    fprintf(f, "label: %.*s\n", (int) sizeof(lp->d_packname), lp->d_packname);
-    fprintf(f, "flags:");
+      fprintf(f, _("type: %d\n"), lp->d_type);
+    fprintf(f, _("disk: %.*s\n"), (int) sizeof(lp->d_typename), lp->d_typename);
+    fprintf(f, _("label: %.*s\n"), (int) sizeof(lp->d_packname), lp->d_packname);
+    fprintf(f, _("flags:"));
     if (lp->d_flags & BSD_D_REMOVABLE)
-      fprintf(f, " removable");
+      fprintf(f, _(" removable"));
     if (lp->d_flags & BSD_D_ECC)
-      fprintf(f, " ecc");
+      fprintf(f, _(" ecc"));
     if (lp->d_flags & BSD_D_BADSECT)
-      fprintf(f, " badsect");
+      fprintf(f, _(" badsect"));
     fprintf(f, "\n");
     /* On various machines the fields of *lp are short/int/long */
     /* In order to avoid problems, we cast them all to long. */
-    fprintf(f, "bytes/sector: %ld\n", (long) lp->d_secsize);
-    fprintf(f, "sectors/track: %ld\n", (long) lp->d_nsectors);
-    fprintf(f, "tracks/cylinder: %ld\n", (long) lp->d_ntracks);
-    fprintf(f, "sectors/cylinder: %ld\n", (long) lp->d_secpercyl);
-    fprintf(f, "cylinders: %ld\n", (long) lp->d_ncylinders);
-    fprintf(f, "rpm: %d\n", lp->d_rpm);
-    fprintf(f, "interleave: %d\n", lp->d_interleave);
-    fprintf(f, "trackskew: %d\n", lp->d_trackskew);
-    fprintf(f, "cylinderskew: %d\n", lp->d_cylskew);
-    fprintf(f, "headswitch: %ld\t\t# milliseconds\n", (long) lp->d_headswitch);
-    fprintf(f, "track-to-track seek: %ld\t# milliseconds\n", (long) lp->d_trkseek);
-    fprintf(f, "drivedata: ");
+    fprintf(f, _("bytes/sector: %ld\n"), (long) lp->d_secsize);
+    fprintf(f, _("sectors/track: %ld\n"), (long) lp->d_nsectors);
+    fprintf(f, _("tracks/cylinder: %ld\n"), (long) lp->d_ntracks);
+    fprintf(f, _("sectors/cylinder: %ld\n"), (long) lp->d_secpercyl);
+    fprintf(f, _("cylinders: %ld\n"), (long) lp->d_ncylinders);
+    fprintf(f, _("rpm: %d\n"), lp->d_rpm);
+    fprintf(f, _("interleave: %d\n"), lp->d_interleave);
+    fprintf(f, _("trackskew: %d\n"), lp->d_trackskew);
+    fprintf(f, _("cylinderskew: %d\n"), lp->d_cylskew);
+    fprintf(f, _("headswitch: %ld\t\t# milliseconds\n"), (long) lp->d_headswitch);
+    fprintf(f, _("track-to-track seek: %ld\t# milliseconds\n"), (long) lp->d_trkseek);
+    fprintf(f, _("drivedata: "));
     for (i = NDDATA - 1; i >= 0; i--)
       if (lp->d_drivedata[i])
 	break;
@@ -314,8 +318,8 @@ xbsd_print_disklabel (int show_all)
     for (j = 0; j <= i; j++)
       fprintf(f, "%ld ", (long) lp->d_drivedata[j]);
   }
-  fprintf (f, "\n%d partitions:\n", lp->d_npartitions);
-  fprintf (f, "#        size   offset    fstype   [fsize bsize   cpg]\n");
+  fprintf (f, _("\n%d partitions:\n"), lp->d_npartitions);
+  fprintf (f, _("#        size   offset    fstype   [fsize bsize   cpg]\n"));
   pp = lp->d_partitions;
   for (i = 0; i < lp->d_npartitions; i++, pp++) {
     if (pp->p_size) {
@@ -371,10 +375,10 @@ static void
 xbsd_write_disklabel (void)
 {
 #if defined (i386) || defined (sparc)
-  printf ("Writing disklabel to %s%d.\n", disk_device, xbsd_part_index+1);
+  printf (_("Writing disklabel to %s%d.\n"), disk_device, xbsd_part_index+1);
   xbsd_writelabel (xbsd_part, &xbsd_dlabel);
 #elif defined (__alpha__)
-  printf ("Writing disklabel to %s.\n", disk_device);
+  printf (_("Writing disklabel to %s.\n"), disk_device);
   xbsd_writelabel (NULL, &xbsd_dlabel);
 #endif
 }
@@ -385,14 +389,14 @@ xbsd_create_disklabel (void)
   char c;
 
 #if defined (i386) || defined (sparc)
-  fprintf (stderr, "%s%d contains no disklabel.\n",
+  fprintf (stderr, _("%s%d contains no disklabel.\n"),
 	   disk_device, xbsd_part_index+1);
 #elif defined (__alpha__)
-  fprintf (stderr, "%s contains no disklabel.\n", disk_device);
+  fprintf (stderr, _("%s contains no disklabel.\n"), disk_device);
 #endif
 
   while (1)
-    if ((c = tolower (read_char ("Do you want to create a disklabel? (y/n) "))) == 'y')
+    if ((c = tolower (read_char (_("Do you want to create a disklabel? (y/n) ")))) == 'y')
     {
 #if defined (i386) || defined (sparc)
       if (xbsd_initlabel (xbsd_part, &xbsd_dlabel, xbsd_part_index) == 1)
@@ -431,28 +435,28 @@ xbsd_edit_disklabel (void)
   d = &xbsd_dlabel;
 
 #ifdef __alpha__
-  d -> d_secsize    = (u_long) edit_int ((u_long) d -> d_secsize     ,"bytes/sector");
-  d -> d_nsectors   = (u_long) edit_int ((u_long) d -> d_nsectors    ,"sectors/track");
-  d -> d_ntracks    = (u_long) edit_int ((u_long) d -> d_ntracks     ,"tracks/cylinder");
-  d -> d_ncylinders = (u_long) edit_int ((u_long) d -> d_ncylinders  ,"cylinders");
+  d -> d_secsize    = (u_long) edit_int ((u_long) d -> d_secsize     ,_("bytes/sector"));
+  d -> d_nsectors   = (u_long) edit_int ((u_long) d -> d_nsectors    ,_("sectors/track"));
+  d -> d_ntracks    = (u_long) edit_int ((u_long) d -> d_ntracks     ,_("tracks/cylinder"));
+  d -> d_ncylinders = (u_long) edit_int ((u_long) d -> d_ncylinders  ,_("cylinders"));
 #endif
 
   /* d -> d_secpercyl can be != d -> d_nsectors * d -> d_ntracks */
   while (1)
   {
     d -> d_secpercyl = (u_long) edit_int ((u_long) d -> d_nsectors * d -> d_ntracks,
-					  "sectors/cylinder");
+					  _("sectors/cylinder"));
     if (d -> d_secpercyl <= d -> d_nsectors * d -> d_ntracks)
       break;
 
-    printf ("Must be <= sectors/track * tracks/cylinder (default).\n");
+    printf (_("Must be <= sectors/track * tracks/cylinder (default).\n"));
   }
-  d -> d_rpm        = (u_short) edit_int ((u_short) d -> d_rpm       ,"rpm");
-  d -> d_interleave = (u_short) edit_int ((u_short) d -> d_interleave,"interleave");
-  d -> d_trackskew  = (u_short) edit_int ((u_short) d -> d_trackskew ,"trackskew");
-  d -> d_cylskew    = (u_short) edit_int ((u_short) d -> d_cylskew   ,"cylinderskew");
-  d -> d_headswitch = (u_long) edit_int ((u_long) d -> d_headswitch  ,"headswitch");
-  d -> d_trkseek    = (u_long) edit_int ((u_long) d -> d_trkseek     ,"track-to-track seek");
+  d -> d_rpm        = (u_short) edit_int ((u_short) d -> d_rpm       ,_("rpm"));
+  d -> d_interleave = (u_short) edit_int ((u_short) d -> d_interleave,_("interleave"));
+  d -> d_trackskew  = (u_short) edit_int ((u_short) d -> d_trackskew ,_("trackskew"));
+  d -> d_cylskew    = (u_short) edit_int ((u_short) d -> d_cylskew   ,_("cylinderskew"));
+  d -> d_headswitch = (u_long) edit_int ((u_long) d -> d_headswitch  ,_("headswitch"));
+  d -> d_trkseek    = (u_long) edit_int ((u_long) d -> d_trkseek     ,_("track-to-track seek"));
 
   d -> d_secperunit = d -> d_secpercyl * d -> d_ncylinders;
 }
@@ -493,7 +497,7 @@ xbsd_write_bootstrap (void)
   else
     dkbasename = "wd";
 
-  printf ("Bootstrap: %sboot -> boot%s (%s): ", dkbasename, dkbasename, dkbasename);
+  printf (_("Bootstrap: %sboot -> boot%s (%s): "), dkbasename, dkbasename, dkbasename);
   if (read_line ())
   {
     line_ptr[strlen (line_ptr)-1] = '\0';
@@ -519,7 +523,7 @@ xbsd_write_bootstrap (void)
   for (p=d; p < e; p++)
     if (*p)
     {
-      fprintf (stderr, "Bootstrap overlaps with disk label!\n");
+      fprintf (stderr, _("Bootstrap overlaps with disk label!\n"));
       exit ( EXIT_FAILURE );
     }
 
@@ -540,9 +544,9 @@ xbsd_write_bootstrap (void)
     fatal (unable_to_write);
 
 #if defined (i386) || defined (sparc)
-  printf ("Bootstrap installed on %s%d.\n", disk_device, xbsd_part_index+1);
+  printf (_("Bootstrap installed on %s%d.\n"), disk_device, xbsd_part_index+1);
 #elif defined (__alpha__)
-  printf ("Bootstrap installed on %s.\n", disk_device);
+  printf (_("Bootstrap installed on %s.\n"), disk_device);
 #endif
 
   sync_disks ();
@@ -563,7 +567,7 @@ xbsd_get_part_index (int max)
   char prompt[40];
   char l;
 
-  sprintf (prompt, "Partition (a-%c): ", 'a' + max - 1);
+  sprintf (prompt, _("Partition (a-%c): "), 'a' + max - 1);
   do
      l = tolower (read_char (prompt));
   while (l < 'a' || l > 'a' + max - 1);
@@ -583,7 +587,7 @@ xbsd_check_new_partition (int *i)
 
     if (t == BSD_MAXPARTITIONS)
     {
-      fprintf (stderr, "The maximum number of partitions has been created\n");
+      fprintf (stderr, _("The maximum number of partitions has been created\n"));
       return 0;
     }
   }
@@ -594,7 +598,7 @@ xbsd_check_new_partition (int *i)
 
   if (xbsd_dlabel.d_partitions[*i].p_size != 0)
   {
-    fprintf (stderr, "This partition already exists.\n");
+    fprintf (stderr, _("This partition already exists.\n"));
     return 0;
   }
   return 1;
@@ -716,7 +720,7 @@ xbsd_readlabel (struct partition *p, struct xbsd_disklabel *d)
     return 0;
 
   if (d -> d_npartitions > BSD_MAXPARTITIONS)
-    fprintf (stderr, "Warning: too many partitions (%d, maximum is %d).\n",
+    fprintf (stderr, _("Warning: too many partitions (%d, maximum is %d).\n"),
 	     d -> d_npartitions, BSD_MAXPARTITIONS);
   return 1;
 }
@@ -762,7 +766,7 @@ xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d)
 static void
 sync_disks (void)
 {
-  printf ("\nSyncing disks.\n");
+  printf (_("\nSyncing disks.\n"));
   sync ();
   sleep (4);
 }

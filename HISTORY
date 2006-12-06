@@ -1,3 +1,82 @@
+util-linux 2.9v:
+
+* cfdisk no longer believes the kernel's HDGETGEO
+  (and may be able to partition a 2 TB disk)
+
+util-linux 2.9u:
+
+* Czech more.help and messages (Jiøí Pavlovský)
+* Japanese messages (Daisuke Yamashita)
+* fdisk fix (Klaus G. Wagner)
+* mount fix (Hirokazu Takahashi)
+* agetty: enable hardware flow control (Thorsten Kranzkowski)
+* minor cfdisk improvements
+* fdisk no longer accepts a default device
+* Makefile fix
+
+util-linux 2.9t:
+
+* national language support for hwclock
+* Japanese messages (both by Daisuke Yamashita)
+* German messages and some misc i18n fixes (Elrond)
+* Czech messages (Jiøí Pavlovský)
+* wall fixed for /dev/pts/xx ttys
+* make last and wall use getutent() (Sascha Schumann)
+  [Maybe this is bad: last reading all of wtmp may be too slow.
+   Revert in case people complain.]
+* documented UUID= and LABEL= in fstab.5
+* added some partition types
+* swapon: warn only if verbose
+
+util-linux 2.9s:
+
+* tunelp patch (Andrea Arcangeli)
+* German messages (Elrond)
+
+util-linux 2.9[pqr]:
+
+* errno->errsv patch (Arnaldo Carvalho de Melo)
+* hwclock patch for the Award 4.50g BIOS "2094" bug. (Dave Coffin)
+* fdisk patch to correct deletion of last logical partition
+
+util-linux 2.9o:
+
+* fix to login by Ambrose C. Li
+* improvement to mcookie inspired by a patch from Rik Faith
+* more i18n by Arnaldo Carvalho de Melo; pt_BR locale
+
+util-linux 2.9n:
+
+* Added -u option to logger (write to user-specified socket; Martin Schultze)
+* Added mount.smb script contributed by Greg Galperin
+* Some more national language support
+* mkfs.minix argument parsing fixed
+* write fixed for /dev/pts/xx ttys
+* configure adapted for the case of <scsi/scsi.h> that needs u_char.
+
+util-linux 2.9m:
+
+* Added national language support (misiek@misiek.eu.org)
+* minor improvements in mount, fdisk, cfdisk, agetty, more
+
+util-linux 2.9l:
+
+* Added /dev/port use to hwclock again - it may be necessary for Jensen.
+
+util-linux 2.9k:
+
+* major reshuffle of hwclock stuff; added sparc and alpha code
+* tiny shutdown fix
+* tiny fdisk fix
+
+util-linux 2.9j:
+
+* added configure
+* merged three lists of partition types in *fdisk
+* multi page display in cfdisk
+* test for getlogin() == "";
+* start fixup hwclock
+
 util-linux 2.9i:
 
 * fixed 2.9h typo in more
@@ -89,6 +168,11 @@ HIGHLIGHTS for version 2.9:
 4) Numerous other small changes.
 
 0xF) Send questions and/or patches to util-linux@math.uio.no
+
+util-linux 2.9 was released by Andries Brouwer - aeb@cwi.nl
+The address util-linux@math.uio.no reaches Rik, Andries, Peter,
+Michael, Erik, Nicolai and possibly others.  Hwclock stuff is
+forwarded to Bryan.
 
 util-linux 2.8:
 

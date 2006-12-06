@@ -369,7 +369,7 @@ unless there are sectors available inside the extended partition.
 
 If space is available, you are prompted for the first cylinder:
 
-     First sector ([237]-977): _
+     First cylinder ([237]-977): _
 
 The limits are the lowest and the highest cylinders in which sectors
 are available in the appropriate part of the disk.  The square-bracketed

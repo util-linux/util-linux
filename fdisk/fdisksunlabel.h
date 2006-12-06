@@ -36,8 +36,6 @@ typedef struct {
 #define SSWAP32(x) (other_endian ? __swap32(x) \
 				 : (__u32)(x))
 				 
-#define scround(x) ((x+(display_factor-1)*unit_flag)/display_factor)
-
 /* fdisk.c */
 extern char changed[MAXIMUM_PARTS];
 extern char buffer[MAX_SECTOR_SIZE];

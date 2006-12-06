@@ -38,6 +38,12 @@
  *	auth.warning. (Of course, the password itself is not logged.)
  */
 
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  * - added Native Language Support
+  * Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+  * - fixed strerr(errno) in gettext calls
+  */
+
 /*
  * Usage: passwd [username [password]]
  * Only root may use the one and two argument forms. 
@@ -59,12 +65,10 @@
 #include <errno.h>
 #include <sys/resource.h>
 #include "my_crypt.h"
+#include "nls.h"
+#include "env.h"
 
-#if 0
-#  include "../version.h"
-#else
-char version[] = "admutil 1.18, 15-Oct-95";
-#endif
+#include "../version.h"
 
 #ifndef _PATH_CHFN
 # define _PATH_CHFN "/usr/bin/chfn"
@@ -156,7 +160,7 @@ int check_passwd(char *passwd, char *oldpasswd, char *user, char *gecos)
     char *c, *g, *p;
 
     if ( (strlen(passwd) < 6) ) {
-	printf("The password must have at least 6 characters, try again.\n");
+	printf(_("The password must have at least 6 characters, try again.\n"));
 	return 0;
     }
 	
@@ -169,19 +173,19 @@ int check_passwd(char *passwd, char *oldpasswd, char *user, char *gecos)
     }
 	
     if ( (other + digit + ucase + lcase) < 2) {
-	printf("The password must contain characters out of two of the following\n");
-	printf("classes:  upper and lower case letters, digits and non alphanumeric\n");
-	printf("characters. See passwd(1) for more information.\n");
+	printf(_("The password must contain characters out of two of the following\n"));
+	printf(_("classes:  upper and lower case letters, digits and non alphanumeric\n"));
+	printf(_("characters. See passwd(1) for more information.\n"));
 	return 0;
     }
 	
     if ( oldpasswd[0] && !strncmp(oldpasswd, crypt(passwd, oldpasswd), 13) ) {
-	printf("You cannot reuse the old password.\n");
+	printf(_("You cannot reuse the old password.\n"));
 	return 0;
     }
 	
     if ( !check_passwd_string(passwd, user) ) {
-	printf("Please don't use something like your username as password!\n");
+	printf(_("Please don't use something like your username as password!\n"));
 	return 0;
     }
 
@@ -192,14 +196,14 @@ int check_passwd(char *passwd, char *oldpasswd, char *user, char *gecos)
 	    g[c-gecos] = 0;
 	    while ( (c=rindex(g, ' ')) ) {
 		if ( !check_passwd_string(passwd, c+1) ) {
-		    printf("Please don't use something like your realname as password!\n");
+		    printf(_("Please don't use something like your realname as password!\n"));
 		    free (g);
 		    return 0;
 		}
 		*c = '\0';
 	    } /* while */
 	    if ( !check_passwd_string(passwd, g) ) {
-		printf("Please don't use something like your realname as password!\n");
+		printf(_("Please don't use something like your realname as password!\n"));
 		free (g);
 		return 0;
 	    }
@@ -216,8 +220,8 @@ int check_passwd(char *passwd, char *oldpasswd, char *user, char *gecos)
 
 void usage()
 {
-    printf ("Usage: passwd [username [password]]\n");
-    printf("Only root may use the one and two argument forms.\n");
+    printf (_("Usage: passwd [username [password]]\n"));
+    printf(_("Only root may use the one and two argument forms.\n"));
 }
 
 int
@@ -248,6 +252,11 @@ main(argc, argv)
 	{0, 0, 0, 0}
 	};
 
+    sanitize_env();
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
+
     optind = 0;
     while ( (c = getopt_long(argc, argv, "foqsvV", long_options, &opt_index)) != -1 ) {
 	switch (c) {
@@ -265,17 +274,17 @@ main(argc, argv)
 	    break;
 	case 'V':
 	case 'v':
-	    printf("%s\n", version);
+	    printf("%s\n", util_linux_version);
 	    exit(0);
 	default:
-	    fprintf(stderr, "Usage: passwd [-foqsvV] [user [password]]\n");
+	    fprintf(stderr, _("Usage: passwd [-foqsvV] [user [password]]\n"));
 	    exit(1);
 	} /* switch (c) */
     } /* while */
 
     if (fullname || shell) {
 	char *args[100];
-	int i, j;
+	int i, j, errsv;
 
 	setuid(getuid()); /* drop special privs. */
 	if (fullname)
@@ -288,29 +297,33 @@ main(argc, argv)
 
 	args[j] = NULL;
 	execv(args[0], args);
-	fprintf(stderr, "Can't exec %s: %s\n", args[0], strerror(errno));
+	errsv = errno;
+	fprintf(stderr, _("Can't exec %s: %s\n"), args[0], strerror(errsv));
 	exit(1);
     }
     
     switch (argc - optind) {
     case 0:
-	if ( !(user = getlogin()) ) {
+	/* Why use getlogin()? Some systems allow having several
+	   usernames with the same uid, especially several root accounts.
+	   One changes the password for the username, not the uid. */
+	if ( !(user = getlogin()) || !*user ) {
 	    if ( !(pe = getpwuid( getuid() )) ) {
-		pexit("Cannot find login name");
+		pexit(_("Cannot find login name"));
 	    } else
 		user = pe->pw_name;
 	}
 	break;
     case 1:
 	if(gotuid) {
-	    printf("Only root can change the password for others.\n");
+	    printf(_("Only root can change the password for others.\n"));
 	    exit (1);
 	} else
 	    user = argv[optind];
 	break;
     case 2:
 	if(gotuid) {
-	    printf("Only root can change the password for others.\n");
+	    printf(_("Only root can change the password for others.\n"));
 	    exit(1);
 	} else {
 	    user = argv[optind];
@@ -318,33 +331,33 @@ main(argc, argv)
 	}
 	break;
     default:
-	printf("Too many arguments.\n");
+	printf(_("Too many arguments.\n"));
 	exit (1);
     } /* switch */
 
     if(!(pe = getpwnam(user))) {
-	pexit("Can't find username anywhere. Is `%s' really a user?", user);
+	pexit(_("Can't find username anywhere. Is `%s' really a user?"), user);
     }
     
     if (!(is_local(user))) {
-	puts("Sorry, I can only change local passwords. Use yppasswd instead.");
+	puts(_("Sorry, I can only change local passwords. Use yppasswd instead."));
 	exit(1);
     }
     
     /* if somebody got into changing utmp... */
     if(gotuid && gotuid != pe->pw_uid) {
-	puts("UID and username does not match, imposter!");
+	puts(_("UID and username does not match, imposter!"));
 	exit(1);
     }
     
     if ( !silent )
-	printf( "Changing password for %s\n", user );
+	printf( _("Changing password for %s\n"), user );
     
     if ( (gotuid && pe->pw_passwd && pe->pw_passwd[0]) 
 	|| (!gotuid && !strcmp(user,"root")) ) {
-	oldstr = getpass("Enter old password: ");
+	oldstr = getpass(_("Enter old password: "));
 	if(strncmp(pe->pw_passwd, crypt(oldstr, pe->pw_passwd), 13)) {
-	    puts("Illegal password, imposter.");
+	    puts(_("Illegal password, imposter."));
 	    exit(1);
 	}
     }
@@ -356,9 +369,9 @@ main(argc, argv)
 	/* password not set on command line by root, ask for it ... */
 	
       redo_it:
-	pwdstr = getpass("Enter new password: ");
+	pwdstr = getpass(_("Enter new password: "));
 	if (pwdstr[0] == '\0') {
-	    puts("Password not changed.");
+	    puts(_("Password not changed."));
 	    exit(1);
 	}
 
@@ -368,10 +381,10 @@ main(argc, argv)
 	
 	strncpy(pwdstr1, pwdstr, 9);
 	pwdstr1[9] = 0;
-	pwdstr = getpass("Re-type new password: ");
+	pwdstr = getpass(_("Re-type new password: "));
 	
 	if(strncmp(pwdstr, pwdstr1, 8)) {
-	    puts("You misspelled it. Password not changed.");
+	    puts(_("You misspelled it. Password not changed."));
 	    exit(1);
 	}
     } /* pwdstr i.e. password set on command line */
@@ -386,28 +399,28 @@ main(argc, argv)
 #ifdef LOGALL
     openlog("passwd", 0, LOG_AUTH);
     if (gotuid)
-	syslog(LOG_NOTICE,"password changed, user %s",user);
+	syslog(LOG_NOTICE,_("password changed, user %s"),user);
     else {
 	if ( !strcmp(user, "root") )
-	    syslog(LOG_WARNING,"ROOT PASSWORD CHANGED");
+	    syslog(LOG_WARNING,_("ROOT PASSWORD CHANGED"));
 	else
-	    syslog(LOG_NOTICE,"password changed by root, user %s",user);
+	    syslog(LOG_NOTICE,_("password changed by root, user %s"),user);
     }
     closelog();
 #endif /* LOGALL */
 
     pe->pw_passwd = cryptstr;
 #ifdef DEBUG
-    printf ("calling setpwnam to set password.\n");
+    printf (_("calling setpwnam to set password.\n"));
 #else
     if (setpwnam( pe ) < 0) {
        perror( "setpwnam" );
-       printf( "Password *NOT* changed.  Try again later.\n" );
+       printf( _("Password *NOT* changed.  Try again later.\n" ));
        exit( 1 );
     }
 #endif
 
     if ( !silent )
-	printf("Password changed.\n");	
+	printf(_("Password changed.\n"));	
     exit(0);
 }

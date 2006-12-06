@@ -2,19 +2,28 @@
  * ctrlaltdel.c - Set the function of the Ctrl-Alt-Del combination
  * Created 4-Jul-92 by Peter Orbaek <poe@daimi.aau.dk>
  * ftp://ftp.daimi.aau.dk/pub/linux/poe/
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  */
 
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
 #include "linux_reboot.h"
+#include "nls.h"
 
 int
 main(int argc, char *argv[]) {
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	
+
 	if(geteuid()) {
 		fprintf(stderr,
-		    "You must be root to set the Ctrl-Alt-Del behaviour.\n");
+		    _("You must be root to set the Ctrl-Alt-Del behaviour.\n"));
 		exit(1);
 	}
 
@@ -29,7 +38,7 @@ main(int argc, char *argv[]) {
 			exit(1);
 		}
 	} else {
-		fprintf(stderr, "Usage: ctrlaltdel hard|soft\n");
+		fprintf(stderr, _("Usage: ctrlaltdel hard|soft\n"));
 		exit(1);
 	}
 	exit(0);

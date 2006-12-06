@@ -3,6 +3,10 @@
 /* Vesa Roukonen added code for asking password */
 /* Currently maintained at ftp://ftp.daimi.aau.dk/pub/linux/poe/ */
 
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ */
+
 #include <unistd.h>
 #include <pwd.h>
 #include <grp.h>
@@ -11,6 +15,7 @@
 #include <errno.h>
 #include "pathnames.h"
 #include "my_crypt.h"
+#include "nls.h"
 
 #ifndef TRUE
 # define TRUE 1
@@ -39,7 +44,7 @@ allow_setgid(struct passwd *pe, struct group *ge)
 
     if(ge->gr_passwd && ge->gr_passwd[0] != 0) {
 	if(strcmp(ge->gr_passwd, 
-		  crypt(getpass("Password: "), ge->gr_passwd)) == 0) {
+		  crypt(getpass(_("Password: ")), ge->gr_passwd)) == 0) {
 	    return TRUE;		/* password accepted */
 	}
     }
@@ -53,9 +58,13 @@ main(int argc, char *argv[])
     struct passwd *pw_entry;
     struct group *gr_entry;
     char *shell;
+
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
     
     if (!(pw_entry = getpwuid(getuid()))) {
-	perror("newgrp: Who are you?");
+	perror(_("newgrp: Who are you?"));
 	exit(1);
     }
     
@@ -63,34 +72,34 @@ main(int argc, char *argv[])
     
     if (argc < 2) {
 	if(setgid(pw_entry->pw_gid) < 0) {
-	    perror("newgrp: setgid");
+	    perror(_("newgrp: setgid"));
 	    exit(1);
 	}
     } else {
 	if (!(gr_entry = getgrnam(argv[1]))) {
-	    perror("newgrp: No such group.");
+	    perror(_("newgrp: No such group."));
 	    exit(1);
 	} else {
 	    if(allow_setgid(pw_entry, gr_entry)) {
 		if(setgid(gr_entry->gr_gid) < 0) {
-		    perror("newgrp: setgid");
+		    perror(_("newgrp: setgid"));
 		    exit(1);
 		}
 	    } else {
-		puts("newgrp: Permission denied");
+		puts(_("newgrp: Permission denied"));
 		exit(1);
 	    }
 	}
     }
 
     if(setuid(getuid()) < 0) {
-	perror("newgrp: setuid");
+	perror(_("newgrp: setuid"));
 	exit(1);
     }
 
     fflush(stdout); fflush(stderr);
     execl(shell,shell,(char*)0);
-    perror("No shell");
+    perror(_("No shell"));
     fflush(stderr);
     exit(1);
 }

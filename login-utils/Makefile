@@ -3,9 +3,10 @@
 # Revised: Sun Nov 10 20:28:43 1996 by faith@cs.unc.edu
 # Copyright 1992, 1993, 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
 #
-# Suggested changed from Bauke Jan Douma <bjdouma@xs4all.nl> have been
+# Suggested changes from Bauke Jan Douma <bjdouma@xs4all.nl> have been
 # implemented to handle shadow and sysvinit systems 
 
+include ../make_include
 include ../MCONFIG
 
 # Where to put man pages?
@@ -37,7 +38,7 @@ USRBIN.PASSWD=	passwd
 
 USRSBIN.PUTILS=	vipw
 
-ifeq "$(HAVE_LIBCRYPT)" "yes"
+ifeq "$(NEED_LIBCRYPT)" "yes"
 CRYPT=-lcrypt
 endif
 
@@ -84,9 +85,9 @@ all-misc: $(USRBIN.MISC)
 
 agetty.o: $(LIB)/pathnames.h
 agetty: agetty.o
-chfn: chfn.o islocal.o setpwnam.o
+chfn: chfn.o islocal.o setpwnam.o $(LIB)/env.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
-chsh: chsh.o islocal.o setpwnam.o
+chsh: chsh.o islocal.o setpwnam.o $(LIB)/env.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
 islocal.o: $(LIB)/pathnames.h
 last.o: $(LIB)/pathnames.h
@@ -101,13 +102,17 @@ login: login.o $(LIB)/setproctitle.o checktty.o
 endif
 
 mesg: mesg.o $(ERR_O)
+
 newgrp: newgrp.o 
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
+
 setpwnam.o: $(LIB)/pathnames.h
 shutdown.o: $(LIB)/pathnames.h $(LIB)/linux_reboot.h
 shutdown: shutdown.o $(LIB)/my_reboot.o
 simpleinit.o: $(LIB)/pathnames.h $(LIB)/linux_reboot.h
 simpleinit: simpleinit.o $(LIB)/my_reboot.o
+	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT)
+
 vipw.o: $(LIB)/pathnames.h
 vipw: vipw.o
 
@@ -127,7 +132,7 @@ login.o: $(LIB)/pathnames.h
 mesg.o: $(LIB)/err.h
 endif
 
-passwd: passwd.o islocal.o setpwnam.o
+passwd: passwd.o islocal.o setpwnam.o $(LIB)/env.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT)
 
 ifeq "$(REQUIRE_PASSWORD)" "yes"

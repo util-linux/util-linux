@@ -31,12 +31,17 @@
  * SUCH DAMAGE.
  */
 
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  * - added Native Language Support
+  */
+
 #include <sys/types.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <ctype.h>		/* for isdigit() */
 #include <unistd.h>		/* for getopt() */
 #include "hexdump.h"
+#include "nls.h"
 
 static void odoffset(int, char ***);
 
@@ -125,11 +130,11 @@ oldsyntax(int argc, char ***argvp)
 		case '?':
 		default:
 			(void)fprintf(stderr,
-			    "od: od(1) has been deprecated for hexdump(1).\n");
+			    _("od: od(1) has been deprecated for hexdump(1).\n"));
 			if (ch != '?')
 				(void)fprintf(stderr,
-"od: hexdump(1) compatibility doesn't support the -%c option%s\n",
-				    ch, ch == 's' ? "; see strings(1)." : ".");
+_("od: hexdump(1) compatibility doesn't support the -%c option%s\n"),
+				    ch, ch == 's' ? _("; see strings(1).") : ".");
 			usage();
 		}
 

@@ -1,5 +1,6 @@
 .SUFFIXES:
 
+include ../make_include
 include ../MCONFIG
 
 GETOPTDIR=$(USRLIBDIR)/getopt

@@ -10,8 +10,8 @@
 # Select for CPU one of intel, alpha, sparc, arm, m68k, mips
 CPU=$(shell uname -m | sed s/i.86/intel/)
 
-# if HAVE_LIBCRYPT is "yes" -lcrypt will be used
-HAVE_LIBCRYPT=yes
+# define where is locale directrory (default /usr/share/locale)
+LOCALEDIR=/usr/share/locale
 
 # If HAVE_PAM is set to "yes", then login, chfn, chsh, and newgrp
 # will use PAM for authentication. Additionally, passwd will not be
@@ -65,9 +65,6 @@ HAVE_GETTY=no
 # properly.]
 USE_TTY_GROUP=yes
 
-# If HAVE_OPENPTY is set to "yes", then script will use the Unix98 ptys
-HAVE_OPENPTY=no
-
 # If HAVE_RESET is set to "yes", then reset won't be installed.  The version
 # of reset that comes with the ncurses package is less aggressive.
 HAVE_RESET=yes
@@ -81,12 +78,12 @@ CC=		gcc
 
 # Different optimizations for different cpus.
 ifeq "$(CPU)" "intel"
-  OPT=		-pipe -O3 -m486 -fomit-frame-pointer
+  OPT=		-pipe -O2 -m486 -fomit-frame-pointer
 else 
   ifeq "$(CPU)" "arm"
     OPT=	-O2 -m3 -fomit-frame-pointer
   else
-    OPT=	-O3 -fomit-frame-pointer
+    OPT=	-O2 -fomit-frame-pointer
   endif
 endif
 
@@ -103,23 +100,8 @@ CFLAGS    = $(OPT) -I. -I$(LIB) $(WARNFLAGS) \
 			-DSBINDIR=\"$(SBINDIR)\" \
 			-DUSRSBINDIR=\"$(USRSBINDIR)\" \
 			-DLOGDIR=\"$(LOGDIR)\" \
-			-DVARPATH=\"$(VARPATH)\"
-
-# Set HAVE_NCURSES to "yes" if you have ncurses
-# (without it, more, ul and setterm are not made)
-HAVE_NCURSES=yes
-
-# ncurses appears to be installed in three major ways.
-#
-# There is a subdirectory /usr/include/ncurses, with curses.h in
-#   CURSESFLAGS=-I/usr/include/ncurses -DNCH=0
-# No such subdirectory, but ncurses/curses.h is installed as ncurses.h
-#   CURSESFLAGS=-DNCH=1
-# No such subdirectory - <curses.h> is the ncurses one.
-#   CURSESFLAGS=-DNCH=0
-# Pick your choice.
-CURSESFLAGS=-I/usr/include/ncurses -DNCH=0
-LIBCURSES=-lncurses
+			-DVARPATH=\"$(VARPATH)\" \
+			-DLOCALEDIR=\"$(LOCALEDIR)\"
 
 # Set HAVE_SLANG to yes if you have slang (and prefer to use that for cfdisk)
 # (If neither HAVE_NCURSES nor HAVE_SLANG is defined, cfdisk is not made.)
@@ -130,6 +112,7 @@ LIBCURSES=-lncurses
 # No such subdirectory - slcurses.h lives in /usr/include
 #   (no extra definition required).
 LIBSLANG=-lslang
+
 
 DEVDIR=		$(DESTDIR)/dev
 ETCDIR=		$(DESTDIR)/etc

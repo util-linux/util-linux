@@ -18,12 +18,17 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  * - added Native Language Support
+  */
+
 /*
  * last
  */
 #include <sys/param.h>
 #include <sys/stat.h>
 #include <sys/file.h>
+#include <sys/types.h>
 #include <signal.h>
 #include <string.h>
 #include <time.h>
@@ -32,18 +37,23 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#include <sys/socket.h>
+#include <netinet/in.h>
 #include <arpa/inet.h>
+
 #include "pathnames.h"
+#include "nls.h"
 
 #define	SECDAY	(24*60*60)			/* seconds in a day */
 #define	NO	0				/* false/no */
 #define	YES	1				/* true/yes */
 
-static struct utmp	buf[1024];		/* utmp read buffer */
+static struct utmp	utmpbuf;
 
-#define	HMAX	(int)sizeof(buf[0].ut_host)	/* size of utmp host field */
-#define	LMAX	(int)sizeof(buf[0].ut_line)	/* size of utmp tty field */
-#define	NMAX	(int)sizeof(buf[0].ut_name)	/* size of utmp name field */
+#define	HMAX	(int)sizeof(utmpbuf.ut_host)	/* size of utmp host field */
+#define	LMAX	(int)sizeof(utmpbuf.ut_line)	/* size of utmp tty field */
+#define	NMAX	(int)sizeof(utmpbuf.ut_name)	/* size of utmp name field */
 
 #ifndef MIN
 #define MIN(a,b)	(((a) < (b)) ? (a) : (b))
@@ -94,6 +104,10 @@ main(argc, argv)
 	extern char	*optarg;
 	int	ch;
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	while ((ch = getopt(argc, argv, "0123456789yli:f:h:t:")) != EOF)
 		switch((char)ch) {
 		case '0': case '1': case '2': case '3': case '4':
@@ -126,7 +140,7 @@ main(argc, argv)
 			break;
 		case '?':
 		default:
-			fputs("usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n", stderr);
+			fputs(_("usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"), stderr);
 			exit(1);
 		}
 	for (argv += optind; *argv; ++argv) {
@@ -183,31 +197,39 @@ wtmp()
 {
 	register struct utmp	*bp;		/* current structure */
 	register TTY	*T;			/* tty list entry */
-	struct stat	stb;			/* stat of file for size */
-	long	bl, delta,			/* time difference */
-		lseek(), time();
-	int	bytes, wfd;
+	long	delta;				/* time difference */
 	void	onintr();
-	char	*ct, *crmsg = NULL;
+	char *crmsg = NULL;
+	char *ct = NULL;
+	struct utmp **utmplist = NULL;
+	int listlen = 0;
+	int listnr = 0;
+	int i;
+	
+	utmpname(file);
 
-	if ((wfd = open(file, O_RDONLY, 0)) < 0 || fstat(wfd, &stb) == -1) {
-		perror(file);
-		exit(1);
-	}
-	bl = (stb.st_size + sizeof(buf) - 1) / sizeof(buf);
-
-	(void)time(&buf[0].ut_time);
+	(void)time(&utmpbuf.ut_time);
 	(void)signal(SIGINT, onintr);
 	(void)signal(SIGQUIT, onintr);
 
-	while (--bl >= 0) {
-	    if (lseek(wfd, (long)(bl * sizeof(buf)), SEEK_SET) == -1 ||
-		(bytes = read(wfd, (char *)buf, sizeof(buf))) == -1) {
-		fprintf(stderr, "last: %s: ", file);
-		perror((char *)NULL);
-		exit(1);
-	    }
-	    for (bp = &buf[bytes / sizeof(buf[0]) - 1]; bp >= buf; --bp) {
+	setutent();
+	while((bp = getutent())) {
+		if(listnr >= listlen) {
+			listlen += 10;
+			listlen *= 2; 	/* avoid quadratic behaviour */
+			utmplist = realloc(utmplist, sizeof(bp) * listlen);
+		}
+
+		utmplist[listnr] = malloc(sizeof(*bp));
+		memcpy(utmplist[listnr++], bp, sizeof(*bp));
+	}
+	endutent();
+
+	if(listnr) 
+		ct = ctime(&utmplist[0]->ut_time);
+
+	for(i = listnr - 1; i >= 0; i--) {
+		bp = utmplist[i];
 		/*
 		 * if the terminal line is '~', the machine stopped.
 		 * see utmp(5) for more info.
@@ -258,7 +280,7 @@ wtmp()
 		    print_partial_line(bp);
 
 		    if (!T->logout)
-			puts("  still logged in");
+			puts(_("  still logged in"));
 		    else {
 			if (T->logout < 0) {
 			    T->logout = -T->logout;
@@ -276,10 +298,11 @@ wtmp()
 			return;
 		}
 		T->logout = bp->ut_time;
-	    }
+		utmpbuf.ut_time = bp->ut_time;
+		free(bp);
 	}
-	ct = ctime(&buf[0].ut_time);
-	printf("\nwtmp begins %10.10s %5.5s \n", ct, ct + 11);
+	if(utmplist) free(utmplist);
+	if(ct) printf(_("\nwtmp begins %s"), ct); 	/* ct already ends in \n */
 }
 
 /*
@@ -293,7 +316,7 @@ want(bp, check)
 {
 	register ARG	*step;
 
-	if (check)
+	if (check) {
 		/*
 		 * when uucp and ftp log in over a network, the entry in
 		 * the utmp file is the name plus their process id.  See
@@ -303,6 +326,7 @@ want(bp, check)
 			bp->ut_line[3] = '\0';
 		else if (!strncmp(bp->ut_line, "uucp", sizeof("uucp") - 1))
 			bp->ut_line[4] = '\0';
+	}
 	if (!arglist)
 		return(YES);
 
@@ -340,7 +364,7 @@ addarg(type, arg)
 	register ARG	*cur;
 
 	if (!(cur = (ARG *)malloc((unsigned int)sizeof(ARG)))) {
-		fputs("last: malloc failure.\n", stderr);
+		fputs(_("last: malloc failure.\n"), stderr);
 		exit(1);
 	}
 	cur->next = arglist;
@@ -360,7 +384,7 @@ addtty(ttyname)
 	register TTY	*cur;
 
 	if (!(cur = (TTY *)malloc((unsigned int)sizeof(TTY)))) {
-		fputs("last: malloc failure.\n", stderr);
+		fputs(_("last: malloc failure.\n"), stderr);
 		exit(1);
 	}
 	cur->next = ttylist;
@@ -389,7 +413,7 @@ hostconv(arg)
 	if (first) {
 		first = 0;
 		if (gethostname(name, sizeof(name))) {
-			perror("last: gethostname");
+			perror(_("last: gethostname"));
 			exit(1);
 		}
 		hostdot = strchr(name, '.');
@@ -415,7 +439,7 @@ ttyconv(arg)
 	if (strlen(arg) == 2) {
 		/* either 6 for "ttyxx" or 8 for "console" */
 		if (!(mval = malloc((unsigned int)8))) {
-			fputs("last: malloc failure.\n", stderr);
+			fputs(_("last: malloc failure.\n"), stderr);
 			exit(1);
 		}
 		if (!strcmp(arg, "co"))
@@ -441,8 +465,8 @@ onintr(signo)
 {
 	char	*ct;
 
-	ct = ctime(&buf[0].ut_time);
-	printf("\ninterrupted %10.10s %5.5s \n", ct, ct + 11);
+	ct = ctime(&utmpbuf.ut_time);
+	printf(_("\ninterrupted %10.10s %5.5s \n"), ct, ct + 11);
 	if (signo == SIGINT)
 		exit(1);
 	(void)fflush(stdout);			/* fix required for rsh */

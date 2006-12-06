@@ -34,6 +34,12 @@
  *
  */
 
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  * - added Native Language Support
+  * Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+  * - fixed strerr(errno) in gettext calls
+  */
+
 #include <sys/types.h>
 #include <sys/uio.h>
 #include <signal.h>
@@ -45,6 +51,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include "nls.h"
 
 #ifdef __linux__
 #include "pathnames.h"
@@ -68,19 +75,20 @@ ttymsg(iov, iovcnt, line, tmout)
 	static char errbuf[MAXNAMLEN+1024];
 	register int cnt, fd, left, wret;
 	struct iovec localiov[6];
-	int forked = 0;
+	int forked = 0, errsv;
 
 	if (iovcnt > sizeof(localiov) / sizeof(localiov[0]))
-		return ("too many iov's (change code in wall/ttymsg.c)");
+		return (_("too many iov's (change code in wall/ttymsg.c)"));
 
-	if (strchr(line, '/')) {
-		/* A slash is an attempt to break security... */
-		(void) sprintf(errbuf, "'/' in \"%s\"", device);
-		errbuf[1024] = 0; 	/* protect caller */
-		return (errbuf);
-	}
+	/* The old code here rejected the line argument when it contained a '/',
+	   saying: "A slash may be an attempt to break security...".
+	   However, if a user can control the line argument here
+	   then he can make this routine write to /dev/hda or /dev/sda
+	   already. So, this test was worthless, and these days it is
+	   also wrong since people use /dev/pts/xxx. */
+
 	if (strlen(line) + sizeof(_PATH_DEV) + 1 > sizeof(device)) {
-		(void) sprintf(errbuf, "excessively long line arg");
+		(void) sprintf(errbuf, _("excessively long line arg"));
 		return (errbuf);
 	}
 	(void) sprintf(device, "%s%s", _PATH_DEV, line);
@@ -134,10 +142,12 @@ ttymsg(iov, iovcnt, line, tmout)
 			cpid = fork();
 			if (cpid < 0) {
 				if (strlen(strerror(errno)) > 1000)
-					(void) sprintf(errbuf, "cannot fork");
-				else
+					(void) sprintf(errbuf, _("cannot fork"));
+				else {
+					errsv = errno;
 					(void) sprintf(errbuf,
-						 "fork: %s", strerror(errno));
+						 _("fork: %s"), strerror(errsv));
+				}
 				(void) close(fd);
 				return (errbuf);
 			}
@@ -164,10 +174,12 @@ ttymsg(iov, iovcnt, line, tmout)
 		if (forked)
 			_exit(1);
 		if (strlen(strerror(errno)) > 1000)
-			(void) sprintf(errbuf, "%s: BAD ERROR", device);
-		else
+			(void) sprintf(errbuf, _("%s: BAD ERROR"), device);
+		else {
+			errsv = errno;
 			(void) sprintf(errbuf, "%s: %s", device,
-				       strerror(errno));
+				       strerror(errsv));
+		}
 		errbuf[1024] = 0;
 		return (errbuf);
 	}

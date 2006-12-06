@@ -34,6 +34,10 @@
  * SUCH DAMAGE.
  */
 
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  * - added Native Language Support
+  */
+
 /*
  * look -- find lines in a sorted list.
  * 
@@ -56,6 +60,7 @@
 #include <getopt.h>
 #include <locale.h>
 #include "pathnames.h"
+#include "nls.h"
 
 #define	EQUAL		0
 #define	GREATER		1
@@ -83,6 +88,10 @@ main(int argc, char *argv[])
 	int ch, fd, termchar;
 	char *back, *file, *front, *p;
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	
 	setlocale(LC_ALL, "");
 
 	file = _PATH_WORDS;
@@ -158,7 +167,7 @@ look(char *front, char *back)
 
 	comparbuf = malloc(stringlen+1);
 	if (comparbuf == NULL)
-		err("Out of memory");
+		err(_("Out of memory"));
 
 	front = binary_search(front, back);
 	front = linear_search(front, back);
@@ -328,7 +337,7 @@ compare(char *s2, char *s2end, int nocase) {
 static void
 usage()
 {
-	(void)fprintf(stderr, "usage: look [-dfa] [-t char] string [file]\n");
+	(void)fprintf(stderr, _("usage: look [-dfa] [-t char] string [file]\n"));
 	exit(2);
 }
 

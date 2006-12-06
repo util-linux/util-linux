@@ -17,6 +17,10 @@
  *   suggestion from Zefram.  Disallowing users with shells not in /etc/shells
  *   from changing their shell.
  *
+ *   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ *   - added Native Language Support
+ *
+ *
  */
 
 #if 0
@@ -34,6 +38,8 @@
 #include <getopt.h>
 #include "my_crypt.h"
 #include "../version.h"
+#include "nls.h"
+#include "env.h"
 
 #if REQUIRE_PASSWORD && USE_PAM
 #include <security/pam_appl.h>
@@ -79,7 +85,7 @@ int main (argc, argv)
     int argc;
     char *argv[];
 {
-    char *cp, *shell, *oldshell, *pwdstr;
+    char *cp, *shell, *oldshell;
     uid_t uid;
     struct sinfo info;
     struct passwd *pw;
@@ -89,6 +95,11 @@ int main (argc, argv)
     int retcode;
     struct pam_conv conv = { misc_conv, NULL };
 #endif
+
+    sanitize_env();
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
 
     /* whoami is the program name for error messages */
     whoami = argv[0];
@@ -104,20 +115,19 @@ int main (argc, argv)
     if (! info.username) {
 	pw = getpwuid (uid);
 	if (! pw) {
-	    fprintf (stderr, "%s: you (user %d) don't exist.\n", whoami, uid);
+	    fprintf (stderr, _("%s: you (user %d) don't exist.\n"), whoami, uid);
 	    return (-1); }
     }
     else {
 	pw = getpwnam (info.username);
 	if (! pw) {
 	    cp = info.username;
-	    fprintf (stderr, "%s: user \"%s\" does not exist.\n", whoami, cp);
+	    fprintf (stderr, _("%s: user \"%s\" does not exist.\n"), whoami, cp);
 	    return (-1); }
     }
 
     if (!(is_local(pw->pw_name))) {
-       fprintf (stderr, "%s: can only change local entries; use yp%s instead.\n
-",
+       fprintf (stderr, _("%s: can only change local entries; use yp%s instead.\n"),
            whoami, whoami);
        exit(1);
     }
@@ -128,35 +138,35 @@ int main (argc, argv)
     /* reality check */
     if (uid != 0 && (uid != pw->pw_uid || !get_shell_list(oldshell))) {
 	errno = EACCES;
-	fprintf(stderr,"%s: Your shell is not in /etc/shells, shell change"
-		" denied\n",whoami);
+	fprintf(stderr,_("%s: Your shell is not in /etc/shells, shell change"
+		" denied\n"),whoami);
 	return (-1);
     }
     
     shell = info.shell;
 
-    printf( "Changing shell for %s.\n", pw->pw_name );
+    printf( _("Changing shell for %s.\n"), pw->pw_name );
 
 #if REQUIRE_PASSWORD
 # if USE_PAM
     if(uid != 0) {
         if (pam_start("chsh", pw->pw_name, &conv, &pamh)) {
-	    puts("Password error.");
+	    puts(_("Password error."));
 	    exit(1);
 	}
         if (pam_authenticate(pamh, 0)) {
-	    puts("Password error.");
+	    puts(_("Password error."));
 	    exit(1);
 	}
         retcode = pam_acct_mgmt(pamh, 0);
         if (retcode == PAM_NEW_AUTHTOK_REQD) {
 	    retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
         } else if (retcode) {
-	    puts("Password error.");
+	    puts(_("Password error."));
 	    exit(1);
 	}
         if (pam_setcred(pamh, 0)) {
-	    puts("Password error.");
+	    puts(_("Password error."));
 	    exit(1);
 	}
         /* no need to establish a session; this isn't a session-oriented
@@ -165,10 +175,10 @@ int main (argc, argv)
 # else /* USE_PAM */
     /* require password, unless root */
     if(uid != 0 && pw->pw_passwd && pw->pw_passwd[0]) {
-	pwdstr = getpass("Password: ");
+	char *pwdstr = getpass(_("Password: "));
 	if(strncmp(pw->pw_passwd,
 		   crypt(pwdstr, pw->pw_passwd), 13)) {
-	    puts("Incorrect password.");
+	    puts(_("Incorrect password."));
 	    exit(1);
 	}
     }
@@ -176,24 +186,24 @@ int main (argc, argv)
 #endif /* REQUIRE_PASSWORD */
 
     if (! shell) {
-	shell = prompt ("New shell", oldshell);
+	shell = prompt (_("New shell"), oldshell);
 	if (! shell) return 0;
     }
     
     if (check_shell (shell) < 0) return (-1);
 
     if (! strcmp (pw->pw_shell, shell)) {
-	printf ("Shell not changed.\n");
+	printf (_("Shell not changed.\n"));
 	return 0;
     }
     if (!strcmp(shell, "/bin/sh")) shell = "";
     pw->pw_shell = shell;
     if (setpwnam (pw) < 0) {
 	perror ("setpwnam");
-	printf( "Shell *NOT* changed.  Try again later.\n" );
+	printf( _("Shell *NOT* changed.  Try again later.\n") );
 	return (-1);
     }
-    printf ("Shell changed.\n");
+    printf (_("Shell changed.\n"));
     return 0;
 }
 
@@ -261,9 +271,9 @@ static void parse_argv (argc, argv, pinfo)
 static void usage (fp)
     FILE *fp;
 {
-    fprintf (fp, "Usage: %s [ -s shell ] ", whoami);
-    fprintf (fp, "[ --list-shells ] [ --help ] [ --version ]\n");
-    fprintf (fp, "       [ username ]\n");
+    fprintf (fp, _("Usage: %s [ -s shell ] "), whoami);
+    fprintf (fp, _("[ --list-shells ] [ --help ] [ --version ]\n"));
+    fprintf (fp, _("       [ username ]\n"));
 }
 
 /*
@@ -281,7 +291,7 @@ static char *prompt (question, def_val)
     printf("%s [%s]: ", question, def_val);
     *buf = 0;
     if (fgets (buf, sizeof (buf), stdin) == NULL) {
-	printf ("\nAborted.\n");
+	printf (_("\nAborted.\n"));
 	exit (-1);
     }
     /* remove the newline at the end of buf. */
@@ -307,44 +317,44 @@ static int check_shell (shell)
     int i, c;
 
     if (*shell != '/') {
-	printf ("%s: shell must be a full path name.\n", whoami);
+	printf (_("%s: shell must be a full path name.\n"), whoami);
 	return (-1);
     }
     if (access (shell, F_OK) < 0) {
-	printf ("%s: \"%s\" does not exist.\n", whoami, shell);
+	printf (_("%s: \"%s\" does not exist.\n"), whoami, shell);
 	return (-1);
     }
     if (access (shell, X_OK) < 0) {
-	printf ("%s: \"%s\" is not executable.\n", whoami, shell);
+	printf (_("%s: \"%s\" is not executable.\n"), whoami, shell);
 	return (-1);
     }
     /* keep /etc/passwd clean. */
     for (i = 0; i < strlen (shell); i++) {
 	c = shell[i];
 	if (c == ',' || c == ':' || c == '=' || c == '"' || c == '\n') {
-	    printf ("%s: '%c' is not allowed.\n", whoami, c);
+	    printf (_("%s: '%c' is not allowed.\n"), whoami, c);
 	    return (-1);
 	}
 	if (iscntrl (c)) {
-	    printf ("%s: Control characters are not allowed.\n", whoami);
+	    printf (_("%s: Control characters are not allowed.\n"), whoami);
 	    return (-1);
 	}
     }
 #if ONLY_LISTED_SHELLS
     if (! get_shell_list (shell)) {
        if (!getuid())
-	  printf ("Warning: \"%s\" is not listed in /etc/shells\n", shell);
+	  printf (_("Warning: \"%s\" is not listed in /etc/shells\n"), shell);
        else {
-	  printf ("%s: \"%s\" is not listed in /etc/shells.\n",
+	  printf (_("%s: \"%s\" is not listed in /etc/shells.\n"),
 		  whoami, shell);
-	  printf( "%s: use -l option to see list\n", whoami );
+	  printf( _("%s: use -l option to see list\n"), whoami );
 	  exit(1);
        }
     }
 #else
     if (! get_shell_list (shell)) {
-       printf ("Warning: \"%s\" is not listed in /etc/shells.\n", shell);
-       printf( "Use %s -l to see list.\n", whoami );
+       printf (_("Warning: \"%s\" is not listed in /etc/shells.\n"), shell);
+       printf( _("Use %s -l to see list.\n"), whoami );
     }
 #endif
     return 0;
@@ -365,7 +375,7 @@ static boolean get_shell_list (shell_name)
     found = false;
     fp = fopen ("/etc/shells", "r");
     if (! fp) {
-	if (! shell_name) printf ("No known shells.\n");
+	if (! shell_name) printf (_("No known shells.\n"));
 	return true;
     }
     while (fgets (buf, sizeof (buf), fp) != NULL) {
@@ -399,7 +409,7 @@ static void *xmalloc (bytes)
 
     vp = malloc (bytes);
     if (! vp && bytes > 0) {
-	perror ("malloc failed");
+	perror (_("malloc failed"));
 	exit (-1);
     }
     return vp;

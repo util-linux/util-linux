@@ -51,6 +51,11 @@
    1992-02-05 poe@daimi.aau.dk: Ported the stuff to Linux 0.12
    From 1992 till now (1997) this code for Linux has been maintained at
    ftp.daimi.aau.dk:/pub/linux/poe/
+
+   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+    - added Native Language Support
+   Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
+    - fixed strerr(errno) in gettext calls
  */
 
 /*
@@ -112,6 +117,7 @@
 #include <sys/sysmacros.h>
 #include <netdb.h>
 #include "my_crypt.h"
+#include "nls.h"
 
 #ifdef __linux__
 #  include <sys/sysmacros.h>
@@ -275,7 +281,7 @@ main(int argc, char **argv)
     struct group *gr;
     register int ch;
     register char *p;
-    int ask, fflag, hflag, pflag, cnt;
+    int ask, fflag, hflag, pflag, cnt, errsv;
     int quietlog, passwd_req;
     char *domain, *ttyn;
     char tbuf[MAXPATHLEN + 2], tname[sizeof(_PATH_TTY) + 10];
@@ -292,7 +298,6 @@ main(int argc, char **argv)
     pam_handle_t *pamh = NULL;
     struct pam_conv conv = { misc_conv, NULL };
     pid_t childPid;
-    void (*oldSigHandler) ();
 #else
     char *salt, *pp;
 #endif
@@ -304,6 +309,10 @@ main(int argc, char **argv)
     alarm((unsigned int)timeout);
     signal(SIGQUIT, SIG_IGN);
     signal(SIGINT, SIG_IGN);
+
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
     
     setpriority(PRIO_PROCESS, 0, 0);
 #ifdef HAVE_QUOTA
@@ -337,14 +346,14 @@ main(int argc, char **argv)
 	case 'h':
 	  if (getuid()) {
 	      fprintf(stderr,
-		      "login: -h for super-user only.\n");
+		      _("login: -h for super-user only.\n"));
 	      exit(1);
 	  }
 	  hflag = 1;
 	  if (domain && (p = index(optarg, '.')) &&
 	      strcasecmp(p, domain) == 0)
 	    *p = 0;
-	  hostname = optarg;
+	  hostname = strdup(optarg); 	/* strdup: Ambrose C. Li */
 	  { 
 	      struct hostent *he = gethostbyname(hostname);
 	      if (he) {
@@ -362,7 +371,7 @@ main(int argc, char **argv)
 	case '?':
 	default:
 	  fprintf(stderr,
-		  "usage: login [-fp] [username]\n");
+		  _("usage: login [-fp] [username]\n"));
 	  exit(1);
       }
     argc -= optind;
@@ -450,6 +459,12 @@ main(int argc, char **argv)
     
     openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
 
+#if 0
+    /* other than iso-8859-1 */
+    printf("\033(K");
+    fprintf(stderr,"\033(K");
+#endif
+
 #ifdef USE_PAM
     /* username is initialized to NULL
        and if specified on the command line it is set.
@@ -458,9 +473,9 @@ main(int argc, char **argv)
 
     retcode = pam_start("login",username, &conv, &pamh);
     if(retcode != PAM_SUCCESS) {
-	fprintf(stderr,"login: PAM Failure, aborting: %s\n",
+	fprintf(stderr,_("login: PAM Failure, aborting: %s\n"),
 	pam_strerror(pamh, retcode));
-	syslog(LOG_ERR,"Couldn't initialize PAM: %s", pam_strerror(pamh, retcode));
+	syslog(LOG_ERR,_("Couldn't initialize PAM: %s"), pam_strerror(pamh, retcode));
 	exit(99);
     }
     /* hostname & tty are either set to NULL or their correct values,
@@ -469,6 +484,15 @@ main(int argc, char **argv)
     PAM_FAIL_CHECK;
     retcode = pam_set_item(pamh, PAM_TTY, tty);
     PAM_FAIL_CHECK;
+
+#if 0
+    /* other than iso-8859-1
+     * one more time due to reset tty by PAM
+     */
+    printf("\033(K");
+    fprintf(stderr,"\033(K");
+#endif
+	    
     /* if fflag == 1, then the user has already been authenticated */
     if (fflag && (getuid() == 0))
 	passwd_req = 0;
@@ -491,9 +515,9 @@ main(int argc, char **argv)
 	       (retcode == PAM_CRED_INSUFFICIENT) ||
 	       (retcode == PAM_AUTHINFO_UNAVAIL))) {
 	    pam_get_item(pamh, PAM_USER, (const void **) &username);
-	    syslog(LOG_NOTICE,"FAILED LOGIN %d FROM %s FOR %s, %s",
+	    syslog(LOG_NOTICE,_("FAILED LOGIN %d FROM %s FOR %s, %s"),
 	    failcount, hostname, username, pam_strerror(pamh, retcode));
-	    fprintf(stderr,"Login incorrect\n\n");
+	    fprintf(stderr,_("Login incorrect\n\n"));
 	    pam_set_item(pamh,PAM_USER,NULL);
 	    retcode = pam_authenticate(pamh, 0);
 	}
@@ -502,14 +526,14 @@ main(int argc, char **argv)
 	    pam_get_item(pamh, PAM_USER, (const void **) &username);
 
 	    if (retcode == PAM_MAXTRIES) 
-		syslog(LOG_NOTICE,"TOO MANY LOGIN TRIES (%d) FROM %s FOR "
-			"%s, %s", failcount, hostname, username,
+		syslog(LOG_NOTICE,_("TOO MANY LOGIN TRIES (%d) FROM %s FOR "
+			"%s, %s"), failcount, hostname, username,
 			 pam_strerror(pamh, retcode));
 	    else
-		syslog(LOG_NOTICE,"FAILED LOGIN SESSION FROM %s FOR %s, %s",
+		syslog(LOG_NOTICE,_("FAILED LOGIN SESSION FROM %s FOR %s, %s"),
 			hostname, username, pam_strerror(pamh, retcode));
 
-	    fprintf(stderr,"\nLogin incorrect\n");
+	    fprintf(stderr,_("\nLogin incorrect\n"));
 	    pam_end(pamh, retcode);
 	    exit(0);
 	}
@@ -558,7 +582,7 @@ main(int argc, char **argv)
 	   Feb 95 <alvaro@etsit.upm.es> */
 	
 	if (username[0] == '+') {
-	    puts("Illegal username");
+	    puts(_("Illegal username"));
 	    badlogin(username);
 	    sleepexit(1);
 	}
@@ -601,16 +625,16 @@ main(int argc, char **argv)
 	 */
 	if (pwd && pwd->pw_uid == 0 && !rootterm(tty)) {
 	    fprintf(stderr,
-		    "%s login refused on this terminal.\n",
+		    _("%s login refused on this terminal.\n"),
 		    pwd->pw_name);
 	    
 	    if (hostname)
 	      syslog(LOG_NOTICE,
-		     "LOGIN %s REFUSED FROM %s ON TTY %s",
+		     _("LOGIN %s REFUSED FROM %s ON TTY %s"),
 		     pwd->pw_name, hostname, tty);
 	    else
 	      syslog(LOG_NOTICE,
-		     "LOGIN %s REFUSED ON TTY %s",
+		     _("LOGIN %s REFUSED ON TTY %s"),
 		     pwd->pw_name, tty);
 	    continue;
 	}
@@ -623,7 +647,7 @@ main(int argc, char **argv)
 	  break;
 	
 	setpriority(PRIO_PROCESS, 0, -4);
-	pp = getpass("Password: ");
+	pp = getpass(_("Password: "));
 	
 #  ifdef CRYPTOCARD
 	if (strncmp(pp, "CRYPTO", 6) == 0) {
@@ -662,7 +686,7 @@ main(int argc, char **argv)
 	if (pwd && !strcmp(p, pwd->pw_passwd))
 	  break;
 	
-	printf("Login incorrect\n");
+	printf(_("Login incorrect\n"));
 	badlogin(username); /* log ALL bad logins */
 	failures++;
 	
@@ -684,11 +708,11 @@ main(int argc, char **argv)
 	switch(errno) {
 	  case EUSERS:
 	    fprintf(stderr,
-		    "Too many users logged on already.\nTry again later.\n");
+		    _("Too many users logged on already.\nTry again later.\n"));
 	    break;
 	  case EPROCLIM:
 	    fprintf(stderr,
-		    "You have too many processes running.\n");
+		    _("You have too many processes running.\n"));
 	    break;
 	  default:
 	    perror("quota (Q_SETUID)");
@@ -734,7 +758,7 @@ main(int argc, char **argv)
 #ifndef __linux__
 #  ifdef KERBEROS
     if (notickets && !quietlog)
-      printf("Warning: no Kerberos tickets issued\n");
+      printf(_("Warning: no Kerberos tickets issued\n"));
 #  endif
     
 #  ifndef USE_PAM			/* PAM does all of this for us */
@@ -746,13 +770,13 @@ main(int argc, char **argv)
 
 	if (pwd->pw_change) {
 	    if (tp.tv_sec >= pwd->pw_change) {
-		printf("Sorry -- your password has expired.\n");
+		printf(_("Sorry -- your password has expired.\n"));
 		sleepexit(1);
 	    }
 	    else if (tp.tv_sec - pwd->pw_change < TWOWEEKS && !quietlog) {
 		struct tm *ttp;
 		ttp = localtime(&pwd->pw_change);
-		printf("Warning: your password expires on %s %d, %d\n",
+		printf(_("Warning: your password expires on %s %d, %d\n"),
 		       months[ttp->tm_mon], ttp->tm_mday,
 		       TM_YEAR_BASE + ttp->tm_year);
 	    }
@@ -760,13 +784,13 @@ main(int argc, char **argv)
 
 	if (pwd->pw_expire) {
 	    if (tp.tv_sec >= pwd->pw_expire) {
-		printf("Sorry -- your account has expired.\n");
+		printf(_("Sorry -- your account has expired.\n"));
 		sleepexit(1);
 	    }
 	    else if (tp.tv_sec - pwd->pw_expire < TWOWEEKS && !quietlog) {
 		struct tm *ttp;
 		ttp = localtime(&pwd->pw_expire);
-		printf("Warning: your account expires on %s %d, %d\n",
+		printf(_("Warning: your account expires on %s %d, %d\n"),
 		       months[ttp->tm_mon], ttp->tm_mday,
 		       TM_YEAR_BASE + ttp->tm_year);
 	    }
@@ -796,7 +820,6 @@ main(int argc, char **argv)
 	struct utmp ut;
 	int wtmp;
 	struct utmp *utp;
-	time_t t;
 	pid_t mypid = getpid();
 	
 	utmpname(_PATH_UTMP);
@@ -814,6 +837,16 @@ Michael Riepe <michael@stud.uni-hannover.de>
 		    && utp->ut_type >= INIT_PROCESS
 		    && utp->ut_type <= DEAD_PROCESS)
 			break;
+
+	/* If we can't find a pre-existing entry by pid, try by line.
+	   BSD network daemons may rely on this. (anonymous) */
+	if (utp == NULL) {
+	     setutent();
+	     ut.ut_type = LOGIN_PROCESS;
+	     strncpy(ut.ut_id, ttyn + 8, sizeof(ut.ut_id));
+	     strncpy(ut.ut_line, ttyn + 5, sizeof(ut.ut_line));
+	     utp = getutid(&ut);
+	}
 	
 	if (utp) {
 	    memcpy(&ut, utp, sizeof(ut));
@@ -821,7 +854,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	    /* some gettys/telnetds don't initialize utmp... */
 	    memset(&ut, 0, sizeof(ut));
 	}
-	/* endutent(); superfluous, error for glibc */
 	
 	if (ut.ut_id[0] == 0)
 	  strncpy(ut.ut_id, ttyn + 8, sizeof(ut.ut_id));
@@ -829,9 +861,16 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	strncpy(ut.ut_user, username, sizeof(ut.ut_user));
 	strncpy(ut.ut_line, ttyn + 5, sizeof(ut.ut_line));
 	ut.ut_line[sizeof(ut.ut_line)-1] = 0;
-	time(&t);
-	ut.ut_time = t;		/* ut_time is not always a time_t */
-				/* (we might test #ifdef _HAVE_UT_TV ) */
+#ifdef _HAVE_UT_TV		/* in <utmpbits.h> included by <utmp.h> */
+	gettimeofday(&ut.ut_tv, NULL);
+#else
+	{
+	  time_t t;
+	  time(&t);
+	  ut.ut_time = t;	/* ut_time is not always a time_t */
+				/* glibc2 #defines it as ut_tv.tv_sec */
+	}
+#endif
 	ut.ut_type = USER_PROCESS;
 	ut.ut_pid = mypid;
 	if (hostname) {
@@ -985,23 +1024,23 @@ Michael Riepe <michael@stud.uni-hannover.de>
 #endif
     
     if (tty[sizeof("tty")-1] == 'S')
-      syslog(LOG_INFO, "DIALUP AT %s BY %s", tty, pwd->pw_name);
+      syslog(LOG_INFO, _("DIALUP AT %s BY %s"), tty, pwd->pw_name);
     
     /* allow tracking of good logins.
        -steve philp (sphilp@mail.alliance.net) */
     
     if (pwd->pw_uid == 0) {
 	if (hostname)
-	  syslog(LOG_NOTICE, "ROOT LOGIN ON %s FROM %s",
+	  syslog(LOG_NOTICE, _("ROOT LOGIN ON %s FROM %s"),
 		 tty, hostname);
 	else
-	  syslog(LOG_NOTICE, "ROOT LOGIN ON %s", tty);
+	  syslog(LOG_NOTICE, _("ROOT LOGIN ON %s"), tty);
     } else {
 	if (hostname) 
-	  syslog(LOG_INFO, "LOGIN ON %s BY %s FROM %s", tty, 
+	  syslog(LOG_INFO, _("LOGIN ON %s BY %s FROM %s"), tty, 
 		 pwd->pw_name, hostname);
 	else 
-	  syslog(LOG_INFO, "LOGIN ON %s BY %s", tty, 
+	  syslog(LOG_INFO, _("LOGIN ON %s BY %s"), tty, 
 		 pwd->pw_name);
     }
     
@@ -1012,8 +1051,8 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	motd();
 	mail = getenv("MAIL");
 	if (mail && stat(mail, &st) == 0 && st.st_size != 0) {
-		printf("You have %smail.\n",
-		       (st.st_mtime > st.st_atime) ? "new " : "");
+		printf(_("You have %smail.\n"),
+		       (st.st_mtime > st.st_atime) ? _("new ") : "");
 	}
     }
     
@@ -1029,8 +1068,9 @@ Michael Riepe <michael@stud.uni-hannover.de>
     signal(SIGINT, SIG_IGN);
     childPid = fork();
     if (childPid < 0) {
+       int errsv = errno;
        /* error in fork() */
-       fprintf(stderr,"login: failure forking: %s", strerror(errno));
+       fprintf(stderr,_("login: failure forking: %s"), strerror(errsv));
        PAM_END;
        exit(0);
     } else if (childPid) {
@@ -1045,17 +1085,17 @@ Michael Riepe <michael@stud.uni-hannover.de>
     
     /* discard permissions last so can't get killed and drop core */
     if(setuid(pwd->pw_uid) < 0 && pwd->pw_uid) {
-	syslog(LOG_ALERT, "setuid() failed");
+	syslog(LOG_ALERT, _("setuid() failed"));
 	exit(1);
     }
     
     /* wait until here to change directory! */
     if (chdir(pwd->pw_dir) < 0) {
-	printf("No directory %s!\n", pwd->pw_dir);
+	printf(_("No directory %s!\n"), pwd->pw_dir);
 	if (chdir("/"))
 	  exit(0);
 	pwd->pw_dir = "/";
-	printf("Logging in with home = \"/\".\n");
+	printf(_("Logging in with home = \"/\".\n"));
     }
     
     /* if the shell field has a space: treat it like a shell script */
@@ -1063,7 +1103,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	buff = malloc(strlen(pwd->pw_shell) + 6);
 
 	if (!buff) {
-	    fprintf(stderr, "login: no memory for shell script.\n");
+	    fprintf(stderr, _("login: no memory for shell script.\n"));
 	    exit(0);
 	}
 
@@ -1088,11 +1128,13 @@ Michael Riepe <michael@stud.uni-hannover.de>
 
     execvp(childArgv[0], childArgv + 1);
 
-    if (!strcmp(childArgv[0], "/bin/sh")) 
-	    fprintf(stderr, "login: couldn't exec shell script: %s.\n",
-		    strerror(errno));
+    errsv = errno;
+
+    if (!strcmp(childArgv[0], "/bin/sh"))
+	fprintf(stderr, _("login: couldn't exec shell script: %s.\n"),
+		strerror(errsv));
     else
-	    fprintf(stderr, "login: no shell: %s.\n", strerror(errno));
+	fprintf(stderr, _("login: no shell: %s.\n"), strerror(errsv));
 
     exit(0);
 }
@@ -1108,7 +1150,7 @@ getloginname()
     cnt2 = 0;
     for (;;) {
 	cnt = 0;
-	printf("\n%s login: ", thishost); fflush(stdout);
+	printf(_("\n%s login: "), thishost); fflush(stdout);
 	for (p = nbuf; (ch = getchar()) != '\n'; ) {
 	    if (ch == EOF) {
 		badlogin("EOF");
@@ -1119,15 +1161,15 @@ getloginname()
 	    
 	    cnt++;
 	    if (cnt > UT_NAMESIZE + 20) {
-		fprintf(stderr, "login name much too long.\n");
-		badlogin("NAME too long");
+		fprintf(stderr, _("login name much too long.\n"));
+		badlogin(_("NAME too long"));
 		exit(0);
 	    }
 	}
 	if (p > nbuf) {
 	  if (nbuf[0] == '-')
 	    fprintf(stderr,
-		    "login names may not start with '-'.\n");
+		    _("login names may not start with '-'.\n"));
 	  else {
 	      *p = '\0';
 	      username = nbuf;
@@ -1137,8 +1179,8 @@ getloginname()
 	
 	cnt2++;
 	if (cnt2 > 50) {
-	    fprintf(stderr, "too many bare linefeeds.\n");
-	    badlogin("EXCESSIVE linefeeds");
+	    fprintf(stderr, _("too many bare linefeeds.\n"));
+	    badlogin(_("EXCESSIVE linefeeds"));
 	    exit(0);
 	}
     }
@@ -1149,7 +1191,7 @@ timedout()
 {
     struct termio ti;
     
-    fprintf(stderr, "Login timed out after %d seconds\n", timeout);
+    fprintf(stderr, _("Login timed out after %d seconds\n"), timeout);
     
     /* reset echo */
     ioctl(0, TCGETA, &ti);
@@ -1171,7 +1213,7 @@ rootterm(ttyn)
 { 
     int fd;
     char buf[100],*p;
-    int cnt, more;
+    int cnt, more = 0;
     
     fd = open(SECURETTY, O_RDONLY);
     if(fd < 0) return 1;
@@ -1249,14 +1291,14 @@ dolastlog(quiet)
 	if (!quiet) {
 	    if (read(fd, (char *)&ll, sizeof(ll)) == sizeof(ll) &&
 		ll.ll_time != 0) {
-		printf("Last login: %.*s ",
+		printf(_("Last login: %.*s "),
 		       24-5, (char *)ctime(&ll.ll_time));
 		
 		if (*ll.ll_host != '\0')
-		  printf("from %.*s\n",
+		  printf(_("from %.*s\n"),
 			 (int)sizeof(ll.ll_host), ll.ll_host);
 		else
-		  printf("on %.*s\n",
+		  printf(_("on %.*s\n"),
 			 (int)sizeof(ll.ll_line), ll.ll_line);
 	    }
 	    lseek(fd, (off_t)pwd->pw_uid * sizeof(ll), SEEK_SET);
@@ -1277,12 +1319,21 @@ dolastlog(quiet)
 void
 badlogin(const char *name)
 {
-    if (hostname)
-      syslog(LOG_NOTICE, "%d LOGIN FAILURE%s FROM %s, %s",
-	     failures, failures > 1 ? "S" : "", hostname, name);
-    else
-      syslog(LOG_NOTICE, "%d LOGIN FAILURE%s ON %s, %s",
-	     failures, failures > 1 ? "S" : "", tty, name);
+    if (failures == 1) {
+	if (hostname)
+	  syslog(LOG_NOTICE, _("LOGIN FAILURE FROM %s, %s"),
+		 hostname, name);
+	else
+	  syslog(LOG_NOTICE, _("LOGIN FAILURE ON %s, %s"),
+		 tty, name);
+    } else {
+	if (hostname)
+	  syslog(LOG_NOTICE, _("%d LOGIN FAILURES FROM %s, %s"),
+		 failures, hostname, name);
+	else
+	  syslog(LOG_NOTICE, _("%d LOGIN FAILURES ON %s, %s"),
+		 failures, tty, name);
+    }
 }
 
 #undef	UNKNOWN

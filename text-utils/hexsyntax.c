@@ -31,11 +31,16 @@
  * SUCH DAMAGE.
  */
 
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  * - added Native Language Support
+  */
+
 #include <sys/types.h>
 #include <unistd.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include "hexdump.h"
+#include "nls.h"
 
 off_t skip;				/* bytes to skip */
 
@@ -72,7 +77,7 @@ void newsyntax(int argc, char ***argvp)
 		case 'n':
 			if ((length = atoi(optarg)) < 0) {
 				(void)fprintf(stderr,
-				    "hexdump: bad length value.\n");
+				    _("hexdump: bad length value.\n"));
 				exit(1);
 			}
 			break;
@@ -83,7 +88,7 @@ void newsyntax(int argc, char ***argvp)
 		case 's':
 			if ((skip = strtol(optarg, &p, 0)) < 0) {
 				(void)fprintf(stderr,
-				    "hexdump: bad skip value.\n");
+				    _("hexdump: bad skip value.\n"));
 				exit(1);
 			}
 			switch(*p) {
@@ -121,6 +126,6 @@ void newsyntax(int argc, char ***argvp)
 void usage()
 {
 	(void)fprintf(stderr,
-"hexdump: [-bcdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n");
+_("hexdump: [-bcdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"));
 	exit(1);
 }

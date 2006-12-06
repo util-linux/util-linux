@@ -25,6 +25,9 @@
  * Well, a good user interface is still lacking. On the other hand,
  * many configurations cannot be handled by any other fdisk.
  * I changed the name to sfdisk to prevent confusion. - aeb, 970501
+ *
+ * Changes:
+ * 19990319 - Arnaldo Carvalho de Melo <acme@conectiva.com.br> - i18n
  */
 
 #define PROGNAME "sfdisk"
@@ -45,6 +48,9 @@
 #include <linux/unistd.h>	/* _syscall */
 #include <linux/hdreg.h>	/* HDIO_GETGEO */
 #include <linux/fs.h>		/* BLKGETSIZE */
+#include <locale.h>
+#include "nls.h"
+#include "common.h"
 
 #define SIZE(a)	(sizeof(a)/sizeof(a[0]))
 
@@ -139,12 +145,12 @@ sseek(char *dev, unsigned int fd, unsigned long s) {
 	 if ((out = lseek(fd, in, SEEK_SET)) != in) {
 #endif
 	perror("llseek");
-	error("seek error on %s - cannot seek to %lu\n", dev, s);
+	error(_("seek error on %s - cannot seek to %lu\n"), dev, s);
 	return 0;
     }
 
     if (in != out) {
-	error("seek error: wanted 0x%08x%08x, got 0x%08x%08x\n",
+	error(_("seek error: wanted 0x%08x%08x, got 0x%08x%08x\n"),
 	       (uint)(in>>32), (uint)(in & 0xffffffff),
 	       (uint)(out>>32), (uint)(out & 0xffffffff));
 	return 0;
@@ -190,11 +196,11 @@ get_sector(char *dev, int fd, unsigned long sno) {
 	return 0;
 
     if (!(s = (struct sector *) malloc(sizeof(struct sector))))
-	fatal("out of memory - giving up\n");
+	fatal(_("out of memory - giving up\n"));
 
     if (read(fd, s->data, sizeof(s->data)) != sizeof(s->data)) {
 	perror("read");
-	error("read error on %s - cannot read sector %lu\n", dev, sno);
+	error(_("read error on %s - cannot read sector %lu\n"), dev, sno);
 	free(s);
 	return 0;
     }
@@ -210,7 +216,7 @@ get_sector(char *dev, int fd, unsigned long sno) {
 int
 msdos_signature (struct sector *s) {
     if (*(unsigned short *) (s->data + 0x1fe) != 0xaa55) {
-	error("ERROR: sector %lu does not have an msdos signature\n",
+	error(_("ERROR: sector %lu does not have an msdos signature\n"),
 	       s->sectornumber);
 	return 0;
     }
@@ -227,7 +233,7 @@ write_sectors(char *dev, int fd) {
 		return 0;
 	    if (write(fd, s->data, sizeof(s->data)) != sizeof(s->data)) {
 		perror("write");
-		error("write error on %s - cannot write sector %lu\n",
+		error(_("write error on %s - cannot write sector %lu\n"),
 		       dev, s->sectornumber);
 		return 0;
 	    }
@@ -265,7 +271,7 @@ save_sectors(char *dev, int fdin) {
     fdout = open(save_sector_file, O_WRONLY | O_CREAT, 0444);
     if (fdout < 0) {
 	perror(save_sector_file);
-	error("cannot open partition sector save file (%s)\n",
+	error(_("cannot open partition sector save file (%s)\n"),
 	       save_sector_file);
 	return 0;
     }
@@ -277,13 +283,13 @@ save_sectors(char *dev, int fdin) {
 		return 0;
 	    if (read(fdin, ss+4, 512) != 512) {
 		perror("read");
-		error("read error on %s - cannot read sector %lu\n",
+		error(_("read error on %s - cannot read sector %lu\n"),
 		       dev, s->sectornumber);
 		return 0;
 	    }
 	    if (write(fdout, ss, sizeof(ss)) != sizeof(ss)) {
 		perror("write");
-		error("write error on %s\n", save_sector_file);
+		error(_("write error on %s\n"), save_sector_file);
 		return 0;
 	    }
 	}
@@ -301,35 +307,35 @@ restore_sectors(char *dev) {
 
     if (stat(restore_sector_file, &statbuf) < 0) {
 	perror(restore_sector_file);
-	error("cannot stat partition restore file (%s)\n",
+	error(_("cannot stat partition restore file (%s)\n"),
 	       restore_sector_file);
 	return 0;
     }
     if (statbuf.st_size % 516) {
-	error("partition restore file has wrong size - not restoring\n");
+	error(_("partition restore file has wrong size - not restoring\n"));
 	return 0;
     }
     if (!(ss = (char *) malloc(statbuf.st_size))) {
-	error("out of memory?\n");
+	error(_("out of memory?\n"));
 	return 0;
     }
     fdin = open(restore_sector_file, O_RDONLY);
     if (fdin < 0) {
 	perror(restore_sector_file);
-	error("cannot open partition restore file (%s)\n",
+	error(_("cannot open partition restore file (%s)\n"),
 	       restore_sector_file);
 	return 0;
     }
     if (read(fdin, ss, statbuf.st_size) != statbuf.st_size) {
 	perror("read");
-	error("error reading %s\n", restore_sector_file);
+	error(_("error reading %s\n"), restore_sector_file);
 	return 0;
     }
 
     fdout = open(dev, O_WRONLY);
     if (fdout < 0) {
 	perror(dev);
-	error("cannot open device %s for writing\n", dev);
+	error(_("cannot open device %s for writing\n"), dev);
 	return 0;
     }
 
@@ -341,7 +347,7 @@ restore_sectors(char *dev) {
 	  return 0;
 	if (write(fdout, ss+4, 512) != 512) {
 	    perror(dev);
-	    error("error writing sector %lu on %s\n", sno, dev);
+	    error(_("error writing sector %lu on %s\n"), sno, dev);
 	    return 0;
 	}
 	ss += 516;
@@ -367,61 +373,70 @@ restore_sectors(char *dev) {
  * };
  */
 
-unsigned long cylindersize;
-unsigned long heads, sectors, cylinders;
-unsigned long specified_heads, specified_sectors, specified_cylinders;
+/*
+ * We consider several geometries for a disk:
+ * B - the BIOS geometry, gotten from the kernel via HDIO_GETGEO
+ * F - the fdisk geometry
+ * U - the user-specified geometry
+ *
+ * 0 means unspecified / unknown
+ */
+struct geometry {
+	unsigned long cylindersize;
+	unsigned long heads, sectors, cylinders;
+} B, F, U;
 
 void
 get_cylindersize(char *dev, int fd, int silent) {
     struct hd_geometry g;
     int ioctl_ok = 0;
 
-    heads = sectors = cylinders = 0;
+    B.heads = B.sectors = B.cylinders = 0;
 
     if (!ioctl(fd, HDIO_GETGEO, &g)) {
 	ioctl_ok = 1;
 
-	heads = g.heads;
-	sectors = g.sectors;
-	cylinders = g.cylinders;
+	B.heads = g.heads;
+	B.sectors = g.sectors;
+	B.cylinders = g.cylinders;
     }
 
-    if (specified_heads)
-      heads = specified_heads;
-    if (specified_sectors)
-      sectors = specified_sectors;
-    if (specified_cylinders)
-      cylinders = specified_cylinders;
+    if (U.heads)
+      B.heads = U.heads;
+    if (U.sectors)
+      B.sectors = U.sectors;
+    if (U.cylinders)
+      B.cylinders = U.cylinders;
 
-    cylindersize = heads * sectors;
+    B.cylindersize = B.heads * B.sectors;
 
     if (ioctl_ok) {
 	if (g.start && !force) {
 	    warn(
-		 "Warning: start=%d - this looks like a partition rather than\n"
+		 _("Warning: start=%d - this looks like a partition rather than\n"
 		 "the entire disk. Using fdisk on it is probably meaningless.\n"
-		 "[Use the --force option if you really want this]\n", g.start);
+		 "[Use the --force option if you really want this]\n"), g.start);
 	    exit(1);
 	}
-	if (heads != g.heads)
-	  warn("Warning: HDIO_GETGEO says that there are %d heads\n",
+	if (B.heads != g.heads)
+	  warn(_("Warning: HDIO_GETGEO says that there are %d heads\n"),
 	       g.heads);
-	if (sectors != g.sectors)
-	  warn("Warning: HDIO_GETGEO says that there are %d sectors\n",
+	if (B.sectors != g.sectors)
+	  warn(_("Warning: HDIO_GETGEO says that there are %d sectors\n"),
 	       g.sectors);
-	if (cylinders != g.cylinders)
-	  warn("Warning: HDIO_GETGEO says that there are %d cylinders\n",
+	if (B.cylinders != g.cylinders)
+	  warn(_("Warning: HDIO_GETGEO says that there are %d cylinders\n"),
 	       g.cylinders);
     } else if (!silent)
-      if (!heads || !sectors || !cylinders)
-	printf("Disk %s: cannot get geometry\n", dev);
-    if (sectors > 63)
-      warn("Warning: unlikely number of sectors (%d) - usually at most 63\n"
-	   "This will give problems with all software that uses C/H/S addressing.\n",
-	   sectors);
+      if (!B.heads || !B.sectors || !B.cylinders)
+	printf(_("Disk %s: cannot get geometry\n"), dev);
+    if (B.sectors > 63)
+      warn(_("Warning: unlikely number of sectors (%d) - usually at most 63\n"
+	   "This will give problems with all software that uses C/H/S addressing.\n"),
+	   B.sectors);
     if (!silent)
-      printf("\nDisk %s: %lu heads, %lu sectors, %lu cylinders\n",
-	     dev, heads, sectors, cylinders);
+      printf(_("\nDisk %s: %lu cylinders, %lu heads, %lu sectors/track\n"),
+	     dev, B.cylinders, B.heads, B.sectors);
 }
 
 typedef struct { unsigned char h,s,c; } chs; /* has some c bits in s */
@@ -431,19 +446,19 @@ typedef struct { unsigned long h,s,c; } longchs;
 longchs zero_longchs;
 
 chs
-longchs_to_chs (longchs aa) {
+longchs_to_chs (longchs aa, struct geometry G) {
     chs a;
 
     if (aa.h < 256 && aa.s < 64 && aa.c < 1024) {
 	a.h = aa.h;
 	a.s = aa.s | ((aa.c >> 2) & 0xc0);
 	a.c = (aa.c & 0xff);
-    } else if (heads && sectors) {
-	a.h = heads - 1;
-	a.s = sectors | 0xc0;
+    } else if (G.heads && G.sectors) {
+	a.h = G.heads - 1;
+	a.s = G.sectors | 0xc0;
 	a.c = 0xff;
     } else
-      a = zero_chs;
+        a = zero_chs;
     return a;
 }
 
@@ -459,13 +474,13 @@ chs_to_longchs (chs a) {
 }
 
 longchs
-ulong_to_longchs (unsigned long sno) {
+ulong_to_longchs (unsigned long sno, struct geometry G) {
     longchs aa;
 
-    if (heads && sectors && cylindersize) {
-	aa.s = 1 + sno % sectors;
-	aa.h = (sno / sectors) % heads;
-	aa.c = sno / cylindersize;
+    if (G.heads && G.sectors && G.cylindersize) {
+	aa.s = 1 + sno % G.sectors;
+	aa.h = (sno / G.sectors) % G.heads;
+	aa.c = sno / G.cylindersize;
 	return aa;
     } else {
 	return zero_longchs;
@@ -473,18 +488,18 @@ ulong_to_longchs (unsigned long sno) {
 }
 
 unsigned long
-longchs_to_ulong (longchs aa) {
-    return (aa.c*cylindersize + aa.h*sectors + aa.s - 1);
+longchs_to_ulong (longchs aa, struct geometry G) {
+    return (aa.c*G.cylindersize + aa.h*G.sectors + aa.s - 1);
 }
 
 chs
-ulong_to_chs (unsigned long sno) {
-    return longchs_to_chs(ulong_to_longchs(sno));
+ulong_to_chs (unsigned long sno, struct geometry G) {
+    return longchs_to_chs(ulong_to_longchs(sno, G), G);
 }
 
 unsigned long
-chs_to_ulong (chs a) {
-    return longchs_to_ulong(chs_to_longchs(a));
+chs_to_ulong (chs a, struct geometry G) {
+    return longchs_to_ulong(chs_to_longchs(a), G);
 }
 
 int
@@ -499,19 +514,19 @@ chs_ok (chs a, char *v, char *w) {
 
     if (is_equal_chs(a, zero_chs))
       return 1;
-    if (heads && aa.h >= heads) {
-	warn("%s of partition %s has impossible value for head: "
-	     "%d (should be in 0-%d)\n", w, v, aa.h, heads-1);
+    if (B.heads && aa.h >= B.heads) {
+	warn(_("%s of partition %s has impossible value for head: "
+	     "%d (should be in 0-%d)\n"), w, v, aa.h, B.heads-1);
 	ret = 0;
     }
-    if (sectors && (aa.s == 0 || aa.s > sectors)) {
-	warn("%s of partition %s has impossible value for sector: "
-	     "%d (should be in 1-%d)\n", w, v, aa.s, sectors);
+    if (B.sectors && (aa.s == 0 || aa.s > B.sectors)) {
+	warn(_("%s of partition %s has impossible value for sector: "
+	     "%d (should be in 1-%d)\n"), w, v, aa.s, B.sectors);
 	ret = 0;
     }
-    if (cylinders && aa.c >= cylinders) {
-	warn("%s of partition %s has impossible value for cylinders: "
-	     "%d (should be in 0-%d)\n", w, v, aa.c, cylinders-1);
+    if (B.cylinders && aa.c >= B.cylinders) {
+	warn(_("%s of partition %s has impossible value for cylinders: "
+	     "%d (should be in 0-%d)\n"), w, v, aa.c, B.cylinders-1);
 	ret = 0;
     }
     return ret;
@@ -533,109 +548,25 @@ chs_ok (chs a, char *v, char *w) {
 #define LINUX_EXTENDED		0x85
 #define BSD_PARTITION		0xa5
 
-/*
- * List of system Id's, adapted from fdisk 2.0d and <linux/genhd.h>
- * and SFS and several other sources.
- */
-struct systypes {
-    unsigned char type;
-    char *name;
-} sys_types[] = {
-    {0, "Empty"},
-    {1, "DOS 12-bit FAT"},		/* Primary DOS with 12-bit FAT */
-    {2, "XENIX /"},			/* XENIX / filesystem */
-    {3, "XENIX /usr"},			/* XENIX /usr filesystem */
-    {4, "DOS 16-bit FAT <32M"},		/* Primary DOS with 16-bit FAT */
-    {5, "DOS Extended"},		/* DOS 3.3+ extended partition */
-    {6, "DOS 16-bit FAT >=32M"},
-    {7, "HPFS / NTFS"},
-    {8, "AIX boot or SplitDrive"},
-    {9, "AIX data or Coherent"},
-    {0x0a, "OS/2 Boot Manager"},
-    {0x0b, "Win95 FAT32"},
-    {0x0c, "Win95 FAT32 (LBA)"},
-    {0x0e, "Win95 FAT16 (LBA)"},
-    {0x0f, "Win95 Extended (LBA)"},
-    {0x10, "OPUS"},
-    {0x11, "Hidden DOS FAT12"},
-    {0x12, "Compaq diagnostics"},
-    {0x14, "Hidden DOS FAT16"},
-    {0x16, "Hidden DOS FAT16 (big)"},
-    {0x17, "Hidden HPFS/NTFS"},
-    {0x18, "AST Windows swapfile"},
-    {0x24, "NEC DOS"},
-    {0x3c, "PartitionMagic recovery"},
-    {0x40, "Venix 80286"},
-    {0x41, "Linux/MINIX (sharing disk with DRDOS)"},
-    {0x42, "SFS or Linux swap (sharing disk with DRDOS)"},
-    {0x43, "Linux native (sharing disk with DRDOS)"},
-    {0x50, "DM (disk manager)"},
-    {0x51, "DM6 Aux1 (or Novell)"},
-    {0x52, "CP/M or Microport SysV/AT"},
-    {0x53, "DM6 Aux3"},
-    {0x54, "DM6"},
-    {0x55, "EZ-Drive (disk manager)"},
-    {0x56, "Golden Bow (disk manager)"},
-    {0x5c, "Priam Edisk (disk manager)"},
-    {0x61, "SpeedStor"},
-    {0x63, "GNU HURD or Mach or Sys V/386 (such as ISC UNIX)"},
-    {0x64, "Novell Netware 286"},
-    {0x65, "Novell Netware 386"},
-    {0x70, "DiskSecure Multi-Boot"},
-    {0x75, "PC/IX"},
-    {0x77, "QNX4.x"},
-    {0x78, "QNX4.x 2nd part"},
-    {0x79, "QNX4.x 3rd part"},
-    {0x80, "MINIX until 1.4a"},
-    {0x81, "MINIX / old Linux"},
-    {0x82, "Linux swap"},
-    {0x83, "Linux native"},
-    {0x84, "OS/2 hidden C: drive"},
-    {0x85, "Linux extended"},
-    {0x86, "NTFS volume set"},
-    {0x87, "NTFS volume set"},
-    {0x93, "Amoeba"},
-    {0x94, "Amoeba BBT"},		/* (bad block table) */
-    {0xa0, "IBM Thinkpad hibernation"}, /* according to dan@fch.wimsey.bc.ca */
-    {0xa5, "BSD/386"},			/* 386BSD */
-    {0xa6, "OpenBSD"},
-    {0xa7, "NeXTSTEP 486"},
-    {0xb7, "BSDI fs"},
-    {0xb8, "BSDI swap"},
-    {0xc1, "DRDOS/sec (FAT-12)"},
-    {0xc4, "DRDOS/sec (FAT-16, < 32M)"},
-    {0xc6, "DRDOS/sec (FAT-16, >= 32M)"},
-    {0xc7, "Syrinx"},
-    {0xdb, "CP/M or Concurrent CP/M or Concurrent DOS or CTOS"},
-    {0xe1, "DOS access or SpeedStor 12-bit FAT extended partition"},
-    {0xe3, "DOS R/O or SpeedStor"},
-    {0xe4, "SpeedStor 16-bit FAT extended partition < 1024 cyl."},
-    {0xeb, "BeOS fs"},
-    {0xf1, "SpeedStor"},
-    {0xf2, "DOS 3.3+ secondary"},
-    {0xf4, "SpeedStor large partition"},
-    {0xfe, "SpeedStor >1024 cyl. or LANstep"},
-    {0xff, "Xenix Bad Block Table"}
-};
-
+/* List of partition types now in i386_sys_types.c */
 
 const char *
 sysname(unsigned char type) {
     struct systypes *s;
 
-    for (s = sys_types; s - sys_types < SIZE(sys_types); s++)
+    for (s = i386_sys_types; s->name; s++)
       if (s->type == type)
-	return s->name;
-    return "Unknown";
+	return _(s->name);
+    return _("Unknown");
 }
 
 void
 list_types(void) {
     struct systypes *s;
 
-    printf("Id  Name\n\n");
-    for (s = sys_types; s - sys_types < SIZE(sys_types); s++)
-      printf("%2x  %s\n", s->type, s->name);
+    printf(_("Id  Name\n\n"));
+    for (s = i386_sys_types; s->name; s++)
+      printf("%2x  %s\n", s->type, _(s->name));
 }
 
 int
@@ -767,7 +698,8 @@ add_sector_and_offset(struct disk_desc *z) {
 }
 
 /* tell the kernel to reread the partition tables */
-int reread_ioctl(int fd) {
+int
+reread_ioctl(int fd) {
     if(ioctl(fd, BLKRRPART)) {
 	perror("BLKRRPART");
 	return -1;
@@ -775,21 +707,28 @@ int reread_ioctl(int fd) {
     return 0;
 }
 
+int
+is_blockdev(int fd) {
+    struct stat statbuf;
+
+    return(fstat(fd, &statbuf) == 0 && S_ISBLK(statbuf.st_mode));
+}
+
 /* reread after writing */
 void
 reread_disk_partition(char *dev, int fd) {
-    printf("Re-reading the partition table ...\n");
+    printf(_("Re-reading the partition table ...\n"));
     fflush(stdout);
     sync();
     sleep(3);			/* superfluous since 1.3.20 */
 
-    if(reread_ioctl(fd))
-      printf("The command to re-read the partition table failed\n"
-	     "Reboot your system now, before using mkfs\n");
+    if(reread_ioctl(fd) && is_blockdev(fd))
+      printf(_("The command to re-read the partition table failed\n"
+	     "Reboot your system now, before using mkfs\n"));
 
     if (close(fd)) {
 	perror(dev);
-	printf("Error closing %s\n", dev);
+	printf(_("Error closing %s\n"), dev);
     }
     printf("\n");
 }
@@ -827,7 +766,7 @@ asc_to_index(char *pnam, struct disk_desc *z) {
 	pno = linux_to_index(pnum, z);
     }
     if (!(pno >= 0 && pno < z->partno))
-      fatal("%s: no such partition\n", pnam);
+      fatal(_("%s: no such partition\n"), pnam);
     return pno;
 }
 
@@ -850,7 +789,7 @@ void
 set_format(char c) {
     switch(c) {
       default:
-	printf("unrecognized format - using sectors\n");
+	printf(_("unrecognized format - using sectors\n"));
       case 'S': specified_format = F_SECTOR; break;
       case 'B': specified_format = F_BLOCK; break;
       case 'C': specified_format = F_CYLINDER; break;
@@ -860,14 +799,15 @@ set_format(char c) {
 
 unsigned long
 unitsize(int format) {
-    default_format = (cylindersize ? F_CYLINDER : F_MEGABYTE);
+    default_format = (B.cylindersize ? F_CYLINDER : F_MEGABYTE);
     if (!format && !(format = specified_format))
       format = default_format;
 
     switch(format) {
       default:
       case F_CYLINDER:
-	if(cylindersize) return cylindersize;
+	if(B.cylindersize)
+	  return B.cylindersize;
       case F_SECTOR:
 	return 1;
       case F_BLOCK:
@@ -879,51 +819,51 @@ unitsize(int format) {
 
 unsigned long
 get_disksize(int format) {
-    unsigned long cs = cylinders;
+    unsigned long cs = B.cylinders;
     if (cs && leave_last)
       cs--;
-    return (cs * cylindersize) / unitsize(format);
+    return (cs * B.cylindersize) / unitsize(format);
 }
 
 void
-out_partition_header(char *dev, int format) {
+out_partition_header(char *dev, int format, struct geometry G) {
     if (dump) {
-	printf("# partition table of %s\n", dev);
-	printf("unit: sectors\n\n");
+	printf(_("# partition table of %s\n"), dev);
+	printf(_("unit: sectors\n\n"));
 	return;
     }
 
-    default_format = (cylindersize ? F_CYLINDER : F_MEGABYTE);
+    default_format = (G.cylindersize ? F_CYLINDER : F_MEGABYTE);
     if (!format && !(format = specified_format))
       format = default_format;
 
     switch(format) {
       default:
-	printf("unimplemented format - using %s\n",
-	       cylindersize ? "cylinders" : "sectors");
+	printf(_("unimplemented format - using %s\n"),
+	       G.cylindersize ? _("cylinders") : _("sectors"));
       case F_CYLINDER:
-	if (cylindersize) {
-	  printf("Units = cylinders of %lu bytes, blocks of 1024 bytes"
-		 ", counting from %d\n\n",
-		 cylindersize<<9, increment);
-	    printf("   Device Boot Start     End   #cyls   #blocks   Id  System\n");
+	if (G.cylindersize) {
+	  printf(_("Units = cylinders of %lu bytes, blocks of 1024 bytes"
+		 ", counting from %d\n\n"),
+		 G.cylindersize<<9, increment);
+	    printf(_("   Device Boot Start     End   #cyls   #blocks   Id  System\n"));
 	    break;
 	}
 	/* fall through */
       case F_SECTOR:
-	printf("Units = sectors of 512 bytes, counting from %d\n\n",
+	printf(_("Units = sectors of 512 bytes, counting from %d\n\n"),
 	       increment);
-	printf("   Device Boot    Start       End  #sectors  Id  System\n");
+	printf(_("   Device Boot    Start       End  #sectors  Id  System\n"));
 	break;
       case F_BLOCK:
-	printf("Units = blocks of 1024 bytes, counting from %d\n\n",
+	printf(_("Units = blocks of 1024 bytes, counting from %d\n\n"),
 	       increment);
-	printf("   Device Boot   Start       End   #blocks   Id  System\n");
+	printf(_("   Device Boot   Start       End   #blocks   Id  System\n"));
 	break;
       case F_MEGABYTE:
-	printf("Units = megabytes of 1048576 bytes, blocks of 1024 bytes"
-	       ", counting from %d\n\n", increment);
-	printf("   Device Boot Start   End     MB   #blocks   Id  System\n");
+	printf(_("Units = megabytes of 1048576 bytes, blocks of 1024 bytes"
+	       ", counting from %d\n\n"), increment);
+	printf(_("   Device Boot Start   End     MB   #blocks   Id  System\n"));
 	break;
     }
 }
@@ -955,8 +895,19 @@ out_roundup_size(int width, unsigned long n, unsigned long unit) {
     putchar(' ');
 }
 
+int
+get_fdisk_geometry(struct part_desc *p) {
+    chs b = p->p.end_chs;
+    longchs bb = chs_to_longchs(b);
+    F.heads = bb.h+1;
+    F.sectors = bb.s;
+    F.cylindersize = F.heads*F.sectors;
+    return (F.sectors != B.sectors || F.heads != B.heads);
+}
+
 void
-out_partition(char *dev, int format, struct part_desc *p, struct disk_desc *z) {
+out_partition(char *dev, int format, struct part_desc *p,
+	      struct disk_desc *z, struct geometry G) {
     unsigned long start, end, size;
     int pno, lpno;
 
@@ -978,12 +929,12 @@ out_partition(char *dev, int format, struct part_desc *p, struct disk_desc *z) {
     size = p->size;
 
     if (dump) {
-	printf(" start=%9lu", start);
-	printf(", size=%8lu", size);
+	printf(_(" start=%9lu"), start);
+	printf(_(", size=%8lu"), size);
 	if (p->ptype == DOS_TYPE) {
-	    printf(", Id=%2x", p->p.sys_type);
+	    printf(_(", Id=%2x"), p->p.sys_type);
 	    if (p->p.bootable == 0x80)
-		printf(", bootable");
+		printf(_(", bootable"));
 	}
 	printf("\n");
 	return;
@@ -998,10 +949,10 @@ out_partition(char *dev, int format, struct part_desc *p, struct disk_desc *z) {
 
     switch(format) {
       case F_CYLINDER:
-	if (cylindersize) {
-	    out_rounddown(6, start, cylindersize, increment);
-	    out_roundup(6, end, cylindersize, increment);
-	    out_roundup_size(6, size, cylindersize);
+	if (G.cylindersize) {
+	    out_rounddown(6, start, G.cylindersize, increment);
+	    out_roundup(6, end, G.cylindersize, increment);
+	    out_roundup_size(6, size, G.cylindersize);
 	    out_rounddown(8, size, 2, 0);
 	    break;
 	}
@@ -1039,22 +990,22 @@ out_partition(char *dev, int format, struct part_desc *p, struct disk_desc *z) {
     if (!quiet && p->ptype == DOS_TYPE) {
 	chs a, b;
 	longchs aa, bb;
-	a = (size ? ulong_to_chs(start) : zero_chs);
+	a = (size ? ulong_to_chs(start,G) : zero_chs);
 	b = p->p.begin_chs;
 	aa = chs_to_longchs(a);
 	bb = chs_to_longchs(b);
 	if(a.s && !is_equal_chs(a, b))
-	  printf("\t\tstart: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n",
+	  printf(_("\t\tstart: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
 		 aa.c, aa.h, aa.s, bb.c, bb.h, bb.s);
-	a = (size ? ulong_to_chs(end) : zero_chs);
+	a = (size ? ulong_to_chs(end,G) : zero_chs);
 	b = p->p.end_chs;
 	aa = chs_to_longchs(a);
 	bb = chs_to_longchs(b);
 	if(a.s && !is_equal_chs(a, b))
-	  printf("\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n",
+	  printf(_("\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
 		 aa.c, aa.h, aa.s, bb.c, bb.h, bb.s);
-	if(cylinders && cylinders < 1024 && bb.c > cylinders)
-	  printf("partition ends on cylinder %ld, beyond the end of the disk\n",
+	if(G.cylinders && G.cylinders < 1024 && bb.c > G.cylinders)
+	  printf(_("partition ends on cylinder %ld, beyond the end of the disk\n"),
 	       bb.c);
     }
 }
@@ -1064,11 +1015,16 @@ out_partitions(char *dev, struct disk_desc *z) {
     int pno, format = 0;
 
     if (z->partno == 0)
-	printf("No partitions found\n");
+	printf(_("No partitions found\n"));
     else {
-	out_partition_header(dev, format);
+	if (get_fdisk_geometry(&(z->partitions[0])))
+	    printf(_("Warning: The first partition looks like it was made\n"
+		     "  for C/H/S=*/%ld/%ld (instead of %ld/%ld/%ld).\n"
+		     "For this listing I'll assume that geometry.\n"),
+		   F.heads, F.sectors, B.cylinders, B.heads, B.sectors);
+	out_partition_header(dev, format, F);
 	for(pno=0; pno < z->partno; pno++) {
-	    out_partition(dev, format, &(z->partitions[pno]), z);
+	    out_partition(dev, format, &(z->partitions[pno]), z, F);
 	    if(show_extended && pno%4==3)
 	      printf("\n");
 	}
@@ -1109,9 +1065,9 @@ partitions_ok(struct disk_desc *z) {
     /* Have at least 4 partitions been defined? */
     if (partno < 4) {
          if (!partno)
-	      fatal("no partition table present.\n");
+	      fatal(_("no partition table present.\n"));
 	 else
-	      fatal("strange, only %d partitions defined.\n", partno);
+	      fatal(_("strange, only %d partitions defined.\n"), partno);
 	 return 0;
     }
 
@@ -1120,13 +1076,13 @@ partitions_ok(struct disk_desc *z) {
     for (p = partitions; p - partitions < partno; p++)
       if (p->size == 0) {
 	  if(p->p.sys_type != EMPTY_PARTITION)
-	    warn("Warning: partition %s has size 0 but is not marked Empty\n",
+	    warn(_("Warning: partition %s has size 0 but is not marked Empty\n"),
 		 PNO(p));
 	  else if(p->p.bootable != 0)
-	    warn("Warning: partition %s has size 0 and is bootable\n",
+	    warn(_("Warning: partition %s has size 0 and is bootable\n"),
 		 PNO(p));
 	  else if(p->p.start_sect != 0)
-	    warn("Warning: partition %s has size 0 and nonzero start\n",
+	    warn(_("Warning: partition %s has size 0 and nonzero start\n"),
 		 PNO(p));
 	  /* all this is probably harmless, no error return */
       }
@@ -1137,8 +1093,8 @@ partitions_ok(struct disk_desc *z) {
       if (p->size && !is_extended(p->p.sys_type)) {
 	  q = p->ep;
 	  if (p->start < q->start || p->start + p->size > q->start + q->size) {
-	      warn("Warning: partition %s ", PNO(p));
-	      warn("is not contained in partition %s\n", PNO(q));
+	      warn(_("Warning: partition %s "), PNO(p));
+	      warn(_("is not contained in partition %s\n"), PNO(q));
 	      return 0;
 	  }
       }
@@ -1149,8 +1105,8 @@ partitions_ok(struct disk_desc *z) {
 	for (q = p+1; q < partitions+partno; q++)
 	  if (q->size && !is_extended(q->p.sys_type))
 	    if(!((p->start > q-> start) ? disj(q,p) : disj(p,q))) {
-		warn("Warning: partitions %s ", PNO(p));
-		warn("and %s overlap\n", PNO(q));
+		warn(_("Warning: partitions %s "), PNO(p));
+		warn(_("and %s overlap\n"), PNO(q));
 		return 0;
 	    }
 
@@ -1161,9 +1117,9 @@ partitions_ok(struct disk_desc *z) {
         for (q = partitions; q < partitions+partno; q++)
           if (is_extended(q->p.sys_type))
             if (p->start <= q->start && p->start + p->size > q->start) {
-                warn("Warning: partition %s contains part of ", PNO(p));
-		warn("the partition table (sector %lu),\n", q->start);
-		warn("and will destroy it when filled\n");
+                warn(_("Warning: partition %s contains part of "), PNO(p));
+		warn(_("the partition table (sector %lu),\n"), q->start);
+		warn(_("and will destroy it when filled\n"));
 		return 0;
 	    }
 
@@ -1172,11 +1128,11 @@ partitions_ok(struct disk_desc *z) {
     for (p = partitions; p < partitions+partno; p++)
       if (p->size) {
 	  if(p->start == 0) {
-	      warn("Warning: partition %s starts at sector 0\n", PNO(p));
+	      warn(_("Warning: partition %s starts at sector 0\n"), PNO(p));
 	      return 0;
           }
           if (p->size && p->start + p->size > ds) {
-	      warn("Warning: partition %s extends past end of disk\n", PNO(p));
+	      warn(_("Warning: partition %s extends past end of disk\n"), PNO(p));
 	      return 0;
           }
       }
@@ -1190,8 +1146,8 @@ partitions_ok(struct disk_desc *z) {
 	if (p->p.sys_type == EXTENDED_PARTITION)
 	  ect++;
       if (ect > 1 && !Linux) {
-	  warn("Among the primary partitions, at most one can be extended\n");
-	  warn(" (although this is not a problem under Linux)\n");
+	  warn(_("Among the primary partitions, at most one can be extended\n"));
+	  warn(_(" (although this is not a problem under Linux)\n"));
 	  return 0;
       }
     }
@@ -1202,20 +1158,20 @@ partitions_ok(struct disk_desc *z) {
      * The first partition starts after MBR.
      * Logical partitions start slightly after the containing extended partn.
      */
-    if (cylindersize) {
+    if (B.cylindersize) {
 	for(p = partitions; p < partitions+partno; p++)
 	  if (p->size) {
-	      if(p->start % cylindersize != 0
-		 && (!p->ep || p->start / cylindersize != p->ep->start / cylindersize)
-		 && (p->p.start_sect >= cylindersize)) {
-		  warn("Warning: partition %s does not start "
-		       "at a cylinder boundary\n", PNO(p));
+	      if(p->start % B.cylindersize != 0
+		 && (!p->ep || p->start / B.cylindersize != p->ep->start / B.cylindersize)
+		 && (p->p.start_sect >= B.cylindersize)) {
+		  warn(_("Warning: partition %s does not start "
+		       "at a cylinder boundary\n"), PNO(p));
 		  if (!Linux)
 		    return 0;
 	      }
-	      if((p->start + p->size) % cylindersize) {
-		  warn("Warning: partition %s does not end "
-		       "at a cylinder boundary\n", PNO(p));
+	      if((p->start + p->size) % B.cylindersize) {
+		  warn(_("Warning: partition %s does not end "
+		       "at a cylinder boundary\n"), PNO(p));
 		  if (!Linux)
 		    return 0;
 	      }
@@ -1232,22 +1188,22 @@ partitions_ok(struct disk_desc *z) {
 	  if (pno == -1)
 	    pno = p - partitions;
 	  else if (p - partitions < 4) {
-	      warn("Warning: more than one primary partition is marked "
+	      warn(_("Warning: more than one primary partition is marked "
 		   "bootable (active)\n"
 		   "This does not matter for LILO, but the DOS MBR will "
-		   "not boot this disk.\n");
+		   "not boot this disk.\n"));
 	      break;
           }
 	  if (p - partitions >= 4) {
-	      warn("Warning: usually one can boot from primary partitions "
-		   "only\n" "LILO disregards the `bootable' flag.\n");
+	      warn(_("Warning: usually one can boot from primary partitions "
+		   "only\nLILO disregards the `bootable' flag.\n"));
 	      break;
           }
       }
       if (pno == -1 || pno >= 4)
-	warn("Warning: no primary partition is marked bootable (active)\n"
+	warn(_("Warning: no primary partition is marked bootable (active)\n"
 	     "This does not matter for LILO, but the DOS MBR will "
-	     "not boot this disk.\n");
+	     "not boot this disk.\n"));
     }
 
     /* Is chs as we expect? */
@@ -1255,26 +1211,26 @@ partitions_ok(struct disk_desc *z) {
       if(p->ptype == DOS_TYPE) {
 	chs a, b;
 	longchs aa, bb;
-	a = p->size ? ulong_to_chs(p->start) : zero_chs;
+	a = p->size ? ulong_to_chs(p->start,B) : zero_chs;
 	b = p->p.begin_chs;
 	aa = chs_to_longchs(a);
 	bb = chs_to_longchs(b);
 	if (!chs_ok(b, PNO(p), "start"))
 	  return 0;
 	if(a.s && !is_equal_chs(a, b))
-	  warn("partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n",
+	  warn(_("partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
 	       PNO(p), aa.c, aa.h, aa.s, bb.c, bb.h, bb.s);
-	a = p->size ? ulong_to_chs(p->start + p->size - 1) : zero_chs;
+	a = p->size ? ulong_to_chs(p->start + p->size - 1, B) : zero_chs;
 	b = p->p.end_chs;
 	aa = chs_to_longchs(a);
 	bb = chs_to_longchs(b);
 	if (!chs_ok(b, PNO(p), "end"))
 	  return 0;
 	if(a.s && !is_equal_chs(a, b))
-	  warn("partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n",
+	  warn(_("partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"),
 	       PNO(p), aa.c, aa.h, aa.s, bb.c, bb.h, bb.s);
-	if(cylinders && cylinders < 1024 && bb.c > cylinders)
-	  warn("partition %s ends on cylinder %ld, beyond the end of the disk\n",
+	if(B.cylinders && B.cylinders < 1024 && bb.c > B.cylinders)
+	  warn(_("partition %s ends on cylinder %ld, beyond the end of the disk\n"),
 	       PNO(p), bb.c);
     }
 
@@ -1307,7 +1263,7 @@ extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z)
 	cp = s->data + 0x1be;
 
 	if (pno+4 >= SIZE(z->partitions)) {
-	    printf("too many partitions - ignoring those past nr (%d)\n",
+	    printf(_("too many partitions - ignoring those past nr (%d)\n"),
 		   pno-1);
 	    break;
 	}
@@ -1320,9 +1276,11 @@ extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z)
 	    partitions[pno].ep = ep;
 	    copy_to_part(cp,&p);
 	    if (is_extended(p.sys_type)) {
+		partitions[pno].start = start + p.start_sect;
 		if (next)
-		  printf("tree of partitions?\n");
-		partitions[pno].start = next = start + p.start_sect;
+		  printf(_("tree of partitions?\n"));
+		else
+		  next = partitions[pno].start;		/* follow `upper' branch */
 		moretodo = 1;
 	    } else {
 		partitions[pno].start = here + p.start_sect;
@@ -1382,8 +1340,8 @@ bsd_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z) {
 	bp = bp0 = &l->d_partitions[0];
 	while (bp - bp0 <= BSD_MAXPARTITIONS) {
 		if (pno+1 >= SIZE(z->partitions)) {
-			printf("too many partitions - ignoring those "
-			       "past nr (%d)\n", pno-1);
+			printf(_("too many partitions - ignoring those "
+			       "past nr (%d)\n"), pno-1);
 			break;
 		}
 		if (bp->p_fstype != BSD_FS_UNUSED) {
@@ -1424,14 +1382,14 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
 	|| pt.sys_type == EZD_PARTITION
 	|| pt.sys_type == DM6_AUX1PARTITION
 	|| pt.sys_type == DM6_AUX3PARTITION) {
-	printf("detected Disk Manager - unable to handle that\n");
+	printf(_("detected Disk Manager - unable to handle that\n"));
 	return 0;
     }
     { unsigned int sig = *(unsigned short *)(s->data + 2);
       if (sig <= 0x1ae
 	  && *(unsigned short *)(s->data + sig) == 0x55aa
 	  && (1 & *(unsigned char *)(s->data + sig + 2))) {
-	  printf("DM6 signature found - giving up\n");
+	  printf(_("DM6 signature found - giving up\n"));
 	  return 0;
       }
     }
@@ -1451,14 +1409,14 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
     for (i=0; i<4; i++) {
 	if (is_extended(partitions[i].p.sys_type)) {
 	    if (!partitions[i].size) {
-		printf("strange..., an extended partition of size 0?\n");
+		printf(_("strange..., an extended partition of size 0?\n"));
 		continue;
 	    }
 	    extended_partition(dev, fd, &partitions[i], z);
 	}
 	if (is_bsd(partitions[i].p.sys_type)) {
 	    if (!partitions[i].size) {
-		printf("strange..., a BSD partition of size 0?\n");
+		printf(_("strange..., a BSD partition of size 0?\n"));
 		continue;
 	    }
 	    bsd_partition(dev, fd, &partitions[i], z);
@@ -1490,7 +1448,7 @@ get_partitions(char *dev, int fd, struct disk_desc *z) {
 	&& !osf_partition(dev, fd, 0, z)
 	&& !sun_partition(dev, fd, 0, z)
 	&& !amiga_partition(dev, fd, 0, z)) {
-	printf(" %s: unrecognized partition\n", dev);
+	printf(_(" %s: unrecognized partition\n"), dev);
 	return;
     }
 }
@@ -1502,7 +1460,7 @@ write_partitions(char *dev, int fd, struct disk_desc *z) {
     int pno = z->partno;
 
     if (no_write) {
-	printf("-n flag was given: Nothing changed\n");
+	printf(_("-n flag was given: Nothing changed\n"));
 	exit(0);
     }
 
@@ -1515,12 +1473,12 @@ write_partitions(char *dev, int fd, struct disk_desc *z) {
     }
     if (save_sector_file) {
 	if (!save_sectors(dev, fd)) {
-	    fatal("Failed saving the old sectors - aborting\n");
+	    fatal(_("Failed saving the old sectors - aborting\n"));
 	    return 0;
 	}
     }
     if (!write_sectors(dev, fd)) {
-	error("Failed writing the partition on %s\n", dev);
+	error(_("Failed writing the partition on %s\n"), dev);
 	return 0;
     }
     return 1;
@@ -1597,7 +1555,7 @@ read_stdin(unsigned char **fields, unsigned char *line, int fieldssize, int line
 	return RD_EOF;
     }
     if (!(lp = index(lp, '\n')))
-      fatal("long or incomplete input line - quitting\n");
+      fatal(_("long or incomplete input line - quitting\n"));
     *lp = 0;
 
     /* remove comments, if any */
@@ -1633,20 +1591,20 @@ read_stdin(unsigned char **fields, unsigned char *line, int fieldssize, int line
 			while(isalnum(*ip)) 	/* 0x07FF */
 			  ip++;
 		    } else
-		      fatal("input error: `=' expected after %s field\n",
+		      fatal(_("input error: `=' expected after %s field\n"),
 			    d->fldname);
 		    if (fno <= d->fldno)
 		      fno = d->fldno + 1;
 		    if(*ip == 0)
 		      return fno;
 		    if(*ip != ',' && *ip != ';')
-		      fatal("input error: unexpected character %c after %s field\n",
+		      fatal(_("input error: unexpected character %c after %s field\n"),
 			    *ip, d->fldname);
 		    *ip = 0;
 		    goto nxtfld;
 		}
 	    }
-	    fatal("unrecognized input: %s\n", ip);
+	    fatal(_("unrecognized input: %s\n"), ip);
     }
 
     /* split line into fields */
@@ -1678,11 +1636,11 @@ get_ul(char *u, unsigned long *up, unsigned long def, int base) {
 	errno = 0;
 	*up = strtoul(u, &nu, base);
 	if (errno == ERANGE) {
-	    printf("number too big\n");
+	    printf(_("number too big\n"));
 	    return -1;
 	}
 	if (*nu) {
-	    printf("trailing junk after number\n");
+	    printf(_("trailing junk after number\n"));
 	    return -1;
 	}
     } else
@@ -1783,7 +1741,7 @@ max_length(int pno, int is_extended, struct part_desc *ep, int format,
 int
 compute_start_sect(struct part_desc *p, struct part_desc *ep) {
     unsigned long base;
-    int inc = (DOS && sectors) ? sectors : 1;
+    int inc = (DOS && B.sectors) ? B.sectors : 1;
     int delta;
 
     if (ep && p->start + p->size >= ep->start + 1)
@@ -1798,7 +1756,7 @@ compute_start_sect(struct part_desc *p, struct part_desc *ep) {
 	if (is_extended(p->p.sys_type) && boxes == ONESECTOR)
 	  p->size = inc;
 	else if ((int)(p->size) <= 0) {
-	    warn("no room for partition descriptor\n");
+	    warn(_("no room for partition descriptor\n"));
 	    return 0;
 	}
     }
@@ -1812,8 +1770,8 @@ compute_start_sect(struct part_desc *p, struct part_desc *ep) {
 	p->p.end_chs = zero_chs;
     } else {
         p->p.start_sect = p->start - base;
-	p->p.begin_chs = ulong_to_chs(p->start);
-	p->p.end_chs = ulong_to_chs(p->start + p->size - 1);
+	p->p.begin_chs = ulong_to_chs(p->start,B);
+	p->p.end_chs = ulong_to_chs(p->start + p->size - 1,B);
     }
     p->p.nr_sects = p->size;
     return 1;
@@ -1823,7 +1781,7 @@ compute_start_sect(struct part_desc *p, struct part_desc *ep) {
 int
 build_surrounding_extended(struct part_desc *p, struct part_desc *ep,
 			   struct disk_desc *z) {
-    int inc = (DOS && sectors) ? sectors : 1;
+    int inc = (DOS && B.sectors) ? B.sectors : 1;
     int format = F_SECTOR;
     struct part_desc *p0 = &(z->partitions[0]), *eep = ep->ep;
 
@@ -1831,7 +1789,7 @@ build_surrounding_extended(struct part_desc *p, struct part_desc *ep,
 	ep->start = first_free(ep-p0, 1, eep, format, p->start, z);
 	ep->size = max_length(ep-p0, 1, eep, format, ep->start, z);
 	if (ep->start > p->start || ep->start + ep->size < p->start + p->size) {
-	    warn("cannot build surrounding extended partition\n");
+	    warn(_("cannot build surrounding extended partition\n"));
 	    return 0;
 	}
     } else {
@@ -1882,7 +1840,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
     if (fno == RD_EOF) {
 	return -1;
     } else if (fno > 10 && *(fields[10]) != 0) {
-	printf("too many input fields\n");
+	printf(_("too many input fields\n"));
 	return 0;
     }
 
@@ -1893,7 +1851,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 
     /* use specified format, but round to cylinders if F_MEGABYTE specified */
     format = 0;
-    if (cylindersize && specified_format == F_MEGABYTE)
+    if (B.cylindersize && specified_format == F_MEGABYTE)
       format = F_CYLINDER;
 
     orig = (one_only ? &(oldp.partitions[pno]) : 0);
@@ -1916,7 +1874,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 	}
 	if (ml == 0 && pno >= 4) {
 	    /* no free blocks left - don't read any further */
-	    warn("No room for more\n");
+	    warn(_("No room for more\n"));
 	    return -1;
 	}
     }
@@ -1935,7 +1893,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
     else if (get_ul(fields[2], &ul, LINUX_NATIVE, 16))
       return 0;
     if (ul > 255) {
-	warn("Illegal type\n");
+	warn(_("Illegal type\n"));
 	return 0;
     }
     p.p.sys_type = ul;
@@ -1967,12 +1925,12 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 	p.size -= (p.size % unitsize(format));
     }
     if (p.size > ml1) {
-	warn("Warning: exceeds max allowable size (%lu)\n", ml1 / unitsize(0));
+	warn(_("Warning: exceeds max allowable size (%lu)\n"), ml1 / unitsize(0));
 	if (!force)
 	  return 0;
     }
     if (p.size == 0 && pno >= 4 && (fno < 2 || !*(fields[1]))) {
-	warn("Warning: empty partition\n");
+	warn(_("Warning: empty partition\n"));
 	if (!force)
 	  return 0;
     }
@@ -1986,7 +1944,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
     }
 
     if (p.start < ff1 && p.size > 0) {
-	warn("Warning: bad partition start (earliest %lu)\n",
+	warn(_("Warning: bad partition start (earliest %lu)\n"),
 	     (ff1 + unitsize(0) - 1) / unitsize(0));
 	if (!force)
 	  return 0;
@@ -1999,7 +1957,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
     else if (!strcmp(fields[3], "*") || !strcmp(fields[3], "+"))
       ul = 0x80;
     else {
-    	warn("unrecognized bootable flag - choose - or *\n");
+    	warn(_("unrecognized bootable flag - choose - or *\n"));
     	return 0;
     }
     p.p.bootable = ul;
@@ -2016,31 +1974,31 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
       if (fno < 5) {
 	  bb = aa;
       } else if (fno < 7) {
-	  warn("partial c,h,s specification?\n");
+	  warn(_("partial c,h,s specification?\n"));
 	  return 0;
       } else if(get_ul(fields[4], &bb.c, aa.c, 0) ||
 		get_ul(fields[5], &bb.h, aa.h, 0) ||
 		get_ul(fields[6], &bb.s, aa.s, 0))
 	return 0;
-      p.p.begin_chs = longchs_to_chs(bb);
+      p.p.begin_chs = longchs_to_chs(bb,B);
     }
     { longchs aa = chs_to_longchs(p.p.end_chs), bb;
 
       if (fno < 8) {
 	  bb = aa;
       } else if (fno < 10) {
-	  warn("partial c,h,s specification?\n");
+	  warn(_("partial c,h,s specification?\n"));
 	  return 0;
       } else if(get_ul(fields[7], &bb.c, aa.c, 0) ||
 		get_ul(fields[8], &bb.h, aa.h, 0) ||
 		get_ul(fields[9], &bb.s, aa.s, 0))
 	return 0;
-      p.p.end_chs = longchs_to_chs(bb);
+      p.p.end_chs = longchs_to_chs(bb, B);
     }
 
     if (pno > 3 && p.size && show_extended && p.p.sys_type != EMPTY_PARTITION
 	        && (is_extended(p.p.sys_type) != (pct == 1))) {
-	warn("Extended partition not where expected\n");
+	warn(_("Extended partition not where expected\n"));
 	if (!force)
 	  return 0;
     }
@@ -2050,7 +2008,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
       z->partno += 4;		/* reqd for out_partition() */
 
     if (interactive)
-      out_partition(dev, 0, &(z->partitions[pno]), z);
+      out_partition(dev, 0, &(z->partitions[pno]), z, B);
 
     return 1;
 }
@@ -2072,7 +2030,7 @@ read_partition(char *dev, int interactive, int pno, struct part_desc *ep,
 
     while (!(i = read_line(pno, ep, dev, interactive, z)))
       if (!interactive)
-	fatal("bad input\n");
+	fatal(_("bad input\n"));
     if (i < 0) {
 	p->ep = ep;
 	return 0;
@@ -2094,7 +2052,7 @@ read_partition_chain(char *dev, int interactive, struct part_desc *ep,
     while (1) {
 	base = z->partno;
 	if (base+4 > SIZE(z->partitions)) {
-	    printf("too many partitions\n");
+	    printf(_("too many partitions\n"));
 	    break;
 	}
 	for (i=0; i<4; i++)
@@ -2127,11 +2085,9 @@ read_input(char *dev, int interactive, struct disk_desc *z) {
     z->partno = 0;
 
     if (interactive)
-      warn("
-Input in the following format; absent fields get a default value.
-<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>
-Usually you only need to specify <start> and <size> (and perhaps <type>).
-");
+      warn(_("Input in the following format; absent fields get a default value.\n"
+             "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
+             "Usually you only need to specify <start> and <size> (and perhaps <type>).\n"));
     eof = 0;
 
     for (i=0; i<4; i++)
@@ -2149,54 +2105,51 @@ Usually you only need to specify <start> and <size> (and perhaps <type>).
  */
 
 static void version(void) {
-    printf(PROGNAME " version " VERSION " (aeb@cwi.nl, " DATE ")\n");
+    printf("%s %s %s (aeb@cwi.nl, %s)\n", PROGNAME, _("version"), VERSION, DATE);
 }
 
 static void
 usage(void) {
     version();
-    printf("Usage:
-	" PROGNAME " [options] device ...
-device: something like /dev/hda or /dev/sda
-useful options:
-    -s [or --show-size]: list size of a partition
-    -c [or --id]:        print or change partition Id
-    -l [or --list]:      list partitions of each device
-    -d [or --dump]:      idem, but in a format suitable for later input
-    -i [or --increment]: number cylinders etc. from 1 instead of from 0
-    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB
-    -T [or --list-types]:list the known partition types
-    -D [or --DOS]:       for DOS-compatibility: waste a little space
-    -R [or --re-read]:   make kernel reread partition table
-    -N# :                change only the partition with number #
-    -n :                 do not actually write to disk
-    -O file :            save the sectors that will be overwritten to file
-    -I file :            restore these sectors again
-    -v [or --version]:   print version
-    -? [or --help]:      print this message
-dangerous options:
-    -g [or --show-geometry]: print the kernel's idea of the geometry
-    -x [or --show-extended]: also list extended partitions on output
-                           or expect descriptors for them on input
-    -L  [or --Linux]:      do not complain about things irrelevant for Linux
-    -q  [or --quiet]:      suppress warning messages
-    You can override the detected geometry using:
-    -C# [or --cylinders #]:set the number of cylinders to use
-    -H# [or --heads #]:    set the number of heads to use
-    -S# [or --sectors #]:  set the number of sectors to use
-    You can disable all consistency checking with:
-    -f  [or --force]:      do what I say, even if it is stupid
-");
+    printf(_("Usage: %s [options] device ...\n"), PROGNAME);
+    puts (_("device: something like /dev/hda or /dev/sda"));
+    puts (_("useful options:"));
+    puts (_("    -s [or --show-size]: list size of a partition"));
+    puts (_("    -c [or --id]:        print or change partition Id"));
+    puts (_("    -l [or --list]:      list partitions of each device"));
+    puts (_("    -d [or --dump]:      idem, but in a format suitable for later input"));
+    puts (_("    -i [or --increment]: number cylinders etc. from 1 instead of from 0"));
+    puts (_("    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB"));
+    puts (_("    -T [or --list-types]:list the known partition types"));
+    puts (_("    -D [or --DOS]:       for DOS-compatibility: waste a little space"));
+    puts (_("    -R [or --re-read]:   make kernel reread partition table"));
+    puts (_("    -N# :                change only the partition with number #"));
+    puts (_("    -n :                 do not actually write to disk"));
+    puts (_("    -O file :            save the sectors that will be overwritten to file"));
+    puts (_("    -I file :            restore these sectors again"));
+    puts (_("    -v [or --version]:   print version"));
+    puts (_("    -? [or --help]:      print this message"));
+    puts (_("dangerous options:"));
+    puts (_("    -g [or --show-geometry]: print the kernel's idea of the geometry"));
+    puts (_("    -x [or --show-extended]: also list extended partitions on output\n"
+          "                             or expect descriptors for them on input"));
+    puts (_("    -L  [or --Linux]:      do not complain about things irrelevant for Linux"));
+    puts (_("    -q  [or --quiet]:      suppress warning messages"));
+    puts (_("    You can override the detected geometry using:"));
+    puts (_("    -C# [or --cylinders #]:set the number of cylinders to use"));
+    puts (_("    -H# [or --heads #]:    set the number of heads to use"));
+    puts (_("    -S# [or --sectors #]:  set the number of sectors to use"));
+    puts (_("You can disable all consistency checking with:"));
+    puts (_("    -f  [or --force]:      do what I say, even if it is stupid"));
     exit(1);
 }
 
 static void
 activate_usage(char *progn) {
-    printf("Usage:
-  %s device	 	list active partitions on device
-  %s device n1 n2 ...	activate partitions n1 ..., inactivate the rest
-  %s device		activate partition n, inactivate the other ones
-", progn, progn, PROGNAME " -An");
+    puts (_("Usage:"));
+    printf(_("%s device		 list active partitions on device\n"), progn);
+    printf(_("%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"), progn);
+    printf(_("%s -An device	 activate partition n, inactivate the other ones\n"), PROGNAME);
     exit(1);
 }
 
@@ -2310,8 +2263,12 @@ main(int argc, char **argv) {
     char *activatearg = 0;
     char *unhidearg = 0;
 
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
+
     if (argc < 1)
-      fatal("no command?\n");
+      fatal(_("no command?\n"));
     if ((progn = rindex(argv[0], '/')) == NULL)
       progn = argv[0];
     else
@@ -2358,11 +2315,11 @@ main(int argc, char **argv) {
 	    activatearg = optarg;
 	    activate = 1; break;
 	  case 'C':
-	    specified_cylinders = atoi(optarg); break;
+	    U.cylinders = atoi(optarg); break;
 	  case 'D':
 	    DOS = 1; break;
 	  case 'H':
-	    specified_heads = atoi(optarg); break;
+	    U.heads = atoi(optarg); break;
 	  case 'L':
 	    Linux = 1; break;
 	  case 'N':
@@ -2374,7 +2331,7 @@ main(int argc, char **argv) {
 	  case 'R':
 	    opt_reread = 1; break;
 	  case 'S':
-	    specified_sectors = atoi(optarg); break;
+	    U.sectors = atoi(optarg); break;
 	  case 'T':
 	    list_types();
 	    exit(0);
@@ -2434,7 +2391,7 @@ main(int argc, char **argv) {
 	}
 
 	if (opt_size)
-	  printf("total: %d blocks\n", total_size);
+	  printf(_("total: %d blocks\n"), total_size);
 
 	exit(exit_status);
     }
@@ -2471,18 +2428,18 @@ main(int argc, char **argv) {
     }
     if (do_id) {
         if ((do_id & PRINT_ID) != 0 && optind != argc-2)
-	  fatal("usage: sfdisk --print-id device partition-number\n");
+	  fatal(_("usage: sfdisk --print-id device partition-number\n"));
 	else if ((do_id & CHANGE_ID) != 0 && optind != argc-3)
-	  fatal("usage: sfdisk --change-id device partition-number Id\n");
+	  fatal(_("usage: sfdisk --change-id device partition-number Id\n"));
 	else if (optind != argc-3 && optind != argc-2)
-	  fatal("usage: sfdisk --id device partition-number [Id]\n");
+	  fatal(_("usage: sfdisk --id device partition-number [Id]\n"));
 	do_change_id(argv[optind], argv[optind+1],
 		     (optind == argc-2) ? 0 : argv[optind+2]);
 	exit(exit_status);
     }
       
     if (optind != argc-1)
-      fatal("can specify only one device (except with -l or -s)\n");
+      fatal(_("can specify only one device (except with -l or -s)\n"));
     dev = argv[optind];
 
     if (opt_reread)
@@ -2507,7 +2464,7 @@ my_open (char *dev, int rw, int silent) {
     fd = open(dev, mode);
     if (fd < 0 && !silent) {
 	perror(dev);
-	fatal("cannot open %s %s\n", dev, rw ? "read-write" : "for reading");
+	fatal(_("cannot open %s %s\n"), dev, rw ? _("read-write") : _("for reading"));
     }
     return fd;
 }
@@ -2532,7 +2489,7 @@ do_list (char *dev, int silent) {
 
     if (verify) {
 	if (partitions_ok(z))
-	  warn("%s: OK\n", dev);
+	  warn(_("%s: OK\n"), dev);
 	else
 	  exit_status = 1;
     }
@@ -2549,16 +2506,17 @@ do_geom (char *dev, int silent) {
 
     /* get_cylindersize(dev, fd, silent); */
     if (!ioctl(fd, HDIO_GETGEO, &g))
-	printf("%s: %d cylinders, %d heads, %d sectors/track\n",
+	printf(_("%s: %d cylinders, %d heads, %d sectors/track\n"),
 	       dev, g.cylinders, g.heads, g.sectors);
     else
-	printf("%s: unknown geometry\n", dev);
+	printf(_("%s: unknown geometry\n"), dev);
 }
 
 /* for compatibility with earlier fdisk: provide option -s */
 void
 do_size (char *dev, int silent) {
-    int fd, size;
+    int fd;
+    long size;
 
     fd = my_open(dev, 0, silent);
     if (fd < 0)
@@ -2567,7 +2525,7 @@ do_size (char *dev, int silent) {
     if(ioctl(fd, BLKGETSIZE, &size)) {
 	if(!silent) {
 	    perror(dev);
-	    fatal("BLKGETSIZE ioctl failed for %s\n", dev);
+	    fatal(_("BLKGETSIZE ioctl failed for %s\n"), dev);
 	}
 	return;
     }
@@ -2579,9 +2537,9 @@ do_size (char *dev, int silent) {
       return;
 
     if (silent)
-      printf("%s: %9d\n", dev, size);
+      printf("%s: %9ld\n", dev, size);
     else
-      printf("%d\n", size);
+      printf("%ld\n", size);
 
     total_size += size;
 }
@@ -2644,7 +2602,7 @@ do_activate (char **av, int ac, char *arg) {
 		else
 		  printf("%s#%d\n", dev, pno);
 		if (z->partitions[pno].p.bootable != 0x80)
-		  warn("bad active byte: 0x%x instead of 0x80\n",
+		  warn(_("bad active byte: 0x%x instead of 0x80\n"),
 		       z->partitions[pno].p.bootable);
 	    }
 	}
@@ -2661,7 +2619,7 @@ do_activate (char **av, int ac, char *arg) {
 
 	/* then write to disk */
 	if(write_partitions(dev, fd, z))
-	  warn("Done\n\n");
+	  warn(_("Done\n\n"));
 	else
 	  exit_status = 1;
     }
@@ -2670,8 +2628,8 @@ do_activate (char **av, int ac, char *arg) {
       if (z->partitions[pno].p.bootable)
 	i++;
     if (i != 1)
-      warn("You have %d active primary partitions. This does not matter for LILO,\n"
-	   "but the DOS MBR will only boot a disk with 1 active partition.\n", i);
+      warn(_("You have %d active primary partitions. This does not matter for LILO,\n"
+	   "but the DOS MBR will only boot a disk with 1 active partition.\n"), i);
 }
 
 void
@@ -2684,7 +2642,7 @@ set_unhidden (struct disk_desc *z, char *pnam) {
     if (id == 0x11 || id == 0x14 || id == 0x16 || id == 0x17)
       id -= 0x10;
     else
-      fatal("partition %s has id %x and is not hidden\n", pnam, id);
+      fatal(_("partition %s has id %x and is not hidden\n"), pnam, id);
     z->partitions[pno].p.sys_type = id;
 }
 
@@ -2714,7 +2672,7 @@ do_unhide (char **av, int ac, char *arg) {
 
     /* then write to disk */
     if(write_partitions(dev, fd, z))
-      warn("Done\n\n");
+      warn(_("Done\n\n"));
     else
       exit_status = 1;
 }
@@ -2740,11 +2698,11 @@ void do_change_id(char *dev, char *pnam, char *id) {
     }
     i = strtoul(id, NULL, 16);
     if (i > 255)
-      fatal("Bad Id %x\n", i);
+      fatal(_("Bad Id %x\n"), i);
     z->partitions[pno].p.sys_type = i;
 
     if(write_partitions(dev, fd, z))
-      warn("Done\n\n");
+      warn(_("Done\n\n"));
     else
       exit_status = 1;
 }
@@ -2755,7 +2713,7 @@ do_reread(char *dev) {
 
     fd = my_open(dev, 0, 0);
     if(reread_ioctl(fd))
-      printf("This disk is currently in use.\n");
+      printf(_("This disk is currently in use.\n"));
 }
 
 /*
@@ -2772,26 +2730,26 @@ do_fdisk(char *dev){
 
     if (stat(dev, &statbuf) < 0) {
 	perror(dev);
-	fatal("Fatal error: cannot find %s\n", dev);
+	fatal(_("Fatal error: cannot find %s\n"), dev);
     }
     if (!S_ISBLK(statbuf.st_mode)) {
-	warn("Warning: %s is not a block device\n", dev);
+	warn(_("Warning: %s is not a block device\n"), dev);
+	no_reread = 1;
     }
     fd = my_open(dev, !no_write, 0);
 
     if(!no_write && !no_reread) {
-	warn("Checking that no-one is using this disk right now ...\n");
+	warn(_("Checking that no-one is using this disk right now ...\n"));
 	if(reread_ioctl(fd)) {
-	    printf("
-This disk is currently in use - repartitioning is probably a bad idea.
-Umount all file systems, and swapoff all swap partitions on this disk.
-Use the --no-reread flag to suppress this check.\n");
+	    printf(_("\nThis disk is currently in use - repartitioning is probably a bad idea."
+		   "Umount all file systems, and swapoff all swap partitions on this disk."
+		   "Use the --no-reread flag to suppress this check.\n"));
 	    if (!force) {
-		printf("Use the --force flag to overrule all checks.\n");
+		printf(_("Use the --force flag to overrule all checks.\n"));
 		exit(1);
 	    }
 	} else
-	  warn("OK");
+	  warn(_("OK"));
     }
 
     z = &oldp;
@@ -2800,11 +2758,11 @@ Use the --no-reread flag to suppress this check.\n");
     get_cylindersize(dev, fd, 0);
     get_partitions(dev, fd, z);
 
-    printf("Old situation:\n");
+    printf(_("Old situation:\n"));
     out_partitions(dev, z);
 
     if (one_only && (one_only_pno = linux_to_index(one_only, z)) < 0)
-      fatal("Partition %d does not exist, cannot change it\n", one_only);
+      fatal(_("Partition %d does not exist, cannot change it\n"), one_only);
 
     z = &newp;
 
@@ -2812,35 +2770,35 @@ Use the --no-reread flag to suppress this check.\n");
 
 	read_input(dev, interactive, z);
 
-	printf("New situation:\n");
+	printf(_("New situation:\n"));
 	out_partitions(dev, z);
 
 	if (!partitions_ok(z) && !force) {
 	    if(!interactive)
-	      fatal("I don't like these partitions - nothing changed.\n"
-		    "(If you really want this, use the --force option.)\n");
+	      fatal(_("I don't like these partitions - nothing changed.\n"
+		      "(If you really want this, use the --force option.)\n"));
 	    else
-	      printf("I don't like this - probably you should answer No\n");
+	      printf(_("I don't like this - probably you should answer No\n"));
 	}
       ask:
 	if (interactive) {
 	    if (no_write)
-	      printf("Are you satisfied with this? [ynq] ");
+	      printf(_("Are you satisfied with this? [ynq] "));
 	    else
-	      printf("Do you want to write this to disk? [ynq] ");
+	      printf(_("Do you want to write this to disk? [ynq] "));
 	    answer = c = getchar();
 	    while (c != '\n' && c != EOF)
 	      c = getchar();
 	    if (c == EOF)
-		printf("\nsfdisk: premature end of input\n");
+		printf(_("\nsfdisk: premature end of input\n"));
 	    if (c == EOF || answer == 'q' || answer == 'Q') {
-		fatal("Quitting - nothing changed\n");
+		fatal(_("Quitting - nothing changed\n"));
 	    } else if (answer == 'n' || answer == 'N') {
 		continue;
 	    } else if (answer == 'y' || answer == 'Y') {
 		break;
 	    } else {
-		printf("Please answer one of y,n,q\n");
+		printf(_("Please answer one of y,n,q\n"));
 		goto ask;
 	    }
 	} else
@@ -2848,15 +2806,15 @@ Use the --no-reread flag to suppress this check.\n");
     }
 
     if(write_partitions(dev, fd, z))
-      printf("Successfully wrote the new partition table\n\n");
+      printf(_("Successfully wrote the new partition table\n\n"));
     else
       exit_status = 1;
 
     reread_disk_partition(dev, fd);
     
-    warn("If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
+    warn(_("If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 	 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
-	 "(See fdisk(8).)\n");
+	 "(See fdisk(8).)\n"));
     
     sync();			/* superstition */
     sleep(3);

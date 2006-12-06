@@ -42,22 +42,26 @@
  * Revision 1.2  1995/01/03  07:33:44  johnsonm
  * revisions for lp driver updates in Linux 1.1.76
  *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
+ * 1999-05-07 Merged LPTRUSTIRQ patch by Andrea Arcangeli (1998/11/29), aeb
  *
  */
 
-#include<unistd.h>
-#include<stdio.h>
-#include<fcntl.h>
-/* This is for (some) 2.1 kernels */
-#define LP_NEED_CAREFUL
-#include<linux/lp.h>
-#include<linux/fs.h>
-#include<sys/ioctl.h>
-#include<sys/stat.h>
-#include<sys/types.h>
-#include<malloc.h>
-#include<string.h>
-#include<errno.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <fcntl.h>
+/* #include <linux/fs.h> */
+#include <sys/ioctl.h>
+#include <sys/stat.h>
+#include <sys/types.h>
+#include <malloc.h>
+#include <string.h>
+#include <errno.h>
+#include "lp.h"
+#include "nls.h"
+#include "../version.h"
 
 struct command {
   long op;
@@ -69,19 +73,23 @@ struct command {
 
 
 void print_usage(char *progname) {
-  printf("Usage: %s <device> [ -i <IRQ> | -t <TIME> | -c <CHARS> | -w <WAIT> | \n"
-         "          -a [on|off] | -o [on|off] | -C [on|off] | -q [on|off] | -s ]\n", progname);
+  printf(_("Usage: %s <device> [ -i <IRQ> | -t <TIME> | -c <CHARS> | -w <WAIT> | \n"
+	   "          -a [on|off] | -o [on|off] | -C [on|off] | -q [on|off] | -s | \n"
+	   "          -T [on|off] ]\n"),
+	 progname);
   exit (1);
 }
 
 
-
+void print_version(char *progname) {
+  printf("%s %s\n", progname, UTIL_LINUX_VERSION);
+}
 
 
 void *mylloc(long size) {
   void *ptr;
   if(!(ptr = (void*)malloc(size))) {
-    perror("malloc error");
+    perror(_("malloc error"));
     exit(2);
   }
   return ptr;
@@ -92,7 +100,7 @@ void *mylloc(long size) {
 long get_val(char *val) {
   long ret;
   if (!(sscanf(val, "%ld", &ret) == 1)) {
-    perror("sscanf error");
+    perror(_("sscanf error"));
     exit(3);
   }
   return ret;
@@ -114,33 +122,14 @@ int main (int argc, char ** argv) {
   struct stat statbuf;
   struct command *cmds, *cmdst;
 
-
   progname = argv[0];
   if (argc < 2) print_usage(progname);
-
-  filename = strdup(argv[1]);
-  fd = open(filename, O_WRONLY|O_NONBLOCK, 0);
-  /* Need to open O_NONBLOCK in case ABORTOPEN is already set and
-     printer is off or off-line or in an error condition.  Otherwise
-     we would abort... */
-  if (fd < 0) {
-    perror(argv[1]);
-    return -1;
-  }
-
-  fstat(fd, &statbuf);
-
-  if((!S_ISCHR(statbuf.st_mode)) || (MAJOR(statbuf.st_rdev) != 6 )
-     || (MINOR(statbuf.st_rdev) > 3)) {
-    printf("%s: %s not an lp device.\n", argv[0], argv[1]);
-    print_usage(progname);
-  }
 
   cmdst = cmds = mylloc(sizeof(struct command));
   cmds->next = 0;
 
   show_irq = 1;
-  while ((c = getopt(argc, argv, "t:c:w:a:i:ho:C:sq:r")) != EOF) {
+  while ((c = getopt(argc, argv, "t:c:w:a:i:ho:C:sq:rT:vV")) != EOF) {
     switch (c) {
     case 'h':
       print_usage(progname);
@@ -210,8 +199,42 @@ int main (int argc, char ** argv) {
       cmds = cmds->next; cmds->next = 0;
       break;
 #endif
-    default: print_usage(progname);
+#ifdef LPTRUSTIRQ
+    case 'T':
+      /* Note: this will do the wrong thing on 2.0.36 when compiled under 2.2.x */
+      cmds->op = LPTRUSTIRQ;
+      cmds->val = get_onoff(optarg);
+      cmds->next = mylloc(sizeof(struct command));
+      cmds = cmds->next; cmds->next = 0;
+      break;
+#endif
+    case 'v':
+    case 'V':
+      print_version(progname);
+      exit(0);
+    default:
+      print_usage(progname);
     }
+  }
+
+  if (optind != argc-1)
+    print_usage(progname);
+
+  filename = strdup(argv[optind]);
+  fd = open(filename, O_WRONLY|O_NONBLOCK, 0);
+  /* Need to open O_NONBLOCK in case ABORTOPEN is already set and
+     printer is off or off-line or in an error condition.  Otherwise
+     we would abort... */
+  if (fd < 0) {
+    perror(filename);
+    return -1;
+  }
+
+  fstat(fd, &statbuf);
+
+  if(!S_ISCHR(statbuf.st_mode)) {
+    printf(_("%s: %s not an lp device.\n"), argv[0], filename);
+    print_usage(progname);
   }
 
   /* Allow for binaries compiled under a new kernel to work on the old ones */
@@ -231,12 +254,12 @@ int main (int argc, char ** argv) {
       else {
         if (status == 0xdeadbeef)	/* a few 1.1.7x kernels will do this */
           status = retval;
-	printf("%s status is %d", filename, status);
-	if (!(status & LP_PBUSY)) printf(", busy");
-	if (!(status & LP_PACK)) printf(", ready");
-	if ((status & LP_POUTPA)) printf(", out of paper");
-	if ((status & LP_PSELECD)) printf(", on-line");
-	if (!(status & LP_PERRORP)) printf(", error");
+	printf(_("%s status is %d"), filename, status);
+	if (!(status & LP_PBUSY)) printf(_(", busy"));
+	if (!(status & LP_PACK)) printf(_(", ready"));
+	if ((status & LP_POUTPA)) printf(_(", out of paper"));
+	if ((status & LP_PSELECD)) printf(_(", on-line"));
+	if (!(status & LP_PERRORP)) printf(_(", error"));
 	printf("\n");
       }
     } else
@@ -253,15 +276,15 @@ int main (int argc, char ** argv) {
     irq = 0xdeadbeef;
     retval = ioctl(fd, LPGETIRQ - offset, &irq);
     if (retval == -1) {
-      perror("LPGETIRQ error");
+      perror(_("LPGETIRQ error"));
       exit(4);
     }
     if (irq == 0xdeadbeef)		/* up to 1.1.77 will do this */
       irq = retval;
     if (irq)
-      printf("%s using IRQ %d\n", filename, irq);
+      printf(_("%s using IRQ %d\n"), filename, irq);
     else
-      printf("%s using polling\n", filename);
+      printf(_("%s using polling\n"), filename);
   }
 
   close(fd);

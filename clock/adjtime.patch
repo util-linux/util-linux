@@ -1,0 +1,302 @@
+From ao112@rgfn.epcc.edu Fri Mar 19 06:27:26 1999
+Received: from rgfn.epcc.edu (rgfn.epcc.edu [208.136.234.19]) by hera.cwi.nl with ESMTP
+	id GAA27711 for <Andries.Brouwer@cwi.nl>; Fri, 19 Mar 1999 06:27:23 +0100 (MET)
+Received: (from ao112@localhost)
+	by rgfn.epcc.edu (8.8.8/8.8.8) id WAA16797;
+	Thu, 18 Mar 1999 22:27:19 -0700 (MST)
+Date: Thu, 18 Mar 1999 22:27:19 -0700 (MST)
+Message-Id: <199903190527.WAA16797@rgfn.epcc.edu>
+From: ao112@rgfn.epcc.edu (James P. Rutledge)
+To: Andries.Brouwer@cwi.nl
+Subject: Re: hwclock patch for drift_factor calculation improvement
+Reply-To: ao112@rgfn.epcc.edu
+Status: R
+
+
+
+>
+>Could you perhaps make your patch relative to
+>util-linux-2.9n (found in ftp.cwi.nl/pub/aeb/util-linux/util-linux-2.9n.tar.gz)
+>?
+>
+>(The hwclock stuff has changed quite a bit since 2.9g.)
+>
+>Andries
+>
+
+Andries;
+
+Per your request, the patch has been modified for util-linux version
+2.9n, from the version for 2.9g.
+
+The program "hwclock" (version 2.4c) could give more accurate
+values for the drift factor that it places in the file "/etc/adjtime".
+
+A patch to improve the accuracy is included.
+
+I have incorporated some error sources which were not compensated
+for into the drift factor calculation (performed when the "--set"
+or the "--systohc" option is used) to make it more accurate.
+In particular, the sync delay between the desired set time and the
+start of the hardware clock second, and the expected drift since the
+last hardware clock adjustment are now accounted for in the drift
+factor calculation.
+
+With this patch, if at any time an adjust operation is attempted and
+the hardware clock is found to be not valid, then the calibration
+and adjustment time is set to zero to insure that if the hardware
+clock should coincidentally return to validity, a calibration is not
+done with bad history data (hardware clock info bad) and an adjust is
+not attempted on bad (but now passing validity test) hardware clock
+data.  (With this patch, a previous calibration time of zero causes
+the calibration time to initialize with the current time, when the
+hardware clock is set, but no change is made to the drift factor,
+so in effect, an initial calibration is started over while the previous
+drift factor is retained.)
+
+Also, the behavior in the case of an initially missing "/etc/adjtime"
+file or such a file produced by the predecessor "clock" program has
+been slightly improved as follows: 
+
+    With this patch, if the file exists but was produced by "clock"
+    and, thus, is given a zero calibration time, the drift factor is
+    not updated upon the first calibration by "hwclock", but is left alone
+    and is only changed by subsequent calibrations.
+
+    With this patch, if the file does not exist and, thus, is given
+    a zero calibration time, the drift factor is set to zero upon the
+    first calibration by "hwclock" and is then changed, as appropriate, by
+    subsequent calibrations.
+
+    Also, with this patch, an "--adjust" operation against a non-existent
+    "/etc/adjtime" file or one which has zero as the last adjustment
+    time will not change the hardware clock setting.
+
+A context diff for a patch to the file "hwclock.c" in the directory
+"util-linux-2.9n/clock" is appended.
+To use the patch, "cd" to the directory "util-linux-2.9n/clock".
+Run "patch < bug-report", where "bug-report" is the file name of
+this mail message, to get new file "hwclock.c" which contains the proposed
+new version.  This patch is, of course, submitted per the GPL and the
+appropriate "NO WARRANTY OF ANY KIND" and "USE AT YOUR OWN RISK"
+disclaimers apply.
+
+Note that the patch presumptuously changes the "hwclock.c" version
+number from 2.4c to 2.4c1 in "hwclock.c".
+
+Jim
+
+------------------ Patch file follows ----------------------------
+*** hwclock.c	Thu Mar 18 22:04:01 1999
+--- new-hwclock.c	Thu Mar 18 22:03:18 1999
+***************
+*** 76,86 ****
+  
+  #include "clock.h"
+  #include "../version.h"
+  
+  #define MYNAME "hwclock"
+! #define VERSION "2.4c"
+  
+  char *progname = MYNAME;
+  
+  /* The struct that holds our hardware access routines */
+  struct clock_ops *ur;
+--- 76,86 ----
+  
+  #include "clock.h"
+  #include "../version.h"
+  
+  #define MYNAME "hwclock"
+! #define VERSION "2.4c1"
+  
+  char *progname = MYNAME;
+  
+  /* The struct that holds our hardware access routines */
+  struct clock_ops *ur;
+***************
+*** 581,601 ****
+  
+  
+  static void
+  adjust_drift_factor(struct adjtime *adjtime_p,
+                      const time_t nowtime, 
+!                     const bool hclock_valid, const time_t hclocktime   ) {
+  /*---------------------------------------------------------------------------
+    Update the drift factor in <*adjtime_p> to reflect the fact that the
+    Hardware Clock was calibrated to <nowtime> and before that was set
+    to <hclocktime>.
+  
+-   We assume that the user has been doing regular drift adjustments
+-   using the drift factor in the adjtime file, so if <nowtime> and
+-   <clocktime> are different, that means the adjustment factor isn't
+-   quite right.
+- 
+    We record in the adjtime file the time at which we last calibrated
+    the clock so we can compute the drift rate each time we calibrate.
+  
+    EXCEPT: if <hclock_valid> is false, assume Hardware Clock was not set
+    before to anything meaningful and regular adjustments have not been
+--- 581,598 ----
+  
+  
+  static void
+  adjust_drift_factor(struct adjtime *adjtime_p,
+                      const time_t nowtime, 
+!                     const bool hclock_valid,
+!                     const time_t hclocktime,
+!                     const float sync_delay   ) {
+  /*---------------------------------------------------------------------------
+    Update the drift factor in <*adjtime_p> to reflect the fact that the
+    Hardware Clock was calibrated to <nowtime> and before that was set
+    to <hclocktime>.
+  
+    We record in the adjtime file the time at which we last calibrated
+    the clock so we can compute the drift rate each time we calibrate.
+  
+    EXCEPT: if <hclock_valid> is false, assume Hardware Clock was not set
+    before to anything meaningful and regular adjustments have not been
+***************
+*** 604,629 ****
+  ----------------------------------------------------------------------------*/
+    if (!hclock_valid) {
+      if (debug)
+        printf("Not adjusting drift factor because the Hardware Clock "
+               "previously contained garbage.\n");
+    } else if ((hclocktime - adjtime_p->last_calib_time) < 23 * 60 * 60) {
+      if (debug) 
+        printf("Not adjusting drift factor because it has been less than a "
+               "day since the last calibration.\n");
+    } else {
+!     const float factor_adjust = 
+!       ((float) (nowtime - hclocktime) 
+!        / (hclocktime - adjtime_p->last_calib_time))
+!         * 24 * 60 * 60;
+  
+      if (debug)
+!       printf("Clock drifted %d seconds in the past %d seconds "
+               "in spite of a drift factor of %f seconds/day.\n"
+               "Adjusting drift factor by %f seconds/day\n",
+!              (int) (nowtime - hclocktime),
+!              (int) (hclocktime - adjtime_p->last_calib_time),
+               adjtime_p->drift_factor,
+               factor_adjust  );
+        
+      adjtime_p->drift_factor += factor_adjust;
+    }
+--- 601,642 ----
+  ----------------------------------------------------------------------------*/
+    if (!hclock_valid) {
+      if (debug)
+        printf("Not adjusting drift factor because the Hardware Clock "
+               "previously contained garbage.\n");
++   } else if (adjtime_p->last_calib_time == 0) {
++     if (debug)
++       printf("Not adjusting drift factor because last calibration "
++              "time is zero,\nso history is bad and calibration startover "
++              "is necessary.\n");
+    } else if ((hclocktime - adjtime_p->last_calib_time) < 23 * 60 * 60) {
+      if (debug) 
+        printf("Not adjusting drift factor because it has been less than a "
+               "day since the last calibration.\n");
+    } else {
+!     const float sec_per_day = 24.0 * 60.0 * 60.0;
+!     float atime_per_htime;  /* adjusted time units per hardware time unit */
+!     float adj_days;   /* days since last adjustment (in hardware clock time) */
+!     float cal_days;   /* days since last calibration (in hardware clock time) */
+!     float exp_drift;  /* expected drift (sec) since last adjustment */
+!     float unc_drift;  /* uncorrected drift (sec) since last calibration */
+!     float factor_adjust;  /* amount to add to previous drift factor */
+!     atime_per_htime = 1.0 + adjtime_p->drift_factor / sec_per_day;
+!     adj_days = (float)(hclocktime - adjtime_p->last_adj_time) / sec_per_day;
+!     exp_drift = adj_days * adjtime_p->drift_factor + adjtime_p->not_adjusted;
+!     unc_drift = (float)(nowtime - hclocktime) + sync_delay - exp_drift;
+!     cal_days = ((float)(adjtime_p->last_adj_time - adjtime_p->last_calib_time)
+!                  + adjtime_p->not_adjusted) / (sec_per_day * atime_per_htime)
+!                + adj_days;
+!     factor_adjust = unc_drift / cal_days;
+  
+      if (debug)
+!       printf("Clock drifted %.1f seconds in the past %d seconds "
+               "in spite of a drift factor of %f seconds/day.\n"
+               "Adjusting drift factor by %f seconds/day\n",
+!              unc_drift,
+!              (int) (nowtime - adjtime_p->last_calib_time),
+               adjtime_p->drift_factor,
+               factor_adjust  );
+        
+      adjtime_p->drift_factor += factor_adjust;
+    }
+***************
+*** 764,773 ****
+--- 777,794 ----
+  
+  ----------------------------------------------------------------------------*/
+    if (!hclock_valid) {
+      fprintf(stderr, "The Hardware Clock does not contain a valid time, "
+              "so we cannot adjust it.\n");
++     adjtime_p->last_calib_time = 0;  /* calibration startover is required */
++     adjtime_p->last_adj_time = 0;
++     adjtime_p->not_adjusted = 0;
++     adjtime_p->dirty = TRUE;
++   } else if (adjtime_p->last_adj_time == 0) {
++     if (debug)
++       printf("Not setting clock because last adjustment time is zero, "
++              "so history is bad.");
+    } else {
+      int adjustment;
+      /* Number of seconds we must insert in the Hardware Clock */
+      float retro;   
+      /* Fraction of second we have to remove from clock after inserting
+***************
+*** 878,888 ****
+                         time_diff(read_time, startup_time));
+            *retcode_p = 0;
+          } else if (set) {
+            set_hardware_clock_exact(set_time, startup_time, 
+  				      universal, testing);
+!           adjust_drift_factor(&adjtime, set_time, hclock_valid, hclocktime);
+            *retcode_p = 0;
+          } else if (adjust) {
+            do_adjustment(&adjtime, hclock_valid, hclocktime, 
+                          read_time, universal, testing);
+            *retcode_p = 0;
+--- 899,910 ----
+                         time_diff(read_time, startup_time));
+            *retcode_p = 0;
+          } else if (set) {
+            set_hardware_clock_exact(set_time, startup_time, 
+  				      universal, testing);
+!           adjust_drift_factor(&adjtime, set_time, hclock_valid, hclocktime,
+!                               time_diff(read_time, startup_time));
+            *retcode_p = 0;
+          } else if (adjust) {
+            do_adjustment(&adjtime, hclock_valid, hclocktime, 
+                          read_time, universal, testing);
+            *retcode_p = 0;
+***************
+*** 898,908 ****
+            
+            set_hardware_clock_exact((time_t) reftime.tv_sec, reftime, 
+                                     universal, testing);
+            *retcode_p = 0;
+            adjust_drift_factor(&adjtime, (time_t) reftime.tv_sec, hclock_valid, 
+!                               hclocktime);
+          } else if (hctosys) {
+            rc = set_system_clock(hclock_valid, hclocktime, testing);
+            if (rc != 0) {
+              printf("Unable to set system clock.\n");
+              *retcode_p = 1;
+--- 920,930 ----
+            
+            set_hardware_clock_exact((time_t) reftime.tv_sec, reftime, 
+                                     universal, testing);
+            *retcode_p = 0;
+            adjust_drift_factor(&adjtime, (time_t) reftime.tv_sec, hclock_valid, 
+!                               hclocktime, (float)(read_time.tv_usec / 1E6));
+          } else if (hctosys) {
+            rc = set_system_clock(hclock_valid, hclocktime, testing);
+            if (rc != 0) {
+              printf("Unable to set system clock.\n");
+              *retcode_p = 1;
+

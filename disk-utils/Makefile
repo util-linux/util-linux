@@ -4,6 +4,7 @@
 # Copyright 1992, 1993, 1994, 1995 Rickard E. Faith (faith@cs.unc.edu)
 #
 
+include ../make_include
 include ../MCONFIG
 
 # Where to put man pages?

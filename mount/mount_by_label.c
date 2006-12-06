@@ -1,3 +1,7 @@
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -6,6 +10,7 @@
 #include "sundries.h"		/* for xstrdup */
 #include "linux_fs.h"
 #include "mount_by_label.h"
+#include "nls.h"
 
 #define PROC_PARTITIONS "/proc/partitions"
 #define DEVLABELDIR	"/dev"
@@ -133,7 +138,8 @@ get_spec_by_uuid(const char *s) {
 	return get_spec_by_x(UUID, uuid);
 
  bad_uuid:
-	die(EX_USAGE, "mount: bad UUID");
+	die(EX_USAGE, _("mount: bad UUID"));
+	return NULL;		/* just for gcc */
 }
 
 char *

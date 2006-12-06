@@ -43,6 +43,7 @@
 .Op Fl f Ar file
 .Op Fl p Ar pri
 .Op Fl t Ar tag
+.Op Fl u Ar socket
 .Op Ar message ...
 .Sh DESCRIPTION
 .Nm Logger
@@ -73,6 +74,10 @@ The default is ``user.notice.''
 .It Fl t Ar tag 
 Mark every line in the log with the specified
 .Ar tag  .
+.It Fl u Ar sock
+Write to socket as specified with
+.Ar socket
+instead of builtin syslog routines.
 .It Ar message
 Write the message to log; if not specified, and the
 .Fl f

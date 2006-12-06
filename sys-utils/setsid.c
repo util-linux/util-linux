@@ -2,16 +2,25 @@
  * setsid.c -- execute a command in a new session
  * Rick Sladkey <jrs@world.std.com>
  * In the public domain.
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  */
 
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include "nls.h"
 
 int main(int argc, char *argv[])
 {
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	
 	if (argc < 2) {
-		fprintf(stderr, "usage: %s program [arg ...]\n",
+		fprintf(stderr, _("usage: %s program [arg ...]\n"),
 			argv[0]);
 		exit(1);
 	}

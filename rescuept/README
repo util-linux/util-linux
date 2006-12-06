@@ -1,0 +1,98 @@
+As far as I now know, there are four utilities that attempt to
+assist in recovering a lost partition table, or a partition
+that was deleted by mistake.
+
+(i) findsuper is a small utility that finds blocks with the ext2
+superblock signature, and prints out location and some info.
+It is in the non-installed part of the e2progs distribution.
+
+(ii) rescuept is a utility that recognizes ext2 superblocks,
+FAT partitions, swap partitions, and extended partition tables;
+it prints out information that can be used with fdisk or sfdisk
+to reconstruct the partition table.
+It is in the non-installed part of the util-linux distribution.
+
+(iii) fixdisktable (http://bmrc.berkeley.edu/people/chaffee/fat32.html)
+is a utility that handles ext2, FAT, NTFS, ufs, BSD disklabels
+(but not yet old Linux swap partitions); it actually will rewrite
+the partition table, if you give it permission.
+
+(iv) gpart (http://home.pages.de/~michab/gpart/) is a utility
+that handles ext2, FAT, Linux swap, HPFS, NTFS, FreeBSD and
+Solaris/x86 disklabels, minix, reiser fs; it prints a proposed
+contents for the primary partition table, and is well-documented.
+
+
+
+The current directory contains rescuept.
+I would never have written it had I known about fixdisktable
+and gpart. However, now that it exists I find several situations
+that are handled by rescuept and not by any of the others,
+so let it be for the moment. 
+
+
+Two patches for bugs found in gpart-0.1c:
+=================================================================
+diff -r ../gpart-0.1c/src/gm_ext2.c ./src/gm_ext2.c
+74c74,75
+<       if ((sb->s_errors != EXT2_ERRORS_CONTINUE) &&
+---
+>       if ((sb->s_errors != 0) &&
+>           (sb->s_errors != EXT2_ERRORS_CONTINUE) &&
+78c79
+<       if (sb->s_state && (sb->s_state != EXT2_VALID_FS) && (sb->s_state != EXT2_ERROR_FS))
+---
+>       if (sb->s_state & ~(EXT2_VALID_FS | EXT2_ERROR_FS))
+=================================================================
+(Both bugs have the effect that good ext2 filesystems are not
+recognized by gpart-0.1c. Patches sent to gpart author.)
+
+
+
+
+How do you get your partition table back?
+The easy way - if you had been smart you would have done
+	# sfdisk -d /dev/xxx > xxx.pt
+before the disaster, where xxx.pt lives on some other disk
+or is printed on a piece of paper and taped to the wall. Now
+	# sfdisk /dev/xxx < xxx.pt
+will restore the partition table.
+
+In the absence of such good information, try each of the above
+utilities to get an idea of where your partitions were.
+Since gpart is the most elaborate one, it may be your best bet.
+If it misses some of your ext2 partitions, and you have gpart-0.1c,
+apply the above patch and try again.
+
+Note that if you in the course of history have deleted some partition
+and created something else on the same spot, then there will often
+be traces of both, and these utilities may easily retrieve outdated
+information.
+
+
+If you think you found a partition, make a primary partition entry
+in the partition table, and try to mount the partition.
+Note that some utilities count sectors the DOS way (starting with 1)
+while most do it right (starting with 0).
+
+
+Report successes and failures of rescuept or any of the others
+to aeb@cwi.nl. (It may well be that rescuept ought to be replaced
+by gpart.)
+
+
+
+A comment:
+-----
+From: Nix <nix-kernel@vger.rutgers.edu>
+Subject: Re: [OFFTOPIC] Searching for filesystem locator
+Date:   Sun, 9 May 1999 20:26:16 +0100 (BST)
+
+> (iii) fixdisktable
+
+I've just tried this but it appears to suffer from a 2^31-sectors problem.
+
+> (iv) gpart
+
+... but this proved a godsend.
+-----

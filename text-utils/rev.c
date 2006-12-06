@@ -37,6 +37,9 @@
  *                           last line that has no newline correctly.
  * 3-Jun-1998: Patched by Nicolai Langfeldt to work better on Linux:
  * 	Handle any-length-lines.  Code copied from util-linux' setpwnam.c
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  */
 
 #include <sys/types.h>
@@ -45,6 +48,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include "nls.h"
 
 void usage __P((void));
 void warn __P((const char *, ...));
@@ -60,6 +64,10 @@ main(argc, argv)
   size_t len;
   FILE *fp;
   int ch, rval;
+
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
 
   while ((ch = getopt(argc, argv, "")) != EOF)
     switch(ch) {
@@ -98,7 +106,7 @@ main(argc, argv)
 
 	p = realloc(p, buflen);
 	if (p == NULL) {
-	  fprintf(stderr,"Unable to allocate bufferspace\n");
+	  fprintf(stderr,_("Unable to allocate bufferspace\n"));
 	  exit(1);
 	}
 
@@ -156,6 +164,6 @@ warn(fmt, va_alist)
 void
 usage()
 {
-	(void)fprintf(stderr, "usage: rev [file ...]\n");
+	(void)fprintf(stderr, _("usage: rev [file ...]\n"));
 	exit(1);
 }

@@ -37,8 +37,9 @@
 .\" Sat Nov 27 20:23:32 1993: Updated authorship information
 .\" Wed Jul 26 00:00:00 1995: Updated some nfs stuff, joey@infodrom.north.de
 .\" Tue Apr  2 00:38:28 1996: added info about "noauto", "user", etc.
+.\" Tue Jun 15 20:02:18 1999: added LABEL and UUID
 .\"
-.TH FSTAB 5 "27 November 1993" "Linux 0.99" "Linux Programmer's Manual"
+.TH FSTAB 5 "15 June 1999" "Linux 2.2" "Linux Programmer's Manual"
 .SH NAME
 fstab \- static information about the filesystems
 .SH SYNOPSIS
@@ -66,11 +67,28 @@ The first field,
 .RI ( fs_spec ),
 describes the block special device or
 remote filesystem to be mounted.
+.LP
+For ordinary mounts it will hold (a link to) a block special
+device node (as created by
+.BR mknod (8))
+for the device to be mounted, like `/dev/cdrom' or `/dev/sdb7'.
+For NFS mounts one will have <host>:<dir>, e.g., `knuth.aeb.nl:/'.
+For procfs, use `proc'.
+.LP
+Instead of giving the device explicitly, one may indicate
+the (ext2) filesystem that is to be mounted by its UUID or
+volume label (cf.
+.BR e2label (8)),
+writing LABEL=<label> or UUID=<uuid>,
+e.g., `LABEL=Boot' or `UUID=3e6be9de\%-8139\%-11d1\%-9106\%-a43f08d823a6'.
+This will make the system more robust: adding or removing a SCSI disk
+changes the disk device name but not the filesystem volume label.
 
 The second field,
 .RI ( fs_file ),
 describes the mount point for the filesystem.  For swap partitions, this
-field should be specified as ``none''.
+field should be specified as `none'. If the name of the mount point
+contains spaces these can be escaped as `\\040'.
 
 The third field,
 .RI ( fs_vfstype ),

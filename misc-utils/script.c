@@ -31,6 +31,10 @@
  * SUCH DAMAGE.
  */
 
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ */
+
 /*
  * script
  */
@@ -43,13 +47,15 @@
 #include <sys/signal.h>
 #include <stdio.h>
 #include <paths.h>
+#include "nls.h"
 
 #ifdef __linux__
 #include <unistd.h>
 #include <string.h>
 #endif
 
-#ifdef HAVE_OPENPTY
+#include "../defines.h"
+#ifdef HAVE_openpty
 #include <pty.h>
 #endif
 
@@ -74,7 +80,7 @@ struct	termios tt;
 struct	winsize win;
 int	lb;
 int	l;
-#ifndef HAVE_OPENPTY
+#ifndef HAVE_openpty
 char	line[] = "/dev/ptyXX";
 #endif
 int	aflg;
@@ -89,6 +95,10 @@ main(argc, argv)
 	void finish();
 	char *getenv();
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+	
 	while ((ch = getopt(argc, argv, "a")) != EOF)
 		switch((char)ch) {
 		case 'a':
@@ -96,7 +106,7 @@ main(argc, argv)
 			break;
 		case '?':
 		default:
-			fprintf(stderr, "usage: script [-a] [file]\n");
+			fprintf(stderr, _("usage: script [-a] [file]\n"));
 			exit(1);
 		}
 	argc -= optind;
@@ -116,7 +126,7 @@ main(argc, argv)
 		shell = _PATH_BSHELL;
 
 	getmaster();
-	printf("Script started, file is %s\n", fname);
+	printf(_("Script started, file is %s\n"), fname);
 	fixtty();
 
 	(void) signal(SIGCHLD, finish);
@@ -148,7 +158,7 @@ doinput()
 	char ibuf[BUFSIZ];
 
 	(void) fclose(fscript);
-#ifdef HAVE_OPENPTY
+#ifdef HAVE_openpty
 	(void) close(slave);
 #endif
 	while ((cc = read(0, ibuf, BUFSIZ)) > 0)
@@ -181,11 +191,11 @@ dooutput()
 	char obuf[BUFSIZ], *ctime();
 
 	(void) close(0);
-#ifdef HAVE_OPENPTY
+#ifdef HAVE_openpty
 	(void) close(slave);
 #endif
 	tvec = time((time_t *)NULL);
-	fprintf(fscript, "Script started on %s", ctime(&tvec));
+	fprintf(fscript, _("Script started on %s"), ctime(&tvec));
 	for (;;) {
 		cc = read(master, obuf, sizeof (obuf));
 		if (cc <= 0)
@@ -251,12 +261,12 @@ done()
 
 	if (subchild) {
 		tvec = time((time_t *)NULL);
-		fprintf(fscript,"\nScript done on %s", ctime(&tvec));
+		fprintf(fscript,_("\nScript done on %s"), ctime(&tvec));
 		(void) fclose(fscript);
 		(void) close(master);
 	} else {
 		(void) tcsetattr(0, TCSAFLUSH, &tt);
-		printf("Script done, file is %s\n", fname);
+		printf(_("Script done, file is %s\n"), fname);
 	}
 	exit(0);
 }
@@ -264,11 +274,11 @@ done()
 void
 getmaster()
 {
-#ifdef HAVE_OPENPTY
+#ifdef HAVE_openpty
 	(void) tcgetattr(0, &tt);
 	(void) ioctl(0, TIOCGWINSZ, (char *)&win);
 	if (openpty(&master, &slave, NULL, &tt, &win) < 0) {
-		fprintf(stderr, "openpty failed\n");
+		fprintf(stderr, _("openpty failed\n"));
 		fail();
 	}
 #else
@@ -302,15 +312,15 @@ getmaster()
 			}
 		}
 	}
-	fprintf(stderr, "Out of pty's\n");
+	fprintf(stderr, _("Out of pty's\n"));
 	fail();
-#endif /* not HAVE_OPENPTY */
+#endif /* not HAVE_openpty */
 }
 
 void
 getslave()
 {
-#ifndef HAVE_OPENPTY
+#ifndef HAVE_openpty
 	line[strlen("/dev/")] = 't';
 	slave = open(line, O_RDWR);
 	if (slave < 0) {

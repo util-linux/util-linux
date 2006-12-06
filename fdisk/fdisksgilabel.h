@@ -91,7 +91,6 @@ typedef struct {
                                  : (__u16)(x))
 #define SSWAP32(x) (other_endian ? __swap32(x) \
                                  : (__u32)(x))
-#define scround(x) ((x+(display_factor-1)*unit_flag)/display_factor)
 
 /* fdisk.c */
 #define sgilabel ((sgi_partition *)buffer)

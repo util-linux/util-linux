@@ -39,6 +39,9 @@ the maximum number of symbolic links this system can have.
 The program exits with a 1 status ONLY if it finds it cannot
 chdir to /,  or if it encounters an unknown file type.
 
+1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+- added Native Language Support
+
 -------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -47,6 +50,7 @@ chdir to /,  or if it encounters an unknown file type.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/param.h>
+#include "nls.h"
 
 #ifndef __GNU_LIBRARY__
 extern char *sys_errlist[];
@@ -76,6 +80,10 @@ char *argv[];
     register int c;
     char curdir[MAXPATHLEN];
 
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
+    
     if(argc < 2)
 	usage();
 
@@ -96,7 +104,7 @@ char *argv[];
     }
 
     if(getcwd(curdir, sizeof(curdir)) == NULL){
-	(void)fprintf(stderr, "namei: unable to get current directory - %s\n", curdir);
+	(void)fprintf(stderr, _("namei: unable to get current directory - %s\n"), curdir);
 	exit(1);
     }
 
@@ -107,7 +115,7 @@ char *argv[];
 	namei(argv[optind], 0);
 
 	if(chdir(curdir) == -1){
-	    (void)fprintf(stderr, "namei: unable to chdir to %s - %s (%d)\n", curdir, ERR);
+	    (void)fprintf(stderr, _("namei: unable to chdir to %s - %s (%d)\n"), curdir, ERR);
 	    exit(1);
 	}
     }
@@ -117,7 +125,7 @@ char *argv[];
 void
 usage()
 {
-    (void)fprintf(stderr,"usage: namei [-mx] pathname [pathname ...]\n");
+    (void)fprintf(stderr,_("usage: namei [-mx] pathname [pathname ...]\n"));
     exit(1);
 }
 
@@ -146,14 +154,14 @@ register int lev;
 	    file++;
 	
 	if(chdir("/") == -1){
-	    (void)fprintf(stderr,"namei: could not chdir to root!\n");
+	    (void)fprintf(stderr,_("namei: could not chdir to root!\n"));
 	    exit(1);
 	}
 	for(i = 0; i < lev; i++)
 	    (void)printf("  ");
 
 	if(stat("/", &stb) == -1){
-	    (void)fprintf(stderr, "namei: could not stat root!\n");
+	    (void)fprintf(stderr, _("namei: could not stat root!\n"));
 	    exit(1);
 	}
 	lastdev = stb.st_dev;
@@ -208,7 +216,7 @@ register int lev;
 		 */
 		
 		if(chdir(buf) == -1){
-		    (void)printf(" ? could not chdir into %s - %s (%d)\n", buf, ERR );
+		    (void)printf(_(" ? could not chdir into %s - %s (%d)\n"), buf, ERR );
 		    return;
 		}
 		if(xflag && lastdev != stb.st_dev && lastdev != NODEV){
@@ -237,7 +245,7 @@ register int lev;
 		
 		bzero(sym, BUFSIZ);
 		if(readlink(buf, sym, BUFSIZ) == -1){
-		    (void)printf(" ? problems reading symlink %s - %s (%d)\n", buf, ERR);
+		    (void)printf(_(" ? problems reading symlink %s - %s (%d)\n"), buf, ERR);
 		    return;
 		}
 
@@ -247,7 +255,7 @@ register int lev;
 		    (void)printf(" l %s -> %s", buf, sym);
 
 		if(symcount > 0 && symcount++ > MAXSYMLINKS){
-		    (void)printf("  *** EXCEEDED UNIX LIMIT OF SYMLINKS ***");
+		    (void)printf(_("  *** EXCEEDED UNIX LIMIT OF SYMLINKS ***"));
 		    symcount = -1;
 		}
 		(void)printf("\n");
@@ -283,7 +291,7 @@ register int lev;
 		break;
 		
 	    default:
-		(void)fprintf(stderr,"namei: unknown file type 0%06o on file %s\n", stb.st_mode, buf );
+		(void)fprintf(stderr,_("namei: unknown file type 0%06o on file %s\n"), stb.st_mode, buf );
 		exit(1);
 	    
 	}

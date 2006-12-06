@@ -1,0 +1,9 @@
+This directory contains the hwclock stuff as fixed by me.
+It should work on all architectures.
+
+Bryan has backported my changes to his original source,
+so the present directory should be superfluous -
+however, his code fails on my Sparc.
+Will look at it later.
+
+Andries Brouwer - aeb@cwi.nl

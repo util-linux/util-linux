@@ -48,11 +48,8 @@ Check the device for bad blocks before creating the file system.  If any
 are found, the count is printed.
 .TP
 .BI \-n " namelength"
-Specify the maximum length of filenames.  No space is allowed between the
-.B \-n
-and the
-.IR namelength.  Currently, the only allowable
-values are 14 and 30.
+Specify the maximum length of filenames.
+Currently, the only allowable values are 14 and 30.
 .B 30 is the default.
 .TP
 .BI \-i " inodecount"
@@ -77,9 +74,10 @@ Operational error
 .IP 16
 Usage or syntax error
 .SH "SEE ALSO"
+.BR mkfs (8),
 .BR fsck (8),
-.BR mkefs (8),
-.BR efsck (8),
+.BR mke2fs (8),
+.BR e2fsck (8),
 .BR reboot (8)
 .\" .SH AUTHORS
 .\" Linus Torvalds (torvalds@cs.helsinki.fi).

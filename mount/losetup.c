@@ -2,6 +2,10 @@
  * losetup.c - setup and control loop devices
  */
 
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ */
+
 #include <stdio.h>
 #include <string.h>
 #include <ctype.h>
@@ -13,6 +17,7 @@
 
 #include "loop.h"
 #include "lomount.h"
+#include "nls.h"
 
 #ifdef LOOP_SET_FD
 
@@ -62,11 +67,11 @@ static void show_loop(const char *device)
 		return;
 	}
 	if (ioctl(fd, LOOP_GET_STATUS, &loopinfo) < 0) {
-		perror("Cannot get loop info");
+		perror(_("Cannot get loop info"));
 		close(fd);
 		return;
 	}
-	printf("%s: [%04x]:%ld (%s) offset %d, %s encryption\n",
+	printf(_("%s: [%04x]:%ld (%s) offset %d, %s encryption\n"),
 	       device, loopinfo.lo_device, loopinfo.lo_inode,
 	       loopinfo.lo_name, loopinfo.lo_offset,
 	       crypt_name(loopinfo.lo_encrypt_type));
@@ -98,7 +103,7 @@ int set_loop(const char *device, const char *file, int offset,
 	loopinfo.lo_name[LO_NAME_SIZE-1] = 0;
 	if (encryption && (loopinfo.lo_encrypt_type = crypt_type(encryption))
 	    < 0) {
-		fprintf(stderr,"Unsupported encryption type %s\n",encryption);
+		fprintf(stderr,_("Unsupported encryption type %s\n"),encryption);
 		exit(1);
 	}
 	loopinfo.lo_offset = offset;
@@ -107,30 +112,30 @@ int set_loop(const char *device, const char *file, int offset,
 		loopinfo.lo_encrypt_key_size = 0;
 		break;
 	case LO_CRYPT_XOR:
-		pass = getpass("Password: ");
+		pass = getpass(_("Password: "));
 		strncpy(loopinfo.lo_encrypt_key, pass, LO_KEY_SIZE);
 		loopinfo.lo_encrypt_key[LO_KEY_SIZE-1] = 0;
 		loopinfo.lo_encrypt_key_size = strlen(loopinfo.lo_encrypt_key);
 		break;
 	case LO_CRYPT_DES:
-		pass = getpass("Password: ");
+		pass = getpass(_("Password: "));
 		strncpy(loopinfo.lo_encrypt_key, pass, 8);
 		loopinfo.lo_encrypt_key[8] = 0;
 		loopinfo.lo_encrypt_key_size = 8;
-		pass = getpass("Init (up to 16 hex digits): ");
+		pass = getpass(_("Init (up to 16 hex digits): "));
 		for (i = 0; i < 16 && pass[i]; i++)
 			if (isxdigit(pass[i]))
 				loopinfo.lo_init[i >> 3] |= (pass[i] > '9' ?
 				    (islower(pass[i]) ? toupper(pass[i]) :
 				    pass[i])-'A'+10 : pass[i]-'0') << (i & 7)*4;
 			else {
-				fprintf(stderr,"Non-hex digit '%c'.\n",pass[i]);
+				fprintf(stderr,_("Non-hex digit '%c'.\n"),pass[i]);
 				exit(1);
 			}
 		break;
 	default:
 		fprintf(stderr,
-			"Don't know how to get key for encryption system %d\n",
+			_("Don't know how to get key for encryption system %d\n"),
 			loopinfo.lo_encrypt_type);
 		exit(1);
 	}
@@ -166,10 +171,10 @@ int del_loop(const char *device)
 
 static int usage(void)
 {
-	fprintf(stderr, "usage:\n\
+	fprintf(stderr, _("usage:\n\
   %s loop_device                                      # give info\n\
   %s -d loop_device                                   # delete\n\
-  %s [ -e encryption ] [ -o offset ] loop_device file # setup\n",
+  %s [ -e encryption ] [ -o offset ] loop_device file # setup\n"),
 		progname, progname, progname);
 	exit(1);
 }
@@ -179,6 +184,10 @@ int main(int argc, char **argv)
 	char *offset,*encryption;
 	int delete,off,c;
 	int ro = 0;
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	delete = off = 0;
 	offset = encryption = NULL;
@@ -219,7 +228,7 @@ int main(int argc, char **argv)
 
 int main(int argc, char **argv) {
   fprintf(stderr,
-         "No loop support was available at compile time. Please recompile.\n");
+         _("No loop support was available at compile time. Please recompile.\n"));
   return -1;
 }
 #endif

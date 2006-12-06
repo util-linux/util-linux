@@ -31,6 +31,10 @@
  * SUCH DAMAGE.
  */
 
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  * - added Native Language Support
+  */
+
 #include <sys/types.h>
 #include <sys/time.h>
 #include <sys/resource.h>
@@ -38,6 +42,8 @@
 #include <stdio.h>
 #include <pwd.h>
 #include <stdlib.h>
+#include <errno.h>
+#include "nls.h"
 
 int donice(int,int,int);
 
@@ -52,10 +58,14 @@ main(int argc, char **argv)
 	int which = PRIO_PROCESS;
 	int who = 0, prio, errs = 0;
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	argc--, argv++;
 	if (argc < 2) {
-		fprintf(stderr, "usage: renice priority [ [ -p ] pids ] ");
-		fprintf(stderr, "[ [ -g ] pgrps ] [ [ -u ] users ]\n");
+		fprintf(stderr, _("usage: renice priority [ [ -p ] pids ] "
+				  "[ [ -g ] pgrps ] [ [ -u ] users ]\n"));
 		exit(1);
 	}
 	prio = atoi(*argv);
@@ -81,7 +91,7 @@ main(int argc, char **argv)
 			register struct passwd *pwd = getpwnam(*argv);
 			
 			if (pwd == NULL) {
-				fprintf(stderr, "renice: %s: unknown user\n",
+				fprintf(stderr, _("renice: %s: unknown user\n"),
 					*argv);
 				continue;
 			}
@@ -89,7 +99,7 @@ main(int argc, char **argv)
 		} else {
 			who = atoi(*argv);
 			if (who < 0) {
-				fprintf(stderr, "renice: %s: bad value\n",
+				fprintf(stderr, _("renice: %s: bad value\n"),
 					*argv);
 				continue;
 			}
@@ -104,19 +114,18 @@ donice(which, who, prio)
 	int which, who, prio;
 {
 	int oldprio;
-	extern int errno;
 
 	errno = 0, oldprio = getpriority(which, who);
 	if (oldprio == -1 && errno) {
 		fprintf(stderr, "renice: %d: ", who);
-		perror("getpriority");
+		perror(_("getpriority"));
 		return (1);
 	}
 	if (setpriority(which, who, prio) < 0) {
 		fprintf(stderr, "renice: %d: ", who);
-		perror("setpriority");
+		perror(_("setpriority"));
 		return (1);
 	}
-	printf("%d: old priority %d, new priority %d\n", who, oldprio, prio);
+	printf(_("%d: old priority %d, new priority %d\n"), who, oldprio, prio);
 	return (0);
 }

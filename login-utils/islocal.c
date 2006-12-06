@@ -10,11 +10,16 @@
      to distinguish user names where one is a prefix of the other,
      and to use "pathnames.h". Oct 5, 96.   
 
+   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+   - added Native Language Support
+     
+
 */
 
 #include <stdio.h>
 #include <string.h>
 
+#include "nls.h"
 #include "pathnames.h"
 
 #define MAX_LENGTH	1024
@@ -28,7 +33,7 @@ is_local(char *user)
 	int len;
 
         if(!(fd = fopen(_PATH_PASSWD, "r"))) {
-                fprintf(stderr,"Can't read %s, exiting.",_PATH_PASSWD);
+                fprintf(stderr,_("Can't read %s, exiting."),_PATH_PASSWD);
                 exit(1);
         }
 

@@ -21,29 +21,32 @@ WARNING: The simpleinit and some other programs in this package are
 To install from source:
 
 1) Get source distribution (see the .lsm file for locations)
-2) Untar util-linux-2.9.tar.gz somewhere
-3) cd util-linux-2.9
+2) Untar util-linux-2.9X.tar.gz somewhere
+3) cd util-linux-2.9X
 4) Edit MCONFIG
-5) make
-6) make install
-7) If you want to use simpleinit and agetty, then make softlinks from
+5) ./configure
+6) Look at defines.h and make_include, and edit if necessary
+7) make
+8) make install
+9) If you want to use simpleinit and agetty, then make softlinks from
    /sbin/init to simpleinit and from /sbin/getty to agetty, but make sure
    that your /etc/inittab is set up right (this is *NOT* the System V
    compatible init!), or you will be hosed.  If you are using the SysV
    init and/or some other getty, they you can keep using those.
 
 
-If you have compilation problems:
+If you have compilation problems: tell util-linux@math.uio.no about it.
 
-- with -lcrypt: you forgot to edit MCONFIG and write HAVE_LIBCRYPT=no.
-- in cfdisk or setterm: you forgot to edit MCONFIG and write HAVE_NCURSES=no
-  (or you forgot to write CURSESFLAGS=-I/usr/include/ncurses -DNCH=0)?
-- in fdisksunlabel.c: change #if 1 into #if 0 if there is no <scsi/scsi.h>.
-- in mount/nfsmount.c: change #if 1 into #if 0 if there is no inet_aton().
-- in sys-utils/ipcs.c: change #if 0 into #if 1 if <linux/linkage.h> is needed.
-- in sys-utils/cytune.c: change #if 0 into #if 1 if <linux/tqueue.h> is needed.
+Users of libc 5.4.46 may get warnings like
+  /usr/include/linux/byteorder/swab.h:100: warning: no previous prototype for `__fswab16'
+that they'll have to ignore. The Linux kernel includes are not meant to be included
+in user programs, but libc5 does precisely that and is inherently broken.
 
-elsewhere: tell util-linux@math.uio.no about it.
+Some old libc have complaints like
+  /usr/include/sys/syslog.h:71: warning: missing braces around initializer
+Also this is a libc/include problem.
+
+There should be no compilation errors.
 
 
 If you have runtime problems:

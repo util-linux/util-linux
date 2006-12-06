@@ -3,6 +3,10 @@
  * sundries.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
  *
  * added fcntl locking by Kjetil T. (kjetilho@math.uio.no) - aeb, 950927
+ *
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * - added Native Language Support
+ *
  */
 #include <unistd.h>
 #include <stdio.h>
@@ -11,7 +15,7 @@
 #include "fstab.h"
 #include "sundries.h"
 #include "nfsmount.h"
-
+#include "nls.h"
 
 /* String list constructor.  (car() and cdr() are defined in "sundries.h").  */
 string_list
@@ -33,7 +37,7 @@ xmalloc (size_t size) {
 
      t = malloc (size);
      if (t == NULL)
-          die (EX_SYSERR, "not enough memory");
+          die (EX_SYSERR, _("not enough memory"));
 
      return t;
 }
@@ -48,7 +52,7 @@ xstrdup (const char *s) {
      t = strdup (s);
 
      if (t == NULL)
-          die (EX_SYSERR, "not enough memory");
+          die (EX_SYSERR, _("not enough memory"));
 
      return t;
 }
@@ -58,7 +62,7 @@ xstrndup (const char *s, int n) {
      char *t;
 
      if (s == NULL)
-	  die (EX_SOFTWARE, "bug in xstrndup call");
+	  die (EX_SOFTWARE, _("bug in xstrndup call"));
 
      t = xmalloc(n+1);
      strncpy(t,s,n);
@@ -156,12 +160,15 @@ die (int err, const char *fmt, ...) {
 string_list
 parse_list (char *strings) {
      string_list list;
-     char *t;
+     char *s, *t;
 
      if (strings == NULL)
 	  return NULL;
 
-     list = cons (strtok (strings, ","), NULL);
+     /* strtok() destroys its argument, so we have to use a copy */
+     s = xstrdup(strings);
+
+     list = cons (strtok (s, ","), NULL);
 
      while ((t = strtok (NULL, ",")) != NULL)
 	  list = cons (t, list);
@@ -185,7 +192,7 @@ matching_type (const char *type, string_list types) {
 	  return 1;
 
      if ((notype = alloca (strlen (type) + 3)) == NULL)
-	  die (EX_SYSERR, "mount: out of memory");
+	  die (EX_SYSERR, _("%s: Out of memory!\n"), "mount");
      sprintf (notype, "no%s", type);
 
      foundyes = foundno = no = 0;
@@ -214,7 +221,7 @@ canonicalize (const char *path) {
      if (path == NULL)
 	  return NULL;
 
-     if (streq(path, "none") || streq(path, "proc"))
+     if (streq(path, "none") || streq(path, "proc") || streq(path, "devpts"))
 	  return xstrdup(path);
 
      canonical = xmalloc (PATH_MAX + 1);
