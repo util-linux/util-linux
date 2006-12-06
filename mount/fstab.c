@@ -12,6 +12,7 @@
 #include "mntent.h"
 #include "fstab.h"
 #include "sundries.h"		/* for xmalloc() etc */
+#include "get_label_uuid.h"
 #include "nls.h"
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
@@ -223,22 +224,60 @@ getmntoptfile (const char *file) {
 	return NULL;
 }
 
+static int
+has_label(const char *device, const char *label) {
+	char devuuid[16];
+	char *devlabel;
+
+	return !get_label_uuid(device, &devlabel, devuuid) &&
+		!strcmp(label, devlabel);
+}
+
+static int
+has_uuid(const char *device, const char *uuid){
+	char devuuid[16];
+	char *devlabel;
+
+	return !get_label_uuid(device, &devlabel, devuuid) &&
+		!memcmp(uuid, devuuid, sizeof(devuuid));
+}
+
 /* Find the entry (SPEC,FILE) in fstab */
 struct mntentchn *
 getfsspecfile (const char *spec, const char *file) {
 	struct mntentchn *mc, *mc0;
 
 	mc0 = fstab_head();
+
+	/* first attempt: names occur precisely as given */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
 		if (streq (mc->m.mnt_dir, file) &&
 		    streq (mc->m.mnt_fsname, spec))
 			return mc;
+
+	/* second attempt: names found after symlink resolution */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
 		if ((streq (mc->m.mnt_dir, file) ||
 		     streq (canonicalize(mc->m.mnt_dir), file))
 		    && (streq (mc->m.mnt_fsname, spec) ||
 			streq (canonicalize(mc->m.mnt_fsname), spec)))
 			return mc;
+
+	/* third attempt: names found after LABEL= or UUID= resolution */
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
+		if (!strncmp (mc->m.mnt_fsname, "LABEL=", 6) &&
+		    (streq (mc->m.mnt_dir, file) ||
+		     streq (canonicalize(mc->m.mnt_dir), file))) {
+			if (has_label(spec, mc->m.mnt_fsname+6))
+				return mc;
+		}
+		if (!strncmp (mc->m.mnt_fsname, "UUID=", 5) &&
+		    (streq (mc->m.mnt_dir, file) ||
+		     streq (canonicalize(mc->m.mnt_dir), file))) {
+			if (has_uuid(spec, mc->m.mnt_fsname+5))
+				return mc;
+		}
+	}
 	return NULL;
 }
 

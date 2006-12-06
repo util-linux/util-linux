@@ -362,6 +362,7 @@ currently supported are:
 .IR ntfs ,
 .IR proc ,
 .IR qnx4 ,
+.IR ramfs ,
 .IR reiserfs ,
 .IR romfs ,
 .IR smbfs ,
@@ -894,6 +895,16 @@ Set the umask (the bitmask of the permissions that are
 present). The default is the umask of the current process.
 The value is given in octal.
 .TP
+.BI dmask= value
+Set the umask applied to directories only.
+The default is the umask of the current process.
+The value is given in octal. Present since 2.5.43.
+.TP
+.BI fmask= value
+Set the umask applied to regular files only.
+The default is the umask of the current process.
+The value is given in octal. Present since 2.5.43.
+.TP
 .BI check= value 
 Three different levels of pickyness can be chosen:
 .RS
@@ -1240,6 +1251,11 @@ By default, the files are owned by root and not readable by somebody else.
 .TP
 \fBuid=\fP\fIvalue\fP and \fBgid=\fP\fIvalue\fP
 These options are recognized, but have no effect as far as I can see.
+
+.SH "Mount options for ramfs"
+Ramfs is a memory based filesystem. Mount it and you have it. Unmount it
+and it is gone. Present since Linux 2.3.99pre4.
+There are no mount options.
 
 .SH "Mount options for reiserfs"
 Reiserfs is a journaling filesystem.

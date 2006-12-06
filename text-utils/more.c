@@ -63,7 +63,6 @@
 #include <regex.h>
 #undef _REGEX_RE_COMP
 
-/* #define MOREHELPFILE "/usr/lib/more.help" */
 #define VI		"vi"	/* found on the user's path */
 
 #define Fopen(s,m)	(Currline = 0,file_pos=0,fopen(s,m))
@@ -1216,7 +1215,6 @@ int command (char *filename, register FILE *f)
     register int retval = 0;
     register int c;
     char colonch;
-    FILE *helpf;
     int done;
     char comchar, cmdbuf[80];
 
@@ -1388,31 +1386,37 @@ int command (char *filename, register FILE *f)
 	    break;
 	case '?':
 	case 'h':
-	    helpf = NULL;
-	    {
-		    char *lang;
-		    char hlpfile[sizeof(MOREHELPFILE)+4];
-
-		    lang = getenv("LANGUAGE");
-		    if (!lang || *lang == '\0')
-			    lang = setlocale(LC_MESSAGES, "");
-		    if (!lang || *lang == '\0')
-			    lang = getenv("LANG");
-		    if (lang && strlen(lang) > 1) {
-			    strcpy(hlpfile, MOREHELPFILE);
-			    strcat(hlpfile, ".");
-			    strncat(hlpfile, lang, 2);
-			    helpf = fopen (hlpfile, "r");
-		    }
-	    }
-	    if (helpf == NULL)
-		    helpf = fopen (MOREHELPFILE, "r");
-	    if (helpf == NULL)
-		error (_("Can't open help file"));
-	    if (noscroll) doclear ();
-	    copy_file (helpf);
-	    fclose (helpf);
-	    prompt (filename);
+	    if (noscroll) doclear();
+	    xprintf(_("\nMost commands optionally preceded by integer argument"
+		" k.  Defaults in brackets.\n"
+		"Star (*) indicates argument becomes new default.\n"));
+	    xprintf("---------------------------------------"
+		"----------------------------------------\n");
+	    xprintf(_("<space>\t\t\t"
+			"Display next k lines of text [current screen size]\n"
+		"z\t\t\tDisplay next k lines of text [current screen size]*\n"
+		"<return>\t\tDisplay next k lines of text [1]*\n"
+		"d or ctrl-D\t\t"
+			"Scroll k lines [current scroll size, initially 11]*\n"
+		"q or Q or <interrupt>\tExit from more\n"
+		"s\t\t\tSkip forward k lines of text [1]\n"
+		"f\t\t\tSkip forward k screenfuls of text [1]\n"
+		"b or ctrl-B\t\tSkip backwards k screenfuls of text [1]\n"
+		"'\t\t\tGo to place where previous search started\n"
+		"=\t\t\tDisplay current line number\n"
+		"/<regular expression>\t"
+			"Search for kth occurrence of regular expression [1]\n"
+		"n\t\t\tSearch for kth occurrence of last r.e [1]\n"
+		"!<cmd> or :!<cmd>\tExecute <cmd> in a subshell\n"
+		"v\t\t\tStart up /usr/bin/vi at current line\n"
+		"ctrl-L\t\t\tRedraw screen\n"
+		":n\t\t\tGo to kth next file [1]\n"
+		":p\t\t\tGo to kth previous file [1]\n"
+		":f\t\t\tDisplay current file name and line number\n"
+		".\t\t\tRepeat previous command\n"));
+	    xprintf("---------------------------------------"
+		"----------------------------------------\n");
+	    prompt(filename);
 	    break;
 	case 'v':	/* This case should go right before default */
 	    if (!no_intty) {

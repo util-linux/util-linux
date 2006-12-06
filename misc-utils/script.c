@@ -238,6 +238,15 @@ resize(int dummy) {
 	kill(child, SIGWINCH);
 }
 
+/*
+ * Stop extremely silly gcc complaint on %c:
+ *  warning: `%c' yields only last 2 digits of year in some locales
+ */
+static void
+my_strftime(char *buf, size_t len, const char *fmt, const struct tm *tm) {
+	strftime(buf, len, fmt, tm);
+}
+
 void
 dooutput() {
 	register int cc;
@@ -251,7 +260,9 @@ dooutput() {
 	(void) close(slave);
 #endif
 	tvec = time((time_t *)NULL);
-	fprintf(fscript, _("Script started on %s"), ctime(&tvec));
+	my_strftime(obuf, sizeof obuf, "%c\n", localtime(&tvec));
+	fprintf(fscript, _("Script started on %s"), obuf);
+
 	for (;;) {
 		if (tflg)
 			gettimeofday(&tv, NULL);
@@ -259,9 +270,9 @@ dooutput() {
 		if (cc <= 0)
 			break;
 		if (tflg) {
-			newtime=tv.tv_sec + (double) tv.tv_usec / 1000000;
+			newtime = tv.tv_sec + (double) tv.tv_usec / 1000000;
 			fprintf(stderr, "%f %i\n", newtime - oldtime, cc);
-			oldtime=newtime;
+			oldtime = newtime;
 		}
 		(void) write(1, obuf, cc);
 		(void) fwrite(obuf, 1, cc, fscript);
@@ -321,9 +332,10 @@ done() {
 
 	if (subchild) {
 		if (!qflg) {
+			char buf[BUFSIZ];
 			tvec = time((time_t *)NULL);
-			fprintf(fscript, _("\nScript done on %s"),
-				ctime(&tvec));
+			my_strftime(buf, sizeof buf, "%c\n", localtime(&tvec));
+			fprintf(fscript, _("\nScript done on %s"), buf);
 		}
 		(void) fclose(fscript);
 		(void) close(master);

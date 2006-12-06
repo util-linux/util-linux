@@ -1,9 +1,29 @@
+util-linux 2.11y
+
+* Danish messages (Claus Hindsgaul)
+* Finnish messages (Lauri Nurmi)
+* German messages (Michael Piefel)
+* Spanish messages (Santiago Vila Doncel)
+* Swedish messages (Christian Rose)
+* cfdisk: improve escape seq recognition when compiled with slang
+* fdisk: decimal units
+* hwclock/rtc.c: minor cleanup (Joachim Henke)
+* ipcs: compilation fix
+* more: kill external help file (Joachim Henke)
+* mount: fix LABEL= handling for user umount
+* mount: don't abort on read error on photocds (Gyorgy Kovesdi)
+* mount.8: add dmask and fmask vfat mount options
+* pg: compilation fix (Joachim Henke)
+* script: localized time strings (Goeran Uddeborg)
+* setterm: accept devfs name (Joachim Henke)
+* simpleinit: security: refuse initctl_fd if setting FD_CLOEXEC fails
+* umount: allow user umount after mount by label or uuid
+
 util-linux 2.11x
 
 * Danish messages (Claus Hindsgaul)
 * Dutch messages (Taco Witte)
 * Finnish messages (Lauri Nurmi)
-* No French messages with permission to distribute (Michel Robitaille)
 * German messages (Michael Piefel)
 * Swedish messages (Christian Rose)
 * Turkish messages (Nilgün Belma Bugüner)
@@ -36,7 +56,6 @@ util-linux 2.11v
 
 * Catalan messages (Antoni Bella Perez)
 * Finnish messages (Lauri Nurmi)
-* No French messages with permission to distribute (Michel Robitaille)
 * Very few Russian messages (panivan@yandex.ru)
 * Slovenian messages (Primoz Peterlin)
 * Spanish messages (Santiago Vila Doncel)
@@ -89,7 +108,6 @@ util-linux 2.11s
 
 * Estonian messages (Meelis Roos)
 * French messages: some minor corrections
-* No French messages with permission to distribute (Michel Robitaille)
 * German messages (Michael Piefel)
 * Spanish messages (Santiago Vila Doncel)
 * Swedish messages (Christian Rose)
@@ -116,7 +134,6 @@ util-linux 2.11s
 util-linux 2.11r
 
 * Estonian messages (Meelis Roos)
-* No French messages with permission to distribute (Michel Robitaille)
 * German messages (Michael Piefel)
 * Spanish messages (Santiago Vila Doncel)
 * Swedish messages (Christian Rose)
@@ -139,7 +156,6 @@ util-linux 2.11q
 util-linux 2.11p
 
 * Danish messages (Claus Hindsgaul)
-* No French messages with permission to distribute (Michel Robitaille)
 * German messages (Karl Eichwalder)
 * Spanish messages (Santiago Vila Doncel)
 * Swedish messages (Christian Rose)
@@ -157,7 +173,6 @@ util-linux 2.11p
 util-linux 2.11o
 
 * Estonian messages (Meelis Roos)
-* No French messages with permission to distribute (Michel Robitaille)
 * Japanese messages (Daisuke Yamashita)
 * Spanish messages (Santiago Vila Doncel)
 * cal: option -s: Sunday is first day of the week
@@ -184,7 +199,6 @@ util-linux 2.11o
 util-linux 2.11n
 
 * Danish messages (Claus Hindsgaul)
-* No French messages with permission to distribute (Michel Robitaille)
 * German messages (Karl Eichwalder)
 * Swedish messages (Christian Rose)
 * Turkish messages now in UTF-8 (Nilgün Belma Bugüner)
@@ -249,7 +263,6 @@ util-linux 2.11k
 
 util-linux 2.11j
 
-* No French messages with permission to distribute (Michel Robitaille)
 * fdisk: fix for AIX label (Olaf Hering)
 * fdisk: fix for creating DOS label when BSD label is present
 * mount.8: added remark about blocksize to ext2 sb= mount option description.

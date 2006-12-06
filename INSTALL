@@ -80,6 +80,12 @@ Warnings like
     from pointer target type
 are caused by bad ncurses or glibc header files.
 
+Warnings like
+  script.c: In function `dooutput':
+  script.c:254: warning: `%c' yields only last 2 digits of year in some locales
+are caused by a broken gcc that warns about things that are not wrong,
+where the warning is not easily avoided.
+
 All such warnings are harmless.
 There should be no compilation errors.
 

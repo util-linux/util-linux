@@ -201,7 +201,6 @@ int	kerror = KSUCCESS, notickets = 1;
 #endif
 
 #define	TTYGRPNAME	"tty"		/* name of group to own ttys */
-/**#  define TTYGRPNAME      "other" **/
 
 #ifndef MAXPATHLEN
 #  define MAXPATHLEN 1024
@@ -237,11 +236,6 @@ struct	ltchars ltc = {
 	CSUSP, CDSUSP, CRPRNT, CFLUSH, CWERASE, CLNEXT
 };
 #endif
-
-const char *months[] = {
-	"Jan", "Feb", "Mar", "Apr", "May", "Jun",
-	"Jul", "Aug", "Sep", "Oct", "Nov", "Dec"
-};
 
 /* Nice and simple code provided by Linus Torvalds 16-Feb-93 */
 /* Nonblocking stuff by Maciej W. Rozycki, macro@ds2.pg.gda.pl, 1999.

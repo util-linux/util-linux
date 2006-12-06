@@ -107,8 +107,6 @@ extern ext2_loff_t ext2_llseek(unsigned int fd, ext2_loff_t offset,
 
 #define SECTOR_SIZE 512
 
-#define MAX_CYLINDERS 65535	/* there is no maximum anymore */
-				/* the kernel max is 65535 */
 #define MAX_HEADS 255
 #define MAX_SECTORS 63
 
@@ -1184,60 +1182,57 @@ menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
 }
 
 /* This function takes a list of menu items, lets the user choose one *
- * and returns the value keyboard shortcut of the selected menu item  */
+ * and returns the keyboard shortcut value of the selected menu item  */
 
 static int
 menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
 	    char *available, int menuType, int menuDefault ) {
     int i, ylast = y, key = 0, current = menuDefault;
 
-    if( !( menuType & ( MENU_HORIZ | MENU_VERT ) ) )	
-    {
+    if( !( menuType & ( MENU_HORIZ | MENU_VERT ) ) ) {
         print_warning(_("Menu without direction. Defaulting horizontal."));
         menuType |= MENU_HORIZ;
     }
 
     /* Make sure that the current is one of the available items */
-    while( !strchr(available, menuItems[current].key) )
-    {
+    while( !strchr(available, menuItems[current].key) ) {
         current ++ ;
         if( !menuItems[current].key ) current = 0;
     }
 
     /* Repeat until allowable choice has been made */
-    while( !key )
-    {
-        /* Display the menu */
+    while( !key ) {
+        /* Display the menu and read a command */
         ylast = menuUpdate( y, x, menuItems, itemLength, available,
 			    menuType, current );
         refresh();
         key = getch();
+
         /* Clear out all prompts and such */
         clear_warning();
-        for( i = y; i < ylast; i ++ )
-        {
-            move( i, x );
+        for (i = y; i < ylast; i++) {
+            move(i, x);
             clrtoeol();
         }
         move( WARNING_START + 1, 0 );
         clrtoeol();
-        /* Cursor keys */
-        if( key == ESC )
-        {
+
+        /* Cursor keys - possibly split by slow connection */
+        if( key == ESC ) {
             /* Check whether this is a real ESC or one of extended keys */
             /*nodelay(stdscr, TRUE);*/
             key = getch();
             /*nodelay(stdscr, FALSE);*/
-            if( key == /*ERR*/ ESC )
-            {
+
+            if( key == /*ERR*/ ESC ) {
                 /* This is a real ESC */
                 key = ESC;
             }
-            if( key == '[' )
-            {
+            if(key == '[' || key == 'O') {
                 /* This is one extended keys */
-                switch( getch() )
-                {
+		key = getch();
+
+                switch(key) {
                     case 'A': /* Up arrow */
 			key = MENU_UP;
                         break;
@@ -1250,21 +1245,23 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
                     case 'D': /* Left arrow */
                         key = MENU_LEFT;
                         break;
+		    default:
+			key = 0;
                 }
             }
         }
 
-        /* Enter equals to the keyboard shortcut of current menu item */
-        if( key == CR)
+        /* Enter equals the keyboard shortcut of current menu item */
+        if (key == CR)
             key = menuItems[current].key;
 
 	/* Give alternatives for arrow keys in case the window manager
 	   swallows these */
-	if ( key == TAB )
+	if (key == TAB)
 	    key = MENU_RIGHT;
-        if ( key == UPKEY )	/* ^P */
+        if (key == UPKEY)	/* ^P */
 	    key = MENU_UP;
-	if ( key == DOWNKEY )	/* ^N */
+	if (key == DOWNKEY)	/* ^N */
 	    key = MENU_DOWN;
 
 	if (key == MENU_UP) {
@@ -1315,21 +1312,22 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
 
         /* Should all keys to be accepted? */
         if( key && (menuType & MENU_ACCEPT_OTHERS) ) break;
-        /* Is pressed key among acceptable ones */
+
+        /* Is pressed key among acceptable ones? */
         if( key && (strchr(available, tolower(key)) || strchr(available, key)))
 	    break;
+
         /* The key has not been accepted so far -> let's reject it */
-        if( key )
-        {
+        if (key) {
             key = 0;
             putchar( BELL );
             print_warning(_("Illegal key"));
         }
     }
+
     /* Clear out prompts and such */
     clear_warning();
-    for( i = y; i <= ylast; i ++ )
-    {
+    for( i = y; i <= ylast; i ++ ) {
         move( i, x );
         clrtoeol();
     }
@@ -2820,7 +2818,7 @@ do_curses_fdisk(void) {
 
 static void
 copyright(void) {
-    fprintf(stderr, _("Copyright (C) 1994-2000 Kevin E. Martin & aeb\n"));
+    fprintf(stderr, _("Copyright (C) 1994-2002 Kevin E. Martin & aeb\n"));
 }
 
 static void

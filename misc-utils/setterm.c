@@ -107,6 +107,7 @@
 #else
 #include <curses.h>
 #endif
+#include <sys/param.h>		/* for MAXPATHLEN */
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include "nls.h"
@@ -184,7 +185,7 @@ int opt_cl_all;			/* Clear all or rest. */
 int opt_bl_min;			/* Blank screen. */
 int opt_blength_l;
 int opt_bfreq_f;
-int opt_sn_num = 0;		/* Snap screen. */
+int opt_sn_num;			/* Snap screen. */
 int opt_st_attr;
 int opt_rt_len;			/* regular tab length */
 int opt_tb_array[161];		/* Array for tab list */
@@ -1109,7 +1110,6 @@ perform_sequence(int vcterm) {
 
 static void
 screendump(int vcnum, FILE *F) {
-#include <sys/param.h>
     char infile[MAXPATHLEN];
     unsigned char header[4];
     unsigned int rows, cols;
@@ -1117,13 +1117,28 @@ screendump(int vcnum, FILE *F) {
     char *inbuf, *outbuf, *p, *q;
 
     sprintf(infile, "/dev/vcsa%d", vcnum);
-    fd = open(infile, 0);
-    if (fd < 0 || read(fd, header, 4) != 4)
-      goto try_ioctl;
+    fd = open(infile, O_RDONLY);
+    if (fd < 0 && vcnum == 0) {
+	/* vcsa0 is often called vcsa */
+	sprintf(infile, "/dev/vcsa");
+	fd = open(infile, O_RDONLY);
+    }
+    if (fd < 0) {
+	/* try devfs name - for zero vcnum just /dev/vcc/a */
+	/* some gcc's warn for %.u - add 0 */
+	sprintf(infile, "/dev/vcc/a%.0u", vcnum);
+	fd = open(infile, O_RDONLY);
+    }
+    if (fd < 0) {
+	sprintf(infile, "/dev/vcsa%d", vcnum);
+	goto try_ioctl;
+    }
+    if (read(fd, header, 4) != 4)
+	goto try_ioctl;
     rows = header[0];
     cols = header[1];
     if (rows * cols == 0)
-      goto try_ioctl;
+        goto try_ioctl;
     inbuf = malloc(rows*cols*2);
     outbuf = malloc(rows*(cols+1));
     if(!inbuf || !outbuf) {

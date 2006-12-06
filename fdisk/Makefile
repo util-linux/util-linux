@@ -28,7 +28,7 @@ endif
 
 all: $(SBIN) $(NOTMADE)
 
-cfdisk.o: cfdisk.c
+cfdisk.o: cfdisk.c ../MCONFIG
 ifeq "$(HAVE_SLANG)" "yes"
 	$(CC) -c $(CFLAGS) -DSLCURSES=1 $< -o $@
 else

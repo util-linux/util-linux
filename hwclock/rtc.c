@@ -89,20 +89,19 @@ struct linux_rtc_time {
 #define RTC_DEVN	"rtc"
 #endif
 
-static char rtc_dev_name[40];
+static char *rtc_dev_name;
 
-/* maybe we should not try /dev/misc/efirtc? */
 static int
 open_rtc(void) {
 	int rtc_fd;
 
-	sprintf(rtc_dev_name, "/dev/%s", RTC_DEVN);
+	rtc_dev_name = "/dev/" RTC_DEVN;
 	rtc_fd = open(rtc_dev_name, O_RDONLY);
 	if (rtc_fd < 0 && errno == ENOENT) {
-		sprintf(rtc_dev_name, "/dev/misc/%s", RTC_DEVN);
+		rtc_dev_name = "/dev/misc/" RTC_DEVN;
 		rtc_fd = open(rtc_dev_name, O_RDONLY);
 		if (rtc_fd < 0 && errno == ENOENT)
-			sprintf(rtc_dev_name, "/dev/%s", RTC_DEVN);
+			rtc_dev_name = "/dev/" RTC_DEVN;
 	}
 	return rtc_fd;
 }

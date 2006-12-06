@@ -61,7 +61,11 @@
 #include <locale.h>
 #include <nl_types.h>
 #include <libgen.h>
+#if NCH
+#include <ncurses.h>
+#else
 #include <curses.h>
+#endif
 #include <term.h>
 
 #include "nls.h"

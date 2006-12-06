@@ -1081,11 +1081,14 @@ read_int(uint low, uint dflt, uint high, uint base, char *mesg)
 			continue;
 
 		if (*line_ptr == '+' || *line_ptr == '-') {
+			int minus = (*line_ptr == '-');
+			int absolute = 0;
+
 			i = atoi(line_ptr+1);
-			if (*line_ptr == '-')
-				i = -i;
+
  			while (isdigit(*++line_ptr))
 				use_default = 0;
+
 			switch (*line_ptr) {
 				case 'c':
 				case 'C':
@@ -1094,25 +1097,31 @@ read_int(uint low, uint dflt, uint high, uint base, char *mesg)
 					break;
 				case 'k':
 				case 'K':
-					i *= 2;
-					i /= (sector_size / 512);
-					i /= units_per_sector;
+					absolute = 1000;
 					break;
 				case 'm':
 				case 'M':
-					i *= 2048;
-					i /= (sector_size / 512);
-					i /= units_per_sector;
+					absolute = 1000000;
 					break;
 				case 'g':
 				case 'G':
-					i *= 2048000;
-					i /= (sector_size / 512);
-					i /= units_per_sector;
+					absolute = 1000000000;
 					break;
 				default:
 					break;
 			}
+			if (absolute) {
+				unsigned long long bytes;
+				unsigned long unit;
+
+				bytes = (unsigned long long) i * absolute;
+				unit = sector_size * units_per_sector;
+				bytes += unit/2;	/* round */
+				bytes /= unit;
+				i = bytes;
+			}
+			if (minus)
+				i = -i;
 			i += base;
 		} else {
 			i = atoi(line_ptr);
@@ -1457,7 +1466,7 @@ static void check_consistency(struct partition *p, int partition) {
 
 /* Ending on cylinder boundary? */
 	if (peh != (heads - 1) || pes != sectors) {
-		printf(_("Partition %i does not end on cylinder boundary:\n"),
+		printf(_("Partition %i does not end on cylinder boundary.\n"),
 			partition + 1);
 #if 0
 		printf(_("     phys=(%d, %d, %d) "), pec, peh, pes);

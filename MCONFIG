@@ -134,7 +134,6 @@ ERR_O=$(LIB)/err.o
 # Set HAVE_SLANG to yes if you have slang (and prefer to use that for cfdisk)
 # (If neither HAVE_NCURSES nor HAVE_SLANG is defined, cfdisk is not made.)
 # HAVE_SLANG=yes
-
 # There is a subdirectory /usr/include/slang containing slcurses.h
 # SLANGFLAGS=-I/usr/include/slang
 # No such subdirectory - slcurses.h lives in /usr/include
@@ -158,9 +157,6 @@ VAR_PATH=	/var
 LOG_DIR=	/var/log
 MAN_DIR=	/usr/share/man
 INFO_DIR=	/usr/share/info
-
-# Directory for help file for more.  Used to be /usr/lib.
-MOREHELP_DIR=	$(USRSHAREMISC_DIR)
 
 #
 # Paths used for install
@@ -187,9 +183,6 @@ INFODIR=	$(DESTDIR)$(INFO_DIR)
 
 # Directory for shutdown, halt, reboot, etc.
 SHUTDOWNDIR=	$(SBINDIR)
-
-# Directory for help file for more.  Used to be /usr/lib.
-MOREHELPDIR=	$(DESTDIR)$(MOREHELP_DIR)
 
 # Modes
 DIRMODE=	755

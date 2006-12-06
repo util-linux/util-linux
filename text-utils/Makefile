@@ -12,7 +12,7 @@ USRBIN=		col colcrt colrm column hexdump rev line
 
 BIN=
 
-MAYBE=		more ul
+MAYBE=		more pg ul
 
 ifeq "$(HAVE_NCURSES)" "yes"
 BIN:=$(BIN) more
@@ -24,12 +24,6 @@ BIN:=$(BIN) more
 MAN1:=$(MAN1) more.1
 endif
 endif
-
-# Where to put database files?
-MOREHELP=	more.help
-MOREHELPFILE=$(MOREHELP_DIR)/$(MOREHELP)
-# MOREHELP_DIR and MOREHELPDIR set in ../MCONFIG
-CFLAGS:=$(CFLAGS) -DMOREHELPFILE=\"$(MOREHELPFILE)\"
 
 # Is pg silent?
 ifeq "$(SILENT_PG)" "yes"
@@ -82,12 +76,11 @@ line: line.o
 colcrt.o colrm.o column.o rev.o ul.o: $(LIB)/widechar.h
 
 install install.shadow install.text-utils: all
-	$(INSTALLDIR) $(BINDIR) $(USRBINDIR) $(MOREHELPDIR) $(MAN1DIR)
+	$(INSTALLDIR) $(BINDIR) $(USRBINDIR) $(MAN1DIR)
 ifneq "$(BIN)" ""
 	$(INSTALLBIN) $(BIN) $(BINDIR)
 endif
 	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
-	$(INSTALLDAT) $(MOREHELP) $(MOREHELPDIR)
 	$(INSTALLMAN) $(MAN1) $(MAN1DIR)
 
 .PHONY: clean distclean

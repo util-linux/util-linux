@@ -360,9 +360,12 @@ void do_shm (char format)
 				printf ("%-10d %-10.10s", shmid, pw->pw_name);
 			else
 				printf ("%-10d %-10d", shmid, ipcp->uid);
-			printf ("%-10o %-10d %-10ld %-6s %-6s\n", 
+			printf ("%-10o %-10ld %-10ld %-6s %-6s\n", 
 				ipcp->mode & 0777,
-				shmseg.shm_segsz,
+				/*
+				 * earlier: int, Austin has size_t
+				 */
+				(long) shmseg.shm_segsz,
 				/*
 				 * glibc-2.1.3 and earlier has unsigned short;
 				 * Austin has shmatt_t
@@ -606,8 +609,8 @@ void print_shm (int shmid)
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid);
 	printf (_("mode=%#o\taccess_perms=%#o\n"),
 		ipcp->mode, ipcp->mode & 0777);
-	printf (_("bytes=%d\tlpid=%d\tcpid=%d\tnattch=%ld\n"),
-		shmds.shm_segsz, shmds.shm_lpid, shmds.shm_cpid,
+	printf (_("bytes=%ld\tlpid=%d\tcpid=%d\tnattch=%ld\n"),
+		(long) shmds.shm_segsz, shmds.shm_lpid, shmds.shm_cpid,
 		(long) shmds.shm_nattch);
 	printf (_("att_time=%-26.24s\n"),
 		shmds.shm_atime ? ctime (&shmds.shm_atime) : _("Not set"));

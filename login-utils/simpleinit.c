@@ -13,6 +13,8 @@
  * - block signals in handlers, so that longjmp() doesn't kill context
  * 2001-02-25 Richard Gooch <rgooch@atnf.csiro.au>
  * - make default INIT_PATH the boot_prog (if it is a directory) - YECCH
+ * 2002-11-20 patch from SuSE
+ * - refuse initctl_fd if setting FD_CLOEXEC fails
  */
 
 #include <sys/types.h>
@@ -202,6 +204,19 @@ int main(int argc, char *argv[])
 		mkfifo (initctl_name, S_IRUSR | S_IWUSR);
 		if ( ( initctl_fd = open (initctl_name, O_RDWR, 0) ) < 0 )
 			err ( _("error opening fifo\n") );
+	}
+
+	if (initctl_fd >= 0 && fcntl(initctl_fd, F_SETFD, FD_CLOEXEC) != 0) {
+		err ( _("error setting close-on-exec on /dev/initctl") );
+
+		/* Can the fcntl ever fail?  If it does, and we leave
+		   the descriptor open in child processes, then any
+		   process on the system will be able to write to
+		   /dev/initctl and have us execute arbitrary commands
+		   as root. So let's refuse to use the fifo in this case. */
+
+		close(initctl_fd);
+		initctl_fd = -1;
 	}
 
 	if ( want_single || (access (_PATH_SINGLE, R_OK) == 0) ) do_single ();

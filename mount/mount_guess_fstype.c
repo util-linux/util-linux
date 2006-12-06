@@ -275,7 +275,8 @@ do_guess_fstype(const char *device) {
 	 /* block 0 */
 	 if (lseek(fd, 0, SEEK_SET) != 0
 	     || read(fd, (char *) &xsb, sizeof(xsb)) != sizeof(xsb))
-	      goto io_error;
+	      goto try_iso9660;
+	 /* Gyorgy Kovesdi: none of my photocds has a readable block 0 */
 
 	 if (xiafsmagic(xsb.xiasb) == _XIAFS_SUPER_MAGIC)
 	      type = "xiafs";
@@ -426,6 +427,7 @@ do_guess_fstype(const char *device) {
 
     if (!type) {
 	 /* block 32 */
+    try_iso9660:
 	 if (lseek(fd, 0x8000, SEEK_SET) != 0x8000
 	     || read(fd, (char *) &isosb, sizeof(isosb)) != sizeof(isosb))
 	      goto io_error;
