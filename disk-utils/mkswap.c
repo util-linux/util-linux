@@ -63,9 +63,9 @@
 static char * program_name = "mkswap";
 static char * device_name = NULL;
 static int DEV = -1;
-static long PAGES = 0;
+static unsigned long PAGES = 0;
+static unsigned long badpages = 0;
 static int check = 0;
-static int badpages = 0;
 static int version = -1;
 
 #define MAKE_VERSION(p,q,r)	(65536*(p) + 256*(q) + (r))
@@ -379,7 +379,7 @@ check_blocks(void) {
 	if (badpages == 1)
 		printf(_("one bad page\n"));
 	else if (badpages > 1)
-		printf(_("%d bad pages\n"), badpages);
+		printf(_("%lu bad pages\n"), badpages);
 }
 
 static long
@@ -412,10 +412,10 @@ find_size (int fd) {
 }
 
 /* return size in pages, to avoid integer overflow */
-static long
+static unsigned long
 get_size(const char  *file) {
 	int	fd;
-	long	size;
+	unsigned long	size;
 
 	fd = open(file, O_RDONLY);
 	if (fd < 0) {
@@ -440,9 +440,10 @@ isnzdigit(char c) {
 int
 main(int argc, char ** argv) {
 	struct stat statbuf;
-	int i, sz;
-	long maxpages;
-	long goodpages;
+	int i;
+	unsigned long maxpages;
+	unsigned long goodpages;
+	unsigned long sz;
 	off_t offset;
 	int force = 0;
 	char *block_count = 0;
@@ -507,7 +508,7 @@ main(int argc, char ** argv) {
 		   explicitly */
 		char *tmp;
 		int blocks_per_page = pagesize/1024;
-		PAGES = strtol(block_count,&tmp,0)/blocks_per_page;
+		PAGES = strtoul(block_count,&tmp,0)/blocks_per_page;
 		if (*tmp)
 			usage();
 	}
@@ -517,7 +518,7 @@ main(int argc, char ** argv) {
 	} else if (PAGES > sz && !force) {
 		fprintf(stderr,
 			_("%s: error: "
-			  "size %ld is larger than device size %d\n"),
+			  "size %lu is larger than device size %lu\n"),
 			program_name,
 			PAGES*(pagesize/1024), sz*(pagesize/1024));
 		exit(1);
@@ -611,7 +612,7 @@ the -f option to force it.\n"),
 	}
 
 	goodpages = PAGES - badpages - 1;
-	if (goodpages <= 0)
+	if ((long) goodpages <= 0)
 		die(_("Unable to set up swap-space: unreadable"));
 	printf(_("Setting up swapspace version %d, size = %llu kB\n"),
 		version, (unsigned long long)goodpages * pagesize / 1000);

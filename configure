@@ -15,6 +15,7 @@
 # H7. For nfsmount.c: do we have <rpcsvc/nfs_prot.h>?
 # H8. For nfsmount.h (nfsmount_xdr.c: int32_t): do we have <asm/types.h>?
 # H9. For raw.c: do we have <linux/raw.h>?
+# H10. For md5.c: do we have <stdint.h>?
 #
 # Existence of functions:
 # F1. For nfsmount.c: is inet_aton() available?
@@ -37,7 +38,7 @@
 #  8. For err.c: do we have __progname?
 #  9. For script.c: do we have <pty.h> and openpty()?
 # 10. For lib/widechar.h: do we have wide character support?
-# 11. For pivot_root.c: does <linux/unistd.h> define __NR_pivot_root?
+# 11. For pivot_root.c: does <sys/syscall.h> define SYS_pivot_root?
 # 12. For hwclock.c: does struct tm have a field tm_gmtoff?
 # 13. For nfsmount: does the output of rpcgen compile?
 # 14. For fsck.cramfs, mkfs.cramfs: do we have libz?
@@ -165,6 +166,11 @@ if ./testincl "linux/raw.h"; then
         echo "HAVE_RAW_H=yes" >> make_include
 fi
 
+#
+# H10. For md5.c: do we have <stdint.h>?
+if ./testincl "stdint.h"; then
+        echo "#define HAVE_stdint_h" >> defines.h
+fi
 
 #
 # Find out about the existence of functions
@@ -594,21 +600,22 @@ fi
 rm -f conftest conftest.c
 
 #
-# 11. For pivot_root.c: does <linux/unistd.h> define __NR_pivot_root?
+# 11. For pivot_root.c: does <sys/syscall.h> define SYS_pivot_root?
 #
 echo "
-#include <linux/unistd.h>
+#include <sys/syscall.h>
+#include <unistd.h>
 int main(void)
 {
-    return __NR_pivot_root;
+    return SYS_pivot_root;
 }
 " >conftest.c
 eval $compile
 if test -s conftest; then
 	echo "HAVE_PIVOT_ROOT=yes" >> make_include
-	echo "You have __NR_pivot_root"
+	echo "You have SYS_pivot_root"
 else
-	echo "You don't have __NR_pivot_root"
+	echo "You don't have SYS_pivot_root"
 fi
 rm -f conftest conftest.c
 

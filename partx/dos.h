@@ -6,8 +6,8 @@ struct partition {
 	unsigned char bh, bs, bc;
 	unsigned char sys_type;
 	unsigned char eh, es, ec;
-	unsigned int start_sect;
-	unsigned int nr_sects;
+	unsigned char start_sect[4];
+	unsigned char nr_sects[4];
 };
 
 #endif				/* DOS_H_INCLUDED */

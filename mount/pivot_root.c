@@ -3,14 +3,17 @@
 /* Written 2000 by Werner Almesberger */
 
 #include <stdio.h>
-#include <errno.h>	/* needed for <linux/unistd.h> below */
+#include <sys/syscall.h>
+#include <unistd.h>
 
-#ifdef __ia64__
-# include <sys/syscall.h>
-# define pivot_root(new_root,put_old) syscall(SYS_pivot_root,new_root,put_old)
-#else
-# include <linux/unistd.h>
+#define pivot_root(new_root,put_old) syscall(SYS_pivot_root,new_root,put_old)
 
+#if 0
+/*
+ * With kernelheaders 2.3.41 or later, and ancient libc, try the following.
+ */
+#include <errno.h>
+#include <linux/unistd.h>
 static
 _syscall2(int,pivot_root,const char *,new_root,const char *,put_old)
 #endif

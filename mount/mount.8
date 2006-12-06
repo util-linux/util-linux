@@ -118,6 +118,7 @@ a second place using
 .B "mount --rbind olddir newdir"
 .RE
 .\" available since Linux 2.4.11.
+The mount options are not changed.
 
 Since Linux 2.5.1 it is possible to atomically move a subtree
 to another place. The call is
@@ -315,6 +316,12 @@ This is necessary for example when
 .I /etc
 is on a read-only file system.
 .TP
+.BI \-p " num"
+In case of a loop mount with encryption, read the passphrase from
+file descriptor
+.I num
+instead of from the terminal.
+.TP
 .B \-s
 Tolerate sloppy mount options rather than failing. This will ignore
 mount options not supported by a filesystem type. Not all filesystems
@@ -376,6 +383,7 @@ currently supported are:
 .IR udf ,
 .IR ufs ,
 .IR umsdos ,
+.IR usbfs ,
 .IR vfat ,
 .IR xenix ,
 .IR xfs ,
@@ -390,7 +398,10 @@ instead. Since kernel version 2.1.21 the types
 .I ext
 and
 .I xiafs
-do not exist anymore.
+do not exist anymore. Earlier,
+.I usbfs
+was known as
+.IR usbdevfs .
 
 For most types all the
 .B mount
@@ -1479,6 +1490,9 @@ For filesystems created by SunOS or Solaris on Sparc.
 .B sunx86
 For filesystems created by Solaris on x86.
 .TP
+.B hp
+For filesystems created by HP-UX, read-only.
+.TP
 .B nextstep
 For filesystems created by NeXTStep (on NeXT station) (currently read only).
 .TP
@@ -1556,7 +1570,7 @@ the short name is not all upper case.
 .I win95
 Force the short name to upper case upon display; store a long name when
 the short name is not all upper case.
-. TP
+.TP
 .I winnt
 Display the shortname as is; store a long name when the short name is 
 not all lower case or all upper case.
@@ -1567,6 +1581,21 @@ all upper case.
 .RE
 
 The default is "lower".
+
+.SH "Mount options for usbfs"
+.TP
+\fBdevuid=\fP\fIuid\fP and \fBdevgid=\fP\fIgid\fP and \fBdevmode=\fP\fImode\fP
+Set the owner and group and mode of the device files in the usbfs file system
+(default: uid=gid=0, mode=0644). The mode is given in octal.
+.TP
+\fBbusuid=\fP\fIuid\fP and \fBbusgid=\fP\fIgid\fP and \fBbusmode=\fP\fImode\fP
+Set the owner and group and mode of the bus directories in the usbfs
+file system (default: uid=gid=0, mode=0555). The mode is given in octal.
+.TP
+\fBlistuid=\fP\fIuid\fP and \fBlistgid=\fP\fIgid\fP and \fBlistmode=\fP\fImode\fP
+Set the owner and group and mode of the file
+.I devices
+(default: uid=gid=0, mode=0444). The mode is given in octal.
 
 .SH "Mount options for xenix"
 None.

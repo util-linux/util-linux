@@ -113,6 +113,9 @@ static int mounttype = 0;
 /* True if ruid != euid.  */
 static int suid = 0;
 
+/* Contains the fd to read the passphrase from, if any. */
+static int pfd = -1;
+
 /* Map from -o and fstab option strings to the flag argument to mount(2).  */
 struct opt_map {
   const char *opt;		/* option name */
@@ -601,7 +604,8 @@ loop_check(char **spec, char **type, int *flags,
       if (verbose)
 	printf(_("mount: going to use the loop device %s\n"), *loopdev);
       offset = opt_offset ? strtoul(opt_offset, NULL, 0) : 0;
-      if (set_loop (*loopdev, *loopfile, offset, opt_encryption, &loopro)) {
+      if (set_loop(*loopdev, *loopfile, offset,
+		   opt_encryption, pfd, &loopro)) {
 	if (verbose)
 	  printf(_("mount: failed setting up loop device\n"));
 	return EX_FAIL;
@@ -657,6 +661,14 @@ update_mtab_entry(char *spec, char *node, char *type, char *opts,
 	    unlock_mtab();
 	}
     }
+}
+
+static void
+set_pfd(char *s) {
+	if (!isdigit(*s))
+		die(EX_USAGE,
+		    _("mount: argument to -p or --pass-fd must be a number"));
+	pfd = atoi(optarg);
 }
 
 static void
@@ -768,7 +780,7 @@ try_mount_one (const char *spec0, const char *node0, char *types0,
   if (mount_all && (flags & MS_NOAUTO))
     return 0;
 
-  suid_check (spec, node, &flags, &user);
+  suid_check(spec, node, &flags, &user);
 
   mount_opts = extra_opts;
 
@@ -776,11 +788,12 @@ try_mount_one (const char *spec0, const char *node0, char *types0,
       cdrom_setspeed(spec);
 
   if (!(flags & MS_REMOUNT)) {
-      /* don't set up a (new) loop device if we only remount - this left
+      /*
+       * Don't set up a (new) loop device if we only remount - this left
        * stale assignments of files to loop devices. Nasty when used for
        * encryption.
        */
-      res = loop_check (&spec, &types, &flags, &loop, &loopdev, &loopfile);
+      res = loop_check(&spec, &types, &flags, &loop, &loopdev, &loopfile);
       if (res)
 	  return res;
   }
@@ -841,7 +854,7 @@ retry_nfs:
 
 #ifdef HAVE_NFS
   if (mnt_err && types && streq (types, "nfs")) {
-      if (nfs_mount_version == 4) {
+      if (nfs_mount_version == 4 && mnt_err != EBUSY && mnt_err != ENOENT) {
 	  if (verbose)
 	    printf(_("mount: failed with nfs mount version 4, trying 3..\n"));
 	  nfs_mount_version = 3;
@@ -912,7 +925,7 @@ retry_nfs:
       break;
     case EINVAL:
     { int fd;
-      long size;
+      unsigned long size;
       int warned=0;
 
       if (flags & MS_REMOUNT) {
@@ -922,9 +935,9 @@ retry_nfs:
 	       "       or too many mounted file systems"),
 	       spec);
 
-	if (stat (spec, &statbuf) == 0 && S_ISBLK(statbuf.st_mode)
+	if (stat(spec, &statbuf) == 0 && S_ISBLK(statbuf.st_mode)
 	   && (fd = open(spec, O_RDONLY | O_NONBLOCK)) >= 0) {
-	  if(ioctl(fd, BLKGETSIZE, &size) == 0) {
+	  if (ioctl(fd, BLKGETSIZE, &size) == 0) {
 	    if (size == 0) {
 	      warned++;
 	  error ("       (could this be the IDE device where you in fact use\n"
@@ -1357,6 +1370,7 @@ static struct option longopts[] = {
 	{ "rw", 0, 0, 'w' },
 	{ "options", 1, 0, 'o' },
 	{ "test-opts", 1, 0, 'O' },
+	{ "pass-fd", 1, 0, 'p' },
 	{ "types", 1, 0, 't' },
 	{ "bind", 0, 0, 128 },
 	{ "replace", 0, 0, 129 },
@@ -1394,7 +1408,7 @@ usage (FILE *fp, int n) {
 	  "       mount --move olddir newdir\n"
 	  "A device can be given by name, say /dev/hda1 or /dev/cdrom,\n"
 	  "or by label, using  -L label  or by uuid, using  -U uuid .\n"
-	  "Other options: [-nfFrsvw] [-o options].\n"
+	  "Other options: [-nfFrsvw] [-o options] [-p passwdfd].\n"
 	  "For many more details, say  man 8 mount .\n"
 	));
 /*
@@ -1433,7 +1447,7 @@ main (int argc, char *argv[]) {
 	initproctitle(argc, argv);
 #endif
 
-	while ((c = getopt_long (argc, argv, "afFhilL:no:O:rsU:vVwt:",
+	while ((c = getopt_long (argc, argv, "afFhilL:no:O:p:rsU:vVwt:",
 				 longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':	       /* mount everything in fstab */
@@ -1471,6 +1485,9 @@ main (int argc, char *argv[]) {
 				test_opts = xstrconcat3(test_opts, ",", optarg);
 			else
 				test_opts = xstrdup(optarg);
+			break;
+		case 'p':		/* fd on which to read passwd */
+			set_pfd(optarg);
 			break;
 		case 'r':		/* mount readonly */
 			readonly = 1;

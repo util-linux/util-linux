@@ -67,6 +67,10 @@ static char version_string[] = "vipw 1.4";
 #include "xstrncpy.h"
 #include "nls.h"
 
+#ifdef WITH_SELINUX
+#include <selinux/selinux.h>
+#endif
+
 #define FILENAMELEN 67
 
 char *progname;
@@ -189,6 +193,24 @@ pw_unlock(void) {
 	sprintf(tmp, "%s%s", orig_file, ".OLD");
 	unlink(tmp);
 	link(orig_file, tmp);
+
+#ifdef WITH_SELINUX
+	if (is_selinux_enabled()) {
+	  security_context_t passwd_context=NULL;
+	  int ret=0;
+	  if (getfilecon(orig_file,&passwd_context) < 0) {
+	    (void) fprintf(stderr,_("%s: Can't get context for %s"),progname,orig_file);
+	    pw_error(orig_file, 1, 1);
+	  }
+	  ret=setfilecon(tmp_file,passwd_context);
+	  freecon(passwd_context);
+	  if (ret!=0) {
+	    (void) fprintf(stderr,_("%s: Can't set context for %s"),progname,tmp_file);
+	    pw_error(tmp_file, 1, 1);
+	  }
+	}
+#endif
+
 	if (rename(tmp_file, orig_file) == -1) {
 		int errsv = errno;
 		fprintf(stderr, 
@@ -266,7 +288,9 @@ edit_file(int is_shadow)
 
 	if (stat(tmp_file, &begin))
 		pw_error(tmp_file, 1, 1);
+
 	pw_edit(0);
+
 	if (stat(tmp_file, &end))
 		pw_error(tmp_file, 1, 1);
 	if (begin.st_mtime == end.st_mtime) {

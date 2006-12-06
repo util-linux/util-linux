@@ -279,7 +279,9 @@ umount_one (const char *spec, const char *node, const char *type,
 	if (force) {		/* only supported for NFS */
 		res = umount2 (node, MNT_FORCE);
 		if (res == -1) {
+			int errsv = errno;
 			perror("umount2");
+			errno = errsv;
 			if (errno == ENOSYS) {
 				if (verbose)
 					printf(_("no umount2, trying umount...\n"));
@@ -400,15 +402,23 @@ umount_one (const char *spec, const char *node, const char *type,
  * In both cases, it is best to try the last occurrence first.
  */
 static int
-umount_one_bw (const char *file, struct mntentchn *mc) {
-     int res = 1;
+umount_one_bw (const char *file, struct mntentchn *mc0) {
+	struct mntentchn *mc;
+	int res = 1;
 
-     while (res && mc) {
-	  res = umount_one(mc->m.mnt_fsname, mc->m.mnt_dir,
-			   mc->m.mnt_type, mc->m.mnt_opts, mc);
-	  mc = getmntfilesbackward (file, mc);
-     }
-     return res;
+	mc = mc0;
+	while (res && mc) {
+		res = umount_one(mc->m.mnt_fsname, mc->m.mnt_dir,
+				 mc->m.mnt_type, mc->m.mnt_opts, mc);
+		mc = getmntdirbackward(file, mc);
+	}
+	mc = mc0;
+	while (res && mc) {
+		res = umount_one(mc->m.mnt_fsname, mc->m.mnt_dir,
+				 mc->m.mnt_type, mc->m.mnt_opts, mc);
+		mc = getmntdevbackward(file, mc);
+	}
+	return res;
 }
 
 /* Unmount all filesystems of type VFSTYPES found in mtab.  Since we are
@@ -525,7 +535,6 @@ get_value(string_list list, char *s) {
 	}
 	return 0;
 }
-/*=======================================================================*/
 
 static int
 umount_file (char *arg) {
@@ -534,19 +543,27 @@ umount_file (char *arg) {
 	string_list options;
 	int fstab_has_user, fstab_has_users, fstab_has_owner, ok;
 
-	file = canonicalize (arg); /* mtab paths are canonicalized */
+	file = canonicalize(arg); /* mtab paths are canonicalized */
 	if (verbose > 1)
 		printf(_("Trying to umount %s\n"), file);
 
-	mc = getmntfilesbackward (file, NULL);
+	mc = getmntdirbackward(file, NULL);
+	if (!mc)
+		mc = getmntdevbackward(file, NULL);
 	if (!mc && verbose)
 		printf(_("Could not find %s in mtab\n"), file);
 
 	if (suid) {
+		char *mtab_user = NULL;
+
 		if (!mc)
-			die (2, _("umount: %s is not mounted (according to mtab)"), file);
-		if (getmntfilesbackward (file, mc))
-			die (2, _("umount: it seems %s is mounted multiple times"), file);
+			die(2,
+			    _("umount: %s is not mounted (according to mtab)"),
+			    file);
+		if (!is_mounted_once(file))
+			die(2,
+			    _("umount: it seems %s is mounted multiple times"),
+			    file);
 
 		/* If fstab contains the two lines
 		   /dev/sda1 /mnt/zip auto user,noauto  0 0
@@ -558,10 +575,12 @@ umount_file (char *arg) {
 		if (!fs) {
 			if (!getfsspec (file) && !getfsfile (file))
 				die (2,
-				     _("umount: %s is not in the fstab (and you are not root)"),
+				     _("umount: %s is not in the fstab "
+				       "(and you are not root)"),
 				     file);
 			else
-				die (2, _("umount: %s mount disagrees with the fstab"), file);
+				die (2, _("umount: %s mount disagrees with "
+					  "the fstab"), file);
 		}
 
 		/* User mounting and unmounting is allowed only
@@ -586,7 +605,6 @@ umount_file (char *arg) {
 
 		if (!ok && (fstab_has_user || fstab_has_owner)) {
 			char *user = getusername();
-			char *mtab_user;
 
 			options = parse_list (mc->m.mnt_opts);
 			mtab_user = get_value(options, "user=");
@@ -595,7 +613,8 @@ umount_file (char *arg) {
 				ok = 1;
 		}
 		if (!ok)
-			die (2, _("umount: only root can unmount %s from %s"),
+			die (2, _("umount: only %s can unmount %s from %s"),
+			     mtab_user ? mtab_user : "root",
 			     fs->m.mnt_fsname, fs->m.mnt_dir);
 	}
 
@@ -673,8 +692,9 @@ main (int argc, char *argv[]) {
 	argv += optind;
 
 	if (all) {
+		/* nodev stuff: sysfs, usbfs, oprofilefs, ... */
 		if (types == NULL)
-			types = "noproc,nodevfs";
+			types = "noproc,nodevfs,nodevpts";
 		result = umount_all (types, test_opts);
 	} else if (argc < 1) {
 		usage (stderr, 2);

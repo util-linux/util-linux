@@ -139,24 +139,26 @@ uuidcache_init_evms(void) {
  * special devices for the xfs filesystem external log & realtime device.
  */
 
-/*
- * XVM support - Eric Sandeen
- * Return 1 if this looks like an xvm device that should be scanned
- */
+/* Return 1 if this looks like an xvm device that should be scanned */
 static int
 is_xvm(char *ptname)
 {
+	int len;
+
+	/* if it doesn't start with "xvm," we're done. */
+	if (strncmp(ptname, "xvm", 3))
+		return 0;
+
+	len = strlen(ptname);
 	/*
-	 * Scan anything with "xvm" and "data" in its name.
-	 * That might pick up non-data xvm subvols if the
-	 * volumename contains the string 'data' but
-	 * that should be harmless.
+	 * check for "log/block" or "rt/block" on the end,
+	 * these are special - don't scan.
 	 */
+	if (!strncmp(ptname+(len-9), "log/block", 9) ||
+	    !strncmp(ptname+(len-8), "rt/block", 8))
+	    	return 0;
 
-	if (strstr(ptname, "xvm") && strstr(ptname, "data"))
-		return 1;
-
-	return 0;
+	return 1;
 }
 
 static void

@@ -72,7 +72,7 @@ mount.o: $(LIB)/setproctitle.h
 
 mount.o umount.o getusername.o: getusername.h
 
-mount.o umount.o losetup.o lomount.o: lomount.h loop.h
+mount.o umount.o losetup.o lomount.o: lomount.h loop.h my_dev_t.h
 
 swapon.o: swap_constants.h swapargs.h
 
@@ -118,12 +118,9 @@ nfsmount.o: nfs_mount4.h
 swapargs.h:
 	sh swap.configure
 
-loop.h:
-	sh mk_loop_h
-
 clean:
 	rm -f a.out core *~ *.o swapargs.h $(PROGS) $(MAYBE)
-	rm -f loop.h nfs_mountversion.h
+	rm -f nfs_mountversion.h
 
 clobber distclean realclean: clean
 	rm -f $(GEN_FILES)

@@ -801,6 +801,7 @@ get_partition_table_geometry(void) {
 void
 get_geometry(int fd, struct geom *g) {
 	int sec_fac;
+	unsigned long longsectors;
 	unsigned long long bytes;	/* really u64 */
 
 	get_sectorsize(fd);
@@ -820,15 +821,18 @@ get_geometry(int fd, struct geom *g) {
 		pt_sectors ? pt_sectors :
 		kern_sectors ? kern_sectors : 63;
 
-	if (ioctl(fd, BLKGETSIZE64, &bytes) == 0) {
-		/* got bytes */
-	} else {
-		unsigned long longsectors;
+	if (ioctl(fd, BLKGETSIZE, &longsectors))
+		longsectors = 0;
+	if (ioctl(fd, BLKGETSIZE64, &bytes))
+		bytes = 0;
 
-		if (ioctl(fd, BLKGETSIZE, &longsectors))
-			longsectors = 0;
+	/*
+	 * If BLKGETSIZE64 was unknown or broken, use longsectors.
+	 * (Kernels 2.4.15-2.4.17 had a broken BLKGETSIZE64
+	 * that returns sectors instead of bytes.)
+	 */
+	if (bytes == 0 || bytes == longsectors)
 		bytes = ((unsigned long long) longsectors) << 9;
-	}
 
 	total_number_of_sectors = (bytes >> 9);
 
@@ -1853,11 +1857,12 @@ verify(void) {
 		}
 	}
 
-	if (total > heads * sectors * cylinders)
+	if (total > total_number_of_sectors)
 		printf(_("Total allocated sectors %d greater than the maximum "
-			"%d\n"), total, heads * sectors * cylinders);
-	else if ((total = heads * sectors * cylinders - total) != 0)
-		printf(_("%d unallocated sectors\n"), total);
+			"%lld\n"), total, total_number_of_sectors);
+	else if (total < total_number_of_sectors)
+		printf(_("%lld unallocated sectors\n"),
+		       total_number_of_sectors - total);
 }
 
 static void
@@ -2045,6 +2050,10 @@ new_partition(void) {
 		else
 			printf(_("You must delete some partition and add "
 				 "an extended partition first\n"));
+	} else if (partitions >= MAXIMUM_PARTS) {
+		printf(_("All logical partitions are in use\n"));
+		printf(_("Adding a primary partition\n"));
+		add_partition(get_partition(0, 4), LINUX_NATIVE);
 	} else {
 		char c, line[LINE_LENGTH];
 		snprintf(line, sizeof(line),
@@ -2506,7 +2515,7 @@ main(int argc, char **argv) {
 	}
 
 	if (opts) {
-		long size;
+		unsigned long size;
 
 		nowarn = 1;
 		type_open = O_RDONLY;
@@ -2523,9 +2532,9 @@ main(int argc, char **argv) {
 				fatal(ioctl_error);
 			close(fd);
 			if (opts == 1)
-				printf("%ld\n", size/2);
+				printf("%lu\n", size/2);
 			else
-				printf("%s: %ld\n", argv[j], size/2);
+				printf("%s: %lu\n", argv[j], size/2);
 		}
 		exit(0);
 	}

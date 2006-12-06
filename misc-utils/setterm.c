@@ -1085,7 +1085,7 @@ perform_sequence(int vcterm) {
 			result = klogctl(6, NULL, 0);
 
 		if (result != 0)
-			printf(_("klogctl error: %s\n"), strerror(result));
+			printf(_("klogctl error: %s\n"), strerror(errno));
 	}
 
 	/* -msglevel [0-8] */
@@ -1093,7 +1093,7 @@ perform_sequence(int vcterm) {
 		/* 8 -- Set level of messages printed to console */
 		result = klogctl(8, NULL, opt_msglevel_num);
 		if (result != 0)
-			printf(_("klogctl error: %s\n"), strerror(result));
+			printf(_("klogctl error: %s\n"), strerror(errno));
 	}
 
 	/* -blength [0-2000] */

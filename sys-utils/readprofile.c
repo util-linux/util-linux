@@ -132,10 +132,11 @@ main(int argc, char **argv) {
 	FILE *map;
 	int proFd;
 	char *mapFile, *proFile, *mult=0;
-	unsigned long len=0, add0=0, indx=1;
+	unsigned long len=0, indx=1;
+	unsigned long long add0=0;
 	unsigned int step;
 	unsigned int *buf, total, fn_len;
-	unsigned long fn_add, next_add;          /* current and next address */
+	unsigned long long fn_add, next_add;          /* current and next address */
 	char fn_name[S_LEN], next_name[S_LEN];   /* current and next name */
 	char mode[8];
 	int c;
@@ -292,7 +293,7 @@ main(int argc, char **argv) {
 	}
 
 	while (fgets(mapline,S_LEN,map)) {
-		if (sscanf(mapline,"%lx %s %s",&fn_add,mode,fn_name) != 3) {
+		if (sscanf(mapline,"%llx %s %s",&fn_add,mode,fn_name) != 3) {
 			fprintf(stderr,_("%s: %s(%i): wrong map line\n"),
 				prgname, mapFile, maplineno);
 			exit(1);
@@ -316,7 +317,7 @@ main(int argc, char **argv) {
 	while (fgets(mapline,S_LEN,map)) {
 		unsigned int this=0;
 
-		if (sscanf(mapline,"%lx %s %s",&next_add,mode,next_name)!=3) {
+		if (sscanf(mapline,"%llx %s %s",&next_add,mode,next_name)!=3) {
 			fprintf(stderr,_("%s: %s(%i): wrong map line\n"),
 				prgname,mapFile, maplineno);
 			exit(1);
@@ -342,7 +343,7 @@ main(int argc, char **argv) {
 					printf ("%s:\n", fn_name);
 					header_printed = 1;
 				}
-				printf ("\t%lx\t%u\n", (indx - 1)*step + add0, buf[indx]);
+				printf ("\t%llx\t%u\n", (indx - 1)*step + add0, buf[indx]);
 			}
 			this += buf[indx++];
 		}
@@ -355,7 +356,7 @@ main(int argc, char **argv) {
 			fn_len = next_add-fn_add;
 			if (fn_len && (this || optAll)) {
 				if (optVerbose)
-					printf("%08lx %-40s %6i %8.4f\n", fn_add,
+					printf("%016llx %-40s %6i %8.4f\n", fn_add,
 					       fn_name,this,this/(double)fn_len);
 				else
 					printf("%6i %-40s %8.4f\n",
@@ -368,7 +369,7 @@ main(int argc, char **argv) {
 	}
 	/* trailer */
 	if (optVerbose)
-		printf("%08x %-40s %6i %8.4f\n",
+		printf("%016x %-40s %6i %8.4f\n",
 		       0,"total",total,total/(double)(fn_add-add0));
 	else
 		printf("%6i %-40s %8.4f\n",

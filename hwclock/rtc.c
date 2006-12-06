@@ -3,6 +3,7 @@
 #include <fcntl.h>		/* for O_RDONLY */
 #include <sysexits.h>
 #include <sys/ioctl.h>
+#include <sys/time.h>		/* for struct timeval */
 
 #include "clock.h"
 #include "nls.h"
@@ -226,17 +227,40 @@ int ret;
 		     rtc_dev_name);
       ret = busywait_for_rtc_clock_tick(rtc_fd);
     } else if (rc == 0) {
+#ifdef Wait_until_update_interrupt
       unsigned long dummy;
 
       /* this blocks until the next update interrupt */
       rc = read(rtc_fd, &dummy, sizeof(dummy));
-      if (rc == -1) {
+      ret = 1;
+      if (rc == -1)
         outsyserr(_("read() to %s to wait for clock tick failed"),
 		  rtc_dev_name);
-        ret = 1;
-      } else {
+      else
         ret = 0;
-      }
+#else
+      /* Just reading rtc_fd fails on broken hardware: no update
+	 interrupt comes and a bootscript with a hwclock call hangs */
+      fd_set rfds;
+      struct timeval tv;
+
+      /* Wait up to five seconds for the next update interrupt */
+      FD_ZERO(&rfds);
+      FD_SET(rtc_fd, &rfds);
+      tv.tv_sec = 5;
+      tv.tv_usec = 0;
+      rc = select(rtc_fd + 1, &rfds, NULL, NULL, &tv);
+      ret = 1;
+      if (rc == -1)
+        outsyserr(_("select() to %s to wait for clock tick failed"),
+		  rtc_dev_name);
+      else if (rc == 0)
+	fprintf(stderr, _("select() to %s to wait for clock tick timed out\n"),
+			  rtc_dev_name);
+      else
+        ret = 0;
+#endif
+
       /* Turn off update interrupts */
       rc = ioctl(rtc_fd, RTC_UIE_OFF, 0);
       if (rc == -1)

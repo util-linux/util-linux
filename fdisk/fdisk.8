@@ -220,7 +220,7 @@ Try them in the order
 .B cfdisk
 is a beautiful program that has strict requirements on
 the partition tables it accepts, and produces high quality partition
-tables. Use it if you can. 
+tables. Use it if you can.
 .B fdisk
 is a buggy program that does fuzzy things - usually it happens to
 produce reasonable results. Its single advantage is that it has
@@ -230,6 +230,11 @@ Avoid it if you can.
 is for hackers only - the user interface is terrible, but it is
 more correct than fdisk and more powerful than both fdisk and cfdisk.
 Moreover, it can be used noninteractively.)
+.PP
+These days there also is
+.BR parted .
+The cfdisk interface is nicer, but parted does much more: it not only
+resizes partitions, but also the filesystems that live in them.
 .PP
 The IRIX/SGI type disklabel is currently not supported by the kernel.
 Moreover, IRIX/SGI header directories are not fully supported yet.

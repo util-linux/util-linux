@@ -48,6 +48,12 @@ PAM=-lpam -ldl -lpam_misc
 PAMFL=-DUSE_PAM=1
 endif
 
+ifeq "$(HAVE_SELINUX)" "yes"
+CFLAGS += -DWITH_SELINUX=1 -g
+SELINUXLLIB=-lselinux 
+SELINUXOBJS=selinux_utils.o
+endif
+
 ifeq "$(HAVE_SHADOW)" "no"
 ifeq "$(HAVE_PAM)" "no"
 ifeq "$(HAVE_PASSWD)" "no"
@@ -96,18 +102,18 @@ shutdown.o simpleinit.o: $(LIB)/linux_reboot.h
 wall.o: ttymsg.h $(LIB)/carefulputc.h
 
 agetty: agetty.o $(LIB)/xstrncpy.o
-chfn: chfn.o islocal.o setpwnam.o $(LIB)/env.o $(LIB)/xstrncpy.o
-	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
-chsh: chsh.o islocal.o setpwnam.o $(LIB)/env.o
-	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
+chfn: chfn.o islocal.o setpwnam.o $(SELINUXOBJS) $(LIB)/env.o $(LIB)/xstrncpy.o
+	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM) $(SELINUXLLIB)
+chsh: chsh.o islocal.o setpwnam.o $(SELINUXOBJS) $(LIB)/env.o
+	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM) $(SELINUXLLIB)
 last: last.o
 
 ifeq "$(HAVE_PAM)" "yes"
 login: login.o $(LIB)/setproctitle.o $(LIB)/xstrncpy.o
-	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
+	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM) $(SELINUXLLIB)
 else
 login: login.o $(LIB)/xstrncpy.o $(LIB)/setproctitle.o checktty.o 
-	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) 
+	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(SELINUXLLIB)
 endif
 
 mesg: mesg.o $(ERR_O)
@@ -124,6 +130,7 @@ initctl: initctl.o
 	$(CC) $(LDFLAGS) -o $@ $^
 
 vipw: vipw.o $(LIB)/xstrncpy.o
+	$(CC) $(LDFLAGS) -o $@ $^ $(SELINUXLLIB)
 
 newgrp.o: $(LIB)/pathnames.h
 	$(CC) -c $(CFLAGS) $(PAMFL) newgrp.c 

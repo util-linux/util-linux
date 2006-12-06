@@ -18,6 +18,10 @@ ARCH=$(shell echo $(CPU) | sed 's/i.86/intel/;s/arm.*/arm/')
 # installed as it is not PAM aware.
 HAVE_PAM=no
 
+# If HAVE_SELINUX is set to "yes", the login will make sure the user is
+# logged into an appropriate security context
+HAVE_SELINUX=no
+
 # If HAVE_SHADOW is set to "yes", then login, chfn, chsh, newgrp, passwd,
 # and vipw will not be built or installed from the login-utils
 # subdirectory.  

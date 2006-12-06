@@ -7,6 +7,22 @@ is_extended(int type) {
 	return (type == 5 || type == 0xf || type == 0x85);
 }
 
+/* assemble badly aligned little endian integer */
+static inline unsigned int
+assemble4le(unsigned char *p) {
+	return p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24);
+}
+
+static inline unsigned int
+partition_start(struct partition *p) {
+	return assemble4le(&(p->start_sect[0]));
+}
+
+static inline unsigned int
+partition_size(struct partition *p) {
+	return assemble4le(&(p->nr_sects[0]));
+}
+
 static int
 read_extended_partition(int fd, struct partition *ep,
 			struct slice *sp, int ns)
@@ -18,7 +34,7 @@ read_extended_partition(int fd, struct partition *ep,
 	int moretodo = 1;
 	int i, n=0;
 
-	here = start = ep->start_sect;
+	here = start = partition_start(ep);;
 
 	while (moretodo) {
 		moretodo = 0;
@@ -35,11 +51,11 @@ read_extended_partition(int fd, struct partition *ep,
 		p = (struct partition *) (bp + 0x1be);
 
 		for (i=0; i<2; i++, p++) {
-			if (p->nr_sects == 0 || is_extended(p->sys_type))
+			if (partition_size(p) == 0 || is_extended(p->sys_type))
 				continue;
 			if (n < ns) {
-				sp[n].start = here + p->start_sect;
-				sp[n].size = p->nr_sects;
+				sp[n].start = here + partition_start(p);
+				sp[n].size = partition_size(p);
 				n++;
 			} else {
 				fprintf(stderr,
@@ -51,8 +67,9 @@ read_extended_partition(int fd, struct partition *ep,
 
 		p -= 2;
 		for (i=0; i<2; i++, p++) {
-			if(p->nr_sects != 0 && is_extended(p->sys_type)) {
-				here = start + p->start_sect;
+			if (partition_size(p) != 0 &&
+			    is_extended(p->sys_type)) {
+				here = start + partition_start(p);
 				moretodo = 1;
 				break;
 			}
@@ -82,17 +99,16 @@ read_dos_pt(int fd, struct slice all, struct slice *sp, int ns) {
 
 	p = (struct partition *) (bp + 0x1be);
 	for (i=0; i<4; i++) {
-		if (is_gpt(p->sys_type)) {
+		if (is_gpt(p->sys_type))
 			return 0;
-		}
 		p++;
 	}
 	p = (struct partition *) (bp + 0x1be);
 	for (i=0; i<4; i++) {
 		/* always add, even if zero length */
 		if (n < ns) {
-			sp[n].start = p->start_sect;
-			sp[n].size = p->nr_sects;
+			sp[n].start = partition_start(p);
+			sp[n].size = partition_size(p);
 			n++;
 		} else {
 			fprintf(stderr,

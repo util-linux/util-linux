@@ -47,6 +47,12 @@
 #include <security/pam_misc.h>
 #endif
 
+#ifdef WITH_SELINUX
+#include <selinux/selinux.h>
+#include <selinux/av_permissions.h>
+#include "selinux_utils.h"
+#endif
+
 typedef unsigned char boolean;
 #define false 0
 #define true 1
@@ -120,6 +126,27 @@ main (int argc, char *argv[]) {
            whoami, whoami);
        exit(1);
     }
+
+#ifdef WITH_SELINUX
+    if (is_selinux_enabled()) {
+      if(uid == 0) {
+	if (checkAccess(pw->pw_name,PASSWD__CHSH)!=0) {
+	  security_context_t user_context;
+	  if (getprevcon(&user_context) < 0)
+	    user_context=(security_context_t) strdup(_("Unknown user context"));
+	  fprintf(stderr, _("%s: %s is not authorized to change the shell of %s\n"),
+		  whoami, user_context, pw->pw_name);
+	  freecon(user_context);
+	  exit(1);
+	}
+      }
+      if (setupDefaultContext("/etc/passwd") != 0) {
+	fprintf(stderr,_("%s: Can't set default context for /etc/passwd"),
+		whoami);
+	exit(1);
+      }
+    }
+#endif
 
     oldshell = pw->pw_shell;
     if (!oldshell[0]) oldshell = "/bin/sh";

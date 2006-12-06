@@ -1,3 +1,30 @@
+util-linux 2.12a
+
+* chfn, chsh, login, vipw: SElinux support
+* fdisk: fix for kernels 2.4.15-2.4.17
+* fdisk: fix when all partitions are in use
+* hwclock: add a timeout when waiting for a clock update (Göran Weinholt)
+* ipcs: compilation fix
+* ipcs: shminfo.shmall gives pages
+* login: use getutline() instead of getutid()
+* login: fix for 64-bit time_t
+* mount: efs support
+* partx: bigendian fix
+* readprofile: support for 64-bit addresses
+* setterm: fix klogctl error message (Joern Heissler)
+* setterm.1: clarification
+* sfdisk: fix check for is_ide_cdrom_or_tape
+* umount: skip proc, devfs, devpts on umount -a
+
+util-linux 2.12
+
+* losetup: cryptoloop support
+* losetup: -p option specifies fd for passphrase
+* fdisk: sgi layout fix
+* mount: -p option specifies fd for passphrase
+* mount: recognize some PCDOS floppies
+* umount: in "umount name", first try to interpret "name" as a mount point
+
 util-linux 2.12pre
 
 * Catalan messages (Antoni Bella Perez)

@@ -40,6 +40,12 @@
 #include "nls.h"
 #include "env.h"
 
+#ifdef WITH_SELINUX
+#include <selinux/selinux.h>
+#include <selinux/av_permissions.h>
+#include "selinux_utils.h"
+#endif
+
 #if REQUIRE_PASSWORD && USE_PAM
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
@@ -135,6 +141,27 @@ int main (int argc, char **argv) {
            whoami, whoami);
        exit(1);
     }
+
+#ifdef WITH_SELINUX
+    if (is_selinux_enabled()) {
+      if(uid == 0) {
+	if (checkAccess(oldf.username,PASSWD__CHFN)!=0) {
+	  security_context_t user_context;
+	  if (getprevcon(&user_context) < 0)
+	    user_context=(security_context_t) strdup(_("Unknown user context"));
+	  fprintf(stderr, _("%s: %s is not authorized to change the finger info of %s\n"),
+		  whoami, user_context, oldf.username);
+	  freecon(user_context);
+	  exit(1);
+	}
+      }
+      if (setupDefaultContext("/etc/passwd") != 0) {
+	fprintf(stderr,_("%s: Can't set default context for /etc/passwd"),
+		whoami);
+	exit(1);
+      }
+    }
+#endif
 
     /* Reality check */
     if (uid != 0 && uid != oldf.pw->pw_uid) {

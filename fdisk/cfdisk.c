@@ -118,28 +118,6 @@ extern long long ext2_llseek(unsigned int fd, long long offset,
 #define LINUX_SWAP     0x82
 #define LINUX          0x83
 
-/* There used to be defined error messages here. However, it turns out
- * that gettext cannot handle constructions like
- *
- * #define ADD_EXISTS _("This partition is already in use")
- * ...
- * 	print_warning(ADD_EXISTS);
- *
- * So, now the messages are spread over the source again.
- * Another thing which gettext cannot cope with are multi-line strings:
- *
- *	printf("Usage:
- * Print version:
- *	cfdisk -v
- * Print partition table:
- *	cfdisk -P{r|s|t} device
- * ");
- *
- * (This is a commonly used gnu extension of the C syntax, but not ANSI-C.)
- * Another reason to uglify the source a little.
- */
-
-
 #define PRI_OR_LOG -1
 #define PRIMARY -2
 #define LOGICAL -3

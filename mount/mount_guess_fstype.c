@@ -71,7 +71,7 @@ swapped(unsigned short a) {
     Corrected the test for xiafs - aeb
     Read the superblock only once - aeb
     Added a very weak heuristic for vfat - aeb
-    Added iso9660, minix-v2, romfs, qnx4, udf, vxfs, swap - aeb
+    Added efs, iso9660, minix-v2, romfs, qnx4, udf, vxfs, swap - aeb
     Added a test for high sierra (iso9660) - quinlan@bucknell.edu
     Added ufs from a patch by jj. But maybe there are several types of ufs?
     Added ntfs from a patch by Richard Russon.
@@ -84,7 +84,7 @@ swapped(unsigned short a) {
 */
 static char
 *magic_known[] = {
-	"adfs", "bfs", "cramfs", "ext", "ext2", "ext3",
+	"adfs", "bfs", "cramfs", "efs", "ext", "ext2", "ext3",
 	"hfs", "hpfs", "iso9660", "jfs", "minix", "ntfs",
 	"qnx4", "reiserfs", "romfs", "swap", "sysv", "udf", "ufs",
 	"vxfs", "xfs", "xiafs"
@@ -229,12 +229,6 @@ do_guess_fstype(const char *device) {
     int fd;
     char *type = NULL;
     union {
-	struct minix_super_block ms;
-	struct ext_super_block es;
-	struct ext2_super_block e2s;
-	struct vxfs_super_block vs;
-    } sb;			/* stuff at 1024 */
-    union {
 	struct xiafs_super_block xiasb;
 	char romfs_magic[8];
 	char qnx4fs_magic[10];	/* ignore first 4 bytes */
@@ -243,7 +237,15 @@ do_guess_fstype(const char *device) {
 	struct fat_super_block fatsb;
 	struct xfs_super_block xfsb;
 	struct cramfs_super_block cramfssb;
-    } xsb;
+	struct efs_volume_header efsvh;
+	struct efs_super efssb;
+    } xsb;			/* stuff at 0 */
+    union {
+	struct minix_super_block ms;
+	struct ext_super_block es;
+	struct ext2_super_block e2s;
+	struct vxfs_super_block vs;
+    } sb;			/* stuff at 1024 */
     struct ufs_super_block ufssb;
     union {
 	struct iso_volume_descriptor iso;
@@ -294,9 +296,17 @@ do_guess_fstype(const char *device) {
 	 else if(cramfsmagic(xsb.cramfssb) == CRAMFS_SUPER_MAGIC ||
 		 cramfsmagic(xsb.cramfssb) == CRAMFS_SUPER_MAGIC_BE)
 	      type = "cramfs";
+	 else if (assemble4be(xsb.efsvh.vh_magic) == EFS_VHMAGIC)
+	      type = "efs";		/* EFS volume header */
+	 				/* might check checksum here */
+	 else if (assemble4be(xsb.efssb.fs_magic) == EFS_SBMAGIC ||
+		  assemble4be(xsb.efssb.fs_magic) == EFS_SBMAGIC2)
+		 type = "efs";		/* EFS partition */
 	 else if ((!strncmp(xsb.fatsb.s_os, "MSDOS", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "MSWIN", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "MTOOL", 5) ||
+		   !strncmp(xsb.fatsb.s_os, "IBM", 3) ||
+		   !strncmp(xsb.fatsb.s_os, "DRDOS", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "mkdosfs", 7) ||
 		   !strncmp(xsb.fatsb.s_os, "kmkdosfs", 8) ||
 		   /* Michal Svec: created by fdformat, old msdos utility for

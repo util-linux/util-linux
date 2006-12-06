@@ -262,7 +262,7 @@ void do_shm (char format)
 	struct ipc_perm *ipcp = &shmseg.shm_perm;
 	struct passwd *pw;
 
-	maxid = shmctl (0, SHM_INFO, (struct shmid_ds *) &shm_info);
+	maxid = shmctl (0, SHM_INFO, (struct shmid_ds *) (void *) &shm_info);
 	if (maxid < 0) {
 		printf (_("kernel not configured for shared memory\n"));
 		return;
@@ -271,18 +271,18 @@ void do_shm (char format)
 	switch (format) {
 	case LIMITS:
 		printf (_("------ Shared Memory Limits --------\n"));
-		if ((shmctl (0, IPC_INFO, (struct shmid_ds *) &shminfo)) < 0 )
+		if ((shmctl (0, IPC_INFO, (struct shmid_ds *) (void *) &shminfo)) < 0 )
 			return;
 		/* glibc 2.1.3 and all earlier libc's have ints as fields
 		   of struct shminfo; glibc 2.1.91 has unsigned long; ach */
-		printf (_("max number of segments = %ld\n"),
-			(long) shminfo.shmmni);
-		printf (_("max seg size (kbytes) = %ld\n"),
-			(long) (shminfo.shmmax >> 10));
-		printf (_("max total shared memory (kbytes) = %ld\n"),
-			(long) shminfo.shmall << 2);
-		printf (_("min seg size (bytes) = %ld\n"),
-			(long) shminfo.shmmin);
+		printf (_("max number of segments = %lu\n"),
+			(unsigned long) shminfo.shmmni);
+		printf (_("max seg size (kbytes) = %lu\n"),
+			(unsigned long) (shminfo.shmmax >> 10));
+		printf (_("max total shared memory (pages) = %lu\n"),
+			(unsigned long) shminfo.shmall);
+		printf (_("min seg size (bytes) = %lu\n"),
+			(unsigned long) shminfo.shmmin);
 		return;
 
 	case STATUS:
@@ -360,12 +360,12 @@ void do_shm (char format)
 				printf ("%-10d %-10.10s", shmid, pw->pw_name);
 			else
 				printf ("%-10d %-10d", shmid, ipcp->uid);
-			printf ("%-10o %-10ld %-10ld %-6s %-6s\n", 
+			printf ("%-10o %-10lu %-10ld %-6s %-6s\n", 
 				ipcp->mode & 0777,
 				/*
 				 * earlier: int, Austin has size_t
 				 */
-				(long) shmseg.shm_segsz,
+				(unsigned long) shmseg.shm_segsz,
 				/*
 				 * glibc-2.1.3 and earlier has unsigned short;
 				 * Austin has shmatt_t
@@ -389,7 +389,7 @@ void do_sem (char format)
 	struct passwd *pw;
 	union semun arg;
 
-	arg.array = (ushort *)  &seminfo;
+	arg.array = (ushort *)  (void *) &seminfo;
 	maxid = semctl (0, 0, SEM_INFO, arg);
 	if (maxid < 0) {
 		printf (_("kernel not configured for semaphores\n"));
@@ -399,7 +399,7 @@ void do_sem (char format)
 	switch (format) {
 	case LIMITS:
 		printf (_("------ Semaphore Limits --------\n"));
-		arg.array = (ushort *) &seminfo; /* damn union */
+		arg.array = (ushort *) (void *) &seminfo; /* damn union */
 		if ((semctl (0, 0, IPC_INFO, arg)) < 0 )
 			return;
 		printf (_("max number of arrays = %d\n"), seminfo.semmni);
@@ -491,7 +491,7 @@ void do_msg (char format)
 	struct ipc_perm *ipcp = &msgque.msg_perm;
 	struct passwd *pw;
 
-	maxid = msgctl (0, MSG_INFO, (struct msqid_ds *) &msginfo);
+	maxid = msgctl (0, MSG_INFO, (struct msqid_ds *) (void *) &msginfo);
 	if (maxid < 0) {
 		printf (_("kernel not configured for message queues\n"));
 		return;
@@ -499,7 +499,7 @@ void do_msg (char format)
 	
 	switch (format) {
 	case LIMITS:
-		if ((msgctl (0, IPC_INFO, (struct msqid_ds *) &msginfo)) < 0 )
+		if ((msgctl (0, IPC_INFO, (struct msqid_ds *) (void *) &msginfo)) < 0 )
 			return;
 		printf (_("------ Messages: Limits --------\n"));
 		printf (_("max queues system wide = %d\n"), msginfo.msgmni);

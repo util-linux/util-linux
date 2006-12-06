@@ -906,9 +906,8 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	if (utp == NULL) {
 	     setutent();
 	     ut.ut_type = LOGIN_PROCESS;
-	     strncpy(ut.ut_id, tty_number, sizeof(ut.ut_id));
 	     strncpy(ut.ut_line, tty_name, sizeof(ut.ut_line));
-	     utp = getutid(&ut);
+	     utp = getutline(&ut);
 	}
 	
 	if (utp) {
@@ -1363,15 +1362,17 @@ dolastlog(int quiet) {
 	if (!quiet) {
 	    if (read(fd, (char *)&ll, sizeof(ll)) == sizeof(ll) &&
 		ll.ll_time != 0) {
-		printf(_("Last login: %.*s "),
-		       24-5, (char *)ctime(&ll.ll_time));
+		    time_t ll_time = (time_t) ll.ll_time;
+
+		    printf(_("Last login: %.*s "),
+			   24-5, ctime(&ll_time));
 		
-		if (*ll.ll_host != '\0')
-		  printf(_("from %.*s\n"),
-			 (int)sizeof(ll.ll_host), ll.ll_host);
-		else
-		  printf(_("on %.*s\n"),
-			 (int)sizeof(ll.ll_line), ll.ll_line);
+		    if (*ll.ll_host != '\0')
+			    printf(_("from %.*s\n"),
+				   (int)sizeof(ll.ll_host), ll.ll_host);
+		    else
+			    printf(_("on %.*s\n"),
+				   (int)sizeof(ll.ll_line), ll.ll_line);
 	    }
 	    lseek(fd, (off_t)pwd->pw_uid * sizeof(ll), SEEK_SET);
 	}

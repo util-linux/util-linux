@@ -396,7 +396,7 @@ struct geometry {
 static struct geometry
 get_geometry(char *dev, int fd, int silent) {
     struct hd_geometry g;
-    long size;
+    unsigned long size;
     struct geometry R;
 
     if (ioctl(fd, BLKGETSIZE, &size)) {
@@ -2398,7 +2398,7 @@ static void do_change_id(char *dev, char *part, char *id);
 static void do_unhide(char **av, int ac, char *arg);
 static void do_activate(char **av, int ac, char *arg);
 
-int total_size;
+unsigned long total_size;
 
 int
 main(int argc, char **argv) {
@@ -2527,7 +2527,7 @@ main(int argc, char **argv) {
 	total_size = 0;
 	openproc();
 	while ((dev = nextproc()) != NULL) {
-	    if (!strncmp(dev, "hd", 2) && is_ide_cdrom_or_tape(dev))
+	    if (is_ide_cdrom_or_tape(dev))
 		continue;
 	    if (opt_out_geom)
 		do_geom(dev, 1);
@@ -2538,7 +2538,7 @@ main(int argc, char **argv) {
 	}
 
 	if (opt_size)
-	  printf(_("total: %d blocks\n"), total_size);
+	  printf(_("total: %lu blocks\n"), total_size);
 
 	exit(exit_status);
     }
@@ -2664,7 +2664,7 @@ do_geom (char *dev, int silent) {
 static void
 do_size (char *dev, int silent) {
     int fd;
-    long size;
+    unsigned long size;
 
     fd = my_open(dev, 0, silent);
     if (fd < 0)
@@ -2685,9 +2685,9 @@ do_size (char *dev, int silent) {
       return;
 
     if (silent)
-      printf("%s: %9ld\n", dev, size);
+      printf("%s: %9lu\n", dev, size);
     else
-      printf("%ld\n", size);
+      printf("%lu\n", size);
 
     total_size += size;
 }
