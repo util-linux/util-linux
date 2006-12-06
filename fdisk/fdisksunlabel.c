@@ -117,7 +117,7 @@ int
 check_sun_label(void) {
 	unsigned short *ush;
 	int csum;
-	
+
 	if (sunlabel->magic != SUN_LABEL_MAGIC &&
 	    sunlabel->magic != SUN_LABEL_MAGIC_SWAPPED) {
 		sun_label = 0;

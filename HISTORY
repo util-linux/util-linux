@@ -1,3 +1,13 @@
+util-linux 2.11w
+
+* cfdisk, fdisk: allow slightly larger disk sizes
+* fdisk: Makefile: also for m68 (sun3) (Kaj-Michael Lang)
+* fdisk: allow to use the last partial cylinder, change display format
+* fdisk: do not ask partition number in case there is only one choice
+* fdisk: new sunlabel fix
+* login: fix possible local root exploit (Wojciech Purczynski)
+* more: bigendian fix
+
 util-linux 2.11v
 
 * Catalan messages (Antoni Bella Perez)

@@ -200,7 +200,7 @@ int sectors = 0;
 int cylinders = 0;
 int cylinder_size = 0;		/* heads * sectors */
 int total_size = 0;		/* actual_size rounded down */
-long actual_size = 0;		/* set using ioctl */
+unsigned long actual_size = 0;	/* set using ioctl */
 				/* explicitly given user values */
 int user_heads = 0, user_sectors = 0, user_cylinders = 0;
 				/* kernel values; ignore the cylinders */

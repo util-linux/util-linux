@@ -172,6 +172,8 @@ uint	heads,
 	display_in_cyl_units = 1,
 	extended_offset = 0;		/* offset of link pointers */
 
+unsigned long total_number_of_sectors;
+
 #define dos_label (!sun_label && !sgi_label && !aix_label && !osf_label)
 int     sun_label = 0;                  /* looking at sun disklabel */
 int	sgi_label = 0;			/* looking at sgi disklabel */
@@ -807,7 +809,7 @@ get_partition_table_geometry(void) {
 void
 get_geometry(int fd, struct geom *g) {
 	int sec_fac;
-	long longsectors;
+	unsigned long longsectors;
 
 	get_sectorsize(fd);
 	sec_fac = sector_size / 512;
@@ -843,6 +845,8 @@ get_geometry(int fd, struct geom *g) {
 		g->sectors = sectors;
 		g->cylinders = cylinders;
 	}
+
+	total_number_of_sectors = longsectors;
 }
 
 /*
@@ -867,12 +871,13 @@ get_boot(enum action what) {
 		pe->changed = (what == create_empty_dos);
 	}
 
+	if (what == create_empty_sun && check_sun_label())
+		return 0;
+
 	memset(MBRbuffer, 0, 512);
 
 	if (what == create_empty_dos)
 		goto got_dos_table;		/* skip reading disk */
-	if (what == create_empty_sun)
-		goto got_table;
 
 	if ((fd = open(disk_device, type_open)) < 0) {
 	    if ((fd = open(disk_device, O_RDONLY)) < 0) {
@@ -893,8 +898,6 @@ get_boot(enum action what) {
 	get_geometry(fd, NULL);
 
 	update_units();
-
-got_table:
 
 	if (check_sun_label())
 		return 0;
@@ -1136,14 +1139,70 @@ get_partition(int warn, int max) {
 	i = read_int(1, 0, max, 0, _("Partition number")) - 1;
 	pe = &ptes[i];
 
-	if (warn
-	    && ((!sun_label && !sgi_label && !pe->part_table->sys_ind)
-	     || (sun_label &&
-		(!sunlabel->partitions[i].num_sectors ||
-		 !sunlabel->infos[i].id))
-		|| (sgi_label && (!sgi_get_num_sectors(i))))
-	) fprintf(stderr, _("Warning: partition %d has empty type\n"), i+1);
+	if (warn) {
+		if ((!sun_label && !sgi_label && !pe->part_table->sys_ind)
+		    || (sun_label &&
+			(!sunlabel->partitions[i].num_sectors ||
+			 !sunlabel->infos[i].id))
+		    || (sgi_label && (!sgi_get_num_sectors(i)))
+		   )
+			fprintf(stderr,
+				_("Warning: partition %d has empty type\n"),
+				i+1);
+	}
 	return i;
+}
+
+static int
+get_existing_partition(int warn, int max) {
+	int pno = -1;
+	int i;
+
+	for (i = 0; i < max; i++) {
+		struct pte *pe = &ptes[i];
+		struct partition *p = pe->part_table;
+
+		if (p && !is_cleared_partition(p)) {
+			if (pno >= 0)
+				goto not_unique;
+			pno = i;
+		}
+	}
+	if (pno >= 0) {
+		printf(_("Selected partition %d\n"), pno+1);
+		return pno;
+	}
+	printf(_("No partition is defined yet!\n"));
+	return -1;
+
+ not_unique:
+	return get_partition(warn, max);
+}
+
+static int
+get_nonexisting_partition(int warn, int max) {
+	int pno = -1;
+	int i;
+
+	for (i = 0; i < max; i++) {
+		struct pte *pe = &ptes[i];
+		struct partition *p = pe->part_table;
+
+		if (p && is_cleared_partition(p)) {
+			if (pno >= 0)
+				goto not_unique;
+			pno = i;
+		}
+	}
+	if (pno >= 0) {
+		printf(_("Selected partition %d\n"), pno+1);
+		return pno;
+	}
+	printf(_("All primary partitions have been defined already!\n"));
+	return -1;
+
+ not_unique:
+	return get_partition(warn, max);
 }
 
 char * const
@@ -1264,9 +1323,13 @@ delete_partition(int i) {
 static void
 change_sysid(void) {
 	char *temp;
-	int i = get_partition(0, partitions), sys, origsys;
-	struct partition *p = ptes[i].part_table;
+	int i, sys, origsys;
+	struct partition *p;
 
+	i = get_existing_partition(0, partitions);
+	if (i == -1)
+		return;
+	p = ptes[i].part_table;
 	origsys = sys = get_sysid(i);
 
 	/* if changing types T to 0 is allowed, then
@@ -1396,17 +1459,34 @@ static void check_consistency(struct partition *p, int partition) {
 	if (peh != (heads - 1) || pes != sectors) {
 		printf(_("Partition %i does not end on cylinder boundary:\n"),
 			partition + 1);
+#if 0
 		printf(_("     phys=(%d, %d, %d) "), pec, peh, pes);
 		printf(_("should be (%d, %d, %d)\n"),
 		pec, heads - 1, sectors);
+#endif
 	}
 }
 
 static void
 list_disk_geometry(void) {
-	printf(_("\nDisk %s: %d heads, %d sectors, %d cylinders\nUnits = "
-	       "%s of %d * %d bytes\n\n"), disk_device, heads, sectors,
-	       cylinders, str_units(PLURAL), units_per_sector, sector_size);
+	long long bytes = (long long) total_number_of_sectors * 512;
+	long megabytes = bytes/1000000;
+
+	if (megabytes < 10000)
+		printf(_("\nDisk %s: %ld MB, %lld bytes\n"),
+		       disk_device, megabytes, bytes);
+	else
+		printf(_("\nDisk %s: %ld.%ld GB, %lld bytes\n"),
+		       disk_device, megabytes/1000, (megabytes/100)%10, bytes);
+	printf(_("%d heads, %d sectors/track, %d cylinders"),
+	       heads, sectors, cylinders);
+	if (units_per_sector == 1)
+		printf(_(", total %lu sectors"),
+		       total_number_of_sectors / (sector_size/512));
+	printf("\n");
+	printf(_("Units = %s of %d * %d = %d bytes\n\n"),
+	       str_units(PLURAL),
+	       units_per_sector, sector_size, units_per_sector * sector_size);
 }
 
 /*
@@ -1579,7 +1659,7 @@ list_table(int xtra) {
 	printf(_("%*s Boot    Start       End    Blocks   Id  System\n"),
 	       w+1, _("Device"));
 
-	for (i = 0 ; i < partitions; i++) {
+	for (i = 0; i < partitions; i++) {
 		struct pte *pe = &ptes[i];
 
 		p = pe->part_table;
@@ -1777,7 +1857,10 @@ add_partition(int n, int sys) {
 	fill_bounds(first, last);
 	if (n < 4) {
 		start = sector_offset;
-		limit = heads * sectors * cylinders - 1;
+		if (display_in_cyl_units)
+			limit = heads * sectors * cylinders - 1;
+		else
+			limit = total_number_of_sectors - 1;
 		if (extended_offset) {
 			first[ext_index] = extended_offset;
 			last[ext_index] = get_start_sect(q) +
@@ -1945,8 +2028,9 @@ new_partition(void) {
 			 _("l   logical (5 or over)") : _("e   extended"));
 		while (1) {
 			if ((c = tolower(read_char(line))) == 'p') {
-				add_partition(get_partition(0, 4),
-					      LINUX_NATIVE);
+				int i = get_nonexisting_partition(0, 4);
+				if (i >= 0)
+					add_partition(i, LINUX_NATIVE);
 				return;
 			}
 			else if (c == 'l' && extended_offset) {
@@ -1954,8 +2038,9 @@ new_partition(void) {
 				return;
 			}
 			else if (c == 'e' && !extended_offset) {
-				add_partition(get_partition(0, 4),
-					      EXTENDED);
+				int i = get_nonexisting_partition(0, 4);
+				if (i >= 0)
+					add_partition(i, EXTENDED);
 				return;
 			}
 			else
@@ -2480,8 +2565,9 @@ main(int argc, char **argv) {
 				unknown_command(c);
 			break;
 		case 'd':
-			delete_partition(
-				get_partition(1, partitions));
+			j = get_existing_partition(1, partitions);
+			if (j >= 0)
+				delete_partition(j);
 			break;
 		case 'i':
 			if (sgi_label)

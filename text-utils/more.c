@@ -1915,7 +1915,7 @@ int readch () {
 static char *BS = "\b";
 static char *BSB = "\b \b";
 static char *CARAT = "^";
-#define ERACEONECOLUMN \
+#define ERASEONECOLUMN \
     if (docrterase) \
 	errwrite(BSB); \
     else \
@@ -1926,7 +1926,6 @@ void ttyin (unsigned char buf[], register int nmax, char pchar) {
     int c;
     int slash = 0;
     int	maxlen;
-    int cbuf;
 
     sp = buf;
     maxlen = 0;
@@ -1964,14 +1963,14 @@ void ttyin (unsigned char buf[], register int nmax, char pchar) {
 		    }
 
 		    if (mblength == 1) {
-		      ERACEONECOLUMN
+		      ERASEONECOLUMN
 		    }
 		    else {
 			int wc_width;
 			wc_width = wcwidth (wc);
 			wc_width = (wc_width < 1) ? 1 : wc_width;
 			while (wc_width--) {
-			    ERACEONECOLUMN
+			    ERASEONECOLUMN
 			}
 		    }
 
@@ -1984,13 +1983,13 @@ void ttyin (unsigned char buf[], register int nmax, char pchar) {
 #endif
 		  {
 		    --promptlen;
-		    ERACEONECOLUMN
+		    ERASEONECOLUMN
 		    --sp;
 		  }
 
 		if ((*sp < ' ' && *sp != '\n') || *sp == RUBOUT) {
 		    --promptlen;
-		    ERACEONECOLUMN
+		    ERASEONECOLUMN
 		}
 		continue;
 	    }
@@ -2021,7 +2020,7 @@ void ttyin (unsigned char buf[], register int nmax, char pchar) {
 	}
 	if (slash && ((cc_t) c == otty.c_cc[VKILL]
 		   || (cc_t) c == otty.c_cc[VERASE])) {
-	    ERACEONECOLUMN
+	    ERASEONECOLUMN
 	    --sp;
 	}
 	if (c != '\\')
@@ -2032,9 +2031,9 @@ void ttyin (unsigned char buf[], register int nmax, char pchar) {
 	    errwrite(CARAT);
 	    promptlen++;
 	}
-	cbuf = c;
 	if (c != '\n' && c != ESC) {
-	    errwrite1((char *)(&cbuf));
+	    char cbuf = c;
+	    errwrite1(&cbuf);
 	    promptlen++;
 	}
 	else

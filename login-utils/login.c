@@ -183,10 +183,6 @@ static void sigint (int);
 static void motd (void);
 static void dolastlog (int quiet);
 
-#ifndef __linux__
-static char *stypeof (char *ttyid);
-#endif
-
 #ifdef CRYPTOCARD
 #include "cryptocard.h"
 #endif
@@ -280,6 +276,24 @@ opentty(const char * tty) {
 		close(fd);
 }
 
+/* In case login is suid it was possible to use a hardlink as stdin
+   and exploit races for a local root exploit. (Wojciech Purczynski). */
+/* More precisely, the problem is  ttyn := ttyname(0); ...; chown(ttyn);
+   here ttyname() might return "/tmp/x", a hardlink to a pseudotty. */
+/* All of this is a problem only when login is suid, which it isnt. */
+static void
+check_ttyname(char *ttyn) {
+	struct stat statbuf;
+
+	if (lstat(ttyn, &statbuf)
+	    || !S_ISCHR(statbuf.st_mode)
+	    || (statbuf.st_nlink > 1 && strncmp(ttyn, "/dev/", 5))) {
+		syslog(LOG_ERR, _("FATAL: bad tty"));
+		sleep(1);
+		exit(1);
+	}
+}
+
 /* true if the filedescriptor fd is a console tty, very Linux specific */
 static int
 consoletty(int fd) {
@@ -350,8 +364,8 @@ main(int argc, char **argv)
     char *domain, *ttyn;
     char tbuf[MAXPATHLEN + 2], tname[sizeof(_PATH_TTY) + 10];
     char *termenv;
-    char * childArgv[10];
-    char * buff;
+    char *childArgv[10];
+    char *buff;
     int childArgc = 0;
 #ifdef USE_PAM
     int retcode;
@@ -363,9 +377,6 @@ main(int argc, char **argv)
 #endif
 #ifdef CHOWNVCS
     char vcsn[20], vcsan[20];
-#endif
-#ifndef __linux__
-    int ioctlval;
 #endif
 
     pid = getpid();
@@ -451,37 +462,20 @@ main(int argc, char **argv)
 	while(*p)
 	    *p++ = ' ';
     } else
-      ask = 1;
+        ask = 1;
 
-#ifndef __linux__
-    ioctlval = 0;
-    ioctl(0, TIOCLSET, &ioctlval);
-    ioctl(0, TIOCNXCL, 0);
-    fcntl(0, F_SETFL, ioctlval);
-    ioctl(0, TIOCGETP, &sgttyb);
-    sgttyb.sg_erase = CERASE;
-    sgttyb.sg_kill = CKILL;
-    ioctl(0, TIOCSLTC, &ltc);
-    ioctl(0, TIOCSETC, &tc);
-    ioctl(0, TIOCSETP, &sgttyb);
-    
-    /*
-     * Be sure that we're in blocking mode!!!
-     * This is really for HPUX
-     */
-    ioctlval = 0;
-    ioctl(0, FIOSNBIO, &ioctlval);
-#endif /* ! __linux__ */
-    
     for (cnt = getdtablesize(); cnt > 2; cnt--)
       close(cnt);
     
     ttyn = ttyname(0);
+
     if (ttyn == NULL || *ttyn == '\0') {
 	/* no snprintf required - see definition of tname */
 	sprintf(tname, "%s??", _PATH_TTY);
 	ttyn = tname;
     }
+
+    check_ttyname(ttyn);
 
     if (strncmp(ttyn, "/dev/", 5) == 0)
 	tty_name = ttyn+5;
@@ -704,10 +698,6 @@ main(int argc, char **argv)
 #else /* ! USE_PAM */
 
     for (cnt = 0;; ask = 1) {
-#  ifndef __linux__
-	ioctlval = 0;
-	ioctl(0, TIOCSETD, &ioctlval);
-#  endif
 
 	if (ask) {
 	    fflag = 0;
@@ -1284,13 +1274,6 @@ timedout(int sig) {
 #ifndef USE_PAM
 int
 rootterm(char * ttyn)
-#ifndef __linux__
-{
-    struct ttyent *t;
-    
-    return((t = getttynam(ttyn)) && (t->ty_status&TTY_SECURE));
-}
-#else
 { 
     int fd;
     char buf[100],*p;
@@ -1318,7 +1301,6 @@ rootterm(char * ttyn)
   	}
     }
 }
-#endif /* !__linux__ */
 #endif /* !USE_PAM */
 
 jmp_buf motdinterrupt;
@@ -1410,18 +1392,6 @@ badlogin(const char *name) {
 		 failures, tty_name, name);
     }
 }
-
-#undef	UNKNOWN
-#define	UNKNOWN	"su"
-
-#ifndef __linux__
-char *
-stypeof(char *ttyid) {
-    struct ttyent *t;
-
-    return(ttyid && (t = getttynam(ttyid)) ? t->ty_type : UNKNOWN);
-}
-#endif 
 
 /* Should not be called from PAM code... */
 void
