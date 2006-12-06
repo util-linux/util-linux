@@ -1,7 +1,7 @@
-/* Original author unknown, but may be "krishna balasub@cis.ohio-state.edu"
-   Modified Sat Oct  9 10:55:28 1993 for 0.99.13 */
+/* Original author unknown, may be "krishna balasub@cis.ohio-state.edu" */
+/*
 
-/* 
+  Modified Sat Oct  9 10:55:28 1993 for 0.99.13
 
   Patches from Mike Jagdis (jaggy@purplet.demon.co.uk) applied Wed Feb
   8 12:12:21 1995 by faith@cs.unc.edu to print numeric uids if no
@@ -13,7 +13,7 @@
 
   Patched to display the key field -- hy@picksys.com 12/18/96
 
-  1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+  1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
   - added Native Language Support
 
 
@@ -335,10 +335,13 @@ void do_shm (char format)
 				printf ("%-10d%-10.10s", shmid, pw->pw_name);
 			else
 				printf ("%-10d%-10d", shmid, ipcp->uid);
-			printf("  %-20.16s%-20.16s%-20.16s\n",
-			shmseg.shm_atime ? ctime(&shmseg.shm_atime) + 4 : _("Not set"),
-		 	shmseg.shm_dtime ? ctime(&shmseg.shm_dtime) + 4 : _("Not set"),
-			shmseg.shm_ctime ? ctime(&shmseg.shm_ctime) + 4 : _("Not set"));
+			/* ctime uses static buffer: use separate calls */
+			printf("  %-20.16s", shmseg.shm_atime
+			       ? ctime(&shmseg.shm_atime) + 4 : _("Not set\n"));
+			printf("%-20.16s", shmseg.shm_dtime
+			       ? ctime(&shmseg.shm_dtime) + 4 : _("Not set\n"));
+			printf("%-20.16s\n", shmseg.shm_ctime
+			       ? ctime(&shmseg.shm_ctime) + 4 : _("Not set\n"));
 			break;
 		case PID:
 			if (pw)
@@ -445,9 +448,10 @@ void do_sem (char format)
 				printf ("%-8d%-10.10s", semid, pw->pw_name);
 			else
 				printf ("%-8d%-10d", semid, ipcp->uid);
-			printf ("  %-26.24s %-26.24s\n", 
-				semary.sem_otime ? ctime(&semary.sem_otime) : _("Not set"),
-				semary.sem_ctime ? ctime(&semary.sem_ctime) : _("Not set"));
+			printf ("  %-26.24s", semary.sem_otime
+				? ctime(&semary.sem_otime) : _("Not set\n"));
+			printf (" %-26.24s\n", semary.sem_ctime
+				? ctime(&semary.sem_ctime) : _("Not set\n"));
 			break;
 		case PID:
 			break;
@@ -544,10 +548,12 @@ void do_msg (char format)
 				printf ("%-8d%-10.10s", msqid, pw->pw_name);
 			else
 				printf ("%-8d%-10d", msqid, ipcp->uid);
-			printf ("  %-20.16s%-20.16s%-20.16s\n", 
-			msgque.msg_stime ? ctime(&msgque.msg_stime) + 4 : _("Not set"),
-		 	msgque.msg_rtime ? ctime(&msgque.msg_rtime) + 4 : _("Not set"),
-			msgque.msg_ctime ? ctime(&msgque.msg_ctime) + 4 : _("Not set"));
+			printf ("  %-20.16s", msgque.msg_stime
+				? ctime(&msgque.msg_stime) + 4 : _("Not set\n"));
+			printf ("%-20.16s", msgque.msg_rtime
+				? ctime(&msgque.msg_rtime) + 4 : _("Not set\n"));
+			printf ("%-20.16s\n", msgque.msg_ctime
+				? ctime(&msgque.msg_ctime) + 4 : _("Not set\n"));
 			break;
 		case PID:
  			if (pw)
@@ -631,10 +637,12 @@ void print_msg (int msqid)
 		 */
 		(long) buf.msg_cbytes, (long) buf.msg_qbytes,
 		(long) buf.msg_qnum, buf.msg_lspid, buf.msg_lrpid);
-	printf (_("send_time=%srcv_time=%schange_time=%s"), 
-		buf.msg_rtime? ctime (&buf.msg_rtime) : _("Not Set\n"),
-		buf.msg_stime? ctime (&buf.msg_stime) : _("Not Set\n"),
-		buf.msg_ctime? ctime (&buf.msg_ctime) : _("Not Set\n"));
+	printf (_("send_time=%s"),
+		buf.msg_stime? ctime (&buf.msg_stime) : _("Not set\n"));
+	printf (_("rcv_time=%s"),
+		buf.msg_rtime? ctime (&buf.msg_rtime) : _("Not set\n"));
+	printf (_("change_time=%s"),
+		buf.msg_ctime? ctime (&buf.msg_ctime) : _("Not set\n"));
 	printf ("\n");
 	return;
 }

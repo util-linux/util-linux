@@ -76,9 +76,11 @@ For NFS mounts one will have <host>:<dir>, e.g., `knuth.aeb.nl:/'.
 For procfs, use `proc'.
 .LP
 Instead of giving the device explicitly, one may indicate
-the (ext2) filesystem that is to be mounted by its UUID or
+the (ext2 or XFS) filesystem that is to be mounted by its UUID or
 volume label (cf.
-.BR e2label (8)),
+.BR e2label (8)
+or
+.BR xfs_admin (8)),
 writing LABEL=<label> or UUID=<uuid>,
 e.g., `LABEL=Boot' or `UUID=3e6be9de\%-8139\%-11d1\%-9106\%-a43f08d823a6'.
 This will make the system more robust: adding or removing a SCSI disk
@@ -111,6 +113,10 @@ features.
 .TP
 .I xiafs
 a local filesystem with longer filenames, larger inodes, and lots of other
+features.
+.TP
+.I xfs
+a local filesystem with journaling, scalability and lots of other
 features.
 .TP
 .I msdos

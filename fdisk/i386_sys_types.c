@@ -76,12 +76,15 @@ struct systypes i386_sys_types[] = {
 	{0xda, N_("Non-FS data")},
 	{0xdb, N_("CP/M / CTOS / ...")},/* CP/M or Concurrent CP/M or
 					   Concurrent DOS or CTOS */
+	{0xde, N_("Dell Utility")},	/* Dell PowerEdge Server utilities */
 	{0xe1, N_("DOS access")},	/* DOS access or SpeedStor 12-bit FAT
 					   extended partition */
 	{0xe3, N_("DOS R/O")},		/* DOS R/O or SpeedStor */
 	{0xe4, N_("SpeedStor")},	/* SpeedStor 16-bit FAT extended
 					   partition < 1024 cyl. */
 	{0xeb, N_("BeOS fs")},
+	{0xee, N_("EFI GPT")},		/* Intel EFI GUID Partition Table */
+	{0xef, N_("EFI (FAT-12/16/32)")},/* Intel EFI System Partition */
 	{0xf1, N_("SpeedStor")},
 	{0xf4, N_("SpeedStor")},	/* SpeedStor large partition */
 	{0xf2, N_("DOS secondary")},	/* DOS 3.3+ secondary */

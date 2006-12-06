@@ -17,7 +17,7 @@
  *  detect *fat and then assume vfat, so perhaps /etc/filesystems isnt
  *  so useful anymore.]
  *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  * Fri Dec  1 23:31:00 2000: Sepp Wijnands <mrrazz@garbage-coderz.net>
@@ -175,6 +175,9 @@ fstype(const char *device) {
 	|| read(fd, (char *) &sb, sizeof(sb)) != sizeof(sb))
 	 goto io_error;
 
+    /* ext2 has magic in little-endian on disk, so "swapped" is
+       superfluous; however, there have existed strange byteswapped
+       PPC ext2 systems */
     if (ext2magic(sb.e2s) == EXT2_SUPER_MAGIC
 	|| ext2magic(sb.e2s) == EXT2_PRE_02B_MAGIC
 	|| ext2magic(sb.e2s) == swapped(EXT2_SUPER_MAGIC))
@@ -365,39 +368,55 @@ is_in_procfs(const char *type) {
 int
 procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
 	   char **type) {
-   FILE *procfs;
-   char *fsname;
-   int ret = 1;
-   int errsv = 0;
+	char *files[2] = { ETC_FILESYSTEMS, PROC_FILESYSTEMS };
+	FILE *procfs;
+	char *fsname;
+	int ret = 1;
+	int errsv = 0;
+	int i;
 
-   *type = NULL;
+	*type = NULL;
 
-   procfs = fopen(ETC_FILESYSTEMS, "r");
-   if (!procfs) {
-	procfs = fopen(PROC_FILESYSTEMS, "r");
-	if (!procfs)
-             return 1;
-   }
-   while ((fsname = procfsnext(procfs)) != NULL) {
-      if (tested (fsname))
-	 continue;
-      args->type = fsname;
-      if (verbose) {
-	 printf(_("Trying %s\n"), fsname);
-	 fflush(stdout);
-      }
-      if ((*mount_fn) (args) == 0) {
-	 *type = fsname;
-	 ret = 0;
-	 break;
-      } else if (errno != EINVAL && is_in_procfs(fsname) == 1) {
-         *type = "guess";
-	 ret = -1;
-	 errsv = errno;
-	 break;
-      }
-   }
-   fclose(procfs);
-   errno = errsv;
-   return ret;
+	/* Use PROC_FILESYSTEMS only when ETC_FILESYSTEMS does not exist.
+	   In some cases trying a filesystem that the kernel knows about
+	   on the wrong data will crash the kernel; in such cases
+	   ETC_FILESYSTEMS can be used to list the filesystems that we
+	   are allowed to try, and in the order they should be tried.
+	   End ETC_FILESYSTEMS with a line containing a single '*' only,
+	   if PROC_FILESYSTEMS should be tried afterwards. */
+
+	for (i=0; i<2; i++) {
+		procfs = fopen(files[i], "r");
+		if (!procfs)
+			continue;
+		while ((fsname = procfsnext(procfs)) != NULL) {
+			if (!strcmp(fsname, "*")) {
+				fclose(procfs);
+				goto nexti;
+			}
+			if (tested (fsname))
+				continue;
+			args->type = fsname;
+			if (verbose) {
+				printf(_("Trying %s\n"), fsname);
+				fflush(stdout);
+			}
+			if ((*mount_fn) (args) == 0) {
+				*type = fsname;
+				ret = 0;
+				break;
+			} else if (errno != EINVAL &&
+				   is_in_procfs(fsname) == 1) {
+				*type = "guess";
+				ret = -1;
+				errsv = errno;
+				break;
+			}
+		}
+		fclose(procfs);
+		errno = errsv;
+		return ret;
+	nexti:;
+	}
+	return 1;
 }

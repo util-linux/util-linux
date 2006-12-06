@@ -6,7 +6,7 @@
  * Modifications by Rick Sladkey (jrs@world.std.com)
  * Larger buffersize 3 June 1998 by Nicolai Langfeldt, based on a patch
  * by Peeter Joot.  This was also suggested by John Hudson.
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  */

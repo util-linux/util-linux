@@ -21,7 +21,7 @@ BIN=            kill
 USRBIN=		cal chkdupexe ddate logger look mcookie \
 		namei rename script whereis write
 
-MAYBE=		reset setterm tsort
+MAYBE=		reset setterm
 
 ifeq "$(HAVE_RESET)" "no"
 USRBIN:=$(USRBIN) reset
@@ -31,11 +31,6 @@ endif
 ifeq "$(HAVE_NCURSES)" "yes"
 USRBIN:=$(USRBIN) setterm
 MAN1:=$(MAN1) setterm.1
-endif
-
-ifeq "$(HAVE_TSORT)" "no"
-USRBIN:=$(USRBIN) tsort
-MAN1:=$(MAN1) tsort.1
 endif
 
 # For script only

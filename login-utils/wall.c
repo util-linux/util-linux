@@ -37,7 +37,7 @@
  * This program is not related to David Wall, whose Stanford Ph.D. thesis
  * is entitled "Mechanisms for Broadcast and Selective Broadcast".
  *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  */
@@ -53,10 +53,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 #include <unistd.h>
 #include <utmp.h>
 
 #include "nls.h"
+#include "xstrncpy.h"
 #include "ttymsg.h"
 #include "pathnames.h"
 #include "carefulputc.h"
@@ -115,14 +117,14 @@ usage:
 	iov.iov_len = mbufsize;
 	while((utmpptr = getutent())) {
 		if (!utmpptr->ut_name[0] ||
-		    !strncmp(utmpptr->ut_name, IGNOREUSER, sizeof(utmpptr->ut_name)))
+		    !strncmp(utmpptr->ut_name, IGNOREUSER,
+			     sizeof(utmpptr->ut_name)))
 			continue;
 #ifdef USER_PROCESS
 		if (utmpptr->ut_type != USER_PROCESS)
 			continue;
 #endif
-		strncpy(line, utmpptr->ut_line, sizeof(utmpptr->ut_line));
-		line[sizeof(utmpptr->ut_line)-1] = '\0';
+		xstrncpy(line, utmpptr->ut_line, sizeof(utmpptr->ut_line));
 		if ((p = ttymsg(&iov, 1, line, 60*5)) != NULL)
 			(void)fprintf(stderr, "%s: %s\n", progname, p);
 	}

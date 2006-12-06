@@ -26,7 +26,7 @@
    59 Bcy, 3161:       PRAISE_BOB and KILL_BOB options split, other minor
                        changes.
 
-   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
    - added Native Language Support
 
    2000-03-17 Burt Holzman <bnh@iname.com>

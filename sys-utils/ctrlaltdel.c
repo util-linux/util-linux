@@ -2,7 +2,7 @@
  * ctrlaltdel.c - Set the function of the Ctrl-Alt-Del combination
  * Created 4-Jul-92 by Peter Orbaek <poe@daimi.aau.dk>
  * ftp://ftp.daimi.aau.dk/pub/linux/poe/
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  */

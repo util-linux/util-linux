@@ -16,7 +16,7 @@
  *
  * Converted to terminfo by Kars de Jong (jongk@cs.utwente.nl)
  *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  *
@@ -859,17 +859,17 @@ perform_sequence(int vcterm) {
 	/* -snow [on|off].  Vc only. */
 	if (opt_snow && vcterm) {
 		if (opt_sn_on)
-			printf("%s%s%s", DCS, _("snow.on"), ST);
+			printf("%s%s%s", DCS, "snow.on", ST);
 		else
-			printf("%s%s%s", DCS, _("snow.off"), ST);
+			printf("%s%s%s", DCS, "snow.off", ST);
 	}
 
 	/* -softscroll [on|off].  Vc only. */
 	if (opt_softscroll && vcterm) {
 		if (opt_so_on)
-			printf("%s%s%s", DCS, _("softscroll.on"), ST);
+			printf("%s%s%s", DCS, "softscroll.on", ST);
 		else
-			printf("%s%s%s", DCS, _("softscroll.off"), ST);
+			printf("%s%s%s", DCS, "softscroll.off", ST);
 	}
 #endif
 
@@ -1165,6 +1165,7 @@ try_ioctl:
 	}
 	rows = screenbuf[0];
 	cols = screenbuf[1];
+
 	for (i=0; i<rows; i++) {
 	    strncpy(buf, screenbuf+2+(cols*i), cols);
 	    buf[cols] = '\0';

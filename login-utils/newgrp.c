@@ -3,7 +3,7 @@
 /* Vesa Roukonen added code for asking password */
 /* Currently maintained at ftp://ftp.daimi.aau.dk/pub/linux/poe/ */
 
-/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  */
 

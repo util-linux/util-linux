@@ -5,7 +5,7 @@
 
    -f option added by Eric Rasmussen <ear@usfirst.org> - 12/28/95
    
-   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
    - added Native Language Support
 
    1999-05-05 Thorsten Kranzkowski <dl8bcu@gmx.net>
@@ -564,7 +564,6 @@ update_utmp(line)
      * entry in the utmp file.
      */
 
-#ifdef __linux__
     utmpname(_PATH_UTMP);
     setutent();
     while ((utp = getutent()) 
@@ -578,7 +577,6 @@ update_utmp(line)
 	memset(&ut, 0, sizeof(ut));
 	strncpy(ut.ut_id, line + 3, sizeof(ut.ut_id));
     }
-    /*endutent();*/
 	
     strncpy(ut.ut_user, "LOGIN", sizeof(ut.ut_user));
     strncpy(ut.ut_line, line, sizeof(ut.ut_line));
@@ -593,7 +591,7 @@ update_utmp(line)
     endutent();
 
     {
-#if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 1)
+#ifdef HAVE_updwtmp
 	updwtmp(_PATH_WTMP, &ut);
 #else
 	int ut_fd;
@@ -610,31 +608,6 @@ update_utmp(line)
 	}
 #endif
     }
-#else /* not __linux__ */
-    { int     ut_fd;
-      if ((ut_fd = open(UTMP_FILE, 2)) < 0) {
-	  error(_("%s: open for update: %m"), UTMP_FILE);
-      } else {
-	  long    ut_size = sizeof(ut);       /* avoid nonsense */
-
-	  while (read(ut_fd, (char *) &ut, sizeof(ut)) == sizeof(ut)) {
-	      if (ut.ut_type == INIT_PROCESS && ut.ut_pid == mypid) {
-		  ut.ut_type = LOGIN_PROCESS;
-		  ut.ut_time = time((long *) 0);
-		  (void) strncpy(ut.ut_name, "LOGIN", sizeof(ut.ut_name));
-		  (void) strncpy(ut.ut_line, line, sizeof(ut.ut_line));
-		  if (fakehost)
-		      (void) strncpy(ut.ut_host, fakehost, sizeof(ut.ut_host));
-		  (void) lseek(ut_fd, -ut_size, 1);
-		  (void) write(ut_fd, (char *) &ut, sizeof(ut));
-		  (void) close(ut_fd);
-		  return;
-	      }
-	  }
-	  error(_("%s: no utmp entry"), line);
-      }
-    }
-#endif /* __linux__ */
 }
 
 #endif

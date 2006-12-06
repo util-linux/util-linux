@@ -52,7 +52,7 @@
 #include <arpa/inet.h>
 #endif
 
-#if defined(MNT_FORCE) && !defined(__sparc__) && !defined(__arm__)
+#if defined(MNT_FORCE) && !defined(__sparc__) && !defined(__arm__) && !defined(__mips__)
 /* Interesting ... it seems libc knows about MNT_FORCE and presumably
    about umount2 as well -- need not do anything */
 #else /* MNT_FORCE */
@@ -378,7 +378,7 @@ umount_one_bw (const char *file, struct mntentchn *mc) {
 }
 
 /* Unmount all filesystems of type VFSTYPES found in mtab.  Since we are
-   concurrently updating mtab after every succesful umount, we have to
+   concurrently updating mtab after every successful umount, we have to
    slurp in the entire file before we start.  This isn't too bad, because
    in any case it's important to umount mtab entries in reverse order
    to mount, e.g. /usr/spool before /usr.  */

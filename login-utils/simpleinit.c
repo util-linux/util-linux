@@ -1,8 +1,14 @@
 /* simpleinit.c - poe@daimi.aau.dk */
-/* Version 1.21 */
+/* Version 2.0.1 */
 
-/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
+ * 2001-01-25 Richard Gooch <rgooch@atnf.csiro.au>
+ * - fixed bug with failed services so they may be later "reclaimed"
+ * 2001-02-02 Richard Gooch <rgooch@atnf.csiro.au>
+ * - fixed race when reading from pipe and reaping children
+ * 2001-02-18 sam@quux.dropbear.id.au
+ * - fixed bug in <get_path>: multiple INIT_PATH components did not work
  */
 
 #include <sys/types.h>
@@ -31,6 +37,7 @@
 #include "my_crypt.h"
 #include "pathnames.h"
 #include "linux_reboot.h"
+#include "xstrncpy.h"
 #include "nls.h"
 #include "simpleinit.h"
 
@@ -77,7 +84,8 @@ static sigjmp_buf jmp_env;
 
 static void do_single (void);
 static int do_rc_tty (const char *path);
-static int process_path ( const char *path, int (*func) (const char *path) );
+static int process_path (const char *path, int (*func) (const char *path),
+			 int ignore_dangling_symlink);
 static int preload_file (const char *path);
 static int run_file (const char *path);
 static void spawn (int i), read_inittab (void);
@@ -91,7 +99,7 @@ static void sigterm_handler (int sig);
 static void set_tz (void);
 #endif
 static void write_wtmp (void);
-static pid_t mywaitpid (pid_t pid, int *status);
+static pid_t mywait (int *status);
 static int run_command (const char *file, const char *name, pid_t pid);
 
 
@@ -221,7 +229,7 @@ int main(int argc, char *argv[])
 	}
 
 	for ever {
-		pid = mywaitpid (-1, &vec);
+		pid = mywait (&vec);
 		if (pid < 1) continue;
 
 		/* clear utmp entry, and append to wtmp if possible */
@@ -322,7 +330,7 @@ static int do_rc_tty (const char *path)
     sigset_t ss;
 
     if (caught_sigint) return 0;
-    process_path (path, preload_file);
+    process_path (path, preload_file, 0);
     /*  Launch off a subprocess to start a new session (required for frobbing
 	the TTY) and capture control-C  */
     switch ( child = fork () )
@@ -344,10 +352,10 @@ static int do_rc_tty (const char *path)
 	break;
     }
     /*  Parent  */
-    process_path (path, run_file);
+    process_path (path, run_file, 0);
     while (1)
     {
-	if ( ( pid = mywaitpid (-1, &status) ) == child )
+	if ( ( pid = mywait (&status) ) == child )
 	    return (WTERMSIG (status) == SIGINT) ? 0 : 1;
 	if (pid < 0) break;
     }
@@ -356,16 +364,26 @@ static int do_rc_tty (const char *path)
     return 0;
 }   /*  End Function do_rc_tty  */
 
-static int process_path ( const char *path, int (*func) (const char *path) )
+static int process_path (const char *path, int (*func) (const char *path),
+			 int ignore_dangling_symlink)
 {
     struct stat statbuf;
     DIR *dp;
     struct dirent *de;
 
-    if (stat (path, &statbuf) != 0)
+    if (lstat (path, &statbuf) != 0)
     {
-	err (_ ("stat of path failed\n") );
+	err (_ ("lstat of path failed\n") );
 	return 1;
+    }
+    if ( S_ISLNK (statbuf.st_mode) )
+    {
+	if (stat (path, &statbuf) != 0)
+	{
+	    if ( (errno == ENOENT) && ignore_dangling_symlink ) return 0;
+	    err (_ ("stat of path failed\n") );
+	    return 1;
+	}
     }
     if ( !( statbuf.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH) ) ) return 0;
     if ( !S_ISDIR (statbuf.st_mode) ) return (*func) (path);
@@ -382,7 +400,7 @@ static int process_path ( const char *path, int (*func) (const char *path) )
 	if (de->d_name[0] == '.') continue;
 	retval = sprintf (newpath, "%s/%s", path, de->d_name);
 	if (newpath[retval - 1] == '~') continue;  /*  Common mistake  */
-	if ( ( retval = process_path (newpath, func) ) ) return retval;
+	if ( ( retval = process_path (newpath, func, 1) ) ) return retval;
     }
     closedir (dp);
     return 0;
@@ -545,11 +563,8 @@ static void read_inittab (void)
 		(void) strcpy(inittab[i].line, buf);
 
 		(void) strtok(inittab[i].line, ":");
-		(void) strncpy(inittab[i].tty, inittab[i].line, 10);
-		inittab[i].tty[9] = 0;
-		(void) strncpy(inittab[i].termcap,
-				strtok((char *)0, ":"), 30);
-		inittab[i].termcap[29] = 0;
+		xstrncpy(inittab[i].tty, inittab[i].line, 10);
+		xstrncpy(inittab[i].termcap, strtok((char *)0, ":"), 30);
 
 		getty = strtok((char *)0, ":");
 		(void) strtok(getty, " \t\n");
@@ -566,10 +581,8 @@ static void read_inittab (void)
 			err(_("no TERM or cannot stat tty\n"));
 		} else {
 			/* is it a console tty? */
-			if(major(stb.st_rdev) == 4 && minor(stb.st_rdev) < 64) {
-				strncpy(inittab[i].termcap, termenv, 30);
-				inittab[i].termcap[29] = 0;
-			}
+			if(major(stb.st_rdev) == 4 && minor(stb.st_rdev) < 64)
+				xstrncpy(inittab[i].termcap, termenv, 30);
 		}
 #endif
 
@@ -752,40 +765,40 @@ static void show_scripts (FILE *fp, const struct script_struct *script,
 static const char *get_path (const char *file);
 
 
-static pid_t mywaitpid (pid_t pid, int *status)
+static pid_t mywait (int *status)
 /*  [RETURNS] The pid for a process to be reaped, 0 if no process is to be
     reaped, and less than 0 if the boot scripts appear to have finished.
 */
 {
-    int ival;
-    sigset_t ss_new, ss_old;
+    pid_t pid;
+    sigset_t ss;
     long buffer[COMMAND_SIZE / sizeof (long)];
     struct command_struct *command = (struct command_struct *) buffer;
 
-    if (initctl_fd < 0) return waitpid (pid, status, 0);
-    if (status == NULL) status = &ival;
-    if ( ( pid = waitpid (pid, status, WNOHANG) ) > 0 )
+    if (initctl_fd < 0) return wait (status);
+    /*  Some magic to avoid races which can result in lost signals   */
+    command->command = -1;
+    if ( sigsetjmp (jmp_env, 1) )
+    {   /*  Jump from signal handler  */
+	do_longjmp = 0;
+	process_command (command);
+	return 0;
+    }
+    sigemptyset (&ss);  /*  Block SIGCHLD so wait status cannot be lost  */
+    sigaddset (&ss, SIGCHLD);
+    sigprocmask (SIG_BLOCK, &ss, NULL);
+    if ( ( pid = waitpid (-1, status, WNOHANG) ) > 0 )
     {
+	sigprocmask (SIG_UNBLOCK, &ss, NULL);
 	return process_pidstat (pid, *status);
     }
-    /*  Some magic to avoid races  */
-    command->command = -1;
-    sigemptyset (&ss_new);
-    sigaddset (&ss_new, SIGCHLD);
-    sigprocmask (SIG_BLOCK, &ss_new, &ss_old);
-    ival = sigsetjmp (jmp_env, 0);
-    sigprocmask (SIG_SETMASK, &ss_old, NULL);
-    if (ival == 0) do_longjmp = 1;
-    else
-    {
-	do_longjmp = 0;
-	if (command->command < 0) return 0;
-    }
-    if (command->command < 0) read (initctl_fd, buffer, COMMAND_SIZE);
+    do_longjmp = 1;  /*  After this, SIGCHLD will cause a jump backwards  */
+    sigprocmask (SIG_UNBLOCK, &ss, NULL);
+    read (initctl_fd, buffer, COMMAND_SIZE);
     do_longjmp = 0;
     process_command (command);
     return 0;
-}   /*  End Function mywaitpid  */
+}   /*  End Function mywait  */
 
 static pid_t process_pidstat (pid_t pid, int status)
 /*  [RETURNS] The pid for a process to be reaped, 0 if no process is to be
@@ -978,7 +991,7 @@ static int run_command (const char *file, const char *name, pid_t pid)
     script = find_script_byname (name, &starting_list, &service);
     if (script == NULL)
 	service = find_service_in_list (name, unavailable_services);
-    if (script == NULL)
+    if (service == NULL)
     {
 	int i;
 	char txt[1024];
@@ -988,24 +1001,13 @@ static int run_command (const char *file, const char *name, pid_t pid)
 	    if (needer != NULL) free (needer);
 	    return SIG_FAILED;
 	}
+	service = calloc (1, strlen (name) + sizeof *service);
 	if (service == NULL)
 	{
-	    service = calloc (1, strlen (name) + sizeof *service);
-	    if (service == NULL)
-	    {
-		free (script);
-		return SIG_FAILED;
-	    }
-	    strcpy (service->name, name);
+	    free (script);
+	    return SIG_FAILED;
 	}
-	else  /*  Unhook service from unavailable list  */
-	{
-	    if (service->prev == NULL) unavailable_services = service->next;
-	    else service->prev->next = service->next;
-	    if (service->next != NULL) service->next->prev = service->prev;
-	    service->prev = NULL;
-	    service->next = NULL;
-	}
+	strcpy (service->name, name);
 	switch ( script->pid = fork () )
 	{
 	  case 0:   /*  Child   */
@@ -1063,6 +1065,7 @@ static struct script_struct *find_script_byname (const char *name,
 	    return (script);
 	}
     }
+    if (service != NULL) *service = NULL;
     return NULL;
 }   /*  End Function find_script_byname  */
 
@@ -1121,6 +1124,7 @@ static void handle_nonworking (struct script_struct *script)
 	next = service->next;
 	if (provider == NULL)
 	{
+	    service->prev = NULL;
 	    service->next = unavailable_services;
 	    if (unavailable_services != NULL)
 		unavailable_services->prev = service;
@@ -1180,7 +1184,7 @@ static const char *get_path (const char *file)
 	    p2 = p1 + strlen (p1);
 	strncpy (path, p1, p2 - p1);
 	path[p2 - p1] = '/';
-	strcat (path + (p2 - p1) + 1, file);
+	strcpy (path + (p2 - p1) + 1, file);
 	if (*p2 == ':') ++p2;
 	if (access (path, X_OK) == 0) return path;
     }

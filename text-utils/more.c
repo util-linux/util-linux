@@ -26,7 +26,7 @@
 **	  on linux/axp.
 **	modified by Kars de Jong <jongk@cs.utwente.nl> to use terminfo instead
 **	  of termcap.
-	1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+	1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
 	- added Native Language Support
 	1999-03-19 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
 	- more nls translatable strings
@@ -55,6 +55,7 @@
 #include <sys/wait.h>
 #include <a.out.h>
 #include <locale.h>
+#include "xstrncpy.h"
 #include "nls.h"
 
 #define _REGEX_RE_COMP
@@ -1786,14 +1787,12 @@ retry:
 	    if ((padstr = my_tgetstr("pc","pad")) != NULL)
 		PC = *padstr;
 	    Home = my_tgetstr("ho","home");
-	    if (Home == 0 || *Home == '\0')
-	    {
+	    if (Home == 0 || *Home == '\0') {
 		if ((cursorm = my_tgetstr("cm","cup")) != NULL) {
 		    const char *t = (const char *)my_tgoto(cursorm, 0, 0);
-		    strncpy(cursorhome, t, sizeof(cursorhome));
-		    cursorhome[sizeof(cursorhome)-1] = 0;
+		    xstrncpy(cursorhome, t, sizeof(cursorhome));
 		    Home = cursorhome;
-	       }
+		}
 	    }
 	    EodClr = my_tgetstr("cd","ed");
 	    if ((chBS = my_tgetstr("le","cub1")) == NULL)

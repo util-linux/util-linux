@@ -1,7 +1,7 @@
 /*
  * mount_by_label.c - aeb
  *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  * 2000-01-20 James Antill <james@and.org>
  * - Added error message if /proc/partitions cannot be opened

@@ -15,6 +15,8 @@
 #define LINUX_SWAP      0x82
 #define LINUX_NATIVE    0x83
 #define LINUX_EXTENDED  0x85
+#define LINUX_LVM       0x8e
+#define LINUX_RAID      0xfd
 
 #define IS_EXTENDED(i) \
 	((i) == EXTENDED || (i) == WIN98_EXTENDED || (i) == LINUX_EXTENDED)
@@ -67,7 +69,6 @@ extern int fd,
 extern uint display_in_cyl_units,
             units_per_sector;
 extern void change_units(void);
-extern struct partition *part_table[];
 extern void fatal(enum failure why);
 extern void get_geometry(int fd, struct geom *);
 extern int get_boot(enum action what);

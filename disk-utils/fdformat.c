@@ -1,6 +1,6 @@
 /* fdformat.c  -  Low-level formats a floppy disk - Werner Almesberger */
 
-/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  * 1999-03-20 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
  & - more i18n/nls translatable strings marked

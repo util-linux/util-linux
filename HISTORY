@@ -1,3 +1,39 @@
+util-linux 2.11b:
+
+* Danish messages (Claus Hindsgaul)
+* umount: mips does not support umount2 (Christoph Martin)
+* fdisk: tiny fix
+* mount.8: adfs options documented, xfs corrected
+
+util-linux 2.11a:
+
+* tsort: deleted - it is part of GNU textutils 2.0
+* mount: fix rootdev() (Richard Kettlewell)
+* mount: fix gid of mtab file
+* mount: try /proc/filesystems after /etc/filesystems if the latter ends in "*"
+* fdisk: added a few system types
+
+util-linux 2.11:
+
+* Jump to 2.11 to note that libc-4.5.26 is no longer supported,
+  and we require libc-4.6.27 (since now snprintf is used).
+  Also, kbdrate has now been removed. Find it in kbd-1.05.
+  Added -D_FILE_OFFSET_BITS=64 to CFLAGS.
+* Danish messages (Claus Hindsgaul)
+* fdisk: avoid loop in case of extended without logical
+* ipcs: corrected interchanged report on msg_rtime/msg_stime (Arun Kumar U)
+* kill: updated manpage
+* last: very much faster with mmap (Marek Zelem)
+* login: Applied PAM patch by David MacKenzie <djm@web.us.uu.net>
+* login: do a setsid in the child (Erik Troan)
+* mount: make "mount 192.168.1.8:/ /a -o bg" work again (Bjoern Voigt)
+* mount: added constant MS_MOVE
+* readprofile: added -M option, updated manpage (Andrew Morton)
+* setsid: fork when it would fail otherwise (John Fremlin)
+* simpleinit: updated (Richard Gooch et al.)
+* vipw: also offer to edit shadow file (Erik Troan)
+* xfs docs (Nathan Scott)
+
 util-linux 2.10s:
 
 * Danish messages (Claus Hindsgaul)
@@ -275,7 +311,7 @@ util-linux 2.9n:
 
 util-linux 2.9m:
 
-* Added national language support (misiek@misiek.eu.org)
+* Added national language support (misiek@pld.ORG.PL)
 * minor improvements in mount, fdisk, cfdisk, agetty, more
 
 util-linux 2.9l:

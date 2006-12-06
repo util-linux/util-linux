@@ -18,8 +18,12 @@
  * WARRANTIES OF MERCHANTIBILITY AND FITNESS FOR A PARTICULAR PURPOSE.
  */
 
- /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
   * - added Native Language Support
+  */
+
+ /* 2001-02-14 Marek Zelem <marek@fornax.sk>
+  * - using mmap() on Linux - great speed improvement
   */
 
 /*
@@ -29,6 +33,7 @@
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <sys/types.h>
+#include <sys/mman.h>
 #include <signal.h>
 #include <string.h>
 #include <time.h>
@@ -197,8 +202,15 @@ wtmp(void) {
 	long	delta;				/* time difference */
 	char *crmsg = NULL;
 	char *ct = NULL;
+#if USE_GETUTENT
 	struct utmp **utmplist = NULL;
 	int listlen = 0;
+#else
+	int fd;
+	struct utmp *utl;
+	struct stat st;
+	int utl_len;
+#endif
 	int listnr = 0;
 	int i;
 	
@@ -208,6 +220,7 @@ wtmp(void) {
 	(void)signal(SIGINT, onintr);
 	(void)signal(SIGQUIT, onintr);
 
+#if USE_GETUTENT
 	setutent();
 	while((bp = getutent())) {
 		if(listnr >= listlen) {
@@ -220,12 +233,31 @@ wtmp(void) {
 		memcpy(utmplist[listnr++], bp, sizeof(*bp));
 	}
 	endutent();
+#else
+	if ((fd = open(file,O_RDONLY)) < 0)
+		exit(1);
+	fstat(fd, &st);
+	utl_len = st.st_size;
+	utl = mmap(NULL, utl_len, PROT_READ|PROT_WRITE,
+		   MAP_PRIVATE|MAP_FILE, fd, 0);
+	if (utl == NULL)
+		exit(1);
+	listnr = utl_len/sizeof(struct utmp);
+#endif
 
 	if(listnr) 
+#if USE_GETUTENT
 		ct = ctime(&utmplist[0]->ut_time);
+#else
+		ct = ctime(&utl[0].ut_time);
+#endif
 
 	for(i = listnr - 1; i >= 0; i--) {
+#if USE_GETUTENT
 		bp = utmplist[i];
+#else
+		bp = utl+i;
+#endif
 		/*
 		 * if the terminal line is '~', the machine stopped.
 		 * see utmp(5) for more info.
@@ -245,7 +277,8 @@ wtmp(void) {
 		    }
 
 		    currentout = -bp->ut_time;
-		    crmsg = strncmp(bp->ut_name, "shutdown", NMAX) ? "crash" : "down ";
+		    crmsg = (strncmp(bp->ut_name, "shutdown", NMAX)
+			    ? "crash" : "down ");
 		    if (!bp->ut_name[0])
 			(void)strcpy(bp->ut_name, "reboot");
 		    if (want(bp, NO)) {
@@ -295,9 +328,15 @@ wtmp(void) {
 		}
 		T->logout = bp->ut_time;
 		utmpbuf.ut_time = bp->ut_time;
+#if USE_GETUTENT
 		free(bp);
 	}
 	if(utmplist) free(utmplist);
+#else
+	}
+	munmap(utl,utl_len);
+	close(fd);
+#endif
 	if(ct) printf(_("\nwtmp begins %s"), ct); 	/* ct already ends in \n */
 }
 

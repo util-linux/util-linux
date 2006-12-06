@@ -241,7 +241,7 @@ main (int argc, char **argv )
 
     /* If we are in MkLinux do not even bother trying to set the clock */
     if(!access("/proc/osfmach3/version", R_OK))
-    {           // We're running MkLinux
+    {           /* We're running MkLinux */
      if ( readit | writeit | setit | adjustit )
 	printf("You must change the clock setting in MacOS.\n");
      exit(0);

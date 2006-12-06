@@ -96,17 +96,17 @@ shutdown.o simpleinit.o: $(LIB)/linux_reboot.h
 wall.o: ttymsg.h $(LIB)/carefulputc.h
 
 agetty: agetty.o
-chfn: chfn.o islocal.o setpwnam.o $(LIB)/env.o
+chfn: chfn.o islocal.o setpwnam.o $(LIB)/env.o $(LIB)/xstrncpy.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
 chsh: chsh.o islocal.o setpwnam.o $(LIB)/env.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
 last: last.o
 
 ifeq "$(HAVE_PAM)" "yes"
-login: login.o $(LIB)/setproctitle.o
+login: login.o $(LIB)/setproctitle.o $(LIB)/xstrncpy.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
 else
-login: login.o $(LIB)/setproctitle.o checktty.o 
+login: login.o $(LIB)/xstrncpy.o $(LIB)/setproctitle.o checktty.o 
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) 
 endif
 
@@ -115,20 +115,20 @@ mesg: mesg.o $(ERR_O)
 newgrp: newgrp.o 
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT) $(PAM)
 
-shutdown: shutdown.o $(LIB)/my_reboot.o
+shutdown: shutdown.o $(LIB)/my_reboot.o $(LIB)/xstrncpy.o
 
-simpleinit: simpleinit.o $(LIB)/my_reboot.o
+simpleinit: simpleinit.o $(LIB)/my_reboot.o $(LIB)/xstrncpy.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT)
 
 initctl: initctl.o
 	$(CC) $(LDFLAGS) -o $@ $^
 
-vipw: vipw.o
+vipw: vipw.o $(LIB)/xstrncpy.o
 
 newgrp.o: $(LIB)/pathnames.h
 	$(CC) -c $(CFLAGS) $(PAMFL) newgrp.c 
 
-wall: wall.o ttymsg.o $(LIB)/carefulputc.o
+wall: wall.o ttymsg.o $(LIB)/carefulputc.o $(LIB)/xstrncpy.o
 
 LOGINFLAGS=
 ifeq "$(USE_TTY_GROUP)" "yes"
@@ -145,7 +145,7 @@ login.o: login.c $(LIB)/pathnames.h $(LIB)/setproctitle.c $(LIB)/setproctitle.h
 mesg.o: mesg.c $(LIB)/errs.h
 	$(CC) -c $(CFLAGS) $(LOGINFLAGS) mesg.c
 
-passwd: passwd.o islocal.o setpwnam.o $(LIB)/env.o
+passwd: passwd.o islocal.o setpwnam.o $(LIB)/env.o $(LIB)/xstrncpy.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT)
 
 ifeq "$(REQUIRE_PASSWORD)" "yes"
@@ -214,8 +214,8 @@ ifeq "$(USE_TTY_GROUP)" "yes"
 	chmod g+s $(USRBINDIR)/wall
 endif
 
-.PHONY: clean
-clean:
+.PHONY: clean distclean
+clean distclean:
 	-rm -f *.o *~ core $(BIN.PASSWD) $(SBIN.GETTY) $(SBIN.INIT) \
 		$(USRBIN.MISC) $(USRBIN.PASSWD) $(USRBIN.PUTILS) \
 		$(USRSBIN.PUTILS) $(BIN.PUTILS)

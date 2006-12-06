@@ -52,7 +52,7 @@
    From 1992 till now (1997) this code for Linux has been maintained at
    ftp.daimi.aau.dk:/pub/linux/poe/
 
-   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
     - added Native Language Support
    Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
     - fixed strerr(errno) in gettext calls
@@ -119,6 +119,7 @@
 #include "pathnames.h"
 #include "my_crypt.h"
 #include "login.h"
+#include "xstrncpy.h"
 #include "nls.h"
 
 #ifdef __linux__
@@ -145,8 +146,11 @@
        syslog(LOG_ERR,"%s",pam_strerror(pamh, retcode)); \
        pam_end(pamh, retcode); exit(1); \
    }
-#  define PAM_END { retcode = pam_close_session(pamh,0); \
-		    pam_end(pamh,retcode); }
+#  define PAM_END { \
+	pam_setcred(pamh, PAM_DELETE_CRED); \
+	retcode = pam_close_session(pamh,0); \
+	pam_end(pamh,retcode); \
+}
 #endif
 
 #ifndef __linux__
@@ -190,13 +194,14 @@ struct  lastlog
 };
 #endif
 
-
+#ifndef USE_PAM
 static void getloginname (void);
+static void checknologin (void);
+static int rootterm (char *ttyn);
+#endif
 static void timedout (int);
 static void sigint (int);
-static int rootterm (char *ttyn);
 static void motd (void);
-static void checknologin (void);
 static void dolastlog (int quiet);
 
 #ifndef __linux__
@@ -355,8 +360,7 @@ main(int argc, char **argv)
      *    host to login so that it may be placed in utmp and wtmp
      */
     gethostname(tbuf, sizeof(tbuf));
-    strncpy(thishost, tbuf, sizeof(thishost)-1);
-    thishost[sizeof(thishost)-1] = 0;
+    xstrncpy(thishost, tbuf, sizeof(thishost));
     domain = index(tbuf, '.');
     
     username = tty = hostname = NULL;
@@ -590,14 +594,21 @@ main(int argc, char **argv)
        First get the username that we are actually using, though.
     */
     retcode = pam_get_item(pamh, PAM_USER, (const void **) &username);
-    setpwent();
-    pwd = getpwnam(username);
+    if (retcode == PAM_SUCCESS && username && *username) {
+      pwd = getpwnam(username);
+    }
+
+    /*
+     * Initialize the supplementary group list.
+     * This should be done before pam_setcred because
+     * the PAM modules might add groups during pam_setcred.
+     */
     if (pwd) initgroups(username, pwd->pw_gid);
 
-    retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED);
+    retcode = pam_open_session(pamh, 0);
     PAM_FAIL_CHECK;
 
-    retcode = pam_open_session(pamh, 0);
+    retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED);
     PAM_FAIL_CHECK;
 
 #else /* ! USE_PAM */
@@ -795,66 +806,6 @@ main(int argc, char **argv)
 	}
     }
     
-#ifndef __linux__
-#  ifdef KERBEROS
-    if (notickets && !quietlog)
-      printf(_("Warning: no Kerberos tickets issued\n"));
-#  endif
-    
-#  ifndef USE_PAM			/* PAM does all of this for us */
-#    define TWOWEEKS	(14*24*60*60)
-    if (pwd->pw_change || pwd->pw_expire) {
-	struct timeval tp;
-
-	gettimeofday(&tp, (struct timezone *)NULL);
-
-	if (pwd->pw_change) {
-	    if (tp.tv_sec >= pwd->pw_change) {
-		printf(_("Sorry -- your password has expired.\n"));
-		sleepexit(1);
-	    }
-	    else if (tp.tv_sec - pwd->pw_change < TWOWEEKS && !quietlog) {
-		struct tm *ttp;
-		ttp = localtime(&pwd->pw_change);
-		printf(_("Warning: your password expires on %d %s %d.\n"),
-		       ttp->tm_mday, months[ttp->tm_mon],
-		       TM_YEAR_BASE + ttp->tm_year);
-	    }
-	}
-
-	if (pwd->pw_expire) {
-	    if (tp.tv_sec >= pwd->pw_expire) {
-		printf(_("Sorry -- your account has expired.\n"));
-		sleepexit(1);
-	    }
-	    else if (tp.tv_sec - pwd->pw_expire < TWOWEEKS && !quietlog) {
-		struct tm *ttp;
-		ttp = localtime(&pwd->pw_expire);
-		printf(_("Warning: your account expires on %d %s %d.\n"),
-		       ttp->tm_mday, months[ttp->tm_mon],
-		       TM_YEAR_BASE + ttp->tm_year);
-	    }
-	}
-    }
-#  endif /* !USE_PAM */
-    
-    /* nothing else left to fail -- really log in */
-    {
-	struct utmp utmp;
-	
-	memset((char *)&utmp, 0, sizeof(utmp));
-	time(&utmp.ut_time);
-	strncpy(utmp.ut_name, username, sizeof(utmp.ut_name));
-	/* ut_name may legally be non-null-terminated */
-	if (hostname) {
-	    strncpy(utmp.ut_host, hostname, sizeof(utmp.ut_host));
-	    utmp.ut_host[sizeof(utmp.ut_host)-1] = 0;
-	}
-	strncpy(utmp.ut_line, tty, sizeof(utmp.ut_line));
-	utmp.ut_line[sizeof(utmp.ut_line)-1] = 0;
-	login(&utmp);
-    }
-#else /* __linux__ defined */
     /* for linux, write entries in utmp and wtmp */
     {
 	struct utmp ut;
@@ -898,8 +849,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	  strncpy(ut.ut_id, ttyn + 8, sizeof(ut.ut_id));
 	
 	strncpy(ut.ut_user, username, sizeof(ut.ut_user));
-	strncpy(ut.ut_line, ttyn + 5, sizeof(ut.ut_line));
-	ut.ut_line[sizeof(ut.ut_line)-1] = 0;
+	xstrncpy(ut.ut_line, ttyn + 5, sizeof(ut.ut_line));
 #ifdef _HAVE_UT_TV		/* in <utmpbits.h> included by <utmp.h> */
 	gettimeofday(&ut.ut_tv, NULL);
 #else
@@ -913,8 +863,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	ut.ut_type = USER_PROCESS;
 	ut.ut_pid = mypid;
 	if (hostname) {
-	    strncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
-	    ut.ut_host[sizeof(ut.ut_host)-1] = 0;
+	    xstrncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
 	    if (hostaddress.h_addr_list)
 	      memcpy(&ut.ut_addr, hostaddress.h_addr_list[0],
 		     sizeof(ut.ut_addr));
@@ -923,7 +872,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	pututline(&ut);
 	endutent();
 
-#if __GLIBC__ > 2 || (__GLIBC__ == 2 && __GLIBC_MINOR__ >= 1)
+#ifdef HAVE_updwtmp
 	updwtmp(_PATH_WTMP, &ut);
 #else
 #if 0
@@ -953,19 +902,11 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	    }
 	}
 #endif
-#endif /* __GLIBC__ */
+#endif
     }
-#endif /* __linux__ */
     
     dolastlog(quietlog);
     
-#ifndef __linux__
-    if (!hflag) {					/* XXX */
-	static struct winsize win = { 0, 0, 0, 0 };
-	
-	ioctl(0, TIOCSWINSZ, &win);
-    }
-#endif
     chown(ttyn, pwd->pw_uid,
 	  (gr = getgrnam(TTYGRPNAME)) ? gr->gr_gid : pwd->pw_gid);
     chmod(ttyn, TTY_MODE);
@@ -1012,17 +953,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	  memset(environ, 0, sizeof(char*));
       }
     
-#ifndef __linux__
-    setenv("HOME", pwd->pw_dir, 1);
-    setenv("SHELL", pwd->pw_shell, 1);
-    if (term[0] == '\0') {
-	strncpy(term, stypeof(tty), sizeof(term));
-	term[sizeof(term)-1] = 0;
-    }
-    setenv("TERM", term, 0);
-    setenv("USER", pwd->pw_name, 1);
-    setenv("PATH", _PATH_DEFPATH, 0);
-#else
     setenv("HOME", pwd->pw_dir, 0);      /* legal to override */
     if(pwd->pw_uid)
       setenv("PATH", _PATH_DEFPATH, 1);
@@ -1046,7 +976,6 @@ Michael Riepe <michael@stud.uni-hannover.de>
        HP-UX 6.5 does it. We'll not allow modifying it.
        */
     setenv("LOGNAME", pwd->pw_name, 1);
-#endif
 
 #ifdef USE_PAM
     {
@@ -1108,8 +1037,15 @@ Michael Riepe <michael@stud.uni-hannover.de>
     signal(SIGHUP, SIG_DFL);
 
 #ifdef USE_PAM
-    /* We must fork before setuid() because we need to call
+    /*
+     * We must fork before setuid() because we need to call
      * pam_close_session() as root.
+     */
+    /*
+     * Problem: if the user's shell is a shell like ash that doesnt do
+     * setsid() or setpgrp(), then a ctrl-\, sending SIGQUIT to every
+     * process in the pgrp, will kill us.
+     * Solution: use TIOCNOTTY and setsid().
      */
     signal(SIGINT, SIG_IGN);
     childPid = fork();
@@ -1121,11 +1057,16 @@ Michael Riepe <michael@stud.uni-hannover.de>
        exit(0);
     } else if (childPid) {
        /* parent - wait for child to finish, then cleanup session */
+       signal(SIGHUP, SIG_IGN);		/* ignore signal from TIOCNOTTY */
+       ioctl(0, TIOCNOTTY, NULL);
+       signal(SIGHUP, SIG_DFL);
+
        wait(NULL);
        PAM_END;
        exit(0);
     }
     /* child */
+    setsid();
 #endif
     signal(SIGINT, SIG_DFL);
     
@@ -1161,10 +1102,9 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	childArgv[childArgc++] = buff;
     } else {
 	tbuf[0] = '-';
-	strncpy(tbuf + 1, ((p = rindex(pwd->pw_shell, '/')) ?
+	xstrncpy(tbuf + 1, ((p = rindex(pwd->pw_shell, '/')) ?
 			   p + 1 : pwd->pw_shell),
 		sizeof(tbuf)-1);
-	tbuf[sizeof(tbuf)-1] = 0;
 	
 	childArgv[childArgc++] = pwd->pw_shell;
 	childArgv[childArgc++] = tbuf;
@@ -1185,7 +1125,8 @@ Michael Riepe <michael@stud.uni-hannover.de>
     exit(0);
 }
 
-void
+#ifndef USE_PAM
+static void
 getloginname(void) {
     int ch, cnt, cnt2;
     char *p;
@@ -1229,6 +1170,7 @@ getloginname(void) {
 	}
     }
 }
+#endif
 
 void
 timedout(int sig) {
@@ -1243,6 +1185,7 @@ timedout(int sig) {
     exit(0);
 }
 
+#ifndef USE_PAM
 int
 rootterm(char * ttyn)
 #ifndef __linux__
@@ -1279,7 +1222,8 @@ rootterm(char * ttyn)
   	}
     }
 }
-#endif
+#endif /* !__linux__ */
+#endif /* !USE_PAM */
 
 jmp_buf motdinterrupt;
 
@@ -1342,12 +1286,10 @@ dolastlog(int quiet) {
 	}
 	memset((char *)&ll, 0, sizeof(ll));
 	time(&ll.ll_time);
-	strncpy(ll.ll_line, tty, sizeof(ll.ll_line));
-	ll.ll_line[sizeof(ll.ll_line)-1] = 0;
-	if (hostname) {
-	    strncpy(ll.ll_host, hostname, sizeof(ll.ll_host));
-	    ll.ll_host[sizeof(ll.ll_host)-1] = 0;
-	}
+	xstrncpy(ll.ll_line, tty, sizeof(ll.ll_line));
+	if (hostname)
+	    xstrncpy(ll.ll_host, hostname, sizeof(ll.ll_host));
+
 	write(fd, (char *)&ll, sizeof(ll));
 	close(fd);
     }

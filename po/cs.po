@@ -40,7 +40,7 @@ msgid "Cannot open /dev/port: %s"
 msgstr "/dev/port nelze otevøít: %s"
 
 #: clock/cmos.c:577
-msgid "I failed to get permission because I didnt try.\n"
+msgid "I failed to get permission because I didn't try.\n"
 msgstr "Jeliko¾ jsem se nesna¾il, nepodaøilo se mi získat práva pro pøístup.\n"
 
 #: clock/cmos.c:580
@@ -6769,22 +6769,6 @@ msgstr "nelze èíst %s a nelze provést dump pomocí volání ioctl\n"
 #, c-format
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: promìnná TERM není nastavena.\n"
-
-#: misc-utils/tsort.c:117
-msgid "usage: tsort [ inputfile ]\n"
-msgstr "Pou¾ití: tsort [ soubor ]\n"
-
-#: misc-utils/tsort.c:154
-msgid "tsort: odd data count.\n"
-msgstr "tsort: lichý poèet uzlù\n"
-
-#: misc-utils/tsort.c:305
-msgid "tsort: cycle in data.\n"
-msgstr "tsort: smyèka v datech.\n"
-
-#: misc-utils/tsort.c:318
-msgid "tsort: internal error -- could not find cycle.\n"
-msgstr "tsort: vnitøní chyba -- smyèku nelze najít.\n"
 
 #: misc-utils/whereis.c:155
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"

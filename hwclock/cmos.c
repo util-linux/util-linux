@@ -61,10 +61,17 @@ int inb(int c){ return 0; }
 #define BCD_TO_BIN(val) ((val)=((val)&15) + ((val)>>4)*10)
 #define BIN_TO_BCD(val) ((val)=(((val)/10)<<4) + (val)%10)
 
+/* The epoch.
+   Unix uses 1900 as epoch for a struct tm, and 1970 for a time_t.
+   But what was written to CMOS?
+   Digital DECstations use 1928 - this is on a mips
+   Digital Unix uses 1952.
+   Windows NT uses 1980.
+   The ARC console expects to boot Windows NT and uses 1980.
+   (But a Ruffian uses 1900, just like SRM.)
+   It is reported that ALPHA_PRE_V1_2_SRM_CONSOLE uses 1958. */
 #define TM_EPOCH 1900
-int cmos_epoch = 1900;		/* 1980 for an alpha in ARC console time */
-				/* One also sees 1952 (Digital Unix)
-				   and 1958 (ALPHA_PRE_V1_2_SRM_CONSOLE) */
+int cmos_epoch = 1900;
 
 /* Martin Ostermann writes: 
 The problem with the Jensen is twofold: First, it has the clock at a
@@ -576,7 +583,7 @@ get_permissions_cmos(void) {
   } else {
     rc = i386_iopl(3);
     if (rc == -2) {
-      fprintf(stderr, _("I failed to get permission because I didnt try.\n"));
+      fprintf(stderr, _("I failed to get permission because I didn't try.\n"));
     } else if (rc != 0) {
       rc = errno;
       fprintf(stderr, _("%s is unable to get I/O port access:  "

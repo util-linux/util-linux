@@ -28,7 +28,7 @@
  * Changes by Richard Gooch <rgooch@atnf.csiro.au> (butchered by aeb)
  * introducing shutdown.conf.
  *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  * 2000-03-02 Richard Gooch <rgooch@atnf.csiro.au>
@@ -71,6 +71,7 @@
 #include <sys/utsname.h>
 #include "linux_reboot.h"
 #include "pathnames.h"
+#include "xstrncpy.h"
 #include "nls.h"
 
 static void usage(void), int_handler(int), write_user(struct utmp *);
@@ -249,8 +250,7 @@ main(int argc, char *argv[])
 				exit(1);
 			}
 		} else {
-			strncpy(message, argv[c], sizeof(message));
-			message[sizeof(message)-1] = '\0';
+			xstrncpy(message, argv[c], sizeof(message));
 			opt_msgset = 1;
 		}
 	}

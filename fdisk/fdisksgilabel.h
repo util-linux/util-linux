@@ -31,10 +31,18 @@ struct device_parameter { /* 48 bytes */
 	unsigned short xylogics_writecont;
 };
 
+#define	SGI_VOLHDR	0x00
+/* 1 and 2 were used for drive types no longer supported by SGI */
+#define	SGI_SWAP	0x03
+/* 4 and 5 were for filesystem types SGI haven't ever supported on MIPS CPUs */
 #define	SGI_VOLUME	0x06
 #define	SGI_EFS		0x07
-#define	SGI_SWAP	0x03
-#define	SGI_VOLHDR	0x00
+#define	SGI_LVOL	0x08
+#define	SGI_RLVOL	0x09
+#define	SGI_XFS		0x0a
+#define	SGI_XFSLOG	0x0b
+#define	SGI_XLV		0x0c
+#define	SGI_XVM		0x0d
 #define	ENTIRE_DISK	SGI_VOLUME
 /*
  * controller flags
@@ -48,19 +56,19 @@ struct device_parameter { /* 48 bytes */
 #define	ENABLE_CMDTAGQ	0x40
 
 typedef struct {
-	unsigned int   magic;        /* expect SGI_LABEL_MAGIC */
+	unsigned int   magic;		 /* expect SGI_LABEL_MAGIC */
 	unsigned short boot_part;        /* active boot partition */
 	unsigned short swap_part;        /* active swap partition */
 	unsigned char  boot_file[16];    /* name of the bootfile */
 	struct device_parameter devparam;	/*  1 * 48 bytes */
 	struct volume_directory {		/* 15 * 16 bytes */
-		unsigned char vol_file_name[8];	/* an character array */
+		unsigned char vol_file_name[8];	/* a character array */
 		unsigned int  vol_file_start;	/* number of logical block */
 		unsigned int  vol_file_size;	/* number of bytes */
 	} directory[15];
 	struct sgi_partition {			/* 16 * 12 bytes */
 		unsigned int num_sectors;	/* number of blocks */
-		unsigned int start_sector;	/* sector must be cylinder aligned */
+		unsigned int start_sector;	/* must be cylinder aligned */
 		unsigned int id;
 	} partitions[16];
 	unsigned int   csum;

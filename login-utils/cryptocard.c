@@ -17,7 +17,7 @@
 
       ftp://ftp.daimi.aau.dk/pub/linux/poe/poeigl-X.XX.tar.gz
 
-      1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+      1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
       - added Native Language Support
 
 */

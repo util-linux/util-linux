@@ -80,10 +80,6 @@ HAVE_RESET=yes
 # sln also comes with libc and glibc.
 HAVE_SLN=no
 
-# If HAVE_TSORT is set to "yes", then tsort won't be installed.
-# GNU textutils 2.0 includes tsort.
-HAVE_TSORT=no
-
 # If HAVE_FDUTILS is set to "yes", then setfdprm won't be installed.
 HAVE_FDUTILS=no
 
@@ -168,6 +164,7 @@ INSTALLSUID=    $(INSTALL) -m $(SUIDMODE) -o root
 
 CFLAGS    := $(CFLAGS) $(OPT) -I$(LIB) $(WARNFLAGS) \
 			$(CURSESFLAGS) $(SLANGFLAGS) \
+			-D_FILE_OFFSET_BITS=64 \
 			-DSBINDIR=\"$(SBINDIR)\" \
 			-DUSRSBINDIR=\"$(USRSBINDIR)\" \
 			-DLOGDIR=\"$(LOGDIR)\" \

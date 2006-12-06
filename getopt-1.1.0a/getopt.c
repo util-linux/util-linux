@@ -34,7 +34,7 @@
  *   No important changes
  * Version 1.1.0: Tue Jun 30 2000
  *   Added NLS support (partly written by Arkadiusz Mi<B6>kiewicz 
- *     <misiek@misiek.eu.org>)
+ *     <misiek@pld.ORG.PL>)
  */
 
 #include <stdio.h>

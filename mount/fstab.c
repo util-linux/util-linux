@@ -1,4 +1,4 @@
-/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  * Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
  * - fixed strerr(errno) in gettext calls
@@ -537,6 +537,16 @@ update_mtab (const char *dir, struct mntent *instead) {
 			MOUNTED_TEMP, strerror (errsv));
 	}
 	my_endmntent (mftmp);
+
+	{ /*
+	   * If mount is setuid and some non-root user mounts sth,
+	   * then mtab.tmp might get the group of this user. Copy uid/gid
+	   * from the present mtab before renaming.
+	   */
+	    struct stat sbuf;
+	    if (stat (MOUNTED, &sbuf) == 0)
+		chown (MOUNTED_TEMP, sbuf.st_uid, sbuf.st_gid);
+	}
 
 	/* rename mtemp to mtab */
 	if (rename (MOUNTED_TEMP, MOUNTED) < 0) {

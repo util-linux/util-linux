@@ -16,7 +16,7 @@
  * Hacked by Peter Breitenlohner, peb@mppmu.mpg.de,
  * to remove trailing empty fields.  Oct 5, 96.
  *
- *  1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ *  1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *  - added Native Language Support
  *    
  *
@@ -36,6 +36,7 @@
 #include "my_crypt.h"
 #include "islocal.h"
 #include "setpwnam.h"
+#include "xstrncpy.h"
 #include "nls.h"
 #include "env.h"
 
@@ -239,8 +240,7 @@ static boolean parse_argv (argc, argv, pinfo)
 	info_given = true;
 	status = 0;
 
-	strncpy (buf, whoami, sizeof(buf)-128); 
-	buf[sizeof(buf)-128-1] = 0;
+	xstrncpy (buf, whoami, sizeof(buf)-128); 
 	strcat (buf, ": ");
 
 	/* now store the argument */

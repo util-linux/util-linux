@@ -65,6 +65,13 @@ Warnings like
   <asm/mman.h>:30: warning: this is the location of the previous definition
 are caused by the libc/kernel combination.
 
+Warnings like
+  setterm.c:805: warning: passing arg 1 of `tigetstr' discards qualifiers
+    from pointer target type
+  login.c:979: warning: passing arg 1 of `putenv' discards qualifiers
+    from pointer target type
+are caused by bad ncurses or glibc header files.
+
 All such warnings are harmless.
 There should be no compilation errors.
 

@@ -32,7 +32,7 @@
  */
 
 /*
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  * 2000-07-30 Per Andreas Buer <per@linpro.no> - added "q"-option

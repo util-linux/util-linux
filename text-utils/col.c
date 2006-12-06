@@ -37,7 +37,7 @@
  *                           patches from Andries.Brouwer@cwi.nl
  * Wed Sep 14 22:31:17 1994: patches from Carl Christofferson
  *                           (cchris@connected.com)
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * 	added Native Language Support
  * 1999-09-19 Bruno Haible <haible@clisp.cons.org>
  * 	modified to work correctly in multi-byte locales

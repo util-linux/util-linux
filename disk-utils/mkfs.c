@@ -10,7 +10,7 @@
  *
  * Mon Jul  1 18:52:58 1996: janl@math.uio.no (Nicolai Langfeldt):
  *	Incorporated fix by Jonathan Kamens <jik@annex-1-slip-jik.cam.ov.com>
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *	
  */
@@ -92,7 +92,7 @@ int main(int argc, char *argv[])
   }
   sprintf(newpath, "%s:%s\n", SEARCH_PATH, oldpath);
   putenv(newpath);
-  sprintf(progname, PROGNAME, fstype);
+  snprintf(progname, sizeof(progname), PROGNAME, fstype);
   argv[--optind] = progname;
 
   if (verbose) {

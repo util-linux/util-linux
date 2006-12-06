@@ -19,8 +19,7 @@ SUBDIRS=po \
 	fdisk \
 	hwclock \
 	sys-utils \
-	text-utils \
-	kbd
+	text-utils
 
 .PHONEY: all install clean now
 all:	defines.h

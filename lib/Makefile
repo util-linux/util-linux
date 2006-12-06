@@ -1,7 +1,7 @@
 include ../make_include
 include ../MCONFIG
 
-all: err.o my_reboot.o setproctitle.o env.o carefulputc.o
+all: err.o my_reboot.o setproctitle.o env.o carefulputc.o xstrncpy.o
 
 err.o: err.c
 
@@ -12,6 +12,8 @@ env.o: env.h
 setproctitle.o: setproctitle.h
 
 carefulputc.o: carefulputc.h
+
+xstrncpy.o: xstrncpy.h
 
 .PHONY: clean
 clean:

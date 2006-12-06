@@ -76,6 +76,7 @@
 #include <linux/hdreg.h>
 
 #include "nls.h"
+#include "xstrncpy.h"
 #include "common.h"
 
 #if defined(__GNUC__) || defined(HAS_LONG_LONG)
@@ -516,23 +517,26 @@ print_warning(char *s) {
 
 static void
 fatal(char *s, int ret) {
-    char *err = _("FATAL ERROR");
+    char *err1 = _("FATAL ERROR");
+    char *err2 = _("Press any key to exit cfdisk");
 
     if (curses_started) {
-	 char *str = xmalloc(strlen(s) + strlen(err) + 10);
-	 /* snprintf does not compile on all libc's */
-	 sprintf(str, "%s: %s", err, s);
+	 char *str = xmalloc(strlen(s) + strlen(err1) + strlen(err2) + 10);
+
+	 sprintf(str, "%s: %s", err1, s);
 	 if (strlen(str) > COLS)
-		 str[COLS] = 0;
+	     str[COLS] = 0;
 	 mvaddstr(WARNING_START, (COLS-strlen(str))/2, str);
-	 sprintf(str, _("Press any key to exit cfdisk"));
+	 sprintf(str, "%s", err2);
+	 if (strlen(str) > COLS)
+	     str[COLS] = 0;
 	 mvaddstr(WARNING_START+1, (COLS-strlen(str))/2, str);
 	 putchar(BELL); /* CTRL-G */
 	 refresh();
 	 (void)getch();
 	 die_x(ret);
     } else {
-	 fprintf(stderr, "%s: %s\n", err, s);
+	 fprintf(stderr, "%s: %s\n", err1, s);
 	 exit(ret);
     }
 }
@@ -1034,17 +1038,15 @@ menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
     /* Print available buttons */
     move( y, x ); clrtoeol();
 
-    for( i = 0; menuItems[i].key; i++ )
-    {
+    for( i = 0; menuItems[i].key; i++ ) {
         char buff[20];
         int lenName;
 	const char *mi;
 
         /* Search next available button */
         while( menuItems[i].key && !strchr(available, menuItems[i].key) )
-        {
             i++;
-        }
+
         if( !menuItems[i].key ) break; /* No more menu items */
 
         /* If selected item is not available and we have bypassed it,
@@ -1066,15 +1068,13 @@ menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
             print_warning(_("Menu item too long. Menu may look odd."));
 #endif
 	if (lenName >= sizeof(buff)) {	/* truncate ridiculously long string */
-	    strncpy( buff, mi, sizeof(buff)-1);
-	    buff[sizeof(buff)-1] = 0;
-	} else
-        if( menuType & MENU_BUTTON )
-            sprintf( buff, "[%*s%-*s]", (itemLength - lenName) / 2, "",
-                (itemLength - lenName + 1) / 2 + lenName, mi );
-        else
-            sprintf( buff, "%*s%-*s", (itemLength - lenName) / 2, "",
-                (itemLength - lenName + 1) / 2 + lenName, mi );
+	    xstrncpy( buff, mi, sizeof(buff));
+	} else {
+            snprintf(buff, sizeof(buff),
+		     (menuType & MENU_BUTTON) ? "[%*s%-*s]" : "%*s%-*s",
+		     (itemLength - lenName) / 2, "",
+		     (itemLength - lenName + 1) / 2 + lenName, mi);
+	}
         mvaddstr( y, x, buff );
 
         /* Lowlight after selected item */
@@ -1339,7 +1339,7 @@ new_part(int i) {
     else
 	print_warning(_("!!! Internal error !!!"));
 
-    sprintf(def, "%.2f", num_sects/sectors_per_MB);
+    snprintf(def, sizeof(def), "%.2f", num_sects/sectors_per_MB);
     mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X, _("Size (in MB): "));
     if ((len = get_string(response, LINE_LENGTH, def)) <= 0 &&
 	len != GS_DEFAULT)
@@ -1548,7 +1548,6 @@ fill_p_info(void) {
 		add_part(i, p->sys_ind, p->boot_ind,
 			 ((bs <= sectors) ? 0 : bs), bs + bsz - 1,
 			 ((bs <= sectors) ? bs : 0), 1, &errmsg)) {
-		    /* avoid snprintf - it does not exist on ancient systems */
 		    char *bad = _("Bad primary partition");
 		    char *msg = (char *) xmalloc(strlen(bad) + strlen(errmsg) + 30);
 		    sprintf(msg, "%s %d: %s", bad, i, errmsg);
@@ -1579,7 +1578,6 @@ fill_p_info(void) {
 			     logical_sectors[logical-1],
 			     logical_sectors[logical-1] + bs + bsz - 1,
 			     bs, 1, &errmsg)) {
-				/* avoid snprintf */
 				char *bad = _("Bad logical partition");
 				char *msg = (char *) xmalloc(strlen(bad) + strlen(errmsg) + 30);
 				sprintf(msg, "%s %d: %s", bad, i-1, errmsg);
@@ -1751,8 +1749,10 @@ write_part_table(void) {
     for (i = 0; i < num_parts; i++)
 	if (IS_PRIMARY(i) && p_info[i].flags == ACTIVE_FLAG)
 	    ct++;
-    if (ct != 1)
-	print_warning(_("Not precisely one primary partition is bootable. DOS MBR cannot boot this."));
+    if (ct == 0)
+	print_warning(_("No primary partitions are marked bootable. DOS MBR cannot boot this."));
+    if (ct > 1)
+	print_warning(_("More than one primary partition is marked bootable. DOS MBR cannot boot this."));
 }
 
 static void
@@ -1762,7 +1762,7 @@ fp_printf(FILE *fp, char *format, ...) {
     int y, x;
 
     va_start(args, format);
-    vsprintf(buf, format, args);
+    vsnprintf(buf, sizeof(buf), format, args);
     va_end(args);
 
     if (fp == NULL) {
@@ -1818,7 +1818,8 @@ print_raw_table(void) {
 	if (to_file) {
 	    if ((fp = fopen(fname, "w")) == NULL) {
 		char errstr[LINE_LENGTH];
-		sprintf(errstr, _("Cannot open file '%s'"), fname);
+		snprintf(errstr, sizeof(errstr),
+			 _("Cannot open file '%s'"), fname);
 		print_warning(errstr);
 		return;
 	    }

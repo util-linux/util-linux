@@ -66,7 +66,7 @@ static void delete_partition(int i);
 			})
 
 
-#define LINE_LENGTH	80
+#define LINE_LENGTH	800
 #define pt_offset(b, n)	((struct partition *)((b) + 0x1be + \
 				(n) * sizeof(struct partition)))
 #define sector(s)	((s) & 0x3f)
@@ -222,25 +222,31 @@ void fatal(enum failure why) {
 "  ...\n");
 			break;
 		case unable_to_open:
-			sprintf(error, _("Unable to open %s\n"), disk_device);
+			snprintf(error, sizeof(error),
+				 _("Unable to open %s\n"), disk_device);
 			break;
 		case unable_to_read:
-			sprintf(error, _("Unable to read %s\n"), disk_device);
+			snprintf(error, sizeof(error),
+				 _("Unable to read %s\n"), disk_device);
 			break;
 		case unable_to_seek:
-			sprintf(error, _("Unable to seek on %s\n"),disk_device);
+			snprintf(error, sizeof(error),
+				_("Unable to seek on %s\n"),disk_device);
 			break;
 		case unable_to_write:
-			sprintf(error, _("Unable to write %s\n"), disk_device);
+			snprintf(error, sizeof(error),
+				_("Unable to write %s\n"), disk_device);
 			break;
 		case ioctl_error:
-			sprintf(error, _("BLKGETSIZE ioctl failed on %s\n"),
+			snprintf(error, sizeof(error),
+				 _("BLKGETSIZE ioctl failed on %s\n"),
 				disk_device);
 			break;
 		case out_of_memory:
 			message = _("Unable to allocate any more memory\n");
 			break;
-		default: message = _("Fatal error\n");
+		default:
+			message = _("Fatal error\n");
 	}
 
 	fputc('\n', stderr);
@@ -282,7 +288,7 @@ read_pte(int fd, int pno, uint offset) {
 	pe->changed = 0;
 	pe->part_table = pe->ext_pointer = NULL;
 }
-	
+
 static unsigned int
 get_partition_start(struct pte *pe) {
 	return pe->offset + get_start_sect(pe->part_table);
@@ -623,17 +629,18 @@ read_extended(int ext) {
 		for (i = 0; i < 4; i++, p++) if (get_nr_sects(p)) {
 			if (IS_EXTENDED (p->sys_ind)) {
 				if (pe->ext_pointer)
-					fprintf(stderr, _("Warning: extra link"
-							  " pointer in partition table "
-							  "%d\n"), partitions + 1);
+					fprintf(stderr,
+						_("Warning: extra link "
+						  "pointer in partition table"
+						  " %d\n"), partitions + 1);
 				else
 					pe->ext_pointer = p;
 			} else if (p->sys_ind) {
 				if (pe->part_table)
 					fprintf(stderr,
-						_("Warning: ignoring extra data "
-						  "in partition table %d\n"),
-						partitions + 1);
+						_("Warning: ignoring extra "
+						  "data in partition table"
+						  " %d\n"), partitions + 1);
 				else
 					pe->part_table = p;
 			}
@@ -662,7 +669,8 @@ read_extended(int ext) {
 	for (i = 4; i < partitions; i++) {
 		struct pte *pe = &ptes[i];
 
-		if (!get_nr_sects(pe->part_table)) {
+		if (!get_nr_sects(pe->part_table) &&
+		    (partitions > 5 || ptes[4].part_table->sys_ind)) {
 			printf("omitting empty partition (%d)\n", i+1);
 			delete_partition(i);
 			goto remove; 	/* numbering changed */
@@ -682,10 +690,10 @@ create_doslabel(void) {
 	sun_nolabel();  /* otherwise always recognised as sun */
 	sgi_nolabel();  /* otherwise always recognised as sgi */
 
+	for (i = 510-64; i < 510; i++)
+		MBRbuffer[i] = 0;
 	write_part_table_flag(MBRbuffer);
-	for (i = 0; i < 4; i++)
-	    if (ptes[i].part_table)
-		clear_partition(ptes[i].part_table);
+	extended_offset = 0;
 	set_all_unchanged();
 	set_changed(0);
 	get_boot(create_empty);
@@ -969,8 +977,8 @@ read_int(uint low, uint dflt, uint high, uint base, char *mesg)
 	static char *ms = NULL;
 	static int mslen = 0;
 
-	if (!ms || strlen(mesg)+50 > mslen) {
-		mslen = strlen(mesg)+100;
+	if (!ms || strlen(mesg)+100 > mslen) {
+		mslen = strlen(mesg)+200;
 		if (!(ms = realloc(ms,mslen)))
 			fatal(out_of_memory);
 	}
@@ -979,9 +987,11 @@ read_int(uint low, uint dflt, uint high, uint base, char *mesg)
 		default_ok = 0;
 
 	if (default_ok)
-		sprintf(ms, _("%s (%d-%d, default %d): "), mesg, low, high, dflt);
+		snprintf(ms, mslen, _("%s (%d-%d, default %d): "),
+			 mesg, low, high, dflt);
 	else
-		sprintf(ms, "%s (%d-%d): ", mesg, low, high);
+		snprintf(ms, mslen, "%s (%d-%d): ",
+			 mesg, low, high);
 
 	while (1) {
 		int use_default = default_ok;
@@ -1137,12 +1147,15 @@ delete_partition(int i) {
 	}
 
 	if (!q->sys_ind && i > 4) {
+		/* the last one in the chain - just delete */
 		--partitions;
 		--i;
 		clear_partition(ptes[i].ext_pointer);
 		ptes[i].changed = 1;
 	} else {
+		/* not the last one - further ones will be moved down */
 		if (i > 4) {
+			/* delete this link in the chain */
 			p = ptes[i-1].ext_pointer;
 			p->boot_ind = 0;
 			p->head = q->head;
@@ -1156,6 +1169,7 @@ delete_partition(int i) {
 			set_nr_sects(p, get_nr_sects(q));
 			ptes[i-1].changed = 1;
 		} else if (partitions > 5) {    /* 5 will be moved to 4 */
+			/* the first logical in a longer chain */
 			struct pte *pe = &ptes[5];
 
 			if(pe->part_table) /* prevent SEGFAULT */
@@ -1173,6 +1187,7 @@ delete_partition(int i) {
 				i++;
 			}
 		} else
+			/* the only logical: clear only */
 			clear_partition(ptes[i].part_table);
 	}
 }
@@ -1185,12 +1200,12 @@ change_sysid(void) {
 
 	origsys = sys = get_sysid(i);
 
-	if (!sys && !sgi_label)
+	if (!sys && !sgi_label && !sun_label)
                 printf(_("Partition %d does not exist yet!\n"), i + 1);
         else while (1) {
 		sys = read_hex (get_sys_types());
 
-		if (!sys && !sgi_label) {
+		if (!sys && !sgi_label && !sun_label) {
 			printf(_("Type 0 means free space to many systems\n"
 			       "(but not to Linux). Having partitions of\n"
 			       "type 0 is probably unwise. You can delete\n"
@@ -1460,7 +1475,7 @@ list_table(int xtra) {
 			check_consistency(p, i);
 		}
 	}
-	
+
 	/* Is partition table in disk order? It need not be, but... */
 	/* partition table entries are not checked for correct order if this
 	   is a sgi, sun or aix labeled disk... */
@@ -1543,7 +1558,7 @@ verify(void) {
 	int i, j;
 	uint total = 1;
 	uint first[partitions], last[partitions];
-	struct partition *p = part_table[0];
+	struct partition *p;
 
 	if (warn_geometry())
 		return;
@@ -1642,7 +1657,7 @@ add_partition(int n, int sys) {
 		for (i = 0; i < partitions; i++)
 			first[i] = (cround(first[i]) - 1) * units_per_sector;
 
-	sprintf(mesg, _("First %s"), str_units(SINGULAR));
+	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
 	do {
 		temp = start;
 		for (i = 0; i < partitions; i++) {
@@ -1701,8 +1716,9 @@ add_partition(int n, int sys) {
 	if (cround(start) == cround(limit)) {
 		stop = limit;
 	} else {
-		sprintf(mesg, _("Last %s or +size or +sizeM or +sizeK"),
-			str_units(SINGULAR));
+		snprintf(mesg, sizeof(mesg),
+			 _("Last %s or +size or +sizeM or +sizeK"),
+			 str_units(SINGULAR));
 		stop = read_int(cround(start), cround(limit), cround(limit),
 				cround(start), mesg);
 		if (display_in_cyl_units) {
@@ -1785,16 +1801,17 @@ new_partition(void) {
 			add_logical();
 		else
 			printf(_("You must delete some partition and add "
-				"an extended partition first\n"));
+				 "an extended partition first\n"));
 	} else {
 		char c, line[LINE_LENGTH];
-		sprintf(line, _("Command action\n   %s\n   p   primary "
-			"partition (1-4)\n"), extended_offset ?
-			_("l   logical (5 or over)") : _("e   extended"));
-		while (1)
+		snprintf(line, sizeof(line),
+			 _("Command action\n   %s\n   p   primary "
+			   "partition (1-4)\n"), extended_offset ?
+			 _("l   logical (5 or over)") : _("e   extended"));
+		while (1) {
 			if ((c = tolower(read_char(line))) == 'p') {
 				add_partition(get_partition(0, 4),
-					LINUX_NATIVE);
+					      LINUX_NATIVE);
 				return;
 			}
 			else if (c == 'l' && extended_offset) {
@@ -1803,13 +1820,13 @@ new_partition(void) {
 			}
 			else if (c == 'e' && !extended_offset) {
 				add_partition(get_partition(0, 4),
-					EXTENDED);
+					      EXTENDED);
 				return;
 			}
 			else
 				printf(_("Invalid partition number "
-				       "for type `%c'\n"), c);
-		
+					 "for type `%c'\n"), c);
+		}
 	}
 }
 
@@ -2052,7 +2069,7 @@ is_ide_cdrom(char *device) {
 
     if (strncmp("/dev/hd", device, 7))
 	return 0;
-    sprintf(buf, "/proc/ide/%s/media", device+5);
+    snprintf(buf, sizeof(buf), "/proc/ide/%s/media", device+5);
     procf = fopen(buf, "r");
     if (procf != NULL && fgets(buf, sizeof(buf), procf))
         return  !strncmp(buf, "cdrom", 5);
@@ -2068,34 +2085,34 @@ is_ide_cdrom(char *device) {
 static void
 try(char *device, int user_specified) {
 	disk_device = device;
-	if (!setjmp(listingbuf)) {
-		if (!user_specified)
-			if (is_ide_cdrom(device))
+	if (setjmp(listingbuf))
+		return;
+	if (!user_specified)
+		if (is_ide_cdrom(device))
+			return;
+	if ((fd = open(disk_device, type_open)) >= 0) {
+		if (get_boot(try_only) < 0) {
+			list_disk_geometry();
+			if (aix_label)
 				return;
-		if ((fd = open(disk_device, type_open)) >= 0) {
-			if (get_boot(try_only) < 0) {
-				list_disk_geometry();
-				if (aix_label)
-					return;
-				if (btrydev(device) < 0)
-					fprintf(stderr,
-						_("Disk %s doesn't contain a valid "
-						"partition table\n"), device);
-				close(fd);
-			} else {
-				close(fd);
-				list_table(0);
-				if (!sun_label && partitions > 4)
-					delete_partition(ext_index);
-			}
+			if (btrydev(device) < 0)
+				fprintf(stderr,
+					_("Disk %s doesn't contain a valid "
+					  "partition table\n"), device);
+			close(fd);
 		} else {
-				/* Ignore other errors, since we try IDE
-				   and SCSI hard disks which may not be
-				   installed on the system. */
-			if(errno == EACCES) {
-			    fprintf(stderr, _("Cannot open %s\n"), device);
-			    return;
-			}
+			close(fd);
+			list_table(0);
+			if (!sun_label && partitions > 4)
+				delete_partition(ext_index);
+		}
+	} else {
+		/* Ignore other errors, since we try IDE
+		   and SCSI hard disks which may not be
+		   installed on the system. */
+		if(errno == EACCES) {
+			fprintf(stderr, _("Cannot open %s\n"), device);
+			return;
 		}
 	}
 }
@@ -2115,13 +2132,13 @@ tryprocpt(void) {
 	}
 
 	while (fgets(line, sizeof(line), procpt)) {
-		if (sscanf (line, " %d %d %d %[^\n]\n",
+		if (sscanf (line, " %d %d %d %[^\n ]",
 			    &ma, &mi, &sz, ptname) != 4)
 			continue;
 		for(s = ptname; *s; s++);
 		if (isdigit(s[-1]))
 			continue;
-		sprintf(devname, "/dev/%s", ptname);
+		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
 		try(devname, 0);
 	}
 }

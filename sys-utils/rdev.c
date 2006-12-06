@@ -49,7 +49,7 @@ Tue Mar 30 09:31:52 1993: rdev -Rn to set root readonly flag, sct@dcs.ed.ac.uk
 Wed Jun 22 21:12:29 1994: Applied patches from Dave
                           (gentzel@nova.enet.dec.com) to prevent dereferencing
 			  the NULL pointer, faith@cs.unc.edu
-1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
 - added Native Language Support
 
 -------------------------------------------------------------------------

@@ -26,7 +26,7 @@
  * V1_MAX_PAGES fixes, jj, 990325.
  * sparc64 fixes, jj, 000219.
  *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  * 
  */
@@ -41,12 +41,16 @@
 #include <sys/stat.h>
 #include "nls.h"
 
+/* Try to get PAGE_SIZE from libc or kernel includes */
+#ifdef HAVE_sys_user_h
+				/* Note: <sys/user.h> says: for gdb only */
+#include <sys/user.h>		/* for PAGE_SIZE and PAGE_SHIFT */
+#else
 #ifdef HAVE_asm_page_h
 #include <asm/page.h>		/* for PAGE_SIZE and PAGE_SHIFT */
 				/* we also get PAGE_SIZE via getpagesize() */
-/* recent glibc systems also define this in <sys/user.h> */
 #endif
-
+#endif
 
 #ifndef _IO
 /* pre-1.3.45 */

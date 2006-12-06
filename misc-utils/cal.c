@@ -36,7 +36,7 @@
 
 /* 1999-02-01	Jean-Francois Bignolles: added option '-m' to display
  * 		monday as the first day of the week.
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  * 2000-09-01  Michael Charles Pruznick <dummy@netwiz.net> 

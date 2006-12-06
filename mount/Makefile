@@ -24,13 +24,9 @@ PROGS = $(SUID_PROGS) $(NOSUID_PROGS)
 
 MAYBE = pivot_root swapoff
 
-# comment these out if you are not compiling in NFS support
+LO_OBJS = lomount.o $(LIB)/xstrncpy.o
 NFS_OBJS = nfsmount.o nfsmount_xdr.o nfsmount_clnt.o
-# uncomment this if you don't have libc-4.2 but do have the rpclib
 GEN_FILES = nfsmount.h nfsmount_xdr.c nfsmount_clnt.c
-
-# comment these out if you are not compiling in loop support
-LO_OBJS=lomount.o
 
 all: $(PROGS)
 
@@ -58,10 +54,10 @@ umount: umount.o fstab.o sundries.o realpath.o mntent.o getusername.o \
 swapon:	swapon.o version.o
 	$(LINK) $^ -o $@
 
-losetup.o: lomount.c
+main_losetup.o: lomount.c
 	$(COMPILE) -DMAIN lomount.c -o $@
 
-losetup: losetup.o
+losetup: main_losetup.o $(LIB)/xstrncpy.o
 	$(LINK) $^ -o $@
 
 mount.o umount.o nfsmount.o losetup.o fstab.o realpath.o sundries.o: sundries.h

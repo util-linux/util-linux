@@ -53,7 +53,7 @@ what function to perform:
 .TP
 .B \-\-show
 Read the Hardware Clock and print the time on Standard Output.
-The time is always in local time, even if you keep your Hardware Clock
+The time shown is always in local time, even if you keep your Hardware Clock
 in Coordinated Universal Time.  See the
 .B \-\-utc
 option.
@@ -130,9 +130,12 @@ option.
 .B \-\-epoch=year
 Specifies the year which is the beginning of the Hardware Clock's
 epoch.  I.e. the number of years into AD to which a zero value in the
-Hardware Clock's year counter refers.  
+Hardware Clock's year counter refers. It is used together with
+the \-\-setepoch option to set the kernel's idea of the epoch of the
+Hardware Clock, or otherwise to specify the epoch for use with
+direct ISA access.
 
-For example,
+For example, on a Digital Unix machine:
 .sp
 .I hwclock --setepoch --epoch=1952
 
@@ -226,47 +229,36 @@ whenever it finds your Hardware Clock set to 1994 or 1995.
 
 .TP
 .B \-\-srm
+This option is equivalent to
+.B \-\-epoch=1900
+and is used to specify the most common epoch on Alphas
+with SRM console.
 .TP
 .B \-\-arc
+This option is equivalent to
+.B \-\-epoch=1980
+and is used to specify the most common epoch on Alphas
+with ARC console (but Ruffians have epoch 1900).
 .TP
 .B \-\-jensen
 .TP
 .B \-\-funky\-toy
-These options all tell 
-.B hwclock 
-what kind of Alpha machine you have.  They
-are invalid if you don't have an Alpha and shouldn't be necessary if you
-do, because 
+These two options specify what kind of Alpha machine you have.  They
+are invalid if you don't have an Alpha and are usually unnecessary
+if you do, because 
 .B hwclock 
 should be able to determine by itself what it's 
 running on, at least when
 .I /proc
-is mounted.  These options make it possible for 
+is mounted.
+(If you find you need one of these options to make
 .B hwclock 
-to work even when
-its environment does not conform to its expectations and thus it cannot
-accurately determine what sort of system it is running on.  If you think
-hwclock is incorrectly determining the system's characteristics, try 
-running with the 
-.B \-\-debug 
-option to see what conclusions the program is
-reaching and how.  If you find you need one of these options to make
-.B hwclock 
-work, contact the 
-.B hwclock 
-maintainer to see if the program can be improved to detect your system
-automatically.
+work, contact the maintainer to see if the program can be improved
+to detect your system automatically. Output of `hwclock --debug'
+and `cat /proc/cpuinfo' may be of interest.)
 
 .B \-\-jensen 
 means you are running on a Jensen model.
-
-.B \-\-arc 
-means your machine uses epoch 1980 in its hardware clock, as is commonly
-the case for machines on ARC console (but Ruffians have epoch 1900).
-
-.B \-\-srm 
-means your machine uses epoch 1900 in its hardware clock, as is commonly
-the case for machines on SRM console.
 
 .B \-\-funky\-toy 
 means that on your machine, one has to use the UF bit instead

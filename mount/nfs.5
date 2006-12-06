@@ -192,6 +192,9 @@ server performance penalty but it allows two different NFS clients
 to get reasonable good results when both clients are actively
 writing to common filesystem on the server.
 .TP 1.5i
+.I nolock
+Do not use locking. Do not start lockd.
+.TP 1.5i
 .I tcp
 Mount the NFS filesystem using the TCP protocol instead of the
 default UDP protocol.  Many NFS severs only support UDP.

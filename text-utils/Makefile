@@ -6,22 +6,23 @@
 include ../make_include
 include ../MCONFIG
 
-# Where to put man pages?
-
-MAN1= 		col.1 colcrt.1 colrm.1 column.1 hexdump.1 more.1 rev.1
-
-# Where to put binaries?
-# See the "install" rule for the links. . .
-
-BIN=            more
+MAN1= 		col.1 colcrt.1 colrm.1 column.1 hexdump.1 rev.1
 
 USRBIN=		col colcrt colrm column hexdump rev
 
-MAYBE=		ul
+BIN=
+
+MAYBE=		more ul
 
 ifeq "$(HAVE_NCURSES)" "yes"
+BIN:=$(BIN) more
 USRBIN:=$(USRBIN) ul
-MAN1:=$(MAN1) ul.1
+MAN1:=$(MAN1) ul.1 more.1
+else
+ifeq "$(HAVE_TERMCAP)" "yes"
+BIN:=$(BIN) more
+MAN1:=$(MAN1) more.1
+endif
 endif
 
 # Where to put datebase files?
@@ -38,7 +39,7 @@ ifeq "$(HAVE_NCURSES)" "yes"
 # Have ncurses - make more and ul
 more ul:
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LIBCURSES)
-more: more.o
+more: more.o $(LIB)/xstrncpy.o
 ul: ul.o
 else
 # Do not have ncurses - give up on ul
@@ -71,9 +72,13 @@ column: column.o $(ERR_O)
 more.o: more.c $(LIB)/pathnames.h
 rev: rev.o
 
+colcrt.o colrm.o column.o rev.o ul.o: $(LIB)/widechar.h
+
 install install.shadow install.text-utils: all
 	$(INSTALLDIR) $(BINDIR) $(USRBINDIR) $(MOREHELPDIR) $(MAN1DIR)
+ifneq "$(BIN)" ""
 	$(INSTALLBIN) $(BIN) $(BINDIR)
+endif
 	$(INSTALLBIN) $(USRBIN) $(USRBINDIR)
 	$(INSTALLDAT) $(MOREHELP) $(MOREHELPDIR)
 	$(INSTALLMAN) $(MAN1) $(MAN1DIR)

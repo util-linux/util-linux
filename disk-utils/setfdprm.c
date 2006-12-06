@@ -1,7 +1,7 @@
 /* setfdprm.c  -  Sets user-provided floppy disk parameters, re-activates
 		  autodetection and switches diagnostic messages. */
 
-/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  */
 

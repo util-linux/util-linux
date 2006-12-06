@@ -273,14 +273,14 @@ xbsd_new_part (void)
   end = xbsd_dlabel.d_secperunit - 1;
 #endif
 
-  sprintf (mesg, _("First %s"), str_units(SINGULAR));
+  snprintf (mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
   begin = read_int (bsd_cround (begin), bsd_cround (begin), bsd_cround (end),
 		    0, mesg);
 
   if (display_in_cyl_units)
     begin = (begin - 1) * xbsd_dlabel.d_secpercyl;
 
-  sprintf (mesg, _("Last %s or +size or +sizeM or +sizeK"),
+  snprintf (mesg, sizeof(mesg), _("Last %s or +size or +sizeM or +sizeK"),
 	   str_units(SINGULAR));
   end = read_int (bsd_cround (begin), bsd_cround (end), bsd_cround (end),
 		  bsd_cround (begin), mesg);
@@ -517,13 +517,13 @@ xbsd_write_bootstrap (void)
   else
     dkbasename = "wd";
 
-  printf (_("Bootstrap: %sboot -> boot%s (%s): "), dkbasename, dkbasename, dkbasename);
-  if (read_line ())
-  {
+  printf (_("Bootstrap: %sboot -> boot%s (%s): "),
+	  dkbasename, dkbasename, dkbasename);
+  if (read_line ()) {
     line_ptr[strlen (line_ptr)-1] = '\0';
     dkbasename = line_ptr;
   }
-  sprintf (path, "%s/%sboot", bootdir, dkbasename);
+  snprintf (path, sizeof(path), "%s/%sboot", bootdir, dkbasename);
   if (!xbsd_get_bootstrap (path, disklabelbuffer, (int) xbsd_dlabel.d_secsize))
     return;
 
@@ -534,15 +534,14 @@ xbsd_write_bootstrap (void)
   /* The disklabel will be overwritten by 0's from bootxx anyway */
   bzero (d, sizeof (struct xbsd_disklabel));
 
-  sprintf (path, "%s/boot%s", bootdir, dkbasename);
+  snprintf (path, sizeof(path), "%s/boot%s", bootdir, dkbasename);
   if (!xbsd_get_bootstrap (path, &disklabelbuffer[xbsd_dlabel.d_secsize],
 			  (int) xbsd_dlabel.d_bbsize - xbsd_dlabel.d_secsize))
     return;
 
   e = d + sizeof (struct xbsd_disklabel);
   for (p=d; p < e; p++)
-    if (*p)
-    {
+    if (*p) {
       fprintf (stderr, _("Bootstrap overlaps with disk label!\n"));
       exit ( EXIT_FAILURE );
     }
@@ -588,7 +587,7 @@ xbsd_get_part_index (int max)
   char prompt[256];
   char l;
 
-  sprintf (prompt, _("Partition (a-%c): "), 'a' + max - 1);
+  snprintf (prompt, sizeof(prompt), _("Partition (a-%c): "), 'a' + max - 1);
   do
      l = tolower (read_char (prompt));
   while (l < 'a' || l > 'a' + max - 1);

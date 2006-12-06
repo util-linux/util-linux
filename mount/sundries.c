@@ -4,7 +4,7 @@
  *
  * added fcntl locking by Kjetil T. (kjetilho@math.uio.no) - aeb, 950927
  *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  */

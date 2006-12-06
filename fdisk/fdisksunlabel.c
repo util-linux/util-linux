@@ -348,10 +348,11 @@ void create_sunlabel(void)
 	    puts(_("You may change all the disk params from the x menu"));
 	}
 
-	sprintf(sunlabel->info, "%s%s%s cyl %d alt %d hd %d sec %d", 
-		p ? p->vendor : "",
-		(p && *p->vendor) ? " " : "",
-		p ? p->model : (floppy ? _("3,5\" floppy") : _("Linux custom")),
+	snprintf(sunlabel->info, sizeof(sunlabel->info),
+		 "%s%s%s cyl %d alt %d hd %d sec %d", 
+		 p ? p->vendor : "", (p && *p->vendor) ? " " : "",
+		 p ? p->model
+		   : (floppy ? _("3,5\" floppy") : _("Linux custom")),
 		cylinders, SSWAP16(sunlabel->nacyl), heads, sectors);
 
 	sunlabel->ntrks = SSWAP16(heads);
@@ -514,7 +515,7 @@ add_sun_partition(int n, int sys) {
 			return;
 		}
 	}
-	sprintf(mesg, _("First %s"), str_units(SINGULAR));
+	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
 	for (;;) {
 		if (whole_disk)
 			first = read_int(0, 0, 0, 0, mesg);
@@ -549,7 +550,9 @@ and is of type `Whole disk'\n");
 		if (starts[i] > first && starts[i] < stop)
 			stop = starts[i];
 	}
-	sprintf(mesg, _("Last %s or +size or +sizeM or +sizeK"), str_units(SINGULAR));
+	snprintf(mesg, sizeof(mesg),
+		 _("Last %s or +size or +sizeM or +sizeK"),
+		 str_units(SINGULAR));
 	if (whole_disk)
 		last = read_int(scround(stop2), scround(stop2), scround(stop2),
 				0, mesg);

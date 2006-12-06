@@ -21,8 +21,11 @@ INSTALL = install -c
 INSTALL_DATA = ${INSTALL} -m 644
 
 # Not giving an explicit path improves the chances of finding these
+# On the other hand, I have both xgettext 0.10.35 (in /usr/bin) and
+# /usr/openwin/bin/xgettext, and only the former can be used here..
 GENCAT = gencat
-MSGFMT = msgfmt -c	# -c: undocumented, but useful option
+MSGFMT = msgfmt
+# MSGFMT = msgfmt -c	# -c: undocumented, but useful option
 XGETTEXT = xgettext
 MSGMERGE = msgmerge
 

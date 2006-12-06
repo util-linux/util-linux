@@ -14,7 +14,7 @@
  * gather 128 bits of random information, so the magic cookie generated
  * will be considerably easier to guess than one might expect.
  *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  * 1999-03-21 aeb: Added some fragments of code from Colin Plumb.
  *

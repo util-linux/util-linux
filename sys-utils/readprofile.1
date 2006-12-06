@@ -23,7 +23,7 @@ The output is
 organized in three columns: the first is the number of clock ticks,
 the second is the name of the C function in the kernel where those many
 ticks occurred, and the third is the normalized `load' of the procedure,
-calculated as a ratio between the number of thicks and the lenght of
+calculated as a ratio between the number of ticks and the length of
 the procedure. The output is filled with blanks to ease readability.
 
 .LP
@@ -78,6 +78,15 @@ you can make
 setuid 0, in order to reset the buffer without gaining privileges.
 
 .TP
+.RB -M " multiplier"
+On some architectures it is possible to alter the frequency at which
+the kernel delivers profiling interrupts to each CPU.  This option allows you to
+set the frequency, as a multiplier of the system clock frequency, HZ.
+This is supported on i386-SMP (2.2 and 2.4 kernel) and also on sparc-SMP
+and sparc64-SMP (2.4 kernel).  This option also resets the profiling buffer,
+and requires superuser privileges.
+
+.TP
 .B -v
 Verbose. The output is organized in four columns and filled with blanks.
 The first column is the RAM address of a kernel function, the second is
@@ -114,6 +123,11 @@ Look at all the kernel information, with ram addresses"
 Browse a `freezed' profile buffer for a non current kernel:
 .nf
    readprofile -p ~/profile.freeze -m /zImage.map.gz
+
+.fi
+Request profiling at 2kHz per CPU, and reset the profiling buffer
+.nf
+   sudo readprofile -M 20
 
 .fi
 

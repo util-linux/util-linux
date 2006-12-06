@@ -1,5 +1,5 @@
 20000630: Ported the Native Language Support patches from util-linux
-          They are written by Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+          They are written by Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
 20000627: Bumped up version number to 1.0.6
 20000627: A few manpage tweaks
 20000616: Introduced DESTDIR and directory creation in the Makefile.

@@ -62,7 +62,7 @@
  * 06.11.96  - Added v2 code submitted by Joerg Dorchain, but written by
  *             Andreas Schwab.
  *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  *
@@ -211,10 +211,10 @@ die(const char *str) {
  */
 static void
 print_current_name(void) {
-	int i=0;
+	int i = 0;
 
-	while (i<name_depth)
-		printf("/%.*s",namelen,name_list[i++]);
+	while (i < name_depth)
+		printf("/%.*s", namelen, name_list[i++]);
 	if (i == 0)
 		printf ("/");
 }
@@ -978,7 +978,7 @@ check_file(struct minix_inode * dir, unsigned int offset) {
 	if (!inode)
 		return;
 	if (name_depth < MAX_DEPTH)
-		strncpy(name_list[name_depth],name,namelen);
+		strncpy(name_list[name_depth], name, namelen);
 	name_depth++;	
 	if (list) {
 		if (verbose)

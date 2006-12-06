@@ -124,7 +124,7 @@ set_hardware_clock_kd(const struct tm *new_broken_time) {
   t.wday = new_broken_time->tm_wday;
 
   if (ioctl(con_fd, KDSHWCLK, &t ) == -1) {
-    outsyserr(_("ioctl() to open /dev/tty1 failed"));
+    outsyserr(_("ioctl KDSHWCLK failed"));
     exit(1);
   }
   return 0;

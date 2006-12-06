@@ -25,7 +25,7 @@ rootdev(char *p) {
 	char *type = "hd";
 	char let;
 	int ma, mi;
-	char devname[8];
+	char devname[32];
 
 	devno = strtoul(p, &ep, 16);
 	if ((ep == p+3 || ep == p+4) && (*ep == ' ' || *ep == 0)) {

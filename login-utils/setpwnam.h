@@ -22,6 +22,15 @@
 #define GROUP_FILE     _PATH_GROUP
 #define GTMP_FILE      _PATH_GTMP
 #define GTMPTMP_FILE   _PATH_GTMPTMP
+
+#define SHADOW_FILE	_PATH_SHADOW_PASSWD
+#define SPTMP_FILE	_PATH_SHADOW_PTMP
+#define SPTMPTMP_FILE	_PATH_SHADOW_PTMPTMP
+
+#define SGROUP_FILE	_PATH_SHADOW_GROUP
+#define SGTMP_FILE	_PATH_SHADOW_GTMP
+#define SGTMPTMP_FILE	_PATH_SHADOW_GTMPTMP
+
 #else
 #define PASSWD_FILE    "/tmp/passwd"
 #define PTMP_FILE      "/tmp/ptmp"
@@ -30,6 +39,14 @@
 #define GROUP_FILE     "/tmp/group"
 #define GTMP_FILE      "/tmp/gtmp"
 #define GTMPTMP_FILE   "/tmp/gtmptmp"
+
+#define SHADOW_FILE	"/tmp/shadow"
+#define SPTMP_FILE	"/tmp/sptmp"
+#define SPTMPTMP_FILE	"/tmp/sptmptmp"
+
+#define SGROUP_FILE	"/tmp/gshadow"
+#define SGTMP_FILE	"/tmp/sgtmp"
+#define SGTMPTMP_FILE	"/tmp/sgtmptmp"
 #endif
 
 extern int setpwnam (struct passwd *pwd);

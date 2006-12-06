@@ -38,7 +38,7 @@
  *	auth.warning. (Of course, the password itself is not logged.)
  */
 
- /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ /* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
   * - added Native Language Support
   * Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
   * - fixed strerr(errno) in gettext calls
@@ -68,6 +68,7 @@
 #include "my_crypt.h"
 #include "setpwnam.h"
 #include "islocal.h"
+#include "xstrncpy.h"
 #include "nls.h"
 #include "env.h"
 
@@ -375,8 +376,7 @@ main(int argc, char *argv[]) {
 	     && !check_passwd(pwdstr, pe->pw_passwd, user, pe->pw_gecos) ) 
 	    goto redo_it;
 	
-	strncpy(pwdstr1, pwdstr, 9);
-	pwdstr1[9] = 0;
+	xstrncpy(pwdstr1, pwdstr, sizeof(pwdstr1));
 	pwdstr = getpass(_("Re-type new password: "));
 	
 	if(strncmp(pwdstr, pwdstr1, 8)) {

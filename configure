@@ -9,7 +9,7 @@
 # H3. For kbd_rate.c: does <linux/kd.h> exist?
 # H4. For nls.h: do we have <locale.h>?
 # H5. For cal.c: do we have <langinfo.h>?
-# H6. For mkswap.c: do we have <asm/page.h>?
+# H6. For mkswap.c: do we have <sys/user.h> or <asm/page.h>?
 # H7. For nfsmount.h (nfsmount_xdr.c: int32_t): do we have <asm/types.h>?
 #
 # Existence of functions:
@@ -18,6 +18,7 @@
 # F3. For agetty.c: is getdomainname() available?
 # F4. For hwclock/kd.c: do we have nanosleep()?
 # F5. For mkswap.c: do we have personality()?
+# F6. For agetty.c: is updwtmp() available?
 #
 #  1. For sys-utils/cytune.c: do we need <linux/tqueue.h>?
 #  2. For cfdisk, setterm, more, ul: do we have ncurses? How installed?
@@ -114,11 +115,13 @@ if ./testincl "langinfo.h"; then
 fi
 
 #
-# H6. For mkswap.c: do we have <asm/page.h>?
+# H6. For mkswap.c: do we have <sys/user.h> or <asm/page.h>?
 #
-if ./testincl "asm/page.h"; then
+if ./testincl "sys/user.h"; then
+        echo "#define HAVE_sys_user_h" >> defines.h
+else if ./testincl "asm/page.h"; then
         echo "#define HAVE_asm_page_h" >> defines.h
-fi
+fi fi
 
 #
 # H7. For nfsmount.h: do we have <asm/types.h>?
@@ -231,6 +234,29 @@ if test -s conftest && ./conftest 2>/dev/null; then
 	echo "You have personality()"
 else
 	echo "You don't have personality()"
+fi
+rm -f conftest conftest.c
+
+#
+# F6. For agetty.c: is updwtmp() available?
+#
+echo '
+#include <string.h>
+#include <utmp.h>
+main(int a, char **v){
+  struct  utmp ut;
+  memset (&ut, 0, sizeof(ut));
+  if (a == -1)  /* false */
+    updwtmp("/nowhere/wtmp", &ut);
+  exit(0);
+}
+' > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+        echo "#define HAVE_updwtmp" >> defines.h
+        echo "You have updwtmp()"
+else
+        echo "You don't have updwtmp()"
 fi
 rm -f conftest conftest.c
 

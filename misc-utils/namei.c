@@ -39,7 +39,7 @@ the maximum number of symbolic links this system can have.
 The program exits with a 1 status ONLY if it finds it cannot
 chdir to /,  or if it encounters an unknown file type.
 
-1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
 - added Native Language Support
 
 -------------------------------------------------------------*/

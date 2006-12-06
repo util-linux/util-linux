@@ -40,7 +40,7 @@
  *      - Added fix from David.Chapell@mail.trincoll.edu enabeling daemons
  *	  to use write.
  *      - ANSIed it since I was working on it anyway.
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  */
@@ -197,11 +197,7 @@ void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
 	struct utmp *uptr;
 	time_t bestatime, atime;
 	int nloggedttys, nttys, msgsok, user_is_me;
-#ifdef __linux__
 	char atty[sizeof(u.ut_line) + 1];
-#else
-	char atty[UT_LINESIZE + 1];
-#endif
 
 	utmpname(_PATH_UTMP);
 	setutent();
@@ -213,13 +209,8 @@ void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
 		memcpy(&u, uptr, sizeof(u));
 		if (strncmp(user, u.ut_name, sizeof(u.ut_name)) == 0) {
 			++nloggedttys;
-#ifdef __linux__
 			(void)strncpy(atty, u.ut_line, sizeof(u.ut_line));
 			atty[sizeof(u.ut_line)] = '\0';
-#else
-			(void)strncpy(atty, u.ut_line, UT_LINESIZE);
-			atty[UT_LINESIZE] = '\0';
-#endif
 			if (term_chk(atty, &msgsok, &atime, 0))
 				continue;	/* bad term? skip */
 			if (myuid && !msgsok)
@@ -228,10 +219,8 @@ void search_utmp(char *user, char *tty, char *mytty, uid_t myuid)
 				user_is_me = 1;
 				continue;	/* don't write to yourself */
 			}
-#ifdef __linux__
                         if (u.ut_type != USER_PROCESS)
 			        continue;       /* it's not a valid entry */
-#endif
 			++nttys;
 			if (atime > bestatime) {
 				bestatime = atime;

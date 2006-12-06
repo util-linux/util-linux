@@ -2,7 +2,7 @@
    Created 25-Aug-95 by Peter Orbaek <poe@daimi.aau.dk>
    Fixed by JDS June 1996 to clear lists and close files
 
-   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
    - added Native Language Support
 
 */
@@ -30,6 +30,7 @@
 
 #include "pathnames.h"
 #include "login.h"
+#include "xstrncpy.h"
 
 #ifdef TESTING
 struct hostent hostaddress;
@@ -107,8 +108,7 @@ new_class(char *class)
 
     tc->next = ttyclasses;
     tc->first = NULL;
-    strncpy(tc->classname, class, CLASSNAMELEN);
-    tc->classname[CLASSNAMELEN-1] = 0;
+    xstrncpy(tc->classname, class, CLASSNAMELEN);
     ttyclasses = tc;
     return tc;
 }
@@ -128,8 +128,7 @@ add_to_class(struct ttyclass *tc, char *tty)
     }
 
     ge->next = tc->first;
-    strncpy(ge->name, tty, NAMELEN);
-    ge->name[NAMELEN-1] = 0;
+    xstrncpy(ge->name, tty, NAMELEN);
     tc->first = ge;
 }
 
@@ -267,8 +266,7 @@ in_class(const char *tty, char *class)
     if (class[0] == '[') {
 	if ((p = strchr(class, ']'))) {
 	    *p = 0;
-	    strncpy(timespec, class+1, sizeof(timespec));
-	    timespec[sizeof(timespec)-1] = 0;
+	    xstrncpy(timespec, class+1, sizeof(timespec));
 	    *p = ']';
 	    if(!timeok(tm, timespec)) return 0;
 	    class = p+1;
@@ -289,8 +287,7 @@ in_class(const char *tty, char *class)
 		if (n[0] == '[') {
 		    if ((p = strchr(n, ']'))) {
 			*p = 0;
-			strncpy(timespec, n+1, sizeof(timespec));
-			timespec[sizeof(timespec)-1] = 0;
+			xstrncpy(timespec, n+1, sizeof(timespec));
 			*p = ']';
 			if(!timeok(tm, timespec)) continue;
 			n = p+1;
@@ -373,8 +370,7 @@ checktty(const char *user, const char *tty, struct passwd *pwd)
 	  if(*ptr == '#') *ptr = 0;
 
 	if (buf[0] == '*') {
-	    strncpy(defaultbuf, buf, 256);
-	    defaultbuf[255] = 0;
+	    xstrncpy(defaultbuf, buf, 256);
 	    continue;
 	}
 

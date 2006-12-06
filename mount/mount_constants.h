@@ -36,13 +36,16 @@ if we have a stack or plain mount - mount atop of it, forming a stack. */
 #define	MS_OVER		0x200	/* 512 */
 #endif
 #ifndef MS_NOATIME
-#define MS_NOATIME	1024	/* Do not update access times. */
+#define MS_NOATIME	0x400	/* 1024: Do not update access times. */
 #endif
 #ifndef MS_NODIRATIME
-#define MS_NODIRATIME   2048    /* Do not update directory access times */
+#define MS_NODIRATIME   0x800	/* 2048: Don't update directory access times */
 #endif
 #ifndef MS_BIND
-#define	MS_BIND		4096
+#define	MS_BIND		0x1000	/* 4096: Mount existing tree also elsewhere */
+#endif
+#ifndef MS_MOVE
+#define MS_MOVE		0x2000	/* 8192: Atomically move tree */
 #endif
 /*
  * Magic mount flag number. Has to be or-ed to the flag values.

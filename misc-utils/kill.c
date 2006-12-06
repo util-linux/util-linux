@@ -35,7 +35,7 @@
  *  modifications (c) salvatore valente <svalente@mit.edu>
  *  may be used / modified / distributed under the same terms as the original.
  *
- *  1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ *  1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  *  - added Native Language Support
  *
  *  1999-11-13 aeb Accept signal numers 128+s.
@@ -149,12 +149,12 @@ int kill_verbose (char *procname, int pid, int sig);
 
 extern int *get_pids (char *, int);
 
-char *whoami;
+static char *progname;
 
 int main (int argc, char *argv[])
 {
     int errors, numsig, pid;
-    char *ep, *arg, *progname, *p;
+    char *ep, *arg, *p;
     int do_pid, do_kill, check_all;
     int *pids, *ip;
 
@@ -166,9 +166,8 @@ int main (int argc, char *argv[])
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
 
-    whoami = mybasename (*argv);
     numsig = SIGTERM;
-    do_pid = (! strcmp (whoami, "pid"));
+    do_pid = (! strcmp (progname, "pid")); 	/* Yecch */
     do_kill = 0;
     check_all = 0;
 
@@ -183,9 +182,6 @@ int main (int argc, char *argv[])
 	if (! strcmp (arg, "--")) {
 	    argc--, argv++;
 	    break;
-	}
-	if (! strcmp (arg, "-u")) {
-	    return usage (0);
 	}
 	if (! strcmp (arg, "-v") || ! strcmp (arg, "-V") ||
 	    ! strcmp (arg, "--version")) {
@@ -207,7 +203,7 @@ int main (int argc, char *argv[])
 	    /* argc == 2, accept "kill -l $?" */
 	    arg = argv[1];
 	    if ((numsig = arg_to_signum (arg, 1)) < 0) {
-		fprintf (stderr, _("%s: unknown signal %s\n"), whoami, arg);
+		fprintf (stderr, _("%s: unknown signal %s\n"), progname, arg);
 		return 1;
 	    }
 	    printsig (numsig);
@@ -238,6 +234,7 @@ int main (int argc, char *argv[])
 	    so it's probably something like -HUP, or -1/-n
 	    try to deal with it.
 	    -n could be signal n, or pid -n (i.e. process group n).
+	    In case of doubt POSIX tells us to assume a signal.
 	    If a signal has been parsed, assume it's a pid, break */
 	if (do_kill)
 	  break;
@@ -270,7 +267,7 @@ int main (int argc, char *argv[])
 	    if (! pids) {
 		errors++;
 		fprintf (stderr, _("%s: can't find process \"%s\"\n"),
-			 whoami, arg);
+			 progname, arg);
 		continue;
 	    }
 	    for (ip = pids; *ip >= 0; ip++)
@@ -313,7 +310,7 @@ int arg_to_signum (char *arg, int maskbit)
 
 void nosig (char *name)
 {
-    fprintf (stderr, _("%s: unknown signal %s; valid signals:\n"), whoami, name);
+    fprintf (stderr, _("%s: unknown signal %s; valid signals:\n"), progname, name);
     printsignals (stderr);
 }
 
@@ -353,8 +350,8 @@ int usage (int status)
     FILE *fp;
 
     fp = (status == 0 ? stdout : stderr);
-    fprintf (fp, _("usage: %s [ -s signal | -p ] [ -a ] pid ...\n"), whoami);
-    fprintf (fp, _("       %s -l [ signal ]\n"), whoami);
+    fprintf (fp, _("usage: %s [ -s signal | -p ] [ -a ] pid ...\n"), progname);
+    fprintf (fp, _("       %s -l [ signal ]\n"), progname);
     return status;
 }
 
@@ -365,7 +362,7 @@ int kill_verbose (char *procname, int pid, int sig)
 	return 0;
     }
     if (kill (pid, sig) < 0) {
-	fprintf (stderr, "%s ", whoami);
+	fprintf (stderr, "%s ", progname);
 	perror (procname);
 	return 1;
     }

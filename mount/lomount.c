@@ -2,7 +2,7 @@
 /* Added vfs mount options - aeb - 960223 */
 /* Removed lomount - aeb - 960224 */
 
-/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+/* 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  * Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
  * - fixed strerr(errno) in gettext calls
@@ -27,6 +27,7 @@
 
 #include "loop.h"
 #include "lomount.h"
+#include "xstrncpy.h"
 #include "nls.h"
 
 extern int verbose;
@@ -217,8 +218,7 @@ set_loop (const char *device, const char *file, int offset,
 	*loopro = (mode == O_RDONLY);
 
 	memset (&loopinfo, 0, sizeof (loopinfo));
-	strncpy (loopinfo.lo_name, file, LO_NAME_SIZE);
-	loopinfo.lo_name[LO_NAME_SIZE - 1] = 0;
+	xstrncpy (loopinfo.lo_name, file, LO_NAME_SIZE);
 	if (encryption && (loopinfo.lo_encrypt_type = crypt_type (encryption))
 	    < 0) {
 		fprintf (stderr, _("Unsupported encryption type %s\n"),
@@ -233,7 +233,7 @@ set_loop (const char *device, const char *file, int offset,
 	 * passwd etc being swapped out and left somewhere on disk.
 	 */
                                                 
-	if(mlockall(MCL_CURRENT|MCL_FUTURE)) {
+	if(mlockall(MCL_CURRENT | MCL_FUTURE)) {
 		perror("memlock");
 		fprintf(stderr, _("Couldn't lock into memory, exiting.\n"));
 		exit(1);
@@ -246,8 +246,7 @@ set_loop (const char *device, const char *file, int offset,
 		break;
 	case LO_CRYPT_XOR:
 		pass = getpass (_("Password: "));
-		strncpy (loopinfo.lo_encrypt_key, pass, LO_KEY_SIZE);
-		loopinfo.lo_encrypt_key[LO_KEY_SIZE - 1] = 0;
+		xstrncpy (loopinfo.lo_encrypt_key, pass, LO_KEY_SIZE);
 		loopinfo.lo_encrypt_key_size = strlen(loopinfo.lo_encrypt_key);
 		break;
 	case LO_CRYPT_DES:

@@ -26,7 +26,7 @@
  * Improve support for noncanonical names in /etc/fstab.
  * Add support for volume labels and UUIDs.
  *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  * 1999-03-21 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
  * - fixed strerr(errno) in gettext calls
@@ -101,10 +101,7 @@ static int optfork = 0;
 /* Add volumelabel in a listing of mounted devices (-l). */
 static int list_with_volumelabel = 0;
 
-/* Nonzero for mount --bind */
-static int bind = 0;
-
-/* Nonzero for mount {--replace|--before|--after|--over} */
+/* Nonzero for mount {--bind|--replace|--before|--after|--over|--move} */
 static int mounttype = 0;
 
 /* True if ruid != euid.  */
@@ -341,8 +338,6 @@ parse_opts (char *opts, int *flags, char **extra_opts) {
 	if (readwrite)
 		*flags &= ~MS_RDONLY;
 	*flags |= mounttype;
-	if (bind)
-		*flags |= MS_BIND;
 }
 
 /* Try to build a canonical options string.  */
@@ -466,7 +461,7 @@ guess_fstype_and_mount (char *spec, char *node, char **type,
    if (*type && strcasecmp (*type, "auto") == 0)
       *type = NULL;
 
-   if (!*type && (flags & MS_BIND))
+   if (!*type && (flags & (MS_BIND | MS_MOVE)))
       *type = "none";		/* random, but not "bind" */
 
    if (!*type && !(flags & MS_REMOUNT)) {
@@ -1092,7 +1087,7 @@ mount_one (const char *spec, const char *node, char *type, const char *opts,
       /* if -a then we may be rescued by a noauto option */
   }
 
-  if (type == NULL && !bind) {
+  if (type == NULL && !mounttype) {
       if (strchr (spec, ':') != NULL) {
 	type = "nfs";
 	if (verbose)
@@ -1292,6 +1287,7 @@ static struct option longopts[] = {
 	{ "after", 0, 0, 130 },
 	{ "before", 0, 0, 131 },
 	{ "over", 0, 0, 132 },
+	{ "move", 0, 0, 133 },
 	{ NULL, 0, 0, 0 }
 };
 
@@ -1317,11 +1313,13 @@ usage (FILE *fp, int n) {
 	  "       mount --bind olddir newdir\n"
 	  "A device can be given by name, say /dev/hda1 or /dev/cdrom,\n"
 	  "or by label, using  -L label  or by uuid, using  -U uuid .\n"
-	  "Union or stack mounts are specified using one of\n"
-	  "       --replace, --after, --before, --over\n"
 	  "Other options: [-nfFrsvw] [-o options].\n"
 	  "For many more details, say  man 8 mount .\n"
 	));
+/*
+	  "Union or stack mounts are specified using one of\n"
+	  "       --replace, --after, --before, --over\n"
+*/
 	unlock_mtab();
 	exit (n);
 }
@@ -1408,7 +1406,7 @@ main (int argc, char *argv[]) {
 			break;
 
 		case 128: /* bind */
-			++bind;
+			mounttype = MS_BIND;
 			break;
 		case 129: /* replace */
 			mounttype = MS_REPLACE;
@@ -1421,6 +1419,9 @@ main (int argc, char *argv[]) {
 			break;
 		case 132: /* over */
 			mounttype = MS_OVER;
+			break;
+		case 133: /* move */
+			mounttype = MS_MOVE;
 			break;
 	      
 		case '?':
@@ -1435,15 +1436,15 @@ main (int argc, char *argv[]) {
 	specseen = (uuid || volumelabel) ? 1 : 0; 	/* yes, .. i know */
 
 	if (argc+specseen == 0 && !all) {
-		if (options || mounttype || bind)
+		if (options || mounttype)
 			usage (stderr, EX_USAGE);
 		return print_all (types);
 	}
 
 	if (getuid () != geteuid ()) {
 		suid = 1;
-		if (types || options || readwrite || nomtab || all || fake ||
-		    bind || mounttype || (argc + specseen) != 1)
+		if (types || options || readwrite || nomtab || all ||
+		    fake || mounttype || (argc + specseen) != 1)
 			die (EX_USAGE, _("mount: only root can do that"));
 	}
 

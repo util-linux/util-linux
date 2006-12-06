@@ -43,7 +43,7 @@ else
 endif
 endif
 
-cfdisk: cfdisk.o llseek.o i386_sys_types.o
+cfdisk: cfdisk.o llseek.o i386_sys_types.o $(LIB)/xstrncpy.o
 ifeq "$(HAVE_SLANG)" "yes"
 	$(CC) $(LDFLAGS) $^ -o $@ $(LIBSLANG)
 else

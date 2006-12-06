@@ -95,7 +95,7 @@ prints a version string; and just
 .RE
 lists all mounted file systems (of type
 .IR type ).
-The option \-l adds the (ext2) labels in this listing.
+The option \-l adds the (ext2 and XFS) labels in this listing.
 See below.
 
 .\" In fact since 2.3.99. At first the syntax was mount -t bind.
@@ -280,12 +280,12 @@ command is trying to do. It can also be used to add entries for devices
 that were mounted earlier with the -n option.
 .TP
 .B \-l
-Add the ext2 labels in the mount output. Mount must have permission to
+Add the ext2 and XFS labels in the mount output. Mount must have permission to
 read the disk device (e.g. be suid root) for this to work.
-One can set such a label
-using the
+One can set such a label for ext2 using the
 .BR e2label (8)
-utility.
+utility, or for XFS using
+.BR xfs_admin (8).
 .TP
 .B \-n
 Mount without writing in
@@ -323,13 +323,13 @@ These two options require the file
 The argument following the
 .B \-t
 is used to indicate the file system type.  The file system types which are
-currently supported are listed in
-.IR linux/fs/filesystems.c :
+currently supported are:
 .IR adfs ,
 .IR affs ,
 .IR autofs ,
 .IR coda ,
 .IR coherent ,
+.IR cramfs ,
 .IR devpts ,
 .IR efs ,
 .IR ext ,
@@ -352,6 +352,7 @@ currently supported are listed in
 .IR umsdos ,
 .IR vfat ,
 .IR xenix ,
+.IR xfs ,
 .IR xiafs .
 Note that coherent, sysv and xenix are equivalent and that
 .I xenix
@@ -391,7 +392,8 @@ option is given, or if the
 .B auto
 type is specified, the superblock is probed for the filesystem type
 .RI ( minix ", " ext ", " ext2 ", " xiafs ", " iso9660 ", " romfs
-.RI , ufs ", " ntfs  ", " qnx4 ", " bfs
+.RI , ufs ", " ntfs  ", " qnx4 ", " bfs ", " xfs ", " cramfs ", " hfs
+.RI , hpfs ", " adfs
 are supported).
 If this probe fails, mount will try to read the file
 .IR /etc/filesystems ,
@@ -494,7 +496,7 @@ This is the default.
 .B remount
 Attempt to remount an already-mounted file system.  This is commonly
 used to change the mount flags for a file system, especially to make a
-readonly file system writeable.
+readonly file system writeable. It does not change device or mount point.
 .TP
 .B ro
 Mount the file system read-only.
@@ -522,7 +524,16 @@ The following options apply only to certain file systems.
 We sort them by file system. They all follow the
 .B \-o
 flag.
-
+.SH "Mount options for adfs"
+.TP
+\fBuid=\fP\fIvalue\fP and \fBgid=\fP\fIvalue\fP
+Set the owner and group of the files in the file system (default: uid=gid=0).
+.TP
+\fBownmask=\fP\fIvalue\fP and \fBothmask=\fP\fIvalue\fP
+Set the permission mask for ADFS 'owner' permissions and 'other' permissions,
+respectively (default: 0700 and 0077, respectively).
+See also
+.IR /usr/src/linux/Documentation/filesystems/adfs.txt .
 .SH "Mount options for affs"
 .TP
 \fBuid=\fP\fIvalue\fP and \fBgid=\fP\fIvalue\fP
@@ -863,6 +874,7 @@ that it is read-only, of course).
 .B norock
 Disable the use of Rock Ridge extensions, even if available. Cf.\&
 .BR map .
+.TP
 .B nojoliet
 Disable the use of Microsoft Joliet extensions, even if available. Cf.\&
 .BR map .
@@ -1218,6 +1230,102 @@ If `uni_xlate' gets set, UTF8 gets disabled.
 .SH "Mount options for xenix"
 None.
 
+.SH "Mount options for xfs"
+.TP
+.BI biosize= size
+Sets the preferred buffered I/O size (default size is 64K).
+.I size
+must be expressed as the logarithm (base2) of the desired I/O size.
+Valid values for this option are 14 through 16, inclusive
+(i.e. 16K, 32K, and 64K bytes).
+On machines with a 4K pagesize, 13 (8K bytes) is also a valid
+.IR size .
+The preferred buffered I/O size can also be altered on an individual
+file basis using the
+.BR ioctl (2)
+system call.
+.TP
+.B dmapi " / " xdsm
+Enable the DMAPI (Data Management API) event callouts.
+.TP
+.BI logbufs= value
+Set the number of in-memory log buffers.
+Valid numbers range from 2-8 inclusive.
+The default value is 8 buffers for filesystems with a blocksize of 64K,
+4 buffers for filesystems with a blocksize of 32K,
+3 buffers for filesystems with a blocksize of 16K,
+and 2 buffers for all other configurations.
+Increasing the number of buffers may increase performance on
+some workloads at the cost of the memory used for the
+additional log buffers and their associated control structures.
+.TP
+.BI logbsize= value
+Set the size of each in-memory log buffer.
+Valid sizes are 16384 (16K) and 32768 (32K).
+The default value for machines with more than 32MB of memory is 32768,
+machines with less memory use 16384 by default.
+.TP
+\fBlogdev=\fP\fIdevice\fP and \fBrtdev=\fP\fIdevice\fP
+Use an external log (metadata journal) and/or real-time device.
+An XFS filesystem has up to three parts: a data section, a log section,
+and a real-time section.
+The real-time section is optional, and the log section can be separate
+from the data section or contained within it.
+Refer to
+.BR xfs (5).
+.TP
+.B noalign
+Data allocations will not be aligned at stripe unit boundaries.
+.TP
+.B noatime
+Access timestamps are not updated when a file is read.
+.TP
+.B norecovery
+The filesystem will be mounted without running log recovery.
+If the filesystem was not cleanly unmounted, it is likely to
+be inconsistent when mounted in
+.B norecovery
+mode.
+Some files or directories may not be accessible because of this.
+Filesystems mounted
+.B norecovery
+must be mounted read-only or the mount will fail.
+.TP
+.B osyncisdsync
+Make writes to files opened with the O_SYNC flag set behave
+as if the O_DSYNC flag had been used instead.
+This can result in better performance without compromising
+data safety.
+However if this option is in effect, timestamp updates from
+O_SYNC writes can be lost if the system crashes.
+.TP
+.BR quota " / " usrquota " / " uqnoenforce
+User disk quota accounting enabled, and limits (optionally) enforced.
+.TP
+.BR grpquota " / " gqnoenforce
+Group disk quota accounting enabled and limits (optionally) enforced.
+.TP
+\fBsunit=\fP\fIvalue\fP and \fBswidth=\fP\fIvalue\fP
+Used to specify the stripe unit and width for a RAID device or a stripe
+volume.
+.I value
+must be specified in 512-byte block units.
+If this option is not specified and the filesystem was made on a stripe
+volume or the stripe width or unit were specified for the RAID device at
+mkfs time, then the mount system call will restore the value from the
+superblock.
+For filesystems that are made directly on RAID devices, these options can be
+used to override the information in the superblock if the underlying disk
+layout changes after the filesystem has been created.
+The
+.B swidth
+option is required if the
+.B sunit
+option has been specified,
+and must be a multiple of the
+.B sunit
+value.
+
 .SH "Mount options for xiafs"
 None. Although nothing is wrong with xiafs, it is not used much,
 and is not maintained. Probably one shouldn't use it.
@@ -1275,7 +1383,9 @@ temporary file
 .BR umount (8),
 .BR swapon (8),
 .BR nfs (5),
+.BR xfs (5),
 .BR e2label (8),
+.BR xfs_admin (8),
 .BR mountd (8),
 .BR nfsd (8),
 .BR mke2fs (8),

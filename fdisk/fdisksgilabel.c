@@ -76,23 +76,25 @@ isinfreelist( int b ) {
  * end of free blocks section
  */
 struct systypes sgi_sys_types[] = {
-    {SGI_VOLHDR,  N_("SGI volhdr")},
-    {0x01,	  N_("SGI trkrepl")},
-    {0x02,	  N_("SGI secrepl")},
-    {SGI_SWAP,	  N_("SGI raw")},
-    {0x04,	  N_("SGI bsd")},
-    {0x05,	  N_("SGI sysv")},
-    {ENTIRE_DISK, N_("SGI volume")},
-    {SGI_EFS,	  N_("SGI efs")},
-    {0x08,	  N_("SGI lvol")},
-    {0x09,	  N_("SGI rlvol")},
-    {0x0a,	  N_("SGI xfs")},
-    {0x0b,	  N_("SGI xlvol")},
-    {0x0c,	  N_("SGI rxlvol")},
-    {LINUX_SWAP,  N_("Linux swap")},
-    {LINUX_NATIVE,N_("Linux native")},
-    {0x8e,	  N_("Linux LVM")},
-    {0, NULL }
+	{SGI_VOLHDR,	N_("SGI volhdr")},
+	{0x01,		N_("SGI trkrepl")},
+	{0x02,		N_("SGI secrepl")},
+	{SGI_SWAP,	N_("SGI raw")},
+	{0x04,		N_("SGI bsd")},
+	{0x05,		N_("SGI sysv")},
+	{ENTIRE_DISK,	N_("SGI volume")},
+	{SGI_EFS,	N_("SGI efs")},
+	{0x08,		N_("SGI lvol")},
+	{0x09,		N_("SGI rlvol")},
+	{SGI_XFS,	N_("SGI xfs")},
+	{SGI_XFSLOG,	N_("SGI xfslog")},
+	{SGI_XLV,	N_("SGI xlv")},
+	{SGI_XVM,	N_("SGI xvm")},
+	{LINUX_SWAP,	N_("Linux swap")},
+	{LINUX_NATIVE,	N_("Linux native")},
+	{LINUX_LVM,	N_("Linux LVM")},
+	{LINUX_RAID,	N_("Linux RAID")},
+	{0, NULL }
 };
 
 static inline unsigned short
@@ -357,7 +359,7 @@ create_sgiinfo(void)
     /* I keep SGI's habit to write the sgilabel to the second block */
     sgilabel->directory[0].vol_file_start = SSWAP32( 2 );
     sgilabel->directory[0].vol_file_size = SSWAP32( sizeof( sgiinfo ) );
-    strncpy( sgilabel->directory[0].vol_file_name, "sgilabel",8 );
+    strncpy( sgilabel->directory[0].vol_file_name, "sgilabel", 8 );
 }
 
 sgiinfo * fill_sgiinfo(void);
@@ -681,7 +683,7 @@ sgi_add_partition( int n, int sys )
 	printf(_("You got a partition overlap on the disk. Fix it first!\n"));
 	return;
     }
-    sprintf(mesg, _("First %s"), str_units(SINGULAR));
+    snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
     for(;;) {
 	if(sys == SGI_VOLUME) {
 	    last = sgi_get_lastblock();
@@ -708,7 +710,7 @@ sgi_add_partition( int n, int sys )
 	} else
 	    break;
     }
-    sprintf(mesg, _(" Last %s"), str_units(SINGULAR));
+    snprintf(mesg, sizeof(mesg), _(" Last %s"), str_units(SINGULAR));
     last = read_int(scround(first), scround(last)-1, scround(last)-1,
 		    scround(first), mesg)+1;
     if (display_in_cyl_units)
@@ -768,8 +770,12 @@ create_sgilabel(void)
     memset(MBRbuffer, 0, sizeof(MBRbuffer));
     sgilabel->magic = SSWAP32(SGI_LABEL_MAGIC);
     sgilabel->boot_part = SSWAP16(0);
-    sgilabel->swap_part = SSWAP16(1); strncpy(
-    sgilabel->boot_file , "/unix\0\0\0\0\0\0\0\0\0\0\0", 16 );
+    sgilabel->swap_part = SSWAP16(1);
+
+    /* sizeof(sgilabel->boot_file) = 16 > 6 */
+    memset(sgilabel->boot_file, 0, 16);
+    strcpy(sgilabel->boot_file, "/unix");
+
     sgilabel->devparam.skew			= (0);
     sgilabel->devparam.gap1			= (0);
     sgilabel->devparam.gap2			= (0);

@@ -38,7 +38,7 @@
  *
  * Martin Schulze's patches adapted to Util-Linux by Nicolai Langfeldt.
  *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  * Sun Mar 21 1999 - Arnaldo Carvalho de Melo <acme@conectiva.com.br>
  * - fixed strerr(errno) in gettext calls
@@ -64,6 +64,7 @@ static char version_string[] = "vipw 1.4";
 #include <unistd.h>
 
 #include "setpwnam.h"
+#include "xstrncpy.h"
 #include "nls.h"
 
 #define FILENAMELEN 67
@@ -132,13 +133,6 @@ pw_lock(void) {
 	 * that users can't get at the encrypted passwords while editing.
 	 * Open should allow flock'ing the file; see 4.4BSD.	XXX
 	 */
-	lockfd = open(orig_file, O_RDONLY, 0);
-
-	if (lockfd < 0) {
-		(void)fprintf(stderr, "%s: %s: %s\n",
-		    progname, orig_file, strerror(errno));
-		exit(1);
-	}
 #if 0 /* flock()ing is superfluous here, with the ptmp/ptmptmp system. */
 	if (flock(lockfd, LOCK_EX|LOCK_NB)) {
 		(void)fprintf(stderr,
@@ -169,6 +163,16 @@ pw_lock(void) {
 	    }
 	    exit(1);
 	}
+
+	lockfd = open(orig_file, O_RDONLY, 0);
+
+	if (lockfd < 0) {
+		(void)fprintf(stderr, "%s: %s: %s\n",
+		    progname, orig_file, strerror(errno));
+		unlink(tmp_file);
+		exit(1);
+	}
+
 	copyfile(lockfd, fd);
 	(void)close(lockfd);
 	(void)close(fd);
@@ -253,9 +257,28 @@ pw_error(name, err, eval)
 	exit(eval);
 }
 
+static void
+edit_file(void)
+{
+	struct stat begin, end;
+
+	pw_init();
+	pw_lock();
+
+	if (stat(tmp_file, &begin))
+		pw_error(tmp_file, 1, 1);
+	pw_edit(0);
+	if (stat(tmp_file, &end))
+		pw_error(tmp_file, 1, 1);
+	if (begin.st_mtime == end.st_mtime) {
+		(void)fprintf(stderr, _("%s: no changes made\n"), progname);
+		pw_error((char *)NULL, 0, 0);
+	}
+	pw_unlock();
+}
+
 int main(int argc, char *argv[])
 {
-  struct stat begin, end;
 
   setlocale(LC_ALL, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
@@ -265,15 +288,14 @@ int main(int argc, char *argv[])
   progname = (rindex(argv[0], '/')) ? rindex(argv[0], '/') + 1 : argv[0];
   if (!strcmp(progname, "vigr")) {
     program = VIGR;
-    strncpy(orig_file, GROUP_FILE, FILENAMELEN-1);
-    strncpy(tmp_file, GTMP_FILE, FILENAMELEN-1);
-    strncpy(tmptmp_file, GTMPTMP_FILE, FILENAMELEN-1);
-  }
-  else {
+    xstrncpy(orig_file, GROUP_FILE, sizeof(orig_file));
+    xstrncpy(tmp_file, GTMP_FILE, sizeof(tmp_file));
+    xstrncpy(tmptmp_file, GTMPTMP_FILE, sizeof(tmptmp_file));
+  } else {
     program = VIPW;
-    strncpy(orig_file, PASSWD_FILE, FILENAMELEN-1);
-    strncpy(tmp_file, PTMP_FILE, FILENAMELEN-1);
-    strncpy(tmptmp_file, PTMPTMP_FILE, FILENAMELEN-1);
+    xstrncpy(orig_file, PASSWD_FILE, sizeof(orig_file));
+    xstrncpy(tmp_file, PTMP_FILE, sizeof(tmp_file));
+    xstrncpy(tmptmp_file, PTMPTMP_FILE, sizeof(tmptmp_file));
   }
 
   if ((argc > 1) && 
@@ -282,18 +304,32 @@ int main(int argc, char *argv[])
     exit(0);
   }
 
-  pw_init();
-  pw_lock();
+  edit_file();
 
-  if (stat(tmp_file, &begin))
-    pw_error(tmp_file, 1, 1);
-  pw_edit(0);
-  if (stat(tmp_file, &end))
-    pw_error(tmp_file, 1, 1);
-  if (begin.st_mtime == end.st_mtime) {
-    (void)fprintf(stderr, _("%s: no changes made\n"), progname);
-    pw_error((char *)NULL, 0, 0);
+  if (program == VIGR) {
+    strncpy(orig_file, SGROUP_FILE, FILENAMELEN-1);
+    strncpy(tmp_file, SGTMP_FILE, FILENAMELEN-1);
+    strncpy(tmptmp_file, SGTMPTMP_FILE, FILENAMELEN-1);
+  } else {
+    strncpy(orig_file, SHADOW_FILE, FILENAMELEN-1);
+    strncpy(tmp_file, SPTMP_FILE, FILENAMELEN-1);
+    strncpy(tmptmp_file, SPTMPTMP_FILE, FILENAMELEN-1);
   }
-  pw_unlock();
+
+  if (!access(orig_file, X_OK)) {
+    char response[80];
+
+    printf((program == VIGR)
+	   ? _("You are using shadow groups on this system.\n")
+	   : _("You are using shadow passwords on this system.\n"));
+    printf(_("Would you like to edit %s now [y/n]? "), orig_file);
+
+    /* EOF means no */
+    if (fgets(response, sizeof(response), stdin)) {
+	if (response[0] == 'y' || response[0] == 'Y')
+	    edit_file();
+    }
+  }
+
   exit(0);
 }

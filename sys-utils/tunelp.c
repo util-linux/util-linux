@@ -42,7 +42,7 @@
  * Revision 1.2  1995/01/03  07:33:44  johnsonm
  * revisions for lp driver updates in Linux 1.1.76
  *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
+ * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
  * 1999-05-07 Merged LPTRUSTIRQ patch by Andrea Arcangeli (1998/11/29), aeb

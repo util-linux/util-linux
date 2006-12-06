@@ -40,7 +40,7 @@ msgid "Cannot open /dev/port: %s"
 msgstr "Impossibile aprire /dev/port: %s"
 
 #: clock/cmos.c:577
-msgid "I failed to get permission because I didnt try.\n"
+msgid "I failed to get permission because I didn't try.\n"
 msgstr ""
 "Non sono riuscito ad ottenere l'autorizzazione perché non ho provato.\n"
 
@@ -6884,22 +6884,6 @@ msgstr "impossibile leggere %s  e impossibile eseguire ioctl sul dump\n"
 #, c-format
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: $TERM non è definito.\n"
-
-#: misc-utils/tsort.c:117
-msgid "usage: tsort [ inputfile ]\n"
-msgstr "utilizzo: tsort [ inputfile ]\n"
-
-#: misc-utils/tsort.c:154
-msgid "tsort: odd data count.\n"
-msgstr "tsort: conteggio dati strano.\n"
-
-#: misc-utils/tsort.c:305
-msgid "tsort: cycle in data.\n"
-msgstr "tsort: ciclo nei dati.\n"
-
-#: misc-utils/tsort.c:318
-msgid "tsort: internal error -- could not find cycle.\n"
-msgstr "tsort: errore interno - impossibile trovare il ciclo.\n"
 
 #: misc-utils/whereis.c:155
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
