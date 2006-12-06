@@ -1,14 +1,14 @@
-# Translation of util-linux-2.13-pre1.po to Russian
+# Translation of util-linux-2.13-pre2.po to Russian
 # Copyright (C) 2003 Free Software Foundation Inc.
 # This file is put in the public domain.
 # Pavel Maryanov <acid_jack@ukr.net>, 2003, 2004, 2005.
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.13-pre1\n"
+"Project-Id-Version: util-linux-2.13-pre2\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
 "POT-Creation-Date: 2005-08-14 18:14+0200\n"
-"PO-Revision-Date: 2005-08-04 14:27+0300\n"
+"PO-Revision-Date: 2005-08-16 16:54+0300\n"
 "Last-Translator: Pavel Maryanov <acid_jack@ukr.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -162,9 +162,9 @@ msgstr "использование: %s [ -n ] устройство\n"
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
 #: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:142 sys-utils/readprofile.c:197
-#, fuzzy, c-format
+#, c-format
 msgid "%s (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "%s (%s)\n"
 
 #: disk-utils/fdformat.c:130
 #, c-format
@@ -852,9 +852,9 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: Не хватает памяти!\n"
 
 #: disk-utils/mkfs.c:103
-#, fuzzy, c-format
+#, c-format
 msgid "mkfs (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "mkfs (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:124
 #, c-format
@@ -7152,9 +7152,9 @@ msgid "%s: can't read temporary file.\n"
 msgstr "%s: невозможно прочитать временный файл.\n"
 
 #: misc-utils/cal.c:313
-#, fuzzy, c-format
+#, c-format
 msgid "%s from %s\n"
-msgstr "%s из %s%s\n"
+msgstr "%s из %s\n"
 
 #: misc-utils/cal.c:327
 msgid "illegal month value: use 1-12"
@@ -10118,22 +10118,3 @@ msgstr "Строка входных данных слишком длинная.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Не хватает памяти при увеличении буфера.\n"
-
-#, fuzzy
-#~ msgid "mkfs from %s\n"
-#~ msgstr "%s из %s%s\n"
-
-#~ msgid "mkfs version %s (%s)\n"
-#~ msgstr "mkfs версии %s (%s)\n"
-
-#~ msgid "flock: unknown option, aborting.\n"
-#~ msgstr "flock: неизвестная опция, выполняется прерывание.\n"
-
-#~ msgid ""
-#~ "Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-#~ msgstr ""
-#~ "Использование flock [--shared [--timeout=секунды] имя_файла команда {арг "
-#~ "арг...}\n"
-
-#~ msgid "%s version %s\n"
-#~ msgstr "%s версия %s\n"

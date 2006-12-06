@@ -1,4 +1,4 @@
-AC_INIT(util-linux, 2.13-pre2, bunk@stusta.de)
+AC_INIT(util-linux, 2.13-pre3, bunk@stusta.de)
 
 AC_PREREQ(2.59)
 
@@ -34,9 +34,6 @@ AC_CHECK_HEADERS(pty.h)
 AC_CHECK_HEADERS(linux/raw.h)
 AM_CONDITIONAL(HAVE_RAW, test x$ac_cv_header_linux_raw_h = xyes)
 
-AC_CHECK_HEADERS(security/pam_misc.h)
-AM_CONDITIONAL(HAVE_PAM, test x$ac_cv_header_security_pam_misc_h = xyes)
-
 
 
 AC_CHECK_FUNCS(inet_aton)
@@ -59,16 +56,8 @@ AM_CONDITIONAL(HAVE_LIBUTIL, test x$ac_cv_lib_util_openpty = xyes)
 AC_CHECK_LIB(termcap, tgetnum)
 AM_CONDITIONAL(HAVE_TERMCAP, test x$ac_cv_lib_termcap_tgetnum = xyes)
 
-AC_CHECK_LIB(z, crc32)
-AM_CONDITIONAL(HAVE_ZLIB, test x$ac_cv_lib_z_crc32 = xyes)
-
 AC_CHECK_LIB(blkid, blkid_known_fstype)
 AM_CONDITIONAL(HAVE_BLKID, test x$ac_cv_lib_blkid_blkid_known_fstype = xyes)
-
-AC_CHECK_LIB(selinux, getprevcon)
-AM_CONDITIONAL(HAVE_SELINUX, test x$ac_cv_lib_selinux_getprevcon = xyes)
-
-LIBS=""
 
 
 AM_GNU_GETTEXT([external])
@@ -78,7 +67,7 @@ AC_CHECK_HEADERS(ncurses.h)
 AC_CHECK_HEADERS(ncurses/ncurses.h)
 
 
-if test x$ac_cv_header_ncurses_h = xyes -o x$ac_cv_header_ncurses_ncurses_h = xyes; then
+if test x$ac_cv_header_ncurses_h = xyes || x$ac_cv_header_ncurses_ncurses_h = xyes; then
   have_ncurses=yes
   AC_MSG_NOTICE([you have ncurses])
 else
@@ -96,7 +85,7 @@ AC_ARG_WITH([slang],
 if test x$with_slang = xyes; then
   AC_CHECK_HEADERS(slcurses.h)
   AC_CHECK_HEADERS(slang/slcurses.h)
-  if test x$ac_cv_header_slcurses_h = xyes -o x$ac_cv_header_slang_slcurses_h = xyes; then
+  if test x$ac_cv_header_slcurses_h = xyes || x$ac_cv_header_slang_slcurses_h = xyes; then
     use_slang=yes
   else
     AC_MSG_ERROR([slang selected but slcurses.h not found])
@@ -112,7 +101,6 @@ AC_TRY_LINK([
 ],[
 char *c = crypt("abc","pw");
 ],,[
-  my_LIBS="$LIBS"
   LIBS="$LIBS -lcrypt"
   AC_TRY_COMPILE([
   #define _XOPEN_SOURCE
@@ -125,7 +113,6 @@ char *c = crypt("abc","pw");
   ],[
   AC_MSG_ERROR([crypt() is not available])
   ])
-  LIBS="$my_LIBS"
 ])
 
 AM_CONDITIONAL(NEED_LIBCRYPT, test x$need_libcrypt = xyes)
@@ -187,6 +174,22 @@ AC_ARG_ENABLE([agetty],
   enable_agetty=$enableval, enable_agetty=yes
 )
 AM_CONDITIONAL(BUILD_AGETTY, test x$enable_agetty = xyes)
+
+
+AC_ARG_ENABLE([cramfs],
+  AC_HELP_STRING([--disable-cramfs], [do not build fsck.cramfs, mkfs.cramfs]),
+  enable_cramfs=$enableval, enable_cramfs=check
+)
+
+if test x$enable_cramfs != xno; then
+  AC_CHECK_LIB(z, crc32)
+  build_cramfs=$ac_cv_lib_z_crc32
+  if test x$enable_cramfs = xyes && test x$ac_cv_lib_z_crc32 = xno; then
+    AC_MSG_ERROR([cramfs selected but libz not found])
+  fi
+fi
+
+AM_CONDITIONAL(BUILD_CRAMFS, test x$build_cramfs = xyes)
 
 
 AC_ARG_ENABLE([elvtune],
@@ -264,6 +267,33 @@ AC_ARG_ENABLE([login-utils],
   enable_login_utils=$enableval, enable_login_utils=no
 )
 AM_CONDITIONAL(BUILD_LOGIN_UTILS, test x$enable_login_utils = xyes)
+
+AC_ARG_WITH([pam],
+  AC_HELP_STRING([--without-pam], [compile login-utils without PAM support]),
+  with_pam=$withval, with_pam=not_checked
+)
+
+if test x$enable_login_utils = xyes && test x$with_pam != xno; then
+  AC_CHECK_HEADERS(security/pam_misc.h)
+  if test x$with_pam = xyes && test x$ac_cv_header_security_pam_misc_h = xno; then
+    AC_MSG_ERROR([PAM selected but security/pam_misc.h not found])
+  fi
+fi
+AM_CONDITIONAL(HAVE_PAM, test x$ac_cv_header_security_pam_misc_h = xyes)
+
+AC_ARG_WITH([selinux],
+  AC_HELP_STRING([--without-selinux], [compile login-utils without SELinux support]),
+  with_selinux=$withval, with_selinux=not_checked
+)
+
+if test x$enable_login_utils = xyes && test x$with_selinux != xno; then
+  AC_CHECK_LIB(selinux, getprevcon)
+  if test x$with_selinux = xyes && test x$ac_cv_lib_selinux_getprevcon = xno; then
+    AC_MSG_ERROR([SELinux selected but libselinux not found])
+  fi
+fi
+AM_CONDITIONAL(HAVE_SELINUX, test x$ac_cv_lib_selinux_getprevcon = xyes)
+
 
 
 AC_ARG_ENABLE([schedutils],
@@ -348,6 +378,7 @@ if test x$enable_use_tty_group = xyes; then
 fi
 
 
+LIBS=""
 
 CPPFLAGS="-fsigned-char -Wall -Wmissing-prototypes -Wstrict-prototypes -Wundef -Werror-implicit-function-declaration -fomit-frame-pointer $CPPFLAGS"
 

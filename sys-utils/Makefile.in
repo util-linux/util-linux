@@ -142,6 +142,8 @@ AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 BUILD_AGETTY_FALSE = @BUILD_AGETTY_FALSE@
 BUILD_AGETTY_TRUE = @BUILD_AGETTY_TRUE@
+BUILD_CRAMFS_FALSE = @BUILD_CRAMFS_FALSE@
+BUILD_CRAMFS_TRUE = @BUILD_CRAMFS_TRUE@
 BUILD_ELVTUNE_FALSE = @BUILD_ELVTUNE_FALSE@
 BUILD_ELVTUNE_TRUE = @BUILD_ELVTUNE_TRUE@
 BUILD_INIT_FALSE = @BUILD_INIT_FALSE@
@@ -202,8 +204,6 @@ HAVE_TERMCAP_FALSE = @HAVE_TERMCAP_FALSE@
 HAVE_TERMCAP_TRUE = @HAVE_TERMCAP_TRUE@
 HAVE_UUID_FALSE = @HAVE_UUID_FALSE@
 HAVE_UUID_TRUE = @HAVE_UUID_TRUE@
-HAVE_ZLIB_FALSE = @HAVE_ZLIB_FALSE@
-HAVE_ZLIB_TRUE = @HAVE_ZLIB_TRUE@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@
@@ -901,9 +901,9 @@ uninstall-man: uninstall-man1 uninstall-man8
 
 
 @BUILD_RDEV_TRUE@@INTEL_TRUE@install-exec-hook:
-@BUILD_RDEV_TRUE@@INTEL_TRUE@	cd $(DESTDIR)$(usrsbindir) && ln -sf rdev ramsize
-@BUILD_RDEV_TRUE@@INTEL_TRUE@	cd $(DESTDIR)$(usrsbindir) && ln -sf rdev vidmode
-@BUILD_RDEV_TRUE@@INTEL_TRUE@	cd $(DESTDIR)$(usrsbindir) && ln -sf rdev rootflags
+@BUILD_RDEV_TRUE@@INTEL_TRUE@	cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev ramsize
+@BUILD_RDEV_TRUE@@INTEL_TRUE@	cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev vidmode
+@BUILD_RDEV_TRUE@@INTEL_TRUE@	cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev rootflags
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

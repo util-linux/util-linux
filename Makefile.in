@@ -39,9 +39,9 @@ DIST_COMMON = README $(am__configure_deps) $(srcdir)/Makefile.am \
 	$(srcdir)/Makefile.in $(srcdir)/config.h.in \
 	$(top_srcdir)/config/include-Makefile.am \
 	$(top_srcdir)/configure ABOUT-NLS AUTHORS COPYING INSTALL NEWS \
-	config/compile config/config.guess config/config.sub \
-	config/depcomp config/install-sh config/missing \
-	config/mkinstalldirs config/texinfo.tex
+	config/compile config/config.guess config/config.rpath \
+	config/config.sub config/depcomp config/install-sh \
+	config/missing config/mkinstalldirs config/texinfo.tex
 subdir = .
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
@@ -88,6 +88,8 @@ AUTOMAKE = @AUTOMAKE@
 AWK = @AWK@
 BUILD_AGETTY_FALSE = @BUILD_AGETTY_FALSE@
 BUILD_AGETTY_TRUE = @BUILD_AGETTY_TRUE@
+BUILD_CRAMFS_FALSE = @BUILD_CRAMFS_FALSE@
+BUILD_CRAMFS_TRUE = @BUILD_CRAMFS_TRUE@
 BUILD_ELVTUNE_FALSE = @BUILD_ELVTUNE_FALSE@
 BUILD_ELVTUNE_TRUE = @BUILD_ELVTUNE_TRUE@
 BUILD_INIT_FALSE = @BUILD_INIT_FALSE@
@@ -148,8 +150,6 @@ HAVE_TERMCAP_FALSE = @HAVE_TERMCAP_FALSE@
 HAVE_TERMCAP_TRUE = @HAVE_TERMCAP_TRUE@
 HAVE_UUID_FALSE = @HAVE_UUID_FALSE@
 HAVE_UUID_TRUE = @HAVE_UUID_TRUE@
-HAVE_ZLIB_FALSE = @HAVE_ZLIB_FALSE@
-HAVE_ZLIB_TRUE = @HAVE_ZLIB_TRUE@
 INSTALL_DATA = @INSTALL_DATA@
 INSTALL_PROGRAM = @INSTALL_PROGRAM@
 INSTALL_SCRIPT = @INSTALL_SCRIPT@

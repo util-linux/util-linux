@@ -7,10 +7,10 @@
 # partition table: tavola delle partizioni? tabella delle partizioni?
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.12q\n"
+"Project-Id-Version: util-linux 2.13-pre2\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
 "POT-Creation-Date: 2005-08-14 18:14+0200\n"
-"PO-Revision-Date: 2005-02-25 12:33+0000\n"
+"PO-Revision-Date: 2005-08-16 12:28+0100\n"
 "Last-Translator: Marco Colombo <m.colombo@ed.ac.uk>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
 "MIME-Version: 1.0\n"
@@ -164,9 +164,9 @@ msgstr "Uso:  %s [ -n ] dispositivo\n"
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
 #: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:142 sys-utils/readprofile.c:197
-#, fuzzy, c-format
+#, c-format
 msgid "%s (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "%s (%s)\n"
 
 #: disk-utils/fdformat.c:130
 #, c-format
@@ -245,7 +245,7 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:399
 #, c-format
 msgid "%s: invalid cramfs--bad path length\n"
-msgstr ""
+msgstr "%s: cramfs invalido -- lunghezza del percorso non valida\n"
 
 #: disk-utils/fsck.cramfs.c:479
 #, c-format
@@ -266,7 +266,7 @@ msgstr "%s non è un dispositivo a blocchi o un file\n"
 #: disk-utils/fsck.cramfs.c:521 disk-utils/fsck.cramfs.c:556
 #, c-format
 msgid "%s: invalid cramfs--file length too short\n"
-msgstr ""
+msgstr "%s: cramfs non valido -- lunghezza del file troppo corta\n"
 
 #: disk-utils/fsck.cramfs.c:548
 #, c-format
@@ -281,7 +281,7 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:571
 #, c-format
 msgid "%s: invalid cramfs--crc error\n"
-msgstr ""
+msgstr "%s: cramfs non valido -- errore crc\n"
 
 #: disk-utils/fsck.cramfs.c:577
 #, c-format
@@ -291,7 +291,7 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:599
 #, c-format
 msgid "%s: invalid cramfs--bad superblock\n"
-msgstr ""
+msgstr "%s: cramfs non valido -- superblocco danneggiato\n"
 
 #: disk-utils/fsck.cramfs.c:615
 #, c-format
@@ -713,7 +713,7 @@ msgstr "%s: errore di lettura su %s\n"
 #: disk-utils/isosize.c:150
 #, c-format
 msgid "sector count: %d, sector size: %d\n"
-msgstr ""
+msgstr "numero settori: %d, dimensione settori: %d\n"
 
 #: disk-utils/isosize.c:198
 #, c-format
@@ -857,9 +857,9 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: Memoria esaurita!\n"
 
 #: disk-utils/mkfs.c:103
-#, fuzzy, c-format
+#, c-format
 msgid "mkfs (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "mkfs (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:124
 #, c-format
@@ -972,12 +972,16 @@ msgstr "attenzione: dimensioni dei file troncate a %luMB (meno 1 byte).\n"
 msgid ""
 "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
+"attenzione: uid troncati a %u bit. (Questo può essere un problema di "
+"sicurezza)\n"
 
 #: disk-utils/mkfs.cramfs.c:928
 #, c-format
 msgid ""
 "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
+"attenzione: gid troncati a %u bit. (Questo può essere un problema di "
+"sicurezza)\n"
 
 #: disk-utils/mkfs.cramfs.c:933
 #, c-format
@@ -1137,7 +1141,7 @@ msgstr "nessuna etichetta, "
 #: disk-utils/mkswap.c:257
 #, c-format
 msgid "no uuid\n"
-msgstr ""
+msgstr "nessun uuid\n"
 
 #: disk-utils/mkswap.c:381
 #, c-format
@@ -5352,7 +5356,7 @@ msgstr ""
 
 #: getopt/getopt.c:338
 msgid "  -V, --version                Output version information\n"
-msgstr "  -V, --version                informazioni sulla versione di output\n"
+msgstr "  -V, --version                Mostra le informazioni sulla versione\n"
 
 #: getopt/getopt.c:395 getopt/getopt.c:456
 msgid "missing optstring argument"
@@ -5655,14 +5659,14 @@ msgstr ""
 "meno di un giornodall'ultima calibrazione.\n"
 
 #: hwclock/hwclock.c:808
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
 "of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
-"Il clock ha accumulato una deriva di %d secondi negli ultimi %d secondi "
-"nonostante il fattoredi deriva fosse di %f secondi/giorno.\n"
+"Il clock ha accumulato una deriva di %.1f secondi negli ultimi %d secondi "
+"nonostante il fattore di deriva fosse di %f secondi/giorno.\n"
 "Regolazione del fattore di deriva a %f secondi/giorno\n"
 
 #: hwclock/hwclock.c:859
@@ -5772,12 +5776,12 @@ msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Impossibile impostare il valore epoch nel kernel.\n"
 
 #: hwclock/hwclock.c:1175
-#, fuzzy, c-format
+#, c-format
 msgid "%s from util-linux-%s\n"
-msgstr "%s da %s\n"
+msgstr "%s da util-linux-%s\n"
 
 #: hwclock/hwclock.c:1196
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "hwclock - query and set the hardware clock (RTC)\n"
 "\n"
@@ -5812,28 +5816,29 @@ msgstr ""
 "Uso: hwclock [funzione] [opzioni...]\n"
 "\n"
 "Funzioni:\n"
-"  --help        mostra questa guida\n"
+"  --help        mostra questo aiuto\n"
 "  --show        legge il clock hardware e stampa il risultato\n"
-"  --set         imposta rtc rispetto all'orario dato con --date\n"
+"  --set         imposta l'rtc rispetto all'orario dato con --date\n"
 "  --hctosys     imposta l'ora del sistema dal clock hardware\n"
-"  --systohc     imposta il clock hardware sull'ora del sistema attuale\n"
+"  --systohc     imposta il clock hardware all'ora corrente del sistema\n"
 "  --adjust      regola l'rtc tenendo conto della deriva sistematica "
 "dall'ultima \n"
 "                volta in cui il clock è stato impostato o regolato\n"
 "  --getepoch    stampa il valore epoch del clock hardware del kernel\n"
 "  --setepoch    imposta il valore epoch del clock hardware del kernel sul \n"
 "                valore dato con --epoch\n"
-"  --version     stampa la versione di hwclock su stdout\n"
+"  --version     stampa la versione di hwclock su standard output\n"
 "\n"
 "Opzioni: \n"
-"  --utc         il clock hardware è mantenuto su di un orario universale "
-"coordinato\n"
-"  --localtime   il clock hardware è mantenuto sull'ora locale\n"
+"  --utc         il clock hardware è in orario universale coordinato\n"
+"  --localtime   il clock hardware è in ora locale\n"
 "  --directisa   accesso diretto al bus ISA invece di %s\n"
 "  --badyear     ignora l'anno rtc perché il bios è danneggiato\n"
 "  --date        specifica l'ora sulla quale impostare il clock hardware \n"
-"  --epoch=anno  specifica l'anno che è l'inizio per il \n"
-"                valore epoch del clock hardware\n"
+"  --epoch=anno  specifica l'anno di inizio del valore epoch del clock "
+"hardware\n"
+"  --noadjfile   non legge /etc/adjtime; richiede l'uso di --utc o --"
+"localtime\n"
 
 #: hwclock/hwclock.c:1223
 #, c-format
@@ -6232,8 +6237,9 @@ msgstr "Login a %s da %s negato per impostazione predefinita.\n"
 msgid "Login on %s from %s denied.\n"
 msgstr "Login a %s da %s negato.\n"
 
+# FIXME
 #: login-utils/chfn.c:128 login-utils/chsh.c:113
-#, fuzzy, c-format
+#, c-format
 msgid "%s: you (user %d) don't exist.\n"
 msgstr "%s: non si esiste (come utente %d).\n"
 
@@ -6255,7 +6261,7 @@ msgstr ""
 #: login-utils/chfn.c:152
 #, c-format
 msgid "%s: %s is not authorized to change the finger info of %s\n"
-msgstr ""
+msgstr "%s: %s non è autorizzato a cambiare le informazioni finger di %s\n"
 
 #: login-utils/chfn.c:159 login-utils/chsh.c:144
 #, c-format
@@ -7132,7 +7138,7 @@ msgid "%s: can't read temporary file.\n"
 msgstr "%s: impossibile leggere il file temporaneo.\n"
 
 #: misc-utils/cal.c:313
-#, fuzzy, c-format
+#, c-format
 msgid "%s from %s\n"
 msgstr "%s da %s\n"
 
@@ -7144,10 +7150,11 @@ msgstr "valore del mese non valido: usare 1-12"
 msgid "illegal year value: use 1-9999"
 msgstr "valore dell'anno non valido: usare 1-9999"
 
+# FIXME
 #: misc-utils/cal.c:439
 #, c-format
 msgid "%s %d"
-msgstr ""
+msgstr "%s %d"
 
 #: misc-utils/cal.c:780
 #, c-format
@@ -7164,9 +7171,9 @@ msgid "St. Tib's Day"
 msgstr "Giorno di S.Tiberio"
 
 #: misc-utils/kill.c:189
-#, fuzzy, c-format
+#, c-format
 msgid "%s from %s%s\n"
-msgstr "%s da %s\n"
+msgstr "%s da %s%s\n"
 
 #: misc-utils/kill.c:207
 #, c-format
@@ -7767,10 +7774,11 @@ msgstr ""
 "       non è a conoscenza del loop device (se è questo il caso,\n"
 "       occorre ricompilare o eseguire 'modprobe loop'.)"
 
+# FIXME
 #: mount/lomount.c:189
-#, fuzzy, c-format
+#, c-format
 msgid "%s: could not find any free loop device"
-msgstr "%s: impossibile trovare un qualsiasi loop device libero"
+msgstr "%s: impossibile trovare un loop device libero"
 
 #: mount/lomount.c:287
 #, c-format
@@ -8356,8 +8364,9 @@ msgstr "valore riportato di stato nfs sconosciuto: %d"
 msgid "bug in xstrndup call"
 msgstr "bug in chiamata xstrndup"
 
+# FIXME
 #: mount/swapon.c:56
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "usage: %s [-hV]\n"
 "       %s -a [-e] [-v]\n"
@@ -8369,6 +8378,7 @@ msgstr ""
 "     %s [-v] [-p priorità] speciale|LABEL=volume_name ...\n"
 "     %s [-s]\n"
 
+# FIXME
 #: mount/swapon.c:66
 #, c-format
 msgid ""
@@ -8520,7 +8530,7 @@ msgid ""
 msgstr ""
 "Uso: umount [-hV]\n"
 "     umount -a [-f] [-r] [-n] [-v] [-t vfstypes] [-O opts]\n"
-"     umount [-f] [-r] [-n] [-v] special | node...\n"
+"     umount [-f] [-r] [-n] [-v] speciale | nodo...\n"
 
 #: mount/umount.c:546
 msgid "Cannot umount \"\"\n"
@@ -9810,15 +9820,15 @@ msgid ""
 "...Skipping "
 msgstr ""
 "\n"
-"...sto ignorando"
+"...ignorato"
 
 #: text-utils/more.c:1633
 msgid "...Skipping to file "
-msgstr ""
+msgstr "...Andato al file "
 
 #: text-utils/more.c:1635
 msgid "...Skipping back to file "
-msgstr ""
+msgstr "...Tornato al file "
 
 #: text-utils/more.c:1913
 msgid "Line too long"
@@ -10013,25 +10023,6 @@ msgstr "Linea di input troppo lunga.\n"
 msgid "Out of memory when growing buffer.\n"
 msgstr "Memoria insufficiente quando si amplia il buffer.\n"
 
-#, fuzzy
-#~ msgid "mkfs from %s\n"
-#~ msgstr "%s da %s\n"
-
-#~ msgid "mkfs version %s (%s)\n"
-#~ msgstr "versione mkfs %s (%s)\n"
-
-#~ msgid "flock: unknown option, aborting.\n"
-#~ msgstr "flock: opzione sconosciuta, interruzione.\n"
-
-#, fuzzy
-#~ msgid ""
-#~ "Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-#~ msgstr ""
-#~ "Uso: flock [--shared | --timeout=secondi] nomefile comando {arg arg...}\n"
-
-#~ msgid "%s version %s\n"
-#~ msgstr "%s versione %s\n"
-
 #~ msgid "Invalid number: %s\n"
 #~ msgstr "Numero non valido: %s\n"
 
@@ -10064,10 +10055,6 @@ msgstr "Memoria insufficiente quando si amplia il buffer.\n"
 
 #~ msgid "can't stat(%s)"
 #~ msgstr "impossibile eseguire stat(%s)"
-
-#, fuzzy
-#~ msgid "%s doesn't have the correct filemodes"
-#~ msgstr "%s non ha i filemode corretti"
 
 #~ msgid "can't read data from %s"
 #~ msgstr "impossibile leggere i dati da %s"
@@ -10181,3 +10168,14 @@ msgstr "Memoria insufficiente quando si amplia il buffer.\n"
 #~ msgid "mount: this version was compiled without support for the type `nfs'"
 #~ msgstr ""
 #~ "mount: questa versione è stata compilata senza supporto per il tipo 'nfs'"
+
+#~ msgid "flock: unknown option, aborting.\n"
+#~ msgstr "flock: opzione sconosciuta, interruzione.\n"
+
+#~ msgid ""
+#~ "Usage flock [--shared | --timeout=seconds] filename command {arg arg...}\n"
+#~ msgstr ""
+#~ "Uso: flock [--shared | --timeout=secondi] nomefile comando {arg arg...}\n"
+
+#~ msgid "%s version %s\n"
+#~ msgstr "%s versione %s\n"

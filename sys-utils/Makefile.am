@@ -23,9 +23,9 @@ usrsbinexec_PROGRAMS += rdev
 man_MANS += rdev.8 ramsize.8 rootflags.8 vidmode.8
 
 install-exec-hook:
-	cd $(DESTDIR)$(usrsbindir) && ln -sf rdev ramsize
-	cd $(DESTDIR)$(usrsbindir) && ln -sf rdev vidmode
-	cd $(DESTDIR)$(usrsbindir) && ln -sf rdev rootflags
+	cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev ramsize
+	cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev vidmode
+	cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev rootflags
 
 endif
 

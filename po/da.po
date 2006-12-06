@@ -1,11 +1,11 @@
 # Danske beskeder for util-linux.
-# Copyright (C) 2002, 2004 Free Software Foundation, Inc.
+# Copyright (C) 2002, 2004, 2005 Free Software Foundation, Inc.
 #
 # Permission is granted to freely copy and distribute
 # this file and modified versions, provided that this
 # header is not removed and modified versions are marked
 # as such.
-# Claus Hindsgaul <claus_h@image.dk>, 2001-2002, 2004.
+# Claus Hindsgaul <claus_h@image.dk>, 2001-2002, 2004, 2005.
 # Claus Sørensen <cs@klid.dk>, 2000.
 # Keld Jørn Simonsen <keld@dkuug.dk>, 2000.
 #
@@ -14,7 +14,7 @@ msgstr ""
 "Project-Id-Version: util-linux 2.11y\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
 "POT-Creation-Date: 2005-08-14 18:14+0200\n"
-"PO-Revision-Date: 2004-12-04 01:16+0100\n"
+"PO-Revision-Date: 2005-08-15 21:00+0200\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
 "MIME-Version: 1.0\n"
@@ -168,9 +168,9 @@ msgstr "brug: %s [ -n ] enhed\n"
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
 #: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:142 sys-utils/readprofile.c:197
-#, fuzzy, c-format
+#, c-format
 msgid "%s (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "%s (%s)\n"
 
 #: disk-utils/fdformat.c:130
 #, c-format
@@ -456,22 +456,22 @@ msgstr "%ld blokke\n"
 #: disk-utils/fsck.minix.c:619 disk-utils/mkfs.minix.c:510
 #, c-format
 msgid "Firstdatazone=%ld (%ld)\n"
-msgstr "Firstdatazone=%ld (%ld)\n"
+msgstr "Førstedatazone=%ld (%ld)\n"
 
 #: disk-utils/fsck.minix.c:620 disk-utils/mkfs.minix.c:511
 #, c-format
 msgid "Zonesize=%d\n"
-msgstr "Zonesize=%d\n"
+msgstr "Zonestørrelse=%d\n"
 
 #: disk-utils/fsck.minix.c:621
 #, c-format
 msgid "Maxsize=%ld\n"
-msgstr "Maxsize=%ld\n"
+msgstr "Maksstørrelse=%ld\n"
 
 #: disk-utils/fsck.minix.c:622
 #, c-format
 msgid "Filesystem state=%d\n"
-msgstr "Filesystem state=%d\n"
+msgstr "Filsystem-tilstand=%d\n"
 
 #: disk-utils/fsck.minix.c:623
 #, c-format
@@ -479,7 +479,7 @@ msgid ""
 "namelen=%d\n"
 "\n"
 msgstr ""
-"namelen=%d\n"
+"navnelængde=%d\n"
 "\n"
 
 #: disk-utils/fsck.minix.c:638 disk-utils/fsck.minix.c:689
@@ -494,7 +494,7 @@ msgstr "Markér i brug"
 #: disk-utils/fsck.minix.c:664 disk-utils/fsck.minix.c:713
 #, c-format
 msgid "The file `%s' has mode %05o\n"
-msgstr "Filen '%s' har modus %05o\n"
+msgstr "Filen '%s' har tilstand %05o\n"
 
 #: disk-utils/fsck.minix.c:671 disk-utils/fsck.minix.c:719
 #, c-format
@@ -570,7 +570,7 @@ msgstr "mislykket søgning i bad_zone"
 #: disk-utils/fsck.minix.c:1110 disk-utils/fsck.minix.c:1165
 #, c-format
 msgid "Inode %d mode not cleared."
-msgstr "Inode %d modus ikke slettet."
+msgstr "Inode %d-tilstand ikke slettet."
 
 #: disk-utils/fsck.minix.c:1119 disk-utils/fsck.minix.c:1174
 #, c-format
@@ -585,7 +585,7 @@ msgstr "Inode %d i brug, markeret som ubrugt i bitoversigten."
 #: disk-utils/fsck.minix.c:1131 disk-utils/fsck.minix.c:1185
 #, c-format
 msgid "Inode %d (mode = %07o), i_nlinks=%d, counted=%d."
-msgstr "Inode %d (modus = %07o), i_nlinks=%d, optalt=%d."
+msgstr "Inode %d (tilstand = %07o), i_nlinks=%d, optalt=%d."
 
 #: disk-utils/fsck.minix.c:1133 disk-utils/fsck.minix.c:1187
 msgid "Set i_nlinks to count"
@@ -857,12 +857,12 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: Hukommelse opbrugt!\n"
 
 #: disk-utils/mkfs.c:103
-#, fuzzy, c-format
+#, c-format
 msgid "mkfs (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "mkfs (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:124
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "usage: %s [-h] [-v] [-b blksz] [-e edition] [-i file] [-n name] dirname "
 "outfile\n"
@@ -887,10 +887,10 @@ msgstr ""
 " -e udgave  angiv udgavenummer (en del af fsid)\n"
 " -i fil     indsæt filaftryk i filsystemet (kræver >= 2.4.0)\n"
 " -n navn    angiv navnet på cramfs-filsystemet\n"
-" -p         foranstil %d byte forud for opstartskoden\n"
-" -s         sortér mappeindgange (gammelt tilvalt, ignoreres)\n"
+" -p         indsæt %d byte foran opstartskoden\n"
+" -s         sortér mappeindgange (gammelt tilvalg, ignoreres)\n"
 " -z         lav eksplicitte huller (kræver >= 2.3.39)\n"
-" mappenavn roden af det filsystem, der skal komprimeres\n"
+" mappenavn  roden af det filsystem, der skal komprimeres\n"
 " udfil      uddatafil\n"
 
 #: disk-utils/mkfs.cramfs.c:335
@@ -1071,7 +1071,7 @@ msgid ""
 "Maxsize=%ld\n"
 "\n"
 msgstr ""
-"Maxsize=%ld\n"
+"Maksstørrelse=%ld\n"
 "\n"
 
 #: disk-utils/mkfs.minix.c:526
@@ -1144,27 +1144,27 @@ msgstr "Antager sider med størrelsen %d (ikke %d)\n"
 #: disk-utils/mkswap.c:233
 #, c-format
 msgid "Bad swap header size, no label written.\n"
-msgstr ""
+msgstr "Ugyldig størelse på swap-hovede, skrev ikke noget mærke.\n"
 
 #: disk-utils/mkswap.c:243
 #, c-format
 msgid "Label was truncated.\n"
-msgstr ""
+msgstr "Mærke afkortet.\n"
 
 #: disk-utils/mkswap.c:249
-#, fuzzy, c-format
+#, c-format
 msgid "no label, "
-msgstr "mærke"
+msgstr "intet mærke, "
 
 #: disk-utils/mkswap.c:257
 #, c-format
 msgid "no uuid\n"
-msgstr ""
+msgstr "ingen uuid\n"
 
 #: disk-utils/mkswap.c:381
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [-c] [-v0|-v1] [-pPAGESZ] [-L label] /dev/name [blocks]\n"
-msgstr "Brug: %s [-c] [-v0|-v1] [-pPAGESZ] /dev/navn [blokke]\n"
+msgstr "Brug: %s [-c] [-v0|-v1] [-pSIDESTR] [-L mærke] /dev/navn [blokke]\n"
 
 #: disk-utils/mkswap.c:404
 msgid "too many bad pages"
@@ -1211,9 +1211,9 @@ msgid "%s: warning: truncating swap area to %ldkB\n"
 msgstr "%s: fejl: afkorter swap-området til %ldkB\n"
 
 #: disk-utils/mkswap.c:644
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error: label only with v1 swap area\n"
-msgstr "%s: fejl: Ingen steder at opsætte swap?\n"
+msgstr "%s: fejl: mærke med kun v1-swapområde\n"
 
 #: disk-utils/mkswap.c:659
 #, c-format
@@ -1279,9 +1279,8 @@ msgid "Linux XFS"
 msgstr "Linux XFS"
 
 #: fdisk/cfdisk.c:381
-#, fuzzy
 msgid "Linux JFS"
-msgstr "Linux XFS"
+msgstr "Linux JFS"
 
 #: fdisk/cfdisk.c:383
 msgid "Linux ReiserFS"
@@ -2745,6 +2744,8 @@ msgid ""
 "Warning: omitting partitions after #%d.\n"
 "They will be deleted if you save this partition table.\n"
 msgstr ""
+"Advarsel: udelader partitioner efter #%d.\n"
+"De vil blive slettet, hvis du gemmer denne partitionstabel.\n"
 
 #: fdisk/fdisk.c:671
 #, c-format
@@ -3043,6 +3044,9 @@ msgid ""
 "Probably you selected the wrong device.\n"
 "\n"
 msgstr ""
+"Dette ligner ikke en partitionstabel\n"
+"Du har nok valgt den forkerte enhed.\n"
+"\n"
 
 #: fdisk/fdisk.c:1723
 #, c-format
@@ -3243,11 +3247,13 @@ msgstr ""
 "ændret DOS 6.x partitioner.\n"
 
 #: fdisk/fdisk.c:2199
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Error closing file\n"
-msgstr "Fejl ved lukning af %s\n"
+msgstr ""
+"\n"
+"Fejl ved lukning af fil\n"
 
 #: fdisk/fdisk.c:2203
 #, c-format
@@ -3442,7 +3448,7 @@ msgid "Detected sgi disklabel with wrong checksum.\n"
 msgstr "Detekterede SGI diskmærkat med forkert tjeksum.\n"
 
 #: fdisk/fdisksgilabel.c:200
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Disk %s (SGI disk label): %d heads, %d sectors\n"
@@ -3457,11 +3463,11 @@ msgstr ""
 "%d cylindre, %d fysiske cylindre\n"
 "%d ekstra sekt/cyl, interleave %d:1\n"
 "%s\n"
-"Enheder = %s á %d * 512 bytes\n"
+"Enheder = %s á %d * %d byte\n"
 "\n"
 
 #: fdisk/fdisksgilabel.c:213
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Disk %s (SGI disk label): %d heads, %d sectors, %d cylinders\n"
@@ -3470,7 +3476,7 @@ msgid ""
 msgstr ""
 "\n"
 "Disk %s (SGI disk label): %d hoveder, %d sektorer, %d cylindre\n"
-"Enheder = %s á %d * 512 bytes\n"
+"Enheder = %s á %d * %d byte\n"
 "\n"
 
 #: fdisk/fdisksgilabel.c:220
@@ -4180,9 +4186,8 @@ msgid "NTFS volume set"
 msgstr "NTFS bind-sæt"
 
 #: fdisk/i386_sys_types.c:62
-#, fuzzy
 msgid "Linux plaintext"
-msgstr "Linux ext3"
+msgstr "Linux råtekst"
 
 #: fdisk/i386_sys_types.c:64
 msgid "Amoeba"
@@ -4241,9 +4246,8 @@ msgid "Solaris boot"
 msgstr "Solaris opstart"
 
 #: fdisk/i386_sys_types.c:78
-#, fuzzy
 msgid "Solaris"
-msgstr "Solaris opstart"
+msgstr "Solaris"
 
 #: fdisk/i386_sys_types.c:79
 msgid "DRDOS/sec (FAT-12)"
@@ -4971,11 +4975,12 @@ msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
 msgstr "    -g [eller --show-geometry]: vis kernens bud på den geometri"
 
 #: fdisk/sfdisk.c:2326
-#, fuzzy
 msgid ""
 "    -G [or --show-pt-geometry]: print geometry guessed from the partition "
 "table"
-msgstr "    -g [eller --show-geometry]: vis kernens bud på den geometri"
+msgstr ""
+"    -G [eller --show-geometry]: vis kernens bud på den geometri ud fra "
+"partitionstabellen"
 
 #: fdisk/sfdisk.c:2327
 msgid ""
@@ -4983,7 +4988,7 @@ msgid ""
 "                             or expect descriptors for them on input"
 msgstr ""
 "    -x [eller --show-extended]: medtag udvidede partitioner i uddata\n"
-"                                eller forvent beskrivelser af dem i inddata"
+"                                eller forvent deskriptorer for dem i inddata"
 
 #: fdisk/sfdisk.c:2329
 msgid ""
@@ -5713,9 +5718,9 @@ msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Kunne ikke sætte epokeværdien i kernen.\n"
 
 #: hwclock/hwclock.c:1175
-#, fuzzy, c-format
+#, c-format
 msgid "%s from util-linux-%s\n"
-msgstr "%s fra %s\n"
+msgstr "%s fra util-linux-%s\n"
 
 #: hwclock/hwclock.c:1196
 #, c-format
@@ -7060,7 +7065,7 @@ msgid "%s: can't read temporary file.\n"
 msgstr "%s: kunne ikke læse midlertidig fil.\n"
 
 #: misc-utils/cal.c:313
-#, fuzzy, c-format
+#, c-format
 msgid "%s from %s\n"
 msgstr "%s fra %s\n"
 
@@ -7092,9 +7097,9 @@ msgid "St. Tib's Day"
 msgstr "St. Tibs-dag"
 
 #: misc-utils/kill.c:189
-#, fuzzy, c-format
+#, c-format
 msgid "%s from %s%s\n"
-msgstr "%s fra %s\n"
+msgstr "%s fra %s%s\n"
 
 #: misc-utils/kill.c:207
 #, c-format
@@ -7630,7 +7635,7 @@ msgstr "fejl ved skrivning af %s: %s"
 #: mount/fstab.c:643
 #, c-format
 msgid "error changing mode of %s: %s\n"
-msgstr "fejl ved ændring af filmodus for %s: %s\n"
+msgstr "fejl ved ændring af filtilstand for %s: %s\n"
 
 #: mount/fstab.c:661
 #, c-format
@@ -7673,28 +7678,28 @@ msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: kunne ikke få oplysninger om enheden %s: %s\n"
 
 #: mount/lomount.c:179
-#, fuzzy, c-format
+#, c-format
 msgid "%s: could not find any device /dev/loop#"
-msgstr "mount: kunne ikke finde nogen /dev/loop# enhed"
+msgstr "%s: kunne ikke finde nogen /dev/loop# enhed"
 
 #: mount/lomount.c:181
 #, c-format
 msgid "%s: no permission to look at /dev/loop#"
-msgstr ""
+msgstr "%s: har ikke rettigheder til at kigge i /dev/loop#"
 
 #: mount/lomount.c:184
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
 "       about the loop device? (If so, recompile or `modprobe loop'.)"
 msgstr ""
-"mount: Kunne ikke finde nogen loop-enhed. Måske kender denne kerne ikke til\n"
-"       loop-enheder? (I så fald, genoversæt eller 'insmod loop.o'.)"
+"%s: Kunne ikke finde nogen loop-enhed. Måske kender denne kerne ikke til\n"
+"       loop-enheder? (I så fald, genoversæt eller 'modprobe loop.o'.)"
 
 #: mount/lomount.c:189
-#, fuzzy, c-format
+#, c-format
 msgid "%s: could not find any free loop device"
-msgstr "mount: kunne ikke finde nogen ledig loop-enhed"
+msgstr "%s: kunne ikke finde nogen ledig loop-enhed"
 
 #: mount/lomount.c:287
 #, c-format
@@ -7723,7 +7728,7 @@ msgstr ""
 "Denne 'mount' er oversat uden loop-understøttelse. Genoversæt venligst.\n"
 
 #: mount/lomount.c:406
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "usage:\n"
 "  %s loop_device                                       # give info\n"
@@ -7734,7 +7739,8 @@ msgstr ""
 "brug:\n"
 "  %s loop_enhed                                          # vis info\n"
 "  %s -d loop_enhed                                       # slet\n"
-"  %s [ -e kryptering ] [ -o forskydning ] loop_enhed fil # klargør\n"
+"  %s -f                                                  # find ubenyttet\n"
+"  %s [ -e kryptering ] [ -o forskydning ] {-f|loop_enhed} fil # klargør\n"
 
 #: mount/lomount.c:425 mount/sundries.c:205 mount/xmalloc.c:29
 #, c-format
@@ -7764,31 +7770,31 @@ msgid "; rest of file ignored"
 msgstr "; resten af filen blev ignoreret"
 
 #: mount/mount_blkid.c:87
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error: the label %s occurs on both %s and %s\n"
-msgstr "mount: mærket %s optræder på både %s og %s\n"
+msgstr "%s: fejl: mærket %s optræder på både %s og %s\n"
 
 #: mount/mount_blkid.c:99
-#, fuzzy, c-format
+#, c-format
 msgid "mount: going to mount %s by UUID\n"
-msgstr "mount: vil montere %s som %s\n"
+msgstr "mount: vil montere %s efter UUID\n"
 
 #: mount/mount_blkid.c:103
-#, fuzzy, c-format
+#, c-format
 msgid "mount: going to mount %s by label\n"
-msgstr "mount: vil montere %s som %s\n"
+msgstr "mount: vil montere %s efter mærkat\n"
 
 #: mount/mount_by_label.c:192
-#, fuzzy, c-format
+#, c-format
 msgid "%s: could not open %s, so UUID and LABEL conversion cannot be done.\n"
 msgstr ""
-"mount: kunne ikke åbne %s, så UUID- og MÆRKE­konvertering kan ikke "
+"%s: kunne ikke åbne %s, så UUID- og MÆRKE­-konvertering kan ikke "
 "gennemføres.\n"
 
 #: mount/mount_by_label.c:315
-#, fuzzy, c-format
+#, c-format
 msgid "%s: bad UUID"
-msgstr "mount: ugyldig UUID"
+msgstr "%s: ugyldig UUID"
 
 #: mount/mount.c:382
 #, c-format
@@ -7813,7 +7819,7 @@ msgstr "mount: fejl ved skrivning til %s: %s"
 #: mount/mount.c:432
 #, c-format
 msgid "mount: error changing mode of %s: %s"
-msgstr "mount: fejl ved ændring af filmodus for %s: %s"
+msgstr "mount: fejl ved ændring af filtilstand for %s: %s"
 
 #: mount/mount.c:483
 #, c-format
@@ -7956,31 +7962,37 @@ msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s ikke allerede monteret, eller forkert tilvalg"
 
 #: mount/mount.c:959
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
 "       missing codepage or other error"
 msgstr ""
 "mount: forkert filsystemtype, forkert tilvalg, ugyldig superblok på %s,\n"
-"       eller for mange monterede filsystemer"
+"       manglende tegnsæt eller anden fejl"
 
 #: mount/mount.c:969
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
 msgstr ""
+"       (kan dette være en IDE-enhed, hvor du i virkeligheden bruger\n"
+"       ide-scsi, så sr0, sda eller lignende er påkrævet?)"
 
 #: mount/mount.c:975
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
 msgstr ""
+"       (prøver du ikke på at montere en udvidet partition i stedet\n"
+"       for en logisk partition indeni?)"
 
 #: mount/mount.c:992
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
 msgstr ""
+"       I nogle tilfælde vil du finde nyttige oplysninger i systemlogggen\n"
+"       - prøv 'dmesg | tail'  eller lignende\n"
 
 #: mount/mount.c:998
 msgid "mount table full"
@@ -8305,7 +8317,7 @@ msgid "bug in xstrndup call"
 msgstr "programfejl i xstrndup-kald"
 
 #: mount/swapon.c:56
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "usage: %s [-hV]\n"
 "       %s -a [-e] [-v]\n"
@@ -8314,7 +8326,7 @@ msgid ""
 msgstr ""
 "brug: %s [-hV]\n"
 "      %s -a [-e] [-v]\n"
-"      %s [-v] [-p prioritet] speciel ...\n"
+"      %s [-v] [-p prioritet] speciel|LABEL=bindnavn ...\n"
 "      %s [-s]\n"
 
 #: mount/swapon.c:66
@@ -8334,24 +8346,24 @@ msgid "%s on %s\n"
 msgstr "%s på %s\n"
 
 #: mount/swapon.c:177 mount/swapon.c:243
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot find the device for %s\n"
-msgstr "%s: kunne ikke finde \"_stext\" i %s\n"
+msgstr "%s: kunne ikke finde enheden for %s\n"
 
 #: mount/swapon.c:184
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot stat %s: %s\n"
-msgstr "swapon: kan ikke finde %s: %s\n"
+msgstr "%s: kan ikke finde %s: %s\n"
 
 #: mount/swapon.c:195
-#, fuzzy, c-format
+#, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
-msgstr "swapon: advarsel: %s har usikre filrettigheder %04o, %04o anbefales\n"
+msgstr "%s: advarsel: %s har usikre filrettigheder %04o, %04o anbefales\n"
 
 #: mount/swapon.c:207
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Skipping file %s - it appears to have holes.\n"
-msgstr "swapon: Dropper filen %s - den lader til at være fragmenteret.\n"
+msgstr "%s: Dropper filen %s - den lader til at være fragmenteret.\n"
 
 #: mount/swapon.c:275
 #, c-format
@@ -8369,9 +8381,9 @@ msgid "umount: compiled without support for -f\n"
 msgstr "umount: oversat uden understøttelse af tilvalget -f\n"
 
 #: mount/umount.c:139
-#, fuzzy, c-format
+#, c-format
 msgid "umount: cannot fork: %s"
-msgstr "mount: kunne ikke forgrene: %s"
+msgstr "umount: kunne ikke forgrene: %s"
 
 #: mount/umount.c:171
 #, c-format
@@ -8470,9 +8482,8 @@ msgstr ""
 "      umount [-f] [-r] [-n] [-v] speciel | knude...\n"
 
 #: mount/umount.c:546
-#, fuzzy
 msgid "Cannot umount \"\"\n"
-msgstr "Kunne ikke åbne "
+msgstr "Kan ikke afmontere \"\"\n"
 
 #: mount/umount.c:552
 #, c-format
@@ -9209,7 +9220,7 @@ msgstr "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\n"
 #: sys-utils/ipcs.c:610
 #, c-format
 msgid "mode=%#o\taccess_perms=%#o\n"
-msgstr "modus=%#o\tadgangs_rett=%#o\n"
+msgstr "tilstand=%#o\tadgangs_rett=%#o\n"
 
 #: sys-utils/ipcs.c:612
 #, c-format
@@ -9243,7 +9254,7 @@ msgstr ""
 #: sys-utils/ipcs.c:635
 #, c-format
 msgid "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\tmode=%#o\n"
-msgstr "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\tmodus=%#o\n"
+msgstr "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\ttilstand=%#o\n"
 
 #: sys-utils/ipcs.c:637
 #, c-format
@@ -9277,7 +9288,7 @@ msgstr "uid=%d\t gid=%d\t cuid=%d\t cgid=%d\n"
 #: sys-utils/ipcs.c:671
 #, c-format
 msgid "mode=%#o, access_perms=%#o\n"
-msgstr "modus=%#o, adgangs_rett=%#o\n"
+msgstr "tilstand=%#o, adgangs_rett=%#o\n"
 
 #: sys-utils/ipcs.c:673
 #, c-format
@@ -9602,9 +9613,9 @@ msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr "brug: %s [-dflpcsu] [+linjeantal | +/mønster] navn1 navn2 ...\n"
 
 #: text-utils/more.c:439
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unknown option \"-%c\"\n"
-msgstr "%s: ukendt signal %s\n"
+msgstr "%s: ukendt tilvalg \"-%c\"\n"
 
 #: text-utils/more.c:471
 #, c-format
@@ -9946,14 +9957,14 @@ msgid "usage: rev [file ...]\n"
 msgstr "brug: rev [fil ...]\n"
 
 #: text-utils/tailf.c:53 text-utils/tailf.c:105
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot open \"%s\" for read\n"
-msgstr "kunne ikke åbne %s for læsning\n"
+msgstr "Kan ikke åbne %s for læsning\n"
 
 #: text-utils/tailf.c:93
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: tailf logfile\n"
-msgstr "brug: %s [fil]\n"
+msgstr "Brug: tailf logfil\n"
 
 #: text-utils/ul.c:141
 #, c-format

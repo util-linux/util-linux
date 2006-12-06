@@ -8,7 +8,7 @@ man_MANS =
 
 if BUILD_AGETTY
 sbin_PROGRAMS += agetty
-man_MANS += agetty
+man_MANS += agetty.8
 endif
 
 if BUILD_INIT

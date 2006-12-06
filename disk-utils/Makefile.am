@@ -22,7 +22,7 @@ man_MANS += raw.8
 endif
 endif
 
-if HAVE_ZLIB
+if BUILD_CRAMFS
 sbin_PROGRAMS += fsck.cramfs mkfs.cramfs
 fsck_cramfs_SOURCES = fsck.cramfs.c
 mkfs_cramfs_SOURCES = mkfs.cramfs.c

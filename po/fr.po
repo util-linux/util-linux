@@ -8,10 +8,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.13-pre1\n"
+"Project-Id-Version: util-linux 2.13-pre2\n"
 "Report-Msgid-Bugs-To: Adrian Bunk <bunk@stusta.de>\n"
 "POT-Creation-Date: 2005-08-14 18:14+0200\n"
-"PO-Revision-Date: 2005-08-09 08:00-0500\n"
+"PO-Revision-Date: 2005-08-22 08:00-0500\n"
 "Last-Translator: Michel Robitaille <robitail@IRO.UMontreal.CA>\n"
 "Language-Team: French <traduc@traduc.org>\n"
 "MIME-Version: 1.0\n"
@@ -165,9 +165,9 @@ msgstr "usage: %s [ -n ] périphérique\n"
 #: disk-utils/mkfs.cramfs.c:778 disk-utils/mkfs.minix.c:626
 #: disk-utils/mkswap.c:522 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:142 sys-utils/readprofile.c:197
-#, fuzzy, c-format
+#, c-format
 msgid "%s (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "%s (%s)\n"
 
 #: disk-utils/fdformat.c:130
 #, c-format
@@ -867,9 +867,9 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: mémoire épuisée!\n"
 
 #: disk-utils/mkfs.c:103
-#, fuzzy, c-format
+#, c-format
 msgid "mkfs (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "mkfs (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:124
 #, c-format
@@ -7256,9 +7256,9 @@ msgid "%s: can't read temporary file.\n"
 msgstr "%s: ne peut lire du fichier temporaire.\n"
 
 #: misc-utils/cal.c:313
-#, fuzzy, c-format
+#, c-format
 msgid "%s from %s\n"
-msgstr "%s de %s%s\n"
+msgstr "%s de %s\n"
 
 #: misc-utils/cal.c:327
 msgid "illegal month value: use 1-12"
@@ -10236,13 +10236,6 @@ msgstr "Ligne d'entrée trop longue.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Mémoire épuisée lors de l'accroissement du tampon.\n"
-
-#, fuzzy
-#~ msgid "mkfs from %s\n"
-#~ msgstr "%s de %s%s\n"
-
-#~ msgid "mkfs version %s (%s)\n"
-#~ msgstr "mkfs version %s (%s)\n"
 
 #~ msgid "flock: unknown option, aborting.\n"
 #~ msgstr "flock: option inconnue, annulation de l'opération \n"

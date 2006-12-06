@@ -1,3 +1,10 @@
+util-linux 2.13-pre3
+
+* misc buld system fixes
+* cfdisk: fix a segfault with ReiserFS partitions
+* umount: disallow -r option for non-root users
+* updated translations: da, fr, it, nl, ru, sl, tr
+
 util-linux 2.13-pre2
 
 * flock: replaced with flock-2.0.2 by H. Peter Anvin
