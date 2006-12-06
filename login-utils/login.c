@@ -30,7 +30,7 @@
    
 				    'Lastlog' feature.
    
-   - A lot of nitty gritty details has been adjusted in favour of
+   - A lot of nitty gritty details have been adjusted in favour of
      HP-UX, e.g. /etc/securetty, default paths and the environment
      variables assigned by 'login'.
    
@@ -304,7 +304,7 @@ consoletty(int fd)
 int
 main(int argc, char **argv)
 {
-    extern int errno, optind;
+    extern int optind;
     extern char *optarg, **environ;
     struct group *gr;
     register int ch;
@@ -414,7 +414,7 @@ main(int argc, char **argv)
 	    *p++ = ' ';
     } else
       ask = 1;
-    
+
 #ifndef __linux__
     ioctlval = 0;
     ioctl(0, TIOCLSET, &ioctlval);
@@ -479,12 +479,12 @@ main(int argc, char **argv)
 	opentty(ttyn);
 	tcsetattr(0,TCSAFLUSH,&tt);
     }
-    
-    if ((tty = rindex(ttyn, '/')))
-      ++tty;
+
+    if (strncmp(ttyn, "/dev/", 5) == 0)
+	tty = ttyn+5;
     else
-      tty = ttyn;
-    
+	tty = ttyn;
+
     openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
 
 #if 0
@@ -494,10 +494,11 @@ main(int argc, char **argv)
 #endif
 
 #ifdef USE_PAM
-    /* username is initialized to NULL
-       and if specified on the command line it is set.
-       Therefore, we are safe not setting it to anything
-    */
+    /*
+     * username is initialized to NULL
+     * and if specified on the command line it is set.
+     * Therefore, we are safe not setting it to anything
+     */
 
     retcode = pam_start("login",username, &conv, &pamh);
     if(retcode != PAM_SUCCESS) {
@@ -513,14 +514,18 @@ main(int argc, char **argv)
     retcode = pam_set_item(pamh, PAM_TTY, tty);
     PAM_FAIL_CHECK;
 
-    /* Andrew.Taylor@cal.montage.ca: Provide a user prompt to PAM
-       so that the "login: " prompt gets localized. Unfortunately,
-       PAM doesn't have an interface to specify the "Password: " string (yet). */
+    /*
+     * Andrew.Taylor@cal.montage.ca: Provide a user prompt to PAM
+     * so that the "login: " prompt gets localized. Unfortunately,
+     * PAM doesn't have an interface to specify the "Password: " string
+     * (yet).
+     */
     retcode = pam_set_item(pamh, PAM_USER_PROMPT, _("login: "));
     PAM_FAIL_CHECK;
 
 #if 0
-    /* other than iso-8859-1
+    /*
+     * other than iso-8859-1
      * one more time due to reset tty by PAM
      */
     printf("\033(K");
@@ -602,12 +607,12 @@ main(int argc, char **argv)
 	ioctlval = 0;
 	ioctl(0, TIOCSETD, &ioctlval);
 #  endif
-	
+
 	if (ask) {
 	    fflag = 0;
 	    getloginname();
 	}
-	
+
 	/* Dirty patch to fix a gigantic security hole when using 
 	   yellow pages. This problem should be solved by the
 	   libraries, and not by programs, but this must be fixed
@@ -672,7 +677,7 @@ main(int argc, char **argv)
 		     pwd->pw_name, tty);
 	    continue;
 	}
-	
+
 	/*
 	 * If no pre-authentication and a password exists
 	 * for this user, prompt for one and verify it.
@@ -717,6 +722,7 @@ main(int argc, char **argv)
 	}
 #  endif /* KERBEROS */
 	memset(pp, 0, strlen(pp));
+
 	if (pwd && !strcmp(p, pwd->pw_passwd))
 	  break;
 	
@@ -852,7 +858,6 @@ main(int argc, char **argv)
     /* for linux, write entries in utmp and wtmp */
     {
 	struct utmp ut;
-	int wtmp;
 	struct utmp *utp;
 	pid_t mypid = getpid();
 	
@@ -924,15 +929,19 @@ Michael Riepe <michael@stud.uni-hannover.de>
 #if 0
 	/* The O_APPEND open() flag should be enough to guarantee
 	   atomic writes at end of file. */
-	if((wtmp = open(_PATH_WTMP, O_APPEND|O_WRONLY)) >= 0) {
+	{
+	    int wtmp;
+
+	    if((wtmp = open(_PATH_WTMP, O_APPEND|O_WRONLY)) >= 0) {
 		write(wtmp, (char *)&ut, sizeof(ut));
 		close(wtmp);
+	    }
 	}
 #else
 	/* Probably all this locking below is just nonsense,
 	   and the short version is OK as well. */
 	{ 
-	    int lf;
+	    int lf, wtmp;
 	    if ((lf = open(_PATH_WTMPLOCK, O_CREAT|O_WRONLY, 0660)) >= 0) {
 		flock(lf, LOCK_EX);
 		if ((wtmp = open(_PATH_WTMP, O_APPEND|O_WRONLY)) >= 0) {

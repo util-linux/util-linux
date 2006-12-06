@@ -158,7 +158,10 @@ probe_for_kd_clock() {
       } else
         ret = &kd;
     } else {
+      /* probably KDGHWCLK exists on m68k only */
+#ifdef __m68k__
       outsyserr(_("Can't open /dev/tty1"));
+#endif
     }
     return ret;
 }

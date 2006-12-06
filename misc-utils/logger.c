@@ -54,12 +54,10 @@ int	decode __P((char *, CODE *));
 int	pencode __P((char *));
 void	usage __P((void));
 
-int
-myopenlog(sock)
-     const char *sock;
-{
+static int
+myopenlog(const char *sock) {
        int fd;
-       static struct sockaddr s_addr;      /* AF_UNIX address of local logger */
+       static struct sockaddr s_addr;     /* AF_UNIX address of local logger */
 
        s_addr.sa_family = AF_UNIX;
        (void)strncpy(s_addr.sa_data, sock, sizeof(s_addr.sa_data));
@@ -76,14 +74,8 @@ myopenlog(sock)
        return fd;
 }
 
-void
-mysyslog(fd, logflags, pri, tag, msg)
-     int fd;
-     int logflags;
-     int pri;
-     char *tag;
-     char *msg;
-{
+static void
+mysyslog(int fd, int logflags, int pri, char *tag, char *msg) {
        char buf[1000], pid[30], *cp, *tp;
        time_t now;
 
@@ -120,10 +112,7 @@ mysyslog(fd, logflags, pri, tag, msg)
  *	log.
  */
 int
-main(argc, argv)
-	int argc;
-	char *argv[];
-{
+main(int argc, char **argv) {
 	int ch, logflags, pri;
 	char *tag, buf[1024];
 	char *usock = NULL;

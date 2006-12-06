@@ -69,7 +69,8 @@ struct command {
 };
 
 
-void print_usage(char *progname) {
+static void
+print_usage(char *progname) {
   printf(_("Usage: %s <device> [ -i <IRQ> | -t <TIME> | -c <CHARS> | -w <WAIT> | \n"
 	   "          -a [on|off] | -o [on|off] | -C [on|off] | -q [on|off] | -s | \n"
 	   "          -T [on|off] ]\n"),
@@ -77,13 +78,13 @@ void print_usage(char *progname) {
   exit (1);
 }
 
-
-void print_version(char *progname) {
+static void
+print_version(char *progname) {
   printf("%s %s\n", progname, UTIL_LINUX_VERSION);
 }
 
-
-void *mylloc(long size) {
+static void *
+mylloc(long size) {
   void *ptr;
   if(!(ptr = (void*)malloc(size))) {
     perror(_("malloc error"));
@@ -94,7 +95,8 @@ void *mylloc(long size) {
 
 static char *progname;
 
-long get_val(char *val) {
+static long
+get_val(char *val) {
   long ret;
   if (!(sscanf(val, "%ld", &ret) == 1)) {
     fprintf(stderr, _("%s: bad value\n"), progname);
@@ -104,13 +106,15 @@ long get_val(char *val) {
 }
 
 
-long get_onoff(char *val) {
+static long
+get_onoff(char *val) {
   if (!strncasecmp("on", val, 2))
     return 1;
   return 0;
 }
 
-int main (int argc, char ** argv) {
+int
+main (int argc, char ** argv) {
   int c, fd, irq, status, show_irq, offset = 0, retval;
   char *filename, *p;
   struct stat statbuf;

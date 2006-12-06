@@ -15,8 +15,11 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <linux/fd.h>
-#include <linux/fs.h>
+
 #include "nls.h"
+
+/* cannot include <linux/fs.h> */
+#define MAJOR(a)	((a)>>8)
 
 static int ctrl;
 struct floppy_struct param;

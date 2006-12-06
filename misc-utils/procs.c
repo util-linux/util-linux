@@ -14,20 +14,21 @@
 
 #define _POSIX_SOURCE 1
 
-#include <sys/types.h>
-#include <sys/stat.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <dirent.h>
 #include <ctype.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include "kill.h"
 
 extern char *mybasename (char *);
 static char *parse_parens (char *buf);
 
-int *get_pids (char *process_name, int get_all)
-{
+int *
+get_pids (char *process_name, int get_all) {
     DIR *dir;
     struct dirent *ent;
     int status;

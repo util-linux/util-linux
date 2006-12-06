@@ -29,6 +29,8 @@
    1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
    - added Native Language Support
 
+   2000-03-17 Burt Holzman <bnh@iname.com>
+   - added range checks for dates
 */
 #include "../defines.h"		/* for util-linux-version */
 
@@ -129,13 +131,21 @@ default_fmt
 
 #define DY(y) (y+1166)
 
-inline char *ending(int i) { return (i%10==1)?"st":(i%10==2?"nd":(i%10==3?"rd":"th"));};
-inline int leapp(int i) { return (!(DY(i)%4))&&((DY(i)%100)||(!(DY(i)%400)));};
+static inline char *ending(int i) {
+	return (i%10==1)?"st":(i%10==2?"nd":(i%10==3?"rd":"th"));
+}
+
+static inline int leapp(int i) {
+	return (!(DY(i)%4))&&((DY(i)%100)||(!(DY(i)%400)));
+}
+
+/* select a random string */
+static inline char *sel(char **strings, int num) {
+	return(strings[random()%num]);
+}
 
 void print(struct disc_time,char **); /* old */
 void format(char *buf, const char* fmt, struct disc_time dt);
-/* select a random string */
-inline char *sel(char **strings, int num) {return(strings[random()%num]); }; 
 /* read a fortune file */
 int load_fortunes(char *fn, char *delim, char** result);
 
@@ -186,6 +196,10 @@ main (int argc, char *argv[])
 	    larry,moe,
 #endif
 	    curly);
+	if (hastur.season == -1) {
+		printf("Invalid date -- out of range\n");
+		return -1;
+	}
 	fnord=fnord?fnord:default_fmt;
     } else if (argc!=pi) { 
       usage:
@@ -201,6 +215,7 @@ main (int argc, char *argv[])
     }
     format(schwa, fnord, hastur);
     printf("%s\n", schwa);
+   
     return 0;
 }
 
@@ -282,6 +297,19 @@ struct disc_time makeday(int imonth,int iday,int iyear) /*i for input */
     
     int cal[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
     int dayspast=0;
+
+    /* basic range checks */
+    if (imonth < 1 || imonth > 12) {
+	    funkychickens.season = -1;
+	    return funkychickens;
+    }
+    if (iday < 1 || iday > cal[imonth-1]) {
+	    if (!(imonth == 2 && iday == 29 && iyear%4 == 0 &&
+		  (iyear%100 != 0 || iyear%400 == 0))) {
+		    funkychickens.season = -1;
+		    return funkychickens;
+	    }
+    }
     
     imonth--;
     funkychickens.year= iyear+1166;

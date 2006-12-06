@@ -11,8 +11,21 @@
 #include <unistd.h>
 #include <sys/ioctl.h>
 
-#include <linux/fs.h>
 #include "nls.h"
+
+/* Since it is impossible to include <linux/fs.h>, let us
+   give the ioctls explicitly. */
+
+#ifndef BLKROSET
+#define BLKROSET   _IO(0x12,93)
+#define BLKROGET   _IO(0x12,94)
+#define BLKRRPART  _IO(0x12,95)
+#define BLKGETSIZE _IO(0x12,96)
+#define BLKFLSBUF  _IO(0x12,97)
+#define BLKRASET   _IO(0x12,98)
+#define BLKRAGET   _IO(0x12,99)
+#define BLKSSZGET  _IO(0x12,104)
+#endif
 
 const char *progname;
 
@@ -76,7 +89,7 @@ usage(void) {
 	exit(1);
 }
 
-int
+static int
 find_cmd(char *s) {
 	int j;
 

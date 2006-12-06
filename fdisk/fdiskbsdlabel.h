@@ -43,10 +43,10 @@
 
 #define BSD_LINUX_BOOTDIR "/usr/ucb/mdec"
 
-#if defined (i386) || defined (__sparc__) || defined (__arm__)
+#if defined (i386) || defined (__sparc__) || defined (__arm__) || defined (__mips__)
 #define BSD_LABELSECTOR   1
 #define BSD_LABELOFFSET   0
-#elif defined (__alpha__) || defined (__powerpc__)
+#elif defined (__alpha__) || defined (__powerpc__) || defined (__ia64__)
 #define BSD_LABELSECTOR   0
 #define BSD_LABELOFFSET   64
 #else
@@ -182,10 +182,11 @@ static char *xbsd_dktypenames[] = {
 #define	BSD_FS_BOOT	13		/* partition contains bootstrap */
 #define BSD_FS_ADOS	14		/* AmigaDOS fast file system */
 #define BSD_FS_HFS	15		/* Macintosh HFS */
+#define BSD_FS_ADVFS	16		/* Digital Unix AdvFS */
 
 /* this is annoying, but it's also the way it is :-( */
 #ifdef __alpha__
-#define	BSD_FS_EXT2	8		/* MS-DOS file system */
+#define	BSD_FS_EXT2	8		/* ext2 file system */
 #else
 #define	BSD_FS_MSDOS	8		/* MS-DOS file system */
 #endif
@@ -212,6 +213,7 @@ static struct systypes xbsd_fstypes[] = {
 	{BSD_FS_BOOT,   "boot"},
 	{BSD_FS_ADOS,   "ADOS"},
 	{BSD_FS_HFS,    "HFS"},
+	{BSD_FS_ADVFS,	"AdvFS"},
 	{ 0, NULL }
 };
 #define BSD_FSMAXTYPES (SIZE(xbsd_fstypes)-1)

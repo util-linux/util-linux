@@ -1,7 +1,7 @@
 #ifndef MD5_H
 #define MD5_H
 
-#ifdef __alpha
+#if defined (__alpha__) || defined (__ia64__)
 typedef unsigned int uint32;
 #else
 typedef unsigned long uint32;

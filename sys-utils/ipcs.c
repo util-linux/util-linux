@@ -69,6 +69,11 @@ struct shm_info {
 #define SEM_STAT	18
 #define SEM_INFO	19
 #endif
+
+/* Some versions of libc only define IPC_INFO when __USE_GNU is defined. */
+#ifndef IPC_INFO
+#define IPC_INFO        3
+#endif
 /*-------------------------------------------------------------------*/
 
 /* The last arg of semctl is a union semun, but where is it defined?
@@ -112,16 +117,16 @@ void print_sem (int id);
 
 static char *progname;
 
-void usage(void)
-{
+static void
+usage(void) {
 	printf (_("usage : %s -asmq -tclup \n"), progname);
 	printf (_("\t%s [-s -m -q] -i id\n"), progname);
 	printf (_("\t%s -h for help.\n"), progname); 
 	return;
 }
 
-void help (void)
-{
+static void
+help (void) {
 	printf (_("%s provides information on ipc facilities for"), progname);
         printf (_(" which you have read access.\n")); 
 	printf (_("Resource Specification:\n\t-m : shared_mem\n\t-q : messages\n"));
@@ -133,8 +138,8 @@ void help (void)
 	return;
 }
 
-int main (int argc, char **argv)
-{
+int
+main (int argc, char **argv) {
 	int opt, msg = 0, sem = 0, shm = 0, id=0, print=0; 
 	char format = 0;
 	char options[] = "atcluphsmqi:";
@@ -222,8 +227,8 @@ int main (int argc, char **argv)
 }
 
 
-void print_perms (int id, struct ipc_perm *ipcp)
-{
+static void
+print_perms (int id, struct ipc_perm *ipcp) {
 	struct passwd *pw;
 	struct group *gr;
 

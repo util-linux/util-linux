@@ -46,10 +46,13 @@
 #ifdef RPC_CLNT
 %#include <string.h>		/* for memset() */
 #endif
+%#include <asm/types.h>
 
+const MOUNTPORT = 635;
 const MNTPATHLEN = 1024;	/* maximum bytes in a pathname argument */
 const MNTNAMLEN = 255;		/* maximum bytes in a name argument */
 const FHSIZE = 32;		/* size in bytes of a file handle */
+const FHSIZE3 = 64;		/* size in bytes of a file handle */
 
 /*
  * The fhandle is the file handle that the server passes to the client.
@@ -58,6 +61,20 @@ const FHSIZE = 32;		/* size in bytes of a file handle */
  * server needs to distinguish an individual file.
  */
 typedef opaque fhandle[FHSIZE];	
+typedef opaque fhandle3<FHSIZE3>;
+
+enum mountstat3 {
+	MNT_OK			= 0,		/* no error */
+	MNT3ERR_PERM		= 1,		/* not owner */
+	MNT3ERR_NOENT		= 2,		/* No such file or directory */
+	MNT3ERR_IO		= 5,		/* I/O error */
+	MNT3ERR_ACCES		= 13,		/* Permission denied */
+	MNT3ERR_NOTDIR		= 20,		/* Not a directory */
+	MNT3ERR_INVAL		= 22,		/* Invalid argument */
+	MNT3ERR_NAMETOOLONG	= 63,		/* File name too long */
+	MNT3ERR_NOTSUPP		= 10004,	/* Operation not supported */
+	MNT3ERR_SERVERFAULT	= 10006		/* A failure on the server */
+};
 
 /*
  * If a status of zero is returned, the call completed successfully, and 
@@ -67,6 +84,18 @@ typedef opaque fhandle[FHSIZE];
 union fhstatus switch (unsigned fhs_status) {
 case 0:
 	fhandle fhs_fhandle;
+default:
+	void;
+};
+
+struct mountres3_ok {
+	fhandle3 fhandle;
+	int auth_flavours<>;
+};
+
+union mountres3 switch (mountstat3 fhs_status) {
+case MNT_OK:
+	mountres3_ok mountinfo;
 default:
 	void;
 };
@@ -252,6 +281,55 @@ program MOUNTPROG {
 		ppathcnf
 		MOUNTPROC_PATHCONF(dirpath) = 7;
 	} = 2;
+	version MOUNT_V3 {
+		/*
+		 * Does no work. It is made available in all RPC services
+		 * to allow server reponse testing and timing
+		 */
+		void
+		MOUNTPROC3_NULL(void) = 0;
+
+		/*	
+		 * If fhs_status is 0, then fhs_fhandle contains the
+	 	 * file handle for the directory. This file handle may
+		 * be used in the NFS protocol. This procedure also adds
+		 * a new entry to the mount list for this client mounting
+		 * the directory.
+		 * Unix authentication required.
+		 */
+		mountres3
+		MOUNTPROC3_MNT(dirpath) = 1;
+
+		/*
+		 * Returns the list of remotely mounted filesystems. The 
+		 * mountlist contains one entry for each hostname and 
+		 * directory pair.
+		 */
+		mountlist
+		MOUNTPROC3_DUMP(void) = 2;
+
+		/*
+		 * Removes the mount list entry for the directory
+		 * Unix authentication required.
+		 */
+		void
+		MOUNTPROC3_UMNT(dirpath) = 3;
+
+		/*
+		 * Removes all of the mount list entries for this client
+		 * Unix authentication required.
+		 */
+		void
+		MOUNTPROC3_UMNTALL(void) = 4;
+
+		/*
+		 * Returns a list of all the exported filesystems, and which
+		 * machines are allowed to import it.
+		 */
+		exports
+		MOUNTPROC3_EXPORT(void)  = 5;
+
+	} = 3;
 } = 100005;
 
 #ifdef RPC_HDR

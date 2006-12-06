@@ -59,14 +59,14 @@ activate: sfdisk
 	ln -s sfdisk activate
 
 fdisk: fdisk.o llseek.o fdiskbsdlabel.o fdisksgilabel.o fdisksunlabel.o \
-	fdiskaixlabel.o i386_sys_types.o
+	fdiskaixlabel.o i386_sys_types.o partname.o
 fdisk.o: fdisk.c fdisk.h
 fdiskbsdlabel.o: fdiskbsdlabel.c fdisk.h fdiskbsdlabel.h
 fdisksunlabel.o: fdisksunlabel.c fdisksunlabel.h fdisk.h
 fdiskaixlabel.o: fdiskaixlabel.c fdiskaixlabel.h fdisk.h
 fdisk.o cfdisk.o sfdisk.o fdiskbsdlabel.o fdisksunlabel.o \
-	fdisksgilabel.o fdiskaixlabel.o i386_sys_types.o: common.h
-sfdisk: sfdisk.o i386_sys_types.o
+	fdisksgilabel.o fdiskaixlabel.o i386_sys_types.o partname.o: common.h
+sfdisk: sfdisk.o i386_sys_types.o partname.o
 
 install: all
 	$(INSTALLDIR) $(SBINDIR)
@@ -76,4 +76,4 @@ install: all
 
 .PHONY:	clean
 clean:
-	-rm -f *.o *~ core $(SBIN) addpart delpart
+	-rm -f *.o *~ core $(SBIN)

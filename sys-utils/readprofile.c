@@ -46,8 +46,8 @@ static char defaultmap[]="/usr/src/linux/System.map";
 static char defaultpro[]="/proc/profile";
 static char optstring[]="m:p:itvarV";
 
-void usage()
-{
+static void
+usage(void) {
   fprintf(stderr,
 		  _("%s: Usage: \"%s [options]\n"
 		  "\t -m <mapfile>  (default = \"%s\")\n"
@@ -61,9 +61,9 @@ void usage()
   exit(1);
 }
 
-FILE *myopen(char *name, char *mode, int *flag)
-{
-static char cmdline[S_LEN];
+static FILE *
+myopen(char *name, char *mode, int *flag) {
+  static char cmdline[S_LEN];
 
   if (!strcmp(name+strlen(name)-3,".gz"))
     {
@@ -75,23 +75,23 @@ static char cmdline[S_LEN];
   return fopen(name,mode);
 }
 
-int main (int argc, char **argv)
-{
-FILE *pro;
-FILE *map;
-int proFd;
-char *mapFile, *proFile;
-unsigned long len=0, add0=0, index=0;
-unsigned int step;
-unsigned int *buf, total, fn_len;
-unsigned long fn_add, next_add;           /* current and next address */
-char fn_name[S_LEN], next_name[S_LEN];   /* current and next name */
-char mode[8];
-int c;
-int optAll=0, optInfo=0, optReset=0, optVerbose=0;
-char mapline[S_LEN];
-int maplineno=1;
-int popenMap;   /* flag to tell if popen() has been used */
+int
+main (int argc, char **argv) {
+  FILE *pro;
+  FILE *map;
+  int proFd;
+  char *mapFile, *proFile;
+  unsigned long len=0, add0=0, index=0;
+  unsigned int step;
+  unsigned int *buf, total, fn_len;
+  unsigned long fn_add, next_add;           /* current and next address */
+  char fn_name[S_LEN], next_name[S_LEN];   /* current and next name */
+  char mode[8];
+  int c;
+  int optAll=0, optInfo=0, optReset=0, optVerbose=0;
+  char mapline[S_LEN];
+  int maplineno=1;
+  int popenMap;   /* flag to tell if popen() has been used */
 
 #define next (current^1)
 

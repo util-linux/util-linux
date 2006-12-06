@@ -86,24 +86,21 @@ typedef struct _buf {
 	int b_bsize;
 } BUF;
 
-NODE *add_node(), *find_node();
-void add_arc(), no_memory(), remove_node(), tsort();
-char *grow_buf();
+NODE *add_node(char *), *find_node(char *);
+void add_arc(char *, char *), no_memory(void);
+void remove_node(NODE *), tsort(void);
+char *grow_buf(char *, int);
 int find_cycle(NODE *, NODE *, int, int);
 
-extern int errno;
 NODE *graph;
 NODE *hashtable[HASHSIZE];
 NODE **cycle_buf;
 NODE **longest_cycle;
 
 int
-main(argc, argv)
-	int argc;
-	char **argv;
-{
-	register BUF *b;
-	register int c, n;
+main(int argc, char **argv) {
+	BUF *b;
+	int c, n;
 	FILE *fp;
 	int bsize, nused;
 	BUF bufs[2];
@@ -165,10 +162,7 @@ main(argc, argv)
 
 /* double the size of oldbuf and return a pointer to the new buffer. */
 char *
-grow_buf(bp, size)
-	char *bp;
-	int size;
-{
+grow_buf(char *bp, int size) {
 	if (!(bp = realloc(bp, (u_int)size)))
 		no_memory();
 	return(bp);
@@ -179,10 +173,8 @@ grow_buf(bp, size)
  * the graph, then add them.
  */
 void
-add_arc(s1, s2)
-	char *s1, *s2;
-{
-	register NODE *n1;
+add_arc(char *s1, char *s2) {
+	NODE *n1;
 	NODE *n2;
 	int bsize;
 
@@ -213,11 +205,9 @@ add_arc(s1, s2)
 	++n2->n_refcnt;
 }
 
-int
-hash_string(s)
-	char *s;
-{
-	register int hash, i;
+static int
+hash_string(char *s) {
+	int hash, i;
 
 	for (hash = 0, i = 1; *s; s++, i++)
 		hash += *s * i;
@@ -229,10 +219,8 @@ hash_string(s)
  * found.
  */
 NODE *
-find_node(name)
-	char *name;
-{
-	register NODE *n;
+find_node(char *name) {
+	NODE *n;
 
 	for (n = hashtable[hash_string(name)]; n; n = n->n_hash)
 		if (!strcmp(n->n_name, name))
@@ -242,10 +230,8 @@ find_node(name)
 
 /* Add a node to the graph and return a pointer to it. */
 NODE *
-add_node(name)
-	char *name;
-{
-	register NODE *n;
+add_node(char *name) {
+	NODE *n;
 	int hash;
 
 	if (!(n = (NODE *)malloc(sizeof(NODE))) || !(n->n_name = strdup(name)))
@@ -272,10 +258,9 @@ add_node(name)
 
 /* do topological sort on graph */
 void
-tsort()
-{
-	register NODE *n, *next;
-	register int cnt;
+tsort(void) {
+	NODE *n, *next;
+	int cnt;
 
 	while (graph) {
 		/*
@@ -314,7 +299,7 @@ tsort()
 		for (n = graph; n; n = n->n_next)
 			if (!(n->n_flags & NF_ACYCLIC)) {
 				if ((cnt = find_cycle(n, n, 0, 0)) != 0) {
-					register int i;
+					int i;
 
 					(void)fprintf(stderr,
 					    _("tsort: cycle in data.\n"));
@@ -338,11 +323,9 @@ tsort()
 
 /* print node and remove from graph (does not actually free node) */
 void
-remove_node(n)
-	register NODE *n;
-{
-	register NODE **np;
-	register int i;
+remove_node(NODE *n) {
+	NODE **np;
+	int i;
 
 	(void)printf("%s\n", n->n_name);
 	for (np = n->n_arcs, i = n->n_narcs; --i >= 0; np++)
@@ -355,12 +338,9 @@ remove_node(n)
 
 /* look for the longest cycle from node from to node to. */
 int
-find_cycle(from, to, longest_len, depth)
-	NODE *from, *to;
-	int depth, longest_len;
-{
-	register NODE **np;
-	register int i, len;
+find_cycle(NODE *from, NODE *to, int longest_len, int depth) {
+	NODE **np;
+	int i, len;
 
 	/*
 	 * avoid infinite loops and ignore portions of the graph known
@@ -390,8 +370,7 @@ find_cycle(from, to, longest_len, depth)
 }
 
 void
-no_memory()
-{
+no_memory(void) {
 	(void)fprintf(stderr, "tsort: %s.\n", strerror(ENOMEM));
 	exit(1);
 }

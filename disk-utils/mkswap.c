@@ -24,6 +24,7 @@
  *
  * Sparc fixes, jj@ultra.linux.cz (Jakub Jelinek), 981201 - mangled by aeb.
  * V1_MAX_PAGES fixes, jj, 990325.
+ * sparc64 fixes, jj, 000219.
  *
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
  * - added Native Language Support
@@ -74,6 +75,57 @@ linux_version_code(void) {
 	return 0;
 }
 
+#ifdef __sparc__
+# ifdef __arch64__
+#  define is_sparc64() 1
+#  define is_be64() 1
+# else /* sparc32 */
+static int
+is_sparc64(void) {
+	struct utsname un;
+	static int sparc64 = -1;
+
+	if (sparc64 != -1) return sparc64;
+	sparc64 = 0;
+
+	if (uname(&un) < 0) return 0;
+	if (! strcmp(un.machine, "sparc64")) {
+		sparc64 = 1;
+		return 1;
+	}
+	if (strcmp(un.machine, "sparc"))
+		return 0; /* Should not happen */
+
+#ifdef HAVE_personality
+	{
+		extern int personality(unsigned long);
+		int oldpers;
+#define PERS_LINUX          0x00000000
+#define PERS_LINUX_32BIT    0x00800000
+#define PERS_LINUX32        0x00000008
+
+		oldpers = personality(PERS_LINUX_32BIT);
+		if (oldpers != -1) {
+			if (personality(PERS_LINUX) != -1) {
+				uname(&un);
+				if (! strcmp(un.machine, "sparc64")) {
+					sparc64 = 1;
+					oldpers = PERS_LINUX32;
+				}
+			}
+			personality(oldpers);
+		}
+	}
+#endif
+
+	return sparc64;
+}
+#  define is_be64() is_sparc64()
+# endif /* sparc32 */
+#else /* !sparc */
+# define is_be64() 0
+#endif
+
 /*
  * The definition of the union swap_header uses the constant PAGE_SIZE.
  * Unfortunately, on some architectures this depends on the hardware model,
@@ -92,7 +144,7 @@ static int user_pagesize = 0;
 static int kernel_pagesize;	   /* obtained via getpagesize(); */
 static int defined_pagesize = 0;   /* PAGE_SIZE, when that exists */
 static int pagesize;
-static int *signature_page;
+static long *signature_page;
 
 struct swap_header_v1 {
         char         bootbits[1024];    /* Space for disklabel etc. */
@@ -104,7 +156,7 @@ struct swap_header_v1 {
 } *p;
 
 static void
-init_signature_page() {
+init_signature_page(void) {
 #ifdef PAGE_SIZE
 	defined_pagesize = PAGE_SIZE;
 #endif
@@ -130,7 +182,7 @@ init_signature_page() {
 		fprintf(stderr, _("Assuming pages of size %d (not %d)\n"),
 			pagesize, defined_pagesize);
 
-	signature_page = (int *) malloc(pagesize);
+	signature_page = (long *) malloc(pagesize);
 	memset(signature_page,0,pagesize);
 	p = (struct swap_header_v1 *) signature_page;
 }
@@ -169,14 +221,14 @@ write_signature(char *sig) {
    refuse a swap space if it is too large.
 */
 /* patch from jj - why does this differ from the above? */
+/* 32bit kernels have a second limitation of 2GB, sparc64 is limited by
+   the size of virtual address space allocation for vmalloc */
 #if defined(__alpha__)
 #define V1_MAX_PAGES           ((1 << 24) - 1)
 #elif defined(__mips__)
 #define V1_MAX_PAGES           ((1 << 17) - 1)
-#elif defined(__sparc_v9__)
-#define V1_MAX_PAGES           ((3 << 29) - 1)
 #elif defined(__sparc__)
-#define V1_MAX_PAGES           (pagesize == 8192 ? ((3 << 29) - 1) : ((1 << 18) - 1))
+#define V1_MAX_PAGES           (is_sparc64() ? ((3 << 29) - 1) : ((1 << 18) - 1))
 #else
 #define V1_MAX_PAGES           V1_OLD_MAX_PAGES
 #endif
@@ -188,28 +240,68 @@ It is roughly 2GB on i386, PPC, m68k, ARM, 1GB on sparc, 512MB on mips,
 
 #define MAX_BADPAGES	((pagesize-1024-128*sizeof(int)-10)/sizeof(int))
 
+/*
+ * One more point of lossage - Linux swapspace really is a mess.
+ * The definition of the bitmap used is architecture dependent,
+ * and requires one to know whether the machine is bigendian,
+ * and if so, whether it will use 32-bit or 64-bit units in
+ * test_bit().
+ * davem writes: "... is based upon an unsigned long type of
+ * the cpu and the native endianness".
+ * So, it seems we can write `unsigned long' below.
+ * However, sparc64 uses 64-bit units in the kernel, while
+ * mkswap may have been translated with 32-bit longs. Thus,
+ * we need an explicit test for version 0 swap on sparc64.
+ */
+
 static void
-bit_set (unsigned int *addr, unsigned int nr) {
+bit_set (unsigned long *addr, unsigned int nr) {
 	unsigned int r, m;
 
-	addr += nr / (8 * sizeof(int));
+	if(is_be64()) {
+		unsigned long long *bitmap = (unsigned long long *) addr;
+		unsigned long long bitnum = (unsigned long long) nr;
+		unsigned long long rl, ml;
+
+		bitmap += bitnum / (8 * sizeof(long long));
+		rl = *bitmap;
+		ml = 1ULL << (bitnum &
+			      (8ULL * (unsigned long long)sizeof(long long) - 1ULL));
+		*bitmap = rl | ml;
+		return;
+	}
+
+	addr += nr / (8 * sizeof(unsigned long));
 	r = *addr;
-	m = 1 << (nr & (8 * sizeof(int) - 1));
+	m = 1 << (nr & (8 * sizeof(unsigned long) - 1));
 	*addr = r | m;
 }
 
 static int
-bit_test_and_clear (unsigned int *addr, unsigned int nr) {
+bit_test_and_clear (unsigned long *addr, unsigned int nr) {
 	unsigned int r, m;
 
-	addr += nr / (8 * sizeof(int));
+	if(is_be64()) {
+		unsigned long long *bitmap = (unsigned long long *) addr;
+		unsigned long long bitnum = (unsigned long long) nr;
+		unsigned long long rl, ml;
+
+		bitmap += bitnum / (8 * sizeof(long long));
+		rl = *bitmap;
+		ml = 1ULL << (bitnum &
+			      (8ULL * (unsigned long long)sizeof(long long) - 1ULL));
+		*bitmap = rl & ~ml;
+		return ((rl & ml) != 0ULL);
+	}
+
+	addr += nr / (8 * sizeof(unsigned long));
 	r = *addr;
-	m = 1 << (nr & (8 * sizeof(int) - 1));
+	m = 1 << (nr & (8 * sizeof(unsigned long) - 1));
 	*addr = r & ~m;
 	return (r & m) != 0;
 }
 
-void
+static void
 usage(void) {
 	fprintf(stderr,
 		_("Usage: %s [-c] [-v0|-v1] [-pPAGESZ] /dev/name [blocks]\n"),
@@ -217,19 +309,19 @@ usage(void) {
 	exit(1);
 }
 
-void
+static void
 die(const char *str) {
 	fprintf(stderr, "%s: %s\n", program_name, str);
 	exit(1);
 }
 
-void
+static void
 page_ok(int page) {
 	if (version==0)
 		bit_set(signature_page, page);
 }
 
-void
+static void
 page_bad(int page) {
 	if (version == 0)
 		bit_test_and_clear(signature_page, page);
@@ -241,7 +333,7 @@ page_bad(int page) {
 	badpages++;
 }
 
-void
+static void
 check_blocks(void) {
 	unsigned int current_page;
 	int do_seek = 1;
@@ -322,7 +414,7 @@ get_size(const char  *file) {
 	return size;
 }
 
-int
+static int
 isnzdigit(char c) {
 	return (c >= '1' && c <= '9');
 }
@@ -371,7 +463,7 @@ main(int argc, char ** argv) {
 						usage();
 					break;
 				case 'v':
-					version = atoi(argv[0]+2);
+					version = atoi(argv[i]+2);
 					break;
 				default:
 					usage();
@@ -414,7 +506,8 @@ main(int argc, char ** argv) {
 	}
 
 	if (version == -1) {
-		if (PAGES <= V0_MAX_PAGES)
+		/* use version 1 as default, if possible */
+		if (PAGES <= V0_MAX_PAGES && PAGES > V1_MAX_PAGES)
 			version = 0;
 		else if (linux_version_code() < MAKE_VERSION(2,1,117))
 			version = 0;

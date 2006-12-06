@@ -143,10 +143,7 @@ char	uflag;
  * look for source, documentation and binaries
  */
 int
-main(argc, argv)
-	int argc;
-	char *argv[];
-{
+main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);

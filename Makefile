@@ -51,6 +51,7 @@ clean:
 
 distclean: make_include clean
 	cd po && make distclean
+	cd mount && make distclean
 	-rm -f defines.h make_include
 
 #

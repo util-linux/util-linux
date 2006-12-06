@@ -5,9 +5,9 @@
 .SH NAME
 fdisk \- Partition table manipulator for Linux
 .SH SYNOPSIS
-.BI "fdisk [\-u] " device
+.BI "fdisk [\-u] [\-b sectorsize]" device
 .sp
-.BI "fdisk \-l [\-u] [" "device ..." ]
+.BI "fdisk \-l [\-u] [\-b sectorsize] [" "device ..." ]
 .sp
 .BI "fdisk \-s " "partition ..."
 .sp
@@ -169,10 +169,10 @@ program and Linux partitions with the Linux fdisk or Linux cfdisk program.
 
 .SH OPTIONS
 .TP
-.B \-v
-Print version number of
-.B fdisk
-program and exit.
+.BI "\-b " sectorsize
+Specify the sector size of the disk. Valid values are 512, 1024, or 2048.
+(Recent kernels know the sector size. Use this only on old kernels or
+to override the kernel's ideas.)
 .TP
 .B \-l
 List the partition tables for the specified devices and then exit.
@@ -188,6 +188,11 @@ of cylinders.
 The
 .I size
 of the partition (in blocks) is printed on the standard output.
+.TP
+.B \-v
+Print version number of
+.B fdisk
+program and exit.
 .SH BUGS
 There are several *fdisk programs around.
 Each has its problems and strengths.

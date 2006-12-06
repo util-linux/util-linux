@@ -1018,10 +1018,7 @@ int	debug, i, j, linen, max, nchars, pc, term, trace, x, y;
 int	width = DWIDTH;	/* -w option: scrunch letters to 80 columns */
 
 int
-main(argc, argv)
-	int argc;
-	char **argv;
-{ 
+main(int argc, char **argv) {
 	int ch;
 	extern char *__progname;
 	__progname = argv[0];

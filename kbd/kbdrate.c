@@ -95,7 +95,7 @@ static int valid_rates[] = { 300, 267, 240, 218, 200, 185, 171, 160, 150,
 static int valid_delays[] = { 250, 500, 750, 1000 };
 #define DELAY_COUNT (sizeof( valid_delays ) / sizeof( int ))
 
-int
+static int
 KDKBDREP_ioctl_ok(double rate, int delay, int silent) {
 #ifdef KDKBDREP
      /* This ioctl is defined in <linux/kd.h> but is not
@@ -145,7 +145,7 @@ KDKBDREP_ioctl_ok(double rate, int delay, int silent) {
 #endif /* KDKBDREP */
 }
 
-int
+static int
 KIOCSRATE_ioctl_ok(double rate, int delay, int silent) {
 #ifdef KIOCSRATE
    struct kbd_rate kbdrate_s;

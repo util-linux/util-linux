@@ -63,7 +63,7 @@ int inb(int c){ return 0; }
 
 #define TM_EPOCH 1900
 int cmos_epoch = 1900;		/* 1980 for an alpha in ARC console time */
-				/* One also sees 1952 (Digital Unix?)
+				/* One also sees 1952 (Digital Unix)
 				   and 1958 (ALPHA_PRE_V1_2_SRM_CONSOLE) */
 
 /* Martin Ostermann writes: 
@@ -125,6 +125,11 @@ set_cmos_epoch(int ARCconsole, int SRM) {
   unsigned long epoch;
 
   /* Believe the user */
+  if (epoch_option != -1) {
+    cmos_epoch = epoch_option;
+    return;
+  }
+
   if (ARCconsole)
     cmos_epoch = 1980;
 
@@ -137,6 +142,12 @@ set_cmos_epoch(int ARCconsole, int SRM) {
      cmos_epoch = epoch;
      return;
   }
+
+  /* The kernel source today says: read the year. If it is
+     in 11-43 then the epoch is 1980 (this covers 1991-2023).
+     Otherwise, if it is less than 96 then the epoch is 1952
+     (this covers 1952-1962 and 1996-2047). Otherwise, the epoch
+     is 1900 (this covers 1996-1999, or rather 1996-2155). */
 
 
   /* See whether we are dealing with SRM or MILO, as they have
@@ -395,7 +406,7 @@ hclock_set_time(const struct tm *tm) {
 }
 
 static inline int
-cmos_clock_busy() {
+cmos_clock_busy(void) {
 	return
 #ifdef __alpha__
 	                /* poll bit 4 (UF) of Control Register C */

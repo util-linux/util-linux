@@ -22,9 +22,8 @@ static  short	volumes=1;
  * only dealing with free blocks here
  */
 
-void
-aix_info( void )
-{
+static void
+aix_info( void ) {
     puts(
 	_("\n\tThere is a valid AIX label on this disk.\n"
 	"\tUnfortunately Linux cannot handle these\n"
@@ -46,7 +45,7 @@ aix_nolabel( void )
     aixlabel->magic = 0;
     aix_label = 0;
     partitions = 4;
-    memset( buffer, 0, sizeof(buffer) );	/* avoid fdisk cores */
+    memset( MBRbuffer, 0, sizeof(MBRbuffer) );	/* avoid fdisk cores */
     return;
 }
 

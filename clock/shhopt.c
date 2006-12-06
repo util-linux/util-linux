@@ -228,7 +228,7 @@ static void argvRemove(int *argc, char *argv[], int i)
  *  RETURNS       Nothing. Aborts in case of error.
  *
  */
-void optExecute(const optStruct *opt, char *arg, int lng)
+static void optExecute(const optStruct *opt, char *arg, int lng)
 {
     switch (opt->type) {
       case OPT_FLAG:

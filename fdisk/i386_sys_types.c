@@ -58,8 +58,10 @@ struct systypes i386_sys_types[] = {
 	{0x85, N_("Linux extended")},
 	{0x86, N_("NTFS volume set")},
 	{0x87, N_("NTFS volume set")},
+	{0x8e, N_("Linux LVM")},
 	{0x93, N_("Amoeba")},
 	{0x94, N_("Amoeba BBT")},	/* (bad block table) */
+	{0x9f, N_("BSD/OS")},		/* BSDI */
 	{0xa0, N_("IBM Thinkpad hibernation")},
 	{0xa5, N_("BSD/386")},
 	{0xa6, N_("OpenBSD")},

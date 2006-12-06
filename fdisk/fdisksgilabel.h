@@ -93,16 +93,16 @@ typedef struct {
                                  : (__u32)(x))
 
 /* fdisk.c */
-#define sgilabel ((sgi_partition *)buffer)
+#define sgilabel ((sgi_partition *)MBRbuffer)
 #define sgiparam (sgilabel->devparam)
-extern char buffer[MAX_SECTOR_SIZE];
-extern char changed[MAXIMUM_PARTS];
+extern char MBRbuffer[MAX_SECTOR_SIZE];
 extern uint heads, sectors, cylinders;
 extern int show_begin;
 extern int sgi_label;
 extern char *partition_type(unsigned char type);
 extern void update_units(void);
 extern char read_chars(char *mesg);
+extern void set_changed(int);
 
 /* fdisksgilabel.c */
 extern struct	systypes sgi_sys_types[];

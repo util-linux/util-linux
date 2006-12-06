@@ -77,7 +77,7 @@ extern int deprecated;
 extern off_t skip;                      /* bytes to skip */
 enum _vflag { ALL, DUP, FIRST, WAIT };	/* -v values */
 
-char *emalloc();
+char *emalloc(int);
 int size(FS *);
 void add(char *);
 void rewrite(FS *);

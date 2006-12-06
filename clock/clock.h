@@ -22,6 +22,7 @@ typedef int bool;
 /* hwclock.c */
 extern char *progname;
 extern int debug;
+extern int epoch_option;
 extern void outsyserr(char *msg);
 
 /* cmos.c */

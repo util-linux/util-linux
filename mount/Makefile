@@ -14,14 +14,20 @@ LINK = $(CC) $(LDFLAGS)
 
 SUID_PROGS = mount umount
 NOSUID_PROGS = swapon losetup
-PROGS = $(SUID_PROGS) $(NOSUID_PROGS)
 MAN5 = fstab.5 nfs.5
 MAN8 = mount.8 swapoff.8 swapon.8 umount.8 losetup.8
+
+ifeq "$(HAVE_PIVOT_ROOT)" "yes"
+NOSUID_PROGS := $(NOSUID_PROGS) pivot_root
+MAN8 := $(MAN8) pivot_root.8
+endif
+
+PROGS = $(SUID_PROGS) $(NOSUID_PROGS)
 
 # comment these out if you are not compiling in NFS support
 NFS_OBJS = nfsmount.o nfsmount_xdr.o nfsmount_clnt.o
 # uncomment this if you don't have libc-4.2 but do have the rpclib
-GEN_FILES = nfsmount.x nfsmount.h nfsmount_xdr.c nfsmount_clnt.c
+GEN_FILES = nfsmount.h nfsmount_xdr.c nfsmount_clnt.c
 
 # comment these out if you are not compiling in loop support
 LO_OBJS=lomount.o
@@ -30,8 +36,8 @@ all: $(PROGS)
 
 install: $(PROGS)
 	$(INSTALLDIR) $(BINDIR) $(SBINDIR)
-	$(INSTALLSUID) -s $(SUID_PROGS) $(BINDIR)
-	$(INSTALLBIN) -s $(NOSUID_PROGS) $(SBINDIR)
+	$(INSTALLSUID) $(SUID_PROGS) $(BINDIR)
+	$(INSTALLBIN) $(NOSUID_PROGS) $(SBINDIR)
 	(cd $(SBINDIR); ln -sf swapon swapoff)
 	$(INSTALLDIR) $(MAN5DIR) $(MAN8DIR)
 	$(INSTALLMAN) $(MAN5) $(MAN5DIR)
@@ -51,6 +57,10 @@ umount: umount.o fstab.o sundries.o realpath.o mntent.o getusername.o \
 
 swapon:	swapon.o version.o
 	$(LINK) $^ -o $@
+
+losetup.o: lomount.c
+	$(COMPILE) -DMAIN lomount.c
+	mv lomount.o losetup.o
 
 losetup: losetup.o
 	$(LINK) $^ -o $@
@@ -85,28 +95,20 @@ nfsmount_clnt.o: nfsmount_clnt.c
 nfsmount_xdr.o: nfsmount_xdr.c
 	$(COMPILE) $(RPC_CFLAGS) nfsmount_xdr.c
 
-# rpcgen generates files that do not compile - use the pregenerated ones
-# nfsmount.h nfsmount_xdr.c nfsmount_clnt.c: nfsmount.x
-# 	rm -f nfsmount.h nfsmount_xdr.c nfsmount_clnt.c
-# 	$(RPCGEN) -h -o nfsmount.h nfsmount.x
-# 	$(RPCGEN) -c -o nfsmount_xdr.c nfsmount.x
-# 	$(RPCGEN) -l -o nfsmount_clnt.c nfsmount.x
+ifeq "$(HAVE_GOOD_RPC)" "yes"
+nfsmount.h nfsmount_xdr.c nfsmount_clnt.c: nfsmount.x
+	rm -f nfsmount.h nfsmount_xdr.c nfsmount_clnt.c
+	$(RPCGEN) -h -o nfsmount.h nfsmount.x
+	$(RPCGEN) -c -o nfsmount_xdr.c nfsmount.x
+	$(RPCGEN) -l -o nfsmount_clnt.c nfsmount.x
+else
+nfsmount.h nfsmount_xdr.c nfsmount_clnt.c:
+	cp $(RPCSVCDIR)/nfsmount.h .
+	cp $(RPCSVCDIR)/nfsmount_xdr.c .
+	cp $(RPCSVCDIR)/nfsmount_clnt.c .
+endif
 
-nfsmount.x:
-	cp $(RPCSVCDIR)/nfsmount.x .
-
-nfsmount.o: nfs_mountversion.h nfs_mount3.h
-
-NFSMOUNTH=/usr/include/linux/nfs_mount.h
-
-nfs_mountversion.h:
-	rm -f nfs_mountversion.h
-	if [ -f $(NFSMOUNTH) ]; then \
-		grep NFS_MOUNT_VERSION $(NFSMOUNTH) \
-			| sed -e 's/NFS/KERNEL_NFS/'; \
-	else \
-		echo '#define KERNEL_NFS_MOUNT_VERSION 0'; \
-	fi > nfs_mountversion.h
+nfsmount.o: nfs_mount4.h
 
 swapargs.h:
 	sh swap.configure
@@ -119,4 +121,4 @@ clean:
 	rm -f loop.h nfs_mountversion.h
 
 clobber distclean realclean: clean
-#	rm -f $(GEN_FILES)
+	rm -f $(GEN_FILES)

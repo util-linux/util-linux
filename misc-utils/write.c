@@ -45,13 +45,16 @@
  *
  */
 
+#include <stdio.h>
 #include <unistd.h>
 #include <utmp.h>
+#include <errno.h>
 #include <ctype.h>
+#include <time.h>
 #include <pwd.h>
-#include <stdio.h>
 #include <string.h>
 #include <locale.h>
+#include <signal.h>
 #include <sys/param.h>
 #include <sys/signal.h>
 #include <sys/stat.h>
@@ -66,19 +69,17 @@
 void search_utmp(char *, char *, char *, uid_t);
 void do_write(char *, char *, uid_t);
 void wr_fputs(char *);
+static void done(int);
 int term_chk(char *, int *, time_t *, int);
 int utmp_chk(char *, char *);
 
-extern int errno;
 
 int
-main(int argc, char **argv)
-{
+main(int argc, char **argv) {
 	time_t atime;
 	uid_t myuid;
 	int msgsok, myttyfd;
-	char tty[MAXPATHLEN], *mytty, *ttyname();
-	void done();
+	char tty[MAXPATHLEN], *mytty;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -146,7 +147,7 @@ main(int argc, char **argv)
 		(void)fprintf(stderr, _("usage: write user [tty]\n"));
 		exit(1);
 	}
-	done();
+	done(0);
 	/* NOTREACHED */
 	return 0;
 }
@@ -287,14 +288,11 @@ int term_chk(char *tty, int *msgsokP, time_t *atimeP, int showerror)
 /*
  * do_write - actually make the connection
  */
-void do_write(char *tty, char *mytty, uid_t myuid)
-
-{
+void do_write(char *tty, char *mytty, uid_t myuid) {
 	register char *login, *nows;
 	register struct passwd *pwd;
-	time_t now, time();
-	char *getlogin(), path[MAXPATHLEN], host[MAXHOSTNAMELEN], line[512];
-	void done();
+	time_t now;
+	char path[MAXPATHLEN], host[MAXHOSTNAMELEN], line[512];
 
 	/* Determine our login name before the we reopen() stdout */
 	if ((login = getlogin()) == NULL) {
@@ -333,8 +331,8 @@ void do_write(char *tty, char *mytty, uid_t myuid)
 /*
  * done - cleanup and exit
  */
-void done(void)
-{
+static void
+done(int dummy) {
 	(void)printf("EOF\r\n");
 	exit(0);
 }

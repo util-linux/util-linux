@@ -24,10 +24,12 @@
 #include <fcntl.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/stat.h>
 #include <sys/ioctl.h>
 
-#include <linux/fs.h>           /* for BLKGETSIZE */
-
+#ifndef BLKGETSIZE
+#define BLKGETSIZE _IO(0x12,96)
+#endif
 
 char *progname;
 char *device;
@@ -497,9 +499,14 @@ main(int argc, char **argv){
 	}
 
 	if (ioctl(fd, BLKGETSIZE, &size)) {
+		struct stat s;
 		perror("BLKGETSIZE");
 		fprintf(stderr, "%s: could not get device size\n", progname);
-		exit(1);
+		if (stat(device, &s)) {
+			fprintf(stderr, "and also stat fails. Aborting.\n");
+			exit(1);
+		}
+		size = s.st_size / 512;
 	}
 
 	pagesize = getpagesize();

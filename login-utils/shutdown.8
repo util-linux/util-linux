@@ -2,7 +2,7 @@
 .\" May be distributed under the GNU General Public License
 .\"
 .\" 
-.TH SHUTDOWN 8 "24 July 1998" "Linux 2.0" "Linux Programmer's Manual"
+.TH SHUTDOWN 8 "2 March 2000" "Linux 2.0" "Linux Programmer's Manual"
 .SH NAME
 shutdown \- close down the system
 .SH SYNOPSIS
@@ -66,6 +66,12 @@ unmounts all the disks,
 .BR sync (2)'s
 again, waits for a second, and then either terminates or reboots the
 system.
+
+Prior to unmounting all discs, the \fBSIGQUIT\fP signal is sent to the
+\fBinit\fP process, which will in turn exec \fBshutdown\fP(8). This
+allows for clean unmounting, even if the old inode for the \fBinit\fP
+process was unlinked. If the current process ID (PID) equals 1, then
+\fBshutdown\fP(8) will pause forever.
 .SH OPTIONS
 .TP
 .B \-h

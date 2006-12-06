@@ -36,17 +36,40 @@ static  short volumes=1;
 
 typedef struct { int first; int last; } freeblocks;
 static freeblocks freelist[17]; /* 16 partitions can produce 17 vacant slots */
-void setfreelist( int i, int f, int l ) \
-	{ freelist[i].first = f; freelist[i].last = l; return; }
-void add2freelist( int f, int l ) \
-	{ int i = 0; for( ; i<17 ; i++ ) { if(freelist[i].last==0) break; }\
-	  setfreelist( i, f, l ); return; }
-void clearfreelist( void )		\
-	{ int i = 0; for( ; i<17 ; i++ ) { setfreelist( i, 0, 0 ); } return; }
-int  isinfreelist( int b )		\
-	{ int i = 0; for( ; i<17 ; i++ )\
-	{ if( ( freelist[i].first <= b ) && ( freelist[i].last >= b) )\
-	{ return freelist[i].last; } } return 0; }
+
+static void
+setfreelist( int i, int f, int l ) {
+	freelist[i].first = f;
+	freelist[i].last = l;
+}
+
+static void
+add2freelist( int f, int l ) {
+	int i = 0;
+	for( ; i<17 ; i++ ) {
+		if(freelist[i].last==0) break;
+	}
+	setfreelist( i, f, l );
+}
+
+static void
+clearfreelist(void) {
+	int i = 0;
+	for( ; i<17 ; i++ ) {
+		setfreelist( i, 0, 0 );
+	}
+}
+
+static int
+isinfreelist( int b ) {
+	int i = 0;
+	for( ; i<17 ; i++ ) {
+		if (freelist[i].first <= b && freelist[i].last >= b) {
+			return freelist[i].last;
+		}
+	}
+	return 0;
+}
 	/* return last vacant block of this stride (never 0). */
 	/* the '>=' is not quite correct, but simplifies the code */
 /*
@@ -63,53 +86,49 @@ struct systypes sgi_sys_types[] = {
     {SGI_EFS,	  N_("SGI efs")},
     {0x08,	  N_("SGI lvol")},
     {0x09,	  N_("SGI rlvol")},
-    {0x0A,	  N_("SGI xfs")},
-    {0x0B,	  N_("SGI xlvol")},
-    {0x0C,	  N_("SGI rxlvol")},
+    {0x0a,	  N_("SGI xfs")},
+    {0x0b,	  N_("SGI xlvol")},
+    {0x0c,	  N_("SGI rxlvol")},
     {LINUX_SWAP,  N_("Linux swap")},
     {LINUX_NATIVE,N_("Linux native")},
+    {0x8e,	  N_("Linux LVM")},
     {0, NULL }
 };
 
-static inline unsigned short __swap16(unsigned short x) {
+static inline unsigned short
+__swap16(unsigned short x) {
         return (((__u16)(x) & 0xFF) << 8) | (((__u16)(x) & 0xFF00) >> 8);
 }
-static inline __u32 __swap32(__u32 x) {
+
+static inline __u32
+__swap32(__u32 x) {
         return (((__u32)(x) & 0xFF) << 24) | (((__u32)(x) & 0xFF00) << 8) | (((__u32)(x) & 0xFF0000) >> 8) | (((__u32)(x) & 0xFF000000) >> 24);
 }
 
-static
-int
-sgi_get_nsect( void )
-{
+static int
+sgi_get_nsect(void) {
     return SSWAP16(sgilabel->devparam.nsect);
 }
 
-static
-int
-sgi_get_ntrks( void )
-{
+static int
+sgi_get_ntrks(void) {
     return SSWAP16(sgilabel->devparam.ntrks);
 }
 
 #if 0
 static int
-sgi_get_head_vol0( void )
-{
+sgi_get_head_vol0(void) {
     return SSWAP16(sgilabel->devparam.head_vol0);
 }
 
 static int
-sgi_get_bytes( void )
-{
+sgi_get_bytes(void) {
     return SSWAP16(sgilabel->devparam.bytes);
 }
 #endif
 
-static
-int
-sgi_get_pcylcount( void )
-{
+static int
+sgi_get_pcylcount(void) {
     return SSWAP16(sgilabel->devparam.pcylcount);
 }
 
@@ -121,23 +140,19 @@ sgi_nolabel()
     partitions = 4;
 }
 
-unsigned int
-two_s_complement_32bit_sum(
-    unsigned int* base,
-    int size /* in bytes */ )
-{
+static unsigned int
+two_s_complement_32bit_sum(unsigned int* base, int size /* in bytes */ ) {
     int i=0;
     unsigned int sum=0;
+
     size = size / sizeof( unsigned int );
     for( i=0; i<size; i++ )
-    {
 	sum = sum - SSWAP32(base[i]);
-    }
     return sum;
 }
 
-int check_sgi_label()
-{
+int
+check_sgi_label() {
     if (sizeof(sgilabel) > 512) {
 	    fprintf(stderr,
 		    _("According to MIPS Computer Systems, Inc the "
@@ -174,8 +189,7 @@ int check_sgi_label()
 }
 
 void
-sgi_list_table( int xtra )
-{
+sgi_list_table( int xtra ) {
     int i, w;
     char *type;
 
@@ -241,14 +255,12 @@ sgi_list_table( int xtra )
 }
 
 int
-sgi_get_start_sector( int i )
-{
+sgi_get_start_sector( int i ) {
     return SSWAP32(sgilabel->partitions[i].start_sector);
 }
 
 int
-sgi_get_num_sectors( int i )
-{
+sgi_get_num_sectors( int i ) {
     return SSWAP32(sgilabel->partitions[i].num_sectors);
 }
 
@@ -259,13 +271,13 @@ sgi_get_sysid( int i )
 }
 
 int
-sgi_get_bootpartition( void )
+sgi_get_bootpartition(void)
 {
     return SSWAP16(sgilabel->boot_part);
 }
 
 int
-sgi_get_swappartition( void )
+sgi_get_swappartition(void)
 {
     return SSWAP16(sgilabel->swap_part);
 }
@@ -274,25 +286,20 @@ void
 sgi_set_bootpartition( int i )
 {
     sgilabel->boot_part = SSWAP16(((short)i));
-    return;
 }
 
-int
-sgi_get_lastblock( void )
-{
+static int
+sgi_get_lastblock(void) {
     return heads * sectors * cylinders;
 }
 
 void
-sgi_set_swappartition( int i )
-{
+sgi_set_swappartition( int i ) {
     sgilabel->swap_part = SSWAP16(((short)i));
-    return;
 }
 
 static int
-sgi_check_bootfile( const char* aFile )
-{
+sgi_check_bootfile( const char* aFile ) {
     if( strlen( aFile ) < 3 ) /* "/a\n" is minimum */
     {
 	printf( _("\nInvalid Bootfile!\n"
@@ -342,23 +349,21 @@ sgi_set_bootfile( const char* aFile )
 	}
 	printf( _("\n\tBootfile is changed to \"%s\".\n"), sgilabel->boot_file );
     }
-    return;
 }
 
 void
-create_sgiinfo( void )
+create_sgiinfo(void)
 {
     /* I keep SGI's habit to write the sgilabel to the second block */
     sgilabel->directory[0].vol_file_start = SSWAP32( 2 );
     sgilabel->directory[0].vol_file_size = SSWAP32( sizeof( sgiinfo ) );
     strncpy( sgilabel->directory[0].vol_file_name, "sgilabel",8 );
-    return;
 }
 
-sgiinfo * fill_sgiinfo( void );
+sgiinfo * fill_sgiinfo(void);
 
 void
-sgi_write_table( void )
+sgi_write_table(void)
 {
     sgilabel->csum = 0;
     sgilabel->csum = SSWAP32( two_s_complement_32bit_sum(
@@ -385,13 +390,10 @@ sgi_write_table( void )
 	    fatal(unable_to_write);
 	free( info );
     }
-    return;
 }
 
-static
-int
-compare_start( int *x, int *y )
-{
+static int
+compare_start( int *x, int *y ) {
     /*
      * sort according to start sectors
      * and prefers largest partition:
@@ -410,10 +412,8 @@ compare_start( int *x, int *y )
     return( a - b );
 }
 
-static
-int
-sgi_gaps()
-{
+static int
+sgi_gaps(void) {
     /*
      * returned value is:
      *  = 0 : disk is properly filled to the rim
@@ -582,12 +582,11 @@ sgi_change_sysid( int i, int sys )
                     return;
     }
     sgilabel->partitions[i].id = SSWAP32(sys);
-    return;
 }
 
-int
-sgi_entire( void )
-{   /* returns partition index of first entry marked as entire disk */
+/* returns partition index of first entry marked as entire disk */
+static int
+sgi_entire(void) {
     int i=0;
     for( i=0; i<16; i++ )
 	if( sgi_get_sysid(i) == SGI_VOLUME )
@@ -595,52 +594,33 @@ sgi_entire( void )
     return -1;
 }
 
-int
-sgi_num_partitions( void )
-{
-    int i=0,
-	n=0;
-    for( i=0; i<16; i++ )
-	if( sgi_get_num_sectors(i)!=0 )
-	    n++;
-    return n;
-}
-
-static
-void
-sgi_set_partition( int i, uint start, uint length, int sys )
-{
+static void
+sgi_set_partition( int i, uint start, uint length, int sys ) {
     sgilabel->partitions[i].id =
 	    SSWAP32( sys );
     sgilabel->partitions[i].num_sectors =
 	    SSWAP32( length );
     sgilabel->partitions[i].start_sector =
 	    SSWAP32( start );
-    changed[i] = 1;
-    if( sgi_gaps(0) < 0 )	/* rebuild freelist */
+    set_changed(i);
+    if( sgi_gaps() < 0 )	/* rebuild freelist */
 	printf(_("Do You know, You got a partition overlap on the disk?\n"));
-    return;
 }
 
-static
-void
-sgi_set_entire( void )
-{
+static void
+sgi_set_entire(void) {
     int n;
-    for( n=10; n<partitions; n++ )
-    {
-	if(!sgi_get_num_sectors( n ) )
-	{
+    for( n=10; n<partitions; n++ ) {
+	if(!sgi_get_num_sectors( n ) ) {
 	    sgi_set_partition( n, 0, sgi_get_lastblock(), SGI_VOLUME );
 	    break;
 	}
     }
-    return;
 }
 
 static
 void
-sgi_set_volhdr( void )
+sgi_set_volhdr(void)
 {
     int n;
     for( n=8; n<partitions; n++ )
@@ -658,14 +638,12 @@ sgi_set_volhdr( void )
 	    break;
 	}
     }
-    return;
 }
 
 void
 sgi_delete_partition( int i )
 {
     sgi_set_partition( i, 0, 0, 0 );
-    return;
 }
 
 void
@@ -741,11 +719,10 @@ sgi_add_partition( int n, int sys )
 	printf(_("It is highly recommended that eleventh partition\n"
 		"covers the entire disk and is of type `SGI volume'\n"));
     sgi_set_partition( n, first, last-first, sys );
-    return;
 }
 
 void
-create_sgilabel( void )
+create_sgilabel(void)
 {
     struct hd_geometry geometry;
     struct { int start;
@@ -755,7 +732,7 @@ create_sgilabel( void )
     fprintf( stderr,
 	_("Building a new SGI disklabel. Changes will remain in memory only,\n"
 	"until you decide to write them. After that, of course, the previous\n"
-	"content will be unrecoverable lost.\n\n"));
+	"content will be unrecoverably lost.\n\n"));
 #if BYTE_ORDER == LITTLE_ENDIAN
     other_endian = 1;
 #else
@@ -774,13 +751,13 @@ create_sgilabel( void )
     for (i = 0; i < 4; i++)
     {
 	old[i].sysid = 0;
-	if( valid_part_table_flag(buffer) )
+	if( valid_part_table_flag(MBRbuffer) )
 	{
-	    if( part_table[i]->sys_ind )
+	    if( get_part_table(i)->sys_ind )
 	    {
-		old[i].sysid = part_table[i]->sys_ind;
-		old[i].start = get_start_sect( part_table[i] );
-		old[i].nsect = get_nr_sects( part_table[i] );
+		old[i].sysid = get_part_table(i)->sys_ind;
+		old[i].start = get_start_sect( get_part_table(i) );
+		old[i].nsect = get_nr_sects( get_part_table(i) );
 		printf( _("Trying to keep parameters of partition %d.\n"), i );
 		if( debug )
 		    printf( _("ID=%02x\tSTART=%d\tLENGTH=%d\n"),
@@ -788,7 +765,7 @@ create_sgilabel( void )
 	    }
 	}
     }
-    memset(buffer, 0, SECTOR_SIZE);
+    memset(MBRbuffer, 0, sizeof(MBRbuffer));
     sgilabel->magic = SSWAP32(SGI_LABEL_MAGIC);
     sgilabel->boot_part = SSWAP16(0);
     sgilabel->swap_part = SSWAP16(1); strncpy(
@@ -833,35 +810,34 @@ create_sgilabel( void )
 	    sgi_set_partition( i, old[i].start, old[i].nsect, old[i].sysid );
 	}
     }
-    return;
 }
 
 void
-sgi_set_ilfact( void )
+sgi_set_ilfact(void)
 {
     /* do nothing in the beginning */
 }
 
 void
-sgi_set_rspeed( void )
+sgi_set_rspeed(void)
 {
     /* do nothing in the beginning */
 }
 
 void
-sgi_set_pcylcount( void )
+sgi_set_pcylcount(void)
 {
     /* do nothing in the beginning */
 }
 
 void
-sgi_set_xcyl( void )
+sgi_set_xcyl(void)
 {
     /* do nothing in the beginning */
 }
 
 void
-sgi_set_ncyl( void )
+sgi_set_ncyl(void)
 {
     /* do nothing in the beginning */
 }
@@ -870,7 +846,7 @@ sgi_set_ncyl( void )
  */
 
 sgiinfo*
-fill_sgiinfo( void )
+fill_sgiinfo(void)
 {
     sgiinfo*info=calloc( 1, sizeof(sgiinfo) );
     info->magic=SSWAP32(SGI_INFO_MAGIC);

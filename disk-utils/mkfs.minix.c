@@ -72,10 +72,12 @@
 #include <mntent.h>
 #include <getopt.h>
 
-#include <linux/fs.h>
-#include <linux/minix_fs.h>
-
+#include "minix.h"
 #include "nls.h"
+
+#ifndef BLKGETSIZE
+#define BLKGETSIZE _IO(0x12,96)    /* return device size */
+#endif
 
 #ifdef MINIX2_SUPER_MAGIC2
 #define HAVE_MINIX2 1
@@ -83,10 +85,6 @@
 
 #ifndef __GNUC__
 #error "needs gcc for the bitop-__asm__'s"
-#endif
-
-#ifndef __linux__
-#define volatile
 #endif
 
 #define MINIX_ROOT_INO 1
@@ -162,24 +160,20 @@ static unsigned long req_nr_inodes = 0;
 #define mark_zone(x) (setbit(zone_map,(x)-FIRSTZONE+1))
 #define unmark_zone(x) (clrbit(zone_map,(x)-FIRSTZONE+1))
 
-/*
- * Volatile to let gcc know that this doesn't return. When trying
- * to compile this under minix, volatile gives a warning, as
- * exit() isn't defined as volatile under minix.
- */
-volatile void fatal_error(const char * fmt_string,int status)
-{
+static void
+fatal_error(const char * fmt_string,int status) {
 	fprintf(stderr,fmt_string,program_name,device_name);
 	exit(status);
 }
 
-volatile void die(char *str) {
+static void
+die(char *str) {
 	fprintf(stderr, "%s: %s\n", program_name, str);
 	exit(8);
 }
 
-volatile void usage()
-{
+static void
+usage(void) {
 	fprintf(stderr, "%s (%s)\n", program_name, util_linux_version);
 	fprintf(stderr,
 		_("Usage: %s [-c | -l filename] [-nXX] [-iXX] /dev/name [blocks]\n"),
@@ -192,8 +186,8 @@ volatile void usage()
  * an already mounted partition.  Code adapted from mke2fs, Copyright
  * (C) 1994 Theodore Ts'o.  Also licensed under GPL.
  */
-static void check_mount(void)
-{
+static void
+check_mount(void) {
 	FILE * f;
 	struct mntent * mnt;
 
@@ -209,8 +203,8 @@ static void check_mount(void)
 	die(_("%s is mounted; will not make a filesystem here!"));
 }
 
-static long valid_offset (int fd, int offset)
-{
+static long
+valid_offset (int fd, int offset) {
 	char ch;
 
 	if (lseek (fd, offset, 0) < 0)
@@ -220,8 +214,8 @@ static long valid_offset (int fd, int offset)
 	return 1;
 }
 
-static int count_blocks (int fd)
-{
+static int
+count_blocks (int fd) {
 	int high, low;
 
 	low = 0;
@@ -240,8 +234,8 @@ static int count_blocks (int fd)
 	return (low + 1);
 }
 
-static int get_size(const char  *file)
-{
+static int
+get_size(const char  *file) {
 	int	fd;
 	long	size;
 
@@ -260,8 +254,8 @@ static int get_size(const char  *file)
 	return size;
 }
 
-void write_tables(void)
-{
+static void
+write_tables(void) {
 	/* Mark the super block valid. */
 	Super.s_state |= MINIX_VALID_FS;
 	Super.s_state &= ~MINIX_ERROR_FS;
@@ -283,16 +277,16 @@ void write_tables(void)
 	
 }
 
-void write_block(int blk, char * buffer)
-{
+static void
+write_block(int blk, char * buffer) {
 	if (blk*BLOCK_SIZE != lseek(DEV, blk*BLOCK_SIZE, SEEK_SET))
 		die(_("seek failed in write_block"));
 	if (BLOCK_SIZE != write(DEV, buffer, BLOCK_SIZE))
 		die(_("write failed in write_block"));
 }
 
-int get_free_block(void)
-{
+static int
+get_free_block(void) {
 	int blk;
 
 	if (used_good_blocks+1 >= MAX_GOOD_BLOCKS)
@@ -310,16 +304,16 @@ int get_free_block(void)
 	return blk;
 }
 
-void mark_good_blocks(void)
-{
+static void
+mark_good_blocks(void) {
 	int blk;
 
 	for (blk=0 ; blk < used_good_blocks ; blk++)
 		mark_zone(good_blocks_table[blk]);
 }
 
-inline int next(int zone)
-{
+static inline int
+next(int zone) {
 	if (!zone)
 		zone = FIRSTZONE-1;
 	while (++zone < ZONES)
@@ -328,8 +322,8 @@ inline int next(int zone)
 	return 0;
 }
 
-void make_bad_inode(void)
-{
+static void
+make_bad_inode(void) {
 	struct minix_inode * inode = &Inode[MINIX_BAD_INO];
 	int i,j,zone;
 	int ind=0,dind=0;
@@ -379,9 +373,8 @@ end_bad:
 }
 
 #ifdef HAVE_MINIX2
-void
-make_bad_inode2 (void)
-{
+static void
+make_bad_inode2 (void) {
 	struct minix2_inode *inode = &Inode2[MINIX_BAD_INO];
 	int i, j, zone;
 	int ind = 0, dind = 0;
@@ -430,8 +423,8 @@ make_bad_inode2 (void)
 }
 #endif
 
-void make_root_inode(void)
-{
+static void
+make_root_inode(void) {
 	struct minix_inode * inode = &Inode[MINIX_ROOT_INO];
 
 	mark_inode(MINIX_ROOT_INO);
@@ -453,9 +446,8 @@ void make_root_inode(void)
 }
 
 #ifdef HAVE_MINIX2
-void
-make_root_inode2 (void)
-{
+static void
+make_root_inode2 (void) {
 	struct minix2_inode *inode = &Inode2[MINIX_ROOT_INO];
 
 	mark_inode (MINIX_ROOT_INO);
@@ -477,8 +469,8 @@ make_root_inode2 (void)
 }
 #endif
 
-void setup_tables(void)
-{
+static void
+setup_tables(void) {
 	int i;
 	unsigned long inodes;
 
@@ -540,8 +532,8 @@ void setup_tables(void)
  * Perform a test of a block; return the number of
  * blocks readable/writeable.
  */
-long do_check(char * buffer, int try, unsigned int current_block) 
-{
+static long
+do_check(char * buffer, int try, unsigned int current_block) {
 	long got;
 	
 	/* Seek to the correct loc. */
@@ -563,8 +555,8 @@ long do_check(char * buffer, int try, unsigned int current_block)
 
 static unsigned int currently_testing = 0;
 
-void alarm_intr(int alnum)
-{
+static void
+alarm_intr(int alnum) {
 	if (currently_testing >= ZONES)
 		return;
 	signal(SIGALRM,alarm_intr);
@@ -575,8 +567,8 @@ void alarm_intr(int alnum)
 	fflush(stdout);
 }
 
-void check_blocks(void)
-{
+static void
+check_blocks(void) {
 	int try,got;
 	static char buffer[BLOCK_SIZE * TEST_BUFFER_BLOCKS];
 
@@ -606,10 +598,8 @@ void check_blocks(void)
 		printf(_("one bad block\n"));
 }
 
-void get_list_blocks(filename)
-char *filename;
-
-{
+static void
+get_list_blocks(char *filename) {
   FILE *listfile;
   unsigned long blockno;
 
@@ -628,8 +618,8 @@ char *filename;
     printf(_("one bad block\n"));
 }
 
-int main(int argc, char ** argv)
-{
+int
+main(int argc, char ** argv) {
   int i;
   char * tmp;
   struct stat statbuf;

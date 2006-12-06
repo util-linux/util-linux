@@ -1,3 +1,62 @@
+util-linux 2.10m:
+
+* chfn fix when PAM is used (Martin-D. Lacasse)
+* do not use LC_NUMERIC part of locale in hwclock when writing /etc/adjtime
+* mount status return from smb or ncp fix (Mark Peloquin)
+* mount new option -l: also print label when listing mounts
+* mount add heuristic for xfs (Martin K. Petersen)
+* mount UUID and label cache (Erik Troan)
+* fdisk partition names more devfs-friendly
+* fdisk bsdlabel large disk support
+* setterm.1: options documented (Colin Watson)
+* rename correction
+* German, Spanish, French, Italian, Portuguese messages
+  (Roger Luethi, Beth Powell, Alvaro Antunes)
+
+util-linux 2.10l:
+
+* Merged losetup.c and lomount.c
+* ANSIfied everything
+
+util-linux 2.10k:
+
+* NFS version 4 mount support (Trond Myklebust)
+* hwclock fix (Stefan Ring)
+* Added -p option to col, as required by SUS (Joseph S. Myers)
+
+util-linux 2.10j:
+
+* fdisk fixes (Michal Jaegermann)
+
+util-linux 2.10i:
+
+* new directory partx (with code to play with, not to use)
+* minor fdisk changes
+
+util-linux 2.10h:
+
+* Added pivot_root (Werner Almesberger)
+* Added elvtune (Andrea Arcangeli)
+* Added need and extended simpleinit and shutdown (Richard Gooch)
+* Removed all #include <linux/fs.h>
+* errno fixes (Joseph S. Myers)
+* IA-64 fixes (Michael K. Johnson)
+* fdisk fixes for OSF/1 on Alpha (David Huggins-Daines)
+* fdisk sectorsize fix (Greg Hosler)
+* mount speed= option to enable mounting bad CDROMs (Marco d'Itri)
+* ipcrm deletes several things at once (Frank Zago)
+
+util-linux 2.10g:
+
+* fdisk can now sort partitions into order [untested, beware!]
+* Update of mkswap for sparc64 (jj)
+* Update of raw (Stephen Tweedie):
+  Control file was /dev/raw, now /dev/rawctl
+  Access files were /dev/raw*, now /dev/raw/raw*
+* Czech messages (Jiri Pavlovsky)
+* German messages (Daniel Egger)
+* losetup locks memory (Frank v Waveren)
+
 util-linux 2.10f:
 
 * Security fix for mount (okir)

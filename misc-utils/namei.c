@@ -47,17 +47,13 @@ chdir to /,  or if it encounters an unknown file type.
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <errno.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/param.h>
 #include "nls.h"
 
-#ifndef __GNU_LIBRARY__
-extern char *sys_errlist[];
-#endif
-
-extern int errno;
-#define ERR	sys_errlist[errno],errno
+#define ERR	strerror(errno),errno
 
 int symcount;
 int mflag = 0;
@@ -67,17 +63,14 @@ int xflag = 0;
 #define MAXSYMLINKS 256
 #endif
 
-static char *pperm();
+static char *pperm(unsigned short);
+static void namei(char *, int);
+static void usage(void);
 
 int
-main(argc, argv)
-int argc;
-char *argv[];
-{
-    void namei(), usage();
-    int getopt();
+main(int argc, char **argv) {
     extern int optind;
-    register int c;
+    int c;
     char curdir[MAXPATHLEN];
 
     setlocale(LC_ALL, "");
@@ -122,9 +115,8 @@ char *argv[];
     return 0;
 }
 
-void
-usage()
-{
+static void
+usage(void) {
     (void)fprintf(stderr,_("usage: namei [-mx] pathname [pathname ...]\n"));
     exit(1);
 }
@@ -133,16 +125,12 @@ usage()
 #define NODEV		(dev_t)(-1)
 #endif
 
-void
-namei(file, lev)
-
-register char *file;
-register int lev;
-{
-    register char *cp;
+static void
+namei(char *file, int lev) {
+    char *cp;
     char buf[BUFSIZ], sym[BUFSIZ];
     struct stat stb;
-    register int i;
+    int i;
     dev_t lastdev = NODEV;
 
     /*
@@ -305,9 +293,7 @@ register int lev;
  * For example 0755 produces "rwxr-xr-x"
  */
 static char *
-pperm(mode)
-unsigned short mode;
-{
+pperm(unsigned short mode) {
 	unsigned short m;
 	static char buf[16];
 	char *bp;

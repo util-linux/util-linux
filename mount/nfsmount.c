@@ -24,6 +24,8 @@
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
  * - added Native Language Support
  * 
+ * Modified by Olaf Kirch and Trond Myklebust for new NFS code,
+ * plus NFSv3 stuff.
  */
 
 /*
@@ -50,7 +52,8 @@
 
 #include <linux/nfs.h>
 #include "mount_constants.h"
-#include "nfs_mount3.h"
+#include "nfs_mount4.h"
+
 #include "nls.h"
 
 #include "../defines.h"		/* for HAVE_inet_aton */
@@ -58,6 +61,8 @@
 static char *nfs_strerror(int stat);
 
 #define MAKE_VERSION(p,q,r)	(65536*(p) + 256*(q) + (r))
+
+#define MAX_NFSPROT ((nfs_mount_version >= 4) ? 3 : 2)
 
 static int
 linux_version_code(void) {
@@ -74,9 +79,9 @@ linux_version_code(void) {
 }
 
 /*
- * nfs_mount_version according to the kernel sources seen at compile time.
+ * nfs_mount_version according to the sources seen at compile time.
  */
-static int nfs_mount_version = KERNEL_NFS_MOUNT_VERSION;
+int nfs_mount_version = NFS_MOUNT_VERSION;
 
 /*
  * Unfortunately, the kernel prints annoying console messages
@@ -91,16 +96,71 @@ static int nfs_mount_version = KERNEL_NFS_MOUNT_VERSION;
  */
 static void
 find_kernel_nfs_mount_version(void) {
-	int kernel_version = linux_version_code();
+	static int kernel_version = 0;
+
+	if (kernel_version)
+		return;
+
+	kernel_version = linux_version_code();
 
 	if (kernel_version) {
 	     if (kernel_version < MAKE_VERSION(2,1,32))
 		  nfs_mount_version = 1;
-	     else
+	     else if (kernel_version < MAKE_VERSION(2,3,99))
 		  nfs_mount_version = 3;
+	     else
+		  nfs_mount_version = 4; /* since 2.3.99pre4 */
 	}
 	if (nfs_mount_version > NFS_MOUNT_VERSION)
 	     nfs_mount_version = NFS_MOUNT_VERSION;
+}
+
+static struct pmap *
+get_mountport(struct sockaddr_in *server_addr,
+      long unsigned prog,
+      long unsigned version,
+      long unsigned proto,
+      long unsigned port)
+{
+struct pmaplist *pmap;
+static struct pmap p = {0, 0, 0, 0};
+
+server_addr->sin_port = PMAPPORT;
+pmap = pmap_getmaps(server_addr);
+
+if (version > MAX_NFSPROT)
+	version = MAX_NFSPROT;
+if (!prog)
+	prog = MOUNTPROG;
+p.pm_prog = prog;
+p.pm_vers = version;
+p.pm_prot = proto;
+p.pm_port = port;
+
+while (pmap) {
+	if (pmap->pml_map.pm_prog != prog)
+		goto next;
+	if (!version && p.pm_vers > pmap->pml_map.pm_vers)
+		goto next;
+	if (version > 2 && pmap->pml_map.pm_vers != version)
+		goto next;
+	if (version && version <= 2 && pmap->pml_map.pm_vers > 2)
+		goto next;
+	if (pmap->pml_map.pm_vers > MAX_NFSPROT ||
+	    (proto && p.pm_prot && pmap->pml_map.pm_prot != proto) ||
+	    (port && pmap->pml_map.pm_port != port))
+		goto next;
+	memcpy(&p, &pmap->pml_map, sizeof(p));
+next:
+	pmap = pmap->pml_next;
+}
+if (!p.pm_vers)
+	p.pm_vers = MOUNTVERS;
+if (!p.pm_port)
+	p.pm_port = MOUNTPORT;
+if (!p.pm_prot)
+	p.pm_prot = IPPROTO_TCP;
+return &p;
 }
 
 int nfsmount(const char *spec, const char *node, int *flags,
@@ -114,7 +174,6 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	char *old_opts;
 	char *mounthost=NULL;
 	char new_opts[1024];
-	fhandle root_fhandle;
 	struct timeval total_timeout;
 	enum clnt_stat clnt_stat;
 	static struct nfs_mount_data data;
@@ -123,13 +182,18 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	struct hostent *hp;
 	struct sockaddr_in server_addr;
 	struct sockaddr_in mount_server_addr;
+	struct pmap* pm_mnt;
 	int msock, fsock;
 	struct timeval retry_timeout;
-	struct fhstatus status;
+	union {
+		struct fhstatus nfsv2;
+		struct mountres3 nfsv3;
+	} status;
 	struct stat statbuf;
 	char *s;
 	int port;
 	int mountport;
+	int proto;
 	int bg;
 	int soft;
 	int intr;
@@ -238,11 +302,11 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	tcp = 0;
 
 	mountprog = MOUNTPROG;
-	mountvers = MOUNTVERS;
+	mountvers = 0;
 	port = 0;
 	mountport = 0;
 	nfsprog = NFS_PROGRAM;
-	nfsvers = NFS_VERSION;
+	nfsvers = 0;
 
 	/* parse options */
 
@@ -352,6 +416,8 @@ int nfsmount(const char *spec, const char *node, int *flags,
 			}
 		}
 	}
+	proto = (tcp) ? IPPROTO_TCP : IPPROTO_UDP;
+
 	data.flags = (soft ? NFS_MOUNT_SOFT : 0)
 		| (intr ? NFS_MOUNT_INTR : 0)
 		| (posix ? NFS_MOUNT_POSIX : 0)
@@ -365,6 +431,19 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	if (nfs_mount_version >= 3)
 		data.flags |= (nolock ? NFS_MOUNT_NONLM : 0);
 #endif
+	if (nfsvers > MAX_NFSPROT) {
+		fprintf(stderr, "NFSv%d not supported!\n", nfsvers);
+		return 0;
+	}
+	if (mountvers > MAX_NFSPROT) {
+		fprintf(stderr, "NFSv%d not supported!\n", nfsvers);
+		return 0;
+	}
+	if (nfsvers && !mountvers)
+		mountvers = (nfsvers < 3) ? 1 : nfsvers;
+	if (nfsvers && nfsvers < mountvers) {
+		mountvers = nfsvers;
+	}
 
 	/* Adjust options if none specified */
 	if (!data.timeo)
@@ -470,28 +549,60 @@ int nfsmount(const char *spec, const char *node, int *flags,
 			if (t - prevt < 30)
 				sleep(30);
 
-			/* contact the mount daemon via TCP */
-			mount_server_addr.sin_port = htons(mountport);
-			msock = RPC_ANYSOCK;
-			mclient = clnttcp_create(&mount_server_addr,
-						 mountprog, mountvers,
-						 &msock, 0, 0);
+			pm_mnt = get_mountport(&mount_server_addr,
+				       mountprog,
+				       mountvers,
+				       proto,
+ 				       mountport);
 
-			/* if this fails, contact the mount daemon via UDP */
-			if (!mclient) {
-				mount_server_addr.sin_port = htons(mountport);
-				msock = RPC_ANYSOCK;
+			/* contact the mount daemon via TCP */
+			mount_server_addr.sin_port = htons(pm_mnt->pm_port);
+			msock = RPC_ANYSOCK;
+
+			switch (pm_mnt->pm_prot) {
+			case IPPROTO_UDP:
 				mclient = clntudp_create(&mount_server_addr,
-							 mountprog, mountvers,
-							 retry_timeout, &msock);
+						 pm_mnt->pm_prog,
+						 pm_mnt->pm_vers,
+						 retry_timeout,
+						 &msock);
+		  if (mclient)
+			  break;
+		  mount_server_addr.sin_port = htons(pm_mnt->pm_port);
+		  msock = RPC_ANYSOCK;
+		case IPPROTO_TCP:
+			mclient = clnttcp_create(&mount_server_addr,
+						 pm_mnt->pm_prog,
+						 pm_mnt->pm_vers,
+						 &msock, 0, 0);
+			break;
+		default:
+			mclient = 0;
 			}
 			if (mclient) {
 				/* try to mount hostname:dirname */
 				mclient->cl_auth = authunix_create_default();
-				clnt_stat = clnt_call(mclient, MOUNTPROC_MNT,
-					(xdrproc_t) xdr_dirpath, (caddr_t) &dirname,
-					(xdrproc_t) xdr_fhstatus, (caddr_t) &status,
+
+			/* make pointers in xdr_mountres3 NULL so
+			 * that xdr_array allocates memory for us
+			 */
+			memset(&status, 0, sizeof(status));
+
+			if (pm_mnt->pm_vers == 3)
+				clnt_stat = clnt_call(mclient, MOUNTPROC3_MNT,
+						      (xdrproc_t) xdr_dirpath,
+						      (caddr_t) &dirname,
+						      (xdrproc_t) xdr_mountres3,
+						      (caddr_t) &status,
 					total_timeout);
+			else
+				clnt_stat = clnt_call(mclient, MOUNTPROC_MNT,
+						      (xdrproc_t) xdr_dirpath,
+						      (caddr_t) &dirname,
+						      (xdrproc_t) xdr_fhstatus,
+						      (caddr_t) &status,
+						      total_timeout);
+
 				if (clnt_stat == RPC_SUCCESS)
 					break;		/* we're done */
 				if (errno != ECONNREFUSED) {
@@ -522,15 +633,46 @@ int nfsmount(const char *spec, const char *node, int *flags,
 		if (t >= timeout)
 			goto fail;
 	}
+	nfsvers = (pm_mnt->pm_vers < 2) ? 2 : pm_mnt->pm_vers;
 
-	if (status.fhs_status != 0) {
-		fprintf(stderr,
-			_("mount: %s:%s failed, reason given by server: %s\n"),
-			hostname, dirname, nfs_strerror(status.fhs_status));
-		goto fail;
+	if (nfsvers == 2) {
+		if (status.nfsv2.fhs_status != 0) {
+			fprintf(stderr,
+				"mount: %s:%s failed, reason given by server: %s\n",
+				hostname, dirname,
+				nfs_strerror(status.nfsv2.fhs_status));
+			goto fail;
+		}
+		memcpy(data.root.data,
+		       (char *) status.nfsv2.fhstatus_u.fhs_fhandle,
+		       NFS_FHSIZE);
+#if NFS_MOUNT_VERSION >= 4
+		data.root.size = NFS_FHSIZE;
+		memcpy(data.old_root.data,
+		       (char *) status.nfsv2.fhstatus_u.fhs_fhandle,
+		       NFS_FHSIZE);
+#endif
+	} else {
+#if NFS_MOUNT_VERSION >= 4
+		fhandle3 *fhandle;
+		if (status.nfsv3.fhs_status != 0) {
+			fprintf(stderr,
+				"mount: %s:%s failed, reason given by server: %s\n",
+				hostname, dirname,
+				nfs_strerror(status.nfsv3.fhs_status));
+			goto fail;
+		}
+		fhandle = &status.nfsv3.mountres3_u.mountinfo.fhandle;
+		memset(data.old_root.data, 0, NFS_FHSIZE);
+		memset(&data.root, 0, sizeof(data.root));
+		data.root.size = fhandle->fhandle3_len;
+		memcpy(data.root.data,
+		       (char *) fhandle->fhandle3_val,
+		       fhandle->fhandle3_len);
+
+		data.flags |= NFS_MOUNT_VER3;
+#endif
 	}
-	memcpy((char *) &root_fhandle, (char *) status.fhstatus_u.fhs_fhandle,
-		sizeof (root_fhandle));
 
 	/* create nfs socket for kernel */
 
@@ -580,8 +722,6 @@ int nfsmount(const char *spec, const char *node, int *flags,
 	/* prepare data structure for kernel */
 
 	data.fd = fsock;
-	memcpy((char *) &data.root, (char *) &root_fhandle,
-		sizeof (root_fhandle));
 	memcpy((char *) &data.addr, (char *) &server_addr, sizeof(data.addr));
 	strncpy(data.hostname, hostname, sizeof(data.hostname));
 

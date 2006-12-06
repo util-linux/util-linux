@@ -53,6 +53,12 @@ enum failure {usage, usage2, ioctl_error,
 
 enum action {fdisk, require, try_only, create_empty};
 
+struct geom {
+	unsigned int heads;
+	unsigned int sectors;
+	unsigned int cylinders;
+};
+
 /* prototypes for fdisk.c */
 extern char *disk_device,
             *line_ptr;
@@ -60,8 +66,10 @@ extern int fd,
            partitions;
 extern uint display_in_cyl_units,
             units_per_sector;
+extern void change_units(void);
 extern struct partition *part_table[];
 extern void fatal(enum failure why);
+extern void get_geometry(int fd, struct geom *);
 extern int get_boot(enum action what);
 extern int  get_partition(int warn, int max);
 extern void list_types(struct systypes *sys);
@@ -69,7 +77,10 @@ extern int read_line (void);
 extern char read_char(char *mesg);
 extern int read_hex(struct systypes *sys);
 extern void reread_partition_table(int leave);
-uint read_int(uint low, uint dflt, uint high, uint base, char *mesg);
+extern struct partition *get_part_table(int);
+extern int valid_part_table_flag(unsigned char *b);
+extern uint read_int(uint low, uint dflt, uint high, uint base, char *mesg);
+
 
 #define PLURAL	0
 #define SINGULAR 1
@@ -78,9 +89,13 @@ extern char *const str_units(int);
 extern unsigned int get_start_sect(struct partition *p);
 extern unsigned int get_nr_sects(struct partition *p);
 
+extern int osf_label;
+
 /* prototypes for fdiskbsdlabel.c */
 extern void bselect(void);
-extern int btrydev (char * dev);
+extern int check_osf_label(void);
+extern int btrydev(char * dev);
+extern void xbsd_print_disklabel(int);
 
 /* prototypes for fdisksgilabel.c */
 extern int valid_part_table_flag(unsigned char *b);

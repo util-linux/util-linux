@@ -4,14 +4,14 @@
 raw \- bind a Linux raw character device
 .SH SYNOPSIS
 .B raw
-.I /dev/raw<N> <major> <minor>
+.I /dev/raw/raw<N> <major> <minor>
 .PP
 .B raw
-.I /dev/raw<N> /dev/<blockdev>
+.I /dev/raw/raw<N> /dev/<blockdev>
 .PP
 .B raw
 .B \-q
-.I /dev/raw<N>
+.I /dev/raw/raw<N>
 .PP
 .B raw
 .B \-qa
@@ -25,7 +25,7 @@ module later).
 .B raw
 is used in two modes: it either sets raw device bindings, or it queries
 existing bindings.  When setting a raw device,
-.I /dev/raw<N>
+.I /dev/raw/raw<N>
 is the device name of an existing raw device node in the filesystem.
 The block device to which it is to be bound can be specified either in
 terms of its

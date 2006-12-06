@@ -44,6 +44,7 @@
  *
  */
 
+#include <stdarg.h>
 #include <sys/types.h>
 #include <errno.h>
 #include <stdio.h>
@@ -54,13 +55,11 @@
 
 #include "widechar.h"
 
-void usage __P((void));
-void warn __P((const char *, ...));
+void usage(void);
+void warn(const char *, ...);
 
 int
-main(argc, argv)
-	int argc;
-	char *argv[];
+main(int argc, char *argv[])
 {
   register char *filename;
   register wchar_t *t;
@@ -140,27 +139,11 @@ main(argc, argv)
   exit(rval);
 }
 
-#if __STDC__
-#include <stdarg.h>
-#else
-#include <varargs.h>
-#endif
-
 void
-#if __STDC__
 warn(const char *fmt, ...)
-#else
-warn(fmt, va_alist)
-	char *fmt;
-        va_dcl
-#endif
 {
 	va_list ap;
-#if __STDC__
 	va_start(ap, fmt);
-#else
-	va_start(ap);
-#endif
 	(void)fprintf(stderr, "rev: ");
 	(void)vfprintf(stderr, fmt, ap);
 	va_end(ap);
@@ -168,7 +151,7 @@ warn(fmt, va_alist)
 }
 
 void
-usage()
+usage(void)
 {
 	(void)fprintf(stderr, _("usage: rev [file ...]\n"));
 	exit(1);

@@ -32,16 +32,15 @@
 
 static char *progname;
 
-void
-usage()
-{
+static void
+usage(void) {
    fprintf( stderr, _("Usage: %s [-c] [-n level] [-s bufsize]\n"), progname );
 }
 
-int main( int argc, char *argv[] )
-{
+int
+main( int argc, char *argv[] ) {
    char *buf;
-   int	bufsize=8196;
+   int	bufsize=16392;
    int  i;
    int  n;
    int  c;

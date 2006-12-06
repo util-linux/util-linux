@@ -265,6 +265,17 @@ Certain Disk Managers and boot loaders (such as OSBS, but not
 LILO or the OS/2 Boot Manager) also live in this empty space,
 so maybe you want this option if you use one.
 .TP
+.BR \-E " or " \-\-DOS-extended
+Take the starting sector numbers of "inner" extended partitions
+to be relative to the starting cylinder boundary of the outer one,
+(like some versions of DOS do) rather than to the starting sector
+(like Linux does).
+(The fact that there is a difference here means that one should
+always let extended partitions start at cylinder boundaries if
+DOS and Linux should interpret the partition table in the same way.
+Of course one can only know where cylinder boundaries are when
+one knows what geometry DOS will use for this disk.)
+.TP
 .BR \-\-IBM " or " \-\-leave\-last
 Certain IBM diagnostic programs assume that they can use the
 last cylinder on a disk for disk-testing purposes. If you think
@@ -339,7 +350,7 @@ details, see the
 .B lilo
 documentation.
 .LP
-Each partition has a type, its `Id', and if this type is 5
+Each partition has a type, its `Id', and if this type is 5 or f
 .IR "" "(`" "extended partition" "')"
 the starting sector of the partition
 again contains 4 partition descriptors. MSDOS only uses the
@@ -347,7 +358,7 @@ first two of these: the first one an actual data partition,
 and the second one again an extended partition (or empty).
 In this way one gets a chain of extended partitions.
 Other operating systems have slightly different conventions.
-Linux also accepts type 85 as equivalent to 5 - this can be
+Linux also accepts type 85 as equivalent to 5 and f - this can be
 useful if one wants to have extended partitions under Linux past
 the 1024 cylinder boundary, without DOS FDISK hanging.
 (If there is no good reason, you should just use 5, which is

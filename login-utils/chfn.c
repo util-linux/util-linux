@@ -86,16 +86,12 @@ extern int setpwnam P((struct passwd *pwd));
 /* we do not accept gecos field sizes longer than MAX_FIELD_SIZE */
 #define MAX_FIELD_SIZE		256
 
-int main (argc, argv)
-    int argc;
-    char *argv[];
-{
+int main (int argc, char **argv) {
     char *cp;
     uid_t uid;
     struct finfo oldf, newf;
     boolean interactive;
     int status;
-    extern int errno;
 #if REQUIRE_PASSWORD && USE_PAM
     pam_handle_t *pamh = NULL;
     int retcode;
@@ -316,13 +312,15 @@ static void parse_passwd (pw, pinfo)
     struct passwd *pw;
     struct finfo *pinfo;
 {
+    char *gecos;
     char *cp;
 
     if (pw) {
 	pinfo->pw = pw;
 	pinfo->username = pw->pw_name;
-	/* use pw_gecos */
-	cp = pw->pw_gecos;
+	/* use pw_gecos - we take a copy since PAM destroys the original */
+	gecos = strdup(pw->pw_gecos);
+	cp = (gecos ? gecos : "");
 	pinfo->full_name = cp;
 	cp = strchr (cp, ',');
 	if (cp) { *cp = 0, cp++; } else return;

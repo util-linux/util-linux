@@ -20,6 +20,11 @@ hwclock.o: hwclock.c shhopt.h
 hwclock.o cmos.o rtc.o kd.o: clock.h
 hwclock: hwclock.o shhopt.o cmos.o rtc.o kd.o
 
+CWFLAGS := $(subst -Wmissing-prototypes,,$(CFLAGS))
+
+cmos.o: cmos.c
+	$(CC) $(CWFLAGS) -c $< -o $@
+
 install: all
 	$(INSTALLDIR) $(SBINDIR) $(BINDIR) $(USRBINDIR)
 	$(INSTALLBIN) $(SBIN) $(SBINDIR)

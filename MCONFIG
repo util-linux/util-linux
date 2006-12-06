@@ -87,6 +87,7 @@ ifeq "$(CC)" ""
 endif
 
 # Different optimizations for different cpus.
+# Change the -m486 part if you have a 386.
 ifeq "$(CPU)" "intel"
   OPT=		-pipe -O2 -m486 -fomit-frame-pointer
 else 
@@ -99,7 +100,7 @@ endif
 
 LDFLAGS   = -s
 
-WARNFLAGS = -Wall
+WARNFLAGS = -Wall -Wmissing-prototypes -Wstrict-prototypes
 
 LIB=../lib
 

@@ -1,0 +1,85 @@
+.\" Copyright (C) 2000  Richard Gooch
+.\"
+.\" This program is free software; you can redistribute it and/or modify
+.\" it under the terms of the GNU General Public License as published by
+.\" the Free Software Foundation; either version 2 of the License, or
+.\" (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+.\"
+.\" Richard Gooch may be reached by email at  rgooch@atnf.csiro.au
+.\" The postal address is:
+.\"   Richard Gooch, c/o ATNF, P. O. Box 76, Epping, N.S.W., 2121, Australia.
+.\"
+.\"	need.8		Richard Gooch	28-FEB-2000
+.\"
+.TH NEED 8 "28 Feb 2000" "Util-Linux Package"
+.SH NAME
+need \- utility to tell simpleinit(8) to start a service
+.SH SYNOPSIS
+.nf
+\fBneed\fP [\fB-r\fP] [\fBservice\fP]
+.BR display-services
+.fi
+.SH DESCRIPTION
+The \fBneed\fP programme is a utility that tells \fBsimpleinit\fP(8)
+to start a \fIservice\fP (usually a script in \fI/sbin/init.d\fP) and
+will wait for the service to become available. If the service is
+already available, it will not be started again.
+
+When invoked as \fBdisplay-services\fP it will write the list of
+currently available services and the list of failed services to the
+standard output.
+
+The \fB-r\fP option is used to tell \fBsimpleinit\fP(8) to "roll back"
+(stop) services up to (but not including) \fIservice\fP. If
+\fIservice\fP is not specified, all services are stopped. The \fB-r\fP
+option thus allows the system to be partially or wholly shut down in
+an orderly fashion. The \fBshutdown\fP(8) programme still needs to be
+run.
+
+The \fBneed\fP programme is designed to help improve the robustness,
+scalability and readability of system boot scripts. It is now possible
+to write a modularised set of boot scripts without the complex and
+fragile numbered symlink scheme used in SysV-style boot scripts. Each
+script can simply declare, using \fBneed\fP(8), what must run before
+them.
+.SH EXIT CODE
+The exit code from \fBneed\fP is 0 if the service was successfully
+started, 1 if the service failed badly, and 2 if the service is
+unavailable (i.e. disabled in configuration files). These exit codes
+reflect the exit codes from the service startup scripts.
+
+The exit code from \fBneed -r\fP is 0 if the service was successfully
+stopped, 1 if the service could not be stopped, and 2 if the service
+was not available to start with. The service shutdown scripts may only
+return 0 (for success) or 1 (for failure).
+.SH SIGNALS
+\fBneed\fP(8) uses \fBSIGUSR1\fP, \fBSIGUSR2\fP and \fBSIGPOLL\fP for
+communication with \fBsimpleinit\fP(8). Don't send these signals to
+it.
+.SH FILES
+.PD 0
+.TP 20
+.BI /dev/initctl
+This is the control FIFO, created by \fBsimpleinit\fP(8), which
+\fBneed\fP(8) writes commands to.
+.SH SEE ALSO
+.BR simpleinit (8),
+.BR init (8)
+.PP
+A more complete discussion of the new boot script system, based on
+\fBneed\fP(8), is available from:
+http://www.atnf.csiro.au/~rgooch/linux/boot-scripts/
+.SH AUTHOR
+Richard Gooch (rgooch@atnf.csiro.au)
+.SH AVAILABILITY
+The Util-Linux package is available from:
+ftp://ftp.??.kernel.org/pub/linux/utils/util-linux/

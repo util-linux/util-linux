@@ -63,7 +63,7 @@
 #define	THURSDAY		4		/* for reformation */
 #define	SATURDAY 		6		/* 1 Jan 1 was a Saturday */
 
-#define	FIRST_MISSING_DAY 	639787		/* 3 Sep 1752 */
+#define	FIRST_MISSING_DAY 	639799		/* 3 Sep 1752 */
 #define	NUMBER_MISSING_DAYS 	11		/* 11 day correction */
 
 #define	MAXDAYS			43		/* max slots in a month array */
@@ -141,10 +141,7 @@ void    headers_init(void);
 extern char *__progname;
 
 int
-main(argc, argv)
-	int argc;
-	char **argv;
-{
+main(int argc, char **argv) {
 	struct tm *local_time;
 	time_t now;
 	int ch, month, year, yflag;

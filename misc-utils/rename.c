@@ -21,7 +21,7 @@ for i in $@; do N=`echo "$i" | sed "s/$FROM/$TO/g"`; mv "$i" "$N"; done
 
 static char *progname;
 
-int
+static int
 do_rename(char *from, char *to, char *s) {
 	char *newname, *where, *p, *q;
 	int flen, tlen, slen;
@@ -49,7 +49,7 @@ do_rename(char *from, char *to, char *s) {
 	p = where+flen;
 	while (*p)
 		*q++ = *p++;
-	*p = 0;
+	*q = 0;
 
 	if (rename(s, newname) != 0) {
 		int errsv = errno;

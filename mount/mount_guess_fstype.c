@@ -72,13 +72,14 @@ swapped(unsigned short a) {
     Added a very weak heuristic for vfat - aeb
     Added qnx4 - aeb
     Added swap - aeb
+    Added xfs - 2000-03-21 Martin K. Petersen <mkp@linuxcare.com>
 
     Currently supports: minix, ext, ext2, xiafs, iso9660, romfs,
-    ufs, ntfs, vfat, qnx4, bfs
+    ufs, ntfs, vfat, qnx4, bfs, xfs
 */
 static char
 *magic_known[] = { "minix", "ext", "ext2", "xiafs", "iso9660", "romfs",
-		   "ufs", "ntfs", "qnx4", "bfs", "udf",
+		   "ufs", "ntfs", "qnx4", "bfs", "udf", "xfs",
 		   "swap"	/* last - just to warn the user */
 };
 
@@ -130,6 +131,7 @@ fstype(const char *device) {
     union {
 	struct xiafs_super_block xiasb;
 	char romfs_magic[8];
+	char xfs_magic[4];
 	char qnx4fs_magic[10];	/* ignore first 4 bytes */
 	long bfs_magic;
 	struct ntfs_super_block ntfssb;
@@ -177,6 +179,9 @@ fstype(const char *device) {
 	      type = "xiafs";
 	 else if(!strncmp(xsb.romfs_magic, "-rom1fs-", 8))
 	      type = "romfs";
+	 else if(!strncmp(xsb.xfs_magic, "XFSB", 4) ||
+		 !strncmp(xsb.xfs_magic, "BSFX", 4))
+	      type = "xfs";
 	 else if(!strncmp(xsb.qnx4fs_magic+4, "QNX4FS", 6))
 	      type = "qnx4fs";
 	 else if(xsb.bfs_magic == 0x1badface)
@@ -187,7 +192,8 @@ fstype(const char *device) {
 	 else if ((!strncmp(xsb.fatsb.s_os, "MSDOS", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "MSWIN", 5) ||
 		   !strncmp(xsb.fatsb.s_os, "MTOOL", 5) ||
-		   !strncmp(xsb.fatsb.s_os, "mkdosfs", 7))
+		   !strncmp(xsb.fatsb.s_os, "mkdosfs", 7) ||
+		   !strncmp(xsb.fatsb.s_os, "kmkdosfs", 8))
 		  && (!strncmp(xsb.fatsb.s_fs, "FAT12   ", 8) ||
 		      !strncmp(xsb.fatsb.s_fs, "FAT16   ", 8) ||
 		      !strncmp(xsb.fatsb.s_fs2, "FAT32   ", 8)))

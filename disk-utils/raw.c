@@ -1,12 +1,12 @@
 /*
  * raw.c: User mode tool to bind and query raw character devices.
  *
- * Stephen Tweedie, 1999
+ * Stephen Tweedie, 1999, 2000
  *
  * This file may be redistributed under the terms of the GNU General
  * Public License, version 2.
  * 
- * Copyright Red Hat Software, 1999
+ * Copyright Red Hat Software, 1999, 2000
  *
  */
 
@@ -19,8 +19,16 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <sys/sysmacros.h>
-#include <sys/raw.h>
+#include <linux/raw.h>
+#include <linux/major.h>
 
+#ifdef OLD_RAW_DEVS
+#define RAWCTLDEV "/dev/raw"
+#define RAWDEVDIR "/dev/"
+#else
+#define RAWCTLDEV "/dev/rawctl"
+#define RAWDEVDIR "/dev/raw/"
+#endif
 
 
 char *	progname;
@@ -39,9 +47,9 @@ static void usage(int err)
 {
 	fprintf(stderr,
 		"Usage:\n"
-		"  %s /dev/rawN <major> <minor>\n"
-		"  %s /dev/rawN /dev/<blockdev>\n"
-		"  %s -q /dev/rawN\n"
+		"  %s " RAWDEVDIR "rawN <major> <minor>\n"
+		"  %s " RAWDEVDIR "rawN /dev/<blockdev>\n"
+		"  %s -q " RAWDEVDIR "rawN\n"
 		"  %s -qa\n",
 		progname, progname, progname, progname);
 	exit(err);
@@ -164,10 +172,10 @@ int main(int argc, char *argv[])
 
 void open_raw_ctl(void)
 {
-	master_fd = open("/dev/raw", O_RDWR, 0);
+	master_fd = open(RAWCTLDEV, O_RDWR, 0);
 	if (master_fd < 0) {
 		fprintf (stderr, 
-			 "Cannot open master raw device '/dev/raw' (%s)\n",
+			 "Cannot open master raw device '" RAWCTLDEV "' (%s)\n",
 			 strerror(errno));
 		exit(2);
 	}
@@ -190,7 +198,7 @@ int query(int minor, int quiet)
 	}
 	if (quiet && !rq.block_major && !rq.block_minor)
 		return 0;
-	printf ("/dev/raw%d:	bound to major %d, minor %d\n",
+	printf (RAWDEVDIR "raw%d:	bound to major %d, minor %d\n",
 		minor, (int) rq.block_major, (int) rq.block_minor);
 	return 0;
 }
@@ -210,7 +218,7 @@ int bind(int minor, int block_major, int block_minor)
 			 strerror(errno));
 		exit(3);
 	}
-	printf ("/dev/raw%d:	bound to major %d, minor %d\n",
+	printf (RAWDEVDIR "raw%d:	bound to major %d, minor %d\n",
 		raw_minor, (int) rq.block_major, (int) rq.block_minor);
 	return 0;
 }

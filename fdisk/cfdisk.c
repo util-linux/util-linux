@@ -74,7 +74,6 @@
 #include <sys/ioctl.h>
 #include <linux/types.h>
 #include <linux/hdreg.h>
-#include <linux/fs.h>		/* for BLKRRPART, BLKGETSIZE */
 
 #include "nls.h"
 #include "common.h"
@@ -206,7 +205,7 @@ int kern_heads = 0, kern_sectors = 0;
 int pt_heads = 0, pt_sectors = 0;
 
 
-void
+static void
 set_hsc0(unsigned char *h, unsigned char *s, int *c, int sector) {
 	if (sector >= 1024*cylinder_size)
 		sector = 1024*cylinder_size - 1;
@@ -217,7 +216,7 @@ set_hsc0(unsigned char *h, unsigned char *s, int *c, int sector) {
 	*c = sector;
 }
 
-void
+static void
 set_hsc(unsigned char *h, unsigned char *s, unsigned char *c, int sector) {
 	int cc;
 
@@ -226,12 +225,12 @@ set_hsc(unsigned char *h, unsigned char *s, unsigned char *c, int sector) {
 	*s |= (cc >> 2) & 0xC0;
 }
 
-void
+static void
 set_hsc_begin(struct partition *p, int sector) {
 	set_hsc(& p->head, & p->sector, & p->cyl, sector);
 }
 
-void
+static void
 set_hsc_end(struct partition *p, int sector) {
 	set_hsc(& p->end_head, & p->end_sector, & p->end_cyl, sector);
 }
@@ -246,7 +245,7 @@ set_hsc_end(struct partition *p, int sector) {
 
 /* start_sect and nr_sects are stored little endian on all machines */
 /* moreover, they are not aligned correctly */
-void
+static void
 store4_little_endian(unsigned char *cp, unsigned int val) {
 	cp[0] = (val & 0xff);
 	cp[1] = ((val >> 8) & 0xff);
@@ -254,28 +253,28 @@ store4_little_endian(unsigned char *cp, unsigned int val) {
 	cp[3] = ((val >> 24) & 0xff);
 }
 
-unsigned int
+static unsigned int
 read4_little_endian(unsigned char *cp) {
 	return (uint)(cp[0]) + ((uint)(cp[1]) << 8)
 		+ ((uint)(cp[2]) << 16) + ((uint)(cp[3]) << 24);
 }
 
-void
+static void
 set_start_sect(struct partition *p, unsigned int start_sect) {
 	store4_little_endian(p->start4, start_sect);
 }
 
-unsigned int
+static unsigned int
 get_start_sect(struct partition *p) {
 	return read4_little_endian(p->start4);
 }
 
-void
+static void
 set_nr_sects(struct partition *p, unsigned int nr_sects) {
 	store4_little_endian(p->size4, nr_sects);
 }
 
-unsigned int
+static unsigned int
 get_nr_sects(struct partition *p) {
 	return read4_little_endian(p->size4);
 }
@@ -353,11 +352,11 @@ int LABEL_START = 54;
 int SIZE_START = 70;
 int COMMAND_LINE_X = 5;
 
-void die_x(int ret);
-void draw_screen(void);
+static void die_x(int ret);
+static void draw_screen(void);
 
 /* Guaranteed alloc */
-void *
+static void *
 xmalloc (size_t size) {
      void *t;
 
@@ -373,14 +372,14 @@ xmalloc (size_t size) {
 }
 
 /* Some libc's have their own basename() */
-char *my_basename(char *devname)
-{
+static char *
+my_basename(char *devname) {
     char *s = rindex(devname, '/');
     return s ? s+1 : devname;
 }
 
-char *partition_type_name(unsigned char type)
-{
+static char *
+partition_type_name(unsigned char type) {
     struct systypes *s = i386_sys_types;
 
     while(s->name && s->type != type)
@@ -388,8 +387,8 @@ char *partition_type_name(unsigned char type)
     return s->name;
 }
 
-char *partition_type_text(int i)
-{
+static char *
+partition_type_text(int i) {
     if (p_info[i].id == UNUSABLE)
 	 return _("Unusable");
     else if (p_info[i].id == FREE_SPACE)
@@ -412,8 +411,8 @@ char *partition_type_text(int i)
 	 return partition_type_name(p_info[i].id);
 }
 
-void fdexit(int ret)
-{
+static void
+fdexit(int ret) {
     if (opened)
 	close(fd);
 
@@ -430,8 +429,8 @@ void fdexit(int ret)
     exit(ret);
 }
 
-int get_string(char *str, int len, char *def)
-{
+static int
+get_string(char *str, int len, char *def) {
     char c;
     int i = 0;
     int x, y;
@@ -489,8 +488,8 @@ int get_string(char *str, int len, char *def)
 	return i;
 }
 
-void clear_warning(void)
-{
+static void
+clear_warning(void) {
     int i;
 
     if (!curses_started || !warning_last_time)
@@ -503,8 +502,8 @@ void clear_warning(void)
     warning_last_time = FALSE;
 }
 
-void print_warning(char *s)
-{
+static void
+print_warning(char *s) {
     if (!curses_started) {
 	 fprintf(stderr, "%s\n", s);
     } else {
@@ -515,8 +514,8 @@ void print_warning(char *s)
     }
 }
 
-void fatal(char *s, int ret)
-{
+static void
+fatal(char *s, int ret) {
     char *err = _("FATAL ERROR");
 
     if (curses_started) {
@@ -538,13 +537,13 @@ void fatal(char *s, int ret)
     }
 }
 
-void die(int dummy)
-{
+static void
+die(int dummy) {
     die_x(0);
 }
 
-void die_x(int ret)
-{
+static void
+die_x(int ret) {
     signal(SIGINT, old_SIGINT);
     signal(SIGTERM, old_SIGTERM);
 #ifdef SLCURSES
@@ -559,23 +558,24 @@ void die_x(int ret)
     fdexit(ret);
 }
 
-void read_sector(char *buffer, int sect_num)
-{
+static void
+read_sector(char *buffer, int sect_num) {
     if (ext2_llseek(fd, ((ext2_loff_t) sect_num)*SECTOR_SIZE, SEEK_SET) < 0)
 	fatal(_("Cannot seek on disk drive"), 2);
     if (read(fd, buffer, SECTOR_SIZE) != SECTOR_SIZE)
 	fatal(_("Cannot read disk drive"), 2);
 }
 
-void write_sector(char *buffer, int sect_num)
-{
+static void
+write_sector(char *buffer, int sect_num) {
     if (ext2_llseek(fd, ((ext2_loff_t) sect_num)*SECTOR_SIZE, SEEK_SET) < 0)
 	fatal(_("Cannot seek on disk drive"), 2);
     if (write(fd, buffer, SECTOR_SIZE) != SECTOR_SIZE)
 	fatal(_("Cannot write disk drive"), 2);
 }
 
-void dos_copy_to_info(char *to, int tosz, char *from, int fromsz) {
+static void
+dos_copy_to_info(char *to, int tosz, char *from, int fromsz) {
      int i;
 
      for(i=0; i<tosz && i<fromsz && isascii(from[i]); i++)
@@ -583,8 +583,8 @@ void dos_copy_to_info(char *to, int tosz, char *from, int fromsz) {
      to[i] = 0;
 }
 
-void get_dos_label(int i)
-{
+static void
+get_dos_label(int i) {
     char sector[128];
 #define DOS_OSTYPE_OFFSET 3
 #define DOS_LABEL_OFFSET 43
@@ -607,8 +607,8 @@ void get_dos_label(int i)
     }
 }
 
-void get_ext2_label(int i)
-{
+static void
+get_ext2_label(int i) {
 #define EXT2_SUPER_MAGIC 0xEF53
 #define EXT2LABELSZ 16
     struct ext2_super_block {
@@ -637,8 +637,8 @@ void get_ext2_label(int i)
     }
 }
 
-void check_part_info(void)
-{
+static void
+check_part_info(void) {
     int i, pri = 0, log = 0;
 
     for (i = 0; i < num_parts; i++)
@@ -718,8 +718,8 @@ void check_part_info(void)
     }
 }
 
-void remove_part(int i)
-{
+static void
+remove_part(int i) {
     int p;
 
     for (p = i; p < num_parts; p++)
@@ -730,8 +730,8 @@ void remove_part(int i)
 	cur_part--;
 }
 
-void insert_empty_part(int i, int first, int last)
-{
+static void
+insert_empty_part(int i, int first, int last) {
     int p;
 
     for (p = num_parts; p > i; p--)
@@ -750,8 +750,8 @@ void insert_empty_part(int i, int first, int last)
     num_parts++;
 }
 
-void del_part(int i)
-{
+static void
+del_part(int i) {
     int num = p_info[i].num;
 
     if (i > 0 && (p_info[i-1].id == FREE_SPACE ||
@@ -805,9 +805,9 @@ void del_part(int i)
     check_part_info();
 }
 
-int add_part(int num, int id, int flags, int first, int last, int offset,
-	     int want_label, char **errmsg)
-{
+static int
+add_part(int num, int id, int flags, int first, int last, int offset,
+	 int want_label, char **errmsg) {
     int i, pri = 0, log = 0;
 
     if (num_parts == MAXIMUM_PARTS) {
@@ -952,8 +952,8 @@ int add_part(int num, int id, int flags, int first, int last, int offset,
     return 0;
 }
 
-int find_primary(void)
-{
+static int
+find_primary(void) {
     int num = 0, cur = 0;
 
     while (cur < num_parts && IS_PRIMARY(num))
@@ -970,8 +970,8 @@ int find_primary(void)
 	return num;
 }
 
-int find_logical(int i)
-{
+static int
+find_logical(int i) {
     int num = -1;
     int j;
 
@@ -989,8 +989,8 @@ int find_logical(int i)
     return num;
 }
 
-void inc_logical(int i)
-{
+static void
+inc_logical(int i) {
     int j;
 
     for (j = i; j < num_parts; j++)
@@ -1025,9 +1025,9 @@ struct MenuItem
  * Should not be called directly. Call function menuSelect instead.
  */
 
-int menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
-		char *available, int menuType, int current )
-{
+static int
+menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
+	    char *available, int menuType, int current ) {
     int i, lmargin = x, ymargin = y;
     char *mcd;
 
@@ -1112,9 +1112,9 @@ int menuUpdate( int y, int x, struct MenuItem *menuItems, int itemLength,
 /* This function takes a list of menu items, lets the user choose one *
  * and returns the value keyboard shortcut of the selected menu item  */
 
-int menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
-		char *available, int menuType, int menuDefault )
-{
+static int
+menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
+	    char *available, int menuType, int menuDefault ) {
     int i, ylast = y, key = 0, current = menuDefault;
 
     if( !( menuType & ( MENU_HORIZ | MENU_VERT ) ) )	
@@ -1268,8 +1268,8 @@ int menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
  * and waits for a keypress.                                            *
  * Perhaps calling function menuSelect is a bit overkill but who cares? */
 
-void menuContinue(void)
-{
+static void
+menuContinue(void) {
     static struct MenuItem menuContinueBtn[]=
     {
         { 'c', "", N_("Press a key to continue") },
@@ -1283,8 +1283,8 @@ void menuContinue(void)
 /* Function menuSelect takes way too many parameters  *
  * Luckily, most of time we can do with this function */
 
-int menuSimple(struct MenuItem *menuItems, int menuDefault)
-{
+static int
+menuSimple(struct MenuItem *menuItems, int menuDefault) {
     int i, j, itemLength = 0;
     char available[MENU_MAX_ITEMS];
 
@@ -1301,8 +1301,8 @@ int menuSimple(struct MenuItem *menuItems, int menuDefault)
 
 /* End of command menu support code */
 
-void new_part(int i)
-{
+static void
+new_part(int i) {
     char response[LINE_LENGTH], def[LINE_LENGTH];
     char c;
     int first = p_info[i].first_sector;
@@ -1411,8 +1411,8 @@ void new_part(int i)
     (void) add_part(num, id, flags, first, last, offset, 0, &errmsg);
 }
 
-void get_kernel_geometry(void)
-{
+static void
+get_kernel_geometry(void) {
 #ifdef HDIO_GETGEO
     struct hd_geometry geometry;
 
@@ -1423,8 +1423,8 @@ void get_kernel_geometry(void)
 #endif
 }
 
-void get_partition_table_geometry(partition_table *bufp)
-{
+static void
+get_partition_table_geometry(partition_table *bufp) {
     struct partition *p;
     int i,h,s,hh,ss;
     int first = TRUE;
@@ -1455,8 +1455,8 @@ void get_partition_table_geometry(partition_table *bufp)
     }
 }
 
-void decide_on_geometry(void)
-{
+static void
+decide_on_geometry(void) {
     heads = (user_heads ? user_heads :
 	     pt_heads ? pt_heads :
 	     kern_heads ? kern_heads : 255);
@@ -1473,8 +1473,8 @@ void decide_on_geometry(void)
 	    print_warning(_("You specified more cylinders than fit on disk"));
 }
 
-void clear_p_info(void)
-{
+static void
+clear_p_info(void) {
     num_parts = 1;
     p_info[0].first_sector = 0;
     p_info[0].last_sector = total_size - 1;
@@ -1491,8 +1491,8 @@ void clear_p_info(void)
     ext_info.num = PRIMARY;
 }
 
-void fill_p_info(void)
-{
+static void
+fill_p_info(void) {
     int pn, i, bs, bsz;
     struct partition *p;
     partition_table buffer;
@@ -1602,8 +1602,8 @@ void fill_p_info(void)
     }
 }
 
-void fill_part_table(struct partition *p, partition_info *pi)
-{
+static void
+fill_part_table(struct partition *p, partition_info *pi) {
     int begin;
 
     p->boot_ind = pi->flags;
@@ -1618,8 +1618,8 @@ void fill_part_table(struct partition *p, partition_info *pi)
     set_hsc_end(p, pi->last_sector);
 }
 
-void fill_primary_table(partition_table *buffer)
-{
+static void
+fill_primary_table(partition_table *buffer) {
     int i;
 
     /* Zero out existing table */
@@ -1637,8 +1637,8 @@ void fill_primary_table(partition_table *buffer)
     buffer->p.magicflag[1] = PART_TABLE_FLAG1;
 }
 
-void fill_logical_table(partition_table *buffer, partition_info *pi)
-{
+static void
+fill_logical_table(partition_table *buffer, partition_info *pi) {
     struct partition *p;
     int i;
 
@@ -1674,8 +1674,8 @@ void fill_logical_table(partition_table *buffer, partition_info *pi)
     buffer->p.magicflag[1] = PART_TABLE_FLAG1;
 }
 
-void write_part_table(void)
-{
+static void
+write_part_table(void) {
     int i, ct, done = FALSE, len;
     partition_table buffer;
     struct stat s;
@@ -1755,8 +1755,8 @@ void write_part_table(void)
 	print_warning(_("Not precisely one primary partition is bootable. DOS MBR cannot boot this."));
 }
 
-void fp_printf(FILE *fp, char *format, ...)
-{
+static void
+fp_printf(FILE *fp, char *format, ...) {
     va_list args;
     char buf[1024];
     int y, x;
@@ -1780,8 +1780,8 @@ void fp_printf(FILE *fp, char *format, ...)
 }
 
 #define MAX_PER_LINE 16
-void print_file_buffer(FILE *fp, char *buffer)
-{
+static void
+print_file_buffer(FILE *fp, char *buffer) {
     int i,l;
 
     for (i = 0, l = 0; i < SECTOR_SIZE; i++, l++) {
@@ -1798,8 +1798,8 @@ void print_file_buffer(FILE *fp, char *buffer)
     fp_printf(fp, "\n");
 }
 
-void print_raw_table(void)
-{
+static void
+print_raw_table(void) {
     int i, to_file;
     partition_table buffer;
     char fname[LINE_LENGTH];
@@ -1852,8 +1852,8 @@ void print_raw_table(void)
     }
 }
 
-void print_p_info_entry(FILE *fp, partition_info *p)
-{
+static void
+print_p_info_entry(FILE *fp, partition_info *p) {
     int size;
     char part_str[40];
 
@@ -1917,8 +1917,8 @@ void print_p_info_entry(FILE *fp, partition_info *p)
     fp_printf(fp, "\n");
 }
 
-void print_p_info(void)
-{
+static void
+print_p_info(void) {
     char fname[LINE_LENGTH];
     FILE *fp;
     int i, to_file, pext = is_extended(ext_info.id);
@@ -1969,8 +1969,8 @@ void print_p_info(void)
     }
 }
 
-void print_part_entry(FILE *fp, int num, partition_info *pi)
-{
+static void
+print_part_entry(FILE *fp, int num, partition_info *pi) {
     int first = 0, start = 0, end = 0, size = 0;
     unsigned char ss, es, sh, eh;
     int sc, ec;
@@ -2001,8 +2001,8 @@ void print_part_entry(FILE *fp, int num, partition_info *pi)
 }
 
 
-void print_part_table(void)
-{
+static void
+print_part_table(void) {
     int i, j, to_file;
     char fname[LINE_LENGTH];
     FILE *fp;
@@ -2062,8 +2062,8 @@ void print_part_table(void)
     }
 }
 
-void print_tables(void)
-{
+static void
+print_tables(void) {
     int done = FALSE;
 
     static struct MenuItem menuFormat[]=
@@ -2096,8 +2096,8 @@ void print_tables(void)
 }
 
 #define END_OF_HELP "EOHS!"
-void display_help()
-{
+static void
+display_help(void) {
     char *help_text[] = {
 	N_("Help Screen for cfdisk"),
 	"",
@@ -2158,8 +2158,8 @@ void display_help()
     menuContinue();
 }
 
-int change_geometry(void)
-{
+static int
+change_geometry(void) {
     int ret_val = FALSE;
     int done = FALSE;
     char def[LINE_LENGTH];
@@ -2277,8 +2277,8 @@ int change_geometry(void)
     return ret_val;
 }
 
-void change_id(int i)
-{
+static void
+change_id(int i) {
     char id[LINE_LENGTH], def[LINE_LENGTH];
     int num_types = 0;
     int num_across, num_down;
@@ -2351,8 +2351,8 @@ void change_id(int i)
 	p_info[i].id = new_id;
 }
 
-void draw_partition(int i)
-{
+static void
+draw_partition(int i) {
     int size, j;
     int y = i + DISK_TABLE_START + 2 - (cur_part/NUM_ON_SCREEN)*NUM_ON_SCREEN;
     char *t;
@@ -2429,8 +2429,8 @@ void draw_partition(int i)
 	mvprintw(y, COLUMNS-1, "*");
 }
 
-void init_const(void)
-{
+static void
+init_const(void) {
     if (!defined) {
 	NAME_START = (((float)NAME_START)/COLUMNS)*COLS;
 	FLAGS_START = (((float)FLAGS_START)/COLUMNS)*COLS;
@@ -2451,8 +2451,8 @@ void init_const(void)
     }
 }
 
-void draw_screen(void)
-{
+static void
+draw_screen(void) {
     int i;
     char *line;
 
@@ -2514,8 +2514,8 @@ void draw_screen(void)
     free(line);
 }
 
-int draw_cursor(int move)
-{
+static int
+draw_cursor(int move) {
     if (move != 0 && (cur_part + move < 0 || cur_part + move >= num_parts))
 	return -1;
 
@@ -2543,8 +2543,8 @@ int draw_cursor(int move)
     return 0;
 }
 
-void do_curses_fdisk(void)
-{
+static void
+do_curses_fdisk(void) {
     int done = FALSE;
     char command;
 
@@ -2713,13 +2713,13 @@ void do_curses_fdisk(void)
     die_x(0);
 }
 
-void copyright(void)
-{
-    fprintf(stderr, _("Copyright (C) 1994-1999 Kevin E. Martin & aeb\n"));
+static void
+copyright(void) {
+    fprintf(stderr, _("Copyright (C) 1994-2000 Kevin E. Martin & aeb\n"));
 }
 
-void usage(char *prog_name)
-{
+static void
+usage(char *prog_name) {
     /* Unfortunately, xgettext does not handle multi-line strings */
     /* so, let's use explicit \n's instead */
     fprintf(stderr, _("\n"

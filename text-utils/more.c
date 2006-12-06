@@ -57,6 +57,10 @@
 #include <locale.h>
 #include "nls.h"
 
+#define _REGEX_RE_COMP
+#include <regex.h>
+#undef _REGEX_RE_COMP
+
 /* #define MOREHELPFILE "/usr/lib/more.help" */
 #define VI		"/usr/bin/vi"
 
@@ -102,6 +106,7 @@ int  xprintf (char *fmt, ...);
 void execute (char *filename, char *cmd, ...);
 void errwrite (char *txt);
 void errwrite1 (char *sym);
+FILE *checkf (char *, int *);
 
 #define TBUFSIZ	1024
 #define LINSIZ	256
@@ -114,7 +119,7 @@ struct termios	otty, savetty0;
 long		file_pos, file_size;
 int		fnum, no_intty, no_tty, slow_tty;
 int		dum_opt, dlines;
-void		onquit(), onsusp(), chgwinsz(), end_it();
+void		onquit(int), onsusp(int), chgwinsz(int), end_it(int);
 int		nscroll = 11;	/* Number of lines scrolled by 'd' */
 int		fold_opt = 1;	/* Fold long lines */
 int		stop_opt = 1;	/* Stop after form feeds */
@@ -151,14 +156,12 @@ char		*Home;		/* go to home */
 char		*cursorm;	/* cursor movement */
 char		cursorhome[40];	/* contains cursor movement to home */
 char		*EodClr;	/* clear rest of screen */
-char		*tgetstr();
 int		Mcol = 80;	/* number of columns */
 int		Wrap = 1;	/* set if automargins */
 int		soglitch;	/* terminal has standout mode glitch */
 int		ulglitch;	/* terminal has underline mode glitch */
 int		pstate = 0;	/* current UL state */
-char		*getenv();
-static int	magic();
+static int	magic(FILE *, char *);
 struct {
     long chrctr, line;
 } context, screen_start;
@@ -177,32 +180,32 @@ extern char	PC;		/* pad character */
 #endif
 #include <term.h>			/* include after <curses.h> */
 
-void
+static void
 my_putstring(char *s) {
      putp(s);
 }
 
-void
+static void
 my_setupterm(const char *term, int fildes, int *errret) {
      setupterm(term, fildes, errret);
 }
 
-int
+static int
 my_tgetnum(char *s, char *ss) {
      return tigetnum(ss);
 }
 
-int
+static int
 my_tgetflag(char *s, char *ss) {
      return tigetflag(ss);
 }
 
-char *
+static char *
 my_tgetstr(char *s, char *ss) {
      return tigetstr(ss);
 }
 
-char *
+static char *
 my_tgoto(const char *cap, int col, int row) {
      return tparm(cap, col, row);
 }
@@ -214,32 +217,32 @@ char termbuffer[4096];
 char tcbuffer[4096];
 char *strbuf = termbuffer;
 
-void
+static void
 my_putstring(char *s) {
      tputs (s, 1, putchar);
 }
 
-void
+static void
 my_setupterm(const char *term, int fildes, int *errret) {
      *errret = tgetent(tcbuffer, term);
 }
 
-int
+static int
 my_tgetnum(char *s, char *ss) {
      return tgetnum(s);
 }
 
-int
+static int
 my_tgetflag(char *s, char *ss) {
      return tgetflag(s);
 }
 
-char *
+static char *
 my_tgetstr(char *s, char *ss) {
      return tgetstr(s, &strbuf);
 }
 
-char *
+static char *
 my_tgoto(const char *cap, int col, int row) {
      return tgoto(cap, col, row);
 }
@@ -247,10 +250,10 @@ my_tgoto(const char *cap, int col, int row) {
 
 #endif /* USE_CURSES */
 
-void
+static void
 idummy(int *kk) {}
 
-void
+static void
 Fdummy(FILE **ff) {}
 
 int main(int argc, char **argv) {
@@ -265,7 +268,6 @@ int main(int argc, char **argv) {
     int		clearit = 0;
     int		initline = 0;
     char	initbuf[80];
-    FILE	*checkf();
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
@@ -631,8 +633,7 @@ void screen (register FILE *f, register int num_lines)
 ** Come here if a quit signal is received
 */
 
-void onquit()
-{
+void onquit(int dummy) {
     signal(SIGQUIT, SIG_IGN);
     if (!inwait) {
 	putchar ('\n');
@@ -656,8 +657,7 @@ void onquit()
 */
 
 #ifdef SIGWINCH
-void chgwinsz()
-{
+void chgwinsz(int dummy) {
     struct winsize win;
 
     (void) signal(SIGWINCH, SIG_IGN);
@@ -680,9 +680,7 @@ void chgwinsz()
 ** Clean up terminal state and exit. Also come here if interrupt signal received
 */
 
-void end_it ()
-{
-
+void end_it (int dummy) {
     reset_tty ();
     if (clreol) {
 	putchar ('\r');
@@ -764,7 +762,7 @@ int printd (int n)
 /* Put the print representation of an integer into a string */
 static char *sptr;
 
-void Sprintf (int n) {
+static void Sprintf (int n) {
     int a;
 
     if ((a = n/10) != 0)
@@ -772,7 +770,7 @@ void Sprintf (int n) {
     *sptr++ = n % 10 + '0';
 }
 
-void scanstr (int n, char *str)
+static void scanstr (int n, char *str)
 {
     sptr = str;
     Sprintf (n);
@@ -798,9 +796,7 @@ char *s;
 ** string "string"
 */
 
-int tailequ (path, string)
-char *path;
-register char *string;
+static int tailequ (char *path, register char *string)
 {
 	register char *tail;
 
@@ -815,8 +811,7 @@ register char *string;
 	return(0);
 }
 
-void prompt (filename)
-char *filename;
+static void prompt (char *filename)
 {
     if (clreol)
 	cleareol ();
@@ -1171,7 +1166,7 @@ int command (char *filename, register FILE *f)
 	    ret (nscroll);
 	case 'q':
 	case 'Q':
-	    end_it ();
+	    end_it (0);
 	case 's':
 	case 'f':
 	    if (nlines == 0) nlines++;
@@ -1329,7 +1324,7 @@ int colon (char *filename, int cmd, int nlines)
 	case 'n':
 		if (nlines == 0) {
 			if (fnum >= nfiles - 1)
-				end_it ();
+				end_it (0);
 			nlines++;
 		}
 		putchar ('\r');
@@ -1352,7 +1347,7 @@ int colon (char *filename, int cmd, int nlines)
 		return (-1);
 	case 'q':
 	case 'Q':
-		end_it ();
+		end_it (0);
 	default:
 		ringbell();
 		return (-1);
@@ -1433,8 +1428,8 @@ void search(char buf[], FILE *file, register int n)
     register long line2 = startline;
     register long line3 = startline;
     register int lncount;
-    int saveln, rv, re_exec();
-    char *s, *re_comp();
+    int saveln, rv;
+    char *s;
 
     context.line = saveln = Currline;
     context.chrctr = startline;
@@ -1497,7 +1492,7 @@ void search(char buf[], FILE *file, register int n)
 	}
 	else {
 	    pr (_("\nPattern not found\n"));
-	    end_it ();
+	    end_it (0);
 	}
 	error (_("Pattern not found"));
     }
@@ -1746,12 +1741,11 @@ retry:
 int readch ()
 {
 	char ch;
-	extern int errno;
 
 	errno = 0;
 	if (read (2, &ch, 1) <= 0) {
 		if (errno != EINTR)
-			end_it();
+			end_it(0);
 		else
 			ch = otty.c_cc[VKILL];
 	}
@@ -1958,7 +1952,7 @@ void set_tty ()
 	stty(fileno(stderr), &otty);
 }
 
-int ourputch(int ch) {
+static int ourputch(int ch) {
     return putc(ch, stdout);
 }
 
@@ -1992,8 +1986,7 @@ void rdline (register FILE *f)
 
 /* Come here when we get a suspend signal from the terminal */
 
-void onsusp ()
-{
+void onsusp (int dummy) {
     sigset_t signals, oldmask;
 
     /* ignore SIGTTOU so we don't get stopped if csh grabs the tty */

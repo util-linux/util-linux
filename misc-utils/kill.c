@@ -48,6 +48,7 @@
 #include <ctype.h>
 #include <unistd.h>
 #include <signal.h>
+#include "kill.h"
 #include "nls.h"
 
 #define SIZE(a)	(sizeof(a)/sizeof(a[0]))

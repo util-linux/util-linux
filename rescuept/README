@@ -9,7 +9,7 @@ It is in the non-installed part of the e2progs distribution.
 (ii) rescuept is a utility that recognizes ext2 superblocks,
 FAT partitions, swap partitions, and extended partition tables;
 it may also recognize BSD disklabels and Unixware 7 partitions.
-It prints out information that can be used with fdisk or sfdisk
+It prints out information that is suitable as input to sfdisk
 to reconstruct the partition table.
 It is in the non-installed part of the util-linux distribution.
 

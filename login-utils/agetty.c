@@ -24,11 +24,11 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
-#include <varargs.h>
+#include <stdarg.h>
 #include <ctype.h>
 #include <utmp.h>
 #include <getopt.h>
-#include <memory.h>
+#include <time.h>
 #include <sys/file.h>
 #include "nls.h"
 
@@ -42,7 +42,6 @@
 
 #ifdef	USE_SYSLOG
 #include <syslog.h>
-extern void closelog();
 #endif
 
  /*
@@ -216,12 +215,13 @@ static struct Speedtab speedtab[] = {
     { 0, 0 },
 };
 
-#define P_(s) ()
+#define P_(s) s
+int main P_((int argc, char **argv));
 void parse_args P_((int argc, char **argv, struct options *op));
 void parse_speeds P_((struct options *op, char *arg));
 void update_utmp P_((char *line));
 void open_tty P_((char *tty, struct termio *tp, int local));
-void termio_init P_((struct termio *tp, int speed, int local));
+void termio_init P_((struct termio *tp, int speed, struct options *op));
 void auto_baud P_((struct termio *tp));
 void do_prompt P_((struct options *op, struct termio *tp));
 void next_speed P_((struct termio *tp, struct options *op));
@@ -230,7 +230,7 @@ void termio_final P_((struct options *op, struct termio *tp, struct chardata *cp
 int caps_lock P_((char *s));
 int bcode P_((char *s));
 void usage P_((void));
-void error P_((int va_alist));
+void error P_((const char *, ...));
 #undef P_
 
 /* The following is used for understandable diagnostics. */
@@ -499,7 +499,6 @@ parse_speeds(op, arg)
      struct options *op;
      char   *arg;
 {
-    char   *strtok();
     char   *cp;
 
 	debug(_("entered parse_speeds\n"));
@@ -522,8 +521,6 @@ update_utmp(line)
     struct  utmp ut;
     time_t  t;
     int     mypid = getpid();
-    long    time();
-    long    lseek();
     struct  utmp *utp;
 
     /*
@@ -1178,13 +1175,9 @@ usage()
 
 #define	str2cpy(b,s1,s2)	strcat(strcpy(b,s1),s2)
 
-/* VARARGS */
 void
-error(va_alist)
-     va_dcl
-{
+error(const char *fmt, ...) {
     va_list ap;
-    char   *fmt;
 #ifndef	USE_SYSLOG
     int     fd;
 #endif
@@ -1214,15 +1207,14 @@ error(va_alist)
      * vsprintf() like interface.
      */
 
-    va_start(ap);
-    fmt = va_arg(ap, char *);
+    va_start(ap, fmt);
     while (*fmt) {
 	if (strncmp(fmt, "%s", 2) == 0) {
 	    (void) strcpy(bp, va_arg(ap, char *));
 	    bp += strlen(bp);
 	    fmt += 2;
 	} else if (strncmp(fmt, "%m", 2) == 0) {
-	    (void) strcpy(bp, sys_errlist[errno]);
+	    (void) strcpy(bp, strerror(errno));
 	    bp += strlen(bp);
 	    fmt += 2;
 	} else {

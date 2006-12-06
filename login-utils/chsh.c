@@ -88,7 +88,6 @@ int main (argc, argv)
     uid_t uid;
     struct sinfo info;
     struct passwd *pw;
-    extern int errno;
 #if REQUIRE_PASSWORD && USE_PAM
     pam_handle_t *pamh = NULL;
     int retcode;

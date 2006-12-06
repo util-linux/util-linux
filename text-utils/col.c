@@ -45,7 +45,6 @@
  */
 
 #include <stdlib.h>
-#include <malloc.h>
 #include <errno.h>
 #include <ctype.h>
 #include <string.h>
@@ -109,6 +108,7 @@ int fine;			/* if `fine' resolution (half lines) */
 int max_bufd_lines;		/* max # lines to keep in memory */
 int nblank_lines;		/* # blanks after last flushed line */
 int no_backspaces;		/* if not to output any backspaces */
+int pass_unknown_seqs;		/* whether to pass unknown control sequences */
 
 #define	PUTC(ch) \
 	if (putwchar(ch) == WEOF) \
@@ -136,7 +136,8 @@ int main(int argc, char **argv)
 	
 	max_bufd_lines = 128;
 	compress_spaces = 1;		/* compress spaces into tabs */
-	while ((opt = getopt(argc, argv, "bfhl:x")) != EOF)
+	pass_unknown_seqs = 0;          /* remove unknown escape sequences */
+	while ((opt = getopt(argc, argv, "bfhl:px")) != -1)
 		switch (opt) {
 		case 'b':		/* do not output backspaces */
 			no_backspaces = 1;
@@ -153,6 +154,9 @@ int main(int argc, char **argv)
 				    _("col: bad -l argument %s.\n"), optarg);
 				exit(1);
 			}
+			break;
+		case 'p':
+			pass_unknown_seqs = 1;
 			break;
 		case 'x':		/* do not compress spaces into tabs */
 			compress_spaces = 0;
@@ -221,7 +225,8 @@ int main(int argc, char **argv)
 				cur_line -= 2;
 				continue;
 			}
-			continue;
+			if (!pass_unknown_seqs)
+				continue;
 		}
 
 		/* Must stuff ch in a line - are we at the right one? */
@@ -403,7 +408,7 @@ void flush_line(LINE *l)
 			count = (int *)xmalloc((void *)count,
 			    (unsigned)sizeof(int) * count_size);
 		}
-		bzero((char *)count, sizeof(int) * l->l_max_col + 1);
+		memset(count, 0, sizeof(int) * l->l_max_col + 1);
 		for (i = nchars, c = l->l_line; --i >= 0; c++)
 			count[c->c_column]++;
 
@@ -491,7 +496,7 @@ alloc_line()
 	l = line_freelist;
 	line_freelist = l->l_next;
 
-	bzero(l, sizeof(LINE));
+	memset(l, 0, sizeof(LINE));
 	return(l);
 }
 
@@ -513,7 +518,7 @@ xmalloc(void *p, size_t size)
 
 void usage()
 {
-	(void)fprintf(stderr, _("usage: col [-bfx] [-l nline]\n"));
+	(void)fprintf(stderr, _("usage: col [-bfpx] [-l nline]\n"));
 	exit(1);
 }
 

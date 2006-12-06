@@ -31,6 +31,8 @@
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@misiek.eu.org>
  * - added Native Language Support
  *
+ * 2000-03-02 Richard Gooch <rgooch@atnf.csiro.au>
+ * - pause forever if (pid == 1) and send SIGQUIT to pid = 1
  */
 
 #include <stdio.h>
@@ -75,7 +77,7 @@ char	halt_action[256];		/* to find out what to do upon halt */
 
 #define WR(s) write(fd, s, strlen(s))
 #define WRCRLF	write(fd, "\r\n", 2)
-#define ERRSTRING sys_errlist[errno]
+#define ERRSTRING strerror(errno)
 
 
 void
@@ -115,7 +117,11 @@ main(int argc, char *argv[])
 	int c,i;	
 	int fd;
 	char *ptr;
-	
+
+	if (getpid () == 1) {
+		for (i = 0; i < getdtablesize (); i++) close (i);
+		while (1) pause ();
+	}
         setlocale(LC_ALL, "");
         bindtextdomain(PACKAGE, LOCALEDIR);
         textdomain(PACKAGE);
@@ -360,6 +366,10 @@ main(int argc, char *argv[])
 	   and removing it here will be counterproductive.
 	   Let us see whether people complain. */
 	unlink(_PATH_NOLOGIN);
+
+	/*  Tell init(8) to exec so that the old inode may be freed cleanly if
+	    required. Need to sleep before remounting root read-only  */
+	kill (1, SIGQUIT);
 
 	sync();
 	sleep(2);

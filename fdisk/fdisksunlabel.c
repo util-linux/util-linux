@@ -51,6 +51,7 @@ struct systypes sun_sys_types[] = {
 	{8, N_("SunOS home")},
 	{LINUX_SWAP, N_("Linux swap")},
 	{LINUX_NATIVE, N_("Linux native")},
+	{0x8e, N_("Linux LVM")},
 	{ 0, NULL }
 };
 
@@ -87,25 +88,25 @@ void guess_device_type(int fd) {
 	}
 }
 
-void set_sun_partition(int i, uint start, uint stop, int sysid)
-{
+static void
+set_sun_partition(int i, uint start, uint stop, int sysid) {
 	sunlabel->infos[i].id = sysid;
 	sunlabel->partitions[i].start_cylinder =
 		SSWAP32(start / (heads * sectors));
 	sunlabel->partitions[i].num_sectors =
 		SSWAP32(stop - start);
-	changed[i] = 1;
+	set_changed(i);
 }
 
-void sun_nolabel(void)
-{
+void
+sun_nolabel(void) {
 	sun_label = 0;
 	sunlabel->magic = 0;
 	partitions = 4;
 }
 
-int check_sun_label(void)
-{
+int
+check_sun_label(void) {
 	unsigned short *ush;
 	int csum;
 	
@@ -148,6 +149,10 @@ struct sun_predefined_drives {
 {"Quantum","ProDrive 80S",1,832,2,834,6,34,3662},
 {"Quantum","ProDrive 105S",1,974,2,1019,6,35,3662},
 {"CDC","Wren IV 94171-344",3,1545,2,1549,9,46,3600},
+{"IBM","DPES-31080",0,4901,2,4903,4,108,5400},
+{"IBM","DORS-32160",0,1015,2,1017,67,62,5400},
+{"IBM","DNES-318350",0,11199,2,11474,10,320,7200},
+{"SEAGATE","ST34371",0,3880,2,3882,16,135,7228},
 {"","SUN0104",1,974,2,1019,6,35,3662},
 {"","SUN0207",4,1254,2,1272,9,36,3600},
 {"","SUN0327",3,1545,2,1549,9,46,3600},
@@ -162,8 +167,8 @@ struct sun_predefined_drives {
 {"IOMEGA","Jaz",0,1019,2,1021,64,32,5394},
 };
 
-struct sun_predefined_drives *
-sun_autoconfigure_scsi() {
+static struct sun_predefined_drives *
+sun_autoconfigure_scsi(void) {
     struct sun_predefined_drives *p = NULL;
 
 #ifdef SCSI_IOCTL_GET_IDLUN
@@ -193,16 +198,18 @@ sun_autoconfigure_scsi() {
         pfd = fopen("/proc/scsi/scsi","r");
         if (pfd) {
             while (fgets(buffer2,2048,pfd)) {
-                            if (!strcmp(buffer, buffer2)) {
+		if (!strcmp(buffer, buffer2)) {
                     if (fgets(buffer2,2048,pfd)) {
                         q = strstr(buffer2,"Vendor: ");
                         if (q) {
                             q += 8;
                             vendor = q;
-                            q = strstr(q," Model: ");
+			    q = strstr(q," ");
+			    *q++ = 0;	/* truncate vendor name */
+                            q = strstr(q,"Model: ");
                             if (q) {
                                 *q = 0;
-                                q += 8;
+                                q += 7;
                                 model = q;
                                 q = strstr(q," Rev: ");
                                 if (q) {
@@ -247,7 +254,7 @@ void create_sunlabel(void)
 #else
 	other_endian = 0;
 #endif
-	memset(buffer, 0, SECTOR_SIZE);
+	memset(MBRbuffer, 0, sizeof(MBRbuffer));
 	sunlabel->magic = SSWAP16(SUN_LABEL_MAGIC);
 	if (!floppy) {
 	    puts(_("Drive type\n"
@@ -328,14 +335,19 @@ void create_sunlabel(void)
 	    sunlabel->ntrks = SSWAP16(p->ntrks);
 	    sunlabel->nsect = SSWAP16(p->nsect);
 	    sunlabel->rspeed = SSWAP16(p->rspeed);
+	    sunlabel->ilfact = SSWAP16(1);
 	    cylinders = p->ncyl;
 	    heads = p->ntrks;
 	    sectors = p->nsect;
 	    puts(_("You may change all the disk params from the x menu"));
 	}
-	sprintf(buffer, "%s%s%s cyl %d alt %d hd %d sec %d", 
-			p ? p->vendor : "", (p && *p->vendor) ? " " : "", p ? p->model : (floppy ? _("3,5\" floppy") : _("Linux custom")),
-			cylinders, SSWAP16(sunlabel->nacyl), heads, sectors);
+
+	sprintf(sunlabel->info, "%s%s%s cyl %d alt %d hd %d sec %d", 
+		p ? p->vendor : "",
+		(p && *p->vendor) ? " " : "",
+		p ? p->model : (floppy ? _("3,5\" floppy") : _("Linux custom")),
+		cylinders, SSWAP16(sunlabel->nacyl), heads, sectors);
+
 	sunlabel->ntrks = SSWAP16(heads);
 	sunlabel->nsect = SSWAP16(sectors);
 	sunlabel->ncyl = SSWAP16(cylinders);
@@ -358,26 +370,28 @@ void create_sunlabel(void)
 			csum ^= *ush++;
 		sunlabel->csum = csum;
 	}
-	for (i = 1; i < MAXIMUM_PARTS; i++)
-	    changed[i] = 0;
-	changed[0] = 1;
+
+	set_all_unchanged();
+	set_changed(0);
 	get_boot(create_empty);
 }
 
-void toggle_sunflags(int i, unsigned char mask)
-{
+void
+toggle_sunflags(int i, unsigned char mask) {
 	if (sunlabel->infos[i].flags & mask)
 		sunlabel->infos[i].flags &= ~mask;
 	else sunlabel->infos[i].flags |= mask;
-	changed[i] = 1;
+	set_changed(i);
 }
 
-void fetch_sun(uint *starts, uint *lens, uint *start, uint *stop)
-{
+static void
+fetch_sun(uint *starts, uint *lens, uint *start, uint *stop) {
 	int i, continuous = 1;
 	*start = 0; *stop = cylinders * heads * sectors;
 	for (i = 0; i < partitions; i++) {
-		if (sunlabel->partitions[i].num_sectors && sunlabel->infos[i].id && sunlabel->infos[i].id != WHOLE_DISK) {
+		if (sunlabel->partitions[i].num_sectors
+		    && sunlabel->infos[i].id
+		    && sunlabel->infos[i].id != WHOLE_DISK) {
 			starts[i] = SSWAP32(sunlabel->partitions[i].start_cylinder) * heads * sectors;
 			lens[i] = SSWAP32(sunlabel->partitions[i].num_sectors);
 			if (continuous) {
@@ -386,7 +400,9 @@ void fetch_sun(uint *starts, uint *lens, uint *start, uint *stop)
 				else if (starts[i] + lens[i] >= *stop)
 					*stop = starts[i];
 				else
-					continuous = 0; /* There will be probably more gaps than one, so lets check afterwards */
+					continuous = 0;
+				        /* There will be probably more gaps
+					  than one, so lets check afterwards */
 			}
 		} else {
 			starts[i] = 0;
@@ -396,16 +412,17 @@ void fetch_sun(uint *starts, uint *lens, uint *start, uint *stop)
 }
 
 static uint *verify_sun_starts;
-int verify_sun_cmp(int *a, int *b)
-{
+
+static int
+verify_sun_cmp(int *a, int *b) {
     if (*a == -1) return 1;
     if (*b == -1) return -1;
     if (verify_sun_starts[*a] > verify_sun_starts[*b]) return 1;
     return -1;
 }
 
-void verify_sun(void)
-{
+void
+verify_sun(void) {
     uint starts[8], lens[8], start, stop;
     int i,j,k,starto,endo;
     int array[8];
@@ -466,8 +483,8 @@ void verify_sun(void)
         printf(_("Unused gap - sectors %d-%d\n"),start,stop);
 }
 
-void add_sun_partition(int n, int sys)
-{
+void
+add_sun_partition(int n, int sys) {
 	uint start, stop, stop2;
 	uint starts[8], lens[8];
 	int whole_disk = 0;
@@ -701,4 +718,3 @@ sun_write_table(void) {
 	if (write(fd, sunlabel, SECTOR_SIZE) != SECTOR_SIZE)
 		fatal(unable_to_write);
 }
-

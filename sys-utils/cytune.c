@@ -89,7 +89,8 @@ int cmon_index;
 #define mvtime(tvpto, tvpfrom)  (((tvpto)->tv_sec = (tvpfrom)->tv_sec),(tvpto)->tv_usec = (tvpfrom)->tv_usec)
 
 
-inline double dtime(struct timeval * tvpnew, struct timeval * tvpold) {
+static inline double
+dtime(struct timeval * tvpnew, struct timeval * tvpold) {
   double diff;
   diff = (double)tvpnew->tv_sec - (double)tvpold->tv_sec;
   diff += ((double)tvpnew->tv_usec - (double)tvpold->tv_usec)/1000000;
@@ -99,7 +100,8 @@ inline double dtime(struct timeval * tvpnew, struct timeval * tvpold) {
 static int global_argc, global_optind;
 static char ***global_argv;
 
-void summary(int signal) {
+static void
+summary(int signal) {
   struct cyclades_control *cc;
 
   int argc, optind;

@@ -27,10 +27,7 @@
 #endif
 
 int
-main (argc, argv)
-     int argc;
-     char **argv;
-{
+main (int argc, char **argv) {
   struct stat stats;
 
   if (argc != 3) return 1;

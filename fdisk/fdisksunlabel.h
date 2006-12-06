@@ -30,21 +30,22 @@ typedef struct {
 
 #define SUN_LABEL_MAGIC          0xDABE
 #define SUN_LABEL_MAGIC_SWAPPED  0xBEDA
-#define sunlabel ((sun_partition *)buffer)
+#define sunlabel ((sun_partition *)MBRbuffer)
 #define SSWAP16(x) (other_endian ? __swap16(x) \
 				 : (__u16)(x))
 #define SSWAP32(x) (other_endian ? __swap32(x) \
 				 : (__u32)(x))
 				 
 /* fdisk.c */
-extern char changed[MAXIMUM_PARTS];
-extern char buffer[MAX_SECTOR_SIZE];
+extern char MBRbuffer[MAX_SECTOR_SIZE];
 extern uint heads, sectors, cylinders;
 extern int show_begin;
 extern int sun_label;
 extern char *partition_type(unsigned char type);
 extern void update_units(void);
 extern char read_chars(char *mesg);
+extern void set_all_unchanged(void);
+extern void set_changed(int);
 
 /* fdisksunlabel.c */
 #define SUNOS_SWAP 3

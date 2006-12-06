@@ -42,6 +42,7 @@
 #include "hexdump.h"
 
 static void doskip(char *, int);
+static u_char *get(void);
 
 #ifndef MIN
 #define MIN(a,b) ((a)<(b)?(a):(b))
@@ -133,7 +134,7 @@ static off_t savaddress;		/* saved address/offset in stream */
 	} \
 }
 
-void bpad(PR *pr)
+static void bpad(PR *pr)
 {
 	static char *spec = " -0+#";
 	register char *p1, *p2;
@@ -149,7 +150,7 @@ void bpad(PR *pr)
 	while ((*p2++ = *p1++) != 0) ;
 }
 
-void display()
+void display(void)
 {
 	extern FU *endfu;
 	register FS *fs;
@@ -158,7 +159,7 @@ void display()
 	register int cnt;
 	register u_char *bp;
 	off_t saveaddress;
-	u_char savech = 0, *savebp, *get();
+	u_char savech = 0, *savebp;
 
 	while ((bp = get()) != NULL)
 	    for (fs = fshead, savebp = bp, saveaddress = address; fs;
@@ -205,8 +206,8 @@ void display()
 
 static char **_argv;
 
-u_char *
-get()
+static u_char *
+get(void)
 {
 	extern enum _vflag vflag;
 	extern int length;
@@ -276,7 +277,7 @@ get()
 
 int next(char **argv)
 {
-	extern int errno, exitval;
+	extern int exitval;
 	static int done;
 	int statok;
 
@@ -312,7 +313,6 @@ int next(char **argv)
 static void
 doskip(char *fname, int statok)
 {
-	extern int errno;
 	struct stat sbuf;
 
 	if (statok) {
@@ -353,7 +353,6 @@ emalloc(int size)
 
 void nomem()
 {
-	extern int errno;
 
 	(void)fprintf(stderr, "hexdump: %s.\n", strerror(errno));
 	exit(1);

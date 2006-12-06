@@ -1,81 +1,192 @@
 .\" Copyright 1990 Gordon Irlam (gordoni@cs.ua.oz.au)
 .\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
-.\" Most of this was copied from the source code.  Do not restrict distribution.
+.\" Most of this was copied from the source code.
+.\" Do not restrict distribution.
 .\" May be distributed under the GNU General Public License
-.TH SETTERM 1 "2 July 1996" "Util-Linux 2.6" "Linux Programmer's Manual"
+.\"
+.\" Most options documented by Colin Watson (cjw44@cam.ac.uk)
+.\" Undocumented: -snow, -softscroll, -standout; these are
+.\" commented out in the source
+.\"
+.TH SETTERM 1 "7 January 2000" "Util-Linux 2.10" "Linux Programmer's Manual"
 .SH NAME
 setterm \- set terminal attributes
 .SH SYNOPSIS
 .nf
-.BR "setterm [ \-term " terminal_name " ]"
-.B  "setterm [ \-reset ]"
-.B  "setterm [ \-initialize ]"
-.B  "setterm [ \-cursor [on|off] ]"
-.B  "setterm [ \-repeat [on|off] ]"
-.B  "setterm [ \-appcursorkeys [on|off] ]"
-.B  "setterm [ \-linewrap [on|off] ]"
-.B  "setterm [ \-snow [on|off] ]"
-.B  "setterm [ \-softscroll [on|off] ]"
-.B  "setterm [ \-defaults ]"
-.B  "setterm [ \-foreground black|red|green|yellow|blue|magenta|cyan|white|default ]"
-.B  "setterm [ \-background black|red|green|yellow|blue|magenta|cyan|white|default ]"
-.B  "setterm [ \-ulcolor black|grey|red|green|yellow|blue|magenta|cyan|white ]"
-.B  "setterm [ \-ulcolor bright red|green|yellow|blue|magenta|cyan|white ]"
-.B  "setterm [ \-hbcolor black|grey|red|green|yellow|blue|magenta|cyan|white ]"
-.B  "setterm [ \-hbcolor bright red|green|yellow|blue|magenta|cyan|white ]"
-.B  "setterm [ \-inversescreen [on|off] ]"
-.B  "setterm [ \-bold [on|off] ]"
-.B  "setterm [ \-half-bright [on|off] ]"
-.B  "setterm [ \-blink [on|off] ]"
-.B  "setterm [ \-reverse [on|off] ]"
-.B  "setterm [ \-underline [on|off] ]"
-.B  "setterm [ \-store ]"
-.B  "setterm [ \-clear [ all|rest ] ]"
-.BR "setterm [ \-tabs [tab1 tab2 tab3 ... ] ]" " where (tabn = 1-160)"
-.BR "setterm [ \-clrtabs [ tab1 tab2 tab3 ... ]" " where (tabn = 1-160)"
-.BR "setterm [ \-regtabs [" " 1-160 " "] ]"
-.BR "setterm [ \-blank [" " 0-60 " "] ]"
-.BR "setterm [ \-powersave [ on|vsync|hsync|powerdown|off ] ]"
-.BR "setterm [ \-powerdown [" " 0-60 " "] ]"
-.BR "setterm [ \-dump [" " 1-NR_CONS " "] ]"
-.BR "setterm [ \-append [" " 1-NR_CONS " "] ]"
-.BR "setterm [ \-file" " dumpfilename " ]
-.BR "setterm [ \-standout [" " attr " "] ]"
-.BR "setterm [ \-blength [" " 0-2000 " "] ]"
-.B  "setterm [ \-bfreq freqnumber ]"
+.BR "setterm " [ options ]
 .fi
 .SH DESCRIPTION
 .B setterm
-writes to standard output a character string that will invoke the specified
-terminal capabilities.  Where possibile
+writes to standard output a character string that will invoke the
+specified terminal capabilities.  Where possible
 .I terminfo
-is consulted to find the string to use.  Some options however do not
-correspond to a
+is consulted to find the string to use.  Some options however (marked
+"virtual consoles only" below) do not correspond to a
 .BR terminfo (5)
-capability.  In this case, if the terminal type is "con", or
-"linux" the string that invokes the specified capabilities on the PC
-Minix virtual console driver is output.  Options that are not implemented
-by the terminal are ignored.
+capability.  In this case, if the terminal type is "con" or "linux" the
+string that invokes the specified capabilities on the PC Minix virtual
+console driver is output.  Options that are not implemented by the terminal
+are ignored.
 .SH OPTIONS
-Most options are self explanatory.  The less obvious options are as
-follows:
+For boolean options (\fBon\fP or \fBoff\fP), the default is \fBon\fP.
+.P
+For conciseness, an \fI8-color\fP below is \fBblack\fP, \fBred\fP,
+\fBgreen\fP, \fByellow\fP, \fBblue\fP, \fBmagenta\fP, \fBcyan\fP, or
+\fBwhite\fP.
+.P
+A \fI16-color\fP is an \fI8-color\fP, \fBgrey\fP, or \fBbright\fP followed
+by \fBred\fP, \fBgreen\fP, \fByellow\fP, \fBblue\fP, \fBmagenta\fP,
+\fBcyan\fP, or \fBwhite\fP.
+.P
+The various color options may be set independently, at least at virtual
+consoles, though the results of setting multiple modes (for example,
+.BR \-underline " and " \-half-bright )
+are hardware-dependent.
 .TP
-.B \-term
-can be used to override the TERM environment variable.
+.BR \-term " terminal_name"
+Overrides the TERM environment variable.
 .TP
 .B \-reset
-displays the terminal reset string, which typically resets the terminal to
+Displays the terminal reset string, which typically resets the terminal to
 its power on state.
 .TP
 .B \-initialize
-displays the terminal initialization string, which typically sets the
+Displays the terminal initialization string, which typically sets the
 terminal's rendering options, and other attributes to the default values.
 .TP
-.B \-default
-sets the terminal's rendering options to the default values.
+.BR \-cursor " [" on | off ]
+Turns the terminal's cursor on or off.
 .TP
-.B \-store
-stores the terminal's current rendering options as the default values.
+.BR \-repeat " [" on | off "] (virtual consoles only)"
+Turns keyboard repeat on or off.
+.TP
+.BR \-appcursorkeys " [" on | off "] (virtual consoles only)"
+Sets Cursor Key Application Mode on or off. When on, ESC O A, ESC O B, etc.
+will be sent for the cursor keys instead of ESC [ A, ESC [ B, etc.  See the
+"vi and Cursor-Keys" section of the Text-Terminal-HOWTO for how this can
+cause problems for vi users.
+.TP
+.BR \-linewrap " [" on | off "] (virtual consoles only)"
+Turns automatic line-wrapping on or off.
+.TP
+.B \-default
+Sets the terminal's rendering options to the default values.
+.TP
+\fB\-foreground\fP \fI8-color\fP|\fBdefault\fP (virtual consoles only)
+Sets the foreground text color.
+.TP
+\fB\-background\fP \fI8-color\fP|\fBdefault\fP (virtual consoles only)
+Sets the background text color.
+.TP
+\fB\-ulcolor\fP \fI16-color\fP (virtual consoles only)
+Sets the color for underlined characters.
+.TP
+\fB\-hbcolor\fP \fI16-color\fP (virtual consoles only)
+Sets the color for half-bright characters.
+.TP
+.BR \-inversescreen " [" on | off "] (virtual consoles only)"
+Inverts the screen colors.  Foreground and background are swapped, as are
+underline and half-brightness.
+.TP
+.BR \-bold " [" on | off ]
+Turns bold (extra bright) mode on or off.  Except at a virtual console,
+\fB\-bold off\fP turns off all attributes (bold, half-brightness, blink,
+reverse).
+.TP
+.BR \-half-bright " [" on | off ]
+Turns dim (half-brightness) mode on or off (see \fB\-hbcolor\fP). Except at
+a virtual console, \fB\-half-bright off\fP turns off all attributes (bold,
+half-brightness, blink, reverse).
+.TP
+.BR \-blink " [" on | off ]
+Turns blink mode on or off.  Except at a virtual console, \fB\-blink off\fP
+turns off all attributes (bold, half-brightness, blink, reverse).
+.TP
+.BR \-reverse " [" on | off ]
+Turns reverse video mode on or off.  Except at a virtual console,
+\fB\-reverse off\fP turns off all attributes (bold, half-brightness, blink,
+reverse).
+.TP
+.BR \-underline " [" on | off ]
+Turns underline mode on or off (see \fB\-ulcolor\fP).
+.TP
+.BR \-store " (virtual consoles only)"
+Stores the terminal's current rendering options as the default values.
+.TP
+.BR \-clear " [" all ]
+Clears the screen and "homes" the cursor, as
+.BR clear (1).
+.TP
+.B \-clear rest
+Clears from the current cursor position to the end of the screen.
+.TP
+.BR \-tabs " [tab1 tab2 tab3 ...] (virtual consoles only)"
+Sets tab stops at the given horizontal cursor positions, in the range 1-160.
+Without arguments, shows the current tab stop settings.
+.TP
+.BR \-clrtabs " [tab1 tab2 tab3 ...] (virtual consoles only)"
+Clears tab stops from the given horizontal cursor positions, in the range
+1-160.  Without arguments, clears all tab stops.
+.TP
+.BR \-regtabs " [1-160] (virtual consoles only)"
+Clears all tab stops, then sets a regular tab stop pattern, with one tab
+every specified number of positions.  Without an argument, defaults to 8.
+.TP
+.BR \-blank " [0-60] (virtual consoles only)"
+Sets the interval of inactivity, in minutes, after which the screen will be
+automatically blanked (using APM if available).  Without an argument,
+defaults to 0 (disable console blanking).
+.TP
+.BR \-dump " [1-NR_CONS]"
+Writes a snapshot of the given virtual console (with attributes) to the file
+specified in the \fB\-file\fP option, overwriting its contents; the default
+is screen.dump.  Without an argument, dumps the current virtual console.
+Overrides \fB\-append\fP.
+.TP
+.BR \-append " [1-NR_CONS]"
+Like \fB\-dump\fP, but appends to the snapshot file instead of overwriting
+it.  Only works if no \fB\-dump\fP options are given.
+.TP
+.BR \-file " dumpfilename"
+Sets the snapshot file name for any \fB\-dump\fP or \fB\-append\fP options
+on the same command line.  If this option is not present, the default is
+screen.dump in the current directory.
+.TP
+.BR \-msg " [" on | off "] (virtual consoles only)"
+Enables or disables the sending of kernel \fBprintk()\fP messages to the
+console.
+.TP
+.BR \-msglevel " 1-8 (virtual consoles only)"
+Sets the console logging level for kernel \fBprintk()\fP messages.  All
+messages strictly more important than this will be printed, so a logging
+level of 0 has the same effect as \fB\-msg on\fP and a logging level of 8
+will print all kernel messages.
+.BR klogd (8)
+may be a more convenient interface to the logging of kernel messages.
+.TP
+.BR "\-powersave on" | vsync
+Puts the monitor into VESA vsync suspend mode.
+.TP
+.B \-powersave hsync
+Puts the monitor into VESA hsync suspend mode.
+.TP
+.B \-powersave powerdown
+Puts the monitor into VESA powerdown mode.
+.TP
+.BR \-powersave " [" off "]"
+Turns off monitor VESA powersaving features.
+.TP
+.BR \-powerdown " [0-60]"
+Sets the VESA powerdown interval in minutes.  Without an argument, defaults
+to 0 (disable powerdown).  If the console is blanked or the monitor is in
+suspend mode, then the monitor will go into vsync suspend mode or powerdown
+mode respectively after this period of time has elapsed.
+.TP
+.BR \-blength " [0-2000]"
+Sets the bell duration in milliseconds.  Without an argument, defaults to 0.
+.TP
+.BR \-bfreq " [freqnumber]"
+Sets the bell frequency in Hz.  Without an argument, defaults to 0.
 .SH "SEE ALSO"
 .BR tput (1),
 .BR stty (1),
@@ -83,11 +194,3 @@ stores the terminal's current rendering options as the default values.
 .BR tty (4)
 .SH BUGS
 Differences between the Minix and Linux versions are not documented.
-.SH AUTHORS
-Gordon Irlam (gordoni@cs.ua.oz.au)
-.br
-Adaption to Linux by Peter MacDonald
-.br
-Enhancements by Mika Liljeberg (liljeber@cs.Helsinki.FI)
-.br
-Beep patch by Christophe Jolif (cjolif@storm.gatelink.fr.net)

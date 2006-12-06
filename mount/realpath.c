@@ -27,18 +27,20 @@
 
 #define MAX_READLINKS 32
 
+/* this leaks some memory - unimportant for mount */
 char *
 myrealpath(const char *path, char *resolved_path, int maxreslth) {
-	char *npath;
+	char *npath, *buf;
 	char link_path[PATH_MAX+1];
 	int readlinks = 0;
-	int n;
+	int m, n;
 
 	npath = resolved_path;
 
 	/* If it's a relative pathname use getcwd for starters. */
 	if (*path != '/') {
-		getcwd(npath, maxreslth-2);
+		if (!getcwd(npath, maxreslth-2))
+			return NULL;
 		npath += strlen(npath);
 		if (npath[-1] != '/')
 			*npath++ = '/';
@@ -100,14 +102,13 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 				/* Otherwise back up over this component. */
 				while (*(--npath) != '/')
 					;
-			/* Safe sex check. */
-			if (strlen(path) + n >= sizeof(link_path)) {
-				errno = ENAMETOOLONG;
-				return NULL;
-			}
+
 			/* Insert symlink contents into path. */
-			strcat(link_path, path);
-			path = xstrdup(link_path);
+			m = strlen(path);
+			buf = xmalloc(m + n + 1);
+			memcpy(buf, link_path, n);
+			memcpy(buf + n, path, m + 1);
+			path = buf;
 		}
 
 		*npath++ = '/';

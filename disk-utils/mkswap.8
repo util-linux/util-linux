@@ -97,7 +97,7 @@ able to look it up with "cat /proc/cpuinfo" (or you may not -
 the contents of this file depend on architecture and kernel version).
 
 To setup a swap file, it is necessary to create that file before
-running
+initializing it with
 .B mkswap ,
 e.g. using a command like
 
@@ -140,13 +140,12 @@ Create a new style swap area.
 .LP
 If no \-v option is given,
 .B mkswap
-will default to old style if the size of the swap area does not
-exceed the maximum size of an old style swap area, and also if
-the current kernel is older than 2.1.117 (and also if PAGE_SIZE
-is less than 2048).
+will default to new style, but use old style if the current kernel
+is older than 2.1.117 (and also if PAGE_SIZE is less than 2048).
 The new style header does not touch the first block, so may be
-preferable (also if the swap area is small), in case you have
-a boot loader or disk label there.
+preferable, in case you have a boot loader or disk label there.
+If you need to use both 2.0 and 2.2 kernels, use the \-v0 option
+when creating the swapspace.
 
 .SH "SEE ALSO"
 .BR fdisk (8),

@@ -61,9 +61,8 @@ Wed Jun 22 21:12:29 1994: Applied patches from Dave
 
 /* rdev.c  -  query/set root device. */
 
-void
-usage()
-{
+static void
+usage(void) {
 
     puts(_("usage: rdev [ -rsv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"));
     puts(_("  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"));
@@ -115,8 +114,10 @@ static char *find_dev(int number)
     strcpy(name,"/dev/");
     while ((dir = readdir(dp)) != NULL) {
 	strcpy(name+5,dir->d_name);
-	if (stat(name,&s) < 0) die(name);
-	if ((s.st_mode & S_IFMT) == S_IFBLK && s.st_rdev == number) return name;
+	if (stat(name,&s) < 0)
+	    continue;
+	if ((s.st_mode & S_IFMT) == S_IFBLK && s.st_rdev == number)
+	    return name;
     }
     sprintf(name,"0x%04x",number);
     return name;

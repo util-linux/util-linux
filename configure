@@ -20,6 +20,10 @@
 # 14. For script.c: do we have <pty.h> and openpty()?
 # 15. For lib/widechar.h: do we have wide character support?
 # 16. For clock/kd.c: do we have nanosleep()?
+# 17. For mkswap: do we have personality()?
+# 18. For pivot_root.c: does <linux/unistd.h> define __NR_pivot_root?
+# 19. For hwclock.c: does struct tm have a field tm_gmtoff?
+# 20. For nfsmount: does the output of rpcgen compile?
 
 rm -f make_include defines.h
 
@@ -323,7 +327,9 @@ echo "
 #include <pty.h>
 main(){ exit(0); openpty(0, 0, 0, 0, 0); }
 " > conftest.c
+LIBS=-lutil
 eval $compile
+LIBS=
 if test -s conftest && ./conftest 2>/dev/null; then
 	echo "HAVE_OPENPTY=yes" >> make_include
 	echo "#define HAVE_openpty" >> defines.h
@@ -381,3 +387,104 @@ else
 fi
 rm -f conftest conftest.c
 
+#
+# 17. For mkswap.c: do we have personality()?
+#
+echo "
+int main () {
+  extern int personality(unsigned long);
+  personality(0);
+  exit(0);
+}
+" > conftest.c
+eval $compile
+if test -s conftest && ./conftest 2>/dev/null; then
+	echo "#define HAVE_personality" >> defines.h
+	echo "You have personality()"
+else
+	echo "You don't have personality()"
+fi
+rm -f conftest conftest.c
+
+#
+# 18. For pivot_root.c: does <linux/unistd.h> define __NR_pivot_root?
+#
+echo "
+#include <linux/unistd.h>
+int main(void)
+{
+    return __NR_pivot_root;
+}
+" >conftest.c
+eval $compile
+if test -s conftest; then
+	echo "HAVE_PIVOT_ROOT=yes" >> make_include
+	echo "You have __NR_pivot_root"
+else
+	echo "You don't have __NR_pivot_root"
+fi
+rm -f conftest conftest.c
+
+#
+# 19. For hwclock.c: does struct tm have a field tm_gmtoff?
+#
+echo "
+#include <time.h>
+#include <unistd.h>
+int main(int a, char **v)
+{
+    struct tm *tm = localtime(0);
+    if (a == -1)  /* false */
+        sleep(tm->tm_gmtoff);
+    exit(0);
+}
+" >conftest.c
+eval $compile
+if test -s conftest; then
+        echo "#define HAVE_tm_gmtoff" >> defines.h
+        echo "You have a tm_gmtoff field in struct tm"
+else
+        echo "You don't have a tm_gmtoff field in struct tm"
+fi
+rm -f conftest conftest.c
+
+#
+# 20. For nfsmount: does the output of rpcgen compile?
+#
+rm -f conftest conftestx.c conftestl.c conftest.h conftest.x
+echo "
+#ifdef RPC_CLNT
+%#include <string.h>            /* for memset() */
+#endif
+%#include <asm/types.h>
+typedef opaque fhandle[1];
+union fhstatus switch (unsigned fhs_status) {
+case 0:
+        fhandle fhs_fhandle;
+default:
+        void;
+};
+typedef string dirpath<1024>;
+struct ppathcnf {
+    short   pc_mask[2];
+};
+
+program MOUNTPROG {
+    version MOUNTVERS {
+	fhstatus
+	MOUNTPROC_MNT(dirpath) = 1;
+    } = 2;
+} = 100005;
+" > conftest.x
+if rpcgen -h -o conftest.h conftest.x && \
+   rpcgen -c -o conftestx.c conftest.x && \
+   rpcgen -l -o conftestl.c conftest.x && \
+   cc -c conftestx.c 2> conferrs && cc -c conftestl.c 2>> conferrs && \
+   test ! -s conferrs
+then
+        echo "HAVE_GOOD_RPC=yes" >> make_include
+        echo "Your rpcgen seems to work"
+else
+        echo "Your rpcgen output does not compile"
+fi
+rm -f conftest conftestx.c conftestl.c conftest.h conftest.x conferrs

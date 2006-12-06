@@ -96,8 +96,7 @@
 #include <mntent.h>
 #include <sys/stat.h>
 
-#include <linux/fs.h>
-#include <linux/minix_fs.h>
+#include "minix.h"
 #include "nls.h"
 
 #ifdef MINIX2_SUPER_MAGIC2
@@ -169,8 +168,10 @@ static char *zone_map;
 static unsigned char * inode_count = NULL;
 static unsigned char * zone_count = NULL;
 
-void recursive_check(unsigned int ino);
-void recursive_check2(unsigned int ino);
+static void recursive_check(unsigned int ino);
+#ifdef HAVE_MINIX2
+static void recursive_check2(unsigned int ino);
+#endif
 
 #include "bitops.h"
 
@@ -183,22 +184,23 @@ void recursive_check2(unsigned int ino);
 #define mark_zone(x) (setbit(zone_map,(x)-FIRSTZONE+1),changed=1)
 #define unmark_zone(x) (clrbit(zone_map,(x)-FIRSTZONE+1),changed=1)
 
-void leave(int) __attribute__ ((noreturn));
-void leave(int status)
-{
+static void
+leave(int status) {
 	if (termios_set)
 		tcsetattr(0, TCSANOW, &termios);
 	exit(status);
 }
 
-void usage(void) {
+static void
+usage(void) {
 	fprintf(stderr,
 		_("Usage: %s [-larvsmf] /dev/name\n"),
 		program_name);
 	leave(16);
 }
 
-void die(const char *str) {
+static void
+die(const char *str) {
 	fprintf(stderr, "%s: %s\n", program_name, str);
 	leave(8);
 }
@@ -207,8 +209,8 @@ void die(const char *str) {
  * This simply goes through the file-name data and prints out the
  * current file.
  */
-void print_current_name(void)
-{
+static void
+print_current_name(void) {
 	int i=0;
 
 	while (i<name_depth)
@@ -217,8 +219,8 @@ void print_current_name(void)
 		printf ("/");
 }
 
-int ask(const char * string, int def)
-{
+static int
+ask(const char * string, int def) {
 	int c;
 
 	if (!repair) {
@@ -264,8 +266,8 @@ int ask(const char * string, int def)
  * mounted partition.  Code adapted from e2fsck, Copyright (C) 1993,
  * 1994 Theodore Ts'o.  Also licensed under GPL.
  */
-static void check_mount(void)
-{
+static void
+check_mount(void) {
 	FILE * f;
 	struct mntent * mnt;
 	int cont;
@@ -309,8 +311,8 @@ static void check_mount(void)
  * if an error was corrected, and returns the zone (0 for no zone
  * or a bad zone-number).
  */
-int check_zone_nr(unsigned short * nr, int * corrected)
-{
+static int
+check_zone_nr(unsigned short * nr, int * corrected) {
 	if (!*nr)
 		return 0;
 	if (*nr < FIRSTZONE)
@@ -329,8 +331,8 @@ int check_zone_nr(unsigned short * nr, int * corrected)
 }
 
 #ifdef HAVE_MINIX2
-int check_zone_nr2 (unsigned int *nr, int *corrected)
-{
+static int
+check_zone_nr2 (unsigned int *nr, int *corrected) {
 	if (!*nr)
 		return 0;
 	if (*nr < FIRSTZONE)
@@ -352,8 +354,8 @@ int check_zone_nr2 (unsigned int *nr, int *corrected)
 /*
  * read-block reads block nr into the buffer at addr.
  */
-void read_block(unsigned int nr, char * addr)
-{
+static void
+read_block(unsigned int nr, char * addr) {
 	if (!nr) {
 		memset(addr,0,BLOCK_SIZE);
 		return;
@@ -376,8 +378,8 @@ void read_block(unsigned int nr, char * addr)
 /*
  * write_block writes block nr to disk.
  */
-void write_block(unsigned int nr, char * addr)
-{
+static void
+write_block(unsigned int nr, char * addr) {
 	if (!nr)
 		return;
 	if (nr < FIRSTZONE || nr >= ZONES) {
@@ -401,8 +403,8 @@ void write_block(unsigned int nr, char * addr)
  * It sets 'changed' if the inode has needed changing, and re-writes
  * any indirect blocks with errors.
  */
-int map_block(struct minix_inode * inode, unsigned int blknr)
-{
+static int
+map_block(struct minix_inode * inode, unsigned int blknr) {
 	unsigned short ind[BLOCK_SIZE>>1];
 	unsigned short dind[BLOCK_SIZE>>1];
 	int blk_chg, block, result;
@@ -436,8 +438,8 @@ int map_block(struct minix_inode * inode, unsigned int blknr)
 }
 
 #ifdef HAVE_MINIX2
-int map_block2 (struct minix2_inode *inode, unsigned int blknr)
-{
+static int
+map_block2 (struct minix2_inode *inode, unsigned int blknr) {
   	unsigned int ind[BLOCK_SIZE >> 2];
 	unsigned int dind[BLOCK_SIZE >> 2];
 	unsigned int tind[BLOCK_SIZE >> 2];
@@ -494,8 +496,8 @@ int map_block2 (struct minix2_inode *inode, unsigned int blknr)
 }
 #endif
 
-void write_super_block(void)
-{
+static void
+write_super_block(void) {
 	/*
 	 * Set the state of the filesystem based on whether or not there
 	 * are uncorrected errors.  The filesystem valid flag is
@@ -515,8 +517,8 @@ void write_super_block(void)
 	return;
 }
 
-void write_tables(void)
-{
+static void
+write_tables(void) {
 	write_super_block();
 
 	if (IMAPS*BLOCK_SIZE != write(IN,inode_map,IMAPS*BLOCK_SIZE))
@@ -527,8 +529,8 @@ void write_tables(void)
 		die(_("Unable to write inodes"));
 }
 
-void get_dirsize (void)
-{
+static void
+get_dirsize (void) {
 	int block;
 	char blk[BLOCK_SIZE];
 	int size;
@@ -550,8 +552,8 @@ void get_dirsize (void)
 	/* use defaults */
 }
 
-void read_superblock(void)
-{
+static void
+read_superblock(void) {
 	if (BLOCK_SIZE != lseek(IN, BLOCK_SIZE, SEEK_SET))
 		die(_("seek failed"));
 	if (BLOCK_SIZE != read(IN, super_block_buffer, BLOCK_SIZE))
@@ -584,8 +586,8 @@ void read_superblock(void)
 		die(_("bad s_zmap_blocks field in super-block"));
 }
 
-void read_tables(void)
-{
+static void
+read_tables(void) {
 	inode_map = malloc(IMAPS * BLOCK_SIZE);
 	if (!inode_map)
 		die(_("Unable to allocate buffer for inode map"));
@@ -625,8 +627,8 @@ void read_tables(void)
 	}
 }
 
-struct minix_inode * get_inode(unsigned int nr)
-{
+static struct minix_inode *
+get_inode(unsigned int nr) {
 	struct minix_inode * inode;
 
 	if (!nr || nr > INODES)
@@ -676,9 +678,8 @@ struct minix_inode * get_inode(unsigned int nr)
 }
 
 #ifdef HAVE_MINIX2
-struct minix2_inode *
-get_inode2 (unsigned int nr)
-{
+static struct minix2_inode *
+get_inode2 (unsigned int nr) {
 	struct minix2_inode *inode;
 
 	if (!nr || nr > INODES)
@@ -724,8 +725,8 @@ get_inode2 (unsigned int nr)
 }
 #endif
 
-void check_root(void)
-{
+static void
+check_root(void) {
 	struct minix_inode * inode = Inode + ROOT_INO;
 
 	if (!inode || !S_ISDIR(inode->i_mode))
@@ -733,8 +734,8 @@ void check_root(void)
 }
 
 #ifdef HAVE_MINIX2
-void check_root2 (void)
-{
+static void
+check_root2 (void) {
 	struct minix2_inode *inode = Inode2 + ROOT_INO;
 
 	if (!inode || !S_ISDIR (inode->i_mode))
@@ -742,8 +743,8 @@ void check_root2 (void)
 }
 #endif
 
-static int add_zone(unsigned short * znr, int * corrected)
-{
+static int
+add_zone(unsigned short * znr, int * corrected) {
 	int result;
 	int block;
 
@@ -776,8 +777,8 @@ static int add_zone(unsigned short * znr, int * corrected)
 }
 
 #ifdef HAVE_MINIX2
-static int add_zone2 (unsigned int *znr, int *corrected)
-{
+static int
+add_zone2 (unsigned int *znr, int *corrected) {
 	int result;
 	int block;
 
@@ -810,8 +811,8 @@ static int add_zone2 (unsigned int *znr, int *corrected)
 }
 #endif
 
-static void add_zone_ind(unsigned short * znr, int * corrected)
-{
+static void
+add_zone_ind(unsigned short * znr, int * corrected) {
 	static char blk[BLOCK_SIZE];
 	int i, chg_blk=0;
 	int block;
@@ -828,8 +829,7 @@ static void add_zone_ind(unsigned short * znr, int * corrected)
 
 #ifdef HAVE_MINIX2
 static void
-add_zone_ind2 (unsigned int *znr, int *corrected)
-{
+add_zone_ind2 (unsigned int *znr, int *corrected) {
 	static char blk[BLOCK_SIZE];
 	int i, chg_blk = 0;
 	int block;
@@ -845,8 +845,8 @@ add_zone_ind2 (unsigned int *znr, int *corrected)
 }
 #endif
 
-static void add_zone_dind(unsigned short * znr, int * corrected)
-{
+static void
+add_zone_dind(unsigned short * znr, int * corrected) {
 	static char blk[BLOCK_SIZE];
 	int i, blk_chg=0;
 	int block;
@@ -863,8 +863,7 @@ static void add_zone_dind(unsigned short * znr, int * corrected)
 
 #ifdef HAVE_MINIX2
 static void
-add_zone_dind2 (unsigned int *znr, int *corrected)
-{
+add_zone_dind2 (unsigned int *znr, int *corrected) {
 	static char blk[BLOCK_SIZE];
 	int i, blk_chg = 0;
 	int block;
@@ -880,8 +879,7 @@ add_zone_dind2 (unsigned int *znr, int *corrected)
 }
 
 static void
-add_zone_tind2 (unsigned int *znr, int *corrected)
-{
+add_zone_tind2 (unsigned int *znr, int *corrected) {
 	static char blk[BLOCK_SIZE];
 	int i, blk_chg = 0;
 	int block;
@@ -897,8 +895,8 @@ add_zone_tind2 (unsigned int *znr, int *corrected)
 }
 #endif
 
-void check_zones(unsigned int i)
-{
+static void
+check_zones(unsigned int i) {
 	struct minix_inode * inode;
 
 	if (!i || i > INODES)
@@ -916,9 +914,8 @@ void check_zones(unsigned int i)
 }
 
 #ifdef HAVE_MINIX2
-void
-check_zones2 (unsigned int i)
-{
+static void
+check_zones2 (unsigned int i) {
 	struct minix2_inode *inode;
 
 	if (!i || i > INODES)
@@ -937,8 +934,8 @@ check_zones2 (unsigned int i)
 }
 #endif
 
-void check_file(struct minix_inode * dir, unsigned int offset)
-{
+static void
+check_file(struct minix_inode * dir, unsigned int offset) {
 	static char blk[BLOCK_SIZE];
 	struct minix_inode * inode;
 	int ino;
@@ -1000,9 +997,8 @@ void check_file(struct minix_inode * dir, unsigned int offset)
 }
 
 #ifdef HAVE_MINIX2
-void
-check_file2 (struct minix2_inode *dir, unsigned int offset)
-{
+static void
+check_file2 (struct minix2_inode *dir, unsigned int offset) {
 	static char blk[BLOCK_SIZE];
 	struct minix2_inode *inode;
 	int ino;
@@ -1064,8 +1060,8 @@ check_file2 (struct minix2_inode *dir, unsigned int offset)
 }
 #endif
 
-void recursive_check(unsigned int ino)
-{
+static void
+recursive_check(unsigned int ino) {
 	struct minix_inode * dir;
 	unsigned int offset;
 
@@ -1082,9 +1078,8 @@ void recursive_check(unsigned int ino)
 }
 
 #ifdef HAVE_MINIX2
-void
-recursive_check2 (unsigned int ino)
-{
+static void
+recursive_check2 (unsigned int ino) {
 	struct minix2_inode *dir;
 	unsigned int offset;
 
@@ -1101,8 +1096,8 @@ recursive_check2 (unsigned int ino)
 }
 #endif
 
-int bad_zone(int i)
-{
+static int
+bad_zone(int i) {
 	char buffer[1024];
 
 	if (BLOCK_SIZE*i != lseek(IN, BLOCK_SIZE*i, SEEK_SET))
@@ -1110,8 +1105,8 @@ int bad_zone(int i)
 	return (BLOCK_SIZE != read(IN, buffer, BLOCK_SIZE));
 }
 
-void check_counts(void)
-{
+static void
+check_counts(void) {
 	int i;
 
 	for (i=1 ; i <= INODES ; i++) {
@@ -1162,9 +1157,8 @@ void check_counts(void)
 }
 
 #ifdef HAVE_MINIX2
-void
-check_counts2 (void)
-{
+static void
+check_counts2 (void) {
 	int i;
 
 	for (i = 1; i <= INODES; i++) {
@@ -1214,8 +1208,8 @@ check_counts2 (void)
 }
 #endif
 
-void check(void)
-{
+static void
+check(void) {
 	memset(inode_count,0,(INODES + 1) * sizeof(*inode_count));
 	memset(zone_count,0,ZONES*sizeof(*zone_count));
 	check_zones(ROOT_INO);
@@ -1224,9 +1218,8 @@ void check(void)
 }
 
 #ifdef HAVE_MINIX2
-void
-check2 (void)
-{
+static void
+check2 (void) {
 	memset (inode_count, 0, (INODES + 1) * sizeof (*inode_count));
 	memset (zone_count, 0, ZONES * sizeof (*zone_count));
 	check_zones2 (ROOT_INO);
@@ -1235,8 +1228,8 @@ check2 (void)
 }
 #endif
 
-int main(int argc, char ** argv)
-{
+int
+main(int argc, char ** argv) {
 	struct termios tmp;
 	int count;
 	int retcode = 0;

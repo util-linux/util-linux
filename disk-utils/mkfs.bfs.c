@@ -16,7 +16,10 @@
 #include <string.h>
 #include <time.h>
 
-#include <linux/fs.h>		/* for BLKGETSIZE */
+/* cannot include <linux/fs.h> */
+#ifndef BLKGETSIZE
+#define BLKGETSIZE _IO(0x12,96)    /* return device size */
+#endif
 
 #include "../defines.h"		/* for util_linux_version */
 

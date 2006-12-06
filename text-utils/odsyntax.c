@@ -44,6 +44,7 @@
 #include "nls.h"
 
 static void odoffset(int, char ***);
+static void odprecede(void);
 
 int deprecated;
 
@@ -55,7 +56,6 @@ oldsyntax(int argc, char ***argvp)
 	extern int optind;
 	int ch;
 	char **argv;
-	static void odprecede();
 
 	deprecated = 1;
 	argv = *argvp;
@@ -244,7 +244,7 @@ odoffset(int argc, char ***argvp)
 }
 
 static void
-odprecede()
+odprecede(void)
 {
 	static int first = 1;
 

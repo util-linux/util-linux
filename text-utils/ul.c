@@ -282,7 +282,7 @@ void filter(FILE *f)
 		flushln();
 }
 
-void flushln()
+void flushln(void)
 {
 	int lastmode;
 	int i;
@@ -321,7 +321,7 @@ void flushln()
  * For terminals that can overstrike, overstrike underlines and bolds.
  * We don't do anything with halfline ups and downs, or Greek.
  */
-void overstrike()
+void overstrike(void)
 {
 	register int i;
 #ifdef __GNUC__
@@ -362,7 +362,7 @@ void overstrike()
 	}
 }
 
-void iattr()
+void iattr(void)
 {
 	register int i;
 #ifdef __GNUC__
@@ -389,7 +389,7 @@ void iattr()
 	putwchar('\n');
 }
 
-void initbuf()
+void initbuf(void)
 {
 	if (obuf == NULL) {	/* First time. */
 		obuflen = INITBUF;
@@ -401,13 +401,13 @@ void initbuf()
 	}
 
 	/* assumes NORMAL == 0 */
-	bzero((char *)obuf, sizeof(struct CHAR) * obuflen);
+	memset(obuf, 0, sizeof(struct CHAR) * obuflen);
 	setcol(0);
 	maxcol = 0;
 	mode &= ALTSET;
 }
 
-void fwd()
+void fwd(void)
 {
 	int oldcol, oldmax;
 
@@ -418,7 +418,7 @@ void fwd()
 	maxcol = oldmax;
 }
 
-void reverse()
+void reverse(void)
 {
 	upln++;
 	fwd();
@@ -427,10 +427,8 @@ void reverse()
 	upln++;
 }
 
-void initinfo()
+void initinfo(void)
 {
-	char *tigetstr();
-
 	CURS_UP =		tigetstr("cuu1");
 	CURS_RIGHT =		tigetstr("cuf1");
 	CURS_LEFT =		tigetstr("cub1");

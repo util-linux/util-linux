@@ -18,8 +18,8 @@ typedef struct {
 #define	AIX_INFO_MAGIC_SWAPPED	0x59290700
 
 /* fdisk.c */
-#define aixlabel ((aix_partition *)buffer)
-extern char buffer[MAX_SECTOR_SIZE];
+#define aixlabel ((aix_partition *)MBRbuffer)
+extern char MBRbuffer[MAX_SECTOR_SIZE];
 extern char changed[MAXIMUM_PARTS];
 extern uint heads, sectors, cylinders;
 extern int show_begin;

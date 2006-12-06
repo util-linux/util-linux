@@ -38,6 +38,10 @@
 /*
  * script
  */
+#include <stdio.h>
+#include <stdlib.h>
+#include <paths.h>
+#include <time.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <termios.h>
@@ -45,8 +49,6 @@
 #include <sys/time.h>
 #include <sys/file.h>
 #include <sys/signal.h>
-#include <stdio.h>
-#include <paths.h>
 #include "nls.h"
 
 #ifdef __linux__
@@ -59,6 +61,7 @@
 #include <pty.h>
 #endif
 
+void finish(int);
 void done(void);
 void fail(void);
 void fixtty(void);
@@ -86,14 +89,9 @@ char	line[] = "/dev/ptyXX";
 int	aflg;
 
 int
-main(argc, argv)
-	int argc;
-	char *argv[];
-{
+main(int argc, char **argv) {
 	extern int optind;
 	int ch;
-	void finish();
-	char *getenv();
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -152,8 +150,7 @@ main(argc, argv)
 }
 
 void
-doinput()
-{
+doinput() {
 	register int cc;
 	char ibuf[BUFSIZ];
 
@@ -169,8 +166,7 @@ doinput()
 #include <sys/wait.h>
 
 void
-finish()
-{
+finish(int dummy) {
 	union wait status;
 	register int pid;
 	register int die = 0;
@@ -184,11 +180,10 @@ finish()
 }
 
 void
-dooutput()
-{
+dooutput() {
 	register int cc;
-	time_t tvec, time();
-	char obuf[BUFSIZ], *ctime();
+	time_t tvec;
+	char obuf[BUFSIZ];
 
 	(void) close(0);
 #ifdef HAVE_openpty
@@ -207,8 +202,7 @@ dooutput()
 }
 
 void
-doshell()
-{
+doshell() {
 	/***
 	int t;
 
@@ -235,8 +229,7 @@ doshell()
 }
 
 void
-fixtty()
-{
+fixtty() {
 	struct termios rtt;
 
 	rtt = tt;
@@ -246,18 +239,15 @@ fixtty()
 }
 
 void
-fail()
-{
+fail() {
 
 	(void) kill(0, SIGTERM);
 	done();
 }
 
 void
-done()
-{
-	time_t tvec, time();
-	char *ctime();
+done() {
+	time_t tvec;
 
 	if (subchild) {
 		tvec = time((time_t *)NULL);
@@ -272,8 +262,7 @@ done()
 }
 
 void
-getmaster()
-{
+getmaster() {
 #ifdef HAVE_openpty
 	(void) tcgetattr(0, &tt);
 	(void) ioctl(0, TIOCGWINSZ, (char *)&win);
@@ -318,8 +307,7 @@ getmaster()
 }
 
 void
-getslave()
-{
+getslave() {
 #ifndef HAVE_openpty
 	line[strlen("/dev/")] = 't';
 	slave = open(line, O_RDWR);

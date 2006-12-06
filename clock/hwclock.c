@@ -19,6 +19,7 @@
  * and Martin Ostermann <ost@coments.rwth-aachen.de>, aeb@cwi.nl, 990212.
  *
  * Fix for Award 2094 bug, Dave Coffin  (dcoffin@shore.net)  11/12/98
+ * Change of local time handling, Stefan Ring <e9725446@stud3.tuwien.ac.at>
  */
 
 /*
@@ -126,6 +127,9 @@ bool debug;
 bool badyear;
   /* Workaround for Award 4.50g BIOS bug: keep the year in a file. */
 
+int epoch_option = -1;
+  /* User-specified epoch, used when rtc fails to return epoch. */
+
 /*
  * Almost all Award BIOS's made between 04/26/94 and 05/31/95
  * have a nasty bug limiting the RTC year byte to the range 94-99.
@@ -136,7 +140,7 @@ bool badyear;
  * I recommend putting this command "hwclock --badyear" in the monthly
  * crontab, just to be safe. --  Dave Coffin  11/12/98
  */
-void
+static void
 write_date_to_file (struct tm *tm) {
   FILE *fp;
 
@@ -148,7 +152,7 @@ write_date_to_file (struct tm *tm) {
     perror(LASTDATE);
 }
 
-void
+static void
 read_date_from_file (struct tm *tm) {
   int last_mday, last_mon, last_year;
   FILE *fp;
@@ -378,18 +382,17 @@ mktime_tz(struct tm tm, const bool universal,
     *systime_p = 0;
     if (debug)
       printf(_("Invalid values in hardware clock: "
-             "%2d/%.2d/%.2d %.2d:%.2d:%.2d\n"),
-             tm.tm_year, tm.tm_mon+1, tm.tm_mday,
-             tm.tm_hour, tm.tm_min, tm.tm_sec
-             );
+             "%4d/%.2d/%.2d %.2d:%.2d:%.2d\n"),
+             tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday,
+             tm.tm_hour, tm.tm_min, tm.tm_sec);
   } else {
     *valid_p = TRUE;
     *systime_p = mktime_result;
     if (debug) 
-      printf(_("Hw clock time : %2d/%.2d/%.2d %.2d:%.2d:%.2d = "
-	       "%d seconds since 1969\n"),
-	     tm.tm_year, tm.tm_mon+1, tm.tm_mday,
-             tm.tm_hour, tm.tm_min, tm.tm_sec, (int) *systime_p);
+      printf(_("Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = "
+	       "%ld seconds since 1969\n"),
+	     tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday,
+             tm.tm_hour, tm.tm_min, tm.tm_sec, (long) *systime_p);
   }
   /* now put back the original zone.  */
   if (zone) setenv("TZ", zone, TRUE);
@@ -414,7 +417,8 @@ read_hardware_clock(const bool universal, bool *valid_p, time_t *systime_p){
     read_date_from_file(&tm);
 
   if (debug)
-    printf (_("Time read from Hardware Clock: %02d:%02d:%02d\n"),
+    printf (_("Time read from Hardware Clock: %4d/%.2d/%.2d %02d:%02d:%02d\n"),
+	    tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday,
             tm.tm_hour, tm.tm_min, tm.tm_sec);
   mktime_tz(tm, universal, valid_p, systime_p);
 }
@@ -596,8 +600,8 @@ interpret_date_string(const char *date_opt, time_t * const time_p) {
         int seconds_since_epoch;
         rc = sscanf(date_resp + sizeof(magic)-1, "%d", &seconds_since_epoch);
         if (rc < 1) {
-          fprintf(stderr, _("The date command issued by %s returned"
-                  "something other than an integer where the converted"
+          fprintf(stderr, _("The date command issued by %s returned "
+                  "something other than an integer where the converted "
                   "time value was expected.\n"
                   "The command was:\n  %s\nThe response was:\n %s\n"),
                   MYNAME, date_command, date_resp);
@@ -643,29 +647,33 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
     retcode = 1;
   } else {
     struct timeval tv;
+    struct tm *broken;
+    int minuteswest;
     int rc;
     
     tv.tv_sec = newtime;
     tv.tv_usec = 0;
     
-    tzset(); /* init timezone from TZ or ...zoneinfo/localtime */
+    broken = localtime(&newtime);
+#ifdef HAVE_tm_gmtoff
+    minuteswest = -broken->tm_gmtoff/60;		/* GNU extension */
+#else
+    minuteswest = timezone/60;
+    if (broken->tm_isdst)
+	    minuteswest -= 60;
+#endif
     
     if (debug) {
       printf( _("Calling settimeofday:\n") );
       printf( _("\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"),
              (long) tv.tv_sec, (long) tv.tv_usec );
-      printf( _("\ttz.tz_minuteswest = %ld\n"), timezone/60);
+      printf( _("\ttz.tz_minuteswest = %d\n"), minuteswest);
     }
     if (testing) {
       printf(_("Not setting system clock because running in test mode.\n"));
       retcode = 0;
     } else {
-      /* For documentation of settimeofday(), in addition to its man page,
-         see kernel/time.c in the Linux source code.
-	 The code used to have `-60*daylight' here, but that is wrong.
-	 The variable `daylight' does not specify whether it is DST now. */
-
-      const struct timezone tz = { timezone/60, 0 };
+      const struct timezone tz = { minuteswest, 0 };
 
       rc = settimeofday(&tv, &tz);
       if (rc != 0) {
@@ -1149,7 +1157,6 @@ main(int argc, char **argv, char **envp) {
   bool ARCconsole, utc, testing, directisa, Jensen, SRM, funky_toy;
   bool local_opt;
   char *date_opt;
-  int epoch_opt;
 
   const optStruct option_def[] = {
     { 'h', (char *) "help",      OPT_FLAG,   &help,      0 },
@@ -1163,7 +1170,7 @@ main(int argc, char **argv, char **envp) {
     { 'v', (char *) "version",   OPT_FLAG,   &version,   0 },
     { 'V', (char *) "version",   OPT_FLAG,   &version,   0 },
     { 0,   (char *) "date",      OPT_STRING, &date_opt,  0 },
-    { 0,   (char *) "epoch",     OPT_UINT,   &epoch_opt, 0 },
+    { 0,   (char *) "epoch",     OPT_UINT,   &epoch_option,0 },
     { 'u', (char *) "utc",       OPT_FLAG,   &utc,       0 },
     { 0,   (char *) "localtime", OPT_FLAG,   &local_opt, 0 },
     { 0,   (char *) "badyear",   OPT_FLAG,   &badyear,   0 },
@@ -1183,7 +1190,9 @@ main(int argc, char **argv, char **envp) {
 
   gettimeofday(&startup_time, NULL);  /* Remember what time we were invoked */
 
-  setlocale(LC_ALL, "");
+  /* not LC_ALL - the LC_NUMERIC part gives problems when
+     writing to /etc/adjtime - gqueri@mail.dotcom.fr */
+  setlocale(LC_MESSAGES, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
   textdomain(PACKAGE);
 
@@ -1192,13 +1201,12 @@ main(int argc, char **argv, char **envp) {
     version = utc = local_opt = ARCconsole = SRM = funky_toy =
     directisa = badyear = Jensen = testing = debug = FALSE;
   date_opt = NULL;
-  epoch_opt = -1; 
 
   argc_parse = argc; argv_parse = argv;
   optParseOptions(&argc_parse, argv_parse, option_def, 0);
     /* Uses and sets argc_parse, argv_parse. 
        Sets show, systohc, hctosys, adjust, utc, local_opt, version,
-       testing, debug, set, date_opt, getepoch, setepoch, epoch_opt
+       testing, debug, set, date_opt, getepoch, setepoch, epoch_option
        */
     /* This is an ugly routine - for example, if I give an incorrect
        option, it only says "unrecognized option" without telling
@@ -1252,12 +1260,17 @@ main(int argc, char **argv, char **envp) {
       fprintf(stderr, 
               _("Sorry, only the superuser can change the Hardware Clock.\n"));
       permitted = FALSE;
+    } else if (hctosys) {
+      fprintf(stderr,
+	      _("Sorry, only the superuser can change the System Clock.\n"));
+      permitted = FALSE;
     } else if (setepoch) {
       fprintf(stderr, 
               _("Sorry, only the superuser can change "
               "the Hardware Clock epoch in the kernel.\n"));
       permitted = FALSE;
-    } else permitted = TRUE;
+    } else
+      permitted = TRUE;
   }
 
   if (!permitted) retcode = 2;
@@ -1266,16 +1279,19 @@ main(int argc, char **argv, char **envp) {
     if (version) {
       printf(MYNAME " " VERSION "/%s\n",util_linux_version);
     } else if (getepoch || setepoch) {
-      manipulate_epoch(getepoch, setepoch, epoch_opt, testing);
+      manipulate_epoch(getepoch, setepoch, epoch_option, testing);
     } else {
       if (debug)
         printf(MYNAME " " VERSION "/%s\n",util_linux_version);
       determine_clock_access_method(directisa);
-      if (!ur)
-        fprintf(stderr, _("Cannot access the Hardware Clock via any known "
-                "method.  Use --debug option to see the details of our "
-                "search for an access method.\n"));
-      else
+      if (!ur) {
+        fprintf(stderr,
+		_("Cannot access the Hardware Clock via any known method.\n"));
+	if (!debug)
+		fprintf(stderr,
+			_("Use the --debug option to see the details of our "
+			  "search for an access method.\n"));
+      } else
         manipulate_clock(show, adjust, set, set_time, hctosys, systohc, 
                          startup_time, utc, local_opt, testing, &rc);
     }

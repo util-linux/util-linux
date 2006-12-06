@@ -8,22 +8,16 @@ include ../MCONFIG
 
 # Where to put man pages?
 
-MAN8= 		fdformat.8 mkfs.8 mkswap.8
+MAN8= 		fdformat.8 mkfs.8 mkswap.8 elvtune.8 fsck.minix.8 mkfs.minix.8 mkfs.bfs.8
 
 # Where to put binaries?
 # See the "install" rule for the links. . .
 
-SBIN= 		mkfs mkswap blockdev
+SBIN= 		mkfs mkswap blockdev elvtune fsck.minix mkfs.minix mkfs.bfs
 
 USRBIN=		fdformat
 
 ETC=		fdprm
-
-ifneq "$(CPU)" "sparc"
-# fsck and mkfs will compile, but there is no kernel support on sparc
-MAN8:=$(MAN8) fsck.minix.8 mkfs.minix.8 mkfs.bfs.8
-SBIN:=$(SBIN) fsck.minix mkfs.minix mkfs.bfs
-endif
 
 ifneq "$(HAVE_FDUTILS)" "yes"
 USRBIN:=$(USRBIN) setfdprm
@@ -39,7 +33,7 @@ endif
 
 all: $(SBIN) $(USRBIN)
 
-fsck.minix.o mkfs.minix.o: bitops.h
+fsck.minix.o mkfs.minix.o: bitops.h minix.h
 
 install: all
 	$(INSTALLDIR) $(SBINDIR) $(USRBINDIR) $(ETCDIR)

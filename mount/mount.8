@@ -40,7 +40,7 @@
 .SH NAME
 mount \- mount a file system
 .SH SYNOPSIS
-.BI "mount [\-hV]"
+.BI "mount [\-lhV]"
 .LP
 .BI "mount \-a [\-fFnrsvw] [\-t " vfstype ]
 .br
@@ -91,11 +91,12 @@ prints a help message;
 .RE
 prints a version string; and just
 .RS
-.BI "mount [-t" " type" ]
+.BI "mount [-l] [-t" " type" ]
 .RE
 lists all mounted file systems (of type
-.IR type )
-- see below.
+.IR type ).
+The option \-l adds the (ext2) labels in this listing.
+See below.
 
 The
 .I proc
@@ -269,6 +270,14 @@ flag to determine what the
 .B mount
 command is trying to do. It can also be used to add entries for devices
 that were mounted earlier with the -n option.
+.TP
+.B \-l
+Add the ext2 labels in the mount output. Mount must have permission to
+read the disk device (e.g. be suid root) for this to work.
+One can set such a label
+using the
+.BR e2label (8)
+utility.
 .TP
 .B \-n
 Mount without writing in
@@ -624,12 +633,15 @@ to the options given in
 Set checking level. When at least one of these options is set (and
 .B check=normal
 is set by default) the inodes and blocks bitmaps are checked upon mount
-(which can take half a minute or so on a big disk).
+(which can take half a minute or so on a big disk, and is rather useless).
 With strict checking, block deallocation checks that the block to free
 is in the data zone.
 .TP
 .BR check=none " / " nocheck
-No checking is done.
+No checking is done. This is fast. Recent kernels do not have a
+check option anymore - checking with
+.BR e2fsck (8)
+is more meaningful.
 .TP
 .B debug
 Print debugging info upon each (re)mount.
@@ -985,7 +997,10 @@ Especially useful options include
 .TP
 .B rsize=8192,wsize=8192
 This will make your nfs connection much faster than with the default
-buffer size of 1024.
+buffer size of 1024. (NFSv2 does not work with larger values of
+.B rsize
+and
+.BR wsize .)
 .TP
 .B hard
 The program accessing a file on a NFS mounted file system will hang
@@ -1251,6 +1266,7 @@ temporary file
 .BR umount (8),
 .BR swapon (8),
 .BR nfs (5),
+.BR e2label (8),
 .BR mountd (8),
 .BR nfsd (8),
 .BR mke2fs (8),

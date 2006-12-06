@@ -45,9 +45,9 @@
 #include <getopt.h>
 #include <sys/ioctl.h>
 #include <sys/stat.h>
+#include <sys/utsname.h>
 #include <linux/unistd.h>	/* _syscall */
 #include <linux/hdreg.h>	/* HDIO_GETGEO */
-#include <linux/fs.h>		/* BLKGETSIZE */
 #include "nls.h"
 #include "common.h"
 
@@ -69,8 +69,11 @@ int exit_status = 0;
 
 int force = 0;		/* 1: do what I say, even if it is stupid ... */
 int quiet = 0;		/* 1: suppress all warnings */
+/* IA-64 gcc spec file currently does -DLinux... */
+#undef Linux
 int Linux = 0;		/* 1: suppress warnings irrelevant for Linux */
 int DOS = 0;		/* 1: shift extended partitions by #sectors, not 1 */
+int DOS_extended = 0;	/* 1: use starting cylinder boundary of extd partn */
 int dump = 0;           /* 1: list in a format suitable for later input */
 int verify = 0;         /* 1: check that listed partition is reasonable */
 int no_write = 0;	/* 1: do not actually write to disk */
@@ -80,7 +83,7 @@ int opt_list = 0;
 char *save_sector_file = NULL;
 char *restore_sector_file = NULL;
 
-void
+static void
 warn(char *s, ...) {
     va_list p;
 
@@ -91,7 +94,7 @@ warn(char *s, ...) {
     va_end(p);
 }
 
-void
+static void
 error(char *s, ...) {
     va_list p;
 
@@ -102,7 +105,7 @@ error(char *s, ...) {
     va_end(p);
 }
 
-void
+static void
 fatal(char *s, ...) {
     va_list p;
 
@@ -125,23 +128,25 @@ fatal(char *s, ...) {
  * On the other hand, a 32 bit sector number is OK until 2TB.
  * The routines _llseek and sseek below are the only ones that
  * know about the loff_t type.
+ *
+ * Note: we use 512-byte sectors here, irrespective of the hardware ss.
  */
-#ifndef __alpha__
+#if !defined (__alpha__) && !defined (__ia64__)
 static
 _syscall5(int,  _llseek,  uint,  fd, ulong, hi, ulong, lo,
        loff_t *, res, uint, wh);
 #endif
 
-int
+static int
 sseek(char *dev, unsigned int fd, unsigned long s) {
     loff_t in, out;
     in = ((loff_t) s << 9);
     out = 1;
 
-#ifndef __alpha__
+#if !defined (__alpha__) && !defined (__ia64__)
     if (_llseek (fd, in>>32, in & 0xffffffff, &out, SEEK_SET) != 0) {
 #else
-	 if ((out = lseek(fd, in, SEEK_SET)) != in) {
+    if ((out = lseek(fd, in, SEEK_SET)) != in) {
 #endif
 	perror("llseek");
 	error(_("seek error on %s - cannot seek to %lu\n"), dev, s);
@@ -172,7 +177,7 @@ struct sector {
     char data[512];
 } *sectorhead;
 
-void
+static void
 free_sectors(void) {
     struct sector *s;
 
@@ -183,7 +188,7 @@ free_sectors(void) {
     }
 }
 
-struct sector *
+static struct sector *
 get_sector(char *dev, int fd, unsigned long sno) {
     struct sector *s;
 
@@ -198,7 +203,8 @@ get_sector(char *dev, int fd, unsigned long sno) {
 	fatal(_("out of memory - giving up\n"));
 
     if (read(fd, s->data, sizeof(s->data)) != sizeof(s->data)) {
-	perror("read");
+	if (errno)		/* 0 in case we read past end-of-disk */
+	    perror("read");
 	error(_("read error on %s - cannot read sector %lu\n"), dev, sno);
 	free(s);
 	return 0;
@@ -212,7 +218,7 @@ get_sector(char *dev, int fd, unsigned long sno) {
     return s;
 }
 
-int
+static int
 msdos_signature (struct sector *s) {
     if (*(unsigned short *) (s->data + 0x1fe) != 0xaa55) {
 	error(_("ERROR: sector %lu does not have an msdos signature\n"),
@@ -222,7 +228,7 @@ msdos_signature (struct sector *s) {
     return 1;
 }
 
-int
+static int
 write_sectors(char *dev, int fd) {
     struct sector *s;
 
@@ -241,7 +247,7 @@ write_sectors(char *dev, int fd) {
     return 1;
 }
 
-void
+static void
 ulong_to_chars(unsigned long u, char *uu) {
     int i;
 
@@ -251,7 +257,7 @@ ulong_to_chars(unsigned long u, char *uu) {
     }
 }
 
-unsigned long
+static unsigned long
 chars_to_ulong(unsigned char *uu) {
     int i;
     unsigned long u = 0;
@@ -261,7 +267,7 @@ chars_to_ulong(unsigned char *uu) {
     return u;
 }
 
-int
+static int
 save_sectors(char *dev, int fdin) {
     struct sector *s;
     char ss[516];
@@ -295,9 +301,9 @@ save_sectors(char *dev, int fdin) {
     return 1;
 }
 
-void reread_disk_partition(char *dev, int fd);
+static void reread_disk_partition(char *dev, int fd);
 
-int
+static int
 restore_sectors(char *dev) {
     int fdin, fdout, ct;
     struct stat statbuf;
@@ -370,6 +376,8 @@ restore_sectors(char *dev) {
  *      unsigned short cylinders;
  *      unsigned long start;
  * };
+ *
+ * For large disks g.cylinders is truncated, so we use BLKGETSIZE.
  */
 
 /*
@@ -383,52 +391,64 @@ restore_sectors(char *dev) {
 struct geometry {
 	unsigned long cylindersize;
 	unsigned long heads, sectors, cylinders;
+	unsigned long start;
 } B, F, U;
 
-void
-get_cylindersize(char *dev, int fd, int silent) {
+static struct geometry
+get_geometry(char *dev, int fd, int silent) {
     struct hd_geometry g;
-    int ioctl_ok = 0;
+    long size;
+    struct geometry R;
 
-    B.heads = B.sectors = B.cylinders = 0;
-
-    if (!ioctl(fd, HDIO_GETGEO, &g)) {
-	ioctl_ok = 1;
-
-	B.heads = g.heads;
-	B.sectors = g.sectors;
-	B.cylinders = g.cylinders;
+    if (ioctl(fd, BLKGETSIZE, &size)) {
+	size = 0;
+	if (!silent)
+	    printf(_("Disk %s: cannot get size\n"), dev);
     }
+    if (ioctl(fd, HDIO_GETGEO, &g)) {
+	g.heads = g.sectors = g.cylinders = g.start = 0;
+	if (!silent)
+	    printf(_("Disk %s: cannot get geometry\n"), dev);
+    }
+    R.heads = g.heads;
+    R.sectors = g.sectors;
+    R.cylindersize = R.heads * R.sectors;
+    R.cylinders = (R.cylindersize ? size / R.cylindersize : 0);
+    R.start = g.start;
+    return R;
+}
 
-    if (U.heads)
-      B.heads = U.heads;
-    if (U.sectors)
-      B.sectors = U.sectors;
-    if (U.cylinders)
-      B.cylinders = U.cylinders;
+static void
+get_cylindersize(char *dev, int fd, int silent) {
+    struct geometry R;
+
+    R = get_geometry(dev, fd, silent);
+
+    B.heads = (U.heads ? U.heads : R.heads);
+    B.sectors = (U.sectors ? U.sectors : R.sectors);
+    B.cylinders = (U.cylinders ? U.cylinders : R.cylinders);
 
     B.cylindersize = B.heads * B.sectors;
 
-    if (ioctl_ok) {
-	if (g.start && !force) {
-	    warn(
-		 _("Warning: start=%d - this looks like a partition rather than\n"
-		 "the entire disk. Using fdisk on it is probably meaningless.\n"
-		 "[Use the --force option if you really want this]\n"), g.start);
-	    exit(1);
-	}
-	if (B.heads != g.heads)
-	  warn(_("Warning: HDIO_GETGEO says that there are %d heads\n"),
-	       g.heads);
-	if (B.sectors != g.sectors)
-	  warn(_("Warning: HDIO_GETGEO says that there are %d sectors\n"),
-	       g.sectors);
-	if (B.cylinders != g.cylinders)
-	  warn(_("Warning: HDIO_GETGEO says that there are %d cylinders\n"),
-	       g.cylinders);
-    } else if (!silent)
-      if (!B.heads || !B.sectors || !B.cylinders)
-	printf(_("Disk %s: cannot get geometry\n"), dev);
+    if (R.start && !force) {
+	warn(
+	    _("Warning: start=%d - this looks like a partition rather than\n"
+	      "the entire disk. Using fdisk on it is probably meaningless.\n"
+	      "[Use the --force option if you really want this]\n"), R.start);
+	exit(1);
+    }
+
+    if (R.heads && B.heads != R.heads)
+	warn(_("Warning: HDIO_GETGEO says that there are %d heads\n"),
+	     R.heads);
+    if (R.sectors && B.sectors != R.sectors)
+	warn(_("Warning: HDIO_GETGEO says that there are %d sectors\n"),
+	     R.sectors);
+    if (R.cylinders && B.cylinders != R.cylinders
+	    && B.cylinders < 65536 && R.cylinders < 65536)
+	warn(_("Warning: BLKGETSIZE/HDIO_GETGEO says that there are %d cylinders\n"),
+	     R.cylinders);
+
     if (B.sectors > 63)
       warn(_("Warning: unlikely number of sectors (%d) - usually at most 63\n"
 	   "This will give problems with all software that uses C/H/S addressing.\n"),
@@ -444,7 +464,7 @@ chs zero_chs = { 0,0,0 };
 typedef struct { unsigned long h,s,c; } longchs;
 longchs zero_longchs;
 
-chs
+static chs
 longchs_to_chs (longchs aa, struct geometry G) {
     chs a;
 
@@ -461,7 +481,7 @@ longchs_to_chs (longchs aa, struct geometry G) {
     return a;
 }
 
-longchs
+static longchs
 chs_to_longchs (chs a) {
     longchs aa;
 
@@ -472,7 +492,7 @@ chs_to_longchs (chs a) {
     return aa;
 }
 
-longchs
+static longchs
 ulong_to_longchs (unsigned long sno, struct geometry G) {
     longchs aa;
 
@@ -486,27 +506,29 @@ ulong_to_longchs (unsigned long sno, struct geometry G) {
     }
 }
 
-unsigned long
-longchs_to_ulong (longchs aa, struct geometry G) {
-    return (aa.c*G.cylindersize + aa.h*G.sectors + aa.s - 1);
-}
-
-chs
+static chs
 ulong_to_chs (unsigned long sno, struct geometry G) {
     return longchs_to_chs(ulong_to_longchs(sno, G), G);
 }
 
-unsigned long
+#if 0
+static unsigned long
+longchs_to_ulong (longchs aa, struct geometry G) {
+    return (aa.c*G.cylindersize + aa.h*G.sectors + aa.s - 1);
+}
+
+static unsigned long
 chs_to_ulong (chs a, struct geometry G) {
     return longchs_to_ulong(chs_to_longchs(a), G);
 }
+#endif
 
-int
+static int
 is_equal_chs (chs a, chs b) {
     return (a.h == b.h && a.s == b.s && a.c == b.c);
 }
 
-int
+static int
 chs_ok (chs a, char *v, char *w) {
     longchs aa = chs_to_longchs(a);
     int ret = 1;
@@ -549,7 +571,7 @@ chs_ok (chs a, char *v, char *w) {
 
 /* List of partition types now in i386_sys_types.c */
 
-const char *
+static const char *
 sysname(unsigned char type) {
     struct systypes *s;
 
@@ -559,7 +581,7 @@ sysname(unsigned char type) {
     return _("Unknown");
 }
 
-void
+static void
 list_types(void) {
     struct systypes *s;
 
@@ -568,14 +590,14 @@ list_types(void) {
       printf("%2x  %s\n", s->type, _(s->name));
 }
 
-int
+static int
 is_extended(unsigned char type) {
 	return (type == EXTENDED_PARTITION
 		|| type == LINUX_EXTENDED
 		|| type == WIN98_EXTENDED);
 }
 
-int
+static int
 is_bsd(unsigned char type) {
 	return (type == BSD_PARTITION);
 }
@@ -597,7 +619,7 @@ struct partition {
 
 /* Unfortunately, partitions are not aligned, and non-Intel machines
    are unhappy with non-aligned integers. So, we need a copy by hand. */
-int
+static int
 copy_to_int(unsigned char *cp) {
     unsigned int m;
 
@@ -608,7 +630,7 @@ copy_to_int(unsigned char *cp) {
     return m;
 }
 
-void
+static void
 copy_from_int(int m, char *cp) {
     *cp++ = (m & 0xff); m >>= 8;
     *cp++ = (m & 0xff); m >>= 8;
@@ -616,7 +638,7 @@ copy_from_int(int m, char *cp) {
     *cp++ = (m & 0xff);
 }
 
-void
+static void
 copy_to_part(char *cp, struct partition *p) {
     p->bootable = *cp++;
     p->begin_chs.h = *cp++;
@@ -630,7 +652,7 @@ copy_to_part(char *cp, struct partition *p) {
     p->nr_sects = copy_to_int(cp+4);
 }
 
-void
+static void
 copy_from_part(struct partition *p, char *cp) {
     *cp++ = p->bootable;
     *cp++ = p->begin_chs.h;
@@ -661,14 +683,14 @@ struct part_desc {
 #define BSD_TYPE	1
 } zero_part_desc;
 
-struct part_desc *
+static struct part_desc *
 outer_extended_partition(struct part_desc *p) {
     while (p->ep)
       p = p->ep;
     return p;
 }
 
-int
+static int
 is_parent(struct part_desc *pp, struct part_desc *p) {
     while (p) {
 	if (pp == p)
@@ -684,7 +706,7 @@ struct disk_desc {
 } oldp, newp;
 
 /* determine where on the disk this information goes */
-void
+static void
 add_sector_and_offset(struct disk_desc *z) {
     int pno;
     struct part_desc *p;
@@ -697,7 +719,7 @@ add_sector_and_offset(struct disk_desc *z) {
 }
 
 /* tell the kernel to reread the partition tables */
-int
+static int
 reread_ioctl(int fd) {
     if(ioctl(fd, BLKRRPART)) {
 	perror("BLKRRPART");
@@ -706,7 +728,7 @@ reread_ioctl(int fd) {
     return 0;
 }
 
-int
+static int
 is_blockdev(int fd) {
     struct stat statbuf;
 
@@ -714,7 +736,7 @@ is_blockdev(int fd) {
 }
 
 /* reread after writing */
-void
+static void
 reread_disk_partition(char *dev, int fd) {
     printf(_("Re-reading the partition table ...\n"));
     fflush(stdout);
@@ -733,7 +755,7 @@ reread_disk_partition(char *dev, int fd) {
 }
 
 /* find Linux name of this partition, assuming that it will have a name */
-int
+static int
 index_to_linux(int pno, struct disk_desc *z) {
     int i, ct = 1;
     struct part_desc *p = &(z->partitions[0]);
@@ -743,7 +765,7 @@ index_to_linux(int pno, struct disk_desc *z) {
     return ct;
 }
 
-int
+static int
 linux_to_index(int lpno, struct disk_desc *z) {
     int i, ct = 0;
     struct part_desc *p = &(z->partitions[0]);
@@ -754,7 +776,7 @@ linux_to_index(int lpno, struct disk_desc *z) {
     return -1;
 }
 
-int
+static int
 asc_to_index(char *pnam, struct disk_desc *z) {
     int pnum, pno;
 
@@ -784,7 +806,7 @@ int one_only = 0;
 int one_only_pno;
 int increment = 0;
 
-void
+static void
 set_format(char c) {
     switch(c) {
       default:
@@ -796,7 +818,7 @@ set_format(char c) {
     }
 }
 
-unsigned long
+static unsigned long
 unitsize(int format) {
     default_format = (B.cylindersize ? F_CYLINDER : F_MEGABYTE);
     if (!format && !(format = specified_format))
@@ -816,7 +838,7 @@ unitsize(int format) {
     }
 }
 
-unsigned long
+static unsigned long
 get_disksize(int format) {
     unsigned long cs = B.cylinders;
     if (cs && leave_last)
@@ -824,7 +846,7 @@ get_disksize(int format) {
     return (cs * B.cylindersize) / unitsize(format);
 }
 
-void
+static void
 out_partition_header(char *dev, int format, struct geometry G) {
     if (dump) {
 	printf(_("# partition table of %s\n"), dev);
@@ -894,7 +916,7 @@ out_roundup_size(int width, unsigned long n, unsigned long unit) {
     putchar(' ');
 }
 
-int
+static int
 get_fdisk_geometry(struct part_desc *p) {
     chs b = p->p.end_chs;
     longchs bb = chs_to_longchs(b);
@@ -904,7 +926,7 @@ get_fdisk_geometry(struct part_desc *p) {
     return (F.sectors != B.sectors || F.heads != B.heads);
 }
 
-void
+static void
 out_partition(char *dev, int format, struct part_desc *p,
 	      struct disk_desc *z, struct geometry G) {
     unsigned long start, end, size;
@@ -916,7 +938,7 @@ out_partition(char *dev, int format, struct part_desc *p,
     pno = p - &(z->partitions[0]); 	/* our index */
     lpno = index_to_linux(pno, z); 	/* name of next one that has a name */
     if(pno == linux_to_index(lpno, z))  /* was that us? */
-      printf("%8s%-2u", dev, lpno);     /* yes */
+      printf("%s", partname(dev, lpno, 10));  /* yes */
     else if(show_extended)
       printf("    -     ");
     else
@@ -1009,7 +1031,7 @@ out_partition(char *dev, int format, struct part_desc *p,
     }
 }
 
-void
+static void
 out_partitions(char *dev, struct disk_desc *z) {
     struct part_desc *p;
     int pno, format = 0;
@@ -1020,7 +1042,7 @@ out_partitions(char *dev, struct disk_desc *z) {
 	for (pno=0; pno < z->partno; pno++) {
 	    p = &(z->partitions[pno]);
 	    if (p->size != 0 && p->p.sys_type != 0) {
-		if (get_fdisk_geometry(p))
+		if (get_fdisk_geometry(p) && !dump)
 		    printf(
 		   _("Warning: The first partition looks like it was made\n"
 		     "  for C/H/S=*/%ld/%ld (instead of %ld/%ld/%ld).\n"
@@ -1046,7 +1068,7 @@ disj(struct part_desc *p, struct part_desc *q) {
 	    && q->start + q->size <= p->start + p->size));
 }
 
-char *
+static char *
 pnumber(struct part_desc *p, struct disk_desc *z) {
     static char buf[20];
     int this, next;
@@ -1062,7 +1084,7 @@ pnumber(struct part_desc *p, struct disk_desc *z) {
     return buf;
 }
 
-int
+static int
 partitions_ok(struct disk_desc *z) {
     struct part_desc *partitions = &(z->partitions[0]), *p, *q;
     int partno = z->partno;
@@ -1258,6 +1280,20 @@ extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z)
 
     here = start = ep->start;
 
+    if (B.cylindersize && start % B.cylindersize) {
+	/* This is BAD */
+	if (DOS_extended) {
+	    here = start -= (start % B.cylindersize);
+	    printf(_("Warning: shifted start of the extd partition from %ld to %ld\n"),
+		   ep->start, start);
+	    printf(_("(For listing purposes only. Do not change its contents.)\n"));
+	} else {
+	    printf(_("Warning: extended partition does not start at a "
+		     "cylinder boundary.\n"));
+	    printf(_("DOS and Linux will interpret the contents differently.\n"));
+	}
+    }
+
     while (moretodo) {
 	moretodo = 0;
 
@@ -1365,6 +1401,22 @@ bsd_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z) {
 	z->partno = pno;
 }
 
+#define MAKE_VERSION(p,q,r)     (65536*(p) + 256*(q) + (r))
+
+static int
+linux_version_code(void) {
+        struct utsname my_utsname;
+        int p, q, r;
+
+        if (uname(&my_utsname) == 0) {
+                p = atoi(strtok(my_utsname.release, "."));
+                q = atoi(strtok(NULL, "."));
+                r = atoi(strtok(NULL, "."));
+                return MAKE_VERSION(p,q,r);
+        }
+        return 0;
+}
+
 static int
 msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
     int i;
@@ -1373,6 +1425,7 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
     struct sector *s;
     struct part_desc *partitions = &(z->partitions[0]);
     int pno = z->partno;
+    int bsd_later = (linux_version_code() >= MAKE_VERSION(2,3,40));
 
     if (!(s = get_sector(dev, fd, start)))
 	return 0;
@@ -1421,7 +1474,7 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
 	    }
 	    extended_partition(dev, fd, &partitions[i], z);
 	}
-	if (is_bsd(partitions[i].p.sys_type)) {
+	if (!bsd_later && is_bsd(partitions[i].p.sys_type)) {
 	    if (!partitions[i].size) {
 		printf(_("strange..., a BSD partition of size 0?\n"));
 		continue;
@@ -1429,6 +1482,19 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
 	    bsd_partition(dev, fd, &partitions[i], z);
 	}
     }
+
+    if (bsd_later) {
+	for (i=0; i<4; i++) {
+	    if (is_bsd(partitions[i].p.sys_type)) {
+		if (!partitions[i].size) {
+		    printf(_("strange..., a BSD partition of size 0?\n"));
+		    continue;
+		}
+		bsd_partition(dev, fd, &partitions[i], z);
+	    }
+	}
+    }
+	    
     return 1;
 }
 
@@ -1447,7 +1513,7 @@ amiga_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
 	return 0;
 }
 
-void
+static void
 get_partitions(char *dev, int fd, struct disk_desc *z) {
     z->partno = 0;
 
@@ -1460,7 +1526,7 @@ get_partitions(char *dev, int fd, struct disk_desc *z) {
     }
 }
 
-int
+static int
 write_partitions(char *dev, int fd, struct disk_desc *z) {
     struct sector *s;
     struct part_desc *partitions = &(z->partitions[0]), *p;
@@ -1543,7 +1609,7 @@ struct dumpfld {
 #define RD_EOF (-1)
 #define RD_CMD (-2)
 
-int
+static int
 read_stdin(unsigned char **fields, unsigned char *line, int fieldssize, int linesize) {
     unsigned char *lp, *ip;
     int c, fno;
@@ -1635,7 +1701,7 @@ read_stdin(unsigned char **fields, unsigned char *line, int fieldssize, int line
 }
 
 /* read a number, use default if absent */
-int
+static int
 get_ul(char *u, unsigned long *up, unsigned long def, int base) {
     char *nu;
 
@@ -1672,7 +1738,7 @@ int all_logicals_inside_outermost_extended = 1;
 enum { NESTED, CHAINED, ONESECTOR } boxes = NESTED;
 
 /* find the default value for <start> - assuming entire units */
-unsigned long
+static unsigned long
 first_free(int pno, int is_extended, struct part_desc *ep, int format,
 	   unsigned long mid, struct disk_desc *z) {
     unsigned long ff, fff;
@@ -1716,7 +1782,7 @@ first_free(int pno, int is_extended, struct part_desc *ep, int format,
 }
 
 /* find the default value for <size> - assuming entire units */
-unsigned long
+static unsigned long
 max_length(int pno, int is_extended, struct part_desc *ep, int format,
 	   unsigned long start, struct disk_desc *z) {
     unsigned long fu;
@@ -1745,7 +1811,7 @@ max_length(int pno, int is_extended, struct part_desc *ep, int format,
 
 /* compute starting sector of a partition inside an extended one */
 /* ep is 0 or points to surrounding extended partition */
-int
+static int
 compute_start_sect(struct part_desc *p, struct part_desc *ep) {
     unsigned long base;
     int inc = (DOS && B.sectors) ? B.sectors : 1;
@@ -1785,7 +1851,7 @@ compute_start_sect(struct part_desc *p, struct part_desc *ep) {
 }    
 
 /* build the extended partition surrounding a given logical partition */
-int
+static int
 build_surrounding_extended(struct part_desc *p, struct part_desc *ep,
 			   struct disk_desc *z) {
     int inc = (DOS && B.sectors) ? B.sectors : 1;
@@ -1819,7 +1885,7 @@ build_surrounding_extended(struct part_desc *p, struct part_desc *ep,
     return 1;
 }
 
-int
+static int
 read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 	  struct disk_desc *z) {
     unsigned char line[1000];
@@ -1837,7 +1903,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
     if (interactive) {
 	if (pct == 0 && (show_extended || pno == 0))
 	  warn("\n");
-	warn("%8s%d: ", dev, lpno);
+	warn("%s:", partname(dev, lpno, 10));
     }
 
     /* read input line - skip blank lines when reading from a file */
@@ -1932,7 +1998,8 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 	p.size -= (p.size % unitsize(format));
     }
     if (p.size > ml1) {
-	warn(_("Warning: exceeds max allowable size (%lu)\n"), ml1 / unitsize(0));
+	warn(_("Warning: given size (%lu) exceeds max allowable size (%lu)\n"),
+	     (p.size + unitsize(0) - 1) / unitsize(0), ml1 / unitsize(0));
 	if (!force)
 	  return 0;
     }
@@ -2022,7 +2089,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 
 /* ep either points to the extended partition to contain this one,
    or to the empty partition that may become extended or is 0 */
-int
+static int
 read_partition(char *dev, int interactive, int pno, struct part_desc *ep,
 	       struct disk_desc *z) {
     struct part_desc *p = &(z->partitions[pno]);
@@ -2050,7 +2117,7 @@ read_partition(char *dev, int interactive, int pno, struct part_desc *ep,
     return 1;
 }
 
-void
+static void
 read_partition_chain(char *dev, int interactive, struct part_desc *ep,
 		     struct disk_desc *z) {
     int i, base;
@@ -2082,7 +2149,7 @@ read_partition_chain(char *dev, int interactive, struct part_desc *ep,
     }
 }
 
-void
+static void
 read_input(char *dev, int interactive, struct disk_desc *z) {
     int i;
     struct part_desc *partitions = &(z->partitions[0]), *ep;
@@ -2191,6 +2258,7 @@ static const struct option long_opts[] = {
     { "sectors",    required_argument, NULL, 'S' },
     { "activate",   optional_argument, NULL, 'A' },
     { "DOS",              no_argument, NULL, 'D' },
+    { "DOS-extended",	  no_argument, NULL, 'E' },
     { "Linux",            no_argument, NULL, 'L' },
     { "re-read",          no_argument, NULL, 'R' },
     { "list-types",       no_argument, NULL, 'T' },
@@ -2219,7 +2287,7 @@ static struct devd {
     { "ed", "abcd" }
 };
 
-int
+static int
 is_ide_cdrom(char *device) {
     /* No device was given explicitly, and we are trying some
        likely things.  But opening /dev/hdc may produce errors like
@@ -2244,14 +2312,14 @@ is_ide_cdrom(char *device) {
     return 0;
 }
 
-void do_list(char *dev, int silent);
-void do_size(char *dev, int silent);
-void do_geom(char *dev, int silent);
-void do_fdisk(char *dev);
-void do_reread(char *dev);
-void do_change_id(char *dev, char *part, char *id);
-void do_unhide(char **av, int ac, char *arg);
-void do_activate(char **av, int ac, char *arg);
+static void do_list(char *dev, int silent);
+static void do_size(char *dev, int silent);
+static void do_geom(char *dev, int silent);
+static void do_fdisk(char *dev);
+static void do_reread(char *dev);
+static void do_change_id(char *dev, char *part, char *id);
+static void do_unhide(char **av, int ac, char *arg);
+static void do_activate(char **av, int ac, char *arg);
 
 int total_size;
 
@@ -2325,6 +2393,8 @@ main(int argc, char **argv) {
 	    U.cylinders = atoi(optarg); break;
 	  case 'D':
 	    DOS = 1; break;
+	  case 'E':
+	    DOS_extended = 1; break;
 	  case 'H':
 	    U.heads = atoi(optarg); break;
 	  case 'L':
@@ -2463,7 +2533,7 @@ main(int argc, char **argv) {
  *  H. Listing the current situation
  */
 
-int
+static int
 my_open (char *dev, int rw, int silent) {
     int fd, mode;
 
@@ -2476,7 +2546,7 @@ my_open (char *dev, int rw, int silent) {
     return fd;
 }
 
-void
+static void
 do_list (char *dev, int silent) {
     int fd;
     struct disk_desc *z;
@@ -2502,25 +2572,23 @@ do_list (char *dev, int silent) {
     }
 }
 
-void
+static void
 do_geom (char *dev, int silent) {
     int fd;
-    struct hd_geometry g;
+    struct geometry R;
 
     fd = my_open(dev, 0, silent);
     if (fd < 0)
 	return;
 
-    /* get_cylindersize(dev, fd, silent); */
-    if (!ioctl(fd, HDIO_GETGEO, &g))
-	printf(_("%s: %d cylinders, %d heads, %d sectors/track\n"),
-	       dev, g.cylinders, g.heads, g.sectors);
-    else
-	printf(_("%s: unknown geometry\n"), dev);
+    R = get_geometry(dev, fd, silent);
+    if (R.cylinders)
+	printf(_("%s: %ld cylinders, %ld heads, %ld sectors/track\n"),
+	       dev, R.cylinders, R.heads, R.sectors);
 }
 
 /* for compatibility with earlier fdisk: provide option -s */
-void
+static void
 do_size (char *dev, int silent) {
     int fd;
     long size;
@@ -2575,7 +2643,7 @@ do_size (char *dev, int silent) {
  * The present syntax was chosen to be (somewhat) compatible with the
  * activate from the LILO package.
  */
-void
+static void
 set_active (struct disk_desc *z, char *pnam) {
     int pno;
 
@@ -2583,7 +2651,7 @@ set_active (struct disk_desc *z, char *pnam) {
     z->partitions[pno].p.bootable = 0x80;
 }
 
-void
+static void
 do_activate (char **av, int ac, char *arg) {
     char *dev = av[0];
     int fd;
@@ -2605,7 +2673,7 @@ do_activate (char **av, int ac, char *arg) {
 	    if (z->partitions[pno].p.bootable) {
 		lpno = index_to_linux(pno, z);
 		if (pno == linux_to_index(lpno, z))
-		  printf("%s%d\n", dev, lpno);
+		  printf("%s\n", partname(dev, lpno, 0));
 		else
 		  printf("%s#%d\n", dev, pno);
 		if (z->partitions[pno].p.bootable != 0x80)
@@ -2639,7 +2707,7 @@ do_activate (char **av, int ac, char *arg) {
 	   "but the DOS MBR will only boot a disk with 1 active partition.\n"), i);
 }
 
-void
+static void
 set_unhidden (struct disk_desc *z, char *pnam) {
     int pno;
     unsigned char id;
@@ -2656,7 +2724,7 @@ set_unhidden (struct disk_desc *z, char *pnam) {
 /*
  * maybe remove and make part of --change-id
  */
-void
+static void
 do_unhide (char **av, int ac, char *arg) {
     char *dev = av[0];
     int fd, rw, i;
@@ -2684,7 +2752,8 @@ do_unhide (char **av, int ac, char *arg) {
       exit_status = 1;
 }
 
-void do_change_id(char *dev, char *pnam, char *id) {
+static void
+do_change_id(char *dev, char *pnam, char *id) {
     int fd, rw, pno;
     struct disk_desc *z;
     unsigned long i;
@@ -2714,7 +2783,7 @@ void do_change_id(char *dev, char *pnam, char *id) {
       exit_status = 1;
 }
 
-void
+static void
 do_reread(char *dev) {
     int fd;
 
@@ -2727,7 +2796,7 @@ do_reread(char *dev) {
  *  I. Writing the new situation
  */
 
-void
+static void
 do_fdisk(char *dev){
     int fd;
     int c, answer;
@@ -2748,15 +2817,15 @@ do_fdisk(char *dev){
     if(!no_write && !no_reread) {
 	warn(_("Checking that no-one is using this disk right now ...\n"));
 	if(reread_ioctl(fd)) {
-	    printf(_("\nThis disk is currently in use - repartitioning is probably a bad idea."
-		   "Umount all file systems, and swapoff all swap partitions on this disk."
+	    printf(_("\nThis disk is currently in use - repartitioning is probably a bad idea.\n"
+		   "Umount all file systems, and swapoff all swap partitions on this disk.\n"
 		   "Use the --no-reread flag to suppress this check.\n"));
 	    if (!force) {
 		printf(_("Use the --force flag to overrule all checks.\n"));
 		exit(1);
 	    }
 	} else
-	  warn(_("OK"));
+	  warn(_("OK\n"));
     }
 
     z = &oldp;

@@ -18,7 +18,8 @@ MAN1.PASSWD=    passwd.1
 
 MAN8.GETTY=	agetty.8
 
-MAN8.INIT=	fastboot.8 fasthalt.8 halt.8 reboot.8 simpleinit.8 shutdown.8
+MAN8.INIT=	fastboot.8 fasthalt.8 halt.8 reboot.8 simpleinit.8 shutdown.8 \
+		need.8
 
 MAN8.PUTILS=	vipw.8 vigr.8
 
@@ -27,7 +28,7 @@ MAN8.PUTILS=	vipw.8 vigr.8
 
 SBIN.GETTY=	agetty
 
-SBIN.INIT=	simpleinit shutdown
+SBIN.INIT=	simpleinit shutdown need
 
 BIN.PUTILS=	login
 
@@ -109,9 +110,14 @@ newgrp: newgrp.o
 setpwnam.o: $(LIB)/pathnames.h
 shutdown.o: $(LIB)/pathnames.h $(LIB)/linux_reboot.h
 shutdown: shutdown.o $(LIB)/my_reboot.o
-simpleinit.o: $(LIB)/pathnames.h $(LIB)/linux_reboot.h
+simpleinit.o: $(LIB)/pathnames.h $(LIB)/linux_reboot.h simpleinit.h
+need.o: simpleinit.h
+
 simpleinit: simpleinit.o $(LIB)/my_reboot.o
 	$(CC) $(LDFLAGS) -o $@ $^ $(CRYPT)
+
+need: need.o
+	$(CC) $(LDFLAGS) -o $@ $^
 
 vipw.o: $(LIB)/pathnames.h
 vipw: vipw.o
@@ -177,6 +183,7 @@ install-init: $(SBIN.INIT)
 	(cd $(SHUTDOWNDIR); ln -sf shutdown fastboot)
 	(cd $(SHUTDOWNDIR); ln -sf shutdown halt)
 	(cd $(SHUTDOWNDIR); ln -sf shutdown fasthalt)
+	(cd $(SHUTDOWNDIR); ln -sf need display-services)
 
 
 install-getty: $(SBIN.GETTY)

@@ -27,6 +27,8 @@ SBIN= 		ctrlaltdel
 
 NOTMADE=
 
+CWFLAGS := $(subst -Wmissing-prototypes,,$(CFLAGS))
+
 ifeq "$(HAVE_SLN)" "no"
 ifeq "$(CAN_DO_STATIC)" "no"
 NOTMADE=nosln
@@ -46,6 +48,16 @@ USRINFO=        ipc.info
 
 all: $(SBIN) $(BIN) $(USRBIN) $(USRSBIN) $(NOTMADE)
 
+# Sometimes indirectly include <asm/bitops.h>
+cytune.o: cytune.c
+	$(CC) $(CWFLAGS) -c $< -o $@
+
+ipcs.o: ipcs.c
+	$(CC) $(CWFLAGS) -c $< -o $@
+
+ipcrm.o: ipcrm.c
+	$(CC) $(CWFLAGS) -c $< -o $@
+
 sln: sln.c
 	$(CC) -static $(CFLAGS) $(LDFLAGS) $< -o $@
 
@@ -57,6 +69,7 @@ nosln:
 arch: arch.o
 ctrlaltdel.o: ctrlaltdel.c $(LIB)/linux_reboot.h
 ctrlaltdel: ctrlaltdel.o $(LIB)/my_reboot.o
+cytune: cytune.o
 ipcrm: ipcrm.o
 ipcs: ipcs.o
 rdev: rdev.o

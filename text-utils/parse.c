@@ -84,7 +84,7 @@ void add(char *fmt)
 	static FS **nextfs;
 	FS *tfs;
 	FU *tfu, **nextfu;
-	char *savep, *emalloc();
+	char *savep;
 
 	/* start new linked list of format units */
 	/* NOSTRICT */
@@ -491,7 +491,7 @@ static void badcnt(char *s)
 	exit(1);
 }
 
-static void badsfmt()
+static void badsfmt(void)
 {
 	(void)fprintf(stderr,
 	    _("hexdump: %%s requires a precision or a byte count.\n"));

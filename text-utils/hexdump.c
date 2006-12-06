@@ -37,6 +37,7 @@
 
 #include <sys/types.h>
 #include <stdio.h>
+#include <string.h>
 #include "hexdump.h"
 #include "nls.h"
 
@@ -45,18 +46,16 @@ int blocksize;				/* data block size */
 int exitval;				/* final exit value */
 int length = -1;			/* max bytes to read */
 
-int main(argc, argv)
-	int argc;
-	char **argv;
+int main(int argc, char **argv)
 {
 	register FS *tfs;
-	char *p, *rindex();
+	char *p;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	if (!(p = rindex(argv[0], 'o')) || strcmp(p, "od"))
+	if (!(p = strrchr(argv[0], 'o')) || strcmp(p, "od"))
 		newsyntax(argc, &argv);
 	else
 		oldsyntax(argc, &argv);

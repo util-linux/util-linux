@@ -80,9 +80,7 @@ wchar_t default_separator[] = { '\t', ' ', 0 };
 wchar_t *separator = default_separator;	/* field separator for table option */
 
 int
-main(argc, argv)
-	int argc;
-	char **argv;
+main(int argc, char **argv)
 {
 	struct winsize win;
 	FILE *fp;
