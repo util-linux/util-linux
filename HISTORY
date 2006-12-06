@@ -1,3 +1,6 @@
+util-linux 2.12q
+* updated translation: nl
+
 util-linux 2.12q-pre2
 
 * sfdisk: document -G option in --help output
