@@ -46,6 +46,7 @@
 
 #include <unistd.h>		/* for geteuid() */
 #include <fcntl.h>		/* for O_RDWR */
+#include <errno.h>
 #include "../defines.h"		/* for HAVE_sys_io_h */
 #include "nls.h"
 

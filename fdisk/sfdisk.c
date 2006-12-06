@@ -150,7 +150,7 @@ fatal(char *s, ...) {
 /*
  * arm needs PACKED - use it everywhere?
  */
-#if defined(__GNUC__) && defined(__arm__)
+#if defined(__GNUC__) && (defined(__arm__) || defined(__alpha__))
 # define PACKED __attribute__ ((packed))
 #else
 # define PACKED

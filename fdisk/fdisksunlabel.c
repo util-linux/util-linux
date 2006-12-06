@@ -379,8 +379,8 @@ void create_sunlabel(void)
 	}
 
 	set_all_unchanged();
-	set_changed(0);
 	get_boot(create_empty_sun);
+	set_changed(0);
 }
 
 void

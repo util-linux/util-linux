@@ -125,7 +125,7 @@ uninstall:
 cat-id-tbl.o: $(INTL)/libgettext.h
 
 clean:
-	rm -f core core.* *~ *.o util-linux.pot cat-id-tbl.tmp
+	rm -f core core.* *~ *.o util-linux.pot cat-id-tbl.c cat-id-tbl.tmp
 
 distclean: clean
 	rm -f POTFILES *.gmo *.mo *.msg *.cat *.cat.m

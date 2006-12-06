@@ -1,3 +1,13 @@
+util-linux 2.12l
+
+* Makefile: remove cat-id-tbl.c upon make clean
+* fdisk: fixed a bug that would cause a non-update of a sun disklabel
+* fdisk: use sectorsize instead of 512 for SGI (Eric Y. Theriault)
+* fdisk: use __attribute__((packed)) for alpha, ARM: avoid unaligned accesses
+* hwclock: actually use HAVE_tm_gmtoff
+* swapon: fix priority handling
+* umount: refuse to unmount an empty string
+
 util-linux 2.12k
 
 * cfdisk: fixed a signed character bug causing problems for Spanish users

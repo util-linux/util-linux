@@ -87,7 +87,7 @@ drift since the last time the clock was set or adjusted.  See discussion
 below.
 .TP
 .B \-\-getepoch
-Print out standard output the kernel's Hardware Clock epoch value.
+Print the kernel's Hardware Clock epoch value to standard output.
 This is the number of years into AD to which a zero year value in the
 Hardware Clock refers.  For example, if you are using the convention
 that the year counter in your Hardware Clock contains the number of
@@ -344,8 +344,11 @@ But don't be misled -- almost nobody cares what timezone the kernel
 thinks it is in.  Instead, programs that care about the timezone
 (perhaps because they want to display a local time for you) almost
 always use a more traditional method of determining the timezone: They
-use the TZ environment variable and/or the /usr/local/timezone
-directory, as explained in the man page for tzset(3).  However, some
+use the TZ environment variable and/or the
+.I /usr/share/zoneinfo
+directory, as explained in the man page for
+.BR tzset (3).
+However, some
 programs and fringe parts of the Linux kernel such as filesystems use
 the kernel timezone value.  An example is the vfat filesystem.  If the
 kernel timezone value is wrong, the vfat filesystem will report and
@@ -353,7 +356,8 @@ set the wrong timestamps on files.
 .PP
 .B hwclock
 sets the kernel timezone to the value indicated by TZ and/or
-/usr/local/timezone when you set the System Time using the 
+.I /usr/share/zoneinfo
+when you set the System Time using the 
 .B \-\-hctosys
 option.
 .PP

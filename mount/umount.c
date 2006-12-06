@@ -549,6 +549,11 @@ umount_file (char *arg) {
 	int fstab_has_user, fstab_has_users, fstab_has_owner, fstab_has_group;
 	int ok;
 
+	if (!*arg) {		/* "" would be expanded to `pwd` */
+		die(2, _("Cannot umount \"\"\n"));
+		return 0;
+	}
+
 	file = canonicalize(arg); /* mtab paths are canonicalized */
 	if (verbose > 1)
 		printf(_("Trying to umount %s\n"), file);

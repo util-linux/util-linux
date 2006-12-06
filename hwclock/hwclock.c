@@ -82,6 +82,7 @@
 #include <getopt.h>
 #include <sysexits.h>
 
+#include "../defines.h"		/* for HAVE_tm_gmtoff */
 #include "clock.h"
 #include "nls.h"
 

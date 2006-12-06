@@ -14,7 +14,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.12\n"
-"POT-Creation-Date: 2004-12-13 21:53+0100\n"
+"POT-Creation-Date: 2004-12-15 19:42+0100\n"
 "PO-Revision-Date: 2003-08-20 11:40+0300\n"
 "Last-Translator: Lauri Nurmi <lanurmi@iki.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -1606,7 +1606,7 @@ msgstr "   Looginen"
 #. type id
 #. type name
 #: fdisk/cfdisk.c:2010 fdisk/fdisk.c:1435 fdisk/fdisk.c:1747
-#: fdisk/fdisksgilabel.c:237 fdisk/fdisksunlabel.c:689 fdisk/sfdisk.c:650
+#: fdisk/fdisksgilabel.c:239 fdisk/fdisksunlabel.c:689 fdisk/sfdisk.c:650
 msgid "Unknown"
 msgstr "Tuntematon"
 
@@ -2716,7 +2716,7 @@ msgstr ""
 msgid "%*s Boot      Start         End      Blocks   Id  System\n"
 msgstr "%*s Käynn     Alku          Loppu    Lohkot   Id  Järjestelmä\n"
 
-#: fdisk/fdisk.c:1719 fdisk/fdisksgilabel.c:220 fdisk/fdisksunlabel.c:674
+#: fdisk/fdisk.c:1719 fdisk/fdisksgilabel.c:222 fdisk/fdisksunlabel.c:674
 msgid "Device"
 msgstr "Laite"
 
@@ -2799,12 +2799,12 @@ msgstr "Varattujen sektoreiden kokonaismäärä %d on suurempi kuin maksimi %d\n"
 msgid "%lld unallocated sectors\n"
 msgstr "%d varaamatonta sektoria\n"
 
-#: fdisk/fdisk.c:1915 fdisk/fdisksgilabel.c:629 fdisk/fdisksunlabel.c:503
+#: fdisk/fdisk.c:1915 fdisk/fdisksgilabel.c:631 fdisk/fdisksunlabel.c:503
 #, c-format
 msgid "Partition %d is already defined.  Delete it before re-adding it.\n"
 msgstr "Osio %d on jo määritelty. Poista se ennen uudelleen lisäämistä.\n"
 
-#: fdisk/fdisk.c:1942 fdisk/fdiskbsdlabel.c:284 fdisk/fdisksgilabel.c:647
+#: fdisk/fdisk.c:1942 fdisk/fdiskbsdlabel.c:284 fdisk/fdisksgilabel.c:649
 #: fdisk/fdisksunlabel.c:518
 #, c-format
 msgid "First %s"
@@ -3406,14 +3406,14 @@ msgid "Detected sgi disklabel with wrong checksum.\n"
 msgstr "Havaittiin sgi-levynimiö, jolla on väärä tarkistussumma.\n"
 
 #: fdisk/fdisksgilabel.c:200
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Disk %s (SGI disk label): %d heads, %d sectors\n"
 "%d cylinders, %d physical cylinders\n"
 "%d extra sects/cyl, interleave %d:1\n"
 "%s\n"
-"Units = %s of %d * 512 bytes\n"
+"Units = %s of %d * %d bytes\n"
 "\n"
 msgstr ""
 "\n"
@@ -3424,12 +3424,12 @@ msgstr ""
 "Yksiköt = %10$d * 512 -tavuiset %9$s\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:212
-#, c-format
+#: fdisk/fdisksgilabel.c:213
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Disk %s (SGI disk label): %d heads, %d sectors, %d cylinders\n"
-"Units = %s of %d * 512 bytes\n"
+"Units = %s of %d * %d bytes\n"
 "\n"
 msgstr ""
 "\n"
@@ -3437,7 +3437,7 @@ msgstr ""
 "Yksiköt = %6$d * 512 -tavuiset %5$s\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:218
+#: fdisk/fdisksgilabel.c:220
 #, c-format
 msgid ""
 "----- partitions -----\n"
@@ -3446,7 +3446,7 @@ msgstr ""
 "----- osiot -----\n"
 "Os# %*s  Info     Alku        Loppu Sektorit Id  Järjestelmä\n"
 
-#: fdisk/fdisksgilabel.c:240
+#: fdisk/fdisksgilabel.c:242
 #, c-format
 msgid ""
 "----- Bootinfo -----\n"
@@ -3457,13 +3457,13 @@ msgstr ""
 "Käynnistystiedosto: %s\n"
 "----- Hakemistomerkinnät -----\n"
 
-#: fdisk/fdisksgilabel.c:248
+#: fdisk/fdisksgilabel.c:250
 #, c-format
 msgid "%2d: %-10s sector%5u size%8u\n"
 msgstr "%2d: %-10s sektori%5u koko%8u\n"
 
 #. "/a\n" is minimum
-#: fdisk/fdisksgilabel.c:302
+#: fdisk/fdisksgilabel.c:304
 msgid ""
 "\n"
 "Invalid Bootfile!\n"
@@ -3475,7 +3475,7 @@ msgstr ""
 "\tKäynnistystiedoston on oltava absoluuttinen, ei-tyhjä polku,\n"
 "\tesim. \"/unix\" tai \"/unix.save\".\n"
 
-#: fdisk/fdisksgilabel.c:308
+#: fdisk/fdisksgilabel.c:310
 msgid ""
 "\n"
 "\tName of Bootfile too long:  16 bytes maximum.\n"
@@ -3483,7 +3483,7 @@ msgstr ""
 "\n"
 "\tKäynnistystiedoston nimi on liian pitkä: maksimi 16 tavua.\n"
 
-#: fdisk/fdisksgilabel.c:313
+#: fdisk/fdisksgilabel.c:315
 msgid ""
 "\n"
 "\tBootfile must have a fully qualified pathname.\n"
@@ -3491,7 +3491,7 @@ msgstr ""
 "\n"
 "\tKäynnistystiedoston polun on oltava täydellinen.\n"
 
-#: fdisk/fdisksgilabel.c:320
+#: fdisk/fdisksgilabel.c:322
 msgid ""
 "\n"
 "\tBe aware, that the bootfile is not checked for existence.\n"
@@ -3501,7 +3501,7 @@ msgstr ""
 "\tHuomaa, että käynnistystiedoston olemassaoloa ei tarkisteta.\n"
 "\tSGI:n oletus on \"/unix\", ja varmuuskopiolle \"/unix.save\".\n"
 
-#: fdisk/fdisksgilabel.c:346
+#: fdisk/fdisksgilabel.c:348
 #, c-format
 msgid ""
 "\n"
@@ -3510,19 +3510,19 @@ msgstr ""
 "\n"
 "\tKäynnistystiedostoksi muutettiin \"%s\".\n"
 
-#: fdisk/fdisksgilabel.c:436
+#: fdisk/fdisksgilabel.c:438
 msgid "More than one entire disk entry present.\n"
 msgstr "Levyllä on useampi kuin yksi kokolevymerkintä.\n"
 
-#: fdisk/fdisksgilabel.c:443 fdisk/fdisksunlabel.c:479
+#: fdisk/fdisksgilabel.c:445 fdisk/fdisksunlabel.c:479
 msgid "No partitions defined\n"
 msgstr "Ei määriteltyjä osioita\n"
 
-#: fdisk/fdisksgilabel.c:449
+#: fdisk/fdisksgilabel.c:451
 msgid "IRIX likes when Partition 11 covers the entire disk.\n"
 msgstr "IRIX pitää siitä, että Osio 11 täyttää koko levyn.\n"
 
-#: fdisk/fdisksgilabel.c:451
+#: fdisk/fdisksgilabel.c:453
 #, c-format
 msgid ""
 "The entire disk partition should start at block 0,\n"
@@ -3531,7 +3531,7 @@ msgstr ""
 "Koko levyn osion tulee alkaa lohkosta 0,\n"
 "ei levylohkosta %d.\n"
 
-#: fdisk/fdisksgilabel.c:457
+#: fdisk/fdisksgilabel.c:459
 #, c-format
 msgid ""
 "The entire disk partition is only %d diskblock large,\n"
@@ -3540,31 +3540,31 @@ msgstr ""
 "Koko levyn osio on vain %d levylohkon kokoinen,\n"
 "mutta levy on %d levylohkon kokoinen.\n"
 
-#: fdisk/fdisksgilabel.c:463
+#: fdisk/fdisksgilabel.c:465
 msgid "One Partition (#11) should cover the entire disk.\n"
 msgstr "Yhden osion (#11) tulee täyttää koko levy.\n"
 
-#: fdisk/fdisksgilabel.c:473
+#: fdisk/fdisksgilabel.c:475
 #, c-format
 msgid "Partition %d does not start on cylinder boundary.\n"
 msgstr "Osion %d alku ei ole sylinterin rajalla.\n"
 
-#: fdisk/fdisksgilabel.c:479
+#: fdisk/fdisksgilabel.c:481
 #, c-format
 msgid "Partition %d does not end on cylinder boundary.\n"
 msgstr "Osion %d loppu ei ole sylinterin rajalla.\n"
 
-#: fdisk/fdisksgilabel.c:486
+#: fdisk/fdisksgilabel.c:488
 #, c-format
 msgid "The Partition %d and %d overlap by %d sectors.\n"
 msgstr "Osiot %d ja %d ovat päällekkäiset %d sektorin verran.\n"
 
-#: fdisk/fdisksgilabel.c:494 fdisk/fdisksgilabel.c:512
+#: fdisk/fdisksgilabel.c:496 fdisk/fdisksgilabel.c:514
 #, c-format
 msgid "Unused gap of %8u sectors - sectors %8u-%u\n"
 msgstr "Käyttämätön %8u sektorin alue - sektorit %8u-%u\n"
 
-#: fdisk/fdisksgilabel.c:523
+#: fdisk/fdisksgilabel.c:525
 msgid ""
 "\n"
 "The boot partition does not exist.\n"
@@ -3572,7 +3572,7 @@ msgstr ""
 "\n"
 "Käynnistysosiota ei ole olemassa.\n"
 
-#: fdisk/fdisksgilabel.c:526
+#: fdisk/fdisksgilabel.c:528
 msgid ""
 "\n"
 "The swap partition does not exist.\n"
@@ -3580,7 +3580,7 @@ msgstr ""
 "\n"
 "Sivutusosiota ei ole olemassa.\n"
 
-#: fdisk/fdisksgilabel.c:530
+#: fdisk/fdisksgilabel.c:532
 msgid ""
 "\n"
 "The swap partition has no swap type.\n"
@@ -3588,16 +3588,16 @@ msgstr ""
 "\n"
 "Sivutusosiolla ei ole sivutustyyppiä.\n"
 
-#: fdisk/fdisksgilabel.c:533
+#: fdisk/fdisksgilabel.c:535
 msgid "\tYou have chosen an unusual boot file name.\n"
 msgstr "\tValittu käynnistystiedoston nimi on epätavallinen.\n"
 
 #. caught already before, ...
-#: fdisk/fdisksgilabel.c:542
+#: fdisk/fdisksgilabel.c:544
 msgid "Sorry You may change the Tag of non-empty partitions.\n"
 msgstr "Valitan, vain ei-tyhjien osioiden lippua voi muuttaa.\n"
 
-#: fdisk/fdisksgilabel.c:548
+#: fdisk/fdisksgilabel.c:550
 msgid ""
 "It is highly recommended that the partition at offset 0\n"
 "is of type \"SGI volhdr\", the IRIX system will rely on it to\n"
@@ -3611,28 +3611,28 @@ msgstr ""
 "Vain \"SGI volume\" -kokolevyosuus voi rikkoa tätä sääntöä.\n"
 "Kirjoita KYLLÄ, jos olet varma tämän osion merkitsemisestä toisin.\n"
 
-#: fdisk/fdisksgilabel.c:553 fdisk/fdisksunlabel.c:628
+#: fdisk/fdisksgilabel.c:555 fdisk/fdisksunlabel.c:628
 msgid "YES\n"
 msgstr "KYLLÄ\n"
 
 #. rebuild freelist
-#: fdisk/fdisksgilabel.c:577
+#: fdisk/fdisksgilabel.c:579
 msgid "Do You know, You got a partition overlap on the disk?\n"
 msgstr "Tiedätkö, että levyllä on päällekkäisiä osioita?\n"
 
-#: fdisk/fdisksgilabel.c:635
+#: fdisk/fdisksgilabel.c:637
 msgid "Attempting to generate entire disk entry automatically.\n"
 msgstr "Yritetään luoda kokolevymerkintä automaattisesti.\n"
 
-#: fdisk/fdisksgilabel.c:640
+#: fdisk/fdisksgilabel.c:642
 msgid "The entire disk is already covered with partitions.\n"
 msgstr "Koko levy on jo osioiden käytössä.\n"
 
-#: fdisk/fdisksgilabel.c:644
+#: fdisk/fdisksgilabel.c:646
 msgid "You got a partition overlap on the disk. Fix it first!\n"
 msgstr "Levyllä on päällekkäisiä osioita. Tämä on korjattava ensin!\n"
 
-#: fdisk/fdisksgilabel.c:653 fdisk/fdisksgilabel.c:682
+#: fdisk/fdisksgilabel.c:655 fdisk/fdisksgilabel.c:684
 msgid ""
 "It is highly recommended that eleventh partition\n"
 "covers the entire disk and is of type `SGI volume'\n"
@@ -3640,17 +3640,17 @@ msgstr ""
 "On erittäin suositeltavaa, että yhdestoista osio\n"
 "kattaa koko levyn ja on tyyppiä \"SGI volume\"\n"
 
-#: fdisk/fdisksgilabel.c:669
+#: fdisk/fdisksgilabel.c:671
 msgid "You will get a partition overlap on the disk. Fix it first!\n"
 msgstr ""
 "Levyllä tulee olemaan päällekkäisiä osioita. Tämä on korjattava ensin!\n"
 
-#: fdisk/fdisksgilabel.c:674
+#: fdisk/fdisksgilabel.c:676
 #, c-format
 msgid " Last %s"
 msgstr " Viimeinen %s"
 
-#: fdisk/fdisksgilabel.c:704
+#: fdisk/fdisksgilabel.c:706
 msgid ""
 "Building a new SGI disklabel. Changes will remain in memory only,\n"
 "until you decide to write them. After that, of course, the previous\n"
@@ -3662,7 +3662,7 @@ msgstr ""
 "tietenkään voida palauttaa.\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:726
+#: fdisk/fdisksgilabel.c:728
 #, c-format
 msgid ""
 "Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
@@ -3673,12 +3673,12 @@ msgstr ""
 "sylinteriarvoa %d. Tämä arvo voi typistyä laitteilla, jotka ovat suurempia\n"
 "kuin 33,8 Gt.\n"
 
-#: fdisk/fdisksgilabel.c:739
+#: fdisk/fdisksgilabel.c:741
 #, c-format
 msgid "Trying to keep parameters of partition %d.\n"
 msgstr "Yritetään säilyttää osion %d parametrit.\n"
 
-#: fdisk/fdisksgilabel.c:741
+#: fdisk/fdisksgilabel.c:743
 #, c-format
 msgid "ID=%02x\tSTART=%d\tLENGTH=%d\n"
 msgstr "ID=%02x\tALKU=%d\tPITUUS=%d\n"
@@ -8455,42 +8455,42 @@ msgstr ""
 "valitsimet]\n"
 "        umount [-f] [-r] [-n] [-v] erikoistied | solmu...\n"
 
-#: mount/umount.c:554
+#: mount/umount.c:557
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr "Yritetään irrottaa %s\n"
 
-#: mount/umount.c:560
+#: mount/umount.c:563
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "%s ei löytynyt tiedostosta mtab\n"
 
-#: mount/umount.c:567
+#: mount/umount.c:570
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s ei ole liitetty (tiedoston mtab mukaan)"
 
-#: mount/umount.c:571
+#: mount/umount.c:574
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: %s vaikuttaa olevan liitettynä useita kertoja"
 
-#: mount/umount.c:584
+#: mount/umount.c:587
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: %s ei ole tiedostossa fstab (etkä ole root)"
 
-#: mount/umount.c:588
+#: mount/umount.c:591
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: %s on ristiriidassa tiedoston fstab kanssa"
 
-#: mount/umount.c:629
+#: mount/umount.c:632
 #, fuzzy, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "umount: vain root voi irrottaa laitteen %s paikasta %s"
 
-#: mount/umount.c:710
+#: mount/umount.c:713
 msgid "umount: only root can do that"
 msgstr "umount: vain root voi tehdä tämän"
 

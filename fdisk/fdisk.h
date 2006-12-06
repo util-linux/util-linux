@@ -29,6 +29,12 @@
 extern long long ext2_llseek(unsigned int fd, long long offset,
 			     unsigned int origin);
 
+#if defined(__GNUC__) && (defined(__arm__) || defined(__alpha__))
+# define PACKED __attribute__ ((packed))
+#else
+# define PACKED
+#endif
+
 struct partition {
 	unsigned char boot_ind;         /* 0x80 - active */
 	unsigned char head;             /* starting head */
@@ -40,7 +46,7 @@ struct partition {
 	unsigned char end_cyl;          /* end cylinder */
 	unsigned char start4[4];        /* starting sector counting from 0 */
 	unsigned char size4[4];         /* nr of sectors in partition */
-};
+} PACKED;
 
 enum failure {usage, usage2, ioctl_error,
 	unable_to_open, unable_to_read, unable_to_seek,

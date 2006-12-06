@@ -11,7 +11,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11r\n"
-"POT-Creation-Date: 2004-12-13 21:53+0100\n"
+"POT-Creation-Date: 2004-12-15 19:42+0100\n"
 "PO-Revision-Date: 2002-05-19 20:04GMT+0300\n"
 "Last-Translator: Meelis Roos <mroos@linux.ee>\n"
 "Language-Team: Estonian <et@li.org>\n"
@@ -1563,7 +1563,7 @@ msgstr " Loogiline"
 #. type id
 #. type name
 #: fdisk/cfdisk.c:2010 fdisk/fdisk.c:1435 fdisk/fdisk.c:1747
-#: fdisk/fdisksgilabel.c:237 fdisk/fdisksunlabel.c:689 fdisk/sfdisk.c:650
+#: fdisk/fdisksgilabel.c:239 fdisk/fdisksunlabel.c:689 fdisk/sfdisk.c:650
 msgid "Unknown"
 msgstr "Tundmatu"
 
@@ -2688,7 +2688,7 @@ msgstr ""
 msgid "%*s Boot      Start         End      Blocks   Id  System\n"
 msgstr "%*s Boot    Algus       Lõpp   Plokke   Id  Süsteem\n"
 
-#: fdisk/fdisk.c:1719 fdisk/fdisksgilabel.c:220 fdisk/fdisksunlabel.c:674
+#: fdisk/fdisk.c:1719 fdisk/fdisksgilabel.c:222 fdisk/fdisksunlabel.c:674
 msgid "Device"
 msgstr "Seade"
 
@@ -2771,12 +2771,12 @@ msgstr "Kogu kasutataud sektorite arv %d on suurem kui sektorite koguarv %d\n"
 msgid "%lld unallocated sectors\n"
 msgstr "%d vaba sektorit\n"
 
-#: fdisk/fdisk.c:1915 fdisk/fdisksgilabel.c:629 fdisk/fdisksunlabel.c:503
+#: fdisk/fdisk.c:1915 fdisk/fdisksgilabel.c:631 fdisk/fdisksunlabel.c:503
 #, c-format
 msgid "Partition %d is already defined.  Delete it before re-adding it.\n"
 msgstr "Partitsioon %d on juba olemas. Kustutage see enne uuesti lisamist\n"
 
-#: fdisk/fdisk.c:1942 fdisk/fdiskbsdlabel.c:284 fdisk/fdisksgilabel.c:647
+#: fdisk/fdisk.c:1942 fdisk/fdiskbsdlabel.c:284 fdisk/fdisksgilabel.c:649
 #: fdisk/fdisksunlabel.c:518
 #, c-format
 msgid "First %s"
@@ -3386,14 +3386,14 @@ msgid "Detected sgi disklabel with wrong checksum.\n"
 msgstr "Leidsin vale kontrollsummaga SGI partitsioonitabeli\n"
 
 #: fdisk/fdisksgilabel.c:200
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Disk %s (SGI disk label): %d heads, %d sectors\n"
 "%d cylinders, %d physical cylinders\n"
 "%d extra sects/cyl, interleave %d:1\n"
 "%s\n"
-"Units = %s of %d * 512 bytes\n"
+"Units = %s of %d * %d bytes\n"
 "\n"
 msgstr ""
 "\n"
@@ -3404,12 +3404,12 @@ msgstr ""
 "Ühikud = %s suurusega %d * 512 baiti\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:212
-#, c-format
+#: fdisk/fdisksgilabel.c:213
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Disk %s (SGI disk label): %d heads, %d sectors, %d cylinders\n"
-"Units = %s of %d * 512 bytes\n"
+"Units = %s of %d * %d bytes\n"
 "\n"
 msgstr ""
 "\n"
@@ -3417,7 +3417,7 @@ msgstr ""
 "Ühikud = %s suurusega %d * 512 baiti\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:218
+#: fdisk/fdisksgilabel.c:220
 #, c-format
 msgid ""
 "----- partitions -----\n"
@@ -3426,7 +3426,7 @@ msgstr ""
 "----- partitsioonid -----\n"
 "Nr# %*s  Info     Algus       Lõpp Sektoreid Id  Süsteem\n"
 
-#: fdisk/fdisksgilabel.c:240
+#: fdisk/fdisksgilabel.c:242
 #, c-format
 msgid ""
 "----- Bootinfo -----\n"
@@ -3437,13 +3437,13 @@ msgstr ""
 "Buutfail: %s\n"
 "----- Kataloogikirjed -----\n"
 
-#: fdisk/fdisksgilabel.c:248
+#: fdisk/fdisksgilabel.c:250
 #, c-format
 msgid "%2d: %-10s sector%5u size%8u\n"
 msgstr "%2d: %-10s sektor %5u pikkus %8u\n"
 
 #. "/a\n" is minimum
-#: fdisk/fdisksgilabel.c:302
+#: fdisk/fdisksgilabel.c:304
 msgid ""
 "\n"
 "Invalid Bootfile!\n"
@@ -3455,7 +3455,7 @@ msgstr ""
 "\tBuutfail peab olema absoluutse teega mittetühi string,\n"
 "\tnäiteks \"/unix\" või \"/unix.save\"\n"
 
-#: fdisk/fdisksgilabel.c:308
+#: fdisk/fdisksgilabel.c:310
 msgid ""
 "\n"
 "\tName of Bootfile too long:  16 bytes maximum.\n"
@@ -3463,7 +3463,7 @@ msgstr ""
 "\n"
 "\tBuutfaili nimi on liiga pikk: 16 baiti on maksimum\n"
 
-#: fdisk/fdisksgilabel.c:313
+#: fdisk/fdisksgilabel.c:315
 msgid ""
 "\n"
 "\tBootfile must have a fully qualified pathname.\n"
@@ -3471,7 +3471,7 @@ msgstr ""
 "\n"
 "\tBuutfail tuleb anda täisteega\n"
 
-#: fdisk/fdisksgilabel.c:320
+#: fdisk/fdisksgilabel.c:322
 msgid ""
 "\n"
 "\tBe aware, that the bootfile is not checked for existence.\n"
@@ -3481,7 +3481,7 @@ msgstr ""
 "\tEttevaatust, buutfaili olemasolu ei kontrollita.\n"
 "\tSGI vaikeväärtus on \"/unix\" ja varuväärtus \"/unix.save\"\n"
 
-#: fdisk/fdisksgilabel.c:346
+#: fdisk/fdisksgilabel.c:348
 #, c-format
 msgid ""
 "\n"
@@ -3490,19 +3490,19 @@ msgstr ""
 "\n"
 "\tUueks buutfailiks on \"%s\"\n"
 
-#: fdisk/fdisksgilabel.c:436
+#: fdisk/fdisksgilabel.c:438
 msgid "More than one entire disk entry present.\n"
 msgstr "Tabelis on rohekm kui üks terve ketta kirje\n"
 
-#: fdisk/fdisksgilabel.c:443 fdisk/fdisksunlabel.c:479
+#: fdisk/fdisksgilabel.c:445 fdisk/fdisksunlabel.c:479
 msgid "No partitions defined\n"
 msgstr "Ühtegi partitsiooni pole defineeritud\n"
 
-#: fdisk/fdisksgilabel.c:449
+#: fdisk/fdisksgilabel.c:451
 msgid "IRIX likes when Partition 11 covers the entire disk.\n"
 msgstr "IRIXile meeldib, et partitsioon 11 katab kogu ketta\n"
 
-#: fdisk/fdisksgilabel.c:451
+#: fdisk/fdisksgilabel.c:453
 #, c-format
 msgid ""
 "The entire disk partition should start at block 0,\n"
@@ -3510,7 +3510,7 @@ msgid ""
 msgstr ""
 "Tervet ketast kattev partitsioon peab algama kettaplokist 0, mitte %d\n"
 
-#: fdisk/fdisksgilabel.c:457
+#: fdisk/fdisksgilabel.c:459
 #, c-format
 msgid ""
 "The entire disk partition is only %d diskblock large,\n"
@@ -3519,31 +3519,31 @@ msgstr ""
 "Tervet ketast kattev partitsioon on ainult %d plokki pikk,\n"
 "aga ketas ise on %d plokki pikk\n"
 
-#: fdisk/fdisksgilabel.c:463
+#: fdisk/fdisksgilabel.c:465
 msgid "One Partition (#11) should cover the entire disk.\n"
 msgstr "Mingi partitsioon (soovitavalt number 11) peab katma kogu ketta\n"
 
-#: fdisk/fdisksgilabel.c:473
+#: fdisk/fdisksgilabel.c:475
 #, c-format
 msgid "Partition %d does not start on cylinder boundary.\n"
 msgstr "Partitsioon %d ei alga silindri piirilt\n"
 
-#: fdisk/fdisksgilabel.c:479
+#: fdisk/fdisksgilabel.c:481
 #, c-format
 msgid "Partition %d does not end on cylinder boundary.\n"
 msgstr "Partitsioon %d ei lõppe silindri piiril\n"
 
-#: fdisk/fdisksgilabel.c:486
+#: fdisk/fdisksgilabel.c:488
 #, c-format
 msgid "The Partition %d and %d overlap by %d sectors.\n"
 msgstr "Partitsioonid %d ja %d kattuvad %d sektori ulatuses\n"
 
-#: fdisk/fdisksgilabel.c:494 fdisk/fdisksgilabel.c:512
+#: fdisk/fdisksgilabel.c:496 fdisk/fdisksgilabel.c:514
 #, fuzzy, c-format
 msgid "Unused gap of %8u sectors - sectors %8u-%u\n"
 msgstr "Kasutamata auk %8d sektorist - sektorid %8d-%d\n"
 
-#: fdisk/fdisksgilabel.c:523
+#: fdisk/fdisksgilabel.c:525
 msgid ""
 "\n"
 "The boot partition does not exist.\n"
@@ -3551,7 +3551,7 @@ msgstr ""
 "\n"
 "Buutpartitsiooni ei eksisteeri\n"
 
-#: fdisk/fdisksgilabel.c:526
+#: fdisk/fdisksgilabel.c:528
 msgid ""
 "\n"
 "The swap partition does not exist.\n"
@@ -3559,7 +3559,7 @@ msgstr ""
 "\n"
 "Saalimispartitsiooni ei eksisteeri\n"
 
-#: fdisk/fdisksgilabel.c:530
+#: fdisk/fdisksgilabel.c:532
 msgid ""
 "\n"
 "The swap partition has no swap type.\n"
@@ -3567,16 +3567,16 @@ msgstr ""
 "\n"
 "Saalimispartitsioonil pole saalimispartitsiooni tüüp\n"
 
-#: fdisk/fdisksgilabel.c:533
+#: fdisk/fdisksgilabel.c:535
 msgid "\tYou have chosen an unusual boot file name.\n"
 msgstr "\tTe olete valinud ebahariliku buutfaili nime\n"
 
 #. caught already before, ...
-#: fdisk/fdisksgilabel.c:542
+#: fdisk/fdisksgilabel.c:544
 msgid "Sorry You may change the Tag of non-empty partitions.\n"
 msgstr "Tüüpi saab muuta ainult mittetühjadel partitsioonidel\n"
 
-#: fdisk/fdisksgilabel.c:548
+#: fdisk/fdisksgilabel.c:550
 msgid ""
 "It is highly recommended that the partition at offset 0\n"
 "is of type \"SGI volhdr\", the IRIX system will rely on it to\n"
@@ -3590,28 +3590,28 @@ msgstr ""
 "terve ketta kirje tohib seda reeglit rikkuda.\n"
 "Kui olete kindel, et soovite seda tüüpi muuta, kirjutage YES\n"
 
-#: fdisk/fdisksgilabel.c:553 fdisk/fdisksunlabel.c:628
+#: fdisk/fdisksgilabel.c:555 fdisk/fdisksunlabel.c:628
 msgid "YES\n"
 msgstr "YES\n"
 
 #. rebuild freelist
-#: fdisk/fdisksgilabel.c:577
+#: fdisk/fdisksgilabel.c:579
 msgid "Do You know, You got a partition overlap on the disk?\n"
 msgstr "Kas teate, et mõned partitsioonid kattuvad omavahel?\n"
 
-#: fdisk/fdisksgilabel.c:635
+#: fdisk/fdisksgilabel.c:637
 msgid "Attempting to generate entire disk entry automatically.\n"
 msgstr "Üritan genereerida terve ketta kirjet automaatselt\n"
 
-#: fdisk/fdisksgilabel.c:640
+#: fdisk/fdisksgilabel.c:642
 msgid "The entire disk is already covered with partitions.\n"
 msgstr "Terve ketas on juba partitsioonidega kaetud\n"
 
-#: fdisk/fdisksgilabel.c:644
+#: fdisk/fdisksgilabel.c:646
 msgid "You got a partition overlap on the disk. Fix it first!\n"
 msgstr "Kettal on partitsioonide kattumine. Parandage see kõigepealt!\n"
 
-#: fdisk/fdisksgilabel.c:653 fdisk/fdisksgilabel.c:682
+#: fdisk/fdisksgilabel.c:655 fdisk/fdisksgilabel.c:684
 msgid ""
 "It is highly recommended that eleventh partition\n"
 "covers the entire disk and is of type `SGI volume'\n"
@@ -3619,16 +3619,16 @@ msgstr ""
 "On ülimalt soovitav, et 11. partitsioon kataks kogu ketta\n"
 "ja oleks tüüpi \"SGI volume\"\n"
 
-#: fdisk/fdisksgilabel.c:669
+#: fdisk/fdisksgilabel.c:671
 msgid "You will get a partition overlap on the disk. Fix it first!\n"
 msgstr "Te ajaksite partitsioonid kattuma! Parandage see kõigepealt ära\n"
 
-#: fdisk/fdisksgilabel.c:674
+#: fdisk/fdisksgilabel.c:676
 #, c-format
 msgid " Last %s"
 msgstr "Viimane %s"
 
-#: fdisk/fdisksgilabel.c:704
+#: fdisk/fdisksgilabel.c:706
 msgid ""
 "Building a new SGI disklabel. Changes will remain in memory only,\n"
 "until you decide to write them. After that, of course, the previous\n"
@@ -3639,7 +3639,7 @@ msgstr ""
 "kuni Te ise otsustate need kettale kirjutada. Pärast seda pole vana sisu\n"
 "loomulikult enam taastatav.\n"
 
-#: fdisk/fdisksgilabel.c:726
+#: fdisk/fdisksgilabel.c:728
 #, c-format
 msgid ""
 "Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
@@ -3647,12 +3647,12 @@ msgid ""
 "This value may be truncated for devices > 33.8 GB.\n"
 msgstr ""
 
-#: fdisk/fdisksgilabel.c:739
+#: fdisk/fdisksgilabel.c:741
 #, c-format
 msgid "Trying to keep parameters of partition %d.\n"
 msgstr "Üritan säilitada partitsiooni %d parameetrid\n"
 
-#: fdisk/fdisksgilabel.c:741
+#: fdisk/fdisksgilabel.c:743
 #, c-format
 msgid "ID=%02x\tSTART=%d\tLENGTH=%d\n"
 msgstr "ID=%02x\tSTART=%d\tLENGTH=%d\n"
@@ -8315,42 +8315,42 @@ msgid ""
 "       umount [-f] [-r] [-n] [-v] special | node...\n"
 msgstr ""
 
-#: mount/umount.c:554
+#: mount/umount.c:557
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr ""
 
-#: mount/umount.c:560
+#: mount/umount.c:563
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr ""
 
-#: mount/umount.c:567
+#: mount/umount.c:570
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr ""
 
-#: mount/umount.c:571
+#: mount/umount.c:574
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr ""
 
-#: mount/umount.c:584
+#: mount/umount.c:587
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr ""
 
-#: mount/umount.c:588
+#: mount/umount.c:591
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr ""
 
-#: mount/umount.c:629
+#: mount/umount.c:632
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr ""
 
-#: mount/umount.c:710
+#: mount/umount.c:713
 msgid "umount: only root can do that"
 msgstr ""
 

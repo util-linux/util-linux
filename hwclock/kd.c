@@ -12,6 +12,7 @@ probe_for_kd_clock() {
 
 #include <unistd.h>		/* for close() */
 #include <fcntl.h>		/* for O_RDONLY */
+#include <errno.h>
 #include <sysexits.h>
 #include <sys/ioctl.h>
 

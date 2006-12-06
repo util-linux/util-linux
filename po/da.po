@@ -12,7 +12,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11y\n"
-"POT-Creation-Date: 2004-12-13 21:53+0100\n"
+"POT-Creation-Date: 2004-12-15 19:42+0100\n"
 "PO-Revision-Date: 2004-12-04 01:16+0100\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
@@ -1593,7 +1593,7 @@ msgstr "   Logisk "
 #. type id
 #. type name
 #: fdisk/cfdisk.c:2010 fdisk/fdisk.c:1435 fdisk/fdisk.c:1747
-#: fdisk/fdisksgilabel.c:237 fdisk/fdisksunlabel.c:689 fdisk/sfdisk.c:650
+#: fdisk/fdisksgilabel.c:239 fdisk/fdisksunlabel.c:689 fdisk/sfdisk.c:650
 msgid "Unknown"
 msgstr "Ukendt"
 
@@ -2707,7 +2707,7 @@ msgstr ""
 msgid "%*s Boot      Start         End      Blocks   Id  System\n"
 msgstr "%*s Opstart   Start         Slut     Blokke   Id  System\n"
 
-#: fdisk/fdisk.c:1719 fdisk/fdisksgilabel.c:220 fdisk/fdisksunlabel.c:674
+#: fdisk/fdisk.c:1719 fdisk/fdisksgilabel.c:222 fdisk/fdisksunlabel.c:674
 msgid "Device"
 msgstr "Enhed"
 
@@ -2790,13 +2790,13 @@ msgstr ""
 msgid "%lld unallocated sectors\n"
 msgstr "%lld ikke-allokerede sektorer\n"
 
-#: fdisk/fdisk.c:1915 fdisk/fdisksgilabel.c:629 fdisk/fdisksunlabel.c:503
+#: fdisk/fdisk.c:1915 fdisk/fdisksgilabel.c:631 fdisk/fdisksunlabel.c:503
 #, c-format
 msgid "Partition %d is already defined.  Delete it before re-adding it.\n"
 msgstr ""
 "Partition %d er allerede defineret. Slet den før du tilføjer den igen.\n"
 
-#: fdisk/fdisk.c:1942 fdisk/fdiskbsdlabel.c:284 fdisk/fdisksgilabel.c:647
+#: fdisk/fdisk.c:1942 fdisk/fdiskbsdlabel.c:284 fdisk/fdisksgilabel.c:649
 #: fdisk/fdisksunlabel.c:518
 #, c-format
 msgid "First %s"
@@ -3394,14 +3394,14 @@ msgid "Detected sgi disklabel with wrong checksum.\n"
 msgstr "Detekterede SGI diskmærkat med forkert tjeksum.\n"
 
 #: fdisk/fdisksgilabel.c:200
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Disk %s (SGI disk label): %d heads, %d sectors\n"
 "%d cylinders, %d physical cylinders\n"
 "%d extra sects/cyl, interleave %d:1\n"
 "%s\n"
-"Units = %s of %d * 512 bytes\n"
+"Units = %s of %d * %d bytes\n"
 "\n"
 msgstr ""
 "\n"
@@ -3412,12 +3412,12 @@ msgstr ""
 "Enheder = %s á %d * 512 bytes\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:212
-#, c-format
+#: fdisk/fdisksgilabel.c:213
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Disk %s (SGI disk label): %d heads, %d sectors, %d cylinders\n"
-"Units = %s of %d * 512 bytes\n"
+"Units = %s of %d * %d bytes\n"
 "\n"
 msgstr ""
 "\n"
@@ -3425,7 +3425,7 @@ msgstr ""
 "Enheder = %s á %d * 512 bytes\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:218
+#: fdisk/fdisksgilabel.c:220
 #, c-format
 msgid ""
 "----- partitions -----\n"
@@ -3434,7 +3434,7 @@ msgstr ""
 "----- partitioner -----\n"
 "Pt# %*s  Info     Start       Slut  Sektorer Id  System\n"
 
-#: fdisk/fdisksgilabel.c:240
+#: fdisk/fdisksgilabel.c:242
 #, c-format
 msgid ""
 "----- Bootinfo -----\n"
@@ -3445,13 +3445,13 @@ msgstr ""
 "Opstartsfil: %s\n"
 "----- Mappeindgange -----\n"
 
-#: fdisk/fdisksgilabel.c:248
+#: fdisk/fdisksgilabel.c:250
 #, c-format
 msgid "%2d: %-10s sector%5u size%8u\n"
 msgstr "%2d: %-10s sektor%5u størrelse%8u\n"
 
 #. "/a\n" is minimum
-#: fdisk/fdisksgilabel.c:302
+#: fdisk/fdisksgilabel.c:304
 msgid ""
 "\n"
 "Invalid Bootfile!\n"
@@ -3463,7 +3463,7 @@ msgstr ""
 "\tOpstartsfilen skal være et absolut, ikke-tomt stinavn,\n"
 "\tf.eks. \"/unix\" eller \"/unix.save\".\n"
 
-#: fdisk/fdisksgilabel.c:308
+#: fdisk/fdisksgilabel.c:310
 msgid ""
 "\n"
 "\tName of Bootfile too long:  16 bytes maximum.\n"
@@ -3471,7 +3471,7 @@ msgstr ""
 "\n"
 "\tFor langt navn på opstartsfil: højst 16 byte.\n"
 
-#: fdisk/fdisksgilabel.c:313
+#: fdisk/fdisksgilabel.c:315
 msgid ""
 "\n"
 "\tBootfile must have a fully qualified pathname.\n"
@@ -3479,7 +3479,7 @@ msgstr ""
 "\n"
 "\tOpstartsfil skal have et komplet stinavn.\n"
 
-#: fdisk/fdisksgilabel.c:320
+#: fdisk/fdisksgilabel.c:322
 msgid ""
 "\n"
 "\tBe aware, that the bootfile is not checked for existence.\n"
@@ -3489,7 +3489,7 @@ msgstr ""
 "\tBemærk, at der ikke tjekkes for opstartsfilens eksistens.\n"
 "\tSGIs standard er \"/unix\" og som backup \"/unix.save\".\n"
 
-#: fdisk/fdisksgilabel.c:346
+#: fdisk/fdisksgilabel.c:348
 #, c-format
 msgid ""
 "\n"
@@ -3498,19 +3498,19 @@ msgstr ""
 "\n"
 "\tOpstartsfil er ændret til \"%s\".\n"
 
-#: fdisk/fdisksgilabel.c:436
+#: fdisk/fdisksgilabel.c:438
 msgid "More than one entire disk entry present.\n"
 msgstr "Der er mere end én fuldstændig diskindgang.\n"
 
-#: fdisk/fdisksgilabel.c:443 fdisk/fdisksunlabel.c:479
+#: fdisk/fdisksgilabel.c:445 fdisk/fdisksunlabel.c:479
 msgid "No partitions defined\n"
 msgstr "Ingen partitioner defineret\n"
 
-#: fdisk/fdisksgilabel.c:449
+#: fdisk/fdisksgilabel.c:451
 msgid "IRIX likes when Partition 11 covers the entire disk.\n"
 msgstr "IRIX kan lide, når partition 11 fylder hele disken.\n"
 
-#: fdisk/fdisksgilabel.c:451
+#: fdisk/fdisksgilabel.c:453
 #, c-format
 msgid ""
 "The entire disk partition should start at block 0,\n"
@@ -3519,7 +3519,7 @@ msgstr ""
 "Hele diskpartitionen bør starte ved blok 0,\n"
 "ikke ved diskblok %d.\n"
 
-#: fdisk/fdisksgilabel.c:457
+#: fdisk/fdisksgilabel.c:459
 #, c-format
 msgid ""
 "The entire disk partition is only %d diskblock large,\n"
@@ -3528,31 +3528,31 @@ msgstr ""
 "Hele diskpartitionen er kun %d diskblokke stor,\n"
 "men disken er på %d diskblokke.\n"
 
-#: fdisk/fdisksgilabel.c:463
+#: fdisk/fdisksgilabel.c:465
 msgid "One Partition (#11) should cover the entire disk.\n"
 msgstr "En partition (#11) bør fylde hele disken.\n"
 
-#: fdisk/fdisksgilabel.c:473
+#: fdisk/fdisksgilabel.c:475
 #, c-format
 msgid "Partition %d does not start on cylinder boundary.\n"
 msgstr "Partition %d starter ikke på en cylindergrænse.\n"
 
-#: fdisk/fdisksgilabel.c:479
+#: fdisk/fdisksgilabel.c:481
 #, c-format
 msgid "Partition %d does not end on cylinder boundary.\n"
 msgstr "Partition %d slutter ikke på en cylindergrænse.\n"
 
-#: fdisk/fdisksgilabel.c:486
+#: fdisk/fdisksgilabel.c:488
 #, c-format
 msgid "The Partition %d and %d overlap by %d sectors.\n"
 msgstr "Partition %d og %d overlapper hinanden i %d sektorer.\n"
 
-#: fdisk/fdisksgilabel.c:494 fdisk/fdisksgilabel.c:512
+#: fdisk/fdisksgilabel.c:496 fdisk/fdisksgilabel.c:514
 #, c-format
 msgid "Unused gap of %8u sectors - sectors %8u-%u\n"
 msgstr "Ubenyttet hul på %8u sektorer - sektor %8u-%u\n"
 
-#: fdisk/fdisksgilabel.c:523
+#: fdisk/fdisksgilabel.c:525
 msgid ""
 "\n"
 "The boot partition does not exist.\n"
@@ -3560,7 +3560,7 @@ msgstr ""
 "\n"
 "Opstartpartitionen eksisterer ikke.\n"
 
-#: fdisk/fdisksgilabel.c:526
+#: fdisk/fdisksgilabel.c:528
 msgid ""
 "\n"
 "The swap partition does not exist.\n"
@@ -3568,7 +3568,7 @@ msgstr ""
 "\n"
 "Swappartitionen eksisterer ikke.\n"
 
-#: fdisk/fdisksgilabel.c:530
+#: fdisk/fdisksgilabel.c:532
 msgid ""
 "\n"
 "The swap partition has no swap type.\n"
@@ -3576,16 +3576,16 @@ msgstr ""
 "\n"
 "Swappartitionen har ikke nogen swaptype.\n"
 
-#: fdisk/fdisksgilabel.c:533
+#: fdisk/fdisksgilabel.c:535
 msgid "\tYou have chosen an unusual boot file name.\n"
 msgstr "\tDu har valgt et ikke-standard navn på opstartsfilen.\n"
 
 #. caught already before, ...
-#: fdisk/fdisksgilabel.c:542
+#: fdisk/fdisksgilabel.c:544
 msgid "Sorry You may change the Tag of non-empty partitions.\n"
 msgstr "Beklager. Du må ændre mærket (tag) på ikke-tomme partitioner.\n"
 
-#: fdisk/fdisksgilabel.c:548
+#: fdisk/fdisksgilabel.c:550
 msgid ""
 "It is highly recommended that the partition at offset 0\n"
 "is of type \"SGI volhdr\", the IRIX system will rely on it to\n"
@@ -3599,28 +3599,28 @@ msgstr ""
 "Kun \"SGI volume\" hele-disk-sektionen kan bryde dette.\n"
 "Skriv JA, hvis du er sikker på, at du vil mærke partitionen anderledes.\n"
 
-#: fdisk/fdisksgilabel.c:553 fdisk/fdisksunlabel.c:628
+#: fdisk/fdisksgilabel.c:555 fdisk/fdisksunlabel.c:628
 msgid "YES\n"
 msgstr "JA\n"
 
 #. rebuild freelist
-#: fdisk/fdisksgilabel.c:577
+#: fdisk/fdisksgilabel.c:579
 msgid "Do You know, You got a partition overlap on the disk?\n"
 msgstr "Ved du, at du har overlappende partitioner på disken?\n"
 
-#: fdisk/fdisksgilabel.c:635
+#: fdisk/fdisksgilabel.c:637
 msgid "Attempting to generate entire disk entry automatically.\n"
 msgstr "Forsøger at genere hele-disk-indgang automatisk.\n"
 
-#: fdisk/fdisksgilabel.c:640
+#: fdisk/fdisksgilabel.c:642
 msgid "The entire disk is already covered with partitions.\n"
 msgstr "Hele disken er allerede fyldt med partitioner.\n"
 
-#: fdisk/fdisksgilabel.c:644
+#: fdisk/fdisksgilabel.c:646
 msgid "You got a partition overlap on the disk. Fix it first!\n"
 msgstr "Du har overlappende partitioner på disken. Ret det først!\n"
 
-#: fdisk/fdisksgilabel.c:653 fdisk/fdisksgilabel.c:682
+#: fdisk/fdisksgilabel.c:655 fdisk/fdisksgilabel.c:684
 msgid ""
 "It is highly recommended that eleventh partition\n"
 "covers the entire disk and is of type `SGI volume'\n"
@@ -3628,16 +3628,16 @@ msgstr ""
 "Det anbefales kraftigt at den ellevte partition\n"
 "fylder hele disken og er af typen 'SGI volume'\n"
 
-#: fdisk/fdisksgilabel.c:669
+#: fdisk/fdisksgilabel.c:671
 msgid "You will get a partition overlap on the disk. Fix it first!\n"
 msgstr "Du vil få overlappende partitioner på disken. Ret dette først!\n"
 
-#: fdisk/fdisksgilabel.c:674
+#: fdisk/fdisksgilabel.c:676
 #, c-format
 msgid " Last %s"
 msgstr " Sidste %s"
 
-#: fdisk/fdisksgilabel.c:704
+#: fdisk/fdisksgilabel.c:706
 msgid ""
 "Building a new SGI disklabel. Changes will remain in memory only,\n"
 "until you decide to write them. After that, of course, the previous\n"
@@ -3649,7 +3649,7 @@ msgstr ""
 "naturligvis ikke kunne genskabes.\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:726
+#: fdisk/fdisksgilabel.c:728
 #, c-format
 msgid ""
 "Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
@@ -3660,12 +3660,12 @@ msgstr ""
 "cylinderværdien %d.\n"
 "Denne værdi kan blive afkortet på enheder, der er større end 33.8 GB.\n"
 
-#: fdisk/fdisksgilabel.c:739
+#: fdisk/fdisksgilabel.c:741
 #, c-format
 msgid "Trying to keep parameters of partition %d.\n"
 msgstr "Forsøger at bibeholde parametrene for partition %d.\n"
 
-#: fdisk/fdisksgilabel.c:741
+#: fdisk/fdisksgilabel.c:743
 #, c-format
 msgid "ID=%02x\tSTART=%d\tLENGTH=%d\n"
 msgstr "ID=%02x\tSTART=%d\tLÆNGDE=%d\n"
@@ -8410,42 +8410,42 @@ msgstr ""
 "      umount -a [-f] [-r] [-n] [-v] [-t vfstyper] [-O tilvalg]\n"
 "      umount [-f] [-r] [-n] [-v] speciel | knude...\n"
 
-#: mount/umount.c:554
+#: mount/umount.c:557
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr "Forsøger at afmontere %s\n"
 
-#: mount/umount.c:560
+#: mount/umount.c:563
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "Kunne ikke finde %s i mtab\n"
 
-#: mount/umount.c:567
+#: mount/umount.c:570
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s er ikke monteret (ifølge mtab)"
 
-#: mount/umount.c:571
+#: mount/umount.c:574
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: det lader til, at %s er monteret flere gange"
 
-#: mount/umount.c:584
+#: mount/umount.c:587
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: %s er ikke i fstab (og du er ikke root)"
 
-#: mount/umount.c:588
+#: mount/umount.c:591
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: %s montering stemmer ikke med fstab"
 
-#: mount/umount.c:629
+#: mount/umount.c:632
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "umount: kun %s kan afmontere %s fra %s"
 
-#: mount/umount.c:710
+#: mount/umount.c:713
 msgid "umount: only root can do that"
 msgstr "umount: dette kan kun root gøre"
 

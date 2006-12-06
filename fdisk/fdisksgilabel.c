@@ -201,19 +201,21 @@ sgi_list_table(int xtra) {
 			 "%d cylinders, %d physical cylinders\n"
 			 "%d extra sects/cyl, interleave %d:1\n"
 			 "%s\n"
-			 "Units = %s of %d * 512 bytes\n\n"),
+			 "Units = %s of %d * %d bytes\n\n"),
 		       disk_device, heads, sectors, cylinders,
 		       SSWAP16(sgiparam.pcylcount),
 		       SSWAP16(sgiparam.sparecyl),
 		       SSWAP16(sgiparam.ilfact),
 		       (char *)sgilabel,
-		       str_units(PLURAL), units_per_sector);
+		       str_units(PLURAL), units_per_sector,
+                       sector_size);
 	} else {
 		printf(_("\nDisk %s (SGI disk label): "
 			 "%d heads, %d sectors, %d cylinders\n"
-			 "Units = %s of %d * 512 bytes\n\n"),
+			 "Units = %s of %d * %d bytes\n\n"),
 		       disk_device, heads, sectors, cylinders,
-		       str_units(PLURAL), units_per_sector);
+		       str_units(PLURAL), units_per_sector,
+                       sector_size);
 	}
 	printf(_("----- partitions -----\n"
 		 "Pt# %*s  Info     Start       End   Sectors  Id  System\n"),
@@ -766,7 +768,7 @@ create_sgilabel(void)
 	sgilabel->devparam.unused1			= SSWAP16(0);
 	sgilabel->devparam.nsect			= SSWAP16(geometry.sectors);
 	/* sectors/track */
-	sgilabel->devparam.bytes			= SSWAP16(512);
+	sgilabel->devparam.bytes			= SSWAP16(sector_size);
 	sgilabel->devparam.ilfact			= SSWAP16(1);
 	sgilabel->devparam.flags			= SSWAP32(TRACK_FWD|\
 								  IGNORE_ERRORS|RESEEK);

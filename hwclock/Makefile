@@ -17,6 +17,7 @@ all: $(SBIN)
 
 
 hwclock.o: hwclock.c
+hwclock.o cmos.o kd.o: ../defines.h
 hwclock.o cmos.o rtc.o kd.o: clock.h
 hwclock: hwclock.o cmos.o rtc.o kd.o
 

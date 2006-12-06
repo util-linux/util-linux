@@ -25,6 +25,8 @@
 #include <fcntl.h>
 #include <string.h>
 #include <signal.h>
+#include <errno.h>
+#include <time.h>
 #include <pwd.h>
 #include <sys/file.h>
 #include <sys/wait.h>
