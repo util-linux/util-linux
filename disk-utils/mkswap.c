@@ -568,6 +568,8 @@ main(int argc, char ** argv) {
 		perror(device_name);
 		exit(1);
 	}
+
+	/* Want a block device. Probably not /dev/hda or /dev/hdb. */
 	if (!S_ISBLK(statbuf.st_mode))
 		check=0;
 	else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)

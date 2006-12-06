@@ -1,3 +1,27 @@
+util-linux 2.11x
+
+* Danish messages (Claus Hindsgaul)
+* Dutch messages (Taco Witte)
+* Finnish messages (Lauri Nurmi)
+* No French messages with permission to distribute (Michel Robitaille)
+* German messages (Michael Piefel)
+* Swedish messages (Christian Rose)
+* Turkish messages (Nilgün Belma Bugüner)
+* cfdisk: correct error printout
+* fdisk: allow addition of a new partition when logicals all used
+  but primary free
+* hwclock: detect systime jumps backward during setting hwclock
+* mkfs.cramfs: do not mmap all files simultaneously
+* mkfs.cramfs: make blocksize settable
+* mkfs.minix: correct error printout
+* mkswap.8: now max 32 swapspaces
+* mount: new --rbind flag, for recursive loopback mounts
+* mount, umount: new -O option (Michael K. Johnson)
+* mount.8: -O and win95 options documented
+* setpwnam.c: open temp pw file with O_EXCL
+* simpleinit: fix for "spawn too fast" (Denis Vlasenko)
+* swapon: new -e option (Erik Troan)
+
 util-linux 2.11w
 
 * cfdisk, fdisk: allow slightly larger disk sizes

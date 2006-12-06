@@ -8,8 +8,12 @@
  * - added Native Language Support
  * 1999-03-21 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
  * - fixed strerr(errno) in gettext calls
+ * 2001-03-22 Erik Troan <ewt@redhat.com>
+ * - added -e option for -a
+ * - -a shouldn't try to add swaps that are already enabled
  */
 
+#include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
@@ -34,12 +38,16 @@ int all = 0;
 int verbose = 0;
 int priority = -1;	/* non-prioritized swap by default */
 
+/* If true, don't complain if the device/file doesn't exist */
+int ifexists = 0;
+
 extern char version[];
 static char *program_name;
 
 static struct option longswaponopts[] = {
 		/* swapon only */
 	{ "priority", required_argument, 0, 'p' },
+	{ "ifexists", 0, 0, 'e' },
 	{ "summary", 0, 0, 's' },
 		/* also for swapoff */
 	{ "all", 0, 0, 'a' },
@@ -54,7 +62,7 @@ static struct option *longswapoffopts = &longswaponopts[2];
 static void
 swapon_usage(FILE *fp, int n) {
 	fprintf(fp, _("usage: %s [-hV]\n"
-		      "       %s -a [-v]\n"
+		      "       %s -a [-e] [-v]\n"
 		      "       %s [-v] [-p priority] special ...\n"
 		      "       %s [-s]\n"),
 		program_name, program_name, program_name, program_name);
@@ -256,7 +264,7 @@ main_swapon(int argc, char *argv[]) {
 	int status = 0;
 	int c;
 
-	while ((c = getopt_long(argc, argv, "ahp:svV",
+	while ((c = getopt_long(argc, argv, "ahep:svV",
 				 longswaponopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':		/* all */
@@ -267,6 +275,9 @@ main_swapon(int argc, char *argv[]) {
 			break;
 		case 'p':		/* priority */
 			priority = atoi(optarg);
+			break;
+		case 'e':               /* ifexists */
+		        ifexists = 1;
 			break;
 		case 's':		/* status report */
 			status = display_summary();
@@ -289,6 +300,9 @@ main_swapon(int argc, char *argv[]) {
 	if (!all && *argv == NULL)
 		swapon_usage(stderr, 2);
 
+	if (ifexists && (!all || strcmp(program_name, "swapon")))
+	  swapon_usage(stderr, 1);
+
 	if (all) {
 		read_proc_swaps();
 
@@ -303,7 +317,8 @@ main_swapon(int argc, char *argv[]) {
 			char *special = fstab->mnt_fsname;
 
 			if (streq(fstab->mnt_type, MNTTYPE_SWAP) &&
-			    !is_in_proc_swaps(special)) {
+			    !is_in_proc_swaps(special)
+			    && (!ifexists || !access(special, R_OK))) {
 				/* parse mount options; */
 				char *opt, *opts = strdup(fstab->mnt_opts);
 	   

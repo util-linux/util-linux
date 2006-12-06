@@ -37,6 +37,8 @@
  * 2000-05-11 Mark A. Peloquin <peloquin@us.ibm.com>
  * - check_special_mountprog now returns correct status
  * 2000-11-08 aeb: accept nonnumeric uid=, gid= options
+ * 2001-07-13 Michael K. Johnson <johnsonm@redhat.com>
+ * - implemented -a -O
  */
 
 #include <unistd.h>
@@ -122,10 +124,11 @@ struct opt_map {
 #define MS_USERS	0x40000000
 #define MS_USER		0x20000000
 #define MS_OWNER	0x10000000
+#define MS_NETDEV	0x00020000
 #define MS_LOOP		0x00010000
 
 /* Options that we keep the mount system call from seeing.  */
-#define MS_NOSYS	(MS_NOAUTO|MS_USERS|MS_USER|MS_LOOP)
+#define MS_NOSYS	(MS_NOAUTO|MS_USERS|MS_USER|MS_NETDEV|MS_LOOP)
 
 /* Options that we keep from appearing in the options field in the mtab.  */
 #define MS_NOMTAB	(MS_REMOUNT|MS_NOAUTO|MS_USERS|MS_USER)
@@ -159,6 +162,7 @@ static const struct opt_map opt_map[] = {
   { "nouser",	0, 1, MS_USER	},	/* Forbid ordinary user to mount */
   { "owner",	0, 0, MS_OWNER  },	/* Let the owner of the device mount */
   { "noowner",	0, 1, MS_OWNER  },	/* Device owner has no special privs */
+  { "_netdev",	0, 0, MS_NETDEV },	/* Device accessible only via network */
   /* add new options here */
 #ifdef MS_NOSUB
   { "sub",	0, 1, MS_NOSUB	},	/* allow submounts */
@@ -1209,7 +1213,7 @@ has_noauto (char *opts) {
 #define DISKMAJOR(m)	(((int) m) & ~0xf)
 
 static int
-do_mount_all (char *types, char *options) {
+do_mount_all (char *types, char *options, char *test_opts) {
 	struct mntentchn *mc, *mc0, *mtmp;
 	int status = 0;
 	struct stat statbuf;
@@ -1232,6 +1236,7 @@ do_mount_all (char *types, char *options) {
 		if (has_noauto (mc->m.mnt_opts))
 			continue;
 		if (matching_type (mc->m.mnt_type, types)
+		    && matching_opts (mc->m.mnt_opts, test_opts)
 		    && !streq (mc->m.mnt_dir, "/")
 		    && !streq (mc->m.mnt_dir, "root")) {
 
@@ -1350,6 +1355,7 @@ static struct option longopts[] = {
 	{ "read-write", 0, 0, 'w' },
 	{ "rw", 0, 0, 'w' },
 	{ "options", 1, 0, 'o' },
+	{ "test-opts", 1, 0, 'O' },
 	{ "types", 1, 0, 't' },
 	{ "bind", 0, 0, 128 },
 	{ "replace", 0, 0, 129 },
@@ -1358,6 +1364,7 @@ static struct option longopts[] = {
 	{ "over", 0, 0, 132 },
 	{ "move", 0, 0, 133 },
 	{ "guess-fstype", 1, 0, 134 },
+	{ "rbind", 0, 0, 135 },
 	{ NULL, 0, 0, 0 }
 };
 
@@ -1373,7 +1380,7 @@ usage (FILE *fp, int n) {
 	  "So far the informational part. Next the mounting.\n"
 	  "The command is `mount [-t fstype] something somewhere'.\n"
 	  "Details found in /etc/fstab may be omitted.\n"
-	  "       mount -a                 : mount all stuff from /etc/fstab\n"
+	  "       mount -a [-t|-O] ...     : mount all stuff from /etc/fstab\n"
 	  "       mount device             : mount device at the known place\n"
 	  "       mount directory          : mount known device here\n"
 	  "       mount -t type dev dir    : ordinary mount command\n"
@@ -1399,7 +1406,7 @@ usage (FILE *fp, int n) {
 int
 main (int argc, char *argv[]) {
 	int c, result = 0, specseen;
-	char *options = NULL, *spec, *node;
+	char *options = NULL, *test_opts = NULL, *spec, *node;
 	char *volumelabel = NULL;
 	char *uuid = NULL;
 	char *types = NULL;
@@ -1424,7 +1431,7 @@ main (int argc, char *argv[]) {
 	initproctitle(argc, argv);
 #endif
 
-	while ((c = getopt_long (argc, argv, "afFhlL:no:rsU:vVwt:",
+	while ((c = getopt_long (argc, argv, "afFhlL:no:O:rsU:vVwt:",
 				 longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':	       /* mount everything in fstab */
@@ -1453,6 +1460,12 @@ main (int argc, char *argv[]) {
 				options = xstrconcat3(options, ",", optarg);
 			else
 				options = xstrdup(optarg);
+			break;
+		case 'O':		/* with -t: mount only if (not) opt */
+			if (test_opts)
+				test_opts = xstrconcat3(test_opts, ",", optarg);
+			else
+				test_opts = xstrdup(optarg);
 			break;
 		case 'r':		/* mount readonly */
 			readonly = 1;
@@ -1509,6 +1522,9 @@ main (int argc, char *argv[]) {
 			printf("%s\n", fstype ? fstype : "unknown");
 			exit(fstype ? 0 : EX_FAIL);
 		    }
+		case 135:
+			mounttype = (MS_BIND | MS_REC);
+			break;
 		case '?':
 		default:
 			usage (stderr, EX_USAGE);
@@ -1563,7 +1579,7 @@ main (int argc, char *argv[]) {
 	switch (argc+specseen) {
 	case 0:
 		/* mount -a */
-		result = do_mount_all (types, options);
+		result = do_mount_all (types, options, test_opts);
 		if (result == 0 && verbose)
 			error(_("nothing was mounted"));
 		break;

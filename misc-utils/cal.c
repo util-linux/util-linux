@@ -75,6 +75,8 @@
 #endif
 
 #include "widechar.h"
+
+#define SIZE(a)	(sizeof(a)/sizeof((a)[0]))
  
 /* allow compile-time define to over-ride default */
 #ifndef NUM_MONTHS

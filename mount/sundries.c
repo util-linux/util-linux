@@ -185,6 +185,83 @@ matching_type (const char *type, const char *types) {
      return no;
 }
 
+/* Returns 1 if needle found or noneedle not found in haystack
+ * Otherwise returns 0
+ */
+static int
+check_option(const char *haystack, const char *needle) {
+     const char *p, *r;
+     int len, needle_len, this_len;
+     int no;
+
+     no = 0;
+     if (!strncmp(needle, "no", 2)) {
+	  no = 1;
+	  needle += 2;
+     }
+     needle_len = strlen(needle);
+     len = strlen(haystack);
+
+     for (p = haystack; p < haystack+len; p++) {
+	  r = strchr(p, ',');
+	  if (r) {
+	       this_len = r-p;
+	  } else {
+	       this_len = strlen(p);
+	  }
+	  if (this_len != needle_len) {
+	       p += this_len;
+	       continue;
+	  }
+	  if (strncmp(p, needle, this_len) == 0)
+	       return !no; /* foo or nofoo was found */
+	  p += this_len;
+     }
+
+     return no;  /* foo or nofoo was not found */
+}
+
+
+/* Returns 1 if each of the test_opts options agrees with the entire
+ * list of options.
+ * Returns 0 if any noopt is found in test_opts and opt is found in options.
+ * Returns 0 if any opt is found in test_opts but is not found in options.
+ * Unlike fs type matching, nonetdev,user and nonetdev,nouser have
+ * DIFFERENT meanings; each option is matched explicitly as specified.
+ */
+int
+matching_opts (const char *options, const char *test_opts) {
+     const char *p, *r;
+     char *q;
+     int len, this_len;
+
+     if (test_opts == NULL)
+	  return 1;
+
+     len = strlen(test_opts);
+     q = alloca(len+1);
+     if (q == NULL)
+          die (EX_SYSERR, _("not enough memory"));
+     
+     for (p = test_opts; p < test_opts+len; p++) {
+	  r = strchr(p, ',');
+	  if (r) {
+	       this_len = r-p;
+	  } else {
+	       this_len = strlen(p);
+	  }
+	  if (!this_len) continue; /* if two ',' appear in a row */
+	  strncpy(q, p, this_len);
+	  q[this_len] = '\0';
+	  if (!check_option(options, q))
+	       return 0; /* any match failure means failure */
+	  p += this_len;
+     }
+
+     /* no match failures in list means success */
+     return 1;
+}
+
 /* Make a canonical pathname from PATH.  Returns a freshly malloced string.
    It is up the *caller* to ensure that the PATH is sensible.  i.e.
    canonicalize ("/dev/fd0/.") returns "/dev/fd0" even though ``/dev/fd0/.''

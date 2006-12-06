@@ -83,9 +83,8 @@ chkdupexe: chkdupexe.pl
 ddate: ddate.o
 kill: kill.o procs.o
 logger: logger.o
-mcookie: mcookie.o md5.o
-mcookie.o: mcookie.c md5.h
-md5.o: md5.c md5.h
+mcookie: mcookie.o $(LIB)/md5.o
+mcookie.o: mcookie.c $(LIB)/md5.h
 reset: reset.sh
 script: script.o
 write.o: $(LIB)/carefulputc.h

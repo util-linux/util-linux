@@ -84,8 +84,8 @@ Note that before 2.1.117 the kernel allocated one byte for each page,
 while it now allocates two bytes, so that taking a swap area of 2 GiB
 in use might require 2 MiB of kernel memory.
 
-Presently, Linux allows 8 swap areas. The areas in use can be seen
-in the file
+Presently, Linux allows 32 swap areas (this was 8 before Linux 2.4.10).
+The areas in use can be seen in the file
 .I /proc/swaps
 (since 2.1.25).
 

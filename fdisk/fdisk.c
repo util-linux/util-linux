@@ -2007,13 +2007,14 @@ new_partition(void) {
 		return;
 	}
 
-	if (partitions >= MAXIMUM_PARTS) {
+	for (i = 0; i < 4; i++)
+		free_primary += !ptes[i].part_table->sys_ind;
+
+	if (!free_primary && partitions >= MAXIMUM_PARTS) {
 		printf(_("The maximum number of partitions has been created\n"));
 		return;
 	}
 
-	for (i = 0; i < 4; i++)
-		free_primary += !ptes[i].part_table->sys_ind;
 	if (!free_primary) {
 		if (extended_offset)
 			add_logical();

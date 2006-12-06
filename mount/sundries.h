@@ -24,6 +24,7 @@ void block_signals (int how);
 char *canonicalize (const char *path);
 void error (const char *fmt, ...);
 int matching_type (const char *type, const char *types);
+int matching_opts (const char *options, const char *test_opts);
 void *xmalloc (size_t size);
 char *xstrdup (const char *s);
 char *xstrndup (const char *s, int n);

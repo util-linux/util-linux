@@ -16,6 +16,8 @@
 #include <unistd.h>		/* write */
 #include <sys/ioctl.h>		/* ioctl */
 #include <sys/stat.h>		/* stat */
+#include <sys/sysmacros.h>	/* major */
+
 #include "nls.h"
 
 #include <endian.h>
@@ -82,12 +84,12 @@ void guess_device_type(int fd) {
                 scsi_disk = 0;
                 floppy = 0;
 	} else if (S_ISBLK(bootstat.st_mode)
-		   && ((bootstat.st_rdev >> 8) == IDE0_MAJOR ||
-		       (bootstat.st_rdev >> 8) == IDE1_MAJOR)) {
+		   && (major(bootstat.st_rdev) == IDE0_MAJOR ||
+		       major(bootstat.st_rdev) == IDE1_MAJOR)) {
                 scsi_disk = 0;
                 floppy = 0;
 	} else if (S_ISBLK(bootstat.st_mode)
-		   && (bootstat.st_rdev >> 8) == FLOPPY_MAJOR) {
+		   && major(bootstat.st_rdev) == FLOPPY_MAJOR) {
                 scsi_disk = 0;
                 floppy = 1;
 	} else {

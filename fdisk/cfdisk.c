@@ -903,8 +903,13 @@ add_part(int num, int id, int flags, int first, int last, int offset,
 	return -1;
     }
 
-    if (last >= total_size) {
+    if (last >= actual_size) {
 	*errmsg = _("Partition ends after end-of-disk");
+	return -1;
+    }
+
+    if (last >= total_size) {
+	*errmsg = _("Partition ends in the final partial cylinder");
 	return -1;
     }
 
@@ -1670,7 +1675,7 @@ fill_p_info(void) {
 			     bs, 1, &errmsg)) {
 				char *bad = _("Bad logical partition");
 				char *msg = (char *) xmalloc(strlen(bad) + strlen(errmsg) + 30);
-				sprintf(msg, "%s %d: %s", bad, i-1, errmsg);
+				sprintf(msg, "%s %d: %s", bad, i, errmsg);
 				fatal(msg, 4);
 			}
 		}

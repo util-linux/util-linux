@@ -160,17 +160,11 @@ static unsigned long req_nr_inodes = 0;
 #define mark_zone(x) (setbit(zone_map,(x)-FIRSTZONE+1))
 #define unmark_zone(x) (clrbit(zone_map,(x)-FIRSTZONE+1))
 
-#ifndef HAVE_MINIX2
-static void
-fatal_error(const char * fmt_string,int status) {
-	fprintf(stderr,fmt_string,program_name,device_name);
-	exit(status);
-}
-#endif
-
 static void
 die(char *str) {
-	fprintf(stderr, "%s: %s\n", program_name, str);
+	fprintf(stderr, "%s: ", program_name);
+	fprintf(stderr, str, device_name);
+	fprintf(stderr, "\n");
 	exit(8);
 }
 
@@ -675,11 +669,13 @@ main(int argc, char ** argv) {
 	dirsize = i+2;
 	break;
       case 'v':
-#ifdef HAVE_MINIX2
-	version2 = 1;
-#else
-	fatal_error(_("%s: not compiled with minix v2 support\n"),-1);
+#ifndef HAVE_MINIX2
+	fprintf(stderr,
+		_("%s: not compiled with minix v2 support\n"),
+		program_name);
+	exit(-1);
 #endif
+	version2 = 1;
 	break;
       default:
 	usage();

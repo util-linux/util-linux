@@ -30,6 +30,7 @@ hwclock/rtc.c
 lib/carefulputc.c
 lib/env.c
 lib/err.c
+lib/md5.c
 lib/my_reboot.c
 lib/setproctitle.c
 lib/xstrncpy.c
@@ -57,7 +58,6 @@ misc-utils/kill.c
 misc-utils/logger.c
 misc-utils/look.c
 misc-utils/mcookie.c
-misc-utils/md5.c
 misc-utils/namei.c
 misc-utils/procs.c
 misc-utils/rename.c

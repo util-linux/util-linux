@@ -427,7 +427,8 @@ xbsd_create_disklabel (void) {
 		c = read_char (_("Do you want to create a disklabel? (y/n) "));
 		if (tolower(c) == 'y') {
 			if (xbsd_initlabel (
-#if defined (__alpha__) || defined (__powerpc__) || defined (__hppa__)
+#if defined (__alpha__) || defined (__powerpc__) || defined (__hppa__) || \
+    defined (__s390__) || defined (__s390x__)
 				NULL, &xbsd_dlabel, 0
 #else
 				xbsd_part, &xbsd_dlabel, xbsd_part_index

@@ -44,7 +44,7 @@ swapon, swapoff \- enable/disable devices and files for paging and swapping
 .SH SYNOPSIS
 .B /sbin/swapon [\-h \-V]
 .br
-.B /sbin/swapon \-a [\-v]
+.B /sbin/swapon \-a [\-v] [\-e]
 .br
 .BI "/sbin/swapon [\-v] [\-p " "priority" "] " " specialfile " ...
 .br
@@ -78,9 +78,19 @@ Display swap usage summary by device. Equivalent to "cat /proc/swaps".
 Not available before Linux 2.1.25.
 .TP
 .B \-a
-All devices marked as ``sw'' swap devices in
+All devices marked as ``swap'' swap devices in
 .I /etc/fstab
-are made available.
+are made available. Devices that are already running as swap are silently
+skipped.
+.TP 
+.B \-e
+When 
+.B \-a 
+is used with swapon, 
+.B
+\-e 
+makes swapon silently skip devices that
+do not exist.
 .TP
 .BI \-p " priority"
 Specify priority for

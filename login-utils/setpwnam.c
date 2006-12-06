@@ -98,7 +98,7 @@ setpwnam (struct passwd *pwd)
     /* sanity check */
     for (x = 0; x < 3; x++) {
 	if (x > 0) sleep(1);
-	fd = open(PTMPTMP_FILE, O_WRONLY|O_CREAT, 0644);
+	fd = open(PTMPTMP_FILE, O_WRONLY|O_CREAT|O_EXCL, 0644);
 	if (fd == -1) {
 	    umask(oldumask);
 	    return -1;

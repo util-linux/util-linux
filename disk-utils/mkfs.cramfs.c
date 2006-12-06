@@ -18,6 +18,11 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+/*
+ * Old version would die on largish filesystems. Change to mmap the
+ * files one by one instaed of all simultaneously. - aeb, 2002-11-01
+ */
+
 #include <sys/types.h>
 #include <stdio.h>
 #include <sys/stat.h>
@@ -33,6 +38,7 @@
 #include <zlib.h>
 
 #include "cramfs.h"
+#include "md5.h"
 #include "nls.h"
 
 #define PAD_SIZE 512		/* only 0 and 512 supported by kernel */
@@ -40,18 +46,81 @@
 static const char *progname = "mkcramfs";
 static int verbose = 0;
 
+#define PAGE_CACHE_SIZE (4096)
+/* The kernel assumes PAGE_CACHE_SIZE as block size. */
+static unsigned int blksize = PAGE_CACHE_SIZE; /* settable via -b option */
+static long total_blocks = 0, total_nodes = 1; /* pre-count the root node */
+static int image_length = 0;
+
+/*
+ * If opt_holes is set, then mkcramfs can create explicit holes in the
+ * data, which saves 26 bytes per hole (which is a lot smaller a
+ * saving than for most filesystems).
+ *
+ * Note that kernels up to at least 2.3.39 don't support cramfs holes,
+ * which is why this is turned off by default.
+ */
+static int opt_edition = 0;
+static int opt_errors = 0;
+static int opt_holes = 0;
+static int opt_pad = 0;
+static char *opt_image = NULL;
+static char *opt_name = NULL;
+
+static int warn_dev = 0;
+static int warn_gid = 0;
+static int warn_namelen = 0;
+static int warn_skip = 0;
+static int warn_size = 0;
+static int warn_uid = 0;
+
+#ifndef MIN
+# define MIN(_a,_b) ((_a) < (_b) ? (_a) : (_b))
+#endif
+
+/* In-core version of inode / directory entry. */
+struct entry {
+	/* stats */
+	char *name;
+	unsigned int mode, size, uid, gid;
+	unsigned char md5sum[16];
+	unsigned char flags;
+#define HAVE_MD5	1
+#define	INVALID		2
+
+	/* FS data */
+	char *path;
+        struct entry *same;	    /* points to other identical file */
+        unsigned int offset;        /* pointer to compressed data in archive */
+	unsigned int dir_offset;    /* offset of directory entry in archive */
+
+	/* organization */
+	struct entry *child;	    /* NULL for non-directory and empty dir */
+	struct entry *next;
+};
+
+/*
+ * Width of various bitfields in struct cramfs_inode.
+ * Used only to generate warnings.
+ */
+#define CRAMFS_SIZE_WIDTH 24
+#define CRAMFS_UID_WIDTH 16
+#define CRAMFS_GID_WIDTH 8
+#define CRAMFS_OFFSET_WIDTH 26
+
 /* Input status of 0 to print help and exit without an error. */
-static void usage(int status)
-{
+static void
+usage(int status) {
 	FILE *stream = status ? stderr : stdout;
 
 	fprintf(stream,
-		_("usage: %s [-h] [-v] [-e edition] [-i file] [-n name] "
+		_("usage: %s [-v] [-b blksz] [-e edition] [-i file] [-n name] "
 		    "dirname outfile\n"
 		  " -h         print this help\n"
 		  " -v         be verbose\n"
 		  " -E         make all warnings errors "
 		    "(non-zero exit status)\n"
+		  " -b blksz   use this blocksize, must equal page size\n"
 		  " -e edition set edition number (part of fsid)\n"
 		  " -i file    insert a file image into the filesystem "
 		    "(requires >= 2.4.0)\n"
@@ -66,59 +135,98 @@ static void usage(int status)
 	exit(status);
 }
 
-#define PAGE_CACHE_SIZE (4096)
-/* The kernel assumes PAGE_CACHE_SIZE as block size. */
-static unsigned int blksize = PAGE_CACHE_SIZE;
-static long total_blocks = 0, total_nodes = 1; /* pre-count the root node */
-static int image_length = 0;
+/* malloc or die */
+static void *
+xmalloc (size_t size) {
+	void *t = malloc(size);
+	if (t == NULL) {
+		perror(NULL);
+		exit(8);	/* out of memory */
+	}
+	return t;
+}
 
-/*
- * If opt_holes is set, then mkcramfs can create explicit holes in the
- * data, which saves 26 bytes per hole (which is a lot smaller a
- * saving than most most filesystems).
- *
- * Note that kernels up to at least 2.3.39 don't support cramfs holes,
- * which is why this is turned off by default.
- */
-static int opt_edition = 0;
-static int opt_errors = 0;
-static int opt_holes = 0;
-static int opt_pad = 0;
-static char *opt_image = NULL;
-static char *opt_name = NULL;
+static char *
+do_mmap(char *path, unsigned int size, unsigned int mode){
+	int fd;
+	char *start;
 
-static int warn_dev, warn_gid, warn_namelen, warn_skip, warn_size, warn_uid;
+	if (!size)
+		return NULL;
 
-#ifndef MIN
-# define MIN(_a,_b) ((_a) < (_b) ? (_a) : (_b))
-#endif
+	if (S_ISLNK(mode)) {
+		start = xmalloc(size);
+		if (readlink(path, start, size) < 0) {
+			perror(path);
+			warn_skip = 1;
+			start = NULL;
+		}
+		return start;
+	}
 
-/* In-core version of inode / directory entry. */
-struct entry {
-	/* stats */
-	char *name;
-	unsigned int mode, size, uid, gid;
+	fd = open(path, O_RDONLY);
+	if (fd < 0) {
+		perror(path);
+		warn_skip = 1;
+		return NULL;
+	}
 
-	/* FS data */
-	void *uncompressed;
-        /* points to other identical file */
-        struct entry *same;
-        unsigned int offset;            /* pointer to compressed data in archive */
-	unsigned int dir_offset;	/* Where in the archive is the directory entry? */
+	start = mmap(NULL, size, PROT_READ, MAP_PRIVATE, fd, 0);
+	if (-1 == (int) (long) start) {
+		perror("mmap");
+		exit(8);
+	}
+	close(fd);
 
-	/* organization */
-	struct entry *child; /* null for non-directories and empty directories */
-	struct entry *next;
-};
+	return start;
+}
 
-/*
- * Width of various bitfields in struct cramfs_inode.
- * Used only to generate warnings.
- */
-#define CRAMFS_SIZE_WIDTH 24
-#define CRAMFS_UID_WIDTH 16
-#define CRAMFS_GID_WIDTH 8
-#define CRAMFS_OFFSET_WIDTH 26
+static void
+do_munmap(char *start, unsigned int size, unsigned int mode){
+	if (S_ISLNK(mode))
+		free(start);
+	else
+		munmap(start, size);
+}
+
+/* compute md5sums, so that we do not have to compare every pair of files */
+static void
+mdfile(struct entry *e) {
+	MD5_CTX ctx;
+	char *start;
+
+	start = do_mmap(e->path, e->size, e->mode);
+	if (start == NULL) {
+		e->flags |= INVALID;
+	} else {
+		MD5Init(&ctx);
+		MD5Update(&ctx, start, e->size);
+		MD5Final(e->md5sum, &ctx);
+
+		do_munmap(start, e->size, e->mode);
+
+		e->flags |= HAVE_MD5;
+	}
+}
+
+/* md5 digests are equal; files are almost certainly the same,
+   but just to be sure, do the comparison */
+static int
+identical_file(struct entry *e1, struct entry *e2){
+	char *start1, *start2;
+	int equal;
+
+	start1 = do_mmap(e1->path, e1->size, e1->mode);
+	if (!start1)
+		return 0;
+	start2 = do_mmap(e2->path, e2->size, e2->mode);
+	if (!start2)
+		return 0;
+	equal = !memcmp(start1, start2, e1->size);
+	do_munmap(start1, e1->size, e1->mode);
+	do_munmap(start2, e2->size, e2->mode);
+	return equal;
+}
 
 /*
  * The longest file name component to allow for in the input directory tree.
@@ -129,21 +237,32 @@ struct entry {
  */
 #define MAX_INPUT_NAMELEN 255
 
-static int find_identical_file(struct entry *orig,struct entry *newfile)
+static int find_identical_file(struct entry *orig, struct entry *new)
 {
-        if(orig==newfile) return 1;
-        if(!orig) return 0;
-        if(orig->size==newfile->size && orig->uncompressed && !memcmp(orig->uncompressed,newfile->uncompressed,orig->size)) {
-                newfile->same=orig;
-                return 1;
+        if (orig == new)
+		return 1;
+        if (!orig)
+		return 0;
+        if (orig->size == new->size && orig->path) {
+		if (!orig->flags)
+			mdfile(orig);
+		if (!new->flags)
+			mdfile(new);
+
+		if ((orig->flags & HAVE_MD5) && (new->flags & HAVE_MD5) &&
+		    !memcmp(orig->md5sum, new->md5sum, 16) &&
+		    identical_file(orig, new)) {
+			new->same = orig;
+			return 1;
+		}
         }
-        return find_identical_file(orig->child,newfile) ||
-                   find_identical_file(orig->next,newfile);
+        return find_identical_file(orig->child, new) ||
+                   find_identical_file(orig->next, new);
 }
 
-static void eliminate_doubles(struct entry *root,struct entry *orig) {
-        if(orig) {
-                if(orig->size && orig->uncompressed)
+static void eliminate_doubles(struct entry *root, struct entry *orig) {
+        if (orig) {
+                if (orig->size && orig->path)
 			find_identical_file(root,orig);
                 eliminate_doubles(root,orig->child);
                 eliminate_doubles(root,orig->next);
@@ -169,11 +288,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 
 	/* Set up the path. */
 	/* TODO: Reuse the parent's buffer to save memcpy'ing and duplication. */
-	path = malloc(len + 1 + MAX_INPUT_NAMELEN + 1);
-	if (!path) {
-		perror(NULL);
-		exit(8);
-	}
+	path = xmalloc(len + 1 + MAX_INPUT_NAMELEN + 1);
 	memcpy(path, name, len);
 	endpath = path + len;
 	*endpath = '/';
@@ -259,45 +374,15 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 		if (S_ISDIR(st.st_mode)) {
 			entry->size = parse_directory(root_entry, path, &entry->child, fslen_ub);
 		} else if (S_ISREG(st.st_mode)) {
-			/* TODO: We ought to open files in do_compress, one
-			   at a time, instead of amassing all these memory
-			   maps during parse_directory (which don't get used
-			   until do_compress anyway).  As it is, we tend to
-			   get EMFILE errors (especially if mkcramfs is run
-			   by non-root).
-
-			   While we're at it, do analagously for symlinks
-			   (which would just save a little memory). */
-			int fd = open(path, O_RDONLY);
-			if (fd < 0) {
-				perror(path);
-				warn_skip = 1;
-				continue;
-			}
+			entry->path = strdup(path);
 			if (entry->size) {
-				if ((entry->size >= 1 << CRAMFS_SIZE_WIDTH)) {
+				if (entry->size >= (1 << CRAMFS_SIZE_WIDTH)) {
 					warn_size = 1;
 					entry->size = (1 << CRAMFS_SIZE_WIDTH) - 1;
 				}
-
-				entry->uncompressed = mmap(NULL, entry->size, PROT_READ, MAP_PRIVATE, fd, 0);
-				if (-1 == (int) (long) entry->uncompressed) {
-					perror("mmap");
-					exit(8);
-				}
 			}
-			close(fd);
 		} else if (S_ISLNK(st.st_mode)) {
-			entry->uncompressed = malloc(entry->size);
-			if (!entry->uncompressed) {
-				perror(NULL);
-				exit(8);
-			}
-			if (readlink(path, entry->uncompressed, entry->size) < 0) {
-				perror(path);
-				warn_skip = 1;
-				continue;
-			}
+			entry->path = strdup(path);
 		} else if (S_ISFIFO(st.st_mode) || S_ISSOCK(st.st_mode)) {
 			/* maybe we should skip sockets */
 			entry->size = 0;
@@ -311,7 +396,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 			int blocks = ((entry->size - 1) / blksize + 1);
 
 			/* block pointers & data expansion allowance + data */
-			if(entry->size)
+			if (entry->size)
 				*fslen_ub += (4+26)*blocks + entry->size + 3;
                 }
 
@@ -492,14 +577,24 @@ static int is_zero(char const *begin, unsigned len)
  * Note that size > 0, as a zero-sized file wouldn't ever
  * have gotten here in the first place.
  */
-static unsigned int do_compress(char *base, unsigned int offset, char const *name, char *uncompressed, unsigned int size)
+static unsigned int
+do_compress(char *base, unsigned int offset, char const *name,
+	    char *path, unsigned int size, unsigned int mode)
 {
-	unsigned long original_size = size;
-	unsigned long original_offset = offset;
-	unsigned long new_size;
-	unsigned long blocks = (size - 1) / blksize + 1;
-	unsigned long curr = offset + 4 * blocks;
+	unsigned long original_size, original_offset, new_size, blocks, curr;
 	int change;
+	char *p, *start;
+
+	/* get uncompressed data */
+	start = do_mmap(path, size, mode);
+	if (start == NULL)
+		return offset;
+	p = start;
+
+	original_size = size;
+	original_offset = offset;
+	blocks = (size - 1) / blksize + 1;
+	curr = offset + 4 * blocks;
 
 	total_blocks += blocks;
 
@@ -509,11 +604,11 @@ static unsigned int do_compress(char *base, unsigned int offset, char const *nam
 		if (input > blksize)
 			input = blksize;
 		size -= input;
-		if (!is_zero (uncompressed, input)) {
-			compress(base + curr, &len, uncompressed, input);
+		if (!is_zero (p, input)) {
+			compress(base + curr, &len, p, input);
 			curr += len;
 		}
-		uncompressed += input;
+		p += input;
 
 		if (len > blksize*2) {
 			/* (I don't think this can happen with zlib.) */
@@ -527,10 +622,12 @@ static unsigned int do_compress(char *base, unsigned int offset, char const *nam
 		offset += 4;
 	} while (size);
 
+	do_munmap(start, original_size, mode);
+
 	curr = (curr + 3) & ~3;
 	new_size = curr - original_offset;
 	/* TODO: Arguably, original_size in these 2 lines should be
-	   st_blocks * 512.  But if you say that then perhaps
+	   st_blocks * 512.  But if you say that, then perhaps
 	   administrative data should also be included in both. */
 	change = new_size - original_size;
 	if (verbose)
@@ -543,26 +640,27 @@ static unsigned int do_compress(char *base, unsigned int offset, char const *nam
 
 /*
  * Traverse the entry tree, writing data for every item that has
- * non-null entry->compressed (i.e. every symlink and non-empty
+ * non-null entry->path (i.e. every symlink and non-empty
  * regfile).
  */
-static unsigned int write_data(struct entry *entry, char *base, unsigned int offset)
-{
-	do {
-		if (entry->uncompressed) {
-                        if(entry->same) {
-                                set_data_offset(entry, base, entry->same->offset);
-                                entry->offset=entry->same->offset;
+static unsigned int
+write_data(struct entry *entry, char *base, unsigned int offset) {
+	struct entry *e;
+
+	for (e = entry; e; e = e->next) {
+		if (e->path) {
+                        if (e->same) {
+                                set_data_offset(e, base, e->same->offset);
+                                e->offset = e->same->offset;
                         } else {
-                                set_data_offset(entry, base, offset);
-                                entry->offset=offset;
-                                offset = do_compress(base, offset, entry->name, entry->uncompressed, entry->size);
+                                set_data_offset(e, base, offset);
+                                e->offset = offset;
+                                offset = do_compress(base, offset, e->name,
+						     e->path, e->size,e->mode);
                         }
-		}
-		else if (entry->child)
-			offset = write_data(entry->child, base, offset);
-                entry=entry->next;
-	} while (entry);
+		} else if (e->child)
+			offset = write_data(e->child, base, offset);
+	}
 	return offset;
 }
 
@@ -595,10 +693,12 @@ static unsigned int write_file(char *file, char *base, unsigned int offset)
  * Note that if you want it to fit in a ROM then you're limited to what the
  * hardware and kernel can support (64MB?).
  */
-#define MAXFSLEN ((((1 << CRAMFS_OFFSET_WIDTH) - 1) << 2) /* offset */ \
-		  + (1 << CRAMFS_SIZE_WIDTH) - 1 /* filesize */ \
-		  + (1 << CRAMFS_SIZE_WIDTH) * 4 / PAGE_CACHE_SIZE /* block pointers */ )
-
+static unsigned int
+maxfslen(void) {
+	return (((1 << CRAMFS_OFFSET_WIDTH) - 1) << 2)    /* offset */
+		+ (1 << CRAMFS_SIZE_WIDTH) - 1            /* filesize */
+		+ (1 << CRAMFS_SIZE_WIDTH) * 4 / blksize; /* block pointers */
+}
 
 /*
  * Usage:
@@ -618,9 +718,10 @@ int main(int argc, char **argv)
 	int fd;
 	/* initial guess (upper-bound) of required filesystem size */
 	loff_t fslen_ub = sizeof(struct cramfs_super);
+	unsigned int fslen_max;
 	char const *dirname, *outfile;
 	u32 crc = crc32(0L, Z_NULL, 0);
-	int c;			/* for getopt */
+	int c;
 
 	total_blocks = 0;
 
@@ -632,10 +733,15 @@ int main(int argc, char **argv)
 	}
 
 	/* command line options */
-	while ((c = getopt(argc, argv, "hEe:i:n:psVvz")) != EOF) {
+	while ((c = getopt(argc, argv, "hb:Ee:i:n:psVvz")) != EOF) {
 		switch (c) {
 		case 'h':
 			usage(0);
+		case 'b':
+			blksize = atoi(optarg);
+			if (blksize <= 0)
+				usage(1);
+			break;
 		case 'E':
 			opt_errors = 1;
 			break;
@@ -699,19 +805,19 @@ int main(int argc, char **argv)
 	/* always allocate a multiple of blksize bytes because that's
            what we're going to write later on */
 	fslen_ub = ((fslen_ub - 1) | (blksize - 1)) + 1;
+	fslen_max = maxfslen();
 
-	if (fslen_ub > MAXFSLEN) {
+	if (fslen_ub > fslen_max) {
 		fprintf(stderr,
 			_("warning: guestimate of required size (upper bound) "
 			  "is %LdMB, but maximum image size is %uMB.  "
 			  "We might die prematurely.\n"),
 			fslen_ub >> 20,
-			MAXFSLEN >> 20);
-		fslen_ub = MAXFSLEN;
+			fslen_max >> 20);
+		fslen_ub = fslen_max;
 	}
 
-        /* find duplicate files. TODO: uses the most inefficient algorithm
-           possible. */
+        /* find duplicate files */
         eliminate_doubles(root_entry,root_entry);
 
 	/* TODO: Why do we use a private/anonymous mapping here

@@ -483,21 +483,20 @@ set_hardware_clock(const time_t newtime,
 
 
 static void
-set_hardware_clock_exact(const time_t settime, 
-                         const struct timeval ref_time,
+set_hardware_clock_exact(const time_t sethwtime, 
+                         const struct timeval refsystime,
                          const bool universal, 
                          const bool testing) {
 /*----------------------------------------------------------------------------
-  Set the Hardware Clock to the time "settime", in local time zone or UTC,
+  Set the Hardware Clock to the time "sethwtime", in local time zone or UTC,
   according to "universal".
 
-  But correct "settime" and wait for a fraction of a second so that
-  "settime" is the value of the Hardware Clock as of system time
-  "ref_time", which is in the past.  For example, if "settime" is
-  14:03:05 and "ref_time" is 12:10:04.5 and the current system
-  time is 12:10:06.0: Wait .5 seconds (to make exactly 2 seconds since
-  "ref_time") and then set the Hardware Clock to 14:03:07, thus
-  getting a precise and retroactive setting of the clock.
+  Wait for a fraction of a second so that "sethwtime" is the value of
+  the Hardware Clock as of system time "refsystime", which is in the past.
+  For example, if "sethwtime" is 14:03:05 and "refsystime" is 12:10:04.5
+  and the current system time is 12:10:06.0: Wait .5 seconds (to make
+  exactly 2 seconds since "refsystime") and then set the Hardware Clock
+  to 14:03:07, thus getting a precise and retroactive setting of the clock.
 
   (Don't be confused by the fact that the system clock and the Hardware
   Clock differ by two hours in the above example.  That's just to remind 
@@ -505,23 +504,29 @@ set_hardware_clock_exact(const time_t settime,
 
   This function ought to be able to accept set times as fractional times.
   Idea for future enhancement.
-
 -----------------------------------------------------------------------------*/
-  time_t newtime;  /* Time to which we will set Hardware Clock */
-  struct timeval now_time;  /* locally used time */
 
-  gettimeofday(&now_time, NULL);
-  newtime = settime + (int) time_diff(now_time, ref_time) + 1;
+  time_t newhwtime;
+  struct timeval beginsystime, nowsystime;
+
+ time_resync:
+  gettimeofday(&beginsystime, NULL);
+  newhwtime = sethwtime + (int) time_diff(beginsystime, refsystime) + 1;
   if (debug) 
     printf(_("Time elapsed since reference time has been %.6f seconds.\n"
            "Delaying further to reach the next full second.\n"),
-           time_diff(now_time, ref_time));
+           time_diff(beginsystime, refsystime));
   
-  /* Now delay some more until Hardware Clock time newtime arrives */
-  do gettimeofday(&now_time, NULL);
-  while (time_diff(now_time, ref_time) < newtime - settime);
+  /* Now delay some more until Hardware Clock time newhwtime arrives */
+  do {
+	  float tdiff;
+	  gettimeofday(&nowsystime, NULL);
+	  tdiff = time_diff(nowsystime, beginsystime);
+	  if (tdiff < 0)
+		  goto time_resync;	/* probably time was reset */
+  } while (time_diff(nowsystime, refsystime) < newhwtime - sethwtime);
   
-  set_hardware_clock(newtime, universal, testing);
+  set_hardware_clock(newhwtime, universal, testing);
 }
 
 

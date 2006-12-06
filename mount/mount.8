@@ -35,6 +35,7 @@
 .\" 990111, aeb: documented /sbin/mount.smbfs
 .\" 990730, Yann Droneaud <lch@multimania.com>: updated page
 .\" 991214, Elrond <Elrond@Wunder-Nett.org>: added some docs on devpts
+.\" 010714, Michael K. Johnson <johnsonm@redhat.com> added -O
 .\" 010725, Nikita Danilov <NikitaDanilov@Yahoo.COM>: reiserfs options
 .\" 011124, Karl Eichwalder <ke@gnu.franken.de>: tmpfs options
 .\"
@@ -44,7 +45,7 @@ mount \- mount a file system
 .SH SYNOPSIS
 .BI "mount [\-lhV]"
 .LP
-.BI "mount \-a [\-fFnrsvw] [\-t " vfstype ]
+.BI "mount \-a [\-fFnrsvw] [\-t " vfstype "] [\-O " optlist ]
 .br
 .BI "mount [\-fnrsvw] [\-o " options " [,...]] " "device " | " dir"
 .br
@@ -109,6 +110,15 @@ file hierarchy somewhere else. The call is
 .RE
 After this call the same contents is accessible in two places.
 
+This call attaches only (part of) a single filesystem, not possible
+submounts. The entire file hierarchy including submounts is attached
+a second place using
+.RS
+.br
+.B "mount --rbind olddir newdir"
+.RE
+.\" available since Linux 2.4.11.
+
 Since Linux 2.5.1 it is possible to atomically move a subtree
 to another place. The call is
 .RS
@@ -147,12 +157,12 @@ mounted where, using which options. This file is used in three ways:
 (i) The command
 .RS
 .br
-.BI "mount \-a [-t" " type" ]
+.BI "mount \-a [\-t " type "] [\-O " optlist ]
 .RE
 (usually given in a bootscript) causes all file systems mentioned in
 .I fstab
-(of the proper type) to be mounted as indicated, except for those
-whose line contains the
+(of the proper type and/or having or not having the proper options)
+to be mounted as indicated, except for those whose line contains the
 .B noauto
 keyword. Adding the
 .B \-F
@@ -470,6 +480,44 @@ and
 .IR ext .
 .RE
 .TP
+.B \-O
+Used in conjunction with
+.BR \-a ,
+to limit the set of filesystems to which the
+.B \-a
+is applied.  Like
+.B \-t
+in this regard except that it is useless except in the context of
+.BR \-a .
+For example, the command:
+.RS
+.RS
+.B "mount \-a \-O no_netdev"
+.RE
+mounts all file systems except those which have the option
+.I _netdev
+specified in the options field in the
+.I /etc/fstab
+file.
+
+It is different from
+.B \-t
+in that each option is matched exactly; a leading
+.B no
+at the beginning of one option does not negate the rest.
+
+The
+.B \-t
+and
+.B \-O
+options are cumulative in effect; that is, the command
+.RS
+.B "mount \-a \-t ext2 \-O _netdev"
+.RE
+mounts all ext2 filesystems with the _netdev option, not all filesystems
+that are either ext2 or have the _netdev option specified.
+.RE
+.TP
 .B \-o
 Options are specified with a
 .B \-o
@@ -502,6 +550,11 @@ Interpret character or block special devices on the file system.
 .TP
 .B exec
 Permit execution of binaries.
+.TP
+.B _netdev
+The filesystem resides on a device that requires network access
+(used to prevent the system from attempting to mount these filesystems
+until the network has been enabled on the system).
 .TP
 .B noatime
 Do not update inode access times on this file system (e.g, for faster
@@ -1457,15 +1510,30 @@ by the console. It can be be enabled for the filesystem with this option.
 If `uni_xlate' gets set, UTF8 gets disabled.
 .TP
 .B shortname=[lower|win95|winnt|mixed]
-Option (available since 2.4.13) that sets how short filenames are to be
-created and displayed.
-.nf
-   lower = display lower, create win95 filenames
-   win95 = display win95, create win95 filenames
-   winnt = display winnt, create winnt filenames
-   mixed = display winnt, create win95 filenames
-.fi
-Default is "lower".
+
+Defines the behaviour for creation and display of filenames which fit into
+8.3 characters. If a long name for a file exists, it will always be
+preferred display. There are four modes:
+.RS
+.TP
+.I lower
+Force the short name to lower case upon display; store a long name when 
+the short name is not all upper case.
+.TP
+.I win95
+Force the short name to upper case upon display; store a long name when
+the short name is not all upper case.
+. TP
+.I winnt
+Display the shortname as is; store a long name when the short name is 
+not all lower case or all upper case.
+.TP
+.I mixed
+Display the short name as is; store a long name when the short name is not
+all upper case.
+.RE
+
+The default is "lower".
 
 .SH "Mount options for xenix"
 None.

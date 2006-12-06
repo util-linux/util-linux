@@ -289,9 +289,12 @@ int main(int argc, char *argv[])
 
 		for(i = 0; i < numcmd; i++) {
 			if(pid == inittab[i].pid || inittab[i].pid < 0) {
-				if(stopped) inittab[i].pid = -1;
-				else spawn(i);
-				break;
+				if (stopped)
+					inittab[i].pid = -1;
+				else
+					spawn(i);
+				if (pid == inittab[i].pid)
+					break;
 			}
 		}
 	}
@@ -456,9 +459,16 @@ static void spawn (int i)
 	struct timeval ct;
 
 	if (inittab[i].toks[0] == NULL) return;
+
 	/*  Check if respawning too fast  */
 	gettimeofday (&ct, NULL);
 	ds_taken = ct.tv_sec - inittab[i].last_start.tv_sec;
+
+	/* On the first iteration last_start==0 and ds_taken
+	   may be very large. Avoid overflow. -- Denis Vlasenko */
+	if (ds_taken > 10000)
+		ds_taken = 10000;
+
 	ds_taken *= 10;
 	ds_taken += (ct.tv_usec - inittab[i].last_start.tv_usec) / 100000;
 	if (ds_taken < 1)

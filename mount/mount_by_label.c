@@ -243,7 +243,7 @@ uuidcache_init(void) {
 	int firstPass;
 	int handleOnFirst;
 #if 0
-	char *iobuf = 0;
+	char iobuf[32*1024];	/* For setvbuf */
 #endif
 
 	if (uuidCache)
@@ -272,12 +272,8 @@ uuidcache_init(void) {
    to keep statistics in /proc/partitions. Of course, statistics belong
    in some /proc/diskstats, not in some /proc file that happened to
    exist already. */
-   {
-#define CBBUF	(16 * 1024)
-	iobuf = (char *) malloc(CBBUF);
-	if (iobuf)
-		setvbuf(procpt, iobuf, _IOFBF, CBBUF);
-   }
+
+	setvbuf(procpt, iobuf, _IOFBF, sizeof(iobuf));
 #endif
 
 	for (firstPass = 1; firstPass >= 0; firstPass--) {
@@ -321,10 +317,7 @@ uuidcache_init(void) {
 	}
 
 	fclose(procpt);
-#if 0
-	if (iobuf)
-		free(iobuf);
-#endif
+
 	uuidcache_init_lvm();
 }
 

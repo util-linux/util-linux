@@ -51,8 +51,14 @@ if we have a stack or plain mount - mount atop of it, forming a stack. */
 #ifndef MS_MOVE
 #define MS_MOVE		0x2000	/* 8192: Atomically move tree */
 #endif
+#ifndef MS_REC
+#define MS_REC		0x4000	/* 16384: Recursive loopback */
+#endif
+#ifndef MS_VERBOSE
+#define MS_VERBOSE	0x8000	/* 32768 */
+#endif
 /*
- * Magic mount flag number. Has to be or-ed to the flag values.
+ * Magic mount flag number. Had to be or-ed to the flag values.
  */
 #ifndef MS_MGC_VAL
 #define MS_MGC_VAL 0xC0ED0000	/* magic flag number to indicate "new" flags */

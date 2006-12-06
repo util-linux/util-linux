@@ -29,7 +29,7 @@ umount \- unmount file systems
 .SH SYNOPSIS
 .BI "umount [\-hV]"
 .LP
-.BI "umount -a [\-dflnrv] [\-t " vfstype ]
+.BI "umount -a [\-dflnrv] [\-t " vfstype "] [\-O " options ]
 .br
 .BI "umount [\-dflnrv] " "dir " | " device " [...]
 .SH DESCRIPTION
@@ -89,6 +89,15 @@ specified type.  More than one type may be specified in a comma separated
 list.  The list of file system types can be prefixed with
 .B no
 to specify the file system types on which no action should be taken.
+.TP
+.BI \-O " options"
+Indicate that the actions should only be taken on file systems with
+the specified options in
+.IR /etc/fstab .
+More than one option type may be specified in a comma separated
+list.  Each option can be prefixed with
+.B no
+to specify options for which no action should be taken.
 .TP
 .B \-f
 Force unmount (in case of an unreachable NFS system).

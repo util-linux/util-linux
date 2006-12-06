@@ -23,6 +23,7 @@
  *               in mtab, try them all, with last one tried first
  *             - Differentiate "user" and "users" key words in fstab
  * 001202: aeb - remove at most one line from /etc/mtab
+ * 010716: Michael K. Johnson <johnsonm@redhat.com: -a -O
  * 010914: Jamie Strandboge - use tcp if that was used for mount
  * 011005: hch - add lazy umount support
  * 020105: aeb - permission test owner umount
@@ -416,7 +417,7 @@ umount_one_bw (const char *file, struct mntentchn *mc) {
    in any case it's important to umount mtab entries in reverse order
    to mount, e.g. /usr/spool before /usr.  */
 static int
-umount_all (char *types) {
+umount_all (char *types, char *test_opts) {
      struct mntentchn *mc, *hd;
      int errors = 0;
 
@@ -424,7 +425,8 @@ umount_all (char *types) {
      if (!hd->prev)
 	  die (2, _("umount: cannot find list of filesystems to unmount"));
      for (mc = hd->prev; mc != hd; mc = mc->prev) {
-	  if (matching_type (mc->m.mnt_type, types)) {
+	  if (matching_type (mc->m.mnt_type, types)
+	      && matching_opts (mc->m.mnt_opts, test_opts)) {
 	       errors |= umount_one (mc->m.mnt_fsname, mc->m.mnt_dir,
 				     mc->m.mnt_type, mc->m.mnt_opts, mc);
 	  }
@@ -441,6 +443,7 @@ static struct option longopts[] =
   { "force", 0, 0, 'f' },
   { "help", 0, 0, 'h' },
   { "no-mtab", 0, 0, 'n' },
+  { "test-opts", 1, 0, 'O' },
   { "verbose", 0, 0, 'v' },
   { "version", 0, 0, 'V' },
   { "read-only", 0, 0, 'r' },
@@ -452,7 +455,7 @@ static void
 usage (FILE *fp, int n)
 {
   fprintf (fp, _("Usage: umount [-hV]\n"
-	       "       umount -a [-f] [-r] [-n] [-v] [-t vfstypes]\n"
+	       "       umount -a [-f] [-r] [-n] [-v] [-t vfstypes] [-O opts]\n"
 	       "       umount [-f] [-r] [-n] [-v] special | node...\n"));
   exit (n);
 }
@@ -606,7 +609,7 @@ int
 main (int argc, char *argv[]) {
 	int c;
 	int all = 0;
-	char *types = NULL;
+	char *types = NULL, *test_opts = NULL;
 	int result = 0;
 
 	sanitize_env();
@@ -616,7 +619,7 @@ main (int argc, char *argv[]) {
 
 	umask(033);
 
-	while ((c = getopt_long (argc, argv, "adfhlnrt:vV",
+	while ((c = getopt_long (argc, argv, "adfhlnrt:O:vV",
 				 longopts, NULL)) != -1)
 		switch (c) {
 		case 'a':		/* umount everything */
@@ -637,6 +640,9 @@ main (int argc, char *argv[]) {
 			break;
 		case 'n':		/* do not write in /etc/mtab */
 			++nomtab;
+			break;
+		case 'O':		/* specify file system options */
+			test_opts = optarg;
 			break;
 		case 'r':		/* remount read-only if umount fails */
 			++remount;
@@ -669,7 +675,7 @@ main (int argc, char *argv[]) {
 	if (all) {
 		if (types == NULL)
 			types = "noproc,nodevfs";
-		result = umount_all (types);
+		result = umount_all (types, test_opts);
 	} else if (argc < 1) {
 		usage (stderr, 2);
 	} else while (argc--) {

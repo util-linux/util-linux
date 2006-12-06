@@ -25,10 +25,6 @@ then
     setserial /dev/modem spd_hi
 fi
 
-# Make the keyboard repeat rate and delay reasonable.
-                                echo -n "keyboard "
-kbdrate -r 24 -d 250 >& /dev/null
-
 # Make CTRL-ALT-DEL do a controlled reboot (i.e., call reboot(8))
                                 echo -n "reboot "
 ctrlaltdel soft

@@ -49,6 +49,9 @@
 #elif defined (__alpha__) || defined (__powerpc__) || defined (__ia64__) || defined (__hppa__)
 #define BSD_LABELSECTOR   0
 #define BSD_LABELOFFSET   64
+#elif defined (__s390__) || defined (__s390x__)
+#define BSD_LABELSECTOR   1
+#define BSD_LABELOFFSET   0
 #else
 #error unknown architecture
 #endif

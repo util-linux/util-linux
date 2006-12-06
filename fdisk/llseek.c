@@ -25,7 +25,7 @@ extern ext2_loff_t ext2_llseek (unsigned int, ext2_loff_t, unsigned int);
 
 #else	/* HAVE_LLSEEK */
 
-#if defined(__alpha__) || defined(__ia64__)
+#if defined(__alpha__) || defined(__ia64__) || defined(__s390x__)
 
 #define my_llseek lseek
 

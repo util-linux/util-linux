@@ -38,6 +38,7 @@
 .\" Wed Jul 26 00:00:00 1995: Updated some nfs stuff, joey@infodrom.north.de
 .\" Tue Apr  2 00:38:28 1996: added info about "noauto", "user", etc.
 .\" Tue Jun 15 20:02:18 1999: added LABEL and UUID
+.\" Sat Jul 14 2001: Michael K. Johnson <johnsonm@redhat.com> added -O
 .\"
 .TH FSTAB 5 "15 June 1999" "Linux 2.2" "Linux Programmer's Manual"
 .SH NAME
@@ -156,7 +157,10 @@ For documentation on all nfs-specific options have a look at
 Common for all types of file system are the options ``noauto''
 (do not mount when "mount -a" is given, e.g., at boot time), ``user''
 (allow a user to mount), and ``owner''
-(allow device owner to mount). For more details, see
+(allow device owner to mount), and ``_netdev'' (device requires network
+to be available).
+The ``owner'' and ``_netdev'' options are Linux-specific.
+For more details, see
 .BR mount (8).
 
 The fifth field,

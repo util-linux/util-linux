@@ -41,8 +41,10 @@ all: $(SBIN) $(USRBIN)
 fsck.cramfs: fsck.cramfs.o
 	$(CC) $(LDFLAGS) -o fsck.cramfs fsck.cramfs.o -lz
 
-mkfs.cramfs: mkfs.cramfs.o
-	$(CC) $(LDFLAGS) -o mkfs.cramfs mkfs.cramfs.o -lz
+mkfs.cramfs: mkfs.cramfs.o $(LIB)/md5.o
+	$(CC) $(LDFLAGS) -o mkfs.cramfs mkfs.cramfs.o $(LIB)/md5.o -lz
+
+mkfs.cramfs.o: $(LIB)/md5.h
 
 fsck.cramfs.o mkfs.cramfs.o: cramfs.h
 

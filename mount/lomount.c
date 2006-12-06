@@ -24,6 +24,7 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <sys/sysmacros.h>
 
 #include "loop.h"
 #include "lomount.h"
@@ -121,7 +122,7 @@ is_loop_device (const char *device) {
 #endif
 	return (loopmajor && stat(device, &statbuf) == 0 &&
 		S_ISBLK(statbuf.st_mode) &&
-		(statbuf.st_rdev>>8) == loopmajor);
+		major(statbuf.st_rdev) == loopmajor);
 }
 
 #define SIZE(a) (sizeof(a)/sizeof(a[0]))
@@ -174,7 +175,7 @@ find_unused_loop_device (void) {
 
 	if (!somedev)
 		error(_("mount: could not find any device /dev/loop#"));
-	else if(!someloop) {
+	else if (!someloop) {
 	    if (loop_known == 1)
 		error(_(
 		    "mount: Could not find any loop device.\n"
