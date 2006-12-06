@@ -39,6 +39,7 @@
 # 11. For pivot_root.c: does <linux/unistd.h> define __NR_pivot_root?
 # 12. For hwclock.c: does struct tm have a field tm_gmtoff?
 # 13. For nfsmount: does the output of rpcgen compile?
+# 14. For fsck.cramfs, mkfs.cramfs: do we have libz?
 
 rm -f make_include defines.h
 
@@ -660,3 +661,23 @@ else
 fi
 rm -f conftest conftestx.c conftestl.c conftest.h conftest.x conferrs
 rm -f conftestx.o conftestl.o
+
+#
+# 14. For fsck.cramfs, mkfs.cramfs: do we have libz?
+#
+echo '
+#include <zlib.h>
+int main(){ exit(0); crc32(0, 0, 0); }
+' > conftest.c
+LIBS=-lz
+eval $compile
+LIBS=
+if test -s conftest; then
+        echo "HAVE_ZLIB=yes" >> make_include
+        echo "You have zlib"
+else
+        echo "HAVE_ZLIB=no" >> make_include
+        echo "You don't have zlib"
+fi
+rm -f conftest conftest.c
+

@@ -52,7 +52,7 @@ static char *prgname;
 /* These are the defaults */
 static char defaultmap[]="/usr/src/linux/System.map";
 static char defaultpro[]="/proc/profile";
-static char optstring[]="M:m:np:itvarV";
+static char optstring[]="M:m:np:itvarVb";
 
 static void
 usage(void) {
@@ -64,6 +64,7 @@ usage(void) {
 		  "\t -i            print only info about the sampling step\n"
 		  "\t -v            print verbose data\n"
 		  "\t -a            print all symbols, even if count is 0\n"
+		  "\t -b            print individual histogram-bin counts\n"
 		  "\t -r            reset all the counters (root only)\n"
 		  "\t -n            disable byte order auto-detection\n"
 		  "\t -V            print version and exit\n")
@@ -116,10 +117,11 @@ main (int argc, char **argv) {
 	char fn_name[S_LEN], next_name[S_LEN];   /* current and next name */
 	char mode[8];
 	int c;
-	int optAll=0, optInfo=0, optReset=0, optVerbose=0, optNative=0;
+	int optAll=0, optInfo=0, optReset=0, optVerbose=0, optNative=0, optBins=0;
 	char mapline[S_LEN];
 	int maplineno=1;
 	int popenMap;   /* flag to tell if popen() has been used */
+	int header_printed;
 
 #define next (current^1)
 
@@ -137,6 +139,7 @@ main (int argc, char **argv) {
 		case 'n': optNative++;	  break;
 		case 'p': proFile=optarg; break;
 		case 'a': optAll++;       break;
+		case 'b': optBins++;	  break;
 		case 'i': optInfo++;      break;
 		case 'M': mult=optarg;    break;
 		case 'r': optReset++;     break;
@@ -266,11 +269,14 @@ main (int argc, char **argv) {
 				prgname,mapFile, maplineno);
 			exit(1);
 		}
+		header_printed = 0;
 
 		/* ignore any LEADING (before a '[tT]' symbol is found)
 		   Absolute symbols */
 		if (*mode == 'A' && total == 0) continue;
-		if (*mode!='T' && *mode!='t') break;/* only text is profiled */
+		if (*mode != 'T' && *mode != 't' &&
+		    *mode != 'W' && *mode != 'w')
+			break;	/* only text is profiled */
 
 		if (indx >= len / sizeof(*buf)) {
 			fprintf(stderr, _("%s: profile address out of range. "
@@ -278,18 +284,31 @@ main (int argc, char **argv) {
 			exit(1);
 		}
 
-		while (indx < (next_add-add0)/step)
+		while (indx < (next_add-add0)/step) {
+			if (optBins && (buf[indx] || optAll)) {
+				if (!header_printed) {
+					printf ("%s:\n", fn_name);
+					header_printed = 1;
+				}
+				printf ("\t%lx\t%u\n", (indx - 1)*step + add0, buf[indx]);
+			}
 			this += buf[indx++];
+		}
 		total += this;
 
-		fn_len = next_add-fn_add;
-		if (fn_len && (this || optAll)) {
-			if (optVerbose)
-				printf("%08lx %-40s %6i %8.4f\n", fn_add,
-				       fn_name,this,this/(double)fn_len);
-			else
-				printf("%6i %-40s %8.4f\n",
-				       this,fn_name,this/(double)fn_len);
+		if (optBins) {
+			if (optVerbose || this > 0)
+				printf ("  total\t\t\t\t%u\n", this);
+		} else {
+			fn_len = next_add-fn_add;
+			if (fn_len && (this || optAll)) {
+				if (optVerbose)
+					printf("%08lx %-40s %6i %8.4f\n", fn_add,
+					       fn_name,this,this/(double)fn_len);
+				else
+					printf("%6i %-40s %8.4f\n",
+					       this,fn_name,this/(double)fn_len);
+			}
 		}
 		fn_add=next_add; strcpy(fn_name,next_name);
 

@@ -3,7 +3,7 @@ PACKAGE = util-linux
 include ../make_include
 include ../MCONFIG
 
-ifeq "(DISABLE_NLS)" "yes"
+ifeq "$(DISABLE_NLS)" "yes"
   DO_NLS=no
 else
   DO_NLS=$(HAVE_XGETTEXT)

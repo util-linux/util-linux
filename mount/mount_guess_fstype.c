@@ -259,8 +259,9 @@ do_guess_fstype(const char *device) {
 
     /* opening and reading an arbitrary unknown path can have
        undesired side effects - first check that `device' refers
-       to a block device */
-    if (stat (device, &statbuf) || !S_ISBLK(statbuf.st_mode))
+       to a block device or ordinary file */
+    if (stat (device, &statbuf) ||
+	!(S_ISBLK(statbuf.st_mode) || S_ISREG(statbuf.st_mode)))
       return 0;
 
     fd = open(device, O_RDONLY);

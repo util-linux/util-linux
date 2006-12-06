@@ -572,9 +572,16 @@ update_utmp(line)
 
     utmpname(_PATH_UTMP);
     setutent();
-    while ((utp = getutent()) 
-	   && !(utp->ut_type == INIT_PROCESS
-		&& utp->ut_pid == mypid)) /* nothing */;
+
+    /* Find mypid in utmp. Earlier code here tested only
+       utp->ut_type != INIT_PROCESS, so maybe the >= here should be >.
+       The present code is taken from login.c, so if this is changed,
+       maybe login has to be changed as well. */
+    while ((utp = getutent()))
+	    if (utp->ut_pid == mypid
+		&& utp->ut_type >= INIT_PROCESS
+		&& utp->ut_type <= DEAD_PROCESS)
+		    break;
 
     if (utp) {
 	memcpy(&ut, utp, sizeof(ut));

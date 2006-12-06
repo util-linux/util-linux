@@ -1,3 +1,23 @@
+util-linux 2.11u
+
+* Danish messages (Claus Hindsgaul)
+* German messages (Michael Piefel)
+* Spanish messages (Santiago Vila Doncel)
+* Swedish messages (Christian Rose)
+* Turkish messages (Nilgün Belma Bugüner)
+* configure: for fsck.cramfs, mkfs.cramfs: add test for libz
+* text-utils/Makefile: pg fix (Toomas Rosin)
+* po/Makefile: typo fix (Silvan Minghetti)
+* agetty: use same test as login does to find utmp entry
+* fdisk: fix for fdisk on empty disk (Michael D. Black)
+* hwclock: compilation fix on alpha
+* mount: add mount by label for jfs (Christoph Hellwig)
+* mount: add mount by label for evms (Luciano Chavez)
+* mount: allow regular files when guessing (Michal Svec)
+* partx/gpt.c: fix size computation (Matt Domsch)
+* readprofile: new option -b (David Mosberger)
+* umount: don't umount devfs upon umount -a (David Gilbert)
+
 util-linux 2.11t
 
 * fdformat: remove test on major

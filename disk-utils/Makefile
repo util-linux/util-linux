@@ -14,12 +14,13 @@ MAN8= 	blockdev.8 fdformat.8 isosize.8 mkfs.8 mkswap.8 elvtune.8 \
 # Where to put binaries?
 # See the "install" rule for the links. . .
 
-SBIN= 	mkfs mkswap blockdev elvtune fsck.minix mkfs.minix mkfs.bfs \
-	fsck.cramfs mkfs.cramfs
+SBIN= 	mkfs mkswap blockdev elvtune fsck.minix mkfs.minix mkfs.bfs
 
 USRBIN=	fdformat isosize
 
 ETC=	fdprm
+
+MAYBE=  setfdprm raw fsck.cramfs mkfs.cramfs
 
 ifneq "$(HAVE_FDUTILS)" "yes"
 USRBIN:=$(USRBIN) setfdprm
@@ -29,6 +30,10 @@ endif
 ifeq "$(HAVE_RAW_H)" "yes"
 USRBIN:=$(USRBIN) raw
 MAN8:=$(MAN8) raw.8
+endif
+
+ifeq "$(HAVE_ZLIB)" "yes"
+SBIN:=$(SBIN) fsck.cramfs mkfs.cramfs
 endif
 
 all: $(SBIN) $(USRBIN)
@@ -55,4 +60,4 @@ endif
 
 .PHONY:	clean
 clean:
-	-rm -f *.o *~ core $(SBIN) $(USRBIN) raw
+	-rm -f *.o *~ core $(SBIN) $(USRBIN) $(MAYBE)

@@ -1,6 +1,6 @@
 # Turkish translations for util-linux messages.
 # Copyright (C) 2002 Nilgün Belma Bugüner.
-# Nilgün Belma Bugüner <nilgun@fide.org>, 2001, 2002.
+# Nilgün Belma Bugüner <nilgun@superonline.com>, 2001, 2002.
 #
 # Permission is granted to freely copy and distribute
 # this file and modified versions, provided that this
@@ -9,10 +9,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.11r\n"
-"POT-Creation-Date: 2002-07-07 17:03+0200\n"
-"PO-Revision-Date: 2002-06-26 15:29+0300\n"
-"Last-Translator: Nilgün Belma Bugüner <nilgun@fide.org>\n"
+"Project-Id-Version: util-linux 2.11t\n"
+"POT-Creation-Date: 2002-08-04 02:14+0200\n"
+"PO-Revision-Date: 2002-07-11 10:20+0300\n"
+"Last-Translator: Nilgün Belma Bugüner <nilgun@superonline.com>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
@@ -160,9 +160,9 @@ msgid "%s from %s\n"
 msgstr "%s (%s den)\n"
 
 #: disk-utils/fdformat.c:130
-#, fuzzy, c-format
+#, c-format
 msgid "%s: not a block device\n"
-msgstr "%s: bir disket aygıtı değil\n"
+msgstr "%s: bir blok aygıtı değil\n"
 
 #: disk-utils/fdformat.c:140
 msgid "Could not determine current format type"
@@ -190,101 +190,108 @@ msgid ""
 " -v         be more verbose\n"
 " file       file to test\n"
 msgstr ""
+"kullanımı: %s [-hv] [-x dizin] dosya\n"
+" -h         bu yardım iletisini gösterir\n"
+" -x dizin   dizin içine açar\n"
+" -v         ayrıntılı çıktı verir\n"
+" dosya      denenen dosya\n"
 
 #: disk-utils/fsck.cramfs.c:191
 #, c-format
 msgid "%s: error %d while decompressing! %p(%d)\n"
-msgstr ""
+msgstr "%s: sıkıştırma açılırken hata %d! %p(%d)\n"
 
 #: disk-utils/fsck.cramfs.c:243
-#, fuzzy, c-format
+#, c-format
 msgid "%s: size error in symlink `%s'\n"
-msgstr "%s: %s üzerinde erişim hatası\n"
+msgstr "%s: sembolik bağ `%s' üzerinde boyut hatası\n"
 
 #: disk-utils/fsck.cramfs.c:258 disk-utils/fsck.cramfs.c:328
 #, c-format
 msgid "  uncompressing block at %ld to %ld (%ld)\n"
-msgstr ""
+msgstr "  %ld den %ld ye kadar blok sıkıştırılmamış (%ld)\n"
 
 #: disk-utils/fsck.cramfs.c:287
 #, c-format
 msgid "%s: bogus mode on `%s' (%o)\n"
-msgstr ""
+msgstr "%s: sahte kip `%s' (%o)\n"
 
 #: disk-utils/fsck.cramfs.c:319
-#, fuzzy, c-format
+#, c-format
 msgid "  hole at %ld (%d)\n"
-msgstr "(%d, %d, %d) olmalıydı\n"
+msgstr "  %ld de delik (%d)\n"
 
 #: disk-utils/fsck.cramfs.c:337
 #, c-format
 msgid "%s: Non-block (%ld) bytes\n"
-msgstr ""
+msgstr "%s: bloksuz (%ld) bayt\n"
 
 #: disk-utils/fsck.cramfs.c:343
 #, c-format
 msgid "%s: Non-size (%ld vs %ld) bytes\n"
-msgstr ""
+msgstr "%s: boyutsuz (%ld vs %ld) bayt\n"
 
 #: disk-utils/fsck.cramfs.c:392
 #, c-format
 msgid "%s: invalid cramfs--bad path length\n"
-msgstr ""
+msgstr "%s: geçersiz cramfs -- dosya yolu uzunluğu hatalı\n"
 
 #: disk-utils/fsck.cramfs.c:472
-#, fuzzy, c-format
+#, c-format
 msgid "%s: compiled without -x support\n"
-msgstr "%s: minix v2 desteğiyle derlenmemiş\n"
+msgstr "%s: -x desteği olmaksızın derlenmiş\n"
 
 #: disk-utils/fsck.cramfs.c:498
 #, c-format
 msgid "%s: warning--unable to determine filesystem size \n"
-msgstr ""
+msgstr "%s: uyarı -- dosya sistemi boyu saptanamıyor \n"
 
 #: disk-utils/fsck.cramfs.c:508
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a block device or file\n"
-msgstr "%s: bir disket aygıtı değil\n"
+msgstr "%s bir blok aygıtı ya da dosyası değil\n"
 
 #: disk-utils/fsck.cramfs.c:514 disk-utils/fsck.cramfs.c:549
 #, c-format
 msgid "%s: invalid cramfs--file length too short\n"
-msgstr ""
+msgstr "%s: geçersiz cramfs -- dosya uzunluğu çok küçük\n"
 
 #: disk-utils/fsck.cramfs.c:541
 #, c-format
 msgid "%s: invalid cramfs--wrong magic\n"
-msgstr ""
+msgstr "%s: geçersiz cramfs -- hatalı dosya kimliği\n"
 
 #: disk-utils/fsck.cramfs.c:554
 #, c-format
 msgid "%s: warning--file length too long, padded image?\n"
-msgstr ""
+msgstr "%s: uyarı -- dosya uzunluğu çok büyük, adımlı eşlem?\n"
 
 #: disk-utils/fsck.cramfs.c:564
-#, fuzzy, c-format
+#, c-format
 msgid "%s: invalid cramfs--crc error\n"
-msgstr "%s: seçenek çözümleme hatası\n"
+msgstr "%s: geçersiz cramfs--crc hatası\n"
 
 #: disk-utils/fsck.cramfs.c:570
 #, c-format
 msgid "%s: warning--old cramfs image, no CRC\n"
-msgstr ""
+msgstr "%s: uyarı -- eski cramfs eşlemi, CRC'siz\n"
 
 #: disk-utils/fsck.cramfs.c:592
 #, c-format
 msgid "%s: invalid cramfs--bad superblock\n"
-msgstr ""
+msgstr "%s: geçersiz cramfs -- hatalı süperblok\n"
 
 #: disk-utils/fsck.cramfs.c:608
 #, c-format
 msgid "%s: invalid cramfs--directory data end (%ld) != file data start (%ld)\n"
 msgstr ""
+"%s: geçersiz cramfs -- dizin verisi sonu (%ld) != dosya verisi başlangıcı (%"
+"ld)\n"
 
 #: disk-utils/fsck.cramfs.c:616
 #, c-format
 msgid "%s: invalid cramfs--invalid file data offset\n"
-msgstr ""
+msgstr "%s: geçersiz cramfs -- geçersiz dosya verisi başlangıcı\n"
 
 #: disk-utils/fsck.minix.c:200
 #, c-format
@@ -853,6 +860,18 @@ msgid ""
 " dirname    root of the filesystem to be compressed\n"
 " outfile    output file\n"
 msgstr ""
+"kullanımı: %s [-h] [-v] [-e baskı] [-i dosya] [-n isim] dizinismi çdosyası\n"
+" -h        bu yardım iletisi gösterilir\n"
+" -v        çıktı daha ayrıntılı olur\n"
+" -E        uyarılar hata olarak verilir (sıfırdan farklı çıkış kodu)\n"
+" -e baskı  baskı numarasını ayarlar (dosyasistemi kimliğinin bir parçası)\n"
+" -i dosya  dosya sistemine bir dosya eşlemi sokuşturur (>= 2.4.0 gerekir)\n"
+" -n isim   cramfs dosya sistemi ismi ayarlanırr  -p        önyükleme koduna %"
+"d baytlık adımlama uygulanır\n"
+" -s        dizin içeriğini sıralar (eski seçenek, yoksayılır)\n"
+" -z        belirgin delikler yapar (>= 2.3.39 gerekir)\n"
+" dizinismi sıkıştırılan dosya sisteminin kökü\n"
+" çdosyası  çıktı dosyası\n"
 
 #: disk-utils/mkfs.cramfs.c:213
 #, c-format
@@ -860,27 +879,32 @@ msgid ""
 "Very long (%u bytes) filename `%s' found.\n"
 " Please increase MAX_INPUT_NAMELEN in mkcramfs.c and recompile.  Exiting.\n"
 msgstr ""
+"Çok uzun (%u baytlık) dosya ismi `%s' bulundu.\n"
+"mkcramfs.c içinde MAX_INPUT_NAMELEN değerini arttırın ve tekrar derleyin.   "
+"Çıkılıyor.\n"
 
 #: disk-utils/mkfs.cramfs.c:371
 msgid "filesystem too big.  Exiting.\n"
-msgstr ""
+msgstr "dosya sistemi çok büyük.  Çıklıyor.\n"
 
 #: disk-utils/mkfs.cramfs.c:422
 msgid ""
 "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  "
 "Exiting.\n"
 msgstr ""
+"MAXENTRIES aşıldı.  mkcramfs.c içinde bu değeri yükseltin ve yeniden "
+"derleyin.   Çıkılıyor.\n"
 
 #. (I don't think this can happen with zlib.)
 #: disk-utils/mkfs.cramfs.c:520
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
-msgstr ""
+msgstr "OLAMAZ: blok \"sıkıştırması\" > 2*blokuzunluğu (%ld)\n"
 
 #: disk-utils/mkfs.cramfs.c:537
 #, c-format
 msgid "%6.2f%% (%+d bytes)\t%s\n"
-msgstr ""
+msgstr "%%%6.2f (%+d bayt)\t%s\n"
 
 #: disk-utils/mkfs.cramfs.c:705
 #, c-format
@@ -888,71 +912,77 @@ msgid ""
 "warning: guestimate of required size (upper bound) is %LdMB, but maximum "
 "image size is %uMB.  We might die prematurely.\n"
 msgstr ""
+"uyarı: gereken tahmini boyut (üst sınır) %Ld MB, ama en büyük bellekeşlem "
+"boyu %u MB.   Vakitsiz ölüm.\n"
 
 #: disk-utils/mkfs.cramfs.c:747
-#, fuzzy, c-format
+#, c-format
 msgid "Including: %s\n"
-msgstr "kimlik geçersiz: %s\n"
+msgstr "İçeriği: %s\n"
 
 #: disk-utils/mkfs.cramfs.c:753
 #, c-format
 msgid "Directory data: %d bytes\n"
-msgstr ""
+msgstr "Dizin verisi: %d bayt\n"
 
 #: disk-utils/mkfs.cramfs.c:761
 #, c-format
 msgid "Everything: %d kilobytes\n"
-msgstr ""
+msgstr "Hepsi: %d kB\n"
 
 #: disk-utils/mkfs.cramfs.c:766
-#, fuzzy, c-format
+#, c-format
 msgid "Super block: %d bytes\n"
-msgstr "kullanılmış alan = %d bayt\n"
+msgstr "Süper blok: %d bayt\n"
 
 #: disk-utils/mkfs.cramfs.c:773
 #, c-format
 msgid "CRC: %x\n"
-msgstr ""
+msgstr "CRC: %x\n"
 
 #: disk-utils/mkfs.cramfs.c:778
 #, c-format
 msgid "not enough space allocated for ROM image (%Ld allocated, %d used)\n"
 msgstr ""
+"ROM bellekeşlemi için ayrılan alan yetersiz (%Ld ayrıldı, %d kullanıldı)\n"
 
 #: disk-utils/mkfs.cramfs.c:790
 #, c-format
 msgid "ROM image write failed (%d %d)\n"
-msgstr ""
+msgstr "ROM bellekeşlemi yazmada hata (%d %d)\n"
 
 #. (These warnings used to come at the start, but they scroll off the
 #. screen too quickly.)
 #. (can't happen when reading from ext2fs)
 #. bytes, not chars: think UTF8.
 #: disk-utils/mkfs.cramfs.c:799
-#, fuzzy
 msgid "warning: filenames truncated to 255 bytes.\n"
-msgstr "Uyarı: düğüm sayısı çok büyük.\n"
+msgstr "uyarı: dosya isimleri 255 bayt olarak kısaltıldı.\n"
 
 #: disk-utils/mkfs.cramfs.c:802
 msgid "warning: files were skipped due to errors.\n"
-msgstr ""
+msgstr "uyarı: hatalardan dolayı dosyalar atlandı.\n"
 
 #: disk-utils/mkfs.cramfs.c:805
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte).\n"
-msgstr ""
+msgstr "uyarı: dosya boyutları %luMB'a düşürüldü (eksi 1 bayt).\n"
 
 #: disk-utils/mkfs.cramfs.c:810
 #, c-format
 msgid ""
 "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
+"uyarı: kullanıcı kimlikleri %u bite düşürüldü. (Bu bir güvenlik kaygısı "
+"olabilir.)\n"
 
 #: disk-utils/mkfs.cramfs.c:815
 #, c-format
 msgid ""
 "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
+"uyarı: grup kimlikleri %u bite düşürüldü. (Bu bir güvenlik kaygısı "
+"olabilir.)\n"
 
 #: disk-utils/mkfs.cramfs.c:820
 #, c-format
@@ -960,6 +990,8 @@ msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
 "that some device files will be wrong.\n"
 msgstr ""
+"UYARI: aygıt numaraları %u bitle sınırlandı. Bu işlem bazı aygıt "
+"dosyalarının isimlerinin yanlış olmasına sebep olacak.\n"
 
 #: disk-utils/mkfs.minix.c:181
 #, c-format
@@ -2421,6 +2453,8 @@ msgid ""
 "This disk has both DOS and BSD magic.\n"
 "Give the 'b' command to go to BSD mode.\n"
 msgstr ""
+"Bu disk hem DOS hem de BSD olarak imli.\n"
+"BSD kipine geçmek için 'b' komutunu verin.\n"
 
 #: fdisk/fdisk.c:924
 msgid ""
@@ -2430,7 +2464,7 @@ msgstr ""
 "Aygıt ne geçerli bir DOS disk bölümleme tablosu ne de Sun, SGI ya da OSF "
 "disk etiketleri içeriyor.\n"
 
-#: fdisk/fdisk.c:942
+#: fdisk/fdisk.c:941
 msgid "Internal error\n"
 msgstr "İç hata\n"
 
@@ -2886,11 +2920,10 @@ msgstr ""
 
 #. OSF label, and no DOS label
 #: fdisk/fdisk.c:2414
-#, fuzzy, c-format
+#, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 "%s üzerinde OSF/1 disk etiketi saptandı, disk etiketi kipine giriliyor.\n"
-"DOS disk bölümleme tablosu kipine dönmek için 'r' komutunu kullanın.\n"
 
 #: fdisk/fdisk.c:2424
 msgid "Command (m for help): "
@@ -5432,13 +5465,12 @@ msgstr ""
 "ayarlanamıyor.\n"
 
 #: hwclock/hwclock.c:749
-#, fuzzy
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
 "so history is bad and calibration startover is necessary.\n"
 msgstr ""
-"Son düzeltmeden beri 1 günden az zaman geçtiğinden sapma faktörü "
-"ayarlanamıyor.\n"
+"Son düzeltme zamanı sıfır olduğndan sapma faktörü ayarsız,\n"
+"yani geçmiş hatalı ve bir düzeltme başlangıcı gerekiyor.\n"
 
 #: hwclock/hwclock.c:755
 msgid ""
@@ -5449,15 +5481,15 @@ msgstr ""
 "ayarlanamıyor.\n"
 
 #: hwclock/hwclock.c:803
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
 "of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
-"Saat %d saniye saptı; %d saniye içinde; %f saniye/gün sapma faktörüne "
-"rağmen\n"
-"Sapma faktörü %f saniye/gün olarak ayarlanıyor\n"
+"%3$f saniye/gün sapma faktörüne rağmen, %2$d saniye içinde saat %1$.1f "
+"saniye saptı.\n"
+"Sapma faktörü %4$f saniye/gün olarak ayarlanıyor\n"
 
 #: hwclock/hwclock.c:854
 #, c-format
@@ -5619,7 +5651,6 @@ msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr "%s seçeneği argüman almaz.  %d verildi.\n"
 
 #: hwclock/hwclock.c:1398
-#, fuzzy
 msgid ""
 "You have specified multiple functions.\n"
 "You can only perform one function at a time.\n"
@@ -5887,65 +5918,65 @@ msgstr "almaşık hız çok yüksek"
 msgid "exiting parsespeeds\n"
 msgstr "parsespeeds'den çıkılyor\n"
 
-#: login-utils/agetty.c:642
+#: login-utils/agetty.c:649
 #, c-format
 msgid "/dev: chdir() failed: %m"
 msgstr "/dev: chdir() başarısız: %m"
 
-#: login-utils/agetty.c:646
+#: login-utils/agetty.c:653
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s: bir karakter aygıtı değil"
 
 #. ignore close(2) errors
-#: login-utils/agetty.c:653
+#: login-utils/agetty.c:660
 msgid "open(2)\n"
 msgstr "open(2)\n"
 
-#: login-utils/agetty.c:655
+#: login-utils/agetty.c:662
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s: standart girdi olarak açılamıyor: %m"
 
-#: login-utils/agetty.c:665
+#: login-utils/agetty.c:672
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s: oku/yaz için açık değil"
 
 #. Set up standard output and standard error file descriptors.
-#: login-utils/agetty.c:669
+#: login-utils/agetty.c:676
 msgid "duping\n"
 msgstr "çoğaltıyor\n"
 
 #. set up stdout and stderr
-#: login-utils/agetty.c:671
+#: login-utils/agetty.c:678
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s: çoğaltma sorunu: %m"
 
-#: login-utils/agetty.c:745
+#: login-utils/agetty.c:752
 msgid "term_io 2\n"
 msgstr "term_io 2\n"
 
-#: login-utils/agetty.c:930
+#: login-utils/agetty.c:937
 msgid "user"
 msgstr "kullanıcı"
 
-#: login-utils/agetty.c:930
+#: login-utils/agetty.c:937
 msgid "users"
 msgstr "kullanıcı"
 
-#: login-utils/agetty.c:1018
+#: login-utils/agetty.c:1025
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: okunan: %m"
 
-#: login-utils/agetty.c:1064
+#: login-utils/agetty.c:1071
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: girdi geçersiz"
 
-#: login-utils/agetty.c:1188
+#: login-utils/agetty.c:1195
 #, c-format
 msgid ""
 "Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
@@ -7933,9 +7964,8 @@ msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: tür belirtilmemiş - ':' içerdiğinden nfs varsayılıyor\n"
 
 #: mount/mount.c:1137
-#, fuzzy
 msgid "mount: no type was given - I'll assume smb because of the // prefix\n"
-msgstr "mount: tür belirtilmemiş - ':' içerdiğinden nfs varsayılıyor\n"
+msgstr "mount: tür belirtilmemiş - '//' öneki içerdiğinden smb varsayılıyor\n"
 
 #.
 #. * Retry in the background.
@@ -8036,40 +8066,40 @@ msgstr "mount: %s  %s içinde bulunamıyor"
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %s  %s ya da %s içinde bulunamıyor"
 
-#: mount/mount_by_label.c:199
+#: mount/mount_by_label.c:240
 #, c-format
 msgid ""
 "mount: could not open %s, so UUID and LABEL conversion cannot be done.\n"
 msgstr "mount: %s açılamadı, UUID ve ETİKET dönüşümü yapılmış olmayabilir.\n"
 
-#: mount/mount_by_label.c:325
+#: mount/mount_by_label.c:366
 msgid "mount: bad UUID"
 msgstr "mount: UUID hatalı"
 
-#: mount/mount_guess_fstype.c:482
+#: mount/mount_guess_fstype.c:483
 msgid "mount: error while guessing filesystem type\n"
 msgstr "mount: dosya sistemi türü belirlenirken hata\n"
 
-#: mount/mount_guess_fstype.c:491
+#: mount/mount_guess_fstype.c:492
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: %s için bir dosya sistemi türü belirtilmemiş\n"
 
-#: mount/mount_guess_fstype.c:494
+#: mount/mount_guess_fstype.c:495
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       %s ya da %s içindeki anılan tüm türler denenecek\n"
 
-#: mount/mount_guess_fstype.c:497
+#: mount/mount_guess_fstype.c:498
 msgid "       and it looks like this is swapspace\n"
 msgstr "       ve bu takas alanı gibi görünüyor\n"
 
-#: mount/mount_guess_fstype.c:499
+#: mount/mount_guess_fstype.c:500
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       %s türü denenecek\n"
 
-#: mount/mount_guess_fstype.c:587
+#: mount/mount_guess_fstype.c:588
 #, c-format
 msgid "Trying %s\n"
 msgstr "%s deneniyor\n"
@@ -8177,7 +8207,7 @@ msgstr ""
 "           %s [-s]\n"
 
 #: mount/swapon.c:66
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "usage: %s [-hV]\n"
 "       %s -a [-v]\n"
@@ -8185,8 +8215,7 @@ msgid ""
 msgstr ""
 "kullanımı: %s [-hV]\n"
 "           %s -a [-v]\n"
-"           %s [-v] [-p öncelik] özel ...\n"
-"           %s [-s]\n"
+"           %s [-v] özel ...\n"
 
 #: mount/swapon.c:170 mount/swapon.c:234
 #, c-format
@@ -8210,7 +8239,7 @@ msgstr "swapon: %s atlanıyor - delikler içeriyor gibi görünüyor.\n"
 
 #: mount/swapon.c:240
 msgid "Not superuser.\n"
-msgstr ""
+msgstr "root değil.\n"
 
 #: mount/swapon.c:298 mount/swapon.c:386
 #, c-format
@@ -9208,7 +9237,7 @@ msgid "missing comma"
 msgstr "virgül eksik"
 
 #: sys-utils/readprofile.c:60
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s: Usage: \"%s [options]\n"
 "\t -m <mapfile>  (default = \"%s\")\n"
@@ -9217,6 +9246,7 @@ msgid ""
 "\t -i            print only info about the sampling step\n"
 "\t -v            print verbose data\n"
 "\t -a            print all symbols, even if count is 0\n"
+"\t -b            print individual histogram-bin counts\n"
 "\t -r            reset all the counters (root only)\n"
 "\t -n            disable byte order auto-detection\n"
 "\t -V            print version and exit\n"
@@ -9232,38 +9262,38 @@ msgstr ""
 "\t -n                 bayt sıralamasının saptanmasını önler\n"
 "\t -V                 sürüm bilgilerini gösterir ve çıkar\n"
 
-#: sys-utils/readprofile.c:83
+#: sys-utils/readprofile.c:84
 msgid "out of memory"
 msgstr "bellek yetersiz"
 
-#: sys-utils/readprofile.c:144
+#: sys-utils/readprofile.c:147
 #, c-format
 msgid "%s Version %s\n"
 msgstr ""
 "%s Sürüm %s\n"
 "Çeviri hatalarını <gnu-tr-u12a@listssourceforge.net> adresine bildiriniz\n"
 
-#: sys-utils/readprofile.c:228
+#: sys-utils/readprofile.c:231
 #, c-format
 msgid "Sampling_step: %i\n"
 msgstr "Örnekleme_adımı: %i\n"
 
-#: sys-utils/readprofile.c:241 sys-utils/readprofile.c:265
+#: sys-utils/readprofile.c:244 sys-utils/readprofile.c:268
 #, c-format
 msgid "%s: %s(%i): wrong map line\n"
 msgstr "%s: %s(%i): eşlem satırı yanlış\n"
 
-#: sys-utils/readprofile.c:253
+#: sys-utils/readprofile.c:256
 #, c-format
 msgid "%s: can't find \"_stext\" in %s\n"
 msgstr "%s: \"_stext\" %s içinde bulunamıyor\n"
 
-#: sys-utils/readprofile.c:276
+#: sys-utils/readprofile.c:282
 #, c-format
 msgid "%s: profile address out of range. Wrong map file?\n"
 msgstr "%s: profil adresi kapsamdışı. Eşlem dosyası yanlış olabilir mi?\n"
 
-#: sys-utils/readprofile.c:304
+#: sys-utils/readprofile.c:323
 msgid "total"
 msgstr "toplam"
 
@@ -9611,41 +9641,39 @@ msgstr "hexdump: dönüşüm karakteri %%%s hatalı.\n"
 msgid ""
 "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
 msgstr ""
+"%s: Kullanımı: %s [-number] [-p dizge] [-cefnrs] [+satır] [+/kalıp/] "
+"[dosyalar]\n"
 
 #: text-utils/pg.c:255
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option requires an argument -- %s\n"
-msgstr "`%s' seçeneği bir argümanla kullanılır\n"
+msgstr "%s: seçenek bir argümanla kullanılır -- %s\n"
 
 #: text-utils/pg.c:263
-#, fuzzy, c-format
+#, c-format
 msgid "%s: illegal option -- %s\n"
-msgstr "%s: kuraldışı seçenek -- %c\n"
+msgstr "%s: kuraldışı seçenek -- %s\n"
 
 #: text-utils/pg.c:380
-#, fuzzy
 msgid "...skipping forward\n"
-msgstr "...atlanıyor\n"
+msgstr "...ileri atlanıyor\n"
 
 #: text-utils/pg.c:382
-#, fuzzy
 msgid "...skipping backward\n"
-msgstr "...atlanıyor\n"
+msgstr "...geri atlanıyor\n"
 
 #: text-utils/pg.c:404
-#, fuzzy
 msgid "No next file"
-msgstr "(Sonraki dosya: %s)"
+msgstr "Sonrasında dosya yok"
 
 #: text-utils/pg.c:408
-#, fuzzy
 msgid "No previous file"
-msgstr "Atanmış disk bölümü yok\n"
+msgstr "Öncesinde dosya yok"
 
 #: text-utils/pg.c:938
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Read error from %s file\n"
-msgstr "%s: %s üzerinde okuma hatası\n"
+msgstr "%s: %s dosyasından okuma hatası\n"
 
 #.
 #. * Most likely '\0' in input.
@@ -9653,54 +9681,49 @@ msgstr "%s: %s üzerinde okuma hatası\n"
 #: text-utils/pg.c:944
 #, c-format
 msgid "%s: Unexpected EOF in %s file\n"
-msgstr ""
+msgstr "%s: %s doyasında beklenmedik dosya sonu\n"
 
 #: text-utils/pg.c:947
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Unknown error in %s file\n"
-msgstr "kimlikte bilinmeyen hata"
+msgstr "%s: %s doyasında bilinmeyen hata\n"
 
 #: text-utils/pg.c:1042
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Cannot create tempfile\n"
-msgstr "%s: geçici dosya okunamıyor.\n"
+msgstr "%s: geçici dosya oluşturulamıyor.\n"
 
 #: text-utils/pg.c:1051 text-utils/pg.c:1226
-#, fuzzy
 msgid "RE error: "
-msgstr ", hata"
+msgstr "RE hatası:"
 
 #: text-utils/pg.c:1208
 msgid "(EOF)"
-msgstr ""
+msgstr "(DosyaSonu)"
 
 #: text-utils/pg.c:1234
 msgid "No remembered search string"
-msgstr ""
+msgstr "Arama dizgesi yok"
 
 #: text-utils/pg.c:1317
-#, fuzzy
 msgid "Cannot open "
-msgstr "%s açılamıyor\n"
+msgstr "Açılamıyor"
 
 #: text-utils/pg.c:1365
-#, fuzzy
 msgid "saved"
-msgstr "gönderim"
+msgstr "kaydedildi"
 
 #: text-utils/pg.c:1472
 msgid ": !command not allowed in rflag mode.\n"
-msgstr ""
+msgstr ": rflag kipinde ! komutu kullanılmaz.\n"
 
 #: text-utils/pg.c:1504
-#, fuzzy
 msgid "fork() failed, try again later\n"
-msgstr "Parola değiştirilmedi! Daha sonra tekrar deneyin.\n"
+msgstr "Alt süreç oluşturulamadı, daha sonra tekrar deneyin\n"
 
 #: text-utils/pg.c:1709
-#, fuzzy
 msgid "(Next file: "
-msgstr "(Sonraki dosya: %s)"
+msgstr "(Sonraki dosya: "
 
 #: text-utils/rev.c:113
 msgid "Unable to allocate bufferspace\n"
@@ -9744,9 +9767,6 @@ msgstr "Tampon büyütülürken bellek yetmedi.\n"
 
 #~ msgid "unrecognized option `%s'\n"
 #~ msgstr "`%s' seçeneği bilinmiyor\n"
-
-#~ msgid "option `%s' requires an argument\n"
-#~ msgstr "`%s' seçeneği bir argümanla kullanılır\n"
 
 #~ msgid "option `%s' doesn't allow an argument\n"
 #~ msgstr "`%s' seçeneği bir argümansız kullanılır\n"

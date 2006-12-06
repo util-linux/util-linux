@@ -13,6 +13,10 @@
  * - Added support of labels on LVM
  * 2002-03-21 Christoph Hellwig <hch@infradead.org>
  * - Added JFS support
+ * 2002-07-11 Christoph Hellwig <hch@infradead.org>
+ * - Added JFS v2 format support
+ * 2002-07-26 Luciano Chavez <lnx1138@us.ibm.com>
+ * - Added EVMS support
  */
 
 #include <stdio.h>
@@ -31,6 +35,8 @@
 #define PROC_PARTITIONS "/proc/partitions"
 #define DEVLABELDIR	"/dev"
 #define VG_DIR          "/proc/lvm/VGs"
+#define EVMS_VOLUME_NAME_SIZE  127
+#define PROC_EVMS_VOLUMES "/proc/evms/volumes"
 
 static struct uuidCache_s {
 	struct uuidCache_s *next;
@@ -107,12 +113,20 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 	else if (lseek(fd, JFS_SUPER1_OFF, SEEK_SET) == JFS_SUPER1_OFF
 	    && read(fd, (char *) &jfssb, sizeof(jfssb)) == sizeof(jfssb)
 		&& (strncmp(jfssb.s_magic, JFS_MAGIC, 4) == 0)) {
-		/* what to do with non-existant UUID?  --hch */
-		memset(uuid, 0, 16);
-		namesize = sizeof(jfssb.s_fpack);
-		if ((*label = calloc(namesize + 1, 1)) != NULL)
-			memcpy(*label, jfssb.s_fpack, namesize);
-		rv = 0;
+		    if (assemble4le(jfssb.s_version) == 1) {
+			/* old (OS/2 compatible) jfs filesystems don't
+			   have UUIDs and only have a very small label. */
+			memset(uuid, 0, 16);
+			namesize = sizeof(jfssb.s_fpack);
+			if ((*label = calloc(namesize + 1, 1)) != NULL)
+				memcpy(*label, jfssb.s_fpack, namesize);
+		    } else {
+			memcpy(uuid, jfssb.s_uuid, sizeof(jfssb.s_uuid));
+			namesize = sizeof(jfssb.s_label);
+			if ((*label = calloc(namesize + 1, 1)) != NULL)
+			    memcpy(*label, jfssb.s_label, namesize);
+		    }
+		    rv = 0;
 	}
 
 	close(fd);
@@ -174,6 +188,30 @@ uuidcache_init_lvm(void) {
 	closedir(vg_dir);
 }
 
+static int
+uuidcache_init_evms(void) {
+	FILE *procvol;
+	char *label;
+	char uuid[16];
+	char volname[EVMS_VOLUME_NAME_SIZE+1];
+	char line[EVMS_VOLUME_NAME_SIZE+80];
+
+	procvol = fopen(PROC_EVMS_VOLUMES, "r");
+	if (!procvol)
+		return 0;
+
+	while (fgets(line, sizeof(line), procvol)) {
+		if (sscanf(line, "%*d %*d %*d %*s %*s %[^\n]", volname) == 1) {
+			if (!get_label_uuid(volname, &label, uuid))
+				uuidcache_addentry(strdup(volname), label, uuid);
+		}
+	}
+	
+	fclose(procvol);
+	
+	return 1;
+}
+
 static void
 uuidcache_init(void) {
 	char line[100];
@@ -190,6 +228,9 @@ uuidcache_init(void) {
 #endif
 
 	if (uuidCache)
+		return;
+
+	if (uuidcache_init_evms())
 		return;
 
 	procpt = fopen(PROC_PARTITIONS, "r");

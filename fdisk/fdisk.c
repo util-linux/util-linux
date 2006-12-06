@@ -937,10 +937,10 @@ got_dos_table:
 		case create_empty_dos:
 		case create_empty_sun:
 			break;
+		default:
+			fprintf(stderr, _("Internal error\n"));
+			exit(1);
 		}
-
-		fprintf(stderr, _("Internal error\n"));
-		exit(1);
 	}
 
 	warn_cylinders();

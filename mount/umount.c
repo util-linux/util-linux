@@ -666,7 +666,7 @@ main (int argc, char *argv[]) {
 
 	if (all) {
 		if (types == NULL)
-			types = "noproc";
+			types = "noproc,nodevfs";
 		result = umount_all (types);
 	} else if (argc < 1) {
 		usage (stderr, 2);

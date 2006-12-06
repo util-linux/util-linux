@@ -1248,7 +1248,7 @@ static const struct option longopts[] = {
 	{ "jensen", 0, 0, 'J' },
 	{ "SRM", 0, 0, 'S' },
 	{ "srm", 0, 0, 'S' },
-	{ "funky-toy", 0, 0, 'F'}
+	{ "funky-toy", 0, 0, 'F'},
 #endif
 	{ "set", 0, 0, 128 },
 	{ "getepoch", 0, 0, 129 },

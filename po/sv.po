@@ -9,9 +9,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.11r\n"
-"POT-Creation-Date: 2002-07-07 17:03+0200\n"
-"PO-Revision-Date: 2002-05-15 19:38+0200\n"
+"Project-Id-Version: util-linux 2.11t\n"
+"POT-Creation-Date: 2002-08-04 02:14+0200\n"
+"PO-Revision-Date: 2002-07-10 20:11+0200\n"
 "Last-Translator: Christian Rose <menthos@menthos.com>\n"
 "Language-Team: Swedish <sv@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -159,9 +159,9 @@ msgid "%s from %s\n"
 msgstr "%s från %s\n"
 
 #: disk-utils/fdformat.c:130
-#, fuzzy, c-format
+#, c-format
 msgid "%s: not a block device\n"
-msgstr "%s: inte en diskettenhet\n"
+msgstr "%s: inte en blockenhet\n"
 
 #: disk-utils/fdformat.c:140
 msgid "Could not determine current format type"
@@ -189,101 +189,106 @@ msgid ""
 " -v         be more verbose\n"
 " file       file to test\n"
 msgstr ""
+"användning: %s [-hv] [-x kat] fil\n"
+" -h         visa denna hjälptext\n"
+" -x kat     packa upp i kat\n"
+" -v         var mer utförlig\n"
+" fil        fil att testa\n"
 
 #: disk-utils/fsck.cramfs.c:191
 #, c-format
 msgid "%s: error %d while decompressing! %p(%d)\n"
-msgstr ""
+msgstr "%s: fel %d vid uppackning! %p(%d)\n"
 
 #: disk-utils/fsck.cramfs.c:243
-#, fuzzy, c-format
+#, c-format
 msgid "%s: size error in symlink `%s'\n"
-msgstr "%s: sökfel på %s\n"
+msgstr "%s: storleksfel i symboliska länken \"%s\"\n"
 
 #: disk-utils/fsck.cramfs.c:258 disk-utils/fsck.cramfs.c:328
 #, c-format
 msgid "  uncompressing block at %ld to %ld (%ld)\n"
-msgstr ""
+msgstr "  packar upp block vid %ld till %ld (%ld)\n"
 
 #: disk-utils/fsck.cramfs.c:287
 #, c-format
 msgid "%s: bogus mode on `%s' (%o)\n"
-msgstr ""
+msgstr "%s: felaktiga rättigheter på \"%s\" (%o)\n"
 
 #: disk-utils/fsck.cramfs.c:319
-#, fuzzy, c-format
+#, c-format
 msgid "  hole at %ld (%d)\n"
-msgstr "borde vara (%d, %d, %d)\n"
+msgstr "  hål vid %ld (%d)\n"
 
 #: disk-utils/fsck.cramfs.c:337
 #, c-format
 msgid "%s: Non-block (%ld) bytes\n"
-msgstr ""
+msgstr "%s: Icke-blockbyte (%ld)\n"
 
 #: disk-utils/fsck.cramfs.c:343
 #, c-format
 msgid "%s: Non-size (%ld vs %ld) bytes\n"
-msgstr ""
+msgstr "%s: Icke-storleksbyte (%ld gentemot %ld)\n"
 
 #: disk-utils/fsck.cramfs.c:392
 #, c-format
 msgid "%s: invalid cramfs--bad path length\n"
-msgstr ""
+msgstr "%s: ogiltigt cramfs--felaktig sökvägslängd\n"
 
 #: disk-utils/fsck.cramfs.c:472
-#, fuzzy, c-format
+#, c-format
 msgid "%s: compiled without -x support\n"
-msgstr "%s: inte kompilerad med stöd för minix v2\n"
+msgstr "%s: kompilerad utan stöd för -x\n"
 
 #: disk-utils/fsck.cramfs.c:498
 #, c-format
 msgid "%s: warning--unable to determine filesystem size \n"
-msgstr ""
+msgstr "%s: varning--kan inte avgöra filsystemsstorlek \n"
 
 #: disk-utils/fsck.cramfs.c:508
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a block device or file\n"
-msgstr "%s: inte en diskettenhet\n"
+msgstr "%s är ingen blockenhet eller fil\n"
 
 #: disk-utils/fsck.cramfs.c:514 disk-utils/fsck.cramfs.c:549
 #, c-format
 msgid "%s: invalid cramfs--file length too short\n"
-msgstr ""
+msgstr "%s: ogiltigt cramfs--fillängden är för kort\n"
 
 #: disk-utils/fsck.cramfs.c:541
 #, c-format
 msgid "%s: invalid cramfs--wrong magic\n"
-msgstr ""
+msgstr "%s: ogiltigt cramfs--felaktig magisk siffra\n"
 
 #: disk-utils/fsck.cramfs.c:554
 #, c-format
 msgid "%s: warning--file length too long, padded image?\n"
-msgstr ""
+msgstr "%s: varning--fillängden är för lång, utfylld avbild?\n"
 
 #: disk-utils/fsck.cramfs.c:564
-#, fuzzy, c-format
+#, c-format
 msgid "%s: invalid cramfs--crc error\n"
-msgstr "%s: fel vid flaggtolkning\n"
+msgstr "%s: ogiltigt cramfs--crc-fel\n"
 
 #: disk-utils/fsck.cramfs.c:570
 #, c-format
 msgid "%s: warning--old cramfs image, no CRC\n"
-msgstr ""
+msgstr "%s: varning--gammal cramfs-avbild, ingen CRC\n"
 
 #: disk-utils/fsck.cramfs.c:592
 #, c-format
 msgid "%s: invalid cramfs--bad superblock\n"
-msgstr ""
+msgstr "%s: ogiltigt cramfs--felaktigt superblock\n"
 
 #: disk-utils/fsck.cramfs.c:608
 #, c-format
 msgid "%s: invalid cramfs--directory data end (%ld) != file data start (%ld)\n"
-msgstr ""
+msgstr "%s: ogiltigt cramfs--katalogdataslut (%ld) != fildatabörjan (%ld)\n"
 
 #: disk-utils/fsck.cramfs.c:616
 #, c-format
 msgid "%s: invalid cramfs--invalid file data offset\n"
-msgstr ""
+msgstr "%s: ogiltigt cramfs--ogiltigt fildataavstånd\n"
 
 #: disk-utils/fsck.minix.c:200
 #, c-format
@@ -854,6 +859,18 @@ msgid ""
 " dirname    root of the filesystem to be compressed\n"
 " outfile    output file\n"
 msgstr ""
+"användning: %s [-h] [-v] [-e edition] [-i fil] [-n namn] katnamn utfil\n"
+" -h         visa denna hjälptext\n"
+" -v         var utförlig\n"
+" -E         gör alla varningar till fel (slutstatus inte noll)\n"
+" -e edition ställ in editionsnummer (del av fsid)\n"
+" -i fil     infoga en filavbild i filsystemet (kräver >= 2.4.0)\n"
+" -n namn    ställ in namnet på cramfs-filsystemet\n"
+" -p         fyll ut med %d byte för startkod\n"
+" -s         sortera katalogposter (gammal flagga, ignorerad)\n"
+" -z         skapa explicita hål (kräver >= 2.3.39)\n"
+" katnamn    rot på filsystemet som ska komprimeras\n"
+" utfil      utdatafil\n"
 
 #: disk-utils/mkfs.cramfs.c:213
 #, c-format
@@ -861,27 +878,31 @@ msgid ""
 "Very long (%u bytes) filename `%s' found.\n"
 " Please increase MAX_INPUT_NAMELEN in mkcramfs.c and recompile.  Exiting.\n"
 msgstr ""
+"Mycket långt (%u byte) filnamn \"%s\" hittades.\n"
+" Öka MAX_INPUT_NAMELEN i mkcramfs.c och kompilera om. Avslutar.\n"
 
 #: disk-utils/mkfs.cramfs.c:371
 msgid "filesystem too big.  Exiting.\n"
-msgstr ""
+msgstr "filsystemet är för stort. Avslutar.\n"
 
 #: disk-utils/mkfs.cramfs.c:422
 msgid ""
 "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  "
 "Exiting.\n"
 msgstr ""
+"Överskred MAXENTRIES. Öka detta värde i mkcramfs.c och kompilera om. "
+"Avslutar.\n"
 
 #. (I don't think this can happen with zlib.)
 #: disk-utils/mkfs.cramfs.c:520
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
-msgstr ""
+msgstr "AIEEE: block \"komprimerat\" till > 2*blocklängd (%ld)\n"
 
 #: disk-utils/mkfs.cramfs.c:537
 #, c-format
 msgid "%6.2f%% (%+d bytes)\t%s\n"
-msgstr ""
+msgstr "%6.2f%% (%+d byte)\t%s\n"
 
 #: disk-utils/mkfs.cramfs.c:705
 #, c-format
@@ -889,71 +910,76 @@ msgid ""
 "warning: guestimate of required size (upper bound) is %LdMB, but maximum "
 "image size is %uMB.  We might die prematurely.\n"
 msgstr ""
+"varning: uppskattning av begärd storlek (övre gräns) är %Ld MB, men maximal "
+"avbildsstorlek är %u MB. Vi kan dö i förtid.\n"
 
 #: disk-utils/mkfs.cramfs.c:747
-#, fuzzy, c-format
+#, c-format
 msgid "Including: %s\n"
-msgstr "ogiltigt id: %s\n"
+msgstr "Inklusive: %s\n"
 
 #: disk-utils/mkfs.cramfs.c:753
 #, c-format
 msgid "Directory data: %d bytes\n"
-msgstr ""
+msgstr "Katalogdata: %d byte\n"
 
 #: disk-utils/mkfs.cramfs.c:761
 #, c-format
 msgid "Everything: %d kilobytes\n"
-msgstr ""
+msgstr "Allting: %d kilobyte\n"
 
 #: disk-utils/mkfs.cramfs.c:766
-#, fuzzy, c-format
+#, c-format
 msgid "Super block: %d bytes\n"
-msgstr "använt utrymme = %d byte\n"
+msgstr "Superblock: %d byte\n"
 
 #: disk-utils/mkfs.cramfs.c:773
 #, c-format
 msgid "CRC: %x\n"
-msgstr ""
+msgstr "CRC: %x\n"
 
 #: disk-utils/mkfs.cramfs.c:778
 #, c-format
 msgid "not enough space allocated for ROM image (%Ld allocated, %d used)\n"
 msgstr ""
+"inte tillräckligt med utrymme allokerat för ROM-avbild (%Ld allokerat, %d "
+"använt)\n"
 
 #: disk-utils/mkfs.cramfs.c:790
 #, c-format
 msgid "ROM image write failed (%d %d)\n"
-msgstr ""
+msgstr "ROM-avbildsskrivning misslyckades (%d %d)\n"
 
 #. (These warnings used to come at the start, but they scroll off the
 #. screen too quickly.)
 #. (can't happen when reading from ext2fs)
 #. bytes, not chars: think UTF8.
 #: disk-utils/mkfs.cramfs.c:799
-#, fuzzy
 msgid "warning: filenames truncated to 255 bytes.\n"
-msgstr "Varning: antalet inoder är för stort.\n"
+msgstr "varning: filnamn trunkerade till 255 byte.\n"
 
 #: disk-utils/mkfs.cramfs.c:802
 msgid "warning: files were skipped due to errors.\n"
-msgstr ""
+msgstr "varning: filer hoppades över på grund av fel.\n"
 
 #: disk-utils/mkfs.cramfs.c:805
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte).\n"
-msgstr ""
+msgstr "varning: filstorlekar avkortade till %lu MB (minus 1 byte).\n"
 
 #: disk-utils/mkfs.cramfs.c:810
 #, c-format
 msgid ""
 "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
+"varning: uid avkortade till %u bitar (detta kan vara ett säkerhetsproblem).\n"
 
 #: disk-utils/mkfs.cramfs.c:815
 #, c-format
 msgid ""
 "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
+"varning: gid avkortade till %u bitar (detta kan vara ett säkerhetsproblem).\n"
 
 #: disk-utils/mkfs.cramfs.c:820
 #, c-format
@@ -961,6 +987,8 @@ msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
 "that some device files will be wrong.\n"
 msgstr ""
+"VARNING: enhetsnummer avkortade till %u bitar. Detta betyder med största\n"
+"sannolikhet att en del enhetsfiler kommer att vara felaktiga.\n"
 
 #: disk-utils/mkfs.minix.c:181
 #, c-format
@@ -2435,6 +2463,8 @@ msgid ""
 "This disk has both DOS and BSD magic.\n"
 "Give the 'b' command to go to BSD mode.\n"
 msgstr ""
+"Denna disk har både magiska DOS- och BSD-siffror.\n"
+"Ge kommandot \"b\" för att gå till BSD-läge.\n"
 
 #: fdisk/fdisk.c:924
 msgid ""
@@ -2444,7 +2474,7 @@ msgstr ""
 "Enheten innehåller varken en giltig DOS-partitionstabell eller en Sun-, SGI- "
 "eller OSF-disketikett\n"
 
-#: fdisk/fdisk.c:942
+#: fdisk/fdisk.c:941
 msgid "Internal error\n"
 msgstr "Internt fel\n"
 
@@ -2901,11 +2931,9 @@ msgstr ""
 
 #. OSF label, and no DOS label
 #: fdisk/fdisk.c:2414
-#, fuzzy, c-format
+#, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
-msgstr ""
-"Upptäckte en OSF/1-disketikett på %s, går in i disketikettsläge.\n"
-"För att återgå till DOS-partitionstabelläge använder du kommandot \"r\".\n"
+msgstr "Upptäckte en OSF/1-disketikett på %s, går in i disketikettsläge.\n"
 
 #: fdisk/fdisk.c:2424
 msgid "Command (m for help): "
@@ -5431,13 +5459,13 @@ msgstr ""
 "skräp.\n"
 
 #: hwclock/hwclock.c:749
-#, fuzzy
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
 "so history is bad and calibration startover is necessary.\n"
 msgstr ""
-"Justerar inte dragningsfaktorn eftersom det har gått mindre än en dag sedan "
-"den senaste kalibreringen.\n"
+"Justerar inte dragningsfaktorn eftersom senaste kalibreringstiden\n"
+"är noll, så historiken är trasig och en omstart av kalibreringen\n"
+"är nödvändig.\n"
 
 #: hwclock/hwclock.c:755
 msgid ""
@@ -5448,13 +5476,13 @@ msgstr ""
 "den senaste kalibreringen.\n"
 
 #: hwclock/hwclock.c:803
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
 "of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
-"Klockan drog sig %d sekunder under de senaster %d sekunderna trots en "
+"Klockan drog sig %.1f sekunder under de senaster %d sekunderna trots en "
 "dragningsfaktor på %f sekunder/dag.\n"
 "Justerar dragningsfaktorn med %f sekunder/dag\n"
 
@@ -5621,12 +5649,11 @@ msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr "%s tar inga argument som inte är flaggor. Du angav %d.\n"
 
 #: hwclock/hwclock.c:1398
-#, fuzzy
 msgid ""
 "You have specified multiple functions.\n"
 "You can only perform one function at a time.\n"
 msgstr ""
-"Du har angivit flera funktionsflaggor.\n"
+"Du har angivit flera funktioner\n"
 "Du kan bara utföra en funktion åt gången.\n"
 
 #: hwclock/hwclock.c:1405
@@ -5886,65 +5913,65 @@ msgstr "för många alternativa hastigheter"
 msgid "exiting parsespeeds\n"
 msgstr "avslutar parsespeeds\n"
 
-#: login-utils/agetty.c:642
+#: login-utils/agetty.c:649
 #, c-format
 msgid "/dev: chdir() failed: %m"
 msgstr "/dev: chdir() misslyckades: %m"
 
-#: login-utils/agetty.c:646
+#: login-utils/agetty.c:653
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s: ingen teckenenhet"
 
 #. ignore close(2) errors
-#: login-utils/agetty.c:653
+#: login-utils/agetty.c:660
 msgid "open(2)\n"
 msgstr "open(2)\n"
 
-#: login-utils/agetty.c:655
+#: login-utils/agetty.c:662
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s: kan inte öppna som standard in: %m"
 
-#: login-utils/agetty.c:665
+#: login-utils/agetty.c:672
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s: inte öppen för läsning/skrivning"
 
 #. Set up standard output and standard error file descriptors.
-#: login-utils/agetty.c:669
+#: login-utils/agetty.c:676
 msgid "duping\n"
 msgstr "duplicerar\n"
 
 #. set up stdout and stderr
-#: login-utils/agetty.c:671
+#: login-utils/agetty.c:678
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s: dupliceringsproblem: %m"
 
-#: login-utils/agetty.c:745
+#: login-utils/agetty.c:752
 msgid "term_io 2\n"
 msgstr "term_io 2\n"
 
-#: login-utils/agetty.c:930
+#: login-utils/agetty.c:937
 msgid "user"
 msgstr "användare"
 
-#: login-utils/agetty.c:930
+#: login-utils/agetty.c:937
 msgid "users"
 msgstr "användare"
 
-#: login-utils/agetty.c:1018
+#: login-utils/agetty.c:1025
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: läste: %m"
 
-#: login-utils/agetty.c:1064
+#: login-utils/agetty.c:1071
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: indataspill"
 
-#: login-utils/agetty.c:1188
+#: login-utils/agetty.c:1195
 #, c-format
 msgid ""
 "Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
@@ -7934,10 +7961,9 @@ msgstr ""
 "mount: ingen typ angavs - jag kommer att anta nfs på grund av kolonet\n"
 
 #: mount/mount.c:1137
-#, fuzzy
 msgid "mount: no type was given - I'll assume smb because of the // prefix\n"
 msgstr ""
-"mount: ingen typ angavs - jag kommer att anta nfs på grund av kolonet\n"
+"mount: ingen typ angavs - jag kommer att anta smb på grund //-prefixet\n"
 
 #.
 #. * Retry in the background.
@@ -8036,7 +8062,7 @@ msgstr "mount: kan inte hitta %s i %s"
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: kan inte hitta %s i %s eller %s"
 
-#: mount/mount_by_label.c:199
+#: mount/mount_by_label.c:240
 #, c-format
 msgid ""
 "mount: could not open %s, so UUID and LABEL conversion cannot be done.\n"
@@ -8044,34 +8070,34 @@ msgstr ""
 "mount: kunde inte öppna %s, så UUID och ETIKETT-konvertering kan inte "
 "utföras.\n"
 
-#: mount/mount_by_label.c:325
+#: mount/mount_by_label.c:366
 msgid "mount: bad UUID"
 msgstr "mount: felaktig UUID"
 
-#: mount/mount_guess_fstype.c:482
+#: mount/mount_guess_fstype.c:483
 msgid "mount: error while guessing filesystem type\n"
 msgstr "mount: fel vid gissning av filsystemstypen\n"
 
-#: mount/mount_guess_fstype.c:491
+#: mount/mount_guess_fstype.c:492
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: du angav ingen filsystemstyp för %s\n"
 
-#: mount/mount_guess_fstype.c:494
+#: mount/mount_guess_fstype.c:495
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       Jag kommer att försöka med alla typer nämnda i %s eller %s\n"
 
-#: mount/mount_guess_fstype.c:497
+#: mount/mount_guess_fstype.c:498
 msgid "       and it looks like this is swapspace\n"
 msgstr "       och det verkar som om detta är växlingsutrymme\n"
 
-#: mount/mount_guess_fstype.c:499
+#: mount/mount_guess_fstype.c:500
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       Jag kommer att försöka med typen %s\n"
 
-#: mount/mount_guess_fstype.c:587
+#: mount/mount_guess_fstype.c:588
 #, c-format
 msgid "Trying %s\n"
 msgstr "Försöker med %s\n"
@@ -8179,7 +8205,7 @@ msgstr ""
 "            %s [-s]\n"
 
 #: mount/swapon.c:66
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "usage: %s [-hV]\n"
 "       %s -a [-v]\n"
@@ -8187,8 +8213,7 @@ msgid ""
 msgstr ""
 "användning: %s [-hV]\n"
 "            %s -a [-v]\n"
-"            %s [-v] [-p prioritet] special ...\n"
-"            %s [-s]\n"
+"            %s [-v] special ...\n"
 
 #: mount/swapon.c:170 mount/swapon.c:234
 #, c-format
@@ -8212,7 +8237,7 @@ msgstr "swapon: Hoppar över filen %s - den verkar ha hål.\n"
 
 #: mount/swapon.c:240
 msgid "Not superuser.\n"
-msgstr ""
+msgstr "Inte superanvändare.\n"
 
 #: mount/swapon.c:298 mount/swapon.c:386
 #, c-format
@@ -9196,7 +9221,7 @@ msgid "missing comma"
 msgstr "komma saknas"
 
 #: sys-utils/readprofile.c:60
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s: Usage: \"%s [options]\n"
 "\t -m <mapfile>  (default = \"%s\")\n"
@@ -9205,6 +9230,7 @@ msgid ""
 "\t -i            print only info about the sampling step\n"
 "\t -v            print verbose data\n"
 "\t -a            print all symbols, even if count is 0\n"
+"\t -b            print individual histogram-bin counts\n"
 "\t -r            reset all the counters (root only)\n"
 "\t -n            disable byte order auto-detection\n"
 "\t -V            print version and exit\n"
@@ -9220,36 +9246,36 @@ msgstr ""
 "\t -n              deaktivera automatisk detektering av byteordning\n"
 "\t -V              visa versionsinformation och avsluta\n"
 
-#: sys-utils/readprofile.c:83
+#: sys-utils/readprofile.c:84
 msgid "out of memory"
 msgstr "slut på minne"
 
-#: sys-utils/readprofile.c:144
+#: sys-utils/readprofile.c:147
 #, c-format
 msgid "%s Version %s\n"
 msgstr "%s version %s\n"
 
-#: sys-utils/readprofile.c:228
+#: sys-utils/readprofile.c:231
 #, c-format
 msgid "Sampling_step: %i\n"
 msgstr "Samplingssteg: %i\n"
 
-#: sys-utils/readprofile.c:241 sys-utils/readprofile.c:265
+#: sys-utils/readprofile.c:244 sys-utils/readprofile.c:268
 #, c-format
 msgid "%s: %s(%i): wrong map line\n"
 msgstr "%s: %s(%i): felaktig tabellrad\n"
 
-#: sys-utils/readprofile.c:253
+#: sys-utils/readprofile.c:256
 #, c-format
 msgid "%s: can't find \"_stext\" in %s\n"
 msgstr "%s: kan inte hitta \"_stext\" i %s\n"
 
-#: sys-utils/readprofile.c:276
+#: sys-utils/readprofile.c:282
 #, c-format
 msgid "%s: profile address out of range. Wrong map file?\n"
 msgstr "%s: profiladressen är utanför intervallet. Fel tabellfil?\n"
 
-#: sys-utils/readprofile.c:304
+#: sys-utils/readprofile.c:323
 msgid "total"
 msgstr "totalt"
 
@@ -9597,41 +9623,39 @@ msgstr "hexdump: felaktigt konverteringstecken %%%s.\n"
 msgid ""
 "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
 msgstr ""
+"%s: Användning: %s [-number] [-p sträng] [-cefnrs] [+rad] [+/mönster/] "
+"[filer]\n"
 
 #: text-utils/pg.c:255
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option requires an argument -- %s\n"
-msgstr "flaggan \"%s\" kräver ett argument\n"
+msgstr "%s: flaggan kräver ett argument -- %s\n"
 
 #: text-utils/pg.c:263
-#, fuzzy, c-format
+#, c-format
 msgid "%s: illegal option -- %s\n"
-msgstr "%s: otillåten flagga -- %c\n"
+msgstr "%s: otillåten flagga -- %s\n"
 
 #: text-utils/pg.c:380
-#, fuzzy
 msgid "...skipping forward\n"
-msgstr "...hoppar över\n"
+msgstr "...hoppar framåt\n"
 
 #: text-utils/pg.c:382
-#, fuzzy
 msgid "...skipping backward\n"
-msgstr "...hoppar över\n"
+msgstr "...hoppar bakåt\n"
 
 #: text-utils/pg.c:404
-#, fuzzy
 msgid "No next file"
-msgstr "(Nästa fil: %s)"
+msgstr "Ingen nästa fil"
 
 #: text-utils/pg.c:408
-#, fuzzy
 msgid "No previous file"
-msgstr "Inga partitioner är angivna\n"
+msgstr "Inga tidigare fil"
 
 #: text-utils/pg.c:938
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Read error from %s file\n"
-msgstr "%s: läsfel på %s\n"
+msgstr "%s: Läsfel från %s-fil\n"
 
 #.
 #. * Most likely '\0' in input.
@@ -9639,54 +9663,49 @@ msgstr "%s: läsfel på %s\n"
 #: text-utils/pg.c:944
 #, c-format
 msgid "%s: Unexpected EOF in %s file\n"
-msgstr ""
+msgstr "%s: Oväntat filslut i %s-fil\n"
 
 #: text-utils/pg.c:947
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Unknown error in %s file\n"
-msgstr "okänt fel i id"
+msgstr "%s: Okänt fel i %s-fil\n"
 
 #: text-utils/pg.c:1042
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Cannot create tempfile\n"
-msgstr "%s: kan inte läsa temporär fil.\n"
+msgstr "%s: Kan inte skapa temporär fil\n"
 
 #: text-utils/pg.c:1051 text-utils/pg.c:1226
-#, fuzzy
 msgid "RE error: "
-msgstr ", fel"
+msgstr "RE-fel: "
 
 #: text-utils/pg.c:1208
 msgid "(EOF)"
-msgstr ""
+msgstr "(Filslut)"
 
 #: text-utils/pg.c:1234
 msgid "No remembered search string"
-msgstr ""
+msgstr "Ingen ihågkommen söksträng"
 
 #: text-utils/pg.c:1317
-#, fuzzy
 msgid "Cannot open "
-msgstr "Kan inte öppna %s\n"
+msgstr "Kan inte öppna "
 
 #: text-utils/pg.c:1365
-#, fuzzy
 msgid "saved"
-msgstr "sänt"
+msgstr "sparad"
 
 #: text-utils/pg.c:1472
 msgid ": !command not allowed in rflag mode.\n"
-msgstr ""
+msgstr ": !kommando inte tillåtet i rflag-läge.\n"
 
 #: text-utils/pg.c:1504
-#, fuzzy
 msgid "fork() failed, try again later\n"
-msgstr "Lösenordet ändrades *INTE*. Försök igen senare.\n"
+msgstr "fork() misslyckades, försök igen senare\n"
 
 #: text-utils/pg.c:1709
-#, fuzzy
 msgid "(Next file: "
-msgstr "(Nästa fil: %s)"
+msgstr "(Nästa fil: "
 
 #: text-utils/rev.c:113
 msgid "Unable to allocate bufferspace\n"
@@ -9730,9 +9749,6 @@ msgstr "Slut på minne vid växande av buffert.\n"
 
 #~ msgid "unrecognized option `%s'\n"
 #~ msgstr "flaggan \"%s\" är okänd\n"
-
-#~ msgid "option `%s' requires an argument\n"
-#~ msgstr "flaggan \"%s\" kräver ett argument\n"
 
 #~ msgid "option `%s' doesn't allow an argument\n"
 #~ msgstr "flaggan \"%s\" tillåter inte ett argument\n"

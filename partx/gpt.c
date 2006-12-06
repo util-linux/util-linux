@@ -599,7 +599,8 @@ read_gpt_pt (int fd, struct slice all, struct slice *sp, int ns)
 			n++;
 		} else {
 			sp[n].start = __le64_to_cpu(ptes[i].starting_lba);
-			sp[n].size  = __le64_to_cpu(ptes[i].ending_lba);
+			sp[n].size  = __le64_to_cpu(ptes[i].ending_lba) -
+				__le64_to_cpu(ptes[i].starting_lba) + 1;
                         last_used_index=n;
 			n++;
 		}
@@ -608,23 +609,3 @@ read_gpt_pt (int fd, struct slice all, struct slice *sp, int ns)
 	free (gpt);
 	return last_used_index+1;
 }
-
-
-/*
- * Overrides for Emacs so that we follow Linus's tabbing style.
- * Emacs will notice this stuff at the end of the file and automatically
- * adjust the settings for this buffer only.  This must remain at the end
- * of the file.
- * ---------------------------------------------------------------------------
- * Local variables:
- * c-indent-level: 4 
- * c-brace-imaginary-offset: 0
- * c-brace-offset: -4
- * c-argdecl-indent: 4
- * c-label-offset: -4
- * c-continued-statement-offset: 4
- * c-continued-brace-offset: 0
- * indent-tabs-mode: nil
- * tab-width: 8
- * End:
- */

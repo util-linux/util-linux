@@ -13,7 +13,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11b\n"
-"POT-Creation-Date: 2002-07-07 17:03+0200\n"
+"POT-Creation-Date: 2002-08-04 02:14+0200\n"
 "PO-Revision-Date: 2001-05-24 16:03-03:00\n"
 "Last-Translator: Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -250,7 +250,7 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:508
 #, fuzzy, c-format
 msgid "%s is not a block device or file\n"
-msgstr "%s: não é um dispositivo de disquetes\n"
+msgstr "mount: %s não é um dispositivo de blocos"
 
 #: disk-utils/fsck.cramfs.c:514 disk-utils/fsck.cramfs.c:549
 #, c-format
@@ -2451,7 +2451,7 @@ msgstr ""
 "O dispositivo não contém nem uma tabela de partições DOS válida nem um "
 "rótulo de disco Sun, OSF ou SGI\n"
 
-#: fdisk/fdisk.c:942
+#: fdisk/fdisk.c:941
 msgid "Internal error\n"
 msgstr "Erro interno\n"
 
@@ -5927,65 +5927,65 @@ msgstr "número excessivo de velocidades alternativas"
 msgid "exiting parsespeeds\n"
 msgstr "exiting parsespeeds\n"
 
-#: login-utils/agetty.c:642
+#: login-utils/agetty.c:649
 #, c-format
 msgid "/dev: chdir() failed: %m"
 msgstr "/dev: chdir() falhou: %m"
 
-#: login-utils/agetty.c:646
+#: login-utils/agetty.c:653
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s não é um dispositivo de caracteres"
 
 #. ignore close(2) errors
-#: login-utils/agetty.c:653
+#: login-utils/agetty.c:660
 msgid "open(2)\n"
 msgstr "open(2)\n"
 
-#: login-utils/agetty.c:655
+#: login-utils/agetty.c:662
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s: não foi possível abrir como entrada padrão: %m"
 
-#: login-utils/agetty.c:665
+#: login-utils/agetty.c:672
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s: não está aberto para leitura/gravação"
 
 #. Set up standard output and standard error file descriptors.
-#: login-utils/agetty.c:669
+#: login-utils/agetty.c:676
 msgid "duping\n"
 msgstr "duping\n"
 
 #. set up stdout and stderr
-#: login-utils/agetty.c:671
+#: login-utils/agetty.c:678
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s: problema de dup: %m"
 
-#: login-utils/agetty.c:745
+#: login-utils/agetty.c:752
 msgid "term_io 2\n"
 msgstr "term_io 2\n"
 
-#: login-utils/agetty.c:930
+#: login-utils/agetty.c:937
 msgid "user"
 msgstr "usuário"
 
-#: login-utils/agetty.c:930
+#: login-utils/agetty.c:937
 msgid "users"
 msgstr "usuários"
 
-#: login-utils/agetty.c:1018
+#: login-utils/agetty.c:1025
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: leitura: %m"
 
-#: login-utils/agetty.c:1064
+#: login-utils/agetty.c:1071
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: entrada excedida"
 
-#: login-utils/agetty.c:1188
+#: login-utils/agetty.c:1195
 #, c-format
 msgid ""
 "Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
@@ -8087,7 +8087,7 @@ msgstr "mount: não foi possível localizar %s em %s"
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: não foi possível localizar %s em %s ou %s"
 
-#: mount/mount_by_label.c:199
+#: mount/mount_by_label.c:240
 #, c-format
 msgid ""
 "mount: could not open %s, so UUID and LABEL conversion cannot be done.\n"
@@ -8095,35 +8095,35 @@ msgstr ""
 "mount: não foi possível abrir %s - conversões de UUID e LABEL não podem ser "
 "feitas\n"
 
-#: mount/mount_by_label.c:325
+#: mount/mount_by_label.c:366
 msgid "mount: bad UUID"
 msgstr "mount: UUID inválida"
 
-#: mount/mount_guess_fstype.c:482
+#: mount/mount_guess_fstype.c:483
 #, fuzzy
 msgid "mount: error while guessing filesystem type\n"
 msgstr "mount: você precisa especificar o tipo do sistema de arquivos"
 
-#: mount/mount_guess_fstype.c:491
+#: mount/mount_guess_fstype.c:492
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: não foi especificado um tipo de sistema de arquivos para %s\n"
 
-#: mount/mount_guess_fstype.c:494
+#: mount/mount_guess_fstype.c:495
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       experimentarei todos os tipos mencionados em %s ou %s\n"
 
-#: mount/mount_guess_fstype.c:497
+#: mount/mount_guess_fstype.c:498
 msgid "       and it looks like this is swapspace\n"
 msgstr "       e parece ser um espaço de permuta\n"
 
-#: mount/mount_guess_fstype.c:499
+#: mount/mount_guess_fstype.c:500
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       experimentarei o tipo %s\n"
 
-#: mount/mount_guess_fstype.c:587
+#: mount/mount_guess_fstype.c:588
 #, c-format
 msgid "Trying %s\n"
 msgstr "Experimentando %s\n"
@@ -9269,6 +9269,7 @@ msgid ""
 "\t -i            print only info about the sampling step\n"
 "\t -v            print verbose data\n"
 "\t -a            print all symbols, even if count is 0\n"
+"\t -b            print individual histogram-bin counts\n"
 "\t -r            reset all the counters (root only)\n"
 "\t -n            disable byte order auto-detection\n"
 "\t -V            print version and exit\n"
@@ -9283,37 +9284,37 @@ msgstr ""
 "\t -r            reinicializa todos os contadores (somente root)\n"
 "\t -V            mostra a versão e sai\n"
 
-#: sys-utils/readprofile.c:83
+#: sys-utils/readprofile.c:84
 #, fuzzy
 msgid "out of memory"
 msgstr "memória insuficiente?\n"
 
-#: sys-utils/readprofile.c:144
+#: sys-utils/readprofile.c:147
 #, c-format
 msgid "%s Version %s\n"
 msgstr "%s versão %s\n"
 
-#: sys-utils/readprofile.c:228
+#: sys-utils/readprofile.c:231
 #, c-format
 msgid "Sampling_step: %i\n"
 msgstr "Passo de amostragem: %i\n"
 
-#: sys-utils/readprofile.c:241 sys-utils/readprofile.c:265
+#: sys-utils/readprofile.c:244 sys-utils/readprofile.c:268
 #, c-format
 msgid "%s: %s(%i): wrong map line\n"
 msgstr "%s: %s(%i): linha de mapa incorreta\n"
 
-#: sys-utils/readprofile.c:253
+#: sys-utils/readprofile.c:256
 #, c-format
 msgid "%s: can't find \"_stext\" in %s\n"
 msgstr "%s: não foi possível localizar \"_stext\" em %s\n"
 
-#: sys-utils/readprofile.c:276
+#: sys-utils/readprofile.c:282
 #, c-format
 msgid "%s: profile address out of range. Wrong map file?\n"
 msgstr ""
 
-#: sys-utils/readprofile.c:304
+#: sys-utils/readprofile.c:323
 msgid "total"
 msgstr "total"
 

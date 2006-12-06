@@ -181,8 +181,12 @@ struct vxfs_super_block {
 
 struct jfs_super_block {
 	char	s_magic[4];
-	u_char	s_dummy1[97];
+	u_char	s_version[4];
+	u_char	s_dummy1[93];
 	char	s_fpack[11];
+	u_char	s_dummy2[24];
+	u_char	s_uuid[16];
+	char	s_label[16];
 };
 #define JFS_SUPER1_OFF 0x8000
 #define JFS_MAGIC "JFS1"

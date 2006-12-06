@@ -43,9 +43,9 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.11r\n"
-"POT-Creation-Date: 2002-07-07 17:03+0200\n"
-"PO-Revision-Date: 2002-05-17 11:21:12+0200\n"
+"Project-Id-Version: util-linux 2.11t\n"
+"POT-Creation-Date: 2002-08-04 02:14+0200\n"
+"PO-Revision-Date: 2002-07-09 17:33:18+0200\n"
 "Last-Translator: Michael Piefel <piefel@informatik.hu-berlin.de>\n"
 "Language-Team: German <de@li.org>\n"
 "MIME-Version: 1.0\n"
@@ -198,9 +198,9 @@ msgid "%s from %s\n"
 msgstr "%s von %s\n"
 
 #: disk-utils/fdformat.c:130
-#, fuzzy, c-format
+#, c-format
 msgid "%s: not a block device\n"
-msgstr "%s ist kein Diskettenlaufwerk\n"
+msgstr "%s: kein blockorientiertes Gerät\n"
 
 #: disk-utils/fdformat.c:140
 msgid "Could not determine current format type"
@@ -228,6 +228,11 @@ msgid ""
 " -v         be more verbose\n"
 " file       file to test\n"
 msgstr ""
+"Aufruf: %s [-hv] [-x Verz] Datei\n"
+" -h         diese Hilfe ausgeben\n"
+" -x Verz    in Verzeichnis extrahieren\n"
+" -v         gesprächiger sein\n"
+" Datei      zu testende Datei\n"
 
 #: disk-utils/fsck.cramfs.c:191
 #, c-format
@@ -235,9 +240,9 @@ msgid "%s: error %d while decompressing! %p(%d)\n"
 msgstr ""
 
 #: disk-utils/fsck.cramfs.c:243
-#, fuzzy, c-format
+#, c-format
 msgid "%s: size error in symlink `%s'\n"
-msgstr "%s: Fehler beim Lesen auf %s\n"
+msgstr "%s: Größenfehler bei symbolischer Verknüpfung »%s«\n"
 
 #: disk-utils/fsck.cramfs.c:258 disk-utils/fsck.cramfs.c:328
 #, c-format
@@ -250,9 +255,9 @@ msgid "%s: bogus mode on `%s' (%o)\n"
 msgstr ""
 
 #: disk-utils/fsck.cramfs.c:319
-#, fuzzy, c-format
+#, c-format
 msgid "  hole at %ld (%d)\n"
-msgstr "sollte sein (%d, %d, %d)\n"
+msgstr " Loch bei %ld (%d)\n"
 
 #: disk-utils/fsck.cramfs.c:337
 #, c-format
@@ -270,9 +275,9 @@ msgid "%s: invalid cramfs--bad path length\n"
 msgstr ""
 
 #: disk-utils/fsck.cramfs.c:472
-#, fuzzy, c-format
+#, c-format
 msgid "%s: compiled without -x support\n"
-msgstr "umount: Die Unterstützung für -f wurde nicht mit übersetzt\n"
+msgstr "%s: Die Unterstützung für -x wurde nicht mit übersetzt\n"
 
 #: disk-utils/fsck.cramfs.c:498
 #, c-format
@@ -280,9 +285,9 @@ msgid "%s: warning--unable to determine filesystem size \n"
 msgstr ""
 
 #: disk-utils/fsck.cramfs.c:508
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a block device or file\n"
-msgstr "%s ist kein Diskettenlaufwerk\n"
+msgstr "%s ist kein blockorientiertes Gerät oder Datei\n"
 
 #: disk-utils/fsck.cramfs.c:514 disk-utils/fsck.cramfs.c:549
 #, c-format
@@ -300,9 +305,9 @@ msgid "%s: warning--file length too long, padded image?\n"
 msgstr ""
 
 #: disk-utils/fsck.cramfs.c:564
-#, fuzzy, c-format
+#, c-format
 msgid "%s: invalid cramfs--crc error\n"
-msgstr "%s: Fehler beim Parsen der Option\n"
+msgstr "%s: ungültiges cramfs -- CRC-Fehler\n"
 
 #: disk-utils/fsck.cramfs.c:570
 #, c-format
@@ -515,7 +520,7 @@ msgstr "Die Datei »%s« hat Mode %05o\n"
 
 #: disk-utils/fsck.minix.c:693 disk-utils/fsck.minix.c:742
 msgid "Warning: inode count too big.\n"
-msgstr "Warnung: »inode count« zu gross.\n"
+msgstr "Warnung: »inode count« zu groß.\n"
 
 #: disk-utils/fsck.minix.c:755
 msgid "root inode isn't a directory"
@@ -917,9 +922,9 @@ msgid ""
 msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:747
-#, fuzzy, c-format
+#, c-format
 msgid "Including: %s\n"
-msgstr "Ungültige Nummer: %s\n"
+msgstr "Einschließlich: %s\n"
 
 #: disk-utils/mkfs.cramfs.c:753
 #, c-format
@@ -956,9 +961,8 @@ msgstr ""
 #. (can't happen when reading from ext2fs)
 #. bytes, not chars: think UTF8.
 #: disk-utils/mkfs.cramfs.c:799
-#, fuzzy
 msgid "warning: filenames truncated to 255 bytes.\n"
-msgstr "Warnung: »inode count« zu gross.\n"
+msgstr "Warnung: Dateiname auf 255 Bytes abgeschnitten.\n"
 
 #: disk-utils/mkfs.cramfs.c:802
 msgid "warning: files were skipped due to errors.\n"
@@ -1050,6 +1054,8 @@ msgid ""
 "Maxsize=%ld\n"
 "\n"
 msgstr ""
+"Maxgröße=%ld\n"
+"\n"
 
 #: disk-utils/mkfs.minix.c:544
 msgid "seek failed during testing of blocks"
@@ -2488,7 +2494,7 @@ msgstr ""
 "Das Gerät enthält weder eine gültige DOS-Partitionstabelle,\n"
 "noch einen »Sun«, »SGI« oder »OSF disklabel«\n"
 
-#: fdisk/fdisk.c:942
+#: fdisk/fdisk.c:941
 msgid "Internal error\n"
 msgstr "Interner Fehler\n"
 
@@ -4356,6 +4362,9 @@ msgid ""
 "Units = cylinders of %lu bytes, blocks of 1024 bytes, counting from %d\n"
 "\n"
 msgstr ""
+"Einheit = Zylinder von %lu Bytes, Blöcke von 1024 Bytes, Zählung beginnt bei "
+"%d\n"
+"\n"
 
 #: fdisk/sfdisk.c:870
 msgid "   Device Boot Start     End   #cyls    #blocks   Id  System\n"
@@ -4367,6 +4376,8 @@ msgid ""
 "Units = sectors of 512 bytes, counting from %d\n"
 "\n"
 msgstr ""
+"Einheit = Sektoren von 512 Bytes, Zählung beginnt bei %d\n"
+"\n"
 
 #: fdisk/sfdisk.c:877
 msgid "   Device Boot    Start       End   #sectors  Id  System\n"
@@ -4378,6 +4389,8 @@ msgid ""
 "Units = blocks of 1024 bytes, counting from %d\n"
 "\n"
 msgstr ""
+"Einheit = Blöcke von 1024 Bytes, Zählung beginnt bei %d\n"
+"\n"
 
 #: fdisk/sfdisk.c:882
 msgid "   Device Boot   Start       End    #blocks   Id  System\n"
@@ -4389,6 +4402,9 @@ msgid ""
 "Units = megabytes of 1048576 bytes, blocks of 1024 bytes, counting from %d\n"
 "\n"
 msgstr ""
+"Einheit = Megabytes von 1048576 Bytes, Blöcke von 1024 Bytes, Zählung "
+"beginnt bei %d\n"
+"\n"
 
 #: fdisk/sfdisk.c:887
 msgid "   Device Boot Start   End     MB    #blocks   Id  System\n"
@@ -5377,13 +5393,14 @@ msgstr ""
 "sinnvollen Wert enthielt.\n"
 
 #: hwclock/hwclock.c:749
-#, fuzzy
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
 "so history is bad and calibration startover is necessary.\n"
 msgstr ""
-"Der Driftfaktor wird nicht verändert, da weniger als ein Tag seit der "
-"letzten Kalibrierung vergangen ist.\n"
+"Der Driftfaktor wird nicht verändert, da die Zeit der letzten Kalibrierung "
+"Null\n"
+"ist, also die Aufzeichnungen beschädigt sind und die Kalibrierung von neuem\n"
+"starten muss.\n"
 
 #: hwclock/hwclock.c:755
 msgid ""
@@ -5395,15 +5412,15 @@ msgstr ""
 
 # Egger
 #: hwclock/hwclock.c:803
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
 "of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
-"Die Uhr wich um %d Sekunden in den vergangenen %d Sekunden, trotz eines "
-"Driftfaktors von %f Sekunden/Tag, ab.\n"
-"Der Faktor wird um %f Sekunden/Tag geändert.\n"
+"Die Uhr wich in den vergangenen %2$d Sekunden trotz eines Driftfaktors von %3"
+"$f Sekunden/Tag um %1$.1f Sekunden ab.\n"
+"Der Faktor wird um %4$f Sekunden/Tag geändert.\n"
 
 # Egger
 #: hwclock/hwclock.c:854
@@ -5477,6 +5494,11 @@ msgid ""
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken.\n"
 msgstr ""
+"Der Kernel hebt nur auf Alpha-Maschinen einen Epochen-Wert für die Hardware-"
+"Uhr\n"
+"auf. Dieses hwclock wurde für eine andere Maschine als Alpha übersetzt (und\n"
+"läuft daher vermutlich gerade nicht auf einer Alpha). Es wird nichts "
+"gemacht.\n"
 
 # Egger
 #: hwclock/hwclock.c:1146
@@ -5575,6 +5597,9 @@ msgid ""
 "  --jensen, --arc, --srm, --funky-toy\n"
 "                tell hwclock the type of alpha you have (see hwclock(8))\n"
 msgstr ""
+"  --jensen, --arc, --srm, --funky-toy\n"
+"                hwclock mitteilen, um welchen Alpha-Typ es sich handelt\n"
+"                  (siehe hwclock(8))\n"
 
 #: hwclock/hwclock.c:1392
 #, c-format
@@ -5845,66 +5870,66 @@ msgstr ""
 msgid "exiting parsespeeds\n"
 msgstr ""
 
-#: login-utils/agetty.c:642
+#: login-utils/agetty.c:649
 #, c-format
 msgid "/dev: chdir() failed: %m"
 msgstr "Konnte nicht in das Verzeichnis /dev wechseln: %m"
 
-#: login-utils/agetty.c:646
+#: login-utils/agetty.c:653
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s ist kein zeichenorientiertes Gerät"
 
 # debug
 #. ignore close(2) errors
-#: login-utils/agetty.c:653
+#: login-utils/agetty.c:660
 msgid "open(2)\n"
-msgstr ""
+msgstr "open(2)\n"
 
-#: login-utils/agetty.c:655
+#: login-utils/agetty.c:662
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "Konnte /dev/%s nicht als Standardeingabe öffnen: %m"
 
-#: login-utils/agetty.c:665
+#: login-utils/agetty.c:672
 #, c-format
 msgid "%s: not open for read/write"
-msgstr ""
+msgstr "%s: nicht offen für Lesen/Schreiben"
 
 #. Set up standard output and standard error file descriptors.
-#: login-utils/agetty.c:669
+#: login-utils/agetty.c:676
 msgid "duping\n"
 msgstr ""
 
 #. set up stdout and stderr
-#: login-utils/agetty.c:671
+#: login-utils/agetty.c:678
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr ""
 
-#: login-utils/agetty.c:745
+#: login-utils/agetty.c:752
 msgid "term_io 2\n"
 msgstr ""
 
-#: login-utils/agetty.c:930
+#: login-utils/agetty.c:937
 msgid "user"
 msgstr "Benutzer"
 
-#: login-utils/agetty.c:930
+#: login-utils/agetty.c:937
 msgid "users"
 msgstr "Benutzer"
 
-#: login-utils/agetty.c:1018
+#: login-utils/agetty.c:1025
 #, c-format
 msgid "%s: read: %m"
 msgstr ""
 
-#: login-utils/agetty.c:1064
+#: login-utils/agetty.c:1071
 #, c-format
 msgid "%s: input overrun"
 msgstr ""
 
-#: login-utils/agetty.c:1188
+#: login-utils/agetty.c:1195
 #, c-format
 msgid ""
 "Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
@@ -5917,12 +5942,12 @@ msgstr ""
 msgid "login: memory low, login may fail\n"
 msgstr ""
 
-# This ends up in the syslog. Translate it?
+# Das geht ins Syslog - ich übersetze es nicht. (MPi)
 #: login-utils/checktty.c:105
 msgid "can't malloc for ttyclass"
 msgstr ""
 
-# This ends up in the syslog. Translate it?
+# Das geht ins Syslog - ich übersetze es nicht. (MPi)
 #: login-utils/checktty.c:126
 msgid "can't malloc for grplist"
 msgstr ""
@@ -6223,7 +6248,7 @@ msgstr "Anmeldung: "
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr ""
 
-# unten noch mal mit anderen NL
+# unten noch zwei mal mit anderen NL
 #: login-utils/login.c:613
 msgid ""
 "Login incorrect\n"
@@ -6232,15 +6257,16 @@ msgstr ""
 "Login inkorrekt\n"
 "\n"
 
+# Das geht ins Syslog - ich übersetze es nicht. (MPi)
 #: login-utils/login.c:622
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
-msgstr ""
+msgstr "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 
 #: login-utils/login.c:626
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
-msgstr ""
+msgstr "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 
 #: login-utils/login.c:630
 msgid ""
@@ -6272,26 +6298,27 @@ msgstr "login: Speicher ist alle!\n"
 
 #: login-utils/login.c:725
 msgid "Illegal username"
-msgstr ""
+msgstr "Ungültiger Nutzername"
 
 #: login-utils/login.c:768
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr ""
 
+# Das geht ins Syslog - ich übersetze es nicht. (MPi)
 #: login-utils/login.c:773
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
-msgstr ""
+msgstr "LOGIN %s REFUSED FROM %s ON TTY %s"
 
 #: login-utils/login.c:777
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
-msgstr ""
+msgstr "LOGIN %s REFUSED ON TTY %s"
 
 #: login-utils/login.c:830
 msgid "Login incorrect\n"
-msgstr ""
+msgstr "Login inkorrekt\n"
 
 #: login-utils/login.c:852
 msgid ""
@@ -6303,30 +6330,31 @@ msgstr ""
 msgid "You have too many processes running.\n"
 msgstr ""
 
+# Das geht ins Syslog - ich übersetze es nicht. (MPi)
 #: login-utils/login.c:1080
 #, c-format
 msgid "DIALUP AT %s BY %s"
-msgstr ""
+msgstr "DIALUP AT %s BY %s"
 
 #: login-utils/login.c:1087
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
-msgstr ""
+msgstr "ROOT LOGIN ON %s FROM %s"
 
 #: login-utils/login.c:1090
 #, c-format
 msgid "ROOT LOGIN ON %s"
-msgstr ""
+msgstr "ROOT LOGIN ON %s"
 
 #: login-utils/login.c:1093
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
-msgstr ""
+msgstr "LOGIN ON %s BY %s FROM %s"
 
 #: login-utils/login.c:1096
 #, c-format
 msgid "LOGIN ON %s BY %s"
-msgstr ""
+msgstr "LOGIN ON %s BY %s"
 
 #: login-utils/login.c:1108
 msgid "You have new mail.\n"
@@ -6372,7 +6400,7 @@ msgstr ""
 #: login-utils/login.c:1219
 #, c-format
 msgid "login: no shell: %s.\n"
-msgstr ""
+msgstr "login: keine Shell: %s.\n"
 
 #: login-utils/login.c:1234
 #, c-format
@@ -6385,11 +6413,11 @@ msgstr ""
 
 #: login-utils/login.c:1245
 msgid "login name much too long.\n"
-msgstr ""
+msgstr "Login-Name viel zu lang.\n"
 
 #: login-utils/login.c:1246
 msgid "NAME too long"
-msgstr ""
+msgstr "NAME zu lang"
 
 #: login-utils/login.c:1253
 msgid "login names may not start with '-'.\n"
@@ -6397,16 +6425,16 @@ msgstr "Benutzernamen dürfen nicht mit einem »-« anfangen.\n"
 
 #: login-utils/login.c:1263
 msgid "too many bare linefeeds.\n"
-msgstr ""
+msgstr "zu viele nackte Zeilenvorschübe\n"
 
 #: login-utils/login.c:1264
 msgid "EXCESSIVE linefeeds"
-msgstr ""
+msgstr "EXZESSIV viele Zeilenvorschübe"
 
 #: login-utils/login.c:1275
 #, c-format
 msgid "Login timed out after %d seconds\n"
-msgstr ""
+msgstr "Login nach %d Sekunden abgebrochen\n"
 
 #: login-utils/login.c:1372
 #, c-format
@@ -6423,37 +6451,37 @@ msgstr "von %.*s\n"
 msgid "on %.*s\n"
 msgstr "auf %.*s\n"
 
-# This ends up in the syslog. Translate it?
+# Das geht ins Syslog - ich übersetze es nicht. (MPi)
 #: login-utils/login.c:1399
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
-msgstr ""
+msgstr "LOGIN FAILURE FROM %s, %s"
 
-# This ends up in the syslog. Translate it?
+# Das geht ins Syslog - ich übersetze es nicht. (MPi)
 #: login-utils/login.c:1402
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
-msgstr ""
+msgstr "LOGIN FAILURE ON %s, %s"
 
-# This ends up in the syslog. Translate it?
+# Das geht ins Syslog - ich übersetze es nicht. (MPi)
 #: login-utils/login.c:1406
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
-msgstr ""
+msgstr "%d LOGIN FAILURES FROM %s, %s"
 
-# This ends up in the syslog. Translate it?
+# Das geht ins Syslog - ich übersetze es nicht. (MPi)
 #: login-utils/login.c:1409
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
-msgstr ""
+msgstr "%d LOGIN FAILURES ON %s, %s"
 
 #: login-utils/mesg.c:89
 msgid "is y\n"
-msgstr ""
+msgstr "ist y\n"
 
 #: login-utils/mesg.c:92
 msgid "is n\n"
-msgstr ""
+msgstr "is n\n"
 
 #: login-utils/mesg.c:112
 msgid "usage: mesg [y | n]\n"
@@ -6482,7 +6510,7 @@ msgstr ""
 
 #: login-utils/newgrp.c:103
 msgid "No shell"
-msgstr ""
+msgstr "Keine Shell"
 
 #: login-utils/passwd.c:161
 msgid "The password must have at least 6 characters, try again.\n"
@@ -7920,10 +7948,9 @@ msgstr ""
 "mount: Kein Typ angegeben - aufgrund des Doppelpunkts wird NFS angenommen\n"
 
 #: mount/mount.c:1137
-#, fuzzy
 msgid "mount: no type was given - I'll assume smb because of the // prefix\n"
 msgstr ""
-"mount: Kein Typ angegeben - aufgrund des Doppelpunkts wird NFS angenommen\n"
+"mount: Kein Typ angegeben - aufgrund des //-Präfixes wird smb angenommen\n"
 
 #.
 #. * Retry in the background.
@@ -7933,7 +7960,7 @@ msgstr ""
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: »%s« wird im Hintergrund fortgesetzt\n"
 
-# Not realy nice
+# Not really nice
 #: mount/mount.c:1164
 #, c-format
 msgid "mount: giving up \"%s\"\n"
@@ -8024,7 +8051,7 @@ msgstr "mount: Konnte %s nicht in %s finden"
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: Konnte %s nicht in %s oder %s finden"
 
-#: mount/mount_by_label.c:199
+#: mount/mount_by_label.c:240
 #, c-format
 msgid ""
 "mount: could not open %s, so UUID and LABEL conversion cannot be done.\n"
@@ -8032,15 +8059,15 @@ msgstr ""
 "mount: konnte %s nicht öffnen, also können UUID- und LABEL-Konvertierung\n"
 "       nicht durchgeführt werden.\n"
 
-#: mount/mount_by_label.c:325
+#: mount/mount_by_label.c:366
 msgid "mount: bad UUID"
 msgstr "mount: ungültige UUID"
 
-#: mount/mount_guess_fstype.c:482
+#: mount/mount_guess_fstype.c:483
 msgid "mount: error while guessing filesystem type\n"
 msgstr "mount: Fehler beim Erraten des Dateisystemtyps\n"
 
-#: mount/mount_guess_fstype.c:491
+#: mount/mount_guess_fstype.c:492
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: Es wurde kein Dateisystemtyp für %s angegeben\n"
@@ -8048,25 +8075,25 @@ msgstr "mount: Es wurde kein Dateisystemtyp für %s angegeben\n"
 # Maybe:
 # "       Es werden alle Dateisystemtypen ausprobiert, die\n"
 # "       in %s oder %s aufgelistet sind\n"
-#: mount/mount_guess_fstype.c:494
+#: mount/mount_guess_fstype.c:495
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr ""
 "       Werde alle Dateisystemtypen probieren, die in %s oder\n"
 "       %s aufgelistet sind\n"
 
-#: mount/mount_guess_fstype.c:497
+#: mount/mount_guess_fstype.c:498
 msgid "       and it looks like this is swapspace\n"
 msgstr "       und es sieht so aus, als sei dies Swap-Bereich\n"
 
 # Maybe: "       Es wird der Typ %s ausprobiert\n"
 # or   : ... "probieren"
-#: mount/mount_guess_fstype.c:499
+#: mount/mount_guess_fstype.c:500
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       Werde den Typ %s versuchen\n"
 
-#: mount/mount_guess_fstype.c:587
+#: mount/mount_guess_fstype.c:588
 #, c-format
 msgid "Trying %s\n"
 msgstr "Versuche %s\n"
@@ -8175,7 +8202,7 @@ msgstr ""
 "        %s [-s]\n"
 
 #: mount/swapon.c:66
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "usage: %s [-hV]\n"
 "       %s -a [-v]\n"
@@ -8183,8 +8210,7 @@ msgid ""
 msgstr ""
 "Aufruf: %s [-hV]\n"
 "        %s -a [-v]\n"
-"        %s [-v] [-p Priorität] Spezialdatei ...\n"
-"        %s [-s]\n"
+"        %s [-v] Spezialdatei ...\n"
 
 # The first %s is swapon/swapoff
 #: mount/swapon.c:170 mount/swapon.c:234
@@ -8211,9 +8237,8 @@ msgid "swapon: Skipping file %s - it appears to have holes.\n"
 msgstr "swapon: Überspringe die Datei %s - sie scheint Löcher zu enthalten.\n"
 
 #: mount/swapon.c:240
-#, fuzzy
 msgid "Not superuser.\n"
-msgstr "Nicht gesetzt\n"
+msgstr "Nicht Superuser.\n"
 
 #: mount/swapon.c:298 mount/swapon.c:386
 #, c-format
@@ -9185,7 +9210,7 @@ msgid "missing comma"
 msgstr "fehlendes Komma"
 
 #: sys-utils/readprofile.c:60
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "%s: Usage: \"%s [options]\n"
 "\t -m <mapfile>  (default = \"%s\")\n"
@@ -9194,6 +9219,7 @@ msgid ""
 "\t -i            print only info about the sampling step\n"
 "\t -v            print verbose data\n"
 "\t -a            print all symbols, even if count is 0\n"
+"\t -b            print individual histogram-bin counts\n"
 "\t -r            reset all the counters (root only)\n"
 "\t -n            disable byte order auto-detection\n"
 "\t -V            print version and exit\n"
@@ -9209,36 +9235,36 @@ msgstr ""
 "\t -n            Byte-Anordnungs-Erkennung abschalten\n"
 "\t -V            Versionsinformation ausgeben und beenden\n"
 
-#: sys-utils/readprofile.c:83
+#: sys-utils/readprofile.c:84
 msgid "out of memory"
 msgstr "Speicher ist alle"
 
-#: sys-utils/readprofile.c:144
+#: sys-utils/readprofile.c:147
 #, c-format
 msgid "%s Version %s\n"
 msgstr "%s Version %s\n"
 
-#: sys-utils/readprofile.c:228
+#: sys-utils/readprofile.c:231
 #, c-format
 msgid "Sampling_step: %i\n"
 msgstr ""
 
-#: sys-utils/readprofile.c:241 sys-utils/readprofile.c:265
+#: sys-utils/readprofile.c:244 sys-utils/readprofile.c:268
 #, c-format
 msgid "%s: %s(%i): wrong map line\n"
 msgstr ""
 
-#: sys-utils/readprofile.c:253
+#: sys-utils/readprofile.c:256
 #, c-format
 msgid "%s: can't find \"_stext\" in %s\n"
 msgstr "%s: Konnte »_stext« nicht in %s finden\n"
 
-#: sys-utils/readprofile.c:276
+#: sys-utils/readprofile.c:282
 #, c-format
 msgid "%s: profile address out of range. Wrong map file?\n"
 msgstr ""
 
-#: sys-utils/readprofile.c:304
+#: sys-utils/readprofile.c:323
 msgid "total"
 msgstr "total"
 
@@ -9584,42 +9610,39 @@ msgstr "hexdump: ungültiges Umwandlungszeichen %%%s.\n"
 msgid ""
 "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
 msgstr ""
+"%s: Aufruf: %s [-zahl] [-p zkette] [-cefnrs] [+zeile] [+/muster/] [dateien]\n"
 
 # libc: "Die Option »%s« erfordert ein Argument\n"
 #: text-utils/pg.c:255
-#, fuzzy, c-format
+#, c-format
 msgid "%s: option requires an argument -- %s\n"
-msgstr "Option »%s« erwartet ein Argument\n"
+msgstr "%s: Option erfordert ein Argument -- %s\n"
 
 #: text-utils/pg.c:263
-#, fuzzy, c-format
+#, c-format
 msgid "%s: illegal option -- %s\n"
-msgstr "%s: unzulässige Option -- %c\n"
+msgstr "%s: unzulässige Option -- %s\n"
 
 #: text-utils/pg.c:380
-#, fuzzy
 msgid "...skipping forward\n"
-msgstr "...Überspringe\n"
+msgstr "...springe vorwärts\n"
 
 #: text-utils/pg.c:382
-#, fuzzy
 msgid "...skipping backward\n"
-msgstr "...Überspringe\n"
+msgstr "...springe rückwärts\n"
 
 #: text-utils/pg.c:404
-#, fuzzy
 msgid "No next file"
-msgstr "(Nächste Datei: %s)"
+msgstr "Keine nächste Datei"
 
 #: text-utils/pg.c:408
-#, fuzzy
 msgid "No previous file"
-msgstr "Keine Partitionen definiert\n"
+msgstr "Kein vorhergehende Datei"
 
 #: text-utils/pg.c:938
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Read error from %s file\n"
-msgstr "%s: Fehler beim Lesen auf %s\n"
+msgstr "%s: Fehler beim Lesen aus %s-Datei\n"
 
 #.
 #. * Most likely '\0' in input.
@@ -9627,52 +9650,49 @@ msgstr "%s: Fehler beim Lesen auf %s\n"
 #: text-utils/pg.c:944
 #, c-format
 msgid "%s: Unexpected EOF in %s file\n"
-msgstr ""
+msgstr "%s: unerwartetes Dateiende in %s-Datei\n"
 
 #: text-utils/pg.c:947
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Unknown error in %s file\n"
-msgstr "unbekannter Fehler in ID"
+msgstr "%s: unbekannter Fehler in %s-Datei\n"
 
 #: text-utils/pg.c:1042
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Cannot create tempfile\n"
-msgstr "%s: Konnte eine temporäre Datei nicht lesen.\n"
+msgstr "%s: Konnte keine temporäre Datei anlegen.\n"
 
 #: text-utils/pg.c:1051 text-utils/pg.c:1226
-#, fuzzy
 msgid "RE error: "
-msgstr ", Fehler"
+msgstr "Fehler in regulärem Ausdruck: "
 
 #: text-utils/pg.c:1208
 msgid "(EOF)"
-msgstr ""
+msgstr "(Dateiende)"
 
 #: text-utils/pg.c:1234
 msgid "No remembered search string"
-msgstr ""
+msgstr "Kein gemerkter Suchtext"
 
 #: text-utils/pg.c:1317
-#, fuzzy
 msgid "Cannot open "
-msgstr "Konnte %s nicht öffnen\n"
+msgstr "Kann nicht öffnen "
 
 #: text-utils/pg.c:1365
 msgid "saved"
-msgstr ""
+msgstr "gespeichert"
 
 #: text-utils/pg.c:1472
 msgid ": !command not allowed in rflag mode.\n"
-msgstr ""
+msgstr ": !befehl im rflag-Modus nicht erlaubt.\n"
 
 #: text-utils/pg.c:1504
 msgid "fork() failed, try again later\n"
-msgstr ""
+msgstr "fork() fehlgeschlagen, später versuchen\n"
 
 #: text-utils/pg.c:1709
-#, fuzzy
 msgid "(Next file: "
-msgstr "(Nächste Datei: %s)"
+msgstr "(Nächste Datei: "
 
 #: text-utils/rev.c:113
 msgid "Unable to allocate bufferspace\n"
@@ -9716,10 +9736,6 @@ msgstr "Speicher ist alle beim Vergrößern eines Puffers.\n"
 
 #~ msgid "unrecognized option `%s'\n"
 #~ msgstr "unbekannte Option »%s«\n"
-
-# libc: "Die Option »%s« erfordert ein Argument\n"
-#~ msgid "option `%s' requires an argument\n"
-#~ msgstr "Option »%s« erwartet ein Argument\n"
 
 # libc: "Die Option »%s« erlaubt kein Argument\n"
 #~ msgid "option `%s' doesn't allow an argument\n"

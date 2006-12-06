@@ -6,9 +6,9 @@
 include ../make_include
 include ../MCONFIG
 
-MAN1= 		col.1 colcrt.1 colrm.1 column.1 hexdump.1 rev.1 line.1 pg.1
+MAN1= 		col.1 colcrt.1 colrm.1 column.1 hexdump.1 rev.1 line.1
 
-USRBIN=		col colcrt colrm column hexdump rev line pg
+USRBIN=		col colcrt colrm column hexdump rev line
 
 BIN=
 
@@ -16,8 +16,8 @@ MAYBE=		more ul
 
 ifeq "$(HAVE_NCURSES)" "yes"
 BIN:=$(BIN) more
-USRBIN:=$(USRBIN) ul
-MAN1:=$(MAN1) ul.1 more.1
+USRBIN:=$(USRBIN) ul pg
+MAN1:=$(MAN1) ul.1 more.1 pg.1
 else
 ifeq "$(HAVE_TERMCAP)" "yes"
 BIN:=$(BIN) more
