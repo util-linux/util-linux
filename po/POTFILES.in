@@ -12,6 +12,7 @@ disk-utils/mkswap.c
 disk-utils/raw.c
 disk-utils/setfdprm.c
 fdisk/cfdisk.c
+fdisk/disksize.c
 fdisk/fdisk.c
 fdisk/fdiskaixlabel.c
 fdisk/fdiskbsdlabel.c

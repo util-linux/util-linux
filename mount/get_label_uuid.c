@@ -45,13 +45,19 @@ is_raid_partition(int fd) {
 }
 
 int
-is_reiserfs_magic_string (const char *magic) {
-	return (!strncmp(magic, REISERFS_SUPER_MAGIC_STRING, 
-			 strlen(REISERFS_SUPER_MAGIC_STRING)) ||
-		!strncmp(magic, REISER2FS_SUPER_MAGIC_STRING, 
-			 strlen(REISER2FS_SUPER_MAGIC_STRING)) ||
-		!strncmp(magic, REISER3FS_SUPER_MAGIC_STRING, 
-			 strlen(REISER3FS_SUPER_MAGIC_STRING)));
+reiserfs_magic_version(const char *magic) {
+	int rc = 0;
+
+	if (!strncmp(magic, REISERFS_SUPER_MAGIC_STRING,
+		     strlen(REISERFS_SUPER_MAGIC_STRING)))
+		rc = 1;
+	if (!strncmp(magic, REISER2FS_SUPER_MAGIC_STRING, 
+		     strlen(REISER2FS_SUPER_MAGIC_STRING)))
+		rc = 2;
+	if (!strncmp(magic, REISER3FS_SUPER_MAGIC_STRING, 
+		     strlen(REISER3FS_SUPER_MAGIC_STRING)))
+		rc = 3;
+	return rc;
 }
 
 /*
@@ -112,9 +118,23 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 	else if (lseek(fd, JFS_SUPER1_OFF, SEEK_SET) == JFS_SUPER1_OFF
 	    && read(fd, (char *) &jfssb, sizeof(jfssb)) == sizeof(jfssb)
 	    && (strncmp(jfssb.s_magic, JFS_MAGIC, 4) == 0)) {
-		if (assemble4le(jfssb.s_version) == 1) {
-			/* old (OS/2 compatible) jfs filesystems don't
-			   have UUIDs and only have a very small label. */
+
+/* The situation for jfs is rather messy. The structure of the
+   superblock changed a few times, but there seems to be no good way
+   to check what kind of sb we have.
+   Old (OS/2 compatible) jfs filesystems don't have UUIDs and have
+   an 11-byte label in s_fpack[].
+   Kernel 2.5.6 supports jfs v1; 2.5.8 supports v2; 2.5.18 has label/uuid.
+   Kernel 2.4.20 supports jfs v2 with label/uuid.
+   s_version will be 2 for new filesystems using an external log.
+   Other new filesystems will have version 1.
+   Label and UUID can be set by jfs_tune. */
+
+/* Let us believe label/uuid on v2, and on v1 only when label agrees
+   with s_fpack in the first 11 bytes. */
+
+		if (assemble4le(jfssb.s_version) == 1 &&
+		    strncmp(jfssb.s_label, jfssb.s_fpack, 11) != 0) {
 			memset(uuid, 0, 16);
 			namesize = sizeof(jfssb.s_fpack);
 			if ((*label = calloc(namesize + 1, 1)) != NULL)
@@ -131,7 +151,9 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 		 == REISERFS_DISK_OFFSET_IN_BYTES
 	    && read(fd, (char *) &reiserfssb, sizeof(reiserfssb))
 		 == sizeof(reiserfssb)
-	    && is_reiserfs_magic_string(reiserfssb.s_magic)) {
+		/* Only 3.6.x format supers have labels or uuids.
+		   Label and UUID can be set by reiserfstune -l/-u. */
+	    && reiserfs_magic_version(reiserfssb.s_magic) > 1) {
 		namesize = sizeof (reiserfssb.s_label);
 		if ((*label = calloc(namesize + 1, 1)) != NULL)
 			memcpy(*label, reiserfssb.s_label, namesize);

@@ -32,8 +32,6 @@
    2000-03-17 Burt Holzman <bnh@iname.com>
    - added range checks for dates
 */
-#include "../defines.h"		/* for util-linux-version */
-
 
 /* configuration options  VVVVV   READ THIS!!! */
 
@@ -64,6 +62,7 @@
 #include <time.h>
 #include <stdio.h>
 #include "nls.h"
+#include "../defines.h"		/* for util-linux-version */
 
 #ifndef __GNUC__
 #define inline /* foo */

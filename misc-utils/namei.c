@@ -47,6 +47,7 @@ chdir to /,  or if it encounters an unknown file type.
 #include <stdio.h>
 #include <unistd.h>
 #include <string.h>
+#include <strings.h>
 #include <stdlib.h>
 #include <errno.h>
 #include <sys/types.h>

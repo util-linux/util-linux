@@ -85,7 +85,7 @@ int main(int argc, char *argv[])
   oldpath = getenv("PATH");
   if (!oldpath)
 	  oldpath = "/bin";
-  newpath = (char *) malloc(strlen(oldpath) + sizeof(SEARCH_PATH) + 2);
+  newpath = (char *) malloc(strlen(oldpath) + sizeof(SEARCH_PATH) + 3);
   if (!newpath) {
     fprintf(stderr, _("%s: Out of memory!\n"), "mkfs");
     exit(1);

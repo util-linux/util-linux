@@ -677,11 +677,11 @@ program MOUNTPROG {
     } = 2;
 } = 100005;
 " > conftest.x
-if rpcgen -h -o conftest.h conftest.x 2> conferrs && \
-   rpcgen -c -o conftestx.c conftest.x 2>> conferrs && \
-   rpcgen -l -o conftestl.c conftest.x 2>> conferrs && \
-   $CC $CFLAGS -c conftestx.c 2>> conferrs && \
-   $CC $CFLAGS -c conftestl.c 2>> conferrs && \
+if rpcgen -h -o conftest.h conftest.x 2> conferrs > /dev/null && \
+   rpcgen -c -o conftestx.c conftest.x 2>> conferrs > /dev/null && \
+   rpcgen -l -o conftestl.c conftest.x 2>> conferrs > /dev/null && \
+   $CC $CFLAGS -c conftestx.c 2>> conferrs > /dev/null && \
+   $CC $CFLAGS -c conftestl.c 2>> conferrs > /dev/null && \
    test ! -s conferrs
 then
         echo "HAVE_GOOD_RPC=yes" >> make_include

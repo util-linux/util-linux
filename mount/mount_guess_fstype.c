@@ -384,7 +384,7 @@ do_guess_fstype(const char *device) {
 	    || read(fd, (char *) &reiserfssb, sizeof(reiserfssb)) !=
 		sizeof(reiserfssb))
 	    goto io_error;
-	if (is_reiserfs_magic_string(reiserfssb.s_magic))
+	if (reiserfs_magic_version(reiserfssb.s_magic))
 	    type = "reiserfs";
     }
 
@@ -434,7 +434,7 @@ do_guess_fstype(const char *device) {
 	    || read(fd, (char *) &reiserfssb, sizeof(reiserfssb)) !=
 		sizeof(reiserfssb))
 	    goto io_error;
-	if (is_reiserfs_magic_string(reiserfssb.s_magic))
+	if (reiserfs_magic_version(reiserfssb.s_magic))
 	    type = "reiserfs";
     }
 

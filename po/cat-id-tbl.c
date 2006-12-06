@@ -1126,8 +1126,8 @@ Units = %s of %d * 512 bytes\n\
   {"error reading %s\n", 842},
   {"cannot open device %s for writing\n", 843},
   {"error writing sector %lu on %s\n", 844},
-  {"Disk %s: cannot get size\n", 845},
-  {"Disk %s: cannot get geometry\n", 846},
+  {"Disk %s: cannot get geometry\n", 845},
+  {"Disk %s: cannot get size\n", 846},
   {"\
 Warning: start=%lu - this looks like a partition rather than\n\
 the entire disk. Using fdisk on it is probably meaningless.\n\
@@ -1299,7 +1299,7 @@ MB", 941},
   {"%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n", 964},
   {"%s -An device\t activate partition n, inactivate the other ones\n", 965},
   {"no command?\n", 966},
-  {"total: %lu blocks\n", 967},
+  {"total: %llu blocks\n", 967},
   {"usage: sfdisk --print-id device partition-number\n", 968},
   {"usage: sfdisk --change-id device partition-number Id\n", 969},
   {"usage: sfdisk --id device partition-number [Id]\n", 970},
@@ -1308,7 +1308,7 @@ MB", 941},
   {"cannot open %s for reading\n", 973},
   {"%s: OK\n", 974},
   {"%s: %ld cylinders, %ld heads, %ld sectors/track\n", 975},
-  {"BLKGETSIZE ioctl failed for %s\n", 976},
+  {"Cannot get size of %s\n", 976},
   {"bad active byte: 0x%x instead of 0x80\n", 977},
   {"\
 Done\n\

@@ -170,7 +170,7 @@ int sectors = 0;
 long long cylinders = 0;
 int cylinder_size = 0;		/* heads * sectors */
 long long total_size = 0;	/* actual_size rounded down */
-long long actual_size = 0;	/* set using ioctl */
+long long actual_size = 0;	/* (in 512-byte sectors) - set using ioctl */
 				/* explicitly given user values */
 int user_heads = 0, user_sectors = 0;
 long long user_cylinders = 0;
@@ -1579,7 +1579,7 @@ static void
 fill_p_info(void) {
     int pn, i;
     long long bs, bsz;
-    unsigned long long bytes;
+    unsigned long long llsectors;
     struct partition *p;
     partition_table buffer;
     partition_info tmp_ext = { 0, 0, 0, 0, FREE_SPACE, PRIMARY };
@@ -1608,15 +1608,9 @@ fill_p_info(void) {
     ioctl(fd, BLKFLSBUF);	/* ignore errors */
 				/* e.g. Permission Denied */
 
-    if (ioctl(fd, BLKGETSIZE64, &bytes) == 0)
-	    actual_size = (bytes >> 9);
-    else {
-	    unsigned long sz = 0;
-
-	    if (ioctl(fd, BLKGETSIZE, &sz))
-		    fatal(_("Cannot get disk size"), 3);
-	    actual_size = sz;
-    }
+    if (disksize(fd, &llsectors))
+	    fatal(_("Cannot get disk size"), 3);
+    actual_size = llsectors;
 
     read_sector(buffer.c.b, 0);
 

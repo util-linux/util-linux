@@ -696,8 +696,8 @@ create_sgilabel(void)
 		int sysid;
 	} old[4];
 	int i=0;
-	long longsectors;	/* the number of sectors on the device */
-	int res; 			/* the result from the ioctl */
+	unsigned long long llsectors;
+	int res; 		/* the result from the ioctl */
 	int sec_fac; 		/* the sector factor */
 
 	sec_fac = sector_size / 512;	/* determine the sector factor */
@@ -709,15 +709,18 @@ create_sgilabel(void)
 
 	other_endian = (BYTE_ORDER == LITTLE_ENDIAN);
 
-	res = ioctl(fd, BLKGETSIZE, &longsectors);
+	res = disksize(fd, &llsectors);
 
 	if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
 		heads = geometry.heads;
 		sectors = geometry.sectors;
 		if (res == 0) {
 			/* the get device size ioctl was successful */
-			cylinders = longsectors / (heads * sectors);
-			cylinders /= sec_fac;
+			unsigned long long llcyls;
+			llcyls = llsectors / (heads * sectors * sec_fac);
+			cylinders = llcyls;
+			if (cylinders != llcyls)	/* truncated? */
+				cylinders = ~0;
 		} else {
 			/* otherwise print error and use truncated version */
 			cylinders = geometry.cylinders;

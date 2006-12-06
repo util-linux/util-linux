@@ -409,24 +409,32 @@ struct geometry {
 static struct geometry
 get_geometry(char *dev, int fd, int silent) {
     struct hd_geometry g;
-    unsigned long size;
+    unsigned long cyls;
+    unsigned long long sectors;
     struct geometry R;
 
-    if (ioctl(fd, BLKGETSIZE, &size)) {
-	size = 0;
-	if (!silent)
-	    do_warn(_("Disk %s: cannot get size\n"), dev);
-    }
     if (ioctl(fd, HDIO_GETGEO, &g)) {
 	g.heads = g.sectors = g.cylinders = g.start = 0;
 	if (!silent)
 	    do_warn(_("Disk %s: cannot get geometry\n"), dev);
     }
+
+    R.start = g.start;
     R.heads = g.heads;
     R.sectors = g.sectors;
     R.cylindersize = R.heads * R.sectors;
-    R.cylinders = (R.cylindersize ? size / R.cylindersize : 0);
-    R.start = g.start;
+    R.cylinders = 0;
+
+    if (disksize(fd, &sectors)) {
+	if (!silent)
+	    do_warn(_("Disk %s: cannot get size\n"), dev);
+    } else if (R.cylindersize) {
+	    sectors /= R.cylindersize;
+	    cyls = sectors;
+	    if (cyls != sectors)
+		    cyls = ~0;
+	    R.cylinders = cyls;
+    }
     return R;
 }
 
@@ -2368,6 +2376,19 @@ is_ide_cdrom_or_tape(char *device) {
 	return is_ide;
 }
 
+static int
+is_probably_full_disk(char *name) {
+	struct hd_geometry geometry;
+	int fd, i = 0;
+
+	fd = open(name, O_RDONLY);
+	if (fd >= 0) {
+		i = ioctl(fd, HDIO_GETGEO, &geometry);
+		close(fd);
+	}
+	return (fd >= 0 && i == 0 && geometry.start == 0);
+}
+
 #define PROC_PARTITIONS	"/proc/partitions"
 static FILE *procf = NULL;
 
@@ -2381,7 +2402,7 @@ openproc(void) {
 static char *
 nextproc(void) {
 	static char devname[120];
-	char line[100], ptname[100], *s;
+	char line[100], ptname[100];
 	int ma, mi, sz;
 
 	if (procf == NULL)
@@ -2390,10 +2411,9 @@ nextproc(void) {
 		if (sscanf (line, " %d %d %d %[^\n ]",
 			    &ma, &mi, &sz, ptname) != 4)
 			continue;
-		for(s = ptname; *s; s++);
-		if (isdigit(s[-1]))
-			continue;
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
+		if (!is_probably_full_disk(devname))
+			continue;
 		return devname;
 	}
 
@@ -2411,7 +2431,7 @@ static void do_change_id(char *dev, char *part, char *id);
 static void do_unhide(char **av, int ac, char *arg);
 static void do_activate(char **av, int ac, char *arg);
 
-unsigned long total_size;
+unsigned long long total_size;
 
 int
 main(int argc, char **argv) {
@@ -2551,7 +2571,7 @@ main(int argc, char **argv) {
 	}
 
 	if (opt_size)
-	  printf(_("total: %lu blocks\n"), total_size);
+	  printf(_("total: %llu blocks\n"), total_size);
 
 	exit(exit_status);
     }
@@ -2677,16 +2697,16 @@ do_geom (char *dev, int silent) {
 static void
 do_size (char *dev, int silent) {
     int fd;
-    unsigned long size;
+    unsigned long long size;
 
     fd = my_open(dev, 0, silent);
     if (fd < 0)
 	return;
 
-    if (ioctl(fd, BLKGETSIZE, &size)) {
+    if (disksize(fd, &size)) {
 	if (!silent) {
 	    perror(dev);
-	    fatal(_("BLKGETSIZE ioctl failed for %s\n"), dev);
+	    fatal(_("Cannot get size of %s\n"), dev);
 	}
 	return;
     }
@@ -2698,9 +2718,9 @@ do_size (char *dev, int silent) {
       return;
 
     if (silent)
-      printf("%s: %9lu\n", dev, size);
+      printf("%s: %9llu\n", dev, size);
     else
-      printf("%lu\n", size);
+      printf("%llu\n", size);
 
     total_size += size;
 }

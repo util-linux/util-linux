@@ -39,7 +39,7 @@ else
 endif
 endif
 
-cfdisk: cfdisk.o llseek.o i386_sys_types.o $(LIB)/xstrncpy.o
+cfdisk: cfdisk.o llseek.o disksize.o i386_sys_types.o $(LIB)/xstrncpy.o
 ifeq "$(HAVE_SLANG)" "yes"
 	$(CC) $(LDFLAGS) $^ -o $@ $(LIBSLANG)
 else
@@ -55,15 +55,15 @@ activate: sfdisk
 	rm -f activate
 	ln -s sfdisk activate
 
-fdisk: fdisk.o llseek.o fdiskbsdlabel.o fdisksgilabel.o fdisksunlabel.o \
-	fdiskaixlabel.o i386_sys_types.o partname.o
+fdisk: fdisk.o llseek.o disksize.o fdiskbsdlabel.o fdisksgilabel.o \
+	fdisksunlabel.o fdiskaixlabel.o i386_sys_types.o partname.o
 fdisk.o: fdisk.c fdisk.h
 fdiskbsdlabel.o: fdiskbsdlabel.c fdisk.h fdiskbsdlabel.h
 fdisksunlabel.o: fdisksunlabel.c fdisksunlabel.h fdisk.h
 fdiskaixlabel.o: fdiskaixlabel.c fdiskaixlabel.h fdisk.h
 fdisk.o cfdisk.o sfdisk.o fdiskbsdlabel.o fdisksunlabel.o \
 	fdisksgilabel.o fdiskaixlabel.o i386_sys_types.o partname.o: common.h
-sfdisk: sfdisk.o i386_sys_types.o partname.o
+sfdisk: sfdisk.o disksize.o i386_sys_types.o partname.o
 
 install: all
 	$(INSTALLDIR) $(SBINDIR)

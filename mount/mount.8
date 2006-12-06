@@ -749,8 +749,11 @@ Since Linux version 2.1.21 extfs is no longer part of the kernel source.
 
 .SH "Mount options for ext2"
 The `ext2' file system is the standard Linux file system.
-Due to a kernel bug, it may be mounted with random mount options
-(fixed in Linux 2.0.4).
+.\" Due to a kernel bug, it may be mounted with random mount options
+.\" (fixed in Linux 2.0.4).
+Since Linux 2.5.46, for most mount options the default
+is determined by the filesystem superblock. Set them with
+.BR tune2fs (8).
 .TP
 .BR bsddf " / " minixdf
 Set the behaviour for the
@@ -779,19 +782,25 @@ to the options given in
 .IR /etc/fstab .)
 
 .TP
-.BR check " / " check=normal " / " check=strict
-Set checking level. When at least one of these options is set (and
-.B check=normal
-is set by default) the inodes and blocks bitmaps are checked upon mount
-(which can take half a minute or so on a big disk, and is rather useless).
-With strict checking, block deallocation checks that the block to free
-is in the data zone.
+.\" Before Linux 2.3.99-pre3:
+.\" .BR check " / " check=normal " / " check=strict
+.\" Set checking level. When at least one of these options is set (and
+.\" .B check=normal
+.\" is set by default) the inodes and blocks bitmaps are checked upon mount
+.\" (which can take half a minute or so on a big disk, and is rather useless).
+.\" With strict checking, block deallocation checks that the block to free
+.\" is in the data zone.
+.\" Since 2.3.99-pre3 but before 2.6.0-test7 every string check=foo
+.\" was equivalent to just check. Since 2.6.0-test7 only check is accepted.
+.BR check
+Check filesystem (block and inode bitmaps) at mount time.
+.\" requires CONFIG_EXT2_CHECK
 .TP
 .BR check=none " / " nocheck
-No checking is done. This is fast. Recent kernels do not have a
-check option anymore - checking with
+No checking is done at mount time. This is the default. This is fast.
+It is wise to invoke
 .BR e2fsck (8)
-is more meaningful.
+every now and then, e.g. at boot time.
 .TP
 .B debug
 Print debugging info upon each (re)mount.
@@ -814,6 +823,16 @@ the directory has the setgid bit set, in which case it takes the gid
 from the parent directory, and also gets the setgid bit set
 if it is a directory itself.
 .TP
+.BR nobh
+Do not attach buffer_heads to file pagecache. (Since 2.5.49.)
+.TP
+.BR nouid32
+Disables 32-bit UIDs and GIDs.  This is for interoperability with older
+kernels which only store and expect 16-bit values.
+.TP
+.BR oldalloc " or " orlov
+Use old allocator or Orlov allocator for new inodes. Orlov is default.
+.TP
 \fBresgid=\fP\fIn\fP and \fBresuid=\fP\fIn\fP
 The ext2 file system reserves a certain percentage of the available
 space (by default 5%, see
@@ -828,8 +847,8 @@ Instead of block 1, use block
 .I n
 as superblock. This could be useful when the filesystem has been damaged.
 (Earlier, copies of the superblock would be made every 8192 blocks: in
-block 1, 8193, 16385, ... (and one got hundreds or even thousands
-of copies on a big filesystem). Since version 1.08,
+block 1, 8193, 16385, ... (and one got thousands of copies on
+a big filesystem). Since version 1.08,
 .B mke2fs
 has a \-s (sparse superblock) option to reduce the number of backup
 superblocks, and since version 1.15 this is the default. Note
@@ -839,13 +858,16 @@ cannot be mounted r/w under Linux 2.0.*.)
 The block number here uses 1k units. Thus, if you want to use logical
 block 32768 on a filesystem with 4k blocks, use "sb=131072".
 .TP
+.BR user_xattr " / " nouser_xattr
+Support "user." extended attributes (or not).
+.\" requires CONFIG_EXT2_FS_XATTR
+.TP
+.BR acl " / " noacl
+Support POSIX Access Control Lists (or not).
+.\" requires CONFIG_EXT2_FS_POSIX_ACL
+.TP
 .BR grpquota " / " noquota " / " quota " / " usrquota
 These options are accepted but ignored.
-
-.TP
-.BR nouid32
-Disables 32-bit UIDs and GIDs.  This is for interoperability with older
-kernels which only store and expect 16-bit values.
 
 
 .SH "Mount options for ext3"

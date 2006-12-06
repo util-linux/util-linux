@@ -1,3 +1,10 @@
+util-linux 2.12c,d
+
+* mount.8: added recent ext2 mount options
+* mount: support jfs mount-by-label, improve reiserfs support
+* sfdisk: remove strange "ends in a digit" heuristic
+* *fdisk: use common disksize() routine
+
 util-linux 2.12b
 
 * chsh: improved error message
@@ -8,7 +15,7 @@ util-linux 2.12b
 * fdisk: remove strange "ends in a digit" heuristic
 * fdisk: also list Solaris as possible type for 0x82
 * mount: added --rbind option
-* mount: use blkid library
+* mount: use blkid, uuid libraries when available
 * mount: support reiserfs mount by label
 * mount: attempt to use the right definition of dev_t in struct loopinfo
 * mount.8: jfs mount options added

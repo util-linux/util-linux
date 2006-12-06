@@ -821,8 +821,7 @@ get_partition_table_geometry(void) {
 void
 get_geometry(int fd, struct geom *g) {
 	int sec_fac;
-	unsigned long longsectors;
-	unsigned long long bytes;	/* really u64 */
+	unsigned long long llsectors, llcyls;
 
 	get_sectorsize(fd);
 	sec_fac = sector_size / 512;
@@ -841,26 +840,19 @@ get_geometry(int fd, struct geom *g) {
 		pt_sectors ? pt_sectors :
 		kern_sectors ? kern_sectors : 63;
 
-	if (ioctl(fd, BLKGETSIZE, &longsectors))
-		longsectors = 0;
-	if (ioctl(fd, BLKGETSIZE64, &bytes))
-		bytes = 0;
+	if (disksize(fd, &llsectors))
+		llsectors = 0;
 
-	/*
-	 * If BLKGETSIZE64 was unknown or broken, use longsectors.
-	 * (Kernels 2.4.15-2.4.17 had a broken BLKGETSIZE64
-	 * that returns sectors instead of bytes.)
-	 */
-	if (bytes == 0 || bytes == longsectors)
-		bytes = ((unsigned long long) longsectors) << 9;
-
-	total_number_of_sectors = (bytes >> 9);
+	total_number_of_sectors = llsectors;
 
 	sector_offset = 1;
 	if (dos_compatible_flag)
 		sector_offset = sectors;
 
-	cylinders = total_number_of_sectors / (heads * sectors * sec_fac);
+	llcyls = total_number_of_sectors / (heads * sectors * sec_fac);
+	cylinders = llcyls;
+	if (cylinders != llcyls)	/* truncated? */
+		cylinders = ~0;
 	if (!cylinders)
 		cylinders = user_cylinders;
 
@@ -2531,7 +2523,7 @@ main(int argc, char **argv) {
 	}
 
 	if (opts) {
-		unsigned long size;
+		unsigned long long size;
 
 		nowarn = 1;
 		type_open = O_RDONLY;
@@ -2544,13 +2536,13 @@ main(int argc, char **argv) {
 			disk_device = argv[j];
 			if ((fd = open(disk_device, type_open)) < 0)
 				fatal(unable_to_open);
-			if (ioctl(fd, BLKGETSIZE, &size))
+			if (disksize(fd, &size))
 				fatal(ioctl_error);
 			close(fd);
 			if (opts == 1)
-				printf("%lu\n", size/2);
+				printf("%llu\n", size/2);
 			else
-				printf("%s: %lu\n", argv[j], size/2);
+				printf("%s: %llu\n", argv[j], size/2);
 		}
 		exit(0);
 	}
