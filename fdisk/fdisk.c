@@ -176,7 +176,8 @@ uint	heads,
 int     sun_label = 0;                  /* looking at sun disklabel */
 int	sgi_label = 0;			/* looking at sgi disklabel */
 int	aix_label = 0;			/* looking at aix disklabel */
-int	osf_label = 0;			/* looking at osf disklabel */
+int	osf_label = 0;			/* looking at OSF/1 disklabel */
+int	possibly_osf_label = 0;
 
 jmp_buf listingbuf;
 
@@ -337,7 +338,7 @@ menu(void) {
 	   puts(_("   w   write table to disk and exit"));
 	   puts(_("   x   extra functionality (experts only)"));
 	}
-	else if(sgi_label) {
+	else if (sgi_label) {
 	   puts(_("Command action"));
 	   puts(_("   a   select bootable partition"));    /* sgi flavour */
 	   puts(_("   b   edit bootfile entry"));          /* sgi */
@@ -355,7 +356,7 @@ menu(void) {
 	   puts(_("   v   verify the partition table"));
 	   puts(_("   w   write table to disk and exit"));
 	}
-	else if(aix_label) {
+	else if (aix_label) {
 	   puts(_("Command action"));
 	   puts(_("   m   print this menu"));
 	   puts(_("   o   create a new empty DOS partition table"));
@@ -403,7 +404,7 @@ xmenu(void) {
 	   puts(_("   w   write table to disk and exit"));
 	   puts(_("   y   change number of physical cylinders"));	/*sun*/
 	}
-	else if(sgi_label) {
+	else if (sgi_label) {
 	   puts(_("Command action"));
 	   puts(_("   b   move beginning of data in a partition")); /* !sun */
 	   puts(_("   c   change number of cylinders"));
@@ -419,7 +420,7 @@ xmenu(void) {
 	   puts(_("   v   verify the partition table"));
 	   puts(_("   w   write table to disk and exit"));
 	}
-	else if(aix_label) {
+	else if (aix_label) {
 	   puts(_("Command action"));
 	   puts(_("   b   move beginning of data in a partition")); /* !sun */
 	   puts(_("   c   change number of cylinders"));
@@ -710,7 +711,7 @@ create_doslabel(void) {
 	  "content won't be recoverable.\n\n"));
 	sun_nolabel();  /* otherwise always recognised as sun */
 	sgi_nolabel();  /* otherwise always recognised as sgi */
-	aix_label = osf_label = 0;
+	aix_label = osf_label = possibly_osf_label = 0;
 	partitions = 4;
 
 	for (i = 510-64; i < 510; i++)
@@ -856,6 +857,18 @@ get_boot(enum action what) {
 
 	partitions = 4;
 
+	for (i = 0; i < 4; i++) {
+		struct pte *pe = &ptes[i];
+
+		pe->part_table = pt_offset(MBRbuffer, i);
+		pe->ext_pointer = NULL;
+		pe->offset = 0;
+		pe->sectorbuffer = MBRbuffer;
+		pe->changed = (what == create_empty_dos);
+	}
+
+	memset(MBRbuffer, 0, 512);
+
 	if (what == create_empty_dos)
 		goto got_dos_table;		/* skip reading disk */
 	if (what == create_empty_sun)
@@ -867,7 +880,8 @@ get_boot(enum action what) {
 		    return 1;
 		fatal(unable_to_open);
 	    } else
-		printf(_("You will not be able to write the partition table.\n"));
+		printf(_("You will not be able to write "
+			 "the partition table.\n"));
 	}
 
 	if (512 != read(fd, MBRbuffer, 512)) {
@@ -891,8 +905,15 @@ got_table:
 	if (check_aix_label())
 		return 0;
 
-	if (check_osf_label())
-		return 0;
+	if (check_osf_label()) {
+		possibly_osf_label = 1;
+		if (!valid_part_table_flag(MBRbuffer)) {
+			osf_label = 1;
+			return 0;
+		}
+		printf(_("This disk has both DOS and BSD magic.\n"
+			 "Give the 'b' command to go to BSD mode.\n"));
+	}
 
 got_dos_table:
 
@@ -900,8 +921,9 @@ got_dos_table:
 		switch(what) {
 		case fdisk:
 			fprintf(stderr,
-				_("Device contains neither a valid DOS partition"
-			 	  " table, nor Sun, SGI or OSF disklabel\n"));
+				_("Device contains neither a valid DOS "
+				  "partition table, nor Sun, SGI or OSF "
+				  "disklabel\n"));
 #ifdef __sparc__
 			create_sunlabel();
 #else
@@ -923,16 +945,6 @@ got_dos_table:
 
 	warn_cylinders();
 	warn_geometry();
-
-	for (i = 0; i < 4; i++) {
-		struct pte *pe = &ptes[i];
-
-		pe->part_table = pt_offset(MBRbuffer, i);
-		pe->ext_pointer = NULL;
-		pe->offset = 0;
-		pe->sectorbuffer = MBRbuffer;
-		pe->changed = (what == create_empty_dos);
-	}
 
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = &ptes[i];
@@ -1229,7 +1241,7 @@ delete_partition(int i) {
 			/* the first logical in a longer chain */
 			struct pte *pe = &ptes[5];
 
-			if(pe->part_table) /* prevent SEGFAULT */
+			if (pe->part_table) /* prevent SEGFAULT */
 				set_start_sect(pe->part_table,
 					       get_partition_start(pe) -
 					       extended_offset);
@@ -1450,7 +1462,7 @@ fix_chain_of_logicals(void) {
 	/* Stage 1: sort sectors but leave sector of part 4 */
 	/* (Its sector is the global extended_offset.) */
  stage1:
-	for(j = 5; j < partitions-1; j++) {
+	for (j = 5; j < partitions-1; j++) {
 		oj = ptes[j].offset;
 		ojj = ptes[j+1].offset;
 		if (oj > ojj) {
@@ -1470,7 +1482,7 @@ fix_chain_of_logicals(void) {
 
 	/* Stage 2: sort starting sectors */
  stage2:
-	for(j = 4; j < partitions-1; j++) {
+	for (j = 4; j < partitions-1; j++) {
 		pj = ptes[j].part_table;
 		pjj = ptes[j+1].part_table;
 		sj = get_start_sect(pj);
@@ -1488,7 +1500,7 @@ fix_chain_of_logicals(void) {
 	}
 
 	/* Probably something was changed */
-	for(j = 4; j < partitions; j++)
+	for (j = 4; j < partitions; j++)
 		ptes[j].changed = 1;
 }
 
@@ -1497,7 +1509,7 @@ fix_partition_table_order(void) {
 	struct pte *pei, *pek;
 	int i,k;
 
-	if(!wrong_p_order(NULL)) {
+	if (!wrong_p_order(NULL)) {
 		printf(_("Nothing to do. Ordering is correct already.\n\n"));
 		return;
 	}
@@ -1957,7 +1969,7 @@ write_table(void) {
 
 	if (dos_label) {
 		for (i=0; i<3; i++)
-			if(ptes[i].changed)
+			if (ptes[i].changed)
 				ptes[3].changed = 1;
 		for (i = 3; i < partitions; i++) {
 			struct pte *pe = &ptes[i];
@@ -1975,7 +1987,7 @@ write_table(void) {
 		int needw = 0;
 
 		for (i=0; i<8; i++)
-			if(ptes[i].changed)
+			if (ptes[i].changed)
 				needw = 1;
 		if (needw)
 			sun_write_table();
@@ -2001,7 +2013,7 @@ reread_partition_table(int leave) {
 		   twice, the second time works. - biro@yggdrasil.com */
                 sync();
                 sleep(2);
-                if((i = ioctl(fd, BLKRRPART)) != 0)
+                if ((i = ioctl(fd, BLKRRPART)) != 0)
                         error = errno;
         }
 
@@ -2123,7 +2135,7 @@ xselect(void) {
 				x_list_table(1);
 			break;
 		case 'f':
-			if(dos_label)
+			if (dos_label)
 				fix_partition_table_order();
 			break;
 		case 'g':
@@ -2247,7 +2259,7 @@ try(char *device, int user_specified) {
 		/* Ignore other errors, since we try IDE
 		   and SCSI hard disks which may not be
 		   installed on the system. */
-		if(errno == EACCES) {
+		if (errno == EACCES) {
 			fprintf(stderr, _("Cannot open %s\n"), device);
 			return;
 		}
@@ -2272,7 +2284,7 @@ tryprocpt(void) {
 		if (sscanf (line, " %d %d %d %[^\n ]",
 			    &ma, &mi, &sz, ptname) != 4)
 			continue;
-		for(s = ptname; *s; s++);
+		for (s = ptname; *s; s++);
 		if (isdigit(s[-1]))
 			continue;
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
@@ -2336,7 +2348,8 @@ main(int argc, char **argv) {
 	}
 
 #if 0
-	printf(_("This kernel finds the sector size itself - -b option ignored\n"));
+	printf(_("This kernel finds the sector size itself - "
+		 "-b option ignored\n"));
 #else
 	if (user_set_sector_size && argc-optind != 1)
 		printf(_("Warning: the -b (set sector size) option should"
@@ -2352,7 +2365,7 @@ main(int argc, char **argv) {
 			   variable `k' might be clobbered by `longjmp' */
 			dummy(&k);
 			listing = 1;
-			for(k=optind; k<argc; k++)
+			for (k=optind; k<argc; k++)
 				try(argv[k], 1);
 		} else {
 			/* we no longer have default device names */
@@ -2396,18 +2409,16 @@ main(int argc, char **argv) {
 
 	get_boot(fdisk);
 
-#ifdef __alpha__
-	/* On alpha, if we detect a disklabel, go directly to
-	   disklabel mode (typically you'll be switching from DOS
-	   partition tables to disklabels, not the other way around)
-	   - dhuggins@linuxcare.com */
 	if (osf_label) {
-		printf(_("Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
-			 "To return to DOS partition table mode, use the 'r' command.\n"),
+		/* OSF label, and no DOS label */
+		printf(_("Detected an OSF/1 disklabel on %s, entering "
+			 "disklabel mode.\n"),
 		       disk_device);
 		bselect();
+		osf_label = 0;
+		/* If we return we may want to make an empty DOS label? */
 	}
-#endif
+
 	while (1) {
 		putchar('\n');
 		c = tolower(read_char(_("Command (m for help): ")));
@@ -2492,7 +2503,7 @@ main(int argc, char **argv) {
 			write_table(); 		/* does not return */
 			break;
 		case 'x':
-			if(sgi_label) {
+			if (sgi_label) {
 				fprintf(stderr,
 					_("\n\tSorry, no experts menu for SGI "
 					"partition tables available.\n\n"));

@@ -105,7 +105,7 @@ Libc5 and glibc 2.0-2.1 have /var/spool/mail, but glibc 2.1.1 has /var/mail.
 
 /* no more . in DEFPATH */
 #define	_PATH_DEFPATH	        "/usr/local/bin:/bin:/usr/bin"
-#define	_PATH_DEFPATH_ROOT	SBINDIR ":/bin:" USRSBINDIR ":/usr/bin"
+#define	_PATH_DEFPATH_ROOT	"/usr/local/sbin:/usr/local/bin:" SBINDIR ":/bin:" USRSBINDIR ":/usr/bin"
 #define	_PATH_HUSHLOGIN		".hushlogin"
 #define	_PATH_LASTLOG		LOGDIR "/lastlog"
 

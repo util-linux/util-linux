@@ -93,6 +93,15 @@ HAVE_SLN=no
 # If HAVE_FDUTILS is set to "yes", then setfdprm won't be installed.
 HAVE_FDUTILS=no
 
+# If SILENT_PG is set to "yes", then pg will not ring the bell
+# when an invalid key is pressed
+SILENT_PG=no
+
+# If configure decides that Native Language Support (NLS) is available,
+# it sets MAY_ENABLE_NLS in defines.h. If you don't want NLS, set
+# DISABLE_NLS to "yes".
+DISABLE_NLS=no
+
 # Different optimizations for different cpus.
 # gcc 3.0 likes options -mcpu=i486 instead of -m486
 ifeq "$(ARCH)" "intel"
@@ -198,8 +207,12 @@ INSTALLMAN=	$(INSTALL) -m $(MANMODE)
 INSTALLDAT=	$(INSTALL) -m $(DATMODE)
 INSTALLSUID=    $(INSTALL) -m $(SUIDMODE) -o root
 
-CFLAGS    := $(OPT) -I$(LIB) $(WARNFLAGS) \
-			$(CURSESFLAGS) $(SLANGFLAGS) \
+ifeq "$(DISABLE_NLS)" "yes"
+NLSFLAGS = -DDISABLE_NLS
+endif
+
+CFLAGS := $(OPT) -I$(LIB) $(WARNFLAGS) \
+			$(CURSESFLAGS) $(SLANGFLAGS) $(NLSFLAGS) \
 			-D_FILE_OFFSET_BITS=64 \
 			-DSBINDIR=\"$(SBIN_DIR)\" \
 			-DUSRSBINDIR=\"$(USRSBIN_DIR)\" \

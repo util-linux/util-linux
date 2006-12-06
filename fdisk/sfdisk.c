@@ -1367,7 +1367,7 @@ extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z)
 }
 
 #define BSD_DISKMAGIC   (0x82564557UL)
-#define BSD_MAXPARTITIONS       8
+#define BSD_MAXPARTITIONS       16
 #define BSD_FS_UNUSED	   0
 typedef unsigned char u8;
 typedef unsigned short u16;
@@ -1404,11 +1404,11 @@ bsd_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z) {
 	if (!(s = get_sector(dev,fd,start+1)))
 		return;
 	l = (struct bsd_disklabel *) (s->data);
-	if (l->d_magic != BSD_DISKMAGIC)
+	if (l->d_magic != BSD_DISKMAGIC || l->d_magic2 != BSD_DISKMAGIC)
 		return;
 
 	bp = bp0 = &l->d_partitions[0];
-	while (bp - bp0 <= BSD_MAXPARTITIONS) {
+	while (bp - bp0 < BSD_MAXPARTITIONS && bp - bp0 < l->d_npartitions) {
 		if (pno+1 >= SIZE(z->partitions)) {
 			printf(_("too many partitions - ignoring those "
 			       "past nr (%d)\n"), pno-1);

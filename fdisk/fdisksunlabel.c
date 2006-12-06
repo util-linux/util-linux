@@ -678,8 +678,8 @@ sun_list_table(int xtra) {
 			__u32 start = SSWAP32(sunlabel->partitions[i].start_cylinder) * heads * sectors;
 			__u32 len = SSWAP32(sunlabel->partitions[i].num_sectors);
 			printf(
-			    "%*s%-2d %c%c %9ld %9ld %9ld%c  %2x  %s\n",
-/* device */		  w, disk_device, i + 1,
+			    "%s %c%c %9ld %9ld %9ld%c  %2x  %s\n",
+/* device */		  partname(disk_device, i+1, w),
 /* flags */		  (sunlabel->infos[i].flags & 0x01) ? 'u' : ' ',
 			  (sunlabel->infos[i].flags & 0x10) ? 'r' : ' ',
 /* start */		  (long) scround(start),

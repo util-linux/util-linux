@@ -33,9 +33,10 @@ partnamebf(char *dev, int pno, int lth, int bufsiz, char *bufp) {
 	wp = strlen(p);
 		
 	if (lth) {
-		sprintf(bufp, "%*.*s%s%-2u", lth-wp-2, w, dev, p, pno);
+		snprintf(bufp, bufsiz, "%*.*s%s%-2u",
+			 lth-wp-2, w, dev, p, pno);
 	} else {
-		sprintf(bufp, "%.*s%s%-2u", w, dev, p, pno);
+		snprintf(bufp, bufsiz, "%.*s%s%-2u", w, dev, p, pno);
 	}
 	return bufp;
 }

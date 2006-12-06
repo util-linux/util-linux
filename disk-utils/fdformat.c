@@ -18,12 +18,8 @@
 
 #include "nls.h"
 
-/* cannot include <linux/fs.h> */
-#define MAJOR(a)	((a)>>8)
-
 struct floppy_struct param;
 
-#define FLOPPY_MAJOR 2
 #define SECTOR_SIZE 512
 #define PERROR(msg) { perror(msg); exit(1); }
 
@@ -130,9 +126,10 @@ int main(int argc,char **argv)
     }
     if (argc != 2) usage(progname);
     if (stat(argv[1],&st) < 0) PERROR(argv[1]);
-    if (!S_ISBLK(st.st_mode) || MAJOR(st.st_rdev) != FLOPPY_MAJOR) {
-	fprintf(stderr,_("%s: not a floppy device\n"),argv[1]);
+    if (!S_ISBLK(st.st_mode)) {
+	fprintf(stderr,_("%s: not a block device\n"),argv[1]);
 	exit(1);
+	/* do not test major - perhaps this was an USB floppy */
     }
     if (access(argv[1],W_OK) < 0) PERROR(argv[1]);
 

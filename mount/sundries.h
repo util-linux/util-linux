@@ -22,7 +22,6 @@ extern int sloppy;
 /* Functions in sundries.c that are used in mount.c and umount.c  */ 
 void block_signals (int how);
 char *canonicalize (const char *path);
-char *realpath (const char *path, char *resolved_path);
 void error (const char *fmt, ...);
 int matching_type (const char *type, const char *types);
 void *xmalloc (size_t size);

@@ -91,15 +91,25 @@ nfsmount_xdr.o: nfsmount_xdr.c
 	$(COMPILE) $(RPC_CFLAGS) nfsmount_xdr.c
 
 ifeq "$(HAVE_GOOD_RPC)" "yes"
-nfsmount.h nfsmount_xdr.c nfsmount_clnt.c: nfsmount.x
-	rm -f nfsmount.h nfsmount_xdr.c nfsmount_clnt.c
+nfsmount.h: nfsmount.x
+	rm -f nfsmount.h
 	$(RPCGEN) -h -o nfsmount.h nfsmount.x
+
+nfsmount_xdr.c: nfsmount.x
+	rm -f nfsmount_xdr.c
 	$(RPCGEN) -c -o nfsmount_xdr.c nfsmount.x
+
+nfsmount_clnt.c: nfsmount.x
+	rm -f nfsmount_clnt.c
 	$(RPCGEN) -l -o nfsmount_clnt.c nfsmount.x
 else
-nfsmount.h nfsmount_xdr.c nfsmount_clnt.c:
+nfsmount.h:
 	cp $(RPCSVCDIR)/nfsmount.h .
+
+nfsmount_xdr.c:
 	cp $(RPCSVCDIR)/nfsmount_xdr.c .
+
+nfsmount_clnt.c:
 	cp $(RPCSVCDIR)/nfsmount_clnt.c .
 endif
 

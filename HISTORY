@@ -1,3 +1,45 @@
+util-linux 2.11t
+
+* fdformat: remove test on major
+* fsck.cramfs: added NLS
+* fdisk: fix device names with sundisklabels under devfs (Kaj-Michael Lang)
+* fdisk: minor polishing
+* hwclock: also handle ENOTTY ioctl return (Maciej W. Rozycki)
+* hwclock: minor polishing
+* ipcrm.8: minor polishing
+* mkfs.cramfs: added NLS
+* mkfs.cramfs: added -v (verbose) option, and made default silent
+* mount: patch for make -j (RedHat)
+* swapoff: minor polishing
+
+util-linux 2.11s
+
+* Estonian messages (Meelis Roos)
+* French messages: some minor corrections
+* No French messages with permission to distribute (Michel Robitaille)
+* German messages (Michael Piefel)
+* Spanish messages (Santiago Vila Doncel)
+* Swedish messages (Christian Rose)
+* Turkish messages (Nilgün Belma Bugüner)
+* MCONFIG: allow "make DISABLE_NLS=yes <target>" (Peter Breitenlohner)
+* configure: don't run ./conftest - better for cross-compilation (Magnus Damm)
+* fdisk: fixes for disks with OSF/1 label
+* fsck.cramfs: new (from kernel source)
+* hwclock: improved adjtime handling (James P. Rutledge)
+* hwclock: remove shhopts stuff
+* ipcs: remove unused heading (Michael Kerrisk)
+* line: replace by C version - the sh version was broken (Gunnar Ritter)
+* login: default root path: added /usr/local/[s]bin (RedHat)
+* mkfs.cramfs: new (from kernel source)
+* mount: when no type is known, assume that prefix // implies samba (RedHat)
+* mount -a: avoid stat on devices that have noauto option (Jeroen Mostert)
+* mount by label: ignore RAID partitions (RedHat)
+* [u]mount: fstab.c fix (ejb@ql.org)
+* pg: new (Gunnar Ritter)
+* sfdisk: small BSD partition fix
+* swapoff -a: also do swapoff on all files found in /proc/swaps
+* swapon -a: skip files already found in /proc/swaps
+
 util-linux 2.11r
 
 * Estonian messages (Meelis Roos)

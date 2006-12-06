@@ -1,10 +1,12 @@
 disk-utils/blockdev.c
 disk-utils/elvtune.c
 disk-utils/fdformat.c
+disk-utils/fsck.cramfs.c
 disk-utils/fsck.minix.c
 disk-utils/isosize.c
 disk-utils/mkfs.bfs.c
 disk-utils/mkfs.c
+disk-utils/mkfs.cramfs.c
 disk-utils/mkfs.minix.c
 disk-utils/mkswap.c
 disk-utils/raw.c
@@ -25,7 +27,6 @@ hwclock/cmos.c
 hwclock/hwclock.c
 hwclock/kd.c
 hwclock/rtc.c
-hwclock/shhopt.c
 lib/carefulputc.c
 lib/env.c
 lib/err.c
@@ -103,5 +104,6 @@ text-utils/hexsyntax.c
 text-utils/more.c
 text-utils/odsyntax.c
 text-utils/parse.c
+text-utils/pg.c
 text-utils/rev.c
 text-utils/ul.c

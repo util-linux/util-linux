@@ -33,12 +33,12 @@
 
 #include <linux/types.h>	/* for __u32, __u16, __u8, __s16 */
 
-#ifndef BSD_DISKMAGIC	/* perhaps from <linux/genhd.h> */
+#ifndef BSD_DISKMAGIC
 #define BSD_DISKMAGIC     ((__u32) 0x82564557)
 #endif
 
 #ifndef BSD_MAXPARTITIONS
-#define	BSD_MAXPARTITIONS 8
+#define	BSD_MAXPARTITIONS 16
 #endif
 
 #define BSD_LINUX_BOOTDIR "/usr/ucb/mdec"

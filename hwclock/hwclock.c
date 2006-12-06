@@ -20,6 +20,7 @@
  *
  * Fix for Award 2094 bug, Dave Coffin  (dcoffin@shore.net)  11/12/98
  * Change of local time handling, Stefan Ring <e9725446@stud3.tuwien.ac.at>
+ * Change of adjtime handling, James P. Rutledge <ao112@rgfn.epcc.edu>.
  *
  * Distributed under GPL
  */
@@ -78,13 +79,13 @@
 #include <sys/time.h>
 #include <sys/stat.h>
 #include <stdarg.h>
+#include <getopt.h>
+#include <sysexits.h>
 
-#include "shhopt.h"
 #include "clock.h"
 #include "nls.h"
 
 #define MYNAME "hwclock"
-#define VERSION "2.4c"
 
 char *progname = MYNAME;
 
@@ -108,14 +109,17 @@ struct adjtime {
      updated since read from the disk file).  
      */
   bool dirty;
+
   /* line 1 */
-  float drift_factor;    
+  double drift_factor;    
   time_t last_adj_time;
-  float not_adjusted;
+  double not_adjusted;
+
   /* line 2 */
   time_t last_calib_time;
       /* The most recent time that we set the clock from an external
 	 authority (as opposed to just doing a drift adjustment) */
+
   /* line 3 */
   enum a_local_utc {LOCAL, UTC, UNKNOWN} local_utc;
       /* To which time zone, local or UTC, we most recently set the
@@ -170,18 +174,18 @@ read_date_from_file (struct tm *tm) {
   write_date_to_file (tm);
 }
 
-static float 
+static double 
 time_diff(struct timeval subtrahend, struct timeval subtractor) {
 /*---------------------------------------------------------------------------
   The difference in seconds between two times in "timeval" format.
 ----------------------------------------------------------------------------*/
-  return( (subtrahend.tv_sec - subtractor.tv_sec)
-           + (subtrahend.tv_usec - subtractor.tv_usec) / 1E6 );
+  return (subtrahend.tv_sec - subtractor.tv_sec)
+           + (subtrahend.tv_usec - subtractor.tv_usec) / 1E6;
 }
 
 
 static struct timeval
-time_inc(struct timeval addend, float increment) {
+time_inc(struct timeval addend, double increment) {
 /*----------------------------------------------------------------------------
   The time, in "timeval" format, which is <increment> seconds after
   the time <addend>.  Of course, <increment> may be negative.
@@ -199,7 +203,7 @@ time_inc(struct timeval addend, float increment) {
     newtime.tv_usec -= 1E6;
     newtime.tv_sec += 1;
   }
-  return(newtime);
+  return newtime;
 }
 
 
@@ -223,39 +227,41 @@ hw_clock_is_utc(const bool utc, const bool local_opt,
 
 
 
-static void
-read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
+static int
+read_adjtime(struct adjtime *adjtime_p) {
 /*----------------------------------------------------------------------------
   Read the adjustment parameters out of the /etc/adjtime file.
 
   Return them as the adjtime structure <*adjtime_p>.
-
   If there is no /etc/adjtime file, return defaults.
   If values are missing from the file, return defaults for them.
   
-  return *rc_p = 0 if all OK, !=0 otherwise.
+  return value 0 if all OK, !=0 otherwise.
 
 -----------------------------------------------------------------------------*/
   FILE *adjfile;
   int rc;  /* local return code */
   struct stat statbuf;  /* We don't even use the contents of this. */
 
-  rc = stat(ADJPATH, &statbuf);
-  if (rc < 0 && errno == ENOENT) {
-    /* He doesn't have a adjtime file, so we'll use defaults. */
-    adjtime_p->drift_factor = 0;
-    adjtime_p->last_adj_time = 0;
-    adjtime_p->not_adjusted = 0;
-    adjtime_p->last_calib_time = 0;
-    adjtime_p->local_utc = UNKNOWN;
+    rc = stat(ADJPATH, &statbuf);
+    if (rc < 0 && errno == ENOENT) {
+      /* He doesn't have a adjtime file, so we'll use defaults. */
+      adjtime_p->drift_factor = 0;
+      adjtime_p->last_adj_time = 0;
+      adjtime_p->not_adjusted = 0;
+      adjtime_p->last_calib_time = 0;
+      adjtime_p->local_utc = UNKNOWN;
 
-    *rc_p = 0;
-  } else { 
+      return 0;
+    }
+
     adjfile = fopen(ADJPATH, "r");   /* open file for reading */
     if (adjfile == NULL) {
       outsyserr("cannot open file " ADJPATH);
-      *rc_p = 2;
-    } else {
+      return EX_OSFILE;
+    }
+
+    {
       char line1[81];           /* String: first line of adjtime file */
       char line2[81];           /* String: second line of adjtime file */
       char line3[81];           /* String: third line of adjtime file */
@@ -277,7 +283,7 @@ read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
       adjtime_p->last_calib_time = 0;
       timeval = 0;
       
-      sscanf(line1, "%f %ld %f", 
+      sscanf(line1, "%lf %ld %lf", 
              &adjtime_p->drift_factor,
              &timeval, 
              &adjtime_p->not_adjusted);
@@ -299,8 +305,6 @@ read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
 	  fprintf(stderr, _("(Expected: `UTC' or `LOCAL' or nothing.)\n"));
 	}
       }
-      
-      *rc_p = 0;
     }
     adjtime_p->dirty = FALSE;
 
@@ -313,12 +317,13 @@ read_adjtime(struct adjtime *adjtime_p, int *rc_p) {
 	     (adjtime_p->local_utc == LOCAL) ? _("local") :
 	     (adjtime_p->local_utc == UTC) ? _("UTC") : _("unknown"));
     }
-  }
+
+    return 0;
 }
 
 
-static void
-synchronize_to_clock_tick(int *retcode_p) {
+static int
+synchronize_to_clock_tick(void) {
 /*-----------------------------------------------------------------------------
   Wait until the falling edge of the Hardware Clock's update flag so
   that any time that is read from the clock immediately after we
@@ -330,14 +335,17 @@ synchronize_to_clock_tick(int *retcode_p) {
   We wait (up to one second) either blocked waiting for an rtc device
   or in a CPU spin loop.  The former is probably not very accurate.  
 
-  Return *retcode_p == 0 if it worked, nonzero if it didn't.
-
+  Return 0 if it worked, nonzero if it didn't.
 -----------------------------------------------------------------------------*/
-  if (debug) printf(_("Waiting for clock tick...\n"));
+	int rc;
 
-  *retcode_p = ur->synchronize_to_clock_tick();
+	if (debug) printf(_("Waiting for clock tick...\n"));
 
-  if (debug) printf(_("...got clock tick\n"));
+	rc = ur->synchronize_to_clock_tick();
+
+	if (debug) printf(_("...got clock tick\n"));
+
+	return rc;
 }
 
 
@@ -520,7 +528,7 @@ set_hardware_clock_exact(const time_t settime,
 
 static void
 display_time(const bool hclock_valid, const time_t systime, 
-             const float sync_duration) {
+             const double sync_duration) {
 /*----------------------------------------------------------------------------
   Put the time "systime" on standard output in display format.
   Except if hclock_valid == false, just tell standard output that we don't
@@ -638,7 +646,7 @@ interpret_date_string(const char *date_opt, time_t * const time_p) {
 	}
 	fclose(date_child_fp);
 
-	return(retcode);
+	return retcode;
 }
 
  
@@ -663,7 +671,7 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
   int retcode;
 
   if (!hclock_valid) {
-    fprintf(stderr,_("The Hardware Clock does not contain a valid time, so "
+    fprintf(stderr, _("The Hardware Clock does not contain a valid time, so "
             "we cannot set the System Time from it.\n"));
     retcode = 1;
   } else {
@@ -685,10 +693,10 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
 #endif
     
     if (debug) {
-      printf( _("Calling settimeofday:\n") );
-      printf( _("\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"),
-             (long) tv.tv_sec, (long) tv.tv_usec );
-      printf( _("\ttz.tz_minuteswest = %d\n"), minuteswest);
+      printf(_("Calling settimeofday:\n"));
+      printf(_("\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"),
+             (long) tv.tv_sec, (long) tv.tv_usec);
+      printf(_("\ttz.tz_minuteswest = %d\n"), minuteswest);
     }
     if (testing) {
       printf(_("Not setting system clock because running in test mode.\n"));
@@ -697,32 +705,32 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
       const struct timezone tz = { minuteswest, 0 };
 
       rc = settimeofday(&tv, &tz);
-      if (rc != 0) {
-        if (errno == EPERM)
-          fprintf(stderr, _("Must be superuser to set system clock.\n"));
-        else
-          outsyserr(_("settimeofday() failed"));
-        retcode = 1;
+      if (rc) {
+	      if (errno == EPERM) {
+		      fprintf(stderr,
+			      _("Must be superuser to set system clock.\n"));
+		      retcode = EX_NOPERM;
+	      } else {
+		      outsyserr(_("settimeofday() failed"));
+		      retcode = 1;
+	      }
       } else retcode = 0;
     }
   }
-  return(retcode);
+  return retcode;
 }
 
 
 static void
 adjust_drift_factor(struct adjtime *adjtime_p,
                     const time_t nowtime, 
-                    const bool hclock_valid, const time_t hclocktime   ) {
-/*---------------------------------------------------------------------------
+                    const bool hclock_valid,
+		    const time_t hclocktime,
+		    const double sync_delay) {
+/*------------------------------------------------------------------------
   Update the drift factor in <*adjtime_p> to reflect the fact that the
   Hardware Clock was calibrated to <nowtime> and before that was set
   to <hclocktime>.
-
-  We assume that the user has been doing regular drift adjustments
-  using the drift factor in the adjtime file, so if <nowtime> and
-  <clocktime> are different, that means the adjustment factor isn't
-  quite right.
 
   We record in the adjtime file the time at which we last calibrated
   the clock so we can compute the drift rate each time we calibrate.
@@ -730,52 +738,97 @@ adjust_drift_factor(struct adjtime *adjtime_p,
   EXCEPT: if <hclock_valid> is false, assume Hardware Clock was not set
   before to anything meaningful and regular adjustments have not been
   done, so don't adjust the drift factor.
+  ------------------------------------------------------------------------*/
+	if (!hclock_valid) {
+		if (debug)
+			printf(_("Not adjusting drift factor because the "
+				 "Hardware Clock previously contained "
+				 "garbage.\n"));
+	} else if (adjtime_p->last_calib_time == 0) {
+		if (debug)
+			printf(_("Not adjusting drift factor because last "
+				 "calibration time is zero,\n"
+				 "so history is bad and calibration startover "
+				 "is necessary.\n"));
+	} else if ((hclocktime - adjtime_p->last_calib_time) < 23 * 60 * 60) {
+		if (debug)
+			printf(_("Not adjusting drift factor because it has "
+				 "been less than a day since the last "
+				 "calibration.\n"));
+	} else if (adjtime_p->last_calib_time != 0) {
+		/*
+		 * At adjustment time we adjust the hardware clock according
+		 * to the contents of /etc/adjtime.
+		 *
+		 * At calibration time we set the hardware clock and
+		 * update /etc/adjtime, that is, for each calibration
+		 * (except the first) we also do an adjustment.
+		 *
+		 * We are now at calibration time.
+		 *
+		 * Let us do computation in doubles. (Floats almost suffice,
+		 * but 195 days + 1 second equals 195 days in floats.)
+		 */
+		const double sec_per_day = 24.0 * 60.0 * 60.0;
+		double atime_per_htime;
+		double adj_days, cal_days;
+		double exp_drift, unc_drift;
+		double factor_adjust;
 
-----------------------------------------------------------------------------*/
-  if (!hclock_valid) {
-    if (debug)
-      printf(_("Not adjusting drift factor because the Hardware Clock "
-             "previously contained garbage.\n"));
-  } else if ((hclocktime - adjtime_p->last_calib_time) < 23 * 60 * 60) {
-    if (debug) 
-      printf(_("Not adjusting drift factor because it has been less than a "
-             "day since the last calibration.\n"));
-  } else if (adjtime_p->last_calib_time != 0) {
-    const float factor_adjust = 
-      ((float) (nowtime - hclocktime) 
-       / (hclocktime - adjtime_p->last_calib_time))
-        * 24 * 60 * 60;
+		/* Adjusted time units per hardware time unit */
+		atime_per_htime = 1.0 + adjtime_p->drift_factor / sec_per_day;
 
-    if (debug)
-      printf(_("Clock drifted %d seconds in the past %d seconds "
-             "in spite of a drift factor of %f seconds/day.\n"
-             "Adjusting drift factor by %f seconds/day\n"),
-             (int) (nowtime - hclocktime),
-             (int) (hclocktime - adjtime_p->last_calib_time),
-             adjtime_p->drift_factor,
-             factor_adjust  );
+		/* Days since last adjustment (in hardware clock time) */
+		adj_days = (double)(hclocktime - adjtime_p->last_adj_time)
+			/ sec_per_day;
+
+		/* Expected drift (sec) since last adjustment */
+		exp_drift = adj_days * adjtime_p->drift_factor
+			+ adjtime_p->not_adjusted;
+
+		/* Uncorrected drift (sec) since last calibration */
+		unc_drift = (double)(nowtime - hclocktime)
+			+ sync_delay - exp_drift;
+
+		/* Days since last calibration (in hardware clock time) */
+		cal_days = ((double)(adjtime_p->last_adj_time
+				    - adjtime_p->last_calib_time)
+			    + adjtime_p->not_adjusted)
+			/ (sec_per_day * atime_per_htime) + adj_days;
+
+		/* Amount to add to previous drift factor */
+		factor_adjust = unc_drift / cal_days;
+
+		if (debug)
+			printf(_("Clock drifted %.1f seconds in the past "
+				 "%d seconds in spite of a drift factor of "
+				 "%f seconds/day.\n"
+				 "Adjusting drift factor by %f seconds/day\n"),
+			       unc_drift,
+			       (int) (nowtime - adjtime_p->last_calib_time),
+			       adjtime_p->drift_factor,
+			       factor_adjust);
       
-    adjtime_p->drift_factor += factor_adjust;
-  }
-  adjtime_p->last_calib_time = nowtime;
+		adjtime_p->drift_factor += factor_adjust;
+	}
+	adjtime_p->last_calib_time = nowtime;
   
-  adjtime_p->last_adj_time = nowtime;
+	adjtime_p->last_adj_time = nowtime;
   
-  adjtime_p->not_adjusted = 0;
+	adjtime_p->not_adjusted = 0;
     
-  adjtime_p->dirty = TRUE;
+	adjtime_p->dirty = TRUE;
 }
 
 
 
 static void
-calculate_adjustment(
-                     const float factor,
+calculate_adjustment(const double factor,
                      const time_t last_time, 
-                     const float not_adjusted,
+                     const double not_adjusted,
                      const time_t systime,
                      int *adjustment_p, 
-                     float *retro_p,
+                     double *retro_p,
                      const int debug ) {
 /*----------------------------------------------------------------------------
   Do the drift adjustment calculation.
@@ -790,13 +843,13 @@ calculate_adjustment(
   advance the clock or insert seconds.  Negative means to retard the clock
   or remove seconds.
 ----------------------------------------------------------------------------*/
-  float exact_adjustment;
+  double exact_adjustment;
 
-  exact_adjustment = ((float) (systime - last_time)) * factor / (24 * 60 * 60)
+  exact_adjustment = ((double) (systime - last_time)) * factor / (24 * 60 * 60)
                      + not_adjusted;
   *adjustment_p = FLOOR(exact_adjustment);
   
-  *retro_p = exact_adjustment - (float) *adjustment_p;
+  *retro_p = exact_adjustment - (double) *adjustment_p;
   if (debug) {
     printf (_("Time since last adjustment is %d seconds\n"),
             (int) (systime - last_time));
@@ -897,10 +950,18 @@ do_adjustment(struct adjtime *adjtime_p,
   if (!hclock_valid) {
     fprintf(stderr, _("The Hardware Clock does not contain a valid time, "
             "so we cannot adjust it.\n"));
+    adjtime_p->last_calib_time = 0;  /* calibration startover is required */
+    adjtime_p->last_adj_time = 0;
+    adjtime_p->not_adjusted = 0;
+    adjtime_p->dirty = TRUE;
+  } else if (adjtime_p->last_adj_time == 0) {
+    if (debug)
+      printf("Not setting clock because last adjustment time is zero, "
+	     "so history is bad.");
   } else {
     int adjustment;
     /* Number of seconds we must insert in the Hardware Clock */
-    float retro;   
+    double retro;   
     /* Fraction of second we have to remove from clock after inserting
        <adjustment> whole seconds.
        */
@@ -951,13 +1012,13 @@ determine_clock_access_method(const bool user_requests_ISA) {
   }
 }
 
-static void
+static int
 manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
                  const bool set, const time_t set_time,
                  const bool hctosys, const bool systohc, 
                  const struct timeval startup_time, 
                  const bool utc, const bool local_opt,
-		 const bool testing, int *retcode_p) {
+		 const bool testing) {
 /*---------------------------------------------------------------------------
   Do all the normal work of hwclock - read, set clock, etc.
 
@@ -965,24 +1026,26 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 
   Return rc == 0 if everything went OK, rc != 0 if not.
 ----------------------------------------------------------------------------*/
-  struct adjtime adjtime;
-    /* Contents of the adjtime file, or what they should be. */
-  int rc;  /* local return code */
-  bool no_auth;  /* User lacks necessary authorization to access the clock */
+    struct adjtime adjtime;
+      /* Contents of the adjtime file, or what they should be. */
+    int rc;  /* local return code */
+    bool no_auth;  /* User lacks necessary authorization to access the clock */
 
-  no_auth = ur->get_permissions();
+    no_auth = ur->get_permissions();
+    if (no_auth)
+	  return EX_NOPERM;
 
-  if (no_auth) *retcode_p = 1;
-  else {
-    if (!noadjfile && (adjust || set || systohc || (!utc && !local_opt)))
-      read_adjtime(&adjtime, &rc);
-    else {
+    if (!noadjfile && (adjust || set || systohc || (!utc && !local_opt))) {
+      rc = read_adjtime(&adjtime);
+      if (rc)
+	      return rc;
+    } else {
       /* A little trick to avoid reading the file if we don't have to */
       adjtime.dirty = FALSE; 
       rc = 0;
     }
-    if (rc != 0) *retcode_p = 2;
-    else {
+
+    {
       const bool universal = hw_clock_is_utc(utc, local_opt, adjtime);
 
       if ((set || systohc || adjust) &&
@@ -991,9 +1054,11 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 	adjtime.dirty = TRUE;
       }
 
-      synchronize_to_clock_tick(retcode_p);  
-        /* this takes up to 1 second */
-      if (*retcode_p == 0) {
+      rc = synchronize_to_clock_tick();  /* this takes up to 1 second */
+      if (rc)
+	      return rc;
+
+      {
         struct timeval read_time; 
           /* The time at which we read the Hardware Clock */
 
@@ -1014,16 +1079,14 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
         if (show) {
           display_time(hclock_valid, hclocktime, 
                        time_diff(read_time, startup_time));
-          *retcode_p = 0;
         } else if (set) {
           set_hardware_clock_exact(set_time, startup_time, 
 				      universal, testing);
-          adjust_drift_factor(&adjtime, set_time, hclock_valid, hclocktime);
-          *retcode_p = 0;
+          adjust_drift_factor(&adjtime, set_time, hclock_valid, hclocktime,
+			      time_diff(read_time, startup_time));
         } else if (adjust) {
           do_adjustment(&adjtime, hclock_valid, hclocktime, 
                         read_time, universal, testing);
-          *retcode_p = 0;
         } else if (systohc) {
           struct timeval nowtime, reftime;
           /* We can only set_hardware_clock_exact to a whole seconds
@@ -1036,22 +1099,20 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
           
           set_hardware_clock_exact((time_t) reftime.tv_sec, reftime, 
                                    universal, testing);
-          *retcode_p = 0;
           adjust_drift_factor(&adjtime, (time_t) reftime.tv_sec, hclock_valid, 
-                              hclocktime);
+                              hclocktime, (double) read_time.tv_usec / 1E6);
         } else if (hctosys) {
           rc = set_system_clock(hclock_valid, hclocktime, testing);
-          if (rc != 0) {
+          if (rc) {
             printf(_("Unable to set system clock.\n"));
-            *retcode_p = 1;
-          } else *retcode_p = 0;
+	    return rc;
+          }
         }
-        if (!noadjfile) {
+        if (!noadjfile)
          save_adjtime(adjtime, testing);
-       }
       }
     }
-  }
+    return 0;
 }
 
 
@@ -1104,6 +1165,11 @@ manipulate_epoch(const bool getepoch, const bool setepoch,
 #define RTC_DEV "/dev/rtc"
 #endif
 
+static void
+out_version(void) {
+	printf(_("%s from %s\n"), MYNAME, util_linux_version);
+}
+
 /*
     usage - Output (error and) usage information
 
@@ -1148,7 +1214,7 @@ usage( const char *fmt, ... ) {
     "                either --utc or --localtime\n"
     ),RTC_DEV);
 #ifdef __alpha__
-  fprintf( usageto, _(
+  fprintf(usageto, _(
     "  --jensen, --arc, --srm, --funky-toy\n"
     "                tell hwclock the type of alpha you have (see hwclock(8))\n"
     ) );
@@ -1156,200 +1222,272 @@ usage( const char *fmt, ... ) {
 
 
   fflush(stdout);
-  if( fmt ) {
+  if (fmt) {
     usageto = stderr;
     va_start(ap, fmt);
     vfprintf(stderr, fmt, ap);
     va_end(ap);
   }
  
-  exit( fmt ? 99 : 0 );
+  exit(fmt ? EX_USAGE : 0);
 }
 
+static const struct option longopts[] = {
+	{ "adjust", 0, 0, 'a' },
+	{ "help", 0, 0, 'h' },
+	{ "show", 0, 0, 'r' },
+	{ "hctosys", 0, 0, 's' },
+	{ "utc", 0, 0, 'u' },
+	{ "version", 0, 0, 'v' },
+	{ "systohc", 0, 0, 'w' },
+	{ "debug", 0, 0, 'D' },
+#ifdef __alpha__
+	{ "ARC", 0, 0, 'A' },
+	{ "arc", 0, 0, 'A' },
+	{ "Jensen", 0, 0, 'J' },
+	{ "jensen", 0, 0, 'J' },
+	{ "SRM", 0, 0, 'S' },
+	{ "srm", 0, 0, 'S' },
+	{ "funky-toy", 0, 0, 'F'}
+#endif
+	{ "set", 0, 0, 128 },
+	{ "getepoch", 0, 0, 129 },
+	{ "setepoch", 0, 0, 130 },
+	{ "noadjfile", 0, 0, 131 },
+	{ "localtime", 0, 0, 132 },
+	{ "badyear", 0, 0, 133 },
+	{ "directisa", 0, 0, 134 },
+	{ "test", 0, 0, 135 },
+	{ "date", 1, 0, 136 },
+	{ "epoch", 1, 0, 137 },
+	{ NULL, 0, 0, 0 }
+};
+
+/*
+ * Returns:
+ *  EX_USAGE: bad invocation
+ *  EX_NOPERM: no permission
+ *  EX_OSFILE: cannot open /dev/rtc or /etc/adjtime
+ *  EX_IOERR: ioctl error getting or setting the time
+ *  0: OK (or not)
+ *  1: failure
+ */
 int 
 main(int argc, char **argv) {
 
-  struct timeval startup_time;
-    /* The time we started up, in seconds into the epoch, including fractions.
-       */
-  time_t set_time;  /* Time to which user said to set Hardware Clock */
+	struct timeval startup_time;
+	/* The time we started up, in seconds into the epoch, including
+	   fractions. */
+	time_t set_time;  /* Time to which user said to set Hardware Clock */
 
-  bool permitted;  /* User is permitted to do the function */
-  int retcode;   /* Our eventual return code */
+	bool permitted;  /* User is permitted to do the function */
+	int rc, c;
 
-  int rc;  /* local return code */
+	/* Variables set by various options; show may also be set later */
+	/* The options debug, badyear and epoch_option are global */
+	bool show, set, systohc, hctosys, adjust, getepoch, setepoch;
+	bool utc, testing, local_opt, noadjfile, directisa;
+	bool ARCconsole, Jensen, SRM, funky_toy;
+	char *date_opt;
 
-  /* option_def is the control table for the option parser.  These other
-     variables are the results of parsing the options and their meanings
-     are given by the option_def.  The only exception is <show>, which
-     may be modified after parsing is complete to effect an implied option.
-     */
-  bool help, show, set, systohc, hctosys, adjust, getepoch, setepoch, version;
-  bool ARCconsole, utc, testing, directisa, Jensen, SRM, funky_toy, noadjfile;
-  bool local_opt;
-  char *date_opt;
+	/* Remember what time we were invoked */
+	gettimeofday(&startup_time, NULL);
 
-  const optStruct option_def[] = {
-    { 'h', (char *) "help",      OPT_FLAG,   &help,      0 },
-    { 'r', (char *) "show",      OPT_FLAG,   &show,      0 },
-    { 0,   (char *) "set",       OPT_FLAG,   &set,       0 },
-    { 'w', (char *) "systohc",   OPT_FLAG,   &systohc,   0 },
-    { 's', (char *) "hctosys",   OPT_FLAG,   &hctosys,   0 },
-    { 0,   (char *) "getepoch",  OPT_FLAG,   &getepoch,  0 },
-    { 0,   (char *) "setepoch",  OPT_FLAG,   &setepoch,  0 },
-    { 'a', (char *) "adjust",    OPT_FLAG,   &adjust,    0 },
-    { 0,   (char *) "noadjfile", OPT_FLAG,   &noadjfile, 0 },
-    { 'v', (char *) "version",   OPT_FLAG,   &version,   0 },
-    { 'V', (char *) "version",   OPT_FLAG,   &version,   0 },
-    { 0,   (char *) "date",      OPT_STRING, &date_opt,  0 },
-    { 0,   (char *) "epoch",     OPT_UINT,   &epoch_option,0 },
-    { 'u', (char *) "utc",       OPT_FLAG,   &utc,       0 },
-    { 0,   (char *) "localtime", OPT_FLAG,   &local_opt, 0 },
-    { 0,   (char *) "badyear",   OPT_FLAG,   &badyear,   0 },
-    { 0,   (char *) "directisa", OPT_FLAG,   &directisa, 0 },
-    { 0,   (char *) "test",      OPT_FLAG,   &testing,   0 },
-    { 'D', (char *) "debug",     OPT_FLAG,   &debug,     0 },
-#ifdef __alpha__
-    { 'A', (char *) "ARC",       OPT_FLAG,   &ARCconsole,0 },
-    { 'A', (char *) "arc",       OPT_FLAG,   &ARCconsole,0 },
-    { 'J', (char *) "Jensen",    OPT_FLAG,   &Jensen,    0 },
-    { 'J', (char *) "jensen",    OPT_FLAG,   &Jensen,    0 },
-    { 'S', (char *) "SRM",       OPT_FLAG,   &SRM,       0 },
-    { 'S', (char *) "srm",       OPT_FLAG,   &SRM,       0 },
-    { 'F', (char *) "funky-toy", OPT_FLAG,   &funky_toy, 0 },
-#endif
-    { 0,   (char *) NULL,        OPT_END,    NULL,       0 }
-  };
-  int argc_parse;       /* argc, except we modify it as we parse */
-  char **argv_parse;    /* argv, except we modify it as we parse */
-
-  gettimeofday(&startup_time, NULL);  /* Remember what time we were invoked */
-
-  setlocale(LC_ALL, "");
+	setlocale(LC_ALL, "");
 #ifdef LC_NUMERIC
-  /* We need LC_CTYPE and LC_TIME and LC_MESSAGES, but must avoid
-     LC_NUMERIC since it gives problems when we write to /etc/adjtime.
-     - gqueri@mail.dotcom.fr */
-  setlocale(LC_NUMERIC, "C");
+	/* We need LC_CTYPE and LC_TIME and LC_MESSAGES, but must avoid
+	   LC_NUMERIC since it gives problems when we write to /etc/adjtime.
+	   - gqueri@mail.dotcom.fr */
+	setlocale(LC_NUMERIC, "C");
 #endif
-  bindtextdomain(PACKAGE, LOCALEDIR);
-  textdomain(PACKAGE);
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
-  /* set option defaults */
-  help = show = set = systohc = hctosys = adjust = noadjfile =
-    getepoch = setepoch = version = utc = local_opt =
-    ARCconsole = SRM = funky_toy = directisa = badyear = Jensen =
-    testing = debug = FALSE;
-  date_opt = NULL;
+	/* Set option defaults */
+	show = set = systohc = hctosys = adjust = noadjfile = FALSE;
+	getepoch = setepoch = utc = local_opt = testing = debug = FALSE;
+	ARCconsole = Jensen = SRM = funky_toy = directisa = badyear = FALSE;
+	date_opt = NULL;
 
-  argc_parse = argc; argv_parse = argv;
-  optParseOptions(&argc_parse, argv_parse, option_def, 0);
-    /* Uses and sets argc_parse, argv_parse. 
-       Sets show, systohc, hctosys, adjust, utc, local_opt, version,
-       testing, debug, set, date_opt, getepoch, setepoch, epoch_option,
-       noadjtime */
-    /* This is an ugly routine - for example, if I give an incorrect
-       option, it only says "unrecognized option" without telling
-       me what options are recognized. Rewrite with standard
-       getopt() and usage() and throw shhopt out. */
-  
-  if (argc_parse - 1 > 0) {
-    usage( _("%s takes no non-option arguments.  "
-            "You supplied %d.\n"),
-            MYNAME, argc_parse - 1);
-  }
+	while ((c = getopt_long (argc, argv, "?hvVDarsuwAJSF", longopts, NULL))
+	       != -1) {
+		switch (c) {
+		case 'D':
+			debug = TRUE;
+			break;
+		case 'a':
+			adjust = TRUE;
+			break;
+		case 'r':
+			show = TRUE;
+			break;
+		case 's':
+			hctosys = TRUE;
+			break;
+		case 'u':
+			utc = TRUE;
+			break;
+		case 'w':
+			systohc = TRUE;
+			break;
+#ifdef __alpha__
+		case 'A':
+			ARCconsole = TRUE;
+			break;
+		case 'J':
+			Jensen = TRUE;
+			break;
+		case 'S':
+			SRM = TRUE;
+			break;
+		case 'F':
+			funky_toy = TRUE;
+			break;
+#endif
+		case 128:
+			set = TRUE;
+			break;
+		case 129:
+			getepoch = TRUE;
+			break;
+		case 130:
+			setepoch = TRUE;
+			break;
+		case 131:
+			noadjfile = TRUE;
+			break;
+		case 132:
+			local_opt = TRUE;		/* --localtime */
+			break;
+		case 133:
+			badyear = TRUE;
+			break;
+		case 134:
+			directisa = TRUE;
+			break;
+		case 135:
+			testing = TRUE;			/* --test */
+			break;
+		case 136:
+			date_opt = optarg;		/* --date */
+			break;
+		case 137:
+			epoch_option = atoi(optarg);	/* --epoch */
+			break;
+		case 'v':				/* --version */
+		case 'V':
+			out_version();
+			return 0;
+		case 'h':				/* --help */
+		case '?':
+		default:
+			usage(NULL);
+		}
+	}
 
-  if (help)
-    usage( NULL );
+	argc -= optind;
+	argv += optind;
 
-  if (show + set + systohc + hctosys + adjust + 
-      getepoch + setepoch + version > 1) {
-    fprintf(stderr, _("You have specified multiple function options.\n"
-            "You can only perform one function at a time.\n"));
-    exit(100);
-  }
+	if (argc > 0) {
+		usage(_("%s takes no non-option arguments.  "
+			"You supplied %d.\n"),
+		      MYNAME, argc);
+	}
 
-  if (utc && local_opt) {
-    fprintf(stderr, _("%s: The --utc and --localtime options are mutually "
-		      "exclusive.  You specified both.\n"), MYNAME);
-    exit(100);
-  }
+	if (show + set + systohc + hctosys + adjust + getepoch + setepoch > 1){
+		fprintf(stderr, _("You have specified multiple functions.\n"
+				  "You can only perform one function "
+				  "at a time.\n"));
+		exit(EX_USAGE);
+	}
 
-  if (adjust && noadjfile) {
-    fprintf(stderr, _("%s: The --adjust and --noadjfile options are mutually "
-                     "exclusive.  You specified both.\n"), MYNAME);
-    exit(100);
-  }
+	if (utc && local_opt) {
+		fprintf(stderr, _("%s: The --utc and --localtime options "
+				  "are mutually exclusive.  You specified "
+				  "both.\n"), MYNAME);
+		exit(EX_USAGE);
+	}
 
-  if (noadjfile && !(utc || local_opt)) {
-    fprintf(stderr, _("%s: With --noadjfile, you must specify either "
-                     "--utc or --localtime\n"), MYNAME);
-    exit(100);
-  }
+	if (adjust && noadjfile) {
+		fprintf(stderr, _("%s: The --adjust and --noadjfile options "
+				  "are mutually exclusive.  You specified "
+				  "both.\n"), MYNAME);
+		exit(EX_USAGE);
+	}
+
+	if (noadjfile && !(utc || local_opt)) {
+		fprintf(stderr, _("%s: With --noadjfile, you must specify "
+				  "either --utc or --localtime\n"), MYNAME);
+		exit(EX_USAGE);
+	}
 
 #ifdef __alpha__
-  set_cmos_epoch(ARCconsole, SRM);
-  set_cmos_access(Jensen, funky_toy);
+	set_cmos_epoch(ARCconsole, SRM);
+	set_cmos_access(Jensen, funky_toy);
 #endif
 
-  if (set) {
-    rc = interpret_date_string(date_opt, &set_time);  /* (time-consuming) */
-    if (rc != 0) {
-      fprintf(stderr, _("No usable set-to time.  Cannot set clock.\n"));
-      exit(100);
-    }
-  }
+	if (set) {
+		rc = interpret_date_string(date_opt, &set_time);
+		/* (time-consuming) */
+		if (rc != 0) {
+			fprintf(stderr, _("No usable set-to time.  "
+					  "Cannot set clock.\n"));
+			exit(EX_USAGE);
+		}
+	}
 
-  if (!(show | set | systohc | hctosys | adjust | getepoch | setepoch |
-        version)) 
-    show = 1; /* default to show */
+	if (!(show | set | systohc | hctosys | adjust | getepoch | setepoch)) 
+		show = 1; /* default to show */
 
   
-  if (getuid() == 0) permitted = TRUE;
-  else {
-    /* program is designed to run setuid (in some situations) -- be secure! */
-    if (set || hctosys || systohc || adjust) {
-      fprintf(stderr, 
-              _("Sorry, only the superuser can change the Hardware Clock.\n"));
-      permitted = FALSE;
-    } else if (hctosys) {
-      fprintf(stderr,
-	      _("Sorry, only the superuser can change the System Clock.\n"));
-      permitted = FALSE;
-    } else if (setepoch) {
-      fprintf(stderr, 
-              _("Sorry, only the superuser can change "
-              "the Hardware Clock epoch in the kernel.\n"));
-      permitted = FALSE;
-    } else
-      permitted = TRUE;
-  }
+	if (getuid() == 0)
+		permitted = TRUE;
+	else {
+		/* program is designed to run setuid (in some situations) */
+		if (set || hctosys || systohc || adjust) {
+			fprintf(stderr, 
+				_("Sorry, only the superuser can change "
+				  "the Hardware Clock.\n"));
+			permitted = FALSE;
+		} else if (hctosys) {
+			fprintf(stderr,
+				_("Sorry, only the superuser can change "
+				  "the System Clock.\n"));
+			permitted = FALSE;
+		} else if (setepoch) {
+			fprintf(stderr, 
+				_("Sorry, only the superuser can change the "
+				  "Hardware Clock epoch in the kernel.\n"));
+			permitted = FALSE;
+		} else
+			permitted = TRUE;
+	}
 
-  if (!permitted) retcode = 2;
-  else {
-    retcode = 0;
-    if (version) {
-      printf(MYNAME " " VERSION "/%s\n",util_linux_version);
-    } else if (getepoch || setepoch) {
-      manipulate_epoch(getepoch, setepoch, epoch_option, testing);
-    } else {
-      if (debug)
-        printf(MYNAME " " VERSION "/%s\n",util_linux_version);
-      determine_clock_access_method(directisa);
-      if (!ur) {
-        fprintf(stderr,
-		_("Cannot access the Hardware Clock via any known method.\n"));
-	if (!debug)
+	if (!permitted)
+		exit(EX_NOPERM);
+
+	if (getepoch || setepoch) {
+		manipulate_epoch(getepoch, setepoch, epoch_option, testing);
+		return 0;
+	}
+
+	if (debug)
+		out_version();
+	determine_clock_access_method(directisa);
+	if (!ur) {
 		fprintf(stderr,
-			_("Use the --debug option to see the details of our "
-			  "search for an access method.\n"));
-      } else
-        manipulate_clock(show, adjust, noadjfile, set, set_time,
-			 hctosys, systohc, startup_time, utc, local_opt,
-			 testing, &rc);
-    }
-  }
-  exit(retcode);
+			_("Cannot access the Hardware Clock via "
+			  "any known method.\n"));
+		if (!debug)
+			fprintf(stderr,
+				_("Use the --debug option to see the details "
+				  "of our search for an access method.\n"));
+		exit(1);
+	}
+
+	return manipulate_clock(show, adjust, noadjfile, set, set_time,
+				hctosys, systohc, startup_time, utc,
+				local_opt, testing);
 }
 
 /* A single routine for greater uniformity */

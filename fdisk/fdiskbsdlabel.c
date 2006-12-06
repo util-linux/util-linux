@@ -38,8 +38,8 @@
    19990319 - Arnaldo Carvalho de Melo <acme@conectiva.com.br> - i18n/nls
 
    20000101 - David Huggins-Daines <dhuggins@linuxcare.com> - Better
-   support for OSF/1 disklabels on Alpha.  Also fixed unaligned
-   accesses in alpha_bootblock_checksum()
+   support for OSF/1 disklabels on Alpha.
+   Also fixed unaligned accesses in alpha_bootblock_checksum()
 */
 
 #include <unistd.h>
@@ -73,7 +73,8 @@ static int xbsd_get_part_index (int max);
 static int xbsd_check_new_partition (int *i);
 static void xbsd_list_types (void);
 static u_short xbsd_dkcksum (struct xbsd_disklabel *lp);
-static int xbsd_initlabel  (struct partition *p, struct xbsd_disklabel *d, int pindex);
+static int xbsd_initlabel  (struct partition *p, struct xbsd_disklabel *d,
+			    int pindex);
 static int xbsd_readlabel  (struct partition *p, struct xbsd_disklabel *d);
 static int xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d);
 static void sync_disks (void);
@@ -101,22 +102,26 @@ static struct xbsd_disklabel xbsd_dlabel;
 #define bsd_cround(n) \
 	(display_in_cyl_units ? ((n)/xbsd_dlabel.d_secpercyl) + 1 : (n))
 
+/*
+ * Test whether the whole disk has BSD disk label magic.
+ *
+ * Note: often reformatting with DOS-type label leaves the BSD magic,
+ * so this does not mean that there is a BSD disk label.
+ */
 int
 check_osf_label(void) {
-    osf_label = 0;
-    if (xbsd_readlabel (NULL, &xbsd_dlabel) == 0)
-	return 0;
-    osf_label = 1;
-    return 1;
+	if (xbsd_readlabel (NULL, &xbsd_dlabel) == 0)
+		return 0;
+	return 1;
 }
 
 int
 btrydev (char * dev) {
-    if (xbsd_readlabel (NULL, &xbsd_dlabel) == 0)
-	return -1;
-    printf(_("\nBSD label for device: %s\n"), dev);
-    xbsd_print_disklabel (0);
-    return 0;
+	if (xbsd_readlabel (NULL, &xbsd_dlabel) == 0)
+		return -1;
+	printf(_("\nBSD label for device: %s\n"), dev);
+	xbsd_print_disklabel (0);
+	return 0;
 }
 
 static void
@@ -598,152 +603,159 @@ xbsd_get_part_index (int max)
 }
 
 static int
-xbsd_check_new_partition (int *i)
-{
-  int t;
+xbsd_check_new_partition (int *i) {
 
-  if (xbsd_dlabel.d_npartitions == BSD_MAXPARTITIONS)
-  {
-    for (t=0; t < BSD_MAXPARTITIONS; t++)
-      if (xbsd_dlabel.d_partitions[t].p_size == 0)
-	break;
+	/* room for more? various BSD flavours have different maxima */
+	if (xbsd_dlabel.d_npartitions == BSD_MAXPARTITIONS) {
+		int t;
 
-    if (t == BSD_MAXPARTITIONS)
-    {
-      fprintf (stderr, _("The maximum number of partitions has been created\n"));
-      return 0;
-    }
-  }
-  *i = xbsd_get_part_index (BSD_MAXPARTITIONS);
+		for (t = 0; t < BSD_MAXPARTITIONS; t++)
+			if (xbsd_dlabel.d_partitions[t].p_size == 0)
+				break;
 
-  if (*i >= xbsd_dlabel.d_npartitions)
-    xbsd_dlabel.d_npartitions = (*i) + 1;
+		if (t == BSD_MAXPARTITIONS) {
+			fprintf (stderr, _("The maximum number of partitions "
+					   "has been created\n"));
+			return 0;
+		}
+	}
 
-  if (xbsd_dlabel.d_partitions[*i].p_size != 0)
-  {
-    fprintf (stderr, _("This partition already exists.\n"));
-    return 0;
-  }
-  return 1;
+	*i = xbsd_get_part_index (BSD_MAXPARTITIONS);
+
+	if (*i >= xbsd_dlabel.d_npartitions)
+		xbsd_dlabel.d_npartitions = (*i) + 1;
+
+	if (xbsd_dlabel.d_partitions[*i].p_size != 0) {
+		fprintf (stderr, _("This partition already exists.\n"));
+		return 0;
+	}
+
+	return 1;
 }
 
 static void
-xbsd_list_types (void)
-{
-  list_types (xbsd_fstypes);
+xbsd_list_types (void) {
+	list_types (xbsd_fstypes);
 }
 
 static u_short
-xbsd_dkcksum (struct xbsd_disklabel *lp)
-{
-  register u_short *start, *end;
-  register u_short sum = 0;
+xbsd_dkcksum (struct xbsd_disklabel *lp) {
+	u_short *start, *end;
+	u_short sum = 0;
   
-  start = (u_short *)lp;
-  end = (u_short *)&lp->d_partitions[lp->d_npartitions];
-  while (start < end)
-    sum ^= *start++;
-  return (sum);
+	start = (u_short *) lp;
+	end = (u_short *) &lp->d_partitions[lp->d_npartitions];
+	while (start < end)
+		sum ^= *start++;
+	return sum;
 }
 
 static int
-xbsd_initlabel (struct partition *p, struct xbsd_disklabel *d, int pindex)
-{
-  struct xbsd_partition *pp;
-  struct geom g;
+xbsd_initlabel (struct partition *p, struct xbsd_disklabel *d, int pindex) {
+	struct xbsd_partition *pp;
+	struct geom g;
 
-  get_geometry (fd, &g);
-  bzero (d, sizeof (struct xbsd_disklabel));
+	get_geometry (fd, &g);
+	bzero (d, sizeof (struct xbsd_disklabel));
 
-  d -> d_magic = BSD_DISKMAGIC;
+	d -> d_magic = BSD_DISKMAGIC;
 
-  if (strncmp (disk_device, "/dev/sd", 7) == 0)
-    d -> d_type = BSD_DTYPE_SCSI;
-  else
-    d -> d_type = BSD_DTYPE_ST506;
+	if (strncmp (disk_device, "/dev/sd", 7) == 0)
+		d -> d_type = BSD_DTYPE_SCSI;
+	else
+		d -> d_type = BSD_DTYPE_ST506;
 
 #if 0 /* not used (at least not written to disk) by NetBSD/i386 1.0 */
-  d -> d_subtype = BSD_DSTYPE_INDOSPART & pindex;
+	d -> d_subtype = BSD_DSTYPE_INDOSPART & pindex;
 #endif
 
 #if !defined (__alpha__)
-  d -> d_flags = BSD_D_DOSPART;
+	d -> d_flags = BSD_D_DOSPART;
 #else
-  d -> d_flags = 0;
+	d -> d_flags = 0;
 #endif
-  d -> d_secsize = SECTOR_SIZE;			/* bytes/sector  */
-  d -> d_nsectors = g.sectors;			/* sectors/track */
-  d -> d_ntracks = g.heads;			/* tracks/cylinder (heads) */
-  d -> d_ncylinders = g.cylinders;
-  d -> d_secpercyl  = g.sectors * g.heads;	/* sectors/cylinder */
-  if (d -> d_secpercyl == 0)
-	  d -> d_secpercyl = 1;			/* avoid segfaults */
-  d -> d_secperunit = d -> d_secpercyl * d -> d_ncylinders;
+	d -> d_secsize = SECTOR_SIZE;		/* bytes/sector  */
+	d -> d_nsectors = g.sectors;		/* sectors/track */
+	d -> d_ntracks = g.heads;		/* tracks/cylinder (heads) */
+	d -> d_ncylinders = g.cylinders;
+	d -> d_secpercyl  = g.sectors * g.heads;/* sectors/cylinder */
+	if (d -> d_secpercyl == 0)
+		d -> d_secpercyl = 1;		/* avoid segfaults */
+	d -> d_secperunit = d -> d_secpercyl * d -> d_ncylinders;
 
-  d -> d_rpm = 3600;
-  d -> d_interleave = 1;
-  d -> d_trackskew = 0;
-  d -> d_cylskew = 0;
-  d -> d_headswitch = 0;
-  d -> d_trkseek = 0;
+	d -> d_rpm = 3600;
+	d -> d_interleave = 1;
+	d -> d_trackskew = 0;
+	d -> d_cylskew = 0;
+	d -> d_headswitch = 0;
+	d -> d_trkseek = 0;
 
-  d -> d_magic2 = BSD_DISKMAGIC;
-  d -> d_bbsize = BSD_BBSIZE;
-  d -> d_sbsize = BSD_SBSIZE;
+	d -> d_magic2 = BSD_DISKMAGIC;
+	d -> d_bbsize = BSD_BBSIZE;
+	d -> d_sbsize = BSD_SBSIZE;
 
 #if !defined (__alpha__)
-  d -> d_npartitions = 4;
-  pp = &d -> d_partitions[2]; /* Partition C should be the NetBSD partition */
-  pp -> p_offset = get_start_sect(p);
-  pp -> p_size   = get_nr_sects(p);
-  pp -> p_fstype = BSD_FS_UNUSED;
-  pp = &d -> d_partitions[3]; /* Partition D should be the whole disk */
-  pp -> p_offset = 0;
-  pp -> p_size   = d -> d_secperunit;
-  pp -> p_fstype = BSD_FS_UNUSED;
+	d -> d_npartitions = 4;
+	pp = &d -> d_partitions[2];		/* Partition C should be
+						   the NetBSD partition */
+	pp -> p_offset = get_start_sect(p);
+	pp -> p_size   = get_nr_sects(p);
+	pp -> p_fstype = BSD_FS_UNUSED;
+	pp = &d -> d_partitions[3];		/* Partition D should be
+						   the whole disk */
+	pp -> p_offset = 0;
+	pp -> p_size   = d -> d_secperunit;
+	pp -> p_fstype = BSD_FS_UNUSED;
 #elif defined (__alpha__)
-  d -> d_npartitions = 3;
-  pp = &d -> d_partitions[2]; /* Partition C should be the whole disk */
-  pp -> p_offset = 0;
-  pp -> p_size   = d -> d_secperunit;
-  pp -> p_fstype = BSD_FS_UNUSED;  
+	d -> d_npartitions = 3;
+	pp = &d -> d_partitions[2];		/* Partition C should be
+						   the whole disk */
+	pp -> p_offset = 0;
+	pp -> p_size   = d -> d_secperunit;
+	pp -> p_fstype = BSD_FS_UNUSED;  
 #endif
 
-  return 1;
+	return 1;
 }
 
+/*
+ * Read a xbsd_disklabel from sector 0 or from the starting sector of p.
+ * If it has the right magic, return 1.
+ */
 static int
 xbsd_readlabel (struct partition *p, struct xbsd_disklabel *d)
 {
-  int t, sector;
+	int t, sector;
 
+	/* p is used only to get the starting sector */
 #if !defined (__alpha__)
-  sector = (p ? get_start_sect(p) : 0);
+	sector = (p ? get_start_sect(p) : 0);
 #elif defined (__alpha__)
-  sector = 0;
+	sector = 0;
 #endif
 
-  if (ext2_llseek (fd, (ext2_loff_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
-    fatal (unable_to_seek);
-  if (BSD_BBSIZE != read (fd, disklabelbuffer, BSD_BBSIZE))
-    fatal (unable_to_read);
+	if (ext2_llseek (fd, (ext2_loff_t) sector * SECTOR_SIZE, SEEK_SET) == -1)
+		fatal (unable_to_seek);
+	if (BSD_BBSIZE != read (fd, disklabelbuffer, BSD_BBSIZE))
+		fatal (unable_to_read);
 
-  bcopy (&disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE + BSD_LABELOFFSET],
-	 d, sizeof (struct xbsd_disklabel));
+	bcopy (&disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE + BSD_LABELOFFSET],
+	       d, sizeof (struct xbsd_disklabel));
 
-  for (t = d -> d_npartitions; t < BSD_MAXPARTITIONS; t++)
-  {
-    d -> d_partitions[t].p_size   = 0;
-    d -> d_partitions[t].p_offset = 0;
-    d -> d_partitions[t].p_fstype = BSD_FS_UNUSED;  
-  }
-  if (d -> d_magic != BSD_DISKMAGIC || d -> d_magic2 != BSD_DISKMAGIC)
-    return 0;
+	if (d -> d_magic != BSD_DISKMAGIC || d -> d_magic2 != BSD_DISKMAGIC)
+		return 0;
 
-  if (d -> d_npartitions > BSD_MAXPARTITIONS)
-    fprintf (stderr, _("Warning: too many partitions (%d, maximum is %d).\n"),
-	     d -> d_npartitions, BSD_MAXPARTITIONS);
-  return 1;
+	for (t = d -> d_npartitions; t < BSD_MAXPARTITIONS; t++) {
+		d -> d_partitions[t].p_size   = 0;
+		d -> d_partitions[t].p_offset = 0;
+		d -> d_partitions[t].p_fstype = BSD_FS_UNUSED;  
+	}
+
+	if (d -> d_npartitions > BSD_MAXPARTITIONS)
+		fprintf (stderr, _("Warning: too many partitions "
+				   "(%d, maximum is %d).\n"),
+			 d -> d_npartitions, BSD_MAXPARTITIONS);
+	return 1;
 }
 
 static int

@@ -515,7 +515,7 @@ update_mtab (const char *dir, struct mntent *instead) {
 
 	/* write chain to mtemp */
 	mftmp = my_setmntent (MOUNTED_TEMP, "w");
-	if (mftmp == NULL || mfp->mntent_fp == NULL) {
+	if (mftmp == NULL || mftmp->mntent_fp == NULL) {
 		int errsv = errno;
 		error (_("cannot open %s (%s) - mtab not updated"),
 		       MOUNTED_TEMP, strerror (errsv));

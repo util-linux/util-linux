@@ -38,8 +38,8 @@
 #include "gpt.h"
 #include "partx.h"
 
-#define BLKGETLASTSECT  _IO(0x12,108) /* get last sector of block device */
-#define BLKGETSIZE _IO(0x12,96)	/* return device size */
+#define BLKGETLASTSECT  _IO(0x12,108)   /* get last sector of block device */
+#define BLKGETSIZE _IO(0x12,96)	        /* return device size */
 #define BLKSSZGET  _IO(0x12,104)	/* get block device sector size */
 #define BLKGETSIZE64 _IOR(0x12,114,sizeof(uint64_t))	/* return device size in bytes (u64 *arg) */
 

@@ -6,9 +6,9 @@
 include ../make_include
 include ../MCONFIG
 
-MAN1= 		col.1 colcrt.1 colrm.1 column.1 hexdump.1 rev.1 line.1
+MAN1= 		col.1 colcrt.1 colrm.1 column.1 hexdump.1 rev.1 line.1 pg.1
 
-USRBIN=		col colcrt colrm column hexdump rev line
+USRBIN=		col colcrt colrm column hexdump rev line pg
 
 BIN=
 
@@ -25,26 +25,32 @@ MAN1:=$(MAN1) more.1
 endif
 endif
 
-# Where to put datebase files?
-
+# Where to put database files?
 MOREHELP=	more.help
 MOREHELPFILE=$(MOREHELP_DIR)/$(MOREHELP)
 # MOREHELP_DIR and MOREHELPDIR set in ../MCONFIG
 CFLAGS:=$(CFLAGS) -DMOREHELPFILE=\"$(MOREHELPFILE)\"
 
+# Is pg silent?
+ifeq "$(SILENT_PG)" "yes"
+CFLAGS:=$(CFLAGS) -DPGNOBELL
+endif
+
 all: $(BIN) $(USRBIN)
 
-# more and ul use curses - maybe we can't compile them
+# more and pg and ul use curses - maybe we can't compile them
 ifeq "$(HAVE_NCURSES)" "yes"
-# Have ncurses - make more and ul
-more ul:
+# Have ncurses - make more and pg and ul
+more pg ul:
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LIBCURSES)
 more: more.o $(LIB)/xstrncpy.o
+pg: pg.o
 ul: ul.o
 else
-# Do not have ncurses - give up on ul
-ul:
+# Do not have ncurses - give up on pg and ul
+pg ul:
 	@echo $@ not made since it requires ncurses
+# For more we can also try termcap
 ifeq "$(HAVE_TERMCAP)" "yes"
 more: more.o $(LIB)/xstrncpy.o
 	$(CC) $(CFLAGS) $(LDFLAGS) $^ -o $@ $(LIBTERMCAP)
@@ -71,12 +77,7 @@ column.o: $(LIB)/errs.h
 column: column.o $(ERR_O)
 more.o: more.c $(LIB)/pathnames.h
 rev: rev.o
-line: line.sh
-
-%: %.sh
-	cp $@.sh $@
-	chmod 755 $@
-
+line: line.o
 
 colcrt.o colrm.o column.o rev.o ul.o: $(LIB)/widechar.h
 

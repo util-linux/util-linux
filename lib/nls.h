@@ -14,7 +14,7 @@ int main(int argc, char *argv[]);
 # include <locale.h>
 #endif
 
-#ifdef ENABLE_NLS
+#if defined MAY_ENABLE_NLS && !defined DISABLE_NLS
 # include <libintl.h>
 # define _(Text) gettext (Text)
 # ifdef gettext_noop

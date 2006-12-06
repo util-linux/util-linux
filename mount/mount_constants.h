@@ -19,6 +19,10 @@
 #ifndef MS_MANDLOCK
 #define MS_MANDLOCK	64	/* Allow mandatory locks on an FS */
 #endif
+#ifndef MS_DIRSYNC
+#define MS_DIRSYNC	128	/* Directory modifications are synchronous */
+#endif
+
 #ifndef MS_ACTION_MASK
 #define	MS_ACTION_MASK	0x380
 /* Remount, but new filesystem may be different from old. Atomic

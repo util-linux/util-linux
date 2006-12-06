@@ -1439,7 +1439,8 @@ int command (char *filename, register FILE *f)
    		kill_line ();
 		if (Senter && Sexit) {
 		    my_putstring (Senter);
-		    promptlen = pr (_("[Press 'h' for instructions.]")) + (2 * soglitch);
+		    promptlen = pr (_("[Press 'h' for instructions.]"))
+			    + 2 * soglitch;
 		    my_putstring (Sexit);
 		}
 		else
@@ -1794,13 +1795,13 @@ retry:
 	     * Wait until we're in the foreground before we save the
 	     * the terminal modes.
 	     */
-	    if (ioctl(fileno(stdout), TIOCGPGRP, &tgrp) < 0) {
-		 perror("TIOCGPGRP");
-		 exit(1);
+	    if ((tgrp = tcgetpgrp(fileno(stdout))) < 0) {
+		perror("tcgetpgrp");
+		exit(1);
 	    }
 	    if (tgrp != getpgrp(0)) {
-		 kill(0, SIGTTOU);
-		 goto retry;
+		kill(0, SIGTTOU);
+		goto retry;
 	    }
 	}
 #endif
@@ -1903,7 +1904,7 @@ int readch () {
 	unsigned char c;
 
 	errno = 0;
-	if (read (2, &c, 1) <= 0) {
+	if (read (fileno(stderr), &c, 1) <= 0) {
 		if (errno != EINTR)
 			end_it(0);
 		else

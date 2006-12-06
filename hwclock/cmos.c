@@ -65,15 +65,18 @@ int inb(int c){ return 0; }
 #define BCD_TO_BIN(val) ((val)=((val)&15) + ((val)>>4)*10)
 #define BIN_TO_BCD(val) ((val)=(((val)/10)<<4) + (val)%10)
 
-/* The epoch.
-   Unix uses 1900 as epoch for a struct tm, and 1970 for a time_t.
-   But what was written to CMOS?
-   Digital DECstations use 1928 - this is on a mips
-   Digital Unix uses 1952.
-   Windows NT uses 1980.
-   The ARC console expects to boot Windows NT and uses 1980.
-   (But a Ruffian uses 1900, just like SRM.)
-   It is reported that ALPHA_PRE_V1_2_SRM_CONSOLE uses 1958. */
+/*
+ * The epoch.
+ *
+ * Unix uses 1900 as epoch for a struct tm, and 1970 for a time_t.
+ * But what was written to CMOS?
+ * Digital DECstations use 1928 - this is on a mips or alpha
+ * Digital Unix uses 1952, e.g. on AXPpxi33
+ * Windows NT uses 1980.
+ * The ARC console expects to boot Windows NT and uses 1980.
+ * (But a Ruffian uses 1900, just like SRM.)
+ * It is reported that ALPHA_PRE_V1_2_SRM_CONSOLE uses 1958.
+ */
 #define TM_EPOCH 1900
 int cmos_epoch = 1900;
 
@@ -154,12 +157,13 @@ set_cmos_epoch(int ARCconsole, int SRM) {
      return;
   }
 
-  /* The kernel source today says: read the year. If it is
-     in 11-43 then the epoch is 1980 (this covers 1991-2023).
-     Otherwise, if it is less than 96 then the epoch is 1952
-     (this covers 1952-1962 and 1996-2047). Otherwise, the epoch
-     is 1900 (this covers 1996-1999, or rather 1996-2155). */
-
+  /* The kernel source today says: read the year.
+     If it is in 0-19 then the epoch is 2000.
+     If it is in 20-47 then the epoch is 1980.
+     If it is in 48-69 then the epoch is 1952.
+     If it is in 70-99 then the epoch is 1928.
+     Otherwise the epoch is 1900.
+     Clearly, this must be changed before 2019. */
 
   /* See whether we are dealing with SRM or MILO, as they have
      different "epoch" ideas. */

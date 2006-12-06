@@ -16,7 +16,6 @@
   1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
   - added Native Language Support
 
-
 */
 
 #include <stdio.h>
@@ -430,9 +429,9 @@ void do_sem (char format)
 
 	default:
 		printf (_("------ Semaphore Arrays --------\n"));
-		printf (_("%-10s %-10s %-10s %-10s %-10s %-12s\n"), 
+		printf (_("%-10s %-10s %-10s %-10s %-10s\n"), 
 			_("key"),_("semid"),_("owner"),_("perms"),
-			_("nsems"),_("status"));
+			_("nsems"));
 		break;
 	}
 
@@ -461,7 +460,7 @@ void do_sem (char format)
 			break;
 			
 		default:
-		        printf( "0x%08x ",ipcp->KEY );
+		        printf("0x%08x ", ipcp->KEY);
 			if (pw)
 				printf ("%-10d %-10.9s", semid, pw->pw_name);
 			else
@@ -478,7 +477,6 @@ void do_sem (char format)
 			break;
 		}
 	}
-	return;
 }
 
 

@@ -144,7 +144,8 @@ for hosts that can run multiple NFS servers.
 The default value is version 2.
 .TP 1.5i
 .I nolock
-Disable NFS locking. This has to be used with some old NFS servers
+Disable NFS locking. Do not start lockd.
+This has to be used with some old NFS servers
 that don't support locking.
 .TP 1.5i
 .I bg
@@ -195,9 +196,6 @@ Disable all forms of attribute caching entirely.  This extracts a
 server performance penalty but it allows two different NFS clients
 to get reasonable good results when both clients are actively
 writing to common filesystem on the server.
-.TP 1.5i
-.I nolock
-Do not use locking. Do not start lockd.
 .TP 1.5i
 .I tcp
 Mount the NFS filesystem using the TCP protocol instead of the

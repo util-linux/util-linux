@@ -1,17 +1,14 @@
 .\" This page is in the public domain
-.Dd August 2, 2001
-.Dt line 1
-.Os Linux 2.4
-.Sh NAME
-.Nm line
-.Nd read one line
-.Sh SYNOPSIS
-.Nm
-.Sh DESCRIPTION
-.Nm
-copies one line (up to a newline) from standard input and writes it to
-standard output. It always prints at least a newline and returns an exit
-code of 1 on EOF.
-.Sh SEE ALSO
-.Xr read 2 ,
-.Xr sh 1
+.TH LINE 1 "2002-07-07" "" "User Commands"
+.SH NAME
+line \- read one line
+.SH SYNOPSIS
+.B line
+.SH DESCRIPTION
+The utility
+.I line
+copies one line (up to a newline) from standard input to standard output.
+It always prints at least a newline and returns an exit status of 1
+on EOF or read error.
+.SH "SEE ALSO"
+.BR read (1)

@@ -74,10 +74,8 @@ Provide help
 Display version
 .TP
 .B \-s
-Display swap usage summary by device.
-This option is only available if
-.I /proc/swaps
-exists (probably not before kernel 2.1.25).
+Display swap usage summary by device. Equivalent to "cat /proc/swaps".
+Not available before Linux 2.1.25.
 .TP
 .B \-a
 All devices marked as ``sw'' swap devices in
@@ -101,12 +99,14 @@ for use with
 .BR "swapon -a" .
 .PP
 .B Swapoff
-disables swapping on the specified devices and files, or on all swap
-entries in
-.I /etc/fstab
-when the
+disables swapping on the specified devices and files.
+When the
 .B \-a
-flag is given.
+flag is given, swapping is disabled on all known swap devices and files
+(as found in
+.I /proc/swaps
+or
+.IR /etc/fstab ).
 .SH NOTE
 You should not use
 .B swapon

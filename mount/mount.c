@@ -94,7 +94,7 @@ int sloppy = 0;
 static int readwrite = 0;
 
 /* True for all mount (-a).  */
-int all = 0;
+int mount_all = 0;
 
 /* True for fork() during all mount (-F).  */
 static int optfork = 0;
@@ -148,6 +148,7 @@ static const struct opt_map opt_map[] = {
   { "nodev",	0, 0, MS_NODEV	},	/* don't interpret devices */
   { "sync",	0, 0, MS_SYNCHRONOUS},	/* synchronous I/O */
   { "async",	0, 1, MS_SYNCHRONOUS},	/* asynchronous I/O */
+  { "dirsync",	0, 0, MS_DIRSYNC},	/* synchronous directory modifications */
   { "remount",  0, 0, MS_REMOUNT},      /* Alter flags of mounted FS */
   { "bind",	0, 0, MS_BIND   },	/* Remount part of tree elsewhere */
   { "auto",	0, 1, MS_NOAUTO	},	/* Can be mounted using -a */
@@ -201,25 +202,25 @@ static struct string_opt_map {
 
 static void
 clear_string_opts(void) {
-  struct string_opt_map *m;
+	struct string_opt_map *m;
 
-  for (m = &string_opt_map[0]; m->tag; m++)
-    *(m->valptr) = NULL;
+	for (m = &string_opt_map[0]; m->tag; m++)
+		*(m->valptr) = NULL;
 }
 
 static int
 parse_string_opt(char *s) {
-  struct string_opt_map *m;
-  int lth;
+	struct string_opt_map *m;
+	int lth;
 
-  for (m = &string_opt_map[0]; m->tag; m++) {
-    lth = strlen(m->tag);
-    if (!strncmp(s, m->tag, lth)) {
-      *(m->valptr) = xstrdup(s + lth);
-      return 1;
-    }
-  }
-  return 0;
+	for (m = &string_opt_map[0]; m->tag; m++) {
+		lth = strlen(m->tag);
+		if (!strncmp(s, m->tag, lth)) {
+			*(m->valptr) = xstrdup(s + lth);
+			return 1;
+		}
+	}
+	return 0;
 }
 
 int mount_quiet=0;
@@ -264,54 +265,54 @@ print_all (char *types) {
  */
 static inline void
 parse_opt (const char *opt, int *mask, char *extra_opts) {
-  const struct opt_map *om;
+	const struct opt_map *om;
 
-  for (om = opt_map; om->opt != NULL; om++)
-      if (streq (opt, om->opt)) {
-	if (om->inv)
-	  *mask &= ~om->mask;
-	else
-	  *mask |= om->mask;
-	if ((om->mask == MS_USER || om->mask == MS_USERS)
-	    && !om->inv)
-	  *mask |= MS_SECURE;
-	if ((om->mask == MS_OWNER) && !om->inv)
-	  *mask |= MS_OWNERSECURE;
+	for (om = opt_map; om->opt != NULL; om++)
+		if (streq (opt, om->opt)) {
+			if (om->inv)
+				*mask &= ~om->mask;
+			else
+				*mask |= om->mask;
+			if ((om->mask == MS_USER || om->mask == MS_USERS)
+			    && !om->inv)
+				*mask |= MS_SECURE;
+			if ((om->mask == MS_OWNER) && !om->inv)
+				*mask |= MS_OWNERSECURE;
 #ifdef MS_SILENT
-        if (om->mask == MS_SILENT && om->inv)  {
-          mount_quiet = 1;
-          verbose = 0;
-        }
+			if (om->mask == MS_SILENT && om->inv)  {
+				mount_quiet = 1;
+				verbose = 0;
+			}
 #endif
-	return;
-      }
+			return;
+		}
 
-  if (*extra_opts)
-    strcat(extra_opts, ",");
+	if (*extra_opts)
+		strcat(extra_opts, ",");
 
-  /* convert nonnumeric ids to numeric */
-  if (!strncmp(opt, "uid=", 4) && !isdigit(opt[4])) {
-	  struct passwd *pw = getpwnam(opt+4);
-	  char uidbuf[20];
+	/* convert nonnumeric ids to numeric */
+	if (!strncmp(opt, "uid=", 4) && !isdigit(opt[4])) {
+		struct passwd *pw = getpwnam(opt+4);
+		char uidbuf[20];
 
-	  if (pw) {
-		  sprintf(uidbuf, "uid=%d", pw->pw_uid);
-		  strcat(extra_opts, uidbuf);
-		  return;
-	  }
-  }
-  if (!strncmp(opt, "gid=", 4) && !isdigit(opt[4])) {
-	  struct group *gr = getgrnam(opt+4);
-	  char gidbuf[20];
+		if (pw) {
+			sprintf(uidbuf, "uid=%d", pw->pw_uid);
+			strcat(extra_opts, uidbuf);
+			return;
+		}
+	}
+	if (!strncmp(opt, "gid=", 4) && !isdigit(opt[4])) {
+		struct group *gr = getgrnam(opt+4);
+		char gidbuf[20];
 
-	  if (gr) {
-		  sprintf(gidbuf, "gid=%d", gr->gr_gid);
-		  strcat(extra_opts, gidbuf);
-		  return;
-	  }
-  }
+		if (gr) {
+			sprintf(gidbuf, "gid=%d", gr->gr_gid);
+			strcat(extra_opts, gidbuf);
+			return;
+		}
+	}
 
-  strcat(extra_opts, opt);
+	strcat(extra_opts, opt);
 }
   
 /* Take -o options list and compute 4th and 5th args to mount(2).  flags
@@ -344,30 +345,31 @@ parse_opts (char *opts, int *flags, char **extra_opts) {
 /* Try to build a canonical options string.  */
 static char *
 fix_opts_string (int flags, const char *extra_opts, const char *user) {
-  const struct opt_map *om;
-  const struct string_opt_map *m;
-  char *new_opts;
+	const struct opt_map *om;
+	const struct string_opt_map *m;
+	char *new_opts;
 
-  new_opts = (flags & MS_RDONLY) ? "ro" : "rw";
-  for (om = opt_map; om->opt != NULL; om++) {
-      if (om->skip)
-	continue;
-      if (om->inv || !om->mask || (flags & om->mask) != om->mask)
-	continue;
-      new_opts = xstrconcat3(new_opts, ",", om->opt);
-      flags &= ~om->mask;
-  }
-  for (m = &string_opt_map[0]; m->tag; m++) {
-      if (!m->skip && *(m->valptr))
-	   new_opts = xstrconcat4(new_opts, ",", m->tag, *(m->valptr));
-  }
-  if (extra_opts && *extra_opts) {
-      new_opts = xstrconcat3(new_opts, ",", extra_opts);
-  }
-  if (user) {
-      new_opts = xstrconcat3(new_opts, ",user=", user);
-  }
-  return new_opts;
+	new_opts = (flags & MS_RDONLY) ? "ro" : "rw";
+	for (om = opt_map; om->opt != NULL; om++) {
+		if (om->skip)
+			continue;
+		if (om->inv || !om->mask || (flags & om->mask) != om->mask)
+			continue;
+		new_opts = xstrconcat3(new_opts, ",", om->opt);
+		flags &= ~om->mask;
+	}
+	for (m = &string_opt_map[0]; m->tag; m++) {
+		if (!m->skip && *(m->valptr))
+			new_opts = xstrconcat4(new_opts, ",",
+					       m->tag, *(m->valptr));
+	}
+	if (extra_opts && *extra_opts) {
+		new_opts = xstrconcat3(new_opts, ",", extra_opts);
+	}
+	if (user) {
+		new_opts = xstrconcat3(new_opts, ",user=", user);
+	}
+	return new_opts;
 }
 
 static int
@@ -757,11 +759,11 @@ try_mount_one (const char *spec0, const char *node0, char *types0,
 
   parse_opts (xstrdup (opts), &flags, &extra_opts);
 
-  suid_check (spec, node, &flags, &user);
-
   /* quietly succeed for fstab entries that don't get mounted automatically */
-  if (all && (flags & MS_NOAUTO))
+  if (mount_all && (flags & MS_NOAUTO))
     return 0;
+
+  suid_check (spec, node, &flags, &user);
 
   mount_opts = extra_opts;
 
@@ -872,7 +874,7 @@ retry_nfs:
 	/* heuristic: if /proc/version exists, then probably proc is mounted */
 	if (stat ("/proc/version", &statbuf))   /* proc mounted? */
 	   error (_("mount: %s is busy"), node);   /* no */
-	else if(!all || verbose)                /* yes, don't mention it */
+	else if (!mount_all || verbose)            /* yes, don't mention it */
 	   error (_("mount: proc already mounted"));
       } else {
 	error (_("mount: %s already mounted or %s busy"), spec, node);
@@ -1095,10 +1097,11 @@ mount_one (const char *spec, const char *node, char *types, const char *opts,
       specset = 1;
       nspec = get_spec_by_uuid(spec+5);
   } else if (!strncmp(spec, "LABEL=", 6)) {
-      const char *nspec2;
+      const char *nspec2 = NULL;
       specset = 2;
       nspec = get_spec_by_volume_label(spec+6);
-      nspec2 = second_occurrence_of_vol_label(spec+6);
+      if (nspec)
+	      nspec2 = second_occurrence_of_vol_label(spec+6);
       if (nspec2) {
 	      if (verbose)
 		      printf(_("mount: the label %s occurs on "
@@ -1117,7 +1120,7 @@ mount_one (const char *spec, const char *node, char *types, const char *opts,
 	  if (verbose > 1)
 		  printf(_("mount: going to mount %s by %s\n"), spec,
 			 (specset==1) ? _("UUID") : _("label"));
-      } else if(!all)
+      } else if(!mount_all)
           die (EX_USAGE, _("mount: no such partition found"));
       /* if -a then we may be rescued by a noauto option */
   }
@@ -1128,6 +1131,11 @@ mount_one (const char *spec, const char *node, char *types, const char *opts,
 	if (verbose)
 	  printf(_("mount: no type was given - "
 		 "I'll assume nfs because of the colon\n"));
+      } else if(!strncmp(spec, "//", 2)) {
+	types = "smb";
+	if (verbose)
+	  printf(_("mount: no type was given - "
+		   "I'll assume smb because of the // prefix\n"));
       }
   }
 
@@ -1181,6 +1189,19 @@ mounted (char *spec, char *node) {
      return 0;
 }
 
+/* avoid using stat() on things we are not going to mount anyway.. */
+static int
+has_noauto (char *opts) {
+	char *s;
+
+	if (!opts)
+		return 0;
+	s = strstr(opts, "noauto");
+	if (!s)
+		return 0;
+	return (s == opts || s[-1] == ',') && (s[6] == 0 || s[6] == ',');
+}
+
 /* Mount all filesystems of the specified types except swap and root.  */
 /* With the --fork option: fork and let different incarnations of
    mount handle different filesystems.  However, try to avoid several
@@ -1188,118 +1209,131 @@ mounted (char *spec, char *node) {
 #define DISKMAJOR(m)	(((int) m) & ~0xf)
 
 static int
-mount_all (char *types, char *options) {
-     struct mntentchn *mc, *mc0, *mtmp;
-     int status = 0;
-     struct stat statbuf;
-     struct child {
-	  pid_t pid;
-	  char *group;
-	  struct mntentchn *mec;
-	  struct mntentchn *meclast;
-	  struct child *nxt;
-     } childhead, *childtail, *cp;
-     char major[22];
-     char *g, *colon;
+do_mount_all (char *types, char *options) {
+	struct mntentchn *mc, *mc0, *mtmp;
+	int status = 0;
+	struct stat statbuf;
+	struct child {
+		pid_t pid;
+		char *group;
+		struct mntentchn *mec;
+		struct mntentchn *meclast;
+		struct child *nxt;
+	} childhead, *childtail, *cp;
+	char major[22];
+	char *g, *colon;
 
-     /* build a chain of what we have to do, or maybe
-	several chains, one for each major or NFS host */
-     childhead.nxt = 0;
-     childtail = &childhead;
-     mc0 = fstab_head();
-     for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
-	  if (matching_type (mc->m.mnt_type, types)
-	      && !streq (mc->m.mnt_dir, "/")
-	      && !streq (mc->m.mnt_dir, "root")) {
-	       if (mounted (mc->m.mnt_fsname, mc->m.mnt_dir)) {
-		    if (verbose)
-			 printf(_("mount: %s already mounted on %s\n"),
-				mc->m.mnt_fsname, mc->m.mnt_dir);
-	       } else {
-		    mtmp = (struct mntentchn *) xmalloc(sizeof(*mtmp));
-		    *mtmp = *mc;
-		    mtmp->nxt = 0;
-		    g = NULL;
-		    if (optfork) {
-			 if (stat(mc->m.mnt_fsname, &statbuf) == 0 &&
-			     S_ISBLK(statbuf.st_mode)) {
-			      sprintf(major, "#%x", DISKMAJOR(statbuf.st_rdev));
-			      g = major;
-			 }
+	/* build a chain of what we have to do, or maybe
+	   several chains, one for each major or NFS host */
+	childhead.nxt = 0;
+	childtail = &childhead;
+	mc0 = fstab_head();
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
+		if (has_noauto (mc->m.mnt_opts))
+			continue;
+		if (matching_type (mc->m.mnt_type, types)
+		    && !streq (mc->m.mnt_dir, "/")
+		    && !streq (mc->m.mnt_dir, "root")) {
+
+			if (mounted (mc->m.mnt_fsname, mc->m.mnt_dir)) {
+				if (verbose)
+					printf(_("mount: %s already mounted "
+						 "on %s\n"),
+					       mc->m.mnt_fsname,
+					       mc->m.mnt_dir);
+				continue;
+			}
+
+			mtmp = (struct mntentchn *) xmalloc(sizeof(*mtmp));
+			*mtmp = *mc;
+			mtmp->nxt = 0;
+			g = NULL;
+			if (optfork) {
+				if (stat(mc->m.mnt_fsname, &statbuf) == 0 &&
+				    S_ISBLK(statbuf.st_mode)) {
+					sprintf(major, "#%x",
+						DISKMAJOR(statbuf.st_rdev));
+					g = major;
+				}
 #ifdef HAVE_NFS
-			 if (strcmp(mc->m.mnt_type, "nfs") == 0) {
-			      g = xstrdup(mc->m.mnt_fsname);
-			      colon = strchr(g, ':');
-			      if (colon)
-				   *colon = '\0';
-			 }
+				if (strcmp(mc->m.mnt_type, "nfs") == 0) {
+					g = xstrdup(mc->m.mnt_fsname);
+					colon = strchr(g, ':');
+					if (colon)
+						*colon = '\0';
+				}
 #endif
-		    }
-		    if (g) {
-			 for (cp = childhead.nxt; cp; cp = cp->nxt)
-			      if (cp->group && strcmp(cp->group, g) == 0) {
-				   cp->meclast->nxt = mtmp;
-				   cp->meclast = mtmp;
-				   goto fnd;
-			      }
-		    }
-		    cp = (struct child *) xmalloc(sizeof *cp);
-		    cp->nxt = 0;
-		    cp->mec = cp->meclast = mtmp;
-		    cp->group = xstrdup(g);
-		    cp->pid = 0;
-		    childtail->nxt = cp;
-		    childtail = cp;
-	       fnd:;
-	       }
-	  }
-     }
+			}
+			if (g) {
+				for (cp = childhead.nxt; cp; cp = cp->nxt)
+					if (cp->group &&
+					    strcmp(cp->group, g) == 0) {
+						cp->meclast->nxt = mtmp;
+						cp->meclast = mtmp;
+						goto fnd;
+					}
+			}
+			cp = (struct child *) xmalloc(sizeof *cp);
+			cp->nxt = 0;
+			cp->mec = cp->meclast = mtmp;
+			cp->group = xstrdup(g);
+			cp->pid = 0;
+			childtail->nxt = cp;
+			childtail = cp;
+		fnd:;
+
+		}
+	}
 			      
-     /* now do everything */
-     for (cp = childhead.nxt; cp; cp = cp->nxt) {
-	  pid_t p = -1;
-	  if (optfork) {
-	       p = fork();
-	       if (p == -1) {
-	       	    int errsv = errno;
-		    error(_("mount: cannot fork: %s"), strerror (errsv));
-	       }
-	       else if (p != 0)
-		    cp->pid = p;
-	  }
+	/* now do everything */
+	for (cp = childhead.nxt; cp; cp = cp->nxt) {
+		pid_t p = -1;
+		if (optfork) {
+			p = fork();
+			if (p == -1) {
+				int errsv = errno;
+				error(_("mount: cannot fork: %s"),
+				      strerror (errsv));
+			}
+			else if (p != 0)
+				cp->pid = p;
+		}
 
-	  /* if child, or not forked, do the mounting */
-	  if (p == 0 || p == -1) {
-	       for (mc = cp->mec; mc; mc = mc->nxt)
-		    status |= mount_one (mc->m.mnt_fsname, mc->m.mnt_dir,
-					 mc->m.mnt_type, mc->m.mnt_opts,
-					 options, 0, 0);
-	       if (mountcount)
-		    status |= EX_SOMEOK;
-	       if (p == 0)
-		    exit(status);
-	  }
-     }
+		/* if child, or not forked, do the mounting */
+		if (p == 0 || p == -1) {
+			for (mc = cp->mec; mc; mc = mc->nxt) {
+				status |= mount_one (mc->m.mnt_fsname,
+						     mc->m.mnt_dir,
+						     mc->m.mnt_type,
+						     mc->m.mnt_opts,
+						     options, 0, 0);
+			}
+			if (mountcount)
+				status |= EX_SOMEOK;
+			if (p == 0)
+				exit(status);
+		}
+	}
 
-     /* wait for children, if any */
-     while ((cp = childhead.nxt) != NULL) {
-	  childhead.nxt = cp->nxt;
-	  if (cp->pid) {
-	       int ret;
-	  keep_waiting:
-	       if(waitpid(cp->pid, &ret, 0) == -1) {
-		    if (errno == EINTR)
-			 goto keep_waiting;
-		    perror("waitpid");
-	       } else if (WIFEXITED(ret))
-		    status |= WEXITSTATUS(ret);
-	       else
-		    status |= EX_SYSERR;
-	  }
-     }
-     if (mountcount)
-	  status |= EX_SOMEOK;
-     return status;
+	/* wait for children, if any */
+	while ((cp = childhead.nxt) != NULL) {
+		childhead.nxt = cp->nxt;
+		if (cp->pid) {
+			int ret;
+		keep_waiting:
+			if(waitpid(cp->pid, &ret, 0) == -1) {
+				if (errno == EINTR)
+					goto keep_waiting;
+				perror("waitpid");
+			} else if (WIFEXITED(ret))
+				status |= WEXITSTATUS(ret);
+			else
+				status |= EX_SYSERR;
+		}
+	}
+	if (mountcount)
+		status |= EX_SOMEOK;
+	return status;
 }
 
 extern char version[];
@@ -1391,10 +1425,10 @@ main (int argc, char *argv[]) {
 	while ((c = getopt_long (argc, argv, "afFhlL:no:rsU:vVwt:",
 				 longopts, NULL)) != -1) {
 		switch (c) {
-		case 'a':		/* mount everything in fstab */
-			++all;
+		case 'a':	       /* mount everything in fstab */
+			++mount_all;
 			break;
-		case 'f':		/* fake: don't actually call mount(2) */
+		case 'f':	       /* fake: don't actually call mount(2) */
 			++fake;
 			break;
 		case 'F':
@@ -1484,7 +1518,7 @@ main (int argc, char *argv[]) {
 
 	specseen = (uuid || volumelabel) ? 1 : 0; 	/* yes, .. i know */
 
-	if (argc+specseen == 0 && !all) {
+	if (argc+specseen == 0 && !mount_all) {
 		if (options || mounttype)
 			usage (stderr, EX_USAGE);
 		return print_all (types);
@@ -1492,7 +1526,7 @@ main (int argc, char *argv[]) {
 
 	if (getuid () != geteuid ()) {
 		suid = 1;
-		if (types || options || readwrite || nomtab || all ||
+		if (types || options || readwrite || nomtab || mount_all ||
 		    fake || mounttype || (argc + specseen) != 1)
 			die (EX_USAGE, _("mount: only root can do that"));
 	}
@@ -1527,7 +1561,7 @@ main (int argc, char *argv[]) {
 	switch (argc+specseen) {
 	case 0:
 		/* mount -a */
-		result = mount_all (types, options);
+		result = do_mount_all (types, options);
 		if (result == 0 && verbose)
 			error(_("nothing was mounted"));
 		break;

@@ -62,13 +62,13 @@ static char *mtsafe_strtok(char *, const char *, char **);
 #define wcstok mtsafe_strtok
 #endif
 
-void  c_columnate __P((void));
-void *emalloc __P((int));
-void  input __P((FILE *));
-void  maketbl __P((void));
-void  print __P((void));
-void  r_columnate __P((void));
-void  usage __P((void));
+static void  c_columnate __P((void));
+static void *emalloc __P((int));
+static void  input __P((FILE *));
+static void  maketbl __P((void));
+static void  print __P((void));
+static void  r_columnate __P((void));
+static void  usage __P((void));
 
 int termwidth = 80;		/* default terminal width */
 
@@ -87,10 +87,9 @@ main(int argc, char **argv)
 	int ch, tflag, xflag;
 	char *p;
 
-#ifdef __linux__
 	extern char *__progname;
 	__progname = argv[0];
-#endif
+
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
@@ -151,7 +150,7 @@ main(int argc, char **argv)
 }
 
 #define	TAB	8
-void
+static void
 c_columnate()
 {
 	int chcnt, col, cnt, endcol, numcols;
@@ -181,7 +180,7 @@ c_columnate()
 		putwchar('\n');
 }
 
-void
+static void
 r_columnate()
 {
 	int base, chcnt, cnt, col, endcol, numcols, numrows, row;
@@ -211,7 +210,7 @@ r_columnate()
 	}
 }
 
-void
+static void
 print()
 {
 	int cnt;
@@ -229,7 +228,7 @@ typedef struct _tbl {
 } TBL;
 #define	DEFCOLS	25
 
-void
+static void
 maketbl()
 {
 	TBL *t;
@@ -280,7 +279,7 @@ maketbl()
 #define	DEFNUM		1000
 #define	MAXLINELEN	(LINE_MAX + 1)
 
-void
+static void
 input(fp)
 	FILE *fp;
 {
@@ -355,7 +354,7 @@ static char *mtsafe_strtok(char *str, const char *delim, char **ptr)
 }
 #endif
 
-void *
+static void *
 emalloc(size)
 	int size;
 {
@@ -367,7 +366,7 @@ emalloc(size)
 	return (p);
 }
 
-void
+static void
 usage()
 {
 

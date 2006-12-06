@@ -14,7 +14,8 @@ MAN8= 	blockdev.8 fdformat.8 isosize.8 mkfs.8 mkswap.8 elvtune.8 \
 # Where to put binaries?
 # See the "install" rule for the links. . .
 
-SBIN= 	mkfs mkswap blockdev elvtune fsck.minix mkfs.minix mkfs.bfs
+SBIN= 	mkfs mkswap blockdev elvtune fsck.minix mkfs.minix mkfs.bfs \
+	fsck.cramfs mkfs.cramfs
 
 USRBIN=	fdformat isosize
 
@@ -31,6 +32,14 @@ MAN8:=$(MAN8) raw.8
 endif
 
 all: $(SBIN) $(USRBIN)
+
+fsck.cramfs: fsck.cramfs.o
+	cc -o fsck.cramfs fsck.cramfs.o -lz
+
+mkfs.cramfs: mkfs.cramfs.o
+	cc -o mkfs.cramfs mkfs.cramfs.o -lz
+
+fsck.cramfs.o mkfs.cramfs.o: cramfs.h
 
 fsck.minix.o mkfs.minix.o: bitops.h minix.h
 

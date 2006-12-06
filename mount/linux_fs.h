@@ -21,7 +21,7 @@ struct minix_super_block {
 	u_char   s_dummy[16];
 	u_char   s_magic[2];
 };
-#define minixmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8))
+#define minixmagic(s)	assemble2le(s.s_magic)
 
 #define ISODCL(from, to) (to - from + 1)
 #define ISO_STANDARD_ID "CD001"
@@ -46,7 +46,7 @@ struct ext_super_block {
 	u_char   s_dummy[56];
 	u_char   s_magic[2];
 };
-#define extmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8))
+#define extmagic(s)	assemble2le(s.s_magic)
 
 #define EXT2_PRE_02B_MAGIC  0xEF51
 #define EXT2_SUPER_MAGIC    0xEF53
@@ -63,7 +63,7 @@ struct ext2_super_block {
 	u_char	s_dummy3[88];
 	u_char	s_journal_inum[4];	/* ext3 only */
 };
-#define ext2magic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8))
+#define ext2magic(s)	assemble2le(s.s_magic)
 
 struct reiserfs_super_block
 {
@@ -96,9 +96,7 @@ struct xiafs_super_block {
     u_char     s_dummy[60];
     u_char     s_magic[4];
 };
-#define xiafsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
-			(((uint) s.s_magic[2]) << 16) + \
-			(((uint) s.s_magic[3]) << 24))
+#define xiafsmagic(s)	assemble4le(s.s_magic)
 
 /* From jj@sunsite.ms.mff.cuni.cz Mon Mar 23 15:19:05 1998 */
 #define UFS_SUPER_MAGIC_LE 0x00011954
@@ -107,9 +105,7 @@ struct ufs_super_block {
     u_char     s_dummy[0x55c];
     u_char     s_magic[4];
 };
-#define ufsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
-			 (((uint) s.s_magic[2]) << 16) + \
-			 (((uint) s.s_magic[3]) << 24))
+#define ufsmagic(s)	assemble4le(s.s_magic)
 
 /* From Richard.Russon@ait.co.uk Wed Feb 24 08:05:27 1999 */
 #define NTFS_SUPER_MAGIC "NTFS"
@@ -150,9 +146,7 @@ struct cramfs_super_block {
 	u_char    s_dummy[12];
 	u_char    s_id[16];
 };
-#define cramfsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
-			 (((uint) s.s_magic[2]) << 16) + \
-			 (((uint) s.s_magic[3]) << 24))
+#define cramfsmagic(s)	assemble4le(s.s_magic)
 
 #define HFS_SUPER_MAGIC 0x4244
 struct hfs_super_block {
@@ -160,20 +154,15 @@ struct hfs_super_block {
 	u_char    s_dummy[18];
 	u_char    s_blksize[4];
 };
-#define hfsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8))
-#define hfsblksize(s)	((uint) s.s_blksize[0] + \
-			 (((uint) s.s_blksize[1]) << 8) + \
-			 (((uint) s.s_blksize[2]) << 16) + \
-			 (((uint) s.s_blksize[3]) << 24))
+#define hfsmagic(s)	assemble2le(s.s_magic)
+#define hfsblksize(s)	assemble4le(s.s_blksize)
 
 #define HPFS_SUPER_MAGIC 0xf995e849
 struct hpfs_super_block {
 	u_char    s_magic[4];
 	u_char    s_magic2[4];
 };
-#define hpfsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
-			 (((uint) s.s_magic[2]) << 16) + \
-			 (((uint) s.s_magic[3]) << 24))
+#define hpfsmagic(s)	assemble4le(s.s_magic)
 
 struct adfs_super_block {
 	u_char    s_dummy[448];
@@ -187,9 +176,7 @@ struct adfs_super_block {
 struct vxfs_super_block {
 	u_char	s_magic[4];
 };
-#define vxfsmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
-			 (((uint) s.s_magic[2]) << 16) + \
-			 (((uint) s.s_magic[3]) << 24))
+#define vxfsmagic(s)	assemble4le(s.s_magic)
 #define VXFS_SUPER_MAGIC 0xa501FCF5
 
 struct jfs_super_block {
@@ -200,14 +187,26 @@ struct jfs_super_block {
 #define JFS_SUPER1_OFF 0x8000
 #define JFS_MAGIC "JFS1"
 
-#define SYSV_SUPER_MAGIC	0xfd187e20
-
 struct sysv_super_block {
 	u_char  s_dummy1[504];
 	u_char  s_magic[4];
 	u_char  type[4];
 };
+#define sysvmagic(s)		assemble4le(s.s_magic)
+#define SYSV_SUPER_MAGIC	0xfd187e20
 
-#define sysvmagic(s)	((uint) s.s_magic[0] + (((uint) s.s_magic[1]) << 8) + \
-			 (((uint) s.s_magic[2]) << 16) + \
-			 (((uint) s.s_magic[3]) << 24))
+struct mdp_super_block {
+	u_char	md_magic[4];
+};
+#define MD_SB_MAGIC	0xa92b4efc
+#define mdsbmagic(s)	assemble4le(s.md_magic)
+
+static inline int
+assemble2le(unsigned char *p) {
+	return (p[0] | (p[1] << 8));
+}
+
+static inline int
+assemble4le(unsigned char *p) {
+	return (p[0] | (p[1] << 8) | (p[2] << 16) | (p[3] << 24));
+}

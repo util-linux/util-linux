@@ -39,6 +39,30 @@ static struct uuidCache_s {
 	char *device;
 } *uuidCache = NULL;
 
+/*
+ * See whether this device has (the magic of) a RAID superblock at the end.
+ * If so, it probably is, or has been, part of a RAID array.
+ */
+static int
+is_raid_partition(int fd) {
+	struct mdp_super_block mdsb;
+	int n;
+
+	/* hardcode 4096 here in various places, because that's
+	   what it's defined to be.  Note that even if we used
+	   the actual kernel headers, sizeof(mdp_super_t) is
+	   slightly larger in the 2.2 kernel on 64-bit archs,
+	   so using that wouldn't work. */
+	lseek(fd, -4096, SEEK_END);	/* Ignore possible error
+					   about return value overflow */
+	n = 4096;
+	if (sizeof(mdsb) < n)
+		n = sizeof(mdsb);
+	if (read(fd, &mdsb, n) != n)
+		return 1;		/* error */
+	return (mdsbmagic(mdsb) == MD_SB_MAGIC);
+}
+
 /* for now, only ext2, ext3 and xfs are supported */
 static int
 get_label_uuid(const char *device, char **label, char *uuid) {
@@ -55,6 +79,12 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 	fd = open(device, O_RDONLY);
 	if (fd < 0)
 		return rv;
+
+	/* If there is a RAID partition, or an error, ignore this partition */
+	if (is_raid_partition(fd)) {
+		close(fd);
+		return rv;
+	}
 
 	if (lseek(fd, 1024, SEEK_SET) == 1024
 	    && read(fd, (char *) &e2sb, sizeof(e2sb)) == sizeof(e2sb)

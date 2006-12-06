@@ -548,6 +548,11 @@ effect.
 .B sync
 All I/O to the file system should be done synchronously.
 .TP
+.B dirsync
+All directory updates within the file system should be done synchronously.
+This affects the following system calls: creat, link, unlink, symlink,
+mkdir, rmdir, mknod and rename.
+.TP
 .B user
 Allow an ordinary user to mount the file system.
 The name of the mounting user is written to mtab so that he can unmount
@@ -1125,8 +1130,8 @@ For details, see
 Especially useful options include
 .TP
 .B rsize=8192,wsize=8192
-This will make your nfs connection much faster than with the default
-buffer size of 1024. (NFSv2 does not work with larger values of
+This will make your nfs connection faster than with the default
+buffer size of 4096. (NFSv2 does not work with larger values of
 .B rsize
 and
 .BR wsize .)
@@ -1175,6 +1180,7 @@ hard links instead of being suppressed.
 .TP
 \fBuid=\fP\fIvalue\fP, \fBgid=\fP\fIvalue\fP and \fBumask=\fP\fIvalue\fP
 Set the file permission on the filesystem.
+The umask value is given in octal.
 By default, the files are owned by root and not readable by somebody else.
 
 .SH "Mount options for proc"
@@ -1316,6 +1322,7 @@ Set the default group.
 .TP
 .B umask=
 Set the default umask.
+The value is given in octal.
 .TP
 .B uid=
 Set the default user.
@@ -1661,7 +1668,7 @@ temporary file
 It is possible for a corrupted file system to cause a crash.
 .PP
 Some Linux file systems don't support
-.B "\-o sync"
+.B "\-o sync and \-o dirsync"
 (the ext2 and ext3 file systems
 .I do
 support synchronous updates (a la BSD) when mounted with the

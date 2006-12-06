@@ -1,6 +1,7 @@
 /* rtc.c - Use /dev/rtc for clock access */
 #include <unistd.h>		/* for close() */
 #include <fcntl.h>		/* for O_RDONLY */
+#include <sysexits.h>
 #include <sys/ioctl.h>
 
 #include "clock.h"
@@ -90,17 +91,29 @@ struct linux_rtc_time {
 
 static char rtc_dev_name[40];
 
-/* maybe we should not try /dev/misc/efirtc?
-   maybe we should reset rtc_dev_name to give better error messages */
+/* maybe we should not try /dev/misc/efirtc? */
 static int
 open_rtc(void) {
 	int rtc_fd;
 
 	sprintf(rtc_dev_name, "/dev/%s", RTC_DEVN);
 	rtc_fd = open(rtc_dev_name, O_RDONLY);
-	if (rtc_fd < 0) {
+	if (rtc_fd < 0 && errno == ENOENT) {
 		sprintf(rtc_dev_name, "/dev/misc/%s", RTC_DEVN);
 		rtc_fd = open(rtc_dev_name, O_RDONLY);
+		if (rtc_fd < 0 && errno == ENOENT)
+			sprintf(rtc_dev_name, "/dev/%s", RTC_DEVN);
+	}
+	return rtc_fd;
+}
+
+static int
+open_rtc_or_exit(void) {
+	int rtc_fd = open_rtc();
+
+	if (rtc_fd < 0) {
+		outsyserr(_("open() of %s failed"), rtc_dev_name);
+		exit(EX_OSFILE);
 	}
 	return rtc_fd;
 }
@@ -135,7 +148,7 @@ do_rtc_read_ioctl(int rtc_fd, struct tm *tm) {
 		perror(ioctlname);
 		fprintf(stderr, _("ioctl() to %s to read the time failed.\n"),
 			rtc_dev_name);
-		exit(5);
+		exit(EX_IOERR);
 	}
 
 	tm->tm_isdst = -1;          /* don't know whether it's dst */
@@ -204,7 +217,7 @@ int ret;
 #else
     rc = ioctl(rtc_fd, RTC_UIE_ON, 0);
 #endif
-    if (rc == -1 && errno == EINVAL) {
+    if (rc == -1 && (errno == ENOTTY || errno == EINVAL)) {
       /* This rtc device doesn't have interrupt functions.  This is typical
          on an Alpha, where the Hardware Clock interrupts are used by the
          kernel for the system clock, so aren't at the user's disposal.
@@ -245,11 +258,7 @@ static int
 read_hardware_clock_rtc(struct tm *tm) {
 	int rtc_fd;
 
-	rtc_fd = open_rtc();
-	if (rtc_fd == -1) {
-		outsyserr(_("open() of %s failed"), rtc_dev_name);
-		exit(5);
-	}
+	rtc_fd = open_rtc_or_exit();
 
 	/* Read the RTC time/date, return answer via tm */
 	do_rtc_read_ioctl(rtc_fd, tm);
@@ -269,11 +278,8 @@ set_hardware_clock_rtc(const struct tm *new_broken_time) {
 	int rtc_fd;
 	char *ioctlname;
 
-	rtc_fd = open_rtc();
-	if (rtc_fd < 0) {
-		outsyserr(_("Unable to open %s"), rtc_dev_name);
-		exit(5);
-	}
+	rtc_fd = open_rtc_or_exit();
+
 #ifdef __sparc__
 	{
 		struct sparc_rtc_time stm;
@@ -299,7 +305,7 @@ set_hardware_clock_rtc(const struct tm *new_broken_time) {
 		perror(ioctlname);
 		fprintf(stderr, _("ioctl() to %s to set the time failed.\n"),
 			rtc_dev_name);
-		exit(5);
+		exit(EX_IOERR);
 	}
 
 	if (debug)

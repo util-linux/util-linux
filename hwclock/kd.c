@@ -1,6 +1,7 @@
 /* kd.c - KDGHWCLK stuff, possibly m68k only */
 #include <unistd.h>		/* for close() */
 #include <fcntl.h>		/* for O_RDONLY */
+#include <sysexits.h>
 #include <sys/ioctl.h>
 
 #include "../defines.h"		/* for HAVE_nanosleep */
@@ -90,7 +91,7 @@ read_hardware_clock_kd(struct tm *tm) {
 
   if (ioctl(con_fd, KDGHWCLK, &t) == -1) {
     outsyserr(_("ioctl() failed to read time from %s"), con_fd_filename);
-    exit(5);
+    exit(EX_IOERR);
   }
 
   tm->tm_sec  = t.sec;

@@ -14,7 +14,7 @@
 
 #if 1
 /* explicit prototypes, since sometimes <wchar.h> does not give them */
-extern int wcwidth (wint_t c);
+extern int wcwidth (wchar_t c);         /* old: wint_t c */
 extern int wcswidth (const wchar_t *s, size_t n);
 extern size_t wcslen (const wchar_t *s);
 extern wchar_t *wcsdup (const wchar_t *s);

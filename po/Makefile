@@ -3,6 +3,12 @@ PACKAGE = util-linux
 include ../make_include
 include ../MCONFIG
 
+ifeq "(DISABLE_NLS)" "yes"
+  DO_NLS=no
+else
+  DO_NLS=$(HAVE_XGETTEXT)
+endif
+
 #
 # po2tbl.sed is not taken from /usr/share/gettext/intl
 # Often it is not present.
@@ -61,7 +67,7 @@ INSTOBJEXT = .mo
 	sed -f $(PO2TBL) < $< > $*.msg \
 	  && rm -f $@ && $(GENCAT) $@ $*.msg
 
-all: all-$(HAVE_XGETTEXT)
+all: all-$(DO_NLS)
 
 all-yes: cat-id-tbl.c $(CATALOGS)
 all-no:
@@ -86,7 +92,7 @@ stamp-cat-id: util-linux.pot
 	fi
 	rm -f stamp-cat-id && echo timestamp > stamp-cat-id
 
-install: install-data-$(HAVE_XGETTEXT)
+install: install-data-$(DO_NLS)
 install-data-no: all
 install-data-yes: all
 	@catalogs='$(CATALOGS)'; \
@@ -125,6 +131,7 @@ distclean: clean
 	rm -f POTFILES *.gmo *.mo *.msg *.cat *.cat.m
 
 update-po: 
+	rm -f util-linux.pot
 	$(MAKE) util-linux.pot
 	catalogs='$(CATALOGS)'; \
 	for cat in $$catalogs; do \
