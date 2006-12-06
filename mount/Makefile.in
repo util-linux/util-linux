@@ -38,8 +38,8 @@ build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/config/include-Makefile.am
-bin_PROGRAMS = mount$(EXEEXT) umount$(EXEEXT) swapon$(EXEEXT) \
-	losetup$(EXEEXT) $(am__EXEEXT_1)
+bin_PROGRAMS = mount$(EXEEXT) umount$(EXEEXT)
+sbin_PROGRAMS = losetup$(EXEEXT) swapon$(EXEEXT) $(am__EXEEXT_1)
 @HAVE_BLKID_TRUE@am__append_1 = -lblkid -luuid
 @HAVE_BLKID_TRUE@am__append_2 = -lblkid -luuid
 @HAVE_PIVOT_ROOT_TRUE@am__append_3 = pivot_root
@@ -56,11 +56,12 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/config/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-@HAVE_PIVOT_ROOT_TRUE@am__EXEEXT_1 = pivot_root$(EXEEXT)
-am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man5dir)" \
-	"$(DESTDIR)$(man8dir)"
+am__installdirs = "$(DESTDIR)$(bindir)" "$(DESTDIR)$(sbindir)" \
+	"$(DESTDIR)$(man5dir)" "$(DESTDIR)$(man8dir)"
 binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-PROGRAMS = $(bin_PROGRAMS)
+@HAVE_PIVOT_ROOT_TRUE@am__EXEEXT_1 = pivot_root$(EXEEXT)
+sbinPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
+PROGRAMS = $(bin_PROGRAMS) $(sbin_PROGRAMS)
 am_losetup_OBJECTS = losetup-lomount.$(OBJEXT)
 losetup_OBJECTS = $(am_losetup_OBJECTS)
 losetup_LDADD = $(LDADD)
@@ -195,6 +196,8 @@ LIBS = @LIBS@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
+M68K_FALSE = @M68K_FALSE@
+M68K_TRUE = @M68K_TRUE@
 MAKEINFO = @MAKEINFO@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
@@ -344,6 +347,29 @@ uninstall-binPROGRAMS:
 
 clean-binPROGRAMS:
 	-test -z "$(bin_PROGRAMS)" || rm -f $(bin_PROGRAMS)
+install-sbinPROGRAMS: $(sbin_PROGRAMS)
+	@$(NORMAL_INSTALL)
+	test -z "$(sbindir)" || $(mkdir_p) "$(DESTDIR)$(sbindir)"
+	@list='$(sbin_PROGRAMS)'; for p in $$list; do \
+	  p1=`echo $$p|sed 's/$(EXEEXT)$$//'`; \
+	  if test -f $$p \
+	  ; then \
+	    f=`echo "$$p1" | sed 's,^.*/,,;$(transform);s/$$/$(EXEEXT)/'`; \
+	   echo " $(INSTALL_PROGRAM_ENV) $(sbinPROGRAMS_INSTALL) '$$p' '$(DESTDIR)$(sbindir)/$$f'"; \
+	   $(INSTALL_PROGRAM_ENV) $(sbinPROGRAMS_INSTALL) "$$p" "$(DESTDIR)$(sbindir)/$$f" || exit 1; \
+	  else :; fi; \
+	done
+
+uninstall-sbinPROGRAMS:
+	@$(NORMAL_UNINSTALL)
+	@list='$(sbin_PROGRAMS)'; for p in $$list; do \
+	  f=`echo "$$p" | sed 's,^.*/,,;s/$(EXEEXT)$$//;$(transform);s/$$/$(EXEEXT)/'`; \
+	  echo " rm -f '$(DESTDIR)$(sbindir)/$$f'"; \
+	  rm -f "$(DESTDIR)$(sbindir)/$$f"; \
+	done
+
+clean-sbinPROGRAMS:
+	-test -z "$(sbin_PROGRAMS)" || rm -f $(sbin_PROGRAMS)
 losetup$(EXEEXT): $(losetup_OBJECTS) $(losetup_DEPENDENCIES) 
 	@rm -f losetup$(EXEEXT)
 	$(LINK) $(losetup_LDFLAGS) $(losetup_OBJECTS) $(losetup_LDADD) $(LIBS)
@@ -585,7 +611,7 @@ check-am: all-am
 check: check-am
 all-am: Makefile $(PROGRAMS) $(MANS)
 installdirs:
-	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(man8dir)"; do \
+	for dir in "$(DESTDIR)$(bindir)" "$(DESTDIR)$(sbindir)" "$(DESTDIR)$(man5dir)" "$(DESTDIR)$(man8dir)"; do \
 	  test -z "$$dir" || $(mkdir_p) "$$dir"; \
 	done
 install: install-am
@@ -614,7 +640,8 @@ maintainer-clean-generic:
 	@echo "it deletes files that may require special tools to rebuild."
 clean: clean-am
 
-clean-am: clean-binPROGRAMS clean-generic clean-local mostlyclean-am
+clean-am: clean-binPROGRAMS clean-generic clean-local \
+	clean-sbinPROGRAMS mostlyclean-am
 
 distclean: distclean-am
 	-rm -rf ./$(DEPDIR)
@@ -634,7 +661,7 @@ info-am:
 
 install-data-am: install-man
 
-install-exec-am: install-binPROGRAMS
+install-exec-am: install-binPROGRAMS install-sbinPROGRAMS
 	@$(NORMAL_INSTALL)
 	$(MAKE) $(AM_MAKEFLAGS) install-exec-hook
 
@@ -661,22 +688,24 @@ ps: ps-am
 
 ps-am:
 
-uninstall-am: uninstall-binPROGRAMS uninstall-info-am uninstall-man
+uninstall-am: uninstall-binPROGRAMS uninstall-info-am uninstall-man \
+	uninstall-sbinPROGRAMS
 
 uninstall-man: uninstall-man5 uninstall-man8
 
 .PHONY: CTAGS GTAGS all all-am check check-am clean clean-binPROGRAMS \
-	clean-generic clean-local ctags distclean distclean-compile \
-	distclean-generic distclean-tags distdir dvi dvi-am html \
-	html-am info info-am install install-am install-binPROGRAMS \
-	install-data install-data-am install-exec install-exec-am \
-	install-exec-hook install-info install-info-am install-man \
-	install-man5 install-man8 install-strip installcheck \
-	installcheck-am installdirs maintainer-clean \
-	maintainer-clean-generic mostlyclean mostlyclean-compile \
-	mostlyclean-generic pdf pdf-am ps ps-am tags uninstall \
-	uninstall-am uninstall-binPROGRAMS uninstall-info-am \
-	uninstall-man uninstall-man5 uninstall-man8
+	clean-generic clean-local clean-sbinPROGRAMS ctags distclean \
+	distclean-compile distclean-generic distclean-tags distdir dvi \
+	dvi-am html html-am info info-am install install-am \
+	install-binPROGRAMS install-data install-data-am install-exec \
+	install-exec-am install-exec-hook install-info install-info-am \
+	install-man install-man5 install-man8 install-sbinPROGRAMS \
+	install-strip installcheck installcheck-am installdirs \
+	maintainer-clean maintainer-clean-generic mostlyclean \
+	mostlyclean-compile mostlyclean-generic pdf pdf-am ps ps-am \
+	tags uninstall uninstall-am uninstall-binPROGRAMS \
+	uninstall-info-am uninstall-man uninstall-man5 uninstall-man8 \
+	uninstall-sbinPROGRAMS
 
 
 swapon.c: swapargs.h
@@ -690,7 +719,7 @@ clean-local:
 install-exec-hook:
 	chmod 4755 $(DESTDIR)$(bindir)/mount
 	chmod 4755 $(DESTDIR)$(bindir)/umount
-	cd $(DESTDIR)$(bindir) && ln -sf swapon swapoff
+	cd $(DESTDIR)$(sbindir) && ln -sf swapon swapoff
 # Tell versions [3.59,3.63) of GNU make to not export all variables.
 # Otherwise a system limit (for SysV at least) may be exceeded.
 .NOEXPORT:

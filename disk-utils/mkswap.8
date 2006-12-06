@@ -76,9 +76,12 @@ while the bad blocks, if any, can simply be listed. Nobody wants
 to use a swap space with hundreds of bad blocks. (I would not even
 use a swap space with 1 bad block.)
 In the new style swap area this is precisely what is done.
-The maximum useful size of a swap area now depends on the architecture.
+
+The maximum useful size of a swap area depends on the architecture and
+the kernel version.
 It is roughly 2GiB on i386, PPC, m68k, ARM, 1GiB on sparc, 512MiB on mips,
-128GiB on alpha and 3TiB on sparc64.
+128GiB on alpha and 3TiB on sparc64. For kernels after 2.3.3 there is no
+such limitation.
 
 Note that before 2.1.117 the kernel allocated one byte for each page,
 while it now allocates two bytes, so that taking a swap area of 2 GiB

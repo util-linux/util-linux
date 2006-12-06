@@ -2,7 +2,8 @@ include $(top_srcdir)/config/include-Makefile.am
 
 AM_CPPFLAGS += -DHAVE_NFS
 
-bin_PROGRAMS = mount umount swapon losetup
+bin_PROGRAMS = mount umount
+sbin_PROGRAMS = losetup swapon
 man_MANS = fstab.5 nfs.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 
 mount_SOURCES = mount.c fstab.c sundries.c xmalloc.c realpath.c mntent.c \
@@ -32,7 +33,7 @@ swapon_LDADD = -lblkid -luuid
 endif
 
 if HAVE_PIVOT_ROOT
-bin_PROGRAMS += pivot_root
+sbin_PROGRAMS += pivot_root
 man_MANS += pivot_root.8
 endif
 
@@ -49,4 +50,4 @@ clean-local:
 install-exec-hook:
 	chmod 4755 $(DESTDIR)$(bindir)/mount
 	chmod 4755 $(DESTDIR)$(bindir)/umount
-	cd $(DESTDIR)$(bindir) && ln -sf swapon swapoff
+	cd $(DESTDIR)$(sbindir) && ln -sf swapon swapoff

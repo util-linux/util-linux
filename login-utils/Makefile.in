@@ -40,9 +40,9 @@ DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/config/include-Makefile.am
 bin_PROGRAMS = $(am__EXEEXT_1)
 usrbinexec_PROGRAMS = $(am__EXEEXT_4) $(am__EXEEXT_5) $(am__EXEEXT_6) \
-	$(am__EXEEXT_7) $(am__EXEEXT_8)
+	$(am__EXEEXT_7)
 sbin_PROGRAMS = $(am__EXEEXT_2) $(am__EXEEXT_3)
-usrsbinexec_PROGRAMS = $(am__EXEEXT_9)
+usrsbinexec_PROGRAMS = $(am__EXEEXT_8)
 @BUILD_AGETTY_TRUE@am__append_1 = agetty
 @BUILD_AGETTY_TRUE@am__append_2 = agetty.8
 @BUILD_INIT_TRUE@am__append_3 = simpleinit shutdown initctl
@@ -52,27 +52,25 @@ usrsbinexec_PROGRAMS = $(am__EXEEXT_9)
 @BUILD_LAST_TRUE@am__append_5 = last
 @BUILD_LAST_TRUE@am__append_6 = last.1
 @BUILD_LOGIN_UTILS_TRUE@am__append_7 = login
-@BUILD_LOGIN_UTILS_TRUE@am__append_8 = chfn chsh
+@BUILD_LOGIN_UTILS_TRUE@am__append_8 = chfn chsh newgrp
 @BUILD_LOGIN_UTILS_TRUE@am__append_9 = vipw
-@BUILD_LOGIN_UTILS_TRUE@am__append_10 = chfn.1 chsh.1 login.1 vipw.8 vigr.8
-@BUILD_LOGIN_UTILS_TRUE@@NEED_LIBCRYPT_TRUE@am__append_11 = newgrp
-@BUILD_LOGIN_UTILS_TRUE@@NEED_LIBCRYPT_TRUE@am__append_12 = newgrp.1
+@BUILD_LOGIN_UTILS_TRUE@am__append_10 = chfn.1 chsh.1 login.1 newgrp.1 vipw.8 vigr.8
+@BUILD_LOGIN_UTILS_TRUE@@NEED_LIBCRYPT_TRUE@am__append_11 = -lcrypt
+@BUILD_LOGIN_UTILS_TRUE@@NEED_LIBCRYPT_TRUE@am__append_12 = -lcrypt
 @BUILD_LOGIN_UTILS_TRUE@@NEED_LIBCRYPT_TRUE@am__append_13 = -lcrypt
 @BUILD_LOGIN_UTILS_TRUE@@NEED_LIBCRYPT_TRUE@am__append_14 = -lcrypt
-@BUILD_LOGIN_UTILS_TRUE@@NEED_LIBCRYPT_TRUE@am__append_15 = -lcrypt
-@BUILD_LOGIN_UTILS_TRUE@@NEED_LIBCRYPT_TRUE@am__append_16 = -lcrypt
+@BUILD_LOGIN_UTILS_TRUE@@HAVE_PAM_TRUE@am__append_15 = -lpam -lpam_misc
+@BUILD_LOGIN_UTILS_TRUE@@HAVE_PAM_TRUE@am__append_16 = -lpam -lpam_misc
 @BUILD_LOGIN_UTILS_TRUE@@HAVE_PAM_TRUE@am__append_17 = -lpam -lpam_misc
-@BUILD_LOGIN_UTILS_TRUE@@HAVE_PAM_TRUE@am__append_18 = -lpam -lpam_misc
-@BUILD_LOGIN_UTILS_TRUE@@HAVE_PAM_TRUE@am__append_19 = -lpam -lpam_misc
+@BUILD_LOGIN_UTILS_TRUE@@HAVE_SELINUX_TRUE@am__append_18 = selinux_utils.c
+@BUILD_LOGIN_UTILS_TRUE@@HAVE_SELINUX_TRUE@am__append_19 = -lselinux
 @BUILD_LOGIN_UTILS_TRUE@@HAVE_SELINUX_TRUE@am__append_20 = selinux_utils.c
 @BUILD_LOGIN_UTILS_TRUE@@HAVE_SELINUX_TRUE@am__append_21 = -lselinux
-@BUILD_LOGIN_UTILS_TRUE@@HAVE_SELINUX_TRUE@am__append_22 = selinux_utils.c
-@BUILD_LOGIN_UTILS_TRUE@@HAVE_SELINUX_TRUE@am__append_23 = -lselinux
-@BUILD_LOGIN_UTILS_TRUE@@HAVE_SELINUX_TRUE@am__append_24 = -lselinux
-@BUILD_MESG_TRUE@am__append_25 = mesg
-@BUILD_MESG_TRUE@am__append_26 = mesg.1
-@BUILD_WALL_TRUE@am__append_27 = wall
-@BUILD_WALL_TRUE@am__append_28 = wall.1
+@BUILD_LOGIN_UTILS_TRUE@@HAVE_SELINUX_TRUE@am__append_22 = -lselinux
+@BUILD_MESG_TRUE@am__append_23 = mesg
+@BUILD_MESG_TRUE@am__append_24 = mesg.1
+@BUILD_WALL_TRUE@am__append_25 = wall
+@BUILD_WALL_TRUE@am__append_26 = wall.1
 subdir = login-utils
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
@@ -95,13 +93,12 @@ binPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 @BUILD_INIT_TRUE@	initctl$(EXEEXT)
 sbinPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 @BUILD_LAST_TRUE@am__EXEEXT_4 = last$(EXEEXT)
-@BUILD_LOGIN_UTILS_TRUE@am__EXEEXT_5 = chfn$(EXEEXT) chsh$(EXEEXT)
-@BUILD_LOGIN_UTILS_TRUE@@NEED_LIBCRYPT_TRUE@am__EXEEXT_6 =  \
-@BUILD_LOGIN_UTILS_TRUE@@NEED_LIBCRYPT_TRUE@	newgrp$(EXEEXT)
-@BUILD_MESG_TRUE@am__EXEEXT_7 = mesg$(EXEEXT)
-@BUILD_WALL_TRUE@am__EXEEXT_8 = wall$(EXEEXT)
+@BUILD_LOGIN_UTILS_TRUE@am__EXEEXT_5 = chfn$(EXEEXT) chsh$(EXEEXT) \
+@BUILD_LOGIN_UTILS_TRUE@	newgrp$(EXEEXT)
+@BUILD_MESG_TRUE@am__EXEEXT_6 = mesg$(EXEEXT)
+@BUILD_WALL_TRUE@am__EXEEXT_7 = wall$(EXEEXT)
 usrbinexecPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
-@BUILD_LOGIN_UTILS_TRUE@am__EXEEXT_9 = vipw$(EXEEXT)
+@BUILD_LOGIN_UTILS_TRUE@am__EXEEXT_8 = vipw$(EXEEXT)
 usrsbinexecPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(bin_PROGRAMS) $(sbin_PROGRAMS) $(usrbinexec_PROGRAMS) \
 	$(usrsbinexec_PROGRAMS)
@@ -271,6 +268,8 @@ LIBS = @LIBS@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
+M68K_FALSE = @M68K_FALSE@
+M68K_TRUE = @M68K_TRUE@
 MAKEINFO = @MAKEINFO@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
@@ -343,21 +342,20 @@ usrsbinexecdir = $(prefix)/usr/sbin
 AM_CPPFLAGS = -include $(top_srcdir)/config.h -I$(top_srcdir)/include
 DEFAULT_INCLUDES = 
 man_MANS = $(am__append_2) $(am__append_4) $(am__append_6) \
-	$(am__append_10) $(am__append_12) $(am__append_26) \
-	$(am__append_28)
+	$(am__append_10) $(am__append_24) $(am__append_26)
 @BUILD_INIT_TRUE@@NEED_LIBCRYPT_TRUE@simpleinit_LDADD = -lcrypt
 @BUILD_LOGIN_UTILS_TRUE@chfn_SOURCES = chfn.c islocal.c setpwnam.c \
-@BUILD_LOGIN_UTILS_TRUE@	$(am__append_20)
+@BUILD_LOGIN_UTILS_TRUE@	$(am__append_18)
 @BUILD_LOGIN_UTILS_TRUE@chsh_SOURCES = chsh.c islocal.c setpwnam.c \
-@BUILD_LOGIN_UTILS_TRUE@	$(am__append_22)
-@BUILD_LOGIN_UTILS_TRUE@chfn_LDADD = ../lib/libenv.a $(am__append_13) \
-@BUILD_LOGIN_UTILS_TRUE@	$(am__append_17) $(am__append_21)
-@BUILD_LOGIN_UTILS_TRUE@chsh_LDADD = ../lib/libenv.a $(am__append_14) \
-@BUILD_LOGIN_UTILS_TRUE@	$(am__append_18) $(am__append_23)
-@BUILD_LOGIN_UTILS_TRUE@login_LDADD = ../lib/libsetproctitle.a \
+@BUILD_LOGIN_UTILS_TRUE@	$(am__append_20)
+@BUILD_LOGIN_UTILS_TRUE@chfn_LDADD = ../lib/libenv.a $(am__append_11) \
 @BUILD_LOGIN_UTILS_TRUE@	$(am__append_15) $(am__append_19)
-@BUILD_LOGIN_UTILS_TRUE@newgrp_LDADD = $(am__append_16)
-@BUILD_LOGIN_UTILS_TRUE@vipw_LDADD = $(am__append_24)
+@BUILD_LOGIN_UTILS_TRUE@chsh_LDADD = ../lib/libenv.a $(am__append_12) \
+@BUILD_LOGIN_UTILS_TRUE@	$(am__append_16) $(am__append_21)
+@BUILD_LOGIN_UTILS_TRUE@login_LDADD = ../lib/libsetproctitle.a \
+@BUILD_LOGIN_UTILS_TRUE@	$(am__append_13) $(am__append_17)
+@BUILD_LOGIN_UTILS_TRUE@newgrp_LDADD = $(am__append_14)
+@BUILD_LOGIN_UTILS_TRUE@vipw_LDADD = $(am__append_22)
 @BUILD_LOGIN_UTILS_TRUE@@HAVE_PAM_FALSE@login_SOURCES = login.c checktty.c
 @BUILD_LOGIN_UTILS_TRUE@@HAVE_PAM_TRUE@login_SOURCES = login.c
 @BUILD_WALL_TRUE@wall_SOURCES = wall.c ttymsg.c

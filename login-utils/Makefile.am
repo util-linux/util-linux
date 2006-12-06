@@ -32,9 +32,9 @@ endif
 if BUILD_LOGIN_UTILS
 
 bin_PROGRAMS += login
-usrbinexec_PROGRAMS += chfn chsh
+usrbinexec_PROGRAMS += chfn chsh newgrp
 usrsbinexec_PROGRAMS += vipw
-man_MANS += chfn.1 chsh.1 login.1 vipw.8 vigr.8
+man_MANS += chfn.1 chsh.1 login.1 newgrp.1 vipw.8 vigr.8
 
 chfn_SOURCES = chfn.c islocal.c setpwnam.c
 chsh_SOURCES = chsh.c islocal.c setpwnam.c
@@ -46,8 +46,6 @@ newgrp_LDADD =
 vipw_LDADD =
 
 if NEED_LIBCRYPT
-usrbinexec_PROGRAMS += newgrp
-man_MANS += newgrp.1
 chfn_LDADD += -lcrypt
 chsh_LDADD += -lcrypt
 login_LDADD += -lcrypt

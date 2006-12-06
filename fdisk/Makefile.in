@@ -38,14 +38,14 @@ build_triplet = @build@
 host_triplet = @host@
 DIST_COMMON = $(srcdir)/Makefile.am $(srcdir)/Makefile.in \
 	$(top_srcdir)/config/include-Makefile.am
-sbin_PROGRAMS = fdisk$(EXEEXT) $(am__EXEEXT_1) $(am__EXEEXT_2) \
-	$(am__EXEEXT_3)
-@SPARC_FALSE@am__append_1 = sfdisk
-@SPARC_FALSE@am__append_2 = sfdisk.8
-@SPARC_FALSE@@USE_SLANG_TRUE@am__append_3 = cfdisk
-@SPARC_FALSE@@USE_SLANG_TRUE@am__append_4 = cfdisk.8
-@HAVE_NCURSES_TRUE@@SPARC_FALSE@@USE_SLANG_FALSE@am__append_5 = cfdisk
-@HAVE_NCURSES_TRUE@@SPARC_FALSE@@USE_SLANG_FALSE@am__append_6 = cfdisk.8
+@M68K_FALSE@sbin_PROGRAMS = fdisk$(EXEEXT) $(am__EXEEXT_1) \
+@M68K_FALSE@	$(am__EXEEXT_2) $(am__EXEEXT_3)
+@M68K_FALSE@@SPARC_FALSE@am__append_1 = sfdisk
+@M68K_FALSE@@SPARC_FALSE@am__append_2 = sfdisk.8
+@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_TRUE@am__append_3 = cfdisk
+@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_TRUE@am__append_4 = cfdisk.8
+@HAVE_NCURSES_TRUE@@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_FALSE@am__append_5 = cfdisk
+@HAVE_NCURSES_TRUE@@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_FALSE@am__append_6 = cfdisk.8
 subdir = fdisk
 ACLOCAL_M4 = $(top_srcdir)/aclocal.m4
 am__aclocal_m4_deps = $(top_srcdir)/m4/gettext.m4 \
@@ -58,34 +58,42 @@ am__configure_deps = $(am__aclocal_m4_deps) $(CONFIGURE_DEPENDENCIES) \
 mkinstalldirs = $(SHELL) $(top_srcdir)/config/mkinstalldirs
 CONFIG_HEADER = $(top_builddir)/config.h
 CONFIG_CLEAN_FILES =
-@SPARC_FALSE@am__EXEEXT_1 = sfdisk$(EXEEXT)
-@SPARC_FALSE@@USE_SLANG_TRUE@am__EXEEXT_2 = cfdisk$(EXEEXT)
-@HAVE_NCURSES_TRUE@@SPARC_FALSE@@USE_SLANG_FALSE@am__EXEEXT_3 = cfdisk$(EXEEXT)
+@M68K_FALSE@@SPARC_FALSE@am__EXEEXT_1 = sfdisk$(EXEEXT)
+@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_TRUE@am__EXEEXT_2 =  \
+@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_TRUE@	cfdisk$(EXEEXT)
+@HAVE_NCURSES_TRUE@@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_FALSE@am__EXEEXT_3 = cfdisk$(EXEEXT)
 am__installdirs = "$(DESTDIR)$(sbindir)" "$(DESTDIR)$(man8dir)"
 sbinPROGRAMS_INSTALL = $(INSTALL_PROGRAM)
 PROGRAMS = $(sbin_PROGRAMS)
 am__cfdisk_SOURCES_DIST = cfdisk.c llseek.c disksize.c \
 	i386_sys_types.c
-@HAVE_NCURSES_TRUE@@SPARC_FALSE@@USE_SLANG_FALSE@am_cfdisk_OBJECTS = cfdisk.$(OBJEXT) \
-@HAVE_NCURSES_TRUE@@SPARC_FALSE@@USE_SLANG_FALSE@	llseek.$(OBJEXT) \
-@HAVE_NCURSES_TRUE@@SPARC_FALSE@@USE_SLANG_FALSE@	disksize.$(OBJEXT) \
-@HAVE_NCURSES_TRUE@@SPARC_FALSE@@USE_SLANG_FALSE@	i386_sys_types.$(OBJEXT)
-@SPARC_FALSE@@USE_SLANG_TRUE@am_cfdisk_OBJECTS = cfdisk.$(OBJEXT) \
-@SPARC_FALSE@@USE_SLANG_TRUE@	llseek.$(OBJEXT) \
-@SPARC_FALSE@@USE_SLANG_TRUE@	disksize.$(OBJEXT) \
-@SPARC_FALSE@@USE_SLANG_TRUE@	i386_sys_types.$(OBJEXT)
+@HAVE_NCURSES_TRUE@@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_FALSE@am_cfdisk_OBJECTS = cfdisk.$(OBJEXT) \
+@HAVE_NCURSES_TRUE@@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_FALSE@	llseek.$(OBJEXT) \
+@HAVE_NCURSES_TRUE@@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_FALSE@	disksize.$(OBJEXT) \
+@HAVE_NCURSES_TRUE@@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_FALSE@	i386_sys_types.$(OBJEXT)
+@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_TRUE@am_cfdisk_OBJECTS =  \
+@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_TRUE@	cfdisk.$(OBJEXT) \
+@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_TRUE@	llseek.$(OBJEXT) \
+@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_TRUE@	disksize.$(OBJEXT) \
+@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_TRUE@	i386_sys_types.$(OBJEXT)
 cfdisk_OBJECTS = $(am_cfdisk_OBJECTS)
 cfdisk_DEPENDENCIES =
-am_fdisk_OBJECTS = fdisk.$(OBJEXT) llseek.$(OBJEXT) disksize.$(OBJEXT) \
-	fdiskbsdlabel.$(OBJEXT) fdisksgilabel.$(OBJEXT) \
-	fdisksunlabel.$(OBJEXT) fdiskaixlabel.$(OBJEXT) \
-	i386_sys_types.$(OBJEXT) partname.$(OBJEXT)
+am__fdisk_SOURCES_DIST = fdisk.c llseek.c disksize.c fdiskbsdlabel.c \
+	fdisksgilabel.c fdisksunlabel.c fdiskaixlabel.c \
+	i386_sys_types.c partname.c
+@M68K_FALSE@am_fdisk_OBJECTS = fdisk.$(OBJEXT) llseek.$(OBJEXT) \
+@M68K_FALSE@	disksize.$(OBJEXT) fdiskbsdlabel.$(OBJEXT) \
+@M68K_FALSE@	fdisksgilabel.$(OBJEXT) fdisksunlabel.$(OBJEXT) \
+@M68K_FALSE@	fdiskaixlabel.$(OBJEXT) i386_sys_types.$(OBJEXT) \
+@M68K_FALSE@	partname.$(OBJEXT)
 fdisk_OBJECTS = $(am_fdisk_OBJECTS)
 fdisk_LDADD = $(LDADD)
 am__sfdisk_SOURCES_DIST = sfdisk.c disksize.c i386_sys_types.c \
 	partname.c
-@SPARC_FALSE@am_sfdisk_OBJECTS = sfdisk.$(OBJEXT) disksize.$(OBJEXT) \
-@SPARC_FALSE@	i386_sys_types.$(OBJEXT) partname.$(OBJEXT)
+@M68K_FALSE@@SPARC_FALSE@am_sfdisk_OBJECTS = sfdisk.$(OBJEXT) \
+@M68K_FALSE@@SPARC_FALSE@	disksize.$(OBJEXT) \
+@M68K_FALSE@@SPARC_FALSE@	i386_sys_types.$(OBJEXT) \
+@M68K_FALSE@@SPARC_FALSE@	partname.$(OBJEXT)
 sfdisk_OBJECTS = $(am_sfdisk_OBJECTS)
 sfdisk_LDADD = $(LDADD)
 depcomp = $(SHELL) $(top_srcdir)/config/depcomp
@@ -95,7 +103,7 @@ COMPILE = $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) \
 CCLD = $(CC)
 LINK = $(CCLD) $(AM_CFLAGS) $(CFLAGS) $(AM_LDFLAGS) $(LDFLAGS) -o $@
 SOURCES = $(cfdisk_SOURCES) $(fdisk_SOURCES) $(sfdisk_SOURCES)
-DIST_SOURCES = $(am__cfdisk_SOURCES_DIST) $(fdisk_SOURCES) \
+DIST_SOURCES = $(am__cfdisk_SOURCES_DIST) $(am__fdisk_SOURCES_DIST) \
 	$(am__sfdisk_SOURCES_DIST)
 man8dir = $(mandir)/man8
 NROFF = nroff
@@ -191,6 +199,8 @@ LIBS = @LIBS@
 LTLIBICONV = @LTLIBICONV@
 LTLIBINTL = @LTLIBINTL@
 LTLIBOBJS = @LTLIBOBJS@
+M68K_FALSE = @M68K_FALSE@
+M68K_TRUE = @M68K_TRUE@
 MAKEINFO = @MAKEINFO@
 MKINSTALLDIRS = @MKINSTALLDIRS@
 MSGFMT = @MSGFMT@
@@ -262,15 +272,16 @@ usrbinexecdir = $(prefix)/usr/bin
 usrsbinexecdir = $(prefix)/usr/sbin
 AM_CPPFLAGS = -include $(top_srcdir)/config.h -I$(top_srcdir)/include
 DEFAULT_INCLUDES = 
-man_MANS = fdisk.8 $(am__append_2) $(am__append_4) $(am__append_6)
-fdisk_SOURCES = fdisk.c llseek.c disksize.c fdiskbsdlabel.c fdisksgilabel.c \
-	fdisksunlabel.c fdiskaixlabel.c i386_sys_types.c partname.c
+@M68K_FALSE@man_MANS = fdisk.8 $(am__append_2) $(am__append_4) \
+@M68K_FALSE@	$(am__append_6)
+@M68K_FALSE@fdisk_SOURCES = fdisk.c llseek.c disksize.c fdiskbsdlabel.c fdisksgilabel.c \
+@M68K_FALSE@	fdisksunlabel.c fdiskaixlabel.c i386_sys_types.c partname.c
 
-@SPARC_FALSE@sfdisk_SOURCES = sfdisk.c disksize.c i386_sys_types.c partname.c
-@HAVE_NCURSES_TRUE@@SPARC_FALSE@@USE_SLANG_FALSE@cfdisk_SOURCES = cfdisk.c llseek.c disksize.c i386_sys_types.c
-@SPARC_FALSE@@USE_SLANG_TRUE@cfdisk_SOURCES = cfdisk.c llseek.c disksize.c i386_sys_types.c
-@HAVE_NCURSES_TRUE@@SPARC_FALSE@@USE_SLANG_FALSE@cfdisk_LDADD = -lncurses
-@SPARC_FALSE@@USE_SLANG_TRUE@cfdisk_LDADD = -lslang
+@M68K_FALSE@@SPARC_FALSE@sfdisk_SOURCES = sfdisk.c disksize.c i386_sys_types.c partname.c
+@HAVE_NCURSES_TRUE@@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_FALSE@cfdisk_SOURCES = cfdisk.c llseek.c disksize.c i386_sys_types.c
+@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_TRUE@cfdisk_SOURCES = cfdisk.c llseek.c disksize.c i386_sys_types.c
+@HAVE_NCURSES_TRUE@@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_FALSE@cfdisk_LDADD = -lncurses
+@M68K_FALSE@@SPARC_FALSE@@USE_SLANG_TRUE@cfdisk_LDADD = -lslang
 all: all-am
 
 .SUFFIXES:

@@ -1,4 +1,4 @@
-AC_INIT(util-linux, 2.13-pre3, bunk@stusta.de)
+AC_INIT(util-linux, 2.13-pre4, bunk@stusta.de)
 
 AC_PREREQ(2.59)
 
@@ -161,11 +161,13 @@ AC_TRY_COMPILE([
 
 
 case "$host" in
-  i?86-*) intel=true ;;
+  i?86-*)  intel=true ;;
+  m68*)    m68k=true ;;
   sparc*)  sparc=true ;;
 esac
 
 AM_CONDITIONAL(INTEL, test x$intel = xtrue)
+AM_CONDITIONAL(M68K,  test x$m68k  = xtrue)
 AM_CONDITIONAL(SPARC, test x$sparc = xtrue)
 
 
