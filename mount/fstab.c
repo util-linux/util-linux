@@ -399,9 +399,11 @@ static int we_created_lockfile = 0;
 static int signals_have_been_setup = 0;
 
 /* Ensure that the lock is released if we are interrupted.  */
+extern char *strsignal(int sig);	/* not always in <string.h> */
+
 static void
 handler (int sig) {
-     die (EX_USER, "%s", sys_siglist[sig]);
+     die(EX_USER, "%s", strsignal(sig));
 }
 
 static void

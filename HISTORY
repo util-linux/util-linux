@@ -1,3 +1,16 @@
+util-linux 2.12i
+
+* MCONFIG: fix build conditions
+* chfn, chsh: add error checking
+* cytune: use local header cyclades.h
+* fdisk: fix default SGI volume header size (Eric Sandeen)
+* fstab.c: use strsignal() instead of sys_siglist[]
+* hwclock: use <sys/io.h> when available on i386
+* hwclock: dont try KDGHWCLK on archs other than __m68k__
+* sfdisk: correct typo in __attribute__used nonsense
+* sfdisk: use PACKED on __arm__ (Jeroen Dobbelaere)
+* sfdisk: fix warning printout
+
 util-linux 2.12e,f,g,h
 
 * cfdisk: avoid crash if no partition table

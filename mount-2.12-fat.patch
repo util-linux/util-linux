@@ -1,0 +1,319 @@
+diff -uNr util-linux-2.12/mount/get_label_uuid.c ../patch/util-linux-2.12/mount/get_label_uuid.c
+--- util-linux-2.12/mount/get_label_uuid.c	2002-11-26 12:18:01.000000000 +0100
++++ ../patch/util-linux-2.12/mount/get_label_uuid.c	2003-10-20 18:27:56.000000000 +0200
+@@ -43,7 +43,139 @@
+ #endif
+ }
+ 
+-/* for now, only ext2, ext3, xfs, ocfs are supported */
++/* Remove trailing spaces */
++static void remtrailspc(char *label) {
++    char *c;
++
++    c = strchr(label, 0)-1;
++    while (c >= label && *c == ' ')
++        *(c--) = 0;
++}
++
++static int handle_fat_dirent(struct fat_dirent *dirent, char **label) {
++    size_t namesize;
++    
++    /* end-of-directory marker */
++    if (!dirent->s_filename[0])
++        return -1;
++
++    /* valid volume label */
++    if ((dirent->s_attr == 0x08 || dirent->s_attr == 0x28) && dirent->s_filename[0] != 0xe5) {
++        
++        /* sanity check */
++        if (dirent->s_size[0] || dirent->s_size[1] || dirent->s_size[2] || dirent->s_size[3] ||
++            dirent->s_cluster[0] || dirent->s_cluster[1])
++            return -1;
++            
++        namesize = sizeof(dirent->s_filename);
++        if (!(*label = calloc(namesize + 1, 1)))
++            return -1;
++        memcpy(*label, dirent->s_filename, namesize);
++        (*label)[namesize] = 0;
++        remtrailspc(*label);
++        
++        return 0;
++    }
++
++    return 1;
++}
++
++static int read_volume_label_fat(int fd, struct fat_super_block *fatsb, char **label) {
++    unsigned i, m;
++    off_t o;
++
++    m = assemble2le(fatsb->s_dirents);   /* root directory entries */  
++
++    o = (off_t) assemble2le(fatsb->s_ssec) *     /* bytes per sector */
++        ((off_t) assemble2le(fatsb->s_rsecs) +   /* reserved sectors */
++         (off_t) assemble2le(fatsb->s_spfat) *   /* sectors per fat */
++         (off_t) fatsb->s_nfats);                /* number of fats */ 
++    
++    for (i = 0; i < m; i++) {
++        struct fat_dirent dirent;
++        int rv;
++
++        if (lseek(fd, o, SEEK_SET) != o ||
++            read(fd, &dirent, sizeof(dirent)) != sizeof(dirent))
++            return -1;
++
++        if ((rv = handle_fat_dirent(&dirent, label)) != 1)
++            return rv;
++        
++        o += sizeof(dirent);
++    }
++    
++    return -1;
++}
++
++static int read_volume_label_fat32(int fd, struct fat32_super_block *fat32sb, char **label) {
++    unsigned c;
++    off_t fo, b, o;
++    int i, ifat;
++    size_t m, cs;
++    
++    ifat = fat32sb->s_mirror[0] & 128 ? (fat32sb->s_mirror[0] & 0xF) : 0;
++
++    if (ifat >= fat32sb->s_nfats)
++        return -1;
++    
++    fo = (off_t) assemble2le(fat32sb->s_ssec) *    /* bytes per sector */
++        ((off_t) assemble2le(fat32sb->s_rsecs) +   /* reserved sectors */
++         (off_t) assemble4le(fat32sb->s_spfat) *   /* sectors per fat */
++         (off_t) ifat);                            /* number of FAT used */
++
++    b = (off_t) assemble2le(fat32sb->s_ssec) *     /* bytes per sector */
++        ((off_t) assemble2le(fat32sb->s_rsecs) +   /* reserved sectors */
++         (off_t) assemble4le(fat32sb->s_spfat) *   /* sectors per fat */
++         (off_t) fat32sb->s_nfats);                /* number of FATs */
++
++    c = assemble4le(fat32sb->s_rcluster) & 0x0fffffffL;
++    if (c < 2 || c >= 0x0ffffff0)
++        return -1;
++
++    m = cs = assemble2le(fat32sb->s_ssec) * (size_t) fat32sb->s_scluster;
++    o = b + (off_t) cs*(c-2);
++
++    for (i = 0; i < 0xFFFF; i++) { /* safety against DoS attack */
++        struct fat_dirent dirent;
++        int rv;
++
++        if (lseek(fd, o, SEEK_SET) != o ||
++            read(fd, &dirent, sizeof(dirent)) != sizeof(dirent))
++            return -1;
++
++        if ((rv = handle_fat_dirent(&dirent, label)) != 1)
++            return rv;
++        
++        if (m > sizeof(dirent)) {
++            m -= sizeof(dirent);
++            o += sizeof(dirent);
++        } else {
++            off_t d;
++
++            /* next cluster */
++            
++            d = fo+4*c;
++            if (lseek(fd, d, SEEK_SET) != d ||
++                read(fd, &c, 4) != 4)
++                return -1;
++
++            c = assemble4le((char*) &c) & 0x0fffffffL;
++            if (c < 2 || c >= 0x0ffffff0) {
++                return -1;
++            }
++
++            m = cs;
++            o = b + cs*(c-2);
++        }
++    }
++    
++    
++    return -1;
++}
++
++
++/* for now, only ext2, ext3, xfs, ocfs, fat, fat32 are supported */
+ int
+ get_label_uuid(const char *device, char **label, char *uuid) {
+ 	int fd;
+@@ -54,8 +186,10 @@
+ 	struct jfs_super_block jfssb;
+ 	struct ocfs_volume_header ovh;	/* Oracle */
+ 	struct ocfs_volume_label olbl;
++        struct fat_super_block fatsb;
++        struct fat32_super_block fat32sb;
+ 
+-	fd = open(device, O_RDONLY);
++        fd = open(device, O_RDONLY);
+ 	if (fd < 0)
+ 		return rv;
+ 
+@@ -111,7 +245,87 @@
+ 			    memcpy(*label, jfssb.s_label, namesize);
+ 		}
+ 		rv = 0;
+-	}
++        } else if (lseek(fd, 0, SEEK_SET) == 0
++                   && read(fd, (char*) &fat32sb, sizeof(fat32sb)) == sizeof(fat32sb)
++                   && fat32sb.s_sig[0] == 0x55
++                   && fat32sb.s_sig[1] == 0xAA
++                   && (fat32sb.s_media & 0xF0) == 0xF0
++                   && (fat32sb.s_spfat_old[0] == 0)
++                   && (fat32sb.s_spfat_old[1] == 0)
++                   && fat32sb.s_extsig == 0x29
++                   && (memcmp(fat32sb.s_fs, "FAT32   ", 8) == 0)) {
++
++            *label = NULL;
++
++            /* If no root directory entry volume name was found use the one from the boot sector */
++            if (read_volume_label_fat32(fd, &fat32sb, label) != 0) {
++                if (memcmp(fat32sb.s_label, "NO NAME    ", 11) != 0 &&
++                    memcmp(fat32sb.s_label, "           ", 11) != 0 &&
++                    memcmp(fat32sb.s_label, "\0\0\0\0\0\0\0\0", 8) != 0) {
++                    
++                    namesize = sizeof(fat32sb.s_label);
++                    if ((*label = calloc(namesize + 1, 1)) != NULL) {
++                        memcpy(*label, fat32sb.s_label, namesize);
++                        (*label)[namesize] = 0;
++                        remtrailspc(*label);
++                    }
++                }
++            }
++
++            if (*label) {
++                
++                /* Set UUID from serial */
++                uuid[0] = fat32sb.s_serial[3];
++                uuid[1] = fat32sb.s_serial[2];
++                uuid[2] = fat32sb.s_serial[1];
++                uuid[3] = fat32sb.s_serial[0];
++                memset(uuid+4, 0, 12);
++                
++                rv = 0;
++            }
++	} else if (lseek(fd, 0, SEEK_SET) == 0
++                   && read(fd, (char*) &fatsb, sizeof(fatsb)) == sizeof(fatsb)
++                   && fatsb.s_sig[0] == 0x55
++                   && fatsb.s_sig[1] == 0xAA
++                   && (fatsb.s_media & 0xF0) == 0xF0
++                   && fatsb.s_extsig == 0x29
++                   && (memcmp(fatsb.s_fs, "FAT12   ", 8) == 0
++                       || memcmp(fatsb.s_fs, "FAT16   ", 8) == 0
++                       || memcmp(fatsb.s_fs, "FAT     ", 8) == 0
++                       || memcmp(fatsb.s_fs, "\0\0\0\0\0\0\0\0", 8) == 0)
++                   && memcmp(fatsb.s_fs2, "FAT32   ", 8) != 0) {
++
++            *label = NULL;
++            
++            if (read_volume_label_fat(fd, &fatsb, label) != 0) {
++
++                /* If no root directory entry volume name was found use the one from the boot sector */
++                if (memcmp(fatsb.s_label, "NO NAME    ", 11) != 0 &&
++                    memcmp(fatsb.s_label, "           ", 11) != 0 &&
++                    memcmp(fatsb.s_label, "\0\0\0\0\0\0\0\0", 8) != 0) {
++                    
++                    namesize = sizeof(fatsb.s_label);
++                    if ((*label = calloc(namesize + 1, 1)) != NULL) {
++                        memcpy(*label, fatsb.s_label, namesize);
++                        (*label)[namesize] = 0;
++                        remtrailspc(*label);
++                    }
++
++                }
++            }
++
++            if (*label) {
++
++                /* Set UUID from serial */
++                uuid[0] = fatsb.s_serial[3];
++                uuid[1] = fatsb.s_serial[2];
++                uuid[2] = fatsb.s_serial[1];
++                uuid[3] = fatsb.s_serial[0];
++                memset(uuid+4, 0, 12);
++                
++                rv = 0;
++            }
++        }
+ 
+ 	close(fd);
+ 	return rv;
+diff -uNr util-linux-2.12/mount/linux_fs.h ../patch/util-linux-2.12/mount/linux_fs.h
+--- util-linux-2.12/mount/linux_fs.h	2003-07-05 22:16:32.000000000 +0200
++++ ../patch/util-linux-2.12/mount/linux_fs.h	2003-10-20 18:07:06.000000000 +0200
+@@ -122,13 +122,65 @@
+     u_char    s_dummy[3];
+     u_char    s_os[8];		/* "MSDOS5.0" or "MSWIN4.0" or "MSWIN4.1" */
+ 				/* mtools-3.9.4 writes "MTOOL394" */
+-    u_char    s_dummy2[32];
++    u_char    s_ssec[2];        /* bytes per sector */
++    u_char    s_scluster;       /* sectors per cluster */
++    u_char    s_rsecs[2];       /* reserved sectors */
++    u_char    s_nfats;          /* number of FATs */
++    u_char    s_dirents[2];     /* maximum root directory entries */
++    u_char    s_nsecs[2];       /* total number of sectors */
++    u_char    s_media;          /* media type, upper nibble is 0xF */
++    u_char    s_spfat[2];       /* sectors per fat */
++
++    u_char    s_dummy2[14];
++    u_char    s_extsig;         /* extended signature */
++    u_char    s_serial[4];      /* serial number */
+     u_char    s_label[11];	/* for DOS? */
+-    u_char    s_fs[8];		/* "FAT12   " or "FAT16   " or all zero   */
++    u_char    s_fs[8];	        /* "FAT12   " or "FAT16   " or all zero   */
+                                 /* OS/2 BM has "FAT     " here. */
+-    u_char    s_dummy3[9];
+-    u_char    s_label2[11];	/* for Windows? */
+-    u_char    s_fs2[8];	        /* garbage or "FAT32   " */
++
++    u_char    s_dummy3[20];
++    u_char    s_fs2[8];         /* "FAT32   " */
++
++    u_char    s_dummy4[420];
++    u_char    s_sig[2];         /* 55 AA */
++};
++
++struct fat32_super_block {
++    u_char    s_dummy[3];
++    u_char    s_os[8];		/* "MSDOS5.0" or "MSWIN4.0" or "MSWIN4.1" */
++				/* mtools-3.9.4 writes "MTOOL394" */
++
++    u_char    s_ssec[2];        /* bytes per sector */
++    u_char    s_scluster;       /* sectors per cluster */
++    u_char    s_rsecs[2];       /* reserved sectors */
++    u_char    s_nfats;          /* number of FATs */
++    u_char    s_dirents[2];     /* maximum root directory entries */
++    u_char    s_nsecs[2];       /* total number of sectors */
++    u_char    s_media;          /* media type, upper nibble is 0xF */
++    u_char    s_spfat_old[2];   /* sectors per fat */
++
++    u_char    s_dummy2[12];
++    u_char    s_spfat[4];       /* sectors per FAT */
++    u_char    s_mirror[2];      /* mirror flag */
++    u_char    s_version[2];     /* fs version */
++    u_char    s_rcluster[4];    /* root directory cluster */
++
++    u_char    s_dummy3[18];
++    u_char    s_extsig;         /* extended signature 0x29 */
++    u_char    s_serial[4];      /* serial number */
++    u_char    s_label[11];      /* label */
++    u_char    s_fs[8];          /* filesystem type "FAT32   " */
++
++    u_char    s_dummy4[420];
++    u_char    s_sig[2];         /* 55 AA */
++};
++
++struct fat_dirent {
++    u_char    s_filename[11];   /* Filename with extension */
++    u_char    s_attr;           /* File attribute flags */
++    u_char    s_dummy[14];   
++    u_char    s_cluster[2];     /* Starting cluster */
++    u_char    s_size[4];        /* File size */
+ };
+ 
+ #define XFS_SUPER_MAGIC "XFSB"

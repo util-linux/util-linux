@@ -598,13 +598,11 @@ sgi_set_volhdr(void)
 	for (n=8; n<partitions; n++) {
 		if (!sgi_get_num_sectors(n)) {
 			/*
-			 * 5 cylinders is an arbitrary value I like
-			 * IRIX 5.3 stored files in the volume header
-			 * (like sash, symmon, fx, ide) with ca. 3200
-			 * sectors.
+			 * Choose same default volume header size
+			 * as IRIX fx uses.
 			 */
-			if (heads * sectors * 5 < sgi_get_lastblock())
-				sgi_set_partition(n, 0, heads * sectors * 5, SGI_VOLHDR);
+			if (4096 < sgi_get_lastblock())
+				sgi_set_partition(n, 0, 4096, SGI_VOLHDR);
 			break;
 		}
 	}

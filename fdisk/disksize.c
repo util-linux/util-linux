@@ -5,7 +5,7 @@ int disksize(int fd, unsigned long long *sectors) {
 	long sz;
 	long long b;
 
-	err = ioctl (fd, BLKGETSIZE, &sz);
+	err = ioctl(fd, BLKGETSIZE, &sz);
 	if (err)
 		return err;
 	err = ioctl(fd, BLKGETSIZE64, &b);

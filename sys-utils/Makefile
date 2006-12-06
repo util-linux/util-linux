@@ -69,6 +69,7 @@ nosln:
 arch: arch.o
 ctrlaltdel.o: ctrlaltdel.c $(LIB)/linux_reboot.h
 ctrlaltdel: ctrlaltdel.o $(LIB)/my_reboot.o
+cytune.o: cytune.c cyclades.h
 cytune: cytune.o
 ipcrm: ipcrm.o
 ipcs: ipcs.o

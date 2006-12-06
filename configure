@@ -16,6 +16,7 @@
 # H8. For nfsmount.h (nfsmount_xdr.c: int32_t): do we have <asm/types.h>?
 # H9. For raw.c: do we have <linux/raw.h>?
 # H10. For md5.c: do we have <stdint.h>?
+# H11. For cmos.c: do we have <sys/io.h>?
 #
 # Existence of functions:
 # F1. For nfsmount.c: is inet_aton() available?
@@ -28,7 +29,7 @@
 # F8. For fsck.cramfs.c: is lchown() available?
 # F9. For cfdisk.c: is rpmatch() available?
 #
-#  1. For sys-utils/cytune.c: do we need <linux/tqueue.h>?
+#  1. Deleted.
 #  2. For cfdisk, setterm, more, ul: do we have ncurses? How installed?
 #  3. For more: do we have libtermcap?
 #  4. For chfn, chsh, login, newgrp, passwd: do we need -lcrypt?
@@ -171,6 +172,12 @@ fi
 # H10. For md5.c: do we have <stdint.h>?
 if ./testincl "stdint.h"; then
         echo "#define HAVE_stdint_h" >> defines.h
+fi
+
+#
+# H11. For cmos.c: do we have <sys/io.h>?
+if ./testincl "sys/io.h"; then
+        echo "#define HAVE_sys_io_h" >> defines.h
 fi
 
 #
@@ -359,23 +366,6 @@ if test -s conftest; then
         echo "You have rpmatch()"
 else
         echo "You don't have rpmatch()"
-fi
-rm -f conftest conftest.c
-
-#
-# 1. cytune.c may need struct tq_struct
-#
-echo "
-#include <sys/types.h>
-#include <linux/cyclades.h>
-int main(){ exit(0); }
-" > conftest.c
-eval $compile
-if test -s conftest; then
-	echo "You don't need <linux/tqueue.h>"
-else
-	echo "#define NEED_tqueue_h" >> defines.h
-	echo "You need <linux/tqueue.h>"
 fi
 rm -f conftest conftest.c
 

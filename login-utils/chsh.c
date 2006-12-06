@@ -181,9 +181,9 @@ main (int argc, char *argv[]) {
 	    exit(1);
 	}
         retcode = pam_acct_mgmt(pamh, 0);
-        if (retcode == PAM_NEW_AUTHTOK_REQD) {
+        if (retcode == PAM_NEW_AUTHTOK_REQD)
 	    retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
-        } else if (retcode) {
+        if (retcode) {
 	    puts(_("Password error."));
 	    exit(1);
 	}

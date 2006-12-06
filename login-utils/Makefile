@@ -55,14 +55,13 @@ SELINUXOBJS=selinux_utils.o
 endif
 
 ifeq "$(HAVE_SHADOW)" "no"
-ifeq "$(HAVE_PAM)" "no"
-ifeq "$(HAVE_PASSWD)" "no"
-WHAT_TO_BUILD:=$(WHAT_TO_BUILD) all-passwd all-putils
-WHAT_TO_INSTALL:=$(WHAT_TO_INSTALL) install-passwd install-putils
-endif
-else
 WHAT_TO_BUILD:=$(WHAT_TO_BUILD) all-putils
 WHAT_TO_INSTALL:=$(WHAT_TO_INSTALL) install-putils
+ifeq "$(HAVE_PAM)" "no"
+ifeq "$(HAVE_PASSWD)" "no"
+WHAT_TO_BUILD:=$(WHAT_TO_BUILD) all-passwd
+WHAT_TO_INSTALL:=$(WHAT_TO_INSTALL) install-passwd
+endif
 endif
 endif
 

@@ -28,6 +28,7 @@
  *
  * Changes:
  * 19990319 - Arnaldo Carvalho de Melo <acme@conectiva.com.br> - i18n
+ * 20040428 - Jeroen Dobbelaere <jeroen.dobbelaere@acunia.com> - added PACKED
  * 20040824 - David A. Wheeler <dwheeler@dwheeler.com> - warnings to stderr
  */
 
@@ -99,8 +100,11 @@ warn(char *s, ...) {
     va_list p;
 
     va_start(p, s);
-    if (!quiet)
-	do_warn(s, p);
+    if (!quiet) {
+	fflush(stdout);
+	vfprintf(stderr, s, p);
+	fflush(stderr);
+    }
     va_end(p);
 }
 
@@ -131,14 +135,26 @@ fatal(char *s, ...) {
 
 /*
  * GCC nonsense - needed for GCC 3.4.x with -O2
+ *
+ * Maybe just test with #if (__GNUC__ >= 3) && (__GNUC_MINOR__ >= 4) ?
  */
-#if defined(__GNUC__PREREQ) && __GNUC_PREREQ(3,4)
+#ifndef __GNUC_PREREQ
+#define __GNUC_PREREQ(x,y)	0
+#endif
+#if __GNUC_PREREQ(3,4)
 #define __attribute__used __attribute__ ((used))
 #else
 #define __attribute__used
 #endif
 
-/* Or test with  #if (__GNUC__ >= 3) && (__GNUC_MINOR__ >= 4)  */
+/*
+ * arm needs PACKED - use it everywhere?
+ */
+#if defined(__GNUC__) && defined(__arm__)
+# define PACKED __attribute__ ((packed))
+#else
+# define PACKED
+#endif
 
 
 /*
@@ -418,7 +434,8 @@ restore_sectors(char *dev) {
  * 0 means unspecified / unknown
  */
 struct geometry {
-	unsigned long cylindersize;
+	unsigned long long total_size;		/* in sectors */
+	unsigned long cylindersize;		/* in sectors */
 	unsigned long heads, sectors, cylinders;
 	unsigned long start;
 } B, F, U;
@@ -441,17 +458,27 @@ get_geometry(char *dev, int fd, int silent) {
     R.sectors = g.sectors;
     R.cylindersize = R.heads * R.sectors;
     R.cylinders = 0;
+    R.total_size = 0;
 
     if (disksize(fd, &sectors)) {
-	if (!silent)
+	/* maybe an ordinary file */
+	struct stat s;
+
+	if (fstat(fd, &s) == 0 && S_ISREG(s.st_mode))
+	    R.total_size = (s.st_size >> 9);
+	else if (!silent)
 	    do_warn(_("Disk %s: cannot get size\n"), dev);
-    } else if (R.cylindersize) {
+    } else
+	    R.total_size = sectors;
+
+    if (R.cylindersize && R.total_size) {
 	    sectors /= R.cylindersize;
 	    cyls = sectors;
 	    if (cyls != sectors)
 		    cyls = ~0;
 	    R.cylinders = cyls;
     }
+
     return R;
 }
 
@@ -466,6 +493,10 @@ get_cylindersize(char *dev, int fd, int silent) {
     B.cylinders = (U.cylinders ? U.cylinders : R.cylinders);
 
     B.cylindersize = B.heads * B.sectors;
+    B.total_size = R.total_size;
+
+    if (B.cylinders == 0 && B.cylindersize != 0)
+	    B.cylinders = B.total_size / B.cylindersize;
 
     if (R.start && !force) {
 	warn(
@@ -495,7 +526,7 @@ get_cylindersize(char *dev, int fd, int silent) {
 	     dev, B.cylinders, B.heads, B.sectors);
 }
 
-typedef struct { unsigned char h,s,c; } chs; /* has some c bits in s */
+typedef struct { unsigned char h,s,c; } PACKED chs; /* has some c bits in s */
 chs zero_chs = { 0,0,0 };
 
 typedef struct { unsigned long h,s,c; } longchs;
@@ -652,8 +683,8 @@ struct partition {
     unsigned char sys_type;
     chs end_chs;
     unsigned int start_sect;	/* starting sector counting from 0 */
-    unsigned int nr_sects;		/* nr of sectors in partition */
-};
+    unsigned int nr_sects;	/* nr of sectors in partition */
+} PACKED;
 
 /* Unfortunately, partitions are not aligned, and non-Intel machines
    are unhappy with non-aligned integers. So, we need a copy by hand. */
@@ -2936,7 +2967,7 @@ do_fdisk(char *dev){
 	fatal(_("Fatal error: cannot find %s\n"), dev);
     }
     if (!S_ISBLK(statbuf.st_mode)) {
-	warn(_("Warning: %s is not a block device\n"), dev);
+	do_warn(_("Warning: %s is not a block device\n"), dev);
 	no_reread = 1;
     }
     fd = my_open(dev, !no_write, 0);

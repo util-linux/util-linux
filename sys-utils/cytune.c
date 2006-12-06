@@ -53,12 +53,7 @@
 #include <linux/tty.h>
 #include <termios.h>
 
-#include "../defines.h"		/* for NEED_tqueue_h */
-#ifdef NEED_tqueue_h
-#include <linux/tqueue.h>	/* required for old kernels (for struct tq_struct) */
-				/* compilation errors on other kernels */
-#endif
-#include <linux/cyclades.h>
+#include "cyclades.h"
 
 #if 0
 #ifndef XMIT

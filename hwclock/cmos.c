@@ -46,11 +46,15 @@
 
 #include <unistd.h>		/* for geteuid() */
 #include <fcntl.h>		/* for O_RDWR */
-
+#include "../defines.h"		/* for HAVE_sys_io_h */
 #include "nls.h"
 
 #if defined(__i386__)
+#ifdef HAVE_sys_io_h
+#include <sys/io.h>
+#else
 #include <asm/io.h>		/* for inb, outb */
+#endif
 #elif defined(__alpha__)
 /* <asm/io.h> fails to compile, probably because of u8 etc */
 extern unsigned int     inb(unsigned long port);

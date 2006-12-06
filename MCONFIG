@@ -34,8 +34,7 @@ HAVE_SELINUX=no
 HAVE_SHADOW=yes
 
 # If HAVE_PASSWD is set to "yes", then passwd will not be built or
-# installed from the login-utils subdirectory (but login, chfn, chsh,
-# newgrp, and vipw *will* be installed).
+# installed from the login-utils subdirectory.
 HAVE_PASSWD=no
 
 # If you use chfn and chsh from this package, REQUIRE_PASSWORD will require
@@ -119,6 +118,8 @@ ifeq "$(ARCH)" "intel"
     CPUHEAD=-m
   else
     CPUHEAD=-mcpu=i
+# recent versions want -march=i
+# must add the right test
   endif
   ifeq "$(CPU)" "i386"
     CPUTAIL=386

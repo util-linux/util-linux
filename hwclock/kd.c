@@ -1,4 +1,15 @@
-/* kd.c - KDGHWCLK stuff, possibly m68k only */
+/* kd.c - KDGHWCLK stuff, possibly m68k only - deprecated */
+#ifndef __m68k__
+
+#include "clock.h"
+
+struct clock_ops *
+probe_for_kd_clock() {
+	return NULL;
+}
+
+#else /* __m68k__ */
+
 #include <unistd.h>		/* for close() */
 #include <fcntl.h>		/* for O_RDONLY */
 #include <sysexits.h>
@@ -162,9 +173,7 @@ probe_for_kd_clock() {
 	}
 	if (con_fd < 0) {
 		/* probably KDGHWCLK exists on m68k only */
-#ifdef __m68k__
 		outsyserr(_("Can't open /dev/tty1 or /dev/vc/1"));
-#endif
 	} else {
 		if (ioctl(con_fd, KDGHWCLK, &t) == -1) {
 			if (errno != EINVAL)
@@ -174,3 +183,4 @@ probe_for_kd_clock() {
 	}
 	return ret;
 }
+#endif /* __m68k__ */
