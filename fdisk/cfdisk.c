@@ -77,7 +77,6 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <linux/types.h>
-#include <linux/hdreg.h>
 
 #include "nls.h"
 #include "xstrncpy.h"

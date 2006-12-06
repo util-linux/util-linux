@@ -222,7 +222,7 @@ main(int argc, char **argv) {
 #endif
 	
 	yflag = 0;
-	while ((ch = getopt(argc, argv, "13mjyV")) != -1)
+	while ((ch = getopt(argc, argv, "13mjsyV")) != -1)
 		switch(ch) {
  		case '1':
  			num_months = 1;		/* default */

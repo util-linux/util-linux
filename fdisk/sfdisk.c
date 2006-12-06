@@ -47,7 +47,6 @@
 #include <sys/stat.h>
 #include <sys/utsname.h>
 #include <linux/unistd.h>	/* _syscall */
-#include <linux/hdreg.h>	/* HDIO_GETGEO */
 #include "nls.h"
 #include "common.h"
 
@@ -131,7 +130,7 @@ fatal(char *s, ...) {
  *
  * Note: we use 512-byte sectors here, irrespective of the hardware ss.
  */
-#if !defined (__alpha__) && !defined (__ia64__)
+#if !defined (__alpha__) && !defined (__ia64__) && !defined (__x86_64__)
 static
 _syscall5(int,  _llseek,  uint,  fd, ulong, hi, ulong, lo,
        loff_t *, res, uint, wh);
@@ -143,7 +142,7 @@ sseek(char *dev, unsigned int fd, unsigned long s) {
     in = ((loff_t) s << 9);
     out = 1;
 
-#if !defined (__alpha__) && !defined (__ia64__)
+#if !defined (__alpha__) && !defined (__ia64__) && !defined (__x86_64__)
     if (_llseek (fd, in>>32, in & 0xffffffff, &out, SEEK_SET) != 0) {
 #else
     if ((out = lseek(fd, in, SEEK_SET)) != in) {

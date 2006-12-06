@@ -29,8 +29,6 @@
 #include <getopt.h>
 #include <sys/stat.h>
 
-#include <linux/hdreg.h>       /* for HDIO_GETGEO */
-
 #include "nls.h"
 #include "common.h"
 #include "fdisk.h"
@@ -179,6 +177,7 @@ int     sun_label = 0;                  /* looking at sun disklabel */
 int	sgi_label = 0;			/* looking at sgi disklabel */
 int	aix_label = 0;			/* looking at aix disklabel */
 int	osf_label = 0;			/* looking at osf disklabel */
+
 jmp_buf listingbuf;
 
 void fatal(enum failure why) {
@@ -459,14 +458,16 @@ static int
 get_sysid(int i) {
 	return (
 		sun_label ? sunlabel->infos[i].id :
-		sgi_label ? sgi_get_sysid(i) : ptes[i].part_table->sys_ind);
+		sgi_label ? sgi_get_sysid(i) :
+		ptes[i].part_table->sys_ind);
 }
 
 static struct systypes *
 get_sys_types(void) {
 	return (
 		sun_label ? sun_sys_types :
-		sgi_label ? sgi_sys_types : i386_sys_types);
+		sgi_label ? sgi_sys_types :
+		i386_sys_types);
 }
 
 char *partition_type(unsigned char type)
@@ -707,7 +708,6 @@ create_doslabel(void) {
 	_("Building a new DOS disklabel. Changes will remain in memory only,\n"
 	  "until you decide to write them. After that, of course, the previous\n"
 	  "content won't be recoverable.\n\n"));
-
 	sun_nolabel();  /* otherwise always recognised as sun */
 	sgi_nolabel();  /* otherwise always recognised as sgi */
 	aix_label = osf_label = 0;
@@ -810,9 +810,7 @@ get_geometry(int fd, struct geom *g) {
 
 	get_sectorsize(fd);
 	sec_fac = sector_size / 512;
-
 	guess_device_type(fd);
-
 	heads = cylinders = sectors = 0;
 	kern_heads = kern_sectors = 0;
 	pt_heads = pt_sectors = 0;
@@ -1126,13 +1124,13 @@ get_partition(int warn, int max) {
 	i = read_int(1, 0, max, 0, _("Partition number")) - 1;
 	pe = &ptes[i];
 
-	if (warn && (
-	     (!sun_label && !sgi_label && !pe->part_table->sys_ind)
+	if (warn
+	    && ((!sun_label && !sgi_label && !pe->part_table->sys_ind)
 	     || (sun_label &&
 		(!sunlabel->partitions[i].num_sectors ||
 		 !sunlabel->infos[i].id))
-	     || (sgi_label && (!sgi_get_num_sectors(i)))
-	)) fprintf(stderr, _("Warning: partition %d has empty type\n"), i+1);
+		|| (sgi_label && (!sgi_get_num_sectors(i))))
+	) fprintf(stderr, _("Warning: partition %d has empty type\n"), i+1);
 	return i;
 }
 
@@ -1295,7 +1293,6 @@ change_sysid(void) {
 				       "as IRIX expects it.\n\n"));
                         if (sys == origsys)
                             break;
-
 			if (sun_label) {
 				sun_change_sysid(i, sys);
 			} else
@@ -1970,7 +1967,8 @@ write_table(void) {
 				write_sector(fd, pe->offset, pe->sectorbuffer);
 			}
 		}
-	} else if (sgi_label) {
+	}
+	else if (sgi_label) {
 		/* no test on change? the printf below might be mistaken */
 		sgi_write_table();
 	} else if (sun_label) {
@@ -2105,7 +2103,7 @@ xselect(void) {
 			break;
 		case 'c':
 			user_cylinders = cylinders =
-				read_int(1, cylinders, 131071, 0,
+				read_int(1, cylinders, 1048576, 0,
 					 _("Number of cylinders"));
 			if (sun_label)
 				sun_set_ncyl(cylinders);
@@ -2120,7 +2118,8 @@ xselect(void) {
 				sgi_set_xcyl();
 			else if (sun_label)
 				sun_set_xcyl();
-			else if (dos_label)
+			else
+			if (dos_label)
 				x_list_table(1);
 			break;
 		case 'f':
@@ -2409,7 +2408,6 @@ main(int argc, char **argv) {
 		bselect();
 	}
 #endif
-
 	while (1) {
 		putchar('\n');
 		c = tolower(read_char(_("Command (m for help): ")));

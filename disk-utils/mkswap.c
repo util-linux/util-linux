@@ -608,8 +608,8 @@ the -f option to force it.\n"),
 	goodpages = PAGES - badpages - 1;
 	if (goodpages <= 0)
 		die(_("Unable to set up swap-space: unreadable"));
-	printf(_("Setting up swapspace version %d, size = %lu bytes\n"),
-		version, (unsigned long)goodpages * pagesize);
+	printf(_("Setting up swapspace version %d, size = %lu KiB\n"),
+		version, (unsigned long)goodpages * pagesize / 1024);
 	write_signature((version == 0) ? "SWAP-SPACE" : "SWAPSPACE2");
 
 	offset = ((version == 0) ? 0 : 1024);

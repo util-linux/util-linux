@@ -182,6 +182,7 @@ int main(int argc, char **argv)
 				prog, c);
 			usage(prog);
 			error++;
+			return error;
 		}
 
 		if (iskey) {

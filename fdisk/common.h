@@ -7,6 +7,17 @@
 #define BLKFLSBUF  _IO(0x12,97)    /* flush buffer cache */
 #define BLKSSZGET  _IO(0x12,104)   /* get block device sector size */
 
+/* including <linux/hdreg.h> also fails */
+struct hd_geometry {
+      unsigned char heads;
+      unsigned char sectors;
+      unsigned short cylinders;
+      unsigned long start;
+};
+
+#define HDIO_GETGEO		0x0301	/* get device geometry */
+
+
 struct systypes {
 	unsigned char type;
 	char *name;

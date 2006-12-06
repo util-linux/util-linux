@@ -4,7 +4,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.10f\n"
-"POT-Creation-Date: 2002-04-06 01:28+0200\n"
+"POT-Creation-Date: 2002-05-09 02:51+0200\n"
 "PO-Revision-Date: 2000-04-04 21:52-0800\n"
 "Last-Translator: Beth Powell <bpowell@turbolinux.com>\n"
 "Language-Team: <support@turbolinux.com>\n"
@@ -643,7 +643,7 @@ msgstr ""
 msgid "not enough space, need at least %lu blocks"
 msgstr ""
 
-#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2025
+#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2057
 #, c-format
 msgid "Device: %s\n"
 msgstr "Dispositivo: %s\n"
@@ -723,7 +723,7 @@ msgid "Usage: mkfs [-V] [-t fstype] [fs-options] device [size]\n"
 msgstr ""
 " Utilizzo: mkfs [-V] [-t tipofs] [opzioni-fs] dispositivo [dimensione]\n"
 
-#: disk-utils/mkfs.c:90 fdisk/cfdisk.c:373 getopt-1.1.2/getopt.c:89
+#: disk-utils/mkfs.c:90 fdisk/cfdisk.c:372 getopt-1.1.2/getopt.c:89
 #: getopt-1.1.2/getopt.c:99 login-utils/wall.c:237
 #, c-format
 msgid "%s: Out of memory!\n"
@@ -880,7 +880,7 @@ msgid "too many bad pages"
 msgstr "troppe pagine danneggiate"
 
 #: disk-utils/mkswap.c:359 misc-utils/look.c:182 misc-utils/setterm.c:1130
-#: text-utils/more.c:1934 text-utils/more.c:1945
+#: text-utils/more.c:2062 text-utils/more.c:2073
 msgid "Out of memory"
 msgstr "Memoria esaurita"
 
@@ -949,7 +949,7 @@ msgstr "Impossibile impostare lo spazio-swap: non leggibile"
 
 #: disk-utils/mkswap.c:611
 #, fuzzy, c-format
-msgid "Setting up swapspace version %d, size = %lu bytes\n"
+msgid "Setting up swapspace version %d, size = %lu KiB\n"
 msgstr "Impostazione spazio di swap versione %d, dimensione = %ld byte\n"
 
 #: disk-utils/mkswap.c:617
@@ -1001,61 +1001,61 @@ msgstr "       %s [ -c | -y | -n | -d ] dev\n"
 msgid "   %s [ -c | -y | -n ] dev\n"
 msgstr "       %s [ -c | -y | -n ] dev\n"
 
-#: fdisk/cfdisk.c:398 fdisk/cfdisk.c:1991
+#: fdisk/cfdisk.c:397 fdisk/cfdisk.c:1990
 msgid "Unusable"
 msgstr "Inutilizzabile"
 
-#: fdisk/cfdisk.c:400 fdisk/cfdisk.c:1993
+#: fdisk/cfdisk.c:399 fdisk/cfdisk.c:1992
 msgid "Free Space"
 msgstr "Spazio disponibile"
 
-#: fdisk/cfdisk.c:403
+#: fdisk/cfdisk.c:402
 msgid "Linux ext2"
 msgstr "Linux ext2"
 
-#: fdisk/cfdisk.c:405
+#: fdisk/cfdisk.c:404
 #, fuzzy
 msgid "Linux ext3"
 msgstr "Linux ext2"
 
-#: fdisk/cfdisk.c:407
+#: fdisk/cfdisk.c:406
 #, fuzzy
 msgid "Linux XFS"
 msgstr "Linux"
 
-#: fdisk/cfdisk.c:409
+#: fdisk/cfdisk.c:408
 #, fuzzy
 msgid "Linux ReiserFS"
 msgstr "Linux"
 
 #. also Solaris
-#: fdisk/cfdisk.c:411 fdisk/i386_sys_types.c:57
+#: fdisk/cfdisk.c:410 fdisk/i386_sys_types.c:57
 msgid "Linux"
 msgstr "Linux"
 
-#: fdisk/cfdisk.c:414
+#: fdisk/cfdisk.c:413
 msgid "OS/2 HPFS"
 msgstr "OS/2 HPFS"
 
-#: fdisk/cfdisk.c:416
+#: fdisk/cfdisk.c:415
 msgid "OS/2 IFS"
 msgstr "OS/2 IFS"
 
-#: fdisk/cfdisk.c:420
+#: fdisk/cfdisk.c:419
 msgid "NTFS"
 msgstr "NTFS"
 
-#: fdisk/cfdisk.c:431
+#: fdisk/cfdisk.c:430
 msgid "Disk has been changed.\n"
 msgstr "Il disco è stato cambiato.\n"
 
-#: fdisk/cfdisk.c:432
+#: fdisk/cfdisk.c:431
 msgid "Reboot the system to ensure the partition table is correctly updated.\n"
 msgstr ""
 "Riavviare il sistema per assicurarsi che la tabella delle partizioni sia "
 "aggiornata correttamente.\n"
 
-#: fdisk/cfdisk.c:435
+#: fdisk/cfdisk.c:434
 msgid ""
 "\n"
 "WARNING: If you have created or modified any\n"
@@ -1067,223 +1067,223 @@ msgstr ""
 "partizione DOS 6.x, consultare la pagina del manuale cfdisk\n"
 "per ulteriori informazioni.\n"
 
-#: fdisk/cfdisk.c:530
+#: fdisk/cfdisk.c:529
 msgid "FATAL ERROR"
 msgstr "ERRORE IRREVERSIBILE"
 
-#: fdisk/cfdisk.c:531
+#: fdisk/cfdisk.c:530
 msgid "Press any key to exit cfdisk"
 msgstr "Premere qualsiasi tasto per uscire da cfdisk"
 
-#: fdisk/cfdisk.c:578 fdisk/cfdisk.c:586
+#: fdisk/cfdisk.c:577 fdisk/cfdisk.c:585
 msgid "Cannot seek on disk drive"
 msgstr "Ricerca sull'unità disco impossibile"
 
-#: fdisk/cfdisk.c:580
+#: fdisk/cfdisk.c:579
 msgid "Cannot read disk drive"
 msgstr "Impossibile leggere l'unità disco"
 
-#: fdisk/cfdisk.c:588
+#: fdisk/cfdisk.c:587
 msgid "Cannot write disk drive"
 msgstr "Impossibile scrivere sull'unità disco"
 
-#: fdisk/cfdisk.c:888
+#: fdisk/cfdisk.c:887
 msgid "Too many partitions"
 msgstr "Troppe partizioni"
 
-#: fdisk/cfdisk.c:893
+#: fdisk/cfdisk.c:892
 msgid "Partition begins before sector 0"
 msgstr "La partizione inizia prima del settore 0"
 
-#: fdisk/cfdisk.c:898
+#: fdisk/cfdisk.c:897
 msgid "Partition ends before sector 0"
 msgstr "La partizione termina prima del settore 0"
 
-#: fdisk/cfdisk.c:903
+#: fdisk/cfdisk.c:902
 msgid "Partition begins after end-of-disk"
 msgstr "La partizione inizia dopo la fine del disco"
 
-#: fdisk/cfdisk.c:908
+#: fdisk/cfdisk.c:907
 msgid "Partition ends after end-of-disk"
 msgstr "La partizione termina dopo la fine del disco"
 
-#: fdisk/cfdisk.c:932
+#: fdisk/cfdisk.c:931
 msgid "logical partitions not in disk order"
 msgstr "le partizioni logiche non sono nell'ordine del disco"
 
-#: fdisk/cfdisk.c:935
+#: fdisk/cfdisk.c:934
 msgid "logical partitions overlap"
 msgstr "sovrapposizione delle partizioni logiche"
 
-#: fdisk/cfdisk.c:937
+#: fdisk/cfdisk.c:936
 msgid "enlarged logical partitions overlap"
 msgstr "sovrapposizione delle partizioni logiche ampliate"
 
-#: fdisk/cfdisk.c:967
+#: fdisk/cfdisk.c:966
 msgid ""
 "!!!! Internal error creating logical drive with no extended partition !!!!"
 msgstr ""
 "!!!! Errore interno durante la creazione di un'unità logica con partizione "
 "non estesa !!!!"
 
-#: fdisk/cfdisk.c:978 fdisk/cfdisk.c:990
+#: fdisk/cfdisk.c:977 fdisk/cfdisk.c:989
 msgid ""
 "Cannot create logical drive here -- would create two extended partitions"
 msgstr ""
 "Impossibile creare un'unità logica in questo caso - si creerebbero due "
 "partizioni estese"
 
-#: fdisk/cfdisk.c:1138
+#: fdisk/cfdisk.c:1137
 msgid "Menu item too long. Menu may look odd."
 msgstr "Voce di menu troppo lunga. Il menu può apparire strano."
 
-#: fdisk/cfdisk.c:1192
+#: fdisk/cfdisk.c:1191
 msgid "Menu without direction. Defaulting horizontal."
 msgstr "Menu senza direzione. È predefinita quella orizzontale."
 
-#: fdisk/cfdisk.c:1322
+#: fdisk/cfdisk.c:1321
 msgid "Illegal key"
 msgstr "Tasto non valido"
 
-#: fdisk/cfdisk.c:1345
+#: fdisk/cfdisk.c:1344
 msgid "Press a key to continue"
 msgstr "Premere un tasto per continuare"
 
-#: fdisk/cfdisk.c:1392 fdisk/cfdisk.c:1962 fdisk/cfdisk.c:2493
-#: fdisk/cfdisk.c:2495
+#: fdisk/cfdisk.c:1391 fdisk/cfdisk.c:1961 fdisk/cfdisk.c:2492
+#: fdisk/cfdisk.c:2494
 msgid "Primary"
 msgstr "Primaria"
 
-#: fdisk/cfdisk.c:1392
+#: fdisk/cfdisk.c:1391
 msgid "Create a new primary partition"
 msgstr "Creare una nuova partizione primaria"
 
-#: fdisk/cfdisk.c:1393 fdisk/cfdisk.c:1962 fdisk/cfdisk.c:2492
-#: fdisk/cfdisk.c:2495
+#: fdisk/cfdisk.c:1392 fdisk/cfdisk.c:1961 fdisk/cfdisk.c:2491
+#: fdisk/cfdisk.c:2494
 msgid "Logical"
 msgstr "Logica"
 
-#: fdisk/cfdisk.c:1393
+#: fdisk/cfdisk.c:1392
 msgid "Create a new logical partition"
 msgstr "Creare una nuova partizione logica"
 
-#: fdisk/cfdisk.c:1394 fdisk/cfdisk.c:1449 fdisk/cfdisk.c:2167
+#: fdisk/cfdisk.c:1393 fdisk/cfdisk.c:1448 fdisk/cfdisk.c:2166
 msgid "Cancel"
 msgstr "Annulla"
 
-#: fdisk/cfdisk.c:1394 fdisk/cfdisk.c:1449
+#: fdisk/cfdisk.c:1393 fdisk/cfdisk.c:1448
 msgid "Don't create a partition"
 msgstr "Non creare una partizione"
 
-#: fdisk/cfdisk.c:1410
+#: fdisk/cfdisk.c:1409
 msgid "!!! Internal error !!!"
 msgstr "!!! Errore interno !!!"
 
-#: fdisk/cfdisk.c:1413
+#: fdisk/cfdisk.c:1412
 msgid "Size (in MB): "
 msgstr "Dimensione (in MB): "
 
-#: fdisk/cfdisk.c:1447
+#: fdisk/cfdisk.c:1446
 msgid "Beginning"
 msgstr "Inizio"
 
-#: fdisk/cfdisk.c:1447
+#: fdisk/cfdisk.c:1446
 msgid "Add partition at beginning of free space"
 msgstr "Aggiungere la partizione all'inizio dello spazio disponibile"
 
-#: fdisk/cfdisk.c:1448
+#: fdisk/cfdisk.c:1447
 msgid "End"
 msgstr "Fine"
 
-#: fdisk/cfdisk.c:1448
+#: fdisk/cfdisk.c:1447
 msgid "Add partition at end of free space"
 msgstr "Aggiungere la partizione alla fine dello spazio disponibile"
 
-#: fdisk/cfdisk.c:1466
+#: fdisk/cfdisk.c:1465
 msgid "No room to create the extended partition"
 msgstr "Non c'è spazio per creare una partizione estesa"
 
-#: fdisk/cfdisk.c:1510
+#: fdisk/cfdisk.c:1509
 #, fuzzy
 msgid "No partition table or unknown signature on partition table"
 msgstr "Firma danneggiata sulla tabella delle partizioni"
 
-#: fdisk/cfdisk.c:1512
+#: fdisk/cfdisk.c:1511
 msgid "Do you wish to start with a zero table [y/N] ?"
 msgstr ""
 
-#: fdisk/cfdisk.c:1564
+#: fdisk/cfdisk.c:1563
 msgid "You specified more cylinders than fit on disk"
 msgstr ""
 "Si è specificato un numero di cilindri superiore a quelli contenuti su disco"
 
-#: fdisk/cfdisk.c:1594
+#: fdisk/cfdisk.c:1593
 msgid "Cannot open disk drive"
 msgstr "Impossibile aprire l'unità disco"
 
-#: fdisk/cfdisk.c:1596 fdisk/cfdisk.c:1775
+#: fdisk/cfdisk.c:1595 fdisk/cfdisk.c:1774
 msgid "Opened disk read-only - you have no permission to write"
 msgstr "Disco aperto in sola lettura - scrittura non autorizzata"
 
-#: fdisk/cfdisk.c:1617
+#: fdisk/cfdisk.c:1616
 msgid "Cannot get disk size"
 msgstr "Impossibile ottenere la dimensione del disco"
 
-#: fdisk/cfdisk.c:1642
+#: fdisk/cfdisk.c:1641
 msgid "Bad primary partition"
 msgstr "Partizione primaria danneggiata"
 
-#: fdisk/cfdisk.c:1672
+#: fdisk/cfdisk.c:1671
 msgid "Bad logical partition"
 msgstr "Partizione logica danneggiata"
 
-#: fdisk/cfdisk.c:1787
+#: fdisk/cfdisk.c:1786
 msgid "Warning!!  This may destroy data on your disk!"
 msgstr "Attenzione!!  I dati sul disco potrebbero venire eliminati!"
 
-#: fdisk/cfdisk.c:1791
+#: fdisk/cfdisk.c:1790
 msgid "Are you sure you want write the partition table to disk? (yes or no): "
 msgstr "Scrivere la tabella delle partizioni su disco? (si o no): "
 
-#: fdisk/cfdisk.c:1797
+#: fdisk/cfdisk.c:1796
 msgid "no"
 msgstr "no"
 
-#: fdisk/cfdisk.c:1798
+#: fdisk/cfdisk.c:1797
 msgid "Did not write partition table to disk"
 msgstr "Scrittura tabella delle partizioni su disco non effettuata"
 
-#: fdisk/cfdisk.c:1800
+#: fdisk/cfdisk.c:1799
 msgid "yes"
 msgstr "si"
 
-#: fdisk/cfdisk.c:1803
+#: fdisk/cfdisk.c:1802
 msgid "Please enter `yes' or `no'"
 msgstr "Inserire `si' (senza accento) o `no'"
 
-#: fdisk/cfdisk.c:1807
+#: fdisk/cfdisk.c:1806
 msgid "Writing partition table to disk..."
 msgstr "Scrittura tabella delle partizioni su disco in corso..."
 
-#: fdisk/cfdisk.c:1832 fdisk/cfdisk.c:1836
+#: fdisk/cfdisk.c:1831 fdisk/cfdisk.c:1835
 msgid "Wrote partition table to disk"
 msgstr "Eseguita l'operazione di scrittura tabella delle partizioni su disco"
 
-#: fdisk/cfdisk.c:1834
+#: fdisk/cfdisk.c:1833
 msgid ""
 "Wrote partition table, but re-read table failed.  Reboot to update table."
 msgstr ""
 "Eseguita l'operazione di scrittura tabella delle partizioni, ma non è "
 "riuscita la rilettura della tabella. Riavviare per aggiornare la tabella."
 
-#: fdisk/cfdisk.c:1844
+#: fdisk/cfdisk.c:1843
 #, fuzzy
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
 msgstr ""
 "Non è possibile avviare in modo preciso una partizione primaria. DOS MBR non "
 "può avviarla."
 
-#: fdisk/cfdisk.c:1846
+#: fdisk/cfdisk.c:1845
 #, fuzzy
 msgid ""
 "More than one primary partition is marked bootable. DOS MBR cannot boot this."
@@ -1291,87 +1291,87 @@ msgstr ""
 "Non è possibile avviare in modo preciso una partizione primaria. DOS MBR non "
 "può avviarla."
 
-#: fdisk/cfdisk.c:1904 fdisk/cfdisk.c:2023 fdisk/cfdisk.c:2107
+#: fdisk/cfdisk.c:1903 fdisk/cfdisk.c:2022 fdisk/cfdisk.c:2106
 msgid "Enter filename or press RETURN to display on screen: "
 msgstr ""
 "Inserire il nome del file o premere RETURN (INVIO) per visualizzare sullo "
 "schermo:"
 
-#: fdisk/cfdisk.c:1913 fdisk/cfdisk.c:2031 fdisk/cfdisk.c:2115
+#: fdisk/cfdisk.c:1912 fdisk/cfdisk.c:2030 fdisk/cfdisk.c:2114
 #, c-format
 msgid "Cannot open file '%s'"
 msgstr "Impossibile aprire il file '%s'"
 
-#: fdisk/cfdisk.c:1924
+#: fdisk/cfdisk.c:1923
 #, c-format
 msgid "Disk Drive: %s\n"
 msgstr "Unità disco: %s\n"
 
-#: fdisk/cfdisk.c:1926
+#: fdisk/cfdisk.c:1925
 msgid "Sector 0:\n"
 msgstr "Settore 0:\n"
 
-#: fdisk/cfdisk.c:1933
+#: fdisk/cfdisk.c:1932
 #, c-format
 msgid "Sector %d:\n"
 msgstr "Settore %d:\n"
 
-#: fdisk/cfdisk.c:1953
+#: fdisk/cfdisk.c:1952
 msgid "   None   "
 msgstr "   Nessuno   "
 
-#: fdisk/cfdisk.c:1955
+#: fdisk/cfdisk.c:1954
 msgid "   Pri/Log"
 msgstr "   Pri/Log"
 
-#: fdisk/cfdisk.c:1957
+#: fdisk/cfdisk.c:1956
 msgid "   Primary"
 msgstr "   Primario"
 
-#: fdisk/cfdisk.c:1959
+#: fdisk/cfdisk.c:1958
 msgid "   Logical"
 msgstr "   Logico"
 
 #. odd flag on end
 #. type id
 #. type name
-#: fdisk/cfdisk.c:1997 fdisk/fdisk.c:1275 fdisk/fdisk.c:1563
-#: fdisk/fdisksgilabel.c:238 fdisk/fdisksunlabel.c:691 fdisk/sfdisk.c:582
+#: fdisk/cfdisk.c:1996 fdisk/fdisk.c:1306 fdisk/fdisk.c:1594
+#: fdisk/fdisksgilabel.c:237 fdisk/fdisksunlabel.c:690 fdisk/sfdisk.c:581
 msgid "Unknown"
 msgstr "Sconosciuto"
 
-#: fdisk/cfdisk.c:2003
+#: fdisk/cfdisk.c:2002
 #, c-format
 msgid "Boot (%02X)"
 msgstr "Avvio (%02X)"
 
-#: fdisk/cfdisk.c:2005 fdisk/cfdisk.c:2501
+#: fdisk/cfdisk.c:2004 fdisk/cfdisk.c:2500
 #, c-format
 msgid "Unknown (%02X)"
 msgstr "Sconosciuto (%02X)"
 
-#: fdisk/cfdisk.c:2007
+#: fdisk/cfdisk.c:2006
 #, c-format
 msgid "None (%02X)"
 msgstr "Nessuno (%02X)"
 
-#: fdisk/cfdisk.c:2042 fdisk/cfdisk.c:2126
+#: fdisk/cfdisk.c:2041 fdisk/cfdisk.c:2125
 #, c-format
 msgid "Partition Table for %s\n"
 msgstr "Tabella delle partizioni per %s\n"
 
-#: fdisk/cfdisk.c:2044
+#: fdisk/cfdisk.c:2043
 msgid "            First    Last\n"
 msgstr "           Primo    Ultimo\n"
 
-#: fdisk/cfdisk.c:2045
+#: fdisk/cfdisk.c:2044
 msgid ""
 " # Type     Sector   Sector   Offset  Length   Filesystem Type (ID)   Flags\n"
 msgstr ""
 " # Tipo     settore   settore   offset  lunghezza   tipo di filesystem  "
 "(ID)   flag\n"
 
-#: fdisk/cfdisk.c:2046
+#: fdisk/cfdisk.c:2045
 msgid ""
 "-- ------- -------- --------- ------ --------- ---------------------- "
 "---------\n"
@@ -1380,481 +1380,481 @@ msgstr ""
 "---------\n"
 
 #. Three-line heading. Read "Start Sector" etc vertically.
-#: fdisk/cfdisk.c:2129
+#: fdisk/cfdisk.c:2128
 msgid "         ---Starting---      ----Ending----    Start Number of\n"
 msgstr "         ---Avvio---      ----Chiusura----    Numero avvio di\n"
 
-#: fdisk/cfdisk.c:2130
+#: fdisk/cfdisk.c:2129
 msgid " # Flags Head Sect Cyl   ID  Head Sect Cyl    Sector  Sectors\n"
 msgstr ""
 " # Flag testina sett. cil.   ID  testina sett. cil.    settore  settori\n"
 
-#: fdisk/cfdisk.c:2131
+#: fdisk/cfdisk.c:2130
 msgid "-- ----- ---- ---- ---- ---- ---- ---- ---- -------- ---------\n"
 msgstr "-- ----- ---- ---- ---- ---- ---- ---- ---- -------- ---------\n"
 
-#: fdisk/cfdisk.c:2164
+#: fdisk/cfdisk.c:2163
 msgid "Raw"
 msgstr "Grezzo"
 
-#: fdisk/cfdisk.c:2164
+#: fdisk/cfdisk.c:2163
 msgid "Print the table using raw data format"
 msgstr "Stampare la tabella utilizzando il formato dati grezzi"
 
-#: fdisk/cfdisk.c:2165 fdisk/cfdisk.c:2267
+#: fdisk/cfdisk.c:2164 fdisk/cfdisk.c:2266
 msgid "Sectors"
 msgstr "Settori"
 
-#: fdisk/cfdisk.c:2165
+#: fdisk/cfdisk.c:2164
 msgid "Print the table ordered by sectors"
 msgstr "Stampare la tabella ordinata per settori"
 
-#: fdisk/cfdisk.c:2166
+#: fdisk/cfdisk.c:2165
 msgid "Table"
 msgstr "Tabella"
 
-#: fdisk/cfdisk.c:2166
+#: fdisk/cfdisk.c:2165
 msgid "Just print the partition table"
 msgstr "Stampare la tabella delle partizioni"
 
-#: fdisk/cfdisk.c:2167
+#: fdisk/cfdisk.c:2166
 msgid "Don't print the table"
 msgstr "Non stampare la tabella"
 
-#: fdisk/cfdisk.c:2195
+#: fdisk/cfdisk.c:2194
 msgid "Help Screen for cfdisk"
 msgstr "Schermata Guida per cfdisk"
 
-#: fdisk/cfdisk.c:2197
+#: fdisk/cfdisk.c:2196
 msgid "This is cfdisk, a curses based disk partitioning program, which"
 msgstr ""
 "Questo è cfdisk, un programma per la partizione dei dischi basato su curses"
 
-#: fdisk/cfdisk.c:2198
+#: fdisk/cfdisk.c:2197
 msgid "allows you to create, delete and modify partitions on your hard"
 msgstr ""
 "consente di creare, cancellare e modificare le partizioni sul disco fisso"
 
-#: fdisk/cfdisk.c:2199
+#: fdisk/cfdisk.c:2198
 msgid "disk drive."
 msgstr "unità disco."
 
-#: fdisk/cfdisk.c:2201
+#: fdisk/cfdisk.c:2200
 msgid "Copyright (C) 1994-1999 Kevin E. Martin & aeb"
 msgstr "Copyright (C) 1994-1999 Kevin E. Martin & aeb"
 
-#: fdisk/cfdisk.c:2203
+#: fdisk/cfdisk.c:2202
 msgid "Command      Meaning"
 msgstr "Comando     significato"
 
-#: fdisk/cfdisk.c:2204
+#: fdisk/cfdisk.c:2203
 msgid "-------      -------"
 msgstr "-------      -------"
 
-#: fdisk/cfdisk.c:2205
+#: fdisk/cfdisk.c:2204
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr " b          Cambia flag avviabile per la partizione corrente"
 
-#: fdisk/cfdisk.c:2206
+#: fdisk/cfdisk.c:2205
 msgid "  d          Delete the current partition"
 msgstr " d          Elimina la partizione corrente"
 
-#: fdisk/cfdisk.c:2207
+#: fdisk/cfdisk.c:2206
 msgid "  g          Change cylinders, heads, sectors-per-track parameters"
 msgstr " g          cambio cilindri, testine, parametri settori-per-traccia"
 
-#: fdisk/cfdisk.c:2208
+#: fdisk/cfdisk.c:2207
 msgid "             WARNING: This option should only be used by people who"
 msgstr ""
 "            ATTENZIONE: questa opzione dovrebbe essere utilizzata solo da "
 "persone"
 
-#: fdisk/cfdisk.c:2209
+#: fdisk/cfdisk.c:2208
 msgid "             know what they are doing."
 msgstr "            esperte."
 
-#: fdisk/cfdisk.c:2210
+#: fdisk/cfdisk.c:2209
 msgid "  h          Print this screen"
 msgstr " h          Stampare questa schermata"
 
-#: fdisk/cfdisk.c:2211
+#: fdisk/cfdisk.c:2210
 msgid "  m          Maximize disk usage of the current partition"
 msgstr ""
 " m          Massimizzare l'utilizzo del disco della partizione corrente"
 
-#: fdisk/cfdisk.c:2212
+#: fdisk/cfdisk.c:2211
 msgid "             Note: This may make the partition incompatible with"
 msgstr "            Nota: questo può rendere la partizione incompatibile con"
 
-#: fdisk/cfdisk.c:2213
+#: fdisk/cfdisk.c:2212
 msgid "             DOS, OS/2, ..."
 msgstr "            DOS, OS/2, ..."
 
-#: fdisk/cfdisk.c:2214
+#: fdisk/cfdisk.c:2213
 msgid "  n          Create new partition from free space"
 msgstr " n          Creazione di una nuova partizione nello spazio disponibile"
 
-#: fdisk/cfdisk.c:2215
+#: fdisk/cfdisk.c:2214
 msgid "  p          Print partition table to the screen or to a file"
 msgstr " p          Stampa della tabella delle partizioni su schermo o su file"
 
-#: fdisk/cfdisk.c:2216
+#: fdisk/cfdisk.c:2215
 msgid "             There are several different formats for the partition"
 msgstr "            Vi sono diversi altri formati per la partizione"
 
-#: fdisk/cfdisk.c:2217
+#: fdisk/cfdisk.c:2216
 msgid "             that you can choose from:"
 msgstr "            tra i quali scegliere:"
 
-#: fdisk/cfdisk.c:2218
+#: fdisk/cfdisk.c:2217
 msgid "                r - Raw data (exactly what would be written to disk)"
 msgstr ""
 "               r - dati grezzi (esattamente ciò che verrebbe scritto sul "
 "disco)"
 
-#: fdisk/cfdisk.c:2219
+#: fdisk/cfdisk.c:2218
 msgid "                s - Table ordered by sectors"
 msgstr "               s - Tabella ordinata per settori"
 
-#: fdisk/cfdisk.c:2220
+#: fdisk/cfdisk.c:2219
 msgid "                t - Table in raw format"
 msgstr "               t - Tabella in formato grezzo"
 
-#: fdisk/cfdisk.c:2221
+#: fdisk/cfdisk.c:2220
 msgid "  q          Quit program without writing partition table"
 msgstr ""
 "  q          Esce dal programma senza scrivere nella tabella delle partizioni"
 
-#: fdisk/cfdisk.c:2222
+#: fdisk/cfdisk.c:2221
 msgid "  t          Change the filesystem type"
 msgstr " t          Cambia il tipo di filesystem"
 
-#: fdisk/cfdisk.c:2223
+#: fdisk/cfdisk.c:2222
 msgid "  u          Change units of the partition size display"
 msgstr ""
 " u          Modifica l'unità di visualizzazione della dimensione della "
 "partizione"
 
-#: fdisk/cfdisk.c:2224
+#: fdisk/cfdisk.c:2223
 msgid "             Rotates through MB, sectors and cylinders"
 msgstr "            Ruota attraverso MB, settori e cilindri"
 
-#: fdisk/cfdisk.c:2225
+#: fdisk/cfdisk.c:2224
 msgid "  W          Write partition table to disk (must enter upper case W)"
 msgstr ""
 " W          Scrittura della tabella di partizione sul disco (si deve "
 "inserire la W maiuscola)"
 
-#: fdisk/cfdisk.c:2226
+#: fdisk/cfdisk.c:2225
 msgid "             Since this might destroy data on the disk, you must"
 msgstr ""
 "            Dato che in questo modo è possibile eliminare dati sul disco, si "
 "deve"
 
-#: fdisk/cfdisk.c:2227
+#: fdisk/cfdisk.c:2226
 msgid "             either confirm or deny the write by entering `yes' or"
 msgstr "            confermare o negare la scrittura inserendo `sì' o"
 
-#: fdisk/cfdisk.c:2228
+#: fdisk/cfdisk.c:2227
 msgid "             `no'"
 msgstr "             `no'"
 
-#: fdisk/cfdisk.c:2229
+#: fdisk/cfdisk.c:2228
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "Freccia Su      sposta il cursore alla partizione precedente"
 
-#: fdisk/cfdisk.c:2230
+#: fdisk/cfdisk.c:2229
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "Freccia Giù   sposta il cursore alla partizione successiva"
 
-#: fdisk/cfdisk.c:2231
+#: fdisk/cfdisk.c:2230
 msgid "CTRL-L       Redraws the screen"
 msgstr "CTRL-L       Ridisegna lo schermo"
 
-#: fdisk/cfdisk.c:2232
+#: fdisk/cfdisk.c:2231
 msgid "  ?          Print this screen"
 msgstr "  ?          Stampa questa schermata"
 
-#: fdisk/cfdisk.c:2234
+#: fdisk/cfdisk.c:2233
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Nota: è possibile immettere tutti i comandi in maiuscolo o minuscolo"
 
-#: fdisk/cfdisk.c:2235
+#: fdisk/cfdisk.c:2234
 msgid "case letters (except for Writes)."
 msgstr "lettere maiuscole/minuscole (fatta eccezione per Writes)."
 
-#: fdisk/cfdisk.c:2265 fdisk/cfdisk.c:2595 fdisk/fdisksunlabel.c:321
-#: fdisk/fdisksunlabel.c:323
+#: fdisk/cfdisk.c:2264 fdisk/cfdisk.c:2594 fdisk/fdisksunlabel.c:320
+#: fdisk/fdisksunlabel.c:322
 msgid "Cylinders"
 msgstr "Cilindri"
 
-#: fdisk/cfdisk.c:2265
+#: fdisk/cfdisk.c:2264
 msgid "Change cylinder geometry"
 msgstr "Modifica la geometria dei cilindri"
 
-#: fdisk/cfdisk.c:2266 fdisk/fdisksunlabel.c:318
+#: fdisk/cfdisk.c:2265 fdisk/fdisksunlabel.c:317
 msgid "Heads"
 msgstr "Testine"
 
-#: fdisk/cfdisk.c:2266
+#: fdisk/cfdisk.c:2265
 msgid "Change head geometry"
 msgstr "Modifica la geometria delle testine"
 
-#: fdisk/cfdisk.c:2267
+#: fdisk/cfdisk.c:2266
 msgid "Change sector geometry"
 msgstr "Modifica la geometria dei settori"
 
-#: fdisk/cfdisk.c:2268
+#: fdisk/cfdisk.c:2267
 msgid "Done"
 msgstr "Fine"
 
-#: fdisk/cfdisk.c:2268
+#: fdisk/cfdisk.c:2267
 msgid "Done with changing geometry"
 msgstr "Modifica della geometria eseguita"
 
-#: fdisk/cfdisk.c:2281
+#: fdisk/cfdisk.c:2280
 msgid "Enter the number of cylinders: "
 msgstr "Immettere il numero di cilindri: "
 
-#: fdisk/cfdisk.c:2293 fdisk/cfdisk.c:2863
+#: fdisk/cfdisk.c:2292 fdisk/cfdisk.c:2862
 msgid "Illegal cylinders value"
 msgstr "Valore cilindri non valido"
 
-#: fdisk/cfdisk.c:2299
+#: fdisk/cfdisk.c:2298
 msgid "Enter the number of heads: "
 msgstr "Immettere il numero delle testine: "
 
-#: fdisk/cfdisk.c:2306 fdisk/cfdisk.c:2873
+#: fdisk/cfdisk.c:2305 fdisk/cfdisk.c:2872
 msgid "Illegal heads value"
 msgstr "Valore testine non valido"
 
-#: fdisk/cfdisk.c:2312
+#: fdisk/cfdisk.c:2311
 msgid "Enter the number of sectors per track: "
 msgstr "Immettere il numero dei settori per traccia: "
 
-#: fdisk/cfdisk.c:2319 fdisk/cfdisk.c:2880
+#: fdisk/cfdisk.c:2318 fdisk/cfdisk.c:2879
 msgid "Illegal sectors value"
 msgstr "Valore settori non valido"
 
-#: fdisk/cfdisk.c:2422
+#: fdisk/cfdisk.c:2421
 msgid "Enter filesystem type: "
 msgstr "Immettere il tipo di filesystem: "
 
-#: fdisk/cfdisk.c:2440
+#: fdisk/cfdisk.c:2439
 msgid "Cannot change FS Type to empty"
 msgstr "Impossibile cambiare il tipo FS in vuoto"
 
-#: fdisk/cfdisk.c:2442
+#: fdisk/cfdisk.c:2441
 msgid "Cannot change FS Type to extended"
 msgstr "Impossibile cambiare il tipo FS in espanso"
 
-#: fdisk/cfdisk.c:2470 fdisk/fdisksunlabel.c:44
+#: fdisk/cfdisk.c:2469 fdisk/fdisksunlabel.c:43
 msgid "Boot"
 msgstr "Avvio"
 
-#: fdisk/cfdisk.c:2472
+#: fdisk/cfdisk.c:2471
 #, c-format
 msgid "Unk(%02X)"
 msgstr "Unk(%02X)"
 
-#: fdisk/cfdisk.c:2475 fdisk/cfdisk.c:2478
+#: fdisk/cfdisk.c:2474 fdisk/cfdisk.c:2477
 msgid ", NC"
 msgstr "NC"
 
-#: fdisk/cfdisk.c:2483 fdisk/cfdisk.c:2486
+#: fdisk/cfdisk.c:2482 fdisk/cfdisk.c:2485
 msgid "NC"
 msgstr "NC"
 
-#: fdisk/cfdisk.c:2494
+#: fdisk/cfdisk.c:2493
 msgid "Pri/Log"
 msgstr "Pri/Log"
 
-#: fdisk/cfdisk.c:2570
+#: fdisk/cfdisk.c:2569
 #, c-format
 msgid "Disk Drive: %s"
 msgstr "Unità disco: %s"
 
-#: fdisk/cfdisk.c:2576
+#: fdisk/cfdisk.c:2575
 #, fuzzy, c-format
 msgid "Size: %lld bytes, %ld MB"
 msgstr "Dimensione: %lld byte"
 
-#: fdisk/cfdisk.c:2579
+#: fdisk/cfdisk.c:2578
 #, fuzzy, c-format
 msgid "Size: %lld bytes, %ld.%ld GB"
 msgstr "Dimensione: %lld byte"
 
-#: fdisk/cfdisk.c:2583
+#: fdisk/cfdisk.c:2582
 #, c-format
 msgid "Heads: %d   Sectors per Track: %d   Cylinders: %d"
 msgstr "Testine: %d   settori per traccia: %d   cilindri: %d"
 
-#: fdisk/cfdisk.c:2587
+#: fdisk/cfdisk.c:2586
 msgid "Name"
 msgstr "Nome"
 
-#: fdisk/cfdisk.c:2588
+#: fdisk/cfdisk.c:2587
 msgid "Flags"
 msgstr "Flag"
 
-#: fdisk/cfdisk.c:2589
+#: fdisk/cfdisk.c:2588
 msgid "Part Type"
 msgstr "Tipo di partiz."
 
-#: fdisk/cfdisk.c:2590
+#: fdisk/cfdisk.c:2589
 msgid "FS Type"
 msgstr "Tipo FS"
 
-#: fdisk/cfdisk.c:2591
+#: fdisk/cfdisk.c:2590
 msgid "[Label]"
 msgstr "[Etichetta]"
 
-#: fdisk/cfdisk.c:2593
+#: fdisk/cfdisk.c:2592
 msgid "  Sectors"
 msgstr "  Settori"
 
-#: fdisk/cfdisk.c:2597
+#: fdisk/cfdisk.c:2596
 msgid "Size (MB)"
 msgstr "Dimensione (MB)"
 
-#: fdisk/cfdisk.c:2599
+#: fdisk/cfdisk.c:2598
 msgid "Size (GB)"
 msgstr "Dimensione (GB)"
 
-#: fdisk/cfdisk.c:2654
+#: fdisk/cfdisk.c:2653
 msgid "Bootable"
 msgstr "Avviabile"
 
-#: fdisk/cfdisk.c:2654
+#: fdisk/cfdisk.c:2653
 msgid "Toggle bootable flag of the current partition"
 msgstr " Cambia flag avviabile per la partizione corrente "
 
-#: fdisk/cfdisk.c:2655
+#: fdisk/cfdisk.c:2654
 msgid "Delete"
 msgstr "Elimina"
 
-#: fdisk/cfdisk.c:2655
+#: fdisk/cfdisk.c:2654
 msgid "Delete the current partition"
 msgstr "Elimina la partizione corrente"
 
-#: fdisk/cfdisk.c:2656
+#: fdisk/cfdisk.c:2655
 msgid "Geometry"
 msgstr "Geometria"
 
-#: fdisk/cfdisk.c:2656
+#: fdisk/cfdisk.c:2655
 msgid "Change disk geometry (experts only)"
 msgstr "Modifica della geometria del disco (solo per esperti)"
 
-#: fdisk/cfdisk.c:2657
+#: fdisk/cfdisk.c:2656
 msgid "Help"
 msgstr "Guida"
 
-#: fdisk/cfdisk.c:2657
+#: fdisk/cfdisk.c:2656
 msgid "Print help screen"
 msgstr "Stampa della schermata della guida"
 
-#: fdisk/cfdisk.c:2658
+#: fdisk/cfdisk.c:2657
 msgid "Maximize"
 msgstr "Massimi."
 
-#: fdisk/cfdisk.c:2658
+#: fdisk/cfdisk.c:2657
 msgid "Maximize disk usage of the current partition (experts only)"
 msgstr ""
 "Massimizzare l'utilizzo del disco della partizione corrente (solo per "
 "esperti)"
 
-#: fdisk/cfdisk.c:2659
+#: fdisk/cfdisk.c:2658
 msgid "New"
 msgstr "Nuova"
 
-#: fdisk/cfdisk.c:2659
+#: fdisk/cfdisk.c:2658
 msgid "Create new partition from free space"
 msgstr "Creazione di una nuova partizione nello spazio disponibile"
 
-#: fdisk/cfdisk.c:2660
+#: fdisk/cfdisk.c:2659
 msgid "Print"
 msgstr "Stampa"
 
-#: fdisk/cfdisk.c:2660
+#: fdisk/cfdisk.c:2659
 msgid "Print partition table to the screen or to a file"
 msgstr "Stampa della tabella delle partizioni su schermo o su file"
 
-#: fdisk/cfdisk.c:2661
+#: fdisk/cfdisk.c:2660
 msgid "Quit"
 msgstr "Esci"
 
-#: fdisk/cfdisk.c:2661
+#: fdisk/cfdisk.c:2660
 msgid "Quit program without writing partition table"
 msgstr "Esce dal programma senza scrivere nella tabella delle partizioni"
 
-#: fdisk/cfdisk.c:2662
+#: fdisk/cfdisk.c:2661
 msgid "Type"
 msgstr "Tipo"
 
-#: fdisk/cfdisk.c:2662
+#: fdisk/cfdisk.c:2661
 msgid "Change the filesystem type (DOS, Linux, OS/2 and so on)"
 msgstr "Modificare il tipo di filesystem (DOS, Linux, OS/2 e così via)"
 
-#: fdisk/cfdisk.c:2663
+#: fdisk/cfdisk.c:2662
 msgid "Units"
 msgstr "Unità"
 
-#: fdisk/cfdisk.c:2663
+#: fdisk/cfdisk.c:2662
 msgid "Change units of the partition size display (MB, sect, cyl)"
 msgstr ""
 "Cambia l'unità di visualizzazione della dimensione della partizione (MB, "
 "sett., cil.)"
 
-#: fdisk/cfdisk.c:2664
+#: fdisk/cfdisk.c:2663
 msgid "Write"
 msgstr "Scrivi"
 
-#: fdisk/cfdisk.c:2664
+#: fdisk/cfdisk.c:2663
 msgid "Write partition table to disk (this might destroy data)"
 msgstr ""
 "Scrivere la tabella delle partizioni sul disco (i dati potrebbero venir "
 "eliminati)"
 
-#: fdisk/cfdisk.c:2710
+#: fdisk/cfdisk.c:2709
 msgid "Cannot make this partition bootable"
 msgstr "Impossibile rendere questa partizione avviabile"
 
-#: fdisk/cfdisk.c:2720
+#: fdisk/cfdisk.c:2719
 msgid "Cannot delete an empty partition"
 msgstr "Impossibile cancellare una partizione vuota"
 
-#: fdisk/cfdisk.c:2740 fdisk/cfdisk.c:2742
+#: fdisk/cfdisk.c:2739 fdisk/cfdisk.c:2741
 msgid "Cannot maximize this partition"
 msgstr "Impossibile massimizzare questa partizione"
 
-#: fdisk/cfdisk.c:2750
+#: fdisk/cfdisk.c:2749
 msgid "This partition is unusable"
 msgstr "Questa partizione è utilizzabile"
 
-#: fdisk/cfdisk.c:2752
+#: fdisk/cfdisk.c:2751
 msgid "This partition is already in use"
 msgstr "Questa partizione è già in uso"
 
-#: fdisk/cfdisk.c:2769
+#: fdisk/cfdisk.c:2768
 msgid "Cannot change the type of an empty partition"
 msgstr "Impossibile modificare il tipo di una partizione vuota"
 
-#: fdisk/cfdisk.c:2796 fdisk/cfdisk.c:2802
+#: fdisk/cfdisk.c:2795 fdisk/cfdisk.c:2801
 msgid "No more partitions"
 msgstr "Nessun'altra partizione"
 
-#: fdisk/cfdisk.c:2809
+#: fdisk/cfdisk.c:2808
 msgid "Illegal command"
 msgstr "Comando non valido"
 
-#: fdisk/cfdisk.c:2819
+#: fdisk/cfdisk.c:2818
 #, fuzzy
 msgid "Copyright (C) 1994-2000 Kevin E. Martin & aeb\n"
 msgstr "Copyright (C) 1994-1999 Kevin E. Martin & aeb\n"
 
 #. Unfortunately, xgettext does not handle multi-line strings
 #. so, let's use explicit \n's instead
-#: fdisk/cfdisk.c:2826
+#: fdisk/cfdisk.c:2825
 #, c-format
 msgid ""
 "\n"
@@ -1891,7 +1891,7 @@ msgstr ""
 "                al numero di testine e di settori/traccia.\n"
 "\n"
 
-#: fdisk/fdisk.c:193
+#: fdisk/fdisk.c:194
 #, fuzzy
 msgid ""
 "Usage: fdisk [-b SSZ] [-u] DISK     Change partition table\n"
@@ -1914,7 +1914,7 @@ msgstr ""
 "-u: indica Inizio e Fine con unità di misura settore (invece di cilindro)\n"
 "-b 2048: (per alcune unità MO) utilizzare i settori a 2048 byte\n"
 
-#: fdisk/fdisk.c:205
+#: fdisk/fdisk.c:206
 msgid ""
 "Usage: fdisk [-l] [-b SSZ] [-u] device\n"
 "E.g.: fdisk /dev/hda  (for the first IDE disk)\n"
@@ -1930,224 +1930,224 @@ msgstr ""
 "  o: fdisk /dev/rd/c0d0  o: fdisk /dev/ida/c0d0  (per i dispositivi RAID)\n"
 "  ...\n"
 
-#: fdisk/fdisk.c:214
+#: fdisk/fdisk.c:215
 #, c-format
 msgid "Unable to open %s\n"
 msgstr "Impossibile aprire %s\n"
 
-#: fdisk/fdisk.c:218
+#: fdisk/fdisk.c:219
 #, c-format
 msgid "Unable to read %s\n"
 msgstr "Impossibile leggere %s\n"
 
-#: fdisk/fdisk.c:222
+#: fdisk/fdisk.c:223
 #, c-format
 msgid "Unable to seek on %s\n"
 msgstr "Ricerca impossibile su %s\n"
 
-#: fdisk/fdisk.c:226
+#: fdisk/fdisk.c:227
 #, c-format
 msgid "Unable to write %s\n"
 msgstr "Impossibile scrivere su %s\n"
 
-#: fdisk/fdisk.c:230
+#: fdisk/fdisk.c:231
 #, c-format
 msgid "BLKGETSIZE ioctl failed on %s\n"
 msgstr "BLKGETSIZE ioctl non riuscito su %s\n"
 
-#: fdisk/fdisk.c:234
+#: fdisk/fdisk.c:235
 msgid "Unable to allocate any more memory\n"
 msgstr "Impossibile allocare altra memoria\n"
 
-#: fdisk/fdisk.c:237
+#: fdisk/fdisk.c:238
 msgid "Fatal error\n"
 msgstr "Errore irreversibile\n"
 
-#: fdisk/fdisk.c:321 fdisk/fdisk.c:340 fdisk/fdisk.c:358 fdisk/fdisk.c:365
-#: fdisk/fdisk.c:388 fdisk/fdisk.c:406 fdisk/fdisk.c:422 fdisk/fdisk.c:438
-#: fdisk/fdiskbsdlabel.c:126
+#: fdisk/fdisk.c:322 fdisk/fdisk.c:341 fdisk/fdisk.c:359 fdisk/fdisk.c:366
+#: fdisk/fdisk.c:389 fdisk/fdisk.c:407 fdisk/fdisk.c:423 fdisk/fdisk.c:439
+#: fdisk/fdiskbsdlabel.c:124
 msgid "Command action"
 msgstr "Azione comando"
 
-#: fdisk/fdisk.c:322
+#: fdisk/fdisk.c:323
 msgid "   a   toggle a read only flag"
 msgstr "   a   attivazione/disattivazione di un flag di sola lettura"
 
 #. sun
-#: fdisk/fdisk.c:323 fdisk/fdisk.c:367
+#: fdisk/fdisk.c:324 fdisk/fdisk.c:368
 msgid "   b   edit bsd disklabel"
 msgstr "   b   modifica di bsd disklabel"
 
-#: fdisk/fdisk.c:324
+#: fdisk/fdisk.c:325
 msgid "   c   toggle the mountable flag"
 msgstr "   c   attivazione/disattivazione del flag montabile"
 
 #. sun
-#: fdisk/fdisk.c:325 fdisk/fdisk.c:344 fdisk/fdisk.c:369
+#: fdisk/fdisk.c:326 fdisk/fdisk.c:345 fdisk/fdisk.c:370
 msgid "   d   delete a partition"
 msgstr "   d   cancellazione di una partizione"
 
-#: fdisk/fdisk.c:326 fdisk/fdisk.c:345 fdisk/fdisk.c:370
+#: fdisk/fdisk.c:327 fdisk/fdisk.c:346 fdisk/fdisk.c:371
 msgid "   l   list known partition types"
 msgstr "   l   elenco dei tipi di partizione conosciuti"
 
 #. sun
-#: fdisk/fdisk.c:327 fdisk/fdisk.c:346 fdisk/fdisk.c:359 fdisk/fdisk.c:371
-#: fdisk/fdisk.c:396 fdisk/fdisk.c:413 fdisk/fdisk.c:429 fdisk/fdisk.c:446
-#: fdisk/fdiskbsdlabel.c:131
+#: fdisk/fdisk.c:328 fdisk/fdisk.c:347 fdisk/fdisk.c:360 fdisk/fdisk.c:372
+#: fdisk/fdisk.c:397 fdisk/fdisk.c:414 fdisk/fdisk.c:430 fdisk/fdisk.c:447
+#: fdisk/fdiskbsdlabel.c:129
 msgid "   m   print this menu"
 msgstr "   m   stampa di questo menu"
 
-#: fdisk/fdisk.c:328 fdisk/fdisk.c:347 fdisk/fdisk.c:372
+#: fdisk/fdisk.c:329 fdisk/fdisk.c:348 fdisk/fdisk.c:373
 msgid "   n   add a new partition"
 msgstr "   n   aggiunta di una nuova partizione"
 
-#: fdisk/fdisk.c:329 fdisk/fdisk.c:348 fdisk/fdisk.c:360 fdisk/fdisk.c:373
+#: fdisk/fdisk.c:330 fdisk/fdisk.c:349 fdisk/fdisk.c:361 fdisk/fdisk.c:374
 msgid "   o   create a new empty DOS partition table"
 msgstr "   o   creazione di una nuova tabella delle partizioni DOS vuota"
 
-#: fdisk/fdisk.c:330 fdisk/fdisk.c:349 fdisk/fdisk.c:374 fdisk/fdisk.c:397
-#: fdisk/fdisk.c:414 fdisk/fdisk.c:430 fdisk/fdisk.c:447
+#: fdisk/fdisk.c:331 fdisk/fdisk.c:350 fdisk/fdisk.c:375 fdisk/fdisk.c:398
+#: fdisk/fdisk.c:415 fdisk/fdisk.c:431 fdisk/fdisk.c:448
 msgid "   p   print the partition table"
 msgstr "   p   stampa della tabella delle partizioni"
 
-#: fdisk/fdisk.c:331 fdisk/fdisk.c:350 fdisk/fdisk.c:361 fdisk/fdisk.c:375
-#: fdisk/fdisk.c:398 fdisk/fdisk.c:415 fdisk/fdisk.c:431 fdisk/fdisk.c:448
-#: fdisk/fdiskbsdlabel.c:134
+#: fdisk/fdisk.c:332 fdisk/fdisk.c:351 fdisk/fdisk.c:362 fdisk/fdisk.c:376
+#: fdisk/fdisk.c:399 fdisk/fdisk.c:416 fdisk/fdisk.c:432 fdisk/fdisk.c:449
+#: fdisk/fdiskbsdlabel.c:132
 msgid "   q   quit without saving changes"
 msgstr "   q   uscita senza salvataggio delle modifiche"
 
-#: fdisk/fdisk.c:332 fdisk/fdisk.c:351 fdisk/fdisk.c:362 fdisk/fdisk.c:376
+#: fdisk/fdisk.c:333 fdisk/fdisk.c:352 fdisk/fdisk.c:363 fdisk/fdisk.c:377
 msgid "   s   create a new empty Sun disklabel"
 msgstr "   s   creazione di una nuova disklabel Sun vuota"
 
 #. sun
-#: fdisk/fdisk.c:333 fdisk/fdisk.c:352 fdisk/fdisk.c:377
+#: fdisk/fdisk.c:334 fdisk/fdisk.c:353 fdisk/fdisk.c:378
 msgid "   t   change a partition's system id"
 msgstr "   t   modifica dell'id di sistema di una partizione"
 
-#: fdisk/fdisk.c:334 fdisk/fdisk.c:353 fdisk/fdisk.c:378
+#: fdisk/fdisk.c:335 fdisk/fdisk.c:354 fdisk/fdisk.c:379
 msgid "   u   change display/entry units"
 msgstr "   u   modifica delle unità di visualizzazione/di immissione"
 
-#: fdisk/fdisk.c:335 fdisk/fdisk.c:354 fdisk/fdisk.c:379 fdisk/fdisk.c:401
-#: fdisk/fdisk.c:418 fdisk/fdisk.c:434 fdisk/fdisk.c:451
+#: fdisk/fdisk.c:336 fdisk/fdisk.c:355 fdisk/fdisk.c:380 fdisk/fdisk.c:402
+#: fdisk/fdisk.c:419 fdisk/fdisk.c:435 fdisk/fdisk.c:452
 msgid "   v   verify the partition table"
 msgstr "   v   verifica della tabella delle partizioni"
 
-#: fdisk/fdisk.c:336 fdisk/fdisk.c:355 fdisk/fdisk.c:380 fdisk/fdisk.c:402
-#: fdisk/fdisk.c:419 fdisk/fdisk.c:435 fdisk/fdisk.c:452
+#: fdisk/fdisk.c:337 fdisk/fdisk.c:356 fdisk/fdisk.c:381 fdisk/fdisk.c:403
+#: fdisk/fdisk.c:420 fdisk/fdisk.c:436 fdisk/fdisk.c:453
 msgid "   w   write table to disk and exit"
 msgstr "   w   scrittura della tabella su disco e uscita"
 
-#: fdisk/fdisk.c:337 fdisk/fdisk.c:381
+#: fdisk/fdisk.c:338 fdisk/fdisk.c:382
 msgid "   x   extra functionality (experts only)"
 msgstr " x   ulteriori funzioni (solo per esperti)"
 
-#: fdisk/fdisk.c:341
+#: fdisk/fdisk.c:342
 msgid "   a   select bootable partition"
 msgstr "   a   selezione della partizione che è possibile avviare"
 
 #. sgi flavour
-#: fdisk/fdisk.c:342
+#: fdisk/fdisk.c:343
 msgid "   b   edit bootfile entry"
 msgstr "   b   modifica della voce bootfile"
 
 #. sgi
-#: fdisk/fdisk.c:343
+#: fdisk/fdisk.c:344
 msgid "   c   select sgi swap partition"
 msgstr "   c   selezione della partizione swap sgi"
 
-#: fdisk/fdisk.c:366
+#: fdisk/fdisk.c:367
 msgid "   a   toggle a bootable flag"
 msgstr "   a  Cambia bootable flag"
 
-#: fdisk/fdisk.c:368
+#: fdisk/fdisk.c:369
 msgid "   c   toggle the dos compatibility flag"
 msgstr "   c   cambia il flag compatibile con il dos"
 
-#: fdisk/fdisk.c:389
+#: fdisk/fdisk.c:390
 msgid "   a   change number of alternate cylinders"
 msgstr "   a   modifica del numero di cilindri alternativi"
 
 #. sun
-#: fdisk/fdisk.c:390 fdisk/fdisk.c:408 fdisk/fdisk.c:424 fdisk/fdisk.c:440
+#: fdisk/fdisk.c:391 fdisk/fdisk.c:409 fdisk/fdisk.c:425 fdisk/fdisk.c:441
 msgid "   c   change number of cylinders"
 msgstr "   c   modifica del numero di cilindri"
 
-#: fdisk/fdisk.c:391 fdisk/fdisk.c:409 fdisk/fdisk.c:425 fdisk/fdisk.c:441
+#: fdisk/fdisk.c:392 fdisk/fdisk.c:410 fdisk/fdisk.c:426 fdisk/fdisk.c:442
 msgid "   d   print the raw data in the partition table"
 msgstr "   d   stampa dei dati grezzi nella tabella delle partizioni"
 
-#: fdisk/fdisk.c:392
+#: fdisk/fdisk.c:393
 msgid "   e   change number of extra sectors per cylinder"
 msgstr "   e   modifica del numero dei settori supplementari per cilindro"
 
 #. sun
-#: fdisk/fdisk.c:393 fdisk/fdisk.c:412 fdisk/fdisk.c:428 fdisk/fdisk.c:445
+#: fdisk/fdisk.c:394 fdisk/fdisk.c:413 fdisk/fdisk.c:429 fdisk/fdisk.c:446
 msgid "   h   change number of heads"
 msgstr "   h   modifica del numero di testine"
 
-#: fdisk/fdisk.c:394
+#: fdisk/fdisk.c:395
 msgid "   i   change interleave factor"
 msgstr "   i   modifica del fattore di interleave"
 
 #. sun
-#: fdisk/fdisk.c:395
+#: fdisk/fdisk.c:396
 msgid "   o   change rotation speed (rpm)"
 msgstr "   o   modifica della velocità di rotazione (rpm)"
 
-#: fdisk/fdisk.c:399 fdisk/fdisk.c:416 fdisk/fdisk.c:432 fdisk/fdisk.c:449
-#: fdisk/fdiskbsdlabel.c:135
+#: fdisk/fdisk.c:400 fdisk/fdisk.c:417 fdisk/fdisk.c:433 fdisk/fdisk.c:450
+#: fdisk/fdiskbsdlabel.c:133
 msgid "   r   return to main menu"
 msgstr "   r   ritorno al menu principale"
 
-#: fdisk/fdisk.c:400 fdisk/fdisk.c:417 fdisk/fdisk.c:433 fdisk/fdisk.c:450
+#: fdisk/fdisk.c:401 fdisk/fdisk.c:418 fdisk/fdisk.c:434 fdisk/fdisk.c:451
 msgid "   s   change number of sectors/track"
 msgstr "   s   modifica del numero di settori/traccia"
 
-#: fdisk/fdisk.c:403
+#: fdisk/fdisk.c:404
 msgid "   y   change number of physical cylinders"
 msgstr "   y   modifica del numero di cilindri fisici"
 
-#: fdisk/fdisk.c:407 fdisk/fdisk.c:423 fdisk/fdisk.c:439
+#: fdisk/fdisk.c:408 fdisk/fdisk.c:424 fdisk/fdisk.c:440
 msgid "   b   move beginning of data in a partition"
 msgstr "   b   spostamento dell'inizio di dati in una partizione"
 
-#: fdisk/fdisk.c:410 fdisk/fdisk.c:426 fdisk/fdisk.c:442
+#: fdisk/fdisk.c:411 fdisk/fdisk.c:427 fdisk/fdisk.c:443
 msgid "   e   list extended partitions"
 msgstr "   e   elenco delle partizioni estese"
 
 #. !sun
-#: fdisk/fdisk.c:411 fdisk/fdisk.c:427 fdisk/fdisk.c:444
+#: fdisk/fdisk.c:412 fdisk/fdisk.c:428 fdisk/fdisk.c:445
 #, fuzzy
 msgid "   g   create an IRIX (SGI) partition table"
 msgstr "   g   creazione di una tabella delle partizioni IRIX"
 
 #. !sun
-#: fdisk/fdisk.c:443
+#: fdisk/fdisk.c:444
 #, fuzzy
 msgid "   f   fix partition order"
 msgstr "   p   stampa della tabella delle partizioni"
 
-#: fdisk/fdisk.c:558
+#: fdisk/fdisk.c:561
 msgid "You must set"
 msgstr "Si devono impostare"
 
-#: fdisk/fdisk.c:572
+#: fdisk/fdisk.c:575
 msgid "heads"
 msgstr "testine"
 
-#: fdisk/fdisk.c:574 fdisk/fdisk.c:1110 fdisk/sfdisk.c:865
+#: fdisk/fdisk.c:577 fdisk/fdisk.c:1142 fdisk/sfdisk.c:864
 msgid "sectors"
 msgstr "settori"
 
-#: fdisk/fdisk.c:576 fdisk/fdisk.c:1110 fdisk/fdiskbsdlabel.c:466
-#: fdisk/sfdisk.c:865
+#: fdisk/fdisk.c:579 fdisk/fdisk.c:1142 fdisk/fdiskbsdlabel.c:464
+#: fdisk/sfdisk.c:864
 msgid "cylinders"
 msgstr "cilindri"
 
-#: fdisk/fdisk.c:580
+#: fdisk/fdisk.c:583
 #, c-format
 msgid ""
 "%s%s.\n"
@@ -2157,11 +2157,11 @@ msgstr ""
 "È possibile effettuare questa operazione dal menu delle funzioni "
 "supplementari.\n"
 
-#: fdisk/fdisk.c:581
+#: fdisk/fdisk.c:584
 msgid " and "
 msgstr " e "
 
-#: fdisk/fdisk.c:598
+#: fdisk/fdisk.c:601
 #, c-format
 msgid ""
 "\n"
@@ -2173,30 +2173,30 @@ msgid ""
 "   (e.g., DOS FDISK, OS/2 FDISK)\n"
 msgstr ""
 
-#: fdisk/fdisk.c:621
+#: fdisk/fdisk.c:624
 msgid "Bad offset in primary extended partition\n"
 msgstr "Offset errato nella partizione estesa primaria\n"
 
-#: fdisk/fdisk.c:635
+#: fdisk/fdisk.c:638
 #, c-format
 msgid "Warning: deleting partitions after %d\n"
 msgstr "Attenzione: cancellazione delle partizioni dopo %d\n"
 
-#: fdisk/fdisk.c:652
+#: fdisk/fdisk.c:655
 #, c-format
 msgid "Warning: extra link pointer in partition table %d\n"
 msgstr ""
 "Attenzione: puntatore di collegamento supplementare nella tabella delle "
 "partizioni %d\n"
 
-#: fdisk/fdisk.c:660
+#: fdisk/fdisk.c:663
 #, c-format
 msgid "Warning: ignoring extra data in partition table %d\n"
 msgstr ""
 "Attenzione: i dati supplementari nella tabella delle partizioni %d vengono "
 "ignorati\n"
 
-#: fdisk/fdisk.c:705
+#: fdisk/fdisk.c:708
 msgid ""
 "Building a new DOS disklabel. Changes will remain in memory only,\n"
 "until you decide to write them. After that, of course, the previous\n"
@@ -2208,16 +2208,16 @@ msgstr ""
 "contenuto precedente non potrà essere recuperato.\n"
 "\n"
 
-#: fdisk/fdisk.c:750
+#: fdisk/fdisk.c:752
 #, c-format
 msgid "Note: sector size is %d (not %d)\n"
 msgstr "Nota: la dimensione del settore è %d (non %d)\n"
 
-#: fdisk/fdisk.c:838
+#: fdisk/fdisk.c:870
 msgid "You will not be able to write the partition table.\n"
 msgstr "Impossibile scrivere la tabella delle partizioni.\n"
 
-#: fdisk/fdisk.c:871
+#: fdisk/fdisk.c:903
 #, fuzzy
 msgid ""
 "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
@@ -2226,16 +2226,16 @@ msgstr ""
 "Il dispositivo non contiene né una tabella delle partizioni DOS, né una "
 "disklabel Sun o SGI valide\n"
 
-#: fdisk/fdisk.c:888
+#: fdisk/fdisk.c:920
 msgid "Internal error\n"
 msgstr "Errore interno\n"
 
-#: fdisk/fdisk.c:910
+#: fdisk/fdisk.c:942
 #, c-format
 msgid "Ignoring extra extended partition %d\n"
 msgstr "La partizione estesa supplementare viene ignorata %d\n"
 
-#: fdisk/fdisk.c:922
+#: fdisk/fdisk.c:954
 #, c-format
 msgid ""
 "Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
@@ -2244,7 +2244,7 @@ msgstr ""
 "Attenzione: il flag 0x%04x non valido della tabella delle partizioni %d "
 "verrà corretto con w(rite)\n"
 
-#: fdisk/fdisk.c:944
+#: fdisk/fdisk.c:976
 msgid ""
 "\n"
 "got EOF thrice - exiting..\n"
@@ -2252,65 +2252,65 @@ msgstr ""
 "\n"
 "ricevuto EOF tre volte - uscita in corso..\n"
 
-#: fdisk/fdisk.c:983
+#: fdisk/fdisk.c:1015
 msgid "Hex code (type L to list codes): "
 msgstr "Codice esadecimale (digitare L per elencare i codici): "
 
-#: fdisk/fdisk.c:1022
+#: fdisk/fdisk.c:1054
 #, c-format
 msgid "%s (%d-%d, default %d): "
 msgstr "%s (%d-%d, predefinito %d): "
 
-#: fdisk/fdisk.c:1078
+#: fdisk/fdisk.c:1110
 #, c-format
 msgid "Using default value %d\n"
 msgstr "Utilizzo del valore predefinito %d\n"
 
-#: fdisk/fdisk.c:1082
+#: fdisk/fdisk.c:1114
 msgid "Value out of range.\n"
 msgstr "Valore fuori intervallo.\n"
 
-#: fdisk/fdisk.c:1092
+#: fdisk/fdisk.c:1124
 msgid "Partition number"
 msgstr "Numero della partizione"
 
-#: fdisk/fdisk.c:1101
+#: fdisk/fdisk.c:1133
 #, c-format
 msgid "Warning: partition %d has empty type\n"
 msgstr "Attenzione: la partizione %d ha tipo vuoto\n"
 
-#: fdisk/fdisk.c:1108
+#: fdisk/fdisk.c:1140
 msgid "cylinder"
 msgstr "cilindro"
 
-#: fdisk/fdisk.c:1108
+#: fdisk/fdisk.c:1140
 msgid "sector"
 msgstr "settore"
 
-#: fdisk/fdisk.c:1117
+#: fdisk/fdisk.c:1149
 #, c-format
 msgid "Changing display/entry units to %s\n"
 msgstr "Modifica delle unità di visualizzazione/immissione su %s\n"
 
-#: fdisk/fdisk.c:1128
+#: fdisk/fdisk.c:1160
 #, c-format
 msgid "WARNING: Partition %d is an extended partition\n"
 msgstr "ATTENZIONE: la partizione %d è una partizione estesa\n"
 
-#: fdisk/fdisk.c:1139
+#: fdisk/fdisk.c:1171
 msgid "DOS Compatibility flag is set\n"
 msgstr "Impostato il flag compatibile con DOS\n"
 
-#: fdisk/fdisk.c:1143
+#: fdisk/fdisk.c:1175
 msgid "DOS Compatibility flag is not set\n"
 msgstr "Il flag compatibile con DOS non è impostato\n"
 
-#: fdisk/fdisk.c:1229
+#: fdisk/fdisk.c:1261
 #, c-format
 msgid "Partition %d does not exist yet!\n"
 msgstr "La partizione %d non esiste ancora!\n"
 
-#: fdisk/fdisk.c:1234
+#: fdisk/fdisk.c:1266
 msgid ""
 "Type 0 means free space to many systems\n"
 "(but not to Linux). Having partitions of\n"
@@ -2322,7 +2322,7 @@ msgstr ""
 "tipo 0 probabilmente non è consigliabile. È possibile eliminare\n"
 "una partizione utilizzando il comando `d'.\n"
 
-#: fdisk/fdisk.c:1243
+#: fdisk/fdisk.c:1275
 msgid ""
 "You cannot change a partition into an extended one or vice versa\n"
 "Delete it first.\n"
@@ -2330,7 +2330,7 @@ msgstr ""
 "Non è possibile trasformare una partizione in una estesa o viceversa\n"
 "Prima bisogna eliminarla.\n"
 
-#: fdisk/fdisk.c:1252
+#: fdisk/fdisk.c:1284
 msgid ""
 "Consider leaving partition 3 as Whole disk (5),\n"
 "as SunOS/Solaris expects it and even Linux likes it.\n"
@@ -2340,7 +2340,7 @@ msgstr ""
 "poiché SunOS/Solaris lo prevede e ciò è gradito anche a Linux.\n"
 "\n"
 
-#: fdisk/fdisk.c:1258
+#: fdisk/fdisk.c:1290
 msgid ""
 "Consider leaving partition 9 as volume header (0),\n"
 "and partition 11 as entire volume (6)as IRIX expects it.\n"
@@ -2350,53 +2350,53 @@ msgstr ""
 "e la partizione 11 come volume intero (6) poiché IRIX lo prevede.\n"
 "\n"
 
-#: fdisk/fdisk.c:1272
+#: fdisk/fdisk.c:1303
 #, c-format
 msgid "Changed system type of partition %d to %x (%s)\n"
 msgstr "Modificato il tipo di sistema della partizione %d in %x (%s)\n"
 
-#: fdisk/fdisk.c:1326
+#: fdisk/fdisk.c:1357
 #, c-format
 msgid "Partition %d has different physical/logical beginnings (non-Linux?):\n"
 msgstr ""
 "La partizione %d ha diversi elementi iniziali fisici/logici (non Linux?):\n"
 
-#: fdisk/fdisk.c:1328 fdisk/fdisk.c:1336 fdisk/fdisk.c:1345 fdisk/fdisk.c:1354
+#: fdisk/fdisk.c:1359 fdisk/fdisk.c:1367 fdisk/fdisk.c:1376 fdisk/fdisk.c:1385
 #, c-format
 msgid "     phys=(%d, %d, %d) "
 msgstr "    phys=(%d, %d, %d) "
 
-#: fdisk/fdisk.c:1329 fdisk/fdisk.c:1337
+#: fdisk/fdisk.c:1360 fdisk/fdisk.c:1368
 #, c-format
 msgid "logical=(%d, %d, %d)\n"
 msgstr "logico=(%d, %d, %d)\n"
 
-#: fdisk/fdisk.c:1334
+#: fdisk/fdisk.c:1365
 #, c-format
 msgid "Partition %d has different physical/logical endings:\n"
 msgstr "La partizione %d ha diversi elementi finali fisici/logici:\n"
 
-#: fdisk/fdisk.c:1343
+#: fdisk/fdisk.c:1374
 #, c-format
 msgid "Partition %i does not start on cylinder boundary:\n"
 msgstr "La partizione %i non inizia al limite del cilindro:\n"
 
-#: fdisk/fdisk.c:1346
+#: fdisk/fdisk.c:1377
 #, c-format
 msgid "should be (%d, %d, 1)\n"
 msgstr "dovrebbe essere (%d, %d, 1)\n"
 
-#: fdisk/fdisk.c:1352
+#: fdisk/fdisk.c:1383
 #, c-format
 msgid "Partition %i does not end on cylinder boundary:\n"
 msgstr "La partizione %i non termina al limite del cilindro:\n"
 
-#: fdisk/fdisk.c:1355
+#: fdisk/fdisk.c:1386
 #, c-format
 msgid "should be (%d, %d, %d)\n"
 msgstr "dovrebbe essere (%d, %d, %d)\n"
 
-#: fdisk/fdisk.c:1362
+#: fdisk/fdisk.c:1393
 #, c-format
 msgid ""
 "\n"
@@ -2409,29 +2409,29 @@ msgstr ""
 "Unità = %s di %d * %d byte\n"
 "\n"
 
-#: fdisk/fdisk.c:1470
+#: fdisk/fdisk.c:1501
 msgid ""
 "Nothing to do. Ordering is correct already.\n"
 "\n"
 msgstr ""
 
-#: fdisk/fdisk.c:1534
+#: fdisk/fdisk.c:1565
 #, c-format
 msgid "%*s Boot    Start       End    Blocks   Id  System\n"
 msgstr "%*s Avvio    Inizio    Fine   Blocchi   Id  Sistema\n"
 
-#: fdisk/fdisk.c:1535 fdisk/fdisksgilabel.c:221 fdisk/fdisksunlabel.c:676
+#: fdisk/fdisk.c:1566 fdisk/fdisksgilabel.c:220 fdisk/fdisksunlabel.c:675
 msgid "Device"
 msgstr "Dispositivo"
 
-#: fdisk/fdisk.c:1572
+#: fdisk/fdisk.c:1603
 #, fuzzy
 msgid ""
 "\n"
 "Partition table entries are not in disk order\n"
 msgstr "le partizioni logiche non sono nell'ordine del disco"
 
-#: fdisk/fdisk.c:1582
+#: fdisk/fdisk.c:1613
 #, c-format
 msgid ""
 "\n"
@@ -2442,92 +2442,92 @@ msgstr ""
 "Disco %s: %d testine, %d settori, %d cilindri\n"
 "\n"
 
-#: fdisk/fdisk.c:1584
+#: fdisk/fdisk.c:1615
 msgid "Nr AF  Hd Sec  Cyl  Hd Sec  Cyl    Start     Size ID\n"
 msgstr " Nr AF  Hd Sec  Cyl  Hd Sec  Cyl    Start     Size ID\n"
 
-#: fdisk/fdisk.c:1628
+#: fdisk/fdisk.c:1659
 #, c-format
 msgid "Warning: partition %d contains sector 0\n"
 msgstr "Attenzione: la partizione %d contiene il settore 0\n"
 
-#: fdisk/fdisk.c:1631
+#: fdisk/fdisk.c:1662
 #, c-format
 msgid "Partition %d: head %d greater than maximum %d\n"
 msgstr "Partizione %d: testina %d più grande del massimo %d\n"
 
-#: fdisk/fdisk.c:1634
+#: fdisk/fdisk.c:1665
 #, c-format
 msgid "Partition %d: sector %d greater than maximum %d\n"
 msgstr "Partizione %d: settore %d più grande del massimo %d\n"
 
-#: fdisk/fdisk.c:1637
+#: fdisk/fdisk.c:1668
 #, c-format
 msgid "Partitions %d: cylinder %d greater than maximum %d\n"
 msgstr "Partizione %d: cilindro %d più grande del massimo %d\n"
 
-#: fdisk/fdisk.c:1641
+#: fdisk/fdisk.c:1672
 #, c-format
 msgid "Partition %d: previous sectors %d disagrees with total %d\n"
 msgstr "Partizione %d: dissenso dei settori precedenti %d con il totale %d\n"
 
-#: fdisk/fdisk.c:1673
+#: fdisk/fdisk.c:1704
 #, c-format
 msgid "Warning: bad start-of-data in partition %d\n"
 msgstr "Attenzione: inizio dati danneggiato nella partizione %d\n"
 
-#: fdisk/fdisk.c:1681
+#: fdisk/fdisk.c:1712
 #, c-format
 msgid "Warning: partition %d overlaps partition %d.\n"
 msgstr "Attenzione: la partizione %d si sovrappone alla partizione %d.\n"
 
-#: fdisk/fdisk.c:1701
+#: fdisk/fdisk.c:1732
 #, c-format
 msgid "Warning: partition %d is empty\n"
 msgstr "Attenzione: la partizione %d è vuota\n"
 
-#: fdisk/fdisk.c:1706
+#: fdisk/fdisk.c:1737
 #, c-format
 msgid "Logical partition %d not entirely in partition %d\n"
 msgstr "La partizione logica %d non è interamente nella partizione %d\n"
 
-#: fdisk/fdisk.c:1712
+#: fdisk/fdisk.c:1743
 #, c-format
 msgid "Total allocated sectors %d greater than the maximum %d\n"
 msgstr "Numero %d totale dei settori allocati superiore al massimo %d\n"
 
-#: fdisk/fdisk.c:1715
+#: fdisk/fdisk.c:1746
 #, c-format
 msgid "%d unallocated sectors\n"
 msgstr "%d settori non allocati\n"
 
-#: fdisk/fdisk.c:1728 fdisk/fdisksgilabel.c:662 fdisk/fdisksunlabel.c:506
+#: fdisk/fdisk.c:1759 fdisk/fdisksgilabel.c:661 fdisk/fdisksunlabel.c:505
 #, c-format
 msgid "Partition %d is already defined.  Delete it before re-adding it.\n"
 msgstr ""
 "La partizione %d è già definita.  Cancellarla prima di riaggiungerla.\n"
 
-#: fdisk/fdisk.c:1749 fdisk/fdiskbsdlabel.c:281 fdisk/fdisksgilabel.c:684
-#: fdisk/fdisksunlabel.c:521
+#: fdisk/fdisk.c:1780 fdisk/fdiskbsdlabel.c:279 fdisk/fdisksgilabel.c:683
+#: fdisk/fdisksunlabel.c:520
 #, c-format
 msgid "First %s"
 msgstr "Primo %s"
 
-#: fdisk/fdisk.c:1764 fdisk/fdisksunlabel.c:562
+#: fdisk/fdisk.c:1795 fdisk/fdisksunlabel.c:561
 #, c-format
 msgid "Sector %d is already allocated\n"
 msgstr "Il settore %d è già allocato\n"
 
-#: fdisk/fdisk.c:1800
+#: fdisk/fdisk.c:1831
 msgid "No free sectors available\n"
 msgstr "Non ci sono settori liberi disponibili\n"
 
-#: fdisk/fdisk.c:1809 fdisk/fdiskbsdlabel.c:288 fdisk/fdisksunlabel.c:573
+#: fdisk/fdisk.c:1840 fdisk/fdiskbsdlabel.c:286 fdisk/fdisksunlabel.c:572
 #, c-format
 msgid "Last %s or +size or +sizeM or +sizeK"
 msgstr "Ultimo %s o +size o +sizeM o +sizeK "
 
-#: fdisk/fdisk.c:1874
+#: fdisk/fdisk.c:1905
 msgid ""
 "\tSorry - this fdisk cannot handle AIX disk labels.\n"
 "\tIf you want to add DOS-type partitions, create\n"
@@ -2535,17 +2535,17 @@ msgid ""
 "\tWARNING: This will destroy the present disk contents.\n"
 msgstr ""
 
-#: fdisk/fdisk.c:1883 fdisk/fdiskbsdlabel.c:615
+#: fdisk/fdisk.c:1914 fdisk/fdiskbsdlabel.c:613
 msgid "The maximum number of partitions has been created\n"
 msgstr "È stato creato il numero massimo di partizioni\n"
 
-#: fdisk/fdisk.c:1893
+#: fdisk/fdisk.c:1924
 msgid "You must delete some partition and add an extended partition first\n"
 msgstr ""
 "Si devono eliminare alcune partizioni e aggiungere anzitutto una partizione "
 "estesa\n"
 
-#: fdisk/fdisk.c:1898
+#: fdisk/fdisk.c:1929
 #, c-format
 msgid ""
 "Command action\n"
@@ -2556,20 +2556,20 @@ msgstr ""
 "   %s\n"
 "   p   partizione primaria (1-4)\n"
 
-#: fdisk/fdisk.c:1900
+#: fdisk/fdisk.c:1931
 msgid "l   logical (5 or over)"
 msgstr "l   logica (5 od oltre)"
 
-#: fdisk/fdisk.c:1900
+#: fdisk/fdisk.c:1931
 msgid "e   extended"
 msgstr " e   estesa"
 
-#: fdisk/fdisk.c:1917
+#: fdisk/fdisk.c:1948
 #, c-format
 msgid "Invalid partition number for type `%c'\n"
 msgstr "Numero di partizioni non valido per il tipo `%c'\n"
 
-#: fdisk/fdisk.c:1952
+#: fdisk/fdisk.c:1984
 msgid ""
 "The partition table has been altered!\n"
 "\n"
@@ -2577,11 +2577,11 @@ msgstr ""
 "La tabella delle partizioni è stata alterata!\n"
 "\n"
 
-#: fdisk/fdisk.c:1961
+#: fdisk/fdisk.c:1993
 msgid "Calling ioctl() to re-read partition table.\n"
 msgstr "Chiamata di ioctl() per rileggere la tabella delle partizioni.\n"
 
-#: fdisk/fdisk.c:1977
+#: fdisk/fdisk.c:2009
 #, c-format
 msgid ""
 "\n"
@@ -2590,7 +2590,7 @@ msgid ""
 "The new table will be used at the next reboot.\n"
 msgstr ""
 
-#: fdisk/fdisk.c:1987
+#: fdisk/fdisk.c:2019
 msgid ""
 "\n"
 "WARNING: If you have created or modified any DOS 6.x\n"
@@ -2602,68 +2602,68 @@ msgstr ""
 "consultare la pagina del manuale fdisk per ulteriori\n"
 "informazioni.\n"
 
-#: fdisk/fdisk.c:1994
+#: fdisk/fdisk.c:2026
 msgid "Syncing disks.\n"
 msgstr "Sincronizzazione dei dischi in corso.\n"
 
-#: fdisk/fdisk.c:2041
+#: fdisk/fdisk.c:2073
 #, c-format
 msgid "Partition %d has no data area\n"
 msgstr "La partizione %d non ha area dati\n"
 
-#: fdisk/fdisk.c:2046
+#: fdisk/fdisk.c:2078
 msgid "New beginning of data"
 msgstr "Nuovo inizio dati"
 
-#: fdisk/fdisk.c:2062
+#: fdisk/fdisk.c:2094
 msgid "Expert command (m for help): "
 msgstr "Comando per esperti (m per richiamare la guida): "
 
-#: fdisk/fdisk.c:2075
+#: fdisk/fdisk.c:2107
 msgid "Number of cylinders"
 msgstr "Numero di cilindri"
 
-#: fdisk/fdisk.c:2101
+#: fdisk/fdisk.c:2134
 msgid "Number of heads"
 msgstr "Numero di testine"
 
-#: fdisk/fdisk.c:2126
+#: fdisk/fdisk.c:2159
 msgid "Number of sectors"
 msgstr "Numero di settori"
 
-#: fdisk/fdisk.c:2129
+#: fdisk/fdisk.c:2162
 msgid "Warning: setting sector offset for DOS compatiblity\n"
 msgstr ""
 "Attenzione: impostare l'offset di settore per assicurare compatibilità con "
 "DOS\n"
 
-#: fdisk/fdisk.c:2204
+#: fdisk/fdisk.c:2237
 #, c-format
 msgid "Disk %s doesn't contain a valid partition table\n"
 msgstr "Il disco %s non contiene una tabella delle partizioni valida\n"
 
-#: fdisk/fdisk.c:2218
+#: fdisk/fdisk.c:2251
 #, c-format
 msgid "Cannot open %s\n"
 msgstr "Impossibile aprire %s\n"
 
-#: fdisk/fdisk.c:2234 fdisk/sfdisk.c:2364
+#: fdisk/fdisk.c:2267 fdisk/sfdisk.c:2363
 #, c-format
 msgid "cannot open %s\n"
 msgstr "impossibile aprire %s\n"
 
-#: fdisk/fdisk.c:2256
+#: fdisk/fdisk.c:2289
 #, fuzzy, c-format
 msgid "%c: unknown command\n"
 msgstr "%s: comando sconosciuto: %s\n"
 
-#: fdisk/fdisk.c:2306
+#: fdisk/fdisk.c:2339
 msgid "This kernel finds the sector size itself - -b option ignored\n"
 msgstr ""
 "Questo kernel trova la dimensione del settore in maniera indipendente - - "
 "opzione b ignorata\n"
 
-#: fdisk/fdisk.c:2309
+#: fdisk/fdisk.c:2342
 msgid ""
 "Warning: the -b (set sector size) option should be used with one specified "
 "device\n"
@@ -2671,18 +2671,18 @@ msgstr ""
 "Attenzione: l'opzione -b (mpostazione della dimensione del settore) si "
 "dovrebbe utilizzare con un dispositivo specificato\n"
 
-#: fdisk/fdisk.c:2372
+#: fdisk/fdisk.c:2405
 #, c-format
 msgid ""
 "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 "To return to DOS partition table mode, use the 'r' command.\n"
 msgstr ""
 
-#: fdisk/fdisk.c:2381
+#: fdisk/fdisk.c:2413
 msgid "Command (m for help): "
 msgstr "Comando (m per richiamare la guida): "
 
-#: fdisk/fdisk.c:2397
+#: fdisk/fdisk.c:2429
 #, c-format
 msgid ""
 "\n"
@@ -2691,15 +2691,15 @@ msgstr ""
 "\n"
 "Il file d'avvio corrente è: %s\n"
 
-#: fdisk/fdisk.c:2399
+#: fdisk/fdisk.c:2431
 msgid "Please enter the name of the new boot file: "
 msgstr "Immettere il nome del nuovo file d'avvio:"
 
-#: fdisk/fdisk.c:2401
+#: fdisk/fdisk.c:2433
 msgid "Boot file unchanged\n"
 msgstr "File d'avvio immutato\n"
 
-#: fdisk/fdisk.c:2465
+#: fdisk/fdisk.c:2497
 msgid ""
 "\n"
 "\tSorry, no experts menu for SGI partition tables available.\n"
@@ -2738,7 +2738,7 @@ msgstr ""
 "\t   di rimuovere in maniera logica il disco dalla macchina AIX \n"
 "\t   (altrimenti si diviene AIXpert)."
 
-#: fdisk/fdiskbsdlabel.c:119
+#: fdisk/fdiskbsdlabel.c:117
 #, c-format
 msgid ""
 "\n"
@@ -2747,168 +2747,168 @@ msgstr ""
 "\n"
 "Etichetta BSD per dispositivo: %s\n"
 
-#: fdisk/fdiskbsdlabel.c:127
+#: fdisk/fdiskbsdlabel.c:125
 msgid "   d   delete a BSD partition"
 msgstr "   d   eliminanazione di una partizione BSD"
 
-#: fdisk/fdiskbsdlabel.c:128
+#: fdisk/fdiskbsdlabel.c:126
 msgid "   e   edit drive data"
 msgstr "   e   modifica dei dati dell'unità"
 
-#: fdisk/fdiskbsdlabel.c:129
+#: fdisk/fdiskbsdlabel.c:127
 msgid "   i   install bootstrap"
 msgstr "   i   installazione di bootstrap"
 
-#: fdisk/fdiskbsdlabel.c:130
+#: fdisk/fdiskbsdlabel.c:128
 msgid "   l   list known filesystem types"
 msgstr "   l   elenco dei tipi di filesystem conosciuti"
 
-#: fdisk/fdiskbsdlabel.c:132
+#: fdisk/fdiskbsdlabel.c:130
 msgid "   n   add a new BSD partition"
 msgstr "   n   aggiunta di una nuova partizione BSD"
 
-#: fdisk/fdiskbsdlabel.c:133
+#: fdisk/fdiskbsdlabel.c:131
 msgid "   p   print BSD partition table"
 msgstr "   p   stampa della tabella delle partizioni BSD"
 
-#: fdisk/fdiskbsdlabel.c:136
+#: fdisk/fdiskbsdlabel.c:134
 msgid "   s   show complete disklabel"
 msgstr "   s   visualizzazione del disklabel completo"
 
-#: fdisk/fdiskbsdlabel.c:137
+#: fdisk/fdiskbsdlabel.c:135
 msgid "   t   change a partition's filesystem id"
 msgstr "   t   modifica dell'id del filesystem di una partizione"
 
-#: fdisk/fdiskbsdlabel.c:138
+#: fdisk/fdiskbsdlabel.c:136
 #, fuzzy
 msgid "   u   change units (cylinders/sectors)"
 msgstr "   c   modifica del numero di cilindri"
 
-#: fdisk/fdiskbsdlabel.c:139
+#: fdisk/fdiskbsdlabel.c:137
 msgid "   w   write disklabel to disk"
 msgstr "   w   scrittura del disklabel su disco"
 
-#: fdisk/fdiskbsdlabel.c:141
+#: fdisk/fdiskbsdlabel.c:139
 msgid "   x   link BSD partition to non-BSD partition"
 msgstr "   x   collegamento della partizione BSD a una non-BSD"
 
-#: fdisk/fdiskbsdlabel.c:173
+#: fdisk/fdiskbsdlabel.c:171
 #, fuzzy, c-format
 msgid "Partition %s has invalid starting sector 0.\n"
 msgstr "La partizione %s%d ha settore di inizio 0: dato non valido.\n"
 
-#: fdisk/fdiskbsdlabel.c:177
+#: fdisk/fdiskbsdlabel.c:175
 #, fuzzy, c-format
 msgid "Reading disklabel of %s at sector %d.\n"
 msgstr "Lettura del disklabel di %s%d al settore %d.\n"
 
-#: fdisk/fdiskbsdlabel.c:187
+#: fdisk/fdiskbsdlabel.c:185
 #, c-format
 msgid "There is no *BSD partition on %s.\n"
 msgstr "Non esiste partizione *BSD su %s.\n"
 
-#: fdisk/fdiskbsdlabel.c:201
+#: fdisk/fdiskbsdlabel.c:199
 msgid "BSD disklabel command (m for help): "
 msgstr "Comando disklabel BSD (m per richiamare la guida): "
 
-#: fdisk/fdiskbsdlabel.c:315
+#: fdisk/fdiskbsdlabel.c:313
 #, c-format
 msgid "type: %s\n"
 msgstr "tipo: %s\n"
 
-#: fdisk/fdiskbsdlabel.c:317
+#: fdisk/fdiskbsdlabel.c:315
 #, c-format
 msgid "type: %d\n"
 msgstr "tipo: %d\n"
 
-#: fdisk/fdiskbsdlabel.c:318
+#: fdisk/fdiskbsdlabel.c:316
 #, c-format
 msgid "disk: %.*s\n"
 msgstr "disco: %.*s\n"
 
-#: fdisk/fdiskbsdlabel.c:319
+#: fdisk/fdiskbsdlabel.c:317
 #, c-format
 msgid "label: %.*s\n"
 msgstr "etichetta: %.*s\n"
 
-#: fdisk/fdiskbsdlabel.c:320
+#: fdisk/fdiskbsdlabel.c:318
 msgid "flags:"
 msgstr "flag:"
 
-#: fdisk/fdiskbsdlabel.c:322
+#: fdisk/fdiskbsdlabel.c:320
 msgid " removable"
 msgstr " rimovibile"
 
-#: fdisk/fdiskbsdlabel.c:324
+#: fdisk/fdiskbsdlabel.c:322
 msgid " ecc"
 msgstr " ecc"
 
-#: fdisk/fdiskbsdlabel.c:326
+#: fdisk/fdiskbsdlabel.c:324
 msgid " badsect"
 msgstr " badsect"
 
 #. On various machines the fields of *lp are short/int/long
 #. In order to avoid problems, we cast them all to long.
-#: fdisk/fdiskbsdlabel.c:330
+#: fdisk/fdiskbsdlabel.c:328
 #, c-format
 msgid "bytes/sector: %ld\n"
 msgstr "byte/settore: %ld\n"
 
-#: fdisk/fdiskbsdlabel.c:331
+#: fdisk/fdiskbsdlabel.c:329
 #, c-format
 msgid "sectors/track: %ld\n"
 msgstr "settori/traccia: %ld\n"
 
-#: fdisk/fdiskbsdlabel.c:332
+#: fdisk/fdiskbsdlabel.c:330
 #, c-format
 msgid "tracks/cylinder: %ld\n"
 msgstr "tracce/cilindro: %ld\n"
 
-#: fdisk/fdiskbsdlabel.c:333
+#: fdisk/fdiskbsdlabel.c:331
 #, c-format
 msgid "sectors/cylinder: %ld\n"
 msgstr "settori/cilindro: %ld\n"
 
-#: fdisk/fdiskbsdlabel.c:334
+#: fdisk/fdiskbsdlabel.c:332
 #, c-format
 msgid "cylinders: %ld\n"
 msgstr "cilindri: %ld\n"
 
-#: fdisk/fdiskbsdlabel.c:335
+#: fdisk/fdiskbsdlabel.c:333
 #, c-format
 msgid "rpm: %d\n"
 msgstr "rpm: %d\n"
 
-#: fdisk/fdiskbsdlabel.c:336
+#: fdisk/fdiskbsdlabel.c:334
 #, c-format
 msgid "interleave: %d\n"
 msgstr " interleave: %d\n"
 
-#: fdisk/fdiskbsdlabel.c:337
+#: fdisk/fdiskbsdlabel.c:335
 #, c-format
 msgid "trackskew: %d\n"
 msgstr "trackskew: %d\n"
 
-#: fdisk/fdiskbsdlabel.c:338
+#: fdisk/fdiskbsdlabel.c:336
 #, c-format
 msgid "cylinderskew: %d\n"
 msgstr "cylinderskew: %d\n"
 
-#: fdisk/fdiskbsdlabel.c:339
+#: fdisk/fdiskbsdlabel.c:337
 #, c-format
 msgid "headswitch: %ld\t\t# milliseconds\n"
 msgstr "headswitch: %ld\t\t# millisecondi\n"
 
-#: fdisk/fdiskbsdlabel.c:341
+#: fdisk/fdiskbsdlabel.c:339
 #, c-format
 msgid "track-to-track seek: %ld\t# milliseconds\n"
 msgstr "ricerca traccia-a-traccia: %ld\t# millisecondi\n"
 
-#: fdisk/fdiskbsdlabel.c:343
+#: fdisk/fdiskbsdlabel.c:341
 msgid "drivedata: "
 msgstr "datiunità:"
 
-#: fdisk/fdiskbsdlabel.c:352
+#: fdisk/fdiskbsdlabel.c:350
 #, c-format
 msgid ""
 "\n"
@@ -2917,98 +2917,98 @@ msgstr ""
 "\n"
 "%d partizioni:\n"
 
-#: fdisk/fdiskbsdlabel.c:353
+#: fdisk/fdiskbsdlabel.c:351
 #, fuzzy
 msgid "#       start       end      size     fstype   [fsize bsize   cpg]\n"
 msgstr "#        size   offset    fstype   [fsize bsize   cpg]\n"
 
-#: fdisk/fdiskbsdlabel.c:402 fdisk/fdiskbsdlabel.c:405
+#: fdisk/fdiskbsdlabel.c:400 fdisk/fdiskbsdlabel.c:403
 #, c-format
 msgid "Writing disklabel to %s.\n"
 msgstr "Scrittura del disklabel su %s in corso.\n"
 
-#: fdisk/fdiskbsdlabel.c:417 fdisk/fdiskbsdlabel.c:419
+#: fdisk/fdiskbsdlabel.c:415 fdisk/fdiskbsdlabel.c:417
 #, c-format
 msgid "%s contains no disklabel.\n"
 msgstr "%s non contiene disklabel.\n"
 
-#: fdisk/fdiskbsdlabel.c:424
+#: fdisk/fdiskbsdlabel.c:422
 msgid "Do you want to create a disklabel? (y/n) "
 msgstr "Creare un disklabel? (s/n)"
 
-#: fdisk/fdiskbsdlabel.c:463
+#: fdisk/fdiskbsdlabel.c:461
 msgid "bytes/sector"
 msgstr "byte/settore"
 
-#: fdisk/fdiskbsdlabel.c:464
+#: fdisk/fdiskbsdlabel.c:462
 msgid "sectors/track"
 msgstr "settori/traccia"
 
-#: fdisk/fdiskbsdlabel.c:465
+#: fdisk/fdiskbsdlabel.c:463
 msgid "tracks/cylinder"
 msgstr "tracce/cilindro"
 
-#: fdisk/fdiskbsdlabel.c:473
+#: fdisk/fdiskbsdlabel.c:471
 msgid "sectors/cylinder"
 msgstr "settori/cilindro"
 
-#: fdisk/fdiskbsdlabel.c:477
+#: fdisk/fdiskbsdlabel.c:475
 msgid "Must be <= sectors/track * tracks/cylinder (default).\n"
 msgstr " Deve essere <= settori/traccia * tracce/cilindro (predefinito).\n"
 
-#: fdisk/fdiskbsdlabel.c:479
+#: fdisk/fdiskbsdlabel.c:477
 msgid "rpm"
 msgstr "rpm"
 
-#: fdisk/fdiskbsdlabel.c:480
+#: fdisk/fdiskbsdlabel.c:478
 msgid "interleave"
 msgstr "interleave"
 
-#: fdisk/fdiskbsdlabel.c:481
+#: fdisk/fdiskbsdlabel.c:479
 msgid "trackskew"
 msgstr "trackskew"
 
-#: fdisk/fdiskbsdlabel.c:482
+#: fdisk/fdiskbsdlabel.c:480
 msgid "cylinderskew"
 msgstr "cylinderskew"
 
-#: fdisk/fdiskbsdlabel.c:483
+#: fdisk/fdiskbsdlabel.c:481
 msgid "headswitch"
 msgstr "headswitch"
 
-#: fdisk/fdiskbsdlabel.c:484
+#: fdisk/fdiskbsdlabel.c:482
 msgid "track-to-track seek"
 msgstr "ricerca traccia-a-traccia"
 
-#: fdisk/fdiskbsdlabel.c:525
+#: fdisk/fdiskbsdlabel.c:523
 #, c-format
 msgid "Bootstrap: %sboot -> boot%s (%s): "
 msgstr "Bootstrap: %sboot -> boot%s (%s): "
 
-#: fdisk/fdiskbsdlabel.c:550
+#: fdisk/fdiskbsdlabel.c:548
 msgid "Bootstrap overlaps with disk label!\n"
 msgstr "Sovrapposizione del bootstrap con il disklabel!\n"
 
-#: fdisk/fdiskbsdlabel.c:571 fdisk/fdiskbsdlabel.c:573
+#: fdisk/fdiskbsdlabel.c:569 fdisk/fdiskbsdlabel.c:571
 #, c-format
 msgid "Bootstrap installed on %s.\n"
 msgstr "Bootstrap installato su %s.\n"
 
-#: fdisk/fdiskbsdlabel.c:595
+#: fdisk/fdiskbsdlabel.c:593
 #, c-format
 msgid "Partition (a-%c): "
 msgstr "Partizione (a-%c): "
 
-#: fdisk/fdiskbsdlabel.c:626
+#: fdisk/fdiskbsdlabel.c:624
 msgid "This partition already exists.\n"
 msgstr "Questa partizione esiste già.\n"
 
-#: fdisk/fdiskbsdlabel.c:746
+#: fdisk/fdiskbsdlabel.c:744
 #, c-format
 msgid "Warning: too many partitions (%d, maximum is %d).\n"
 msgstr "Attenzione: troppe partizioni (%d, il massimo è %d).\n"
 
-#: fdisk/fdiskbsdlabel.c:793
+#: fdisk/fdiskbsdlabel.c:791
 msgid ""
 "\n"
 "Syncing disks.\n"
@@ -3016,85 +3016,85 @@ msgstr ""
 "\n"
 "Sincronizzazione dei dischi.\n"
 
-#: fdisk/fdisksgilabel.c:79
+#: fdisk/fdisksgilabel.c:78
 msgid "SGI volhdr"
 msgstr "SGI volhdr"
 
-#: fdisk/fdisksgilabel.c:80
+#: fdisk/fdisksgilabel.c:79
 msgid "SGI trkrepl"
 msgstr "SGI trkrepl"
 
-#: fdisk/fdisksgilabel.c:81
+#: fdisk/fdisksgilabel.c:80
 msgid "SGI secrepl"
 msgstr "SGI secrepl"
 
-#: fdisk/fdisksgilabel.c:82
+#: fdisk/fdisksgilabel.c:81
 msgid "SGI raw"
 msgstr "SGI raw"
 
-#: fdisk/fdisksgilabel.c:83
+#: fdisk/fdisksgilabel.c:82
 msgid "SGI bsd"
 msgstr "SGI bsd"
 
-#: fdisk/fdisksgilabel.c:84
+#: fdisk/fdisksgilabel.c:83
 msgid "SGI sysv"
 msgstr "SGI sysv"
 
-#: fdisk/fdisksgilabel.c:85
+#: fdisk/fdisksgilabel.c:84
 msgid "SGI volume"
 msgstr "SGI volume"
 
-#: fdisk/fdisksgilabel.c:86
+#: fdisk/fdisksgilabel.c:85
 msgid "SGI efs"
 msgstr "SGI efs"
 
-#: fdisk/fdisksgilabel.c:87
+#: fdisk/fdisksgilabel.c:86
 msgid "SGI lvol"
 msgstr "SGI lvol"
 
-#: fdisk/fdisksgilabel.c:88
+#: fdisk/fdisksgilabel.c:87
 msgid "SGI rlvol"
 msgstr "SGI rlvol"
 
-#: fdisk/fdisksgilabel.c:89
+#: fdisk/fdisksgilabel.c:88
 msgid "SGI xfs"
 msgstr "SGI xfs"
 
-#: fdisk/fdisksgilabel.c:90
+#: fdisk/fdisksgilabel.c:89
 #, fuzzy
 msgid "SGI xfslog"
 msgstr "SGI xfs"
 
-#: fdisk/fdisksgilabel.c:91
+#: fdisk/fdisksgilabel.c:90
 #, fuzzy
 msgid "SGI xlv"
 msgstr "SGI xlvol"
 
-#: fdisk/fdisksgilabel.c:92
+#: fdisk/fdisksgilabel.c:91
 #, fuzzy
 msgid "SGI xvm"
 msgstr "SGI xlvol"
 
 #. Minix 1.4b and later
-#: fdisk/fdisksgilabel.c:93 fdisk/fdisksunlabel.c:52 fdisk/i386_sys_types.c:56
+#: fdisk/fdisksgilabel.c:92 fdisk/fdisksunlabel.c:51 fdisk/i386_sys_types.c:56
 msgid "Linux swap"
 msgstr "Linux swap"
 
-#: fdisk/fdisksgilabel.c:94 fdisk/fdisksunlabel.c:53
+#: fdisk/fdisksgilabel.c:93 fdisk/fdisksunlabel.c:52
 msgid "Linux native"
 msgstr "Linux nativo"
 
-#: fdisk/fdisksgilabel.c:95 fdisk/fdisksunlabel.c:54 fdisk/i386_sys_types.c:62
+#: fdisk/fdisksgilabel.c:94 fdisk/fdisksunlabel.c:53 fdisk/i386_sys_types.c:62
 #, fuzzy
 msgid "Linux LVM"
 msgstr "Linux"
 
-#: fdisk/fdisksgilabel.c:96
+#: fdisk/fdisksgilabel.c:95
 #, fuzzy
 msgid "Linux RAID"
 msgstr "Linux"
 
-#: fdisk/fdisksgilabel.c:159
+#: fdisk/fdisksgilabel.c:158
 msgid ""
 "According to MIPS Computer Systems, Inc the Label must not contain more than "
 "512 bytes\n"
@@ -3102,11 +3102,11 @@ msgstr ""
 "Secondo la ditta MIPS Computer Systems, Inc l'etichetta non deve contenere "
 "più di512 byte\n"
 
-#: fdisk/fdisksgilabel.c:178
+#: fdisk/fdisksgilabel.c:177
 msgid "Detected sgi disklabel with wrong checksum.\n"
 msgstr "Rilevato un disklabel sgi con checksum errato.\n"
 
-#: fdisk/fdisksgilabel.c:201
+#: fdisk/fdisksgilabel.c:200
 #, c-format
 msgid ""
 "\n"
@@ -3125,7 +3125,7 @@ msgstr ""
 "Unità = %s di %d * 512 byte\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:213
+#: fdisk/fdisksgilabel.c:212
 #, c-format
 msgid ""
 "\n"
@@ -3138,7 +3138,7 @@ msgstr ""
 "Unità = %s di %d * 512 byte\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:219
+#: fdisk/fdisksgilabel.c:218
 #, fuzzy, c-format
 msgid ""
 "----- partitions -----\n"
@@ -3147,7 +3147,7 @@ msgstr ""
 "----- partizioni -----\n"
 "%*s  Info      Inizio       Fine   Settori  Id  Sistema\n"
 
-#: fdisk/fdisksgilabel.c:241
+#: fdisk/fdisksgilabel.c:240
 #, fuzzy, c-format
 msgid ""
 "----- Bootinfo -----\n"
@@ -3158,12 +3158,12 @@ msgstr ""
 "File di avvio: %s\n"
 "----- Voci directory -----\n"
 
-#: fdisk/fdisksgilabel.c:251
+#: fdisk/fdisksgilabel.c:250
 #, c-format
 msgid "%2d: %-10s sector%5u size%8u\n"
 msgstr "%2d: %-10s settore%5u dimensione%8u\n"
 
-#: fdisk/fdisksgilabel.c:305
+#: fdisk/fdisksgilabel.c:304
 msgid ""
 "\n"
 "Invalid Bootfile!\n"
@@ -3175,7 +3175,7 @@ msgstr ""
 "\tIl file di avvio deve essere un path assoluto non nullo,\n"
 "\tes. \"/unix\" o \"/unix.save\".\n"
 
-#: fdisk/fdisksgilabel.c:312
+#: fdisk/fdisksgilabel.c:311
 msgid ""
 "\n"
 "\tName of Bootfile too long:  16 bytes maximum.\n"
@@ -3183,7 +3183,7 @@ msgstr ""
 "\n"
 "\tNome del file di avvio troppo lungo:  deve essere di 16 byte al massimo.\n"
 
-#: fdisk/fdisksgilabel.c:317
+#: fdisk/fdisksgilabel.c:316
 msgid ""
 "\n"
 "\tBootfile must have a fully qualified pathname.\n"
@@ -3191,7 +3191,7 @@ msgstr ""
 "\n"
 "\tIl file di avvio deve avere un path completo.\n"
 
-#: fdisk/fdisksgilabel.c:322
+#: fdisk/fdisksgilabel.c:321
 msgid ""
 "\n"
 "\tBe aware, that the bootfile is not checked for existence.\n"
@@ -3203,7 +3203,7 @@ msgstr ""
 "\tL'impostazione predefinita di SGI è \"/unix\" e per il backup \"/unix.save"
 "\".\n"
 
-#: fdisk/fdisksgilabel.c:350
+#: fdisk/fdisksgilabel.c:349
 #, c-format
 msgid ""
 "\n"
@@ -3212,19 +3212,19 @@ msgstr ""
 "\n"
 "\tFile di avvio cambiato in \"%s\".\n"
 
-#: fdisk/fdisksgilabel.c:448
+#: fdisk/fdisksgilabel.c:447
 msgid "More than one entire disk entry present.\n"
 msgstr "Presente più di una voce disco intero.\n"
 
-#: fdisk/fdisksgilabel.c:456 fdisk/fdisksunlabel.c:482
+#: fdisk/fdisksgilabel.c:455 fdisk/fdisksunlabel.c:481
 msgid "No partitions defined\n"
 msgstr "Nessuna partizione definita\n"
 
-#: fdisk/fdisksgilabel.c:463
+#: fdisk/fdisksgilabel.c:462
 msgid "IRIX likes when Partition 11 covers the entire disk.\n"
 msgstr "IRIX gradisce che la partizione 11 comprenda l'intero disco.\n"
 
-#: fdisk/fdisksgilabel.c:465
+#: fdisk/fdisksgilabel.c:464
 #, c-format
 msgid ""
 "The entire disk partition should start at block 0,\n"
@@ -3233,7 +3233,7 @@ msgstr ""
 "La partizione dell'intero disco dovrebbe iniziare al blocco 0,\n"
 "non al blocco %d.\n"
 
-#: fdisk/fdisksgilabel.c:469
+#: fdisk/fdisksgilabel.c:468
 #, c-format
 msgid ""
 "The entire disk partition is only %d diskblock large,\n"
@@ -3242,31 +3242,31 @@ msgstr ""
 "La partizione del disco intero è solamente di %d blocchi,\n"
 "ma il disco è di %d blocchi.\n"
 
-#: fdisk/fdisksgilabel.c:476
+#: fdisk/fdisksgilabel.c:475
 msgid "One Partition (#11) should cover the entire disk.\n"
 msgstr "Una partizione (#11) dovrebbe comprendere il disco intero.\n"
 
-#: fdisk/fdisksgilabel.c:488
+#: fdisk/fdisksgilabel.c:487
 #, c-format
 msgid "Partition %d does not start on cylinder boundary.\n"
 msgstr "La partizione %d non inizia al limite del cilindro.\n"
 
-#: fdisk/fdisksgilabel.c:495
+#: fdisk/fdisksgilabel.c:494
 #, c-format
 msgid "Partition %d does not end on cylinder boundary.\n"
 msgstr "La partizione %d non termina al limite del cilindro.\n"
 
-#: fdisk/fdisksgilabel.c:503
+#: fdisk/fdisksgilabel.c:502
 #, c-format
 msgid "The Partition %d and %d overlap by %d sectors.\n"
 msgstr "Le partizioni %d e %d si sovrappongono di %d settori.\n"
 
-#: fdisk/fdisksgilabel.c:512 fdisk/fdisksgilabel.c:532
+#: fdisk/fdisksgilabel.c:511 fdisk/fdisksgilabel.c:531
 #, c-format
 msgid "Unused gap of %8d sectors - sectors %8d-%d\n"
 msgstr "Intervallo di %8d settori non utilizzato - settori %8d-%d\n"
 
-#: fdisk/fdisksgilabel.c:545
+#: fdisk/fdisksgilabel.c:544
 msgid ""
 "\n"
 "The boot partition does not exist.\n"
@@ -3274,7 +3274,7 @@ msgstr ""
 "\n"
 "la partizione di avvio non esiste.\n"
 
-#: fdisk/fdisksgilabel.c:549
+#: fdisk/fdisksgilabel.c:548
 msgid ""
 "\n"
 "The swap partition does not exist.\n"
@@ -3282,7 +3282,7 @@ msgstr ""
 "\n"
 "La partizione swap non esiste.\n"
 
-#: fdisk/fdisksgilabel.c:554
+#: fdisk/fdisksgilabel.c:553
 msgid ""
 "\n"
 "The swap partition has no swap type.\n"
@@ -3290,15 +3290,15 @@ msgstr ""
 "\n"
 "La partizione swap non ha tipo swap.\n"
 
-#: fdisk/fdisksgilabel.c:558
+#: fdisk/fdisksgilabel.c:557
 msgid "\tYou have chosen an unusual boot file name.\n"
 msgstr "\tSi è selezionato un nome file di avvio non comune.\n"
 
-#: fdisk/fdisksgilabel.c:569
+#: fdisk/fdisksgilabel.c:568
 msgid "Sorry You may change the Tag of non-empty partitions.\n"
 msgstr "È possibile modificare solamente il tag delle partizioni non vuote.\n"
 
-#: fdisk/fdisksgilabel.c:576
+#: fdisk/fdisksgilabel.c:575
 msgid ""
 "It is highly recommended that the partition at offset 0\n"
 "is of type \"SGI volhdr\", the IRIX system will rely on it to\n"
@@ -3313,34 +3313,34 @@ msgstr ""
 "Digitare YES (sì) se si è certi di voler codificare questa partizione in "
 "modo differente.\n"
 
-#: fdisk/fdisksgilabel.c:581 fdisk/fdisksunlabel.c:630
+#: fdisk/fdisksgilabel.c:580 fdisk/fdisksunlabel.c:629
 msgid "YES\n"
 msgstr ""
 
 #. rebuild freelist
-#: fdisk/fdisksgilabel.c:607
+#: fdisk/fdisksgilabel.c:606
 msgid "Do You know, You got a partition overlap on the disk?\n"
 msgstr ""
 "Si è a conoscenza del fatto che sul disco esiste una sovrapposizione di "
 "partizioni?\n"
 
-#: fdisk/fdisksgilabel.c:669
+#: fdisk/fdisksgilabel.c:668
 msgid "Attempting to generate entire disk entry automatically.\n"
 msgstr ""
 "Tentativo di generare automaticamente l'immissione dell'intero disco in "
 "corso.\n"
 
-#: fdisk/fdisksgilabel.c:676
+#: fdisk/fdisksgilabel.c:675
 msgid "The entire disk is already covered with partitions.\n"
 msgstr "L'intero disco è già coperto da partizioni.\n"
 
-#: fdisk/fdisksgilabel.c:681
+#: fdisk/fdisksgilabel.c:680
 msgid "You got a partition overlap on the disk. Fix it first!\n"
 msgstr ""
 "Sovrapposizione di partizioni sul disco. Risolvere anzitutto questo "
 "problema.\n"
 
-#: fdisk/fdisksgilabel.c:690 fdisk/fdisksgilabel.c:719
+#: fdisk/fdisksgilabel.c:689 fdisk/fdisksgilabel.c:718
 msgid ""
 "It is highly recommended that eleventh partition\n"
 "covers the entire disk and is of type `SGI volume'\n"
@@ -3348,18 +3348,18 @@ msgstr ""
 "Si raccomanda che l'undicesima partizione\n"
 "copra l'intero disco e sia di tipo `SGI volume'\n"
 
-#: fdisk/fdisksgilabel.c:706
+#: fdisk/fdisksgilabel.c:705
 msgid "You will get a partition overlap on the disk. Fix it first!\n"
 msgstr ""
 "Si avrà una sovrapposizione di partizioni sul disco. Risolvere anzitutto "
 "questo problema.\n"
 
-#: fdisk/fdisksgilabel.c:711
+#: fdisk/fdisksgilabel.c:710
 #, c-format
 msgid " Last %s"
 msgstr " Ultimo %s"
 
-#: fdisk/fdisksgilabel.c:733
+#: fdisk/fdisksgilabel.c:732
 #, fuzzy
 msgid ""
 "Building a new SGI disklabel. Changes will remain in memory only,\n"
@@ -3372,54 +3372,54 @@ msgstr ""
 "contenuto precedente sarà definitivamente perso.\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:759
+#: fdisk/fdisksgilabel.c:758
 #, c-format
 msgid "Trying to keep parameters of partition %d.\n"
 msgstr "Tentativo di mantenere i parametri della partizione %d in corso.\n"
 
-#: fdisk/fdisksgilabel.c:761
+#: fdisk/fdisksgilabel.c:760
 #, c-format
 msgid "ID=%02x\tSTART=%d\tLENGTH=%d\n"
 msgstr "ID=%02x\tINIZIO=%d\tLUNGHEZZA=%d\n"
 
-#: fdisk/fdisksunlabel.c:43 fdisk/i386_sys_types.c:6
+#: fdisk/fdisksunlabel.c:42 fdisk/i386_sys_types.c:6
 msgid "Empty"
 msgstr "Vuoto"
 
-#: fdisk/fdisksunlabel.c:45
+#: fdisk/fdisksunlabel.c:44
 msgid "SunOS root"
 msgstr "SunOS root"
 
-#: fdisk/fdisksunlabel.c:46
+#: fdisk/fdisksunlabel.c:45
 msgid "SunOS swap"
 msgstr "SunOS swap"
 
-#: fdisk/fdisksunlabel.c:47
+#: fdisk/fdisksunlabel.c:46
 msgid "SunOS usr"
 msgstr "SunOS usr"
 
-#: fdisk/fdisksunlabel.c:48
+#: fdisk/fdisksunlabel.c:47
 msgid "Whole disk"
 msgstr "Disco intero"
 
-#: fdisk/fdisksunlabel.c:49
+#: fdisk/fdisksunlabel.c:48
 msgid "SunOS stand"
 msgstr "SunOS stand"
 
-#: fdisk/fdisksunlabel.c:50
+#: fdisk/fdisksunlabel.c:49
 msgid "SunOS var"
 msgstr "SunOS var"
 
-#: fdisk/fdisksunlabel.c:51
+#: fdisk/fdisksunlabel.c:50
 msgid "SunOS home"
 msgstr "SunOS home"
 
 #. DOS 3.3+ secondary
-#: fdisk/fdisksunlabel.c:55 fdisk/i386_sys_types.c:98
+#: fdisk/fdisksunlabel.c:54 fdisk/i386_sys_types.c:98
 msgid "Linux raid autodetect"
 msgstr "Autorilevamento raid di Linux"
 
-#: fdisk/fdisksunlabel.c:132
+#: fdisk/fdisksunlabel.c:131
 msgid ""
 "Detected sun disklabel with wrong checksum.\n"
 "Probably you'll have to set all the values,\n"
@@ -3431,12 +3431,12 @@ msgstr ""
 "per es. testine, settori, cilindri e partizioni\n"
 "o forzare un'etichetta nuova (comando s nel menu principale)\n"
 
-#: fdisk/fdisksunlabel.c:231
+#: fdisk/fdisksunlabel.c:230
 #, c-format
 msgid "Autoconfigure found a %s%s%s\n"
 msgstr "L'autoconfigurazione ha trovato un %s%s%s\n"
 
-#: fdisk/fdisksunlabel.c:258
+#: fdisk/fdisksunlabel.c:257
 msgid ""
 "Building a new sun disklabel. Changes will remain in memory only,\n"
 "until you decide to write them. After that, of course, the previous\n"
@@ -3447,7 +3447,7 @@ msgstr ""
 "solamente fino a quando si decide di scriverle. Dopodiché, chiaramente, il\n"
 "contenuto precedente non sarà recuperabile.\n"
 
-#: fdisk/fdisksunlabel.c:269
+#: fdisk/fdisksunlabel.c:268
 msgid ""
 "Drive type\n"
 "   ?   auto configure\n"
@@ -3457,71 +3457,71 @@ msgstr ""
 "   ?   auto configure\n"
 "   0   custom (con le impostazioni predefinite rilevate dell'hardware)"
 
-#: fdisk/fdisksunlabel.c:279
+#: fdisk/fdisksunlabel.c:278
 msgid "Select type (? for auto, 0 for custom): "
 msgstr "Selezione tipo (? per auto, 0 per custom): "
 
-#: fdisk/fdisksunlabel.c:291
+#: fdisk/fdisksunlabel.c:290
 msgid "Autoconfigure failed.\n"
 msgstr "Autoconfigurazione non riuscita.\n"
 
-#: fdisk/fdisksunlabel.c:319
+#: fdisk/fdisksunlabel.c:318
 msgid "Sectors/track"
 msgstr "Settori/traccia"
 
-#: fdisk/fdisksunlabel.c:326
+#: fdisk/fdisksunlabel.c:325
 msgid "Alternate cylinders"
 msgstr "Cilindri alternativi"
 
-#: fdisk/fdisksunlabel.c:329
+#: fdisk/fdisksunlabel.c:328
 msgid "Physical cylinders"
 msgstr "Cilindri fisici"
 
-#: fdisk/fdisksunlabel.c:332 fdisk/fdisksunlabel.c:726
+#: fdisk/fdisksunlabel.c:331 fdisk/fdisksunlabel.c:725
 msgid "Rotation speed (rpm)"
 msgstr "Velocità di rotazione (rpm)"
 
-#: fdisk/fdisksunlabel.c:334 fdisk/fdisksunlabel.c:719
+#: fdisk/fdisksunlabel.c:333 fdisk/fdisksunlabel.c:718
 msgid "Interleave factor"
 msgstr "Fattore di interleave"
 
-#: fdisk/fdisksunlabel.c:337 fdisk/fdisksunlabel.c:712
+#: fdisk/fdisksunlabel.c:336 fdisk/fdisksunlabel.c:711
 msgid "Extra sectors per cylinder"
 msgstr "Settori supplementari per cilindro"
 
-#: fdisk/fdisksunlabel.c:351
+#: fdisk/fdisksunlabel.c:350
 msgid "You may change all the disk params from the x menu"
 msgstr "È possibile modificare tutti i parametri disco dal menu x"
 
-#: fdisk/fdisksunlabel.c:358
+#: fdisk/fdisksunlabel.c:357
 msgid "3,5\" floppy"
 msgstr "floppy da 3,5\""
 
-#: fdisk/fdisksunlabel.c:358
+#: fdisk/fdisksunlabel.c:357
 msgid "Linux custom"
 msgstr "Linux custom"
 
-#: fdisk/fdisksunlabel.c:445
+#: fdisk/fdisksunlabel.c:444
 #, c-format
 msgid "Partition %d doesn't end on cylinder boundary\n"
 msgstr "La partizione %d non finisce al limite del cilindro\n"
 
-#: fdisk/fdisksunlabel.c:465
+#: fdisk/fdisksunlabel.c:464
 #, c-format
 msgid "Partition %d overlaps with others in sectors %d-%d\n"
 msgstr "La partizione %d si sovrappone ad altre nei settori %d-%d\n"
 
-#: fdisk/fdisksunlabel.c:487
+#: fdisk/fdisksunlabel.c:486
 #, c-format
 msgid "Unused gap - sectors 0-%d\n"
 msgstr "Intervallo inutilizzato - settori 0-%d\n"
 
-#: fdisk/fdisksunlabel.c:489 fdisk/fdisksunlabel.c:493
+#: fdisk/fdisksunlabel.c:488 fdisk/fdisksunlabel.c:492
 #, c-format
 msgid "Unused gap - sectors %d-%d\n"
 msgstr "Intervallo inutilizzato - settori %d-%d\n"
 
-#: fdisk/fdisksunlabel.c:516
+#: fdisk/fdisksunlabel.c:515
 msgid ""
 "Other partitions already cover the whole disk.\n"
 "Delete some/shrink them before retry.\n"
@@ -3529,7 +3529,7 @@ msgstr ""
 "Altre partizioni coprono già il disco intero.\n"
 "Eliminarne alcune/rimpicciolirle prima di riprovare.\n"
 
-#: fdisk/fdisksunlabel.c:592
+#: fdisk/fdisksunlabel.c:591
 #, c-format
 msgid ""
 "You haven't covered the whole disk with the 3rd partition, but your value\n"
@@ -3540,7 +3540,7 @@ msgstr ""
 "%d %s copre alcune altre partizioni. La voce immessa è stata cambiata\n"
 "in %d %s\n"
 
-#: fdisk/fdisksunlabel.c:612
+#: fdisk/fdisksunlabel.c:611
 #, c-format
 msgid ""
 "If you want to maintain SunOS/Solaris compatibility, consider leaving this\n"
@@ -3550,7 +3550,7 @@ msgstr ""
 "in considerazione di lasciare questa partizione come disco intero (5), "
 "partendo da 0, con %u settori\n"
 
-#: fdisk/fdisksunlabel.c:625
+#: fdisk/fdisksunlabel.c:624
 msgid ""
 "It is highly recommended that the partition at offset 0\n"
 "is UFS, EXT2FS filesystem or SunOS swap. Putting Linux swap\n"
@@ -3566,7 +3566,7 @@ msgstr ""
 "Digitare YES  (sì) se si è certi di volere che quella partizione\n"
 "venga codificata con 82 (swap Linux ): "
 
-#: fdisk/fdisksunlabel.c:656
+#: fdisk/fdisksunlabel.c:655
 #, c-format
 msgid ""
 "\n"
@@ -3585,7 +3585,7 @@ msgstr ""
 "Unità = %s di %d * 512 byte\n"
 "\n"
 
-#: fdisk/fdisksunlabel.c:670
+#: fdisk/fdisksunlabel.c:669
 #, c-format
 msgid ""
 "\n"
@@ -3598,16 +3598,16 @@ msgstr ""
 "Unità = %s di %d * 512 byte\n"
 "\n"
 
-#: fdisk/fdisksunlabel.c:675
+#: fdisk/fdisksunlabel.c:674
 #, c-format
 msgid "%*s Flag    Start       End    Blocks   Id  System\n"
 msgstr "%*s Flag    Inizio       Fine    Blocchi   Id  Sistema\n"
 
-#: fdisk/fdisksunlabel.c:700
+#: fdisk/fdisksunlabel.c:699
 msgid "Number of alternate cylinders"
 msgstr "Numero di cilindri alternativi"
 
-#: fdisk/fdisksunlabel.c:733
+#: fdisk/fdisksunlabel.c:732
 msgid "Number of physical cylinders"
 msgstr "Numero dei cilindri fisici"
 
@@ -3977,91 +3977,91 @@ msgstr "LANstep"
 msgid "BBT"
 msgstr "BBT"
 
-#: fdisk/sfdisk.c:152
+#: fdisk/sfdisk.c:151
 #, c-format
 msgid "seek error on %s - cannot seek to %lu\n"
 msgstr "errore di ricerca su %s - impossibile ricercare a %lu\n"
 
-#: fdisk/sfdisk.c:157
+#: fdisk/sfdisk.c:156
 #, c-format
 msgid "seek error: wanted 0x%08x%08x, got 0x%08x%08x\n"
 msgstr "errore di ricerca: si voleva 0x%08x%08x, si è ottenuto 0x%08x%08x\n"
 
-#: fdisk/sfdisk.c:203
+#: fdisk/sfdisk.c:202
 msgid "out of memory - giving up\n"
 msgstr "memoria insufficiente - termina\n"
 
-#: fdisk/sfdisk.c:208 fdisk/sfdisk.c:291
+#: fdisk/sfdisk.c:207 fdisk/sfdisk.c:290
 #, c-format
 msgid "read error on %s - cannot read sector %lu\n"
 msgstr "errore in lettura su %s - impossibile leggere il settore %lu\n"
 
-#: fdisk/sfdisk.c:226
+#: fdisk/sfdisk.c:225
 #, c-format
 msgid "ERROR: sector %lu does not have an msdos signature\n"
 msgstr "ERRORE: il settore %lu non ha una firma msdos\n"
 
-#: fdisk/sfdisk.c:241
+#: fdisk/sfdisk.c:240
 #, c-format
 msgid "write error on %s - cannot write sector %lu\n"
 msgstr "errore di scrittura su %s - impossibile scrivere il settore %lu\n"
 
-#: fdisk/sfdisk.c:279
+#: fdisk/sfdisk.c:278
 #, c-format
 msgid "cannot open partition sector save file (%s)\n"
 msgstr "impossibile aprire il file di salvataggio settore partizione (%s)\n"
 
-#: fdisk/sfdisk.c:297
+#: fdisk/sfdisk.c:296
 #, c-format
 msgid "write error on %s\n"
 msgstr "errore di scrittura su %s\n"
 
-#: fdisk/sfdisk.c:315
+#: fdisk/sfdisk.c:314
 #, c-format
 msgid "cannot stat partition restore file (%s)\n"
 msgstr "impossibile eseguire stat del file di ripristino partizione (%s)\n"
 
-#: fdisk/sfdisk.c:320
+#: fdisk/sfdisk.c:319
 msgid "partition restore file has wrong size - not restoring\n"
 msgstr ""
 "il file di ripristino partizione ha una dimensione errata - il ripristino "
 "non viene effettuato\n"
 
-#: fdisk/sfdisk.c:324
+#: fdisk/sfdisk.c:323
 msgid "out of memory?\n"
 msgstr "memoria insufficiente?\n"
 
-#: fdisk/sfdisk.c:330
+#: fdisk/sfdisk.c:329
 #, c-format
 msgid "cannot open partition restore file (%s)\n"
 msgstr "impossibile aprire il file di ripristino partizione (%s)\n"
 
-#: fdisk/sfdisk.c:336
+#: fdisk/sfdisk.c:335
 #, c-format
 msgid "error reading %s\n"
 msgstr "errore durante la lettura di %s\n"
 
-#: fdisk/sfdisk.c:343
+#: fdisk/sfdisk.c:342
 #, c-format
 msgid "cannot open device %s for writing\n"
 msgstr "impossibile aprire il dispositivo %s per scrivere\n"
 
-#: fdisk/sfdisk.c:355
+#: fdisk/sfdisk.c:354
 #, c-format
 msgid "error writing sector %lu on %s\n"
 msgstr "errore durante la scrittura del settore %lu su %s\n"
 
-#: fdisk/sfdisk.c:406
+#: fdisk/sfdisk.c:405
 #, fuzzy, c-format
 msgid "Disk %s: cannot get size\n"
 msgstr "Disco %s: impossibile ottenere la geometria\n"
 
-#: fdisk/sfdisk.c:411
+#: fdisk/sfdisk.c:410
 #, c-format
 msgid "Disk %s: cannot get geometry\n"
 msgstr "Disco %s: impossibile ottenere la geometria\n"
 
-#: fdisk/sfdisk.c:435
+#: fdisk/sfdisk.c:434
 #, fuzzy, c-format
 msgid ""
 "Warning: start=%lu - this looks like a partition rather than\n"
@@ -4072,22 +4072,22 @@ msgstr ""
 "l'intero disco. Utilizzare fdisk su di esso probabilmente non ha senso.\n"
 "[Utilizzare l'opzione --force se lo si desidera davvero]\n"
 
-#: fdisk/sfdisk.c:442
+#: fdisk/sfdisk.c:441
 #, fuzzy, c-format
 msgid "Warning: HDIO_GETGEO says that there are %lu heads\n"
 msgstr "Attenzione: HDIO_GETGEO dice che vi sono %d testine\n"
 
-#: fdisk/sfdisk.c:445
+#: fdisk/sfdisk.c:444
 #, fuzzy, c-format
 msgid "Warning: HDIO_GETGEO says that there are %lu sectors\n"
 msgstr "Attenzione: HDIO_GETGEO dice che vi sono %d testine\n"
 
-#: fdisk/sfdisk.c:449
+#: fdisk/sfdisk.c:448
 #, fuzzy, c-format
 msgid "Warning: BLKGETSIZE/HDIO_GETGEO says that there are %lu cylinders\n"
 msgstr "Attenzione: HDIO_GETGEO dice che vi sono %d cilindri\n"
 
-#: fdisk/sfdisk.c:453
+#: fdisk/sfdisk.c:452
 #, fuzzy, c-format
 msgid ""
 "Warning: unlikely number of sectors (%lu) - usually at most 63\n"
@@ -4098,7 +4098,7 @@ msgstr ""
 "Questo creerà problemi con tutto il software che utilizza l'indirizzamento C/"
 "H/S.\n"
 
-#: fdisk/sfdisk.c:457
+#: fdisk/sfdisk.c:456
 #, c-format
 msgid ""
 "\n"
@@ -4107,7 +4107,7 @@ msgstr ""
 "\n"
 "Disco %s: %lu cilindri, %lu testine, %lu settori/traccia\n"
 
-#: fdisk/sfdisk.c:539
+#: fdisk/sfdisk.c:538
 #, fuzzy, c-format
 msgid ""
 "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
@@ -4115,7 +4115,7 @@ msgstr ""
 "%s della partizione %s ha un valore impossibile per la testina: %d "
 "(dovrebbeessere compreso nell'intervallo 0-%d)\n"
 
-#: fdisk/sfdisk.c:544
+#: fdisk/sfdisk.c:543
 #, fuzzy, c-format
 msgid ""
 "%s of partition %s has impossible value for sector: %lu (should be in 1-%"
@@ -4124,7 +4124,7 @@ msgstr ""
 "%s della partizione %s ha un valore impossibile per il settore: %d "
 "(dovrebbeessere compreso nell'intervallo 1-%d)\n"
 
-#: fdisk/sfdisk.c:549
+#: fdisk/sfdisk.c:548
 #, fuzzy, c-format
 msgid ""
 "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%"
@@ -4133,7 +4133,7 @@ msgstr ""
 "%s della partizione %s ha un valore impossibile per i cilindri: %d (dovrebbe "
 "essere compreso nell'intervallo 0-%d)\n"
 
-#: fdisk/sfdisk.c:589
+#: fdisk/sfdisk.c:588
 msgid ""
 "Id  Name\n"
 "\n"
@@ -4141,11 +4141,11 @@ msgstr ""
 "Nome Id\n"
 "\n"
 
-#: fdisk/sfdisk.c:742
+#: fdisk/sfdisk.c:741
 msgid "Re-reading the partition table ...\n"
 msgstr "Rilettura della tabella delle partizioni in corso...\n"
 
-#: fdisk/sfdisk.c:748
+#: fdisk/sfdisk.c:747
 msgid ""
 "The command to re-read the partition table failed\n"
 "Reboot your system now, before using mkfs\n"
@@ -4153,31 +4153,31 @@ msgstr ""
 "Il comando per la rilettura della tabella delle partizioni non è riuscito\n"
 "Riavviare adesso il sistema prima di utilizzare mkfs\n"
 
-#: fdisk/sfdisk.c:753
+#: fdisk/sfdisk.c:752
 #, c-format
 msgid "Error closing %s\n"
 msgstr "Errore durante la chiusura di %s\n"
 
-#: fdisk/sfdisk.c:791
+#: fdisk/sfdisk.c:790
 #, c-format
 msgid "%s: no such partition\n"
 msgstr "%s: nessuna partizione di questo tipo\n"
 
-#: fdisk/sfdisk.c:814
+#: fdisk/sfdisk.c:813
 msgid "unrecognized format - using sectors\n"
 msgstr "formato non riconosciuto - utilizzo dei settori in corso\n"
 
-#: fdisk/sfdisk.c:853
+#: fdisk/sfdisk.c:852
 #, c-format
 msgid "# partition table of %s\n"
 msgstr "# tabella delle partizioni di %s\n"
 
-#: fdisk/sfdisk.c:864
+#: fdisk/sfdisk.c:863
 #, c-format
 msgid "unimplemented format - using %s\n"
 msgstr "formato non implementato - utilizzo di %s in corso\n"
 
-#: fdisk/sfdisk.c:868
+#: fdisk/sfdisk.c:867
 #, c-format
 msgid ""
 "Units = cylinders of %lu bytes, blocks of 1024 bytes, counting from %d\n"
@@ -4186,13 +4186,13 @@ msgstr ""
 "Unità = cilindri di %lu byte, blocchi di 1024 byte, conteggiando da %d\n"
 "\n"
 
-#: fdisk/sfdisk.c:871
+#: fdisk/sfdisk.c:870
 #, fuzzy
 msgid "   Device Boot Start     End   #cyls    #blocks   Id  System\n"
 msgstr ""
 "   Inizio Boot Dispositivo     Fine   #cilin.   #blocchi   Id  Sistema\n"
 
-#: fdisk/sfdisk.c:876
+#: fdisk/sfdisk.c:875
 #, c-format
 msgid ""
 "Units = sectors of 512 bytes, counting from %d\n"
@@ -4201,12 +4201,12 @@ msgstr ""
 "Unità = settori di 512 byte, conteggiando da %d\n"
 "\n"
 
-#: fdisk/sfdisk.c:878
+#: fdisk/sfdisk.c:877
 #, fuzzy
 msgid "   Device Boot    Start       End   #sectors  Id  System\n"
 msgstr "   Boot Dispositivo    Inizio      Fine  #settori Id  Sistema\n"
 
-#: fdisk/sfdisk.c:881
+#: fdisk/sfdisk.c:880
 #, c-format
 msgid ""
 "Units = blocks of 1024 bytes, counting from %d\n"
@@ -4215,12 +4215,12 @@ msgstr ""
 "Unità = blocchi di 1024 byte, conteggiando da %d\n"
 "\n"
 
-#: fdisk/sfdisk.c:883
+#: fdisk/sfdisk.c:882
 #, fuzzy
 msgid "   Device Boot   Start       End    #blocks   Id  System\n"
 msgstr "   Boot Dispositivo   Inizio       Fine  #blocchi  Id  Sistema\n"
 
-#: fdisk/sfdisk.c:886
+#: fdisk/sfdisk.c:885
 #, c-format
 msgid ""
 "Units = megabytes of 1048576 bytes, blocks of 1024 bytes, counting from %d\n"
@@ -4229,31 +4229,31 @@ msgstr ""
 "Unità = megabyte da 1048576 byte, blocchi da 1024 byte, conteggiando da %d\n"
 "\n"
 
-#: fdisk/sfdisk.c:888
+#: fdisk/sfdisk.c:887
 #, fuzzy
 msgid "   Device Boot Start   End     MB    #blocks   Id  System\n"
 msgstr "   Inizio Boot Dispositivo   Fine    MB   #blocchi  Id  Sistema\n"
 
-#: fdisk/sfdisk.c:1048
+#: fdisk/sfdisk.c:1047
 #, c-format
 msgid "\t\tstart: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr "\t\tinizio: (c,h,s) previsto (%ld,%ld,%ld) trovato (%ld,%ld,%ld)\n"
 
-#: fdisk/sfdisk.c:1055
+#: fdisk/sfdisk.c:1054
 #, c-format
 msgid "\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr "\t\tendenza: (c,h,s) previsto (%ld,%ld,%ld) trovato (%ld,%ld,%ld)\n"
 
-#: fdisk/sfdisk.c:1058
+#: fdisk/sfdisk.c:1057
 #, c-format
 msgid "partition ends on cylinder %ld, beyond the end of the disk\n"
 msgstr "la partizione termina sul cilindro %ld, oltre la fine del disco\n"
 
-#: fdisk/sfdisk.c:1068
+#: fdisk/sfdisk.c:1067
 msgid "No partitions found\n"
 msgstr "Non si è trovata alcuna partizione\n"
 
-#: fdisk/sfdisk.c:1072
+#: fdisk/sfdisk.c:1071
 #, fuzzy, c-format
 msgid ""
 "Warning: The partition table looks like it was made\n"
@@ -4264,87 +4264,87 @@ msgstr ""
 "  per C/H/S=*/%ld/%ld (al posto di %ld/%ld/%ld).\n"
 "Per questo elenco viene presunta tale geometria.\n"
 
-#: fdisk/sfdisk.c:1121
+#: fdisk/sfdisk.c:1120
 msgid "no partition table present.\n"
 msgstr "nessuna tabella delle partizioni presente.\n"
 
-#: fdisk/sfdisk.c:1123
+#: fdisk/sfdisk.c:1122
 #, c-format
 msgid "strange, only %d partitions defined.\n"
 msgstr "strano, sono definite solo %d partizioni.\n"
 
-#: fdisk/sfdisk.c:1132
+#: fdisk/sfdisk.c:1131
 #, c-format
 msgid "Warning: partition %s has size 0 but is not marked Empty\n"
 msgstr ""
 "Attenzione: la partizione %s ha dimensione 0 ma non è contrassegnata come "
 "vuota\n"
 
-#: fdisk/sfdisk.c:1135
+#: fdisk/sfdisk.c:1134
 #, c-format
 msgid "Warning: partition %s has size 0 and is bootable\n"
 msgstr "Attenzione: la partizione %s ha dimensione 0 ed è avviabile\n"
 
-#: fdisk/sfdisk.c:1138
+#: fdisk/sfdisk.c:1137
 #, c-format
 msgid "Warning: partition %s has size 0 and nonzero start\n"
 msgstr "Attenzione: la partizione %s ha dimensione 0 e inizio non nullo\n"
 
-#: fdisk/sfdisk.c:1149
+#: fdisk/sfdisk.c:1148
 #, c-format
 msgid "Warning: partition %s "
 msgstr "Attenzione: la partizione %s "
 
-#: fdisk/sfdisk.c:1150
+#: fdisk/sfdisk.c:1149
 #, c-format
 msgid "is not contained in partition %s\n"
 msgstr "non è contenuta nella partizione %s\n"
 
-#: fdisk/sfdisk.c:1161
+#: fdisk/sfdisk.c:1160
 #, c-format
 msgid "Warning: partitions %s "
 msgstr "Attenzione: le partizioni %s "
 
-#: fdisk/sfdisk.c:1162
+#: fdisk/sfdisk.c:1161
 #, c-format
 msgid "and %s overlap\n"
 msgstr "e %s si sovrappongono\n"
 
-#: fdisk/sfdisk.c:1173
+#: fdisk/sfdisk.c:1172
 #, c-format
 msgid ""
 "Warning: partition %s contains part of the partition table (sector %lu),\n"
 "and will destroy it when filled\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:1185
+#: fdisk/sfdisk.c:1184
 #, c-format
 msgid "Warning: partition %s starts at sector 0\n"
 msgstr "Attenzione: la partizione %s inizia al settore 0\n"
 
-#: fdisk/sfdisk.c:1189
+#: fdisk/sfdisk.c:1188
 #, c-format
 msgid "Warning: partition %s extends past end of disk\n"
 msgstr "Attenzione: la partizione %s si estende dopo la fine del disco\n"
 
-#: fdisk/sfdisk.c:1204
+#: fdisk/sfdisk.c:1203
 #, fuzzy
 msgid ""
 "Among the primary partitions, at most one can be extended\n"
 " (although this is not a problem under Linux)\n"
 msgstr "Tra le partizioni primarie, al massimo una può essere estesa\n"
 
-#: fdisk/sfdisk.c:1222
+#: fdisk/sfdisk.c:1221
 #, c-format
 msgid "Warning: partition %s does not start at a cylinder boundary\n"
 msgstr "Attenzione: la partizione %s non inizia al limite di un cilindro\n"
 
-#: fdisk/sfdisk.c:1228
+#: fdisk/sfdisk.c:1227
 #, c-format
 msgid "Warning: partition %s does not end at a cylinder boundary\n"
 msgstr "Attenzione: la partizione %s non termina al limite di un cilindro\n"
 
-#: fdisk/sfdisk.c:1246
+#: fdisk/sfdisk.c:1245
 msgid ""
 "Warning: more than one primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -4353,7 +4353,7 @@ msgstr ""
 "(attiva)\n"
 "Questo non ha importanza per LILO, ma MBR DOS non avvierà questo disco.\n"
 
-#: fdisk/sfdisk.c:1253
+#: fdisk/sfdisk.c:1252
 msgid ""
 "Warning: usually one can boot from primary partitions only\n"
 "LILO disregards the `bootable' flag.\n"
@@ -4362,7 +4362,7 @@ msgstr ""
 "primarie\n"
 "LILO non prende in considerazione il flag `bootable' (flag 'avviabile').\n"
 
-#: fdisk/sfdisk.c:1259
+#: fdisk/sfdisk.c:1258
 msgid ""
 "Warning: no primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
@@ -4371,164 +4371,164 @@ msgstr ""
 "(attiva)\n"
 "Questo non ha importanza per LILO, ma MBR DOS non avvierà questo disco.\n"
 
-#: fdisk/sfdisk.c:1276
+#: fdisk/sfdisk.c:1275
 #, c-format
 msgid ""
 "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "partizione %s: inizio: (c,h,s) previsto (%ld,%ld,%ld) trovato (%ld,%ld,%ld)\n"
 
-#: fdisk/sfdisk.c:1285
+#: fdisk/sfdisk.c:1284
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 " partizione %s: fine: (c,h,s) previsto (%ld,%ld,%ld) trovato (%ld,%ld,%ld)\n"
 
-#: fdisk/sfdisk.c:1288
+#: fdisk/sfdisk.c:1287
 #, c-format
 msgid "partition %s ends on cylinder %ld, beyond the end of the disk\n"
 msgstr "la partizione %s termina sul cilindro %ld, oltre la fine del disco\n"
 
-#: fdisk/sfdisk.c:1313
+#: fdisk/sfdisk.c:1312
 #, fuzzy, c-format
 msgid ""
 "Warning: shifted start of the extd partition from %ld to %ld\n"
 "(For listing purposes only. Do not change its contents.)\n"
 msgstr "Attenzione: inizio dati danneggiato nella partizione %d\n"
 
-#: fdisk/sfdisk.c:1319
+#: fdisk/sfdisk.c:1318
 #, fuzzy
 msgid ""
 "Warning: extended partition does not start at a cylinder boundary.\n"
 "DOS and Linux will interpret the contents differently.\n"
 msgstr "Attenzione: la partizione %s non inizia al limite di un cilindro\n"
 
-#: fdisk/sfdisk.c:1337 fdisk/sfdisk.c:1414
+#: fdisk/sfdisk.c:1336 fdisk/sfdisk.c:1413
 #, c-format
 msgid "too many partitions - ignoring those past nr (%d)\n"
 msgstr "troppe partizioni - sto ignorando quei numeri passati (%d)\n"
 
-#: fdisk/sfdisk.c:1352
+#: fdisk/sfdisk.c:1351
 msgid "tree of partitions?\n"
 msgstr "struttura delle partizioni?\n"
 
-#: fdisk/sfdisk.c:1473
+#: fdisk/sfdisk.c:1472
 msgid "detected Disk Manager - unable to handle that\n"
 msgstr "rilevato l'amministratore del disco - impossibile da gestire\n"
 
-#: fdisk/sfdisk.c:1480
+#: fdisk/sfdisk.c:1479
 msgid "DM6 signature found - giving up\n"
 msgstr "trovata firma DM6 - termina\n"
 
-#: fdisk/sfdisk.c:1500
+#: fdisk/sfdisk.c:1499
 msgid "strange..., an extended partition of size 0?\n"
 msgstr "strano..., una partizione estesa di dimensione 0?\n"
 
-#: fdisk/sfdisk.c:1507 fdisk/sfdisk.c:1518
+#: fdisk/sfdisk.c:1506 fdisk/sfdisk.c:1517
 msgid "strange..., a BSD partition of size 0?\n"
 msgstr "strano..., una partizione BSD di dimensione 0?\n"
 
-#: fdisk/sfdisk.c:1552
+#: fdisk/sfdisk.c:1551
 #, c-format
 msgid " %s: unrecognized partition\n"
 msgstr " %s: partizione non riconosciuta\n"
 
-#: fdisk/sfdisk.c:1564
+#: fdisk/sfdisk.c:1563
 msgid "-n flag was given: Nothing changed\n"
 msgstr "flag -n dato: nessuna modifica\n"
 
-#: fdisk/sfdisk.c:1578
+#: fdisk/sfdisk.c:1577
 msgid "Failed saving the old sectors - aborting\n"
 msgstr "Salvataggio dei vecchi settori non riuscito - interruzione in corso\n"
 
-#: fdisk/sfdisk.c:1583
+#: fdisk/sfdisk.c:1582
 #, c-format
 msgid "Failed writing the partition on %s\n"
 msgstr "Scrittura della partizione su %s non riuscita\n"
 
-#: fdisk/sfdisk.c:1660
+#: fdisk/sfdisk.c:1659
 msgid "long or incomplete input line - quitting\n"
 msgstr "linea di input lunga o incompleta - uscita in corso\n"
 
-#: fdisk/sfdisk.c:1696
+#: fdisk/sfdisk.c:1695
 #, c-format
 msgid "input error: `=' expected after %s field\n"
 msgstr "errore di input: `=' previsto dopo il campo %s\n"
 
-#: fdisk/sfdisk.c:1703
+#: fdisk/sfdisk.c:1702
 #, c-format
 msgid "input error: unexpected character %c after %s field\n"
 msgstr "errore di input: carattere non previsto %c dopo il campo %s\n"
 
-#: fdisk/sfdisk.c:1709
+#: fdisk/sfdisk.c:1708
 #, c-format
 msgid "unrecognized input: %s\n"
 msgstr "input non riconosciuto: %s\n"
 
-#: fdisk/sfdisk.c:1751
+#: fdisk/sfdisk.c:1750
 msgid "number too big\n"
 msgstr "numero troppo grande\n"
 
-#: fdisk/sfdisk.c:1755
+#: fdisk/sfdisk.c:1754
 msgid "trailing junk after number\n"
 msgstr "segni strani dopo il numero\n"
 
-#: fdisk/sfdisk.c:1876
+#: fdisk/sfdisk.c:1875
 msgid "no room for partition descriptor\n"
 msgstr "non c'è spazio per il descrittore di partizione\n"
 
-#: fdisk/sfdisk.c:1909
+#: fdisk/sfdisk.c:1908
 msgid "cannot build surrounding extended partition\n"
 msgstr "impossibile costituire una partizione estesa adiacente\n"
 
-#: fdisk/sfdisk.c:1960
+#: fdisk/sfdisk.c:1959
 msgid "too many input fields\n"
 msgstr "troppi campi di input\n"
 
 #. no free blocks left - don't read any further
-#: fdisk/sfdisk.c:1994
+#: fdisk/sfdisk.c:1993
 msgid "No room for more\n"
 msgstr "Non c'è spazio per altri\n"
 
-#: fdisk/sfdisk.c:2013
+#: fdisk/sfdisk.c:2012
 msgid "Illegal type\n"
 msgstr "Tipo non valido\n"
 
-#: fdisk/sfdisk.c:2045
+#: fdisk/sfdisk.c:2044
 #, fuzzy, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
 msgstr "Attenzione: superiore alla dimensione massima consentita (%lu)\n"
 
-#: fdisk/sfdisk.c:2051
+#: fdisk/sfdisk.c:2050
 msgid "Warning: empty partition\n"
 msgstr "Attenzione: partizione vuota\n"
 
-#: fdisk/sfdisk.c:2065
+#: fdisk/sfdisk.c:2064
 #, c-format
 msgid "Warning: bad partition start (earliest %lu)\n"
 msgstr "Attenzione: inizio partizione non valido (%lu troppo anticipato)\n"
 
-#: fdisk/sfdisk.c:2078
+#: fdisk/sfdisk.c:2077
 msgid "unrecognized bootable flag - choose - or *\n"
 msgstr "flag avviabile non riconosciuto - scegliere - o *\n"
 
-#: fdisk/sfdisk.c:2095 fdisk/sfdisk.c:2108
+#: fdisk/sfdisk.c:2094 fdisk/sfdisk.c:2107
 msgid "partial c,h,s specification?\n"
 msgstr "Specificazione c,h,s parziale?\n"
 
-#: fdisk/sfdisk.c:2119
+#: fdisk/sfdisk.c:2118
 msgid "Extended partition not where expected\n"
 msgstr "partizione estesa in posizione non prevista\n"
 
-#: fdisk/sfdisk.c:2151
+#: fdisk/sfdisk.c:2150
 msgid "bad input\n"
 msgstr "input non valido\n"
 
-#: fdisk/sfdisk.c:2173
+#: fdisk/sfdisk.c:2172
 msgid "too many partitions\n"
 msgstr "troppe partizioni\n"
 
-#: fdisk/sfdisk.c:2206
+#: fdisk/sfdisk.c:2205
 msgid ""
 "Input in the following format; absent fields get a default value.\n"
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
@@ -4541,47 +4541,47 @@ msgstr ""
 "Solitamente è necessario specificare solamente <inizio> e <dimensione> ( e "
 "forse <tipo>).\n"
 
-#: fdisk/sfdisk.c:2226
+#: fdisk/sfdisk.c:2225
 msgid "version"
 msgstr "versione"
 
-#: fdisk/sfdisk.c:2232
+#: fdisk/sfdisk.c:2231
 #, c-format
 msgid "Usage: %s [options] device ...\n"
 msgstr "Utilizzo: %s [opzioni] dispositivo...\n"
 
-#: fdisk/sfdisk.c:2233
+#: fdisk/sfdisk.c:2232
 msgid "device: something like /dev/hda or /dev/sda"
 msgstr "dispositivo: qualcosa come /dev/hda o /dev/sda"
 
-#: fdisk/sfdisk.c:2234
+#: fdisk/sfdisk.c:2233
 msgid "useful options:"
 msgstr "opzioni utili:"
 
-#: fdisk/sfdisk.c:2235
+#: fdisk/sfdisk.c:2234
 msgid "    -s [or --show-size]: list size of a partition"
 msgstr "    -s [o --show-size]: elenco dimensioni di una partizione"
 
-#: fdisk/sfdisk.c:2236
+#: fdisk/sfdisk.c:2235
 msgid "    -c [or --id]:        print or change partition Id"
 msgstr "    -c [o --id]:        stampa o modifica dell'Id della partizione"
 
-#: fdisk/sfdisk.c:2237
+#: fdisk/sfdisk.c:2236
 msgid "    -l [or --list]:      list partitions of each device"
 msgstr "    -l [o --list]:      elenco delle partizioni di ciascun dispositivo"
 
-#: fdisk/sfdisk.c:2238
+#: fdisk/sfdisk.c:2237
 msgid "    -d [or --dump]:      idem, but in a format suitable for later input"
 msgstr ""
 "    -d [o --dump]:      idem, ma in un formato adatto per un successivo input"
 
-#: fdisk/sfdisk.c:2239
+#: fdisk/sfdisk.c:2238
 msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
 msgstr ""
 "    -i [o --increment]: numero dei cilindri ecc. partendo da 1 invece che da "
 "0"
 
-#: fdisk/sfdisk.c:2240
+#: fdisk/sfdisk.c:2239
 msgid ""
 "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
 "MB"
@@ -4589,56 +4589,56 @@ msgstr ""
 "    -uS, -uB, -uC, -uM:  accetta/riporta in unità di settori/blocchi/"
 "cilindri/MB"
 
-#: fdisk/sfdisk.c:2241
+#: fdisk/sfdisk.c:2240
 msgid "    -T [or --list-types]:list the known partition types"
 msgstr "    -T [o --list-types]:elenca i tipi di partizione conosciuti"
 
-#: fdisk/sfdisk.c:2242
+#: fdisk/sfdisk.c:2241
 msgid "    -D [or --DOS]:       for DOS-compatibility: waste a little space"
 msgstr ""
 "    -D [o --DOS]:       per la compatibilità con DOS: spreca un po' di spazio"
 
-#: fdisk/sfdisk.c:2243
+#: fdisk/sfdisk.c:2242
 msgid "    -R [or --re-read]:   make kernel reread partition table"
 msgstr ""
 "    -R [o --re-read]:   fa rileggere al kernel la tabella delle partizioni"
 
-#: fdisk/sfdisk.c:2244
+#: fdisk/sfdisk.c:2243
 msgid "    -N# :                change only the partition with number #"
 msgstr "    -N# :                modifica solamente la partizione con numero #"
 
-#: fdisk/sfdisk.c:2245
+#: fdisk/sfdisk.c:2244
 msgid "    -n :                 do not actually write to disk"
 msgstr "    -n :                 non scrive realmente sul disco"
 
-#: fdisk/sfdisk.c:2246
+#: fdisk/sfdisk.c:2245
 msgid ""
 "    -O file :            save the sectors that will be overwritten to file"
 msgstr ""
 "    -O file :            salva sul file i settori che verranno sovrascritti"
 
-#: fdisk/sfdisk.c:2247
+#: fdisk/sfdisk.c:2246
 msgid "    -I file :            restore these sectors again"
 msgstr "    -I file :            ripristina questi settori nuovamente"
 
-#: fdisk/sfdisk.c:2248
+#: fdisk/sfdisk.c:2247
 msgid "    -v [or --version]:   print version"
 msgstr "    -v [o --version]:   stampa versione"
 
-#: fdisk/sfdisk.c:2249
+#: fdisk/sfdisk.c:2248
 msgid "    -? [or --help]:      print this message"
 msgstr "    -? [o --help]:     stampa questo messaggio"
 
-#: fdisk/sfdisk.c:2250
+#: fdisk/sfdisk.c:2249
 msgid "dangerous options:"
 msgstr "opzioni pericolose:"
 
-#: fdisk/sfdisk.c:2251
+#: fdisk/sfdisk.c:2250
 msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
 msgstr ""
 "    -g [o --show-geometry]: stampa l'idea del kernel riguardo alla geometria"
 
-#: fdisk/sfdisk.c:2252
+#: fdisk/sfdisk.c:2251
 msgid ""
 "    -x [or --show-extended]: also list extended partitions on output\n"
 "                             or expect descriptors for them on input"
@@ -4646,117 +4646,117 @@ msgstr ""
 "    -x [o --show-extended]: elenca anche le partizioni estese in output\n"
 "                             o prevede i rispettivi descrittori in input"
 
-#: fdisk/sfdisk.c:2254
+#: fdisk/sfdisk.c:2253
 msgid ""
 "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
 msgstr ""
 "    -L  [o --Linux]:      non reclamare per cose che risultano irrilevanti "
 "per Linux"
 
-#: fdisk/sfdisk.c:2255
+#: fdisk/sfdisk.c:2254
 msgid "    -q  [or --quiet]:      suppress warning messages"
 msgstr "    -q  [o --quiet]:      elimina i messaggi di avvertimento"
 
-#: fdisk/sfdisk.c:2256
+#: fdisk/sfdisk.c:2255
 msgid "    You can override the detected geometry using:"
 msgstr "    È possibile non usare la geometria rilevata utilizzando:"
 
-#: fdisk/sfdisk.c:2257
+#: fdisk/sfdisk.c:2256
 msgid "    -C# [or --cylinders #]:set the number of cylinders to use"
 msgstr "    -C# [o --cylindres #]:imposta il numero di cilindri da utilizzare"
 
-#: fdisk/sfdisk.c:2258
+#: fdisk/sfdisk.c:2257
 msgid "    -H# [or --heads #]:    set the number of heads to use"
 msgstr "    -H# [o --heads #]:    imposta il numero di testine da utilizzare"
 
-#: fdisk/sfdisk.c:2259
+#: fdisk/sfdisk.c:2258
 msgid "    -S# [or --sectors #]:  set the number of sectors to use"
 msgstr "    -S# [o --sectors #]:  imposta il numero di settori da utilizzare"
 
-#: fdisk/sfdisk.c:2260
+#: fdisk/sfdisk.c:2259
 msgid "You can disable all consistency checking with:"
 msgstr "È possibile disattivare tutte le verifiche di coerenza con:"
 
-#: fdisk/sfdisk.c:2261
+#: fdisk/sfdisk.c:2260
 msgid "    -f  [or --force]:      do what I say, even if it is stupid"
 msgstr "    -f  [o --force]:      fa ciò che dico, anche se è stupido"
 
-#: fdisk/sfdisk.c:2267
+#: fdisk/sfdisk.c:2266
 msgid "Usage:"
 msgstr "Utilizzo:"
 
-#: fdisk/sfdisk.c:2268
+#: fdisk/sfdisk.c:2267
 #, c-format
 msgid "%s device\t\t list active partitions on device\n"
 msgstr "%s device\t\t elenca le partizioni attive sul dispositivo\n"
 
-#: fdisk/sfdisk.c:2269
+#: fdisk/sfdisk.c:2268
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
 msgstr "%s device n1 n2 ... attiva le partizioni n1 ..., disattiva il resto\n"
 
-#: fdisk/sfdisk.c:2270
+#: fdisk/sfdisk.c:2269
 #, c-format
 msgid "%s -An device\t activate partition n, inactivate the other ones\n"
 msgstr "%s -An device\t attiva la partizione n, disattiva le altre\n"
 
-#: fdisk/sfdisk.c:2422
+#: fdisk/sfdisk.c:2421
 msgid "no command?\n"
 msgstr "nessun comando?\n"
 
-#: fdisk/sfdisk.c:2540
+#: fdisk/sfdisk.c:2539
 #, c-format
 msgid "total: %d blocks\n"
 msgstr "totale: %d blocchi\n"
 
-#: fdisk/sfdisk.c:2577
+#: fdisk/sfdisk.c:2576
 msgid "usage: sfdisk --print-id device partition-number\n"
 msgstr "utilizzo: sfdisk --print-id numero partizione dispositivo\n"
 
-#: fdisk/sfdisk.c:2579
+#: fdisk/sfdisk.c:2578
 msgid "usage: sfdisk --change-id device partition-number Id\n"
 msgstr " utilizzo: sfdisk --change-id numero partizione dispositivo Id\n"
 
-#: fdisk/sfdisk.c:2581
+#: fdisk/sfdisk.c:2580
 msgid "usage: sfdisk --id device partition-number [Id]\n"
 msgstr "utilizzo: sfdisk --id numero partizione dispositivo [Id]\n"
 
-#: fdisk/sfdisk.c:2588
+#: fdisk/sfdisk.c:2587
 msgid "can specify only one device (except with -l or -s)\n"
 msgstr ""
 "è possibile specificare solamente un dispositivo(eccetto con -l o -s)\n"
 
-#: fdisk/sfdisk.c:2614
+#: fdisk/sfdisk.c:2613
 #, fuzzy, c-format
 msgid "cannot open %s read-write\n"
 msgstr "impossibile aprire %s\n"
 
-#: fdisk/sfdisk.c:2616
+#: fdisk/sfdisk.c:2615
 #, fuzzy, c-format
 msgid "cannot open %s for reading\n"
 msgstr "impossibile aprire %s in lettura"
 
-#: fdisk/sfdisk.c:2641
+#: fdisk/sfdisk.c:2640
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: OK\n"
 
-#: fdisk/sfdisk.c:2658
+#: fdisk/sfdisk.c:2657
 #, fuzzy, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s: %d cilindri, %d testine, %d settori/traccia\n"
 
-#: fdisk/sfdisk.c:2675
+#: fdisk/sfdisk.c:2674
 #, c-format
 msgid "BLKGETSIZE ioctl failed for %s\n"
 msgstr "BLKGETSIZE ioctl non riuscito per %s\n"
 
-#: fdisk/sfdisk.c:2752
+#: fdisk/sfdisk.c:2751
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "byte attivo non valido: 0x%x al posto di 0x80\n"
 
-#: fdisk/sfdisk.c:2769 fdisk/sfdisk.c:2822 fdisk/sfdisk.c:2853
+#: fdisk/sfdisk.c:2768 fdisk/sfdisk.c:2821 fdisk/sfdisk.c:2852
 msgid ""
 "Done\n"
 "\n"
@@ -4764,7 +4764,7 @@ msgstr ""
 "Fine\n"
 "\n"
 
-#: fdisk/sfdisk.c:2778
+#: fdisk/sfdisk.c:2777
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -4773,37 +4773,37 @@ msgstr ""
 "Ci sono %d partizioni primarie attive. Questo è irrelevante per LILO,\n"
 "ma MBR DOS  avvierà solamente un disco con 1 partizione attiva.\n"
 
-#: fdisk/sfdisk.c:2792
+#: fdisk/sfdisk.c:2791
 #, c-format
 msgid "partition %s has id %x and is not hidden\n"
 msgstr "la partizione %s ha id %x e non è nascosta\n"
 
-#: fdisk/sfdisk.c:2849
+#: fdisk/sfdisk.c:2848
 #, fuzzy, c-format
 msgid "Bad Id %lx\n"
 msgstr "Id non valido %x\n"
 
-#: fdisk/sfdisk.c:2864
+#: fdisk/sfdisk.c:2863
 msgid "This disk is currently in use.\n"
 msgstr "Questo disco è attualmente in uso.\n"
 
-#: fdisk/sfdisk.c:2881
+#: fdisk/sfdisk.c:2880
 #, c-format
 msgid "Fatal error: cannot find %s\n"
 msgstr "Errore irreversibile: impossibile trovare %s\n"
 
-#: fdisk/sfdisk.c:2884
+#: fdisk/sfdisk.c:2883
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "Attenzione: %s non è un dispositivo di blocchi\n"
 
-#: fdisk/sfdisk.c:2890
+#: fdisk/sfdisk.c:2889
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr ""
 "Verifica in corso che in questo momento nessuno stia utilizzando questo "
 "disco...\n"
 
-#: fdisk/sfdisk.c:2892
+#: fdisk/sfdisk.c:2891
 #, fuzzy
 msgid ""
 "\n"
@@ -4817,29 +4817,29 @@ msgstr ""
 "swapoff di tutte le partizioni swap su questo disco. Utilizzare il flag--no-"
 "reread per eliminare questo controllo.\n"
 
-#: fdisk/sfdisk.c:2896
+#: fdisk/sfdisk.c:2895
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "Utilizzare il flag -force per oltrepassare tutti i controlli.\n"
 
-#: fdisk/sfdisk.c:2900
+#: fdisk/sfdisk.c:2899
 #, fuzzy
 msgid "OK\n"
 msgstr "OK"
 
-#: fdisk/sfdisk.c:2909
+#: fdisk/sfdisk.c:2908
 msgid "Old situation:\n"
 msgstr "Vecchia situazione:\n"
 
-#: fdisk/sfdisk.c:2913
+#: fdisk/sfdisk.c:2912
 #, c-format
 msgid "Partition %d does not exist, cannot change it\n"
 msgstr "La partizione %d non esiste, non è possibile modificarla\n"
 
-#: fdisk/sfdisk.c:2921
+#: fdisk/sfdisk.c:2920
 msgid "New situation:\n"
 msgstr "Nuova situazione:\n"
 
-#: fdisk/sfdisk.c:2926
+#: fdisk/sfdisk.c:2925
 msgid ""
 "I don't like these partitions - nothing changed.\n"
 "(If you really want this, use the --force option.)\n"
@@ -4847,19 +4847,19 @@ msgstr ""
 "Queste partizioni non mi piacciono - nessuna modifica\n"
 "(se questo è quanto si desidera, utilizzare l'opzione --force.)\n"
 
-#: fdisk/sfdisk.c:2929
+#: fdisk/sfdisk.c:2928
 msgid "I don't like this - probably you should answer No\n"
 msgstr "Questo non mi piace - probabilmente si dovrebbe rispondere no\n"
 
-#: fdisk/sfdisk.c:2934
+#: fdisk/sfdisk.c:2933
 msgid "Are you satisfied with this? [ynq] "
 msgstr "Soddisfatti di questo? [ynq] "
 
-#: fdisk/sfdisk.c:2936
+#: fdisk/sfdisk.c:2935
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "Scrivere questo su disco? [ynq] "
 
-#: fdisk/sfdisk.c:2941
+#: fdisk/sfdisk.c:2940
 msgid ""
 "\n"
 "sfdisk: premature end of input\n"
@@ -4867,15 +4867,15 @@ msgstr ""
 "\n"
 "sfdisk: fine prematura dell'input\n"
 
-#: fdisk/sfdisk.c:2943
+#: fdisk/sfdisk.c:2942
 msgid "Quitting - nothing changed\n"
 msgstr "Uscita in corso - nessuna modifica\n"
 
-#: fdisk/sfdisk.c:2949
+#: fdisk/sfdisk.c:2948
 msgid "Please answer one of y,n,q\n"
 msgstr "Scegliere un'opzione per la risposta tra y,n,q\n"
 
-#: fdisk/sfdisk.c:2957
+#: fdisk/sfdisk.c:2956
 msgid ""
 "Successfully wrote the new partition table\n"
 "\n"
@@ -4883,7 +4883,7 @@ msgstr ""
 "La nuova tabella delle partizioni è stata scritta con successo\n"
 "\n"
 
-#: fdisk/sfdisk.c:2963
+#: fdisk/sfdisk.c:2962
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -5875,7 +5875,7 @@ msgstr "Modifica delle informazioni finger per %s in corso.\n"
 msgid "Password error."
 msgstr "Errore password."
 
-#: login-utils/chfn.c:176 login-utils/chsh.c:167 login-utils/login.c:787
+#: login-utils/chfn.c:176 login-utils/chsh.c:167 login-utils/login.c:790
 #: login-utils/newgrp.c:48 login-utils/simpleinit.c:320 mount/lomount.c:248
 #: mount/lomount.c:253
 msgid "Password: "
@@ -6108,12 +6108,12 @@ msgstr "login: -h solamente per super-user.\n"
 msgid "usage: login [-fp] [username]\n"
 msgstr "utilizzo: login [-fp] [nomeutente]\n"
 
-#: login-utils/login.c:547
+#: login-utils/login.c:550
 #, c-format
 msgid "login: PAM Failure, aborting: %s\n"
 msgstr "logine: errore PAM, interruzione in corso: %s\n"
 
-#: login-utils/login.c:549
+#: login-utils/login.c:552
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "Impossibile inizializzare PAM: %s"
@@ -6124,16 +6124,16 @@ msgstr "Impossibile inizializzare PAM: %s"
 #. * PAM doesn't have an interface to specify the "Password: " string
 #. * (yet).
 #.
-#: login-utils/login.c:566
+#: login-utils/login.c:569
 msgid "login: "
 msgstr "login: "
 
-#: login-utils/login.c:606
+#: login-utils/login.c:609
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "FALLITA LOGIN %d DA %s PER %s, %s"
 
-#: login-utils/login.c:610
+#: login-utils/login.c:613
 msgid ""
 "Login incorrect\n"
 "\n"
@@ -6141,17 +6141,17 @@ msgstr ""
 "Login non corretto\n"
 "\n"
 
-#: login-utils/login.c:619
+#: login-utils/login.c:622
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "TROPPI TENTATIVI DI LOGIN (%d) DA %s PER %s, %s"
 
-#: login-utils/login.c:623
+#: login-utils/login.c:626
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "FALLITA SESSIONE DI LOGIN DA %s PER %s, %s"
 
-#: login-utils/login.c:627
+#: login-utils/login.c:630
 msgid ""
 "\n"
 "Login incorrect\n"
@@ -6159,51 +6159,51 @@ msgstr ""
 "\n"
 "Login  non corretto\n"
 
-#: login-utils/login.c:649 login-utils/login.c:656 login-utils/login.c:690
+#: login-utils/login.c:652 login-utils/login.c:659 login-utils/login.c:693
 msgid ""
 "\n"
 "Session setup problem, abort.\n"
 msgstr ""
 
-#: login-utils/login.c:650
+#: login-utils/login.c:653
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr ""
 
-#: login-utils/login.c:657
+#: login-utils/login.c:660
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr ""
 
-#: login-utils/login.c:676
+#: login-utils/login.c:679
 #, fuzzy
 msgid "login: Out of memory\n"
 msgstr "%s: memoria esaurita!\n"
 
-#: login-utils/login.c:722
+#: login-utils/login.c:725
 msgid "Illegal username"
 msgstr "Nome utente non valido"
 
-#: login-utils/login.c:765
+#: login-utils/login.c:768
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "%s login rifiutato su questo terminale.\n"
 
-#: login-utils/login.c:770
+#: login-utils/login.c:773
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "LOGIN %s RIFIUTATO DA %s SU TTY %s"
 
-#: login-utils/login.c:774
+#: login-utils/login.c:777
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "LOGIN %s RIFIUTATO SU TTY %s"
 
-#: login-utils/login.c:827
+#: login-utils/login.c:830
 msgid "Login incorrect\n"
 msgstr "Login non corretto\n"
 
-#: login-utils/login.c:849
+#: login-utils/login.c:852
 msgid ""
 "Too many users logged on already.\n"
 "Try again later.\n"
@@ -6211,84 +6211,84 @@ msgstr ""
 "Troppi utenti già collegati.\n"
 "Riprovare successivamente.\n"
 
-#: login-utils/login.c:853
+#: login-utils/login.c:856
 msgid "You have too many processes running.\n"
 msgstr "Ci sono troppi processi in esecuzione.\n"
 
-#: login-utils/login.c:1077
+#: login-utils/login.c:1080
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr " CONNESSIONE DI ACCESSO REMOTO A %s ATTRAVERSO %s"
 
-#: login-utils/login.c:1084
+#: login-utils/login.c:1087
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "LOGIN DI ROOT A %s DA %s"
 
-#: login-utils/login.c:1087
+#: login-utils/login.c:1090
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "LOGIN DI ROOT A %s"
 
-#: login-utils/login.c:1090
+#: login-utils/login.c:1093
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "LOGIN A %s ATTRAVERSO %s DA %s"
 
-#: login-utils/login.c:1093
+#: login-utils/login.c:1096
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "LOGIN A %s ATTRAVERSO %s"
 
-#: login-utils/login.c:1105
+#: login-utils/login.c:1108
 #, fuzzy
 msgid "You have new mail.\n"
 msgstr "C'è %sposta.\n"
 
-#: login-utils/login.c:1107
+#: login-utils/login.c:1110
 #, fuzzy
 msgid "You have mail.\n"
 msgstr "C'è %sposta.\n"
 
 #. error in fork()
-#: login-utils/login.c:1125
+#: login-utils/login.c:1128
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "login: errore in esecuzione forking: %s"
 
-#: login-utils/login.c:1162
+#: login-utils/login.c:1165
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr ""
 
-#: login-utils/login.c:1168
+#: login-utils/login.c:1171
 msgid "setuid() failed"
 msgstr "setuid() non riuscito"
 
-#: login-utils/login.c:1174
+#: login-utils/login.c:1177
 #, c-format
 msgid "No directory %s!\n"
 msgstr "Nessuna directory %s!\n"
 
-#: login-utils/login.c:1178
+#: login-utils/login.c:1181
 msgid "Logging in with home = \"/\".\n"
 msgstr "Connessione con home = \"/\".\n"
 
-#: login-utils/login.c:1186
+#: login-utils/login.c:1189
 msgid "login: no memory for shell script.\n"
 msgstr "login: nessuna memoria per lo script shell.\n"
 
-#: login-utils/login.c:1213
+#: login-utils/login.c:1216
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr "login: exec dello script shell impossibile: %s.\n"
 
-#: login-utils/login.c:1216
+#: login-utils/login.c:1219
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "login: nessuna shell: %s.\n"
 
-#: login-utils/login.c:1231
+#: login-utils/login.c:1234
 #, c-format
 msgid ""
 "\n"
@@ -6297,62 +6297,62 @@ msgstr ""
 "\n"
 "%s login: "
 
-#: login-utils/login.c:1242
+#: login-utils/login.c:1245
 msgid "login name much too long.\n"
 msgstr "il nome di login è troppo lungo.\n"
 
-#: login-utils/login.c:1243
+#: login-utils/login.c:1246
 msgid "NAME too long"
 msgstr "NOME troppo lungo"
 
-#: login-utils/login.c:1250
+#: login-utils/login.c:1253
 msgid "login names may not start with '-'.\n"
 msgstr "I nomi di login non possono iniziare con'-'.\n"
 
-#: login-utils/login.c:1260
+#: login-utils/login.c:1263
 msgid "too many bare linefeeds.\n"
 msgstr "troppi linefeed vuoti.\n"
 
-#: login-utils/login.c:1261
+#: login-utils/login.c:1264
 msgid "EXCESSIVE linefeeds"
 msgstr "Linefeed ECCESSIVI"
 
-#: login-utils/login.c:1272
+#: login-utils/login.c:1275
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "Login scaduto dopo %d secondi\n"
 
-#: login-utils/login.c:1369
+#: login-utils/login.c:1372
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Ultimo login: %.*s "
 
-#: login-utils/login.c:1373
+#: login-utils/login.c:1376
 #, c-format
 msgid "from %.*s\n"
 msgstr "da %.*s\n"
 
-#: login-utils/login.c:1376
+#: login-utils/login.c:1379
 #, c-format
 msgid "on %.*s\n"
 msgstr "su %.*s\n"
 
-#: login-utils/login.c:1396
+#: login-utils/login.c:1399
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "ERRORE DI LOGIN DA %s, %s"
 
-#: login-utils/login.c:1399
+#: login-utils/login.c:1402
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "ERRORE DI LOGIN SU %s, %s"
 
-#: login-utils/login.c:1403
+#: login-utils/login.c:1406
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "%d ERRORI DI LOGIN DA %s, %s"
 
-#: login-utils/login.c:1406
+#: login-utils/login.c:1409
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%d ERRORI DI LOGIN SU %s, %s"
@@ -6715,7 +6715,7 @@ msgstr "apertura file rc non riuscita\n"
 msgid "fork failed\n"
 msgstr "fork non riuscito\n"
 
-#: login-utils/simpleinit.c:512 text-utils/more.c:1624
+#: login-utils/simpleinit.c:512 text-utils/more.c:1705
 msgid "exec failed\n"
 msgstr "exec fallita\n"
 
@@ -7585,7 +7585,7 @@ msgstr "mount: impossibile aprire %s in scrittura: %s"
 msgid "mount: cannot set speed: %s"
 msgstr "mount: impossibile aprire %s: %s"
 
-#: mount/mount.c:720 mount/mount.c:1254
+#: mount/mount.c:720 mount/mount.c:1265
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: impossibile effettuare il fork: %s"
@@ -7771,24 +7771,34 @@ msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr ""
 "mount: %s%s è protetto da scrittura, montaggio in sola lettura in corso"
 
-#: mount/mount.c:1107
+#: mount/mount.c:1104
+#, c-format
+msgid "mount: the label %s occurs on both %s and %s\n"
+msgstr ""
+
+#: mount/mount.c:1108
+#, fuzzy, c-format
+msgid "mount: %s duplicate - not mounted"
+msgstr "umount: %s: non montato"
+
+#: mount/mount.c:1118
 #, fuzzy, c-format
 msgid "mount: going to mount %s by %s\n"
 msgstr "mount: considerare il montaggio di %s con %s\n"
 
-#: mount/mount.c:1108
+#: mount/mount.c:1119
 msgid "UUID"
 msgstr "UUID"
 
-#: mount/mount.c:1108
+#: mount/mount.c:1119
 msgid "label"
 msgstr "etichetta"
 
-#: mount/mount.c:1110 mount/mount.c:1502
+#: mount/mount.c:1121 mount/mount.c:1521
 msgid "mount: no such partition found"
 msgstr "mount: non si è trovata tale partizione"
 
-#: mount/mount.c:1118
+#: mount/mount.c:1129
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 "mount: non è stato dato il tipo - Si presume nfs perché ci sono i due punti\n"
@@ -7796,22 +7806,22 @@ msgstr ""
 #.
 #. * Retry in the background.
 #.
-#: mount/mount.c:1134
+#: mount/mount.c:1145
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: esecuzione in background di \"%s\"\n"
 
-#: mount/mount.c:1145
+#: mount/mount.c:1156
 #, c-format
 msgid "mount: giving up \"%s\"\n"
 msgstr "mount: termina \"%s\"\n"
 
-#: mount/mount.c:1205
+#: mount/mount.c:1216
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s già montato su %s\n"
 
-#: mount/mount.c:1324
+#: mount/mount.c:1335
 msgid ""
 "Usage: mount -V                 : print version\n"
 "       mount -h                 : print this help\n"
@@ -7836,30 +7846,35 @@ msgid ""
 "For many more details, say  man 8 mount .\n"
 msgstr ""
 
-#: mount/mount.c:1486
+#: mount/mount.c:1497
 msgid "mount: only root can do that"
 msgstr "mount: è possibile solo per root"
 
-#: mount/mount.c:1491
+#: mount/mount.c:1502
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: nessun %s trovato - creazione in corso..\n"
 
-#: mount/mount.c:1504
+#: mount/mount.c:1516
+#, c-format
+msgid "mount: the label %s occurs on both %s and %s - not mounted\n"
+msgstr ""
+
+#: mount/mount.c:1523
 #, c-format
 msgid "mount: mounting %s\n"
 msgstr "mount: mount di %s in corso\n"
 
-#: mount/mount.c:1513
+#: mount/mount.c:1532
 msgid "nothing was mounted"
 msgstr ""
 
-#: mount/mount.c:1528
+#: mount/mount.c:1547
 #, c-format
 msgid "mount: cannot find %s in %s"
 msgstr "mount: impossibile trovare %s in %s"
 
-#: mount/mount.c:1543
+#: mount/mount.c:1562
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: impossibile trovare %s in %s o %s"
@@ -8349,53 +8364,53 @@ msgstr ""
 msgid "%s: illegal option -- %c\n"
 msgstr ""
 
-#: sys-utils/ipcrm.c:192
+#: sys-utils/ipcrm.c:193
 #, fuzzy, c-format
 msgid "%s: illegal key (%s)\n"
 msgstr "Tasto non valido"
 
-#: sys-utils/ipcrm.c:207 sys-utils/ipcrm.c:239
+#: sys-utils/ipcrm.c:208 sys-utils/ipcrm.c:240
 #, fuzzy
 msgid "permission denied for key"
 msgstr "mount: autorizzazione negata"
 
-#: sys-utils/ipcrm.c:210 sys-utils/ipcrm.c:249
+#: sys-utils/ipcrm.c:211 sys-utils/ipcrm.c:250
 msgid "already removed key"
 msgstr ""
 
-#: sys-utils/ipcrm.c:213 sys-utils/ipcrm.c:244
+#: sys-utils/ipcrm.c:214 sys-utils/ipcrm.c:245
 #, fuzzy
 msgid "invalid key"
 msgstr "Numero non valido: %s\n"
 
-#: sys-utils/ipcrm.c:216 sys-utils/ipcrm.c:254
+#: sys-utils/ipcrm.c:217 sys-utils/ipcrm.c:255
 msgid "unknown error in key"
 msgstr ""
 
-#: sys-utils/ipcrm.c:240
+#: sys-utils/ipcrm.c:241
 #, fuzzy
 msgid "permission denied for id"
 msgstr "mount: autorizzazione negata"
 
-#: sys-utils/ipcrm.c:245
+#: sys-utils/ipcrm.c:246
 #, fuzzy
 msgid "invalid id"
 msgstr "Numero non valido: %s\n"
 
-#: sys-utils/ipcrm.c:250
+#: sys-utils/ipcrm.c:251
 msgid "already removed id"
 msgstr ""
 
-#: sys-utils/ipcrm.c:255
+#: sys-utils/ipcrm.c:256
 msgid "unknown error in id"
 msgstr ""
 
-#: sys-utils/ipcrm.c:258
+#: sys-utils/ipcrm.c:259
 #, fuzzy, c-format
 msgid "%s: %s (%s)\n"
 msgstr "%s su %s\n"
 
-#: sys-utils/ipcrm.c:266
+#: sys-utils/ipcrm.c:267
 #, fuzzy, c-format
 msgid "%s: unknown argument: %s\n"
 msgstr "%s: segnale sconosciuto %s\n"
@@ -9228,12 +9243,12 @@ msgid ""
 msgstr ""
 "hexdump: [-bcdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
 
-#: text-utils/more.c:263
+#: text-utils/more.c:264
 #, fuzzy, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr " usage: %s [-dfln] [+linenum | +/pattern] name1 name2 ...\n"
 
-#: text-utils/more.c:521
+#: text-utils/more.c:522
 #, c-format
 msgid ""
 "\n"
@@ -9245,7 +9260,7 @@ msgstr ""
 "\n"
 
 #. simple ELF detection
-#: text-utils/more.c:564
+#: text-utils/more.c:565
 #, c-format
 msgid ""
 "\n"
@@ -9256,39 +9271,39 @@ msgstr ""
 "******** %s: non è un file di testo********\n"
 "\n"
 
-#: text-utils/more.c:667
+#: text-utils/more.c:668
 msgid "[Use q or Q to quit]"
 msgstr "[Utilizzare q o Q per uscire]"
 
-#: text-utils/more.c:847
+#: text-utils/more.c:848
 msgid "--More--"
 msgstr "--Ancora--"
 
-#: text-utils/more.c:849
+#: text-utils/more.c:850
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(File successivo: %s)"
 
-#: text-utils/more.c:855
+#: text-utils/more.c:856
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Premere spazio per continuare, 'q' per uscire.]"
 
-#: text-utils/more.c:1190
+#: text-utils/more.c:1271
 #, fuzzy, c-format
 msgid "...back %d pages"
 msgstr "...indietro %d pagine"
 
-#: text-utils/more.c:1192
+#: text-utils/more.c:1273
 #, fuzzy
 msgid "...back 1 page"
 msgstr "...indietro %d pagine"
 
-#: text-utils/more.c:1233
+#: text-utils/more.c:1314
 #, c-format
 msgid "...skipping %d line"
 msgstr "...sto saltando %d righe"
 
-#: text-utils/more.c:1274
+#: text-utils/more.c:1355
 msgid ""
 "\n"
 "***Back***\n"
@@ -9298,37 +9313,37 @@ msgstr ""
 "***Indietro***\n"
 "\n"
 
-#: text-utils/more.c:1331
+#: text-utils/more.c:1412
 msgid "Can't open help file"
 msgstr "Impossibile aprire il file guida"
 
-#: text-utils/more.c:1361 text-utils/more.c:1365
+#: text-utils/more.c:1442 text-utils/more.c:1446
 msgid "[Press 'h' for instructions.]"
 msgstr "[Premere 'h' per visualizzare le istruzioni.]"
 
-#: text-utils/more.c:1399
+#: text-utils/more.c:1480
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" linea %d"
 
-#: text-utils/more.c:1401
+#: text-utils/more.c:1482
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Non un file] linea %d"
 
-#: text-utils/more.c:1485
+#: text-utils/more.c:1566
 msgid "  Overflow\n"
 msgstr "  Overflow\n"
 
-#: text-utils/more.c:1532
+#: text-utils/more.c:1613
 msgid "...skipping\n"
 msgstr "...ignora\n"
 
-#: text-utils/more.c:1562
+#: text-utils/more.c:1643
 msgid "Regular expression botch"
 msgstr "Errore nell'espressione regolare"
 
-#: text-utils/more.c:1574
+#: text-utils/more.c:1655
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9336,15 +9351,15 @@ msgstr ""
 "\n"
 "Pattern non trovato\n"
 
-#: text-utils/more.c:1577
+#: text-utils/more.c:1658
 msgid "Pattern not found"
 msgstr "Pattern non trovato"
 
-#: text-utils/more.c:1638
+#: text-utils/more.c:1719
 msgid "can't fork\n"
 msgstr "impossibile effettuare fork\n"
 
-#: text-utils/more.c:1677
+#: text-utils/more.c:1758
 msgid ""
 "\n"
 "...Skipping "
@@ -9352,21 +9367,21 @@ msgstr ""
 "\n"
 "...sto ignorando"
 
-#: text-utils/more.c:1682
+#: text-utils/more.c:1763
 #, fuzzy
 msgid "...Skipping to file "
 msgstr "...Sto ignorando"
 
-#: text-utils/more.c:1684
+#: text-utils/more.c:1765
 #, fuzzy
 msgid "...Skipping back to file "
 msgstr "ritorna al file"
 
-#: text-utils/more.c:1918
+#: text-utils/more.c:2046
 msgid "Line too long"
 msgstr "Linea troppo lunga"
 
-#: text-utils/more.c:1961
+#: text-utils/more.c:2089
 msgid "No previous command to substitute for"
 msgstr "Nessun comando precedente da sostituire"
 

@@ -1,3 +1,18 @@
+util-linux 2.11r
+
+* Estonian messages (Meelis Roos)
+* No French messages with permission to distribute (Michel Robitaille)
+* German messages (Michael Piefel)
+* Spanish messages (Santiago Vila Doncel)
+* Swedish messages (Christian Rose)
+* Turkish messages (Nilgün Belma Bugüner)
+* MCONFIG: move $(CFLAGS) to the end to allow overrides (Kevin P. Fleming)
+* cal: tiny fix (Mitsuru Chinen)
+* fdisk: avoid <linux/hdreg.h>
+* fdisk: x86_64 patch (Mads Martin Jørgensen)
+* hwclock.8: zoneinfo is now in /usr/share
+* mkswap: report in KiB instead of bytes.
+
 util-linux 2.11q
 
 * fdisk: geometry improvement
@@ -17,7 +32,7 @@ util-linux 2.11p
 * ipcrm: make POSIX compatible (Andre Corwin Mazzone)
 * ipcrm.8: idem
 * kill: fixed Makefile
-* login: setsid fixes(?)
+* login: setsid fixes
 * mkswap: max size of swap space is very large (Peter Chubb)
 * mount: JFS support for mount-by-label (hch)
 * nfsmount: check for <rpcsvc/nfs_prot.h> (hch)

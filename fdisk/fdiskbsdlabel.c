@@ -55,8 +55,6 @@
 #include <sys/ioctl.h>
 #include <sys/param.h>
 
-#include <linux/hdreg.h>	/* for HDIO_GETGEO */
-
 #include "common.h"
 #include "fdisk.h"
 #define FREEBSD_PARTITION	0xa5

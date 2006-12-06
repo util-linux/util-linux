@@ -26,7 +26,6 @@
 #undef u_char
 #endif
 #include <linux/major.h>	/* FLOPPY_MAJOR */
-#include <linux/hdreg.h>	/* HDIO_GETGEO */
 
 #include "common.h"
 #include "fdisk.h"

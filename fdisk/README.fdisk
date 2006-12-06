@@ -165,7 +165,7 @@ file system.  You may prefer to have a separate partition for `/usr',
 which contains most of the executable files, or for `/home', which
 contains most of your private files.  You may also wish to set aside a
 partition to use for swap space, depending on the amount of memory your
-PC has.  You will certainly need swap space if you have less than 4 Mb
+PC has.  You will certainly need swap space if you have less than 4 MB
 of RAM and wish to compile anything substantial.  You can reserve swap
 space in a file, but you need a partition big enough to hold it, and
 this will probably be less efficient than having a partition devoted to

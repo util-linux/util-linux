@@ -68,7 +68,7 @@ Set the System Time from the Hardware Clock.
 
 Also set the kernel's timezone value to the local timezone
 as indicated by the TZ environment variable and/or
-.IR /usr/lib/zoneinfo ,
+.IR /usr/share/zoneinfo ,
 as 
 .BR tzset (3)
 would interpret them.
@@ -107,16 +107,16 @@ option for details.
 Print the version of 
 .B hwclock 
 on Standard Output.
-.br
-You need the following option if you specify 
-.B \-\-set
-option.  Otherwise, it is ignored.
 .TP
 .B \-\-date=date_string
-Specifies the time to which to set the Hardware Clock.  The value of this
-option is an argument to the
+You need this option if you specify the
+.B \-\-set
+option.  Otherwise, it is ignored.
+This specifies the time to which to set the Hardware Clock.
+The value of this option is an argument to the
 .BR date (1)
-program.  For example,
+program.
+For example,
 .sp
 .I hwclock --set --date="9/22/96 16:45:05"
 .sp
@@ -573,7 +573,9 @@ ISA" method of accessing the Hardware Clock.
 
 .SH FILES
 .I /etc/adjtime
-.I /usr/lib/zoneinfo/
+.I /usr/share/zoneinfo/
+.RI ( /usr/lib/zoneinfo
+on old systems)
 .I /dev/rtc
 .I /dev/port
 .I /dev/tty1

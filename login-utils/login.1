@@ -115,10 +115,11 @@ of a tty device without the /dev/ prefix must be specified on each
 line.  If the file does not exist, root is allowed to log in on any
 tty.
 .PP
-The file
+On most modern Linux systems PAM (Pluggable Authentication Modules)
+is used. On systems that do not use PAM, the file
 .I /etc/usertty
-specifies additional access restrictions for specific users. If this
-file does not exist, no additional access restrictions are
+specifies additional access restrictions for specific users.
+If this file does not exist, no additional access restrictions are
 imposed. The file consists of a sequence of sections. There are three
 possible section types: CLASSES, GROUPS and USERS. A CLASSES section
 defines classes of ttys and hostname patterns, A GROUPS section
