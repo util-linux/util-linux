@@ -7,7 +7,7 @@
 .SH NAME
 mkswap \- set up a Linux swap area
 .SH SYNOPSIS
-.BI "mkswap [\-c] [\-v" N "] [\-f] [\-p " PSZ "] "device  " [" size "]"
+.BI "mkswap [\-c] [\-v" N "] [\-f] [\-p " PSZ "] [\-L " label "] " device  " [" size "]"
 .SH DESCRIPTION
 .B mkswap
 sets up a Linux swap area on a device or in a file.
@@ -130,6 +130,10 @@ as that probably means one is going to erase the partition table.
 .TP
 .BI "\-p " PSZ
 Specify the page size to use.
+.TP
+.BI "\-L " label
+Specify a label, to allow swapon by label.
+(Only for new style swap areas.)
 .TP
 .B \-v0
 Create an old style swap area.

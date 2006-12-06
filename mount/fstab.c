@@ -11,7 +11,8 @@
 #include <sys/stat.h>
 #include "mntent.h"
 #include "fstab.h"
-#include "sundries.h"		/* for xmalloc() etc */
+#include "sundries.h"
+#include "xmalloc.h"
 #include "mount_blkid.h"
 #include "paths.h"
 #include "nls.h"
@@ -411,6 +412,15 @@ setlkw_timeout (int sig) {
      /* nothing, fcntl will fail anyway */
 }
 
+/* Remove lock file.  */
+void
+unlock_mtab (void) {
+	if (we_created_lockfile) {
+		unlink (MOUNTED_LOCK);
+		we_created_lockfile = 0;
+	}
+}
+
 /* Create the lock file.
    The lock file will be removed if we catch a signal or when we exit. */
 /* The old code here used flock on a lock file /etc/mtab~ and deleted
@@ -435,6 +445,8 @@ void
 lock_mtab (void) {
 	int tries = 3;
 	char linktargetfile[MOUNTLOCK_LINKTARGET_LTH];
+
+	at_die = unlock_mtab;
 
 	if (!signals_have_been_setup) {
 		int sig = 0;
@@ -540,15 +552,6 @@ lock_mtab (void) {
 		}
 
 		close(fd);
-	}
-}
-
-/* Remove lock file.  */
-void
-unlock_mtab (void) {
-	if (we_created_lockfile) {
-		unlink (MOUNTED_LOCK);
-		we_created_lockfile = 0;
 	}
 }
 

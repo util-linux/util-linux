@@ -26,7 +26,6 @@ void error (const char *fmt, ...);
 int matching_type (const char *type, const char *types);
 int matching_opts (const char *options, const char *test_opts);
 void *xmalloc (size_t size);
-void *xrealloc (void *t, size_t size);
 char *xstrdup (const char *s);
 char *xstrndup (const char *s, int n);
 char *xstrconcat2 (const char *, const char *);

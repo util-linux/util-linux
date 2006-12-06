@@ -74,6 +74,8 @@ mount_get_devname_by_uuid(const char *uuid) {
 	return get_spec_by_uuid(uuid);
 }
 
+extern char *progname;
+
 const char *
 mount_get_devname_by_label(const char *volumelabel) {
 	const char *spec, *spec2;
@@ -82,9 +84,8 @@ mount_get_devname_by_label(const char *volumelabel) {
 	spec2 = second_occurrence_of_vol_label(volumelabel);
 	if (spec2)
 		die (EX_FAIL,
-		     _("mount: the label %s occurs on "
-		       "both %s and %s - not mounted\n"),
-		     volumelabel, spec, spec2);
+		     _("%s: error: the label %s occurs on both %s and %s\n"),
+		     progname, volumelabel, spec, spec2);
 	return spec;
 }
 

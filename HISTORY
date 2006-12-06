@@ -1,3 +1,11 @@
+util-linux 2.12n,o
+
+* lomount: revert patch from 2.12j
+* lptune.8: -T option is obsolete
+* mkswap, mkswap.8, swapon: support labels
+  (use HAVE_BLKID=no as long as the blkid library doesnt support this)
+* umount: allow user unmounting repeatedly mounted nfs mounts
+
 util-linux 2.12m
 
 * cfdisk: recognize JFS, support reiserfs labels (flavio.stanchina@tin.it)

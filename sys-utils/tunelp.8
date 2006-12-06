@@ -110,7 +110,11 @@ current IRQ, is implied.
 
 .TP
 .B \-T [on|off]
-This option tell the lp driver to trust or not the IRQ.
+This option is obsolete. It was added in Linux 2.1.131,
+and removed again in Linux 2.3.10. The below is for these
+old kernels only.
+
+This option tells the lp driver to trust or not the IRQ.
 This option makes sense only if you are using interrupts.
 If you tell the lp driver to trust the irq, then, when the lp driver will
 get an irq, it will send the next pending character to the printer

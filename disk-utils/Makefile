@@ -36,6 +36,10 @@ ifeq "$(HAVE_ZLIB)" "yes"
 SBIN:=$(SBIN) fsck.cramfs mkfs.cramfs
 endif
 
+ifeq "$(HAVE_UUID)" "yes"
+MKSWAP_LIBS=-luuid
+endif
+
 all: $(SBIN) $(USRBIN)
 
 fsck.cramfs: fsck.cramfs.o
@@ -49,6 +53,9 @@ mkfs.cramfs.o: $(LIB)/md5.h
 fsck.cramfs.o mkfs.cramfs.o: cramfs.h
 
 fsck.minix.o mkfs.minix.o: bitops.h minix.h
+
+mkswap: mkswap.o $(LIB)/xstrncpy.o
+	$(CC) $(LDFLAGS) -o $@ $^ $(MKSWAP_LIBS)
 
 install: all
 	$(INSTALLDIR) $(SBINDIR) $(USRBINDIR) $(ETCDIR)

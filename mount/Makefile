@@ -47,18 +47,19 @@ install: $(PROGS)
 %.o: %.c
 	$(COMPILE) $<
 
-mount: mount.o fstab.o sundries.o realpath.o mntent.o version.o \
+mount: mount.o fstab.o sundries.o xmalloc.o realpath.o mntent.o version.o \
        get_label_uuid.o mount_by_label.o mount_blkid.o mount_guess_fstype.o \
        getusername.o $(LIB)/setproctitle.o $(LIB)/env.o $(NFS_OBJS) $(LO_OBJS)
 	$(LINK) $^ -o $@ $(BLKID_LIB)
 
-umount: umount.o fstab.o sundries.o realpath.o mntent.o getusername.o \
-	get_label_uuid.o mount_by_label.o mount_blkid.o version.o \
-	$(LIB)/env.o $(LO_OBJS)
+umount: umount.o fstab.o sundries.o xmalloc.o realpath.o mntent.o \
+	getusername.o get_label_uuid.o mount_by_label.o mount_blkid.o \
+	version.o $(LIB)/env.o $(LO_OBJS)
 	$(LINK) $^ -o $@ $(BLKID_LIB)
 
-swapon:	swapon.o version.o
-	$(LINK) $^ -o $@
+swapon:	swapon.o version.o xmalloc.o \
+	get_label_uuid.o mount_by_label.o mount_blkid.o
+	$(LINK) $^ -o $@ $(BLKID_LIB)
 
 main_losetup.o: lomount.c
 	$(COMPILE) -DMAIN lomount.c -o $@

@@ -24,6 +24,7 @@
 #include "mount_blkid.h"
 #include "mount_constants.h"
 #include "sundries.h"
+#include "xmalloc.h"
 #include "mntent.h"
 #include "fstab.h"
 #include "lomount.h"

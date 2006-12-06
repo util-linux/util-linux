@@ -58,6 +58,15 @@ swapon, swapoff \- enable/disable devices and files for paging and swapping
 .SH DESCRIPTION
 .B Swapon
 is used to specify devices on which paging and swapping are to take place.
+
+The device or file used is given by the
+.I specialfile
+parameter. It may be of the form
+.BI \-L " label"
+or
+.BI \-U " uuid"
+to indicate a device by label or uuid.
+
 Calls to
 .B swapon
 normally occur in the system multi-user initialization file
@@ -66,16 +75,6 @@ making all swap devices available, so that the paging and swapping activity
 is interleaved across several devices and files.
 
 Normally, the first form is used:
-.TP
-.B \-h
-Provide help
-.TP
-.B \-V
-Display version
-.TP
-.B \-s
-Display swap usage summary by device. Equivalent to "cat /proc/swaps".
-Not available before Linux 2.1.25.
 .TP
 .B \-a
 All devices marked as ``swap'' swap devices in
@@ -88,8 +87,17 @@ When
 .B \-a 
 is used with swapon, 
 .B \-e 
-makes swapon silently skip devices that
-do not exist.
+makes swapon silently skip devices that do not exist.
+.TP
+.B \-h
+Provide help
+.TP
+.BI \-L " label"
+Use the partition that has the specified
+.IR label .
+(For this, access to
+.I /proc/partitions
+is needed.)
 .TP
 .BI \-p " priority"
 Specify priority for
@@ -98,7 +106,8 @@ This option is only available if
 .B swapon
 was compiled under and is used under a 1.3.2 or later kernel.
 .I priority
-is a value between 0 and 32767. See
+is a value between 0 and 32767. Higher numbers indicate higher
+priority. See
 .BR swapon (2)
 for a full description of swap priorities. Add
 .BI pri= value
@@ -107,8 +116,22 @@ to the option field of
 for use with
 .BR "swapon -a" .
 .TP
+.B \-s
+Display swap usage summary by device. Equivalent to "cat /proc/swaps".
+Not available before Linux 2.1.25.
+.TP
+.BI \-U " uuid"
+Use the partition that has the specified
+.IR uuid .
+(For this, access to
+.I /proc/partitions
+is needed.)
+.TP
 .B \-v
 Be verbose.
+.TP
+.B \-V
+Display version
 .PP
 .B Swapoff
 disables swapping on the specified devices and files.

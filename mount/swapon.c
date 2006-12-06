@@ -11,9 +11,12 @@
 #include <mntent.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include "xmalloc.h"
 #include "swap_constants.h"
 #include "swapargs.h"
 #include "nls.h"
+#include "mount_blkid.h"
+#include "mount_by_label.h"
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
@@ -32,7 +35,7 @@ int priority = -1;	/* non-prioritized swap by default */
 int ifexists = 0;
 
 extern char version[];
-static char *program_name;
+char *progname;
 
 static struct option longswaponopts[] = {
 		/* swapon only */
@@ -53,9 +56,9 @@ static void
 swapon_usage(FILE *fp, int n) {
 	fprintf(fp, _("usage: %s [-hV]\n"
 		      "       %s -a [-e] [-v]\n"
-		      "       %s [-v] [-p priority] special ...\n"
+		      "       %s [-v] [-p priority] special|LABEL=volume_name ...\n"
 		      "       %s [-s]\n"),
-		program_name, program_name, program_name, program_name);
+		progname, progname, progname, progname);
 	exit(n);
 }
 
@@ -64,7 +67,7 @@ swapoff_usage(FILE *fp, int n) {
 	fprintf(fp, _("usage: %s [-hV]\n"
 		      "       %s -a [-v]\n"
 		      "       %s [-v] special ...\n"),
-		program_name, program_name, program_name);
+		progname, progname, progname);
 	exit(n);
 }
 
@@ -132,7 +135,7 @@ read_proc_swaps(void) {
 }
 
 static int
-is_in_proc_swaps(char *fname) {
+is_in_proc_swaps(const char *fname) {
 	int i;
 
 	for (i = 0; i < numSwaps; i++)
@@ -149,7 +152,7 @@ display_summary(void)
 
        if ((swaps = fopen(PROC_SWAPS, "r")) == NULL) {
        	       int errsv = errno;
-               fprintf(stderr, "%s: %s: %s\n", program_name, PROC_SWAPS,
+               fprintf(stderr, "%s: %s: %s\n", progname, PROC_SWAPS,
 			strerror(errsv));
                return -1 ; 
        }
@@ -162,17 +165,25 @@ display_summary(void)
 }
 
 static int
-do_swapon(const char *special, int prio) {
+do_swapon(const char *orig_special, int prio) {
 	int status;
 	struct stat st;
+	const char *special;
 
 	if (verbose)
-		printf(_("%s on %s\n"), program_name, special);
+		printf(_("%s on %s\n"), progname, orig_special);
+
+	special = mount_get_devname(orig_special);
+	if (!special) {
+		fprintf(stderr, _("%s: cannot find the device for %s\n"),
+			progname, orig_special);
+		return -1;
+	}
 
 	if (stat(special, &st) < 0) {
 		int errsv = errno;
-		fprintf(stderr, _("swapon: cannot stat %s: %s\n"),
-			 special, strerror(errsv));
+		fprintf(stderr, _("%s: cannot stat %s: %s\n"),
+			progname, special, strerror(errsv));
 		return -1;
 	}
 
@@ -182,10 +193,10 @@ do_swapon(const char *special, int prio) {
 		int permMask = (S_ISBLK(st.st_mode) ? 07007 : 07077);
 
 		if ((st.st_mode & permMask) != 0) {
-			fprintf(stderr, _("swapon: warning: %s has "
+			fprintf(stderr, _("%s: warning: %s has "
 					  "insecure permissions %04o, "
 					  "%04o suggested\n"),
-				special, st.st_mode & 07777,
+				progname, special, st.st_mode & 07777,
 				~permMask & 0666);
 		}
 	}
@@ -194,9 +205,9 @@ do_swapon(const char *special, int prio) {
 	if (S_ISREG(st.st_mode)) {
 		if (st.st_blocks * 512 < st.st_size) {
 			fprintf(stderr,
-				_("swapon: Skipping file %s - it appears "
+				_("%s: Skipping file %s - it appears "
 				  "to have holes.\n"),
-				special);
+				progname, special);
 			return -1;
 		}
 	}
@@ -221,17 +232,42 @@ do_swapon(const char *special, int prio) {
 #endif
 	if (status < 0) {
 		int errsv = errno;
-		fprintf(stderr, "%s: %s: %s\n", program_name,
-			 special, strerror(errsv));
+		fprintf(stderr, "%s: %s: %s\n",
+			progname, orig_special, strerror(errsv));
 	}
 
 	return status;
 }
 
 static int
-do_swapoff(const char *special, int quiet) {
+cannot_find(const char *special) {
+	fprintf(stderr, _("%s: cannot find the device for %s\n"),
+		progname, special);
+	return -1;
+}
+
+static int
+swapon_by_label(const char *label, int prio) {
+	const char *special = mount_get_devname_by_label(label);
+	return special ? do_swapon(special, prio) : cannot_find(label);
+}
+
+static int
+swapon_by_uuid(const char *uuid, int prio) {
+	const char *special = mount_get_devname_by_uuid(uuid);
+	return special ? do_swapon(special, prio) : cannot_find(uuid);
+}
+
+static int
+do_swapoff(const char *orig_special, int quiet) {
+        const char *special;
+
 	if (verbose)
-		printf(_("%s on %s\n"), program_name, special);
+		printf(_("%s on %s\n"), progname, orig_special);
+
+	special = mount_get_devname(orig_special);
+	if (!special)
+		return cannot_find(orig_special);
 
 	if (swapoff(special) == 0)
 		return 0;	/* success */
@@ -242,22 +278,96 @@ do_swapoff(const char *special, int quiet) {
 	}
 
 	if (!quiet || errno == ENOMEM) {
-		int errsv = errno;
-		fprintf(stderr, "%s: %s: %s\n", program_name,
-			 special, strerror(errsv));
+		fprintf(stderr, "%s: %s: %s\n",
+			progname, orig_special, strerror(errno));
 	}
 	return -1;
 }
 
 static int
-main_swapon(int argc, char *argv[]) {
+swapoff_by_label(const char *label, int quiet) {
+	const char *special = mount_get_devname_by_label(label);
+	return special ? do_swapoff(special, quiet) : cannot_find(label);
+}
+
+static int
+swapoff_by_uuid(const char *uuid, int quiet) {
+	const char *special = mount_get_devname_by_uuid(uuid);
+	return special ? do_swapoff(special, quiet) : cannot_find(uuid);
+}
+
+static int
+swapon_all(void) {
 	FILE *fp;
 	struct mntent *fstab;
 	int status = 0;
-	int c;
 
-	while ((c = getopt_long(argc, argv, "ahep:svV",
-				 longswaponopts, NULL)) != -1) {
+	read_proc_swaps();
+
+	fp = setmntent(_PATH_FSTAB, "r");
+	if (fp == NULL) {
+		int errsv = errno;
+		fprintf(stderr, _("%s: cannot open %s: %s\n"),
+			progname, _PATH_FSTAB, strerror(errsv));
+		exit(2);
+	}
+
+	while ((fstab = getmntent(fp)) != NULL) {
+		const char *orig_special = fstab->mnt_fsname;
+		const char *special;
+		int skip = 0;
+		int pri = priority;
+
+		if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
+			continue;
+
+		special = mount_get_devname(orig_special);
+		if (!special)
+			continue;
+
+		if (!is_in_proc_swaps(special) &&
+		    (!ifexists || !access(special, R_OK))) {
+			/* parse mount options; */
+			char *opt, *opts = strdup(fstab->mnt_opts);
+	   
+			for (opt = strtok(opts, ","); opt != NULL;
+			     opt = strtok(NULL, ",")) {
+				if (strncmp(opt, "pri=", 4) == 0)
+					pri = atoi(opt+4);
+				if (strcmp(opt, "noauto") == 0)
+					skip = 1;
+			}
+			if (!skip)
+				status |= do_swapon(special, pri);
+		}
+	}
+	fclose(fp);
+
+	return status;
+}
+
+static const char **llist = NULL;
+static int llct = 0;
+static const char **ulist = NULL;
+static int ulct = 0;
+
+static void addl(const char *label) {
+	llist = (const char **) xrealloc(llist, (++llct) * sizeof(char *));
+	llist[llct-1] = label;
+}
+
+static void addu(const char *uuid) {
+	ulist = (const char **) xrealloc(ulist, (++ulct) * sizeof(char *));
+	ulist[ulct-1] = uuid;
+}
+
+static int
+main_swapon(int argc, char *argv[]) {
+	int status = 0;
+	int c, i;
+
+	while ((c = getopt_long(argc, argv, "ahep:svVL:U:",
+				longswaponopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':		/* all */
 			++all;
@@ -267,6 +377,12 @@ main_swapon(int argc, char *argv[]) {
 			break;
 		case 'p':		/* priority */
 			priority = atoi(optarg);
+			break;
+		case 'L':
+			addl(optarg);
+			break;
+		case 'U':
+			addu(optarg);
 			break;
 		case 'e':               /* ifexists */
 		        ifexists = 1;
@@ -278,7 +394,7 @@ main_swapon(int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf("%s: %s\n", program_name, version);
+			printf("%s: %s\n", progname, version);
 			exit(0);
 		case 0:
 			break;
@@ -289,46 +405,20 @@ main_swapon(int argc, char *argv[]) {
 	}
 	argv += optind;
 
-	if (!all && *argv == NULL)
+	if (!all && !llct && !ulct && *argv == NULL)
 		swapon_usage(stderr, 2);
 
-	if (ifexists && (!all || strcmp(program_name, "swapon")))
-	  swapon_usage(stderr, 1);
+	if (ifexists && (!all || strcmp(progname, "swapon")))
+		swapon_usage(stderr, 1);
 
-	if (all) {
-		read_proc_swaps();
+	if (all)
+		status |= swapon_all();
 
-		fp = setmntent(_PATH_FSTAB, "r");
-		if (fp == NULL) {
-			int errsv = errno;
-			fprintf(stderr, _("%s: cannot open %s: %s\n"),
-				program_name, _PATH_FSTAB, strerror(errsv));
-			exit(2);
-		}
-		while ((fstab = getmntent(fp)) != NULL) {
-			char *special = fstab->mnt_fsname;
-			int skip = 0;
-			int pri = priority;
+	for (i = 0; i < llct; i++)
+		status |= swapon_by_label(llist[i], priority);
 
-			if (streq(fstab->mnt_type, MNTTYPE_SWAP) &&
-			    !is_in_proc_swaps(special)
-			    && (!ifexists || !access(special, R_OK))) {
-				/* parse mount options; */
-				char *opt, *opts = strdup(fstab->mnt_opts);
-	   
-				for (opt = strtok(opts, ","); opt != NULL;
-				     opt = strtok(NULL, ",")) {
-					if (strncmp(opt, "pri=", 4) == 0)
-						pri = atoi(opt+4);
-					if (strcmp(opt, "noauto") == 0)
-						skip = 1;
-				}
-				if (!skip)
-					status |= do_swapon(special, pri);
-			}
-		}
-		fclose(fp);
-	}
+	for (i = 0; i < ulct; i++)
+		status |= swapon_by_uuid(ulist[i], priority);
 
 	while (*argv != NULL)
 		status |= do_swapon(*argv++, priority);
@@ -343,7 +433,7 @@ main_swapoff(int argc, char *argv[]) {
 	int status = 0;
 	int c, i;
 
-	while ((c = getopt_long(argc, argv, "ahvV",
+	while ((c = getopt_long(argc, argv, "ahvVL:U:",
 				 longswapoffopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':		/* all */
@@ -356,8 +446,14 @@ main_swapoff(int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf("%s: %s\n", program_name, version);
+			printf("%s: %s\n", progname, version);
 			exit(0);
+		case 'L':
+			addl(optarg);
+			break;
+		case 'U':
+			addu(optarg);
+			break;
 		case 0:
 			break;
 		case '?':
@@ -367,13 +463,19 @@ main_swapoff(int argc, char *argv[]) {
 	}
 	argv += optind;
 
-	if (!all && *argv == NULL)
+	if (!all && !llct && !ulct && *argv == NULL)
 		swapoff_usage(stderr, 2);
 
 	/*
 	 * swapoff any explicitly given arguments.
 	 * Complain in case the swapoff call fails.
 	 */
+	for (i = 0; i < llct; i++)
+		status |= swapoff_by_label(llist[i], !QUIET);
+
+	for (i = 0; i < ulct; i++)
+		status |= swapoff_by_uuid(ulist[i], !QUIET);
+
 	while (*argv != NULL)
 		status |= do_swapoff(*argv++, !QUIET);
 
@@ -398,7 +500,7 @@ main_swapoff(int argc, char *argv[]) {
 		if (fp == NULL) {
 			int errsv = errno;
 			fprintf(stderr, _("%s: cannot open %s: %s\n"),
-				program_name, _PATH_FSTAB, strerror(errsv));
+				progname, _PATH_FSTAB, strerror(errsv));
 			exit(2);
 		}
 		while ((fstab = getmntent(fp)) != NULL) {
@@ -420,12 +522,12 @@ main(int argc, char *argv[]) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	program_name = argv[0];
-	p = strrchr(program_name, '/');
+	progname = argv[0];
+	p = strrchr(progname, '/');
 	if (p)
-		program_name = p+1;
+		progname = p+1;
 
-	if (streq(program_name, "swapon"))
+	if (streq(progname, "swapon"))
 		return main_swapon(argc, argv);
 	else
 		return main_swapoff(argc, argv);

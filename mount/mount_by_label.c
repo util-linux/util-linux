@@ -40,6 +40,8 @@
 #define EVMS_VOLUME_NAME_SIZE  127
 #define PROC_EVMS_VOLUMES "/proc/evms/volumes"
 
+extern char *progname;
+
 static struct uuidCache_s {
 	struct uuidCache_s *next;
 	char uuid[16];
@@ -82,7 +84,7 @@ uuidcache_init_lvm(void) {
 		sprintf(buffer, "%s/%s/LVs", VG_DIR, vg_iter->d_name);
 		lv_list = opendir(buffer);
 		if (lv_list == NULL) {
-			perror("mount (init_lvm)");
+			perror("uuidcache_init_lvm");
 			continue;
 		}
 		seekdir(lv_list, 2);
@@ -187,9 +189,9 @@ uuidcache_init(void) {
 	if (!procpt) {
 		static int warn = 0;
 		if (!warn++)
-		    error (_("mount: could not open %s, so UUID and LABEL "
+		    error (_("%s: could not open %s, so UUID and LABEL "
 			     "conversion cannot be done.\n"),
-		       PROC_PARTITIONS);
+			   progname, PROC_PARTITIONS);
 		return;
 	}
 #if 0
@@ -310,7 +312,7 @@ get_spec_by_uuid(const char *s) {
 	return get_spec_by_x(UUID, uuid);
 
  bad_uuid:
-	die(EX_USAGE, _("mount: bad UUID"));
+	die(EX_USAGE, _("%s: bad UUID"), progname);
 	return NULL;		/* just for gcc */
 }
 

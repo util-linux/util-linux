@@ -1,6 +1,6 @@
 #ifndef HAVE_BLKID
 /*
- * Get label. Used by both mount and umount.
+ * Get label. Used by mount, umount and swapon.
  */
 #include <stdio.h>
 #include <fcntl.h>
@@ -8,8 +8,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#include "xmalloc.h"
 #include "linux_fs.h"
 #include "get_label_uuid.h"
+#include "../disk-utils/swapheader.h"
 
 /*
  * See whether this device has (the magic of) a RAID superblock at the end.
@@ -60,15 +62,48 @@ reiserfs_magic_version(const char *magic) {
 	return rc;
 }
 
+static void
+store_uuid(char *udest, char *usrc) {
+	if (usrc)
+		memcpy(udest, usrc, 16);
+	else
+		memset(udest, 0, 16);
+}
+
+static void
+store_label(char **ldest, char *lsrc, int len) {
+	*ldest = xmalloc(len+1);
+	memset(*ldest, 0, len+1);
+	memcpy(*ldest, lsrc, len);
+}
+
+static int
+is_v1_swap_partition(int fd, char **label, char *uuid) {
+	int n = getpagesize();
+	char *buf = xmalloc(n);
+	struct swap_header_v1_2 *p = (struct swap_header_v1_2 *) buf;
+
+	if (lseek(fd, 0, SEEK_SET) == 0
+	    && read(fd, buf, n) == n
+	    && !strncmp(buf+n-10, "SWAPSPACE2", 10)
+	    && p->version == 1) {
+		store_uuid(uuid, p->uuid);
+		store_label(label, p->volume_name, 16);
+		return 1;
+	}
+	return 0;
+}
+	    
+
 /*
  * Get both label and uuid.
- * For now, only ext2, ext3, xfs, ocfs, ocfs2, reiserfs are supported
+ * For now, only ext2, ext3, xfs, ocfs, ocfs2, reiserfs, swap are supported
+ *
+ * Return 0 on success.
  */
 int
 get_label_uuid(const char *device, char **label, char *uuid) {
 	int fd;
-	int rv = 1;
-	size_t namesize;
 	struct ext2_super_block e2sb;
 	struct xfs_super_block xfsb;
 	struct jfs_super_block jfssb;
@@ -76,47 +111,50 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 	struct ocfs_volume_label olbl;
 	struct ocfs2_super_block osb;
 	struct reiserfs_super_block reiserfssb;
+	int blksize;
+	int rv = 0;
 
 	fd = open(device, O_RDONLY);
 	if (fd < 0)
-		return rv;
+		return -1;
 
 	/* If there is a RAID partition, or an error, ignore this partition */
 	if (is_raid_partition(fd)) {
-		close(fd);
-		return rv;
+		rv = 1;
+		goto done;
 	}
+
+	if (is_v1_swap_partition(fd, label, uuid))
+		goto done;
 
 	if (lseek(fd, 1024, SEEK_SET) == 1024
 	    && read(fd, (char *) &e2sb, sizeof(e2sb)) == sizeof(e2sb)
 	    && (ext2magic(e2sb) == EXT2_SUPER_MAGIC)) {
-		memcpy(uuid, e2sb.s_uuid, sizeof(e2sb.s_uuid));
-		namesize = sizeof(e2sb.s_volume_name);
-		if ((*label = calloc(namesize + 1, 1)) != NULL)
-			memcpy(*label, e2sb.s_volume_name, namesize);
-		rv = 0;
+		store_uuid(uuid, e2sb.s_uuid);
+		store_label(label, e2sb.s_volume_name,
+			    sizeof(e2sb.s_volume_name));
+		goto done;
 	}
-	else if (lseek(fd, 0, SEEK_SET) == 0
+
+	if (lseek(fd, 0, SEEK_SET) == 0
 	    && read(fd, (char *) &xfsb, sizeof(xfsb)) == sizeof(xfsb)
 	    && (strncmp(xfsb.s_magic, XFS_SUPER_MAGIC, 4) == 0)) {
-		memcpy(uuid, xfsb.s_uuid, sizeof(xfsb.s_uuid));
-		namesize = sizeof(xfsb.s_fname);
-		if ((*label = calloc(namesize + 1, 1)) != NULL)
-			memcpy(*label, xfsb.s_fname, namesize);
-		rv = 0;
+		store_uuid(uuid, xfsb.s_uuid);
+		store_label(label, xfsb.s_fname, sizeof(xfsb.s_fname));
+		goto done;
 	}
-	else if (lseek(fd, 0, SEEK_SET) == 0
+
+	if (lseek(fd, 0, SEEK_SET) == 0
 	    && read(fd, (char *) &ovh, sizeof(ovh)) == sizeof(ovh)
 	    && (strncmp(ovh.signature, OCFS_MAGIC, sizeof(OCFS_MAGIC)) == 0)
 	    && (lseek(fd, 512, SEEK_SET) == 512)
 	    && read(fd, (char *) &olbl, sizeof(olbl)) == sizeof(olbl)) {
-		uuid[0] = '\0';
-		namesize = ocfslabellen(olbl);
-		if ((*label = calloc(namesize + 1, 1)) != NULL)
-			memcpy(*label, olbl.label, namesize);
-		rv = 0;
+		store_uuid(uuid, NULL);
+		store_label(label, olbl.label, ocfslabellen(olbl));
+		goto done;
 	}
-	else if (lseek(fd, JFS_SUPER1_OFF, SEEK_SET) == JFS_SUPER1_OFF
+
+	if (lseek(fd, JFS_SUPER1_OFF, SEEK_SET) == JFS_SUPER1_OFF
 	    && read(fd, (char *) &jfssb, sizeof(jfssb)) == sizeof(jfssb)
 	    && (strncmp(jfssb.s_magic, JFS_MAGIC, 4) == 0)) {
 
@@ -136,55 +174,47 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 
 		if (assemble4le(jfssb.s_version) == 1 &&
 		    strncmp(jfssb.s_label, jfssb.s_fpack, 11) != 0) {
-			memset(uuid, 0, 16);
-			namesize = sizeof(jfssb.s_fpack);
-			if ((*label = calloc(namesize + 1, 1)) != NULL)
-				memcpy(*label, jfssb.s_fpack, namesize);
+			store_uuid(uuid, NULL);
+			store_label(label, jfssb.s_fpack,
+				    sizeof(jfssb.s_fpack));
 		} else {
-			memcpy(uuid, jfssb.s_uuid, sizeof(jfssb.s_uuid));
-			namesize = sizeof(jfssb.s_label);
-			if ((*label = calloc(namesize + 1, 1)) != NULL)
-			    memcpy(*label, jfssb.s_label, namesize);
+			store_uuid(uuid, jfssb.s_uuid);
+			store_label(label, jfssb.s_label,
+				    sizeof(jfssb.s_label));
 		}
-		rv = 0;
+		goto done;
 	}
-	else if (lseek(fd, REISERFS_DISK_OFFSET_IN_BYTES, SEEK_SET)
-		 == REISERFS_DISK_OFFSET_IN_BYTES
+
+	if (lseek(fd, REISERFS_DISK_OFFSET_IN_BYTES, SEEK_SET)
+	    == REISERFS_DISK_OFFSET_IN_BYTES
 	    && read(fd, (char *) &reiserfssb, sizeof(reiserfssb))
-		 == sizeof(reiserfssb)
-		/* Only 3.6.x format supers have labels or uuids.
-		   Label and UUID can be set by reiserfstune -l/-u. */
+	    == sizeof(reiserfssb)
+	    /* Only 3.6.x format supers have labels or uuids.
+	       Label and UUID can be set by reiserfstune -l/-u. */
 	    && reiserfs_magic_version(reiserfssb.s_magic) > 1) {
-		namesize = sizeof (reiserfssb.s_label);
-		if ((*label = calloc(namesize + 1, 1)) != NULL)
-			memcpy(*label, reiserfssb.s_label, namesize);
-		memcpy(uuid, reiserfssb.s_uuid, sizeof (reiserfssb.s_uuid));
-		rv = 0;
+		store_uuid(uuid, reiserfssb.s_uuid);
+		store_label(label, reiserfssb.s_label,
+			    sizeof(reiserfssb.s_label));
+		goto done;
 	}
-	else {
-		int blksize, blkoff;
 
-		for (blksize = OCFS2_MIN_BLOCKSIZE;
-		     blksize <= OCFS2_MAX_BLOCKSIZE;
-		     blksize <<= 1) {
-			blkoff = blksize * OCFS2_SUPER_BLOCK_BLKNO;
-			if (lseek(fd, blkoff, SEEK_SET) == blkoff
-			    && read(fd, (char *) &osb, sizeof(osb))
-			       == sizeof(osb)
-			    && strncmp(osb.signature,
-				       OCFS2_SUPER_BLOCK_SIGNATURE,
-				       sizeof(OCFS2_SUPER_BLOCK_SIGNATURE))
-			       == 0) {
-				memcpy(uuid, osb.s_uuid, sizeof(osb.s_uuid));
-				namesize = sizeof(osb.s_label);
-				if ((*label = calloc(namesize, 1)) != NULL)
-					memcpy(*label, osb.s_label, namesize);
-				rv = 0;
-				break;
-			}
+	for (blksize = OCFS2_MIN_BLOCKSIZE;
+	     blksize <= OCFS2_MAX_BLOCKSIZE;
+	     blksize <<= 1) {
+		int blkoff = blksize * OCFS2_SUPER_BLOCK_BLKNO;
+
+		if (lseek(fd, blkoff, SEEK_SET) == blkoff
+		    && read(fd, (char *) &osb, sizeof(osb)) == sizeof(osb)
+		    && strncmp(osb.signature,
+			       OCFS2_SUPER_BLOCK_SIGNATURE,
+			       sizeof(OCFS2_SUPER_BLOCK_SIGNATURE)) == 0) {
+			store_uuid(uuid, osb.s_uuid);
+			store_label(label, osb.s_label, sizeof(osb.s_label));
+			goto done;
 		}
 	}
-
+	rv = 1;
+ done:
 	close(fd);
 	return rv;
 }

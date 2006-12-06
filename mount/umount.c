@@ -571,7 +571,10 @@ umount_file (char *arg) {
 			die(2,
 			    _("umount: %s is not mounted (according to mtab)"),
 			    file);
-		if (!is_mounted_once(file))
+		/* The 2.4 kernel will generally refuse to mount the same
+		   filesystem on the same mount point, but will accept NFS.
+		   So, unmounting must be possible. */
+		if (!is_mounted_once(file) && strcmp(mc->m.mnt_type,"nfs"))
 			die(2,
 			    _("umount: it seems %s is mounted multiple times"),
 			    file);

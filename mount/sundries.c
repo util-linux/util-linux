@@ -18,46 +18,6 @@
 #include "nfsmount.h"
 #include "nls.h"
 
-void *
-xmalloc (size_t size) {
-     void *t;
-
-     if (size == 0)
-          return NULL;
-
-     t = malloc (size);
-     if (t == NULL)
-          die (EX_SYSERR, _("not enough memory"));
-
-     return t;
-}
-
-void *
-xrealloc (void *p, size_t size) {
-     void *t;
-
-     t = realloc(p, size);
-     if (t == NULL)
-	  die (EX_SYSERR, _("not enough memory"));
-
-     return t;
-}
-
-char *
-xstrdup (const char *s) {
-     char *t;
-
-     if (s == NULL)
-          return NULL;
-
-     t = strdup (s);
-
-     if (t == NULL)
-          die (EX_SYSERR, _("not enough memory"));
-
-     return t;
-}
-
 char *
 xstrndup (const char *s, int n) {
      char *t;
@@ -145,20 +105,6 @@ error (const char *fmt, ...) {
      vfprintf (stderr, fmt2, args);
      va_end (args);
      free (fmt2);
-}
-
-/* Fatal error.  Print message and exit.  */
-void
-die (int err, const char *fmt, ...) {
-     va_list args;
-
-     va_start (args, fmt);
-     vfprintf (stderr, fmt, args);
-     fprintf (stderr, "\n");
-     va_end (args);
-
-     unlock_mtab ();
-     exit (err);
 }
 
 /* True if fstypes match.  Null *TYPES means match anything,

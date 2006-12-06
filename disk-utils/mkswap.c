@@ -39,7 +39,14 @@
 #include <sys/ioctl.h>		/* for _IO */
 #include <sys/utsname.h>
 #include <sys/stat.h>
+#include "../defines.h"
+#include "swapheader.h"
+#include "xstrncpy.h"
 #include "nls.h"
+
+#ifdef HAVE_uuid_uuid_h
+#include <uuid/uuid.h>
+#endif
 
 /* Try to get PAGE_SIZE from libc or kernel includes */
 #ifdef HAVE_sys_user_h
@@ -154,18 +161,11 @@ static int kernel_pagesize;	   /* obtained via getpagesize(); */
 static int defined_pagesize = 0;   /* PAGE_SIZE, when that exists */
 static int pagesize;
 static long *signature_page;
-
-struct swap_header_v1 {
-        char         bootbits[1024];    /* Space for disklabel etc. */
-	unsigned int version;
-	unsigned int last_page;
-	unsigned int nr_badpages;
-	unsigned int padding[125];
-	unsigned int badpages[1];
-} *p;
+struct swap_header_v1 *p;
 
 static void
 init_signature_page(void) {
+
 #ifdef PAGE_SIZE
 	defined_pagesize = PAGE_SIZE;
 #endif
@@ -192,7 +192,7 @@ init_signature_page(void) {
 			pagesize, defined_pagesize);
 
 	signature_page = (long *) malloc(pagesize);
-	memset(signature_page,0,pagesize);
+	memset(signature_page, 0, pagesize);
 	p = (struct swap_header_v1 *) signature_page;
 }
 
@@ -201,6 +201,62 @@ write_signature(char *sig) {
 	char *sp = (char *) signature_page;
 
 	strncpy(sp+pagesize-10, sig, 10);
+}
+
+#if 0
+static int
+tohex(int a) {
+	return ((a < 10) ? '0'+a : 'a'+a-10);
+}
+
+static void
+uuid_unparse(unsigned char *uuid, char *s) {
+	int i;
+
+	for (i=0; i<16; i++) {
+		if (i == 4 || i == 6 || i == 8 || i == 10)
+			*s++ = '-';
+		*s++ = tohex((uuid[i] >> 4) & 0xf);
+		*s++ = tohex(uuid[i] & 0xf);
+	}
+	*s = 0;
+}
+#endif
+
+static void
+write_uuid_and_label(char *uuid, char *volume_name) {
+	struct swap_header_v1_2 *h;
+
+	/* Sanity check */
+	if (sizeof(struct swap_header_v1) !=
+	    sizeof(struct swap_header_v1_2)) {
+		fprintf(stderr,
+			_("Bad swap header size, no label written.\n"));
+		return;
+	}
+
+	h = (struct swap_header_v1_2 *) signature_page;
+	if (uuid)
+		memcpy(h->uuid, uuid, sizeof(h->uuid));
+	if (volume_name) {
+		xstrncpy(h->volume_name, volume_name, sizeof(h->volume_name));
+		if (strlen(volume_name) > strlen(h->volume_name))
+			fprintf(stderr, _("Label was truncated.\n"));
+	}
+	if (uuid || volume_name) {
+		if (volume_name)
+			printf("LABEL=%s, ", h->volume_name);
+		else
+			printf(_("no label, "));
+#ifdef HAVE_uuid_uuid_h
+		if (uuid) {
+			char uuid_string[37];
+			uuid_unparse(uuid, uuid_string);
+			printf("UUID=%s\n", uuid_string);
+		} else
+#endif
+			printf(_("no uuid\n"));
+	}
 }
 
 /*
@@ -323,7 +379,7 @@ bit_test_and_clear (unsigned long *addr, unsigned int nr) {
 static void
 usage(void) {
 	fprintf(stderr,
-		_("Usage: %s [-c] [-v0|-v1] [-pPAGESZ] /dev/name [blocks]\n"),
+		_("Usage: %s [-c] [-v0|-v1] [-pPAGESZ] [-L label] /dev/name [blocks]\n"),
 		program_name);
 	exit(1);
 }
@@ -448,8 +504,13 @@ main(int argc, char ** argv) {
 	int force = 0;
 	char *block_count = 0;
 	char *pp;
+	char *opt_label = NULL;
+	char *uuid = NULL;
+#ifdef HAVE_uuid_uuid_h
+	uuid_t uuid_dat;
+#endif
 
-	program_name = (argc && *argv) ? argv[0] : "fsck.minix";
+	program_name = (argc && *argv) ? argv[0] : "mkswap";
 	if ((pp = strrchr(program_name, '/')) != NULL)
 		program_name = pp+1;
 
@@ -477,10 +538,16 @@ main(int argc, char ** argv) {
 					if (!*pp && i+1 < argc)
 						pp = argv[++i];
 					if (isnzdigit(*pp))
-						user_pagesize=atoi(pp);
+						user_pagesize = atoi(pp);
 					else
 						usage();
 					break;
+			        case 'L':
+					pp = argv[i]+2;
+					if (!*pp && i+1 < argc)
+						pp = argv[++i];
+					opt_label = pp;
+				        break;
 				case 'v':
 					version = atoi(argv[i]+2);
 					break;
@@ -494,6 +561,11 @@ main(int argc, char ** argv) {
 		} else
 			usage();
 	}
+
+#ifdef HAVE_uuid_uuid_h
+	uuid_generate(uuid_dat);
+	uuid = uuid_dat;
+#endif
 
 	init_signature_page();	/* get pagesize */
 
@@ -525,6 +597,10 @@ main(int argc, char ** argv) {
 	}
 
 	if (version == -1) {
+		/* labels only for v1 */
+		if (opt_label)
+			version = 1;
+		else
 		/* use version 1 as default, if possible */
 		if (PAGES <= V0_MAX_PAGES && PAGES > V1_MAX_PAGES)
 			version = 0;
@@ -562,6 +638,13 @@ main(int argc, char ** argv) {
 		fprintf(stderr,
 			_("%s: warning: truncating swap area to %ldkB\n"),
 			program_name, PAGES * pagesize / 1000);
+	}
+
+	if (opt_label && version == 0) {
+		fprintf(stderr,
+			_("%s: error: label only with v1 swap area\n"),
+			program_name);
+		usage();
 	}
 
 	DEV = open(device_name,O_RDWR);
@@ -617,6 +700,9 @@ the -f option to force it.\n"),
 	printf(_("Setting up swapspace version %d, size = %llu kB\n"),
 		version, (unsigned long long)goodpages * pagesize / 1000);
 	write_signature((version == 0) ? "SWAP-SPACE" : "SWAPSPACE2");
+
+	if (version == 1)
+		write_uuid_and_label(uuid, opt_label);
 
 	offset = ((version == 0) ? 0 : 1024);
 	if (lseek(DEV, offset, SEEK_SET) != offset)

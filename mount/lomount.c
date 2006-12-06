@@ -242,7 +242,7 @@ int
 set_loop(const char *device, const char *file, unsigned long long offset,
 	 const char *encryption, int pfd, int *loopro) {
 	struct loop_info64 loopinfo64;
-	int fd, ffd, mode, i, n;
+	int fd, ffd, mode, i;
 	char *pass;
 
 	mode = (*loopro ? O_RDONLY : O_RDWR);
@@ -299,11 +299,10 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	default:
 		pass = xgetpass(pfd, _("Password: "));
 	gotpass:
+		memset(loopinfo64.lo_encrypt_key, 0, LO_KEY_SIZE);
 		xstrncpy(loopinfo64.lo_encrypt_key, pass, LO_KEY_SIZE);
-		n = strlen(pass);
-		memset(pass, 0, n);
-		loopinfo64.lo_encrypt_key_size =
-			(n < LO_KEY_SIZE) ? n : LO_KEY_SIZE;
+		memset(pass, 0, strlen(pass));
+		loopinfo64.lo_encrypt_key_size = LO_KEY_SIZE;
 	}
 
 	if (ioctl(fd, LOOP_SET_FD, ffd) < 0) {

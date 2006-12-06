@@ -12,6 +12,7 @@
 # H4. For nls.h: do we have <locale.h>?
 # H5. For cal.c: do we have <langinfo.h>?
 # H6. For mkswap.c: do we have <sys/user.h> or <asm/page.h>?
+# H6a For mkswap.c: do we have <uuid/uuid.h>?
 # H7. For nfsmount.c: do we have <rpcsvc/nfs_prot.h>?
 # H8. For nfsmount.h (nfsmount_xdr.c: int32_t): do we have <asm/types.h>?
 # H9. For raw.c: do we have <linux/raw.h>?
@@ -162,6 +163,16 @@ if ./testincl "sys/user.h"; then
 else if ./testincl "asm/page.h"; then
         echo "#define HAVE_asm_page_h" >> defines.h
 fi; fi
+
+#
+# H6a. For mkswap.c: do we have <uuid/uuid.h>?
+#
+if ./testincl "uuid/uuid.h"; then
+    echo "#define HAVE_uuid_uuid_h" >> defines.h
+    echo "HAVE_UUID=yes" >> make_include
+else
+    echo "HAVE_UUID=no" >> make_include
+fi
 
 #
 # H7. For nfsmount.c: do we have <rpcsvc/nfs_prot.h>?
