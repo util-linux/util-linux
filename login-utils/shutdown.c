@@ -632,7 +632,18 @@ unmount_disks_ourselves(void)
 	}
 	n = 0;
 	while (n < 100 && (mnt = getmntent(mtab))) {
-		if (strcmp (mnt->mnt_type, "devfs") == 0) continue;
+		/*
+		 * Neil Phillips: trying to unmount temporary / kernel
+		 * filesystems is pointless and may cause error messages;
+		 * /dev can be a ramfs managed by udev.
+		 */
+		if (strcmp(mnt->mnt_type, "devfs") == 0 ||
+		    strcmp(mnt->mnt_type, "proc") == 0 ||
+		    strcmp(mnt->mnt_type, "sysfs") == 0 ||
+		    strcmp(mnt->mnt_type, "ramfs") == 0 ||
+		    strcmp(mnt->mnt_type, "tmpfs") == 0 ||
+		    strcmp(mnt->mnt_type, "devpts") == 0)
+			continue;
 		mntlist[n++] = strdup(mnt->mnt_dir);
 	}
 	endmntent(mtab);

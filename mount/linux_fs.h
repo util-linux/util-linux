@@ -236,35 +236,49 @@ struct ocfs_volume_label {
 #define ocfslabellen(o)	assemble2le(o.label_len)
 #define OCFS_MAGIC	"OracleCFS"
 
+struct ocfs2_super_block {
+	u_char  signature[8];
+	u_char  s_dummy1[184];
+	u_char  s_dummy2[80];
+	u_char  s_label[64];
+	u_char  s_uuid[16];
+};
+
+#define OCFS2_MIN_BLOCKSIZE		512
+#define OCFS2_MAX_BLOCKSIZE		4096
+#define OCFS2_SUPER_BLOCK_BLKNO		2
+#define OCFS2_SUPER_BLOCK_SIGNATURE	"OCFSV2"
+
+
 struct efs_volume_directory {	/* size 16 */
-        char    vd_name[8];
-        char    vd_lbn[4];
-        char    vd_nbytes[4];
+	char    vd_name[8];
+	char    vd_lbn[4];
+	char    vd_nbytes[4];
 };
 
 struct efs_partition_table {	/* size 12 */
-        char    pt_nblks[4];
-        char    pt_firstlbn[4];
-        char    pt_type[4];
+	char    pt_nblks[4];
+	char    pt_firstlbn[4];
+	char    pt_type[4];
 };
 
 struct efs_volume_header {	/* size 512 */
-        char    vh_magic[4];
-        short   vh_rootpt;
-        short   vh_swappt;
-        char    vh_bootfile[16];
-        char    pad[48];
-        struct efs_volume_directory vh_vd[15];
-        struct efs_partition_table  vh_pt[16];
-        int     vh_csum;
-        int     vh_fill;
+	char    vh_magic[4];
+	short   vh_rootpt;
+	short   vh_swappt;
+	char    vh_bootfile[16];
+	char    pad[48];
+	struct efs_volume_directory vh_vd[15];
+	struct efs_partition_table  vh_pt[16];
+	int     vh_csum;
+	int     vh_fill;
 };
 
 struct efs_super {
-        char     fs_stuff[512+28];
-        char     fs_magic[4];
-        char     fs_fname[6];
-        char     fs_fpack[6];
+	char     fs_stuff[512+28];
+	char     fs_magic[4];
+	char     fs_fname[6];
+	char     fs_fpack[6];
 	/* ... */
 };
 

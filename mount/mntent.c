@@ -21,7 +21,7 @@
 static unsigned char need_escaping[] = { ' ', '\t', '\n', '\\' };
 
 static char *
-mangle(unsigned char *s) {
+mangle(const unsigned char *s) {
 	char *ss, *sp;
 	int n;
 
@@ -98,7 +98,7 @@ my_setmntent (const char *file, char *mode) {
 	mntFILE *mfp = xmalloc(sizeof(*mfp));
 	mode_t old_umask = umask(077);
 
-	mfp->mntent_fp = fopen (file, mode);
+	mfp->mntent_fp = fopen(file, mode);
 	umask(old_umask);
 	mfp->mntent_file = xstrdup(file);
 	mfp->mntent_errs = (mfp->mntent_fp == NULL);
@@ -118,9 +118,8 @@ my_endmntent (mntFILE *mfp) {
 	}
 }
 
-
 int
-my_addmntent (mntFILE *mfp, struct mntent *mnt) {
+my_addmntent (mntFILE *mfp, struct my_mntent *mnt) {
 	char *m1, *m2, *m3, *m4;
 	int res;
 
@@ -132,22 +131,21 @@ my_addmntent (mntFILE *mfp, struct mntent *mnt) {
 	m3 = mangle(mnt->mnt_type);
 	m4 = mangle(mnt->mnt_opts);
 
-	res = ((fprintf (mfp->mntent_fp, "%s %s %s %s %d %d\n",
-			 m1, m2, m3, m4, mnt->mnt_freq, mnt->mnt_passno)
-		< 0) ? 1 : 0);
+	res = fprintf (mfp->mntent_fp, "%s %s %s %s %d %d\n",
+		       m1, m2, m3, m4, mnt->mnt_freq, mnt->mnt_passno);
 
 	free(m1);
 	free(m2);
 	free(m3);
 	free(m4);
-	return res;
+	return (res < 0) ? 1 : 0;
 }
 
 /* Read the next entry from the file fp. Stop reading at an incorrect entry. */
-struct mntent *
+struct my_mntent *
 my_getmntent (mntFILE *mfp) {
 	static char buf[4096];
-	static struct mntent me;
+	static struct my_mntent me;
 	char *s;
 
  again:
@@ -193,7 +191,7 @@ my_getmntent (mntFILE *mfp) {
 	s = skip_nonspaces(s);
 	s = skip_spaces(s);
 
-	if(isdigit(*s)) {
+	if (isdigit(*s)) {
 		me.mnt_freq = atoi(s);
 		while(isdigit(*s)) s++;
 	} else

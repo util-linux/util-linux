@@ -7,6 +7,12 @@
 #  - set USE_TTY_GROUP=no
 #  - define DESTDIR
 
+## Configuration outside of this file you might want to do for mount:
+## If make_include has HAVE_BLKID=yes, turn that into HAVE_BLKID=no
+## if you do not want to use the blkid library.
+## In mount/realpath.c turn #define resolve_symlinks into
+## #undef resolve_symlinks if you use devfs and hate long names.
+
 # Select for ARCH one of intel, alpha, sparc, arm, m68k, mips
 # Select for CPU i386 if the binaries must be able to run on an intel 386
 # (by default i486 code is generated, see below)

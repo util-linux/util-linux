@@ -130,6 +130,18 @@ fatal(char *s, ...) {
 }
 
 /*
+ * GCC nonsense - needed for GCC 3.4.x with -O2
+ */
+#if defined(__GNUC__PREREQ) && __GNUC_PREREQ(3,4)
+#define __attribute__used __attribute__ ((used))
+#else
+#define __attribute__used
+#endif
+
+/* Or test with  #if (__GNUC__ >= 3) && (__GNUC_MINOR__ >= 4)  */
+
+
+/*
  *  A. About seeking
  */
 
@@ -143,8 +155,13 @@ fatal(char *s, ...) {
  *
  * Note: we use 512-byte sectors here, irrespective of the hardware ss.
  */
-#if !defined (__alpha__) && !defined (__ia64__) && !defined (__x86_64__) && !defined (__s390x__)
-static
+#undef use_lseek
+#if defined (__alpha__) || defined (__ia64__) || defined (__x86_64__) || defined (__s390x__)
+#define use_lseek
+#endif
+
+#ifndef use_lseek
+static __attribute__used
 _syscall5(int,  _llseek,  unsigned int,  fd, ulong, hi, ulong, lo,
        loff_t *, res, unsigned int, wh);
 #endif
@@ -155,7 +172,7 @@ sseek(char *dev, unsigned int fd, unsigned long s) {
     in = ((loff_t) s << 9);
     out = 1;
 
-#if !defined (__alpha__) && !defined (__ia64__) && !defined (__x86_64__) && !defined (__s390x__)
+#ifndef use_lseek
     if (_llseek (fd, in>>32, in & 0xffffffff, &out, SEEK_SET) != 0) {
 #else
     if ((out = lseek(fd, in, SEEK_SET)) != in) {
@@ -1876,6 +1893,7 @@ max_length(int pno, int is_extended, struct part_desc *ep, int format,
 }
 
 /* compute starting sector of a partition inside an extended one */
+/* return 0 on failure */
 /* ep is 0 or points to surrounding extended partition */
 static int
 compute_start_sect(struct part_desc *p, struct part_desc *ep) {
@@ -1889,6 +1907,7 @@ compute_start_sect(struct part_desc *p, struct part_desc *ep) {
       delta = -inc;
     else
       delta = 0;
+
     if (delta < 0) {
 	p->start -= delta;
 	p->size += delta;

@@ -249,7 +249,7 @@ do_swapoff(const char *special, int quiet) {
 		exit(1);	/* any further swapoffs will also fail */
 	}
 
-	if (!quiet) {
+	if (!quiet || errno == ENOMEM) {
 		int errsv = errno;
 		fprintf(stderr, "%s: %s: %s\n", program_name,
 			 special, strerror(errsv));

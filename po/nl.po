@@ -19,7 +19,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.12\n"
-"POT-Creation-Date: 2004-09-07 03:04+0200\n"
+"POT-Creation-Date: 2004-09-07 03:05+0200\n"
 "PO-Revision-Date: 2003-07-29 22:55+0100\n"
 "Last-Translator: Taco Witte <T.C.Witte@phys.uu.nl>\n"
 "Language-Team: Dutch <vertaling@nl.linux.org>\n"

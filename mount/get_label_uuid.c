@@ -62,7 +62,7 @@ reiserfs_magic_version(const char *magic) {
 
 /*
  * Get both label and uuid.
- * For now, only ext2, ext3, xfs, ocfs, reiserfs are supported
+ * For now, only ext2, ext3, xfs, ocfs, ocfs2, reiserfs are supported
  */
 int
 get_label_uuid(const char *device, char **label, char *uuid) {
@@ -74,6 +74,7 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 	struct jfs_super_block jfssb;
 	struct ocfs_volume_header ovh;	/* Oracle */
 	struct ocfs_volume_label olbl;
+	struct ocfs2_super_block osb;
 	struct reiserfs_super_block reiserfssb;
 
 	fd = open(device, O_RDONLY);
@@ -159,6 +160,29 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 			memcpy(*label, reiserfssb.s_label, namesize);
 		memcpy(uuid, reiserfssb.s_uuid, sizeof (reiserfssb.s_uuid));
 		rv = 0;
+	}
+	else {
+		int blksize, blkoff;
+
+		for (blksize = OCFS2_MIN_BLOCKSIZE;
+		     blksize <= OCFS2_MAX_BLOCKSIZE;
+		     blksize <<= 1) {
+			blkoff = blksize * OCFS2_SUPER_BLOCK_BLKNO;
+			if (lseek(fd, blkoff, SEEK_SET) == blkoff
+			    && read(fd, (char *) &osb, sizeof(osb))
+			       == sizeof(osb)
+			    && strncmp(osb.signature,
+				       OCFS2_SUPER_BLOCK_SIGNATURE,
+				       sizeof(OCFS2_SUPER_BLOCK_SIGNATURE))
+			       == 0) {
+				memcpy(uuid, osb.s_uuid, sizeof(osb.s_uuid));
+				namesize = sizeof(osb.s_label);
+				if ((*label = calloc(namesize, 1)) != NULL)
+					memcpy(*label, osb.s_label, namesize);
+				rv = 0;
+				break;
+			}
+		}
 	}
 
 	close(fd);

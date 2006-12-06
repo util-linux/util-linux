@@ -32,17 +32,13 @@
 
 #define MAX_READLINKS 32
 
-/* this leaks some memory - unimportant for mount */
 char *
 myrealpath(const char *path, char *resolved_path, int maxreslth) {
 	int readlinks = 0;
 	char *npath;
 	char link_path[PATH_MAX+1];
 	int n;
-#ifdef resolve_symlinks
-	char *buf;
-	int m;
-#endif
+	char *buf = NULL;
 
 	npath = resolved_path;
 
@@ -83,7 +79,7 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 		while (*path != '\0' && *path != '/') {
 			if (npath-resolved_path > maxreslth-2) {
 				errno = ENAMETOOLONG;
-				return NULL;
+				goto err;
 			}
 			*npath++ = *path++;
 		}
@@ -91,7 +87,7 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 		/* Protect against infinite loops. */
 		if (readlinks++ > MAX_READLINKS) {
 			errno = ELOOP;
-			return NULL;
+			goto err;
 		}
 
 		/* See if last pathname component is a symlink. */
@@ -100,9 +96,11 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 		if (n < 0) {
 			/* EINVAL means the file exists but isn't a symlink. */
 			if (errno != EINVAL)
-				return NULL;
+				goto err;
 		} else {
 #ifdef resolve_symlinks		/* Richard Gooch dislikes sl resolution */
+			int m;
+
 			/* Note: readlink doesn't add the null byte. */
 			link_path[n] = '\0';
 			if (*link_path == '/')
@@ -115,6 +113,8 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 
 			/* Insert symlink contents into path. */
 			m = strlen(path);
+			if (buf)
+				free(buf);
 			buf = xmalloc(m + n + 1);
 			memcpy(buf, link_path, n);
 			memcpy(buf + n, path, m + 1);
@@ -128,5 +128,13 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 		npath--;
 	/* Make sure it's null terminated. */
 	*npath = '\0';
+
+	if (buf)
+		free(buf);
 	return resolved_path;
+
+ err:
+	if (buf)
+		free(buf);
+	return NULL;
 }

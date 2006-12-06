@@ -157,9 +157,9 @@ For documentation on all nfs-specific options have a look at
 Common for all types of file system are the options ``noauto''
 (do not mount when "mount -a" is given, e.g., at boot time), ``user''
 (allow a user to mount), and ``owner''
-(allow device owner to mount), and ``_netdev'' (device requires network
-to be available).
-The ``owner'' and ``_netdev'' options are Linux-specific.
+(allow device owner to mount), and ``comment''
+(e.g., for use by fstab-maintaining programs).
+The ``owner'' and ``comment'' options are Linux-specific.
 For more details, see
 .BR mount (8).
 

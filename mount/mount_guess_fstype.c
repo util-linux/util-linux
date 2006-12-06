@@ -97,11 +97,12 @@ swapped(unsigned short a) {
     Added jfs - Christoph Hellwig
     Added sysv - Tim Launchbury
     Added udf - Bryce Nesbitt
+    Added ocfs, ocfs2 - Manish Singh - http://oss.oracle.com/projects/ocfs2/
 */
 static char
 *magic_known[] = {
 	"adfs", "bfs", "cramfs", "efs", "ext", "ext2", "ext3",
-	"hfs", "hpfs", "iso9660", "jfs", "minix", "ntfs",
+	"hfs", "hpfs", "iso9660", "jfs", "minix", "ntfs", "ocfs", "ocfs2",
 	"qnx4", "reiserfs", "romfs", "swap", "sysv", "udf", "ufs",
 	"vxfs", "xfs", "xiafs"
 };
@@ -212,6 +213,7 @@ do_guess_fstype(const char *device) {
 	struct fat_super_block fatsb;
 	struct xfs_super_block xfsb;
 	struct cramfs_super_block cramfssb;
+	struct ocfs_volume_header ovh;
 	struct efs_volume_header efsvh;
 	struct efs_super efssb;
     } xsb;			/* stuff at 0 */
@@ -232,6 +234,7 @@ do_guess_fstype(const char *device) {
     struct hpfs_super_block hpfssb;
     struct adfs_super_block adfssb;
     struct sysv_super_block svsb;
+    struct ocfs2_super_block osb;
     struct stat statbuf;
 
     /* opening and reading an arbitrary unknown path can have
@@ -261,6 +264,8 @@ do_guess_fstype(const char *device) {
 	      type = "romfs";
 	 else if(!strncmp(xsb.xfsb.s_magic, XFS_SUPER_MAGIC, 4))
 	      type = "xfs";
+	 else if(!strncmp(xsb.ovh.signature, OCFS_MAGIC, sizeof(OCFS_MAGIC)))
+	      type = "ocfs";
 	 else if(!strncmp(xsb.qnx4fs_magic+4, "QNX4FS", 6))
 	      type = "qnx4";
 	 else if(xsb.bfs_magic == 0x1badface)
@@ -439,6 +444,22 @@ do_guess_fstype(const char *device) {
     }
 
     if (!type) {
+	    int blksize, blkoff;
+
+	    for (blksize = OCFS2_MIN_BLOCKSIZE;
+		 blksize <= OCFS2_MAX_BLOCKSIZE;
+		 blksize <<= 1) {
+		    blkoff = blksize * OCFS2_SUPER_BLOCK_BLKNO;
+		    if (lseek(fd, blkoff, SEEK_SET) != blkoff
+			|| read(fd, (char *) &osb, sizeof(osb)) != sizeof(osb))
+			    goto io_error;
+		    if (strncmp(osb.signature, OCFS2_SUPER_BLOCK_SIGNATURE,
+				sizeof(OCFS2_SUPER_BLOCK_SIGNATURE)) == 0)
+			    type = "ocfs2";
+	    }
+    }
+
+    if (!type) {
 	    /* perhaps the user tries to mount the swap space
 	       on a new disk; warn her before she does mke2fs on it */
 	    int pagesize = getpagesize();
@@ -573,11 +594,11 @@ is_in_procfs(const char *type) {
 /* when 1 is returned, *types is NULL */
 int
 procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
-	   char **types) {
+	   const char **types) {
 	char *files[2] = { ETC_FILESYSTEMS, PROC_FILESYSTEMS };
 	FILE *procfs;
 	char *fsname;
-	char *notypes = NULL;
+	const char *notypes = NULL;
 	int no = 0;
 	int ret = 1;
 	int errsv = 0;

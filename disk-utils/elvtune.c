@@ -20,12 +20,15 @@
  *  Public License, version 2.
  */
 
-#include <getopt.h>
 #include <fcntl.h>
+#include <errno.h>
 #include <stdio.h>
-#include <sys/ioctl.h>
+#include <getopt.h>
 #include <unistd.h>
 #include <stdlib.h>
+#include <string.h>
+#include <sys/ioctl.h>
+#include <sys/utsname.h>
 #include "nls.h"
 
 /* this has to match with the kernel structure */
@@ -37,6 +40,7 @@ typedef struct blkelv_ioctl_arg_s {
 	int max_bomb_segments;
 } blkelv_ioctl_arg_t;
 
+/* ioctls introduced in 2.2.16, removed in 2.5.58 */
 #define BLKELVGET   _IOR(0x12,106,size_t)
 #define BLKELVSET   _IOW(0x12,107,size_t)
 
@@ -48,12 +52,31 @@ usage(void) {
 		        " /dev/blkdev1 [/dev/blkdev2...]\n");
 	fprintf(stderr, "\telvtune -h\n");
 	fprintf(stderr, "\telvtune -v\n");
+	fprintf(stderr, "\tNOTE: elvtune only works with 2.4 kernels\n");
+	/* (ioctls exist in 2.2.16 - 2.5.57) */
 }
 
 static void
 version(void) {
 	fprintf(stderr, "elvtune (%s)\n", util_linux_version);
 }
+
+#define MAKE_VERSION(p,q,r)	(65536*(p) + 256*(q) + (r))
+
+static int
+linux_version_code(void) {
+	struct utsname my_utsname;
+	int p, q, r;
+
+	if (uname(&my_utsname) == 0) {
+		p = atoi(strtok(my_utsname.release, "."));
+		q = atoi(strtok(NULL, "."));
+		r = atoi(strtok(NULL, "."));
+		return MAKE_VERSION(p,q,r);
+	}
+	return 0;
+}
+
 
 int
 main(int argc, char * argv[]) {
@@ -110,8 +133,20 @@ main(int argc, char * argv[]) {
 			break;
 		}
 
+		/* mmj: If we get EINVAL it's not a 2.4 kernel, so warn about
+		   that and exit. It should return ENOTTY however, so check for
+		   that as well in case it gets corrected in the future */
+
 		if (ioctl(fd, BLKELVGET, &elevator) < 0) {
+			int errsv = errno;
 			perror("ioctl get");
+			if ((errsv == EINVAL || errsv == ENOTTY) &&
+			    linux_version_code() >= MAKE_VERSION(2,5,58)) {
+				fprintf(stderr,
+					"\nelvtune is only useful on older "
+					"kernels;\nfor 2.6 use IO scheduler "
+					"sysfs tunables instead..\n");
+			}
 			break;
 		}
 

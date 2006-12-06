@@ -73,6 +73,7 @@ xstrconcat2 (const char *s, const char *t) {
      return res;
 }
 
+/* frees its first arg - typical use: s = xstrconcat3(s,t,u); */
 char *
 xstrconcat3 (const char *s, const char *t, const char *u) {
      char *res;
@@ -84,9 +85,11 @@ xstrconcat3 (const char *s, const char *t, const char *u) {
      strcpy(res, s);
      strcat(res, t);
      strcat(res, u);
+     free((void *) s);
      return res;
 }
 
+/* frees its first arg - typical use: s = xstrconcat4(s,t,u,v); */
 char *
 xstrconcat4 (const char *s, const char *t, const char *u, const char *v) {
      char *res;
@@ -100,6 +103,7 @@ xstrconcat4 (const char *s, const char *t, const char *u, const char *v) {
      strcat(res, t);
      strcat(res, u);
      strcat(res, v);
+     free((void *) s);
      return res;
 }
 
@@ -269,19 +273,18 @@ matching_opts (const char *options, const char *test_opts) {
    we return unmodified.   */
 char *
 canonicalize (const char *path) {
-     char *canonical;
+	char canonical[PATH_MAX+2];
 
-     if (path == NULL)
-	  return NULL;
+	if (path == NULL)
+		return NULL;
 
-     if (streq(path, "none") || streq(path, "proc") || streq(path, "devpts"))
-	  return xstrdup(path);
+	if (streq(path, "none") ||
+	    streq(path, "proc") ||
+	    streq(path, "devpts"))
+		return xstrdup(path);
 
-     canonical = xmalloc (PATH_MAX+2);
-  
-     if (myrealpath (path, canonical, PATH_MAX+1))
-	  return canonical;
+	if (myrealpath (path, canonical, PATH_MAX+1))
+		return xstrdup(canonical);
 
-     free(canonical);
-     return xstrdup(path);
+	return xstrdup(path);
 }

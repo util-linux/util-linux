@@ -1,14 +1,4 @@
-#include <mntent.h>
-#define _PATH_FSTAB	"/etc/fstab"
-#ifdef _PATH_MOUNTED
-#define MOUNTED_LOCK	_PATH_MOUNTED "~"
-#define MOUNTED_TEMP	_PATH_MOUNTED ".tmp"
-#else
-#define MOUNTED_LOCK	"/etc/mtab~"
-#define MOUNTED_TEMP	"/etc/mtab.tmp"
-#endif
-#define LOCK_TIMEOUT	10
-
+#include "mntent.h"
 int mtab_is_writable(void);
 int mtab_does_not_exist(void);
 int mtab_is_a_symlink(void);
@@ -16,7 +6,7 @@ int is_mounted_once(const char *name);
 
 struct mntentchn {
 	struct mntentchn *nxt, *prev;
-	struct mntent m;
+	struct my_mntent m;
 };
 
 struct mntentchn *mtab_head (void);
@@ -32,7 +22,6 @@ struct mntentchn *getfsspecfile (const char *spec, const char *file);
 struct mntentchn *getfsuuidspec (const char *uuid);
 struct mntentchn *getfsvolspec (const char *label);
 
-#include <mntent.h>
 void lock_mtab (void);
 void unlock_mtab (void);
-void update_mtab (const char *special, struct mntent *with);
+void update_mtab (const char *special, struct my_mntent *with);

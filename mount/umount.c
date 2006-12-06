@@ -316,7 +316,7 @@ umount_one (const char *spec, const char *node, const char *type,
 		res = mount(spec, node, NULL,
 			    MS_MGC_VAL | MS_REMOUNT | MS_RDONLY, NULL);
 		if (res == 0) {
-			struct mntent remnt;
+			struct my_mntent remnt;
 			fprintf(stderr,
 				_("umount: %s busy - remounted read-only\n"),
 				spec);
@@ -392,6 +392,8 @@ umount_one (const char *spec, const char *node, const char *type,
 }
 
 /*
+ * umount_one_bw: unmount FILE that has last occurrence MC0
+ *
  * Why this loop?
  * 1. People who boot a system with a bad fstab root entry
  *    will get an incorrect "/dev/foo on /" in mtab.
@@ -472,52 +474,18 @@ usage (FILE *fp, int n)
 
 int mount_quiet = 0;
 
-/*=======================================================================*/
-/* string list stuff - no longer used by mount - will disappear entirely */
-typedef struct string_list {
-	char *hd;
-	struct string_list *tl;
-} *string_list;
-
-#define car(p) ((p) -> hd)
-#define cdr(p) ((p) -> tl)
-
-static string_list
-cons (char *a, const string_list b) {
-	string_list p;
-
-	p = xmalloc (sizeof *p);
-	car (p) = a;
-	cdr (p) = b;
-	return p;
-}
-
-/* Parse a list of strings like str[,str]... into a string list.  */
-static string_list
-parse_list (char *strings) {
-	string_list list;
-	char *s, *t;
-
-	if (strings == NULL)
-		return NULL;
-
-	/* strtok() destroys its argument, so we have to use a copy */
-	s = xstrdup(strings);
-
-	list = cons (strtok (s, ","), NULL);
-
-	while ((t = strtok (NULL, ",")) != NULL)
-		list = cons (t, list);
-
-	return list;
-}
-
+/*
+ * Look for an option in a comma-separated list
+ */
 static int
-contains(string_list list, char *s) {
-	while (list) {
-		if (streq (car (list), s))
+contains(const char *list, const char *s) {
+	int n = strlen(s);
+
+	while (*list) {
+		if (strncmp(list, s, n) == 0 &&
+		    (list[n] == 0 || list[n] == ','))
 			return 1;
-		list = cdr (list);
+		while (*list && *list++ != ',') ;
 	}
 	return 0;
 }
@@ -526,12 +494,18 @@ contains(string_list list, char *s) {
  * If list contains "user=peter" and we ask for "user=", return "peter"
  */
 static char *
-get_value(string_list list, char *s) {
+get_value(const char *list, const char *s) {
+	const char *t;
 	int n = strlen(s);
-	while (list) {
-		if (strncmp (car (list), s, n) == 0)
-			return car(list)+n;
-		list = cdr (list);
+
+	while (*list) {
+		if (strncmp(list, s, n) == 0) {
+			s = t = list+n;
+			while (*s && *s != ',')
+				s++;
+			return xstrndup(t, s-t);
+		}
+		while (*list && *list++ != ',') ;
 	}
 	return 0;
 }
@@ -539,8 +513,7 @@ get_value(string_list list, char *s) {
 static int
 umount_file (char *arg) {
 	struct mntentchn *mc, *fs;
-	char *file;
-	string_list options;
+	const char *file, *options;
 	int fstab_has_user, fstab_has_users, fstab_has_owner, ok;
 
 	file = canonicalize(arg); /* mtab paths are canonicalized */
@@ -594,7 +567,9 @@ umount_file (char *arg) {
 		/* A convenient side effect is that the user who mounted
 		   is visible in mtab. */
 
-		options = parse_list (fs->m.mnt_opts);
+		options = fs->m.mnt_opts;
+		if (!options)
+			options = "";
 		fstab_has_user = contains(options, "user");
 		fstab_has_users = contains(options, "users");
 		fstab_has_owner = contains(options, "owner");
@@ -606,7 +581,9 @@ umount_file (char *arg) {
 		if (!ok && (fstab_has_user || fstab_has_owner)) {
 			char *user = getusername();
 
-			options = parse_list (mc->m.mnt_opts);
+			options = mc->m.mnt_opts;
+			if (!options)
+				options = "";
 			mtab_user = get_value(options, "user=");
 
 			if (user && mtab_user && streq (user, mtab_user))

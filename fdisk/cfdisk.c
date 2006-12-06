@@ -1488,55 +1488,68 @@ said_yes(char answer) {
 
 static void
 get_partition_table_geometry(partition_table *bufp) {
-    struct partition *p;
-    int i,h,s,hh,ss;
-    int first = TRUE;
-    int bad = FALSE;
+	struct partition *p;
+	int i,h,s,hh,ss;
+	int first = TRUE;
+	int bad = FALSE;
 
-    if (bufp->p.magicflag[0] != PART_TABLE_FLAG0 ||
-	bufp->p.magicflag[1] != PART_TABLE_FLAG1) {
-	    /* Matthew Wilcox: slightly friendlier version of
-	       fatal(_("Bad signature on partition table"), 3);
-	    */
-	    int cont;
-	    mvaddstr(WARNING_START, 0,
-	      _("No partition table or unknown signature on partition table"));
-	    mvaddstr(WARNING_START+1, 0,
-	      _("Do you wish to start with a zero table [y/N] ?"));
-	    putchar(BELL);
-	    refresh();
-	    cont = getch();
-	    if (cont == EOF || !said_yes(cont))
-		    die_x(3);
-	    zero_table = TRUE;
-	    return;
+	for (i=0; i<66; i++)
+		if (bufp->c.b[446+i])
+			goto nonz;
 
-	    /* Oskar Liljeblad suggested:
-	         Bad signature blah blah
-		 If this is a brand new harddrive that has not been partitioned
-		 before, please run cfdisk -z.
-	    */
-    }
-
-    hh = ss = 0;
-    for (i=0; i<4; i++) {
-	p = &(bufp->p.part[i]);
-	if (p->sys_ind != 0) {
-	    h = p->end_head + 1;
-	    s = (p->end_sector & 077);
-	    if (first) {
-		hh = h;
-		ss = s;
-		first = FALSE;
-	    } else if (hh != h || ss != s)
-		bad = TRUE;
+	/* zero table */
+	if (!curses_started) {
+		fatal(_("No partition table.\n"), 3);
+		return;
+	} else {
+		mvaddstr(WARNING_START, 0,
+			 _("No partition table. Starting with zero table."));
+		putchar(BELL);
+		refresh();
+		zero_table = TRUE;
+		return;
 	}
-    }
+ nonz:
+	if (bufp->p.magicflag[0] != PART_TABLE_FLAG0 ||
+	    bufp->p.magicflag[1] != PART_TABLE_FLAG1) {
+		if (!curses_started)
+			fatal(_("Bad signature on partition table"), 3);
 
-    if (!first && !bad) {
-	pt_heads = hh;
-	pt_sectors = ss;
-    }
+		/* Matthew Wilcox */
+		mvaddstr(WARNING_START, 0,
+			 _("Unknown partition table type"));
+		mvaddstr(WARNING_START+1, 0,
+			 _("Do you wish to start with a zero table [y/N] ?"));
+		putchar(BELL);
+		refresh();
+		{
+			int cont = getch();
+			if (cont == EOF || !said_yes(cont))
+				die_x(3);
+		}
+		zero_table = TRUE;
+		return;
+	}
+
+	hh = ss = 0;
+	for (i=0; i<4; i++) {
+		p = &(bufp->p.part[i]);
+		if (p->sys_ind != 0) {
+			h = p->end_head + 1;
+			s = (p->end_sector & 077);
+			if (first) {
+				hh = h;
+				ss = s;
+				first = FALSE;
+			} else if (hh != h || ss != s)
+				bad = TRUE;
+		}
+	}
+
+	if (!first && !bad) {
+		pt_heads = hh;
+		pt_sectors = ss;
+	}
 }
 
 static void

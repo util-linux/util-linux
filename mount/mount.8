@@ -109,6 +109,7 @@ file hierarchy somewhere else. The call is
 .B "mount --bind olddir newdir"
 .RE
 After this call the same contents is accessible in two places.
+One can also remount a single file (on a single file).
 
 This call attaches only (part of) a single filesystem, not possible
 submounts. The entire file hierarchy including submounts is attached
@@ -120,7 +121,7 @@ a second place using
 .\" available since Linux 2.4.11.
 The mount options are not changed.
 
-Since Linux 2.5.1 it is possible to atomically move a subtree
+Since Linux 2.5.1 it is possible to atomically move a mounted tree
 to another place. The call is
 .RS
 .br
@@ -242,6 +243,8 @@ option below). It is possible to replace
 .I /etc/mtab
 by a symbolic link to
 .IR /proc/mounts ,
+and especially when you have very large numbers of mounts
+things will be much faster with that symlink,
 but some information is lost that way, and in particular
 working with the loop device will be less convenient,
 and using the "user" option will fail.
@@ -421,35 +424,15 @@ program have different calling conventions,
 .I /sbin/mount.smbfs
 may have to be a shell script that sets up the desired call.
 
-The type
-.I iso9660
-is the default.  If no
+If no
 .B \-t
 option is given, or if the
 .B auto
-type is specified, the superblock is probed for the filesystem type
-.RI ( adfs ,
-.IR bfs ,
-.IR cramfs ,
-.IR ext ,
-.IR ext2 ,
-.IR ext3 ,
-.IR hfs ,
-.IR hpfs ,
-.IR iso9660 ,
-.IR jfs ,
-.IR minix ,
-.IR ntfs ,
-.IR qnx4 ,
-.IR reiserfs ,
-.IR romfs ,
-.IR udf ,
-.IR ufs ,
-.IR vxfs ,
-.IR xfs ,
-.IR xiafs
-are supported).
-If this probe fails, mount will try to read the file
+type is specified, mount will try to guess the desired type.
+If mount was compiled with the blkid library, the guessing is done
+by this library. Otherwise, mount guesses itself by probing the
+superblock; if that does not turn up anything that looks familiar,
+mount will try to read the file
 .IR /etc/filesystems ,
 or, if that does not exist,
 .IR /proc/filesystems .
@@ -470,8 +453,8 @@ The
 type may be useful for user-mounted floppies.
 Creating a file
 .I /etc/filesystems
-can be useful to change the probe order (e.g., to try vfat before msdos)
-or if you use a kernel module autoloader.
+can be useful to change the probe order (e.g., to try vfat before msdos
+or ext3 before ext2) or if you use a kernel module autoloader.
 Warning: the probing uses a heuristic (the presence of appropriate `magic'),
 and could recognize the wrong filesystem type, possibly with catastrophic
 consequences. If your data is valuable, don't ask
@@ -587,9 +570,9 @@ Do not interpret character or block special devices on the file
 system.
 .TP
 .B noexec
-Do not allow execution of any binaries on the mounted file system.
-This option might be useful for a server that has file systems containing
-binaries for architectures other than its own.
+Do not allow direct execution of any binaries on the mounted file system.
+(Until recently it was possible to run binaries anyway using a command like
+/lib/ld*.so /mnt/binary. This trick fails since Linux 2.4.25 / 2.6.0.)
 .TP
 .B nosuid
 Do not allow set-user-identifier or set-group-identifier bits to take

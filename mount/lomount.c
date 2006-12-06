@@ -249,7 +249,7 @@ int
 set_loop(const char *device, const char *file, unsigned long long offset,
 	 const char *encryption, int pfd, int *loopro) {
 	struct loop_info64 loopinfo64;
-	int fd, ffd, mode;
+	int fd, ffd, mode, i;
 	char *pass;
 
 	mode = (*loopro ? O_RDONLY : O_RDWR);
@@ -303,12 +303,14 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	case LO_CRYPT_XOR:
 		pass = getpass(_("Password: "));
 		xstrncpy(loopinfo64.lo_encrypt_key, pass, LO_KEY_SIZE);
+		memset(pass, 0, strlen(pass));
 		loopinfo64.lo_encrypt_key_size =
 			strlen(loopinfo64.lo_encrypt_key);
 		break;
 	default:
 		pass = xgetpass(pfd, _("Password: "));
 		xstrncpy(loopinfo64.lo_encrypt_key, pass, LO_KEY_SIZE);
+		memset(pass, 0, strlen(pass));
 		loopinfo64.lo_encrypt_key_size = LO_KEY_SIZE;
 	}
 
@@ -318,33 +320,35 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	}
 	close (ffd);
 
-	if (ioctl(fd, LOOP_SET_STATUS64, &loopinfo64) < 0) {
+	i = ioctl(fd, LOOP_SET_STATUS64, &loopinfo64);
+	if (i) {
 		struct loop_info loopinfo;
 		int errsv = errno;
 
-		errno = loop_info64_to_old(&loopinfo64, &loopinfo);
-		if (errno) {
+		i = loop_info64_to_old(&loopinfo64, &loopinfo);
+		if (i) {
 			errno = errsv;
 			perror("ioctl: LOOP_SET_STATUS64");
-			goto fail;
+		} else {
+			i = ioctl(fd, LOOP_SET_STATUS, &loopinfo);
+			if (i)
+				perror("ioctl: LOOP_SET_STATUS");
 		}
-
-		if (ioctl(fd, LOOP_SET_STATUS, &loopinfo) < 0) {
-			perror("ioctl: LOOP_SET_STATUS");
-			goto fail;
-		}
+		memset(&loopinfo, 0, sizeof(loopinfo));
 	}
+	memset(&loopinfo64, 0, sizeof(loopinfo64));
 
+	if (i) {
+		ioctl (fd, LOOP_CLR_FD, 0);
+		close (fd);
+		return 1;
+	}
 	close (fd);
+
 	if (verbose > 1)
 		printf(_("set_loop(%s,%s,%llu): success\n"),
 		       device, file, offset);
 	return 0;
-
- fail:
-	(void) ioctl (fd, LOOP_CLR_FD, 0);
-	close (fd);
-	return 1;
 }
 
 int 

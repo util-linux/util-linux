@@ -11,6 +11,6 @@ extern int verbose;
 char *guess_fstype(const char *device);
 char *do_guess_fstype(const char *device);
 int procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
-	       char **type);
+	       const char **type);
 int is_in_procfs(const char *fstype);
 

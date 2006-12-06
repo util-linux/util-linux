@@ -2,43 +2,7 @@
  * A mount(8) for Linux 0.99.
  * mount.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
  *
- * Wed Sep 14 22:43:00 1994: Mitchum DSouza
- * (mitch@mrc-applied-psychology.cambridge.ac.uk) added support for mounting
- * the "loop" device.
- *
- * Wed Sep 14 22:55:10 1994: Sander van Malssen (svm@kozmix.hacktic.nl)
- * added support for remounting readonly file systems readonly.
- *
- * Wed Feb  8 12:27:00 1995: Andries.Brouwer@cwi.nl fixed up error messages.
- * Sat Jun  3 20:44:38 1995: Patches from Andries.Brouwer@cwi.nl applied.
- * Tue Sep 26 22:38:20 1995: aeb@cwi.nl, many changes
- * Fri Feb 23 13:47:00 1996: aeb@cwi.nl, loop device related changes
- *
- * Since then, many changes - aeb.
- *
- * Wed Oct  1 23:55:28 1997: Dick Streefland <dick_streefland@tasking.com>
- * Implemented the "bg", "fg" and "retry" mount options for NFS.
- *
- * Tue Aug  4 15:54:31 1998: aeb@cwi.nl:
- * Open fd 0,1,2 so that printf's do not clobber /etc/mtab or so.
- * Mangle filenames with embedded spaces. Add ufsmagic. Add locking.
- * Avoid unnecessary error messages about /proc.
- * Improve support for noncanonical names in /etc/fstab.
- * Add support for volume labels and UUIDs.
- *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
- * - added Native Language Support
- * 1999-03-21 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
- * - fixed strerr(errno) in gettext calls
- * 1999-07-05 Hirokazu Takahashi <h-takaha@sss.abk.nec.co.jp>
- * - fixed use of nouser option
- * 1999-09-09 Michael K. Johnson <johnsonm@redhat.com>
- * - added `owner' mount option
- * 2000-05-11 Mark A. Peloquin <peloquin@us.ibm.com>
- * - check_special_mountprog now returns correct status
- * 2000-11-08 aeb: accept nonnumeric uid=, gid= options
- * 2001-07-13 Michael K. Johnson <johnsonm@redhat.com>
- * - implemented -a -O
+ * Modifications by many people. Distributed under GPL.
  */
 
 #include <unistd.h>
@@ -69,6 +33,7 @@
 #include "mount_guess_fstype.h"
 #include "mount_by_label.h"
 #include "getusername.h"
+#include "paths.h"
 #include "env.h"
 #include "nls.h"
 
@@ -131,11 +96,11 @@ struct opt_map {
 #define MS_USERS	0x40000000
 #define MS_USER		0x20000000
 #define MS_OWNER	0x10000000
-#define MS_NETDEV	0x00020000
+#define MS_COMMENT	0x00020000
 #define MS_LOOP		0x00010000
 
 /* Options that we keep the mount system call from seeing.  */
-#define MS_NOSYS	(MS_NOAUTO|MS_USERS|MS_USER|MS_NETDEV|MS_LOOP)
+#define MS_NOSYS	(MS_NOAUTO|MS_USERS|MS_USER|MS_COMMENT|MS_LOOP)
 
 /* Options that we keep from appearing in the options field in the mtab.  */
 #define MS_NOMTAB	(MS_REMOUNT|MS_NOAUTO|MS_USERS|MS_USER)
@@ -170,7 +135,9 @@ static const struct opt_map opt_map[] = {
   { "nouser",	0, 1, MS_USER	},	/* Forbid ordinary user to mount */
   { "owner",	0, 0, MS_OWNER  },	/* Let the owner of the device mount */
   { "noowner",	0, 1, MS_OWNER  },	/* Device owner has no special privs */
-  { "_netdev",	0, 0, MS_NETDEV },	/* Device accessible only via network */
+  { "_netdev",	0, 0, MS_COMMENT},	/* Device requires network */
+  { "comment",	0, 0, MS_COMMENT},	/* fstab comment only (kudzu,_netdev)*/
+
   /* add new options here */
 #ifdef MS_NOSUB
   { "sub",	0, 1, MS_NOSUB	},	/* allow submounts */
@@ -196,19 +163,20 @@ static const struct opt_map opt_map[] = {
   { NULL,	0, 0, 0		}
 };
 
-static char *opt_loopdev, *opt_vfstype, *opt_offset, *opt_encryption,
-  *opt_speed;
+static const char *opt_loopdev, *opt_vfstype, *opt_offset, *opt_encryption,
+	*opt_speed, *opt_comment;
 
 static struct string_opt_map {
   char *tag;
   int skip;
-  char **valptr;
+  const char **valptr;
 } string_opt_map[] = {
   { "loop=",	0, &opt_loopdev },
   { "vfs=",	1, &opt_vfstype },
   { "offset=",	0, &opt_offset },
   { "encryption=", 0, &opt_encryption },
   { "speed=", 0, &opt_speed },
+  { "comment=", 1, &opt_comment },
   { NULL, 0, NULL }
 };
 
@@ -239,23 +207,23 @@ int mount_quiet=0;
 
 /* Report on a single mount.  */
 static void
-print_one (const struct mntent *me) {
-     if (mount_quiet)
-	  return;
-     printf ("%s on %s", me->mnt_fsname, me->mnt_dir);
-     if (me->mnt_type != NULL && *(me->mnt_type) != '\0')
-	  printf (" type %s", me->mnt_type);
-     if (me->mnt_opts != NULL)
-	  printf (" (%s)", me->mnt_opts);
-     if (list_with_volumelabel) {
-	     const char *label;
-	     label = mount_get_volume_label_by_spec(me->mnt_fsname);
-	     if (label) {
-		     printf (" [%s]", label);
-		     /* free(label); */
-	     }
-     }
-     printf ("\n");
+print_one (const struct my_mntent *me) {
+	if (mount_quiet)
+		return;
+	printf ("%s on %s", me->mnt_fsname, me->mnt_dir);
+	if (me->mnt_type != NULL && *(me->mnt_type) != '\0')
+		printf (" type %s", me->mnt_type);
+	if (me->mnt_opts != NULL)
+		printf (" (%s)", me->mnt_opts);
+	if (list_with_volumelabel) {
+		const char *label;
+		label = mount_get_volume_label_by_spec(me->mnt_fsname);
+		if (label) {
+			printf (" [%s]", label);
+			/* free(label); */
+		}
+	}
+	printf ("\n");
 }
 
 /* Report on everything in mtab (of the specified types if any).  */
@@ -271,6 +239,11 @@ print_all (char *types) {
      exit (0);
 }
 
+static void
+my_free(const void *s) {
+	if (s)
+		free((void *) s);
+}
 
 /*
  * Look for OPT in opt_map table and return mask value.
@@ -332,21 +305,24 @@ parse_opt (const char *opt, int *mask, char *extra_opts) {
 /* Take -o options list and compute 4th and 5th args to mount(2).  flags
    gets the standard options (indicated by bits) and extra_opts all the rest */
 static void
-parse_opts (char *opts, int *flags, char **extra_opts) {
-	char *opt;
-
+parse_opts (const char *options, int *flags, char **extra_opts) {
 	*flags = 0;
 	*extra_opts = NULL;
 
 	clear_string_opts();
 
-	if (opts != NULL) {
+	if (options != NULL) {
+		char *opts = xstrdup(options);
+		char *opt;
+
 		*extra_opts = xmalloc (strlen (opts) + 1); 
 		**extra_opts = '\0';
 
 		for (opt = strtok (opts, ","); opt; opt = strtok (NULL, ","))
 			if (!parse_string_opt (opt))
 				parse_opt (opt, flags, *extra_opts);
+
+		free(opts);
 	}
 
 	if (readonly)
@@ -363,7 +339,7 @@ fix_opts_string (int flags, const char *extra_opts, const char *user) {
 	const struct string_opt_map *m;
 	char *new_opts;
 
-	new_opts = (flags & MS_RDONLY) ? "ro" : "rw";
+	new_opts = xstrdup((flags & MS_RDONLY) ? "ro" : "rw");
 	for (om = opt_map; om->opt != NULL; om++) {
 		if (om->skip)
 			continue;
@@ -388,63 +364,66 @@ fix_opts_string (int flags, const char *extra_opts, const char *user) {
 
 static int
 already (const char *spec, const char *node) {
-    struct mntentchn *mc;
-    int ret = 1;
+	struct mntentchn *mc;
+	int ret = 1;
 
-    if ((mc = getmntfile(node)) != NULL)
-        error (_("mount: according to mtab, %s is already mounted on %s"),
-	       mc->m.mnt_fsname, node);
-    else if (spec && strcmp (spec, "none") &&
-	     (mc = getmntfile(spec)) != NULL)
-        error (_("mount: according to mtab, %s is mounted on %s"),
-	       spec, mc->m.mnt_dir);
-    else
-        ret = 0;
-    return ret;
+	if ((mc = getmntfile(node)) != NULL)
+		error (_("mount: according to mtab, "
+			 "%s is already mounted on %s"),
+		       mc->m.mnt_fsname, node);
+	else if (spec && strcmp (spec, "none") &&
+		 (mc = getmntfile(spec)) != NULL)
+		error (_("mount: according to mtab, %s is mounted on %s"),
+		       spec, mc->m.mnt_dir);
+	else
+		ret = 0;
+	return ret;
 }
 
 /* Create mtab with a root entry.  */
 static void
 create_mtab (void) {
-  struct mntentchn *fstab;
-  struct mntent mnt;
-  int flags;
-  char *extra_opts;
-  mntFILE *mfp;
+	struct mntentchn *fstab;
+	struct my_mntent mnt;
+	int flags;
+	mntFILE *mfp;
 
-  lock_mtab();
+	lock_mtab();
 
-  mfp = my_setmntent (MOUNTED, "a+");
-  if (mfp == NULL || mfp->mntent_fp == NULL) {
-    int errsv = errno;
-    die (EX_FILEIO, _("mount: can't open %s for writing: %s"),
-	 MOUNTED, strerror (errsv));
-  }
+	mfp = my_setmntent (MOUNTED, "a+");
+	if (mfp == NULL || mfp->mntent_fp == NULL) {
+		int errsv = errno;
+		die (EX_FILEIO, _("mount: can't open %s for writing: %s"),
+		     MOUNTED, strerror (errsv));
+	}
 
-  /* Find the root entry by looking it up in fstab */
-  if ((fstab = getfsfile ("/")) || (fstab = getfsfile ("root"))) {
-      parse_opts (xstrdup (fstab->m.mnt_opts), &flags, &extra_opts);
-      mnt.mnt_dir = "/";
-      mnt.mnt_fsname = canonicalize (fstab->m.mnt_fsname);
-      mnt.mnt_type = fstab->m.mnt_type;
-      mnt.mnt_opts = fix_opts_string (flags, extra_opts, NULL);
-      mnt.mnt_freq = mnt.mnt_passno = 0;
+	/* Find the root entry by looking it up in fstab */
+	if ((fstab = getfsfile ("/")) || (fstab = getfsfile ("root"))) {
+		char *extra_opts;
+		parse_opts (fstab->m.mnt_opts, &flags, &extra_opts);
+		mnt.mnt_dir = "/";
+		mnt.mnt_fsname = canonicalize (fstab->m.mnt_fsname);
+		mnt.mnt_type = fstab->m.mnt_type;
+		mnt.mnt_opts = fix_opts_string (flags, extra_opts, NULL);
+		mnt.mnt_freq = mnt.mnt_passno = 0;
+		my_free(extra_opts);
 
-      if (my_addmntent (mfp, &mnt) == 1) {
-        int errsv = errno;
-	die (EX_FILEIO, _("mount: error writing %s: %s"),
-	     MOUNTED, strerror (errsv));
-      }
-  }
-  if (fchmod (fileno (mfp->mntent_fp), S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0)
-    if (errno != EROFS) {
-      int errsv = errno;
-      die (EX_FILEIO, _("mount: error changing mode of %s: %s"),
-	   MOUNTED, strerror (errsv));
-    }
-  my_endmntent (mfp);
+		if (my_addmntent (mfp, &mnt) == 1) {
+			int errsv = errno;
+			die (EX_FILEIO, _("mount: error writing %s: %s"),
+			     MOUNTED, strerror (errsv));
+		}
+	}
+	if (fchmod (fileno (mfp->mntent_fp), 0644) < 0)
+		if (errno != EROFS) {
+			int errsv = errno;
+			die (EX_FILEIO,
+			     _("mount: error changing mode of %s: %s"),
+			     MOUNTED, strerror (errsv));
+		}
+	my_endmntent (mfp);
 
-  unlock_mtab();
+	unlock_mtab();
 }
 
 /* count successful mount system calls */
@@ -477,8 +456,8 @@ do_mount_syscall (struct mountargs *args) {
  *	on return types is filled with the type used.
  */
 static int
-guess_fstype_and_mount (char *spec, char *node, char **types,
-			int flags, char *mount_opts) {
+guess_fstype_and_mount(const char *spec, const char *node, const char **types,
+		       int flags, char *mount_opts) {
    struct mountargs args = { spec, node, NULL, flags & ~MS_NOSYS, mount_opts };
    
    if (*types && strcasecmp (*types, "auto") == 0)
@@ -526,12 +505,12 @@ guess_fstype_and_mount (char *spec, char *node, char **types,
  *	Die if the user is not allowed to do this.
  */
 static void
-suid_check(char *spec, char *node, int *flags, char **user) {
+suid_check(const char *spec, const char *node, int *flags, char **user) {
   if (suid) {
       /* RedHat patch: allow owners to mount when fstab contains
 	 the owner option.  Note that this should never be used
-         in a high security environment, but may be useful to give
-         people at the console the possibility of mounting a floppy. */
+	 in a high security environment, but may be useful to give
+	 people at the console the possibility of mounting a floppy. */
       if (*flags & MS_OWNER) {
 	  if (!strncmp(spec, "/dev/", 5)) {
 	      struct stat sb;
@@ -545,14 +524,14 @@ suid_check(char *spec, char *node, int *flags, char **user) {
       /* James Kehl <mkehl@gil.com.au> came with a similar patch:
 	 allow an arbitrary user to mount when he is the owner of
 	 the mount-point and has write-access to the device.
-         This is even less secure. Let me skip it for the time being;
-         there should be an explicit fstab line allowing such things. */
+	 This is even less secure. Let me skip it for the time being;
+	 there should be an explicit fstab line allowing such things. */
 
       if (!(*flags & (MS_USER | MS_USERS))) {
-          if (already (spec, node))
+	  if (already (spec, node))
 	    die (EX_USAGE, _("mount failed"));
 	  else
-            die (EX_USAGE, _("mount: only root can mount %s on %s"), spec, node);
+	    die (EX_USAGE, _("mount: only root can mount %s on %s"), spec, node);
       }
       if (*flags & MS_USER)
 	  *user = getusername();
@@ -563,8 +542,8 @@ suid_check(char *spec, char *node, int *flags, char **user) {
 }
 
 static int
-loop_check(char **spec, char **type, int *flags,
-	   int *loop, char **loopdev, char **loopfile) {
+loop_check(const char **spec, const char **type, int *flags,
+	   int *loop, const char **loopdev, const char **loopfile) {
   int looptype;
   unsigned long long offset;
 
@@ -627,45 +606,47 @@ loop_check(char **spec, char **type, int *flags,
 }
 
 static void
-update_mtab_entry(char *spec, char *node, char *type, char *opts,
-		  int flags, int freq, int pass) {
-    struct mntent mnt;
+update_mtab_entry(const char *spec, const char *node, const char *type,
+		  const char *opts, int flags, int freq, int pass) {
+	struct my_mntent mnt;
 
-    mnt.mnt_fsname = canonicalize (spec);
-    mnt.mnt_dir = canonicalize (node);
-    mnt.mnt_type = type;
-    mnt.mnt_opts = opts;
-    mnt.mnt_freq = freq;
-    mnt.mnt_passno = pass;
+	mnt.mnt_fsname = canonicalize (spec);
+	mnt.mnt_dir = canonicalize (node);
+	mnt.mnt_type = type;
+	mnt.mnt_opts = opts;
+	mnt.mnt_freq = freq;
+	mnt.mnt_passno = pass;
       
-    /* We get chatty now rather than after the update to mtab since the
-       mount succeeded, even if the write to /etc/mtab should fail.  */
-    if (verbose)
-	    print_one (&mnt);
+	/* We get chatty now rather than after the update to mtab since the
+	   mount succeeded, even if the write to /etc/mtab should fail.  */
+	if (verbose)
+		print_one (&mnt);
 
-    if (!nomtab && mtab_is_writable()) {
-	if (flags & MS_REMOUNT)
-	    update_mtab (mnt.mnt_dir, &mnt);
-	else {
-	    mntFILE *mfp;
+	if (!nomtab && mtab_is_writable()) {
+		if (flags & MS_REMOUNT)
+			update_mtab (mnt.mnt_dir, &mnt);
+		else {
+			mntFILE *mfp;
 
-	    lock_mtab();
-	    mfp = my_setmntent(MOUNTED, "a+");
-	    if (mfp == NULL || mfp->mntent_fp == NULL) {
-	       	int errsv = errno;
-		error(_("mount: can't open %s: %s"), MOUNTED,
-		      strerror (errsv));
-	    } else {
-		if ((my_addmntent (mfp, &mnt)) == 1) {
-			int errsv = errno;
-			error(_("mount: error writing %s: %s"), MOUNTED,
-			      strerror (errsv));
+			lock_mtab();
+			mfp = my_setmntent(MOUNTED, "a+");
+			if (mfp == NULL || mfp->mntent_fp == NULL) {
+				int errsv = errno;
+				error(_("mount: can't open %s: %s"), MOUNTED,
+				      strerror (errsv));
+			} else {
+				if ((my_addmntent (mfp, &mnt)) == 1) {
+					int errsv = errno;
+					error(_("mount: error writing %s: %s"),
+					      MOUNTED, strerror (errsv));
+				}
+			}
+			my_endmntent(mfp);
+			unlock_mtab();
 		}
-		my_endmntent(mfp);
-	    }
-	    unlock_mtab();
 	}
-    }
+	my_free(mnt.mnt_fsname);
+	my_free(mnt.mnt_dir);
 }
 
 static void
@@ -677,20 +658,21 @@ set_pfd(char *s) {
 }
 
 static void
-cdrom_setspeed(char *spec) {
+cdrom_setspeed(const char *spec) {
 #define CDROM_SELECT_SPEED      0x5322  /* Set the CD-ROM speed */
-    if (opt_speed) {
-	int cdrom;
-	int speed = atoi(opt_speed);
+	if (opt_speed) {
+		int cdrom;
+		int speed = atoi(opt_speed);
 
-	if ((cdrom = open(spec, O_RDONLY | O_NONBLOCK)) < 0)
-	    die(EX_FAIL, _("mount: cannot open %s for setting speed"),
-		spec);
-	if (ioctl(cdrom, CDROM_SELECT_SPEED, speed) < 0)
-	    die(EX_FAIL, _("mount: cannot set speed: %s"),
-		strerror(errno));
-	close(cdrom);
-    }
+		if ((cdrom = open(spec, O_RDONLY | O_NONBLOCK)) < 0)
+			die(EX_FAIL,
+			    _("mount: cannot open %s for setting speed"),
+			    spec);
+		if (ioctl(cdrom, CDROM_SELECT_SPEED, speed) < 0)
+			die(EX_FAIL, _("mount: cannot set speed: %s"),
+			    strerror(errno));
+		close(cdrom);
+	}
 }
 
 /*
@@ -700,8 +682,8 @@ cdrom_setspeed(char *spec) {
  */
 
 static int
-check_special_mountprog(char *spec, char *node, char *type, int flags,
-			char *extra_opts, int *status) {
+check_special_mountprog(const char *spec, const char *node, const char *type,
+			int flags, char *extra_opts, int *status) {
   char mountprog[120];
   struct stat statbuf;
   int res;
@@ -714,7 +696,7 @@ check_special_mountprog(char *spec, char *node, char *type, int flags,
        if (stat(mountprog, &statbuf) == 0) {
 	    res = fork();
 	    if (res == 0) {
-		 char *oo, *mountargs[10];
+		 const char *oo, *mountargs[10];
 		 int i = 0;
 
 		 setuid(getuid());
@@ -732,7 +714,7 @@ check_special_mountprog(char *spec, char *node, char *type, int flags,
 		      mountargs[i++] = oo;
 		 }
 		 mountargs[i] = NULL;
-		 execv(mountprog, mountargs);
+		 execv(mountprog, (char **) mountargs);
 		 exit(1);	/* exec failed */
 	    } else if (res != -1) {
 		 int st;
@@ -758,32 +740,35 @@ check_special_mountprog(char *spec, char *node, char *type, int flags,
  *      return status from wait
  */
 static int
-try_mount_one (const char *spec0, const char *node0, char *types0,
+try_mount_one (const char *spec0, const char *node0, const char *types0,
 	       const char *opts0, int freq, int pass, int bg, int ro) {
-  int res, status;
+  int res = 0, status;
   int mnt5_res = 0;		/* only for gcc */
   int mnt_err;
   int flags;
   char *extra_opts;		/* written in mtab */
   char *mount_opts;		/* actually used on system call */
-  const char *opts;
-  char *spec, *node, *types;
+  const char *opts, *spec, *node, *types;
   char *user = 0;
   int loop = 0;
-  char *loopdev = 0, *loopfile = 0;
+  const char *loopdev = 0, *loopfile = 0;
   struct stat statbuf;
   int nfs_mount_version = 0;	/* any version */
 
-  spec = xstrdup(spec0);
-  node = xstrdup(node0);
-  types = xstrdup(types0);
-  opts = xstrdup(opts0);
+  /* copies for freeing on exit */
+  const char *opts1, *spec1, *node1, *types1, *extra_opts1;
 
-  parse_opts (xstrdup (opts), &flags, &extra_opts);
+  spec = spec1 = xstrdup(spec0);
+  node = node1 = xstrdup(node0);
+  types = types1 = xstrdup(types0);
+  opts = opts1 = xstrdup(opts0);
+
+  parse_opts (opts, &flags, &extra_opts);
+  extra_opts1 = extra_opts;
 
   /* quietly succeed for fstab entries that don't get mounted automatically */
   if (mount_all && (flags & MS_NOAUTO))
-    return 0;
+      goto out;
 
   suid_check(spec, node, &flags, &user);
 
@@ -800,7 +785,7 @@ try_mount_one (const char *spec0, const char *node0, char *types0,
        */
       res = loop_check(&spec, &types, &flags, &loop, &loopdev, &loopfile);
       if (res)
-	  return res;
+	  goto out;
   }
 
   /*
@@ -808,8 +793,10 @@ try_mount_one (const char *spec0, const char *node0, char *types0,
    * For the moment these types are ncpfs and smbfs. Maybe also vxfs.
    * All such special things must occur isolated in the types string.
    */
-  if (check_special_mountprog (spec, node, types, flags, extra_opts, &status))
-      return status;
+  if (check_special_mountprog(spec, node, types, flags, extra_opts, &status)) {
+      res = status;
+      goto out;
+  }
 
   /*
    * Also nfs requires a separate program, but it is built in.
@@ -819,11 +806,13 @@ try_mount_one (const char *spec0, const char *node0, char *types0,
 retry_nfs:
     mnt_err = nfsmount (spec, node, &flags, &extra_opts, &mount_opts,
 			&nfs_mount_version, bg);
-    if (mnt_err)
-      return mnt_err;
+    if (mnt_err) {
+	res = mnt_err;
+	goto out;
+    }
 #else
     die (EX_SOFTWARE, _("mount: this version was compiled "
-	              "without support for the type `nfs'"));
+		      "without support for the type `nfs'"));
 #endif
   }
 
@@ -847,7 +836,8 @@ retry_nfs:
 			pass);
 
       block_signals (SIG_UNBLOCK);
-      return 0;
+      res = 0;
+      goto out;
   }
 
   mnt_err = errno;
@@ -913,13 +903,13 @@ retry_nfs:
       else if (stat (spec, &statbuf))
 	   error (_("mount: special device %s does not exist"), spec);
       else {
-           errno = mnt_err;
-           perror("mount");
+	   errno = mnt_err;
+	   perror("mount");
       }
       break;
     case ENOTDIR:
       if (stat (node, &statbuf) || ! S_ISDIR(statbuf.st_mode))
-           error (_("mount: mount point %s is not a directory"), node);
+	   error (_("mount: mount point %s is not a directory"), node);
       else if (stat (spec, &statbuf) && errno == ENOTDIR)
 	   error (_("mount: special device %s does not exist\n"
 		    "       (a path prefix is not a directory)\n"), spec);
@@ -981,7 +971,7 @@ retry_nfs:
 	char *lowtype, *p;
 	int u;
 
-	error (_("mount: fs type %s not supported by kernel"), types);
+	error (_("mount: unknown filesystem type '%s'"), types);
 
 	/* maybe this loser asked for FAT or ISO9660 or isofs */
 	lowtype = xstrdup(types);
@@ -995,7 +985,9 @@ retry_nfs:
 	if (u && is_in_procfs(lowtype) == 1)
 	  error (_("mount: probably you meant %s"), lowtype);
 	else if (!strncmp(lowtype, "iso", 3) && is_in_procfs("iso9660") == 1)
-	  error (_("mount: maybe you meant iso9660 ?"));
+	  error (_("mount: maybe you meant 'iso9660'?"));
+	else if (!strncmp(lowtype, "fat", 3) && is_in_procfs("vfat") == 1)
+	  error (_("mount: maybe you meant 'vfat'?"));
 	free(lowtype);
       } else
 	error (_("mount: %s has wrong device number or fs type %s not supported"),
@@ -1033,16 +1025,18 @@ retry_nfs:
 	     types = types0;
 	 }
          if (opts) {
-	     char *opts1 = realloc(xstrdup(opts), strlen(opts)+4);
-             strcat(opts1, ",ro");
-	     opts = opts1;
+	     char *opts2 = realloc(xstrdup(opts), strlen(opts)+4);
+             strcat(opts2, ",ro");
+	     my_free(opts1);
+	     opts = opts1 = opts2;
          } else
              opts = "ro";
 	 if (types && !strcmp(types, "guess"))
 	     types = 0;
          error (_("mount: %s%s is write-protected, mounting read-only"),
 		bd, spec0);
-	 return try_mount_one (spec0, node0, types, opts, freq, pass, bg, 1);
+	 res = try_mount_one (spec0, node0, types, opts, freq, pass, bg, 1);
+	 goto out;
       }
       break;
     }
@@ -1050,7 +1044,16 @@ retry_nfs:
       error ("mount: %s", strerror (mnt_err)); break;
     }
   }
-  return EX_FAIL;
+  res = EX_FAIL;
+
+ out:
+  my_free(extra_opts1);
+  my_free(spec1);
+  my_free(node1);
+  my_free(opts1);
+  my_free(types1);
+
+  return res;
 }
 
 /*
@@ -1094,14 +1097,20 @@ usersubst(const char *opts) {
 	}
 	return opts;
 }
-		
+
+static int
+is_existing_file (const char *s) {
+	struct stat statbuf;
+
+	return (stat(s, &statbuf) == 0);
+}
 
 /*
  * Return 0 for success (either mounted sth or -a and NOAUTO was given)
  */
 static int
-mount_one (const char *spec, const char *node, char *types, const char *opts,
-	   char *cmdlineopts, int freq, int pass) {
+mount_one (const char *spec, const char *node, const char *types,
+	   const char *opts, char *cmdlineopts, int freq, int pass) {
   int status, status2;
   const char *nspec;
 
@@ -1119,7 +1128,7 @@ mount_one (const char *spec, const char *node, char *types, const char *opts,
   if (nspec)
        spec = nspec;
 
-  if (types == NULL && !mounttype) {
+  if (types == NULL && !mounttype && !is_existing_file(spec)) {
       if (strchr (spec, ':') != NULL) {
 	types = "nfs";
 	if (verbose)
@@ -1161,25 +1170,34 @@ mount_one (const char *spec, const char *node, char *types, const char *opts,
 
 /* Check if an fsname/dir pair was already in the old mtab.  */
 static int
-mounted (const char *spec, char *node) {
-     struct mntentchn *mc, *mc0;
+mounted (const char *spec0, const char *node0) {
+	struct mntentchn *mc, *mc0;
+	char *spec, *node;
+	int ret = 0;
 
-     /* Handle possible UUID= and LABEL= in spec */
-     spec = mount_get_devname(spec);
+	/* Handle possible UUID= and LABEL= in spec */
+	spec0 = mount_get_devname(spec0);
 
-     spec = canonicalize(spec);
-     node = canonicalize(node);
+	spec = canonicalize(spec0);
+	node = canonicalize(node0);
 
-     mc0 = mtab_head();
-     for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-	  if (streq (spec, mc->m.mnt_fsname) && streq (node, mc->m.mnt_dir))
-	       return 1;
-     return 0;
+	mc0 = mtab_head();
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
+		if (streq (spec, mc->m.mnt_fsname) &&
+		    streq (node, mc->m.mnt_dir)) {
+			ret = 1;
+			break;
+		}
+
+	free(spec);
+	free(node);
+
+	return ret;
 }
 
 /* avoid using stat() on things we are not going to mount anyway.. */
 static int
-has_noauto (char *opts) {
+has_noauto (const char *opts) {
 	char *s;
 
 	if (!opts)
@@ -1586,8 +1604,7 @@ main (int argc, char *argv[]) {
 				die (EX_USAGE,
 				     _("mount: cannot find %s in %s"),
 				     spec, _PATH_FSTAB);
-			/* struct mntent does not have const qualifiers */
-			mc->m.mnt_fsname = (char *) spec;
+			mc->m.mnt_fsname = spec;
 		} else {
 			/* Try to find the other pathname in fstab.  */
 			spec = canonicalize (*argv);
@@ -1605,6 +1622,8 @@ main (int argc, char *argv[]) {
 			/* Earlier mtab was tried first, but this would
 			   sometimes try the wrong mount in case mtab had
 			   the root device entry wrong. */
+
+			my_free(spec);
 		}
 
 		result = mount_one (xstrdup (mc->m.mnt_fsname),

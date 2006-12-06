@@ -1,3 +1,15 @@
+util-linux 2.12e,f,g,h
+
+* cfdisk: avoid crash if no partition table
+* elvtune: tell user that this only works on 2.4 kernels
+* lomount: clear passwords after use
+* mount: accept comments (introduced by \;) in fstab - withdrawn again
+* mount: accept comments (specified by comment=) in fstab
+* mount: support ocfs, ocfs2
+* [u]mount: be more careful with malloc, try to avoid OOM with many mounts
+* sfdisk: __attribute__used nonsense to support gcc 3.4
+* shutdown: do not unmount various virtual filesystems
+
 util-linux 2.12c,d
 
 * mount.8: added recent ext2 mount options
