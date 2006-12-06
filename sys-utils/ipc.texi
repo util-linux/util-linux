@@ -4,28 +4,28 @@
 @settitle Inter Process Communication.
 @setchapternewpage odd
 @comment %**end of header (This is for running Texinfo on a region.)
-     
+   
 @ifinfo
 This file documents the System V style inter process communication
 primitives available under linux.
- 
+
 Copyright @copyright{} 1992  krishna balasubramanian
-     
+    
 Permission is granted to use this material and the accompanying
 programs within the terms of the GNU GPL.
 @end ifinfo
-     
+    
 @titlepage
 @sp 10
 @center @titlefont{System V Inter Process Communication}
 @sp 2
 @center krishna balasubramanian,
-     
+    
 @comment  The following two commands start the copyright page.
 @page
 @vskip 0pt plus 1filll
 Copyright @copyright{} 1992  krishna balasubramanian
-     
+    
 Permission is granted to use this material and the accompanying
 programs within the terms of the GNU GPL.
 @end titlepage
@@ -35,12 +35,12 @@ programs within the terms of the GNU GPL.
 * ipc: (ipc).           System V style inter process communication
 @end direntry
 
-@node top, Overview, Notes, (dir)
+@node Top, Overview, Notes, (dir)
 @chapter System V IPC.
 
 These facilities are provided to maintain compatibility with
-programs developed on system V unix systems and others 
-that rely on these system V mechanisms to accomplish inter 
+programs developed on system V unix systems and others
+that rely on these system V mechanisms to accomplish inter
 process communication (IPC).@refill
 
 The specifics described here are applicable to the Linux implementation.
@@ -54,17 +54,17 @@ Other implementations may do things slightly differently.
 * Notes:: 		Miscellaneous notes.
 @end menu
 
-@node Overview, example, top, top
+@node Overview, example, Top, Top
 @section Overview
 
 @noindent System V IPC consists of three mechanisms:
 
 @itemize @bullet
-@item  
+@item 
 Messages : exchange messages with any process or server.
-@item  
+@item 
 Semaphores : allow unrelated processes to synchronize execution.
-@item  
+@item 
 Shared memory : allow unrelated processes to share memory.
 @end itemize
 
@@ -77,11 +77,11 @@ Shared memory : allow unrelated processes to share memory.
 Access to all resources is permitted on the basis of permissions
 set up when the resource was created.@refill
 
-A resource here consists of message queue, a semaphore set (array) 
+A resource here consists of message queue, a semaphore set (array)
 or a shared memory segment.@refill
 
 A resource must first be allocated by a creator before it is used.
-The creator can assign a different owner. After use the resource 
+The creator can assign a different owner. After use the resource
 must be explicitly destroyed by the creator or owner.@refill
 
 A resource is identified by a numeric @var{id}. Typically a creator
@@ -93,14 +93,14 @@ pathnames or strings to numeric keys.@refill
 
 There are system and implementation defined limits on the number and
 sizes of resources of any given type. Some of these are imposed by the
-implementation and others by the system administrator 
+implementation and others by the system administrator
 when configuring the kernel (@xref{msglimits}, @xref{semlimits},
 @xref{shmlimits}).@refill
 
-There is an @code{msqid_ds}, @code{semid_ds} or @code{shmid_ds} struct 
-associated with each message queue, semaphore array or shared segment. 
-Each ipc resource has an associated @code{ipc_perm} struct which defines 
-the creator, owner, access perms ..etc.., for the resource. 
+There is an @code{msqid_ds}, @code{semid_ds} or @code{shmid_ds} struct
+associated with each message queue, semaphore array or shared segment.
+Each ipc resource has an associated @code{ipc_perm} struct which defines
+the creator, owner, access perms ..etc.., for the resource.
 These structures are detailed in the following sections.@refill
 
 
@@ -112,21 +112,21 @@ Here is a code fragment with pointers on how to use shared memory. The
 same methods are applicable to other resources.@refill
 
 In a typical access sequence the creator allocates a new instance
-of the resource with the @code{get} system call using the IPC_CREAT 
+of the resource with the @code{get} system call using the IPC_CREAT
 flag.@refill
 
 @noindent creator process:@*
 
 @example
 #include <sys/shm.h>
-int id; 
-key_t key; 
+int id;
+key_t key;
 char proc_id = 'C';	
 int size = 0x5000;	/* 20 K */
 int flags = 0664 | IPC_CREAT;		/* read-only for others */
 
 key = ftok ("~creator/ipckey", proc_id);
-id = shmget (key, size, flags); 
+id = shmget (key, size, flags);
 exit (0);	/* quit leaving resource allocated */
 @end example
 
@@ -137,8 +137,8 @@ Client process:
 @example
 #include <sys/shm.h>
 char *shmaddr;
-int id; 
-key_t key; 
+int id;
+key_t key;
 char proc_id = 'C';	
 
 key = ftok ("~creator/ipckey", proc_id);
@@ -170,7 +170,7 @@ shmctl (id, IPC_RMID, NULL);
 @node perms, syscalls, example, Overview
 @section Permissions
 
-Each resource has an associated @code{ipc_perm} struct which defines the 
+Each resource has an associated @code{ipc_perm} struct which defines the
 creator, owner and access perms for the resource.@refill
 
 @example
@@ -185,18 +185,18 @@ struct ipc_perm
 @end example
 
 The creating process is the default owner. The owner can be reassigned
-by the creator and has creator perms. Only the owner, creator or super-user 
+by the creator and has creator perms. Only the owner, creator or super-user
 can delete the resource.@refill
 
-The lowest nine bits of the flags parameter supplied by the user to the 
-system call are compared with the values stored in @code{ipc_perms.mode} 
+The lowest nine bits of the flags parameter supplied by the user to the
+system call are compared with the values stored in @code{ipc_perms.mode}
 to determine if the requested access is allowed. In the case
 that the system call creates the resource, these bits are initialized
 from the user supplied value.@refill
 
 As for files, access permissions are specified as read, write and exec
-for user, group or other (though the exec perms are unused). For example  
-0624 grants read-write to owner, write-only to group and read-only 
+for user, group or other (though the exec perms are unused). For example 
+0624 grants read-write to owner, write-only to group and read-only
 access to others.@refill
 
 For shared memory, note that read-write access for segments is determined
@@ -214,23 +214,23 @@ cannot be changed by the user.@refill
 This section provides an overview of the IPC system calls. See the
 specific sections on each type of resource for details.@refill
 
-Each type of mechanism provides a @dfn{get}, @dfn{ctl} and one or more 
+Each type of mechanism provides a @dfn{get}, @dfn{ctl} and one or more
 @dfn{op} system calls that allow the user to create or procure the
-resource (get), define its behaviour or destroy it (ctl) and manipulate 
+resource (get), define its behaviour or destroy it (ctl) and manipulate
 the resources (op).@refill
 	
 
 
 @subsection The @dfn{get} system calls
 
-The @code{get} call typically takes a @var{key} and returns a numeric 
-@var{id} that is used for further access. 
+The @code{get} call typically takes a @var{key} and returns a numeric
+@var{id} that is used for further access.
 The @var{id} is an index into the resource table. A sequence
 number is maintained and incremented when a resource is
-destroyed so that acceses using an obselete @var{id} is likely to fail.@refill
+destroyed so that access using an obsolete @var{id} is likely to fail.@refill
 
 The user also specifies the permissions and other behaviour
-charecteristics for the current access. The flags are or-ed with the 
+charecteristics for the current access. The flags are or-ed with the
 permissions when invoking system calls as in:@refill
 @example
 msgflg = IPC_CREAT | IPC_EXCL | 0666;
@@ -240,7 +240,7 @@ id = msgget (key, msgflg);
 @item
 @code{key} : IPC_PRIVATE => new instance of resource is initialized.
 @item
-@code{flags} : 
+@code{flags} :
 @itemize @asis
 @item
 IPC_CREAT : resource created for @var{key} if it does not exist.
@@ -252,14 +252,14 @@ returns : an identifier used for all further access to the resource.
 @end itemize
 
 Note that IPC_PRIVATE is not a flag but a special @code{key}
-that ensures (when the call is successful) that a new resource is 
+that ensures (when the call is successful) that a new resource is
 created.@refill
 
 Use of IPC_PRIVATE does not make the resource inaccessible to other
 users. For this you must set the access permissions appropriately.@refill
 
-There is currently no way for a process to ensure exclusive access to a 
-resource. IPC_CREAT | IPC_EXCL only ensures (on success) that a new 
+There is currently no way for a process to ensure exclusive access to a
+resource. IPC_CREAT | IPC_EXCL only ensures (on success) that a new
 resource was initialized. It does not imply exclusive access.@refill
 
 @noindent
@@ -267,7 +267,7 @@ See Also : @xref{msgget}, @xref{semget}, @xref{shmget}.@refill
 
 
 
-@subsection The @dfn{ctl} system calls 
+@subsection The @dfn{ctl} system calls
 
 Provides or alters the information stored in the structure that describes
 the resource indexed by @var{id}.@refill
@@ -288,9 +288,9 @@ Commands supported by all @code{ctl} calls:@*
 @itemize @bullet
 @item
 IPC_STAT : read info on resource  specified by id into user allocated
-buffer. The user must have read access to the resource.@refill 
+buffer. The user must have read access to the resource.@refill
 @item
-IPC_SET : write info from buffer into resource data structure. The 
+IPC_SET : write info from buffer into resource data structure. The
 user must be owner creator or super-user.@refill
 @item
 IPC_RMID : remove resource. The user must be the owner, creator or
@@ -301,7 +301,7 @@ The IPC_RMID command results in immediate removal of a message
 queue or semaphore array. Shared memory segments however, are
 only destroyed upon the last detach after IPC_RMID is executed.@refill
 
-The @code{semctl} call provides a number of command options that allow 
+The @code{semctl} call provides a number of command options that allow
 the user to determine or set the values of the semaphores in an array.@refill
 
 @noindent
@@ -324,7 +324,7 @@ See Also: @xref{msgsnd},@xref{msgrcv},@xref{semop},@xref{shmat},
 
 
 
-@node Messages, msgget, syscalls, top
+@node Messages, msgget, syscalls, Top
 @section Messages
 
 A message resource is described by a struct @code{msqid_ds} which is
@@ -334,7 +334,7 @@ The memory used by the resource is released when it is destroyed by
 a @code{msgctl} call.@refill
 
 @example
-struct msqid_ds 
+struct msqid_ds
     struct ipc_perm msg_perm;
     struct msg *msg_first;  /* first message on queue (internal) */
     struct msg *msg_last;   /* last message in queue (internal) */
@@ -350,14 +350,14 @@ struct msqid_ds
     ushort msg_lrpid;       /* pid of last msgrcv */
 @end example
 
-To send or receive a message the user allocates a structure that looks 
-like a @code{msgbuf} but with an array @code{mtext} of the required size. 
-Messages have a type (positive integer) associated with them so that 
-(for example) a listener can choose to receive only messages of a 
+To send or receive a message the user allocates a structure that looks
+like a @code{msgbuf} but with an array @code{mtext} of the required size.
+Messages have a type (positive integer) associated with them so that
+(for example) a listener can choose to receive only messages of a
 given type.@refill
 
 @example
-struct msgbuf 
+struct msgbuf
     long mtype;      type of message (@xref{msgrcv}).
     char mtext[1];   message text .. why is this not a ptr?
 @end example
@@ -404,14 +404,14 @@ resource already exists.@refill
 rwxrwxrwx : access permissions.
 @end itemize
 @item
-returns: msqid (an integer used for all further access) on success. 
+returns: msqid (an integer used for all further access) on success.
 -1 on failure.@refill
 @end itemize
 
-A message queue is allocated if there is no resource corresponding 
-to the given key. The access permissions specified are then copied 
-into the @code{msg_perm} struct and the fields in @code{msqid_ds} 
-initialized. The user must use the IPC_CREAT flag or key = IPC_PRIVATE, 
+A message queue is allocated if there is no resource corresponding
+to the given key. The access permissions specified are then copied
+into the @code{msg_perm} struct and the fields in @code{msqid_ds}
+initialized. The user must use the IPC_CREAT flag or key = IPC_PRIVATE,
 if a new instance is to be allocated. If a resource corresponding to
 @var{key} already exists, the access permissions are verified.@refill
 
@@ -500,7 +500,7 @@ msgtyp :
 @item
 > 0 => get first message of matching type.
 @item
-< 0 => get message with least type  which is <= abs(msgtyp).  
+< 0 => get message with least type  which is <= abs(msgtyp). 
 @end itemize
 @item
 msgflg :
@@ -518,11 +518,11 @@ returns : size of message if found. -1 on error.
 @end itemize
 
 The first message that meets the @code{msgtyp} specification is
-identified. For msgtyp < 0, the entire queue is searched for the 
+identified. For msgtyp < 0, the entire queue is searched for the
 message with the smallest type.@refill
 
-If its length is smaller than msgsz or if the user specified the 
-MSG_NOERROR flag, its text and type are copied to msgp->mtext and 
+If its length is smaller than msgsz or if the user specified the
+MSG_NOERROR flag, its text and type are copied to msgp->mtext and
 msgp->mtype, and it is taken off the queue.@refill
 
 The @code{msg_cbytes}, @code{msg_qnum}, @code{msg_lrpid},
@@ -568,11 +568,11 @@ IPC_STAT results in the copy of the queue data structure
 into the user supplied buffer.@refill
 
 In the case of IPC_SET, the queue size (@code{msg_qbytes})
-and the @code{uid}, @code{gid}, @code{mode} (low 9 bits) fields 
+and the @code{uid}, @code{gid}, @code{mode} (low 9 bits) fields
 of the @code{msg_perm} struct are set from the user supplied values.
 @code{msg_ctime} is updated.@refill
- 
-Note that only the super user may increase the limit on the size of a 
+
+Note that only the super user may increase the limit on the size of a
 message queue beyond MSGMNB.@refill
 
 When the queue is destroyed (IPC_RMID), the sequence number is
@@ -616,11 +616,11 @@ MSGMNI : number of message queue identifiers ... policy.
 @item
 MSGMAX : max size of message.
 Header and message space allocated on one page.
-MSGMAX = (PAGE_SIZE - sizeof(struct msg)). 
+MSGMAX = (PAGE_SIZE - sizeof(struct msg)).
 Implementation maximum MSGMAX = 4080.@refill
 @item
 MSGMNB : default max size of a message queue ... policy.
-The super-user can increase the size of a 
+The super-user can increase the size of a
 queue beyond MSGMNB by a @code{msgctl} call.@refill
 @end itemize
 
@@ -630,8 +630,8 @@ MSGTQL  max number of message headers system-wide.@*
 MSGPOOL total size in bytes of msg pool.
 
 
-  
-@node Semaphores, semget, msglimits, top
+ 
+@node Semaphores, semget, msglimits, Top
 @section Semaphores
 
 Each semaphore has a value >= 0. An id provides access to an array
@@ -641,9 +641,9 @@ semaphores in a set are performed by the @code{semop} call which processes
 @code{sembuf} described below. The operations are applied only if all of
 them succeed.@refill
 
-If you do not have a need for such arrays, you are probably better off using 
+If you do not have a need for such arrays, you are probably better off using
 the @code{test_bit}, @code{set_bit} and  @code{clear_bit} bit-operations
-defined in <asm/bitops.h>.@refill 
+defined in <asm/bitops.h>.@refill
 
 Semaphore operations may also be qualified by a SEM_UNDO flag which
 results in the operation being undone when the process exits.@refill
@@ -652,13 +652,13 @@ If a decrement cannot go through, a process will be put to sleep
 on a queue waiting for the @code{semval} to increase unless it specifies
 IPC_NOWAIT. A read operation can similarly result in a sleep on a
 queue waiting for @code{semval} to become 0. (Actually there are
-two queues per semaphore array).@refill  
+two queues per semaphore array).@refill 
 
 @noindent
 A semaphore array is described by:
 @example
-struct semid_ds 
-  struct ipc_perm sem_perm;       
+struct semid_ds
+  struct ipc_perm sem_perm;      
   time_t          sem_otime;      /* last semop time */
   time_t          sem_ctime;      /* last change time */
   struct wait_queue *eventn;	  /* wait for a semval to increase */
@@ -670,7 +670,7 @@ struct semid_ds
 @noindent
 Each semaphore is described internally by :
 @example
-struct sem 
+struct sem
   short   sempid;         /* pid of last semop() */
   ushort  semval;         /* current value */
   ushort  semncnt;        /* num procs awaiting increase in semval */
@@ -698,7 +698,7 @@ semid = semget (key_t key, int nsems, int semflg);
 @item
 @code{key} : an integer usually got from @code{ftok} or IPC_PRIVATE
 @item
-@code{nsems} : 
+@code{nsems} :
 @itemize @asis
 @item
 # of semaphores in array (0 <= nsems <= SEMMSL <= SEMMNS)
@@ -710,18 +710,18 @@ If successful you always get access to the entire array anyway.@refill
 semflg :
 @itemize @asis
 @item
-IPC_CREAT used to create a new resource 
+IPC_CREAT used to create a new resource
 @item
 IPC_EXCL used with IPC_CREAT to ensure failure if the resource exists.
 @item
 rwxrwxrwx  access permissions.
 @end itemize
 @item
-returns : semid on success. -1 on failure. 
+returns : semid on success. -1 on failure.
 @end itemize
 
 An array of nsems semaphores is allocated if there is no resource
-corresponding to the given key. The access permissions specified are 
+corresponding to the given key. The access permissions specified are
 then copied into the @code{sem_perm} struct for the array along with the
 user-id etc. The user must use the IPC_CREAT flag or key = IPC_PRIVATE
 if a new resource is to be created.@refill
@@ -762,13 +762,13 @@ sops : array of semaphore operations.
 @item
 nsops : number of operations in array (0 < nsops < SEMOPM).
 @item
-returns : semval for last operation. -1 on failure. 
+returns : semval for last operation. -1 on failure.
 @end itemize
 
 @noindent
 Operations are described by a structure sembuf:
 @example
-struct sembuf 
+struct sembuf
     ushort  sem_num;        /* semaphore index in array */
     short   sem_op;         /* semaphore operation */
     short   sem_flg;        /* operation flags */
@@ -783,25 +783,25 @@ Two kinds of operations can result in wait:
 @enumerate
 @item
 If sem_op is 0 (read operation) and semval is non-zero, the process
-sleeps on a queue waiting for semval to become zero or returns with 
+sleeps on a queue waiting for semval to become zero or returns with
 error EAGAIN if (IPC_NOWAIT | sem_flg) is true.@refill
 @item
-If (sem_op < 0) and (semval + sem_op < 0), the process either sleeps 
+If (sem_op < 0) and (semval + sem_op < 0), the process either sleeps
 on a queue waiting for semval to increase or returns with error EAGAIN if
 (sem_flg & IPC_NOWAIT) is true.@refill
 @end enumerate
- 
+
 The array sops is first read in and preliminary checks performed on
 the arguments. The operations are parsed to determine if any of
 them needs write permissions or requests an undo operation.@refill
 
-The operations are then tried and the process sleeps if any operation 
+The operations are then tried and the process sleeps if any operation
 that does not specify IPC_NOWAIT cannot go through. If a process sleeps
-it repeats these checks on waking up. If any operation that requests 
-IPC_NOWAIT, cannot go through at any stage, the call returns with errno 
+it repeats these checks on waking up. If any operation that requests
+IPC_NOWAIT, cannot go through at any stage, the call returns with errno
 set to EAGAIN.@refill
 
-Finally, operations are committed when all go through without an intervening 
+Finally, operations are committed when all go through without an intervening
 sleep. Processes waiting on the zero_queue or increment_queue are awakened
 if any of the semval's becomes zero or is incremented respectively.@refill
 
@@ -842,19 +842,19 @@ semid : id obtained by a call to semget.
 @item
 cmd :
 @itemize @asis
-@item  
+@item 
 GETPID  return pid for the process that executed the last semop.
-@item  
+@item 
 GETVAL  return semval of semaphore with index semnum.
-@item  
+@item 
 GETNCNT return number of processes waiting for semval to increase.
-@item  
+@item 
 GETZCNT return number of processes waiting for semval to become 0
-@item  
+@item 
 SETVAL  set semval = arg.val.
-@item  
-GETALL  read all semval's into arg.array. 
-@item  
+@item 
+GETALL  read all semval's into arg.array.
+@item 
 SETALL  set all semval's with values given in arg.array.
 @end itemize
 @item
@@ -866,17 +866,17 @@ The last two operate on all semaphores in the set.@refill
 
 @code{arg} is a union :
 @example
-union semun 
-    int val;               value for SETVAL. 
+union semun
+    int val;               value for SETVAL.
     struct semid_ds *buf;  buffer for IPC_STAT and IPC_SET.
-    ushort *array;         array for GETALL and SETALL 
+    ushort *array;         array for GETALL and SETALL
 @end example
 
 @itemize @bullet
 @item
 IPC_SET, SETVAL, SETALL : sem_ctime is updated.
 @item
-SETVAL, SETALL : Undo entries are cleared for altered semaphores in 
+SETVAL, SETALL : Undo entries are cleared for altered semaphores in
 all processes. Processes sleeping on the wait queues are
 awakened if a semval becomes 0 or increases.@refill
 @item
@@ -944,10 +944,10 @@ SEMUME  maximum number of undo entries per process.
 
 
 
-@node Shared Memory, shmget, semlimits, top
+@node Shared Memory, shmget, semlimits, Top
 @section Shared Memory
 
-Shared memory is distinct from the sharing of read-only code pages or 
+Shared memory is distinct from the sharing of read-only code pages or
 the sharing of unaltered data pages that is available due to the
 copy-on-write mechanism. The essential difference is that the
 shared pages are dirty (in the case of Shared memory) and can be
@@ -956,7 +956,7 @@ made to appear at a convenient location in the process' address space.@refill
 @noindent
 A shared segment is described by :
 @example
-struct shmid_ds 
+struct shmid_ds
     struct  ipc_perm shm_perm;
     int     shm_segsz;              /* size of segment (bytes) */
     time_t  shm_atime;              /* last attach time */
@@ -970,7 +970,7 @@ struct shmid_ds
 
 A shmget allocates a shmid_ds and an internal page table. A shmat
 maps the segment into the process' address space with pointers
-into the internal page table and the actual pages are faulted in 
+into the internal page table and the actual pages are faulted in
 as needed. The memory associated with the segment must be explicitly
 destroyed by calling shmctl with IPC_RMID.@refill
 
@@ -1009,13 +1009,13 @@ IPC_EXCL used with IPC_CREAT to ensure failure if the resource exists.
 rwxrwxrwx  access permissions.
 @end itemize
 @item
-returns : shmid on success. -1 on failure. 
+returns : shmid on success. -1 on failure.
 @end itemize
 
 A descriptor for a shared memory segment is allocated if there isn't one
-corresponding to the given key. The access permissions specified are 
+corresponding to the given key. The access permissions specified are
 then copied into the @code{shm_perm} struct for the segment along with the
-user-id etc. The user must use the IPC_CREAT flag or key = IPC_PRIVATE 
+user-id etc. The user must use the IPC_CREAT flag or key = IPC_PRIVATE
 to allocate a new segment.@refill
 
 If the segment already exists, the access permissions are verified,
@@ -1083,8 +1083,8 @@ are encouraged to avoid non-specific attaches.
 Algorithm:
 @display
 Determine attach address as described above.
-Check region (shmaddr, shmaddr + size) is not mapped and allocate 
-    page tables (undocumented SHM_REMAP flag!).
+Check region (shmaddr, shmaddr + size) is not mapped and allocate
+page tables (undocumented SHM_REMAP flag!).
 Map the region by setting up pointers into the internal page table.
 Add a descriptor for the attach to the task struct for the process.
 @code{shm_nattch}, @code{shm_lpid}, @code{shm_atime} are updated.
@@ -1094,12 +1094,12 @@ Add a descriptor for the attach to the task struct for the process.
 Notes:@*
 The @code{brk} value is not altered.
 The segment is automatically detached when the process exits.
-The same segment may be attached as read-only or read-write and 
-    more than once in the process' address space.
+The same segment may be attached as read-only or read-write and
+more than once in the process' address space.
 A shmat can succeed on a segment marked for destruction.
 The request for a particular type of attach is made using the SHM_RDONLY flag.
 There is no notion of a write-only attach. The requested attach
-    permissions must fall within those allowed by @code{shm_perm.mode}.
+permissions must fall within those allowed by @code{shm_perm.mode}.
 
 @noindent
 Errors:@*
@@ -1211,7 +1211,7 @@ SHMSEG : maximum number of shared segments per process.
 
 
 
-@node Notes, top, shmlimits, top
+@node Notes, Top, shmlimits, Top
 @section Miscellaneous Notes
 
 The system calls are mapped into one -- @code{sys_ipc}. This should be
@@ -1226,10 +1226,10 @@ each semaphore which was altered (with an undo request) by the process.
 One major cause for unhappiness with the undo mechanism is that
 it does not fit in with the notion of having an atomic set of
 operations on an array. The undo requests for an array and each
-semaphore therein may have been accumulated over many @code{semop} 
-calls. Thus use the undo mechanism with private semaphores only.@refill 
+semaphore therein may have been accumulated over many @code{semop}
+calls. Thus use the undo mechanism with private semaphores only.@refill
 
-Should the process sleep in @code{exit} or should all undo 
+Should the process sleep in @code{exit} or should all undo
 operations be applied with the IPC_NOWAIT flag in effect?
 Currently  those undo operations which go through immediately are
 applied and those that require a wait are ignored silently.@refill
@@ -1255,21 +1255,21 @@ in the reverse sequence as attaches.@refill
 
 Taking control of the matter is probably best. The rule applied
 is that attaches are allowed in unmapped regions other than
-in the text space (see <a.out.h>). Also remember that attach addresses 
+in the text space (see <a.out.h>). Also remember that attach addresses
 and segment sizes are multiples of PAGE_SIZE.@refill
 
 One more trap (I quote Bruno on this). If you use malloc() to get space
-for your shared memory (ie. to fix the @code{brk}), you must ensure you 
-get an unmapped address range. This means you must mallocate more memory 
+for your shared memory (ie. to fix the @code{brk}), you must ensure you
+get an unmapped address range. This means you must mallocate more memory
 than you had ever allocated before. Memory returned by malloc(), used,
 then freed by free() and then again returned by malloc is no good.
 Neither is calloced memory.@refill
 
 Note that a shared memory region remains a shared memory region until
-you unmap it. Attaching a segment at the @code{brk} and calling malloc 
-after that will result in an overlap of what malloc thinks is its 
-space with what is really a shared memory region. For example in the case 
-of a read-only attach, you will not be able to write to the overlapped 
+you unmap it. Attaching a segment at the @code{brk} and calling malloc
+after that will result in an overlap of what malloc thinks is its
+space with what is really a shared memory region. For example in the case
+of a read-only attach, you will not be able to write to the overlapped
 portion.@refill
 
 

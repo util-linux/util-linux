@@ -200,6 +200,22 @@ main(int argc, char **argv) {
 	textdomain(PACKAGE);
 
 #if 0				/* setting week1stday is against man page */
+/*
+ * What *is* the first day of the week? Note that glibc does not
+ * provide any information today, it (almost) always answers Monday.
+ * Sunday is the Jewish and Christian tradition.
+ * Sometimes an answer is built into the language:
+ * German calls Wednesday "Mittwoch", so starts at Sunday.
+ * Portuguese calls Monday "segunda-feira", so starts at Sunday.
+ * Russian calls Friday "pyatnitsa", so starts at Monday.
+ * ISO 8601 decided to start at Monday.
+ *
+ * The traditional Unix cal utility starts at Sunday.
+ * We start at Sunday and have an option -m for starting at Monday.
+ * 
+ * At some future time this may become -s for Sunday, -m for Monday,
+ * no option for glibc-determined locale-dependent version.
+ */
 #ifdef HAVE_langinfo_h
 	week1stday = (int)(nl_langinfo(_NL_TIME_FIRST_WEEKDAY))[0];
 #endif
@@ -300,9 +316,9 @@ void headers_init(void)
      wd = (i + week1stday) % 7;
 #ifdef ENABLE_WIDECHAR
      mbstowcs(wd_wc,weekday(wd),10);
-     if (wcslen(wd_wc) < 3)
+     if (wcswidth(wd_wc,10) < 3)
 	     wcscat(j_day_headings_wc,L" ");
-     if (wcslen(wd_wc) < 2) {
+     if (wcswidth(wd_wc,10) < 2) {
 	     wcscat(day_headings_wc, L" ");
 	     wcscat(j_day_headings_wc, L" ");
      }
@@ -351,7 +367,11 @@ do_monthly(month, year, out)
 	 */
 	len = sprintf(lineout, _("%s %d"), full_month[month - 1], year);
 #ifdef ENABLE_WIDECHAR
-	len = mbstowcs(lineout_wc,lineout,len);
+	if (mbstowcs(lineout_wc,lineout,len) > 0) {
+          len = wcswidth(lineout_wc,len);
+        } else {
+          len = strlen(lineout);
+        }
 #endif
 	(void)sprintf(out->s[0],"%*s%s",
 	    ((julian ? J_WEEK_LEN : WEEK_LEN) - len) / 2, "", lineout );
@@ -630,7 +650,11 @@ center(str, len, separate)
 	wchar_t str_wc[300];
 	int str_len;
 
-	str_len = mbstowcs(str_wc,str,300);
+	if (mbstowcs(str_wc,str,300) > 0) {
+           str_len = wcswidth(str_wc,300);
+        } else {
+           str_len = strlen(str);
+        } 
 	len -= str_len;
 #else
 	len -= strlen(str);

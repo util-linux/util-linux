@@ -653,7 +653,7 @@ cdrom_setspeed(char *spec) {
 	int speed = atoi(opt_speed);
 
 	if ((cdrom = open(spec, O_RDONLY | O_NONBLOCK)) < 0)
-	    die(EX_FAIL, _("mount: cannot not open %s for setting speed"),
+	    die(EX_FAIL, _("mount: cannot open %s for setting speed"),
 		spec);
 	if (ioctl(cdrom, CDROM_SELECT_SPEED, speed) < 0)
 	    die(EX_FAIL, _("mount: cannot set speed: %s"),

@@ -13,8 +13,10 @@
 #endif
 #endif
 
-#define MINIX_SUPER_MAGIC   0x137F         /* original minix fs */
-#define MINIX_SUPER_MAGIC2  0x138F         /* minix fs, 30 char names */
+#define MINIX_SUPER_MAGIC   0x137F         /* minix v1, 14 char names */
+#define MINIX_SUPER_MAGIC2  0x138F         /* minix v1, 30 char names */
+#define MINIX2_SUPER_MAGIC  0x2468	   /* minix v2, 14 char names */
+#define MINIX2_SUPER_MAGIC2 0x2478         /* minix v2, 30 char names */
 struct minix_super_block {
 	u_char   s_dummy[16];
 	u_char   s_magic[2];

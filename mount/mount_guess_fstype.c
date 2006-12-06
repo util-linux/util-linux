@@ -76,7 +76,7 @@ assemble4le(unsigned char *p) {
     Corrected the test for xiafs - aeb
     Read the superblock only once - aeb
     Added a very weak heuristic for vfat - aeb
-    Added iso9660, romfs, qnx4, udf, vxfs, swap - aeb
+    Added iso9660, minix-v2, romfs, qnx4, udf, vxfs, swap - aeb
     Added a test for high sierra (iso9660) - quinlan@bucknell.edu
     Added ufs from a patch by jj. But maybe there are several types of ufs?
     Added ntfs from a patch by Richard Russon.
@@ -94,14 +94,47 @@ static char
 	"vxfs", "xfs", "xiafs"
 };
 
-static int
-tested(const char *device) {
-    char **m;
+static struct tried {
+	struct tried *next;
+	char *type;
+} *tried = NULL;
 
-    for (m = magic_known; m - magic_known < SIZE(magic_known); m++)
-        if (!strcmp(*m, device))
-	    return 1;
-    return 0;
+static int
+was_tested(const char *fstype) {
+	char **m;
+	struct tried *t;
+
+	for (m = magic_known; m - magic_known < SIZE(magic_known); m++)
+		if (!strcmp(*m, fstype))
+			return 1;
+	for (t = tried; t; t = t->next) {
+		if (!strcmp(t->type, fstype))
+			return 1;
+	}
+	return 0;
+}
+
+static void
+set_tested(const char *fstype) {
+	struct tried *t = xmalloc(sizeof(struct tried));
+
+	t->next = tried;
+	t->type = xstrdup(fstype);
+	tried = t;
+}
+
+static void
+free_tested(void) {
+	struct tried *t, *tt;
+
+	t = tried;
+	while(t) {
+		free(t->type);
+		tt = t->next;
+		free(t);
+		t = tt;
+	}
+	tried = NULL;
 }
 
 /* udf magic - I find that trying to mount garbage as an udf fs
@@ -194,57 +227,8 @@ fstype(const char *device) {
     if (fd < 0)
       return 0;
 
-    if (lseek(fd, 1024, SEEK_SET) != 1024
-	|| read(fd, (char *) &sb, sizeof(sb)) != sizeof(sb))
-	 goto io_error;
-
-    /* ext2 has magic in little-endian on disk, so "swapped" is
-       superfluous; however, there have existed strange byteswapped
-       PPC ext2 systems */
-    if (ext2magic(sb.e2s) == EXT2_SUPER_MAGIC
-	|| ext2magic(sb.e2s) == EXT2_PRE_02B_MAGIC
-	|| ext2magic(sb.e2s) == swapped(EXT2_SUPER_MAGIC)) {
-	 type = "ext2";
-
-	 /* maybe even ext3? */
-	 if ((assemble4le(sb.e2s.s_feature_compat)
-	      & EXT3_FEATURE_COMPAT_HAS_JOURNAL) &&
-	     assemble4le(sb.e2s.s_journal_inum) != 0)
-		 type = "ext3,ext2";
-    }
-
-    else if (minixmagic(sb.ms) == MINIX_SUPER_MAGIC
-	     || minixmagic(sb.ms) == MINIX_SUPER_MAGIC2
-	     || minixmagic(sb.ms) == swapped(MINIX_SUPER_MAGIC2))
-	 type = "minix";
-
-    else if (extmagic(sb.es) == EXT_SUPER_MAGIC)
-	 type = "ext";
-
-    else if (vxfsmagic(sb.vs) == VXFS_SUPER_MAGIC)
-	 type = "vxfs";
-
-    if (!type) {
-	/* block 64 */
-	if (lseek(fd, REISERFS_DISK_OFFSET_IN_BYTES, SEEK_SET) !=
-		REISERFS_DISK_OFFSET_IN_BYTES
-	    || read(fd, (char *) &reiserfssb, sizeof(reiserfssb)) !=
-		sizeof(reiserfssb))
-	    goto io_error;
-	if (is_reiserfs_magic_string(&reiserfssb))
-	    type = "reiserfs";
-    }
-
-    if (!type) {
-	/* block 8 */
-	if (lseek(fd, REISERFS_OLD_DISK_OFFSET_IN_BYTES, SEEK_SET) !=
-				REISERFS_OLD_DISK_OFFSET_IN_BYTES
-	    || read(fd, (char *) &reiserfssb, sizeof(reiserfssb)) !=
-		sizeof(reiserfssb))
-	    goto io_error;
-	if (is_reiserfs_magic_string(&reiserfssb))
-	    type = "reiserfs";
-    }
+    /* do seeks and reads in disk order, otherwise a very short
+       partition may cause a failure because of read error */
 
     if (!type) {
 	 /* block 0 */
@@ -291,36 +275,42 @@ fstype(const char *device) {
     }
 
     if (!type) {
-	 /* block 32 */
-	 if (lseek(fd, JFS_SUPER1_OFF, SEEK_SET) != JFS_SUPER1_OFF
-	     || read(fd, (char *) &jfssb, sizeof(jfssb)) != sizeof(jfssb))
-	      goto io_error;
-	 if (!strncmp(jfssb.s_magic, JFS_MAGIC, 4))
-	      type = "jfs";
+	/* block 1 */
+	if (lseek(fd, 1024, SEEK_SET) != 1024 ||
+	    read(fd, (char *) &sb, sizeof(sb)) != sizeof(sb))
+		goto io_error;
+
+	/* ext2 has magic in little-endian on disk, so "swapped" is
+	   superfluous; however, there have existed strange byteswapped
+	   PPC ext2 systems */
+	if (ext2magic(sb.e2s) == EXT2_SUPER_MAGIC ||
+	    ext2magic(sb.e2s) == EXT2_PRE_02B_MAGIC ||
+	    ext2magic(sb.e2s) == swapped(EXT2_SUPER_MAGIC)) {
+		type = "ext2";
+
+	     /* maybe even ext3? */
+	     if ((assemble4le(sb.e2s.s_feature_compat)
+		  & EXT3_FEATURE_COMPAT_HAS_JOURNAL) &&
+		 assemble4le(sb.e2s.s_journal_inum) != 0)
+		     type = "ext3,ext2";
+	}
+
+	else if (minixmagic(sb.ms) == MINIX_SUPER_MAGIC ||
+		 minixmagic(sb.ms) == MINIX_SUPER_MAGIC2 ||
+		 minixmagic(sb.ms) == swapped(MINIX_SUPER_MAGIC2) ||
+		 minixmagic(sb.ms) == MINIX2_SUPER_MAGIC ||
+		 minixmagic(sb.ms) == MINIX2_SUPER_MAGIC2)
+		type = "minix";
+
+	else if (extmagic(sb.es) == EXT_SUPER_MAGIC)
+		type = "ext";
+
+	else if (vxfsmagic(sb.vs) == VXFS_SUPER_MAGIC)
+		type = "vxfs";
     }
 
     if (!type) {
-	 if (lseek(fd, 8192, SEEK_SET) != 8192
-	     || read(fd, (char *) &ufssb, sizeof(ufssb)) != sizeof(ufssb))
-	      goto io_error;
-
-	 if (ufsmagic(ufssb) == UFS_SUPER_MAGIC) /* also test swapped version? */
-	      type = "ufs";
-    }
-
-    if (!type) {
-	 if (lseek(fd, 0x8000, SEEK_SET) != 0x8000
-	     || read(fd, (char *) &isosb, sizeof(isosb)) != sizeof(isosb))
-	      goto io_error;
-
-	 if(strncmp(isosb.iso.id, ISO_STANDARD_ID, sizeof(isosb.iso.id)) == 0
-	    || strncmp(isosb.hs.id, HS_STANDARD_ID, sizeof(isosb.hs.id)) == 0)
-	      type = "iso9660";
-	 else if (may_be_udf(isosb.iso.id))
-	      type = "udf";
-    }
-
-    if (!type) {
+	/* block 1 */
         if (lseek(fd, 0x400, SEEK_SET) != 0x400
             || read(fd, (char *) &hfssb, sizeof(hfssb)) != sizeof(hfssb))
              goto io_error;
@@ -337,15 +327,7 @@ fstype(const char *device) {
     }
 
     if (!type) {
-        if (lseek(fd, 0x2000, SEEK_SET) != 0x2000
-            || read(fd, (char *) &hpfssb, sizeof(hpfssb)) != sizeof(hpfssb))
-             goto io_error;
-
-        if (hpfsmagic(hpfssb) == HPFS_SUPER_MAGIC)
-             type = "hpfs";
-    }
-
-    if (!type) {
+	/* block 3 */
         if (lseek(fd, 0xc00, SEEK_SET) != 0xc00
             || read(fd, (char *) &adfssb, sizeof(adfssb)) != sizeof(adfssb))
              goto io_error;
@@ -355,6 +337,70 @@ fstype(const char *device) {
             && (adfsblksize(adfssb) >= 8 &&
                 adfsblksize(adfssb) <= 10))
              type = "adfs";
+    }
+
+    if (!type) {
+	 /* block 8 */
+	 if (lseek(fd, 8192, SEEK_SET) != 8192
+	     || read(fd, (char *) &ufssb, sizeof(ufssb)) != sizeof(ufssb))
+	      goto io_error;
+
+	 if (ufsmagic(ufssb) == UFS_SUPER_MAGIC) /* also test swapped version? */
+	      type = "ufs";
+    }
+
+    if (!type) {
+	/* block 8 */
+	if (lseek(fd, REISERFS_OLD_DISK_OFFSET_IN_BYTES, SEEK_SET) !=
+				REISERFS_OLD_DISK_OFFSET_IN_BYTES
+	    || read(fd, (char *) &reiserfssb, sizeof(reiserfssb)) !=
+		sizeof(reiserfssb))
+	    goto io_error;
+	if (is_reiserfs_magic_string(&reiserfssb))
+	    type = "reiserfs";
+    }
+
+    if (!type) {
+	/* block 8 */
+        if (lseek(fd, 0x2000, SEEK_SET) != 0x2000
+            || read(fd, (char *) &hpfssb, sizeof(hpfssb)) != sizeof(hpfssb))
+             goto io_error;
+
+        if (hpfsmagic(hpfssb) == HPFS_SUPER_MAGIC)
+             type = "hpfs";
+    }
+
+    if (!type) {
+	 /* block 32 */
+	 if (lseek(fd, JFS_SUPER1_OFF, SEEK_SET) != JFS_SUPER1_OFF
+	     || read(fd, (char *) &jfssb, sizeof(jfssb)) != sizeof(jfssb))
+	      goto io_error;
+	 if (!strncmp(jfssb.s_magic, JFS_MAGIC, 4))
+	      type = "jfs";
+    }
+
+    if (!type) {
+	 /* block 32 */
+	 if (lseek(fd, 0x8000, SEEK_SET) != 0x8000
+	     || read(fd, (char *) &isosb, sizeof(isosb)) != sizeof(isosb))
+	      goto io_error;
+
+	 if(strncmp(isosb.iso.id, ISO_STANDARD_ID, sizeof(isosb.iso.id)) == 0
+	    || strncmp(isosb.hs.id, HS_STANDARD_ID, sizeof(isosb.hs.id)) == 0)
+	      type = "iso9660";
+	 else if (may_be_udf(isosb.iso.id))
+	      type = "udf";
+    }
+
+    if (!type) {
+	/* block 64 */
+	if (lseek(fd, REISERFS_DISK_OFFSET_IN_BYTES, SEEK_SET) !=
+		REISERFS_DISK_OFFSET_IN_BYTES
+	    || read(fd, (char *) &reiserfssb, sizeof(reiserfssb)) !=
+		sizeof(reiserfssb))
+	    goto io_error;
+	if (is_reiserfs_magic_string(&reiserfssb))
+	    type = "reiserfs";
     }
 
     if (!type) {
@@ -381,7 +427,10 @@ fstype(const char *device) {
     return(type);
 
 io_error:
-    perror(device);
+    if (errno)
+	 perror(device);
+    else
+	 fprintf(stderr, _("mount: error while guessing filesystem type\n"));
     close(fd);
     return 0;
 }
@@ -479,10 +528,11 @@ procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
 				fclose(procfs);
 				goto nexti;
 			}
-			if (tested (fsname))
+			if (was_tested (fsname))
 				continue;
 			if (no && matching_type(fsname, notypes))
 				continue;
+			set_tested (fsname);
 			args->type = fsname;
 			if (verbose) {
 				printf(_("Trying %s\n"), fsname);
@@ -500,6 +550,7 @@ procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
 				break;
 			}
 		}
+		free_tested();
 		fclose(procfs);
 		errno = errsv;
 		return ret;

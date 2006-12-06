@@ -4,11 +4,16 @@
 
 
 #include <stdio.h>
-#include <linux/unistd.h>
+
+#ifdef __ia64__
+# include <sys/syscall.h>
+# define pivot_root(new_root,put_old) syscall(SYS_pivot_root,new_root,put_old)
+#else
+# include <linux/unistd.h>
 
 static
 _syscall2(int,pivot_root,const char *,new_root,const char *,put_old)
-
+#endif
 
 int main(int argc,const char **argv)
 {

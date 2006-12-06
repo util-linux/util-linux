@@ -1,3 +1,23 @@
+util-linux 2.11n
+
+* Danish messages (Claus Hindsgaul)
+* No new French messages yet
+* German messages (Karl Eichwalder)
+* Swedish messages (Christian Rose)
+* Turkish messages now in UTF-8 (Nilgün Belma Bugüner)
+* blockdev: add --report option
+* cal: fix for wide multibyte-char (Motonobu Ichimura)
+* cfdisk: recognize ext3 and reiserfs (Flavio Stanchina)
+* fsck.minix: i18n changes
+* ipc.{info,texi}: minor correction
+* login: compilation fix (Jaroslaw J. Pyszny)
+* mount.8: tmpfs mount options (Karl Eichwalder)
+* mount: recognize minix v2
+* mount: support mount-by-label also for lvm (Kirby Bohling)
+* mount: order guessing of fstypes according to seek offset
+* pivot_root: compilation fix for ia64
+* readprofile: byte order auto-detection (Werner Almesberger)
+
 util-linux 2.11m
 
 * Danish messages (Claus Hindsgaul)

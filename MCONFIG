@@ -89,7 +89,7 @@ HAVE_SLN=no
 HAVE_FDUTILS=no
 
 # This enables building of raw
-# ADD_RAW=yes
+ADD_RAW=yes
 
 # Different optimizations for different cpus.
 # gcc 3.0 likes options -mcpu=i486 instead of -m486

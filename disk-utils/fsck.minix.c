@@ -142,6 +142,9 @@ static int termios_set = 0;
 #define MAX_DEPTH 50
 static int name_depth = 0;
 static char name_list[MAX_DEPTH][NAME_MAX+1];
+/* Copy of the previous, just for error reporting - see get_current_name */
+/* This is a waste of 12kB or so. */
+static char current_name[MAX_DEPTH*(NAME_MAX+1)+1];
 
 static char * inode_buffer = NULL;
 #define Inode (((struct minix_inode *) inode_buffer)-1)
@@ -210,13 +213,21 @@ die(const char *str) {
  * current file.
  */
 static void
-print_current_name(void) {
-	int i = 0;
+get_current_name(void) {
+	int i = 0, ct;
+	char *p, *q;
 
-	while (i < name_depth)
-		printf("/%.*s", namelen, name_list[i++]);
+	q = current_name;
+	while (i < name_depth) {
+		p = name_list[i++];
+		ct = namelen;
+		*q++ = '/';
+		while (ct-- && *p)
+			*q++ = *p++;
+	}
 	if (i == 0)
-		printf ("/");
+		*q++ = '/';
+	*q = 0;
 }
 
 static int
@@ -315,14 +326,18 @@ static int
 check_zone_nr(unsigned short * nr, int * corrected) {
 	if (!*nr)
 		return 0;
-	if (*nr < FIRSTZONE)
-		printf(_("Zone nr < FIRSTZONE in file `"));
-	else if (*nr >= ZONES)
-		printf(_("Zone nr >= ZONES in file `"));
-	else
+
+	if (*nr < FIRSTZONE) {
+		get_current_name();
+		printf(_("Zone nr < FIRSTZONE in file `%s'."),
+		       current_name);
+	} else if (*nr >= ZONES) {
+		get_current_name();
+		printf(_("Zone nr >= ZONES in file `%s'."),
+		       current_name);
+	} else
 		return *nr;
-	print_current_name();
-	printf(_("'."));
+
 	if (ask(_("Remove block"),1)) {
 		*nr = 0;
 		*corrected = 1;
@@ -335,14 +350,18 @@ static int
 check_zone_nr2 (unsigned int *nr, int *corrected) {
 	if (!*nr)
 		return 0;
-	if (*nr < FIRSTZONE)
-		printf (_("Zone nr < FIRSTZONE in file `"));
-	else if (*nr >= ZONES)
-		printf (_("Zone nr >= ZONES in file `"));
-	else
+
+	if (*nr < FIRSTZONE) {
+		get_current_name();
+		printf (_("Zone nr < FIRSTZONE in file `%s'."),
+			current_name);
+	} else if (*nr >= ZONES) {
+		get_current_name();
+		printf (_("Zone nr >= ZONES in file `%s'."),
+			current_name);
+	} else
 		return *nr;
-	print_current_name ();
-	printf (_("'."));
+
 	if (ask (_("Remove block"), 1)) {
 		*nr = 0;
 		*corrected = 1;
@@ -361,15 +380,15 @@ read_block(unsigned int nr, char * addr) {
 		return;
 	}
 	if (BLOCK_SIZE*nr != lseek(IN, BLOCK_SIZE*nr, SEEK_SET)) {
-		printf(_("Read error: unable to seek to block in file '"));
-		print_current_name();
-		printf(_("'\n"));
+		get_current_name();
+		printf(_("Read error: unable to seek to block in file '%s'\n"),
+		       current_name);
 		memset(addr,0,BLOCK_SIZE);
 		errors_uncorrected = 1;
 	} else if (BLOCK_SIZE != read(IN, addr, BLOCK_SIZE)) {
-		printf(_("Read error: bad block in file '"));
-		print_current_name();
-		printf(_("'\n"));
+		get_current_name();
+		printf(_("Read error: bad block in file '%s'\n"),
+		       current_name);
 		memset(addr,0,BLOCK_SIZE);
 		errors_uncorrected = 1;
 	}
@@ -391,9 +410,9 @@ write_block(unsigned int nr, char * addr) {
 	if (BLOCK_SIZE*nr != lseek(IN, BLOCK_SIZE*nr, SEEK_SET))
 		die(_("seek failed in write_block"));
 	if (BLOCK_SIZE != write(IN, addr, BLOCK_SIZE)) {
-		printf(_("Write error: bad block in file '"));
-		print_current_name();
-		printf(_("'\n"));
+		get_current_name();
+		printf(_("Write error: bad block in file '%s'\n"),
+		       current_name);
 		errors_uncorrected = 1;
 	}
 }
@@ -637,10 +656,10 @@ get_inode(unsigned int nr) {
 	inode = Inode + nr;
 	if (!inode_count[nr]) {
 		if (!inode_in_use(nr)) {
-			printf(_("Inode %d marked not used, "
-				 "but used for file '"), nr);
-			print_current_name();
-			printf(_("'\n"));
+			get_current_name();
+			printf(_("Inode %d marked unused, "
+				 "but used for file '%s'\n"),
+			       nr, current_name);
 			if (repair) {
 				if (ask(_("Mark in use"),1))
 					mark_inode(nr);
@@ -663,8 +682,9 @@ get_inode(unsigned int nr) {
 		else if (S_ISFIFO(inode->i_mode))
 			;
 		else {
-                        print_current_name();
-                        printf(_(" has mode %05o\n"),inode->i_mode);
+                        get_current_name();
+                        printf(_("The file `%s' has mode %05o\n"),
+			       current_name, inode->i_mode);
                 }
 
 	} else
@@ -688,10 +708,10 @@ get_inode2 (unsigned int nr) {
 	inode = Inode2 + nr;
 	if (!inode_count[nr]) {
 		if (!inode_in_use (nr)) {
-			printf (_("Inode %d marked not used, "
-				  "but used for file '"), nr);
-			print_current_name ();
-			printf (_("'\n"));
+			get_current_name();
+			printf (_("Inode %d marked unused, "
+				  "but used for file '%s'\n"),
+				nr, current_name);
 			if (repair) {
 				if (ask (_("Mark in use"), 1))
 					mark_inode (nr);
@@ -712,8 +732,9 @@ get_inode2 (unsigned int nr) {
 		else if (S_ISSOCK (inode->i_mode));
 		else if (S_ISFIFO (inode->i_mode));
 		else {
-			print_current_name ();
-			printf (_(" has mode %05o\n"), inode->i_mode);
+			get_current_name ();
+			printf (_("The file `%s' has mode %05o\n"),
+				current_name, inode->i_mode);
 		}
 	} else
 		links++;
@@ -754,9 +775,9 @@ add_zone(unsigned short * znr, int * corrected) {
 	if (!block)
 		return 0;
 	if (zone_count[block]) {
-		printf(_("Block has been used before. Now in file `"));
-		print_current_name();
-		printf(_("'."));
+		get_current_name();
+		printf(_("Block has been used before. Now in file `%s'."),
+		       current_name);
 		if (ask(_("Clear"),1)) {
 			*znr = 0;
 			block = 0;
@@ -766,9 +787,9 @@ add_zone(unsigned short * znr, int * corrected) {
 	if (!block)
 		return 0;
 	if (!zone_in_use(block)) {
-		printf(_("Block %d in file `"),block);
-		print_current_name();
-		printf(_("' is marked not in use."));
+		get_current_name();
+		printf(_("Block %d in file `%s' is marked not in use."),
+		       block, current_name);
 		if (ask(_("Correct"),1))
 			mark_zone(block);
 	}
@@ -788,9 +809,9 @@ add_zone2 (unsigned int *znr, int *corrected) {
 	if (!block)
 		return 0;
 	if (zone_count[block]) {
-		printf (_("Block has been used before. Now in file `"));
-		print_current_name ();
-		printf (_("'."));
+		get_current_name();
+		printf (_("Block has been used before. Now in file `%s'."),
+			current_name);
 		if (ask (_("Clear"), 1)) {
 			*znr = 0;
 			block = 0;
@@ -800,9 +821,9 @@ add_zone2 (unsigned int *znr, int *corrected) {
 	if (!block)
 		return 0;
 	if (!zone_in_use (block)) {
-		printf (_("Block %d in file `"), block);
-		print_current_name ();
-		printf (_("' is marked not in use."));
+		get_current_name();
+		printf (_("Block %d in file `%s' is marked not in use."),
+			block, current_name);
 		if (ask (_("Correct"), 1))
 			mark_zone (block);
 	}
@@ -948,10 +969,10 @@ check_file(struct minix_inode * dir, unsigned int offset) {
 	name = blk + (offset % BLOCK_SIZE) + 2;
 	ino = * (unsigned short *) (name-2);
 	if (ino > INODES) {
-		printf(_("The directory '"));
-		print_current_name();
-		printf(_("' contains a bad inode number for file '%.*s'."),
-		       namelen, name);
+		get_current_name();
+		printf(_("The directory '%s' contains a bad inode number "
+			 "for file '%.*s'."),
+		       current_name, namelen, name);
 		if (ask(_(" Remove"),1)) {
 			*(unsigned short *)(name-2) = 0;
 			write_block(block, blk);
@@ -965,15 +986,17 @@ check_file(struct minix_inode * dir, unsigned int offset) {
 	name_depth--;
 	if (!offset) {
 		if (!inode || strcmp(".",name)) {
-			print_current_name();
-			printf(_(": bad directory: '.' isn't first\n"));
+			get_current_name();
+			printf(_("`%s': bad directory: '.' isn't first\n"),
+			       current_name);
 			errors_uncorrected = 1;
 		} else return;
 	}
 	if (offset == dirsize) {
 		if (!inode || strcmp("..",name)) {
-			print_current_name();
-			printf(_(": bad directory: '..' isn't second\n"));
+			get_current_name();
+			printf(_("`%s': bad directory: '..' isn't second\n"),
+			       current_name);
 			errors_uncorrected = 1;
 		} else return;
 	}
@@ -986,7 +1009,8 @@ check_file(struct minix_inode * dir, unsigned int offset) {
 		if (verbose)
 			printf("%6d %07o %3d ", ino,
 			       inode->i_mode, inode->i_nlinks);
-		print_current_name();
+		get_current_name();
+		printf("%s", current_name);
 		if (S_ISDIR(inode->i_mode))
 			printf(":\n");
 		else
@@ -1013,10 +1037,10 @@ check_file2 (struct minix2_inode *dir, unsigned int offset) {
 	name = blk + (offset % BLOCK_SIZE) + 2;
 	ino = *(unsigned short *) (name - 2);
 	if (ino > INODES) {
-		printf(_("The directory '"));
-		print_current_name ();
-		printf (_("' contains a bad inode number for file '%.*s'."),
-			  namelen, name);
+		get_current_name();
+		printf(_("The directory '%s' contains a bad inode number "
+			 "for file '%.*s'."),
+			  current_name, namelen, name);
 		if (ask (_(" Remove"), 1)) {
 			*(unsigned short *) (name - 2) = 0;
 			write_block (block, blk);
@@ -1030,16 +1054,18 @@ check_file2 (struct minix2_inode *dir, unsigned int offset) {
 	name_depth--;
 	if (!offset) {
 		if (!inode || strcmp (".", name)) {
-			print_current_name ();
-			printf (_(": bad directory: '.' isn't first\n"));
+			get_current_name ();
+			printf (_("%s: bad directory: '.' isn't first\n"),
+				current_name);
 			errors_uncorrected = 1;
 		} else
 			return;
 	}
 	if (offset == dirsize) {
 		if (!inode || strcmp ("..", name)) {
-			print_current_name ();
-			printf (_(": bad directory: '..' isn't second\n"));
+			get_current_name ();
+			printf (_("%s: bad directory: '..' isn't second\n"),
+				current_name);
 			errors_uncorrected = 1;
 		} else
 			return;
@@ -1049,8 +1075,10 @@ check_file2 (struct minix2_inode *dir, unsigned int offset) {
 	name_depth++;
 	if (list) {
 		if (verbose)
-			printf ("%6d %07o %3d ", ino, inode->i_mode, inode->i_nlinks);
-		print_current_name ();
+			printf ("%6d %07o %3d ", ino, inode->i_mode,
+				inode->i_nlinks);
+		get_current_name ();
+		printf("%s", current_name);
 		if (S_ISDIR (inode->i_mode))
 			printf (":\n");
 		else
@@ -1073,8 +1101,9 @@ recursive_check(unsigned int ino) {
 	if (!S_ISDIR(dir->i_mode))
 		die(_("internal error"));
 	if (dir->i_size < 2 * dirsize) {
-		print_current_name();
-		printf(_(": bad directory: size < 32"));
+		get_current_name();
+		printf(_("%s: bad directory: size < 32"),
+		       current_name);
 		errors_uncorrected = 1;
 	}
 	for (offset = 0 ; offset < dir->i_size ; offset += dirsize)
@@ -1091,8 +1120,9 @@ recursive_check2 (unsigned int ino) {
 	if (!S_ISDIR (dir->i_mode))
 		die ("internal error");
 	if (dir->i_size < 2 * dirsize) {
-		print_current_name ();
-		printf (_(": bad directory: size < 32"));
+		get_current_name ();
+		printf (_("%s: bad directory: size < 32"),
+			current_name);
 		errors_uncorrected = 1;
 	}
 	for (offset = 0; offset < dir->i_size; offset += dirsize)

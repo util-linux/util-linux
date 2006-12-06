@@ -36,6 +36,7 @@
 .\" 990730, Yann Droneaud <lch@multimania.com>: updated page
 .\" 991214, Elrond <Elrond@Wunder-Nett.org>: added some docs on devpts
 .\" 010725, Nikita Danilov <NikitaDanilov@Yahoo.COM>: reiserfs options
+.\" 011124, Karl Eichwalder <ke@gnu.franken.de>: tmpfs options
 .\"
 .TH MOUNT 8 "14 September 1997" "Linux 2.0" "Linux Programmer's Manual"
 .SH NAME
@@ -347,6 +348,7 @@ currently supported are:
 .IR romfs ,
 .IR smbfs ,
 .IR sysv ,
+.IR tmpfs ,
 .IR udf ,
 .IR ufs ,
 .IR umsdos ,
@@ -391,9 +393,25 @@ is the default.  If no
 option is given, or if the
 .B auto
 type is specified, the superblock is probed for the filesystem type
-.RI ( minix ", " ext ", " ext2 ", " ext3 ", " xiafs ", " iso9660 ,
-.IR jfs ", " reiserfs ", " romfs ", " ufs ", " ntfs  ", " qnx4 ", " bfs ,
-.IR xfs ", " cramfs ", " hfs ", " hpfs ", " adfs ", " vxfs
+.RI ( adfs ,
+.IR bfs ,
+.IR cramfs ,
+.IR ext ,
+.IR ext2 ,
+.IR ext3 ,
+.IR hfs ,
+.IR hpfs ,
+.IR iso9660 ,
+.IR jfs ,
+.IR minix ,
+.IR ntfs ,
+.IR qnx4 ,
+.IR reiserfs ,
+.IR romfs ,
+.IR ufs ,
+.IR vxfs ,
+.IR xfs ,
+.IR xiafs
 are supported).
 If this probe fails, mount will try to read the file
 .IR /etc/filesystems ,
@@ -1234,6 +1252,28 @@ and the current version of
 
 .SH "Mount options for sysv"
 None.
+
+.SH "Mount options for tmpfs"
+The following parameters accept a suffix
+.BR k ,
+.B m
+or
+.B g
+for Ki, Mi, Gi (binary kilo, mega and giga) and can be changed on remount.
+.TP
+.BI size= nbytes
+Override default size of the filesystem.
+The size is given in bytes, and rounded down to entire pages.
+The default is half of the memory.
+.TP
+.B nr_blocks=
+Set number of blocks.
+.TP
+.B nr_inodes=
+Set number of inodes.
+.TP
+.B mode=
+Set initial permissions of the root directory.
 
 .SH "Mount options for udf"
 .TP

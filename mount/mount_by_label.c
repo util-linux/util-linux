@@ -9,6 +9,8 @@
  * - Added cache for UUID and disk labels
  * 2000-11-07 Nathan Scott <nathans@sgi.com>
  * - Added XFS support
+ * 2001-11-22 Kirby Bohling <kbohling@birddog.com>
+ * - Added support of labels on LVM
  */
 
 #include <stdio.h>
@@ -16,6 +18,9 @@
 #include <ctype.h>
 #include <fcntl.h>
 #include <unistd.h>
+#include <errno.h>
+#include <sys/types.h>   /* needed for opendir */
+#include <dirent.h>
 #include "sundries.h"		/* for xstrdup */
 #include "linux_fs.h"
 #include "mount_by_label.h"
@@ -23,6 +28,7 @@
 
 #define PROC_PARTITIONS "/proc/partitions"
 #define DEVLABELDIR	"/dev"
+#define VG_DIR          "/proc/lvm/VGs"
 
 static struct uuidCache_s {
 	struct uuidCache_s *next;
@@ -85,6 +91,44 @@ uuidcache_addentry(char *device, char *label, char *uuid) {
 	last->device = device;
 	last->label = label;
 	memcpy(last->uuid, uuid, sizeof(last->uuid));
+}
+
+/* LVM support - Kirby Bohling */
+static void
+uuidcache_init_lvm(void) {
+	char buffer[PATH_MAX];
+	char lvm_device[PATH_MAX];
+	DIR *vg_dir, *lv_list;
+	struct dirent *vg_iter, *lv_iter;
+	char uuid[16], *label;
+
+	vg_dir = opendir(VG_DIR);
+	if (vg_dir == NULL)	/* to be expected */
+		return;
+
+	seekdir(vg_dir, 2);
+	while ((vg_iter = readdir(vg_dir)) != 0) {
+		sprintf(buffer, "%s/%s/LVs", VG_DIR, vg_iter->d_name);
+		lv_list = opendir(buffer);
+		if (lv_list == NULL) {
+			perror("mount (init_lvm)");
+			continue;
+		}
+		seekdir(lv_list, 2);
+		while ((lv_iter = readdir(lv_list)) != 0) {
+			/* Now we have the file.. could open it and read out
+			 * where the device is, read the first line, second
+			 * field... Instead we guess.
+			 */
+			sprintf(lvm_device, "%s/%s/%s", DEVLABELDIR,
+				vg_iter->d_name, lv_iter->d_name);
+			if (!get_label_uuid(lvm_device, &label, uuid))
+				uuidcache_addentry(strdup(lvm_device),
+						   label, uuid);
+		}
+		closedir(lv_list);
+	}
+	closedir(vg_dir);
 }
 
 static void
@@ -152,6 +196,8 @@ uuidcache_init(void) {
 	}
 
 	fclose(procpt);
+
+	uuidcache_init_lvm();
 }
 
 #define UUID   1

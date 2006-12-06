@@ -77,6 +77,9 @@ renice: renice.o
 readprofile: readprofile.o
 setsid: setsid.o
 
+ipc.info: ipc.texi
+	makeinfo ipc.texi
+
 install: all
 	$(INSTALLDIR) $(SBINDIR) $(BINDIR) $(USRBINDIR) $(USRSBINDIR)
 	$(INSTALLBIN) $(SBIN) $(SBINDIR)

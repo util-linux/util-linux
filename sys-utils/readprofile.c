@@ -25,6 +25,10 @@
  * - 64bit clean patch
  * 3Feb2001 Andrew Morton <andrewm@uow.edu.au>
  * - -M option to write profile multiplier.
+ * 2001-11-07 Werner Almesberger <wa@almesberger.net>
+ * - byte order auto-detection and -n option
+ * 2001-11-09 Werner Almesberger <wa@almesberger.net>
+ * - skip step size (index 0)
  */
 
 #include <errno.h>
@@ -46,7 +50,7 @@ static char *prgname;
 /* These are the defaults */
 static char defaultmap[]="/usr/src/linux/System.map";
 static char defaultpro[]="/proc/profile";
-static char optstring[]="M:m:p:itvarV";
+static char optstring[]="M:m:np:itvarV";
 
 static void
 usage(void) {
@@ -59,6 +63,7 @@ usage(void) {
 		  "\t -v            print verbose data\n"
 		  "\t -a            print all symbols, even if count is 0\n"
 		  "\t -r            reset all the counters (root only)\n"
+		  "\t -n            disable byte order auto-detection\n"
 		  "\t -V            print version and exit\n")
 		  ,prgname,prgname,defaultmap,defaultpro);
   exit(1);
@@ -102,14 +107,14 @@ main (int argc, char **argv) {
 	FILE *map;
 	int proFd;
 	char *mapFile, *proFile, *mult=0;
-	unsigned long len=0, add0=0, indx=0;
+	unsigned long len=0, add0=0, indx=1;
 	unsigned int step;
 	unsigned int *buf, total, fn_len;
 	unsigned long fn_add, next_add;          /* current and next address */
 	char fn_name[S_LEN], next_name[S_LEN];   /* current and next name */
 	char mode[8];
 	int c;
-	int optAll=0, optInfo=0, optReset=0, optVerbose=0;
+	int optAll=0, optInfo=0, optReset=0, optVerbose=0, optNative=0;
 	char mapline[S_LEN];
 	int maplineno=1;
 	int popenMap;   /* flag to tell if popen() has been used */
@@ -127,6 +132,7 @@ main (int argc, char **argv) {
 	while ((c=getopt(argc,argv,optstring))!=-1) {
 		switch(c) {
 		case 'm': mapFile=optarg; break;
+		case 'n': optNative++;	  break;
 		case 'p': proFile=optarg; break;
 		case 'a': optAll++;       break;
 		case 'i': optInfo++;      break;
@@ -189,6 +195,31 @@ main (int argc, char **argv) {
 		exit(1);
 	}
 	close(proFd);
+
+	if (!optNative) {
+		int entries = len/sizeof(*buf);
+		int big = 0,small = 0,i;
+		unsigned *p;
+
+		for (p = buf+1; p < buf+entries; p++)
+			if (*p) {
+				if (*p >= 1 << (sizeof(*buf)/2)) big++;
+				else small++;
+			}
+		if (big > small) {
+			fprintf(stderr,"Assuming reversed byte order. "
+			   "Use -n to force native byte order.\n");
+			for (p = buf; p < buf+entries; p++)
+				for (i = 0; i < sizeof(*buf)/2; i++) {
+					unsigned char *b = (unsigned char *) p;
+					unsigned char tmp;
+
+					tmp = b[i];
+					b[i] = b[sizeof(*buf)-i-1];
+					b[sizeof(*buf)-i-1] = tmp;
+				}
+		}
+	}
 
 	step=buf[0];
 	if (optInfo) {

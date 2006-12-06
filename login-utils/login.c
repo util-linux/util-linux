@@ -645,7 +645,7 @@ main(int argc, char **argv)
     if (!(pwd = getpwnam(username))) {
 	    fprintf(stderr, _("\nSession setup problem, abort.\n"));
 	    syslog(LOG_ERR, _("Invalid user name \"%s\" in %s:%d. Abort."),
-		   __FUNCTION__, __LINE__);
+		   username, __FUNCTION__, __LINE__);
 	    pam_end(pamh, PAM_SYSTEM_ERR);
 	    exit(1);
     }

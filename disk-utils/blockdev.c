@@ -29,6 +29,17 @@
 #define BLKBSZSET  _IOW(0x12,113,sizeof(int))
 #endif
 
+/* Maybe <linux/hdreg.h> could be included */
+#ifndef HDIO_GETGEO
+#define HDIO_GETGEO 0x0301
+struct hd_geometry {
+	unsigned char heads;
+	unsigned char sectors;
+	unsigned short cylinders;	/* truncated */
+	unsigned long start;
+};
+#endif
+
 const char *progname;
 
 struct bdc {
@@ -85,7 +96,10 @@ struct bdc {
 static void
 usage(void) {
 	int i;
-	fprintf(stderr, _("Usage: %s [-V] [-v|-q] commands devices\n"), progname);
+	fprintf(stderr, _("Usage:\n"));
+	fprintf(stderr, "  %s -V\n", progname);
+	fprintf(stderr, _("  %s --report [devices]\n"), progname);
+	fprintf(stderr, _("  %s [-v|-q] commands devices\n"), progname);
 	fprintf(stderr, _("Available commands:\n"));
 	for (i = 0; i < SIZE(bdcms); i++) {
 		fprintf(stderr, "\t%s", bdcms[i].name);
@@ -109,6 +123,9 @@ find_cmd(char *s) {
 }
 
 void do_commands(int fd, char **argv, int d);
+void report_header(void);
+void report_device(char *device, int quiet);
+void report_all_devices(void);
 
 int
 main(int argc, char **argv) {
@@ -133,6 +150,18 @@ main(int argc, char **argv) {
 	/* -V not together with commands */
 	if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
 		printf("%s from %s\n", progname, util_linux_version);
+		exit(0);
+	}
+
+	/* --report not together with other commands */
+	if (!strcmp(argv[1], "--report")) {
+		report_header();
+		if (argc > 2) {
+			for (d = 2; d < argc; d++)
+				report_device(argv[d], 0);
+		} else {
+			report_all_devices();
+		}
 		exit(0);
 	}
 
@@ -188,7 +217,8 @@ do_commands(int fd, char **argv, int d) {
 
 		j = find_cmd(argv[i]);
 		if (j == -1) {
-			fprintf(stderr, _("%s: Unknown command: %s\n"), progname, argv[i]);
+			fprintf(stderr, _("%s: Unknown command: %s\n"),
+				progname, argv[i]);
 			usage();
 		}
 
@@ -246,8 +276,72 @@ do_commands(int fd, char **argv, int d) {
 			break;
 		default:
 			if (verbose)
-				printf("%s succeeded.\n", _(bdcms[j].help));
+				printf(_("%s succeeded.\n"), _(bdcms[j].help));
 			break;
 		}
 	}
+}
+
+#define PROC_PARTITIONS "/proc/partitions"
+
+void
+report_all_devices(void) {
+	FILE *procpt;
+	char line[200];
+	char ptname[200];
+	char device[210];
+	int ma, mi, sz;
+
+	procpt = fopen(PROC_PARTITIONS, "r");
+	if (!procpt) {
+		fprintf(stderr, _("%s: cannot open %s\n"),
+			progname, PROC_PARTITIONS);
+		exit(1);
+	}
+
+	while (fgets(line, sizeof(line), procpt)) {
+		if (sscanf (line, " %d %d %d %[^\n ]",
+			    &ma, &mi, &sz, ptname) != 4)
+			continue;
+
+		sprintf(device, "/dev/%s", ptname);
+		report_device(device, 1);
+	}
+}
+
+void
+report_device(char *device, int quiet) {
+	int fd;
+	int ro, ssz, bsz;
+	long ra, sz, ss;
+	struct hd_geometry g;
+
+	fd = open(device, O_RDONLY | O_NONBLOCK);
+	if (fd < 0) {
+		if (!quiet)
+			fprintf(stderr, _("%s: cannot open %s\n"),
+				progname, device);
+		return;
+	}
+
+	ro = ssz = bsz = 0;
+	g.start = ra = sz = ss = 0;
+	if (ioctl (fd, BLKROGET, &ro) == 0 &&
+	    ioctl (fd, BLKRAGET, &ra) == 0 &&
+	    ioctl (fd, BLKSSZGET, &ssz) == 0 &&
+	    ioctl (fd, BLKBSZGET, &bsz) == 0 &&
+	    ioctl (fd, BLKGETSIZE, &sz) == 0 &&
+	    ioctl (fd, HDIO_GETGEO, &g) == 0) {
+		printf("%s %5ld %5d %5d %10ld %10ld  %s\n",
+		       ro ? "ro" : "rw", ra, ssz, bsz, g.start, sz, device);
+	} else {
+		if (!quiet)
+			fprintf(stderr, _("%s: ioctl error on %s\n"),
+				progname, device);
+	}
+}
+
+void
+report_header() {
+	printf(_("RO    RA   SSZ   BSZ   StartSec     Size    Device\n"));
 }

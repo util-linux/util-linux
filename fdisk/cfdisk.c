@@ -49,6 +49,8 @@
  *  Terabyte-sized disks.
  * Sat Jun 30 05:23:19 EST 2001 <nathans@sgi.com>
  *  XFS label recognition.
+ * Thu Nov 22 15:42:56 CET 2001 <flavio.stanchina@tin.it>
+ *  ext3 and ReiserFS recognition.
  *
  ****************************************************************************/
 
@@ -399,8 +401,12 @@ partition_type_text(int i) {
     else if (p_info[i].id == LINUX) {
 	 if (!strcmp(p_info[i].fstype, "ext2"))
 	      return _("Linux ext2");
+	 else if (!strcmp(p_info[i].fstype, "ext3"))
+	      return _("Linux ext3");
 	 else if (!strcmp(p_info[i].fstype, "xfs"))
 	      return _("Linux XFS");
+	 else if (!strcmp(p_info[i].fstype, "reiserfs"))
+	      return _("Linux ReiserFS");
 	 else
 	      return _("Linux");
     } else if (p_info[i].id == OS2_OR_NTFS) {
@@ -593,84 +599,116 @@ dos_copy_to_info(char *to, int tosz, char *from, int fromsz) {
 
 static void
 get_dos_label(int i) {
-    char sector[128];
+	char sector[128];
 #define DOS_OSTYPE_OFFSET 3
 #define DOS_LABEL_OFFSET 43
 #define DOS_FSTYPE_OFFSET 54
 #define DOS_OSTYPE_SZ 8
 #define DOS_LABEL_SZ 11
 #define DOS_FSTYPE_SZ 8
-    ext2_loff_t offset;
+	ext2_loff_t offset;
 
-    offset = ((ext2_loff_t) p_info[i].first_sector + p_info[i].offset)
-	 * SECTOR_SIZE;
-    if (ext2_llseek(fd, offset, SEEK_SET) == offset
-	&& read(fd, &sector, sizeof(sector)) == sizeof(sector)) {
-	 dos_copy_to_info(p_info[i].ostype, OSTYPESZ,
-			  sector+DOS_OSTYPE_OFFSET, DOS_OSTYPE_SZ);
-	 dos_copy_to_info(p_info[i].volume_label, LABELSZ,
-			  sector+DOS_LABEL_OFFSET, DOS_LABEL_SZ);
-	 dos_copy_to_info(p_info[i].fstype, FSTYPESZ,
-			  sector+DOS_FSTYPE_OFFSET, DOS_FSTYPE_SZ);
-    }
+	offset = ((ext2_loff_t) p_info[i].first_sector + p_info[i].offset)
+		* SECTOR_SIZE;
+	if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	    && read(fd, &sector, sizeof(sector)) == sizeof(sector)) {
+		dos_copy_to_info(p_info[i].ostype, OSTYPESZ,
+				 sector+DOS_OSTYPE_OFFSET, DOS_OSTYPE_SZ);
+		dos_copy_to_info(p_info[i].volume_label, LABELSZ,
+				 sector+DOS_LABEL_OFFSET, DOS_LABEL_SZ);
+		dos_copy_to_info(p_info[i].fstype, FSTYPESZ,
+				 sector+DOS_FSTYPE_OFFSET, DOS_FSTYPE_SZ);
+	}
+}
+
+#define REISERFS_SUPER_MAGIC_STRING "ReIsErFs"
+#define REISER2FS_SUPER_MAGIC_STRING "ReIsEr2Fs"
+struct reiserfs_super_block {
+	char s_dummy0[ 52];
+	char s_magic [ 12];
+	char s_dummy1[140];
+};
+
+static int
+is_reiserfs_magic_string(const struct reiserfs_super_block *rs) {
+	return (!strncmp(rs->s_magic, REISERFS_SUPER_MAGIC_STRING,
+			 strlen(REISERFS_SUPER_MAGIC_STRING)) ||
+		!strncmp(rs->s_magic, REISER2FS_SUPER_MAGIC_STRING,
+			 strlen(REISER2FS_SUPER_MAGIC_STRING)));
 }
 
 static void
 get_linux_label(int i) {
 
-#define EXT2_SUPER_MAGIC 0xEF53
 #define EXT2LABELSZ 16
-    struct ext2_super_block {
-	char  s_dummy0[56];
-	unsigned char  s_magic[2];
-	char  s_dummy1[62];
-	char  s_volume_name[EXT2LABELSZ];
-	char  s_last_mounted[64];
-	char  s_dummy2[824];
-    } e2fsb;
+#define EXT2_SUPER_MAGIC 0xEF53
+#define EXT3_FEATURE_COMPAT_HAS_JOURNAL 0x0004
+	struct ext2_super_block {
+		char  s_dummy0[56];
+		unsigned char  s_magic[2];
+		char  s_dummy1[34];
+		unsigned char  s_feature_compat[4];
+		char  s_dummy2[24];
+		char  s_volume_name[EXT2LABELSZ];
+		char  s_last_mounted[64];
+		char  s_dummy3[824];
+	} e2fsb;
+
+#define REISERFS_DISK_OFFSET_IN_BYTES (64 * 1024)
+	struct reiserfs_super_block reiserfsb;
 
 #define XFS_SUPER_MAGIC "XFSB"
 #define XFSLABELSZ 12
-    struct xfs_super_block {
-	unsigned char   s_magic[4];
-	unsigned char   s_dummy0[104];
-	unsigned char   s_fname[XFSLABELSZ];
-	unsigned char   s_dummy1[904];
-    } xfsb;
+	struct xfs_super_block {
+		unsigned char   s_magic[4];
+		unsigned char   s_dummy0[104];
+		unsigned char   s_fname[XFSLABELSZ];
+		unsigned char   s_dummy1[904];
+	} xfsb;
 
-    char *label;
-    ext2_loff_t offset;
-    int j;
+	char *label;
+	ext2_loff_t offset;
+	int j;
 
-    offset = ((ext2_loff_t) p_info[i].first_sector + p_info[i].offset)
-	 * SECTOR_SIZE + 1024;
-    if (ext2_llseek(fd, offset, SEEK_SET) == offset
-	&& read(fd, &e2fsb, sizeof(e2fsb)) == sizeof(e2fsb)
-	&& e2fsb.s_magic[0] + 256*e2fsb.s_magic[1] == EXT2_SUPER_MAGIC) {
-	 label = e2fsb.s_volume_name;
-	 for(j=0; j<EXT2LABELSZ; j++)
-	      if(!isprint(label[j]))
-		   label[j] = 0;
-	 label[EXT2LABELSZ] = 0;
-	 strncpy(p_info[i].volume_label, label, LABELSZ);
-	 strncpy(p_info[i].fstype, "ext2", FSTYPESZ);
-	 return;
-    }
+	offset = ((ext2_loff_t) p_info[i].first_sector + p_info[i].offset)
+		* SECTOR_SIZE + 1024;
+	if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	    && read(fd, &e2fsb, sizeof(e2fsb)) == sizeof(e2fsb)
+	    && e2fsb.s_magic[0] + (e2fsb.s_magic[1]<<8) == EXT2_SUPER_MAGIC) {
+		label = e2fsb.s_volume_name;
+		for(j=0; j<EXT2LABELSZ && j<LABELSZ && isprint(label[j]); j++)
+			p_info[i].volume_label[j] = label[j];
+		p_info[i].volume_label[j] = 0;
+		/* ext2 or ext3? */
+		if (e2fsb.s_feature_compat[0]&EXT3_FEATURE_COMPAT_HAS_JOURNAL)
+			strncpy(p_info[i].fstype, "ext3", FSTYPESZ);
+		else
+			strncpy(p_info[i].fstype, "ext2", FSTYPESZ);
+		return;
+	}
 
-    offset = ((ext2_loff_t) p_info[i].first_sector + p_info[i].offset)
-	 * SECTOR_SIZE + 0;
-    if (ext2_llseek(fd, offset, SEEK_SET) == offset
-	&& read(fd, &xfsb, sizeof(xfsb)) == sizeof(xfsb)
-	&& !strcmp(xfsb.s_magic, XFS_SUPER_MAGIC)) {
-	 label = xfsb.s_fname;
-	 for(j=0; j<XFSLABELSZ; j++)
-	     if(!isprint(label[j]))
-		  label[j] = 0;
-	 label[XFSLABELSZ] = 0;
-	 strncpy(p_info[i].volume_label, label, LABELSZ);
-	 strncpy(p_info[i].fstype, "xfs", FSTYPESZ);
-	 return;
-    }
+	offset = ((ext2_loff_t) p_info[i].first_sector + p_info[i].offset)
+		* SECTOR_SIZE + 0;
+	if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	    && read(fd, &xfsb, sizeof(xfsb)) == sizeof(xfsb)
+	    && !strcmp(xfsb.s_magic, XFS_SUPER_MAGIC)) {
+		label = xfsb.s_fname;
+		for(j=0; j<XFSLABELSZ && j<LABELSZ && isprint(label[j]); j++)
+			p_info[i].volume_label[j] = label[j];
+		p_info[i].volume_label[j] = 0;
+		strncpy(p_info[i].fstype, "xfs", FSTYPESZ);
+		return;
+	}
+
+	/* reiserfs? */
+	offset = ((ext2_loff_t) p_info[i].first_sector + p_info[i].offset)
+		* SECTOR_SIZE + REISERFS_DISK_OFFSET_IN_BYTES;
+	if (ext2_llseek(fd, offset, SEEK_SET) == offset
+	    && read(fd, &reiserfsb, 1024) == 1024
+	    && is_reiserfs_magic_string(&reiserfsb)) {
+		strncpy(p_info[i].fstype, "reiserfs", FSTYPESZ);
+		return;
+	}
 }
 
 static void
