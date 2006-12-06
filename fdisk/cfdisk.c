@@ -414,7 +414,7 @@ fdexit(int ret) {
 
 static int
 get_string(char *str, int len, char *def) {
-    char c;
+    unsigned char c;
     int i = 0;
     int x, y;
     int use_def = FALSE;

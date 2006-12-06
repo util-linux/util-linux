@@ -263,14 +263,14 @@ get_spec_by_x(int n, const char *t) {
 	uuidcache_init();
 	uc = uuidCache;
 
-	while(uc) {
+	while (uc) {
 		switch (n) {
 		case UUID:
 			if (!memcmp(t, uc->uuid, sizeof(uc->uuid)))
 				return xstrdup(uc->device);
 			break;
 		case VOL:
-			if (!strcmp(t, uc->label))
+			if (uc->label && !strcmp(t, uc->label))
 				return xstrdup(uc->device);
 			break;
 		}
@@ -344,7 +344,7 @@ second_occurrence_of_vol_label (const char *label) {
         uuidcache_init();
 
         for (last = uuidCache; last; last = last->next) {
-		if (!strcmp(last->label, label)) {
+		if (last->label && !strcmp(last->label, label)) {
 			occurrences++;
 			if (occurrences == 2)
 				return last->device;

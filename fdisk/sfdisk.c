@@ -2298,7 +2298,9 @@ read_input(char *dev, int interactive, struct disk_desc *z) {
  */
 
 static void version(void) {
-    printf("%s %s %s (aeb@cwi.nl, %s)\n", PROGNAME, _("version"), VERSION, DATE);
+    printf("%s %s %s (aeb@cwi.nl, %s) from util-linux-"
+	   UTIL_LINUX_VERSION "\n",
+	   PROGNAME, _("version"), VERSION, DATE);
 }
 
 static void

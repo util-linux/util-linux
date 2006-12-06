@@ -56,7 +56,7 @@
 static char *prgname;
 
 /* These are the defaults */
-static char defaultmap[]="/usr/src/linux/System.map";
+static char defaultmap[]="/boot/System.map";
 static char defaultpro[]="/proc/profile";
 static char optstring[]="M:m:np:itvarVbs";
 

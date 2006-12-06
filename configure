@@ -74,15 +74,31 @@ export COMPILE
 rm -f conftest.c conftest
 
 #
-# Old gcc wants options like -m486, but gcc 3.0 says
-# `-m486' is deprecated. Use `-march=i486' or `-mcpu=i486' instead.
+# Old gcc (e.g. 2.5.8 and 2.7.2.3) wants options like -m486, and these
+# are still accepted by 2.95.3 and RedHat's 2.96, but gcc 3.0 says:
+#  `-m486' is deprecated. Use `-march=i486' or `-mcpu=i486' instead.
+#
+# Later gcc (e.g. 2.95.3 and 3.3.4) wants options like -mcpu=i486
+# and has never heard about -mtune=i486.
+#
+# I am told that gcc >= 3.4.0 wants options like -mtune=i486
+#  -mtune gives the CPU to optimize for
+#  -march gives the architecture
+#
+# Various versions of gcc react to unknown options with strings
+# containing "Invalid option" or "invalid option".
 #
 echo "
 int main(){ exit(0); }
 " > conftest.c
-gccout=`$CC $CFLAGS -m386 conftest.c -o conftest 2>&1 | grep "march="`
+gccout=`$CC $CFLAGS -mtune=i486 conftest.c -o conftest 2>&1 | grep "nvalid"`
 if test -z "$gccout"; then
-    echo "HAVE_OLD_GCC=yes" >> make_include
+    echo "HAVE_NEW_GCC=yes" >> make_include
+else
+    gccout=`$CC $CFLAGS -m386 conftest.c -o conftest 2>&1 | grep "march="`
+    if test -z "$gccout"; then
+        echo "HAVE_OLD_GCC=yes" >> make_include
+    fi
 fi
 rm -f conftest conftest.c
 
@@ -583,7 +599,7 @@ int main () {
 }
 " > conftest.c
 eval $compile
-if test -s conftest && ./conftest < conftest.c > /dev/null 2>/dev/null; then
+if test -s conftest; then
         echo "#define ENABLE_WIDECHAR" >> defines.h
         echo "You have wide character support"
 else

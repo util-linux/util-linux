@@ -148,7 +148,7 @@ find_unused_loop_device (void) {
 	   So, we just try /dev/loop[0-7]. */
 	char dev[20];
 	char *loop_formats[] = { "/dev/loop%d", "/dev/loop/%d" };
-	int i, j, fd, somedev = 0, someloop = 0;
+	int i, j, fd, somedev = 0, someloop = 0, permission = 0;
 	struct stat statbuf;
 	struct loop_info loopinfo;
 
@@ -166,7 +166,9 @@ find_unused_loop_device (void) {
 					return xstrdup(dev);/* probably free */
 				}
 				close (fd);
-			}
+			} else if (errno == EACCES)
+				permission++;
+
 			continue;/* continue trying as long as devices exist */
 		}
 		break;
@@ -175,6 +177,8 @@ find_unused_loop_device (void) {
 
 	if (!somedev)
 		error(_("%s: could not find any device /dev/loop#"), progname);
+	else if (!someloop && permission)
+		error(_("%s: no permission to look at /dev/loop#"), progname);
 	else if (!someloop)
 		error(_(
 		    "%s: Could not find any loop device. Maybe this kernel "
@@ -396,7 +400,7 @@ find_unused_loop_device (void) {
 #include <stdarg.h>
 
 int verbose = 0;
-static char *progname;
+char *progname;
 
 static void
 usage(void) {

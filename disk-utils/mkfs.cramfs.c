@@ -121,8 +121,8 @@ usage(int status) {
 	FILE *stream = status ? stderr : stdout;
 
 	fprintf(stream,
-		_("usage: %s [-v] [-b blksz] [-e edition] [-i file] [-n name] "
-		    "dirname outfile\n"
+		_("usage: %s [-h] [-v] [-b blksz] [-e edition] [-i file] "
+		  "[-n name] dirname outfile\n"
 		  " -h         print this help\n"
 		  " -v         be verbose\n"
 		  " -E         make all warnings errors "

@@ -1,16 +1,6 @@
 /*
  * A swapon(8)/swapoff(8) for Linux 0.99.
  * swapon.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
- *
- * 1997-02-xx <Vincent.Renardias@waw.com>
- * - added '-s' (summary option)
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
- * - added Native Language Support
- * 1999-03-21 Arnaldo Carvalho de Melo <acme@conectiva.com.br>
- * - fixed strerr(errno) in gettext calls
- * 2001-03-22 Erik Troan <ewt@redhat.com>
- * - added -e option for -a
- * - -a shouldn't try to add swaps that are already enabled
  */
 
 #include <ctype.h>

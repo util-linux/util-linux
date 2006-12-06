@@ -117,14 +117,20 @@ SILENT_PG=no
 DISABLE_NLS=no
 
 # Different optimizations for different cpus.
-# gcc 3.0 likes options -mcpu=i486 instead of -m486
+# Before gcc 2.8.0 only -m486
+# gcc 3.0 only likes -mcpu=i486
+# gcc 3.4 only likes -mtune=i486
 ifeq "$(ARCH)" "intel"
-  ifeq "$(HAVE_OLD_GCC)" "yes"
-    CPUHEAD=-m
+  ifeq "$(HAVE_NEW_GCC)" "yes"
+    # 3.4.0 and later
+    CPUHEAD=-mtune=i
   else
-    CPUHEAD=-mcpu=i
-# it is rumoured that recent gcc versions want -march=i
-# must add the right test
+    ifeq "$(HAVE_OLD_GCC)" "yes"
+      # before 3.0
+      CPUHEAD=-m
+    else
+      CPUHEAD=-mcpu=i
+    endif
   endif
   ifeq "$(CPU)" "i386"
     CPUTAIL=386

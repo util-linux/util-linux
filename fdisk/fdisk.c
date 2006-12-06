@@ -644,7 +644,9 @@ read_extended(int ext) {
 			struct pte *pre = &ptes[partitions-1];
 
 			fprintf(stderr,
-				_("Warning: omitting partitions after %d\n"),
+				_("Warning: omitting partitions after #%d.\n"
+				  "They will be deleted "
+				  "if you save this partition table.\n"),
 				partitions);
 			clear_partition(pre->ext_pointer);
 			pre->changed = 1;

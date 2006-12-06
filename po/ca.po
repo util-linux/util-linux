@@ -10,7 +10,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.12\n"
-"POT-Creation-Date: 2004-12-05 20:08+0100\n"
+"POT-Creation-Date: 2004-12-13 21:53+0100\n"
 "PO-Revision-Date: 2003-08-01 10:59+0200\n"
 "Last-Translator: Antoni Bella Perez <bella5@teleline.es>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -186,7 +186,7 @@ msgstr "Doble densitat"
 msgid "Single"
 msgstr "Densitat simple"
 
-#: disk-utils/fsck.cramfs.c:98
+#: disk-utils/fsck.cramfs.c:108
 #, c-format
 msgid ""
 "usage: %s [-hv] [-x dir] file\n"
@@ -201,99 +201,99 @@ msgstr ""
 " -v         mostra més missatges\n"
 " fitxer     fitxer a comprovar\n"
 
-#: disk-utils/fsck.cramfs.c:191
+#: disk-utils/fsck.cramfs.c:201
 #, c-format
 msgid "%s: error %d while decompressing! %p(%d)\n"
 msgstr "%s: Error %d al descomprimir! %p(%d)\n"
 
-#: disk-utils/fsck.cramfs.c:243
+#: disk-utils/fsck.cramfs.c:253
 #, c-format
 msgid "%s: size error in symlink `%s'\n"
 msgstr "%s: Error en la mida de l'enllaç simbòlic `%s'\n"
 
-#: disk-utils/fsck.cramfs.c:258 disk-utils/fsck.cramfs.c:328
+#: disk-utils/fsck.cramfs.c:268 disk-utils/fsck.cramfs.c:338
 #, c-format
 msgid "  uncompressing block at %ld to %ld (%ld)\n"
 msgstr "  descomprimint el bloc en %ld a %ld (%ld)\n"
 
-#: disk-utils/fsck.cramfs.c:287
+#: disk-utils/fsck.cramfs.c:297
 #, c-format
 msgid "%s: bogus mode on `%s' (%o)\n"
 msgstr "%s: Mode fals en `%s' (%o)\n"
 
-#: disk-utils/fsck.cramfs.c:319
+#: disk-utils/fsck.cramfs.c:329
 #, c-format
 msgid "  hole at %ld (%d)\n"
 msgstr "  buit en %ld (%d)\n"
 
-#: disk-utils/fsck.cramfs.c:337
+#: disk-utils/fsck.cramfs.c:347
 #, c-format
 msgid "%s: Non-block (%ld) bytes\n"
 msgstr "%s: No bloc (%ld) octets\n"
 
-#: disk-utils/fsck.cramfs.c:343
+#: disk-utils/fsck.cramfs.c:353
 #, c-format
 msgid "%s: Non-size (%ld vs %ld) bytes\n"
 msgstr "%s: No mida (%ld vs %ld) octets\n"
 
-#: disk-utils/fsck.cramfs.c:392
+#: disk-utils/fsck.cramfs.c:402
 #, c-format
 msgid "%s: invalid cramfs--bad path length\n"
 msgstr "%s: cramfs no vàlid, longitud de la ruta errònia\n"
 
-#: disk-utils/fsck.cramfs.c:472
+#: disk-utils/fsck.cramfs.c:482
 #, c-format
 msgid "%s: compiled without -x support\n"
 msgstr "%s: Compilat sense suport per a -x\n"
 
-#: disk-utils/fsck.cramfs.c:498
+#: disk-utils/fsck.cramfs.c:508
 #, c-format
 msgid "%s: warning--unable to determine filesystem size \n"
 msgstr "%s: Atenció, no es pot determinar la mida del sistema de fitxers \n"
 
-#: disk-utils/fsck.cramfs.c:508
+#: disk-utils/fsck.cramfs.c:518
 #, c-format
 msgid "%s is not a block device or file\n"
 msgstr "%s no és un dispositiu de bloc o un fitxer\n"
 
-#: disk-utils/fsck.cramfs.c:514 disk-utils/fsck.cramfs.c:549
+#: disk-utils/fsck.cramfs.c:524 disk-utils/fsck.cramfs.c:559
 #, c-format
 msgid "%s: invalid cramfs--file length too short\n"
 msgstr "%s: cramfs no vàlid, longitud del fitxer massa curta\n"
 
-#: disk-utils/fsck.cramfs.c:541
+#: disk-utils/fsck.cramfs.c:551
 #, c-format
 msgid "%s: invalid cramfs--wrong magic\n"
 msgstr "%s: cramfs no vàlid, màgia errònia\n"
 
-#: disk-utils/fsck.cramfs.c:554
+#: disk-utils/fsck.cramfs.c:564
 #, c-format
 msgid "%s: warning--file length too long, padded image?\n"
 msgstr "%s: Atenció; longitud del fitxer massa llarga, imatge desplaçada?\n"
 
-#: disk-utils/fsck.cramfs.c:564
+#: disk-utils/fsck.cramfs.c:574
 #, c-format
 msgid "%s: invalid cramfs--crc error\n"
 msgstr "%s: cramfs no vàlid, error del crc\n"
 
-#: disk-utils/fsck.cramfs.c:570
+#: disk-utils/fsck.cramfs.c:580
 #, c-format
 msgid "%s: warning--old cramfs image, no CRC\n"
 msgstr "%s: Atenció; imatge cramfs antiga, no és CRC\n"
 
-#: disk-utils/fsck.cramfs.c:592
+#: disk-utils/fsck.cramfs.c:602
 #, c-format
 msgid "%s: invalid cramfs--bad superblock\n"
 msgstr "%s: cramfs no vàlid, superbloc dolent\n"
 
-#: disk-utils/fsck.cramfs.c:608
+#: disk-utils/fsck.cramfs.c:618
 #, c-format
 msgid "%s: invalid cramfs--directory data end (%ld) != file data start (%ld)\n"
 msgstr ""
 "%s: cramfs no vàlid, el final de les dades als directoris (%ld)\n"
 "és diferent del començament de les dades dels fitxers (%ld)\n"
 
-#: disk-utils/fsck.cramfs.c:616
+#: disk-utils/fsck.cramfs.c:626
 #, c-format
 msgid "%s: invalid cramfs--invalid file data offset\n"
 msgstr "%s: cramfs no vàlid, desplaçament no vàlid de les dades dels fitxers\n"
@@ -766,7 +766,7 @@ msgstr "masses ínodes; el màxim és de 512"
 msgid "not enough space, need at least %lu blocks"
 msgstr "no hi ha prou espai, com a mínim es necessiten %lu blocs"
 
-#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2224
+#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2226
 #, c-format
 msgid "Device: %s\n"
 msgstr "Dispositiu: %s\n"
@@ -852,9 +852,10 @@ msgid "mkfs version %s (%s)\n"
 msgstr "mkfs versió %s (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:124
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"usage: %s [-v] [-b blksz] [-e edition] [-i file] [-n name] dirname outfile\n"
+"usage: %s [-h] [-v] [-b blksz] [-e edition] [-i file] [-n name] dirname "
+"outfile\n"
 " -h         print this help\n"
 " -v         be verbose\n"
 " -E         make all warnings errors (non-zero exit status)\n"
@@ -1609,7 +1610,7 @@ msgstr "   Lògica"
 #. odd flag on end
 #. type id
 #. type name
-#: fdisk/cfdisk.c:2010 fdisk/fdisk.c:1433 fdisk/fdisk.c:1745
+#: fdisk/cfdisk.c:2010 fdisk/fdisk.c:1435 fdisk/fdisk.c:1747
 #: fdisk/fdisksgilabel.c:237 fdisk/fdisksunlabel.c:689 fdisk/sfdisk.c:650
 msgid "Unknown"
 msgstr "Desconegut"
@@ -2394,11 +2395,11 @@ msgstr "Heu de definir els"
 msgid "heads"
 msgstr "capçals"
 
-#: fdisk/fdisk.c:586 fdisk/fdisk.c:1255 fdisk/sfdisk.c:936
+#: fdisk/fdisk.c:586 fdisk/fdisk.c:1257 fdisk/sfdisk.c:936
 msgid "sectors"
 msgstr "sectors"
 
-#: fdisk/fdisk.c:588 fdisk/fdisk.c:1255 fdisk/fdiskbsdlabel.c:470
+#: fdisk/fdisk.c:588 fdisk/fdisk.c:1257 fdisk/fdiskbsdlabel.c:470
 #: fdisk/sfdisk.c:936
 msgid "cylinders"
 msgstr "cilindres"
@@ -2441,22 +2442,24 @@ msgid "Bad offset in primary extended partition\n"
 msgstr "Desplaçament incorrecte en particions primàries esteses\n"
 
 #: fdisk/fdisk.c:647
-#, fuzzy, c-format
-msgid "Warning: omitting partitions after %d\n"
-msgstr "Atenció: S'estan suprimint les particions després de %d\n"
+#, c-format
+msgid ""
+"Warning: omitting partitions after #%d.\n"
+"They will be deleted if you save this partition table.\n"
+msgstr ""
 
-#: fdisk/fdisk.c:664
+#: fdisk/fdisk.c:666
 #, c-format
 msgid "Warning: extra link pointer in partition table %d\n"
 msgstr "Atenció: Enllaç d'apuntador addicional en la taula de particions %d\n"
 
-#: fdisk/fdisk.c:672
+#: fdisk/fdisk.c:674
 #, c-format
 msgid "Warning: ignoring extra data in partition table %d\n"
 msgstr ""
 "Atenció: S'ignoren les dades addicionals en la taula de particions %d\n"
 
-#: fdisk/fdisk.c:717
+#: fdisk/fdisk.c:719
 msgid ""
 "Building a new DOS disklabel. Changes will remain in memory only,\n"
 "until you decide to write them. After that, of course, the previous\n"
@@ -2468,16 +2471,16 @@ msgstr ""
 "d'aquesta operació, l'anterior contingut no podrà ser recuperat.\n"
 "\n"
 
-#: fdisk/fdisk.c:761
+#: fdisk/fdisk.c:763
 #, c-format
 msgid "Note: sector size is %d (not %d)\n"
 msgstr "Nota: La mida del sector és %d (no %d)\n"
 
-#: fdisk/fdisk.c:918
+#: fdisk/fdisk.c:920
 msgid "You will not be able to write the partition table.\n"
 msgstr "No podreu escriure la taula de particions.\n"
 
-#: fdisk/fdisk.c:947
+#: fdisk/fdisk.c:949
 msgid ""
 "This disk has both DOS and BSD magic.\n"
 "Give the 'b' command to go to BSD mode.\n"
@@ -2485,7 +2488,7 @@ msgstr ""
 "Aquest disc té tanta màgia DOS com BSD.\n"
 "Empreu el comandament 'b' per anar al mode BSD.\n"
 
-#: fdisk/fdisk.c:957
+#: fdisk/fdisk.c:959
 msgid ""
 "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
 "disklabel\n"
@@ -2493,16 +2496,16 @@ msgstr ""
 "El dispositiu no conté una taula de particions DOS vàlida, així com tampoc "
 "una etiqueta de disc Sun, SGI o OSF\n"
 
-#: fdisk/fdisk.c:974
+#: fdisk/fdisk.c:976
 msgid "Internal error\n"
 msgstr "Error intern\n"
 
-#: fdisk/fdisk.c:987
+#: fdisk/fdisk.c:989
 #, c-format
 msgid "Ignoring extra extended partition %d\n"
 msgstr "S'ignorarà la partició estesa addicional %d\n"
 
-#: fdisk/fdisk.c:999
+#: fdisk/fdisk.c:1001
 #, c-format
 msgid ""
 "Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
@@ -2511,7 +2514,7 @@ msgstr ""
 "Atenció: Etiqueta 0x%04x no vàlida de la taula de particions %d serà "
 "corregida amb w(rite)\n"
 
-#: fdisk/fdisk.c:1021
+#: fdisk/fdisk.c:1023
 msgid ""
 "\n"
 "got EOF thrice - exiting..\n"
@@ -2519,78 +2522,78 @@ msgstr ""
 "\n"
 "s'ha aconseguit un EOF tres vegades - sortint...\n"
 
-#: fdisk/fdisk.c:1060
+#: fdisk/fdisk.c:1062
 msgid "Hex code (type L to list codes): "
 msgstr "Codi hex. (escriviu L per a veure la llista de codis): "
 
-#: fdisk/fdisk.c:1100
+#: fdisk/fdisk.c:1102
 #, c-format
 msgid "%s (%u-%u, default %u): "
 msgstr "%s (%u-%u, valor per defecte %u): "
 
-#: fdisk/fdisk.c:1167
+#: fdisk/fdisk.c:1169
 #, c-format
 msgid "Using default value %u\n"
 msgstr "Usant el valor per defecte %u\n"
 
-#: fdisk/fdisk.c:1171
+#: fdisk/fdisk.c:1173
 msgid "Value out of range.\n"
 msgstr "El valor està fora del rang.\n"
 
-#: fdisk/fdisk.c:1181
+#: fdisk/fdisk.c:1183
 msgid "Partition number"
 msgstr "Nombre de partició"
 
-#: fdisk/fdisk.c:1192
+#: fdisk/fdisk.c:1194
 #, c-format
 msgid "Warning: partition %d has empty type\n"
 msgstr "Atenció: La partició %d és del tipus buit\n"
 
-#: fdisk/fdisk.c:1214 fdisk/fdisk.c:1240
+#: fdisk/fdisk.c:1216 fdisk/fdisk.c:1242
 #, c-format
 msgid "Selected partition %d\n"
 msgstr "S'ha seleccionat la partició %d\n"
 
-#: fdisk/fdisk.c:1217
+#: fdisk/fdisk.c:1219
 msgid "No partition is defined yet!\n"
 msgstr "No hi ha cap partició definida!\n"
 
-#: fdisk/fdisk.c:1243
+#: fdisk/fdisk.c:1245
 msgid "All primary partitions have been defined already!\n"
 msgstr "Ja s'han definit totes les particions primàries!\n"
 
-#: fdisk/fdisk.c:1253
+#: fdisk/fdisk.c:1255
 msgid "cylinder"
 msgstr "cilindre"
 
-#: fdisk/fdisk.c:1253
+#: fdisk/fdisk.c:1255
 msgid "sector"
 msgstr "sector"
 
-#: fdisk/fdisk.c:1262
+#: fdisk/fdisk.c:1264
 #, c-format
 msgid "Changing display/entry units to %s\n"
 msgstr "Canviant les unitats de visualització/entrada a %s\n"
 
-#: fdisk/fdisk.c:1273
+#: fdisk/fdisk.c:1275
 #, c-format
 msgid "WARNING: Partition %d is an extended partition\n"
 msgstr "ATENCIÓ: La partició %d és una partició estesa\n"
 
-#: fdisk/fdisk.c:1284
+#: fdisk/fdisk.c:1286
 msgid "DOS Compatibility flag is set\n"
 msgstr "L'etiqueta de compatibilitat amb DOS està establerta\n"
 
-#: fdisk/fdisk.c:1288
+#: fdisk/fdisk.c:1290
 msgid "DOS Compatibility flag is not set\n"
 msgstr "L'etiqueta de compatibilitat amb DOS no està establerta\n"
 
-#: fdisk/fdisk.c:1388
+#: fdisk/fdisk.c:1390
 #, c-format
 msgid "Partition %d does not exist yet!\n"
 msgstr "La partició %d encara no existeix!\n"
 
-#: fdisk/fdisk.c:1393
+#: fdisk/fdisk.c:1395
 msgid ""
 "Type 0 means free space to many systems\n"
 "(but not to Linux). Having partitions of\n"
@@ -2602,7 +2605,7 @@ msgstr ""
 "tindre particions del tipus 0. Podeu suprimir-les\n"
 "amb el comandament `d'.\n"
 
-#: fdisk/fdisk.c:1402
+#: fdisk/fdisk.c:1404
 msgid ""
 "You cannot change a partition into an extended one or vice versa\n"
 "Delete it first.\n"
@@ -2610,7 +2613,7 @@ msgstr ""
 "No podeu convertir una partició en estesa ni viceversa primer\n"
 "haureu d'esborrar-la.\n"
 
-#: fdisk/fdisk.c:1411
+#: fdisk/fdisk.c:1413
 msgid ""
 "Consider leaving partition 3 as Whole disk (5),\n"
 "as SunOS/Solaris expects it and even Linux likes it.\n"
@@ -2621,7 +2624,7 @@ msgstr ""
 "Linux.\n"
 "\n"
 
-#: fdisk/fdisk.c:1417
+#: fdisk/fdisk.c:1419
 msgid ""
 "Consider leaving partition 9 as volume header (0),\n"
 "and partition 11 as entire volume (6)as IRIX expects it.\n"
@@ -2632,52 +2635,52 @@ msgstr ""
 "espera.\n"
 "\n"
 
-#: fdisk/fdisk.c:1430
+#: fdisk/fdisk.c:1432
 #, c-format
 msgid "Changed system type of partition %d to %x (%s)\n"
 msgstr "S'ha canviat el tipus del sistema de la partició %d per %x (%s)\n"
 
-#: fdisk/fdisk.c:1485
+#: fdisk/fdisk.c:1487
 #, c-format
 msgid "Partition %d has different physical/logical beginnings (non-Linux?):\n"
 msgstr "La partició %d té diferents començaments físics/lògics (no Linux?):\n"
 
-#: fdisk/fdisk.c:1487 fdisk/fdisk.c:1495 fdisk/fdisk.c:1504 fdisk/fdisk.c:1514
+#: fdisk/fdisk.c:1489 fdisk/fdisk.c:1497 fdisk/fdisk.c:1506 fdisk/fdisk.c:1516
 #, c-format
 msgid "     phys=(%d, %d, %d) "
 msgstr "     físic=(%d, %d, %d) "
 
-#: fdisk/fdisk.c:1488 fdisk/fdisk.c:1496
+#: fdisk/fdisk.c:1490 fdisk/fdisk.c:1498
 #, c-format
 msgid "logical=(%d, %d, %d)\n"
 msgstr "lògic=(%d, %d, %d)\n"
 
-#: fdisk/fdisk.c:1493
+#: fdisk/fdisk.c:1495
 #, c-format
 msgid "Partition %d has different physical/logical endings:\n"
 msgstr "La partició %d té diferents finals físics/lògics:\n"
 
-#: fdisk/fdisk.c:1502
+#: fdisk/fdisk.c:1504
 #, c-format
 msgid "Partition %i does not start on cylinder boundary:\n"
 msgstr "La partició %i no comença en el límit del cilindre:\n"
 
-#: fdisk/fdisk.c:1505
+#: fdisk/fdisk.c:1507
 #, c-format
 msgid "should be (%d, %d, 1)\n"
 msgstr "ha de ser (%d, %d, 1)\n"
 
-#: fdisk/fdisk.c:1511
+#: fdisk/fdisk.c:1513
 #, c-format
 msgid "Partition %i does not end on cylinder boundary.\n"
 msgstr "La partició %i no acaba en un límit de cilindre.\n"
 
-#: fdisk/fdisk.c:1515
+#: fdisk/fdisk.c:1517
 #, c-format
 msgid "should be (%d, %d, %d)\n"
 msgstr "ha de ser (%d, %d, %d)\n"
 
-#: fdisk/fdisk.c:1527
+#: fdisk/fdisk.c:1529
 #, c-format
 msgid ""
 "\n"
@@ -2686,7 +2689,7 @@ msgstr ""
 "\n"
 "Disc %s: %ld MiB, %lld octets\n"
 
-#: fdisk/fdisk.c:1530
+#: fdisk/fdisk.c:1532
 #, c-format
 msgid ""
 "\n"
@@ -2695,17 +2698,17 @@ msgstr ""
 "\n"
 "Disc %s: %ld.%ld GiB, %lld octets\n"
 
-#: fdisk/fdisk.c:1532
+#: fdisk/fdisk.c:1534
 #, c-format
 msgid "%d heads, %d sectors/track, %d cylinders"
 msgstr "%d capçals, %d sectors/pista, %d cilindres"
 
-#: fdisk/fdisk.c:1535
+#: fdisk/fdisk.c:1537
 #, c-format
 msgid ", total %llu sectors"
 msgstr ", total %llu sectors"
 
-#: fdisk/fdisk.c:1538
+#: fdisk/fdisk.c:1540
 #, c-format
 msgid ""
 "Units = %s of %d * %d = %d bytes\n"
@@ -2714,7 +2717,7 @@ msgstr ""
 "Unitats = %s de %d * %d = %d octets\n"
 "\n"
 
-#: fdisk/fdisk.c:1646
+#: fdisk/fdisk.c:1648
 msgid ""
 "Nothing to do. Ordering is correct already.\n"
 "\n"
@@ -2722,23 +2725,23 @@ msgstr ""
 "Res a fer. L'ordre és correcte.\n"
 "\n"
 
-#: fdisk/fdisk.c:1702
+#: fdisk/fdisk.c:1704
 msgid ""
 "This doesn't look like a partition table\n"
 "Probably you selected the wrong device.\n"
 "\n"
 msgstr ""
 
-#: fdisk/fdisk.c:1716
+#: fdisk/fdisk.c:1718
 #, c-format
 msgid "%*s Boot      Start         End      Blocks   Id  System\n"
 msgstr "%*s Arrenc.   Comença       Acaba    Blocs    Id  Sistema\n"
 
-#: fdisk/fdisk.c:1717 fdisk/fdisksgilabel.c:220 fdisk/fdisksunlabel.c:674
+#: fdisk/fdisk.c:1719 fdisk/fdisksgilabel.c:220 fdisk/fdisksunlabel.c:674
 msgid "Device"
 msgstr "Dispositiu"
 
-#: fdisk/fdisk.c:1754
+#: fdisk/fdisk.c:1756
 msgid ""
 "\n"
 "Partition table entries are not in disk order\n"
@@ -2746,7 +2749,7 @@ msgstr ""
 "\n"
 "Les entrades en la taula de particions no estan en ordre al disc\n"
 
-#: fdisk/fdisk.c:1764
+#: fdisk/fdisk.c:1766
 #, c-format
 msgid ""
 "\n"
@@ -2757,92 +2760,92 @@ msgstr ""
 "Disc %s: %d capçals, %d sectors, %d cilindres\n"
 "\n"
 
-#: fdisk/fdisk.c:1766
+#: fdisk/fdisk.c:1768
 msgid "Nr AF  Hd Sec  Cyl  Hd Sec  Cyl     Start      Size ID\n"
 msgstr "Núm IA Cab Sect Cil Cap Sect Cil    Comença    Mida ID\n"
 
-#: fdisk/fdisk.c:1811
+#: fdisk/fdisk.c:1813
 #, c-format
 msgid "Warning: partition %d contains sector 0\n"
 msgstr "Atenció: La partició %d conté el sector 0\n"
 
-#: fdisk/fdisk.c:1814
+#: fdisk/fdisk.c:1816
 #, c-format
 msgid "Partition %d: head %d greater than maximum %d\n"
 msgstr "Partició %d: El capçal %d supera el màxim %d\n"
 
-#: fdisk/fdisk.c:1817
+#: fdisk/fdisk.c:1819
 #, c-format
 msgid "Partition %d: sector %d greater than maximum %d\n"
 msgstr "Partició %d: El sector %d supera el màxim %d\n"
 
-#: fdisk/fdisk.c:1820
+#: fdisk/fdisk.c:1822
 #, c-format
 msgid "Partitions %d: cylinder %d greater than maximum %d\n"
 msgstr "Partició %d: El cilindre %d supera el màxim %d\n"
 
-#: fdisk/fdisk.c:1824
+#: fdisk/fdisk.c:1826
 #, c-format
 msgid "Partition %d: previous sectors %d disagrees with total %d\n"
 msgstr "Partició %d: Sectors anteriors %d difereixen del total %d\n"
 
-#: fdisk/fdisk.c:1856
+#: fdisk/fdisk.c:1858
 #, c-format
 msgid "Warning: bad start-of-data in partition %d\n"
 msgstr "Atenció: Inici de dades incorrecte en la partició %d\n"
 
-#: fdisk/fdisk.c:1864
+#: fdisk/fdisk.c:1866
 #, c-format
 msgid "Warning: partition %d overlaps partition %d.\n"
 msgstr "Atenció: La partició %d es solapa amb la partició %d.\n"
 
-#: fdisk/fdisk.c:1884
+#: fdisk/fdisk.c:1886
 #, c-format
 msgid "Warning: partition %d is empty\n"
 msgstr "Atenció: La partició %d està buida\n"
 
-#: fdisk/fdisk.c:1889
+#: fdisk/fdisk.c:1891
 #, c-format
 msgid "Logical partition %d not entirely in partition %d\n"
 msgstr "La partició lògica %d no està integrada en la partició %d\n"
 
-#: fdisk/fdisk.c:1895
+#: fdisk/fdisk.c:1897
 #, fuzzy, c-format
 msgid "Total allocated sectors %d greater than the maximum %lld\n"
 msgstr "El total de sectors assignats %d supera el màxim de %d\n"
 
-#: fdisk/fdisk.c:1898
+#: fdisk/fdisk.c:1900
 #, fuzzy, c-format
 msgid "%lld unallocated sectors\n"
 msgstr "%d sectors no assignats\n"
 
-#: fdisk/fdisk.c:1913 fdisk/fdisksgilabel.c:629 fdisk/fdisksunlabel.c:503
+#: fdisk/fdisk.c:1915 fdisk/fdisksgilabel.c:629 fdisk/fdisksunlabel.c:503
 #, c-format
 msgid "Partition %d is already defined.  Delete it before re-adding it.\n"
 msgstr ""
 "La partició %d ja està definida. Esborreu-la abans de tornar-la a afegir.\n"
 
-#: fdisk/fdisk.c:1940 fdisk/fdiskbsdlabel.c:284 fdisk/fdisksgilabel.c:647
+#: fdisk/fdisk.c:1942 fdisk/fdiskbsdlabel.c:284 fdisk/fdisksgilabel.c:647
 #: fdisk/fdisksunlabel.c:518
 #, c-format
 msgid "First %s"
 msgstr "Primer %s"
 
-#: fdisk/fdisk.c:1955 fdisk/fdisksunlabel.c:559
+#: fdisk/fdisk.c:1957 fdisk/fdisksunlabel.c:559
 #, c-format
 msgid "Sector %d is already allocated\n"
 msgstr "El sector %d ja està assignat\n"
 
-#: fdisk/fdisk.c:1991
+#: fdisk/fdisk.c:1993
 msgid "No free sectors available\n"
 msgstr "No hi ha cap sector lliure disponible\n"
 
-#: fdisk/fdisk.c:2000 fdisk/fdiskbsdlabel.c:291 fdisk/fdisksunlabel.c:570
+#: fdisk/fdisk.c:2002 fdisk/fdiskbsdlabel.c:291 fdisk/fdisksunlabel.c:570
 #, c-format
 msgid "Last %s or +size or +sizeM or +sizeK"
 msgstr "Últim %s o +mida o +midaM o +midaK"
 
-#: fdisk/fdisk.c:2065
+#: fdisk/fdisk.c:2067
 msgid ""
 "\tSorry - this fdisk cannot handle AIX disk labels.\n"
 "\tIf you want to add DOS-type partitions, create\n"
@@ -2854,25 +2857,25 @@ msgstr ""
 "\t particions DOS (Useu o).\n"
 "\tATENCIÓ: Això destruirà l'actual contingut del disc.\n"
 
-#: fdisk/fdisk.c:2077 fdisk/fdiskbsdlabel.c:618
+#: fdisk/fdisk.c:2079 fdisk/fdiskbsdlabel.c:618
 msgid "The maximum number of partitions has been created\n"
 msgstr "S'ha creat el màxim nombre de particions\n"
 
-#: fdisk/fdisk.c:2085
+#: fdisk/fdisk.c:2087
 msgid "You must delete some partition and add an extended partition first\n"
 msgstr "Primer heu de suprimir alguna partició i afegir-ne una d'estesa\n"
 
-#: fdisk/fdisk.c:2088
+#: fdisk/fdisk.c:2090
 #, fuzzy
 msgid "All logical partitions are in use\n"
 msgstr "les particions lògiques no estan en un ordre de disc"
 
-#: fdisk/fdisk.c:2089
+#: fdisk/fdisk.c:2091
 #, fuzzy
 msgid "Adding a primary partition\n"
 msgstr "Partició primària incorrecta"
 
-#: fdisk/fdisk.c:2094
+#: fdisk/fdisk.c:2096
 #, c-format
 msgid ""
 "Command action\n"
@@ -2883,20 +2886,20 @@ msgstr ""
 "%s\n"
 "   p   Partició primària (1-4)\n"
 
-#: fdisk/fdisk.c:2096
+#: fdisk/fdisk.c:2098
 msgid "l   logical (5 or over)"
 msgstr "l   lògica (5 o superior)"
 
-#: fdisk/fdisk.c:2096
+#: fdisk/fdisk.c:2098
 msgid "e   extended"
 msgstr "e   estesa"
 
-#: fdisk/fdisk.c:2115
+#: fdisk/fdisk.c:2117
 #, c-format
 msgid "Invalid partition number for type `%c'\n"
 msgstr "Nombre de partició no vàlid per al tipus `%c'\n"
 
-#: fdisk/fdisk.c:2151
+#: fdisk/fdisk.c:2153
 msgid ""
 "The partition table has been altered!\n"
 "\n"
@@ -2904,11 +2907,11 @@ msgstr ""
 "Ja s'ha modificat la taula de particions!\n"
 "\n"
 
-#: fdisk/fdisk.c:2160
+#: fdisk/fdisk.c:2162
 msgid "Calling ioctl() to re-read partition table.\n"
 msgstr "Cridant a ioctl() per a rellegir la taula de particions.\n"
 
-#: fdisk/fdisk.c:2176
+#: fdisk/fdisk.c:2178
 #, c-format
 msgid ""
 "\n"
@@ -2921,7 +2924,7 @@ msgstr ""
 "El nucli encara usa l'antiga taula.\n"
 "La taula nova s'usarà després de reiniciar.\n"
 
-#: fdisk/fdisk.c:2186
+#: fdisk/fdisk.c:2188
 msgid ""
 "\n"
 "WARNING: If you have created or modified any DOS 6.x\n"
@@ -2933,67 +2936,67 @@ msgstr ""
 "particions DOS 6.x, mireu la pàgina del manual del fdisk\n"
 "per a informació addicional.\n"
 
-#: fdisk/fdisk.c:2193
+#: fdisk/fdisk.c:2195
 msgid "Syncing disks.\n"
 msgstr "Sincronitzant els discs.\n"
 
-#: fdisk/fdisk.c:2240
+#: fdisk/fdisk.c:2242
 #, c-format
 msgid "Partition %d has no data area\n"
 msgstr "La partició %d no té cap àrea amb dades\n"
 
-#: fdisk/fdisk.c:2245
+#: fdisk/fdisk.c:2247
 msgid "New beginning of data"
 msgstr "Nou començament de dades"
 
-#: fdisk/fdisk.c:2261
+#: fdisk/fdisk.c:2263
 msgid "Expert command (m for help): "
 msgstr "Comandament expert (m per a l'ajuda): "
 
-#: fdisk/fdisk.c:2274
+#: fdisk/fdisk.c:2276
 msgid "Number of cylinders"
 msgstr "Nombre de cilindres"
 
-#: fdisk/fdisk.c:2301
+#: fdisk/fdisk.c:2303
 msgid "Number of heads"
 msgstr "Nombre de capçals"
 
-#: fdisk/fdisk.c:2326
+#: fdisk/fdisk.c:2328
 msgid "Number of sectors"
 msgstr "Nombre de sectors"
 
-#: fdisk/fdisk.c:2329
+#: fdisk/fdisk.c:2331
 msgid "Warning: setting sector offset for DOS compatiblity\n"
 msgstr ""
 "Atenció: Establint desplaçament del sector per a la compatibilitat amb DOS\n"
 
-#: fdisk/fdisk.c:2401
+#: fdisk/fdisk.c:2403
 #, c-format
 msgid "Disk %s doesn't contain a valid partition table\n"
 msgstr "El disc %s no conté una taula de particions vàlida\n"
 
-#: fdisk/fdisk.c:2412
+#: fdisk/fdisk.c:2414
 #, c-format
 msgid "Cannot open %s\n"
 msgstr "No es pot obrir %s\n"
 
-#: fdisk/fdisk.c:2430 fdisk/sfdisk.c:2452
+#: fdisk/fdisk.c:2432 fdisk/sfdisk.c:2454
 #, c-format
 msgid "cannot open %s\n"
 msgstr "no es pot obrir %s\n"
 
-#: fdisk/fdisk.c:2450
+#: fdisk/fdisk.c:2452
 #, c-format
 msgid "%c: unknown command\n"
 msgstr "%c: Comandament desconegut\n"
 
-#: fdisk/fdisk.c:2518
+#: fdisk/fdisk.c:2520
 msgid "This kernel finds the sector size itself - -b option ignored\n"
 msgstr ""
 "Aquest nucli cerca la mida del sector por si mateix; l'opció -b serà "
 "ignorada\n"
 
-#: fdisk/fdisk.c:2522
+#: fdisk/fdisk.c:2524
 msgid ""
 "Warning: the -b (set sector size) option should be used with one specified "
 "device\n"
@@ -3002,18 +3005,18 @@ msgstr ""
 "dispositiu específic\n"
 
 #. OSF label, and no DOS label
-#: fdisk/fdisk.c:2581
+#: fdisk/fdisk.c:2583
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 "A l'entrar el mode d'etiqueta, s'ha detectat una etiqueta de disc OSF/1 en %"
 "s.\n"
 
-#: fdisk/fdisk.c:2591
+#: fdisk/fdisk.c:2593
 msgid "Command (m for help): "
 msgstr "Comandament (m per a l'ajuda): "
 
-#: fdisk/fdisk.c:2607
+#: fdisk/fdisk.c:2609
 #, c-format
 msgid ""
 "\n"
@@ -3022,15 +3025,15 @@ msgstr ""
 "\n"
 "L'actual fitxer d'arrencada és: %s\n"
 
-#: fdisk/fdisk.c:2609
+#: fdisk/fdisk.c:2611
 msgid "Please enter the name of the new boot file: "
 msgstr "Si us plau entreu el nom del nou fitxer d'arrencada: "
 
-#: fdisk/fdisk.c:2611
+#: fdisk/fdisk.c:2613
 msgid "Boot file unchanged\n"
 msgstr "No s'ha modificat el fitxer d'arrencada\n"
 
-#: fdisk/fdisk.c:2684
+#: fdisk/fdisk.c:2686
 msgid ""
 "\n"
 "\tSorry, no experts menu for SGI partition tables available.\n"
@@ -4889,48 +4892,48 @@ msgstr ""
 "Normalment sols necessitarieu especificar <començament> i <mida> (i potser "
 "<tipus>).\n"
 
-#: fdisk/sfdisk.c:2301
+#: fdisk/sfdisk.c:2303
 msgid "version"
 msgstr "versió"
 
-#: fdisk/sfdisk.c:2307
+#: fdisk/sfdisk.c:2309
 #, c-format
 msgid "Usage: %s [options] device ...\n"
 msgstr "Ús: %s [opcions] dispositiu ...\n"
 
-#: fdisk/sfdisk.c:2308
+#: fdisk/sfdisk.c:2310
 msgid "device: something like /dev/hda or /dev/sda"
 msgstr "dispositiu: Semblant a /dev/hda o /dev/sda"
 
-#: fdisk/sfdisk.c:2309
+#: fdisk/sfdisk.c:2311
 msgid "useful options:"
 msgstr "opcions útils:"
 
-#: fdisk/sfdisk.c:2310
+#: fdisk/sfdisk.c:2312
 msgid "    -s [or --show-size]: list size of a partition"
 msgstr "    -s [o --show-size]:  Mostra la mida d'una partició"
 
-#: fdisk/sfdisk.c:2311
+#: fdisk/sfdisk.c:2313
 msgid "    -c [or --id]:        print or change partition Id"
 msgstr ""
 "    -c [o --id]:         Imprimeix o canvia l'identificador de la partició"
 
-#: fdisk/sfdisk.c:2312
+#: fdisk/sfdisk.c:2314
 msgid "    -l [or --list]:      list partitions of each device"
 msgstr "    -l [o --list]:       Mostra les particions de cada dispositiu"
 
-#: fdisk/sfdisk.c:2313
+#: fdisk/sfdisk.c:2315
 msgid "    -d [or --dump]:      idem, but in a format suitable for later input"
 msgstr ""
 "    -d [o --dump]:       Igual, però amb un format adequat per l'entrada "
 "posterior"
 
-#: fdisk/sfdisk.c:2314
+#: fdisk/sfdisk.c:2316
 msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
 msgstr ""
 "    -i [o --increment]:  Nombre de cilindres, etc. des de 1 en comptes de 0"
 
-#: fdisk/sfdisk.c:2315
+#: fdisk/sfdisk.c:2317
 msgid ""
 "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
 "MB"
@@ -4938,56 +4941,56 @@ msgstr ""
 "    -uS, -uB, -uC, -uM:  Accepta/reporta en unitats de sectors/blocs/"
 "cilindres/MB"
 
-#: fdisk/sfdisk.c:2316
+#: fdisk/sfdisk.c:2318
 msgid "    -T [or --list-types]:list the known partition types"
 msgstr "    -T [o --list-types]: Llista els tipus de particions conegudes"
 
-#: fdisk/sfdisk.c:2317
+#: fdisk/sfdisk.c:2319
 msgid "    -D [or --DOS]:       for DOS-compatibility: waste a little space"
 msgstr ""
 "    -D [o --DOS]:        Per compatibilitat amb DOS: Es perd una mica d'espai"
 
-#: fdisk/sfdisk.c:2318
+#: fdisk/sfdisk.c:2320
 msgid "    -R [or --re-read]:   make kernel reread partition table"
 msgstr ""
 "    -R [o --re-read]:    Fa que el nucli rellegeixi la taula de particions"
 
-#: fdisk/sfdisk.c:2319
+#: fdisk/sfdisk.c:2321
 msgid "    -N# :                change only the partition with number #"
 msgstr "    -N# :                Sols canvia la partició amb el número #"
 
-#: fdisk/sfdisk.c:2320
+#: fdisk/sfdisk.c:2322
 msgid "    -n :                 do not actually write to disk"
 msgstr "    -n :                 No escriu realment al disc"
 
-#: fdisk/sfdisk.c:2321
+#: fdisk/sfdisk.c:2323
 msgid ""
 "    -O file :            save the sectors that will be overwritten to file"
 msgstr ""
 "    -O fitxer :          Desa els sectors que es sobreescriuran en un fitxer"
 
-#: fdisk/sfdisk.c:2322
+#: fdisk/sfdisk.c:2324
 msgid "    -I file :            restore these sectors again"
 msgstr "    -I fitxer:           Restaura aquests sectors altra vegada"
 
-#: fdisk/sfdisk.c:2323
+#: fdisk/sfdisk.c:2325
 msgid "    -v [or --version]:   print version"
 msgstr "    -v [o --version]:    Imprimeix la versió"
 
-#: fdisk/sfdisk.c:2324
+#: fdisk/sfdisk.c:2326
 msgid "    -? [or --help]:      print this message"
 msgstr "    -? [o --help]:       Imprimeix aquest missatge"
 
-#: fdisk/sfdisk.c:2325
+#: fdisk/sfdisk.c:2327
 msgid "dangerous options:"
 msgstr "opcions perilloses:"
 
-#: fdisk/sfdisk.c:2326
+#: fdisk/sfdisk.c:2328
 msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
 msgstr ""
 "    -g [o --show-geometry]:  Imprimeix la idea del nucli de la geometria"
 
-#: fdisk/sfdisk.c:2327
+#: fdisk/sfdisk.c:2329
 msgid ""
 "    -x [or --show-extended]: also list extended partitions on output\n"
 "                             or expect descriptors for them on input"
@@ -4996,119 +4999,119 @@ msgstr ""
 "esteses\n"
 "                             o espera els seus descriptors en l'entrada"
 
-#: fdisk/sfdisk.c:2329
+#: fdisk/sfdisk.c:2331
 msgid ""
 "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
 msgstr ""
 "    -L  [o --Linux]:       No mostra avisos sobre aspectes irrellevants per "
 "a Linux"
 
-#: fdisk/sfdisk.c:2330
+#: fdisk/sfdisk.c:2332
 msgid "    -q  [or --quiet]:      suppress warning messages"
 msgstr "    -q  [o --quiet]:       Suprimeix els missatges d'advertència"
 
-#: fdisk/sfdisk.c:2331
+#: fdisk/sfdisk.c:2333
 msgid "    You can override the detected geometry using:"
 msgstr "    Podeu modificar la geometria detectada usant:"
 
-#: fdisk/sfdisk.c:2332
+#: fdisk/sfdisk.c:2334
 msgid "    -C# [or --cylinders #]:set the number of cylinders to use"
 msgstr ""
 "    -C# [o --cylinders #]: Estableix el nombre de cilindres que s'usaran"
 
-#: fdisk/sfdisk.c:2333
+#: fdisk/sfdisk.c:2335
 msgid "    -H# [or --heads #]:    set the number of heads to use"
 msgstr "    -H# [o --heads #]:     Estableix el nombre de capçals que s'usaran"
 
-#: fdisk/sfdisk.c:2334
+#: fdisk/sfdisk.c:2336
 msgid "    -S# [or --sectors #]:  set the number of sectors to use"
 msgstr "    -S# [o --sectors #]:   Estableix el nombre de sectors que s'usaran"
 
-#: fdisk/sfdisk.c:2335
+#: fdisk/sfdisk.c:2337
 msgid "You can disable all consistency checking with:"
 msgstr "Podeu desactivar tota comprovació de consistència amb:"
 
-#: fdisk/sfdisk.c:2336
+#: fdisk/sfdisk.c:2338
 msgid "    -f  [or --force]:      do what I say, even if it is stupid"
 msgstr ""
 "    -f  [o --force]:       Farà el que li digueu, encara que sigui estúpid"
 
-#: fdisk/sfdisk.c:2342
+#: fdisk/sfdisk.c:2344
 msgid "Usage:"
 msgstr "Ús:"
 
-#: fdisk/sfdisk.c:2343
+#: fdisk/sfdisk.c:2345
 #, c-format
 msgid "%s device\t\t list active partitions on device\n"
 msgstr "%s dispositiu\t\t enumera les particions actives del dispositiu\n"
 
-#: fdisk/sfdisk.c:2344
+#: fdisk/sfdisk.c:2346
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
 msgstr ""
 "%s dispositiu n1 n2 ... activar particions n1 ..., desactivar la resta\n"
 
-#: fdisk/sfdisk.c:2345
+#: fdisk/sfdisk.c:2347
 #, c-format
 msgid "%s -An device\t activate partition n, inactivate the other ones\n"
 msgstr "%s -Un perifèric\t activa la partició n, desactiva la resta\n"
 
-#: fdisk/sfdisk.c:2509
+#: fdisk/sfdisk.c:2511
 msgid "no command?\n"
 msgstr "cap comandament?\n"
 
-#: fdisk/sfdisk.c:2627
+#: fdisk/sfdisk.c:2629
 #, fuzzy, c-format
 msgid "total: %llu blocks\n"
 msgstr "total: %d blocs\n"
 
-#: fdisk/sfdisk.c:2664
+#: fdisk/sfdisk.c:2666
 msgid "usage: sfdisk --print-id device partition-number\n"
 msgstr "ús: sfdisk --print-id dispositiu partició_número\n"
 
-#: fdisk/sfdisk.c:2666
+#: fdisk/sfdisk.c:2668
 msgid "usage: sfdisk --change-id device partition-number Id\n"
 msgstr "ús: sfdisk --change-id dispositiu número_partició Id\n"
 
-#: fdisk/sfdisk.c:2668
+#: fdisk/sfdisk.c:2670
 msgid "usage: sfdisk --id device partition-number [Id]\n"
 msgstr "ús: sfdisk --id dispositiu partició_número [Id]\n"
 
-#: fdisk/sfdisk.c:2675
+#: fdisk/sfdisk.c:2677
 msgid "can specify only one device (except with -l or -s)\n"
 msgstr "sols podeu especificar un dispositiu (excepte amb -l o -s)\n"
 
-#: fdisk/sfdisk.c:2701
+#: fdisk/sfdisk.c:2703
 #, c-format
 msgid "cannot open %s read-write\n"
 msgstr "no es pot obrir %s per a lectura-escriptura\n"
 
-#: fdisk/sfdisk.c:2703
+#: fdisk/sfdisk.c:2705
 #, c-format
 msgid "cannot open %s for reading\n"
 msgstr "no es pot obrir %s per a lectura\n"
 
-#: fdisk/sfdisk.c:2728
+#: fdisk/sfdisk.c:2730
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: Correcte\n"
 
-#: fdisk/sfdisk.c:2745
+#: fdisk/sfdisk.c:2747
 #, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s : %ld cilindres, %ld capçals, %ld sectors/pista\n"
 
-#: fdisk/sfdisk.c:2762
+#: fdisk/sfdisk.c:2764
 #, fuzzy, c-format
 msgid "Cannot get size of %s\n"
 msgstr "no es pot aconseguir la mida de %s"
 
-#: fdisk/sfdisk.c:2840
+#: fdisk/sfdisk.c:2842
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "octet actiu incorrecte: 0x%x en comptes de 0x80\n"
 
-#: fdisk/sfdisk.c:2858 fdisk/sfdisk.c:2911 fdisk/sfdisk.c:2942
+#: fdisk/sfdisk.c:2860 fdisk/sfdisk.c:2913 fdisk/sfdisk.c:2944
 msgid ""
 "Done\n"
 "\n"
@@ -5116,7 +5119,7 @@ msgstr ""
 "Fet\n"
 "\n"
 
-#: fdisk/sfdisk.c:2867
+#: fdisk/sfdisk.c:2869
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -5125,35 +5128,35 @@ msgstr ""
 "Teniu %d particions primàries actives. Això no és important per al LILO,\n"
 "però el MBR del DOS sols pot arrencar discs amb una partició activa.\n"
 
-#: fdisk/sfdisk.c:2881
+#: fdisk/sfdisk.c:2883
 #, c-format
 msgid "partition %s has id %x and is not hidden\n"
 msgstr "la partició %s té l'identificador %x i no està oculta\n"
 
-#: fdisk/sfdisk.c:2938
+#: fdisk/sfdisk.c:2940
 #, c-format
 msgid "Bad Id %lx\n"
 msgstr "Identificador dolent %lx\n"
 
-#: fdisk/sfdisk.c:2953
+#: fdisk/sfdisk.c:2955
 msgid "This disk is currently in use.\n"
 msgstr "Aquest disc està actualment en ús.\n"
 
-#: fdisk/sfdisk.c:2970
+#: fdisk/sfdisk.c:2972
 #, c-format
 msgid "Fatal error: cannot find %s\n"
 msgstr "Error fatal: No es pot trobar %s\n"
 
-#: fdisk/sfdisk.c:2973
+#: fdisk/sfdisk.c:2975
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "Atenció: %s no és un dispositiu de blocs\n"
 
-#: fdisk/sfdisk.c:2979
+#: fdisk/sfdisk.c:2981
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr "Comprovant que en aquest moment ningú estigui usant aquest disc...\n"
 
-#: fdisk/sfdisk.c:2981
+#: fdisk/sfdisk.c:2983
 msgid ""
 "\n"
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -5166,28 +5169,28 @@ msgstr ""
 "swapoff en totes les particions d'intercanvi del disc.\n"
 "Useu l'etiqueta --no-reread per a suprimir aquesta comprovació.\n"
 
-#: fdisk/sfdisk.c:2985
+#: fdisk/sfdisk.c:2987
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "Useu l'etiqueta --force per a obviar totes les comprovacions.\n"
 
-#: fdisk/sfdisk.c:2989
+#: fdisk/sfdisk.c:2991
 msgid "OK\n"
 msgstr "Correcte\n"
 
-#: fdisk/sfdisk.c:2998
+#: fdisk/sfdisk.c:3000
 msgid "Old situation:\n"
 msgstr "Antiga situació:\n"
 
-#: fdisk/sfdisk.c:3002
+#: fdisk/sfdisk.c:3004
 #, c-format
 msgid "Partition %d does not exist, cannot change it\n"
 msgstr "La partició %d no existeix; no es pot canviar\n"
 
-#: fdisk/sfdisk.c:3010
+#: fdisk/sfdisk.c:3012
 msgid "New situation:\n"
 msgstr "Nova situació:\n"
 
-#: fdisk/sfdisk.c:3015
+#: fdisk/sfdisk.c:3017
 msgid ""
 "I don't like these partitions - nothing changed.\n"
 "(If you really want this, use the --force option.)\n"
@@ -5195,19 +5198,19 @@ msgstr ""
 "No veig aquestes particions adequades - no he canviat res.\n"
 "(Si realment desitgeu fer això, useu l'opció --force).\n"
 
-#: fdisk/sfdisk.c:3018
+#: fdisk/sfdisk.c:3020
 msgid "I don't like this - probably you should answer No\n"
 msgstr "No veig això adequat - probablement hagueu de respondre No\n"
 
-#: fdisk/sfdisk.c:3023
+#: fdisk/sfdisk.c:3025
 msgid "Are you satisfied with this? [ynq] "
 msgstr "Esteu satisfet amb això? [ynq] "
 
-#: fdisk/sfdisk.c:3025
+#: fdisk/sfdisk.c:3027
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "Desitgeu escriure això al disc? [ynq] "
 
-#: fdisk/sfdisk.c:3030
+#: fdisk/sfdisk.c:3032
 msgid ""
 "\n"
 "sfdisk: premature end of input\n"
@@ -5215,15 +5218,15 @@ msgstr ""
 "\n"
 "sfdisk: Final prematur de l'entrada\n"
 
-#: fdisk/sfdisk.c:3032
+#: fdisk/sfdisk.c:3034
 msgid "Quitting - nothing changed\n"
 msgstr "Sortint - no s'ha canviat res\n"
 
-#: fdisk/sfdisk.c:3038
+#: fdisk/sfdisk.c:3040
 msgid "Please answer one of y,n,q\n"
 msgstr "Si us plau responeu amb una: y,n,q\n"
 
-#: fdisk/sfdisk.c:3046
+#: fdisk/sfdisk.c:3048
 msgid ""
 "Successfully wrote the new partition table\n"
 "\n"
@@ -5231,7 +5234,7 @@ msgstr ""
 "S'ha escrit correctament la nova taula de particions\n"
 "\n"
 
-#: fdisk/sfdisk.c:3052
+#: fdisk/sfdisk.c:3054
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -6217,8 +6220,8 @@ msgid "Password error."
 msgstr "Error de contrasenya."
 
 #: login-utils/chfn.c:203 login-utils/chsh.c:200 login-utils/login.c:774
-#: login-utils/newgrp.c:48 login-utils/simpleinit.c:338 mount/lomount.c:293
-#: mount/lomount.c:296
+#: login-utils/newgrp.c:48 login-utils/simpleinit.c:338 mount/lomount.c:297
+#: mount/lomount.c:300
 msgid "Password: "
 msgstr "Contrasenya: "
 
@@ -7785,12 +7788,17 @@ msgstr ", tipus de xifrat %d\n"
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: No es pot obtindre informació sobre el dispositiu %s: %s\n"
 
-#: mount/lomount.c:177
+#: mount/lomount.c:179
 #, fuzzy, c-format
 msgid "%s: could not find any device /dev/loop#"
 msgstr "mount: No es pot trobar cap dispositiu /dev/loop#"
 
-#: mount/lomount.c:180
+#: mount/lomount.c:181
+#, c-format
+msgid "%s: no permission to look at /dev/loop#"
+msgstr ""
+
+#: mount/lomount.c:184
 #, fuzzy, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -7799,36 +7807,36 @@ msgstr ""
 "mount: No es pot trobar cap dispositiu loop. Podria ser que el nucli no el\n"
 "       reconeguès?. (Si es això, recompileu o feu `modprobe loop')."
 
-#: mount/lomount.c:185
+#: mount/lomount.c:189
 #, fuzzy, c-format
 msgid "%s: could not find any free loop device"
 msgstr "mount: No es pot trobar cap dispositiu loop lliure"
 
-#: mount/lomount.c:283
+#: mount/lomount.c:287
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "No es pot blocar en memòria, sortint.\n"
 
-#: mount/lomount.c:337
+#: mount/lomount.c:341
 #, fuzzy, c-format
 msgid "set_loop(%s,%s,%llu): success\n"
 msgstr "set_loop(%s,%s,%d): Correcte\n"
 
-#: mount/lomount.c:348
+#: mount/lomount.c:352
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: No es pot suprimir el dispositiu %s: %s\n"
 
-#: mount/lomount.c:358
+#: mount/lomount.c:362
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): Correcte\n"
 
-#: mount/lomount.c:366
+#: mount/lomount.c:370
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Aquest mount s'ha compilat sense suport loop. Si us plau, recompileu-lo.\n"
 
-#: mount/lomount.c:403
+#: mount/lomount.c:407
 #, fuzzy, c-format
 msgid ""
 "usage:\n"
@@ -7842,12 +7850,12 @@ msgstr ""
 "  %s -d dispositiu_loop                              # elimina\n"
 "  %s [ -e xifrat ] [ -o desplaça. ] disp_loop fitxer # configura\n"
 
-#: mount/lomount.c:422 mount/sundries.c:30 mount/sundries.c:45
+#: mount/lomount.c:426 mount/sundries.c:30 mount/sundries.c:45
 #: mount/sundries.c:248
 msgid "not enough memory"
 msgstr "no hi ha prou memòria"
 
-#: mount/lomount.c:537
+#: mount/lomount.c:541
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
 "Quan es va compilar el suport loop no estava disponible. Si us plau, "
@@ -8379,7 +8387,7 @@ msgstr "valor de retorn de nfs status desconegut: %d"
 msgid "bug in xstrndup call"
 msgstr "error en la crida xstrndup"
 
-#: mount/swapon.c:64
+#: mount/swapon.c:54
 #, c-format
 msgid ""
 "usage: %s [-hV]\n"
@@ -8392,7 +8400,7 @@ msgstr ""
 "      %s [-v] [-p prioritat] especial ...\n"
 "      %s [-s]\n"
 
-#: mount/swapon.c:74
+#: mount/swapon.c:64
 #, c-format
 msgid ""
 "usage: %s [-hV]\n"
@@ -8403,33 +8411,33 @@ msgstr ""
 "     %s -a [-v]\n"
 "     %s [-v] especial ...\n"
 
-#: mount/swapon.c:178 mount/swapon.c:242
+#: mount/swapon.c:168 mount/swapon.c:232
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s en %s\n"
 
-#: mount/swapon.c:182
+#: mount/swapon.c:172
 #, c-format
 msgid "swapon: cannot stat %s: %s\n"
 msgstr "swapon: No es pot executar stat per a %s: %s\n"
 
-#: mount/swapon.c:193
+#: mount/swapon.c:183
 #, c-format
 msgid "swapon: warning: %s has insecure permissions %04o, %04o suggested\n"
 msgstr ""
 "swapon: Atenció: %s teniu els permisos %04o que no son segurs, es "
 "suggereixen %04o\n"
 
-#: mount/swapon.c:205
+#: mount/swapon.c:195
 #, c-format
 msgid "swapon: Skipping file %s - it appears to have holes.\n"
 msgstr "swapon: Saltant-se el fitxer %s - sembla que està a troços.\n"
 
-#: mount/swapon.c:248
+#: mount/swapon.c:238
 msgid "Not superuser.\n"
 msgstr "No és el superusuari.\n"
 
-#: mount/swapon.c:312 mount/swapon.c:407
+#: mount/swapon.c:302 mount/swapon.c:397
 #, c-format
 msgid "%s: cannot open %s: %s\n"
 msgstr "%s: No es pot obrir %s: %s\n"
@@ -10009,6 +10017,10 @@ msgstr "Línia d'entrada massa llarga.\n"
 #: text-utils/ul.c:599
 msgid "Out of memory when growing buffer.\n"
 msgstr "Memòria esgotada a l'augmentar la mida de la memòria temporal.\n"
+
+#, fuzzy
+#~ msgid "Warning: omitting partitions after %d\n"
+#~ msgstr "Atenció: S'estan suprimint les particions després de %d\n"
 
 #~ msgid "mount: fs type %s not supported by kernel"
 #~ msgstr ""

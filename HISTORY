@@ -1,3 +1,14 @@
+util-linux 2.12k
+
+* cfdisk: fixed a signed character bug causing problems for Spanish users
+* configure, MCONFIG: detect gcc 3.4.0 and use -mtune option (Matthew Burgess)
+* configure: do not run ./conftest (for cross compilation) (NIIBE Yutaka)
+* fsck.cramfs: try to get correct PAGE_CACHE_SIZE
+* losetup: try to give better error messages
+* readprofile: default map file is /boot/System.map
+* rdev.8: added historical info on ramdisk
+* New French, Spanish, Swedish and Turkish messages
+
 util-linux 2.12j
 
 * cal: highlight today (Pádraig Brady)
@@ -10,7 +21,7 @@ util-linux 2.12j
 * swapon: let swapon -a skip the swapfiles marked "noauto" (Dale R. Worley)
 * umount: fix problem with empty mtab (Bryan Kadzban)
 * umount: use special umount program if it exists (Ram Pai)
-* New Danish messages
+* New Danish and French messages
 
 util-linux 2.12i
 

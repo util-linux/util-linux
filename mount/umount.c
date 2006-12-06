@@ -655,7 +655,7 @@ main (int argc, char *argv[]) {
 	if ((p = strrchr(progname, '/')) != NULL)
 		progname = p+1;
 
-	umask(033);
+	umask(022);
 
 	while ((c = getopt_long (argc, argv, "adfhlnrit:O:vV",
 				 longopts, NULL)) != -1)

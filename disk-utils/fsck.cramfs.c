@@ -75,7 +75,17 @@ unsigned long end_data = 0;		/* end of the data */
 static uid_t euid;			/* effective UID */
 
 #define PAD_SIZE 512
+
+#include <asm/page.h>
+#ifdef PAGE_SIZE
+#define PAGE_CACHE_SIZE ((int) PAGE_SIZE)
+#elif defined __ia64__
+#define PAGE_CACHE_SIZE (16384)
+#elif defined __alpha__
+#define PAGE_CACHE_SIZE (8192)
+#else
 #define PAGE_CACHE_SIZE (4096)
+#endif
 
 /* Guarantee access to at least 8kB at a time */
 #define ROMBUFFER_BITS	13

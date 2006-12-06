@@ -23,7 +23,7 @@ echo $SWAPH >> conftest.c
 echo '#include <unistd.h>
 main(){ exit(0); swapon("/dev/null", 0); }' >> conftest.c
 eval $compile
-if test -s conftest && ./conftest 2>/dev/null; then
+if test -s conftest; then
 	echo "#define SWAPON_HAS_TWO_ARGS" > swapargs.h
 	echo $PAGEH >> swapargs.h
 	echo $SWAPH >> swapargs.h

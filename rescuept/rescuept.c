@@ -23,6 +23,7 @@
 #include <stdio.h>
 #include <fcntl.h>
 #include <string.h>
+#include <stdlib.h>
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
@@ -50,7 +51,7 @@ typedef short sint16;
 typedef unsigned char uchar;
 
 void read_sectors(int fd, char *buf, int sectornr, int sectorct) {
-	extern long long llseek();
+	extern long long llseek(int fd, long long offset, int whence);
 	long long offset;
 	int n;
 
@@ -519,7 +520,7 @@ main(int argc, char **argv){
 	pagesecs = pagesize/512;
 
 	printf("# partition table of %s\n", device);
-	printf("# total size %d sectors\n", size);
+	printf("# total size %ld sectors\n", size);
 	printf("unit: sectors\n");
 
 	for(i=0; i<size; i++) {
