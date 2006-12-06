@@ -12,7 +12,7 @@
 #include "mntent.h"
 #include "fstab.h"
 #include "sundries.h"		/* for xmalloc() etc */
-#include "get_label_uuid.h"
+#include "mount_blkid.h"
 #include "nls.h"
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
@@ -260,20 +260,24 @@ getmntoptfile (const char *file) {
 
 static int
 has_label(const char *device, const char *label) {
-	char devuuid[16];
-	char *devlabel;
+	const char *devlabel;
+	int ret;
 
-	return !get_label_uuid(device, &devlabel, devuuid) &&
-		!strcmp(label, devlabel);
+	devlabel = mount_get_volume_label_by_spec(device);
+	ret = !strcmp(label, devlabel);
+	/* free(devlabel); */
+	return ret;
 }
 
 static int
 has_uuid(const char *device, const char *uuid){
-	char devuuid[16];
-	char *devlabel;
+	const char *devuuid;
+	int ret;
 
-	return !get_label_uuid(device, &devlabel, devuuid) &&
-		!memcmp(uuid, devuuid, sizeof(devuuid));
+	devuuid = mount_get_devname_by_uuid(device);
+	ret = !strcmp(uuid, devuuid);
+	/* free(devuuid); */
+	return ret;
 }
 
 /* Find the entry (SPEC,FILE) in fstab */
@@ -455,6 +459,9 @@ lock_mtab (void) {
 
 		(void) unlink(linktargetfile);
 
+		if (j == 0)
+			we_created_lockfile = 1;
+
 		if (j < 0 && errsv != EEXIST) {
 			die (EX_FILEIO, _("can't link lock file %s: %s "
 			     "(use -n flag to override)"),
@@ -488,7 +495,6 @@ lock_mtab (void) {
 				}
 				/* proceed anyway */
 			}
-			we_created_lockfile = 1;
 		} else {
 			static int tries = 0;
 

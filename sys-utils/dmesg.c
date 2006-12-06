@@ -11,6 +11,24 @@
  *
  */
 
+/*
+ * Commands to sys_syslog:
+ *
+ *      0 -- Close the log.  Currently a NOP.
+ *      1 -- Open the log. Currently a NOP.
+ *      2 -- Read from the log.
+ *      3 -- Read all messages remaining in the ring buffer.
+ *      4 -- Read and clear all messages remaining in the ring buffer
+ *      5 -- Clear ring buffer.
+ *      6 -- Disable printk's to console
+ *      7 -- Enable printk's to console
+ *      8 -- Set level of messages printed to console
+ *      9 -- Return number of unread characters in the log buffer
+ *           [supported since 2.4.10]
+ *
+ * Only function 3 is allowed to non-root processes.
+ */
+
 #include <linux/unistd.h>
 #include <stdio.h>
 #include <getopt.h>
@@ -41,13 +59,14 @@ usage(void) {
 int
 main(int argc, char *argv[]) {
 	char *buf;
-	int  bufsize = 16392;
+	int  sz;
+	int  bufsize = 0;
 	int  i;
 	int  n;
 	int  c;
 	int  level = 0;
 	int  lastc;
-	int  cmd = 3;
+	int  cmd = 3;		/* Read all messages in the ring buffer */
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -57,14 +76,16 @@ main(int argc, char *argv[]) {
 	while ((c = getopt(argc, argv, "cn:s:")) != -1) {
 		switch (c) {
 		case 'c':
-			cmd = 4;
+			cmd = 4;	/* Read and clear all messages */
 			break;
 		case 'n':
-			cmd = 8;
+			cmd = 8;	/* Set level of messages */
 			level = atoi(optarg);
 			break;
 		case 's':
 			bufsize = atoi(optarg);
+			if (bufsize < 4096)
+				bufsize = 4096;
 			break;
 		case '?':
 		default:
@@ -89,9 +110,31 @@ main(int argc, char *argv[]) {
 		exit(0);
 	}
 
-	if (bufsize < 4096) bufsize = 4096;
-	buf = (char*)malloc(bufsize);
-	n = klogctl(cmd, buf, bufsize);
+	if (!bufsize) {
+		n = klogctl(10, NULL, 0);	/* read ringbuffer size */
+		if (n > 0)
+			bufsize = n;
+	}
+
+	if (bufsize) {
+		sz = bufsize + 8;
+		buf = (char *) malloc(sz);
+		n = klogctl(cmd, buf, sz);
+	} else {
+		sz = 16392;
+		while (1) {
+			buf = (char *) malloc(sz);
+			n = klogctl(3, buf, sz);	/* read only */
+			if (n != sz || sz > (1<<28))
+				break;
+			free(buf);
+			sz *= 4;
+		}
+
+		if (n > 0 && cmd == 4)
+			n = klogctl(cmd, buf, sz);	/* read and clear */
+	}
+
 	if (n < 0) {
 		perror("klogctl");
 		exit(1);

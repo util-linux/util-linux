@@ -1,3 +1,4 @@
+#ifndef HAVE_BLKID
 /*
  * Get label. Used by both mount and umount.
  */
@@ -43,7 +44,20 @@ is_raid_partition(int fd) {
 #endif
 }
 
-/* for now, only ext2, ext3, xfs, ocfs are supported */
+int
+is_reiserfs_magic_string (const char *magic) {
+	return (!strncmp(magic, REISERFS_SUPER_MAGIC_STRING, 
+			 strlen(REISERFS_SUPER_MAGIC_STRING)) ||
+		!strncmp(magic, REISER2FS_SUPER_MAGIC_STRING, 
+			 strlen(REISER2FS_SUPER_MAGIC_STRING)) ||
+		!strncmp(magic, REISER3FS_SUPER_MAGIC_STRING, 
+			 strlen(REISER3FS_SUPER_MAGIC_STRING)));
+}
+
+/*
+ * Get both label and uuid.
+ * For now, only ext2, ext3, xfs, ocfs, reiserfs are supported
+ */
 int
 get_label_uuid(const char *device, char **label, char *uuid) {
 	int fd;
@@ -54,6 +68,7 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 	struct jfs_super_block jfssb;
 	struct ocfs_volume_header ovh;	/* Oracle */
 	struct ocfs_volume_label olbl;
+	struct reiserfs_super_block reiserfssb;
 
 	fd = open(device, O_RDONLY);
 	if (fd < 0)
@@ -112,7 +127,19 @@ get_label_uuid(const char *device, char **label, char *uuid) {
 		}
 		rv = 0;
 	}
+	else if (lseek(fd, REISERFS_DISK_OFFSET_IN_BYTES, SEEK_SET)
+		 == REISERFS_DISK_OFFSET_IN_BYTES
+	    && read(fd, (char *) &reiserfssb, sizeof(reiserfssb))
+		 == sizeof(reiserfssb)
+	    && is_reiserfs_magic_string(reiserfssb.s_magic)) {
+		namesize = sizeof (reiserfssb.s_label);
+		if ((*label = calloc(namesize + 1, 1)) != NULL)
+			memcpy(*label, reiserfssb.s_label, namesize);
+		memcpy(uuid, reiserfssb.s_uuid, sizeof (reiserfssb.s_uuid));
+		rv = 0;
+	}
 
 	close(fd);
 	return rv;
 }
+#endif

@@ -329,6 +329,7 @@ main_swapon(int argc, char *argv[]) {
 				status |= do_swapon(special, priority);
 			}
 		}
+		fclose(fp);
 	}
 
 	while (*argv != NULL)
@@ -407,6 +408,7 @@ main_swapoff(int argc, char *argv[]) {
 			    !is_in_proc_swaps(fstab->mnt_fsname))
 				do_swapoff(fstab->mnt_fsname, QUIET);
 		}
+		fclose(fp);
 	}
 
 	return status;

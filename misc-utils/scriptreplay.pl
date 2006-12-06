@@ -1,16 +1,16 @@
 #!/usr/bin/perl -w
 
 # "script -t" will output a typescript with timings
-# this script "replay" replays it
+# this script "scriptreplay" replays it
 # run pod2man on it to get a man page
 
 =head1 NAME
 
-replay - play back typescripts, using timing information
+scriptreplay - play back typescripts, using timing information
 
 =head1 SYNOPSIS
 
-replay timingfile [typescript [divisor]]
+scriptreplay timingfile [typescript [divisor]]
 
 =head1 DESCRIPTION
 
@@ -36,7 +36,7 @@ specifying a divisor of 2 makes the script be replayed twice as fast.
  <etc, etc>
  % exit
  Script done, file is typescript
- % replay timingfile
+ % scriptreplay timingfile
 
 =cut
 
@@ -45,7 +45,7 @@ $|=1;
 open (TIMING, shift)
         or die "cannot read timing info: $!";
 open (TYPESCRIPT, shift || 'typescript')
-        or die "cannot read typescriot: $!";
+        or die "cannot read typescript: $!";
 my $divisor=shift || 1;
 
 # Read starting timestamp line and ignore.
@@ -55,7 +55,7 @@ my $block;
 my $oldblock='';
 while (<TIMING>) {
         my ($delay, $blocksize)=split ' ', $_, 2;
-        # Sleep, unless the delay is really tiny. Realy tiny delays cannot
+        # Sleep, unless the delay is really tiny. Really tiny delays cannot
         # be accurately done, because the system calls in this loop will
         # have more overhead. The 0.0001 is arbitrary, but works fairly well.
         if ($delay / $divisor > 0.0001) {
@@ -63,7 +63,7 @@ while (<TIMING>) {
         }
 
         read(TYPESCRIPT, $block, $blocksize)
-                or die "read filure on typescript: $!";
+                or die "read failure on typescript: $!";
         print $oldblock;
         $oldblock=$block;
 }

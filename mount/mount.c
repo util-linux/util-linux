@@ -57,6 +57,7 @@
 #include <sys/wait.h>
 #include <sys/mount.h>
 
+#include "mount_blkid.h"
 #include "mount_constants.h"
 #include "sundries.h"
 #include "mntent.h"
@@ -160,6 +161,7 @@ static const struct opt_map opt_map[] = {
   { "dirsync",	0, 0, MS_DIRSYNC},	/* synchronous directory modifications */
   { "remount",  0, 0, MS_REMOUNT},      /* Alter flags of mounted FS */
   { "bind",	0, 0, MS_BIND   },	/* Remount part of tree elsewhere */
+  { "rbind",	0, 0, MS_BIND|MS_REC }, /* Idem, plus mounted subtrees */
   { "auto",	0, 1, MS_NOAUTO	},	/* Can be mounted using -a */
   { "noauto",	0, 0, MS_NOAUTO	},	/* Can  only be mounted explicitly */
   { "users",	0, 0, MS_USERS	},	/* Allow ordinary user to mount */
@@ -247,9 +249,11 @@ print_one (const struct mntent *me) {
 	  printf (" (%s)", me->mnt_opts);
      if (list_with_volumelabel) {
 	     const char *label;
-	     label = get_volume_label_by_spec(me->mnt_fsname);
-	     if (label)
+	     label = mount_get_volume_label_by_spec(me->mnt_fsname);
+	     if (label) {
 		     printf (" [%s]", label);
+		     /* free(label); */
+	     }
      }
      printf ("\n");
 }
@@ -561,7 +565,8 @@ suid_check(char *spec, char *node, int *flags, char **user) {
 static int
 loop_check(char **spec, char **type, int *flags,
 	   int *loop, char **loopdev, char **loopfile) {
-  int looptype, offset;
+  int looptype;
+  unsigned long long offset;
 
   /*
    * In the case of a loop mount, either type is of the form lo@/dev/loop5
@@ -603,7 +608,7 @@ loop_check(char **spec, char **type, int *flags,
 	return EX_SYSERR;	/* no more loop devices */
       if (verbose)
 	printf(_("mount: going to use the loop device %s\n"), *loopdev);
-      offset = opt_offset ? strtoul(opt_offset, NULL, 0) : 0;
+      offset = opt_offset ? strtoull(opt_offset, NULL, 0) : 0;
       if (set_loop(*loopdev, *loopfile, offset,
 		   opt_encryption, pfd, &loopro)) {
 	if (verbose)
@@ -1097,10 +1102,8 @@ usersubst(const char *opts) {
 static int
 mount_one (const char *spec, const char *node, char *types, const char *opts,
 	   char *cmdlineopts, int freq, int pass) {
-  int status;
-  int status2;
-  int specset = 0;
-  char *nspec;
+  int status, status2;
+  const char *nspec;
 
   /* Substitute values in opts, if required */
   opts = usersubst(opts);
@@ -1111,37 +1114,10 @@ mount_one (const char *spec, const char *node, char *types, const char *opts,
   else if (cmdlineopts != NULL)
        opts = xstrconcat3(opts, ",", cmdlineopts);
 
-  if (!strncmp(spec, "UUID=", 5)) {
-      specset = 1;
-      nspec = get_spec_by_uuid(spec+5);
-  } else if (!strncmp(spec, "LABEL=", 6)) {
-      const char *nspec2 = NULL;
-      specset = 2;
-      nspec = get_spec_by_volume_label(spec+6);
-      if (nspec)
-	      nspec2 = second_occurrence_of_vol_label(spec+6);
-      if (nspec2) {
-	      if (verbose)
-		      printf(_("mount: the label %s occurs on "
-			       "both %s and %s\n"),
-			     spec+6, nspec, nspec2);
-	      die (EX_FAIL,
-		   _("mount: %s duplicate - not mounted"),
-		   spec, _PATH_FSTAB);
-      }
-  } else
-      nspec = 0;		/* just for gcc */
-
-  if (specset) {
-      if (nspec) {
-	  spec = nspec;
-	  if (verbose > 1)
-		  printf(_("mount: going to mount %s by %s\n"), spec,
-			 (specset==1) ? _("UUID") : _("label"));
-      } else if(!mount_all)
-          die (EX_USAGE, _("mount: no such partition found"));
-      /* if -a then we may be rescued by a noauto option */
-  }
+  /* Handle possible LABEL= and UUID= forms of spec */
+  nspec = mount_get_devname_for_mounting(spec);
+  if (nspec)
+       spec = nspec;
 
   if (types == NULL && !mounttype) {
       if (strchr (spec, ':') != NULL) {
@@ -1185,20 +1161,14 @@ mount_one (const char *spec, const char *node, char *types, const char *opts,
 
 /* Check if an fsname/dir pair was already in the old mtab.  */
 static int
-mounted (char *spec, char *node) {
+mounted (const char *spec, char *node) {
      struct mntentchn *mc, *mc0;
-     char *nspec = NULL;
 
-     if (!strncmp(spec, "UUID=", 5))
-	  nspec = get_spec_by_uuid(spec+5);
-     else if (!strncmp(spec, "LABEL=", 6))
-	  nspec = get_spec_by_volume_label(spec+6);
+     /* Handle possible UUID= and LABEL= in spec */
+     spec = mount_get_devname(spec);
 
-     if (nspec)
-	  spec = nspec;
-
-     spec = canonicalize (spec);
-     node = canonicalize (node);
+     spec = canonicalize(spec);
+     node = canonicalize(node);
 
      mc0 = mtab_head();
      for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
@@ -1422,7 +1392,8 @@ usage (FILE *fp, int n) {
 int
 main (int argc, char *argv[]) {
 	int c, result = 0, specseen;
-	char *options = NULL, *test_opts = NULL, *spec, *node;
+	char *options = NULL, *test_opts = NULL, *node;
+	const char *spec;
 	char *volumelabel = NULL;
 	char *uuid = NULL;
 	char *types = NULL;
@@ -1442,6 +1413,8 @@ main (int argc, char *argv[]) {
 	while((fd = open("/dev/null", O_RDWR)) == 0 || fd == 1 || fd == 2) ;
 	if (fd > 2)
 		close(fd);
+
+	mount_blkid_get_cache();
 
 #ifdef DO_PS_FIDDLING
 	initproctitle(argc, argv);
@@ -1580,17 +1553,10 @@ main (int argc, char *argv[]) {
 
 	if (specseen) {
 		if (uuid)
-			spec = get_spec_by_uuid(uuid);
-		else {
-			const char *spec2;
-			spec = get_spec_by_volume_label(volumelabel);
-			spec2 = second_occurrence_of_vol_label(volumelabel);
-			if (spec2)
-				die (EX_FAIL,
-				     _("mount: the label %s occurs on "
-				       "both %s and %s - not mounted\n"),
-				     volumelabel, spec, spec2);
-		}
+			spec = mount_get_devname_by_uuid(uuid);
+		else
+			spec = mount_get_devname_by_label(volumelabel);
+
 		if (!spec)
 			die (EX_USAGE, _("mount: no such partition found"));
 		if (verbose)
@@ -1620,7 +1586,8 @@ main (int argc, char *argv[]) {
 				die (EX_USAGE,
 				     _("mount: cannot find %s in %s"),
 				     spec, _PATH_FSTAB);
-			mc->m.mnt_fsname = spec;
+			/* struct mntent does not have const qualifiers */
+			mc->m.mnt_fsname = (char *) spec;
 		} else {
 			/* Try to find the other pathname in fstab.  */
 			spec = canonicalize (*argv);
@@ -1664,5 +1631,8 @@ main (int argc, char *argv[]) {
 
 	if (result == EX_SOMEOK)
 		result = 0;
+
+	mount_blkid_put_cache();
+
 	exit (result);
 }

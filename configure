@@ -42,6 +42,7 @@
 # 12. For hwclock.c: does struct tm have a field tm_gmtoff?
 # 13. For nfsmount: does the output of rpcgen compile?
 # 14. For fsck.cramfs, mkfs.cramfs: do we have libz?
+# 15. For mount, do we have blkid?
 
 rm -f make_include defines.h
 
@@ -710,3 +711,21 @@ else
 fi
 rm -f conftest conftest.c
 
+#
+# 15. For mount, do we have blkid?
+# 
+echo '
+#include <blkid/blkid.h>
+int main(){ exit(0); blkid_known_fstype("ext2"); }
+' > conftest.c
+LIBS="-lblkid -luuid"
+eval $compile
+LIBS=
+if test -s conftest; then
+        echo "HAVE_BLKID=yes" >> make_include
+        echo "You have blkid"
+else
+        echo "HAVE_BLKID=no" >> make_include
+        echo "You don't have blkid"
+fi
+rm -f conftest conftest.c

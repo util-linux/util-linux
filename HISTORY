@@ -1,3 +1,25 @@
+util-linux 2.12b
+
+* chsh: improved error message
+* dmesg: ask kernel proper buffer size
+* losetup: handle 64-bit offsets
+* blockdev: also report BLKGETSIZE64 result
+* blockdev, elvtune, fdisk: handle new kernel _IOR,_IOW defines
+* fdisk: remove strange "ends in a digit" heuristic
+* fdisk: also list Solaris as possible type for 0x82
+* mount: added --rbind option
+* mount: use blkid library
+* mount: support reiserfs mount by label
+* mount: attempt to use the right definition of dev_t in struct loopinfo
+* mount.8: jfs mount options added
+* readprofile: new -s option
+* rename.1: added ref to mmv.1
+* replay: renamed to scriptreplay; correct typos
+* script: do not use locale for time delay floating point number format
+* sfdisk: error messages to stderr
+* New Catalan, Dutch, Finnish, French, German, Spanish, Swedish, Turkish,
+  Ukrainian messages
+
 util-linux 2.12a
 
 * chfn, chsh, login, vipw: SElinux support

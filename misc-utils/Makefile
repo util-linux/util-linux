@@ -7,7 +7,7 @@
 include ../make_include
 include ../MCONFIG
 
-# replay not added yet
+# scriptreplay not added yet
 
 # Where to put man pages?
 

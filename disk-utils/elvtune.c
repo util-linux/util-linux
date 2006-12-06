@@ -37,8 +37,8 @@ typedef struct blkelv_ioctl_arg_s {
 	int max_bomb_segments;
 } blkelv_ioctl_arg_t;
 
-#define BLKELVGET   _IOR(0x12,106,sizeof(blkelv_ioctl_arg_t))
-#define BLKELVSET   _IOW(0x12,107,sizeof(blkelv_ioctl_arg_t))
+#define BLKELVGET   _IOR(0x12,106,size_t)
+#define BLKELVSET   _IOW(0x12,107,size_t)
 
 static void
 usage(void) {

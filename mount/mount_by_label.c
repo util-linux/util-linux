@@ -1,3 +1,4 @@
+#ifndef HAVE_BLKID
 /*
  * mount_by_label.c - aeb
  *
@@ -255,7 +256,7 @@ uuidcache_init(void) {
 #define UUID   1
 #define VOL    2
 
-static char *
+static const char *
 get_spec_by_x(int n, const char *t) {
 	struct uuidCache_s *uc;
 
@@ -288,7 +289,7 @@ fromhex(char c) {
 		return (c - 'A' + 10);
 }
 
-char *
+const char *
 get_spec_by_uuid(const char *s) {
 	u_char uuid[16];
 	int i;
@@ -310,7 +311,7 @@ get_spec_by_uuid(const char *s) {
 	return NULL;		/* just for gcc */
 }
 
-char *
+const char *
 get_spec_by_volume_label(const char *s) {
 	return get_spec_by_x(VOL, s);
 }
@@ -342,7 +343,7 @@ second_occurrence_of_vol_label (const char *label) {
 
         uuidcache_init();
 
-        for (last = uuidCache; last->next; last = last->next) {
+        for (last = uuidCache; last; last = last->next) {
 		if (!strcmp(last->label, label)) {
 			occurrences++;
 			if (occurrences == 2)
@@ -354,3 +355,4 @@ second_occurrence_of_vol_label (const char *label) {
 }
 
           
+#endif

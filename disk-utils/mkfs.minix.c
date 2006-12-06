@@ -79,10 +79,6 @@
 #define BLKGETSIZE _IO(0x12,96)    /* return device size */
 #endif
 
-#ifdef MINIX2_SUPER_MAGIC2
-#define HAVE_MINIX2 1
-#endif
-
 #ifndef __GNUC__
 #error "needs gcc for the bitop-__asm__'s"
 #endif
@@ -95,13 +91,10 @@
 
 #define UPPER(size,n) ((size+((n)-1))/(n))
 #define INODE_SIZE (sizeof(struct minix_inode))
-#ifdef HAVE_MINIX2
+
 #define INODE_SIZE2 (sizeof(struct minix2_inode))
 #define INODE_BLOCKS UPPER(INODES, (version2 ? MINIX2_INODES_PER_BLOCK \
 				    : MINIX_INODES_PER_BLOCK))
-#else
-#define INODE_BLOCKS UPPER(INODES, (MINIX_INODES_PER_BLOCK))
-#endif
 #define INODE_BUFFER_SIZE (INODE_BLOCKS * BLOCK_SIZE)
 
 #define BITS_PER_BLOCK (BLOCK_SIZE<<3)
@@ -122,18 +115,13 @@ static char root_block[BLOCK_SIZE] = "\0";
 
 static char * inode_buffer = NULL;
 #define Inode (((struct minix_inode *) inode_buffer)-1)
-#ifdef HAVE_MINIX2
 #define Inode2 (((struct minix2_inode *) inode_buffer)-1)
-#endif
+
 static char super_block_buffer[BLOCK_SIZE];
 static char boot_block_buffer[512];
 #define Super (*(struct minix_super_block *)super_block_buffer)
 #define INODES ((unsigned long)Super.s_ninodes)
-#ifdef HAVE_MINIX2
 #define ZONES ((unsigned long)(version2 ? Super.s_zones : Super.s_nzones))
-#else
-#define ZONES ((unsigned long)(Super.s_nzones))
-#endif
 #define IMAPS ((unsigned long)Super.s_imap_blocks)
 #define ZMAPS ((unsigned long)Super.s_zmap_blocks)
 #define FIRSTZONE ((unsigned long)Super.s_firstdatazone)
@@ -368,7 +356,6 @@ end_bad:
 		write_block(dind, (char *) dind_block);
 }
 
-#ifdef HAVE_MINIX2
 static void
 make_bad_inode2 (void) {
 	struct minix2_inode *inode = &Inode2[MINIX_BAD_INO];
@@ -417,7 +404,6 @@ make_bad_inode2 (void) {
 	if (dind)
 		write_block (dind, (char *) dind_block);
 }
-#endif
 
 static void
 make_root_inode(void) {
@@ -441,7 +427,6 @@ make_root_inode(void) {
 	write_block(inode->i_zone[0],root_block);
 }
 
-#ifdef HAVE_MINIX2
 static void
 make_root_inode2 (void) {
 	struct minix2_inode *inode = &Inode2[MINIX_ROOT_INO];
@@ -463,7 +448,6 @@ make_root_inode2 (void) {
 		inode->i_gid = getgid();
 	write_block (inode->i_zone[0], root_block);
 }
-#endif
 
 static void
 setup_tables(void) {
@@ -472,10 +456,13 @@ setup_tables(void) {
 
 	memset(super_block_buffer,0,BLOCK_SIZE);
 	memset(boot_block_buffer,0,512);
-	MAGIC = magic;
-	ZONESIZE = 0;
-	MAXSIZE = version2 ? 0x7fffffff : (7+512+512*512)*1024;
-	ZONES = BLOCKS;
+	Super.s_magic = magic;
+	Super.s_log_zone_size = 0;
+	Super.s_max_size = version2 ? 0x7fffffff : (7+512+512*512)*1024;
+	if (version2)
+		Super.s_zones = BLOCKS;
+	else
+		Super.s_nzones = BLOCKS;
 
 /* some magic nrs: 1 inode / 3 blocks */
 	if ( req_nr_inodes == 0 ) 
@@ -483,26 +470,27 @@ setup_tables(void) {
 	else
 		inodes = req_nr_inodes;
 	/* Round up inode count to fill block size */
-#ifdef HAVE_MINIX2
 	if (version2)
 		inodes = ((inodes + MINIX2_INODES_PER_BLOCK - 1) &
 			  ~(MINIX2_INODES_PER_BLOCK - 1));
 	else
-#endif
 		inodes = ((inodes + MINIX_INODES_PER_BLOCK - 1) &
 			  ~(MINIX_INODES_PER_BLOCK - 1));
 	if (inodes > 65535)
 		inodes = 65535;
-	INODES = inodes;
-	IMAPS = UPPER(INODES + 1,BITS_PER_BLOCK);
-	ZMAPS = UPPER(BLOCKS - (1+IMAPS+INODE_BLOCKS), BITS_PER_BLOCK+1);
+	Super.s_ninodes = inodes;
+
 	/* The old code here
 	 * ZMAPS = 0;
 	 * while (ZMAPS != UPPER(BLOCKS - NORM_FIRSTZONE + 1,BITS_PER_BLOCK))
 	 *	  ZMAPS = UPPER(BLOCKS - NORM_FIRSTZONE + 1,BITS_PER_BLOCK);
 	 * was no good, since it may loop. - aeb
 	 */
-	FIRSTZONE = NORM_FIRSTZONE;
+	Super.s_imap_blocks = UPPER(INODES + 1, BITS_PER_BLOCK);
+	Super.s_zmap_blocks = UPPER(BLOCKS - (1+IMAPS+INODE_BLOCKS),
+				    BITS_PER_BLOCK+1);
+	Super.s_firstdatazone = NORM_FIRSTZONE;
+
 	inode_map = malloc(IMAPS * BLOCK_SIZE);
 	zone_map = malloc(ZMAPS * BLOCK_SIZE);
 	if (!inode_map || !zone_map)
@@ -641,10 +629,9 @@ main(int argc, char ** argv) {
 
   if (INODE_SIZE * MINIX_INODES_PER_BLOCK != BLOCK_SIZE)
     die(_("bad inode size"));
-#ifdef HAVE_MINIX2
   if (INODE_SIZE2 * MINIX2_INODES_PER_BLOCK != BLOCK_SIZE)
     die(_("bad inode size"));
-#endif
+
   opterr = 0;
   while ((i = getopt(argc, argv, "ci:l:n:v")) != -1)
     switch (i) {
@@ -669,12 +656,6 @@ main(int argc, char ** argv) {
 	dirsize = i+2;
 	break;
       case 'v':
-#ifndef HAVE_MINIX2
-	fprintf(stderr,
-		_("%s: not compiled with minix v2 support\n"),
-		program_name);
-	exit(-1);
-#endif
 	version2 = 1;
 	break;
       default:
@@ -700,14 +681,12 @@ main(int argc, char ** argv) {
   if (!device_name || BLOCKS<10) {
     usage();
   }
-#ifdef HAVE_MINIX2
   if (version2) {
     if (namelen == 14)
       magic = MINIX2_SUPER_MAGIC;
     else
       magic = MINIX2_SUPER_MAGIC2;
   } else
-#endif
     if (BLOCKS > 65535)
       BLOCKS = 65535;
   check_mount();		/* is it already mounted? */
@@ -734,16 +713,13 @@ main(int argc, char ** argv) {
     check_blocks();
   else if (listfile)
     get_list_blocks(listfile);
-#ifdef HAVE_MINIX2
   if (version2) {
     make_root_inode2 ();
     make_bad_inode2 ();
-  } else
-#endif
-    {
+  } else {
       make_root_inode();
       make_bad_inode();
-    }
+  }
   mark_good_blocks();
   write_tables();
   return 0;

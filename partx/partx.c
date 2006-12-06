@@ -123,7 +123,7 @@ main(int argc, char **argv){
 	case 'd':
 		what = DELETE; break;
 	case 'g':
-		force_gpt=1; break;
+		force_gpt = 1; break;
 	case 'n':
 		p = optarg;
 		lower = atoi(p);

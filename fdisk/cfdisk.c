@@ -2574,13 +2574,14 @@ draw_screen(void) {
     mvaddstr(HEADER_START+2, (COLS-strlen(line))/2, line);
     {
 	    long long bytes = actual_size*(long long) SECTOR_SIZE;
-	    long long megabytes = bytes/1000000;
+	    long long megabytes = bytes/(K*K);
+
 	    if (megabytes < 10000)
 		    sprintf(line, _("Size: %lld bytes, %lld MB"),
 			    bytes, megabytes);
 	    else
 		    sprintf(line, _("Size: %lld bytes, %lld.%lld GB"),
-			    bytes, megabytes/1000, (megabytes/100)%10);
+			    bytes, megabytes/K, (10*megabytes/K)%10);
     }
     mvaddstr(HEADER_START+3, (COLS-strlen(line))/2, line);
     sprintf(line, _("Heads: %d   Sectors per Track: %d   Cylinders: %lld"),

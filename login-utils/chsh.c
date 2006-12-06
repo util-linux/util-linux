@@ -152,7 +152,13 @@ main (int argc, char *argv[]) {
     if (!oldshell[0]) oldshell = "/bin/sh";
 
     /* reality check */
-    if (uid != 0 && (uid != pw->pw_uid || !get_shell_list(oldshell))) {
+    if (uid != 0 && uid != pw->pw_uid) {
+	errno = EACCES;
+	fprintf(stderr,_("%s: Running UID doesn't match UID of user we're "
+			 "altering, shell change denied\n"), whoami);
+	return (-1);
+    }
+    if (uid != 0 && !get_shell_list(oldshell)) {
 	errno = EACCES;
 	fprintf(stderr,_("%s: Your shell is not in /etc/shells, shell change"
 		" denied\n"),whoami);

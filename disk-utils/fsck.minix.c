@@ -99,10 +99,6 @@
 #include "minix.h"
 #include "nls.h"
 
-#ifdef MINIX2_SUPER_MAGIC2
-#define HAVE_MINIX2 1
-#endif
-
 #ifndef __linux__
 #define volatile
 #endif
@@ -111,13 +107,9 @@
 
 #define UPPER(size,n) ((size+((n)-1))/(n))
 #define INODE_SIZE (sizeof(struct minix_inode))
-#ifdef HAVE_MINIX2
 #define INODE_SIZE2 (sizeof(struct minix2_inode))
 #define INODE_BLOCKS UPPER(INODES, (version2 ? MINIX2_INODES_PER_BLOCK \
 				    : MINIX_INODES_PER_BLOCK))
-#else
-#define INODE_BLOCKS UPPER(INODES, (MINIX_INODES_PER_BLOCK))
-#endif
 #define INODE_BUFFER_SIZE (INODE_BLOCKS * BLOCK_SIZE)
 
 #define BITS_PER_BLOCK (BLOCK_SIZE<<3)
@@ -152,11 +144,7 @@ static char * inode_buffer = NULL;
 static char super_block_buffer[BLOCK_SIZE];
 #define Super (*(struct minix_super_block *)super_block_buffer)
 #define INODES ((unsigned long)Super.s_ninodes)
-#ifdef HAVE_MINIX2
 #define ZONES ((unsigned long)(version2 ? Super.s_zones : Super.s_nzones))
-#else
-#define ZONES ((unsigned long)(Super.s_nzones))
-#endif
 #define IMAPS ((unsigned long)Super.s_imap_blocks)
 #define ZMAPS ((unsigned long)Super.s_zmap_blocks)
 #define FIRSTZONE ((unsigned long)Super.s_firstdatazone)
@@ -172,9 +160,7 @@ static unsigned char * inode_count = NULL;
 static unsigned char * zone_count = NULL;
 
 static void recursive_check(unsigned int ino);
-#ifdef HAVE_MINIX2
 static void recursive_check2(unsigned int ino);
-#endif
 
 #include "bitops.h"
 
@@ -345,7 +331,6 @@ check_zone_nr(unsigned short * nr, int * corrected) {
 	return 0;
 }
 
-#ifdef HAVE_MINIX2
 static int
 check_zone_nr2 (unsigned int *nr, int *corrected) {
 	if (!*nr)
@@ -368,7 +353,6 @@ check_zone_nr2 (unsigned int *nr, int *corrected) {
 	}
 	return 0;
 }
-#endif
 
 /*
  * read-block reads block nr into the buffer at addr.
@@ -456,7 +440,6 @@ map_block(struct minix_inode * inode, unsigned int blknr) {
 	return result;
 }
 
-#ifdef HAVE_MINIX2
 static int
 map_block2 (struct minix2_inode *inode, unsigned int blknr) {
   	unsigned int ind[BLOCK_SIZE >> 2];
@@ -513,7 +496,6 @@ map_block2 (struct minix2_inode *inode, unsigned int blknr) {
 		write_block (block, (char *) ind);
 	return result;
 }
-#endif
 
 static void
 write_super_block(void) {
@@ -554,11 +536,9 @@ get_dirsize (void) {
 	char blk[BLOCK_SIZE];
 	int size;
 
-#if HAVE_MINIX2
 	if (version2)
 		block = Inode2[ROOT_INO].i_zone[0];
 	else
-#endif
 		block = Inode[ROOT_INO].i_zone[0];
 	read_block (block, blk);
 	for (size = 16; size < BLOCK_SIZE; size <<= 1) {
@@ -585,7 +565,6 @@ read_superblock(void) {
 		namelen = 30;
 		dirsize = 32;
 		version2 = 0;
-#ifdef HAVE_MINIX2
 	} else if (MAGIC == MINIX2_SUPER_MAGIC) {
 		namelen = 14;
 		dirsize = 16;
@@ -594,7 +573,6 @@ read_superblock(void) {
 		namelen = 30;
 		dirsize = 32;
 		version2 = 1;
-#endif
 	} else
 		die(_("bad magic number in super-block"));
 	if (ZONESIZE != 0 || BLOCK_SIZE != 1024)
@@ -697,7 +675,6 @@ get_inode(unsigned int nr) {
 	return inode;
 }
 
-#ifdef HAVE_MINIX2
 static struct minix2_inode *
 get_inode2 (unsigned int nr) {
 	struct minix2_inode *inode;
@@ -745,7 +722,6 @@ get_inode2 (unsigned int nr) {
 	}
 	return inode;
 }
-#endif
 
 static void
 check_root(void) {
@@ -755,7 +731,6 @@ check_root(void) {
 		die(_("root inode isn't a directory"));
 }
 
-#ifdef HAVE_MINIX2
 static void
 check_root2 (void) {
 	struct minix2_inode *inode = Inode2 + ROOT_INO;
@@ -763,7 +738,6 @@ check_root2 (void) {
 	if (!inode || !S_ISDIR (inode->i_mode))
 		die ("root inode isn't a directory");
 }
-#endif
 
 static int
 add_zone(unsigned short * znr, int * corrected) {
@@ -798,7 +772,6 @@ add_zone(unsigned short * znr, int * corrected) {
 	return block;
 }
 
-#ifdef HAVE_MINIX2
 static int
 add_zone2 (unsigned int *znr, int *corrected) {
 	int result;
@@ -831,7 +804,6 @@ add_zone2 (unsigned int *znr, int *corrected) {
 		zone_count[block]--;
 	return block;
 }
-#endif
 
 static void
 add_zone_ind(unsigned short * znr, int * corrected) {
@@ -849,7 +821,6 @@ add_zone_ind(unsigned short * znr, int * corrected) {
 		write_block(block, blk);
 }
 
-#ifdef HAVE_MINIX2
 static void
 add_zone_ind2 (unsigned int *znr, int *corrected) {
 	static char blk[BLOCK_SIZE];
@@ -865,7 +836,6 @@ add_zone_ind2 (unsigned int *znr, int *corrected) {
 	if (chg_blk)
 		write_block (block, blk);
 }
-#endif
 
 static void
 add_zone_dind(unsigned short * znr, int * corrected) {
@@ -883,7 +853,6 @@ add_zone_dind(unsigned short * znr, int * corrected) {
 		write_block(block, blk);
 }
 
-#ifdef HAVE_MINIX2
 static void
 add_zone_dind2 (unsigned int *znr, int *corrected) {
 	static char blk[BLOCK_SIZE];
@@ -915,7 +884,6 @@ add_zone_tind2 (unsigned int *znr, int *corrected) {
 	if (blk_chg)
 		write_block (block, blk);
 }
-#endif
 
 static void
 check_zones(unsigned int i) {
@@ -935,7 +903,6 @@ check_zones(unsigned int i) {
 	add_zone_dind(8 + inode->i_zone, &changed);
 }
 
-#ifdef HAVE_MINIX2
 static void
 check_zones2 (unsigned int i) {
 	struct minix2_inode *inode;
@@ -954,7 +921,6 @@ check_zones2 (unsigned int i) {
 	add_zone_dind2 (8 + inode->i_zone, &changed);
 	add_zone_tind2 (9 + inode->i_zone, &changed);
 }
-#endif
 
 static void
 check_file(struct minix_inode * dir, unsigned int offset) {
@@ -1023,7 +989,6 @@ check_file(struct minix_inode * dir, unsigned int offset) {
 	return;
 }
 
-#ifdef HAVE_MINIX2
 static void
 check_file2 (struct minix2_inode *dir, unsigned int offset) {
 	static char blk[BLOCK_SIZE];
@@ -1090,7 +1055,6 @@ check_file2 (struct minix2_inode *dir, unsigned int offset) {
 	name_depth--;
 	return;
 }
-#endif
 
 static void
 recursive_check(unsigned int ino) {
@@ -1110,7 +1074,6 @@ recursive_check(unsigned int ino) {
 		check_file(dir,offset);
 }
 
-#ifdef HAVE_MINIX2
 static void
 recursive_check2 (unsigned int ino) {
 	struct minix2_inode *dir;
@@ -1128,7 +1091,6 @@ recursive_check2 (unsigned int ino) {
 	for (offset = 0; offset < dir->i_size; offset += dirsize)
 		check_file2 (dir, offset);
 }
-#endif
 
 static int
 bad_zone(int i) {
@@ -1194,7 +1156,6 @@ check_counts(void) {
 	}
 }
 
-#ifdef HAVE_MINIX2
 static void
 check_counts2 (void) {
 	int i;
@@ -1249,7 +1210,6 @@ check_counts2 (void) {
 				i, zone_count[i]);
 	}
 }
-#endif
 
 static void
 check(void) {
@@ -1260,7 +1220,6 @@ check(void) {
 	check_counts();
 }
 
-#ifdef HAVE_MINIX2
 static void
 check2 (void) {
 	memset (inode_count, 0, (INODES + 1) * sizeof (*inode_count));
@@ -1269,7 +1228,6 @@ check2 (void) {
 	recursive_check2 (ROOT_INO);
 	check_counts2 ();
 }
-#endif
 
 int
 main(int argc, char ** argv) {
@@ -1294,10 +1252,9 @@ main(int argc, char ** argv) {
 
 	if (INODE_SIZE * MINIX_INODES_PER_BLOCK != BLOCK_SIZE)
 		die(_("bad inode size"));
-#ifdef HAVE_MINIX2
 	if (INODE_SIZE2 * MINIX2_INODES_PER_BLOCK != BLOCK_SIZE)
 		die(_("bad v2 inode size"));
-#endif
+
 	while (argc-- > 1) {
 		argv++;
 		if (argv[0][0] != '-') {
@@ -1360,13 +1317,10 @@ main(int argc, char ** argv) {
 		termios_set = 1;
 	}
 
-#if HAVE_MINIX2
 	if (version2) {
 		check_root2 ();
 		check2 ();
-	} else 
-#endif
-	  {
+	} else {
 		check_root();
 		check();
 	}

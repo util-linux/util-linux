@@ -24,8 +24,9 @@
 #define BLKRASET   _IO(0x12,98)
 #define BLKRAGET   _IO(0x12,99)
 #define BLKSSZGET  _IO(0x12,104)
-#define BLKBSZGET  _IOR(0x12,112,sizeof(int))
-#define BLKBSZSET  _IOW(0x12,113,sizeof(int))
+#define BLKBSZGET  _IOR(0x12,112,size_t)
+#define BLKBSZSET  _IOW(0x12,113,size_t)
+#define BLKGETSIZE64 _IOR(0x12,114,size_t)
 #endif
 
 /* Maybe <linux/hdreg.h> could be included */
@@ -52,6 +53,7 @@ struct bdc {
 #define	ARGINTP	3
 #define ARGINTG	4
 #define ARGLINTG 5
+#define ARGLLINTG 6
 	long argval;
 	char *argname;
 	char *help;
@@ -73,7 +75,10 @@ struct bdc {
 	{ "--setbsz", "BLKBSZSET", BLKBSZSET, ARGINTAP, 0, "BLOCKSIZE", N_("set blocksize") },
 #endif
 #ifdef BLKGETSIZE
-	{ "--getsize", "BLKGETSIZE", BLKGETSIZE, ARGLINTG, -1, NULL, N_("get size") },
+	{ "--getsize", "BLKGETSIZE", BLKGETSIZE, ARGLINTG, -1, NULL, N_("get 32-bit sector count") },
+#endif
+#ifdef BLKGETSIZE64
+	{ "--getsize64", "BLKGETSIZE64", BLKGETSIZE64, ARGLLINTG, -1, NULL, N_("get size in bytes") },
 #endif
 #ifdef BLKRASET
 	{ "--setra", "BLKRASET", BLKRASET, ARGINTA, 0, "READAHEAD", N_("set readahead") },
@@ -100,6 +105,7 @@ usage(void) {
 	fprintf(stderr, _("  %s --report [devices]\n"), progname);
 	fprintf(stderr, _("  %s [-v|-q] commands devices\n"), progname);
 	fprintf(stderr, _("Available commands:\n"));
+	fprintf(stderr, "\t--getsz\t(%s)\n", "get size in 512-byte sectors");
 	for (i = 0; i < SIZE(bdcms); i++) {
 		fprintf(stderr, "\t%s", bdcms[i].name);
 		if (bdcms[i].argname)
@@ -119,6 +125,23 @@ find_cmd(char *s) {
 		if (!strcmp(s, bdcms[j].name))
 			return j;
 	return -1;
+}
+
+static int
+getsize(int fd, long long *sectors) {
+	int err;
+	long sz;
+	long long b;
+
+	err = ioctl (fd, BLKGETSIZE, &sz);
+	if (err)
+		return err;
+	err = ioctl(fd, BLKGETSIZE64, &b);
+	if (err || b == 0 || b == sz)
+		*sectors = sz;
+	else
+		*sectors = (b >> 9);
+	return 0;
 }
 
 void do_commands(int fd, char **argv, int d);
@@ -174,6 +197,8 @@ main(int argc, char **argv) {
 				d++;
 			continue;
 		}
+		if (!strcmp(argv[d], "--getsz"))
+			continue;
 		if (!strcmp(argv[d], "--")) {
 			d++;
 			break;
@@ -202,6 +227,7 @@ do_commands(int fd, char **argv, int d) {
 	int res, i, j;
 	int iarg;
 	long larg;
+	long long llarg;
 	int verbose = 0;
 
 	for (i = 1; i < d; i++) {
@@ -211,6 +237,15 @@ do_commands(int fd, char **argv, int d) {
 		}
 		if (!strcmp(argv[i], "-q")) {
 			verbose = 0;
+			continue;
+		}
+
+		if (!strcmp(argv[i], "--getsz")) {
+			res = getsize(fd, &llarg);
+			if (res == 0)
+				printf("%lld\n", llarg);
+			else
+				exit(1);
 			continue;
 		}
 
@@ -253,6 +288,10 @@ do_commands(int fd, char **argv, int d) {
 			larg = bdcms[j].argval;
 			res = ioctl(fd, bdcms[j].ioc, &larg);
 			break;
+		case ARGLLINTG:
+			llarg = bdcms[j].argval;
+			res = ioctl(fd, bdcms[j].ioc, &llarg);
+			break;
 		}
 		if (res == -1) {
 			perror(bdcms[j].iocname);
@@ -272,6 +311,12 @@ do_commands(int fd, char **argv, int d) {
 				printf("%s: %ld\n", _(bdcms[j].help), larg);
 			else
 				printf("%ld\n", larg);
+			break;
+		case ARGLLINTG:
+			if (verbose)
+				printf("%s: %lld\n", _(bdcms[j].help), llarg);
+			else
+				printf("%lld\n", llarg);
 			break;
 		default:
 			if (verbose)
@@ -312,7 +357,8 @@ void
 report_device(char *device, int quiet) {
 	int fd;
 	int ro, ssz, bsz;
-	long ra, sz, ss;
+	long ra, ss;
+	long long bytes;
 	struct hd_geometry g;
 
 	fd = open(device, O_RDONLY | O_NONBLOCK);
@@ -324,15 +370,15 @@ report_device(char *device, int quiet) {
 	}
 
 	ro = ssz = bsz = 0;
-	g.start = ra = sz = ss = 0;
+	g.start = ra = ss = 0;
 	if (ioctl (fd, BLKROGET, &ro) == 0 &&
 	    ioctl (fd, BLKRAGET, &ra) == 0 &&
 	    ioctl (fd, BLKSSZGET, &ssz) == 0 &&
 	    ioctl (fd, BLKBSZGET, &bsz) == 0 &&
-	    ioctl (fd, BLKGETSIZE, &sz) == 0 &&
-	    ioctl (fd, HDIO_GETGEO, &g) == 0) {
-		printf("%s %5ld %5d %5d %10ld %10ld  %s\n",
-		       ro ? "ro" : "rw", ra, ssz, bsz, g.start, sz, device);
+	    ioctl (fd, HDIO_GETGEO, &g) == 0 &&
+	    getsize (fd, &bytes) == 0) {
+		printf("%s %5ld %5d %5d %10ld %10lld  %s\n",
+		       ro ? "ro" : "rw", ra, ssz, bsz, g.start, bytes, device);
 	} else {
 		if (!quiet)
 			fprintf(stderr, _("%s: ioctl error on %s\n"),

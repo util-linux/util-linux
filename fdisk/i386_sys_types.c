@@ -53,7 +53,7 @@ struct systypes i386_sys_types[] = {
 	{0x75, N_("PC/IX")},
 	{0x80, N_("Old Minix")},	/* Minix 1.4a and earlier */
 	{0x81, N_("Minix / old Linux")},/* Minix 1.4b and later */
-	{0x82, N_("Linux swap")},	/* also Solaris */
+	{0x82, N_("Linux swap / Solaris")},
 	{0x83, N_("Linux")},
 	{0x84, N_("OS/2 hidden C: drive")},
 	{0x85, N_("Linux extended")},

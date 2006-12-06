@@ -35,6 +35,9 @@
  * - also try /boot/System.map-`uname -r`
  * 2003-04-09 Werner Almesberger <wa@almesberger.net>
  * - fixed off-by eight error and improved heuristics in byte order detection
+ * 2003-08-12 Nikita Danilov <Nikita@Namesys.COM>
+ * - added -s option; example of use:
+ * "readprofile -s -m /boot/System.map-test | grep __d_lookup | sort -n -k3"
  */
 
 #include <errno.h>
@@ -55,7 +58,7 @@ static char *prgname;
 /* These are the defaults */
 static char defaultmap[]="/usr/src/linux/System.map";
 static char defaultpro[]="/proc/profile";
-static char optstring[]="M:m:np:itvarVb";
+static char optstring[]="M:m:np:itvarVbs";
 
 static void *
 xmalloc (size_t size) {
@@ -111,18 +114,19 @@ boot_uname_r_str(void) {
 
 static void
 usage(void) {
-	fprintf(stderr,
-		_("%s: Usage: \"%s [options]\n"
-		  "\t -m <mapfile>  (defaults: \"%s\" and\n\t\t\t\t  \"%s\")\n"
-		  "\t -p <pro-file> (default: \"%s\")\n"
-		  "\t -M <mult>     set the profiling multiplier to <mult>\n"
-		  "\t -i            print only info about the sampling step\n"
-		  "\t -v            print verbose data\n"
-		  "\t -a            print all symbols, even if count is 0\n"
-		  "\t -b            print individual histogram-bin counts\n"
-		  "\t -r            reset all the counters (root only)\n"
-		  "\t -n            disable byte order auto-detection\n"
-		  "\t -V            print version and exit\n"),
+	fprintf(stderr, _(
+		"%s: Usage: \"%s [options]\n"
+		"\t -m <mapfile>  (defaults: \"%s\" and\n\t\t\t\t  \"%s\")\n"
+		"\t -p <pro-file> (default: \"%s\")\n"
+		"\t -M <mult>     set the profiling multiplier to <mult>\n"
+		"\t -i            print only info about the sampling step\n"
+		"\t -v            print verbose data\n"
+		"\t -a            print all symbols, even if count is 0\n"
+		"\t -b            print individual histogram-bin counts\n"
+		"\t -s            print individual counters within functions\n"
+		"\t -r            reset all the counters (root only)\n"
+		"\t -n            disable byte order auto-detection\n"
+		"\t -V            print version and exit\n"),
 		prgname, prgname, defaultmap, boot_uname_r_str(), defaultpro);
 	exit(1);
 }
@@ -140,7 +144,8 @@ main(int argc, char **argv) {
 	char fn_name[S_LEN], next_name[S_LEN];   /* current and next name */
 	char mode[8];
 	int c;
-	int optAll=0, optInfo=0, optReset=0, optVerbose=0, optNative=0, optBins=0;
+	int optAll=0, optInfo=0, optReset=0, optVerbose=0, optNative=0;
+	int optBins=0, optSub=0;
 	char mapline[S_LEN];
 	int maplineno=1;
 	int popenMap;   /* flag to tell if popen() has been used */
@@ -172,6 +177,9 @@ main(int argc, char **argv) {
 			break;
 		case 'b':
 			optBins++;
+			break;
+		case 's':
+			optSub++;
 			break;
 		case 'i':
 			optInfo++;
@@ -228,8 +236,8 @@ main(int argc, char **argv) {
 	 * Use an fd for the profiling buffer, to skip stdio overhead
 	 */
 	if (((proFd=open(proFile,O_RDONLY)) < 0)
-	     || ((int)(len=lseek(proFd,0,SEEK_END)) < 0)
-	     || (lseek(proFd,0,SEEK_SET) < 0)) {
+	    || ((int)(len=lseek(proFd,0,SEEK_END)) < 0)
+	    || (lseek(proFd,0,SEEK_SET) < 0)) {
 		fprintf(stderr,"%s: %s: %s\n",prgname,proFile,strerror(errno));
 		exit(1);
 	}
@@ -258,7 +266,7 @@ main(int argc, char **argv) {
 		}
 		if (big > small) {
 			fprintf(stderr,"Assuming reversed byte order. "
-			   "Use -n to force native byte order.\n");
+				"Use -n to force native byte order.\n");
 			for (p = buf; p < buf+entries; p++)
 				for (i = 0; i < sizeof(*buf)/2; i++) {
 					unsigned char *b = (unsigned char *) p;
@@ -352,18 +360,31 @@ main(int argc, char **argv) {
 		if (optBins) {
 			if (optVerbose || this > 0)
 				printf ("  total\t\t\t\t%u\n", this);
-		} else {
-			fn_len = next_add-fn_add;
-			if (fn_len && (this || optAll)) {
-				if (optVerbose)
-					printf("%016llx %-40s %6i %8.4f\n", fn_add,
-					       fn_name,this,this/(double)fn_len);
-				else
-					printf("%6i %-40s %8.4f\n",
-					       this,fn_name,this/(double)fn_len);
+		} else if ((this || optAll) &&
+			   (fn_len = next_add-fn_add) != 0) {
+			if (optVerbose)
+				printf("%016llx %-40s %6i %8.4f\n", fn_add,
+				       fn_name,this,this/(double)fn_len);
+			else
+				printf("%6i %-40s %8.4f\n",
+				       this,fn_name,this/(double)fn_len);
+			if (optSub) {
+				unsigned long long scan;
+
+				for (scan = (fn_add-add0)/step + 1;
+				     scan < (next_add-add0)/step; scan++) {
+					unsigned long long addr;
+
+					addr = (scan - 1)*step + add0;
+					printf("\t%#llx\t%s+%#llx\t%u\n",
+					       addr, fn_name, addr - fn_add,
+					       buf[scan]);
+				}
 			}
 		}
-		fn_add=next_add; strcpy(fn_name,next_name);
+
+		fn_add = next_add;
+		strcpy(fn_name,next_name);
 
 		maplineno++;
 	}

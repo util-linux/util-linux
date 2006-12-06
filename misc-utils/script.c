@@ -113,6 +113,15 @@ die_if_link(char *fn) {
 	}
 }
 
+/*
+ * script -t prints time delays as floating point numbers
+ * The example program (scriptreplay) that we provide to handle this
+ * timing output is a perl script, and does not handle numbers in
+ * locale format (not even when "use locale;" is added).
+ * So, since these numbers are not for human consumption, it seems
+ * easiest to set LC_NUMERIC here.
+ */
+
 int
 main(int argc, char **argv) {
 	extern int optind;
@@ -125,6 +134,7 @@ main(int argc, char **argv) {
 
 
 	setlocale(LC_ALL, "");
+	setlocale(LC_NUMERIC, "C");	/* see comment above */
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 	

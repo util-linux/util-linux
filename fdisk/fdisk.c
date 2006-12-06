@@ -766,6 +766,26 @@ get_kernel_geometry(int fd) {
 #endif
 }
 
+static int
+is_probably_full_disk(char *name) {
+#ifdef HDIO_GETGEO
+	struct hd_geometry geometry;
+	int fd, i = 0;
+
+	fd = open(name, O_RDONLY);
+	if (fd >= 0) {
+		i = ioctl(fd, HDIO_GETGEO, &geometry);
+		close(fd);
+	}
+	return (fd >= 0 && i == 0 && geometry.start == 0);
+#else
+	/* silly heuristic */
+	while (*name)
+		name++;
+	return !isdigit(name[-1]);
+#endif
+}
+
 static void
 get_partition_table_geometry(void) {
 	unsigned char *bufp = MBRbuffer;
@@ -862,6 +882,8 @@ get_boot(enum action what) {
 	int i;
 
 	partitions = 4;
+	ext_index = 0;
+	extended_offset = 0;
 
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = &ptes[i];
@@ -1044,8 +1066,8 @@ read_hex(struct systypes *sys)
 }
 
 /*
- * Print the message MESG, then read an integer between LOW and HIGH (inclusive).
- * If the user hits Enter, DFLT is returned.
+ * Print the message MESG, then read an integer in LOW..HIGH.
+ * If the user hits Enter, DFLT is returned, provided that is in LOW..HIGH.
  * Answers like +10 are interpreted as offsets from BASE.
  *
  * There is no default if DFLT is not between LOW and HIGH.
@@ -2359,23 +2381,17 @@ try(char *device, int user_specified) {
 			return;
 	if ((fd = open(disk_device, type_open)) >= 0) {
 		gb = get_boot(try_only);
-		if (gb > 0) {	/* I/O error */
-			close(fd);
+		if (gb > 0) { /* I/O error */
 		} else if (gb < 0) { /* no DOS signature */
 			list_disk_geometry();
-			if (aix_label)
-				return;
-			if (btrydev(device) < 0)
+			if (!aix_label && btrydev(device) < 0)
 				fprintf(stderr,
 					_("Disk %s doesn't contain a valid "
 					  "partition table\n"), device);
-			close(fd);
 		} else {
-			close(fd);
 			list_table(0);
-			if (!sun_label && partitions > 4)
-				delete_partition(ext_index);
 		}
+		close(fd);
 	} else {
 		/* Ignore other errors, since we try IDE
 		   and SCSI hard disks which may not be
@@ -2387,12 +2403,14 @@ try(char *device, int user_specified) {
 	}
 }
 
-/* for fdisk -l: try all things in /proc/partitions
-   that look like a partition name (do not end in a digit) */
+/*
+ * for fdisk -l:
+ * try all things in /proc/partitions that look like a full disk
+ */
 static void
 tryprocpt(void) {
 	FILE *procpt;
-	char line[100], ptname[100], devname[120], *s;
+	char line[100], ptname[100], devname[120];
 	int ma, mi, sz;
 
 	procpt = fopen(PROC_PARTITIONS, "r");
@@ -2405,11 +2423,9 @@ tryprocpt(void) {
 		if (sscanf (line, " %d %d %d %[^\n ]",
 			    &ma, &mi, &sz, ptname) != 4)
 			continue;
-		for (s = ptname; *s; s++);
-		if (isdigit(s[-1]))
-			continue;
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
-		try(devname, 0);
+		if (is_probably_full_disk(devname))
+			try(devname, 0);
 	}
 	fclose(procpt);
 }
@@ -2504,11 +2520,11 @@ main(int argc, char **argv) {
 			   variable `k' might be clobbered by `longjmp' */
 			dummy(&k);
 			listing = 1;
-			for (k=optind; k<argc; k++)
+			for (k = optind; k < argc; k++)
 				try(argv[k], 1);
 		} else {
 			/* we no longer have default device names */
-			/* but, we can use /proc/partitions instead */
+			/* but we can use /proc/partitions instead */
 			tryprocpt();
 		}
 		exit(0);

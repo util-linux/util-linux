@@ -38,6 +38,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "linux_fs.h"
+#include "mount_blkid.h"
 #include "mount_guess_fstype.h"
 #include "sundries.h"		/* for xstrdup */
 #include "nls.h"
@@ -45,6 +46,21 @@
 #define ETC_FILESYSTEMS		"/etc/filesystems"
 #define PROC_FILESYSTEMS	"/proc/filesystems"
 
+#ifdef HAVE_BLKID
+
+char *
+do_guess_fstype(const char *device) 
+{
+	return blkid_get_tag_value(blkid, "TYPE", device);
+}
+
+static int
+known_fstype(const char *fstype) 
+{
+	return blkid_known_fstype(fstype);
+}
+	
+#else
 #define SIZE(a) (sizeof(a)/sizeof(a[0]))
 
 /* Most file system types can be recognized by a `magic' number
@@ -90,47 +106,14 @@ static char
 	"vxfs", "xfs", "xiafs"
 };
 
-static struct tried {
-	struct tried *next;
-	char *type;
-} *tried = NULL;
-
 static int
-was_tested(const char *fstype) {
+known_fstype(const char *fstype) {
 	char **m;
-	struct tried *t;
 
 	for (m = magic_known; m - magic_known < SIZE(magic_known); m++)
 		if (!strcmp(*m, fstype))
 			return 1;
-	for (t = tried; t; t = t->next) {
-		if (!strcmp(t->type, fstype))
-			return 1;
-	}
 	return 0;
-}
-
-static void
-set_tested(const char *fstype) {
-	struct tried *t = xmalloc(sizeof(struct tried));
-
-	t->next = tried;
-	t->type = xstrdup(fstype);
-	tried = t;
-}
-
-static void
-free_tested(void) {
-	struct tried *t, *tt;
-
-	t = tried;
-	while(t) {
-		free(t->type);
-		tt = t->next;
-		free(t);
-		t = tt;
-	}
-	tried = NULL;
 }
 
 /*
@@ -210,18 +193,10 @@ may_be_adfs(const u_char *s) {
 
 	p = (u_char *) s + 511;
 	sum = 0;
-	while(--p != s)
+	while (--p != s)
 		sum = (sum >> 8) + (sum & 0xff) + *p;
 
 	return (sum == p[511]);
-}
-
-static int is_reiserfs_magic_string (struct reiserfs_super_block * rs)
-{
-    return (!strncmp (rs->s_magic, REISERFS_SUPER_MAGIC_STRING, 
-		      strlen ( REISERFS_SUPER_MAGIC_STRING)) ||
-	    !strncmp (rs->s_magic, REISER2FS_SUPER_MAGIC_STRING, 
-		      strlen ( REISER2FS_SUPER_MAGIC_STRING)));
 }
 
 char *
@@ -409,7 +384,7 @@ do_guess_fstype(const char *device) {
 	    || read(fd, (char *) &reiserfssb, sizeof(reiserfssb)) !=
 		sizeof(reiserfssb))
 	    goto io_error;
-	if (is_reiserfs_magic_string(&reiserfssb))
+	if (is_reiserfs_magic_string(reiserfssb.s_magic))
 	    type = "reiserfs";
     }
 
@@ -459,7 +434,7 @@ do_guess_fstype(const char *device) {
 	    || read(fd, (char *) &reiserfssb, sizeof(reiserfssb)) !=
 		sizeof(reiserfssb))
 	    goto io_error;
-	if (is_reiserfs_magic_string(&reiserfssb))
+	if (is_reiserfs_magic_string(reiserfssb.s_magic))
 	    type = "reiserfs";
     }
 
@@ -493,6 +468,49 @@ io_error:
 	 fprintf(stderr, _("mount: error while guessing filesystem type\n"));
     close(fd);
     return 0;
+}
+
+#endif
+
+static struct tried {
+	struct tried *next;
+	char *type;
+} *tried = NULL;
+
+static int
+was_tested(const char *fstype) {
+	struct tried *t;
+
+	if (known_fstype(fstype))
+		return 1;
+	for (t = tried; t; t = t->next) {
+		if (!strcmp(t->type, fstype))
+			return 1;
+	}
+	return 0;
+}
+
+static void
+set_tested(const char *fstype) {
+	struct tried *t = xmalloc(sizeof(struct tried));
+
+	t->next = tried;
+	t->type = xstrdup(fstype);
+	tried = t;
+}
+
+static void
+free_tested(void) {
+	struct tried *t, *tt;
+
+	t = tried;
+	while(t) {
+		free(t->type);
+		tt = t->next;
+		free(t);
+		t = tt;
+	}
+	tried = NULL;
 }
 
 char *

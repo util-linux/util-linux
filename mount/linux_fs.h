@@ -82,13 +82,26 @@ struct reiserfs_super_block
 	u_char		s_oid_maxsize[2];
 	u_char		s_oid_cursize[2];
 	u_char		s_state[2];
-	u_char		s_magic[12];
+	u_char		s_magic[10];
+	u_char		s_fs_state[2];
+	u_char		s_hash_function_code[4];
+	u_char		s_tree_height[2];
+	u_char		s_bmap_nr[2];
+	u_char		s_version[2];
+	u_char		s_reserved_for_journal[2];
+	u_char		s_inode_generation[4];
+	u_char		s_flags[4];
+	u_char		s_uuid[16];
+	u_char		s_label[16];
 };
 #define REISERFS_SUPER_MAGIC_STRING "ReIsErFs"
 #define REISER2FS_SUPER_MAGIC_STRING "ReIsEr2Fs"
+#define REISER3FS_SUPER_MAGIC_STRING "ReIsEr3Fs"
 #define REISERFS_DISK_OFFSET_IN_BYTES (64 * 1024)
 /* the spot for the super in versions 3.5 - 3.5.10 (inclusive) */
 #define REISERFS_OLD_DISK_OFFSET_IN_BYTES (8 * 1024)
+
+extern int is_reiserfs_magic_string (const char *magic);
 
 #define _XIAFS_SUPER_MAGIC 0x012FD16D
 struct xiafs_super_block {

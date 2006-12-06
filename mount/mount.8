@@ -1130,9 +1130,6 @@ possibly leading to silent data corruption.)
 If the high byte of the file length contains other garbage,
 set this mount option to ignore the high order bits of the file length.
 This implies that a file cannot be larger than 16MB.
-The `cruft' option is set automatically if the entire CDROM
-has a weird size (negative, or more than 800MB). It is also
-set when volume sequence numbers other than 0 or 1 are seen.
 .TP
 .BI session= x
 Select number of session on multisession CD. (Since 2.3.4.)
@@ -1149,6 +1146,44 @@ to 8 bit characters. The default is iso8859-1.
 .TP
 .B utf8
 Convert 16 bit Unicode characters on CD to UTF-8.
+
+.SH "Mount options for jfs"
+.TP
+.BI iocharset= name
+Character set to use for converting from Unicode to ASCII.  The default is
+to do no conversion.  Use
+.B iocharset=utf8
+for UTF8 translations.  This requires CONFIG_NLS_UTF8 to be set in
+the kernel
+.I ".config"
+file.
+.TP
+.BI resize= value
+Resize the volume to
+.I value
+blocks. JFS only supports growing a volume, not shrinking it. This option
+is only valid during a remount, when the volume is mounted read-write. The
+.B resize
+keyword with no value will grow the volume to the full size of the partition.
+.TP
+.B nointegrity
+Do not write to the journal.  The primary use of this option is to allow
+for higher performance when restoring a volume from backup media. The
+integrity of the volume is not guaranteed if the system abnormally abends.
+.TP
+.B integrity
+Default.  Commit metadata changes to the journal.  Use this option to remount
+a volume where the
+.B nointegrity
+option was previously specified in order to restore normal behavior.
+.TP
+.BR errors=continue " / " errors=remount-ro " / " errors=panic
+Define the behaviour when an error is encountered.
+(Either ignore errors and just mark the file system erroneous and continue,
+or remount the file system read-only, or panic and halt the system.)
+.TP
+.BR noquota " / " quota " / " usrquota " / " grpquota
+These options are accepted but ignored.
 
 .SH "Mount options for minix"
 None.

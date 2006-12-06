@@ -1,7 +1,7 @@
 include ../make_include
 include ../MCONFIG
 
-DEFINES = -DHAVE_NFS
+DEFINES = -DHAVE_NFS $(BLKID_DEFINE)
 
 RPCSVCDIR = rpcsvc
 RPC_CFLAGS = -Wno-unused 
@@ -18,6 +18,11 @@ MAN8 = mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 ifeq "$(HAVE_PIVOT_ROOT)" "yes"
 NOSUID_PROGS := $(NOSUID_PROGS) pivot_root
 MAN8 := $(MAN8) pivot_root.8
+endif
+
+ifeq "$(HAVE_BLKID)" "yes"
+BLKID_DEFINE = -DHAVE_BLKID
+BLKID_LIB = -lblkid -luuid
 endif
 
 PROGS = $(SUID_PROGS) $(NOSUID_PROGS)
@@ -43,13 +48,14 @@ install: $(PROGS)
 	$(COMPILE) $<
 
 mount: mount.o fstab.o sundries.o realpath.o mntent.o version.o \
-       mount_guess_fstype.o get_label_uuid.o mount_by_label.o getusername.o \
-       $(LIB)/setproctitle.o $(LIB)/env.o $(NFS_OBJS) $(LO_OBJS)
-	$(LINK) $^ -o $@
+       get_label_uuid.o mount_by_label.o mount_blkid.o mount_guess_fstype.o \
+       getusername.o $(LIB)/setproctitle.o $(LIB)/env.o $(NFS_OBJS) $(LO_OBJS)
+	$(LINK) $^ -o $@ $(BLKID_LIB)
 
 umount: umount.o fstab.o sundries.o realpath.o mntent.o getusername.o \
-	get_label_uuid.o version.o $(LIB)/env.o $(LO_OBJS)
-	$(LINK) $^ -o $@
+	get_label_uuid.o mount_by_label.o mount_blkid.o version.o \
+	$(LIB)/env.o $(LO_OBJS)
+	$(LINK) $^ -o $@ $(BLKID_LIB)
 
 swapon:	swapon.o version.o
 	$(LINK) $^ -o $@
@@ -79,6 +85,8 @@ swapon.o: swap_constants.h swapargs.h
 sundries.o nfsmount.o nfsmount_xdr.o nfsmount_clnt.o: nfsmount.h
 
 umount.o: mount_constants.h
+
+mount.o mount_blkid.o: mount_blkid.h
 
 mount.o mount_by_label.o mount_guess_fstype.o: linux_fs.h
 

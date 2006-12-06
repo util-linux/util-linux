@@ -6,7 +6,7 @@
 #define BLKGETSIZE   _IO(0x12,96)    /* return device size */
 #define BLKFLSBUF    _IO(0x12,97)    /* flush buffer cache */
 #define BLKSSZGET    _IO(0x12,104)   /* get block device sector size */
-#define BLKGETSIZE64 _IOR(0x12,114,8)	/* 8 = sizeof(u64) */
+#define BLKGETSIZE64 _IOR(0x12,114,size_t)	/* size in bytes */
 
 /* including <linux/hdreg.h> also fails */
 struct hd_geometry {

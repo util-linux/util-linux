@@ -246,7 +246,7 @@ digits_only(const char *s) {
 }
 
 int
-set_loop(const char *device, const char *file, int offset,
+set_loop(const char *device, const char *file, unsigned long long offset,
 	 const char *encryption, int pfd, int *loopro) {
 	struct loop_info64 loopinfo64;
 	int fd, ffd, mode;
@@ -337,7 +337,7 @@ set_loop(const char *device, const char *file, int offset,
 
 	close (fd);
 	if (verbose > 1)
-		printf(_("set_loop(%s,%s,%d): success\n"),
+		printf(_("set_loop(%s,%s,%llu): success\n"),
 		       device, file, offset);
 	return 0;
 
@@ -376,7 +376,7 @@ mutter(void) {
 }  
 
 int
-set_loop (const char *device, const char *file, int offset,
+set_loop (const char *device, const char *file, unsigned long long offset,
 	  const char *encryption, int *loopro) {
 	mutter();
 	return 1;
@@ -446,10 +446,11 @@ error (const char *fmt, ...) {
 int
 main(int argc, char **argv) {
 	char *offset, *encryption, *passfd;
-	int delete, off, c;
+	int delete, c;
 	int res = 0;
 	int ro = 0;
 	int pfd = -1;
+	unsigned long long off;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -490,9 +491,9 @@ main(int argc, char **argv) {
 		else
 			res = show_loop(argv[optind]);
 	} else {
-		if (offset && sscanf(offset,"%d",&off) != 1)
+		if (offset && sscanf(offset, "%llu", &off) != 1)
 			usage();
-		if (passfd && sscanf(passfd,"%d",&pfd) != 1)
+		if (passfd && sscanf(passfd, "%d", &pfd) != 1)
 			usage();
 		res = set_loop(argv[optind], argv[optind+1], off,
 			       encryption, pfd, &ro);
