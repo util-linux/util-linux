@@ -1,3 +1,8 @@
+util-linux 2.12q-pre2
+
+* sfdisk: document -G option in --help output
+* updated translations: ca, et, fr
+
 util-linux 2.12q-pre1
 
 * new maintainer

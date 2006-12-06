@@ -2327,6 +2327,7 @@ usage(void) {
     puts (_("    -? [or --help]:      print this message"));
     puts (_("dangerous options:"));
     puts (_("    -g [or --show-geometry]: print the kernel's idea of the geometry"));
+    puts (_("    -G [or --show-pt-geometry]: print geometry guessed from the partition table"));
     puts (_("    -x [or --show-extended]: also list extended partitions on output\n"
           "                             or expect descriptors for them on input"));
     puts (_("    -L  [or --Linux]:      do not complain about things irrelevant for Linux"));
