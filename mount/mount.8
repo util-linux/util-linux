@@ -621,6 +621,13 @@ access on the news spool to speed up news servers).
 .B nodiratime
 Do not update directory inode access times on this filesystem.
 .TP
+.B relatime
+Update inode access times relative to modify or change time.  Access
+time is only updated if the previous access time was earlier than the
+current modify or change time. (Similar to noatime, but doesn't break
+mutt or other applications that need to know if a file has been read
+since the last time it was modified.)
+.TP
 .B noauto
 Can only be mounted explicitly (i.e., the
 .B \-a
