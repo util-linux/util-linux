@@ -44,6 +44,13 @@
 #include "setproctitle.h"
 #endif
 
+/* Quiet mode */
+int mount_quiet = 0;
+
+/* Debug mode (level) */
+int mount_debug = 0;
+
+
 /* True for fake mount (-f).  */
 static int fake = 0;
 
@@ -207,7 +214,6 @@ parse_string_opt(char *s) {
 	return 0;
 }
 
-int mount_quiet=0;
 
 /* Report on a single mount.  */
 static void
@@ -452,6 +458,10 @@ do_mount_syscall (struct mountargs *args) {
 
 	if ((flags & MS_MGC_MSK) == 0)
 		flags |= MS_MGC_VAL;
+
+	mnt_debug(1, "mount(2) syscall: source=\"%s\" target=\"%s\" "
+			"filesystemtype=\"%s\" mountflags=%lu data=%s",
+			args->spec, args->node, args->type, flags, args->data ? "YES" : "NOT");
 
 	ret = mount (args->spec, args->node, args->type, flags, args->data);
 	if (ret == 0)
@@ -734,7 +744,7 @@ check_special_mountprog(const char *spec, const char *node, const char *type,
 	    res = fork();
 	    if (res == 0) {
 		 const char *oo, *mountargs[10];
-		 int i = 0;
+		 int i = 0, x;
 
 		 setuid(getuid());
 		 setgid(getgid());
@@ -751,6 +761,11 @@ check_special_mountprog(const char *spec, const char *node, const char *type,
 		      mountargs[i++] = oo;
 		 }
 		 mountargs[i] = NULL;
+
+		 for(x = 0; x < 10 && mountargs[x]; x++)
+			 mnt_debug(1, "external mount: argv[%d] = \"%s\"",
+				 		x, mountargs[x]);
+
 		 execv(mountprog, (char **) mountargs);
 		 exit(1);	/* exec failed */
 	    } else if (res != -1) {
@@ -794,6 +809,11 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 
   /* copies for freeing on exit */
   const char *opts1, *spec1, *node1, *types1, *extra_opts1;
+
+  mnt_debug(1, "spec:  \"%s\"", spec0);
+  mnt_debug(1, "node:  \"%s\"", node0);
+  mnt_debug(1, "types: \"%s\"", types0);
+  mnt_debug(1, "opts:  \"%s\"", opts0);
 
   spec = spec1 = xstrdup(spec0);
   node = node1 = xstrdup(node0);
@@ -1382,6 +1402,7 @@ do_mount_all (char *types, char *options, char *test_opts) {
 
 static struct option longopts[] = {
 	{ "all", 0, 0, 'a' },
+	{ "debug", 1, 0, 'd' },
 	{ "fake", 0, 0, 'f' },
 	{ "fork", 0, 0, 'F' },
 	{ "help", 0, 0, 'h' },
@@ -1481,11 +1502,14 @@ main(int argc, char *argv[]) {
 	initproctitle(argc, argv);
 #endif
 
-	while ((c = getopt_long (argc, argv, "afFhilL:no:O:p:rsU:vVwt:",
+	while ((c = getopt_long (argc, argv, "ad:fFhilL:no:O:p:rsU:vVwt:",
 				 longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':	       /* mount everything in fstab */
 			++mount_all;
+			break;
+		case 'd':
+			mount_debug = atoi(optarg);
 			break;
 		case 'f':	       /* fake: don't actually call mount(2) */
 			++fake;
@@ -1586,6 +1610,10 @@ main(int argc, char *argv[]) {
 			usage (stderr, EX_USAGE);
 		}
 	}
+
+	mnt_debug(2, "fstab path: \"%s\"", _PATH_FSTAB);
+	mnt_debug(2, "lock path:  \"%s\"", MOUNTED_LOCK);
+	mnt_debug(2, "temp path:  \"%s\"", MOUNTED_TEMP);
 
 	argc -= optind;
 	argv += optind;

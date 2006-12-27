@@ -2,7 +2,10 @@
  * sundries.h
  * Support function prototypes.  Functions are in sundries.c.
  */
+#ifndef SUNDRIES_H
+#define SUNDRIES_H
 
+#include <stdio.h>
 #include <sys/types.h>
 #include <fcntl.h>
 #include <limits.h>
@@ -14,6 +17,7 @@
 #endif
 
 extern int mount_quiet;
+extern int mount_debug;
 extern int verbose;
 extern int sloppy;
 
@@ -47,3 +51,23 @@ int nfsmount (const char *spec, const char *node, int *flags,
 #define EX_SOMEOK      64	/* some mount succeeded */
 
 #define EX_BG         256       /* retry in background (internal only) */
+
+static inline void
+mnt_debug(int lev, const char *fmt, ...)
+{
+	va_list ap;
+
+	if (lev > mount_debug)
+		return;
+
+	fputs("DEBUG: ", stderr);
+
+	va_start(ap, fmt);
+	vfprintf(stderr, fmt, ap);
+	va_end(ap);
+
+	fputc('\n', stderr);
+}
+
+#endif /* SUNDRIES_H */
+
