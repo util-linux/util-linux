@@ -382,7 +382,7 @@ main(argc, argv)
 
     /* Let the login program take care of password validation. */
 
-    (void) execl(options.login, options.login, "--", logname, (char *) 0);
+    (void) execl(options.login, options.login, "--", logname, NULL);
     error(_("%s: can't exec %s: %m"), options.tty, options.login);
     exit(0);  /* quiet GCC */
 }

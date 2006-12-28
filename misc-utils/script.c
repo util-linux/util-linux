@@ -324,9 +324,9 @@ doshell() {
 		shname = shell;
 
 	if (cflg)
-		execl(shell, shname, "-c", cflg, 0);
+		execl(shell, shname, "-c", cflg, NULL);
 	else
-		execl(shell, shname, "-i", 0);
+		execl(shell, shname, "-i", NULL);
 
 	perror(shell);
 	fail();
