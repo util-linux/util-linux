@@ -422,9 +422,9 @@ void do_sem (char format)
 		break;
 
 	case TIME:
-		printf (_("------ Shared Memory Operation/Change Times --------\n"));
+		printf (_("------ Semaphore Operation/Change Times --------\n"));
 		printf (_("%-8s %-10s %-26.24s %-26.24s\n"),
-			_("shmid"),_("owner"),_("last-op"),_("last-changed"));
+			_("semid"),_("owner"),_("last-op"),_("last-changed"));
 		break;
 
 	case PID:

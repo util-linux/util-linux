@@ -19,8 +19,8 @@ msqid      perms      cuid       cgid       uid        gid
 ------ Messages: Status --------
 
 test: sem headers
------- Shared Memory Operation/Change Times --------
-shmid    owner      last-op                    last-changed              
+------ Semaphore Operation/Change Times --------
+semid    owner      last-op                    last-changed              
 ------ Semaphore Arrays Creators/Owners --------
 semid      perms      cuid       cgid       uid        gid       
 ------ Semaphore Limits --------
@@ -38,8 +38,8 @@ key        msqid      owner      perms      used-bytes   messages
 ------ Shared Memory Attach/Detach/Change Times --------
 shmid      owner      attached             detached             changed             
 --
------- Shared Memory Operation/Change Times --------
-shmid    owner      last-op                    last-changed              
+------ Semaphore Operation/Change Times --------
+semid    owner      last-op                    last-changed              
 --
 ------ Message Queues Send/Recv/Change Times --------
 msqid    owner      send                 recv                 change              
