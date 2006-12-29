@@ -279,8 +279,8 @@ void do_shm (char format)
 			(unsigned long) shminfo.shmmni);
 		printf (_("max seg size (kbytes) = %lu\n"),
 			(unsigned long) (shminfo.shmmax >> 10));
-		printf (_("max total shared memory (pages) = %lu\n"),
-			(unsigned long) shminfo.shmall);
+		printf (_("max total shared memory (kbytes) = %llu\n"),
+			getpagesize()/1024 * (unsigned long long) shminfo.shmall);
 		printf (_("min seg size (bytes) = %lu\n"),
 			(unsigned long) shminfo.shmmin);
 		return;
