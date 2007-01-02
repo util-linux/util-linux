@@ -15,6 +15,8 @@ function ts_init {
 	TS_DIFF="$TS_DIFFDIR/$TS_NAME"
 	TS_EXPECTED="$TS_EXPECTEDDIR/$TS_NAME"
 
+	rm -f $TS_OUTPUT
+
 	printf "%15s: %-25s ..." "$TS_COMPONENT" "$TS_DESC"
 }
 
@@ -30,6 +32,9 @@ function ts_finalize {
 		else
 			res=0
 		fi
+	else
+		echo " IGNORE (expected output undefined)"
+		exit 0
 	fi
 	if [ $res -eq 0 ]; then
 		echo " OK"

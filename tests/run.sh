@@ -6,6 +6,8 @@ echo
 echo "------------------ Utils-linux-ng regression tests ------------------"
 echo
 
+rm -f *~
+
 res=0
 count=0
 for ts in `ls ts-*`; do
