@@ -47,6 +47,7 @@
 #include <ctype.h>
 #include <signal.h>
 #include <errno.h>
+#include <fcntl.h>
 #include <termios.h>
 #include <setjmp.h>
 #include <sys/ioctl.h>
@@ -478,6 +479,7 @@ checkf (fs, clearfirst)
 	}
 	if (magic(f, fs))
 		return((FILE *)NULL);
+	fcntl(fileno(f), F_SETFD, FD_CLOEXEC );
 	c = Getc(f);
 	*clearfirst = (c == '\f');
 	Ungetc (c, f);
