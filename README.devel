@@ -1,0 +1,21 @@
+
+ Notes for util-linux-ng developers
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ * generated files are unwanted in SCM (git) and also very unwanted in your
+   patches.
+
+ * "./autogen.sh" generates all necessary files (run it after checkout from
+   git)
+
+ * "make mrproper" removes all generates files. You have to call "./autogen.sh"
+   after mrproper.
+
+ * "make distclean" is subset of mrproper. It removes all unnecessary files,
+   but code is still possible recompile by "./configure; make"
+
+ * "make dist-gzip" (or -bzip2) creates tarball which is possible use without
+   autogen.sh
+
+
+

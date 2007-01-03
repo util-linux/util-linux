@@ -60,8 +60,14 @@ AC_CHECK_LIB(blkid, blkid_known_fstype)
 AM_CONDITIONAL(HAVE_BLKID, test x$ac_cv_lib_blkid_blkid_known_fstype = xyes)
 
 
+AM_GNU_GETTEXT_VERSION([0.14.1])
 AM_GNU_GETTEXT([external])
-
+if test -d po
+then
+    ALL_LINGUAS=`(cd po > /dev/null && ls *.po) | sed 's+\.po$++'`
+else
+    ALL_LINGUAS="af am ar as be bg bn_IN bn ca cs cy da de el en_GB es et eu_ES fa fi fr gl gu he hi hr hu hy id is it ja ka kn ko ku lo lt lv mk ml mr ms my nb nl nn no nso or pa pl pt_BR pt ro ru si sk sl sq sr@Latn sr sv ta te th tr uk ur vi zh_CN zh_TW zu"
+fi
 
 AC_CHECK_HEADERS(ncurses.h)
 AC_CHECK_HEADERS(ncurses/ncurses.h)
@@ -386,6 +392,21 @@ LIBS=""
 
 AC_CONFIG_HEADERS(config.h)
 
-AC_CONFIG_FILES([Makefile disk-utils/Makefile fdisk/Makefile getopt/Makefile hwclock/Makefile lib/Makefile login-utils/Makefile misc-utils/Makefile mount/Makefile partx/Makefile po/Makefile.in schedutils/Makefile sys-utils/Makefile text-utils/Makefile])
+AC_CONFIG_FILES([
+Makefile
+disk-utils/Makefile
+fdisk/Makefile 
+getopt/Makefile
+hwclock/Makefile
+lib/Makefile
+login-utils/Makefile
+misc-utils/Makefile
+mount/Makefile
+partx/Makefile
+po/Makefile.in
+schedutils/Makefile
+sys-utils/Makefile
+text-utils/Makefile
+])
 
 AC_OUTPUT

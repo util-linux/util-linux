@@ -1,6 +1,7 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 SUBDIRS = lib \
+	include \
 	disk-utils \
 	fdisk \
 	getopt \
@@ -16,8 +17,17 @@ SUBDIRS = lib \
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = config/mkinstalldirs config/include-Makefile.am
+EXTRA_DIST = 	config/include-Makefile.am \
+		autogen.sh
 
 distclean-local:
-	-for i in `find . -name \*~ -o -name \*.orig -o -name \*.rej`; do rm $$i; done
+	-find . \( -name \*~ -o -name \*.orig -o -name \*.rej \) -exec rm -f {} \;
 	rm -rf autom4te.cache
+
+mrproper: distclean
+	-find -name Makefile.in -exec rm -f {} \;
+	rm -f configure ABOUT-NLS
+	rm -rf m4
+	cd po; rm -f `cat .gitignore`; cd ..
+	cd config; rm -f `cat ../.gitignore`; cd ..
+
