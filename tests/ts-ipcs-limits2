@@ -1,0 +1,20 @@
+#!/bin/bash
+
+. commands.sh
+. functions.sh
+
+TS_COMPONENT="ipcs"
+TS_DESC="basic limits"
+
+. ts-ipcs.sh
+
+ts_init
+
+(
+	echo "check for difference between kernel and IPC"
+	ipcs_limits_check
+
+) > $TS_OUTPUT
+
+ts_finalize
+

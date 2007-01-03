@@ -3,6 +3,11 @@ TS_OUTDIR="$TS_TOPDIR/output"
 TS_DIFFDIR="$TS_TOPDIR/diff"
 TS_EXPECTEDDIR="$TS_TOPDIR/expected"
 
+function ts_skip {
+	echo " IGNORE ($1)"
+	exit 0
+}
+
 function ts_init {
 	TS_NAME=$(basename $0)
 	if [ ! -d $TS_OUTDIR ]; then
@@ -37,7 +42,11 @@ function ts_finalize {
 		exit 0
 	fi
 	if [ $res -eq 0 ]; then
-		echo " OK"
+		if [ x"$1" == x"" ]; then
+			echo " OK"
+		else
+			echo " OK ($1)"
+		fi
 		exit 0
 	else
 		echo " FAILED ($TS_NAME)"

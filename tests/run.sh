@@ -10,7 +10,7 @@ rm -f *~
 
 res=0
 count=0
-for ts in `ls ts-*`; do
+for ts in $(find -maxdepth 1 -regex "\./ts[^\.~]*" |  sort); do
 	$TS_TOPDIR/$ts
 	res=$(( $res + $? ))
 	count=$(( $count + 1 ))
