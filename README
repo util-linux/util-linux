@@ -1,11 +1,50 @@
-util-linux is a random collection of Linux utilities
 
-The stuff in the subdirectories mount, fdisk, disk-utils, text-utils,
-misc-utils, schedutils, sys-utils, getopt-* should be rather
-distribution-neutral, and installing it does no harm.
-On the other hand, the stuff in login-utils defines initial boot-time
-stuff, things that are done in different ways by different distributions.
-If you install it, your machine may not boot anymore, or you may be
-unable to login.
+                          utils-linux-ng
+           (fork of util-linux, based on version 2.13-pre7)
 
-No RPMs are provided - get yours from your distributor.
+         util-linux is a random collection of Linux utilities
+
+
+MAILING LIST:
+
+      E-MAIL: util-linux-ng@vger.kernel.org
+      URL:    http://vger.kernel.org/vger-lists.html#util-linux-ng
+
+
+NEUTRALITY:
+
+      The stuff in util-linux-ng should be rather distribution-neutral.
+      No RPMs/DEBs/... are provided - get yours from your distributor.
+
+
+DEPRECATED:
+
+      The utils marked as deprecated will be removed in a future version of the
+      util-linux-ng. Please, prepare your distribution for this change.
+
+      * boot-time stuff
+
+        The stuff in login-utils defines initial boot-time stuff, things that
+        are done in different ways by different distributions.  If you install
+        it, your machine may not boot anymore, or you may be unable to login.
+
+      <TODO>
+
+
+VERSION SCHEMA:
+
+      Standard releases:
+
+          <major>.<minor>.<maint>
+
+             major = fatal and deep changes
+             minor = typical release with new fetures
+             maint = maintenance releases; bug fixes only
+       
+      Development releases:
+
+         <major>.<minor><suffix>
+
+             suffix = "devel" or "rc<N>"
+
+

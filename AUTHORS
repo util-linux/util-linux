@@ -1,6 +1,26 @@
-Maintainer: Adrian Bunk <bunk@stusta.de>
 
-Maintainer of flock: H. Peter Anvin <hpa@zytor.com>
-Maintainer of getopt: Frodo Looijaard <frodol@dds.nl>
-Maintainer of schedutils: Robert Love <rlove@rlove.org>
-Maintainer of simpleinit: Richard Gooch <rgooch@atnf.csiro.au>
+                            utils-linux-ng
+           (fork of util-linux, based on version 2.13-pre7)
+
+MAINTAINERS:
+      
+      Karel Zak <kzak@redhat.com> 
+
+      Maintainer of flock:           H. Peter Anvin <hpa@zytor.com>
+      Maintainer of getopt:          Frodo Looijaard <frodol@dds.nl>
+      Maintainer of schedutils:      Robert Love <rlove@rlove.org>
+      Maintainer of simpleinit:      Richard Gooch <rgooch@atnf.csiro.au>
+
+PAST MAINTAINERS:
+
+      Maintainer of util-linux:      Adrian Bunk <bunk@stusta.de> 
+      Maintainer of util-linux:      Andries E. Brouwer <aeb@cwi.nl>
+
+
+CONTRIBUTORS:
+
+      Bryan Henderson <bryanh@giraffe-data.com>
+            - original author of hwclock 
+
+
+      <your name>   <--- send a patch

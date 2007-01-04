@@ -2,20 +2,76 @@
  Notes for util-linux-ng developers
  ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
- * generated files are unwanted in SCM (git) and also very unwanted in your
-   patches.
+AUTOTOOLS:
 
- * "./autogen.sh" generates all necessary files (run it after checkout from
-   git)
+     * "./autogen.sh" generates all necessary files (run it after checkout from
+       git)
 
- * "make mrproper" removes all generates files. You have to call "./autogen.sh"
-   after mrproper.
+     * "make mrproper" removes all generates files. You have to call autogen.sh
+       after mrproper.
 
- * "make distclean" is subset of mrproper. It removes all unnecessary files,
-   but code is still possible recompile by "./configure; make"
+     * "make distclean" is subset of mrproper. It removes all unnecessary files,
+       but code is still possible recompile by "./configure; make"
 
- * "make dist-gzip" (or -bzip2) creates tarball which is possible use without
-   autogen.sh
+     * "make dist-gzip" (or -bzip2) creates tarball which is possible use without
+      autogen.sh
 
+
+PATCHES:
+
+     * send your patches to the mailing list or to upstream maintainer
+       (see the AUTHORS file)
+
+     * diff -u
+
+     * dont include generated (autotools) stuff to your patches
+
+     * patches are delivered via email only.  Downloading them from internet
+       servers is a pain.
+
+     * one patch per email, with the changelog in the body of the email.
+
+     * Subject: [PATCH] subsystem: description
+
+     * if someone else wrote the patch, they should be credited (and blamed) for it.
+       To communicate this, add a line:
+
+          From: John Doe <jdoe@wherever.com>
+
+     * add a Signed-off-by line:
+
+          Signed-off-by: Foo Bar <fb@wherever.com>
+
+     * there is a lot of really useful rules. Please, read:
+
+       The perfect patch
+                http://www.zip.com.au/~akpm/linux/patches/stuff/tpp.txt
+
+
+
+SCM (source code management):
+
+     URL: http://git.kernel.org/git/?p=utils/util-linux-ng/util-linux-ng.git
+
+     
+    * maintenance branch(es)
+        - created for every <major>.<minor> release, branch name: v<major>.<minor>
+
+    * master branch
+        - contains what are reasonably tested and ready to next release
+        - it's source for occasional snapshots or release candidates
+        - active development does not usually happen on "master" (except trivial
+          and non-invasive patches).
+
+    * devel branch
+        - the status of this branch is: "it works for me". It means useful
+          but not well tested patches.
+        - for long-term development or invasive changes should be an active
+          development forked into a separate branch (topic branches) from the
+          tip of "master".
+
+    * A new tag object is created for:
+        - every release, tag name: v<version>
+        - every public snapshot, tag name: s<version>-YYYYMMDD
 
 
