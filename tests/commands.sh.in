@@ -1,0 +1,8 @@
+TOPDIR=@top_srcdir@
+TS_TOPDIR=$TOPDIR/tests
+
+# paths to commands
+TS_CMD_MOUNT=${TS_CMD_MOUNT:-"$TOPDIR/mount/mount"}
+TS_CMD_UMOUNT=${TS_CMD_MOUNT:-"$TOPDIR/mount/umount"}
+TS_CMD_SWAPON=${TS_CMD_MOUNT:-"$TOPDIR/mount/swapon"}
+TS_CMD_SWAPOFF=${TS_CMD_MOUNT:-"$TOPDIR/mount/swapoff"}

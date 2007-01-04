@@ -13,7 +13,8 @@ SUBDIRS = lib \
 	po \
 	schedutils \
 	sys-utils \
-	text-utils
+	text-utils \
+	tests
 
 ACLOCAL_AMFLAGS = -I m4
 

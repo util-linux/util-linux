@@ -1,0 +1,7 @@
+DEBUG: fstab path: "/etc/fstab"
+DEBUG: lock path:  "/etc/mtab~"
+DEBUG: temp path:  "/etc/mtab.tmp"
+DEBUG: spec:  "/dev/dummy"
+DEBUG: node:  "/mnt"
+DEBUG: types: "(null)"
+DEBUG: opts:  "(null)"

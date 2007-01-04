@@ -1,0 +1,16 @@
+
+ util-linux regression tests
+ ~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+ It's expected that for each invasive change or important bugfix you will
+ include a test to your patch.
+
+
+ Run all tests:
+
+	./run.sh
+
+ Run one tests:
+
+	./ts-<component_name>-<test_name>.sh
+

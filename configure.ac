@@ -408,6 +408,8 @@ po/Makefile.in
 schedutils/Makefile
 sys-utils/Makefile
 text-utils/Makefile
+tests/Makefile
+tests/commands.sh
 ])
 
 AC_OUTPUT
