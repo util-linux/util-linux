@@ -9,7 +9,7 @@
 #include <string.h>		/* for index */
 #include <ctype.h>		/* for isdigit */
 #include <sys/stat.h>		/* for umask */
-#include "mntent.h"
+#include "mount_mntent.h"
 #include "sundries.h"		/* for xmalloc */
 #include "nls.h"
 

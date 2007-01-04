@@ -21,11 +21,14 @@
 #include <sys/wait.h>
 #include <sys/mount.h>
 
+#include <mntent.h>
+#include <paths.h>
+
 #include "mount_blkid.h"
 #include "mount_constants.h"
 #include "sundries.h"
 #include "xmalloc.h"
-#include "mntent.h"
+#include "mount_mntent.h"
 #include "fstab.h"
 #include "lomount.h"
 #include "loop.h"
@@ -34,7 +37,7 @@
 #include "mount_guess_fstype.h"
 #include "mount_by_label.h"
 #include "getusername.h"
-#include "paths.h"
+#include "mount_paths.h"
 #include "env.h"
 #include "nls.h"
 

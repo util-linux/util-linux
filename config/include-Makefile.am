@@ -6,7 +6,5 @@ mandir = $(datadir)/man
 
 AM_CPPFLAGS = -include $(top_builddir)/config.h -I$(top_srcdir)/include
 
-DEFAULT_INCLUDES =
-
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 

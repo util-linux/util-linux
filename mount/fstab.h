@@ -1,4 +1,4 @@
-#include "mntent.h"
+#include "mount_mntent.h"
 int mtab_is_writable(void);
 int mtab_does_not_exist(void);
 int is_mounted_once(const char *name);

@@ -9,12 +9,12 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
-#include "mntent.h"
+#include "mount_mntent.h"
 #include "fstab.h"
 #include "sundries.h"
 #include "xmalloc.h"
 #include "mount_blkid.h"
-#include "paths.h"
+#include "mount_paths.h"
 #include "nls.h"
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)

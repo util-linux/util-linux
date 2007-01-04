@@ -1,5 +1,5 @@
-#ifndef MY_MNTENT_H
-#define MY_MNTENT_H
+#ifndef MOUNT_MNTENT_H
+#define MOUNT_MNTENT_H
 
 struct my_mntent {
 	const char *mnt_fsname;
@@ -25,4 +25,4 @@ void my_endmntent (mntFILE *mfp);
 int my_addmntent (mntFILE *mfp, struct my_mntent *mnt);
 struct my_mntent *my_getmntent (mntFILE *mfp);
 
-#endif
+#endif /* MOUNT_MNTENT_H */
