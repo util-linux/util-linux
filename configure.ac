@@ -409,6 +409,7 @@ schedutils/Makefile
 sys-utils/Makefile
 text-utils/Makefile
 tests/Makefile
+tests/helpers/Makefile
 tests/commands.sh
 ])
 
