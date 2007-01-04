@@ -395,9 +395,10 @@ AC_CONFIG_HEADERS(config.h)
 AC_CONFIG_FILES([
 Makefile
 disk-utils/Makefile
-fdisk/Makefile 
+fdisk/Makefile
 getopt/Makefile
 hwclock/Makefile
+include/Makefile
 lib/Makefile
 login-utils/Makefile
 misc-utils/Makefile

@@ -4,4 +4,5 @@ man_MANS = hwclock.8
 
 sbin_PROGRAMS = hwclock
 
-hwclock_SOURCES = hwclock.c cmos.c rtc.c kd.c
+hwclock_SOURCES = hwclock.c cmos.c rtc.c kd.c clock.h
+

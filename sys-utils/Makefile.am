@@ -4,9 +4,13 @@ bin_PROGRAMS = dmesg
 
 usrbinexec_PROGRAMS = cytune flock ipcrm ipcs renice setsid
 
+cytune_SOURCES = cytune.c cyclades.h
+
 sbin_PROGRAMS = ctrlaltdel
 
 usrsbinexec_PROGRAMS = readprofile tunelp
+
+tunelp_SOURCES = tunelp.c lp.h
 
 man_MANS = flock.1 readprofile.1 \
 	ctrlaltdel.8 cytune.8 dmesg.8 ipcrm.8 ipcs.8 renice.8 \

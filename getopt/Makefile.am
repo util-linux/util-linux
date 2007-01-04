@@ -9,3 +9,6 @@ man_MANS = getopt.1
 exampledir = $(prefix)/usr/share/getopt/
 example_DATA = getopt-parse.bash getopt-parse.tcsh \
 	getopt-test.bash getopt-test.tcsh
+
+EXTRA_DIST = $(example_DATA) README Changelog COPYING
+

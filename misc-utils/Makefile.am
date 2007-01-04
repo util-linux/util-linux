@@ -1,5 +1,8 @@
 include $(top_srcdir)/config/include-Makefile.am
 
+EXTRA_DIST = README.cal  README.namei README1.namei chkdupexe.pl \
+	scriptreplay.pl
+
 bin_PROGRAMS =
 
 usrbinexec_PROGRAMS = cal ddate logger look mcookie \
@@ -40,7 +43,7 @@ endif
 
 if BUILD_KILL
 bin_PROGRAMS += kill
-kill_SOURCES = kill.c procs.c
+kill_SOURCES = kill.c procs.c kill.h
 man_MANS += kill.1
 endif
 

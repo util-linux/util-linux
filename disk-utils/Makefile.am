@@ -4,9 +4,10 @@ man_MANS = blockdev.8 fdformat.8 isosize.8 mkfs.8 mkswap.8 \
            fsck.minix.8 mkfs.minix.8 mkfs.bfs.8
 
 sbin_PROGRAMS = mkfs mkswap blockdev fsck.minix mkfs.minix mkfs.bfs
-fsck_minix_SOURCES = fsck.minix.c
-mkfs_minix_SOURCES = mkfs.minix.c
+fsck_minix_SOURCES = fsck.minix.c bitops.h minix.h
+mkfs_minix_SOURCES = mkfs.minix.c bitops.h minix.h
 mkfs_bfs_SOURCES = mkfs.bfs.c
+mkswap_SOURCES = mkswap.c swapheader.h
 
 usrbinexec_PROGRAMS = fdformat isosize
 
@@ -24,8 +25,8 @@ endif
 
 if BUILD_CRAMFS
 sbin_PROGRAMS += fsck.cramfs mkfs.cramfs
-fsck_cramfs_SOURCES = fsck.cramfs.c
-mkfs_cramfs_SOURCES = mkfs.cramfs.c
+fsck_cramfs_SOURCES = fsck.cramfs.c cramfs.h
+mkfs_cramfs_SOURCES = mkfs.cramfs.c cramfs.h
 fsck_cramfs_LDADD = -lz
 mkfs_cramfs_LDADD = -lz $(top_srcdir)/lib/libmd5.a
 endif
@@ -33,3 +34,4 @@ endif
 if HAVE_UUID
 mkswap_LDADD = -luuid
 endif
+
