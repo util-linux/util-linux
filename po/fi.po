@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-01-04 13:19+0100\n"
+"POT-Creation-Date: 2007-01-04 14:58+0100\n"
 "PO-Revision-Date: 2005-08-06 19:35+0300\n"
 "Last-Translator: Lauri Nurmi <lanurmi@iki.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -1081,7 +1081,7 @@ msgid "too many bad pages"
 msgstr "liian monta viallista sivua"
 
 #: disk-utils/mkswap.c:418 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1929 text-utils/more.c:1940
+#: text-utils/more.c:1931 text-utils/more.c:1942
 msgid "Out of memory"
 msgstr "Muisti lopussa"
 
@@ -6849,7 +6849,7 @@ msgstr "hakemiston avaaminen epäonnistui\n"
 msgid "fork failed\n"
 msgstr "haarauttaminen epäonnistui\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1576
+#: login-utils/simpleinit.c:539 text-utils/more.c:1578
 msgid "exec failed\n"
 msgstr "käynnistys epäonnistui\n"
 
@@ -7684,17 +7684,17 @@ msgstr "muisti ei riitä"
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Loop-tukea ei ollut käännöksen aikana. Käännä uudelleen.\n"
 
-#: mount/mntent.c:166
+#: mount/mount_mntent.c:166
 #, c-format
 msgid "[mntent]: warning: no final newline at the end of %s\n"
 msgstr "[mntent]: varoitus: tiedoston %s lopussa ei ole rivinvaihtoa\n"
 
-#: mount/mntent.c:217
+#: mount/mount_mntent.c:217
 #, c-format
 msgid "[mntent]: line %d in %s is bad%s\n"
 msgstr "[mntent]: rivi %d tiedostossa %s on virheellinen%s\n"
 
-#: mount/mntent.c:220
+#: mount/mount_mntent.c:220
 msgid "; rest of file ignored"
 msgstr "; loput tiedostosta jätetään huomioimatta"
 
@@ -7725,160 +7725,160 @@ msgstr ""
 msgid "%s: bad UUID"
 msgstr "%s: virheellinen UUID"
 
-#: mount/mount.c:382
+#: mount/mount.c:391
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: tiedoston mtab mukaan %s on jo liitetty pisteeseen %s"
 
-#: mount/mount.c:387
+#: mount/mount.c:396
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: tiedoston mtab mukaan %s on liitetty pisteeseen %s"
 
-#: mount/mount.c:407
+#: mount/mount.c:416
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: tiedostoa %s ei voi avata kirjoittamista varten: %s"
 
-#: mount/mount.c:424 mount/mount.c:677
+#: mount/mount.c:433 mount/mount.c:690
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: virhe kirjoitettaessa %s: %s"
 
-#: mount/mount.c:432
+#: mount/mount.c:441
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: virhe muutettaessa tiedoston %s tilaa: %s"
 
-#: mount/mount.c:483
+#: mount/mount.c:496
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s vaikuttaa olevan sivutustilaa - ei liitetä"
 
-#: mount/mount.c:570
+#: mount/mount.c:583
 msgid "mount failed"
 msgstr "liittäminen epäonnistui"
 
-#: mount/mount.c:572
+#: mount/mount.c:585
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: vain root voi liittää %s pisteeseen %s"
 
-#: mount/mount.c:600
+#: mount/mount.c:613
 msgid "mount: loop device specified twice"
 msgstr "mount: loop-laite annettu kahdesti"
 
-#: mount/mount.c:605
+#: mount/mount.c:618
 msgid "mount: type specified twice"
 msgstr "mount: tyyppi annettu kahdesti"
 
-#: mount/mount.c:617
+#: mount/mount.c:630
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: ohitetaan loop-laitteen asettaminen\n"
 
-#: mount/mount.c:626
+#: mount/mount.c:639
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: aiotaan käyttää loop-laitetta %s\n"
 
-#: mount/mount.c:631
+#: mount/mount.c:644
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: loop-laitteen asettaminen epäonnistui\n"
 
-#: mount/mount.c:635
+#: mount/mount.c:648
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: loop-laite asetettiin onnistuneesti\n"
 
-#: mount/mount.c:672
+#: mount/mount.c:685
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: tiedostoa %s ei voi avata: %s"
 
-#: mount/mount.c:693
+#: mount/mount.c:706
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argumentin valitsimelle -p tai --pass-fd on oltava luku"
 
-#: mount/mount.c:706
+#: mount/mount.c:719
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: tiedostoa %s ei voi avata nopeuden asetusta varten"
 
-#: mount/mount.c:709
+#: mount/mount.c:722
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: nopeutta ei voi asettaa: %s"
 
-#: mount/mount.c:763 mount/mount.c:1339
+#: mount/mount.c:781 mount/mount.c:1362
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: haarauttaminen ei onnistu: %s"
 
-#: mount/mount.c:885
+#: mount/mount.c:908
 #, c-format
 msgid "mount: failed with nfs mount version 4, trying 3..\n"
 msgstr "mount: epäonnistui nfs mount -versiolla 4, yritetään versiolla 3..\n"
 
-#: mount/mount.c:895
+#: mount/mount.c:918
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: Tiedostojärjestelmän tyyppiä ei voitu määrittää, eikä tyyppiä ole "
 "annettu"
 
-#: mount/mount.c:898
+#: mount/mount.c:921
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: tiedostojärjestelmän tyyppi on annettava"
 
-#: mount/mount.c:901
+#: mount/mount.c:924
 msgid "mount: mount failed"
 msgstr "mount: liitos epäonnistui"
 
-#: mount/mount.c:907 mount/mount.c:942
+#: mount/mount.c:930 mount/mount.c:965
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: liitospiste %s ei ole hakemisto"
 
-#: mount/mount.c:909
+#: mount/mount.c:932
 msgid "mount: permission denied"
 msgstr "mount: lupa evätty"
 
-#: mount/mount.c:911
+#: mount/mount.c:934
 msgid "mount: must be superuser to use mount"
 msgstr "mount: mountin käyttöön vaaditaan pääkäyttäjän oikeudet"
 
-#: mount/mount.c:915 mount/mount.c:919
+#: mount/mount.c:938 mount/mount.c:942
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s on varattu"
 
-#: mount/mount.c:921
+#: mount/mount.c:944
 msgid "mount: proc already mounted"
 msgstr "mount: proc on jo liitetty"
 
-#: mount/mount.c:923
+#: mount/mount.c:946
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s on jo liitetty tai %s on varattu"
 
-#: mount/mount.c:929
+#: mount/mount.c:952
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: liitospiste %s ei ole olemassa"
 
-#: mount/mount.c:931
+#: mount/mount.c:954
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: liitospiste %s on symlinkki olemattomaan"
 
-#: mount/mount.c:934
+#: mount/mount.c:957
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: erikoislaite %s ei ole olemassa"
 
-#: mount/mount.c:944
+#: mount/mount.c:967
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -7887,12 +7887,12 @@ msgstr ""
 "mount: erikoislaite %s ei ole olemassa\n"
 "       (polun etuliite ei ole hakemisto)\n"
 
-#: mount/mount.c:957
+#: mount/mount.c:980
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s ei ole vielä liitetty, tai virheellinen valitsin"
 
-#: mount/mount.c:959
+#: mount/mount.c:982
 #, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -7901,7 +7901,7 @@ msgstr ""
 "mount: väärä tiedostojärjestelmätyyppi, virheellinen valitsin, viallinen \n"
 "       superlohko laitteella %s, puuttuva koodisivu, tai muu virhe"
 
-#: mount/mount.c:969
+#: mount/mount.c:992
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -7909,7 +7909,7 @@ msgstr ""
 "       (voisiko tämä olla IDE-laite, joka käyttää ide-scsi-ajuria,\n"
 "       jolloin käytetään sr0:aa tai sda:ta?)"
 
-#: mount/mount.c:975
+#: mount/mount.c:998
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -7917,7 +7917,7 @@ msgstr ""
 "       (etkö yritäkin liittää laajennettua osiota, etkä\n"
 "       sen sisältämää loogista osiota?)"
 
-#: mount/mount.c:992
+#: mount/mount.c:1015
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -7925,51 +7925,51 @@ msgstr ""
 "       Joissakin tapauksissa järjestelmälokista löytyy hyödyllistä\n"
 "       tietoa - kokeile esim. komentoa \"dmesg | tail\".\n"
 
-#: mount/mount.c:998
+#: mount/mount.c:1021
 msgid "mount table full"
 msgstr "liitostaulukko täynnä"
 
-#: mount/mount.c:1000
+#: mount/mount.c:1023
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: superlohkoa ei voi lukea"
 
-#: mount/mount.c:1004
+#: mount/mount.c:1027
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: tuntematon laite"
 
-#: mount/mount.c:1009
+#: mount/mount.c:1032
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: tuntematon tiedostojärjestelmän tyyppi \"%s\""
 
-#: mount/mount.c:1021
+#: mount/mount.c:1044
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: tarkoitat todennäköisesti %s"
 
-#: mount/mount.c:1023
+#: mount/mount.c:1046
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: ehkä tarkoitit \"iso9660\"?"
 
-#: mount/mount.c:1025
+#: mount/mount.c:1048
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: ehkä tarkoitit \"vfat\"?"
 
-#: mount/mount.c:1028
+#: mount/mount.c:1051
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: tiedoston %s laitenumero on väärä tai tiedostojärjestelmätyyppi %s ei "
 "ole tuettu"
 
-#: mount/mount.c:1034
+#: mount/mount.c:1057
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s ei ole lohkolaite, ja tilan luku epäonnistuu?"
 
-#: mount/mount.c:1036
+#: mount/mount.c:1059
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -7978,71 +7978,71 @@ msgstr ""
 "mount: ydin ei tunnista tiedostoa %s lohkolaitteeksi\n"
 "       (ehkä \"insmod ajuri\" auttaa?)"
 
-#: mount/mount.c:1039
+#: mount/mount.c:1062
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s ei ole lohkolaite (yritä \"-o loop\"?)"
 
-#: mount/mount.c:1042
+#: mount/mount.c:1065
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s ei ole lohkolaite"
 
-#: mount/mount.c:1045
+#: mount/mount.c:1068
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s ei ole kelvollinen lohkolaite"
 
-#: mount/mount.c:1048
+#: mount/mount.c:1071
 msgid "block device "
 msgstr "lohkolaite "
 
-#: mount/mount.c:1050
+#: mount/mount.c:1073
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: ei voi liittää %s%s vain luku -tilassa"
 
-#: mount/mount.c:1054
+#: mount/mount.c:1077
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s on kirjoitussuojattu, mutta \"-w\" -lippu on annettu"
 
-#: mount/mount.c:1071
+#: mount/mount.c:1094
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s on kirjoitussuojattu, liitetään vain luku -tilassa"
 
-#: mount/mount.c:1170
+#: mount/mount.c:1193
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 "mount: tyyppiä ei annettu - kaksoispisteen perusteella sen oletetaan olevan "
 "nfs\n"
 
-#: mount/mount.c:1176
+#: mount/mount.c:1199
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: tyyppiä ei annettu - //-alkuliitteen perusteella sen oletetaan olevan "
 "smbfs\n"
 
-#: mount/mount.c:1193
+#: mount/mount.c:1216
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: siirretään taustalle \"%s\"\n"
 
-#: mount/mount.c:1204
+#: mount/mount.c:1227
 #, c-format
 msgid "mount: giving up \"%s\"\n"
 msgstr "mount: luovutetaan \"%s\"\n"
 
-#: mount/mount.c:1286
+#: mount/mount.c:1309
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s on jo liitetty paikkaan %s\n"
 
 # valitsin -p passwdfd, mitä se tekee???
-#: mount/mount.c:1416
+#: mount/mount.c:1440
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8089,34 +8089,34 @@ msgstr ""
 "Muut valitsimet: [-nfFrsvw] [-o valitsimet] [-p passwdfd].\n"
 "Paljon lisätietoja komennolla:  man 8 mount .\n"
 
-#: mount/mount.c:1605
+#: mount/mount.c:1636
 msgid "mount: only root can do that"
 msgstr "mount: vain root voi tehdä tuon"
 
-#: mount/mount.c:1610
+#: mount/mount.c:1641
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: ei löytynyt %s - luodaan se..\n"
 
-#: mount/mount.c:1622
+#: mount/mount.c:1653
 msgid "mount: no such partition found"
 msgstr "mount: osiota ei löydy"
 
-#: mount/mount.c:1624
+#: mount/mount.c:1655
 #, c-format
 msgid "mount: mounting %s\n"
 msgstr "mount: liitetään %s\n"
 
-#: mount/mount.c:1633
+#: mount/mount.c:1664
 msgid "nothing was mounted"
 msgstr "mitään ei liitetty"
 
-#: mount/mount.c:1648
+#: mount/mount.c:1679
 #, c-format
 msgid "mount: cannot find %s in %s"
 msgstr "mount: %s ei löydy tiedostosta %s"
 
-#: mount/mount.c:1663
+#: mount/mount.c:1694
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %s ei löydy tiedostosta %s, eikä %s"
@@ -8781,8 +8781,8 @@ msgid "max seg size (kbytes) = %lu\n"
 msgstr "max seg size (kbytes) = %lu\n"
 
 #: sys-utils/ipcs.c:282
-#, c-format
-msgid "max total shared memory (pages) = %lu\n"
+#, fuzzy, c-format
+msgid "max total shared memory (kbytes) = %llu\n"
 msgstr "max total shared memory (kbytes) = %lu\n"
 
 #: sys-utils/ipcs.c:284
@@ -8831,7 +8831,7 @@ msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
 msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
 
 #: sys-utils/ipcs.c:301 sys-utils/ipcs.c:307 sys-utils/ipcs.c:314
-#: sys-utils/ipcs.c:320 sys-utils/ipcs.c:427
+#: sys-utils/ipcs.c:320
 msgid "shmid"
 msgstr "shmid"
 
@@ -8999,13 +8999,13 @@ msgstr "allocated semaphores = %d\n"
 msgid "------ Semaphore Arrays Creators/Owners --------\n"
 msgstr "------ Semaphore Arrays Creators/Owners --------\n"
 
-#: sys-utils/ipcs.c:421 sys-utils/ipcs.c:436
+#: sys-utils/ipcs.c:421 sys-utils/ipcs.c:427 sys-utils/ipcs.c:436
 msgid "semid"
 msgstr "semid"
 
 #: sys-utils/ipcs.c:425
-#, c-format
-msgid "------ Shared Memory Operation/Change Times --------\n"
+#, fuzzy, c-format
+msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "------ Shared Memory Operation/Change Times --------\n"
 
 #: sys-utils/ipcs.c:426
@@ -9548,17 +9548,17 @@ msgstr ""
 "hexdump: [-bcCdovx] [-e muoto] [-f muototied] [-n pituus] [-s ohita] "
 "[tiedosto ...]\n"
 
-#: text-utils/more.c:216
+#: text-utils/more.c:217
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr "käyttö: %s [-dflpcsu] [+rivinumero | +/hahmo] nimi1 nimi2 ...\n"
 
-#: text-utils/more.c:439
+#: text-utils/more.c:440
 #, c-format
 msgid "%s: unknown option \"-%c\"\n"
 msgstr "%s: tuntematon valitsin \"-%c\"\n"
 
-#: text-utils/more.c:471
+#: text-utils/more.c:472
 #, c-format
 msgid ""
 "\n"
@@ -9569,7 +9569,7 @@ msgstr ""
 "*** %s: hakemisto ***\n"
 "\n"
 
-#: text-utils/more.c:514
+#: text-utils/more.c:516
 #, c-format
 msgid ""
 "\n"
@@ -9580,45 +9580,45 @@ msgstr ""
 "***** %s: Ei ole tekstitiedosto *****\n"
 "\n"
 
-#: text-utils/more.c:617
+#: text-utils/more.c:619
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Käytä q tai Q lopettaaksesi]"
 
-#: text-utils/more.c:709
+#: text-utils/more.c:711
 #, c-format
 msgid "--More--"
 msgstr "--Lisää--"
 
-#: text-utils/more.c:711
+#: text-utils/more.c:713
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Seuraava tiedosto: %s)"
 
-#: text-utils/more.c:716
+#: text-utils/more.c:718
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Välilyönti jatkaa, \"q\" lopettaa.]"
 
-#: text-utils/more.c:1115
+#: text-utils/more.c:1117
 #, c-format
 msgid "...back %d pages"
 msgstr "...%d sivua taaksepäin"
 
-#: text-utils/more.c:1117
+#: text-utils/more.c:1119
 msgid "...back 1 page"
 msgstr "...1 sivu taaksepäin"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1162
 msgid "...skipping one line"
 msgstr "...ohitetaan yksi rivi"
 
-#: text-utils/more.c:1162
+#: text-utils/more.c:1164
 #, c-format
 msgid "...skipping %d lines"
 msgstr "...ohitetaan %d riviä"
 
-#: text-utils/more.c:1199
+#: text-utils/more.c:1201
 msgid ""
 "\n"
 "***Back***\n"
@@ -9628,7 +9628,7 @@ msgstr ""
 "***Takaisin***\n"
 "\n"
 
-#: text-utils/more.c:1237
+#: text-utils/more.c:1239
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -9641,7 +9641,7 @@ msgstr ""
 "Asteriskilla (*) merkityissä komennoissa argumentista tulee uusi "
 "oletusarvo.\n"
 
-#: text-utils/more.c:1244
+#: text-utils/more.c:1246
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -9687,34 +9687,34 @@ msgstr ""
 ":f                      Näytä nykyinen tiedostonimi ja rivinumero\n"
 ".                       Toista edellinen komento\n"
 
-#: text-utils/more.c:1313 text-utils/more.c:1318
+#: text-utils/more.c:1315 text-utils/more.c:1320
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Näppäin \"h\" näyttää ohjeita.]"
 
-#: text-utils/more.c:1352
+#: text-utils/more.c:1354
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" rivi %d"
 
-#: text-utils/more.c:1354
+#: text-utils/more.c:1356
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Ei tiedosto] rivi %d"
 
-#: text-utils/more.c:1438
+#: text-utils/more.c:1440
 msgid "  Overflow\n"
 msgstr "  Ylivuoto\n"
 
-#: text-utils/more.c:1485
+#: text-utils/more.c:1487
 msgid "...skipping\n"
 msgstr "...ohitetaan\n"
 
-#: text-utils/more.c:1514
+#: text-utils/more.c:1516
 msgid "Regular expression botch"
 msgstr "Virhe säännöllisessä lausekkeessa"
 
-#: text-utils/more.c:1526
+#: text-utils/more.c:1528
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9722,15 +9722,15 @@ msgstr ""
 "\n"
 "Hahmoa ei löydy\n"
 
-#: text-utils/more.c:1529 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1531 text-utils/pg.c:1125 text-utils/pg.c:1276
 msgid "Pattern not found"
 msgstr "Hahmoa ei löydy"
 
-#: text-utils/more.c:1590
+#: text-utils/more.c:1592
 msgid "can't fork\n"
 msgstr "haarauttaminen ei onnistu\n"
 
-#: text-utils/more.c:1629
+#: text-utils/more.c:1631
 msgid ""
 "\n"
 "...Skipping "
@@ -9738,19 +9738,19 @@ msgstr ""
 "\n"
 "...Ohitetaan"
 
-#: text-utils/more.c:1633
+#: text-utils/more.c:1635
 msgid "...Skipping to file "
 msgstr "...Vaihdetaan tiedostoon "
 
-#: text-utils/more.c:1635
+#: text-utils/more.c:1637
 msgid "...Skipping back to file "
 msgstr "...Palataan tiedostoon "
 
-#: text-utils/more.c:1913
+#: text-utils/more.c:1915
 msgid "Line too long"
 msgstr "Liian pitkä rivi"
 
-#: text-utils/more.c:1956
+#: text-utils/more.c:1958
 msgid "No previous command to substitute for"
 msgstr "Ei edellistä komentoa korvattavaksi"
 

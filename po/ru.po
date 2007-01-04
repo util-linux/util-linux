@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.13-pre2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-01-04 13:19+0100\n"
+"POT-Creation-Date: 2007-01-04 14:58+0100\n"
 "PO-Revision-Date: 2005-08-16 16:54+0300\n"
 "Last-Translator: Pavel Maryanov <acid_jack@ukr.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -1079,7 +1079,7 @@ msgid "too many bad pages"
 msgstr "слишком много плохих страниц"
 
 #: disk-utils/mkswap.c:418 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1929 text-utils/more.c:1940
+#: text-utils/more.c:1931 text-utils/more.c:1942
 msgid "Out of memory"
 msgstr "Не хватает памяти"
 
@@ -6915,7 +6915,7 @@ msgstr "открытие каталога завершилось неудачей\n"
 msgid "fork failed\n"
 msgstr "создание дочернего процесса завершилось неудачей\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1576
+#: login-utils/simpleinit.c:539 text-utils/more.c:1578
 msgid "exec failed\n"
 msgstr "выполнение завершилось неудачей\n"
 
@@ -7757,17 +7757,17 @@ msgstr ""
 "Поддержка loop была недоступна во время компиляции. Пожалуйста, выполните "
 "перекомиляцию.\n"
 
-#: mount/mntent.c:166
+#: mount/mount_mntent.c:166
 #, c-format
 msgid "[mntent]: warning: no final newline at the end of %s\n"
 msgstr "[mntent]: предупреждение: no final newline at the end of %s\n"
 
-#: mount/mntent.c:217
+#: mount/mount_mntent.c:217
 #, c-format
 msgid "[mntent]: line %d in %s is bad%s\n"
 msgstr "[mntent]: строка %d в %s плохая %s\n"
 
-#: mount/mntent.c:220
+#: mount/mount_mntent.c:220
 msgid "; rest of file ignored"
 msgstr "; остальная часть файла проигнорирована"
 
@@ -7798,160 +7798,160 @@ msgstr ""
 msgid "%s: bad UUID"
 msgstr "%s: неверный UUID"
 
-#: mount/mount.c:382
+#: mount/mount.c:391
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: согласно mtab, %s уже примонтирован на %s"
 
-#: mount/mount.c:387
+#: mount/mount.c:396
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: согласно mtab, %s примонтирован на %s"
 
-#: mount/mount.c:407
+#: mount/mount.c:416
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: невозможно открыть %s для записи: %s"
 
-#: mount/mount.c:424 mount/mount.c:677
+#: mount/mount.c:433 mount/mount.c:690
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: ошибка записи %s: %s"
 
-#: mount/mount.c:432
+#: mount/mount.c:441
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: ошибка смены режима %s: %s"
 
-#: mount/mount.c:483
+#: mount/mount.c:496
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s выглядит как пространство для свопинга - не примонтирован"
 
-#: mount/mount.c:570
+#: mount/mount.c:583
 msgid "mount failed"
 msgstr "mount завершился неудачей"
 
-#: mount/mount.c:572
+#: mount/mount.c:585
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: только root может монтировать %s на %s"
 
-#: mount/mount.c:600
+#: mount/mount.c:613
 msgid "mount: loop device specified twice"
 msgstr "mount: устройство обратной связи указано дважды"
 
-#: mount/mount.c:605
+#: mount/mount.c:618
 msgid "mount: type specified twice"
 msgstr "mount: тип указан дважды"
 
-#: mount/mount.c:617
+#: mount/mount.c:630
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: пропускается установка устройства обратной связи\n"
 
-#: mount/mount.c:626
+#: mount/mount.c:639
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: подготовка к использованию устройства обратной связи %s\n"
 
-#: mount/mount.c:631
+#: mount/mount.c:644
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: установка устройства обратной связи завершилась неудачей\n"
 
-#: mount/mount.c:635
+#: mount/mount.c:648
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: установка устройства обратной связи успешно завершилась\n"
 
-#: mount/mount.c:672
+#: mount/mount.c:685
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: невозможно открыть %s: %s"
 
-#: mount/mount.c:693
+#: mount/mount.c:706
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: аргумент для -p или --pass-fd должен быть числом"
 
-#: mount/mount.c:706
+#: mount/mount.c:719
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: невозможно открыть %s для установки скорости"
 
-#: mount/mount.c:709
+#: mount/mount.c:722
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: невозможно установить скорость: %s"
 
-#: mount/mount.c:763 mount/mount.c:1339
+#: mount/mount.c:781 mount/mount.c:1362
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: невозможно создать дочерний процесс: %s"
 
-#: mount/mount.c:885
+#: mount/mount.c:908
 #, c-format
 msgid "mount: failed with nfs mount version 4, trying 3..\n"
 msgstr "mount: сбой монтирования nfs версии 4, пробуется 3..\n"
 
-#: mount/mount.c:895
+#: mount/mount.c:918
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: невозможно определить тип файловой системы, и ни одна не была указана"
 
-#: mount/mount.c:898
+#: mount/mount.c:921
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: вы должны указать тип файловой системы"
 
-#: mount/mount.c:901
+#: mount/mount.c:924
 msgid "mount: mount failed"
 msgstr "mount: монтирование завершилось неудачей"
 
-#: mount/mount.c:907 mount/mount.c:942
+#: mount/mount.c:930 mount/mount.c:965
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: точка монтирования %s не является каталогом"
 
-#: mount/mount.c:909
+#: mount/mount.c:932
 msgid "mount: permission denied"
 msgstr "mount: доступ запрещен"
 
-#: mount/mount.c:911
+#: mount/mount.c:934
 msgid "mount: must be superuser to use mount"
 msgstr ""
 "mount: необходимо иметь права суперпользователя для использования mount"
 
-#: mount/mount.c:915 mount/mount.c:919
+#: mount/mount.c:938 mount/mount.c:942
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s занят"
 
-#: mount/mount.c:921
+#: mount/mount.c:944
 msgid "mount: proc already mounted"
 msgstr "mount: proc уже примонтирован"
 
-#: mount/mount.c:923
+#: mount/mount.c:946
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s уже примонтирован или %s занят"
 
-#: mount/mount.c:929
+#: mount/mount.c:952
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: точка монтирования %s не существует"
 
-#: mount/mount.c:931
+#: mount/mount.c:954
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: точка монтирования %s является символической ссылкой в никуда"
 
-#: mount/mount.c:934
+#: mount/mount.c:957
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: специальное устройство %s не существует"
 
-#: mount/mount.c:944
+#: mount/mount.c:967
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -7960,12 +7960,12 @@ msgstr ""
 "mount: специальное устройство %s не существует\n"
 "       (префикс пути не является каталогом)\n"
 
-#: mount/mount.c:957
+#: mount/mount.c:980
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s уже не примонтирован или неверная опция"
 
-#: mount/mount.c:959
+#: mount/mount.c:982
 #, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -7974,7 +7974,7 @@ msgstr ""
 "mount: неверный тип ФС, неверная опция, неверный суперблок\n"
 "       на %s, отсутствует кодовая страница или другая ошибка"
 
-#: mount/mount.c:969
+#: mount/mount.c:992
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -7983,7 +7983,7 @@ msgstr ""
 "       используете ide-scsi, и поэтому нужен sr0, sda или\n"
 "       что-нибудь подобное?)"
 
-#: mount/mount.c:975
+#: mount/mount.c:998
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -7991,7 +7991,7 @@ msgstr ""
 "       (не пытаетесь лы вы примонтировать расширенный раздел\n"
 "       вместо одного из логических разделов внутри него?)"
 
-#: mount/mount.c:992
+#: mount/mount.c:1015
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -8000,52 +8000,52 @@ msgstr ""
 "       найдена в syslog - попробуйте dmesg | tail или что-то\n"
 "       в этом роде\n"
 
-#: mount/mount.c:998
+#: mount/mount.c:1021
 msgid "mount table full"
 msgstr "таблица монтирования заполнена"
 
-#: mount/mount.c:1000
+#: mount/mount.c:1023
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: невозможно прочитать суперблок"
 
-#: mount/mount.c:1004
+#: mount/mount.c:1027
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: неизвестное устройство"
 
-#: mount/mount.c:1009
+#: mount/mount.c:1032
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: неизвестный тип файловой системы '%s'"
 
-#: mount/mount.c:1021
+#: mount/mount.c:1044
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: возможно вы имели в виду %s"
 
-#: mount/mount.c:1023
+#: mount/mount.c:1046
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: может быть вы имели в виду 'iso9660'?"
 
-#: mount/mount.c:1025
+#: mount/mount.c:1048
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: может быть вы имели в виду 'vfat'?"
 
-#: mount/mount.c:1028
+#: mount/mount.c:1051
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s имеет неверный номер устройства или тип ФС %s не поддерживается"
 
-#: mount/mount.c:1034
+#: mount/mount.c:1057
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr ""
 "mount: %s не является блочным устройством, а определение состояния "
 "невозможно?"
 
-#: mount/mount.c:1036
+#: mount/mount.c:1059
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -8054,68 +8054,68 @@ msgstr ""
 "mount: ядро не распознает %s как блочное устройство\n"
 "       (может быть `insmod driver'?)"
 
-#: mount/mount.c:1039
+#: mount/mount.c:1062
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr ""
 "mount: %s не является блочным устройством (может попробовать `-o loop'?)"
 
-#: mount/mount.c:1042
+#: mount/mount.c:1065
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s не является блочным устройством"
 
-#: mount/mount.c:1045
+#: mount/mount.c:1068
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s не является верным блочным устройством"
 
-#: mount/mount.c:1048
+#: mount/mount.c:1071
 msgid "block device "
 msgstr "блочное устройство "
 
-#: mount/mount.c:1050
+#: mount/mount.c:1073
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: невозможно примонтировать %s%s только для чтения"
 
-#: mount/mount.c:1054
+#: mount/mount.c:1077
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s защищен от записи, но явно указан флаг `-w'"
 
-#: mount/mount.c:1071
+#: mount/mount.c:1094
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s защищен от записи, монтируется только для чтения"
 
-#: mount/mount.c:1170
+#: mount/mount.c:1193
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: не был указан тип - будет подразумеваться nfs из-за двоеточия\n"
 
-#: mount/mount.c:1176
+#: mount/mount.c:1199
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: не был указан тип - будет подразумеваться smbfs из-за префикса //\n"
 
-#: mount/mount.c:1193
+#: mount/mount.c:1216
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: фоновая обработка \"%s\"\n"
 
-#: mount/mount.c:1204
+#: mount/mount.c:1227
 #, c-format
 msgid "mount: giving up \"%s\"\n"
 msgstr "mount: сдаюсь \"%s\"\n"
 
-#: mount/mount.c:1286
+#: mount/mount.c:1309
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s уже примонтирован на %s\n"
 
-#: mount/mount.c:1416
+#: mount/mount.c:1440
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8164,34 +8164,34 @@ msgstr ""
 "Другие опции: [-nfFrsvw] [-o опции] [-p passwdfd].\n"
 "Для получения более подробного описания наберите  man 8 mount .\n"
 
-#: mount/mount.c:1605
+#: mount/mount.c:1636
 msgid "mount: only root can do that"
 msgstr "mount: только root может сделать это"
 
-#: mount/mount.c:1610
+#: mount/mount.c:1641
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s не найден - создается...\n"
 
-#: mount/mount.c:1622
+#: mount/mount.c:1653
 msgid "mount: no such partition found"
 msgstr "mount: такой раздел не найден"
 
-#: mount/mount.c:1624
+#: mount/mount.c:1655
 #, c-format
 msgid "mount: mounting %s\n"
 msgstr "mount: монтируется %s\n"
 
-#: mount/mount.c:1633
+#: mount/mount.c:1664
 msgid "nothing was mounted"
 msgstr "ничего не было примонтировано"
 
-#: mount/mount.c:1648
+#: mount/mount.c:1679
 #, c-format
 msgid "mount: cannot find %s in %s"
 msgstr "mount: невозможно найти %s в %s"
 
-#: mount/mount.c:1663
+#: mount/mount.c:1694
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: невозможно найти %s в %s или %s"
@@ -8857,8 +8857,8 @@ msgid "max seg size (kbytes) = %lu\n"
 msgstr "максимальный размер сегмента (кбайт) = %lu\n"
 
 #: sys-utils/ipcs.c:282
-#, c-format
-msgid "max total shared memory (pages) = %lu\n"
+#, fuzzy, c-format
+msgid "max total shared memory (kbytes) = %llu\n"
 msgstr "максимум суммарной совм. исп. памяти (кбайт) = %lu\n"
 
 #: sys-utils/ipcs.c:284
@@ -8907,7 +8907,7 @@ msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
 msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
 
 #: sys-utils/ipcs.c:301 sys-utils/ipcs.c:307 sys-utils/ipcs.c:314
-#: sys-utils/ipcs.c:320 sys-utils/ipcs.c:427
+#: sys-utils/ipcs.c:320
 msgid "shmid"
 msgstr "shmid"
 
@@ -9076,13 +9076,13 @@ msgstr "выделено семафоров = %d\n"
 msgid "------ Semaphore Arrays Creators/Owners --------\n"
 msgstr "------ Создатели/владельцы массивов семафоров --------\n"
 
-#: sys-utils/ipcs.c:421 sys-utils/ipcs.c:436
+#: sys-utils/ipcs.c:421 sys-utils/ipcs.c:427 sys-utils/ipcs.c:436
 msgid "semid"
 msgstr "semid"
 
 #: sys-utils/ipcs.c:425
-#, c-format
-msgid "------ Shared Memory Operation/Change Times --------\n"
+#, fuzzy, c-format
+msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "------ Количество операций/изменений совм. исп. памяти --------\n"
 
 #: sys-utils/ipcs.c:426
@@ -9632,18 +9632,18 @@ msgstr ""
 "hexdump: [-bcCdovx] [-e строка_формата] [-f файл_формата] [-n длина] [-s "
 "пропуск] [файл ...]\n"
 
-#: text-utils/more.c:216
+#: text-utils/more.c:217
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr ""
 "использование: %s [-dflpcsu] [+номер_строки | +/шаблон] имя1 имя2 ...\n"
 
-#: text-utils/more.c:439
+#: text-utils/more.c:440
 #, c-format
 msgid "%s: unknown option \"-%c\"\n"
 msgstr "%s: неизвестная опция \"-%c\"\n"
 
-#: text-utils/more.c:471
+#: text-utils/more.c:472
 #, c-format
 msgid ""
 "\n"
@@ -9654,7 +9654,7 @@ msgstr ""
 "*** %s: каталог ***\n"
 "\n"
 
-#: text-utils/more.c:514
+#: text-utils/more.c:516
 #, c-format
 msgid ""
 "\n"
@@ -9665,45 +9665,45 @@ msgstr ""
 "******** %s: Не текстовый файл ********\n"
 "\n"
 
-#: text-utils/more.c:617
+#: text-utils/more.c:619
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Используйте q или or Q для выхода]"
 
-#: text-utils/more.c:709
+#: text-utils/more.c:711
 #, c-format
 msgid "--More--"
 msgstr "--Далее--"
 
-#: text-utils/more.c:711
+#: text-utils/more.c:713
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Следующий файл: %s)"
 
-#: text-utils/more.c:716
+#: text-utils/more.c:718
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Нажмите пробел для продолжения, 'q' для выхода.]"
 
-#: text-utils/more.c:1115
+#: text-utils/more.c:1117
 #, c-format
 msgid "...back %d pages"
 msgstr "...назад на %d страниц"
 
-#: text-utils/more.c:1117
+#: text-utils/more.c:1119
 msgid "...back 1 page"
 msgstr "...назад на 1 страницу"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1162
 msgid "...skipping one line"
 msgstr "...пропускается одна строка"
 
-#: text-utils/more.c:1162
+#: text-utils/more.c:1164
 #, c-format
 msgid "...skipping %d lines"
 msgstr "...пропускается %d строк"
 
-#: text-utils/more.c:1199
+#: text-utils/more.c:1201
 msgid ""
 "\n"
 "***Back***\n"
@@ -9713,7 +9713,7 @@ msgstr ""
 "***Назад***\n"
 "\n"
 
-#: text-utils/more.c:1237
+#: text-utils/more.c:1239
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -9726,7 +9726,7 @@ msgstr ""
 "Звездочка (*) означает, что аргумент становится новым значением по "
 "умолчанию.\n"
 
-#: text-utils/more.c:1244
+#: text-utils/more.c:1246
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -9772,34 +9772,34 @@ msgstr ""
 ":f                      Отображение имени текущего файла и номера строки\n"
 ".                       Повторение предыдущей команды\n"
 
-#: text-utils/more.c:1313 text-utils/more.c:1318
+#: text-utils/more.c:1315 text-utils/more.c:1320
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Нажмите 'h' для получения инструкций.]"
 
-#: text-utils/more.c:1352
+#: text-utils/more.c:1354
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" строка %d"
 
-#: text-utils/more.c:1354
+#: text-utils/more.c:1356
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Не файл] строка %d"
 
-#: text-utils/more.c:1438
+#: text-utils/more.c:1440
 msgid "  Overflow\n"
 msgstr "  Переполнение\n"
 
-#: text-utils/more.c:1485
+#: text-utils/more.c:1487
 msgid "...skipping\n"
 msgstr "...пропускается\n"
 
-#: text-utils/more.c:1514
+#: text-utils/more.c:1516
 msgid "Regular expression botch"
 msgstr "Некорректное регулярное выражение"
 
-#: text-utils/more.c:1526
+#: text-utils/more.c:1528
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9807,15 +9807,15 @@ msgstr ""
 "\n"
 "Шаблон не найден\n"
 
-#: text-utils/more.c:1529 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1531 text-utils/pg.c:1125 text-utils/pg.c:1276
 msgid "Pattern not found"
 msgstr "Шаблон не найден"
 
-#: text-utils/more.c:1590
+#: text-utils/more.c:1592
 msgid "can't fork\n"
 msgstr "невозможно создать дочерний процесс\n"
 
-#: text-utils/more.c:1629
+#: text-utils/more.c:1631
 msgid ""
 "\n"
 "...Skipping "
@@ -9823,19 +9823,19 @@ msgstr ""
 "\n"
 "...Пропускается "
 
-#: text-utils/more.c:1633
+#: text-utils/more.c:1635
 msgid "...Skipping to file "
 msgstr "...Пропускается до файла "
 
-#: text-utils/more.c:1635
+#: text-utils/more.c:1637
 msgid "...Skipping back to file "
 msgstr "...Пропускается обратно до файла "
 
-#: text-utils/more.c:1913
+#: text-utils/more.c:1915
 msgid "Line too long"
 msgstr "Строка слишком длинная"
 
-#: text-utils/more.c:1956
+#: text-utils/more.c:1958
 msgid "No previous command to substitute for"
 msgstr "Нет предыдущей команды для замены"
 

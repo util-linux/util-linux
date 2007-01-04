@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11n\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-01-04 13:19+0100\n"
+"POT-Creation-Date: 2007-01-04 14:58+0100\n"
 "PO-Revision-Date: 2001-12-11 22:43+0900\n"
 "Last-Translator: Daisuke Yamashita <yamad@mb.infoweb.ne.jp>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -1042,7 +1042,7 @@ msgid "too many bad pages"
 msgstr "不正ページが多すぎます"
 
 #: disk-utils/mkswap.c:418 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1929 text-utils/more.c:1940
+#: text-utils/more.c:1931 text-utils/more.c:1942
 msgid "Out of memory"
 msgstr "メモリが足りません"
 
@@ -6812,7 +6812,7 @@ msgstr "ディレクトリのオープンが失敗しました\n"
 msgid "fork failed\n"
 msgstr "fork が失敗\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1576
+#: login-utils/simpleinit.c:539 text-utils/more.c:1578
 msgid "exec failed\n"
 msgstr "実行に失敗\n"
 
@@ -7645,17 +7645,17 @@ msgstr ""
 "コンパイル時に loop サポートが有効になっていません。再コンパイルしてくださ"
 "い。\n"
 
-#: mount/mntent.c:166
+#: mount/mount_mntent.c:166
 #, c-format
 msgid "[mntent]: warning: no final newline at the end of %s\n"
 msgstr "[mntent]: 警告: %s の最後に改行がありません\n"
 
-#: mount/mntent.c:217
+#: mount/mount_mntent.c:217
 #, c-format
 msgid "[mntent]: line %d in %s is bad%s\n"
 msgstr "[mntent]: %2$s の %1$d 行目は不正です%3$s\n"
 
-#: mount/mntent.c:220
+#: mount/mount_mntent.c:220
 msgid "; rest of file ignored"
 msgstr "-- 無視します"
 
@@ -7685,158 +7685,158 @@ msgstr ""
 msgid "%s: bad UUID"
 msgstr "mount: 不正な UUID"
 
-#: mount/mount.c:382
+#: mount/mount.c:391
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: mtab によると、%s は %s にマウント済です"
 
-#: mount/mount.c:387
+#: mount/mount.c:396
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: mtab によると、%s は %s にマウントされています"
 
-#: mount/mount.c:407
+#: mount/mount.c:416
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: %s を書き込み用にオープンできません: %s"
 
-#: mount/mount.c:424 mount/mount.c:677
+#: mount/mount.c:433 mount/mount.c:690
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: %s の書き込みエラー: %s"
 
-#: mount/mount.c:432
+#: mount/mount.c:441
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: %s のモード変更エラー: %s"
 
-#: mount/mount.c:483
+#: mount/mount.c:496
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s はスワップ空間のようですね -- マウントしません"
 
-#: mount/mount.c:570
+#: mount/mount.c:583
 msgid "mount failed"
 msgstr "マウントに失敗しました"
 
-#: mount/mount.c:572
+#: mount/mount.c:585
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: root だけが %s を %s にマウントできます"
 
-#: mount/mount.c:600
+#: mount/mount.c:613
 msgid "mount: loop device specified twice"
 msgstr "mount: loop デバイスが 2 回指定されました"
 
-#: mount/mount.c:605
+#: mount/mount.c:618
 msgid "mount: type specified twice"
 msgstr "mount: タイプが 2 回指定されました"
 
-#: mount/mount.c:617
+#: mount/mount.c:630
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: loop デバイスの設定をスキップします\n"
 
-#: mount/mount.c:626
+#: mount/mount.c:639
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: loop デバイス %s を使います\n"
 
-#: mount/mount.c:631
+#: mount/mount.c:644
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: loop デバイスの設定に失敗しました\n"
 
-#: mount/mount.c:635
+#: mount/mount.c:648
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: loop デバイスの設定に成功しました\n"
 
-#: mount/mount.c:672
+#: mount/mount.c:685
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: %s がオープンできません: %s"
 
-#: mount/mount.c:693
+#: mount/mount.c:706
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr ""
 
-#: mount/mount.c:706
+#: mount/mount.c:719
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: %s を速度設定用にオープンできません"
 
-#: mount/mount.c:709
+#: mount/mount.c:722
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: 速度の設定ができません: %s"
 
-#: mount/mount.c:763 mount/mount.c:1339
+#: mount/mount.c:781 mount/mount.c:1362
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: fork できません: %s"
 
-#: mount/mount.c:885
+#: mount/mount.c:908
 #, c-format
 msgid "mount: failed with nfs mount version 4, trying 3..\n"
 msgstr "mount: nfs mount version 4 では失敗しました。3 を試します..\n"
 
-#: mount/mount.c:895
+#: mount/mount.c:918
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr "mount: none が指定されましたが、ファイルシステムタイプを決定できません"
 
-#: mount/mount.c:898
+#: mount/mount.c:921
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: ファイルシステムタイプを指定する必要があります"
 
-#: mount/mount.c:901
+#: mount/mount.c:924
 msgid "mount: mount failed"
 msgstr "mount: マウントに失敗しました"
 
-#: mount/mount.c:907 mount/mount.c:942
+#: mount/mount.c:930 mount/mount.c:965
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: マウントポイント %s はディレクトリではありません"
 
-#: mount/mount.c:909
+#: mount/mount.c:932
 msgid "mount: permission denied"
 msgstr "mount: 許可がありません"
 
-#: mount/mount.c:911
+#: mount/mount.c:934
 msgid "mount: must be superuser to use mount"
 msgstr "mount: mount を使うにはスーパーユーザでなければなりません"
 
-#: mount/mount.c:915 mount/mount.c:919
+#: mount/mount.c:938 mount/mount.c:942
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s は使用中です"
 
-#: mount/mount.c:921
+#: mount/mount.c:944
 msgid "mount: proc already mounted"
 msgstr "mount: proc はマウント済です"
 
-#: mount/mount.c:923
+#: mount/mount.c:946
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s は マウント済か %s が使用中です"
 
-#: mount/mount.c:929
+#: mount/mount.c:952
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: マウントポイント %s が存在しません"
 
-#: mount/mount.c:931
+#: mount/mount.c:954
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: マウントポイント %s はどこもさしていないシンボリックリンクです"
 
-#: mount/mount.c:934
+#: mount/mount.c:957
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: スペシャルデバイス %s が存在しません"
 
-#: mount/mount.c:944
+#: mount/mount.c:967
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -7845,12 +7845,12 @@ msgstr ""
 "mount: スペシャルデバイス %s が存在しません\n"
 "       (パスのディレクトリがありません)\n"
 
-#: mount/mount.c:957
+#: mount/mount.c:980
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s はまだマウントされていないか、不正なオプションです"
 
-#: mount/mount.c:959
+#: mount/mount.c:982
 #, fuzzy, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -7860,71 +7860,71 @@ msgstr ""
 "       %s のスーパーブロックが不正、或いはファイルシステムのマウント\n"
 "       が多すぎます"
 
-#: mount/mount.c:969
+#: mount/mount.c:992
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
 msgstr ""
 
-#: mount/mount.c:975
+#: mount/mount.c:998
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
 msgstr ""
 
-#: mount/mount.c:992
+#: mount/mount.c:1015
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
 msgstr ""
 
-#: mount/mount.c:998
+#: mount/mount.c:1021
 msgid "mount table full"
 msgstr "マウントテーブルがいっぱいです"
 
-#: mount/mount.c:1000
+#: mount/mount.c:1023
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: スーパーブロックを読めません"
 
-#: mount/mount.c:1004
+#: mount/mount.c:1027
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: 不明なデバイスです"
 
-#: mount/mount.c:1009
+#: mount/mount.c:1032
 #, fuzzy, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "   l   既知のファイルシステムタイプをリスト表示する"
 
-#: mount/mount.c:1021
+#: mount/mount.c:1044
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: おそらくあなたは %s を指定したかったのでしょう"
 
-#: mount/mount.c:1023
+#: mount/mount.c:1046
 #, fuzzy
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: 多分あなたは iso9660 を指定したかったのでは？"
 
-#: mount/mount.c:1025
+#: mount/mount.c:1048
 #, fuzzy
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: 多分あなたは iso9660 を指定したかったのでは？"
 
-#: mount/mount.c:1028
+#: mount/mount.c:1051
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s は間違ったデバイス番号になっているか、ファイルシステムタイプ\n"
 "       %s がサポートされていません"
 
-#: mount/mount.c:1034
+#: mount/mount.c:1057
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s はブロックデバイスではありません、だから stat が失敗？"
 
-#: mount/mount.c:1036
+#: mount/mount.c:1059
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -7933,68 +7933,68 @@ msgstr ""
 "mount: このカーネルは %s をブロックデバイスとして認識しません\n"
 "       (多分、`insmod ドライバ' しないといけないのでは？)"
 
-#: mount/mount.c:1039
+#: mount/mount.c:1062
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr ""
 "mount: %s はブロックデバイスではありません (多分 `-o loop' とやってみたら？)"
 
-#: mount/mount.c:1042
+#: mount/mount.c:1065
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s はブロックデバイスではありません"
 
-#: mount/mount.c:1045
+#: mount/mount.c:1068
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s は正常なブロックデバイスではありません"
 
-#: mount/mount.c:1048
+#: mount/mount.c:1071
 msgid "block device "
 msgstr "ブロックデバイス "
 
-#: mount/mount.c:1050
+#: mount/mount.c:1073
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: %s%s を読込み専用でマウントできません"
 
-#: mount/mount.c:1054
+#: mount/mount.c:1077
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s は書き込み禁止ですが、`-w' フラグが明示的に与えられました"
 
-#: mount/mount.c:1071
+#: mount/mount.c:1094
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s は書き込み禁止です、読込み専用でマウントします"
 
-#: mount/mount.c:1170
+#: mount/mount.c:1193
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: タイプが与えられていません -- コロンがあるので nfs の様ですが\n"
 
-#: mount/mount.c:1176
+#: mount/mount.c:1199
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: タイプが与えられていません -- コロンがあるので smbfs の様ですが\n"
 
-#: mount/mount.c:1193
+#: mount/mount.c:1216
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: バックグラウンド \"%s\"\n"
 
-#: mount/mount.c:1204
+#: mount/mount.c:1227
 #, c-format
 msgid "mount: giving up \"%s\"\n"
 msgstr "mount: 諦めました \"%s\"\n"
 
-#: mount/mount.c:1286
+#: mount/mount.c:1309
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s は %s にマウント済です\n"
 
-#: mount/mount.c:1416
+#: mount/mount.c:1440
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8039,34 +8039,34 @@ msgstr ""
 "その他のオプション: [-nfFrsvw] [-o オプション]\n"
 "もっと詳しいことを知りたければ、man 8 mount と唱えてみましょう。\n"
 
-#: mount/mount.c:1605
+#: mount/mount.c:1636
 msgid "mount: only root can do that"
 msgstr "mount: root だけがそれを行なえます"
 
-#: mount/mount.c:1610
+#: mount/mount.c:1641
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s が見つかりません -- 作成します..\n"
 
-#: mount/mount.c:1622
+#: mount/mount.c:1653
 msgid "mount: no such partition found"
 msgstr "mount: そのようなパーティションは見つかりません"
 
-#: mount/mount.c:1624
+#: mount/mount.c:1655
 #, c-format
 msgid "mount: mounting %s\n"
 msgstr "mount: %s をマウントします\n"
 
-#: mount/mount.c:1633
+#: mount/mount.c:1664
 msgid "nothing was mounted"
 msgstr "何もマウントされませんでした"
 
-#: mount/mount.c:1648
+#: mount/mount.c:1679
 #, c-format
 msgid "mount: cannot find %s in %s"
 msgstr "mount: %2$s 内に %1$s を見つけられません"
 
-#: mount/mount.c:1663
+#: mount/mount.c:1694
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %2$s や %3$s 内に %1$s を見つけられません"
@@ -8736,7 +8736,7 @@ msgstr "セグメントサイズの最大 (単位:KB) = %ld\n"
 
 #: sys-utils/ipcs.c:282
 #, fuzzy, c-format
-msgid "max total shared memory (pages) = %lu\n"
+msgid "max total shared memory (kbytes) = %llu\n"
 msgstr "合計共有メモリの最大 (単位:KB) = %ld\n"
 
 #: sys-utils/ipcs.c:284
@@ -8785,7 +8785,7 @@ msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
 msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
 
 #: sys-utils/ipcs.c:301 sys-utils/ipcs.c:307 sys-utils/ipcs.c:314
-#: sys-utils/ipcs.c:320 sys-utils/ipcs.c:427
+#: sys-utils/ipcs.c:320
 msgid "shmid"
 msgstr "shmid"
 
@@ -8953,13 +8953,13 @@ msgstr "確保されたセマフォ数 = %d\n"
 msgid "------ Semaphore Arrays Creators/Owners --------\n"
 msgstr "------ セマフォ配列 作成者/所有者 --------\n"
 
-#: sys-utils/ipcs.c:421 sys-utils/ipcs.c:436
+#: sys-utils/ipcs.c:421 sys-utils/ipcs.c:427 sys-utils/ipcs.c:436
 msgid "semid"
 msgstr "semid"
 
 #: sys-utils/ipcs.c:425
-#, c-format
-msgid "------ Shared Memory Operation/Change Times --------\n"
+#, fuzzy, c-format
+msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "------ シェアードメモリ 命令/変更回数 --------\n"
 
 #: sys-utils/ipcs.c:426
@@ -9497,17 +9497,17 @@ msgid ""
 msgstr ""
 "hexdump: [-bcdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
 
-#: text-utils/more.c:216
+#: text-utils/more.c:217
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr "使い方: %s [-dflpcsu] [+行番号 | +/パターン] 名前1 名前2 ...\n"
 
-#: text-utils/more.c:439
+#: text-utils/more.c:440
 #, fuzzy, c-format
 msgid "%s: unknown option \"-%c\"\n"
 msgstr "%s: 不明なシグナル %s\n"
 
-#: text-utils/more.c:471
+#: text-utils/more.c:472
 #, c-format
 msgid ""
 "\n"
@@ -9518,7 +9518,7 @@ msgstr ""
 "*** %s: ディレクトリ ***\n"
 "\n"
 
-#: text-utils/more.c:514
+#: text-utils/more.c:516
 #, c-format
 msgid ""
 "\n"
@@ -9529,46 +9529,46 @@ msgstr ""
 "******** %s: テキストファイルではありません ********\n"
 "\n"
 
-#: text-utils/more.c:617
+#: text-utils/more.c:619
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[終了するには q か Q を押して下さい]"
 
-#: text-utils/more.c:709
+#: text-utils/more.c:711
 #, c-format
 msgid "--More--"
 msgstr "--続ける--"
 
-#: text-utils/more.c:711
+#: text-utils/more.c:713
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(次のファイル: %s)"
 
-#: text-utils/more.c:716
+#: text-utils/more.c:718
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[スペースキーを押すと続き、'q' で終了。]"
 
-#: text-utils/more.c:1115
+#: text-utils/more.c:1117
 #, c-format
 msgid "...back %d pages"
 msgstr "... %d ページ戻ります"
 
-#: text-utils/more.c:1117
+#: text-utils/more.c:1119
 msgid "...back 1 page"
 msgstr "... 1 ページ戻ります"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1162
 #, fuzzy
 msgid "...skipping one line"
 msgstr "...%d 行飛ばします"
 
-#: text-utils/more.c:1162
+#: text-utils/more.c:1164
 #, fuzzy, c-format
 msgid "...skipping %d lines"
 msgstr "...%d 行飛ばします"
 
-#: text-utils/more.c:1199
+#: text-utils/more.c:1201
 msgid ""
 "\n"
 "***Back***\n"
@@ -9578,7 +9578,7 @@ msgstr ""
 "***戻る***\n"
 "\n"
 
-#: text-utils/more.c:1237
+#: text-utils/more.c:1239
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -9590,7 +9590,7 @@ msgstr ""
 "す。\n"
 "星印(*)はデフォルトが変更されることを示します。\n"
 
-#: text-utils/more.c:1244
+#: text-utils/more.c:1246
 #, fuzzy
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
@@ -9633,34 +9633,34 @@ msgstr ""
 ":f\t\t\t現在のファイル名と行番号を表示する\n"
 ".\t\t\t直前のコマンドを繰り返す\n"
 
-#: text-utils/more.c:1313 text-utils/more.c:1318
+#: text-utils/more.c:1315 text-utils/more.c:1320
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "['h' キーで操作方法]"
 
-#: text-utils/more.c:1352
+#: text-utils/more.c:1354
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" %d 行"
 
-#: text-utils/more.c:1354
+#: text-utils/more.c:1356
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[非ファイル] %d 行"
 
-#: text-utils/more.c:1438
+#: text-utils/more.c:1440
 msgid "  Overflow\n"
 msgstr "  大きすぎ\n"
 
-#: text-utils/more.c:1485
+#: text-utils/more.c:1487
 msgid "...skipping\n"
 msgstr "...飛ばしています\n"
 
-#: text-utils/more.c:1514
+#: text-utils/more.c:1516
 msgid "Regular expression botch"
 msgstr "正規表現がマズい"
 
-#: text-utils/more.c:1526
+#: text-utils/more.c:1528
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9668,15 +9668,15 @@ msgstr ""
 "\n"
 "パターンが見つかりません\n"
 
-#: text-utils/more.c:1529 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1531 text-utils/pg.c:1125 text-utils/pg.c:1276
 msgid "Pattern not found"
 msgstr "パターンが見つかりません"
 
-#: text-utils/more.c:1590
+#: text-utils/more.c:1592
 msgid "can't fork\n"
 msgstr "子プロセスを起動できません\n"
 
-#: text-utils/more.c:1629
+#: text-utils/more.c:1631
 msgid ""
 "\n"
 "...Skipping "
@@ -9684,19 +9684,19 @@ msgstr ""
 "\n"
 "...飛ばしています "
 
-#: text-utils/more.c:1633
+#: text-utils/more.c:1635
 msgid "...Skipping to file "
 msgstr "...ファイルを飛ばします "
 
-#: text-utils/more.c:1635
+#: text-utils/more.c:1637
 msgid "...Skipping back to file "
 msgstr "...ファイルに戻ります "
 
-#: text-utils/more.c:1913
+#: text-utils/more.c:1915
 msgid "Line too long"
 msgstr "行が長すぎます"
 
-#: text-utils/more.c:1956
+#: text-utils/more.c:1958
 msgid "No previous command to substitute for"
 msgstr "大体のための以前のコマンドがありません"
 

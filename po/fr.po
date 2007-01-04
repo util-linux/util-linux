@@ -10,7 +10,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre5\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-01-04 13:19+0100\n"
+"POT-Creation-Date: 2007-01-04 14:58+0100\n"
 "PO-Revision-Date: 2005-11-08 08:00-0500\n"
 "Last-Translator: Michel Robitaille <robitail@IRO.UMontreal.CA>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -1090,7 +1090,7 @@ msgid "too many bad pages"
 msgstr "trop de pages corrompus"
 
 #: disk-utils/mkswap.c:418 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1929 text-utils/more.c:1940
+#: text-utils/more.c:1931 text-utils/more.c:1942
 msgid "Out of memory"
 msgstr "Mémoire épuisée"
 
@@ -7012,7 +7012,7 @@ msgstr "échec d'ouverture du répertoire\n"
 msgid "fork failed\n"
 msgstr "échec de fork()\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1576
+#: login-utils/simpleinit.c:539 text-utils/more.c:1578
 msgid "exec failed\n"
 msgstr "échec de exec()\n"
 
@@ -7853,17 +7853,17 @@ msgstr ""
 "Aucun support de boucle n'était disponible au moment de la compilation. SVP "
 "recompiler.\n"
 
-#: mount/mntent.c:166
+#: mount/mount_mntent.c:166
 #, c-format
 msgid "[mntent]: warning: no final newline at the end of %s\n"
 msgstr "[mntent]: AVERTISSEMENT: aucun nouvelle ligne finale à la fin de %s\n"
 
-#: mount/mntent.c:217
+#: mount/mount_mntent.c:217
 #, c-format
 msgid "[mntent]: line %d in %s is bad%s\n"
 msgstr "[mntent]: ligne %d dans %s est erroné%s\n"
 
-#: mount/mntent.c:220
+#: mount/mount_mntent.c:220
 msgid "; rest of file ignored"
 msgstr "; reste du fichier est ignoré"
 
@@ -7894,162 +7894,162 @@ msgstr ""
 msgid "%s: bad UUID"
 msgstr "%s: UUID erroné"
 
-#: mount/mount.c:382
+#: mount/mount.c:391
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: selon mtab %s est déjà monté sur %s"
 
-#: mount/mount.c:387
+#: mount/mount.c:396
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: selon mtab %s est monté sur %s"
 
-#: mount/mount.c:407
+#: mount/mount.c:416
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: ne peut ouvrir %s en écriture: %s"
 
-#: mount/mount.c:424 mount/mount.c:677
+#: mount/mount.c:433 mount/mount.c:690
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: erreur d'écriture %s: %s"
 
-#: mount/mount.c:432
+#: mount/mount.c:441
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: erreur lors du changement de mode de %s: %s"
 
-#: mount/mount.c:483
+#: mount/mount.c:496
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s ressemble à un esapce de swap - n'a pas été monté"
 
-#: mount/mount.c:570
+#: mount/mount.c:583
 msgid "mount failed"
 msgstr "échec de mount"
 
-#: mount/mount.c:572
+#: mount/mount.c:585
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: seul l'usager ROOT peut monter %s sur %s"
 
-#: mount/mount.c:600
+#: mount/mount.c:613
 msgid "mount: loop device specified twice"
 msgstr "mount: périphérique de type loop spécifié deux fois"
 
-#: mount/mount.c:605
+#: mount/mount.c:618
 msgid "mount: type specified twice"
 msgstr "mount: type spécifié deux fois"
 
-#: mount/mount.c:617
+#: mount/mount.c:630
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: escamotage du setup du périphérique de type loop\n"
 
-#: mount/mount.c:626
+#: mount/mount.c:639
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: on se prépare à utiliser le périphérique de type loop %s\n"
 
-#: mount/mount.c:631
+#: mount/mount.c:644
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: échec d'initialisation du périphérique de type loop\n"
 
-#: mount/mount.c:635
+#: mount/mount.c:648
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: réussite d'initialisation du périphérique de type loop\n"
 
-#: mount/mount.c:672
+#: mount/mount.c:685
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: ne peut ouvrir %s: %s"
 
-#: mount/mount.c:693
+#: mount/mount.c:706
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argument à -p ou --pass-fd doit être un nombre"
 
-#: mount/mount.c:706
+#: mount/mount.c:719
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: ne peut ouvrir %s pour ajuster la vitesse"
 
-#: mount/mount.c:709
+#: mount/mount.c:722
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: ne peut initialiser la vitesse: %s"
 
-#: mount/mount.c:763 mount/mount.c:1339
+#: mount/mount.c:781 mount/mount.c:1362
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: ne peut établir un relais fork(): %s"
 
-#: mount/mount.c:885
+#: mount/mount.c:908
 #, c-format
 msgid "mount: failed with nfs mount version 4, trying 3..\n"
 msgstr "mount: échec avec la version 4 de mount nfs, on tente la 3..\n"
 
-#: mount/mount.c:895
+#: mount/mount.c:918
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: je ne peux déterminer le type de système de fichiers et aucun n'a été "
 "spécifié"
 
-#: mount/mount.c:898
+#: mount/mount.c:921
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: vous devez spécifier le type de système de fichiers"
 
-#: mount/mount.c:901
+#: mount/mount.c:924
 msgid "mount: mount failed"
 msgstr "mount: échec de mount"
 
-#: mount/mount.c:907 mount/mount.c:942
+#: mount/mount.c:930 mount/mount.c:965
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: le point de montage %s n'est pas un répertoire"
 
-#: mount/mount.c:909
+#: mount/mount.c:932
 msgid "mount: permission denied"
 msgstr "mount: permission refusée"
 
-#: mount/mount.c:911
+#: mount/mount.c:934
 msgid "mount: must be superuser to use mount"
 msgstr "mount: doit être le super usager pour utiliser mount"
 
-#: mount/mount.c:915 mount/mount.c:919
+#: mount/mount.c:938 mount/mount.c:942
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s est occupé"
 
-#: mount/mount.c:921
+#: mount/mount.c:944
 msgid "mount: proc already mounted"
 msgstr "mount: proc déjà monté"
 
-#: mount/mount.c:923
+#: mount/mount.c:946
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s est déjà monté ou %s est occupé"
 
-#: mount/mount.c:929
+#: mount/mount.c:952
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: le point de montage %s n'existe pas"
 
-#: mount/mount.c:931
+#: mount/mount.c:954
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr ""
 "mount: le point de montage %s est un lien symbolique qui pointe vers nulle "
 "part"
 
-#: mount/mount.c:934
+#: mount/mount.c:957
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: périphérique spécial %s n'existe pas"
 
-#: mount/mount.c:944
+#: mount/mount.c:967
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -8058,12 +8058,12 @@ msgstr ""
 "mount: le périphérique spécial %s n'existe pas\n"
 "       (un préfixe de chemin n'est pas un répertoire)\n"
 
-#: mount/mount.c:957
+#: mount/mount.c:980
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s n'est pas déjà monté ou option erronée"
 
-#: mount/mount.c:959
+#: mount/mount.c:982
 #, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -8073,7 +8073,7 @@ msgstr ""
 "sur %s,\n"
 "       codepage manquante ou autre erreur"
 
-#: mount/mount.c:969
+#: mount/mount.c:992
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -8081,7 +8081,7 @@ msgstr ""
 "       (cela pourrait être le périphérique IDE où vous utilisez\n"
 "       ide-scsi alors que sr0 ou sda ou autre serait requis?)"
 
-#: mount/mount.c:975
+#: mount/mount.c:998
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -8089,7 +8089,7 @@ msgstr ""
 "       (tentez-vous de monter une partition étendue,\n"
 "       au lieu d'une partition logique à l'intérieur?)"
 
-#: mount/mount.c:992
+#: mount/mount.c:1015
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -8098,51 +8098,51 @@ msgstr ""
 "essayez\n"
 "       dmesg | tail  ou quelque chose du genre\n"
 
-#: mount/mount.c:998
+#: mount/mount.c:1021
 msgid "mount table full"
 msgstr "table de périphériques montés est pleine"
 
-#: mount/mount.c:1000
+#: mount/mount.c:1023
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: ne peut lire le super bloc"
 
-#: mount/mount.c:1004
+#: mount/mount.c:1027
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: périphérique inconnnu"
 
-#: mount/mount.c:1009
+#: mount/mount.c:1032
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: type inconnu de système de fichiers '%s'"
 
-#: mount/mount.c:1021
+#: mount/mount.c:1044
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: probablement vous voulez dire %s"
 
-#: mount/mount.c:1023
+#: mount/mount.c:1046
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: peut-être voulez-vous dire 'iso9660'?"
 
-#: mount/mount.c:1025
+#: mount/mount.c:1048
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: peut-être voulez-vous dire 'vfat'?"
 
-#: mount/mount.c:1028
+#: mount/mount.c:1051
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s a un nombre de périphérique erroné ou le type du syst. de fichiers "
 "%s n'est pas supporté"
 
-#: mount/mount.c:1034
+#: mount/mount.c:1057
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s n'est pas un périphérique de type bloc et stat() a échoué?"
 
-#: mount/mount.c:1036
+#: mount/mount.c:1059
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -8151,71 +8151,71 @@ msgstr ""
 "mount: le kernel ne reconnaît pas %s comme un périphérique de type bloc\n"
 "       (peut-être un pilote « insmod »?)"
 
-#: mount/mount.c:1039
+#: mount/mount.c:1062
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr ""
 "mount: %s n'est pas un périphérique de type bloc (essayer « -o loop » ?)"
 
-#: mount/mount.c:1042
+#: mount/mount.c:1065
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s n'est pas un périphérique de type bloc"
 
-#: mount/mount.c:1045
+#: mount/mount.c:1068
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s n'est pas un périphérique valide de type bloc"
 
-#: mount/mount.c:1048
+#: mount/mount.c:1071
 msgid "block device "
 msgstr "périphérique de type bloc"
 
-#: mount/mount.c:1050
+#: mount/mount.c:1073
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: ne peut monter %s%s en lecture seulement"
 
-#: mount/mount.c:1054
+#: mount/mount.c:1077
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s est protégé en écriture mais l'option « -w » a été fournie"
 
-#: mount/mount.c:1071
+#: mount/mount.c:1094
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s est protégé en écriture, on le monte en lecture seulement"
 
-#: mount/mount.c:1170
+#: mount/mount.c:1193
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 "mount: aucun type n'a été donné - ja vais assumer nfs en raison du « : »\n"
 
-#: mount/mount.c:1176
+#: mount/mount.c:1199
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: aucun type n'a été fourni - je vais assumer smbfs en raison du "
 "préfixe //\n"
 
-#: mount/mount.c:1193
+#: mount/mount.c:1216
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: mise en arrière plan de \"%s\"\n"
 
-#: mount/mount.c:1204
+#: mount/mount.c:1227
 #, c-format
 msgid "mount: giving up \"%s\"\n"
 msgstr "mount: abandon \"%s\"\n"
 
-#: mount/mount.c:1286
+#: mount/mount.c:1309
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s est déjà monté sur %s\n"
 
 # mount/mount.c:1323
-#: mount/mount.c:1416
+#: mount/mount.c:1440
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8266,34 +8266,34 @@ msgstr ""
 "Autres options: [-nfFrsvw] [-o options] [-p mot_de_passe].\n"
 "Pour plus de détails exécuter:  man 8 mount .\n"
 
-#: mount/mount.c:1605
+#: mount/mount.c:1636
 msgid "mount: only root can do that"
 msgstr "mount: seul l'usager ROOT peut faire cela"
 
-#: mount/mount.c:1610
+#: mount/mount.c:1641
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s n'a pas été repéré - on le crée..\n"
 
-#: mount/mount.c:1622
+#: mount/mount.c:1653
 msgid "mount: no such partition found"
 msgstr "mount: pas de telle partition repérée"
 
-#: mount/mount.c:1624
+#: mount/mount.c:1655
 #, c-format
 msgid "mount: mounting %s\n"
 msgstr "mount: on monte %s\n"
 
-#: mount/mount.c:1633
+#: mount/mount.c:1664
 msgid "nothing was mounted"
 msgstr "rien n'a été monté"
 
-#: mount/mount.c:1648
+#: mount/mount.c:1679
 #, c-format
 msgid "mount: cannot find %s in %s"
 msgstr "mount: ne peut repérer %s dans %s"
 
-#: mount/mount.c:1663
+#: mount/mount.c:1694
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: ne peut repérer %s dans %s ou %s"
@@ -8962,8 +8962,8 @@ msgid "max seg size (kbytes) = %lu\n"
 msgstr "taille max seg (koctets) = %lu\n"
 
 #: sys-utils/ipcs.c:282
-#, c-format
-msgid "max total shared memory (pages) = %lu\n"
+#, fuzzy, c-format
+msgid "max total shared memory (kbytes) = %llu\n"
 msgstr "maximum total de mémoire partagé (pages) = %lu\n"
 
 #: sys-utils/ipcs.c:284
@@ -9012,7 +9012,7 @@ msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
 msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
 
 #: sys-utils/ipcs.c:301 sys-utils/ipcs.c:307 sys-utils/ipcs.c:314
-#: sys-utils/ipcs.c:320 sys-utils/ipcs.c:427
+#: sys-utils/ipcs.c:320
 msgid "shmid"
 msgstr "shmid"
 
@@ -9181,13 +9181,13 @@ msgstr "sémaphores alloués = %d\n"
 msgid "------ Semaphore Arrays Creators/Owners --------\n"
 msgstr "------ Tableaux des sémaphores Créateurs/Propriétaires --------\n"
 
-#: sys-utils/ipcs.c:421 sys-utils/ipcs.c:436
+#: sys-utils/ipcs.c:421 sys-utils/ipcs.c:427 sys-utils/ipcs.c:436
 msgid "semid"
 msgstr "semid"
 
 #: sys-utils/ipcs.c:425
-#, c-format
-msgid "------ Shared Memory Operation/Change Times --------\n"
+#, fuzzy, c-format
+msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "------ Mémoire partagé Opération/Changement Temps --------\n"
 
 #: sys-utils/ipcs.c:426
@@ -9739,17 +9739,17 @@ msgstr ""
 "hexdump: [-bcCdovx] [-e format] [-f fichier-format] [-n longueur] [-s saut] "
 "[fichier ...]\n"
 
-#: text-utils/more.c:216
+#: text-utils/more.c:217
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr "usage: %s [-dflpcsu] [+no-de-ligne | +/patron] nom1 nom2 ...\n"
 
-#: text-utils/more.c:439
+#: text-utils/more.c:440
 #, c-format
 msgid "%s: unknown option \"-%c\"\n"
 msgstr "%s: option inconnue \"-%c\"\n"
 
-#: text-utils/more.c:471
+#: text-utils/more.c:472
 #, c-format
 msgid ""
 "\n"
@@ -9760,7 +9760,7 @@ msgstr ""
 "*** %s: répertoire ***\n"
 "\n"
 
-#: text-utils/more.c:514
+#: text-utils/more.c:516
 #, c-format
 msgid ""
 "\n"
@@ -9771,46 +9771,46 @@ msgstr ""
 "******** %s: N'est pas un fichier texte ********\n"
 "\n"
 
-#: text-utils/more.c:617
+#: text-utils/more.c:619
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Utiliser q ou Q pour quitter]"
 
-#: text-utils/more.c:709
+#: text-utils/more.c:711
 #, c-format
 msgid "--More--"
 msgstr "--Plus--"
 
-#: text-utils/more.c:711
+#: text-utils/more.c:713
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Prochain fichier: %s)"
 
-#: text-utils/more.c:716
+#: text-utils/more.c:718
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr ""
 "[Appuyer sur la barre d'espacement pour continuer, « q » pour quitter.]"
 
-#: text-utils/more.c:1115
+#: text-utils/more.c:1117
 #, c-format
 msgid "...back %d pages"
 msgstr "...reculé de %d pages"
 
-#: text-utils/more.c:1117
+#: text-utils/more.c:1119
 msgid "...back 1 page"
 msgstr "...reculé de 1 page"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1162
 msgid "...skipping one line"
 msgstr "...escamotage d'une ligne"
 
-#: text-utils/more.c:1162
+#: text-utils/more.c:1164
 #, c-format
 msgid "...skipping %d lines"
 msgstr "...escamotage de %d ligne(s)"
 
-#: text-utils/more.c:1199
+#: text-utils/more.c:1201
 msgid ""
 "\n"
 "***Back***\n"
@@ -9820,7 +9820,7 @@ msgstr ""
 "***Arrière***\n"
 "\n"
 
-#: text-utils/more.c:1237
+#: text-utils/more.c:1239
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -9832,7 +9832,7 @@ msgstr ""
 "Par défaut entre crochets.\n"
 "L'étoile \"*\" indique que l'arguement devient le nouveau défaut.\n"
 
-#: text-utils/more.c:1244
+#: text-utils/more.c:1246
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -9883,34 +9883,34 @@ msgstr ""
 "ligne\n"
 ".                        répéter la commande précédente\n"
 
-#: text-utils/more.c:1313 text-utils/more.c:1318
+#: text-utils/more.c:1315 text-utils/more.c:1320
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Appuyer « h » pour obtenir les instructions.]"
 
-#: text-utils/more.c:1352
+#: text-utils/more.c:1354
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "« %s » ligne %d"
 
-#: text-utils/more.c:1354
+#: text-utils/more.c:1356
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Pas un fichier] ligne %d"
 
-#: text-utils/more.c:1438
+#: text-utils/more.c:1440
 msgid "  Overflow\n"
 msgstr "  Débordement\n"
 
-#: text-utils/more.c:1485
+#: text-utils/more.c:1487
 msgid "...skipping\n"
 msgstr "...escamotage\n"
 
-#: text-utils/more.c:1514
+#: text-utils/more.c:1516
 msgid "Regular expression botch"
 msgstr "Expression régulière bâclée"
 
-#: text-utils/more.c:1526
+#: text-utils/more.c:1528
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9918,15 +9918,15 @@ msgstr ""
 "\n"
 "Patron non repéré\n"
 
-#: text-utils/more.c:1529 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1531 text-utils/pg.c:1125 text-utils/pg.c:1276
 msgid "Pattern not found"
 msgstr "Patron non repéré"
 
-#: text-utils/more.c:1590
+#: text-utils/more.c:1592
 msgid "can't fork\n"
 msgstr "ne peut établir un relais fork()\n"
 
-#: text-utils/more.c:1629
+#: text-utils/more.c:1631
 msgid ""
 "\n"
 "...Skipping "
@@ -9934,19 +9934,19 @@ msgstr ""
 "\n"
 "...Escamotage en cours "
 
-#: text-utils/more.c:1633
+#: text-utils/more.c:1635
 msgid "...Skipping to file "
 msgstr "...Escamotage vers le fichier "
 
-#: text-utils/more.c:1635
+#: text-utils/more.c:1637
 msgid "...Skipping back to file "
 msgstr "...Escamotage arrière vers le fichier "
 
-#: text-utils/more.c:1913
+#: text-utils/more.c:1915
 msgid "Line too long"
 msgstr "Ligne trop longue"
 
-#: text-utils/more.c:1956
+#: text-utils/more.c:1958
 msgid "No previous command to substitute for"
 msgstr "Aucune commande précédente pour subsitution"
 

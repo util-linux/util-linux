@@ -65,7 +65,7 @@ mount/fstab.c
 mount/get_label_uuid.c
 mount/getusername.c
 mount/lomount.c
-mount/mntent.c
+mount/mount_mntent.c
 mount/mount_blkid.c
 mount/mount_by_label.c
 mount/mount.c
