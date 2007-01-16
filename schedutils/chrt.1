@@ -36,10 +36,11 @@ chrt \- manipulate real-time attributes of a process
 .BR chrt (1)
 sets or retrieves the real-time scheduling attributes of an existing PID or
 runs COMMAND with the given attributes.  Both policy (one of
+.BR SCHED_OTHER ,
 .BR SCHED_FIFO ,
 .BR SCHED_RR ,
 or
-.BR SCHED_OTHER )
+.BR SCHED_BATCH )
 and priority can be set and retrieved.
 .SH OPTIONS
 .TP
@@ -47,6 +48,10 @@ and priority can be set and retrieved.
 operate on an existing PID and do not launch a new task
 .TP
 
+.TP
+.B -b, --batch
+set scheduling policy to
+.BR SCHED_BATCH
 .TP
 .B -f, --fifo
 set scheduling policy to

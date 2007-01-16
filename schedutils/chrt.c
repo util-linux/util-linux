@@ -36,6 +36,8 @@ static void show_usage(const char *cmd)
 	fprintf(stderr, "usage: %s [options] [prio] [pid | cmd [args...]]\n",
 			cmd);
 	fprintf(stderr, "manipulate real-time attributes of a process\n");
+	fprintf(stderr, "  -b, --batch                        "
+			"set policy to SCHED_BATCH\n");
 	fprintf(stderr, "  -f, --fifo                         "
 			"set policy to SCHED_FF\n");
 	fprintf(stderr, "  -p, --pid                          "
@@ -83,6 +85,9 @@ static void show_rt_info(const char *what, pid_t pid)
 	case SCHED_RR:
 		printf("SCHED_RR\n");
 		break;
+	case SCHED_BATCH:
+		printf("SCHED_BATCH\n");
+		break;
 	default:
 		printf("unknown\n");
 	}
@@ -101,6 +106,13 @@ static void show_min_max(void)
 {
 	int max, min;
 
+	max = sched_get_priority_max(SCHED_OTHER);
+	min = sched_get_priority_min(SCHED_OTHER);
+	if (max >= 0 && min >= 0)
+		printf("SCHED_OTHER min/max priority\t: %d/%d\n", min, max);
+	else
+		printf("SCHED_OTHER not supported?\n");
+
 	max = sched_get_priority_max(SCHED_FIFO);
 	min = sched_get_priority_min(SCHED_FIFO);
 	if (max >= 0 && min >= 0)
@@ -115,12 +127,12 @@ static void show_min_max(void)
 	else
 		printf("SCHED_RR not supported?\n");
 
-	max = sched_get_priority_max(SCHED_OTHER);
-	min = sched_get_priority_min(SCHED_OTHER);
+	max = sched_get_priority_max(SCHED_BATCH);
+	min = sched_get_priority_min(SCHED_BATCH);
 	if (max >= 0 && min >= 0)
-		printf("SCHED_OTHER min/max priority\t: %d/%d\n", min, max);
+		printf("SCHED_BATCH min/max priority\t: %d/%d\n", min, max);
 	else
-		printf("SCHED_OTHER not supported?\n");
+		printf("SCHED_BATCH not supported?\n");
 }
 
 int main(int argc, char *argv[])
@@ -130,6 +142,7 @@ int main(int argc, char *argv[])
 	pid_t pid = 0;
 
 	struct option longopts[] = {
+		{ "batch",	0, NULL, 'b' },
 		{ "fifo",	0, NULL, 'f' },
 		{ "pid",	0, NULL, 'p' },
 		{ "help",	0, NULL, 'h' },
@@ -141,11 +154,14 @@ int main(int argc, char *argv[])
 		{ NULL,		0, NULL, 0 }
 	};
 
-	while((i = getopt_long(argc, argv, "+fphmorvV", longopts, NULL)) != -1)
+	while((i = getopt_long(argc, argv, "+bfphmorvV", longopts, NULL)) != -1)
 	{
 		int ret = 1;
 
 		switch (i) {
+		case 'b':
+			policy = SCHED_BATCH;
+			break;
 		case 'f':
 			policy = SCHED_FIFO;
 			break;
