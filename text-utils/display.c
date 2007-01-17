@@ -255,7 +255,8 @@ get(void)
 					(void)printf("*\n");
 				return(NULL);
 			}
-			memset((char *)curp + nread, 0, need);
+			if (need > 0)
+				memset((char *)curp + nread, 0, need);
 			eaddress = address + nread;
 			return(curp);
 		}
