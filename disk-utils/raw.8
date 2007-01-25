@@ -15,6 +15,11 @@ raw \- bind a Linux raw character device
 .PP
 .B raw
 .B \-qa
+.SH WARNING
+The rawio is a deprecated interface since Linux kernel 2.6.3. Please,
+modify your application to open the block device with the
+O_DIRECT flag.
+
 .SH DESCRIPTION
 .B raw
 is used to bind a Linux raw character device to a block device.  Any
@@ -75,10 +80,12 @@ With
 .B -h
 provides a usage summary.
 .SH BUGS
-The Linux 
+The Linux
 .B dd
-(1) command does not currently align its buffers correctly, and so
-cannot be used on raw devices.
+(1) command should be used without bs= option or the blocksize needs to be a
+multiple of the sector size of the device (512 bytes usually) otherwise it
+will fail with "Invalid Argument" messages (EINVAL).
+
 .PP
 Raw I/O devices do not maintain cache coherency with the Linux block
 device buffer cache.  If you use raw I/O to overwrite data already in
