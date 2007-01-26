@@ -31,6 +31,7 @@
 #endif
 #define DEVFS_RAWCTLDEV "/dev/raw/rawctl"
 
+#define RAW_NR_MINORS 8192
 
 char *	progname;
 int	do_query = 0;
@@ -64,7 +65,7 @@ int main(int argc, char *argv[])
 	char * block_name;
 	int  err;
 	int  block_major, block_minor;	
-	int  i;
+	int  i, rc;
 
 	struct stat statbuf;
 	
@@ -94,7 +95,7 @@ int main(int argc, char *argv[])
 	if (do_query_all) {
 		if (optind < argc)
 			usage(1);
-		for (i=1; i<255; i++)
+		for (i = 1; i < RAW_NR_MINORS; i++)
 			query(i, 1);
 		exit(0);
 	}
@@ -107,6 +108,20 @@ int main(int argc, char *argv[])
 		usage(1);
 	raw_name = argv[optind++];
 
+	/*
+	 * try to check the device name before stat(), because on systems with
+	 * udev the raw0 causes a create udev event for char 162/0, which
+	 * causes udev to *remove* /dev/rawctl
+	 */
+	rc = sscanf(raw_name, RAWDEVDIR "raw%d", &raw_minor);
+	if (rc == 1 && raw_minor == 0) {
+ 		fprintf (stderr,
+ 			"Device '%s' is control raw dev "
+			"(use raw<N> where <N> is greater than zero)\n",
+ 			raw_name);
+		exit(2);
+	}
+
 	err = stat(raw_name, &statbuf);
 	if (err) {
 		fprintf (stderr, "Cannot locate raw device '%s' (%s)\n",
@@ -115,7 +130,7 @@ int main(int argc, char *argv[])
 	}
 	
 	if (!S_ISCHR(statbuf.st_mode)) {
-		fprintf (stderr, "raw device '%s' is not a character dev\n",
+		fprintf (stderr, "Raw device '%s' is not a character dev\n",
 			 raw_name);
 		exit(2);
 	}
@@ -129,7 +144,7 @@ int main(int argc, char *argv[])
 
 	if (do_query)
 		return query(raw_minor, 0);
-	
+
 	/* 
 	 * It's not a query, so we still have some parsing to do.  Have
 	 * we been given a block device filename or a major/minor pair? 
@@ -193,18 +208,25 @@ void open_raw_ctl(void)
 int query(int minor, int quiet)
 {
 	struct raw_config_request rq;
+	static int has_worked = 0;
 	int err;
-	
+
 	rq.raw_minor = minor;
 	err = ioctl(master_fd, RAW_GETBIND, &rq);
 	if (err < 0) {
 		if (quiet && errno == ENODEV)
 			return 3;
-		fprintf (stderr, 
+		if (has_worked && errno == EINVAL)
+			return 0;
+		fprintf (stderr,
 			 "Error querying raw device (%s)\n",
 			 strerror(errno));
 		exit(3);
 	}
+	/* If one query has worked, mark that fact so that we don't
+	 * report spurious fatal errors if raw(8) has been built to
+	 * support more raw minor numbers than the kernel has. */
+	has_worked = 1;
 	if (quiet && !rq.block_major && !rq.block_minor)
 		return 0;
 	printf (RAWDEVDIR "raw%d:	bound to major %d, minor %d\n",
