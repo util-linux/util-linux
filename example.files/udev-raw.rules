@@ -1,0 +1,11 @@
+# This file and interface are deprecated.
+# Applications needing raw device access should open regular
+# block devices with O_DIRECT.
+#
+# Enter raw device bindings here.
+#
+# An example would be:
+#   ACTION=="add", KERNEL=="sda", RUN+="/bin/raw /dev/raw/raw1 %N"
+# to bind /dev/raw/raw1 to /dev/sda, or
+#   ACTION=="add", ENV{MAJOR}=="8", ENV{MINOR}=="1", RUN+="/bin/raw /dev/raw/raw2 %M %m"
+# to bind /dev/raw/raw2 to the device with major 8, minor 1.
