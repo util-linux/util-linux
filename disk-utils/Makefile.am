@@ -18,7 +18,7 @@ endif
 
 if HAVE_RAW
 if BUILD_RAW
-usrbinexec_PROGRAMS += raw
+sbin_PROGRAMS += raw
 man_MANS += raw.8
 endif
 endif
