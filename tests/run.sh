@@ -20,8 +20,10 @@ echo
 echo "---------------------------------------------------------------------"
 if [ $res -eq 0 ]; then
 	echo "  All $count tests PASSED"
+	res=0
 else
 	echo "  $res tests of $count FAILED"
+	res=1
 fi
 echo "---------------------------------------------------------------------"
-
+exit $res
