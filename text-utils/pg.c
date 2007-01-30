@@ -255,7 +255,7 @@ invopt(char *s)
 	usage();
 }
 
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 /*
  * A mbstowcs()-alike function that transparently handles invalid sequences.
  */
@@ -402,7 +402,7 @@ checkf(void)
 	return 0;
 }
 
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 /*
  * Return the last character that will fit on the line at col columns
  * in case MB_CUR_MAX > 1.
@@ -489,7 +489,7 @@ endline(unsigned col, char *s)
 	unsigned pos = 0;
 	char *t = s;
 
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 	if (MB_CUR_MAX > 1)
 		return endline_for_mb(col, s);
 #endif
@@ -776,7 +776,7 @@ endprompt:
 	cmd.count = getcount(cmd.cmdline);
 }
 
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 /*
  * Remove backspace formatting, for searches
  * in case MB_CUR_MAX > 1.
@@ -817,7 +817,7 @@ colb(char *s)
 {
 	char *p = s, *q;
 
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 	if (MB_CUR_MAX > 1)
 		return colb_for_mb(s);
 #endif
@@ -836,7 +836,7 @@ colb(char *s)
 	return s;
 }
 
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 /*
  * Convert nonprintable characters to spaces
  * in case MB_CUR_MAX > 1.
@@ -867,7 +867,7 @@ makeprint_for_mb(char *s, size_t l)
 static void
 makeprint(char *s, size_t l)
 {
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 	if (MB_CUR_MAX > 1)
 		return makeprint_for_mb(s, l);
 #endif

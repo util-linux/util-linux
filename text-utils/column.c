@@ -52,7 +52,7 @@
 
 #include "widechar.h"
 
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 #define wcs_width(s) wcswidth(s,wcslen(s))
 static wchar_t *mbs_to_wcs(const char *);
 #else
@@ -312,7 +312,7 @@ input(fp)
 	}
 }
 
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 static wchar_t *mbs_to_wcs(const char *s)
 {
 	size_t n;
@@ -330,7 +330,7 @@ static wchar_t *mbs_to_wcs(const char *s)
 }
 #endif
 
-#ifndef ENABLE_WIDECHAR
+#ifndef HAVE_WIDECHAR
 static char *mtsafe_strtok(char *str, const char *delim, char **ptr)
 {
 	if (str == NULL) {

@@ -50,7 +50,7 @@
 
 #include "widechar.h"
 
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 static int put1wc(int c) /* Output an ASCII character as a wide character */
 {
   if (putwchar(c) == WEOF)

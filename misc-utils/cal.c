@@ -355,7 +355,7 @@ main(int argc, char **argv) {
 	exit(0);
 }
 
-#ifndef ENABLE_WIDECHAR
+#ifndef HAVE_WIDECHAR
 static char *eos(char *s) {
 	while (s && *s)
 		s++;
@@ -366,14 +366,14 @@ static char *eos(char *s) {
 void headers_init(void)
 {
   int i, wd;
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
   wchar_t day_headings_wc[22],j_day_headings_wc[29];
   wchar_t wd_wc[10];
 #endif
 
   strcpy(day_headings,"");
   strcpy(j_day_headings,"");
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
   wcscpy(day_headings_wc,L"");
   wcscpy(j_day_headings_wc,L"");
 #endif
@@ -386,7 +386,7 @@ void headers_init(void)
 
   for(i = 0 ; i < 7 ; i++ ) {
      wd = (i + week1stday) % 7;
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
      mbstowcs(wd_wc,weekday(wd),10);
      if (wcswidth(wd_wc,10) < 3)
 	     wcscat(j_day_headings_wc,L" ");
@@ -404,7 +404,7 @@ void headers_init(void)
 #endif
   }
 
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
   wcstombs(day_headings,day_headings_wc,sizeof(day_headings));
   wcstombs(j_day_headings,j_day_headings_wc,sizeof(j_day_headings));
 #endif
@@ -723,7 +723,7 @@ trim_trailing_spaces(s)
 void
 center_str(const char* src, char* dest, size_t dest_size, int width)
 {
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 	wchar_t str_wc[FMT_ST_CHARS];
 #endif
 	char str[FMT_ST_CHARS];
@@ -732,7 +732,7 @@ center_str(const char* src, char* dest, size_t dest_size, int width)
 
 	len = strlen(src);
 
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 	if (mbstowcs(str_wc, src, FMT_ST_CHARS) > 0) {
 		wide_char_enabled = 1;
 		len = wcswidth(str_wc, SIZE(str_wc));
@@ -741,7 +741,7 @@ center_str(const char* src, char* dest, size_t dest_size, int width)
 	if (len > width) {
 		str_to_print=str;
 		if (wide_char_enabled) {
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 			str_wc[width]=L'\0';
 			wcstombs(str, str_wc, SIZE(str));
 #endif
