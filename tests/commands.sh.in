@@ -11,3 +11,5 @@ TS_CMD_SWAPON=${TS_CMD_MOUNT:-"$TOPDIR/mount/swapon"}
 TS_CMD_SWAPOFF=${TS_CMD_MOUNT:-"$TOPDIR/mount/swapoff"}
 
 TS_CMD_IPCS=${TS_CMD_IPCS:-"$TOPDIR/sys-utils/ipcs"}
+
+TS_CMD_COL=${TS_CMD_COL:-"$TOPDIR/text-utils/col"}

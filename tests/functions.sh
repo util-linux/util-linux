@@ -2,6 +2,7 @@
 TS_OUTDIR="$TS_TOPDIR/output"
 TS_DIFFDIR="$TS_TOPDIR/diff"
 TS_EXPECTEDDIR="$TS_TOPDIR/expected"
+TS_INPUTDIR="$TS_TOPDIR/input"
 
 function ts_skip {
 	echo " IGNORE ($1)"
@@ -9,6 +10,7 @@ function ts_skip {
 }
 
 function ts_init {
+	export LANG="en_US.UTF-8":
 	TS_NAME=$(basename $0)
 	if [ ! -d $TS_OUTDIR ]; then
 		mkdir -p $TS_OUTDIR
@@ -19,6 +21,7 @@ function ts_init {
 	TS_OUTPUT="$TS_OUTDIR/$TS_NAME"
 	TS_DIFF="$TS_DIFFDIR/$TS_NAME"
 	TS_EXPECTED="$TS_EXPECTEDDIR/$TS_NAME"
+	TS_INPUT="$TS_INPUTDIR/$TS_NAME"
 
 	rm -f $TS_OUTPUT
 
@@ -35,7 +38,7 @@ function ts_finalize {
 				res=1
 			fi
 		else
-			res=0
+			res=1
 		fi
 	else
 		echo " IGNORE (expected output undefined)"

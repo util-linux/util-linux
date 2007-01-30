@@ -128,6 +128,7 @@ int main(int argc, char **argv)
 	int this_line;			/* line l points to */
 	int nflushd_lines;		/* number of lines that were flushed */
 	int adjust, opt, warned;
+	int ret = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -175,8 +176,16 @@ int main(int argc, char **argv)
 	cur_line = max_line = nflushd_lines = this_line = 0;
 	cur_set = last_set = CS_NORMAL;
 	lines = l = alloc_line();
-
-	while ((ch = getwchar()) != WEOF) {
+	
+	while (feof(stdin)==0) {
+		errno = 0;
+		if ((ch = getwchar()) == WEOF) {
+			if (errno==EILSEQ) {
+				perror("col");
+				ret = 1;
+			}
+			break;
+		}	
 		if (!iswgraph(ch)) {
 			switch (ch) {
 			case BS:		/* can't go back further */
@@ -332,7 +341,7 @@ int main(int argc, char **argv)
 	flush_blanks();
 	if (ferror(stdout) || fclose(stdout))
 		return 1;
-	return 0;
+	return ret;
 }
 
 void flush_lines(int nflush)
