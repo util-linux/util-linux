@@ -42,6 +42,10 @@ chdir to /,  or if it encounters an unknown file type.
 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
 - added Native Language Support
 
+2006-12-15 Karel Zak <kzak@redhat.com>
+- fixed logic; don't follow the path if a component is not directory
+- fixed infinite loop of symbolic links; stack size is very limited
+
 -------------------------------------------------------------*/
 
 #include <stdio.h>
@@ -66,7 +70,7 @@ int xflag = 0;
 #endif
 
 static char *pperm(unsigned short);
-static void namei(char *, int);
+static void namei(char *, int, mode_t *);
 static void usage(void);
 
 int
@@ -107,9 +111,10 @@ main(int argc, char **argv) {
 
 
     for(; optind < argc; optind++){
+	mode_t lastmode = 0;
 	(void)printf("f: %s\n", argv[optind]);
 	symcount = 1;
-	namei(argv[optind], 0);
+	namei(argv[optind], 0, &lastmode);
 
 	if(chdir(curdir) == -1){
 	    (void)fprintf(stderr,
@@ -131,8 +136,10 @@ usage(void) {
 #define NODEV		(dev_t)(-1)
 #endif
 
+int kzak;
+
 static void
-namei(char *file, int lev) {
+namei(char *file, int lev, mode_t *lastmode) {
     char *cp;
     char buf[BUFSIZ], sym[BUFSIZ];
     struct stat stb;
@@ -142,11 +149,11 @@ namei(char *file, int lev) {
     /*
      * See if the file has a leading /, and if so cd to root
      */
-    
-    if(*file == '/'){
+
+    if(file && *file == '/'){
 	while(*file == '/')
 	    file++;
-	
+
 	if(chdir("/") == -1){
 	    (void)fprintf(stderr,_("namei: could not chdir to root!\n"));
 	    exit(1);
@@ -166,7 +173,7 @@ namei(char *file, int lev) {
 	    (void)printf(" d /\n");
     }
 
-    for(;;){
+    for(; file && *file;){
 
 	if (strlen(file) >= BUFSIZ) {
 		fprintf(stderr,_("namei: buf overflow\n"));
@@ -198,6 +205,20 @@ namei(char *file, int lev) {
 	for(i = 0; i < lev; i++)
 	    (void)printf("  ");
 
+
+	/*
+	 * We cannot walk on *path* if a previous element, in the path wasn't
+	 * directory, because there could be a component with same name. Try:
+	 *
+	 * $ touch a b
+	 * $ namei a/b    <-- "a" is not directory so namei shouldn't 
+	 *                    check for "b"
+	 */
+	if (*lastmode && S_ISDIR(*lastmode)==0 && S_ISLNK(*lastmode)==0){
+	    (void)printf(" ? %s - %s (%d)\n", buf, strerror(ENOENT), ENOENT);
+	    return;
+	}
+
 	/*
 	 * See what type of critter this file is
 	 */
@@ -206,6 +227,8 @@ namei(char *file, int lev) {
 	    (void)printf(" ? %s - %s (%d)\n", buf, ERR);
 	    return;
 	}
+
+	*lastmode = stb.st_mode;
 
 	switch(stb.st_mode & S_IFMT){
 	    case S_IFDIR:
@@ -241,7 +264,6 @@ namei(char *file, int lev) {
 		 * Sigh, another symlink.  Read its contents and
 		 * call namei()
 		 */
-		
 		bzero(sym, BUFSIZ);
 		if(readlink(buf, sym, BUFSIZ) == -1){
 		    (void)printf(_(" ? problems reading symlink %s - %s (%d)\n"), buf, ERR);
@@ -255,11 +277,12 @@ namei(char *file, int lev) {
 
 		if(symcount > 0 && symcount++ > MAXSYMLINKS){
 		    (void)printf(_("  *** EXCEEDED UNIX LIMIT OF SYMLINKS ***\n"));
-		    symcount = -1;
 		} else {
 		    (void)printf("\n");
-		    namei(sym, lev + 1);
+		    namei(sym, lev + 1, lastmode);
 		}
+		if (symcount > MAXSYMLINKS)
+		    return;
 		break;
 
 	    case S_IFCHR:
