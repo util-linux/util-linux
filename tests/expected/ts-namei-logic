@@ -1,0 +1,19 @@
+f: output/namei/namei1/namei2/a
+ d output
+ d namei
+ d namei1
+ d namei2
+ - a
+f: output/namei/namei1/namei2/b
+ d output
+ d namei
+ d namei1
+ d namei2
+ - b
+f: output/namei/namei1/namei2/a/b
+ d output
+ d namei
+ d namei1
+ d namei2
+ - a
+ ? b - No such file or directory (2)

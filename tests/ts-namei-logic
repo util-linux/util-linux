@@ -1,0 +1,23 @@
+#!/bin/bash
+
+. commands.sh
+. functions.sh
+
+TS_COMPONENT="namei"
+TS_DESC="logic"
+
+ts_init
+
+SANDBOX="$TS_OUTDIR/namei"
+
+mkdir -p $SANDBOX/namei1/namei2
+touch $SANDBOX/namei1/namei2/a $SANDBOX/namei1/namei2/b
+
+touch $TS_OUTPUT
+
+$TS_CMD_NAMEI $SANDBOX/namei1/namei2/a   >> $TS_OUTPUT 2>&1
+$TS_CMD_NAMEI $SANDBOX/namei1/namei2/b   >> $TS_OUTPUT 2>&1
+$TS_CMD_NAMEI $SANDBOX/namei1/namei2/a/b >> $TS_OUTPUT 2>&1
+
+ts_finalize
+

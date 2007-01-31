@@ -1,8 +1,8 @@
 
-TS_OUTDIR="$TS_TOPDIR/output"
-TS_DIFFDIR="$TS_TOPDIR/diff"
-TS_EXPECTEDDIR="$TS_TOPDIR/expected"
-TS_INPUTDIR="$TS_TOPDIR/input"
+TS_OUTDIR="output"
+TS_DIFFDIR="diff"
+TS_EXPECTEDDIR="expected"
+TS_INPUTDIR="input"
 
 function ts_skip {
 	echo " IGNORE ($1)"
