@@ -85,7 +85,7 @@ main(int argc, char **argv)
 	} else {
 		int i;
 
-		if (strcmp(argv[0], "--help") == 0 || strcmp(argv[0], "-h") == 0) {
+		if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
 			printf("%s <option>\n", argv[0]);
 			fputs("options:\n", stdout);
 			for (fn = hlps; fn->name; fn++) 
