@@ -47,17 +47,6 @@
 #include <uuid/uuid.h>
 #endif
 
-/* Try to get PAGE_SIZE from libc or kernel includes */
-#ifdef HAVE_SYS_USER_H
-				/* Note: <sys/user.h> says: for gdb only */
-#include <sys/user.h>		/* for PAGE_SIZE and PAGE_SHIFT */
-#else
-#ifdef HAVE_ASM_PAGE_H
-#include <asm/page.h>		/* for PAGE_SIZE and PAGE_SHIFT */
-				/* we also get PAGE_SIZE via getpagesize() */
-#endif
-#endif
-
 #ifndef _IO
 /* pre-1.3.45 */
 #define BLKGETSIZE 0x1260
@@ -142,22 +131,25 @@ is_sparc64(void) {
 #endif
 
 /*
- * The definition of the union swap_header uses the constant PAGE_SIZE.
- * Unfortunately, on some architectures this depends on the hardware model,
- * and can only be found at run time -- we use getpagesize(), so that
- * we do not need separate binaries e.g. for sun4, sun4c/d/m and sun4u.
+ * The definition of the union swap_header uses the kernel constant PAGE_SIZE.
+ * Unfortunately, on some architectures this depends on the hardware model, and
+ * can only be found at run time -- we use getpagesize(), so that we do not
+ * need separate binaries e.g. for sun4, sun4c/d/m and sun4u.
  *
- * Even more unfortunately, getpagesize() does not always return
- * the right information. For example, libc4 and libc5 do not use
- * the system call but invent a value themselves
- * (EXEC_PAGESIZE or NBPG * CLSIZE or NBPC), and thus it may happen
- * that e.g. on a sparc PAGE_SIZE=4096 and getpagesize() returns 8192.
+ * Even more unfortunately, getpagesize() does not always return the right
+ * information. For example, libc4, libc5 and glibc 2.0 do not use the system
+ * call but invent a value themselves (EXEC_PAGESIZE or NBPG * CLSIZE or NBPC),
+ * and thus it may happen that e.g. on a sparc kernel PAGE_SIZE=4096 and
+ * getpagesize() returns 8192.
+ *
  * What to do? Let us allow the user to specify the pagesize explicitly.
+ *
+ * Update 05-Feb-2007 (kzak):
+ *      - use sysconf(_SC_PAGESIZE) to be consistent with the rest of 
+ *        util-linux code.  It is the standardized and preferred way of 
+ *        querying page size.	
  */
-
-static int user_pagesize = 0;
-static int kernel_pagesize;	   /* obtained via getpagesize(); */
-static int defined_pagesize = 0;   /* PAGE_SIZE, when that exists */
+static int user_pagesize;
 static int pagesize;
 static long *signature_page;
 struct swap_header_v1 *p;
@@ -165,11 +157,7 @@ struct swap_header_v1 *p;
 static void
 init_signature_page(void) {
 
-#ifdef PAGE_SIZE
-	defined_pagesize = PAGE_SIZE;
-#endif
-	kernel_pagesize = getpagesize();
-	pagesize = kernel_pagesize;
+	int kernel_pagesize = pagesize = (int) sysconf(_SC_PAGESIZE);
 
 	if (user_pagesize) {
 		if ((user_pagesize & (user_pagesize-1)) ||
@@ -181,14 +169,10 @@ init_signature_page(void) {
 		pagesize = user_pagesize;
 	}
 
-	if (user_pagesize && user_pagesize != kernel_pagesize &&
-	    user_pagesize != defined_pagesize)
+	if (user_pagesize && user_pagesize != kernel_pagesize)
 		fprintf(stderr, _("Using user-specified page size %d, "
-				  "instead of the system values %d/%d\n"),
-			pagesize, kernel_pagesize, defined_pagesize);
-	else if (defined_pagesize && pagesize != defined_pagesize)
-		fprintf(stderr, _("Assuming pages of size %d (not %d)\n"),
-			pagesize, defined_pagesize);
+				  "instead of the system value %d\n"),
+				pagesize, kernel_pagesize);
 
 	signature_page = (long *) malloc(pagesize);
 	memset(signature_page, 0, pagesize);

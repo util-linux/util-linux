@@ -20,7 +20,7 @@ hlp_wordsize(void)
 int
 hlp_pagesize(void)
 {
-	printf("%d\n", getpagesize());
+	printf("%d\n", (int) sysconf(_SC_PAGESIZE));
 	return 0;
 }
 

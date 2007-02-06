@@ -4,9 +4,6 @@
    language is requested. */
 #undef ENABLE_NLS
 
-/* Define to 1 if you have the <asm/page.h> header file. */
-#undef HAVE_ASM_PAGE_H
-
 /* Define if the GNU dcgettext() function is already present or preinstalled.
    */
 #undef HAVE_DCGETTEXT

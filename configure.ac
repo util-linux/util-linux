@@ -26,7 +26,6 @@ AC_CHECK_HEADERS(linux/blkpg.h,,,[
 ])
 AC_CHECK_HEADERS(langinfo.h)
 AC_CHECK_HEADERS(sys/user.h)
-AC_CHECK_HEADERS(asm/page.h)
 AC_CHECK_HEADERS(rpcsvc/nfs_prot.h)
 AC_CHECK_HEADERS(sys/io.h)
 AC_CHECK_HEADERS(pty.h)
