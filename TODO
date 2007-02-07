@@ -1,0 +1,12 @@
+
+2.13:
+
+- remove all NFS code
+
+- remove all FS detection code
+
+- remove from all places direct calls of ioctl(BLKGETSIZE) and move it
+  lib/blkdevsize.c: blkdev_get_size(), blkdev_get_sectors(), blkdev_get_pages()
+  (see mkswap.c and fdisk/disksize.c)
+
+
