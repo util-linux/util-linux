@@ -9,4 +9,4 @@
   lib/blkdevsize.c: blkdev_get_size(), blkdev_get_sectors(), blkdev_get_pages()
   (see mkswap.c and fdisk/disksize.c)
 
-
+- use EXIT_FAILED and EXIT_SUCCESS from stdlib.h for exit() codes
