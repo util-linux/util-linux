@@ -1,0 +1,90 @@
+#!/bin/bash
+
+# 
+# Copyright (C) 2007 Karel Zak <kzak@redhat.com>
+# 
+# This file is part of util-linux-ng.
+# 
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License.
+# 
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+# Test swap device initialization and usage
+
+. commands.sh
+. functions.sh
+
+TS_COMPONENT="mkswap"
+TS_DESC="doit"
+
+ts_init
+
+if [ $UID != 0 ]; then
+	ts_skip "not root permissions"
+fi
+
+set -o pipefail
+
+
+touch $TS_OUTPUT
+
+IMAGE="$TS_OUTDIR/loop-swap.img"
+IMAGE_RE=$( echo $IMAGE | sed 's:/:\\/:g' )
+LABEL="testSwap"
+
+dd if=/dev/zero of=$IMAGE bs=1M count=20 &> /dev/null
+
+DEVICE=$( $TS_CMD_LOSETUP -f )
+$TS_CMD_LOSETUP $DEVICE $IMAGE 2>&1 >> $TS_OUTPUT
+
+# XXX: atomic version: depends on "losetup -a"
+## create the device
+#$TS_CMD_LOSETUP -f $IMAGE 2>&1 >> $TS_OUTPUT
+#
+## get the device name
+#DEVICE=$( $TS_CMD_LOSETUP -a | gawk 'BEGIN {FS=":"} /'$IMAGE_RE'/ { print $1 }' )
+
+# make the swap
+$TS_CMD_MKSWAP -L $LABEL $DEVICE 2>&1 >> $TS_OUTPUT
+
+# check it
+blkid -c /dev/null -w /dev/null -s TYPE $DEVICE 2>&1 | grep -q 'TYPE="swap"' 2>&1 >> $TS_OUTPUT
+
+if [ "$?" != "0" ]; then
+	echo "Cannot found Linux swap on $DEVICE" >> $TS_OUTPUT
+	#$TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
+	ts_finalize
+fi
+
+# try connect it to system (and found the device by label)
+$TS_CMD_SWAPON -L $LABEL 2>&1 >> $TS_OUTPUT
+
+# check it
+grep -q $DEVICE /proc/swaps
+
+if [ "$?" != "0" ]; then
+	echo "Cannot found $DEVICE in /proc/swaps" >> $TS_OUTPUT
+	$TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
+	ts_finalize
+fi
+
+# swapoff doesn't exist in build tree
+if [ ! -x "$TS_CMD_SWAPOFF" ]; then
+	ln -sf $TS_CMD_SWAPON $TS_CMD_SWAPOFF
+	REMSWAPOFF="true"
+fi
+$TS_CMD_SWAPOFF $DEVICE 2>&1 >> $TS_OUTPUT
+$TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
+
+if [ -n "$REMSWAPOFF" ]; then
+	rm -f $TS_CMD_SWAPOFF
+fi
+
+ts_finalize
+

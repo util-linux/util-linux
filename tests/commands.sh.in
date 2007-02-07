@@ -6,9 +6,12 @@ TS_HELPER_SYSINFO="$TS_TOPDIR/helpers/mnt_test_sysinfo"
 
 # paths to commands
 TS_CMD_MOUNT=${TS_CMD_MOUNT:-"$TOPDIR/mount/mount"}
-TS_CMD_UMOUNT=${TS_CMD_MOUNT:-"$TOPDIR/mount/umount"}
-TS_CMD_SWAPON=${TS_CMD_MOUNT:-"$TOPDIR/mount/swapon"}
-TS_CMD_SWAPOFF=${TS_CMD_MOUNT:-"$TOPDIR/mount/swapoff"}
+TS_CMD_UMOUNT=${TS_CMD_UMOUNT:-"$TOPDIR/mount/umount"}
+TS_CMD_SWAPON=${TS_CMD_SWAPON:-"$TOPDIR/mount/swapon"}
+TS_CMD_SWAPOFF=${TS_CMD_SWAPOFF:-"$TOPDIR/mount/swapoff"}
+TS_CMD_LOSETUP=${TS_CMD_LOSETUP:-"$TOPDIR/mount/losetup"}
+
+TS_CMD_MKSWAP=${TS_CMD_MKSWAP:-"$TOPDIR/disk-utils/mkswap"}
 
 TS_CMD_IPCS=${TS_CMD_IPCS:-"$TOPDIR/sys-utils/ipcs"}
 

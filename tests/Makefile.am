@@ -8,10 +8,12 @@ EXTRA_DIST = 	commands.sh.in \
 		ts-ipcs-headers \
 		ts-ipcs-limits \
 		ts-ipcs-limits2 \
+		ts-mkswap-doit \
 		expected/ts-mount-paths \
 		expected/ts-ipcs-headers \
 		expected/ts-ipcs-limits \
-		expected/ts-ipcs-limits2
+		expected/ts-ipcs-limits2 \
+		expected/ts-mkswap-doit
 
 distclean-local:
 	rm -rf output diff
