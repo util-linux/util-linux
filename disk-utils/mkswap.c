@@ -151,7 +151,7 @@ is_sparc64(void) {
  */
 static int user_pagesize;
 static int pagesize;
-static long *signature_page;
+static unsigned long *signature_page;
 struct swap_header_v1 *p;
 
 static void
@@ -174,7 +174,7 @@ init_signature_page(void) {
 				  "instead of the system value %d\n"),
 				pagesize, kernel_pagesize);
 
-	signature_page = (long *) malloc(pagesize);
+	signature_page = (unsigned long *) malloc(pagesize);
 	memset(signature_page, 0, pagesize);
 	p = (struct swap_header_v1 *) signature_page;
 }
