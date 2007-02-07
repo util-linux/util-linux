@@ -36,6 +36,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <mntent.h>
 #include <sys/ioctl.h>		/* for _IO */
 #include <sys/utsname.h>
 #include <sys/stat.h>
@@ -476,6 +477,29 @@ isnzdigit(char c) {
 	return (c >= '1' && c <= '9');
 }
 
+
+/*
+ * Check to make certain that our new filesystem won't be created on
+ * an already mounted partition.  Code adapted from mke2fs, Copyright
+ * (C) 1994 Theodore Ts'o.  Also licensed under GPL.
+ * (C) 2006 Karel Zak -- port to mkswap
+ */
+static int
+check_mount(void) {
+	FILE * f;
+	struct mntent * mnt;
+
+	if ((f = setmntent (MOUNTED, "r")) == NULL)
+		return 0;
+	while ((mnt = getmntent (f)) != NULL)
+		if (strcmp (device_name, mnt->mnt_fsname) == 0)
+			break;
+	endmntent (f);
+	if (!mnt)
+		return 0;
+	return 1;
+}
+
 int
 main(int argc, char ** argv) {
 	struct stat statbuf;
@@ -639,8 +663,19 @@ main(int argc, char ** argv) {
 	/* Want a block device. Probably not /dev/hda or /dev/hdb. */
 	if (!S_ISBLK(statbuf.st_mode))
 		check=0;
-	else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
-		die(_("Will not try to make swapdevice on '%s'"));
+	else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340) {
+		fprintf(stderr,
+			_("%s: error: "
+			  "will not try to make swapdevice on '%s'\n"),
+			program_name, device_name);
+		exit(1);
+	} else if (check_mount()) {
+		fprintf(stderr,
+			_("%s: error: "
+			  "%s is mounted; will not make swapspace.\n"),
+			program_name, device_name);
+		exit(1);
+	}
 
 #ifdef __sparc__
 	if (!force && version == 0) {
