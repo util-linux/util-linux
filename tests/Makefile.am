@@ -2,19 +2,21 @@ include $(top_srcdir)/config/include-Makefile.am
 
 SUBDIRS = helpers
 
-EXTRA_DIST = 	commands.sh.in \
+EXTRA_DIST = 	expected/* \
 		functions.sh \
-		ts-mount-paths \
+		input/* \
+		README \
+		run.sh \
+		ts-col-multibyte \
 		ts-ipcs-headers \
 		ts-ipcs-limits \
 		ts-ipcs-limits2 \
+		ts-ipcs.sh \
 		ts-mkswap-doit \
-		expected/ts-mount-paths \
-		expected/ts-ipcs-headers \
-		expected/ts-ipcs-limits \
-		expected/ts-ipcs-limits2 \
-		expected/ts-mkswap-doit
+		ts-mount-paths \
+		ts-namei-logic
 
 distclean-local:
 	rm -rf output diff
+
 

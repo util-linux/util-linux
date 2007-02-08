@@ -10,3 +10,7 @@
   (see mkswap.c and fdisk/disksize.c)
 
 - use EXIT_FAILED and EXIT_SUCCESS from stdlib.h for exit() codes
+
+- build-sys:
+	- add exampledir and example_DATA
+	- add readmedir and readme_DATA

@@ -49,7 +49,6 @@ login-utils/vipw.c
 login-utils/wall.c
 misc-utils/cal.c
 misc-utils/ddate.c
-misc-utils/flushb.c
 misc-utils/kill.c
 misc-utils/logger.c
 misc-utils/look.c
@@ -65,12 +64,12 @@ mount/fstab.c
 mount/get_label_uuid.c
 mount/getusername.c
 mount/lomount.c
-mount/mount_mntent.c
 mount/mount_blkid.c
 mount/mount_by_label.c
 mount/mount.c
 mount/mount_guess_fstype.c
 mount/mount_guess_rootdev.c
+mount/mount_mntent.c
 mount/nfsmount.c
 mount/nfsmount_clnt.c
 mount/nfsmount_xdr.c

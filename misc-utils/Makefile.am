@@ -1,7 +1,10 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-EXTRA_DIST = README.cal  README.namei README1.namei chkdupexe.pl \
-	scriptreplay.pl
+EXTRA_DIST = 	README.* \
+		chkdupexe.pl \
+		scriptreplay.pl \
+		reset \
+		reset.033c
 
 bin_PROGRAMS =
 

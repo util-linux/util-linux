@@ -6,3 +6,4 @@ sbin_PROGRAMS = hwclock
 
 hwclock_SOURCES = hwclock.c cmos.c rtc.c kd.c clock.h
 
+EXTRA_DIST = README.* clock-ppc.c

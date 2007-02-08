@@ -20,19 +20,25 @@ ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = 	config/include-Makefile.am \
 		autogen.sh \
-		licenses/COPYING.GPL \
-		licenses/COPYING.UCB
+		README.* \
+		licenses/* \
+		example.files/* \
+		po/Makevars.template \
+		po/update-potfiles
+
 
 distclean-local:
 	-find . \( -name \*~ -o -name \*.orig -o -name \*.rej \) -exec rm -f {} \;
 	rm -rf autom4te.cache
 
 mrproper: distclean
-	-find -name Makefile.in -exec rm -f {} \;
-	rm -f configure ABOUT-NLS
-	rm -rf m4
-	cd po; rm -f `cat .gitignore`; cd ..
-	cd config; rm -f `cat ../.gitignore`; cd ..
+	if [ -f ".gitignore" ]; then \
+		find -name Makefile.in -exec rm -f {} \; ; \
+		rm -f configure ABOUT-NLS ; \
+		rm -rf m4 ; \
+		cd config; rm -f `cat ../.gitignore`; cd .. ; \
+		cd po; rm -f `cat .gitignore`; cd .. ; \
+	fi
 
 # The automake is very stupid for work with man pages. The files from man_MANS are
 # not included to the distribution. A solution is use dist_man_MANS or

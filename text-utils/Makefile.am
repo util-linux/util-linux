@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-EXTRA_DIST = README.clear  README.col  README.pg  README.reset LICENSE.pg
+EXTRA_DIST = README.* LICENSE.*
 
 usrbinexec_PROGRAMS = col colcrt colrm column hexdump rev line tailf
 
