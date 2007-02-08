@@ -277,7 +277,7 @@ AM_CONDITIONAL(BUILD_LOGIN_UTILS, test x$enable_login_utils = xyes)
 
 AC_ARG_WITH([pam],
   AC_HELP_STRING([--without-pam], [compile login-utils without PAM support]),
-  with_pam=$withval, with_pam=not_checked
+  with_pam=$withval, with_pam=yes
 )
 
 if test x$enable_login_utils = xyes && test x$with_pam != xno; then
@@ -289,11 +289,11 @@ fi
 AM_CONDITIONAL(HAVE_PAM, test x$ac_cv_header_security_pam_misc_h = xyes)
 
 AC_ARG_WITH([selinux],
-  AC_HELP_STRING([--without-selinux], [compile login-utils without SELinux support]),
-  with_selinux=$withval, with_selinux=not_checked
+  AC_HELP_STRING([--with-selinux], [compile with SELinux support]),
+  with_selinux=$withval, with_selinux=no
 )
 
-if test x$enable_login_utils = xyes && test x$with_selinux != xno; then
+if test x$with_selinux != xno; then
   AC_CHECK_LIB(selinux, getprevcon)
   if test x$with_selinux = xyes && test x$ac_cv_lib_selinux_getprevcon = xno; then
     AC_MSG_ERROR([SELinux selected but libselinux not found])
