@@ -28,7 +28,7 @@
  *
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
- * 
+ *
  */
 
 #include <stdio.h>
@@ -40,6 +40,12 @@
 #include <sys/ioctl.h>		/* for _IO */
 #include <sys/utsname.h>
 #include <sys/stat.h>
+#include <errno.h>
+#ifdef HAVE_LIBSELINUX
+#include <selinux/selinux.h>
+#include <selinux/context.h>
+#endif
+
 #include "swapheader.h"
 #include "xstrncpy.h"
 #include "nls.h"
@@ -65,6 +71,8 @@ static int check = 0;
 static int version = -1;
 
 #define MAKE_VERSION(p,q,r)	(65536*(p) + 256*(q) + (r))
+
+#define SELINUX_SWAPFILE_TYPE	"swapfile_t"
 
 static int
 linux_version_code(void) {
@@ -146,9 +154,9 @@ is_sparc64(void) {
  * What to do? Let us allow the user to specify the pagesize explicitly.
  *
  * Update 05-Feb-2007 (kzak):
- *      - use sysconf(_SC_PAGESIZE) to be consistent with the rest of 
- *        util-linux code.  It is the standardized and preferred way of 
- *        querying page size.	
+ *      - use sysconf(_SC_PAGESIZE) to be consistent with the rest of
+ *        util-linux code.  It is the standardized and preferred way of
+ *        querying page size.
  */
 static int user_pagesize;
 static int pagesize;
@@ -285,7 +293,7 @@ write_uuid_and_label(char *uuid, char *volume_name) {
 #elif defined(__sparc__)
 #define V1_MAX_PAGES           (is_sparc64() ? ((3 << 29) - 1) : ((1 << 18) - 1))
 #elif defined(__ia64__)
-/* 
+/*
  * The actual size will depend on the amount of virtual address space
  * available to vmalloc the swap map.
  */
@@ -736,6 +744,40 @@ the -f option to force it.\n"),
 #ifdef HAVE_FSYNC
 	if (fsync(DEV))
 		 die(_("fsync failed"));
+#endif
+
+#ifdef HAVE_LIBSELINUX
+	if (S_ISREG(statbuf.st_mode) && is_selinux_enabled()) {
+		security_context_t context_string;
+		security_context_t oldcontext;
+		context_t newcontext;
+
+		if ((fgetfilecon(DEV, &oldcontext) < 0) &&
+		    (errno != ENODATA)) {
+			fprintf(stderr, _("%s: %s: unable to obtain selinux file label: %s\n"),
+					program_name, device_name,
+					strerror(errno));
+			exit(1);
+		}
+		if (!(newcontext = context_new(oldcontext)))
+			die(_("unable to create new selinux context"));
+		if (context_type_set(newcontext, SELINUX_SWAPFILE_TYPE))
+			die(_("couldn't compute selinux context"));
+
+		context_string = context_str(newcontext);
+
+		if (strcmp(context_string, oldcontext)!=0) {
+			if (fsetfilecon(DEV, context_string)) {
+				fprintf(stderr, _("%s: unable to relabel %s to %s: %s\n"),
+						program_name, device_name,
+						context_string,
+						strerror(errno));
+				exit(1);
+			}
+		}
+		context_free(newcontext);
+		freecon(oldcontext);
+	}
 #endif
 	return 0;
 }

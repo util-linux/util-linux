@@ -31,7 +31,13 @@ fsck_cramfs_LDADD = -lz
 mkfs_cramfs_LDADD = -lz $(top_srcdir)/lib/libmd5.a
 endif
 
+mkswap_LDADD =
+
 if HAVE_UUID
-mkswap_LDADD = -luuid
+mkswap_LDADD += -luuid
+endif
+
+if HAVE_SELINUX
+mkswap_LDADD += -lselinux
 endif
 
