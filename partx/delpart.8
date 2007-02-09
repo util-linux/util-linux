@@ -1,0 +1,30 @@
+.\" delpart.8 --
+.\" Copyright 2007 Karel Zak <kzak@redhat.com>
+.\" Copyright 2007 Red Hat, Inc.
+.\" May be distributed under the GNU General Public License
+.TH DELPART 8 "11 Jan 2007"
+.SH NAME
+delpart \-
+simple wrapper around the "del partition" ioctl
+.SH SYNOPSIS
+.B delpart device partition
+.SH DESCRIPTION
+.B delpart
+is a program that asks the Linux kernel to remove a partition.
+
+This command doesn't manipulate with partitions on hard drive.
+
+.SH OPTIONS
+.TP
+.BI device
+Specify the disk device.
+.TP
+.BI partition
+Specify the partition number.
+
+.SH SEE ALSO
+.BR addpart (8),
+.BR fdisk (8),
+.BR parted (8),
+.BR partprobe (8),
+.BR partx (8)

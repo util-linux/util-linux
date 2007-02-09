@@ -1,0 +1,45 @@
+.\" partx.8 --
+.\" Copyright 2007 Karel Zak <kzak@redhat.com>
+.\" Copyright 2007 Red Hat, Inc.
+.\" May be distributed under the GNU General Public License
+.TH PARTX 8 "11 Jan 2007"
+.SH NAME
+partx \-
+telling the kernel about presence and numbering of on-disk partitions.
+.SH SYNOPSIS
+.B partx [-a|-d|-l] [--type TYPE] [--nr M-N] [partition] disk
+.SH DESCRIPTION
+Given a block device (
+.B disk
+) and a partition table
+.B type
+, try to parse the partition table, and list the
+contents. Optionally add or remove partitions.
+
+This is not an fdisk - adding and removing partitions
+is not a change of the disk, but just telling the kernel
+about presence and numbering of on-disk partitions.
+
+.SH OPTIONS
+.TP
+.B \-a
+add specified partitions or read disk and add all partitions
+.TP
+.B \-d
+delete specified or all partitions
+.TP
+.B \-l
+list partitions
+.TP
+.BI --type " TYPE"
+Specify the partition type -- dos, bsd, solaris, unixware or gpt.
+.TP
+.BI --nr " M-N"
+Specify the range of partitions (e.g --nr 2-4).
+
+.SH SEE ALSO
+.BR addpart (8),
+.BR delpart (8),
+.BR fdisk (8),
+.BR parted (8),
+.BR partprobe (8)
