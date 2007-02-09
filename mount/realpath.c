@@ -19,18 +19,15 @@
  * This routine is part of libc.  We include it nevertheless,
  * since the libc version has some security flaws.
  */
-
-#include <limits.h>		/* for PATH_MAX */
-#ifndef PATH_MAX
-#define PATH_MAX 8192
-#endif
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
 #include "realpath.h"
 #include "sundries.h"		/* for xstrdup */
 
-#define MAX_READLINKS 32
+#ifndef MAXSYMLINKS
+# define MAXSYMLINKS 256
+#endif
 
 char *
 myrealpath(const char *path, char *resolved_path, int maxreslth) {
@@ -85,7 +82,7 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 		}
 
 		/* Protect against infinite loops. */
-		if (readlinks++ > MAX_READLINKS) {
+		if (readlinks++ > MAXSYMLINKS) {
 			errno = ELOOP;
 			goto err;
 		}

@@ -19,11 +19,6 @@
 #include "mount_by_label.h"
 #include "realpath.h"
 
-#include <limits.h>             /* for PATH_MAX */
-#ifndef PATH_MAX
-#define PATH_MAX 8192
-#endif
-
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
 #define	_PATH_FSTAB     "/etc/fstab"
