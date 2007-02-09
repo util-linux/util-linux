@@ -32,7 +32,7 @@ umount_LDADD = $(top_srcdir)/lib/libenv.a
 
 swapon_SOURCES = swapon.c xmalloc.c \
 	get_label_uuid.c mount_by_label.c mount_blkid.c \
-	swap_constants.h
+	swap_constants.h realpath.c
 
 losetup_SOURCES = lomount.c loop.h lomount.h
 losetup_CFLAGS = -DMAIN

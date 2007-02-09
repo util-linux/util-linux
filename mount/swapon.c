@@ -17,6 +17,12 @@
 #include "nls.h"
 #include "mount_blkid.h"
 #include "mount_by_label.h"
+#include "realpath.h"
+
+#include <limits.h>             /* for PATH_MAX */
+#ifndef PATH_MAX
+#define PATH_MAX 8192
+#endif
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
@@ -136,9 +142,17 @@ read_proc_swaps(void) {
 static int
 is_in_proc_swaps(const char *fname) {
 	int i;
+	char canonical[PATH_MAX + 2];
+
+	if (!myrealpath(fname, canonical, PATH_MAX + 1)) {
+		fprintf(stderr, _("%s: cannot canonicalize %s: %s\n"),
+			progname, fname, strerror(errno));
+		strncpy(canonical, fname, PATH_MAX + 1);
+		*(canonical + (PATH_MAX + 1)) = '\0';
+	}
 
 	for (i = 0; i < numSwaps; i++)
-		if (swapFiles[i] && !strcmp(fname, swapFiles[i]))
+		if (swapFiles[i] && !strcmp(canonical, swapFiles[i]))
 			return 1;
 	return 0;
 }
