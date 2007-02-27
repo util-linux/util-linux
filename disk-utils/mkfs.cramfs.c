@@ -471,11 +471,13 @@ static void set_data_offset(struct entry *entry, char *base, unsigned long offse
  * entries, using a stack to remember the directories
  * we've seen.
  */
-#define MAXENTRIES (100)
 static unsigned int write_directory_structure(struct entry *entry, char *base, unsigned int offset)
 {
 	int stack_entries = 0;
-	struct entry *entry_stack[MAXENTRIES];
+	int stack_size = 64;
+	struct entry **entry_stack;
+
+	entry_stack = xmalloc(stack_size * sizeof(struct entry *));
 
 	for (;;) {
 		int dir_start = stack_entries;
@@ -508,13 +510,13 @@ static unsigned int write_directory_structure(struct entry *entry, char *base, u
 			if (verbose)
 				printf("  %s\n", entry->name);
 			if (entry->child) {
-				if (stack_entries >= MAXENTRIES) {
-					fprintf(stderr,
-						_("Exceeded MAXENTRIES.  Raise"
-						  " this value in mkcramfs.c "
-						  "and recompile.  Exiting.\n")
-						);
-					exit(8);
+				if (stack_entries >= stack_size) {
+					stack_size *= 2;
+					entry_stack = realloc(entry_stack, stack_size * sizeof(struct entry *));
+					if (!entry_stack) {
+						perror(NULL);
+						exit(8);        /* out of memory */
+					}
 				}
 				entry_stack[stack_entries] = entry;
 				stack_entries++;
@@ -551,6 +553,7 @@ static unsigned int write_directory_structure(struct entry *entry, char *base, u
 			printf("'%s':\n", entry->name);
 		entry = entry->child;
 	}
+	free(entry_stack);
 	return offset;
 }
 
