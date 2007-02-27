@@ -12,6 +12,7 @@ TS_CMD_SWAPOFF=${TS_CMD_SWAPOFF:-"$TOPDIR/mount/swapoff"}
 TS_CMD_LOSETUP=${TS_CMD_LOSETUP:-"$TOPDIR/mount/losetup"}
 
 TS_CMD_MKSWAP=${TS_CMD_MKSWAP:-"$TOPDIR/disk-utils/mkswap"}
+TS_CMD_MKCRAMFS=${TS_CMD_MKCRAMFS:-"$TOPDIR/disk-utils/mkfs.cramfs"}
 
 TS_CMD_IPCS=${TS_CMD_IPCS:-"$TOPDIR/sys-utils/ipcs"}
 

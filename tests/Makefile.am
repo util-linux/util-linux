@@ -14,7 +14,8 @@ EXTRA_DIST = 	expected/* \
 		ts-ipcs.sh \
 		ts-mkswap-doit \
 		ts-mount-paths \
-		ts-namei-logic
+		ts-namei-logic \
+		ts-cramfs-mkfs
 
 distclean-local:
 	rm -rf output diff

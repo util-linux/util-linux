@@ -1,0 +1,114 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2007 Karel Zak <kzak@redhat.com>
+#
+# This file is part of util-linux-ng.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+# Test cramfs
+
+. commands.sh
+. functions.sh
+
+TS_COMPONENT="mkfs.cramfs"
+TS_DESC="mkfs"
+
+ts_init
+
+if [ $UID != 0 ]; then
+	ts_skip "not root permissions"
+fi
+
+set -o pipefail
+
+
+touch $TS_OUTPUT
+
+IMAGE="$TS_OUTDIR/cramfs-loop.img"
+IMAGE_DATA="$TS_OUTDIR/cramfs-data"
+IMAGE_RE=$( echo $IMAGE | sed 's:/:\\/:g' )
+LABEL="testCramfs"
+MOUNTPOINT="$TS_OUTDIR/cramfs-mnt"
+
+HLIMIT=110
+
+echo "create mountpoint dir" >> $TS_OUTPUT
+if [ ! -d "$MOUNTPOINT" ]; then
+	mkdir -p $MOUNTPOINT
+fi
+
+echo "generate data" >> $TS_OUTPUT
+if [ ! -d "$IMAGE_DATA" ]; then
+	mkdir -p $IMAGE_DATA
+	for d in `seq 0 $HLIMIT`; do
+		DIRNAME="$IMAGE_DATA/$(printf "dir-%03d" $d)"
+		mkdir -p $DIRNAME
+		for f in `seq 0 $HLIMIT`; do
+			FILENAME="$DIRNAME/$(printf "data.%03d" $f)"
+			printf "data in %03d-%03d" $d $f >> $FILENAME
+		done
+	done
+fi
+
+echo "list checksums from original data" >> $TS_OUTPUT
+find $IMAGE_DATA -type f -exec md5sum {} \; >> $TS_OUTPUT
+echo >> $TS_OUTPUT
+
+echo "create cramfs image" >> $TS_OUTPUT
+$TS_CMD_MKCRAMFS -n $LABEL $IMAGE_DATA $IMAGE 2>&1 >> $TS_OUTPUT
+
+if [ ! -s "$IMAGE" ]; then
+	echo "Cannot create $IMAGE" >> $TS_OUTPUT
+	ts_finalize
+fi
+
+echo "count MD5 from the image" >> $TS_OUTPUT
+md5sum $IMAGE 2>&1 >> $TS_OUTPUT
+echo >> $TS_OUTPUT
+
+echo "create loop device from image" >> $TS_OUTPUT
+DEVICE=$( $TS_CMD_LOSETUP -f )
+$TS_CMD_LOSETUP $DEVICE $IMAGE 2>&1 >> $TS_OUTPUT
+
+
+echo "check the image" >> $TS_OUTPUT
+blkid -c /dev/null -w /dev/null -s TYPE $DEVICE 2>&1 | grep -q 'TYPE="cramfs"' 2>&1 >> $TS_OUTPUT
+
+if [ "$?" != "0" ]; then
+	echo "Cannot found cramfs on $DEVICE" >> $TS_OUTPUT
+	ts_finalize
+fi
+
+echo "mount the image" >> $TS_OUTPUT
+$TS_CMD_MOUNT -L $LABEL $MOUNTPOINT 2>&1 >> $TS_OUTPUT
+
+# check it
+grep -q $DEVICE /proc/mounts
+
+if [ "$?" != "0" ]; then
+	echo "Cannot found $DEVICE in /proc/mounts" >> $TS_OUTPUT
+fi
+
+echo "list the image" >> $TS_OUTPUT
+ls -laR $MOUNTPOINT >> $TS_OUTPUT
+echo >> $TS_OUTPUT
+
+echo "list checksums from new data" >> $TS_OUTPUT
+find $MOUNTPOINT -type f -exec md5sum {} \; >> $TS_OUTPUT
+echo >> $TS_OUTPUT
+
+echo "umount the image" >> $TS_OUTPUT
+$TS_CMD_UMOUNT $DEVICE
+$TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
+ts_finalize
+
