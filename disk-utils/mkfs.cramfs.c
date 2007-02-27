@@ -661,7 +661,7 @@ write_data(struct entry *entry, char *base, unsigned int offset) {
                         if (e->same) {
                                 set_data_offset(e, base, e->same->offset);
                                 e->offset = e->same->offset;
-                        } else {
+                        } else if (e->size) {
                                 set_data_offset(e, base, offset);
                                 e->offset = offset;
                                 offset = do_compress(base, offset, e->name,
