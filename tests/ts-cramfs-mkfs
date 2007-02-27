@@ -40,8 +40,6 @@ IMAGE_RE=$( echo $IMAGE | sed 's:/:\\/:g' )
 LABEL="testCramfs"
 MOUNTPOINT="$TS_OUTDIR/cramfs-mnt"
 
-HLIMIT=110
-
 echo "create mountpoint dir" >> $TS_OUTPUT
 if [ ! -d "$MOUNTPOINT" ]; then
 	mkdir -p $MOUNTPOINT
@@ -50,10 +48,10 @@ fi
 echo "generate data" >> $TS_OUTPUT
 if [ ! -d "$IMAGE_DATA" ]; then
 	mkdir -p $IMAGE_DATA
-	for d in `seq 0 $HLIMIT`; do
+	for d in `seq 0 110`; do
 		DIRNAME="$IMAGE_DATA/$(printf "dir-%03d" $d)"
 		mkdir -p $DIRNAME
-		for f in `seq 0 $HLIMIT`; do
+		for f in `seq 0 10`; do
 			FILENAME="$DIRNAME/$(printf "data.%03d" $f)"
 			printf "data in %03d-%03d" $d $f >> $FILENAME
 		done
