@@ -7009,7 +7009,7 @@ msgstr "Você está usando senhas sombra (shadow) neste sistema\n"
 #: login-utils/vipw.c:354
 #, c-format
 msgid "Would you like to edit %s now [y/n]? "
-msgstr "Você gostaria de editar %s agora [s/n]"
+msgstr "Você gostaria de editar %s agora [y/n]"
 
 #: login-utils/wall.c:104
 #, c-format

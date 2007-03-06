@@ -1,5 +1,6 @@
 
 2.13:
+====
 
 - remove all NFS code
 
@@ -14,3 +15,11 @@
 - build-sys:
 	- add exampledir and example_DATA
 	- add readmedir and readme_DATA
+
+- convet po/ files to UTF-8
+
+
+2.14:
+====
+
+- use rpmatch() for all Y/N  ?

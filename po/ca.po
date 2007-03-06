@@ -7084,7 +7084,7 @@ msgstr "Aquest sistema utilitza contrasenyes ocultes.\n"
 #: login-utils/vipw.c:354
 #, c-format
 msgid "Would you like to edit %s now [y/n]? "
-msgstr "Desitgeu editar %s ara? [s/n] "
+msgstr "Desitgeu editar %s ara? [y/n] "
 
 #: login-utils/wall.c:104
 #, c-format
