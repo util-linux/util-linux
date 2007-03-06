@@ -327,9 +327,12 @@ compare(char *s2, char *s2end) {
 	/* copy, ignoring things that should be ignored */
 	p = comparbuf;
 	i = stringlen;
-	while(s2 < s2end && *s2 != '\n' && i--) {
+	while(s2 < s2end && *s2 != '\n' && i) {
 		if (!dflag || isalnum(*s2))
+		{
 			*p++ = *s2;
+			i--;
+		}
 		s2++;
 	}
 	*p = 0;
