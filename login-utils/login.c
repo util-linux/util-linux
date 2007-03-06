@@ -624,6 +624,8 @@ main(int argc, char **argv)
     PAM_FAIL_CHECK;
 
     retcode = pam_setcred(pamh, PAM_ESTABLISH_CRED);
+    if (retcode != PAM_SUCCESS)
+	    pam_close_session(pamh, 0);
     PAM_FAIL_CHECK;
 
 #else /* ! HAVE_SECURITY_PAM_MISC_H */
