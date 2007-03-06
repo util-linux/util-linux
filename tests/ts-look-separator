@@ -1,0 +1,32 @@
+#!/bin/bash
+
+#
+# WARNING: the look command expects that the /usr/share/dict/words uses
+#          directory order!
+#
+# for example:
+#
+#	cat words.raw | egrep --invert-match "'s$" | \
+#		egrep  "^[[:alnum:]'&!,./-]+$" | \
+#		sort --ignore-case --dictionary-order | \
+#		uniq >  words
+#
+
+. commands.sh
+. functions.sh
+
+TS_COMPONENT="look"
+TS_DESC="separator"
+
+ts_init
+
+if [ ! -f "/usr/share/dict/words" ]; then
+	ts_ignore "/usr/share/dict/words not such file" 
+fi
+
+touch $TS_OUTPUT
+
+$TS_CMD_LOOK apple-pie >> $TS_OUTPUT
+
+ts_finalize
+
