@@ -41,6 +41,7 @@
 #include "setpwnam.h"
 #include "nls.h"
 #include "env.h"
+#include "pathnames.h"
 
 #if defined(REQUIRE_PASSWORD) && defined(HAVE_SECURITY_PAM_MISC_H)
 #include <security/pam_appl.h>
@@ -149,7 +150,7 @@ main (int argc, char *argv[]) {
 #endif
 
     oldshell = pw->pw_shell;
-    if (!oldshell[0]) oldshell = "/bin/sh";
+    if (!oldshell[0]) oldshell = _PATH_BSHELL;
 
     /* reality check */
     if (uid != 0 && uid != pw->pw_uid) {
@@ -164,7 +165,7 @@ main (int argc, char *argv[]) {
 		" denied\n"),whoami);
 	return (-1);
     }
-    
+
     shell = info.shell;
 
     printf( _("Changing shell for %s.\n"), pw->pw_name );
@@ -211,14 +212,14 @@ main (int argc, char *argv[]) {
 	shell = prompt (_("New shell"), oldshell);
 	if (! shell) return 0;
     }
-    
+
     if (check_shell (shell) < 0) return (-1);
 
     if (! strcmp (pw->pw_shell, shell)) {
 	printf (_("Shell not changed.\n"));
 	return 0;
     }
-    if (!strcmp(shell, "/bin/sh")) shell = "";
+    if (!strcmp(shell, _PATH_BSHELL)) shell = "";
     pw->pw_shell = shell;
     if (setpwnam (pw) < 0) {
 	perror ("setpwnam");
@@ -303,7 +304,7 @@ static char *
 prompt (char *question, char *def_val) {
     int len;
     char *ans, *cp;
-  
+
     if (! def_val) def_val = "";
     printf("%s [%s]: ", question, def_val);
     *buf = 0;
