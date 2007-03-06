@@ -1531,7 +1531,7 @@ get_kernel_geometry(void) {
 
 static int
 said_yes(char answer) {
-#ifdef HAVE_rpmatch
+#ifdef HAVE_RPMATCH
 	char reply[2];
 	int yn;
 
