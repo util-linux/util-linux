@@ -23,3 +23,6 @@
 ====
 
 - use rpmatch() for all Y/N  ?
+
+- rewrite ipcs to use /proc/sys/kernel rather than unreliable syscalls
+  (there are problems with 32bit userspace on 64bit kernel)
