@@ -256,6 +256,7 @@ consoletty(int fd) {
 static void
 logbtmp(const char *line, const char *username, const char *hostname) {
 	struct utmp ut;
+	struct timeval tv;
 
 	memset(&ut, 0, sizeof(ut));
 
@@ -266,7 +267,9 @@ logbtmp(const char *line, const char *username, const char *hostname) {
 	xstrncpy(ut.ut_line, line, sizeof(ut.ut_line));
 
 #if defined(_HAVE_UT_TV)	    /* in <utmpbits.h> included by <utmp.h> */
-	gettimeofday(&ut.ut_tv, NULL);
+	gettimeofday(&tv, NULL);
+	ut.ut_tv.tv_sec = tv.tv_sec;
+	ut.ut_tv.tv_usec = tv.tv_usec;
 #else
 	{
 		time_t t;
@@ -833,6 +836,7 @@ main(int argc, char **argv)
     {
 	struct utmp ut;
 	struct utmp *utp;
+	struct timeval tv;
 	
 	utmpname(_PATH_UTMP);
 	setutent();
@@ -872,7 +876,9 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	strncpy(ut.ut_user, username, sizeof(ut.ut_user));
 	xstrncpy(ut.ut_line, tty_name, sizeof(ut.ut_line));
 #ifdef _HAVE_UT_TV		/* in <utmpbits.h> included by <utmp.h> */
-	gettimeofday(&ut.ut_tv, NULL);
+	gettimeofday(&tv, NULL);
+	ut.ut_tv.tv_sec = tv.tv_sec;
+	ut.ut_tv.tv_usec = tv.tv_usec;
 #else
 	{
 	    time_t t;
