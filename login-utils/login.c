@@ -223,7 +223,8 @@ check_ttyname(char *ttyn) {
 
 	if (lstat(ttyn, &statbuf)
 	    || !S_ISCHR(statbuf.st_mode)
-	    || (statbuf.st_nlink > 1 && strncmp(ttyn, "/dev/", 5))) {
+	    || (statbuf.st_nlink > 1 && strncmp(ttyn, "/dev/", 5))
+	    || (access(ttyn, R_OK | W_OK) != 0)) {
 		syslog(LOG_ERR, _("FATAL: bad tty"));
 		sleep(1);
 		exit(1);
