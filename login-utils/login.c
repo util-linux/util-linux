@@ -582,15 +582,21 @@ main(int argc, char **argv)
 	    pam_end(pamh, retcode);
 	    exit(0);
 	}
-
-	retcode = pam_acct_mgmt(pamh, 0);
-
-	if(retcode == PAM_NEW_AUTHTOK_REQD) {
-	    retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
-	}
-
-	PAM_FAIL_CHECK;
     }
+
+    /*
+     * Authentication may be skipped (for example, during krlogin, rlogin, etc...),
+     * but it doesn't mean that we can skip other account checks. The account
+     * could be disabled or password expired (althought kerberos ticket is valid).
+     * -- kzak@redhat.com (22-Feb-2006)
+     */
+    retcode = pam_acct_mgmt(pamh, 0);
+
+    if(retcode == PAM_NEW_AUTHTOK_REQD) {
+        retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+    }
+
+    PAM_FAIL_CHECK;
 
     /*
      * Grab the user information out of the password file for future usage
