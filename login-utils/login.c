@@ -285,6 +285,30 @@ logbtmp(const char *line, const char *username, const char *hostname) {
 	updwtmp(_PATH_BTMP, &ut);
 #endif
 }
+
+
+static int child_pid = 0;
+static volatile int got_sig = 0;
+
+/*
+ * This handler allows to inform a shell about signals to login. If you have
+ * (root) permissions you can kill all login childrent by one signal to login
+ * process.
+ *
+ * Also, parent who is session leader is able (before setsid() in child) to
+ * inform child when controlling tty goes away (e.g. modem hangup, SIGHUP).
+ */
+static void
+sig_handler(int signal)
+{
+	if(child_pid)
+		kill(-child_pid, signal);
+	else
+		got_sig = 1;
+	if(signal == SIGTERM)
+		kill(-child_pid, SIGHUP); /* because the shell often ignores SIGTERM */
+}
+
 #endif	/* HAVE_SECURITY_PAM_MISC_H */
 
 int
@@ -307,7 +331,7 @@ main(int argc, char **argv)
     int retcode;
     pam_handle_t *pamh = NULL;
     struct pam_conv conv = { misc_conv, NULL };
-    pid_t childPid;
+    struct sigaction sa, oldsa_hup, oldsa_term;
 #else
     char *salt, *pp;
 #endif
@@ -1021,13 +1045,37 @@ Michael Riepe <michael@stud.uni-hannover.de>
     signal(SIGTSTP, SIG_IGN);
 
 #ifdef HAVE_SECURITY_PAM_MISC_H
+
+    memset(&sa, 0, sizeof(sa));
+    sa.sa_handler = SIG_IGN;
+    sigaction(SIGINT, &sa, NULL);
+
+    sigaction(SIGHUP, &sa, &oldsa_hup); /* ignore when TIOCNOTTY */
+
+    /*
+     * detach the controlling tty
+     * -- we needn't the tty in parent who waits for child only.
+     *    The child calls setsid() that detach from the tty as well.
+     */
+    ioctl(0, TIOCNOTTY, NULL);
+
+    /*
+     * We have care about SIGTERM, because leave PAM session without
+     * pam_close_session() is pretty bad thing.
+     */
+    sa.sa_handler = sig_handler;
+    sigaction(SIGHUP, &sa, NULL);
+    sigaction(SIGTERM, &sa, &oldsa_term);
+
+    closelog();
+
     /*
      * We must fork before setuid() because we need to call
      * pam_close_session() as root.
      */
     
-    childPid = fork();
-    if (childPid < 0) {
+    child_pid = fork();
+    if (child_pid < 0) {
        int errsv = errno;
        /* error in fork() */
        fprintf(stderr, _("login: failure forking: %s"), strerror(errsv));
@@ -1035,21 +1083,30 @@ Michael Riepe <michael@stud.uni-hannover.de>
        exit(0);
     }
 
-    if (childPid) {
+    if (child_pid) {
        /* parent - wait for child to finish, then cleanup session */
-       signal(SIGHUP, SIG_IGN);
-       signal(SIGINT, SIG_IGN);
-       signal(SIGQUIT, SIG_IGN);
-       signal(SIGTSTP, SIG_IGN);
-       signal(SIGTTIN, SIG_IGN);
-       signal(SIGTTOU, SIG_IGN);
+       close(0);
+       close(1);
+       close(2);
+       sa.sa_handler = SIG_IGN;
+       sigaction(SIGQUIT, &sa, NULL);
+       sigaction(SIGINT, &sa, NULL);
 
-       wait(NULL);
+       /* wait as long as any child is there */
+       while(wait(NULL) == -1 && errno == EINTR)
+	       ;
        PAM_END;
        exit(0);
     }
 
     /* child */
+
+    /* restore to old state */
+    sigaction(SIGHUP, &oldsa_hup, NULL);
+    sigaction(SIGTERM, &oldsa_term, NULL);
+    if(got_sig)
+	    exit(1);
+
     /*
      * Problem: if the user's shell is a shell like ash that doesnt do
      * setsid() or setpgrp(), then a ctrl-\, sending SIGQUIT to every
