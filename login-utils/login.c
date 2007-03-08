@@ -1096,6 +1096,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
        /* wait as long as any child is there */
        while(wait(NULL) == -1 && errno == EINTR)
 	       ;
+       openlog("login", LOG_ODELAY, LOG_AUTHPRIV);
        PAM_END;
        exit(0);
     }
