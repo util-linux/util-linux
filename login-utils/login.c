@@ -342,6 +342,7 @@ main(int argc, char **argv)
     pid = getpid();
 
     signal(SIGALRM, timedout);
+    siginterrupt(SIGALRM,1);           /* we have to interrupt syscalls like ioclt() */
     alarm((unsigned int)timeout);
     signal(SIGQUIT, SIG_IGN);
     signal(SIGINT, SIG_IGN);
