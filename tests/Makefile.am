@@ -16,7 +16,8 @@ EXTRA_DIST = 	expected/* \
 		ts-mount-paths \
 		ts-namei-logic \
 		ts-cramfs-mkfs \
-		ts-look-separator
+		ts-look-separator \
+		ts-login-checktty
 
 distclean-local:
 	rm -rf output diff

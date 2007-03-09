@@ -116,3 +116,8 @@ install-exec-hook::
 	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 provide.8
 
 endif
+
+noinst_PROGRAMS = checktty_test
+checktty_test_SOURCES = checktty.c login.h
+checktty_test_CFLAGS = -DMAIN_TEST_CHECKTTY
+

@@ -186,6 +186,65 @@ hnmatch(const char *hn, const char *pat)
     }
 }
 
+#ifdef MAIN_TEST_CHECKTTY
+
+char	hostaddress[4];
+char	*hostname;
+void	sleepexit(int eval) {}		/* dummy for this test */
+void	badlogin(const char *s) {}	/* dummy for this test */
+
+int
+main(int argc, char **argv)
+{
+	struct addrinfo hints, *info = NULL;
+	struct addrexp {
+		const char *range;
+		const char *ip;
+	} alist[] = {
+		{ "130.225.16.0/255.255.254.0", "130.225.16.1" },
+		{ "130.225.16.0/255.255.254.0", "10.20.30.1" },
+		{ "130.225.0.0/255.254.0.0", "130.225.16.1" },
+		{ "130.225.0.0/255.254.0.0", "130.225.17.1" },
+		{ "130.225.0.0/255.254.0.0", "150.160.170.180" },
+		{ NULL, NULL }
+	}, *item;
+
+	memset(&hints, 0, sizeof(hints));
+	hints.ai_family = AF_INET;
+	hints.ai_flags = AI_NUMERICHOST |  AI_PASSIVE | AI_ADDRCONFIG;
+	hints.ai_socktype = SOCK_STREAM;
+
+	for (item = alist; item->range; item++) {
+
+		printf("hnmatch() on %-30s <-- %-15s: ", item->range, item->ip);
+
+		if (getaddrinfo(item->ip, NULL, &hints, &info)==0 && info) {
+			if (info->ai_family == AF_INET)	{
+			    struct sockaddr_in *sa =
+				    	(struct sockaddr_in *) info->ai_addr;
+			    memcpy(hostaddress, &(sa->sin_addr),
+					sizeof(sa->sin_addr));
+			}
+/***
+			if (info->ai_family == AF_INET6) {
+			    struct sockaddr_in6 *sa =
+				    	(struct sockaddr_in6 *) info->ai_addr;
+			    memcpy(hostaddress, &(sa->sin6_addr),
+					sizeof(sa->sin6_addr));
+			}
+***/
+			freeaddrinfo(info);
+			printf("%s\n", hnmatch("dummy", item->range) ?
+						"match" : "mismatch");
+		}
+		else
+			printf("getaddrinfo() failed\n");
+
+	}
+	return 0;
+}
+#endif /* MAIN_TEST_CHECKTTY */
+
 static char *wdays[] = { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
 
 /* example timespecs:

@@ -1,0 +1,16 @@
+#!/bin/bash
+
+. commands.sh
+. functions.sh
+
+TS_COMPONENT="login"
+TS_DESC="checktty"
+
+ts_init
+
+touch $TS_OUTPUT
+
+$TS_CMD_CHECKTTY  >> $TS_OUTPUT
+
+ts_finalize
+

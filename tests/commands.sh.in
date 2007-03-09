@@ -21,3 +21,5 @@ TS_CMD_COL=${TS_CMD_COL:-"$TOPDIR/text-utils/col"}
 TS_CMD_NAMEI=${TS_CMD_NAMEI-"$TOPDIR/misc-utils/namei"}
 TS_CMD_LOOK=${TS_CMD_LOOK-"$TOPDIR/misc-utils/look"}
 
+TS_CMD_CHECKTTY=${TS_CMD_CHECKTTY-"$TOPDIR/login-utils/checktty_test"}
+
