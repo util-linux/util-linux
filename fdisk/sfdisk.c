@@ -469,8 +469,8 @@ get_cylindersize(char *dev, int fd, int silent) {
 
     R = get_geometry(dev, fd, silent);
 
-    B.heads = (U.heads ? U.heads : R.heads);
-    B.sectors = (U.sectors ? U.sectors : R.sectors);
+    B.heads = (U.heads ? U.heads : R.heads ? R.heads : 255);
+    B.sectors = (U.sectors ? U.sectors : R.sectors ? R.sectors : 63);
     B.cylinders = (U.cylinders ? U.cylinders : R.cylinders);
 
     B.cylindersize = B.heads * B.sectors;
