@@ -172,7 +172,8 @@ struct passwd *pwd;
 #ifdef HAVE_SECURITY_PAM_MISC_H
 static struct passwd pwdcopy;
 #endif
-char    hostaddress[4];		/* used in checktty.c */
+char    hostaddress[16];	/* used in checktty.c */
+sa_family_t hostfamily;		/* used in checktty.c */
 char	*hostname;		/* idem */
 static char	*username, *tty_name, *tty_number;
 static char	thishost[100];
@@ -283,7 +284,7 @@ logbtmp(const char *line, const char *username, const char *hostname) {
 	if (hostname) {
 		xstrncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
 		if (hostaddress[0])
-			memcpy(&ut.ut_addr, hostaddress, sizeof(ut.ut_addr));
+			memcpy(&ut.ut_addr_v6, hostaddress, sizeof(ut.ut_addr_v6));
 	}
 #if HAVE_UPDWTMP		/* bad luck for ancient systems */
 	updwtmp(_PATH_BTMP, &ut);
@@ -391,13 +392,29 @@ main(int argc, char **argv)
 
 	  hostname = strdup(optarg); 	/* strdup: Ambrose C. Li */
 	  {
-		  struct hostent *he = gethostbyname(hostname);
+		struct addrinfo hints, *info = NULL;
 
-		  /* he points to static storage; copy the part we use */
-		  hostaddress[0] = 0;
-		  if (he && he->h_addr_list && he->h_addr_list[0])
-			  memcpy(hostaddress, he->h_addr_list[0],
-				 sizeof(hostaddress));
+		memset(&hints, 0, sizeof(hints));
+		hints.ai_flags = AI_ADDRCONFIG;
+
+		hostaddress[0] = 0;
+
+		if (getaddrinfo(hostname, NULL, &hints, &info)==0 && info) {
+			if (info->ai_family == AF_INET) {
+			    struct sockaddr_in *sa =
+					(struct sockaddr_in *) info->ai_addr;
+			    memcpy(hostaddress, &(sa->sin_addr),
+					sizeof(sa->sin_addr));
+			}
+			else if (info->ai_family == AF_INET6) {
+			    struct sockaddr_in6 *sa =
+					(struct sockaddr_in6 *) info->ai_addr;
+			    memcpy(hostaddress, &(sa->sin6_addr),
+					sizeof(sa->sin6_addr));
+			}
+			hostfamily = info->ai_family;
+			freeaddrinfo(info);
+		}
 	  }
 	  break;
 	  
@@ -892,7 +909,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	if (hostname) {
 		xstrncpy(ut.ut_host, hostname, sizeof(ut.ut_host));
 		if (hostaddress[0])
-			memcpy(&ut.ut_addr, hostaddress, sizeof(ut.ut_addr));
+			memcpy(&ut.ut_addr_v6, hostaddress, sizeof(ut.ut_addr_v6));
 	}
 	
 	pututline(&ut);

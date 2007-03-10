@@ -256,6 +256,13 @@ to compare with the IP address of the remote host. For example
 any host whose IP address is in the range 130.225.16.0 \-
 130.225.17.255.
 .PP
+.IP o
+An range of IPv6 addresses, written @[n:n:n:n:n:n:n:n]/m is interpreted as a
+[net]/prefixlen pair. An IPv6 host address is matched if prefixlen bits of
+net is equal to the prefixlen bits of the address.  For  example, the
+[net]/prefixlen pattern [3ffe:505:2:1::]/64 matches every address in the
+range 3ffe:505:2:1:: through 3ffe:505:2:1:ffff:ffff:ffff:ffff.
+.PP
 Any of the above origins may be prefixed by a time specification
 according to the syntax:
 .PP
