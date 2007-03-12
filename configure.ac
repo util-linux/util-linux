@@ -302,6 +302,19 @@ fi
 AM_CONDITIONAL(HAVE_SELINUX, test x$ac_cv_lib_selinux_getprevcon = xyes)
 
 
+AC_ARG_WITH([audit],
+  AC_HELP_STRING([--with-audit], [compile with audit support]),
+  with_audit=$withval, with_audit=no
+)
+
+if test x$with_audit != xno; then
+  AC_CHECK_LIB(audit, audit_log_user_message)
+  if test x$with_audit = xyes && test x$ac_cv_lib_audit_audit_log_user_message = xno; then
+    AC_MSG_ERROR([Audit selected but libaudit not found (or doesn't support audit_log_user_message())])
+  fi
+fi
+AM_CONDITIONAL(HAVE_AUDIT, test x$ac_cv_lib_audit_audit_log_user_message = xyes)
+
 
 AC_ARG_ENABLE([schedutils],
   AC_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),

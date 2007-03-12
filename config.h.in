@@ -35,6 +35,9 @@
 /* Define to 1 if you have the `lchown' function. */
 #undef HAVE_LCHOWN
 
+/* Define to 1 if you have the `audit' library (-laudit). */
+#undef HAVE_LIBAUDIT
+
 /* Define to 1 if you have the `blkid' library (-lblkid). */
 #undef HAVE_LIBBLKID
 
