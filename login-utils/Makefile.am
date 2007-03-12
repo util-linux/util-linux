@@ -67,6 +67,9 @@ else
 login_SOURCES = login.c checktty.c login.h my_crypt.h
 endif
 
+if HAVE_AUDIT
+login_LDADD += -laudit
+endif
 
 if HAVE_SELINUX
 chfn_SOURCES += selinux_utils.c selinux_utils.h

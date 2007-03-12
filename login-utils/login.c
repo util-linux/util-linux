@@ -106,6 +106,9 @@
 #include <sys/syslog.h>
 #include <sys/sysmacros.h>
 #include <netdb.h>
+#ifdef HAVE_LIBAUDIT
+# include <libaudit.h>
+#endif
 #include "pathnames.h"
 #include "my_crypt.h"
 #include "login.h"
@@ -315,6 +318,33 @@ sig_handler(int signal)
 }
 
 #endif	/* HAVE_SECURITY_PAM_MISC_H */
+
+#ifdef HAVE_LIBAUDIT
+static void
+logaudit(const char *tty, const char *username, const char *hostname,
+					struct passwd *pwd, int status)
+{
+	char buf[64];
+	int audit_fd;
+
+	audit_fd = audit_open();
+	if (audit_fd == -1)
+		return;
+	if (!pwd)
+		pwd = getpwnam(username);
+	if (pwd)
+		snprintf(buf, sizeof(buf), "uid=%d", pwd->pw_uid);
+	else
+		snprintf(buf, sizeof(buf), "acct=%s", username);
+
+	audit_log_user_message(audit_fd, AUDIT_USER_LOGIN,
+		buf, hostname, NULL, tty, status);
+
+	close(audit_fd);
+}
+#else /* ! HAVE_LIBAUDIT */
+# define logaudit(tty, username, hostname, pwd, status)
+#endif /* HAVE_LIBAUDIT */
 
 int
 main(int argc, char **argv)
@@ -580,6 +610,7 @@ main(int argc, char **argv)
 	    syslog(LOG_NOTICE,_("FAILED LOGIN %d FROM %s FOR %s, %s"),
 		   failcount, hostname, username, pam_strerror(pamh, retcode));
 	    logbtmp(tty_name, username, hostname);
+	    logaudit(tty_name, username, hostname, NULL, 0);
 
 	    fprintf(stderr,_("Login incorrect\n\n"));
 	    pam_set_item(pamh,PAM_USER,NULL);
@@ -597,6 +628,7 @@ main(int argc, char **argv)
 		syslog(LOG_NOTICE,_("FAILED LOGIN SESSION FROM %s FOR %s, %s"),
 			hostname, username, pam_strerror(pamh, retcode));
 	    logbtmp(tty_name, username, hostname);
+	    logaudit(tty_name, username, hostname, NULL, 0);
 
 	    fprintf(stderr,_("\nLogin incorrect\n"));
 	    pam_end(pamh, retcode);
@@ -751,6 +783,7 @@ main(int argc, char **argv)
 	      syslog(LOG_NOTICE,
 		     _("LOGIN %s REFUSED ON TTY %s"),
 		     pwd->pw_name, tty_name);
+	    logaudit(tty_name, pwd->pw_name, hostname, pwd, 0);
 	    continue;
 	}
 
@@ -948,6 +981,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 #endif
     }
     
+    logaudit(tty_name, username, hostname, pwd, 1);
     dolastlog(quietlog);
     
     chown(ttyn, pwd->pw_uid,
