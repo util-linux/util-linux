@@ -17,6 +17,7 @@ stamp-h
 stamp-h1
 update.log
 m4
+aclocal.m4
 ABOUT-NLS
 config.rpath
 mkinstalldirs
