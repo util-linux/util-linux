@@ -44,7 +44,13 @@ DIE=0
 	echo "or see http://www.gnu.org/software/autoheader"
 	DIE=1
 }
-
+(libtool --version) < /dev/null > /dev/null 2>&1 || {
+	echo
+	echo "You must have libtool installed to generate util-linux build-system."
+	echo "Download the appropriate package for your distribution,"
+	echo "or see http://www.gnu.org/software/libtool"
+	DIE=1
+}
 if test "$DIE" -eq 1; then
 	exit 1
 fi
@@ -55,6 +61,7 @@ test -f mount/mount.c || {
 }
 
 autopoint --force
+libtoolize --copy --force
 aclocal -I m4
 automake --add-missing
 autoconf

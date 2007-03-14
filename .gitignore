@@ -25,3 +25,4 @@ compile
 depcomp
 install-sh
 missing
+ltmain.sh
