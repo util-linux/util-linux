@@ -24,7 +24,7 @@ PATCHES:
 
      * diff -u
 
-     * dont include generated (autotools) stuff to your patches
+     * don't include generated (autotools) stuff to your patches
 
      * patches are delivered via email only.  Downloading them from internet
        servers is a pain.
@@ -51,21 +51,22 @@ PATCHES:
 
 SCM (source code management):
 
-     URL: http://git.kernel.org/git/?p=utils/util-linux-ng/util-linux-ng.git
+     git clone git://git.kernel.org/pub/scm/utils/util-linux-ng/util-linux-ng.git util-linux-ng
 
-     
+
     * maintenance branch(es)
         - created for every <major>.<minor> release, branch name: v<major>.<minor>
 
     * master branch
         - contains what are reasonably tested and ready to next release
-        - it's source for occasional snapshots or release candidates
+        - it's source for releases and release candidates
         - active development does not usually happen on "master" (except trivial
           and non-invasive patches).
 
     * devel branch
         - the status of this branch is: "it works for me". It means useful
           but not well tested patches.
+        - it's source for occasional snapshots
         - for long-term development or invasive changes should be an active
           development forked into a separate branch (topic branches) from the
           tip of "master".
