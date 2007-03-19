@@ -9,6 +9,24 @@ function ts_skip {
 	exit 0
 }
 
+function ts_failed {
+	if [ x"$1" == x"" ]; then
+		echo " FAILED ($TS_NAME)"
+	else
+		echo " FAILED ($1)"
+	fi
+	exit 1
+}
+
+function ts_ok {
+	if [ x"$1" == x"" ]; then
+		echo " OK"
+	else
+		echo " OK ($1)"
+	fi
+	exit 0
+}
+
 function ts_init {
 	export LANG="en_US.UTF-8":
 	TS_NAME=$(basename $0)
@@ -45,15 +63,11 @@ function ts_finalize {
 		exit 0
 	fi
 	if [ $res -eq 0 ]; then
-		if [ x"$1" == x"" ]; then
-			echo " OK"
-		else
-			echo " OK ($1)"
-		fi
-		exit 0
+		ts_ok $1
 	else
-		echo " FAILED ($TS_NAME)"
-		exit 1
+		ts_failed $1
 	fi
 }
+
+
 
