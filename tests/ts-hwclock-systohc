@@ -1,0 +1,76 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2007 Karel Zak <kzak@redhat.com>
+#
+# This file is part of util-linux-ng.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+# Test cramfs
+
+. commands.sh
+. functions.sh
+
+TS_COMPONENT="hwclock"
+TS_DESC="systohc"
+
+NTP_SERVER="0.fedora.pool.ntp.org"
+
+ts_init
+
+if [ $UID != 0 ]; then
+	ts_skip "not root permissions"
+fi
+if [ -x "ntpdate" ]; then
+	ts_skip "cannot found ntpdate command"
+fi
+
+set -o pipefail
+
+# sync with server
+(ntpdate $NTP_SERVER | sed "s/^.*offset \([0-9.]*\) sec/\1/g") &> /dev/null
+
+if [ "$?" == "1" ]; then
+	ts_skip "cannot sync with $NTP_SERVER"
+fi
+
+# sync again and check difference
+OFFSET=$( ntpdate $NTP_SERVER 2> /dev/null | sed "s/^.*offset [\-]*\([0-9.]*\) sec/\1/g" )
+if [ "$?" == "1" ]; then
+	ts_skip "cannot sync with $NTP_SERVER (2nd attempt)"
+fi
+
+DIFF=$( echo "$OFFSET > 1" | bc )
+if [ "$DIFF" == "1" ]; then
+	ts_skip "diff between systime and NTP is greated than 1 second"
+fi
+
+# call hwclock
+for i in `seq 0 10`; do
+	#echo "sync #$i"
+	$TS_CMD_HWCLOCK --systohc
+	$TS_CMD_HWCLOCK --hctosys
+done
+
+# sync with NTP and check new difference
+OFFSET=$( ntpdate $NTP_SERVER 2> /dev/null | sed "s/^.*offset [\-]*\([0-9.]*\) sec/\1/g" )
+if [ "$?" == "1" ]; then
+	ts_skip "cannot sync with $NTP_SERVER (3rd attempt)"
+fi
+
+DIFF=$( echo "$OFFSET > 1" | bc )
+if [ "$DIFF" == "1" ]; then
+	ts_failed "offset is $OFFSET"
+fi
+
+ts_ok
+

@@ -23,3 +23,5 @@ TS_CMD_LOOK=${TS_CMD_LOOK-"$TOPDIR/misc-utils/look"}
 
 TS_CMD_CHECKTTY=${TS_CMD_CHECKTTY-"$TOPDIR/login-utils/checktty_test"}
 
+TS_CMD_HWCLOCK=${TS_CMD_HWCLOCK-"$TOPDIR/hwclock/hwclock"}
+

@@ -17,7 +17,8 @@ EXTRA_DIST = 	expected/* \
 		ts-namei-logic \
 		ts-cramfs-mkfs \
 		ts-look-separator \
-		ts-login-checktty
+		ts-login-checktty \
+		ts-hwclock-systohc
 
 distclean-local:
 	rm -rf output diff
