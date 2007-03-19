@@ -1210,6 +1210,7 @@ usage( const char *fmt, ... ) {
     "\nOptions: \n"
     "  --utc         the hardware clock is kept in coordinated universal time\n"
     "  --localtime   the hardware clock is kept in local time\n"
+    "  --rtc=path    special /dev/... file to use instead of default\n"
     "  --directisa   access the ISA bus directly instead of %s\n"
     "  --badyear     ignore rtc's year because the bios is broken\n"
     "  --date        specifies the time to which to set the hardware clock\n"
@@ -1265,6 +1266,7 @@ static const struct option longopts[] = {
 	{ "test", 0, 0, 135 },
 	{ "date", 1, 0, 136 },
 	{ "epoch", 1, 0, 137 },
+	{ "rtc", 1, 0, 'f' },
 	{ NULL, 0, 0, 0 }
 };
 
@@ -1314,7 +1316,7 @@ main(int argc, char **argv) {
 	ARCconsole = Jensen = SRM = funky_toy = directisa = badyear = FALSE;
 	date_opt = NULL;
 
-	while ((c = getopt_long (argc, argv, "?hvVDarsuwAJSF", longopts, NULL))
+	while ((c = getopt_long (argc, argv, "?hvVDarsuwAJSFf:", longopts, NULL))
 	       != -1) {
 		switch (c) {
 		case 'D':
@@ -1378,6 +1380,9 @@ main(int argc, char **argv) {
 			break;
 		case 137:
 			epoch_option = atoi(optarg);	/* --epoch */
+			break;
+		case 'f':
+			rtc_dev_name = optarg;		/* --rtc */
 			break;
 		case 'v':				/* --version */
 		case 'V':

@@ -82,30 +82,47 @@ struct linux_rtc_time {
 #define RTC_EPOCH_SET	_IOW('p', 0x0e, unsigned long)	 /* Set epoch */
 #endif
 
+/* /dev/rtc is conventionally chardev 10/135
+ * ia64 uses /dev/efirtc, chardev 10/136
+ * devfs (obsolete) used /dev/misc/... for miscdev
+ * new RTC framework + udev uses dynamic major and /dev/rtc0.../dev/rtcN
+ * ... so we need an overridable default
+ */
 
-/* ia64 uses /dev/efirtc (char 10,136) */
-/* devfs uses /dev/misc/rtc */
-#ifdef __ia64__
-#define RTC_DEVN	"efirtc"
-#else
-#define RTC_DEVN	"rtc"
-#endif
-
-static char *rtc_dev_name;
+/* default or user defined dev (by hwclock --rtc=<path>) */
+char *rtc_dev_name;
 
 static int
 open_rtc(void) {
-	int rtc_fd;
+	char *fls[] = {
+#ifdef __ia64__
+		"/dev/efirtc",
+		"/dev/misc/efirtc",
+#endif
+		"/dev/rtc",
+		"/dev/rtc0",
+		"/dev/misc/rtc",
+		NULL
+	};
+	char **p = fls;
+	char *fname = rtc_dev_name ? : *p;
 
-	rtc_dev_name = "/dev/" RTC_DEVN;
-	rtc_fd = open(rtc_dev_name, O_RDONLY);
-	if (rtc_fd < 0 && errno == ENOENT) {
-		rtc_dev_name = "/dev/misc/" RTC_DEVN;
-		rtc_fd = open(rtc_dev_name, O_RDONLY);
-		if (rtc_fd < 0 && errno == ENOENT)
-			rtc_dev_name = "/dev/" RTC_DEVN;
-	}
-	return rtc_fd;
+	do {
+		int fd = open(fname, O_RDONLY);
+
+		if (fd < 0 && errno == ENOENT) {
+			if (fname == rtc_dev_name)
+				break;
+			fname = *++p;
+		} else {
+			rtc_dev_name = *p;
+			return fd;
+		}
+	} while(fname);
+
+	if (!rtc_dev_name)
+		rtc_dev_name = *fls;
+	return -1;
 }
 
 static int
@@ -346,7 +363,7 @@ get_permissions_rtc(void) {
 }
 
 static struct clock_ops rtc = {
-	"/dev/" RTC_DEVN " interface to clock",
+	"/dev interface to clock",
 	get_permissions_rtc,
 	read_hardware_clock_rtc,
 	set_hardware_clock_rtc,

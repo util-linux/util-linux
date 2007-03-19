@@ -33,3 +33,4 @@ extern void set_cmos_access(int Jensen, int funky_toy);
 /* rtc.c */
 extern int get_epoch_rtc(unsigned long *epoch, int silent);
 extern int set_epoch_rtc(unsigned long epoch);
+extern char *rtc_dev_name;

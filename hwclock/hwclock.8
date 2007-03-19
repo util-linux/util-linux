@@ -22,6 +22,7 @@ other options:
 .PP
 .B "[\-u|\-\-utc]  \-\-localtime  \-\-noadjfile \-\-directisa"
 .B "\-\-test [\-D|\-\-debug]"
+.B "\-\-rtc=filename"
 .PP
 and arcane options for DEC Alpha:
 .PP
@@ -182,6 +183,15 @@ or
 must be specified when using this option.
 
 .TP
+.B \-\-rtc=filename
+overrides the default /dev file name, which is
+.IR /dev/rtc
+on many platforms but may be
+.IR /dev/rtc0 ,
+.IR /dev/rtc1 ,
+and so on.
+
+.TP
 .B \-\-directisa
 is meaningful only on an ISA machine or an Alpha (which implements enough
 of ISA to be, roughly speaking, an ISA machine for 
@@ -314,6 +324,12 @@ capitalized form, was coined for use by
 because all of the other names are inappropriate to the point of being
 misleading.
 .PP
+So for example, some non-ISA systems have a few real time clocks with
+only one of them having its own power domain.
+A very low power external I2C or SPI clock chip might be used with a
+backup battery as the hardware clock to initialize a more functional
+integrated real-time clock which is used for most other purposes.
+.PP
 .B The System Time: 
 This is the time kept by a clock inside the Linux kernel and driven by
 a timer interrupt.  (On an ISA machine, the timer interrupt is part of
@@ -381,6 +397,13 @@ a relatively recent addition to Linux.  Older systems don't have it.
 Also, though there are versions of the rtc driver that work on DEC
 Alphas, there appear to be plenty of Alphas on which the rtc driver
 does not work (a common symptom is hwclock hanging).
+Moreover, recent Linux systems have more generic support for RTCs,
+even systems that have more than one, so you might need to override
+the default by specifying
+.I /dev/rtc0
+or
+.I /dev/rtc1
+instead.
 .PP
 On older systems, the method of accessing the Hardware Clock depends on
 the system hardware. 
@@ -411,7 +434,8 @@ file /dev/tty1.
 .PP
 .B hwclock 
 tries to use /dev/rtc.  If it is compiled for a kernel that doesn't have
-that function or it is unable to open /dev/rtc, 
+that function or it is unable to open /dev/rtc
+(or the alternative special file you've defined on the command line)
 .B hwclock 
 will fall back to another method, if available.  On an ISA or Alpha
 machine, you can force
@@ -569,8 +593,8 @@ maintainer; an option may be appropriate.
 
 Note that this section is only relevant when you are using the "direct
 ISA" method of accessing the Hardware Clock.
-
-
+ACPI provides a standard way to access century values, when they
+are supported by the hardware.
 
 .SH "ENVIRONMENT VARIABLES"
 .I TZ
@@ -581,6 +605,7 @@ ISA" method of accessing the Hardware Clock.
 .RI ( /usr/lib/zoneinfo
 on old systems)
 .I /dev/rtc
+.I /dev/rtc0
 .I /dev/port
 .I /dev/tty1
 .I /proc/cpuinfo
