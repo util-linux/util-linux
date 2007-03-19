@@ -72,5 +72,5 @@ if [ "$DIFF" == "1" ]; then
 	ts_failed "offset is $OFFSET"
 fi
 
-ts_ok
+ts_ok "offset is $OFFSET"
 

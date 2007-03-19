@@ -517,14 +517,19 @@ set_hardware_clock_exact(const time_t sethwtime,
            "Delaying further to reach the next full second.\n"),
            time_diff(beginsystime, refsystime));
   
-  /* Now delay some more until Hardware Clock time newhwtime arrives */
+  /*
+   * Now delay some more until Hardware Clock time newhwtime arrives.  The -500
+   * ms is because the Hardware Clock always sets to your set time plus 500 ms
+   * (because it is designed to update to the next second precisely 500 ms
+   * after you finish the setting).
+   */
   do {
 	  float tdiff;
 	  gettimeofday(&nowsystime, NULL);
 	  tdiff = time_diff(nowsystime, beginsystime);
 	  if (tdiff < 0)
 		  goto time_resync;	/* probably time was reset */
-  } while (time_diff(nowsystime, refsystime) < newhwtime - sethwtime);
+  } while (time_diff(nowsystime, refsystime) - 0.5 < newhwtime - sethwtime);
   
   set_hardware_clock(newhwtime, universal, testing);
 }
