@@ -1,3 +1,6 @@
+#ifndef HWCLOCK_CLOCK_H
+#define HWCLOCK_CLOCK_H
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -24,8 +27,12 @@ typedef int bool;
 extern char *progname;
 extern int debug;
 extern int epoch_option;
-extern void outsyserr(char *msg, ...);
-
+extern void outsyserr(char *msg, ...)
+#ifdef __GNUC__
+        __attribute__ ((format (printf, 1, 2)));
+#else
+        ;
+#endif
 /* cmos.c */
 extern void set_cmos_epoch(int ARCconsole, int SRM);
 extern void set_cmos_access(int Jensen, int funky_toy);
@@ -41,3 +48,5 @@ extern void hwaudit_exit(int status);
 #else
 # define hwclock_exit(_status)	exit(_status)
 #endif
+
+#endif /* HWCLOCK_CLOCK_H */

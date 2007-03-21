@@ -6,7 +6,7 @@ hwclock \- query and set the hardware clock (RTC)
 .br
 .BR "hwclock \-w" " or " "hwclock \-\-systohc"
 .br
-.BR "hwclock \-s" " or " "hwclock \-\-hctosys" 
+.BR "hwclock \-s" " or " "hwclock \-\-hctosys"
 .br
 .BR "hwclock \-a" " or " "hwclock \-\-adjust"
 .br
@@ -39,15 +39,15 @@ current time, set the Hardware Clock to a specified time, set the
 Hardware Clock to the System Time, and set the System Time from the
 Hardware Clock.
 .PP
-You can also run 
-.B hwclock 
+You can also run
+.B hwclock
 periodically to insert or remove time from the Hardware Clock to
 compensate for systematic drift (where the clock consistently gains or
 loses time at a certain rate if left to run).
 
 .SH OPTIONS
-You need exactly one of the following options to tell 
-.B hwclock 
+You need exactly one of the following options to tell
+.B hwclock
 what function to perform:
 .PP
 .TP
@@ -60,17 +60,17 @@ option.
 
 .TP
 .B \-\-set
-Set the Hardware Clock to the time given by the 
+Set the Hardware Clock to the time given by the
 .B \-\-date
 option.
 .TP
 .B \-\-hctosys
-Set the System Time from the Hardware Clock.  
+Set the System Time from the Hardware Clock.
 
 Also set the kernel's timezone value to the local timezone
 as indicated by the TZ environment variable and/or
 .IR /usr/share/zoneinfo ,
-as 
+as
 .BR tzset (3)
 would interpret them.
 The obsolete tz_dsttime field of the kernel's timezone value is set
@@ -105,8 +105,8 @@ option.  See the
 option for details.
 .TP
 .B \-\-version
-Print the version of 
-.B hwclock 
+Print the version of
+.B hwclock
 on Standard Output.
 .TP
 .B \-\-date=date_string
@@ -121,8 +121,8 @@ For example,
 .sp
 .I hwclock --set --date="9/22/96 16:45:05"
 .sp
-The argument is in local time, even if you keep your Hardware Clock in 
-Coordinated Universal time.  See the 
+The argument is in local time, even if you keep your Hardware Clock in
+Coordinated Universal time.  See the
 .B \-\-utc
 option.
 
@@ -163,7 +163,7 @@ nor
 .B hwclock
 was used to set the clock (i.e. hwclock was successfully run with the
 .B \-\-set
-, 
+,
 .B \-\-systohc
 ,
 or
@@ -194,12 +194,12 @@ and so on.
 .TP
 .B \-\-directisa
 is meaningful only on an ISA machine or an Alpha (which implements enough
-of ISA to be, roughly speaking, an ISA machine for 
+of ISA to be, roughly speaking, an ISA machine for
 .BR hwclock 's
 purposes).  For other machines, it has no effect.  This option tells
 .B hwclock
 to use explicit I/O instructions to access the Hardware Clock.
-Without this option, 
+Without this option,
 .B hwclock
 will try to use the /dev/rtc device (which it assumes to be driven by the
 rtc device driver).  If it is unable to open the device (for read), it will
@@ -209,7 +209,7 @@ The rtc device driver was new in Linux Release 2.
 .TP
 .B \-\-badyear
 Indicates that the Hardware Clock is incapable of storing years outside
-the range 1994-1999.  There is a problem in some BIOSes (almost all 
+the range 1994-1999.  There is a problem in some BIOSes (almost all
 Award BIOSes made between 4/26/94 and 5/31/95) wherein they are unable
 to deal with years after 1999.  If one attempts to set the year-of-century
 value to something less than 94 (or 95 in some cases), the value that
@@ -219,20 +219,20 @@ cannot set the year after 1999 and cannot use the value of the clock as
 the true time in the normal way.
 
 To compensate for this (without your getting a BIOS update, which would
-definitely be preferable), always use 
+definitely be preferable), always use
 .B \-\-badyear
-if you have one of these machines.  When  
+if you have one of these machines.  When
 .B hwclock
 knows it's working with a brain-damaged clock, it ignores the year part of
-the Hardware Clock value and instead tries to guess the year based on the 
+the Hardware Clock value and instead tries to guess the year based on the
 last calibrated date in the adjtime file, by assuming that that date is
-within the past year.  For this to work, you had better do a 
+within the past year.  For this to work, you had better do a
 .I hwclock \-\-set
 or
 .I hwclock \-\-systohc
 at least once a year!
 
-Though 
+Though
 .B hwclock
 ignores the year value when it reads the Hardware Clock, it sets the
 year value when it sets the clock.  It sets it to 1995, 1996, 1997, or
@@ -243,9 +243,9 @@ year without setting it, this scheme could be defeated and you could
 end up losing a day.
 
 .B hwclock
-warns you that you probably need 
+warns you that you probably need
 .B \-\-badyear
-whenever it finds your Hardware Clock set to 1994 or 1995.  
+whenever it finds your Hardware Clock set to 1994 or 1995.
 
 .TP
 .B \-\-srm
@@ -265,25 +265,25 @@ with ARC console (but Ruffians have epoch 1900).
 .B \-\-funky\-toy
 These two options specify what kind of Alpha machine you have.  They
 are invalid if you don't have an Alpha and are usually unnecessary
-if you do, because 
-.B hwclock 
-should be able to determine by itself what it's 
+if you do, because
+.B hwclock
+should be able to determine by itself what it's
 running on, at least when
 .I /proc
 is mounted.
 (If you find you need one of these options to make
-.B hwclock 
+.B hwclock
 work, contact the maintainer to see if the program can be improved
 to detect your system automatically. Output of `hwclock --debug'
 and `cat /proc/cpuinfo' may be of interest.)
 
-.B \-\-jensen 
+.B \-\-jensen
 means you are running on a Jensen model.
 
-.B \-\-funky\-toy 
+.B \-\-funky\-toy
 means that on your machine, one has to use the UF bit instead
 of the UIP bit in the Hardware Clock to detect a time transition.  "Toy"
-in the option name refers to the Time Of Year facility of the machine. 
+in the option name refers to the Time Of Year facility of the machine.
 
 
 .TP
@@ -291,12 +291,12 @@ in the option name refers to the Time Of Year facility of the machine.
 Do everything except actually updating the Hardware Clock or anything
 else.  This is useful, especially in conjunction with
 .B \-\-debug,
-in learning about 
+in learning about
 .B hwclock.
 .TP
 .B \-\-debug
-Display a lot of information about what 
-.B hwclock 
+Display a lot of information about what
+.B hwclock
 is doing internally.  Some of its function is complex and this output
 can help you understand how the program works.
 
@@ -308,7 +308,7 @@ can help you understand how the program works.
 .PP
 There are two main clocks in a Linux system:
 .PP
-.B The Hardware Clock: 
+.B The Hardware Clock:
 This is a clock that runs independently of any control program running
 in the CPU and even when the machine is powered off.
 
@@ -319,8 +319,8 @@ ticks, so the clock actually has virtually infinite precision.
 .PP
 This clock is commonly called the hardware clock, the real time clock,
 the RTC, the BIOS clock, and the CMOS clock.  Hardware Clock, in its
-capitalized form, was coined for use by 
-.B hwclock 
+capitalized form, was coined for use by
+.B hwclock
 because all of the other names are inappropriate to the point of being
 misleading.
 .PP
@@ -330,7 +330,7 @@ A very low power external I2C or SPI clock chip might be used with a
 backup battery as the hardware clock to initialize a more functional
 integrated real-time clock which is used for most other purposes.
 .PP
-.B The System Time: 
+.B The System Time:
 This is the time kept by a clock inside the Linux kernel and driven by
 a timer interrupt.  (On an ISA machine, the timer interrupt is part of
 the ISA standard).  It has meaning only while Linux is running on the
@@ -346,12 +346,12 @@ starts up, and then never use the Hardware Clock again.  Note that in DOS,
 for which ISA was designed, the Hardware Clock is the only real time clock.
 .PP
 It is important that the System Time not have any discontinuities such as
-would happen if you used the 
+would happen if you used the
 .BR date (1L)
 program to set it while the system is running.  You can, however, do whatever
 you want to the Hardware Clock while the system is running, and the next
 time Linux starts up, it will do so with the adjusted time from the Hardware
-Clock.  You can also use the program 
+Clock.  You can also use the program
 .BR adjtimex (8)
 to smoothly adjust the System Time while the system runs.
 .PP
@@ -373,7 +373,7 @@ set the wrong timestamps on files.
 .B hwclock
 sets the kernel timezone to the value indicated by TZ and/or
 .I /usr/share/zoneinfo
-when you set the System Time using the 
+when you set the System Time using the
 .B \-\-hctosys
 option.
 .PP
@@ -388,7 +388,7 @@ This second field is not used under Linux and is always zero.
 
 .SH How hwclock Accesses the Hardware Clock
 .PP
-.B hwclock 
+.B hwclock
 Uses many different ways to get and set Hardware Clock values.
 The most normal way is to do I/O to the device special file /dev/rtc,
 which is presumed to be driven by the rtc device driver.  However,
@@ -406,16 +406,16 @@ or
 instead.
 .PP
 On older systems, the method of accessing the Hardware Clock depends on
-the system hardware. 
+the system hardware.
 .PP
-On an ISA system, 
-.B hwclock 
+On an ISA system,
+.B hwclock
 can directly access the "CMOS memory" registers that
 constitute the clock, by doing I/O to Ports 0x70 and 0x71.  It does
 this with actual I/O instructions and consequently can only do it if
 running with superuser effective userid.  (In the case of a Jensen
 Alpha, there is no way for
-.B hwclock 
+.B hwclock
 to execute those I/O instructions, and so it uses instead the
 /dev/port device special file, which provides almost as low-level an
 interface to the I/O subsystem).
@@ -432,11 +432,11 @@ On an m68k system,
 can access the clock via the console driver, via the device special
 file /dev/tty1.
 .PP
-.B hwclock 
+.B hwclock
 tries to use /dev/rtc.  If it is compiled for a kernel that doesn't have
 that function or it is unable to open /dev/rtc
 (or the alternative special file you've defined on the command line)
-.B hwclock 
+.B hwclock
 will fall back to another method, if available.  On an ISA or Alpha
 machine, you can force
 .B hwclock
@@ -450,64 +450,64 @@ by specifying the \-\-directisa option.
 The Hardware Clock is usually not very accurate.  However, much of its
 inaccuracy is completely predictable - it gains or loses the same amount
 of time every day.  This is called systematic drift.
-.BR hwclock 's 
+.BR hwclock 's
 "adjust" function lets you make systematic corrections to correct the
 systematic drift.
 .PP
-It works like this:  
-.B hwclock 
+It works like this:
+.B hwclock
 keeps a file,
 .I /etc/adjtime,
 that keeps some historical information.  This is called the adjtime file.
 .PP
-Suppose you start with no adjtime file.  You issue a 
+Suppose you start with no adjtime file.  You issue a
 .I hwclock \-\-set
-command to set the Hardware Clock to the true current time.  
-.B Hwclock 
-creates the adjtime file and records in it the current time as the 
+command to set the Hardware Clock to the true current time.
+.B Hwclock
+creates the adjtime file and records in it the current time as the
 last time the clock was calibrated.
 5 days later, the clock has gained 10 seconds, so you issue another
 .I hwclock \-\-set
-command to set it back 10 seconds.  
-.B Hwclock 
+command to set it back 10 seconds.
+.B Hwclock
 updates the adjtime file to show the current time as the last time the
 clock was calibrated, and records 2 seconds per day as the systematic
 drift rate.  24 hours go by, and then you issue a
 .I hwclock \-\-adjust
-command.  
-.B Hwclock 
+command.
+.B Hwclock
 consults the adjtime file and sees that the clock gains 2 seconds per
 day when left alone and that it has been left alone for exactly one
 day.  So it subtracts 2 seconds from the Hardware Clock.  It then
 records the current time as the last time the clock was adjusted.
 Another 24 hours goes by and you issue another
 .I hwclock \-\-adjust.
-.B Hwclock 
+.B Hwclock
 does the same thing: subtracts 2 seconds and updates the adjtime file
 with the current time as the last time the clock was adjusted.
 .PP
-Every time you calibrate (set) the clock (using 
+Every time you calibrate (set) the clock (using
 .I \-\-set
 or
 .I \-\-systohc
 ),
-.B hwclock 
+.B hwclock
 recalculates the systematic drift rate based on how long it has been
 since the last calibration, how long it has been since the last
 adjustment, what drift rate was assumed in any intervening
 adjustments, and the amount by which the clock is presently off.
 .PP
-A small amount of error creeps in any time 
-.B hwclock 
+A small amount of error creeps in any time
+.B hwclock
 sets the clock, so it refrains from making an adjustment that would be
 less than 1 second.  Later on, when you request an adjustment again,
 the accumulated drift will be more than a second and
-.B hwclock 
+.B hwclock
 will do the adjustment then.
 .PP
-It is good to do a 
+It is good to do a
 .I hwclock \-\-adjust
-just before the 
+just before the
 .I hwclock \-\-hctosys
 at system startup time, and maybe periodically while the system is
 running via cron.
@@ -528,26 +528,26 @@ as a decimal integer.
 Line 2: 1 number: Resulting number of seconds since 1969 UTC of most
 recent calibration.  Zero if there has been no calibration yet or it
 is known that any previous calibration is moot (for example, because
-the Hardware Clock has been found, since that calibration, not to 
+the Hardware Clock has been found, since that calibration, not to
 contain a valid time).  This is a decimal integer.
 .PP
-Line 3: "UTC" or "LOCAL".  Tells whether the Hardware Clock is set to 
+Line 3: "UTC" or "LOCAL".  Tells whether the Hardware Clock is set to
 Coordinated Universal Time or local time.  You can always override this
-value with options on the 
+value with options on the
 .B hwclock
 command line.
 .PP
-You can use an adjtime file that was previously used with the 
+You can use an adjtime file that was previously used with the
 .BR clock (8)
-program with 
+program with
 .B hwclock.
 
 
 .SH "Automatic Hardware Clock Synchronization By the Kernel"
 
-You should be aware of another way that the Hardware Clock is kept 
+You should be aware of another way that the Hardware Clock is kept
 synchronized in some systems.  The Linux kernel has a mode wherein it
-copies the System Time to the Hardware Clock every 11 minutes.  
+copies the System Time to the Hardware Clock every 11 minutes.
 This is a good mode to use when you are using something sophisticated
 like ntp to keep your System Time synchronized. (ntp is a way to keep
 your System Time synchronized either to a time server somewhere on the
@@ -560,18 +560,18 @@ can turn it off by running anything, including
 that sets the System Time the old fashioned way.
 
 To see if it is on or
-off, use the command 
+off, use the command
 .I adjtimex \-\-print
 and look at the value of "status".  If the "64" bit of this number
 (expressed in binary) equal to 0, 11 minute mode is on.  Otherwise, it
 is off.
 
-If your system runs with 11 minute mode on, don't use 
+If your system runs with 11 minute mode on, don't use
 .I hwclock \-\-adjust
 or
 .IR "hwclock \-\-hctosys" .
 You'll just make a mess.  It is acceptable to use a
-.I hwclock \-\-hctosys 
+.I hwclock \-\-hctosys
 at startup time to get a reasonable System Time until your system is
 able to set the System Time from the external source and start 11
 minute mode.
@@ -580,14 +580,14 @@ minute mode.
 .SH ISA Hardware Clock Century value
 
 There is some sort of standard that defines CMOS memory Byte 50 on an ISA
-machine as an indicator of what century it is.  
+machine as an indicator of what century it is.
 .B hwclock
 does not use or set that byte because there are some machines that
 don't define the byte that way, and it really isn't necessary anyway,
 since the year-of-century does a good job of implying which century it
 is.
 
-If you have a bona fide use for a CMOS century byte, contact the 
+If you have a bona fide use for a CMOS century byte, contact the
 .B hwclock
 maintainer; an option may be appropriate.
 
@@ -622,6 +622,6 @@ on old systems)
 Written by Bryan Henderson, September 1996 (bryanh@giraffe-data.com),
 based on work done on the
 .I clock
-program by Charles Hedrick, Rob Hooft, and Harald Koenig.  
+program by Charles Hedrick, Rob Hooft, and Harald Koenig.
 See the source code for complete history and credits.
 

@@ -44,7 +44,7 @@ static int
 synchronize_to_clock_tick_kd(void) {
 /*----------------------------------------------------------------------------
    Wait for the top of a clock tick by calling KDGHWCLK in a busy loop until
-   we see it.  
+   we see it.
 -----------------------------------------------------------------------------*/
   int i;
 
@@ -58,7 +58,7 @@ synchronize_to_clock_tick_kd(void) {
     outsyserr(_("KDGHWCLK ioctl to read time failed"));
     return 3;
   }
-	
+
   i = 0;
   do {
     /* Added by Roman Hodek <Roman.Hodek@informatik.uni-erlangen.de> */
@@ -95,7 +95,7 @@ read_hardware_clock_kd(struct tm *tm) {
   Read the hardware clock and return the current time via <tm>
   argument.  Use ioctls to /dev/tty1 on what we assume is an m68k
   machine.
-  
+
   Note that we don't use /dev/console here.  That might be a serial
   console.
 -----------------------------------------------------------------------------*/

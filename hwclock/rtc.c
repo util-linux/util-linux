@@ -177,7 +177,7 @@ static int
 busywait_for_rtc_clock_tick(const int rtc_fd) {
 /*----------------------------------------------------------------------------
    Wait for the top of a clock tick by reading /dev/rtc in a busy loop until
-   we see it.  
+   we see it.
 -----------------------------------------------------------------------------*/
   struct tm start_time;
     /* The time when we were called (and started waiting) */
@@ -395,13 +395,13 @@ get_epoch_rtc(unsigned long *epoch_p, int silent) {
   rtc_fd = open_rtc();
   if (rtc_fd < 0) {
     if (!silent) {
-      if (errno == ENOENT) 
+      if (errno == ENOENT)
         fprintf(stderr, _(
 		"To manipulate the epoch value in the kernel, we must "
                 "access the Linux 'rtc' device driver via the device special "
                 "file %s.  This file does not exist on this system.\n"),
 		rtc_dev_name);
-      else 
+      else
         outsyserr(_("Unable to open %s"), rtc_dev_name);
     }
     return 1;
@@ -442,7 +442,7 @@ set_epoch_rtc(unsigned long epoch) {
 
   rtc_fd = open_rtc();
   if (rtc_fd < 0) {
-    if (errno == ENOENT) 
+    if (errno == ENOENT)
       fprintf(stderr, _("To manipulate the epoch value in the kernel, we must "
               "access the Linux 'rtc' device driver via the device special "
               "file %s.  This file does not exist on this system.\n"),
@@ -460,7 +460,7 @@ set_epoch_rtc(unsigned long epoch) {
     if (errno == EINVAL)
       fprintf(stderr, _("The kernel device driver for %s "
 	      "does not have the RTC_EPOCH_SET ioctl.\n"), rtc_dev_name);
-    else 
+    else
       outsyserr(_("ioctl(RTC_EPOCH_SET) to %s failed"), rtc_dev_name);
     close(rtc_fd);
     return 1;

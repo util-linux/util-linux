@@ -84,7 +84,7 @@ int inb(int c){ return 0; }
 #define TM_EPOCH 1900
 int cmos_epoch = 1900;
 
-/* Martin Ostermann writes: 
+/* Martin Ostermann writes:
 The problem with the Jensen is twofold: First, it has the clock at a
 different address. Secondly, it has a distinction beween "local" and
 normal bus addresses. The local ones pertain to the hardware integrated
@@ -377,7 +377,7 @@ static unsigned long cmos_set_time(unsigned long arg)
 	  pmbit = 0x80;
       }
   }
-  
+
   if (!(save_control & 0x04)) { /* BCD mode - the default */
       BIN_TO_BCD(tm.tm_sec);
       BIN_TO_BCD(tm.tm_min);
@@ -388,7 +388,7 @@ static unsigned long cmos_set_time(unsigned long arg)
       BIN_TO_BCD(tm.tm_year);
       BIN_TO_BCD(century);
   }
-  
+
   cmos_write (0, tm.tm_sec);
   cmos_write (2, tm.tm_min);
   cmos_write (4, tm.tm_hour | pmbit);
@@ -402,7 +402,7 @@ static unsigned long cmos_set_time(unsigned long arg)
 
     /* The kernel sources, linux/arch/i386/kernel/time.c, have the
        following comment:
-    
+
        The following flags have to be released exactly in this order,
        otherwise the DS12887 (popular MC146818A clone with integrated
        battery and quartz) will not reset the oscillator and will not
@@ -410,7 +410,7 @@ static unsigned long cmos_set_time(unsigned long arg)
        in the Dallas Semiconductor data sheets, but who believes data
        sheets anyway ...  -- Markus Kuhn
     */
-    
+
   cmos_write (11, save_control);
   cmos_write (10, save_freq_select);
   return 0;
@@ -485,8 +485,8 @@ read_hardware_clock_cmos(struct tm *tm) {
 
   while (!got_time) {
     /* Bit 7 of Byte 10 of the Hardware Clock value is the Update In Progress
-       (UIP) bit, which is on while and 244 uS before the Hardware Clock 
-       updates itself.  It updates the counters individually, so reading 
+       (UIP) bit, which is on while and 244 uS before the Hardware Clock
+       updates itself.  It updates the counters individually, so reading
        them during an update would produce garbage.  The update takes 2mS,
        so we could be spinning here that long waiting for this bit to turn
        off.
@@ -512,7 +512,7 @@ read_hardware_clock_cmos(struct tm *tm) {
 	  century = hclock_read(century_byte);
 #endif
 
-      /* Unless the clock changed while we were reading, consider this 
+      /* Unless the clock changed while we were reading, consider this
          a good clock read .
        */
       if (tm->tm_sec == hclock_read (0))
