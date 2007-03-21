@@ -85,6 +85,12 @@
 #include "clock.h"
 #include "nls.h"
 
+#ifdef HAVE_LIBAUDIT
+#include <libaudit.h>
+static int hwaudit_fd = -1;
+static int hwaudit_on;
+#endif
+
 #define MYNAME "hwclock"
 
 char *progname = MYNAME;
@@ -1240,7 +1246,7 @@ usage( const char *fmt, ... ) {
     va_end(ap);
   }
  
-  exit(fmt ? EX_USAGE : 0);
+  hwclock_exit(fmt ? EX_USAGE : 0);
 }
 
 static const struct option longopts[] = {
@@ -1305,6 +1311,17 @@ main(int argc, char **argv) {
 	/* Remember what time we were invoked */
 	gettimeofday(&startup_time, NULL);
 
+#ifdef HAVE_LIBAUDIT
+	hwaudit_fd = audit_open();
+	if (hwaudit_fd < 0 && !(errno == EINVAL || errno == EPROTONOSUPPORT ||
+				errno == EAFNOSUPPORT)) {
+		/* You get these error codes only when the kernel doesn't have
+		 * audit compiled in. */
+		fprintf(stderr, _("%s: Unable to connect to audit system\n"),
+				MYNAME);
+		return EX_NOPERM;
+	}
+#endif
 	setlocale(LC_ALL, "");
 #ifdef LC_NUMERIC
 	/* We need LC_CTYPE and LC_TIME and LC_MESSAGES, but must avoid
@@ -1403,6 +1420,14 @@ main(int argc, char **argv) {
 	argc -= optind;
 	argv += optind;
 
+#ifdef HAVE_LIBAUDIT
+	if (testing != TRUE) {
+		if (adjust == TRUE || hctosys == TRUE || systohc == TRUE ||
+					set == TRUE || setepoch == TRUE) {
+			hwaudit_on = TRUE;
+		}
+	}
+#endif
 	if (argc > 0) {
 		usage(_("%s takes no non-option arguments.  "
 			"You supplied %d.\n"),
@@ -1413,27 +1438,27 @@ main(int argc, char **argv) {
 		fprintf(stderr, _("You have specified multiple functions.\n"
 				  "You can only perform one function "
 				  "at a time.\n"));
-		exit(EX_USAGE);
+		hwclock_exit(EX_USAGE);
 	}
 
 	if (utc && local_opt) {
 		fprintf(stderr, _("%s: The --utc and --localtime options "
 				  "are mutually exclusive.  You specified "
 				  "both.\n"), MYNAME);
-		exit(EX_USAGE);
+		hwclock_exit(EX_USAGE);
 	}
 
 	if (adjust && noadjfile) {
 		fprintf(stderr, _("%s: The --adjust and --noadjfile options "
 				  "are mutually exclusive.  You specified "
 				  "both.\n"), MYNAME);
-		exit(EX_USAGE);
+		hwclock_exit(EX_USAGE);
 	}
 
 	if (noadjfile && !(utc || local_opt)) {
 		fprintf(stderr, _("%s: With --noadjfile, you must specify "
 				  "either --utc or --localtime\n"), MYNAME);
-		exit(EX_USAGE);
+		hwclock_exit(EX_USAGE);
 	}
 
 #ifdef __alpha__
@@ -1447,7 +1472,7 @@ main(int argc, char **argv) {
 		if (rc != 0) {
 			fprintf(stderr, _("No usable set-to time.  "
 					  "Cannot set clock.\n"));
-			exit(EX_USAGE);
+			hwclock_exit(EX_USAGE);
 		}
 	}
 
@@ -1479,11 +1504,11 @@ main(int argc, char **argv) {
 	}
 
 	if (!permitted)
-		exit(EX_NOPERM);
+		hwclock_exit(EX_NOPERM);
 
 	if (getepoch || setepoch) {
 		manipulate_epoch(getepoch, setepoch, epoch_option, testing);
-		return 0;
+		hwclock_exit(0);
 	}
 
 	if (debug)
@@ -1497,12 +1522,14 @@ main(int argc, char **argv) {
 			fprintf(stderr,
 				_("Use the --debug option to see the details "
 				  "of our search for an access method.\n"));
-		exit(1);
+		hwclock_exit(1);
 	}
 
-	return manipulate_clock(show, adjust, noadjfile, set, set_time,
+	rc = manipulate_clock(show, adjust, noadjfile, set, set_time,
 				hctosys, systohc, startup_time, utc,
 				local_opt, testing);
+	hwclock_exit(rc);
+	return rc;	/* Not reached */
 }
 
 /* A single routine for greater uniformity */
@@ -1518,6 +1545,20 @@ outsyserr(char *msg, ...) {
 	fprintf(stderr, ", errno=%d: %s.\n",
 		errsv, strerror(errsv));
 }
+
+
+#ifdef HAVE_LIBAUDIT
+void
+hwaudit_exit(int status)
+{
+	if (hwaudit_on) {
+		audit_log_user_message(hwaudit_fd, AUDIT_USYS_CONFIG,
+			"changing system time", NULL, NULL, NULL, status ? 0 : 1);
+		close(hwaudit_fd);
+	}
+	exit(status);
+}
+#endif
 
 /****************************************************************************
 

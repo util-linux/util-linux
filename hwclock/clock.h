@@ -34,3 +34,10 @@ extern void set_cmos_access(int Jensen, int funky_toy);
 extern int get_epoch_rtc(unsigned long *epoch, int silent);
 extern int set_epoch_rtc(unsigned long epoch);
 extern char *rtc_dev_name;
+
+#ifdef HAVE_LIBAUDIT
+extern void hwaudit_exit(int status);
+# define hwclock_exit(_status)	hwaudit_exit(_status)
+#else
+# define hwclock_exit(_status)	exit(_status)
+#endif

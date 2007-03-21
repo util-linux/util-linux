@@ -131,7 +131,7 @@ open_rtc_or_exit(void) {
 
 	if (rtc_fd < 0) {
 		outsyserr(_("open() of %s failed"), rtc_dev_name);
-		exit(EX_OSFILE);
+		hwclock_exit(EX_OSFILE);
 	}
 	return rtc_fd;
 }
@@ -166,7 +166,7 @@ do_rtc_read_ioctl(int rtc_fd, struct tm *tm) {
 		perror(ioctlname);
 		fprintf(stderr, _("ioctl() to %s to read the time failed.\n"),
 			rtc_dev_name);
-		exit(EX_IOERR);
+		hwclock_exit(EX_IOERR);
 	}
 
 	tm->tm_isdst = -1;          /* don't know whether it's dst */
@@ -346,7 +346,7 @@ set_hardware_clock_rtc(const struct tm *new_broken_time) {
 		perror(ioctlname);
 		fprintf(stderr, _("ioctl() to %s to set the time failed.\n"),
 			rtc_dev_name);
-		exit(EX_IOERR);
+		hwclock_exit(EX_IOERR);
 	}
 
 	if (debug)

@@ -103,7 +103,7 @@ read_hardware_clock_kd(struct tm *tm) {
 
   if (ioctl(con_fd, KDGHWCLK, &t) == -1) {
     outsyserr(_("ioctl() failed to read time from %s"), con_fd_filename);
-    exit(EX_IOERR);
+    hwclock_exit(EX_IOERR);
   }
 
   tm->tm_sec  = t.sec;
@@ -139,7 +139,7 @@ set_hardware_clock_kd(const struct tm *new_broken_time) {
 
   if (ioctl(con_fd, KDSHWCLK, &t ) == -1) {
     outsyserr(_("ioctl KDSHWCLK failed"));
-    exit(1);
+    hwclock_exit(1);
   }
   return 0;
 }
