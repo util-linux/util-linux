@@ -78,8 +78,12 @@ main(int argc, char *argv[])
 	    exit(1);
 	}
     } else {
+	errno = 0;
 	if (!(gr_entry = getgrnam(argv[1]))) {
-	    perror(_("newgrp: No such group."));
+	    if (errno)
+		    perror(_("newgrp: No such group."));			/* error */
+	    else
+		    fprintf(stderr, "%s\n", _("newgrp: No such group."));	/* no group */
 	    exit(1);
 	} else {
 	    if(allow_setgid(pw_entry, gr_entry)) {
