@@ -26,12 +26,46 @@
 # define FALSE 0
 #endif
 
+/* try to read password from gshadow */
+static char *
+get_gshadow_pwd(char *groupname)
+{
+	char buf[BUFSIZ];
+	char *pwd = NULL;
+	FILE *f = fopen(_PATH_GSHADOW, "r");
+
+	if (groupname == NULL || *groupname == '\0' || f == NULL)
+		return NULL;
+
+	while(fgets(buf, sizeof buf, f))
+	{
+		char *cp = strchr (buf, ':');
+		if (!cp)
+			continue;				/* any junk in gshadow? */
+		*cp = '\0';
+		if (strcmp(buf, groupname) == 0)
+		{
+			if (cp-buf >= BUFSIZ)
+				break;				/* only group name on line */
+			pwd = cp+1;
+			if ((cp = strchr(pwd, ':')) && pwd == cp+1 )
+				pwd = NULL;			/* empty password */
+			else if (cp)
+				*cp = '\0';
+			break;
+		}
+	}
+	fclose(f);
+	return pwd ? strdup(pwd) : NULL;
+}
+
 static int
 allow_setgid(struct passwd *pe, struct group *ge) 
 {
     char **look;
     int notfound = 1;
-	
+    char *pwd, *xpwd;
+
     if (getuid() == 0) return TRUE;	/* root may do anything */
     if (ge->gr_gid == pe->pw_gid) return TRUE; /* You can switch back to your default group */
 
@@ -44,12 +78,14 @@ allow_setgid(struct passwd *pe, struct group *ge)
        contrary to login et al. we let an empty password mean the same
        as * in /etc/passwd */
 
-    if(ge->gr_passwd && ge->gr_passwd[0] != 0) {
-	if(strcmp(ge->gr_passwd, 
-		  crypt(getpass(_("Password: ")), ge->gr_passwd)) == 0) {
-	    return TRUE;		/* password accepted */
-	}
-    }
+    /* check /etc/gshadow */
+    if (!(pwd = get_gshadow_pwd(ge->gr_name)))
+        pwd = ge->gr_passwd;
+
+    if(pwd && *pwd && (xpwd = getpass(_("Password: ")))) {
+        if(strcmp(pwd, crypt(xpwd, pwd)) == 0)
+	   return TRUE;		/* password accepted */
+     }
 
     return FALSE;			/* default to denial */
 }

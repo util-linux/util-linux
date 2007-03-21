@@ -134,6 +134,9 @@ Libc5 and glibc 2.0-2.1 have /var/spool/mail, but glibc 2.1.1 has /var/mail.
 /* used in login-utils/setpwnam.h and login-utils/islocal.c */
 #define _PATH_PASSWD            "/etc/passwd"
 
+/* used in login-utils/newgrp */
+#define _PATH_GSHADOW		"/etc/gshadow"
+
 /* used in login-utils/setpwnam.h */
 #define _PATH_PTMP              "/etc/ptmp"
 #define _PATH_PTMPTMP           "/etc/ptmptmp"
