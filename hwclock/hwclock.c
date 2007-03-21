@@ -273,12 +273,12 @@ read_adjtime(struct adjtime *adjtime_p) {
       char line3[81];           /* String: third line of adjtime file */
       long timeval;
 
-      line1[0] = '\0';          /* In case fgets fails */
-      fgets(line1, sizeof(line1), adjfile);
-      line2[0] = '\0';          /* In case fgets fails */
-      fgets(line2, sizeof(line2), adjfile);
-      line3[0] = '\0';          /* In case fgets fails */
-      fgets(line3, sizeof(line3), adjfile);
+      if (!fgets(line1, sizeof(line1), adjfile))
+        line1[0] = '\0';          /* In case fgets fails */
+      if (!fgets(line2, sizeof(line2), adjfile))
+        line2[0] = '\0';          /* In case fgets fails */
+      if (!fgets(line3, sizeof(line3), adjfile))
+        line3[0] = '\0';          /* In case fgets fails */
 
       fclose(adjfile);
 
@@ -627,8 +627,8 @@ interpret_date_string(const char *date_opt, time_t * const time_p) {
 		return 10;
 	}
 
-	date_resp[0] = '\0';  /* in case fgets fails */
-	fgets(date_resp, sizeof(date_resp), date_child_fp);
+	if (!fgets(date_resp, sizeof(date_resp), date_child_fp))
+		date_resp[0] = '\0';  /* in case fgets fails */
 	if (debug)
 		printf(_("response from date command = %s\n"), date_resp);
 	if (strncmp(date_resp, magic, sizeof(magic)-1) != 0) {
@@ -1296,7 +1296,7 @@ main(int argc, char **argv) {
 	struct timeval startup_time;
 	/* The time we started up, in seconds into the epoch, including
 	   fractions. */
-	time_t set_time;  /* Time to which user said to set Hardware Clock */
+	time_t set_time = 0;  /* Time to which user said to set Hardware Clock */
 
 	bool permitted;  /* User is permitted to do the function */
 	int rc, c;
