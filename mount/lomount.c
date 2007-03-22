@@ -28,6 +28,8 @@ extern char *progname;
 extern char *xstrdup (const char *s);	/* not: #include "sundries.h" */
 extern void error (const char *fmt, ...);	/* idem */
 
+#define SIZE(a) (sizeof(a)/sizeof(a[0]))
+
 #ifdef LOOP_SET_FD
 
 static int
@@ -128,6 +130,41 @@ show_loop(char *device) {
 	close (fd);
 	return 1;
 }
+
+static int
+show_used_loop_devices (void) {
+	char dev[20];
+	char *loop_formats[] = { "/dev/loop%d", "/dev/loop/%d" };
+	int i, j, fd, permission = 0, somedev = 0;
+	struct stat statbuf;
+	struct loop_info loopinfo;
+
+	for (j = 0; j < SIZE(loop_formats); j++) {
+	    for(i = 0; i < 256; i++) {
+		sprintf(dev, loop_formats[j], i);
+		if (stat (dev, &statbuf) == 0 && S_ISBLK(statbuf.st_mode)) {
+			fd = open (dev, O_RDONLY);
+			if (fd >= 0) {
+				if(ioctl (fd, LOOP_GET_STATUS, &loopinfo) == 0)
+					show_loop(dev);
+				close (fd);
+				somedev++;
+			} else if (errno == EACCES)
+				permission++;
+			continue; /* continue trying as long as devices exist */
+		}
+		break;
+	    }
+	}
+
+	if (somedev==0 && permission) {
+		error(_("%s: no permission to look at /dev/loop#"), progname);
+		return 1;
+	}
+	return 0;
+}
+
+
 #endif
 
 int
@@ -138,8 +175,6 @@ is_loop_device (const char *device) {
 		S_ISBLK(statbuf.st_mode) &&
 		major(statbuf.st_rdev) == LOOPMAJOR);
 }
-
-#define SIZE(a) (sizeof(a)/sizeof(a[0]))
 
 char *
 find_unused_loop_device (void) {
@@ -403,12 +438,13 @@ char *progname;
 
 static void
 usage(void) {
-	fprintf(stderr, _("usage:\n\
-  %s loop_device                                       # give info\n\
-  %s -d loop_device                                    # delete\n\
-  %s -f                                                # find unused\n\
-  %s [-e encryption] [-o offset] {-f|loop_device} file # setup\n"),
-		progname, progname, progname, progname);
+	fprintf(stderr, _("usage:\n"
+  "  %1$s loop_device                                       # give info\n"
+  "  %1$s -d loop_device                                    # delete\n"
+  "  %1$s -f                                                # find unused\n"
+  "  %1$s -a                                                # list all used\n"
+  "  %1$s [-e encryption] [-o offset] {-f|loop_device} file # setup\n"),
+		progname);
 	exit(1);
 }
 
@@ -442,7 +478,7 @@ error (const char *fmt, ...) {
 int
 main(int argc, char **argv) {
 	char *p, *offset, *encryption, *passfd, *device, *file;
-	int delete, find, c;
+	int delete, find, c, all;
 	int res = 0;
 	int ro = 0;
 	int pfd = -1;
@@ -452,7 +488,7 @@ main(int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	delete = find = 0;
+	delete = find = all = 0;
 	off = 0;
 	offset = encryption = passfd = NULL;
 
@@ -460,8 +496,11 @@ main(int argc, char **argv) {
 	if ((p = strrchr(progname, '/')) != NULL)
 		progname = p+1;
 
-	while ((c = getopt(argc, argv, "de:E:fo:p:v")) != -1) {
+	while ((c = getopt(argc, argv, "ade:E:fo:p:v")) != -1) {
 		switch (c) {
+		case 'a':
+			all = 1;
+			break;
 		case 'd':
 			delete = 1;
 			break;
@@ -489,17 +528,22 @@ main(int argc, char **argv) {
 	if (argc == 1) {
 		usage();
 	} else if (delete) {
-		if (argc != optind+1 || encryption || offset || find)
+		if (argc != optind+1 || encryption || offset || find || all)
 			usage();
 	} else if (find) {
-		if (argc < optind || argc > optind+1)
+		if (all || argc < optind || argc > optind+1)
+			usage();
+	} else if (all) {
+		if (argc > 2)
 			usage();
 	} else {
 		if (argc < optind+1 || argc > optind+2)
 			usage();
 	}
 
-	if (find) {
+	if (all)
+		return show_used_loop_devices();
+	else if (find) {
 		device = find_unused_loop_device();
 		if (device == NULL)
 			return -1;
