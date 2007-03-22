@@ -18,7 +18,8 @@ EXTRA_DIST = 	expected/* \
 		ts-cramfs-mkfs \
 		ts-look-separator \
 		ts-login-checktty \
-		ts-hwclock-systohc
+		ts-hwclock-systohc \
+		ts-mount-special
 
 distclean-local:
 	rm -rf output diff

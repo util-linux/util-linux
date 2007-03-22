@@ -1,0 +1,37 @@
+#!/bin/bash
+
+#
+# test for /sbin/mount.<type> suuport
+#
+
+. commands.sh
+. functions.sh
+
+TS_COMPONENT="mount"
+TS_DESC="special program"
+
+MOUNTER="/sbin/mount.mytest"
+
+ts_init
+
+touch $TS_OUTPUT
+
+if [ $UID != 0 ]; then
+	ts_skip "not root permissions"
+fi
+
+cat > $MOUNTER << EOF
+#!/bin/bash 
+# This util-linux-ng regression test component
+# It's safe to remove me...
+#
+echo "\$0 called with \"\$*\""
+EOF
+chmod +x $MOUNTER
+
+$TS_CMD_MOUNT --debug=2 -t mytest  /foo /bar &> $TS_OUTPUT
+
+rm -f $MOUNTER
+
+ts_finalize
+
