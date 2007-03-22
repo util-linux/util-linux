@@ -1900,6 +1900,16 @@ mount failure
 .BR 64
 some mount succeeded
 
+.SH NOTES
+The syntax of external mount helpers is:
+
+.br
+.BI "/sbin/mount.<suffix> spec dir [\-sfnv] [\-o options]
+.br
+
+where the <suffix> is filesystem type and \-sfnvo options have same meaning like
+standard mount options.
+
 .SH FILES
 .TP 18n
 .I /etc/fstab

@@ -499,18 +499,22 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
 		 setuid(getuid());
 		 setgid(getgid());
 		 oo = fix_opts_string (flags, extra_opts, NULL);
-		 mountargs[i++] = mountprog;
-		 mountargs[i++] = spec;
-		 mountargs[i++] = node;
+		 mountargs[i++] = mountprog;				/* 1 */
+		 mountargs[i++] = spec;					/* 2 */
+		 mountargs[i++] = node;					/* 3 */
+		 if (sloppy && strncmp(type, "nfs", 3) == 0)
+		      mountargs[i++] = "-s";				/* 4 */
+		 if (fake)
+		      mountargs[i++] = "-f";				/* 5 */
 		 if (nomtab)
-		      mountargs[i++] = "-n";
+		      mountargs[i++] = "-n";				/* 6 */
 		 if (verbose)
-		      mountargs[i++] = "-v";
+		      mountargs[i++] = "-v";				/* 7 */
 		 if (oo && *oo) {
-		      mountargs[i++] = "-o";
-		      mountargs[i++] = oo;
+		      mountargs[i++] = "-o";				/* 8 */
+		      mountargs[i++] = oo;				/* 9 */
 		 }
-		 mountargs[i] = NULL;
+		 mountargs[i] = NULL;					/* 10 */
 
 		 i = 0;
 		 while(mount_debug && mountargs[i]) {
