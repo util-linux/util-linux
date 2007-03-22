@@ -473,6 +473,69 @@ do_mount_syscall (struct mountargs *args) {
 }
 
 /*
+ * check_special_mountprog()
+ *	If there is a special mount program for this type, exec it.
+ * returns: 0: no exec was done, 1: exec was done, status has result
+ */
+
+static int
+check_special_mountprog(const char *spec, const char *node, const char *type, int flags,
+			char *extra_opts, int *status) {
+  char mountprog[120];
+  struct stat statbuf;
+  int res;
+
+  if (!external_allowed)
+      return 0;
+
+  if (type && strlen(type) < 100) {
+       sprintf(mountprog, "/sbin/mount.%s", type);
+       if (stat(mountprog, &statbuf) == 0) {
+	    res = fork();
+	    if (res == 0) {
+		 char *oo, *mountargs[10];
+		 int i = 0;
+
+		 setuid(getuid());
+		 setgid(getgid());
+		 oo = fix_opts_string (flags, extra_opts, NULL);
+		 mountargs[i++] = mountprog;
+		 mountargs[i++] = spec;
+		 mountargs[i++] = node;
+		 if (nomtab)
+		      mountargs[i++] = "-n";
+		 if (verbose)
+		      mountargs[i++] = "-v";
+		 if (oo && *oo) {
+		      mountargs[i++] = "-o";
+		      mountargs[i++] = oo;
+		 }
+		 mountargs[i] = NULL;
+
+		 i = 0;
+		 while(mount_debug && mountargs[i]) {
+			mnt_debug(1, "external mount: argv[%d] = \"%s\"",
+				i, mountargs[i]);
+			i++;
+		 }
+
+		 execv(mountprog, mountargs);
+		 exit(1);	/* exec failed */
+	    } else if (res != -1) {
+		 int st;
+		 wait(&st);
+		 *status = (WIFEXITED(st) ? WEXITSTATUS(st) : EX_SYSERR);
+		 return 1;
+	    } else {
+		 int errsv = errno;
+		 error(_("mount: cannot fork: %s"), strerror(errsv));
+	    }
+       }
+  }
+  return 0;
+}
+
+/*
  * guess_fstype_and_mount()
  *	Mount a single file system. Guess the type when unknown.
  * returns: 0: OK, -1: error in errno, 1: other error
@@ -481,9 +544,9 @@ do_mount_syscall (struct mountargs *args) {
  */
 static int
 guess_fstype_and_mount(const char *spec, const char *node, const char **types,
-		       int flags, char *mount_opts) {
+		       int flags, char *mount_opts, int *special, int *status) {
    struct mountargs args = { spec, node, NULL, flags & ~MS_NOSYS, mount_opts };
-   
+
    if (*types && strcasecmp (*types, "auto") == 0)
       *types = NULL;
 
@@ -492,10 +555,16 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
 
    if (!*types && !(flags & MS_REMOUNT)) {
       *types = guess_fstype(spec);
-      if (*types && !strcmp(*types, "swap")) {
-	  error(_("%s looks like swapspace - not mounted"), spec);
-	  *types = NULL;
-	  return 1;
+      if (*types) {
+	  if (!strcmp(*types, "swap")) {
+	      error(_("%s looks like swapspace - not mounted"), spec);
+	      *types = NULL;
+	      return 1;
+	  } else if (check_special_mountprog(spec, node, *types, flags,
+					     mount_opts, status)) {
+	      *special = 1;
+	      return 0;
+          }
       }
    }
 
@@ -726,66 +795,6 @@ cdrom_setspeed(const char *spec) {
 }
 
 /*
- * check_special_mountprog()
- *	If there is a special mount program for this type, exec it.
- * returns: 0: no exec was done, 1: exec was done, status has result
- */
-
-static int
-check_special_mountprog(const char *spec, const char *node, const char *type,
-			int flags, char *extra_opts, int *status) {
-  char mountprog[120];
-  struct stat statbuf;
-  int res;
-
-  if (!external_allowed)
-      return 0;
-
-  if (type && strlen(type) < 100) {
-       sprintf(mountprog, "/sbin/mount.%s", type);
-       if (stat(mountprog, &statbuf) == 0) {
-	    res = fork();
-	    if (res == 0) {
-		 const char *oo, *mountargs[10];
-		 int i = 0, x;
-
-		 setuid(getuid());
-		 setgid(getgid());
-		 oo = fix_opts_string (flags, extra_opts, NULL);
-		 mountargs[i++] = mountprog;
-		 mountargs[i++] = spec;
-		 mountargs[i++] = node;
-		 if (nomtab)
-		      mountargs[i++] = "-n";
-		 if (verbose)
-		      mountargs[i++] = "-v";
-		 if (oo && *oo) {
-		      mountargs[i++] = "-o";
-		      mountargs[i++] = oo;
-		 }
-		 mountargs[i] = NULL;
-
-		 for(x = 0; x < 10 && mountargs[x]; x++)
-			 mnt_debug(1, "external mount: argv[%d] = \"%s\"",
-				 		x, mountargs[x]);
-
-		 execv(mountprog, (char **) mountargs);
-		 exit(1);	/* exec failed */
-	    } else if (res != -1) {
-		 int st;
-		 wait(&st);
-		 *status = (WIFEXITED(st) ? WEXITSTATUS(st) : EX_SYSERR);
-		 return 1;
-	    } else {
-	    	 int errsv = errno;
-		 error(_("mount: cannot fork: %s"), strerror(errsv));
-	    }
-       }
-  }
-  return 0;
-}
-
-/*
  * try_mount_one()
  *	Try to mount one file system. When "bg" is 1, this is a retry
  *	in the background. One additional exit code EX_BG is used here.
@@ -797,7 +806,7 @@ check_special_mountprog(const char *spec, const char *node, const char *type,
 static int
 try_mount_one (const char *spec0, const char *node0, const char *types0,
 	       const char *opts0, int freq, int pass, int bg, int ro) {
-  int res = 0, status;
+  int res = 0, status = 0, special = 0;
   int mnt5_res = 0;		/* only for gcc */
   int mnt_err;
   int flags;
@@ -873,9 +882,15 @@ retry_nfs:
 
   block_signals (SIG_BLOCK);
 
-  if (!fake)
+  if (!fake) {
     mnt5_res = guess_fstype_and_mount (spec, node, &types, flags & ~MS_NOSYS,
-				       mount_opts);
+				       mount_opts, &special, &status);
+
+    if (special) {
+      block_signals (SIG_UNBLOCK);
+      return status;
+    }
+  }
 
   if (fake || mnt5_res == 0) {
       /* Mount succeeded, report this (if verbose) and write mtab entry.  */
