@@ -35,6 +35,7 @@ Setup loop device:
 .IR offset ]
 .RB [ \-p
 .IR pfd ]
+.RB [ \-r ]
 .in +8
 .RB { \-f | \fIloop_device\fP }
 .I file
@@ -87,6 +88,8 @@ device.
 Read the passphrase from file descriptor with number
 .I num
 instead of from the terminal.
+.IP \fB\-r\fP
+Setup read-only loop device.
 .SH RETURN VALUE
 .B losetup
 returns 0 on success, nonzero on failure. When

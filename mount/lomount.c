@@ -443,7 +443,8 @@ usage(void) {
   "  %1$s -d loop_device                                    # delete\n"
   "  %1$s -f                                                # find unused\n"
   "  %1$s -a                                                # list all used\n"
-  "  %1$s [-e encryption] [-o offset] {-f|loop_device} file # setup\n"),
+  "  %1$s -r                                                # read-only loop\n"
+  "  %1$s [-e encryption] [-o offset] [-r] {-f|loop_device} file # setup\n"),
 		progname);
 	exit(1);
 }
@@ -496,10 +497,13 @@ main(int argc, char **argv) {
 	if ((p = strrchr(progname, '/')) != NULL)
 		progname = p+1;
 
-	while ((c = getopt(argc, argv, "ade:E:fo:p:v")) != -1) {
+	while ((c = getopt(argc, argv, "ade:E:fo:p:vr")) != -1) {
 		switch (c) {
 		case 'a':
 			all = 1;
+			break;
+		case 'r':
+			ro = 1;
 			break;
 		case 'd':
 			delete = 1;
