@@ -24,4 +24,6 @@ EXTRA_DIST = 	expected/* \
 distclean-local:
 	rm -rf output diff
 
+clean: distclean-local
+
 
