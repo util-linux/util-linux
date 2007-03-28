@@ -662,3 +662,120 @@ update_mtab (const char *dir, struct my_mntent *instead) {
  leave:
 	unlock_mtab();
 }
+
+
+#ifdef MAIN_TEST_MTABLOCK
+
+/*
+ * This is mtab locking code test for:
+ *
+ *	- performance (how many concurrent processes)
+ *
+ *	- lock reliability (is possible to see corrupted data  if more
+ *	                    concurrent processes modify a same file)
+ *
+ *  The test is very simple -- it reads a number from locked file, increments the
+ *  number and writes the number back to the file.
+ */
+
+/* dummy */
+int verbose;
+int mount_quiet;
+char *progname;
+
+const char *mount_get_volume_label_by_spec(const char *spec) { return NULL; }
+const char *mount_get_devname_by_uuid(const char *uuid) { return NULL; }
+struct my_mntent *my_getmntent (mntFILE *mfp) { return NULL; }
+mntFILE *my_setmntent (const char *file, char *mode) { return NULL; }
+void my_endmntent (mntFILE *mfp) { }
+int my_addmntent (mntFILE *mfp, struct my_mntent *mnt) { return 0; }
+char *myrealpath(const char *path, char *resolved_path, int m) { return NULL; }
+
+int
+main(int argc, char **argv)
+{
+	time_t synctime;
+	char *filename;
+	int nloops, id, i;
+	pid_t pid = getpid();
+	unsigned int usecs;
+	struct timeval tv;
+	struct stat st;
+	long last = 0;
+
+	progname = argv[0];
+
+	if (argc < 3)
+		die(EXIT_FAILURE,
+			"usage: %s <id> <synctime> <file> <nloops>\n",
+			progname);
+
+	id = atoi(argv[1]);
+	synctime = (time_t) atol(argv[2]);
+	filename = argv[3];
+	nloops = atoi(argv[4]);
+
+	if (stat(filename, &st) < -1)
+		die(EXIT_FAILURE, "%s: %s\n", filename, strerror(errno));
+
+	fprintf(stderr, "%05d (pid=%05d): START\n", id, pid);
+
+	gettimeofday(&tv, NULL);
+	if (synctime && synctime - tv.tv_sec > 1) {
+		usecs = ((synctime - tv.tv_sec) * 1000000UL) -
+					(1000000UL - tv.tv_usec);
+		usleep(usecs);
+	}
+
+	for (i = 0; i < nloops; i++) {
+		FILE *f;
+		long num;
+		char buf[256];
+
+		lock_mtab();
+
+		if (!(f = fopen(filename, "r"))) {
+			unlock_mtab();
+			die(EXIT_FAILURE, "ERROR: %d (pid=%d, loop=%d): "
+					"open for read failed\n", id, pid, i);
+		}
+		if (!fgets(buf, sizeof(buf), f)) {
+			unlock_mtab();
+			die(EXIT_FAILURE, "ERROR: %d (pid=%d, loop=%d): "
+					"read failed\n", id, pid, i);
+		}
+		fclose(f);
+
+		num = atol(buf) + 1;
+
+		if (!(f = fopen(filename, "w"))) {
+			unlock_mtab();
+			die(EXIT_FAILURE, "ERROR: %d (pid=%d, loop=%d): "
+					"open for write failed\n", id, pid, i);
+		}
+		fprintf(f, "%ld", num);
+		fclose(f);
+
+		unlock_mtab();
+
+		gettimeofday(&tv, NULL);
+
+		fprintf(stderr, "%010ld.%06ld %04d (pid=%05d, loop=%05d): "
+				"num=%09ld last=%09ld\n",
+				tv.tv_sec, tv.tv_usec, id,
+				pid, i, num, last);
+		last = num;
+
+		/* The mount command usually finish after mtab update. We
+		 * simulate this via short sleep -- it's also enough to make
+		 * concurrent processes happy.
+		 */
+		usleep(50000);
+	}
+
+	fprintf(stderr, "%05d (pid=%05d): DONE\n", id, pid);
+
+	exit(EXIT_SUCCESS);
+}
+#endif
+

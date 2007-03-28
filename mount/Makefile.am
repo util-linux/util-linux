@@ -48,6 +48,9 @@ sbin_PROGRAMS += pivot_root
 man_MANS += pivot_root.8
 endif
 
+noinst_PROGRAMS = mtab_lock_test
+mtab_lock_test_SOURCES = fstab.c sundries.c xmalloc.c $(MNTHDRS)
+mtab_lock_test_CFLAGS = -DMAIN_TEST_MTABLOCK
 
 swapon.c: swapargs.h
 
