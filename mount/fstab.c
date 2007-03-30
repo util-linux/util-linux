@@ -9,6 +9,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <sys/time.h>
+#include <time.h>
 #include "mount_mntent.h"
 #include "fstab.h"
 #include "sundries.h"
@@ -392,6 +394,7 @@ getfsvolspec (const char *label) {
 
 /* Flag for already existing lock file. */
 static int we_created_lockfile = 0;
+static int lockfile_fd = -1;
 
 /* Flag to indicate that signals have been set up. */
 static int signals_have_been_setup = 0;
@@ -413,6 +416,8 @@ setlkw_timeout (int sig) {
 void
 unlock_mtab (void) {
 	if (we_created_lockfile) {
+		close(lockfile_fd);
+		lockfile_fd = -1;
 		unlink (MOUNTED_LOCK);
 		we_created_lockfile = 0;
 	}
@@ -438,9 +443,32 @@ unlock_mtab (void) {
 #define MOUNTLOCK_LINKTARGET		MOUNTED_LOCK "%d"
 #define MOUNTLOCK_LINKTARGET_LTH	(sizeof(MOUNTED_LOCK)+20)
 
+/*
+ * The original mount locking code has used sleep(1) between attempts and
+ * maximal number of attemps has been 5.
+ *
+ * There was very small number of attempts and extremely long waiting (1s)
+ * that is useless on machines with large number of concurret mount processes.
+ *
+ * Now we wait few thousand microseconds between attempts and we have global
+ * time limit (30s) rather than limit for number of attempts. The advantage
+ * is that this method also counts time which we spend in fcntl(F_SETLKW) and
+ * number of attempts is not so much restricted.
+ *
+ * -- kzak@redhat.com [2007-Mar-2007]
+ */
+
+/* maximum seconds between first and last attempt */
+#define MOUNTLOCK_MAXTIME		30
+
+/* sleep time (in microseconds, max=999999) between attempts */
+#define MOUNTLOCK_WAITTIME		5000
+
 void
 lock_mtab (void) {
-	int tries = 3;
+	int i;
+	struct timespec waittime;
+	struct timeval maxtime;
 	char linktargetfile[MOUNTLOCK_LINKTARGET_LTH];
 
 	at_die = unlock_mtab;
@@ -452,7 +480,7 @@ lock_mtab (void) {
 		sa.sa_handler = handler;
 		sa.sa_flags = 0;
 		sigfillset (&sa.sa_mask);
-  
+
 		while (sigismember (&sa.sa_mask, ++sig) != -1
 		       && sig != SIGCHLD) {
 			if (sig == SIGALRM)
@@ -466,45 +494,55 @@ lock_mtab (void) {
 
 	sprintf(linktargetfile, MOUNTLOCK_LINKTARGET, getpid ());
 
+	i = open (linktargetfile, O_WRONLY|O_CREAT, 0);
+	if (i < 0) {
+		int errsv = errno;
+		/* linktargetfile does not exist (as a file)
+		   and we cannot create it. Read-only filesystem?
+		   Too many files open in the system?
+		   Filesystem full? */
+		die (EX_FILEIO, _("can't create lock file %s: %s "
+						  "(use -n flag to override)"),
+			 linktargetfile, strerror (errsv));
+	}
+	close(i);
+
+	gettimeofday(&maxtime, NULL);
+	maxtime.tv_sec += MOUNTLOCK_MAXTIME;
+
+	waittime.tv_sec = 0;
+	waittime.tv_nsec = (1000 * MOUNTLOCK_WAITTIME);
+
 	/* Repeat until it was us who made the link */
 	while (!we_created_lockfile) {
+		struct timeval now;
 		struct flock flock;
-		int errsv, fd, i, j;
-
-		i = open (linktargetfile, O_WRONLY|O_CREAT, 0);
-		if (i < 0) {
-			int errsv = errno;
-			/* linktargetfile does not exist (as a file)
-			   and we cannot create it. Read-only filesystem?
-			   Too many files open in the system?
-			   Filesystem full? */
-			die (EX_FILEIO, _("can't create lock file %s: %s "
-			     "(use -n flag to override)"),
-			     linktargetfile, strerror (errsv));
-		}
-		close(i);
+		int errsv, j;
 
 		j = link(linktargetfile, MOUNTED_LOCK);
 		errsv = errno;
-
-		(void) unlink(linktargetfile);
 
 		if (j == 0)
 			we_created_lockfile = 1;
 
 		if (j < 0 && errsv != EEXIST) {
+			(void) unlink(linktargetfile);
 			die (EX_FILEIO, _("can't link lock file %s: %s "
 			     "(use -n flag to override)"),
 			     MOUNTED_LOCK, strerror (errsv));
 		}
 
-		fd = open (MOUNTED_LOCK, O_WRONLY);
+		lockfile_fd = open (MOUNTED_LOCK, O_WRONLY);
 
-		if (fd < 0) {
-			int errsv = errno;
+		if (lockfile_fd < 0) {
 			/* Strange... Maybe the file was just deleted? */
-			if (errno == ENOENT && tries-- > 0)
+			int errsv = errno;
+			gettimeofday(&now, NULL);
+			if (errno == ENOENT && now.tv_sec < maxtime.tv_sec) {
+				we_created_lockfile = 0;
 				continue;
+			}
+			(void) unlink(linktargetfile);
 			die (EX_FILEIO, _("can't open lock file %s: %s "
 			     "(use -n flag to override)"),
 			     MOUNTED_LOCK, strerror (errsv));
@@ -517,38 +555,38 @@ lock_mtab (void) {
 
 		if (j == 0) {
 			/* We made the link. Now claim the lock. */
-			if (fcntl (fd, F_SETLK, &flock) == -1) {
+			if (fcntl (lockfile_fd, F_SETLK, &flock) == -1) {
 				if (verbose) {
 				    int errsv = errno;
 				    printf(_("Can't lock lock file %s: %s\n"),
 					   MOUNTED_LOCK, strerror (errsv));
 				}
-				/* proceed anyway */
+				/* proceed, since it was us who created the lockfile anyway */
 			}
+			(void) unlink(linktargetfile);
 		} else {
-			static int tries = 0;
-
 			/* Someone else made the link. Wait. */
-			alarm(LOCK_TIMEOUT);
-			if (fcntl (fd, F_SETLKW, &flock) == -1) {
-				int errsv = errno;
-				die (EX_FILEIO, _("can't lock lock file %s: %s"),
-				     MOUNTED_LOCK, (errno == EINTR) ?
-				     _("timed out") : strerror (errsv));
-			}
-			alarm(0);
-			/* Limit the number of iterations - maybe there
-			   still is some old /etc/mtab~ */
-			if (tries++ > 3) {
-				if (tries > 5)
-					die (EX_FILEIO, _("Cannot create link %s\n"
-					    "Perhaps there is a stale lock file?\n"),
-					     MOUNTED_LOCK);
-				sleep(1);
-			}
-		}
+			gettimeofday(&now, NULL);
+			if (now.tv_sec < maxtime.tv_sec) {
+				alarm(maxtime.tv_sec - now.tv_sec);
+				if (fcntl (lockfile_fd, F_SETLKW, &flock) == -1) {
+					int errsv = errno;
+					(void) unlink(linktargetfile);
+					die (EX_FILEIO, _("can't lock lock file %s: %s"),
+					     MOUNTED_LOCK, (errno == EINTR) ?
+					     _("timed out") : strerror (errsv));
+				}
+				alarm(0);
 
-		close(fd);
+				nanosleep(&waittime, NULL);
+			} else {
+				(void) unlink(linktargetfile);
+				die (EX_FILEIO, _("Cannot create link %s\n"
+						  "Perhaps there is a stale lock file?\n"),
+					 MOUNTED_LOCK);
+			}
+			close(lockfile_fd);
+		}
 	}
 }
 

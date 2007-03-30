@@ -16,8 +16,8 @@ TS_DESC="mtablock"
 # 2GHz machine)). It has terrible performance due a bad timeouts implemntation
 # in lock_mtab().
 #
-NLOOPS=10
-NPROCESSES=5
+NLOOPS=1000
+NPROCESSES=50
 
 ts_init
 
