@@ -131,6 +131,41 @@ to another place. The call is
 .B "mount --move olddir newdir"
 .RE
 
+Since Linux 2.6.15 it is possible to mark a mount and its submounts as shared,
+private, slave or unbindable. A shared mount provides ability to create mirrors
+of that mount such that mounts and umounts within any of the mirrors propagate
+to the other mirror. A slave mount receives propagation from its master, but
+any not vice-versa.  A private mount carries no propagation abilities.  A
+unbindable mount is a private mount which cannot cloned through a bind
+operation. Detailed semantics is documented in Documentation/sharedsubtree.txt
+file in the kernel source tree.
+.RS
+.br
+.B "mount --make-shared mountpoint"
+.br
+.B "mount --make-slave mountpoint"
+.br
+.B "mount --make-private mountpoint"
+.br
+.B "mount --make-unbindable mountpoint"
+.br
+.RE
+
+The following commands allows one to recursively change the type of all the
+mounts under a given mountpoint.
+.RS
+.br
+.B "mount --make-rshared mountpoint"
+.br
+.B "mount --make-rslave mountpoint"
+.br
+.B "mount --make-rprivate mountpoint"
+.br
+.B
+"mount --make-runbindable mountpoint"
+.br
+.RE
+
 The
 .I proc
 file system is not associated with a special device, and when

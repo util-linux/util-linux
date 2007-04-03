@@ -84,7 +84,9 @@ static int optfork = 0;
 /* Add volumelabel in a listing of mounted devices (-l). */
 static int list_with_volumelabel = 0;
 
-/* Nonzero for mount {--bind|--replace|--before|--after|--over|--move} */
+/* Nonzero for mount {--bind|--replace|--before|--after|--over|--move|
+ * 		       make-shared|make-private|make-unbindable|make-slave}
+ */
 static int mounttype = 0;
 
 /* True if ruid != euid.  */
@@ -108,7 +110,7 @@ struct opt_map {
 #define MS_USER		0x20000000
 #define MS_OWNER	0x10000000
 #define MS_GROUP	0x08000000
-#define MS_COMMENT	0x00020000
+#define MS_COMMENT	0x02000000
 #define MS_LOOP		0x00010000
 
 /* Options that we keep the mount system call from seeing.  */
@@ -116,6 +118,8 @@ struct opt_map {
 
 /* Options that we keep from appearing in the options field in the mtab.  */
 #define MS_NOMTAB	(MS_REMOUNT|MS_NOAUTO|MS_USERS|MS_USER)
+
+#define MS_PROPAGATION  (MS_SHARED|MS_SLAVE|MS_UNBINDABLE|MS_PRIVATE)
 
 /* Options that we make ordinary users have by default.  */
 #define MS_SECURE	(MS_NOEXEC|MS_NOSUID|MS_NODEV)
@@ -349,6 +353,9 @@ parse_opts (const char *options, int *flags, char **extra_opts) {
 		*flags |= MS_RDONLY;
 	if (readwrite)
 		*flags &= ~MS_RDONLY;
+
+	if (mounttype & MS_PROPAGATION)
+		*flags &= ~MS_BIND;
 	*flags |= mounttype;
 }
 
@@ -901,13 +908,15 @@ retry_nfs:
       if (loop)
 	  opt_loopdev = loopdev;
 
-      update_mtab_entry(loop ? loopfile : spec,
+      if (!(mounttype & MS_PROPAGATION)) {
+	      update_mtab_entry(loop ? loopfile : spec,
 			node,
 			types ? types : "unknown",
 			fix_opts_string (flags & ~MS_NOMTAB, extra_opts, user),
 			flags,
 			freq,
 			pass);
+      }
 
       block_signals (SIG_UNBLOCK);
       res = 0;
@@ -1447,6 +1456,14 @@ static struct option longopts[] = {
 	{ "move", 0, 0, 133 },
 	{ "guess-fstype", 1, 0, 134 },
 	{ "rbind", 0, 0, 135 },
+	{ "make-shared", 0, 0, 136 },
+	{ "make-slave", 0, 0, 137 },
+	{ "make-private", 0, 0, 138 },
+	{ "make-unbindable", 0, 0, 139 },
+	{ "make-rshared", 0, 0, 140 },
+	{ "make-rslave", 0, 0, 141 },
+	{ "make-rprivate", 0, 0, 142 },
+	{ "make-runbindable", 0, 0, 143 },
 	{ "internal-only", 0, 0, 'i' },
 	{ NULL, 0, 0, 0 }
 };
@@ -1473,6 +1490,17 @@ usage (FILE *fp, int n) {
 	  "       mount --bind olddir newdir\n"
 	  "or move a subtree:\n"
 	  "       mount --move olddir newdir\n"
+	  "One can change the type of mount containing the directory dir:\n"
+	  "       mount --make-shared dir\n"
+	  "       mount --make-slave dir\n"
+	  "       mount --make-private dir\n"
+	  "       mount --make-unbindable dir\n"
+	  "One can change the type of all the mounts in a mount subtree\n"
+	  "containing the directory dir:\n"
+	  "       mount --make-rshared dir\n"
+	  "       mount --make-rslave dir\n"
+	  "       mount --make-rprivate dir\n"
+	  "       mount --make-runbindable dir\n"
 	  "A device can be given by name, say /dev/hda1 or /dev/cdrom,\n"
 	  "or by label, using  -L label  or by uuid, using  -U uuid .\n"
 	  "Other options: [-nfFrsvw] [-o options] [-p passwdfd].\n"
@@ -1627,6 +1655,39 @@ main(int argc, char *argv[]) {
 		case 135:
 			mounttype = (MS_BIND | MS_REC);
 			break;
+
+		case 136:
+			mounttype = MS_SHARED;
+			break;
+
+		case 137:
+			mounttype = MS_SLAVE;
+			break;
+
+		case 138:
+			mounttype = MS_PRIVATE;
+			break;
+
+		case 139:
+			mounttype = MS_UNBINDABLE;
+			break;
+
+		case 140:
+			mounttype = (MS_SHARED | MS_REC);
+			break;
+
+		case 141:
+			mounttype = (MS_SLAVE | MS_REC);
+			break;
+
+		case 142:
+			mounttype = (MS_PRIVATE | MS_REC);
+			break;
+
+		case 143:
+			mounttype = (MS_UNBINDABLE | MS_REC);
+			break;
+
 		case '?':
 		default:
 			usage (stderr, EX_USAGE);

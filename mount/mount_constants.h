@@ -57,6 +57,18 @@ if we have a stack or plain mount - mount atop of it, forming a stack. */
 #ifndef MS_VERBOSE
 #define MS_VERBOSE	0x8000	/* 32768 */
 #endif
+#ifndef MS_UNBINDABLE
+#define MS_UNBINDABLE	(1<<17)	/* 131072 unbindable*/
+#endif
+#ifndef MS_PRIVATE
+#define MS_PRIVATE	(1<<18)	/* 262144 Private*/
+#endif
+#ifndef MS_SLAVE
+#define MS_SLAVE	(1<<19)	/* 524288 Slave*/
+#endif
+#ifndef MS_SHARED
+#define MS_SHARED	(1<<20)	/* 1048576 Shared*/
+#endif
 /*
  * Magic mount flag number. Had to be or-ed to the flag values.
  */
