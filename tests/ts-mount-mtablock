@@ -6,6 +6,12 @@
 TS_COMPONENT="mount"
 TS_DESC="mtablock"
 
+ts_init
+
+if [ $UID != 0 ]; then
+        ts_skip "not root permissions"
+fi
+
 #
 # Be careful with number of processes. Don't forget that there is time limit
 # when the mount waits on the mtab lock. If you define too much processes some
@@ -19,7 +25,6 @@ TS_DESC="mtablock"
 NLOOPS=1000
 NPROCESSES=50
 
-ts_init
 
 > $TS_OUTPUT.debug
 echo 0 > $TS_OUTPUT
