@@ -24,7 +24,7 @@ scriptreplay: scriptreplay.pl
 CLEANFILES = chkdupexe scriptreplay
 
 man_MANS = cal.1 chkdupexe.1 ddate.1 logger.1 look.1 mcookie.1 \
-	namei.1 script.1 whereis.1
+	namei.1 script.1 whereis.1 scriptreplay.1
 
 if HAVE_NCURSES
 cal_LDADD = -lncurses
