@@ -1,0 +1,14 @@
+The following is a list of commands or features that are going to be
+removed in the util-linux-ng source tree.
+
+
+What:	raw command
+When:	depends on kernel upstream
+Why:	O_DIRECT can be used instead
+
+---------------------------
+
+What:	cryptoloop support in mount/losetup
+When:	undefined yet
+Why:	depreciated in favor of dm-crypt.
+
