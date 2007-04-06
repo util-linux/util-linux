@@ -20,6 +20,8 @@
 
 - rewrite the replay script to C to avoid dependence on perl
 
+- add an option to the cal command to control highlight date
+  (cal -v YYYY/MM/DD)
 
 2.14:
 ====
