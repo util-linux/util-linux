@@ -18,6 +18,8 @@
 
 - convet po/ files to UTF-8
 
+- rewrite the replay script to C to avoid dependence on perl
+
 
 2.14:
 ====
