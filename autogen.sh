@@ -60,6 +60,7 @@ test -f mount/mount.c || {
 	exit 1
 }
 
+set -e
 autopoint --force
 libtoolize --copy --force
 aclocal -I m4
