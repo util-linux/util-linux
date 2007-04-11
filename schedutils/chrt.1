@@ -42,12 +42,14 @@ runs COMMAND with the given attributes.  Both policy (one of
 or
 .BR SCHED_BATCH )
 and priority can be set and retrieved.
+.PP
+The
+.BR SCHED_BATCH
+policy is supported since Linux 2.6.16.
 .SH OPTIONS
 .TP
 .B -p, --pid
 operate on an existing PID and do not launch a new task
-.TP
-
 .TP
 .B -b, --batch
 set scheduling policy to

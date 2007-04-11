@@ -30,6 +30,13 @@
 #include <getopt.h>
 #include <errno.h>
 
+/* the SCHED_BATCH is supported since Linux 2.6.16
+ *  -- temporary workaround for people with old glibc headers
+ */
+#ifndef SCHED_BATCH
+# define SCHED_BATCH 3
+#endif
+
 static void show_usage(const char *cmd)
 {
 	fprintf(stderr, "chrt (%s)\n", PACKAGE_STRING);

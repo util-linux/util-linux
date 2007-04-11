@@ -30,3 +30,6 @@
 
 - rewrite ipcs to use /proc/sys/kernel rather than unreliable syscalls
   (there are problems with 32bit userspace on 64bit kernel)
+
+- remove support for old system headers (like missing ioctls, ..)
+	 * check for SCHED_BATCH in the configure script
