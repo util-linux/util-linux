@@ -752,7 +752,7 @@ update_mtab_entry(const char *spec, const char *node, const char *type,
 	mnt.mnt_opts = opts;
 	mnt.mnt_freq = freq;
 	mnt.mnt_passno = pass;
-      
+
 	/* We get chatty now rather than after the update to mtab since the
 	   mount succeeded, even if the write to /etc/mtab should fail.  */
 	if (verbose)
@@ -761,6 +761,8 @@ update_mtab_entry(const char *spec, const char *node, const char *type,
 	if (!nomtab && mtab_is_writable()) {
 		if (flags & MS_REMOUNT)
 			update_mtab (mnt.mnt_dir, &mnt);
+		else if (flags & MS_MOVE)
+			update_mtab(mnt.mnt_fsname, &mnt);
 		else {
 			mntFILE *mfp;
 

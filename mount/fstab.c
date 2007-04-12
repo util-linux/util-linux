@@ -638,9 +638,13 @@ update_mtab (const char *dir, struct my_mntent *instead) {
 				mc->nxt->prev = mc->prev;
 				free(mc);
 			}
-		} else {
+		} else if (!strcmp(mc->m.mnt_dir, instead->mnt_dir)) {
 			/* A remount */
 			mc->m.mnt_opts = instead->mnt_opts;
+		} else {
+			/* A move */
+			my_free(mc->m.mnt_dir);
+			mc->m.mnt_dir = xstrdup(instead->mnt_dir);
 		}
 	} else if (instead) {
 		/* not found, add a new entry */
