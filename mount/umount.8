@@ -122,6 +122,19 @@ or when the \-d option was given.
 Any pending loop devices can be freed using `losetup -d', see
 .BR losetup (8).
 
+.SH NOTES
+The syntax of external umount helpers is:
+
+.br
+.BI "/sbin/umount.<suffix> [\-nlfvr] " "dir " | " device "
+.br
+
+where the <suffix> is filesystem type or a value from "uhelper=" mtab option.
+
+The uhelper (unprivileged umount helper) is possible to used when non-root user
+wants to umount a mountpoint which is not defined in the /etc/fstab file (e.g
+devices mounted by HAL).
+
 .SH FILES
 .I /etc/mtab
 table of mounted file systems

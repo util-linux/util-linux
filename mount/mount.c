@@ -188,7 +188,7 @@ static const struct opt_map opt_map[] = {
 };
 
 static const char *opt_loopdev, *opt_vfstype, *opt_offset, *opt_encryption,
-	*opt_speed, *opt_comment;
+	*opt_speed, *opt_comment, *opt_uhelper;
 
 static struct string_opt_map {
   char *tag;
@@ -201,6 +201,7 @@ static struct string_opt_map {
   { "encryption=", 0, &opt_encryption },
   { "speed=", 0, &opt_speed },
   { "comment=", 1, &opt_comment },
+  { "uhelper=", 0, &opt_uhelper },
   { NULL, 0, NULL }
 };
 
