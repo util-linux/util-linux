@@ -7922,7 +7922,7 @@ msgstr "mount: erreur lors du changement de mode de %s: %s"
 #: mount/mount.c:496
 #, c-format
 msgid "%s looks like swapspace - not mounted"
-msgstr "%s ressemble à un esapce de swap - n'a pas été monté"
+msgstr "%s ressemble à un espace de swap - n'a pas été monté"
 
 #: mount/mount.c:583
 msgid "mount failed"
