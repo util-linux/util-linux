@@ -29,7 +29,7 @@
 #include "nfsmount.h"
 #include <arpa/inet.h>
 
-#if defined(MNT_FORCE) && !defined(__sparc__) && !defined(__arm__)
+#if defined(MNT_FORCE)
 /* Interesting ... it seems libc knows about MNT_FORCE and presumably
    about umount2 as well -- need not do anything */
 #else /* MNT_FORCE */
