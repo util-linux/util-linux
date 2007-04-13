@@ -1749,7 +1749,7 @@ main(int argc, char *argv[]) {
 	case 0:
 		/* mount -a */
 		result = do_mount_all (types, options, test_opts);
-		if (result == 0 && verbose)
+		if (result == 0 && verbose && !fake)
 			error(_("nothing was mounted"));
 		break;
 
