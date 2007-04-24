@@ -398,6 +398,9 @@ if test x$enable_use_tty_group = xyes; then
   AC_DEFINE(USE_TTY_GROUP, 1, [Should wall and write be installed setgid tty?])
 fi
 
+
+AC_SUBST([SUID_CFLAGS])
+
 CPPFLAGS="-fsigned-char -fomit-frame-pointer $CPPFLAGS"
 
 LIBS=""

@@ -48,3 +48,15 @@ VERSION SCHEMA:
              suffix = "devel" or "rc<N>"
 
 
+COMPILATION:
+
+      See the INSTALL file for more details.
+
+      Notes:
+            * use SUID_CFLAGS when you want to define special compiler options
+              for typical suid programs, for example:
+
+                  SUID_CFLAGS="-fpic" ./configure
+
+              Now this feature is supported for chfn, chsh, newgrp, write,
+              mount and umount.

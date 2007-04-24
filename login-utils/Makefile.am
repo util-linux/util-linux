@@ -51,6 +51,10 @@ login_LDADD = ../lib/libsetproctitle.a
 newgrp_LDADD =
 vipw_LDADD =
 
+chfn_CFLAGS = $(SUID_CFLAGS)
+chsh_CFLAGS = $(SUID_CFLAGS)
+newgrp_CFLAGS = $(SUID_CFLAGS)
+
 if NEED_LIBCRYPT
 chfn_LDADD += -lcrypt
 chsh_LDADD += -lcrypt
