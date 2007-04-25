@@ -55,15 +55,9 @@ SCM (source code management):
 
 
     * maintenance branch(es)
-        - created for every <major>.<minor> release, branch name: v<major>.<minor>
+        - created for every <major>.<minor> release, branch name: v<major>.<minor>-mnt
 
     * master branch
-        - contains what are reasonably tested and ready to next release
-        - it's source for releases and release candidates
-        - active development does not usually happen on "master" (except trivial
-          and non-invasive patches).
-
-    * devel branch
         - the status of this branch is: "it works for me". It means useful
           but not well tested patches.
         - it's source for occasional snapshots
