@@ -13,8 +13,8 @@ usrsbinexec_PROGRAMS = readprofile tunelp
 tunelp_SOURCES = tunelp.c lp.h
 
 man_MANS = flock.1 readprofile.1 \
-	ctrlaltdel.8 cytune.8 dmesg.8 ipcrm.8 ipcs.8 renice.8 \
-	setsid.8 tunelp.8
+	ctrlaltdel.8 cytune.8 dmesg.1 ipcrm.1 ipcs.1 renice.1 \
+	setsid.1 tunelp.8
 
 info_TEXINFOS = ipc.texi
 
