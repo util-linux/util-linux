@@ -665,7 +665,12 @@ update_mtab (const char *dir, struct my_mntent *instead) {
 		absent->m.mnt_freq = instead->mnt_freq;
 		absent->m.mnt_passno = instead->mnt_passno;
 		absent->nxt = mc0;
-		absent->prev = mc0->prev;
+		if (mc0->prev != NULL) {
+			absent->prev = mc0->prev;
+			mc0->prev->nxt = absent;
+		} else {
+			absent->prev = mc0;
+		}
 		mc0->prev = absent;
 		if (mc0->nxt == NULL)
 			mc0->nxt = absent;
