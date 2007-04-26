@@ -20,7 +20,8 @@ EXTRA_DIST = 	expected/* \
 		ts-login-checktty \
 		ts-hwclock-systohc \
 		ts-mount-special \
-		ts-mount-mtablock
+		ts-mount-mtablock \
+		ts-mount-move
 
 distclean-local:
 	rm -rf output diff
