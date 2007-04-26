@@ -1,0 +1,72 @@
+#!/bin/bash
+
+#
+# test for mount -o remount,ro
+#
+
+. commands.sh
+. functions.sh
+
+TS_COMPONENT="mount"
+TS_DESC="remount"
+
+ts_init
+
+if [ $UID != 0 ]; then
+	ts_skip "not root permissions"
+fi
+
+# clean up
+test_cleanup() {
+	$TS_CMD_UMOUNT $MOUNTPOINT &> /dev/null
+	rmdir $MOUNTPOINT &> /dev/null
+	$TS_CMD_LOSETUP -d $DEVICE &> /dev/null
+	rm -f $IMAGE
+}
+
+touch $TS_OUTPUT
+
+PWD=$(pwd)
+
+# mountpoint
+MOUNTPOINT="$PWD/$TS_OUTDIR/mnt-remount"
+mkdir $MOUNTPOINT
+
+# initializa device
+IMAGE="$TS_OUTDIR/loop-remount.img"
+
+dd if=/dev/zero of=$IMAGE bs=1M count=20 &> /dev/null
+
+DEVICE=$( $TS_CMD_LOSETUP -f )
+$TS_CMD_LOSETUP $DEVICE $IMAGE 2>&1 >> $TS_OUTPUT
+mkfs.ext2 $DEVICE &> /dev/null
+
+# mount read-write
+$TS_CMD_MOUNT $DEVICE $MOUNTPOINT
+
+# check the mount
+egrep -q "^$DEVICE $MOUNTPOINT" /etc/mtab
+
+if [ "$?" != "0" ]; then
+        echo "Cannot found $MOUNTPOINT in /etc/mtab" >> $TS_OUTPUT
+	test_cleanup
+        ts_finalize
+fi
+
+# remount
+$TS_CMD_MOUNT -o remount,ro $MOUNTPOINT
+
+# check the remount
+egrep -q "^$DEVICE $MOUNTPOINT ext2 ro 0 0" /etc/mtab
+
+if [ "$?" != "0" ]; then
+        echo "Cannot found remounted $MOUNTPOINT in /etc/mtab" >> $TS_OUTPUT
+        test_cleanup
+	ts_finalize
+fi
+
+test_cleanup
+
+echo "Success" >> $TS_OUTPUT
+ts_finalize
+
