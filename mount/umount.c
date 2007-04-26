@@ -735,7 +735,7 @@ main (int argc, char *argv[]) {
 	if (all) {
 		/* nodev stuff: sysfs, usbfs, oprofilefs, ... */
 		if (types == NULL)
-			types = "noproc,nodevfs,nodevpts,nosysfs";
+			types = "noproc,nodevfs,nodevpts,nosysfs,norpc_pipefs,nonfsd";
 		result = umount_all (types, test_opts);
 	} else if (argc < 1) {
 		usage (stderr, 2);
