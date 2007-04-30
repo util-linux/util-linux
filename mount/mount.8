@@ -341,7 +341,9 @@ conjunction with the
 flag to determine what the
 .B mount
 command is trying to do. It can also be used to add entries for devices
-that were mounted earlier with the -n option.
+that were mounted earlier with the -n option. The -f option checks for
+existing record in /etc/mtab and fails when the record already
+exists (with regular non-fake mount, this check is done by kernel).
 .TP
 .B \-i
 Don't call the /sbin/mount.<filesystem> helper even if it exists.

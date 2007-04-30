@@ -190,6 +190,8 @@ static const struct opt_map opt_map[] = {
 static const char *opt_loopdev, *opt_vfstype, *opt_offset, *opt_encryption,
 	*opt_speed, *opt_comment, *opt_uhelper;
 
+static int mounted (const char *spec0, const char *node0);
+
 static struct string_opt_map {
   char *tag;
   int skip;
@@ -860,6 +862,14 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       goto out;
 
   suid_check(spec, node, &flags, &user);
+
+  /* The "mount -f" checks for for existing record in /etc/mtab (with
+   * regular non-fake mount this is usually done by kernel)
+   */
+  if (fake && mounted (spec, node))
+      die(EX_USAGE, _("mount: according to mtab, "
+                      "%s is already mounted on %s\n"),
+		      spec, node);
 
   mount_opts = extra_opts;
 
