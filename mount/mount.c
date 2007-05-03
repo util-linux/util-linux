@@ -271,13 +271,40 @@ my_free(const void *s) {
 		free((void *) s);
 }
 
+/* reallocates its first arg */
+static char *
+append_opt(char *s, const char *opt, const char *val)
+{
+	if (!opt)
+		return s;
+	if (!s) {
+		if (!val)
+		       return xstrdup(opt);		/* opt */
+
+		return xstrconcat2(opt, val);		/* opt=val */
+	}
+	if (!val)
+		return xstrconcat3(s, ",", opt);	/* s,opt */
+
+	return xstrconcat4(s, ",", opt, val);		/* s,opt=val */
+}
+
+static char *
+append_numopt(char *s, const char *opt, long num)
+{
+	char buf[32];
+
+	snprintf(buf, sizeof(buf), "%ld", num);
+	return append_opt(s, opt, buf);
+}
+
 /*
  * Look for OPT in opt_map table and return mask value.
  * If OPT isn't found, tack it onto extra_opts (which is non-NULL).
  * For the options uid= and gid= replace user or group name by its value.
  */
 static inline void
-parse_opt(const char *opt, int *mask, char *extra_opts, int len) {
+parse_opt(const char *opt, int *mask, char **extra_opts) {
 	const struct opt_map *om;
 
 	for (om = opt_map; om->opt != NULL; om++)
@@ -301,39 +328,29 @@ parse_opt(const char *opt, int *mask, char *extra_opts, int len) {
 			return;
 		}
 
-	len -= strlen(extra_opts);
-
-	if (*extra_opts && --len > 0)
-		strcat(extra_opts, ",");
-
 	/* convert nonnumeric ids to numeric */
 	if (!strncmp(opt, "uid=", 4) && !isdigit(opt[4])) {
 		struct passwd *pw = getpwnam(opt+4);
-		char uidbuf[20];
 
 		if (pw) {
-			sprintf(uidbuf, "uid=%d", pw->pw_uid);
-			if ((len -= strlen(uidbuf)) > 0)
-				strcat(extra_opts, uidbuf);
+			*extra_opts = append_numopt(*extra_opts,
+						"uid=", pw->pw_uid);
 			return;
 		}
 	}
 	if (!strncmp(opt, "gid=", 4) && !isdigit(opt[4])) {
 		struct group *gr = getgrnam(opt+4);
-		char gidbuf[20];
 
 		if (gr) {
-			sprintf(gidbuf, "gid=%d", gr->gr_gid);
-			if ((len -= strlen(gidbuf)) > 0)
-				strcat(extra_opts, gidbuf);
+			*extra_opts = append_numopt(*extra_opts,
+						"gid=", gr->gr_gid);
 			return;
 		}
 	}
 
-	if ((len -= strlen(opt)) > 0)
-		strcat(extra_opts, opt);
+	*extra_opts = append_opt(*extra_opts, opt, NULL);
 }
-  
+
 /* Take -o options list and compute 4th and 5th args to mount(2).  flags
    gets the standard options (indicated by bits) and extra_opts all the rest */
 static void
@@ -346,14 +363,10 @@ parse_opts (const char *options, int *flags, char **extra_opts) {
 	if (options != NULL) {
 		char *opts = xstrdup(options);
 		char *opt;
-		int len = strlen(opts) + 20;
-
-		*extra_opts = xmalloc(len); 
-		**extra_opts = '\0';
 
 		for (opt = strtok(opts, ","); opt; opt = strtok(NULL, ","))
 			if (!parse_string_opt(opt))
-				parse_opt(opt, flags, *extra_opts, len);
+				parse_opt(opt, flags, extra_opts);
 
 		free(opts);
 	}
@@ -375,26 +388,25 @@ fix_opts_string (int flags, const char *extra_opts, const char *user) {
 	const struct string_opt_map *m;
 	char *new_opts;
 
-	new_opts = xstrdup((flags & MS_RDONLY) ? "ro" : "rw");
+	new_opts = append_opt(NULL, (flags & MS_RDONLY) ? "ro" : "rw", NULL);
 	for (om = opt_map; om->opt != NULL; om++) {
 		if (om->skip)
 			continue;
 		if (om->inv || !om->mask || (flags & om->mask) != om->mask)
 			continue;
-		new_opts = xstrconcat3(new_opts, ",", om->opt);
+		new_opts = append_opt(new_opts, om->opt, NULL);
 		flags &= ~om->mask;
 	}
 	for (m = &string_opt_map[0]; m->tag; m++) {
 		if (!m->skip && *(m->valptr))
-			new_opts = xstrconcat4(new_opts, ",",
-					       m->tag, *(m->valptr));
+			new_opts = append_opt(new_opts, m->tag, *(m->valptr));
 	}
-	if (extra_opts && *extra_opts) {
-		new_opts = xstrconcat3(new_opts, ",", extra_opts);
-	}
-	if (user) {
-		new_opts = xstrconcat3(new_opts, ",user=", user);
-	}
+	if (extra_opts && *extra_opts)
+		new_opts = append_opt(new_opts, extra_opts, NULL);
+
+	if (user)
+		new_opts = append_opt(new_opts, "user=", user);
+
 	return new_opts;
 }
 
@@ -1130,8 +1142,7 @@ retry_nfs:
 	     types = types0;
 	 }
          if (opts) {
-	     char *opts2 = xrealloc(xstrdup(opts), strlen(opts)+4);
-             strcat(opts2, ",ro");
+	     char *opts2 = append_opt(xstrdup(opts), "ro", NULL);
 	     my_free(opts1);
 	     opts = opts1 = opts2;
          } else
@@ -1185,10 +1196,13 @@ subst_string(const char *s, const char *sub, int sublen, const char *repl) {
 	return n;
 }
 
-static const char *
+static char *
 usersubst(const char *opts) {
 	char *s, *w;
 	char id[40];
+
+	if (!opts)
+		return NULL;
 
 	s = "uid=useruid";
 	if (opts && (w = strstr(opts, s)) != NULL) {
@@ -1200,7 +1214,7 @@ usersubst(const char *opts) {
 		sprintf(id, "gid=%d", getgid());
 		opts = subst_string(opts, w, strlen(s), id);
 	}
-	return opts;
+	return xstrdup(opts);
 }
 
 static int
@@ -1215,18 +1229,16 @@ is_existing_file (const char *s) {
  */
 static int
 mount_one (const char *spec, const char *node, const char *types,
-	   const char *opts, char *cmdlineopts, int freq, int pass) {
+	   const char *fstabopts, char *cmdlineopts, int freq, int pass) {
 	int status, status2;
 	const char *nspec;
+	char *opts;
 
 	/* Substitute values in opts, if required */
-	opts = usersubst(opts);
+	opts = usersubst(fstabopts);
 
 	/* Merge the fstab and command line options.  */
-	if (opts == NULL)
-		opts = cmdlineopts;
-	else if (cmdlineopts != NULL)
-		opts = xstrconcat3(opts, ",", cmdlineopts);
+	opts = append_opt(opts, cmdlineopts, NULL);
 
 	/* Handle possible LABEL= and UUID= forms of spec */
 	nspec = mount_get_devname_for_mounting(spec);
@@ -1267,11 +1279,14 @@ mount_one (const char *spec, const char *node, const char *types,
 	spec = xstrdup(spec);		/* arguments will be destroyed */
 	node = xstrdup(node);		/* by set_proc_name()          */
 	types = xstrdup(types);
-	opts = xstrdup(opts);
 	set_proc_name (spec);		/* make a nice "ps" listing */
 	status2 = try_mount_one (spec, node, types, opts, freq, pass, 1, 0);
 	if (verbose && status2)
 		printf (_("mount: giving up \"%s\"\n"), spec);
+
+	my_free(opts);
+	my_free(node);
+	my_free(types);
 	exit (0);			/* child stops here */
 }
 
@@ -1602,16 +1617,10 @@ main(int argc, char *argv[]) {
 			++nomtab;
 			break;
 		case 'o':		/* specify mount options */
-			if (options)
-				options = xstrconcat3(options, ",", optarg);
-			else
-				options = xstrdup(optarg);
+			options = append_opt(options, optarg, NULL);
 			break;
 		case 'O':		/* with -t: mount only if (not) opt */
-			if (test_opts)
-				test_opts = xstrconcat3(test_opts, ",", optarg);
-			else
-				test_opts = xstrdup(optarg);
+			test_opts = append_opt(test_opts, optarg, NULL);
 			break;
 		case 'p':		/* fd on which to read passwd */
 			set_pfd(optarg);
