@@ -62,6 +62,9 @@ swapargs.h:
 clean-local:
 	rm -f swapargs.h
 
+if HAVE_SELINUX
+mount_LDADD += -lselinux
+endif
 
 install-exec-hook:
 	chmod 4755 $(DESTDIR)$(bindir)/mount

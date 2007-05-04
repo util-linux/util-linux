@@ -703,6 +703,50 @@ This option implies the options
 .BR noexec ", " nosuid ", and " nodev
 (unless overridden by subsequent options, as in the option line
 .BR users,exec,dev,suid ).
+.TP
+\fBcontext=\fP\fIcontext\fP, \fBfscontext=\fP\fIcontext\fP and \fBdefcontext=\fP\fIcontext\fP
+The
+.BR context=
+option is useful when mounting filesystems that do not support
+extended attributes, such as a floppy or hard disk formatted with VFAT, or
+systems that are not normally running under SELinux, such as an ext3 formatted
+disk from a non-SELinux workstation. You can also use
+.BR context=
+on filesystems you do not trust, such as a floppy. It also helps in compatibility with
+xattr-supporting filesystems on earlier 2.4.<x> kernel versions. Even where
+xattrs are supported, you can save time not having to label every file by
+assigning the entire disk one security context.
+
+A commonly used option for removable media is
+.BR context=system_u:object_r:removable_t .
+
+Two other options are
+.BR fscontext=
+and
+.BR defcontext= ,
+both of which are mutually exclusive of the context option. This means you
+can use fscontext and defcontext with each other, but neither can be used with
+context.
+
+The
+.BR fscontext=
+option works for all filesystems, regardless of their xattr
+support. The fscontext option sets the overarching filesystem label to a
+specific security context. This filesystem label is separate from the
+individual labels on the files. It represents the entire filesystem for
+certain kinds of permission checks, such as during mount or file creation.
+Individual file labels are still obtained from the xattrs on the files
+themselves. The context option actually sets the aggregate context that
+fscontext provides, in addition to supplying the same label for individual
+files.
+
+You can set the default security context for unlabeled files using
+.BR defcontext=
+option. This overrides the value set for unlabeled files in the policy and requires a
+file system that supports xattr labeling.
+
+For more details see
+.BR selinux (8)
 .RE
 .TP
 .B \-\-bind
