@@ -281,7 +281,7 @@ append_opt(char *s, const char *opt, const char *val)
 		if (!val)
 		       return xstrdup(opt);		/* opt */
 
-		return xstrconcat2(opt, val);		/* opt=val */
+		return xstrconcat3(NULL, opt, val);	/* opt=val */
 	}
 	if (!val)
 		return xstrconcat3(s, ",", opt);	/* s,opt */
@@ -491,8 +491,8 @@ do_mount_syscall (struct mountargs *args) {
 		flags |= MS_MGC_VAL;
 
 	mnt_debug(1, "mount(2) syscall: source=\"%s\" target=\"%s\" "
-			"filesystemtype=\"%s\" mountflags=%lu data=%s",
-			args->spec, args->node, args->type, flags, args->data ? "YES" : "NOT");
+			"filesystemtype=\"%s\" mountflags=%lu data=\"%s\"",
+			args->spec, args->node, args->type, flags, (char *) args->data);
 
 	ret = mount (args->spec, args->node, args->type, flags, args->data);
 	if (ret == 0)

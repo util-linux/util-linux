@@ -15,6 +15,7 @@
 #include "fstab.h"
 #include "sundries.h"
 #include "realpath.h"
+#include "xmalloc.h"
 #include "nfsmount.h"
 #include "nls.h"
 
@@ -32,50 +33,53 @@ xstrndup (const char *s, int n) {
      return t;
 }
 
+/* reallocates its first arg - typical use: s = xstrconcat3(s,t,u); */
 char *
-xstrconcat2 (const char *s, const char *t) {
-     char *res;
+xstrconcat3 (char *s, const char *t, const char *u) {
+     size_t len = 0;
 
-     if (!s) s = "";
-     if (!t) t = "";
-     res = xmalloc(strlen(s) + strlen(t) + 1);
-     strcpy(res, s);
-     strcat(res, t);
-     return res;
-}
+     len = (s ? strlen(s) : 0) + (t ? strlen(t) : 0) + (u ? strlen(u) : 0);
 
-/* frees its first arg - typical use: s = xstrconcat3(s,t,u); */
-char *
-xstrconcat3 (const char *s, const char *t, const char *u) {
-     char *res;
-
-     if (!s) s = "";
-     if (!t) t = "";
-     if (!u) u = "";
-     res = xmalloc(strlen(s) + strlen(t) + strlen(u) + 1);
-     strcpy(res, s);
-     strcat(res, t);
-     strcat(res, u);
-     free((void *) s);
-     return res;
+     if (!len)
+	     return NULL;
+     if (!s) {
+	     s = xmalloc(len + 1);
+	     *s = '\0';
+     }
+     else
+	     s = xrealloc(s, len + 1);
+     if (t)
+	     strcat(s, t);
+     if (u)
+	     strcat(s, u);
+     return s;
 }
 
 /* frees its first arg - typical use: s = xstrconcat4(s,t,u,v); */
 char *
-xstrconcat4 (const char *s, const char *t, const char *u, const char *v) {
-     char *res;
+xstrconcat4 (char *s, const char *t, const char *u, const char *v) {
+     size_t len = 0;
 
-     if (!s) s = "";
-     if (!t) t = "";
-     if (!u) u = "";
-     if (!v) v = "";
-     res = xmalloc(strlen(s) + strlen(t) + strlen(u) + strlen(v) + 1);
-     strcpy(res, s);
-     strcat(res, t);
-     strcat(res, u);
-     strcat(res, v);
-     free((void *) s);
-     return res;
+     len = (s ? strlen(s) : 0) + (t ? strlen(t) : 0) +
+		(u ? strlen(u) : 0) + (v ? strlen(v) : 0);
+
+     if (!len)
+	     return NULL;
+     if (!s) {
+	     s = xmalloc(len + 1);
+	     *s = '\0';
+     }
+     else
+	     s = xrealloc(s, len + 1);
+     if (t)
+	     strcat(s, t);
+     if (u)
+	     strcat(s, u);
+     if (v)
+	     strcat(s, v);
+     return s;
+
+
 }
 
 /* Call this with SIG_BLOCK to block and SIG_UNBLOCK to unblock.  */
@@ -96,15 +100,13 @@ block_signals (int how) {
 void
 error (const char *fmt, ...) {
      va_list args;
-     char *fmt2;
 
      if (mount_quiet)
 	  return;
-     fmt2 = xstrconcat2 (fmt, "\n");
      va_start (args, fmt);
-     vfprintf (stderr, fmt2, args);
+     vfprintf (stderr, fmt, args);
      va_end (args);
-     free (fmt2);
+     fputc('\n', stderr);
 }
 
 /* True if fstypes match.  Null *TYPES means match anything,

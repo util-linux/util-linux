@@ -32,9 +32,8 @@ int matching_opts (const char *options, const char *test_opts);
 void *xmalloc (size_t size);
 char *xstrdup (const char *s);
 char *xstrndup (const char *s, int n);
-char *xstrconcat2 (const char *, const char *);
-char *xstrconcat3 (const char *, const char *, const char *);
-char *xstrconcat4 (const char *, const char *, const char *, const char *);
+char *xstrconcat3 (char *, const char *, const char *);
+char *xstrconcat4 (char *, const char *, const char *, const char *);
 
 void die (int errcode, const char *fmt, ...);
 
