@@ -71,7 +71,7 @@ automake --add-missing
 cd $THEDIR
 
 echo 
-echo "Now type './configure' and 'make' to compile."
+echo "Now type '$srcdir/configure' and 'make' to compile."
 echo 
 
 
