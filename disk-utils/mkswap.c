@@ -50,7 +50,7 @@
 #include "xstrncpy.h"
 #include "nls.h"
 
-#ifdef HAVE_UUID_UUID_H
+#ifdef HAVE_LIBUUID
 #include <uuid/uuid.h>
 #endif
 
@@ -240,7 +240,7 @@ write_uuid_and_label(char *uuid, char *volume_name) {
 			printf("LABEL=%s, ", h->volume_name);
 		else
 			printf(_("no label, "));
-#ifdef HAVE_UUID_UUID_H
+#ifdef HAVE_LIBUUID
 		if (uuid) {
 			char uuid_string[37];
 			uuid_unparse(uuid, uuid_string);
@@ -521,7 +521,7 @@ main(int argc, char ** argv) {
 	char *pp;
 	char *opt_label = NULL;
 	char *uuid = NULL;
-#ifdef HAVE_UUID_UUID_H
+#ifdef HAVE_LIBUUID
 	uuid_t uuid_dat;
 #endif
 
@@ -577,7 +577,7 @@ main(int argc, char ** argv) {
 			usage();
 	}
 
-#ifdef HAVE_UUID_UUID_H
+#ifdef HAVE_LIBUUID
 	uuid_generate(uuid_dat);
 	uuid = uuid_dat;
 #endif
