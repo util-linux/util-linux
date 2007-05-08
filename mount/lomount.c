@@ -311,16 +311,17 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 
 	loopinfo64.lo_offset = offset;
 
-#ifdef MCL_FUTURE  
+#ifdef MCL_FUTURE
 	/*
 	 * Oh-oh, sensitive data coming up. Better lock into memory to prevent
 	 * passwd etc being swapped out and left somewhere on disk.
 	 */
-                                                
-	if(mlockall(MCL_CURRENT | MCL_FUTURE)) {
-		perror("memlock");
-		fprintf(stderr, _("Couldn't lock into memory, exiting.\n"));
-		exit(1);
+	if (loopinfo64.lo_encrypt_type != LO_CRYPT_NONE) {
+		if(mlockall(MCL_CURRENT | MCL_FUTURE)) {
+			perror("memlock");
+			fprintf(stderr, _("Couldn't lock into memory, exiting.\n"));
+			exit(1);
+		}
 	}
 #endif
 
