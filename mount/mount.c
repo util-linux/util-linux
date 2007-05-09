@@ -941,7 +941,6 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   int loop = 0;
   const char *loopdev = 0, *loopfile = 0;
   struct stat statbuf;
-  int nfs_mount_version = 0;	/* any version */
 
   /* copies for freeing on exit */
   const char *opts1, *spec1, *node1, *types1, *extra_opts1;
@@ -999,19 +998,6 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       goto out;
   }
 
-  /*
-   * Also nfs requires a separate program, but it is built in.
-   */
-  if (!fake && types && streq (types, "nfs")) {
-retry_nfs:
-    mnt_err = nfsmount (spec, node, &flags, &extra_opts, &mount_opts,
-			&nfs_mount_version, bg);
-    if (mnt_err) {
-	res = mnt_err;
-	goto out;
-    }
-  }
-
   block_signals (SIG_BLOCK);
 
   if (!fake) {
@@ -1050,15 +1036,6 @@ retry_nfs:
 	del_loop(spec);
 
   block_signals (SIG_UNBLOCK);
-
-  if (mnt_err && types && streq (types, "nfs")) {
-      if (nfs_mount_version == 4 && mnt_err != EBUSY && mnt_err != ENOENT) {
-	  if (verbose)
-	    printf(_("mount: failed with nfs mount version 4, trying 3..\n"));
-	  nfs_mount_version = 3;
-	  goto retry_nfs;
-      }
-  }
 
   /* Mount failed, complain, but don't die.  */
 

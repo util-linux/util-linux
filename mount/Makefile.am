@@ -2,22 +2,19 @@ include $(top_srcdir)/config/include-Makefile.am
 
 EXTRA_DIST = README.mount swap.configure
 
-AM_CPPFLAGS += -DHAVE_NFS
-
 bin_PROGRAMS = mount umount
 sbin_PROGRAMS = losetup swapon
-man_MANS = fstab.5 nfs.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
+man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 
 MNTHDRS = fstab.h linux_fs.h mount_mntent.h mount_constants.h my_dev_t.h \
 	mount_paths.h get_label_uuid.h lomount.h mount_blkid.h \
-	mount_guess_fstype.h nfs_mount4.h realpath.h xmalloc.h \
+	mount_guess_fstype.h realpath.h xmalloc.h \
 	getusername.h loop.h mount_by_label.h mount_guess_rootdev.h \
-	nfsmount.h sundries.h
+	sundries.h
 
 mount_SOURCES = mount.c fstab.c sundries.c xmalloc.c realpath.c mount_mntent.c \
 	get_label_uuid.c mount_by_label.c mount_blkid.c mount_guess_fstype.c \
 	getusername.c \
-	nfsmount.c nfsmount_xdr.c nfsmount_clnt.c \
 	lomount.c \
 	$(MNTHDRS)
 
