@@ -7,15 +7,13 @@ sbin_PROGRAMS = losetup swapon
 man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 
 MNTHDRS = fstab.h linux_fs.h mount_mntent.h mount_constants.h my_dev_t.h \
-	mount_paths.h lomount.h fsprobe.h \
-	mount_guess_fstype.h realpath.h xmalloc.h \
+	mount_paths.h lomount.h fsprobe.h realpath.h xmalloc.h \
 	getusername.h loop.h sundries.h
 
 mount_common = fstab.c sundries.c xmalloc.c realpath.c mount_mntent.c \
-	getusername.c lomount.c $(MNTHDRS) ../lib/env.c
+	fsprobe.c getusername.c lomount.c $(MNTHDRS) ../lib/env.c
 
-mount_SOURCES = mount.c $(mount_common) ../lib/setproctitle.c \
-	mount_guess_fstype.c
+mount_SOURCES = mount.c $(mount_common) ../lib/setproctitle.c
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 

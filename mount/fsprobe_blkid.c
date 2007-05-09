@@ -41,4 +41,15 @@ mount_get_devname_for_mounting(const char *spec) {
 	return blkid_get_devname(blkid, spec, 0);
 }
 
+int
+fsprobe_known_fstype(const char *fstype)
+{
+	return blkid_known_fstype(fstype);
+}
+
+const char *
+fsprobe_get_fstype_by_devname(const char *devname) {
+	return blkid_get_tag_value(blkid, "TYPE", devname);
+}
+
 #endif

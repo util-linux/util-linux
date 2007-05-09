@@ -38,7 +38,6 @@
 #include "lomount.h"
 #include "loop.h"
 #include "linux_fs.h"		/* for BLKGETSIZE */
-#include "mount_guess_fstype.h"
 #include "getusername.h"
 #include "mount_paths.h"
 #include "env.h"
@@ -655,6 +654,26 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
   return 0;
 }
 
+
+static const char *
+guess_fstype_by_devname(const char *devname)
+{
+   const char *type = fsprobe_get_fstype_by_devname(devname);
+
+   if (verbose) {
+      printf (_("mount: you didn't specify a filesystem type for %s\n"), devname);
+
+      if (!type)
+         printf (_("       I will try all types mentioned in %s or %s\n"),
+		      ETC_FILESYSTEMS, PROC_FILESYSTEMS);
+      else if (!strcmp(type, "swap"))
+         printf (_("       and it looks like this is swapspace\n"));
+      else
+         printf (_("       I will try type %s\n"), type);
+   }
+   return type;
+}
+
 /*
  * guess_fstype_and_mount()
  *	Mount a single file system. Guess the type when unknown.
@@ -674,7 +693,7 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
       *types = "none";		/* random, but not "bind" */
 
    if (!*types && !(flags & MS_REMOUNT)) {
-      *types = guess_fstype(spec);
+      *types = guess_fstype_by_devname(spec);
       if (*types) {
 	  if (!strcmp(*types, "swap")) {
 	      error(_("%s looks like swapspace - not mounted"), spec);
@@ -710,7 +729,7 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
       return do_mount_syscall (&args);
    }
 
-   return procfsloop(do_mount_syscall, &args, types);
+   return fsprobe_procfsloop_mount(do_mount_syscall, &args, types);
 }
 
 /*
@@ -1146,8 +1165,10 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
     case EIO:
       error (_("mount: %s: can't read superblock"), spec); break;
     case ENODEV:
-    { int pfs;
-      if ((pfs = is_in_procfs(types)) == 1 || !strcmp(types, "guess"))
+    {
+      int pfs = fsprobe_known_fstype_in_procfs(types);
+
+      if (pfs == 1 || !strcmp(types, "guess"))
         error(_("mount: %s: unknown device"), spec);
       else if (pfs == 0) {
 	char *lowtype, *p;
@@ -1164,11 +1185,13 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 	    u++;
 	  }
 	}
-	if (u && is_in_procfs(lowtype) == 1)
+	if (u && fsprobe_known_fstype_in_procfs(lowtype) == 1)
 	  error (_("mount: probably you meant %s"), lowtype);
-	else if (!strncmp(lowtype, "iso", 3) && is_in_procfs("iso9660") == 1)
+	else if (!strncmp(lowtype, "iso", 3) &&
+			fsprobe_known_fstype_in_procfs("iso9660") == 1)
 	  error (_("mount: maybe you meant 'iso9660'?"));
-	else if (!strncmp(lowtype, "fat", 3) && is_in_procfs("vfat") == 1)
+	else if (!strncmp(lowtype, "fat", 3) &&
+			fsprobe_known_fstype_in_procfs("vfat") == 1)
 	  error (_("mount: maybe you meant 'vfat'?"));
 	free(lowtype);
       } else
@@ -1740,8 +1763,8 @@ main(int argc, char *argv[]) {
 			   use only for testing purposes -
 			   the guessing is not reliable at all */
 		    {
-			char *fstype;
-			fstype = do_guess_fstype(optarg);
+			const char *fstype;
+			fstype = fsprobe_get_fstype_by_devname(optarg);
 			printf("%s\n", fstype ? fstype : "unknown");
 			exit(fstype ? 0 : EX_FAIL);
 		    }

@@ -1,35 +1,3 @@
-/*
- * Thu Jul 14 07:32:40 1994: faith@cs.unc.edu added changes from Adam
- * J. Richter (adam@adam.yggdrasil.com) so that /proc/filesystems is used
- * if no -t option is given.  I modified his patches so that, if
- * /proc/filesystems is not available, the behavior of mount is the same as
- * it was previously.
- *
- * Wed Feb 8 09:23:18 1995: Mike Grupenhoff <kashmir@umiacs.UMD.EDU> added
- * a probe of the superblock for the type before /proc/filesystems is
- * checked.
- *
- * Fri Apr  5 01:13:33 1996: quinlan@bucknell.edu, fixed up iso9660 autodetect
- *
- * Wed Nov  11 11:33:55 1998: K.Garloff@ping.de, try /etc/filesystems before
- * /proc/filesystems
- * [This was mainly in order to specify vfat before fat; these days we often
- *  detect *fat and then assume vfat, so perhaps /etc/filesystems isnt
- *  so useful anymore.]
- *
- * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
- * added Native Language Support
- *
- * 2000-12-01 Sepp Wijnands <mrrazz@garbage-coderz.net>
- * added probes for cramfs, hfs, hpfs and adfs.
- *
- * 2001-10-26 Tim Launchbury
- * added sysv magic.
- *
- * aeb - many changes.
- *
- */
-
 #include <stdio.h>
 #include <string.h>
 #include <fcntl.h>
@@ -37,28 +5,13 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
+#include "mount_paths.h"
 #include "linux_fs.h"
 #include "fsprobe.h"
-#include "mount_guess_fstype.h"
 #include "sundries.h"		/* for xstrdup */
 #include "nls.h"
 
-#define ETC_FILESYSTEMS		"/etc/filesystems"
-#define PROC_FILESYSTEMS	"/proc/filesystems"
-
-char *
-do_guess_fstype(const char *device) 
-{
-	return blkid_get_tag_value(blkid, "TYPE", device);
-}
-
-static int
-known_fstype(const char *fstype) 
-{
-	return blkid_known_fstype(fstype);
-}
-	
-
+/* list of already tested filesystems by fsprobe_procfsloop_mount() */
 static struct tried {
 	struct tried *next;
 	char *type;
@@ -68,7 +21,7 @@ static int
 was_tested(const char *fstype) {
 	struct tried *t;
 
-	if (known_fstype(fstype))
+	if (fsprobe_known_fstype(fstype))
 		return 1;
 	for (t = tried; t; t = t->next) {
 		if (!strcmp(t->type, fstype))
@@ -100,23 +53,6 @@ free_tested(void) {
 	tried = NULL;
 }
 
-char *
-guess_fstype(const char *spec) {
-	char *type = do_guess_fstype(spec);
-	if (verbose) {
-	    printf (_("mount: you didn't specify a filesystem type for %s\n"),
-		    spec);
-	    if (!type)
-	      printf (_("       I will try all types mentioned in %s or %s\n"),
-		      ETC_FILESYSTEMS, PROC_FILESYSTEMS);
-	    else if (!strcmp(type, "swap"))
-	      printf (_("       and it looks like this is swapspace\n"));
-	    else
-	      printf (_("       I will try type %s\n"), type);
-	}
-	return type;
-}
-
 static char *
 procfsnext(FILE *procfs) {
    char line[100];
@@ -134,7 +70,8 @@ procfsnext(FILE *procfs) {
    the kernel knows about, so /etc/filesystems is irrelevant.
    Return: 1: yes, 0: no, -1: cannot open procfs */
 int
-is_in_procfs(const char *type) {
+fsprobe_known_fstype_in_procfs(const char *type)
+{
     FILE *procfs;
     char *fsname;
     int ret = -1;
@@ -159,8 +96,10 @@ is_in_procfs(const char *type) {
 /* when 0 or -1 is returned, *types contains the type used */
 /* when 1 is returned, *types is NULL */
 int
-procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
-	   const char **types) {
+fsprobe_procfsloop_mount(	int (*mount_fn)(struct mountargs *),
+				struct mountargs *args,
+				const char **types)
+{
 	char *files[2] = { ETC_FILESYSTEMS, PROC_FILESYSTEMS };
 	FILE *procfs;
 	char *fsname;
@@ -208,7 +147,7 @@ procfsloop(int (*mount_fn)(struct mountargs *), struct mountargs *args,
 				ret = 0;
 				break;
 			} else if (errno != EINVAL &&
-				   is_in_procfs(fsname) == 1) {
+				   fsprobe_known_fstype_in_procfs(fsname) == 1) {
 				*types = "guess";
 				ret = -1;
 				errsv = errno;

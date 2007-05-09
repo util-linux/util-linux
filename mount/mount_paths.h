@@ -12,4 +12,7 @@
 #endif
 #define LOCK_TIMEOUT	10
 
+#define ETC_FILESYSTEMS		"/etc/filesystems"
+#define PROC_FILESYSTEMS	"/proc/filesystems"
+
 #endif /* MOUNT_PATHS_H */
