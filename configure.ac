@@ -71,8 +71,26 @@ AC_DEFUN([UTIL_CHECK_LIB], [
 UTIL_CHECK_LIB(uuid, uuid_is_null)
 UTIL_CHECK_LIB(util, openpty)
 UTIL_CHECK_LIB(termcap, tgetnum)
-UTIL_CHECK_LIB(blkid, blkid_known_fstype)
 
+AC_ARG_WITH([fsprobe],
+  AC_HELP_STRING([--with-fsprobe], [library to guess filesystems (blkid|volume_id), default is blkid]),
+  with_fsprobe=$withval, with_fsprobe=blkid
+)
+
+AM_CONDITIONAL(HAVE_BLKID, false)
+AM_CONDITIONAL(HAVE_VOLUME_ID, false)
+
+have_blkid=no
+have_volume_id=no
+if test x$with_fsprobe = xblkid; then
+  UTIL_CHECK_LIB(blkid, blkid_known_fstype)
+elif test x$with_fsprobe = xvolume_id; then
+  UTIL_CHECK_LIB(volume_id, volume_id_open_fd)
+fi
+
+if test $have_blkid = no && test $have_volume_id = no; then
+  AC_MSG_ERROR([Without blkid or volume_id you will not be able to build util-linux-ng.])
+fi
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
 AM_GNU_GETTEXT([external])
