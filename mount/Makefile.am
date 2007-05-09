@@ -7,13 +7,12 @@ sbin_PROGRAMS = losetup swapon
 man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 
 MNTHDRS = fstab.h linux_fs.h mount_mntent.h mount_constants.h my_dev_t.h \
-	mount_paths.h get_label_uuid.h lomount.h fsprobe.h \
+	mount_paths.h lomount.h fsprobe.h \
 	mount_guess_fstype.h realpath.h xmalloc.h \
-	getusername.h loop.h mount_by_label.h sundries.h
+	getusername.h loop.h sundries.h
 
 mount_common = fstab.c sundries.c xmalloc.c realpath.c mount_mntent.c \
-	getusername.c get_label_uuid.c mount_by_label.c fsprobe_blkid.c \
-	lomount.c $(MNTHDRS) ../lib/env.c
+	getusername.c lomount.c $(MNTHDRS) ../lib/env.c
 
 mount_SOURCES = mount.c $(mount_common) ../lib/setproctitle.c \
 	mount_guess_fstype.c
@@ -25,7 +24,6 @@ umount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 swapon_SOURCES = swapon.c xmalloc.c \
-	get_label_uuid.c mount_by_label.c fsprobe_blkid.c \
 	swap_constants.h realpath.c
 
 losetup_SOURCES = lomount.c loop.h lomount.h
@@ -36,6 +34,9 @@ umount_LDADD =
 swapon_LDADD =
 
 if HAVE_BLKID
+mount_SOURCES += fsprobe_blkid.c
+umount_SOURCES += fsprobe_blkid.c
+swapon_SOURCES += fsprobe_blkid.c
 mount_LDADD += -lblkid -luuid
 umount_LDADD += -lblkid -luuid
 swapon_LDADD += -lblkid -luuid

@@ -15,7 +15,6 @@
 #include "swap_constants.h"
 #include "nls.h"
 #include "fsprobe.h"
-#include "mount_by_label.h"
 #include "realpath.h"
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)

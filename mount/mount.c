@@ -39,7 +39,6 @@
 #include "loop.h"
 #include "linux_fs.h"		/* for BLKGETSIZE */
 #include "mount_guess_fstype.h"
-#include "mount_by_label.h"
 #include "getusername.h"
 #include "mount_paths.h"
 #include "env.h"
