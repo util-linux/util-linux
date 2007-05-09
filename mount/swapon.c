@@ -14,7 +14,7 @@
 #include "xmalloc.h"
 #include "swap_constants.h"
 #include "nls.h"
-#include "mount_blkid.h"
+#include "fsprobe.h"
 #include "mount_by_label.h"
 #include "realpath.h"
 

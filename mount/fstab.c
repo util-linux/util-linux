@@ -15,7 +15,7 @@
 #include "fstab.h"
 #include "sundries.h"
 #include "xmalloc.h"
-#include "mount_blkid.h"
+#include "fsprobe.h"
 #include "mount_paths.h"
 #include "nls.h"
 

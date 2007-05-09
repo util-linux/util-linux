@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "mount_blkid.h"
+#include "fsprobe.h"
 
 #ifdef HAVE_LIBBLKID
 

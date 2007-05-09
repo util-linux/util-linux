@@ -38,7 +38,7 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "linux_fs.h"
-#include "mount_blkid.h"
+#include "fsprobe.h"
 #include "mount_guess_fstype.h"
 #include "sundries.h"		/* for xstrdup */
 #include "nls.h"
