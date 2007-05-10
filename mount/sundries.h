@@ -37,9 +37,6 @@ char *xstrconcat4 (char *, const char *, const char *, const char *);
 
 void die (int errcode, const char *fmt, ...);
 
-int nfsmount (const char *spec, const char *node, int *flags,
-	      char **orig_opts, char **opt_args, int *version, int running_bg);
-
 /* exit status - bits below are ORed */
 #define EX_USAGE	1	/* incorrect invocation or permission */
 #define EX_SYSERR	2	/* out of memory, cannot fork, ... */
