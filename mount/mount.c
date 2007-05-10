@@ -232,6 +232,11 @@ parse_string_opt(char *s) {
 	return 0;
 }
 
+static void
+my_free(const void *s) {
+	if (s)
+		free((void *) s);
+}
 
 /* Report on a single mount.  */
 static void
@@ -244,11 +249,18 @@ print_one (const struct my_mntent *me) {
 	if (me->mnt_opts != NULL)
 		printf (" (%s)", me->mnt_opts);
 	if (list_with_volumelabel) {
-		const char *label;
-		label = mount_get_volume_label_by_spec(me->mnt_fsname);
-		if (label) {
-			printf (" [%s]", label);
-			/* free(label); */
+		const char *devname = fsprobe_get_devname(me->mnt_fsname);
+
+		if (devname) {
+			const char *label;
+
+			label = fsprobe_get_label_by_devname(devname);
+			my_free(devname);
+
+			if (label) {
+				printf (" [%s]", label);
+				my_free(label);
+			}
 		}
 	}
 	printf ("\n");
@@ -265,12 +277,6 @@ print_all (char *types) {
 	       print_one (&(mc->m));
      }
      exit (0);
-}
-
-static void
-my_free(const void *s) {
-	if (s)
-		free((void *) s);
 }
 
 /* reallocates its first arg */
@@ -1329,7 +1335,7 @@ mount_one (const char *spec, const char *node, const char *types,
 	opts = append_opt(opts, cmdlineopts, NULL);
 
 	/* Handle possible LABEL= and UUID= forms of spec */
-	nspec = mount_get_devname_for_mounting(spec);
+	nspec = fsprobe_get_devname_for_mounting(spec);
 	if (nspec)
 		spec = nspec;
 
@@ -1386,7 +1392,7 @@ mounted (const char *spec0, const char *node0) {
 	int ret = 0;
 
 	/* Handle possible UUID= and LABEL= in spec */
-	spec0 = mount_get_devname(spec0);
+	spec0 = fsprobe_get_devname(spec0);
 	if (!spec0)
 		return ret;
 
@@ -1668,7 +1674,7 @@ main(int argc, char *argv[]) {
 	if (fd > 2)
 		close(fd);
 
-	mount_blkid_get_cache();
+	fsprobe_init();
 
 #ifdef DO_PS_FIDDLING
 	initproctitle(argc, argv);
@@ -1841,9 +1847,9 @@ main(int argc, char *argv[]) {
 
 	if (specseen) {
 		if (uuid)
-			spec = mount_get_devname_by_uuid(uuid);
+			spec = fsprobe_get_devname_by_uuid(uuid);
 		else
-			spec = mount_get_devname_by_label(volumelabel);
+			spec = fsprobe_get_devname_by_label(volumelabel);
 
 		if (!spec)
 			die (EX_USAGE, _("mount: no such partition found"));
@@ -1921,7 +1927,7 @@ main(int argc, char *argv[]) {
 	if (result == EX_SOMEOK)
 		result = 0;
 
-	mount_blkid_put_cache();
+	fsprobe_exit();
 
 	exit (result);
 }

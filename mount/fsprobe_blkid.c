@@ -1,43 +1,47 @@
 #include <stdio.h>
+#include <blkid/blkid.h>
 #include "fsprobe.h"
 
-#ifdef HAVE_LIBBLKID
-
-blkid_cache blkid;
+static blkid_cache blkid;
 
 void
-mount_blkid_get_cache(void) {
+fsprobe_init(void) {
 	blkid_get_cache(&blkid, NULL);
 }
 
 void
-mount_blkid_put_cache(void) {
+fsprobe_exit(void) {
 	blkid_put_cache(blkid);
 }
 
 const char *
-mount_get_volume_label_by_spec(const char *spec) {
-	return blkid_get_tag_value(blkid, "LABEL", spec);
+fsprobe_get_label_by_devname(const char *devname) {
+	return blkid_get_tag_value(blkid, "LABEL", devname);
 }
 
 const char *
-mount_get_devname(const char *spec) {
+fsprobe_get_uuid_by_devname(const char *devname) {
+	return blkid_get_tag_value(blkid, "UUID", devname);
+}
+
+const char *
+fsprobe_get_devname(const char *spec) {
 	return blkid_get_devname(blkid, spec, 0);
 }
 
 const char *
-mount_get_devname_by_uuid(const char *uuid) {
+fsprobe_get_devname_by_uuid(const char *uuid) {
 	return blkid_get_devname(blkid, "UUID", uuid);
 }
 
 const char *
-mount_get_devname_by_label(const char *label) {
+fsprobe_get_devname_by_label(const char *label) {
 	return blkid_get_devname(blkid, "LABEL", label);
 }
 
 /* Also when no UUID= or LABEL= occur? No verbose? No warnings? */
 const char *
-mount_get_devname_for_mounting(const char *spec) {
+fsprobe_get_devname_for_mounting(const char *spec) {
 	return blkid_get_devname(blkid, spec, 0);
 }
 
@@ -52,4 +56,3 @@ fsprobe_get_fstype_by_devname(const char *devname) {
 	return blkid_get_tag_value(blkid, "TYPE", devname);
 }
 
-#endif

@@ -179,7 +179,7 @@ do_swapon(const char *orig_special, int prio) {
 	if (verbose)
 		printf(_("%s on %s\n"), progname, orig_special);
 
-	special = mount_get_devname(orig_special);
+	special = fsprobe_get_devname(orig_special);
 	if (!special) {
 		fprintf(stderr, _("%s: cannot find the device for %s\n"),
 			progname, orig_special);
@@ -254,13 +254,13 @@ cannot_find(const char *special) {
 
 static int
 swapon_by_label(const char *label, int prio) {
-	const char *special = mount_get_devname_by_label(label);
+	const char *special = fsprobe_get_devname_by_label(label);
 	return special ? do_swapon(special, prio) : cannot_find(label);
 }
 
 static int
 swapon_by_uuid(const char *uuid, int prio) {
-	const char *special = mount_get_devname_by_uuid(uuid);
+	const char *special = fsprobe_get_devname_by_uuid(uuid);
 	return special ? do_swapon(special, prio) : cannot_find(uuid);
 }
 
@@ -271,7 +271,7 @@ do_swapoff(const char *orig_special, int quiet) {
 	if (verbose)
 		printf(_("%s on %s\n"), progname, orig_special);
 
-	special = mount_get_devname(orig_special);
+	special = fsprobe_get_devname(orig_special);
 	if (!special)
 		return cannot_find(orig_special);
 
@@ -292,13 +292,13 @@ do_swapoff(const char *orig_special, int quiet) {
 
 static int
 swapoff_by_label(const char *label, int quiet) {
-	const char *special = mount_get_devname_by_label(label);
+	const char *special = fsprobe_get_devname_by_label(label);
 	return special ? do_swapoff(special, quiet) : cannot_find(label);
 }
 
 static int
 swapoff_by_uuid(const char *uuid, int quiet) {
-	const char *special = mount_get_devname_by_uuid(uuid);
+	const char *special = fsprobe_get_devname_by_uuid(uuid);
 	return special ? do_swapoff(special, quiet) : cannot_find(uuid);
 }
 
@@ -327,7 +327,7 @@ swapon_all(void) {
 		if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
 			continue;
 
-		special = mount_get_devname(orig_special);
+		special = fsprobe_get_devname(orig_special);
 		if (!special)
 			continue;
 

@@ -292,7 +292,7 @@ has_label(const char *device, const char *label) {
 	const char *devlabel;
 	int ret;
 
-	devlabel = mount_get_volume_label_by_spec(device);
+	devlabel = fsprobe_get_label_by_devname(device);
 	ret = !strcmp(label, devlabel);
 	/* free(devlabel); */
 	return ret;
@@ -303,7 +303,7 @@ has_uuid(const char *device, const char *uuid){
 	const char *devuuid;
 	int ret;
 
-	devuuid = mount_get_devname_by_uuid(device);
+	devuuid = fsprobe_get_uuid_by_devname(device);
 	ret = !strcmp(uuid, devuuid);
 	/* free(devuuid); */
 	return ret;
@@ -745,8 +745,8 @@ int verbose;
 int mount_quiet;
 char *progname;
 
-const char *mount_get_volume_label_by_spec(const char *spec) { return NULL; }
-const char *mount_get_devname_by_uuid(const char *uuid) { return NULL; }
+const char *fsprobe_get_label_by_devname(const char *spec) { return NULL; }
+const char *fsprobe_get_uuid_by_devname(const char *spec) { return NULL; }
 struct my_mntent *my_getmntent (mntFILE *mfp) { return NULL; }
 mntFILE *my_setmntent (const char *file, char *mode) { return NULL; }
 void my_endmntent (mntFILE *mfp) { }
