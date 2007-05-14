@@ -293,8 +293,11 @@ has_label(const char *device, const char *label) {
 	int ret;
 
 	devlabel = fsprobe_get_label_by_devname(device);
+	if (!devlabel)
+		return 0;
+
 	ret = !strcmp(label, devlabel);
-	/* free(devlabel); */
+	my_free(devlabel);
 	return ret;
 }
 
@@ -304,8 +307,11 @@ has_uuid(const char *device, const char *uuid){
 	int ret;
 
 	devuuid = fsprobe_get_uuid_by_devname(device);
+	if (!devuuid)
+		return 0;
+
 	ret = !strcmp(uuid, devuuid);
-	/* free(devuuid); */
+	my_free(devuuid);
 	return ret;
 }
 
