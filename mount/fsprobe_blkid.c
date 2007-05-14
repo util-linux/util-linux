@@ -25,11 +25,6 @@ fsprobe_get_uuid_by_devname(const char *devname) {
 }
 
 const char *
-fsprobe_get_devname(const char *spec) {
-	return blkid_get_devname(blkid, spec, 0);
-}
-
-const char *
 fsprobe_get_devname_by_uuid(const char *uuid) {
 	return blkid_get_devname(blkid, "UUID", uuid);
 }
@@ -37,12 +32,6 @@ fsprobe_get_devname_by_uuid(const char *uuid) {
 const char *
 fsprobe_get_devname_by_label(const char *label) {
 	return blkid_get_devname(blkid, "LABEL", label);
-}
-
-/* Also when no UUID= or LABEL= occur? No verbose? No warnings? */
-const char *
-fsprobe_get_devname_for_mounting(const char *spec) {
-	return blkid_get_devname(blkid, spec, 0);
 }
 
 int

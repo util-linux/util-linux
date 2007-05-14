@@ -22,7 +22,7 @@ umount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 swapon_SOURCES = swapon.c xmalloc.c \
-	swap_constants.h realpath.c
+	swap_constants.h realpath.c fsprobe.c sundries.c
 
 losetup_SOURCES = lomount.c loop.h lomount.h
 losetup_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)

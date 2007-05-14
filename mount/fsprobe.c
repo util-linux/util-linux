@@ -162,3 +162,64 @@ fsprobe_procfsloop_mount(	int (*mount_fn)(struct mountargs *),
 	}
 	return 1;
 }
+
+const char *
+fsprobe_get_devname_for_mounting(const char *spec)
+{
+	char *name, *value;
+
+	if (!spec)
+		return NULL;
+
+	if (parse_spec(spec, &name, &value) != 0)
+		return NULL;				/* parse error */
+
+	if (name) {
+		const char *nspec = NULL;
+
+		if (!strcmp(name,"LABEL"))
+			nspec = fsprobe_get_devname_by_label(value);
+		else if (!strcmp(name,"UUID"))
+			nspec = fsprobe_get_devname_by_uuid(value);
+
+		if (nspec && verbose > 1)
+			printf(_("mount: going to mount %s by %s\n"), spec, name);
+
+		free((void *) name);
+		return nspec;
+	}
+
+	/* no LABEL, no UUID, .. probably a path */
+	if (verbose > 1)
+		printf(_("mount: no LABEL=, no UUID=, going to mount %s by path\n"), spec);
+
+	return canonicalize(spec);
+}
+
+/* like fsprobe_get_devname_for_mounting(), but without verbose messages */
+const char *
+fsprobe_get_devname(const char *spec)
+{
+	char *name, *value;
+
+	if (!spec)
+		return NULL;
+
+	if (parse_spec(spec, &name, &value) != 0)
+		return NULL;				/* parse error */
+
+	if (name) {
+		const char *nspec = NULL;
+
+		if (!strcmp(name,"LABEL"))
+			nspec = fsprobe_get_devname_by_label(value);
+		else if (!strcmp(name,"UUID"))
+			nspec = fsprobe_get_devname_by_uuid(value);
+
+		free((void *) name);
+		return nspec;
+	}
+
+	return canonicalize(spec);
+}
+

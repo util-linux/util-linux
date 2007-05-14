@@ -247,3 +247,41 @@ canonicalize (const char *path) {
 
 	return xstrdup(path);
 }
+
+
+/*
+ * Parses NAME=value, returns -1 on parse error, 0 success. The success is also
+ * when the 'spec' doesn't contain name=value pair (because the spec could be
+ * a devname too). In particular case the pointer 'name' is set to NULL.
+
+ * The result is a new allocated string (the 'name' pointer).
+ */
+int
+parse_spec(const char *spec, char **name, char **value)
+{
+	char *vl, *tk, *cp;
+
+	*name = NULL;
+	*value = NULL;
+
+	if (!(cp = strchr(spec, '=')))
+		return 0;				/* no name= */
+
+	tk = xstrdup(spec);
+	vl = tk + (cp - spec);
+	*vl++ = '\0';
+
+	if (*vl == '"' || *vl == '\'') {
+		if (!(cp = strrchr(vl+1, *vl))) {
+			free(tk);
+			return -1;			/* parse error */
+		}
+		vl++;
+		*cp = '\0';
+	}
+
+	*name = tk;
+	*value = vl;
+	return 0;
+}
+
