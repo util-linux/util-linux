@@ -477,9 +477,8 @@ If no
 option is given, or if the
 .B auto
 type is specified, mount will try to guess the desired type.
-If mount was compiled with the blkid library, the guessing is done
-by this library. Otherwise, mount guesses itself by probing the
-superblock; if that does not turn up anything that looks familiar,
+Mount uses the blkid or volume_id library for guessing the filesystem
+type; if that does not turn up anything that looks familiar,
 mount will try to read the file
 .IR /etc/filesystems ,
 or, if that does not exist,

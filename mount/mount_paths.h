@@ -15,4 +15,8 @@
 #define ETC_FILESYSTEMS		"/etc/filesystems"
 #define PROC_FILESYSTEMS	"/proc/filesystems"
 
+/* udev paths */
+#define PATH_DEV_BYLABEL	"/dev/disk/by-label"
+#define PATH_DEV_BYUUID		"/dev/disk/by-uuid"
+
 #endif /* MOUNT_PATHS_H */

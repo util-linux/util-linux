@@ -44,6 +44,15 @@ if HAVE_SELINUX
 mount_LDADD += -lselinux
 endif
 
+if HAVE_VOLUME_ID
+mount_SOURCES += fsprobe_volumeid.c
+umount_SOURCES += fsprobe_volumeid.c
+swapon_SOURCES += fsprobe_volumeid.c
+mount_LDADD += -lvolume_id
+umount_LDADD += -lvolume_id
+swapon_LDADD += -lvolume_id
+endif
+
 if HAVE_PIVOT_ROOT
 sbin_PROGRAMS += pivot_root
 man_MANS += pivot_root.8
