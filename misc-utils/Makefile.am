@@ -1,8 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 EXTRA_DIST = 	README.* \
-		chkdupexe.pl \
-		scriptreplay.pl \
 		reset \
 		reset.033c
 
@@ -14,12 +12,6 @@ usrbinexec_PROGRAMS = cal ddate logger look mcookie \
 mcookie_SOURCES = mcookie.c ../lib/md5.c
 
 usrbinexec_SCRIPTS = chkdupexe scriptreplay
-
-chkdupexe: chkdupexe.pl
-	sed -e 's,[@]PERL[@],$(PERL),g' < chkdupexe.pl > chkdupexe
-
-scriptreplay: scriptreplay.pl
-	sed -e 's,[@]PERL[@],$(PERL),g' < scriptreplay.pl > scriptreplay
 
 CLEANFILES = chkdupexe scriptreplay
 
