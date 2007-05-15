@@ -11,22 +11,17 @@ MNTHDRS = fstab.h linux_fs.h mount_mntent.h mount_constants.h my_dev_t.h \
 	mount_guess_fstype.h realpath.h xmalloc.h \
 	getusername.h loop.h mount_by_label.h mount_guess_rootdev.h \
 	sundries.h
+mount_common = fstab.c sundries.c xmalloc.c realpath.c mount_mntent.c \
+	getusername.c get_label_uuid.c mount_by_label.c mount_blkid.c \
+	lomount.c $(MNTHDRS)
 
-mount_SOURCES = mount.c fstab.c sundries.c xmalloc.c realpath.c mount_mntent.c \
-	get_label_uuid.c mount_by_label.c mount_blkid.c mount_guess_fstype.c \
-	getusername.c \
-	lomount.c \
-	$(MNTHDRS)
-
+mount_SOURCES = mount.c $(mount_common) \
+	mount_guess_fstype.c
 mount_LDADD = $(top_srcdir)/lib/libenv.a $(top_srcdir)/lib/libsetproctitle.a
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
-umount_SOURCES = umount.c fstab.c sundries.c xmalloc.c realpath.c mount_mntent.c \
-	getusername.c get_label_uuid.c mount_by_label.c mount_blkid.c \
-	lomount.c \
-	$(MNTHDRS)
-	
+umount_SOURCES = umount.c $(mount_common)
 umount_LDADD = $(top_srcdir)/lib/libenv.a
 umount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
