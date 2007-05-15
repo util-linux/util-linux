@@ -17,33 +17,32 @@ AC_PATH_PROG(PERL, perl)
 
 AC_SYS_LARGEFILE
 
-AC_CHECK_HEADERS(scsi/scsi.h)
-AC_CHECK_HEADERS(linux/compiler.h)
-AC_CHECK_HEADERS(linux/blkpg.h,,,[
+AC_CHECK_HEADERS([linux/compiler.h linux/blkpg.h], [], [], [
 #ifdef HAVE_LINUX_COMPILER_H
 #include <linux/compiler.h>
 #endif
 ])
-AC_CHECK_HEADERS(langinfo.h)
-AC_CHECK_HEADERS(sys/user.h)
-AC_CHECK_HEADERS(rpcsvc/nfs_prot.h)
-AC_CHECK_HEADERS(sys/io.h)
-AC_CHECK_HEADERS(pty.h)
-
-AC_CHECK_HEADERS(linux/raw.h)
+AC_CHECK_HEADERS(
+	[scsi/scsi.h \
+	langinfo.h \
+	sys/user.h \
+	rpcsvc/nfs_prot.h \
+	sys/io.h \
+	pty.h \
+	linux/raw.h])
 AM_CONDITIONAL(HAVE_RAW, test x$ac_cv_header_linux_raw_h = xyes)
 
 
-
-AC_CHECK_FUNCS(inet_aton)
-AC_CHECK_FUNCS(fsync)
-AC_CHECK_FUNCS(getdomainname)
-AC_CHECK_FUNCS(nanosleep)
-AC_CHECK_FUNCS(personality)
-AC_CHECK_FUNCS(updwtmp)
+AC_CHECK_FUNCS(
+	[inet_aton \
+	fsync \
+	getdomainname \
+	nanosleep \
+	personality \
+	updwtmp \
+	lchown \
+	rpmatch])
 AC_FUNC_FSEEKO
-AC_CHECK_FUNCS(lchown)
-AC_CHECK_FUNCS(rpmatch)
 
 
 AC_CHECK_LIB(uuid, uuid_is_null)
@@ -68,8 +67,7 @@ else
     ALL_LINGUAS="af am ar as be bg bn_IN bn ca cs cy da de el en_GB es et eu_ES fa fi fr gl gu he hi hr hu hy id is it ja ka kn ko ku lo lt lv mk ml mr ms my nb nl nn no nso or pa pl pt_BR pt ro ru si sk sl sq sr@Latn sr sv ta te th tr uk ur vi zh_CN zh_TW zu"
 fi
 
-AC_CHECK_HEADERS(ncurses.h)
-AC_CHECK_HEADERS(ncurses/ncurses.h)
+AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h])
 
 
 if test x$ac_cv_header_ncurses_h = xyes || test x$ac_cv_header_ncurses_ncurses_h = xyes; then
@@ -88,8 +86,7 @@ AC_ARG_WITH([slang],
 )
 
 if test x$with_slang = xyes; then
-  AC_CHECK_HEADERS(slcurses.h)
-  AC_CHECK_HEADERS(slang/slcurses.h)
+  AC_CHECK_HEADERS([slcurses.h slang/slcurses.h])
   if test x$ac_cv_header_slcurses_h = xyes || test x$ac_cv_header_slang_slcurses_h = xyes; then
     use_slang=yes
   else
