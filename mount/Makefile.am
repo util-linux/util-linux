@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-EXTRA_DIST = README.mount swap.configure
+EXTRA_DIST = README.mount
 
 bin_PROGRAMS = mount umount
 sbin_PROGRAMS = losetup swapon
@@ -53,14 +53,6 @@ endif
 noinst_PROGRAMS = mtab_lock_test
 mtab_lock_test_SOURCES = fstab.c sundries.c xmalloc.c $(MNTHDRS)
 mtab_lock_test_CPPFLAGS = -DMAIN_TEST_MTABLOCK $(AM_CPPFLAGS)
-
-swapon.c: swapargs.h
-
-swapargs.h:
-	sh swap.configure
-
-clean-local:
-	rm -f swapargs.h
 
 install-exec-hook:
 	chmod 4755 $(DESTDIR)$(bindir)/mount

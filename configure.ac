@@ -162,6 +162,29 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 ])
 
 
+AC_CHECK_HEADERS([asm/page.h sys/swap.h], [], [], [
+#ifdef HAVE_ASM_PAGE_H
+# include <asm/page.h>
+#endif
+])
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
+[[
+#ifdef HAVE_ASM_PAGE_H
+# include <asm/page.h>
+#endif
+#ifdef HAVE_SYS_SWAP_H
+# include <sys/swap.h>
+#endif
+#include <unistd.h>
+]],
+[[swapon("/dev/null", 0);]])],
+[AC_DEFINE(SWAPON_HAS_TWO_ARGS, 1, [Is swapon() declared with two parameters?])
+],
+[AC_MSG_NOTICE([Your libc thinks that swapon has 1 arg only.])
+])
+
+
 case "$host" in
   i?86-*)  intel=true ;;
   m68*)    m68k=true ;;

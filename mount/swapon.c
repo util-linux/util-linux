@@ -13,7 +13,6 @@
 #include <sys/stat.h>
 #include "xmalloc.h"
 #include "swap_constants.h"
-#include "swapargs.h"
 #include "nls.h"
 #include "mount_blkid.h"
 #include "mount_by_label.h"
@@ -23,6 +22,11 @@
 
 #define	_PATH_FSTAB     "/etc/fstab"
 #define PROC_SWAPS      "/proc/swaps"
+
+#ifdef SWAPON_HAS_TWO_ARGS
+# include <asm/page.h>
+# include <sys/swap.h>
+#endif
 
 #define SWAPON_NEEDS_TWO_ARGS
 
