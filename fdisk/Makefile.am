@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-EXTRA_DIST = README.* sfdisk.examples partitiontype.c
+EXTRA_DIST = README.fdisk README.cfdisk sfdisk.examples partitiontype.c
 
 if !M68K
 

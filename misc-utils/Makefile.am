@@ -1,11 +1,12 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-EXTRA_DIST = 	README.*
+EXTRA_DIST = README.flushb
 
 bin_PROGRAMS =
 
 usrbinexec_PROGRAMS = cal ddate logger look mcookie \
 	namei script whereis
+EXTRA_DIST += README.cal README.ddate README.namei README.namei2
 
 mcookie_SOURCES = mcookie.c ../lib/md5.c
 
@@ -49,7 +50,7 @@ if BUILD_RESET
 dist_usrbinexec_SCRIPTS = reset
 man_MANS += reset.1
 endif
-EXTRA_DIST += reset.033c
+EXTRA_DIST += README.reset reset.033c
 
 if BUILD_WRITE
 

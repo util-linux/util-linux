@@ -20,9 +20,9 @@ ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = 	config/include-Makefile.am \
 		autogen.sh \
-		README.* \
-		licenses/* \
-		example.files/* \
+		README.devel \
+		licenses/ \
+		example.files/ \
 		po/Makevars.template \
 		po/update-potfiles
 

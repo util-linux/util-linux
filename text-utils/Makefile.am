@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-EXTRA_DIST = README.* LICENSE.*
+EXTRA_DIST = README.clear README.col
 
 usrbinexec_PROGRAMS = col colcrt colrm column hexdump rev line tailf
 
@@ -23,3 +23,5 @@ more_LDADD = -ltermcap
 man_MANS += more.1
 endif
 endif
+
+EXTRA_DIST += README.pg LICENSE.pg
