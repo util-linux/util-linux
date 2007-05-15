@@ -38,6 +38,11 @@ IMAGE="$TS_OUTDIR/loop-swap.img"
 IMAGE_RE=$( echo $IMAGE | sed 's:/:\\/:g' )
 LABEL="testSwap"
 
+ldd $TS_CMD_SWAPON | grep -q 'libvolume_id' 2>&1 >> $TS_OUTPUT
+if [ "$?" == "0" ]; then
+	HAS_VOLUMEID="yes"
+fi
+
 dd if=/dev/zero of=$IMAGE bs=1M count=20 &> /dev/null
 
 DEVICE=$( $TS_CMD_LOSETUP -f )
@@ -54,12 +59,15 @@ $TS_CMD_LOSETUP $DEVICE $IMAGE 2>&1 >> $TS_OUTPUT
 $TS_CMD_MKSWAP -L $LABEL $DEVICE 2>&1 >> $TS_OUTPUT
 
 # check it
-blkid -c /dev/null -w /dev/null -s TYPE $DEVICE 2>&1 | grep -q 'TYPE="swap"' 2>&1 >> $TS_OUTPUT
-
-if [ "$?" != "0" ]; then
+if [ "$($TS_CMD_MOUNT --guess-fstype $DEVICE)" != "swap" ]; then
 	echo "Cannot found Linux swap on $DEVICE" >> $TS_OUTPUT
-	#$TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
+	$TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
 	ts_finalize
+fi
+
+if [ -n "$HAS_VOLUMEID" ] && [ ! -L "/dev/disk/by-label/$LABEL" ]; then
+	$TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
+	ts_skip "udev ignores /dev/loop*"
 fi
 
 # try connect it to system (and found the device by label)
