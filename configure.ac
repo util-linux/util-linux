@@ -399,8 +399,10 @@ if test x$enable_use_tty_group = xyes; then
 fi
 
 
-AC_SUBST([SUID_CFLAGS])
-AC_SUBST([SUID_LDFLAGS])
+AC_ARG_VAR([SUID_CFLAGS],
+	   [CFLAGS used for binaries which are usually with the suid bit])
+AC_ARG_VAR([SUID_LDFLAGS],
+	   [LDFLAGS used for binaries which are usually with the suid bit])
 
 LIBS=""
 
