@@ -8,7 +8,21 @@ AM_INIT_AUTOMAKE([check-news -Wall foreign 1.9])
 
 AC_CONFIG_SRCDIR(mount/mount.c)
 
-AC_PREFIX_DEFAULT(/)
+AC_PREFIX_DEFAULT([/usr])
+
+# Check whether exec_prefix=/usr:
+case $exec_prefix:$prefix in
+NONE:NONE | NONE:/usr | /usr:*)
+  AC_MSG_NOTICE([Default --exec-prefix detected.])
+  case $bindir in
+  '${exec_prefix}/bin') bindir=/bin
+    AC_MSG_NOTICE([  --bindir defaults to /bin]) ;;
+  esac
+  case $sbindir in
+  '${exec_prefix}/sbin') sbindir=/sbin
+    AC_MSG_NOTICE([  --sbindir defaults to /sbin]) ;;
+  esac ;;
+esac
 
 AC_PROG_CC_STDC
 AC_PROG_LIBTOOL

@@ -1,8 +1,6 @@
-usrbinexecdir = $(prefix)/usr/bin
-usrsbinexecdir = $(prefix)/usr/sbin
-datadir = $(prefix)/usr/share
-infodir = $(datadir)/info
-mandir = $(datadir)/man
+# The original default vaues of bindir and sbindir:
+usrbinexecdir = ${exec_prefix}/bin
+usrsbinexecdir = ${exec_prefix}/sbin
 
 AM_CPPFLAGS = -include $(top_builddir)/config.h -I$(top_srcdir)/include \
 	-DLOCALEDIR=\"$(localedir)\"
