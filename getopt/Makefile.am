@@ -7,8 +7,8 @@ getopt_CFLAGS = -DLIBCGETOPT=1
 man_MANS = getopt.1
 
 exampledir = $(prefix)/usr/share/getopt/
-example_DATA = getopt-parse.bash getopt-parse.tcsh \
+dist_example_DATA = getopt-parse.bash getopt-parse.tcsh \
 	getopt-test.bash getopt-test.tcsh
 
-EXTRA_DIST = $(example_DATA) README Changelog COPYING
+EXTRA_DIST = README Changelog COPYING
 
