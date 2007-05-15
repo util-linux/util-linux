@@ -26,3 +26,5 @@ depcomp
 install-sh
 missing
 ltmain.sh
+libtool
+.deps
