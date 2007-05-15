@@ -6,7 +6,7 @@ getopt_CPPFLAGS = -DLIBCGETOPT=1 $(AM_CPPFLAGS)
 
 man_MANS = getopt.1
 
-exampledir = $(prefix)/usr/share/getopt/
+exampledir = $(datadir)/getopt/
 dist_example_DATA = getopt-parse.bash getopt-parse.tcsh \
 	getopt-test.bash getopt-test.tcsh
 
