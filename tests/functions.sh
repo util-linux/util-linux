@@ -75,5 +75,28 @@ function ts_finalize {
 	fi
 }
 
+function ts_device_init {
+	IMAGE="$TS_OUTDIR/$TS_NAME.img"
+	IMAGE_RE=$( echo "$IMAGE" | sed 's:/:\\/:g' )
 
+	dd if=/dev/zero of="$IMAGE" bs=1M count=5 &> /dev/null
 
+	$TS_CMD_LOSETUP -f "$IMAGE" 2>&1 >> $TS_OUTPUT
+	DEVICE=$( $TS_CMD_LOSETUP -a | gawk 'BEGIN {FS=":"} /'$IMAGE_RE'/ { print $1 }' )
+
+	if [ -z "$DEVICE" ]; then
+		ts_device_deinit
+		return 1		# error
+	fi
+
+	return 0			# succes
+}
+
+function ts_device_deinit {
+	if [ -b "$DEVICE" ]; then
+		$TS_CMD_UMOUNT "$DEVICE" &> /dev/null
+		$TS_CMD_LOSETUP -d "$DEVICE" &> /dev/null
+		rm -f "$IMAGE" &> /dev/null
+	fi
+}
+		
