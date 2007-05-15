@@ -75,11 +75,7 @@ swapoff_usage(FILE *fp, int n) {
 #define SWAPON_NEEDS_TWO_ARGS
 #endif
 
-#ifdef SWAPON_NEEDS_TWO_ARGS
-#ifdef SWAPON_HAS_TWO_ARGS
-/* libc is OK */
-#include <unistd.h>
-#else
+#if defined(SWAPON_NEEDS_TWO_ARGS) && !defined(SWAPON_HAS_TWO_ARGS)
 /* We want a swapon with two args, but have an old libc.
    Build the kernel call by hand. */
 #include <linux/unistd.h>
@@ -87,7 +83,6 @@ static
 _syscall2(int,  swapon,  const char *,  path, int, flags);
 static
 _syscall1(int,  swapoff,  const char *,  path);
-#endif
 #else
 /* just do as libc says */
 #include <unistd.h>
