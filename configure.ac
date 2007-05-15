@@ -92,19 +92,19 @@ fi
 AM_CONDITIONAL(USE_SLANG, test $use_slang = yes)
 
 
-AC_TRY_LINK([
+AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #define _XOPEN_SOURCE
 #include <unistd.h>
-],[
+]], [[
 char *c = crypt("abc","pw");
-],,[
+]])],[],[
   LIBS="$LIBS -lcrypt"
-  AC_TRY_COMPILE([
+  AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
   #define _XOPEN_SOURCE
   #include <unistd.h>
-  ],[
+  ]], [[
   char *c = crypt("abc","pw");
-  ],[
+  ]])],[
   AC_DEFINE(NEED_LIBCRYPT, 1, [Do we need -lcrypt?])
   need_libcrypt=yes
   ],[
@@ -114,47 +114,52 @@ char *c = crypt("abc","pw");
 
 AM_CONDITIONAL(NEED_LIBCRYPT, test x$need_libcrypt = xyes)
 
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <stdio.h>
-],[
+]], [[
 printf(__progname);
-],AC_DEFINE(HAVE___PROGNAME, 1, [Do we have __progname?])
-)
+]])],
+[AC_DEFINE(HAVE___PROGNAME, 1, Do we have __progname?)
+])
 
 
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <wchar.h>
 #include <wctype.h>
 #include <stdio.h>
-],[
+]], [[
   wchar_t wc;
   wint_t w;
   w = fgetwc(stdin);
   if (w == WEOF) exit(1);
   wc = w;
   fputwc(wc,stdout);
-],AC_DEFINE(HAVE_WIDECHAR,1,[Do we have wide character support?]))
+]])],
+[AC_DEFINE(HAVE_WIDECHAR,1,Do we have wide character support?)
+])
 
 
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/syscall.h>
 #include <unistd.h>
-],[
+]], [[
 int test = SYS_pivot_root;
-],have_pivot_root=true)
+]])],
+[AM_CONDITIONAL(HAVE_PIVOT_ROOT, true)],
+[AM_CONDITIONAL(HAVE_PIVOT_ROOT, false)])
 
-AM_CONDITIONAL(HAVE_PIVOT_ROOT, test x$have_pivot_root = xtrue)
 
-
-AC_TRY_COMPILE([
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <time.h>
 #include <unistd.h>
-],[
+]], [[
     int a = 0;
     struct tm *tm = localtime(0);
     if (a == -1)  /* false */
         sleep(tm->tm_gmtoff);
-],[AC_DEFINE(HAVE_TM_GMTOFF,1,[Does struct tm have a field tm_gmtoff?])])
+]])],
+[AC_DEFINE(HAVE_TM_GMTOFF,1,[Does struct tm have a field tm_gmtoff?])
+])
 
 
 case "$host" in
