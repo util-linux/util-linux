@@ -17,12 +17,10 @@ mount_common = fstab.c sundries.c xmalloc.c realpath.c mount_mntent.c \
 
 mount_SOURCES = mount.c $(mount_common) ../lib/setproctitle.c \
 	mount_guess_fstype.c
-mount_LDADD =
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 umount_SOURCES = umount.c $(mount_common)
-umount_LDADD =
 umount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
@@ -33,10 +31,18 @@ swapon_SOURCES = swapon.c xmalloc.c \
 losetup_SOURCES = lomount.c loop.h lomount.h
 losetup_CFLAGS = -DMAIN
 
+mount_LDADD =
+umount_LDADD =
+swapon_LDADD =
+
 if HAVE_BLKID
 mount_LDADD += -lblkid -luuid
 umount_LDADD += -lblkid -luuid
-swapon_LDADD = -lblkid -luuid
+swapon_LDADD += -lblkid -luuid
+endif
+
+if HAVE_SELINUX
+mount_LDADD += -lselinux
 endif
 
 if HAVE_PIVOT_ROOT
@@ -55,10 +61,6 @@ swapargs.h:
 
 clean-local:
 	rm -f swapargs.h
-
-if HAVE_SELINUX
-mount_LDADD += -lselinux
-endif
 
 install-exec-hook:
 	chmod 4755 $(DESTDIR)$(bindir)/mount
