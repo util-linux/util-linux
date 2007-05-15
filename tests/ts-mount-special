@@ -13,12 +13,9 @@ TS_DESC="special program"
 MOUNTER="/sbin/mount.mytest"
 
 ts_init
+ts_skip_nonroot
 
 touch $TS_OUTPUT
-
-if [ $UID != 0 ]; then
-	ts_skip "not root permissions"
-fi
 
 cat > $MOUNTER << EOF
 #!/bin/bash 

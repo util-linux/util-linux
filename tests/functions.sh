@@ -9,6 +9,12 @@ function ts_skip {
 	exit 0
 }
 
+function ts_skip_nonroot {
+	if [ $UID != 0 ]; then
+		ts_skip "not root permissions"
+	fi
+}
+
 function ts_failed {
 	if [ x"$1" == x"" ]; then
 		echo " FAILED ($TS_NAME)"

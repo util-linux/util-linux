@@ -11,10 +11,7 @@ TS_COMPONENT="mount"
 TS_DESC="move "
 
 ts_init
-
-if [ $UID != 0 ]; then
-	ts_skip "not root permissions"
-fi
+ts_skip_nonroot
 
 touch $TS_OUTPUT
 

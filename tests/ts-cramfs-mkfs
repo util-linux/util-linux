@@ -24,13 +24,9 @@ TS_COMPONENT="mkfs.cramfs"
 TS_DESC="mkfs"
 
 ts_init
-
-if [ $UID != 0 ]; then
-	ts_skip "not root permissions"
-fi
+ts_skip_nonroot
 
 set -o pipefail
-
 
 touch $TS_OUTPUT
 

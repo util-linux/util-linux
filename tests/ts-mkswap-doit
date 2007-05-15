@@ -24,10 +24,7 @@ TS_COMPONENT="mkswap"
 TS_DESC="doit"
 
 ts_init
-
-if [ $UID != 0 ]; then
-	ts_skip "not root permissions"
-fi
+ts_skip_nonroot
 
 set -o pipefail
 

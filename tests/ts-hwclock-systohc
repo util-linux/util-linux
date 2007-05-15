@@ -26,10 +26,8 @@ TS_DESC="systohc"
 NTP_SERVER="0.fedora.pool.ntp.org"
 
 ts_init
+ts_skip_nonroot
 
-if [ $UID != 0 ]; then
-	ts_skip "not root permissions"
-fi
 if [ -x "ntpdate" ]; then
 	ts_skip "cannot found ntpdate command"
 fi

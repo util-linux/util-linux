@@ -21,7 +21,7 @@ TS_DESC="separator"
 ts_init
 
 if [ ! -f "/usr/share/dict/words" ]; then
-	ts_ignore "/usr/share/dict/words not such file" 
+	ts_skip "/usr/share/dict/words not such file" 
 fi
 
 touch $TS_OUTPUT

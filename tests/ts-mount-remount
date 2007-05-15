@@ -11,10 +11,7 @@ TS_COMPONENT="mount"
 TS_DESC="remount"
 
 ts_init
-
-if [ $UID != 0 ]; then
-	ts_skip "not root permissions"
-fi
+ts_skip_nonroot
 
 # clean up
 test_cleanup() {
