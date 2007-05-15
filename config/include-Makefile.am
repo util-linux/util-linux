@@ -5,6 +5,7 @@ infodir = $(datadir)/info
 mandir = $(datadir)/man
 
 AM_CPPFLAGS = -include $(top_builddir)/config.h -I$(top_srcdir)/include
+AM_CFLAGS = -fsigned-char -fomit-frame-pointer
 
 DEFS = -DLOCALEDIR=\"$(localedir)\" @DEFS@
 

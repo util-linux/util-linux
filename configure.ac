@@ -401,8 +401,6 @@ fi
 
 AC_SUBST([SUID_CFLAGS])
 
-CPPFLAGS="-fsigned-char -fomit-frame-pointer $CPPFLAGS"
-
 LIBS=""
 
 
