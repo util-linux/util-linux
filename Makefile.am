@@ -18,7 +18,7 @@ SUBDIRS = \
 
 ACLOCAL_AMFLAGS = -I m4
 
-EXTRA_DIST = 	config/include-Makefile.am \
+EXTRA_DIST = \
 		autogen.sh \
 		README.devel \
 		licenses/ \
