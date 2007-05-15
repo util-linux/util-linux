@@ -39,3 +39,8 @@ mrproper: distclean
 		cd config; rm -f `cat ../.gitignore`; cd .. ; \
 		cd po; rm -f `cat .gitignore`; cd .. ; \
 	fi
+
+ENABLE_ALL = --enable-elvtune --enable-init --enable-kill --enable-last \
+ --enable-mesg --enable-partx --enable-raw --enable-rdev --enable-reset \
+ --enable-login-utils --enable-write
+DISTCHECK_CONFIGURE_FLAGS = --disable-use-tty-group $(ENABLE_ALL)
