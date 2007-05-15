@@ -34,7 +34,7 @@ cal_LDADD = -ltermcap
 endif
 endif
 
-if HAVE_LIBUTIL
+if HAVE_UTIL
 script_LDADD = -lutil
 endif
 

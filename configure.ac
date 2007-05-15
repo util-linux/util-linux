@@ -28,10 +28,10 @@ AC_CHECK_HEADERS(
 	sys/user.h \
 	rpcsvc/nfs_prot.h \
 	sys/io.h \
-	pty.h \
-	linux/raw.h])
-AM_CONDITIONAL(HAVE_RAW, test x$ac_cv_header_linux_raw_h = xyes)
-
+	pty.h])
+AC_CHECK_HEADERS([linux/raw.h],
+		 [AM_CONDITIONAL([HAVE_RAW], [true])],
+		 [AM_CONDITIONAL([HAVE_RAW], [false])])
 
 AC_CHECK_FUNCS(
 	[inet_aton \
@@ -44,18 +44,19 @@ AC_CHECK_FUNCS(
 	rpmatch])
 AC_FUNC_FSEEKO
 
-
-AC_CHECK_LIB(uuid, uuid_is_null)
-AM_CONDITIONAL(HAVE_UUID, test x$ac_cv_lib_uuid_uuid_is_null = xyes)
-
-AC_CHECK_LIB(util, openpty)
-AM_CONDITIONAL(HAVE_LIBUTIL, test x$ac_cv_lib_util_openpty = xyes)
-
-AC_CHECK_LIB(termcap, tgetnum)
-AM_CONDITIONAL(HAVE_TERMCAP, test x$ac_cv_lib_termcap_tgetnum = xyes)
-
-AC_CHECK_LIB(blkid, blkid_known_fstype)
-AM_CONDITIONAL(HAVE_BLKID, test x$ac_cv_lib_blkid_blkid_known_fstype = xyes)
+dnl UTIL_CHECK_LIB(LIBRARY, FUNCTION)
+dnl ---------------------------------
+AC_DEFUN([UTIL_CHECK_LIB], [
+  dnl The trick is to keep the third argument to AC_CHECK_LIB empty,
+  dnl and thus keep the default action.
+  have_$1=yes
+  AC_CHECK_LIB([$1], [$2], [], [have_$1=no])
+  AM_CONDITIONAL(AS_TR_CPP(HAVE_$1), [test $have_$1 = yes])
+])
+UTIL_CHECK_LIB(uuid, uuid_is_null)
+UTIL_CHECK_LIB(util, openpty)
+UTIL_CHECK_LIB(termcap, tgetnum)
+UTIL_CHECK_LIB(blkid, blkid_known_fstype)
 
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
@@ -67,16 +68,12 @@ else
     ALL_LINGUAS="af am ar as be bg bn_IN bn ca cs cy da de el en_GB es et eu_ES fa fi fr gl gu he hi hr hu hy id is it ja ka kn ko ku lo lt lv mk ml mr ms my nb nl nn no nso or pa pl pt_BR pt ro ru si sk sl sq sr@Latn sr sv ta te th tr uk ur vi zh_CN zh_TW zu"
 fi
 
-AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h])
-
-
-if test x$ac_cv_header_ncurses_h = xyes || test x$ac_cv_header_ncurses_ncurses_h = xyes; then
-  have_ncurses=yes
-  AC_MSG_NOTICE([you have ncurses])
-else
-  AC_MSG_NOTICE([you do not have ncurses])
-fi
-
+have_ncurses=no
+AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [have_ncurses=yes])
+case $have_ncurses in
+yes) AC_MSG_NOTICE([you have ncurses]);;
+no)  AC_MSG_NOTICE([you do not have ncurses]);;
+esac
 AM_CONDITIONAL(HAVE_NCURSES, test x$have_ncurses = xyes)
 
 
@@ -85,16 +82,14 @@ AC_ARG_WITH([slang],
   [], with_slang=no
 )
 
+use_slang=no
 if test x$with_slang = xyes; then
-  AC_CHECK_HEADERS([slcurses.h slang/slcurses.h])
-  if test x$ac_cv_header_slcurses_h = xyes || test x$ac_cv_header_slang_slcurses_h = xyes; then
-    use_slang=yes
-  else
+  AC_CHECK_HEADERS([slcurses.h slang/slcurses.h], [use_slang=yes])
+  if test $use_slang = no; then
     AC_MSG_ERROR([slang selected but slcurses.h not found])
   fi
 fi
-
-AM_CONDITIONAL(USE_SLANG, test x$use_slang = xyes)
+AM_CONDITIONAL(USE_SLANG, test $use_slang = yes)
 
 
 AC_TRY_LINK([
@@ -185,15 +180,17 @@ AC_ARG_ENABLE([cramfs],
   [], enable_cramfs=check
 )
 
-if test x$enable_cramfs != xno; then
-  AC_CHECK_LIB(z, crc32)
-  build_cramfs=$ac_cv_lib_z_crc32
-  if test x$enable_cramfs = xyes && test x$ac_cv_lib_z_crc32 = xno; then
-    AC_MSG_ERROR([cramfs selected but libz not found])
-  fi
+if test $enable_cramfs = no; then
+  build_cramfs=no
+else
+  build_cramfs=yes
+  dnl Trick: leave the third parameter empty to get the default action.
+  AC_CHECK_LIB(z, crc32, [], build_cramfs=no)
+  case $enable_cramfs:$build_cramfs in
+  yes:no) AC_MSG_ERROR([cramfs selected but libz not found]);;
+  esac
 fi
-
-AM_CONDITIONAL(BUILD_CRAMFS, test x$build_cramfs = xyes)
+AM_CONDITIONAL(BUILD_CRAMFS, test $build_cramfs = yes)
 
 
 AC_ARG_ENABLE([elvtune],
@@ -273,30 +270,31 @@ AC_ARG_ENABLE([login-utils],
 AM_CONDITIONAL(BUILD_LOGIN_UTILS, test x$enable_login_utils = xyes)
 
 AC_ARG_WITH([pam],
-  AC_HELP_STRING([--without-pam], [compile login-utils without PAM support]),
-  [], with_pam=yes
-)
+  [AC_HELP_STRING([--without-pam], [compile login-utils without PAM support])])
 
+AM_CONDITIONAL(HAVE_PAM, false)
 if test x$enable_login_utils = xyes && test x$with_pam != xno; then
-  AC_CHECK_HEADERS(security/pam_misc.h)
-  if test x$with_pam = xyes && test x$ac_cv_header_security_pam_misc_h = xno; then
-    AC_MSG_ERROR([PAM selected but security/pam_misc.h not found])
-  fi
+  AC_CHECK_HEADERS([security/pam_misc.h],
+    [AM_CONDITIONAL(HAVE_PAM, true)],
+    [if test x$with_pam = xyes; then
+	AC_MSG_ERROR([PAM selected but security/pam_misc.h not found])
+     fi
+    ])
 fi
-AM_CONDITIONAL(HAVE_PAM, test x$ac_cv_header_security_pam_misc_h = xyes)
 
 AC_ARG_WITH([selinux],
   AC_HELP_STRING([--with-selinux], [compile with SELinux support]),
   [], with_selinux=no
 )
 
-if test x$with_selinux != xno; then
-  AC_CHECK_LIB(selinux, getprevcon)
-  if test x$with_selinux = xyes && test x$ac_cv_lib_selinux_getprevcon = xno; then
-    AC_MSG_ERROR([SELinux selected but libselinux not found])
-  fi
+if test x$with_selinux = xno; then
+  AM_CONDITIONAL(HAVE_SELINUX, false)
+else
+  UTIL_CHECK_LIB(selinux, getprevcon)
+  case $with_selinux:$have_selinux in
+  yes:no) AC_MSG_ERROR([SELinux selected but libselinux not found]);;
+  esac
 fi
-AM_CONDITIONAL(HAVE_SELINUX, test x$ac_cv_lib_selinux_getprevcon = xyes)
 
 
 AC_ARG_WITH([audit],
@@ -304,13 +302,16 @@ AC_ARG_WITH([audit],
   [], with_audit=no
 )
 
-if test x$with_audit != xno; then
-  AC_CHECK_LIB(audit, audit_log_user_message)
-  if test x$with_audit = xyes && test x$ac_cv_lib_audit_audit_log_user_message = xno; then
-    AC_MSG_ERROR([Audit selected but libaudit not found (or doesn't support audit_log_user_message())])
-  fi
+if test x$with_audit = xno; then
+  AM_CONDITIONAL(HAVE_AUDIT, false)
+else
+  UTIL_CHECK_LIB(audit, audit_log_user_message)
+  case $with_audit:$have_audit in
+  yes:no)
+   AC_MSG_ERROR([Audit selected but libaudit not found (or doesn't support audit_log_user_message())])
+   ;;
+  esac
 fi
-AM_CONDITIONAL(HAVE_AUDIT, test x$ac_cv_lib_audit_audit_log_user_message = xyes)
 
 
 AC_ARG_ENABLE([schedutils],
