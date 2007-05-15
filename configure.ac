@@ -4,7 +4,7 @@ AC_PREREQ(2.59)
 
 AC_CONFIG_AUX_DIR(config)
 
-AM_INIT_AUTOMAKE([check-news -Wall foreign 1.9])
+AM_INIT_AUTOMAKE([check-news -Wall foreign 1.9 dist-bzip2])
 
 AC_CONFIG_SRCDIR(mount/mount.c)
 
