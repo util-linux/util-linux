@@ -25,9 +25,5 @@ EXTRA_DIST = 	expected/* \
 		ts-mount-remount
 
 
-distclean-local:
+clean-local:
 	rm -rf output diff
-
-clean: distclean-local
-
-
