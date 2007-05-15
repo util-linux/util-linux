@@ -75,9 +75,9 @@ UTIL_CHECK_LIB(blkid, blkid_known_fstype)
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
 AM_GNU_GETTEXT([external])
-if test -d po
+if test -d $srcdir/po
 then
-    ALL_LINGUAS=`(cd po > /dev/null && ls *.po) | sed 's+\.po$++'`
+    ALL_LINGUAS=`cd $srcdir/po > /dev/null && echo *.po | sed 's/\.po//g'`
 else
     ALL_LINGUAS="af am ar as be bg bn_IN bn ca cs cy da de el en_GB es et eu_ES fa fi fr gl gu he hi hr hu hy id is it ja ka kn ko ku lo lt lv mk ml mr ms my nb nl nn no nso or pa pl pt_BR pt ro ru si sk sl sq sr@Latn sr sv ta te th tr uk ur vi zh_CN zh_TW zu"
 fi
