@@ -27,12 +27,12 @@ EXTRA_DIST = \
 
 
 distclean-local:
-	-find . \( -name \*~ -o -name \*.orig -o -name \*.rej \) -exec rm -f {} \;
+	-find . -name \*~ -o -name \*.orig -o -name \*.rej | xargs rm -f
 	rm -rf autom4te.cache
 
 mrproper: distclean
 	if [ -f ".gitignore" ]; then \
-		find -name Makefile.in -exec rm -f {} \; ; \
+		find -name Makefile.in | xargs rm -f ; \
 		rm -f configure ABOUT-NLS ; \
 		rm -rf m4 ; \
 		cd config; rm -f `cat ../.gitignore`; cd .. ; \
