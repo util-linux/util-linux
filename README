@@ -40,10 +40,10 @@ COMPILATION:
       See the INSTALL file for more details.
 
       Notes:
-            * use SUID_CFLAGS and SUID_LDFLAGS when you want to define special compiler options
-              for typical suid programs, for example:
+            * use SUID_CFLAGS and SUID_LDFLAGS when you want to define special
+              compiler options for typical suid programs, for example:
 
-                  SUID_CFLAGS="-fpie" SUID_LDFLAGS="-pie" ./configure
+                  ./configure SUID_CFLAGS="-fpie" SUID_LDFLAGS="-pie"
 
-              Now this feature is supported for chfn, chsh, newgrp, write,
-              mount and umount.
+              This feature is currently supported for chfn, chsh, newgrp,
+              write, mount, and umount.
