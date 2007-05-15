@@ -20,6 +20,7 @@ mount_SOURCES = mount.c fstab.c sundries.c xmalloc.c realpath.c mount_mntent.c \
 
 mount_LDADD = $(top_srcdir)/lib/libenv.a $(top_srcdir)/lib/libsetproctitle.a
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
+mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 umount_SOURCES = umount.c fstab.c sundries.c xmalloc.c realpath.c mount_mntent.c \
 	getusername.c get_label_uuid.c mount_by_label.c mount_blkid.c \
@@ -28,6 +29,7 @@ umount_SOURCES = umount.c fstab.c sundries.c xmalloc.c realpath.c mount_mntent.c
 	
 umount_LDADD = $(top_srcdir)/lib/libenv.a
 umount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
+umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 swapon_SOURCES = swapon.c xmalloc.c \
 	get_label_uuid.c mount_by_label.c mount_blkid.c \

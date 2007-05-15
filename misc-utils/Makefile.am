@@ -65,6 +65,7 @@ if BUILD_WRITE
 usrbinexec_PROGRAMS += write
 man_MANS += write.1
 write_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
+write_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 if USE_TTY_GROUP
 install-exec-hook::
