@@ -84,7 +84,7 @@ AM_CONDITIONAL(HAVE_NCURSES, test x$have_ncurses = xyes)
 
 AC_ARG_WITH([slang],
   AC_HELP_STRING([--with-slang], [compile cfdisk with slang]),
-  with_slang=$withval, with_slang=no
+  [], with_slang=no
 )
 
 if test x$with_slang = xyes; then
@@ -178,14 +178,14 @@ AM_CONDITIONAL(SPARC, test x$sparc = xtrue)
 
 AC_ARG_ENABLE([agetty],
   AC_HELP_STRING([--disable-agetty], [do not build agetty]),
-  enable_agetty=$enableval, enable_agetty=yes
+  [], enable_agetty=yes
 )
 AM_CONDITIONAL(BUILD_AGETTY, test x$enable_agetty = xyes)
 
 
 AC_ARG_ENABLE([cramfs],
   AC_HELP_STRING([--disable-cramfs], [do not build fsck.cramfs, mkfs.cramfs]),
-  enable_cramfs=$enableval, enable_cramfs=check
+  [], enable_cramfs=check
 )
 
 if test x$enable_cramfs != xno; then
@@ -201,83 +201,83 @@ AM_CONDITIONAL(BUILD_CRAMFS, test x$build_cramfs = xyes)
 
 AC_ARG_ENABLE([elvtune],
   AC_HELP_STRING([--enable-elvtune], [build elvtune (only works with 2.2 and 2.4 kernels)]),
-  enable_elvtune=$enableval, enable_elvtune=no
+  [], enable_elvtune=no
 )
 AM_CONDITIONAL(BUILD_ELVTUNE, test x$enable_elvtune = xyes)
 
 
 AC_ARG_ENABLE([init],
   AC_HELP_STRING([--enable-init], [build simpleinit, shutdown, initctl]),
-  enable_init=$enableval, enable_init=no
+  [], enable_init=no
 )
 AM_CONDITIONAL(BUILD_INIT, test x$enable_init = xyes)
 
 
 AC_ARG_ENABLE([kill],
   AC_HELP_STRING([--enable-kill], [build kill]),
-  enable_kill=$enableval, enable_kill=no
+  [], enable_kill=no
 )
 AM_CONDITIONAL(BUILD_KILL, test x$enable_kill = xyes)
 
 
 AC_ARG_ENABLE([last],
   AC_HELP_STRING([--enable-last], [build last]),
-  enable_last=$enableval, enable_last=no
+  [], enable_last=no
 )
 AM_CONDITIONAL(BUILD_LAST, test x$enable_last = xyes)
 
 
 AC_ARG_ENABLE([mesg],
   AC_HELP_STRING([--enable-mesg], [build mesg]),
-  enable_mesg=$enableval, enable_mesg=no
+  [], enable_mesg=no
 )
 AM_CONDITIONAL(BUILD_MESG, test x$enable_mesg = xyes)
 
 
 AC_ARG_ENABLE([partx],
   AC_HELP_STRING([--enable-partx], [build addpart, delpart, partx]),
-  enable_partx=$enableval, enable_partx=no
+  [], enable_partx=no
 )
 AM_CONDITIONAL(BUILD_PARTX, test x$enable_partx = xyes)
 
 
 AC_ARG_ENABLE([raw],
   AC_HELP_STRING([--enable-raw], [build raw]),
-  enable_raw=$enableval, enable_raw=no
+  [], enable_raw=no
 )
 AM_CONDITIONAL(BUILD_RAW, test x$enable_raw = xyes)
 
 
 AC_ARG_ENABLE([rdev],
   AC_HELP_STRING([--enable-rdev], [build rdev on i386]),
-  enable_rdev=$enableval, enable_rdev=no
+  [], enable_rdev=no
 )
 AM_CONDITIONAL(BUILD_RDEV, test x$enable_rdev = xyes)
 
 
 AC_ARG_ENABLE([rename],
   AC_HELP_STRING([--disable-rename], [do not build rename]),
-  enable_agetty=$enableval, enable_rename=yes
+  [], enable_rename=yes
 )
 AM_CONDITIONAL(BUILD_RENAME, test x$enable_rename = xyes)
 
 
 AC_ARG_ENABLE([reset],
   AC_HELP_STRING([--enable-reset], [build reset]),
-  enable_reset=$enableval, enable_reset=no
+  [], enable_reset=no
 )
 AM_CONDITIONAL(BUILD_RESET, test x$enable_reset = xyes)
 
 
 AC_ARG_ENABLE([login-utils],
   AC_HELP_STRING([--enable-login-utils], [build chfn, chsh, login, newgrp, vipw]),
-  enable_login_utils=$enableval, enable_login_utils=no
+  [], enable_login_utils=no
 )
 AM_CONDITIONAL(BUILD_LOGIN_UTILS, test x$enable_login_utils = xyes)
 
 AC_ARG_WITH([pam],
   AC_HELP_STRING([--without-pam], [compile login-utils without PAM support]),
-  with_pam=$withval, with_pam=yes
+  [], with_pam=yes
 )
 
 if test x$enable_login_utils = xyes && test x$with_pam != xno; then
@@ -290,7 +290,7 @@ AM_CONDITIONAL(HAVE_PAM, test x$ac_cv_header_security_pam_misc_h = xyes)
 
 AC_ARG_WITH([selinux],
   AC_HELP_STRING([--with-selinux], [compile with SELinux support]),
-  with_selinux=$withval, with_selinux=no
+  [], with_selinux=no
 )
 
 if test x$with_selinux != xno; then
@@ -304,7 +304,7 @@ AM_CONDITIONAL(HAVE_SELINUX, test x$ac_cv_lib_selinux_getprevcon = xyes)
 
 AC_ARG_WITH([audit],
   AC_HELP_STRING([--with-audit], [compile with audit support]),
-  with_audit=$withval, with_audit=no
+  [], with_audit=no
 )
 
 if test x$with_audit != xno; then
@@ -318,28 +318,28 @@ AM_CONDITIONAL(HAVE_AUDIT, test x$ac_cv_lib_audit_audit_log_user_message = xyes)
 
 AC_ARG_ENABLE([schedutils],
   AC_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
-  enable_schedutils=$enableval, enable_schedutils=yes
+  [], enable_schedutils=yes
 )
 AM_CONDITIONAL(BUILD_SCHEDUTILS, test x$enable_schedutils = xyes)
 
 
 AC_ARG_ENABLE([wall],
   AC_HELP_STRING([--disable-wall], [do not build wall]),
-  enable_wall=$enableval, enable_wall=yes
+  [], enable_wall=yes
 )
 AM_CONDITIONAL(BUILD_WALL, test x$enable_wall = xyes)
 
 
 AC_ARG_ENABLE([write],
   AC_HELP_STRING([--enable-write], [build write]),
-  enable_write=$enableval, enable_write=no
+  [], enable_write=no
 )
 AM_CONDITIONAL(BUILD_WRITE, test x$enable_write = xyes)
 
 
 AC_ARG_ENABLE([chsh-only-listed],
   AC_HELP_STRING([--disable-chsh-only-listed], [chsh: allow shells not in /etc/shells]),
-  enable_login_chsh_only_listed=$enableval, enable_chsh_only_listed=yes
+  [], enable_chsh_only_listed=yes
 )
 
 if test x$enable_chsh_only_listed = xyes; then
@@ -349,7 +349,7 @@ fi
 
 AC_ARG_ENABLE([login-chown-vcs],
   AC_HELP_STRING([--enable-login-chown-vcs], [let login chown /dev/vcsN]),
-  enable_login_chown_vcs=$enableval, enable_login_chown_vcs=no
+  [], enable_login_chown_vcs=no
 )
 
 if test x$enable_login_chown_vcs = xyes; then
@@ -359,7 +359,7 @@ fi
 
 AC_ARG_ENABLE([login-stat-mail],
   AC_HELP_STRING([--enable-login-stat-mail], [let login stat() the mailbox]),
-  enable_login_stat_mail=$enableval, enable_login_stat_mail=no
+  [], enable_login_stat_mail=no
 )
 
 if test x$enable_login_stat_mail = xyes; then
@@ -369,7 +369,7 @@ fi
 
 AC_ARG_ENABLE([pg-bell],
   AC_HELP_STRING([--disable-pg-bell], [let pg not ring the bell on invalid keys]),
-  enable_pg_bell=$enableval, enable_pg_bell=yes
+  [], enable_pg_bell=yes
 )
 
 if test x$enable_pg_bell = xyes; then
@@ -379,7 +379,7 @@ fi
 
 AC_ARG_ENABLE([require-password],
   AC_HELP_STRING([--disable-require-password], [do not require the user to enter the password in chfn and chsh]),
-  enable_require_password=$enableval, enable_require_password=yes
+  [], enable_require_password=yes
 )
 
 if test x$enable_require_password = xyes; then
@@ -389,7 +389,7 @@ fi
 
 AC_ARG_ENABLE([use-tty-group],
   AC_HELP_STRING([--disable-use-tty-group], [do not install wall and write setgid tty]),
-  enable_use_tty_group=$enableval, enable_use_tty_group=yes
+  [], enable_use_tty_group=yes
 )
 AM_CONDITIONAL(USE_TTY_GROUP, test x$enable_use_tty_group = xyes)
 
