@@ -26,9 +26,9 @@ endif
 if BUILD_CRAMFS
 sbin_PROGRAMS += fsck.cramfs mkfs.cramfs
 fsck_cramfs_SOURCES = fsck.cramfs.c cramfs.h
-mkfs_cramfs_SOURCES = mkfs.cramfs.c cramfs.h
+mkfs_cramfs_SOURCES = mkfs.cramfs.c cramfs.h ../lib/md5.c
 fsck_cramfs_LDADD = -lz
-mkfs_cramfs_LDADD = -lz $(top_srcdir)/lib/libmd5.a
+mkfs_cramfs_LDADD = -lz
 endif
 
 mkswap_LDADD =

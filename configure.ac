@@ -415,7 +415,6 @@ fdisk/Makefile
 getopt/Makefile
 hwclock/Makefile
 include/Makefile
-lib/Makefile
 login-utils/Makefile
 misc-utils/Makefile
 mount/Makefile

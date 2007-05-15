@@ -11,7 +11,7 @@ bin_PROGRAMS =
 usrbinexec_PROGRAMS = cal ddate logger look mcookie \
 	namei script whereis
 
-mcookie_LDADD = $(top_srcdir)/lib/libmd5.a
+mcookie_SOURCES = mcookie.c ../lib/md5.c
 
 usrbinexec_SCRIPTS = chkdupexe scriptreplay
 

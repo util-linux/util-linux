@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-SUBDIRS = lib \
+SUBDIRS = \
 	include \
 	disk-utils \
 	fdisk \

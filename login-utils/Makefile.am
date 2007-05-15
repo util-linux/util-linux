@@ -40,14 +40,17 @@ usrbinexec_PROGRAMS += chfn chsh newgrp
 usrsbinexec_PROGRAMS += vipw
 man_MANS += chfn.1 chsh.1 login.1 newgrp.1 vipw.8 vigr.8
 
-chfn_SOURCES = chfn.c islocal.c setpwnam.c islocal.h my_crypt.h setpwnam.h
-chsh_SOURCES = chsh.c islocal.c setpwnam.c islocal.h my_crypt.h setpwnam.h
+chfn_SOURCES = chfn.c $(chfn_chsh_common)
+chsh_SOURCES = chsh.c $(chfn_chsh_common)
+chfn_chsh_common = islocal.c setpwnam.c islocal.h my_crypt.h setpwnam.h \
+	../lib/env.c
+login_SOURCES = login.c login.h my_crypt.h ../lib/setproctitle.c
 newgrp_SOURCES = newgrp.c my_crypt.h
 vipw_SOURCES = vipw.c setpwnam.h
 
-chfn_LDADD = ../lib/libenv.a
-chsh_LDADD = ../lib/libenv.a
-login_LDADD = ../lib/libsetproctitle.a
+chfn_LDADD =
+chsh_LDADD =
+login_LDADD =
 newgrp_LDADD =
 vipw_LDADD =
 
@@ -70,9 +73,8 @@ if HAVE_PAM
 chfn_LDADD += -lpam -lpam_misc
 chsh_LDADD += -lpam -lpam_misc
 login_LDADD += -lpam -lpam_misc
-login_SOURCES = login.c login.h my_crypt.h
 else
-login_SOURCES = login.c checktty.c login.h my_crypt.h
+login_SOURCES += checktty.c
 endif
 
 if HAVE_AUDIT
