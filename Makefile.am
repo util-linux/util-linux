@@ -23,7 +23,6 @@ EXTRA_DIST = \
 		README.devel \
 		licenses/ \
 		example.files/ \
-		po/Makevars.template \
 		po/update-potfiles
 
 
