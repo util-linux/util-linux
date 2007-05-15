@@ -70,9 +70,6 @@ mount/mount.c
 mount/mount_guess_fstype.c
 mount/mount_guess_rootdev.c
 mount/mount_mntent.c
-mount/nfsmount.c
-mount/nfsmount_clnt.c
-mount/nfsmount_xdr.c
 mount/pivot_root.c
 mount/realpath.c
 mount/sundries.c
