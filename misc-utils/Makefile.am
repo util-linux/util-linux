@@ -1,8 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-EXTRA_DIST = 	README.* \
-		reset \
-		reset.033c
+EXTRA_DIST = 	README.*
 
 bin_PROGRAMS =
 
@@ -48,9 +46,10 @@ man_MANS += rename.1
 endif
 
 if BUILD_RESET
-usrbinexec_SCRIPTS += reset
+dist_usrbinexec_SCRIPTS = reset
 man_MANS += reset.1
 endif
+EXTRA_DIST += reset.033c
 
 if BUILD_WRITE
 
