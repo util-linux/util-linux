@@ -29,7 +29,7 @@ swapon_SOURCES = swapon.c xmalloc.c \
 	swap_constants.h realpath.c
 
 losetup_SOURCES = lomount.c loop.h lomount.h
-losetup_CFLAGS = -DMAIN
+losetup_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
 
 mount_LDADD =
 umount_LDADD =
@@ -52,7 +52,7 @@ endif
 
 noinst_PROGRAMS = mtab_lock_test
 mtab_lock_test_SOURCES = fstab.c sundries.c xmalloc.c $(MNTHDRS)
-mtab_lock_test_CFLAGS = -DMAIN_TEST_MTABLOCK
+mtab_lock_test_CPPFLAGS = -DMAIN_TEST_MTABLOCK $(AM_CPPFLAGS)
 
 swapon.c: swapargs.h
 

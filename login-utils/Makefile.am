@@ -132,5 +132,5 @@ endif
 
 noinst_PROGRAMS = checktty_test
 checktty_test_SOURCES = checktty.c login.h
-checktty_test_CFLAGS = -DMAIN_TEST_CHECKTTY
+checktty_test_CPPFLAGS = -DMAIN_TEST_CHECKTTY $(AM_CPPFLAGS)
 

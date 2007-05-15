@@ -2,7 +2,7 @@ include $(top_srcdir)/config/include-Makefile.am
 
 usrbinexec_PROGRAMS = getopt
 
-getopt_CFLAGS = -DLIBCGETOPT=1
+getopt_CPPFLAGS = -DLIBCGETOPT=1 $(AM_CPPFLAGS)
 
 man_MANS = getopt.1
 
