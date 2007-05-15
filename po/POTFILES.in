@@ -68,7 +68,6 @@ mount/mount_blkid.c
 mount/mount_by_label.c
 mount/mount.c
 mount/mount_guess_fstype.c
-mount/mount_guess_rootdev.c
 mount/mount_mntent.c
 mount/pivot_root.c
 mount/realpath.c

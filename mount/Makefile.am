@@ -9,8 +9,7 @@ man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 MNTHDRS = fstab.h linux_fs.h mount_mntent.h mount_constants.h my_dev_t.h \
 	mount_paths.h get_label_uuid.h lomount.h mount_blkid.h \
 	mount_guess_fstype.h realpath.h xmalloc.h \
-	getusername.h loop.h mount_by_label.h mount_guess_rootdev.h \
-	sundries.h
+	getusername.h loop.h mount_by_label.h sundries.h
 mount_common = fstab.c sundries.c xmalloc.c realpath.c mount_mntent.c \
 	getusername.c get_label_uuid.c mount_by_label.c mount_blkid.c \
 	lomount.c $(MNTHDRS) ../lib/env.c
