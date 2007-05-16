@@ -32,11 +32,6 @@ touch $TS_OUTPUT
 
 LABEL="testSwap"
 
-ldd $TS_CMD_SWAPON | grep -q 'libvolume_id' 2>&1 >> $TS_OUTPUT
-if [ "$?" == "0" ]; then
-	HAS_VOLUMEID="yes"
-fi
-
 ts_device_init || ts_finalize
 $TS_CMD_MKSWAP -L $LABEL $DEVICE 2>&1 >> $TS_OUTPUT
 
@@ -47,8 +42,9 @@ if [ "$($TS_CMD_MOUNT --guess-fstype $DEVICE)" != "swap" ]; then
 	ts_finalize
 fi
 
-if [ -n "$HAS_VOLUMEID" ] && [ ! -L "/dev/disk/by-label/$LABEL" ]; then
-	ts_device_deinit
+ts_udev_loop_support $LABEL
+if [ "$?" != "0" ]; then
+	ts_device_deinit;
 	ts_skip "udev ignores /dev/loop*"
 fi
 

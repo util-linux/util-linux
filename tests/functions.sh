@@ -99,4 +99,16 @@ function ts_device_deinit {
 		rm -f "$IMAGE" &> /dev/null
 	fi
 }
+
+function ts_udev_loop_support {
+	ldd $TS_CMD_MOUNT | grep -q 'libvolume_id' 2>&1 >> $TS_OUTPUT
+	if [ "$?" == "0" ]; then
+		HAS_VOLUMEID="yes"
+	fi
+	if [ -n "$HAS_VOLUMEID" ] && [ ! -L "/dev/disk/by-label/$1" ]; then
+		return 1
+	fi
+	return 0
+}
+
 		
