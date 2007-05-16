@@ -1,6 +1,6 @@
 .\" Copyright 2002 Andre C. Mazzone (linuxdev@karagee.com)
 .\" May be distributed under the GNU General Public License
-.TH IPCRM 8 "last change: 19 March 2002" "ipcrm" "Linux Programmer's Manual"
+.TH IPCRM 1 "last change: 19 March 2002" "ipcrm" "Linux Programmer's Manual"
 .SH NAME
 ipcrm \- remove a message queue, semaphore set or shared memory id
 .SH SYNOPSIS
@@ -98,7 +98,7 @@ The details of the removes are described in
 and
 .IR semctl (2).
 The identifiers and keys may be found by using
-.IR ipcs (8).
+.IR ipcs (1).
 .SH NOTES
 In its first Linux implementation, ipcrm used the deprecated syntax
 shown in the
@@ -113,7 +113,7 @@ compatibility the previous syntax is still supported.
 .\" Krishna Balasubramanian (balasub@cis.ohio-state.edu)
 .SH SEE ALSO
 .nh
-.BR ipcs (8),
+.BR ipcs (1),
 .BR msgctl (2),
 .BR msgget (2),
 .BR semctl (2),
