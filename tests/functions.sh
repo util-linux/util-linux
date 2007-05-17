@@ -111,4 +111,53 @@ function ts_udev_loop_support {
 	return 0
 }
 
-		
+function ts_uuid_by_devname {
+	local DEV="$1"
+	local UUID=""
+	if [ -x "$TS_ECMD_BLKID" ]; then
+		UUID=$($TS_ECMD_BLKID -c /dev/null -w /dev/null -s "UUID" $DEV | sed 's/.*UUID="//g; s/"//g')
+	elif [ -x "$TS_ECMD_VOLID" ]; then
+		UUID=$($TS_ECMD_VOLID -u $DEV)
+	fi
+	echo $UUID
+}
+
+function ts_label_by_devname {
+	local DEV="$1"
+	local TYPE=""
+	if [ -x "$TS_ECMD_BLKID" ]; then
+		LABEL=$($TS_ECMD_BLKID -c /dev/null -w /dev/null -s "LABEL" $DEV | sed 's/.*LABEL="//g; s/"//g')
+	elif [ -x "$TS_ECMD_VOLID" ]; then
+		LABEL=$($TS_ECMD_VOLID -l $DEV)
+	fi
+	echo $LABEL
+}
+
+function ts_fstype_by_devname {
+	local DEV="$1"
+	local TYPE=""
+	if [ -x "$TS_ECMD_BLKID" ]; then
+		TYPE=$($TS_ECMD_BLKID -c /dev/null -w /dev/null -s "TYPE" $DEV | sed 's/.*TYPE="//g; s/"//g')
+	elif [ -x "$TS_ECMD_VOLID" ]; then
+		TYPE=$($TS_ECMD_VOLID -t $DEV)
+	fi
+	echo $TYPE
+}
+
+function ts_device_has {
+	local TAG="$1"
+	local VAL="$2"
+	local DEV="$3"
+
+	case $TAG in
+		"TYPE") vl=$(ts_fstype_by_devname $DEV);;
+		"LABEL") vl=$(ts_label_by_devname $DEV);;
+		"UUID") vl=$(ts_uuid_by_devname $DEV);;
+		*) return 1;;
+	esac
+
+	if [ "$vl" == "$VAL" ]; then
+		return 0
+	fi
+	return 1
+}

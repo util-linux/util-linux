@@ -29,6 +29,8 @@ AC_GNU_SOURCE
 AC_PROG_LIBTOOL
 
 AC_PATH_PROG(PERL, perl)
+AC_PATH_PROG(BLKID, blkid, [], [$PATH:/sbin])
+AC_PATH_PROG(VOLID, vol_id, [], [$PATH:/lib/udev])
 
 AC_SYS_LARGEFILE
 

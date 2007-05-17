@@ -4,6 +4,10 @@ TS_TOPDIR=$TOPDIR/tests
 # helpers
 TS_HELPER_SYSINFO="$TS_TOPDIR/helpers/mnt_test_sysinfo"
 
+# external commands
+TS_ECMD_BLKID="@BLKID@"
+TS_ECMD_VOLID="@VOLID@"
+
 # paths to commands
 TS_CMD_MOUNT=${TS_CMD_MOUNT:-"$TOPDIR/mount/mount"}
 TS_CMD_UMOUNT=${TS_CMD_UMOUNT:-"$TOPDIR/mount/umount"}
