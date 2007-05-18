@@ -8,8 +8,6 @@ TS_DESC="headers"
 
 ts_init
 
-touch $TS_OUTPUT
-
 echo "test: shm headers" >> $TS_OUTPUT
 $TS_CMD_IPCS -m -t | grep --after-context=1 "^---"  >> $TS_OUTPUT
 $TS_CMD_IPCS -m -p | grep --after-context=1 "^---"  >> $TS_OUTPUT

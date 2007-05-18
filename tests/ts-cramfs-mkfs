@@ -28,8 +28,6 @@ ts_skip_nonroot
 
 set -o pipefail
 
-touch $TS_OUTPUT
-
 IMAGE="$TS_OUTDIR/cramfs-loop.img"
 IMAGE_DATA="$TS_OUTDIR/cramfs-data"
 IMAGE_RE=$( echo $IMAGE | sed 's:/:\\/:g' )
@@ -37,9 +35,7 @@ LABEL="testCramfs"
 MOUNTPOINT="$TS_OUTDIR/cramfs-mnt"
 
 echo "create mountpoint dir" >> $TS_OUTPUT
-if [ ! -d "$MOUNTPOINT" ]; then
-	mkdir -p $MOUNTPOINT
-fi
+[ -d "$MOUNTPOINT" ] || mkdir -p $MOUNTPOINT
 
 echo "generate data" >> $TS_OUTPUT
 if [ ! -d "$IMAGE_DATA" ]; then

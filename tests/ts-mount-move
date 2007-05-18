@@ -13,39 +13,31 @@ TS_DESC="move "
 ts_init
 ts_skip_nonroot
 
-touch $TS_OUTPUT
-
 PWD=$(pwd)
 
 DIR_SRC="$PWD/$TS_OUTDIR/mnt-move-src"
 DIR_A="$PWD/$TS_OUTDIR/mnt-move-A"
 DIR_B="$PWD/$TS_OUTDIR/mnt-move-B"
 
-mkdir $DIR_SRC $DIR_A $DIR_B
+[ -d $DIR_SRC ] || mkdir $DIR_SRC
+[ -d $DIR_A ] || mkdir $DIR_A
+[ -d $DIR_B ] || mkdir $DIR_B
 
 # bind
 $TS_CMD_MOUNT --bind $DIR_SRC $DIR_A
 
 # check the bind
 egrep -q "^$DIR_SRC $DIR_A" /etc/mtab
-
-if [ "$?" != "0" ]; then
-        echo "Cannot found binded $DIR_SRC in /etc/mtab" >> $TS_OUTPUT
-	rmdir $DIR_SRC $DIR_A $DIR_B
-        ts_finalize
-fi
+[ "$?" == "0" ] || ts_die "Cannot found binded $DIR_SRC in /etc/mtab"
 
 # move
 $TS_CMD_MOUNT --move $DIR_A $DIR_B
 
 # check the move
 egrep -q "^$DIR_SRC $DIR_B" /etc/mtab
-
 if [ "$?" != "0" ]; then
-        echo "Cannot found moved $DIR_SRC in /etc/mtab" >> $TS_OUTPUT
 	$TS_CMD_UMOUNT $DIR_SRC
-	rmdir $DIR_SRC $DIR_A $DIR_B
-        ts_finalize
+	ts_die "Cannot found moved $DIR_SRC in /etc/mtab"
 fi
 
 # clean up
@@ -53,6 +45,5 @@ $TS_CMD_UMOUNT $DIR_SRC
 rmdir $DIR_SRC $DIR_A $DIR_B
 
 echo "Success" >> $TS_OUTPUT
-
 ts_finalize
 

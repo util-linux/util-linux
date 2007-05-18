@@ -15,8 +15,6 @@ MOUNTER="/sbin/mount.mytest"
 ts_init
 ts_skip_nonroot
 
-touch $TS_OUTPUT
-
 cat > $MOUNTER << EOF
 #!/bin/bash 
 # This util-linux-ng regression test component

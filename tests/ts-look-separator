@@ -20,13 +20,8 @@ TS_DESC="separator"
 
 ts_init
 
-if [ ! -f "/usr/share/dict/words" ]; then
-	ts_skip "/usr/share/dict/words not such file" 
-fi
-
-touch $TS_OUTPUT
+[ -f "/usr/share/dict/words" ] || ts_skip "/usr/share/dict/words not such file"
 
 $TS_CMD_LOOK apple-pie >> $TS_OUTPUT
-
 ts_finalize
 

@@ -10,8 +10,5 @@ ts_init
 
 cat $TS_INPUT | $TS_CMD_COL > /dev/null  2> $TS_OUTPUT
 
-
-
-
 ts_finalize
 
