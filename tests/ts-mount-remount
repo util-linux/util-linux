@@ -9,7 +9,7 @@
 TS_COMPONENT="mount"
 TS_DESC="remount"
 
-ts_init
+ts_init "$1"
 ts_skip_nonroot
 
 # mountpoint
@@ -40,6 +40,6 @@ egrep -q "^$DEVICE $MOUNTPOINT ext2 ro 0 0" /etc/mtab
 
 ts_device_deinit $DEVICE
 
-echo "Success" >> $TS_OUTPUT
+ts_log "Success"
 ts_finalize
 

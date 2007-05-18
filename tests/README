@@ -8,9 +8,9 @@
 
  Run all tests:
 
-	./run.sh
+	./run.sh [--verbose]
 
  Run one tests:
 
-	./ts-<component_name>-<test_name>.sh
+	./ts-<component_name>-<test_name>.sh [--verbose]
 

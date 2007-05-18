@@ -10,7 +10,7 @@
 TS_COMPONENT="mount"
 TS_DESC="move "
 
-ts_init
+ts_init "$1"
 ts_skip_nonroot
 
 PWD=$(pwd)
@@ -44,6 +44,6 @@ fi
 $TS_CMD_UMOUNT $DIR_SRC
 rmdir $DIR_SRC $DIR_A $DIR_B
 
-echo "Success" >> $TS_OUTPUT
+ts_log "Success"
 ts_finalize
 

@@ -1,10 +1,5 @@
 #!/bin/bash
 
-if [ ! -f "/proc/sys/kernel/shmall" ]; then
-	ts_init
-	ts_skip "not IPC in kernel"
-fi
-
 PAGE_SIZE=$($TS_HELPER_SYSINFO pagesize)
 
 # kernel files

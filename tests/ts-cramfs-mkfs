@@ -23,7 +23,7 @@
 TS_COMPONENT="mkfs.cramfs"
 TS_DESC="mkfs"
 
-ts_init
+ts_init "$1"
 ts_skip_nonroot
 
 set -o pipefail
@@ -34,10 +34,10 @@ IMAGE_RE=$( echo $IMAGE | sed 's:/:\\/:g' )
 LABEL="testCramfs"
 MOUNTPOINT="$TS_OUTDIR/cramfs-mnt"
 
-echo "create mountpoint dir" >> $TS_OUTPUT
+ts_log "create mountpoint dir"
 [ -d "$MOUNTPOINT" ] || mkdir -p $MOUNTPOINT
 
-echo "generate data" >> $TS_OUTPUT
+ts_log "generate data"
 if [ ! -d "$IMAGE_DATA" ]; then
 	mkdir -p $IMAGE_DATA
 	for d in `seq 0 110`; do
@@ -50,45 +50,45 @@ if [ ! -d "$IMAGE_DATA" ]; then
 	done
 fi
 
-echo "list checksums from original data" >> $TS_OUTPUT
+ts_log "list checksums from original data"
 find $IMAGE_DATA -type f -exec md5sum {} \; >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
-echo "create cramfs image" >> $TS_OUTPUT
+ts_log "create cramfs image"
 $TS_CMD_MKCRAMFS -n $LABEL $IMAGE_DATA $IMAGE 2>&1 >> $TS_OUTPUT
 [ -s "$IMAGE" ] || ts_die "Cannot create $IMAGE"
 
-echo "count MD5 from the image" >> $TS_OUTPUT
+ts_log "count MD5 from the image"
 md5sum $IMAGE 2>&1 >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
-echo "create loop device from image" >> $TS_OUTPUT
+ts_log "create loop device from image"
 DEVICE=$( $TS_CMD_LOSETUP -f )
 $TS_CMD_LOSETUP $DEVICE $IMAGE 2>&1 >> $TS_OUTPUT
 
-echo "check the image" >> $TS_OUTPUT
+ts_log "check the image"
 ts_device_has "TYPE" "cramfs" $DEVICE
 [  "$?" == "0" ] || ts_die "Cannot found cramfs on $DEVICE" $DEVICE
 
 ts_udev_dev_support "by-label" $LABEL
 [ "$?" == "0" ] || ts_skip "udev ignores /dev/loop*" $DEVICE
 
-echo "mount the image" >> $TS_OUTPUT
+ts_log "mount the image"
 $TS_CMD_MOUNT -L $LABEL $MOUNTPOINT 2>&1 >> $TS_OUTPUT
 
 # check it
 grep -q $DEVICE /proc/mounts
 [ "$?" == "0" ] || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE
 
-echo "list the image" >> $TS_OUTPUT
+ts_log "list the image"
 ls -laR $MOUNTPOINT >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
-echo "list checksums from new data" >> $TS_OUTPUT
+ts_log "list checksums from new data"
 find $MOUNTPOINT -type f -exec md5sum {} \; >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
-echo "umount the image" >> $TS_OUTPUT
+ts_log "umount the image"
 $TS_CMD_UMOUNT $DEVICE
 $TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
 ts_finalize

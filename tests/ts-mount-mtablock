@@ -6,7 +6,7 @@
 TS_COMPONENT="mount"
 TS_DESC="mtablock"
 
-ts_init
+ts_init "$1"
 ts_skip_nonroot
 
 #

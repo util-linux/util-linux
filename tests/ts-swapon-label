@@ -23,7 +23,7 @@ TS_DESC="label"
 
 LABEL="testSwapLabel"
 
-ts_init
+ts_init "$1"
 ts_skip_nonroot
 
 set -o pipefail
@@ -48,6 +48,6 @@ grep -q $DEVICE /proc/swaps
 ts_swapoff $DEVICE
 ts_device_deinit $DEVICE
 
-echo "Success" >> $TS_OUTPUT
+ts_log "Success"
 ts_finalize
 

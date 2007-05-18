@@ -12,7 +12,7 @@ TS_DESC="special program"
 
 MOUNTER="/sbin/mount.mytest"
 
-ts_init
+ts_init "$1"
 ts_skip_nonroot
 
 cat > $MOUNTER << EOF

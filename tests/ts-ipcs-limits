@@ -7,37 +7,34 @@ TS_COMPONENT="ipcs"
 TS_DESC="limits overflow"
 
 if [ $UID != 0 ]; then
-	ts_init
+	ts_init "$1"
 	ts_skip_nonroot
 fi
 
 . ts-ipcs.sh
 
-ts_init
+ts_init "$1"
 
-(
-	echo "load original values"
-	for i in $IPCS_IDX; do
-		SHM_ORG[$i]=$(cat ${IPCS_PROCFILES[$i]})
-	done
+ts_log "load original values"
+for i in $IPCS_IDX; do
+	SHM_ORG[$i]=$(cat ${IPCS_PROCFILES[$i]})
+done >> $TS_OUTPUT
 		
-	echo "check for difference between kernel and IPC"
-	ipcs_limits_check
+ts_log "check for difference between kernel and IPC"
+ipcs_limits_check >> $TS_OUTPUT
 
-	echo "maximalize kernel setting"
-	for i in $IPCS_IDX; do
-		echo ${IPCS_LIMITS[$i]} >> ${IPCS_PROCFILES[$i]}
-	done
+ts_log "maximalize kernel setting"
+for i in $IPCS_IDX; do
+	echo ${IPCS_LIMITS[$i]} >> ${IPCS_PROCFILES[$i]}
+done >> $TS_OUTPUT
 
-	echo "re-check for difference between kernel and IPC"
-	ipcs_limits_check
+ts_log "re-check for difference between kernel and IPC"
+ipcs_limits_check >> $TS_OUTPUT
 
-	echo "write original values to kernel"
-	for i in $IPCS_IDX; do
-		echo ${SHM_ORG[$i]} >> ${IPCS_PROCFILES[$i]}
-	done
-
-) > $TS_OUTPUT
+ts_log "write original values to kernel"
+for i in $IPCS_IDX; do
+	echo ${SHM_ORG[$i]} >> ${IPCS_PROCFILES[$i]}
+done >> $TS_OUTPUT
 
 ts_finalize
 

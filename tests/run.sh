@@ -11,7 +11,7 @@ rm -f *~
 res=0
 count=0
 for ts in $(find -maxdepth 1 -regex "\./ts[^\.~]*" |  sort); do
-	$TS_TOPDIR/$ts
+	$TS_TOPDIR/$ts "$1"
 	res=$(( $res + $? ))
 	count=$(( $count + 1 ))
 done

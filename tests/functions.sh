@@ -3,6 +3,7 @@ TS_OUTDIR="output"
 TS_DIFFDIR="diff"
 TS_EXPECTEDDIR="expected"
 TS_INPUTDIR="input"
+TS_VERBOSE="no"
 
 function ts_skip {
 	echo " IGNORE ($1)"
@@ -36,6 +37,11 @@ function ts_ok {
 	exit 0
 }
 
+function ts_log {
+	echo "$1" >> $TS_OUTPUT
+	[ "$TS_VERBOSE" == "yes" ] && echo "$1"
+}
+
 function ts_init {
 	export LANG="en_US.UTF-8":
 	TS_NAME=$(basename $0)
@@ -45,6 +51,7 @@ function ts_init {
 	if [ ! -d $TS_DIFFDIR ]; then
 		mkdir -p $TS_DIFFDIR
 	fi
+	[ "$1" == "--verbose" ] && TS_VERBOSE="yes"
 	TS_OUTPUT="$TS_OUTDIR/$TS_NAME"
 	TS_DIFF="$TS_DIFFDIR/$TS_NAME"
 	TS_EXPECTED="$TS_EXPECTEDDIR/$TS_NAME"
@@ -80,7 +87,7 @@ function ts_finalize {
 }
 
 function ts_die {
-	echo "$1" >> $TS_OUTPUT
+	ts_log "$1"
 	if [ -n "$2" ] && [ -b "$2" ]; then
 		ts_device_deinit "$2"
 	fi

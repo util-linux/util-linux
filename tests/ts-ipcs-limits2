@@ -8,13 +8,10 @@ TS_DESC="basic limits"
 
 . ts-ipcs.sh
 
-ts_init
+ts_init "$1"
 
-(
-	echo "check for difference between kernel and IPC"
-	ipcs_limits_check
-
-) > $TS_OUTPUT
+ts_log "check for difference between kernel and IPC"
+ipcs_limits_check >> $TS_OUTPUT
 
 ts_finalize
 

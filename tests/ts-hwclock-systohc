@@ -25,7 +25,7 @@ TS_DESC="systohc"
 
 NTP_SERVER="0.fedora.pool.ntp.org"
 
-ts_init
+ts_init "$1"
 ts_skip_nonroot
 
 [ -x "/usr/sbin/ntpdate" ] || ts_skip "cannot found ntpdate command"
