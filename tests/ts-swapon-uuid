@@ -1,0 +1,53 @@
+#!/bin/bash
+
+# 
+# Copyright (C) 2007 Karel Zak <kzak@redhat.com>
+# 
+# This file is part of util-linux-ng.
+# 
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License.
+# 
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+. commands.sh
+. functions.sh
+
+TS_COMPONENT="swapon"
+TS_DESC="uuid"
+
+ts_init
+ts_skip_nonroot
+
+set -o pipefail
+
+DEVICE=$(ts_device_init)
+[ "$?" == 0 ] || ts_die "Cannot init device"
+
+$TS_CMD_MKSWAP $DEVICE > /dev/null 2>> $TS_OUTPUT
+[ "$?" == "0" ] || ts_die "Cannot make swap $DEVICE" $DEVICE
+
+ts_device_has_uuid $DEVICE
+[ "$?" == "0" ] || ts_die "Cannot found UUID on $DEVICE" $DEVICE
+
+UUID=$(ts_uuid_by_devname $DEVICE)
+
+ts_udev_dev_support "by-uuid" $UUID
+[ "$?" == "0" ] || ts_skip "udev ignores /dev/loop*" $DEVICE
+
+$TS_CMD_SWAPON -U $UUID 2>&1 >> $TS_OUTPUT
+
+grep -q $DEVICE /proc/swaps
+[ "$?" == "0" ] || ts_die "Cannot found $DEVICE in /proc/swaps" $DEVICE
+
+ts_swapoff $DEVICE
+ts_device_deinit $DEVICE
+
+echo "Success" >> $TS_OUTPUT
+ts_finalize
+
