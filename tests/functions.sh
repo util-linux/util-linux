@@ -6,6 +6,9 @@ TS_INPUTDIR="input"
 
 function ts_skip {
 	echo " IGNORE ($1)"
+	if [ -n "$2" ] && [ -b "$2" ]; then
+		ts_device_deinit "$2"
+	fi
 	exit 0
 }
 
@@ -48,6 +51,7 @@ function ts_init {
 	TS_INPUT="$TS_INPUTDIR/$TS_NAME"
 
 	rm -f $TS_OUTPUT
+	touch $TS_OUTPUT
 
 	printf "%15s: %-25s ..." "$TS_COMPONENT" "$TS_DESC"
 }
@@ -75,37 +79,48 @@ function ts_finalize {
 	fi
 }
 
+function ts_die {
+	echo "$1" >> $TS_OUTPUT
+	if [ -n "$2" ] && [ -b "$2" ]; then
+		ts_device_deinit "$2"
+	fi
+	ts_finalize
+}
+
 function ts_device_init {
-	IMAGE="$TS_OUTDIR/$TS_NAME.img"
-	IMAGE_RE=$( echo "$IMAGE" | sed 's:/:\\/:g' )
+	local IMAGE="$TS_OUTDIR/$TS_NAME.img"
+	local IMAGE_RE=$( echo "$IMAGE" | sed 's:/:\\/:g' )
+	local DEV=""
 
 	dd if=/dev/zero of="$IMAGE" bs=1M count=5 &> /dev/null
 
 	$TS_CMD_LOSETUP -f "$IMAGE" 2>&1 >> $TS_OUTPUT
-	DEVICE=$( $TS_CMD_LOSETUP -a | gawk 'BEGIN {FS=":"} /'$IMAGE_RE'/ { print $1 }' )
+	DEV=$( $TS_CMD_LOSETUP -a | gawk 'BEGIN {FS=":"} /'$IMAGE_RE'/ { print $1 }' )
 
-	if [ -z "$DEVICE" ]; then
-		ts_device_deinit
+	if [ -z "$DEV" ]; then
+		ts_device_deinit $DEV
 		return 1		# error
 	fi
 
+	echo $DEV
 	return 0			# succes
 }
 
 function ts_device_deinit {
-	if [ -b "$DEVICE" ]; then
-		$TS_CMD_UMOUNT "$DEVICE" &> /dev/null
-		$TS_CMD_LOSETUP -d "$DEVICE" &> /dev/null
-		rm -f "$IMAGE" &> /dev/null
+	local DEV="$1"
+
+	if [ -b "$DEV" ]; then
+		$TS_CMD_UMOUNT "$DEV" &> /dev/null
+		$TS_CMD_LOSETUP -d "$DEV" &> /dev/null
 	fi
 }
 
-function ts_udev_loop_support {
+function ts_udev_dev_support {
 	ldd $TS_CMD_MOUNT | grep -q 'libvolume_id' 2>&1 >> $TS_OUTPUT
 	if [ "$?" == "0" ]; then
-		HAS_VOLUMEID="yes"
+		local HAS_VOLUMEID="yes"
 	fi
-	if [ -n "$HAS_VOLUMEID" ] && [ ! -L "/dev/disk/by-label/$1" ]; then
+	if [ -n "$HAS_VOLUMEID" ] && [ ! -L "/dev/disk/$1/$2" ]; then
 		return 1
 	fi
 	return 0
@@ -148,6 +163,7 @@ function ts_device_has {
 	local TAG="$1"
 	local VAL="$2"
 	local DEV="$3"
+	local vl=""
 
 	case $TAG in
 		"TYPE") vl=$(ts_fstype_by_devname $DEV);;
@@ -160,4 +176,23 @@ function ts_device_has {
 		return 0
 	fi
 	return 1
+}
+
+function ts_device_has_uuid {
+	ts_uuid_by_devname "$1" | egrep -q '^[0-9a-z]{8}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{4}-[0-9a-z]{12}$'
+	return $?
+}
+
+function ts_swapoff {
+	local DEV="$1"
+
+	# swapoff doesn't exist in build tree
+	if [ ! -x "$TS_CMD_SWAPOFF" ]; then
+		ln -sf $TS_CMD_SWAPON $TS_CMD_SWAPOFF
+		REMSWAPOFF="true"
+	fi
+	$TS_CMD_SWAPOFF $DEV 2>&1 >> $TS_OUTPUT
+	if [ -n "$REMSWAPOFF" ]; then
+		rm -f $TS_CMD_SWAPOFF
+	fi
 }

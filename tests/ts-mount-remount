@@ -3,7 +3,6 @@
 #
 # test for mount -o remount,ro
 #
-
 . commands.sh
 . functions.sh
 
@@ -13,40 +12,33 @@ TS_DESC="remount"
 ts_init
 ts_skip_nonroot
 
-touch $TS_OUTPUT
-
 # mountpoint
 MOUNTPOINT="$(pwd)/$TS_OUTDIR/mnt-remount"
 mkdir -p $MOUNTPOINT
 
-ts_device_init || ts_finalize
+DEVICE=$(ts_device_init)
+[ "$?" == 0 ] || ts_die "Cannot init device"
+
 mkfs.ext2 $DEVICE &> /dev/null
+[ "$?" == "0" ] || ts_die "Cannot make ext2 on $DEVICE" $DEVICE
 
 # mount read-write
 $TS_CMD_MOUNT $DEVICE $MOUNTPOINT
+[ "$?" == "0" ] || ts_die "Cannot mount $MOUNTPOINT" $DEVICE
 
 # check the mount
 egrep -q "^$DEVICE $MOUNTPOINT" /etc/mtab
-
-if [ "$?" != "0" ]; then
-        echo "Cannot found $MOUNTPOINT in /etc/mtab" >> $TS_OUTPUT
-	ts_device_deinit
-        ts_finalize
-fi
+[ "$?" == "0" ] || ts_die "Cannot found $MOUNTPOINT in /etc/mtab" $DEVICE
 
 # remount
 $TS_CMD_MOUNT -o remount,ro $MOUNTPOINT
+[ "$?" == "0" ] || ts_die "Cannot remount $MOUNTPOINT" $DEVICE
 
 # check the remount
 egrep -q "^$DEVICE $MOUNTPOINT ext2 ro 0 0" /etc/mtab
+[ "$?" == "0" ] || ts_die "Cannot found remounted $MOUNTPOINT in /etc/mtab" $DEVICE
 
-if [ "$?" != "0" ]; then
-        echo "Cannot found remounted $MOUNTPOINT in /etc/mtab" >> $TS_OUTPUT
-        ts_device_deinit
-	ts_finalize
-fi
-
-ts_device_deinit
+ts_device_deinit $DEVICE
 
 echo "Success" >> $TS_OUTPUT
 ts_finalize
