@@ -8,22 +8,24 @@ EXTRA_DIST = 	expected/ \
 		README \
 		run.sh \
 		ts-col-multibyte \
+		ts-cramfs-mkfs \
+		ts-hwclock-systohc \
 		ts-ipcs-headers \
 		ts-ipcs-limits \
 		ts-ipcs-limits2 \
 		ts-ipcs.sh \
-		ts-mkswap-doit \
-		ts-mount-paths \
-		ts-namei-logic \
-		ts-cramfs-mkfs \
-		ts-look-separator \
 		ts-login-checktty \
-		ts-hwclock-systohc \
-		ts-mount-special \
-		ts-mount-mtablock \
+		ts-look-separator \
 		ts-mount-move \
-		ts-mount-remount
-
+		ts-mount-mtablock \
+		ts-mount-paths \
+		ts-mount-remount \
+		ts-mount-special \
+		ts-mount-uuid \
+		ts-namei-logic \
+		ts-swapon-devname \
+		ts-swapon-label \
+		ts-swapon-uuid
 
 clean-local:
 	rm -rf output diff
