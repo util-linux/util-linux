@@ -11,6 +11,7 @@ EXTRA_DIST = 	expected/ \
 		ts-cramfs-mkfs \
 		ts-fstab-label \
 		ts-fstab-uuid \
+		ts-fstab-devname \
 		ts-hwclock-systohc \
 		ts-ipcs-headers \
 		ts-ipcs-limits \
