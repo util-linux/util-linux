@@ -75,8 +75,8 @@ UTIL_CHECK_LIB(util, openpty)
 UTIL_CHECK_LIB(termcap, tgetnum)
 
 AC_ARG_WITH([fsprobe],
-  AC_HELP_STRING([--with-fsprobe], [library to guess filesystems (blkid|volume_id), default is blkid]),
-  with_fsprobe=$withval, with_fsprobe=blkid
+  [AS_HELP_STRING([--with-fsprobe], [library to guess filesystems (blkid|volume_id), default is blkid])],
+  [], [with_fsprobe=blkid]
 )
 
 AM_CONDITIONAL(HAVE_BLKID, false)
@@ -91,7 +91,7 @@ elif test x$with_fsprobe = xvolume_id; then
 fi
 
 if test $have_blkid = no && test $have_volume_id = no; then
-  AC_MSG_ERROR([Without blkid or volume_id you will not be able to build util-linux-ng.])
+  AC_MSG_ERROR([blkid or volume_id is needed to build util-linux-ng.])
 fi
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
