@@ -13,8 +13,7 @@ ts_init "$1"
 ts_skip_nonroot
 
 # mountpoint
-MOUNTPOINT="$(pwd)/$TS_OUTDIR/mnt-remount"
-mkdir -p $MOUNTPOINT
+[ -d $TS_MOUNTPOINT ] || mkdir -p $TS_MOUNTPOINT
 
 DEVICE=$(ts_device_init)
 [ "$?" == 0 ] || ts_die "Cannot init device"
@@ -23,20 +22,20 @@ mkfs.ext2 $DEVICE &> /dev/null
 [ "$?" == "0" ] || ts_die "Cannot make ext2 on $DEVICE" $DEVICE
 
 # mount read-write
-$TS_CMD_MOUNT $DEVICE $MOUNTPOINT
-[ "$?" == "0" ] || ts_die "Cannot mount $MOUNTPOINT" $DEVICE
+$TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT
+[ "$?" == "0" ] || ts_die "Cannot mount $TS_MOUNTPOINT" $DEVICE
 
 # check the mount
-egrep -q "^$DEVICE $MOUNTPOINT" /etc/mtab
-[ "$?" == "0" ] || ts_die "Cannot found $MOUNTPOINT in /etc/mtab" $DEVICE
+egrep -q "^$DEVICE $TS_MOUNTPOINT" /etc/mtab
+[ "$?" == "0" ] || ts_die "Cannot found $TS_MOUNTPOINT in /etc/mtab" $DEVICE
 
 # remount
-$TS_CMD_MOUNT -o remount,ro $MOUNTPOINT
-[ "$?" == "0" ] || ts_die "Cannot remount $MOUNTPOINT" $DEVICE
+$TS_CMD_MOUNT -o remount,ro $TS_MOUNTPOINT
+[ "$?" == "0" ] || ts_die "Cannot remount $TS_MOUNTPOINT" $DEVICE
 
 # check the remount
-egrep -q "^$DEVICE $MOUNTPOINT ext2 ro 0 0" /etc/mtab
-[ "$?" == "0" ] || ts_die "Cannot found remounted $MOUNTPOINT in /etc/mtab" $DEVICE
+egrep -q "^$DEVICE $TS_MOUNTPOINT ext2 ro 0 0" /etc/mtab
+[ "$?" == "0" ] || ts_die "Cannot found remounted $TS_MOUNTPOINT in /etc/mtab" $DEVICE
 
 ts_device_deinit $DEVICE
 

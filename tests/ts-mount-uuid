@@ -26,7 +26,6 @@ ts_skip_nonroot
 
 set -o pipefail
 
-MOUNTPOINT="$TS_OUTDIR/${TS_NAME}_mnt"
 DEVICE=$(ts_device_init)
 [ "$?" == 0 ] || ts_die "Cannot init device"
 
@@ -41,9 +40,9 @@ UUID=$(ts_uuid_by_devname $DEVICE)
 ts_udev_dev_support "by-uuid" $UUID
 [ "$?" == "0" ] || ts_skip "udev ignores /dev/loop*" $DEVICE
 
-[ -d "$MOUNTPOINT" ] || mkdir -p $MOUNTPOINT
+[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
-$TS_CMD_MOUNT -U $UUID $MOUNTPOINT 2>&1 >> $TS_OUTPUT
+$TS_CMD_MOUNT -U $UUID $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
 
 grep -q $DEVICE /proc/mounts
 [ "$?" == "0" ] || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE

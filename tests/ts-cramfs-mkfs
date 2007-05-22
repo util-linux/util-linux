@@ -32,10 +32,11 @@ IMAGE="$TS_OUTDIR/cramfs-loop.img"
 IMAGE_DATA="$TS_OUTDIR/cramfs-data"
 IMAGE_RE=$( echo $IMAGE | sed 's:/:\\/:g' )
 LABEL="testCramfs"
-MOUNTPOINT="$TS_OUTDIR/cramfs-mnt"
+TS_MOUNTPOINT="$TS_OUTDIR/cramfs-mnt"
 
 ts_log "create mountpoint dir"
-[ -d "$MOUNTPOINT" ] || mkdir -p $MOUNTPOINT
+
+[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
 ts_log "generate data"
 if [ ! -d "$IMAGE_DATA" ]; then
@@ -74,18 +75,18 @@ ts_udev_dev_support "by-label" $LABEL
 [ "$?" == "0" ] || ts_skip "udev ignores /dev/loop*" $DEVICE
 
 ts_log "mount the image"
-$TS_CMD_MOUNT -L $LABEL $MOUNTPOINT 2>&1 >> $TS_OUTPUT
+$TS_CMD_MOUNT -L $LABEL $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
 
 # check it
 grep -q $DEVICE /proc/mounts
 [ "$?" == "0" ] || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE
 
 ts_log "list the image"
-ls -laR $MOUNTPOINT >> $TS_OUTPUT
+ls -laR $TS_MOUNTPOINT >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "list checksums from new data"
-find $MOUNTPOINT -type f -exec md5sum {} \; >> $TS_OUTPUT
+find $TS_MOUNTPOINT -type f -exec md5sum {} \; >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "umount the image"

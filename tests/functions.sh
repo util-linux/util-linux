@@ -56,6 +56,7 @@ function ts_init {
 	TS_DIFF="$TS_DIFFDIR/$TS_NAME"
 	TS_EXPECTED="$TS_EXPECTEDDIR/$TS_NAME"
 	TS_INPUT="$TS_INPUTDIR/$TS_NAME"
+	TS_MOUNTPOINT="$(pwd)/$TS_OUTDIR/${TS_NAME}_mnt"
 
 	rm -f $TS_OUTPUT
 	touch $TS_OUTPUT
@@ -90,6 +91,7 @@ function ts_die {
 	ts_log "$1"
 	if [ -n "$2" ] && [ -b "$2" ]; then
 		ts_device_deinit "$2"
+		ts_fstab_clean		# for sure... 
 	fi
 	ts_finalize
 }
@@ -203,3 +205,39 @@ function ts_swapoff {
 		rm -f $TS_CMD_SWAPOFF
 	fi
 }
+
+function ts_fstab_open {
+	echo "# <!-- util-linux-ng test entry" >> /etc/fstab
+}
+
+function ts_fstab_close {
+	echo "# -->" >> /etc/fstab
+}
+
+function ts_fstab_addline {
+	local SPEC="$1"
+	local MNT=${2:-"$TS_MOUNTPOINT"}
+	local FS=${3:-"auto"}
+	local OPT=${4:-"default"}
+
+	echo "$SPEC   $MNT   $FS   defaults   0   0" >> /etc/fstab
+}
+
+function ts_fstab_add {
+	ts_fstab_open
+	ts_fstab_addline "$*"
+	ts_fstab_close
+}
+
+function ts_fstab_clean {
+	sed --in-place "
+/# <!-- util-linux-ng/!b
+:a
+/# -->/!{
+  N
+  ba
+}
+s/# <!-- util-linux-ng.*-->//;
+/^$/d" /etc/fstab
+}
+

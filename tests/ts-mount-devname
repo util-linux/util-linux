@@ -26,7 +26,6 @@ ts_skip_nonroot
 
 set -o pipefail
 
-MOUNTPOINT="$TS_OUTDIR/${TS_NAME}_mnt"
 DEVICE=$(ts_device_init)
 [ "$?" == 0 ] || ts_die "Cannot init device"
 
@@ -36,9 +35,9 @@ mkfs.ext3 $DEVICE &> /dev/null
 ts_device_has "TYPE" "ext3" $DEVICE
 [ "$?" == "0" ] || ts_die "Cannot found ext3 on $DEVICE" $DEVICE
 
-[ -d "$MOUNTPOINT" ] || mkdir -p $MOUNTPOINT
+[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
-$TS_CMD_MOUNT $DEVICE $MOUNTPOINT 2>&1 >> $TS_OUTPUT
+$TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
 
 grep -q $DEVICE /proc/mounts
 [ "$?" == "0" ] || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE
