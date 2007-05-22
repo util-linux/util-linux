@@ -9,6 +9,7 @@ EXTRA_DIST = 	expected/ \
 		run.sh \
 		ts-col-multibyte \
 		ts-cramfs-mkfs \
+		ts-fstab-label \
 		ts-hwclock-systohc \
 		ts-ipcs-headers \
 		ts-ipcs-limits \
