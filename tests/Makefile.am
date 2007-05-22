@@ -16,6 +16,7 @@ EXTRA_DIST = 	expected/ \
 		ts-ipcs.sh \
 		ts-login-checktty \
 		ts-look-separator \
+		ts-mount-devname \
 		ts-mount-label \
 		ts-mount-move \
 		ts-mount-mtablock \
