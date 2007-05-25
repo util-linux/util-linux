@@ -369,6 +369,24 @@ getfs_by_dir (const char *dir) {
 /* Find the device SPEC in fstab.  */
 struct mntentchn *
 getfs_by_spec (const char *spec) {
+	char *name, *value;
+	struct mntentchn *mc = NULL;
+
+	if (!spec)
+		return NULL;
+
+	if (parse_spec(spec, &name, &value) != 0)
+		return NULL;				/* parse error */
+
+	if (name) {
+		if (!strcmp(name,"LABEL"))
+			mc = getfs_by_label (value);
+		else if (!strcmp(name,"UUID"))
+			mc = getfs_by_uuid (value);
+
+		free((void *) name);
+		return mc;
+	}
 	return getfs_by_devname(spec);
 }
 
