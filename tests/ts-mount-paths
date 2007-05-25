@@ -8,7 +8,7 @@ TS_DESC="basic paths"
 
 ts_init "$1"
 
-$TS_CMD_MOUNT -n -f --debug=2 /dev/dummy /mnt &> $TS_OUTPUT
+$TS_CMD_MOUNT -n -f -v -v -v /dev/dummy /mnt &> $TS_OUTPUT
 
 ts_finalize
 

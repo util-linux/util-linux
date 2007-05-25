@@ -1,7 +1,9 @@
-DEBUG: fstab path: "/etc/fstab"
-DEBUG: lock path:  "/etc/mtab~"
-DEBUG: temp path:  "/etc/mtab.tmp"
-DEBUG: spec:  "/dev/dummy"
-DEBUG: node:  "/mnt"
-DEBUG: types: "(null)"
-DEBUG: opts:  "(null)"
+mount: fstab path: "/etc/fstab"
+mount: lock path:  "/etc/mtab~"
+mount: temp path:  "/etc/mtab.tmp"
+mount: no LABEL=, no UUID=, going to mount /dev/dummy by path
+mount: spec:  "/dev/dummy"
+mount: node:  "/mnt"
+mount: types: "(null)"
+mount: opts:  "(null)"
+/dev/dummy on /mnt type unknown (rw)

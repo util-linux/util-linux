@@ -52,10 +52,6 @@
 /* Quiet mode */
 int mount_quiet = 0;
 
-/* Debug mode (level) */
-int mount_debug = 0;
-
-
 /* True for fake mount (-f).  */
 static int fake = 0;
 
@@ -583,8 +579,9 @@ do_mount_syscall (struct mountargs *args) {
 	if ((flags & MS_MGC_MSK) == 0)
 		flags |= MS_MGC_VAL;
 
-	mnt_debug(1, "mount(2) syscall: source: \"%s\", target: \"%s\", "
-			"filesystemtype: \"%s\", mountflags: %lu, data: %s",
+	if (verbose > 2)
+		printf("mount: mount(2) syscall: source: \"%s\", target: \"%s\", "
+			"filesystemtype: \"%s\", mountflags: %d, data: %s\n",
 			args->spec, args->node, args->type, flags, (char *) args->data);
 
 	ret = mount (args->spec, args->node, args->type, flags, args->data);
@@ -612,6 +609,8 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
   if (type && strlen(type) < 100) {
        sprintf(mountprog, "/sbin/mount.%s", type);
        if (stat(mountprog, &statbuf) == 0) {
+	    if (verbose)
+		 fflush(stdout);
 	    res = fork();
 	    if (res == 0) {
 		 char *oo, *mountargs[10];
@@ -637,11 +636,14 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
 		 }
 		 mountargs[i] = NULL;					/* 10 */
 
-		 i = 0;
-		 while(mount_debug && mountargs[i]) {
-			mnt_debug(1, "external mount: argv[%d] = \"%s\"",
-				i, mountargs[i]);
-			i++;
+		 if (verbose > 2) {
+			i = 0;
+			while(verbose > 2 && mountargs[i]) {
+				printf("mount: external mount: argv[%d] = \"%s\"\n",
+					i, mountargs[i]);
+				i++;
+			}
+			fflush(stdout);
 		 }
 
 		 execv(mountprog, mountargs);
@@ -968,10 +970,12 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   /* copies for freeing on exit */
   const char *opts1, *spec1, *node1, *types1, *extra_opts1;
 
-  mnt_debug(1, "spec:  \"%s\"", spec0);
-  mnt_debug(1, "node:  \"%s\"", node0);
-  mnt_debug(1, "types: \"%s\"", types0);
-  mnt_debug(1, "opts:  \"%s\"", opts0);
+  if (verbose > 2) {
+	  printf("mount: spec:  \"%s\"\n", spec0);
+	  printf("mount: node:  \"%s\"\n", node0);
+	  printf("mount: types: \"%s\"\n", types0);
+	  printf("mount: opts:  \"%s\"\n", opts0);
+  }
 
   spec = spec1 = xstrdup(spec0);
   node = node1 = xstrdup(node0);
@@ -1561,7 +1565,6 @@ do_mount_all (char *types, char *options, char *test_opts) {
 
 static struct option longopts[] = {
 	{ "all", 0, 0, 'a' },
-	{ "debug", 1, 0, 'd' },
 	{ "fake", 0, 0, 'f' },
 	{ "fork", 0, 0, 'F' },
 	{ "help", 0, 0, 'h' },
@@ -1680,14 +1683,11 @@ main(int argc, char *argv[]) {
 	initproctitle(argc, argv);
 #endif
 
-	while ((c = getopt_long (argc, argv, "ad:fFhilL:no:O:p:rsU:vVwt:",
+	while ((c = getopt_long (argc, argv, "afFhilL:no:O:p:rsU:vVwt:",
 				 longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':	       /* mount everything in fstab */
 			++mount_all;
-			break;
-		case 'd':
-			mount_debug = atoi(optarg);
 			break;
 		case 'f':	       /* fake: don't actually call mount(2) */
 			++fake;
@@ -1816,9 +1816,11 @@ main(int argc, char *argv[]) {
 		}
 	}
 
-	mnt_debug(2, "fstab path: \"%s\"", _PATH_FSTAB);
-	mnt_debug(2, "lock path:  \"%s\"", MOUNTED_LOCK);
-	mnt_debug(2, "temp path:  \"%s\"", MOUNTED_TEMP);
+	if (verbose > 2) {
+		printf("mount: fstab path: \"%s\"\n", _PATH_FSTAB);
+		printf("mount: lock path:  \"%s\"\n", MOUNTED_LOCK);
+		printf("mount: temp path:  \"%s\"\n", MOUNTED_TEMP);
+	}
 
 	argc -= optind;
 	argv += optind;
