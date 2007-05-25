@@ -315,38 +315,38 @@ has_uuid(const char *device, const char *uuid){
 	return ret;
 }
 
-/* Find the entry (SPEC,FILE) in fstab */
+/* Find the entry (SPEC,DIR) in fstab */
 struct mntentchn *
-getfsspecfile (const char *spec, const char *file) {
+getfs_by_specdir (const char *spec, const char *dir) {
 	struct mntentchn *mc, *mc0;
 
 	mc0 = fstab_head();
 
 	/* first attempt: names occur precisely as given */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if (streq(mc->m.mnt_dir, file) &&
+		if (streq(mc->m.mnt_dir, dir) &&
 		    streq(mc->m.mnt_fsname, spec))
 			return mc;
 
 	/* second attempt: names found after symlink resolution */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if ((streq(mc->m.mnt_dir, file) ||
-		     streq(canonicalize(mc->m.mnt_dir), file))
+		if ((streq(mc->m.mnt_dir, dir) ||
+		     streq(canonicalize(mc->m.mnt_dir), dir))
 		    && (streq(mc->m.mnt_fsname, spec) ||
-			streq(canonicalize(mc->m.mnt_fsname), spec)))
+			streq(canonicalize(mc->m.mnt_fsname), dir)))
 			return mc;
 
 	/* third attempt: names found after LABEL= or UUID= resolution */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
 		if (!strncmp (mc->m.mnt_fsname, "LABEL=", 6) &&
-		    (streq(mc->m.mnt_dir, file) ||
-		     streq(canonicalize(mc->m.mnt_dir), file))) {
+		    (streq(mc->m.mnt_dir, dir) ||
+		     streq(canonicalize(mc->m.mnt_dir), dir))) {
 			if (has_label(spec, mc->m.mnt_fsname+6))
 				return mc;
 		}
 		if (!strncmp (mc->m.mnt_fsname, "UUID=", 5) &&
-		    (streq(mc->m.mnt_dir, file) ||
-		     streq(canonicalize(mc->m.mnt_dir), file))) {
+		    (streq(mc->m.mnt_dir, dir) ||
+		     streq(canonicalize(mc->m.mnt_dir), dir))) {
 			if (has_uuid(spec, mc->m.mnt_fsname+5))
 				return mc;
 		}
@@ -354,33 +354,40 @@ getfsspecfile (const char *spec, const char *file) {
 	return NULL;
 }
 
-/* Find the dir FILE in fstab.  */
+/* Find the dir DIR in fstab.  */
 struct mntentchn *
-getfsfile (const char *file) {
+getfs_by_dir (const char *dir) {
 	struct mntentchn *mc, *mc0;
 
 	mc0 = fstab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if (streq(mc->m.mnt_dir, file))
+		if (streq(mc->m.mnt_dir, dir))
 			return mc;
 	return NULL;
 }
 
 /* Find the device SPEC in fstab.  */
 struct mntentchn *
-getfsspec (const char *spec) {
+getfs_by_spec (const char *spec) {
+	return getfs_by_devname(spec);
+}
+
+/* Find the device in fstab.  */
+struct mntentchn *
+getfs_by_devname (const char *devname) {
 	struct mntentchn *mc, *mc0;
 
 	mc0 = fstab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if (streq(mc->m.mnt_fsname, spec))
+		if (streq(mc->m.mnt_fsname, devname))
 			return mc;
 	return NULL;
 }
 
+
 /* Find the uuid UUID in fstab. */
 struct mntentchn *
-getfsuuidspec (const char *uuid) {
+getfs_by_uuid (const char *uuid) {
 	struct mntentchn *mc, *mc0;
 
 	mc0 = fstab_head();
@@ -393,7 +400,7 @@ getfsuuidspec (const char *uuid) {
 
 /* Find the label LABEL in fstab. */
 struct mntentchn *
-getfsvolspec (const char *label) {
+getfs_by_label (const char *label) {
 	struct mntentchn *mc, *mc0;
 
 	mc0 = fstab_head();

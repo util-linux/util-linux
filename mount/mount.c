@@ -539,7 +539,7 @@ create_mtab (void) {
 	}
 
 	/* Find the root entry by looking it up in fstab */
-	if ((fstab = getfsfile ("/")) || (fstab = getfsfile ("root"))) {
+	if ((fstab = getfs_by_dir ("/")) || (fstab = getfs_by_dir ("root"))) {
 		char *extra_opts;
 		parse_opts (fstab->m.mnt_opts, &flags, &extra_opts);
 		mnt.mnt_dir = "/";
@@ -1872,10 +1872,10 @@ main(int argc, char *argv[]) {
 			usage (stderr, EX_USAGE);
 		if (specseen) {
 			/* We know the device. Where shall we mount it? */
-			mc = (uuid ? getfsuuidspec (uuid)
-			           : getfsvolspec (volumelabel));
+			mc = (uuid ? getfs_by_uuid (uuid)
+			           : getfs_by_label (volumelabel));
 			if (mc == NULL)
-				mc = getfsspec (spec);
+				mc = getfs_by_spec (spec);
 			if (mc == NULL)
 				die (EX_USAGE,
 				     _("mount: cannot find %s in %s"),
@@ -1884,12 +1884,12 @@ main(int argc, char *argv[]) {
 		} else {
 			/* Try to find the other pathname in fstab.  */
 			spec = canonicalize (*argv);
-			if ((mc = getfsspec (spec)) == NULL &&
-			    (mc = getfsfile (spec)) == NULL &&
+			if ((mc = getfs_by_spec (spec)) == NULL &&
+			    (mc = getfs_by_dir (spec)) == NULL &&
 			    /* Try noncanonical name in fstab
 			       perhaps /dev/cdrom or /dos is a symlink */
-			    (mc = getfsspec (*argv)) == NULL &&
-			    (mc = getfsfile (*argv)) == NULL &&
+			    (mc = getfs_by_spec (*argv)) == NULL &&
+			    (mc = getfs_by_dir (*argv)) == NULL &&
 			    /* Try mtab - maybe this was a remount */
 			    (mc = getmntfile (spec)) == NULL)
 				die (EX_USAGE,

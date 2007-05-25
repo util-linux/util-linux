@@ -490,9 +490,9 @@ umount_file (char *arg) {
 		   then "mount /dev/sda4" followed by "umount /mnt/zip"
 		   used to fail. So, we must not look for file, but for
 		   the pair (spec,file) in fstab. */
-		fs = getfsspecfile(mc->m.mnt_fsname, mc->m.mnt_dir);
+		fs = getfs_by_specdir(mc->m.mnt_fsname, mc->m.mnt_dir);
 		if (!fs) {
-			if (!getfsspec (file) && !getfsfile (file))
+			if (!getfs_by_spec (file) && !getfs_by_dir (file))
 				die (2,
 				     _("umount: %s is not in the fstab "
 				       "(and you are not root)"),
