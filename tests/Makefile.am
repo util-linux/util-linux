@@ -12,6 +12,7 @@ EXTRA_DIST = 	expected/ \
 		ts-fstab-label \
 		ts-fstab-uuid \
 		ts-fstab-devname \
+		ts-fstab-devname2label \
 		ts-hwclock-systohc \
 		ts-ipcs-headers \
 		ts-ipcs-limits \
