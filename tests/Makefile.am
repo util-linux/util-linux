@@ -11,6 +11,7 @@ EXTRA_DIST = 	expected/ \
 		ts-cramfs-mkfs \
 		ts-fstab-label \
 		ts-fstab-label2devname \
+		ts-fstab-label2uuid \
 		ts-fstab-uuid \
 		ts-fstab-devname \
 		ts-fstab-devname2label \
