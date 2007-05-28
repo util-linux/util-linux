@@ -42,13 +42,19 @@ ts_udev_dev_support "by-label" $LABEL
 
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
+# variant A)
 $TS_CMD_MOUNT -L $LABEL $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
-
 grep -q $DEVICE /proc/mounts
-[ "$?" == "0" ] || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE
-
+[ "$?" == "0" ] || ts_die "A) Cannot found $DEVICE in /proc/mounts" $DEVICE
 $TS_CMD_UMOUNT $DEVICE
-[ "$?" == "0" ] || ts_die "Cannot umount $DEVICE" $DEVICE
+[ "$?" == "0" ] || ts_die "A) Cannot umount $DEVICE" $DEVICE
+
+# variant B)
+$TS_CMD_MOUNT LABEL=$LABEL $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
+grep -q $DEVICE /proc/mounts
+[ "$?" == "0" ] || ts_die "B) Cannot found $DEVICE in /proc/mounts" $DEVICE
+$TS_CMD_UMOUNT $DEVICE
+[ "$?" == "0" ] || ts_die "B) Cannot umount $DEVICE" $DEVICE
 
 ts_device_deinit $DEVICE
 
