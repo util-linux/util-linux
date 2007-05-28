@@ -14,6 +14,7 @@ EXTRA_DIST = 	expected/ \
 		ts-fstab-label2uuid \
 		ts-fstab-uuid \
 		ts-fstab-uuid2devname \
+		ts-fstab-uuid2label \
 		ts-fstab-devname \
 		ts-fstab-devname2label \
 		ts-fstab-devname2uuid \
