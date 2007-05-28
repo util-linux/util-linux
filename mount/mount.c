@@ -1645,14 +1645,91 @@ usage (FILE *fp, int n) {
 	exit (n);
 }
 
+/* returns mount entry from fstab */
+static struct mntentchn *
+getfs(const char *spec, const char *uuid, const char *label)
+{
+	struct mntentchn *mc = NULL;
+	const char *devname = NULL;
+
+	/*
+	 * A) 99% of all cases, the spec on cmdline matches
+	 *    with spec in fstab
+	 */
+	if (uuid)
+		mc = getfs_by_uuid(uuid);
+	else if (label)
+		mc = getfs_by_label(label);
+	else {
+		mc = getfs_by_spec(spec);
+
+		if (!mc)
+			mc = getfs_by_dir(spec);
+	}
+	if (mc)
+		return mc;
+
+	/*
+	 * B) UUID or LABEL on cmdline, but devname in fstab
+	 */
+	if (uuid)
+		devname = fsprobe_get_devname_by_uuid(uuid);
+	else if (label)
+		devname = fsprobe_get_devname_by_label(label);
+	else
+		devname = fsprobe_get_devname(spec);
+
+	if (devname)
+		mc = getfs_by_devname(devname);
+
+	/*
+	 * C) mixed
+	 */
+	if (!mc && devname) {
+		const char *id = NULL;
+
+		if (!label && (!spec || strncmp(spec, "LABEL=", 6))) {
+			id = fsprobe_get_label_by_devname(devname);
+			if (id)
+				mc = getfs_by_label(id);
+		}
+		if (!mc && !uuid && (!spec || strncmp(spec, "UUID=", 5))) {
+			id = fsprobe_get_uuid_by_devname(devname);
+			if (id)
+				mc = getfs_by_uuid(id);
+		}
+		my_free(id);
+
+		if (mc) {
+			/* use real device name to avoid repetitional
+			 * conversion from LABEL/UUID to devname
+			 */
+			my_free(mc->m.mnt_fsname);
+			mc->m.mnt_fsname = xstrdup(devname);
+		}
+	}
+
+	/*
+	 * D) remount -- try /etc/mtab
+	 *    Earlier mtab was tried first, but this would sometimes try the
+	 *    wrong mount in case mtab had the root device entry wrong.
+	 */
+	if (!mc)
+		mc = getmntfile (devname ? devname : spec);
+
+	if (devname)
+		my_free(devname);
+	return mc;
+}
+
 char *progname;
 
 int
 main(int argc, char *argv[]) {
 	int c, result = 0, specseen;
 	char *options = NULL, *test_opts = NULL, *node;
-	const char *spec;
-	char *volumelabel = NULL;
+	const char *spec = NULL;
+	char *label = NULL;
 	char *uuid = NULL;
 	char *types = NULL;
 	char *p;
@@ -1705,7 +1782,7 @@ main(int argc, char *argv[]) {
 			list_with_volumelabel = 1;
 			break;
 		case 'L':
-			volumelabel = optarg;
+			label = optarg;
 			break;
 		case 'n':		/* do not write /etc/mtab */
 			++nomtab;
@@ -1825,7 +1902,7 @@ main(int argc, char *argv[]) {
 	argc -= optind;
 	argv += optind;
 
-	specseen = (uuid || volumelabel) ? 1 : 0; 	/* yes, .. i know */
+	specseen = (uuid || label) ? 1 : 0;	/* yes, .. i know */
 
 	if (argc+specseen == 0 && !mount_all) {
 		if (options || mounttype)
@@ -1847,19 +1924,6 @@ main(int argc, char *argv[]) {
 		create_mtab ();
 	}
 
-	if (specseen) {
-		if (uuid)
-			spec = fsprobe_get_devname_by_uuid(uuid);
-		else
-			spec = fsprobe_get_devname_by_label(volumelabel);
-
-		if (!spec)
-			die (EX_USAGE, _("mount: no such partition found"));
-		if (verbose)
-			printf(_("mount: mounting %s\n"), spec);
-	} else
-		spec = NULL;		/* just for gcc */
-
 	switch (argc+specseen) {
 	case 0:
 		/* mount -a */
@@ -1869,39 +1933,20 @@ main(int argc, char *argv[]) {
 		break;
 
 	case 1:
-		/* mount [-nfrvw] [-o options] special | node */
+		/* mount [-nfrvw] [-o options] special | node
+		 * (/etc/fstab is necessary)
+		 */
 		if (types != NULL)
 			usage (stderr, EX_USAGE);
-		if (specseen) {
-			/* We know the device. Where shall we mount it? */
-			mc = (uuid ? getfs_by_uuid (uuid)
-			           : getfs_by_label (volumelabel));
-			if (mc == NULL)
-				mc = getfs_by_spec (spec);
-			if (mc == NULL)
-				die (EX_USAGE,
-				     _("mount: cannot find %s in %s"),
-				     spec, _PATH_FSTAB);
-			mc->m.mnt_fsname = spec;
-		} else {
-			/* Try to find the other pathname in fstab.  */
-			spec = canonicalize (*argv);
-			if ((mc = getfs_by_spec (spec)) == NULL &&
-			    (mc = getfs_by_dir (spec)) == NULL &&
-			    /* Try noncanonical name in fstab
-			       perhaps /dev/cdrom or /dos is a symlink */
-			    (mc = getfs_by_spec (*argv)) == NULL &&
-			    (mc = getfs_by_dir (*argv)) == NULL &&
-			    /* Try mtab - maybe this was a remount */
-			    (mc = getmntfile (spec)) == NULL)
-				die (EX_USAGE,
-				     _("mount: can't find %s in %s or %s"),
-				     spec, _PATH_FSTAB, MOUNTED);
-			/* Earlier mtab was tried first, but this would
-			   sometimes try the wrong mount in case mtab had
-			   the root device entry wrong. */
 
-			my_free(spec);
+		mc = getfs(*argv, uuid, label);
+		if (!mc) {
+			if (uuid || label)
+				die (EX_USAGE, _("mount: no such partition found"));
+
+			die (EX_USAGE,
+			     _("mount: can't find %s in %s or %s"),
+			     spec, _PATH_FSTAB, MOUNTED);
 		}
 
 		result = mount_one (xstrdup (mc->m.mnt_fsname),
@@ -1911,17 +1956,23 @@ main(int argc, char *argv[]) {
 		break;
 
 	case 2:
-		/* mount [-nfrvw] [-t vfstype] [-o options] special node */
+		/* mount special node  (/etc/fstab is not necessary) */
 		if (specseen) {
-			/* we have spec already */
+			/* mount -L label node   (or -U uuid) */
+			spec = uuid ?	fsprobe_get_devname_by_uuid(uuid) :
+					fsprobe_get_devname_by_label(label);
 			node = argv[0];
 		} else {
+			/* mount special node */
 			spec = argv[0];
 			node = argv[1];
 		}
+		if (!spec)
+			die (EX_USAGE, _("mount: no such partition found"));
+
 		result = mount_one (spec, node, types, NULL, options, 0, 0);
 		break;
-      
+
 	default:
 		usage (stderr, EX_USAGE);
 	}
