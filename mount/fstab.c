@@ -358,18 +358,28 @@ getfs_by_specdir (const char *spec, const char *dir) {
 struct mntentchn *
 getfs_by_dir (const char *dir) {
 	struct mntentchn *mc, *mc0;
+	char *cdir;
 
 	mc0 = fstab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
 		if (streq(mc->m.mnt_dir, dir))
 			return mc;
+
+	cdir = canonicalize(dir);
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
+		if (streq(mc->m.mnt_dir, cdir)) {
+			free(cdir);
+			return mc;
+		}
+	}
+	free(cdir);
 	return NULL;
 }
 
 /* Find the device SPEC in fstab.  */
 struct mntentchn *
 getfs_by_spec (const char *spec) {
-	char *name, *value;
+	char *name, *value, *cspec;
 	struct mntentchn *mc = NULL;
 
 	if (!spec)
@@ -387,7 +397,16 @@ getfs_by_spec (const char *spec) {
 		free((void *) name);
 		return mc;
 	}
-	return getfs_by_devname(spec);
+
+	cspec = canonicalize(spec);
+	mc = getfs_by_devname(cspec);
+	free(cspec);
+
+	if (!mc)
+		/* noncanonical name  like /dev/cdrom */
+		mc = getfs_by_devname(spec);
+
+	return mc;
 }
 
 /* Find the device in fstab.  */
