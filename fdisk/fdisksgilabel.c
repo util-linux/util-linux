@@ -197,7 +197,7 @@ sgi_list_table(int xtra) {
 	w = strlen(disk_device);
 
 	if (xtra) {
-		printf(_("\nDisk %s (SGI disk label): %d heads, %d sectors\n"
+		printf(_("\nDisk %s (SGI disk label): %d heads, %llu sectors\n"
 			 "%d cylinders, %d physical cylinders\n"
 			 "%d extra sects/cyl, interleave %d:1\n"
 			 "%s\n"
@@ -211,7 +211,7 @@ sgi_list_table(int xtra) {
                        sector_size);
 	} else {
 		printf(_("\nDisk %s (SGI disk label): "
-			 "%d heads, %d sectors, %d cylinders\n"
+			 "%d heads, %llu sectors, %d cylinders\n"
 			 "Units = %s of %d * %d bytes\n\n"),
 		       disk_device, heads, sectors, cylinders,
 		       str_units(PLURAL), units_per_sector,

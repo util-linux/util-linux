@@ -103,8 +103,9 @@ typedef struct {
 /* fdisk.c */
 #define sgilabel ((sgi_partition *)MBRbuffer)
 #define sgiparam (sgilabel->devparam)
-extern char MBRbuffer[MAX_SECTOR_SIZE];
-extern unsigned int heads, sectors, cylinders, sector_size;
+extern unsigned char MBRbuffer[MAX_SECTOR_SIZE];
+extern unsigned int heads, cylinders, sector_size;
+extern unsigned long long sectors;
 extern int show_begin;
 extern int sgi_label;
 extern char *partition_type(unsigned char type);

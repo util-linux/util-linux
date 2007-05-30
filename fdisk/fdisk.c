@@ -62,7 +62,7 @@ static void delete_partition(int i);
 
 /* A valid partition table sector ends in 0x55 0xaa */
 static unsigned int
-part_table_flag(char *b) {
+part_table_flag(unsigned char *b) {
 	return ((unsigned int) b[510]) + (((unsigned int) b[511]) << 8);
 }
 
@@ -72,7 +72,7 @@ valid_part_table_flag(unsigned char *b) {
 }
 
 static void
-write_part_table_flag(char *b) {
+write_part_table_flag(unsigned char *b) {
 	b[510] = 0x55;
 	b[511] = 0xaa;
 }
@@ -99,17 +99,17 @@ set_start_sect(struct partition *p, unsigned int start_sect) {
 	store4_little_endian(p->start4, start_sect);
 }
 
-unsigned int
+unsigned long long
 get_start_sect(struct partition *p) {
 	return read4_little_endian(p->start4);
 }
 
 static void
-set_nr_sects(struct partition *p, unsigned int nr_sects) {
+set_nr_sects(struct partition *p, unsigned long long nr_sects) {
 	store4_little_endian(p->size4, nr_sects);
 }
 
-unsigned int
+unsigned long long
 get_nr_sects(struct partition *p) {
 	return read4_little_endian(p->size4);
 }
@@ -121,7 +121,7 @@ static int type_open = O_RDWR;
  * Raw disk label. For DOS-type partition tables the MBR,
  * with descriptions of the primary partitions.
  */
-char MBRbuffer[MAX_SECTOR_SIZE];
+unsigned char MBRbuffer[MAX_SECTOR_SIZE];
 
 /*
  * per partition table entry data
@@ -135,8 +135,8 @@ struct pte {
 	struct partition *part_table;	/* points into sectorbuffer */
 	struct partition *ext_pointer;	/* points into sectorbuffer */
 	char changed;			/* boolean */
-	unsigned int offset;		/* disk sector number */
-	char *sectorbuffer;		/* disk sector contents */
+	unsigned long long offset;	/* disk sector number */
+	unsigned char *sectorbuffer;	/* disk sector contents */
 } ptes[MAXIMUM_PARTS];
 
 char	*disk_device,			/* must be specified */
@@ -155,15 +155,14 @@ unsigned int	user_cylinders, user_heads, user_sectors;
 unsigned int	pt_heads, pt_sectors;
 unsigned int	kern_heads, kern_sectors;
 
+unsigned long long sector_offset = 1, extended_offset = 0, sectors;
+
 unsigned int	heads,
-	sectors,
 	cylinders,
 	sector_size = DEFAULT_SECTOR_SIZE,
 	user_set_sector_size = 0,
-	sector_offset = 1,
 	units_per_sector = 1,
-	display_in_cyl_units = 1,
-	extended_offset = 0;		/* offset of link pointers */
+	display_in_cyl_units = 1;
 
 unsigned long long total_number_of_sectors;
 
@@ -240,21 +239,21 @@ void fatal(enum failure why) {
 }
 
 static void
-seek_sector(int fd, unsigned int secno) {
+seek_sector(int fd, unsigned long long secno) {
 	off_t offset = (off_t) secno * sector_size;
 	if (lseek(fd, offset, SEEK_SET) == (off_t) -1)
 		fatal(unable_to_seek);
 }
 
 static void
-read_sector(int fd, unsigned int secno, char *buf) {
+read_sector(int fd, unsigned long long secno, unsigned char *buf) {
 	seek_sector(fd, secno);
 	if (read(fd, buf, sector_size) != sector_size)
 		fatal(unable_to_read);
 }
 
 static void
-write_sector(int fd, unsigned int secno, char *buf) {
+write_sector(int fd, unsigned long long secno, unsigned char *buf) {
 	seek_sector(fd, secno);
 	if (write(fd, buf, sector_size) != sector_size)
 		fatal(unable_to_write);
@@ -262,11 +261,11 @@ write_sector(int fd, unsigned int secno, char *buf) {
 
 /* Allocate a buffer and read a partition table sector */
 static void
-read_pte(int fd, int pno, unsigned int offset) {
+read_pte(int fd, int pno, unsigned long long offset) {
 	struct pte *pe = &ptes[pno];
 
 	pe->offset = offset;
-	pe->sectorbuffer = (char *) malloc(sector_size);
+	pe->sectorbuffer = malloc(sector_size);
 	if (!pe->sectorbuffer)
 		fatal(out_of_memory);
 	read_sector(fd, offset, pe->sectorbuffer);
@@ -274,7 +273,7 @@ read_pte(int fd, int pno, unsigned int offset) {
 	pe->part_table = pe->ext_pointer = NULL;
 }
 
-static unsigned int
+static unsigned long long
 get_partition_start(struct pte *pe) {
 	return pe->offset + get_start_sect(pe->part_table);
 }
@@ -540,10 +539,10 @@ clear_partition(struct partition *p) {
 }
 
 static void
-set_partition(int i, int doext, unsigned int start, unsigned int stop,
-	      int sysid) {
+set_partition(int i, int doext, unsigned long long start,
+	      unsigned long long stop, int sysid) {
 	struct partition *p;
-	unsigned int offset;
+	unsigned long long offset;
 
 	if (doext) {
 		p = ptes[i].ext_pointer;
@@ -1536,7 +1535,7 @@ list_disk_geometry(void) {
 	else
 		printf(_("\nDisk %s: %ld.%ld GB, %lld bytes\n"),
 		       disk_device, megabytes/1000, (megabytes/100)%10, bytes);
-	printf(_("%d heads, %d sectors/track, %d cylinders"),
+	printf(_("%d heads, %llu sectors/track, %d cylinders"),
 	       heads, sectors, cylinders);
 	if (units_per_sector == 1)
 		printf(_(", total %llu sectors"),
@@ -1768,20 +1767,21 @@ x_list_table(int extend) {
 	struct partition *p;
 	int i;
 
-	printf(_("\nDisk %s: %d heads, %d sectors, %d cylinders\n\n"),
+	printf(_("\nDisk %s: %d heads, %llu sectors, %d cylinders\n\n"),
 		disk_device, heads, sectors, cylinders);
         printf(_("Nr AF  Hd Sec  Cyl  Hd Sec  Cyl     Start      Size ID\n"));
 	for (i = 0 ; i < partitions; i++) {
 		pe = &ptes[i];
 		p = (extend ? pe->ext_pointer : pe->part_table);
 		if (p != NULL) {
-                        printf("%2d %02x%4d%4d%5d%4d%4d%5d%11u%11u %02x\n",
+                        printf("%2d %02x%4d%4d%5d%4d%4d%5d%11lu%11lu %02x\n",
 				i + 1, p->boot_ind, p->head,
 				sector(p->sector),
 				cylinder(p->sector, p->cyl), p->end_head,
 				sector(p->end_sector),
 				cylinder(p->end_sector, p->end_cyl),
-				get_start_sect(p), get_nr_sects(p), p->sys_ind);
+				(unsigned long) get_start_sect(p),
+				(unsigned long) get_nr_sects(p), p->sys_ind);
 			if (p->sys_ind)
 				check_consistency(p, i);
 		}
@@ -1789,7 +1789,7 @@ x_list_table(int extend) {
 }
 
 static void
-fill_bounds(unsigned int *first, unsigned int *last) {
+fill_bounds(unsigned long long *first, unsigned long long *last) {
 	int i;
 	struct pte *pe = &ptes[0];
 	struct partition *p;
@@ -1822,7 +1822,7 @@ check(int n, unsigned int h, unsigned int s, unsigned int c,
 			n, h + 1, heads);
 	if (real_s >= sectors)
 		fprintf(stderr, _("Partition %d: sector %d greater than "
-			"maximum %d\n"), n, s, sectors);
+			"maximum %llu\n"), n, s, sectors);
 	if (real_c >= cylinders)
 		fprintf(stderr, _("Partitions %d: cylinder %d greater than "
 			"maximum %d\n"), n, real_c + 1, cylinders);
@@ -1835,8 +1835,8 @@ check(int n, unsigned int h, unsigned int s, unsigned int c,
 static void
 verify(void) {
 	int i, j;
-	unsigned int total = 1;
-	unsigned int first[partitions], last[partitions];
+	unsigned long total = 1;
+	unsigned long long first[partitions], last[partitions];
 	struct partition *p;
 
 	if (warn_geometry())
@@ -1880,7 +1880,7 @@ verify(void) {
 
 	if (extended_offset) {
 		struct pte *pex = &ptes[ext_index];
-		unsigned int e_last = get_start_sect(pex->part_table) +
+		unsigned long long e_last = get_start_sect(pex->part_table) +
 			get_nr_sects(pex->part_table) - 1;
 
 		for (i = 4; i < partitions; i++) {
@@ -1899,8 +1899,8 @@ verify(void) {
 	}
 
 	if (total > total_number_of_sectors)
-		printf(_("Total allocated sectors %d greater than the maximum "
-			"%lld\n"), total, total_number_of_sectors);
+		printf(_("Total allocated sectors %ld greater than the maximum"
+			" %lld\n"), total, total_number_of_sectors);
 	else if (total < total_number_of_sectors)
 		printf(_("%lld unallocated sectors\n"),
 		       total_number_of_sectors - total);
@@ -1913,7 +1913,7 @@ add_partition(int n, int sys) {
 	struct partition *p = ptes[n].part_table;
 	struct partition *q = ptes[ext_index].part_table;
 	long long llimit;
-	unsigned int start, stop = 0, limit, temp,
+	unsigned long long start, stop = 0, limit, temp,
 		first[partitions], last[partitions];
 
 	if (p && p->sys_ind) {
@@ -1959,7 +1959,7 @@ add_partition(int n, int sys) {
 		if (start > limit)
 			break;
 		if (start >= temp+units_per_sector && read) {
-			printf(_("Sector %d is already allocated\n"), temp);
+			printf(_("Sector %llu is already allocated\n"), temp);
 			temp = start;
 			read = 0;
 		}
@@ -2209,14 +2209,14 @@ reread_partition_table(int leave) {
 
 #define MAX_PER_LINE	16
 static void
-print_buffer(char pbuffer[]) {
+print_buffer(unsigned char pbuffer[]) {
 	int	i,
 		l;
 
 	for (i = 0, l = 0; i < sector_size; i++, l++) {
 		if (l == 0)
 			printf("0x%03X:", i);
-		printf(" %02X", (unsigned char) pbuffer[i]);
+		printf(" %02X", pbuffer[i]);
 		if (l == MAX_PER_LINE - 1) {
 			printf("\n");
 			l = -1;

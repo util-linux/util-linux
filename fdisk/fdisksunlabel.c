@@ -348,7 +348,7 @@ void create_sunlabel(void)
 	}
 
 	snprintf(sunlabel->info, sizeof(sunlabel->info),
-		 "%s%s%s cyl %d alt %d hd %d sec %d", 
+		 "%s%s%s cyl %d alt %d hd %d sec %llu",
 		 p ? p->vendor : "", (p && *p->vendor) ? " " : "",
 		 p ? p->model
 		   : (floppy ? _("3,5\" floppy") : _("Linux custom")),
@@ -655,7 +655,7 @@ sun_list_table(int xtra) {
 	w = strlen(disk_device);
 	if (xtra)
 		printf(
-		_("\nDisk %s (Sun disk label): %d heads, %d sectors, %d rpm\n"
+		_("\nDisk %s (Sun disk label): %d heads, %llu sectors, %d rpm\n"
 		"%d cylinders, %d alternate cylinders, %d physical cylinders\n"
 		"%d extra sects/cyl, interleave %d:1\n"
 		"%s\n"
@@ -669,7 +669,7 @@ sun_list_table(int xtra) {
 		       str_units(PLURAL), units_per_sector);
 	else
 		printf(
-	_("\nDisk %s (Sun disk label): %d heads, %d sectors, %d cylinders\n"
+	_("\nDisk %s (Sun disk label): %d heads, %llu sectors, %d cylinders\n"
 	"Units = %s of %d * 512 bytes\n\n"),
 		       disk_device, heads, sectors, cylinders,
 		       str_units(PLURAL), units_per_sector);

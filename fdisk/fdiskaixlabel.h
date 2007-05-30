@@ -19,9 +19,10 @@ typedef struct {
 
 /* fdisk.c */
 #define aixlabel ((aix_partition *)MBRbuffer)
-extern char MBRbuffer[MAX_SECTOR_SIZE];
+extern unsigned char MBRbuffer[MAX_SECTOR_SIZE];
 extern char changed[MAXIMUM_PARTS];
-extern unsigned int heads, sectors, cylinders;
+extern unsigned int heads, cylinders;
+extern unsigned long long sectors;
 extern int show_begin;
 extern int aix_label;
 extern char *partition_type(unsigned char type);
