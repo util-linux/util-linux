@@ -1,3 +1,6 @@
+#ifndef FDISK_COMMON_H
+#define FDISK_COMMON_H
+
 /* common stuff for fdisk, cfdisk, sfdisk */
 
 /* including <linux/fs.h> fails */
@@ -19,7 +22,6 @@ struct hd_geometry {
 
 #define HDIO_GETGEO		0x0301	/* get device geometry */
 
-
 struct systypes {
 	unsigned char type;
 	char *name;
@@ -28,5 +30,8 @@ struct systypes {
 extern struct systypes i386_sys_types[];
 
 extern char *partname(char *dev, int pno, int lth);
+extern int is_probably_full_disk(char *name);
 
 int disksize(int fd, unsigned long long *sectors);
+
+#endif /* FDISK_COMMON_H */

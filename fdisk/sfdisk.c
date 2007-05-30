@@ -2411,19 +2411,6 @@ is_ide_cdrom_or_tape(char *device) {
 	return is_ide;
 }
 
-static int
-is_probably_full_disk(char *name) {
-	struct hd_geometry geometry;
-	int fd, i = 0;
-
-	fd = open(name, O_RDONLY);
-	if (fd >= 0) {
-		i = ioctl(fd, HDIO_GETGEO, &geometry);
-		close(fd);
-	}
-	return (fd >= 0 && i == 0 && geometry.start == 0);
-}
-
 #define PROC_PARTITIONS	"/proc/partitions"
 static FILE *procf = NULL;
 
