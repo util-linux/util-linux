@@ -422,6 +422,7 @@ currently supported include:
 .IR msdos ,
 .IR ncpfs ,
 .IR nfs ,
+.IR nfs4 ,
 .IR ntfs ,
 .IR proc ,
 .IR qnx4 ,
@@ -453,14 +454,16 @@ do not exist anymore. Earlier,
 .I usbfs
 was known as
 .IR usbdevfs .
+Note, the real list of all supported filesystems depends on your
+kernel.
 
 For most types all the
 .B mount
 program has to do is issue a simple
 .IR mount (2)
 system call, and no detailed knowledge of the filesystem type is required.
-For a few types however (like nfs, cifs, smbfs, ncpfs) ad hoc code is
-necessary. The nfs ad hoc code is built in, but cifs, smbfs, and ncpfs
+For a few types however (like nfs, nfs4, cifs, smbfs, ncpfs) ad hoc code is
+necessary. The nfs, nfs4, cifs, smbfs, and ncpfs
 have a separate mount program. In order to make it possible to
 treat all types in a uniform way, mount will execute the program
 .I /sbin/mount.TYPE
@@ -1379,81 +1382,20 @@ and the current version of
 .B mount
 (2.12) does not know anything about ncpfs.
 
-.SH "Mount options for nfs"
-Instead of a textual option string, parsed by the kernel, the
-.I nfs
-file system expects a binary argument of type
-.IR "struct nfs_mount_data" .
-The program
-.B mount
-itself parses the following options of the form `tag=value',
-and puts them in the structure mentioned:
-.BI rsize= n,
-.BI wsize= n,
-.BI timeo= n,
-.BI retrans= n,
-.BI acregmin= n,
-.BI acregmax= n,
-.BI acdirmin= n,
-.BI acdirmax= n,
-.BI actimeo= n,
-.BI retry= n,
-.BI port= n,
-.BI mountport= n,
-.BI mounthost= name,
-.BI mountprog= n,
-.BI mountvers= n,
-.BI nfsprog= n,
-.BI nfsvers= n,
-.BI namlen= n.
-The option
-.BI addr= n
-is accepted but ignored.
-Also the following Boolean options, possibly preceded by
-.B no
-are recognized:
-.BR bg ,
-.BR fg ,
-.BR soft ,
-.BR hard ,
-.BR intr ,
-.BR posix ,
-.BR cto ,
-.BR ac ,
-.BR tcp ,
-.BR udp ,
-.BR lock .
-For details, see
-.BR nfs (5).
+.SH "Mount options for nfs and nfs4"
+See the options section of the
+.BR nfs (5)
+man page (nfs-utils package must be installed).
 
-Especially useful options include
-.TP
-.B rsize=8192,wsize=8192
-This will make your nfs connection faster than with the default
-buffer size of 4096. (NFSv2 does not work with larger values of
-.B rsize
-and
-.BR wsize .)
-.TP
-.B hard
-The program accessing a file on a NFS mounted file system will hang
-when the server crashes. The process cannot be interrupted or
-killed unless you also specify
-.BR intr .
-When the NFS server is back online the program will continue undisturbed
-from where it was. This is probably what you want.
-.TP
-.B soft
-This option allows the kernel to time out if the nfs server is not
-responding for some time. The time can be
-specified with
-.BR timeo=time .
-This option might be useful if your nfs server sometimes doesn't respond
-or will be rebooted while some process tries to get a file from the server.
-Usually it just causes lots of trouble.
-.TP
-.B nolock
-Do not use locking. Do not start lockd.
+The
+.IR nfs " and " nfs4
+implementation expects a binary argument (a
+.IR "struct nfs_mount_data" )
+to the mount system call. This argument is constructed by
+.BR mount.nfs (8)
+and the current version of
+.B mount
+(2.13) does not know anything about nfs and nfs4.
 
 .SH "Mount options for ntfs"
 .TP
@@ -1970,10 +1912,7 @@ system error (out of memory, cannot fork, no more loop devices)
 .BR 4
 internal
 .B mount
-bug or missing
-.BR nfs
-support in
-.B mount
+bug
 .TP
 .BR 8
 user interrupt
