@@ -2057,6 +2057,16 @@ Mount by label or uuid will work only if your devices have the names listed in
 .IR /proc/partitions .
 In particular, it may well fail if the kernel was compiled with devfs
 but devfs is not mounted.
+.PP
+It is possible that files
+.IR /etc/mtab
+and
+.IR /proc/mounts
+don't match. The first file is based only on the mount command options, but the
+content of the second file also depends on the kernel and others settings (e.g.
+remote NFS server. In particular case the mount command may reports unreliable
+information about a NFS mount point and the /proc/mounts file usually contains
+more reliable information.)
 .SH HISTORY
 A
 .B mount
