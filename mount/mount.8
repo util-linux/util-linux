@@ -2067,6 +2067,13 @@ content of the second file also depends on the kernel and others settings (e.g.
 remote NFS server. In particular case the mount command may reports unreliable
 information about a NFS mount point and the /proc/mounts file usually contains
 more reliable information.)
+.PP
+Checking files on NFS filesystem referenced by file descriptors (i.e. the
+.BR fcntl
+and
+.BR ioctl
+families of functions) may lead to inconsistent result due to the lack of
+consistency check in kernel even if noac is used.
 .SH HISTORY
 A
 .B mount
