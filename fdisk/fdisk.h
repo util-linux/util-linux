@@ -79,7 +79,7 @@ extern unsigned int read_int(unsigned int low, unsigned int dflt,
 
 #define PLURAL	0
 #define SINGULAR 1
-extern char *const str_units(int);
+extern const char * str_units(int);
 
 extern unsigned long long get_start_sect(struct partition *p);
 extern unsigned long long get_nr_sects(struct partition *p);

@@ -1253,7 +1253,7 @@ get_nonexisting_partition(int warn, int max) {
 	return get_partition(warn, max);
 }
 
-char * const
+const char *
 str_units(int n) {	/* n==1: use singular */
 	if (n == 1)
 		return display_in_cyl_units ? _("cylinder") : _("sector");
