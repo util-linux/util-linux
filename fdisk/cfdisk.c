@@ -83,6 +83,7 @@
 #include "nls.h"
 #include "xstrncpy.h"
 #include "common.h"
+#include "gpt.h"
 
 #define DEFAULT_DEVICE "/dev/hda"
 #define ALTERNATE_DEVICE "/dev/sda"
@@ -1668,6 +1669,13 @@ fill_p_info(void) {
     } else
 	 opentype = O_RDWR;
     opened = TRUE;
+
+    if (gpt_probe_signature_devname(fd)) {
+	 print_warning(_("Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."));
+	 refresh();
+	 getch();
+	 clear_warning();
+    }
 
     /* Blocks are visible in more than one way:
        e.g. as block on /dev/hda and as block on /dev/hda3

@@ -34,6 +34,8 @@
 #include <linux/blkpg.h>
 #endif
 
+#include "gpt.h"
+
 static void delete_partition(int i);
 
 #define hex_val(c)	({ \
@@ -2372,6 +2374,14 @@ is_ide_cdrom_or_tape(char *device) {
 }
 
 static void
+gpt_warning(char *dev)
+{
+	if (dev && gpt_probe_signature_devname(dev))
+		fprintf(stderr, _("\nWARNING: GPT (GUID Partition Table) detected on '%s'! "
+			"The util fdisk doesn't support GPT. Use GNU Parted.\n\n"), dev);
+}
+
+static void
 try(char *device, int user_specified) {
 	int gb;
 
@@ -2381,6 +2391,7 @@ try(char *device, int user_specified) {
 	if (!user_specified)
 		if (is_ide_cdrom_or_tape(device))
 			return;
+	gpt_warning(device);
 	if ((fd = open(disk_device, type_open)) >= 0) {
 		gb = get_boot(try_only);
 		if (gb > 0) { /* I/O error */
@@ -2439,6 +2450,8 @@ static void
 unknown_command(int c) {
 	printf(_("%c: unknown command\n"), c);
 }
+
+
 
 int
 main(int argc, char **argv) {
@@ -2544,6 +2557,7 @@ main(int argc, char **argv) {
 
 		for (j = optind; j < argc; j++) {
 			disk_device = argv[j];
+			gpt_warning(disk_device);
 			if ((fd = open(disk_device, type_open)) < 0)
 				fatal(unable_to_open);
 			if (disksize(fd, &size))
@@ -2564,6 +2578,7 @@ main(int argc, char **argv) {
 	else
 		fatal(usage2);
 
+	gpt_warning(disk_device);
 	get_boot(fdisk);
 
 	if (osf_label) {

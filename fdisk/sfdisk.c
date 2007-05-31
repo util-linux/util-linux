@@ -50,6 +50,8 @@
 #include "nls.h"
 #include "common.h"
 
+#include "gpt.h"
+
 #define SIZE(a)	(sizeof(a)/sizeof(a[0]))
 
 /*
@@ -2444,6 +2446,23 @@ nextproc(void) {
 	return NULL;
 }	
 
+static void
+gpt_warning(char *dev, int warn_only)
+{
+	if (force)
+		warn_only = 1;
+
+	if (dev && gpt_probe_signature_devname(dev)) {
+		fflush(stdout);
+		fprintf(stderr, _("\nWARNING: GPT (GUID Partition Table) detected on '%s'! "
+			"The util sfdisk doesn't support GPT. Use GNU Parted.\n\n"), dev);
+		if (!warn_only) {
+			fprintf(stderr, _("Use the --force flag to overrule this check.\n"));
+			exit(1);
+		}
+	}
+}
+
 static void do_list(char *dev, int silent);
 static void do_size(char *dev, int silent);
 static void do_geom(char *dev, int silent);
@@ -2589,6 +2608,7 @@ main(int argc, char **argv) {
 	while ((dev = nextproc()) != NULL) {
 	    if (is_ide_cdrom_or_tape(dev))
 		continue;
+	    gpt_warning(dev, 1);
 	    if (opt_out_geom)
 		do_geom(dev, 1);
 	    if (opt_out_pt_geom)
@@ -2616,6 +2636,7 @@ main(int argc, char **argv) {
 
     if (opt_list || opt_out_geom || opt_out_pt_geom || opt_size || verify) {
 	while (optind < argc) {
+	    gpt_warning(argv[optind], 1);
 	    if (opt_out_geom)
 	      do_geom(argv[optind], 0);
 	    if (opt_out_pt_geom)
@@ -2628,6 +2649,9 @@ main(int argc, char **argv) {
 	}
 	exit(exit_status);
     }
+
+    if (optind != argc-1)
+	gpt_warning(argv[optind], 0);
 
     if (activate) {
 	do_activate(argv+optind, argc-optind, activatearg);
@@ -2648,7 +2672,7 @@ main(int argc, char **argv) {
 		     (optind == argc-2) ? 0 : argv[optind+2]);
 	exit(exit_status);
     }
-      
+
     if (optind != argc-1)
       fatal(_("can specify only one device (except with -l or -s)\n"));
     dev = argv[optind];

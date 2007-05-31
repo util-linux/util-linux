@@ -42,6 +42,11 @@ is a menu driven program for creation and manipulation of
 partition tables.
 It understands DOS type partition tables and BSD or SUN type disklabels.
 
+.B fdisk
+doesn't understand GUID Partition Table (GPT) and
+it is not designed for large partitions. In particular case use more advanced GNU
+.B parted(8).
+
 The
 .I device
 is usually one of the following:
