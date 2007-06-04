@@ -79,7 +79,8 @@ For the
 .B ramsize
 command, the
 .B size
-parameter specifies the size of the RAM disk in kilobytes.
+parameter specifies the size of the RAM disk in kilobytes. 2.0.x kernels
+and newer dynamically allocate the ramdisk and do not need this setting.
 
 For the
 .B rootflags
@@ -87,7 +88,7 @@ command, the
 .B flags
 parameter contains extra information used when mounting root.
 Currently the only effect of these flags is to force the kernel to
-mount the root filesystem in readonly mode if 
+mount the root filesystem in readonly mode if
 .B flags
 is non-zero.
 
@@ -120,7 +121,8 @@ will be examined to determine the current settings.
 Causes
 .B rdev
 to act like
-.BR ramsize .
+.BR ramsize
+(Not relevant for 2.0.x and newer kernels).
 .TP
 .B \-R
 Causes
