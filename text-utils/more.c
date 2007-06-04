@@ -167,12 +167,13 @@ struct {
 extern char	PC;		/* pad character */
 
 #ifdef HAVE_NCURSES_H
-#include <ncurses.h>
+# include <ncurses.h>
 #elif defined(HAVE_NCURSES_NCURSES_H)
-#include <ncurses/ncurses.h>
+# include <ncurses/ncurses.h>
 #endif
 
-#include <term.h>			/* include after <curses.h> */
+#if defined(HAVE_NCURSES_H) || defined(HAVE_NCURSES_NCURSES_H)
+# include <term.h>			/* include after <curses.h> */
 
 static void
 my_putstring(char *s) {
@@ -203,6 +204,46 @@ static char *
 my_tgoto(const char *cap, int col, int row) {
      return tparm(cap, col, row);
 }
+
+#elif defined(HAVE_LIBTERMCAP)          /* !ncurses */
+
+#include <termcap.h>
+
+char termbuffer[4096];
+char tcbuffer[4096];
+char *strbuf = termbuffer;
+
+static void
+my_putstring(char *s) {
+     tputs (s, 1, putchar);
+}
+
+static void
+my_setupterm(const char *term, int fildes, int *errret) {
+     *errret = tgetent(tcbuffer, term);
+}
+
+static int
+my_tgetnum(char *s, char *ss) {
+     return tgetnum(s);
+}
+
+static int
+my_tgetflag(char *s, char *ss) {
+     return tgetflag(s);
+}
+
+static char *
+my_tgetstr(char *s, char *ss) {
+     return tgetstr(s, &strbuf);
+}
+
+static char *
+my_tgoto(const char *cap, int col, int row) {
+     return tgoto(cap, col, row);
+}
+
+#endif /* HAVE_LIBTERMCAP */
 
 static void
 idummy(int *kk) {}
