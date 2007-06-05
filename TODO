@@ -2,23 +2,7 @@
 2.13:
 ====
 
-- remove all NFS code
-
-- remove all FS detection code
-
-- remove from all places direct calls of ioctl(BLKGETSIZE) and move it
-  lib/blkdevsize.c: blkdev_get_size(), blkdev_get_sectors(), blkdev_get_pages()
-  (see mkswap.c and fdisk/disksize.c)
-
-- use EXIT_FAILED and EXIT_SUCCESS from stdlib.h for exit() codes
-
-- build-sys:
-	- add exampledir and example_DATA
-	- add readmedir and readme_DATA
-
 - convet po/ files to UTF-8
-
-- rewrite the replay script to C to avoid dependence on perl
 
 - add an option to the cal command to control highlight date
   (cal -v YYYY/MM/DD)
@@ -32,4 +16,47 @@
   (there are problems with 32bit userspace on 64bit kernel)
 
 - remove support for old system headers (like missing ioctls, ..)
-	 * check for SCHED_BATCH in the configure script
+
+- remove from all places direct calls of ioctl(BLKGETSIZE) and move it
+  lib/blkdevsize.c: blkdev_get_size(), blkdev_get_sectors(), blkdev_get_pages()
+  (see mkswap.c and fdisk/disksize.c)
+
+- use EXIT_FAILED and EXIT_SUCCESS from stdlib.h for exit() codes
+
+- rewrite the replay script to C to avoid dependence on perl
+
+- "mount -a":
+
+        Date:   Sun, 3 Jun 2007 18:04:24 +0300 (MET DST)
+        From: Szabolcs Szakacsits <szaka@sienet.hu>
+
+	In the past the right record order could be figured out easily by just
+	checking out fstab (if one knew what to look for) but considering the
+	fastly increasing number of user space file systems and their usage, with
+	their path, library, etc dependencies, it's getting trickier and is a black
+	magic for most users because they simply expect drives to be mounted
+	independently of their order in fstab.
+
+	One typical, wrongly edited fstab example is:
+
+	  /dev/hda2 /             ext3      defaults  1 1
+	  /dev/hda1 /mnt/windows  ntfs-3g   defaults  0 0
+	  /dev/hda3 /usr          ext3      defaults  0 0
+
+	The events:
+
+	  mount  ->  /sbin/mount.ntfs-3g  ->
+		 ->  resolves to <path1>/ntfs-3g via a symlink ->
+		 ->  ntfs-3g requires at least <path2>/libfuse*
+
+	There are many potential solutions. For example installing everything on
+	the root file system which may be needed for successful mount. But this
+	is not always feasible or practical since we could end up putting almost
+	everything on the root file system in the end.
+
+	Another idea is an improved mount strategy:
+
+	  do {
+		try to mount all unmounted entries
+	  } while (not all mounted && at least one new was successfully mounted)
+
