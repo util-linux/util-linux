@@ -36,6 +36,12 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/syscall.h>
+
+struct bitmask {
+	unsigned int size;
+	unsigned long *maskp;
+};
 
 static void show_usage(const char *cmd)
 {
@@ -48,7 +54,7 @@ static void show_usage(const char *cmd)
         fprintf(stderr, "  -c, --cpu-list             "\
 		"display and specify cpus in list format\n");
 	fprintf(stderr, "  -h, --help                 display this help\n");
-	fprintf(stderr, "  -v, --version              "\
+	fprintf(stderr, "  -V, --version              "\
 		"output version information\n\n");
 	fprintf(stderr, "The default behavior is to run a new command:\n");
 	fprintf(stderr, "  %s 03 sshd -b 1024\n", cmd);
@@ -73,21 +79,75 @@ static inline int val_to_char(int v)
 		return -1;
 }
 
-static char * cpuset_to_str(cpu_set_t *mask, char *str)
+/*
+ * The following bitmask declarations, bitmask_*() routines, and associated
+ * _setbit() and _getbit() routines are:
+ * Copyright (c) 2004 Silicon Graphics, Inc. (SGI) All rights reserved.
+ * SGI publishes it under the terms of the GNU General Public License, v2,
+ * as published by the Free Software Foundation.
+ */
+#define howmany(x,y) (((x)+((y)-1))/(y))
+#define bitsperlong (8 * sizeof(unsigned long))
+#define longsperbits(n) howmany(n, bitsperlong)
+#define bytesperbits(x) ((x+7)/8)
+
+static unsigned int _getbit(const struct bitmask *bmp, unsigned int n)
+{
+	if (n < bmp->size)
+		return (bmp->maskp[n/bitsperlong] >> (n % bitsperlong)) & 1;
+	else
+		return 0;
+}
+
+static void _setbit(struct bitmask *bmp, unsigned int n, unsigned int v)
+{
+	if (n < bmp->size) {
+		if (v)
+			bmp->maskp[n/bitsperlong] |= 1UL << (n % bitsperlong);
+		else
+			bmp->maskp[n/bitsperlong] &= ~(1UL << (n % bitsperlong));
+	}
+}
+
+int bitmask_isbitset(const struct bitmask *bmp, unsigned int i)
+{
+	return _getbit(bmp, i);
+}
+
+struct bitmask *bitmask_clearall(struct bitmask *bmp)
+{
+	unsigned int i;
+	for (i = 0; i < bmp->size; i++)
+		_setbit(bmp, i, 0);
+	return bmp;
+}
+
+struct bitmask *bitmask_setbit(struct bitmask *bmp, unsigned int i)
+{
+	_setbit(bmp, i, 1);
+	return bmp;
+}
+
+unsigned int bitmask_nbytes(struct bitmask *bmp)
+{
+	return longsperbits(bmp->size) * sizeof(unsigned long);
+}
+
+static char * cpuset_to_str(struct bitmask *mask, char *str)
 {
 	int base;
 	char *ptr = str;
 	char *ret = 0;
 
-	for (base = CPU_SETSIZE - 4; base >= 0; base -= 4) {
+	for (base = mask->size - 4; base >= 0; base -= 4) {
 		char val = 0;
-		if (CPU_ISSET(base, mask))
+		if (bitmask_isbitset(mask, base))
 			val |= 1;
-		if (CPU_ISSET(base + 1, mask))
+		if (bitmask_isbitset(mask, base + 1))
 			val |= 2;
-		if (CPU_ISSET(base + 2, mask))
+		if (bitmask_isbitset(mask, base + 2))
 			val |= 4;
-		if (CPU_ISSET(base + 3, mask))
+		if (bitmask_isbitset(mask, base + 3))
 			val |= 8;
 		if (!ret && val)
 			ret = ptr;
@@ -97,19 +157,35 @@ static char * cpuset_to_str(cpu_set_t *mask, char *str)
 	return ret ? ret : ptr - 1;
 }
 
-static char * cpuset_to_cstr(cpu_set_t *mask, char *str)
+struct bitmask *bitmask_alloc(unsigned int n)
+{
+	struct bitmask *bmp;
+
+	bmp = malloc(sizeof(*bmp));
+	if (!bmp)
+		return 0;
+	bmp->size = n;
+	bmp->maskp = calloc(longsperbits(n), sizeof(unsigned long));
+	if (!bmp->maskp) {
+		free(bmp);
+		return 0;
+	}
+	return bmp;
+}
+
+static char * cpuset_to_cstr(struct bitmask *mask, char *str)
 {
 	int i;
 	char *ptr = str;
 	int entry_made = 0;
 
-	for (i = 0; i < CPU_SETSIZE; i++) {
-		if (CPU_ISSET(i, mask)) {
+	for (i = 0; i < mask->size; i++) {
+		if (bitmask_isbitset(mask, i)) {
 			int j;
 			int run = 0;
 			entry_made = 1;
-			for (j = i + 1; j < CPU_SETSIZE; j++) {
-				if (CPU_ISSET(j, mask))
+			for (j = i + 1; j < mask->size; j++) {
+				if (bitmask_isbitset(mask, j))
 					run++;
 				else
 					break;
@@ -146,7 +222,7 @@ static inline int char_to_val(int c)
 		return -1;
 }
 
-static int str_to_cpuset(cpu_set_t *mask, const char* str)
+static int str_to_cpuset(struct bitmask *mask, const char* str)
 {
 	int len = strlen(str);
 	const char *ptr = str + len - 1;
@@ -156,19 +232,19 @@ static int str_to_cpuset(cpu_set_t *mask, const char* str)
 	if (len > 1 && !memcmp(str, "0x", 2L))
 		str += 2;
 
-	CPU_ZERO(mask);
+	bitmask_clearall(mask);
 	while (ptr >= str) {
 		char val = char_to_val(*ptr);
 		if (val == (char) -1)
 			return -1;
 		if (val & 1)
-			CPU_SET(base, mask);
+			bitmask_setbit(mask, base);
 		if (val & 2)
-			CPU_SET(base + 1, mask);
+			bitmask_setbit(mask, base + 1);
 		if (val & 4)
-			CPU_SET(base + 2, mask);
+			bitmask_setbit(mask, base + 2);
 		if (val & 8)
-			CPU_SET(base + 3, mask);
+			bitmask_setbit(mask, base + 3);
 		len--;
 		ptr--;
 		base += 4;
@@ -186,11 +262,11 @@ static const char *nexttoken(const char *q,  int sep)
 	return q;
 }
 
-static int cstr_to_cpuset(cpu_set_t *mask, const char* str)
+static int cstr_to_cpuset(struct bitmask *mask, const char* str)
 {
 	const char *p, *q;
 	q = str;
-	CPU_ZERO(mask);
+	bitmask_clearall(mask);
 
 	while (p = q, q = nexttoken(q, ','), p) {
 		unsigned int a;	/* beginning of range */
@@ -218,7 +294,7 @@ static int cstr_to_cpuset(cpu_set_t *mask, const char* str)
 		if (!(a <= b))
 			return 1;
 		while (a <= b) {
-			CPU_SET(a, mask);			
+			bitmask_setbit(mask, a);
 			a += s;
 		}
 	}
@@ -226,14 +302,42 @@ static int cstr_to_cpuset(cpu_set_t *mask, const char* str)
 	return 0;
 }
 
+/*
+ * Number of bits in a CPU bitmask on current system
+ */
+static int
+max_number_of_cpus(void)
+{
+	int n;
+	int cpus = 2048;
+
+	for (;;) {
+		unsigned long buffer[longsperbits(cpus)];
+		memset(buffer, 0, sizeof(buffer));
+		/* the library version does not return size of cpumask_t */
+		n = syscall(SYS_sched_getaffinity, 0, bytesperbits(cpus),
+								&buffer);
+		if (n < 0 && errno == EINVAL && cpus < 1024*1024) {
+			cpus *= 2;
+			continue;
+		}
+		return n*8;
+	}
+	fprintf (stderr, "cannot determine NR_CPUS; aborting");
+	exit(1);
+	return 0;
+}
+
 int main(int argc, char *argv[])
 {
-	cpu_set_t new_mask, cur_mask;
+	struct bitmask *new_mask, *cur_mask;
 	pid_t pid = 0;
 	int opt, err;
-	char mstr[1 + CPU_SETSIZE / 4];
-	char cstr[7 * CPU_SETSIZE];
+	char *mstr;
+	char *cstr;
 	int c_opt = 0;
+        unsigned int cpus_configured;
+	int new_mask_byte_size, cur_mask_byte_size;
 
 	struct option longopts[] = {
 		{ "pid",	0, NULL, 'p' },
@@ -270,8 +374,37 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	cpus_configured = max_number_of_cpus();
+
+	/*
+	 * cur_mask is always used for the sched_getaffinity call
+	 * On the sched_getaffinity the kernel demands a user mask of
+	 * at least the size of its own cpumask_t.
+	 */
+	cur_mask = bitmask_alloc(cpus_configured);
+	if (!cur_mask) {
+		fprintf (stderr, "bitmask_alloc failed\n");
+		exit(1);
+	}
+	cur_mask_byte_size = bitmask_nbytes(cur_mask);
+	mstr = malloc(1 + cur_mask->size / 4);
+	cstr = malloc(7 * cur_mask->size);
+
+	/*
+	 * new_mask is always used for the sched_setaffinity call
+	 * On the sched_setaffinity the kernel will zero-fill its
+	 * cpumask_t if the user's mask is shorter.
+	 */
+	new_mask = bitmask_alloc(cpus_configured);
+	if (!new_mask) {
+		fprintf (stderr, "bitmask_alloc failed\n");
+		exit(1);
+	}
+	new_mask_byte_size = bitmask_nbytes(new_mask);
+
 	if (pid) {
-		if (sched_getaffinity(pid, sizeof (cur_mask), &cur_mask) < 0) {
+		if (sched_getaffinity(pid, cur_mask_byte_size,
+					(cpu_set_t *)cur_mask->maskp) < 0) {
 			perror("sched_getaffinity");
 			fprintf(stderr, "failed to get pid %d's affinity\n",
 				pid);
@@ -279,19 +412,19 @@ int main(int argc, char *argv[])
 		}
 		if (c_opt)
 			printf("pid %d's current affinity list: %s\n", pid,
-				cpuset_to_cstr(&cur_mask, cstr));
+				cpuset_to_cstr(cur_mask, cstr));
 		else
 			printf("pid %d's current affinity mask: %s\n", pid,
-				cpuset_to_str(&cur_mask, mstr));
+				cpuset_to_str(cur_mask, mstr));
 
 		if (argc - optind == 1)
 			return 0;
 	}
 
 	if (c_opt)
-		err = cstr_to_cpuset(&new_mask, argv[optind]);
+		err = cstr_to_cpuset(new_mask, argv[optind]);
 	else
-		err = str_to_cpuset(&new_mask, argv[optind]);
+		err = str_to_cpuset(new_mask, argv[optind]);
 
 	if (err) {
 		if (c_opt)
@@ -303,13 +436,15 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	if (sched_setaffinity(pid, sizeof (new_mask), &new_mask)) {
+	if (sched_setaffinity(pid, new_mask_byte_size,
+					(cpu_set_t *) new_mask->maskp) < 0) {
 		perror("sched_setaffinity");
 		fprintf(stderr, "failed to set pid %d's affinity.\n", pid);
 		return 1;
 	}
 
-	if (sched_getaffinity(pid, sizeof (cur_mask), &cur_mask) < 0) {
+	if (sched_getaffinity(pid, cur_mask_byte_size,
+					(cpu_set_t *)cur_mask->maskp) < 0) {
 		perror("sched_getaffinity");
 		fprintf(stderr, "failed to get pid %d's affinity.\n", pid);
 		return 1;
@@ -318,10 +453,10 @@ int main(int argc, char *argv[])
 	if (pid) {
 		if (c_opt)
 			printf("pid %d's new affinity list: %s\n", pid, 
-		               cpuset_to_cstr(&cur_mask, cstr));
+		               cpuset_to_cstr(cur_mask, cstr));
 		else
 			printf("pid %d's new affinity mask: %s\n", pid, 
-		               cpuset_to_str(&cur_mask, mstr));
+		               cpuset_to_str(cur_mask, mstr));
 	} else {
 		argv += optind + 1;
 		execvp(argv[0], argv);
