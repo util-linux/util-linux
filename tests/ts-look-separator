@@ -18,7 +18,7 @@
 TS_COMPONENT="look"
 TS_DESC="separator"
 
-ts_init "$1"
+ts_init "$*"
 
 [ -f "/usr/share/dict/words" ] || ts_skip "/usr/share/dict/words not such file"
 

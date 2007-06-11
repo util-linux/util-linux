@@ -23,7 +23,7 @@
 TS_COMPONENT="mkfs.cramfs"
 TS_DESC="mkfs"
 
-ts_init "$1"
+ts_init "$*"
 ts_skip_nonroot
 
 set -o pipefail

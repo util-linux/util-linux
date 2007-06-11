@@ -27,7 +27,7 @@ TS_DESC="devname2label"
 
 LABEL="testMountD2L"
 
-ts_init "$1"
+ts_init "$*"
 ts_skip_nonroot
 
 set -o pipefail

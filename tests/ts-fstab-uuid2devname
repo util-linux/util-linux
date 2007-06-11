@@ -25,7 +25,7 @@
 TS_COMPONENT="fstab"
 TS_DESC="uuid2devname"
 
-ts_init "$1"
+ts_init "$*"
 ts_skip_nonroot
 
 set -o pipefail

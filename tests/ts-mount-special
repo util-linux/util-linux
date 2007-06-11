@@ -12,11 +12,11 @@ TS_DESC="special program"
 
 MOUNTER="/sbin/mount.mytest"
 
-ts_init "$1"
+ts_init "$*"
 ts_skip_nonroot
 
 cat > $MOUNTER << EOF
-#!/bin/bash 
+#!/bin/bash
 # This util-linux-ng regression test component
 # It's safe to remove me...
 #

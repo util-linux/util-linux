@@ -42,6 +42,12 @@ function ts_log {
 	[ "$TS_VERBOSE" == "yes" ] && echo "$1"
 }
 
+function ts_has_option {
+	NAME="$1"
+	ALL="$2"
+	echo -n $ALL | sed 's/ //g' | gawk 'BEGIN { FS="="; RS="--" } /('$NAME'$|'$NAME'=)/ { print "yes" }'
+}
+
 function ts_init {
 	export LANG="en_US.UTF-8":
 	TS_NAME=$(basename $0)
@@ -51,7 +57,8 @@ function ts_init {
 	if [ ! -d $TS_DIFFDIR ]; then
 		mkdir -p $TS_DIFFDIR
 	fi
-	[ "$1" == "--verbose" ] && TS_VERBOSE="yes"
+
+	TS_VERBOSE=$( ts_has_option "verbose" "$*")
 	TS_OUTPUT="$TS_OUTDIR/$TS_NAME"
 	TS_DIFF="$TS_DIFFDIR/$TS_NAME"
 	TS_EXPECTED="$TS_EXPECTEDDIR/$TS_NAME"

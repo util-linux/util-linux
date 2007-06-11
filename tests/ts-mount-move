@@ -10,7 +10,7 @@
 TS_COMPONENT="mount"
 TS_DESC="move "
 
-ts_init "$1"
+ts_init "$*"
 ts_skip_nonroot
 
 PWD=$(pwd)

@@ -9,7 +9,7 @@
 TS_COMPONENT="mount"
 TS_DESC="remount"
 
-ts_init "$1"
+ts_init "$*"
 ts_skip_nonroot
 
 # mountpoint

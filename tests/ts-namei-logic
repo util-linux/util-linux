@@ -6,7 +6,7 @@
 TS_COMPONENT="namei"
 TS_DESC="logic"
 
-ts_init "$1"
+ts_init "$*"
 
 SANDBOX="$TS_OUTDIR/namei"
 

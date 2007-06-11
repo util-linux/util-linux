@@ -6,7 +6,7 @@
 TS_COMPONENT="ipcs"
 TS_DESC="headers"
 
-ts_init "$1"
+ts_init "$*"
 
 ts_log "test: shm headers"
 $TS_CMD_IPCS -m -t | grep --after-context=1 "^---"  >> $TS_OUTPUT

@@ -6,7 +6,7 @@
 TS_COMPONENT="mount"
 TS_DESC="basic paths"
 
-ts_init "$1"
+ts_init "$*"
 
 $TS_CMD_MOUNT -n -f -v -v -v /dev/dummy /mnt &> $TS_OUTPUT
 

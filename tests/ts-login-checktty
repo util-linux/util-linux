@@ -6,7 +6,7 @@
 TS_COMPONENT="login"
 TS_DESC="checktty"
 
-ts_init "$1"
+ts_init "$*"
 $TS_CMD_CHECKTTY  >> $TS_OUTPUT
 ts_finalize
 
