@@ -388,15 +388,14 @@ void headers_init(void)
   int i, wd;
 #ifdef HAVE_WIDECHAR
   wchar_t day_headings_wc[22],j_day_headings_wc[29];
-  wchar_t wd_wc[10];
+  char *cur_dh = day_headings, *cur_j_dh = j_day_headings;
+
+  wcscpy(day_headings_wc, L"");
+  wcscpy(j_day_headings_wc, L"");
 #endif
 
   strcpy(day_headings,"");
   strcpy(j_day_headings,"");
-#ifdef HAVE_WIDECHAR
-  wcscpy(day_headings_wc,L"");
-  wcscpy(j_day_headings_wc,L"");
-#endif
 
 #ifdef HAVE_LANGINFO_H
 # define weekday(wd)	nl_langinfo(ABDAY_1+wd)
@@ -405,29 +404,26 @@ void headers_init(void)
 #endif
 
   for(i = 0 ; i < 7 ; i++ ) {
+     ssize_t space_left;
      wd = (i + week1stday) % 7;
 #ifdef HAVE_WIDECHAR
-     mbstowcs(wd_wc,weekday(wd),10);
-     if (wcswidth(wd_wc,10) < 3)
-	     wcscat(j_day_headings_wc,L" ");
-     if (wcswidth(wd_wc,10) < 2) {
-	     wcscat(day_headings_wc, L" ");
-	     wcscat(j_day_headings_wc, L" ");
-     }
-     wcsncat(day_headings_wc,wd_wc,2);
-     wcsncat(j_day_headings_wc,wd_wc,3);
-     wcscat(day_headings_wc, L" ");
-     wcscat(j_day_headings_wc, L" ");
+     swprintf(day_headings_wc, SIZE(day_headings_wc), L"%1.2s ", weekday(wd));
+     swprintf(j_day_headings_wc, SIZE(j_day_headings_wc), L"%3.3s ", weekday(wd));
+
+     space_left = sizeof(day_headings) - (cur_dh - day_headings);
+     if(space_left <= 0)
+	     break;
+     cur_dh += wcstombs(cur_dh, day_headings_wc, space_left);
+
+     space_left = sizeof(j_day_headings)-(cur_j_dh-j_day_headings);
+     if(space_left <= 0)
+	     break;
+     cur_j_dh +=  wcstombs(cur_j_dh,j_day_headings_wc, space_left);
 #else
      sprintf(eos(day_headings), "%2.2s ", weekday(wd));
      sprintf(eos(j_day_headings), "%3.3s ", weekday(wd));
 #endif
   }
-
-#ifdef HAVE_WIDECHAR
-  wcstombs(day_headings,day_headings_wc,sizeof(day_headings));
-  wcstombs(j_day_headings,j_day_headings_wc,sizeof(j_day_headings));
-#endif
 
   trim_trailing_spaces(day_headings);
   trim_trailing_spaces(j_day_headings);
