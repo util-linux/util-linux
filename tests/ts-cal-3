@@ -1,0 +1,60 @@
+#!/bin/bash
+
+#
+# Copyright (C) 2007 Karel Zak <kzak@redhat.com>
+#
+# This file is part of util-linux-ng.
+#
+# This file is free software; you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation; either version 2 of the License.
+#
+# This file is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+
+. commands.sh
+. functions.sh
+
+TS_COMPONENT="cal"
+TS_DESC="3 months"
+
+ts_init "$*"
+
+set -o pipefail
+
+USETERM=$( ts_has_option "useterm" "$*" )
+MYTIME=1159350000
+
+[ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
+ts_log ""
+
+ts_log "Gregorian - Monday-based week"
+if [ "$USETERM" == "yes" ]; then
+	TEST_TIME=$MYTIME LD_PRELOAD=$TS_HELPER_LIBPRELOAD_TIME $TS_CMD_CAL -3m
+fi
+TEST_TIME=$MYTIME LD_PRELOAD=$TS_HELPER_LIBPRELOAD_TIME $TS_CMD_CAL -3m >> $TS_OUTPUT
+
+ts_log "Gregorian - Sunday-based week"
+if [ "$USETERM" == "yes" ]; then
+	TEST_TIME=$MYTIME LD_PRELOAD=$TS_HELPER_LIBPRELOAD_TIME $TS_CMD_CAL -3s
+fi
+TEST_TIME=$MYTIME LD_PRELOAD=$TS_HELPER_LIBPRELOAD_TIME $TS_CMD_CAL -3s >> $TS_OUTPUT
+
+
+ts_log "Julian - Monday-based week"
+if [ "$USETERM" == "yes" ]; then
+	TEST_TIME=$MYTIME LD_PRELOAD=$TS_HELPER_LIBPRELOAD_TIME $TS_CMD_CAL -3mj
+fi
+TEST_TIME=$MYTIME LD_PRELOAD=$TS_HELPER_LIBPRELOAD_TIME $TS_CMD_CAL -3mj >> $TS_OUTPUT
+
+ts_log "Julian - Sunday-based week"
+if [ "$USETERM" == "yes" ]; then
+	TEST_TIME=$MYTIME LD_PRELOAD=$TS_HELPER_LIBPRELOAD_TIME $TS_CMD_CAL -3sj
+fi
+TEST_TIME=$MYTIME LD_PRELOAD=$TS_HELPER_LIBPRELOAD_TIME $TS_CMD_CAL -3sj >> $TS_OUTPUT
+
+ts_finalize
+
