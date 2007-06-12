@@ -3,13 +3,13 @@
            (fork of util-linux, based on version 2.13-pre7)
 
 MAINTAINER:
-      
-      Karel Zak <kzak@redhat.com> 
+
+      Karel Zak <kzak@redhat.com>
 
 
 PAST MAINTAINERS:
 
-      Adrian Bunk <bunk@stusta.de> 
+      Adrian Bunk <bunk@stusta.de>
       Andries E. Brouwer <aeb@cwi.nl>
 
 
@@ -34,5 +34,6 @@ CONTRIBUTORS:
       David Brownell <david-b@pacbell.net>
       Jason Vas Dias <jvdias@redhat.com>
       Marco d'Itri <md@Linux.IT>
-      Kay Sievers <kay.sievers@vrfy.org> 
+      Kay Sievers <kay.sievers@vrfy.org>
+      Pádraig Brady <P@draigBrady.com>
 
