@@ -123,7 +123,16 @@ my_tgetstr(char *s, char *ss) {
         return ret;
 }
 
+#else /* ! (HAVE_LIBTERMCAP || HAVE_NCURSES) */
+
+static void
+my_putstring(char *s) {
+     fputs(s, stdout);
+}
+
 #endif
+
+
 const char	*term="";
 const char	*Senter="", *Sexit="";/* enter and exit standout mode */
 int		Slen;		/* strlen of Senter+Sexit */
@@ -475,11 +484,8 @@ monthly(int day, int month, int year) {
 
 	do_monthly(day, month, year, &out);
 	for (i = 0; i < FMT_ST_LINES; i++) {
-#if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
-		my_putstring(out.s[i]);putchar('\n');
-#else
-		puts(out.s[i]);
-#endif
+		my_putstring(out.s[i]);
+		putchar('\n');
 	}
 }
 
@@ -531,11 +537,7 @@ monthly3(int day, int month, int year) {
 		       w2, out_curm.s[i],
 		       w3, out_next.s[i]);
 
-#if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
 		my_putstring(lineout);
-#else
-		fputs(lineout,stdout);
-#endif
 	}
 }
 
@@ -568,11 +570,8 @@ j_yearly(int day, int year) {
 			}
 			*p = '\0';
 			trim_trailing_spaces(lineout);
-#if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
-			my_putstring(lineout);putchar('\n');
-#else
-			puts(lineout);
-#endif
+			my_putstring(lineout);
+			putchar('\n');
 		}
 	}
 	printf("\n");
@@ -608,14 +607,11 @@ yearly(int day, int year) {
 			}
 			*p = '\0';
 			trim_trailing_spaces(lineout);
-#if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
-                        my_putstring(lineout);putchar('\n');
-#else
-                        puts(lineout);
-#endif
+			my_putstring(lineout);
+			putchar('\n');
 		}
 	}
-	printf("\n");
+	putchar('\n');
 }
 
 /*
