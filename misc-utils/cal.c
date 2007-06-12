@@ -87,9 +87,13 @@ my_putstring(char *s) {
      putp(s);
 }
 
-static char *
+static const char *
 my_tgetstr(char *s, char *ss) {
-     return tigetstr(ss);
+    const char* ret = tigetstr(ss);
+    if (!ret || ret==(char*)-1)
+        return "";
+    else
+        return ret;
 }
 
 #elif defined(HAVE_LIBTERMCAP)
@@ -110,14 +114,20 @@ my_putstring(char *s) {
      tputs (s, 1, putchar);
 }
 
-static char *
+static const char *
 my_tgetstr(char *s, char *ss) {
-     return tgetstr(s, &strbuf);
+    const char* ret = tgetstr(s, &strbuf);
+    if (!ret)
+        return "";
+    else
+        return ret;
 }
 
 #endif
 const char	*term="";
 const char	*Senter="", *Sexit="";/* enter and exit standout mode */
+int		Slen;		/* strlen of Senter+Sexit */
+char		*Hrow;		/* pointer to highlighted row in month */
 
 #ifdef HAVE_LANGINFO_H
 # include <langinfo.h>
@@ -262,6 +272,7 @@ main(int argc, char **argv) {
 		if (ret > 0) {
 			Senter = my_tgetstr("so","smso");
 			Sexit = my_tgetstr("se","rmso");
+			Slen = strlen(Senter) + strlen(Sexit);
 		}
 	}
 #endif
@@ -442,11 +453,18 @@ do_monthly(int day, int month, int year, struct fmt_st *out) {
 	sprintf(out->s[1],"%s",
 		julian ? j_day_headings : day_headings);
 	for (row = 0; row < 6; row++) {
-		for (col = 0, p = lineout; col < 7; col++)
-			p = ascii_day(p, days[row * 7 + col]);
+		int has_hl = 0;
+		for (col = 0, p = lineout; col < 7; col++) {
+			int xd = days[row * 7 + col];
+			if (xd != SPACE && (xd & TODAY_FLAG))
+				has_hl = 1;
+			p = ascii_day(p, xd);
+		}
 		*p = '\0';
 		trim_trailing_spaces(lineout);
 		sprintf(out->s[row+2], "%s", lineout);
+		if (has_hl)
+			Hrow = out->s[row+2];
 	}
 }
 
@@ -494,14 +512,25 @@ monthly3(int day, int month, int year) {
 	do_monthly(day, prev_month, prev_year, &out_prev);
 	do_monthly(day, month,      year,      &out_curm);
 	do_monthly(day, next_month, next_year, &out_next);
+
         width = (julian ? J_WEEK_LEN : WEEK_LEN) -1;
 	for (i = 0; i < 2; i++)
 		printf("%s  %s  %s\n", out_prev.s[i], out_curm.s[i], out_next.s[i]);
 	for (i = 2; i < FMT_ST_LINES; i++) {
+		int w1, w2, w3;
+		w1 = w2 = w3 = width;
+
+#if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
+                /* adjust width to allow for non printable characters */
+                w1 += (out_prev.s[i] == Hrow ? Slen : 0);
+                w2 += (out_curm.s[i] == Hrow ? Slen : 0);
+                w3 += (out_next.s[i] == Hrow ? Slen : 0);
+#endif
 		snprintf(lineout, SIZE(lineout), "%-*s  %-*s  %-*s\n",
-		       width, out_prev.s[i],
-		       width, out_curm.s[i],
-		       width, out_next.s[i]);
+		       w1, out_prev.s[i],
+		       w2, out_curm.s[i],
+		       w3, out_next.s[i]);
+
 #if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
 		my_putstring(lineout);
 #else
