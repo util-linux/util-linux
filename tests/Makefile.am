@@ -9,6 +9,7 @@ EXTRA_DIST = 	expected/ \
 		run.sh \
 		ts-cal-1 \
 		ts-cal-3 \
+		ts-cal-y \
 		ts-col-multibyte \
 		ts-cramfs-mkfs \
 		ts-fstab-label \
