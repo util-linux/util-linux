@@ -11,23 +11,28 @@
 #include <mntent.h>
 #include <errno.h>
 #include <sys/stat.h>
+#include <unistd.h>
 #include "xmalloc.h"
 #include "swap_constants.h"
 #include "nls.h"
 #include "fsprobe.h"
 #include "realpath.h"
 
+#ifdef HAVE_SYS_SWAP_H
+# include <sys/swap.h>
+#endif
+
+#ifndef SWAPON_HAS_TWO_ARGS
+/* libc is insane, let's call the kernel */
+# include <sys/syscall.h>
+# define swapon(path, flags) syscall(SYS_swapon, path, flags)
+# define swapoff(path) syscall(SYS_swapoff, path)
+#endif
+
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
 #define	_PATH_FSTAB     "/etc/fstab"
 #define PROC_SWAPS      "/proc/swaps"
-
-#ifdef SWAPON_HAS_TWO_ARGS
-# include <asm/page.h>
-# include <sys/swap.h>
-#endif
-
-#define SWAPON_NEEDS_TWO_ARGS
 
 #define QUIET	1
 
@@ -74,24 +79,6 @@ swapoff_usage(FILE *fp, int n) {
 		progname, progname, progname);
 	exit(n);
 }
-
-#ifdef SWAPON_HAS_TWO_ARGS
-#define SWAPON_NEEDS_TWO_ARGS
-#endif
-
-#if defined(SWAPON_NEEDS_TWO_ARGS) && !defined(SWAPON_HAS_TWO_ARGS)
-/* We want a swapon with two args, but have an old libc.
-   Build the kernel call by hand. */
-#include <linux/unistd.h>
-static
-_syscall2(int,  swapon,  const char *,  path, int, flags);
-static
-_syscall1(int,  swapoff,  const char *,  path);
-#else
-/* just do as libc says */
-#include <unistd.h>
-#endif
-
 
 /*
  * contents of /proc/swaps
@@ -219,7 +206,6 @@ do_swapon(const char *orig_special, int prio) {
 		}
 	}
 
-#ifdef SWAPON_NEEDS_TWO_ARGS
 	{
 		int flags = 0;
 
@@ -234,9 +220,7 @@ do_swapon(const char *orig_special, int prio) {
 #endif
 		status = swapon(special, flags);
 	}
-#else
-	status = swapon(special);
-#endif
+
 	if (status < 0) {
 		int errsv = errno;
 		fprintf(stderr, "%s: %s: %s\n",
