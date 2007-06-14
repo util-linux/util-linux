@@ -20,18 +20,12 @@
  *
  */
 
-#ifdef __linux__
-#define HAVE_GETTIMEOFDAY 1
-#endif
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>
 #include "md5.h"
-#ifdef HAVE_GETTIMEOFDAY
 #include <sys/time.h>
 #include <unistd.h>
-#endif
 #include "nls.h"
 
 #define BUFFERSIZE 4096
@@ -79,12 +73,8 @@ int main( int argc, char **argv )
    pid_t             pid;
    char              *file = NULL;
    int               r;
-#ifdef HAVE_GETTIMEOFDAY
    struct timeval    tv;
    struct timezone   tz;
-#else
-   long int          t;
-#endif
 
    setlocale(LC_ALL, "");
    bindtextdomain(PACKAGE, LOCALEDIR);
@@ -97,14 +87,9 @@ int main( int argc, char **argv )
       }
 
    MD5Init( &ctx );
-   
-#ifdef HAVE_GETTIMEOFDAY
    gettimeofday( &tv, &tz );
    MD5Update( &ctx, (unsigned char *)&tv, sizeof( tv ) );
-#else
-   time( &t );
-   MD5Update( &ctx, (unsigned char *)&t, sizeof( t ) );
-#endif
+
    pid = getppid();
    MD5Update( &ctx, (unsigned char *)&pid, sizeof( pid ));
    pid = getpid();
