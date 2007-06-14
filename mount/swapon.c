@@ -1,8 +1,6 @@
 /*
  * A swapon(8)/swapoff(8) for Linux 0.99.
- * swapon.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
  */
-
 #include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
@@ -17,6 +15,7 @@
 #include "nls.h"
 #include "fsprobe.h"
 #include "realpath.h"
+#include "mount_paths.h"
 
 #ifdef HAVE_SYS_SWAP_H
 # include <sys/swap.h>
@@ -30,9 +29,6 @@
 #endif
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
-
-#define	_PATH_FSTAB     "/etc/fstab"
-#define PROC_SWAPS      "/proc/swaps"
 
 #define QUIET	1
 
@@ -145,10 +141,10 @@ display_summary(void)
        char line[1024] ;
 
        if ((swaps = fopen(PROC_SWAPS, "r")) == NULL) {
-       	       int errsv = errno;
+               int errsv = errno;
                fprintf(stderr, "%s: %s: %s\n", progname, PROC_SWAPS,
 			strerror(errsv));
-               return -1 ; 
+               return -1;
        }
 
        while (fgets(line, sizeof(line), swaps))
@@ -320,7 +316,7 @@ swapon_all(void) {
 		    (!ifexists || !access(special, R_OK))) {
 			/* parse mount options; */
 			char *opt, *opts = strdup(fstab->mnt_opts);
-	   
+
 			for (opt = strtok(opts, ","); opt != NULL;
 			     opt = strtok(NULL, ",")) {
 				if (strncmp(opt, "pri=", 4) == 0)
