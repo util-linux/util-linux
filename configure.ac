@@ -106,11 +106,15 @@ fi
 have_ncurses=no
 AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [have_ncurses=yes])
 case $have_ncurses in
-yes) AC_MSG_NOTICE([you have ncurses]);;
-no)  AC_MSG_NOTICE([you do not have ncurses]);;
+yes)
+     AC_MSG_NOTICE([you have ncurses])
+     AC_DEFINE(HAVE_NCURSES, 1, [Do we have -lncurses?])
+     ;;
+no)
+     AC_MSG_NOTICE([you do not have ncurses])
+     ;;
 esac
 AM_CONDITIONAL(HAVE_NCURSES, test x$have_ncurses = xyes)
-
 
 AC_ARG_WITH([slang],
   AS_HELP_STRING([--with-slang], [compile cfdisk with slang]),
