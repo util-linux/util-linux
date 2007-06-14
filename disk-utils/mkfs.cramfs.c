@@ -83,15 +83,17 @@ static int warn_uid = 0;
 # define MIN(_a,_b) ((_a) < (_b) ? (_a) : (_b))
 #endif
 
+/* entry.flags */
+#define CRAMFS_EFLAG_MD5	1
+#define CRAMFS_EFLAG_INVALID	2
+
 /* In-core version of inode / directory entry. */
 struct entry {
 	/* stats */
 	unsigned char *name;
 	unsigned int mode, size, uid, gid;
 	unsigned char md5sum[16];
-	unsigned char flags;
-#define HAVE_MD5	1
-#define	INVALID		2
+	unsigned char flags;	   /* CRAMFS_EFLAG_* */
 
 	/* FS data */
 	char *path;
@@ -203,7 +205,7 @@ mdfile(struct entry *e) {
 
 	start = do_mmap(e->path, e->size, e->mode);
 	if (start == NULL) {
-		e->flags |= INVALID;
+		e->flags |= CRAMFS_EFLAG_INVALID;
 	} else {
 		MD5Init(&ctx);
 		MD5Update(&ctx, start, e->size);
@@ -211,7 +213,7 @@ mdfile(struct entry *e) {
 
 		do_munmap(start, e->size, e->mode);
 
-		e->flags |= HAVE_MD5;
+		e->flags |= CRAMFS_EFLAG_MD5;
 	}
 }
 
@@ -255,7 +257,8 @@ static int find_identical_file(struct entry *orig, struct entry *new)
 		if (!new->flags)
 			mdfile(new);
 
-		if ((orig->flags & HAVE_MD5) && (new->flags & HAVE_MD5) &&
+		if ((orig->flags & CRAMFS_EFLAG_MD5) &&
+		    (new->flags & CRAMFS_EFLAG_MD5) &&
 		    !memcmp(orig->md5sum, new->md5sum, 16) &&
 		    identical_file(orig, new)) {
 			new->same = orig;
