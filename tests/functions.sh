@@ -58,6 +58,10 @@ function ts_init {
 		mkdir -p $TS_DIFFDIR
 	fi
 
+	declare -a TS_SUID_PROGS
+	declare -a TS_SUID_USER
+	declare -a TS_SUID_GROUP
+
 	TS_VERBOSE=$( ts_has_option "verbose" "$*")
 	TS_OUTPUT="$TS_OUTDIR/$TS_NAME"
 	TS_DIFF="$TS_DIFFDIR/$TS_NAME"
@@ -85,8 +89,27 @@ function ts_init {
 	printf "%15s: %-25s ..." "$TS_COMPONENT" "$TS_DESC"
 }
 
+function ts_init_suid {
+	PROG="$1"
+	ct=${#TS_SUID_PROGS[*]}
+
+	# Save info about original setting
+	TS_SUID_PROGS[$ct]=$PROG
+	TS_SUID_USER[$ct]=$(stat --printf="%U" $PROG)
+	TS_SUID_GROUP[$ct]=$(stat --printf="%G" $PROG)
+
+	chown root.root $PROG &> /dev/null
+	chmod u+s $PROG &> /dev/null
+}
+
 function ts_finalize {
 	local res=0
+
+	for idx in $(seq 0 $((${#TS_SUID_PROGS[*]} - 1))); do
+		PROG=${TS_SUID_PROGS[$idx]}
+		chmod a-s $PROG &> /dev/null
+		chown ${TS_SUID_USER[$idx]}.${TS_SUID_GROUP[$idx]} $PROG &> /dev/null
+	done
 
 	if [ -s $TS_EXPECTED ]; then
 		if [ -s $TS_OUTPUT ]; then
