@@ -315,42 +315,48 @@ has_uuid(const char *device, const char *uuid){
 	return ret;
 }
 
-/* Find the entry (SPEC,DIR) in fstab */
+/* Find the entry (SPEC,DIR) in fstab -- spec and dir must be canonicalized! */
 struct mntentchn *
 getfs_by_specdir (const char *spec, const char *dir) {
 	struct mntentchn *mc, *mc0;
 
 	mc0 = fstab_head();
 
-	/* first attempt: names occur precisely as given */
-	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if (streq(mc->m.mnt_dir, dir) &&
-		    streq(mc->m.mnt_fsname, spec))
-			return mc;
-
-	/* second attempt: names found after symlink resolution */
-	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
-		if ((streq(mc->m.mnt_dir, dir) ||
-		     streq(canonicalize(mc->m.mnt_dir), dir))
-		    && (streq(mc->m.mnt_fsname, spec) ||
-			streq(canonicalize(mc->m.mnt_fsname), dir)))
-			return mc;
-
-	/* third attempt: names found after LABEL= or UUID= resolution */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
-		if (!strncmp (mc->m.mnt_fsname, "LABEL=", 6) &&
-		    (streq(mc->m.mnt_dir, dir) ||
-		     streq(canonicalize(mc->m.mnt_dir), dir))) {
-			if (has_label(spec, mc->m.mnt_fsname+6))
-				return mc;
+		/* dir */
+		if (!streq(mc->m.mnt_dir, dir)) {
+			char *dr = canonicalize(mc->m.mnt_dir);
+			int ok = 0;
+
+			if (streq(dr, dir))
+				ok = 1;
+			my_free(dr);
+			if (!ok)
+				continue;
 		}
-		if (!strncmp (mc->m.mnt_fsname, "UUID=", 5) &&
-		    (streq(mc->m.mnt_dir, dir) ||
-		     streq(canonicalize(mc->m.mnt_dir), dir))) {
-			if (has_uuid(spec, mc->m.mnt_fsname+5))
-				return mc;
+
+		/* spec */
+		if (!streq(mc->m.mnt_fsname, spec)) {
+			char *fs = canonicalize(mc->m.mnt_fsname);
+			int ok = 0;
+
+			if (streq(fs, spec))
+				ok = 1;
+			else if (strncmp (fs, "LABEL=", 6) == 0) {
+				if (has_label(spec, fs + 6))
+					ok = 1;
+			}
+			else if (strncmp (fs, "UUID=", 5) == 0) {
+				if (has_uuid(spec, fs + 5))
+					ok = 1;
+			}
+			my_free(fs);
+			if (!ok)
+				continue;
 		}
+		return mc;
 	}
+
 	return NULL;
 }
 
