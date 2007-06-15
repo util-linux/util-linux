@@ -1946,7 +1946,7 @@ main(int argc, char *argv[]) {
 
 			die (EX_USAGE,
 			     _("mount: can't find %s in %s or %s"),
-			     spec, _PATH_FSTAB, MOUNTED);
+			     *argv, _PATH_FSTAB, MOUNTED);
 		}
 
 		result = mount_one (xstrdup (mc->m.mnt_fsname),
