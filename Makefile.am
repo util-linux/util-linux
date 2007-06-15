@@ -23,7 +23,8 @@ EXTRA_DIST = \
 		README.devel \
 		licenses/ \
 		example.files/ \
-		po/update-potfiles
+		po/update-potfiles \
+		tools
 
 
 distclean-local:
