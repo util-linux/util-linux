@@ -246,14 +246,14 @@ function ts_fstab_addline {
 	local SPEC="$1"
 	local MNT=${2:-"$TS_MOUNTPOINT"}
 	local FS=${3:-"auto"}
-	local OPT=${4:-"default"}
+	local OPT=${4:-"defaults"}
 
-	echo "$SPEC   $MNT   $FS   defaults   0   0" >> /etc/fstab
+	echo "$SPEC   $MNT   $FS   $OPT   0   0" >> /etc/fstab
 }
 
 function ts_fstab_add {
 	ts_fstab_open
-	ts_fstab_addline "$*"
+	ts_fstab_addline $*
 	ts_fstab_close
 }
 
