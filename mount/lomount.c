@@ -444,7 +444,7 @@ usage(void) {
   "  %1$s -f                                                # find unused\n"
   "  %1$s -a                                                # list all used\n"
   "  %1$s -r                                                # read-only loop\n"
-  "  %1$s [-e encryption] [-o offset] [-r] {-f|loop_device} file # setup\n"),
+  "  %1$s [-e encryption] [-o offset] [-r] {-f [-s] |loop_device} file # setup\n"),
 		progname);
 	exit(1);
 }
@@ -481,6 +481,7 @@ main(int argc, char **argv) {
 	char *p, *offset, *encryption, *passfd, *device, *file;
 	int delete, find, c, all;
 	int res = 0;
+	int showdev = 0;
 	int ro = 0;
 	int pfd = -1;
 	unsigned long long off;
@@ -497,7 +498,7 @@ main(int argc, char **argv) {
 	if ((p = strrchr(progname, '/')) != NULL)
 		progname = p+1;
 
-	while ((c = getopt(argc, argv, "ade:E:fo:p:vr")) != -1) {
+	while ((c = getopt(argc, argv, "ade:E:fo:p:vrs")) != -1) {
 		switch (c) {
 		case 'a':
 			all = 1;
@@ -521,6 +522,9 @@ main(int argc, char **argv) {
 		case 'p':
 			passfd = optarg;
 			break;
+		case 's':
+			showdev = 1;
+			break;
 		case 'v':
 			verbose = 1;
 			break;
@@ -532,7 +536,7 @@ main(int argc, char **argv) {
 	if (argc == 1) {
 		usage();
 	} else if (delete) {
-		if (argc != optind+1 || encryption || offset || find || all)
+		if (argc != optind+1 || encryption || offset || find || all || showdev)
 			usage();
 	} else if (find) {
 		if (all || argc < optind || argc > optind+1)
@@ -576,6 +580,9 @@ main(int argc, char **argv) {
 		if (passfd && sscanf(passfd, "%d", &pfd) != 1)
 			usage();
 		res = set_loop(device, file, off, encryption, pfd, &ro);
+		if (res == 0 && showdev && find) {
+			printf("%s\n", device);
+		}
 	}
 	return res;
 }

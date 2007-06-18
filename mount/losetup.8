@@ -37,7 +37,7 @@ Setup loop device:
 .IR pfd ]
 .RB [ \-r ]
 .in +8
-.RB { \-f | \fIloop_device\fP }
+.RB { \-f [ \-s ] | \fIloop_device\fP }
 .I file
 .in -13
 .ad b
@@ -90,6 +90,13 @@ Read the passphrase from file descriptor with number
 instead of from the terminal.
 .IP \fB\-r\fP
 Setup read-only loop device.
+.IP \fB\-s\fP
+Print device name if the
+.I -f
+option and a
+.I file
+argument are present.
+
 .SH RETURN VALUE
 .B losetup
 returns 0 on success, nonzero on failure. When
