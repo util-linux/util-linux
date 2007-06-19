@@ -121,6 +121,10 @@ AC_ARG_WITH([slang],
   [], with_slang=no
 )
 
+have_tinfo=no
+AC_CHECK_LIB(tinfo, tgetent, [have_tinfo=yes])
+AM_CONDITIONAL(HAVE_TINFO, test x$have_tinfo = xyes)
+
 use_slang=no
 if test x$with_slang = xyes; then
   AC_CHECK_HEADERS([slcurses.h slang/slcurses.h], [use_slang=yes])

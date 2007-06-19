@@ -12,9 +12,15 @@ man_MANS = col.1 colcrt.1 colrm.1 column.1 hexdump.1 rev.1 line.1 tailf.1
 if HAVE_NCURSES
 bin_PROGRAMS = more
 usrbinexec_PROGRAMS += ul pg
+if HAVE_TINFO
+more_LDADD = -ltinfo
+pg_LDADD = -ltinfo -lncurses
+ul_LDADD = -ltinfo
+else
 more_LDADD = -lncurses
 pg_LDADD = -lncurses
 ul_LDADD = -lncurses
+endif
 man_MANS += ul.1 more.1 pg.1
 else
 if HAVE_TERMCAP

@@ -17,11 +17,15 @@ CLEANFILES = chkdupexe scriptreplay
 man_MANS = cal.1 chkdupexe.1 ddate.1 logger.1 look.1 mcookie.1 \
 	namei.1 script.1 whereis.1 scriptreplay.1
 
+if HAVE_TINFO
+cal_LDADD = -ltinfo -lncurses
+else
 if HAVE_NCURSES
 cal_LDADD = -lncurses
 else
 if HAVE_TERMCAP
 cal_LDADD = -ltermcap
+endif
 endif
 endif
 
@@ -32,7 +36,11 @@ endif
 if HAVE_NCURSES
 usrbinexec_PROGRAMS += setterm
 man_MANS += setterm.1
+if HAVE_TINFO
+setterm_LDADD = -ltinfo
+else
 setterm_LDADD = -lncurses
+endif
 endif
 
 if BUILD_KILL
