@@ -295,6 +295,7 @@ struct disc_time makeday(int imonth,int iday,int iyear) /*i for input */
     int cal[12] = { 31,28,31,30,31,30,31,31,30,31,30,31 };
     int dayspast=0;
 
+    memset(&funkychickens,0,sizeof(funkychickens));
     /* basic range checks */
     if (imonth < 1 || imonth > 12) {
 	    funkychickens.season = -1;
