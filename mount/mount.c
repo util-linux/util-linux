@@ -846,20 +846,45 @@ loop_check(const char **spec, const char **type, int *flags,
 	printf(_("mount: skipping the setup of a loop device\n"));
     } else {
       int loopro = (*flags & MS_RDONLY);
+      int res;
 
-      if (!*loopdev || !**loopdev)
-	*loopdev = find_unused_loop_device();
-      if (!*loopdev)
-	return EX_SYSERR;	/* no more loop devices */
-      if (verbose)
-	printf(_("mount: going to use the loop device %s\n"), *loopdev);
       offset = opt_offset ? strtoull(opt_offset, NULL, 0) : 0;
-      if (set_loop(*loopdev, *loopfile, offset,
-		   opt_encryption, pfd, &loopro)) {
+
+      do {
+        if (!*loopdev || !**loopdev)
+	  *loopdev = find_unused_loop_device();
+	if (!*loopdev)
+	  return EX_SYSERR;	/* no more loop devices */
 	if (verbose)
-	  printf(_("mount: failed setting up loop device\n"));
-	return EX_FAIL;
-      }
+	  printf(_("mount: going to use the loop device %s\n"), *loopdev);
+
+	if ((res = set_loop(*loopdev, *loopfile, offset,
+			    opt_encryption, pfd, &loopro))) {
+	  if (res == 2) {
+	     /* loop dev has been grabbed by some other process,
+	        try again, if not given explicitly */
+	     if (!opt_loopdev) {
+	       if (verbose)
+	         printf(_("mount: stolen loop=%s ...trying again\n"), *loopdev);
+	       my_free(*loopdev);
+	       *loopdev = NULL;
+	       continue;
+	     }
+	     error(_("mount: stolen loop=%s"), *loopdev);
+	     return EX_FAIL;
+
+	  } else {
+	     if (verbose)
+	       printf(_("mount: failed setting up loop device\n"));
+	     if (!opt_loopdev) {
+	       my_free(*loopdev);
+	       *loopdev = NULL;
+	     }
+	     return EX_FAIL;
+	  }
+	}
+      } while (!*loopdev);
+
       if (verbose > 1)
 	printf(_("mount: setup loop device successfully\n"));
       *spec = *loopdev;
