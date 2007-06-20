@@ -563,9 +563,9 @@ main(int argc, char **argv) {
 		device = find_unused_loop_device();
 		if (device == NULL)
 			return -1;
-		if (verbose)
-			printf("Loop device is %s\n", device);
 		if (argc == optind) {
+			if (verbose)
+				printf("Loop device is %s\n", device);
 			printf("%s\n", device);
 			return 0;
 		}
@@ -587,10 +587,23 @@ main(int argc, char **argv) {
 			usage();
 		if (passfd && sscanf(passfd, "%d", &pfd) != 1)
 			usage();
-		res = set_loop(device, file, off, encryption, pfd, &ro);
-		if (res == 0 && showdev && find) {
+		do {
+			res = set_loop(device, file, off, encryption, pfd, &ro);
+			if (res == 2 && find) {
+				if (verbose)
+					printf("stolen loop=%s...trying again\n",
+						device);
+				free(device);
+				if (!(device = find_unused_loop_device()))
+					return -1;
+			}
+		} while (find && res == 2);
+
+		if (verbose && res == 0)
+			printf("Loop device is %s\n", device);
+
+		if (res == 0 && showdev && find)
 			printf("%s\n", device);
-		}
 	}
 	return res;
 }
