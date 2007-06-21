@@ -20,11 +20,13 @@ enum probe_type {
 	VOLUME_ID_TYPE,
 };
 
-static char *probe(const char *device, enum probe_type type)
+static char
+*probe(const char *device, enum probe_type type)
 {
 	int fd;
 	uint64_t size;
 	struct volume_id *id;
+	const char *val;
 	char *value = NULL;
 
 	fd = open(device, O_RDONLY);
@@ -42,13 +44,16 @@ static char *probe(const char *device, enum probe_type type)
 	if (volume_id_probe_all(id, 0, size) == 0) {
 		switch(type) {
 		case VOLUME_ID_LABEL:
-			value  = xstrdup(id->label);
+			if (volume_id_get_label(id, &val))
+				value  = xstrdup(val);
 			break;
 		case VOLUME_ID_UUID:
-			value  = xstrdup(id->uuid);
+			if (volume_id_get_uuid(id, &val))
+				value  = xstrdup(val);
 			break;
 		case VOLUME_ID_TYPE:
-			value  = xstrdup(id->type);
+			if (volume_id_get_type(id, &val))
+				value  = xstrdup(val);
 			break;
 		default:
 			break;
@@ -72,10 +77,8 @@ fsprobe_exit(void)
 int
 fsprobe_known_fstype(const char *fstype)
 {
-	/* TODO 
 	if (volume_id_get_prober_by_type(fstype) != NULL)
 		return 1;
-	*/
 	return 0;
 }
 
@@ -101,11 +104,15 @@ const char *
 fsprobe_get_devname_by_uuid(const char *uuid)
 {
 	char dev[PATH_MAX];
+	size_t len;
 
 	if (!uuid)
 		return NULL;
 
-	snprintf(dev, sizeof(dev), PATH_DEV_BYUUID "/%s", uuid);
+	strcpy(dev, PATH_DEV_BYUUID "/");
+	len = strlen(PATH_DEV_BYUUID "/");
+	if (!volume_id_encode_string(uuid, &dev[len], sizeof(dev) - len) != 0)
+		return NULL;
 	return canonicalize(dev);
 }
 
@@ -113,11 +120,13 @@ const char *
 fsprobe_get_devname_by_label(const char *label)
 {
 	char dev[PATH_MAX];
+	size_t len;
 
 	if (!label)
 		return NULL;
-
-	snprintf(dev, sizeof(dev), PATH_DEV_BYLABEL "/%s", label);
+	strcpy(dev, PATH_DEV_BYLABEL "/");
+	len = strlen(PATH_DEV_BYLABEL "/");
+	if (!volume_id_encode_string(label, &dev[len], sizeof(dev) - len) != 0)
+		return NULL;
 	return canonicalize(dev);
 }
-

@@ -87,7 +87,7 @@ have_volume_id=no
 if test x$with_fsprobe = xblkid; then
   UTIL_CHECK_LIB(blkid, blkid_known_fstype)
 elif test x$with_fsprobe = xvolume_id; then
-  UTIL_CHECK_LIB(volume_id, volume_id_open_fd)
+  UTIL_CHECK_LIB(volume_id, volume_id_encode_string)
 fi
 
 if test $have_blkid = no && test $have_volume_id = no; then
