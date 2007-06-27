@@ -446,16 +446,23 @@ char *progname;
 
 static void
 usage(void) {
-	fprintf(stderr, _("usage:\n"
-  "  %1$s loop_device                                       # give info\n"
-  "  %1$s -d loop_device                                    # delete\n"
-  "  %1$s -f                                                # find unused\n"
-  "  %1$s -a                                                # list all used\n"
-  "  %1$s -r                                                # read-only loop\n"
-  "  %1$s [-e encryption] [-o offset] [-r] {-f [-s] |loop_device} file # setup\n"),
+	fprintf(stderr, _("\nUsage:\n"
+  " %1$s loop_device                                  # give info\n"
+  " %1$s -a | --all                                   # list all used\n"
+  " %1$s -d | --detach loop_device                    # delete\n"
+  " %1$s -f | --find                                  # find unused\n"
+  " %1$s [ options ] {-f|--find|loop_device} file     # setup\n"
+  "\nOptions:\n"
+  " -e | --encryption <type> enable data encryption with specified <name/num>\n"
+  " -h | --help              this help\n"
+  " -o | --offset <num>      start at offset <num> into file\n"
+  " -p | --pass-fd <num>     read passphrase from file descriptor <num>\n"
+  " -r | --read-only         setup read-only loop device\n"
+  " -s | --show              print device name (with -f <file>)\n"
+  " -v | --verbose           verbose mode\n\n"),
 		progname);
 	exit(1);
-}
+ }
 
 char *
 xstrdup (const char *s) {
@@ -484,6 +491,7 @@ error (const char *fmt, ...) {
 	fprintf (stderr, "\n");
 }
 
+
 int
 main(int argc, char **argv) {
 	char *p, *offset, *encryption, *passfd, *device, *file;
@@ -493,6 +501,19 @@ main(int argc, char **argv) {
 	int ro = 0;
 	int pfd = -1;
 	unsigned long long off;
+	struct option longopts[] = {
+		{ "all", 0, 0, 'a' },
+		{ "detach", 0, 0, 'd' },
+		{ "encryption", 1, 0, 'e' },
+		{ "find", 0, 0, 'f' },
+		{ "help", 0, 0, 'h' },
+		{ "offset", 1, 0, 'o' },
+		{ "pass-fd", 1, 0, 'p' },
+		{ "read-only", 0, 0, 'r' },
+	        { "show", 0, 0, 's' },
+		{ "verbose", 0, 0, 'v' },
+		{ NULL, 0, 0, 0 }
+	};
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
@@ -506,7 +527,8 @@ main(int argc, char **argv) {
 	if ((p = strrchr(progname, '/')) != NULL)
 		progname = p+1;
 
-	while ((c = getopt(argc, argv, "ade:E:fo:p:vrs")) != -1) {
+	while ((c = getopt_long(argc, argv, "ade:E:fho:p:rsv",
+				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':
 			all = 1;
