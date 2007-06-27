@@ -9,9 +9,9 @@ if !M68K
 sbin_PROGRAMS = fdisk
 man_MANS = fdisk.8
 fdisk_SOURCES = fdisk.c fdiskbsdlabel.c fdisksgilabel.c \
-	fdisksunlabel.c fdiskaixlabel.c partname.c \
+	fdisksunlabel.c fdiskaixlabel.c fdiskmaclabel.c partname.c \
 	fdisk.h fdisksunlabel.h fdisksgilabel.h fdiskaixlabel.h \
-	fdiskbsdlabel.h $(fdisk_common)
+	fdiskbsdlabel.h fdiskmaclabel.h $(fdisk_common)
 
 if !SPARC
 

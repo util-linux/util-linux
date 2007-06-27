@@ -26,6 +26,7 @@
 #include "fdisksunlabel.h"
 #include "fdisksgilabel.h"
 #include "fdiskaixlabel.h"
+#include "fdiskmaclabel.h"
 
 #ifdef HAVE_LINUX_COMPILER_H
 #include <linux/compiler.h>
@@ -168,11 +169,12 @@ unsigned int	heads,
 
 unsigned long long total_number_of_sectors;
 
-#define dos_label (!sun_label && !sgi_label && !aix_label && !osf_label)
-int     sun_label = 0;                  /* looking at sun disklabel */
+#define dos_label (!sun_label && !sgi_label && !aix_label && !mac_label && !osf_label)
+int	sun_label = 0;			/* looking at sun disklabel */
 int	sgi_label = 0;			/* looking at sgi disklabel */
 int	aix_label = 0;			/* looking at aix disklabel */
 int	osf_label = 0;			/* looking at OSF/1 disklabel */
+int	mac_label = 0;			/* looking at mac disklabel */
 int	possibly_osf_label = 0;
 
 jmp_buf listingbuf;
@@ -366,7 +368,7 @@ menu(void) {
 	   puts(_("   v   verify the partition table"));
 	   puts(_("   w   write table to disk and exit"));
 	}
-	else if (aix_label) {
+	else if (aix_label || mac_label) {
 	   puts(_("Command action"));
 	   puts(_("   m   print this menu"));
 	   puts(_("   o   create a new empty DOS partition table"));
@@ -430,7 +432,7 @@ xmenu(void) {
 	   puts(_("   v   verify the partition table"));
 	   puts(_("   w   write table to disk and exit"));
 	}
-	else if (aix_label) {
+	else if (aix_label || mac_label) {
 	   puts(_("Command action"));
 	   puts(_("   b   move beginning of data in a partition")); /* !sun */
 	   puts(_("   c   change number of cylinders"));
@@ -727,7 +729,7 @@ create_doslabel(void) {
 	  "content won't be recoverable.\n\n"));
 	sun_nolabel();  /* otherwise always recognised as sun */
 	sgi_nolabel();  /* otherwise always recognised as sgi */
-	aix_label = osf_label = possibly_osf_label = 0;
+	mac_label = aix_label = osf_label = possibly_osf_label = 0;
 	partitions = 4;
 
 	for (i = 510-64; i < 510; i++)
@@ -924,6 +926,9 @@ get_boot(enum action what) {
 		return 0;
 
 	if (check_aix_label())
+		return 0;
+
+	if (check_mac_label())
 		return 0;
 
 	if (check_osf_label()) {
@@ -2059,6 +2064,15 @@ new_partition(void) {
 		return;
 	}
 
+	if (mac_label) {
+		printf(_("\tSorry - this fdisk cannot handle Mac disk labels."
+		         "\n\tIf you want to add DOS-type partitions, create"
+		         "\n\ta new empty DOS partition table first. (Use o.)"
+		         "\n\tWARNING: "
+		         "This will destroy the present disk contents.\n"));
+		 return;
+	}
+
 	for (i = 0; i < 4; i++)
 		free_primary += !ptes[i].part_table->sys_ind;
 
@@ -2397,7 +2411,7 @@ try(char *device, int user_specified) {
 		if (gb > 0) { /* I/O error */
 		} else if (gb < 0) { /* no DOS signature */
 			list_disk_geometry();
-			if (!aix_label && btrydev(device) < 0)
+			if (!aix_label && !mac_label && btrydev(device) < 0)
 				fprintf(stderr,
 					_("Disk %s doesn't contain a valid "
 					  "partition table\n"), device);

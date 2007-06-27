@@ -96,6 +96,7 @@ extern int osf_label;
 extern int sun_label;
 extern int sgi_label;
 extern int aix_label;
+extern int mac_label;
 
 /* prototypes for fdiskbsdlabel.c */
 extern void bselect(void);
