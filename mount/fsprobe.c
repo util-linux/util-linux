@@ -96,9 +96,10 @@ fsprobe_known_fstype_in_procfs(const char *type)
 /* when 0 or -1 is returned, *types contains the type used */
 /* when 1 is returned, *types is NULL */
 int
-fsprobe_procfsloop_mount(	int (*mount_fn)(struct mountargs *),
-				struct mountargs *args,
-				const char **types)
+fsprobe_procfsloop_mount(int (*mount_fn)(struct mountargs *, int *, int *),
+			 struct mountargs *args,
+			 const char **types,
+			 int *special, int *status)
 {
 	char *files[2] = { ETC_FILESYSTEMS, PROC_FILESYSTEMS };
 	FILE *procfs;
@@ -142,7 +143,7 @@ fsprobe_procfsloop_mount(	int (*mount_fn)(struct mountargs *),
 				printf(_("Trying %s\n"), fsname);
 				fflush(stdout);
 			}
-			if ((*mount_fn) (args) == 0) {
+			if ((*mount_fn) (args, special, status) == 0) {
 				*types = fsname;
 				ret = 0;
 				break;

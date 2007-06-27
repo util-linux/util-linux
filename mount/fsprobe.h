@@ -37,8 +37,10 @@ struct mountargs {
 
 extern int fsprobe_known_fstype_in_procfs(const char *type);
 
-extern int fsprobe_procfsloop_mount(int (*mount_fn)(struct mountargs *),
+extern int fsprobe_procfsloop_mount(
+			int (*mount_fn)(struct mountargs *, int *, int *),
 			struct mountargs *args,
-			const char **types);
+			const char **types,
+			int *special, int *status);
 
 #endif /* MOUNT_FSPROBE_H */

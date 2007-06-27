@@ -189,6 +189,8 @@ static const char *opt_loopdev, *opt_vfstype, *opt_offset, *opt_encryption,
 	*opt_speed, *opt_comment, *opt_uhelper;
 
 static int mounted (const char *spec0, const char *node0);
+static int check_special_mountprog(const char *spec, const char *node,
+		const char *type, int flags, char *extra_opts, int *status);
 
 static struct string_opt_map {
   char *tag;
@@ -574,7 +576,6 @@ static int mountcount = 0;
 static int
 do_mount_syscall (struct mountargs *args) {
 	int flags = args->flags;
-	int ret;
 
 	if ((flags & MS_MGC_MSK) == 0)
 		flags |= MS_MGC_VAL;
@@ -584,7 +585,25 @@ do_mount_syscall (struct mountargs *args) {
 			"filesystemtype: \"%s\", mountflags: %d, data: %s\n",
 			args->spec, args->node, args->type, flags, (char *) args->data);
 
-	ret = mount (args->spec, args->node, args->type, flags, args->data);
+	return mount (args->spec, args->node, args->type, flags, args->data);
+}
+
+/*
+ * do_mount()
+ *	Mount a single file system, possibly invoking an external handler to
+ *      do so. Keep track of successes.
+ * returns: 0: OK, -1: error in errno
+ */
+static int
+do_mount (struct mountargs *args, int *special, int *status) {
+	int ret;
+	if (check_special_mountprog(args->spec, args->node, args->type,
+	                            args->flags, args->data, status)) {
+		*special = 1;
+		ret = 0;
+	} else
+		ret = do_mount_syscall(args);
+
 	if (ret == 0)
 		mountcount++;
 	return ret;
@@ -595,7 +614,6 @@ do_mount_syscall (struct mountargs *args) {
  *	If there is a special mount program for this type, exec it.
  * returns: 0: no exec was done, 1: exec was done, status has result
  */
-
 static int
 check_special_mountprog(const char *spec, const char *node, const char *type, int flags,
 			char *extra_opts, int *status) {
@@ -620,8 +638,8 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
 		 setgid(getgid());
 		 oo = fix_opts_string (flags, extra_opts, NULL);
 		 mountargs[i++] = mountprog;				/* 1 */
-		 mountargs[i++] = spec;					/* 2 */
-		 mountargs[i++] = node;					/* 3 */
+		 mountargs[i++] = (char *) spec;			/* 2 */
+		 mountargs[i++] = (char *) node;			/* 3 */
 		 if (sloppy && strncmp(type, "nfs", 3) == 0)
 		      mountargs[i++] = "-s";				/* 4 */
 		 if (fake)
@@ -707,10 +725,9 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
 	      error(_("%s looks like swapspace - not mounted"), spec);
 	      *types = NULL;
 	      return 1;
-	  } else if (check_special_mountprog(spec, node, *types, flags,
-					     mount_opts, status)) {
-	      *special = 1;
-	      return 0;
+	  } else {
+	      args.type = *types;
+	      return do_mount (&args, special, status);
           }
       }
    }
@@ -724,7 +741,7 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
       while((p = index(t,',')) != NULL) {
 	 *p = 0;
 	 args.type = *types = t;
-	 if(do_mount_syscall (&args) == 0)
+	 if (do_mount (&args, special, status) == 0)
 	    return 0;
 	 t = p+1;
       }
@@ -734,10 +751,10 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
 
    if (*types || (flags & MS_REMOUNT)) {
       args.type = *types;
-      return do_mount_syscall (&args);
+      return do_mount (&args, special, status);
    }
 
-   return fsprobe_procfsloop_mount(do_mount_syscall, &args, types);
+   return fsprobe_procfsloop_mount(do_mount, &args, types, special, status);
 }
 
 /*
@@ -1058,7 +1075,8 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 
     if (special) {
       block_signals (SIG_UNBLOCK);
-      return status;
+      res = status;
+      goto out;
     }
   }
 
