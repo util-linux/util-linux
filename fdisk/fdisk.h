@@ -76,6 +76,14 @@ extern int valid_part_table_flag(unsigned char *b);
 extern unsigned int read_int(unsigned int low, unsigned int dflt,
 			     unsigned int high, unsigned int base, char *mesg);
 
+extern unsigned char MBRbuffer[MAX_SECTOR_SIZE];
+extern unsigned int heads, cylinders, sector_size;
+extern unsigned long long sectors;
+extern char *partition_type(unsigned char type);
+extern void update_units(void);
+extern char read_chars(char *mesg);
+extern void set_changed(int);
+extern void set_all_unchanged(void);
 
 #define PLURAL	0
 #define SINGULAR 1
@@ -85,6 +93,9 @@ extern unsigned long long get_start_sect(struct partition *p);
 extern unsigned long long get_nr_sects(struct partition *p);
 
 extern int osf_label;
+extern int sun_label;
+extern int sgi_label;
+extern int aix_label;
 
 /* prototypes for fdiskbsdlabel.c */
 extern void bselect(void);

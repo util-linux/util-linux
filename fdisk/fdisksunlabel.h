@@ -1,3 +1,6 @@
+#ifndef FDISK_SUN_LABEL_H
+#define FDISK_SUN_LABEL_H
+
 #include <linux/types.h>   /* for __u16, __u32 */
 
 typedef struct {
@@ -35,19 +38,6 @@ typedef struct {
 				 : (__u16)(x))
 #define SSWAP32(x) (other_endian ? __swap32(x) \
 				 : (__u32)(x))
-				 
-/* fdisk.c */
-extern unsigned char MBRbuffer[MAX_SECTOR_SIZE];
-extern unsigned int heads, cylinders;
-extern unsigned long long sectors;
-extern int show_begin;
-extern int sun_label;
-extern char *partition_type(unsigned char type);
-extern void update_units(void);
-extern char read_chars(char *mesg);
-extern void set_all_unchanged(void);
-extern void set_changed(int);
-
 /* fdisksunlabel.c */
 #define SUNOS_SWAP 3
 #define WHOLE_DISK 5
@@ -72,3 +62,4 @@ extern void sun_set_rspeed(void);
 extern void sun_set_pcylcount(void);
 extern void toggle_sunflags(int i, unsigned char mask);
 
+#endif /* FDISK_SUN_LABEL_H */

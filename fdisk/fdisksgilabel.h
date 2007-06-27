@@ -1,3 +1,6 @@
+#ifndef FDISK_SGI_LABEL_H
+#define FDISK_SGI_LABEL_H
+
 #include <linux/types.h>   /* for __u32 etc */
 /*
  * Copyright (C) Andreas Neuper, Sep 1998.
@@ -103,20 +106,11 @@ typedef struct {
 /* fdisk.c */
 #define sgilabel ((sgi_partition *)MBRbuffer)
 #define sgiparam (sgilabel->devparam)
-extern unsigned char MBRbuffer[MAX_SECTOR_SIZE];
-extern unsigned int heads, cylinders, sector_size;
-extern unsigned long long sectors;
-extern int show_begin;
-extern int sgi_label;
-extern char *partition_type(unsigned char type);
-extern void update_units(void);
-extern char read_chars(char *mesg);
-extern void set_changed(int);
 
 /* fdisksgilabel.c */
 extern struct	systypes sgi_sys_types[];
-extern void 	sgi_nolabel( void );
-extern int 	check_sgi_label( void );
+extern void	sgi_nolabel( void );
+extern int	check_sgi_label( void );
 extern void	sgi_list_table( int xtra );
 extern void	sgi_change_sysid( int i, int sys );
 extern unsigned int	sgi_get_start_sector( int i );
@@ -139,3 +133,5 @@ extern int	sgi_get_bootpartition( void );
 extern int	sgi_get_swappartition( void );
 extern void	sgi_set_bootfile( const char* aFile );
 extern const char *sgi_get_bootfile( void );
+
+#endif /* FDISK_SGI_LABEL_H */

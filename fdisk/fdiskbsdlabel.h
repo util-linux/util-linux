@@ -1,3 +1,6 @@
+#ifndef FDISK_BSD_LABEL_H
+#define FDISK_BSD_LABEL_H
+
 /*
  * Copyright (c) 1987, 1988 Regents of the University of California.
  * All rights reserved.
@@ -232,3 +235,5 @@ static struct systypes xbsd_fstypes[] = {
 #define	BSD_D_RAMDISK	0x08		/* disk emulator */
 #define	BSD_D_CHAIN    	0x10		/* can do back-back transfers */
 #define	BSD_D_DOSPART	0x20		/* within MSDOS partition */
+
+#endif /* FDISK_BSD_LABEL_H */

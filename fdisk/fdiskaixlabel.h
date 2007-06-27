@@ -1,3 +1,6 @@
+#ifndef FDISK_AIX_LABEL_H
+#define FDISK_AIX_LABEL_H
+
 #include <linux/types.h>   /* for __u32 etc */
 /*
  * Copyright (C) Andreas Neuper, Sep 1998.
@@ -19,17 +22,10 @@ typedef struct {
 
 /* fdisk.c */
 #define aixlabel ((aix_partition *)MBRbuffer)
-extern unsigned char MBRbuffer[MAX_SECTOR_SIZE];
-extern char changed[MAXIMUM_PARTS];
-extern unsigned int heads, cylinders;
-extern unsigned long long sectors;
-extern int show_begin;
-extern int aix_label;
-extern char *partition_type(unsigned char type);
-extern void update_units(void);
-extern char read_chars(char *mesg);
 
 /* fdiskaixlabel.c */
 extern struct	systypes aix_sys_types[];
-extern void 	aix_nolabel( void );
-extern int 	check_aix_label( void );
+extern void	aix_nolabel( void );
+extern int	check_aix_label( void );
+
+#endif /* FDISK_AIX_LABEL_H */
