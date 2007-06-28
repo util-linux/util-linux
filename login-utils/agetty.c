@@ -30,6 +30,9 @@
 #include <getopt.h>
 #include <time.h>
 #include <sys/file.h>
+#include <sys/types.h>
+#include <sys/socket.h>
+#include <netdb.h>
 #include "xstrncpy.h"
 #include "nls.h"
 
@@ -120,6 +123,15 @@
   */
 #ifndef BUFSIZ
 #define	BUFSIZ		1024
+#endif
+
+/* set a maximum length for the hostname,  */
+#ifdef HOST_NAME_MAX
+# define HOSTNAME_LENGTH HOST_NAME_MAX		/* defined by POSIX.1 */
+#elif defined(MAXHOSTNAMELEN)
+# define HOSTNAME_LENGTH MAXHOSTNAMELEN		/* implemented in current Unix-versions */
+#else
+# define HOSTNAME_LENGTH 255
 #endif
 
  /*
@@ -876,6 +888,31 @@ do_prompt(op, tp)
 #endif
 		     domainname[sizeof(domainname)-1] = '\0';
 		     printf ("%s", domainname);
+		   }
+		  break;
+
+		  case 'O':
+		   {
+			char *dom = "unknown_domain";
+			char host[HOST_NAME_MAX + 1];
+			struct addrinfo hints, *info = NULL;
+
+			memset(&hints, 0, sizeof(hints));
+			hints.ai_flags = AI_CANONNAME;
+
+			if (gethostname(host, sizeof(host)) ||
+			    getaddrinfo(host, NULL, &hints, &info) ||
+			    info == NULL)
+				fputs(dom, stdout);
+			else {
+				char *canon;
+
+				if (info->ai_canonname &&
+				    (canon = strchr(info->ai_canonname, '.')))
+					dom = canon + 1;
+				fputs(dom, stdout);
+				freeaddrinfo(info);
+			}
 		   }
 		  break;
 
