@@ -470,7 +470,7 @@ xmenu(void) {
 static int
 get_sysid(int i) {
 	return (
-		sun_label ? sunlabel->infos[i].id :
+		sun_label ? sun_get_sysid(i) :
 		sgi_label ? sgi_get_sysid(i) :
 		ptes[i].part_table->sys_ind);
 }
@@ -1178,7 +1178,7 @@ get_partition(int warn, int max) {
 		if ((!sun_label && !sgi_label && !pe->part_table->sys_ind)
 		    || (sun_label &&
 			(!sunlabel->partitions[i].num_sectors ||
-			 !sunlabel->infos[i].id))
+			 !sunlabel->part_tags[i].tag))
 		    || (sgi_label && (!sgi_get_num_sectors(i)))
 		   )
 			fprintf(stderr,
@@ -1400,7 +1400,7 @@ change_sysid(void) {
 		}
 
                 if (sys < 256) {
-			if (sun_label && i == 2 && sys != WHOLE_DISK)
+			if (sun_label && i == 2 && sys != SUN_TAG_BACKUP)
 				printf(_("Consider leaving partition 3 "
 				       "as Whole disk (5),\n"
 				       "as SunOS/Solaris expects it and "
@@ -2614,7 +2614,7 @@ main(int argc, char **argv) {
 				toggle_active(get_partition(1, partitions));
 			else if (sun_label)
 				toggle_sunflags(get_partition(1, partitions),
-						0x01);
+						SUN_FLAG_UNMNT);
 			else if (sgi_label)
 				sgi_set_bootpartition(
 					get_partition(1, partitions));
@@ -2638,7 +2638,7 @@ main(int argc, char **argv) {
 				toggle_dos_compatibility_flag();
 			else if (sun_label)
 				toggle_sunflags(get_partition(1, partitions),
-						0x10);
+						SUN_FLAG_RONLY);
 			else if (sgi_label)
 				sgi_set_swappartition(
 						get_partition(1, partitions));
