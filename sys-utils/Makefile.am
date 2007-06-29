@@ -20,17 +20,14 @@ info_TEXINFOS = ipc.texi
 
 
 if BUILD_RDEV
-
 if INTEL
-
 usrsbinexec_PROGRAMS += rdev
 man_MANS += rdev.8 ramsize.8 rootflags.8 vidmode.8
+RDEV_LINKS = ramsize vidmode rootflags
+endif
+endif
 
 install-exec-hook:
-	cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev ramsize
-	cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev vidmode
-	cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev rootflags
-
-endif
-
-endif
+	for I in $(RDEV_LINKS); do \
+		cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev $$I ; \
+	done
