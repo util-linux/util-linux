@@ -880,12 +880,11 @@ do_prompt(op, tp)
 
 		  case 'o':
 		   {
-		     char domainname[256];
+		     char domainname[HOST_NAME_MAX+1];
 #ifdef HAVE_GETDOMAINNAME
-		     getdomainname(domainname, sizeof(domainname));
-#else
-		     strcpy(domainname, "unknown_domain");
+		     if (getdomainname(domainname, sizeof(domainname)))
 #endif
+			 strcpy(domainname, "unknown_domain");
 		     domainname[sizeof(domainname)-1] = '\0';
 		     printf ("%s", domainname);
 		   }
@@ -988,14 +987,11 @@ do_prompt(op, tp)
 	(void) fclose(fd);
     }
 #endif
-#ifdef __linux__
-	{
-		char hn[MAXHOSTNAMELEN+1];
-
-		(void) gethostname(hn, MAXHOSTNAMELEN);
-		write(1, hn, strlen(hn));
-	}
-#endif		
+    {
+	char hn[HOST_NAME_MAX+1];
+	if (gethostname(hn, sizeof(hn)) == 0)
+	    write(1, hn, strlen(hn));
+    }
     (void) write(1, LOGIN, sizeof(LOGIN) - 1);	/* always show login prompt */
 }
 
