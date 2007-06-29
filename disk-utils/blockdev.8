@@ -1,8 +1,9 @@
 .\" -*- nroff -*-
 .\" Copyright 1998 Andries E. Brouwer (aeb@cwi.nl)
+.\" Copyright 2007 Karel Zak <kzak@redhat.com>
 .\"
 .\" May be distributed under the GNU General Public License
-.TH BLOCKDEV 8 "May 2000" ""
+.TH BLOCKDEV 8 "Jun 2007" ""
 .SH NAME
 blockdev \- call block device ioctls from the command line
 .SH SYNOPSIS
@@ -37,8 +38,19 @@ Get read-only. Print 1 if the device is read-only, 0 otherwise.
 .B \--getss
 Print sectorsize in bytes - usually 512.
 .TP
+.B \--getbsz
+Print blocksize in bytes.
+.TP
+.BI \--setbsz " N"
+Set blocksize to
+.I N
+bytes.
+.TP
 .B \--getsize
-Print device capacity (in 512-byte sectors).
+Print device size in sectors.
+.TP
+.B \--getsize64
+Print device size in bytes.
 .TP
 .BI \--setra " N"
 Set readahead to
@@ -59,3 +71,9 @@ Flush buffers.
 .TP
 .B \--rereadpt
 Reread partition table.
+.SH AUTHOR
+blockdev was written by Andries E. Brouwer.
+.SH AVAILABILITY
+blockdev is part of the util-linux-ng package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
+

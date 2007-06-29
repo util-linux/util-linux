@@ -108,20 +108,26 @@ struct bdc {
 static void
 usage(void) {
 	int i;
+	fputc('\n', stderr);
 	fprintf(stderr, _("Usage:\n"));
 	fprintf(stderr, "  %s -V\n", progname);
 	fprintf(stderr, _("  %s --report [devices]\n"), progname);
 	fprintf(stderr, _("  %s [-v|-q] commands devices\n"), progname);
+	fputc('\n', stderr);
+
 	fprintf(stderr, _("Available commands:\n"));
-	fprintf(stderr, "\t--getsz\t(%s)\n", "get size in 512-byte sectors");
+	fprintf(stderr, "\t%-30s %s\n", "--getsz",
+			"get size in 512-byte sectors");
 	for (i = 0; i < SIZE(bdcms); i++) {
-		fprintf(stderr, "\t%s", bdcms[i].name);
 		if (bdcms[i].argname)
-			fprintf(stderr, " %s", bdcms[i].argname);
-		if (bdcms[i].help)
-			fprintf(stderr, "\t(%s)", _(bdcms[i].help));
-		fprintf(stderr, "\n");
+			fprintf(stderr, "\t%s %-*s %s\n", bdcms[i].name,
+					(int) (29 - strlen(bdcms[i].name)),
+					bdcms[i].argname, _(bdcms[i].help));
+		else
+			fprintf(stderr, "\t%-30s %s\n", bdcms[i].name,
+					_(bdcms[i].help));
 	}
+	fputc('\n', stderr);
 	exit(1);
 }
 
