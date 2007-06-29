@@ -23,6 +23,8 @@
 #define BLKFLSBUF  _IO(0x12,97)
 #define BLKRASET   _IO(0x12,98)
 #define BLKRAGET   _IO(0x12,99)
+#define BLKFRASET  _IO(0x12,100)
+#define BLKFRAGET  _IO(0x12,101)
 #define BLKSSZGET  _IO(0x12,104)
 #define BLKBSZGET  _IOR(0x12,112,size_t)
 #define BLKBSZSET  _IOW(0x12,113,size_t)
@@ -85,6 +87,12 @@ struct bdc {
 #endif
 #ifdef BLKRAGET
 	{ "--getra", "BLKRAGET", BLKRAGET, ARGLINTG, -1, NULL, N_("get readahead") },
+#endif
+#ifdef BLKFRASET
+	{ "--setfra", "BLKFRASET", BLKFRASET, ARGINTA, 0, "FSREADAHEAD", N_("set filesystem readahead") },
+#endif
+#ifdef BLKFRAGET
+	{ "--getfra", "BLKFRAGET", BLKFRAGET, ARGLINTG, -1, NULL, N_("get filesystem readahead") },
 #endif
 #ifdef BLKFLSBUF
 	{ "--flushbufs", "BLKFLSBUF", BLKFLSBUF, ARGNONE, 0, NULL, N_("flush buffers") },

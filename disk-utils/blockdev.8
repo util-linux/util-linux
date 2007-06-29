@@ -48,6 +48,12 @@ Set readahead to
 .B \--getra
 Print readahead (in 512-byte sectors).
 .TP
+.BI \--setfra " N"
+Set filesystem readahead (same like --setra on 2.6 kernels).
+.TP
+.B \--getfra
+Get filesystem readahead.
+.TP
 .B \--flushbufs
 Flush buffers.
 .TP
