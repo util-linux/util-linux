@@ -33,6 +33,9 @@
 #elif defined(__s390x__) || defined(__s390__)
 #define __NR_ioprio_set		282
 #define __NR_ioprio_get		283
+#elif defined(__sparc__)
+#define __NR_ioprio_set		196
+#define __NR_ioprio_get		218
 #else
 #error "Unsupported arch"
 #endif
