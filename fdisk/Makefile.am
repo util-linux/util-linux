@@ -4,7 +4,7 @@ EXTRA_DIST = README.fdisk README.cfdisk sfdisk.examples partitiontype.c
 
 fdisk_common = disksize.c i386_sys_types.c common.h gpt.c gpt.h
 
-if !M68K
+if !ARCH_M68K
 
 sbin_PROGRAMS = fdisk
 man_MANS = fdisk.8
@@ -13,7 +13,7 @@ fdisk_SOURCES = fdisk.c fdiskbsdlabel.c fdisksgilabel.c \
 	fdisk.h fdisksunlabel.h fdisksgilabel.h fdiskaixlabel.h \
 	fdiskbsdlabel.h fdiskmaclabel.h $(fdisk_common)
 
-if !SPARC
+if !ARCH_SPARC
 
 sbin_PROGRAMS += sfdisk
 man_MANS += sfdisk.8
@@ -33,6 +33,6 @@ cfdisk_LDADD = -lncurses
 endif
 endif
 
-endif # !SPARC
-endif # !M68K
+endif # !ARCH_SPARC
+endif # !ARCH_M68K
 

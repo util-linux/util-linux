@@ -20,7 +20,7 @@ info_TEXINFOS = ipc.texi
 
 
 if BUILD_RDEV
-if INTEL
+if ARCH_I86
 usrsbinexec_PROGRAMS += rdev
 man_MANS += rdev.8 ramsize.8 rootflags.8 vidmode.8
 RDEV_LINKS = ramsize vidmode rootflags

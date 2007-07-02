@@ -224,15 +224,24 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
 ])
 
 
-case "$host" in
-  i?86-*)  intel=true ;;
-  m68*)    m68k=true ;;
-  sparc*)  sparc=true ;;
-esac
+dnl UTIL_SET_ARCH(ARCHNAME, PATTERN)
+dnl ---------------------------------
+AC_DEFUN([UTIL_SET_ARCH], [
+  cpu_$1=false
+  case "$host" in
+   $2) cpu_$1=true ;;
+  esac
+  AM_CONDITIONAL(AS_TR_CPP(ARCH_$1), [test x$cpu_$1 = xtrue])
+])
 
-AM_CONDITIONAL(INTEL, test x$intel = xtrue)
-AM_CONDITIONAL(M68K,  test x$m68k  = xtrue)
-AM_CONDITIONAL(SPARC, test x$sparc = xtrue)
+UTIL_SET_ARCH(I86, i?86-*)
+UTIL_SET_ARCH(86_64, x86_64*)
+UTIL_SET_ARCH(IA64, ia64*)
+UTIL_SET_ARCH(S390, s390*)
+UTIL_SET_ARCH(SPARC, sparc*)
+UTIL_SET_ARCH(PPC, ppc*|powerpc*)
+UTIL_SET_ARCH(M68K, m68*)
+UTIL_SET_ARCH(MIPS, mips*)
 
 
 AC_ARG_ENABLE([agetty],
