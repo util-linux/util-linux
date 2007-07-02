@@ -2,7 +2,7 @@ include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS = dmesg
 
-usrbinexec_PROGRAMS = cytune flock ipcrm ipcs renice setsid
+usrbinexec_PROGRAMS = cytune flock ipcrm ipcs renice setsid setarch
 
 cytune_SOURCES = cytune.c cyclades.h
 
@@ -14,10 +14,9 @@ tunelp_SOURCES = tunelp.c lp.h
 
 man_MANS = flock.1 readprofile.1 \
 	ctrlaltdel.8 cytune.8 dmesg.1 ipcrm.1 ipcs.1 renice.1 \
-	setsid.1 tunelp.8
+	setsid.1 tunelp.8 setarch.8
 
 info_TEXINFOS = ipc.texi
-
 
 if BUILD_RDEV
 if ARCH_I86
@@ -27,7 +26,34 @@ RDEV_LINKS = ramsize vidmode rootflags
 endif
 endif
 
+SETARCH_LINKS = linux32 linux64
+
+if ARCH_S390
+SETARCH_LINKS += s390 s390x
+endif
+if ARCH_I86
+SETARCH_LINKS += i386
+endif
+if ARCH_86_64
+SETARCH_LINKS += i386 x86_64
+endif
+if ARCH_PPC
+SETARCH_LINKS += ppc ppc64 ppc32
+endif
+if ARCH_SPARC
+SETARCH_LINKS += sparc sparc64 sparc32 sparc32bash
+endif
+if ARCH_MIPS
+SETARCH_LINKS += mips mips64 mips32
+endif
+if ARCH_IA64
+SETARCH_LINKS += i386 ia64
+endif
+
 install-exec-hook:
 	for I in $(RDEV_LINKS); do \
 		cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev $$I ; \
+	done
+	for I in $(SETARCH_LINKS); do \
+		cd $(DESTDIR)$(usrbinexecdir) && ln -sf setarch $$I ; \
 	done
