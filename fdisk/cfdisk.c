@@ -547,7 +547,7 @@ die_x(int ret) {
 }
 
 static void
-read_sector(char *buffer, long long sect_num) {
+read_sector(unsigned char *buffer, long long sect_num) {
     if (lseek(fd, sect_num*SECTOR_SIZE, SEEK_SET) < 0)
 	fatal(_("Cannot seek on disk drive"), 2);
     if (read(fd, buffer, SECTOR_SIZE) != SECTOR_SIZE)
@@ -555,7 +555,7 @@ read_sector(char *buffer, long long sect_num) {
 }
 
 static void
-write_sector(char *buffer, long long sect_num) {
+write_sector(unsigned char *buffer, long long sect_num) {
     if (lseek(fd, sect_num*SECTOR_SIZE, SEEK_SET) < 0)
 	fatal(_("Cannot seek on disk drive"), 2);
     if (write(fd, buffer, SECTOR_SIZE) != SECTOR_SIZE)
@@ -686,8 +686,8 @@ get_linux_label(int i) {
 	offset = (p_info[i].first_sector + p_info[i].offset) * SECTOR_SIZE + 0;
 	if (lseek(fd, offset, SEEK_SET) == offset
 	    && read(fd, &xfsb, sizeof(xfsb)) == sizeof(xfsb)
-	    && !strncmp(xfsb.s_magic, XFS_SUPER_MAGIC, 4)) {
-		label = xfsb.s_fname;
+	    && !strncmp((char *) xfsb.s_magic, XFS_SUPER_MAGIC, 4)) {
+		label = (char *) xfsb.s_fname;
 		for(j=0; j<XFSLABELSZ && j<LABELSZ && isprint(label[j]); j++)
 			p_info[i].volume_label[j] = label[j];
 		p_info[i].volume_label[j] = 0;
@@ -717,7 +717,7 @@ get_linux_label(int i) {
 	    && has_reiserfs_magic_string(&reiserfsb, &reiserfs_is_3_6)) {
 		if (reiserfs_is_3_6) {
 			/* label only on version 3.6 onward */
-			label = reiserfsb.s_label;
+			label = (char *) reiserfsb.s_label;
 			for(j=0; j<REISERFSLABELSZ && j<LABELSZ &&
 				    isprint(label[j]); j++)
 				p_info[i].volume_label[j] = label[j];
@@ -1947,13 +1947,13 @@ fp_printf(FILE *fp, char *format, ...) {
 
 #define MAX_PER_LINE 16
 static void
-print_file_buffer(FILE *fp, char *buffer) {
+print_file_buffer(FILE *fp, unsigned char *buffer) {
     int i,l;
 
     for (i = 0, l = 0; i < SECTOR_SIZE; i++, l++) {
 	if (l == 0)
 	    fp_printf(fp, "0x%03X:", i);
-	fp_printf(fp, " %02X", (unsigned char) buffer[i]);
+	fp_printf(fp, " %02X", buffer[i]);
 	if (l == MAX_PER_LINE - 1) {
 	    fp_printf(fp, "\n");
 	    l = -1;
