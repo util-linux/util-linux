@@ -1,14 +1,12 @@
 
-2.13:
-====
 
 - convet po/ files to UTF-8
 
-- add an option to the cal command to control highlight date
-  (cal -v YYYY/MM/DD)
-
 2.14:
 ====
+
+- add an option to the cal command to control highlight date
+  (cal -v YYYY/MM/DD)
 
 - use rpmatch() for all Y/N  ?
 
