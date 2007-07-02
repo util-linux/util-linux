@@ -246,7 +246,7 @@ sgi_list_table(int xtra) {
 		if (sgilabel->directory[i].vol_file_size) {
 			__u32 start = SSWAP32(sgilabel->directory[i].vol_file_start);
 			__u32 len = SSWAP32(sgilabel->directory[i].vol_file_size);
-			char *name = sgilabel->directory[i].vol_file_name;
+			unsigned char *name = sgilabel->directory[i].vol_file_name;
 			printf(_("%2d: %-10s sector%5u size%8u\n"),
 			       i, name, (unsigned int) start,
 			       (unsigned int) len);
@@ -318,7 +318,7 @@ sgi_check_bootfile(const char* aFile) {
 			}
 		}
 	}
-	if (strncmp(aFile, sgilabel->boot_file, 16)) {
+	if (strncmp(aFile, (char *) sgilabel->boot_file, 16)) {
 		printf(_("\n\tBe aware, that the bootfile is not checked for existence.\n\t"
 			 "SGI's default is \"/unix\" and for backup \"/unix.save\".\n"));
 		/* filename is correct and did change */
@@ -329,7 +329,7 @@ sgi_check_bootfile(const char* aFile) {
 
 const char *
 sgi_get_bootfile(void) {
-	return sgilabel->boot_file;
+	return (char *) sgilabel->boot_file;
 }
 
 void
@@ -355,7 +355,7 @@ create_sgiinfo(void) {
 	/* I keep SGI's habit to write the sgilabel to the second block */
 	sgilabel->directory[0].vol_file_start = SSWAP32(2);
 	sgilabel->directory[0].vol_file_size = SSWAP32(sizeof(sgiinfo));
-	strncpy(sgilabel->directory[0].vol_file_name, "sgilabel", 8);
+	strncpy((char *) sgilabel->directory[0].vol_file_name, "sgilabel", 8);
 }
 
 sgiinfo *fill_sgiinfo(void);
@@ -372,7 +372,7 @@ sgi_write_table(void) {
 		fatal(unable_to_seek);
 	if (write(fd, sgilabel, SECTOR_SIZE) != SECTOR_SIZE)
 		fatal(unable_to_write);
-	if (! strncmp(sgilabel->directory[0].vol_file_name, "sgilabel", 8)) {
+	if (! strncmp((char *) sgilabel->directory[0].vol_file_name, "sgilabel", 8)) {
 		/*
 		 * keep this habit of first writing the "sgilabel".
 		 * I never tested whether it works without (AN 981002).
@@ -753,7 +753,7 @@ create_sgilabel(void)
 
 	/* sizeof(sgilabel->boot_file) = 16 > 6 */
 	memset(sgilabel->boot_file, 0, 16);
-	strcpy(sgilabel->boot_file, "/unix");
+	strcpy((char *) sgilabel->boot_file, "/unix");
 
 	sgilabel->devparam.skew			= (0);
 	sgilabel->devparam.gap1			= (0);
@@ -837,9 +837,9 @@ fill_sgiinfo(void)
 	info->b2=SSWAP16(-1);
 	info->b3=SSWAP16(1);
 	/* You may want to replace this string !!!!!!! */
-	strcpy(info->scsi_string, "IBM OEM 0662S12         3 30");
-	strcpy(info->serial, "0000");
+	strcpy((char *) info->scsi_string, "IBM OEM 0662S12         3 30");
+	strcpy((char *) info->serial, "0000");
 	info->check1816 = SSWAP16(18*256 +16);
-	strcpy(info->installer, "Sfx version 5.3, Oct 18, 1994");
+	strcpy((char *) info->installer, "Sfx version 5.3, Oct 18, 1994");
 	return info;
 }
