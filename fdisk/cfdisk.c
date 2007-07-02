@@ -1670,7 +1670,7 @@ fill_p_info(void) {
 	 opentype = O_RDWR;
     opened = TRUE;
 
-    if (gpt_probe_signature_devname(fd)) {
+    if (gpt_probe_signature_fd(fd)) {
 	 print_warning(_("Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."));
 	 refresh();
 	 getch();
