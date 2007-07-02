@@ -24,6 +24,7 @@
 #include <errno.h>
 #include <error.h>
 #include <sys/utsname.h>
+#include "nls.h"
 
 #define set_pers(pers) ((long)syscall(SYS_personality, pers))
 
@@ -53,13 +54,13 @@ show_help(void)
   if (!*p)
     p = "setarch";
 
-  printf("Usage: %s%s [options] [program [program arguments]]\n\nOptions:\n",
+  printf(_("Usage: %s%s [options] [program [program arguments]]\n\nOptions:\n"),
          p, !strcmp(p, "setarch") ? " <arch>" : "");
 
   for (f = 0; f < sizeof(flags) / sizeof(flags[0]); f++)
-    printf("\t-%c\tEnable %s\n", flags[f].c, flags[f].name);
+    printf(_("\t-%c\tEnable %s\n"), flags[f].c, flags[f].name);
 
-  printf("\nFor more information see setarch(8).\n");
+  printf(_("\nFor more information see setarch(8).\n"));
   exit(EXIT_SUCCESS);
 }
 
@@ -71,7 +72,7 @@ show_usage(const char *s)
   if (!*p)
     p = "setarch";
 
-  fprintf(stderr, "%s: %s\nTry `%s --help' for more information.\n", p, s, p);
+  fprintf(stderr, _("%s: %s\nTry `%s --help' for more information.\n"), p, s, p);
   exit(EXIT_FAILURE);
 }
 
@@ -129,7 +130,7 @@ int set_arch(const char *pers, unsigned long options)
 	break;
 
   if(transitions[i].perval < 0)
-    error(EXIT_FAILURE, 0, "%s: Unrecognized architecture", pers);
+    error(EXIT_FAILURE, 0, _("%s: Unrecognized architecture"), pers);
 
   pers_value = transitions[i].perval | options;
   res = set_pers(pers_value);
@@ -145,7 +146,7 @@ int set_arch(const char *pers, unsigned long options)
 	   && strcmp(un.machine, "i586")
 	   && strcmp(un.machine, "i686")
 	   && strcmp(un.machine, "athlon")))
-      error(EXIT_FAILURE, 0, "%s: Unrecognized architecture", pers);
+      error(EXIT_FAILURE, 0, _("%s: Unrecognized architecture"), pers);
   }
 
   return 0;
@@ -157,15 +158,19 @@ int main(int argc, char *argv[])
   unsigned long options = 0;
   int verbose = 0;
 
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
+
   if (argc < 1)
-    show_usage("Not enough arguments");
+    show_usage(_("Not enough arguments"));
 
   p = program_invocation_short_name;
   if (!strcmp(p, "setarch")) {
     argv++;
     argc--;
     if (argc < 1)
-      show_usage("Not enough arguments");
+      show_usage(_("Not enough arguments"));
     p = argv[0];
     if (!strcmp(p, "-h") || !strcmp(p, "--help"))
       show_help();
@@ -191,19 +196,19 @@ int main(int argc, char *argv[])
       for (f = 0; f < sizeof(flags) / sizeof(flags[0]); f++) {
 	if (arg[n] == flags[f].c) {
 	  if (verbose)
-	    fprintf(stderr, "Switching on %s.\n", flags[f].name);
+	    fprintf(stderr, _("Switching on %s.\n"), flags[f].name);
 	  options |= flags[f].option;
 	  unknown = 0;
 	  break;
 	}
       }
       if (unknown)
-	error(0, 0, "Unknown option `%c' ignored", arg[n]);
+	error(0, 0, _("Unknown option `%c' ignored"), arg[n]);
     }
   }
 
   if (set_arch(p, options))
-    error(EXIT_FAILURE, errno, "Failed to set personality to %s", p);
+    error(EXIT_FAILURE, errno, _("Failed to set personality to %s"), p);
 
   if (!argc) {
     execl("/bin/sh", "-sh", NULL);
