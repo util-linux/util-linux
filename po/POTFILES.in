@@ -15,8 +15,10 @@ fdisk/disksize.c
 fdisk/fdiskaixlabel.c
 fdisk/fdiskbsdlabel.c
 fdisk/fdisk.c
+fdisk/fdiskmaclabel.c
 fdisk/fdisksgilabel.c
 fdisk/fdisksunlabel.c
+fdisk/gpt.c
 fdisk/i386_sys_types.c
 fdisk/partitiontype.c
 fdisk/partname.c
@@ -60,14 +62,13 @@ misc-utils/script.c
 misc-utils/setterm.c
 misc-utils/whereis.c
 misc-utils/write.c
+mount/fsprobe_blkid.c
+mount/fsprobe.c
+mount/fsprobe_volumeid.c
 mount/fstab.c
-mount/get_label_uuid.c
 mount/getusername.c
 mount/lomount.c
-mount/mount_blkid.c
-mount/mount_by_label.c
 mount/mount.c
-mount/mount_guess_fstype.c
 mount/mount_mntent.c
 mount/pivot_root.c
 mount/realpath.c
@@ -96,6 +97,7 @@ sys-utils/ipcs.c
 sys-utils/rdev.c
 sys-utils/readprofile.c
 sys-utils/renice.c
+sys-utils/setarch.c
 sys-utils/setsid.c
 sys-utils/tunelp.c
 text-utils/col.c
