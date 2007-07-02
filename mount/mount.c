@@ -1057,6 +1057,9 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 	  goto out;
   }
 
+  if (loop)
+      opt_loopdev = loopdev;
+
   /*
    * Call mount.TYPE for types that require a separate mount program.
    * For the moment these types are ncpfs and smbfs. Maybe also vxfs.
@@ -1082,8 +1085,6 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 
   if (fake || mnt5_res == 0) {
       /* Mount succeeded, report this (if verbose) and write mtab entry.  */
-      if (loop)
-	  opt_loopdev = loopdev;
 
       if (!(mounttype & MS_PROPAGATION)) {
 	      update_mtab_entry(loop ? loopfile : spec,
