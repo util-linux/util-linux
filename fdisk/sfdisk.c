@@ -974,12 +974,12 @@ static struct geometry
 get_fdisk_geometry_one(struct part_desc *p) {
     struct geometry G;
 
+    memset(&G, 0, sizeof(struct geometry));
     chs b = p->p.end_chs;
     longchs bb = chs_to_longchs(b);
     G.heads = bb.h+1;
     G.sectors = bb.s;
     G.cylindersize = G.heads*G.sectors;
-    G.cylinders = G.start = 0;
     return G;
 }
 
@@ -989,8 +989,8 @@ get_fdisk_geometry(struct disk_desc *z) {
     int pno, agree;
     struct geometry G0, G;
 
+    memset(&G0, 0, sizeof(struct geometry));
     agree = 0;
-    G0.heads = G0.sectors = 0;
     for (pno=0; pno < z->partno; pno++) {
 	p = &(z->partitions[pno]);
 	if (p->size != 0 && p->p.sys_type != 0) {
