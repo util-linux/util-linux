@@ -4,6 +4,10 @@
 
          util-linux is a random collection of Linux utilities
 
+WEB PAGE:
+
+     http://kernel.org/~kzak/util-linux-ng/
+
 
 MAILING LIST:
 
@@ -11,11 +15,23 @@ MAILING LIST:
       URL:    http://vger.kernel.org/vger-lists.html#util-linux-ng
 
 
+DOWNLOAD:
+
+      ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/
+
+
+SOURCE CODE:
+
+      Web interface:
+	  http://git.kernel.org/?p=utils/util-linux-ng/util-linux-ng.git
+      Checkout:
+	  git clone git://git.kernel.org/pub/scm/utils/util-linux-ng/util-linux-ng.git util-linux-ng
+
+
 NEUTRALITY:
 
       The stuff in util-linux-ng should be rather distribution-neutral.
       No RPMs/DEBs/... are provided - get yours from your distributor.
-
 
 
 VERSION SCHEMA:
@@ -27,12 +43,12 @@ VERSION SCHEMA:
              major = fatal and deep changes
              minor = typical release with new fetures
              maint = maintenance releases; bug fixes only
-       
+
       Development releases:
 
          <major>.<minor><suffix>
 
-             suffix = "devel" or "rc<N>"
+             suffix = "devel" or "-rc<N>"
 
 
 COMPILATION:

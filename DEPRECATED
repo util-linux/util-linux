@@ -2,8 +2,8 @@ The following is a list of commands or features that are going to be
 removed in the util-linux-ng source tree.
 
 
-What:	raw command
-When:	depends on kernel upstream
+What:	raw(8) command
+When:	undefined yet; depends on kernel upstream
 Why:	O_DIRECT can be used instead
 
 ---------------------------
@@ -11,4 +11,43 @@ Why:	O_DIRECT can be used instead
 What:	cryptoloop support in mount/losetup
 When:	undefined yet
 Why:	depreciated in favor of dm-crypt.
+
+---------------------------
+
+What:	elvtune
+When:	undefined yet
+Why:	useless for kernel >= 2.6.9
+
+---------------------------
+
+What:	arch(1) command
+When:	2.14
+Why:	deprecated in favor of uname(1) from coreutils
+
+	The arch(1) has been moved (during 2.13 development cycle) to coreutuls
+	where it will be maintained as an alias for uname(1) command.
+
+----------------------------
+
+What:	kill(1) command
+When:	2.14 or 2.15
+Why:	deprecated in favor of kill from procps or bash build-in kill command
+
+----------------------------
+
+What:	newgrp(1)
+When:	undefined yet
+Why:	deprecated in favor of newgrp from shadow-utils
+
+----------------------------
+
+What:	last(1)
+Whan:	undefined yet
+Why:	nobody use this implementation
+
+----------------------------
+
+What:	shutdown(1)
+Whan:	undefined yet
+Why:	nobody use this implementation
 

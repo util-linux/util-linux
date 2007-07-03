@@ -13,27 +13,32 @@ PAST MAINTAINERS:
       Andries E. Brouwer <aeb@cwi.nl>
 
 
-AUTHORS:
+AUTHORS (merged projects):
 
       flock:           H. Peter Anvin <hpa@zytor.com>
       getopt:          Frodo Looijaard <frodol@dds.nl>
       schedutils:      Robert Love <rlove@rlove.org>
       simpleinit:      Richard Gooch <rgooch@atnf.csiro.au>
       hwclock:         Bryan Henderson <bryanh@giraffe-data.com>
-
+      setarch:	       Elliot Lee <sopwith@redhat.com>
+                       Jindrich Novy <jnovy@redhat.com>
 
 CONTRIBUTORS:
 
-      Stepan Kasal <skasal@redhat.com>
-      Mike Frysinger <vapier@gentoo.org>
-      Martin Schlemmer <azarah@gentoo.org>
-      Valerie Henson <val_henson@linux.intel.com>
-      Matthias Koenig <mkoenig@suse.de>
-      Ram Pai <linuxram@us.ibm.com>
-      Steve Grubb <sgrubb@redhat.com>
+      Arkadiusz Miskiewicz <arekm@maven.pl>
+      Cliff Wickman <cpw@sgi.com>
       David Brownell <david-b@pacbell.net>
+      David Miller <davem@davemloft.net>
       Jason Vas Dias <jvdias@redhat.com>
-      Marco d'Itri <md@Linux.IT>
       Kay Sievers <kay.sievers@vrfy.org>
+      Luciano Chavez <lnx1138@us.ibm.com>
+      Marco d'Itri <md@Linux.IT>
+      Martin Schlemmer <azarah@gentoo.org>
+      Matthias Koenig <mkoenig@suse.de>
+      Mike Frysinger <vapier@gentoo.org>
       Pádraig Brady <P@draigBrady.com>
+      Ram Pai <linuxram@us.ibm.com>
+      Stepan Kasal <skasal@redhat.com>
+      Steve Grubb <sgrubb@redhat.com>
+      Valerie Henson <val_henson@linux.intel.com>
 

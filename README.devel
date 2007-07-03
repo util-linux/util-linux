@@ -54,8 +54,8 @@ SCM (source code management):
      git clone git://git.kernel.org/pub/scm/utils/util-linux-ng/util-linux-ng.git util-linux-ng
 
 
-    * maintenance branch(es)
-        - created for every <major>.<minor> release, branch name: v<major>.<minor>-mnt
+    * maintenance (stable) branch(es)
+        - created for every <major>.<minor> release, branch name: v<major>.<minor>-stable
 
     * master branch
         - the status of this branch is: "it works for me". It means useful
