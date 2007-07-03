@@ -1,0 +1,356 @@
+
+Util-linux-ng 2.13 Release Notes
+================================
+
+Release highlights:
+------------------
+
+ mount(8) doesn't include NFS client code anymore. Don't forget to
+ install nfs-utils 1.1.0 or newer with /sbin/[u]mount.{nfs,nfs4}.
+
+ mount(8) doesn't include filesystem detection code anymore. You
+ have to compile --with-fsprobe={blkid,volume_id}, and libblkid
+ (e2fsprogs) or libvolume_id (udev >= v110) is required.
+
+ mount(8) supports new relatime, context, fscontext, and defcontext
+ mount options.
+
+ losetup(8) supports command line option "-a" to list all used loop
+ devices, '-s' to print a device name if "-f" and a file argument
+ are present, and "-r" to create a read-only loop device.
+
+ fdisk(8) Sun label support has been improved. fdisk(8) is also able
+ to warn about detected GPT (fdisk doesn't support GPT).
+
+ taskset(1) is independent on hardcoded NR_CPUS. chrt(1) supports
+ SCHED_BATCH scheduling policy.
+
+ The package build system is now based on autotools. The build system
+ supports  separate CFLAGS and LDFLAGS for suid programs (SUID_CFLAGS,
+ SUID_LDFLAGS). For more details see the README file
+
+ hwclock(8) supports command line option --rtc=<path> and /dev/rtc0
+ device. --systohc functionality has been improved, and it doesn't cause
+ a 500ms inaccuracy each time it is used.
+
+ Audit system support (--with-audit) has been added to hwclock(8) and
+ login(1).
+
+ SELinux support (--with-selinux) has been added to mkswap(8) and
+ mount(8).
+
+ The setarch(8) upstream has been merged with util-linux-ng.
+
+
+Fixed security issues:
+---------------------
+
+ CVE-2007-0822 - mount(8) allows local users to trigger a NULL
+                 dereference and an application crash
+ CVE-2006-7108 - login(1) omits PAM account validation when auth is
+                 skipped
+
+
+Changelog:
+---------
+
+agetty:
+	add 'O' escape code to display domain name
+	check gethostname() return value
+blockdev:
+	add BLKFRAGET/BLKFRASET ioctls
+	cleanup usage() and update man page
+build-sys:
+	add AC_GNU_SOURCE
+	add Automake option dist-bzip2
+	add missing files
+	add SUID_CFLAGS
+	add SUID_LDFLAGS
+	add support for audit
+	amend .gitignore
+	call automake after autoconf
+	cleanup architecture conditionals
+	cleanup sys-utils/ rdev symlinks
+	configure.am selinux support cleanup
+	declare SUID_CFLAGS and SUID_LDFLAGS as precious
+	do not build convenience libraries in lib/
+	do not kick off AM_CFLAGS by SUID_CFLAGS
+	do not play with DEFS, use AM_CPPFLAGS
+	do not set with_foo twice
+	do not use internal Autoconf variables
+	do not use wildcards in EXTRA_DIST
+	factor out common parts from mount/Makefile.am
+	fix HAVE_NCURSES
+	fix ifdef ENABLE_WIDECHAR usage
+	fix linking when ncurses is built with --with-termlib=tinfo
+	fix README filenames and add missing files to EXTRA_DISTs
+	fix the example configure call in README
+	fix the final message of autogen.sh
+	in configure.ac, change "po" -> "$srcdir/po"
+	in the clean targets use "find ... | xargs rm -f"
+	let configure instantiate the misc-utils/*.pl scripts
+	make the getopt example directory relative to datadir
+	merge adjacent AC_CONFIG_HEADERS and AC_CONFIG_FUNCS calls
+	minor fixes in configure.in
+	mount/Makefile.am tiny cleanup
+	mount/Makefile.am tiny cleanup II
+	move -D flags to *_CPPFLAGS
+	move the optimization flags to AM_CFLAGS
+	--prefix defaults to /usr
+	remove aclocal.m4 from SCM
+	remove AC_PROG_RANLIB
+	remove config.h.in from VCS
+	remove config/include-Makefile.am from EXTRA_DIST
+	remove DEFAULT_INCLUDES workaround
+	remove -fomit-frame-pointer
+	remove generated autotools stuff from git
+	remove po/Makevars.template from EXTRA_DIST
+	remove swapargs.h, move the tests to main configure.ac
+	rename to -ng, change maintainer name
+	replace AC_TRY_* by AC_*_IFELSE
+	s/AC_HELP_STRING/AS_HELP_STRING/
+	set DISTCHECK_CONFIGURE_FLAGS in top-level makefile
+	simplify "clean" in tests/Makefile.am
+	update po/POTFILES.in
+	use dist_example_DATA
+	use dist_noinst_DATA to work around the bug with dist_man_MANS
+	use dist_noinst_HEADERS in include/Makefile.am
+	use dist_usrbinexec_SCRIPTS in misc-utils/Makefile.am
+	check exit status of autotools
+cal:
+	fix a segfault and -3m highlighting
+	ifdef cleanup, non-curses/tempcap code fixes
+	widechar code cleanup
+cfdisk:
+	build-sys defines HAVE_RPMATCH, not HAVE_rpmatch
+	fix stupid typo in GPT checker call
+chsh:
+	remove tailing wihit-spaces and use PATH_BSHELL
+col:
+	getwchar() errors shouldn't be hidden
+ddate:
+	fix compiler warnings
+docs:
+	add the DEPRECATED file
+	clean up TODO file and add a new resuest for 2.14
+	fix info about devel/master branchs
+	fix URL and typos in README.devel
+	refresh AUTHORS file
+	remove deprecated section from README
+	update AUTHORS file
+	update TODO file
+fdisk:
+	add GPT detection code
+	add MAC label detection
+	cleanup full disk detection code
+	fix "differ in signedness" compiler warnings
+	fix "type qualifiers ignored on function return type"
+	Makefile.am refactoring
+	many significant improvements and fixes to Sun label handling
+	move duplicate stuff from fdisk*label.h to fdisk.h
+	use unsigned long long instead int for sectors
+getopt:
+	remove old unused files
+hexdump:
+	don't use memset with zero lenght
+hwclock:
+	add --rtc=<path> option and support for /dev/rtc0
+	add support for audit system
+	fix --systohc sets clock 0.5 seconds slow
+	make ggc happy and check return values from fgets, read and write
+	remove tailing white-spaces and clean up clock.h
+ipcs:
+	add new tests for ipcs limits
+	add regression test for output headers
+	fix typo in Semaphore headers
+	max total shared memory in kbytes instead pages
+login:
+	add audit support
+	add IPv6 support
+	add regression test for IP address checking code
+	attempt to run if it has no read/write access to its terminal
+	close PAM session after failed pam_setcred
+	improve work with signals
+	keep syslog useful for end of PAM session.
+	login's timeout can fail
+	omits PAM account validation when auth is skipped (CVE-2006-7108)
+	remove triiling white-spaces
+	update 32bit utmp correctly on 64bit system
+look:
+	fix problem with !isalnum() words
+	remove tailing white-spaces
+losetup:
+	add a new option -s
+	add -a option to list all used loop devices
+	add long options and fix man page
+	add support read-only loops
+	add to man page info about deprecated cryptoloop
+man pages:
+	add "AVAILABILITY" section
+mcookie:
+	remove non-linux code
+misc-utils:
+	add scriptreplay manpage
+	remove old cal test
+mkfs.cramfs:
+	cleanup HAVE_ macros usage
+	fix a way how mkfs works with empty files
+	remove hardcoded limit for directories
+mkswap:
+	add regression test
+	automatically add selinux label to swapfile
+	avoid mkswap usage on already mounted device
+	gcc happy: unsigned long usage
+	fix libuuid usage in mkswap
+more:
+	fix file descriptor leak
+mount:
+	add note about /etc/mtab unreliability to mount.8
+	add note about fcntl/ioctl unreliability on NFS to mount.8
+	add -s and -f and note to man page for external mount helpers
+	add simple (printf-like) debug routine and --debug option
+	add support for context, fscontext and defcontext selinux mount options
+	add support for mixed usage of SPECes
+	add support for mtab "uhelper" option
+	avoid duplicate entries in mtab when mount -f
+	call /sbin/mount.<type> also when mounting without "-t"
+	clean up getfs* (fstab.c) interface
+	clean up info about NFS in mount.8
+	doesn't rpc_pipefs and nfsd on umount -a
+	do not treat arm/sparc specially.
+	don't umount sysfs when running umount -a
+	fix -fv so that it doesn't incorrectly spit out an error that nothing was done.
+	fix has_* functions (CVE-2007-0822)
+	fix list logic in update_mtab
+	fix memory usage in update_mtab
+	fix mtab_lock
+	fix typo in error message
+	fsprobe: add libvolume_id support
+	fsprobe: add libvolume_id support to configure.ac
+	fsprobe: make fsprobe_get_devname functions more generic
+	fsprobe: remove mount_guess_fstype.{c,h}
+	fsprobe: remove non-blkid code
+	fsprobe: rename files to fsprobe_*
+	fsprobe: rename the rest of API routines to fsprobe_*
+	fsprobe: use blkid cache only when really necessary
+	getfs_* (fstab) interface has to work with canonicalize()
+	kill mount_guess_rootdev
+	loop device race condition
+	needs to handle special mountprog even on guessed file systems.
+	parse SPEC before search in fstab
+	relative atime support
+	remove all NFS code
+	remove nfsmount() from sundries.h
+	rewrite getfs_by_specdir() without mem leaks
+	shared-subtree support
+	update mtab correctly when mount --move
+	use encoded labels for volume_id
+	use growable string for options
+	use loop= option when mounting by /sbin/mount.<type>
+	use realloc for xstrconcat functions
+	use verbose mode instead debug mode
+namei:
+	fix logic and infinite loop of symlinks
+	new regression test
+newgrp:
+	add support for /etc/gshadow
+	check result from getgrnam() more carefully
+partx:
+	add man pages for addpart, delpart and partx
+po:
+	rename mount/mntent.c to mount/mount_mntent.c
+	typo in french translation of mount error.
+	update po files
+	vipw doesn't use rpmatch, all translations have to use y/n
+raw:
+	add file with udev rule example
+	don't accept raw0 as a target name
+	move the raw command to /sbin
+	update man page (about dd and O_DIRECT)
+schedutils:
+	add support for SCHED_BATCH
+	define SCHED_BATCH when compile with old glibc
+	remove extra hyptens from man pages
+	taskset is independent of hardcoded NR_CPUS max
+	fix ionice build on sparc
+setarch:
+	add NLS support
+sfdisk:
+	fix "differ in signedness" compiler warnings
+	fix "may be used uninitialized" compiler warnings
+	setting default geometry values
+swapon:
+	cleanup PATH_ macros and tailing white-spaces
+	does not correctly deal with symlinks
+	fix swapon headers and syscalls
+	simplify an #if
+sys-utils:
+	added setarch command
+	add note about obsolete ramsize option to rdev.8
+	fix man page headers
+	move some man pages from category 8 to 1
+tests:
+	add basic infrastructure for regression tests
+	add cal -1 test
+	add cal -3 test
+	add cal -y test
+	add expected outputs for cramfs
+	add functions for label, uuid and fstype detection
+	add hwclock systohc test
+	add library for LD_PRELOAD to manipulate with time() in tests
+	add lock_mtab() performance and reliability test
+	add look test for words with separator
+	add missing header
+	add mkfs.cramfs tests
+	add more variants to {mount,fstab}-by-{label,uuid,devname}
+	add mount by devname from fstab
+	add mount by devname test
+	add mount by devname with label in fstab
+	add mount by devname with uuid in fstab
+	add mount by label from fstab test
+	add mount by LABEL test
+	add mount by label with devname in fstab
+	add mount by label with uuid in fstab
+	add mount by UUID from fstab test
+	add mount by UUID test
+	add mount by uuid with devname in fstab
+	add mount by uuid with label in fstab
+	add mount /dev/symlink test
+	add mount --move test
+	add mount -o remount test
+	add return code
+	add simple helper that returns info about system
+	add support for fstab modification
+	add support for suid programs
+	add swapon by devname test
+	add swapon by UUID test
+	add test for /sbin/mount.<type> call
+	add ts_log and --verbose support
+	add ts_ok and ts_failed
+	cleanup blkid cache after test device deinitialization
+	code refactoring -- new ts_device_init function
+	code refactoring -- new ts_skip_nonroot function
+	code refactoring -- new ts_udev_loop_support function
+	enable mtablock test when uid=0 only
+	fix argv[] usage in mnt_test_sysinfo.c
+	fix dependence on blkid
+	fix Makefile.am (add missing tests)
+	fix ts_fstab_add function
+	"if [...]" clean up
+	make clean need to remove diffs and outputs
+	pass all arguments to ts_init, add ts_has_option function
+	refresh mtablock output in expected/ directory
+	simplify devices usage
+text-utils:
+	fix the more command compilation against termcap
+tools:
+	add codecheck-config that checks for {HAVE,ENABLE}_ orphans
+vipw:
+	fix permissions (600->400) for edited /etc/[g]shodow files
+wall:
+	fix O_NONBLOCK usage
+misc:
+	Clean up pagesize/PAGE_SIZE usage.
+	clean up realpath.[ch] includes and macros
+	execl() should be use NULL not 0
+

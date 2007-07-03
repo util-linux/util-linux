@@ -24,7 +24,8 @@ EXTRA_DIST = \
 		licenses/ \
 		example.files/ \
 		po/update-potfiles \
-		tools
+		tools \
+		docs
 
 
 distclean-local:
