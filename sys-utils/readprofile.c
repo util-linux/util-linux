@@ -306,7 +306,8 @@ main(int argc, char **argv) {
 				prgname, mapFile, maplineno);
 			exit(1);
 		}
-		if (!strcmp(fn_name,"_stext")) /* only elf works like this */ {
+		/* only elf works like this */
+		if (!strcmp(fn_name,"_stext") || !strcmp(fn_name,"__stext")) {
 			add0 = fn_add;
 			break;
 		}
