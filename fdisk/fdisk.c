@@ -18,6 +18,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <sys/stat.h>
+#include <time.h>
 
 #include "nls.h"
 #include "common.h"
@@ -91,7 +92,7 @@ store4_little_endian(unsigned char *cp, unsigned int val) {
 }
 
 static unsigned int
-read4_little_endian(unsigned char *cp) {
+read4_little_endian(const unsigned char *cp) {
 	return (unsigned int)(cp[0]) + ((unsigned int)(cp[1]) << 8)
 		+ ((unsigned int)(cp[2]) << 16)
 		+ ((unsigned int)(cp[3]) << 24);
@@ -115,6 +116,49 @@ set_nr_sects(struct partition *p, unsigned long long nr_sects) {
 unsigned long long
 get_nr_sects(struct partition *p) {
 	return read4_little_endian(p->size4);
+}
+
+static ssize_t
+xread(int fd, void *buf, size_t count) {
+        char *p = buf;
+        ssize_t out = 0;
+        ssize_t rv;
+
+        while (count) {
+                rv = read(fd, p, count);
+                if (rv == -1) {
+                        if (errno == EINTR || errno == EAGAIN)
+                                continue;
+                        return out ? out : -1; /* Error */
+                } else if (rv == 0) {
+                        return out; /* EOF */
+                }
+
+                p += rv;
+                out += rv;
+                count -= rv;
+        }
+
+        return out;
+}
+
+static unsigned int
+get_random_id(void) {
+	int fd;
+	unsigned int v;
+	ssize_t rv = -1;
+
+	fd = open("/dev/urandom", O_RDONLY);
+	if (fd >= 0) {
+	        rv = xread(fd, &v, sizeof v);
+		close(fd);
+	}
+
+	if (rv == sizeof v)
+		return v;
+
+	/* Fallback: sucks, but better than nothing */
+	return (unsigned int)(getpid() + time(NULL));
 }
 
 /* normally O_RDWR, -l option gives O_RDONLY */
@@ -457,6 +501,7 @@ xmenu(void) {
 	   puts(_("   f   fix partition order"));		/* !sun, !aix, !sgi */
 	   puts(_("   g   create an IRIX (SGI) partition table"));/* sgi */
 	   puts(_("   h   change number of heads"));
+	   puts(_("   i   change the disk identifier")); /* dos only */
 	   puts(_("   m   print this menu"));
 	   puts(_("   p   print the partition table"));
 	   puts(_("   q   quit without saving changes"));
@@ -720,25 +765,65 @@ read_extended(int ext) {
 }
 
 static void
+dos_write_mbr_id(unsigned char *b, unsigned int id) {
+	store4_little_endian(&b[440], id);
+}
+
+static unsigned int
+dos_read_mbr_id(const unsigned char *b) {
+	return read4_little_endian(&b[440]);
+}
+
+static void
+dos_print_mbr_id(void) {
+	printf(_("Disk identifier: 0x%08x\n"), dos_read_mbr_id(MBRbuffer));
+}
+
+static void
+dos_set_mbr_id(void) {
+	unsigned long new_id;
+	char *ep;
+	char ps[64];
+
+	snprintf(ps, sizeof ps, _("New disk identifier (current 0x%08x): "),
+		 dos_read_mbr_id(MBRbuffer));
+
+	if (read_chars(ps) == '\n')
+		return;
+
+	new_id = strtoul(line_ptr, &ep, 0);
+	if (*ep != '\n')
+		return;
+
+	dos_write_mbr_id(MBRbuffer, new_id);
+	dos_print_mbr_id();
+}
+
+static void
 create_doslabel(void) {
-	int i;
+	unsigned int id = get_random_id();
 
 	fprintf(stderr,
-	_("Building a new DOS disklabel. Changes will remain in memory only,\n"
-	  "until you decide to write them. After that, of course, the previous\n"
-	  "content won't be recoverable.\n\n"));
+	_("Building a new DOS disklabel with disk identifier 0x%08x.\n"
+	  "Changes will remain in memory only, until you decide to write them.\n"
+	  "After that, of course, the previous content won't be recoverable.\n\n"),
+		id);
 	sun_nolabel();  /* otherwise always recognised as sun */
 	sgi_nolabel();  /* otherwise always recognised as sgi */
 	mac_label = aix_label = osf_label = possibly_osf_label = 0;
 	partitions = 4;
 
-	for (i = 510-64; i < 510; i++)
-		MBRbuffer[i] = 0;
-	write_part_table_flag(MBRbuffer);
+	/* Zero out the MBR buffer */
 	extended_offset = 0;
 	set_all_unchanged();
 	set_changed(0);
 	get_boot(create_empty_dos);
+
+	/* Generate an MBR ID for this disk */
+	dos_write_mbr_id(MBRbuffer, id);
+
+	/* Mark it bootable (unfortunately required) */
+	write_part_table_flag(MBRbuffer);
 }
 
 #include <sys/utsname.h>
@@ -1528,9 +1613,12 @@ list_disk_geometry(void) {
 		printf(_(", total %llu sectors"),
 		       total_number_of_sectors / (sector_size/512));
 	printf("\n");
-	printf(_("Units = %s of %d * %d = %d bytes\n\n"),
+	printf(_("Units = %s of %d * %d = %d bytes\n"),
 	       str_units(PLURAL),
 	       units_per_sector, sector_size, units_per_sector * sector_size);
+	if (dos_label)
+		dos_print_mbr_id();
+	printf("\n");
 }
 
 /*
@@ -1695,7 +1783,6 @@ list_table(int xtra) {
 		printf(_("This doesn't look like a partition table\n"
 			 "Probably you selected the wrong device.\n\n"));
 	}
-		
 
 	/* Heuristic: we list partition 3 of /dev/foo as /dev/foo3,
 	   but if the device name ends in a digit, say /dev/foo1,
@@ -2310,6 +2397,8 @@ xselect(void) {
 		case 'i':
 			if (sun_label)
 				sun_set_ilfact();
+			if (dos_label)
+				dos_set_mbr_id();
 			break;
 		case 'o':
 			if (sun_label)
