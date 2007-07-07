@@ -173,10 +173,12 @@ last_lba(int fd)
 	}
 	if (S_ISBLK(s.st_mode))
 		sectors = _get_num_sectors(fd);
+	else if (S_ISREG(s.st_mode))
+		sectors = s.st_size >> _get_sector_size(fd);
 	else
 	{
 		fprintf(stderr,
-			"last_lba(): I don't know how to handle files with mode %x\n",
+			"last_lba(): I don't know how to handle files with mode %o\n",
 			s.st_mode);
 		sectors = 1;
 	}
