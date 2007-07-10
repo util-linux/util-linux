@@ -74,3 +74,9 @@ install-exec-hook::
 endif
 
 endif
+
+noinst_PROGRAMS = cal_test
+cal_test_SOURCES = cal.c
+cal_test_CPPFLAGS = -DTEST_CAL $(AM_CPPFLAGS)
+cal_test_LDADD = $(cal_LDADD)
+

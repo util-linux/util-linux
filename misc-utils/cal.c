@@ -351,7 +351,16 @@ main(int argc, char **argv) {
 			errx(1, _("illegal year value: use 1-9999"));
 		break;
 	case 0:
-		time(&now);
+	{
+#ifdef TEST_CAL
+		char *e = getenv("TEST_TIME");
+
+		if (e && isdigit((unsigned char) *e))
+			now = atol(e);
+		else
+#endif
+			time(&now);
+	}
 		local_time = localtime(&now);
 		if (isatty(1))
 			day = local_time->tm_yday + 1;
