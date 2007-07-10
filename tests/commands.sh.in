@@ -6,7 +6,6 @@ TS_TESTUSER=${TS_TESTUSER:-"test"}
 
 # helpers
 TS_HELPER_SYSINFO="$TS_TOPDIR/helpers/mnt_test_sysinfo"
-TS_HELPER_LIBPRELOAD_TIME="$TS_TOPDIR/helpers/.libs/libpreload-time.so"
 
 # external commands
 TS_ECMD_BLKID="@BLKID@"
@@ -31,6 +30,7 @@ TS_CMD_COL=${TS_CMD_COL:-"$TOPDIR/text-utils/col"}
 TS_CMD_NAMEI=${TS_CMD_NAMEI-"$TOPDIR/misc-utils/namei"}
 TS_CMD_LOOK=${TS_CMD_LOOK-"$TOPDIR/misc-utils/look"}
 TS_CMD_CAL=${TS_CMD_CAL-"$TOPDIR/misc-utils/cal"}
+TS_CMD_CALTEST=${TS_CMD_CALTEST-"$TOPDIR/misc-utils/cal_test"}
 
 TS_CMD_CHECKTTY=${TS_CMD_CHECKTTY-"$TOPDIR/login-utils/checktty_test"}
 
