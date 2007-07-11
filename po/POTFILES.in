@@ -88,6 +88,7 @@ partx/unixware.c
 schedutils/chrt.c
 schedutils/ionice.c
 schedutils/taskset.c
+sys-utils/arch.c
 sys-utils/ctrlaltdel.c
 sys-utils/cytune.c
 sys-utils/dmesg.c

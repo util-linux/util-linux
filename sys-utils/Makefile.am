@@ -18,6 +18,11 @@ man_MANS = flock.1 readprofile.1 \
 
 info_TEXINFOS = ipc.texi
 
+if BUILD_ARCH
+bin_PROGRAMS += arch
+man_MANS += arch.1
+endif
+
 if BUILD_RDEV
 if ARCH_I86
 usrsbinexec_PROGRAMS += rdev

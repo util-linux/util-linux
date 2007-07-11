@@ -22,9 +22,9 @@ Why:	useless for kernel >= 2.6.9
 
 What:	arch(1) command
 When:	2.14
-Why:	deprecated in favor of uname(1) from coreutils
+Why:	deprecated in favor of uname(1) or arch(1) from coreutils
 
-	The arch(1) has been moved (during 2.13 development cycle) to coreutuls
+	The arch(1) has been added (during 2.13 development cycle) to coreutuls
 	where it will be maintained as an alias for uname(1) command.
 
 ----------------------------
