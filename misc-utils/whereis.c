@@ -66,6 +66,8 @@ static char *bindirs[] = {
    "/usr/etc",
    "/lib",
    "/usr/lib",
+   "/lib64",
+   "/usr/lib64",
    "/usr/games",
    "/usr/games/bin",
    "/usr/games/lib",
@@ -74,7 +76,7 @@ static char *bindirs[] = {
    "/usr/TeX/bin",
    "/usr/tex/bin",
    "/usr/interviews/bin/LINUX",
-   
+
    "/usr/X11R6/bin",
    "/usr/X386/bin",
    "/usr/bin/X11",
@@ -149,7 +151,6 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	
 
 	argc--, argv++;
 	if (argc == 0) {
@@ -328,7 +329,7 @@ findin(char *dir, char *cp) {
 		goto noglob;
 
 	l = strlen(dir);
-	if (l < sizeof(dirbuf)) { 	/* refuse excessively long names */
+	if (l < sizeof(dirbuf)) {	/* refuse excessively long names */
 		strcpy (dirbuf, dir);
 		d = index(dirbuf, '*');
 		*d = 0;
