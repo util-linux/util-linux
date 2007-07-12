@@ -7,11 +7,8 @@ AUTOTOOLS:
      * "./autogen.sh" generates all necessary files (run it after checkout from
        git)
 
-     * "make mrproper" removes all generates files. You have to call autogen.sh
-       after mrproper.
-
-     * "make distclean" is subset of mrproper. It removes all unnecessary files,
-       but code is still possible recompile by "./configure; make"
+     * "make distclean" removes all unnecessary files, but code is still possible 
+       recompile by "./configure; make"
 
      * "make dist-gzip" (or -bzip2) creates tarball which is possible use without
       autogen.sh
@@ -24,7 +21,7 @@ PATCHES:
 
      * diff -u
 
-     * don't include generated (autotools) stuff to your patches
+     * don't include generated (autotools) stuff to your patches (use git-clean [-X])
 
      * patches are delivered via email only.  Downloading them from internet
        servers is a pain.

@@ -32,15 +32,6 @@ distclean-local:
 	-find . -name \*~ -o -name \*.orig -o -name \*.rej | xargs rm -f
 	rm -rf autom4te.cache
 
-mrproper: distclean
-	if [ -f ".gitignore" ]; then \
-		find -name Makefile.in | xargs rm -f ; \
-		rm -f configure ABOUT-NLS ; \
-		rm -rf m4 ; \
-		cd config; rm -f `cat ../.gitignore`; cd .. ; \
-		cd po; rm -f `cat .gitignore`; cd .. ; \
-	fi
-
 ENABLE_ALL = --enable-elvtune --enable-init --enable-kill --enable-last \
  --enable-mesg --enable-partx --enable-raw --enable-rdev --enable-reset \
  --enable-login-utils --enable-write
