@@ -8,13 +8,13 @@ cytune_SOURCES = cytune.c cyclades.h
 
 sbin_PROGRAMS = ctrlaltdel
 
-usrsbinexec_PROGRAMS = readprofile tunelp
+usrsbinexec_PROGRAMS = readprofile tunelp rtcwake
 
 tunelp_SOURCES = tunelp.c lp.h
 
 man_MANS = flock.1 readprofile.1 \
 	ctrlaltdel.8 cytune.8 dmesg.1 ipcrm.1 ipcs.1 renice.1 \
-	setsid.1 tunelp.8 setarch.8
+	setsid.1 tunelp.8 setarch.8 rtcwake.8
 
 info_TEXINFOS = ipc.texi
 

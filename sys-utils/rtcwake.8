@@ -1,0 +1,94 @@
+.\" Copyright (c) 2007, SUSE LINUX Products GmbH
+.\"                     Bernhard Walle <bwalle@suse.de>
+.\"
+.\" This program is free software; you can redistribute it and/or
+.\" modify it under the terms of the GNU General Public License
+.\" as published by the Free Software Foundation; either version 2
+.\" of the License, or (at your option) any later version.
+.\"
+.\" This program is distributed in the hope that it will be useful,
+.\" but WITHOUT ANY WARRANTY; without even the implied warranty of
+.\" MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+.\" GNU General Public License for more details.
+.\"
+.\" You should have received a copy of the GNU General Public License
+.\" along with this program; if not, write to the Free Software
+.\" Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA
+.\" 02110-1301, USA.
+.\"
+.TH rtcwake 8 "2007-07-13" "" "Linux Programmer's Manual"
+.SH NAME
+rtcwake - enter a system sleep state until specified wakeup time
+.SH SYNOPSIS
+\fBrtcwake\fP [-hvVlua] [-d \fIdevice\fP] [-m \fIstandby_mode\fP] -t \fItime_t\fP | -s \fIseconds\fP
+.SH DESCRIPTION
+This program is used to enter a system sleep state until specified wakeup time.
+.PP
+This uses cross-platform Linux interfaces to enter a system sleep state, and
+leave it no later than a specified time.  It uses any RTC framework driver that
+supports standard driver model wakeup flags.
+.PP
+This is normally used like the old \fBapmsleep\fP utility, to wake from a suspend
+state like ACPI S1 (standby) or S3 (suspend-to-RAM).  Most platforms can
+implement those without analogues of BIOS, APM, or ACPI.
+.P
+On some systems, this can also be used like \fBnvram-wakeup\fP, waking from states
+like ACPI S4 (suspend to disk).  Not all systems have persistent media that are
+appropriate for such suspend modes.
+.SS Options
+.TP
+\fB-v\fP | \fB--verbose\fP
+Be verbose.
+.TP
+\fB-h\fP | \fB--help\fP
+Display a short help message that shows how to use the program.
+.TP
+\fB-V\fP | \fB--version\fP
+Displays version information and exists.
+.TP
+\fB-a\fP | \fB--auto\fP
+Reads the clock mode (whether the hardware clock is set to UTC or local time)
+from \fI/etc/adjtime\fP. That's the location where the \fBhwclock\fP stores
+that information.
+.TP
+\fB-l\fP | \fB--local\fP
+Assumes that the hardware clock is set to local time, regardless of the
+contents of \fI/etc/adjtime\fP.
+.TP
+\fB-u\fP | \fB--utc\fP
+Assumes that the hardware clock is set to UTC (Universal Time Coordinated),
+regardless of the contents of \fI/etc/adjtime\fP.
+.TP
+\fB-d\fP \fIdevice\fP | \fB--device\fP \fIdevice\fP
+Uses \fIdevice\fP instead of \fIrtc0\fP as realtime clock. This option
+is only relevant if your system has more than one RTC. You may specify
+\fIrtc1\fP, \fIrtc2\fP, ... here.
+.TP
+\fB-s\fP \fIseconds\fP | \fB--seconds\fP \fIseconds\fP
+Sets the wakeup time to \fIseconds\fP in future from now.
+.TP
+\fB-t\fP \fItime_t\fP | \fB--time\fP \fItime_t\fP
+Sets the wakeup time to the absolute time \fItime_t\fP. \fItime_t\fP
+is the time in seconds since 1970-01-01, 00:00 UTC. Use the
+\fBdate\fP tool to convert between human-readable time and \fItime_t\fP.
+.TP
+\fB-m\fP \fImode\fP | \fB--mode\fP \fImode\fP
+Use standby state \fImode\fP. Valid values are \fIstandby\fP,
+\fImem\fP, \fIdisk\fP and \fIon\fP (no suspend). The default is
+\fIstandby\fP.
+.SH HISTORY
+The program first appeared as kernel commit message for Linux 2.6 in the GIT
+commit 87ac84f42a7a580d0dd72ae31d6a5eb4bfe04c6d.
+.SH AVAILABILITY
+The rtcwake command is part of the util-linux-ng package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
+.SH AUTHOR
+The program was written by David Brownell <david-b@pacbell.net> and improved by
+Bernhard Walle <bwalle@suse.de>.
+.SH COPYRIGHT
+This is free software.  You may redistribute copies of it  under  the  terms
+of  the  GNU General  Public  License <http://www.gnu.org/licenses/gpl.html>.
+There is NO WARRANTY, to the extent permitted by law.
+.SH "SEE ALSO"
+.BR hwclock (8),
+.BR date (1)

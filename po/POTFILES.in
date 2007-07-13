@@ -98,6 +98,7 @@ sys-utils/ipcs.c
 sys-utils/rdev.c
 sys-utils/readprofile.c
 sys-utils/renice.c
+sys-utils/rtcwake.c
 sys-utils/setarch.c
 sys-utils/setsid.c
 sys-utils/tunelp.c
