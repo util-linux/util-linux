@@ -112,7 +112,7 @@ extern struct	systypes sgi_sys_types[];
 extern void	sgi_nolabel( void );
 extern int	check_sgi_label( void );
 extern void	sgi_list_table( int xtra );
-extern void	sgi_change_sysid( int i, int sys );
+extern int  sgi_change_sysid( int i, int sys );
 extern unsigned int	sgi_get_start_sector( int i );
 extern unsigned int	sgi_get_num_sectors( int i );
 extern int	sgi_get_sysid( int i );

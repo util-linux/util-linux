@@ -530,7 +530,7 @@ void sun_delete_partition(int i)
 	part->num_sectors = 0;
 }
 
-void sun_change_sysid(int i, __u16 sys)
+int sun_change_sysid(int i, __u16 sys)
 {
 	struct sun_partition *part = &sunlabel->partitions[i];
 	struct sun_tag_flag *tag = &sunlabel->part_tags[i];
@@ -543,7 +543,7 @@ void sun_change_sysid(int i, __u16 sys)
 	      "Type YES if you're very sure you would like that partition\n"
 	      "tagged with 82 (Linux swap): "));
 	    if (strcmp (line_ptr, _("YES\n")))
-		    return;
+		    return 0;
 	}
 	switch (sys) {
 	case SUN_TAG_SWAP:
@@ -558,6 +558,7 @@ void sun_change_sysid(int i, __u16 sys)
 		break;
 	}
 	tag->tag = SSWAP16(sys);
+	return 1;
 }
 
 void sun_list_table(int xtra)

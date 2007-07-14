@@ -537,12 +537,12 @@ verify_sgi(int verbose)
 	return (gap > 0) ? 1 : (gap == 0) ? 0 : -1;
 }
 
-void
+int
 sgi_change_sysid(int i, int sys)
 {
 	if (sgi_get_num_sectors(i) == 0) /* caught already before, ... */ {
 		printf(_("Sorry You may change the Tag of non-empty partitions.\n"));
-		return;
+		return 0;
 	}
 	if (((sys != ENTIRE_DISK) && (sys != SGI_VOLHDR))
 	    && (sgi_get_start_sector(i)<1)) {
@@ -553,9 +553,10 @@ sgi_change_sysid(int i, int sys)
 			  "Only the \"SGI volume\" entire disk section may violate this.\n"
 			  "Type YES if you are sure about tagging this partition differently.\n"));
 		if (strcmp (line_ptr, _("YES\n")))
-			return;
+			return 0;
 	}
 	sgilabel->partitions[i].id = SSWAP32(sys);
+	return 1;
 }
 
 /* returns partition index of first entry marked as entire disk */

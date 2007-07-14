@@ -82,7 +82,7 @@ extern int check_sun_label(void);
 extern void sun_nolabel(void);
 extern void create_sunlabel(void);
 extern void sun_delete_partition(int i);
-extern void sun_change_sysid(int i, __u16 sys);
+extern int sun_change_sysid(int i, __u16 sys);
 extern void sun_list_table(int xtra);
 extern void verify_sun(void);
 extern void add_sun_partition(int n, int sys);

@@ -1499,17 +1499,21 @@ change_sysid(void) {
                         if (sys == origsys)
 				break;
 			if (sun_label) {
-				sun_change_sysid(i, sys);
+				ptes[i].changed = sun_change_sysid(i, sys);
 			} else
 			if (sgi_label) {
-				sgi_change_sysid(i, sys);
-			} else
+				ptes[i].changed = sgi_change_sysid(i, sys);
+			} else {
 				p->sys_ind = sys;
-                        printf (_("Changed system type of partition %d "
-                                "to %x (%s)\n"), i + 1, sys,
-                                (temp = partition_type(sys)) ? temp :
-                                _("Unknown"));
-                        ptes[i].changed = 1;
+				ptes[i].changed = 1;
+			}
+			temp = partition_type(sys) ? : _("Unknown");
+			if (ptes[i].changed)
+				printf (_("Changed system type of partition %d "
+				        "to %x (%s)\n"), i + 1, sys, temp);
+			else
+				printf (_("System type of partition %d is unchanged"
+				        "to %x (%s)\n"), i + 1, sys, temp);
 			if (is_dos_partition(origsys) ||
 			    is_dos_partition(sys))
 				dos_changed = 1;
