@@ -46,7 +46,7 @@ static void show_usage(const char *cmd)
 	fprintf(stderr, "  -b, --batch                        "
 			"set policy to SCHED_BATCH\n");
 	fprintf(stderr, "  -f, --fifo                         "
-			"set policy to SCHED_FF\n");
+			"set policy to SCHED_FIFO\n");
 	fprintf(stderr, "  -p, --pid                          "
 			"operate on existing given pid\n");
 	fprintf(stderr, "  -m, --max                          "
@@ -146,7 +146,7 @@ int main(int argc, char *argv[])
 {
 	int i, policy = SCHED_RR, priority = 0, verbose = 0;
 	struct sched_param sp;
-	pid_t pid = 0;
+	pid_t pid = -1;
 
 	struct option longopts[] = {
 		{ "batch",	0, NULL, 'b' },
@@ -205,12 +205,12 @@ int main(int argc, char *argv[])
 		
 	}
 
-	if ((pid && argc - optind < 1) || (!pid && argc - optind < 2)) {
+	if (((pid > -1) && argc - optind < 1) || ((pid == -1) && argc - optind < 2)) {
 		show_usage(argv[0]);
 		return 1;
 	}
 
-	if (pid && (verbose || argc - optind == 1)) {
+	if ((pid > -1) && (verbose || argc - optind == 1)) {
 		show_rt_info("current", pid);
 		if (argc - optind == 1)
 			return 0;
@@ -224,6 +224,8 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
+	if (pid == -1)
+		pid = 0;
 	sp.sched_priority = priority;
 	if (sched_setscheduler(pid, policy, &sp) == -1) {
 		perror("sched_setscheduler");

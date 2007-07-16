@@ -79,13 +79,13 @@ output version information and exit
 .SH USAGE
 .TP
 The default behavior is to run a new command::
-chrt [prio] [command] [arguments]
+chrt prio command [arguments]
 .TP
 You can also retrieve the real-time attributes of an existing task:
-chrt -p [pid]
+chrt -p pid
 .TP
 Or set them:
-chrt -p [prio] [pid]
+chrt -p prio pid
 .SH PERMISSIONS
 A user must possess
 .BR CAP_SYS_NICE
