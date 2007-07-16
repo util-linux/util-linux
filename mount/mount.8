@@ -1033,6 +1033,17 @@ in files after a crash and journal recovery.
 Sync all data and metadata every
 .I nrsec
 seconds. The default value is 5 seconds. Zero means default.
+.RE
+.TP
+.BR user_xattr
+Enable Extended User Attributes. See the
+.BR attr (5)
+manual page.
+.TP
+.BR acl
+Enable POSIX Access Control Lists. See the
+.BR acl (5)
+manual page.
  
 .SH "Mount options for fat"
 (Note:
@@ -1523,6 +1534,16 @@ There is a special
 .I resizer
 utility which can be obtained from
 .IR ftp://ftp.namesys.com/pub/reiserfsprogs .
+.TP
+.BR user_xattr
+Enable Extended User Attributes. See the
+.BR attr (5)
+manual page.
+.TP
+.BR acl
+Enable POSIX Access Control Lists. See the
+.BR acl (5)
+manual page.
 
 .SH "Mount options for romfs"
 None.
