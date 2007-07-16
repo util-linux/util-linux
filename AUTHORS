@@ -13,15 +13,18 @@ PAST MAINTAINERS:
       Andries E. Brouwer <aeb@cwi.nl>
 
 
-AUTHORS (merged projects):
+AUTHORS (merged projects & commands):
 
       flock:           H. Peter Anvin <hpa@zytor.com>
       getopt:          Frodo Looijaard <frodol@dds.nl>
       schedutils:      Robert Love <rlove@rlove.org>
       simpleinit:      Richard Gooch <rgooch@atnf.csiro.au>
       hwclock:         Bryan Henderson <bryanh@giraffe-data.com>
-      setarch:	       Elliot Lee <sopwith@redhat.com>
+      setarch:         Elliot Lee <sopwith@redhat.com>
                        Jindrich Novy <jnovy@redhat.com>
+      rtcwake:         David Brownell <david-b@pacbell.net>
+                       Bernhard Walle <bwalle@suse.de>
+
 
 CONTRIBUTORS:
 
@@ -29,11 +32,13 @@ CONTRIBUTORS:
       Cliff Wickman <cpw@sgi.com>
       David Brownell <david-b@pacbell.net>
       David Miller <davem@davemloft.net>
+      H. Peter Anvin <hpa@zytor.com>
       Jason Vas Dias <jvdias@redhat.com>
       Kay Sievers <kay.sievers@vrfy.org>
       Luciano Chavez <lnx1138@us.ibm.com>
       Marco d'Itri <md@Linux.IT>
       Martin Schlemmer <azarah@gentoo.org>
+      Masatake YAMATO <jet@gyve.org>
       Matthias Koenig <mkoenig@suse.de>
       Mike Frysinger <vapier@gentoo.org>
       Pádraig Brady <P@draigBrady.com>
