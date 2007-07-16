@@ -221,7 +221,8 @@ makemsg(fname)
 				putc('\n', fp);
 				cnt = 0;
 			}
-			carefulputc(ch, fp);
+			if (ch != '\n')
+				carefulputc(ch, fp);
 		}
 	}
 	fprintf(fp, "%79s\r\n", " ");
