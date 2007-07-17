@@ -43,11 +43,11 @@ Why:	deprecated in favor of newgrp from shadow-utils
 
 What:	last(1)
 Whan:	undefined yet
-Why:	nobody use this implementation
+Why:	nobody uses this implementation
 
 ----------------------------
 
 What:	shutdown(1)
 Whan:	undefined yet
-Why:	nobody use this implementation
+Why:	nobody uses this implementation
 

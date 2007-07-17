@@ -39,7 +39,13 @@ Release highlights:
  SELinux support (--with-selinux) has been added to mkswap(8) and
  mount(8).
 
- The setarch(8) upstream has been merged with util-linux-ng.
+ setarch(8) upstream has been merged with util-linux-ng.
+
+ rtcwake(8) command has been added to util-linux-ng.
+
+ arch(1) is deprecated in favor of "uname -m" or arch(1) from coreutils
+ (>= 6.9+). The util-linux-ng package doesn't build arch by default,
+ you have to use the option --enable-arch.
 
 
 Fixed security issues:
@@ -53,6 +59,10 @@ Fixed security issues:
 
 Changelog:
 ---------
+
+ For more details see ChangeLog files at:
+ ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.13/
+
 
 agetty:
 	add 'O' escape code to display domain name
@@ -117,10 +127,14 @@ build-sys:
 	use dist_noinst_HEADERS in include/Makefile.am
 	use dist_usrbinexec_SCRIPTS in misc-utils/Makefile.am
 	check exit status of autotools
+	remove "make mrproper", git-clean is good enough
+	remove libtool
 cal:
 	fix a segfault and -3m highlighting
 	ifdef cleanup, non-curses/tempcap code fixes
 	widechar code cleanup
+	add test code
+	remove old cal test
 cfdisk:
 	build-sys defines HAVE_RPMATCH, not HAVE_rpmatch
 	fix stupid typo in GPT checker call
@@ -149,6 +163,9 @@ fdisk:
 	many significant improvements and fixes to Sun label handling
 	move duplicate stuff from fdisk*label.h to fdisk.h
 	use unsigned long long instead int for sectors
+	check returns in fdisk from partition changes
+	when generating a DOS disk label, give it an ID
+	do not complain about regular files
 getopt:
 	remove old unused files
 hexdump:
@@ -189,9 +206,6 @@ man pages:
 	add "AVAILABILITY" section
 mcookie:
 	remove non-linux code
-misc-utils:
-	add scriptreplay manpage
-	remove old cal test
 mkfs.cramfs:
 	cleanup HAVE_ macros usage
 	fix a way how mkfs works with empty files
@@ -204,6 +218,7 @@ mkswap:
 	fix libuuid usage in mkswap
 more:
 	fix file descriptor leak
+	ix the more command compilation against termcap
 mount:
 	add note about /etc/mtab unreliability to mount.8
 	add note about fcntl/ioctl unreliability on NFS to mount.8
@@ -249,6 +264,7 @@ mount:
 	use loop= option when mounting by /sbin/mount.<type>
 	use realloc for xstrconcat functions
 	use verbose mode instead debug mode
+	add acl option documentation for ext3 and reiserfs
 namei:
 	fix logic and infinite loop of symlinks
 	new regression test
@@ -267,12 +283,18 @@ raw:
 	don't accept raw0 as a target name
 	move the raw command to /sbin
 	update man page (about dd and O_DIRECT)
+readprofile:
+	also search for __stext in readprofile
 schedutils:
 	add support for SCHED_BATCH
 	define SCHED_BATCH when compile with old glibc
 	remove extra hyptens from man pages
 	taskset is independent of hardcoded NR_CPUS max
 	fix ionice build on sparc
+	fix chrt docs and pid=0 usage
+	prefer SYS_ioprio_{set,get} from glibc to hardcoded version
+scriptreplay:
+	add manpage
 setarch:
 	add NLS support
 sfdisk:
@@ -289,6 +311,7 @@ sys-utils:
 	add note about obsolete ramsize option to rdev.8
 	fix man page headers
 	move some man pages from category 8 to 1
+	add arch(1) back to the official tree
 tests:
 	add basic infrastructure for regression tests
 	add cal -1 test
@@ -341,14 +364,18 @@ tests:
 	pass all arguments to ts_init, add ts_has_option function
 	refresh mtablock output in expected/ directory
 	simplify devices usage
-text-utils:
-	fix the more command compilation against termcap
+	remove dependence on helpers/libpreload-time.so
+	don't use mlockall if CRYPT_NONE
 tools:
 	add codecheck-config that checks for {HAVE,ENABLE}_ orphans
 vipw:
 	fix permissions (600->400) for edited /etc/[g]shodow files
 wall:
 	fix O_NONBLOCK usage
+	remove deprecated sigsetmask() from wall
+	remove unwanted newlines from wall
+whereis:
+	add lib64 paths
 misc:
 	Clean up pagesize/PAGE_SIZE usage.
 	clean up realpath.[ch] includes and macros
