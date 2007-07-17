@@ -23,13 +23,24 @@ bin_PROGRAMS += arch
 man_MANS += arch.1
 endif
 
+
 if BUILD_RDEV
+rdev_common_mans = rdev.8 ramsize.8 rootflags.8 vidmode.8
+rdev_common_links = ramsize vidmode rootflags
+
 if ARCH_I86
 usrsbinexec_PROGRAMS += rdev
-man_MANS += rdev.8 ramsize.8 rootflags.8 vidmode.8
-RDEV_LINKS = ramsize vidmode rootflags
+man_MANS += $(rdev_common_mans)
+RDEV_LINKS = $(rdev_common_links)
 endif
+if ARCH_86_64
+usrsbinexec_PROGRAMS += rdev
+man_MANS += $(rdev_common_mans)
+RDEV_LINKS = $(rdev_common_links)
 endif
+
+endif
+
 
 SETARCH_LINKS = linux32 linux64
 
