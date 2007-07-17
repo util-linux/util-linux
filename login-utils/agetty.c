@@ -418,7 +418,7 @@ parse_args(argc, argv, op)
 	    op->eightbits = 1;
 	    break;
 	case 'I':
-	    if (!(op->initstring = malloc(strlen(optarg)))) {
+	    if (!(op->initstring = malloc(strlen(optarg)+1))) {
 		error(_("can't malloc initstring"));
 		break;
 	    }
