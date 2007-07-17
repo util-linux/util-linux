@@ -17,8 +17,8 @@
 
 # Test cramfs
 
-. commands.sh
-. functions.sh
+. ./commands.sh
+. ./functions.sh
 
 TS_COMPONENT="hwclock"
 TS_DESC="systohc"

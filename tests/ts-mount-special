@@ -4,8 +4,8 @@
 # test for /sbin/mount.<type> suuport
 #
 
-. commands.sh
-. functions.sh
+. ./commands.sh
+. ./functions.sh
 
 TS_COMPONENT="mount"
 TS_DESC="special program"

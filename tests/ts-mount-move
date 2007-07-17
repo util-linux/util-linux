@@ -4,8 +4,8 @@
 # test for mount --move and --bind
 #
 
-. commands.sh
-. functions.sh
+. ./commands.sh
+. ./functions.sh
 
 TS_COMPONENT="mount"
 TS_DESC="move "

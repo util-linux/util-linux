@@ -15,8 +15,8 @@
 # GNU General Public License for more details.
 #
 
-. commands.sh
-. functions.sh
+. ./commands.sh
+. ./functions.sh
 
 TS_COMPONENT="swapon"
 TS_DESC="label"

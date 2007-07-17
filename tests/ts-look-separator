@@ -12,8 +12,8 @@
 #		uniq >  words
 #
 
-. commands.sh
-. functions.sh
+. ./commands.sh
+. ./functions.sh
 
 TS_COMPONENT="look"
 TS_DESC="separator"

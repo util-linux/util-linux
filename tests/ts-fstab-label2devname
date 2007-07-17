@@ -19,8 +19,8 @@
 # mount by LABEL -- with an devname in fstab
 #
 
-. commands.sh
-. functions.sh
+. ./commands.sh
+. ./functions.sh
 
 TS_COMPONENT="fstab"
 TS_DESC="label2devname"

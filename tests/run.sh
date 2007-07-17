@@ -1,6 +1,6 @@
 #!/bin/bash
 
-. commands.sh
+. ./commands.sh
 
 echo
 echo "------------------ Utils-linux-ng regression tests ------------------"

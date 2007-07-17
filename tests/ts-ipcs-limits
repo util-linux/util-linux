@@ -1,7 +1,7 @@
 #!/bin/bash
 
-. commands.sh
-. functions.sh
+. ./commands.sh
+. ./functions.sh
 
 TS_COMPONENT="ipcs"
 TS_DESC="limits overflow"
@@ -11,7 +11,7 @@ if [ $UID != 0 ]; then
 	ts_skip_nonroot
 fi
 
-. ts-ipcs.sh
+. ./ts-ipcs.sh
 
 ts_init "$*"
 

@@ -1,7 +1,7 @@
 #!/bin/bash
 
-. commands.sh
-. functions.sh
+. ./commands.sh
+. ./functions.sh
 
 TS_COMPONENT="col"
 TS_DESC="multibyte"

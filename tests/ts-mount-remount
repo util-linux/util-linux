@@ -3,8 +3,8 @@
 #
 # test for mount -o remount,ro
 #
-. commands.sh
-. functions.sh
+. ./commands.sh
+. ./functions.sh
 
 TS_COMPONENT="mount"
 TS_DESC="remount"

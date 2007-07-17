@@ -19,8 +19,8 @@
 # mount by UUID -- with an LABEL in fstab
 #
 
-. commands.sh
-. functions.sh
+. ./commands.sh
+. ./functions.sh
 
 TS_COMPONENT="fstab"
 TS_DESC="uuid2label"
