@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-07-03 01:36+0200\n"
+"POT-Creation-Date: 2007-07-17 13:12+0200\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -693,7 +693,7 @@ msgstr "preveè inodov - najveè 512"
 msgid "not enough space, need at least %lu blocks"
 msgstr "ni zadosti prostora, najmanj %lu blokov"
 
-#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2230
+#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2321
 #, c-format
 msgid "Device: %s\n"
 msgstr "Naprava %s\n"
@@ -770,7 +770,7 @@ msgstr ""
 "[velikost]\n"
 
 #: disk-utils/mkfs.c:88 disk-utils/mkfs.c:96 fdisk/cfdisk.c:343
-#: getopt/getopt.c:91 getopt/getopt.c:101 login-utils/wall.c:237
+#: getopt/getopt.c:91 getopt/getopt.c:101 login-utils/wall.c:238
 #, c-format
 msgid "%s: Out of memory!\n"
 msgstr "%s: Zmanjkalo pomnilnika!\n"
@@ -1547,8 +1547,8 @@ msgstr "  Primaren"
 msgid "   Logical"
 msgstr "   Logièen"
 
-#: fdisk/cfdisk.c:2072 fdisk/fdisk.c:1426 fdisk/fdisk.c:1738
-#: fdisk/fdisksgilabel.c:239 fdisk/fdisksunlabel.c:611 fdisk/sfdisk.c:632
+#: fdisk/cfdisk.c:2072 fdisk/fdisk.c:1510 fdisk/fdisk.c:1829
+#: fdisk/fdisksgilabel.c:239 fdisk/fdisksunlabel.c:612 fdisk/sfdisk.c:632
 msgid "Unknown"
 msgstr "Neznano"
 
@@ -2129,9 +2129,9 @@ msgstr ""
 "\n"
 "BSD oznaka za napravo: %s\n"
 
-#: fdisk/fdiskbsdlabel.c:129 fdisk/fdisk.c:335 fdisk/fdisk.c:354
-#: fdisk/fdisk.c:372 fdisk/fdisk.c:379 fdisk/fdisk.c:402 fdisk/fdisk.c:420
-#: fdisk/fdisk.c:436 fdisk/fdisk.c:452
+#: fdisk/fdiskbsdlabel.c:129 fdisk/fdisk.c:379 fdisk/fdisk.c:398
+#: fdisk/fdisk.c:416 fdisk/fdisk.c:423 fdisk/fdisk.c:446 fdisk/fdisk.c:464
+#: fdisk/fdisk.c:480 fdisk/fdisk.c:496
 msgid "Command action"
 msgstr "  Ukaz  dejanje"
 
@@ -2151,9 +2151,9 @@ msgstr "   i   namesti zaèetni nalagalnik"
 msgid "   l   list known filesystem types"
 msgstr "   l   izpi¹i znane datoteène sisteme"
 
-#: fdisk/fdiskbsdlabel.c:134 fdisk/fdisk.c:341 fdisk/fdisk.c:360
-#: fdisk/fdisk.c:373 fdisk/fdisk.c:385 fdisk/fdisk.c:410 fdisk/fdisk.c:427
-#: fdisk/fdisk.c:443 fdisk/fdisk.c:460
+#: fdisk/fdiskbsdlabel.c:134 fdisk/fdisk.c:385 fdisk/fdisk.c:404
+#: fdisk/fdisk.c:417 fdisk/fdisk.c:429 fdisk/fdisk.c:454 fdisk/fdisk.c:471
+#: fdisk/fdisk.c:487 fdisk/fdisk.c:505
 msgid "   m   print this menu"
 msgstr "   m   izpi¹i ta meni"
 
@@ -2165,14 +2165,14 @@ msgstr "   n   dodaj novo particijo tipa BSD"
 msgid "   p   print BSD partition table"
 msgstr "   p   izpi¹i BSD-jevo tabelo razdelkov"
 
-#: fdisk/fdiskbsdlabel.c:137 fdisk/fdisk.c:345 fdisk/fdisk.c:364
-#: fdisk/fdisk.c:375 fdisk/fdisk.c:389 fdisk/fdisk.c:412 fdisk/fdisk.c:429
-#: fdisk/fdisk.c:445 fdisk/fdisk.c:462
+#: fdisk/fdiskbsdlabel.c:137 fdisk/fdisk.c:389 fdisk/fdisk.c:408
+#: fdisk/fdisk.c:419 fdisk/fdisk.c:433 fdisk/fdisk.c:456 fdisk/fdisk.c:473
+#: fdisk/fdisk.c:489 fdisk/fdisk.c:507
 msgid "   q   quit without saving changes"
 msgstr "   q   konèaj, ne da bi shranil spremembe"
 
-#: fdisk/fdiskbsdlabel.c:138 fdisk/fdisk.c:413 fdisk/fdisk.c:430
-#: fdisk/fdisk.c:446 fdisk/fdisk.c:463
+#: fdisk/fdiskbsdlabel.c:138 fdisk/fdisk.c:457 fdisk/fdisk.c:474
+#: fdisk/fdisk.c:490 fdisk/fdisk.c:508
 msgid "   r   return to main menu"
 msgstr "   r   vrni se v glavni meni"
 
@@ -2215,13 +2215,13 @@ msgstr "Na %s ni razdelka tipa *BSD.\n"
 msgid "BSD disklabel command (m for help): "
 msgstr "Ukaz BSD oznaka diska (m za pomoè): "
 
-#: fdisk/fdiskbsdlabel.c:284 fdisk/fdisk.c:1934 fdisk/fdisksgilabel.c:649
+#: fdisk/fdiskbsdlabel.c:284 fdisk/fdisk.c:2025 fdisk/fdisksgilabel.c:650
 #: fdisk/fdisksunlabel.c:422
 #, c-format
 msgid "First %s"
 msgstr "Prvi %s"
 
-#: fdisk/fdiskbsdlabel.c:291 fdisk/fdisk.c:1994 fdisk/fdisksunlabel.c:479
+#: fdisk/fdiskbsdlabel.c:291 fdisk/fdisk.c:2085 fdisk/fdisksunlabel.c:479
 #, c-format
 msgid "Last %s or +size or +sizeM or +sizeK"
 msgstr "Zadnji %s ali +size ali +sizeM ali +sizeK"
@@ -2367,7 +2367,7 @@ msgstr "sektorji/sled"
 msgid "tracks/cylinder"
 msgstr "sledi/stezo"
 
-#: fdisk/fdiskbsdlabel.c:470 fdisk/fdisk.c:596 fdisk/fdisk.c:1248
+#: fdisk/fdiskbsdlabel.c:470 fdisk/fdisk.c:641 fdisk/fdisk.c:1333
 #: fdisk/sfdisk.c:918
 msgid "cylinders"
 msgstr "steze"
@@ -2425,7 +2425,7 @@ msgstr "Zaèetni nalagalnik je name¹èen na %s.\n"
 msgid "Partition (a-%c): "
 msgstr "Razdelek (a-%c): "
 
-#: fdisk/fdiskbsdlabel.c:618 fdisk/fdisk.c:2080
+#: fdisk/fdiskbsdlabel.c:618 fdisk/fdisk.c:2171
 #, c-format
 msgid "The maximum number of partitions has been created\n"
 msgstr "Najveèje mo¾no ¹tevilo razdelkov je bilo ustvarjeno\n"
@@ -2449,7 +2449,7 @@ msgstr ""
 "\n"
 "Sinhronizacija diskov.\n"
 
-#: fdisk/fdisk.c:193
+#: fdisk/fdisk.c:237
 msgid ""
 "Usage: fdisk [-b SSZ] [-u] DISK     Change partition table\n"
 "       fdisk -l [-b SSZ] [-u] DISK  List partition table(s)\n"
@@ -2471,7 +2471,7 @@ msgstr ""
 "-u: vrni Zaèetek in Konec v sektorskih (namesto v steznih) enotah\n"
 "-b 2048: (za nekatere MO diske) uporabi sektorje velikosti 2048-bajtov\n"
 
-#: fdisk/fdisk.c:205
+#: fdisk/fdisk.c:249
 msgid ""
 "Usage: fdisk [-l] [-b SSZ] [-u] device\n"
 "E.g.: fdisk /dev/hda  (for the first IDE disk)\n"
@@ -2487,184 +2487,189 @@ msgstr ""
 " ali: fdisk /dev/rd/c0d0 ali fdisk /dev/ida/c0d0 (za RAID naprave)\n"
 " ...\n"
 
-#: fdisk/fdisk.c:214
+#: fdisk/fdisk.c:258
 #, c-format
 msgid "Unable to open %s\n"
 msgstr "%s ni mogoèe odpreti\n"
 
-#: fdisk/fdisk.c:218
+#: fdisk/fdisk.c:262
 #, c-format
 msgid "Unable to read %s\n"
 msgstr "%s ni mogoèe prebrati\n"
 
-#: fdisk/fdisk.c:222
+#: fdisk/fdisk.c:266
 #, c-format
 msgid "Unable to seek on %s\n"
 msgstr "Na %s iskanje ni mo¾no\n"
 
-#: fdisk/fdisk.c:226
+#: fdisk/fdisk.c:270
 #, c-format
 msgid "Unable to write %s\n"
 msgstr "Na %s ni mogoèe pisati\n"
 
-#: fdisk/fdisk.c:230
+#: fdisk/fdisk.c:274
 #, c-format
 msgid "BLKGETSIZE ioctl failed on %s\n"
 msgstr "BLKGETSIZE od ioctl ni uspel na %s\n"
 
-#: fdisk/fdisk.c:234
+#: fdisk/fdisk.c:278
 msgid "Unable to allocate any more memory\n"
 msgstr "Dodeljevanje pomnilnika ni veè mogoèe\n"
 
-#: fdisk/fdisk.c:237
+#: fdisk/fdisk.c:281
 msgid "Fatal error\n"
 msgstr "Usodna napaka\n"
 
-#: fdisk/fdisk.c:336
+#: fdisk/fdisk.c:380
 msgid "   a   toggle a read only flag"
 msgstr "   a   preklopi samo za branje"
 
-#: fdisk/fdisk.c:337 fdisk/fdisk.c:381
+#: fdisk/fdisk.c:381 fdisk/fdisk.c:425
 msgid "   b   edit bsd disklabel"
 msgstr "   b   spremeni oznako diska tipa BSD"
 
-#: fdisk/fdisk.c:338
+#: fdisk/fdisk.c:382
 msgid "   c   toggle the mountable flag"
 msgstr "   c   preklopi zastavico priklopljivo"
 
-#: fdisk/fdisk.c:339 fdisk/fdisk.c:358 fdisk/fdisk.c:383
+#: fdisk/fdisk.c:383 fdisk/fdisk.c:402 fdisk/fdisk.c:427
 msgid "   d   delete a partition"
 msgstr "   d   zbri¹i razdelek"
 
-#: fdisk/fdisk.c:340 fdisk/fdisk.c:359 fdisk/fdisk.c:384
+#: fdisk/fdisk.c:384 fdisk/fdisk.c:403 fdisk/fdisk.c:428
 msgid "   l   list known partition types"
 msgstr "   l   izpi¹i znane vrste razdelkov"
 
-#: fdisk/fdisk.c:342 fdisk/fdisk.c:361 fdisk/fdisk.c:386
+#: fdisk/fdisk.c:386 fdisk/fdisk.c:405 fdisk/fdisk.c:430
 msgid "   n   add a new partition"
 msgstr "   n   dodaj nov razdelek"
 
-#: fdisk/fdisk.c:343 fdisk/fdisk.c:362 fdisk/fdisk.c:374 fdisk/fdisk.c:387
+#: fdisk/fdisk.c:387 fdisk/fdisk.c:406 fdisk/fdisk.c:418 fdisk/fdisk.c:431
 msgid "   o   create a new empty DOS partition table"
 msgstr "   o   ustvari novo prazno tabelo razdelkov tipa MS-DOS"
 
-#: fdisk/fdisk.c:344 fdisk/fdisk.c:363 fdisk/fdisk.c:388 fdisk/fdisk.c:411
-#: fdisk/fdisk.c:428 fdisk/fdisk.c:444 fdisk/fdisk.c:461
+#: fdisk/fdisk.c:388 fdisk/fdisk.c:407 fdisk/fdisk.c:432 fdisk/fdisk.c:455
+#: fdisk/fdisk.c:472 fdisk/fdisk.c:488 fdisk/fdisk.c:506
 msgid "   p   print the partition table"
 msgstr "   p   izpi¹i tabelo razdelkov"
 
-#: fdisk/fdisk.c:346 fdisk/fdisk.c:365 fdisk/fdisk.c:376 fdisk/fdisk.c:390
+#: fdisk/fdisk.c:390 fdisk/fdisk.c:409 fdisk/fdisk.c:420 fdisk/fdisk.c:434
 msgid "   s   create a new empty Sun disklabel"
 msgstr "   s   ustvari novo prazno oznako diska tipa Sun"
 
-#: fdisk/fdisk.c:347 fdisk/fdisk.c:366 fdisk/fdisk.c:391
+#: fdisk/fdisk.c:391 fdisk/fdisk.c:410 fdisk/fdisk.c:435
 msgid "   t   change a partition's system id"
 msgstr "   t   spremeni sistemski ID razdelka"
 
-#: fdisk/fdisk.c:348 fdisk/fdisk.c:367 fdisk/fdisk.c:392
+#: fdisk/fdisk.c:392 fdisk/fdisk.c:411 fdisk/fdisk.c:436
 msgid "   u   change display/entry units"
 msgstr "   u   spremeni prikazne/vnosne enote"
 
-#: fdisk/fdisk.c:349 fdisk/fdisk.c:368 fdisk/fdisk.c:393 fdisk/fdisk.c:415
-#: fdisk/fdisk.c:432 fdisk/fdisk.c:448 fdisk/fdisk.c:465
+#: fdisk/fdisk.c:393 fdisk/fdisk.c:412 fdisk/fdisk.c:437 fdisk/fdisk.c:459
+#: fdisk/fdisk.c:476 fdisk/fdisk.c:492 fdisk/fdisk.c:510
 msgid "   v   verify the partition table"
 msgstr "   v   preveri tabelo razdelkov"
 
-#: fdisk/fdisk.c:350 fdisk/fdisk.c:369 fdisk/fdisk.c:394 fdisk/fdisk.c:416
-#: fdisk/fdisk.c:433 fdisk/fdisk.c:449 fdisk/fdisk.c:466
+#: fdisk/fdisk.c:394 fdisk/fdisk.c:413 fdisk/fdisk.c:438 fdisk/fdisk.c:460
+#: fdisk/fdisk.c:477 fdisk/fdisk.c:493 fdisk/fdisk.c:511
 msgid "   w   write table to disk and exit"
 msgstr "   w   zapi¹i tabelo razdelkov na disk in konèaj"
 
-#: fdisk/fdisk.c:351 fdisk/fdisk.c:395
+#: fdisk/fdisk.c:395 fdisk/fdisk.c:439
 msgid "   x   extra functionality (experts only)"
 msgstr "   x   dodatne mo¾nosti (samo za poznavalce)"
 
-#: fdisk/fdisk.c:355
+#: fdisk/fdisk.c:399
 msgid "   a   select bootable partition"
 msgstr "   a   izberi zagonski razdelek"
 
-#: fdisk/fdisk.c:356
+#: fdisk/fdisk.c:400
 msgid "   b   edit bootfile entry"
 msgstr "   b   uredi zagonskodatoteèni vnos"
 
-#: fdisk/fdisk.c:357
+#: fdisk/fdisk.c:401
 msgid "   c   select sgi swap partition"
 msgstr "   c   izberi izmenjalni razdelek tipa sgi"
 
-#: fdisk/fdisk.c:380
+#: fdisk/fdisk.c:424
 msgid "   a   toggle a bootable flag"
 msgstr "   a   preklopi zagonsko zastavico"
 
-#: fdisk/fdisk.c:382
+#: fdisk/fdisk.c:426
 msgid "   c   toggle the dos compatibility flag"
 msgstr "   c   preklopi zdru¾ljivo z DOS zastavico"
 
-#: fdisk/fdisk.c:403
+#: fdisk/fdisk.c:447
 msgid "   a   change number of alternate cylinders"
 msgstr "   a   spremeni ¹tevilo izmeniènih stez"
 
-#: fdisk/fdisk.c:404 fdisk/fdisk.c:422 fdisk/fdisk.c:438 fdisk/fdisk.c:454
+#: fdisk/fdisk.c:448 fdisk/fdisk.c:466 fdisk/fdisk.c:482 fdisk/fdisk.c:498
 msgid "   c   change number of cylinders"
 msgstr "   c   spremeni ¹tevilo stez"
 
-#: fdisk/fdisk.c:405 fdisk/fdisk.c:423 fdisk/fdisk.c:439 fdisk/fdisk.c:455
+#: fdisk/fdisk.c:449 fdisk/fdisk.c:467 fdisk/fdisk.c:483 fdisk/fdisk.c:499
 msgid "   d   print the raw data in the partition table"
 msgstr "   d   izpi¹i surove podatke iz tabele razdelkov"
 
-#: fdisk/fdisk.c:406
+#: fdisk/fdisk.c:450
 msgid "   e   change number of extra sectors per cylinder"
 msgstr "   e   spremeni ¹tevilo dodatkih sektorjev na stezo"
 
-#: fdisk/fdisk.c:407 fdisk/fdisk.c:426 fdisk/fdisk.c:442 fdisk/fdisk.c:459
+#: fdisk/fdisk.c:451 fdisk/fdisk.c:470 fdisk/fdisk.c:486 fdisk/fdisk.c:503
 msgid "   h   change number of heads"
 msgstr "   h   spremeni ¹tevilo glav"
 
-#: fdisk/fdisk.c:408
+#: fdisk/fdisk.c:452
 msgid "   i   change interleave factor"
 msgstr "   i   spremeni koeficient prepletenosti"
 
-#: fdisk/fdisk.c:409
+#: fdisk/fdisk.c:453
 msgid "   o   change rotation speed (rpm)"
 msgstr "   o   spremeni hitrost vrtenja (obrati/min)"
 
-#: fdisk/fdisk.c:414 fdisk/fdisk.c:431 fdisk/fdisk.c:447 fdisk/fdisk.c:464
+#: fdisk/fdisk.c:458 fdisk/fdisk.c:475 fdisk/fdisk.c:491 fdisk/fdisk.c:509
 msgid "   s   change number of sectors/track"
 msgstr "   s   spremeni ¹tevilo sektorjev/sled"
 
-#: fdisk/fdisk.c:417
+#: fdisk/fdisk.c:461
 msgid "   y   change number of physical cylinders"
 msgstr "   y   spremeni ¹tevilo fiziènih stez"
 
-#: fdisk/fdisk.c:421 fdisk/fdisk.c:437 fdisk/fdisk.c:453
+#: fdisk/fdisk.c:465 fdisk/fdisk.c:481 fdisk/fdisk.c:497
 msgid "   b   move beginning of data in a partition"
 msgstr "   b   premakni zaèetek podatkov v razdelku"
 
-#: fdisk/fdisk.c:424 fdisk/fdisk.c:440 fdisk/fdisk.c:456
+#: fdisk/fdisk.c:468 fdisk/fdisk.c:484 fdisk/fdisk.c:500
 msgid "   e   list extended partitions"
 msgstr "   e   izpi¹i raz¹irjene razdelke"
 
-#: fdisk/fdisk.c:425 fdisk/fdisk.c:441 fdisk/fdisk.c:458
+#: fdisk/fdisk.c:469 fdisk/fdisk.c:485 fdisk/fdisk.c:502
 msgid "   g   create an IRIX (SGI) partition table"
 msgstr "   g   ustvari tabelo razdelkvo tipa IRIX (SGI)"
 
-#: fdisk/fdisk.c:457
+#: fdisk/fdisk.c:501
 msgid "   f   fix partition order"
 msgstr "   f   popravi vrstni red razdelkov"
 
-#: fdisk/fdisk.c:575
+#: fdisk/fdisk.c:504
+#, fuzzy
+msgid "   i   change the disk identifier"
+msgstr "   u   spremeni prikazne/vnosne enote"
+
+#: fdisk/fdisk.c:620
 #, c-format
 msgid "You must set"
 msgstr "Nastaviti morate"
 
-#: fdisk/fdisk.c:592
+#: fdisk/fdisk.c:637
 msgid "heads"
 msgstr "glave"
 
-#: fdisk/fdisk.c:594 fdisk/fdisk.c:1248 fdisk/sfdisk.c:918
+#: fdisk/fdisk.c:639 fdisk/fdisk.c:1333 fdisk/sfdisk.c:918
 msgid "sectors"
 msgstr "sektorji"
 
-#: fdisk/fdisk.c:600
+#: fdisk/fdisk.c:645
 #, c-format
 msgid ""
 "%s%s.\n"
@@ -2673,11 +2678,11 @@ msgstr ""
 "%s%s.\n"
 "To lahko storite v meniju z dodatnimi mo¾nostmi.\n"
 
-#: fdisk/fdisk.c:601
+#: fdisk/fdisk.c:646
 msgid " and "
 msgstr " in "
 
-#: fdisk/fdisk.c:618
+#: fdisk/fdisk.c:663
 #, c-format
 msgid ""
 "\n"
@@ -2696,12 +2701,12 @@ msgstr ""
 "2) zagonskim in razdeljevalnim programjem drugih\n"
 "operacijskih sistemov(npr. DOS FDISK, OS/2 FDISK)\n"
 
-#: fdisk/fdisk.c:641
+#: fdisk/fdisk.c:686
 #, c-format
 msgid "Bad offset in primary extended partition\n"
 msgstr "Po¹kodovan odmik v primarnem raz¹irjenem razdelku\n"
 
-#: fdisk/fdisk.c:655
+#: fdisk/fdisk.c:700
 #, c-format
 msgid ""
 "Warning: omitting partitions after #%d.\n"
@@ -2710,39 +2715,49 @@ msgstr ""
 "Opozorilo: omejujem razdelke po #%d.\n"
 "Èe shranite ta razdelek bodo izbrisani.\n"
 
-#: fdisk/fdisk.c:674
+#: fdisk/fdisk.c:719
 #, c-format
 msgid "Warning: extra link pointer in partition table %d\n"
 msgstr "Opozorilo: dodatni povezovalni kazalec v tabeli razdelkov %d\n"
 
-#: fdisk/fdisk.c:682
+#: fdisk/fdisk.c:727
 #, c-format
 msgid "Warning: ignoring extra data in partition table %d\n"
 msgstr "Opozorilo: dodatni podatki v tabeli razdelkov %d ne bodo upo¹tevani\n"
 
-#: fdisk/fdisk.c:727
+#: fdisk/fdisk.c:779
 #, c-format
+msgid "Disk identifier: 0x%08x\n"
+msgstr ""
+
+#: fdisk/fdisk.c:788
+#, c-format
+msgid "New disk identifier (current 0x%08x): "
+msgstr ""
+
+#: fdisk/fdisk.c:807
+#, fuzzy, c-format
 msgid ""
-"Building a new DOS disklabel. Changes will remain in memory only,\n"
-"until you decide to write them. After that, of course, the previous\n"
-"content won't be recoverable.\n"
+"Building a new DOS disklabel with disk identifier 0x%08x.\n"
+"Changes will remain in memory only, until you decide to write them.\n"
+"After that, of course, the previous content won't be recoverable.\n"
 "\n"
 msgstr ""
 "Ustvarja se nova oznaka diska tipa DOS. Spremembe bodo ostale v pomnilniku\n"
 "dokler se ne odloèite, da jih boste zapisali. Po tem prej¹nja vsebina\n"
 "ne bo veè obnovljiva.\n"
 
-#: fdisk/fdisk.c:771
+#: fdisk/fdisk.c:856
 #, c-format
 msgid "Note: sector size is %d (not %d)\n"
 msgstr "Opomba: velikost sektorja je %d (ne %d)\n"
 
-#: fdisk/fdisk.c:908
+#: fdisk/fdisk.c:993
 #, c-format
 msgid "You will not be able to write the partition table.\n"
 msgstr "Ne boste mogli zapisati tabele razdelkov.\n"
 
-#: fdisk/fdisk.c:940
+#: fdisk/fdisk.c:1025
 #, c-format
 msgid ""
 "This disk has both DOS and BSD magic.\n"
@@ -2751,7 +2766,7 @@ msgstr ""
 "Ta disk je oznaèek kot tipa DOS in tipa BSD.\n"
 "Uporabite 'b' ukaz, da preidete v BSD naèin.\n"
 
-#: fdisk/fdisk.c:950
+#: fdisk/fdisk.c:1035
 #, c-format
 msgid ""
 "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
@@ -2760,17 +2775,17 @@ msgstr ""
 "Naprava ne vsebuje veljavne tabele razdelkov tipa DOS, niti oznake diska "
 "tipa Sun, SGI ali OSF\n"
 
-#: fdisk/fdisk.c:967
+#: fdisk/fdisk.c:1052
 #, c-format
 msgid "Internal error\n"
 msgstr "Notranja napaka\n"
 
-#: fdisk/fdisk.c:980
+#: fdisk/fdisk.c:1065
 #, c-format
 msgid "Ignoring extra extended partition %d\n"
 msgstr "Dodatni raz¹irjen razdelek %d ne bo upo¹tevan\n"
 
-#: fdisk/fdisk.c:992
+#: fdisk/fdisk.c:1077
 #, c-format
 msgid ""
 "Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
@@ -2779,7 +2794,7 @@ msgstr ""
 "Opozorilo: neveljavna zastavica 0x%04x tabele razdelkov %d bo popravljena z w"
 "(rite)\n"
 
-#: fdisk/fdisk.c:1014
+#: fdisk/fdisk.c:1099
 #, c-format
 msgid ""
 "\n"
@@ -2788,83 +2803,83 @@ msgstr ""
 "\n"
 "3x dobljen EOF - Konèujem..\n"
 
-#: fdisk/fdisk.c:1053
+#: fdisk/fdisk.c:1138
 msgid "Hex code (type L to list codes): "
 msgstr "©estnajsti¹ka koda (pritisni L za izbor kod): "
 
-#: fdisk/fdisk.c:1093
+#: fdisk/fdisk.c:1178
 #, c-format
 msgid "%s (%u-%u, default %u): "
 msgstr "%s (%u-%u, privzeto %u): "
 
-#: fdisk/fdisk.c:1160
+#: fdisk/fdisk.c:1245
 #, c-format
 msgid "Using default value %u\n"
 msgstr "Uporbljena bo privzeta vrednost %u\n"
 
-#: fdisk/fdisk.c:1164
+#: fdisk/fdisk.c:1249
 #, c-format
 msgid "Value out of range.\n"
 msgstr "Vrednost izven dosega.\n"
 
-#: fdisk/fdisk.c:1174
+#: fdisk/fdisk.c:1259
 msgid "Partition number"
 msgstr "©tevilka razdelka"
 
-#: fdisk/fdisk.c:1185
+#: fdisk/fdisk.c:1270
 #, c-format
 msgid "Warning: partition %d has empty type\n"
 msgstr "Opozorilo: razdelek %d nima tipa\n"
 
-#: fdisk/fdisk.c:1207 fdisk/fdisk.c:1233
+#: fdisk/fdisk.c:1292 fdisk/fdisk.c:1318
 #, c-format
 msgid "Selected partition %d\n"
 msgstr "Izbran razdelek %d\n"
 
-#: fdisk/fdisk.c:1210
+#: fdisk/fdisk.c:1295
 #, c-format
 msgid "No partition is defined yet!\n"
 msgstr "Noben razdelek ¹e ni doloèen!\n"
 
-#: fdisk/fdisk.c:1236
+#: fdisk/fdisk.c:1321
 #, c-format
 msgid "All primary partitions have been defined already!\n"
 msgstr "Vsi primarni razdelki so ¾e doloèeni!\n"
 
-#: fdisk/fdisk.c:1246
+#: fdisk/fdisk.c:1331
 msgid "cylinder"
 msgstr "steza"
 
-#: fdisk/fdisk.c:1246
+#: fdisk/fdisk.c:1331
 msgid "sector"
 msgstr "sektor"
 
-#: fdisk/fdisk.c:1255
+#: fdisk/fdisk.c:1340
 #, c-format
 msgid "Changing display/entry units to %s\n"
 msgstr "Spreminjam enote prikaza/vnosa na %s\n"
 
-#: fdisk/fdisk.c:1266
+#: fdisk/fdisk.c:1351
 #, c-format
 msgid "WARNING: Partition %d is an extended partition\n"
 msgstr "OPOZORILO: Razdelek %d je raz¹irjeni razdelek\n"
 
-#: fdisk/fdisk.c:1277
+#: fdisk/fdisk.c:1362
 #, c-format
 msgid "DOS Compatibility flag is set\n"
 msgstr "Zdru¾ljivost z DOS je nastavljena.\n"
 
-#: fdisk/fdisk.c:1281
+#: fdisk/fdisk.c:1366
 #, c-format
 msgid "DOS Compatibility flag is not set\n"
 msgstr "Zdru¾ljivost z DOS ni nastavljena.\n"
 
-#: fdisk/fdisk.c:1381
+#: fdisk/fdisk.c:1466
 #, c-format
 msgid "Partition %d does not exist yet!\n"
 msgstr "Razdelek %d ¹e ne obstaja!\n"
 
-#: fdisk/fdisk.c:1386
+#: fdisk/fdisk.c:1471
 #, c-format
 msgid ""
 "Type 0 means free space to many systems\n"
@@ -2876,7 +2891,7 @@ msgstr ""
 "v Linuxu pa ne. Razdelkov tipa 0 ni pametno imeti\n"
 "Razdelek lahko zbri¹ete z ukazom `d'.\n"
 
-#: fdisk/fdisk.c:1395
+#: fdisk/fdisk.c:1480
 #, c-format
 msgid ""
 "You cannot change a partition into an extended one or vice versa\n"
@@ -2885,7 +2900,7 @@ msgstr ""
 "Razdelka ne morete pretvoriti v raz¹irjenega ali obratno.\n"
 "Najprej ga zbri¹ite.\n"
 
-#: fdisk/fdisk.c:1404
+#: fdisk/fdisk.c:1489
 #, c-format
 msgid ""
 "Consider leaving partition 3 as Whole disk (5),\n"
@@ -2896,7 +2911,7 @@ msgstr ""
 "Tak je dogovor v SunOS/Solaris, Linux pa ga spo¹tuje.\n"
 "\n"
 
-#: fdisk/fdisk.c:1410
+#: fdisk/fdisk.c:1495
 #, c-format
 msgid ""
 "Consider leaving partition 9 as volume header (0),\n"
@@ -2907,52 +2922,57 @@ msgstr ""
 "razdelek 11 pa kot celotni del (6), kot prièakuje IRIX.\n"
 "\n"
 
-#: fdisk/fdisk.c:1423
+#: fdisk/fdisk.c:1512
 #, c-format
 msgid "Changed system type of partition %d to %x (%s)\n"
 msgstr "Tip razdelka %d je spremenjen v %x (%s)\n"
 
-#: fdisk/fdisk.c:1478
+#: fdisk/fdisk.c:1515
+#, fuzzy, c-format
+msgid "System type of partition %d is unchangedto %x (%s)\n"
+msgstr "Tip razdelka %d je spremenjen v %x (%s)\n"
+
+#: fdisk/fdisk.c:1567
 #, c-format
 msgid "Partition %d has different physical/logical beginnings (non-Linux?):\n"
 msgstr "Fizièni zaèetek razdelka %d ni enak logiènemu (ne-Linux?):\n"
 
-#: fdisk/fdisk.c:1480 fdisk/fdisk.c:1488 fdisk/fdisk.c:1497 fdisk/fdisk.c:1507
+#: fdisk/fdisk.c:1569 fdisk/fdisk.c:1577 fdisk/fdisk.c:1586 fdisk/fdisk.c:1596
 #, c-format
 msgid "     phys=(%d, %d, %d) "
 msgstr "  fizièni=(%d, %d, %d) "
 
-#: fdisk/fdisk.c:1481 fdisk/fdisk.c:1489
+#: fdisk/fdisk.c:1570 fdisk/fdisk.c:1578
 #, c-format
 msgid "logical=(%d, %d, %d)\n"
 msgstr "logièni=(%d, %d, %d)\n"
 
-#: fdisk/fdisk.c:1486
+#: fdisk/fdisk.c:1575
 #, c-format
 msgid "Partition %d has different physical/logical endings:\n"
 msgstr "Fizièna/logièna konca razdelka %d se ne ujemata:\n"
 
-#: fdisk/fdisk.c:1495
+#: fdisk/fdisk.c:1584
 #, c-format
 msgid "Partition %i does not start on cylinder boundary:\n"
 msgstr "Razdelek %i se ne zaène na meji stez:\n"
 
-#: fdisk/fdisk.c:1498
+#: fdisk/fdisk.c:1587
 #, c-format
 msgid "should be (%d, %d, 1)\n"
 msgstr "moral bi biti (%d, %d, 1)\n"
 
-#: fdisk/fdisk.c:1504
+#: fdisk/fdisk.c:1593
 #, c-format
 msgid "Partition %i does not end on cylinder boundary.\n"
 msgstr "Razdelek %i se ne konèa na meji stez.\n"
 
-#: fdisk/fdisk.c:1508
+#: fdisk/fdisk.c:1597
 #, c-format
 msgid "should be (%d, %d, %d)\n"
 msgstr "moral bi biti (%d, %d, %d)\n"
 
-#: fdisk/fdisk.c:1520
+#: fdisk/fdisk.c:1609
 #, c-format
 msgid ""
 "\n"
@@ -2961,7 +2981,7 @@ msgstr ""
 "\n"
 "Disk %s: %ld MB, %lld bajtov\n"
 
-#: fdisk/fdisk.c:1523
+#: fdisk/fdisk.c:1612
 #, c-format
 msgid ""
 "\n"
@@ -2970,26 +2990,24 @@ msgstr ""
 "\n"
 "Disk %s: %ld.%ld GB, %lld bajtov\n"
 
-#: fdisk/fdisk.c:1525
+#: fdisk/fdisk.c:1614
 #, fuzzy, c-format
 msgid "%d heads, %llu sectors/track, %d cylinders"
 msgstr "%d glav, %d sektorjev/stezo, %d stez"
 
-#: fdisk/fdisk.c:1528
+#: fdisk/fdisk.c:1617
 #, fuzzy, c-format
 msgid ", total %llu sectors"
 msgstr ", skupno %lu sektorjev"
 
-#: fdisk/fdisk.c:1531
-#, c-format
-msgid ""
-"Units = %s of %d * %d = %d bytes\n"
-"\n"
+#: fdisk/fdisk.c:1620
+#, fuzzy, c-format
+msgid "Units = %s of %d * %d = %d bytes\n"
 msgstr ""
 "Enote = %s od %d x %d = %d bajtov\n"
 "\n"
 
-#: fdisk/fdisk.c:1639
+#: fdisk/fdisk.c:1731
 #, c-format
 msgid ""
 "Nothing to do. Ordering is correct already.\n"
@@ -2998,7 +3016,7 @@ msgstr ""
 "Niè ni treba spremeniti. Red je ¾e pravilen.\n"
 "\n"
 
-#: fdisk/fdisk.c:1695
+#: fdisk/fdisk.c:1787
 #, c-format
 msgid ""
 "This doesn't look like a partition table\n"
@@ -3009,16 +3027,16 @@ msgstr ""
 "Verjetno ste izbrali napaèno napravo.\n"
 "\n"
 
-#: fdisk/fdisk.c:1709
+#: fdisk/fdisk.c:1800
 #, c-format
 msgid "%*s Boot      Start         End      Blocks   Id  System\n"
 msgstr "%*s Zagon    Zaèetek       Konec     Bloki    Id  Sistem\n"
 
-#: fdisk/fdisk.c:1710 fdisk/fdisksgilabel.c:222 fdisk/fdisksunlabel.c:593
+#: fdisk/fdisk.c:1801 fdisk/fdisksgilabel.c:222 fdisk/fdisksunlabel.c:594
 msgid "Device"
 msgstr "Naprava"
 
-#: fdisk/fdisk.c:1747
+#: fdisk/fdisk.c:1838
 #, c-format
 msgid ""
 "\n"
@@ -3027,7 +3045,7 @@ msgstr ""
 "\n"
 "Vnosi tabele razdelkov niso v diskovnem vrstnem redu\n"
 
-#: fdisk/fdisk.c:1757
+#: fdisk/fdisk.c:1848
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -3038,82 +3056,82 @@ msgstr ""
 "Disk %s: %d glav, %d sektorjev, %d stez\n"
 "\n"
 
-#: fdisk/fdisk.c:1759
+#: fdisk/fdisk.c:1850
 #, fuzzy, c-format
 msgid "Nr AF  Hd Sec  Cyl  Hd Sec  Cyl     Start      Size ID\n"
 msgstr " ©t AF Glav Sekt Stz  Glav Sekt Stz   Zaèetek  Vel  ID\n"
 
-#: fdisk/fdisk.c:1805
+#: fdisk/fdisk.c:1896
 #, c-format
 msgid "Warning: partition %d contains sector 0\n"
 msgstr "Opozorilo: razdelek %d vsebuje sektor 0\n"
 
-#: fdisk/fdisk.c:1808
+#: fdisk/fdisk.c:1899
 #, c-format
 msgid "Partition %d: head %d greater than maximum %d\n"
 msgstr "Razdelek %d: glava %d je veèja od najveèje %d\n"
 
-#: fdisk/fdisk.c:1811
+#: fdisk/fdisk.c:1902
 #, fuzzy, c-format
 msgid "Partition %d: sector %d greater than maximum %llu\n"
 msgstr "Razdelek %d: sektor %d je veèji od najveèjega %d\n"
 
-#: fdisk/fdisk.c:1814
+#: fdisk/fdisk.c:1905
 #, c-format
 msgid "Partitions %d: cylinder %d greater than maximum %d\n"
 msgstr "Razdelki %d: steza %d je veèja od najveèje %d\n"
 
-#: fdisk/fdisk.c:1818
+#: fdisk/fdisk.c:1909
 #, c-format
 msgid "Partition %d: previous sectors %d disagrees with total %d\n"
 msgstr "Razdelek %d: prej¹nji sektorji %d se ne ujemajo s celoto %d\n"
 
-#: fdisk/fdisk.c:1850
+#: fdisk/fdisk.c:1941
 #, c-format
 msgid "Warning: bad start-of-data in partition %d\n"
 msgstr "Opozorilo: po¹kodovan zaèetek podatkov v razdelku %d\n"
 
-#: fdisk/fdisk.c:1858
+#: fdisk/fdisk.c:1949
 #, c-format
 msgid "Warning: partition %d overlaps partition %d.\n"
 msgstr "Opozorilo: razdelek %d prekriva razdelek %d.\n"
 
-#: fdisk/fdisk.c:1878
+#: fdisk/fdisk.c:1969
 #, c-format
 msgid "Warning: partition %d is empty\n"
 msgstr "Opozorilo: razdelek %d je prazen\n"
 
-#: fdisk/fdisk.c:1883
+#: fdisk/fdisk.c:1974
 #, c-format
 msgid "Logical partition %d not entirely in partition %d\n"
 msgstr "Logièni razdelek %d ni v celoti v razdelku %d\n"
 
-#: fdisk/fdisk.c:1889
+#: fdisk/fdisk.c:1980
 #, fuzzy, c-format
 msgid "Total allocated sectors %ld greater than the maximum %lld\n"
 msgstr "Vsota dodeljenih sektorjev %d je veèja od najveèje %lld\n"
 
-#: fdisk/fdisk.c:1892
+#: fdisk/fdisk.c:1983
 #, c-format
 msgid "%lld unallocated sectors\n"
 msgstr "%lld nedodeljenih sektorjev\n"
 
-#: fdisk/fdisk.c:1907 fdisk/fdisksgilabel.c:631 fdisk/fdisksunlabel.c:407
+#: fdisk/fdisk.c:1998 fdisk/fdisksgilabel.c:632 fdisk/fdisksunlabel.c:407
 #, c-format
 msgid "Partition %d is already defined.  Delete it before re-adding it.\n"
 msgstr "Razdelek %d je ¾e doloèen. Zbri¹ite ga preden ga ponovno dodate.\n"
 
-#: fdisk/fdisk.c:1949
+#: fdisk/fdisk.c:2040
 #, fuzzy, c-format
 msgid "Sector %llu is already allocated\n"
 msgstr "Sektor %d je ¾e dodeljen\n"
 
-#: fdisk/fdisk.c:1985
+#: fdisk/fdisk.c:2076
 #, c-format
 msgid "No free sectors available\n"
 msgstr "Ni veè prostih sektorjev\n"
 
-#: fdisk/fdisk.c:2059
+#: fdisk/fdisk.c:2150
 #, c-format
 msgid ""
 "\tSorry - this fdisk cannot handle AIX disk labels.\n"
@@ -3126,7 +3144,7 @@ msgstr ""
 "\t novo prazno tabelo razdelkov tipa DOS. (Uporabite o.)\n"
 "\tOPOZORILO: To bo unièilo trenutno vsebuno diska.\n"
 
-#: fdisk/fdisk.c:2068
+#: fdisk/fdisk.c:2159
 #, fuzzy, c-format
 msgid ""
 "\tSorry - this fdisk cannot handle Mac disk labels.\n"
@@ -3139,22 +3157,22 @@ msgstr ""
 "\t novo prazno tabelo razdelkov tipa DOS. (Uporabite o.)\n"
 "\tOPOZORILO: To bo unièilo trenutno vsebuno diska.\n"
 
-#: fdisk/fdisk.c:2088
+#: fdisk/fdisk.c:2179
 #, c-format
 msgid "You must delete some partition and add an extended partition first\n"
 msgstr "Izbrisati morate nek razdelek in najprej dodati raz¹irjen razdelek\n"
 
-#: fdisk/fdisk.c:2091
+#: fdisk/fdisk.c:2182
 #, fuzzy, c-format
 msgid "All logical partitions are in use\n"
 msgstr "Vsi logièni razdelki so v uporabi\n"
 
-#: fdisk/fdisk.c:2092
+#: fdisk/fdisk.c:2183
 #, fuzzy, c-format
 msgid "Adding a primary partition\n"
 msgstr "Dodaja se primarni razdelek\n"
 
-#: fdisk/fdisk.c:2097
+#: fdisk/fdisk.c:2188
 #, c-format
 msgid ""
 "Command action\n"
@@ -3165,20 +3183,20 @@ msgstr ""
 "  %s\n"
 "  p   primarni razdelek (1-4)\n"
 
-#: fdisk/fdisk.c:2099
+#: fdisk/fdisk.c:2190
 msgid "l   logical (5 or over)"
 msgstr "l   logièni (5 ali veè)"
 
-#: fdisk/fdisk.c:2099
+#: fdisk/fdisk.c:2190
 msgid "e   extended"
 msgstr "e   raz¹irjen"
 
-#: fdisk/fdisk.c:2118
+#: fdisk/fdisk.c:2209
 #, c-format
 msgid "Invalid partition number for type `%c'\n"
 msgstr "Neveljavna ¹tevilka razdelka za tip `%c'\n"
 
-#: fdisk/fdisk.c:2154
+#: fdisk/fdisk.c:2245
 #, c-format
 msgid ""
 "The partition table has been altered!\n"
@@ -3187,12 +3205,12 @@ msgstr ""
 "Tabela razdelkov je bila spremenjena!\n"
 "\n"
 
-#: fdisk/fdisk.c:2163
+#: fdisk/fdisk.c:2254
 #, c-format
 msgid "Calling ioctl() to re-read partition table.\n"
 msgstr "Klièem ioctl() za ponovno branje tabele razdelkov.\n"
 
-#: fdisk/fdisk.c:2179
+#: fdisk/fdisk.c:2270
 #, c-format
 msgid ""
 "\n"
@@ -3205,7 +3223,7 @@ msgstr ""
 "Jedro ¹e vedno uporablja staro tabelo.\n"
 "Nova tabelo bo v uporabi ¹ele po naslednjem zagonu.\n"
 
-#: fdisk/fdisk.c:2189
+#: fdisk/fdisk.c:2280
 #, c-format
 msgid ""
 "\n"
@@ -3218,7 +3236,7 @@ msgstr ""
 " tipa DOS 6.x, si poglejte priroènik za fdisk za dodatne\n"
 "informacije.\n"
 
-#: fdisk/fdisk.c:2195
+#: fdisk/fdisk.c:2286
 #, c-format
 msgid ""
 "\n"
@@ -3227,42 +3245,42 @@ msgstr ""
 "\n"
 "Napaka pri zapiranju datoteke\n"
 
-#: fdisk/fdisk.c:2199
+#: fdisk/fdisk.c:2290
 #, c-format
 msgid "Syncing disks.\n"
 msgstr "Sinhroniziram diske.\n"
 
-#: fdisk/fdisk.c:2246
+#: fdisk/fdisk.c:2337
 #, c-format
 msgid "Partition %d has no data area\n"
 msgstr "Razdelek %d nima podatkovnega obmoèja\n"
 
-#: fdisk/fdisk.c:2251
+#: fdisk/fdisk.c:2342
 msgid "New beginning of data"
 msgstr "Nov zaèetek podatkov"
 
-#: fdisk/fdisk.c:2267
+#: fdisk/fdisk.c:2358
 msgid "Expert command (m for help): "
 msgstr "Strokovni ukaz (m za pomoè): "
 
-#: fdisk/fdisk.c:2280
+#: fdisk/fdisk.c:2371
 msgid "Number of cylinders"
 msgstr "©tevilo stez"
 
-#: fdisk/fdisk.c:2307
+#: fdisk/fdisk.c:2398
 msgid "Number of heads"
 msgstr "©tevilo glav"
 
-#: fdisk/fdisk.c:2332
+#: fdisk/fdisk.c:2425
 msgid "Number of sectors"
 msgstr "©tevilo sektorjev"
 
-#: fdisk/fdisk.c:2335
+#: fdisk/fdisk.c:2428
 #, c-format
 msgid "Warning: setting sector offset for DOS compatiblity\n"
 msgstr "Opozorilo: odmik sektorja bo nastavljen tako, da bo zdru¾ljiv z DOS\n"
 
-#: fdisk/fdisk.c:2394
+#: fdisk/fdisk.c:2487
 #, c-format
 msgid ""
 "\n"
@@ -3271,33 +3289,33 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/fdisk.c:2416
+#: fdisk/fdisk.c:2509
 #, c-format
 msgid "Disk %s doesn't contain a valid partition table\n"
 msgstr "Disk %s ne vsebuje veljavne tabele razdelkov\n"
 
-#: fdisk/fdisk.c:2427
+#: fdisk/fdisk.c:2520
 #, c-format
 msgid "Cannot open %s\n"
 msgstr "%s ne morem odpreti\n"
 
-#: fdisk/fdisk.c:2445 fdisk/sfdisk.c:2423
+#: fdisk/fdisk.c:2538 fdisk/sfdisk.c:2423
 #, c-format
 msgid "cannot open %s\n"
 msgstr "%s ne morem odpreti\n"
 
-#: fdisk/fdisk.c:2465
+#: fdisk/fdisk.c:2558
 #, c-format
 msgid "%c: unknown command\n"
 msgstr "%c: neznan ukaz\n"
 
-#: fdisk/fdisk.c:2535
+#: fdisk/fdisk.c:2628
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
 msgstr ""
 "To jedro najde velikost sektorja samostojno - -b izbire ni upo¹tevana\n"
 
-#: fdisk/fdisk.c:2539
+#: fdisk/fdisk.c:2632
 #, c-format
 msgid ""
 "Warning: the -b (set sector size) option should be used with one specified "
@@ -3306,18 +3324,18 @@ msgstr ""
 "Opozorilo: izbira -b (nastavi velikost sektorja) se naj uporablja s podano "
 "napravo\n"
 
-#: fdisk/fdisk.c:2600
+#: fdisk/fdisk.c:2693
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 "Na %s je bila zaznana oznaka diska tipa OSF/1, vstopa v naèin oznaèevanja "
 "diska.\n"
 
-#: fdisk/fdisk.c:2610
+#: fdisk/fdisk.c:2703
 msgid "Command (m for help): "
 msgstr "Ukaz (m za pomoè): "
 
-#: fdisk/fdisk.c:2626
+#: fdisk/fdisk.c:2719
 #, c-format
 msgid ""
 "\n"
@@ -3326,16 +3344,16 @@ msgstr ""
 "\n"
 "Trenutna zagonska datoteka je: %s\n"
 
-#: fdisk/fdisk.c:2628
+#: fdisk/fdisk.c:2721
 msgid "Please enter the name of the new boot file: "
 msgstr "Prosimo vpi¹ite ime nove zagonske datoteke: "
 
-#: fdisk/fdisk.c:2630
+#: fdisk/fdisk.c:2723
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "Zagonska datoteka ni bila spremenjena\n"
 
-#: fdisk/fdisk.c:2703
+#: fdisk/fdisk.c:2796
 #, c-format
 msgid ""
 "\n"
@@ -3679,27 +3697,27 @@ msgstr ""
 msgid "YES\n"
 msgstr "DA\n"
 
-#: fdisk/fdisksgilabel.c:579
+#: fdisk/fdisksgilabel.c:580
 #, c-format
 msgid "Do You know, You got a partition overlap on the disk?\n"
 msgstr "Ali se zavedate, da se vam na disku prekrivajo razdelki?\n"
 
-#: fdisk/fdisksgilabel.c:637
+#: fdisk/fdisksgilabel.c:638
 #, c-format
 msgid "Attempting to generate entire disk entry automatically.\n"
 msgstr "Samodejni poskus vnosa celotnega diska.\n"
 
-#: fdisk/fdisksgilabel.c:642
+#: fdisk/fdisksgilabel.c:643
 #, c-format
 msgid "The entire disk is already covered with partitions.\n"
 msgstr "Celoten disk je ¾e prekrit z razdelki.\n"
 
-#: fdisk/fdisksgilabel.c:646
+#: fdisk/fdisksgilabel.c:647
 #, c-format
 msgid "You got a partition overlap on the disk. Fix it first!\n"
 msgstr "Na disku se vam prekrivajo razdelki. Popravite jih!\n"
 
-#: fdisk/fdisksgilabel.c:655 fdisk/fdisksgilabel.c:684
+#: fdisk/fdisksgilabel.c:656 fdisk/fdisksgilabel.c:685
 #, c-format
 msgid ""
 "It is highly recommended that eleventh partition\n"
@@ -3708,17 +3726,17 @@ msgstr ""
 "Priporoèljivo je, da enajsti razdelek\n"
 "prekriva celoten disk in je tipa `SGI volume'\n"
 
-#: fdisk/fdisksgilabel.c:671
+#: fdisk/fdisksgilabel.c:672
 #, c-format
 msgid "You will get a partition overlap on the disk. Fix it first!\n"
 msgstr "Prekrivali se vam bodo razdelki na disku. Popravite jih!\n"
 
-#: fdisk/fdisksgilabel.c:676
+#: fdisk/fdisksgilabel.c:677
 #, c-format
 msgid " Last %s"
 msgstr " Zadnji %s"
 
-#: fdisk/fdisksgilabel.c:706
+#: fdisk/fdisksgilabel.c:707
 #, c-format
 msgid ""
 "Building a new SGI disklabel. Changes will remain in memory only,\n"
@@ -3731,7 +3749,7 @@ msgstr ""
 "vsebina nepovrnljiva.\n"
 "\n"
 
-#: fdisk/fdisksgilabel.c:728 fdisk/fdisksunlabel.c:220
+#: fdisk/fdisksgilabel.c:729 fdisk/fdisksunlabel.c:220
 #, c-format
 msgid ""
 "Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
@@ -3742,12 +3760,12 @@ msgstr ""
 "vrednost steze %d.\n"
 "Ta vrednost se lahko skraj¹a za naprave > 33.8 GB.\n"
 
-#: fdisk/fdisksgilabel.c:741
+#: fdisk/fdisksgilabel.c:742
 #, c-format
 msgid "Trying to keep parameters of partition %d.\n"
 msgstr "Poskus ohranjanja parametrov razdelka %d.\n"
 
-#: fdisk/fdisksgilabel.c:743
+#: fdisk/fdisksgilabel.c:744
 #, c-format
 msgid "ID=%02x\tSTART=%d\tLENGTH=%d\n"
 msgstr "ID=%02x\tZAÈETEK=%d\tDOL®INA=%d\n"
@@ -3924,7 +3942,7 @@ msgstr ""
 "razdelkov in zagonski blok. Vnesite DA, èe res ¾elite\n"
 "da se ta razdelek oznaèi kot 82 (Linux izmenjalni): "
 
-#: fdisk/fdisksunlabel.c:571
+#: fdisk/fdisksunlabel.c:572
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -3944,7 +3962,7 @@ msgstr ""
 "Enote = %s od %d * 512 bajtov\n"
 "\n"
 
-#: fdisk/fdisksunlabel.c:587
+#: fdisk/fdisksunlabel.c:588
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -3957,28 +3975,28 @@ msgstr ""
 "Enote =%s od %d * 512 bajtov\n"
 "\n"
 
-#: fdisk/fdisksunlabel.c:592
+#: fdisk/fdisksunlabel.c:593
 #, c-format
 msgid "%*s Flag    Start       End    Blocks   Id  System\n"
 msgstr "%*s Zastava Zaèetek    Konec   Bloki    Id  Sistem\n"
 
-#: fdisk/fdisksunlabel.c:620
+#: fdisk/fdisksunlabel.c:621
 msgid "Number of alternate cylinders"
 msgstr "©tevilo drugih stez"
 
-#: fdisk/fdisksunlabel.c:632
+#: fdisk/fdisksunlabel.c:633
 msgid "Extra sectors per cylinder"
 msgstr "Dodatni sektorji na stezo"
 
-#: fdisk/fdisksunlabel.c:639
+#: fdisk/fdisksunlabel.c:640
 msgid "Interleave factor"
 msgstr "Faktor prepletenosti"
 
-#: fdisk/fdisksunlabel.c:646
+#: fdisk/fdisksunlabel.c:647
 msgid "Rotation speed (rpm)"
 msgstr "Hitrost vrtenja (obrati/min)"
 
-#: fdisk/fdisksunlabel.c:653
+#: fdisk/fdisksunlabel.c:654
 msgid "Number of physical cylinders"
 msgstr "©tevilo fiziènih stez"
 
@@ -5411,7 +5429,7 @@ msgstr "Privzemamo, da strojna ura teèe v %s èasu.\n"
 msgid "UTC"
 msgstr "UTC"
 
-#: hwclock/hwclock.c:230 hwclock/hwclock.c:323
+#: hwclock/hwclock.c:230 hwclock/hwclock.c:323 sys-utils/rtcwake.c:381
 msgid "local"
 msgstr "krajevnem"
 
@@ -6240,8 +6258,8 @@ msgid "Password error."
 msgstr "Napaka v geslu."
 
 #: login-utils/chfn.c:203 login-utils/chsh.c:201 login-utils/login.c:798
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:332
-#: mount/lomount.c:335
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:333
+#: mount/lomount.c:336
 msgid "Password: "
 msgstr "Geslo: "
 
@@ -6983,17 +7001,17 @@ msgstr "preveè iov-jev (spremeni kodo v wall/ttymsg.c)"
 msgid "excessively long line arg"
 msgstr "prekoraèitev dol¾ine vrstice argumenta"
 
-#: login-utils/ttymsg.c:139
+#: login-utils/ttymsg.c:140
 #, c-format
 msgid "cannot fork"
 msgstr "vejitev ni mogoèa"
 
-#: login-utils/ttymsg.c:143
+#: login-utils/ttymsg.c:144
 #, c-format
 msgid "fork: %s"
 msgstr "vejitev: %s"
 
-#: login-utils/ttymsg.c:172
+#: login-utils/ttymsg.c:174
 #, c-format
 msgid "%s: BAD ERROR"
 msgstr "%s RESNA NAPAKA"
@@ -7088,12 +7106,12 @@ msgstr "%s: %s ne bo prebran - uporabi stdin.\n"
 msgid "%s: can't read %s.\n"
 msgstr "%s %s ni mogoèe brati.\n"
 
-#: login-utils/wall.c:231
+#: login-utils/wall.c:232
 #, c-format
 msgid "%s: can't stat temporary file.\n"
 msgstr "%s ni mogoèe dobiti stanja zaèasne datoteke.\n"
 
-#: login-utils/wall.c:241
+#: login-utils/wall.c:242
 #, c-format
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: ni mogoèe brati iz zaèasne datoteke.\n"
@@ -7111,12 +7129,12 @@ msgstr "neveljavna vrednost meseca: uporabite 1-12"
 msgid "illegal year value: use 1-9999"
 msgstr "neveljavna vrednost leta: uporabite 1-9999"
 
-#: misc-utils/cal.c:455
+#: misc-utils/cal.c:464
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:801
+#: misc-utils/cal.c:810
 #, c-format
 msgid "usage: cal [-13smjyV] [[month] year]\n"
 msgstr "uporaba: cal [-13smjyV] [[mesec] leto]\n"
@@ -7549,7 +7567,7 @@ msgstr "no mogoèe brati %s in ni mogoèe dobiti izpisa ioctl\n"
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: $TERM ni doloèen.\n"
 
-#: misc-utils/whereis.c:157
+#: misc-utils/whereis.c:158
 #, c-format
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr "whereis [ -sbmu ] [ -SBM imenik ... -f ] ime...\n"
@@ -7758,34 +7776,34 @@ msgstr "%s: iskanje proste loop naprave ni bilo uspe¹no\n"
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "V pomnilnik ni mogoèe zakleniti, konèujem.\n"
 
-#: mount/lomount.c:348
+#: mount/lomount.c:349
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:383
+#: mount/lomount.c:384
 #, c-format
 msgid "set_loop(%s,%s,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): uspeh\n"
 
-#: mount/lomount.c:394
+#: mount/lomount.c:395
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: naprave %s ni mogoèe zbrisati: %s\n"
 
-#: mount/lomount.c:404
+#: mount/lomount.c:405
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): uspeh\n"
 
-#: mount/lomount.c:412
+#: mount/lomount.c:413
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Program mount je bil preveden brez podpore za loop. Poskusite ponovno "
 "prevesti mount.\n"
 
-#: mount/lomount.c:449
+#: mount/lomount.c:450
 #, c-format
 msgid ""
 "\n"
@@ -7807,12 +7825,12 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:477 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:478 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "premalo pomnilnika"
 
-#: mount/lomount.c:638
+#: mount/lomount.c:639
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -9377,22 +9395,22 @@ msgstr ""
 msgid "Sampling_step: %i\n"
 msgstr "Vzorèni_korak: %i\n"
 
-#: sys-utils/readprofile.c:305 sys-utils/readprofile.c:329
+#: sys-utils/readprofile.c:305 sys-utils/readprofile.c:330
 #, c-format
 msgid "%s: %s(%i): wrong map line\n"
 msgstr "%s: %s(%i): napaèna preslikovalna(map) vrstica\n"
 
-#: sys-utils/readprofile.c:317
+#: sys-utils/readprofile.c:318
 #, c-format
 msgid "%s: can't find \"_stext\" in %s\n"
 msgstr "%s: \"_stext\" ni mogoèe najti v %s\n"
 
-#: sys-utils/readprofile.c:343
+#: sys-utils/readprofile.c:344
 #, c-format
 msgid "%s: profile address out of range. Wrong map file?\n"
 msgstr "%s: profil naslova je izven dometa. Napaèna preslik.(map) dat.?\n"
 
-#: sys-utils/readprofile.c:401
+#: sys-utils/readprofile.c:402
 msgid "total"
 msgstr "skupno"
 
@@ -9426,6 +9444,113 @@ msgstr "nastaviprioriteto"
 #, c-format
 msgid "%d: old priority %d, new priority %d\n"
 msgstr "%d: stara prioriteta %d, nova prioriteta %d\n"
+
+#: sys-utils/rtcwake.c:79
+#, c-format
+msgid ""
+"usage: %s [options]\n"
+"    -d | --device <device>    select rtc device (rtc0|rtc1|...)\n"
+"    -l | --local              RTC uses local timezone\n"
+"    -m | --mode               standby|mem|... sleep mode\n"
+"    -s | --seconds <seconds>  seconds to sleep\n"
+"    -t | --time <time_t>      time to wake\n"
+"    -u | --utc                RTC uses UTC\n"
+"    -v | --verbose            verbose messages\n"
+"    -V | --version            show version\n"
+msgstr ""
+
+#: sys-utils/rtcwake.c:138
+msgid "read rtc time"
+msgstr ""
+
+#: sys-utils/rtcwake.c:143
+msgid "read system time"
+msgstr ""
+
+#: sys-utils/rtcwake.c:161
+msgid "convert rtc time"
+msgstr ""
+
+#: sys-utils/rtcwake.c:200
+msgid "set rtc alarm"
+msgstr ""
+
+#: sys-utils/rtcwake.c:204
+msgid "enable rtc alarm"
+msgstr ""
+
+#: sys-utils/rtcwake.c:214
+msgid "set rtc wake alarm"
+msgstr ""
+
+#: sys-utils/rtcwake.c:324
+#, fuzzy, c-format
+msgid "%s: unrecognized suspend state '%s'\n"
+msgstr " %s: neprepoznan tip tabele razdelkov"
+
+#: sys-utils/rtcwake.c:333
+#, fuzzy, c-format
+msgid "%s: illegal interval %s seconds\n"
+msgstr "%s: nedovoljen kljuè (%s)\n"
+
+#: sys-utils/rtcwake.c:347
+#, fuzzy, c-format
+msgid "%s: illegal time_t value %s\n"
+msgstr "%s: nedovoljena izbira -- %s\n"
+
+#: sys-utils/rtcwake.c:363
+#, fuzzy, c-format
+msgid "%s: version %s\n"
+msgstr "%s razlièica %s\n"
+
+#: sys-utils/rtcwake.c:376
+#, c-format
+msgid "%s: assuming RTC uses UTC ...\n"
+msgstr ""
+
+#: sys-utils/rtcwake.c:380
+#, fuzzy, c-format
+msgid "Using %s time\n"
+msgstr "Uporabljam %s.\n"
+
+#: sys-utils/rtcwake.c:385
+#, c-format
+msgid "%s: must provide wake time\n"
+msgstr ""
+
+#: sys-utils/rtcwake.c:395
+#, fuzzy
+msgid "malloc() failed"
+msgstr "malloc ni uspel"
+
+#: sys-utils/rtcwake.c:406
+#, fuzzy, c-format
+msgid "%s: %s not enabled for wakeup events\n"
+msgstr "%s: %s ni lp naprava.\n"
+
+#: sys-utils/rtcwake.c:422
+#, c-format
+msgid "alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"
+msgstr ""
+
+#: sys-utils/rtcwake.c:426
+#, c-format
+msgid "%s: time doesn't go backward to %s\n"
+msgstr ""
+
+#: sys-utils/rtcwake.c:437
+#, fuzzy, c-format
+msgid "%s: wakeup from \"%s\" using %s at %s\n"
+msgstr "Sporoèilo iz %s@%s na %s pri %s ..."
+
+#: sys-utils/rtcwake.c:451
+#, fuzzy
+msgid "rtc read"
+msgstr ", pripravljen"
+
+#: sys-utils/rtcwake.c:460
+msgid "disable rtc alarm interrupt"
+msgstr ""
 
 #: sys-utils/setarch.c:57
 #, c-format
@@ -10337,9 +10462,6 @@ msgstr "Pri poveèevanju medpomnilnika je zmanjkalo pomnilnika.\n"
 
 #~ msgid "UUID"
 #~ msgstr "UUID"
-
-#~ msgid "%s version %s\n"
-#~ msgstr "%s razlièica %s\n"
 
 #~ msgid "Can't open help file"
 #~ msgstr "Datoteke s pomoèjo ni mogoèe odpreti"
