@@ -95,11 +95,11 @@ int main(int argc, char *argv[])
 		switch (c) {
 		case 'n':
 			ioprio = strtol(optarg, NULL, 10);
-			set = 1;
+			set |= 1;
 			break;
 		case 'c':
 			ioprio_class = strtol(optarg, NULL, 10);
-			set = 1;
+			set |= 2;
 			break;
 		case 'p':
 			pid = strtol(optarg, NULL, 10);
@@ -119,6 +119,8 @@ int main(int argc, char *argv[])
 		case IOPRIO_CLASS_BE:
 			break;
 		case IOPRIO_CLASS_IDLE:
+			if (set & 1)
+				printf("Ignoring given class data for idle class\n");
 			ioprio = 7;
 			break;
 		default:
@@ -136,8 +138,11 @@ int main(int argc, char *argv[])
 			perror("ioprio_get");
 		else {
 			ioprio_class = ioprio >> IOPRIO_CLASS_SHIFT;
-			ioprio = ioprio & 0xff;
-			printf("%s: prio %d\n", to_prio[ioprio_class], ioprio);
+			if (ioprio_class != IOPRIO_CLASS_IDLE) {
+				ioprio = ioprio & 0xff;
+				printf("%s: prio %d\n", to_prio[ioprio_class], ioprio);
+			} else
+				printf("%s\n", to_prio[ioprio_class]);
 		}
 	} else {
 		if (ioprio_set(IOPRIO_WHO_PROCESS, pid, ioprio | ioprio_class << IOPRIO_CLASS_SHIFT) == -1) {
