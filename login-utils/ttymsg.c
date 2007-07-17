@@ -128,6 +128,7 @@ ttymsg(struct iovec *iov, int iovcnt, char *line, int tmout) {
 		}
 		if (errno == EWOULDBLOCK) {
 			int cpid, flags;
+			sigset_t sigmask;
 
 			if (forked) {
 				(void) close(fd);
@@ -153,7 +154,8 @@ ttymsg(struct iovec *iov, int iovcnt, char *line, int tmout) {
 			/* wait at most tmout seconds */
 			(void) signal(SIGALRM, SIG_DFL);
 			(void) signal(SIGTERM, SIG_DFL); /* XXX */
-			(void) sigsetmask(0);
+			sigemptyset(&sigmask);
+			sigprocmask (SIG_SETMASK, &sigmask, NULL);
 			(void) alarm((u_int)tmout);
 			flags = fcntl(fd, F_GETFL);
 			fcntl(flags, F_SETFL, (long) (flags & ~O_NONBLOCK));
