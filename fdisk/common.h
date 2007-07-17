@@ -3,6 +3,10 @@
 
 /* common stuff for fdisk, cfdisk, sfdisk */
 
+/* udev paths */
+#define PATH_DEV_BYID   "/dev/disk/by-id"
+#define PATH_DEV_BYPATH "/dev/disk/by-path"
+
 /* including <linux/fs.h> fails */
 #include <sys/types.h>
 #include <sys/ioctl.h>

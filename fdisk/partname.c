@@ -30,6 +30,13 @@ partnamebf(char *dev, int pno, int lth, int bufsiz, char *bufp) {
 		p = "part";
 	}
 
+	/* udev names partitions by appending -partN
+	   e.g. ata-SAMSUNG_SV8004H_0357J1FT712448-part1 */
+	if ((strncmp(dev, PATH_DEV_BYID, strlen(PATH_DEV_BYID)) == 0) ||
+	     strncmp(dev, PATH_DEV_BYPATH, strlen(PATH_DEV_BYPATH)) == 0) {
+	       p = "-part";
+	}
+
 	wp = strlen(p);
 		
 	if (lth) {
