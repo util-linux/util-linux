@@ -640,8 +640,16 @@ main(int argc, char ** argv) {
 		usage();
 	}
 
-	DEV = open(device_name,O_RDWR);
-	if (DEV < 0 || fstat(DEV, &statbuf) < 0) {
+	if (stat(device_name, &statbuf) < 0) {
+		perror(device_name);
+		exit(EXIT_FAILURE);
+	}
+	if (S_ISBLK(statbuf.st_mode))
+		DEV = open(device_name, O_RDWR | O_EXCL);
+	else
+		DEV = open(device_name, O_RDWR);
+
+	if (DEV < 0) {
 		perror(device_name);
 		exit(1);
 	}

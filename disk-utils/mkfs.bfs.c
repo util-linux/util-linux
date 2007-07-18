@@ -170,7 +170,7 @@ main(int argc, char *argv[]) {
 	if (!S_ISBLK(statbuf.st_mode))
 		fatal(_("%s is not a block special device"), device);
 
-	fd = open(device, O_RDWR);
+	fd = open(device, O_RDWR | O_EXCL);
 	if (fd == -1) {
 		perror(device);
 		fatal(_("cannot open %s"), device);

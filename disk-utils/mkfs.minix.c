@@ -699,11 +699,14 @@ main(int argc, char ** argv) {
   tmp += dirsize;
   *(short *)tmp = 2;
   strcpy(tmp+2,".badblocks");
-  DEV = open(device_name,O_RDWR );
+  if (stat(device_name, &statbuf) < 0)
+    die(_("unable to stat %s"));
+  if (S_ISBLK(statbuf.st_mode))
+    DEV = open(device_name,O_RDWR | O_EXCL);
+  else
+    DEV = open(device_name,O_RDWR);
   if (DEV<0)
     die(_("unable to open %s"));
-  if (fstat(DEV,&statbuf)<0)
-    die(_("unable to stat %s"));
   if (!S_ISBLK(statbuf.st_mode))
     check=0;
   else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
