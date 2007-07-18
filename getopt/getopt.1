@@ -81,7 +81,7 @@ can be used.
 Allow long options to start with a single 
 .RB ` \- '.
 .IP "\-h, \-\-help"
-Output a small usage guide and exit succesfully. No other output is generated. 
+Output a small usage guide and exit successfully. No other output is generated.
 .IP "\-l, \-\-longoptions longopts"
 The long (multi\-character) options to be recognized. 
 More than one option name
@@ -92,7 +92,7 @@ are cumulative.
 Each long option name
 in 
 .I longopts 
-may be followed by one colon to indicate it has a required argument,and by two colons to indicate it has an optional argument.
+may be followed by one colon to indicate it has a required argument, and by two colons to indicate it has an optional argument.
 .IP "\-n, \-\-name progname"
 The name that will be used by the 
 .BR getopt (3)
@@ -155,7 +155,7 @@ will return
 .RB ` \-\- ' 
 and error status 0.
 .IP "\-V, \-\-version"
-Output version information and exit succesfully. No other output is generated. 
+Output version information and exit successfully. No other output is generated.
 .SH PARSING
 This section specifies the format of the second part of the parameters of
 .B getopt
@@ -259,7 +259,7 @@ quoting mode,
 but no second parameter will be generated in unquoted (compatible) mode.
 Note that many other 
 .BR getopt (1) 
-implemetations do not support optional arguments.
+implementations do not support optional arguments.
 
 If several short options were specified after a single 
 .RB ` \- ', 
@@ -346,7 +346,7 @@ non\-option parameters.
 
 If the first character is a
 .RB ` \- ',
-non\-option parameters are outputed at the place where they are found; in normal
+non\-option parameters are outputted at the place where they are found; in normal
 operation, they are all collected at the end of output after a 
 .RB ` \-\- ' 
 parameter has been generated. Note that this
@@ -364,7 +364,7 @@ If the first character of the first parameter of getopt is not a
 .RB ` \- ', 
 getopt goes into compatibility mode. It will interpret its first parameter as
 the string of short options, and all other arguments will be parsed. It
-will still do parameter shuffling (ie. all non\-option parameters are outputed
+will still do parameter shuffling (ie. all non\-option parameters are outputted
 at the end), unless the environment variable 
 .B POSIXLY_CORRECT 
 is set.
@@ -387,7 +387,7 @@ characters in the short options string are ignored.
 .B getopt
 returns error code 
 .B 0 
-for succesful parsing, 
+for successful parsing,
 .B 1
 if
 .BR getopt (3)
@@ -429,7 +429,7 @@ argument (but can not do this for short options). This
 treats optional arguments that are empty as if they were not present.
 
 The syntax if you do not want any short option variables at all is
-not very intuitive (you have to set them explicitely to the empty
+not very intuitive (you have to set them explicitly to the empty
 string).
 
 .SH AUTHOR

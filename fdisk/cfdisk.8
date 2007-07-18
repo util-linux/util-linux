@@ -113,7 +113,7 @@ detected, the filesystem type is displayed as
 .IR Unusable .
 The size field displays the size of the partition in megabytes (by
 default).  It can also display the size in sectors and cylinders (see
-the change units command below).  If an asterisks
+the change units command below).  If an asterisk
 .RB ( * )
 appears after the size, this means that the partition is not aligned
 on cylinder boundaries.
@@ -184,9 +184,9 @@ key.  If you want to change the default value, simply enter the
 desired value and press
 .IR Enter .
 The altered disk parameter values do not take effect until you return
-the main menu (by pressing
+to the main menu (by pressing
 .IR Enter " or " ESC
-at the change disk geometry command line.  If you change the geometry
+at the change disk geometry command line).  If you change the geometry
 such that the disk appears larger, the extra sectors are added at the
 end of the disk as free space.  If the disk appears smaller, the
 partitions that are beyond the new last sector are deleted and the
@@ -198,7 +198,7 @@ Print the help screen.
 .TP
 .B m
 Maximize disk usage of the current partition.  This command will
-recover the the unused space between the partition table and the
+recover the unused space between the partition table and the
 beginning of the partition, but at the cost of making the partition
 incompatible with DOS, OS/2 and possibly other operating systems.
 This option will toggle between maximal disk usage and DOS, OS/2,
@@ -218,7 +218,7 @@ no intervening primary partition).
 .B cfdisk
 next prompts you for the size of the partition you want to create.
 The default size, equal to the entire free space of the current
-partition, is display in megabytes.  You can either press the
+partition, is displayed in megabytes.  You can either press the
 .I Enter
 key to accept the default size or enter a different size at the
 prompt.
@@ -241,7 +241,7 @@ space, and
 will ask you to choose where to place the partition.  After the
 partition is created,
 .B cfdisk
-automatically adjusts the other partition's partition types if all of
+automatically adjusts the other partitions' partition types if all of
 the primary partitions are used.
 .TP
 .B p
@@ -282,7 +282,7 @@ primary and logical partitions, free and unusable space is printed and
 the extended partition is printed before the first logical partition.
 
 If a partition does not start or end on a cylinder boundary or if the
-partition length is not divisible by the cylinder size, an asterisks
+partition length is not divisible by the cylinder size, an asterisk
 .RB ( * )
 is printed after the non-aligned sector number/count.  This usually
 indicates that a partition was created by an operating system that
@@ -351,9 +351,9 @@ the write by entering `yes' or `no'.  If you enter `yes',
 .B cfdisk
 will write the partition table to disk and the tell the kernel to
 re-read the partition table from the disk.  The re-reading of the
-partition table works is most cases, but I have seen it fail.  Don't
+partition table works in most cases, but I have seen it fail.  Don't
 panic.  It will be correct after you reboot the system.  In all cases,
-I still recommend rebooting the system--just to be safe.
+I still recommend rebooting the system -- just to be safe.
 .TP
 .I Up Arrow
 .TP
