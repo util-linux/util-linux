@@ -89,9 +89,8 @@ mysyslog(int fd, int logflags, int pri, char *tag, char *msg) {
        time_t now;
 
        if (fd > -1) {
-	       /* avoid snprintf - it does not exist on ancient systems */
                if (logflags & LOG_PID)
-                       sprintf (pid, "[%d]", getpid());
+                       snprintf (pid, sizeof(pid), "[%d]", getpid());
 	       else
 		       pid[0] = 0;
                if (tag)
@@ -104,8 +103,7 @@ mysyslog(int fd, int logflags, int pri, char *tag, char *msg) {
                (void)time(&now);
 	       tp = ctime(&now)+4;
 
-	       /* do snprintf by hand - ugly, but for once... */
-               sprintf(buf, "<%d>%.15s %.200s%s: %.400s",
+               snprintf(buf, sizeof(buf), "<%d>%.15s %.200s%s: %.400s",
 			pri, tp, cp, pid, msg);
 
                if (write(fd, buf, strlen(buf)+1) < 0)
