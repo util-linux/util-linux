@@ -617,9 +617,7 @@ main(int argc, char ** argv) {
 			version = 1;
 		else
 		/* use version 1 as default, if possible */
-		if (PAGES <= V0_MAX_PAGES && PAGES > V1_MAX_PAGES)
-			version = 0;
-		else if (linux_version_code() < MAKE_VERSION(2,1,117))
+		if (linux_version_code() < MAKE_VERSION(2,1,117))
 			version = 0;
 		else if (pagesize < 2048)
 			version = 0;
