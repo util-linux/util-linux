@@ -50,7 +50,6 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <signal.h>
-#include <linux/tty.h>
 #include <termios.h>
 
 #include "cyclades.h"
