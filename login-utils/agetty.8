@@ -3,7 +3,7 @@
 agetty \- alternative Linux getty
 
 .SH SYNOPSIS
-.BR "agetty " [\-ihLmnw]
+.BR "agetty " [\-8ihLmnw]
 .RI "[-f " issue_file ]
 .RI "[-l " login_program ]
 .RI "[-I " init ]
@@ -13,7 +13,7 @@ agetty \- alternative Linux getty
 .I baud_rate,...
 .RI [ term ]
 .br
-.BR "agetty " [\-ihLmnw]
+.BR "agetty " [\-8ihLmnw]
 .RI "[-f " issue_file ]
 .RI "[-l " login_program ]
 .RI "[-I " init ]
@@ -91,6 +91,9 @@ whatever init(8) may have set, and is inherited by login and the shell.
 .nf
 .fi
 .ad
+.TP
+\-8
+Assume that the tty is 8-bit clean, hence disable parity detection.
 .TP
 \-h
 Enable hardware (RTS/CTS) flow control. It is left up to the

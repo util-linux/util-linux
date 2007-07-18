@@ -154,6 +154,7 @@ struct options {
     char   *issue;			/* alternative issue file */
     int     numspeed;			/* number of baud rates to try */
     int     speeds[MAX_SPEED];		/* baud rates to be tried */
+    int     eightbits;			/* assume 8bit-clean tty */
 };
 
 #define	F_PARSE		(1<<0)		/* process modem status messages */
@@ -411,8 +412,11 @@ parse_args(argc, argv, op)
     extern int optind;			/* getopt */
     int     c;
 
-    while (isascii(c = getopt(argc, argv, "I:LH:f:hil:mt:wn"))) {
+    while (isascii(c = getopt(argc, argv, "8I:LH:f:hil:mt:wn"))) {
 	switch (c) {
+	case '8':
+	    op->eightbits = 1;
+	    break;
 	case 'I':
 	    if (!(op->initstring = malloc(strlen(optarg)))) {
 		error(_("can't malloc initstring"));
@@ -1061,10 +1065,11 @@ char   *get_logname(op, cp, tp)
 
 	    if ((c == 0) && op->numspeed > 1)
 		return (0);
-
 	    /* Do parity bit handling. */
 
-	    if (c != (ascval = (c & 0177))) {	/* "parity" bit on ? */
+	    if (op->eightbits) {
+		ascval = c;
+	    } else if (c != (ascval = (c & 0177))) {	/* "parity" bit on */
 		for (bits = 1, mask = 1; mask & 0177; mask <<= 1)
 		    if (mask & ascval)
 			bits++;			/* count "1" bits */
@@ -1225,7 +1230,7 @@ bcode(s)
 void
 usage()
 {
-    fprintf(stderr, _("Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\nor\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"), progname);
+    fprintf(stderr, _("Usage: %s [-8hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\nor\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"), progname);
     exit(1);
 }
 
