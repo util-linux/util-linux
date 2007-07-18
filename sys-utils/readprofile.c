@@ -325,6 +325,7 @@ main(int argc, char **argv) {
 	 */
 	while (fgets(mapline,S_LEN,map)) {
 		unsigned int this=0;
+		int done = 0;
 
 		if (sscanf(mapline,"%llx %s %s",&next_add,mode,next_name)!=3) {
 			fprintf(stderr,_("%s: %s(%i): wrong map line\n"),
@@ -333,12 +334,19 @@ main(int argc, char **argv) {
 		}
 		header_printed = 0;
 
-		/* ignore any LEADING (before a '[tT]' symbol is found)
-		   Absolute symbols */
-		if ((*mode == 'A' || *mode == '?') && total == 0) continue;
-		if (*mode != 'T' && *mode != 't' &&
-		    *mode != 'W' && *mode != 'w')
-			break;	/* only text is profiled */
+		/* the kernel only profiles up to _etext */
+		if (!strcmp(next_name, "_etext") ||
+		    !strcmp(next_name, "__etext"))
+			done = 1;
+		else {
+			/* ignore any LEADING (before a '[tT]' symbol is found)
+			   Absolute symbols */
+			if ((*mode == 'A' || *mode == '?') && total == 0)
+				continue;
+			if (*mode != 'T' && *mode != 't' &&
+			    *mode != 'W' && *mode != 'w')
+				break;	/* only text is profiled */
+		}
 
 		if (indx >= len / sizeof(*buf)) {
 			fprintf(stderr, _("%s: profile address out of range. "
@@ -388,6 +396,8 @@ main(int argc, char **argv) {
 		strcpy(fn_name,next_name);
 
 		maplineno++;
+		if (done)
+			break;
 	}
 
 	/* clock ticks, out of kernel text - probably modules */
