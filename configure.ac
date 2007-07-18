@@ -209,17 +209,10 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 ])
 
 
-AC_CHECK_HEADERS([asm/page.h sys/swap.h], [], [], [
-#ifdef HAVE_ASM_PAGE_H
-# include <asm/page.h>
-#endif
-])
+AC_CHECK_HEADERS([sys/swap.h])
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
 [[
-#ifdef HAVE_ASM_PAGE_H
-# include <asm/page.h>
-#endif
 #ifdef HAVE_SYS_SWAP_H
 # include <sys/swap.h>
 #endif
