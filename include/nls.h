@@ -1,3 +1,6 @@
+#ifndef UTIL_LINUX_NLS_H
+#define UTIL_LINUX_NLS_H
+
 int main(int argc, char *argv[]);
 
 #ifndef LOCALEDIR
@@ -13,6 +16,7 @@ int main(int argc, char *argv[]);
 #  define N_(String) (String)
 # endif
 #else
+# include <locale.h>
 # undef bindtextdomain
 # define bindtextdomain(Domain, Directory) /* empty */
 # undef textdomain
@@ -21,4 +25,4 @@ int main(int argc, char *argv[]);
 # define N_(Text) (Text)
 #endif
 
-
+#endif /* UTIL_LINUX_NLS_H */
