@@ -15,14 +15,8 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-<<<<<<< HEAD:tests/ts-fstab-devname
-
 . ./commands.sh
 . ./functions.sh
-=======
-. commands.sh
-. functions.sh
->>>>>>> tests: add license notices, change from gplv2-only to gplv2-or-later:tests/ts-fstab-devname
 
 TS_COMPONENT="fstab"
 TS_DESC="devname"
