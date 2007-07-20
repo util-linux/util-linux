@@ -60,7 +60,7 @@ function ts_log {
 function ts_has_option {
 	NAME="$1"
 	ALL="$2"
-	echo -n $ALL | sed 's/ //g' | gawk 'BEGIN { FS="="; RS="--" } /('$NAME'$|'$NAME'=)/ { print "yes" }'
+	echo -n $ALL | sed 's/ //g' | $AWK 'BEGIN { FS="="; RS="--" } /('$NAME'$|'$NAME'=)/ { print "yes" }'
 }
 
 function ts_init {
@@ -167,7 +167,7 @@ function ts_device_init {
 	dd if=/dev/zero of="$IMAGE" bs=1M count=5 &> /dev/null
 
 	$TS_CMD_LOSETUP -f "$IMAGE" 2>&1 >> $TS_OUTPUT
-	DEV=$( $TS_CMD_LOSETUP -a | gawk 'BEGIN {FS=":"} /'$IMAGE_RE'/ { print $1 }' )
+	DEV=$( $TS_CMD_LOSETUP -a | $AWK 'BEGIN {FS=":"} /'$IMAGE_RE'/ { print $1 }' )
 
 	if [ -z "$DEV" ]; then
 		ts_device_deinit $DEV

@@ -1,6 +1,8 @@
 TOPDIR=@top_srcdir@
 TS_TOPDIR=$TOPDIR/tests
 
+AWK=@AWK@
+
 # Misc settings
 TS_TESTUSER=${TS_TESTUSER:-"test"}
 
