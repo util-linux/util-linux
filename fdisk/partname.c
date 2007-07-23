@@ -6,16 +6,11 @@
 /*
  * return partition name - uses static storage unless buf is supplied
  */
-static char *
-partnamebf(char *dev, int pno, int lth, int bufsiz, char *bufp) {
-	static char buffer[80];
+char *
+partname(char *dev, int pno, int lth) {
+	static char bufp[80];
 	char *p;
 	int w, wp;
-
-	if (!bufp) {
-		bufp = buffer;
-		bufsiz = sizeof(buffer);
-	}
 
 	w = strlen(dev);
 	p = "";
@@ -38,17 +33,13 @@ partnamebf(char *dev, int pno, int lth, int bufsiz, char *bufp) {
 	}
 
 	wp = strlen(p);
-		
+
 	if (lth) {
-		snprintf(bufp, bufsiz, "%*.*s%s%-2u",
+		snprintf(bufp, sizeof(bufp), "%*.*s%s%-2u",
 			 lth-wp-2, w, dev, p, pno);
 	} else {
-		snprintf(bufp, bufsiz, "%.*s%s%-2u", w, dev, p, pno);
+		snprintf(bufp, sizeof(bufp), "%.*s%s%-2u", w, dev, p, pno);
 	}
 	return bufp;
 }
 
-char *
-partname(char *dev, int pno, int lth) {
-	return partnamebf(dev, pno, lth, 0, NULL);
-}
