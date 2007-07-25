@@ -54,11 +54,11 @@ test -f mount/mount.c || {
 }
 
 set -e
-autopoint --force
-aclocal -I m4
-autoconf
-autoheader
-automake --add-missing
+autopoint --force $AP_OPTS
+aclocal -I m4 $AL_OPTS
+autoconf $AC_OPTS
+autoheader $AH_OPTS
+automake --add-missing $AM_OPTS
 
 cd $THEDIR
 
