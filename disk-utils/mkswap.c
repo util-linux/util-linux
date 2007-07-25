@@ -195,28 +195,8 @@ write_signature(char *sig) {
 	strncpy(sp+pagesize-10, sig, 10);
 }
 
-#if 0
-static int
-tohex(int a) {
-	return ((a < 10) ? '0'+a : 'a'+a-10);
-}
-
 static void
-uuid_unparse(unsigned char *uuid, char *s) {
-	int i;
-
-	for (i=0; i<16; i++) {
-		if (i == 4 || i == 6 || i == 8 || i == 10)
-			*s++ = '-';
-		*s++ = tohex((uuid[i] >> 4) & 0xf);
-		*s++ = tohex(uuid[i] & 0xf);
-	}
-	*s = 0;
-}
-#endif
-
-static void
-write_uuid_and_label(char *uuid, char *volume_name) {
+write_uuid_and_label(unsigned char *uuid, char *volume_name) {
 	struct swap_header_v1_2 *h;
 
 	/* Sanity check */
@@ -520,7 +500,7 @@ main(int argc, char ** argv) {
 	char *block_count = 0;
 	char *pp;
 	char *opt_label = NULL;
-	char *uuid = NULL;
+	unsigned char *uuid = NULL;
 #ifdef HAVE_LIBUUID
 	uuid_t uuid_dat;
 #endif
