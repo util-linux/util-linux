@@ -2,9 +2,9 @@ include $(top_srcdir)/config/include-Makefile.am
 
 SUBDIRS = helpers
 
-EXTRA_DIST = 	expected/ \
+EXTRA_DIST = 	expected \
 		functions.sh \
-		input/ \
+		input \
 		README \
 		run.sh \
 		ts-cal-1 \
