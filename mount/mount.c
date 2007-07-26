@@ -1036,7 +1036,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   /* The "mount -f" checks for for existing record in /etc/mtab (with
    * regular non-fake mount this is usually done by kernel)
    */
-  if (fake && mounted (spec, node))
+  if (!(flags & MS_REMOUNT) && fake && mounted (spec, node))
       die(EX_USAGE, _("mount: according to mtab, "
                       "%s is already mounted on %s\n"),
 		      spec, node);
