@@ -46,7 +46,7 @@ typedef struct blkelv_ioctl_arg_s {
 
 static void
 usage(void) {
-	fprintf(stderr, "elvtune (%s%s)\n", "util-linux-", VERSION);
+	fprintf(stderr, "elvtune (%s)\n", PACKAGE_STRING);
 	fprintf(stderr, _("usage:\n"));
 	fprintf(stderr, "\telvtune [-r r_lat] [-w w_lat] [-b b_lat]"
 		        " /dev/blkdev1 [/dev/blkdev2...]\n");
@@ -58,7 +58,7 @@ usage(void) {
 
 static void
 version(void) {
-	fprintf(stderr, "elvtune (%s%s)\n", "util-linux-", VERSION);
+	fprintf(stderr, "elvtune (%s)\n", PACKAGE_STRING);
 }
 
 #define MAKE_VERSION(p,q,r)	(65536*(p) + 256*(q) + (r))

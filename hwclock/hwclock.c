@@ -1183,7 +1183,7 @@ manipulate_epoch(const bool getepoch, const bool setepoch,
 
 static void
 out_version(void) {
-	printf(_("%s from util-linux-%s\n"), MYNAME, PACKAGE_VERSION);
+	printf(_("%s from %s\n"), MYNAME, PACKAGE_STRING);
 }
 
 /*
