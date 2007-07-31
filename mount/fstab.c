@@ -558,7 +558,7 @@ lock_mtab (void) {
 
 	sprintf(linktargetfile, MOUNTLOCK_LINKTARGET, getpid ());
 
-	i = open (linktargetfile, O_WRONLY|O_CREAT, 0);
+	i = open (linktargetfile, O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR);
 	if (i < 0) {
 		int errsv = errno;
 		/* linktargetfile does not exist (as a file)
