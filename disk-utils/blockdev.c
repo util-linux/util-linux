@@ -57,6 +57,8 @@ struct bdc {
 #define ARGINTG	4
 #define ARGLINTG 5
 #define ARGLLINTG 6
+#define ARGLU 7
+#define ARGLLU 8
 	long argval;
 	char *argname;
 	char *help;
@@ -78,10 +80,10 @@ struct bdc {
 	{ "--setbsz", "BLKBSZSET", BLKBSZSET, ARGINTAP, 0, "BLOCKSIZE", N_("set blocksize") },
 #endif
 #ifdef BLKGETSIZE
-	{ "--getsize", "BLKGETSIZE", BLKGETSIZE, ARGLINTG, -1, NULL, N_("get 32-bit sector count") },
+	{ "--getsize", "BLKGETSIZE", BLKGETSIZE, ARGLU, -1, NULL, N_("get 32-bit sector count") },
 #endif
 #ifdef BLKGETSIZE64
-	{ "--getsize64", "BLKGETSIZE64", BLKGETSIZE64, ARGLLINTG, -1, NULL, N_("get size in bytes") },
+	{ "--getsize64", "BLKGETSIZE64", BLKGETSIZE64, ARGLLU, -1, NULL, N_("get size in bytes") },
 #endif
 #ifdef BLKRASET
 	{ "--setra", "BLKRASET", BLKRASET, ARGINTA, 0, "READAHEAD", N_("set readahead") },
@@ -245,6 +247,8 @@ do_commands(int fd, char **argv, int d) {
 	int iarg;
 	long larg;
 	long long llarg;
+	unsigned long lu;
+	unsigned long long llu;
 	int verbose = 0;
 
 	for (i = 1; i < d; i++) {
@@ -309,6 +313,15 @@ do_commands(int fd, char **argv, int d) {
 			llarg = bdcms[j].argval;
 			res = ioctl(fd, bdcms[j].ioc, &llarg);
 			break;
+		case ARGLU:
+			lu = bdcms[j].argval;
+			res = ioctl(fd, bdcms[j].ioc, &lu);
+			break;
+		case ARGLLU:
+			llu = bdcms[j].argval;
+			res = ioctl(fd, bdcms[j].ioc, &llu);
+			break;
+
 		}
 		if (res == -1) {
 			perror(bdcms[j].iocname);
@@ -335,6 +348,19 @@ do_commands(int fd, char **argv, int d) {
 			else
 				printf("%lld\n", llarg);
 			break;
+		case ARGLU:
+			if (verbose)
+				printf("%s: %lu\n", _(bdcms[j].help), lu);
+			else
+				printf("%lu\n", lu);
+			break;
+		case ARGLLU:
+			if (verbose)
+				printf("%s: %llu\n", _(bdcms[j].help), llu);
+			else
+				printf("%llu\n", llu);
+			break;
+
 		default:
 			if (verbose)
 				printf(_("%s succeeded.\n"), _(bdcms[j].help));
