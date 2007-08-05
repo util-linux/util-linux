@@ -491,9 +491,18 @@ main_swapoff(int argc, char *argv[]) {
 			exit(2);
 		}
 		while ((fstab = getmntent(fp)) != NULL) {
-			if (streq(fstab->mnt_type, MNTTYPE_SWAP) &&
-			    !is_in_proc_swaps(fstab->mnt_fsname))
-				do_swapoff(fstab->mnt_fsname, QUIET);
+			const char *orig_special = fstab->mnt_fsname;
+			const char *special;
+
+			if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
+				continue;
+
+			special = fsprobe_get_devname(orig_special);
+			if (!special)
+				continue;
+
+			if (!is_in_proc_swaps(special))
+				do_swapoff(special, QUIET);
 		}
 		fclose(fp);
 	}
