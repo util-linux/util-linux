@@ -38,6 +38,7 @@ EXTRA_DIST = 	expected \
 		ts-mount-special \
 		ts-mount-uuid \
 		ts-namei-logic \
+		ts-script-race \
 		ts-swapon-devname \
 		ts-swapon-label \
 		ts-swapon-uuid
