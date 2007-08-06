@@ -52,6 +52,7 @@
 #include <sys/time.h>
 #include <sys/file.h>
 #include <sys/signal.h>
+#include <errno.h>
 #include "nls.h"
 
 #ifdef __linux__
@@ -97,6 +98,8 @@ int	tflg = 0;
 
 static char *progname;
 
+int die;
+
 static void
 die_if_link(char *fn) {
 	struct stat s;
@@ -123,6 +126,7 @@ die_if_link(char *fn) {
 
 int
 main(int argc, char **argv) {
+	struct sigaction sa;
 	extern int optind;
 	char *p;
 	int ch;
@@ -191,7 +195,12 @@ main(int argc, char **argv) {
 		printf(_("Script started, file is %s\n"), fname);
 	fixtty();
 
-	(void) signal(SIGCHLD, finish);
+	sigemptyset(&sa.sa_mask);
+	sa.sa_flags = 0;
+
+	sa.sa_handler = finish;
+	sigaction(SIGCHLD, &sa, NULL);
+
 	child = fork();
 	if (child < 0) {
 		perror("fork");
@@ -207,8 +216,10 @@ main(int argc, char **argv) {
 			dooutput();
 		else
 			doshell();
-	} else
-		(void) signal(SIGWINCH, resize);
+	} else {
+		sa.sa_handler = resize;
+		sigaction(SIGWINCH, &sa, NULL);
+	}
 	doinput();
 
 	return 0;
@@ -221,8 +232,12 @@ doinput() {
 
 	(void) fclose(fscript);
 
-	while ((cc = read(0, ibuf, BUFSIZ)) > 0)
+	if (die == 0 && child && kill(child, 0) == -1 && errno == ESRCH)
+		die = 1;
+
+	while (die == 0 && (cc = read(0, ibuf, BUFSIZ)) > 0)
 		(void) write(master, ibuf, cc);
+
 	done();
 }
 
@@ -232,14 +247,10 @@ void
 finish(int dummy) {
 	int status;
 	register int pid;
-	register int die = 0;
 
 	while ((pid = wait3(&status, WNOHANG, 0)) > 0)
 		if (pid == child)
 			die = 1;
-
-	if (die)
-		done();
 }
 
 void
@@ -267,6 +278,7 @@ dooutput() {
 	char obuf[BUFSIZ];
 	struct timeval tv;
 	double oldtime=time(NULL), newtime;
+	int flgs = 0;
 
 	(void) close(0);
 #ifdef HAVE_LIBUTIL
@@ -277,10 +289,37 @@ dooutput() {
 	if (!qflg)
 		fprintf(fscript, _("Script started on %s"), obuf);
 
-	for (;;) {
+	if (die == 0 && child && kill(child, 0) == -1 && errno == ESRCH)
+		/*
+		 * the SIGCHLD handler could be executed when the "child"
+		 * variable is not set yet. It means that the "die" is zero
+		 * althought the child process is already done. We have to
+		 * check this thing now. Now we have the "child" variable
+		 * already initialized. For more details see main() and
+		 * finish().  --kzak 07-Aug-2007
+		 */
+		die = 1;
+
+	do {
+		if (die && flgs == 0) {
+			/* ..child is dead, but it doesn't mean that there is
+			 * nothing in buffers.
+			 */
+			flgs = fcntl(master, F_GETFL, 0);
+			if (fcntl(master, F_SETFL, (flgs | O_NONBLOCK)) == -1)
+				break;
+		}
 		if (tflg)
 			gettimeofday(&tv, NULL);
+
+		errno = 0;
 		cc = read(master, obuf, sizeof (obuf));
+
+		if (die && errno == EINTR && cc <= 0)
+			/* read() has been interrupted by SIGCHLD, try it again
+			 * with O_NONBLOCK
+			 */
+			continue;
 		if (cc <= 0)
 			break;
 		if (tflg) {
@@ -292,7 +331,10 @@ dooutput() {
 		(void) fwrite(obuf, 1, cc, fscript);
 		if (fflg)
 			(void) fflush(fscript);
-	}
+	} while(1);
+
+	if (flgs)
+		fcntl(master, F_SETFL, flgs);
 	done();
 }
 
