@@ -1279,10 +1279,9 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 		 bd, spec);
 	  break;
       } else {
-	 if (loop) {
-	     opts = opts0;
-	     types = types0;
-	 }
+	 opts = opts0;
+	 types = types0;
+
          if (opts) {
 	     char *opts2 = append_opt(xstrdup(opts), "ro", NULL);
 	     my_free(opts1);
