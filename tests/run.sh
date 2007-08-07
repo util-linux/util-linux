@@ -20,6 +20,9 @@
 echo
 echo "------------------ Utils-linux-ng regression tests ------------------"
 echo
+echo "                    For development purpose only.                    "
+echo "                 Don't execute on production system!                 "
+echo
 
 rm -f *~
 
