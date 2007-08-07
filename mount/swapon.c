@@ -31,6 +31,7 @@
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
 #define QUIET	1
+#define CANONIC	1
 
 int all = 0;
 int verbose = 0;
@@ -56,6 +57,8 @@ static struct option longswaponopts[] = {
 };
 
 static struct option *longswapoffopts = &longswaponopts[2];
+
+static int cannot_find(const char *special);
 
 static void
 swapon_usage(FILE *fp, int n) {
@@ -155,19 +158,18 @@ display_summary(void)
 }
 
 static int
-do_swapon(const char *orig_special, int prio) {
+do_swapon(const char *orig_special, int prio, int canonic) {
 	int status;
 	struct stat st;
-	const char *special;
+	const char *special = orig_special;
 
 	if (verbose)
 		printf(_("%s on %s\n"), progname, orig_special);
 
-	special = fsprobe_get_devname(orig_special);
-	if (!special) {
-		fprintf(stderr, _("%s: cannot find the device for %s\n"),
-			progname, orig_special);
-		return -1;
+	if (!canonic) {
+		special = fsprobe_get_devname(orig_special);
+		if (!special)
+			return cannot_find(orig_special);
 	}
 
 	if (stat(special, &st) < 0) {
@@ -236,25 +238,27 @@ cannot_find(const char *special) {
 static int
 swapon_by_label(const char *label, int prio) {
 	const char *special = fsprobe_get_devname_by_label(label);
-	return special ? do_swapon(special, prio) : cannot_find(label);
+	return special ? do_swapon(special, prio, CANONIC) : cannot_find(label);
 }
 
 static int
 swapon_by_uuid(const char *uuid, int prio) {
 	const char *special = fsprobe_get_devname_by_uuid(uuid);
-	return special ? do_swapon(special, prio) : cannot_find(uuid);
+	return special ? do_swapon(special, prio, CANONIC) : cannot_find(uuid);
 }
 
 static int
-do_swapoff(const char *orig_special, int quiet) {
-        const char *special;
+do_swapoff(const char *orig_special, int quiet, int canonic) {
+        const char *special = orig_special;
 
 	if (verbose)
 		printf(_("%s on %s\n"), progname, orig_special);
 
-	special = fsprobe_get_devname(orig_special);
-	if (!special)
-		return cannot_find(orig_special);
+	if (!canonic) {
+		special = fsprobe_get_devname(orig_special);
+		if (!special)
+			return cannot_find(orig_special);
+	}
 
 	if (swapoff(special) == 0)
 		return 0;	/* success */
@@ -274,13 +278,13 @@ do_swapoff(const char *orig_special, int quiet) {
 static int
 swapoff_by_label(const char *label, int quiet) {
 	const char *special = fsprobe_get_devname_by_label(label);
-	return special ? do_swapoff(special, quiet) : cannot_find(label);
+	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(label);
 }
 
 static int
 swapoff_by_uuid(const char *uuid, int quiet) {
 	const char *special = fsprobe_get_devname_by_uuid(uuid);
-	return special ? do_swapoff(special, quiet) : cannot_find(uuid);
+	return special ? do_swapoff(special, quiet, CANONIC) : cannot_find(uuid);
 }
 
 static int
@@ -300,7 +304,6 @@ swapon_all(void) {
 	}
 
 	while ((fstab = getmntent(fp)) != NULL) {
-		const char *orig_special = fstab->mnt_fsname;
 		const char *special;
 		int skip = 0;
 		int pri = priority;
@@ -308,7 +311,7 @@ swapon_all(void) {
 		if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
 			continue;
 
-		special = fsprobe_get_devname(orig_special);
+		special = fsprobe_get_devname(fstab->mnt_fsname);
 		if (!special)
 			continue;
 
@@ -325,7 +328,7 @@ swapon_all(void) {
 					skip = 1;
 			}
 			if (!skip)
-				status |= do_swapon(special, pri);
+				status |= do_swapon(special, pri, CANONIC);
 		}
 	}
 	fclose(fp);
@@ -408,7 +411,7 @@ main_swapon(int argc, char *argv[]) {
 		status |= swapon_by_uuid(ulist[i], priority);
 
 	while (*argv != NULL)
-		status |= do_swapon(*argv++, priority);
+		status |= do_swapon(*argv++, priority, !CANONIC);
 
 	return status;
 }
@@ -464,7 +467,7 @@ main_swapoff(int argc, char *argv[]) {
 		status |= swapoff_by_uuid(ulist[i], !QUIET);
 
 	while (*argv != NULL)
-		status |= do_swapoff(*argv++, !QUIET);
+		status |= do_swapoff(*argv++, !QUIET, !CANONIC);
 
 	if (all) {
 		/*
@@ -476,7 +479,7 @@ main_swapoff(int argc, char *argv[]) {
 		 */
 		read_proc_swaps();
 		for(i=0; i<numSwaps; i++)
-			status |= do_swapoff(swapFiles[i], QUIET);
+			status |= do_swapoff(swapFiles[i], QUIET, CANONIC);
 
 		/*
 		 * Unswap stuff mentioned in /etc/fstab.
@@ -491,18 +494,17 @@ main_swapoff(int argc, char *argv[]) {
 			exit(2);
 		}
 		while ((fstab = getmntent(fp)) != NULL) {
-			const char *orig_special = fstab->mnt_fsname;
 			const char *special;
 
 			if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
 				continue;
 
-			special = fsprobe_get_devname(orig_special);
+			special = fsprobe_get_devname(fstab->mnt_fsname);
 			if (!special)
 				continue;
 
 			if (!is_in_proc_swaps(special))
-				do_swapoff(special, QUIET);
+				do_swapoff(special, QUIET, CANONIC);
 		}
 		fclose(fp);
 	}
