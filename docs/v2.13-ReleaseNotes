@@ -65,319 +65,375 @@ Changelog:
 
 
 agetty:
-	add 'O' escape code to display domain name
-	check gethostname() return value
+   - 8 bit characters on the Linux console lead to input corruption  [Moritz Muehlenhoff]
+   - add 'O' escape code to display domain name  [Karel Zak]
+   - check gethostname() return value  [Karel Zak]
+   - fix short malloc in initstring handling  [LaMont Jones]
 blockdev:
-	add BLKFRAGET/BLKFRASET ioctls
-	cleanup usage() and update man page
+   - add BLKFRAGET/BLKFRASET ioctls  [Karel Zak]
+   - cleanup usage() and update man page  [Karel Zak]
+   - fix "blockdev --getsz" for large devices  [Karel Zak]
+   - use LU and LLU for BLKGETSIZE and BLKGETSIZE64  [Karel Zak]
 build-sys:
-	add AC_GNU_SOURCE
-	add Automake option dist-bzip2
-	add missing files
-	add SUID_CFLAGS
-	add SUID_LDFLAGS
-	add support for audit
-	amend .gitignore
-	call automake after autoconf
-	cleanup architecture conditionals
-	cleanup sys-utils/ rdev symlinks
-	configure.am selinux support cleanup
-	declare SUID_CFLAGS and SUID_LDFLAGS as precious
-	do not build convenience libraries in lib/
-	do not kick off AM_CFLAGS by SUID_CFLAGS
-	do not play with DEFS, use AM_CPPFLAGS
-	do not set with_foo twice
-	do not use internal Autoconf variables
-	do not use wildcards in EXTRA_DIST
-	factor out common parts from mount/Makefile.am
-	fix HAVE_NCURSES
-	fix ifdef ENABLE_WIDECHAR usage
-	fix linking when ncurses is built with --with-termlib=tinfo
-	fix README filenames and add missing files to EXTRA_DISTs
-	fix the example configure call in README
-	fix the final message of autogen.sh
-	in configure.ac, change "po" -> "$srcdir/po"
-	in the clean targets use "find ... | xargs rm -f"
-	let configure instantiate the misc-utils/*.pl scripts
-	make the getopt example directory relative to datadir
-	merge adjacent AC_CONFIG_HEADERS and AC_CONFIG_FUNCS calls
-	minor fixes in configure.in
-	mount/Makefile.am tiny cleanup
-	mount/Makefile.am tiny cleanup II
-	move -D flags to *_CPPFLAGS
-	move the optimization flags to AM_CFLAGS
-	--prefix defaults to /usr
-	remove aclocal.m4 from SCM
-	remove AC_PROG_RANLIB
-	remove config.h.in from VCS
-	remove config/include-Makefile.am from EXTRA_DIST
-	remove DEFAULT_INCLUDES workaround
-	remove -fomit-frame-pointer
-	remove generated autotools stuff from git
-	remove po/Makevars.template from EXTRA_DIST
-	remove swapargs.h, move the tests to main configure.ac
-	rename to -ng, change maintainer name
-	replace AC_TRY_* by AC_*_IFELSE
-	s/AC_HELP_STRING/AS_HELP_STRING/
-	set DISTCHECK_CONFIGURE_FLAGS in top-level makefile
-	simplify "clean" in tests/Makefile.am
-	update po/POTFILES.in
-	use dist_example_DATA
-	use dist_noinst_DATA to work around the bug with dist_man_MANS
-	use dist_noinst_HEADERS in include/Makefile.am
-	use dist_usrbinexec_SCRIPTS in misc-utils/Makefile.am
-	check exit status of autotools
-	remove "make mrproper", git-clean is good enough
-	remove libtool
+   - --prefix defaults to /usr  [Stepan Kasal]
+   - add ${AC,AP,AM,AH}_OPTS to autogen.sh  [Karel Zak]
+   - add AC_GNU_SOURCE  [Karel Zak]
+   - add Automake option dist-bzip2  [Stepan Kasal]
+   - add SUID_CFLAGS  [Karel Zak]
+   - add SUID_LDFLAGS  [Stepan Kasal]
+   - add missing files  [Karel Zak]
+   - add support for audit  [Karel Zak]
+   - add warning when libuuid is not found  [Karel Zak]
+   - amend .gitignore  [Stepan Kasal]
+   - call automake after autoconf  [Stepan Kasal]
+   - cleanup architecture conditionals  [Karel Zak]
+   - cleanup sys-utils/ rdev symlinks  [Karel Zak]
+   - configure.am selinux support cleanup  [Karel Zak]
+   - declare SUID_CFLAGS and SUID_LDFLAGS as precious  [Stepan Kasal]
+   - do not build convenience libraries in lib/  [Stepan Kasal]
+   - do not kick off AM_CFLAGS by SUID_CFLAGS  [Stepan Kasal]
+   - do not play with DEFS, use AM_CPPFLAGS  [Stepan Kasal]
+   - do not set with_foo twice  [Stepan Kasal]
+   - do not use internal Autoconf variables  [Stepan Kasal]
+   - do not use wildcards in EXTRA_DIST  [Stepan Kasal]
+   - factor out common parts from mount/Makefile.am  [Stepan Kasal]
+   - fix HAVE_NCURSES  [Karel Zak]
+   - fix README filenames and add missing files to EXTRA_DISTs  [Karel Zak]
+   - fix directories in EXTRA_DIST  [Karel Zak]
+   - fix ifdef ENABLE_WIDECHAR usage  [Karel Zak]
+   - fix linking when ncurses is built with --with-termlib=tinfo  [Arkadiusz Miskiewicz]
+   - fix the example configure call in README  [Stepan Kasal]
+   - fix the final message of autogen.sh  [Stepan Kasal]
+   - in configure.ac, change "po" -> "$srcdir/po"  [Stepan Kasal]
+   - in the clean targets use "find ... | xargs rm -f"  [Stepan Kasal]
+   - let configure instantiate the misc-utils/*.pl scripts  [Stepan Kasal]
+   - make the getopt example directory relative to datadir  [Stepan Kasal]
+   - merge adjacent AC_CONFIG_HEADERS and AC_CONFIG_FUNCS calls  [Stepan Kasal]
+   - minor fixes in configure.in  [Karel Zak]
+   - missing header when NLS is disabled  [Gabriel Barazer]
+   - mount/Makefile.am tiny cleanup  [Stepan Kasal]
+   - mount/Makefile.am tiny cleanup II  [Stepan Kasal]
+   - move -D flags to *_CPPFLAGS  [Stepan Kasal]
+   - move the optimization flags to AM_CFLAGS  [Stepan Kasal]
+   - release++  [Karel Zak]
+   - remove "make mrproper", git-clean is good enough  [Karel Zak]
+   - remove -fomit-frame-pointer  [Karel Zak]
+   - remove AC_PROG_RANLIB  [Stepan Kasal]
+   - remove DEFAULT_INCLUDES workaround  [Karel Zak]
+   - remove aclocal.m4 from SCM  [Karel Zak]
+   - remove asm/page.h test  [Karel Zak]
+   - remove config.h.in from VCS  [Stepan Kasal]
+   - remove config/include-Makefile.am from EXTRA_DIST  [Stepan Kasal]
+   - remove generated autotools stuff from git  [Karel Zak]
+   - remove libtool  [Karel Zak]
+   - remove po/Makevars.template from EXTRA_DIST  [Stepan Kasal]
+   - remove swapargs.h, move the tests to main configure.ac  [Stepan Kasal]
+   - rename to -ng, change maintainer name  [Karel Zak]
+   - replace AC_TRY_* by AC_*_IFELSE  [Stepan Kasal]
+   - s/AC_HELP_STRING/AS_HELP_STRING/  [Stepan Kasal]
+   - set DISTCHECK_CONFIGURE_FLAGS in top-level makefile  [Stepan Kasal]
+   - simplify "clean" in tests/Makefile.am  [Stepan Kasal]
+   - update po/POTFILES.in  [Stepan Kasal]
+   - use dist_example_DATA  [Stepan Kasal]
+   - use dist_noinst_DATA to work around the bug with dist_man_MANS  [Stepan Kasal]
+   - use dist_noinst_HEADERS in include/Makefile.am  [Stepan Kasal]
+   - use dist_usrbinexec_SCRIPTS in misc-utils/Makefile.am  [Stepan Kasal]
 cal:
-	fix a segfault and -3m highlighting
-	ifdef cleanup, non-curses/tempcap code fixes
-	widechar code cleanup
-	add test code
-	remove old cal test
+   - add test code  [Karel Zak]
+   - fix a segfault and -3m highlighting  [Karel Zak]
+   - ifdef cleanup, non-curses/tempcap code fixes  [Karel Zak]
+   - widechar code cleanup  [Karel Zak]
 cfdisk:
-	build-sys defines HAVE_RPMATCH, not HAVE_rpmatch
-	fix stupid typo in GPT checker call
+   - build-sys defines HAVE_RPMATCH, not HAVE_rpmatch  [Karel Zak]
+   - fix stupid typo in GPT checker call  [Karel Zak]
 chsh:
-	remove tailing wihit-spaces and use PATH_BSHELL
+   - remove tailing wihit-spaces and use PATH_BSHELL  [Karel Zak]
 col:
-	getwchar() errors shouldn't be hidden
+   - getwchar() errors shouldn't be hidden  [Karel Zak]
+cytune:
+   - remove linux/tty.h inclusion  [Karel Zak]
 ddate:
-	fix compiler warnings
+   - fix compiler warnings  [Karel Zak]
+disk-utils:
+   - fix libuuid usage in mkswap  [Matthias Koenig]
+   - let mkfs tools open with O_EXCL  [Matthias Koenig]
 docs:
-	add the DEPRECATED file
-	clean up TODO file and add a new resuest for 2.14
-	fix info about devel/master branchs
-	fix URL and typos in README.devel
-	refresh AUTHORS file
-	remove deprecated section from README
-	update AUTHORS file
-	update TODO file
+   - add rdev(8) between deprecated utils  [Karel Zak]
+   - add release notes  [Karel Zak]
+   - add the DEPRECATED file  [Karel Zak]
+   - clean up TODO file and add a new resuest for 2.14  [Karel Zak]
+   - cleanup before release  [Karel Zak]
+   - fix URL and typos in README.devel  [Karel Zak]
+   - fix info about devel/master branchs  [Karel Zak]
+   - refresh AUTHORS file  [Karel Zak]
+   - remove deprecated section from README  [Karel Zak]
+   - update AUTHORS file  [Karel Zak]
+   - update TODO file  [Karel Zak]
+   - update release notes  [Karel Zak]
 fdisk:
-	add GPT detection code
-	add MAC label detection
-	cleanup full disk detection code
-	fix "differ in signedness" compiler warnings
-	fix "type qualifiers ignored on function return type"
-	Makefile.am refactoring
-	many significant improvements and fixes to Sun label handling
-	move duplicate stuff from fdisk*label.h to fdisk.h
-	use unsigned long long instead int for sectors
-	check returns in fdisk from partition changes
-	when generating a DOS disk label, give it an ID
-	do not complain about regular files
+   - Makefile.am refactoring  [Karel Zak]
+   - add GPT detection code  [Karel Zak]
+   - add MAC label detection  [Karel Zak]
+   - add support for udev persistent device names  [Matthias Koenig]
+   - check returns in fdisk from partition changes  [Mike Frysinger]
+   - cleanup full disk detection code  [Karel Zak]
+   - cleanup partname.c  [Karel Zak]
+   - do not complain about regular files  [H. Peter Anvin]
+   - fix "differ in signedness" compiler warnings  [Karel Zak]
+   - fix "type qualifiers ignored on function return type"  [Karel Zak]
+   - many significant improvements and fixes to Sun label handling  [David Miller]
+   - move duplicate stuff from fdisk*label.h to fdisk.h  [Karel Zak]
+   - use unsigned long long instead int for sectors  [Karel Zak]
+   - when generating a DOS disk label, give it an ID  [H. Peter Anvin]
 getopt:
-	remove old unused files
+   - remove old unused files  [Karel Zak]
 hexdump:
-	don't use memset with zero lenght
+   - don't use memset with zero lenght  [Karel Zak]
 hwclock:
-	add --rtc=<path> option and support for /dev/rtc0
-	add support for audit system
-	fix --systohc sets clock 0.5 seconds slow
-	make ggc happy and check return values from fgets, read and write
-	remove tailing white-spaces and clean up clock.h
+   - add --rtc=<path> option and support for /dev/rtc0  [Karel Zak]
+   - add support for audit system  [Karel Zak]
+   - fix --systohc sets clock 0.5 seconds slow  [Karel Zak]
+   - make ggc happy and check return values from fgets, read and write  [Karel Zak]
+   - remove tailing white-spaces and clean up clock.h  [Karel Zak]
+ionice:
+   - cleanup usage for idle class  [Matthias Koenig]
+   - fix ionice build on sparc  [David Miller]
+   - prefer SYS_ioprio_{set,get} from glibc to hardcoded version  [Karel Zak]
 ipcs:
-	add new tests for ipcs limits
-	add regression test for output headers
-	fix typo in Semaphore headers
-	max total shared memory in kbytes instead pages
+   - add new tests for ipcs limits  [Karel Zak]
+   - add regression test for output headers  [Karel Zak]
+   - fix typo in Semaphore headers  [Karel Zak]
+   - max total shared memory in kbytes instead pages  [Karel Zak]
+logger:
+   - use snprintf instead of sprintf in logger.c  [LaMont Jones]
 login:
-	add audit support
-	add IPv6 support
-	add regression test for IP address checking code
-	attempt to run if it has no read/write access to its terminal
-	close PAM session after failed pam_setcred
-	improve work with signals
-	keep syslog useful for end of PAM session.
-	login's timeout can fail
-	omits PAM account validation when auth is skipped (CVE-2006-7108)
-	remove triiling white-spaces
-	update 32bit utmp correctly on 64bit system
+   - add IPv6 support  [Karel Zak]
+   - add audit support  [Karel Zak]
+   - add regression test for IP address checking code  [Karel Zak]
+   - attempt to run if it has no read/write access to its terminal  [Karel Zak]
+   - close PAM session after failed pam_setcred  [Karel Zak]
+   - improve work with signals  [Karel Zak]
+   - keep syslog useful for end of PAM session.  [Karel Zak]
+   - login's timeout can fail  [Karel Zak]
+   - omits PAM account validation when auth is skipped (CVE-2006-7108)  [Karel Zak]
+   - remove triiling white-spaces  [Karel Zak]
+   - update 32bit utmp correctly on 64bit system  [Karel Zak]
+login-utils:
+   - remove deprecated sigsetmask() from wall  [Karel Zak]
+   - remove unwanted newlines from wall  [Karel Zak]
+lomount.c:
+   - don't use mlockall if CRYPT_NONE  [Masatake YAMATO]
 look:
-	fix problem with !isalnum() words
-	remove tailing white-spaces
+   - fix problem with !isalnum() words  [Karel Zak]
+   - man page clarification  [Pádraig Brady]
+   - remove tailing white-spaces  [Karel Zak]
 losetup:
-	add a new option -s
-	add -a option to list all used loop devices
-	add long options and fix man page
-	add support read-only loops
-	add to man page info about deprecated cryptoloop
+   - add -a option to list all used loop devices  [Karel Zak]
+   - add a new option -s  [Karel Zak]
+   - add long options and fix man page  [Karel Zak]
+   - add support read-only loops  [Karel Zak]
+   - add to man page info about deprecated cryptoloop  [Karel Zak]
 man pages:
-	add "AVAILABILITY" section
+   - add "AVAILABILITY" section  [Karel Zak]
 mcookie:
-	remove non-linux code
+   - remove non-linux code  [Karel Zak]
+misc-util:
+   - new rtcwake command  [Bernhard Walle]
+misc-utils:
+   - add scriptreplay manpage  [Matthias Koenig]
+   - remove old cal test  [Karel Zak]
+mkfs:
+   - remove nonsense from man page  [Karel Zak]
 mkfs.cramfs:
-	cleanup HAVE_ macros usage
-	fix a way how mkfs works with empty files
-	remove hardcoded limit for directories
+   - cleanup HAVE_ macros usage  [Karel Zak]
+   - fix a way how mkfs works with empty files  [Karel Zak]
+   - remove hardcoded limit for directories  [Karel Zak]
 mkswap:
-	add regression test
-	automatically add selinux label to swapfile
-	avoid mkswap usage on already mounted device
-	gcc happy: unsigned long usage
-	fix libuuid usage in mkswap
+   - add regression test  [Karel Zak]
+   - automatically add selinux label to swapfile  [Karel Zak]
+   - avoid mkswap usage on already mounted device  [Karel Zak]
+   - default to V1 in any case  [Matthias Koenig]
+   - fix signedness problems and remove obsolete code  [Karel Zak]
+   - gcc happy  unsigned long usage  [Karel Zak]
 more:
-	fix file descriptor leak
-	ix the more command compilation against termcap
+   - fix file descriptor leak  [Karel Zak]
 mount:
-	add note about /etc/mtab unreliability to mount.8
-	add note about fcntl/ioctl unreliability on NFS to mount.8
-	add -s and -f and note to man page for external mount helpers
-	add simple (printf-like) debug routine and --debug option
-	add support for context, fscontext and defcontext selinux mount options
-	add support for mixed usage of SPECes
-	add support for mtab "uhelper" option
-	avoid duplicate entries in mtab when mount -f
-	call /sbin/mount.<type> also when mounting without "-t"
-	clean up getfs* (fstab.c) interface
-	clean up info about NFS in mount.8
-	doesn't rpc_pipefs and nfsd on umount -a
-	do not treat arm/sparc specially.
-	don't umount sysfs when running umount -a
-	fix -fv so that it doesn't incorrectly spit out an error that nothing was done.
-	fix has_* functions (CVE-2007-0822)
-	fix list logic in update_mtab
-	fix memory usage in update_mtab
-	fix mtab_lock
-	fix typo in error message
-	fsprobe: add libvolume_id support
-	fsprobe: add libvolume_id support to configure.ac
-	fsprobe: make fsprobe_get_devname functions more generic
-	fsprobe: remove mount_guess_fstype.{c,h}
-	fsprobe: remove non-blkid code
-	fsprobe: rename files to fsprobe_*
-	fsprobe: rename the rest of API routines to fsprobe_*
-	fsprobe: use blkid cache only when really necessary
-	getfs_* (fstab) interface has to work with canonicalize()
-	kill mount_guess_rootdev
-	loop device race condition
-	needs to handle special mountprog even on guessed file systems.
-	parse SPEC before search in fstab
-	relative atime support
-	remove all NFS code
-	remove nfsmount() from sundries.h
-	rewrite getfs_by_specdir() without mem leaks
-	shared-subtree support
-	update mtab correctly when mount --move
-	use encoded labels for volume_id
-	use growable string for options
-	use loop= option when mounting by /sbin/mount.<type>
-	use realloc for xstrconcat functions
-	use verbose mode instead debug mode
-	add acl option documentation for ext3 and reiserfs
+   - add -s and -f and note to man page for external mount helpers  [Karel Zak]
+   - add acl option documentation for ext3 and reiserfs  [Matthias Koenig]
+   - add note about /etc/mtab unreliability to mount.8  [Karel Zak]
+   - add note about fcntl/ioctl unreliability on NFS to mount.8  [Karel Zak]
+   - add simple (printf-like) debug routine and --debug option  [Karel Zak]
+   - add support for context, fscontext and defcontext selinux mount options  [Karel Zak]
+   - add support for mixed usage of SPECes  [Karel Zak]
+   - add support for mtab "uhelper" option  [Karel Zak]
+   - avoid duplicate entries in mtab when mount -f  [Karel Zak]
+   - call /sbin/mount.<type> also when mounting without "-t"  [Karel Zak]
+   - clean up getfs* (fstab.c) interface  [Karel Zak]
+   - clean up info about NFS in mount.8  [Karel Zak]
+   - do not treat arm/sparc specially.  [Mike Frysinger]
+   - doesn't rpc_pipefs and nfsd on umount -a  [Karel Zak]
+   - don't umount sysfs when running umount -a  [Mike Frysinger]
+   - fix -f -o remount  [Karel Zak]
+   - fix -fv so that it doesn't incorrectly spit out an error that nothing was done.  [Mike Frysinger]
+   - fix has_* functions (CVE-2007-0822)  [Karel Zak]
+   - fix incorrect behavior when more than one fs type is specified  [Attila Áfra]
+   - fix list logic in update_mtab  [Karel Zak]
+   - fix memory usage in update_mtab  [Mike Frysinger]
+   - fix mtab_lock  [Karel Zak]
+   - fix typo in error message  [Karel Zak]
+   - fsprobe  add libvolume_id support  [Karel Zak]
+   - fsprobe  add libvolume_id support to configure.ac  [Karel Zak]
+   - fsprobe  make fsprobe_get_devname functions more generic  [Karel Zak]
+   - fsprobe  remove mount_guess_fstype.{c,h}  [Karel Zak]
+   - fsprobe  remove non-blkid code  [Karel Zak]
+   - fsprobe  rename files to fsprobe_*  [Karel Zak]
+   - fsprobe  rename the rest of API routines to fsprobe_*  [Karel Zak]
+   - fsprobe  use blkid cache only when really necessary  [Karel Zak]
+   - getfs_* (fstab) interface has to work with canonicalize()  [Karel Zak]
+   - kill mount_guess_rootdev  [Stepan Kasal]
+   - loop device race condition  [Matthias Koenig]
+   - mention hfsplus in mount manpage  [LaMont Jones]
+   - needs to handle special mountprog even on guessed file systems.  [Karel Zak]
+   - parse SPEC before search in fstab  [Karel Zak]
+   - relative atime support  [Valerie Henson]
+   - remove all NFS code  [Karel Zak]
+   - remove nfsmount() from sundries.h  [Karel Zak]
+   - rewrite getfs_by_specdir() without mem leaks  [Karel Zak]
+   - shared-subtree support  [Karel Zak]
+   - should set proper permissions on locktime  [Flávio Leitner]
+   - update mtab correctly when mount --move  [Karel Zak]
+   - update xfs mount options  [Matthias Koenig]
+   - use encoded labels for volume_id  [Kay Sievers]
+   - use growable string for options  [Karel Zak]
+   - use loop= option when mounting by /sbin/mount.<type>  [Karel Zak]
+   - use realloc for xstrconcat functions  [Karel Zak]
+   - use verbose mode instead debug mode  [Karel Zak]
 namei:
-	fix logic and infinite loop of symlinks
-	new regression test
+   - fix logic and infinite loop of symlinks  [Karel Zak]
+   - new regression test  [Karel Zak]
 newgrp:
-	add support for /etc/gshadow
-	check result from getgrnam() more carefully
+   - add support for /etc/gshadow  [Karel Zak]
+   - check result from getgrnam() more carefully  [Karel Zak]
 partx:
-	add man pages for addpart, delpart and partx
+   - add man pages for addpart, delpart and partx  [Karel Zak]
 po:
-	rename mount/mntent.c to mount/mount_mntent.c
-	typo in french translation of mount error.
-	update po files
-	vipw doesn't use rpmatch, all translations have to use y/n
+   - rename mount/mntent.c to mount/mount_mntent.c  [Karel Zak]
+   - typo in french translation of mount error.  [Mike Frysinger]
+   - update po files  [Karel Zak]
+   - update po/ stuff  [Karel Zak]
+   - vipw doesn't use rpmatch, all translations have to use y/n  [Karel Zak]
 raw:
-	add file with udev rule example
-	don't accept raw0 as a target name
-	move the raw command to /sbin
-	update man page (about dd and O_DIRECT)
+   - add file with udev rule example  [Karel Zak]
+   - don't accept raw0 as a target name  [Karel Zak]
+   - move the raw command to /sbin  [Karel Zak]
+   - update man page (about dd and O_DIRECT)  [Karel Zak]
+rdev:
+   - should be delivered on amd64 as well as i386.  [LaMont Jones]
 readprofile:
-	also search for __stext in readprofile
+   - fix on ppc64  [Matthias Koenig]
 schedutils:
-	add support for SCHED_BATCH
-	define SCHED_BATCH when compile with old glibc
-	remove extra hyptens from man pages
-	taskset is independent of hardcoded NR_CPUS max
-	fix ionice build on sparc
-	fix chrt docs and pid=0 usage
-	prefer SYS_ioprio_{set,get} from glibc to hardcoded version
-scriptreplay:
-	add manpage
+   - add support for SCHED_BATCH  [Karel Zak]
+   - define SCHED_BATCH when compile with old glibc  [Karel Zak]
+   - fix chrt docs and pid=0 usage  [Matthias Koenig]
+   - remove extra hyptens from man pages  [Karel Zak]
+script:
+   - fix race conditions  [Karel Zak]
+   - improve quiet mode  [Karel Zak]
 setarch:
-	add NLS support
+   - add NLS support  [Karel Zak]
 sfdisk:
-	fix "differ in signedness" compiler warnings
-	fix "may be used uninitialized" compiler warnings
-	setting default geometry values
+   - fix "differ in signedness" compiler warnings  [Karel Zak]
+   - fix "may be used uninitialized" compiler warnings  [Karel Zak]
+   - setting default geometry values  [Luciano Chavez]
+swapoff:
+   - correctly handle UUID= and LABEL= identifiers  [LaMont Jones]
 swapon:
-	cleanup PATH_ macros and tailing white-spaces
-	does not correctly deal with symlinks
-	fix swapon headers and syscalls
-	simplify an #if
+   - cleanup PATH_ macros and tailing white-spaces  [Karel Zak]
+   - cleanup fsprobe_*() usage  [Karel Zak]
+   - does not correctly deal with symlinks  [Karel Zak]
+   - fix swapon headers and syscalls  [Mike Frysinger]
+   - simplify an #if  [Stepan Kasal]
 sys-utils:
-	added setarch command
-	add note about obsolete ramsize option to rdev.8
-	fix man page headers
-	move some man pages from category 8 to 1
-	add arch(1) back to the official tree
+   - add arch(1) back to the official tree  [Karel Zak]
+   - add note about obsolete ramsize option to rdev.8  [Karel Zak]
+   - added setarch command  [Karel Zak]
+   - fix man page headers  [Karel Zak]
+   - move some man pages from category 8 to 1  [Karel Zak]
+taskset:
+   - independent of hardcoded NR_CPUS max.  [Cliff Wickman]
 tests:
-	add basic infrastructure for regression tests
-	add cal -1 test
-	add cal -3 test
-	add cal -y test
-	add expected outputs for cramfs
-	add functions for label, uuid and fstype detection
-	add hwclock systohc test
-	add library for LD_PRELOAD to manipulate with time() in tests
-	add lock_mtab() performance and reliability test
-	add look test for words with separator
-	add missing header
-	add mkfs.cramfs tests
-	add more variants to {mount,fstab}-by-{label,uuid,devname}
-	add mount by devname from fstab
-	add mount by devname test
-	add mount by devname with label in fstab
-	add mount by devname with uuid in fstab
-	add mount by label from fstab test
-	add mount by LABEL test
-	add mount by label with devname in fstab
-	add mount by label with uuid in fstab
-	add mount by UUID from fstab test
-	add mount by UUID test
-	add mount by uuid with devname in fstab
-	add mount by uuid with label in fstab
-	add mount /dev/symlink test
-	add mount --move test
-	add mount -o remount test
-	add return code
-	add simple helper that returns info about system
-	add support for fstab modification
-	add support for suid programs
-	add swapon by devname test
-	add swapon by UUID test
-	add test for /sbin/mount.<type> call
-	add ts_log and --verbose support
-	add ts_ok and ts_failed
-	cleanup blkid cache after test device deinitialization
-	code refactoring -- new ts_device_init function
-	code refactoring -- new ts_skip_nonroot function
-	code refactoring -- new ts_udev_loop_support function
-	enable mtablock test when uid=0 only
-	fix argv[] usage in mnt_test_sysinfo.c
-	fix dependence on blkid
-	fix Makefile.am (add missing tests)
-	fix ts_fstab_add function
-	"if [...]" clean up
-	make clean need to remove diffs and outputs
-	pass all arguments to ts_init, add ts_has_option function
-	refresh mtablock output in expected/ directory
-	simplify devices usage
-	remove dependence on helpers/libpreload-time.so
-	don't use mlockall if CRYPT_NONE
+   - "if [...]" clean up  [Karel Zak]
+   - add basic infrastructure for regression tests  [Karel Zak]
+   - add cal -1 test  [Karel Zak]
+   - add cal -3 test  [Karel Zak]
+   - add cal -y test  [Karel Zak]
+   - add expected outputs for cramfs  [Karel Zak]
+   - add functions for label, uuid and fstype detection  [Karel Zak]
+   - add hwclock systohc test  [Karel Zak]
+   - add library for LD_PRELOAD to manipulate with time() in tests  [Karel Zak]
+   - add license notices, change from gplv2-only to gplv2-or-later  [Karel Zak]
+   - add lock_mtab() performance and reliability test  [Karel Zak]
+   - add look test for words with separator  [Karel Zak]
+   - add missing header  [Matthias Koenig]
+   - add mkfs.cramfs tests  [Karel Zak]
+   - add more variants to {mount,fstab}-by-{label,uuid,devname}  [Karel Zak]
+   - add mount --move test  [Karel Zak]
+   - add mount -o remount test  [Karel Zak]
+   - add mount /dev/symlink test  [Karel Zak]
+   - add mount by LABEL test  [Karel Zak]
+   - add mount by UUID from fstab test  [Karel Zak]
+   - add mount by UUID test  [Karel Zak]
+   - add mount by devname from fstab  [Karel Zak]
+   - add mount by devname test  [Karel Zak]
+   - add mount by devname with label in fstab  [Karel Zak]
+   - add mount by devname with uuid in fstab  [Karel Zak]
+   - add mount by label from fstab test  [Karel Zak]
+   - add mount by label with devname in fstab  [Karel Zak]
+   - add mount by label with uuid in fstab  [Karel Zak]
+   - add mount by uuid with devname in fstab  [Karel Zak]
+   - add mount by uuid with label in fstab  [Karel Zak]
+   - add return code  [Karel Zak]
+   - add script(1) race condition test  [Karel Zak]
+   - add simple helper that returns info about system  [Karel Zak]
+   - add support for fstab modification  [Karel Zak]
+   - add support for suid programs  [Karel Zak]
+   - add swapon by UUID test  [Karel Zak]
+   - add swapon by devname test  [Karel Zak]
+   - add test for /sbin/mount.<type> call  [Karel Zak]
+   - add ts_log and --verbose support  [Karel Zak]
+   - add ts_ok and ts_failed  [Karel Zak]
+   - cleanup blkid cache after test device deinitialization  [Karel Zak]
+   - code refactoring -- new ts_device_init function  [Karel Zak]
+   - code refactoring -- new ts_skip_nonroot function  [Karel Zak]
+   - code refactoring -- new ts_udev_loop_support function  [Karel Zak]
+   - enable mtablock test when uid=0 only  [Karel Zak]
+   - fix Makefile.am (add missing tests)  [Karel Zak]
+   - fix argv[] usage in mnt_test_sysinfo.c  [Karel Zak]
+   - fix dependence on blkid  [Karel Zak]
+   - fix ts_fstab_add function  [Karel Zak]
+   - make clean need to remove diffs and outputs  [Karel Zak]
+   - pass all arguments to ts_init, add ts_has_option function  [Karel Zak]
+   - refresh mtablock output in expected/ directory  [Karel Zak]
+   - remove dependence on helpers/libpreload-time.so  [Karel Zak]
+   - simplify devices usage  [Karel Zak]
+   - use $AWK based on configure results  [Karel Zak]
+   - use relative paths when sourcing files  [Mike Frysinger]
+text-utils:
+   - fix the more command compilation against termcap  [Karel Zak]
 tools:
-	add codecheck-config that checks for {HAVE,ENABLE}_ orphans
+   - add codecheck-config that checks for {HAVE,ENABLE}_ orphans  [Karel Zak]
 vipw:
-	fix permissions (600->400) for edited /etc/[g]shodow files
+   - fix permissions (600->400) for edited /etc/[g]shodow files  [Karel Zak]
 wall:
-	fix O_NONBLOCK usage
-	remove deprecated sigsetmask() from wall
-	remove unwanted newlines from wall
+   - fix O_NONBLOCK usage  [Karel Zak]
 whereis:
-	add lib64 paths
-misc:
-	Clean up pagesize/PAGE_SIZE usage.
-	clean up realpath.[ch] includes and macros
-	execl() should be use NULL not 0
+   - add lib64 paths  [Karel Zak]
+
+- Clean up pagesize/PAGE_SIZE usage.  [Karel Zak]
+- also search for __stext in readprofile  [Mike Frysinger]
+- check exit status of autotools  [Mike Frysinger]
+- clean up realpath.[ch] includes and macros  [Karel Zak]
+- execl() should be use NULL not 0  [Karel Zak]
+- manpage typos  [LaMont Jones]
+- remove hardcoded package name from some utils  [Karel Zak]
 
