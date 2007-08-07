@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11y\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-07-17 13:12+0200\n"
+"POT-Creation-Date: 2007-08-07 23:26+0200\n"
 "PO-Revision-Date: 2005-08-15 21:00+0200\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
@@ -22,110 +22,110 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "X-Generator: KBabel 1.9.1\n"
 
-#: disk-utils/blockdev.c:64
+#: disk-utils/blockdev.c:67
 msgid "set read-only"
 msgstr "markerer skrivebeskyttet"
 
-#: disk-utils/blockdev.c:65
+#: disk-utils/blockdev.c:68
 msgid "set read-write"
 msgstr "markerer skrivbar"
 
-#: disk-utils/blockdev.c:68
+#: disk-utils/blockdev.c:71
 msgid "get read-only"
 msgstr "få skrivebeskyttet"
 
-#: disk-utils/blockdev.c:71
+#: disk-utils/blockdev.c:74
 msgid "get sectorsize"
 msgstr "få sektorstørrelse"
 
-#: disk-utils/blockdev.c:74
+#: disk-utils/blockdev.c:77
 msgid "get blocksize"
 msgstr "få blokstørrelse"
 
-#: disk-utils/blockdev.c:77
+#: disk-utils/blockdev.c:80
 msgid "set blocksize"
 msgstr "sæt blokstørrelse"
 
-#: disk-utils/blockdev.c:80
+#: disk-utils/blockdev.c:83
 msgid "get 32-bit sector count"
 msgstr "få 32-bit sektorantal"
 
-#: disk-utils/blockdev.c:83
+#: disk-utils/blockdev.c:86
 msgid "get size in bytes"
 msgstr "få størrelse i byte"
 
-#: disk-utils/blockdev.c:86
+#: disk-utils/blockdev.c:89
 msgid "set readahead"
 msgstr "sæt fremlæsning ('readahead')"
 
-#: disk-utils/blockdev.c:89
+#: disk-utils/blockdev.c:92
 msgid "get readahead"
 msgstr "få fremlæsning ('readahead')"
 
-#: disk-utils/blockdev.c:92
+#: disk-utils/blockdev.c:95
 #, fuzzy
 msgid "set filesystem readahead"
 msgstr "sæt fremlæsning ('readahead')"
 
-#: disk-utils/blockdev.c:95
+#: disk-utils/blockdev.c:98
 #, fuzzy
 msgid "get filesystem readahead"
 msgstr "få fremlæsning ('readahead')"
 
-#: disk-utils/blockdev.c:98
+#: disk-utils/blockdev.c:101
 msgid "flush buffers"
 msgstr "tøm buffere"
 
-#: disk-utils/blockdev.c:102
+#: disk-utils/blockdev.c:105
 msgid "reread partition table"
 msgstr "genlæs partitionstabellen"
 
-#: disk-utils/blockdev.c:112
+#: disk-utils/blockdev.c:115
 #, c-format
 msgid "Usage:\n"
 msgstr "Brug:\n"
 
-#: disk-utils/blockdev.c:114
+#: disk-utils/blockdev.c:117
 #, c-format
 msgid "  %s --report [devices]\n"
 msgstr "  %s --report [enheder]\n"
 
-#: disk-utils/blockdev.c:115
+#: disk-utils/blockdev.c:118
 #, c-format
 msgid "  %s [-v|-q] commands devices\n"
 msgstr "  %s [-v|-q] kommandoer enheder\n"
 
-#: disk-utils/blockdev.c:118
+#: disk-utils/blockdev.c:121
 #, c-format
 msgid "Available commands:\n"
 msgstr "Tilgængelige kommandoer:\n"
 
-#: disk-utils/blockdev.c:268
+#: disk-utils/blockdev.c:275
 #, c-format
 msgid "%s: Unknown command: %s\n"
 msgstr "%s: Ukendt kommando: %s\n"
 
-#: disk-utils/blockdev.c:280 disk-utils/blockdev.c:289
+#: disk-utils/blockdev.c:287 disk-utils/blockdev.c:296
 #, c-format
 msgid "%s requires an argument\n"
 msgstr "%s kræver en parameter\n"
 
-#: disk-utils/blockdev.c:337
+#: disk-utils/blockdev.c:366
 #, c-format
 msgid "%s succeeded.\n"
 msgstr "%s lykkedes.\n"
 
-#: disk-utils/blockdev.c:355 disk-utils/blockdev.c:381
+#: disk-utils/blockdev.c:384 disk-utils/blockdev.c:410
 #, c-format
 msgid "%s: cannot open %s\n"
 msgstr "%s: kunne ikke åbne %s\n"
 
-#: disk-utils/blockdev.c:398
+#: disk-utils/blockdev.c:427
 #, c-format
 msgid "%s: ioctl error on %s\n"
 msgstr "%s: ioctl-fejl på %s\n"
 
-#: disk-utils/blockdev.c:405
+#: disk-utils/blockdev.c:434
 #, c-format
 msgid "RO    RA   SSZ   BSZ   StartSec     Size    Device\n"
 msgstr "RO    RA   SST   BST   StartSekt    Størr.  Enhed\n"
@@ -176,8 +176,8 @@ msgstr "brug: %s [ -n ] enhed\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:784 disk-utils/mkfs.minix.c:626
-#: disk-utils/mkswap.c:538 misc-utils/ddate.c:179 misc-utils/rename.c:79
-#: misc-utils/script.c:142 sys-utils/readprofile.c:197
+#: disk-utils/mkswap.c:518 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: misc-utils/script.c:146 sys-utils/readprofile.c:197
 #, c-format
 msgid "%s (%s)\n"
 msgstr "%s (%s)\n"
@@ -988,7 +988,7 @@ msgstr "søgning fejlede under test af blokke"
 msgid "Weird values in do_check: probably bugs\n"
 msgstr "Mystiske værdier i do_check: sandsynligvis programfejl\n"
 
-#: disk-utils/mkfs.minix.c:565 disk-utils/mkswap.c:420
+#: disk-utils/mkfs.minix.c:565 disk-utils/mkswap.c:400
 msgid "seek failed in check_blocks"
 msgstr "søgning mislykkedes i check_blocks"
 
@@ -1015,17 +1015,17 @@ msgstr "kan ikke åbne fil med ugyldige blokke"
 msgid "strtol error: number of blocks not specified"
 msgstr "strtol-fejl: antallet af blokke ikke angivet"
 
-#: disk-utils/mkfs.minix.c:704
-#, c-format
-msgid "unable to open %s"
-msgstr "kunne ikke åbne %s"
-
-#: disk-utils/mkfs.minix.c:706
+#: disk-utils/mkfs.minix.c:703
 #, c-format
 msgid "unable to stat %s"
 msgstr "kunne ikke finde %s"
 
-#: disk-utils/mkfs.minix.c:710
+#: disk-utils/mkfs.minix.c:709
+#, c-format
+msgid "unable to open %s"
+msgstr "kunne ikke åbne %s"
+
+#: disk-utils/mkfs.minix.c:713
 #, c-format
 msgid "will not try to make filesystem on '%s'"
 msgstr "vil ikke forsøge at oprette filsystem på '%s'"
@@ -1041,95 +1041,95 @@ msgid "Using user-specified page size %d, instead of the system value %d\n"
 msgstr ""
 "Benytter bruger-bestemt sidestørrelse %d i stedet for systemværdierne %d/%d\n"
 
-#: disk-utils/mkswap.c:226
+#: disk-utils/mkswap.c:206
 #, c-format
 msgid "Bad swap header size, no label written.\n"
 msgstr "Ugyldig størelse på swap-hovede, skrev ikke noget mærke.\n"
 
-#: disk-utils/mkswap.c:236
+#: disk-utils/mkswap.c:216
 #, c-format
 msgid "Label was truncated.\n"
 msgstr "Mærke afkortet.\n"
 
-#: disk-utils/mkswap.c:242
+#: disk-utils/mkswap.c:222
 #, c-format
 msgid "no label, "
 msgstr "intet mærke, "
 
-#: disk-utils/mkswap.c:250
+#: disk-utils/mkswap.c:230
 #, c-format
 msgid "no uuid\n"
 msgstr "ingen uuid\n"
 
-#: disk-utils/mkswap.c:374
+#: disk-utils/mkswap.c:354
 #, c-format
 msgid "Usage: %s [-c] [-v0|-v1] [-pPAGESZ] [-L label] /dev/name [blocks]\n"
 msgstr "Brug: %s [-c] [-v0|-v1] [-pSIDESTR] [-L mærke] /dev/navn [blokke]\n"
 
-#: disk-utils/mkswap.c:397
+#: disk-utils/mkswap.c:377
 msgid "too many bad pages"
 msgstr "for mange ugyldige sider"
 
-#: disk-utils/mkswap.c:411 misc-utils/look.c:183 misc-utils/setterm.c:1147
+#: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
 #: text-utils/more.c:1972 text-utils/more.c:1983
 msgid "Out of memory"
 msgstr "Hukommelse opbrugt"
 
-#: disk-utils/mkswap.c:428
+#: disk-utils/mkswap.c:408
 #, c-format
 msgid "one bad page\n"
 msgstr "en ugyldig side\n"
 
-#: disk-utils/mkswap.c:430
+#: disk-utils/mkswap.c:410
 #, c-format
 msgid "%lu bad pages\n"
 msgstr "%lu ugyldige sider\n"
 
-#: disk-utils/mkswap.c:589
+#: disk-utils/mkswap.c:569
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: fejl: Ingen steder at opsætte swap?\n"
 
-#: disk-utils/mkswap.c:607
+#: disk-utils/mkswap.c:587
 #, c-format
 msgid "%s: error: size %lu is larger than device size %lu\n"
 msgstr "%s: fejl: størrelsen %lu er større end enhedsstørrelsen %lu\n"
 
-#: disk-utils/mkswap.c:630
+#: disk-utils/mkswap.c:608
 #, c-format
 msgid "%s: error: unknown version %d\n"
 msgstr "%s: fejl: ukendt version %d\n"
 
-#: disk-utils/mkswap.c:637
+#: disk-utils/mkswap.c:615
 #, c-format
 msgid "%s: error: swap area needs to be at least %ldkB\n"
 msgstr "%s: fejl: swap-område skal mindst være på %ldkB\n"
 
-#: disk-utils/mkswap.c:654
+#: disk-utils/mkswap.c:632
 #, c-format
 msgid "%s: warning: truncating swap area to %ldkB\n"
 msgstr "%s: fejl: afkorter swap-området til %ldkB\n"
 
-#: disk-utils/mkswap.c:660
+#: disk-utils/mkswap.c:638
 #, c-format
 msgid "%s: error: label only with v1 swap area\n"
 msgstr "%s: fejl: mærke med kun v1-swapområde\n"
 
-#: disk-utils/mkswap.c:676
+#: disk-utils/mkswap.c:662
 #, fuzzy, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
 msgstr "Vil ikke forsøge at oprette swap-enhed på '%s'"
 
-#: disk-utils/mkswap.c:682
+#: disk-utils/mkswap.c:668
 #, fuzzy, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
 msgstr "%s er monteret; vil ikke oprette et filsystem her!"
 
-#: disk-utils/mkswap.c:695 disk-utils/mkswap.c:716
+#: disk-utils/mkswap.c:681 disk-utils/mkswap.c:702
 msgid "fatal: first page unreadable"
 msgstr "fatalt: første side kan ikke læses"
 
-#: disk-utils/mkswap.c:701
+#: disk-utils/mkswap.c:687
 #, c-format
 msgid ""
 "%s: Device '%s' contains a valid Sun disklabel.\n"
@@ -1142,42 +1142,42 @@ msgstr ""
 "opretter en v0 swap. Ingen swap oprettet. Hvis du virkelig vil oprette en\n"
 "v0 swap på denne enhed, kan du gennemtvinge det med tilvalget -f.\n"
 
-#: disk-utils/mkswap.c:725
+#: disk-utils/mkswap.c:711
 msgid "Unable to set up swap-space: unreadable"
 msgstr "Kunne ikke klargøre swap-område: ulæseligt"
 
-#: disk-utils/mkswap.c:726
+#: disk-utils/mkswap.c:712
 #, c-format
 msgid "Setting up swapspace version %d, size = %llu kB\n"
 msgstr "Klargører swap-område version %d, størrelse = %llu kB\n"
 
-#: disk-utils/mkswap.c:735
+#: disk-utils/mkswap.c:721
 msgid "unable to rewind swap-device"
 msgstr "kunne ikke spole tilbage på swap-enheden"
 
-#: disk-utils/mkswap.c:738
+#: disk-utils/mkswap.c:724
 msgid "unable to write signature page"
 msgstr "kunne ikke skrive signatur-side"
 
-#: disk-utils/mkswap.c:746
+#: disk-utils/mkswap.c:732
 msgid "fsync failed"
 msgstr "fsync mislykkedes"
 
-#: disk-utils/mkswap.c:757
+#: disk-utils/mkswap.c:743
 #, c-format
 msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:763
+#: disk-utils/mkswap.c:749
 #, fuzzy
 msgid "unable to create new selinux context"
 msgstr "kunne ikke skrive inodes"
 
-#: disk-utils/mkswap.c:765
+#: disk-utils/mkswap.c:751
 msgid "couldn't compute selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:771
+#: disk-utils/mkswap.c:757
 #, fuzzy, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "kunne ikke omdøbe %s til %s: %s\n"
@@ -5731,10 +5731,10 @@ msgstr "Sætter IKKE epokeværdien til %d - tester bare.\n"
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Kunne ikke sætte epokeværdien i kernen.\n"
 
-#: hwclock/hwclock.c:1186
+#: hwclock/hwclock.c:1186 misc-utils/cal.c:333 misc-utils/kill.c:189
 #, c-format
-msgid "%s from util-linux-%s\n"
-msgstr "%s fra util-linux-%s\n"
+msgid "%s from %s\n"
+msgstr "%s fra %s\n"
 
 #: hwclock/hwclock.c:1207
 #, fuzzy, c-format
@@ -6025,135 +6025,135 @@ msgstr "Kernens enheds-driver for %s har ikke en RTC_EPOCH_SET ioctl.\n"
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) til %s mislykkedes"
 
-#: login-utils/agetty.c:324
+#: login-utils/agetty.c:325
 msgid "calling open_tty\n"
 msgstr "kalder 'open_tty'\n"
 
-#: login-utils/agetty.c:337
+#: login-utils/agetty.c:338
 msgid "calling termio_init\n"
 msgstr "kalder 'termio_init'\n"
 
-#: login-utils/agetty.c:342
+#: login-utils/agetty.c:343
 msgid "writing init string\n"
 msgstr "skriver init-streng\n"
 
-#: login-utils/agetty.c:352
+#: login-utils/agetty.c:353
 msgid "before autobaud\n"
 msgstr "før 'autobaud'\n"
 
-#: login-utils/agetty.c:364
+#: login-utils/agetty.c:365
 msgid "waiting for cr-lf\n"
 msgstr "venter på cr-lf\n"
 
-#: login-utils/agetty.c:368
+#: login-utils/agetty.c:369
 #, c-format
 msgid "read %c\n"
 msgstr "læs %c\n"
 
-#: login-utils/agetty.c:377
+#: login-utils/agetty.c:378
 msgid "reading login name\n"
 msgstr "læser loginnavn\n"
 
-#: login-utils/agetty.c:398
+#: login-utils/agetty.c:399
 #, c-format
 msgid "%s: can't exec %s: %m"
 msgstr "%s: kunne ikke udføre %s: %m"
 
-#: login-utils/agetty.c:418
+#: login-utils/agetty.c:422
 msgid "can't malloc initstring"
 msgstr "kunne ikke allokere plads til inittekst (malloc)"
 
-#: login-utils/agetty.c:483
+#: login-utils/agetty.c:487
 #, c-format
 msgid "bad timeout value: %s"
 msgstr "ugyldig værdi for tidsudløb: %s"
 
-#: login-utils/agetty.c:492
+#: login-utils/agetty.c:496
 msgid "after getopt loop\n"
 msgstr "efter 'getopt'-løkke\n"
 
-#: login-utils/agetty.c:542
+#: login-utils/agetty.c:546
 msgid "exiting parseargs\n"
 msgstr "afslutter 'parseargs'\n"
 
-#: login-utils/agetty.c:554
+#: login-utils/agetty.c:558
 msgid "entered parse_speeds\n"
 msgstr "kom til 'parse_speeds'\n"
 
-#: login-utils/agetty.c:557
+#: login-utils/agetty.c:561
 #, c-format
 msgid "bad speed: %s"
 msgstr "ugyldig hastighed: %s"
 
-#: login-utils/agetty.c:559
+#: login-utils/agetty.c:563
 msgid "too many alternate speeds"
 msgstr "for mange forskellige hastigheder"
 
-#: login-utils/agetty.c:561
+#: login-utils/agetty.c:565
 msgid "exiting parsespeeds\n"
 msgstr "afslutter 'parsespeeds'\n"
 
-#: login-utils/agetty.c:661
+#: login-utils/agetty.c:665
 #, c-format
 msgid "/dev: chdir() failed: %m"
 msgstr "/dev: chdir() mislykkedes: %m"
 
-#: login-utils/agetty.c:665
+#: login-utils/agetty.c:669
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s: ikke en tegnenhed"
 
-#: login-utils/agetty.c:672
+#: login-utils/agetty.c:676
 msgid "open(2)\n"
 msgstr "open(2)\n"
 
-#: login-utils/agetty.c:674
+#: login-utils/agetty.c:678
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s: kan ikke åbne som standard-ind: %m"
 
-#: login-utils/agetty.c:684
+#: login-utils/agetty.c:688
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s: ikke åben for læsning/skrivning"
 
-#: login-utils/agetty.c:688
+#: login-utils/agetty.c:692
 msgid "duping\n"
 msgstr "duplikerer\n"
 
-#: login-utils/agetty.c:690
+#: login-utils/agetty.c:694
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s: dup problem: %m"
 
-#: login-utils/agetty.c:764
+#: login-utils/agetty.c:768
 msgid "term_io 2\n"
 msgstr "term_io 2\n"
 
-#: login-utils/agetty.c:973
+#: login-utils/agetty.c:977
 #, c-format
 msgid "user"
 msgstr "bruger"
 
-#: login-utils/agetty.c:973
+#: login-utils/agetty.c:977
 #, c-format
 msgid "users"
 msgstr "brugere"
 
-#: login-utils/agetty.c:1058
+#: login-utils/agetty.c:1062
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: læst: %m"
 
-#: login-utils/agetty.c:1104
+#: login-utils/agetty.c:1109
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: inddataoverløb"
 
-#: login-utils/agetty.c:1228
-#, c-format
+#: login-utils/agetty.c:1233
+#, fuzzy, c-format
 msgid ""
-"Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
+"Usage: %s [-8hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
 "login_host] baud_rate,... line [termtype]\n"
 "or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
 "line baud_rate,... [termtype]\n"
@@ -6294,7 +6294,7 @@ msgstr "Finger-informationer *IKKE* ændret. Prøv igen senere.\n"
 msgid "Finger information changed.\n"
 msgstr "Finger-informationer ændret.\n"
 
-#: login-utils/chfn.c:520 login-utils/chsh.c:427 sys-utils/cytune.c:322
+#: login-utils/chfn.c:520 login-utils/chsh.c:427 sys-utils/cytune.c:321
 msgid "malloc failed"
 msgstr "hukommelsesallokering mislykkedes (malloc)"
 
@@ -7084,11 +7084,6 @@ msgstr "%s: kunne ikke finde midlertidig fil.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: kunne ikke læse midlertidig fil.\n"
 
-#: misc-utils/cal.c:333
-#, c-format
-msgid "%s from %s\n"
-msgstr "%s fra %s\n"
-
 #: misc-utils/cal.c:347
 msgid "illegal month value: use 1-12"
 msgstr "ugyldig månedsværdi: brug 1-12"
@@ -7116,11 +7111,6 @@ msgstr "brug: %s [+format] [dag måned år]\n"
 msgid "St. Tib's Day"
 msgstr "St. Tibs-dag"
 
-#: misc-utils/kill.c:189
-#, c-format
-msgid "%s from %s%s\n"
-msgstr "%s fra %s%s\n"
-
 #: misc-utils/kill.c:207
 #, c-format
 msgid "%s: unknown signal %s\n"
@@ -7146,22 +7136,22 @@ msgstr "brug: %s [ -s signal | -p ] [ -a ] pid ...\n"
 msgid "       %s -l [ signal ]\n"
 msgstr "       %s -l [ signal ]\n"
 
-#: misc-utils/logger.c:141
+#: misc-utils/logger.c:139
 #, c-format
 msgid "logger: %s: %s.\n"
 msgstr "logger: %s: %s.\n"
 
-#: misc-utils/logger.c:248
+#: misc-utils/logger.c:246
 #, c-format
 msgid "logger: unknown facility name: %s.\n"
 msgstr "logger: ukendt facilitetsnavn: %s.\n"
 
-#: misc-utils/logger.c:260
+#: misc-utils/logger.c:258
 #, c-format
 msgid "logger: unknown priority name: %s.\n"
 msgstr "logger: ukendt prioritetsnavn: %s.\n"
 
-#: misc-utils/logger.c:287
+#: misc-utils/logger.c:285
 #, c-format
 msgid ""
 "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
@@ -7248,7 +7238,7 @@ msgstr "%s: kunne ikke omdøbe %s til %s: %s\n"
 msgid "call: %s from to files...\n"
 msgstr "kald: %s fra til filer...\n"
 
-#: misc-utils/script.c:106
+#: misc-utils/script.c:109
 #, c-format
 msgid ""
 "Warning: `%s' is a link.\n"
@@ -7259,22 +7249,22 @@ msgstr ""
 "Brug '%s [tilvalg] %s', hvis du virkelig vil bruge den.\n"
 "Skript blev ikke startet.\n"
 
-#: misc-utils/script.c:168
+#: misc-utils/script.c:172
 #, c-format
 msgid "usage: script [-a] [-f] [-q] [-t] [file]\n"
 msgstr "brug: script [-a] [-f] [-q] [-t] [fil]\n"
 
-#: misc-utils/script.c:191
+#: misc-utils/script.c:195
 #, c-format
 msgid "Script started, file is %s\n"
 msgstr "Skript påbegyndt, filen er %s\n"
 
-#: misc-utils/script.c:277
+#: misc-utils/script.c:290
 #, c-format
 msgid "Script started on %s"
 msgstr "Skript påbegyndt på %s"
 
-#: misc-utils/script.c:361
+#: misc-utils/script.c:404
 #, c-format
 msgid ""
 "\n"
@@ -7283,17 +7273,17 @@ msgstr ""
 "\n"
 "Skript kørt på %s"
 
-#: misc-utils/script.c:368
+#: misc-utils/script.c:411
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "Skript færdigt, filen er %s\n"
 
-#: misc-utils/script.c:379
+#: misc-utils/script.c:422
 #, c-format
 msgid "openpty failed\n"
 msgstr "openpty mislykkedes\n"
 
-#: misc-utils/script.c:413
+#: misc-utils/script.c:456
 #, c-format
 msgid "Out of pty's\n"
 msgstr "Løbet tør for pty-er\n"
@@ -7836,7 +7826,7 @@ msgstr "mount: fejl ved skrivning til %s: %s"
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: fejl ved ændring af filtilstand for %s: %s"
 
-#: mount/mount.c:676 mount/mount.c:1566
+#: mount/mount.c:676 mount/mount.c:1565
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: kunne ikke forgrene: %s"
@@ -8120,39 +8110,39 @@ msgstr "mount: kunne ikke montere %s%s skrivebeskyttet"
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s er skrivebeskyttet, men eksplicit '-w'-tilvalg blev givet"
 
-#: mount/mount.c:1294
+#: mount/mount.c:1293
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s er skrivebeskyttet, monterer skrivebeskyttet"
 
-#: mount/mount.c:1394
+#: mount/mount.c:1393
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: ingen type blev angive - Jeg antager nfs på grund af kolonnet\n"
 
-#: mount/mount.c:1400
+#: mount/mount.c:1399
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: ingen type blev angivet - Jeg antager smbfs p.g.a. det "
 "foranstillede //\n"
 
-#: mount/mount.c:1417
+#: mount/mount.c:1416
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: kører \"%s\" i baggrunden\n"
 
-#: mount/mount.c:1427
+#: mount/mount.c:1426
 #, c-format
 msgid "mount: giving up \"%s\"\n"
 msgstr "mount: opgiver \"%s\"\n"
 
-#: mount/mount.c:1513
+#: mount/mount.c:1512
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s er allerede monteret som %s\n"
 
-#: mount/mount.c:1651
+#: mount/mount.c:1650
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8210,24 +8200,24 @@ msgstr ""
 "Andre tilvalg: [-nfFrsvw] [-o tilvalg] [-p adgangskodefd].\n"
 "se mange flere detaljer med 'man 8 mount'.\n"
 
-#: mount/mount.c:1961
+#: mount/mount.c:1960
 msgid "mount: only root can do that"
 msgstr "mount: dette kan kun root gøre"
 
-#: mount/mount.c:1966
+#: mount/mount.c:1965
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: ingen %s fundet - opretter den..\n"
 
-#: mount/mount.c:1976
+#: mount/mount.c:1975
 msgid "nothing was mounted"
 msgstr "intet blev monteret"
 
-#: mount/mount.c:1989 mount/mount.c:2015
+#: mount/mount.c:1988 mount/mount.c:2014
 msgid "mount: no such partition found"
 msgstr "mount: fandt ingen sådan partition"
 
-#: mount/mount.c:1992
+#: mount/mount.c:1991
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: kunne ikke finde %s i %s eller %s"
@@ -8251,7 +8241,7 @@ msgstr "; resten af filen blev ignoreret"
 msgid "bug in xstrndup call"
 msgstr "programfejl i xstrndup-kald"
 
-#: mount/swapon.c:62
+#: mount/swapon.c:65
 #, c-format
 msgid ""
 "usage: %s [-hV]\n"
@@ -8264,7 +8254,7 @@ msgstr ""
 "      %s [-v] [-p prioritet] speciel|LABEL=bindnavn ...\n"
 "      %s [-s]\n"
 
-#: mount/swapon.c:72
+#: mount/swapon.c:75
 #, c-format
 msgid ""
 "usage: %s [-hV]\n"
@@ -8275,42 +8265,42 @@ msgstr ""
 "      %s -a [-v]\n"
 "      %s [-v] speciel ...\n"
 
-#: mount/swapon.c:125
+#: mount/swapon.c:128
 #, fuzzy, c-format
 msgid "%s: cannot canonicalize %s: %s\n"
 msgstr "%s: kunne ikke åbne %s: %s\n"
 
-#: mount/swapon.c:164 mount/swapon.c:253
+#: mount/swapon.c:167 mount/swapon.c:255
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s på %s\n"
 
-#: mount/swapon.c:168 mount/swapon.c:231
-#, c-format
-msgid "%s: cannot find the device for %s\n"
-msgstr "%s: kunne ikke finde enheden for %s\n"
-
-#: mount/swapon.c:175
+#: mount/swapon.c:177
 #, c-format
 msgid "%s: cannot stat %s: %s\n"
 msgstr "%s: kan ikke finde %s: %s\n"
 
-#: mount/swapon.c:186
+#: mount/swapon.c:188
 #, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
 msgstr "%s: advarsel: %s har usikre filrettigheder %04o, %04o anbefales\n"
 
-#: mount/swapon.c:198
+#: mount/swapon.c:200
 #, c-format
 msgid "%s: Skipping file %s - it appears to have holes.\n"
 msgstr "%s: Dropper filen %s - den lader til at være fragmenteret.\n"
 
-#: mount/swapon.c:263
+#: mount/swapon.c:233
+#, c-format
+msgid "%s: cannot find the device for %s\n"
+msgstr "%s: kunne ikke finde enheden for %s\n"
+
+#: mount/swapon.c:267
 #, c-format
 msgid "Not superuser.\n"
 msgstr "Ikke superbruger.\n"
 
-#: mount/swapon.c:297 mount/swapon.c:489
+#: mount/swapon.c:301 mount/swapon.c:492
 #, c-format
 msgid "%s: cannot open %s: %s\n"
 msgstr "%s: kunne ikke åbne %s: %s\n"
@@ -8459,7 +8449,7 @@ msgstr "Du skal være root for at sætte Ctrl-Alt-Del-opførslen.\n"
 msgid "Usage: ctrlaltdel hard|soft\n"
 msgstr "Brug: ctrlaltdel hard|soft\n"
 
-#: sys-utils/cytune.c:115
+#: sys-utils/cytune.c:114
 #, c-format
 msgid ""
 "File %s, For threshold value %lu, Maximum characters in fifo were %d,\n"
@@ -8468,7 +8458,7 @@ msgstr ""
 "Filen %s, For grænseværdi %lu, Maksimale antal tegn i fifo var %d,\n"
 "og den maksimale overførselshastighed var %f tegn/sekund\n"
 
-#: sys-utils/cytune.c:126
+#: sys-utils/cytune.c:125
 #, c-format
 msgid ""
 "File %s, For threshold value %lu and timrout value %lu, Maximum characters "
@@ -8479,32 +8469,32 @@ msgstr ""
 "i fifo var %d,\n"
 "og den maksimale overførselshastighed var %f tegn/sekund\n"
 
-#: sys-utils/cytune.c:190
+#: sys-utils/cytune.c:189
 #, c-format
 msgid "Invalid interval value: %s\n"
 msgstr "Ugyldig intervalværdi: %s\n"
 
-#: sys-utils/cytune.c:198
+#: sys-utils/cytune.c:197
 #, c-format
 msgid "Invalid set value: %s\n"
 msgstr "Ugyldig sat værdi: %s\n"
 
-#: sys-utils/cytune.c:206
+#: sys-utils/cytune.c:205
 #, c-format
 msgid "Invalid default value: %s\n"
 msgstr "Ugyldig standardværdi: %s\n"
 
-#: sys-utils/cytune.c:214
+#: sys-utils/cytune.c:213
 #, c-format
 msgid "Invalid set time value: %s\n"
 msgstr "Ugyldig sat tidsværdi: %s\n"
 
-#: sys-utils/cytune.c:222
+#: sys-utils/cytune.c:221
 #, c-format
 msgid "Invalid default time value: %s\n"
 msgstr "Ugyldig standard tidsværdi: %s\n"
 
-#: sys-utils/cytune.c:239
+#: sys-utils/cytune.c:238
 #, c-format
 msgid ""
 "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
@@ -8513,75 +8503,75 @@ msgstr ""
 "Brug: %s [-q [-i interval]] ([-s værdi]|[-S værdi]) ([-t værdi]|[-T værdi]) "
 "[-g|-G] fil [fil...]\n"
 
-#: sys-utils/cytune.c:251 sys-utils/cytune.c:270 sys-utils/cytune.c:290
-#: sys-utils/cytune.c:340
+#: sys-utils/cytune.c:250 sys-utils/cytune.c:269 sys-utils/cytune.c:289
+#: sys-utils/cytune.c:339
 #, c-format
 msgid "Can't open %s: %s\n"
 msgstr "Kunne ikke åbne %s: %s\n"
 
-#: sys-utils/cytune.c:258
+#: sys-utils/cytune.c:257
 #, c-format
 msgid "Can't set %s to threshold %d: %s\n"
 msgstr "Kunne ikke sætte %s til grænsen %d: %s\n"
 
-#: sys-utils/cytune.c:277
+#: sys-utils/cytune.c:276
 #, c-format
 msgid "Can't set %s to time threshold %d: %s\n"
 msgstr "Kunne ikke sætte %s til tidsgrænsen %d: %s\n"
 
-#: sys-utils/cytune.c:295 sys-utils/cytune.c:352 sys-utils/cytune.c:383
+#: sys-utils/cytune.c:294 sys-utils/cytune.c:351 sys-utils/cytune.c:382
 #, c-format
 msgid "Can't get threshold for %s: %s\n"
 msgstr "Kunne ikke få grænsen for %s: %s\n"
 
-#: sys-utils/cytune.c:301 sys-utils/cytune.c:358 sys-utils/cytune.c:389
+#: sys-utils/cytune.c:300 sys-utils/cytune.c:357 sys-utils/cytune.c:388
 #, c-format
 msgid "Can't get timeout for %s: %s\n"
 msgstr "Kunne ikke få tidsoverløbet for %s: %s\n"
 
-#: sys-utils/cytune.c:307
+#: sys-utils/cytune.c:306
 #, c-format
 msgid "%s: %ld current threshold and %ld current timeout\n"
 msgstr "%s: %ld aktuelle grænse og %ld aktuelle tidsoverløb\n"
 
-#: sys-utils/cytune.c:310
+#: sys-utils/cytune.c:309
 #, c-format
 msgid "%s: %ld default threshold and %ld default timeout\n"
 msgstr "%s: %ld standard grænse og %ld standard tidsoverløb\n"
 
-#: sys-utils/cytune.c:328
+#: sys-utils/cytune.c:327
 msgid "Can't set signal handler"
 msgstr "Kunne ikke sætte signalhåndteringen"
 
-#: sys-utils/cytune.c:332 sys-utils/cytune.c:367
+#: sys-utils/cytune.c:331 sys-utils/cytune.c:366
 msgid "gettimeofday failed"
 msgstr "gettimeofday (aflæsning af ur) mislykkedes"
 
-#: sys-utils/cytune.c:345 sys-utils/cytune.c:377
+#: sys-utils/cytune.c:344 sys-utils/cytune.c:376
 #, c-format
 msgid "Can't issue CYGETMON on %s: %s\n"
 msgstr "Kunne ikke udføre CYGETMON på %s: %s\n"
 
-#: sys-utils/cytune.c:419
+#: sys-utils/cytune.c:418
 #, c-format
 msgid ""
 "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
 "%s: %lu htal, %lu/%lu tegn; fifo: %lu grænse, %lu t-ovl, %lu maks, %lu nu\n"
 
-#: sys-utils/cytune.c:425
+#: sys-utils/cytune.c:424
 #, c-format
 msgid "   %f int/sec; %f rec, %f send (char/sec)\n"
 msgstr "   %f tal/sek; %f flt, %f send (tegn/sek)\n"
 
-#: sys-utils/cytune.c:430
+#: sys-utils/cytune.c:429
 #, c-format
 msgid ""
 "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
 "%s: %lu htal, %lu tegn; fifo: %lu grænse, %lu t-ovl, %lu maks, %lu nu\n"
 
-#: sys-utils/cytune.c:436
+#: sys-utils/cytune.c:435
 #, c-format
 msgid "   %f int/sec; %f rec (char/sec)\n"
 msgstr "   %f tal/sek; %f flt (tegn/sek)\n"
@@ -9349,7 +9339,7 @@ msgstr ""
 msgid "Sampling_step: %i\n"
 msgstr "Sampling_step: %i\n"
 
-#: sys-utils/readprofile.c:305 sys-utils/readprofile.c:330
+#: sys-utils/readprofile.c:305 sys-utils/readprofile.c:331
 #, c-format
 msgid "%s: %s(%i): wrong map line\n"
 msgstr "%s: %s(%i): forkert oversigtlinje\n"
@@ -9359,12 +9349,12 @@ msgstr "%s: %s(%i): forkert oversigtlinje\n"
 msgid "%s: can't find \"_stext\" in %s\n"
 msgstr "%s: kunne ikke finde \"_stext\" i %s\n"
 
-#: sys-utils/readprofile.c:344
+#: sys-utils/readprofile.c:352
 #, c-format
 msgid "%s: profile address out of range. Wrong map file?\n"
 msgstr "%s: profiladresse udenfor området. Forkert map-fil?\n"
 
-#: sys-utils/readprofile.c:402
+#: sys-utils/readprofile.c:412
 msgid "total"
 msgstr "total"
 
@@ -10079,6 +10069,12 @@ msgstr "For lang inddatalinje.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Løb tør for hukommelse under forstørring af buffer.\n"
+
+#~ msgid "%s from util-linux-%s\n"
+#~ msgstr "%s fra util-linux-%s\n"
+
+#~ msgid "%s from %s%s\n"
+#~ msgstr "%s fra %s%s\n"
 
 #~ msgid ""
 #~ "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  "

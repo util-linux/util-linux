@@ -5,7 +5,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-2.11d\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-07-17 13:12+0200\n"
+"POT-Creation-Date: 2007-08-07 23:26+0200\n"
 "PO-Revision-Date: 2001-05-30 15:11+0200\n"
 "Last-Translator: Jiøí Pavlovský <pavlovsk@ff.cuni.cz>\n"
 "Language-Team: Czech <cs@li.org>\n"
@@ -13,113 +13,113 @@ msgstr ""
 "Content-Type: text/plain; charset=iso-8859-2\n"
 "Content-Transfer-Encoding: 8bit\n"
 
-#: disk-utils/blockdev.c:64
+#: disk-utils/blockdev.c:67
 msgid "set read-only"
 msgstr "nastaví pouze pro ètení"
 
-#: disk-utils/blockdev.c:65
+#: disk-utils/blockdev.c:68
 msgid "set read-write"
 msgstr "nastaví pro ètení/zápis"
 
-#: disk-utils/blockdev.c:68
+#: disk-utils/blockdev.c:71
 msgid "get read-only"
 msgstr "zjistí zda je zakázán zápis"
 
-#: disk-utils/blockdev.c:71
+#: disk-utils/blockdev.c:74
 msgid "get sectorsize"
 msgstr "zjistí velikost sektoru"
 
-#: disk-utils/blockdev.c:74
+#: disk-utils/blockdev.c:77
 #, fuzzy
 msgid "get blocksize"
 msgstr "zjistí velikost"
 
-#: disk-utils/blockdev.c:77
+#: disk-utils/blockdev.c:80
 #, fuzzy
 msgid "set blocksize"
 msgstr "zjistí velikost"
 
-#: disk-utils/blockdev.c:80
+#: disk-utils/blockdev.c:83
 msgid "get 32-bit sector count"
 msgstr ""
 
-#: disk-utils/blockdev.c:83
+#: disk-utils/blockdev.c:86
 #, fuzzy
 msgid "get size in bytes"
 msgstr "zjistí velikost"
 
-#: disk-utils/blockdev.c:86
+#: disk-utils/blockdev.c:89
 msgid "set readahead"
 msgstr "nastaví dopøedné ètení sektorù"
 
-#: disk-utils/blockdev.c:89
+#: disk-utils/blockdev.c:92
 msgid "get readahead"
 msgstr "zjistí nastavení dopøedného ètení sektorù"
 
-#: disk-utils/blockdev.c:92
+#: disk-utils/blockdev.c:95
 #, fuzzy
 msgid "set filesystem readahead"
 msgstr "nastaví dopøedné ètení sektorù"
 
-#: disk-utils/blockdev.c:95
+#: disk-utils/blockdev.c:98
 #, fuzzy
 msgid "get filesystem readahead"
 msgstr "zjistí nastavení dopøedného ètení sektorù"
 
-#: disk-utils/blockdev.c:98
+#: disk-utils/blockdev.c:101
 msgid "flush buffers"
 msgstr "vyprázdnit buffery"
 
-#: disk-utils/blockdev.c:102
+#: disk-utils/blockdev.c:105
 msgid "reread partition table"
 msgstr "naète znovu tabulku rozdìlení disku"
 
-#: disk-utils/blockdev.c:112
+#: disk-utils/blockdev.c:115
 #, fuzzy, c-format
 msgid "Usage:\n"
 msgstr "Pou¾ití:"
 
-#: disk-utils/blockdev.c:114
+#: disk-utils/blockdev.c:117
 #, c-format
 msgid "  %s --report [devices]\n"
 msgstr ""
 
-#: disk-utils/blockdev.c:115
+#: disk-utils/blockdev.c:118
 #, fuzzy, c-format
 msgid "  %s [-v|-q] commands devices\n"
 msgstr "Pou¾ití: %s [-V] [-v|-q] pøepínaèe zaøízení\n"
 
-#: disk-utils/blockdev.c:118
+#: disk-utils/blockdev.c:121
 #, c-format
 msgid "Available commands:\n"
 msgstr "Dostupné pøíkazy:\n"
 
-#: disk-utils/blockdev.c:268
+#: disk-utils/blockdev.c:275
 #, c-format
 msgid "%s: Unknown command: %s\n"
 msgstr "%s: neznámý pøíkaz %s\n"
 
-#: disk-utils/blockdev.c:280 disk-utils/blockdev.c:289
+#: disk-utils/blockdev.c:287 disk-utils/blockdev.c:296
 #, c-format
 msgid "%s requires an argument\n"
 msgstr "pøepínaè %s vy¾aduje argument\n"
 
-#: disk-utils/blockdev.c:337
+#: disk-utils/blockdev.c:366
 #, c-format
 msgid "%s succeeded.\n"
 msgstr ""
 
-#: disk-utils/blockdev.c:355 disk-utils/blockdev.c:381
+#: disk-utils/blockdev.c:384 disk-utils/blockdev.c:410
 #, fuzzy, c-format
 msgid "%s: cannot open %s\n"
 msgstr "%s: %s nelze otevøít: %s\n"
 
-#: disk-utils/blockdev.c:398
+#: disk-utils/blockdev.c:427
 #, fuzzy, c-format
 msgid "%s: ioctl error on %s\n"
 msgstr "%s: chyba zápisu na %s\n"
 
-#: disk-utils/blockdev.c:405
+#: disk-utils/blockdev.c:434
 #, c-format
 msgid "RO    RA   SSZ   BSZ   StartSec     Size    Device\n"
 msgstr ""
@@ -170,8 +170,8 @@ msgstr "Pou¾ití: %s [ -n ] zaøízení\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:784 disk-utils/mkfs.minix.c:626
-#: disk-utils/mkswap.c:538 misc-utils/ddate.c:179 misc-utils/rename.c:79
-#: misc-utils/script.c:142 sys-utils/readprofile.c:197
+#: disk-utils/mkswap.c:518 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: misc-utils/script.c:146 sys-utils/readprofile.c:197
 #, fuzzy, c-format
 msgid "%s (%s)\n"
 msgstr "%s na %s\n"
@@ -952,7 +952,7 @@ msgstr "chyba pøi posunu ukazovátka v prùbìhu kontroly blokù"
 msgid "Weird values in do_check: probably bugs\n"
 msgstr "Nesprávné hodnoty v do_check: pravdìpodobnì chyby\n"
 
-#: disk-utils/mkfs.minix.c:565 disk-utils/mkswap.c:420
+#: disk-utils/mkfs.minix.c:565 disk-utils/mkswap.c:400
 msgid "seek failed in check_blocks"
 msgstr "chyba pøi posunu ukazovátka v check_blocks"
 
@@ -979,17 +979,17 @@ msgstr "soubor chybných blokù nelze otevøít"
 msgid "strtol error: number of blocks not specified"
 msgstr "chyba strtol: poèet blokù nebyl zadán"
 
-#: disk-utils/mkfs.minix.c:704
-#, c-format
-msgid "unable to open %s"
-msgstr "%s nelze otevøít"
-
-#: disk-utils/mkfs.minix.c:706
+#: disk-utils/mkfs.minix.c:703
 #, c-format
 msgid "unable to stat %s"
 msgstr "o %s nelze získat informace"
 
-#: disk-utils/mkfs.minix.c:710
+#: disk-utils/mkfs.minix.c:709
+#, c-format
+msgid "unable to open %s"
+msgstr "%s nelze otevøít"
+
+#: disk-utils/mkfs.minix.c:713
 #, c-format
 msgid "will not try to make filesystem on '%s'"
 msgstr "nebudu se pokou¹et vytvoøit systém souborù na '%s'"
@@ -1005,95 +1005,95 @@ msgid "Using user-specified page size %d, instead of the system value %d\n"
 msgstr ""
 "Pou¾ívám zadanou velikost stránky (%d) místo implicitních hodnot (%d/%d).\n"
 
-#: disk-utils/mkswap.c:226
+#: disk-utils/mkswap.c:206
 #, c-format
 msgid "Bad swap header size, no label written.\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:236
+#: disk-utils/mkswap.c:216
 #, c-format
 msgid "Label was truncated.\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:242
+#: disk-utils/mkswap.c:222
 #, fuzzy, c-format
 msgid "no label, "
 msgstr "popis"
 
-#: disk-utils/mkswap.c:250
+#: disk-utils/mkswap.c:230
 #, c-format
 msgid "no uuid\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:374
+#: disk-utils/mkswap.c:354
 #, fuzzy, c-format
 msgid "Usage: %s [-c] [-v0|-v1] [-pPAGESZ] [-L label] /dev/name [blocks]\n"
 msgstr "Pou¾ití: %s [-c] [-v0|-v1] [-pVELIKOST STRÁNKY] /dev/název [bloky]\n"
 
-#: disk-utils/mkswap.c:397
+#: disk-utils/mkswap.c:377
 msgid "too many bad pages"
 msgstr "pøíli¹ mnoho chybných stránek"
 
-#: disk-utils/mkswap.c:411 misc-utils/look.c:183 misc-utils/setterm.c:1147
+#: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
 #: text-utils/more.c:1972 text-utils/more.c:1983
 msgid "Out of memory"
 msgstr "Nedostatek pamìti"
 
-#: disk-utils/mkswap.c:428
+#: disk-utils/mkswap.c:408
 #, c-format
 msgid "one bad page\n"
 msgstr "chybných stránek: 1\n"
 
-#: disk-utils/mkswap.c:430
+#: disk-utils/mkswap.c:410
 #, fuzzy, c-format
 msgid "%lu bad pages\n"
 msgstr "chybných stránek: %d\n"
 
-#: disk-utils/mkswap.c:589
+#: disk-utils/mkswap.c:569
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: chyba: Kde mám vytvoøit odkládací prostor?\n"
 
-#: disk-utils/mkswap.c:607
+#: disk-utils/mkswap.c:587
 #, fuzzy, c-format
 msgid "%s: error: size %lu is larger than device size %lu\n"
 msgstr "%s: chyba: zadaná velikost (%ld) je vìt¹í ne¾ velikost zaøízení (%d)\n"
 
-#: disk-utils/mkswap.c:630
+#: disk-utils/mkswap.c:608
 #, c-format
 msgid "%s: error: unknown version %d\n"
 msgstr "%s: chyba: neznámá verze %d\n"
 
-#: disk-utils/mkswap.c:637
+#: disk-utils/mkswap.c:615
 #, c-format
 msgid "%s: error: swap area needs to be at least %ldkB\n"
 msgstr "%s: chyba: minimální velikost odkládacího prostoru je %ldkB\n"
 
-#: disk-utils/mkswap.c:654
+#: disk-utils/mkswap.c:632
 #, c-format
 msgid "%s: warning: truncating swap area to %ldkB\n"
 msgstr "%s: varování: odkládací prostor useknut na %ldkB\n"
 
-#: disk-utils/mkswap.c:660
+#: disk-utils/mkswap.c:638
 #, fuzzy, c-format
 msgid "%s: error: label only with v1 swap area\n"
 msgstr "%s: chyba: Kde mám vytvoøit odkládací prostor?\n"
 
-#: disk-utils/mkswap.c:676
+#: disk-utils/mkswap.c:662
 #, fuzzy, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
 msgstr "nebudu se pokou¹et vytvoøit odkládací zaøízení '%s'"
 
-#: disk-utils/mkswap.c:682
+#: disk-utils/mkswap.c:668
 #, fuzzy, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
 msgstr "%s je pøipojeno; systém souborù zde vytváøet nebudu!"
 
-#: disk-utils/mkswap.c:695 disk-utils/mkswap.c:716
+#: disk-utils/mkswap.c:681 disk-utils/mkswap.c:702
 msgid "fatal: first page unreadable"
 msgstr "osudová chyba: první stránka je neèitelná"
 
-#: disk-utils/mkswap.c:701
+#: disk-utils/mkswap.c:687
 #, c-format
 msgid ""
 "%s: Device '%s' contains a valid Sun disklabel.\n"
@@ -1107,42 +1107,42 @@ msgstr ""
 "opravdu\n"
 "chcete vytvoøit odkládací prostor v0, pou¾ijte pøepínaè -f pro vynucení.\n"
 
-#: disk-utils/mkswap.c:725
+#: disk-utils/mkswap.c:711
 msgid "Unable to set up swap-space: unreadable"
 msgstr "Odkládací prostor nelze nastavit: neèitelné"
 
-#: disk-utils/mkswap.c:726
+#: disk-utils/mkswap.c:712
 #, fuzzy, c-format
 msgid "Setting up swapspace version %d, size = %llu kB\n"
 msgstr "Vytváøím odkládací prostor verze %d, velikost (v bajtech) = %ld\n"
 
-#: disk-utils/mkswap.c:735
+#: disk-utils/mkswap.c:721
 msgid "unable to rewind swap-device"
 msgstr "odkládací prostor nelze pøevinout"
 
-#: disk-utils/mkswap.c:738
+#: disk-utils/mkswap.c:724
 msgid "unable to write signature page"
 msgstr "stránku signatur nelze zapsat"
 
-#: disk-utils/mkswap.c:746
+#: disk-utils/mkswap.c:732
 msgid "fsync failed"
 msgstr "volání fsync selhalo"
 
-#: disk-utils/mkswap.c:757
+#: disk-utils/mkswap.c:743
 #, c-format
 msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:763
+#: disk-utils/mkswap.c:749
 #, fuzzy
 msgid "unable to create new selinux context"
 msgstr "i-uzly nelze zapsat"
 
-#: disk-utils/mkswap.c:765
+#: disk-utils/mkswap.c:751
 msgid "couldn't compute selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:771
+#: disk-utils/mkswap.c:757
 #, fuzzy, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "%s nelze pøejmenovat na %s: %s\n"
@@ -5723,9 +5723,9 @@ msgstr "Testovací re¾im - poèátek epochy na %d nemìním.\n"
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Hodnotu poèátku epochy v jádøe nelze nastavit.\n"
 
-#: hwclock/hwclock.c:1186
+#: hwclock/hwclock.c:1186 misc-utils/cal.c:333 misc-utils/kill.c:189
 #, fuzzy, c-format
-msgid "%s from util-linux-%s\n"
+msgid "%s from %s\n"
 msgstr "%s na %s\n"
 
 #: hwclock/hwclock.c:1207
@@ -6012,135 +6012,135 @@ msgstr "Ovladaè jádra pro %s nepodporuje RTC_EPOCH_SET ioctl.\n"
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "volání ioctl(RTC_EPOCH_SET) pro %s selhalo"
 
-#: login-utils/agetty.c:324
+#: login-utils/agetty.c:325
 msgid "calling open_tty\n"
 msgstr "volám open_tty\n"
 
-#: login-utils/agetty.c:337
+#: login-utils/agetty.c:338
 msgid "calling termio_init\n"
 msgstr "volám termio_init\n"
 
-#: login-utils/agetty.c:342
+#: login-utils/agetty.c:343
 msgid "writing init string\n"
 msgstr "zapisuji inicializaèní øetìzec\n"
 
-#: login-utils/agetty.c:352
+#: login-utils/agetty.c:353
 msgid "before autobaud\n"
 msgstr "pøed autobaud\n"
 
-#: login-utils/agetty.c:364
+#: login-utils/agetty.c:365
 msgid "waiting for cr-lf\n"
 msgstr "èekám na cr-lf\n"
 
-#: login-utils/agetty.c:368
+#: login-utils/agetty.c:369
 #, c-format
 msgid "read %c\n"
 msgstr "pøeèteno %c\n"
 
-#: login-utils/agetty.c:377
+#: login-utils/agetty.c:378
 msgid "reading login name\n"
 msgstr "ètu pøihla¹ovací jméno\n"
 
-#: login-utils/agetty.c:398
+#: login-utils/agetty.c:399
 #, c-format
 msgid "%s: can't exec %s: %m"
 msgstr "%s: %s nelze spustit: %m"
 
-#: login-utils/agetty.c:418
+#: login-utils/agetty.c:422
 msgid "can't malloc initstring"
 msgstr "pamì» pro inicializaèní øetìzec nelze alokovat"
 
-#: login-utils/agetty.c:483
+#: login-utils/agetty.c:487
 #, c-format
 msgid "bad timeout value: %s"
 msgstr "chybný èasový limit: %s"
 
-#: login-utils/agetty.c:492
+#: login-utils/agetty.c:496
 msgid "after getopt loop\n"
 msgstr "po zpracování argumentù pøíkazové øádky\n"
 
-#: login-utils/agetty.c:542
+#: login-utils/agetty.c:546
 msgid "exiting parseargs\n"
 msgstr "opou¹tím funkci parseargs\n"
 
-#: login-utils/agetty.c:554
+#: login-utils/agetty.c:558
 msgid "entered parse_speeds\n"
 msgstr "vstupuji do funkce parse_speeds\n"
 
-#: login-utils/agetty.c:557
+#: login-utils/agetty.c:561
 #, c-format
 msgid "bad speed: %s"
 msgstr "chybná rychlost %s"
 
-#: login-utils/agetty.c:559
+#: login-utils/agetty.c:563
 msgid "too many alternate speeds"
 msgstr "pøíli¹ mnoho alternativních rychlostí"
 
-#: login-utils/agetty.c:561
+#: login-utils/agetty.c:565
 msgid "exiting parsespeeds\n"
 msgstr "opou¹tím funkci parsespeeds\n"
 
-#: login-utils/agetty.c:661
+#: login-utils/agetty.c:665
 #, c-format
 msgid "/dev: chdir() failed: %m"
 msgstr "/dev: volání chdir() selhalo: %m"
 
-#: login-utils/agetty.c:665
+#: login-utils/agetty.c:669
 #, c-format
 msgid "/dev/%s: not a character device"
 msgstr "/dev/%s není znakovým zaøízením"
 
-#: login-utils/agetty.c:672
+#: login-utils/agetty.c:676
 msgid "open(2)\n"
 msgstr "open(2)\n"
 
-#: login-utils/agetty.c:674
+#: login-utils/agetty.c:678
 #, c-format
 msgid "/dev/%s: cannot open as standard input: %m"
 msgstr "/dev/%s nelze otevøít jako standardní vstup: %m"
 
-#: login-utils/agetty.c:684
+#: login-utils/agetty.c:688
 #, c-format
 msgid "%s: not open for read/write"
 msgstr "%s: není otevøeno pro ètení/zápis"
 
-#: login-utils/agetty.c:688
+#: login-utils/agetty.c:692
 msgid "duping\n"
 msgstr "volám dup\n"
 
-#: login-utils/agetty.c:690
+#: login-utils/agetty.c:694
 #, c-format
 msgid "%s: dup problem: %m"
 msgstr "%s: volání dup selhalo: %m"
 
-#: login-utils/agetty.c:764
+#: login-utils/agetty.c:768
 msgid "term_io 2\n"
 msgstr "term_io 2\n"
 
-#: login-utils/agetty.c:973
+#: login-utils/agetty.c:977
 #, c-format
 msgid "user"
 msgstr "u¾ivatel"
 
-#: login-utils/agetty.c:973
+#: login-utils/agetty.c:977
 #, c-format
 msgid "users"
 msgstr "u¾ivatelé"
 
-#: login-utils/agetty.c:1058
+#: login-utils/agetty.c:1062
 #, c-format
 msgid "%s: read: %m"
 msgstr "%s: pøeèteno: %m"
 
-#: login-utils/agetty.c:1104
+#: login-utils/agetty.c:1109
 #, c-format
 msgid "%s: input overrun"
 msgstr "%s: pøeteèení vstupu"
 
-#: login-utils/agetty.c:1228
-#, c-format
+#: login-utils/agetty.c:1233
+#, fuzzy, c-format
 msgid ""
-"Usage: %s [-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
+"Usage: %s [-8hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
 "login_host] baud_rate,... line [termtype]\n"
 "or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
 "line baud_rate,... [termtype]\n"
@@ -6281,7 +6281,7 @@ msgstr "Finger informace *NEBYLY* zmìnìny. Zkuste to opìt pozdìji.\n"
 msgid "Finger information changed.\n"
 msgstr "Finger informace byly zmìnìny.\n"
 
-#: login-utils/chfn.c:520 login-utils/chsh.c:427 sys-utils/cytune.c:322
+#: login-utils/chfn.c:520 login-utils/chsh.c:427 sys-utils/cytune.c:321
 msgid "malloc failed"
 msgstr "volání malloc selhalo"
 
@@ -7071,11 +7071,6 @@ msgstr "%s: volání stat pro doèasný soubor selhalo.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: doèasný soubor nelze èíst.\n"
 
-#: misc-utils/cal.c:333
-#, fuzzy, c-format
-msgid "%s from %s\n"
-msgstr "%s na %s\n"
-
 #: misc-utils/cal.c:347
 msgid "illegal month value: use 1-12"
 msgstr "chybná hodnota pro mìsíc: pou¾ijte 1-12"
@@ -7103,11 +7098,6 @@ msgstr "Pou¾ití: %s [+formát] [den mìsíc rok]\n"
 msgid "St. Tib's Day"
 msgstr "Den svatého Tiba"
 
-#: misc-utils/kill.c:189
-#, fuzzy, c-format
-msgid "%s from %s%s\n"
-msgstr "%s na %s\n"
-
 #: misc-utils/kill.c:207
 #, c-format
 msgid "%s: unknown signal %s\n"
@@ -7133,23 +7123,23 @@ msgstr "Pou¾ití: %s [ -s signál | -p ] [ -a ] pid ...\n"
 msgid "       %s -l [ signal ]\n"
 msgstr "         %s -l [ signál ]\n"
 
-#: misc-utils/logger.c:141
+#: misc-utils/logger.c:139
 #, c-format
 msgid "logger: %s: %s.\n"
 msgstr "logger: %s: %s.\n"
 
 # 'facility'? lépe asi jako zaøízení, zle to by se pletlo s 'device' 
-#: misc-utils/logger.c:248
+#: misc-utils/logger.c:246
 #, c-format
 msgid "logger: unknown facility name: %s.\n"
 msgstr "logger: neznámé pøíslu¹enství: %s\n"
 
-#: misc-utils/logger.c:260
+#: misc-utils/logger.c:258
 #, c-format
 msgid "logger: unknown priority name: %s.\n"
 msgstr "logger: neznámý název priority: %s\n"
 
-#: misc-utils/logger.c:287
+#: misc-utils/logger.c:285
 #, c-format
 msgid ""
 "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
@@ -7237,7 +7227,7 @@ msgstr "%s: %s nelze pøejmenovat na %s: %s\n"
 msgid "call: %s from to files...\n"
 msgstr "Pou¾ití: %s z na soubory...\n"
 
-#: misc-utils/script.c:106
+#: misc-utils/script.c:109
 #, fuzzy, c-format
 msgid ""
 "Warning: `%s' is a link.\n"
@@ -7248,22 +7238,22 @@ msgstr ""
 "Pokud jej opravdu chcete pou¾ít, tak zadejte `%s [pøepínaèe] %s'.\n"
 "Script nebyl spu¹tìn.\n"
 
-#: misc-utils/script.c:168
+#: misc-utils/script.c:172
 #, fuzzy, c-format
 msgid "usage: script [-a] [-f] [-q] [-t] [file]\n"
 msgstr "Pou¾ití: script [-a] [-f] [-q] [soubor]\n"
 
-#: misc-utils/script.c:191
+#: misc-utils/script.c:195
 #, c-format
 msgid "Script started, file is %s\n"
 msgstr "Script spu¹tìn. Soubor je %s.\n"
 
-#: misc-utils/script.c:277
+#: misc-utils/script.c:290
 #, c-format
 msgid "Script started on %s"
 msgstr "Script spu¹tìn %s"
 
-#: misc-utils/script.c:361
+#: misc-utils/script.c:404
 #, c-format
 msgid ""
 "\n"
@@ -7272,17 +7262,17 @@ msgstr ""
 "\n"
 "Script ukonèen %s"
 
-#: misc-utils/script.c:368
+#: misc-utils/script.c:411
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "Script utils. Soubor je %s\n"
 
-#: misc-utils/script.c:379
+#: misc-utils/script.c:422
 #, c-format
 msgid "openpty failed\n"
 msgstr "volání openpty selhalo\n"
 
-#: misc-utils/script.c:413
+#: misc-utils/script.c:456
 #, c-format
 msgid "Out of pty's\n"
 msgstr "Nejsou ¾ádná dal¹í volná pty\n"
@@ -7829,7 +7819,7 @@ msgstr "mount: chyba pøi zápisu %s: %s"
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: chyba pøi zmìnì módu %s: %s"
 
-#: mount/mount.c:676 mount/mount.c:1566
+#: mount/mount.c:676 mount/mount.c:1565
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: volání fork selhalo: %s"
@@ -8107,37 +8097,37 @@ msgstr "umount: %s%s nelze pøipojit v re¾imu pouze pro ètení"
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s je chránìno proti zápisu, pøipojuji pouze pro ètení"
 
-#: mount/mount.c:1294
+#: mount/mount.c:1293
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s je chránìno proti zápisu, pøipojuji pouze pro ètení"
 
-#: mount/mount.c:1394
+#: mount/mount.c:1393
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: nebyl zadán typ - budu pou¾ívat nfs kvùli dvojteèce\n"
 
-#: mount/mount.c:1400
+#: mount/mount.c:1399
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr "mount: nebyl zadán typ - budu pou¾ívat smbfs kvùli dvojteèce\n"
 
-#: mount/mount.c:1417
+#: mount/mount.c:1416
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: pracuji na pozadí \"%s\"\n"
 
-#: mount/mount.c:1427
+#: mount/mount.c:1426
 #, c-format
 msgid "mount: giving up \"%s\"\n"
 msgstr "mount: konèím \"%s\"\n"
 
-#: mount/mount.c:1513
+#: mount/mount.c:1512
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s je ji¾ pøipojeno na %s\n"
 
-#: mount/mount.c:1651
+#: mount/mount.c:1650
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8197,24 +8187,24 @@ msgstr ""
 "Dal¹í pøepínaèe: [-nfFrsvw] [-o volby].\n"
 "Dal¹í informace viz man(8).\n"
 
-#: mount/mount.c:1961
+#: mount/mount.c:1960
 msgid "mount: only root can do that"
 msgstr "mount: toto mù¾e provést pouze superu¾ivatel"
 
-#: mount/mount.c:1966
+#: mount/mount.c:1965
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s nebylo nalezeno - vytváøím jej..\n"
 
-#: mount/mount.c:1976
+#: mount/mount.c:1975
 msgid "nothing was mounted"
 msgstr "nebyl pøipojen ¾ádný diskový oddíl"
 
-#: mount/mount.c:1989 mount/mount.c:2015
+#: mount/mount.c:1988 mount/mount.c:2014
 msgid "mount: no such partition found"
 msgstr "mount: ¾ádný odpovídající diskový oddíl nebyl nalezen"
 
-#: mount/mount.c:1992
+#: mount/mount.c:1991
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %s nelze nalézt v %s ani %s"
@@ -8237,7 +8227,7 @@ msgstr "; ignoruji zbytek souboru"
 msgid "bug in xstrndup call"
 msgstr "chyba ve volání xstrndup"
 
-#: mount/swapon.c:62
+#: mount/swapon.c:65
 #, fuzzy, c-format
 msgid ""
 "usage: %s [-hV]\n"
@@ -8250,7 +8240,7 @@ msgstr ""
 "         %s [-v] [-p priorita] zvlá¹tní soubor ...\n"
 "         %s [-s]\n"
 
-#: mount/swapon.c:72
+#: mount/swapon.c:75
 #, fuzzy, c-format
 msgid ""
 "usage: %s [-hV]\n"
@@ -8262,44 +8252,44 @@ msgstr ""
 "         %s [-v] [-p priorita] zvlá¹tní soubor ...\n"
 "         %s [-s]\n"
 
-#: mount/swapon.c:125
+#: mount/swapon.c:128
 #, fuzzy, c-format
 msgid "%s: cannot canonicalize %s: %s\n"
 msgstr "%s: %s nelze otevøít: %s\n"
 
-#: mount/swapon.c:164 mount/swapon.c:253
+#: mount/swapon.c:167 mount/swapon.c:255
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s na %s\n"
 
-#: mount/swapon.c:168 mount/swapon.c:231
-#, fuzzy, c-format
-msgid "%s: cannot find the device for %s\n"
-msgstr "%s: \"_stext\" nelze v %s nalézt\n"
-
-#: mount/swapon.c:175
+#: mount/swapon.c:177
 #, fuzzy, c-format
 msgid "%s: cannot stat %s: %s\n"
 msgstr "swapon: volání stat pro %s selhalo: %s\n"
 
-#: mount/swapon.c:186
+#: mount/swapon.c:188
 #, fuzzy, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
 msgstr ""
 "swapon: varování: pøístupová práva pro %s (%04o) nejsou bezpeèná, pou¾ijte %"
 "04o\n"
 
-#: mount/swapon.c:198
+#: mount/swapon.c:200
 #, fuzzy, c-format
 msgid "%s: Skipping file %s - it appears to have holes.\n"
 msgstr "swapon: soubor %s vynechávám - zdá se, ¾e v nìm jsou díry.\n"
 
-#: mount/swapon.c:263
+#: mount/swapon.c:233
+#, fuzzy, c-format
+msgid "%s: cannot find the device for %s\n"
+msgstr "%s: \"_stext\" nelze v %s nalézt\n"
+
+#: mount/swapon.c:267
 #, c-format
 msgid "Not superuser.\n"
 msgstr ""
 
-#: mount/swapon.c:297 mount/swapon.c:489
+#: mount/swapon.c:301 mount/swapon.c:492
 #, c-format
 msgid "%s: cannot open %s: %s\n"
 msgstr "%s: %s nelze otevøít: %s\n"
@@ -8449,7 +8439,7 @@ msgstr "Pouze u¾ivatel root mù¾e nastavit chování Ctrl-Alt-Del.\n"
 msgid "Usage: ctrlaltdel hard|soft\n"
 msgstr "Pou¾ití: ctrlaltdel hard|soft\n"
 
-#: sys-utils/cytune.c:115
+#: sys-utils/cytune.c:114
 #, c-format
 msgid ""
 "File %s, For threshold value %lu, Maximum characters in fifo were %d,\n"
@@ -8458,7 +8448,7 @@ msgstr ""
 "Soubor %s, pro prahovou hodnotu %lu, maximální poèet znakù ve fifo byl %d\n"
 "a maximální pøenosová rychlost ve znacích za sekundu byla %f\n"
 
-#: sys-utils/cytune.c:126
+#: sys-utils/cytune.c:125
 #, c-format
 msgid ""
 "File %s, For threshold value %lu and timrout value %lu, Maximum characters "
@@ -8469,32 +8459,32 @@ msgstr ""
 "znakù\n"
 "ve fifo byl %d a maximální pøenosová rychlost ve znacích za sekundu byla %f\n"
 
-#: sys-utils/cytune.c:190
+#: sys-utils/cytune.c:189
 #, c-format
 msgid "Invalid interval value: %s\n"
 msgstr "Chybné rozpìtí: %s\n"
 
-#: sys-utils/cytune.c:198
+#: sys-utils/cytune.c:197
 #, c-format
 msgid "Invalid set value: %s\n"
 msgstr "Chybná hodnota: %s\n"
 
-#: sys-utils/cytune.c:206
+#: sys-utils/cytune.c:205
 #, c-format
 msgid "Invalid default value: %s\n"
 msgstr "Chybná implicitní hodnota: %s\n"
 
-#: sys-utils/cytune.c:214
+#: sys-utils/cytune.c:213
 #, c-format
 msgid "Invalid set time value: %s\n"
 msgstr "Chybný èasový údaj: %s\n"
 
-#: sys-utils/cytune.c:222
+#: sys-utils/cytune.c:221
 #, c-format
 msgid "Invalid default time value: %s\n"
 msgstr "Chybný implicitní èasový údaj: %s\n"
 
-#: sys-utils/cytune.c:239
+#: sys-utils/cytune.c:238
 #, c-format
 msgid ""
 "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
@@ -8503,56 +8493,56 @@ msgstr ""
 "Pou¾ití: %s [-q [-i interval]] ([-s hodnota]|[-S hodnota]) ([-t hodnota]|[-T "
 "hodnota]) [-g|-G] soubor [soubor...]\n"
 
-#: sys-utils/cytune.c:251 sys-utils/cytune.c:270 sys-utils/cytune.c:290
-#: sys-utils/cytune.c:340
+#: sys-utils/cytune.c:250 sys-utils/cytune.c:269 sys-utils/cytune.c:289
+#: sys-utils/cytune.c:339
 #, c-format
 msgid "Can't open %s: %s\n"
 msgstr "%s nelze otevøít: %s\n"
 
-#: sys-utils/cytune.c:258
+#: sys-utils/cytune.c:257
 #, c-format
 msgid "Can't set %s to threshold %d: %s\n"
 msgstr "%s nelze nastavit na prahovou hodnotu %d: %s\n"
 
-#: sys-utils/cytune.c:277
+#: sys-utils/cytune.c:276
 #, c-format
 msgid "Can't set %s to time threshold %d: %s\n"
 msgstr "%s nelze nastavit na èasový limit %d: %s\n"
 
-#: sys-utils/cytune.c:295 sys-utils/cytune.c:352 sys-utils/cytune.c:383
+#: sys-utils/cytune.c:294 sys-utils/cytune.c:351 sys-utils/cytune.c:382
 #, c-format
 msgid "Can't get threshold for %s: %s\n"
 msgstr "Prahovou hodnotu pro %s nelze zjistit: %s\n"
 
-#: sys-utils/cytune.c:301 sys-utils/cytune.c:358 sys-utils/cytune.c:389
+#: sys-utils/cytune.c:300 sys-utils/cytune.c:357 sys-utils/cytune.c:388
 #, c-format
 msgid "Can't get timeout for %s: %s\n"
 msgstr "Èasový limit pro %s nelze zjistit: %s\n"
 
-#: sys-utils/cytune.c:307
+#: sys-utils/cytune.c:306
 #, fuzzy, c-format
 msgid "%s: %ld current threshold and %ld current timeout\n"
 msgstr "%s: %ld %s prahová hodnota a %ld %s èasový limit\n"
 
-#: sys-utils/cytune.c:310
+#: sys-utils/cytune.c:309
 #, fuzzy, c-format
 msgid "%s: %ld default threshold and %ld default timeout\n"
 msgstr "%s: %ld %s prahová hodnota a %ld %s èasový limit\n"
 
-#: sys-utils/cytune.c:328
+#: sys-utils/cytune.c:327
 msgid "Can't set signal handler"
 msgstr "Zpracování signálu nelze nastavit"
 
-#: sys-utils/cytune.c:332 sys-utils/cytune.c:367
+#: sys-utils/cytune.c:331 sys-utils/cytune.c:366
 msgid "gettimeofday failed"
 msgstr "volání gettimeofday selhalo"
 
-#: sys-utils/cytune.c:345 sys-utils/cytune.c:377
+#: sys-utils/cytune.c:344 sys-utils/cytune.c:376
 #, c-format
 msgid "Can't issue CYGETMON on %s: %s\n"
 msgstr "CYGETMON nelze na %s provést: %s\n"
 
-#: sys-utils/cytune.c:419
+#: sys-utils/cytune.c:418
 #, fuzzy, c-format
 msgid ""
 "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
@@ -8560,12 +8550,12 @@ msgstr ""
 "%s: %lu pøeru¹ení, %lu znakù; fifo: %lu práh, %lu èasový limit, %lu max, %lu "
 "nyní\n"
 
-#: sys-utils/cytune.c:425
+#: sys-utils/cytune.c:424
 #, c-format
 msgid "   %f int/sec; %f rec, %f send (char/sec)\n"
 msgstr "   %f pøer/sek; %f pøíj, %f odesl (znak/sek)\n"
 
-#: sys-utils/cytune.c:430
+#: sys-utils/cytune.c:429
 #, c-format
 msgid ""
 "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
@@ -8573,7 +8563,7 @@ msgstr ""
 "%s: %lu pøeru¹ení, %lu znakù; fifo: %lu práh, %lu èasový limit, %lu max, %lu "
 "nyní\n"
 
-#: sys-utils/cytune.c:436
+#: sys-utils/cytune.c:435
 #, c-format
 msgid "   %f int/sec; %f rec (char/sec)\n"
 msgstr "   %f pøer/sek; %f pøíj (znak/sek)\n"
@@ -9337,7 +9327,7 @@ msgstr ""
 msgid "Sampling_step: %i\n"
 msgstr "Profilovací_krok: %i\n"
 
-#: sys-utils/readprofile.c:305 sys-utils/readprofile.c:330
+#: sys-utils/readprofile.c:305 sys-utils/readprofile.c:331
 #, c-format
 msgid "%s: %s(%i): wrong map line\n"
 msgstr "%s: %s(%i): chybný map øádek\n"
@@ -9347,12 +9337,12 @@ msgstr "%s: %s(%i): chybný map øádek\n"
 msgid "%s: can't find \"_stext\" in %s\n"
 msgstr "%s: \"_stext\" nelze v %s nalézt\n"
 
-#: sys-utils/readprofile.c:344
+#: sys-utils/readprofile.c:352
 #, c-format
 msgid "%s: profile address out of range. Wrong map file?\n"
 msgstr "%s: adresa profilu je mimo rozsah. Chybný mapovací soubor?\n"
 
-#: sys-utils/readprofile.c:402
+#: sys-utils/readprofile.c:412
 msgid "total"
 msgstr "celkem"
 
@@ -10080,6 +10070,14 @@ msgstr "Vstupní øádka je pøíli¹ dlouhá.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Nedostatek pamìti pro rostoucí buffer.\n"
+
+#, fuzzy
+#~ msgid "%s from util-linux-%s\n"
+#~ msgstr "%s na %s\n"
+
+#, fuzzy
+#~ msgid "%s from %s%s\n"
+#~ msgstr "%s na %s\n"
 
 #~ msgid "Assuming pages of size %d (not %d)\n"
 #~ msgstr "Pøedpokládám velikost stránek %d (nikoliv %d)\n"
