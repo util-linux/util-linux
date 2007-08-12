@@ -120,7 +120,7 @@ usage(void) {
 
 	fprintf(stderr, _("Available commands:\n"));
 	fprintf(stderr, "\t%-30s %s\n", "--getsz",
-			"get size in 512-byte sectors");
+			_("get size in 512-byte sectors"));
 	for (i = 0; i < SIZE(bdcms); i++) {
 		if (bdcms[i].argname)
 			fprintf(stderr, "\t%s %-*s %s\n", bdcms[i].name,
@@ -326,7 +326,7 @@ do_commands(int fd, char **argv, int d) {
 		if (res == -1) {
 			perror(bdcms[j].iocname);
 			if (verbose)
-				printf("%s failed.\n", _(bdcms[j].help));
+				printf(_("%s failed.\n"), _(bdcms[j].help));
 			exit(1);
 		}
 		switch(bdcms[j].argtype) {

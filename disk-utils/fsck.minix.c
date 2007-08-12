@@ -590,7 +590,7 @@ read_tables(void) {
 		die(_("Unable to allocate buffer for inode map"));
 	zone_map = malloc(ZMAPS * BLOCK_SIZE);
 	if (!inode_map)
-		die("Unable to allocate buffer for zone map");
+		die(_("Unable to allocate buffer for zone map"));
 	memset(inode_map,0,sizeof(inode_map));
 	memset(zone_map,0,sizeof(zone_map));
 	inode_buffer = malloc(INODE_BUFFER_SIZE);
@@ -736,7 +736,7 @@ check_root2 (void) {
 	struct minix2_inode *inode = Inode2 + ROOT_INO;
 
 	if (!inode || !S_ISDIR (inode->i_mode))
-		die ("root inode isn't a directory");
+		die(_("root inode isn't a directory"));
 }
 
 static int
@@ -953,7 +953,7 @@ check_file(struct minix_inode * dir, unsigned int offset) {
 	if (!offset) {
 		if (!inode || strcmp(".",name)) {
 			get_current_name();
-			printf(_("`%s': bad directory: '.' isn't first\n"),
+			printf(_("%s: bad directory: '.' isn't first\n"),
 			       current_name);
 			errors_uncorrected = 1;
 		} else return;
@@ -961,7 +961,7 @@ check_file(struct minix_inode * dir, unsigned int offset) {
 	if (offset == dirsize) {
 		if (!inode || strcmp("..",name)) {
 			get_current_name();
-			printf(_("`%s': bad directory: '..' isn't second\n"),
+			printf(_("%s: bad directory: '..' isn't second\n"),
 			       current_name);
 			errors_uncorrected = 1;
 		} else return;
@@ -1081,7 +1081,7 @@ recursive_check2 (unsigned int ino) {
 
 	dir = Inode2 + ino;
 	if (!S_ISDIR (dir->i_mode))
-		die ("internal error");
+		die(_("internal error"));
 	if (dir->i_size < 2 * dirsize) {
 		get_current_name ();
 		printf (_("%s: bad directory: size < 32"),
@@ -1124,7 +1124,7 @@ check_counts(void) {
 		if (!inode_in_use(i)) {
 			printf(_("Inode %d used, marked unused in the bitmap."),
 				i);
-			if (ask("Set",1))
+			if (ask(_("Set"),1))
 				mark_inode(i);
 		}
 		if (Inode[i].i_nlinks != inode_count[i]) {
