@@ -71,7 +71,11 @@ hlp_ulong_max(void)
 int
 hlp_ulong_max32(void)
 {
+#if __WORDSIZE == 64
 	printf("%lu\n", ULONG_MAX >> 32);
+#else
+	printf("%lu\n", ULONG_MAX);
+#endif
 	return 0;
 }
 
