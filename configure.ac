@@ -476,6 +476,12 @@ if test x$enable_use_tty_group = xyes; then
   AC_DEFINE(USE_TTY_GROUP, 1, [Should wall and write be installed setgid tty?])
 fi
 
+AC_ARG_ENABLE([makeinstall-chown],
+  AS_HELP_STRING([--disable-makeinstall-chown], [do not do chown-like operations during "make install"]),
+  [], enable_makeinstall_chown=yes
+)
+AM_CONDITIONAL(MAKEINSTALL_DO_CHOWN, test x$enable_makeinstall_chown = xyes)
+
 
 AC_ARG_VAR([SUID_CFLAGS],
 	   [CFLAGS used for binaries which are usually with the suid bit])

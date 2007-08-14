@@ -68,11 +68,12 @@ write_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 write_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 if USE_TTY_GROUP
+if MAKEINSTALL_DO_CHOWN
 install-exec-hook::
 	chgrp tty $(DESTDIR)$(usrbinexecdir)/write
 	chmod g+s $(DESTDIR)$(usrbinexecdir)/write
 endif
-
+endif
 endif
 
 noinst_PROGRAMS = cal_test

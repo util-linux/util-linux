@@ -26,7 +26,7 @@ if NEED_LIBCRYPT
 simpleinit_LDADD = -lcrypt
 endif
 
-endif 
+endif
 
 if BUILD_LAST
 usrbinexec_PROGRAMS += last
@@ -101,17 +101,17 @@ man_MANS += mesg.1
 endif
 
 if BUILD_WALL
-
 usrbinexec_PROGRAMS += wall
 wall_SOURCES = wall.c ttymsg.c ttymsg.h
 man_MANS += wall.1
 
 if USE_TTY_GROUP
+if MAKEINSTALL_DO_CHOWN
 install-exec-hook::
 	chgrp tty $(DESTDIR)$(usrbinexecdir)/wall
 	chmod g+s $(DESTDIR)$(usrbinexecdir)/wall
 endif
-
+endif
 endif
 
 if BUILD_INIT
