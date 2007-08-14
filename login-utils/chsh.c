@@ -150,7 +150,8 @@ main (int argc, char *argv[]) {
 #endif
 
     oldshell = pw->pw_shell;
-    if (!oldshell[0]) oldshell = _PATH_BSHELL;
+    if (oldshell == NULL || *oldshell == '\0')
+	    oldshell = _PATH_BSHELL;			/* default */
 
     /* reality check */
     if (uid != 0 && uid != pw->pw_uid) {
@@ -219,7 +220,6 @@ main (int argc, char *argv[]) {
 	printf (_("Shell not changed.\n"));
 	return 0;
     }
-    if (!strcmp(shell, _PATH_BSHELL)) shell = "";
     pw->pw_shell = shell;
     if (setpwnam (pw) < 0) {
 	perror ("setpwnam");
@@ -332,6 +332,9 @@ prompt (char *question, char *def_val) {
 static int
 check_shell (char *shell) {
     int i, c;
+
+    if (!shell)
+	return (-1);
 
     if (*shell != '/') {
 	printf (_("%s: shell must be a full path name.\n"), whoami);
