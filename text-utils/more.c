@@ -1052,7 +1052,23 @@ void prbuf (register char *s, register int n)
 		    my_putstring(state ? ULenter : ULexit);
 	    }
 	    if (c != ' ' || pstate == 0 || state != 0 || ulglitch == 0)
+#ifdef ENABLE_WIDECHAR
+	    {
+		wchar_t wc;
+		size_t mblength;
+		mbstate_t state;
+		memset (&state, '\0', sizeof (mbstate_t));
+		s--; n++;
+		mblength = mbrtowc (&wc, s, n, &state);
+		if (mblength == (size_t) -2 || mblength == (size_t) -1)
+			mblength = 1;
+		while (mblength--)
+			putchar (*s++);
+		n += mblength;
+	    }
+#else
 	        putchar(c);
+#endif /* ENABLE_WIDECHAR */
 	    if (state && *chUL) {
 		putsout(chBS);
 		my_putstring(chUL);
