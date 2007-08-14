@@ -30,7 +30,13 @@
 chrt \- manipulate real-time attributes of a process
 .SH SYNOPSIS
 .B chrt
-[\fIoptions\fR] [\fIprio\fR] [\fIpid\fR | \fIcommand\fR [\fIarg\fR]...]
+.RI [ options ]\  prio
+.IR command\  [ arg ]...
+.br
+.B chrt
+.RI [ options ]
+.B \-p
+.RI [ prio ]\  pid
 .SH DESCRIPTION
 .PP
 .BR chrt (1)

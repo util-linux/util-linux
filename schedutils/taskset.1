@@ -27,10 +27,16 @@
 .\"
 .TH TASKSET "1" "Apr 2003" "schedutils" "Linux User's Manual"
 .SH NAME
-taskset \- retrieve or set a processes's CPU affinity
+taskset \- retrieve or set a process's CPU affinity
 .SH SYNOPSIS
 .B taskset
-[\fIoptions\fR] [\fImask\fR | \fIlist\fI ] [\fIpid\fR | \fIcommand\fR [\fIarg\fR]...]
+.RI [ options ]\  mask
+.IR command\  [ arg ]...
+.br
+.B taskset
+.RI [ options ]
+.B \-p
+.RI [ mask ]\  pid
 .SH DESCRIPTION
 .PP
 .BR taskset
@@ -66,32 +72,36 @@ returns, it is guaranteed that the given program has been scheduled to a legal
 CPU.
 .SH OPTIONS
 .TP
-.B -p, --pid
+.BR \-p ,\  \-\-pid
 operate on an existing PID and not launch a new task
 .TP
-.B -c, --cpu-list
-specifiy a numerical list of processors instead of a bitmask.  The list may
+.BR \-c ,\  \-\-cpu-list
+specify a numerical list of processors instead of a bitmask.  The list may
 contain multiple items, separated by comma, and ranges.  For example,
 .BR 0,5,7,9-11 .
 .TP
-.B -h, --help
+.BR \-h ,\  \-\-help
 display usage information and exit
 .TP
-.B -V, --version
+.BR \-V ,\  \-\-version
 output version information and exit
 .SH USAGE
 .TP
 The default behavior is to run a new command with a given affinity mask:
-taskset [mask] [command] [arguments]
+.B taskset
+.I mask
+.IR command\  [ arguments ]
 .TP
 You can also retrieve the CPU affinity of an existing task:
-taskset -p [pid]
+.B taskset \-p
+.I pid
 .TP
 Or set it:
-taskset -p [mask] [pid]
+.B taskset \-p
+.I mask pid
 .SH PERMISSIONS
 A user must possess
-.BR CAP_SYS_NICE
+.B CAP_SYS_NICE
 to change the CPU affinity of a process.  Any user can retrieve the affinity
 mask.
 .SH AUTHOR
