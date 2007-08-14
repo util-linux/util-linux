@@ -70,7 +70,7 @@ for normal users, and to
 .I /usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin
 for root.  Last, if this is not a "quiet" login, the message of the
 day is printed and the file with the user's name in
-.I /usr/spool/mail
+.I /var/spool/mail
 will be checked, and a message printed if it has non-zero length.
 
 The user's shell is then started.  If no shell is specified for the
@@ -294,7 +294,7 @@ are allowed to log in from anywhere as is standard behavior.
 .I /var/run/utmp
 .I /var/log/wtmp
 .I /var/log/lastlog
-.I /usr/spool/mail/*
+.I /var/spool/mail/*
 .I /etc/motd
 .I /etc/passwd
 .I /etc/nologin
