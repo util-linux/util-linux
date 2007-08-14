@@ -21,6 +21,7 @@ ACLOCAL_AMFLAGS = -I m4
 EXTRA_DIST = \
 		autogen.sh \
 		README.devel \
+		README.licensing \
 		licenses \
 		example.files \
 		po/update-potfiles \
