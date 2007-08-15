@@ -27,6 +27,10 @@ SOURCE CODE:
       Checkout:
 	  git clone git://git.kernel.org/pub/scm/utils/util-linux-ng/util-linux-ng.git util-linux-ng
 
+NLS (PO TRANSLATIONS):
+
+      PO files are maintained by:
+          http://translationproject.org/domain/util-linux-ng.html
 
 NEUTRALITY:
 
