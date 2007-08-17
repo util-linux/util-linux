@@ -65,7 +65,7 @@ Changelog:
 
 
 agetty:
-   - 8 bit characters on the Linux console lead to input corruption  [Moritz Muehlenhoff]
+   - 8 bit characters on the Linux console lead to input corruption  [Samuel Thibault]
    - add 'O' escape code to display domain name  [Karel Zak]
    - check gethostname() return value  [Karel Zak]
    - fix short malloc in initstring handling  [LaMont Jones]
