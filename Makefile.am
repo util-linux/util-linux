@@ -22,6 +22,7 @@ EXTRA_DIST = \
 		autogen.sh \
 		README.devel \
 		README.licensing \
+		DEPRECATED \
 		licenses \
 		example.files \
 		po/update-potfiles \
