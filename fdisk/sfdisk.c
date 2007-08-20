@@ -1925,11 +1925,12 @@ compute_start_sect(struct part_desc *p, struct part_desc *ep) {
       delta = 0;
 
     if (delta < 0) {
+	unsigned long old_size = p->size;
 	p->start -= delta;
 	p->size += delta;
 	if (is_extended(p->p.sys_type) && boxes == ONESECTOR)
 	  p->size = inc;
-	else if ((int)(p->size) <= 0) {
+	else if (old_size <= -delta) {
 	    warn(_("no room for partition descriptor\n"));
 	    return 0;
 	}
