@@ -123,6 +123,9 @@ int set_arch(const char *pers, unsigned long options)
     {PER_LINUX32, "mips", "mips"},
     {PER_LINUX, "mips64", "mips64"},
 #endif
+#if defined(__alpha__)
+    {PER_LINUX, "alpha", "alpha"},
+#endif
     {-1, NULL, NULL}
   };
 
