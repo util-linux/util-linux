@@ -114,6 +114,7 @@ int set_arch(const char *pers, unsigned long options)
 #endif
 #if defined(__sparc64__) || defined(__sparc__)
     {PER_LINUX32, "sparc", "sparc"},
+    {PER_LINUX32, "sparc32bash", "sparc"},
     {PER_LINUX32, "sparc32", "sparc"},
     {PER_LINUX, "sparc64", "sparc64"},
 #endif
@@ -175,6 +176,14 @@ int main(int argc, char *argv[])
     if (!strcmp(p, "-h") || !strcmp(p, "--help"))
       show_help();
   }
+  #if defined(__sparc64__) || defined(__sparc__)
+   if (!strcmp(p, "sparc32bash")) {
+       if (set_arch(p, NULL))
+         error(EXIT_FAILURE, errno, "Failed to set personality to %s", p);
+       execl("/bin/bash", NULL);
+       error(EXIT_FAILURE, errno, "/bin/bash");
+   }
+  #endif
   for (argv++, argc--; argc && argv[0][0] == '-'; argv++, argc--) {
     int n, unknown = 1;
     const char *arg = argv[0];
