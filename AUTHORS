@@ -29,10 +29,12 @@ AUTHORS (merged projects & commands):
 CONTRIBUTORS:
 
       Arkadiusz Miskiewicz <arekm@maven.pl>
+      Balint Cristian <cbalint@redhat.com>
       Bernhard Walle <bwalle@suse.de>
       Cliff Wickman <cpw@sgi.com>
       David Brownell <david-b@pacbell.net>
       David Miller <davem@davemloft.net>
+      Dennis Gilmore <dennis@ausil.us>
       Flávio Leitner <fleitner@redhat.com>
       Gabriel Barazer <gabriel@oxeva.fr>
       H. Peter Anvin <hpa@zytor.com>
@@ -52,3 +54,11 @@ CONTRIBUTORS:
       Stepan Kasal <skasal@redhat.com>
       Steve Grubb <sgrubb@redhat.com>
       Valerie Henson <val_henson@linux.intel.com>
+
+
+TRANSLATORS (translationproject.org):
+
+      Benno Schulenberg <benno@vertaalt.nl>            (nl.po)
+      Michael Piefel <piefel@informatik.hu-berlin.de>  (de.po)
+      Phan Vinh Thinh <teppi82@gmail.com>              (vi.po)
+
