@@ -34,8 +34,10 @@ static char
 		return NULL;
 
 	id = volume_id_open_fd(fd);
-	if (!id)
+	if (!id) {
+		close(fd);
 		return NULL;
+	}
 
 	/* TODO: use blkdev_get_size() */
 	if (ioctl(fd, BLKGETSIZE64, &size) != 0)
@@ -61,6 +63,7 @@ static char
 	}
 
 	volume_id_close(id);
+	close(fd);
 	return value;
 }
 
