@@ -541,7 +541,7 @@ create_mtab (void) {
 		char *extra_opts;
 		parse_opts (fstab->m.mnt_opts, &flags, &extra_opts);
 		mnt.mnt_dir = "/";
-		mnt.mnt_fsname = canonicalize (fstab->m.mnt_fsname);
+		mnt.mnt_fsname = fsprobe_get_devname(fstab->m.mnt_fsname);
 		mnt.mnt_type = fstab->m.mnt_type;
 		mnt.mnt_opts = fix_opts_string (flags, extra_opts, NULL);
 		mnt.mnt_freq = mnt.mnt_passno = 0;
