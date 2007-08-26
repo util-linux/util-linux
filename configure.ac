@@ -197,6 +197,16 @@ int test = SYS_pivot_root;
 
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+#include <sys/syscall.h>
+#include <unistd.h>
+]], [[
+int test = SYS_sched_getaffinity;
+]])],
+[AM_CONDITIONAL(HAVE_SCHED_GETAFFINITY, true)],
+[AM_CONDITIONAL(HAVE_SCHED_GETAFFINITY, false)])
+
+
+AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <time.h>
 #include <unistd.h>
 ]], [[
