@@ -1177,7 +1177,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 	error (_("mount: %s not mounted already, or bad option"), node);
       } else {
 	error (_("mount: wrong fs type, bad option, bad superblock on %s,\n"
-	       "       missing codepage or helper program, or other error"),
+	       "       missing codepage or other error"),
 	       spec);
 
 	if (stat(spec, &statbuf) == 0 && S_ISBLK(statbuf.st_mode)
