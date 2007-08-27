@@ -107,7 +107,7 @@ int main(int argc, char *argv[])
 		case 'h':
 		default:
 			usage();
-			exit(0);
+			exit(EXIT_SUCCESS);
 		}
 	}
 
@@ -125,7 +125,7 @@ int main(int argc, char *argv[])
 			break;
 		default:
 			printf("bad prio class %d\n", ioprio_class);
-			return 1;
+			exit(EXIT_FAILURE);
 	}
 
 	if (!set) {
@@ -134,9 +134,10 @@ int main(int argc, char *argv[])
 
 		ioprio = ioprio_get(IOPRIO_WHO_PROCESS, pid);
 
-		if (ioprio == -1)
+		if (ioprio == -1) {
 			perror("ioprio_get");
-		else {
+			exit(EXIT_FAILURE);
+		} else {
 			ioprio_class = ioprio >> IOPRIO_CLASS_SHIFT;
 			if (ioprio_class != IOPRIO_CLASS_IDLE) {
 				ioprio = ioprio & 0xff;
@@ -147,12 +148,16 @@ int main(int argc, char *argv[])
 	} else {
 		if (ioprio_set(IOPRIO_WHO_PROCESS, pid, ioprio | ioprio_class << IOPRIO_CLASS_SHIFT) == -1) {
 			perror("ioprio_set");
-			return 1;
+			exit(EXIT_FAILURE);
 		}
 
-		if (argv[optind])
+		if (argv[optind]) {
 			execvp(argv[optind], &argv[optind]);
+			/* execvp should never return */
+			perror("execvp");
+			exit(EXIT_FAILURE);
+		}
 	}
 
-	return 0;
+	exit(EXIT_SUCCESS);
 }
