@@ -51,6 +51,7 @@ CONTRIBUTORS:
       Pádraig Brady <P@draigBrady.com>
       Ram Pai <linuxram@us.ibm.com>
       Samuel Thibault <samuel.thibault@ens-lyon.org>
+      Sascha Sommer <ssommer@suse.de>
       Stepan Kasal <skasal@redhat.com>
       Steve Grubb <sgrubb@redhat.com>
       Valerie Henson <val_henson@linux.intel.com>
@@ -58,7 +59,9 @@ CONTRIBUTORS:
 
 TRANSLATORS (translationproject.org):
 
-      Benno Schulenberg <benno@vertaalt.nl>            (nl.po)
-      Michael Piefel <piefel@informatik.hu-berlin.de>  (de.po)
-      Phan Vinh Thinh <teppi82@gmail.com>              (vi.po)
+      Benno Schulenberg <benno@vertaalt.nl>            (nl)
+      Michael Piefel <piefel@informatik.hu-berlin.de>  (de)
+      Phan Vinh Thinh <teppi82@gmail.com>              (vi)
+      Daniel Nylander <po@danielnylander.se>           (sv)
+      Petr Pisar <petr.pisar@atlas.cz>                 (cs)
 
