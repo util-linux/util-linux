@@ -253,6 +253,7 @@ UTIL_SET_ARCH(SPARC, sparc*)
 UTIL_SET_ARCH(PPC, ppc*|powerpc*)
 UTIL_SET_ARCH(M68K, m68*)
 UTIL_SET_ARCH(MIPS, mips*)
+UTIL_SET_ARCH(HPPA, hppa*)
 
 AC_ARG_ENABLE([arch],
   AS_HELP_STRING([--enable-arch], [do build arch]),

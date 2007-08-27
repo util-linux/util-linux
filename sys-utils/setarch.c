@@ -122,7 +122,8 @@ int set_arch(const char *pers, unsigned long options)
     {PER_LINUX, "ia64", "ia64"},
 #endif
 #if defined(__hppa__)
-    {PER_LINUX, "parisc", "parisc"},
+    {PER_LINUX32, "parisc32", "parisc"},
+    {PER_LINUX32, "parisc", "parisc"},
     {PER_LINUX, "parisc64", "parisc64"},
 #endif
 #if defined(__s390x__) || defined(__s390__)
