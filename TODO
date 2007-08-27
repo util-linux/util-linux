@@ -1,9 +1,7 @@
-
-
-- convet po/ files to UTF-8
-
 2.14:
 ====
+
+- convet po/ files to UTF-8
 
 - add an option to the cal command to control highlight date
   (cal -v YYYY/MM/DD)
@@ -22,6 +20,10 @@
 - use EXIT_FAILED and EXIT_SUCCESS from stdlib.h for exit() codes
 
 - rewrite the replay script to C to avoid dependence on perl
+
+- add long options to setarch(1)
+
+- cleanup cryptoloop support in losetup -- see debian patches (???)
 
 - "mount -a":
 
