@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-08-07 23:26+0200\n"
+"POT-Creation-Date: 2007-08-28 00:12+0200\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -99,6 +99,11 @@ msgstr "  %s [-v|-q] ordres dispositius\n"
 msgid "Available commands:\n"
 msgstr "Ordres disponibles:\n"
 
+#: disk-utils/blockdev.c:123
+#, fuzzy
+msgid "get size in 512-byte sectors"
+msgstr "aconsegueix la mida en octets"
+
 #: disk-utils/blockdev.c:275
 #, c-format
 msgid "%s: Unknown command: %s\n"
@@ -108,6 +113,11 @@ msgstr "%s: Ordre desconeguda: %s\n"
 #, c-format
 msgid "%s requires an argument\n"
 msgstr "%s requereix un argument\n"
+
+#: disk-utils/blockdev.c:329
+#, fuzzy, c-format
+msgid "%s failed.\n"
+msgstr "la cerca ha fallat"
 
 #: disk-utils/blockdev.c:366
 #, c-format
@@ -331,6 +341,12 @@ msgid "Unable to allocate buffer for inode map"
 msgstr ""
 "No es pot assignar memòria intermèdia per al mapa de nodes d'identificació"
 
+#: disk-utils/fsck.minix.c:593
+#, fuzzy
+msgid "Unable to allocate buffer for zone map"
+msgstr ""
+"No es pot assignar memòria intermèdia per al mapa de nodes d'identificació"
+
 #: disk-utils/fsck.minix.c:598
 msgid "Unable to allocate buffer for inodes"
 msgstr "No es pot assignar memòria intermèdia per als nodes d'identificació"
@@ -421,7 +437,7 @@ msgstr "El fitxer «%s» té el mode %05o\n"
 msgid "Warning: inode count too big.\n"
 msgstr "Avís: el nombre de nodes d'identificació és massa gran.\n"
 
-#: disk-utils/fsck.minix.c:731
+#: disk-utils/fsck.minix.c:731 disk-utils/fsck.minix.c:739
 msgid "root inode isn't a directory"
 msgstr "el node d'identificació arrel no és un directori"
 
@@ -456,27 +472,17 @@ msgstr ""
 msgid " Remove"
 msgstr " Elimina"
 
-#: disk-utils/fsck.minix.c:956
-#, c-format
-msgid "`%s': bad directory: '.' isn't first\n"
-msgstr "«%s»: directori incorrecte: «.» no és el primer\n"
-
-#: disk-utils/fsck.minix.c:964
-#, c-format
-msgid "`%s': bad directory: '..' isn't second\n"
-msgstr "«%s»: directori incorrecte: «..» no és el segon\n"
-
-#: disk-utils/fsck.minix.c:1023
+#: disk-utils/fsck.minix.c:956 disk-utils/fsck.minix.c:1023
 #, c-format
 msgid "%s: bad directory: '.' isn't first\n"
 msgstr "%s: directori incorrecte: «.» no és el primer\n"
 
-#: disk-utils/fsck.minix.c:1032
+#: disk-utils/fsck.minix.c:964 disk-utils/fsck.minix.c:1032
 #, c-format
 msgid "%s: bad directory: '..' isn't second\n"
 msgstr "%s: directori incorrecte: «..» no és el segon\n"
 
-#: disk-utils/fsck.minix.c:1066
+#: disk-utils/fsck.minix.c:1066 disk-utils/fsck.minix.c:1084
 msgid "internal error"
 msgstr "error intern"
 
@@ -508,6 +514,10 @@ msgstr ""
 "S'està usant el node d'identificació %d; marcat com a en desús en el mapa de "
 "bits."
 
+#: disk-utils/fsck.minix.c:1127 disk-utils/fsck.minix.c:1181
+msgid "Set"
+msgstr "Estableix"
+
 #: disk-utils/fsck.minix.c:1131 disk-utils/fsck.minix.c:1185
 #, c-format
 msgid "Inode %d (mode = %07o), i_nlinks=%d, counted=%d."
@@ -535,10 +545,6 @@ msgstr "Zona %d: en ús, comptada=%d\n"
 #, c-format
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "Zona %d: no en ús, comptada=%d\n"
-
-#: disk-utils/fsck.minix.c:1181
-msgid "Set"
-msgstr "Estableix"
 
 #: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:631
 #: disk-utils/mkfs.minix.c:633
@@ -1096,7 +1102,7 @@ msgid "too many bad pages"
 msgstr "hi ha massa pàgines incorrectes"
 
 #: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1972 text-utils/more.c:1983
+#: text-utils/more.c:1988 text-utils/more.c:1999
 msgid "Out of memory"
 msgstr "S'ha esgotat la memòria"
 
@@ -6362,18 +6368,18 @@ msgid "Changing finger information for %s.\n"
 msgstr "S'està canviant la informació del finger per a l'usuari %s.\n"
 
 #: login-utils/chfn.c:179 login-utils/chfn.c:183 login-utils/chfn.c:190
-#: login-utils/chfn.c:194 login-utils/chsh.c:177 login-utils/chsh.c:181
-#: login-utils/chsh.c:188 login-utils/chsh.c:192
+#: login-utils/chfn.c:194 login-utils/chsh.c:178 login-utils/chsh.c:182
+#: login-utils/chsh.c:189 login-utils/chsh.c:193
 msgid "Password error."
 msgstr "S'ha produït un error en la contrasenya."
 
-#: login-utils/chfn.c:203 login-utils/chsh.c:201 login-utils/login.c:798
+#: login-utils/chfn.c:203 login-utils/chsh.c:202 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:333
 #: mount/lomount.c:336
 msgid "Password: "
 msgstr "Contrasenya: "
 
-#: login-utils/chfn.c:206 login-utils/chsh.c:204
+#: login-utils/chfn.c:206 login-utils/chsh.c:205
 msgid "Incorrect password."
 msgstr "La contrasenya no és correcta."
 
@@ -6437,7 +6443,7 @@ msgstr ""
 msgid "Finger information changed.\n"
 msgstr "S'ha canviat la informació del finger.\n"
 
-#: login-utils/chfn.c:520 login-utils/chsh.c:427 sys-utils/cytune.c:321
+#: login-utils/chfn.c:520 login-utils/chsh.c:430 sys-utils/cytune.c:321
 msgid "malloc failed"
 msgstr "l'assignació de memòria (malloc) ha fallat"
 
@@ -6447,7 +6453,7 @@ msgid "%s: %s is not authorized to change the shell of %s\n"
 msgstr ""
 "%s: %s no està autoritzat a canviar l'intèrpret d'ordres de l'usuari %s\n"
 
-#: login-utils/chsh.c:158
+#: login-utils/chsh.c:159
 #, c-format
 msgid ""
 "%s: Running UID doesn't match UID of user we're altering, shell change "
@@ -6456,23 +6462,23 @@ msgstr ""
 "%s: L'UID en execució no coincideix amb l'UID de l'usuari que s'està "
 "alterant, s'ha denegat el canvi d'intèrpret d'ordres\n"
 
-#: login-utils/chsh.c:164
+#: login-utils/chsh.c:165
 #, c-format
 msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
 msgstr ""
 "%s: El vostre intèrpret d'ordres no està a /etc/shells; s'ha denegat el "
 "canvi d'intèrpret d'ordres\n"
 
-#: login-utils/chsh.c:171
+#: login-utils/chsh.c:172
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "S'està canviant l'intèrpret d'ordres per %s.\n"
 
-#: login-utils/chsh.c:212
+#: login-utils/chsh.c:213
 msgid "New shell"
 msgstr "Nou intèrpret d'ordres"
 
-#: login-utils/chsh.c:219
+#: login-utils/chsh.c:220
 #, c-format
 msgid "Shell not changed.\n"
 msgstr "No s'ha canviat l'intèrpret d'ordres.\n"
@@ -6498,57 +6504,57 @@ msgstr ""
 "version ]\n"
 "\t[ nom_usuari ]\n"
 
-#: login-utils/chsh.c:337
+#: login-utils/chsh.c:340
 #, c-format
 msgid "%s: shell must be a full path name.\n"
 msgstr "%s: l'intèrpret d'ordres ha de ser un camí complet.\n"
 
-#: login-utils/chsh.c:341
+#: login-utils/chsh.c:344
 #, c-format
 msgid "%s: \"%s\" does not exist.\n"
 msgstr "%s: \"%s\" no existeix.\n"
 
-#: login-utils/chsh.c:345
+#: login-utils/chsh.c:348
 #, c-format
 msgid "%s: \"%s\" is not executable.\n"
 msgstr "%s: \"%s\" no és executable.\n"
 
-#: login-utils/chsh.c:352
+#: login-utils/chsh.c:355
 #, c-format
 msgid "%s: '%c' is not allowed.\n"
 msgstr "%s: '%c' no està permès.\n"
 
-#: login-utils/chsh.c:356
+#: login-utils/chsh.c:359
 #, c-format
 msgid "%s: Control characters are not allowed.\n"
 msgstr "%s: Els caràcters de control no estan permesos.\n"
 
-#: login-utils/chsh.c:363
+#: login-utils/chsh.c:366
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells\n"
 msgstr "Avís: \"%s\" no està llistat a /etc/shells\n"
 
-#: login-utils/chsh.c:365
+#: login-utils/chsh.c:368
 #, c-format
 msgid "%s: \"%s\" is not listed in /etc/shells.\n"
 msgstr "%s: \"%s\" no està llistat a /etc/shells.\n"
 
-#: login-utils/chsh.c:367
+#: login-utils/chsh.c:370
 #, c-format
 msgid "%s: use -l option to see list\n"
 msgstr "%s: useu l'opció -l per veure'n la llista\n"
 
-#: login-utils/chsh.c:373
+#: login-utils/chsh.c:376
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells.\n"
 msgstr "Avís: \"%s\" no està llistat a /etc/shells.\n"
 
-#: login-utils/chsh.c:374
+#: login-utils/chsh.c:377
 #, c-format
 msgid "Use %s -l to see list.\n"
 msgstr "Useu %s -l per veure'n la llista.\n"
 
-#: login-utils/chsh.c:394
+#: login-utils/chsh.c:397
 #, c-format
 msgid "No known shells.\n"
 msgstr "No es coneix cap intèrpret d'ordres.\n"
@@ -7098,7 +7104,7 @@ msgstr "no s'ha pogut obrir el directori\n"
 msgid "fork failed\n"
 msgstr "no s'ha pogut bifurcar\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1619
+#: login-utils/simpleinit.c:539 text-utils/more.c:1635
 msgid "exec failed\n"
 msgstr "no s'ha pogut executar exec\n"
 
@@ -7912,17 +7918,17 @@ msgstr "set_loop(%s,%s,%llu): èxit\n"
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: no s'ha pogut suprimir el dispositiu %s: %s\n"
 
-#: mount/lomount.c:405
+#: mount/lomount.c:406
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): èxit\n"
 
-#: mount/lomount.c:413
+#: mount/lomount.c:414
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Aquest mount s'ha compilat sense suport per a loop. Recompileu-lo.\n"
 
-#: mount/lomount.c:450
+#: mount/lomount.c:451
 #, c-format
 msgid ""
 "\n"
@@ -7944,12 +7950,12 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:478 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:479 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "no hi ha prou memòria"
 
-#: mount/lomount.c:639
+#: mount/lomount.c:640
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -9688,7 +9694,7 @@ msgstr ", a punt"
 msgid "disable rtc alarm interrupt"
 msgstr ""
 
-#: sys-utils/setarch.c:57
+#: sys-utils/setarch.c:70
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -9696,46 +9702,46 @@ msgid ""
 "Options:\n"
 msgstr ""
 
-#: sys-utils/setarch.c:61
+#: sys-utils/setarch.c:74
 #, c-format
 msgid "\t-%c\tEnable %s\n"
 msgstr ""
 
-#: sys-utils/setarch.c:63
+#: sys-utils/setarch.c:76
 #, c-format
 msgid ""
 "\n"
 "For more information see setarch(8).\n"
 msgstr ""
 
-#: sys-utils/setarch.c:75
+#: sys-utils/setarch.c:88
 #, fuzzy, c-format
 msgid ""
 "%s: %s\n"
 "Try `%s --help' for more information.\n"
 msgstr "Escolliu `getopt --help' per obtenir més informació.\n"
 
-#: sys-utils/setarch.c:133 sys-utils/setarch.c:149
+#: sys-utils/setarch.c:155 sys-utils/setarch.c:171
 #, fuzzy, c-format
 msgid "%s: Unrecognized architecture"
 msgstr " %s: no s'ha pogut reconèixer el tipus de la taula de particions\n"
 
-#: sys-utils/setarch.c:166 sys-utils/setarch.c:173
+#: sys-utils/setarch.c:188 sys-utils/setarch.c:195
 #, fuzzy
 msgid "Not enough arguments"
 msgstr "Massa arguments.\n"
 
-#: sys-utils/setarch.c:199
+#: sys-utils/setarch.c:237
 #, c-format
 msgid "Switching on %s.\n"
 msgstr ""
 
-#: sys-utils/setarch.c:206
+#: sys-utils/setarch.c:244
 #, fuzzy, c-format
 msgid "Unknown option `%c' ignored"
 msgstr "%s: opció desconeguda «-%c»\n"
 
-#: sys-utils/setarch.c:211
+#: sys-utils/setarch.c:249
 #, fuzzy, c-format
 msgid "Failed to set personality to %s"
 msgstr "No s'ha pogut escriure la partició a %s\n"
@@ -9928,25 +9934,25 @@ msgstr "(Fitxer següent: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Premeu la barra espaiadora per continuar; «q» per a sortir.]"
 
-#: text-utils/more.c:1158
+#: text-utils/more.c:1174
 #, c-format
 msgid "...back %d pages"
 msgstr "...retrocedeix %d pàgines"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1176
 msgid "...back 1 page"
 msgstr "...retrocedeix 1 pàgina"
 
-#: text-utils/more.c:1203
+#: text-utils/more.c:1219
 msgid "...skipping one line"
 msgstr "...s'està ometent una línia"
 
-#: text-utils/more.c:1205
+#: text-utils/more.c:1221
 #, c-format
 msgid "...skipping %d lines"
 msgstr "...s'està ometent %d línies"
 
-#: text-utils/more.c:1242
+#: text-utils/more.c:1258
 msgid ""
 "\n"
 "***Back***\n"
@@ -9956,7 +9962,7 @@ msgstr ""
 "***Endarrera***\n"
 "\n"
 
-#: text-utils/more.c:1280
+#: text-utils/more.c:1296
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -9969,7 +9975,7 @@ msgstr ""
 "L'asterisc (*) indica que l'argument esdevé el nou valor per defecte.\n"
 
 # a.b: Falta arranjar això de "kth"
-#: text-utils/more.c:1287
+#: text-utils/more.c:1303
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -10014,34 +10020,34 @@ msgstr ""
 ":f                      Mostra el nom del fitxer i el número de línia\n"
 ".                       Repeteix l'ordre anterior\n"
 
-#: text-utils/more.c:1356 text-utils/more.c:1361
+#: text-utils/more.c:1372 text-utils/more.c:1377
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Premeu «h» per a les instruccions.]"
 
-#: text-utils/more.c:1395
+#: text-utils/more.c:1411
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" línia %d"
 
-#: text-utils/more.c:1397
+#: text-utils/more.c:1413
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[No és un fitxer] línia %d"
 
-#: text-utils/more.c:1481
+#: text-utils/more.c:1497
 msgid "  Overflow\n"
 msgstr "  Desbordament\n"
 
-#: text-utils/more.c:1528
+#: text-utils/more.c:1544
 msgid "...skipping\n"
 msgstr "...s'està ometent\n"
 
-#: text-utils/more.c:1557
+#: text-utils/more.c:1573
 msgid "Regular expression botch"
 msgstr "S'ha produït un error en l'expressió regular"
 
-#: text-utils/more.c:1569
+#: text-utils/more.c:1585
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -10049,15 +10055,15 @@ msgstr ""
 "\n"
 "No s'ha trobat el patró\n"
 
-#: text-utils/more.c:1572 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1588 text-utils/pg.c:1125 text-utils/pg.c:1276
 msgid "Pattern not found"
 msgstr "No s'ha trobat el patró"
 
-#: text-utils/more.c:1633
+#: text-utils/more.c:1649
 msgid "can't fork\n"
 msgstr "no s'ha pogut bifurcar\n"
 
-#: text-utils/more.c:1672
+#: text-utils/more.c:1688
 msgid ""
 "\n"
 "...Skipping "
@@ -10065,19 +10071,19 @@ msgstr ""
 "\n"
 "...S'està ometent"
 
-#: text-utils/more.c:1676
+#: text-utils/more.c:1692
 msgid "...Skipping to file "
 msgstr "...s'està saltant al fitxer "
 
-#: text-utils/more.c:1678
+#: text-utils/more.c:1694
 msgid "...Skipping back to file "
 msgstr "...S'està retrocedint al fitxer "
 
-#: text-utils/more.c:1956
+#: text-utils/more.c:1972
 msgid "Line too long"
 msgstr "Línia massa llarga"
 
-#: text-utils/more.c:1999
+#: text-utils/more.c:2015
 msgid "No previous command to substitute for"
 msgstr "No hi ha cap ordre prèvia a substituir"
 
@@ -10268,6 +10274,12 @@ msgstr "Línia d'entrada massa llarga.\n"
 msgid "Out of memory when growing buffer.\n"
 msgstr ""
 "S'ha esgotat la memòria en augmentar la mida de la memòria intermèdia.\n"
+
+#~ msgid "`%s': bad directory: '.' isn't first\n"
+#~ msgstr "«%s»: directori incorrecte: «.» no és el primer\n"
+
+#~ msgid "`%s': bad directory: '..' isn't second\n"
+#~ msgstr "«%s»: directori incorrecte: «..» no és el segon\n"
 
 #~ msgid "%s from util-linux-%s\n"
 #~ msgstr "%s d'util-linux-%s\n"

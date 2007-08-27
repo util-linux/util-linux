@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.13-rc3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-08-07 23:26+0200\n"
+"POT-Creation-Date: 2007-08-28 00:12+0200\n"
 "PO-Revision-Date: 2007-08-14 18:03+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -97,6 +97,11 @@ msgstr "  %s  [-v|-q] PŘÍKAZ… ZAŘÍZENÍ…\n"
 msgid "Available commands:\n"
 msgstr "Dostupné příkazy:\n"
 
+#: disk-utils/blockdev.c:123
+#, fuzzy
+msgid "get size in 512-byte sectors"
+msgstr "zjistí velikost v bajtech"
+
 #: disk-utils/blockdev.c:275
 #, c-format
 msgid "%s: Unknown command: %s\n"
@@ -106,6 +111,11 @@ msgstr "%s: neznámý příkaz %s\n"
 #, c-format
 msgid "%s requires an argument\n"
 msgstr "přepínač %s vyžaduje argument\n"
+
+#: disk-utils/blockdev.c:329
+#, fuzzy, c-format
+msgid "%s failed.\n"
+msgstr "chyba při posunu ukazovátka"
 
 #: disk-utils/blockdev.c:366
 #, c-format
@@ -325,6 +335,11 @@ msgstr "superblok obsahuje chybnou položku s_zmap_blocks"
 msgid "Unable to allocate buffer for inode map"
 msgstr "buffer pro mapu i-uzlů nelze alokovat"
 
+#: disk-utils/fsck.minix.c:593
+#, fuzzy
+msgid "Unable to allocate buffer for zone map"
+msgstr "buffer pro mapu i-uzlů nelze alokovat"
+
 #: disk-utils/fsck.minix.c:598
 msgid "Unable to allocate buffer for inodes"
 msgstr "buffer pro i-uzly nelze alokovat"
@@ -412,7 +427,7 @@ msgstr "Typ souboru „%s“ je %05o\n"
 msgid "Warning: inode count too big.\n"
 msgstr "Varování: počet i-uzlů je příliš veliký.\n"
 
-#: disk-utils/fsck.minix.c:731
+#: disk-utils/fsck.minix.c:731 disk-utils/fsck.minix.c:739
 msgid "root inode isn't a directory"
 msgstr "root i-uzel není adresářem"
 
@@ -445,27 +460,17 @@ msgstr "Adresář „%s“ obsahuje pro soubor „%.*s“ chybné číslo i-uzlu
 msgid " Remove"
 msgstr " Odstranit"
 
-#: disk-utils/fsck.minix.c:956
-#, c-format
-msgid "`%s': bad directory: '.' isn't first\n"
-msgstr "„%s“: chybný adresář: „.“ není první\n"
-
-#: disk-utils/fsck.minix.c:964
-#, c-format
-msgid "`%s': bad directory: '..' isn't second\n"
-msgstr "„%s“: chybný adresář: „..“ není druhý\n"
-
-#: disk-utils/fsck.minix.c:1023
+#: disk-utils/fsck.minix.c:956 disk-utils/fsck.minix.c:1023
 #, c-format
 msgid "%s: bad directory: '.' isn't first\n"
 msgstr "%s: chybný adresář: „.“ není první\n"
 
-#: disk-utils/fsck.minix.c:1032
+#: disk-utils/fsck.minix.c:964 disk-utils/fsck.minix.c:1032
 #, c-format
 msgid "%s: bad directory: '..' isn't second\n"
 msgstr "%s: chybný adresář: „..“ není druhý\n"
 
-#: disk-utils/fsck.minix.c:1066
+#: disk-utils/fsck.minix.c:1066 disk-utils/fsck.minix.c:1084
 msgid "internal error"
 msgstr "vnitřní chyba"
 
@@ -492,6 +497,10 @@ msgstr "I-uzel %d není používán a v bitmapě označen jako používaný."
 #, c-format
 msgid "Inode %d used, marked unused in the bitmap."
 msgstr "I-uzel %d je používán a v bitmapě označen jako nepoužívaný."
+
+#: disk-utils/fsck.minix.c:1127 disk-utils/fsck.minix.c:1181
+msgid "Set"
+msgstr "Nastavit"
 
 #: disk-utils/fsck.minix.c:1131 disk-utils/fsck.minix.c:1185
 #, c-format
@@ -520,10 +529,6 @@ msgstr "Zóna %d: je používaná, napočítáno=%d\n"
 #, c-format
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "Zóna %d: není používaná, napočítáno=%d\n"
-
-#: disk-utils/fsck.minix.c:1181
-msgid "Set"
-msgstr "Nastavit"
 
 #: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:631
 #: disk-utils/mkfs.minix.c:633
@@ -775,7 +780,8 @@ msgstr "mkfs (%s)\n"
 #: disk-utils/mkfs.cramfs.c:125
 #, c-format
 msgid ""
-"usage: %s [-h] [-v] [-b blksize] [-e edition] [-i file] [-n name] dirname outfile\n"
+"usage: %s [-h] [-v] [-b blksize] [-e edition] [-i file] [-n name] dirname "
+"outfile\n"
 " -h         print this help\n"
 " -v         be verbose\n"
 " -E         make all warnings errors (non-zero exit status)\n"
@@ -789,14 +795,16 @@ msgid ""
 " dirname    root of the filesystem to be compressed\n"
 " outfile    output file\n"
 msgstr ""
-"Použití: %s [-h] [-v] [-b VELIKOST_BLOKU] [-e VERZE] [-i SOUBOR] [-n NÁZEV] NÁZEV_ADRESÁŘE VÝSTUPNÍ_SOUBOR\n"
+"Použití: %s [-h] [-v] [-b VELIKOST_BLOKU] [-e VERZE] [-i SOUBOR] [-n NÁZEV] "
+"NÁZEV_ADRESÁŘE VÝSTUPNÍ_SOUBOR\n"
 " -h         vypíše tuto nápovědu\n"
 " -v         upovídaný režim\n"
 " -E         varování  budou považována za chyby (nenulový návratový kód)\n"
 " -b VELIKOST_BLOKU\n"
 "            použije tuto VELIKOST_BLOKU, musí být rovna velikosti stránky\n"
 " -e VERZE   nastaví číslo verze (součást fsid)\n"
-" -i SOUBOR  vloží obraz ze SOUBORU do souborového systému (vyžaduje >= 2.4.0)\n"
+" -i SOUBOR  vloží obraz ze SOUBORU do souborového systému (vyžaduje >= "
+"2.4.0)\n"
 " -n NÁZEV   nastaví název souborového systému cramfs\n"
 " -p         odsadí o %d bytů kvůli bootovacímu kódu\n"
 " -s         setřídí položky v adresářích (stará volba, ignorováno)\n"
@@ -832,8 +840,12 @@ msgstr "%6.2f%% (%+d bytů)\t%s\n"
 
 #: disk-utils/mkfs.cramfs.c:825
 #, c-format
-msgid "warning: guestimate of required size (upper bound) is %LdMB, but maximum image size is %uMB.  We might die prematurely.\n"
-msgstr "varování: požadovaná velikost (horní hranice) je odhadována na %Ld MB, jenže největší velikost obrazu je %u MB. Můžeme zemřít předčasně.\n"
+msgid ""
+"warning: guestimate of required size (upper bound) is %LdMB, but maximum "
+"image size is %uMB.  We might die prematurely.\n"
+msgstr ""
+"varování: požadovaná velikost (horní hranice) je odhadována na %Ld MB, jenže "
+"největší velikost obrazu je %u MB. Můžeme zemřít předčasně.\n"
 
 #: disk-utils/mkfs.cramfs.c:866
 #, c-format
@@ -863,7 +875,8 @@ msgstr "CRC: %x\n"
 #: disk-utils/mkfs.cramfs.c:897
 #, c-format
 msgid "not enough space allocated for ROM image (%Ld allocated, %d used)\n"
-msgstr "Pro obraz ROM nepřidělen dostatek prostoru (%Ld přiděleno, %d použito)\n"
+msgstr ""
+"Pro obraz ROM nepřidělen dostatek prostoru (%Ld přiděleno, %d použito)\n"
 
 #: disk-utils/mkfs.cramfs.c:909
 #, c-format
@@ -887,12 +900,14 @@ msgstr "varování: velikosti souboru zkráceny na %'lu MB (mínus 1 bajt).\n"
 
 #: disk-utils/mkfs.cramfs.c:929
 #, c-format
-msgid "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
+msgid ""
+"warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr "varování: UID zkrácena na %u bitů. (Může mít dopad na bezpečnost.)\n"
 
 #: disk-utils/mkfs.cramfs.c:934
 #, c-format
-msgid "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
+msgid ""
+"warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr "varování: GID zkrácena na %u bitů. (Může mít dopad na bezpečnost.)\n"
 
 #: disk-utils/mkfs.cramfs.c:939
@@ -901,7 +916,8 @@ msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
 "that some device files will be wrong.\n"
 msgstr ""
-"VAROVÁNÍ: čísla zařízení zkrácena na %u bitů. Toto jistě znamená, že některé\n"
+"VAROVÁNÍ: čísla zařízení zkrácena na %u bitů. Toto jistě znamená, že "
+"některé\n"
 "soubory zařízení budou špatné.\n"
 
 #: disk-utils/mkfs.minix.c:163
@@ -1059,7 +1075,7 @@ msgid "too many bad pages"
 msgstr "příliš mnoho chybných stránek"
 
 #: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1972 text-utils/more.c:1983
+#: text-utils/more.c:1988 text-utils/more.c:1999
 msgid "Out of memory"
 msgstr "Nedostatek paměti"
 
@@ -1081,7 +1097,8 @@ msgstr "%s: chyba: Kde mám vytvořit odkládací prostor?\n"
 #: disk-utils/mkswap.c:587
 #, c-format
 msgid "%s: error: size %lu is larger than device size %lu\n"
-msgstr "%s: chyba: zadaná velikost (%lu) je větší než velikost zařízení (%lu)\n"
+msgstr ""
+"%s: chyba: zadaná velikost (%lu) je větší než velikost zařízení (%lu)\n"
 
 #: disk-utils/mkswap.c:608
 #, c-format
@@ -1127,7 +1144,8 @@ msgid ""
 msgstr ""
 "%s: Zařízení '%s' obsahuje korektní Sun popis disku.\n"
 "To znamená, že vytvoření odkládacího prostoru v0 by pravděpodobně zničilo\n"
-"Vaší tabulku rozdělení disku. Odkládací prostor nebyl vytvořen. Pokud opravdu\n"
+"Vaší tabulku rozdělení disku. Odkládací prostor nebyl vytvořen. Pokud "
+"opravdu\n"
 "chcete vytvořit odkládací prostor v0, použijte přepínač -f pro vynucení.\n"
 
 #: disk-utils/mkswap.c:711
@@ -1296,12 +1314,17 @@ msgid "enlarged logical partitions overlap"
 msgstr "zvětšené logické diskové oddíly se vzájemně překrývají"
 
 #: fdisk/cfdisk.c:991
-msgid "!!!! Internal error creating logical drive with no extended partition !!!!"
-msgstr "!!!! Vnitřní chyba při vytváření logického disku bez rozšířených diskových oddílů !!!!"
+msgid ""
+"!!!! Internal error creating logical drive with no extended partition !!!!"
+msgstr ""
+"!!!! Vnitřní chyba při vytváření logického disku bez rozšířených diskových "
+"oddílů !!!!"
 
 #: fdisk/cfdisk.c:1002 fdisk/cfdisk.c:1014
-msgid "Cannot create logical drive here -- would create two extended partitions"
-msgstr "Zde nelze vytvořit logický disk -- vznikly by dva rozšířené diskové oddíly"
+msgid ""
+"Cannot create logical drive here -- would create two extended partitions"
+msgstr ""
+"Zde nelze vytvořit logický disk -- vznikly by dva rozšířené diskové oddíly"
 
 #: fdisk/cfdisk.c:1156
 msgid "Menu item too long. Menu may look odd."
@@ -1406,8 +1429,11 @@ msgid "Opened disk read-only - you have no permission to write"
 msgstr "Disk byl otevřen pouze pro čtení - nemáte práva pro zápis"
 
 #: fdisk/cfdisk.c:1674
-msgid "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
-msgstr "Varování!! Detekována nepodporovaná GPT (GUID tabulka rozdělení disku). Použijte GNU Parted."
+msgid ""
+"Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
+msgstr ""
+"Varování!! Detekována nepodporovaná GPT (GUID tabulka rozdělení disku). "
+"Použijte GNU Parted."
 
 #: fdisk/cfdisk.c:1691
 msgid "Cannot get disk size"
@@ -1426,8 +1452,10 @@ msgid "Warning!!  This may destroy data on your disk!"
 msgstr "Varování!! Toto může vést ke zničení dat na Vašem disku!"
 
 #: fdisk/cfdisk.c:1866
-msgid "Are you sure you want to write the partition table to disk? (yes or no): "
-msgstr "Jste si jist, že chcete uložit tabulku rozdělení disku na disk? (ano či ne): "
+msgid ""
+"Are you sure you want to write the partition table to disk? (yes or no): "
+msgstr ""
+"Jste si jist, že chcete uložit tabulku rozdělení disku na disk? (ano či ne): "
 
 #: fdisk/cfdisk.c:1872
 msgid "no"
@@ -1454,16 +1482,21 @@ msgid "Wrote partition table to disk"
 msgstr "Tabulka rozdělení disku byla uložena na disk"
 
 #: fdisk/cfdisk.c:1909
-msgid "Wrote partition table, but re-read table failed.  Reboot to update table."
-msgstr "Tabulka byla uložena, ale nepodařilo se ji znovu načíst. Restartujte systém."
+msgid ""
+"Wrote partition table, but re-read table failed.  Reboot to update table."
+msgstr ""
+"Tabulka byla uložena, ale nepodařilo se ji znovu načíst. Restartujte systém."
 
 #: fdisk/cfdisk.c:1919
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
-msgstr "Žádný primární diskový oddíl není startovací. DOS MBR takto nenastartuje."
+msgstr ""
+"Žádný primární diskový oddíl není startovací. DOS MBR takto nenastartuje."
 
 #: fdisk/cfdisk.c:1921
-msgid "More than one primary partition is marked bootable. DOS MBR cannot boot this."
-msgstr "Více než 1 primární diskový oddíl je startovací. DOS MBR takto nenastartuje."
+msgid ""
+"More than one primary partition is marked bootable. DOS MBR cannot boot this."
+msgstr ""
+"Více než 1 primární diskový oddíl je startovací. DOS MBR takto nenastartuje."
 
 #: fdisk/cfdisk.c:1979 fdisk/cfdisk.c:2098 fdisk/cfdisk.c:2182
 msgid "Enter filename or press RETURN to display on screen: "
@@ -1532,12 +1565,20 @@ msgid "               First       Last\n"
 msgstr "             První       Poslední\n"
 
 #: fdisk/cfdisk.c:2120
-msgid " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) Flag\n"
-msgstr " # Typ       sektor      sektor    Posun     Délka    ID systému souborů   Příz\n"
+msgid ""
+" # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
+"Flag\n"
+msgstr ""
+" # Typ       sektor      sektor    Posun     Délka    ID systému souborů   "
+"Příz\n"
 
 #: fdisk/cfdisk.c:2121
-msgid "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
-msgstr "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
+msgid ""
+"-- ------- ----------- ----------- ------ ----------- -------------------- "
+"----\n"
+msgstr ""
+"-- ------- ----------- ----------- ------ ----------- -------------------- "
+"----\n"
 
 #: fdisk/cfdisk.c:2204
 msgid "         ---Starting---      ----Ending----    Start     Number of\n"
@@ -1907,7 +1948,8 @@ msgstr "Zvětšit"
 
 #: fdisk/cfdisk.c:2734
 msgid "Maximize disk usage of the current partition (experts only)"
-msgstr "Zvětší velikost aktuálního diskového oddílu na maximum (pouze pro odborníky)"
+msgstr ""
+"Zvětší velikost aktuálního diskového oddílu na maximum (pouze pro odborníky)"
 
 #: fdisk/cfdisk.c:2735
 msgid "New"
@@ -2025,7 +2067,8 @@ msgstr ""
 "Přepínače:\n"
 "-a: Namísto zvýrazňování použije šipku;\n"
 "-z: Začne s nulovou tabulkou rozdělení disku místo, aby ji četl z disku;\n"
-"-c C -h H -s S: Zadání geometrie disku (má přednost před údaji, které udržuje\n"
+"-c C -h H -s S: Zadání geometrie disku (má přednost před údaji, které "
+"udržuje\n"
 "                jádro.\n"
 "\n"
 
@@ -2679,7 +2722,8 @@ msgid ""
 "\n"
 msgstr ""
 "Vytvářím novou DOSOVOU tabulku rozdělení disku s identifikátorem 0x%08x.\n"
-"Změny budou uloženy pouze v paměti, dokud se nerozhodnete je uložit na disk.\n"
+"Změny budou uloženy pouze v paměti, dokud se nerozhodnete je uložit na "
+"disk.\n"
 "Poté již nebudou stará data pochopitelně dostupná.\n"
 
 #: fdisk/fdisk.c:856
@@ -2703,9 +2747,12 @@ msgstr ""
 
 #: fdisk/fdisk.c:1035
 #, c-format
-msgid "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"
+msgid ""
+"Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
+"disklabel\n"
 msgstr ""
-"Zařízení neobsahuje ani DOSOVOU tabulku rozdělení disku, ani SUN či SGI popis\n"
+"Zařízení neobsahuje ani DOSOVOU tabulku rozdělení disku, ani SUN či SGI "
+"popis\n"
 "disku\n"
 
 #: fdisk/fdisk.c:1052
@@ -2720,8 +2767,12 @@ msgstr "Nadbytečný rozšířený diskový oddíl %d ignorován.\n"
 
 #: fdisk/fdisk.c:1077
 #, c-format
-msgid "Warning: invalid flag 0x%04x of partition table %d will be corrected by w(rite)\n"
-msgstr "Varování: chybný příznak 0x%04x tabulky rozdělení disku %d bude opraven zápisem(w)\n"
+msgid ""
+"Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
+"(rite)\n"
+msgstr ""
+"Varování: chybný příznak 0x%04x tabulky rozdělení disku %d bude opraven "
+"zápisem(w)\n"
 
 #: fdisk/fdisk.c:1099
 #, c-format
@@ -2825,7 +2876,9 @@ msgstr ""
 msgid ""
 "You cannot change a partition into an extended one or vice versa\n"
 "Delete it first.\n"
-msgstr "Nemůžete měnit běžné diskové oddíly na rozšířené a zpět. Nejdříve jej smažte.\n"
+msgstr ""
+"Nemůžete měnit běžné diskové oddíly na rozšířené a zpět. Nejdříve jej "
+"smažte.\n"
 
 #: fdisk/fdisk.c:1489
 #, c-format
@@ -2845,7 +2898,8 @@ msgid ""
 "and partition 11 as entire volume (6)as IRIX expects it.\n"
 "\n"
 msgstr ""
-"Zvažte zda by nebylo vhodné ponechat diskový oddíl 9 jako hlavičku svazku (0),\n"
+"Zvažte zda by nebylo vhodné ponechat diskový oddíl 9 jako hlavičku svazku "
+"(0),\n"
 "a diskový oddíl 11 jako celý svazek (6), neboť IRIX to očekává.\n"
 "\n"
 
@@ -2862,7 +2916,8 @@ msgstr "Typ diskového oddílu %d byl navrácen na %x (%s).\n"
 #: fdisk/fdisk.c:1567
 #, c-format
 msgid "Partition %d has different physical/logical beginnings (non-Linux?):\n"
-msgstr "Diskový oddíl %d má rozdílný fyzický a logický začátek (nelinuxový?):\n"
+msgstr ""
+"Diskový oddíl %d má rozdílný fyzický a logický začátek (nelinuxový?):\n"
 
 #: fdisk/fdisk.c:1569 fdisk/fdisk.c:1577 fdisk/fdisk.c:1586 fdisk/fdisk.c:1596
 #, c-format
@@ -3033,7 +3088,8 @@ msgstr "Logický diskový oddíl %d přesahuje mimo diskový oddíl %d.\n"
 #: fdisk/fdisk.c:1980
 #, c-format
 msgid "Total allocated sectors %ld greater than the maximum %lld\n"
-msgstr "Celkový počet alokovaných sektorů (%'ld) je větší než maximum (%'lld).\n"
+msgstr ""
+"Celkový počet alokovaných sektorů (%'ld) je větší než maximum (%'lld).\n"
 
 #: fdisk/fdisk.c:1983
 #, c-format
@@ -3208,11 +3264,13 @@ msgstr "Varování: nastaven posun sektoru kvůli kompatibilitě s DOSEM\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't "
+"support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 "\n"
-"VAROVÁNÍ: Na „%s“ nalezena GPT (GUID tabulka rozdělení disku)! Nástroj fdisk nepodporuje GPT. Použijte GNU Parted.\n"
+"VAROVÁNÍ: Na „%s“ nalezena GPT (GUID tabulka rozdělení disku)! Nástroj fdisk "
+"nepodporuje GPT. Použijte GNU Parted.\n"
 "\n"
 
 #: fdisk/fdisk.c:2509
@@ -3238,13 +3296,17 @@ msgstr "příkaz %c není znám\n"
 #: fdisk/fdisk.c:2628
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
-msgstr "Toto jádro detekuje velikost sektoru automaticky - přepínač -b ignorován\n"
+msgstr ""
+"Toto jádro detekuje velikost sektoru automaticky - přepínač -b ignorován\n"
 
 #: fdisk/fdisk.c:2632
 #, c-format
-msgid "Warning: the -b (set sector size) option should be used with one specified device\n"
+msgid ""
+"Warning: the -b (set sector size) option should be used with one specified "
+"device\n"
 msgstr ""
-"Varování: přepínač -b (nastavení velikosti sektoru) by měl být použit s jedním\n"
+"Varování: přepínač -b (nastavení velikosti sektoru) by měl být použit s "
+"jedním\n"
 "          zadaným zařízením.\n"
 
 #: fdisk/fdisk.c:2693
@@ -3382,8 +3444,11 @@ msgstr "Linux RAID"
 
 #: fdisk/fdisksgilabel.c:163
 #, c-format
-msgid "According to MIPS Computer Systems, Inc the Label must not contain more than 512 bytes\n"
-msgstr "Popis nesmí podle MIPS Computer Systems, Inc obsahovat více než 512 bajtů\n"
+msgid ""
+"According to MIPS Computer Systems, Inc the Label must not contain more than "
+"512 bytes\n"
+msgstr ""
+"Popis nesmí podle MIPS Computer Systems, Inc obsahovat více než 512 bajtů\n"
 
 #: fdisk/fdisksgilabel.c:182
 #, c-format
@@ -3605,7 +3670,8 @@ msgstr ""
 "Doporučuje se, aby diskový oddíl začínající na pozici 0 byl typu\n"
 "„SGI volhdr“. IRIX jej používá k přístupu k nástrojům jako je sash\n"
 "a fx. Výjimkou je pouze „SGI svazek“ zaujímající celý disk.\n"
-"Zadejte ANO, pokud jste si jist, že chcete označit tento diskový oddíl jinak.\n"
+"Zadejte ANO, pokud jste si jist, že chcete označit tento diskový oddíl "
+"jinak.\n"
 
 #: fdisk/fdisksgilabel.c:555 fdisk/fdisksunlabel.c:545
 msgid "YES\n"
@@ -3643,7 +3709,8 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:672
 #, c-format
 msgid "You will get a partition overlap on the disk. Fix it first!\n"
-msgstr "Takto se diskové oddíly budou navzájem překrývat. Nejprve to opravte!\n"
+msgstr ""
+"Takto se diskové oddíly budou navzájem překrývat. Nejprve to opravte!\n"
 
 #: fdisk/fdisksgilabel.c:677
 #, c-format
@@ -3666,7 +3733,8 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:729 fdisk/fdisksunlabel.c:220
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %d.\n"
+"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
+"d.\n"
 "This value may be truncated for devices > 33.8 GB.\n"
 msgstr ""
 "Varování: ioctl BLKGETSIZE selhalo na %s. Pro geometrii používám počet\n"
@@ -3761,8 +3829,11 @@ msgstr "Nalezl jsem sunovský popis disku s chybným počtem_oddílů [%u].\n"
 
 #: fdisk/fdisksunlabel.c:162
 #, c-format
-msgid "Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
-msgstr "Varování: Chybné hodnoty musí být opraveny a bude tak učiněno při zápisu (w)\n"
+msgid ""
+"Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
+msgstr ""
+"Varování: Chybné hodnoty musí být opraveny a bude tak učiněno při zápisu "
+"(w)\n"
 
 #: fdisk/fdisksunlabel.c:192
 #, c-format
@@ -4265,7 +4336,8 @@ msgstr "chyba posunu ukazovátka na %s - ukazovátko nelze posunout na %lu\n"
 #: fdisk/sfdisk.c:183
 #, c-format
 msgid "seek error: wanted 0x%08x%08x, got 0x%08x%08x\n"
-msgstr "chyba při posunu ukazovátka: požadavek 0x%08x%08x, výsledek 0x%08x%08x\n"
+msgstr ""
+"chyba při posunu ukazovátka: požadavek 0x%08x%08x, výsledek 0x%08x%08x\n"
 
 #: fdisk/sfdisk.c:229
 msgid "out of memory - giving up\n"
@@ -4385,18 +4457,25 @@ msgstr ""
 
 #: fdisk/sfdisk.c:589
 #, c-format
-msgid "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
+msgid ""
+"%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
 msgstr "%s diskového oddílu %s má chybný počet hlav: %lu (mělo by být 0-%lu)\n"
 
 #: fdisk/sfdisk.c:594
 #, c-format
-msgid "%s of partition %s has impossible value for sector: %lu (should be in 1-%lu)\n"
-msgstr "%s diskového oddílu %s má chybný počet sektorů: %lu (mělo by být 1-%lu)\n"
+msgid ""
+"%s of partition %s has impossible value for sector: %lu (should be in 1-%"
+"lu)\n"
+msgstr ""
+"%s diskového oddílu %s má chybný počet sektorů: %lu (mělo by být 1-%lu)\n"
 
 #: fdisk/sfdisk.c:599
 #, c-format
-msgid "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%lu)\n"
-msgstr "%s diskového oddílu %s má chybný počet cylindrů: %lu (mělo by být 0-%lu)\n"
+msgid ""
+"%s of partition %s has impossible value for cylinders: %lu (should be in 0-%"
+"lu)\n"
+msgstr ""
+"%s diskového oddílu %s má chybný počet cylindrů: %lu (mělo by být 0-%lu)\n"
 
 #: fdisk/sfdisk.c:639
 #, c-format
@@ -4490,7 +4569,8 @@ msgid ""
 "Units = mebibytes of 1048576 bytes, blocks of 1024 bytes, counting from %d\n"
 "\n"
 msgstr ""
-"Jednotky = mebibajty po 1048576 bajtech, bloky po 1024 bajtech, počítáno od %d\n"
+"Jednotky = mebibajty po 1048576 bajtech, bloky po 1024 bajtech, počítáno od %"
+"d\n"
 "\n"
 
 #: fdisk/sfdisk.c:941
@@ -4540,7 +4620,8 @@ msgstr "Zvláštní - počet definovaných diskových oddílů je pouze %d.\n"
 #: fdisk/sfdisk.c:1185
 #, c-format
 msgid "Warning: partition %s has size 0 but is not marked Empty\n"
-msgstr "Varování: diskový oddíl %s má velikost 0 a není označen jako prázdný.\n"
+msgstr ""
+"Varování: diskový oddíl %s má velikost 0 a není označen jako prázdný.\n"
 
 #: fdisk/sfdisk.c:1188
 #, c-format
@@ -4578,7 +4659,8 @@ msgid ""
 "Warning: partition %s contains part of the partition table (sector %lu),\n"
 "and will destroy it when filled\n"
 msgstr ""
-"Varování: diskový oddíl %s obsahuje část tabulky rozdělení disku (sektor %lu)\n"
+"Varování: diskový oddíl %s obsahuje část tabulky rozdělení disku (sektor %"
+"lu)\n"
 "a v případě zaplnění ji zničí\n"
 
 #: fdisk/sfdisk.c:1238
@@ -4639,7 +4721,8 @@ msgstr "začátek"
 
 #: fdisk/sfdisk.c:1329
 #, c-format
-msgid "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
+msgid ""
+"partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 "diskový oddíl %s: začátek: (c,h,s) předpoklad (%ld,%ld,%ld), nalezeno\n"
 "(%ld,%ld,%ld)\n"
@@ -4770,7 +4853,9 @@ msgstr "Chybný typ\n"
 #: fdisk/sfdisk.c:2102
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
-msgstr "Varování: zadaná velikost(%lu) překračuje maximální povolenou velikost (%lu)\n"
+msgstr ""
+"Varování: zadaná velikost(%lu) překračuje maximální povolenou velikost (%"
+"lu)\n"
 
 #: fdisk/sfdisk.c:2108
 msgid "Warning: empty partition\n"
@@ -4807,7 +4892,8 @@ msgid ""
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
 "Usually you only need to specify <start> and <size> (and perhaps <type>).\n"
 msgstr ""
-"Vstup v následujícím formátu; chybějící položky budou nahrazeny implicitními\n"
+"Vstup v následujícím formátu; chybějící položky budou nahrazeny "
+"implicitními\n"
 "hodnotami.\n"
 "<začátek> <velikost> <typ [E,S,L,X,hex]> <startovací [-,*]> <c,h,s> <c,h,s>\n"
 "Obvykle je třeba zadat pouze <začátek> a <velikost> (a možná <typ>).\n"
@@ -4839,15 +4925,19 @@ msgstr "    -l [či --list]:      ke každému zařízení vypíše diskové odd
 
 #: fdisk/sfdisk.c:2295
 msgid "    -d [or --dump]:      idem, but in a format suitable for later input"
-msgstr "    -d [či --dump]:      taktéž, ale ve formátu vhodném k dalšímu zpracování"
+msgstr ""
+"    -d [či --dump]:      taktéž, ale ve formátu vhodném k dalšímu zpracování"
 
 #: fdisk/sfdisk.c:2296
 msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
 msgstr "    -i [či --increment]: čísluje cylindry etc. od 1 místo od 0"
 
 #: fdisk/sfdisk.c:2297
-msgid "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB"
-msgstr "    -uS, -uB, -uC, -uM:  jako jednotky použije Sektory/Bloky/Cylindry či MB"
+msgid ""
+"    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
+"MB"
+msgstr ""
+"    -uS, -uB, -uC, -uM:  jako jednotky použije Sektory/Bloky/Cylindry či MB"
 
 #: fdisk/sfdisk.c:2298
 msgid "    -T [or --list-types]:list the known partition types"
@@ -4859,7 +4949,8 @@ msgstr "    -D [či --DOS]:       pro kompatibilitu s DOSEM: ubírá trochu mís
 
 #: fdisk/sfdisk.c:2300
 msgid "    -R [or --re-read]:   make kernel reread partition table"
-msgstr "    -R [či --re-read]:   donutí jádro znovu načíst tabulku rozdělení disku"
+msgstr ""
+"    -R [či --re-read]:   donutí jádro znovu načíst tabulku rozdělení disku"
 
 #: fdisk/sfdisk.c:2301
 msgid "    -N# :                change only the partition with number #"
@@ -4870,7 +4961,8 @@ msgid "    -n :                 do not actually write to disk"
 msgstr "    -n :                 žádné změny nebudou uloženy na disk"
 
 #: fdisk/sfdisk.c:2303
-msgid "    -O file :            save the sectors that will be overwritten to file"
+msgid ""
+"    -O file :            save the sectors that will be overwritten to file"
 msgstr "    -O SOUBOR :           uloží změněné sektory do SOUBORU"
 
 #: fdisk/sfdisk.c:2304
@@ -4896,7 +4988,9 @@ msgstr ""
 "                                    udržuje jádro"
 
 #: fdisk/sfdisk.c:2309
-msgid "    -G [or --show-pt-geometry]: print geometry guessed from the partition table"
+msgid ""
+"    -G [or --show-pt-geometry]: print geometry guessed from the partition "
+"table"
 msgstr ""
 "    -G [či --show-pt-geometry]: vypíše informace o geometrii, která\n"
 "                                byla odhadnuta z tabulky rozdělení disku"
@@ -4910,8 +5004,10 @@ msgstr ""
 "                             oddílech a na vstupu bude očekávat jejich popis"
 
 #: fdisk/sfdisk.c:2312
-msgid "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
-msgstr "    -L  [či --Linux]:      problémy nepodstatné pro Linux budou ignorovány"
+msgid ""
+"    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
+msgstr ""
+"    -L  [či --Linux]:      problémy nepodstatné pro Linux budou ignorovány"
 
 #: fdisk/sfdisk.c:2313
 msgid "    -q  [or --quiet]:      suppress warning messages"
@@ -4953,7 +5049,8 @@ msgstr "%s zařízení\t\t vypíše aktivní diskové oddíly na daném zaříze
 #: fdisk/sfdisk.c:2327
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
-msgstr "%s zařízení n1 n2 ... aktivuje diskové oddíly n1 ..., deaktivuje ostatní\n"
+msgstr ""
+"%s zařízení n1 n2 ... aktivuje diskové oddíly n1 ..., deaktivuje ostatní\n"
 
 #: fdisk/sfdisk.c:2328
 #, c-format
@@ -4964,11 +5061,13 @@ msgstr "%s -An zařízení\t aktivuje diskový oddíl n, deaktivuje ostatní\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk doesn't support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk "
+"doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 "\n"
-"VAROVÁNÍ: Na „%s“ nalezena GPT (GUID tabulka rozdělení disku)! Nástroj sfdisk nepodporuje GPT. Použijte GNU Parted.\n"
+"VAROVÁNÍ: Na „%s“ nalezena GPT (GUID tabulka rozdělení disku)! Nástroj "
+"sfdisk nepodporuje GPT. Použijte GNU Parted.\n"
 "\n"
 
 #: fdisk/sfdisk.c:2460
@@ -5045,7 +5144,8 @@ msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
 "but the DOS MBR will only boot a disk with 1 active partition.\n"
 msgstr ""
-"Počet aktivních diskových oddílů je %d. LILU to nečiní problémy, ale DOS MBR\n"
+"Počet aktivních diskových oddílů je %d. LILU to nečiní problémy, ale DOS "
+"MBR\n"
 "nastartuje pouze z disku s jedním aktivním diskovým oddílem.\n"
 
 #: fdisk/sfdisk.c:2914
@@ -5167,8 +5267,10 @@ msgid ""
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
 "(See fdisk(8).)\n"
 msgstr ""
-"Pokud jste vytvořil či změnil nějaké DOSOVÉ diskové oddíly - např. /dev/bla7,\n"
-"použijte dd(1) k vynulování prvních 512 bajtů: 'dd if=/dev/zero of=/dev/bla7\n"
+"Pokud jste vytvořil či změnil nějaké DOSOVÉ diskové oddíly - např. /dev/"
+"bla7,\n"
+"použijte dd(1) k vynulování prvních 512 bajtů: 'dd if=/dev/zero of=/dev/"
+"bla7\n"
 "bs=512 count=1' (viz fdisk(8)).\n"
 
 #: getopt/getopt.c:235
@@ -5200,8 +5302,10 @@ msgid "              parameters\n"
 msgstr "              argumenty\n"
 
 #: getopt/getopt.c:330
-msgid "  -a, --alternative            Allow long options starting with single -\n"
-msgstr "  -a, --alternative            Akceptuje dlouhé volby začínající jedním -\n"
+msgid ""
+"  -a, --alternative            Allow long options starting with single -\n"
+msgstr ""
+"  -a, --alternative            Akceptuje dlouhé volby začínající jedním -\n"
 
 #: getopt/getopt.c:331
 msgid "  -h, --help                   This small usage guide\n"
@@ -5212,8 +5316,10 @@ msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr "  -l, --longoptions=dlouhvol   Rozpoznávané dlouhé volby\n"
 
 #: getopt/getopt.c:333
-msgid "  -n, --name=progname          The name under which errors are reported\n"
-msgstr "  -n, --name=názevprog          Název, pod kterým jsou oznamovány chyby\n"
+msgid ""
+"  -n, --name=progname          The name under which errors are reported\n"
+msgstr ""
+"  -n, --name=názevprog          Název, pod kterým jsou oznamovány chyby\n"
 
 #: getopt/getopt.c:334
 msgid "  -o, --options=optstring      Short options to be recognized\n"
@@ -5221,7 +5327,8 @@ msgstr "  -o, --options=krátvol        Rozpoznávané krátké volby\n"
 
 #: getopt/getopt.c:335
 msgid "  -q, --quiet                  Disable error reporting by getopt(3)\n"
-msgstr "  -q, --quiet                  Vypne oznamování chyb pomocí getopt(3)\n"
+msgstr ""
+"  -q, --quiet                  Vypne oznamování chyb pomocí getopt(3)\n"
 
 #: getopt/getopt.c:336
 msgid "  -Q, --quiet-output           No normal output\n"
@@ -5356,12 +5463,15 @@ msgstr "…hodiny tikly\n"
 #: hwclock/hwclock.c:405
 #, c-format
 msgid "Invalid values in hardware clock: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
-msgstr "Hodiny reálného času obsahují chybné hodnoty: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
+msgstr ""
+"Hodiny reálného času obsahují chybné hodnoty: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 
 #: hwclock/hwclock.c:413
 #, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr "Hodiny reálného času: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld sekund od roku 1969\n"
+msgstr ""
+"Hodiny reálného času: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld sekund od roku "
+"1969\n"
 
 #: hwclock/hwclock.c:441
 #, c-format
@@ -5371,7 +5481,8 @@ msgstr "Hodiny reálného času ukazují %4d/%.2d/%.2d %02d:%02d:%02d\n"
 #: hwclock/hwclock.c:468
 #, c-format
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr "Nastavuji hodiny reálného času na %.2d:%.2d:%.2d = %ld sekund od roku 1969\n"
+msgstr ""
+"Nastavuji hodiny reálného času na %.2d:%.2d:%.2d = %ld sekund od roku 1969\n"
 
 #: hwclock/hwclock.c:474
 #, c-format
@@ -5389,7 +5500,9 @@ msgstr ""
 
 #: hwclock/hwclock.c:556
 #, c-format
-msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
+msgid ""
+"The Hardware Clock registers contain values that are either invalid (e.g. "
+"50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
 msgstr ""
 "Registry hodin reálného času obsahují hodnoty, které jsou buď chybné (např.\n"
 "50tý den v měsíci), či mimo přípustný rozsah (např. rok 2095).\n"
@@ -5414,7 +5527,8 @@ msgstr "argument --date je příliš dlouhý\n"
 msgid ""
 "The value of the --date option is not a valid date.\n"
 "In particular, it contains quotation marks.\n"
-msgstr "Argument přepínače --date není platným datem. Konkrétně obsahuje uvozovky.\n"
+msgstr ""
+"Argument přepínače --date není platným datem. Konkrétně obsahuje uvozovky.\n"
 
 #: hwclock/hwclock.c:621
 #, c-format
@@ -5448,7 +5562,8 @@ msgstr ""
 #: hwclock/hwclock.c:647
 #, c-format
 msgid ""
-"The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
+"The date command issued by %s returned something other than an integer where "
+"the converted time value was expected.\n"
 "The command was:\n"
 "  %s\n"
 "The response was:\n"
@@ -5468,7 +5583,9 @@ msgstr "Datum %s odpovídá %ld sekundám od roku 1969.\n"
 
 #: hwclock/hwclock.c:690
 #, c-format
-msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it.\n"
+msgid ""
+"The Hardware Clock does not contain a valid time, so we cannot set the "
+"System Time from it.\n"
 msgstr ""
 "Systémový čas nelze podle hodin reálného času nastavit, protože neukazují\n"
 "platný čas.\n"
@@ -5504,7 +5621,9 @@ msgstr "volání settimeofday() selhalo"
 
 #: hwclock/hwclock.c:760
 #, c-format
-msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
+msgid ""
+"Not adjusting drift factor because the Hardware Clock previously contained "
+"garbage.\n"
 msgstr ""
 "Neopravuji míru posunu, protože hodiny reálného času posledně obsahovaly\n"
 "neplatné hodnoty.\n"
@@ -5520,16 +5639,22 @@ msgstr ""
 
 #: hwclock/hwclock.c:771
 #, c-format
-msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
-msgstr "Neopravuji míru posunu, protože poslední kalibrace ještě neuplynul celý den.\n"
+msgid ""
+"Not adjusting drift factor because it has been less than a day since the "
+"last calibration.\n"
+msgstr ""
+"Neopravuji míru posunu, protože poslední kalibrace ještě neuplynul celý "
+"den.\n"
 
 #: hwclock/hwclock.c:819
 #, c-format
 msgid ""
-"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
+"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
+"of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
-"Hodiny se za posledních %2$d sekund rozešly o %1$.1f sekund, přestože míra posunu\n"
+"Hodiny se za posledních %2$d sekund rozešly o %1$.1f sekund, přestože míra "
+"posunu\n"
 "je nastavena na %3$f sekund/den.\n"
 "Opravuji míru posunu o %4$f sekund.\n"
 
@@ -5564,7 +5689,8 @@ msgstr "Parametry opravy posunu nezměněny.\n"
 
 #: hwclock/hwclock.c:967
 #, c-format
-msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
+msgid ""
+"The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
 msgstr "Hodiny reálného času obsahují neplatný čas, tudíž jej nelze opravit.\n"
 
 #: hwclock/hwclock.c:999
@@ -5590,11 +5716,13 @@ msgstr "Systémový čas nelze nastavit.\n"
 #: hwclock/hwclock.c:1153
 #, c-format
 msgid ""
-"The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
+"The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
+"machine.\n"
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken.\n"
 msgstr ""
-"Jádro obsahuje hodnotu počátku epochy pro hodiny reálného času pouze na Alpha\n"
+"Jádro obsahuje hodnotu počátku epochy pro hodiny reálného času pouze na "
+"Alpha\n"
 "systémech.\n"
 "Tento program nebyl přeložen pro Alpha systém ( a tudíž pravděpodobně nyní\n"
 "neběží na Alphě). Ignorováno.\n"
@@ -5611,7 +5739,9 @@ msgstr "Jádro pokládá za počátek epochy %lu.\n"
 
 #: hwclock/hwclock.c:1167
 #, c-format
-msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it.\n"
+msgid ""
+"To set the epoch value, you must use the 'epoch' option to tell to what "
+"value to set it.\n"
 msgstr "Počátek epochy nastavíte pomocí přepínačů epoch a setepoch.\n"
 
 #: hwclock/hwclock.c:1170
@@ -5674,7 +5804,8 @@ msgstr ""
 "  --adjust      opraví systematický posun, který nastal od poslední\n"
 "                opravy či nastavení RTC\n"
 "  --getepoch    vypíše počátek epochy pro hodiny reálného času podle jádra\n"
-"  --setepoch    nastaví jádru počátek epochy pro hodiny reálného času na hodnotu\n"
+"  --setepoch    nastaví jádru počátek epochy pro hodiny reálného času na "
+"hodnotu\n"
 "                zadanou volbou --epoch\n"
 "  --version     vypíše označení verze na standardní výstup\n"
 "\n"
@@ -5706,7 +5837,8 @@ msgstr "%s: Nelze se připojit ke kontrolnímu systému\n"
 #: hwclock/hwclock.c:1432
 #, c-format
 msgid "%s takes no non-option arguments.  You supplied %d.\n"
-msgstr "%s akceptuje pouze přepínače. Zadáno argumentů, které nejsou přepínači: %d\n"
+msgstr ""
+"%s akceptuje pouze přepínače. Zadáno argumentů, které nejsou přepínači: %d\n"
 
 #: hwclock/hwclock.c:1438
 #, c-format
@@ -5719,13 +5851,19 @@ msgstr ""
 
 #: hwclock/hwclock.c:1445
 #, c-format
-msgid "%s: The --utc and --localtime options are mutually exclusive.  You specified both.\n"
+msgid ""
+"%s: The --utc and --localtime options are mutually exclusive.  You specified "
+"both.\n"
 msgstr "%s: Přepínače --utc a --localtime nelze použít zároveň.\n"
 
 #: hwclock/hwclock.c:1452
 #, c-format
-msgid "%s: The --adjust and --noadjfile options are mutually exclusive.  You specified both.\n"
-msgstr "%s: Volby --adjust a --noadjfile se vzájemně vylučují. Vy jste však použil obě.\n"
+msgid ""
+"%s: The --adjust and --noadjfile options are mutually exclusive.  You "
+"specified both.\n"
+msgstr ""
+"%s: Volby --adjust a --noadjfile se vzájemně vylučují. Vy jste však použil "
+"obě.\n"
 
 #: hwclock/hwclock.c:1459
 #, c-format
@@ -5749,17 +5887,22 @@ msgstr "Hodiny reálného času může nastavit pouze superuživatel.\n"
 
 #: hwclock/hwclock.c:1499
 #, c-format
-msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel.\n"
+msgid ""
+"Sorry, only the superuser can change the Hardware Clock epoch in the "
+"kernel.\n"
 msgstr "Hodnotu počátku epochy v jádře může nastavit pouze superuživatel.\n"
 
 #: hwclock/hwclock.c:1519
 #, c-format
 msgid "Cannot access the Hardware Clock via any known method.\n"
-msgstr "Žádným ze známých způsobů nelze získat přístup k hodinám reálného času.\n"
+msgstr ""
+"Žádným ze známých způsobů nelze získat přístup k hodinám reálného času.\n"
 
 #: hwclock/hwclock.c:1523
 #, c-format
-msgid "Use the --debug option to see the details of our search for an access method.\n"
+msgid ""
+"Use the --debug option to see the details of our search for an access "
+"method.\n"
 msgstr "Pro zjištění podrobností použijte přepínač --debug.\n"
 
 #: hwclock/kd.c:55
@@ -5859,9 +6002,13 @@ msgstr "%s nelze otevřít."
 
 #: hwclock/rtc.c:400 hwclock/rtc.c:446
 #, c-format
-msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system.\n"
+msgid ""
+"To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
+"device driver via the device special file %s.  This file does not exist on "
+"this system.\n"
 msgstr ""
-"Pro změnu hodnoty počátku epochy v jádře je nutné použít 'rtc' ovladač pomocí\n"
+"Pro změnu hodnoty počátku epochy v jádře je nutné použít 'rtc' ovladač "
+"pomocí\n"
 "zvláštního souboru %s. Tento soubor na tomto systému souborů neexistuje.\n"
 
 #: hwclock/rtc.c:405 hwclock/rtc.c:451
@@ -5877,7 +6024,8 @@ msgstr "volání(RTC_EPOCH_READ) pro %s selhalo"
 #: hwclock/rtc.c:418
 #, c-format
 msgid "we have read epoch %ld from %s with RTC_EPOCH_READ ioctl.\n"
-msgstr "Z %2$s byl pomocí RTC_EPOCH_READ ioctl zjištěn počátek epochy (%1$ld).\n"
+msgstr ""
+"Z %2$s byl pomocí RTC_EPOCH_READ ioctl zjištěn počátek epochy (%1$ld).\n"
 
 #: hwclock/rtc.c:438
 #, c-format
@@ -5887,11 +6035,13 @@ msgstr "Hodnota počátku epochy nesmí být menší než 1900 (požadováno %ld
 #: hwclock/rtc.c:456
 #, c-format
 msgid "setting epoch to %ld with RTC_EPOCH_SET ioctl to %s.\n"
-msgstr "Nastavuji pomocí RTC_EPOCH_SET ioctl pro %2$s počátek epochy na %1$ld.\n"
+msgstr ""
+"Nastavuji pomocí RTC_EPOCH_SET ioctl pro %2$s počátek epochy na %1$ld.\n"
 
 #: hwclock/rtc.c:461
 #, c-format
-msgid "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
+msgid ""
+"The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
 msgstr "Ovladač jádra pro %s nepodporuje RTC_EPOCH_SET ioctl.\n"
 
 #: hwclock/rtc.c:464
@@ -6027,11 +6177,15 @@ msgstr "%s: přetečení vstupu"
 #: login-utils/agetty.c:1233
 #, c-format
 msgid ""
-"Usage: %s [-8hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\n"
-"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"
+"Usage: %s [-8hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
+"login_host] baud_rate,... line [termtype]\n"
+"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
+"line baud_rate,... [termtype]\n"
 msgstr ""
-"Použití: %s [-8hiLmw] [-l LOGIN_PROGRAM] [-t ČASOVÝ_LIMIT] [-I INICIALIZAČNÍ_ŘETĚZEC] [-H POČÍTAČ] BAUD_RATE,… LINKA [TYP_TERMINÁLU]\n"
-"či\t[-hiLmw] [-l LOGIN_PROGRAM] [-t ČASOVÝ_LIMIT] [-I INICIALIZAČNÍ_ŘETĚZEC] [-H POČÍTAČ] LINKA BAUD_RATE,… [TYP_TERMINÁLU]\n"
+"Použití: %s [-8hiLmw] [-l LOGIN_PROGRAM] [-t ČASOVÝ_LIMIT] [-I "
+"INICIALIZAČNÍ_ŘETĚZEC] [-H POČÍTAČ] BAUD_RATE,… LINKA [TYP_TERMINÁLU]\n"
+"či\t[-hiLmw] [-l LOGIN_PROGRAM] [-t ČASOVÝ_LIMIT] [-I INICIALIZAČNÍ_ŘETĚZEC] "
+"[-H POČÍTAČ] LINKA BAUD_RATE,… [TYP_TERMINÁLU]\n"
 
 #: login-utils/checktty.c:85 login-utils/checktty.c:106
 #, c-format
@@ -6091,18 +6245,18 @@ msgid "Changing finger information for %s.\n"
 msgstr "Měním finger informace o uživateli %s.\n"
 
 #: login-utils/chfn.c:179 login-utils/chfn.c:183 login-utils/chfn.c:190
-#: login-utils/chfn.c:194 login-utils/chsh.c:177 login-utils/chsh.c:181
-#: login-utils/chsh.c:188 login-utils/chsh.c:192
+#: login-utils/chfn.c:194 login-utils/chsh.c:178 login-utils/chsh.c:182
+#: login-utils/chsh.c:189 login-utils/chsh.c:193
 msgid "Password error."
 msgstr "Chybné heslo."
 
-#: login-utils/chfn.c:203 login-utils/chsh.c:201 login-utils/login.c:798
+#: login-utils/chfn.c:203 login-utils/chsh.c:202 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:333
 #: mount/lomount.c:336
 msgid "Password: "
 msgstr "Heslo: "
 
-#: login-utils/chfn.c:206 login-utils/chsh.c:204
+#: login-utils/chfn.c:206 login-utils/chsh.c:205
 msgid "Incorrect password."
 msgstr "Chybné heslo."
 
@@ -6164,7 +6318,7 @@ msgstr "Finger informace *NEBYLY* změněny. Zkuste to opět později.\n"
 msgid "Finger information changed.\n"
 msgstr "Finger informace byly změněny.\n"
 
-#: login-utils/chfn.c:520 login-utils/chsh.c:427 sys-utils/cytune.c:321
+#: login-utils/chfn.c:520 login-utils/chsh.c:430 sys-utils/cytune.c:321
 msgid "malloc failed"
 msgstr "volání malloc selhalo"
 
@@ -6173,28 +6327,30 @@ msgstr "volání malloc selhalo"
 msgid "%s: %s is not authorized to change the shell of %s\n"
 msgstr "%s: %s není oprávněn měnit shell uživatele %s\n"
 
-#: login-utils/chsh.c:158
+#: login-utils/chsh.c:159
 #, c-format
-msgid "%s: Running UID doesn't match UID of user we're altering, shell change denied\n"
+msgid ""
+"%s: Running UID doesn't match UID of user we're altering, shell change "
+"denied\n"
 msgstr ""
 "%s: Aktuální UID se neshoduje s UID uživatele, kterého chceme změnit,\n"
 "změna shellu odmítnuta\n"
 
-#: login-utils/chsh.c:164
+#: login-utils/chsh.c:165
 #, c-format
 msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
 msgstr "%s: Váš shell není v /etc/shells, změna shellu odmítnuta\n"
 
-#: login-utils/chsh.c:171
+#: login-utils/chsh.c:172
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Měním shell pro %s.\n"
 
-#: login-utils/chsh.c:212
+#: login-utils/chsh.c:213
 msgid "New shell"
 msgstr "Nový shell"
 
-#: login-utils/chsh.c:219
+#: login-utils/chsh.c:220
 #, c-format
 msgid "Shell not changed.\n"
 msgstr "Shell nebyl změněn.\n"
@@ -6218,57 +6374,57 @@ msgstr ""
 "Použití: %s [ -s shell ] [ --list-shells ] [ --help ] [ --version ]\n"
 "            [ uživatelské jméno ]\n"
 
-#: login-utils/chsh.c:337
+#: login-utils/chsh.c:340
 #, c-format
 msgid "%s: shell must be a full path name.\n"
 msgstr "%s: shell musí být zadán úplným jménem cesty.\n"
 
-#: login-utils/chsh.c:341
+#: login-utils/chsh.c:344
 #, c-format
 msgid "%s: \"%s\" does not exist.\n"
 msgstr "%s: \"%s\" neexistuje.\n"
 
-#: login-utils/chsh.c:345
+#: login-utils/chsh.c:348
 #, c-format
 msgid "%s: \"%s\" is not executable.\n"
 msgstr "%s: \"%s\" není spustitelným souborem.\n"
 
-#: login-utils/chsh.c:352
+#: login-utils/chsh.c:355
 #, c-format
 msgid "%s: '%c' is not allowed.\n"
 msgstr "%s: '%c' není povoleno.\n"
 
-#: login-utils/chsh.c:356
+#: login-utils/chsh.c:359
 #, c-format
 msgid "%s: Control characters are not allowed.\n"
 msgstr "%s: Kontrolní znaky nejsou povoleny.\n"
 
-#: login-utils/chsh.c:363
+#: login-utils/chsh.c:366
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells\n"
 msgstr "Varování: \"%s\" není v /etc/shells\n"
 
-#: login-utils/chsh.c:365
+#: login-utils/chsh.c:368
 #, c-format
 msgid "%s: \"%s\" is not listed in /etc/shells.\n"
 msgstr "%s: \"%s\" není v /etc/shells.\n"
 
-#: login-utils/chsh.c:367
+#: login-utils/chsh.c:370
 #, c-format
 msgid "%s: use -l option to see list\n"
 msgstr "%s: použijte přepínač -l pro vypsání seznamu\n"
 
-#: login-utils/chsh.c:373
+#: login-utils/chsh.c:376
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells.\n"
 msgstr "Varování: \"%s\" není v /etc/shells.\n"
 
-#: login-utils/chsh.c:374
+#: login-utils/chsh.c:377
 #, c-format
 msgid "Use %s -l to see list.\n"
 msgstr "Použijte %s -l pro vypsání seznamu\n"
 
-#: login-utils/chsh.c:394
+#: login-utils/chsh.c:397
 #, c-format
 msgid "No known shells.\n"
 msgstr "Není znám žádný shell.\n"
@@ -6749,7 +6905,8 @@ msgstr "%s nelze spustit - volání exec selhalo, zkouším umount.\n"
 
 #: login-utils/shutdown.c:607
 msgid "Cannot exec umount, giving up on umount."
-msgstr "Umount nelze spustit - volání exec selhalo, vzdávám snahu o spuštění umount."
+msgstr ""
+"Umount nelze spustit - volání exec selhalo, vzdávám snahu o spuštění umount."
 
 #: login-utils/shutdown.c:612
 msgid "Unmounting any remaining filesystems..."
@@ -6766,11 +6923,13 @@ msgstr "Startuji do režimu pro jednoho uživatele.\n"
 
 #: login-utils/simpleinit.c:136
 msgid "exec of single user shell failed\n"
-msgstr "Spuštění shellu pro jednoho uživatele se nezdařilo - volání exec selhalo.\n"
+msgstr ""
+"Spuštění shellu pro jednoho uživatele se nezdařilo - volání exec selhalo.\n"
 
 #: login-utils/simpleinit.c:140
 msgid "fork of single user shell failed\n"
-msgstr "Spuštění shellu pro jednoho uživatele se nezdařilo - volání fork selhalo.\n"
+msgstr ""
+"Spuštění shellu pro jednoho uživatele se nezdařilo - volání fork selhalo.\n"
 
 #: login-utils/simpleinit.c:208
 msgid "error opening fifo\n"
@@ -6812,7 +6971,7 @@ msgstr "adresář nelze otevřít\n"
 msgid "fork failed\n"
 msgstr "volání fork selhalo\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1619
+#: login-utils/simpleinit.c:539 text-utils/more.c:1635
 msgid "exec failed\n"
 msgstr "volání exec selhalo\n"
 
@@ -7023,8 +7182,10 @@ msgstr "logger: neznámý název priority: %s\n"
 
 #: misc-utils/logger.c:285
 #, c-format
-msgid "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
-msgstr "Použití: logger [-is] [-f soubor] [-p pri] [-t značka] [-u soket] [zpráva…]\n"
+msgid ""
+"usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
+msgstr ""
+"Použití: logger [-is] [-f soubor] [-p pri] [-t značka] [-u soket] [zpráva…]\n"
 
 #: misc-utils/look.c:352
 #, c-format
@@ -7621,17 +7782,17 @@ msgstr "set_loop(%s,%s,%llu): úspěch\n"
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: zařízení %s nelze smazat: %s\n"
 
-#: mount/lomount.c:405
+#: mount/lomount.c:406
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): úspěch\n"
 
-#: mount/lomount.c:413
+#: mount/lomount.c:414
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Tento program byl přeložen bez podpory pro loop. Přeložte jej znovu.\n"
 
-#: mount/lomount.c:450
+#: mount/lomount.c:451
 #, c-format
 msgid ""
 "\n"
@@ -7670,12 +7831,12 @@ msgstr ""
 " -v | --verbose           upovídaný režim\n"
 "\n"
 
-#: mount/lomount.c:478 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:479 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "Nedostatek paměti"
 
-#: mount/lomount.c:639
+#: mount/lomount.c:640
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Podpora pro loop nebyla při překladu zadána. Přeložte program znovu.\n"
@@ -7817,7 +7978,8 @@ msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: podle mtab je %s již připojeno do %s\n"
 
 #: mount/mount.c:1115
-msgid "mount: I could not determine the filesystem type, and none was specified"
+msgid ""
+"mount: I could not determine the filesystem type, and none was specified"
 msgstr "mount: typ systému souborů nebyl zadán a ani jej nelze zjistit"
 
 #: mount/mount.c:1118
@@ -7962,7 +8124,8 @@ msgstr "mount: %s není blokovým zařízením a volání stat selhalo?"
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
 "       (maybe `insmod driver'?)"
-msgstr "mount: jádro nerozpoznalo %s jako blokové zařízení (možná „insmod ovladač“?)"
+msgstr ""
+"mount: jádro nerozpoznalo %s jako blokové zařízení (možná „insmod ovladač“?)"
 
 #: mount/mount.c:1263
 #, c-format
@@ -8061,9 +8224,11 @@ msgid ""
 msgstr ""
 "Použití: mount -V               : vypíše informace o verzi\n"
 "         mount -h               : vypíše tuto nápovědu\n"
-"         mount                  : zobrazí seznam připojených systémů souborů\n"
+"         mount                  : zobrazí seznam připojených systémů "
+"souborů\n"
 "         mount -l               : totéž plus jmenovky svazků\n"
-"Toto byly přepínače sloužící k získání informací. Nyní k přepínačům sloužícím\n"
+"Toto byly přepínače sloužící k získání informací. Nyní k přepínačům "
+"sloužícím\n"
 "k připojování systémů souborů.\n"
 "Syntaxe je „mount [-t SSTYP] NĚCO NĚKAM“.\n"
 "Údaje obsažené v /etc/fstab mohou být vynechány.\n"
@@ -8071,7 +8236,8 @@ msgstr ""
 "         mount ZAŘÍZENÍ         : připojí ZAŘÍZENÍ na známé místo\n"
 "         mount ADRESÁŘ          : připojí známé zařízení k ADRESÁŘI\n"
 "         mount -t TYP ZAŘ ADR   : běžná podoba příkazu pro připojení\n"
-"Uvědomte si, že tím, co se připojuje, ve skutečnosti není zařízení, ale systém\n"
+"Uvědomte si, že tím, co se připojuje, ve skutečnosti není zařízení, ale "
+"systém\n"
 "souborů (daného typu), který se na tomto zařízení nachází.\n"
 "Můžete také připojit již přístupný adresářový strom na jiné místo:\n"
 "         mount --bind STARÝ_ADRESÁŘ NOVÝ_ADRESÁŘ\n"
@@ -8262,7 +8428,8 @@ msgstr "%s nelze odpojit - zkouším %s\n"
 #: mount/umount.c:241
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
-msgstr "umount: %s je již používáno - znovu připojeno v režimu pro pouze čtení\n"
+msgstr ""
+"umount: %s je již používáno - znovu připojeno v režimu pro pouze čtení\n"
 
 #: mount/umount.c:252
 #, c-format
@@ -8354,10 +8521,12 @@ msgstr ""
 #: sys-utils/cytune.c:125
 #, c-format
 msgid ""
-"File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
+"File %s, For threshold value %lu and timrout value %lu, Maximum characters "
+"in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
-"Soubor %s, pro prahovou hodnotu %lu a časový limit %lu, maximální počet znaků\n"
+"Soubor %s, pro prahovou hodnotu %lu a časový limit %lu, maximální počet "
+"znaků\n"
 "ve fifo byl %d a maximální přenosová rychlost ve znacích za sekundu byla %f\n"
 
 #: sys-utils/cytune.c:189
@@ -8387,8 +8556,12 @@ msgstr "Chybný implicitní časový údaj: %s\n"
 
 #: sys-utils/cytune.c:238
 #, c-format
-msgid "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) [-g|-G] file [file...]\n"
-msgstr "Použití: %s [-q [-i interval]] ([-s hodnota]|[-S hodnota]) ([-t hodnota]|[-T hodnota]) [-g|-G] soubor [soubor…]\n"
+msgid ""
+"Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
+"[-g|-G] file [file...]\n"
+msgstr ""
+"Použití: %s [-q [-i interval]] ([-s hodnota]|[-S hodnota]) ([-t hodnota]|[-T "
+"hodnota]) [-g|-G] soubor [soubor…]\n"
 
 #: sys-utils/cytune.c:250 sys-utils/cytune.c:269 sys-utils/cytune.c:289
 #: sys-utils/cytune.c:339
@@ -8441,8 +8614,11 @@ msgstr "CYGETMON nelze na %s provést: %s\n"
 
 #: sys-utils/cytune.c:418
 #, c-format
-msgid "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
-msgstr "%s: %lu přerušení, %lu/%lu znaků; fifo: %lu práh, %lu časový limit, %lu max, %lu nyní\n"
+msgid ""
+"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgstr ""
+"%s: %lu přerušení, %lu/%lu znaků; fifo: %lu práh, %lu časový limit, %lu max, "
+"%lu nyní\n"
 
 #: sys-utils/cytune.c:424
 #, c-format
@@ -8451,8 +8627,11 @@ msgstr "   %f přer./s; %f příj., %f odesl. (znak/s)\n"
 
 #: sys-utils/cytune.c:429
 #, c-format
-msgid "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
-msgstr "%s: %lu přerušení, %lu znaků; fifo: %lu práh, %lu časový limit, %lu max, %lu nyní\n"
+msgid ""
+"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgstr ""
+"%s: %lu přerušení, %lu znaků; fifo: %lu práh, %lu časový limit, %lu max, %lu "
+"nyní\n"
 
 #: sys-utils/cytune.c:435
 #, c-format
@@ -8496,7 +8675,8 @@ msgid ""
 "          [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"
 msgstr ""
 "Použití: %s [ [-q ID_ZPRÁVY] [-m ID_SDÍLENÉ_PAMĚTI] [-s ID_SEMAFORU]\n"
-"            [-Q KLÍČ_ZPRÁVY] [-M KLÍČ_SDÍLENÉ_PAMĚTI] [-S KLÍČ_SEMAFORU] … ]\n"
+"            [-Q KLÍČ_ZPRÁVY] [-M KLÍČ_SDÍLENÉ_PAMĚTI] [-S KLÍČ_SEMAFORU] "
+"… ]\n"
 
 #: sys-utils/ipcrm.c:181
 #, c-format
@@ -8567,7 +8747,8 @@ msgstr "\t%s -h pro nápovědu.\n"
 
 #: sys-utils/ipcs.c:130
 #, c-format
-msgid "%s provides information on ipc facilities for which you have read access.\n"
+msgid ""
+"%s provides information on ipc facilities for which you have read access.\n"
 msgstr "%s poskytuje informace o IPC prostředcích, které můžete číst.\n"
 
 #: sys-utils/ipcs.c:132
@@ -9127,7 +9308,8 @@ msgid "usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
 msgstr "Použití: rdev [ -rv ] [ -o POSUN ] [ OBRAZ [ HODNOTA [ POSUN ] ] ]"
 
 #: sys-utils/rdev.c:70
-msgid "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
+msgid ""
+"  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
 msgstr "  rdev /dev/fd0  (či rdev /linux, etc.) vypíše aktuální ROOT zařízení"
 
 #: sys-utils/rdev.c:71
@@ -9136,7 +9318,8 @@ msgstr "  rdev /dev/fd0 /dev/hda2         nastaví ROOT na /dev/hda2"
 
 #: sys-utils/rdev.c:72
 msgid "  rdev -R /dev/fd0 1              set the ROOTFLAGS (readonly status)"
-msgstr "  rdev -R /dev/fd0 1              nastaví PŘÍZNAKY ROOT (pouze pro čtení)"
+msgstr ""
+"  rdev -R /dev/fd0 1              nastaví PŘÍZNAKY ROOT (pouze pro čtení)"
 
 #: sys-utils/rdev.c:73
 msgid "  rdev -r /dev/fd0 627            set the RAMDISK size"
@@ -9163,8 +9346,10 @@ msgid "  vidmode ...                     same as rdev -v"
 msgstr "  vidmód ...                      stejné jako rdev -v"
 
 #: sys-utils/rdev.c:79
-msgid "Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
-msgstr "Poznámka: video módy: -3=Ask, -2=Extended, -1=NormalVga, 1=kláv1, 2=kláv2,..."
+msgid ""
+"Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
+msgstr ""
+"Poznámka: video módy: -3=Ask, -2=Extended, -1=NormalVga, 1=kláv1, 2=kláv2,..."
 
 #: sys-utils/rdev.c:80
 msgid "      use -R 1 to mount root readonly, -R 0 for read/write."
@@ -9236,8 +9421,10 @@ msgstr "celkem"
 
 #: sys-utils/renice.c:68
 #, c-format
-msgid "usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
-msgstr "Použití: renice priorita [ [ -p ] pid ] [[ -g ] pgrp ] [ [ -u ] uživatel ]\n"
+msgid ""
+"usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
+msgstr ""
+"Použití: renice priorita [ [ -p ] pid ] [[ -g ] pgrp ] [ [ -u ] uživatel ]\n"
 
 #: sys-utils/renice.c:97
 #, c-format
@@ -9376,7 +9563,7 @@ msgstr "odečtení hodin reálného času"
 msgid "disable rtc alarm interrupt"
 msgstr "zakázání přerušení budíku hodin reálného času"
 
-#: sys-utils/setarch.c:57
+#: sys-utils/setarch.c:70
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -9387,12 +9574,12 @@ msgstr ""
 "\n"
 "Přepínače:\n"
 
-#: sys-utils/setarch.c:61
+#: sys-utils/setarch.c:74
 #, c-format
 msgid "\t-%c\tEnable %s\n"
 msgstr "\t-%c\tPovolí %s\n"
 
-#: sys-utils/setarch.c:63
+#: sys-utils/setarch.c:76
 #, c-format
 msgid ""
 "\n"
@@ -9401,7 +9588,7 @@ msgstr ""
 "\n"
 "Více informací naleznete v setarch(8).\n"
 
-#: sys-utils/setarch.c:75
+#: sys-utils/setarch.c:88
 #, c-format
 msgid ""
 "%s: %s\n"
@@ -9410,27 +9597,27 @@ msgstr ""
 "%s: %s\n"
 "Více informací získáte příkazem „%s --help“.\n"
 
-#: sys-utils/setarch.c:133 sys-utils/setarch.c:149
+#: sys-utils/setarch.c:155 sys-utils/setarch.c:171
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr " %s: Nerozpoznaná architektura"
 
-#: sys-utils/setarch.c:166 sys-utils/setarch.c:173
+#: sys-utils/setarch.c:188 sys-utils/setarch.c:195
 msgid "Not enough arguments"
 msgstr "Málo argumentů"
 
-#: sys-utils/setarch.c:199
+#: sys-utils/setarch.c:237
 #, c-format
 msgid "Switching on %s.\n"
 msgstr "Zapínám %s.\n"
 
-#: sys-utils/setarch.c:206
+#: sys-utils/setarch.c:244
 #, c-format
 msgid "Unknown option `%c' ignored"
 msgstr "Neznámý přepínač „%c“ ignorován"
 
 # personality – charakteristika architektury
-#: sys-utils/setarch.c:211
+#: sys-utils/setarch.c:249
 #, c-format
 msgid "Failed to set personality to %s"
 msgstr "Selhalo nastavení charakteristiky architektury na %s"
@@ -9563,8 +9750,11 @@ msgstr "hexdump: chybná vzdálenost\n"
 
 #: text-utils/hexsyntax.c:131
 #, c-format
-msgid "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
-msgstr "hexdump: [-bcCdovx] [-e FMT] [-f FMT_SOUBOR] [-n DÉLKA] [-s VZDÁLENOST] [SOUBOR…]\n"
+msgid ""
+"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
+msgstr ""
+"hexdump: [-bcCdovx] [-e FMT] [-f FMT_SOUBOR] [-n DÉLKA] [-s VZDÁLENOST] "
+"[SOUBOR…]\n"
 
 #: text-utils/more.c:258
 #, c-format
@@ -9618,25 +9808,25 @@ msgstr "(Další soubor: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Stiskněte mezerník pro pokračování, 'q' pro ukončení.]"
 
-#: text-utils/more.c:1158
+#: text-utils/more.c:1174
 #, c-format
 msgid "...back %d pages"
 msgstr "…přeskakuji zpět o počet stran: %d"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1176
 msgid "...back 1 page"
 msgstr "…přeskakuji zpět o 1 stranu"
 
-#: text-utils/more.c:1203
+#: text-utils/more.c:1219
 msgid "...skipping one line"
 msgstr "‥přeskakuji o jeden řádek"
 
-#: text-utils/more.c:1205
+#: text-utils/more.c:1221
 #, c-format
 msgid "...skipping %d lines"
 msgstr "…přeskakuji o počet řádků: %d"
 
-#: text-utils/more.c:1242
+#: text-utils/more.c:1258
 msgid ""
 "\n"
 "***Back***\n"
@@ -9645,18 +9835,20 @@ msgstr ""
 "\n"
 "***Zpět***\n"
 
-#: text-utils/more.c:1280
+#: text-utils/more.c:1296
 msgid ""
 "\n"
-"Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
+"Most commands optionally preceded by integer argument k.  Defaults in "
+"brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 "\n"
-"Většině příkazů může jako argument předcházet celé číslo k. Implicitní hodnoty\n"
+"Většině příkazů může jako argument předcházet celé číslo k. Implicitní "
+"hodnoty\n"
 "jsou v hranatých závorkách. Hvězdička (*) znamená, že hodnota argumentu se\n"
 "stane implicitní.\n"
 
-#: text-utils/more.c:1287
+#: text-utils/more.c:1303
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -9683,13 +9875,15 @@ msgstr ""
 "z                       Zobrazí dalších k řádků textu. [aktuální velikost\n"
 "                        obrazovky]*\n"
 "<return>                Zobrazí dalších k řádků textu. [1]*\n"
-"d či ctrl-D             Posun o k řádků [aktuální velikost posunu, po spuštění\n"
+"d či ctrl-D             Posun o k řádků [aktuální velikost posunu, po "
+"spuštění\n"
 "                        11]*\n"
 "q či Q či <interrupt>   Ukončení programu\n"
 "s                       Posun vpřed o k řádků [1]\n"
 "f                       Posun vpřed o k stran [1]\n"
 "b či ctrl-B             Posun vzad o k stran [1]\n"
-"'                       Přeskočí na místo, kde bylo zahájeno předchozí hledání\n"
+"'                       Přeskočí na místo, kde bylo zahájeno předchozí "
+"hledání\n"
 "=                       Zobrazí číslo aktuálního řádku\n"
 "/<regulární výraz>      Hledá k. výskyt regulárního výrazu [1]\n"
 "n                       Hledá k. výrazu posledního regulárního výrazu [1]\n"
@@ -9698,37 +9892,38 @@ msgstr ""
 "ctrl-L                  Překreslí obrazovku\n"
 ":n                      Přeskočí na k. následující soubor [1]\n"
 ":p                      Přeskočí na k. předcházející soubor [1]\n"
-":f                      Vypíše jméno aktuálního souboru a číslo aktuálního řádku\n"
+":f                      Vypíše jméno aktuálního souboru a číslo aktuálního "
+"řádku\n"
 ".                       Zopakuje předcházející příkaz\n"
 
-#: text-utils/more.c:1356 text-utils/more.c:1361
+#: text-utils/more.c:1372 text-utils/more.c:1377
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Stiskněte „h“ pro nápovědu.]"
 
-#: text-utils/more.c:1395
+#: text-utils/more.c:1411
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" řádek %d"
 
-#: text-utils/more.c:1397
+#: text-utils/more.c:1413
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Nejedná se o soubor] řádek %d"
 
-#: text-utils/more.c:1481
+#: text-utils/more.c:1497
 msgid "  Overflow\n"
 msgstr "  Přetečení\n"
 
-#: text-utils/more.c:1528
+#: text-utils/more.c:1544
 msgid "...skipping\n"
 msgstr "…vynechávám\n"
 
-#: text-utils/more.c:1557
+#: text-utils/more.c:1573
 msgid "Regular expression botch"
 msgstr "Chyba v regulárním výrazu"
 
-#: text-utils/more.c:1569
+#: text-utils/more.c:1585
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9736,15 +9931,15 @@ msgstr ""
 "\n"
 "Vzorek nebyl nalezen\n"
 
-#: text-utils/more.c:1572 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1588 text-utils/pg.c:1125 text-utils/pg.c:1276
 msgid "Pattern not found"
 msgstr "Vzorek nebyl nalezen"
 
-#: text-utils/more.c:1633
+#: text-utils/more.c:1649
 msgid "can't fork\n"
 msgstr "volání fork selhalo\n"
 
-#: text-utils/more.c:1672
+#: text-utils/more.c:1688
 msgid ""
 "\n"
 "...Skipping "
@@ -9752,19 +9947,19 @@ msgstr ""
 "\n"
 "…Vynechávám "
 
-#: text-utils/more.c:1676
+#: text-utils/more.c:1692
 msgid "...Skipping to file "
 msgstr "…Přecházím na soubor "
 
-#: text-utils/more.c:1678
+#: text-utils/more.c:1694
 msgid "...Skipping back to file "
 msgstr "…Vracím se na soubor "
 
-#: text-utils/more.c:1956
+#: text-utils/more.c:1972
 msgid "Line too long"
 msgstr "Řádek je příliš dlouhý"
 
-#: text-utils/more.c:1999
+#: text-utils/more.c:2015
 msgid "No previous command to substitute for"
 msgstr "Neexistuje žádný příkaz, jenž by bylo možno nahradit"
 
@@ -9819,8 +10014,11 @@ msgstr "hexdump: chybný znak v konverzi %%%s.\n"
 
 #: text-utils/pg.c:237
 #, c-format
-msgid "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
-msgstr "%s: Použití: %s [-ČÍSLO] [-p ŘETĚZEC] [-cefnrs] [+ŘÁDEK] [+/VZOREK/] [SOUBOR…]\n"
+msgid ""
+"%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
+msgstr ""
+"%s: Použití: %s [-ČÍSLO] [-p ŘETĚZEC] [-cefnrs] [+ŘÁDEK] [+/VZOREK/] "
+"[SOUBOR…]\n"
 
 #: text-utils/pg.c:246
 #, c-format
@@ -9950,9 +10148,18 @@ msgstr "Vstupní řádka je příliš dlouhá.\n"
 msgid "Out of memory when growing buffer.\n"
 msgstr "Nedostatek paměti pro rostoucí buffer.\n"
 
-#~ msgid "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  Exiting.\n"
+#~ msgid "`%s': bad directory: '.' isn't first\n"
+#~ msgstr "„%s“: chybný adresář: „.“ není první\n"
+
+#~ msgid "`%s': bad directory: '..' isn't second\n"
+#~ msgstr "„%s“: chybný adresář: „..“ není druhý\n"
+
+#~ msgid ""
+#~ "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  "
+#~ "Exiting.\n"
 #~ msgstr ""
-#~ "Překročeno MAXENTRIES. Zvětšete tuto hodnotu v mkcramfs.c a znovu přeložte.\n"
+#~ "Překročeno MAXENTRIES. Zvětšete tuto hodnotu v mkcramfs.c a znovu "
+#~ "přeložte.\n"
 #~ "Končím.\n"
 
 #~ msgid "Assuming pages of size %d (not %d)\n"
@@ -10005,7 +10212,8 @@ msgstr "Nedostatek paměti pro rostoucí buffer.\n"
 #~ "  %s [-e encryption] [-o offset] {-f|loop_device} file # setup\n"
 #~ msgstr ""
 #~ "Použití:\n"
-#~ "  %s LOOP_ZAŘÍZENÍ                                     # vypíše informace\n"
+#~ "  %s LOOP_ZAŘÍZENÍ                                     # vypíše "
+#~ "informace\n"
 #~ "  %s -d LOOP_ZAŘÍZENÍ                                  # smaže\n"
 #~ "  %s -f                                                # najde nepoužité\n"
 #~ "  %s [-e ŠIFRA] [ -o POSUN ] {-f|LOOP_ZAŘÍZENÍ} SOUBOR # nastaví\n"
@@ -10013,8 +10221,10 @@ msgstr "Nedostatek paměti pro rostoucí buffer.\n"
 #~ msgid "%s: error: the label %s occurs on both %s and %s\n"
 #~ msgstr "%s: chyba: jmenovka %s se nachází jak na %s tak i na %s\n"
 
-#~ msgid "%s: could not open %s, so UUID and LABEL conversion cannot be done.\n"
-#~ msgstr "%s: nelze otevřít %s, takže konverze UUID a JMENOVEK nebude provedena.\n"
+#~ msgid ""
+#~ "%s: could not open %s, so UUID and LABEL conversion cannot be done.\n"
+#~ msgstr ""
+#~ "%s: nelze otevřít %s, takže konverze UUID a JMENOVEK nebude provedena.\n"
 
 #~ msgid "%s: bad UUID"
 #~ msgstr "%s: chybné UUID"

@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11y\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-08-07 23:26+0200\n"
+"POT-Creation-Date: 2007-08-28 00:12+0200\n"
 "PO-Revision-Date: 2005-08-15 21:00+0200\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
@@ -100,6 +100,11 @@ msgstr "  %s [-v|-q] kommandoer enheder\n"
 msgid "Available commands:\n"
 msgstr "Tilgængelige kommandoer:\n"
 
+#: disk-utils/blockdev.c:123
+#, fuzzy
+msgid "get size in 512-byte sectors"
+msgstr "få størrelse i byte"
+
 #: disk-utils/blockdev.c:275
 #, c-format
 msgid "%s: Unknown command: %s\n"
@@ -109,6 +114,11 @@ msgstr "%s: Ukendt kommando: %s\n"
 #, c-format
 msgid "%s requires an argument\n"
 msgstr "%s kræver en parameter\n"
+
+#: disk-utils/blockdev.c:329
+#, fuzzy, c-format
+msgid "%s failed.\n"
+msgstr "søgning fejlede"
 
 #: disk-utils/blockdev.c:366
 #, c-format
@@ -328,6 +338,11 @@ msgstr "ugyldigt s_zmap_blocks-felt i super-blok"
 msgid "Unable to allocate buffer for inode map"
 msgstr "Kunne ikke allokere buffer til inode-oversigt"
 
+#: disk-utils/fsck.minix.c:593
+#, fuzzy
+msgid "Unable to allocate buffer for zone map"
+msgstr "Kunne ikke allokere buffer til inode-oversigt"
+
 #: disk-utils/fsck.minix.c:598
 msgid "Unable to allocate buffer for inodes"
 msgstr "Kunne ikke allokere buffer til inodes"
@@ -415,7 +430,7 @@ msgstr "Filen '%s' har tilstand %05o\n"
 msgid "Warning: inode count too big.\n"
 msgstr "Advarsel: inode-optælling for stor.\n"
 
-#: disk-utils/fsck.minix.c:731
+#: disk-utils/fsck.minix.c:731 disk-utils/fsck.minix.c:739
 msgid "root inode isn't a directory"
 msgstr "rod-inode er ikke en mappe"
 
@@ -448,27 +463,17 @@ msgstr "Mappen '%s' indeholder forkert inode-antal for filen '%.*s'."
 msgid " Remove"
 msgstr " Fjern"
 
-#: disk-utils/fsck.minix.c:956
-#, c-format
-msgid "`%s': bad directory: '.' isn't first\n"
-msgstr "'%s': ugyldig mappe: '.' er ikke først\n"
-
-#: disk-utils/fsck.minix.c:964
-#, c-format
-msgid "`%s': bad directory: '..' isn't second\n"
-msgstr "'%s': ugyldig mappe: ',.' er ikke nummer to\n"
-
-#: disk-utils/fsck.minix.c:1023
+#: disk-utils/fsck.minix.c:956 disk-utils/fsck.minix.c:1023
 #, c-format
 msgid "%s: bad directory: '.' isn't first\n"
 msgstr "%s: ugyldig mappe: '.' er ikke først\n"
 
-#: disk-utils/fsck.minix.c:1032
+#: disk-utils/fsck.minix.c:964 disk-utils/fsck.minix.c:1032
 #, c-format
 msgid "%s: bad directory: '..' isn't second\n"
 msgstr "%s: ugyldig mappe: ',.' er ikke nummer to\n"
 
-#: disk-utils/fsck.minix.c:1066
+#: disk-utils/fsck.minix.c:1066 disk-utils/fsck.minix.c:1084
 msgid "internal error"
 msgstr "intern fejl"
 
@@ -495,6 +500,10 @@ msgstr "Inode %d ikke brugt, markeret som brugt i bitoversigten."
 #, c-format
 msgid "Inode %d used, marked unused in the bitmap."
 msgstr "Inode %d i brug, markeret som ubrugt i bitoversigten."
+
+#: disk-utils/fsck.minix.c:1127 disk-utils/fsck.minix.c:1181
+msgid "Set"
+msgstr "Sæt"
 
 #: disk-utils/fsck.minix.c:1131 disk-utils/fsck.minix.c:1185
 #, c-format
@@ -523,10 +532,6 @@ msgstr "Zone %d: i brug, optalt=%d\n"
 #, c-format
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "Zone %d: ikke i brug, optalt=%d\n"
-
-#: disk-utils/fsck.minix.c:1181
-msgid "Set"
-msgstr "Sæt"
 
 #: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:631
 #: disk-utils/mkfs.minix.c:633
@@ -1071,7 +1076,7 @@ msgid "too many bad pages"
 msgstr "for mange ugyldige sider"
 
 #: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1972 text-utils/more.c:1983
+#: text-utils/more.c:1988 text-utils/more.c:1999
 msgid "Out of memory"
 msgstr "Hukommelse opbrugt"
 
@@ -6221,18 +6226,18 @@ msgid "Changing finger information for %s.\n"
 msgstr "Ændrer finger-information for %s.\n"
 
 #: login-utils/chfn.c:179 login-utils/chfn.c:183 login-utils/chfn.c:190
-#: login-utils/chfn.c:194 login-utils/chsh.c:177 login-utils/chsh.c:181
-#: login-utils/chsh.c:188 login-utils/chsh.c:192
+#: login-utils/chfn.c:194 login-utils/chsh.c:178 login-utils/chsh.c:182
+#: login-utils/chsh.c:189 login-utils/chsh.c:193
 msgid "Password error."
 msgstr "Fejl i adgangskode."
 
-#: login-utils/chfn.c:203 login-utils/chsh.c:201 login-utils/login.c:798
+#: login-utils/chfn.c:203 login-utils/chsh.c:202 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:333
 #: mount/lomount.c:336
 msgid "Password: "
 msgstr "Adgangskode: "
 
-#: login-utils/chfn.c:206 login-utils/chsh.c:204
+#: login-utils/chfn.c:206 login-utils/chsh.c:205
 msgid "Incorrect password."
 msgstr "Ugyldig adgangskode."
 
@@ -6294,7 +6299,7 @@ msgstr "Finger-informationer *IKKE* ændret. Prøv igen senere.\n"
 msgid "Finger information changed.\n"
 msgstr "Finger-informationer ændret.\n"
 
-#: login-utils/chfn.c:520 login-utils/chsh.c:427 sys-utils/cytune.c:321
+#: login-utils/chfn.c:520 login-utils/chsh.c:430 sys-utils/cytune.c:321
 msgid "malloc failed"
 msgstr "hukommelsesallokering mislykkedes (malloc)"
 
@@ -6303,7 +6308,7 @@ msgstr "hukommelsesallokering mislykkedes (malloc)"
 msgid "%s: %s is not authorized to change the shell of %s\n"
 msgstr "%s: %s er ikke autoriseret til at ændre skallen for %s\n"
 
-#: login-utils/chsh.c:158
+#: login-utils/chsh.c:159
 #, c-format
 msgid ""
 "%s: Running UID doesn't match UID of user we're altering, shell change "
@@ -6312,21 +6317,21 @@ msgstr ""
 "%s: Den kørende UID svarer ikke til den UID, vi udfører ændringer for, "
 "skalændring nægtes\n"
 
-#: login-utils/chsh.c:164
+#: login-utils/chsh.c:165
 #, c-format
 msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
 msgstr "%s: Din skal er ikke i /etc/shells, udskiftning af skal afvist\n"
 
-#: login-utils/chsh.c:171
+#: login-utils/chsh.c:172
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Udskifter skal for %s.\n"
 
-#: login-utils/chsh.c:212
+#: login-utils/chsh.c:213
 msgid "New shell"
 msgstr "Ny skal"
 
-#: login-utils/chsh.c:219
+#: login-utils/chsh.c:220
 #, c-format
 msgid "Shell not changed.\n"
 msgstr "Skal ikke udskiftet.\n"
@@ -6350,57 +6355,57 @@ msgstr ""
 "Brug: %s [ -s skal ] [ --list-shells ] [ --help ] [ --version ]\n"
 "      [ brugernavn ]\n"
 
-#: login-utils/chsh.c:337
+#: login-utils/chsh.c:340
 #, c-format
 msgid "%s: shell must be a full path name.\n"
 msgstr "%s: skallen skal angives med hel sti.\n"
 
-#: login-utils/chsh.c:341
+#: login-utils/chsh.c:344
 #, c-format
 msgid "%s: \"%s\" does not exist.\n"
 msgstr "%s: \"%s\" eksisterer ikke.\n"
 
-#: login-utils/chsh.c:345
+#: login-utils/chsh.c:348
 #, c-format
 msgid "%s: \"%s\" is not executable.\n"
 msgstr "%s: \"%s\" er ikke kørbar.\n"
 
-#: login-utils/chsh.c:352
+#: login-utils/chsh.c:355
 #, c-format
 msgid "%s: '%c' is not allowed.\n"
 msgstr "%s: '%c' er ikke tilladt.\n"
 
-#: login-utils/chsh.c:356
+#: login-utils/chsh.c:359
 #, c-format
 msgid "%s: Control characters are not allowed.\n"
 msgstr "%s: Kontroltegn er ikke tilladt.\n"
 
-#: login-utils/chsh.c:363
+#: login-utils/chsh.c:366
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells\n"
 msgstr "Advarsel: \"%s\" er ikke med i /etc/shells\n"
 
-#: login-utils/chsh.c:365
+#: login-utils/chsh.c:368
 #, c-format
 msgid "%s: \"%s\" is not listed in /etc/shells.\n"
 msgstr "%s: \"%s\" er ikke med i /etc/shells.\n"
 
-#: login-utils/chsh.c:367
+#: login-utils/chsh.c:370
 #, c-format
 msgid "%s: use -l option to see list\n"
 msgstr "%s: brug tilvalget -l for at se en liste\n"
 
-#: login-utils/chsh.c:373
+#: login-utils/chsh.c:376
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells.\n"
 msgstr "Advarsel: \"%s\" ikke med i /etc/shells.\n"
 
-#: login-utils/chsh.c:374
+#: login-utils/chsh.c:377
 #, c-format
 msgid "Use %s -l to see list.\n"
 msgstr "Brug %s -l for at se en liste.\n"
 
-#: login-utils/chsh.c:394
+#: login-utils/chsh.c:397
 #, c-format
 msgid "No known shells.\n"
 msgstr "Ingen kendte skaller.\n"
@@ -6942,7 +6947,7 @@ msgstr "kunne ikke åbne mappe\n"
 msgid "fork failed\n"
 msgstr "forgrening mislykkedes\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1619
+#: login-utils/simpleinit.c:539 text-utils/more.c:1635
 msgid "exec failed\n"
 msgstr "programkørsel mislykkedes\n"
 
@@ -7746,18 +7751,18 @@ msgstr "set_loop(%s,%s,%llu): lykkedes\n"
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: kunne ikke slette enheden %s: %s\n"
 
-#: mount/lomount.c:405
+#: mount/lomount.c:406
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): lykkedes\n"
 
-#: mount/lomount.c:413
+#: mount/lomount.c:414
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Denne 'mount' er oversat uden loop-understøttelse. Genoversæt venligst.\n"
 
-#: mount/lomount.c:450
+#: mount/lomount.c:451
 #, c-format
 msgid ""
 "\n"
@@ -7779,12 +7784,12 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:478 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:479 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "ikke nok hukommelse"
 
-#: mount/lomount.c:639
+#: mount/lomount.c:640
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -9495,7 +9500,7 @@ msgstr ", klar"
 msgid "disable rtc alarm interrupt"
 msgstr ""
 
-#: sys-utils/setarch.c:57
+#: sys-utils/setarch.c:70
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -9503,46 +9508,46 @@ msgid ""
 "Options:\n"
 msgstr ""
 
-#: sys-utils/setarch.c:61
+#: sys-utils/setarch.c:74
 #, c-format
 msgid "\t-%c\tEnable %s\n"
 msgstr ""
 
-#: sys-utils/setarch.c:63
+#: sys-utils/setarch.c:76
 #, c-format
 msgid ""
 "\n"
 "For more information see setarch(8).\n"
 msgstr ""
 
-#: sys-utils/setarch.c:75
+#: sys-utils/setarch.c:88
 #, fuzzy, c-format
 msgid ""
 "%s: %s\n"
 "Try `%s --help' for more information.\n"
 msgstr "Brug 'getopt --help' for flere detaljer.\n"
 
-#: sys-utils/setarch.c:133 sys-utils/setarch.c:149
+#: sys-utils/setarch.c:155 sys-utils/setarch.c:171
 #, fuzzy, c-format
 msgid "%s: Unrecognized architecture"
 msgstr " %s: ukendt partitionstabeltype\n"
 
-#: sys-utils/setarch.c:166 sys-utils/setarch.c:173
+#: sys-utils/setarch.c:188 sys-utils/setarch.c:195
 #, fuzzy
 msgid "Not enough arguments"
 msgstr "For mange parametre.\n"
 
-#: sys-utils/setarch.c:199
+#: sys-utils/setarch.c:237
 #, c-format
 msgid "Switching on %s.\n"
 msgstr ""
 
-#: sys-utils/setarch.c:206
+#: sys-utils/setarch.c:244
 #, fuzzy, c-format
 msgid "Unknown option `%c' ignored"
 msgstr "%s: ukendt tilvalg \"-%c\"\n"
 
-#: sys-utils/setarch.c:211
+#: sys-utils/setarch.c:249
 #, fuzzy, c-format
 msgid "Failed to set personality to %s"
 msgstr "Mislykket skrivning af partition på %s\n"
@@ -9733,25 +9738,25 @@ msgstr "(Næste fil: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Tryk mellemrum for at fortsætte, 'q' for at afslutte.]"
 
-#: text-utils/more.c:1158
+#: text-utils/more.c:1174
 #, c-format
 msgid "...back %d pages"
 msgstr "...bak %d sider"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1176
 msgid "...back 1 page"
 msgstr "...bak 1 side"
 
-#: text-utils/more.c:1203
+#: text-utils/more.c:1219
 msgid "...skipping one line"
 msgstr "...overspringer en linje"
 
-#: text-utils/more.c:1205
+#: text-utils/more.c:1221
 #, c-format
 msgid "...skipping %d lines"
 msgstr "...overspringer %d linjer"
 
-#: text-utils/more.c:1242
+#: text-utils/more.c:1258
 msgid ""
 "\n"
 "***Back***\n"
@@ -9761,7 +9766,7 @@ msgstr ""
 "***Tilbage***\n"
 "\n"
 
-#: text-utils/more.c:1280
+#: text-utils/more.c:1296
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -9773,7 +9778,7 @@ msgstr ""
 "klammer.\n"
 "Stjerne (*) betyder at parameteren bliver den nye standardværdi.\n"
 
-#: text-utils/more.c:1287
+#: text-utils/more.c:1303
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -9819,34 +9824,34 @@ msgstr ""
 ":f                      Vis aktuelle filnavn og linjenummer\n"
 ".                       Gentag seneste kommando\n"
 
-#: text-utils/more.c:1356 text-utils/more.c:1361
+#: text-utils/more.c:1372 text-utils/more.c:1377
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Tryk 'h' for instruktioner.]"
 
-#: text-utils/more.c:1395
+#: text-utils/more.c:1411
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" linje %d"
 
-#: text-utils/more.c:1397
+#: text-utils/more.c:1413
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Ikke en fil] linje %d"
 
-#: text-utils/more.c:1481
+#: text-utils/more.c:1497
 msgid "  Overflow\n"
 msgstr "  Overløb\n"
 
-#: text-utils/more.c:1528
+#: text-utils/more.c:1544
 msgid "...skipping\n"
 msgstr "...overspringer\n"
 
-#: text-utils/more.c:1557
+#: text-utils/more.c:1573
 msgid "Regular expression botch"
 msgstr "Forkludret regulært udtryk"
 
-#: text-utils/more.c:1569
+#: text-utils/more.c:1585
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9854,15 +9859,15 @@ msgstr ""
 "\n"
 "Mønster ikke fundet\n"
 
-#: text-utils/more.c:1572 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1588 text-utils/pg.c:1125 text-utils/pg.c:1276
 msgid "Pattern not found"
 msgstr "Mønster ikke fundet"
 
-#: text-utils/more.c:1633
+#: text-utils/more.c:1649
 msgid "can't fork\n"
 msgstr "kunne ikke forgrene (fork)\n"
 
-#: text-utils/more.c:1672
+#: text-utils/more.c:1688
 msgid ""
 "\n"
 "...Skipping "
@@ -9870,19 +9875,19 @@ msgstr ""
 "\n"
 "...Overspringer "
 
-#: text-utils/more.c:1676
+#: text-utils/more.c:1692
 msgid "...Skipping to file "
 msgstr "...Springer til filen "
 
-#: text-utils/more.c:1678
+#: text-utils/more.c:1694
 msgid "...Skipping back to file "
 msgstr "...Springer tilbage til filen "
 
-#: text-utils/more.c:1956
+#: text-utils/more.c:1972
 msgid "Line too long"
 msgstr "For lang linje"
 
-#: text-utils/more.c:1999
+#: text-utils/more.c:2015
 msgid "No previous command to substitute for"
 msgstr "Ingen tidligere kommando at erstatte med"
 
@@ -10069,6 +10074,12 @@ msgstr "For lang inddatalinje.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Løb tør for hukommelse under forstørring af buffer.\n"
+
+#~ msgid "`%s': bad directory: '.' isn't first\n"
+#~ msgstr "'%s': ugyldig mappe: '.' er ikke først\n"
+
+#~ msgid "`%s': bad directory: '..' isn't second\n"
+#~ msgstr "'%s': ugyldig mappe: ',.' er ikke nummer to\n"
 
 #~ msgid "%s from util-linux-%s\n"
 #~ msgstr "%s fra util-linux-%s\n"

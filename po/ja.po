@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11n\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-08-07 23:26+0200\n"
+"POT-Creation-Date: 2007-08-28 00:12+0200\n"
 "PO-Revision-Date: 2001-12-11 22:43+0900\n"
 "Last-Translator: Daisuke Yamashita <yamad@mb.infoweb.ne.jp>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -95,6 +95,11 @@ msgstr "  %s [-v|-q] コマンド デバイス\n"
 msgid "Available commands:\n"
 msgstr "利用可能コマンド:\n"
 
+#: disk-utils/blockdev.c:123
+#, fuzzy
+msgid "get size in 512-byte sectors"
+msgstr "サイズを取得"
+
 #: disk-utils/blockdev.c:275
 #, c-format
 msgid "%s: Unknown command: %s\n"
@@ -104,6 +109,11 @@ msgstr "%s: 不明なコマンド: %s\n"
 #, c-format
 msgid "%s requires an argument\n"
 msgstr "%s は引数を要求します\n"
+
+#: disk-utils/blockdev.c:329
+#, fuzzy, c-format
+msgid "%s failed.\n"
+msgstr "シークに失敗"
 
 #: disk-utils/blockdev.c:366
 #, c-format
@@ -318,6 +328,11 @@ msgstr "bad s_zmap_blocks field in super-block"
 msgid "Unable to allocate buffer for inode map"
 msgstr "inode マップ用バッファの確保ができません"
 
+#: disk-utils/fsck.minix.c:593
+#, fuzzy
+msgid "Unable to allocate buffer for zone map"
+msgstr "inode マップ用バッファの確保ができません"
+
 #: disk-utils/fsck.minix.c:598
 msgid "Unable to allocate buffer for inodes"
 msgstr "inode 用バッファの確保ができません。"
@@ -406,7 +421,7 @@ msgstr "ファイル `%s' はモード %05o です\n"
 msgid "Warning: inode count too big.\n"
 msgstr "警告: inode 数が大きすぎます。\n"
 
-#: disk-utils/fsck.minix.c:731
+#: disk-utils/fsck.minix.c:731 disk-utils/fsck.minix.c:739
 msgid "root inode isn't a directory"
 msgstr "root inode がディレクトリではありません"
 
@@ -439,27 +454,17 @@ msgstr "ディレクトリ '%s' はファイル '%.*s' の不正 inode 番号を含みます。"
 msgid " Remove"
 msgstr " 削除"
 
-#: disk-utils/fsck.minix.c:956
-#, c-format
-msgid "`%s': bad directory: '.' isn't first\n"
-msgstr "`%s': 不正なディレクトリ: '.' が最初ではありません\n"
-
-#: disk-utils/fsck.minix.c:964
-#, c-format
-msgid "`%s': bad directory: '..' isn't second\n"
-msgstr "`%s': 不正なディレクトリ: '..' が 2 番目ではありません\n"
-
-#: disk-utils/fsck.minix.c:1023
+#: disk-utils/fsck.minix.c:956 disk-utils/fsck.minix.c:1023
 #, c-format
 msgid "%s: bad directory: '.' isn't first\n"
 msgstr "%s: 不正なディレクトリ: '.' が最初ではありません\n"
 
-#: disk-utils/fsck.minix.c:1032
+#: disk-utils/fsck.minix.c:964 disk-utils/fsck.minix.c:1032
 #, c-format
 msgid "%s: bad directory: '..' isn't second\n"
 msgstr "%s: 不正なディレクトリ: '..' が 2 番目ではありません\n"
 
-#: disk-utils/fsck.minix.c:1066
+#: disk-utils/fsck.minix.c:1066 disk-utils/fsck.minix.c:1084
 msgid "internal error"
 msgstr "内部エラー"
 
@@ -486,6 +491,10 @@ msgstr "inode %d は使われませんが、ビットマップでは使用マークが付いています"
 #, c-format
 msgid "Inode %d used, marked unused in the bitmap."
 msgstr "inode %d が使用されますが、ビットマップでは不使用マークが付いています"
+
+#: disk-utils/fsck.minix.c:1127 disk-utils/fsck.minix.c:1181
+msgid "Set"
+msgstr "設定"
 
 #: disk-utils/fsck.minix.c:1131 disk-utils/fsck.minix.c:1185
 #, c-format
@@ -514,10 +523,6 @@ msgstr "Zone %d: 使用中、counted=%d\n"
 #, c-format
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "Zone %d: 使用していません、counted=%d\n"
-
-#: disk-utils/fsck.minix.c:1181
-msgid "Set"
-msgstr "設定"
 
 #: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:631
 #: disk-utils/mkfs.minix.c:633
@@ -1040,7 +1045,7 @@ msgid "too many bad pages"
 msgstr "不正ページが多すぎます"
 
 #: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1972 text-utils/more.c:1983
+#: text-utils/more.c:1988 text-utils/more.c:1999
 msgid "Out of memory"
 msgstr "メモリが足りません"
 
@@ -6211,18 +6216,18 @@ msgid "Changing finger information for %s.\n"
 msgstr "%s の finger 情報を変更します。\n"
 
 #: login-utils/chfn.c:179 login-utils/chfn.c:183 login-utils/chfn.c:190
-#: login-utils/chfn.c:194 login-utils/chsh.c:177 login-utils/chsh.c:181
-#: login-utils/chsh.c:188 login-utils/chsh.c:192
+#: login-utils/chfn.c:194 login-utils/chsh.c:178 login-utils/chsh.c:182
+#: login-utils/chsh.c:189 login-utils/chsh.c:193
 msgid "Password error."
 msgstr "パスワードエラー。"
 
-#: login-utils/chfn.c:203 login-utils/chsh.c:201 login-utils/login.c:798
+#: login-utils/chfn.c:203 login-utils/chsh.c:202 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:333
 #: mount/lomount.c:336
 msgid "Password: "
 msgstr "パスワード: "
 
-#: login-utils/chfn.c:206 login-utils/chsh.c:204
+#: login-utils/chfn.c:206 login-utils/chsh.c:205
 msgid "Incorrect password."
 msgstr "間違ったパスワードです。"
 
@@ -6284,7 +6289,7 @@ msgstr "finger 情報は変更 *されませんでした*。またあとで試してください。\n"
 msgid "Finger information changed.\n"
 msgstr "finger 情報を変更しました。\n"
 
-#: login-utils/chfn.c:520 login-utils/chsh.c:427 sys-utils/cytune.c:321
+#: login-utils/chfn.c:520 login-utils/chsh.c:430 sys-utils/cytune.c:321
 msgid "malloc failed"
 msgstr "malloc に失敗"
 
@@ -6293,30 +6298,30 @@ msgstr "malloc に失敗"
 msgid "%s: %s is not authorized to change the shell of %s\n"
 msgstr "%s: \"%s\" は /etc/shells リストの中にありません。\n"
 
-#: login-utils/chsh.c:158
+#: login-utils/chsh.c:159
 #, c-format
 msgid ""
 "%s: Running UID doesn't match UID of user we're altering, shell change "
 "denied\n"
 msgstr ""
 
-#: login-utils/chsh.c:164
+#: login-utils/chsh.c:165
 #, c-format
 msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
 msgstr ""
 "%s: あなたのシェルは /etc/shells にありませんので、シェルの変更が拒否されまし"
 "た\n"
 
-#: login-utils/chsh.c:171
+#: login-utils/chsh.c:172
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "%s のシェルを変更します。\n"
 
-#: login-utils/chsh.c:212
+#: login-utils/chsh.c:213
 msgid "New shell"
 msgstr "新しいシェル"
 
-#: login-utils/chsh.c:219
+#: login-utils/chsh.c:220
 #, c-format
 msgid "Shell not changed.\n"
 msgstr "シェルを変更しませんでした。\n"
@@ -6340,57 +6345,57 @@ msgstr ""
 "使い方: %s [ -s シェル ] [ --list-shells ] [ --help ] [ --version ]\n"
 "       [ ユーザ名 ]\n"
 
-#: login-utils/chsh.c:337
+#: login-utils/chsh.c:340
 #, c-format
 msgid "%s: shell must be a full path name.\n"
 msgstr "%s: シェルはフルパスで無ければなりません。\n"
 
-#: login-utils/chsh.c:341
+#: login-utils/chsh.c:344
 #, c-format
 msgid "%s: \"%s\" does not exist.\n"
 msgstr "%s: \"%s\" は存在しません。\n"
 
-#: login-utils/chsh.c:345
+#: login-utils/chsh.c:348
 #, c-format
 msgid "%s: \"%s\" is not executable.\n"
 msgstr "%s: \"%s\" は実行できません。\n"
 
-#: login-utils/chsh.c:352
+#: login-utils/chsh.c:355
 #, c-format
 msgid "%s: '%c' is not allowed.\n"
 msgstr "%s: '%c' は許可されません。\n"
 
-#: login-utils/chsh.c:356
+#: login-utils/chsh.c:359
 #, c-format
 msgid "%s: Control characters are not allowed.\n"
 msgstr "%s: コントロール文字は許可されません。\n"
 
-#: login-utils/chsh.c:363
+#: login-utils/chsh.c:366
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells\n"
 msgstr "警告: \"%s\" は /etc/shells リストの中にありません\n"
 
-#: login-utils/chsh.c:365
+#: login-utils/chsh.c:368
 #, c-format
 msgid "%s: \"%s\" is not listed in /etc/shells.\n"
 msgstr "%s: \"%s\" は /etc/shells リストの中にありません。\n"
 
-#: login-utils/chsh.c:367
+#: login-utils/chsh.c:370
 #, c-format
 msgid "%s: use -l option to see list\n"
 msgstr "%s: リストを見るには -l オプションを使ってください\n"
 
-#: login-utils/chsh.c:373
+#: login-utils/chsh.c:376
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells.\n"
 msgstr "警告: \"%s\" は /etc/shells リストの中にありません。\n"
 
-#: login-utils/chsh.c:374
+#: login-utils/chsh.c:377
 #, c-format
 msgid "Use %s -l to see list.\n"
 msgstr "リストを見るには、%s -l を使ってください。\n"
 
-#: login-utils/chsh.c:394
+#: login-utils/chsh.c:397
 #, c-format
 msgid "No known shells.\n"
 msgstr "知らないシェルです。\n"
@@ -6932,7 +6937,7 @@ msgstr "ディレクトリのオープンが失敗しました\n"
 msgid "fork failed\n"
 msgstr "fork が失敗\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1619
+#: login-utils/simpleinit.c:539 text-utils/more.c:1635
 msgid "exec failed\n"
 msgstr "実行に失敗\n"
 
@@ -7737,19 +7742,19 @@ msgstr "set_loop(%s,%s,%d): 成功\n"
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: デバイス %s を削除できません: %s\n"
 
-#: mount/lomount.c:405
+#: mount/lomount.c:406
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): 成功\n"
 
-#: mount/lomount.c:413
+#: mount/lomount.c:414
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "この mount は loop のサポートなしでコンパイルされました。\n"
 "再コンパイルしてください。\n"
 
-#: mount/lomount.c:450
+#: mount/lomount.c:451
 #, c-format
 msgid ""
 "\n"
@@ -7771,12 +7776,12 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:478 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:479 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "メモリが不十分です"
 
-#: mount/lomount.c:639
+#: mount/lomount.c:640
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -9488,7 +9493,7 @@ msgstr ", 準備できています"
 msgid "disable rtc alarm interrupt"
 msgstr ""
 
-#: sys-utils/setarch.c:57
+#: sys-utils/setarch.c:70
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -9496,46 +9501,46 @@ msgid ""
 "Options:\n"
 msgstr ""
 
-#: sys-utils/setarch.c:61
+#: sys-utils/setarch.c:74
 #, c-format
 msgid "\t-%c\tEnable %s\n"
 msgstr ""
 
-#: sys-utils/setarch.c:63
+#: sys-utils/setarch.c:76
 #, c-format
 msgid ""
 "\n"
 "For more information see setarch(8).\n"
 msgstr ""
 
-#: sys-utils/setarch.c:75
+#: sys-utils/setarch.c:88
 #, fuzzy, c-format
 msgid ""
 "%s: %s\n"
 "Try `%s --help' for more information.\n"
 msgstr "`getopt --help' で詳細情報を調べてください。\n"
 
-#: sys-utils/setarch.c:133 sys-utils/setarch.c:149
+#: sys-utils/setarch.c:155 sys-utils/setarch.c:171
 #, fuzzy, c-format
 msgid "%s: Unrecognized architecture"
 msgstr " %s: 認識できないパーティション\n"
 
-#: sys-utils/setarch.c:166 sys-utils/setarch.c:173
+#: sys-utils/setarch.c:188 sys-utils/setarch.c:195
 #, fuzzy
 msgid "Not enough arguments"
 msgstr "引数が多すぎます。\n"
 
-#: sys-utils/setarch.c:199
+#: sys-utils/setarch.c:237
 #, c-format
 msgid "Switching on %s.\n"
 msgstr ""
 
-#: sys-utils/setarch.c:206
+#: sys-utils/setarch.c:244
 #, fuzzy, c-format
 msgid "Unknown option `%c' ignored"
 msgstr "%s: 不明なシグナル %s\n"
 
-#: sys-utils/setarch.c:211
+#: sys-utils/setarch.c:249
 #, fuzzy, c-format
 msgid "Failed to set personality to %s"
 msgstr "%s のパーティション書き込みに失敗\n"
@@ -9725,26 +9730,26 @@ msgstr "(次のファイル: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[スペースキーを押すと続き、'q' で終了。]"
 
-#: text-utils/more.c:1158
+#: text-utils/more.c:1174
 #, c-format
 msgid "...back %d pages"
 msgstr "... %d ページ戻ります"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1176
 msgid "...back 1 page"
 msgstr "... 1 ページ戻ります"
 
-#: text-utils/more.c:1203
+#: text-utils/more.c:1219
 #, fuzzy
 msgid "...skipping one line"
 msgstr "...%d 行飛ばします"
 
-#: text-utils/more.c:1205
+#: text-utils/more.c:1221
 #, fuzzy, c-format
 msgid "...skipping %d lines"
 msgstr "...%d 行飛ばします"
 
-#: text-utils/more.c:1242
+#: text-utils/more.c:1258
 msgid ""
 "\n"
 "***Back***\n"
@@ -9754,7 +9759,7 @@ msgstr ""
 "***戻る***\n"
 "\n"
 
-#: text-utils/more.c:1280
+#: text-utils/more.c:1296
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -9766,7 +9771,7 @@ msgstr ""
 "す。\n"
 "星印(*)はデフォルトが変更されることを示します。\n"
 
-#: text-utils/more.c:1287
+#: text-utils/more.c:1303
 #, fuzzy
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
@@ -9809,34 +9814,34 @@ msgstr ""
 ":f\t\t\t現在のファイル名と行番号を表示する\n"
 ".\t\t\t直前のコマンドを繰り返す\n"
 
-#: text-utils/more.c:1356 text-utils/more.c:1361
+#: text-utils/more.c:1372 text-utils/more.c:1377
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "['h' キーで操作方法]"
 
-#: text-utils/more.c:1395
+#: text-utils/more.c:1411
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" %d 行"
 
-#: text-utils/more.c:1397
+#: text-utils/more.c:1413
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[非ファイル] %d 行"
 
-#: text-utils/more.c:1481
+#: text-utils/more.c:1497
 msgid "  Overflow\n"
 msgstr "  大きすぎ\n"
 
-#: text-utils/more.c:1528
+#: text-utils/more.c:1544
 msgid "...skipping\n"
 msgstr "...飛ばしています\n"
 
-#: text-utils/more.c:1557
+#: text-utils/more.c:1573
 msgid "Regular expression botch"
 msgstr "正規表現がマズい"
 
-#: text-utils/more.c:1569
+#: text-utils/more.c:1585
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9844,15 +9849,15 @@ msgstr ""
 "\n"
 "パターンが見つかりません\n"
 
-#: text-utils/more.c:1572 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1588 text-utils/pg.c:1125 text-utils/pg.c:1276
 msgid "Pattern not found"
 msgstr "パターンが見つかりません"
 
-#: text-utils/more.c:1633
+#: text-utils/more.c:1649
 msgid "can't fork\n"
 msgstr "子プロセスを起動できません\n"
 
-#: text-utils/more.c:1672
+#: text-utils/more.c:1688
 msgid ""
 "\n"
 "...Skipping "
@@ -9860,19 +9865,19 @@ msgstr ""
 "\n"
 "...飛ばしています "
 
-#: text-utils/more.c:1676
+#: text-utils/more.c:1692
 msgid "...Skipping to file "
 msgstr "...ファイルを飛ばします "
 
-#: text-utils/more.c:1678
+#: text-utils/more.c:1694
 msgid "...Skipping back to file "
 msgstr "...ファイルに戻ります "
 
-#: text-utils/more.c:1956
+#: text-utils/more.c:1972
 msgid "Line too long"
 msgstr "行が長すぎます"
 
-#: text-utils/more.c:1999
+#: text-utils/more.c:2015
 msgid "No previous command to substitute for"
 msgstr "大体のための以前のコマンドがありません"
 
@@ -10068,6 +10073,12 @@ msgstr "入力行が長すぎます。\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "バッファを拡大するときにメモリが足りなくなりました。\n"
+
+#~ msgid "`%s': bad directory: '.' isn't first\n"
+#~ msgstr "`%s': 不正なディレクトリ: '.' が最初ではありません\n"
+
+#~ msgid "`%s': bad directory: '..' isn't second\n"
+#~ msgstr "`%s': 不正なディレクトリ: '..' が 2 番目ではありません\n"
 
 #, fuzzy
 #~ msgid "%s from util-linux-%s\n"

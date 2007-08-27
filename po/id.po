@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-08-07 23:26+0200\n"
+"POT-Creation-Date: 2007-08-28 00:12+0200\n"
 "PO-Revision-Date: 2006-02-04 08:30+0700\n"
 "Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -97,6 +97,11 @@ msgstr "  %s [-v|-q] perintah perangkat\n"
 msgid "Available commands:\n"
 msgstr "Perintah yang tersedia:\n"
 
+#: disk-utils/blockdev.c:123
+#, fuzzy
+msgid "get size in 512-byte sectors"
+msgstr "get size in bytes"
+
 #: disk-utils/blockdev.c:275
 #, c-format
 msgid "%s: Unknown command: %s\n"
@@ -106,6 +111,11 @@ msgstr "%s: Perintah tidak diketahui: %s\n"
 #, c-format
 msgid "%s requires an argument\n"
 msgstr "%s membutuhkan sebuah argument\n"
+
+#: disk-utils/blockdev.c:329
+#, fuzzy, c-format
+msgid "%s failed.\n"
+msgstr "gagal seek"
 
 #: disk-utils/blockdev.c:366
 #, c-format
@@ -325,6 +335,11 @@ msgstr "field s_zmap_block buruk dalam super-block"
 msgid "Unable to allocate buffer for inode map"
 msgstr "Tidak dapat mengalokasikan buffer untuk peta inode"
 
+#: disk-utils/fsck.minix.c:593
+#, fuzzy
+msgid "Unable to allocate buffer for zone map"
+msgstr "Tidak dapat mengalokasikan buffer untuk peta inode"
+
 #: disk-utils/fsck.minix.c:598
 msgid "Unable to allocate buffer for inodes"
 msgstr "Tidak dapat mengalokasikan buffer untuk inodes"
@@ -412,7 +427,7 @@ msgstr "File `%s' memiliki mode %05o\n"
 msgid "Warning: inode count too big.\n"
 msgstr "Peringatan: jumlah inode terlalu besar.\n"
 
-#: disk-utils/fsck.minix.c:731
+#: disk-utils/fsck.minix.c:731 disk-utils/fsck.minix.c:739
 msgid "root inode isn't a directory"
 msgstr "root inode tidak berupa sebuah direktori"
 
@@ -445,27 +460,17 @@ msgstr "Direktori '%s' berisi jumlah inode yang buruk untuk file '%.*s'."
 msgid " Remove"
 msgstr " Hapus"
 
-#: disk-utils/fsck.minix.c:956
-#, c-format
-msgid "`%s': bad directory: '.' isn't first\n"
-msgstr "`%s': bad directory: '.' tidak yang pertama\n"
-
-#: disk-utils/fsck.minix.c:964
-#, c-format
-msgid "`%s': bad directory: '..' isn't second\n"
-msgstr "`%s': direktori buruk: '..' tidak yang kedua\n"
-
-#: disk-utils/fsck.minix.c:1023
+#: disk-utils/fsck.minix.c:956 disk-utils/fsck.minix.c:1023
 #, c-format
 msgid "%s: bad directory: '.' isn't first\n"
 msgstr "%s: direktori buruk: '.' bukan yang pertama\n"
 
-#: disk-utils/fsck.minix.c:1032
+#: disk-utils/fsck.minix.c:964 disk-utils/fsck.minix.c:1032
 #, c-format
 msgid "%s: bad directory: '..' isn't second\n"
 msgstr "%s: direktori buruk: '..' tidak kedua\n"
 
-#: disk-utils/fsck.minix.c:1066
+#: disk-utils/fsck.minix.c:1066 disk-utils/fsck.minix.c:1084
 msgid "internal error"
 msgstr "kesalahan internal"
 
@@ -492,6 +497,10 @@ msgstr "Inode %d tidak digunakan, ditandai digunakan dalam bitmap."
 #, c-format
 msgid "Inode %d used, marked unused in the bitmap."
 msgstr "Inode %d digunakan, ditandai digunakan dalam bitmap."
+
+#: disk-utils/fsck.minix.c:1127 disk-utils/fsck.minix.c:1181
+msgid "Set"
+msgstr "Set"
 
 #: disk-utils/fsck.minix.c:1131 disk-utils/fsck.minix.c:1185
 #, c-format
@@ -521,10 +530,6 @@ msgstr "Zone %d: sedang digunakan, terhitung=%d\n"
 #, c-format
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "Zone %d: tidak sedang digunakan, terhitung=%d\n"
-
-#: disk-utils/fsck.minix.c:1181
-msgid "Set"
-msgstr "Set"
 
 #: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:631
 #: disk-utils/mkfs.minix.c:633
@@ -1076,7 +1081,7 @@ msgid "too many bad pages"
 msgstr "terlalu banyak pages yang buruk"
 
 #: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1972 text-utils/more.c:1983
+#: text-utils/more.c:1988 text-utils/more.c:1999
 msgid "Out of memory"
 msgstr "Kekurangan memory"
 
@@ -6290,18 +6295,18 @@ msgid "Changing finger information for %s.\n"
 msgstr "Mengubah informasi finger untuk %s.\n"
 
 #: login-utils/chfn.c:179 login-utils/chfn.c:183 login-utils/chfn.c:190
-#: login-utils/chfn.c:194 login-utils/chsh.c:177 login-utils/chsh.c:181
-#: login-utils/chsh.c:188 login-utils/chsh.c:192
+#: login-utils/chfn.c:194 login-utils/chsh.c:178 login-utils/chsh.c:182
+#: login-utils/chsh.c:189 login-utils/chsh.c:193
 msgid "Password error."
 msgstr "Password error."
 
-#: login-utils/chfn.c:203 login-utils/chsh.c:201 login-utils/login.c:798
+#: login-utils/chfn.c:203 login-utils/chsh.c:202 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:333
 #: mount/lomount.c:336
 msgid "Password: "
 msgstr "Password: "
 
-#: login-utils/chfn.c:206 login-utils/chsh.c:204
+#: login-utils/chfn.c:206 login-utils/chsh.c:205
 msgid "Incorrect password."
 msgstr "Password salah."
 
@@ -6363,7 +6368,7 @@ msgstr "Informasi finger *TIDAT* diubah. Coba lagi nanti.\n"
 msgid "Finger information changed.\n"
 msgstr "Informasi finger berubah.\n"
 
-#: login-utils/chfn.c:520 login-utils/chsh.c:427 sys-utils/cytune.c:321
+#: login-utils/chfn.c:520 login-utils/chsh.c:430 sys-utils/cytune.c:321
 msgid "malloc failed"
 msgstr "malloc gagal"
 
@@ -6372,7 +6377,7 @@ msgstr "malloc gagal"
 msgid "%s: %s is not authorized to change the shell of %s\n"
 msgstr "%s: %s tidak diijinkan untuk mengubah shell dari %s\n"
 
-#: login-utils/chsh.c:158
+#: login-utils/chsh.c:159
 #, c-format
 msgid ""
 "%s: Running UID doesn't match UID of user we're altering, shell change "
@@ -6381,22 +6386,22 @@ msgstr ""
 "%s: UID yang digunakan tidak cocok dengan UID dari pengguna yang "
 "mengubahnya, perubahan shell ditolak\n"
 
-#: login-utils/chsh.c:164
+#: login-utils/chsh.c:165
 #, c-format
 msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
 msgstr ""
 "%s: Shell anda tidak ada dalam daftar /etc/shells, perubahan shell ditolak\n"
 
-#: login-utils/chsh.c:171
+#: login-utils/chsh.c:172
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Merubah shell untuk %s.\n"
 
-#: login-utils/chsh.c:212
+#: login-utils/chsh.c:213
 msgid "New shell"
 msgstr "Shell baru"
 
-#: login-utils/chsh.c:219
+#: login-utils/chsh.c:220
 #, c-format
 msgid "Shell not changed.\n"
 msgstr "Shell tidak berubah.\n"
@@ -6420,57 +6425,57 @@ msgstr ""
 "Penggunaan: %s [ -s shell ] [ --list-shells ] [ --help ] [ --version ]\n"
 "       [ username ]\n"
 
-#: login-utils/chsh.c:337
+#: login-utils/chsh.c:340
 #, c-format
 msgid "%s: shell must be a full path name.\n"
 msgstr "%s: shell harus berada dalam full path name.\n"
 
-#: login-utils/chsh.c:341
+#: login-utils/chsh.c:344
 #, c-format
 msgid "%s: \"%s\" does not exist.\n"
 msgstr "%s: \"%s\" tidak ada.\n"
 
-#: login-utils/chsh.c:345
+#: login-utils/chsh.c:348
 #, c-format
 msgid "%s: \"%s\" is not executable.\n"
 msgstr "%s: \"%s\" bukan sebuah executable.\n"
 
-#: login-utils/chsh.c:352
+#: login-utils/chsh.c:355
 #, c-format
 msgid "%s: '%c' is not allowed.\n"
 msgstr "%s: '%c' tidak diperbolehkan.\n"
 
-#: login-utils/chsh.c:356
+#: login-utils/chsh.c:359
 #, c-format
 msgid "%s: Control characters are not allowed.\n"
 msgstr "%s: Karakter Kontrol tidak diperbolehkan.\n"
 
-#: login-utils/chsh.c:363
+#: login-utils/chsh.c:366
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells\n"
 msgstr "Peringatan: \"%s\" tidak terdaftar dalam /etc/shells\n"
 
-#: login-utils/chsh.c:365
+#: login-utils/chsh.c:368
 #, c-format
 msgid "%s: \"%s\" is not listed in /etc/shells.\n"
 msgstr "%s: \"%s\" tidak terdaftar dalam /etc/shells.\n"
 
-#: login-utils/chsh.c:367
+#: login-utils/chsh.c:370
 #, c-format
 msgid "%s: use -l option to see list\n"
 msgstr "%s: gunakan opsi -l untuk melihat list\n"
 
-#: login-utils/chsh.c:373
+#: login-utils/chsh.c:376
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells.\n"
 msgstr "Peringatan: \"%s\" tidak terdaftar dalam /etc/shells.\n"
 
-#: login-utils/chsh.c:374
+#: login-utils/chsh.c:377
 #, c-format
 msgid "Use %s -l to see list.\n"
 msgstr "Gunakan %s -l untuk melihat list.\n"
 
-#: login-utils/chsh.c:394
+#: login-utils/chsh.c:397
 #, c-format
 msgid "No known shells.\n"
 msgstr "Tidak ada shells yang diketahui.\n"
@@ -7014,7 +7019,7 @@ msgstr "gagal membuka direktori\n"
 msgid "fork failed\n"
 msgstr "gagal fork\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1619
+#: login-utils/simpleinit.c:539 text-utils/more.c:1635
 msgid "exec failed\n"
 msgstr "gagal eksekusi\n"
 
@@ -7827,17 +7832,17 @@ msgstr "set_loop(%s,%s,%llu): berhasil\n"
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: tidak dapat menghapus perangkat %s: %s\n"
 
-#: mount/lomount.c:405
+#: mount/lomount.c:406
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): berhasil\n"
 
-#: mount/lomount.c:413
+#: mount/lomount.c:414
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Mount ini telah dikompile tanpa layanan loop. Tolong di rekompile.\n"
 
-#: mount/lomount.c:450
+#: mount/lomount.c:451
 #, c-format
 msgid ""
 "\n"
@@ -7859,12 +7864,12 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:478 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:479 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "memory tidak cukup"
 
-#: mount/lomount.c:639
+#: mount/lomount.c:640
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Layanan loop tidak ada pada waktu dikompile. Tolong di rekompile.\n"
@@ -9591,7 +9596,7 @@ msgstr ", siap"
 msgid "disable rtc alarm interrupt"
 msgstr ""
 
-#: sys-utils/setarch.c:57
+#: sys-utils/setarch.c:70
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -9599,46 +9604,46 @@ msgid ""
 "Options:\n"
 msgstr ""
 
-#: sys-utils/setarch.c:61
+#: sys-utils/setarch.c:74
 #, c-format
 msgid "\t-%c\tEnable %s\n"
 msgstr ""
 
-#: sys-utils/setarch.c:63
+#: sys-utils/setarch.c:76
 #, c-format
 msgid ""
 "\n"
 "For more information see setarch(8).\n"
 msgstr ""
 
-#: sys-utils/setarch.c:75
+#: sys-utils/setarch.c:88
 #, fuzzy, c-format
 msgid ""
 "%s: %s\n"
 "Try `%s --help' for more information.\n"
 msgstr "Coba `getopt --help' untuk informasi lebih lanjut.\n"
 
-#: sys-utils/setarch.c:133 sys-utils/setarch.c:149
+#: sys-utils/setarch.c:155 sys-utils/setarch.c:171
 #, fuzzy, c-format
 msgid "%s: Unrecognized architecture"
 msgstr " %s: tipe tabel partisi tidak diketahui\n"
 
-#: sys-utils/setarch.c:166 sys-utils/setarch.c:173
+#: sys-utils/setarch.c:188 sys-utils/setarch.c:195
 #, fuzzy
 msgid "Not enough arguments"
 msgstr "memory tidak cukup"
 
-#: sys-utils/setarch.c:199
+#: sys-utils/setarch.c:237
 #, c-format
 msgid "Switching on %s.\n"
 msgstr ""
 
-#: sys-utils/setarch.c:206
+#: sys-utils/setarch.c:244
 #, fuzzy, c-format
 msgid "Unknown option `%c' ignored"
 msgstr "%s: opsi tidak diketahui \"-%c\"\n"
 
-#: sys-utils/setarch.c:211
+#: sys-utils/setarch.c:249
 #, fuzzy, c-format
 msgid "Failed to set personality to %s"
 msgstr "Gagal menulis partisi di %s\n"
@@ -9831,25 +9836,25 @@ msgstr "(File selanjutnya: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Tekan spasi untuk melanjutkan, 'q' untuk berhenti.]"
 
-#: text-utils/more.c:1158
+#: text-utils/more.c:1174
 #, c-format
 msgid "...back %d pages"
 msgstr "...kembali %d halaman"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1176
 msgid "...back 1 page"
 msgstr "...kembali 1 halaman"
 
-#: text-utils/more.c:1203
+#: text-utils/more.c:1219
 msgid "...skipping one line"
 msgstr "...melewati satu baris"
 
-#: text-utils/more.c:1205
+#: text-utils/more.c:1221
 #, c-format
 msgid "...skipping %d lines"
 msgstr "...melewati %d baris"
 
-#: text-utils/more.c:1242
+#: text-utils/more.c:1258
 msgid ""
 "\n"
 "***Back***\n"
@@ -9859,7 +9864,7 @@ msgstr ""
 "***Kembali***\n"
 "\n"
 
-#: text-utils/more.c:1280
+#: text-utils/more.c:1296
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -9871,7 +9876,7 @@ msgstr ""
 "brackets.\n"
 "Bintang (*) mengindikasikan argument menjadi baru secara default.\n"
 
-#: text-utils/more.c:1287
+#: text-utils/more.c:1303
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -9917,34 +9922,34 @@ msgstr ""
 ":f                      Tampilkan nama file saat ini dan nomor baris\n"
 ".                       Ulangi perintah sebelumnya\n"
 
-#: text-utils/more.c:1356 text-utils/more.c:1361
+#: text-utils/more.c:1372 text-utils/more.c:1377
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Tekan 'h' untuk instruksi.]"
 
-#: text-utils/more.c:1395
+#: text-utils/more.c:1411
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" baris %d"
 
-#: text-utils/more.c:1397
+#: text-utils/more.c:1413
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Bukan sebuah file] baris %d"
 
-#: text-utils/more.c:1481
+#: text-utils/more.c:1497
 msgid "  Overflow\n"
 msgstr "  Overflow\n"
 
-#: text-utils/more.c:1528
+#: text-utils/more.c:1544
 msgid "...skipping\n"
 msgstr "...melewati\n"
 
-#: text-utils/more.c:1557
+#: text-utils/more.c:1573
 msgid "Regular expression botch"
 msgstr "Regular expression botch"
 
-#: text-utils/more.c:1569
+#: text-utils/more.c:1585
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9952,15 +9957,15 @@ msgstr ""
 "\n"
 "Pattern tidak ditemukan\n"
 
-#: text-utils/more.c:1572 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1588 text-utils/pg.c:1125 text-utils/pg.c:1276
 msgid "Pattern not found"
 msgstr "Pattern tidak ditemukan"
 
-#: text-utils/more.c:1633
+#: text-utils/more.c:1649
 msgid "can't fork\n"
 msgstr "tidak dapat fork\n"
 
-#: text-utils/more.c:1672
+#: text-utils/more.c:1688
 msgid ""
 "\n"
 "...Skipping "
@@ -9968,19 +9973,19 @@ msgstr ""
 "\n"
 "...Melewati"
 
-#: text-utils/more.c:1676
+#: text-utils/more.c:1692
 msgid "...Skipping to file "
 msgstr "...Melewati ke file "
 
-#: text-utils/more.c:1678
+#: text-utils/more.c:1694
 msgid "...Skipping back to file "
 msgstr "...Melewati kembali ke file "
 
-#: text-utils/more.c:1956
+#: text-utils/more.c:1972
 msgid "Line too long"
 msgstr "Baris terlalu panjang"
 
-#: text-utils/more.c:1999
+#: text-utils/more.c:2015
 msgid "No previous command to substitute for"
 msgstr "Tidak adalah perintah sebelumnya untuk digantikan"
 
@@ -10168,6 +10173,12 @@ msgstr "Baris input terlalu panjang.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Kehabisan memori ketika meningkatkan buffer.\n"
+
+#~ msgid "`%s': bad directory: '.' isn't first\n"
+#~ msgstr "`%s': bad directory: '.' tidak yang pertama\n"
+
+#~ msgid "`%s': bad directory: '..' isn't second\n"
+#~ msgstr "`%s': direktori buruk: '..' tidak yang kedua\n"
 
 #~ msgid "%s from util-linux-%s\n"
 #~ msgstr "%s dari util-linux-%s\n"
