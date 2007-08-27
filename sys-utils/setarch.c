@@ -212,6 +212,14 @@ int main(int argc, char *argv[])
     if (!strcmp(arg, "--help"))
       show_help();
 
+    /* compatibitity with an old Debian setarch implementation
+     * TODO: add long options for all flags
+     */
+    if (!strcmp(arg, "--3gb"))
+      arg="-3";
+    else if (!strcmp(arg, "--4gb"))
+      continue;				/* just ignore this one */
+
     for (n = 1; arg[n]; n++) {
       int f;
 
