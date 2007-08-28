@@ -76,3 +76,7 @@ install-exec-hook:
 	for I in $(SETARCH_LINKS); do \
 		cd $(DESTDIR)$(usrbinexecdir) && ln -sf setarch $$I ; \
 	done
+	for I in $(SETARCH_LINKS); do \
+                echo ".so setarch.8" > $(DESTDIR)$(man8dir)/$$I.8 ; \
+        done
+
