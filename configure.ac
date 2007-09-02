@@ -1,6 +1,6 @@
-AC_INIT(util-linux-ng, 2.13, kzak@redhat.com)
+AC_INIT(util-linux-ng, 2.14, kzak@redhat.com)
 
-AC_PREREQ(2.59)
+AC_PREREQ(2.60)
 
 AC_CONFIG_AUX_DIR(config)
 
