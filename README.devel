@@ -52,7 +52,7 @@ SCM (source code management):
 
 
     * maintenance (stable) branch(es)
-        - created for every <major>.<minor> release, branch name: v<major>.<minor>-stable
+        - created for every <major>.<minor> release, branch name: stable/v<major>.<minor>
 
     * master branch
         - the status of this branch is: "it works for me". It means useful
