@@ -97,6 +97,7 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 		} else {
 #ifdef resolve_symlinks		/* Richard Gooch dislikes sl resolution */
 			int m;
+			char *newbuf;
 
 			/* Note: readlink doesn't add the null byte. */
 			link_path[n] = '\0';
@@ -110,12 +111,12 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 
 			/* Insert symlink contents into path. */
 			m = strlen(path);
+			newbuf = xmalloc(m + n + 1);
+			memcpy(newbuf, link_path, n);
+			memcpy(newbuf + n, path, m + 1);
 			if (buf)
 				free(buf);
-			buf = xmalloc(m + n + 1);
-			memcpy(buf, link_path, n);
-			memcpy(buf + n, path, m + 1);
-			path = buf;
+			path = buf = newbuf;
 #endif
 		}
 		*npath++ = '/';
