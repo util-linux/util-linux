@@ -2248,22 +2248,15 @@ write_table(void) {
 
 void
 reread_partition_table(int leave) {
-	int error = 0;
 	int i;
+	struct stat statbuf;
 
-	printf(_("Calling ioctl() to re-read partition table.\n"));
-	sync();
-	sleep(2);
-	if ((i = ioctl(fd, BLKRRPART)) != 0) {
-                error = errno;
-        } else {
-                /* some kernel versions (1.2.x) seem to have trouble
-                   rereading the partition table, but if asked to do it
-		   twice, the second time works. - biro@yggdrasil.com */
-                sync();
-                sleep(2);
-                if ((i = ioctl(fd, BLKRRPART)) != 0)
-                        error = errno;
+	i = fstat(fd, &statbuf);
+	if (i == 0 && S_ISBLK(statbuf.st_mode)) {
+		printf(_("Calling ioctl() to re-read partition table.\n"));
+		sync();
+		sleep(2);
+		i = ioctl(fd, BLKRRPART);
         }
 
 	if (i) {
@@ -2272,7 +2265,7 @@ reread_partition_table(int leave) {
 			 "The kernel still uses the old table.\n"
 			 "The new table will be used "
 			 "at the next reboot.\n"),
-			error, strerror(error));
+			errno, strerror(errno));
 	}
 
 	if (dos_changed)
