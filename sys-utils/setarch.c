@@ -36,32 +36,47 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <error.h>
+#include <getopt.h>
+#include <limits.h>
 #include <sys/utsname.h>
 #include "nls.h"
 
 #define set_pers(pers) ((long)syscall(SYS_personality, pers))
 
-struct {
-    char c;
-    const char *name;
-    unsigned int option;
-} flags[] = {
-    {'R', "ADDR_NO_RANDOMIZE",  0x0040000},
-    {'F', "FDPIC_FUNCPTRS",     0x0080000},
-    {'Z', "MMAP_PAGE_ZERO",     0x0100000},
-    {'L', "ADDR_COMPAT_LAYOUT", 0x0200000},
-    {'X', "READ_IMPLIES_EXEC",  0x0400000},
-    {'B', "ADDR_LIMIT_32BIT",   0x0800000},
-    {'I', "SHORT_INODE",        0x1000000},
-    {'S', "WHOLE_SECONDS",      0x2000000},
-    {'T', "STICKY_TIMEOUTS",    0x4000000},
-    {'3', "ADDR_LIMIT_3GB",     0x8000000}
+/* Option --4gb has no equivalent short option, use a non-character as a
+   pseudo short option. */
+#define OPT_4GB (CHAR_MAX+1)
+
+#define turn_on(_flag, _opts) \
+	do { \
+		(_opts) |= _flag; \
+		if (verbose) \
+			printf(_("Switching on %s.\n"), #_flag); \
+	} while(0)
+
+/* Options --3gb and --4gb are for compatibitity with an old Debian setarch
+   implementation. */
+struct option longopts[] =
+{
+    { "help",               0, 0, 'h' },
+    { "verbose",            0, 0, 'v' },
+    { "addr-no-randomize",  0, 0, 'R' },
+    { "fdpic-funcptrs",     0, 0, 'F' },
+    { "mmap-page-zero",     0, 0, 'Z' },
+    { "addr-compat-layout", 0, 0, 'L' },
+    { "read-implies-exec",  0, 0, 'X' },
+    { "32bit",              0, 0, 'B' },
+    { "short-inode",        0, 0, 'I' },
+    { "whole-seconds",      0, 0, 'S' },
+    { "sticky-timeouts",    0, 0, 'T' },
+    { "3gb",                0, 0, '3' },
+    { "4gb",                0, 0, OPT_4GB },
+    { NULL,                 0, 0, 0 }
 };
 
 static void __attribute__((__noreturn__))
 show_help(void)
 {
-  int f;
   const char *p = program_invocation_short_name;
 
   if (!*p)
@@ -70,8 +85,20 @@ show_help(void)
   printf(_("Usage: %s%s [options] [program [program arguments]]\n\nOptions:\n"),
          p, !strcmp(p, "setarch") ? " <arch>" : "");
 
-  for (f = 0; f < sizeof(flags) / sizeof(flags[0]); f++)
-    printf(_("\t-%c\tEnable %s\n"), flags[f].c, flags[f].name);
+   printf(_(
+   " -h, --help               this help\n"
+   " -v, --verbose            verbose mode\n"
+   " -R, --addr-no-randomize  disables randomization of the virtual address space\n"
+   " -F, --fdpic-funcptrs     turns on function pointers point to descriptors\n"
+   " -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
+   " -L, --addr-compat-layout changes the way virtual memory is allocated\n"
+   " -X, --read-implies-exec  turns on READ_IMPLIES_EXEC\n"
+   " -B, --32bit              turns on ADDR_LIMIT_32BIT\n"
+   " -I, --short-inode        turns on SHORT_INODE\n"
+   " -S, --whole-seconds      turns on WHOLE_SECONDS\n"
+   " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
+   " -3, --3gb                turns on maximum of 3GB of address space\n"
+   "     --4gb                ignored (for backward compatibility only\n"));
 
   printf(_("\nFor more information see setarch(8).\n"));
   exit(EXIT_SUCCESS);
@@ -88,6 +115,7 @@ show_usage(const char *s)
   fprintf(stderr, _("%s: %s\nTry `%s --help' for more information.\n"), p, s, p);
   exit(EXIT_FAILURE);
 }
+
 
 int set_arch(const char *pers, unsigned long options)
 {
@@ -179,6 +207,7 @@ int main(int argc, char *argv[])
   const char *p;
   unsigned long options = 0;
   int verbose = 0;
+  int c;
 
   setlocale(LC_ALL, "");
   bindtextdomain(PACKAGE, LOCALEDIR);
@@ -194,6 +223,7 @@ int main(int argc, char *argv[])
     if (argc < 1)
       show_usage(_("Not enough arguments"));
     p = argv[0];
+    argv[0] = argv[-1];      /* for getopt_long() to get the program name */
     if (!strcmp(p, "-h") || !strcmp(p, "--help"))
       show_help();
   }
@@ -205,45 +235,52 @@ int main(int argc, char *argv[])
        error(EXIT_FAILURE, errno, "/bin/bash");
    }
   #endif
-  for (argv++, argc--; argc && argv[0][0] == '-'; argv++, argc--) {
-    int n, unknown = 1;
-    const char *arg = argv[0];
 
-    if (!strcmp(arg, "--help"))
+  while ((c = getopt_long(argc, argv, "hv3BFILRSTXZ", longopts, NULL)) != -1) {
+    switch (c) {
+    case 'h':
       show_help();
-
-    /* compatibitity with an old Debian setarch implementation
-     * TODO: add long options for all flags
-     */
-    if (!strcmp(arg, "--3gb"))
-      arg="-3";
-    else if (!strcmp(arg, "--4gb"))
-      continue;				/* just ignore this one */
-
-    for (n = 1; arg[n]; n++) {
-      int f;
-
-      if (arg[n] == 'v') {
-	verbose = 1;
-	continue;
-      }
-
-      if (arg[n] == 'h')
-	show_help();
-
-      for (f = 0; f < sizeof(flags) / sizeof(flags[0]); f++) {
-	if (arg[n] == flags[f].c) {
-	  if (verbose)
-	    fprintf(stderr, _("Switching on %s.\n"), flags[f].name);
-	  options |= flags[f].option;
-	  unknown = 0;
-	  break;
-	}
-      }
-      if (unknown)
-	error(0, 0, _("Unknown option `%c' ignored"), arg[n]);
+      break;
+    case 'v':
+      verbose = 1;
+      break;
+    case 'R':
+	turn_on(ADDR_NO_RANDOMIZE, options);
+	break;
+    case 'F':
+	turn_on(FDPIC_FUNCPTRS, options);
+	break;
+    case 'Z':
+	turn_on(MMAP_PAGE_ZERO, options);
+	break;
+    case 'L':
+	turn_on(ADDR_COMPAT_LAYOUT, options);
+	break;
+    case 'X':
+	turn_on(READ_IMPLIES_EXEC, options);
+	break;
+    case 'B':
+	turn_on(ADDR_LIMIT_32BIT, options);
+	break;
+    case 'I':
+	turn_on(SHORT_INODE, options);
+	break;
+    case 'S':
+	turn_on(WHOLE_SECONDS, options);
+	break;
+    case 'T':
+	turn_on(STICKY_TIMEOUTS, options);
+	break;
+    case '3':
+	turn_on(ADDR_LIMIT_3GB, options);
+	break;
+    case OPT_4GB:          /* just ignore this one */
+      break;
     }
   }
+
+  argc -= optind;
+  argv += optind;
 
   if (set_arch(p, options))
     error(EXIT_FAILURE, errno, _("Failed to set personality to %s"), p);
