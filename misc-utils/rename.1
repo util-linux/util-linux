@@ -6,12 +6,19 @@
 rename \- Rename files
 .SH SYNOPSIS
 .BI rename " from to file..."
+.br
+.BI rename " -V"
 .SH DESCRIPTION
 .B rename
 will rename the specified files by replacing the first occurrence of
 .I from
 in their name by
 .IR to .
+
+.TP
+.I "\-V," "\-\-version"
+Display version information and exit.
+.TP
 
 For example, given the files
 .IR foo1 ", ..., " foo9 ", " foo10 ", ..., " foo278 ,
