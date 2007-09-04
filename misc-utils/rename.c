@@ -64,7 +64,7 @@ do_rename(char *from, char *to, char *s) {
 int
 main(int argc, char **argv) {
 	char *from, *to, *p;
-	int i, ct;
+	int i;
 
 	progname = argv[0];
 	if ((p = strrchr(progname, '/')) != NULL)
@@ -90,8 +90,7 @@ main(int argc, char **argv) {
 	from = argv[1];
 	to = argv[2];
 
-	ct = 0;
 	for (i=3; i<argc; i++)
-		ct += do_rename(from, to, argv[i]);
+		do_rename(from, to, argv[i]);
 	return 0;
 }
