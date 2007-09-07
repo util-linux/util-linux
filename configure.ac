@@ -187,24 +187,79 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 ])
 
 
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
+dnl UTIL_CHECK_SYSCALL(SYSCALL, FALLBACK, ...)
+dnl Only specify FALLBACK if the SYSCALL
+dnl you're checking for is a "newish" one
+dnl -------------------------------------
+AC_DEFUN([UTIL_CHECK_SYSCALL], [
+  dnl This macro uses host_cpu.
+  AC_REQUIRE([AC_CANONICAL_HOST])
+  AC_CACHE_CHECK([for syscall $1],
+    [util_cv_syscall_$1],
+    [_UTIL_SYSCALL_CHECK_DECL([SYS_$1],
+      [syscall=SYS_$1],
+      [dnl Our libc failed use, so see if we can get the kernel
+      dnl headers to play ball ...
+      _UTIL_SYSCALL_CHECK_DECL([_NR_$1],
+	[syscall=_NR_$1],
+	[
+	  syscall=no
+	  case $host_cpu in
+	    _UTIL_CHECK_SYSCALL_FALLBACK(m4_shift($@))
+	  esac
+        ])
+      ])
+    util_cv_syscall_$1=$syscall
+    ])
+  AM_CONDITIONAL([HAVE_]m4_toupper($1), [test $util_cv_syscall_$1 != no])
+  case $util_cv_syscall_$1 in #(
+  no) AC_MSG_WARN([Unable to detect syscall $1.]) ;;
+  SYS_*) ;;
+  *) AC_DEFINE_UNQUOTED([SYS_$1], [$util_cv_syscall_$1],
+	[Fallback syscall number for $1]) ;;
+  esac
+])
+
+dnl _UTIL_SYSCALL_CHECK_DECL(SYMBOL, ACTION-IF-FOUND, ACTION-IF-NOT-FOUND)
+dnl Check if SYMBOL is declared, using the headers needed for syscall checks.
+dnl -------------------------------------
+m4_define([_UTIL_SYSCALL_CHECK_DECL],
+[AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <sys/syscall.h>
 #include <unistd.h>
-]], [[
-int test = SYS_pivot_root;
-]])],
-[AM_CONDITIONAL(HAVE_PIVOT_ROOT, true)],
-[AM_CONDITIONAL(HAVE_PIVOT_ROOT, false)])
+]], [[int test = $1;]])],
+[$2], [$3])
+])
+
+dnl _UTIL_CHECK_SYSCALL_FALLBACK(PATTERN, VALUE, ...)
+dnl Helper macro to create the body for the above `case'.
+dnl -------------------------------------
+m4_define([_UTIL_CHECK_SYSCALL_FALLBACK],
+[m4_ifval([$1],
+  [#(
+  $1) syscall="$2" ;;dnl
+  _UTIL_CHECK_SYSCALL_FALLBACK(m4_shiftn(2, $@))])dnl
+])
 
 
-AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
-#include <sys/syscall.h>
-#include <unistd.h>
-]], [[
-int test = SYS_sched_getaffinity;
-]])],
-[AM_CONDITIONAL(HAVE_SCHED_GETAFFINITY, true)],
-[AM_CONDITIONAL(HAVE_SCHED_GETAFFINITY, false)])
+UTIL_CHECK_SYSCALL([pivot_root])
+UTIL_CHECK_SYSCALL([sched_getaffinity])
+UTIL_CHECK_SYSCALL([ioprio_set],
+  [alpha],    [442],
+  [i*86],     [289],
+  [ia64*],    [1274],
+  [powerpc*], [273],
+  [s390*],    [282],
+  [sparc*],   [196],
+  [x86_64*],  [251])
+UTIL_CHECK_SYSCALL([ioprio_get],
+  [alpha],    [443],
+  [i*86],     [290],
+  [ia64*],    [1275],
+  [powerpc*], [274],
+  [s390*],    [283],
+  [sparc*],   [218],
+  [x86_64*],  [252])
 
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
