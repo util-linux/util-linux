@@ -7,6 +7,13 @@ int main(int argc, char *argv[]);
 #define LOCALEDIR "/usr/share/locale"
 #endif
 
+#ifdef HAVE_LOCALE_H
+# include <locale.h>
+#else
+# undef setlocale
+# define setlocale(Category, Locale) /* empty */
+#endif
+
 #ifdef ENABLE_NLS
 # include <libintl.h>
 # define _(Text) gettext (Text)
@@ -16,7 +23,6 @@ int main(int argc, char *argv[]);
 #  define N_(String) (String)
 # endif
 #else
-# include <locale.h>
 # undef bindtextdomain
 # define bindtextdomain(Domain, Directory) /* empty */
 # undef textdomain

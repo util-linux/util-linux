@@ -49,8 +49,6 @@
 #include <unistd.h>
 #include <signal.h>
 #include <setjmp.h>
-#include <locale.h>
-#include <nl_types.h>
 #include <libgen.h>
 
 #ifdef HAVE_NCURSES_H

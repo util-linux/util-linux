@@ -54,7 +54,6 @@
 #include <pwd.h>
 #include <string.h>
 #include <stdlib.h>
-#include <locale.h>
 #include <signal.h>
 #include <sys/param.h>
 #include <sys/signal.h>

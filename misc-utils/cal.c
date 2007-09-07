@@ -63,7 +63,6 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include <locale.h>
 #include "errs.h"
 #include "nls.h"
 
