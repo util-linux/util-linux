@@ -59,7 +59,6 @@
 #include <strings.h>
 #include <ctype.h>
 #include <getopt.h>
-#include <locale.h>
 #include "pathnames.h"
 #include "nls.h"
 

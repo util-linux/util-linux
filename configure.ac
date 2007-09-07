@@ -41,6 +41,7 @@ AC_CHECK_HEADERS([linux/compiler.h linux/blkpg.h], [], [], [
 AC_CHECK_HEADERS(
 	[scsi/scsi.h \
 	langinfo.h \
+	locale.h \
 	sys/user.h \
 	rpcsvc/nfs_prot.h \
 	sys/io.h \

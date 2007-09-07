@@ -55,7 +55,6 @@
 #include <sys/file.h>
 #include <sys/wait.h>
 #include <a.out.h>
-#include <locale.h>
 #include "xstrncpy.h"
 #include "nls.h"
 #include "widechar.h"
