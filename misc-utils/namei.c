@@ -30,6 +30,7 @@ For each line output, the program puts a file type first:
     s = socket
     b = block device
     c = character device
+    p = FIFO (named pipe)
     - = regular file
     ? = an error of some kind
 
@@ -45,6 +46,9 @@ chdir to /,  or if it encounters an unknown file type.
 2006-12-15 Karel Zak <kzak@redhat.com>
 - fixed logic; don't follow the path if a component is not directory
 - fixed infinite loop of symbolic links; stack size is very limited
+
+2007-09-10 Li Zefan <lizf@cn.fujitsu.com>
+- added to identify FIFO
 
 -------------------------------------------------------------*/
 
@@ -304,6 +308,13 @@ namei(char *file, int lev, mode_t *lastmode) {
 		    (void)printf(" s%s %s\n", pperm(stb.st_mode), buf);
 		else
 		    (void)printf(" s %s\n", buf);
+		break;
+
+		case S_IFIFO:
+		if (mflag)
+			printf(" p%s %s\n", pperm(stb.st_mode), buf);
+		else
+			printf(" p %s\n", buf);
 		break;
 
 	    case S_IFREG:
