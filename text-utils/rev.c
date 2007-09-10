@@ -51,12 +51,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "nls.h"
+#include <err.h>
 
+#include "nls.h"
 #include "widechar.h"
 
 void usage(void);
-void warn(const char *, ...);
 
 int
 main(int argc, char *argv[])
@@ -89,7 +89,7 @@ main(int argc, char *argv[])
   do {
     if (*argv) {
       if ((fp = fopen(*argv, "r")) == NULL) {
-	warn("%s: %s", *argv, strerror(errno));
+	warn("cannot open %s", *argv );
 	rval = 1;
 	++argv;
 	continue;
@@ -109,19 +109,17 @@ main(int argc, char *argv[])
 	buflen *= 2;
 
 	p = realloc(p, buflen*sizeof(wchar_t));
-	if (p == NULL) {
-	  fprintf(stderr,_("Unable to allocate bufferspace\n"));
-	  exit(1);
-	}
+	if (p == NULL)
+	  err(1, _("unable to allocate bufferspace"));
 
 	/* And fill the rest of the buffer */
 	if (fgetws(&p[len], buflen/2, fp) == NULL) break;
 
 	len = wcslen(p);
-      
+
 	/* That was a lot of work for nothing.  Gimme perl! */
       }
-		  
+
       t = p + len - 1 - (*(p+len-1)=='\r' || *(p+len-1)=='\n');
       for ( ; t >= p; --t)
 	if (*t != 0)
@@ -130,24 +128,13 @@ main(int argc, char *argv[])
     }
     fflush(fp);
     if (ferror(fp)) {
-      warn("%s: %s", filename, strerror(errno));
+      warn("%s", filename);
       rval = 1;
     }
     if (fclose(fp))
       rval = 1;
   } while(*argv);
   exit(rval);
-}
-
-void
-warn(const char *fmt, ...)
-{
-	va_list ap;
-	va_start(ap, fmt);
-	(void)fprintf(stderr, "rev: ");
-	(void)vfprintf(stderr, fmt, ap);
-	va_end(ap);
-	(void)fprintf(stderr, "\n");
 }
 
 void
