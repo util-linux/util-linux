@@ -10,6 +10,10 @@ blockdev \- call block device ioctls from the command line
 .B blockdev
 .RI [ options ]
 .I commands devices
+.br
+.B blockdev
+--report
+.RI [ devices ]
 .SH DESCRIPTION
 The utility
 .B blockdev
@@ -24,6 +28,10 @@ Be quiet.
 .TP
 .B \-v
 Be verbose.
+.TP
+.B \-\-report
+Print a report for
+.IR devices .
 .SH COMMANDS
 .TP
 .B \--setro
