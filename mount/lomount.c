@@ -139,7 +139,7 @@ show_used_loop_devices (void) {
 
 	for (j = 0; j < SIZE(loop_formats); j++) {
 	    for(i = 0; i < 256; i++) {
-		sprintf(dev, loop_formats[j], i);
+		snprintf(dev, sizeof(dev), loop_formats[j], i);
 		if (stat (dev, &statbuf) == 0 && S_ISBLK(statbuf.st_mode)) {
 			fd = open (dev, O_RDONLY);
 			if (fd >= 0) {
@@ -164,6 +164,102 @@ show_used_loop_devices (void) {
 
 
 #endif
+
+/* check if the loopfile is already associated with the same given
+ * parameters.
+ *
+ * returns: -1 error
+ *           0 unused
+ *           1 loop device already used
+ */
+static int
+is_associated(int dev, struct stat *file, unsigned long long offset)
+{
+	struct loop_info64 linfo64;
+	struct loop_info64 linfo;
+	int ret = 0;
+
+	if (ioctl(dev, LOOP_GET_STATUS64, &linfo64) == 0) {
+		if (file->st_dev == linfo64.lo_device &&
+	            file->st_ino == linfo64.lo_inode &&
+		    offset == linfo64.lo_offset)
+			ret = 1;
+		return ret;
+	}
+	if (ioctl(dev, LOOP_GET_STATUS, &linfo) == 0) {
+		if (file->st_dev == linfo.lo_device &&
+	            file->st_ino == linfo.lo_inode &&
+		    offset == linfo.lo_offset)
+			ret = 1;
+		return ret;
+	}
+
+	return errno == ENXIO ? 0 : -1;
+}
+
+/* check if the loop file is already used with the same given
+ * parameters. We check for device no, inode and offset.
+ * returns: associated devname or NULL
+ */
+char *
+loopfile_used (const char *filename, unsigned long long offset) {
+	char dev[20];
+	char *loop_formats[] = { "/dev/loop%d", "/dev/loop/%d" };
+	int i, j, fd;
+	struct stat devstat, filestat;
+	struct loop_info loopinfo;
+
+	if (stat(filename, &filestat) == -1) {
+		perror(filename);
+		return NULL;
+	}
+
+	for (j = 0; j < SIZE(loop_formats); j++) {
+	    for(i = 0; i < 256; i++) {
+		snprintf(dev, sizeof(dev), loop_formats[j], i);
+		if (stat (dev, &devstat) == 0 && S_ISBLK(devstat.st_mode)) {
+			fd = open (dev, O_RDONLY);
+			if (fd >= 0) {
+				int res = 0;
+
+				if(ioctl (fd, LOOP_GET_STATUS, &loopinfo) == 0)
+					res = is_associated(fd, &filestat, offset);
+				close (fd);
+				if (res == 1)
+					return xstrdup(dev);
+			}
+			continue; /* continue trying as long as devices exist */
+		}
+		break;
+	    }
+	}
+	return NULL;
+}
+
+int
+loopfile_used_with(char *devname, const char *filename, unsigned long long offset)
+{
+	struct stat statbuf;
+	int fd, ret;
+
+	if (!is_loop_device(devname))
+		return 0;
+
+	if (stat(filename, &statbuf) == -1) {
+		perror(filename);
+		return -1;
+	}
+
+	fd = open(devname, O_RDONLY);
+	if (fd == -1) {
+		perror(devname);
+		return -1;
+	}
+	ret = is_associated(fd, &statbuf, offset);
+
+	close(fd);
+	return ret;
+}
 
 int
 is_loop_device (const char *device) {
@@ -278,6 +374,16 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	int fd, ffd, mode, i;
 	char *pass;
 	char *filename;
+
+	if (verbose) {
+		char *xdev = loopfile_used(file, offset);
+
+		if (xdev) {
+			printf(_("warning: %s is already associated with %s\n"),
+					file, xdev);
+			free(xdev);
+		}
+	}
 
 	mode = (*loopro ? O_RDONLY : O_RDWR);
 	if ((ffd = open(file, mode)) < 0) {

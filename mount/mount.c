@@ -826,9 +826,51 @@ suid_check(const char *spec, const char *node, int *flags, char **user) {
   *flags &= ~(MS_OWNER | MS_GROUP);
 }
 
+/* Check, if there already exists a mounted loop device on the mountpoint node
+ * with the same parameters.
+ */
+static int
+is_mounted_same_loopfile(const char *node0, const char *loopfile, unsigned long long offset)
+{
+	struct mntentchn *mnt = NULL;
+	char *node;
+	int res = 0;
+
+	node = canonicalize_mountpoint(node0);
+
+	/* Search for mountpoint node in mtab,
+	 * procceed if any of these has the loop option set or
+	 * the device is a loop device
+	 */
+	mnt = getmntdirbackward(node, mnt);
+	if (!mnt) {
+		free(node);
+		return 0;
+	}
+	for(; mnt && res == 0; mnt = getmntdirbackward(node, mnt)) {
+		char *p;
+
+		if (strncmp(mnt->m.mnt_fsname, "/dev/loop", 9) == 0)
+			res = loopfile_used_with((char *) mnt->m.mnt_fsname,
+					loopfile, offset);
+
+		else if ((p = strstr(mnt->m.mnt_opts, "loop="))) {
+			char *dev = xstrdup(p+5);
+			if ((p = strchr(dev, ',')))
+				*p = '\0';
+			res = loopfile_used_with(dev, loopfile, offset);
+			free(dev);
+		}
+	}
+
+	free(node);
+	return res;
+}
+
 static int
 loop_check(const char **spec, const char **type, int *flags,
-	   int *loop, const char **loopdev, const char **loopfile) {
+	   int *loop, const char **loopdev, const char **loopfile,
+	   const char *node) {
   int looptype;
   unsigned long long offset;
 
@@ -868,6 +910,11 @@ loop_check(const char **spec, const char **type, int *flags,
       int res;
 
       offset = opt_offset ? strtoull(opt_offset, NULL, 0) : 0;
+
+      if (is_mounted_same_loopfile(node, *loopfile, offset)) {
+        error(_("mount: according to mtab %s is already mounted on %s as loop"), *loopfile, node);
+        return EX_FAIL;
+      }
 
       do {
         if (!*loopdev || !**loopdev)
@@ -1054,7 +1101,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
        * stale assignments of files to loop devices. Nasty when used for
        * encryption.
        */
-      res = loop_check(&spec, &types, &flags, &loop, &loopdev, &loopfile);
+      res = loop_check(&spec, &types, &flags, &loop, &loopdev, &loopfile, node);
       if (res)
 	  goto out;
   }
