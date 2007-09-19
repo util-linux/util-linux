@@ -12,8 +12,8 @@ Modifications by Steve Tell  March 28, 1991
 usage: namei pathname [pathname ... ]
 
 This program reads it's arguments as pathnames to any type
-of Unix file (symlinks, files, directories, and so forth). 
-The program then follows each pathname until a terminal 
+of Unix file (symlinks, files, directories, and so forth).
+The program then follows each pathname until a terminal
 point is found (a file, directory, char device, etc).
 If it finds a symbolic link, we show the link, and start
 following it, indenting the output to show the context.
@@ -86,7 +86,7 @@ main(int argc, char **argv) {
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
-    
+
     if(argc < 2)
 	usage();
 
@@ -95,7 +95,7 @@ main(int argc, char **argv) {
 	    case 'm':
 		mflag = !mflag;
 		break;
-	    
+
 	    case 'x':
 		xflag = !xflag;
 		break;
@@ -187,10 +187,10 @@ namei(char *file, int lev, mode_t *lastmode) {
 	/*
 	 * Copy up to the next / (or nil) into buf
 	 */
-	
+
 	for(cp = buf; *file != '\0' && *file != '/'; cp++, file++)
 	    *cp = *file;
-	
+
 	while(*file == '/')	/* eat extra /'s	*/
 	    file++;
 
@@ -215,7 +215,7 @@ namei(char *file, int lev, mode_t *lastmode) {
 	 * directory, because there could be a component with same name. Try:
 	 *
 	 * $ touch a b
-	 * $ namei a/b    <-- "a" is not directory so namei shouldn't 
+	 * $ namei a/b    <-- "a" is not directory so namei shouldn't
 	 *                    check for "b"
 	 */
 	if (*lastmode && S_ISDIR(*lastmode)==0 && S_ISLNK(*lastmode)==0){
@@ -226,7 +226,7 @@ namei(char *file, int lev, mode_t *lastmode) {
 	/*
 	 * See what type of critter this file is
 	 */
-	
+
 	if(lstat(buf, &stb) == -1){
 	    (void)printf(" ? %s - %s (%d)\n", buf, ERR);
 	    return;
@@ -240,7 +240,7 @@ namei(char *file, int lev, mode_t *lastmode) {
 		/*
 		 * File is a directory, chdir to it
 		 */
-		
+
 		if(chdir(buf) == -1){
 		    (void)printf(_(" ? could not chdir into %s - %s (%d)\n"), buf, ERR );
 		    return;
@@ -295,14 +295,14 @@ namei(char *file, int lev, mode_t *lastmode) {
 		else
 		    (void)printf(" c %s\n", buf);
 		break;
-	    
+
 	    case S_IFBLK:
 		if(mflag)
 		    (void)printf(" b%s %s\n", pperm(stb.st_mode), buf);
 		else
 		    (void)printf(" b %s\n", buf);
 		break;
-	    
+
 	    case S_IFSOCK:
 		if(mflag)
 		    (void)printf(" s%s %s\n", pperm(stb.st_mode), buf);
@@ -310,7 +310,7 @@ namei(char *file, int lev, mode_t *lastmode) {
 		    (void)printf(" s %s\n", buf);
 		break;
 
-		case S_IFIFO:
+	    case S_IFIFO:
 		if (mflag)
 			printf(" p%s %s\n", pperm(stb.st_mode), buf);
 		else
@@ -323,16 +323,16 @@ namei(char *file, int lev, mode_t *lastmode) {
 		else
 		    (void)printf(" - %s\n", buf);
 		break;
-		
+
 	    default:
 		(void)fprintf(stderr,_("namei: unknown file type 0%06o on file %s\n"), stb.st_mode, buf );
 		exit(1);
-	    
+
 	}
     }
 }
 
-/* Take a 
+/* Take a
  * Mode word, as from a struct stat, and return
  * a pointer to a static string containing a printable version like ls.
  * For example 0755 produces "rwxr-xr-x"
@@ -379,4 +379,3 @@ pperm(unsigned short mode) {
 	return &buf[0];
 }
 
-			
