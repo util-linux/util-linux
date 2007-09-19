@@ -36,7 +36,6 @@
 /* compile-time options */
 //#define INCLUDE_FS_TESTS	/* include cramfs checking and extraction */
 
-#define _GNU_SOURCE
 #include <stdio.h>
 #include <stdarg.h>
 #include <unistd.h>

@@ -24,10 +24,6 @@
  * sparc32 util by Jakub Jelinek (1998, 1999)
  */
 
-#ifndef _GNU_SOURCE
-#  define _GNU_SOURCE
-#endif
-
 #include <syscall.h>
 #include <linux/personality.h>
 #include <unistd.h>

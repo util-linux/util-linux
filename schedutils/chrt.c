@@ -21,8 +21,6 @@
  * Copyright (C) 2004 Robert Love
  */
 
-#define _GNU_SOURCE
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <sched.h>
