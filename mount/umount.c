@@ -102,8 +102,12 @@ check_special_umountprog(const char *spec, const char *node,
 				char *umountargs[8];
 				int i = 0;
 
-				setuid(getuid());
-				setgid(getgid());
+				if(setgid(getgid()) < 0)
+					die(EX_FAIL, _("umount: cannot set group id: %s"), strerror(errno));
+
+				if(setuid(getuid()) < 0)
+					die(EX_FAIL, _("umount: cannot set user id: %s"), strerror(errno));
+
 				umountargs[i++] = umountprog;
 				umountargs[i++] = xstrdup(node);
 				if (nomtab)
