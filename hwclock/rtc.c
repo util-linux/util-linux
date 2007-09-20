@@ -104,24 +104,21 @@ open_rtc(void) {
 		"/dev/misc/rtc",
 		NULL
 	};
-	char **p = fls;
-	char *fname = rtc_dev_name ? : *p;
+	char **p;
 
-	do {
-		int fd = open(fname, O_RDONLY);
+	/* --rtc option has been given */
+	if (rtc_dev_name)
+		return open(rtc_dev_name, O_RDONLY);
 
-		if (fd < 0 && errno == ENOENT) {
-			if (fname == rtc_dev_name)
-				break;
-			fname = *++p;
-		} else {
-			rtc_dev_name = *p;
-			return fd;
-		}
-	} while(fname);
+	for (p=fls; *p; ++p) {
+		int fd = open(*p, O_RDONLY);
 
-	if (!rtc_dev_name)
-		rtc_dev_name = *fls;
+		if (fd < 0 && errno == ENOENT)
+			continue;
+		rtc_dev_name = *p;
+		return fd;
+	}
+	rtc_dev_name = *fls;	/* default */
 	return -1;
 }
 
