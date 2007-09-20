@@ -634,8 +634,12 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
 		 char *oo, *mountargs[10];
 		 int i = 0;
 
-		 setuid(getuid());
-		 setgid(getgid());
+		 if(setgid(getgid()) < 0)
+			 die(EX_FAIL, _("mount: cannot set group id: %s"), strerror(errno));
+
+		 if(setuid(getuid()) < 0)
+			 die(EX_FAIL, _("mount: cannot set user id: %s"), strerror(errno));
+
 		 oo = fix_opts_string (flags, extra_opts, NULL);
 		 mountargs[i++] = mountprog;				/* 1 */
 		 mountargs[i++] = (char *) spec;			/* 2 */
