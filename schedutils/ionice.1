@@ -13,7 +13,8 @@ this writing, Linux supports 3 scheduling classes:
 A program running with idle io priority will only get disk time when no other
 program has asked for disk io for a defined grace period. The impact of idle
 io processes on normal system activity should be zero. This scheduling
-class does not take a priority argument.
+class does not take a priority argument. This scheduling class is not
+permitted for an ordinary (i.e., non-root) user.
 
 \fBBest effort\fR.
 This is the default scheduling class for any process that hasn't asked for
@@ -27,7 +28,8 @@ The RT scheduling class is given first access to the disk, regardless of
 what else is going on in the system. Thus the RT class needs to be used with
 some care, as it can starve other processes. As with the best effort class,
 8 priority levels are defined denoting how big a time slice a given process
-will receive on each scheduling window.
+will receive on each scheduling window. This scheduling class is not
+permitted for an ordinary (i.e., non-root) user.
 
 If no arguments or just \fI-p\fR is given, \fIionice\fR will query the
 current io scheduling class and priority for that process.
