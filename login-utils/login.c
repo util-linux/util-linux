@@ -330,12 +330,12 @@ logaudit(const char *tty, const char *username, const char *hostname,
 	audit_fd = audit_open();
 	if (audit_fd == -1)
 		return;
-	if (!pwd)
+	if (!pwd && username)
 		pwd = getpwnam(username);
 	if (pwd)
 		snprintf(buf, sizeof(buf), "uid=%d", pwd->pw_uid);
 	else
-		snprintf(buf, sizeof(buf), "acct=%s", username);
+		snprintf(buf, sizeof(buf), "acct=%s", username ? username : "(unknown)");
 
 	audit_log_user_message(audit_fd, AUDIT_USER_LOGIN,
 		buf, hostname, NULL, tty, status);
