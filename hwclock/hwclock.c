@@ -257,6 +257,7 @@ read_adjtime(struct adjtime *adjtime_p) {
       adjtime_p->not_adjusted = 0;
       adjtime_p->last_calib_time = 0;
       adjtime_p->local_utc = UNKNOWN;
+      adjtime_p->dirty = FALSE;        /* don't create a zero adjfile */
 
       return 0;
     }
