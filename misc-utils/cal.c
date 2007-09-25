@@ -702,7 +702,7 @@ ascii_day(char *p, int day) {
 	}
 	if (day & TODAY_FLAG) {
 		day &= ~TODAY_FLAG;
-		p += sprintf(p, Senter);
+		p += sprintf(p, "%s", Senter);
 		highlight = 1;
 	}
 	if (julian) {
@@ -725,7 +725,7 @@ ascii_day(char *p, int day) {
 		*p++ = aday[day][1];
 	}
 	if (highlight)
-		p += sprintf(p, Sexit);
+		p += sprintf(p, "%s", Sexit);
 	*p++ = ' ';
 	return p;
 }
