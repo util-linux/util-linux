@@ -322,7 +322,7 @@ main(argc, argv)
     update_utmp(options.tty);
 #endif
 
-    debug(_("calling open_tty\n"));
+    debug("calling open_tty\n");
     /* Open the tty as standard { input, output, error }. */
     open_tty(options.tty, &termio, options.flags & F_LOCAL);
 
@@ -335,12 +335,12 @@ main(argc, argv)
 	}
 #endif
     /* Initialize the termio settings (raw mode, eight-bit, blocking i/o). */
-    debug(_("calling termio_init\n"));
+    debug("calling termio_init\n");
     termio_init(&termio, options.speeds[FIRST_SPEED], &options);
 
     /* write the modem init string and DON'T flush the buffers */
     if (options.flags & F_INITSTRING) {
-	debug(_("writing init string\n"));
+	debug("writing init string\n");
 	write(1, options.initstring, strlen(options.initstring));
     }
 
@@ -350,7 +350,7 @@ main(argc, argv)
     }
 
     /* Optionally detect the baud rate from the modem status message. */
-    debug(_("before autobaud\n"));
+    debug("before autobaud\n");
     if (options.flags & F_PARSE)
 	auto_baud(&termio);
 
@@ -362,11 +362,11 @@ main(argc, argv)
     if (options.flags & F_WAITCRLF) {
 	char ch;
 
-	debug(_("waiting for cr-lf\n"));
+	debug("waiting for cr-lf\n");
 	while(read(0, &ch, 1) == 1) {
 	    ch &= 0x7f;   /* strip "parity bit" */
 #ifdef DEBUGGING
-	    fprintf(dbf, _("read %c\n"), ch);
+	    fprintf(dbf, "read %c\n", ch);
 #endif
 	    if (ch == '\n' || ch == '\r') break;
 	}
@@ -375,7 +375,7 @@ main(argc, argv)
     chardata = init_chardata;
     if (!(options.flags & F_NOPROMPT)) {
 	/* Read the login name. */
-	debug(_("reading login name\n"));
+	debug("reading login name\n");
 	while ((logname = get_logname(&options, &chardata, &termio)) == 0)
 	  next_speed(&termio, &options);
     }
@@ -493,7 +493,7 @@ parse_args(argc, argv, op)
 	    usage();
 	}
     }
- 	debug(_("after getopt loop\n"));
+	debug("after getopt loop\n");
     if (argc < optind + 2)			/* check parameter count */
 	usage();
 
@@ -543,7 +543,7 @@ parse_args(argc, argv, op)
     }
 #endif
 
-    debug(_("exiting parseargs\n"));
+    debug("exiting parseargs\n");
 }
 
 /* parse_speeds - parse alternate baud rates */
@@ -555,14 +555,14 @@ parse_speeds(op, arg)
 {
     char   *cp;
 
-	debug(_("entered parse_speeds\n"));
+	debug("entered parse_speeds\n");
     for (cp = strtok(arg, ","); cp != 0; cp = strtok((char *) 0, ",")) {
 	if ((op->speeds[op->numspeed++] = bcode(cp)) <= 0)
 	    error(_("bad speed: %s"), cp);
 	if (op->numspeed >= MAX_SPEED)
 	    error(_("too many alternate speeds"));
     }
-    debug(_("exiting parsespeeds\n"));
+    debug("exiting parsespeeds\n");
 }
 
 #ifdef	SYSV_STYLE
@@ -673,7 +673,7 @@ open_tty(tty, tp, local)
 	(void) close(0);
 	errno = 0;				/* ignore close(2) errors */
 
-	debug(_("open(2)\n"));
+	debug("open(2)\n");
 	if (open(tty, O_RDWR|O_NONBLOCK, 0) != 0)
 	    error(_("/dev/%s: cannot open as standard input: %m"), tty);
 
@@ -689,7 +689,7 @@ open_tty(tty, tp, local)
     }
 
     /* Set up standard output and standard error file descriptors. */
-    debug(_("duping\n"));
+    debug("duping\n");
     if (dup(0) != 1 || dup(0) != 2)		/* set up stdout and stderr */
 	error(_("%s: dup problem: %m"), tty);	/* we have a problem */
 
@@ -765,7 +765,7 @@ termio_init(tp, speed, op)
     /* go to blocking input even in local mode */
     fcntl(0, F_SETFL, fcntl(0, F_GETFL, 0) & ~O_NONBLOCK);
 
-    debug(_("term_io 2\n"));
+    debug("term_io 2\n");
 }
 
 /* auto_baud - extract baud rate from modem status message */

@@ -308,7 +308,7 @@ main(int argc, char *argv[])
 	}
 
 #ifdef DEBUGGING
-	printf(_("timeout = %d, quiet = %d, reboot = %d\n"),
+	printf("timeout = %d, quiet = %d, reboot = %d\n",
 		timeout, opt_quiet, opt_reboot);
 #endif
 	
