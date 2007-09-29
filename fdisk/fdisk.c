@@ -1494,7 +1494,7 @@ change_sysid(void) {
 					  || (i == 8 && sys != 0)))
 				printf(_("Consider leaving partition 9 "
 				       "as volume header (0),\nand "
-				       "partition 11 as entire volume (6)"
+				       "partition 11 as entire volume (6), "
 				       "as IRIX expects it.\n\n"));
                         if (sys == origsys)
 				break;

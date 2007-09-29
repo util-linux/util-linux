@@ -419,7 +419,7 @@ void do_sem (char format)
 	case CREATOR:
 		printf (_("------ Semaphore Arrays Creators/Owners --------\n"));
 		printf (_("%-10s %-10s %-10s %-10s %-10s %-10s\n"),
-		 _("semid"),_("perms"),_("cuid"),_("cgid"),_("uid"),("gid"));
+		 _("semid"),_("perms"),_("cuid"),_("cgid"),_("uid"),_("gid"));
 		break;
 
 	case TIME:
@@ -434,8 +434,7 @@ void do_sem (char format)
 	default:
 		printf (_("------ Semaphore Arrays --------\n"));
 		printf (_("%-10s %-10s %-10s %-10s %-10s\n"), 
-			_("key"),_("semid"),_("owner"),_("perms"),
-			_("nsems"));
+			_("key"),_("semid"),_("owner"),_("perms"),_("nsems"));
 		break;
 	}
 

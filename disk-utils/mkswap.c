@@ -686,9 +686,9 @@ main(int argc, char ** argv) {
 			if (!sum) {
 				fprintf(stderr, _("\
 %s: Device '%s' contains a valid Sun disklabel.\n\
-This probably means creating v0 swap would destroy your partition table\n\
-No swap created. If you really want to create swap v0 on that device, use\n\
-the -f option to force it.\n"),
+This probably means creating v0 swap would destroy your partition table.\n\
+No swap was created. If you really want to create v0 swap on that device,\n\
+use the -f option to force it.\n"),
 					program_name, device_name);
 				exit(1);
 			}

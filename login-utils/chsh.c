@@ -372,11 +372,11 @@ check_shell (char *shell) {
 #ifdef ONLY_LISTED_SHELLS
     if (! get_shell_list (shell)) {
        if (!getuid())
-	  printf (_("Warning: \"%s\" is not listed in /etc/shells\n"), shell);
+	  printf (_("Warning: \"%s\" is not listed in /etc/shells.\n"), shell);
        else {
 	  printf (_("%s: \"%s\" is not listed in /etc/shells.\n"),
 		  whoami, shell);
-	  printf( _("%s: use -l option to see list\n"), whoami );
+	  printf( _("%s: Use -l option to see list.\n"), whoami );
 	  exit(1);
        }
     }

@@ -1209,7 +1209,7 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
     int i, ylast = y, key = 0, current = menuDefault;
 
     if( !( menuType & ( MENU_HORIZ | MENU_VERT ) ) ) {
-        print_warning(_("Menu without direction. Defaulting horizontal."));
+        print_warning(_("Menu without direction. Defaulting to horizontal."));
         menuType |= MENU_HORIZ;
     }
 
