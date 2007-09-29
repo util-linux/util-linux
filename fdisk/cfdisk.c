@@ -2766,15 +2766,15 @@ do_curses_fdisk(void) {
 
 	if (p_info[cur_part].id == FREE_SPACE) {
 	    s = ((opentype == O_RDWR) ? "hnpquW" : "hnpqu");
-	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 8,
+	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 10,
 	        s, MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
 	} else if (p_info[cur_part].id > 0) {
 	    s = ((opentype == O_RDWR) ? "bdhmpqtuW" : "bdhmpqtu");
-	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 8,
+	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 10,
 	        s, MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
 	} else {
 	    s = ((opentype == O_RDWR) ? "hpquW" : "hpqu");
-	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 8,
+	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 10,
 	        s, MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
 	}
 	switch ( command ) {
