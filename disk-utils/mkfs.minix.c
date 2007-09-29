@@ -592,7 +592,10 @@ get_list_blocks(char *filename) {
 		die(_("can't open file of bad blocks"));
 
 	while (!feof(listfile)) {
-		fscanf(listfile,"%ld\n", &blockno);
+		if (fscanf(listfile,"%ld\n", &blockno) != 1) {
+			printf(_("badblock number input error on line %d\n"), badblocks + 1);
+			die(_("cannot read badblocks file"));
+		}
 		mark_zone(blockno);
 		badblocks++;
 	}
