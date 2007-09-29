@@ -231,7 +231,8 @@ static void test_crc(int start)
 		buf = mmap(NULL, super.size, PROT_READ | PROT_WRITE, MAP_PRIVATE | MAP_ANONYMOUS, -1, 0);
 		if (buf != MAP_FAILED) {
 			lseek(fd, 0, SEEK_SET);
-			read(fd, buf, super.size);
+			if (read(fd, buf, super.size) < 0)
+				die(FSCK_ERROR, 1, "read failed: %s", filename);
 		}
 	}
 	if (buf != MAP_FAILED) {
