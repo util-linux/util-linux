@@ -208,7 +208,7 @@ mdfile(struct entry *e) {
 		e->flags |= CRAMFS_EFLAG_INVALID;
 	} else {
 		MD5Init(&ctx);
-		MD5Update(&ctx, start, e->size);
+		MD5Update(&ctx, (unsigned char *) start, e->size);
 		MD5Final(e->md5sum, &ctx);
 
 		do_munmap(start, e->size, e->mode);
@@ -334,7 +334,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 		namelen = strlen(dirent->d_name);
 		if (namelen > MAX_INPUT_NAMELEN) {
 			fprintf(stderr,
-				_("Very long (%u bytes) filename `%s' found.\n"
+				_("Very long (%zu bytes) filename `%s' found.\n"
 				  " Please increase MAX_INPUT_NAMELEN in "
 				  "mkcramfs.c and recompile.  Exiting.\n"),
 				namelen, dirent->d_name);
@@ -352,7 +352,7 @@ static unsigned int parse_directory(struct entry *root_entry, const char *name, 
 			perror(NULL);
 			exit(8);
 		}
-		entry->name = strdup(dirent->d_name);
+		entry->name = (unsigned char *)strdup(dirent->d_name);
 		if (!entry->name) {
 			perror(NULL);
 			exit(8);
@@ -445,9 +445,9 @@ static unsigned int write_superblock(struct entry *root, char *base, int size)
 
 	memset(super->name, 0x00, sizeof(super->name));
 	if (opt_name)
-		strncpy(super->name, opt_name, sizeof(super->name));
+		strncpy((char *)super->name, opt_name, sizeof(super->name));
 	else
-		strncpy(super->name, "Compressed", sizeof(super->name));
+		strncpy((char *)super->name, "Compressed", sizeof(super->name));
 
 	super->root.mode = root->mode;
 	super->root.uid = root->uid;
@@ -487,7 +487,7 @@ static unsigned int write_directory_structure(struct entry *entry, char *base, u
 		while (entry) {
 			struct cramfs_inode *inode =
 				(struct cramfs_inode *) (base + offset);
-			size_t len = strlen(entry->name);
+			size_t len = strlen((const char *)entry->name);
 
 			entry->dir_offset = offset;
 
@@ -560,7 +560,7 @@ static unsigned int write_directory_structure(struct entry *entry, char *base, u
 	return offset;
 }
 
-static int is_zero(char const *begin, unsigned len)
+static int is_zero(unsigned char const *begin, unsigned len)
 {
 	if (opt_holes)
 		/* Returns non-zero iff the first LEN bytes from BEGIN are
@@ -590,18 +590,19 @@ static int is_zero(char const *begin, unsigned len)
  * have gotten here in the first place.
  */
 static unsigned int
-do_compress(char *base, unsigned int offset, char const *name,
+do_compress(char *base, unsigned int offset, unsigned char const *name,
 	    char *path, unsigned int size, unsigned int mode)
 {
 	unsigned long original_size, original_offset, new_size, blocks, curr;
-	int change;
-	char *p, *start;
+	long change;
+	char *start;
+	Bytef *p;
 
 	/* get uncompressed data */
 	start = do_mmap(path, size, mode);
 	if (start == NULL)
 		return offset;
-	p = start;
+	p = (Bytef *) start;
 
 	original_size = size;
 	original_offset = offset;
@@ -611,13 +612,13 @@ do_compress(char *base, unsigned int offset, char const *name,
 	total_blocks += blocks;
 
 	do {
-		unsigned long len = 2 * blksize;
-		unsigned int input = size;
+		uLongf len = 2 * blksize;
+		uLongf input = size;
 		if (input > blksize)
 			input = blksize;
 		size -= input;
 		if (!is_zero (p, input)) {
-			compress(base + curr, &len, p, input);
+			compress((Bytef *)(base + curr), &len, p, input);
 			curr += len;
 		}
 		p += input;
@@ -643,7 +644,7 @@ do_compress(char *base, unsigned int offset, char const *name,
 	   administrative data should also be included in both. */
 	change = new_size - original_size;
 	if (verbose)
-		printf(_("%6.2f%% (%+d bytes)\t%s\n"),
+		printf(_("%6.2f%% (%+ld bytes)\t%s\n"),
 		       (change * 100) / (double) original_size, change, name);
 
 	return curr;
@@ -823,9 +824,9 @@ int main(int argc, char **argv)
 	if (fslen_ub > fslen_max) {
 		fprintf(stderr,
 			_("warning: guestimate of required size (upper bound) "
-			  "is %LdMB, but maximum image size is %uMB.  "
+			  "is %lldMB, but maximum image size is %uMB.  "
 			  "We might die prematurely.\n"),
-			fslen_ub >> 20,
+			(long long)fslen_ub >> 20,
 			fslen_max >> 20);
 		fslen_ub = fslen_max;
 	}
@@ -869,7 +870,7 @@ int main(int argc, char **argv)
 
 	offset = write_directory_structure(root_entry->child, rom_image, offset);
 	if (verbose)
-		printf(_("Directory data: %d bytes\n"), offset);
+		printf(_("Directory data: %zd bytes\n"), offset);
 
 	offset = write_data(root_entry, rom_image, offset);
 
@@ -877,16 +878,16 @@ int main(int argc, char **argv)
            losetup works. */
 	offset = ((offset - 1) | (blksize - 1)) + 1;
 	if (verbose)
-		printf(_("Everything: %d kilobytes\n"), offset >> 10);
+		printf(_("Everything: %zd kilobytes\n"), offset >> 10);
 
 	/* Write the superblock now that we can fill in all of the fields. */
 	write_superblock(root_entry, rom_image+opt_pad, offset);
 	if (verbose)
-		printf(_("Super block: %d bytes\n"),
+		printf(_("Super block: %zd bytes\n"),
 		       sizeof(struct cramfs_super));
 
 	/* Put the checksum in. */
-	crc = crc32(crc, (rom_image+opt_pad), (offset-opt_pad));
+	crc = crc32(crc, (unsigned char *) (rom_image+opt_pad), (offset-opt_pad));
 	((struct cramfs_super *) (rom_image+opt_pad))->fsid.crc = crc;
 	if (verbose)
 		printf(_("CRC: %x\n"), crc);
@@ -895,8 +896,8 @@ int main(int argc, char **argv)
 	if (fslen_ub < offset) {
 		fprintf(stderr,
 			_("not enough space allocated for ROM image "
-			  "(%lld allocated, %d used)\n"),
-			fslen_ub, offset);
+			  "(%lld allocated, %zu used)\n"),
+			(long long) fslen_ub, offset);
 		exit(8);
 	}
 
@@ -906,7 +907,7 @@ int main(int argc, char **argv)
 		exit(8);
 	}
 	if (offset != written) {
-		fprintf(stderr, _("ROM image write failed (%d %d)\n"),
+		fprintf(stderr, _("ROM image write failed (%zd %zd)\n"),
 			written, offset);
 		exit(8);
 	}
