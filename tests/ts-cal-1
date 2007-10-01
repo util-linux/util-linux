@@ -26,35 +26,35 @@ ts_init "$*"
 set -o pipefail
 
 USETERM=$( ts_has_option "useterm" "$*" )
-MYTIME=1159350000
+MYTIME="27 09 2006"
 
 [ "$USETERM" == "yes" ] && TS_VERBOSE="yes"
 ts_log ""
 
 ts_log "Gregorian - Monday-based week"
 if [ "$USETERM" == "yes" ]; then
-	TEST_TIME=$MYTIME $TS_CMD_CALTEST -1m
+	$TS_CMD_CAL -1m $MYTIME
 fi
-TEST_TIME=$MYTIME $TS_CMD_CALTEST -1m >> $TS_OUTPUT
+$TS_CMD_CAL -1m $MYTIME >> $TS_OUTPUT
 
 ts_log "Gregorian - Sunday-based week"
 if [ "$USETERM" == "yes" ]; then
-	TEST_TIME=$MYTIME $TS_CMD_CALTEST -1s
+	$TS_CMD_CAL -1s $MYTIME
 fi
-TEST_TIME=$MYTIME $TS_CMD_CALTEST -1s >> $TS_OUTPUT
+$TS_CMD_CAL -1s $MYTIME >> $TS_OUTPUT
 
 
 ts_log "Julian - Monday-based week"
 if [ "$USETERM" == "yes" ]; then
-	TEST_TIME=$MYTIME $TS_CMD_CALTEST -1mj
+	$TS_CMD_CAL -1mj $MYTIME
 fi
-TEST_TIME=$MYTIME $TS_CMD_CALTEST -1mj >> $TS_OUTPUT
+$TS_CMD_CAL -1mj $MYTIME >> $TS_OUTPUT
 
 ts_log "Julian - Sunday-based week"
 if [ "$USETERM" == "yes" ]; then
-	TEST_TIME=$MYTIME $TS_CMD_CALTEST -1sj
+	$TS_CMD_CAL -1sj $MYTIME
 fi
-TEST_TIME=$MYTIME $TS_CMD_CALTEST -1sj >> $TS_OUTPUT
+$TS_CMD_CAL -1sj $MYTIME >> $TS_OUTPUT
 
 ts_finalize
 

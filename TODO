@@ -29,8 +29,6 @@
 	From: LaMont Jones <lamont@mmjgroup.com>
 	Subject: Re: [PATCH] losetup: support password hashing and specifying the key length
 
- * add an option to the cal command to control highlight date
-
  * convet po/ files to UTF-8
 
  * use rpmatch() for all Y/N questions

@@ -43,7 +43,7 @@
 .Sh SYNOPSIS
 .Nm cal
 .Op Fl smjy13
-.Op [ Ar month ] Ar year
+.Op [ [ Ar day] Ar month ] Ar year
 .Sh DESCRIPTION
 .Nm Cal
 displays a simple calendar.
@@ -76,6 +76,8 @@ will
 .Em not
 display a calendar for 1989.
 Two parameters denote the month (1 - 12) and year.
+Three parameters denote the day (1-31), month and year,
+and the day will be highlighted if the calendar is displayed on a terminal.
 If no parameters are specified, the current month's calendar is
 displayed.
 .Pp

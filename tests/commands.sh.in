@@ -32,7 +32,6 @@ TS_CMD_COL=${TS_CMD_COL:-"$TOPDIR/text-utils/col"}
 TS_CMD_NAMEI=${TS_CMD_NAMEI-"$TOPDIR/misc-utils/namei"}
 TS_CMD_LOOK=${TS_CMD_LOOK-"$TOPDIR/misc-utils/look"}
 TS_CMD_CAL=${TS_CMD_CAL-"$TOPDIR/misc-utils/cal"}
-TS_CMD_CALTEST=${TS_CMD_CALTEST-"$TOPDIR/misc-utils/cal_test"}
 TS_CMD_SCRIPT=${TS_CMD_SCRIPT-"$TOPDIR/misc-utils/script"}
 
 TS_CMD_CHECKTTY=${TS_CMD_CHECKTTY-"$TOPDIR/login-utils/checktty_test"}

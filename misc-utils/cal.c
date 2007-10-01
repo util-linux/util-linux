@@ -341,6 +341,10 @@ main(int argc, char **argv) {
 
 	day = month = year = 0;
 	switch(argc) {
+	case 3:
+		if ((day = atoi(*argv++)) < 1 || month > 31)
+			errx(1, _("illegal day value: use 1-%d"), 31);
+		/* FALLTHROUGH */
 	case 2:
 		if ((month = atoi(*argv++)) < 1 || month > 12)
 			errx(1, _("illegal month value: use 1-12"));
@@ -348,38 +352,38 @@ main(int argc, char **argv) {
 	case 1:
 		if ((year = atoi(*argv)) < 1 || year > 9999)
 			errx(1, _("illegal year value: use 1-9999"));
+		if (day) {
+			int dm = days_in_month[leap_year(year)][month];
+			if (day > dm)
+				errx(1, _("illegal day value: use 1-%d"), dm);
+			day = day_in_year(day, month, year);
+		}
+		if (!month)
+			yflag=1;
 		break;
 	case 0:
-	{
-#ifdef TEST_CAL
-		char *e = getenv("TEST_TIME");
-
-		if (e && isdigit((unsigned char) *e))
-			now = atol(e);
-		else
-#endif
-			time(&now);
-	}
+		time(&now);
 		local_time = localtime(&now);
-		if (isatty(1))
-			day = local_time->tm_yday + 1;
+		day = local_time->tm_yday + 1;
 		year = local_time->tm_year + 1900;
-		if (!yflag)
-			month = local_time->tm_mon + 1;
+		month = local_time->tm_mon + 1;
 		break;
 	default:
 		usage();
 	}
 	headers_init();
 
-	if (month && num_months == 1)
-		monthly(day, month, year);
-	else if (month && num_months == 3)
-		monthly3(day, month, year);
-	else if (julian)
+	if (!isatty(1))
+		day = 0; /* don't highlight */
+
+	if (yflag && julian)
 		j_yearly(day, year);
-	else
+	else if (yflag)
 		yearly(day, year);
+	else if (num_months == 1)
+		monthly(day, month, year);
+	else if (num_months == 3)
+		monthly3(day, month, year);
 	exit(0);
 }
 
@@ -633,6 +637,9 @@ day_array(int day, int month, int year, int *days) {
 	if (month == 9 && year == 1752) {
 		d_sep1752 = julian ? j_sep1752 : sep1752;
 		memcpy(days, d_sep1752 + week1stday, MAXDAYS * sizeof(int));
+		for (dm=0; dm<MAXDAYS; dm++)
+			if (j_sep1752[dm] == day)
+				days[dm] |= TODAY_FLAG;
 		return;
 	}
 	memcpy(days, empty, MAXDAYS * sizeof(int));
@@ -806,6 +813,6 @@ void
 usage()
 {
 
-	(void)fprintf(stderr, _("usage: cal [-13smjyV] [[month] year]\n"));
+	(void)fprintf(stderr, _("usage: cal [-13smjyV] [[[day] month] year]\n"));
 	exit(1);
 }
