@@ -1116,7 +1116,7 @@ pgfile(FILE *f, char *name)
 			 */
 			eof = 1;
 		}
-		if (search == FORWARD) {
+		if (search == FORWARD && remembered == 1) {
 			if (eof) {
 				line = oldline;
 				search = searchcount = 0;
