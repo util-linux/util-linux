@@ -670,6 +670,8 @@ update_mtab (const char *dir, struct my_mntent *instead) {
 	const char *fnam = MOUNTED;
 	struct mntentchn mtabhead;	/* dummy */
 	struct mntentchn *mc, *mc0, *absent = NULL;
+	struct stat sbuf;
+	int fd;
 
 	if (mtab_does_not_exist() || !mtab_is_writable())
 		return;
@@ -751,24 +753,38 @@ update_mtab (const char *dir, struct my_mntent *instead) {
 	}
 
 	discard_mntentchn(mc0);
+	fd = fileno(mftmp->mntent_fp);
 
-	if (fchmod (fileno (mftmp->mntent_fp),
-		    S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0) {
+	/*
+	 * It seems that better is incomplete and broken /mnt/mtab that
+	 * /mnt/mtab that is writeable for non-root users.
+	 *
+	 * We always skip rename() when chown() and chmod() failed.
+	 * -- kzak, 11-Oct-2007
+	 */
+
+	if (fchmod(fd, S_IRUSR|S_IWUSR|S_IRGRP|S_IROTH) < 0) {
 		int errsv = errno;
 		fprintf(stderr, _("error changing mode of %s: %s\n"),
 			MOUNTED_TEMP, strerror (errsv));
+		goto leave;
 	}
-	my_endmntent (mftmp);
 
-	{ /*
-	   * If mount is setuid and some non-root user mounts sth,
-	   * then mtab.tmp might get the group of this user. Copy uid/gid
-	   * from the present mtab before renaming.
-	   */
-	    struct stat sbuf;
-	    if (stat (MOUNTED, &sbuf) == 0)
-		chown (MOUNTED_TEMP, sbuf.st_uid, sbuf.st_gid);
+	/*
+	 * If mount is setuid and some non-root user mounts sth,
+	 * then mtab.tmp might get the group of this user. Copy uid/gid
+	 * from the present mtab before renaming.
+	 */
+	if (stat(MOUNTED, &sbuf) == 0) {
+		if (fchown(fd, sbuf.st_uid, sbuf.st_gid) < 0) {
+			int errsv = errno;
+			fprintf (stderr, _("error changing owner of %s: %s\n"),
+				MOUNTED_TEMP, strerror(errsv));
+			goto leave;
+		}
 	}
+
+	my_endmntent (mftmp);
 
 	/* rename mtemp to mtab */
 	if (rename (MOUNTED_TEMP, MOUNTED) < 0) {
