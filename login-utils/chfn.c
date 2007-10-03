@@ -49,6 +49,16 @@
 #if defined(REQUIRE_PASSWORD) && defined(HAVE_SECURITY_PAM_MISC_H)
 #include <security/pam_appl.h>
 #include <security/pam_misc.h>
+
+#define PAM_FAIL_CHECK(_ph, _rc) \
+    do { \
+	if ((_rc) != PAM_SUCCESS) { \
+	    fprintf(stderr, "\n%s\n", pam_strerror((_ph), (_rc))); \
+	    pam_end((_ph), (_rc)); \
+	    exit(1); \
+	} \
+    } while(0)
+
 #endif
 
 typedef unsigned char boolean;
@@ -90,11 +100,6 @@ int main (int argc, char **argv) {
     struct finfo oldf, newf;
     boolean interactive;
     int status;
-#if defined(REQUIRE_PASSWORD) && defined(HAVE_SECURITY_PAM_MISC_H)
-    pam_handle_t *pamh = NULL;
-    int retcode;
-    struct pam_conv conv = { misc_conv, NULL };
-#endif
 
     sanitize_env();
     setlocale(LC_ALL, "");	/* both for messages and for iscntrl() below */
@@ -175,27 +180,31 @@ int main (int argc, char **argv) {
 #ifdef REQUIRE_PASSWORD
 #ifdef HAVE_SECURITY_PAM_MISC_H
     if(uid != 0) {
-        if (pam_start("chfn", oldf.username, &conv, &pamh)) {
-	    puts(_("Password error."));
+	pam_handle_t *pamh = NULL;
+	struct pam_conv conv = { misc_conv, NULL };
+	int retcode;
+
+	retcode = pam_start("chfn", oldf.username, &conv, &pamh);
+	if(retcode != PAM_SUCCESS) {
+	    fprintf(stderr, _("chfn: PAM Failure, aborting: %s\n"),
+			pam_strerror(pamh, retcode));
 	    exit(1);
 	}
-        if (pam_authenticate(pamh, 0)) {
-	    puts(_("Password error."));
-	    exit(1);
-	}
-        retcode = pam_acct_mgmt(pamh, 0);
-        if (retcode == PAM_NEW_AUTHTOK_REQD)
+
+	retcode = pam_authenticate(pamh, 0);
+	PAM_FAIL_CHECK(pamh, retcode);
+
+	retcode = pam_acct_mgmt(pamh, 0);
+	if (retcode == PAM_NEW_AUTHTOK_REQD)
 	    retcode = pam_chauthtok(pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
-        if (retcode) {
-	    puts(_("Password error."));
-	    exit(1);
-	}
-        if (pam_setcred(pamh, 0)) {
-	    puts(_("Password error."));
-	    exit(1);
-	}
-        /* no need to establish a session; this isn't a session-oriented
-         * activity... */
+	PAM_FAIL_CHECK(pamh, retcode);
+
+	retcode = pam_setcred(pamh, 0);
+	PAM_FAIL_CHECK(pamh, retcode);
+
+	pam_end(pamh, 0);
+	/* no need to establish a session; this isn't a session-oriented
+	 * activity... */
     }
 # else /* HAVE_SECURITY_PAM_MISC_H */
     /* require password, unless root */
