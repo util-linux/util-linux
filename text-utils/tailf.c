@@ -30,6 +30,8 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <malloc.h>
+#include <errno.h>
+#include <string.h>
 #include <sys/stat.h>
 #include "nls.h"
 
@@ -50,8 +52,8 @@ static void tailf(const char *filename, int lines)
     int  i;
 
     if (!(str = fopen(filename, "r"))) {
-	fprintf(stderr, _("Cannot open \"%s\" for read\n"), filename);
-	perror("");
+	fprintf(stderr, _("Cannot open \"%s\" for read: %s\n"),
+			filename, strerror(errno));
 	exit(1);
     }
 
@@ -83,7 +85,7 @@ int main(int argc, char **argv)
     size_t     osize, nsize;
     FILE       *str;
     const char *filename;
-    int        count;
+    int        count, wcount;
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
@@ -102,13 +104,17 @@ int main(int argc, char **argv)
 	nsize = filesize(filename);
 	if (nsize != osize) {
 	    if (!(str = fopen(filename, "r"))) {
-		fprintf(stderr, _("Cannot open \"%s\" for read\n"), filename);
-		perror(argv[0]);
+		fprintf(stderr, _("Cannot open \"%s\" for read: %s\n"),
+				filename, strerror(errno));
 		exit(1);
 	    }
 	    if (!fseek(str, osize, SEEK_SET))
-                while ((count = fread(buffer, 1, sizeof(buffer), str)) > 0)
-                    fwrite(buffer, 1, count, stdout);
+                while ((count = fread(buffer, 1, sizeof(buffer), str)) > 0) {
+                    wcount = fwrite(buffer, 1, count, stdout);
+                    if (wcount != count)
+			fprintf (stderr, _("Incomplete write to \"%s\" (written %d, expected %d)\n"),
+				filename, wcount, count);
+		}
 	    fflush(stdout);
 	    fclose(str);
 	    osize = nsize;
