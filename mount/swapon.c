@@ -99,8 +99,12 @@ read_proc_swaps(void) {
 		return;		/* nothing wrong */
 
 	/* skip the first line */
-	fgets(line, sizeof(line), swaps);
-
+	if (!fgets(line, sizeof(line), swaps)) {
+		fprintf (stderr, _("%s: %s: unexpected file format\n"),
+			progname, PROC_SWAPS);
+		fclose(swaps);
+		return;
+	}
 	while (fgets(line, sizeof(line), swaps)) {
 		/*
 		 * Cut the line "swap_device  ... more info" after device.
