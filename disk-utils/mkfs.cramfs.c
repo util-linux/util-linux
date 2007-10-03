@@ -895,7 +895,7 @@ int main(int argc, char **argv)
 	if (fslen_ub < offset) {
 		fprintf(stderr,
 			_("not enough space allocated for ROM image "
-			  "(%Ld allocated, %d used)\n"),
+			  "(%lld allocated, %d used)\n"),
 			fslen_ub, offset);
 		exit(8);
 	}
