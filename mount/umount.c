@@ -94,7 +94,10 @@ check_special_umountprog(const char *spec, const char *node,
 	if (!external_allowed)
 		return 0;
 
-	if (type && strlen(type) < 100) {
+	if (type == NULL || strcmp(type, "none") == 0)
+		return 0;
+
+	if (strlen(type) < 100) {
 		sprintf(umountprog, "/sbin/umount.%s", type);
 		if (stat(umountprog, &statbuf) == 0) {
 			res = fork();

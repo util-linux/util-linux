@@ -624,7 +624,10 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
   if (!external_allowed)
       return 0;
 
-  if (type && strlen(type) < 100) {
+  if (type == NULL || strcmp(type, "none") == 0)
+	  return 0;
+
+  if (strlen(type) < 100) {
        sprintf(mountprog, "/sbin/mount.%s", type);
        if (stat(mountprog, &statbuf) == 0) {
 	    if (verbose)
@@ -719,8 +722,8 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
    if (*types && strcasecmp (*types, "auto") == 0)
       *types = NULL;
 
-   if (!*types && (flags & (MS_BIND | MS_MOVE)))
-      *types = "none";		/* random, but not "bind" */
+   if (flags & (MS_BIND | MS_MOVE))
+      *types = "none";
 
    if (!*types && !(flags & MS_REMOUNT)) {
       *types = guess_fstype_by_devname(spec);

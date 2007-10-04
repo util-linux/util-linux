@@ -108,6 +108,11 @@ file hierarchy somewhere else. The call is
 .br
 .B "mount --bind olddir newdir"
 .RE
+or fstab entry is:
+.RS
+.br
+.B "/olddir  /newdir  none  bind"
+.RE
 After this call the same contents is accessible in two places.
 One can also remount a single file (on a single file).
 
