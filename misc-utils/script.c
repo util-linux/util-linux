@@ -99,6 +99,7 @@ int	tflg = 0;
 static char *progname;
 
 int die;
+int resized;
 
 static void
 die_if_link(char *fn) {
@@ -235,8 +236,14 @@ doinput() {
 	if (die == 0 && child && kill(child, 0) == -1 && errno == ESRCH)
 		die = 1;
 
-	while (die == 0 && (cc = read(0, ibuf, BUFSIZ)) > 0)
-		(void) write(master, ibuf, cc);
+	while (die == 0) {
+		if ((cc = read(0, ibuf, BUFSIZ)) > 0)
+			(void) write(master, ibuf, cc);
+		else if (cc == -1 && errno == EINTR && resized)
+			resized = 0;
+		else
+			break;
+	}
 
 	done();
 }
@@ -255,11 +262,10 @@ finish(int dummy) {
 
 void
 resize(int dummy) {
+	resized = 1;
 	/* transmit window change information to the child */
 	(void) ioctl(0, TIOCGWINSZ, (char *)&win);
 	(void) ioctl(slave, TIOCSWINSZ, (char *)&win);
-
-	kill(child, SIGWINCH);
 }
 
 /*
