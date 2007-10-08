@@ -95,7 +95,7 @@ show_loop(char *device) {
 
 		if (loopinfo64.lo_encrypt_type ||
 		    loopinfo64.lo_crypt_name[0]) {
-			char *e = loopinfo64.lo_crypt_name;
+			char *e = (char *)loopinfo64.lo_crypt_name;
 
 			if (*e == 0 && loopinfo64.lo_encrypt_type == 1)
 				e = "XOR";
@@ -109,7 +109,7 @@ show_loop(char *device) {
 
 	if (ioctl(fd, LOOP_GET_STATUS, &loopinfo) == 0) {
 		printf ("%s: [%04x]:%ld (%s)",
-			device, loopinfo.lo_device, loopinfo.lo_inode,
+			device, (unsigned int)loopinfo.lo_device, loopinfo.lo_inode,
 			loopinfo.lo_name);
 
 		if (loopinfo.lo_offset)
@@ -297,14 +297,14 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 
 	memset(&loopinfo64, 0, sizeof(loopinfo64));
 
-	xstrncpy(loopinfo64.lo_file_name, file, LO_NAME_SIZE);
+	xstrncpy((char *)loopinfo64.lo_file_name, file, LO_NAME_SIZE);
 
 	if (encryption && *encryption) {
 		if (digits_only(encryption)) {
 			loopinfo64.lo_encrypt_type = atoi(encryption);
 		} else {
 			loopinfo64.lo_encrypt_type = LO_CRYPT_CRYPTOAPI;
-			snprintf(loopinfo64.lo_crypt_name, LO_NAME_SIZE,
+			snprintf((char *)loopinfo64.lo_crypt_name, LO_NAME_SIZE,
 				 "%s", encryption);
 		}
 	}
@@ -336,7 +336,7 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 		pass = xgetpass(pfd, _("Password: "));
 	gotpass:
 		memset(loopinfo64.lo_encrypt_key, 0, LO_KEY_SIZE);
-		xstrncpy(loopinfo64.lo_encrypt_key, pass, LO_KEY_SIZE);
+		xstrncpy((char *)loopinfo64.lo_encrypt_key, pass, LO_KEY_SIZE);
 		memset(pass, 0, strlen(pass));
 		loopinfo64.lo_encrypt_key_size = LO_KEY_SIZE;
 	}
