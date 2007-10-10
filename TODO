@@ -94,6 +94,18 @@
 v2.??:
 =====
 
-- rewrite ipcs to use /proc/sys/kernel rather than unreliable syscalls
-  (there are problems with 32bit userspace on 64bit kernel)
+ * rewrite ipcs to use /proc/sys/kernel rather than unreliable syscalls
+   (there are problems with 32bit userspace on 64bit kernel)
+
+ * minix v3
+
+	From: Matthias Koenig <mkoenig@suse.de>
+	Date:   Tue, 25 Sep 2007 12:00:01 +0200
+
+	It seems that the kernel has support for minix fs v3
+	(though I have not tried it, just inspected some code when
+	trying to find a mkfs.minix issue).
+	It might be worth a thought implementing v3 support
+	(though I am not really sure how much people us minix fs ;-)
+	This might require some major code cleanup in mkfs.minix.
 
