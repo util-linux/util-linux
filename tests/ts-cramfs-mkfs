@@ -80,7 +80,7 @@ grep -q $DEVICE /proc/mounts
 [ "$?" == "0" ] || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE
 
 ts_log "list the image"
-ls -laR $TS_MOUNTPOINT >> $TS_OUTPUT
+ls -laR --time-style=long-iso $TS_MOUNTPOINT >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "list checksums from new data"
