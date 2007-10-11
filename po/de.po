@@ -8765,7 +8765,7 @@ msgid ""
 "\t-a : all (default)\n"
 msgstr ""
 "\t-s : Semaphoren\n"
-"\r-a : alles (Voreinstellung)\n"
+"\t-a : alles (Voreinstellung)\n"
 
 #: sys-utils/ipcs.c:134
 #, c-format
