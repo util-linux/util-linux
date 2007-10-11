@@ -62,6 +62,7 @@ md5sum $IMAGE 2>&1 >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "create loop device from image"
+ts_backup_cache
 DEVICE=$( $TS_CMD_LOSETUP -f )
 $TS_CMD_LOSETUP $DEVICE $IMAGE 2>&1 >> $TS_OUTPUT
 
@@ -90,5 +91,6 @@ echo >> $TS_OUTPUT
 ts_log "umount the image"
 $TS_CMD_UMOUNT $DEVICE
 $TS_CMD_LOSETUP -d $DEVICE 2>&1 >> $TS_OUTPUT
+ts_restore_cache
 ts_finalize
 
