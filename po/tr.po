@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-08-28 00:12+0200\n"
+"POT-Creation-Date: 2007-10-11 14:29+0200\n"
 "PO-Revision-Date: 2005-08-17 12:06+0300\n"
 "Last-Translator: Nilgün Belma Bugüner <nilgun@buguner.name.tr>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -184,9 +184,9 @@ msgstr "kullanımı: %s [ -n ] AYGIT\n"
 
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
-#: disk-utils/mkfs.cramfs.c:784 disk-utils/mkfs.minix.c:626
+#: disk-utils/mkfs.cramfs.c:785 disk-utils/mkfs.minix.c:629
 #: disk-utils/mkswap.c:518 misc-utils/ddate.c:179 misc-utils/rename.c:79
-#: misc-utils/script.c:146 sys-utils/readprofile.c:197
+#: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, c-format
 msgid "%s (%s)\n"
 msgstr "%s: (%s)\n"
@@ -213,7 +213,7 @@ msgstr "Çift"
 msgid "Single"
 msgstr "Tek"
 
-#: disk-utils/fsck.cramfs.c:118
+#: disk-utils/fsck.cramfs.c:117
 #, c-format
 msgid ""
 "usage: %s [-hv] [-x dir] file\n"
@@ -532,8 +532,8 @@ msgstr "Bölge %d: kullanımda, sayılan = %d\n"
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "Bölge %d: kullanım dışı, sayılan = %d\n"
 
-#: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:631
-#: disk-utils/mkfs.minix.c:633
+#: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:634
+#: disk-utils/mkfs.minix.c:636
 msgid "bad inode size"
 msgstr "düğüm sayısı hatalı"
 
@@ -694,7 +694,7 @@ msgstr "düğüm sayısı çok fazla - en çok 512"
 msgid "not enough space, need at least %lu blocks"
 msgstr "yer yetersiz, en az %lu blok gerekiyor"
 
-#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2321
+#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2314
 #, c-format
 msgid "Device: %s\n"
 msgstr "Aygıt: %s\n"
@@ -815,9 +815,9 @@ msgstr ""
 " çdosyası  çıktı dosyası\n"
 
 #: disk-utils/mkfs.cramfs.c:337
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Very long (%u bytes) filename `%s' found.\n"
+"Very long (%zu bytes) filename `%s' found.\n"
 " Please increase MAX_INPUT_NAMELEN in mkcramfs.c and recompile.  Exiting.\n"
 msgstr ""
 "Çok uzun (%u baytlık) dosya ismi `%s' bulundu.\n"
@@ -829,77 +829,77 @@ msgstr ""
 msgid "filesystem too big.  Exiting.\n"
 msgstr "dosya sistemi çok büyük.  Çıklıyor.\n"
 
-#: disk-utils/mkfs.cramfs.c:627
+#: disk-utils/mkfs.cramfs.c:628
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
 msgstr "OLAMAZ: blok \"sıkıştırması\" > 2*blokuzunluğu (%ld)\n"
 
-#: disk-utils/mkfs.cramfs.c:646
-#, c-format
-msgid "%6.2f%% (%+d bytes)\t%s\n"
+#: disk-utils/mkfs.cramfs.c:647
+#, fuzzy, c-format
+msgid "%6.2f%% (%+ld bytes)\t%s\n"
 msgstr "%%%6.2f (%+d bayt)\t%s\n"
 
-#: disk-utils/mkfs.cramfs.c:825
-#, c-format
+#: disk-utils/mkfs.cramfs.c:826
+#, fuzzy, c-format
 msgid ""
-"warning: guestimate of required size (upper bound) is %LdMB, but maximum "
+"warning: guestimate of required size (upper bound) is %lldMB, but maximum "
 "image size is %uMB.  We might die prematurely.\n"
 msgstr ""
 "uyarı: gereken tahmini boyut (üst sınır) %Ld MB, ama en büyük bellekeşlem "
 "boyu %u MB.   Vakitsiz ölüm.\n"
 
-#: disk-utils/mkfs.cramfs.c:866
+#: disk-utils/mkfs.cramfs.c:867
 #, c-format
 msgid "Including: %s\n"
 msgstr "İçeriği: %s\n"
 
-#: disk-utils/mkfs.cramfs.c:872
-#, c-format
-msgid "Directory data: %d bytes\n"
+#: disk-utils/mkfs.cramfs.c:873
+#, fuzzy, c-format
+msgid "Directory data: %zd bytes\n"
 msgstr "Dizin verisi: %d bayt\n"
 
-#: disk-utils/mkfs.cramfs.c:880
-#, c-format
-msgid "Everything: %d kilobytes\n"
+#: disk-utils/mkfs.cramfs.c:881
+#, fuzzy, c-format
+msgid "Everything: %zd kilobytes\n"
 msgstr "Hepsi: %d kB\n"
 
-#: disk-utils/mkfs.cramfs.c:885
-#, c-format
-msgid "Super block: %d bytes\n"
+#: disk-utils/mkfs.cramfs.c:886
+#, fuzzy, c-format
+msgid "Super block: %zd bytes\n"
 msgstr "Süper blok: %d bayt\n"
 
-#: disk-utils/mkfs.cramfs.c:892
+#: disk-utils/mkfs.cramfs.c:893
 #, c-format
 msgid "CRC: %x\n"
 msgstr "CRC: %x\n"
 
-#: disk-utils/mkfs.cramfs.c:897
-#, c-format
-msgid "not enough space allocated for ROM image (%Ld allocated, %d used)\n"
+#: disk-utils/mkfs.cramfs.c:898
+#, fuzzy, c-format
+msgid "not enough space allocated for ROM image (%lld allocated, %zu used)\n"
 msgstr ""
 "ROM bellekeşlemi için ayrılan alan yetersiz (%Ld ayrıldı, %d kullanıldı)\n"
 
-#: disk-utils/mkfs.cramfs.c:909
-#, c-format
-msgid "ROM image write failed (%d %d)\n"
+#: disk-utils/mkfs.cramfs.c:910
+#, fuzzy, c-format
+msgid "ROM image write failed (%zd %zd)\n"
 msgstr "ROM bellekeşlemi yazmada hata (%d %d)\n"
 
-#: disk-utils/mkfs.cramfs.c:918
+#: disk-utils/mkfs.cramfs.c:919
 #, c-format
 msgid "warning: filenames truncated to 255 bytes.\n"
 msgstr "uyarı: dosya isimleri 255 bayt olarak kısaltıldı.\n"
 
-#: disk-utils/mkfs.cramfs.c:921
+#: disk-utils/mkfs.cramfs.c:922
 #, c-format
 msgid "warning: files were skipped due to errors.\n"
 msgstr "uyarı: hatalardan dolayı dosyalar atlandı.\n"
 
-#: disk-utils/mkfs.cramfs.c:924
+#: disk-utils/mkfs.cramfs.c:925
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte).\n"
 msgstr "uyarı: dosya boyutları %luMB'a düşürüldü (eksi 1 bayt).\n"
 
-#: disk-utils/mkfs.cramfs.c:929
+#: disk-utils/mkfs.cramfs.c:930
 #, c-format
 msgid ""
 "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
@@ -907,7 +907,7 @@ msgstr ""
 "uyarı: kullanıcı kimlikleri %u bite düşürüldü. (Bu bir güvenlik kaygısı "
 "olabilir.)\n"
 
-#: disk-utils/mkfs.cramfs.c:934
+#: disk-utils/mkfs.cramfs.c:935
 #, c-format
 msgid ""
 "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
@@ -915,7 +915,7 @@ msgstr ""
 "uyarı: grup kimlikleri %u bite düşürüldü. (Bu bir güvenlik kaygısı "
 "olabilir.)\n"
 
-#: disk-utils/mkfs.cramfs.c:939
+#: disk-utils/mkfs.cramfs.c:940
 #, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
@@ -1006,12 +1006,12 @@ msgstr "check_blocks işleminde erişim başarısız"
 msgid "bad blocks before data-area: cannot make fs"
 msgstr "veri alanından önceki bloklar hatalı: dosya sistemi yapılamıyor"
 
-#: disk-utils/mkfs.minix.c:580 disk-utils/mkfs.minix.c:602
+#: disk-utils/mkfs.minix.c:580 disk-utils/mkfs.minix.c:605
 #, c-format
 msgid "%d bad blocks\n"
 msgstr "%d bozuk blok\n"
 
-#: disk-utils/mkfs.minix.c:582 disk-utils/mkfs.minix.c:604
+#: disk-utils/mkfs.minix.c:582 disk-utils/mkfs.minix.c:607
 #, c-format
 msgid "one bad block\n"
 msgstr "bir bozuk blok\n"
@@ -1020,22 +1020,32 @@ msgstr "bir bozuk blok\n"
 msgid "can't open file of bad blocks"
 msgstr "bozuk bloklar dosyası açılamıyor"
 
-#: disk-utils/mkfs.minix.c:674
+#: disk-utils/mkfs.minix.c:596
+#, c-format
+msgid "badblock number input error on line %d\n"
+msgstr ""
+
+#: disk-utils/mkfs.minix.c:597
+#, fuzzy
+msgid "cannot read badblocks file"
+msgstr "Disk sürücüsü okunamıyor"
+
+#: disk-utils/mkfs.minix.c:677
 #, c-format
 msgid "strtol error: number of blocks not specified"
 msgstr "strtol hatası: blok sayısı belirtilmemiş"
 
-#: disk-utils/mkfs.minix.c:703
+#: disk-utils/mkfs.minix.c:706
 #, c-format
 msgid "unable to stat %s"
 msgstr "%s durum bilgileri alınamıyor"
 
-#: disk-utils/mkfs.minix.c:709
+#: disk-utils/mkfs.minix.c:712
 #, c-format
 msgid "unable to open %s"
 msgstr "%s açılamıyor"
 
-#: disk-utils/mkfs.minix.c:713
+#: disk-utils/mkfs.minix.c:716
 #, c-format
 msgid "will not try to make filesystem on '%s'"
 msgstr "'%s' üzerinde dosya sistemi oluşturmaya çalışılmayacak"
@@ -1083,8 +1093,8 @@ msgstr ""
 msgid "too many bad pages"
 msgstr "çok fazla bozuk sayfa var"
 
-#: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1988 text-utils/more.c:1999
+#: disk-utils/mkswap.c:391 misc-utils/look.c:182 misc-utils/setterm.c:1147
+#: text-utils/more.c:1987 text-utils/more.c:1998
 msgid "Out of memory"
 msgstr "Bellek yetersiz"
 
@@ -2920,7 +2930,7 @@ msgstr "%d disk bölümünün sistem türü %x (%s) olarak değiştirildi\n"
 
 #: fdisk/fdisk.c:1515
 #, fuzzy, c-format
-msgid "System type of partition %d is unchangedto %x (%s)\n"
+msgid "System type of partition %d is unchanged to %x (%s)\n"
 msgstr "%d disk bölümünün sistem türü %x (%s) olarak değiştirildi\n"
 
 #: fdisk/fdisk.c:1567
@@ -3204,12 +3214,12 @@ msgstr ""
 "Disk bölümleme tablosu zaten değişmişti!\n"
 "\n"
 
-#: fdisk/fdisk.c:2254
+#: fdisk/fdisk.c:2256
 #, c-format
 msgid "Calling ioctl() to re-read partition table.\n"
 msgstr "Disk bölümleme tablosunu yeniden okumak için ioctl() çağrılıyor.\n"
 
-#: fdisk/fdisk.c:2270
+#: fdisk/fdisk.c:2263
 #, c-format
 msgid ""
 "\n"
@@ -3222,7 +3232,7 @@ msgstr ""
 "Çekirdek hala eski tabloyu kullanıyor.\n"
 "Yeni tablo makinayı yeniden başlattığınızda geçerli olacak.\n"
 
-#: fdisk/fdisk.c:2280
+#: fdisk/fdisk.c:2273
 #, c-format
 msgid ""
 "\n"
@@ -3235,7 +3245,7 @@ msgstr ""
 "değişiklik yaptıysanız, lütfen fdisk man sayfalarındaki\n"
 "ek bilgileri okuyun.\n"
 
-#: fdisk/fdisk.c:2286
+#: fdisk/fdisk.c:2279
 #, c-format
 msgid ""
 "\n"
@@ -3244,42 +3254,42 @@ msgstr ""
 "\n"
 "Dosya kapatılırken hata\n"
 
-#: fdisk/fdisk.c:2290
+#: fdisk/fdisk.c:2283
 #, c-format
 msgid "Syncing disks.\n"
 msgstr "Diskler eşzamanlanıyor.\n"
 
-#: fdisk/fdisk.c:2337
+#: fdisk/fdisk.c:2330
 #, c-format
 msgid "Partition %d has no data area\n"
 msgstr "%d disk bölümü veri alanına sahip değil\n"
 
-#: fdisk/fdisk.c:2342
+#: fdisk/fdisk.c:2335
 msgid "New beginning of data"
 msgstr "Yeni veri başlangıcı"
 
-#: fdisk/fdisk.c:2358
+#: fdisk/fdisk.c:2351
 msgid "Expert command (m for help): "
 msgstr "Uzman komutları (yardım için m): "
 
-#: fdisk/fdisk.c:2371
+#: fdisk/fdisk.c:2364
 msgid "Number of cylinders"
 msgstr "Silindir sayısı"
 
-#: fdisk/fdisk.c:2398
+#: fdisk/fdisk.c:2391
 msgid "Number of heads"
 msgstr "Kafa sayısı"
 
-#: fdisk/fdisk.c:2425
+#: fdisk/fdisk.c:2418
 msgid "Number of sectors"
 msgstr "Sektör sayısı"
 
-#: fdisk/fdisk.c:2428
+#: fdisk/fdisk.c:2421
 #, c-format
 msgid "Warning: setting sector offset for DOS compatiblity\n"
 msgstr "Uyarı: Sektör hizalaması DOS uyumlu olarak yapılıyor\n"
 
-#: fdisk/fdisk.c:2487
+#: fdisk/fdisk.c:2480
 #, c-format
 msgid ""
 "\n"
@@ -3288,33 +3298,33 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/fdisk.c:2509
+#: fdisk/fdisk.c:2502
 #, c-format
 msgid "Disk %s doesn't contain a valid partition table\n"
 msgstr "%s diski geçerli bir disk bölümleme tablosu içermiyor\n"
 
-#: fdisk/fdisk.c:2520
+#: fdisk/fdisk.c:2513
 #, c-format
 msgid "Cannot open %s\n"
 msgstr "%s açılamıyor\n"
 
-#: fdisk/fdisk.c:2538 fdisk/sfdisk.c:2423
+#: fdisk/fdisk.c:2531 fdisk/sfdisk.c:2423
 #, c-format
 msgid "cannot open %s\n"
 msgstr "%s açılamıyor\n"
 
-#: fdisk/fdisk.c:2558
+#: fdisk/fdisk.c:2551
 #, c-format
 msgid "%c: unknown command\n"
 msgstr "%c: komut bilinmiyor\n"
 
-#: fdisk/fdisk.c:2628
+#: fdisk/fdisk.c:2621
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
 msgstr ""
 "Bu çekirdek sektör uzunluğunu kendisi bulur. - -b seçeneği yoksayıldı\n"
 
-#: fdisk/fdisk.c:2632
+#: fdisk/fdisk.c:2625
 #, c-format
 msgid ""
 "Warning: the -b (set sector size) option should be used with one specified "
@@ -3323,17 +3333,17 @@ msgstr ""
 "Uyarı: -b (sektör uzunluğu ayarı) seçeneği tek aygıt ile kullanılmış "
 "olmalıydı\n"
 
-#: fdisk/fdisk.c:2693
+#: fdisk/fdisk.c:2686
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 "%s üzerinde OSF/1 disk etiketi saptandı, disk etiketi kipine giriliyor.\n"
 
-#: fdisk/fdisk.c:2703
+#: fdisk/fdisk.c:2696
 msgid "Command (m for help): "
 msgstr "Komut (yardım için m): "
 
-#: fdisk/fdisk.c:2719
+#: fdisk/fdisk.c:2712
 #, c-format
 msgid ""
 "\n"
@@ -3342,16 +3352,16 @@ msgstr ""
 "\n"
 "Şu anki önyükleme dosyası: %s\n"
 
-#: fdisk/fdisk.c:2721
+#: fdisk/fdisk.c:2714
 msgid "Please enter the name of the new boot file: "
 msgstr "Lütfen yeni açılış dosyasının ismini giriniz:"
 
-#: fdisk/fdisk.c:2723
+#: fdisk/fdisk.c:2716
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "Açılış dosyası değiştirilmedi\n"
 
-#: fdisk/fdisk.c:2796
+#: fdisk/fdisk.c:2789
 #, c-format
 msgid ""
 "\n"
@@ -5457,7 +5467,7 @@ msgstr "Donanım saatinin %s de tutulduğu varsayılıyor.\n"
 msgid "UTC"
 msgstr "UTC"
 
-#: hwclock/hwclock.c:230 hwclock/hwclock.c:323 sys-utils/rtcwake.c:381
+#: hwclock/hwclock.c:230 hwclock/hwclock.c:323
 msgid "local"
 msgstr "yerel"
 
@@ -5794,7 +5804,7 @@ msgstr "Dönemsellik %d olarak ayarlanmayacak - sadece test ediliyor.\n"
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Çekirdekte dönemsellik değeri ayarlanamıyor.\n"
 
-#: hwclock/hwclock.c:1186 misc-utils/cal.c:333 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1186 misc-utils/cal.c:332 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%2$s deki %1$s\n"
@@ -5958,7 +5968,7 @@ msgstr "KDGHWCLK zaman değiştirilmek üzere çevrim içinde bekleniyor.\n"
 msgid "KDGHWCLK ioctl to read time failed"
 msgstr "KDGHWCLK ioctl zamanı okumada başarısız"
 
-#: hwclock/kd.c:79 hwclock/rtc.c:205
+#: hwclock/kd.c:79 hwclock/rtc.c:202
 #, c-format
 msgid "Timed out waiting for time change.\n"
 msgstr "Zamanı değiştirmek için zamanaşımı bekleniyor.\n"
@@ -5984,67 +5994,67 @@ msgstr "/dev/tty1 veya /dev/vc/1 açılamıyor"
 msgid "KDGHWCLK ioctl failed"
 msgstr "KDGHWCLK ioctl başarısız"
 
-#: hwclock/rtc.c:133 hwclock/rtc.c:226
+#: hwclock/rtc.c:130 hwclock/rtc.c:223
 #, c-format
 msgid "open() of %s failed"
 msgstr "%s için open() işlevi hata verdi"
 
-#: hwclock/rtc.c:167
+#: hwclock/rtc.c:164
 #, c-format
 msgid "ioctl() to %s to read the time failed.\n"
 msgstr "ioctl() %s den zaman okumada başarısız\n"
 
-#: hwclock/rtc.c:189
+#: hwclock/rtc.c:186
 #, c-format
 msgid "Waiting in loop for time from %s to change\n"
 msgstr "%s den zamanı değiştirmek için çevrim içinde bekleniyor\n"
 
-#: hwclock/rtc.c:244
+#: hwclock/rtc.c:241
 #, c-format
 msgid "%s does not have interrupt functions. "
 msgstr "%s için kesme işlevleri yok."
 
-#: hwclock/rtc.c:255
+#: hwclock/rtc.c:252
 #, c-format
 msgid "read() to %s to wait for clock tick failed"
 msgstr "read() %s den saat darbesi beklerken hata verdi"
 
-#: hwclock/rtc.c:273
+#: hwclock/rtc.c:270
 #, c-format
 msgid "select() to %s to wait for clock tick failed"
 msgstr "select() %s den saat darbesi beklerken hata verdi"
 
-#: hwclock/rtc.c:276
+#: hwclock/rtc.c:273
 #, c-format
 msgid "select() to %s to wait for clock tick timed out\n"
 msgstr "select() %s den saat darbesi beklerken zamanaşımına uğradı\n"
 
-#: hwclock/rtc.c:285
+#: hwclock/rtc.c:282
 #, c-format
 msgid "ioctl() to %s to turn off update interrupts failed"
 msgstr "ioctl() %s den güncelleme kesmelerini durduramadı"
 
-#: hwclock/rtc.c:288
+#: hwclock/rtc.c:285
 #, c-format
 msgid "ioctl() to %s to turn on update interrupts failed unexpectedly"
 msgstr "ioctl() %s den güncelleme kesmelerini açması gerekirken hata verdi"
 
-#: hwclock/rtc.c:347
+#: hwclock/rtc.c:344
 #, c-format
 msgid "ioctl() to %s to set the time failed.\n"
 msgstr "ioctl() %s den zamanı ayarlayamadı.\n"
 
-#: hwclock/rtc.c:353
+#: hwclock/rtc.c:350
 #, c-format
 msgid "ioctl(%s) was successful.\n"
 msgstr "ioctl(%s) başarıldı.\n"
 
-#: hwclock/rtc.c:382
+#: hwclock/rtc.c:379
 #, c-format
 msgid "Open of %s failed"
 msgstr "%s açılamadı"
 
-#: hwclock/rtc.c:400 hwclock/rtc.c:446
+#: hwclock/rtc.c:397 hwclock/rtc.c:443
 #, c-format
 msgid ""
 "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
@@ -6055,39 +6065,39 @@ msgstr ""
 "üzerinden Linux 'rtc' aygıt sürücüsüne erişilmelidir.   Bu dosya sistemde "
 "yok.\n"
 
-#: hwclock/rtc.c:405 hwclock/rtc.c:451
+#: hwclock/rtc.c:402 hwclock/rtc.c:448
 #, c-format
 msgid "Unable to open %s"
 msgstr "%s açılamıyor"
 
-#: hwclock/rtc.c:412
+#: hwclock/rtc.c:409
 #, c-format
 msgid "ioctl(RTC_EPOCH_READ) to %s failed"
 msgstr "ioctl(RTC_EPOCH_READ) %s için başarısız"
 
-#: hwclock/rtc.c:418
+#: hwclock/rtc.c:415
 #, c-format
 msgid "we have read epoch %ld from %s with RTC_EPOCH_READ ioctl.\n"
 msgstr "RTC_EPOCH_READ ioctl ile dönemsellik %ld %s den okunabilir.\n"
 
-#: hwclock/rtc.c:438
+#: hwclock/rtc.c:435
 #, c-format
 msgid "The epoch value may not be less than 1900.  You requested %ld\n"
 msgstr ""
 "Dönemsellik değerinin başlangıcı 1900 yılından önce olamaz.  %ld istendi.\n"
 
-#: hwclock/rtc.c:456
+#: hwclock/rtc.c:453
 #, c-format
 msgid "setting epoch to %ld with RTC_EPOCH_SET ioctl to %s.\n"
 msgstr "RTC_EPOCH_SET ioctl ile dönemsellik %ld %s den ayarlanıyor.\n"
 
-#: hwclock/rtc.c:461
+#: hwclock/rtc.c:458
 #, c-format
 msgid ""
 "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
 msgstr "%s için çekirdek aygıt sürücüsünde RTC_EPOCH_SET ioctl yok.\n"
 
-#: hwclock/rtc.c:464
+#: hwclock/rtc.c:461
 #, c-format
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) %s için hata verdi"
@@ -6255,68 +6265,67 @@ msgstr "%s üzerinden %s makinasına girişe öntanımlı olarak izin verilmedi.
 msgid "Login on %s from %s denied.\n"
 msgstr "%s üzerinden %s makinasına girişe izin verilmedi.\n"
 
-#: login-utils/chfn.c:128 login-utils/chsh.c:114
+#: login-utils/chfn.c:133 login-utils/chsh.c:119
 #, c-format
 msgid "%s: you (user %d) don't exist.\n"
 msgstr "%s: Siz (%d) yoksunuz.\n"
 
-#: login-utils/chfn.c:135 login-utils/chsh.c:121
+#: login-utils/chfn.c:140 login-utils/chsh.c:126
 #, c-format
 msgid "%s: user \"%s\" does not exist.\n"
 msgstr "%s: \"%s\" yok.\n"
 
-#: login-utils/chfn.c:140 login-utils/chsh.c:126
+#: login-utils/chfn.c:145 login-utils/chsh.c:131
 #, c-format
 msgid "%s: can only change local entries; use yp%s instead.\n"
 msgstr "%s: sadece yerel girdileri değiştirebilir; yerine yp%s kullanın.\n"
 
-#: login-utils/chfn.c:151 login-utils/chsh.c:137
+#: login-utils/chfn.c:156 login-utils/chsh.c:142
 msgid "Unknown user context"
 msgstr "Kullanıcı bağlamı bilinmiyor"
 
-#: login-utils/chfn.c:152
+#: login-utils/chfn.c:157
 #, c-format
 msgid "%s: %s is not authorized to change the finger info of %s\n"
 msgstr ""
 "%s: %s, %s kullanıcısının kişisel bilgilerini değiştirmeye yetkili değil\n"
 
-#: login-utils/chfn.c:159 login-utils/chsh.c:145
+#: login-utils/chfn.c:164 login-utils/chsh.c:150
 #, c-format
 msgid "%s: Can't set default context for /etc/passwd"
 msgstr "%s: /etc/passwd için öntanımlı bağlam belirtilemiyor"
 
-#: login-utils/chfn.c:173
+#: login-utils/chfn.c:178
 #, c-format
 msgid "Changing finger information for %s.\n"
 msgstr "%s için kullanıcı bilgileri değiştiriliyor.\n"
 
-#: login-utils/chfn.c:179 login-utils/chfn.c:183 login-utils/chfn.c:190
-#: login-utils/chfn.c:194 login-utils/chsh.c:178 login-utils/chsh.c:182
-#: login-utils/chsh.c:189 login-utils/chsh.c:193
-msgid "Password error."
-msgstr "Parola hatası."
+#: login-utils/chfn.c:189
+#, fuzzy, c-format
+msgid "chfn: PAM Failure, aborting: %s\n"
+msgstr "login: PAM hatası, çıkılıyor: %s\n"
 
-#: login-utils/chfn.c:203 login-utils/chsh.c:202 login-utils/login.c:798
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:333
 #: mount/lomount.c:336
 msgid "Password: "
 msgstr "Parola: "
 
-#: login-utils/chfn.c:206 login-utils/chsh.c:205
+#: login-utils/chfn.c:215 login-utils/chsh.c:214
 msgid "Incorrect password."
 msgstr "Parola yanlış."
 
-#: login-utils/chfn.c:217
+#: login-utils/chfn.c:226
 #, c-format
 msgid "Finger information not changed.\n"
 msgstr "Kullanıcı bilgileri değişmedi.\n"
 
-#: login-utils/chfn.c:319
+#: login-utils/chfn.c:328
 #, c-format
 msgid "Usage: %s [ -f full-name ] [ -o office ] "
 msgstr "Kullanımı: %s [ -f ad-soyadı ] [ -o iş yeri ] "
 
-#: login-utils/chfn.c:320
+#: login-utils/chfn.c:329
 #, c-format
 msgid ""
 "[ -p office-phone ]\n"
@@ -6325,12 +6334,12 @@ msgstr ""
 "[ -p iş-telefonu ]\n"
 "\t[ -h ev-telefonu ] "
 
-#: login-utils/chfn.c:321
+#: login-utils/chfn.c:330
 #, c-format
 msgid "[ --help ] [ --version ]\n"
 msgstr "[ --help ] [ --version ]\n"
 
-#: login-utils/chfn.c:392 login-utils/chsh.c:312
+#: login-utils/chfn.c:401 login-utils/chsh.c:321
 #, c-format
 msgid ""
 "\n"
@@ -6339,41 +6348,41 @@ msgstr ""
 "\n"
 "Bırakıldı.\n"
 
-#: login-utils/chfn.c:425
+#: login-utils/chfn.c:434
 #, c-format
 msgid "field is too long.\n"
 msgstr "alan çok uzun.\n"
 
-#: login-utils/chfn.c:433
+#: login-utils/chfn.c:442
 #, c-format
 msgid "'%c' is not allowed.\n"
 msgstr "'%c' kullanılamaz.\n"
 
-#: login-utils/chfn.c:438
+#: login-utils/chfn.c:447
 #, c-format
 msgid "Control characters are not allowed.\n"
 msgstr "Kontrol karakterleri kullanılamaz.\n"
 
-#: login-utils/chfn.c:503
+#: login-utils/chfn.c:512
 #, c-format
 msgid "Finger information *NOT* changed.  Try again later.\n"
 msgstr "Kullanıcı bilgileri değiştirilemedi. Daha sonra tekrar deneyin.\n"
 
-#: login-utils/chfn.c:506
+#: login-utils/chfn.c:515
 #, c-format
 msgid "Finger information changed.\n"
 msgstr "Kullanıcı bilgileri değiştirildi.\n"
 
-#: login-utils/chfn.c:520 login-utils/chsh.c:430 sys-utils/cytune.c:321
+#: login-utils/chfn.c:529 login-utils/chsh.c:439 sys-utils/cytune.c:321
 msgid "malloc failed"
 msgstr "bellek ayrılamadı"
 
-#: login-utils/chsh.c:138
+#: login-utils/chsh.c:143
 #, c-format
 msgid "%s: %s is not authorized to change the shell of %s\n"
 msgstr "%s: %s, %s kullanıcısının kabuğunu değiştirmeye yetkili değil\n"
 
-#: login-utils/chsh.c:159
+#: login-utils/chsh.c:164
 #, c-format
 msgid ""
 "%s: Running UID doesn't match UID of user we're altering, shell change "
@@ -6382,36 +6391,41 @@ msgstr ""
 "%s: kabuğun kullanıcı kimliği değiştirdiğimiz kullanıcı kimlikle\n"
 "aynı değil, kabuk değişikliği kabul edilmedi\n"
 
-#: login-utils/chsh.c:165
+#: login-utils/chsh.c:170
 #, c-format
 msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
 msgstr "%s: Bu kabuk /etc/shells dosyasında yok, kabuk değiştirilemedi\n"
 
-#: login-utils/chsh.c:172
+#: login-utils/chsh.c:177
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "%s için kabuk değiştiriliyor.\n"
 
-#: login-utils/chsh.c:213
+#: login-utils/chsh.c:188
+#, fuzzy, c-format
+msgid "chsh: PAM Failure, aborting: %s\n"
+msgstr "login: PAM hatası, çıkılıyor: %s\n"
+
+#: login-utils/chsh.c:222
 msgid "New shell"
 msgstr "Yeni kabuk"
 
-#: login-utils/chsh.c:220
+#: login-utils/chsh.c:229
 #, c-format
 msgid "Shell not changed.\n"
 msgstr "Kabuk değiştirilmedi,\n"
 
-#: login-utils/chsh.c:226
+#: login-utils/chsh.c:235
 #, c-format
 msgid "Shell *NOT* changed.  Try again later.\n"
 msgstr "Kabuk değiştirilemedi. Daha sonra tekrar deneyin.\n"
 
-#: login-utils/chsh.c:229
+#: login-utils/chsh.c:238
 #, c-format
 msgid "Shell changed.\n"
 msgstr "Kabuk değiştirildi.\n"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:303
 #, c-format
 msgid ""
 "Usage: %s [ -s shell ] [ --list-shells ] [ --help ] [ --version ]\n"
@@ -6420,57 +6434,57 @@ msgstr ""
 "Kullanımı: %s [ -s kabuk ] [ --list-shells ] [ --help ] [ --version ]\n"
 "       [ kullanıcı_ismi ]\n"
 
-#: login-utils/chsh.c:340
+#: login-utils/chsh.c:349
 #, c-format
 msgid "%s: shell must be a full path name.\n"
 msgstr "%s: kabuk tam bir dosya yolu içermeli.\n"
 
-#: login-utils/chsh.c:344
+#: login-utils/chsh.c:353
 #, c-format
 msgid "%s: \"%s\" does not exist.\n"
 msgstr "%s: \"%s\" yok.\n"
 
-#: login-utils/chsh.c:348
+#: login-utils/chsh.c:357
 #, c-format
 msgid "%s: \"%s\" is not executable.\n"
 msgstr "%s: \"%s\" çalıştırılabilir değil.\n"
 
-#: login-utils/chsh.c:355
+#: login-utils/chsh.c:364
 #, c-format
 msgid "%s: '%c' is not allowed.\n"
 msgstr "%s: '%c' kullanılamaz.\n"
 
-#: login-utils/chsh.c:359
+#: login-utils/chsh.c:368
 #, c-format
 msgid "%s: Control characters are not allowed.\n"
 msgstr "%s: Kontrol karakterleri kullanılamaz.\n"
 
-#: login-utils/chsh.c:366
+#: login-utils/chsh.c:375
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells\n"
 msgstr "Uyarı: \"%s\" /etc/shells dosyasında yok.\n"
 
-#: login-utils/chsh.c:368
+#: login-utils/chsh.c:377
 #, c-format
 msgid "%s: \"%s\" is not listed in /etc/shells.\n"
 msgstr "%s: \"%s\"  /etc/shells dosyasında yok.\n"
 
-#: login-utils/chsh.c:370
+#: login-utils/chsh.c:379
 #, c-format
 msgid "%s: use -l option to see list\n"
 msgstr "%s: listeyi görmek için  -l seçeneğini kullanın\n"
 
-#: login-utils/chsh.c:376
+#: login-utils/chsh.c:385
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells.\n"
 msgstr "Uyarı: \"%s\" /etc/shells dosyasında yok.\n"
 
-#: login-utils/chsh.c:377
+#: login-utils/chsh.c:386
 #, c-format
 msgid "Use %s -l to see list.\n"
 msgstr "Listeyi görmek için %s -l kullanın.\n"
 
-#: login-utils/chsh.c:397
+#: login-utils/chsh.c:406
 #, c-format
 msgid "No known shells.\n"
 msgstr "Kullanılabilecek kabuklar belirlenmemiş.\n"
@@ -7014,7 +7028,7 @@ msgstr "dizine geçilemedi\n"
 msgid "fork failed\n"
 msgstr "ast süreç oluşturulamadı\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1635
+#: login-utils/simpleinit.c:539 text-utils/more.c:1634
 msgid "exec failed\n"
 msgstr "çalıştırma başarısız\n"
 
@@ -7156,22 +7170,27 @@ msgstr "%s: geçici dosya durum bilgileri alınamıyor.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: geçici dosya okunamıyor.\n"
 
-#: misc-utils/cal.c:347
+#: misc-utils/cal.c:346 misc-utils/cal.c:358
+#, fuzzy, c-format
+msgid "illegal day value: use 1-%d"
+msgstr "yıl değeri kuraldışı: 1-9999 arasında olmalı"
+
+#: misc-utils/cal.c:350
 msgid "illegal month value: use 1-12"
 msgstr "ay numarası kuraldışı: 1..12 arasında olmalı"
 
-#: misc-utils/cal.c:351
+#: misc-utils/cal.c:354
 msgid "illegal year value: use 1-9999"
 msgstr "yıl değeri kuraldışı: 1-9999 arasında olmalı"
 
-#: misc-utils/cal.c:464
+#: misc-utils/cal.c:467
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:810
-#, c-format
-msgid "usage: cal [-13smjyV] [[month] year]\n"
+#: misc-utils/cal.c:816
+#, fuzzy, c-format
+msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
 msgstr "kullanımı: cal [-13smjyV] [[ay] yıl]\n"
 
 #: misc-utils/ddate.c:203
@@ -7231,7 +7250,7 @@ msgstr ""
 "kullanımı: logger [-is] [-f dosya] [-p pri] [-t başlık] [-u soket] "
 "[ ileti ... ]\n"
 
-#: misc-utils/look.c:352
+#: misc-utils/look.c:351
 #, c-format
 msgid "usage: look [-dfa] [-t char] string [file]\n"
 msgstr "kullanımı: look [-dfa] [-t karakter] dizge [dosya]\n"
@@ -7246,52 +7265,52 @@ msgstr "%s açılamadı\n"
 msgid "Got %d bytes from %s\n"
 msgstr "%d bayt %s dosyasından alındı\n"
 
-#: misc-utils/namei.c:107
+#: misc-utils/namei.c:111
 #, c-format
 msgid "namei: unable to get current directory - %s\n"
 msgstr "namei: çalışılan dizine geçilemiyor - %s\n"
 
-#: misc-utils/namei.c:121
+#: misc-utils/namei.c:125
 #, c-format
 msgid "namei: unable to chdir to %s - %s (%d)\n"
 msgstr "namei: %s dizinine geçilemiyor - %s (%d)\n"
 
-#: misc-utils/namei.c:131
+#: misc-utils/namei.c:135
 #, c-format
 msgid "usage: namei [-mx] pathname [pathname ...]\n"
 msgstr "kullanımı: namei [-mx] dosyaYolu [dosyaYolu ...]\n"
 
-#: misc-utils/namei.c:158
+#: misc-utils/namei.c:162
 #, c-format
 msgid "namei: could not chdir to root!\n"
 msgstr "namei: kök dizine geçilemedi!\n"
 
-#: misc-utils/namei.c:165
+#: misc-utils/namei.c:169
 #, c-format
 msgid "namei: could not stat root!\n"
 msgstr "namei: Kök dizin durum bilgileri alınamadı!\n"
 
-#: misc-utils/namei.c:179
+#: misc-utils/namei.c:183
 #, c-format
 msgid "namei: buf overflow\n"
 msgstr "namei: tampon bellekte taşma\n"
 
-#: misc-utils/namei.c:241
+#: misc-utils/namei.c:245
 #, c-format
 msgid " ? could not chdir into %s - %s (%d)\n"
 msgstr " ? %s içinde chdir yapamadı - %s (%d)\n"
 
-#: misc-utils/namei.c:269
+#: misc-utils/namei.c:273
 #, c-format
 msgid " ? problems reading symlink %s - %s (%d)\n"
 msgstr "%s sembolik bağı okunurken hata - %s (%d)\n"
 
-#: misc-utils/namei.c:279
+#: misc-utils/namei.c:283
 #, c-format
 msgid "  *** EXCEEDED UNIX LIMIT OF SYMLINKS ***\n"
 msgstr "  *** UNIX SEMBOLİK BAĞ SINIRLARI AŞILDI ***\n"
 
-#: misc-utils/namei.c:317
+#: misc-utils/namei.c:328
 #, c-format
 msgid "namei: unknown file type 0%06o on file %s\n"
 msgstr "namei:  0%06o dosya türü %s dosyasında anlaşılamadı\n"
@@ -7311,7 +7330,7 @@ msgstr "%s: %s  %s olarak değiştirilemedi: %s\n"
 msgid "call: %s from to files...\n"
 msgstr "çağrı: %s hangi dosyalarla çalışacak?\n"
 
-#: misc-utils/script.c:109
+#: misc-utils/script.c:110
 #, c-format
 msgid ""
 "Warning: `%s' is a link.\n"
@@ -7322,22 +7341,22 @@ msgstr ""
 "Gerçekten kullanmak istiyorsanız `%s [seçenekler] %s' ile kullanın.\n"
 "Betik başlatılmadı.\n"
 
-#: misc-utils/script.c:172
+#: misc-utils/script.c:173
 #, c-format
 msgid "usage: script [-a] [-f] [-q] [-t] [file]\n"
 msgstr "kullanımı: script [-a] [-f] [-q] [-t] [dosya]\n"
 
-#: misc-utils/script.c:195
+#: misc-utils/script.c:196
 #, c-format
 msgid "Script started, file is %s\n"
 msgstr "Betik başlatıldı, dosyası %s\n"
 
-#: misc-utils/script.c:290
+#: misc-utils/script.c:296
 #, c-format
 msgid "Script started on %s"
 msgstr "%s de betik başlatıldı"
 
-#: misc-utils/script.c:404
+#: misc-utils/script.c:410
 #, c-format
 msgid ""
 "\n"
@@ -7346,17 +7365,17 @@ msgstr ""
 "\n"
 "%s üzerinde betik tamamlandı"
 
-#: misc-utils/script.c:411
+#: misc-utils/script.c:417
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "Betik tamamlandı, dosyası %s\n"
 
-#: misc-utils/script.c:422
+#: misc-utils/script.c:428
 #, c-format
 msgid "openpty failed\n"
 msgstr "openpty başarısız\n"
 
-#: misc-utils/script.c:456
+#: misc-utils/script.c:462
 #, c-format
 msgid "Out of pty's\n"
 msgstr "pty sayısı yetersiz\n"
@@ -7587,12 +7606,12 @@ msgstr "%s okunurken hata\n"
 msgid "Error writing screendump\n"
 msgstr "Ekran dökümü yazılırken hata\n"
 
-#: misc-utils/setterm.c:1180
-#, c-format
-msgid "couldn't read %s, and cannot ioctl dump\n"
-msgstr "%s okunamadı ve ioctl dökümlenemiyor\n"
+#: misc-utils/setterm.c:1172
+#, fuzzy, c-format
+msgid "Couldn't read %s\n"
+msgstr "%s açılamadı\n"
 
-#: misc-utils/setterm.c:1246
+#: misc-utils/setterm.c:1223
 #, c-format
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: $TERM atanmamış.\n"
@@ -7602,52 +7621,52 @@ msgstr "%s: $TERM atanmamış.\n"
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr "whereis [ -sbmu ] [ -SBM dizin ... -f ] isim...\n"
 
-#: misc-utils/write.c:99
+#: misc-utils/write.c:98
 #, c-format
 msgid "write: can't find your tty's name\n"
 msgstr "write: kullandığınız tty ismi bulunamıyor\n"
 
-#: misc-utils/write.c:110
+#: misc-utils/write.c:109
 #, c-format
 msgid "write: you have write permission turned off.\n"
 msgstr "write: yazma izinleriniz kapalı.\n"
 
-#: misc-utils/write.c:131
+#: misc-utils/write.c:130
 #, c-format
 msgid "write: %s is not logged in on %s.\n"
 msgstr "write: %s ile %s üzerinde giriş yapılmamış.\n"
 
-#: misc-utils/write.c:139
+#: misc-utils/write.c:138
 #, c-format
 msgid "write: %s has messages disabled on %s\n"
 msgstr "write: %s iletileri %s üzerinde kapalı\n"
 
-#: misc-utils/write.c:146
+#: misc-utils/write.c:145
 #, c-format
 msgid "usage: write user [tty]\n"
 msgstr "kullanımı: write kullanıcı [tty]\n"
 
-#: misc-utils/write.c:234
+#: misc-utils/write.c:233
 #, c-format
 msgid "write: %s is not logged in\n"
 msgstr "write: %s sistemde değil\n"
 
-#: misc-utils/write.c:243
+#: misc-utils/write.c:242
 #, c-format
 msgid "write: %s has messages disabled\n"
 msgstr "write: iletiler %s için kapalı\n"
 
-#: misc-utils/write.c:247
+#: misc-utils/write.c:246
 #, c-format
 msgid "write: %s is logged in more than once; writing to %s\n"
 msgstr "write: %s birden fazla giriş yapmış; %s'e yazıyor\n"
 
-#: misc-utils/write.c:313
+#: misc-utils/write.c:312
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %s ..."
 msgstr "%s@%s den ileti var (%s olarak, %s üzerinden, şu an %s) ..."
 
-#: misc-utils/write.c:316
+#: misc-utils/write.c:315
 #, c-format
 msgid "Message from %s@%s on %s at %s ..."
 msgstr "%s@%s den ileti var (%s üzerinden, şu an %s) ..."
@@ -7723,22 +7742,27 @@ msgstr ""
 "%s bağı oluşturulamıyor\n"
 "Kalmış bir kilit dosyası olabilir mi?\n"
 
-#: mount/fstab.c:686 mount/fstab.c:739
+#: mount/fstab.c:688 mount/fstab.c:741
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "%s açılamıyor (%s) - mtab güncel değil"
 
-#: mount/fstab.c:748
+#: mount/fstab.c:750
 #, c-format
 msgid "error writing %s: %s"
 msgstr "%s yazılırken hata: %s"
 
-#: mount/fstab.c:758
+#: mount/fstab.c:768
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "%s için kip değiştirilirken hata: %s\n"
 
-#: mount/fstab.c:776
+#: mount/fstab.c:781
+#, fuzzy, c-format
+msgid "error changing owner of %s: %s\n"
+msgstr "%s için kip değiştirilirken hata: %s\n"
+
+#: mount/fstab.c:792
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "%s %s olarak değiştirilemiyor: %s\n"
@@ -7890,7 +7914,7 @@ msgstr "mount: mtab'a göre, %s %s üzerinde bağlı"
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: %s yazmak için açılamıyor: %s"
 
-#: mount/mount.c:552 mount/mount.c:950
+#: mount/mount.c:552 mount/mount.c:957
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: %s yazılırken hata: %s"
@@ -7900,163 +7924,173 @@ msgstr "mount: %s yazılırken hata: %s"
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: %s kipi değiştirilirken hata: %s"
 
-#: mount/mount.c:676 mount/mount.c:1565
+#: mount/mount.c:641
+#, fuzzy, c-format
+msgid "mount: cannot set group id: %s"
+msgstr "mount: hız ayarlanamıyor: %s"
+
+#: mount/mount.c:644
+#, fuzzy, c-format
+msgid "mount: cannot set user id: %s"
+msgstr "mount: hız ayarlanamıyor: %s"
+
+#: mount/mount.c:683 mount/mount.c:1572
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: ast süreç oluşturulamıyor: %s"
 
-#: mount/mount.c:690
+#: mount/mount.c:697
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: %s için bir dosya sistemi türü belirtilmemiş\n"
 
-#: mount/mount.c:693
+#: mount/mount.c:700
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       %s ya da %s içindeki anılan tüm türler denenecek\n"
 
-#: mount/mount.c:696
+#: mount/mount.c:703
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       ve bu takas alanı gibi görünüyor\n"
 
-#: mount/mount.c:698
+#: mount/mount.c:705
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       %s türü denenecek\n"
 
-#: mount/mount.c:725
+#: mount/mount.c:732
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s takas alanı gibi görünüyor - bağlanmadı"
 
-#: mount/mount.c:816
+#: mount/mount.c:823
 msgid "mount failed"
 msgstr "mount başarısız"
 
-#: mount/mount.c:818
+#: mount/mount.c:825
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: %s %s üzerinde sadece root tarafından bağlanabilir"
 
-#: mount/mount.c:846
+#: mount/mount.c:853
 msgid "mount: loop device specified twice"
 msgstr "mount: loop aygıtı iki kere belirtilmiş"
 
-#: mount/mount.c:851
+#: mount/mount.c:858
 msgid "mount: type specified twice"
 msgstr "mount: türü iki defa belirtilmiş"
 
-#: mount/mount.c:863
+#: mount/mount.c:870
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: loop aygıtı ayarları atlanıyor\n"
 
-#: mount/mount.c:876
+#: mount/mount.c:883
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: %s loop aygıtının kullanımına gidiliyor\n"
 
-#: mount/mount.c:885
+#: mount/mount.c:892
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:890
+#: mount/mount.c:897
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:895
+#: mount/mount.c:902
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: loop aygıtı ayarları yapılamadı\n"
 
-#: mount/mount.c:906
+#: mount/mount.c:913
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: loop aygıtı ayarları tamamlandı\n"
 
-#: mount/mount.c:945
+#: mount/mount.c:952
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: %s açılamıyor: %s"
 
-#: mount/mount.c:966
+#: mount/mount.c:973
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: -p ve --pass-fd seçeneklerinin argümanı bir sayı olmalıdır"
 
-#: mount/mount.c:979
+#: mount/mount.c:986
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: hızı ayarlamak için %s açılamıyor"
 
-#: mount/mount.c:982
+#: mount/mount.c:989
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: hız ayarlanamıyor: %s"
 
-#: mount/mount.c:1040
+#: mount/mount.c:1047
 #, fuzzy, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: mtab'a göre, %s zaten %s üzerinde bağlı"
 
-#: mount/mount.c:1115
+#: mount/mount.c:1122
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr "mount: Dosya sistemi türü saptanamadı ve belirtilmemiş"
 
-#: mount/mount.c:1118
+#: mount/mount.c:1125
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: dosya sistemi türünü belirtmelisiniz"
 
-#: mount/mount.c:1121
+#: mount/mount.c:1128
 msgid "mount: mount failed"
 msgstr "mount: bağlanamadı"
 
-#: mount/mount.c:1127 mount/mount.c:1162
+#: mount/mount.c:1134 mount/mount.c:1169
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: bağlama noktası %s bir dizin değil"
 
-#: mount/mount.c:1129
+#: mount/mount.c:1136
 msgid "mount: permission denied"
 msgstr "mount: erişim engellendi"
 
-#: mount/mount.c:1131
+#: mount/mount.c:1138
 msgid "mount: must be superuser to use mount"
 msgstr "mount: root tarafından kullanılmalı"
 
-#: mount/mount.c:1135 mount/mount.c:1139
+#: mount/mount.c:1142 mount/mount.c:1146
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s meşgul"
 
-#: mount/mount.c:1141
+#: mount/mount.c:1148
 msgid "mount: proc already mounted"
 msgstr "mount: proc zaten bağlı"
 
-#: mount/mount.c:1143
+#: mount/mount.c:1150
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: ya %s zaten bağlı ya da %s meşgul"
 
-#: mount/mount.c:1149
+#: mount/mount.c:1156
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: bağlama noktası %s yok"
 
-#: mount/mount.c:1151
+#: mount/mount.c:1158
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: bağlama noktası %s hiçbir yere sembolik bağ sağlamıyor"
 
-#: mount/mount.c:1154
+#: mount/mount.c:1161
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: özel aygıt %s yok"
 
-#: mount/mount.c:1164
+#: mount/mount.c:1171
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -8065,21 +8099,21 @@ msgstr ""
 "mount: özel aygıt %s yok\n"
 "       (dosya yolu öneki bir dizin değil)\n"
 
-#: mount/mount.c:1177
+#: mount/mount.c:1184
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s zaten bağlı değil, ya da seçenek yanlış"
 
-#: mount/mount.c:1179
-#, c-format
+#: mount/mount.c:1186
+#, fuzzy, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
-"       missing codepage or other error"
+"       missing codepage or helper program, or other error"
 msgstr ""
 "mount: dosya sistemi türü yanlış, seçenek yanlış, %s üzerinde superblok\n"
 "       hatalı, karakter kümesi eksik, ya da başka bir hata olabilir"
 
-#: mount/mount.c:1189
+#: mount/mount.c:1196
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -8087,7 +8121,7 @@ msgstr ""
 "       (fiilen ide-scsi kullanıldığına göre bu bir IDE aygıt\n"
 "        olabilir mi? Burada sr0, sda gibi birşeyler olmalı, değil mi?)"
 
-#: mount/mount.c:1195
+#: mount/mount.c:1202
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -8095,7 +8129,7 @@ msgstr ""
 "       (içindeki bir mantıksal disk bölümü yerine\n"
 "        bir ek disk bölümünü bağlamaya çalışmıyor musunuz?)"
 
-#: mount/mount.c:1212
+#: mount/mount.c:1219
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -8103,53 +8137,53 @@ msgstr ""
 "       Bazı durumlarda syslog'da bulunan bilgiler yararlıdır.\n"
 "       dmesg | tail  gibi birşeyler deneyin\n"
 
-#: mount/mount.c:1218
+#: mount/mount.c:1225
 msgid "mount table full"
 msgstr "bağ tablosu dolu"
 
-#: mount/mount.c:1220
+#: mount/mount.c:1227
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: superblok okunamıyor"
 
-#: mount/mount.c:1226
+#: mount/mount.c:1233
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: aygıt bilinmiyor"
 
-#: mount/mount.c:1231
+#: mount/mount.c:1238
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: dosya sistemi türü '%s' bilinmiyor"
 
-#: mount/mount.c:1243
+#: mount/mount.c:1250
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: herhalde %s kastettiniz"
 
-#: mount/mount.c:1246
+#: mount/mount.c:1253
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: 'iso9660' kastetmiş olabilir misiniz?"
 
-#: mount/mount.c:1249
+#: mount/mount.c:1256
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: 'vfat' kastetmiş olabilir misiniz?"
 
-#: mount/mount.c:1252
+#: mount/mount.c:1259
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s yanlış aygıt numarasına sahip ya da dosya sistemi türü %s "
 "desteklenmiyor"
 
-#: mount/mount.c:1258
+#: mount/mount.c:1265
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr ""
 "mount: %s bir blok aygıtı olmayabilir mi ve durum bilgileri alınamayabilir "
 "mi?"
 
-#: mount/mount.c:1260
+#: mount/mount.c:1267
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -8158,68 +8192,68 @@ msgstr ""
 "mount: çekirdek %s aygıtını bir blok aygıtı olarak tanımıyor\n"
 "       (`insmod sürücü' denenebilir?)"
 
-#: mount/mount.c:1263
+#: mount/mount.c:1270
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s bir blok aygıtı değil ( `-o loop' denenebilir mi?)"
 
-#: mount/mount.c:1266
+#: mount/mount.c:1273
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s bir blok aygıtı değil"
 
-#: mount/mount.c:1269
+#: mount/mount.c:1276
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s geçerli bir blok aygıtı değil"
 
-#: mount/mount.c:1272
+#: mount/mount.c:1279
 msgid "block device "
 msgstr "blok aygıtı "
 
-#: mount/mount.c:1274
+#: mount/mount.c:1281
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: %s%s salt-okunur bağlanamıyor"
 
-#: mount/mount.c:1278
+#: mount/mount.c:1285
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr ""
 "mount: %s%s yazma korumalı olduğu halde alenen `-w' seçeneği belirtilmiş"
 
-#: mount/mount.c:1293
+#: mount/mount.c:1300
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s yazma korumalı, salt-okunur olarak bağlanıyor"
 
-#: mount/mount.c:1393
+#: mount/mount.c:1400
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: tür belirtilmemiş - ':' içerdiğinden nfs varsayılıyor\n"
 
-#: mount/mount.c:1399
+#: mount/mount.c:1406
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: tür belirtilmemiş - '//' öneki içerdiğinden smbfs varsayılıyor\n"
 
-#: mount/mount.c:1416
+#: mount/mount.c:1423
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: \"%s\" artalana alınıyor\n"
 
-#: mount/mount.c:1426
+#: mount/mount.c:1433
 #, c-format
 msgid "mount: giving up \"%s\"\n"
 msgstr "mount: \"%s\" bırakılıyor\n"
 
-#: mount/mount.c:1512
+#: mount/mount.c:1519
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s zaten %s üzerinde bağlı\n"
 
-#: mount/mount.c:1650
+#: mount/mount.c:1657
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8282,24 +8316,24 @@ msgstr ""
 "Çeviri hatalarını <gnu-tr@belgeler.org> adresine bildiriniz.\n"
 "Daha fazla bilgi edinmek için 'man 8 mount' yazabilirsiniz.\n"
 
-#: mount/mount.c:1960
+#: mount/mount.c:1967
 msgid "mount: only root can do that"
 msgstr "mount: bunu sadece root yapabilir"
 
-#: mount/mount.c:1965
+#: mount/mount.c:1972
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s yok - oluşturuluyor...\n"
 
-#: mount/mount.c:1975
+#: mount/mount.c:1982
 msgid "nothing was mounted"
 msgstr "hiçbir şey bağlanmadı"
 
-#: mount/mount.c:1988 mount/mount.c:2014
+#: mount/mount.c:1995 mount/mount.c:2021
 msgid "mount: no such partition found"
 msgstr "mount: böyle bir disk bölümü yok"
 
-#: mount/mount.c:1991
+#: mount/mount.c:1998
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %s  %s ya da %s içinde bulunamıyor"
@@ -8346,42 +8380,47 @@ msgstr ""
 "           %s -a [-v]\n"
 "           %s [-v] özel ...\n"
 
-#: mount/swapon.c:128
+#: mount/swapon.c:103
+#, fuzzy, c-format
+msgid "%s: %s: unexpected file format\n"
+msgstr "%s: %s doyasında beklenmedik dosya sonu\n"
+
+#: mount/swapon.c:132
 #, fuzzy, c-format
 msgid "%s: cannot canonicalize %s: %s\n"
 msgstr "%s: %s açılamıyor: %s\n"
 
-#: mount/swapon.c:167 mount/swapon.c:255
+#: mount/swapon.c:171 mount/swapon.c:259
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s %s üzerinde\n"
 
-#: mount/swapon.c:177
+#: mount/swapon.c:181
 #, c-format
 msgid "%s: cannot stat %s: %s\n"
 msgstr "%s: %s durum bilgileri alınamıyor: %s\n"
 
-#: mount/swapon.c:188
+#: mount/swapon.c:192
 #, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
 msgstr "%s: uyarı: %s güvencesiz izinler (%04o) içeriyor, %04o önerilir\n"
 
-#: mount/swapon.c:200
+#: mount/swapon.c:204
 #, c-format
 msgid "%s: Skipping file %s - it appears to have holes.\n"
 msgstr "%s: %s atlanıyor - bazı delikler içeriyor gibi görünüyor.\n"
 
-#: mount/swapon.c:233
+#: mount/swapon.c:237
 #, c-format
 msgid "%s: cannot find the device for %s\n"
 msgstr "%s: %s için aygıt ismi bulunamıyor\n"
 
-#: mount/swapon.c:267
+#: mount/swapon.c:271
 #, c-format
 msgid "Not superuser.\n"
 msgstr "root değil.\n"
 
-#: mount/swapon.c:301 mount/swapon.c:492
+#: mount/swapon.c:305 mount/swapon.c:496
 #, c-format
 msgid "%s: cannot open %s: %s\n"
 msgstr "%s: %s açılamıyor: %s\n"
@@ -8391,81 +8430,91 @@ msgstr "%s: %s açılamıyor: %s\n"
 msgid "umount: compiled without support for -f\n"
 msgstr "umount: -f için destek içermeksizin derlenmiş\n"
 
-#: mount/umount.c:130
+#: mount/umount.c:109
+#, fuzzy, c-format
+msgid "umount: cannot set group id: %s"
+msgstr "mount: hız ayarlanamıyor: %s"
+
+#: mount/umount.c:112
+#, fuzzy, c-format
+msgid "umount: cannot set user id: %s"
+msgstr "mount: hız ayarlanamıyor: %s"
+
+#: mount/umount.c:137
 #, c-format
 msgid "umount: cannot fork: %s"
 msgstr "umount: ast süreç oluşturulamıyor: %s"
 
-#: mount/umount.c:142
+#: mount/umount.c:149
 #, c-format
 msgid "umount: %s: invalid block device"
 msgstr "umount: %s: blok aygıtı geçersiz"
 
-#: mount/umount.c:144
+#: mount/umount.c:151
 #, c-format
 msgid "umount: %s: not mounted"
 msgstr "umount: %s: bağlanmadı"
 
-#: mount/umount.c:146
+#: mount/umount.c:153
 #, c-format
 msgid "umount: %s: can't write superblock"
 msgstr "umount: %s: superblok yazılamıyor"
 
-#: mount/umount.c:150
+#: mount/umount.c:157
 #, c-format
 msgid "umount: %s: device is busy"
 msgstr "umount: %s: aygıt meşgul"
 
-#: mount/umount.c:152
+#: mount/umount.c:159
 #, c-format
 msgid "umount: %s: not found"
 msgstr "umount: %s: yok"
 
-#: mount/umount.c:154
+#: mount/umount.c:161
 #, c-format
 msgid "umount: %s: must be superuser to umount"
 msgstr "umount: %s: bağı kaldırmak için root gerekli"
 
-#: mount/umount.c:156
+#: mount/umount.c:163
 #, c-format
 msgid "umount: %s: block devices not permitted on fs"
 msgstr "umount: %s: dosya sisteminde blok aygıtlara izin yok"
 
-#: mount/umount.c:158
+#: mount/umount.c:165
 #, c-format
 msgid "umount: %s: %s"
 msgstr "umount: %s: %s"
 
-#: mount/umount.c:207
+#: mount/umount.c:214
 #, c-format
 msgid "no umount2, trying umount...\n"
 msgstr "umount2 yok, umount deneniyor...\n"
 
-#: mount/umount.c:223
+#: mount/umount.c:230
 #, c-format
 msgid "could not umount %s - trying %s instead\n"
 msgstr "umount %s gerçekleştirilemedi- yerine %s deneniyor\n"
 
-#: mount/umount.c:241
+#: mount/umount.c:248
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr "umount: %s meşgul- salt-okunur olarak yeniden bağlandı\n"
 
-#: mount/umount.c:252
+#: mount/umount.c:259
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr "umount: %s salt okunur olarak yeniden bağlanamıyor\n"
 
-#: mount/umount.c:261
+#: mount/umount.c:268
 #, c-format
 msgid "%s umounted\n"
 msgstr "%s sistemden ayrıldı\n"
 
-#: mount/umount.c:359
+#: mount/umount.c:366
 msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: ayrılacak dosya sistemlerinin listesi bulunamıyor"
 
-#: mount/umount.c:389
+#: mount/umount.c:396
 #, c-format
 msgid ""
 "Usage: umount [-hV]\n"
@@ -8491,46 +8540,46 @@ msgstr ""
 "Çeviri hatalarını <gnu-tr@belgeler.org> adresine bildiriniz\n"
 "Daha fazla bilgi edinmek için 'man 8 umount' yazınız.\n"
 
-#: mount/umount.c:441
+#: mount/umount.c:448
 msgid "Cannot umount \"\"\n"
 msgstr "\"\" ayrılamaz\n"
 
-#: mount/umount.c:447
+#: mount/umount.c:454
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr "%s sistemden ayrılmaya çalışılıyor\n"
 
-#: mount/umount.c:453
+#: mount/umount.c:460
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "mtab içinde %s bulunamadı\n"
 
-#: mount/umount.c:460
+#: mount/umount.c:467
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s bağlı değil (mtab içinde yok)"
 
-#: mount/umount.c:484
+#: mount/umount.c:491
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: %s defalarca bağlanmış görünüyor"
 
-#: mount/umount.c:497
+#: mount/umount.c:504
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: %s fstab içinde yok (ve siz root değilsiniz)"
 
-#: mount/umount.c:501
+#: mount/umount.c:508
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: %s bağı fstab ile çelişiyor"
 
-#: mount/umount.c:542
+#: mount/umount.c:549
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "umount: sadece %1$s %3$s aygıtını %2$s dizininden ayırabilir"
 
-#: mount/umount.c:623
+#: mount/umount.c:630
 msgid "umount: only root can do that"
 msgstr "umount: bu sadece root tarafından yapılabilir"
 
@@ -9556,7 +9605,12 @@ msgstr ""
 
 #: sys-utils/rtcwake.c:380
 #, fuzzy, c-format
-msgid "Using %s time\n"
+msgid "Using UTC time.\n"
+msgstr "%s kullanarak.\n"
+
+#: sys-utils/rtcwake.c:381
+#, fuzzy, c-format
+msgid "Using local time.\n"
 msgstr "%s kullanarak.\n"
 
 #: sys-utils/rtcwake.c:385
@@ -9598,7 +9652,12 @@ msgstr ", hazır"
 msgid "disable rtc alarm interrupt"
 msgstr ""
 
-#: sys-utils/setarch.c:70
+#: sys-utils/setarch.c:50
+#, c-format
+msgid "Switching on %s.\n"
+msgstr ""
+
+#: sys-utils/setarch.c:81
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -9606,46 +9665,50 @@ msgid ""
 "Options:\n"
 msgstr ""
 
-#: sys-utils/setarch.c:74
+#: sys-utils/setarch.c:85
 #, c-format
-msgid "\t-%c\tEnable %s\n"
+msgid ""
+" -h, --help               this help\n"
+" -v, --verbose            verbose mode\n"
+" -R, --addr-no-randomize  disables randomization of the virtual address "
+"space\n"
+" -F, --fdpic-funcptrs     turns on function pointers point to descriptors\n"
+" -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
+" -L, --addr-compat-layout changes the way virtual memory is allocated\n"
+" -X, --read-implies-exec  turns on READ_IMPLIES_EXEC\n"
+" -B, --32bit              turns on ADDR_LIMIT_32BIT\n"
+" -I, --short-inode        turns on SHORT_INODE\n"
+" -S, --whole-seconds      turns on WHOLE_SECONDS\n"
+" -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
+" -3, --3gb                turns on maximum of 3GB of address space\n"
+"     --4gb                ignored (for backward compatibility only\n"
 msgstr ""
 
-#: sys-utils/setarch.c:76
+#: sys-utils/setarch.c:99
 #, c-format
 msgid ""
 "\n"
 "For more information see setarch(8).\n"
 msgstr ""
 
-#: sys-utils/setarch.c:88
+#: sys-utils/setarch.c:111
 #, fuzzy, c-format
 msgid ""
 "%s: %s\n"
 "Try `%s --help' for more information.\n"
 msgstr "Daha fazla bilgi için `getopt --help' yazınız.\n"
 
-#: sys-utils/setarch.c:155 sys-utils/setarch.c:171
+#: sys-utils/setarch.c:179 sys-utils/setarch.c:195
 #, fuzzy, c-format
 msgid "%s: Unrecognized architecture"
 msgstr " %s: disk bölümleme tablosu türü tanınmıyor\n"
 
-#: sys-utils/setarch.c:188 sys-utils/setarch.c:195
+#: sys-utils/setarch.c:213 sys-utils/setarch.c:220
 #, fuzzy
 msgid "Not enough arguments"
 msgstr "Çok fazla argüman belirtildi.\n"
 
-#: sys-utils/setarch.c:237
-#, c-format
-msgid "Switching on %s.\n"
-msgstr ""
-
-#: sys-utils/setarch.c:244
-#, fuzzy, c-format
-msgid "Unknown option `%c' ignored"
-msgstr "%s: \"-%c\" diye bir seçenek bilinmiyor\n"
-
-#: sys-utils/setarch.c:249
+#: sys-utils/setarch.c:282
 #, fuzzy, c-format
 msgid "Failed to set personality to %s"
 msgstr "%s disk bölümüne yazarken hata oluştu\n"
@@ -9785,17 +9848,17 @@ msgstr ""
 "hexdump: [-bcCdovx] [-e biçem] [-f biçemDosyası] [-n uzunluk] [-s atlanan] "
 "[dosya ...]\n"
 
-#: text-utils/more.c:258
+#: text-utils/more.c:257
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr "kullanımı: %s [-dflpcsu] [+satırnum | +/kalıp] isim1 isim2 ...\n"
 
-#: text-utils/more.c:481
+#: text-utils/more.c:480
 #, c-format
 msgid "%s: unknown option \"-%c\"\n"
 msgstr "%s: \"-%c\" diye bir seçenek bilinmiyor\n"
 
-#: text-utils/more.c:513
+#: text-utils/more.c:512
 #, c-format
 msgid ""
 "\n"
@@ -9806,7 +9869,7 @@ msgstr ""
 "*** %s: dizin ***\n"
 "\n"
 
-#: text-utils/more.c:557
+#: text-utils/more.c:556
 #, c-format
 msgid ""
 "\n"
@@ -9817,45 +9880,45 @@ msgstr ""
 "******** %s: Bir metin dosyası değil ********\n"
 "\n"
 
-#: text-utils/more.c:660
+#: text-utils/more.c:659
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Çıkmak için q ya da Q kullanın]"
 
-#: text-utils/more.c:752
+#: text-utils/more.c:751
 #, c-format
 msgid "--More--"
 msgstr "--Başka--"
 
-#: text-utils/more.c:754
+#: text-utils/more.c:753
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Sonraki dosya: %s)"
 
-#: text-utils/more.c:759
+#: text-utils/more.c:758
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Devam etmek için boşluk çubuğuna, çıkmak için 'q' tuşuna basınız.]"
 
-#: text-utils/more.c:1174
+#: text-utils/more.c:1173
 #, c-format
 msgid "...back %d pages"
 msgstr "...kalan %d sayfa"
 
-#: text-utils/more.c:1176
+#: text-utils/more.c:1175
 msgid "...back 1 page"
 msgstr "...kalan 1 sayfa"
 
-#: text-utils/more.c:1219
+#: text-utils/more.c:1218
 msgid "...skipping one line"
 msgstr "...bir satır atlanıyor"
 
-#: text-utils/more.c:1221
+#: text-utils/more.c:1220
 #, c-format
 msgid "...skipping %d lines"
 msgstr "...%d satır atlanıyor"
 
-#: text-utils/more.c:1258
+#: text-utils/more.c:1257
 msgid ""
 "\n"
 "***Back***\n"
@@ -9865,7 +9928,7 @@ msgstr ""
 "***Kalan***\n"
 "\n"
 
-#: text-utils/more.c:1296
+#: text-utils/more.c:1295
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -9877,7 +9940,7 @@ msgstr ""
 "parantezlerle belirtilenler öntanımlıdır. Yıldız (*) işareti yeni öntanımlı\n"
 "değer olacağını belirtir.\n"
 
-#: text-utils/more.c:1303
+#: text-utils/more.c:1302
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -9923,34 +9986,34 @@ msgstr ""
 ":f             Dosya ismini ve satır numarasını gösterir\n"
 ".              Önceki komut tekrarlanır\n"
 
-#: text-utils/more.c:1372 text-utils/more.c:1377
+#: text-utils/more.c:1371 text-utils/more.c:1376
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Yardım başlıkları için 'h' tuşuna basınız]"
 
-#: text-utils/more.c:1411
+#: text-utils/more.c:1410
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" satır %d"
 
-#: text-utils/more.c:1413
+#: text-utils/more.c:1412
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Dosya değil] satır %d"
 
-#: text-utils/more.c:1497
+#: text-utils/more.c:1496
 msgid "  Overflow\n"
 msgstr "  Taşma\n"
 
-#: text-utils/more.c:1544
+#: text-utils/more.c:1543
 msgid "...skipping\n"
 msgstr "...atlanıyor\n"
 
-#: text-utils/more.c:1573
+#: text-utils/more.c:1572
 msgid "Regular expression botch"
 msgstr "Düzenli ifade acemice"
 
-#: text-utils/more.c:1585
+#: text-utils/more.c:1584
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9958,15 +10021,15 @@ msgstr ""
 "\n"
 "Kalıp bulunamadı\n"
 
-#: text-utils/more.c:1588 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1587 text-utils/pg.c:1123 text-utils/pg.c:1274
 msgid "Pattern not found"
 msgstr "Kalıp bulunamadı"
 
-#: text-utils/more.c:1649
+#: text-utils/more.c:1648
 msgid "can't fork\n"
 msgstr "ast süreç oluşturulamadı\n"
 
-#: text-utils/more.c:1688
+#: text-utils/more.c:1687
 msgid ""
 "\n"
 "...Skipping "
@@ -9974,19 +10037,19 @@ msgstr ""
 "\n"
 "...Atlanıyor "
 
-#: text-utils/more.c:1692
+#: text-utils/more.c:1691
 msgid "...Skipping to file "
 msgstr "...Dosyaya atlanıyor: "
 
-#: text-utils/more.c:1694
+#: text-utils/more.c:1693
 msgid "...Skipping back to file "
 msgstr "...Önceki dosyaya atlanıyor: "
 
-#: text-utils/more.c:1972
+#: text-utils/more.c:1971
 msgid "Line too long"
 msgstr "Satır çok uzun"
 
-#: text-utils/more.c:2015
+#: text-utils/more.c:2014
 msgid "No previous command to substitute for"
 msgstr "Yerini alacak öncesinde bir komut yok"
 
@@ -10039,7 +10102,7 @@ msgstr "hexdump: biçem hatalı {%s}\n"
 msgid "hexdump: bad conversion character %%%s.\n"
 msgstr "hexdump: dönüşüm karakteri %%%s hatalı.\n"
 
-#: text-utils/pg.c:237
+#: text-utils/pg.c:235
 #, c-format
 msgid ""
 "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
@@ -10047,81 +10110,81 @@ msgstr ""
 "%s: Kullanımı: %s [-number] [-p dizge] [-cefnrs] [+satır] [+/kalıp/] "
 "[dosyalar]\n"
 
-#: text-utils/pg.c:246
+#: text-utils/pg.c:244
 #, c-format
 msgid "%s: option requires an argument -- %s\n"
 msgstr "%s: seçenek bir argümanla kullanılır -- %s\n"
 
-#: text-utils/pg.c:254
+#: text-utils/pg.c:252
 #, c-format
 msgid "%s: illegal option -- %s\n"
 msgstr "%s: kuraldışı seçenek -- %s\n"
 
-#: text-utils/pg.c:371
+#: text-utils/pg.c:369
 msgid "...skipping forward\n"
 msgstr "...ileri atlanıyor\n"
 
-#: text-utils/pg.c:373
+#: text-utils/pg.c:371
 msgid "...skipping backward\n"
 msgstr "...geri atlanıyor\n"
 
-#: text-utils/pg.c:395
+#: text-utils/pg.c:393
 msgid "No next file"
 msgstr "Sonrasında dosya yok"
 
-#: text-utils/pg.c:399
+#: text-utils/pg.c:397
 msgid "No previous file"
 msgstr "Öncesinde dosya yok"
 
-#: text-utils/pg.c:929
+#: text-utils/pg.c:927
 #, c-format
 msgid "%s: Read error from %s file\n"
 msgstr "%s: %s dosyasından okuma hatası\n"
 
-#: text-utils/pg.c:935
+#: text-utils/pg.c:933
 #, c-format
 msgid "%s: Unexpected EOF in %s file\n"
 msgstr "%s: %s doyasında beklenmedik dosya sonu\n"
 
-#: text-utils/pg.c:938
+#: text-utils/pg.c:936
 #, c-format
 msgid "%s: Unknown error in %s file\n"
 msgstr "%s: %s doyasında bilinmeyen hata\n"
 
-#: text-utils/pg.c:1033
+#: text-utils/pg.c:1031
 #, c-format
 msgid "%s: Cannot create tempfile\n"
 msgstr "%s: geçici dosya oluşturulamıyor.\n"
 
-#: text-utils/pg.c:1042 text-utils/pg.c:1217
+#: text-utils/pg.c:1040 text-utils/pg.c:1215
 msgid "RE error: "
 msgstr "RE hatası:"
 
-#: text-utils/pg.c:1199
+#: text-utils/pg.c:1197
 msgid "(EOF)"
 msgstr "(DosyaSonu)"
 
-#: text-utils/pg.c:1225
+#: text-utils/pg.c:1223
 msgid "No remembered search string"
 msgstr "Arama dizgesi yok"
 
-#: text-utils/pg.c:1308
+#: text-utils/pg.c:1306
 msgid "Cannot open "
 msgstr "Açılamıyor"
 
-#: text-utils/pg.c:1356
+#: text-utils/pg.c:1354
 msgid "saved"
 msgstr "kaydedildi"
 
-#: text-utils/pg.c:1463
+#: text-utils/pg.c:1461
 msgid ": !command not allowed in rflag mode.\n"
 msgstr ": rflag kipinde ! komutu kullanılmaz.\n"
 
-#: text-utils/pg.c:1495
+#: text-utils/pg.c:1493
 msgid "fork() failed, try again later\n"
 msgstr "Alt süreç oluşturulamadı, daha sonra tekrar deneyin\n"
 
-#: text-utils/pg.c:1700
+#: text-utils/pg.c:1698
 msgid "(Next file: "
 msgstr "(Sonraki dosya: "
 
@@ -10135,15 +10198,30 @@ msgstr "Tampon alanı ayrılamadı\n"
 msgid "usage: rev [file ...]\n"
 msgstr "kullanımı: rev [dosya ...]\n"
 
-#: text-utils/tailf.c:53 text-utils/tailf.c:105
-#, c-format
-msgid "Cannot open \"%s\" for read\n"
+#: text-utils/tailf.c:59 text-utils/tailf.c:129
+#, fuzzy, c-format
+msgid "Cannot open \"%s\" for read: %s\n"
 msgstr "\"%s\" okumak için açılamıyor\n"
 
-#: text-utils/tailf.c:93
-#, c-format
-msgid "Usage: tailf logfile\n"
+#: text-utils/tailf.c:107 text-utils/tailf.c:111
+#, fuzzy
+msgid "Invalid number of lines"
+msgstr "Numara geçersiz: %s\n"
+
+#: text-utils/tailf.c:114
+#, fuzzy
+msgid "Invalid option"
+msgstr "kimlik geçersiz"
+
+#: text-utils/tailf.c:118
+#, fuzzy, c-format
+msgid "Usage: tailf [-n N | -N] logfile\n"
 msgstr "Kullanımı: tailf günlük_dosyası\n"
+
+#: text-utils/tailf.c:137
+#, c-format
+msgid "Incomplete write to \"%s\" (written %d, expected %d)\n"
+msgstr ""
 
 #: text-utils/ul.c:141
 #, c-format
@@ -10174,6 +10252,16 @@ msgstr "Girdi satırı çok uzun.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Tampon büyütülürken bellek yetmedi.\n"
+
+#~ msgid "Password error."
+#~ msgstr "Parola hatası."
+
+#~ msgid "couldn't read %s, and cannot ioctl dump\n"
+#~ msgstr "%s okunamadı ve ioctl dökümlenemiyor\n"
+
+#, fuzzy
+#~ msgid "Unknown option `%c' ignored"
+#~ msgstr "%s: \"-%c\" diye bir seçenek bilinmiyor\n"
 
 #~ msgid "`%s': bad directory: '.' isn't first\n"
 #~ msgstr "`%s': dizin hatalı: '.' ilk değil\n"
@@ -10404,9 +10492,6 @@ msgstr "Tampon büyütülürken bellek yetmedi.\n"
 #~ msgstr ""
 #~ "Kullanımı: flock [--shared] [--timeout=saniye] dosyaismi komut {arg "
 #~ "arg...}\n"
-
-#~ msgid "Invalid number: %s\n"
-#~ msgstr "Numara geçersiz: %s\n"
 
 #~ msgid "Syntax error: '%s'\n"
 #~ msgstr "Sözdizimi hatası: '%s'\n"

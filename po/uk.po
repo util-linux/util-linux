@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-08-28 00:12+0200\n"
+"POT-Creation-Date: 2007-10-11 14:29+0200\n"
 "PO-Revision-Date: 2005-11-30 10:45+0200\n"
 "Last-Translator: Maxim V. Dziumanenko <mvd@mylinux.com.ua>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
@@ -178,9 +178,9 @@ msgstr "використання: %s [ -n ] пристрій\n"
 
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
-#: disk-utils/mkfs.cramfs.c:784 disk-utils/mkfs.minix.c:626
+#: disk-utils/mkfs.cramfs.c:785 disk-utils/mkfs.minix.c:629
 #: disk-utils/mkswap.c:518 misc-utils/ddate.c:179 misc-utils/rename.c:79
-#: misc-utils/script.c:146 sys-utils/readprofile.c:197
+#: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, c-format
 msgid "%s (%s)\n"
 msgstr "%s (%s)\n"
@@ -207,7 +207,7 @@ msgstr "Дві"
 msgid "Single"
 msgstr "Одна"
 
-#: disk-utils/fsck.cramfs.c:118
+#: disk-utils/fsck.cramfs.c:117
 #, c-format
 msgid ""
 "usage: %s [-hv] [-x dir] file\n"
@@ -528,8 +528,8 @@ msgstr "Зона %d: використовується, лічильник=%d\n"
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "Зона %d: не використовується, лічильник=%d\n"
 
-#: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:631
-#: disk-utils/mkfs.minix.c:633
+#: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:634
+#: disk-utils/mkfs.minix.c:636
 msgid "bad inode size"
 msgstr "неправильний розмір вузла"
 
@@ -690,7 +690,7 @@ msgstr "надто багато вузлів - максимум 512"
 msgid "not enough space, need at least %lu blocks"
 msgstr "не вистачає простору, потрібно принаймні %lu блоків"
 
-#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2321
+#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2314
 #, c-format
 msgid "Device: %s\n"
 msgstr "Пристрій: %s\n"
@@ -810,9 +810,9 @@ msgstr ""
 " файл_вив   файл виводу\n"
 
 #: disk-utils/mkfs.cramfs.c:337
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Very long (%u bytes) filename `%s' found.\n"
+"Very long (%zu bytes) filename `%s' found.\n"
 " Please increase MAX_INPUT_NAMELEN in mkcramfs.c and recompile.  Exiting.\n"
 msgstr ""
 "Знайдено надто довгі (%u байт) назви файлів `%s'.\n"
@@ -824,88 +824,88 @@ msgstr ""
 msgid "filesystem too big.  Exiting.\n"
 msgstr "файлова система надто велика. Завершення.\n"
 
-#: disk-utils/mkfs.cramfs.c:627
+#: disk-utils/mkfs.cramfs.c:628
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
 msgstr "AIEEE: блок \"стиснений\" > 2*blocklength (%ld)\n"
 
-#: disk-utils/mkfs.cramfs.c:646
-#, c-format
-msgid "%6.2f%% (%+d bytes)\t%s\n"
+#: disk-utils/mkfs.cramfs.c:647
+#, fuzzy, c-format
+msgid "%6.2f%% (%+ld bytes)\t%s\n"
 msgstr "%6.2f%% (%+d байтів)\t%s\n"
 
-#: disk-utils/mkfs.cramfs.c:825
-#, c-format
+#: disk-utils/mkfs.cramfs.c:826
+#, fuzzy, c-format
 msgid ""
-"warning: guestimate of required size (upper bound) is %LdMB, but maximum "
+"warning: guestimate of required size (upper bound) is %lldMB, but maximum "
 "image size is %uMB.  We might die prematurely.\n"
 msgstr ""
 "Попередження: очікуваний необхідний розмір (верхня межа) складає %LdМб, але "
 "максимальний розмір образу %uМб.  Можливе передчасне аварійне завершення.\n"
 
-#: disk-utils/mkfs.cramfs.c:866
+#: disk-utils/mkfs.cramfs.c:867
 #, c-format
 msgid "Including: %s\n"
 msgstr "Включається: %s\n"
 
-#: disk-utils/mkfs.cramfs.c:872
-#, c-format
-msgid "Directory data: %d bytes\n"
+#: disk-utils/mkfs.cramfs.c:873
+#, fuzzy, c-format
+msgid "Directory data: %zd bytes\n"
 msgstr "Дані каталогу: %d байт\n"
 
-#: disk-utils/mkfs.cramfs.c:880
-#, c-format
-msgid "Everything: %d kilobytes\n"
+#: disk-utils/mkfs.cramfs.c:881
+#, fuzzy, c-format
+msgid "Everything: %zd kilobytes\n"
 msgstr "Загалом: %d кілобайт\n"
 
-#: disk-utils/mkfs.cramfs.c:885
-#, c-format
-msgid "Super block: %d bytes\n"
+#: disk-utils/mkfs.cramfs.c:886
+#, fuzzy, c-format
+msgid "Super block: %zd bytes\n"
 msgstr "Суперблок: %d байт\n"
 
-#: disk-utils/mkfs.cramfs.c:892
+#: disk-utils/mkfs.cramfs.c:893
 #, c-format
 msgid "CRC: %x\n"
 msgstr "Контрольна сума: %x\n"
 
-#: disk-utils/mkfs.cramfs.c:897
-#, c-format
-msgid "not enough space allocated for ROM image (%Ld allocated, %d used)\n"
+#: disk-utils/mkfs.cramfs.c:898
+#, fuzzy, c-format
+msgid "not enough space allocated for ROM image (%lld allocated, %zu used)\n"
 msgstr "не вистачає простору для ROM образу (виділено %Ld, використано %d)\n"
 
-#: disk-utils/mkfs.cramfs.c:909
-#, c-format
-msgid "ROM image write failed (%d %d)\n"
+#: disk-utils/mkfs.cramfs.c:910
+#, fuzzy, c-format
+msgid "ROM image write failed (%zd %zd)\n"
 msgstr "помилка запису ROM обрізу (%d %d)\n"
 
-#: disk-utils/mkfs.cramfs.c:918
+#: disk-utils/mkfs.cramfs.c:919
 #, c-format
 msgid "warning: filenames truncated to 255 bytes.\n"
 msgstr "Попередження: назва файлу обрізана до 255 байтів.\n"
 
-#: disk-utils/mkfs.cramfs.c:921
+#: disk-utils/mkfs.cramfs.c:922
 #, c-format
 msgid "warning: files were skipped due to errors.\n"
 msgstr "Попередження: файл пропущений внаслідок помилок.\n"
 
-#: disk-utils/mkfs.cramfs.c:924
+#: disk-utils/mkfs.cramfs.c:925
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte).\n"
 msgstr "Попередження: розміри файлів обрізані до %luМб (мінус 1 байт).\n"
 
-#: disk-utils/mkfs.cramfs.c:929
+#: disk-utils/mkfs.cramfs.c:930
 #, c-format
 msgid ""
 "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr "Попередження: uid обрізані до %u біт. (Це може загрожувати безпеці.)\n"
 
-#: disk-utils/mkfs.cramfs.c:934
+#: disk-utils/mkfs.cramfs.c:935
 #, c-format
 msgid ""
 "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr "Попередження: gid обрізані до %u біт. (Це може загрожувати безпеці.)\n"
 
-#: disk-utils/mkfs.cramfs.c:939
+#: disk-utils/mkfs.cramfs.c:940
 #, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
@@ -996,12 +996,12 @@ msgstr "помилка позиціювання у функції check_blocks"
 msgid "bad blocks before data-area: cannot make fs"
 msgstr "неправильні блоки перед областю даних: не вдається створити ФС"
 
-#: disk-utils/mkfs.minix.c:580 disk-utils/mkfs.minix.c:602
+#: disk-utils/mkfs.minix.c:580 disk-utils/mkfs.minix.c:605
 #, c-format
 msgid "%d bad blocks\n"
 msgstr "%d пошкоджених блоків\n"
 
-#: disk-utils/mkfs.minix.c:582 disk-utils/mkfs.minix.c:604
+#: disk-utils/mkfs.minix.c:582 disk-utils/mkfs.minix.c:607
 #, c-format
 msgid "one bad block\n"
 msgstr "один пошкоджений блок\n"
@@ -1010,22 +1010,32 @@ msgstr "один пошкоджений блок\n"
 msgid "can't open file of bad blocks"
 msgstr "не вдається відкрити файл пошкоджених блоків"
 
-#: disk-utils/mkfs.minix.c:674
+#: disk-utils/mkfs.minix.c:596
+#, c-format
+msgid "badblock number input error on line %d\n"
+msgstr ""
+
+#: disk-utils/mkfs.minix.c:597
+#, fuzzy
+msgid "cannot read badblocks file"
+msgstr "не вдається прочитати дисковий пристрій"
+
+#: disk-utils/mkfs.minix.c:677
 #, c-format
 msgid "strtol error: number of blocks not specified"
 msgstr "strtol помилка: не вказано кількість блоків"
 
-#: disk-utils/mkfs.minix.c:703
+#: disk-utils/mkfs.minix.c:706
 #, c-format
 msgid "unable to stat %s"
 msgstr "не вдається запустити %s"
 
-#: disk-utils/mkfs.minix.c:709
+#: disk-utils/mkfs.minix.c:712
 #, c-format
 msgid "unable to open %s"
 msgstr "не вдається відкрити %s"
 
-#: disk-utils/mkfs.minix.c:713
+#: disk-utils/mkfs.minix.c:716
 #, c-format
 msgid "will not try to make filesystem on '%s'"
 msgstr "файлова система не буде створена на '%s'"
@@ -1073,8 +1083,8 @@ msgstr ""
 msgid "too many bad pages"
 msgstr "надто багато пошкоджених сторінок"
 
-#: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1988 text-utils/more.c:1999
+#: disk-utils/mkswap.c:391 misc-utils/look.c:182 misc-utils/setterm.c:1147
+#: text-utils/more.c:1987 text-utils/more.c:1998
 msgid "Out of memory"
 msgstr "Недостатньо пам'яті"
 
@@ -2910,7 +2920,7 @@ msgstr "Змінено тип системи розділу %d на %x (%s)\n"
 
 #: fdisk/fdisk.c:1515
 #, fuzzy, c-format
-msgid "System type of partition %d is unchangedto %x (%s)\n"
+msgid "System type of partition %d is unchanged to %x (%s)\n"
 msgstr "Змінено тип системи розділу %d на %x (%s)\n"
 
 #: fdisk/fdisk.c:1567
@@ -3188,12 +3198,12 @@ msgstr ""
 "Таблиця розділів була змінена!\n"
 "\n"
 
-#: fdisk/fdisk.c:2254
+#: fdisk/fdisk.c:2256
 #, c-format
 msgid "Calling ioctl() to re-read partition table.\n"
 msgstr "Викликається ioctl(), щоб перечитати таблицю розділів.\n"
 
-#: fdisk/fdisk.c:2270
+#: fdisk/fdisk.c:2263
 #, c-format
 msgid ""
 "\n"
@@ -3206,7 +3216,7 @@ msgstr ""
 "Ядро досі використовує стару таблицю розділів.\n"
 "Нова таблиця розділів використовуватиметься після перезавантаження.\n"
 
-#: fdisk/fdisk.c:2280
+#: fdisk/fdisk.c:2273
 #, c-format
 msgid ""
 "\n"
@@ -3219,7 +3229,7 @@ msgstr ""
 "розділи, перегляньте man-сторінку з fdisk для отримання додаткової\n"
 "інформації.\n"
 
-#: fdisk/fdisk.c:2286
+#: fdisk/fdisk.c:2279
 #, c-format
 msgid ""
 "\n"
@@ -3228,42 +3238,42 @@ msgstr ""
 "\n"
 "Помилка закривання файлу\n"
 
-#: fdisk/fdisk.c:2290
+#: fdisk/fdisk.c:2283
 #, c-format
 msgid "Syncing disks.\n"
 msgstr "Синхронізація дисків.\n"
 
-#: fdisk/fdisk.c:2337
+#: fdisk/fdisk.c:2330
 #, c-format
 msgid "Partition %d has no data area\n"
 msgstr "Розділ %d не має області даних\n"
 
-#: fdisk/fdisk.c:2342
+#: fdisk/fdisk.c:2335
 msgid "New beginning of data"
 msgstr "Новий початок даних"
 
-#: fdisk/fdisk.c:2358
+#: fdisk/fdisk.c:2351
 msgid "Expert command (m for help): "
 msgstr "Команди експертного режиму(m - довідка): "
 
-#: fdisk/fdisk.c:2371
+#: fdisk/fdisk.c:2364
 msgid "Number of cylinders"
 msgstr "Кількість циліндрів"
 
-#: fdisk/fdisk.c:2398
+#: fdisk/fdisk.c:2391
 msgid "Number of heads"
 msgstr "Кількість головок"
 
-#: fdisk/fdisk.c:2425
+#: fdisk/fdisk.c:2418
 msgid "Number of sectors"
 msgstr "Кількість секторів"
 
-#: fdisk/fdisk.c:2428
+#: fdisk/fdisk.c:2421
 #, c-format
 msgid "Warning: setting sector offset for DOS compatiblity\n"
 msgstr "Попередження: встановлюється зсув сектору для сумісності з DOS\n"
 
-#: fdisk/fdisk.c:2487
+#: fdisk/fdisk.c:2480
 #, c-format
 msgid ""
 "\n"
@@ -3272,33 +3282,33 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/fdisk.c:2509
+#: fdisk/fdisk.c:2502
 #, c-format
 msgid "Disk %s doesn't contain a valid partition table\n"
 msgstr "Диск %s не містить правильної таблиці розділів\n"
 
-#: fdisk/fdisk.c:2520
+#: fdisk/fdisk.c:2513
 #, c-format
 msgid "Cannot open %s\n"
 msgstr "не вдається відкрити %s\n"
 
-#: fdisk/fdisk.c:2538 fdisk/sfdisk.c:2423
+#: fdisk/fdisk.c:2531 fdisk/sfdisk.c:2423
 #, c-format
 msgid "cannot open %s\n"
 msgstr "не вдається відкрити %s\n"
 
-#: fdisk/fdisk.c:2558
+#: fdisk/fdisk.c:2551
 #, c-format
 msgid "%c: unknown command\n"
 msgstr "%c: невідома команда\n"
 
-#: fdisk/fdisk.c:2628
+#: fdisk/fdisk.c:2621
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
 msgstr ""
 "Це ядро визначає розмір сектору саме, тому -b параметри проігноровано\n"
 
-#: fdisk/fdisk.c:2632
+#: fdisk/fdisk.c:2625
 #, c-format
 msgid ""
 "Warning: the -b (set sector size) option should be used with one specified "
@@ -3307,16 +3317,16 @@ msgstr ""
 "Попередження: з вказаним пристроєм повинен використовуватись параметр -b "
 "(встановити розмір сектора)\n"
 
-#: fdisk/fdisk.c:2693
+#: fdisk/fdisk.c:2686
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr "Знайдено OSF/1 етикетку диску на %s, перехід у режим етикетки диску.\n"
 
-#: fdisk/fdisk.c:2703
+#: fdisk/fdisk.c:2696
 msgid "Command (m for help): "
 msgstr "Команда (m - довідка): "
 
-#: fdisk/fdisk.c:2719
+#: fdisk/fdisk.c:2712
 #, c-format
 msgid ""
 "\n"
@@ -3325,16 +3335,16 @@ msgstr ""
 "\n"
 "Поточний файл завантаження: %s\n"
 
-#: fdisk/fdisk.c:2721
+#: fdisk/fdisk.c:2714
 msgid "Please enter the name of the new boot file: "
 msgstr "Введіть назву нового файлу завантаження: "
 
-#: fdisk/fdisk.c:2723
+#: fdisk/fdisk.c:2716
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "Файл завантаження не змінено\n"
 
-#: fdisk/fdisk.c:2796
+#: fdisk/fdisk.c:2789
 #, c-format
 msgid ""
 "\n"
@@ -5427,7 +5437,7 @@ msgstr "Вважається, що апаратний годинник синх�
 msgid "UTC"
 msgstr "UTC"
 
-#: hwclock/hwclock.c:230 hwclock/hwclock.c:323 sys-utils/rtcwake.c:381
+#: hwclock/hwclock.c:230 hwclock/hwclock.c:323
 msgid "local"
 msgstr "локальний"
 
@@ -5774,7 +5784,7 @@ msgstr "Епоха не встановлюється у %d - лише тесту
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "не вдається встановити значення епохи у ядрі.\n"
 
-#: hwclock/hwclock.c:1186 misc-utils/cal.c:333 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1186 misc-utils/cal.c:332 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s з %s\n"
@@ -5940,7 +5950,7 @@ msgstr "Очікування зміни часу з KDGHWCLK у циклі\n"
 msgid "KDGHWCLK ioctl to read time failed"
 msgstr "Помилка зчитування часу з системному виклику ioctl KDGHWCLK"
 
-#: hwclock/kd.c:79 hwclock/rtc.c:205
+#: hwclock/kd.c:79 hwclock/rtc.c:202
 #, c-format
 msgid "Timed out waiting for time change.\n"
 msgstr "Вийшов час очікування зміни часу.\n"
@@ -5966,67 +5976,67 @@ msgstr "не вдається відкрити /dev/tty1 чи /dev/vc/1"
 msgid "KDGHWCLK ioctl failed"
 msgstr "помилка ioctl KDSHWCLK"
 
-#: hwclock/rtc.c:133 hwclock/rtc.c:226
+#: hwclock/rtc.c:130 hwclock/rtc.c:223
 #, c-format
 msgid "open() of %s failed"
 msgstr "помилка у open() для %s"
 
-#: hwclock/rtc.c:167
+#: hwclock/rtc.c:164
 #, c-format
 msgid "ioctl() to %s to read the time failed.\n"
 msgstr "зчитування часу у ioctl() для %s.\n"
 
-#: hwclock/rtc.c:189
+#: hwclock/rtc.c:186
 #, c-format
 msgid "Waiting in loop for time from %s to change\n"
 msgstr "Очікування зміни часу з %s у циклі\n"
 
-#: hwclock/rtc.c:244
+#: hwclock/rtc.c:241
 #, c-format
 msgid "%s does not have interrupt functions. "
 msgstr "%s не має функції переривання."
 
-#: hwclock/rtc.c:255
+#: hwclock/rtc.c:252
 #, c-format
 msgid "read() to %s to wait for clock tick failed"
 msgstr "помилка очікування у циклі в read() для %s"
 
-#: hwclock/rtc.c:273
+#: hwclock/rtc.c:270
 #, c-format
 msgid "select() to %s to wait for clock tick failed"
 msgstr "помилка очікування у циклі в select() для %s"
 
-#: hwclock/rtc.c:276
+#: hwclock/rtc.c:273
 #, c-format
 msgid "select() to %s to wait for clock tick timed out\n"
 msgstr "помилка очікування у циклі в select() для %s\n"
 
-#: hwclock/rtc.c:285
+#: hwclock/rtc.c:282
 #, c-format
 msgid "ioctl() to %s to turn off update interrupts failed"
 msgstr "помилка вимкнення оновлення переривань у ioctl() для %s"
 
-#: hwclock/rtc.c:288
+#: hwclock/rtc.c:285
 #, c-format
 msgid "ioctl() to %s to turn on update interrupts failed unexpectedly"
 msgstr "неочікувана помилка вимкнення оновлення переривань у ioctl() для %s"
 
-#: hwclock/rtc.c:347
+#: hwclock/rtc.c:344
 #, c-format
 msgid "ioctl() to %s to set the time failed.\n"
 msgstr "помилка встановлення часу в ioctl() для %s.\n"
 
-#: hwclock/rtc.c:353
+#: hwclock/rtc.c:350
 #, c-format
 msgid "ioctl(%s) was successful.\n"
 msgstr "ioctl(%s) успішно виконано.\n"
 
-#: hwclock/rtc.c:382
+#: hwclock/rtc.c:379
 #, c-format
 msgid "Open of %s failed"
 msgstr "Помилка відкривання %s"
 
-#: hwclock/rtc.c:400 hwclock/rtc.c:446
+#: hwclock/rtc.c:397 hwclock/rtc.c:443
 #, c-format
 msgid ""
 "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
@@ -6036,39 +6046,39 @@ msgstr ""
 "для маніпулювання значенням епохи у ядрі необхідно отримати доступ до Linux "
 "'rtc' пристрою через спеціальний файл %s. Цей файл не існує у цій системі.\n"
 
-#: hwclock/rtc.c:405 hwclock/rtc.c:451
+#: hwclock/rtc.c:402 hwclock/rtc.c:448
 #, c-format
 msgid "Unable to open %s"
 msgstr "не вдається відкрити %s"
 
-#: hwclock/rtc.c:412
+#: hwclock/rtc.c:409
 #, c-format
 msgid "ioctl(RTC_EPOCH_READ) to %s failed"
 msgstr "помилка у ioctl(RTC_EPOCH_READ) для %s"
 
-#: hwclock/rtc.c:418
+#: hwclock/rtc.c:415
 #, c-format
 msgid "we have read epoch %ld from %s with RTC_EPOCH_READ ioctl.\n"
 msgstr "прочитано значення епохи %ld з %s через RTC_EPOCH_READ ioctl.\n"
 
-#: hwclock/rtc.c:438
+#: hwclock/rtc.c:435
 #, c-format
 msgid "The epoch value may not be less than 1900.  You requested %ld\n"
 msgstr "Значення епохи не може бути нижчим ніж 1900.  Ви вказали %ld\n"
 
-#: hwclock/rtc.c:456
+#: hwclock/rtc.c:453
 #, c-format
 msgid "setting epoch to %ld with RTC_EPOCH_SET ioctl to %s.\n"
 msgstr "встановлюється епоха = %ld через RTC_EPOCH_SET ioctl у %s.\n"
 
-#: hwclock/rtc.c:461
+#: hwclock/rtc.c:458
 #, c-format
 msgid ""
 "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
 msgstr ""
 "Драйвер ядра для %s не підтримує системний виклик RTC_EPOCH_SET ioctl.\n"
 
-#: hwclock/rtc.c:464
+#: hwclock/rtc.c:461
 #, c-format
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "помилка у ioctl(RTC_EPOCH_SET) для %s"
@@ -6235,68 +6245,67 @@ msgstr "Вхід на %s з %s заборонений перманентно.\n"
 msgid "Login on %s from %s denied.\n"
 msgstr "Вхід на %s з %s заборонений.\n"
 
-#: login-utils/chfn.c:128 login-utils/chsh.c:114
+#: login-utils/chfn.c:133 login-utils/chsh.c:119
 #, c-format
 msgid "%s: you (user %d) don't exist.\n"
 msgstr "%s: ваш користувач з uid %d не існує.\n"
 
-#: login-utils/chfn.c:135 login-utils/chsh.c:121
+#: login-utils/chfn.c:140 login-utils/chsh.c:126
 #, c-format
 msgid "%s: user \"%s\" does not exist.\n"
 msgstr "%s: користувач \"%s\" не існує.\n"
 
-#: login-utils/chfn.c:140 login-utils/chsh.c:126
+#: login-utils/chfn.c:145 login-utils/chsh.c:131
 #, c-format
 msgid "%s: can only change local entries; use yp%s instead.\n"
 msgstr ""
 "%s: може змінювати лише локальні записи; використовуйте yp%s натомість.\n"
 
-#: login-utils/chfn.c:151 login-utils/chsh.c:137
+#: login-utils/chfn.c:156 login-utils/chsh.c:142
 msgid "Unknown user context"
 msgstr "Невідомий контекст користувача"
 
-#: login-utils/chfn.c:152
+#: login-utils/chfn.c:157
 #, c-format
 msgid "%s: %s is not authorized to change the finger info of %s\n"
 msgstr "%s: %s не авторизований для зміни інформації finger у %s\n"
 
-#: login-utils/chfn.c:159 login-utils/chsh.c:145
+#: login-utils/chfn.c:164 login-utils/chsh.c:150
 #, c-format
 msgid "%s: Can't set default context for /etc/passwd"
 msgstr "%s: Не вдається встановити типовий контекст для /etc/passwd"
 
-#: login-utils/chfn.c:173
+#: login-utils/chfn.c:178
 #, c-format
 msgid "Changing finger information for %s.\n"
 msgstr "Зміна finger інформації для %s.\n"
 
-#: login-utils/chfn.c:179 login-utils/chfn.c:183 login-utils/chfn.c:190
-#: login-utils/chfn.c:194 login-utils/chsh.c:178 login-utils/chsh.c:182
-#: login-utils/chsh.c:189 login-utils/chsh.c:193
-msgid "Password error."
-msgstr "Помилка паролю."
+#: login-utils/chfn.c:189
+#, fuzzy, c-format
+msgid "chfn: PAM Failure, aborting: %s\n"
+msgstr "login: помилка PAM, перервано: %s\n"
 
-#: login-utils/chfn.c:203 login-utils/chsh.c:202 login-utils/login.c:798
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:333
 #: mount/lomount.c:336
 msgid "Password: "
 msgstr "Пароль: "
 
-#: login-utils/chfn.c:206 login-utils/chsh.c:205
+#: login-utils/chfn.c:215 login-utils/chsh.c:214
 msgid "Incorrect password."
 msgstr "Некоректний пароль."
 
-#: login-utils/chfn.c:217
+#: login-utils/chfn.c:226
 #, c-format
 msgid "Finger information not changed.\n"
 msgstr "Finger інформацію не змінено.\n"
 
-#: login-utils/chfn.c:319
+#: login-utils/chfn.c:328
 #, c-format
 msgid "Usage: %s [ -f full-name ] [ -o office ] "
 msgstr "Використання: %s [ -f повне_ім'я ] [ -o офіс ]"
 
-#: login-utils/chfn.c:320
+#: login-utils/chfn.c:329
 #, c-format
 msgid ""
 "[ -p office-phone ]\n"
@@ -6305,12 +6314,12 @@ msgstr ""
 "[ -p офісний-телефон ]\n"
 "\t[ -h домашній-телефон ] "
 
-#: login-utils/chfn.c:321
+#: login-utils/chfn.c:330
 #, c-format
 msgid "[ --help ] [ --version ]\n"
 msgstr "[ --help ] [ --version ]\n"
 
-#: login-utils/chfn.c:392 login-utils/chsh.c:312
+#: login-utils/chfn.c:401 login-utils/chsh.c:321
 #, c-format
 msgid ""
 "\n"
@@ -6319,41 +6328,41 @@ msgstr ""
 "\n"
 "Перервано.\n"
 
-#: login-utils/chfn.c:425
+#: login-utils/chfn.c:434
 #, c-format
 msgid "field is too long.\n"
 msgstr "поле надто велике.\n"
 
-#: login-utils/chfn.c:433
+#: login-utils/chfn.c:442
 #, c-format
 msgid "'%c' is not allowed.\n"
 msgstr "'%c' не не дозволяється.\n"
 
-#: login-utils/chfn.c:438
+#: login-utils/chfn.c:447
 #, c-format
 msgid "Control characters are not allowed.\n"
 msgstr "Керуючі послідовності не дозволяються.\n"
 
-#: login-utils/chfn.c:503
+#: login-utils/chfn.c:512
 #, c-format
 msgid "Finger information *NOT* changed.  Try again later.\n"
 msgstr "Finger інформацію НЕ змінено. Спробуйте пізніше.\n"
 
-#: login-utils/chfn.c:506
+#: login-utils/chfn.c:515
 #, c-format
 msgid "Finger information changed.\n"
 msgstr "Finger інформацію змінено.\n"
 
-#: login-utils/chfn.c:520 login-utils/chsh.c:430 sys-utils/cytune.c:321
+#: login-utils/chfn.c:529 login-utils/chsh.c:439 sys-utils/cytune.c:321
 msgid "malloc failed"
 msgstr "помилка виділення пам'яті"
 
-#: login-utils/chsh.c:138
+#: login-utils/chsh.c:143
 #, c-format
 msgid "%s: %s is not authorized to change the shell of %s\n"
 msgstr "%s: %s не авторизований для зміни оболонки %s\n"
 
-#: login-utils/chsh.c:159
+#: login-utils/chsh.c:164
 #, c-format
 msgid ""
 "%s: Running UID doesn't match UID of user we're altering, shell change "
@@ -6362,36 +6371,41 @@ msgstr ""
 "%s: UID запущеної програми не відповідає UID користувача, параметри якого "
 "змінюються, зміну оболонки заборонено\n"
 
-#: login-utils/chsh.c:165
+#: login-utils/chsh.c:170
 #, c-format
 msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
 msgstr "%s: Ваша оболонка не у /etc/shells, зміна оболонки заборонена\n"
 
-#: login-utils/chsh.c:172
+#: login-utils/chsh.c:177
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Змінюється оболонка для %s.\n"
 
-#: login-utils/chsh.c:213
+#: login-utils/chsh.c:188
+#, fuzzy, c-format
+msgid "chsh: PAM Failure, aborting: %s\n"
+msgstr "login: помилка PAM, перервано: %s\n"
+
+#: login-utils/chsh.c:222
 msgid "New shell"
 msgstr "Нова оболонка"
 
-#: login-utils/chsh.c:220
+#: login-utils/chsh.c:229
 #, c-format
 msgid "Shell not changed.\n"
 msgstr "Оболонка не змінена.\n"
 
-#: login-utils/chsh.c:226
+#: login-utils/chsh.c:235
 #, c-format
 msgid "Shell *NOT* changed.  Try again later.\n"
 msgstr "Оболонка НЕ змінена. Спробуйте пізніше.\n"
 
-#: login-utils/chsh.c:229
+#: login-utils/chsh.c:238
 #, c-format
 msgid "Shell changed.\n"
 msgstr "Оболонка змінена.\n"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:303
 #, c-format
 msgid ""
 "Usage: %s [ -s shell ] [ --list-shells ] [ --help ] [ --version ]\n"
@@ -6400,57 +6414,57 @@ msgstr ""
 "Використання: %s [ -s оболонка ] [ --list-shells ] [ --help ] [ --version ]\n"
 "       [ ім'я_користувача ]\n"
 
-#: login-utils/chsh.c:340
+#: login-utils/chsh.c:349
 #, c-format
 msgid "%s: shell must be a full path name.\n"
 msgstr "%s: шлях до оболонки повинен бути абсолютним.\n"
 
-#: login-utils/chsh.c:344
+#: login-utils/chsh.c:353
 #, c-format
 msgid "%s: \"%s\" does not exist.\n"
 msgstr "%s: \"%s\" не існує.\n"
 
-#: login-utils/chsh.c:348
+#: login-utils/chsh.c:357
 #, c-format
 msgid "%s: \"%s\" is not executable.\n"
 msgstr "%s: \"%s\" не є виконуваним.\n"
 
-#: login-utils/chsh.c:355
+#: login-utils/chsh.c:364
 #, c-format
 msgid "%s: '%c' is not allowed.\n"
 msgstr "%s: '%c' не дозволяється.\n"
 
-#: login-utils/chsh.c:359
+#: login-utils/chsh.c:368
 #, c-format
 msgid "%s: Control characters are not allowed.\n"
 msgstr "%s: Використовувати керуючі символи не дозволяються.\n"
 
-#: login-utils/chsh.c:366
+#: login-utils/chsh.c:375
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells\n"
 msgstr "Попередження: \"%s\" не зі списку /etc/shells\n"
 
-#: login-utils/chsh.c:368
+#: login-utils/chsh.c:377
 #, c-format
 msgid "%s: \"%s\" is not listed in /etc/shells.\n"
 msgstr "%s: \"%s\" не зі списку /etc/shells.\n"
 
-#: login-utils/chsh.c:370
+#: login-utils/chsh.c:379
 #, c-format
 msgid "%s: use -l option to see list\n"
 msgstr "%s: використовуйте параметр -l щоб переглянути список\n"
 
-#: login-utils/chsh.c:376
+#: login-utils/chsh.c:385
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells.\n"
 msgstr "Попередження: \"%s\" не зі списку /etc/shells.\n"
 
-#: login-utils/chsh.c:377
+#: login-utils/chsh.c:386
 #, c-format
 msgid "Use %s -l to see list.\n"
 msgstr "Використовуйте %s -l щоб переглянути список.\n"
 
-#: login-utils/chsh.c:397
+#: login-utils/chsh.c:406
 #, c-format
 msgid "No known shells.\n"
 msgstr "Немає відомих оболонок.\n"
@@ -6994,7 +7008,7 @@ msgstr "помилка відкривання каталогу\n"
 msgid "fork failed\n"
 msgstr "помилка створення процесу\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1635
+#: login-utils/simpleinit.c:539 text-utils/more.c:1634
 msgid "exec failed\n"
 msgstr "помилка запуску\n"
 
@@ -7135,22 +7149,27 @@ msgstr "%s: не вдається отримати інформацію про �
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: не вдається прочитати тимчасовий файл.\n"
 
-#: misc-utils/cal.c:347
+#: misc-utils/cal.c:346 misc-utils/cal.c:358
+#, fuzzy, c-format
+msgid "illegal day value: use 1-%d"
+msgstr "неправильне значення року: використовуйте 1-9999"
+
+#: misc-utils/cal.c:350
 msgid "illegal month value: use 1-12"
 msgstr "неправильне значення місяця: використовуйте 1-12"
 
-#: misc-utils/cal.c:351
+#: misc-utils/cal.c:354
 msgid "illegal year value: use 1-9999"
 msgstr "неправильне значення року: використовуйте 1-9999"
 
-#: misc-utils/cal.c:464
+#: misc-utils/cal.c:467
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:810
-#, c-format
-msgid "usage: cal [-13smjyV] [[month] year]\n"
+#: misc-utils/cal.c:816
+#, fuzzy, c-format
+msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
 msgstr "використання: cal [-13smjyV] [[місяць] рік]\n"
 
 #: misc-utils/ddate.c:203
@@ -7210,7 +7229,7 @@ msgstr ""
 "використання: logger [-is] [-f файл] [-p пріор] [-t тег] [-u сокет] "
 "[ повідомлення ... ]\n"
 
-#: misc-utils/look.c:352
+#: misc-utils/look.c:351
 #, c-format
 msgid "usage: look [-dfa] [-t char] string [file]\n"
 msgstr "використання: look [-dfa] [-t символ] рядок [файл]\n"
@@ -7225,52 +7244,52 @@ msgstr "не вдається відкрити %s\n"
 msgid "Got %d bytes from %s\n"
 msgstr "Отримано %d байт з %s\n"
 
-#: misc-utils/namei.c:107
+#: misc-utils/namei.c:111
 #, c-format
 msgid "namei: unable to get current directory - %s\n"
 msgstr "namei: не вдається отримати поточний каталог - %s\n"
 
-#: misc-utils/namei.c:121
+#: misc-utils/namei.c:125
 #, c-format
 msgid "namei: unable to chdir to %s - %s (%d)\n"
 msgstr "namei: не вдається перейти у каталог %s - %s (%d)\n"
 
-#: misc-utils/namei.c:131
+#: misc-utils/namei.c:135
 #, c-format
 msgid "usage: namei [-mx] pathname [pathname ...]\n"
 msgstr "використання: namei [-mx] шлях [шлях ...]\n"
 
-#: misc-utils/namei.c:158
+#: misc-utils/namei.c:162
 #, c-format
 msgid "namei: could not chdir to root!\n"
 msgstr "namei: не вдається перейти у кореневий каталог!\n"
 
-#: misc-utils/namei.c:165
+#: misc-utils/namei.c:169
 #, c-format
 msgid "namei: could not stat root!\n"
 msgstr "namei: не вдається отримати інформацію про кореневий каталог!\n"
 
-#: misc-utils/namei.c:179
+#: misc-utils/namei.c:183
 #, c-format
 msgid "namei: buf overflow\n"
 msgstr "namei: переповнення буфера\n"
 
-#: misc-utils/namei.c:241
+#: misc-utils/namei.c:245
 #, c-format
 msgid " ? could not chdir into %s - %s (%d)\n"
 msgstr " ? не вдається перейти у каталог %s - %s (%d)\n"
 
-#: misc-utils/namei.c:269
+#: misc-utils/namei.c:273
 #, c-format
 msgid " ? problems reading symlink %s - %s (%d)\n"
 msgstr " ? проблема при читання символічного посилання %s - %s (%d)\n"
 
-#: misc-utils/namei.c:279
+#: misc-utils/namei.c:283
 #, c-format
 msgid "  *** EXCEEDED UNIX LIMIT OF SYMLINKS ***\n"
 msgstr "  *** ПЕРЕВИЩЕНО UNIX МЕЖУ СИМВОЛІЧНИХ посилань ***\n"
 
-#: misc-utils/namei.c:317
+#: misc-utils/namei.c:328
 #, c-format
 msgid "namei: unknown file type 0%06o on file %s\n"
 msgstr "namei: невідомий тип файлу 0%06o для файлу %s\n"
@@ -7290,7 +7309,7 @@ msgstr "%s: помилка перейменування %s на %s: %s\n"
 msgid "call: %s from to files...\n"
 msgstr "виклик: %s звідки куди файли...\n"
 
-#: misc-utils/script.c:109
+#: misc-utils/script.c:110
 #, c-format
 msgid ""
 "Warning: `%s' is a link.\n"
@@ -7302,22 +7321,22 @@ msgstr ""
 "використовувати.\n"
 "Сценарій не запущено.\n"
 
-#: misc-utils/script.c:172
+#: misc-utils/script.c:173
 #, c-format
 msgid "usage: script [-a] [-f] [-q] [-t] [file]\n"
 msgstr "використання: script [-a] [-f] [-q] [-t] [файл]\n"
 
-#: misc-utils/script.c:195
+#: misc-utils/script.c:196
 #, c-format
 msgid "Script started, file is %s\n"
 msgstr "Сценарій запущено, файл - %s\n"
 
-#: misc-utils/script.c:290
+#: misc-utils/script.c:296
 #, c-format
 msgid "Script started on %s"
 msgstr "Сценарій запущено на %s"
 
-#: misc-utils/script.c:404
+#: misc-utils/script.c:410
 #, c-format
 msgid ""
 "\n"
@@ -7326,17 +7345,17 @@ msgstr ""
 "\n"
 "Сценарій завершено на %s"
 
-#: misc-utils/script.c:411
+#: misc-utils/script.c:417
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "Сценарій завершено, файл %s\n"
 
-#: misc-utils/script.c:422
+#: misc-utils/script.c:428
 #, c-format
 msgid "openpty failed\n"
 msgstr "помилка openpty\n"
 
-#: misc-utils/script.c:456
+#: misc-utils/script.c:462
 #, c-format
 msgid "Out of pty's\n"
 msgstr "Скінчились pty-пристрої\n"
@@ -7567,12 +7586,12 @@ msgstr "Помилка читання %s\n"
 msgid "Error writing screendump\n"
 msgstr "Помилка запису знімку екрану \n"
 
-#: misc-utils/setterm.c:1180
-#, c-format
-msgid "couldn't read %s, and cannot ioctl dump\n"
-msgstr "не вдається прочитати %s, або не вдається виконати ioctl дампу\n"
+#: misc-utils/setterm.c:1172
+#, fuzzy, c-format
+msgid "Couldn't read %s\n"
+msgstr "не вдається відкрити %s\n"
 
-#: misc-utils/setterm.c:1246
+#: misc-utils/setterm.c:1223
 #, c-format
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: не визначено $TERM.\n"
@@ -7582,52 +7601,52 @@ msgstr "%s: не визначено $TERM.\n"
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr "whereis [ -sbmu ] [ -SBM каталог ... -f ] назва...\n"
 
-#: misc-utils/write.c:99
+#: misc-utils/write.c:98
 #, c-format
 msgid "write: can't find your tty's name\n"
 msgstr "write: не вдається  знайти назву вашого tty\n"
 
-#: misc-utils/write.c:110
+#: misc-utils/write.c:109
 #, c-format
 msgid "write: you have write permission turned off.\n"
 msgstr "write: у вас немає прав запису.\n"
 
-#: misc-utils/write.c:131
+#: misc-utils/write.c:130
 #, c-format
 msgid "write: %s is not logged in on %s.\n"
 msgstr "write: %s не ввійшов у систему на %s.\n"
 
-#: misc-utils/write.c:139
+#: misc-utils/write.c:138
 #, c-format
 msgid "write: %s has messages disabled on %s\n"
 msgstr "write: для %s вивід повідомлень вимкнено на %s\n"
 
-#: misc-utils/write.c:146
+#: misc-utils/write.c:145
 #, c-format
 msgid "usage: write user [tty]\n"
 msgstr "використання: write користувач [tty]\n"
 
-#: misc-utils/write.c:234
+#: misc-utils/write.c:233
 #, c-format
 msgid "write: %s is not logged in\n"
 msgstr "write: %s не ввійшов у систему\n"
 
-#: misc-utils/write.c:243
+#: misc-utils/write.c:242
 #, c-format
 msgid "write: %s has messages disabled\n"
 msgstr "write: для %s вивід повідомлень вимкнено\n"
 
-#: misc-utils/write.c:247
+#: misc-utils/write.c:246
 #, c-format
 msgid "write: %s is logged in more than once; writing to %s\n"
 msgstr "write: %s ввійшов у систему більше одного разу; надсилається на %s\n"
 
-#: misc-utils/write.c:313
+#: misc-utils/write.c:312
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %s ..."
 msgstr "Повідомлення від %s@%s (як %s) до %s у %s ..."
 
-#: misc-utils/write.c:316
+#: misc-utils/write.c:315
 #, c-format
 msgid "Message from %s@%s on %s at %s ..."
 msgstr "Повідомлення від %s@%s до %s у %s ..."
@@ -7706,22 +7725,27 @@ msgstr ""
 "не вдається створити посилання %s\n"
 "Можливо є застарілий файл файл блокування?\n"
 
-#: mount/fstab.c:686 mount/fstab.c:739
+#: mount/fstab.c:688 mount/fstab.c:741
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "не вдається відкрити %s (%s) - mtab не оновлено"
 
-#: mount/fstab.c:748
+#: mount/fstab.c:750
 #, c-format
 msgid "error writing %s: %s"
 msgstr "помилка запису %s: %s"
 
-#: mount/fstab.c:758
+#: mount/fstab.c:768
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "помилка зімни режиму доступу до %s: %s\n"
 
-#: mount/fstab.c:776
+#: mount/fstab.c:781
+#, fuzzy, c-format
+msgid "error changing owner of %s: %s\n"
+msgstr "помилка зімни режиму доступу до %s: %s\n"
+
+#: mount/fstab.c:792
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "не вдається перейменувати %s у %s: %s\n"
@@ -7876,7 +7900,7 @@ msgstr "mount: згідно mtab, %s підключений у %s"
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: не вдається відкрити %s для запису: %s"
 
-#: mount/mount.c:552 mount/mount.c:950
+#: mount/mount.c:552 mount/mount.c:957
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: помилка запису %s: %s"
@@ -7886,164 +7910,174 @@ msgstr "mount: помилка запису %s: %s"
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: помилка зміни прав доступу до %s: %s"
 
-#: mount/mount.c:676 mount/mount.c:1565
+#: mount/mount.c:641
+#, fuzzy, c-format
+msgid "mount: cannot set group id: %s"
+msgstr "mount: помилка встановлення швидкості: %s"
+
+#: mount/mount.c:644
+#, fuzzy, c-format
+msgid "mount: cannot set user id: %s"
+msgstr "mount: помилка встановлення швидкості: %s"
+
+#: mount/mount.c:683 mount/mount.c:1572
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: помилка створення процесу: %s"
 
-#: mount/mount.c:690
+#: mount/mount.c:697
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: ви не вказали тип файлової системи для %s\n"
 
-#: mount/mount.c:693
+#: mount/mount.c:700
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       будуть випробувані всі типи вказані у %s або %s\n"
 
-#: mount/mount.c:696
+#: mount/mount.c:703
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       та він схожий розділ підкачки\n"
 
-#: mount/mount.c:698
+#: mount/mount.c:705
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       буде випробувано тип %s\n"
 
-#: mount/mount.c:725
+#: mount/mount.c:732
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s схожий на розділ підкачки - не підключатиметься"
 
-#: mount/mount.c:816
+#: mount/mount.c:823
 msgid "mount failed"
 msgstr "помилка підключення"
 
-#: mount/mount.c:818
+#: mount/mount.c:825
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: лише адміністратор(root) може підключати %s у %s"
 
-#: mount/mount.c:846
+#: mount/mount.c:853
 msgid "mount: loop device specified twice"
 msgstr "mount: loop-пристрій вказано двічі"
 
-#: mount/mount.c:851
+#: mount/mount.c:858
 msgid "mount: type specified twice"
 msgstr "mount: тип вказано двічі"
 
-#: mount/mount.c:863
+#: mount/mount.c:870
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: пропускається встановлення loop-пристрою\n"
 
-#: mount/mount.c:876
+#: mount/mount.c:883
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: буде використовуватись loop-пристрій %s\n"
 
-#: mount/mount.c:885
+#: mount/mount.c:892
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:890
+#: mount/mount.c:897
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:895
+#: mount/mount.c:902
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: помилка встановлення loop-пристрою\n"
 
-#: mount/mount.c:906
+#: mount/mount.c:913
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: встановлення loop-пристрою успішно завершено\n"
 
-#: mount/mount.c:945
+#: mount/mount.c:952
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: не вдається відкрити %s: %s"
 
-#: mount/mount.c:966
+#: mount/mount.c:973
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: аргумент для -p або --pass-fd повинен бути числом"
 
-#: mount/mount.c:979
+#: mount/mount.c:986
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: помилка відкривання %s для встановлення швидкості"
 
-#: mount/mount.c:982
+#: mount/mount.c:989
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: помилка встановлення швидкості: %s"
 
-#: mount/mount.c:1040
+#: mount/mount.c:1047
 #, fuzzy, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: згідно mtab, %s вже підключений у %s"
 
-#: mount/mount.c:1115
+#: mount/mount.c:1122
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: не вдається визначити тип файлової системи, та тип явно не вказаний"
 
-#: mount/mount.c:1118
+#: mount/mount.c:1125
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: необхідно вказати тип файлової системи"
 
-#: mount/mount.c:1121
+#: mount/mount.c:1128
 msgid "mount: mount failed"
 msgstr "mount: помилка підключення"
 
-#: mount/mount.c:1127 mount/mount.c:1162
+#: mount/mount.c:1134 mount/mount.c:1169
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: точка монтування %s не є каталогом"
 
-#: mount/mount.c:1129
+#: mount/mount.c:1136
 msgid "mount: permission denied"
 msgstr "mount: доступ заборонено"
 
-#: mount/mount.c:1131
+#: mount/mount.c:1138
 msgid "mount: must be superuser to use mount"
 msgstr "mount: для використання mount необхідно мати права адміністратора"
 
-#: mount/mount.c:1135 mount/mount.c:1139
+#: mount/mount.c:1142 mount/mount.c:1146
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s зайнятий"
 
-#: mount/mount.c:1141
+#: mount/mount.c:1148
 msgid "mount: proc already mounted"
 msgstr "mount: proc вже підключено"
 
-#: mount/mount.c:1143
+#: mount/mount.c:1150
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s вже підключено або %s зайнятий"
 
-#: mount/mount.c:1149
+#: mount/mount.c:1156
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: точка монтування %s не існує"
 
-#: mount/mount.c:1151
+#: mount/mount.c:1158
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: точка монтування %s є символічним посиланням, яке вказує нікуди"
 
-#: mount/mount.c:1154
+#: mount/mount.c:1161
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: спеціальний пристрій %s не існує"
 
-#: mount/mount.c:1164
+#: mount/mount.c:1171
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -8052,22 +8086,22 @@ msgstr ""
 "mount: спеціальний пристрій %s не існує\n"
 "       (префікс шляху не є каталогом)\n"
 
-#: mount/mount.c:1177
+#: mount/mount.c:1184
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s ще не підключений, або неправильний параметр"
 
-#: mount/mount.c:1179
-#, c-format
+#: mount/mount.c:1186
+#, fuzzy, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
-"       missing codepage or other error"
+"       missing codepage or helper program, or other error"
 msgstr ""
 "mount: неправильний тип файлової системи, неправильний параметр, "
 "неправильний суперблок на %s,\n"
 "       відсутня кодова сторінка або інша помилка"
 
-#: mount/mount.c:1189
+#: mount/mount.c:1196
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -8075,7 +8109,7 @@ msgstr ""
 "       (може це пристрій IDE, для якого ви фактично використовуєте\n"
 "       ide-scsi, тому потрібні sr0, або sda чи щось подібне?)"
 
-#: mount/mount.c:1195
+#: mount/mount.c:1202
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -8084,7 +8118,7 @@ msgstr ""
 "partition,\n"
 "       instead of some logical partition inside?)"
 
-#: mount/mount.c:1212
+#: mount/mount.c:1219
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -8093,51 +8127,51 @@ msgstr ""
 "журналі\n"
 "       спробуйте - dmesg | tail  чи щось подібне\n"
 
-#: mount/mount.c:1218
+#: mount/mount.c:1225
 msgid "mount table full"
 msgstr "таблиця монтування переповнена"
 
-#: mount/mount.c:1220
+#: mount/mount.c:1227
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: не вдається прочитати суперблок"
 
-#: mount/mount.c:1226
+#: mount/mount.c:1233
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: невідомий пристрій"
 
-#: mount/mount.c:1231
+#: mount/mount.c:1238
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: невідомий тип файлової системи '%s'"
 
-#: mount/mount.c:1243
+#: mount/mount.c:1250
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: можливо ви мали на увазі %s"
 
-#: mount/mount.c:1246
+#: mount/mount.c:1253
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: можливо ви мали на увазі 'iso9660'?"
 
-#: mount/mount.c:1249
+#: mount/mount.c:1256
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: можливо ви мали на увазі iso9660 ?"
 
-#: mount/mount.c:1252
+#: mount/mount.c:1259
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s має неправильний номер пристрою або файлова система типу %s не "
 "підтримується"
 
-#: mount/mount.c:1258
+#: mount/mount.c:1265
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s не є блочним пристроєм, та stat зазнав невдачі?"
 
-#: mount/mount.c:1260
+#: mount/mount.c:1267
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -8146,67 +8180,67 @@ msgstr ""
 "mount: ядро не розпізнало %s як блочний пристрій\n"
 "       (можливо треба виконати `insmod драйвер'?)"
 
-#: mount/mount.c:1263
+#: mount/mount.c:1270
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s не є блочним пристроєм (можливо, спробуйте `-o loop'?)"
 
-#: mount/mount.c:1266
+#: mount/mount.c:1273
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s не є блочним пристроєм"
 
-#: mount/mount.c:1269
+#: mount/mount.c:1276
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s не є правильним блочним пристроєм"
 
-#: mount/mount.c:1272
+#: mount/mount.c:1279
 msgid "block device "
 msgstr "блочний пристрій "
 
-#: mount/mount.c:1274
+#: mount/mount.c:1281
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: не вдається підключити %s%s лише для читання"
 
-#: mount/mount.c:1278
+#: mount/mount.c:1285
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s захищений від запису, але було вказано ключ `-w'"
 
-#: mount/mount.c:1293
+#: mount/mount.c:1300
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s захищений від запису, монтується лише для читання"
 
-#: mount/mount.c:1393
+#: mount/mount.c:1400
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: не вказано тип - вважається nfs, через наявність двокрапки\n"
 
-#: mount/mount.c:1399
+#: mount/mount.c:1406
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: не вказано тип - вважається smbfs, через наявність префіксу //\n"
 
-#: mount/mount.c:1416
+#: mount/mount.c:1423
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: продовження спроб у фоні \"%s\"\n"
 
-#: mount/mount.c:1426
+#: mount/mount.c:1433
 #, c-format
 msgid "mount: giving up \"%s\"\n"
 msgstr "mount: залишено спроби підключити \"%s\"\n"
 
-#: mount/mount.c:1512
+#: mount/mount.c:1519
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s вже підключений у %s\n"
 
-#: mount/mount.c:1650
+#: mount/mount.c:1657
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8266,24 +8300,24 @@ msgstr ""
 "Інші параметри: [-nfFrsvw] [-o параметри] [-p пароль].\n"
 "Додаткову інформацію дивіться у man 8 mount .\n"
 
-#: mount/mount.c:1960
+#: mount/mount.c:1967
 msgid "mount: only root can do that"
 msgstr "mount: це може робити лише адміністратор(root)"
 
-#: mount/mount.c:1965
+#: mount/mount.c:1972
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: не знайдено %s - створюється..\n"
 
-#: mount/mount.c:1975
+#: mount/mount.c:1982
 msgid "nothing was mounted"
 msgstr "нічого не було підключено"
 
-#: mount/mount.c:1988 mount/mount.c:2014
+#: mount/mount.c:1995 mount/mount.c:2021
 msgid "mount: no such partition found"
 msgstr "mount: не знайдено такого розділу"
 
-#: mount/mount.c:1991
+#: mount/mount.c:1998
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: не вдається знайти %s у %s або %s"
@@ -8330,42 +8364,47 @@ msgstr ""
 "       %s -a [-v]\n"
 "       %s [-v] спец_файл ...\n"
 
-#: mount/swapon.c:128
+#: mount/swapon.c:103
+#, fuzzy, c-format
+msgid "%s: %s: unexpected file format\n"
+msgstr "%s: Неочікуваний кінець файла у файлі %s\n"
+
+#: mount/swapon.c:132
 #, fuzzy, c-format
 msgid "%s: cannot canonicalize %s: %s\n"
 msgstr "%s: не вдається відкрити %s: %s\n"
 
-#: mount/swapon.c:167 mount/swapon.c:255
+#: mount/swapon.c:171 mount/swapon.c:259
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s на %s\n"
 
-#: mount/swapon.c:177
+#: mount/swapon.c:181
 #, c-format
 msgid "%s: cannot stat %s: %s\n"
 msgstr "%s: не вдається отримати статистику %s: %s\n"
 
-#: mount/swapon.c:188
+#: mount/swapon.c:192
 #, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
 msgstr "%s: попередження: %s має небезпечні права %04o, пропонується %04o\n"
 
-#: mount/swapon.c:200
+#: mount/swapon.c:204
 #, c-format
 msgid "%s: Skipping file %s - it appears to have holes.\n"
 msgstr "%s: пропускається файл %s - схоже, що він містить дірки.\n"
 
-#: mount/swapon.c:233
+#: mount/swapon.c:237
 #, c-format
 msgid "%s: cannot find the device for %s\n"
 msgstr "%s: не вдається знайти пристрій для %s\n"
 
-#: mount/swapon.c:267
+#: mount/swapon.c:271
 #, c-format
 msgid "Not superuser.\n"
 msgstr "Не адміністратор.\n"
 
-#: mount/swapon.c:301 mount/swapon.c:492
+#: mount/swapon.c:305 mount/swapon.c:496
 #, c-format
 msgid "%s: cannot open %s: %s\n"
 msgstr "%s: не вдається відкрити %s: %s\n"
@@ -8375,82 +8414,92 @@ msgstr "%s: не вдається відкрити %s: %s\n"
 msgid "umount: compiled without support for -f\n"
 msgstr "umount: зібрано без підтримки -f\n"
 
-#: mount/umount.c:130
+#: mount/umount.c:109
+#, fuzzy, c-format
+msgid "umount: cannot set group id: %s"
+msgstr "mount: помилка встановлення швидкості: %s"
+
+#: mount/umount.c:112
+#, fuzzy, c-format
+msgid "umount: cannot set user id: %s"
+msgstr "mount: помилка встановлення швидкості: %s"
+
+#: mount/umount.c:137
 #, c-format
 msgid "umount: cannot fork: %s"
 msgstr "umount: не вдається запустити дочірній процес: %s"
 
-#: mount/umount.c:142
+#: mount/umount.c:149
 #, c-format
 msgid "umount: %s: invalid block device"
 msgstr "umount: %s: неправильний блочний пристрій"
 
-#: mount/umount.c:144
+#: mount/umount.c:151
 #, c-format
 msgid "umount: %s: not mounted"
 msgstr "umount: %s: не підключений"
 
-#: mount/umount.c:146
+#: mount/umount.c:153
 #, c-format
 msgid "umount: %s: can't write superblock"
 msgstr "umount: %s: не вдається записати суперблок"
 
-#: mount/umount.c:150
+#: mount/umount.c:157
 #, c-format
 msgid "umount: %s: device is busy"
 msgstr "umount: %s: пристрій зайнятий"
 
-#: mount/umount.c:152
+#: mount/umount.c:159
 #, c-format
 msgid "umount: %s: not found"
 msgstr "umount: %s: не існує"
 
-#: mount/umount.c:154
+#: mount/umount.c:161
 #, c-format
 msgid "umount: %s: must be superuser to umount"
 msgstr ""
 "umount: %s: для використання umount необхідно мати права адміністратора"
 
-#: mount/umount.c:156
+#: mount/umount.c:163
 #, c-format
 msgid "umount: %s: block devices not permitted on fs"
 msgstr "umount: %s: блочні пристрої не дозволено на файловій системі"
 
-#: mount/umount.c:158
+#: mount/umount.c:165
 #, c-format
 msgid "umount: %s: %s"
 msgstr "umount: %s: %s"
 
-#: mount/umount.c:207
+#: mount/umount.c:214
 #, c-format
 msgid "no umount2, trying umount...\n"
 msgstr "немає umount2, пробується umount...\n"
 
-#: mount/umount.c:223
+#: mount/umount.c:230
 #, c-format
 msgid "could not umount %s - trying %s instead\n"
 msgstr "не вдається відключити umount %s - натомість пробується %s\n"
 
-#: mount/umount.c:241
+#: mount/umount.c:248
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr "umount: %s зайнятий - перепідключено у режим лише-для-читання\n"
 
-#: mount/umount.c:252
+#: mount/umount.c:259
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr "umount: не вдається перепідключити %s у режим лише-для-читання\n"
 
-#: mount/umount.c:261
+#: mount/umount.c:268
 #, c-format
 msgid "%s umounted\n"
 msgstr "%s відключено\n"
 
-#: mount/umount.c:359
+#: mount/umount.c:366
 msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: не вдається знайти перелік файлових систем для відключення"
 
-#: mount/umount.c:389
+#: mount/umount.c:396
 #, c-format
 msgid ""
 "Usage: umount [-hV]\n"
@@ -8461,46 +8510,46 @@ msgstr ""
 "       umount -a [-f] [-r] [-n] [-v] [-t тип_фс] [-O параметри]\n"
 "       umount [-f] [-r] [-n] [-v] спец_файл | каталог...\n"
 
-#: mount/umount.c:441
+#: mount/umount.c:448
 msgid "Cannot umount \"\"\n"
 msgstr "Не вдається відключити \"\"\n"
 
-#: mount/umount.c:447
+#: mount/umount.c:454
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr "Спроба відключити %s\n"
 
-#: mount/umount.c:453
+#: mount/umount.c:460
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "не вдається знайти %s у mtab\n"
 
-#: mount/umount.c:460
+#: mount/umount.c:467
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s не є підключеним (згідно mtab)"
 
-#: mount/umount.c:484
+#: mount/umount.c:491
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: здається %s підключений декілька разів"
 
-#: mount/umount.c:497
+#: mount/umount.c:504
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: %s відсутній у fstab (та ви не адміністратор)"
 
-#: mount/umount.c:501
+#: mount/umount.c:508
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: підключений %s відрізняється від fstab"
 
-#: mount/umount.c:542
+#: mount/umount.c:549
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "umount: лише %s може відключити %s від %s"
 
-#: mount/umount.c:623
+#: mount/umount.c:630
 msgid "umount: only root can do that"
 msgstr "umount: це може робити лише адміністратор(root)"
 
@@ -9530,7 +9579,12 @@ msgstr ""
 
 #: sys-utils/rtcwake.c:380
 #, fuzzy, c-format
-msgid "Using %s time\n"
+msgid "Using UTC time.\n"
+msgstr "Використовується %s.\n"
+
+#: sys-utils/rtcwake.c:381
+#, fuzzy, c-format
+msgid "Using local time.\n"
 msgstr "Використовується %s.\n"
 
 #: sys-utils/rtcwake.c:385
@@ -9572,7 +9626,12 @@ msgstr ", готовий"
 msgid "disable rtc alarm interrupt"
 msgstr ""
 
-#: sys-utils/setarch.c:70
+#: sys-utils/setarch.c:50
+#, c-format
+msgid "Switching on %s.\n"
+msgstr ""
+
+#: sys-utils/setarch.c:81
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -9580,46 +9639,50 @@ msgid ""
 "Options:\n"
 msgstr ""
 
-#: sys-utils/setarch.c:74
+#: sys-utils/setarch.c:85
 #, c-format
-msgid "\t-%c\tEnable %s\n"
+msgid ""
+" -h, --help               this help\n"
+" -v, --verbose            verbose mode\n"
+" -R, --addr-no-randomize  disables randomization of the virtual address "
+"space\n"
+" -F, --fdpic-funcptrs     turns on function pointers point to descriptors\n"
+" -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
+" -L, --addr-compat-layout changes the way virtual memory is allocated\n"
+" -X, --read-implies-exec  turns on READ_IMPLIES_EXEC\n"
+" -B, --32bit              turns on ADDR_LIMIT_32BIT\n"
+" -I, --short-inode        turns on SHORT_INODE\n"
+" -S, --whole-seconds      turns on WHOLE_SECONDS\n"
+" -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
+" -3, --3gb                turns on maximum of 3GB of address space\n"
+"     --4gb                ignored (for backward compatibility only\n"
 msgstr ""
 
-#: sys-utils/setarch.c:76
+#: sys-utils/setarch.c:99
 #, c-format
 msgid ""
 "\n"
 "For more information see setarch(8).\n"
 msgstr ""
 
-#: sys-utils/setarch.c:88
+#: sys-utils/setarch.c:111
 #, fuzzy, c-format
 msgid ""
 "%s: %s\n"
 "Try `%s --help' for more information.\n"
 msgstr "Спробуйте `getopt --help', щоб отримати додаткову інформацію.\n"
 
-#: sys-utils/setarch.c:155 sys-utils/setarch.c:171
+#: sys-utils/setarch.c:179 sys-utils/setarch.c:195
 #, fuzzy, c-format
 msgid "%s: Unrecognized architecture"
 msgstr " %s: невідомий тип таблиці розділів\n"
 
-#: sys-utils/setarch.c:188 sys-utils/setarch.c:195
+#: sys-utils/setarch.c:213 sys-utils/setarch.c:220
 #, fuzzy
 msgid "Not enough arguments"
 msgstr "Надто багато параметрів.\n"
 
-#: sys-utils/setarch.c:237
-#, c-format
-msgid "Switching on %s.\n"
-msgstr ""
-
-#: sys-utils/setarch.c:244
-#, fuzzy, c-format
-msgid "Unknown option `%c' ignored"
-msgstr "%s: невідомий параметр \"-%c\"\n"
-
-#: sys-utils/setarch.c:249
+#: sys-utils/setarch.c:282
 #, fuzzy, c-format
 msgid "Failed to set personality to %s"
 msgstr "не вдається записати розділ на %s\n"
@@ -9759,17 +9822,17 @@ msgstr ""
 "hexdump: [-bcCdovx] [-e формат] [-f файл_формату] [-n довжина] [-s зсув] "
 "[файл ...]\n"
 
-#: text-utils/more.c:258
+#: text-utils/more.c:257
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr "використання: %s [-dflpcsu] [+linenum | +/pattern] назва1 назва2 ...\n"
 
-#: text-utils/more.c:481
+#: text-utils/more.c:480
 #, c-format
 msgid "%s: unknown option \"-%c\"\n"
 msgstr "%s: невідомий параметр \"-%c\"\n"
 
-#: text-utils/more.c:513
+#: text-utils/more.c:512
 #, c-format
 msgid ""
 "\n"
@@ -9780,7 +9843,7 @@ msgstr ""
 "*** %s: каталог ***\n"
 "\n"
 
-#: text-utils/more.c:557
+#: text-utils/more.c:556
 #, c-format
 msgid ""
 "\n"
@@ -9791,45 +9854,45 @@ msgstr ""
 "******** %s: не є текстовим файлом ********\n"
 "\n"
 
-#: text-utils/more.c:660
+#: text-utils/more.c:659
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Використовуйте q чи Q щоб вийти]"
 
-#: text-utils/more.c:752
+#: text-utils/more.c:751
 #, c-format
 msgid "--More--"
 msgstr "--Далі--"
 
-#: text-utils/more.c:754
+#: text-utils/more.c:753
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Наступний файл: %s)"
 
-#: text-utils/more.c:759
+#: text-utils/more.c:758
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Натисніть пробіл, щоб продовжити, або 'q', щоб вийти.]"
 
-#: text-utils/more.c:1174
+#: text-utils/more.c:1173
 #, c-format
 msgid "...back %d pages"
 msgstr "...назад %d сторінок"
 
-#: text-utils/more.c:1176
+#: text-utils/more.c:1175
 msgid "...back 1 page"
 msgstr "...назад 1 сторінку"
 
-#: text-utils/more.c:1219
+#: text-utils/more.c:1218
 msgid "...skipping one line"
 msgstr "...пропускається один рядок"
 
-#: text-utils/more.c:1221
+#: text-utils/more.c:1220
 #, c-format
 msgid "...skipping %d lines"
 msgstr "...пропускається %d рядків"
 
-#: text-utils/more.c:1258
+#: text-utils/more.c:1257
 msgid ""
 "\n"
 "***Back***\n"
@@ -9839,7 +9902,7 @@ msgstr ""
 "***Назад***\n"
 "\n"
 
-#: text-utils/more.c:1296
+#: text-utils/more.c:1295
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -9851,7 +9914,7 @@ msgstr ""
 "значення у кутових дужках.\n"
 "Зірочка (*) означає, що параметр стає новим типовим значенням.\n"
 
-#: text-utils/more.c:1303
+#: text-utils/more.c:1302
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -9898,34 +9961,34 @@ msgstr ""
 ":f                      Відобразити назву поточного файлу та номер рядка\n"
 ".                       Повторити попередню команду\n"
 
-#: text-utils/more.c:1372 text-utils/more.c:1377
+#: text-utils/more.c:1371 text-utils/more.c:1376
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Натисніть 'h' щоб переглянути довідку.]"
 
-#: text-utils/more.c:1411
+#: text-utils/more.c:1410
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" рядок %d"
 
-#: text-utils/more.c:1413
+#: text-utils/more.c:1412
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Не файл] рядок %d"
 
-#: text-utils/more.c:1497
+#: text-utils/more.c:1496
 msgid "  Overflow\n"
 msgstr "  Переповнення\n"
 
-#: text-utils/more.c:1544
+#: text-utils/more.c:1543
 msgid "...skipping\n"
 msgstr "...перехід\n"
 
-#: text-utils/more.c:1573
+#: text-utils/more.c:1572
 msgid "Regular expression botch"
 msgstr "Невдалий регулярний вираз"
 
-#: text-utils/more.c:1585
+#: text-utils/more.c:1584
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9933,15 +9996,15 @@ msgstr ""
 "\n"
 "Шаблон не знайдено\n"
 
-#: text-utils/more.c:1588 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1587 text-utils/pg.c:1123 text-utils/pg.c:1274
 msgid "Pattern not found"
 msgstr "Шаблон не знайдено"
 
-#: text-utils/more.c:1649
+#: text-utils/more.c:1648
 msgid "can't fork\n"
 msgstr "не вдається створити процес\n"
 
-#: text-utils/more.c:1688
+#: text-utils/more.c:1687
 msgid ""
 "\n"
 "...Skipping "
@@ -9949,19 +10012,19 @@ msgstr ""
 "\n"
 "...Перехід "
 
-#: text-utils/more.c:1692
+#: text-utils/more.c:1691
 msgid "...Skipping to file "
 msgstr "...Перехід до файлу"
 
-#: text-utils/more.c:1694
+#: text-utils/more.c:1693
 msgid "...Skipping back to file "
 msgstr "...Перехід назад до файлу"
 
-#: text-utils/more.c:1972
+#: text-utils/more.c:1971
 msgid "Line too long"
 msgstr "Рядок надто довгий"
 
-#: text-utils/more.c:2015
+#: text-utils/more.c:2014
 msgid "No previous command to substitute for"
 msgstr "Немає попередньої команди для заміни"
 
@@ -10014,7 +10077,7 @@ msgstr "hexdump: неправильний формат {%s}\n"
 msgid "hexdump: bad conversion character %%%s.\n"
 msgstr "hexdump: неправильний символ перетворення %%%s.\n"
 
-#: text-utils/pg.c:237
+#: text-utils/pg.c:235
 #, c-format
 msgid ""
 "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
@@ -10022,81 +10085,81 @@ msgstr ""
 "%s: Використання: %s [-number] [-p рядок] [-cefnrs] [+line] [+/pattern/] "
 "[файли]\n"
 
-#: text-utils/pg.c:246
+#: text-utils/pg.c:244
 #, c-format
 msgid "%s: option requires an argument -- %s\n"
 msgstr "%s: параметр потребує вказування аргументу -- %s\n"
 
-#: text-utils/pg.c:254
+#: text-utils/pg.c:252
 #, c-format
 msgid "%s: illegal option -- %s\n"
 msgstr "%s: неправильний параметр -- %s\n"
 
-#: text-utils/pg.c:371
+#: text-utils/pg.c:369
 msgid "...skipping forward\n"
 msgstr "...перехід вперед\n"
 
-#: text-utils/pg.c:373
+#: text-utils/pg.c:371
 msgid "...skipping backward\n"
 msgstr "...перехід назад\n"
 
-#: text-utils/pg.c:395
+#: text-utils/pg.c:393
 msgid "No next file"
 msgstr "Немає наступного файлу"
 
-#: text-utils/pg.c:399
+#: text-utils/pg.c:397
 msgid "No previous file"
 msgstr "Немає попереднього файлу"
 
-#: text-utils/pg.c:929
+#: text-utils/pg.c:927
 #, c-format
 msgid "%s: Read error from %s file\n"
 msgstr "%s: Помилка читання з файлу %s\n"
 
-#: text-utils/pg.c:935
+#: text-utils/pg.c:933
 #, c-format
 msgid "%s: Unexpected EOF in %s file\n"
 msgstr "%s: Неочікуваний кінець файла у файлі %s\n"
 
-#: text-utils/pg.c:938
+#: text-utils/pg.c:936
 #, c-format
 msgid "%s: Unknown error in %s file\n"
 msgstr "%s: Невідома помилка у файлі %s\n"
 
-#: text-utils/pg.c:1033
+#: text-utils/pg.c:1031
 #, c-format
 msgid "%s: Cannot create tempfile\n"
 msgstr "%s: не вдається створити тимчасовий файл\n"
 
-#: text-utils/pg.c:1042 text-utils/pg.c:1217
+#: text-utils/pg.c:1040 text-utils/pg.c:1215
 msgid "RE error: "
 msgstr "Помилка РВ: "
 
-#: text-utils/pg.c:1199
+#: text-utils/pg.c:1197
 msgid "(EOF)"
 msgstr "(Кінець файлу)"
 
-#: text-utils/pg.c:1225
+#: text-utils/pg.c:1223
 msgid "No remembered search string"
 msgstr "Немає збереженого у пам'яті рядку пошуку"
 
-#: text-utils/pg.c:1308
+#: text-utils/pg.c:1306
 msgid "Cannot open "
 msgstr "не вдається відкрити "
 
-#: text-utils/pg.c:1356
+#: text-utils/pg.c:1354
 msgid "saved"
 msgstr "збережено"
 
-#: text-utils/pg.c:1463
+#: text-utils/pg.c:1461
 msgid ": !command not allowed in rflag mode.\n"
 msgstr ": команда ! не допустима у режимі rflag.\n"
 
-#: text-utils/pg.c:1495
+#: text-utils/pg.c:1493
 msgid "fork() failed, try again later\n"
 msgstr "помилка виконання fork(), спробуйте пізніше ще раз\n"
 
-#: text-utils/pg.c:1700
+#: text-utils/pg.c:1698
 msgid "(Next file: "
 msgstr "(Наступний файл: "
 
@@ -10110,15 +10173,30 @@ msgstr "не вдається виділити простір для буфер�
 msgid "usage: rev [file ...]\n"
 msgstr "використання: rev [файл ...]\n"
 
-#: text-utils/tailf.c:53 text-utils/tailf.c:105
-#, c-format
-msgid "Cannot open \"%s\" for read\n"
+#: text-utils/tailf.c:59 text-utils/tailf.c:129
+#, fuzzy, c-format
+msgid "Cannot open \"%s\" for read: %s\n"
 msgstr "Не вдається відкрити \"%s\" для читання\n"
 
-#: text-utils/tailf.c:93
-#, c-format
-msgid "Usage: tailf logfile\n"
+#: text-utils/tailf.c:107 text-utils/tailf.c:111
+#, fuzzy
+msgid "Invalid number of lines"
+msgstr "Неправильне число: %s\n"
+
+#: text-utils/tailf.c:114
+#, fuzzy
+msgid "Invalid option"
+msgstr "неправильний ідентифікатор"
+
+#: text-utils/tailf.c:118
+#, fuzzy, c-format
+msgid "Usage: tailf [-n N | -N] logfile\n"
 msgstr "Використання: tailf файл_журналу\n"
+
+#: text-utils/tailf.c:137
+#, c-format
+msgid "Incomplete write to \"%s\" (written %d, expected %d)\n"
+msgstr ""
 
 #: text-utils/ul.c:141
 #, c-format
@@ -10149,6 +10227,16 @@ msgstr "Вхідний рядок надто довгий.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Недостатньо пам'яті для збільшення буфера.\n"
+
+#~ msgid "Password error."
+#~ msgstr "Помилка паролю."
+
+#~ msgid "couldn't read %s, and cannot ioctl dump\n"
+#~ msgstr "не вдається прочитати %s, або не вдається виконати ioctl дампу\n"
+
+#, fuzzy
+#~ msgid "Unknown option `%c' ignored"
+#~ msgstr "%s: невідомий параметр \"-%c\"\n"
 
 #~ msgid "`%s': bad directory: '.' isn't first\n"
 #~ msgstr "`%s': неправильний каталог: елемент '.' не перший\n"
@@ -10376,9 +10464,6 @@ msgstr "Недостатньо пам'яті для збільшення буф�
 
 #~ msgid "%s: not compiled with minix v2 support\n"
 #~ msgstr "%s: скомпільовано без підтримки minix v2\n"
-
-#~ msgid "Invalid number: %s\n"
-#~ msgstr "Неправильне число: %s\n"
 
 #~ msgid "Syntax error: '%s'\n"
 #~ msgstr "Синтаксична помилка: '%s'\n"
