@@ -377,7 +377,7 @@ int main(int argc, char **argv)
 			clock_mode = CM_UTC;
 		}
 		if (verbose)
-			pritf(lock_mode == CM_UTC ? _("Using UTC time.\n") :
+			printf(clock_mode == CM_UTC ? _("Using UTC time.\n") :
 					_("Using local time.\n"));
 	}
 
