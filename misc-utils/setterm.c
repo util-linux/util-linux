@@ -1133,14 +1133,14 @@ screendump(int vcnum, FILE *F) {
     }
     if (fd < 0) {
 	sprintf(infile, "/dev/vcsa%d", vcnum);
-	goto try_ioctl;
+	goto error;
     }
     if (read(fd, header, 4) != 4)
-	goto try_ioctl;
+	goto error;
     rows = header[0];
     cols = header[1];
     if (rows * cols == 0)
-        goto try_ioctl;
+        goto error;
     inbuf = malloc(rows*cols*2);
     outbuf = malloc(rows*(cols+1));
     if(!inbuf || !outbuf) {
@@ -1168,32 +1168,9 @@ screendump(int vcnum, FILE *F) {
     }
     return;
 
-try_ioctl:
-    {
-#define NUM_COLS 160
-#define NUM_ROWS 75
-	char buf[NUM_COLS+1];
-	unsigned char screenbuf[NUM_ROWS*NUM_COLS];
-	screenbuf[0] = 0;
-	screenbuf[1] = (unsigned char) vcnum;
-	if (ioctl(0,TIOCLINUX,screenbuf) < 0) {
-	    fprintf(stderr,_("couldn't read %s, and cannot ioctl dump\n"),
-		    infile);
-	    exit(1);
-	}
-	rows = screenbuf[0];
-	cols = screenbuf[1];
-
-	for (i=0; i<rows; i++) {
-	    strncpy(buf, screenbuf+2+(cols*i), cols);
-	    buf[cols] = '\0';
-	    j = cols;
-	    while (--j && (buf[j] == ' '))
-	      buf[j] = '\0';
-	    fputs(buf,F);
-	    fputc('\n',F); 
-	}
-    }
+error:
+    fprintf(stderr, _("Couldn't read %s\n"), infile);
+    exit(1);
 }
 
 int
