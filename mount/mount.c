@@ -1702,6 +1702,9 @@ getfs(const char *spec, const char *uuid, const char *label)
 	struct mntentchn *mc = NULL;
 	const char *devname = NULL;
 
+	if (!spec && !uuid && !label)
+		return NULL;
+
 	/*
 	 * A) 99% of all cases, the spec on cmdline matches
 	 *    with spec in fstab
@@ -1764,7 +1767,7 @@ getfs(const char *spec, const char *uuid, const char *label)
 	 *    Earlier mtab was tried first, but this would sometimes try the
 	 *    wrong mount in case mtab had the root device entry wrong.
 	 */
-	if (!mc)
+	if (!mc && (devname || spec))
 		mc = getmntfile (devname ? devname : spec);
 
 	if (devname)
@@ -1984,12 +1987,17 @@ main(int argc, char *argv[]) {
 
 	case 1:
 		/* mount [-nfrvw] [-o options] special | node
+		 * mount -L label  (or -U uuid)
 		 * (/etc/fstab is necessary)
 		 */
 		if (types != NULL)
 			usage (stderr, EX_USAGE);
 
-		mc = getfs(*argv, uuid, label);
+		if (uuid || label)
+			mc = getfs(NULL, uuid, label);
+		else
+			mc = getfs(*argv, NULL, NULL);
+
 		if (!mc) {
 			if (uuid || label)
 				die (EX_USAGE, _("mount: no such partition found"));
