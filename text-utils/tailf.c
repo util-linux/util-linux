@@ -33,7 +33,11 @@
 #include <errno.h>
 #include <string.h>
 #include <sys/stat.h>
+#include <ctype.h>
+#include "errs.h"
 #include "nls.h"
+
+#define DEFAULT_LINES  10
 
 static size_t filesize(const char *filename)
 {
@@ -86,19 +90,37 @@ int main(int argc, char **argv)
     FILE       *str;
     const char *filename;
     int        count, wcount;
+    int        lines = DEFAULT_LINES;
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
 
-    if (argc != 2) {
-	fprintf(stderr, _("Usage: tailf logfile\n"));
-	exit(1);
+    argc--;
+    argv++;
+
+    for (; argc > 0 && argv[0][0] == '-'; argc--, argv++) {
+	if (!strcmp(*argv, "-n") || !strcmp(*argv, "--lines")) {
+	    argc--;
+	    argv++;
+	    if (argc > 0 && (lines = atoi(argv[0])) <= 0)
+		errx(EXIT_FAILURE, _("Invalid number of lines"));
+	}
+	else if (isdigit(argv[0][1])) {
+	    if ((lines = atoi(*argv + 1)) <= 0)
+		errx(EXIT_FAILURE, _("Invalid number of lines"));
+	}
+	else
+		errx(EXIT_FAILURE, _("Invalid option"));
     }
 
-    filename = argv[1];
+    if (argc != 1) {
+	fprintf(stderr, _("Usage: tailf [-n N | -N] logfile\n"));
+	exit(EXIT_FAILURE);
+    }
 
-    tailf(filename, 10);
+    filename = argv[0];
+    tailf(filename, lines);
 
     for (osize = filesize(filename);;) {
 	nsize = filesize(filename);

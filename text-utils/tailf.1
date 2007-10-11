@@ -26,7 +26,8 @@
 .SH NAME
 tailf \- follow the growth of a log file
 .SH SYNOPSIS
-.BI tailf " file"
+.B tailf
+[\fIOPTION\fR] \fIfile\fR
 .SH DESCRIPTION
 .B tailf
 will print out the last 10 lines of a file and then wait for the file to
@@ -40,10 +41,13 @@ does not occur periodically when no log activity is happening.
 is extremely useful for monitoring log files on a laptop when logging is
 infrequent and the user desires that the hard disk spin down to conserve
 battery life.
-.SH BUGS
-An option could be provided to print out the last
-.I n
-lines instead of the last 10.
+.PP
+Mandatory arguments to long options are mandatory for short options too.
+.TP
+\fB\-n\fR, \fB\-\-lines\fR=\fIN\fR, \fB\-N\fR
+output the last
+.I N
+lines, instead of the last 10.
 .SH AUTHOR
 This program was written by Rik Faith (faith@acm.org) and may be freely
 distributed under the terms of the X11/MIT License.  There is ABSOLUTELY
