@@ -45,7 +45,8 @@ AC_CHECK_HEADERS(
 	sys/user.h \
 	rpcsvc/nfs_prot.h \
 	sys/io.h \
-	pty.h])
+	pty.h \
+	err.h])
 AC_CHECK_HEADERS([linux/raw.h],
 		 [AM_CONDITIONAL([HAVE_RAW], [true])],
 		 [AM_CONDITIONAL([HAVE_RAW], [false])])
