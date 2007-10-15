@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-08-28 00:12+0200\n"
+"POT-Creation-Date: 2007-10-15 12:05+0200\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -189,7 +189,7 @@ msgstr "uporaba: %s [ -n ] naprava\n"
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:784 disk-utils/mkfs.minix.c:626
 #: disk-utils/mkswap.c:518 misc-utils/ddate.c:179 misc-utils/rename.c:79
-#: misc-utils/script.c:146 sys-utils/readprofile.c:197
+#: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, fuzzy, c-format
 msgid "%s (%s)\n"
 msgstr "%s: %s (%s)\n"
@@ -883,8 +883,8 @@ msgid "CRC: %x\n"
 msgstr "CRC: %x\n"
 
 #: disk-utils/mkfs.cramfs.c:897
-#, c-format
-msgid "not enough space allocated for ROM image (%Ld allocated, %d used)\n"
+#, fuzzy, c-format
+msgid "not enough space allocated for ROM image (%lld allocated, %d used)\n"
 msgstr "za ROM sliko ni zadosti prostora (%Ld rezervirano, %d v rabi)\n"
 
 #: disk-utils/mkfs.cramfs.c:909
@@ -1085,8 +1085,8 @@ msgstr "Uporaba: %s [-c] [-v0|-v1] [-p vel. strani] /dev/ime [bloki]\n"
 msgid "too many bad pages"
 msgstr "preveè po¹kodovanih strani"
 
-#: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1988 text-utils/more.c:1999
+#: disk-utils/mkswap.c:391 misc-utils/look.c:182 misc-utils/setterm.c:1147
+#: text-utils/more.c:1987 text-utils/more.c:1998
 msgid "Out of memory"
 msgstr "Zmanjkalo je pomnilnika"
 
@@ -2934,7 +2934,7 @@ msgstr "Tip razdelka %d je spremenjen v %x (%s)\n"
 
 #: fdisk/fdisk.c:1515
 #, fuzzy, c-format
-msgid "System type of partition %d is unchangedto %x (%s)\n"
+msgid "System type of partition %d is unchanged to %x (%s)\n"
 msgstr "Tip razdelka %d je spremenjen v %x (%s)\n"
 
 #: fdisk/fdisk.c:1567
@@ -5766,7 +5766,7 @@ msgstr "Epoch ne bo nastavljen na %d - samo preizku¹am.\n"
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Vrednosti epoch ni bilo mo¾no nastaviti.\n"
 
-#: hwclock/hwclock.c:1186 misc-utils/cal.c:333 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1186 misc-utils/cal.c:332 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s iz %s\n"
@@ -5924,7 +5924,7 @@ msgstr "Èakam v zanki na spremembo èasa iz KDGHWCLK\n"
 msgid "KDGHWCLK ioctl to read time failed"
 msgstr "KDGHWCLK ioctl za branje èasa ni uspelo"
 
-#: hwclock/kd.c:79 hwclock/rtc.c:205
+#: hwclock/kd.c:79 hwclock/rtc.c:202
 #, c-format
 msgid "Timed out waiting for time change.\n"
 msgstr "Sprememba èasa je trajala predolgo.\n"
@@ -5950,68 +5950,68 @@ msgstr "/dev/tty1 ali /dev/vc/1 ni mogoèe odpreti"
 msgid "KDGHWCLK ioctl failed"
 msgstr "KDGHWCLK ioctl ni uspel"
 
-#: hwclock/rtc.c:133 hwclock/rtc.c:226
+#: hwclock/rtc.c:130 hwclock/rtc.c:223
 #, c-format
 msgid "open() of %s failed"
 msgstr "klic open() za %s ni uspel"
 
-#: hwclock/rtc.c:167
+#: hwclock/rtc.c:164
 #, c-format
 msgid "ioctl() to %s to read the time failed.\n"
 msgstr "klic ioctl() k %s za branje èasa ni uspel\n"
 
-#: hwclock/rtc.c:189
+#: hwclock/rtc.c:186
 #, c-format
 msgid "Waiting in loop for time from %s to change\n"
 msgstr "Èakam v zanki na spremembo èasa iz %s\n"
 
-#: hwclock/rtc.c:244
+#: hwclock/rtc.c:241
 #, c-format
 msgid "%s does not have interrupt functions. "
 msgstr "%s nima prekinitvenih funkcij."
 
-#: hwclock/rtc.c:255
+#: hwclock/rtc.c:252
 #, c-format
 msgid "read() to %s to wait for clock tick failed"
 msgstr "klic read() k %s za èakanje na premik ure ni uspel"
 
-#: hwclock/rtc.c:273
+#: hwclock/rtc.c:270
 #, c-format
 msgid "select() to %s to wait for clock tick failed"
 msgstr "klic select() k %s za èakanje na premik ure ni uspel"
 
-#: hwclock/rtc.c:276
+#: hwclock/rtc.c:273
 #, c-format
 msgid "select() to %s to wait for clock tick timed out\n"
 msgstr "klic select() k %s za èakanje na premik ure je trajal predolgo\n"
 
-#: hwclock/rtc.c:285
+#: hwclock/rtc.c:282
 #, c-format
 msgid "ioctl() to %s to turn off update interrupts failed"
 msgstr "klic ioctl() k %s za izklop posodabljanja prekinitev ni uspel"
 
-#: hwclock/rtc.c:288
+#: hwclock/rtc.c:285
 #, c-format
 msgid "ioctl() to %s to turn on update interrupts failed unexpectedly"
 msgstr ""
 "klic ioctl() k %s za vklop posodabljanja prekinitev neprièakovano ni uspel"
 
-#: hwclock/rtc.c:347
+#: hwclock/rtc.c:344
 #, c-format
 msgid "ioctl() to %s to set the time failed.\n"
 msgstr "klic ioctl() k %s za nastavitev èasa ni uspel.\n"
 
-#: hwclock/rtc.c:353
+#: hwclock/rtc.c:350
 #, c-format
 msgid "ioctl(%s) was successful.\n"
 msgstr "klic ioctl(%s) je bil uspe¹en.\n"
 
-#: hwclock/rtc.c:382
+#: hwclock/rtc.c:379
 #, c-format
 msgid "Open of %s failed"
 msgstr "Odpiranje %s ni uspelo"
 
-#: hwclock/rtc.c:400 hwclock/rtc.c:446
+#: hwclock/rtc.c:397 hwclock/rtc.c:443
 #, c-format
 msgid ""
 "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
@@ -6022,39 +6022,39 @@ msgstr ""
 "Linuxovega 'rtc' gonilnika naprave skozi posebno datoteko naprave %s. Na tem "
 "sistemu ta datoteka ne obstaja.\n"
 
-#: hwclock/rtc.c:405 hwclock/rtc.c:451
+#: hwclock/rtc.c:402 hwclock/rtc.c:448
 #, c-format
 msgid "Unable to open %s"
 msgstr "Ni mogoèe odpreti %s"
 
-#: hwclock/rtc.c:412
+#: hwclock/rtc.c:409
 #, c-format
 msgid "ioctl(RTC_EPOCH_READ) to %s failed"
 msgstr "klic ioctl(RTC_EPOCH_READ) k %s ni uspel"
 
-#: hwclock/rtc.c:418
+#: hwclock/rtc.c:415
 #, c-format
 msgid "we have read epoch %ld from %s with RTC_EPOCH_READ ioctl.\n"
 msgstr "prebrana je bila vrednost razdobja %ld iz %s z RTC_EPOCH_READ ioctl.\n"
 
-#: hwclock/rtc.c:438
+#: hwclock/rtc.c:435
 #, c-format
 msgid "The epoch value may not be less than 1900.  You requested %ld\n"
 msgstr ""
 "Vrednost razdobja mora biti veèja ali enaka 1900. Zahtevana je bila %ld\n"
 
-#: hwclock/rtc.c:456
+#: hwclock/rtc.c:453
 #, c-format
 msgid "setting epoch to %ld with RTC_EPOCH_SET ioctl to %s.\n"
 msgstr "nastavljam vrednost razdobja na %ld z RTC_EPOCH_SET ioctl na %s.\n"
 
-#: hwclock/rtc.c:461
+#: hwclock/rtc.c:458
 #, c-format
 msgid ""
 "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
 msgstr "Gonilnik jedra za %s nima RTC_EPOCH_SET ioctl.\n"
 
-#: hwclock/rtc.c:464
+#: hwclock/rtc.c:461
 #, c-format
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) k %s ni uspel"
@@ -6220,69 +6220,68 @@ msgstr "Vpis na %s iz %s je zanikan(privzeto).\n"
 msgid "Login on %s from %s denied.\n"
 msgstr "Vpis na %s iz %s je zanikan.\n"
 
-#: login-utils/chfn.c:128 login-utils/chsh.c:114
+#: login-utils/chfn.c:133 login-utils/chsh.c:119
 #, c-format
 msgid "%s: you (user %d) don't exist.\n"
 msgstr "%s: vi (uporabnik %d) ne obstajate.\n"
 
-#: login-utils/chfn.c:135 login-utils/chsh.c:121
+#: login-utils/chfn.c:140 login-utils/chsh.c:126
 #, c-format
 msgid "%s: user \"%s\" does not exist.\n"
 msgstr "%s: uporabnik \"%s\" ne obstja.\n"
 
-#: login-utils/chfn.c:140 login-utils/chsh.c:126
+#: login-utils/chfn.c:145 login-utils/chsh.c:131
 #, c-format
 msgid "%s: can only change local entries; use yp%s instead.\n"
 msgstr ""
 "%s: lahko spreminja samo lokalne vnose; namesto tega uporabite yp%s .\n"
 
-#: login-utils/chfn.c:151 login-utils/chsh.c:137
+#: login-utils/chfn.c:156 login-utils/chsh.c:142
 #, fuzzy
 msgid "Unknown user context"
 msgstr "Neznana napaka v uporabni¹ki zvezi[user context]"
 
-#: login-utils/chfn.c:152
+#: login-utils/chfn.c:157
 #, c-format
 msgid "%s: %s is not authorized to change the finger info of %s\n"
 msgstr "%s: %s nima pristojnosti za spreminjanje informacije finger od %s\n"
 
-#: login-utils/chfn.c:159 login-utils/chsh.c:145
+#: login-utils/chfn.c:164 login-utils/chsh.c:150
 #, c-format
 msgid "%s: Can't set default context for /etc/passwd"
 msgstr "%s: Ne more se nastaviti privzete zveze[context] za /etc/passwd"
 
-#: login-utils/chfn.c:173
+#: login-utils/chfn.c:178
 #, c-format
 msgid "Changing finger information for %s.\n"
 msgstr "Spreminjam finger informacijo za %s.\n"
 
-#: login-utils/chfn.c:179 login-utils/chfn.c:183 login-utils/chfn.c:190
-#: login-utils/chfn.c:194 login-utils/chsh.c:178 login-utils/chsh.c:182
-#: login-utils/chsh.c:189 login-utils/chsh.c:193
-msgid "Password error."
-msgstr "Napaka v geslu."
+#: login-utils/chfn.c:189
+#, fuzzy, c-format
+msgid "chfn: PAM Failure, aborting: %s\n"
+msgstr "login: PAM ni uspel, prekinjam: %s\n"
 
-#: login-utils/chfn.c:203 login-utils/chsh.c:202 login-utils/login.c:798
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:333
 #: mount/lomount.c:336
 msgid "Password: "
 msgstr "Geslo: "
 
-#: login-utils/chfn.c:206 login-utils/chsh.c:205
+#: login-utils/chfn.c:215 login-utils/chsh.c:214
 msgid "Incorrect password."
 msgstr "Napaèno geslo."
 
-#: login-utils/chfn.c:217
+#: login-utils/chfn.c:226
 #, c-format
 msgid "Finger information not changed.\n"
 msgstr "Finger informacija ni spremenjena.\n"
 
-#: login-utils/chfn.c:319
+#: login-utils/chfn.c:328
 #, c-format
 msgid "Usage: %s [ -f full-name ] [ -o office ] "
 msgstr "Uporaba: %s [ -f polno-ime] [ -o pisarna ] "
 
-#: login-utils/chfn.c:320
+#: login-utils/chfn.c:329
 #, c-format
 msgid ""
 "[ -p office-phone ]\n"
@@ -6291,12 +6290,12 @@ msgstr ""
 "[ -p pisarni¹ki-tel ]\n"
 "\t[ -h domaèi-tel   ] "
 
-#: login-utils/chfn.c:321
+#: login-utils/chfn.c:330
 #, c-format
 msgid "[ --help ] [ --version ]\n"
 msgstr "[ --help ] [ --version ]\n"
 
-#: login-utils/chfn.c:392 login-utils/chsh.c:312
+#: login-utils/chfn.c:401 login-utils/chsh.c:321
 #, c-format
 msgid ""
 "\n"
@@ -6305,41 +6304,41 @@ msgstr ""
 "\n"
 "Prekinjeno.\n"
 
-#: login-utils/chfn.c:425
+#: login-utils/chfn.c:434
 #, c-format
 msgid "field is too long.\n"
 msgstr "polje je predolgo.\n"
 
-#: login-utils/chfn.c:433
+#: login-utils/chfn.c:442
 #, c-format
 msgid "'%c' is not allowed.\n"
 msgstr "'%c' ni dovoljeno.\n"
 
-#: login-utils/chfn.c:438
+#: login-utils/chfn.c:447
 #, c-format
 msgid "Control characters are not allowed.\n"
 msgstr "Nadzorni znaki niso dovoljeni.\n"
 
-#: login-utils/chfn.c:503
+#: login-utils/chfn.c:512
 #, c-format
 msgid "Finger information *NOT* changed.  Try again later.\n"
 msgstr "Finger informacija NI spremenjena. Poskusite ponovno kasneje.\n"
 
-#: login-utils/chfn.c:506
+#: login-utils/chfn.c:515
 #, c-format
 msgid "Finger information changed.\n"
 msgstr "Finger informacija spremenjena.\n"
 
-#: login-utils/chfn.c:520 login-utils/chsh.c:430 sys-utils/cytune.c:321
+#: login-utils/chfn.c:529 login-utils/chsh.c:439 sys-utils/cytune.c:321
 msgid "malloc failed"
 msgstr "malloc ni uspel"
 
-#: login-utils/chsh.c:138
+#: login-utils/chsh.c:143
 #, c-format
 msgid "%s: %s is not authorized to change the shell of %s\n"
 msgstr "%s: %s nima pristojnosti za spremembo lupine %s\n"
 
-#: login-utils/chsh.c:159
+#: login-utils/chsh.c:164
 #, c-format
 msgid ""
 "%s: Running UID doesn't match UID of user we're altering, shell change "
@@ -6348,36 +6347,41 @@ msgstr ""
 "%s: Tekoèi UID ne ustreza UIDu uporabnika, ki ga a¾uriramo, sprememba lupine "
 "zanikana\n"
 
-#: login-utils/chsh.c:165
+#: login-utils/chsh.c:170
 #, c-format
 msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
 msgstr "%s: Va¹a lupina ni v /etc/shells, sprememba lupine zanikana\n"
 
-#: login-utils/chsh.c:172
+#: login-utils/chsh.c:177
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Spreminjam lupino za %s.\n"
 
-#: login-utils/chsh.c:213
+#: login-utils/chsh.c:188
+#, fuzzy, c-format
+msgid "chsh: PAM Failure, aborting: %s\n"
+msgstr "login: PAM ni uspel, prekinjam: %s\n"
+
+#: login-utils/chsh.c:222
 msgid "New shell"
 msgstr "Nova lupina"
 
-#: login-utils/chsh.c:220
+#: login-utils/chsh.c:229
 #, c-format
 msgid "Shell not changed.\n"
 msgstr "Lupina ni bila spremenjena.\n"
 
-#: login-utils/chsh.c:226
+#: login-utils/chsh.c:235
 #, c-format
 msgid "Shell *NOT* changed.  Try again later.\n"
 msgstr "Lupina NI bila spremenjena. Poskusite znova kasneje.\n"
 
-#: login-utils/chsh.c:229
+#: login-utils/chsh.c:238
 #, c-format
 msgid "Shell changed.\n"
 msgstr "Lupina je bila spremenjena.\n"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:303
 #, c-format
 msgid ""
 "Usage: %s [ -s shell ] [ --list-shells ] [ --help ] [ --version ]\n"
@@ -6386,57 +6390,57 @@ msgstr ""
 "Uporaba: %s [ -s lupina ] [ --list-shells ] [ --help] [ --version ]\n"
 "       [ uporabni¹ko ime]\n"
 
-#: login-utils/chsh.c:340
+#: login-utils/chsh.c:349
 #, c-format
 msgid "%s: shell must be a full path name.\n"
 msgstr "%s: lupina mora biti polno ime poti.\n"
 
-#: login-utils/chsh.c:344
+#: login-utils/chsh.c:353
 #, c-format
 msgid "%s: \"%s\" does not exist.\n"
 msgstr "%s: \"%s\" ne obstaja.\n"
 
-#: login-utils/chsh.c:348
+#: login-utils/chsh.c:357
 #, c-format
 msgid "%s: \"%s\" is not executable.\n"
 msgstr "%s: \"%s\" ni izvr¹ljiva.\n"
 
-#: login-utils/chsh.c:355
+#: login-utils/chsh.c:364
 #, c-format
 msgid "%s: '%c' is not allowed.\n"
 msgstr "%s: '%c' ni dovoljeno.\n"
 
-#: login-utils/chsh.c:359
+#: login-utils/chsh.c:368
 #, c-format
 msgid "%s: Control characters are not allowed.\n"
 msgstr "%s: Nadzorni znaki niso dovoljeni.\n"
 
-#: login-utils/chsh.c:366
+#: login-utils/chsh.c:375
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells\n"
 msgstr "Opozorilo: \"%s\" ni na seznamu v /etc/shells\n"
 
-#: login-utils/chsh.c:368
+#: login-utils/chsh.c:377
 #, c-format
 msgid "%s: \"%s\" is not listed in /etc/shells.\n"
 msgstr "%s: \"%s\" ni na seznamu v /etc/shells.\n"
 
-#: login-utils/chsh.c:370
+#: login-utils/chsh.c:379
 #, c-format
 msgid "%s: use -l option to see list\n"
 msgstr "%s: uporabite -l za izpis seznama\n"
 
-#: login-utils/chsh.c:376
+#: login-utils/chsh.c:385
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells.\n"
 msgstr "Opozorilo: \"%s\" ni na seznamu v /etc/shells.\n"
 
-#: login-utils/chsh.c:377
+#: login-utils/chsh.c:386
 #, c-format
 msgid "Use %s -l to see list.\n"
 msgstr "Uporabite %s -l za izpis seznama.\n"
 
-#: login-utils/chsh.c:397
+#: login-utils/chsh.c:406
 #, c-format
 msgid "No known shells.\n"
 msgstr "Ni znanih lupin.\n"
@@ -6980,7 +6984,7 @@ msgstr "open imenika ni uspel\n"
 msgid "fork failed\n"
 msgstr "vejitev ni uspela\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1635
+#: login-utils/simpleinit.c:539 text-utils/more.c:1634
 msgid "exec failed\n"
 msgstr "zagon ni uspel\n"
 
@@ -7121,20 +7125,20 @@ msgstr "%s ni mogoèe dobiti stanja zaèasne datoteke.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: ni mogoèe brati iz zaèasne datoteke.\n"
 
-#: misc-utils/cal.c:347
+#: misc-utils/cal.c:346
 msgid "illegal month value: use 1-12"
 msgstr "neveljavna vrednost meseca: uporabite 1-12"
 
-#: misc-utils/cal.c:351
+#: misc-utils/cal.c:350
 msgid "illegal year value: use 1-9999"
 msgstr "neveljavna vrednost leta: uporabite 1-9999"
 
-#: misc-utils/cal.c:464
+#: misc-utils/cal.c:463
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:810
+#: misc-utils/cal.c:809
 #, c-format
 msgid "usage: cal [-13smjyV] [[month] year]\n"
 msgstr "uporaba: cal [-13smjyV] [[mesec] leto]\n"
@@ -7196,7 +7200,7 @@ msgstr ""
 "uporaba: logger [-is] [-f dat] [-p prednost] [-t znaèka] [-u vtiènica] "
 "[ sporoèilo ...]\n"
 
-#: misc-utils/look.c:352
+#: misc-utils/look.c:351
 #, c-format
 msgid "usage: look [-dfa] [-t char] string [file]\n"
 msgstr "uporaba: look [-dfa] [-t znak] niz [datoteka]\n"
@@ -7276,7 +7280,7 @@ msgstr "%s: preimenovanje %s na %s ni uspelo: %s\n"
 msgid "call: %s from to files...\n"
 msgstr "klic: %s iz na datoteke...\n"
 
-#: misc-utils/script.c:109
+#: misc-utils/script.c:110
 #, c-format
 msgid ""
 "Warning: `%s' is a link.\n"
@@ -7287,22 +7291,22 @@ msgstr ""
 "Uporabite `%s [izbire] %s' èe jo ¾elite uporabiti.\n"
 "Skript ni bil izvr¹en.\n"
 
-#: misc-utils/script.c:172
+#: misc-utils/script.c:173
 #, c-format
 msgid "usage: script [-a] [-f] [-q] [-t] [file]\n"
 msgstr "uporaba: script [-a] [-f] [-q] [-t] [datoteka]\n"
 
-#: misc-utils/script.c:195
+#: misc-utils/script.c:196
 #, c-format
 msgid "Script started, file is %s\n"
 msgstr "Script se je zaèel, dat. je %s\n"
 
-#: misc-utils/script.c:290
+#: misc-utils/script.c:296
 #, c-format
 msgid "Script started on %s"
 msgstr "Script se je zaèel na %s"
 
-#: misc-utils/script.c:404
+#: misc-utils/script.c:410
 #, c-format
 msgid ""
 "\n"
@@ -7311,17 +7315,17 @@ msgstr ""
 "\n"
 "Script konèan na %s"
 
-#: misc-utils/script.c:411
+#: misc-utils/script.c:417
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "Script konèan, dat. je %s\n"
 
-#: misc-utils/script.c:422
+#: misc-utils/script.c:428
 #, c-format
 msgid "openpty failed\n"
 msgstr "openpty ni uspel\n"
 
-#: misc-utils/script.c:456
+#: misc-utils/script.c:462
 #, c-format
 msgid "Out of pty's\n"
 msgstr "Zmanjkalo pty-jev\n"
@@ -7567,52 +7571,52 @@ msgstr "%s: $TERM ni doloèen.\n"
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr "whereis [ -sbmu ] [ -SBM imenik ... -f ] ime...\n"
 
-#: misc-utils/write.c:99
+#: misc-utils/write.c:98
 #, c-format
 msgid "write: can't find your tty's name\n"
 msgstr "write: imena va¹ega tty ni mogoèe najti\n"
 
-#: misc-utils/write.c:110
+#: misc-utils/write.c:109
 #, c-format
 msgid "write: you have write permission turned off.\n"
 msgstr "write: dovoljenje za pisanje imate izklopljeno.\n"
 
-#: misc-utils/write.c:131
+#: misc-utils/write.c:130
 #, c-format
 msgid "write: %s is not logged in on %s.\n"
 msgstr "write: %s ni prijavljen na %s.\n"
 
-#: misc-utils/write.c:139
+#: misc-utils/write.c:138
 #, c-format
 msgid "write: %s has messages disabled on %s\n"
 msgstr "write: %s ima onemogoèena sporoèila na %s\n"
 
-#: misc-utils/write.c:146
+#: misc-utils/write.c:145
 #, c-format
 msgid "usage: write user [tty]\n"
 msgstr "uporaba: write uporabnik [tty]\n"
 
-#: misc-utils/write.c:234
+#: misc-utils/write.c:233
 #, c-format
 msgid "write: %s is not logged in\n"
 msgstr "write: %s se ni prijavljen\n"
 
-#: misc-utils/write.c:243
+#: misc-utils/write.c:242
 #, c-format
 msgid "write: %s has messages disabled\n"
 msgstr "write: %s ima onemogoèena sporoèila\n"
 
-#: misc-utils/write.c:247
+#: misc-utils/write.c:246
 #, c-format
 msgid "write: %s is logged in more than once; writing to %s\n"
 msgstr "write: %s se je prijavil veè kot enkrat; pi¹em v %s\n"
 
-#: misc-utils/write.c:313
+#: misc-utils/write.c:312
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %s ..."
 msgstr "Sporoèilo iz %s@%s (kot %s) na %s pri %s ..."
 
-#: misc-utils/write.c:316
+#: misc-utils/write.c:315
 #, c-format
 msgid "Message from %s@%s on %s at %s ..."
 msgstr "Sporoèilo iz %s@%s na %s pri %s ..."
@@ -7857,7 +7861,7 @@ msgstr "mount: po evidenci mtab je %s priklopljeno na %s<"
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: enote %s ni moè odpreti za pisanje: %s"
 
-#: mount/mount.c:552 mount/mount.c:950
+#: mount/mount.c:552 mount/mount.c:954
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: napaka pri pisanju na %s: %s"
@@ -7867,163 +7871,173 @@ msgstr "mount: napaka pri pisanju na %s: %s"
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: napaka pri spreminjanju naèina %s: %s"
 
-#: mount/mount.c:676 mount/mount.c:1565
+#: mount/mount.c:638
+#, fuzzy, c-format
+msgid "mount: cannot set group id: %s"
+msgstr "mount: hitrosti ni mogoèe nastaviti: %s"
+
+#: mount/mount.c:641
+#, fuzzy, c-format
+msgid "mount: cannot set user id: %s"
+msgstr "mount: hitrosti ni mogoèe nastaviti: %s"
+
+#: mount/mount.c:680 mount/mount.c:1569
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: ni mogoèe vejiti: %s"
 
-#: mount/mount.c:690
+#: mount/mount.c:694
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: za %s niste podali vrste dat. sistema\n"
 
-#: mount/mount.c:693
+#: mount/mount.c:697
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "\tUporabili se bodo vsi tipi omenjeni v %s ali %s\n"
 
-#: mount/mount.c:696
+#: mount/mount.c:700
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "\tin izgleda kot da je izmenjalni prostor\n"
 
-#: mount/mount.c:698
+#: mount/mount.c:702
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "\tUporabljen bo tip %s\n"
 
-#: mount/mount.c:725
+#: mount/mount.c:729
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s je podoben izmenjalnemu prostoru, zato ne bo priklopljen"
 
-#: mount/mount.c:816
+#: mount/mount.c:820
 msgid "mount failed"
 msgstr "priklop ni uspel"
 
-#: mount/mount.c:818
+#: mount/mount.c:822
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: samo sistemski skrbnik lahko priklopi %s na %s"
 
-#: mount/mount.c:846
+#: mount/mount.c:850
 msgid "mount: loop device specified twice"
 msgstr "mount: loop naprava je podana dvakrat"
 
-#: mount/mount.c:851
+#: mount/mount.c:855
 msgid "mount: type specified twice"
 msgstr "mount: tip je podan dvakrat"
 
-#: mount/mount.c:863
+#: mount/mount.c:867
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: nastavitev loop naprave bo preskoèena\n"
 
-#: mount/mount.c:876
+#: mount/mount.c:880
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: loop naprava %s bo uporabljena\n"
 
-#: mount/mount.c:885
+#: mount/mount.c:889
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:890
+#: mount/mount.c:894
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:895
+#: mount/mount.c:899
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: nastavitev loop naprave ni uspela\n"
 
-#: mount/mount.c:906
+#: mount/mount.c:910
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: nastavitev loop naprave je uspela\n"
 
-#: mount/mount.c:945
+#: mount/mount.c:949
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: %s ni mogoèe odpreti: %s"
 
-#: mount/mount.c:966
+#: mount/mount.c:970
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argument pri -p ali --pass-fd mora biti ¹tevilka"
 
-#: mount/mount.c:979
+#: mount/mount.c:983
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: %s ni mogoèe odpreti za nastavitev hitrosti"
 
-#: mount/mount.c:982
+#: mount/mount.c:986
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: hitrosti ni mogoèe nastaviti: %s"
 
-#: mount/mount.c:1040
+#: mount/mount.c:1044
 #, fuzzy, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: po evidenci mtab je %s ¾e priklopljeno na %s"
 
-#: mount/mount.c:1115
+#: mount/mount.c:1119
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr "mount: Tipa dat. sistema ni bilo mogoèe ugotoviti in ni bil podan"
 
-#: mount/mount.c:1118
+#: mount/mount.c:1122
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: tip dat. sistema mora biti podan"
 
-#: mount/mount.c:1121
+#: mount/mount.c:1125
 msgid "mount: mount failed"
 msgstr "mount: priklop ni uspel"
 
-#: mount/mount.c:1127 mount/mount.c:1162
+#: mount/mount.c:1131 mount/mount.c:1166
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: priklopna toèka %s ni imenik"
 
-#: mount/mount.c:1129
+#: mount/mount.c:1133
 msgid "mount: permission denied"
 msgstr "mount: dostop zavrnjen"
 
-#: mount/mount.c:1131
+#: mount/mount.c:1135
 msgid "mount: must be superuser to use mount"
 msgstr "mount: ukaz mount lahko uporablja samo sistemski skrbnik"
 
-#: mount/mount.c:1135 mount/mount.c:1139
+#: mount/mount.c:1139 mount/mount.c:1143
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s je v rabi"
 
-#: mount/mount.c:1141
+#: mount/mount.c:1145
 msgid "mount: proc already mounted"
 msgstr "mount: proc je ¾e priklopljen"
 
-#: mount/mount.c:1143
+#: mount/mount.c:1147
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s je ¾e priklopljen ali %s zaposlen"
 
-#: mount/mount.c:1149
+#: mount/mount.c:1153
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: priklopna toèka %s ne obstaja"
 
-#: mount/mount.c:1151
+#: mount/mount.c:1155
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: priklopna toèka %s je simbolna povezava do nièesar"
 
-#: mount/mount.c:1154
+#: mount/mount.c:1158
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: posebna naprava %s ne obstaja"
 
-#: mount/mount.c:1164
+#: mount/mount.c:1168
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -8032,22 +8046,22 @@ msgstr ""
 "mount: posebna naprava %s ne obstaja\n"
 "\t(pot ni imenik)\n"
 
-#: mount/mount.c:1177
+#: mount/mount.c:1181
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s ¹e ni priklopljen ali nepravilna izbira"
 
-#: mount/mount.c:1179
-#, c-format
+#: mount/mount.c:1183
+#, fuzzy, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
-"       missing codepage or other error"
+"       missing codepage or helper program, or other error"
 msgstr ""
 "mount: napaèen tip dat. sistema, nepravilna izbira, po¹kodovan superblok na %"
 "s,\n"
 "\tmanjkajoèa kodna stran ali druge napake"
 
-#: mount/mount.c:1189
+#: mount/mount.c:1193
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -8055,7 +8069,7 @@ msgstr ""
 "\t(to bi lahko bila IDE naprava pri kateri uporabljate\n"
 "\tide-scsi tako, da je potrebno imeti sr0 ali sda)"
 
-#: mount/mount.c:1195
+#: mount/mount.c:1199
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -8063,7 +8077,7 @@ msgstr ""
 "\t(ali posku¹ate priklopiti raz¹irjen razdelek,\n"
 "\tnamesto notranjega logiènega razdelka?)"
 
-#: mount/mount.c:1212
+#: mount/mount.c:1216
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -8071,51 +8085,51 @@ msgstr ""
 "\tV nekaterih primerih dobite uporabne informacije v sist. dnevniku\n"
 "\tposkusite z dmesg | tail\n"
 
-#: mount/mount.c:1218
+#: mount/mount.c:1222
 msgid "mount table full"
 msgstr "priklopna tabela je polna"
 
-#: mount/mount.c:1220
+#: mount/mount.c:1224
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: superbloka ni mogoèe prebrati"
 
-#: mount/mount.c:1226
+#: mount/mount.c:1230
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: neznana naprava"
 
-#: mount/mount.c:1231
+#: mount/mount.c:1235
 #, fuzzy, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: neznan tip dat. sistema '%s'"
 
-#: mount/mount.c:1243
+#: mount/mount.c:1247
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: verjetno je bilo mi¹ljeno %s"
 
-#: mount/mount.c:1246
+#: mount/mount.c:1250
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: mogoèe je bil mi¹ljen 'iso9660'?"
 
-#: mount/mount.c:1249
+#: mount/mount.c:1253
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: mogoèe je bil mi¹ljen 'vfat'?"
 
-#: mount/mount.c:1252
+#: mount/mount.c:1256
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s ima napaèno ¹tevilko naprave ali pa datoteènosistemski tip %s ni "
 "podprt"
 
-#: mount/mount.c:1258
+#: mount/mount.c:1262
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s ni bloèna naprava in stat ne uspe?"
 
-#: mount/mount.c:1260
+#: mount/mount.c:1264
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -8124,66 +8138,66 @@ msgstr ""
 "mount: jedro ne prepozna %s kot bloène naprave\n"
 "\t(mogoèe `insmod gonilnik'?)"
 
-#: mount/mount.c:1263
+#: mount/mount.c:1267
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s ni bloèna naprava (poskusite `-o loop'?)"
 
-#: mount/mount.c:1266
+#: mount/mount.c:1270
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s ni bloèna naprava"
 
-#: mount/mount.c:1269
+#: mount/mount.c:1273
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s ni veljavna bloèna naprava"
 
-#: mount/mount.c:1272
+#: mount/mount.c:1276
 msgid "block device "
 msgstr "bloèna naprava"
 
-#: mount/mount.c:1274
+#: mount/mount.c:1278
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: %s%s ni moè priklopiti samo za branje"
 
-#: mount/mount.c:1278
+#: mount/mount.c:1282
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s je za¹èitena pred pisanjem ampak podana je `-w' zastavica"
 
-#: mount/mount.c:1293
+#: mount/mount.c:1297
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s je za¹èitena pred pisanjem, priklapljam samo za branje"
 
-#: mount/mount.c:1393
+#: mount/mount.c:1397
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: tip ni bil podan - predpostavlja se nfs zaradi dvopièja\n"
 
-#: mount/mount.c:1399
+#: mount/mount.c:1403
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr "mount: tip ni bil podan - predpostavlja se smbfs zaradi predpone // \n"
 
-#: mount/mount.c:1416
+#: mount/mount.c:1420
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: \"%s\" gre v ozadje\n"
 
-#: mount/mount.c:1426
+#: mount/mount.c:1430
 #, c-format
 msgid "mount: giving up \"%s\"\n"
 msgstr "mount: predaja se \"%s\"\n"
 
-#: mount/mount.c:1512
+#: mount/mount.c:1516
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s je ¾e priklopljen v %s\n"
 
-#: mount/mount.c:1650
+#: mount/mount.c:1654
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8248,24 +8262,24 @@ msgstr ""
 "Druge izbire: [-nfFrsvw] [-o izbire].\n"
 "Podrobnosti lahko poi¹èete v priroèniku z ukazom: man 8 mount\n"
 
-#: mount/mount.c:1960
+#: mount/mount.c:1967
 msgid "mount: only root can do that"
 msgstr "mount: to lahko izvede samo sistemski skrbnik"
 
-#: mount/mount.c:1965
+#: mount/mount.c:1972
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s bo ustvarjen, ker ga nisem na¹el\n"
 
-#: mount/mount.c:1975
+#: mount/mount.c:1982
 msgid "nothing was mounted"
 msgstr "niè ni bilo priklopljeno"
 
-#: mount/mount.c:1988 mount/mount.c:2014
+#: mount/mount.c:2000 mount/mount.c:2026
 msgid "mount: no such partition found"
 msgstr "mount: takega razdelka nisem na¹el"
 
-#: mount/mount.c:1991
+#: mount/mount.c:2003
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %s ni mogoèe najti v %s ali %s"
@@ -8358,81 +8372,91 @@ msgstr "%s: %s ni mogoèe odpreti: %s\n"
 msgid "umount: compiled without support for -f\n"
 msgstr "umount: prevajanje je potekalo brez podpore za -f\n"
 
-#: mount/umount.c:130
+#: mount/umount.c:106
+#, fuzzy, c-format
+msgid "umount: cannot set group id: %s"
+msgstr "mount: hitrosti ni mogoèe nastaviti: %s"
+
+#: mount/umount.c:109
+#, fuzzy, c-format
+msgid "umount: cannot set user id: %s"
+msgstr "mount: hitrosti ni mogoèe nastaviti: %s"
+
+#: mount/umount.c:134
 #, fuzzy, c-format
 msgid "umount: cannot fork: %s"
 msgstr "umount: vejitev ni mogoèa: %s"
 
-#: mount/umount.c:142
+#: mount/umount.c:146
 #, c-format
 msgid "umount: %s: invalid block device"
 msgstr "umount: %s: neveljavna bloèna naprava"
 
-#: mount/umount.c:144
+#: mount/umount.c:148
 #, c-format
 msgid "umount: %s: not mounted"
 msgstr "umount: %s: ni priklopljena"
 
-#: mount/umount.c:146
+#: mount/umount.c:150
 #, c-format
 msgid "umount: %s: can't write superblock"
 msgstr "umount: %s: superbloka ni mogoèe zapisati"
 
-#: mount/umount.c:150
+#: mount/umount.c:154
 #, c-format
 msgid "umount: %s: device is busy"
 msgstr "umount: %s: naprava je zaposlena"
 
-#: mount/umount.c:152
+#: mount/umount.c:156
 #, c-format
 msgid "umount: %s: not found"
 msgstr "umount: %s: neuspe¹no iskanje"
 
-#: mount/umount.c:154
+#: mount/umount.c:158
 #, c-format
 msgid "umount: %s: must be superuser to umount"
 msgstr "umount: %s: samo sistemski skrbnik lahko odklaplja"
 
-#: mount/umount.c:156
+#: mount/umount.c:160
 #, c-format
 msgid "umount: %s: block devices not permitted on fs"
 msgstr "umount: %s: na dat. sist. bloène naprave niso dovoljene"
 
-#: mount/umount.c:158
+#: mount/umount.c:162
 #, c-format
 msgid "umount: %s: %s"
 msgstr "umount: %s: %s"
 
-#: mount/umount.c:207
+#: mount/umount.c:211
 #, c-format
 msgid "no umount2, trying umount...\n"
 msgstr "ni umount2, posku¹am z umount...\n"
 
-#: mount/umount.c:223
+#: mount/umount.c:227
 #, c-format
 msgid "could not umount %s - trying %s instead\n"
 msgstr "odklop %s ni uspel - posku¹am z %s\n"
 
-#: mount/umount.c:241
+#: mount/umount.c:245
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr "umount: %s je zaposlena - ponovno priklapljam samo za branje\n"
 
-#: mount/umount.c:252
+#: mount/umount.c:256
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr "umount: ponovni priklop %s samo za branje ni mogoè\n"
 
-#: mount/umount.c:261
+#: mount/umount.c:265
 #, c-format
 msgid "%s umounted\n"
 msgstr "%s je odklopljen\n"
 
-#: mount/umount.c:359
+#: mount/umount.c:363
 msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: seznama dat. sist. za odklop ni mogoèe najti"
 
-#: mount/umount.c:389
+#: mount/umount.c:393
 #, c-format
 msgid ""
 "Usage: umount [-hV]\n"
@@ -8443,47 +8467,47 @@ msgstr ""
 "\t  umount -a [-f] [-r] [-n] [-v] [-t tip nav. dat. sist.] [-O izbire]\n"
 "\t  umount [-f] [-r] [-n] [-v] posebno | vozli¹èe...\n"
 
-#: mount/umount.c:441
+#: mount/umount.c:445
 #, fuzzy
 msgid "Cannot umount \"\"\n"
 msgstr "ni mogoèe odklopiti \"\"\n"
 
-#: mount/umount.c:447
+#: mount/umount.c:451
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr "%s posku¹am odklopiti\n"
 
-#: mount/umount.c:453
+#: mount/umount.c:457
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "%s ni mogoèe najti v mtab\n"
 
-#: mount/umount.c:460
+#: mount/umount.c:464
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s ni priklopljen (glede na mtab)"
 
-#: mount/umount.c:484
+#: mount/umount.c:488
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: izgleda kot da je %s veèkrat priklopljen"
 
-#: mount/umount.c:497
+#: mount/umount.c:501
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: %s ni v fstab (in vi niste sistemski skrbnik)"
 
-#: mount/umount.c:501
+#: mount/umount.c:505
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: priklop %s je v nasprotju z fstab"
 
-#: mount/umount.c:542
+#: mount/umount.c:546
 #, fuzzy, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "mount: samo sistemski skrbnik lahko odklopi %s na %s"
 
-#: mount/umount.c:623
+#: mount/umount.c:627
 msgid "umount: only root can do that"
 msgstr "umount: samo sistemski skrbnik naredi to"
 
@@ -9733,17 +9757,17 @@ msgstr ""
 "hexdump: [-bcCdovx] [-e oblika] [-f oblk_dat] [-n dol¾ina] [-s preskok] "
 "[dat ...]\n"
 
-#: text-utils/more.c:258
+#: text-utils/more.c:257
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr "uporaba: %s [-dflpcsu] [+vrstica | +/vzorec] ime1 ime2 ...\n"
 
-#: text-utils/more.c:481
+#: text-utils/more.c:480
 #, fuzzy, c-format
 msgid "%s: unknown option \"-%c\"\n"
 msgstr "%s: neznana mo¾nost \"-%c\"\n"
 
-#: text-utils/more.c:513
+#: text-utils/more.c:512
 #, c-format
 msgid ""
 "\n"
@@ -9754,7 +9778,7 @@ msgstr ""
 "*** %s: imenik ***\n"
 "\n"
 
-#: text-utils/more.c:557
+#: text-utils/more.c:556
 #, c-format
 msgid ""
 "\n"
@@ -9765,45 +9789,45 @@ msgstr ""
 "******** %s: Ni znakovna datoteka ********\n"
 "\n"
 
-#: text-utils/more.c:660
+#: text-utils/more.c:659
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Za izhod uporabite q ali Q]"
 
-#: text-utils/more.c:752
+#: text-utils/more.c:751
 #, c-format
 msgid "--More--"
 msgstr "--Naprej--"
 
-#: text-utils/more.c:754
+#: text-utils/more.c:753
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Naslednja datoteka: %s)"
 
-#: text-utils/more.c:759
+#: text-utils/more.c:758
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Pritisnite preslednico za nadaljevanje, Q za izhod.]"
 
-#: text-utils/more.c:1174
+#: text-utils/more.c:1173
 #, c-format
 msgid "...back %d pages"
 msgstr "...nazaj za %d strani"
 
-#: text-utils/more.c:1176
+#: text-utils/more.c:1175
 msgid "...back 1 page"
 msgstr "...nazaj za eno stran"
 
-#: text-utils/more.c:1219
+#: text-utils/more.c:1218
 msgid "...skipping one line"
 msgstr "...preskok vrstice"
 
-#: text-utils/more.c:1221
+#: text-utils/more.c:1220
 #, c-format
 msgid "...skipping %d lines"
 msgstr "...preskok %d vrstic"
 
-#: text-utils/more.c:1258
+#: text-utils/more.c:1257
 msgid ""
 "\n"
 "***Back***\n"
@@ -9813,7 +9837,7 @@ msgstr ""
 "***Nazaj***\n"
 "\n"
 
-#: text-utils/more.c:1296
+#: text-utils/more.c:1295
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -9824,7 +9848,7 @@ msgstr ""
 "Veèini ukazv se lahko doda celo¹tevilski argument k. Privzeto v oklepajih.\n"
 "Zvezdica (*) pomeni, da bo argument od sedaj naprej privzet.\n"
 
-#: text-utils/more.c:1303
+#: text-utils/more.c:1302
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -9869,34 +9893,34 @@ msgstr ""
 ":f                      Prika¾i ime trenutne datoteke in ¹tevilko vrstice\n"
 ".                       Ponovi prej¹nji ukaz\n"
 
-#: text-utils/more.c:1372 text-utils/more.c:1377
+#: text-utils/more.c:1371 text-utils/more.c:1376
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Pritisnite 'h' za navodila.]"
 
-#: text-utils/more.c:1411
+#: text-utils/more.c:1410
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" vrstica %d"
 
-#: text-utils/more.c:1413
+#: text-utils/more.c:1412
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Ni datoteka] vrstica %d"
 
-#: text-utils/more.c:1497
+#: text-utils/more.c:1496
 msgid "  Overflow\n"
 msgstr "  Prekoraèitev\n"
 
-#: text-utils/more.c:1544
+#: text-utils/more.c:1543
 msgid "...skipping\n"
 msgstr "...preskok\n"
 
-#: text-utils/more.c:1573
+#: text-utils/more.c:1572
 msgid "Regular expression botch"
 msgstr "Krpa regularnega izraza"
 
-#: text-utils/more.c:1585
+#: text-utils/more.c:1584
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9904,15 +9928,15 @@ msgstr ""
 "\n"
 "Vzorca ni moè najti\n"
 
-#: text-utils/more.c:1588 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1587 text-utils/pg.c:1123 text-utils/pg.c:1274
 msgid "Pattern not found"
 msgstr "Vzorca ni moè najti"
 
-#: text-utils/more.c:1649
+#: text-utils/more.c:1648
 msgid "can't fork\n"
 msgstr "vejitev ni mogoèa\n"
 
-#: text-utils/more.c:1688
+#: text-utils/more.c:1687
 msgid ""
 "\n"
 "...Skipping "
@@ -9920,19 +9944,19 @@ msgstr ""
 "\n"
 "... Preskok "
 
-#: text-utils/more.c:1692
+#: text-utils/more.c:1691
 msgid "...Skipping to file "
 msgstr "... Preskok na datoteko "
 
-#: text-utils/more.c:1694
+#: text-utils/more.c:1693
 msgid "...Skipping back to file "
 msgstr "... Preskok nazaj na datoteko "
 
-#: text-utils/more.c:1972
+#: text-utils/more.c:1971
 msgid "Line too long"
 msgstr "Vrstica je predolga"
 
-#: text-utils/more.c:2015
+#: text-utils/more.c:2014
 msgid "No previous command to substitute for"
 msgstr "Zaradi neobstojeèega prej¹njega ukaza zamenjava ni mogoèa"
 
@@ -9985,7 +10009,7 @@ msgstr "hexdump: slaba oblika [%s]\n"
 msgid "hexdump: bad conversion character %%%s.\n"
 msgstr "hexdump: slab pretvorni znak %%%s.\n"
 
-#: text-utils/pg.c:237
+#: text-utils/pg.c:235
 #, c-format
 msgid ""
 "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
@@ -9993,81 +10017,81 @@ msgstr ""
 "%s: Uporaba: %s [-¹tevilo] [-p niz] [-cefnrs] [+vrstica] [+/vzorec/] "
 "[datoteke]\n"
 
-#: text-utils/pg.c:246
+#: text-utils/pg.c:244
 #, c-format
 msgid "%s: option requires an argument -- %s\n"
 msgstr "%s: izbira zahteva argument -- %s\n"
 
-#: text-utils/pg.c:254
+#: text-utils/pg.c:252
 #, c-format
 msgid "%s: illegal option -- %s\n"
 msgstr "%s: nedovoljena izbira -- %s\n"
 
-#: text-utils/pg.c:371
+#: text-utils/pg.c:369
 msgid "...skipping forward\n"
 msgstr "... preskok naprej\n"
 
-#: text-utils/pg.c:373
+#: text-utils/pg.c:371
 msgid "...skipping backward\n"
 msgstr "... preskok nazaj\n"
 
-#: text-utils/pg.c:395
+#: text-utils/pg.c:393
 msgid "No next file"
 msgstr "Naslednje datoteke ni"
 
-#: text-utils/pg.c:399
+#: text-utils/pg.c:397
 msgid "No previous file"
 msgstr "Prej¹nje datoteke ni"
 
-#: text-utils/pg.c:929
+#: text-utils/pg.c:927
 #, c-format
 msgid "%s: Read error from %s file\n"
 msgstr "%s: Napaka pri branju iz datoteke %s\n"
 
-#: text-utils/pg.c:935
+#: text-utils/pg.c:933
 #, c-format
 msgid "%s: Unexpected EOF in %s file\n"
 msgstr "%s: Neprièakovan konec datoteke v %s\n"
 
-#: text-utils/pg.c:938
+#: text-utils/pg.c:936
 #, c-format
 msgid "%s: Unknown error in %s file\n"
 msgstr "%s: Neznana napaka v datoteki %s\n"
 
-#: text-utils/pg.c:1033
+#: text-utils/pg.c:1031
 #, c-format
 msgid "%s: Cannot create tempfile\n"
 msgstr "%s: Zaèasne datoteke ni mogoèe ustvariti\n"
 
-#: text-utils/pg.c:1042 text-utils/pg.c:1217
+#: text-utils/pg.c:1040 text-utils/pg.c:1215
 msgid "RE error: "
 msgstr "napaka RE: "
 
-#: text-utils/pg.c:1199
+#: text-utils/pg.c:1197
 msgid "(EOF)"
 msgstr "(EOF)"
 
-#: text-utils/pg.c:1225
+#: text-utils/pg.c:1223
 msgid "No remembered search string"
 msgstr "Shranjenega iskalnega niza ni"
 
-#: text-utils/pg.c:1308
+#: text-utils/pg.c:1306
 msgid "Cannot open "
 msgstr "Ni mogoèe odpreti "
 
-#: text-utils/pg.c:1356
+#: text-utils/pg.c:1354
 msgid "saved"
 msgstr "shranjeno"
 
-#: text-utils/pg.c:1463
+#: text-utils/pg.c:1461
 msgid ": !command not allowed in rflag mode.\n"
 msgstr ": !ukaz ni dovoljen v rflag naèinu.\n"
 
-#: text-utils/pg.c:1495
+#: text-utils/pg.c:1493
 msgid "fork() failed, try again later\n"
 msgstr "klic fork() ni uspel, poskusite pozneje\n"
 
-#: text-utils/pg.c:1700
+#: text-utils/pg.c:1698
 msgid "(Next file: "
 msgstr "(Naslednja datoteka: "
 
@@ -10120,6 +10144,9 @@ msgstr "Vhodna vrstica je predolga.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Pri poveèevanju medpomnilnika je zmanjkalo pomnilnika.\n"
+
+#~ msgid "Password error."
+#~ msgstr "Napaka v geslu."
 
 #~ msgid "`%s': bad directory: '.' isn't first\n"
 #~ msgstr "`%s': po¹kodovan imenik: '.' ni na prvem mestu\n"
