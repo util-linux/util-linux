@@ -47,7 +47,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
-#include "errs.h"
+#include <err.h>
 #include "nls.h"
 
 #include "widechar.h"
@@ -251,7 +251,7 @@ maketbl()
 					       * sizeof(wchar_t *))) ||
 			!(lens = realloc(lens, ((u_int)maxcols + DEFCOLS)
 					       * sizeof(int))))
-			err_nomsg(1);
+			err(1, NULL);
 		    memset((char *)lens + maxcols * sizeof(int),
 			   0, DEFCOLS * sizeof(int));
 		    maxcols += DEFCOLS;
@@ -306,7 +306,7 @@ input(fp)
 			maxentry += DEFNUM;
 			if (!(list = realloc(list,
 			    (u_int)maxentry * sizeof(wchar_t *))))
-				err_nomsg(1);
+				err(1, NULL);
 		}
 		list[entries++] = wcsdup(buf);
 	}
@@ -361,7 +361,7 @@ emalloc(size)
 	char *p;
 
 	if (!(p = malloc(size)))
-		err_nomsg(1);
+		err(1, NULL);
 	memset(p, 0, size);
 	return (p);
 }
