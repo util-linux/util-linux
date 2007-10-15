@@ -63,7 +63,7 @@
 #include <string.h>
 #include <time.h>
 #include <unistd.h>
-#include "errs.h"
+#include <err.h>
 #include "nls.h"
 
 #if defined(HAVE_NCURSES)
