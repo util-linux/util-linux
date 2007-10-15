@@ -69,6 +69,13 @@ if ARCH_HPPA
 SETARCH_LINKS += parisc parisc64 parisc32
 endif
 
+SETARCH_MAN_LINKS = $(addsuffix .8, $(SETARCH_LINKS))
+man_MANS += $(SETARCH_MAN_LINKS)
+CLEANFILES=$(SETARCH_MAN_LINKS)
+
+$(SETARCH_MAN_LINKS): setarch.8
+	echo ".so setarch.8" > $@
+
 install-exec-hook:
 	for I in $(RDEV_LINKS); do \
 		cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev $$I ; \
@@ -76,7 +83,12 @@ install-exec-hook:
 	for I in $(SETARCH_LINKS); do \
 		cd $(DESTDIR)$(usrbinexecdir) && ln -sf setarch $$I ; \
 	done
+
+uninstall-hook:
+	for I in $(RDEV_LINKS); do \
+		rm -f $(DESTDIR)$(usrbinexecdir)/$$I ; \
+	done
 	for I in $(SETARCH_LINKS); do \
-                echo ".so setarch.8" > $(DESTDIR)$(man8dir)/$$I.8 ; \
-        done
+		rm -f $(DESTDIR)$(usrbinexecdir)/$$I ; \
+	done
 
