@@ -53,7 +53,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-#include "errs.h"
+#include <err.h>
 #include "nls.h"
 
 int
