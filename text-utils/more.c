@@ -99,7 +99,7 @@ void erasep (register int col);
 void show (register char ch);
 void set_tty(void);
 void reset_tty(void);
-void ttyin (unsigned char buf[], register int nmax, char pchar);
+void ttyin (char buf[], register int nmax, char pchar);
 int  number(char *cmd);
 int  readch (void);
 int  get_line(register FILE *f, int *length);
@@ -180,7 +180,7 @@ my_putstring(char *s) {
 }
 
 static void
-my_setupterm(const char *term, int fildes, int *errret) {
+my_setupterm(char *term, int fildes, int *errret) {
      setupterm(term, fildes, errret);
 }
 
@@ -200,7 +200,7 @@ my_tgetstr(char *s, char *ss) {
 }
 
 static char *
-my_tgoto(const char *cap, int col, int row) {
+my_tgoto(char *cap, int col, int row) {
      return tparm(cap, col, row);
 }
 
@@ -218,7 +218,7 @@ my_putstring(char *s) {
 }
 
 static void
-my_setupterm(const char *term, int fildes, int *errret) {
+my_setupterm(char *term, int fildes, int *errret) {
      *errret = tgetent(tcbuffer, term);
 }
 
@@ -238,7 +238,7 @@ my_tgetstr(char *s, char *ss) {
 }
 
 static char *
-my_tgoto(const char *cap, int col, int row) {
+my_tgoto(char *cap, int col, int row) {
      return tgoto(cap, col, row);
 }
 
@@ -784,7 +784,7 @@ int get_line(register FILE *f, int *length)
     wchar_t wc;
     int wc_width;
     mbstate_t state, state_bak;		/* Current status of the stream. */
-    unsigned char mbc[MB_LEN_MAX];	/* Buffer for one multibyte char. */
+    char mbc[MB_LEN_MAX];		/* Buffer for one multibyte char. */
     size_t mblength;			/* Byte length of multibyte char. */
     size_t mbc_pos = 0;			/* Postion of the MBC. */
     int use_mbc_buffer_flag = 0;	/* If 1, mbc has data. */
@@ -1848,8 +1848,8 @@ static char *CARAT = "^";
     else \
 	putserr(BS);
 
-void ttyin (unsigned char buf[], register int nmax, char pchar) {
-    unsigned char *sp;
+void ttyin (char buf[], register int nmax, char pchar) {
+    char *sp;
     int c;
     int slash = 0;
     int	maxlen;
