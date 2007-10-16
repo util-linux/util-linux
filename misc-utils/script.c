@@ -141,7 +141,7 @@ main(int argc, char **argv) {
 	setlocale(LC_NUMERIC, "C");	/* see comment above */
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-	
+
 	if (argc == 2) {
 		if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
 			printf(_("%s (%s)\n"),
@@ -237,8 +237,15 @@ doinput() {
 		die = 1;
 
 	while (die == 0) {
-		if ((cc = read(0, ibuf, BUFSIZ)) > 0)
-			(void) write(master, ibuf, cc);
+		if ((cc = read(0, ibuf, BUFSIZ)) > 0) {
+			ssize_t wrt = write(master, ibuf, cc);
+			if (wrt == -1) {
+				int err = errno;
+				fprintf (stderr, _("%s: write error %d: %s\n"),
+					progname, err, strerror(err));
+				fail();
+			}
+		}
 		else if (cc == -1 && errno == EINTR && resized)
 			resized = 0;
 		else
@@ -285,6 +292,8 @@ dooutput() {
 	struct timeval tv;
 	double oldtime=time(NULL), newtime;
 	int flgs = 0;
+	ssize_t wrt;
+	size_t fwrt;
 
 	(void) close(0);
 #ifdef HAVE_LIBUTIL
@@ -333,8 +342,20 @@ dooutput() {
 			fprintf(stderr, "%f %i\n", newtime - oldtime, cc);
 			oldtime = newtime;
 		}
-		(void) write(1, obuf, cc);
-		(void) fwrite(obuf, 1, cc, fscript);
+		wrt = write(1, obuf, cc);
+		if (wrt < 0) {
+			int err = errno;
+			fprintf (stderr, _("%s: write error: %s\n"),
+				progname, strerror(err));
+			fail();
+		}
+		fwrt = fwrite(obuf, 1, cc, fscript);
+		if (fwrt < cc) {
+			int err = errno;
+			fprintf (stderr, _("%s: cannot write script file, error: %s\n"),
+				progname, strerror(err));
+			fail();
+		}
 		if (fflg)
 			(void) fflush(fscript);
 	} while(1);
