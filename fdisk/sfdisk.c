@@ -246,7 +246,7 @@ get_sector(char *dev, int fd, unsigned long sno) {
 
 static int
 msdos_signature (struct sector *s) {
-    unsigned char *data = s->data;
+    unsigned char *data = (unsigned char *)s->data;
     if (data[510] == 0x55 && data[511] == 0xaa)
 	    return 1;
     error(_("ERROR: sector %lu does not have an msdos signature\n"),
@@ -381,7 +381,7 @@ restore_sectors(char *dev) {
     ss0 = ss;
     ct = statbuf.st_size/516;
     while(ct--) {
-	sno = chars_to_ulong(ss);
+	sno = chars_to_ulong((unsigned char *) ss);
 	if (!sseek(dev, fdout, sno))
 	  goto err;
 	if (write(fdout, ss+4, 512) != 512) {
@@ -716,8 +716,8 @@ copy_to_part(char *cp, struct partition *p) {
     p->end_chs.h = *cp++;
     p->end_chs.s = *cp++;
     p->end_chs.c = *cp++;
-    p->start_sect = copy_to_int(cp);
-    p->nr_sects = copy_to_int(cp+4);
+    p->start_sect = copy_to_int((unsigned char *) cp);
+    p->nr_sects = copy_to_int((unsigned char *) cp+4);
 }
 
 static void
@@ -1711,8 +1711,8 @@ struct dumpfld {
 #define RD_CMD (-2)
 
 static int
-read_stdin(unsigned char **fields, unsigned char *line, int fieldssize, int linesize) {
-    unsigned char *lp, *ip;
+read_stdin(char **fields, char *line, int fieldssize, int linesize) {
+    char *lp, *ip;
     int c, fno;
 
     /* boolean true and empty string at start */
@@ -2006,8 +2006,8 @@ build_surrounding_extended(struct part_desc *p, struct part_desc *ep,
 static int
 read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 	  struct disk_desc *z) {
-    unsigned char line[1000];
-    unsigned char *fields[11];
+    char line[1000];
+    char *fields[11];
     int fno, pct = pno%4;
     struct part_desc p, *orig;
     unsigned long ff, ff1, ul, ml, ml1, def;
