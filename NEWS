@@ -1,3 +1,6 @@
+util-linux-ng 2.14
+ [ unreleased yet; use 'git log' ]
+
 util-linux-ng 2.13
 
 * see docs/v2.13-ReleaseNotes or complete changelog at
