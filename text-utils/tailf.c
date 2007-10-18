@@ -30,11 +30,10 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <malloc.h>
-#include <errno.h>
 #include <string.h>
 #include <sys/stat.h>
 #include <ctype.h>
-#include "errs.h"
+#include <err.h>
 #include "nls.h"
 
 #define DEFAULT_LINES  10
@@ -55,11 +54,8 @@ static void tailf(const char *filename, int lines)
     FILE *str;
     int  i;
 
-    if (!(str = fopen(filename, "r"))) {
-	fprintf(stderr, _("Cannot open \"%s\" for read: %s\n"),
-			filename, strerror(errno));
-	exit(1);
-    }
+    if (!(str = fopen(filename, "r")))
+	err(1, _("cannot open \"%s\" for read"), filename);
 
     buffer = malloc(lines * sizeof(*buffer));
     for (i = 0; i < lines; i++) buffer[i] = malloc(BUFSIZ + 1);
@@ -104,20 +100,18 @@ int main(int argc, char **argv)
 	    argc--;
 	    argv++;
 	    if (argc > 0 && (lines = atoi(argv[0])) <= 0)
-		errx(EXIT_FAILURE, _("Invalid number of lines"));
+		errx(EXIT_FAILURE, _("invalid number of lines"));
 	}
 	else if (isdigit(argv[0][1])) {
 	    if ((lines = atoi(*argv + 1)) <= 0)
-		errx(EXIT_FAILURE, _("Invalid number of lines"));
+		errx(EXIT_FAILURE, _("invalid number of lines"));
 	}
 	else
-		errx(EXIT_FAILURE, _("Invalid option"));
+		errx(EXIT_FAILURE, _("invalid option"));
     }
 
-    if (argc != 1) {
-	fprintf(stderr, _("Usage: tailf [-n N | -N] logfile\n"));
-	exit(EXIT_FAILURE);
-    }
+    if (argc != 1)
+	errx(EXIT_FAILURE, _("usage: tailf [-n N | -N] logfile"));
 
     filename = argv[0];
     tailf(filename, lines);
@@ -125,16 +119,14 @@ int main(int argc, char **argv)
     for (osize = filesize(filename);;) {
 	nsize = filesize(filename);
 	if (nsize != osize) {
-	    if (!(str = fopen(filename, "r"))) {
-		fprintf(stderr, _("Cannot open \"%s\" for read: %s\n"),
-				filename, strerror(errno));
-		exit(1);
-	    }
+	    if (!(str = fopen(filename, "r")))
+		err(EXIT_FAILURE, _("cannot open \"%s\" for read"), filename);
+
 	    if (!fseek(str, osize, SEEK_SET))
                 while ((count = fread(buffer, 1, sizeof(buffer), str)) > 0) {
                     wcount = fwrite(buffer, 1, count, stdout);
                     if (wcount != count)
-			fprintf (stderr, _("Incomplete write to \"%s\" (written %d, expected %d)\n"),
+			warnx(_("incomplete write to \"%s\" (written %d, expected %d)\n"),
 				filename, wcount, count);
 		}
 	    fflush(stdout);
@@ -143,5 +135,5 @@ int main(int argc, char **argv)
 	}
 	usleep(250000);		/* 250mS */
     }
-    return 0;
+    return EXIT_SUCCESS;
 }
