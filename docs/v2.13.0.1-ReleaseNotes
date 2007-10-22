@@ -1,0 +1,22 @@
+
+Util-linux-ng 2.13.0.1 Release Notes  (22-Oct-2007)
+===================================================
+
+Fixed security issue:
+--------------------
+
+ CVE-2007-5191 - mount: doesn't drop privileges properly when calling helpers
+
+
+Changelog:
+---------
+
+ For more details see ChangeLog files at:
+ ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.13/
+
+
+docs:
+   - add info about .bugfix releases and branches  [Karel Zak]
+mount:
+   - doesn't drop privileges properly when calling helpers  [Ludwig Nussel]
+
