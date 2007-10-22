@@ -159,6 +159,8 @@ isosize(char *filenamep) {
 		else
 			printf ("%lld\n", (product * ssize) / divisor);
 	}
+
+	close(fd);
 }
 
 int

@@ -394,6 +394,8 @@ report_all_devices(void) {
 		sprintf(device, "/dev/%s", ptname);
 		report_device(device, 1);
 	}
+
+	fclose(procpt);
 }
 
 void
@@ -427,6 +429,8 @@ report_device(char *device, int quiet) {
 			fprintf(stderr, _("%s: ioctl error on %s\n"),
 				progname, device);
 	}
+
+	close(fd);
 }
 
 void
