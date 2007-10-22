@@ -10,6 +10,7 @@
 #include "fsprobe.h"
 #include "sundries.h"		/* for xstrdup */
 #include "nls.h"
+#include "realpath.h"
 
 /* list of already tested filesystems by fsprobe_procfsloop_mount() */
 static struct tried {

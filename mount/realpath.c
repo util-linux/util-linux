@@ -29,6 +29,38 @@
 # define MAXSYMLINKS 256
 #endif
 
+
+/* Make a canonical pathname from PATH.  Returns a freshly malloced string.
+   It is up the *caller* to ensure that the PATH is sensible.  i.e.
+   canonicalize ("/dev/fd0/.") returns "/dev/fd0" even though ``/dev/fd0/.''
+   is not a legal pathname for ``/dev/fd0''.  Anything we cannot parse
+   we return unmodified.   */
+char *
+canonicalize_mountpoint (const char *path) {
+	if (path == NULL)
+		return NULL;
+
+	if (streq(path, "none") ||
+	    streq(path, "proc") ||
+	    streq(path, "devpts"))
+		return xstrdup(path);
+
+	return canonicalize(path);
+}
+
+char *
+canonicalize (const char *path) {
+	char canonical[PATH_MAX+2];
+
+	if (path == NULL)
+		return NULL;
+
+	if (myrealpath (path, canonical, PATH_MAX+1))
+		return xstrdup(canonical);
+
+	return xstrdup(path);
+}
+
 char *
 myrealpath(const char *path, char *resolved_path, int maxreslth) {
 	int readlinks = 0;

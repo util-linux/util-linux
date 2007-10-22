@@ -224,31 +224,6 @@ matching_opts (const char *options, const char *test_opts) {
      return 1;
 }
 
-/* Make a canonical pathname from PATH.  Returns a freshly malloced string.
-   It is up the *caller* to ensure that the PATH is sensible.  i.e.
-   canonicalize ("/dev/fd0/.") returns "/dev/fd0" even though ``/dev/fd0/.''
-   is not a legal pathname for ``/dev/fd0''.  Anything we cannot parse
-   we return unmodified.   */
-char *
-canonicalize (const char *path) {
-	char canonical[PATH_MAX+2];
-
-	if (path == NULL)
-		return NULL;
-
-#if 1
-	if (streq(path, "none") ||
-	    streq(path, "proc") ||
-	    streq(path, "devpts"))
-		return xstrdup(path);
-#endif
-	if (myrealpath (path, canonical, PATH_MAX+1))
-		return xstrdup(canonical);
-
-	return xstrdup(path);
-}
-
-
 /*
  * Parses NAME=value, returns -1 on parse error, 0 success. The success is also
  * when the 'spec' doesn't contain name=value pair (because the spec could be

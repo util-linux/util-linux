@@ -42,6 +42,7 @@
 #include "mount_paths.h"
 #include "env.h"
 #include "nls.h"
+#include "realpath.h"
 
 #define DO_PS_FIDDLING
 
@@ -926,7 +927,7 @@ update_mtab_entry(const char *spec, const char *node, const char *type,
 	struct my_mntent mnt;
 
 	mnt.mnt_fsname = canonicalize (spec);
-	mnt.mnt_dir = canonicalize (node);
+	mnt.mnt_dir = canonicalize_mountpoint (node);
 	mnt.mnt_type = type;
 	mnt.mnt_opts = opts;
 	mnt.mnt_freq = freq;
@@ -1451,7 +1452,7 @@ mounted (const char *spec0, const char *node0) {
 		return ret;
 
 	spec = canonicalize(spec0);
-	node = canonicalize(node0);
+	node = canonicalize_mountpoint(node0);
 
 	mc0 = mtab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
