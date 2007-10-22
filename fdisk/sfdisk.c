@@ -297,41 +297,49 @@ static int
 save_sectors(char *dev, int fdin) {
     struct sector *s;
     char ss[516];
-    int fdout;
+    int fdout = -1;
 
     fdout = open(save_sector_file, O_WRONLY | O_CREAT, 0444);
     if (fdout < 0) {
 	perror(save_sector_file);
 	error(_("cannot open partition sector save file (%s)\n"),
 	       save_sector_file);
-	return 0;
+	goto err;
     }
 
     for (s = sectorhead; s; s = s->next)
 	if (s->to_be_written) {
 	    ulong_to_chars(s->sectornumber, ss);
 	    if (!sseek(dev, fdin, s->sectornumber))
-		return 0;
+		goto err;
 	    if (read(fdin, ss+4, 512) != 512) {
 		perror("read");
 		error(_("read error on %s - cannot read sector %lu\n"),
 		       dev, s->sectornumber);
-		return 0;
+		goto err;
 	    }
 	    if (write(fdout, ss, sizeof(ss)) != sizeof(ss)) {
 		perror("write");
 		error(_("write error on %s\n"), save_sector_file);
-		return 0;
+		goto err;
 	    }
 	}
+
+    close(fdout);
     return 1;
+
+err:
+    if (fdout >= 0)
+	close(fdout);
+    return 0;
 }
 
 static void reread_disk_partition(char *dev, int fd);
 
 static int
 restore_sectors(char *dev) {
-    int fdin, fdout, ct;
+    int fdin = -1, fdout = -1;
+    int ct;
     struct stat statbuf;
     char *ss0, *ss;
     unsigned long sno;
@@ -340,34 +348,34 @@ restore_sectors(char *dev) {
 	perror(restore_sector_file);
 	error(_("cannot stat partition restore file (%s)\n"),
 	       restore_sector_file);
-	return 0;
+	goto err;
     }
     if (statbuf.st_size % 516) {
 	error(_("partition restore file has wrong size - not restoring\n"));
-	return 0;
+	goto err;
     }
     if (!(ss = (char *) malloc(statbuf.st_size))) {
 	error(_("out of memory?\n"));
-	return 0;
+	goto err;
     }
     fdin = open(restore_sector_file, O_RDONLY);
     if (fdin < 0) {
 	perror(restore_sector_file);
 	error(_("cannot open partition restore file (%s)\n"),
 	       restore_sector_file);
-	return 0;
+	goto err;
     }
     if (read(fdin, ss, statbuf.st_size) != statbuf.st_size) {
 	perror("read");
 	error(_("error reading %s\n"), restore_sector_file);
-	return 0;
+	goto err;
     }
 
     fdout = open(dev, O_WRONLY);
     if (fdout < 0) {
 	perror(dev);
 	error(_("cannot open device %s for writing\n"), dev);
-	return 0;
+	goto err;
     }
 
     ss0 = ss;
@@ -375,19 +383,28 @@ restore_sectors(char *dev) {
     while(ct--) {
 	sno = chars_to_ulong(ss);
 	if (!sseek(dev, fdout, sno))
-	  return 0;
+	  goto err;
 	if (write(fdout, ss+4, 512) != 512) {
 	    perror(dev);
 	    error(_("error writing sector %lu on %s\n"), sno, dev);
-	    return 0;
+	    goto err;
 	}
 	ss += 516;
     }
     free(ss0);
 
     reread_disk_partition(dev, fdout);
+    close(fdin);
 
     return 1;
+
+err:
+    if (fdin >= 0)
+	close(fdin);
+    if (fdout >= 0)
+	close(fdout);
+
+    return 0;
 }
 
 /*
@@ -2414,17 +2431,9 @@ is_ide_cdrom_or_tape(char *device) {
 }
 
 #define PROC_PARTITIONS	"/proc/partitions"
-static FILE *procf = NULL;
-
-static void
-openproc(void) {
-	procf = fopen(PROC_PARTITIONS, "r");
-	if (procf == NULL)
-		fprintf(stderr, _("cannot open %s\n"), PROC_PARTITIONS);
-}
 
 static char *
-nextproc(void) {
+nextproc(FILE *procf) {
 	static char devname[120];
 	char line[100], ptname[100];
 	int ma, mi, sz;
@@ -2441,10 +2450,8 @@ nextproc(void) {
 		return devname;
 	}
 
-	fclose(procf);
-	procf = NULL;
 	return NULL;
-}	
+}
 
 static void
 gpt_warning(char *dev, int warn_only)
@@ -2602,21 +2609,29 @@ main(int argc, char **argv) {
 
     if (optind == argc &&
 	(opt_list || opt_out_geom || opt_out_pt_geom || opt_size || verify)) {
+	FILE *procf;
+
 	/* try all known devices */
 	total_size = 0;
-	openproc();
-	while ((dev = nextproc()) != NULL) {
-	    if (is_ide_cdrom_or_tape(dev))
-		continue;
-	    gpt_warning(dev, 1);
-	    if (opt_out_geom)
-		do_geom(dev, 1);
-	    if (opt_out_pt_geom)
-		do_pt_geom(dev, 1);
-	    if (opt_size)
-		do_size(dev, 1);
-	    if (opt_list || verify)
-		do_list(dev, 1);
+
+	procf = fopen(PROC_PARTITIONS, "r");
+	if (!procf)
+	    fprintf(stderr, _("cannot open %s\n"), PROC_PARTITIONS);
+	else {
+	    while ((dev = nextproc(procf)) != NULL) {
+	        if (is_ide_cdrom_or_tape(dev))
+		   continue;
+	        gpt_warning(dev, 1);
+	        if (opt_out_geom)
+		   do_geom(dev, 1);
+	        if (opt_out_pt_geom)
+		   do_pt_geom(dev, 1);
+	        if (opt_size)
+		   do_size(dev, 1);
+	        if (opt_list || verify)
+		   do_list(dev, 1);
+	    }
+	    fclose(procf);
 	}
 
 	if (opt_size)
@@ -2731,6 +2746,8 @@ do_list (char *dev, int silent) {
 	else
 	  exit_status = 1;
     }
+
+    close(fd);
 }
 
 static void
@@ -2746,6 +2763,8 @@ do_geom (char *dev, int silent) {
     if (R.cylinders)
 	printf(_("%s: %ld cylinders, %ld heads, %ld sectors/track\n"),
 	       dev, R.cylinders, R.heads, R.sectors);
+
+    close(fd);
 }
 
 static void
@@ -2777,6 +2796,8 @@ do_pt_geom (char *dev, int silent) {
     if (R.cylinders)
 	printf(_("%s: %ld cylinders, %ld heads, %ld sectors/track\n"),
 	       dev, R.cylinders, R.heads, R.sectors);
+
+    close(fd);
 }
 
 /* for compatibility with earlier fdisk: provide option -s */
@@ -2809,6 +2830,8 @@ do_size (char *dev, int silent) {
       printf("%llu\n", size);
 
     total_size += size;
+
+    close(fd);
 }
 
 /*
@@ -2899,6 +2922,8 @@ do_activate (char **av, int ac, char *arg) {
     if (i != 1)
       warn(_("You have %d active primary partitions. This does not matter for LILO,\n"
 	   "but the DOS MBR will only boot a disk with 1 active partition.\n"), i);
+
+    close(fd);
 }
 
 static void
@@ -2944,6 +2969,8 @@ do_unhide (char **av, int ac, char *arg) {
       warn(_("Done\n\n"));
     else
       exit_status = 1;
+
+    close(fd);
 }
 
 static void
@@ -2975,6 +3002,8 @@ do_change_id(char *dev, char *pnam, char *id) {
       warn(_("Done\n\n"));
     else
       exit_status = 1;
+
+    close(fd);
 }
 
 static void
@@ -2984,6 +3013,8 @@ do_reread(char *dev) {
     fd = my_open(dev, 0, 0);
     if (reread_ioctl(fd))
       do_warn(_("This disk is currently in use.\n"));
+
+    close(fd);
 }
 
 /*
@@ -3081,11 +3112,11 @@ do_fdisk(char *dev){
       exit_status = 1;
 
     reread_disk_partition(dev, fd);
-    
+
     warn(_("If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 	 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
 	 "(See fdisk(8).)\n"));
-    
+
     sync();			/* superstition */
     sleep(3);
     exit(exit_status);
