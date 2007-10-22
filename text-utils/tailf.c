@@ -77,6 +77,8 @@ static void tailf(const char *filename, int lines)
 
     for (i = 0; i < lines; i++) free(buffer[i]);
     free(buffer);
+
+    fclose(str);
 }
 
 int main(int argc, char **argv)
