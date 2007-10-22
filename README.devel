@@ -51,8 +51,14 @@ SCM (source code management):
      git clone git://git.kernel.org/pub/scm/utils/util-linux-ng/util-linux-ng.git util-linux-ng
 
 
-    * maintenance (stable) branch(es)
-        - created for every <major>.<minor> release, branch name: stable/v<major>.<minor>
+    * maintenance (stable) branch
+        - created for every <major>.<minor> release
+        - branch name: stable/v<major>.<minor>
+
+    * bugfix branch
+        - created for <major>.<minor>.<maint> release for critical/security bugs only
+        - this branch is optional
+        - branch name: stable/v<major>.<minor>.<maint>
 
     * master branch
         - the status of this branch is: "it works for me". It means useful
@@ -64,6 +70,4 @@ SCM (source code management):
 
     * A new tag object is created for:
         - every release, tag name: v<version>
-        - every public snapshot, tag name: s<version>-YYYYMMDD
-
 

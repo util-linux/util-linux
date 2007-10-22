@@ -42,11 +42,12 @@ VERSION SCHEMA:
 
       Standard releases:
 
-          <major>.<minor>.<maint>
+          <major>.<minor>[.<maint>[.<bugfix>]]
 
              major = fatal and deep changes
              minor = typical release with new fetures
              maint = maintenance releases; bug fixes only
+             bugfix = unplanned releases for critical/security bugs
 
       Development releases:
 
