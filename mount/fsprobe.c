@@ -140,10 +140,8 @@ fsprobe_procfsloop_mount(int (*mount_fn)(struct mountargs *, int *, int *),
 				continue;
 			set_tested (fsname);
 			args->type = fsname;
-			if (verbose) {
+			if (verbose)
 				printf(_("Trying %s\n"), fsname);
-				fflush(stdout);
-			}
 			if ((*mount_fn) (args, special, status) == 0) {
 				*types = fsname;
 				ret = 0;
