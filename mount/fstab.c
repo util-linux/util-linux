@@ -536,8 +536,6 @@ lock_mtab (void) {
 	struct timeval maxtime;
 	char linktargetfile[MOUNTLOCK_LINKTARGET_LTH];
 
-	at_die = unlock_mtab;
-
 	if (!signals_have_been_setup) {
 		int sig = 0;
 		struct sigaction sa;

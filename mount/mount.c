@@ -1978,6 +1978,8 @@ main(int argc, char *argv[]) {
 		create_mtab ();
 	}
 
+	atexit(unlock_mtab);
+
 	switch (argc+specseen) {
 	case 0:
 		/* mount -a */
