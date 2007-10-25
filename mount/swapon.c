@@ -60,20 +60,20 @@ static int cannot_find(const char *special);
 
 static void
 swapon_usage(FILE *fp, int n) {
-	fprintf(fp, _("usage: %s [-hV]\n"
-		      "       %s -a [-e] [-v]\n"
-		      "       %s [-v] [-p priority] special|LABEL=volume_name ...\n"
-		      "       %s [-s]\n"),
-		progname, progname, progname, progname);
+	fprintf(fp, _("usage: %1$s [-hV]\n"
+		      "       %1$s -a [-e] [-v]\n"
+		      "       %1$s [-v] [-p priority] special|LABEL=volume_name ...\n"
+		      "       %1$s [-s]\n"),
+		progname);
 	exit(n);
 }
 
 static void
 swapoff_usage(FILE *fp, int n) {
-	fprintf(fp, _("usage: %s [-hV]\n"
-		      "       %s -a [-v]\n"
-		      "       %s [-v] special ...\n"),
-		progname, progname, progname);
+	fprintf(fp, _("usage: %1$s [-hV]\n"
+		      "       %1$s -a [-v]\n"
+		      "       %1$s [-v] special ...\n"),
+		progname);
 	exit(n);
 }
 
