@@ -813,7 +813,6 @@ update_mtab (const char *dir, struct my_mntent *instead) {
 
 /* dummy */
 int verbose;
-int mount_quiet;
 char *progname;
 
 const char *fsprobe_get_label_by_devname(const char *spec) { return NULL; }

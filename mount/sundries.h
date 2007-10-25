@@ -22,9 +22,14 @@ extern int sloppy;
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
-/* Functions in sundries.c that are used in mount.c and umount.c  */ 
+/* Functions in sundries.c that are used in mount.c and umount.c  */
 void block_signals (int how);
-void error (const char *fmt, ...);
+
+void error (const char *fmt, ...)
+	__attribute__ ((__format__ (__printf__, 1, 2)));
+void die(int err, const char *fmt, ...)
+	__attribute__ ((__format__ (__printf__, 2, 3)));
+
 int matching_type (const char *type, const char *types);
 int matching_opts (const char *options, const char *test_opts);
 void *xmalloc (size_t size);
@@ -34,8 +39,6 @@ char *xstrconcat3 (char *, const char *, const char *);
 char *xstrconcat4 (char *, const char *, const char *, const char *);
 
 int parse_spec(const char *spec, char **name, char **value);
-
-void die (int errcode, const char *fmt, ...);
 
 /* exit status - bits below are ORed */
 #define EX_USAGE	1	/* incorrect invocation or permission */

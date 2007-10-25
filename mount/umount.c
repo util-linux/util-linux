@@ -400,8 +400,6 @@ usage (FILE *fp, int n)
   exit (n);
 }
 
-int mount_quiet = 0;
-
 /*
  * Look for an option in a comma-separated list
  */

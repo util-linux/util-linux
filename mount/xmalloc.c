@@ -5,24 +5,6 @@
 #include "nls.h"	/* _() */
 #include "sundries.h"	/* EX_SYSERR */
 
-void (*at_die)(void) = NULL;
-
-/* Fatal error.  Print message and exit.  */
-void
-die(int err, const char *fmt, ...) {
-	va_list args;
-
-	va_start(args, fmt);
-	vfprintf(stderr, fmt, args);
-	fprintf(stderr, "\n");
-	va_end(args);
-
-	if (at_die)
-		(*at_die)();
-
-	exit(err);
-}
-
 static void
 die_if_null(void *t) {
 	if (t == NULL)

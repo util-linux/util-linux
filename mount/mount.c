@@ -50,9 +50,6 @@
 #include "setproctitle.h"
 #endif
 
-/* Quiet mode */
-int mount_quiet = 0;
-
 /* True for fake mount (-f).  */
 static int fake = 0;
 

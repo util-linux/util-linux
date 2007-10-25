@@ -1,8 +1,8 @@
-#include <sys/types.h>
-#include <stdarg.h>
+#ifndef MOUNT_XMALLOC_H
+#define MOUNT_XMALLOC_H
 
 extern void *xmalloc(size_t size);
 extern void *xrealloc(void *p, size_t size);
 extern char *xstrdup(const char *s);
-extern void die(int err, const char *fmt, ...);
-extern void (*at_die)(void);
+
+#endif  /* MOUNT_XMALLOC_H */

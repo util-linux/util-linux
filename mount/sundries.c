@@ -18,6 +18,8 @@
 #include "xmalloc.h"
 #include "nls.h"
 
+int mount_quiet;
+
 char *
 xstrndup (const char *s, int n) {
      char *t;
@@ -106,6 +108,19 @@ error (const char *fmt, ...) {
      vfprintf (stderr, fmt, args);
      va_end (args);
      fputc('\n', stderr);
+}
+
+/* Fatal error.  Print message and exit.  */
+void
+die(int err, const char *fmt, ...) {
+	va_list args;
+
+	va_start(args, fmt);
+	vfprintf(stderr, fmt, args);
+	fprintf(stderr, "\n");
+	va_end(args);
+
+	exit(err);
 }
 
 /* True if fstypes match.  Null *TYPES means match anything,
