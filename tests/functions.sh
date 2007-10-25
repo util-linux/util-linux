@@ -173,15 +173,13 @@ function ts_restore_cache {
 
 function ts_device_init {
 	local IMAGE="$TS_OUTDIR/$TS_NAME.img"
-	local IMAGE_RE=$( echo "$IMAGE" | sed 's:/:\\/:g' )
 	local DEV=""
 
 	ts_backup_cache
 
 	dd if=/dev/zero of="$IMAGE" bs=1M count=5 &> /dev/null
 
-	$TS_CMD_LOSETUP -f "$IMAGE" 2>&1 >> $TS_OUTPUT
-	DEV=$( $TS_CMD_LOSETUP -a | $AWK 'BEGIN {FS=":"} /'$IMAGE_RE'/ { print $1 }' )
+	DEV=$($TS_CMD_LOSETUP -s -f "$IMAGE")
 
 	if [ -z "$DEV" ]; then
 		ts_device_deinit $DEV

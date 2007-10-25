@@ -28,7 +28,6 @@ set -o pipefail
 
 IMAGE="$TS_OUTDIR/cramfs-loop.img"
 IMAGE_DATA="$TS_OUTDIR/cramfs-data"
-IMAGE_RE=$( echo $IMAGE | sed 's:/:\\/:g' )
 LABEL="testCramfs"
 TS_MOUNTPOINT="$TS_OUTDIR/cramfs-mnt"
 
@@ -63,8 +62,7 @@ echo >> $TS_OUTPUT
 
 ts_log "create loop device from image"
 ts_backup_cache
-DEVICE=$( $TS_CMD_LOSETUP -f )
-$TS_CMD_LOSETUP $DEVICE $IMAGE 2>&1 >> $TS_OUTPUT
+DEVICE=$( $TS_CMD_LOSETUP -s -f $IMAGE)
 
 ts_log "check the image"
 ts_device_has "TYPE" "cramfs" $DEVICE
