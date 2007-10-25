@@ -1133,24 +1133,22 @@ screendump(int vcnum, FILE *F) {
     }
     if (fd < 0) {
 	sprintf(infile, "/dev/vcsa%d", vcnum);
-	goto error;
+	goto read_error;
     }
     if (read(fd, header, 4) != 4)
-	goto error;
+	goto read_error;
     rows = header[0];
     cols = header[1];
     if (rows * cols == 0)
-        goto error;
+        goto read_error;
     inbuf = malloc(rows*cols*2);
     outbuf = malloc(rows*(cols+1));
     if(!inbuf || !outbuf) {
 	fputs(_("Out of memory"), stderr);
-	exit(1);
+	goto error;
     }
-    if (read(fd, inbuf, rows*cols*2) != rows*cols*2) {
-	fprintf(stderr, _("Error reading %s\n"), infile);
-	exit(1);
-    }
+    if (read(fd, inbuf, rows*cols*2) != rows*cols*2)
+	    goto read_error;
     p = inbuf;
     q = outbuf;
     for(i=0; i<rows; i++) {
@@ -1164,12 +1162,16 @@ screendump(int vcnum, FILE *F) {
     }
     if (fwrite(outbuf, 1, q-outbuf, F) != q-outbuf) {
 	fprintf(stderr, _("Error writing screendump\n"));
-	exit(1);
+	goto error;
     }
+    close(fd);
     return;
 
-error:
+read_error:
     fprintf(stderr, _("Couldn't read %s\n"), infile);
+error:
+    if (fd >= 0)
+	    close(fd);
     exit(1);
 }
 
