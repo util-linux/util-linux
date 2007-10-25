@@ -34,13 +34,12 @@
 #define CANONIC	1
 
 int all = 0;
-int verbose = 0;
 int priority = -1;	/* non-prioritized swap by default */
+int verbose;
+char *progname;
 
 /* If true, don't complain if the device/file doesn't exist */
 int ifexists = 0;
-
-char *progname;
 
 static struct option longswaponopts[] = {
 		/* swapon only */

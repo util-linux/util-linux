@@ -62,17 +62,14 @@ static int nomtab = 0;
 /* True for explicit readonly (-r).  */
 static int readonly = 0;
 
-/* Nonzero for chatty (-v).  */
-int verbose = 0;
-
 /* Nonzero for sloppy (-s).  */
-int sloppy = 0;
+static int sloppy = 0;
 
 /* True for explicit read/write (-w).  */
 static int readwrite = 0;
 
 /* True for all mount (-a).  */
-int mount_all = 0;
+static int mount_all = 0;
 
 /* True for fork() during all mount (-F).  */
 static int optfork = 0;
@@ -81,7 +78,7 @@ static int optfork = 0;
 static int list_with_volumelabel = 0;
 
 /* Nonzero for mount {--bind|--replace|--before|--after|--over|--move|
- * 		       make-shared|make-private|make-unbindable|make-slave}
+ *		       make-shared|make-private|make-unbindable|make-slave}
  */
 static int mounttype = 0;
 
@@ -1772,8 +1769,6 @@ getfs(const char *spec, const char *uuid, const char *label)
 		my_free(devname);
 	return mc;
 }
-
-char *progname;
 
 int
 main(int argc, char *argv[]) {

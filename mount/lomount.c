@@ -25,8 +25,6 @@
 #include "sundries.h"
 #include "xmalloc.h"
 
-extern char *progname;
-
 #define SIZE(a) (sizeof(a)/sizeof(a[0]))
 
 #ifdef LOOP_SET_FD
@@ -441,9 +439,6 @@ find_unused_loop_device (void) {
 
 #include <getopt.h>
 #include <stdarg.h>
-
-int verbose = 0;
-char *progname;
 
 static void
 usage(void) {

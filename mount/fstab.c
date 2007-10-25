@@ -810,11 +810,7 @@ update_mtab (const char *dir, struct my_mntent *instead) {
  *  The test is very simple -- it reads a number from locked file, increments the
  *  number and writes the number back to the file.
  */
-
 /* dummy */
-int verbose;
-char *progname;
-
 const char *fsprobe_get_label_by_devname(const char *spec) { return NULL; }
 const char *fsprobe_get_uuid_by_devname(const char *spec) { return NULL; }
 struct my_mntent *my_getmntent (mntFILE *mfp) { return NULL; }

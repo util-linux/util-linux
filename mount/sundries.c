@@ -19,6 +19,8 @@
 #include "nls.h"
 
 int mount_quiet;
+int verbose;
+char *progname;
 
 char *
 xstrndup (const char *s, int n) {

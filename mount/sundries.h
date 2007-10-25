@@ -16,13 +16,13 @@
 #include <rpc/types.h>
 #endif
 
+/* global mount, umount, and losetup variables */
 extern int mount_quiet;
 extern int verbose;
-extern int sloppy;
+extern char *progname;
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
-/* Functions in sundries.c that are used in mount.c and umount.c  */
 void block_signals (int how);
 
 void error (const char *fmt, ...)

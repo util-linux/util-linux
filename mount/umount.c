@@ -74,9 +74,6 @@ int nomtab = 0;
 /* Call losetup -d for each unmounted loop device. */
 int delloop = 0;
 
-/* Nonzero for chatty (-v). */
-int verbose = 0;
-
 /* True if ruid != euid.  */
 int suid = 0;
 
@@ -555,8 +552,6 @@ umount_file (char *arg) {
 	else
 		return umount_one (arg, arg, arg, arg, NULL);
 }
-
-char *progname;
 
 int
 main (int argc, char *argv[]) {
