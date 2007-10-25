@@ -24,6 +24,7 @@
 #include "nls.h"
 #include "sundries.h"
 #include "xmalloc.h"
+#include "realpath.h"
 
 #define SIZE(a) (sizeof(a)/sizeof(a[0]))
 
@@ -276,6 +277,7 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	struct loop_info64 loopinfo64;
 	int fd, ffd, mode, i;
 	char *pass;
+	char *filename;
 
 	mode = (*loopro ? O_RDONLY : O_RDWR);
 	if ((ffd = open(file, mode)) < 0) {
@@ -294,7 +296,9 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 
 	memset(&loopinfo64, 0, sizeof(loopinfo64));
 
-	xstrncpy((char *)loopinfo64.lo_file_name, file, LO_NAME_SIZE);
+	if (!(filename = canonicalize(file)))
+		filename = (char *) file;
+	xstrncpy((char *)loopinfo64.lo_file_name, filename, LO_NAME_SIZE);
 
 	if (encryption && *encryption) {
 		if (digits_only(encryption)) {
@@ -351,6 +355,8 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 
 		close(fd);
 		close(ffd);
+		if (file != filename)
+			free(filename);
 		return rc;
 	}
 	close (ffd);
@@ -376,13 +382,17 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	if (i) {
 		ioctl (fd, LOOP_CLR_FD, 0);
 		close (fd);
+		if (file != filename)
+			free(filename);
 		return 1;
 	}
 	close (fd);
 
 	if (verbose > 1)
 		printf(_("set_loop(%s,%s,%llu): success\n"),
-		       device, file, offset);
+		       device, filename, offset);
+	if (file != filename)
+		free(filename);
 	return 0;
 }
 

@@ -25,8 +25,8 @@ umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 swapon_SOURCES = swapon.c swap_constants.h $(utils_common)
 
-losetup_SOURCES = lomount.c sundries.c xmalloc.c loop.h lomount.h xmalloc.h \
-	sundries.h
+losetup_SOURCES = lomount.c sundries.c xmalloc.c realpath.c \
+	loop.h lomount.h xmalloc.h sundries.h realpath.h
 losetup_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
 
 mount_LDADD = $(LDADD_common)
