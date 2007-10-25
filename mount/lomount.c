@@ -22,11 +22,10 @@
 #include "lomount.h"
 #include "xstrncpy.h"
 #include "nls.h"
+#include "sundries.h"
+#include "xmalloc.h"
 
-extern int verbose;
 extern char *progname;
-extern char *xstrdup (const char *s);	/* not: #include "sundries.h" */
-extern void error (const char *fmt, ...);	/* idem */
 
 #define SIZE(a) (sizeof(a)/sizeof(a[0]))
 
@@ -465,34 +464,6 @@ usage(void) {
 		progname);
 	exit(1);
  }
-
-char *
-xstrdup (const char *s) {
-	char *t;
-
-	if (s == NULL)
-		return NULL;
-
-	t = strdup (s);
-
-	if (t == NULL) {
-		fprintf(stderr, _("not enough memory"));
-		exit(1);
-	}
-
-	return t;
-}
-
-void
-error (const char *fmt, ...) {
-	va_list args;
-
-	va_start (args, fmt);
-	vfprintf (stderr, fmt, args);
-	va_end (args);
-	fprintf (stderr, "\n");
-}
-
 
 int
 main(int argc, char **argv) {
