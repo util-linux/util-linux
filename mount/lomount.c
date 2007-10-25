@@ -339,16 +339,19 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	}
 
 	if (ioctl(fd, LOOP_SET_FD, ffd) < 0) {
-		close(fd);
-		close(ffd);
+		int rc = 1;
+
 		if (errno == EBUSY) {
 			if (verbose)
-				printf(_("ioctl LOOP_SET_FD failed: %s\n"), strerror(errno));
-			return 2;
-		} else {
+				printf(_("ioctl LOOP_SET_FD failed: %s\n"),
+							strerror(errno));
+			rc = 2;
+		} else
 			perror("ioctl: LOOP_SET_FD");
-			return 1;
-		}
+
+		close(fd);
+		close(ffd);
+		return rc;
 	}
 	close (ffd);
 
@@ -383,7 +386,7 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	return 0;
 }
 
-int 
+int
 del_loop (const char *device) {
 	int fd;
 
