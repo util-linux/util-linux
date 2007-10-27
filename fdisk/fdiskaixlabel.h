@@ -1,7 +1,7 @@
 #ifndef FDISK_AIX_LABEL_H
 #define FDISK_AIX_LABEL_H
 
-#include <linux/types.h>   /* for __u32 etc */
+#include <stdint.h>
 /*
  * Copyright (C) Andreas Neuper, Sep 1998.
  *	This file may be redistributed under

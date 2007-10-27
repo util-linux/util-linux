@@ -1,15 +1,15 @@
 #ifndef FDISK_SUN_LABEL_H
 #define FDISK_SUN_LABEL_H
 
-#include <linux/types.h>   /* for __u16, __u32 */
+#include <stdint.h>
 
 struct sun_partition {
-	__u32	start_cylinder;
-	__u32	num_sectors;
+	uint32_t	start_cylinder;
+	uint32_t	num_sectors;
 };
 
 struct sun_tag_flag {
-	__u16	tag;
+	uint16_t	tag;
 #define SUN_TAG_UNASSIGNED	0x00	/* Unassigned partition */
 #define SUN_TAG_BOOT		0x01	/* Boot partition	*/
 #define SUN_TAG_ROOT		0x02	/* Root filesystem	*/
@@ -27,7 +27,7 @@ struct sun_tag_flag {
 #define SUN_TAG_LINUX_LVM	0x8e	/* Linux LVM		*/
 #define SUN_TAG_LINUX_RAID	0xfd	/* LInux RAID		*/
 
-	__u16	flag;
+	uint16_t	flag;
 #define SUN_FLAG_UNMNT		0x01	/* Unmountable partition*/
 #define SUN_FLAG_RONLY		0x10	/* Read only		*/
 };
@@ -43,32 +43,32 @@ struct sun_tag_flag {
 
 struct sun_disk_label {
 	char			label_id[SUN_LABEL_ID_SIZE];
-	__u32			version;
+	uint32_t			version;
 	char			volume_id[SUN_VOLUME_ID_SIZE];
-	__u16			num_partitions;
+	uint16_t			num_partitions;
 	struct sun_tag_flag	part_tags[SUN_NUM_PARTITIONS];
-	__u32			bootinfo[3];
-	__u32			sanity;
-	__u32			resv[10];
-	__u32			part_timestamps[SUN_NUM_PARTITIONS];
-	__u32			write_reinstruct;
-	__u32			read_reinstruct;
-	__u8			pad[148];
-	__u16			rpm;
-	__u16			pcyl;
-	__u16			apc;
-	__u16			resv1;
-	__u16			resv2;
-	__u16			intrlv;
-	__u16			ncyl;
-	__u16			acyl;
-	__u16			nhead;
-	__u16			nsect;
-	__u16			resv3;
-	__u16			resv4;
+	uint32_t			bootinfo[3];
+	uint32_t			sanity;
+	uint32_t			resv[10];
+	uint32_t			part_timestamps[SUN_NUM_PARTITIONS];
+	uint32_t			write_reinstruct;
+	uint32_t			read_reinstruct;
+	uint8_t			pad[148];
+	uint16_t			rpm;
+	uint16_t			pcyl;
+	uint16_t			apc;
+	uint16_t			resv1;
+	uint16_t			resv2;
+	uint16_t			intrlv;
+	uint16_t			ncyl;
+	uint16_t			acyl;
+	uint16_t			nhead;
+	uint16_t			nsect;
+	uint16_t			resv3;
+	uint16_t			resv4;
 	struct sun_partition	partitions[SUN_NUM_PARTITIONS];
-	__u16			magic;
-	__u16			cksum;
+	uint16_t			magic;
+	uint16_t			cksum;
 };
 
 #define SUN_LABEL_MAGIC		0xDABE
@@ -82,7 +82,7 @@ extern int check_sun_label(void);
 extern void sun_nolabel(void);
 extern void create_sunlabel(void);
 extern void sun_delete_partition(int i);
-extern int sun_change_sysid(int i, __u16 sys);
+extern int sun_change_sysid(int i, uint16_t sys);
 extern void sun_list_table(int xtra);
 extern void verify_sun(void);
 extern void add_sun_partition(int n, int sys);
@@ -93,7 +93,7 @@ extern void sun_set_xcyl(void);
 extern void sun_set_ilfact(void);
 extern void sun_set_rspeed(void);
 extern void sun_set_pcylcount(void);
-extern void toggle_sunflags(int i, __u16 mask);
+extern void toggle_sunflags(int i, uint16_t mask);
 extern int sun_get_sysid(int i);
 
 #endif /* FDISK_SUN_LABEL_H */

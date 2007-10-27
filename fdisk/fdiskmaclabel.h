@@ -1,7 +1,7 @@
 #ifndef FDISK_MAC_LABEL_H
 #define FDISK_MAC_LABEL_H
 
-#include <linux/types.h>   /* for __u32 etc */
+#include <sys/types.h>
 /*
  * Copyright (C) Andreas Neuper, Sep 1998.
  *	This file may be redistributed under

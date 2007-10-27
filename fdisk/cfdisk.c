@@ -78,7 +78,6 @@
 #include <string.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
-#include <linux/types.h>
 
 #include "nls.h"
 #include "blkdev.h"

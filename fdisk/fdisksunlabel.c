@@ -60,16 +60,16 @@ struct systypes sun_sys_types[] = {
 };
 
 static inline unsigned short __swap16(unsigned short x) {
-        return (((__u16)(x) & 0xFF) << 8) | (((__u16)(x) & 0xFF00) >> 8);
+        return (((uint16_t)(x) & 0xFF) << 8) | (((uint16_t)(x) & 0xFF00) >> 8);
 }
-static inline __u32 __swap32(__u32 x) {
-        return (((__u32)(x) & 0xFF) << 24) | (((__u32)(x) & 0xFF00) << 8) | (((__u32)(x) & 0xFF0000) >> 8) | (((__u32)(x) & 0xFF000000) >> 24);
+static inline uint32_t __swap32(uint32_t x) {
+        return (((uint32_t)(x) & 0xFF) << 24) | (((uint32_t)(x) & 0xFF00) << 8) | (((uint32_t)(x) & 0xFF0000) >> 8) | (((uint32_t)(x) & 0xFF000000) >> 24);
 }
 
 #define SSWAP16(x) (other_endian ? __swap16(x) \
-				 : (__u16)(x))
+				 : (uint16_t)(x))
 #define SSWAP32(x) (other_endian ? __swap32(x) \
-				 : (__u32)(x))
+				 : (uint32_t)(x))
 
 #ifndef FLOPPY_MAJOR
 #define FLOPPY_MAJOR 2
@@ -102,7 +102,7 @@ void guess_device_type(int fd)
 	}
 }
 
-static void set_sun_partition(int i, __u32 start, __u32 stop, __u16 sysid)
+static void set_sun_partition(int i, uint32_t start, uint32_t stop, uint16_t sysid)
 {
 	sunlabel->part_tags[i].tag = SSWAP16(sysid);
 	sunlabel->part_tags[i].flag = SSWAP16(0);
@@ -276,7 +276,7 @@ void create_sunlabel(void)
 	set_changed(0);
 }
 
-void toggle_sunflags(int i, __u16 mask)
+void toggle_sunflags(int i, uint16_t mask)
 {
 	struct sun_tag_flag *p = &sunlabel->part_tags[i];
 
@@ -285,7 +285,7 @@ void toggle_sunflags(int i, __u16 mask)
 	set_changed(i);
 }
 
-static void fetch_sun(__u32 *starts, __u32 *lens, __u32 *start, __u32 *stop)
+static void fetch_sun(uint32_t *starts, uint32_t *lens, uint32_t *start, uint32_t *stop)
 {
 	int i, continuous = 1;
 
@@ -334,7 +334,7 @@ static int verify_sun_cmp(int *a, int *b)
 
 void verify_sun(void)
 {
-    __u32 starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS], start, stop;
+    uint32_t starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS], start, stop;
     int i,j,k,starto,endo;
     int array[SUN_NUM_PARTITIONS];
 
@@ -400,10 +400,10 @@ void verify_sun(void)
 
 void add_sun_partition(int n, int sys)
 {
-	__u32 starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS];
+	uint32_t starts[SUN_NUM_PARTITIONS], lens[SUN_NUM_PARTITIONS];
 	struct sun_partition *part = &sunlabel->partitions[n];
 	struct sun_tag_flag *tag = &sunlabel->part_tags[n];
-	__u32 start, stop, stop2;
+	uint32_t start, stop, stop2;
 	int whole_disk = 0;
 		
 	char mesg[256];
@@ -536,7 +536,7 @@ void sun_delete_partition(int i)
 	part->num_sectors = 0;
 }
 
-int sun_change_sysid(int i, __u16 sys)
+int sun_change_sysid(int i, uint16_t sys)
 {
 	struct sun_partition *part = &sunlabel->partitions[i];
 	struct sun_tag_flag *tag = &sunlabel->part_tags[i];
@@ -603,8 +603,8 @@ void sun_list_table(int xtra)
 		struct sun_tag_flag *tag = &sunlabel->part_tags[i];
 
 		if (part->num_sectors) {
-			__u32 start = SSWAP32(part->start_cylinder) * heads * sectors;
-			__u32 len = SSWAP32(part->num_sectors);
+			uint32_t start = SSWAP32(part->start_cylinder) * heads * sectors;
+			uint32_t len = SSWAP32(part->num_sectors);
 			printf(
 			    "%s %c%c %9ld %9ld %9ld%c  %2x  %s\n",
 /* device */		  partname(disk_device, i+1, w),

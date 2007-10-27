@@ -34,10 +34,10 @@
  * SUCH DAMAGE.
  */
 
-#include <linux/types.h>	/* for __u32, __u16, __u8, __s16 */
+#include <stdint.h>
 
 #ifndef BSD_DISKMAGIC
-#define BSD_DISKMAGIC     ((__u32) 0x82564557)
+#define BSD_DISKMAGIC     ((uint32_t) 0x82564557)
 #endif
 
 #ifndef BSD_MAXPARTITIONS
@@ -63,31 +63,31 @@
 #define	BSD_SBSIZE        8192		/* max size of fs superblock */
 
 struct xbsd_disklabel {
-	__u32	d_magic;		/* the magic number */
-	__s16	d_type;			/* drive type */
-	__s16	d_subtype;		/* controller/d_type specific */
+	uint32_t	d_magic;		/* the magic number */
+	int16_t	d_type;			/* drive type */
+	int16_t	d_subtype;		/* controller/d_type specific */
 	char	d_typename[16];		/* type name, e.g. "eagle" */
 	char	d_packname[16];			/* pack identifier */ 
 			/* disk geometry: */
-	__u32	d_secsize;		/* # of bytes per sector */
-	__u32	d_nsectors;		/* # of data sectors per track */
-	__u32	d_ntracks;		/* # of tracks per cylinder */
-	__u32	d_ncylinders;		/* # of data cylinders per unit */
-	__u32	d_secpercyl;		/* # of data sectors per cylinder */
-	__u32	d_secperunit;		/* # of data sectors per unit */
+	uint32_t	d_secsize;		/* # of bytes per sector */
+	uint32_t	d_nsectors;		/* # of data sectors per track */
+	uint32_t	d_ntracks;		/* # of tracks per cylinder */
+	uint32_t	d_ncylinders;		/* # of data cylinders per unit */
+	uint32_t	d_secpercyl;		/* # of data sectors per cylinder */
+	uint32_t	d_secperunit;		/* # of data sectors per unit */
 	/*
 	 * Spares (bad sector replacements) below
 	 * are not counted in d_nsectors or d_secpercyl.
 	 * Spare sectors are assumed to be physical sectors
 	 * which occupy space at the end of each track and/or cylinder.
 	 */
-	__u16	d_sparespertrack;	/* # of spare sectors per track */
-	__u16	d_sparespercyl;		/* # of spare sectors per cylinder */
+	uint16_t	d_sparespertrack;	/* # of spare sectors per track */
+	uint16_t	d_sparespercyl;		/* # of spare sectors per cylinder */
 	/*
 	 * Alternate cylinders include maintenance, replacement,
 	 * configuration description areas, etc.
 	 */
-	__u32	d_acylinders;		/* # of alt. cylinders per unit */
+	uint32_t	d_acylinders;		/* # of alt. cylinders per unit */
 
 			/* hardware characteristics: */
 	/*
@@ -106,30 +106,30 @@ struct xbsd_disklabel {
 	 * Finally, d_cylskew is the offset of sector 0 on cylinder N
 	 * relative to sector 0 on cylinder N-1.
 	 */
-	__u16	d_rpm;			/* rotational speed */
-	__u16	d_interleave;		/* hardware sector interleave */
-	__u16	d_trackskew;		/* sector 0 skew, per track */
-	__u16	d_cylskew;		/* sector 0 skew, per cylinder */
-	__u32	d_headswitch;		/* head switch time, usec */
-	__u32	d_trkseek;		/* track-to-track seek, usec */
-	__u32	d_flags;		/* generic flags */
+	uint16_t	d_rpm;			/* rotational speed */
+	uint16_t	d_interleave;		/* hardware sector interleave */
+	uint16_t	d_trackskew;		/* sector 0 skew, per track */
+	uint16_t	d_cylskew;		/* sector 0 skew, per cylinder */
+	uint32_t	d_headswitch;		/* head switch time, usec */
+	uint32_t	d_trkseek;		/* track-to-track seek, usec */
+	uint32_t	d_flags;		/* generic flags */
 #define NDDATA 5
-	__u32	d_drivedata[NDDATA];	/* drive-type specific information */
+	uint32_t	d_drivedata[NDDATA];	/* drive-type specific information */
 #define NSPARE 5
-	__u32	d_spare[NSPARE];	/* reserved for future use */
-	__u32	d_magic2;		/* the magic number (again) */
-	__u16	d_checksum;		/* xor of data incl. partitions */
+	uint32_t	d_spare[NSPARE];	/* reserved for future use */
+	uint32_t	d_magic2;		/* the magic number (again) */
+	uint16_t	d_checksum;		/* xor of data incl. partitions */
 			/* filesystem and partition information: */
-	__u16	d_npartitions;	        /* number of partitions in following */
-	__u32	d_bbsize;	        /* size of boot area at sn0, bytes */
-	__u32	d_sbsize;	        /* max size of fs superblock, bytes */
+	uint16_t	d_npartitions;	        /* number of partitions in following */
+	uint32_t	d_bbsize;	        /* size of boot area at sn0, bytes */
+	uint32_t	d_sbsize;	        /* max size of fs superblock, bytes */
 	struct xbsd_partition	 {	/* the partition table */
-		__u32	p_size;	        /* number of sectors in partition */
-		__u32	p_offset;       /* starting sector */
-		__u32	p_fsize;        /* filesystem basic fragment size */
-		__u8	p_fstype;       /* filesystem type, see below */
-		__u8	p_frag;	        /* filesystem fragments per block */
-		__u16	p_cpg;	        /* filesystem cylinders per group */
+		uint32_t	p_size;	        /* number of sectors in partition */
+		uint32_t	p_offset;       /* starting sector */
+		uint32_t	p_fsize;        /* filesystem basic fragment size */
+		uint8_t	p_fstype;       /* filesystem type, see below */
+		uint8_t	p_frag;	        /* filesystem fragments per block */
+		uint16_t	p_cpg;	        /* filesystem cylinders per group */
 	} d_partitions[BSD_MAXPARTITIONS]; /* actually may be more */
 };
 

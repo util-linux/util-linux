@@ -101,11 +101,11 @@ struct systypes sgi_sys_types[] = {
 
 static inline unsigned short
 __swap16(unsigned short x) {
-        return (((__u16)(x) & 0xFF) << 8) | (((__u16)(x) & 0xFF00) >> 8);
+        return (((uint16_t)(x) & 0xFF) << 8) | (((uint16_t)(x) & 0xFF00) >> 8);
 }
 
-static inline __u32
-__swap32(__u32 x) {
+static inline uint32_t
+__swap32(uint32_t x) {
         return (((x & 0xFF) << 24) |
 		((x & 0xFF00) << 8) |
 		((x & 0xFF0000) >> 8) |
@@ -223,8 +223,8 @@ sgi_list_table(int xtra) {
 	       w + 1, _("Device"));
 	for (i = 0 ; i < partitions; i++) {
 		if (sgi_get_num_sectors(i) || debug) {
-			__u32 start = sgi_get_start_sector(i);
-			__u32 len = sgi_get_num_sectors(i);
+			uint32_t start = sgi_get_start_sector(i);
+			uint32_t len = sgi_get_num_sectors(i);
 			kpi++;		/* only count nonempty partitions */
 			printf(
 				"%2d: %s %4s %9ld %9ld %9ld  %2x  %s\n",
@@ -245,8 +245,8 @@ sgi_list_table(int xtra) {
 	       sgilabel->boot_file);
 	for (i = 0 ; i < volumes; i++) {
 		if (sgilabel->directory[i].vol_file_size) {
-			__u32 start = SSWAP32(sgilabel->directory[i].vol_file_start);
-			__u32 len = SSWAP32(sgilabel->directory[i].vol_file_size);
+			uint32_t start = SSWAP32(sgilabel->directory[i].vol_file_start);
+			uint32_t len = SSWAP32(sgilabel->directory[i].vol_file_size);
 			unsigned char *name = sgilabel->directory[i].vol_file_name;
 			printf(_("%2d: %-10s sector%5u size%8u\n"),
 			       i, name, (unsigned int) start,

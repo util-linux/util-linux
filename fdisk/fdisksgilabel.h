@@ -1,7 +1,7 @@
 #ifndef FDISK_SGI_LABEL_H
 #define FDISK_SGI_LABEL_H
 
-#include <linux/types.h>   /* for __u32 etc */
+#include <stdint.h>
 /*
  * Copyright (C) Andreas Neuper, Sep 1998.
  *	This file may be modified and redistributed under
@@ -99,9 +99,9 @@ typedef struct {
 #define	SGI_INFO_MAGIC		0x00072959
 #define	SGI_INFO_MAGIC_SWAPPED	0x59290700
 #define SSWAP16(x) (other_endian ? __swap16(x) \
-                                 : (__u16)(x))
+                                 : (uint16_t)(x))
 #define SSWAP32(x) (other_endian ? __swap32(x) \
-                                 : (__u32)(x))
+                                 : (uint32_t)(x))
 
 /* fdisk.c */
 #define sgilabel ((sgi_partition *)MBRbuffer)
