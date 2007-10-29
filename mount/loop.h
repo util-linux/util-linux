@@ -23,6 +23,13 @@
 #define LOOP_SET_STATUS64	0x4C04
 #define LOOP_GET_STATUS64	0x4C05
 
+/* Flags for loop_into{64,}->lo_flags */
+enum {
+	LO_FLAGS_READ_ONLY  = 1,
+	LO_FLAGS_USE_AOPS   = 2,
+	LO_FLAGS_AUTOCLEAR  = 4, /* New in 2.6.25 */
+};
+
 #define LO_NAME_SIZE	64
 #define LO_KEY_SIZE	32
 

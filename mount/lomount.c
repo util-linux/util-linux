@@ -609,7 +609,7 @@ digits_only(const char *s) {
 
 int
 set_loop(const char *device, const char *file, unsigned long long offset,
-	 const char *encryption, int pfd, int *loopro) {
+	 const char *encryption, int pfd, int *options) {
 	struct loop_info64 loopinfo64;
 	int fd, ffd, mode, i;
 	char *pass;
@@ -625,22 +625,21 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 		}
 	}
 
-	mode = (*loopro ? O_RDONLY : O_RDWR);
+	mode = (*options & SETLOOP_RDONLY) ? O_RDONLY : O_RDWR;
 	if ((ffd = open(file, mode)) < 0) {
-		if (!*loopro && errno == EROFS)
+		if (!(*options & SETLOOP_RDONLY) && errno == EROFS)
 			ffd = open(file, mode = O_RDONLY);
 		if (ffd < 0) {
 			perror(file);
 			return 1;
 		}
+		*options |= SETLOOP_RDONLY;
 	}
 	if ((fd = open(device, mode)) < 0) {
 		perror (device);
 		close(ffd);
 		return 1;
 	}
-	*loopro = (mode == O_RDONLY);
-
 	memset(&loopinfo64, 0, sizeof(loopinfo64));
 
 	if (!(filename = canonicalize(file)))
@@ -708,6 +707,9 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	}
 	close (ffd);
 
+	if (*options & SETLOOP_AUTOCLEAR)
+		loopinfo64.lo_flags = LO_FLAGS_AUTOCLEAR;
+
 	i = ioctl(fd, LOOP_SET_STATUS64, &loopinfo64);
 	if (i) {
 		struct loop_info loopinfo;
@@ -716,15 +718,29 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 		i = loop_info64_to_old(&loopinfo64, &loopinfo);
 		if (i) {
 			errno = errsv;
+			*options &= ~SETLOOP_AUTOCLEAR;
 			perror("ioctl: LOOP_SET_STATUS64");
 		} else {
 			i = ioctl(fd, LOOP_SET_STATUS, &loopinfo);
 			if (i)
 				perror("ioctl: LOOP_SET_STATUS");
+			else if (*options & SETLOOP_AUTOCLEAR)
+			{
+				i = ioctl(fd, LOOP_GET_STATUS, &loopinfo);
+				if (i || !(loopinfo.lo_flags & LO_FLAGS_AUTOCLEAR))
+					*options &= ~SETLOOP_AUTOCLEAR;
+			}
 		}
 		memset(&loopinfo, 0, sizeof(loopinfo));
 	}
+	else if (*options & SETLOOP_AUTOCLEAR)
+	{
+		i = ioctl(fd, LOOP_GET_STATUS64, &loopinfo64);
+		if (i || !(loopinfo64.lo_flags & LO_FLAGS_AUTOCLEAR))
+			*options &= ~SETLOOP_AUTOCLEAR;
+	}
 	memset(&loopinfo64, 0, sizeof(loopinfo64));
+
 
 	if (i) {
 		ioctl (fd, LOOP_CLR_FD, 0);
@@ -733,7 +749,13 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 			free(filename);
 		return 1;
 	}
-	close (fd);
+
+	/*
+	 * HACK: here we're leeking a file descriptor,
+	 * but mount is a short-lived process anyway.
+	 */
+	if (!(*options & SETLOOP_AUTOCLEAR))
+		close (fd);
 
 	if (verbose > 1)
 		printf(_("set_loop(%s,%s,%llu): success\n"),

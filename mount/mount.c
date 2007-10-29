@@ -912,8 +912,11 @@ loop_check(const char **spec, const char **type, int *flags,
       if (verbose)
 	printf(_("mount: skipping the setup of a loop device\n"));
     } else {
-      int loopro = (*flags & MS_RDONLY);
+      int loop_opts = SETLOOP_AUTOCLEAR; /* always attempt autoclear */
       int res;
+
+      if (*flags & MS_RDONLY)
+        loop_opts |= SETLOOP_RDONLY;
 
       offset = opt_offset ? strtoull(opt_offset, NULL, 0) : 0;
 
@@ -931,7 +934,7 @@ loop_check(const char **spec, const char **type, int *flags,
 	  printf(_("mount: going to use the loop device %s\n"), *loopdev);
 
 	if ((res = set_loop(*loopdev, *loopfile, offset,
-			    opt_encryption, pfd, &loopro))) {
+			    opt_encryption, pfd, &loop_opts))) {
 	  if (res == 2) {
 	     /* loop dev has been grabbed by some other process,
 	        try again, if not given explicitly */
@@ -960,8 +963,13 @@ loop_check(const char **spec, const char **type, int *flags,
       if (verbose > 1)
 	printf(_("mount: setup loop device successfully\n"));
       *spec = *loopdev;
-      if (loopro)
-	*flags |= MS_RDONLY;
+
+      if (loop_opts & SETLOOP_RDONLY)
+        *flags |= MS_RDONLY;
+
+      if (loop_opts & SETLOOP_AUTOCLEAR)
+        /* Prevent recording loop dev in mtab for cleanup on umount */
+        *loop = 0;
     }
   }
 
