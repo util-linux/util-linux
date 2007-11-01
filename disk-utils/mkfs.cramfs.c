@@ -33,7 +33,6 @@
 #include <stdlib.h>
 #include <errno.h>
 #include <string.h>
-#include <assert.h>
 #include <getopt.h>
 #include <stdarg.h>
 #include <zlib.h>
