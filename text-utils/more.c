@@ -1573,10 +1573,6 @@ void search(char buf[], FILE *file, register int n)
     }
     if (feof (file)) {
 	if (!no_intty) {
-#ifndef __linux__
-				/* No longer in libc 4.5.8. . . */
-	    file->_flags &= ~STDIO_S_EOF_SEEN; /* why doesn't fseek do this ??!!??! */
-#endif
 	    Currline = saveln;
 	    Fseek (file, startline);
 	}
