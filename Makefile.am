@@ -5,16 +5,20 @@ SUBDIRS = \
 	disk-utils \
 	fdisk \
 	getopt \
-	hwclock \
 	login-utils \
 	misc-utils \
-	mount \
-        partx \
 	po \
 	schedutils \
 	sys-utils \
 	text-utils \
 	tests
+
+if LINUX
+SUBDIRS += \
+	hwclock \
+	mount \
+	partx
+endif
 
 ACLOCAL_AMFLAGS = -I m4
 

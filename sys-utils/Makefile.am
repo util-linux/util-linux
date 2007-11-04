@@ -1,14 +1,25 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-bin_PROGRAMS = dmesg
+bin_PROGRAMS =
+if LINUX
+bin_PROGRAMS += dmesg
+endif
 
-usrbinexec_PROGRAMS = cytune flock ipcrm ipcs renice setsid setarch
+usrbinexec_PROGRAMS = flock ipcrm ipcs renice setsid
+if LINUX
+usrbinexec_PROGRAMS += cytune setarch
+endif
 
 cytune_SOURCES = cytune.c cyclades.h
 
+if LINUX
 sbin_PROGRAMS = ctrlaltdel
+endif
 
-usrsbinexec_PROGRAMS = readprofile tunelp rtcwake
+usrsbinexec_PROGRAMS = readprofile
+if LINUX
+usrsbinexec_PROGRAMS += tunelp rtcwake
+endif
 
 tunelp_SOURCES = tunelp.c lp.h
 

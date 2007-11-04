@@ -34,8 +34,10 @@ script_LDADD = -lutil
 endif
 
 if HAVE_NCURSES
+if LINUX
 usrbinexec_PROGRAMS += setterm
 man_MANS += setterm.1
+endif
 if HAVE_TINFO
 setterm_LDADD = -ltinfo
 else
