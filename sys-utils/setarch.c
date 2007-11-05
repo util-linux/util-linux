@@ -82,10 +82,10 @@ show_help(void)
          p, !strcmp(p, "setarch") ? " <arch>" : "");
 
    printf(_(
-   " -h, --help               this help\n"
-   " -v, --verbose            verbose mode\n"
+   " -h, --help               displays this help text\n"
+   " -v, --verbose            says what options are being switched on\n"
    " -R, --addr-no-randomize  disables randomization of the virtual address space\n"
-   " -F, --fdpic-funcptrs     turns on function pointers point to descriptors\n"
+   " -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
    " -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
    " -L, --addr-compat-layout changes the way virtual memory is allocated\n"
    " -X, --read-implies-exec  turns on READ_IMPLIES_EXEC\n"
@@ -93,8 +93,8 @@ show_help(void)
    " -I, --short-inode        turns on SHORT_INODE\n"
    " -S, --whole-seconds      turns on WHOLE_SECONDS\n"
    " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
-   " -3, --3gb                turns on maximum of 3GB of address space\n"
-   "     --4gb                ignored (for backward compatibility only\n"));
+   " -3, --3gb                limits the used address space to a maximum of 3 GB\n"
+   "     --4gb                ignored (for backward compatibility only)\n"));
 
   printf(_("\nFor more information see setarch(8).\n"));
   exit(EXIT_SUCCESS);
@@ -226,7 +226,7 @@ int main(int argc, char *argv[])
   #if defined(__sparc64__) || defined(__sparc__)
    if (!strcmp(p, "sparc32bash")) {
        if (set_arch(p, 0L))
-         error(EXIT_FAILURE, errno, "Failed to set personality to %s", p);
+           error(EXIT_FAILURE, errno, _("Failed to set personality to %s"), p);
        execl("/bin/bash", NULL);
        error(EXIT_FAILURE, errno, "/bin/bash");
    }
