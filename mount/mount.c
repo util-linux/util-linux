@@ -77,8 +77,8 @@ static int optfork = 0;
 /* Add volumelabel in a listing of mounted devices (-l). */
 static int list_with_volumelabel = 0;
 
-/* Nonzero for mount {--bind|--replace|--before|--after|--over|--move|
- *		       make-shared|make-private|make-unbindable|make-slave}
+/* Nonzero for mount {bind|move|make-shared|make-private|
+ *				make-unbindable|make-slave}
  */
 static int mounttype = 0;
 
@@ -1672,10 +1672,6 @@ static struct option longopts[] = {
 	{ "pass-fd", 1, 0, 'p' },
 	{ "types", 1, 0, 't' },
 	{ "bind", 0, 0, 128 },
-	{ "replace", 0, 0, 129 },
-	{ "after", 0, 0, 130 },
-	{ "before", 0, 0, 131 },
-	{ "over", 0, 0, 132 },
 	{ "move", 0, 0, 133 },
 	{ "guess-fstype", 1, 0, 134 },
 	{ "rbind", 0, 0, 135 },
@@ -1729,10 +1725,7 @@ usage (FILE *fp, int n) {
 	  "Other options: [-nfFrsvw] [-o options] [-p passwdfd].\n"
 	  "For many more details, say  man 8 mount .\n"
 	));
-/*
-	  "Union or stack mounts are specified using one of\n"
-	  "       --replace, --after, --before, --over\n"
-*/
+
 	unlock_mtab();
 	exit (n);
 }
@@ -1917,18 +1910,6 @@ main(int argc, char *argv[]) {
 
 		case 128: /* bind */
 			mounttype = MS_BIND;
-			break;
-		case 129: /* replace */
-			mounttype = MS_REPLACE;
-			break;
-		case 130: /* after */
-			mounttype = MS_AFTER;
-			break;
-		case 131: /* before */
-			mounttype = MS_BEFORE;
-			break;
-		case 132: /* over */
-			mounttype = MS_OVER;
 			break;
 		case 133: /* move */
 			mounttype = MS_MOVE;
