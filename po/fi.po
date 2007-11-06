@@ -1,6 +1,6 @@
 # Finnish messages for util-linux
-# Copyright © 2002, 2003, 2005 Lauri Nurmi <lanurmi@iki.fi>
-# Lauri Nurmi <lanurmi@iki.fi>, 2002, 2003, 2005.
+# Copyright © 2002, 2003, 2005, 2007 Lauri Nurmi <lanurmi@iki.fi>
+# Lauri Nurmi <lanurmi@iki.fi>, 2002, 2003, 2005, 2007.
 #
 # Permission is granted to freely copy and distribute
 # this file and modified versions, provided, that this
@@ -11,12 +11,16 @@
 # ja levittää vapaasti edellyttäen, että tätä otsikkoa
 # ei poisteta, ja muutetut versiot merkitään muutetuiksi.
 #
+# NOTE: This file (version 2.13-rc3) intentionally *appears to* 
+#       have fewer translated messages than the earlier 
+#       version -- no need to worry.
+#
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.13-pre1\n"
+"Project-Id-Version: util-linux-ng 2.13-rc3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-10-11 14:29+0200\n"
-"PO-Revision-Date: 2005-08-06 19:35+0300\n"
+"POT-Creation-Date: 2007-08-07 23:26+0200\n"
+"PO-Revision-Date: 2007-10-17 20:21+0300\n"
 "Last-Translator: Lauri Nurmi <lanurmi@iki.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -64,14 +68,12 @@ msgid "get readahead"
 msgstr "hae lukuennakko"
 
 #: disk-utils/blockdev.c:95
-#, fuzzy
 msgid "set filesystem readahead"
-msgstr "aseta lukuennakko"
+msgstr "aseta tiedostojärjestelmän lukuennakko"
 
 #: disk-utils/blockdev.c:98
-#, fuzzy
 msgid "get filesystem readahead"
-msgstr "hae lukuennakko"
+msgstr "hae tiedostojärjestelmän lukuennakko"
 
 #: disk-utils/blockdev.c:101
 msgid "flush buffers"
@@ -101,11 +103,6 @@ msgstr "  %s [-v|-q] komennot laitteet\n"
 msgid "Available commands:\n"
 msgstr "Käytettävissä olevat komennot:\n"
 
-#: disk-utils/blockdev.c:123
-#, fuzzy
-msgid "get size in 512-byte sectors"
-msgstr "hae koko tavuina"
-
 #: disk-utils/blockdev.c:275
 #, c-format
 msgid "%s: Unknown command: %s\n"
@@ -115,11 +112,6 @@ msgstr "%s: Tuntematon komento: %s\n"
 #, c-format
 msgid "%s requires an argument\n"
 msgstr "%s vaatii argumentin\n"
-
-#: disk-utils/blockdev.c:329
-#, fuzzy, c-format
-msgid "%s failed.\n"
-msgstr "siirtyminen epäonnistui"
 
 #: disk-utils/blockdev.c:366
 #, c-format
@@ -184,14 +176,15 @@ msgstr ""
 msgid "usage: %s [ -n ] device\n"
 msgstr "käyttö: %s [ -n ] laite\n"
 
+# Mikä tämä nyt on olevinaan...
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
-#: disk-utils/mkfs.cramfs.c:785 disk-utils/mkfs.minix.c:629
+#: disk-utils/mkfs.cramfs.c:784 disk-utils/mkfs.minix.c:626
 #: disk-utils/mkswap.c:518 misc-utils/ddate.c:179 misc-utils/rename.c:79
-#: misc-utils/script.c:147 sys-utils/readprofile.c:197
-#, fuzzy, c-format
+#: misc-utils/script.c:146 sys-utils/readprofile.c:197
+#, c-format
 msgid "%s (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "%s (%s)\n"
 
 #: disk-utils/fdformat.c:130
 #, c-format
@@ -215,7 +208,7 @@ msgstr "Kaksi"
 msgid "Single"
 msgstr "Yksi"
 
-#: disk-utils/fsck.cramfs.c:117
+#: disk-utils/fsck.cramfs.c:118
 #, c-format
 msgid ""
 "usage: %s [-hv] [-x dir] file\n"
@@ -252,12 +245,12 @@ msgstr "tarkistus keskeytetty.\n"
 #: disk-utils/fsck.minix.c:318 disk-utils/fsck.minix.c:341
 #, c-format
 msgid "Zone nr < FIRSTZONE in file `%s'."
-msgstr "Vyöhykenumero < FIRSTZONE tiedostossa \"%s\"."
+msgstr "Vyöhykenumero < FIRSTZONE tiedostossa ”%s”."
 
 #: disk-utils/fsck.minix.c:322 disk-utils/fsck.minix.c:345
 #, c-format
 msgid "Zone nr >= ZONES in file `%s'."
-msgstr "Vyöhykenumero >= ZONES tiedostossa \"%s\"."
+msgstr "Vyöhykenumero >= ZONES tiedostossa ”%s”."
 
 #: disk-utils/fsck.minix.c:327 disk-utils/fsck.minix.c:350
 msgid "Remove block"
@@ -266,12 +259,12 @@ msgstr "Poista lohko"
 #: disk-utils/fsck.minix.c:368
 #, c-format
 msgid "Read error: unable to seek to block in file '%s'\n"
-msgstr "Lukuvirhe: siirtyminen lohkoon ei onnistu tiedostossa \"%s\"\n"
+msgstr "Lukuvirhe: siirtyminen lohkoon ei onnistu tiedostossa ”%s”\n"
 
 #: disk-utils/fsck.minix.c:374
 #, c-format
 msgid "Read error: bad block in file '%s'\n"
-msgstr "Lukuvirhe: viallinen lohko tiedostossa \"%s\"\n"
+msgstr "Lukuvirhe: viallinen lohko tiedostossa ”%s”\n"
 
 #: disk-utils/fsck.minix.c:389
 #, c-format
@@ -289,7 +282,7 @@ msgstr "siirtyminen epäonnistui funktiossa write_block"
 #: disk-utils/fsck.minix.c:398
 #, c-format
 msgid "Write error: bad block in file '%s'\n"
-msgstr "Kirjoitusvirhe: viallinen lohko tiedostossa \"%s\"\n"
+msgstr "Kirjoitusvirhe: viallinen lohko tiedostossa ”%s”\n"
 
 #: disk-utils/fsck.minix.c:514
 msgid "seek failed in write_super_block"
@@ -337,11 +330,6 @@ msgstr "virheellinen s_zmap_blocks-kenttä superlohkossa"
 
 #: disk-utils/fsck.minix.c:590
 msgid "Unable to allocate buffer for inode map"
-msgstr "I-solmukartalle ei voi varata puskuria"
-
-#: disk-utils/fsck.minix.c:593
-#, fuzzy
-msgid "Unable to allocate buffer for zone map"
 msgstr "I-solmukartalle ei voi varata puskuria"
 
 #: disk-utils/fsck.minix.c:598
@@ -415,7 +403,7 @@ msgstr ""
 #: disk-utils/fsck.minix.c:638 disk-utils/fsck.minix.c:689
 #, c-format
 msgid "Inode %d marked unused, but used for file '%s'\n"
-msgstr "Käyttämättömäksi merkittyä i-solmua %d käytetään tiedostoon \"%s\"\n"
+msgstr "Käyttämättömäksi merkittyä i-solmua %d käytetään tiedostoon ”%s”\n"
 
 #: disk-utils/fsck.minix.c:642 disk-utils/fsck.minix.c:693
 msgid "Mark in use"
@@ -424,21 +412,21 @@ msgstr "Merkitse käyttöön"
 #: disk-utils/fsck.minix.c:664 disk-utils/fsck.minix.c:713
 #, c-format
 msgid "The file `%s' has mode %05o\n"
-msgstr "Tiedostolla \"%s\" on tila %05o\n"
+msgstr "Tiedostolla ”%s” on tila %05o\n"
 
 #: disk-utils/fsck.minix.c:671 disk-utils/fsck.minix.c:719
 #, c-format
 msgid "Warning: inode count too big.\n"
 msgstr "Varoitus i-solmujen määrä on liian suuri.\n"
 
-#: disk-utils/fsck.minix.c:731 disk-utils/fsck.minix.c:739
+#: disk-utils/fsck.minix.c:731
 msgid "root inode isn't a directory"
 msgstr "juuren i-solmu ei ole hakemisto"
 
 #: disk-utils/fsck.minix.c:753 disk-utils/fsck.minix.c:786
 #, c-format
 msgid "Block has been used before. Now in file `%s'."
-msgstr "Lohkoa on käytetty aikaisemmin. Nyt tiedostossa \"%s\"."
+msgstr "Lohkoa on käytetty aikaisemmin. Nyt tiedostossa ”%s”."
 
 #: disk-utils/fsck.minix.c:755 disk-utils/fsck.minix.c:788
 #: disk-utils/fsck.minix.c:1111 disk-utils/fsck.minix.c:1120
@@ -449,7 +437,7 @@ msgstr "Tyhjennä"
 #: disk-utils/fsck.minix.c:765 disk-utils/fsck.minix.c:798
 #, c-format
 msgid "Block %d in file `%s' is marked not in use."
-msgstr "Lohko %d tiedostossa \"%s\" on merkitty käyttämättömäksi."
+msgstr "Lohko %d tiedostossa ”%s” on merkitty käyttämättömäksi."
 
 #: disk-utils/fsck.minix.c:767 disk-utils/fsck.minix.c:800
 msgid "Correct"
@@ -458,24 +446,33 @@ msgstr "Korjaa"
 #: disk-utils/fsck.minix.c:939 disk-utils/fsck.minix.c:1006
 #, c-format
 msgid "The directory '%s' contains a bad inode number for file '%.*s'."
-msgstr ""
-"Hakemisto \"%s\" sisältää virheellisen i-solmunumeron tiedostolle \"%.*s\"."
+msgstr "Hakemisto ”%s” sisältää virheellisen i-solmunumeron tiedostolle ”%.*s”."
 
 #: disk-utils/fsck.minix.c:942 disk-utils/fsck.minix.c:1009
 msgid " Remove"
 msgstr " Poista"
 
-#: disk-utils/fsck.minix.c:956 disk-utils/fsck.minix.c:1023
+#: disk-utils/fsck.minix.c:956
+#, c-format
+msgid "`%s': bad directory: '.' isn't first\n"
+msgstr "”%s”: viallinen hakemisto: ”.” ei ole ensimmäisenä\n"
+
+#: disk-utils/fsck.minix.c:964
+#, c-format
+msgid "`%s': bad directory: '..' isn't second\n"
+msgstr "”%s”: viallinen hakemisto: ”..” ei ole toisena\n"
+
+#: disk-utils/fsck.minix.c:1023
 #, c-format
 msgid "%s: bad directory: '.' isn't first\n"
-msgstr "%s: viallinen hakemisto: \".\" ei ole ensimmäisenä\n"
+msgstr "%s: viallinen hakemisto: ”.” ei ole ensimmäisenä\n"
 
-#: disk-utils/fsck.minix.c:964 disk-utils/fsck.minix.c:1032
+#: disk-utils/fsck.minix.c:1032
 #, c-format
 msgid "%s: bad directory: '..' isn't second\n"
-msgstr "%s: viallinen hakemisto: \"..\" ei ole toisena\n"
+msgstr "%s: viallinen hakemisto: ”..” ei ole toisena\n"
 
-#: disk-utils/fsck.minix.c:1066 disk-utils/fsck.minix.c:1084
+#: disk-utils/fsck.minix.c:1066
 msgid "internal error"
 msgstr "sisäinen virhe"
 
@@ -502,10 +499,6 @@ msgstr "I-solmua %d ei käytetä, merkitty käytetyksi bittikartassa."
 #, c-format
 msgid "Inode %d used, marked unused in the bitmap."
 msgstr "I-solmu %d käytössä, merkitty käyttämättömäksi bittikartassa."
-
-#: disk-utils/fsck.minix.c:1127 disk-utils/fsck.minix.c:1181
-msgid "Set"
-msgstr "Aseta"
 
 #: disk-utils/fsck.minix.c:1131 disk-utils/fsck.minix.c:1185
 #, c-format
@@ -535,8 +528,12 @@ msgstr "Vyöhyke %d: käytössä, laskettu=%d\n"
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "Vyöhyke %d: ei käytössä, laskettu=%d\n"
 
-#: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:634
-#: disk-utils/mkfs.minix.c:636
+#: disk-utils/fsck.minix.c:1181
+msgid "Set"
+msgstr "Aseta"
+
+#: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:631
+#: disk-utils/mkfs.minix.c:633
 msgid "bad inode size"
 msgstr "virheellinen i-solmun koko"
 
@@ -551,7 +548,7 @@ msgstr "vuorovaikutteisiin korjauksiin tarvitaan pääte"
 #: disk-utils/fsck.minix.c:1286
 #, c-format
 msgid "unable to open '%s'"
-msgstr "laitetta \"%s\" ei voi avata"
+msgstr "laitetta ”%s” ei voi avata"
 
 #: disk-utils/fsck.minix.c:1301
 #, c-format
@@ -697,7 +694,7 @@ msgstr "liian monta i-solmua - maksimi on 512"
 msgid "not enough space, need at least %lu blocks"
 msgstr "tila ei riitä, vaaditaan vähintään %lu lohkoa"
 
-#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2314
+#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2321
 #, c-format
 msgid "Device: %s\n"
 msgstr "Laite: %s\n"
@@ -755,11 +752,11 @@ msgstr "siirtymisvirhe"
 
 #: disk-utils/mkfs.bfs.c:278
 msgid "error writing . entry"
-msgstr "virhe kirjoitettessa \".\"-merkintää"
+msgstr "virhe kirjoitettessa ”.”-merkintää"
 
 #: disk-utils/mkfs.bfs.c:282
 msgid "error writing .. entry"
-msgstr "virhe kirjoitettessa \"..\"-merkintää"
+msgstr "virhe kirjoitettessa ”..”-merkintää"
 
 #: disk-utils/mkfs.bfs.c:286
 #, c-format
@@ -769,9 +766,7 @@ msgstr "virhe suljettaessa laitetta %s"
 #: disk-utils/mkfs.c:73
 #, c-format
 msgid "Usage: mkfs [-V] [-t fstype] [fs-options] device [size]\n"
-msgstr ""
-"Käyttö: mkfs [-V] [-t tied.järj. tyyppi] [tied.järj.valitsimet] laite "
-"[koko]\n"
+msgstr "Käyttö: mkfs [-V] [-t tied.järj. tyyppi] [tied.järj.valitsimet] laite [koko]\n"
 
 #: disk-utils/mkfs.c:88 disk-utils/mkfs.c:96 fdisk/cfdisk.c:343
 #: getopt/getopt.c:91 getopt/getopt.c:101 login-utils/wall.c:238
@@ -780,15 +775,14 @@ msgid "%s: Out of memory!\n"
 msgstr "%s: Muisti lopussa!\n"
 
 #: disk-utils/mkfs.c:103
-#, fuzzy, c-format
+#, c-format
 msgid "mkfs (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "mkfs (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:125
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"usage: %s [-h] [-v] [-b blksize] [-e edition] [-i file] [-n name] dirname "
-"outfile\n"
+"usage: %s [-h] [-v] [-b blksize] [-e edition] [-i file] [-n name] dirname outfile\n"
 " -h         print this help\n"
 " -v         be verbose\n"
 " -E         make all warnings errors (non-zero exit status)\n"
@@ -802,120 +796,110 @@ msgid ""
 " dirname    root of the filesystem to be compressed\n"
 " outfile    output file\n"
 msgstr ""
-"käyttö: %s [-v] [-b lkoko] [-e laitos] [-i tied] [-n nimi] haknimi "
-"tulostied\n"
+"käyttö: %s [-h] [-v] [-b lkoko] [-e laitos] [-i tied] [-n nimi] haknimi tulostied\n"
 " -h          näytä tämä ohje\n"
 " -v          monisanaisuus\n"
 " -E          käsittele varoitukset virheinä (nollasta poikkeava paluuarvo)\n"
 " -b lkoko    käytä tätä lohkokokoa, on oltava sama kuin sivukoko\n"
 " -e laitos   aseta laitosnumero (osa tied.järj-id:tä)\n"
-" -i tied     sisällytä tiedostokuva tiedostojärjestelmään (vaatii >= 2.4.0)\n"
+" -i tied     sisällytä tiedostokuva tiedostojärjestelmään (vaatii >= 2.4.0:n)\n"
 " -n nimi     aseta cramfs-tiedostojärjestelmän nimi\n"
 " -p          tasaa %d tavulla käynnistyskoodia varten\n"
 " -s          lajittele hakemistomerkinnät (vanha valitsin, ei huomioida)\n"
-" -z          tee reikiä (vaatii >= 2.3.39)\n"
+" -z          tee reikiä (vaatii >= 2.3.39:n)\n"
 " haknimi     tiivistettävän tiedostojärjestelmän juuri\n"
 " tulostied   tulostiedosto\n"
 
 #: disk-utils/mkfs.cramfs.c:337
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"Very long (%zu bytes) filename `%s' found.\n"
+"Very long (%u bytes) filename `%s' found.\n"
 " Please increase MAX_INPUT_NAMELEN in mkcramfs.c and recompile.  Exiting.\n"
 msgstr ""
-"Löytyi hyvin pitkä tiedostonimi \"%2$s\" (%1$u tavua).\n"
-" Kasvata vakiota MAX_INPUT_NAMELEN tiedostossa mkcramfs.c ja käännä "
-"uudelleen. Poistutaan.\n"
+"Löytyi hyvin pitkä tiedostonimi ”%2$s” (%1$u tavua).\n"
+" Kasvata vakiota MAX_INPUT_NAMELEN tiedostossa mkcramfs.c ja käännä uudelleen. Poistutaan.\n"
 
 #: disk-utils/mkfs.cramfs.c:465
 #, c-format
 msgid "filesystem too big.  Exiting.\n"
 msgstr "tiedostojärjestelmä on liian suuri. Poistutaan.\n"
 
-#: disk-utils/mkfs.cramfs.c:628
+#: disk-utils/mkfs.cramfs.c:627
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
-msgstr "AIEEE: \"pakatun\" lohkon koko > 2*lohkokoko (%ld)\n"
+msgstr "AIEEE: ”tiivistetyn” lohkon koko > 2*lohkokoko (%ld)\n"
 
-#: disk-utils/mkfs.cramfs.c:647
-#, fuzzy, c-format
-msgid "%6.2f%% (%+ld bytes)\t%s\n"
+#: disk-utils/mkfs.cramfs.c:646
+#, c-format
+msgid "%6.2f%% (%+d bytes)\t%s\n"
 msgstr "%6.2f%% (%+d tavua)\t%s\n"
 
-#: disk-utils/mkfs.cramfs.c:826
-#, fuzzy, c-format
-msgid ""
-"warning: guestimate of required size (upper bound) is %lldMB, but maximum "
-"image size is %uMB.  We might die prematurely.\n"
-msgstr ""
-"varoitus: arviokoko (yläraja) on %Ld Mt, mutta suurin kuvakoko on %u Mt. "
-"Prosessi saattaa päättyä ennenaikaisesti.\n"
+#: disk-utils/mkfs.cramfs.c:825
+#, c-format
+msgid "warning: guestimate of required size (upper bound) is %LdMB, but maximum image size is %uMB.  We might die prematurely.\n"
+msgstr "varoitus: arviokoko (yläraja) on %Ld Mt, mutta suurin kuvakoko on %u Mt. Prosessi saattaa päättyä ennenaikaisesti.\n"
 
-#: disk-utils/mkfs.cramfs.c:867
+#: disk-utils/mkfs.cramfs.c:866
 #, c-format
 msgid "Including: %s\n"
 msgstr "Sisällytetään: %s\n"
 
-#: disk-utils/mkfs.cramfs.c:873
-#, fuzzy, c-format
-msgid "Directory data: %zd bytes\n"
+#: disk-utils/mkfs.cramfs.c:872
+#, c-format
+msgid "Directory data: %d bytes\n"
 msgstr "Hakemistodata: %d tavua\n"
 
-#: disk-utils/mkfs.cramfs.c:881
-#, fuzzy, c-format
-msgid "Everything: %zd kilobytes\n"
+#: disk-utils/mkfs.cramfs.c:880
+#, c-format
+msgid "Everything: %d kilobytes\n"
 msgstr "Kaikki: %d kilotavua\n"
 
-#: disk-utils/mkfs.cramfs.c:886
-#, fuzzy, c-format
-msgid "Super block: %zd bytes\n"
+#: disk-utils/mkfs.cramfs.c:885
+#, c-format
+msgid "Super block: %d bytes\n"
 msgstr "Superlohko: %d tavua\n"
 
-#: disk-utils/mkfs.cramfs.c:893
+#: disk-utils/mkfs.cramfs.c:892
 #, c-format
 msgid "CRC: %x\n"
 msgstr "CRC: %x\n"
 
-#: disk-utils/mkfs.cramfs.c:898
-#, fuzzy, c-format
-msgid "not enough space allocated for ROM image (%lld allocated, %zu used)\n"
-msgstr ""
-"ROM-kuvalle ei ole varattu riittävästi tilaa (%Ld varattu, %d käytetty)\n"
+#: disk-utils/mkfs.cramfs.c:897
+#, c-format
+msgid "not enough space allocated for ROM image (%Ld allocated, %d used)\n"
+msgstr "ROM-kuvalle ei ole varattu riittävästi tilaa (%Ld varattu, %d käytetty)\n"
 
-#: disk-utils/mkfs.cramfs.c:910
-#, fuzzy, c-format
-msgid "ROM image write failed (%zd %zd)\n"
+#: disk-utils/mkfs.cramfs.c:909
+#, c-format
+msgid "ROM image write failed (%d %d)\n"
 msgstr "ROM-kuvan kirjoitus epäonnistui (%d %d)\n"
 
-#: disk-utils/mkfs.cramfs.c:919
+#: disk-utils/mkfs.cramfs.c:918
 #, c-format
 msgid "warning: filenames truncated to 255 bytes.\n"
 msgstr "varoitus: tiedostonimet typistetään 255 tavuun.\n"
 
-#: disk-utils/mkfs.cramfs.c:922
+#: disk-utils/mkfs.cramfs.c:921
 #, c-format
 msgid "warning: files were skipped due to errors.\n"
 msgstr "varoitus: tiedostoja ohitettiin virheiden takia.\n"
 
-#: disk-utils/mkfs.cramfs.c:925
+#: disk-utils/mkfs.cramfs.c:924
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte).\n"
-msgstr ""
-"varoitus: tiedostojen koot typistetty %lu megatavuun (miinus 1 tavu).\n"
+msgstr "varoitus: tiedostojen koot typistetty %lu megatavuun (miinus 1 tavu).\n"
 
-#: disk-utils/mkfs.cramfs.c:930
+#: disk-utils/mkfs.cramfs.c:929
 #, c-format
-msgid ""
-"warning: uids truncated to %u bits.  (This may be a security concern.)\n"
+msgid "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr "varoitus: uid:t typistetty %u bittiin. (Tämä voi olla turvaongelma.)\n"
 
-#: disk-utils/mkfs.cramfs.c:935
+#: disk-utils/mkfs.cramfs.c:934
 #, c-format
-msgid ""
-"warning: gids truncated to %u bits.  (This may be a security concern.)\n"
+msgid "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr "varoitus: gid:t typistetty %u bittiin. (Tämä voi olla turvaongelma.)\n"
 
-#: disk-utils/mkfs.cramfs.c:940
+#: disk-utils/mkfs.cramfs.c:939
 #, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
@@ -995,8 +979,7 @@ msgstr "siirtyminen epäonnistui lohkojen testauksen aikana"
 #: disk-utils/mkfs.minix.c:534
 #, c-format
 msgid "Weird values in do_check: probably bugs\n"
-msgstr ""
-"Outoja arvoja funktiossa do_check: todennäköisesti ohjelmistovirheitä\n"
+msgstr "Outoja arvoja funktiossa do_check: todennäköisesti ohjelmistovirheitä\n"
 
 #: disk-utils/mkfs.minix.c:565 disk-utils/mkswap.c:400
 msgid "seek failed in check_blocks"
@@ -1004,15 +987,14 @@ msgstr "siirtyminen epäonnistui funktiossa check_blocks"
 
 #: disk-utils/mkfs.minix.c:574
 msgid "bad blocks before data-area: cannot make fs"
-msgstr ""
-"virheellisiä lohkoja ennen data-aluetta: tiedostojärjestelmää ei voi luoda"
+msgstr "virheellisiä lohkoja ennen data-aluetta: tiedostojärjestelmää ei voi luoda"
 
-#: disk-utils/mkfs.minix.c:580 disk-utils/mkfs.minix.c:605
+#: disk-utils/mkfs.minix.c:580 disk-utils/mkfs.minix.c:602
 #, c-format
 msgid "%d bad blocks\n"
 msgstr "%d viallista lohkoa\n"
 
-#: disk-utils/mkfs.minix.c:582 disk-utils/mkfs.minix.c:607
+#: disk-utils/mkfs.minix.c:582 disk-utils/mkfs.minix.c:604
 #, c-format
 msgid "one bad block\n"
 msgstr "yksi viallinen lohko\n"
@@ -1021,35 +1003,25 @@ msgstr "yksi viallinen lohko\n"
 msgid "can't open file of bad blocks"
 msgstr "vialliset lohkot sisältävää tiedostoa ei voi avata"
 
-#: disk-utils/mkfs.minix.c:596
-#, c-format
-msgid "badblock number input error on line %d\n"
-msgstr ""
-
-#: disk-utils/mkfs.minix.c:597
-#, fuzzy
-msgid "cannot read badblocks file"
-msgstr "Levyasemaa ei voi lukea"
-
-#: disk-utils/mkfs.minix.c:677
+#: disk-utils/mkfs.minix.c:674
 #, c-format
 msgid "strtol error: number of blocks not specified"
 msgstr "strtol-virhe: lohkojen määrää ei ole annettu"
 
-#: disk-utils/mkfs.minix.c:706
+#: disk-utils/mkfs.minix.c:703
 #, c-format
 msgid "unable to stat %s"
 msgstr "tiedoston %s tilaa ei voi lukea"
 
-#: disk-utils/mkfs.minix.c:712
+#: disk-utils/mkfs.minix.c:709
 #, c-format
 msgid "unable to open %s"
 msgstr "laitetta %s ei voi avata"
 
-#: disk-utils/mkfs.minix.c:716
+#: disk-utils/mkfs.minix.c:713
 #, c-format
 msgid "will not try to make filesystem on '%s'"
-msgstr "ei yritetä luoda tiedostojärjestelmää kohteeseen \"%s\""
+msgstr "ei yritetä luoda tiedostojärjestelmää kohteeseen ”%s”"
 
 #: disk-utils/mkswap.c:174
 #, c-format
@@ -1057,10 +1029,9 @@ msgid "Bad user-specified page size %d\n"
 msgstr "Käyttäjän antama sivukoko %d on virheellinen\n"
 
 #: disk-utils/mkswap.c:182
-#, fuzzy, c-format
+#, c-format
 msgid "Using user-specified page size %d, instead of the system value %d\n"
-msgstr ""
-"Käytetään käyttäjän antamaa sivukokoa %d järjestelmän arvojen %d/%d sijaan\n"
+msgstr "Käytetään käyttäjän antamaa sivukokoa %d järjestelmän arvon %d sijaan\n"
 
 #: disk-utils/mkswap.c:206
 #, c-format
@@ -1091,8 +1062,8 @@ msgstr "Käyttö: %s [-c] [-v0|-v1] [-pSIVUKOKO] [-L nimiö] /dev/nimi [lohkot]\
 msgid "too many bad pages"
 msgstr "liian monta viallista sivua"
 
-#: disk-utils/mkswap.c:391 misc-utils/look.c:182 misc-utils/setterm.c:1147
-#: text-utils/more.c:1987 text-utils/more.c:1998
+#: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
+#: text-utils/more.c:1972 text-utils/more.c:1983
 msgid "Out of memory"
 msgstr "Muisti lopussa"
 
@@ -1137,14 +1108,14 @@ msgid "%s: error: label only with v1 swap area\n"
 msgstr "%s: virhe: vasta sivutustilan versio 1 tukee nimiöitä\n"
 
 #: disk-utils/mkswap.c:662
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
-msgstr "Ei yritetä luoda sivutuslaitetta kohteeseen \"%s\""
+msgstr "%s: virhe: ei yritetä luoda sivutuslaitetta kohteeseen ”%s”\n"
 
 #: disk-utils/mkswap.c:668
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
-msgstr "%s on liitetty; ei tehdä tiedostojärjestelmää tähän!"
+msgstr "%s: virhe: %s on liitetty; ei tehdä sivutustilaa.\n"
 
 #: disk-utils/mkswap.c:681 disk-utils/mkswap.c:702
 msgid "fatal: first page unreadable"
@@ -1158,7 +1129,7 @@ msgid ""
 "No swap created. If you really want to create swap v0 on that device, use\n"
 "the -f option to force it.\n"
 msgstr ""
-"%s: Laitteella \"%s\" on kelvollinen Sun-levynimiö.\n"
+"%s: Laitteella ”%s” on kelvollinen Sun-levynimiö.\n"
 "Tämä tarkoittaa todennäköisesti sitä, että v0-sivutuksen luominen tuhoaisi\n"
 "osiotaulun. Sivutusta ei luotu. Jos todella haluat luoda v0-sivutuksen\n"
 "kyseiselle laitteelle, käytä valitsinta -f sen pakottamiseen.\n"
@@ -1190,18 +1161,17 @@ msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr ""
 
 #: disk-utils/mkswap.c:749
-#, fuzzy
 msgid "unable to create new selinux context"
-msgstr "i-solmuja ei voi kirjoittaa"
+msgstr "uuden selinux-kontekstin luominen ei onnistu"
 
 #: disk-utils/mkswap.c:751
 msgid "couldn't compute selinux context"
-msgstr ""
+msgstr "selinux-kontekstin laskeminen ei onnistunut"
 
 #: disk-utils/mkswap.c:757
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
-msgstr "nimeäminen %s -> %s ei onnistu: %s\n"
+msgstr "%s: uudelleennimeäminen %s -> %s ei onnistu: %s\n"
 
 #: fdisk/cfdisk.c:368 fdisk/cfdisk.c:2066
 msgid "Unusable"
@@ -1255,9 +1225,7 @@ msgstr "Levy on vaihdettu.\n"
 #: fdisk/cfdisk.c:405
 #, c-format
 msgid "Reboot the system to ensure the partition table is correctly updated.\n"
-msgstr ""
-"Järjestelmä on syytä käynnistää uudelleen osiotaulun päivittymisen "
-"varmistamiseksi.\n"
+msgstr "Järjestelmä on syytä käynnistää uudelleen osiotaulun päivittymisen varmistamiseksi.\n"
 
 #: fdisk/cfdisk.c:409
 #, c-format
@@ -1269,7 +1237,7 @@ msgid ""
 msgstr ""
 "\n"
 "VAROITUS: Jos DOS 6.x -osioita luotiin tai muutettiin,\n"
-"katso lisätietoja cfdiskin manuaalista.\n"
+"katso lisätietoja cfdiskin manuaalisivulta.\n"
 
 #: fdisk/cfdisk.c:504
 msgid "FATAL ERROR"
@@ -1328,16 +1296,12 @@ msgid "enlarged logical partitions overlap"
 msgstr "suurennetut loogiset osiot ovat päällekkäiset"
 
 #: fdisk/cfdisk.c:991
-msgid ""
-"!!!! Internal error creating logical drive with no extended partition !!!!"
-msgstr ""
-"!!!! Sisäinen virhe luotaessa loogista asemaa ilman laajennettua osiota !!!!"
+msgid "!!!! Internal error creating logical drive with no extended partition !!!!"
+msgstr "!!!! Sisäinen virhe luotaessa loogista asemaa ilman laajennettua osiota !!!!"
 
 #: fdisk/cfdisk.c:1002 fdisk/cfdisk.c:1014
-msgid ""
-"Cannot create logical drive here -- would create two extended partitions"
-msgstr ""
-"Tähän ei voi luoda loogista asemaa -- luotaisiin kaksi laajennettua osiota"
+msgid "Cannot create logical drive here -- would create two extended partitions"
+msgstr "Tähän ei voi luoda loogista asemaa -- luotaisiin kaksi laajennettua osiota"
 
 #: fdisk/cfdisk.c:1156
 msgid "Menu item too long. Menu may look odd."
@@ -1442,9 +1406,8 @@ msgid "Opened disk read-only - you have no permission to write"
 msgstr "Levy avattiin vain luku -tilassa - sinulla ei ole kirjoitusoikeutta"
 
 #: fdisk/cfdisk.c:1674
-msgid ""
-"Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
-msgstr ""
+msgid "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
+msgstr "Varoitus!! Havaittu ei-tuettu GPT (GUID Partition Table). Käytä GNU Partedia."
 
 #: fdisk/cfdisk.c:1691
 msgid "Cannot get disk size"
@@ -1463,11 +1426,8 @@ msgid "Warning!!  This may destroy data on your disk!"
 msgstr "Varoitus!! Tämä voi tuhota dataa levyltä!"
 
 #: fdisk/cfdisk.c:1866
-#, fuzzy
-msgid ""
-"Are you sure you want to write the partition table to disk? (yes or no): "
-msgstr ""
-"Oletko varma, että haluat kirjoittaa osiotaulun levylle? (kyllä tai ei):"
+msgid "Are you sure you want to write the partition table to disk? (yes or no): "
+msgstr "Haluatko varmasti kirjoittaa osiotaulun levylle? (jaa tai ei):"
 
 #: fdisk/cfdisk.c:1872
 msgid "no"
@@ -1479,11 +1439,11 @@ msgstr "Osiotaulua ei kirjoitettu levylle"
 
 #: fdisk/cfdisk.c:1875
 msgid "yes"
-msgstr "kyllä"
+msgstr "jaa"
 
 #: fdisk/cfdisk.c:1878
 msgid "Please enter `yes' or `no'"
-msgstr "Kirjoita \"kyllä\" tai \"ei\""
+msgstr "Kirjoita ”jaa” tai ”ei”"
 
 #: fdisk/cfdisk.c:1882
 msgid "Writing partition table to disk..."
@@ -1494,24 +1454,16 @@ msgid "Wrote partition table to disk"
 msgstr "Osiotaulu kirjoitettiin levylle"
 
 #: fdisk/cfdisk.c:1909
-msgid ""
-"Wrote partition table, but re-read table failed.  Reboot to update table."
-msgstr ""
-"Osiotaulu kirjoitettiin, mutta uudelleenluku epäonnistui. Tietokone on "
-"käynnistettävä uudelleen, jotta taulu päivittyy."
+msgid "Wrote partition table, but re-read table failed.  Reboot to update table."
+msgstr "Osiotaulu kirjoitettiin, mutta uudelleenluku epäonnistui. Tietokone on käynnistettävä uudelleen, jotta taulu päivittyy."
 
 #: fdisk/cfdisk.c:1919
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
-msgstr ""
-"Yhtään ensiöosiota ei ole merkitty käynnistettäväksi. DOS MBR ei käynnistä "
-"tätä."
+msgstr "Yhtään ensiöosiota ei ole merkitty käynnistettäväksi. DOS MBR ei käynnistä tätä."
 
 #: fdisk/cfdisk.c:1921
-msgid ""
-"More than one primary partition is marked bootable. DOS MBR cannot boot this."
-msgstr ""
-"Useampi kuin yksi ensiöosio on merkitty käynnistettäväksi. DOS MBR ei "
-"käynnistä tätä."
+msgid "More than one primary partition is marked bootable. DOS MBR cannot boot this."
+msgstr "Useampi kuin yksi ensiöosio on merkitty käynnistettäväksi. DOS MBR ei käynnistä tätä."
 
 #: fdisk/cfdisk.c:1979 fdisk/cfdisk.c:2098 fdisk/cfdisk.c:2182
 msgid "Enter filename or press RETURN to display on screen: "
@@ -1520,7 +1472,7 @@ msgstr "Syötä tiedostonimi tai paina RETURN saadaksesi näytölle: "
 #: fdisk/cfdisk.c:1988 fdisk/cfdisk.c:2106 fdisk/cfdisk.c:2190
 #, c-format
 msgid "Cannot open file '%s'"
-msgstr "Tiedostoa \"%s\" ei voi avata"
+msgstr "Tiedostoa ”%s” ei voi avata"
 
 #: fdisk/cfdisk.c:1999
 #, c-format
@@ -1580,20 +1532,12 @@ msgid "               First       Last\n"
 msgstr "               Alku-      Loppu-\n"
 
 #: fdisk/cfdisk.c:2120
-msgid ""
-" # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
-"Flag\n"
-msgstr ""
-" # Tyyppi    sektori     sektori   Siirt.    Pituus   Tied.järj. tyyppi (ID) "
-"Liput\n"
+msgid " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) Flag\n"
+msgstr " # Tyyppi    sektori     sektori   Siirt.    Pituus   Tied.järj. tyyppi (ID) Liput\n"
 
 #: fdisk/cfdisk.c:2121
-msgid ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
-msgstr ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
+msgid "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
+msgstr "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
 
 #: fdisk/cfdisk.c:2204
 msgid "         ---Starting---      ----Ending----    Start     Number of\n"
@@ -1717,8 +1661,7 @@ msgstr "             joista voit valita:"
 
 #: fdisk/cfdisk.c:2293
 msgid "                r - Raw data (exactly what would be written to disk)"
-msgstr ""
-"                r - Raaka data (tasan se, mitä levylle kirjoitettaisiin)"
+msgstr "                r - Raaka data (tasan se, mitä levylle kirjoitettaisiin)"
 
 #: fdisk/cfdisk.c:2294
 msgid "                s - Table ordered by sectors"
@@ -1754,12 +1697,11 @@ msgstr "             Koska tämä saattaa tuhota levyllä olevaa dataa, kirjoitu
 
 #: fdisk/cfdisk.c:2302
 msgid "             either confirm or deny the write by entering `yes' or"
-msgstr ""
-"             on joko varmistettava tai peruttava kirjoittamalla \"kyllä\" tai"
+msgstr "             on joko varmistettava tai peruttava kirjoittamalla ”jaa” tai"
 
 #: fdisk/cfdisk.c:2303
 msgid "             `no'"
-msgstr "             \"ei\""
+msgstr "             ”ei”"
 
 #: fdisk/cfdisk.c:2304
 msgid "Up Arrow     Move cursor to the previous partition"
@@ -2105,8 +2047,8 @@ msgstr ""
 "\n"
 "\tTällä levyllä on kelvollinen AIX-nimiö.\n"
 "\tValitettavasti Linux ei toistaiseksi osaa \n"
-"\tkäsitellä tällaisia levyjä. Siitä huolimatta\n"
-"\tjoitakin neuvoja:\n"
+"\tkäsitellä tällaisia levyjä.\n"
+"\tJoitakin neuvoja:\n"
 "\t1. fdisk tuhoaa levyn tiedot kirjoitettaessa.\n"
 "\t2. Varmista, että tämä levy EI ole enää elintärkeä\n"
 "\t   osa osioryhmää. (Jos on, muutkin levyt saattavat\n"
@@ -2644,9 +2586,8 @@ msgid "   f   fix partition order"
 msgstr "   f    korjaa osiojärjestys"
 
 #: fdisk/fdisk.c:504
-#, fuzzy
 msgid "   i   change the disk identifier"
-msgstr "   u    vaihda näkymä/syöteyksiköt"
+msgstr "   i    muuta levyn tunnistetta"
 
 #: fdisk/fdisk.c:620
 #, c-format
@@ -2720,24 +2661,26 @@ msgstr "Varoitus: jätetään huomiotta ylimääräinen data osiotaulussa %d\n"
 #: fdisk/fdisk.c:779
 #, c-format
 msgid "Disk identifier: 0x%08x\n"
-msgstr ""
+msgstr "Levyn tunniste: 0x%08x\n"
 
 #: fdisk/fdisk.c:788
 #, c-format
 msgid "New disk identifier (current 0x%08x): "
-msgstr ""
+msgstr "Levyn uusi tunniste (nykyinen 0x%08x): "
 
 #: fdisk/fdisk.c:807
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Building a new DOS disklabel with disk identifier 0x%08x.\n"
 "Changes will remain in memory only, until you decide to write them.\n"
 "After that, of course, the previous content won't be recoverable.\n"
 "\n"
 msgstr ""
-"Muodostetaan uusi DOS-levynimiö. Muutokset tehdään vain käyttömuistiin,\n"
-"kunnes päätät kirjoittaa ne levylle. Sen jälkeen edellistä sisältöä ei\n"
-"tietenkään voida enää palauttaa.\n"
+"Muodostetaan uusi DOS-levynimiö, tunniste 0x%08x.\n"
+"Muutokset pidetään vain käyttömuistissa, kunnes päätät kirjoittaa ne\n"
+"levylle. Sen jälkeen edellistä sisältöä ei tietenkään voida enää\n"
+"palauttaa.\n"
+"\n"
 
 #: fdisk/fdisk.c:856
 #, c-format
@@ -2756,13 +2699,11 @@ msgid ""
 "Give the 'b' command to go to BSD mode.\n"
 msgstr ""
 "Tällä levyllä on sekä DOS-, että BSD-taikatavut.\n"
-"Siirry BSD-tilaan \"b\"-komennolla.\n"
+"Siirry BSD-tilaan ”b”-komennolla.\n"
 
 #: fdisk/fdisk.c:1035
 #, c-format
-msgid ""
-"Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
-"disklabel\n"
+msgid "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"
 msgstr "Laitteella ei ole kelvollista DOS-, Sun-, SGI- eikä OSF-levynimiötä\n"
 
 #: fdisk/fdisk.c:1052
@@ -2777,12 +2718,8 @@ msgstr "Ylimääräistä laajennettua osiota %d ei huomioida\n"
 
 #: fdisk/fdisk.c:1077
 #, c-format
-msgid ""
-"Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
-"(rite)\n"
-msgstr ""
-"Varoitus: osiotaulun %2$d virheellinen lippu 0x%1$04x korjataan "
-"kirjoitettaessa (w)\n"
+msgid "Warning: invalid flag 0x%04x of partition table %d will be corrected by w(rite)\n"
+msgstr "Varoitus: osiotaulun %2$d virheellinen lippu 0x%1$04x korjataan kirjoitettaessa (w)\n"
 
 #: fdisk/fdisk.c:1099
 #, c-format
@@ -2881,7 +2818,7 @@ msgstr ""
 "Tyyppi 0 merkitsee tyhjää tilaa useissa järjestelmissä\n"
 "(mutta ei Linuxissa). Tyyppiä 0 olevien osioiden\n"
 "pitäminen ei todennäköisesti ole viisasta. Osion voi\n"
-"poistaa käyttämällä \"d\"-komentoa.\n"
+"poistaa käyttämällä ”d”-komentoa.\n"
 
 #: fdisk/fdisk.c:1480
 #, c-format
@@ -2918,9 +2855,9 @@ msgid "Changed system type of partition %d to %x (%s)\n"
 msgstr "Osion %d järjestelmätyypiksi vaihdettiin %x (%s)\n"
 
 #: fdisk/fdisk.c:1515
-#, fuzzy, c-format
-msgid "System type of partition %d is unchanged to %x (%s)\n"
-msgstr "Osion %d järjestelmätyypiksi vaihdettiin %x (%s)\n"
+#, c-format
+msgid "System type of partition %d is unchangedto %x (%s)\n"
+msgstr "Osion %d järjestelmätyyppinä säilyi %x (%s)\n"
 
 #: fdisk/fdisk.c:1567
 #, c-format
@@ -2981,9 +2918,9 @@ msgstr ""
 "Levy %s: %ld.%ld Gt, %lld tavua\n"
 
 #: fdisk/fdisk.c:1614
-#, fuzzy, c-format
+#, c-format
 msgid "%d heads, %llu sectors/track, %d cylinders"
-msgstr "%d päätä, %d sektoria/ura, %d sylinteriä"
+msgstr "%d päätä, %llu sektoria/ura, %d sylinteriä"
 
 #: fdisk/fdisk.c:1617
 #, c-format
@@ -2991,7 +2928,7 @@ msgid ", total %llu sectors"
 msgstr ", yhteensä %llu sektoria"
 
 #: fdisk/fdisk.c:1620
-#, fuzzy, c-format
+#, c-format
 msgid "Units = %s of %d * %d = %d bytes\n"
 msgstr "Yksiköt = %2$d * %3$d = %4$d -tavuiset %1$s\n"
 
@@ -3034,14 +2971,14 @@ msgstr ""
 "Osiotaulumerkinnät eivät ole levyjärjestyksessä\n"
 
 #: fdisk/fdisk.c:1848
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Disk %s: %d heads, %llu sectors, %d cylinders\n"
 "\n"
 msgstr ""
 "\n"
-"Levy %s: %d päätä, %d sektoria, %d sylinteriä\n"
+"Levy %s: %d päätä, %llu sektoria, %d sylinteriä\n"
 "\n"
 
 #: fdisk/fdisk.c:1850
@@ -3060,9 +2997,9 @@ msgid "Partition %d: head %d greater than maximum %d\n"
 msgstr "Osio %d: pää %d on suurempi kuin maksimi %d\n"
 
 #: fdisk/fdisk.c:1902
-#, fuzzy, c-format
+#, c-format
 msgid "Partition %d: sector %d greater than maximum %llu\n"
-msgstr "Osio %d: sektori %d on suurempi kuin maksimi %d\n"
+msgstr "Osio %d: sektori %d on suurempi kuin maksimi %llu\n"
 
 #: fdisk/fdisk.c:1905
 #, c-format
@@ -3072,8 +3009,7 @@ msgstr "Osio %d: sylinteri %d on suurempi kuin maksimi %d\n"
 #: fdisk/fdisk.c:1909
 #, c-format
 msgid "Partition %d: previous sectors %d disagrees with total %d\n"
-msgstr ""
-"Osio %d: edellinen sektorimäärä %d on ristiriidassa yhteismäärän %d kanssa\n"
+msgstr "Osio %d: edellinen sektorimäärä %d on ristiriidassa yhteismäärän %d kanssa\n"
 
 #: fdisk/fdisk.c:1941
 #, c-format
@@ -3096,10 +3032,9 @@ msgid "Logical partition %d not entirely in partition %d\n"
 msgstr "Looginen osio %d ei ole kokonaan osiossa %d\n"
 
 #: fdisk/fdisk.c:1980
-#, fuzzy, c-format
+#, c-format
 msgid "Total allocated sectors %ld greater than the maximum %lld\n"
-msgstr ""
-"Varattujen sektoreiden kokonaismäärä %d on suurempi kuin maksimi %lld\n"
+msgstr "Varattujen sektoreiden kokonaismäärä %ld on suurempi kuin maksimi %lld\n"
 
 #: fdisk/fdisk.c:1983
 #, c-format
@@ -3112,9 +3047,9 @@ msgid "Partition %d is already defined.  Delete it before re-adding it.\n"
 msgstr "Osio %d on jo määritelty. Poista se ennen uudelleen lisäämistä.\n"
 
 #: fdisk/fdisk.c:2040
-#, fuzzy, c-format
+#, c-format
 msgid "Sector %llu is already allocated\n"
-msgstr "Sektori %d on jo varattu\n"
+msgstr "Sektori %llu on jo varattu\n"
 
 #: fdisk/fdisk.c:2076
 #, c-format
@@ -3129,20 +3064,20 @@ msgid ""
 "\ta new empty DOS partition table first. (Use o.)\n"
 "\tWARNING: This will destroy the present disk contents.\n"
 msgstr ""
-"\tValitan - tämä fdisk ei osaa käsitellä AIX-levynimiöitä.\n"
+"\tValitettavasti tämä fdisk ei osaa käsitellä AIX-levynimiöitä.\n"
 "\tJos haluat lisätä DOS-tyyppisiä osioita, luo ensin\n"
 "\tuusi DOS-osiotaulu. (Komento o.)\n"
 "\tVAROITUS: Uuden osiotaulun luominen tuhoaa levyn nykyisen sisällön.\n"
 
 #: fdisk/fdisk.c:2159
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\tSorry - this fdisk cannot handle Mac disk labels.\n"
 "\tIf you want to add DOS-type partitions, create\n"
 "\ta new empty DOS partition table first. (Use o.)\n"
 "\tWARNING: This will destroy the present disk contents.\n"
 msgstr ""
-"\tValitan - tämä fdisk ei osaa käsitellä AIX-levynimiöitä.\n"
+"\tValitettavasti tämä fdisk ei osaa käsitellä Mac-levynimiöitä.\n"
 "\tJos haluat lisätä DOS-tyyppisiä osioita, luo ensin\n"
 "\tuusi DOS-osiotaulu. (Komento o.)\n"
 "\tVAROITUS: Uuden osiotaulun luominen tuhoaa levyn nykyisen sisällön.\n"
@@ -3184,7 +3119,7 @@ msgstr "e    laajennettu"
 #: fdisk/fdisk.c:2209
 #, c-format
 msgid "Invalid partition number for type `%c'\n"
-msgstr "Virheellinen osionumero tyypille \"%c\"\n"
+msgstr "Virheellinen osionumero tyypille ”%c”\n"
 
 #: fdisk/fdisk.c:2245
 #, c-format
@@ -3195,12 +3130,12 @@ msgstr ""
 "Osiotaulua on muutettu!\n"
 "\n"
 
-#: fdisk/fdisk.c:2256
+#: fdisk/fdisk.c:2254
 #, c-format
 msgid "Calling ioctl() to re-read partition table.\n"
 msgstr "Kutsutaan osiotaulun uudelleen lukeva ioctl().\n"
 
-#: fdisk/fdisk.c:2263
+#: fdisk/fdisk.c:2270
 #, c-format
 msgid ""
 "\n"
@@ -3213,7 +3148,7 @@ msgstr ""
 "Ydin käyttää edelleen vanhaa taulua.\n"
 "Uutta taulua käytetään seuraavasta käynnistyksestä alkaen.\n"
 
-#: fdisk/fdisk.c:2273
+#: fdisk/fdisk.c:2280
 #, c-format
 msgid ""
 "\n"
@@ -3225,7 +3160,7 @@ msgstr ""
 "VAROITUS: Jos DOS 6.x -osioita luotiin tai muutettiin,\n"
 "katso lisätietoja fdiskin manuaalisivulta.\n"
 
-#: fdisk/fdisk.c:2279
+#: fdisk/fdisk.c:2286
 #, c-format
 msgid ""
 "\n"
@@ -3234,95 +3169,92 @@ msgstr ""
 "\n"
 "Virhe suljettaessa tiedostoa\n"
 
-#: fdisk/fdisk.c:2283
+#: fdisk/fdisk.c:2290
 #, c-format
 msgid "Syncing disks.\n"
 msgstr "Synkronoidaan levyt.\n"
 
-#: fdisk/fdisk.c:2330
+#: fdisk/fdisk.c:2337
 #, c-format
 msgid "Partition %d has no data area\n"
 msgstr "Osiolla %d ei ole data-aluetta\n"
 
-#: fdisk/fdisk.c:2335
+#: fdisk/fdisk.c:2342
 msgid "New beginning of data"
 msgstr "Uusi datan alku"
 
-#: fdisk/fdisk.c:2351
+#: fdisk/fdisk.c:2358
 msgid "Expert command (m for help): "
 msgstr "Asiantuntijakomento (m antaa ohjeen): "
 
-#: fdisk/fdisk.c:2364
+#: fdisk/fdisk.c:2371
 msgid "Number of cylinders"
 msgstr "Sylinterien määrä"
 
-#: fdisk/fdisk.c:2391
+#: fdisk/fdisk.c:2398
 msgid "Number of heads"
 msgstr "Päiden määrä"
 
-#: fdisk/fdisk.c:2418
+#: fdisk/fdisk.c:2425
 msgid "Number of sectors"
 msgstr "Sektorien määrä"
 
-#: fdisk/fdisk.c:2421
+#: fdisk/fdisk.c:2428
 #, c-format
 msgid "Warning: setting sector offset for DOS compatiblity\n"
 msgstr "Varoitus: asetetaan sektorisiirtymä DOS-yhteensopivuutta varten\n"
 
-#: fdisk/fdisk.c:2480
+#: fdisk/fdisk.c:2487
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't "
-"support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
+"\n"
+"VAROITUS: GPT (GUID Partition Table) havaittu laitteella ”%s”! Fdisk ei tue GPT:tä. Käytä GNU Partediä.\n"
+"\n"
 
-#: fdisk/fdisk.c:2502
+#: fdisk/fdisk.c:2509
 #, c-format
 msgid "Disk %s doesn't contain a valid partition table\n"
 msgstr "Levy %s ei sisällä kelvollista osiotaulua\n"
 
-#: fdisk/fdisk.c:2513
+#: fdisk/fdisk.c:2520
 #, c-format
 msgid "Cannot open %s\n"
 msgstr "Laitetta %s ei voi avata\n"
 
-#: fdisk/fdisk.c:2531 fdisk/sfdisk.c:2423
+#: fdisk/fdisk.c:2538 fdisk/sfdisk.c:2423
 #, c-format
 msgid "cannot open %s\n"
 msgstr "laitetta %s ei voi avata\n"
 
-#: fdisk/fdisk.c:2551
+#: fdisk/fdisk.c:2558
 #, c-format
 msgid "%c: unknown command\n"
 msgstr "%c: tuntematon komento\n"
 
-#: fdisk/fdisk.c:2621
+#: fdisk/fdisk.c:2628
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
 msgstr "Tämä ydin löytää sektorin koon itse -- -b-valitsinta ei huomioida\n"
 
-#: fdisk/fdisk.c:2625
+#: fdisk/fdisk.c:2632
 #, c-format
-msgid ""
-"Warning: the -b (set sector size) option should be used with one specified "
-"device\n"
-msgstr ""
-"Varoitus: valitsinta -b (sektorikoon asetus) tulee käyttää yhden annetun "
-"laitteen kanssa\n"
+msgid "Warning: the -b (set sector size) option should be used with one specified device\n"
+msgstr "Varoitus: valitsinta -b (sektorikoon asetus) tulee käyttää yhden annetun laitteen kanssa\n"
 
-#: fdisk/fdisk.c:2686
+#: fdisk/fdisk.c:2693
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
-msgstr ""
-"Havaittiin OSF/1-levynimiö laitteella %s, siirrytään levynimiötilaan.\n"
+msgstr "Havaittiin OSF/1-levynimiö laitteella %s, siirrytään levynimiötilaan.\n"
 
-#: fdisk/fdisk.c:2696
+#: fdisk/fdisk.c:2703
 msgid "Command (m for help): "
 msgstr "Komento (m antaa ohjeen): "
 
-#: fdisk/fdisk.c:2712
+#: fdisk/fdisk.c:2719
 #, c-format
 msgid ""
 "\n"
@@ -3331,16 +3263,16 @@ msgstr ""
 "\n"
 "Nykyinen käynnistystiedosto on: %s\n"
 
-#: fdisk/fdisk.c:2714
+#: fdisk/fdisk.c:2721
 msgid "Please enter the name of the new boot file: "
 msgstr "Anna uuden käynnistystiedoston nimi: "
 
-#: fdisk/fdisk.c:2716
+#: fdisk/fdisk.c:2723
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "Käynnistystiedosto muuttumaton\n"
 
-#: fdisk/fdisk.c:2789
+#: fdisk/fdisk.c:2796
 #, c-format
 msgid ""
 "\n"
@@ -3352,7 +3284,6 @@ msgstr ""
 "\n"
 
 #: fdisk/fdiskmaclabel.c:30
-#, fuzzy
 msgid ""
 "\n"
 "\tThere is a valid Mac label on this disk.\n"
@@ -3365,17 +3296,15 @@ msgid ""
 "\t   erase the other disks as well, if unmirrored.)\n"
 msgstr ""
 "\n"
-"\tTällä levyllä on kelvollinen AIX-nimiö.\n"
-"\tValitettavasti Linux ei toistaiseksi osaa \n"
-"\tkäsitellä tällaisia levyjä. Siitä huolimatta\n"
-"\tjoitakin neuvoja:\n"
+"\tTällä levyllä on kelvollinen Mac-nimiö.\n"
+"\tValitettavasti fdisk(1) ei osaa käsitellä tällaisia\n"
+"\tlevyjä. Käytä joko pdiskiä tai partedia osiotaulun\n"
+"\tmuuttamiseen.\n"
+"\tJoitakin neuvoja:\n"
 "\t1. fdisk tuhoaa levyn tiedot kirjoitettaessa.\n"
 "\t2. Varmista, että tämä levy EI ole enää elintärkeä\n"
 "\t   osa osioryhmää. (Jos on, muutkin levyt saattavat\n"
 "\t   tyhjentyä, ellei niitä ole peilattu.)\n"
-"\t3. Varmista ennen tämän fyysisen osion tuhoamista,\n"
-"\t   että levy on loogisesti poistettu AIX-koneesta.\n"
-"\t   (Muussa tapauksessa sinusta tulee AIXpertti)."
 
 #: fdisk/fdisksgilabel.c:80
 msgid "SGI volhdr"
@@ -3451,12 +3380,8 @@ msgstr "Linux RAID"
 
 #: fdisk/fdisksgilabel.c:163
 #, c-format
-msgid ""
-"According to MIPS Computer Systems, Inc the Label must not contain more than "
-"512 bytes\n"
-msgstr ""
-"MIPS Computer Systems, Inc:in mukaan nimiössä saa olla korkeintaan 512 "
-"tavua\n"
+msgid "According to MIPS Computer Systems, Inc the Label must not contain more than 512 bytes\n"
+msgstr "MIPS Computer Systems, Inc:in mukaan nimiössä saa olla korkeintaan 512 tavua\n"
 
 #: fdisk/fdisksgilabel.c:182
 #, c-format
@@ -3464,7 +3389,7 @@ msgid "Detected sgi disklabel with wrong checksum.\n"
 msgstr "Havaittiin sgi-levynimiö, jolla on väärä tarkistussumma.\n"
 
 #: fdisk/fdisksgilabel.c:200
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Disk %s (SGI disk label): %d heads, %llu sectors\n"
@@ -3475,7 +3400,7 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"Levy %1$s (SGI-levynimiö): %2$d päätä, %3$d sektoria\n"
+"Levy %1$s (SGI-levynimiö): %2$d päätä, %3$llu sektoria\n"
 "%4$d sylinteriä, %5$d fyysistä sylinteriä\n"
 "%6$d ylimääräistä sekt/syl, lomitus %7$d:1\n"
 "%8$s\n"
@@ -3483,7 +3408,7 @@ msgstr ""
 "\n"
 
 #: fdisk/fdisksgilabel.c:213
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Disk %s (SGI disk label): %d heads, %llu sectors, %d cylinders\n"
@@ -3491,7 +3416,7 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"Levy %1$s (SGI-levynimiö): %2$d päätä, %3$d sektoria, %4$d sylinteriä\n"
+"Levy %1$s (SGI-levynimiö): %2$d päätä, %3$llu sektoria, %4$d sylinteriä\n"
 "Yksiköt = %6$d * %7$d -tavuiset %5$s\n"
 "\n"
 
@@ -3531,7 +3456,7 @@ msgstr ""
 "\n"
 "Virheellinen käynnistystiedosto!\n"
 "\tKäynnistystiedoston on oltava absoluuttinen, ei-tyhjä polku,\n"
-"\tesim. \"/unix\" tai \"/unix.save\".\n"
+"\tesim. ”/unix” tai ”/unix.save”.\n"
 
 #: fdisk/fdisksgilabel.c:310
 #, c-format
@@ -3560,7 +3485,7 @@ msgid ""
 msgstr ""
 "\n"
 "\tHuomaa, että käynnistystiedoston olemassaoloa ei tarkisteta.\n"
-"\tSGI:n oletus on \"/unix\", ja varmuuskopiolle \"/unix.save\".\n"
+"\tSGI:n oletus on ”/unix”, ja varmuuskopiolle ”/unix.save”.\n"
 
 #: fdisk/fdisksgilabel.c:348
 #, c-format
@@ -3569,7 +3494,7 @@ msgid ""
 "\tBootfile is changed to \"%s\".\n"
 msgstr ""
 "\n"
-"\tKäynnistystiedostoksi muutettiin \"%s\".\n"
+"\tKäynnistystiedostoksi muutettiin ”%s”.\n"
 
 #: fdisk/fdisksgilabel.c:438
 #, c-format
@@ -3675,14 +3600,14 @@ msgid ""
 "Type YES if you are sure about tagging this partition differently.\n"
 msgstr ""
 "On erittäin suositeltavaa, että osiolla siirtymän 0 kohdalla\n"
-"on tyyppi \"SGI volhdr\". IRIX-järjestelmä olettaa, että\n"
+"on tyyppi ”SGI volhdr”. IRIX-järjestelmä olettaa, että\n"
 "erillistyökalut, kuten sash ja fx, voidaan hakea sen hakemistosta.\n"
-"Vain \"SGI volume\" -kokolevyosuus voi rikkoa tätä sääntöä.\n"
-"Kirjoita KYLLÄ, jos olet varma tämän osion merkitsemisestä toisin.\n"
+"Vain ”SGI volume” -kokolevyosuus voi rikkoa tätä sääntöä.\n"
+"Kirjoita JAA, jos olet varma tämän osion merkitsemisestä toisin.\n"
 
 #: fdisk/fdisksgilabel.c:555 fdisk/fdisksunlabel.c:545
 msgid "YES\n"
-msgstr "KYLLÄ\n"
+msgstr "JAA\n"
 
 #: fdisk/fdisksgilabel.c:580
 #, c-format
@@ -3711,13 +3636,12 @@ msgid ""
 "covers the entire disk and is of type `SGI volume'\n"
 msgstr ""
 "On erittäin suositeltavaa, että yhdestoista osio\n"
-"kattaa koko levyn ja on tyyppiä \"SGI volume\"\n"
+"kattaa koko levyn ja on tyyppiä ”SGI volume”\n"
 
 #: fdisk/fdisksgilabel.c:672
 #, c-format
 msgid "You will get a partition overlap on the disk. Fix it first!\n"
-msgstr ""
-"Levyllä tulee olemaan päällekkäisiä osioita. Tämä on korjattava ensin!\n"
+msgstr "Levyllä tulee olemaan päällekkäisiä osioita. Tämä on korjattava ensin!\n"
 
 #: fdisk/fdisksgilabel.c:677
 #, c-format
@@ -3740,8 +3664,7 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:729 fdisk/fdisksunlabel.c:220
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
-"d.\n"
+"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %d.\n"
 "This value may be truncated for devices > 33.8 GB.\n"
 msgstr ""
 "Varoitus: BLKGETSIZE-ioctl epäonnistui laitteelle %s. Käytetään geometrian\n"
@@ -3784,26 +3707,23 @@ msgstr "SunOS stand"
 
 #: fdisk/fdisksunlabel.c:47
 msgid "SunOS var"
-msgstr "SunOS-var"
+msgstr "SunOS var"
 
 #: fdisk/fdisksunlabel.c:48
 msgid "SunOS home"
 msgstr "SunOS home"
 
 #: fdisk/fdisksunlabel.c:49
-#, fuzzy
 msgid "SunOS alt sectors"
-msgstr "%lld varaamatonta sektoria\n"
+msgstr "SunOS alt sectors"
 
 #: fdisk/fdisksunlabel.c:50
-#, fuzzy
 msgid "SunOS cachefs"
-msgstr "SunOS home"
+msgstr "SunOS cachefs"
 
 #: fdisk/fdisksunlabel.c:51
-#, fuzzy
 msgid "SunOS reserved"
-msgstr "SunOS usr"
+msgstr "SunOS reserved"
 
 #: fdisk/fdisksunlabel.c:55 fdisk/i386_sys_types.c:100
 msgid "Linux raid autodetect"
@@ -3824,27 +3744,24 @@ msgstr ""
 "(s-komento päävalikossa)\n"
 
 #: fdisk/fdisksunlabel.c:147
-#, fuzzy, c-format
+#, c-format
 msgid "Detected sun disklabel with wrong version [0x%08x].\n"
-msgstr "Havaittiin sgi-levynimiö, jolla on väärä tarkistussumma.\n"
+msgstr "Havaittiin sun-levynimiö, jolla on väärä versio [0x%08x].\n"
 
 #: fdisk/fdisksunlabel.c:152
-#, fuzzy, c-format
+#, c-format
 msgid "Detected sun disklabel with wrong sanity [0x%08x].\n"
-msgstr "Havaittiin sgi-levynimiö, jolla on väärä tarkistussumma.\n"
+msgstr "Havaittiin sun-levynimiö, jolla on väärä sanity-arvo [0x%08x].\n"
 
 #: fdisk/fdisksunlabel.c:157
-#, fuzzy, c-format
+#, c-format
 msgid "Detected sun disklabel with wrong num_partitions [%u].\n"
-msgstr "Havaittiin sgi-levynimiö, jolla on väärä tarkistussumma.\n"
+msgstr "Havaittiin sun-levynimiö, jolla on väärä num_partitions-arvo [%u].\n"
 
 #: fdisk/fdisksunlabel.c:162
-#, fuzzy, c-format
-msgid ""
-"Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
-msgstr ""
-"Varoitus: osiotaulun %2$d virheellinen lippu 0x%1$04x korjataan "
-"kirjoitettaessa (w)\n"
+#, c-format
+msgid "Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
+msgstr "Varoitus: Väärät arvot korjataan kirjoitettaessa (w)\n"
 
 #: fdisk/fdisksunlabel.c:192
 #, c-format
@@ -3925,13 +3842,13 @@ msgid ""
 "tagged with 82 (Linux swap): "
 msgstr ""
 "On erittäin suositeltavaa, että osio siirtymän 0 kohdalla\n"
-"on tyypiltään UFS, EXT2FS tai SunOS-sivutus. Linuxin sivutusosion\n"
+"on tyypiltään UFS, EXT2FS tai ”SunOS swap”. Linuxin sivutusosion\n"
 "sijoittaminen sinne saattaa tuhota osiotaulun ja käynnistyslohkon.\n"
-"Kirjoita KYLLÄ, jos olet erittäin varma, että haluat osion tyypiksi\n"
+"Kirjoita JAA, jos olet erittäin varma, että haluat osion tyypiksi\n"
 "merkittävän 82 (Linux-sivutus): "
 
 #: fdisk/fdisksunlabel.c:572
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Disk %s (Sun disk label): %d heads, %llu sectors, %d rpm\n"
@@ -3943,16 +3860,17 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"Levy %1$s (Sun-levynimiö): %2$d päätä, %3$d sektoria,\n"
+"Levy %1$s (Sun-levynimiö): %2$d päätä, %3$llu sektoria\n"
 "%4$d kierrosta minuutissa, %5$d sylinteriä, %6$d vaihtoehtoista\n"
-"sylinteriä, %7$d fyysistä sylinteriä, %8$d ylimääräistä sekt/syl,\n"
+"sylinteriä, %7$d fyysistä sylinteriä, %8$d ylimääräistä sekt/syl\n"
 "lomitus %9$d:1\n"
-"%10$s\n"
-"Yksiköt = %12$d * 512 -tavuiset %11$s\n"
+"Nimiötunniste: %10$s\n"
+"Osiotunniste: %11$s\n"
+"Yksiköt = %13$d * 512 -tavuiset %12$s\n"
 "\n"
 
 #: fdisk/fdisksunlabel.c:588
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Disk %s (Sun disk label): %d heads, %llu sectors, %d cylinders\n"
@@ -3960,7 +3878,7 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"Levy %1$s (Sun-levynimiö): %2$d päätä, %3$d sektoria, %4$d sylinteriä\n"
+"Levy %1$s (Sun-levynimiö): %2$d päätä, %3$llu sektoria, %4$d sylinteriä\n"
 "Yksiköt = %6$d * 512 -tavuiset %5$s\n"
 "\n"
 
@@ -4453,8 +4371,7 @@ msgid ""
 "This will give problems with all software that uses C/H/S addressing.\n"
 msgstr ""
 "Varoitus: epätodennäköinen sektorimäärä (%lu) - yleensä korkeintaan 63\n"
-"Tästä aiheutuu ongelmia kaikkien C/H/S-osoitusta käyttävien ohjelmien "
-"kanssa.\n"
+"Tästä aiheutuu ongelmia kaikkien C/H/S-osoitusta käyttävien ohjelmien kanssa.\n"
 
 #: fdisk/sfdisk.c:507
 #, c-format
@@ -4469,25 +4386,18 @@ msgstr ""
 # bugiraportti täytyy lähettää joskus
 #: fdisk/sfdisk.c:589
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
+msgid "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
 msgstr "Osion %2$s %1$s pääarvo on mahdoton: %3$lu (tulee olla 0-%4$lu)\n"
 
 #: fdisk/sfdisk.c:594
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for sector: %lu (should be in 1-%"
-"lu)\n"
-msgstr ""
-"Osion %2$s \"%1$s\":n sektoriarvo on mahdoton: %3$lu (tulee olla 1-%4$lu)\n"
+msgid "%s of partition %s has impossible value for sector: %lu (should be in 1-%lu)\n"
+msgstr "Osion %2$s ”%1$s”:n sektoriarvo on mahdoton: %3$lu (tulee olla 1-%4$lu)\n"
 
 #: fdisk/sfdisk.c:599
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for cylinders: %lu (should be in 0-%"
-"lu)\n"
-msgstr ""
-"Osion %2$s \"%1$s\":n sylinteriarvo on mahdoton: %3$lu (tulee olla 0-%4$lu)\n"
+msgid "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%lu)\n"
+msgstr "Osion %2$s ”%1$s”:n sylinteriarvo on mahdoton: %3$lu (tulee olla 0-%4$lu)\n"
 
 #: fdisk/sfdisk.c:639
 #, c-format
@@ -4541,8 +4451,7 @@ msgid ""
 "Units = cylinders of %lu bytes, blocks of 1024 bytes, counting from %d\n"
 "\n"
 msgstr ""
-"Yksiköt = sylinterit %lu-tavuisia, lohkot 1024-tavuisia, lasketaan %d "
-"alkaen\n"
+"Yksiköt = sylinterit %lu-tavuisia, lohkot 1024-tavuisia, lasketaan %d alkaen\n"
 "\n"
 
 #: fdisk/sfdisk.c:924
@@ -4584,8 +4493,7 @@ msgid ""
 "Units = mebibytes of 1048576 bytes, blocks of 1024 bytes, counting from %d\n"
 "\n"
 msgstr ""
-"Yksiköt = 1048576-tavuiset megatavut, 1024-tavuiset lohkot, alkaen kohdasta %"
-"d\n"
+"Yksiköt = 1048576-tavuiset megatavut, 1024-tavuiset lohkot, alkaen kohdasta %d\n"
 "\n"
 
 #: fdisk/sfdisk.c:941
@@ -4709,8 +4617,7 @@ msgid ""
 "Warning: more than one primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
 msgstr ""
-"Varoitus: useampi kuin yksi ensiöosio on merkitty käynnistettäväksi "
-"(aktiiviseksi)\n"
+"Varoitus: useampi kuin yksi ensiöosio on merkitty käynnistettäväksi (aktiiviseksi)\n"
 "Se ei haittaa LILOa, mutta DOS MBR ei käynnistä tältä levyltä.\n"
 
 #: fdisk/sfdisk.c:1306
@@ -4719,7 +4626,7 @@ msgid ""
 "LILO disregards the `bootable' flag.\n"
 msgstr ""
 "Varoitus: yleensä vain ensiöosiolta voi käynnistää\n"
-"LILO ei välitä \"käynnistettävä\"-lipusta.\n"
+"LILO ei välitä ”käynnistettävä”-lipusta.\n"
 
 #: fdisk/sfdisk.c:1312
 msgid ""
@@ -4727,8 +4634,7 @@ msgid ""
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
 msgstr ""
 "Varoitus: yhtään ensiöosiota ei ole merkitty käynnistettäväksi\n"
-"(aktiiviseksi). Se ei haittaa LILOa, mutta DOS MBR ei käynnistä tältä "
-"levyltä.\n"
+"(aktiiviseksi). Se ei haittaa LILOa, mutta DOS MBR ei käynnistä tältä levyltä.\n"
 
 #: fdisk/sfdisk.c:1326
 msgid "start"
@@ -4736,8 +4642,7 @@ msgstr "alun"
 
 #: fdisk/sfdisk.c:1329
 #, c-format
-msgid ""
-"partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
+msgid "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr "osio %s: alku: (c,h,s) odotettiin (%ld,%ld,%ld) löytyi (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1335
@@ -4747,8 +4652,7 @@ msgstr "lopun"
 #: fdisk/sfdisk.c:1338
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"osio %s: loppu: (c,h,s) odotettiin (%ld,%ld,%ld) löytyi (%ld,%ld,%ld)\n"
+msgstr "osio %s: loppu: (c,h,s) odotettiin (%ld,%ld,%ld) löytyi (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1341
 #, c-format
@@ -4823,7 +4727,7 @@ msgstr "liian pitkä tai epätäydellinen syöterivi - lopetetaan\n"
 #: fdisk/sfdisk.c:1751
 #, c-format
 msgid "input error: `=' expected after %s field\n"
-msgstr "syötevirhe: kentän %s jälkeen odotetaan löytyvän \"=\"\n"
+msgstr "syötevirhe: kentän %s jälkeen odotetaan löytyvän ”=”\n"
 
 #: fdisk/sfdisk.c:1758
 #, c-format
@@ -4879,7 +4783,7 @@ msgstr "Varoitus: virheellinen osion alku (aikaisintaan %lu)\n"
 
 #: fdisk/sfdisk.c:2135
 msgid "unrecognized bootable flag - choose - or *\n"
-msgstr "tunnistamaton \"käynnistettävä\"-lippu - valitse - tai *\n"
+msgstr "tunnistamaton ”käynnistettävä”-lippu - valitse - tai *\n"
 
 #: fdisk/sfdisk.c:2152 fdisk/sfdisk.c:2165
 msgid "partial c,h,s specification?\n"
@@ -4938,15 +4842,11 @@ msgstr "    -d [tai --dump]:     sama kuin edellä, muoto sopiva syötteeksi"
 
 #: fdisk/sfdisk.c:2296
 msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
-msgstr ""
-"    -i [tai --increment]:numeroi sylinterit, ym. alkaen 1:stä, ei 0:sta"
+msgstr "    -i [tai --increment]:numeroi sylinterit, ym. alkaen 1:stä, ei 0:sta"
 
 #: fdisk/sfdisk.c:2297
-msgid ""
-"    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
-"MB"
-msgstr ""
-"    -uS, -uB, -uC, -uM:  käytä yksikköinä sektoreita/lohkoja/sylintereitä/Mt"
+msgid "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB"
+msgstr "    -uS, -uB, -uC, -uM:  käytä yksikköinä sektoreita/lohkoja/sylintereitä/Mt"
 
 #: fdisk/sfdisk.c:2298
 msgid "    -T [or --list-types]:list the known partition types"
@@ -4954,8 +4854,7 @@ msgstr "    -T [tai --list-types]:listaa tunnetut osiotyypit"
 
 #: fdisk/sfdisk.c:2299
 msgid "    -D [or --DOS]:       for DOS-compatibility: waste a little space"
-msgstr ""
-"    -D [tai --DOS]:      DOS-yhteensopivuutta varten; tuhlaa vähän tilaa"
+msgstr "    -D [tai --DOS]:      DOS-yhteensopivuutta varten; tuhlaa vähän tilaa"
 
 #: fdisk/sfdisk.c:2300
 msgid "    -R [or --re-read]:   make kernel reread partition table"
@@ -4970,8 +4869,7 @@ msgid "    -n :                 do not actually write to disk"
 msgstr "    -n :                 älä kirjoita levylle oikeasti"
 
 #: fdisk/sfdisk.c:2303
-msgid ""
-"    -O file :            save the sectors that will be overwritten to file"
+msgid "    -O file :            save the sectors that will be overwritten to file"
 msgstr "    -O tiedosto :        tallenna ylikirjoitettavat sektori tiedostoon"
 
 #: fdisk/sfdisk.c:2304
@@ -4995,9 +4893,7 @@ msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
 msgstr "    -g [tai --show-geometry]: näytä ytimen käsitys geometriasta"
 
 #: fdisk/sfdisk.c:2309
-msgid ""
-"    -G [or --show-pt-geometry]: print geometry guessed from the partition "
-"table"
+msgid "    -G [or --show-pt-geometry]: print geometry guessed from the partition table"
 msgstr "    -G [tai --show-pt-geometry]: näytä osiotausta päätelty geometria"
 
 #: fdisk/sfdisk.c:2310
@@ -5009,10 +4905,8 @@ msgstr ""
 "                             tai odota syötteestä niiden kahvoja"
 
 #: fdisk/sfdisk.c:2312
-msgid ""
-"    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
-msgstr ""
-"    -L  [tai --Linux]:     älä huomauta Linuxissa merkityksettömistä asioista"
+msgid "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
+msgstr "    -L  [tai --Linux]:     älä huomauta Linuxissa merkityksettömistä asioista"
 
 #: fdisk/sfdisk.c:2313
 msgid "    -q  [or --quiet]:      suppress warning messages"
@@ -5065,15 +4959,14 @@ msgstr "%s -An laite\t aktivoi osio n, poista muiden aktivointi\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk "
-"doesn't support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 
 #: fdisk/sfdisk.c:2460
-#, fuzzy, c-format
+#, c-format
 msgid "Use the --force flag to overrule this check.\n"
-msgstr "Käytä --force -valitsinta ohittaaksesi kaikki tarkistukset.\n"
+msgstr "Käytä --force -valitsinta ohittaaksesi tämän tarkistuksen.\n"
 
 #: fdisk/sfdisk.c:2499
 msgid "no command?\n"
@@ -5221,7 +5114,7 @@ msgstr ""
 
 #: fdisk/sfdisk.c:3051
 msgid "I don't like this - probably you should answer No\n"
-msgstr "En pidä tästä - kannattaa todennäköisesti vastata \"No\"\n"
+msgstr "En pidä tästä - kannattaa todennäköisesti vastata ”No”\n"
 
 #: fdisk/sfdisk.c:3056
 #, c-format
@@ -5273,7 +5166,7 @@ msgstr ""
 
 #: getopt/getopt.c:235
 msgid "Try `getopt --help' for more information.\n"
-msgstr "Komento \"getopt --help\" antaa lisää tietoa.\n"
+msgstr "Komento ”getopt --help” antaa lisää tietoa.\n"
 
 #: getopt/getopt.c:301
 msgid "empty long option after -l or --long argument"
@@ -5293,20 +5186,15 @@ msgstr "       getopt [valitsimet] [--] valitsinmerkkijono parametrit\n"
 
 #: getopt/getopt.c:328
 msgid "       getopt [options] -o|--options optstring [options] [--]\n"
-msgstr ""
-"       getopt [valitsimet] -o|--options valitsinmerkkijono [valitsimet] "
-"[--]\n"
+msgstr "       getopt [valitsimet] -o|--options valitsinmerkkijono [valitsimet] [--]\n"
 
 #: getopt/getopt.c:329
 msgid "              parameters\n"
 msgstr "              parametrit\n"
 
 #: getopt/getopt.c:330
-msgid ""
-"  -a, --alternative            Allow long options starting with single -\n"
-msgstr ""
-"  -a, --alternative            Salli pitkien valitsimien alkaminen yhdellä -:"
-"lla\n"
+msgid "  -a, --alternative            Allow long options starting with single -\n"
+msgstr "  -a, --alternative            Salli pitkien valitsimien alkaminen yhdellä -:lla\n"
 
 #: getopt/getopt.c:331
 msgid "  -h, --help                   This small usage guide\n"
@@ -5317,10 +5205,8 @@ msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr "  -l, --longoptions=valitsimet Pitkät tunnistettavat valitsimet\n"
 
 #: getopt/getopt.c:333
-msgid ""
-"  -n, --name=progname          The name under which errors are reported\n"
-msgstr ""
-"  -n, --name=ohjelmanimi       Nimi, joka ilmoitetaan virheiden yhteydessä\n"
+msgid "  -n, --name=progname          The name under which errors are reported\n"
+msgstr "  -n, --name=ohjelmanimi       Nimi, joka ilmoitetaan virheiden yhteydessä\n"
 
 #: getopt/getopt.c:334
 msgid "  -o, --options=optstring      Short options to be recognized\n"
@@ -5355,9 +5241,9 @@ msgid "missing optstring argument"
 msgstr "puuttuva valitsinmerkkijonon argumentti"
 
 #: getopt/getopt.c:446
-#, fuzzy, c-format
+#, c-format
 msgid "getopt (enhanced) 1.1.4\n"
-msgstr "getopt (parannettu) 1.1.3)\n"
+msgstr "getopt (parannettu) 1.1.4\n"
 
 #: getopt/getopt.c:452
 msgid "internal error, contact the author."
@@ -5386,7 +5272,7 @@ msgstr "funky TOY!\n"
 #: hwclock/cmos.c:267
 #, c-format
 msgid "%s: atomic %s failed for 1000 iterations!"
-msgstr "%s: atominen \"%s\" epäonnistui 1000 iteraatiolle!"
+msgstr "%s: atominen ”%s” epäonnistui 1000 iteraatiolle!"
 
 #: hwclock/cmos.c:595
 #, c-format
@@ -5417,7 +5303,7 @@ msgstr "Oletetaan laitteistokellon olevan %sajassa.\n"
 msgid "UTC"
 msgstr "UTC-"
 
-#: hwclock/hwclock.c:230 hwclock/hwclock.c:323
+#: hwclock/hwclock.c:230 hwclock/hwclock.c:323 sys-utils/rtcwake.c:381
 msgid "local"
 msgstr "paikallisessa "
 
@@ -5429,7 +5315,7 @@ msgstr "%s: Varoitus: tunnistamaton kolmas rivi adjtime-tiedostossa\n"
 #: hwclock/hwclock.c:311
 #, c-format
 msgid "(Expected: `UTC' or `LOCAL' or nothing.)\n"
-msgstr "(Odotetaan: \"UTC\", \"LOCAL\" tai ei mitään.)\n"
+msgstr "(Odotetaan: ”UTC”, ”LOCAL” tai ei mitään.)\n"
 
 #: hwclock/hwclock.c:318
 #, c-format
@@ -5463,29 +5349,22 @@ msgstr "...saatiin tikitys\n"
 #: hwclock/hwclock.c:405
 #, c-format
 msgid "Invalid values in hardware clock: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
-msgstr ""
-"Virheellisiä arvoja laitteistokellossa: %3$.2d.%2$.2d.%1$4d %4$.2d:%5$.2d:%6"
-"$.2d\n"
+msgstr "Virheellisiä arvoja laitteistokellossa: %3$.2d.%2$.2d.%1$4d %4$.2d:%5$.2d:%6$.2d\n"
 
 #: hwclock/hwclock.c:413
 #, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr ""
-"Laitteistokellon aika: %3$.2d.%2$.2d.%1$4d %4$.2d:%5$.2d:%6$.2d = %7$ld "
-"sekuntia vuodesta 1969\n"
+msgstr "Laitteistokellon aika: %3$.2d.%2$.2d.%1$4d %4$.2d:%5$.2d:%6$.2d = %7$ld sekuntia vuodesta 1969\n"
 
 #: hwclock/hwclock.c:441
 #, c-format
 msgid "Time read from Hardware Clock: %4d/%.2d/%.2d %02d:%02d:%02d\n"
-msgstr ""
-"Laitteistokellosta luettu aika: %3$.2d.%2$.2d.%1$4d %4$02d:%5$02d:%6$02d\n"
+msgstr "Laitteistokellosta luettu aika: %3$.2d.%2$.2d.%1$4d %4$02d:%5$02d:%6$02d\n"
 
 #: hwclock/hwclock.c:468
 #, c-format
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr ""
-"Asetetaan laitteistokello aikaan %.2d:%.2d:%.2d = %ld sekuntia vuodesta "
-"1969\n"
+msgstr "Asetetaan laitteistokello aikaan %.2d:%.2d:%.2d = %ld sekuntia vuodesta 1969\n"
 
 #: hwclock/hwclock.c:474
 #, c-format
@@ -5503,13 +5382,8 @@ msgstr ""
 
 #: hwclock/hwclock.c:556
 #, c-format
-msgid ""
-"The Hardware Clock registers contain values that are either invalid (e.g. "
-"50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
-msgstr ""
-"Laitteistokellon rekistereissä on arvoja, jotka ovat joko kelvottomia (esim. "
-"kuukauden 50:s päivä) tai suurempia kuin pystymme käsittelemään (esim. vuosi "
-"2095).\n"
+msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
+msgstr "Laitteistokellon rekistereissä on arvoja, jotka ovat joko kelvottomia (esim. kuukauden 50:s päivä) tai suurempia kuin pystymme käsittelemään (esim. vuosi 2095).\n"
 
 #: hwclock/hwclock.c:566
 #, c-format
@@ -5538,11 +5412,11 @@ msgstr ""
 #: hwclock/hwclock.c:621
 #, c-format
 msgid "Issuing date command: %s\n"
-msgstr "Käynnistetään \"date\"-komento: %s\n"
+msgstr "Käynnistetään ”date”-komento: %s\n"
 
 #: hwclock/hwclock.c:625
 msgid "Unable to run 'date' program in /bin/sh shell. popen() failed"
-msgstr "Komentoa \"date\" ei voitu ajaa /bin/sh-kuoressa. popen() epäonnistui"
+msgstr "Komentoa ”date” ei voitu ajaa /bin/sh-kuoressa. popen() epäonnistui"
 
 #: hwclock/hwclock.c:633
 #, c-format
@@ -5558,7 +5432,7 @@ msgid ""
 "The response was:\n"
 "  %s\n"
 msgstr ""
-"%sin käynnistämä \"date\"-komento palautti odottamattomia tuloksia.\n"
+"%sin käynnistämä ”date”-komento palautti odottamattomia tuloksia.\n"
 "Komento oli:\n"
 "  %s\n"
 "Vastaus oli:\n"
@@ -5567,15 +5441,13 @@ msgstr ""
 #: hwclock/hwclock.c:647
 #, c-format
 msgid ""
-"The date command issued by %s returned something other than an integer where "
-"the converted time value was expected.\n"
+"The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
 "The command was:\n"
 "  %s\n"
 "The response was:\n"
 " %s\n"
 msgstr ""
-"%sin käynnistämä \"date\"-komento palautti muuta kuin kokonaisluvun odotetun "
-"muunnetun aika-arvon paikalla.\n"
+"%sin käynnistämä ”date”-komento palautti muuta kuin kokonaisluvun odotetun muunnetun aika-arvon paikalla.\n"
 "Komento oli:\n"
 "  %s\n"
 "Vastaus oli:\n"
@@ -5588,12 +5460,8 @@ msgstr "päiväysmerkkijono %s vastaa %ld sekuntia vuodesta 1969.\n"
 
 #: hwclock/hwclock.c:690
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot set the "
-"System Time from it.\n"
-msgstr ""
-"Laitteistokellon aika ei ole kelvollinen, joten järjestelmän aikaa ei voida "
-"asettaa sen perusteella.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it.\n"
+msgstr "Laitteistokellon aika ei ole kelvollinen, joten järjestelmän aikaa ei voida asettaa sen perusteella.\n"
 
 #: hwclock/hwclock.c:712
 #, c-format
@@ -5626,12 +5494,8 @@ msgstr "settimeofday() epäonnistui"
 
 #: hwclock/hwclock.c:760
 #, c-format
-msgid ""
-"Not adjusting drift factor because the Hardware Clock previously contained "
-"garbage.\n"
-msgstr ""
-"Ei säädetä siirtymäkerrointa, koska laitteistokellossa oli edellisellä "
-"kerralla roskaa.\n"
+msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
+msgstr "Ei säädetä siirtymäkerrointa, koska laitteistokellossa oli edellisellä kerralla roskaa.\n"
 
 #: hwclock/hwclock.c:765
 #, c-format
@@ -5645,22 +5509,16 @@ msgstr ""
 
 #: hwclock/hwclock.c:771
 #, c-format
-msgid ""
-"Not adjusting drift factor because it has been less than a day since the "
-"last calibration.\n"
-msgstr ""
-"Ei säädetä siirtymäkerrointa, koska edellisestä kalibroinnista on alle "
-"vuorokausi.\n"
+msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
+msgstr "Ei säädetä siirtymäkerrointa, koska edellisestä kalibroinnista on alle vuorokausi.\n"
 
 #: hwclock/hwclock.c:819
 #, c-format
 msgid ""
-"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
-"of %f seconds/day.\n"
+"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
-"Kellon siirtymä oli %.1f sekuntia viimeisten %d sekunnin aikana, %f sekuntia/"
-"vrk -siirtymäkertoimesta\n"
+"Kellon siirtymä oli %.1f sekuntia viimeisten %d sekunnin aikana, %f sekuntia/vrk -siirtymäkertoimesta\n"
 "huolimatta. Säädetään siirtymäkerrointa %f sekunnilla/vrk\n"
 
 #: hwclock/hwclock.c:870
@@ -5694,8 +5552,7 @@ msgstr "Siirtymänsäätöparametreja ei päivitetty.\n"
 
 #: hwclock/hwclock.c:967
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
 msgstr "Laitteistokellon aika ei ole kelvollinen, joten sitä ei voi säätää.\n"
 
 #: hwclock/hwclock.c:999
@@ -5721,8 +5578,7 @@ msgstr "Järjestelmäkellon asetus ei onnistu.\n"
 #: hwclock/hwclock.c:1153
 #, c-format
 msgid ""
-"The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
-"machine.\n"
+"The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken.\n"
 msgstr ""
@@ -5742,10 +5598,8 @@ msgstr "Ydin olettaa epoch-arvoksi %lu\n"
 
 #: hwclock/hwclock.c:1167
 #, c-format
-msgid ""
-"To set the epoch value, you must use the 'epoch' option to tell to what "
-"value to set it.\n"
-msgstr "Epoch arvon asettamiseksi on käytettävä \"epoch\"-valitsinta.\n"
+msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it.\n"
+msgstr "Epoch-arvon asettamiseksi on käytettävä ”epoch”-valitsinta.\n"
 
 #: hwclock/hwclock.c:1170
 #, c-format
@@ -5757,13 +5611,13 @@ msgstr "Ei aseteta epoch-arvoksi %d - vain kokeilu.\n"
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Ytimen epoch-arvoa ei voi asettaa.\n"
 
-#: hwclock/hwclock.c:1186 misc-utils/cal.c:332 misc-utils/kill.c:189
-#, fuzzy, c-format
+#: hwclock/hwclock.c:1186 misc-utils/cal.c:333 misc-utils/kill.c:189
+#, c-format
 msgid "%s from %s\n"
-msgstr "%s paketista %s%s\n"
+msgstr "%s paketista %s\n"
 
 #: hwclock/hwclock.c:1207
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "hwclock - query and set the hardware clock (RTC)\n"
 "\n"
@@ -5804,8 +5658,7 @@ msgstr ""
 "  --set         asettaa laitteistokellon --date:lla määrättyyn aikaan\n"
 "  --hctosys     asettaa järjestelmäkellon ajan laitteistokellon mukaan\n"
 "  --systohc     asettaa laitteistokellon nykyiseen järjestelmän aikaan\n"
-"  --adjust      säätää laitteistokellon huomioimaan systemaattisen "
-"siirtymän\n"
+"  --adjust      säätää laitteistokellon huomioimaan systemaattisen poikkeaman\n"
 "                edellisen asetuksen tai säädön jälkeen\n"
 "  --getepoch    näyttää ytimen epoch-arvon laitteistokellolle\n"
 "  --setepoch    asettaa ytimen epoch-arvon laitteistokellolle --epoch:illa\n"
@@ -5815,10 +5668,11 @@ msgstr ""
 "Valitsimet: \n"
 "  --utc         laitteistokello on kansainvälisessä ajassa (UTC)\n"
 "  --localtime   laitteistokello on paikallisesssa ajassa\n"
+"  --rtc=polku   käytä muuta kuin tavallista laitetta, /dev/...\n"
 "  --directisa   käytä ISA-väylää suoraan, ei laitteen %s kautta\n"
 "  --badyear     ei huomioida laitteistokellon vuotta, koska BIOS on rikki\n"
 "  --date        aika, johon laitteistokello asetetaan\n"
-"  --epoch=year  vuosi, joka on laitteistokellon\n"
+"  --epoch=vuosi vuosi, joka on laitteistokellon\n"
 "                epoch-arvon nollakohta\n"
 "  --noadjfile   ei käytetä tiedostoa /etc/adjtime. Vaatii joko valitsimen\n"
 "                --utc tai --localtime käyttämistä\n"
@@ -5833,9 +5687,9 @@ msgstr ""
 "                kertoo hwclockille Alphan tyypin (katso hwclock(8))\n"
 
 #: hwclock/hwclock.c:1320
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Unable to connect to audit system\n"
-msgstr "Järjestelmäkellon asetus ei onnistu.\n"
+msgstr "%s: Audit-järjestelmään yhdistäminen ei onnistu\n"
 
 #: hwclock/hwclock.c:1432
 #, c-format
@@ -5853,28 +5707,18 @@ msgstr ""
 
 #: hwclock/hwclock.c:1445
 #, c-format
-msgid ""
-"%s: The --utc and --localtime options are mutually exclusive.  You specified "
-"both.\n"
-msgstr ""
-"%s: Valitsimet --utc ja --localtime ovat toisensa poissulkevia. Käytit "
-"molempia.\n"
+msgid "%s: The --utc and --localtime options are mutually exclusive.  You specified both.\n"
+msgstr "%s: Valitsimet --utc ja --localtime ovat toisensa poissulkevat. Annoit molemmat.\n"
 
 #: hwclock/hwclock.c:1452
 #, c-format
-msgid ""
-"%s: The --adjust and --noadjfile options are mutually exclusive.  You "
-"specified both.\n"
-msgstr ""
-"%s: Valitsimet --adjust ja --noadjfile ovat toisensa poissulkevia. Käytit "
-"molempia.\n"
+msgid "%s: The --adjust and --noadjfile options are mutually exclusive.  You specified both.\n"
+msgstr "%s: Valitsimet --adjust ja --noadjfile ovat toisensa poissulkevat. Käytit molempia.\n"
 
 #: hwclock/hwclock.c:1459
 #, c-format
 msgid "%s: With --noadjfile, you must specify either --utc or --localtime\n"
-msgstr ""
-"%s: Valitsimen --noadjfile kanssa on käytettävä joko valitsinta --utc tai --"
-"localtime\n"
+msgstr "%s: Valitsimen --noadjfile kanssa on käytettävä joko valitsinta --utc tai --localtime\n"
 
 #: hwclock/hwclock.c:1473
 #, c-format
@@ -5893,11 +5737,8 @@ msgstr "Valitan, vain pääkäyttäjä voi säätää järjestelmäkelloa.\n"
 
 #: hwclock/hwclock.c:1499
 #, c-format
-msgid ""
-"Sorry, only the superuser can change the Hardware Clock epoch in the "
-"kernel.\n"
-msgstr ""
-"Valitan, vain pääkäyttäjä voi säätää laitteistokellon epoch-arvoa ytimessä.\n"
+msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel.\n"
+msgstr "Valitan, vain pääkäyttäjä voi säätää laitteistokellon epoch-arvoa ytimessä.\n"
 
 #: hwclock/hwclock.c:1519
 #, c-format
@@ -5906,11 +5747,8 @@ msgstr "Laitteistokelloa ei pystytä käyttämään millään tunnetulla tavalla
 
 #: hwclock/hwclock.c:1523
 #, c-format
-msgid ""
-"Use the --debug option to see the details of our search for an access "
-"method.\n"
-msgstr ""
-"Käytä --debug -valitsinta nähdäksesi yksityiskohdat käyttötavan etsinnästä.\n"
+msgid "Use the --debug option to see the details of our search for an access method.\n"
+msgstr "Käytä --debug -valitsinta nähdäksesi yksityiskohdat käyttötavan etsinnästä.\n"
 
 #: hwclock/kd.c:55
 #, c-format
@@ -5921,7 +5759,7 @@ msgstr "Odotetaan silmukassa KDGHWCLK-ajan muuttumista\n"
 msgid "KDGHWCLK ioctl to read time failed"
 msgstr "ajan lukeva KDGHWCLK-ioctl epäonnistui"
 
-#: hwclock/kd.c:79 hwclock/rtc.c:202
+#: hwclock/kd.c:79 hwclock/rtc.c:205
 #, c-format
 msgid "Timed out waiting for time change.\n"
 msgstr "Aikakatkaisu odotettaessa ajan muutosta.\n"
@@ -5947,111 +5785,102 @@ msgstr "Laitetta /dev/tty1 tai /dev/vc/1 ei voi avata"
 msgid "KDGHWCLK ioctl failed"
 msgstr "KDGHWCLK-ioctl epäonnistui"
 
-#: hwclock/rtc.c:130 hwclock/rtc.c:223
+#: hwclock/rtc.c:133 hwclock/rtc.c:226
 #, c-format
 msgid "open() of %s failed"
 msgstr "tiedoston %s avaaminen epäonnistui"
 
-#: hwclock/rtc.c:164
+#: hwclock/rtc.c:167
 #, c-format
 msgid "ioctl() to %s to read the time failed.\n"
 msgstr "aikaa lukeva ioctl() laitteelle %s epäonnistui.\n"
 
-#: hwclock/rtc.c:186
+#: hwclock/rtc.c:189
 #, c-format
 msgid "Waiting in loop for time from %s to change\n"
 msgstr "Odotetaan silmukassa laitteen %s ajan muuttumista\n"
 
-#: hwclock/rtc.c:241
+#: hwclock/rtc.c:244
 #, c-format
 msgid "%s does not have interrupt functions. "
 msgstr "laitteella %s ei ole keskeytysfunktioita. "
 
-#: hwclock/rtc.c:252
+#: hwclock/rtc.c:255
 #, c-format
 msgid "read() to %s to wait for clock tick failed"
 msgstr "kellon tikitystä odottava read()-kutsu laitteelle %s epäonnistui"
 
-#: hwclock/rtc.c:270
+#: hwclock/rtc.c:273
 #, c-format
 msgid "select() to %s to wait for clock tick failed"
 msgstr "kellon tikitystä odottava select()-kutsu laitteelle %s epäonnistui"
 
-#: hwclock/rtc.c:273
+#: hwclock/rtc.c:276
 #, c-format
 msgid "select() to %s to wait for clock tick timed out\n"
-msgstr ""
-"kellon tikitystä odottava select()-kutsu laitteelle %s aikakatkaistiin\n"
+msgstr "kellon tikitystä odottava select()-kutsu laitteelle %s aikakatkaistiin\n"
 
-#: hwclock/rtc.c:282
+#: hwclock/rtc.c:285
 #, c-format
 msgid "ioctl() to %s to turn off update interrupts failed"
 msgstr "päivityskeskeytykset lopettava ioctl() laitteelle %s epäonnistui"
 
-#: hwclock/rtc.c:285
+#: hwclock/rtc.c:288
 #, c-format
 msgid "ioctl() to %s to turn on update interrupts failed unexpectedly"
-msgstr ""
-"päivityskeskeytykset aloittava ioctl() laitteelle %s epäonnistui "
-"odottamattomasti"
+msgstr "päivityskeskeytykset aloittava ioctl() laitteelle %s epäonnistui odottamattomasti"
 
-#: hwclock/rtc.c:344
+#: hwclock/rtc.c:347
 #, c-format
 msgid "ioctl() to %s to set the time failed.\n"
 msgstr "ajan asettava ioctl() laitteelle %s epäonnistui.\n"
 
-#: hwclock/rtc.c:350
+#: hwclock/rtc.c:353
 #, c-format
 msgid "ioctl(%s) was successful.\n"
 msgstr "ioctl(%s) onnistui.\n"
 
-#: hwclock/rtc.c:379
+#: hwclock/rtc.c:382
 #, c-format
 msgid "Open of %s failed"
 msgstr "Tiedoston %s avaaminen epäonnistui"
 
-#: hwclock/rtc.c:397 hwclock/rtc.c:443
+#: hwclock/rtc.c:400 hwclock/rtc.c:446
 #, c-format
-msgid ""
-"To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
-"device driver via the device special file %s.  This file does not exist on "
-"this system.\n"
-msgstr ""
-"Ytimen epoch-arvon muuttamiseksi on käytettävä Linuxin \"rtc\"-laiteajuria "
-"laitetiedoston %s kautta. Tässä järjestelmässä ei ole kyseistä tiedostoa.\n"
+msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system.\n"
+msgstr "Ytimen epoch-arvon muuttamiseksi on käytettävä Linuxin ”rtc”-laiteajuria laitetiedoston %s kautta. Tässä järjestelmässä ei ole kyseistä tiedostoa.\n"
 
-#: hwclock/rtc.c:402 hwclock/rtc.c:448
+#: hwclock/rtc.c:405 hwclock/rtc.c:451
 #, c-format
 msgid "Unable to open %s"
 msgstr "Laitetta %s ei voi avata"
 
-#: hwclock/rtc.c:409
+#: hwclock/rtc.c:412
 #, c-format
 msgid "ioctl(RTC_EPOCH_READ) to %s failed"
 msgstr "ioctl(RTC_EPOCH_READ) laitteelle %s epäonnistui"
 
-#: hwclock/rtc.c:415
+#: hwclock/rtc.c:418
 #, c-format
 msgid "we have read epoch %ld from %s with RTC_EPOCH_READ ioctl.\n"
 msgstr "luimme epoch-arvon %ld laitteelta %s ioctl:llä RTC_EPOCH_READ.\n"
 
-#: hwclock/rtc.c:435
+#: hwclock/rtc.c:438
 #, c-format
 msgid "The epoch value may not be less than 1900.  You requested %ld\n"
 msgstr "Epoch-arvo ei voi olla pienempi kuin 1900. Pyyntö oli %ld\n"
 
-#: hwclock/rtc.c:453
+#: hwclock/rtc.c:456
 #, c-format
 msgid "setting epoch to %ld with RTC_EPOCH_SET ioctl to %s.\n"
 msgstr "asetetaan epoch-arvoksi %ld, ioctl RTC_EPOCH_SET laitteelle %s.\n"
 
-#: hwclock/rtc.c:458
+#: hwclock/rtc.c:461
 #, c-format
-msgid ""
-"The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
+msgid "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
 msgstr "Ytimen laiteajurissa laitteelle %s ei ole ioctl:ää RTC_EPOCH_SET.\n"
 
-#: hwclock/rtc.c:461
+#: hwclock/rtc.c:464
 #, c-format
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) laitteelle %s epäonnistui"
@@ -6182,17 +6011,13 @@ msgid "%s: input overrun"
 msgstr "%s: syötteen ylivuoto"
 
 #: login-utils/agetty.c:1233
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"Usage: %s [-8hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
-"login_host] baud_rate,... line [termtype]\n"
-"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
-"line baud_rate,... [termtype]\n"
+"Usage: %s [-8hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\n"
+"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"
 msgstr ""
-"Käyttö: %s [-hiLmw] [-l kirjautumisohjelma] [-t aikakatkaisu] [-I "
-"alustuskomennot] [-H kirjautumisisäntä] linjanopeus,... linja [term.tyyppi]\n"
-"tai\t[-hiLmw] [-l kirjautumisohjelma] [-t aikakatkaisu] [-I alustuskomennot] "
-"[-H kirjautumisisäntä] linja linjanopeus,... [term.tyyppi]\n"
+"Käyttö: %s [-8hiLmw] [-l kirjautumisohjelma] [-t aikakatkaisu] [-I alustuskomennot] [-H kirjautumiskone] linjanopeus,... linja [term.tyyppi]\n"
+"tai\t[-hiLmw] [-l kirjautumisohjelma] [-t aikakatkaisu] [-I alustuskomennot] [-H kirjautumiskone] linja linjanopeus,... [term.tyyppi]\n"
 
 #: login-utils/checktty.c:85 login-utils/checktty.c:106
 #, c-format
@@ -6217,69 +6042,67 @@ msgstr "Kirjautuminen päätteelle %s osoitteesta %s evätty oletuksena.\n"
 msgid "Login on %s from %s denied.\n"
 msgstr "Kirjautuminen päätteelle %s osoitteesta %s evätty.\n"
 
-#: login-utils/chfn.c:133 login-utils/chsh.c:119
+#: login-utils/chfn.c:128 login-utils/chsh.c:114
 #, c-format
 msgid "%s: you (user %d) don't exist.\n"
 msgstr "%s: sinua (käyttäjä %d) ei ole olemassa.\n"
 
-#: login-utils/chfn.c:140 login-utils/chsh.c:126
+#: login-utils/chfn.c:135 login-utils/chsh.c:121
 #, c-format
 msgid "%s: user \"%s\" does not exist.\n"
-msgstr "%s: käyttäjä \"%s\" ei ole olemassa.\n"
+msgstr "%s: käyttäjä ”%s” ei ole olemassa.\n"
 
-#: login-utils/chfn.c:145 login-utils/chsh.c:131
+#: login-utils/chfn.c:140 login-utils/chsh.c:126
 #, c-format
 msgid "%s: can only change local entries; use yp%s instead.\n"
-msgstr ""
-"%s: vain paikallisia merkintöjä voi muuttaa; käytä sen sijaan komentoa yp%"
-"s.\n"
+msgstr "%s: vain paikallisia merkintöjä voi muuttaa; käytä sen sijaan komentoa yp%s.\n"
 
-#: login-utils/chfn.c:156 login-utils/chsh.c:142
+#: login-utils/chfn.c:151 login-utils/chsh.c:137
 msgid "Unknown user context"
 msgstr "Tuntematon käyttäjäympäristö"
 
-#: login-utils/chfn.c:157
+#: login-utils/chfn.c:152
 #, c-format
 msgid "%s: %s is not authorized to change the finger info of %s\n"
-msgstr ""
-"%s: käyttäjällä %s ei ole valtuutusta muuttaa käyttäjän %s finger-tietoja\n"
+msgstr "%s: käyttäjällä %s ei ole valtuutusta muuttaa käyttäjän %s finger-tietoja\n"
 
-#: login-utils/chfn.c:164 login-utils/chsh.c:150
+#: login-utils/chfn.c:159 login-utils/chsh.c:145
 #, c-format
 msgid "%s: Can't set default context for /etc/passwd"
 msgstr "%s: Tiedoston /etc/passwd oletusympäristöä ei voi asettaa"
 
-#: login-utils/chfn.c:178
+#: login-utils/chfn.c:173
 #, c-format
 msgid "Changing finger information for %s.\n"
 msgstr "Vaihdetaan käyttäjän %s finger-tiedot.\n"
 
-#: login-utils/chfn.c:189
-#, fuzzy, c-format
-msgid "chfn: PAM Failure, aborting: %s\n"
-msgstr "login: PAM-virhe, keskeytetään: %s\n"
+#: login-utils/chfn.c:179 login-utils/chfn.c:183 login-utils/chfn.c:190
+#: login-utils/chfn.c:194 login-utils/chsh.c:177 login-utils/chsh.c:181
+#: login-utils/chsh.c:188 login-utils/chsh.c:192
+msgid "Password error."
+msgstr "Salasanavirhe."
 
-#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
+#: login-utils/chfn.c:203 login-utils/chsh.c:201 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:333
 #: mount/lomount.c:336
 msgid "Password: "
 msgstr "Salasana: "
 
-#: login-utils/chfn.c:215 login-utils/chsh.c:214
+#: login-utils/chfn.c:206 login-utils/chsh.c:204
 msgid "Incorrect password."
 msgstr "Väärä salasana."
 
-#: login-utils/chfn.c:226
+#: login-utils/chfn.c:217
 #, c-format
 msgid "Finger information not changed.\n"
 msgstr "Finger-tietoja ei muutettu.\n"
 
-#: login-utils/chfn.c:328
+#: login-utils/chfn.c:319
 #, c-format
 msgid "Usage: %s [ -f full-name ] [ -o office ] "
 msgstr "Käyttö: %s [ -f kokonimi ] [ -o toimisto ] "
 
-#: login-utils/chfn.c:329
+#: login-utils/chfn.c:320
 #, c-format
 msgid ""
 "[ -p office-phone ]\n"
@@ -6288,12 +6111,12 @@ msgstr ""
 "[ -p toimistopuhelin ]\n"
 "\t[ -h kotipuhelin ]"
 
-#: login-utils/chfn.c:330
+#: login-utils/chfn.c:321
 #, c-format
 msgid "[ --help ] [ --version ]\n"
 msgstr "[ --help ] [ --version ]\n"
 
-#: login-utils/chfn.c:401 login-utils/chsh.c:321
+#: login-utils/chfn.c:392 login-utils/chsh.c:312
 #, c-format
 msgid ""
 "\n"
@@ -6302,84 +6125,75 @@ msgstr ""
 "\n"
 "Keskeytetty.\n"
 
-#: login-utils/chfn.c:434
+#: login-utils/chfn.c:425
 #, c-format
 msgid "field is too long.\n"
 msgstr "kenttä on liian pitkä.\n"
 
-#: login-utils/chfn.c:442
+#: login-utils/chfn.c:433
 #, c-format
 msgid "'%c' is not allowed.\n"
-msgstr "merkki \"%c\" ei ole sallittu.\n"
+msgstr "merkki ”%c” ei ole sallittu.\n"
 
-#: login-utils/chfn.c:447
+#: login-utils/chfn.c:438
 #, c-format
 msgid "Control characters are not allowed.\n"
 msgstr "Ohjausmerkkejä ei sallita.\n"
 
-#: login-utils/chfn.c:512
+#: login-utils/chfn.c:503
 #, c-format
 msgid "Finger information *NOT* changed.  Try again later.\n"
 msgstr "Finger-tietoja *EI* muutettu. Yritä myöhemmin uudelleen.\n"
 
-#: login-utils/chfn.c:515
+#: login-utils/chfn.c:506
 #, c-format
 msgid "Finger information changed.\n"
 msgstr "Finger-tietoja muutettiin.\n"
 
-#: login-utils/chfn.c:529 login-utils/chsh.c:439 sys-utils/cytune.c:321
+#: login-utils/chfn.c:520 login-utils/chsh.c:427 sys-utils/cytune.c:321
 msgid "malloc failed"
-msgstr "\"malloc\" epäonnistui"
+msgstr "malloc epäonnistui"
 
-#: login-utils/chsh.c:143
+#: login-utils/chsh.c:138
 #, c-format
 msgid "%s: %s is not authorized to change the shell of %s\n"
 msgstr "%s: käyttäjällä %s ei ole valtuutusta vaihtaa käyttäjän %s kuorta\n"
 
-#: login-utils/chsh.c:164
+#: login-utils/chsh.c:158
 #, c-format
-msgid ""
-"%s: Running UID doesn't match UID of user we're altering, shell change "
-"denied\n"
-msgstr ""
-"%s: Vallitseva UID ei täsmää muutettavan käyttäjän UID:hen, kuoren vaihto "
-"estetty\n"
+msgid "%s: Running UID doesn't match UID of user we're altering, shell change denied\n"
+msgstr "%s: Vallitseva UID ei täsmää muutettavan käyttäjän UID:hen, kuoren vaihto estetty\n"
 
-#: login-utils/chsh.c:170
+#: login-utils/chsh.c:164
 #, c-format
 msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
 msgstr "%s: Kuori ei ole tiedostossa /etc/shells, kuoren vaihto evätty\n"
 
-#: login-utils/chsh.c:177
+#: login-utils/chsh.c:171
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Vaihdetaan käyttäjän %s kuori.\n"
 
-#: login-utils/chsh.c:188
-#, fuzzy, c-format
-msgid "chsh: PAM Failure, aborting: %s\n"
-msgstr "login: PAM-virhe, keskeytetään: %s\n"
-
-#: login-utils/chsh.c:222
+#: login-utils/chsh.c:212
 msgid "New shell"
 msgstr "Uusi kuori"
 
-#: login-utils/chsh.c:229
+#: login-utils/chsh.c:219
 #, c-format
 msgid "Shell not changed.\n"
 msgstr "Kuorta ei vaihdettu.\n"
 
-#: login-utils/chsh.c:235
+#: login-utils/chsh.c:226
 #, c-format
 msgid "Shell *NOT* changed.  Try again later.\n"
 msgstr "Kuorta *EI* vaihdettu. Yritä myöhemmin uudelleen.\n"
 
-#: login-utils/chsh.c:238
+#: login-utils/chsh.c:229
 #, c-format
 msgid "Shell changed.\n"
 msgstr "Kuori vaihdettu.\n"
 
-#: login-utils/chsh.c:303
+#: login-utils/chsh.c:294
 #, c-format
 msgid ""
 "Usage: %s [ -s shell ] [ --list-shells ] [ --help ] [ --version ]\n"
@@ -6388,57 +6202,57 @@ msgstr ""
 "Käyttö: %s [ -s kuori ] [ --list-shells ] [ --help ] [ --version ]\n"
 "       [ käyttäjätunnus ]\n"
 
-#: login-utils/chsh.c:349
+#: login-utils/chsh.c:337
 #, c-format
 msgid "%s: shell must be a full path name.\n"
 msgstr "%s: kuori on annettava polkuineen.\n"
 
-#: login-utils/chsh.c:353
+#: login-utils/chsh.c:341
 #, c-format
 msgid "%s: \"%s\" does not exist.\n"
-msgstr "%s: \"%s\" ei ole olemassa.\n"
+msgstr "%s: ”%s” ei ole olemassa.\n"
 
-#: login-utils/chsh.c:357
+#: login-utils/chsh.c:345
 #, c-format
 msgid "%s: \"%s\" is not executable.\n"
-msgstr "%s: \"%s\" ei ole käynnistettävä.\n"
+msgstr "%s: ”%s” ei ole käynnistettävä.\n"
 
-#: login-utils/chsh.c:364
+#: login-utils/chsh.c:352
 #, c-format
 msgid "%s: '%c' is not allowed.\n"
-msgstr "%s: merkkiä \"%c\" ei sallita.\n"
+msgstr "%s: merkkiä ”%c” ei sallita.\n"
 
-#: login-utils/chsh.c:368
+#: login-utils/chsh.c:356
 #, c-format
 msgid "%s: Control characters are not allowed.\n"
 msgstr "%s: Ohjausmerkkejä ei sallita.\n"
 
-#: login-utils/chsh.c:375
+#: login-utils/chsh.c:363
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells\n"
-msgstr "Varoitus: \"%s\" ei ole listattuna tiedostossa /etc/shells\n"
+msgstr "Varoitus: ”%s” ei ole listattuna tiedostossa /etc/shells\n"
 
-#: login-utils/chsh.c:377
+#: login-utils/chsh.c:365
 #, c-format
 msgid "%s: \"%s\" is not listed in /etc/shells.\n"
-msgstr "%s: \"%s\" ei ole listattuna tiedostossa /etc/shells.\n"
+msgstr "%s: ”%s” ei ole listattuna tiedostossa /etc/shells.\n"
 
-#: login-utils/chsh.c:379
+#: login-utils/chsh.c:367
 #, c-format
 msgid "%s: use -l option to see list\n"
 msgstr "%s: käytä -l -valitsinta nähdäksesi listan\n"
 
-#: login-utils/chsh.c:385
+#: login-utils/chsh.c:373
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells.\n"
-msgstr "Varoitus: \"%s\" ei ole listattu tiedostossa /etc/shells.\n"
+msgstr "Varoitus: ”%s” ei ole listattu tiedostossa /etc/shells.\n"
 
-#: login-utils/chsh.c:386
+#: login-utils/chsh.c:374
 #, c-format
 msgid "Use %s -l to see list.\n"
 msgstr "Käytä %s -l nähdäksesi listan.\n"
 
-#: login-utils/chsh.c:406
+#: login-utils/chsh.c:394
 #, c-format
 msgid "No known shells.\n"
 msgstr "Ei tunnettuja kuoria.\n"
@@ -6450,8 +6264,7 @@ msgstr "Tiedostoa %s ei voi lukea, poistutaan."
 
 #: login-utils/last.c:148
 msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
-msgstr ""
-"käyttö: last [-#] [-f tiedosto] [-t tty] [-h isäntänimi] [käyttäjä ...]\n"
+msgstr "käyttö: last [-#] [-f tiedosto] [-t tty] [-h konenimi] [käyttäjä ...]\n"
 
 #: login-utils/last.c:284
 msgid "  still logged in"
@@ -6533,8 +6346,7 @@ msgstr ""
 #: login-utils/login.c:624
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
-msgstr ""
-"LIIAN MONTA (%1$d) KÄYTTÄJÄN %3$s KIRJAUTUMISYRITYSTÄ OSOITTEESTA %2$s, %4$s"
+msgstr "LIIAN MONTA (%1$d) KÄYTTÄJÄN %3$s KIRJAUTUMISYRITYSTÄ OSOITTEESTA %2$s, %4$s"
 
 #: login-utils/login.c:628
 #, c-format
@@ -6567,7 +6379,7 @@ msgstr "Käyttäjänimi on NULL funktiossa %s, rivillä %d. Keskeytys."
 #: login-utils/login.c:669
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
-msgstr "Virheellinen käyttäjänimi \"%s\" funktiossa %s, rivillä %d. Keskeytys."
+msgstr "Virheellinen käyttäjänimi ”%s” funktiossa %s, rivillä %d. Keskeytys."
 
 #: login-utils/login.c:688
 #, c-format
@@ -6655,7 +6467,7 @@ msgstr "Ei hakemistoa %s!\n"
 #: login-utils/login.c:1209
 #, c-format
 msgid "Logging in with home = \"/\".\n"
-msgstr "Kirjaudutaan käyttäen kotihakemistona \"/\".\n"
+msgstr "Kirjaudutaan käyttäen kotihakemistona ”/”.\n"
 
 #: login-utils/login.c:1217
 #, c-format
@@ -6693,7 +6505,7 @@ msgstr "NIMI liian pitkä"
 #: login-utils/login.c:1281
 #, c-format
 msgid "login names may not start with '-'.\n"
-msgstr "tunnukset eivät voi alkaa merkillä \"-\".\n"
+msgstr "tunnukset eivät voi alkaa merkillä ”-”.\n"
 
 #: login-utils/login.c:1291
 #, c-format
@@ -6858,7 +6670,7 @@ msgstr "Virhe virrankatkaisussa\t%s\n"
 #: login-utils/shutdown.c:458
 #, c-format
 msgid "Executing the program \"%s\" ...\n"
-msgstr "Käynnistetään ohjelma \"%s\"...\n"
+msgstr "Käynnistetään ohjelma ”%s”...\n"
 
 #: login-utils/shutdown.c:461
 #, c-format
@@ -6910,8 +6722,7 @@ msgstr "Komentoa swapoff ei voi käynnistää, toivottavasti umount hoitaa asian
 
 #: login-utils/shutdown.c:594
 msgid "Cannot fork for umount, trying manually."
-msgstr ""
-"Haarauttaminen komentoa umount varten ei onnistu, yritetään manuaalisesti."
+msgstr "Haarauttaminen komentoa umount varten ei onnistu, yritetään manuaalisesti."
 
 #: login-utils/shutdown.c:603
 #, c-format
@@ -6949,7 +6760,7 @@ msgstr "virhe avattaessa fifoa\n"
 
 #: login-utils/simpleinit.c:212
 msgid "error setting close-on-exec on /dev/initctl"
-msgstr "virhe asetettaessa \"close-on-exec\" laitteelle /dev/initctl"
+msgstr "virhe asetettaessa ”close-on-exec” laitteelle /dev/initctl"
 
 #: login-utils/simpleinit.c:259
 msgid "error running finalprog\n"
@@ -6983,7 +6794,7 @@ msgstr "hakemiston avaaminen epäonnistui\n"
 msgid "fork failed\n"
 msgstr "haarauttaminen epäonnistui\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1634
+#: login-utils/simpleinit.c:539 text-utils/more.c:1619
 msgid "exec failed\n"
 msgstr "käynnistys epäonnistui\n"
 
@@ -6998,7 +6809,7 @@ msgstr "TERM-muuttujaa ei ole tai päätteen tilaa ei voi lukea\n"
 #: login-utils/simpleinit.c:936
 #, c-format
 msgid "error stopping service: \"%s\""
-msgstr "virhe pysäytettäessä palvelua: \"%s\""
+msgstr "virhe pysäytettäessä palvelua: ”%s”"
 
 #: login-utils/ttymsg.c:75
 msgid "too many iov's (change code in wall/ttymsg.c)"
@@ -7057,9 +6868,7 @@ msgstr "%s: Tiedoston %s ympäristöä ei voi asettaa"
 #: login-utils/vipw.c:217
 #, c-format
 msgid "%s: can't unlock %s: %s (your changes are still in %s)\n"
-msgstr ""
-"%s: tiedoston %s lukitusta ei voi poistaa: %s (muutoksesi ovat edelleen "
-"tiedostossa %s)\n"
+msgstr "%s: tiedoston %s lukitusta ei voi poistaa: %s (muutoksesi ovat edelleen tiedostossa %s)\n"
 
 #: login-utils/vipw.c:240
 #, c-format
@@ -7126,27 +6935,22 @@ msgstr "%s: väliaikaistiedoston tilaa ei voi lukea.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: väliaikaistiedostoa ei voi avata.\n"
 
-#: misc-utils/cal.c:346 misc-utils/cal.c:358
-#, fuzzy, c-format
-msgid "illegal day value: use 1-%d"
-msgstr "virheellinen vuoden arvo: käytä 1-9999"
-
-#: misc-utils/cal.c:350
+#: misc-utils/cal.c:347
 msgid "illegal month value: use 1-12"
 msgstr "virheellinen kuukauden arvo: käytä 1-12"
 
-#: misc-utils/cal.c:354
+#: misc-utils/cal.c:351
 msgid "illegal year value: use 1-9999"
 msgstr "virheellinen vuoden arvo: käytä 1-9999"
 
-#: misc-utils/cal.c:467
+#: misc-utils/cal.c:464
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:816
-#, fuzzy, c-format
-msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
+#: misc-utils/cal.c:810
+#, c-format
+msgid "usage: cal [-13smjyV] [[month] year]\n"
 msgstr "käyttö: cal [-13smjyV] [[kuukausi] vuosi]\n"
 
 #: misc-utils/ddate.c:203
@@ -7166,7 +6970,7 @@ msgstr "%s: tuntematon signaali %s\n"
 #: misc-utils/kill.c:270
 #, c-format
 msgid "%s: can't find process \"%s\"\n"
-msgstr "%s: prosessia \"%s\" ei löydy\n"
+msgstr "%s: prosessia ”%s” ei löydy\n"
 
 #: misc-utils/kill.c:314
 #, c-format
@@ -7200,13 +7004,10 @@ msgstr "logger: tuntematon prioriteetin nimi: %s.\n"
 
 #: misc-utils/logger.c:285
 #, c-format
-msgid ""
-"usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
-msgstr ""
-"käyttö: logger [-is] [-f tiedosto] [-p pri] [-t tag] [-u pistoke] "
-"[ viesti ... ]\n"
+msgid "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
+msgstr "käyttö: logger [-is] [-f tiedosto] [-p pri] [-t tag] [-u pistoke] [ viesti ... ]\n"
 
-#: misc-utils/look.c:351
+#: misc-utils/look.c:352
 #, c-format
 msgid "usage: look [-dfa] [-t char] string [file]\n"
 msgstr "käyttö: look [-dfa] [-t merkki] merkkijono [tiedosto]\n"
@@ -7221,52 +7022,52 @@ msgstr "Tiedostoa %s ei voitu avata\n"
 msgid "Got %d bytes from %s\n"
 msgstr "Tiedostosta %2$s saatiin %1$d tavua\n"
 
-#: misc-utils/namei.c:111
+#: misc-utils/namei.c:107
 #, c-format
 msgid "namei: unable to get current directory - %s\n"
 msgstr "namei: nykyistä hakemistoa ei voida hakea - %s\n"
 
-#: misc-utils/namei.c:125
+#: misc-utils/namei.c:121
 #, c-format
 msgid "namei: unable to chdir to %s - %s (%d)\n"
 msgstr "namei: hakemistoon %s ei voi siirtyä - %s (%d)\n"
 
-#: misc-utils/namei.c:135
+#: misc-utils/namei.c:131
 #, c-format
 msgid "usage: namei [-mx] pathname [pathname ...]\n"
 msgstr "käyttö: namei [-mx] polku [polku ...]\n"
 
-#: misc-utils/namei.c:162
+#: misc-utils/namei.c:158
 #, c-format
 msgid "namei: could not chdir to root!\n"
 msgstr "namei: juureen siirtyminen epäonnistui!\n"
 
-#: misc-utils/namei.c:169
+#: misc-utils/namei.c:165
 #, c-format
 msgid "namei: could not stat root!\n"
 msgstr "namei: juuren tilaa ei voitu lukea!\n"
 
-#: misc-utils/namei.c:183
+#: misc-utils/namei.c:179
 #, c-format
 msgid "namei: buf overflow\n"
 msgstr "namei: puskurin ylivuoto\n"
 
-#: misc-utils/namei.c:245
+#: misc-utils/namei.c:241
 #, c-format
 msgid " ? could not chdir into %s - %s (%d)\n"
 msgstr " ? siirtyminen hakemistoon %s epäonnistui - %s (%d)\n"
 
-#: misc-utils/namei.c:273
+#: misc-utils/namei.c:269
 #, c-format
 msgid " ? problems reading symlink %s - %s (%d)\n"
 msgstr " ? ongelmia luettaessa symlinkkiä %s - %s (%d)\n"
 
-#: misc-utils/namei.c:283
+#: misc-utils/namei.c:279
 #, c-format
 msgid "  *** EXCEEDED UNIX LIMIT OF SYMLINKS ***\n"
 msgstr "  *** UNIXIN SYMLINKKIEN RAJA YLITETTIIN ***\n"
 
-#: misc-utils/namei.c:328
+#: misc-utils/namei.c:317
 #, c-format
 msgid "namei: unknown file type 0%06o on file %s\n"
 msgstr "namei: tiedostolla %2$s on tuntematon tyyppi 0%1$06o\n"
@@ -7286,33 +7087,33 @@ msgstr "%s: uudelleennimeäminen %s -> %s epäonnistui: %s\n"
 msgid "call: %s from to files...\n"
 msgstr "käyttö: %s lähde kohde tiedostot...\n"
 
-#: misc-utils/script.c:110
+#: misc-utils/script.c:109
 #, c-format
 msgid ""
 "Warning: `%s' is a link.\n"
 "Use `%s [options] %s' if you really want to use it.\n"
 "Script not started.\n"
 msgstr ""
-"Varoitus: \"%s\" on linkki.\n"
-"Käytä \"%s [valitsimet] %s\" jos todella haluat käyttää sitä.\n"
+"Varoitus: ”%s” on linkki.\n"
+"Käytä ”%s [valitsimet] %s” jos todella haluat käyttää sitä.\n"
 "Skriptiä ei käynnistetty.\n"
 
-#: misc-utils/script.c:173
+#: misc-utils/script.c:172
 #, c-format
 msgid "usage: script [-a] [-f] [-q] [-t] [file]\n"
 msgstr "käyttö: script [-a] [-f] [-q] [-t] [tiedosto]\n"
 
-#: misc-utils/script.c:196
+#: misc-utils/script.c:195
 #, c-format
 msgid "Script started, file is %s\n"
 msgstr "Skripti käynnistetty, tiedosto on %s\n"
 
-#: misc-utils/script.c:296
+#: misc-utils/script.c:290
 #, c-format
 msgid "Script started on %s"
 msgstr "Skripti käynnistetty %s"
 
-#: misc-utils/script.c:410
+#: misc-utils/script.c:404
 #, c-format
 msgid ""
 "\n"
@@ -7321,17 +7122,17 @@ msgstr ""
 "\n"
 "Skripti suoritettu %s"
 
-#: misc-utils/script.c:417
+#: misc-utils/script.c:411
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "Skripti suoritettu, tiedosto on %s\n"
 
-#: misc-utils/script.c:428
+#: misc-utils/script.c:422
 #, c-format
 msgid "openpty failed\n"
 msgstr "openpty epäonnistui\n"
 
-#: misc-utils/script.c:462
+#: misc-utils/script.c:456
 #, c-format
 msgid "Out of pty's\n"
 msgstr "Pty:t lopussa\n"
@@ -7562,12 +7363,12 @@ msgstr "Virhe luettaessa %s\n"
 msgid "Error writing screendump\n"
 msgstr "Virhe kirjoitettaessa näyttövedosta\n"
 
-#: misc-utils/setterm.c:1172
-#, fuzzy, c-format
-msgid "Couldn't read %s\n"
-msgstr "Tiedostoa %s ei voitu avata\n"
+#: misc-utils/setterm.c:1180
+#, c-format
+msgid "couldn't read %s, and cannot ioctl dump\n"
+msgstr "tiedostoa %s ei voitu lukea, eikä dump-ioctl onnistu\n"
 
-#: misc-utils/setterm.c:1223
+#: misc-utils/setterm.c:1246
 #, c-format
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: $TERM ei ole määritelty.\n"
@@ -7577,54 +7378,52 @@ msgstr "%s: $TERM ei ole määritelty.\n"
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr "whereis [ -sbmu ] [ -SBM hak ... -f ] nimi...\n"
 
-#: misc-utils/write.c:98
+#: misc-utils/write.c:99
 #, c-format
 msgid "write: can't find your tty's name\n"
 msgstr "write: tty:si nimeä ei löydy\n"
 
-#: misc-utils/write.c:109
+#: misc-utils/write.c:110
 #, c-format
 msgid "write: you have write permission turned off.\n"
 msgstr "write: sinulla ei ole kirjoitusoikeutta.\n"
 
-#: misc-utils/write.c:130
+#: misc-utils/write.c:131
 #, c-format
 msgid "write: %s is not logged in on %s.\n"
 msgstr "write: %s ei ole kirjautuneena päätteellä %s.\n"
 
-#: misc-utils/write.c:138
+#: misc-utils/write.c:139
 #, c-format
 msgid "write: %s has messages disabled on %s\n"
 msgstr "write: %s on estänyt viestit päätteellä %s\n"
 
-#: misc-utils/write.c:145
+#: misc-utils/write.c:146
 #, c-format
 msgid "usage: write user [tty]\n"
 msgstr "käyttö: write käyttäjä [tty]\n"
 
-#: misc-utils/write.c:233
+#: misc-utils/write.c:234
 #, c-format
 msgid "write: %s is not logged in\n"
 msgstr "write: %s ei ole kirjautuneena\n"
 
-#: misc-utils/write.c:242
+#: misc-utils/write.c:243
 #, c-format
 msgid "write: %s has messages disabled\n"
 msgstr "write: %s ei vastaanota viestejä\n"
 
-#: misc-utils/write.c:246
+#: misc-utils/write.c:247
 #, c-format
 msgid "write: %s is logged in more than once; writing to %s\n"
-msgstr ""
-"write: %s on kirjautuneena useammin kuin kerran; kirjoitetaan kohteeseen %s\n"
+msgstr "write: %s on kirjautuneena useammin kuin kerran; kirjoitetaan kohteeseen %s\n"
 
-#: misc-utils/write.c:312
+#: misc-utils/write.c:313
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %s ..."
-msgstr ""
-"Viesti %4$s:lle kirjautuneelta käyttäjältä %1$s@%2$s (%3$s), kello %5$s..."
+msgstr "Viesti %4$s:lle kirjautuneelta käyttäjältä %1$s@%2$s (%3$s), kello %5$s..."
 
-#: misc-utils/write.c:315
+#: misc-utils/write.c:316
 #, c-format
 msgid "Message from %s@%s on %s at %s ..."
 msgstr "Viesti %3$s:lle kirjautuneelta käyttäjältä %1$s@%2$s, kello %4$s..."
@@ -7634,15 +7433,16 @@ msgstr "Viesti %3$s:lle kirjautuneelta käyttäjältä %1$s@%2$s, kello %4$s..."
 msgid "Trying %s\n"
 msgstr "Kokeillaan %s\n"
 
+# Eeeeiiii...
 #: mount/fsprobe.c:187
-#, fuzzy, c-format
+#, c-format
 msgid "mount: going to mount %s by %s\n"
-msgstr "mount: liitetään %s UUID:n perusteella\n"
+msgstr "mount: liitetään %s %s:n perusteella\n"
 
 #: mount/fsprobe.c:195
-#, fuzzy, c-format
+#, c-format
 msgid "mount: no LABEL=, no UUID=, going to mount %s by path\n"
-msgstr "mount: liitetään %s nimiön perusteella\n"
+msgstr "mount: ei LABEL=, ei UUID=, liitetään %s polun perusteella\n"
 
 #: mount/fstab.c:143
 #, c-format
@@ -7657,8 +7457,7 @@ msgstr "virhe: tiedostoa %s ei voi avata: %s"
 #: mount/fstab.c:176
 #, c-format
 msgid "mount: could not open %s - using %s instead\n"
-msgstr ""
-"mount: tiedostoa %s ei voitu avata - käytetään tiedostoa %s sen sijaan\n"
+msgstr "mount: tiedostoa %s ei voitu avata - käytetään tiedostoa %s sen sijaan\n"
 
 #: mount/fstab.c:568
 #, c-format
@@ -7698,27 +7497,22 @@ msgstr ""
 "Linkkiä %s ei voi luoda\n"
 "Ehkä jossakin on vanhentunut lukkotiedosto?\n"
 
-#: mount/fstab.c:688 mount/fstab.c:741
+#: mount/fstab.c:686 mount/fstab.c:739
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "hakemistoa %s ei voi avata (%s) - mtabia ei päivitetty"
 
-#: mount/fstab.c:750
+#: mount/fstab.c:748
 #, c-format
 msgid "error writing %s: %s"
 msgstr "virhe kirjoitettaessa %s: %s"
 
-#: mount/fstab.c:768
+#: mount/fstab.c:758
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "virhe muutettaessa tiedoston %s tilaa: %s\n"
 
-#: mount/fstab.c:781
-#, fuzzy, c-format
-msgid "error changing owner of %s: %s\n"
-msgstr "virhe muutettaessa tiedoston %s tilaa: %s\n"
-
-#: mount/fstab.c:792
+#: mount/fstab.c:776
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "nimeäminen %s -> %s ei onnistu: %s\n"
@@ -7776,7 +7570,7 @@ msgid ""
 msgstr ""
 "%s: Ei löytynyt yhtään loop-laitetta. Ehkä tämä ydin ei ole tietoinen\n"
 "       loop-laitteista?\n"
-"       (Jos näin on, käännä uudelleen tai suorita \"modprobe loop\".)"
+"       (Jos näin on, käännä uudelleen tai suorita ”modprobe loop”.)"
 
 #: mount/lomount.c:224
 #, c-format
@@ -7791,7 +7585,7 @@ msgstr "Muistia ei voitu lukita, poistutaan.\n"
 #: mount/lomount.c:349
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
-msgstr ""
+msgstr "ioctl LOOP_SET_FD epäonnistui: %s\n"
 
 #: mount/lomount.c:384
 #, c-format
@@ -7803,17 +7597,17 @@ msgstr "set_loop(%s,%s,%llu): onnistui\n"
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: laitetta %s ei voi poistaa: %s\n"
 
-#: mount/lomount.c:406
+#: mount/lomount.c:405
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): onnistui\n"
 
-#: mount/lomount.c:414
+#: mount/lomount.c:413
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Tämä mount on käännetty ilman loop-tukea. Käännä uudelleen.\n"
 
-#: mount/lomount.c:451
+#: mount/lomount.c:450
 #, c-format
 msgid ""
 "\n"
@@ -7835,12 +7629,12 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:479 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:478 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "muisti ei riitä"
 
-#: mount/lomount.c:640
+#: mount/lomount.c:639
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Loop-tukea ei ollut käännöksen aikana. Käännä uudelleen.\n"
@@ -7848,12 +7642,12 @@ msgstr "Loop-tukea ei ollut käännöksen aikana. Käännä uudelleen.\n"
 #: mount/mount.c:321
 #, c-format
 msgid "mount: improperly quoted option string '%s'"
-msgstr ""
+msgstr "mount: väärin suojattu valitsinmerkkijono ”%s”"
 
 #: mount/mount.c:354
-#, fuzzy, c-format
+#, c-format
 msgid "mount: translated %s '%s' to '%s'\n"
-msgstr "mount: %s ei löydy tiedostosta %s, eikä %s"
+msgstr "mount: muunnettiin %s ”%s” arvoon ”%s”\n"
 
 #: mount/mount.c:510
 #, c-format
@@ -7870,7 +7664,7 @@ msgstr "mount: tiedoston mtab mukaan %s on liitetty pisteeseen %s"
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: tiedostoa %s ei voi avata kirjoittamista varten: %s"
 
-#: mount/mount.c:552 mount/mount.c:957
+#: mount/mount.c:552 mount/mount.c:950
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: virhe kirjoitettaessa %s: %s"
@@ -7880,175 +7674,162 @@ msgstr "mount: virhe kirjoitettaessa %s: %s"
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: virhe muutettaessa tiedoston %s tilaa: %s"
 
-#: mount/mount.c:641
-#, fuzzy, c-format
-msgid "mount: cannot set group id: %s"
-msgstr "mount: nopeutta ei voi asettaa: %s"
-
-#: mount/mount.c:644
-#, fuzzy, c-format
-msgid "mount: cannot set user id: %s"
-msgstr "mount: nopeutta ei voi asettaa: %s"
-
-#: mount/mount.c:683 mount/mount.c:1572
+#: mount/mount.c:676 mount/mount.c:1565
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: haarauttaminen ei onnistu: %s"
 
-#: mount/mount.c:697
+#: mount/mount.c:690
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: et antanut tyyppiä tiedostojärjestelmälle %s\n"
 
-#: mount/mount.c:700
+#: mount/mount.c:693
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       Kokeillaan kaikkia tiedostoissa %s ja %s mainittuja tyyppejä\n"
 
-#: mount/mount.c:703
+#: mount/mount.c:696
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       ja tämä näyttää olevan sivutustilaa\n"
 
-#: mount/mount.c:705
+#: mount/mount.c:698
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       Kokeillaan tyyppiä %s\n"
 
-#: mount/mount.c:732
+#: mount/mount.c:725
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s vaikuttaa olevan sivutustilaa - ei liitetä"
 
-#: mount/mount.c:823
+#: mount/mount.c:816
 msgid "mount failed"
 msgstr "liittäminen epäonnistui"
 
-#: mount/mount.c:825
+#: mount/mount.c:818
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: vain root voi liittää %s pisteeseen %s"
 
-#: mount/mount.c:853
+#: mount/mount.c:846
 msgid "mount: loop device specified twice"
 msgstr "mount: loop-laite annettu kahdesti"
 
-#: mount/mount.c:858
+#: mount/mount.c:851
 msgid "mount: type specified twice"
 msgstr "mount: tyyppi annettu kahdesti"
 
-#: mount/mount.c:870
+#: mount/mount.c:863
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: ohitetaan loop-laitteen asettaminen\n"
 
-#: mount/mount.c:883
+#: mount/mount.c:876
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: aiotaan käyttää loop-laitetta %s\n"
 
-#: mount/mount.c:892
+#: mount/mount.c:885
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:897
+#: mount/mount.c:890
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:902
+#: mount/mount.c:895
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: loop-laitteen asettaminen epäonnistui\n"
 
-#: mount/mount.c:913
+#: mount/mount.c:906
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: loop-laite asetettiin onnistuneesti\n"
 
-#: mount/mount.c:952
+#: mount/mount.c:945
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: tiedostoa %s ei voi avata: %s"
 
-#: mount/mount.c:973
+#: mount/mount.c:966
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argumentin valitsimelle -p tai --pass-fd on oltava luku"
 
-#: mount/mount.c:986
+#: mount/mount.c:979
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: tiedostoa %s ei voi avata nopeuden asetusta varten"
 
-#: mount/mount.c:989
+#: mount/mount.c:982
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: nopeutta ei voi asettaa: %s"
 
-#: mount/mount.c:1047
-#, fuzzy, c-format
+#: mount/mount.c:1040
+#, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
-msgstr "mount: tiedoston mtab mukaan %s on jo liitetty pisteeseen %s"
+msgstr "mount: mtabin mukaan %s on jo liitetty pisteeseen %s\n"
 
-#: mount/mount.c:1122
-msgid ""
-"mount: I could not determine the filesystem type, and none was specified"
-msgstr ""
-"mount: Tiedostojärjestelmän tyyppiä ei voitu määrittää, eikä tyyppiä ole "
-"annettu"
+#: mount/mount.c:1115
+msgid "mount: I could not determine the filesystem type, and none was specified"
+msgstr "mount: Tiedostojärjestelmän tyyppiä ei voitu määrittää, eikä tyyppiä ole annettu"
 
-#: mount/mount.c:1125
+#: mount/mount.c:1118
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: tiedostojärjestelmän tyyppi on annettava"
 
-#: mount/mount.c:1128
+#: mount/mount.c:1121
 msgid "mount: mount failed"
 msgstr "mount: liitos epäonnistui"
 
-#: mount/mount.c:1134 mount/mount.c:1169
+#: mount/mount.c:1127 mount/mount.c:1162
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: liitospiste %s ei ole hakemisto"
 
-#: mount/mount.c:1136
+#: mount/mount.c:1129
 msgid "mount: permission denied"
 msgstr "mount: lupa evätty"
 
-#: mount/mount.c:1138
+#: mount/mount.c:1131
 msgid "mount: must be superuser to use mount"
 msgstr "mount: mountin käyttöön vaaditaan pääkäyttäjän oikeudet"
 
-#: mount/mount.c:1142 mount/mount.c:1146
+#: mount/mount.c:1135 mount/mount.c:1139
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s on varattu"
 
-#: mount/mount.c:1148
+#: mount/mount.c:1141
 msgid "mount: proc already mounted"
 msgstr "mount: proc on jo liitetty"
 
-#: mount/mount.c:1150
+#: mount/mount.c:1143
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s on jo liitetty tai %s on varattu"
 
-#: mount/mount.c:1156
+#: mount/mount.c:1149
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: liitospiste %s ei ole olemassa"
 
-#: mount/mount.c:1158
+#: mount/mount.c:1151
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: liitospiste %s on symlinkki olemattomaan"
 
-#: mount/mount.c:1161
+#: mount/mount.c:1154
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: erikoislaite %s ei ole olemassa"
 
-#: mount/mount.c:1171
+#: mount/mount.c:1164
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -8057,21 +7838,21 @@ msgstr ""
 "mount: erikoislaite %s ei ole olemassa\n"
 "       (polun etuliite ei ole hakemisto)\n"
 
-#: mount/mount.c:1184
+#: mount/mount.c:1177
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s ei ole vielä liitetty, tai virheellinen valitsin"
 
-#: mount/mount.c:1186
-#, fuzzy, c-format
+#: mount/mount.c:1179
+#, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
-"       missing codepage or helper program, or other error"
+"       missing codepage or other error"
 msgstr ""
 "mount: väärä tiedostojärjestelmätyyppi, virheellinen valitsin, viallinen \n"
 "       superlohko laitteella %s, puuttuva koodisivu, tai muu virhe"
 
-#: mount/mount.c:1196
+#: mount/mount.c:1189
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -8079,7 +7860,7 @@ msgstr ""
 "       (voisiko tämä olla IDE-laite, joka käyttää ide-scsi-ajuria,\n"
 "       jolloin käytetään sr0:aa tai sda:ta?)"
 
-#: mount/mount.c:1202
+#: mount/mount.c:1195
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -8087,133 +7868,126 @@ msgstr ""
 "       (etkö yritäkin liittää laajennettua osiota, etkä\n"
 "       sen sisältämää loogista osiota?)"
 
-#: mount/mount.c:1219
+#: mount/mount.c:1212
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
 msgstr ""
 "       Joissakin tapauksissa järjestelmälokista löytyy hyödyllistä\n"
-"       tietoa - kokeile esim. komentoa \"dmesg | tail\".\n"
+"       tietoa - kokeile esim. komentoa ”dmesg | tail”.\n"
 
-#: mount/mount.c:1225
+#: mount/mount.c:1218
 msgid "mount table full"
 msgstr "liitostaulukko täynnä"
 
-#: mount/mount.c:1227
+#: mount/mount.c:1220
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: superlohkoa ei voi lukea"
 
-#: mount/mount.c:1233
+#: mount/mount.c:1226
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: tuntematon laite"
 
-#: mount/mount.c:1238
+#: mount/mount.c:1231
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
-msgstr "mount: tuntematon tiedostojärjestelmän tyyppi \"%s\""
+msgstr "mount: tuntematon tiedostojärjestelmän tyyppi ”%s”"
 
-#: mount/mount.c:1250
+#: mount/mount.c:1243
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: tarkoitat todennäköisesti %s"
 
-#: mount/mount.c:1253
+#: mount/mount.c:1246
 msgid "mount: maybe you meant 'iso9660'?"
-msgstr "mount: ehkä tarkoitit \"iso9660\"?"
+msgstr "mount: ehkä tarkoitit ”iso9660”?"
 
-#: mount/mount.c:1256
+#: mount/mount.c:1249
 msgid "mount: maybe you meant 'vfat'?"
-msgstr "mount: ehkä tarkoitit \"vfat\"?"
+msgstr "mount: ehkä tarkoitit ”vfat”?"
 
-#: mount/mount.c:1259
+#: mount/mount.c:1252
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
-msgstr ""
-"mount: tiedoston %s laitenumero on väärä tai tiedostojärjestelmätyyppi %s ei "
-"ole tuettu"
+msgstr "mount: tiedoston %s laitenumero on väärä tai tiedostojärjestelmätyyppi %s ei ole tuettu"
 
-#: mount/mount.c:1265
+#: mount/mount.c:1258
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s ei ole lohkolaite, ja tilan luku epäonnistuu?"
 
-#: mount/mount.c:1267
+#: mount/mount.c:1260
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
 "       (maybe `insmod driver'?)"
 msgstr ""
 "mount: ydin ei tunnista tiedostoa %s lohkolaitteeksi\n"
-"       (ehkä \"insmod ajuri\" auttaa?)"
+"       (ehkä ”insmod ajuri” auttaa?)"
 
-#: mount/mount.c:1270
+#: mount/mount.c:1263
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
-msgstr "mount: %s ei ole lohkolaite (yritä \"-o loop\"?)"
+msgstr "mount: %s ei ole lohkolaite (yritä ”-o loop”?)"
 
-#: mount/mount.c:1273
+#: mount/mount.c:1266
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s ei ole lohkolaite"
 
-#: mount/mount.c:1276
+#: mount/mount.c:1269
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s ei ole kelvollinen lohkolaite"
 
-#: mount/mount.c:1279
+#: mount/mount.c:1272
 msgid "block device "
 msgstr "lohkolaite "
 
-#: mount/mount.c:1281
+#: mount/mount.c:1274
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: ei voi liittää %s%s vain luku -tilassa"
 
-#: mount/mount.c:1285
+#: mount/mount.c:1278
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
-msgstr "mount: %s%s on kirjoitussuojattu, mutta \"-w\" -lippu on annettu"
+msgstr "mount: %s%s on kirjoitussuojattu, mutta ”-w” -lippu on annettu"
 
-#: mount/mount.c:1300
+#: mount/mount.c:1293
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s on kirjoitussuojattu, liitetään vain luku -tilassa"
 
-#: mount/mount.c:1400
+#: mount/mount.c:1393
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
-msgstr ""
-"mount: tyyppiä ei annettu - kaksoispisteen perusteella sen oletetaan olevan "
-"nfs\n"
+msgstr "mount: tyyppiä ei annettu - kaksoispisteen perusteella sen oletetaan olevan nfs\n"
 
-#: mount/mount.c:1406
-#, fuzzy, c-format
+#: mount/mount.c:1399
+#, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
-msgstr ""
-"mount: tyyppiä ei annettu - //-alkuliitteen perusteella sen oletetaan olevan "
-"smbfs\n"
+msgstr "mount: tyyppiä ei annettu - //-alkuliitteen perusteella sen oletetaan olevan cifs\n"
 
-#: mount/mount.c:1423
+#: mount/mount.c:1416
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
-msgstr "mount: siirretään taustalle \"%s\"\n"
+msgstr "mount: siirretään taustalle ”%s”\n"
 
-#: mount/mount.c:1433
+#: mount/mount.c:1426
 #, c-format
 msgid "mount: giving up \"%s\"\n"
-msgstr "mount: luovutetaan \"%s\"\n"
+msgstr "mount: luovutetaan ”%s”\n"
 
-#: mount/mount.c:1519
+#: mount/mount.c:1512
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s on jo liitetty paikkaan %s\n"
 
-# valitsin -p passwdfd, mitä se tekee???
-#: mount/mount.c:1657
-#, fuzzy, c-format
+#: mount/mount.c:1650
+#, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
 "       mount -h                 : print this help\n"
@@ -8253,7 +8027,7 @@ msgstr ""
 "        mount                    : näytä liitetyt tiedostojärjestelmät\n"
 "        mount -l                 : sama kuin edellä, lisäksi nimiöt\n"
 "Siinä informatiivinen osuus. Seuraavaksi liittäminen.\n"
-"Komento kuuluu \"mount [-t tied.järj.tyyppi] jotakin jonnekin\".\n"
+"Komento kuuluu ”mount [-t tied.järj.tyyppi] jotakin jonnekin”.\n"
 "Tiedostossa /etc/fstab olevat yksityiskohdat voi jättää pois.\n"
 "        mount -a [-t|-O] ...     : liitä kaikki tiedostosta /etc/fstab\n"
 "        mount laite              : liitä laite tunnettuun paikkaan\n"
@@ -8265,29 +8039,40 @@ msgstr ""
 "        mount --bind vanha_hak uusi_hak\n"
 "tai siirtää alipuu:\n"
 "        mount --move vanha_hak uusi_hak\n"
+"Hakemiston hak sisältävän liitoksen tyyppiä voi muuttaa:\n"
+"       mount --make-shared hak\n"
+"       mount --make-slave hak\n"
+"       mount --make-private hak\n"
+"       mount --make-unbindable hak\n"
+"Kaikkien liitoksen alipuussa olevien hakemiston hak sisältävien\n"
+"liitosten tyyppiä voi muuttaa:\n"
+"       mount --make-rshared hak\n"
+"       mount --make-rslave hak\n"
+"       mount --make-rprivate hak\n"
+"       mount --make-runbindable hak\n"
 "Laite voidaan antaa nimellä, esim. /dev/hda1 tai /dev/cdrom,\n"
 "tai nimiöllä, käyttäen  -L nimiö  tai uuid:lla, käyttäen  -U uuid .\n"
-"Muut valitsimet: [-nfFrsvw] [-o valitsimet] [-p passwdfd].\n"
+"Muut valitsimet: [-nfFrsvw] [-o valitsimet] [-p kahva].\n"
 "Paljon lisätietoja komennolla:  man 8 mount .\n"
 
-#: mount/mount.c:1967
+#: mount/mount.c:1960
 msgid "mount: only root can do that"
 msgstr "mount: vain root voi tehdä tuon"
 
-#: mount/mount.c:1972
+#: mount/mount.c:1965
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: ei löytynyt %s - luodaan se..\n"
 
-#: mount/mount.c:1982
+#: mount/mount.c:1975
 msgid "nothing was mounted"
 msgstr "mitään ei liitetty"
 
-#: mount/mount.c:1995 mount/mount.c:2021
+#: mount/mount.c:1988 mount/mount.c:2014
 msgid "mount: no such partition found"
 msgstr "mount: osiota ei löydy"
 
-#: mount/mount.c:1998
+#: mount/mount.c:1991
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %s ei löydy tiedostosta %s, eikä %s"
@@ -8334,49 +8119,42 @@ msgstr ""
 "        %s -a [-v]\n"
 "        %s [-v] erikoistiedosto ...\n"
 
-#: mount/swapon.c:103
-#, fuzzy, c-format
-msgid "%s: %s: unexpected file format\n"
-msgstr "%s: Odottamaton tiedoston loppu (EOF) tiedostossa %s\n"
-
-#: mount/swapon.c:132
+#: mount/swapon.c:128
 #, fuzzy, c-format
 msgid "%s: cannot canonicalize %s: %s\n"
 msgstr "%s: tiedostoa %s ei voi avata: %s\n"
 
-#: mount/swapon.c:171 mount/swapon.c:259
+#: mount/swapon.c:167 mount/swapon.c:255
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s laitteella %s\n"
 
-#: mount/swapon.c:181
+#: mount/swapon.c:177
 #, c-format
 msgid "%s: cannot stat %s: %s\n"
 msgstr "%s: tiedoston %s tilaa ei voi lukea: %s\n"
 
-#: mount/swapon.c:192
+#: mount/swapon.c:188
 #, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
-msgstr ""
-"%s: varoitus: tiedostolla %s on turvattomat oikeudet %04o, suositellaan %"
-"04o\n"
+msgstr "%s: varoitus: tiedostolla %s on turvattomat oikeudet %04o, suositellaan %04o\n"
 
-#: mount/swapon.c:204
+#: mount/swapon.c:200
 #, c-format
 msgid "%s: Skipping file %s - it appears to have holes.\n"
 msgstr "%s: Ohitetaan tiedosto %s - siinä vaikuttaa olevan reikiä.\n"
 
-#: mount/swapon.c:237
+#: mount/swapon.c:233
 #, c-format
 msgid "%s: cannot find the device for %s\n"
 msgstr "%s: tiedostolle %s ei löydy laitetta\n"
 
-#: mount/swapon.c:271
+#: mount/swapon.c:267
 #, c-format
 msgid "Not superuser.\n"
 msgstr "Et ole pääkäyttäjä.\n"
 
-#: mount/swapon.c:305 mount/swapon.c:496
+#: mount/swapon.c:301 mount/swapon.c:492
 #, c-format
 msgid "%s: cannot open %s: %s\n"
 msgstr "%s: tiedostoa %s ei voi avata: %s\n"
@@ -8386,93 +8164,81 @@ msgstr "%s: tiedostoa %s ei voi avata: %s\n"
 msgid "umount: compiled without support for -f\n"
 msgstr "umount: käännetty ilman tukea valitsimelle -f\n"
 
-#: mount/umount.c:109
-#, fuzzy, c-format
-msgid "umount: cannot set group id: %s"
-msgstr "mount: nopeutta ei voi asettaa: %s"
-
-#: mount/umount.c:112
-#, fuzzy, c-format
-msgid "umount: cannot set user id: %s"
-msgstr "mount: nopeutta ei voi asettaa: %s"
-
-#: mount/umount.c:137
+#: mount/umount.c:130
 #, c-format
 msgid "umount: cannot fork: %s"
 msgstr "umount: haarauttaminen ei onnistu: %s"
 
-#: mount/umount.c:149
+#: mount/umount.c:142
 #, c-format
 msgid "umount: %s: invalid block device"
 msgstr "umount: %s: virheellinen lohkolaite"
 
-#: mount/umount.c:151
+#: mount/umount.c:144
 #, c-format
 msgid "umount: %s: not mounted"
 msgstr "umount: %s: ei ole liitettynä"
 
-#: mount/umount.c:153
+#: mount/umount.c:146
 #, c-format
 msgid "umount: %s: can't write superblock"
 msgstr "umount: %s: superlohkoa ei voi kirjoittaa"
 
-#: mount/umount.c:157
+#: mount/umount.c:150
 #, c-format
 msgid "umount: %s: device is busy"
 msgstr "umount: %s: laite on varattu"
 
-#: mount/umount.c:159
+#: mount/umount.c:152
 #, c-format
 msgid "umount: %s: not found"
 msgstr "umount: %s: ei löydy"
 
-#: mount/umount.c:161
+#: mount/umount.c:154
 #, c-format
 msgid "umount: %s: must be superuser to umount"
 msgstr "umount: %s: vaaditaan pääkäyttäjän oikeudet"
 
-#: mount/umount.c:163
+#: mount/umount.c:156
 #, c-format
 msgid "umount: %s: block devices not permitted on fs"
 msgstr "umount: %s: lohkolaitteita ei sallita tiedostojärjestelmässä"
 
-#: mount/umount.c:165
+#: mount/umount.c:158
 #, c-format
 msgid "umount: %s: %s"
 msgstr "umount: %s: %s"
 
-#: mount/umount.c:214
+#: mount/umount.c:207
 #, c-format
 msgid "no umount2, trying umount...\n"
 msgstr "ohjelmaa umount2 ei ole, kokeillaan ohjelmaa umount...\n"
 
-#: mount/umount.c:230
+#: mount/umount.c:223
 #, c-format
 msgid "could not umount %s - trying %s instead\n"
-msgstr ""
-"kohteen %s irrottaminen epäonnistui - yritetään sen sijaan irrottaa %s\n"
+msgstr "kohteen %s irrottaminen epäonnistui - yritetään sen sijaan irrottaa %s\n"
 
-#: mount/umount.c:248
+#: mount/umount.c:241
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr "umount: %s on varattu - uudelleenliitettiin vain luku -tilassa\n"
 
-#: mount/umount.c:259
+#: mount/umount.c:252
 #, c-format
 msgid "umount: could not remount %s read-only\n"
-msgstr ""
-"umount: kohteen %s uudelleenliittäminen vain luku -tilassa epäonnistui\n"
+msgstr "umount: kohteen %s uudelleenliittäminen vain luku -tilassa epäonnistui\n"
 
-#: mount/umount.c:268
+#: mount/umount.c:261
 #, c-format
 msgid "%s umounted\n"
 msgstr "%s irrotettu\n"
 
-#: mount/umount.c:366
+#: mount/umount.c:359
 msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: irrotettavien tiedostojärjestelmien listaa ei löydy"
 
-#: mount/umount.c:396
+#: mount/umount.c:389
 #, c-format
 msgid ""
 "Usage: umount [-hV]\n"
@@ -8480,50 +8246,49 @@ msgid ""
 "       umount [-f] [-r] [-n] [-v] special | node...\n"
 msgstr ""
 "Käyttö: umount [-hV]\n"
-"        umount -a [-f] [-r] [-n] [-v] [-t vtied.järj.tyypit] [-O "
-"valitsimet]\n"
+"        umount -a [-f] [-r] [-n] [-v] [-t vtied.järj.tyypit] [-O valitsimet]\n"
 "        umount [-f] [-r] [-n] [-v] erikoistied | solmu...\n"
 
-#: mount/umount.c:448
+#: mount/umount.c:441
 msgid "Cannot umount \"\"\n"
-msgstr "Ei voi avata \"\"\n"
+msgstr "Kohdetta ”” ei voi irrottaa\n"
 
-#: mount/umount.c:454
+#: mount/umount.c:447
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr "Yritetään irrottaa %s\n"
 
-#: mount/umount.c:460
+#: mount/umount.c:453
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "%s ei löytynyt tiedostosta mtab\n"
 
-#: mount/umount.c:467
+#: mount/umount.c:460
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s ei ole liitetty (tiedoston mtab mukaan)"
 
-#: mount/umount.c:491
+#: mount/umount.c:484
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: %s vaikuttaa olevan liitettynä useita kertoja"
 
-#: mount/umount.c:504
+#: mount/umount.c:497
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: %s ei ole tiedostossa fstab (etkä ole root)"
 
-#: mount/umount.c:508
+#: mount/umount.c:501
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: %s on ristiriidassa tiedoston fstab kanssa"
 
-#: mount/umount.c:549
+#: mount/umount.c:542
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "umount: vain %s voi irrottaa laitteen %s paikasta %s"
 
-#: mount/umount.c:630
+#: mount/umount.c:623
 msgid "umount: only root can do that"
 msgstr "umount: vain root voi tehdä tämän"
 
@@ -8549,12 +8314,10 @@ msgstr ""
 #: sys-utils/cytune.c:125
 #, c-format
 msgid ""
-"File %s, For threshold value %lu and timrout value %lu, Maximum characters "
-"in fifo were %d,\n"
+"File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
-"Tiedosto %s, kynnysarvolle %lu ja aikakatkaisuarvolle %lu, suurin "
-"merkkimäärä fifossa oli %d,\n"
+"Tiedosto %s, kynnysarvolle %lu ja aikakatkaisuarvolle %lu, suurin merkkimäärä fifossa oli %d,\n"
 "ja suurin siirtonopeus (merkkiä/sekunti) oli %f\n"
 
 #: sys-utils/cytune.c:189
@@ -8584,12 +8347,8 @@ msgstr "Virheellinen oletusaika-arvo: %s\n"
 
 #: sys-utils/cytune.c:238
 #, c-format
-msgid ""
-"Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
-"[-g|-G] file [file...]\n"
-msgstr ""
-"Käyttö: %s [-q [-i väli]] ([-s arvo]|[-S arvo]) ([-t arvo]|[-T arvo]) [-g|-"
-"G] tiedosto [tiedosto...]\n"
+msgid "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) [-g|-G] file [file...]\n"
+msgstr "Käyttö: %s [-q [-i väli]] ([-s arvo]|[-S arvo]) ([-t arvo]|[-T arvo]) [-g|-G] tiedosto [tiedosto...]\n"
 
 #: sys-utils/cytune.c:250 sys-utils/cytune.c:269 sys-utils/cytune.c:289
 #: sys-utils/cytune.c:339
@@ -8642,32 +8401,28 @@ msgstr "Laitteelle %s ei voi käyttää CYGETMONia: %s\n"
 
 #: sys-utils/cytune.c:418
 #, c-format
-msgid ""
-"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
-"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 
 #: sys-utils/cytune.c:424
 #, c-format
 msgid "   %f int/sec; %f rec, %f send (char/sec)\n"
-msgstr "   %f int/sec; %f rec, %f send (char/sec)\n"
+msgstr ""
 
 #: sys-utils/cytune.c:429
 #, c-format
-msgid ""
-"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
-"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 
 #: sys-utils/cytune.c:435
 #, c-format
 msgid "   %f int/sec; %f rec (char/sec)\n"
-msgstr "   %f int/sec; %f rec (char/sec)\n"
+msgstr ""
 
 #: sys-utils/dmesg.c:56
 #, c-format
 msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
-msgstr "Käyttö: %s [-c] [-n taso] [-s puskurin_koko]\n"
+msgstr "käyttö: %s [-c] [-n taso] [-s puskurin_koko]\n"
 
 #: sys-utils/ipcrm.c:66
 #, c-format
@@ -8675,24 +8430,24 @@ msgid "invalid id: %s\n"
 msgstr "virheellinen id: %s\n"
 
 #: sys-utils/ipcrm.c:84
-#, c-format
+#, fuzzy, c-format
 msgid "cannot remove id %s (%s)\n"
-msgstr "id:tä %s ei voi poistaa (%s)\n"
+msgstr "nimeäminen %s -> %s ei onnistu: %s\n"
 
 #: sys-utils/ipcrm.c:99
 #, c-format
 msgid "deprecated usage: %s {shm | msg | sem} id ...\n"
-msgstr "deprecated usage: %s {shm | msg | sem} id ...\n"
+msgstr ""
 
 #: sys-utils/ipcrm.c:126
 #, c-format
 msgid "unknown resource type: %s\n"
-msgstr "unknown resource type: %s\n"
+msgstr "tuntematon resurssityyppi: %s\n"
 
 #: sys-utils/ipcrm.c:130
 #, c-format
 msgid "resource(s) deleted\n"
-msgstr "resource(s) deleted\n"
+msgstr "resurssi(t) poistettu\n"
 
 #: sys-utils/ipcrm.c:140
 #, c-format
@@ -8700,51 +8455,56 @@ msgid ""
 "usage: %s [ [-q msqid] [-m shmid] [-s semid]\n"
 "          [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"
 msgstr ""
-"usage: %s [ [-q msqid] [-m shmid] [-s semid]\n"
-"          [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"
+"käyttö: %s [ [-q msqid] [-m shmid] [-s semid]\n"
+"           [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"
 
 #: sys-utils/ipcrm.c:181
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: illegal option -- %c\n"
+msgstr "%s: virheellinen valitsin -- %c\n"
 
 #: sys-utils/ipcrm.c:193
 #, c-format
 msgid "%s: illegal key (%s)\n"
-msgstr "%s: illegal key (%s)\n"
+msgstr "%s: virheellinen avain (%s)\n"
 
 #: sys-utils/ipcrm.c:208 sys-utils/ipcrm.c:240
+#, fuzzy
 msgid "permission denied for key"
-msgstr "permission denied for key"
+msgstr "mount: lupa evätty"
 
 #: sys-utils/ipcrm.c:211 sys-utils/ipcrm.c:250
 msgid "already removed key"
-msgstr "already removed key"
+msgstr ""
 
 #: sys-utils/ipcrm.c:214 sys-utils/ipcrm.c:245
 msgid "invalid key"
-msgstr "invalid key"
+msgstr ""
 
 #: sys-utils/ipcrm.c:217 sys-utils/ipcrm.c:255
+#, fuzzy
 msgid "unknown error in key"
-msgstr "unknown error in key"
+msgstr "%s: Tuntematon virhe tiedostossa %s\n"
 
 #: sys-utils/ipcrm.c:241
+#, fuzzy
 msgid "permission denied for id"
-msgstr "permission denied for id"
+msgstr "mount: lupa evätty"
 
 #: sys-utils/ipcrm.c:246
 msgid "invalid id"
-msgstr "invalid id"
+msgstr ""
 
 #: sys-utils/ipcrm.c:251
 msgid "already removed id"
-msgstr "already removed id"
+msgstr ""
 
 #: sys-utils/ipcrm.c:256
+#, fuzzy
 msgid "unknown error in id"
-msgstr "unknown error in id"
+msgstr "%s: Tuntematon virhe tiedostossa %s\n"
 
+# Mikä tämä nyt on olevinaan...
 #: sys-utils/ipcrm.c:259
 #, c-format
 msgid "%s: %s (%s)\n"
@@ -8753,12 +8513,12 @@ msgstr "%s: %s (%s)\n"
 #: sys-utils/ipcrm.c:267
 #, c-format
 msgid "%s: unknown argument: %s\n"
-msgstr "%s: unknown argument: %s\n"
+msgstr "%s: tuntematon argumentti: %s\n"
 
 #: sys-utils/ipcs.c:122
 #, c-format
 msgid "usage : %s -asmq -tclup \n"
-msgstr "usage : %s -asmq -tclup \n"
+msgstr "käyttö : %s -asmq -tclup \n"
 
 #: sys-utils/ipcs.c:123
 #, c-format
@@ -8768,14 +8528,12 @@ msgstr "\t%s [-s -m -q] -i id\n"
 #: sys-utils/ipcs.c:124
 #, c-format
 msgid "\t%s -h for help.\n"
-msgstr "\t%s -h for help.\n"
+msgstr "\t%s -h näyttää ohjeen.\n"
 
 #: sys-utils/ipcs.c:130
 #, c-format
-msgid ""
-"%s provides information on ipc facilities for which you have read access.\n"
+msgid "%s provides information on ipc facilities for which you have read access.\n"
 msgstr ""
-"%s provides information on ipc facilities for which you have read access.\n"
 
 #: sys-utils/ipcs.c:132
 #, c-format
@@ -8784,9 +8542,6 @@ msgid ""
 "\t-m : shared_mem\n"
 "\t-q : messages\n"
 msgstr ""
-"Resource Specification:\n"
-"\t-m : shared_mem\n"
-"\t-q : messages\n"
 
 #: sys-utils/ipcs.c:133
 #, c-format
@@ -8794,8 +8549,8 @@ msgid ""
 "\t-s : semaphores\n"
 "\t-a : all (default)\n"
 msgstr ""
-"\t-s : semaphores\n"
-"\t-a : all (default)\n"
+"\t-s : semaforit\n"
+"\t-a : kaikki (oletus)\n"
 
 #: sys-utils/ipcs.c:134
 #, c-format
@@ -8805,10 +8560,10 @@ msgid ""
 "\t-p : pid\n"
 "\t-c : creator\n"
 msgstr ""
-"Output Format:\n"
-"\t-t : time\n"
+"Tulostusmuoto:\n"
+"\t-t : aika\n"
 "\t-p : pid\n"
-"\t-c : creator\n"
+"\t-c : luoja\n"
 
 #: sys-utils/ipcs.c:135
 #, c-format
@@ -8816,78 +8571,78 @@ msgid ""
 "\t-l : limits\n"
 "\t-u : summary\n"
 msgstr ""
-"\t-l : limits\n"
-"\t-u : summary\n"
+"\t-l : rajat\n"
+"\t-u : tiivistelmä\n"
 
 #: sys-utils/ipcs.c:136
 #, c-format
 msgid "-i id [-s -q -m] : details on resource identified by id\n"
-msgstr "-i id [-s -q -m] : details on resource identified by id\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:268
 #, c-format
 msgid "kernel not configured for shared memory\n"
-msgstr "kernel not configured for shared memory\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:274
 #, c-format
 msgid "------ Shared Memory Limits --------\n"
-msgstr "------ Shared Memory Limits --------\n"
+msgstr "------ Jaetun muistin rajat --------\n"
 
 #: sys-utils/ipcs.c:279
 #, c-format
 msgid "max number of segments = %lu\n"
-msgstr "max number of segments = %lu\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:281
 #, c-format
 msgid "max seg size (kbytes) = %lu\n"
-msgstr "max seg size (kbytes) = %lu\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:283
-#, fuzzy, c-format
+#, c-format
 msgid "max total shared memory (kbytes) = %llu\n"
-msgstr "max total shared memory (kbytes) = %lu\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:285
 #, c-format
 msgid "min seg size (bytes) = %lu\n"
-msgstr "min seg size (bytes) = %lu\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:290
 #, c-format
 msgid "------ Shared Memory Status --------\n"
-msgstr "------ Shared Memory Status --------\n"
+msgstr "------ Jaetun muistin tila ---------\n"
 
 #: sys-utils/ipcs.c:291
 #, c-format
 msgid "segments allocated %d\n"
-msgstr "segments allocated %d\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:292
 #, c-format
 msgid "pages allocated %ld\n"
-msgstr "pages allocated %ld\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:293
 #, c-format
 msgid "pages resident  %ld\n"
-msgstr "pages resident  %ld\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:294
 #, c-format
 msgid "pages swapped   %ld\n"
-msgstr "pages swapped   %ld\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:295
 #, c-format
 msgid "Swap performance: %ld attempts\t %ld successes\n"
-msgstr "Swap performance: %ld attempts\t %ld successes\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:300
 #, c-format
 msgid "------ Shared Memory Segment Creators/Owners --------\n"
-msgstr "------ Shared Memory Segment Creators/Owners --------\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:301 sys-utils/ipcs.c:421 sys-utils/ipcs.c:520
 #, c-format
@@ -8901,8 +8656,9 @@ msgstr "shmid"
 
 #: sys-utils/ipcs.c:302 sys-utils/ipcs.c:321 sys-utils/ipcs.c:422
 #: sys-utils/ipcs.c:437 sys-utils/ipcs.c:521 sys-utils/ipcs.c:539
+#, fuzzy
 msgid "perms"
-msgstr "perms"
+msgstr "käyttäjää"
 
 #: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:521
 msgid "cuid"
@@ -8923,7 +8679,7 @@ msgstr "gid"
 #: sys-utils/ipcs.c:306
 #, c-format
 msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
-msgstr "------ Shared Memory Attach/Detach/Change Times --------\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:307
 #, c-format
@@ -8934,24 +8690,25 @@ msgstr "%-10s %-10s %-20s %-20s %-20s\n"
 #: sys-utils/ipcs.c:428 sys-utils/ipcs.c:437 sys-utils/ipcs.c:527
 #: sys-utils/ipcs.c:533 sys-utils/ipcs.c:539
 msgid "owner"
-msgstr "owner"
+msgstr "omistaja"
 
 #: sys-utils/ipcs.c:308
 msgid "attached"
-msgstr "attached"
+msgstr ""
 
 #: sys-utils/ipcs.c:308
 msgid "detached"
-msgstr "detached"
+msgstr ""
 
 #: sys-utils/ipcs.c:309
+#, fuzzy
 msgid "changed"
-msgstr "changed"
+msgstr "Kuori vaihdettu.\n"
 
 #: sys-utils/ipcs.c:313
 #, c-format
 msgid "------ Shared Memory Creator/Last-op --------\n"
-msgstr "------ Shared Memory Creator/Last-op --------\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:314 sys-utils/ipcs.c:532
 #, c-format
@@ -8969,7 +8726,7 @@ msgstr "lpid"
 #: sys-utils/ipcs.c:319
 #, c-format
 msgid "------ Shared Memory Segments --------\n"
-msgstr "------ Shared Memory Segments --------\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:320
 #, c-format
@@ -8978,15 +8735,16 @@ msgstr "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
 
 #: sys-utils/ipcs.c:321 sys-utils/ipcs.c:437 sys-utils/ipcs.c:539
 msgid "key"
-msgstr "key"
+msgstr ""
 
 #: sys-utils/ipcs.c:321
+#, fuzzy
 msgid "bytes"
-msgstr "bytes"
+msgstr "jaa"
 
 #: sys-utils/ipcs.c:322
 msgid "nattch"
-msgstr "nattch"
+msgstr ""
 
 #: sys-utils/ipcs.c:322
 msgid "status"
@@ -8998,79 +8756,79 @@ msgstr "status"
 #: sys-utils/ipcs.c:619 sys-utils/ipcs.c:648 sys-utils/ipcs.c:650
 #: sys-utils/ipcs.c:652 sys-utils/ipcs.c:676
 msgid "Not set"
-msgstr "Not set"
+msgstr "Ei asetettu"
 
 #: sys-utils/ipcs.c:375
 msgid "dest"
-msgstr "dest"
+msgstr "kohde"
 
 #: sys-utils/ipcs.c:376
 msgid "locked"
-msgstr "locked"
+msgstr "lukittu"
 
 #: sys-utils/ipcs.c:396
 #, c-format
 msgid "kernel not configured for semaphores\n"
-msgstr "kernel not configured for semaphores\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:402
 #, c-format
 msgid "------ Semaphore Limits --------\n"
-msgstr "------ Semaphore Limits --------\n"
+msgstr "------- Semaforien rajat -------\n"
 
 #: sys-utils/ipcs.c:406
 #, c-format
 msgid "max number of arrays = %d\n"
-msgstr "max number of arrays = %d\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:407
 #, c-format
 msgid "max semaphores per array = %d\n"
-msgstr "max semaphores per array = %d\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:408
 #, c-format
 msgid "max semaphores system wide = %d\n"
-msgstr "max semaphores system wide = %d\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:409
 #, c-format
 msgid "max ops per semop call = %d\n"
-msgstr "max ops per semop call = %d\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:410
 #, c-format
 msgid "semaphore max value = %d\n"
-msgstr "semaphore max value = %d\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:414
 #, c-format
 msgid "------ Semaphore Status --------\n"
-msgstr "------ Semaphore Status --------\n"
+msgstr "------- Semaforien tila --------\n"
 
 #: sys-utils/ipcs.c:415
 #, c-format
 msgid "used arrays = %d\n"
-msgstr "used arrays = %d\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:416
-#, c-format
+#, fuzzy, c-format
 msgid "allocated semaphores = %d\n"
-msgstr "allocated semaphores = %d\n"
+msgstr "%lld varaamatonta sektoria\n"
 
 #: sys-utils/ipcs.c:420
 #, c-format
 msgid "------ Semaphore Arrays Creators/Owners --------\n"
-msgstr "------ Semaphore Arrays Creators/Owners --------\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:422 sys-utils/ipcs.c:428 sys-utils/ipcs.c:437
 msgid "semid"
 msgstr "semid"
 
 #: sys-utils/ipcs.c:426
-#, fuzzy, c-format
+#, c-format
 msgid "------ Semaphore Operation/Change Times --------\n"
-msgstr "------ Shared Memory Operation/Change Times --------\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:427
 #, c-format
@@ -9079,16 +8837,17 @@ msgstr "%-8s %-10s %-26.24s %-26.24s\n"
 
 #: sys-utils/ipcs.c:428
 msgid "last-op"
-msgstr "last-op"
+msgstr ""
 
 #: sys-utils/ipcs.c:428
+#, fuzzy
 msgid "last-changed"
-msgstr "last-changed"
+msgstr "Salasanaa ei vaihdettu."
 
 #: sys-utils/ipcs.c:435
-#, c-format
+#, fuzzy, c-format
 msgid "------ Semaphore Arrays --------\n"
-msgstr "------ Semaphore Arrays --------\n"
+msgstr "-------      --------"
 
 #: sys-utils/ipcs.c:436 sys-utils/ipcs.c:679
 #, c-format
@@ -9096,58 +8855,59 @@ msgid "%-10s %-10s %-10s %-10s %-10s\n"
 msgstr "%-10s %-10s %-10s %-10s %-10s\n"
 
 #: sys-utils/ipcs.c:438
+#, fuzzy
 msgid "nsems"
-msgstr "nsems"
+msgstr "käyttäjää"
 
 #: sys-utils/ipcs.c:497
 #, c-format
 msgid "kernel not configured for message queues\n"
-msgstr "kernel not configured for message queues\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:505
 #, c-format
 msgid "------ Messages: Limits --------\n"
-msgstr "------ Messages: Limits --------\n"
+msgstr "------- Viestit: Rajat --------\n"
 
 #: sys-utils/ipcs.c:506
 #, c-format
 msgid "max queues system wide = %d\n"
-msgstr "max queues system wide = %d\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:507
 #, c-format
 msgid "max size of message (bytes) = %d\n"
-msgstr "max size of message (bytes) = %d\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:508
 #, c-format
 msgid "default max size of queue (bytes) = %d\n"
-msgstr "default max size of queue (bytes) = %d\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:512
 #, c-format
 msgid "------ Messages: Status --------\n"
-msgstr "------ Messages: Status --------\n"
+msgstr "------- Viestit: Tila --------\n"
 
 #: sys-utils/ipcs.c:513
 #, c-format
 msgid "allocated queues = %d\n"
-msgstr "allocated queues = %d\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:514
 #, c-format
 msgid "used headers = %d\n"
-msgstr "used headers = %d\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:515
-#, c-format
+#, fuzzy, c-format
 msgid "used space = %d bytes\n"
-msgstr "used space = %d bytes\n"
+msgstr "Superlohko: %d tavua\n"
 
 #: sys-utils/ipcs.c:519
 #, c-format
 msgid "------ Message Queues: Creators/Owners --------\n"
-msgstr "------ Message Queues: Creators/Owners --------\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:521 sys-utils/ipcs.c:527 sys-utils/ipcs.c:533
 #: sys-utils/ipcs.c:539
@@ -9157,7 +8917,7 @@ msgstr "msqid"
 #: sys-utils/ipcs.c:525
 #, c-format
 msgid "------ Message Queues Send/Recv/Change Times --------\n"
-msgstr "------ Message Queues Send/Recv/Change Times --------\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:526
 #, c-format
@@ -9174,12 +8934,12 @@ msgstr "recv"
 
 #: sys-utils/ipcs.c:527
 msgid "change"
-msgstr "change"
+msgstr ""
 
 #: sys-utils/ipcs.c:531
-#, c-format
+#, fuzzy, c-format
 msgid "------ Message Queues PIDs --------\n"
-msgstr "------ Message Queues PIDs --------\n"
+msgstr "-------      --------"
 
 #: sys-utils/ipcs.c:533
 msgid "lspid"
@@ -9192,7 +8952,7 @@ msgstr "lrpid"
 #: sys-utils/ipcs.c:537
 #, c-format
 msgid "------ Message Queues --------\n"
-msgstr "------ Message Queues --------\n"
+msgstr "------- Viestijonot --------\n"
 
 #: sys-utils/ipcs.c:538
 #, c-format
@@ -9201,11 +8961,11 @@ msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 
 #: sys-utils/ipcs.c:540
 msgid "used-bytes"
-msgstr "used-bytes"
+msgstr ""
 
 #: sys-utils/ipcs.c:540
 msgid "messages"
-msgstr "messages"
+msgstr ""
 
 #: sys-utils/ipcs.c:608
 #, c-format
@@ -9213,8 +8973,6 @@ msgid ""
 "\n"
 "Shared memory Segment shmid=%d\n"
 msgstr ""
-"\n"
-"Shared memory Segment shmid=%d\n"
 
 #: sys-utils/ipcs.c:609
 #, c-format
@@ -9224,12 +8982,12 @@ msgstr "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\n"
 #: sys-utils/ipcs.c:611
 #, c-format
 msgid "mode=%#o\taccess_perms=%#o\n"
-msgstr "mode=%#o\taccess_perms=%#o\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:613
 #, c-format
 msgid "bytes=%ld\tlpid=%d\tcpid=%d\tnattch=%ld\n"
-msgstr "bytes=%ld\tlpid=%d\tcpid=%d\tnattch=%ld\n"
+msgstr ""
 
 #: sys-utils/ipcs.c:616
 #, c-format
@@ -9253,7 +9011,7 @@ msgid ""
 "Message Queue msqid=%d\n"
 msgstr ""
 "\n"
-"Message Queue msqid=%d\n"
+"Viestijonon msqid=%d\n"
 
 #: sys-utils/ipcs.c:636
 #, c-format
@@ -9281,8 +9039,6 @@ msgid ""
 "\n"
 "Semaphore Array semid=%d\n"
 msgstr ""
-"\n"
-"Semaphore Array semid=%d\n"
 
 #: sys-utils/ipcs.c:670
 #, c-format
@@ -9334,48 +9090,44 @@ msgid "usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
 msgstr "käyttö: rdev [ -rv ] [ -o SIIRTYMÄ ] [ KUVA [ VALUE [ SIIRTYMÄ ] ] ]"
 
 #: sys-utils/rdev.c:70
-msgid ""
-"  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
+msgid "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
 msgstr "  rdev /dev/fd0  (tai rdev /linux, jne) näyttää nykyisen JUURIlaitteen"
 
 #: sys-utils/rdev.c:71
 msgid "  rdev /dev/fd0 /dev/hda2         sets ROOT to /dev/hda2"
-msgstr "  rdev /dev/fd0 /dev/hda2   \t  asettaa JUUREKSI /dev/hda2"
+msgstr "  rdev /dev/fd0 /dev/hda2         asettaa JUUREKSI /dev/hda2"
 
 #: sys-utils/rdev.c:72
 msgid "  rdev -R /dev/fd0 1              set the ROOTFLAGS (readonly status)"
-msgstr "  rdev -R /dev/fd0 1\t\t  aseta JUURILIPUT (vain luku -tila)"
+msgstr "  rdev -R /dev/fd0 1              aseta JUURILIPUT (vain luku -tila)"
 
 #: sys-utils/rdev.c:73
 msgid "  rdev -r /dev/fd0 627            set the RAMDISK size"
-msgstr "  rdev -r /dev/fd0 627\t\t  aseta RAM-levyn koko"
+msgstr "  rdev -r /dev/fd0 627            aseta RAM-levyn koko"
 
 #: sys-utils/rdev.c:74
 msgid "  rdev -v /dev/fd0 1              set the bootup VIDEOMODE"
-msgstr "  rdev -v /dev/fd0 1\t\t  aseta käynnistyksen NÄYTTÖTILA"
+msgstr "  rdev -v /dev/fd0 1              aseta käynnistyksen NÄYTTÖTILA"
 
 #: sys-utils/rdev.c:75
 msgid "  rdev -o N ...                   use the byte offset N"
-msgstr "  rdev -o N ...\t\t\t  käytä tavusiirtymää N"
+msgstr "  rdev -o N ...                   käytä tavusiirtymää N"
 
 #: sys-utils/rdev.c:76
 msgid "  rootflags ...                   same as rdev -R"
-msgstr "  rootflags ...\t\t\t  sama kuin rdev -R"
+msgstr "  rootflags ...                   sama kuin rdev -R"
 
 #: sys-utils/rdev.c:77
 msgid "  ramsize ...                     same as rdev -r"
-msgstr "  ramsize ...\t\t\t  sama kuin rdev -r"
+msgstr "  ramsize ...                     sama kuin rdev -r"
 
 #: sys-utils/rdev.c:78
 msgid "  vidmode ...                     same as rdev -v"
-msgstr "  vidmode ...\t\t\t  sama kuin rdev -v"
+msgstr "  vidmode ...                     sama kuin rdev -v"
 
 #: sys-utils/rdev.c:79
-msgid ""
-"Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
-msgstr ""
-"Huom: Näyttötilat ovat: -3=Kysy, -2=Laajennettu, -1=NormaaliVga, 1=avain1, "
-"2=avain2,..."
+msgid "Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
+msgstr "Huom: Näyttötilat ovat: -3=Kysy, -2=Laajennettu, -1=NormaaliVga, 1=avain1, 2=avain2,..."
 
 #: sys-utils/rdev.c:80
 msgid "      use -R 1 to mount root readonly, -R 0 for read/write."
@@ -9408,15 +9160,15 @@ msgid ""
 "\t -n            disable byte order auto-detection\n"
 "\t -V            print version and exit\n"
 msgstr ""
-"%s: Käyttö: \"%s [valitsimet]\n"
-"\t -m <karttatied> (oletukset: \"%s\" ja\n"
-"\t\t\t\t    \"%s\")\n"
-"\t -p <profiili>   (oletus: \"%s\")\n"
+"%s: Käyttö: ”%s [valitsimet]\n"
+"\t -m <karttatied> (oletukset: ”%s” ja\n"
+"\t\t\t\t    ”%s”)\n"
+"\t -p <profiili>   (oletus: ”%s”)\n"
 "\t -M <kerr>       asettaa profilointikertoimeksi <kerr>\n"
-"\t -i              näyttää vain tiedon \"sampling step\":istä\n"
+"\t -i              näyttää vain tiedon ”sampling step”:istä\n"
 "\t -v              monisanaisuus\n"
 "\t -a              näyttää kaikki symbolit, vaikka määrä olisi 0\n"
-"\t -b              näyttää yksittäiset \"histogram-bin\"-määrät\n"
+"\t -b              näyttää yksittäiset ”histogram-bin”-määrät\n"
 "\t -s              näyttää yksittäiset laskurit funktioissa\n"
 "\t -r              nollaa kaikki laskurit (vain pääkäyttäjälle)\n"
 "\t -n              poistaa käytöstä tavujärjestyksen automaattitunnistuksen\n"
@@ -9435,13 +9187,12 @@ msgstr "%s: %s(%i): väärä kartan rivi\n"
 #: sys-utils/readprofile.c:318
 #, c-format
 msgid "%s: can't find \"_stext\" in %s\n"
-msgstr "%s: merkkijonoa \"_stext\" ei löydy tiedostosta %s\n"
+msgstr "%s: merkkijonoa ”_stext” ei löydy tiedostosta %s\n"
 
 #: sys-utils/readprofile.c:352
 #, c-format
 msgid "%s: profile address out of range. Wrong map file?\n"
-msgstr ""
-"%s: profiiliosoite sallitun välin ulkopuolella. Väärä karttatiedosto?\n"
+msgstr "%s: profiiliosoite sallitun välin ulkopuolella. Väärä karttatiedosto?\n"
 
 #: sys-utils/readprofile.c:412
 msgid "total"
@@ -9449,11 +9200,8 @@ msgstr "yhteensä"
 
 #: sys-utils/renice.c:68
 #, c-format
-msgid ""
-"usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
-msgstr ""
-"käyttö: renice prioriteetti [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] "
-"käyttäjät ]\n"
+msgid "usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
+msgstr "käyttö: renice prioriteetti [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] käyttäjät ]\n"
 
 #: sys-utils/renice.c:97
 #, c-format
@@ -9517,49 +9265,44 @@ msgid "set rtc wake alarm"
 msgstr ""
 
 #: sys-utils/rtcwake.c:324
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized suspend state '%s'\n"
-msgstr " %s: tunnistamaton osiotaulun tyyppi\n"
+msgstr " %s: tunnistamaton virransäästötila ”%s”\n"
 
 #: sys-utils/rtcwake.c:333
-#, fuzzy, c-format
+#, c-format
 msgid "%s: illegal interval %s seconds\n"
-msgstr "%s: illegal key (%s)\n"
+msgstr "%s: virheellinen aikaväli %s sekuntia\n"
 
 #: sys-utils/rtcwake.c:347
-#, fuzzy, c-format
+#, c-format
 msgid "%s: illegal time_t value %s\n"
-msgstr "%s: virheellinen valitsin -- %s\n"
+msgstr "%s: virheellinen time_t-arvo %s\n"
 
 #: sys-utils/rtcwake.c:363
-#, fuzzy, c-format
+#, c-format
 msgid "%s: version %s\n"
-msgstr "%s versio %s\n"
+msgstr "%s: versio %s\n"
 
 #: sys-utils/rtcwake.c:376
 #, c-format
 msgid "%s: assuming RTC uses UTC ...\n"
-msgstr ""
+msgstr "%s: oletetaan RTC:n käyttävän UTC:tä...\n"
 
+# Tätä ei voi suomentaa paremmin muuttamatta koodia tai sotkematta "local"-käännöstä.
 #: sys-utils/rtcwake.c:380
-#, fuzzy, c-format
-msgid "Using UTC time.\n"
-msgstr "Käytetään rajapintaa %s.\n"
-
-#: sys-utils/rtcwake.c:381
-#, fuzzy, c-format
-msgid "Using local time.\n"
-msgstr "Käytetään rajapintaa %s.\n"
+#, c-format
+msgid "Using %s time\n"
+msgstr "Käytetään %s-aikaa.\n"
 
 #: sys-utils/rtcwake.c:385
 #, c-format
 msgid "%s: must provide wake time\n"
-msgstr ""
+msgstr "%s: herätysaika on annettava\n"
 
 #: sys-utils/rtcwake.c:395
-#, fuzzy
 msgid "malloc() failed"
-msgstr "\"malloc\" epäonnistui"
+msgstr "malloc() epäonnistui"
 
 #: sys-utils/rtcwake.c:406
 #, fuzzy, c-format
@@ -9582,74 +9325,70 @@ msgid "%s: wakeup from \"%s\" using %s at %s\n"
 msgstr "Viesti %3$s:lle kirjautuneelta käyttäjältä %1$s@%2$s, kello %4$s..."
 
 #: sys-utils/rtcwake.c:451
-#, fuzzy
 msgid "rtc read"
-msgstr ", valmis"
+msgstr "virhe rtc:tä luettaessa"
 
 #: sys-utils/rtcwake.c:460
 msgid "disable rtc alarm interrupt"
 msgstr ""
 
-#: sys-utils/setarch.c:50
-#, c-format
-msgid "Switching on %s.\n"
-msgstr ""
-
-#: sys-utils/setarch.c:81
+#: sys-utils/setarch.c:57
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
 "\n"
 "Options:\n"
 msgstr ""
+"Käyttö: %s%s [valitsimet] [ohjelma [ohjelman argumentit]]\n"
+"\n"
+"Valitsimet:\n"
 
-#: sys-utils/setarch.c:85
+#: sys-utils/setarch.c:61
 #, c-format
-msgid ""
-" -h, --help               this help\n"
-" -v, --verbose            verbose mode\n"
-" -R, --addr-no-randomize  disables randomization of the virtual address "
-"space\n"
-" -F, --fdpic-funcptrs     turns on function pointers point to descriptors\n"
-" -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
-" -L, --addr-compat-layout changes the way virtual memory is allocated\n"
-" -X, --read-implies-exec  turns on READ_IMPLIES_EXEC\n"
-" -B, --32bit              turns on ADDR_LIMIT_32BIT\n"
-" -I, --short-inode        turns on SHORT_INODE\n"
-" -S, --whole-seconds      turns on WHOLE_SECONDS\n"
-" -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
-" -3, --3gb                turns on maximum of 3GB of address space\n"
-"     --4gb                ignored (for backward compatibility only\n"
-msgstr ""
+msgid "\t-%c\tEnable %s\n"
+msgstr "\t-%c\tOta käyttöön %s\n"
 
-#: sys-utils/setarch.c:99
+#: sys-utils/setarch.c:63
 #, c-format
 msgid ""
 "\n"
 "For more information see setarch(8).\n"
 msgstr ""
+"\n"
+"Lisätietoja manuaalisivulla setarch(8).\n"
 
-#: sys-utils/setarch.c:111
-#, fuzzy, c-format
+#: sys-utils/setarch.c:75
+#, c-format
 msgid ""
 "%s: %s\n"
 "Try `%s --help' for more information.\n"
-msgstr "Komento \"getopt --help\" antaa lisää tietoa.\n"
+msgstr ""
+"%s: %s\n"
+"Komento ”%s --help” antaa lisää tietoa.\n"
 
-#: sys-utils/setarch.c:179 sys-utils/setarch.c:195
-#, fuzzy, c-format
+#: sys-utils/setarch.c:133 sys-utils/setarch.c:149
+#, c-format
 msgid "%s: Unrecognized architecture"
-msgstr " %s: tunnistamaton osiotaulun tyyppi\n"
+msgstr " %s: Tunnistamaton arkkitehtuuri"
 
-#: sys-utils/setarch.c:213 sys-utils/setarch.c:220
-#, fuzzy
+#: sys-utils/setarch.c:166 sys-utils/setarch.c:173
 msgid "Not enough arguments"
-msgstr "Liian monta argumenttia.\n"
+msgstr "Liian vähän argumentteja"
 
-#: sys-utils/setarch.c:282
+#: sys-utils/setarch.c:199
+#, c-format
+msgid "Switching on %s.\n"
+msgstr ""
+
+#: sys-utils/setarch.c:206
+#, c-format
+msgid "Unknown option `%c' ignored"
+msgstr "Tuntematon valitsin ”%c” jätetty huomiotta"
+
+#: sys-utils/setarch.c:211
 #, fuzzy, c-format
 msgid "Failed to set personality to %s"
-msgstr "Osion kirjoitus epäonnistui laitteelle %s\n"
+msgstr "Osion kirjoitus epäonnistui laitteelle %s"
 
 #: sys-utils/setsid.c:26
 #, c-format
@@ -9779,23 +9518,20 @@ msgstr "hexdump: virheellinen ohitusarvo.\n"
 
 #: text-utils/hexsyntax.c:131
 #, c-format
-msgid ""
-"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
-msgstr ""
-"hexdump: [-bcCdovx] [-e muoto] [-f muototied] [-n pituus] [-s ohita] "
-"[tiedosto ...]\n"
+msgid "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
+msgstr "hexdump: [-bcCdovx] [-e muoto] [-f muototied] [-n pituus] [-s ohita] [tiedosto ...]\n"
 
-#: text-utils/more.c:257
+#: text-utils/more.c:258
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr "käyttö: %s [-dflpcsu] [+rivinumero | +/hahmo] nimi1 nimi2 ...\n"
 
-#: text-utils/more.c:480
+#: text-utils/more.c:481
 #, c-format
 msgid "%s: unknown option \"-%c\"\n"
-msgstr "%s: tuntematon valitsin \"-%c\"\n"
+msgstr "%s: tuntematon valitsin ”-%c”\n"
 
-#: text-utils/more.c:512
+#: text-utils/more.c:513
 #, c-format
 msgid ""
 "\n"
@@ -9806,7 +9542,7 @@ msgstr ""
 "*** %s: hakemisto ***\n"
 "\n"
 
-#: text-utils/more.c:556
+#: text-utils/more.c:557
 #, c-format
 msgid ""
 "\n"
@@ -9817,45 +9553,45 @@ msgstr ""
 "***** %s: Ei ole tekstitiedosto *****\n"
 "\n"
 
-#: text-utils/more.c:659
+#: text-utils/more.c:660
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Käytä q tai Q lopettaaksesi]"
 
-#: text-utils/more.c:751
+#: text-utils/more.c:752
 #, c-format
 msgid "--More--"
 msgstr "--Lisää--"
 
-#: text-utils/more.c:753
+#: text-utils/more.c:754
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Seuraava tiedosto: %s)"
 
-#: text-utils/more.c:758
+#: text-utils/more.c:759
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
-msgstr "[Välilyönti jatkaa, \"q\" lopettaa.]"
+msgstr "[Välilyönti jatkaa, ”q” lopettaa.]"
 
-#: text-utils/more.c:1173
+#: text-utils/more.c:1158
 #, c-format
 msgid "...back %d pages"
 msgstr "...%d sivua taaksepäin"
 
-#: text-utils/more.c:1175
+#: text-utils/more.c:1160
 msgid "...back 1 page"
 msgstr "...1 sivu taaksepäin"
 
-#: text-utils/more.c:1218
+#: text-utils/more.c:1203
 msgid "...skipping one line"
 msgstr "...ohitetaan yksi rivi"
 
-#: text-utils/more.c:1220
+#: text-utils/more.c:1205
 #, c-format
 msgid "...skipping %d lines"
 msgstr "...ohitetaan %d riviä"
 
-#: text-utils/more.c:1257
+#: text-utils/more.c:1242
 msgid ""
 "\n"
 "***Back***\n"
@@ -9865,20 +9601,18 @@ msgstr ""
 "***Takaisin***\n"
 "\n"
 
-#: text-utils/more.c:1295
+#: text-utils/more.c:1280
 msgid ""
 "\n"
-"Most commands optionally preceded by integer argument k.  Defaults in "
-"brackets.\n"
+"Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 "\n"
 "Useimpia komentoja voi edeltää valinnainen kokonaislukuargumentti k.\n"
 "Oletusasetukset hakasulkeissa.\n"
-"Asteriskilla (*) merkityissä komennoissa argumentista tulee uusi "
-"oletusarvo.\n"
+"Asteriskilla (*) merkityissä komennoissa argumentista tulee uusi oletusarvo.\n"
 
-#: text-utils/more.c:1302
+#: text-utils/more.c:1287
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -9900,13 +9634,10 @@ msgid ""
 ":f                      Display current file name and line number\n"
 ".                       Repeat previous command\n"
 msgstr ""
-"<väli>                  Näytä seuraavat k riviä tekstiä [nykyinen ruudun "
-"rivimäärä]\n"
-"z                       Näytä seuraavat k riviä tekstiä [nykyinen ruudun "
-"rivimäärä]*\n"
+"<väli>                  Näytä seuraavat k riviä tekstiä [nykyinen ruudun rivimäärä]\n"
+"z                       Näytä seuraavat k riviä tekstiä [nykyinen ruudun rivimäärä]*\n"
 "<return>                Näytä seuraavat k riviä tekstiä [1]*\n"
-"d tai ctrl-D            Vieritä k riviä [nykyinen vieritysmäärä, alkuarvo 11]"
-"*\n"
+"d tai ctrl-D            Vieritä k riviä [nykyinen vieritysmäärä, alkuarvo 11]*\n"
 "q tai Q or <keskeytys>  Poistu moresta\n"
 "s                       Ohita k riviä ja siirry eteenpäin [1]\n"
 "f                       Ohita k ruutua tekstiä ja siirry eteenpäin [1]\n"
@@ -9914,8 +9645,7 @@ msgstr ""
 "'                       Palaa kohtaan, josta edellinen haku alkoi\n"
 "=                       Näytä nykyinen rivinumero\n"
 "/<säännöllinen lauseke> Etsi säännöllisen lausekkeen k:s esiintymä [1]\n"
-"n                       Etsi edellisen säännöllisen lausekkeen k:s esiintymä "
-"[1]\n"
+"n                       Etsi edellisen säännöllisen lausekkeen k:s esiintymä [1]\n"
 "!<kom> tai :!<kom>      Käynnistä <kom> alikuoressa\n"
 "v                       Käynnistä /usr/bin/vi nykyiselle riville\n"
 "ctrl-L                  Piirrä ruutu uudelleen\n"
@@ -9924,34 +9654,34 @@ msgstr ""
 ":f                      Näytä nykyinen tiedostonimi ja rivinumero\n"
 ".                       Toista edellinen komento\n"
 
-#: text-utils/more.c:1371 text-utils/more.c:1376
+#: text-utils/more.c:1356 text-utils/more.c:1361
 #, c-format
 msgid "[Press 'h' for instructions.]"
-msgstr "[Näppäin \"h\" näyttää ohjeita.]"
+msgstr "[Näppäin ”h” näyttää ohjeita.]"
 
-#: text-utils/more.c:1410
+#: text-utils/more.c:1395
 #, c-format
 msgid "\"%s\" line %d"
-msgstr "\"%s\" rivi %d"
+msgstr "”%s” rivi %d"
 
-#: text-utils/more.c:1412
+#: text-utils/more.c:1397
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Ei tiedosto] rivi %d"
 
-#: text-utils/more.c:1496
+#: text-utils/more.c:1481
 msgid "  Overflow\n"
 msgstr "  Ylivuoto\n"
 
-#: text-utils/more.c:1543
+#: text-utils/more.c:1528
 msgid "...skipping\n"
 msgstr "...ohitetaan\n"
 
-#: text-utils/more.c:1572
+#: text-utils/more.c:1557
 msgid "Regular expression botch"
 msgstr "Virhe säännöllisessä lausekkeessa"
 
-#: text-utils/more.c:1584
+#: text-utils/more.c:1569
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9959,15 +9689,15 @@ msgstr ""
 "\n"
 "Hahmoa ei löydy\n"
 
-#: text-utils/more.c:1587 text-utils/pg.c:1123 text-utils/pg.c:1274
+#: text-utils/more.c:1572 text-utils/pg.c:1125 text-utils/pg.c:1276
 msgid "Pattern not found"
 msgstr "Hahmoa ei löydy"
 
-#: text-utils/more.c:1648
+#: text-utils/more.c:1633
 msgid "can't fork\n"
 msgstr "haarauttaminen ei onnistu\n"
 
-#: text-utils/more.c:1687
+#: text-utils/more.c:1672
 msgid ""
 "\n"
 "...Skipping "
@@ -9975,19 +9705,19 @@ msgstr ""
 "\n"
 "...Ohitetaan"
 
-#: text-utils/more.c:1691
+#: text-utils/more.c:1676
 msgid "...Skipping to file "
 msgstr "...Vaihdetaan tiedostoon "
 
-#: text-utils/more.c:1693
+#: text-utils/more.c:1678
 msgid "...Skipping back to file "
 msgstr "...Palataan tiedostoon "
 
-#: text-utils/more.c:1971
+#: text-utils/more.c:1956
 msgid "Line too long"
 msgstr "Liian pitkä rivi"
 
-#: text-utils/more.c:2014
+#: text-utils/more.c:1999
 msgid "No previous command to substitute for"
 msgstr "Ei edellistä komentoa korvattavaksi"
 
@@ -10040,89 +9770,86 @@ msgstr "hexdump: virheellinen muoto {%s}\n"
 msgid "hexdump: bad conversion character %%%s.\n"
 msgstr "hexdump: virheellinen muunnosmerkki %%%s.\n"
 
-#: text-utils/pg.c:235
+#: text-utils/pg.c:237
 #, c-format
-msgid ""
-"%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
-msgstr ""
-"%s: Käyttö: %s [-number] [-p merkkijono] [-cefnrs] [+rivi] [+/hahmo/] "
-"[tiedostot]\n"
+msgid "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
+msgstr "%s: Käyttö: %s [-number] [-p merkkijono] [-cefnrs] [+rivi] [+/hahmo/] [tiedostot]\n"
 
-#: text-utils/pg.c:244
+#: text-utils/pg.c:246
 #, c-format
 msgid "%s: option requires an argument -- %s\n"
 msgstr "%s: valitsin vaatii argumentin -- %s\n"
 
-#: text-utils/pg.c:252
+#: text-utils/pg.c:254
 #, c-format
 msgid "%s: illegal option -- %s\n"
 msgstr "%s: virheellinen valitsin -- %s\n"
 
-#: text-utils/pg.c:369
+#: text-utils/pg.c:371
 msgid "...skipping forward\n"
 msgstr "...ohitetaan eteenpäin\n"
 
-#: text-utils/pg.c:371
+#: text-utils/pg.c:373
 msgid "...skipping backward\n"
 msgstr "...ohitetaan taaksepäin\n"
 
-#: text-utils/pg.c:393
+#: text-utils/pg.c:395
 msgid "No next file"
 msgstr "Ei seuraavaa tiedostoa"
 
-#: text-utils/pg.c:397
+#: text-utils/pg.c:399
 msgid "No previous file"
 msgstr "Ei edellistä tiedostoa"
 
-#: text-utils/pg.c:927
+#: text-utils/pg.c:929
 #, c-format
 msgid "%s: Read error from %s file\n"
 msgstr "%s: Lukuvirhe tiedostosta %s\n"
 
-#: text-utils/pg.c:933
+#: text-utils/pg.c:935
 #, c-format
 msgid "%s: Unexpected EOF in %s file\n"
 msgstr "%s: Odottamaton tiedoston loppu (EOF) tiedostossa %s\n"
 
-#: text-utils/pg.c:936
+#: text-utils/pg.c:938
 #, c-format
 msgid "%s: Unknown error in %s file\n"
 msgstr "%s: Tuntematon virhe tiedostossa %s\n"
 
-#: text-utils/pg.c:1031
+#: text-utils/pg.c:1033
 #, c-format
 msgid "%s: Cannot create tempfile\n"
 msgstr "%s: Väliaikaistiedostoa ei voi luoda\n"
 
-#: text-utils/pg.c:1040 text-utils/pg.c:1215
+#: text-utils/pg.c:1042 text-utils/pg.c:1217
 msgid "RE error: "
 msgstr "Virhe säännöllisessä lausekkeessa: "
 
-#: text-utils/pg.c:1197
+#: text-utils/pg.c:1199
 msgid "(EOF)"
 msgstr "(tiedoston loppu)"
 
-#: text-utils/pg.c:1223
+#: text-utils/pg.c:1225
 msgid "No remembered search string"
 msgstr "Ei muistettua hakumerkkijonoa"
 
-#: text-utils/pg.c:1306
+#: text-utils/pg.c:1308
 msgid "Cannot open "
 msgstr "Ei voi avata "
 
-#: text-utils/pg.c:1354
+#: text-utils/pg.c:1356
 msgid "saved"
 msgstr "tallennettu"
 
-#: text-utils/pg.c:1461
+#: text-utils/pg.c:1463
 msgid ": !command not allowed in rflag mode.\n"
 msgstr ": !-komento ei ole sallittu rajoitetussa tilassa.\n"
 
-#: text-utils/pg.c:1493
+#: text-utils/pg.c:1495
 msgid "fork() failed, try again later\n"
 msgstr "fork() epäonnistui, yritä myöhemmin uudelleen\n"
 
-#: text-utils/pg.c:1698
+#: text-utils/pg.c:1700
 msgid "(Next file: "
 msgstr "(Seuraava tiedosto: "
 
@@ -10136,30 +9863,15 @@ msgstr "Puskuritilaa ei voi varata\n"
 msgid "usage: rev [file ...]\n"
 msgstr "käyttö: rev [tiedosto ...]\n"
 
-#: text-utils/tailf.c:59 text-utils/tailf.c:129
-#, fuzzy, c-format
-msgid "Cannot open \"%s\" for read: %s\n"
-msgstr "Tiedostoa \"%s\" ei voi avata lukua varten\n"
-
-#: text-utils/tailf.c:107 text-utils/tailf.c:111
-#, fuzzy
-msgid "Invalid number of lines"
-msgstr "Virheellinen luku: %s\n"
-
-#: text-utils/tailf.c:114
-#, fuzzy
-msgid "Invalid option"
-msgstr "invalid id"
-
-#: text-utils/tailf.c:118
-#, fuzzy, c-format
-msgid "Usage: tailf [-n N | -N] logfile\n"
-msgstr "käyttö: tailf lokitiedosto\n"
-
-#: text-utils/tailf.c:137
+#: text-utils/tailf.c:53 text-utils/tailf.c:105
 #, c-format
-msgid "Incomplete write to \"%s\" (written %d, expected %d)\n"
-msgstr ""
+msgid "Cannot open \"%s\" for read\n"
+msgstr "Tiedostoa ”%s” ei voi avata lukua varten\n"
+
+#: text-utils/tailf.c:93
+#, c-format
+msgid "Usage: tailf logfile\n"
+msgstr "käyttö: tailf lokitiedosto\n"
 
 #: text-utils/ul.c:141
 #, c-format
@@ -10191,34 +9903,14 @@ msgstr "Syöterivi on liian pitkä.\n"
 msgid "Out of memory when growing buffer.\n"
 msgstr "Muisti loppui kasvatettaessa puskuria.\n"
 
-#~ msgid "Password error."
-#~ msgstr "Salasanavirhe."
-
-#~ msgid "couldn't read %s, and cannot ioctl dump\n"
-#~ msgstr "tiedostoa %s ei voitu lukea, eikä dump-ioctl onnistu\n"
-
-#, fuzzy
-#~ msgid "Unknown option `%c' ignored"
-#~ msgstr "%s: tuntematon valitsin \"-%c\"\n"
-
-#~ msgid "`%s': bad directory: '.' isn't first\n"
-#~ msgstr "\"%s\": viallinen hakemisto: \".\" ei ole ensimmäisenä\n"
-
-#~ msgid "`%s': bad directory: '..' isn't second\n"
-#~ msgstr "\"%s\": viallinen hakemisto: \"..\" ei ole toisena\n"
-
 #~ msgid "%s from util-linux-%s\n"
 #~ msgstr "%s paketista util-linux-%s\n"
 
 #~ msgid "%s from %s%s\n"
 #~ msgstr "%s paketista %s%s\n"
 
-#~ msgid ""
-#~ "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  "
-#~ "Exiting.\n"
-#~ msgstr ""
-#~ "MAXENTRIES ylitetty. Kasvata tätä arvoa tiedostossa mkcramfs.c ja käännä "
-#~ "uudelleen. Poistutaan.\n"
+#~ msgid "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  Exiting.\n"
+#~ msgstr "MAXENTRIES ylitetty. Kasvata tätä arvoa tiedostossa mkcramfs.c ja käännä uudelleen. Poistutaan.\n"
 
 #~ msgid "Assuming pages of size %d (not %d)\n"
 #~ msgstr "Oletetaan sivujen kooksi %d (ei %d)\n"
@@ -10272,18 +9964,14 @@ msgstr "Muisti loppui kasvatettaessa puskuria.\n"
 #~ msgid "%s: error: the label %s occurs on both %s and %s\n"
 #~ msgstr "%s: nimiö %s esiintyy sekä paikassa %s että %s\n"
 
-#~ msgid ""
-#~ "%s: could not open %s, so UUID and LABEL conversion cannot be done.\n"
-#~ msgstr ""
-#~ "%s: laitetta %s ei voitu avata, joten UUID- ja LABEL-muunnosta ei voi "
-#~ "tehdä.\n"
+#~ msgid "%s: could not open %s, so UUID and LABEL conversion cannot be done.\n"
+#~ msgstr "%s: laitetta %s ei voitu avata, joten UUID- ja LABEL-muunnosta ei voi tehdä.\n"
 
 #~ msgid "%s: bad UUID"
 #~ msgstr "%s: virheellinen UUID"
 
 #~ msgid "mount: failed with nfs mount version 4, trying 3..\n"
-#~ msgstr ""
-#~ "mount: epäonnistui nfs mount -versiolla 4, yritetään versiolla 3..\n"
+#~ msgstr "mount: epäonnistui nfs mount -versiolla 4, yritetään versiolla 3..\n"
 
 #~ msgid "mount: mounting %s\n"
 #~ msgstr "mount: liitetään %s\n"
@@ -10295,13 +9983,13 @@ msgstr "Muisti loppui kasvatettaessa puskuria.\n"
 #~ msgstr "mount: virhe arvattaessa tiedostojärjestelmän tyyppiä\n"
 
 #~ msgid "mount: excessively long host:dir argument\n"
-#~ msgstr "mount: liian pitkä isäntä:hakemisto-argumentti\n"
+#~ msgstr "mount: liian pitkä konenimi:hakemisto-argumentti\n"
 
 #~ msgid "mount: warning: multiple hostnames not supported\n"
-#~ msgstr "mount: varoitus: useita isäntänimiä ei tueta\n"
+#~ msgstr "mount: varoitus: useita konenimiä ei tueta\n"
 
 #~ msgid "mount: directory to mount not in host:dir format\n"
-#~ msgstr "mount: liitettävä hakemisto ei ole isäntä:hakemisto-muodossa\n"
+#~ msgstr "mount: liitettävä hakemisto ei ole kone:hakemisto-muodossa\n"
 
 #~ msgid "mount: can't get address for %s\n"
 #~ msgstr "mount: nimelle %s ei voi hakea osoitetta\n"
@@ -10317,9 +10005,6 @@ msgstr "Muisti loppui kasvatettaessa puskuria.\n"
 
 #~ msgid "Warning: Option namlen is not supported.\n"
 #~ msgstr "Varoitus: Valitsinta namlen ei tueta.\n"
-
-#~ msgid "unknown nfs mount parameter: %s=%d\n"
-#~ msgstr "tuntematon nfs-liitosparametri: %s=%d\n"
 
 #~ msgid "Warning: option nolock is not supported.\n"
 #~ msgstr "Varoitus: valitsinta nolock ei tueta.\n"
@@ -10355,7 +10040,7 @@ msgstr "Muisti loppui kasvatettaessa puskuria.\n"
 #~ msgstr "tuntematon nfs status -paluuarvo: %d"
 
 #~ msgid "host: %s, directory: %s\n"
-#~ msgstr "isäntä: %s, hakemisto: %s\n"
+#~ msgstr "kone: %s, hakemisto: %s\n"
 
 #~ msgid "umount: can't get address for %s\n"
 #~ msgstr "umount: nimelle %s ei saada osoitetta\n"
@@ -10414,11 +10099,8 @@ msgstr "Muisti loppui kasvatettaessa puskuria.\n"
 #~ msgid "%s: invalid cramfs--bad superblock\n"
 #~ msgstr "%s: virheellinen cramfs--viallinen superlohko\n"
 
-#~ msgid ""
-#~ "%s: invalid cramfs--directory data end (%ld) != file data start (%ld)\n"
-#~ msgstr ""
-#~ "%s: virheellinen cramfs--hakemistodatan loppu (%ld) != tiedostodatan alku "
-#~ "(%ld)\n"
+#~ msgid "%s: invalid cramfs--directory data end (%ld) != file data start (%ld)\n"
+#~ msgstr "%s: virheellinen cramfs--hakemistodatan loppu (%ld) != tiedostodatan alku (%ld)\n"
 
 #~ msgid "%s: invalid cramfs--invalid file data offset\n"
 #~ msgstr "%s: virheellinen cramfs--virheellinen tiedostodatan siirtymä\n"
@@ -10433,11 +10115,8 @@ msgstr "Muisti loppui kasvatettaessa puskuria.\n"
 #~ msgid "flock: unknown option, aborting.\n"
 #~ msgstr "flock: tuntematon valitsin, keskeytetään.\n"
 
-#~ msgid ""
-#~ "Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-#~ msgstr ""
-#~ "Käyttö: flock [--shared] [--timeout=sekunnit] tiedosto komento {arg "
-#~ "arg...}\n"
+#~ msgid "Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
+#~ msgstr "Käyttö: flock [--shared] [--timeout=sekunnit] tiedosto komento {arg arg...}\n"
 
 #~ msgid "Syntax error: '%s'\n"
 #~ msgstr "Syntaksivirhe: \"%s\"\n"
@@ -10448,11 +10127,8 @@ msgstr "Muisti loppui kasvatettaessa puskuria.\n"
 #~ msgid "   %s [ -p ] dev name\n"
 #~ msgstr "   %s [ -p ] laite nimi\n"
 
-#~ msgid ""
-#~ "   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
-#~ msgstr ""
-#~ "   %s [ -p ] laite koko sekt päät raidat venytys väli aste erik1 "
-#~ "fmt_väli\n"
+#~ msgid "   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
+#~ msgstr "   %s [ -p ] laite koko sekt päät raidat venytys väli aste erik1 fmt_väli\n"
 
 #~ msgid "   %s [ -c | -y | -n | -d ] dev\n"
 #~ msgstr "   %s [ -c | -y | -n | -d ] laite\n"
@@ -10534,9 +10210,7 @@ msgstr "Muisti loppui kasvatettaessa puskuria.\n"
 #~ msgstr "Käyttäjätunnusta ei löydy mistään. Onko \"%s\" todella käyttäjä?"
 
 #~ msgid "Sorry, I can only change local passwords. Use yppasswd instead."
-#~ msgstr ""
-#~ "Valitan, pystyn muuttamaan vain paikallisia salasanoja. Käytä komentoa "
-#~ "yppasswd."
+#~ msgstr "Valitan, pystyn muuttamaan vain paikallisia salasanoja. Käytä komentoa yppasswd."
 
 #~ msgid "UID and username does not match, imposter!"
 #~ msgstr "UID ja käyttäjänimi eivät vastaa toisiaan, huijari!"
@@ -10552,9 +10226,6 @@ msgstr "Muisti loppui kasvatettaessa puskuria.\n"
 
 #~ msgid "Enter new password: "
 #~ msgstr "Syötä uusi salasana: "
-
-#~ msgid "Password not changed."
-#~ msgstr "Salasanaa ei vaihdettu."
 
 #~ msgid "Re-type new password: "
 #~ msgstr "Syötä uusi salasana uudelleen: "
