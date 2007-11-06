@@ -7,7 +7,7 @@ sbin_PROGRAMS = mkfs mkswap blockdev fsck.minix mkfs.minix mkfs.bfs
 fsck_minix_SOURCES = fsck.minix.c bitops.h minix.h
 mkfs_minix_SOURCES = mkfs.minix.c bitops.h minix.h
 mkfs_bfs_SOURCES = mkfs.bfs.c
-mkswap_SOURCES = mkswap.c swapheader.h
+mkswap_SOURCES = mkswap.c swapheader.h ../lib/linux_version.c
 
 usrbinexec_PROGRAMS = fdformat isosize
 

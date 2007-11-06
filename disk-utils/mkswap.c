@@ -46,6 +46,7 @@
 #include <selinux/context.h>
 #endif
 
+#include "linux_version.h"
 #include "swapheader.h"
 #include "xstrncpy.h"
 #include "nls.h"
@@ -70,23 +71,7 @@ static unsigned long badpages = 0;
 static int check = 0;
 static int version = -1;
 
-#define MAKE_VERSION(p,q,r)	(65536*(p) + 256*(q) + (r))
-
 #define SELINUX_SWAPFILE_TYPE	"swapfile_t"
-
-static int
-linux_version_code(void) {
-	struct utsname my_utsname;
-	int p, q, r;
-
-	if (uname(&my_utsname) == 0) {
-		p = atoi(strtok(my_utsname.release, "."));
-		q = atoi(strtok(NULL, "."));
-		r = atoi(strtok(NULL, "."));
-		return MAKE_VERSION(p,q,r);
-	}
-	return 0;
-}
 
 #ifdef __sparc__
 # ifdef __arch64__
@@ -597,7 +582,7 @@ main(int argc, char ** argv) {
 			version = 1;
 		else
 		/* use version 1 as default, if possible */
-		if (linux_version_code() < MAKE_VERSION(2,1,117))
+		if (get_linux_version() < KERNEL_VERSION(2,1,117))
 			version = 0;
 		else if (pagesize < 2048)
 			version = 0;
@@ -619,9 +604,9 @@ main(int argc, char ** argv) {
 
 	if (version == 0)
 		maxpages = V0_MAX_PAGES;
-	else if (linux_version_code() >= MAKE_VERSION(2,3,4))
+	else if (get_linux_version() >= KERNEL_VERSION(2,3,4))
 		maxpages = PAGES;
-	else if (linux_version_code() >= MAKE_VERSION(2,2,1))
+	else if (get_linux_version() >= KERNEL_VERSION(2,2,1))
 		maxpages = V1_MAX_PAGES;
 	else
 		maxpages = V1_OLD_MAX_PAGES;
