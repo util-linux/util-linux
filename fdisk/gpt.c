@@ -38,9 +38,7 @@
 #include <errno.h>
 
 #include "gpt.h"
-
-#define KERNEL_VERSION(a,b,c) (((a) << 16) + ((b) << 8) + (c))
-#define SECTOR_SIZE	512	/* default */
+#include "blkdev.h"
 
 #define _GET_BYTE(x, n)		( ((x) >> (8 * (n))) & 0xff )
 
@@ -60,11 +58,6 @@
 #else
 # define CPU_TO_LE64(x)	PED_SWAP64(x)
 #endif
-
-#define BLKSSZGET  _IO(0x12,104) /* get block device sector size */
-#define BLKGETLASTSECT  _IO(0x12,108)   /* get last sector of block device */
-#define BLKGETSIZE _IO(0x12,96)	/* return device size */
-#define BLKGETSIZE64 _IOR(0x12,114,size_t)	/* return device size in bytes (u64 *arg) */
 
 #define GPT_HEADER_SIGNATURE 0x5452415020494645LL
 #define GPT_PRIMARY_PARTITION_TABLE_LBA 1
@@ -108,52 +101,23 @@ struct blkdev_ioctl_param {
 };
 
 static int
-_get_linux_version (void)
-{
-	static int kver = -1;
-	struct utsname uts;
-	int major;
-	int minor;
-	int teeny;
-
-	if (kver != -1)
-		return kver;
-	if (uname (&uts))
-		return kver = 0;
-	if (sscanf (uts.release, "%u.%u.%u", &major, &minor, &teeny) != 3)
-		return kver = 0;
-	return kver = KERNEL_VERSION (major, minor, teeny);
-}
-
-static unsigned int
 _get_sector_size (int fd)
 {
-	unsigned int sector_size;
+	int sector_size;
 
-	if (_get_linux_version() < KERNEL_VERSION (2,3,0))
-		return SECTOR_SIZE;
-	if (ioctl (fd, BLKSSZGET, &sector_size))
-		return SECTOR_SIZE;
+	if (blkdev_get_sector_size(fd, &sector_size) == -1)
+		return DEFAULT_SECTOR_SIZE;
 	return sector_size;
 }
 
 static uint64_t
 _get_num_sectors(int fd)
 {
-	int version = _get_linux_version();
-	unsigned long	size;
-	uint64_t bytes=0;
+	unsigned long long bytes=0;
 
-	if (version >= KERNEL_VERSION(2,5,4) ||
-		(version <  KERNEL_VERSION(2,5,0) &&
-		 version >= KERNEL_VERSION (2,4,18)))
-	{
-                if (ioctl(fd, BLKGETSIZE64, &bytes) == 0)
-                        return bytes / _get_sector_size(fd);
-	}
-	if (ioctl (fd, BLKGETSIZE, &size))
+	if (blkdev_get_size(fd, &bytes) == -1)
 		return 0;
-	return size;
+	return bytes / _get_sector_size(fd);
 }
 
 static uint64_t

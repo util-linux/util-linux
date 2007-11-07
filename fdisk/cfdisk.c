@@ -81,6 +81,7 @@
 #include <linux/types.h>
 
 #include "nls.h"
+#include "blkdev.h"
 #include "xstrncpy.h"
 #include "common.h"
 #include "gpt.h"
@@ -1687,7 +1688,7 @@ fill_p_info(void) {
     ioctl(fd, BLKFLSBUF);	/* ignore errors */
 				/* e.g. Permission Denied */
 
-    if (disksize(fd, &llsectors))
+    if (blkdev_get_sectors(fd, &llsectors) == -1)
 	    fatal(_("Cannot get disk size"), 3);
     actual_size = llsectors;
 

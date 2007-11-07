@@ -24,6 +24,8 @@
 #include "nls.h"
 #include <linux/major.h>        /* FLOPPY_MAJOR */
 
+#include "blkdev.h"
+
 #include "common.h"
 #include "fdisk.h"
 #include "fdisksgilabel.h"
@@ -710,7 +712,7 @@ create_sgilabel(void)
 
 	other_endian = (BYTE_ORDER == LITTLE_ENDIAN);
 
-	res = disksize(fd, &llsectors);
+	res = blkdev_get_sectors(fd, &llsectors);
 
 	if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
 		heads = geometry.heads;

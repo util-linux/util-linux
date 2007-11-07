@@ -2,7 +2,8 @@ include $(top_srcdir)/config/include-Makefile.am
 
 EXTRA_DIST = README.fdisk README.cfdisk sfdisk.examples partitiontype.c
 
-fdisk_common = disksize.c i386_sys_types.c common.h gpt.c gpt.h
+fdisk_common = i386_sys_types.c common.h gpt.c gpt.h \
+	../lib/blkdev.c ../lib/linux_version.c
 
 if !ARCH_M68K
 

@@ -48,6 +48,7 @@
 #include <sys/utsname.h>
 #include <linux/unistd.h>	/* _syscall */
 #include "nls.h"
+#include "blkdev.h"
 #include "common.h"
 
 #include "gpt.h"
@@ -458,7 +459,7 @@ get_geometry(char *dev, int fd, int silent) {
     R.cylinders = 0;
     R.total_size = 0;
 
-    if (disksize(fd, &sectors)) {
+    if (blkdev_get_sectors(fd, &sectors) == -1) {
 	/* maybe an ordinary file */
 	struct stat s;
 
@@ -2810,7 +2811,7 @@ do_size (char *dev, int silent) {
     if (fd < 0)
 	return;
 
-    if (disksize(fd, &size)) {
+    if (blkdev_get_sectors(fd, &size) == -1) {
 	if (!silent) {
 	    perror(dev);
 	    fatal(_("Cannot get size of %s\n"), dev);

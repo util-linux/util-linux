@@ -19,6 +19,7 @@
 #include <sys/sysmacros.h>	/* major */
 
 #include "nls.h"
+#include "blkdev.h"
 
 #include <endian.h>
 #ifdef HAVE_SCSI_SCSI_H
@@ -203,7 +204,7 @@ void create_sunlabel(void)
 	sunlabel->version = SSWAP32(SUN_LABEL_VERSION);
 	sunlabel->num_partitions = SSWAP16(SUN_NUM_PARTITIONS);
 
-	res = disksize(fd, &llsectors);
+	res = blkdev_get_sectors(fd, &llsectors);
 	sec_fac = sector_size / 512;
 
 	if (!ioctl(fd, HDIO_GETGEO, &geometry)) {

@@ -21,6 +21,7 @@
 #include <time.h>
 
 #include "nls.h"
+#include "blkdev.h"
 #include "common.h"
 #include "fdisk.h"
 
@@ -826,40 +827,18 @@ create_doslabel(void) {
 	write_part_table_flag(MBRbuffer);
 }
 
-#include <sys/utsname.h>
-#define MAKE_VERSION(p,q,r)     (65536*(p) + 256*(q) + (r))
-
-static int
-linux_version_code(void) {
-	static int kernel_version = 0;
-        struct utsname my_utsname;
-        int p, q, r;
-
-        if (!kernel_version && uname(&my_utsname) == 0) {
-                p = atoi(strtok(my_utsname.release, "."));
-                q = atoi(strtok(NULL, "."));
-                r = atoi(strtok(NULL, "."));
-                kernel_version = MAKE_VERSION(p,q,r);
-        }
-        return kernel_version;
-}
-
 static void
 get_sectorsize(int fd) {
-#if defined(BLKSSZGET)
-	if (!user_set_sector_size &&
-	    linux_version_code() >= MAKE_VERSION(2,3,3)) {
-		int arg;
-		if (ioctl(fd, BLKSSZGET, &arg) == 0)
-			sector_size = arg;
-		if (sector_size != DEFAULT_SECTOR_SIZE)
-			printf(_("Note: sector size is %d (not %d)\n"),
-			       sector_size, DEFAULT_SECTOR_SIZE);
-	}
-#else
-	/* maybe the user specified it; and otherwise we still
-	   have the DEFAULT_SECTOR_SIZE default */
-#endif
+	int arg;
+
+	if (user_set_sector_size)
+		return;
+
+	if (blkdev_get_sector_size(fd, &arg) == 0)
+		sector_size = arg;
+	if (sector_size != DEFAULT_SECTOR_SIZE)
+		printf(_("Note: sector size is %d (not %d)\n"),
+		       sector_size, DEFAULT_SECTOR_SIZE);
 }
 
 static void
@@ -929,7 +908,7 @@ get_geometry(int fd, struct geom *g) {
 		pt_sectors ? pt_sectors :
 		kern_sectors ? kern_sectors : 63;
 
-	if (disksize(fd, &llsectors))
+	if (blkdev_get_sectors(fd, &llsectors) == -1)
 		llsectors = 0;
 
 	total_number_of_sectors = llsectors;
@@ -2660,7 +2639,7 @@ main(int argc, char **argv) {
 			gpt_warning(disk_device);
 			if ((fd = open(disk_device, type_open)) < 0)
 				fatal(unable_to_open);
-			if (disksize(fd, &size))
+			if (blkdev_get_sectors(fd, &size) == -1)
 				fatal(ioctl_error);
 			close(fd);
 			if (opts == 1)
