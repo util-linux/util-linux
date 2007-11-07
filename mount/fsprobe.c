@@ -6,7 +6,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include "mount_paths.h"
-#include "linux_fs.h"
 #include "fsprobe.h"
 #include "sundries.h"		/* for xstrdup */
 #include "nls.h"

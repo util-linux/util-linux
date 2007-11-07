@@ -8,6 +8,8 @@
 #include <fcntl.h>
 #include <libvolume_id.h>
 
+#include "blkdev.h"
+
 #include "fsprobe.h"
 #include "realpath.h"
 #include "mount_paths.h"
@@ -39,8 +41,7 @@ static char
 		return NULL;
 	}
 
-	/* TODO: use blkdev_get_size() */
-	if (ioctl(fd, BLKGETSIZE64, &size) != 0)
+	if (blkdev_get_size(fd, &size) != 0)
 		size = 0;
 
 	if (volume_id_probe_all(id, 0, size) == 0) {

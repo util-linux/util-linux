@@ -37,11 +37,11 @@
 #include "fstab.h"
 #include "lomount.h"
 #include "loop.h"
-#include "linux_fs.h"		/* for BLKGETSIZE */
 #include "getusername.h"
 #include "mount_paths.h"
 #include "env.h"
 #include "nls.h"
+#include "blkdev.h"
 #include "realpath.h"
 
 #define DO_PS_FIDDLING
@@ -1219,8 +1219,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       break;
     case EINVAL:
     { int fd;
-      unsigned long size;
-      int warned=0;
+      unsigned long long size = 0;
 
       if (flags & MS_REMOUNT) {
 	error (_("mount: %s not mounted already, or bad option"), node);
@@ -1230,32 +1229,21 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 	       spec);
 
 	if (stat(spec, &statbuf) == 0 && S_ISBLK(statbuf.st_mode)
-	   && (fd = open(spec, O_RDONLY | O_NONBLOCK)) >= 0) {
-	  if (ioctl(fd, BLKGETSIZE, &size) == 0) {
-	    if (size == 0 && !loop) {
-	      warned++;
+	                 && (fd = open(spec, O_RDONLY | O_NONBLOCK)) >= 0) {
+
+	  if (blkdev_get_size(fd, &size) == 0) {
+	    if (size == 0 && !loop)
 	      error(_(
 		 "       (could this be the IDE device where you in fact use\n"
 		 "       ide-scsi so that sr0 or sda or so is needed?)"));
-	    }
-	    if (size && size <= 2) {
-	      warned++;
+
+	    if (size && size <= 2)
 	      error(_(
 		  "       (aren't you trying to mount an extended partition,\n"
 		  "       instead of some logical partition inside?)"));
-	    }
-	  close(fd);
+
+	    close(fd);
 	  }
-#if 0
-	  /* 0xf for SCSI, 0x3f for IDE. One might check /proc/partitions
-	     to see whether this thing really is partitioned.
-	     Do not suggest partitions for /dev/fd0. */
-	  if (!warned && (statbuf.st_rdev & 0xf) == 0) {
-	    warned++;
-	    error ("       (could this be the whole disk device\n"
-		   "       where you need a partition?)");
-	  }
-#endif
 	}
 	error(_(
 		"       In some cases useful info is found in syslog - try\n"

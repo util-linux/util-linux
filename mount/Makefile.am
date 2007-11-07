@@ -8,12 +8,13 @@ man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 
 utils_common = sundries.c xmalloc.c realpath.c fsprobe.c
 
-headers_common = fstab.h linux_fs.h mount_mntent.h mount_constants.h \
+headers_common = fstab.h mount_mntent.h mount_constants.h \
 	mount_paths.h lomount.h fsprobe.h realpath.h xmalloc.h \
 	getusername.h loop.h sundries.h
 
 mount_common = fstab.c mount_mntent.c getusername.c lomount.c \
-	$(utils_common) $(headers_common) ../lib/env.c
+	$(utils_common) $(headers_common) ../lib/env.c ../lib/linux_version.c \
+	../lib/blkdev.c
 
 mount_SOURCES = mount.c $(mount_common) ../lib/setproctitle.c
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
