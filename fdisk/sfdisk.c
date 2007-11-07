@@ -49,6 +49,7 @@
 #include <linux/unistd.h>	/* _syscall */
 #include "nls.h"
 #include "blkdev.h"
+#include "linux_version.h"
 #include "common.h"
 
 #include "gpt.h"
@@ -1500,22 +1501,6 @@ bsd_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z) {
 	z->partno = pno;
 }
 
-#define MAKE_VERSION(p,q,r)     (65536*(p) + 256*(q) + (r))
-
-static int
-linux_version_code(void) {
-        struct utsname my_utsname;
-        int p, q, r;
-
-        if (uname(&my_utsname) == 0) {
-                p = atoi(strtok(my_utsname.release, "."));
-                q = atoi(strtok(NULL, "."));
-                r = atoi(strtok(NULL, "."));
-                return MAKE_VERSION(p,q,r);
-        }
-        return 0;
-}
-
 static int
 msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
     int i;
@@ -1524,7 +1509,7 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
     struct sector *s;
     struct part_desc *partitions = &(z->partitions[0]);
     int pno = z->partno;
-    int bsd_later = (linux_version_code() >= MAKE_VERSION(2,3,40));
+    int bsd_later = (get_linux_version() >= KERNEL_VERSION(2,3,40));
 
     if (!(s = get_sector(dev, fd, start)))
 	return 0;
