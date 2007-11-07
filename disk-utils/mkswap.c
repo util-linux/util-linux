@@ -562,7 +562,7 @@ main(int argc, char ** argv) {
 	} else if (PAGES > sz && !force) {
 		fprintf(stderr,
 			_("%s: error: "
-			  "size %lu is larger than device size %lu\n"),
+			  "size %lu KiB is larger than device size %lu KiB\n"),
 			program_name,
 			PAGES*(pagesize/1024), sz*(pagesize/1024));
 		exit(1);
@@ -589,8 +589,8 @@ main(int argc, char ** argv) {
 
 	if (PAGES < 10) {
 		fprintf(stderr,
-			_("%s: error: swap area needs to be at least %ldkB\n"),
-			program_name, (long)(10 * pagesize / 1000));
+			_("%s: error: swap area needs to be at least %ld KiB\n"),
+			program_name, (long)(10 * pagesize/1024));
 		usage();
 	}
 
@@ -606,8 +606,8 @@ main(int argc, char ** argv) {
 	if (PAGES > maxpages) {
 		PAGES = maxpages;
 		fprintf(stderr,
-			_("%s: warning: truncating swap area to %ldkB\n"),
-			program_name, PAGES * pagesize / 1000);
+			_("%s: warning: truncating swap area to %ld KiB\n"),
+			program_name, PAGES * pagesize / 1024);
 	}
 
 	if (opt_label && version == 0) {
@@ -686,8 +686,8 @@ use the -f option to force it.\n"),
 	goodpages = PAGES - badpages - 1;
 	if ((long) goodpages <= 0)
 		die(_("Unable to set up swap-space: unreadable"));
-	printf(_("Setting up swapspace version %d, size = %llu kB\n"),
-		version, (unsigned long long)goodpages * pagesize / 1000);
+	printf(_("Setting up swapspace version %d, size = %llu KiB\n"),
+		version, (unsigned long long)goodpages * pagesize / 1024);
 	write_signature((version == 0) ? "SWAP-SPACE" : "SWAPSPACE2");
 
 	if (version == 1)
