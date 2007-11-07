@@ -50,17 +50,10 @@
 #include "swapheader.h"
 #include "xstrncpy.h"
 #include "nls.h"
+#include "blkdev.h"
 
 #ifdef HAVE_LIBUUID
 #include <uuid/uuid.h>
-#endif
-
-#ifndef _IO
-/* pre-1.3.45 */
-#define BLKGETSIZE 0x1260
-#else
-/* same on i386, m68k, arm; different on alpha, mips, sparc, ppc */
-#define BLKGETSIZE _IO(0x12,96)
 #endif
 
 static char * program_name = "mkswap";
@@ -428,19 +421,18 @@ find_size (int fd) {
 static unsigned long
 get_size(const char  *file) {
 	int	fd;
-	unsigned long	size;
+	unsigned long long size;
 
 	fd = open(file, O_RDONLY);
 	if (fd < 0) {
 		perror(file);
 		exit(1);
 	}
-	if (ioctl(fd, BLKGETSIZE, &size) >= 0) {
-		int sectors_per_page = pagesize/512;
-		size /= sectors_per_page;
-	} else {
+	if (blkdev_get_size(fd, &size) == 0)
+		size /= pagesize;
+	else
 		size = find_size(fd) / pagesize;
-	}
+
 	close(fd);
 	return size;
 }
