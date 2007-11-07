@@ -12,36 +12,7 @@
 #include <errno.h>
 
 #include "nls.h"
-
-/* Since it is impossible to include <linux/fs.h>, let us
-   give the ioctls explicitly. */
-
-#ifndef BLKROSET
-#define BLKROSET   _IO(0x12,93)
-#define BLKROGET   _IO(0x12,94)
-#define BLKRRPART  _IO(0x12,95)
-#define BLKGETSIZE _IO(0x12,96)
-#define BLKFLSBUF  _IO(0x12,97)
-#define BLKRASET   _IO(0x12,98)
-#define BLKRAGET   _IO(0x12,99)
-#define BLKFRASET  _IO(0x12,100)
-#define BLKFRAGET  _IO(0x12,101)
-#define BLKSSZGET  _IO(0x12,104)
-#define BLKBSZGET  _IOR(0x12,112,size_t)
-#define BLKBSZSET  _IOW(0x12,113,size_t)
-#define BLKGETSIZE64 _IOR(0x12,114,size_t)
-#endif
-
-/* Maybe <linux/hdreg.h> could be included */
-#ifndef HDIO_GETGEO
-#define HDIO_GETGEO 0x0301
-struct hd_geometry {
-	unsigned char heads;
-	unsigned char sectors;
-	unsigned short cylinders;	/* truncated */
-	unsigned long start;
-};
-#endif
+#include "blkdev.h"
 
 const char *progname;
 
@@ -63,47 +34,21 @@ struct bdc {
 	char *argname;
 	char *help;
 } bdcms[] = {
-#ifdef BLKROSET
 	{ "--setro", "BLKROSET", BLKROSET, ARGINTP, 1, NULL, N_("set read-only") },
 	{ "--setrw", "BLKROSET", BLKROSET, ARGINTP, 0, NULL, N_("set read-write") },
-#endif
-#ifdef BLKROGET
 	{ "--getro", "BLKROGET", BLKROGET, ARGINTG, -1, NULL, N_("get read-only") },
-#endif
-#ifdef BLKSSZGET
 	{ "--getss", "BLKSSZGET", BLKSSZGET, ARGINTG, -1, NULL, N_("get sectorsize") },
-#endif
-#ifdef BLKBSZGET
 	{ "--getbsz", "BLKBSZGET", BLKBSZGET, ARGINTG, -1, NULL, N_("get blocksize") },
-#endif
-#ifdef BLKBSZSET
 	{ "--setbsz", "BLKBSZSET", BLKBSZSET, ARGINTAP, 0, "BLOCKSIZE", N_("set blocksize") },
-#endif
-#ifdef BLKGETSIZE
 	{ "--getsize", "BLKGETSIZE", BLKGETSIZE, ARGLU, -1, NULL, N_("get 32-bit sector count") },
-#endif
-#ifdef BLKGETSIZE64
 	{ "--getsize64", "BLKGETSIZE64", BLKGETSIZE64, ARGLLU, -1, NULL, N_("get size in bytes") },
-#endif
-#ifdef BLKRASET
 	{ "--setra", "BLKRASET", BLKRASET, ARGINTA, 0, "READAHEAD", N_("set readahead") },
-#endif
-#ifdef BLKRAGET
 	{ "--getra", "BLKRAGET", BLKRAGET, ARGLINTG, -1, NULL, N_("get readahead") },
-#endif
-#ifdef BLKFRASET
 	{ "--setfra", "BLKFRASET", BLKFRASET, ARGINTA, 0, "FSREADAHEAD", N_("set filesystem readahead") },
-#endif
-#ifdef BLKFRAGET
 	{ "--getfra", "BLKFRAGET", BLKFRAGET, ARGLINTG, -1, NULL, N_("get filesystem readahead") },
-#endif
-#ifdef BLKFLSBUF
 	{ "--flushbufs", "BLKFLSBUF", BLKFLSBUF, ARGNONE, 0, NULL, N_("flush buffers") },
-#endif
-#ifdef BLKRRPART
 	{ "--rereadpt", "BLKRRPART", BLKRRPART, ARGNONE, 0, NULL,
 	  N_("reread partition table") },
-#endif
 };
 
 #define SIZE(a)	(sizeof(a)/sizeof((a)[0]))
@@ -142,25 +87,6 @@ find_cmd(char *s) {
 		if (!strcmp(s, bdcms[j].name))
 			return j;
 	return -1;
-}
-
-static int
-getsize(int fd, long long *sectors) {
-	int err;
-	long sz;
-	long long b;
-
-	err = ioctl (fd, BLKGETSIZE, &sz);
-	if (err) {
-		if (errno != EFBIG)
-			return err;
-	}
-	err = ioctl(fd, BLKGETSIZE64, &b);
-	if (err || b == 0 || b == sz)
-		*sectors = sz;
-	else
-		*sectors = (b >> 9);
-	return 0;
 }
 
 void do_commands(int fd, char **argv, int d);
@@ -262,9 +188,9 @@ do_commands(int fd, char **argv, int d) {
 		}
 
 		if (!strcmp(argv[i], "--getsz")) {
-			res = getsize(fd, &llarg);
+			res = blkdev_get_sectors(fd, &llu);
 			if (res == 0)
-				printf("%lld\n", llarg);
+				printf("%lld\n", llu);
 			else
 				exit(1);
 			continue;
@@ -402,8 +328,8 @@ void
 report_device(char *device, int quiet) {
 	int fd;
 	int ro, ssz, bsz;
-	long ra, ss;
-	long long bytes;
+	long ra;
+	unsigned long long bytes;
 	struct hd_geometry g;
 
 	fd = open(device, O_RDONLY | O_NONBLOCK);
@@ -415,14 +341,14 @@ report_device(char *device, int quiet) {
 	}
 
 	ro = ssz = bsz = 0;
-	g.start = ra = ss = 0;
+	g.start = ra = 0;
 	if (ioctl (fd, BLKROGET, &ro) == 0 &&
 	    ioctl (fd, BLKRAGET, &ra) == 0 &&
 	    ioctl (fd, BLKSSZGET, &ssz) == 0 &&
 	    ioctl (fd, BLKBSZGET, &bsz) == 0 &&
 	    ioctl (fd, HDIO_GETGEO, &g) == 0 &&
-	    getsize (fd, &bytes) == 0) {
-		printf("%s %5ld %5d %5d %10ld %10lld  %s\n",
+	    blkdev_get_size (fd, &bytes) == 0) {
+		printf("%s %5ld %5d %5d %10ld %15lld   %s\n",
 		       ro ? "ro" : "rw", ra, ssz, bsz, g.start, bytes, device);
 	} else {
 		if (!quiet)
@@ -435,5 +361,5 @@ report_device(char *device, int quiet) {
 
 void
 report_header() {
-	printf(_("RO    RA   SSZ   BSZ   StartSec     Size    Device\n"));
+	printf(_("RO    RA   SSZ   BSZ   StartSec            Size   Device\n"));
 }

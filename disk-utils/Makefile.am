@@ -8,6 +8,7 @@ fsck_minix_SOURCES = fsck.minix.c bitops.h minix.h
 mkfs_minix_SOURCES = mkfs.minix.c bitops.h minix.h
 mkfs_bfs_SOURCES = mkfs.bfs.c
 mkswap_SOURCES = mkswap.c swapheader.h ../lib/linux_version.c ../lib/blkdev.c
+blockdev_SOURCES = blockdev.c ../lib/linux_version.c ../lib/blkdev.c
 
 usrbinexec_PROGRAMS = fdformat isosize
 
