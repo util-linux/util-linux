@@ -30,6 +30,8 @@
 #include <sys/ioctl.h>
 #include <sys/utsname.h>
 #include "nls.h"
+#include "blkdev.h"
+#include "linux_version.h"
 
 /* this has to match with the kernel structure */
 /* current version for ac19 and 2.2.16 */
@@ -39,10 +41,6 @@ typedef struct blkelv_ioctl_arg_s {
 	int write_latency;
 	int max_bomb_segments;
 } blkelv_ioctl_arg_t;
-
-/* ioctls introduced in 2.2.16, removed in 2.5.58 */
-#define BLKELVGET   _IOR(0x12,106,size_t)
-#define BLKELVSET   _IOW(0x12,107,size_t)
 
 static void
 usage(void) {
@@ -60,23 +58,6 @@ static void
 version(void) {
 	fprintf(stderr, "elvtune (%s)\n", PACKAGE_STRING);
 }
-
-#define MAKE_VERSION(p,q,r)	(65536*(p) + 256*(q) + (r))
-
-static int
-linux_version_code(void) {
-	struct utsname my_utsname;
-	int p, q, r;
-
-	if (uname(&my_utsname) == 0) {
-		p = atoi(strtok(my_utsname.release, "."));
-		q = atoi(strtok(NULL, "."));
-		r = atoi(strtok(NULL, "."));
-		return MAKE_VERSION(p,q,r);
-	}
-	return 0;
-}
-
 
 int
 main(int argc, char * argv[]) {
@@ -123,7 +104,7 @@ main(int argc, char * argv[]) {
 
 	if (optind >= argc)
 		fprintf(stderr, "missing blockdevice, use -h for help\n"), exit(1);
-		
+
 	while (optind < argc) {
 		devname = argv[optind++];
 
@@ -141,7 +122,7 @@ main(int argc, char * argv[]) {
 			int errsv = errno;
 			perror("ioctl get");
 			if ((errsv == EINVAL || errsv == ENOTTY) &&
-			    linux_version_code() >= MAKE_VERSION(2,5,58)) {
+			    get_linux_version() >= KERNEL_VERSION(2,5,58)) {
 				fprintf(stderr,
 					"\nelvtune is only useful on older "
 					"kernels;\nfor 2.6 use IO scheduler "

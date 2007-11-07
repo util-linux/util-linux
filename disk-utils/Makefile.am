@@ -15,6 +15,7 @@ usrbinexec_PROGRAMS = fdformat isosize
 if BUILD_ELVTUNE
 sbin_PROGRAMS += elvtune
 man_MANS += elvtune.8
+elvtune_SOURCES = elvtune.c ../lib/linux_version.c
 endif
 
 if HAVE_RAW
