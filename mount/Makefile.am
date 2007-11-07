@@ -8,7 +8,7 @@ man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 
 utils_common = sundries.c xmalloc.c realpath.c fsprobe.c
 
-headers_common = fstab.h linux_fs.h mount_mntent.h mount_constants.h my_dev_t.h \
+headers_common = fstab.h linux_fs.h mount_mntent.h mount_constants.h \
 	mount_paths.h lomount.h fsprobe.h realpath.h xmalloc.h \
 	getusername.h loop.h sundries.h
 

@@ -1,3 +1,15 @@
+#ifndef MNT_LOOP_H
+#define MNT_LOOP_H
+
+#include <linux/posix_types.h>
+#include "linux_version.h"
+
+#if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,68)
+#define my_dev_t __kernel_dev_t
+#else
+#define my_dev_t __kernel_old_dev_t
+#endif
+
 #define LO_CRYPT_NONE	0
 #define LO_CRYPT_XOR	1
 #define LO_CRYPT_DES	2
@@ -12,8 +24,6 @@
 
 #define LO_NAME_SIZE	64
 #define LO_KEY_SIZE	32
-
-#include "my_dev_t.h"
 
 struct loop_info {
 	int		lo_number;
@@ -49,3 +59,5 @@ struct loop_info64 {
 	unsigned char		lo_encrypt_key[LO_KEY_SIZE];
 	unsigned long long	lo_init[2];
 };
+
+#endif /* MNT_LOOP_H */
