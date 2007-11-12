@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.13-rc3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-10-15 12:05+0200\n"
+"POT-Creation-Date: 2007-11-12 12:18+0100\n"
 "PO-Revision-Date: 2007-08-14 18:03+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -1176,14 +1176,19 @@ msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr "%s: %s: nelze získat selinuxovou nálepku souboru: %s\n"
 
 #: disk-utils/mkswap.c:749
+#, fuzzy
+msgid "unable to matchpathcon()"
+msgstr "o %s nelze získat informace"
+
+#: disk-utils/mkswap.c:752
 msgid "unable to create new selinux context"
 msgstr "nový kontext selinuxu nelze vytvořit"
 
-#: disk-utils/mkswap.c:751
+#: disk-utils/mkswap.c:754
 msgid "couldn't compute selinux context"
 msgstr "nedokáži vypočíst kontext selinuxu"
 
-#: disk-utils/mkswap.c:757
+#: disk-utils/mkswap.c:760
 #, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "%s nelze změnit jmenovku z %s na %s: %s\n"
@@ -7776,27 +7781,27 @@ msgstr "Nelze zamknout v paměti. Končím.\n"
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr "selhalo ioctl LOOP_SET_FD: %s\n"
 
-#: mount/lomount.c:384
+#: mount/lomount.c:387
 #, c-format
 msgid "set_loop(%s,%s,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): úspěch\n"
 
-#: mount/lomount.c:395
+#: mount/lomount.c:398
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: zařízení %s nelze smazat: %s\n"
 
-#: mount/lomount.c:406
+#: mount/lomount.c:409
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): úspěch\n"
 
-#: mount/lomount.c:414
+#: mount/lomount.c:417
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Tento program byl přeložen bez podpory pro loop. Přeložte jej znovu.\n"
 
-#: mount/lomount.c:451
+#: mount/lomount.c:454
 #, c-format
 msgid ""
 "\n"
@@ -7835,12 +7840,12 @@ msgstr ""
 " -v | --verbose           upovídaný režim\n"
 "\n"
 
-#: mount/lomount.c:479 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:482 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "Nedostatek paměti"
 
-#: mount/lomount.c:640
+#: mount/lomount.c:643
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Podpora pro loop nebyla při překladu zadána. Přeložte program znovu.\n"

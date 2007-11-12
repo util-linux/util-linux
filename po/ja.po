@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11n\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-10-15 12:05+0200\n"
+"POT-Creation-Date: 2007-11-12 12:18+0100\n"
 "PO-Revision-Date: 2001-12-11 22:43+0900\n"
 "Last-Translator: Daisuke Yamashita <yamad@mb.infoweb.ne.jp>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -1144,14 +1144,19 @@ msgstr ""
 
 #: disk-utils/mkswap.c:749
 #, fuzzy
+msgid "unable to matchpathcon()"
+msgstr "%s の状態を取得できません"
+
+#: disk-utils/mkswap.c:752
+#, fuzzy
 msgid "unable to create new selinux context"
 msgstr "inode の書き込みができません"
 
-#: disk-utils/mkswap.c:751
+#: disk-utils/mkswap.c:754
 msgid "couldn't compute selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:757
+#: disk-utils/mkswap.c:760
 #, fuzzy, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "%s の名前を %s に変更できません: %s\n"
@@ -7736,29 +7741,29 @@ msgstr "メモリに格納できませんでしたので、終了します。\n"
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:384
+#: mount/lomount.c:387
 #, fuzzy, c-format
 msgid "set_loop(%s,%s,%llu): success\n"
 msgstr "set_loop(%s,%s,%d): 成功\n"
 
-#: mount/lomount.c:395
+#: mount/lomount.c:398
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: デバイス %s を削除できません: %s\n"
 
-#: mount/lomount.c:406
+#: mount/lomount.c:409
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): 成功\n"
 
-#: mount/lomount.c:414
+#: mount/lomount.c:417
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "この mount は loop のサポートなしでコンパイルされました。\n"
 "再コンパイルしてください。\n"
 
-#: mount/lomount.c:451
+#: mount/lomount.c:454
 #, c-format
 msgid ""
 "\n"
@@ -7780,12 +7785,12 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:479 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:482 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "メモリが不十分です"
 
-#: mount/lomount.c:640
+#: mount/lomount.c:643
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""

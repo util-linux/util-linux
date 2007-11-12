@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.13-rc3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-08-07 23:26+0200\n"
+"POT-Creation-Date: 2007-11-12 12:18+0100\n"
 "PO-Revision-Date: 2007-11-12 01:00+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -93,6 +93,11 @@ msgstr "  %s [-v|-q] parancsok eszközök\n"
 msgid "Available commands:\n"
 msgstr "Elérhető parancsok:\n"
 
+#: disk-utils/blockdev.c:123
+#, fuzzy
+msgid "get size in 512-byte sectors"
+msgstr "méret lekérése bájtokban"
+
 #: disk-utils/blockdev.c:275
 #, c-format
 msgid "%s: Unknown command: %s\n"
@@ -102,6 +107,11 @@ msgstr "%s: Ismeretlen parancs: %s\n"
 #, c-format
 msgid "%s requires an argument\n"
 msgstr "%s egy paramétert igényel\n"
+
+#: disk-utils/blockdev.c:329
+#, fuzzy, c-format
+msgid "%s failed.\n"
+msgstr "a pozícionálás meghiúsult"
 
 #: disk-utils/blockdev.c:366
 #, c-format
@@ -150,7 +160,9 @@ msgstr "Olvasás: "
 #: disk-utils/fdformat.c:73
 #, c-format
 msgid "Problem reading cylinder %d, expected %d, read %d\n"
-msgstr "Probléma a(z) %d. cilinder olvasásakor, a várt %d helyett %d került beolvasásra\n"
+msgstr ""
+"Probléma a(z) %d. cilinder olvasásakor, a várt %d helyett %d került "
+"beolvasásra\n"
 
 #: disk-utils/fdformat.c:79
 #, c-format
@@ -170,7 +182,7 @@ msgstr "Használat: %s [-n] eszköz\n"
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:784 disk-utils/mkfs.minix.c:626
 #: disk-utils/mkswap.c:518 misc-utils/ddate.c:179 misc-utils/rename.c:79
-#: misc-utils/script.c:146 sys-utils/readprofile.c:197
+#: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, c-format
 msgid "%s (%s)\n"
 msgstr "%s (%s)\n"
@@ -321,6 +333,11 @@ msgstr "hibás s_zmap_blocks mező a szuperblokkban"
 msgid "Unable to allocate buffer for inode map"
 msgstr "Nem foglalható le puffer az inode térképnek"
 
+#: disk-utils/fsck.minix.c:593
+#, fuzzy
+msgid "Unable to allocate buffer for zone map"
+msgstr "Nem foglalható le puffer az inode térképnek"
+
 #: disk-utils/fsck.minix.c:598
 msgid "Unable to allocate buffer for inodes"
 msgstr "Nem foglalható le puffer az inode-oknak"
@@ -392,7 +409,9 @@ msgstr ""
 #: disk-utils/fsck.minix.c:638 disk-utils/fsck.minix.c:689
 #, c-format
 msgid "Inode %d marked unused, but used for file '%s'\n"
-msgstr "A(z) %d inode nem használtként van megjelölve, de a(z) \"%s\" fájl használja\n"
+msgstr ""
+"A(z) %d inode nem használtként van megjelölve, de a(z) \"%s\" fájl "
+"használja\n"
 
 #: disk-utils/fsck.minix.c:642 disk-utils/fsck.minix.c:693
 msgid "Mark in use"
@@ -408,7 +427,7 @@ msgstr "A(z) \"%s\" fájl módja: %05o\n"
 msgid "Warning: inode count too big.\n"
 msgstr "Figyelmeztetés: az inode szám túl nagy.\n"
 
-#: disk-utils/fsck.minix.c:731
+#: disk-utils/fsck.minix.c:731 disk-utils/fsck.minix.c:739
 msgid "root inode isn't a directory"
 msgstr "a gyökér inode nem könyvtár"
 
@@ -441,27 +460,17 @@ msgstr "A(z) \"%s\" könyvtár hibás inode-számot tartalmaz a \"%.*s\" fájlho
 msgid " Remove"
 msgstr " Eltávolítás"
 
-#: disk-utils/fsck.minix.c:956
-#, c-format
-msgid "`%s': bad directory: '.' isn't first\n"
-msgstr " \"%s\": hibás könyvtár: a \".\" nem az első\n"
-
-#: disk-utils/fsck.minix.c:964
-#, c-format
-msgid "`%s': bad directory: '..' isn't second\n"
-msgstr " \"%s\": hibás könyvtár: a \"..\" nem a második\n"
-
-#: disk-utils/fsck.minix.c:1023
+#: disk-utils/fsck.minix.c:956 disk-utils/fsck.minix.c:1023
 #, c-format
 msgid "%s: bad directory: '.' isn't first\n"
 msgstr "%s: hibás könyvtár: a \".\" nem az első\n"
 
-#: disk-utils/fsck.minix.c:1032
+#: disk-utils/fsck.minix.c:964 disk-utils/fsck.minix.c:1032
 #, c-format
 msgid "%s: bad directory: '..' isn't second\n"
 msgstr "%s: hibás könyvtár: a \"..\" nem a második\n"
 
-#: disk-utils/fsck.minix.c:1066
+#: disk-utils/fsck.minix.c:1066 disk-utils/fsck.minix.c:1084
 msgid "internal error"
 msgstr "belső hiba"
 
@@ -482,12 +491,18 @@ msgstr "A(z) %d. inode módja nem került törlésre."
 #: disk-utils/fsck.minix.c:1119 disk-utils/fsck.minix.c:1174
 #, c-format
 msgid "Inode %d not used, marked used in the bitmap."
-msgstr "A(z) %d. inode nincs használatban, a bittérképen megjelölve használtként."
+msgstr ""
+"A(z) %d. inode nincs használatban, a bittérképen megjelölve használtként."
 
 #: disk-utils/fsck.minix.c:1125 disk-utils/fsck.minix.c:1180
 #, c-format
 msgid "Inode %d used, marked unused in the bitmap."
-msgstr "A(z) %d. inode használatban, a bittérképen megjelölve használaton kívüliként."
+msgstr ""
+"A(z) %d. inode használatban, a bittérképen megjelölve használaton kívüliként."
+
+#: disk-utils/fsck.minix.c:1127 disk-utils/fsck.minix.c:1181
+msgid "Set"
+msgstr "Beállítás"
 
 #: disk-utils/fsck.minix.c:1131 disk-utils/fsck.minix.c:1185
 #, c-format
@@ -516,10 +531,6 @@ msgstr "%d. zóna: használatban, számlált=%d\n"
 #, c-format
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "%d. zóna: nincs használatban, számlált=%d\n"
-
-#: disk-utils/fsck.minix.c:1181
-msgid "Set"
-msgstr "Beállítás"
 
 #: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:631
 #: disk-utils/mkfs.minix.c:633
@@ -755,7 +766,9 @@ msgstr "hiba a(z) \"%s\" lezáráskor"
 #: disk-utils/mkfs.c:73
 #, c-format
 msgid "Usage: mkfs [-V] [-t fstype] [fs-options] device [size]\n"
-msgstr "Használat: mkfs [-V] [-t fájlrendszertípus] [fájlrendszer-beállítások] eszköz [méret]\n"
+msgstr ""
+"Használat: mkfs [-V] [-t fájlrendszertípus] [fájlrendszer-beállítások] "
+"eszköz [méret]\n"
 
 #: disk-utils/mkfs.c:88 disk-utils/mkfs.c:96 fdisk/cfdisk.c:343
 #: getopt/getopt.c:91 getopt/getopt.c:101 login-utils/wall.c:238
@@ -771,7 +784,8 @@ msgstr "mkfs (%s)\n"
 #: disk-utils/mkfs.cramfs.c:125
 #, c-format
 msgid ""
-"usage: %s [-h] [-v] [-b blksize] [-e edition] [-i file] [-n name] dirname outfile\n"
+"usage: %s [-h] [-v] [-b blksize] [-e edition] [-i file] [-n name] dirname "
+"outfile\n"
 " -h         print this help\n"
 " -v         be verbose\n"
 " -E         make all warnings errors (non-zero exit status)\n"
@@ -785,13 +799,15 @@ msgid ""
 " dirname    root of the filesystem to be compressed\n"
 " outfile    output file\n"
 msgstr ""
-"Használat: %s [-h] [-v] [-b blokkméret] [-e kiadás] [-i fájl] [-n név] könyvtárnév kimenetifájl\n"
+"Használat: %s [-h] [-v] [-b blokkméret] [-e kiadás] [-i fájl] [-n név] "
+"könyvtárnév kimenetifájl\n"
 " -h         ez a súgószöveg\n"
 " -v         részletes mód\n"
 " -E         az összes figyelmeztetés hiba (nem nulla visszatérési értékkel)\n"
 " -b blokkméret  ezen blokkméret használata, meg kell egyeznie a lapmérettel\n"
 " -e szerkesztés beállítja a kiadásszámot (a fsid része)\n"
-" -i fájl    egy képfájl beszúrása a fájlrendszerbe (>= 2.4.0 kernel szükséges)\n"
+" -i fájl    egy képfájl beszúrása a fájlrendszerbe (>= 2.4.0 kernel "
+"szükséges)\n"
 " -n név     a cramfs fájlrendszer nevének beállítása\n"
 " -p         %d bájtnyi kitöltés a rendszerindító kódnak\n"
 " -s         a könyvtárbejegyzések rendezése (elavult kapcsoló, érvénytelen)\n"
@@ -806,7 +822,8 @@ msgid ""
 " Please increase MAX_INPUT_NAMELEN in mkcramfs.c and recompile.  Exiting.\n"
 msgstr ""
 "Nagyon (%u bájt) hosszú fájlnév: \"%s\".\n"
-" Növelje a MAX_INPUT_NAMELEN értéket a mkcramfs.c-ben és fordítsa újra. Kilépés.\n"
+" Növelje a MAX_INPUT_NAMELEN értéket a mkcramfs.c-ben és fordítsa újra. "
+"Kilépés.\n"
 
 #: disk-utils/mkfs.cramfs.c:465
 #, c-format
@@ -816,7 +833,8 @@ msgstr "a fájlrendszer túl nagy. Kilépés.\n"
 #: disk-utils/mkfs.cramfs.c:627
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
-msgstr "HIBA: a blokk a blokkhossz (%ld) több mint kétszeresére \"tömörítve\"\n"
+msgstr ""
+"HIBA: a blokk a blokkhossz (%ld) több mint kétszeresére \"tömörítve\"\n"
 
 #: disk-utils/mkfs.cramfs.c:646
 #, c-format
@@ -825,8 +843,12 @@ msgstr "%6.2f%% (%+d bájt)\t%s\n"
 
 #: disk-utils/mkfs.cramfs.c:825
 #, c-format
-msgid "warning: guestimate of required size (upper bound) is %LdMB, but maximum image size is %uMB.  We might die prematurely.\n"
-msgstr "figyelmeztetés: a szükséges becsült méret (felső határa) %Ld MB, de a maximális képfájlméret %u MB. A folyamat idő előtt befejeződhet.\n"
+msgid ""
+"warning: guestimate of required size (upper bound) is %LdMB, but maximum "
+"image size is %uMB.  We might die prematurely.\n"
+msgstr ""
+"figyelmeztetés: a szükséges becsült méret (felső határa) %Ld MB, de a "
+"maximális képfájlméret %u MB. A folyamat idő előtt befejeződhet.\n"
 
 #: disk-utils/mkfs.cramfs.c:866
 #, c-format
@@ -854,9 +876,11 @@ msgid "CRC: %x\n"
 msgstr "CRC: %x\n"
 
 #: disk-utils/mkfs.cramfs.c:897
-#, c-format
-msgid "not enough space allocated for ROM image (%Ld allocated, %d used)\n"
-msgstr "nincs elég hely lefoglalva a ROM képfájlnak (%Ld lefoglalva, %d használatban)\n"
+#, fuzzy, c-format
+msgid "not enough space allocated for ROM image (%lld allocated, %d used)\n"
+msgstr ""
+"nincs elég hely lefoglalva a ROM képfájlnak (%Ld lefoglalva, %d "
+"használatban)\n"
 
 #: disk-utils/mkfs.cramfs.c:909
 #, c-format
@@ -880,13 +904,19 @@ msgstr "figyelmeztetés: a fájlméretek %lu MB-ra (mínusz 1 bájt) csonkítva.
 
 #: disk-utils/mkfs.cramfs.c:929
 #, c-format
-msgid "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
-msgstr "figyelmeztetés: a felhasználói azonosítók %u bitre csonkítva. (Ez biztonsági probléma lehet.)\n"
+msgid ""
+"warning: uids truncated to %u bits.  (This may be a security concern.)\n"
+msgstr ""
+"figyelmeztetés: a felhasználói azonosítók %u bitre csonkítva. (Ez biztonsági "
+"probléma lehet.)\n"
 
 #: disk-utils/mkfs.cramfs.c:934
 #, c-format
-msgid "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
-msgstr "figyelmeztetés: a csoportazonosítók %u bitre csonkítva.(Ez biztonsági probléma lehet.)\n"
+msgid ""
+"warning: gids truncated to %u bits.  (This may be a security concern.)\n"
+msgstr ""
+"figyelmeztetés: a csoportazonosítók %u bitre csonkítva.(Ez biztonsági "
+"probléma lehet.)\n"
 
 #: disk-utils/mkfs.cramfs.c:939
 #, c-format
@@ -909,7 +939,8 @@ msgstr "a(z) %s csatolva van, itt nem lesz létrehozva fájlrendszer!"
 
 #: disk-utils/mkfs.minix.c:248
 msgid "seek to boot block failed in write_tables"
-msgstr "a rendszerinditó blokkra való pozícionálás meghiúsult a write_tables-ben"
+msgstr ""
+"a rendszerinditó blokkra való pozícionálás meghiúsult a write_tables-ben"
 
 #: disk-utils/mkfs.minix.c:250
 msgid "unable to clear boot sector"
@@ -976,7 +1007,8 @@ msgstr "a pozícionálás meghiúsult a check_blocks-ban"
 
 #: disk-utils/mkfs.minix.c:574
 msgid "bad blocks before data-area: cannot make fs"
-msgstr "hibás blokkok az adatterület előtt: nem lehet létrehozni a fájlrendszert"
+msgstr ""
+"hibás blokkok az adatterület előtt: nem lehet létrehozni a fájlrendszert"
 
 #: disk-utils/mkfs.minix.c:580 disk-utils/mkfs.minix.c:602
 #, c-format
@@ -1010,7 +1042,8 @@ msgstr "%s nem nyitható meg"
 #: disk-utils/mkfs.minix.c:713
 #, c-format
 msgid "will not try to make filesystem on '%s'"
-msgstr "a(z) \"%s\" eszközön nem történik kísérlet a fájlrendszer létrehozására"
+msgstr ""
+"a(z) \"%s\" eszközön nem történik kísérlet a fájlrendszer létrehozására"
 
 #: disk-utils/mkswap.c:174
 #, c-format
@@ -1020,7 +1053,9 @@ msgstr "Hibás felhasználó által megadott lapméret: %d\n"
 #: disk-utils/mkswap.c:182
 #, c-format
 msgid "Using user-specified page size %d, instead of the system value %d\n"
-msgstr "A felhasználó által megadott %d lapméret használata a rendszer %d értéke helyett\n"
+msgstr ""
+"A felhasználó által megadott %d lapméret használata a rendszer %d értéke "
+"helyett\n"
 
 #: disk-utils/mkswap.c:206
 #, c-format
@@ -1045,14 +1080,15 @@ msgstr "nincs uuid\n"
 #: disk-utils/mkswap.c:354
 #, c-format
 msgid "Usage: %s [-c] [-v0|-v1] [-pPAGESZ] [-L label] /dev/name [blocks]\n"
-msgstr "Használat: %s [-c] [-v0|-v1] [-pLAPMÉRET] [-L címke] /dev/név [blokkok]\n"
+msgstr ""
+"Használat: %s [-c] [-v0|-v1] [-pLAPMÉRET] [-L címke] /dev/név [blokkok]\n"
 
 #: disk-utils/mkswap.c:377
 msgid "too many bad pages"
 msgstr "túl sok hibás lap"
 
-#: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
-#: text-utils/more.c:1972 text-utils/more.c:1983
+#: disk-utils/mkswap.c:391 misc-utils/look.c:182 misc-utils/setterm.c:1147
+#: text-utils/more.c:1987 text-utils/more.c:1998
 msgid "Out of memory"
 msgstr "Nincs elég memória"
 
@@ -1099,12 +1135,15 @@ msgstr "%s hiba: címke 1-es verziójú lapozóterülettel\n"
 #: disk-utils/mkswap.c:662
 #, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
-msgstr "%s: hiba: a lapozóeszköz létrehozására nem történik kísérlet a(z) \"%s\" eszközön\n"
+msgstr ""
+"%s: hiba: a lapozóeszköz létrehozására nem történik kísérlet a(z) \"%s\" "
+"eszközön\n"
 
 #: disk-utils/mkswap.c:668
 #, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
-msgstr "%s: hiba: a(z) %s csatolva van, a lapozóterület nem kerül létrehozásra.\n"
+msgstr ""
+"%s: hiba: a(z) %s csatolva van, a lapozóterület nem kerül létrehozásra.\n"
 
 #: disk-utils/mkswap.c:681 disk-utils/mkswap.c:702
 msgid "fatal: first page unreadable"
@@ -1151,14 +1190,19 @@ msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr "%s: %s: a selinux fájlcímke nem kérhető le: %s\n"
 
 #: disk-utils/mkswap.c:749
+#, fuzzy
+msgid "unable to matchpathcon()"
+msgstr "%s nem érhető el"
+
+#: disk-utils/mkswap.c:752
 msgid "unable to create new selinux context"
 msgstr "nem hozható létre új selinux kontextus"
 
-#: disk-utils/mkswap.c:751
+#: disk-utils/mkswap.c:754
 msgid "couldn't compute selinux context"
 msgstr "nem számítható ki a selinux kontextus"
 
-#: disk-utils/mkswap.c:757
+#: disk-utils/mkswap.c:760
 #, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "%s: %s nem címkézhető át (erre: %s): %s\n"
@@ -1215,7 +1259,9 @@ msgstr "A lemez megváltozott.\n"
 #: fdisk/cfdisk.c:405
 #, c-format
 msgid "Reboot the system to ensure the partition table is correctly updated.\n"
-msgstr "A rendszer újraindításával biztosíthatja a partíciós tábla megfelelő frissítését.\n"
+msgstr ""
+"A rendszer újraindításával biztosíthatja a partíciós tábla megfelelő "
+"frissítését.\n"
 
 #: fdisk/cfdisk.c:409
 #, c-format
@@ -1287,12 +1333,17 @@ msgid "enlarged logical partitions overlap"
 msgstr "megnövelt logikai partíciók fedik egymást"
 
 #: fdisk/cfdisk.c:991
-msgid "!!!! Internal error creating logical drive with no extended partition !!!!"
-msgstr "Belső hiba logikai partíció kiterjesztett partíció nélküli létrehozása során!"
+msgid ""
+"!!!! Internal error creating logical drive with no extended partition !!!!"
+msgstr ""
+"Belső hiba logikai partíció kiterjesztett partíció nélküli létrehozása során!"
 
 #: fdisk/cfdisk.c:1002 fdisk/cfdisk.c:1014
-msgid "Cannot create logical drive here -- would create two extended partitions"
-msgstr "Nem hozható létre logikai meghajtó -- ez két kiterjesztett partíciót hozna létre"
+msgid ""
+"Cannot create logical drive here -- would create two extended partitions"
+msgstr ""
+"Nem hozható létre logikai meghajtó -- ez két kiterjesztett partíciót hozna "
+"létre"
 
 #: fdisk/cfdisk.c:1156
 msgid "Menu item too long. Menu may look odd."
@@ -1300,7 +1351,8 @@ msgstr "A menüelem túl hosszú. A menü furcsán jelenhet meg."
 
 #: fdisk/cfdisk.c:1212
 msgid "Menu without direction. Defaulting horizontal."
-msgstr "A menünek nincs iránya. Alapértelemezetten vízszintes kerül felhasználásra."
+msgstr ""
+"A menünek nincs iránya. Alapértelemezetten vízszintes kerül felhasználásra."
 
 #: fdisk/cfdisk.c:1343
 msgid "Illegal key"
@@ -1397,8 +1449,11 @@ msgid "Opened disk read-only - you have no permission to write"
 msgstr "A megnyitott lemez csak olvasható - nincs joga írni rá"
 
 #: fdisk/cfdisk.c:1674
-msgid "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
-msgstr "Figyelmeztetés: Nem támogatott GPT (GUID partíciós tábla). Használja a GNU Parted-et."
+msgid ""
+"Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
+msgstr ""
+"Figyelmeztetés: Nem támogatott GPT (GUID partíciós tábla). Használja a GNU "
+"Parted-et."
 
 #: fdisk/cfdisk.c:1691
 msgid "Cannot get disk size"
@@ -1417,8 +1472,10 @@ msgid "Warning!!  This may destroy data on your disk!"
 msgstr "Figyelmeztetés: ez megsemmisítheti a lemezen található adatait!"
 
 #: fdisk/cfdisk.c:1866
-msgid "Are you sure you want to write the partition table to disk? (yes or no): "
-msgstr "Biztosan ki akarja írni a partíciós táblát a lemezre? (igen vagy nem): "
+msgid ""
+"Are you sure you want to write the partition table to disk? (yes or no): "
+msgstr ""
+"Biztosan ki akarja írni a partíciós táblát a lemezre? (igen vagy nem): "
 
 #: fdisk/cfdisk.c:1872
 msgid "no"
@@ -1445,20 +1502,28 @@ msgid "Wrote partition table to disk"
 msgstr "A partíciós tábla kiírva a lemezre"
 
 #: fdisk/cfdisk.c:1909
-msgid "Wrote partition table, but re-read table failed.  Reboot to update table."
-msgstr "A partíciós tábla kiírva, de újraolvasni nem sikerült. Újraindítás szükséges."
+msgid ""
+"Wrote partition table, but re-read table failed.  Reboot to update table."
+msgstr ""
+"A partíciós tábla kiírva, de újraolvasni nem sikerült. Újraindítás szükséges."
 
 #: fdisk/cfdisk.c:1919
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
-msgstr "Egy elsődleges partíció sincs indíthatóként kijelölve. A DOS MBR ezt nem tudja elindítani."
+msgstr ""
+"Egy elsődleges partíció sincs indíthatóként kijelölve. A DOS MBR ezt nem "
+"tudja elindítani."
 
 #: fdisk/cfdisk.c:1921
-msgid "More than one primary partition is marked bootable. DOS MBR cannot boot this."
-msgstr "Több elsődleges partíció van indíthatóként kijelölve. A DOS MBR ezt nem tudja elindítani."
+msgid ""
+"More than one primary partition is marked bootable. DOS MBR cannot boot this."
+msgstr ""
+"Több elsődleges partíció van indíthatóként kijelölve. A DOS MBR ezt nem "
+"tudja elindítani."
 
 #: fdisk/cfdisk.c:1979 fdisk/cfdisk.c:2098 fdisk/cfdisk.c:2182
 msgid "Enter filename or press RETURN to display on screen: "
-msgstr "Adjon meg fájlnevet vagy nyomja meg az ENTER-t a képernyő megjelenítéshez: "
+msgstr ""
+"Adjon meg fájlnevet vagy nyomja meg az ENTER-t a képernyő megjelenítéshez: "
 
 #: fdisk/cfdisk.c:1988 fdisk/cfdisk.c:2106 fdisk/cfdisk.c:2190
 #, c-format
@@ -1523,12 +1588,20 @@ msgid "               First       Last\n"
 msgstr "               Első     Utolsó\n"
 
 #: fdisk/cfdisk.c:2120
-msgid " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) Flag\n"
-msgstr " # Típus     Szektor   Szektor   Eltolás   Hossz  Fájlrendszer Típus (ID)  Jelző\n"
+msgid ""
+" # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
+"Flag\n"
+msgstr ""
+" # Típus     Szektor   Szektor   Eltolás   Hossz  Fájlrendszer Típus (ID)  "
+"Jelző\n"
 
 #: fdisk/cfdisk.c:2121
-msgid "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
-msgstr "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
+msgid ""
+"-- ------- ----------- ----------- ------ ----------- -------------------- "
+"----\n"
+msgstr ""
+"-- ------- ----------- ----------- ------ ----------- -------------------- "
+"----\n"
 
 #: fdisk/cfdisk.c:2204
 msgid "         ---Starting---      ----Ending----    Start     Number of\n"
@@ -1652,7 +1725,8 @@ msgstr "             amelyek közül választhat:"
 
 #: fdisk/cfdisk.c:2293
 msgid "                r - Raw data (exactly what would be written to disk)"
-msgstr "                r - Nyers adatok (pontosan az, ami ki lesz írva a lemezre)"
+msgstr ""
+"                r - Nyers adatok (pontosan az, ami ki lesz írva a lemezre)"
 
 #: fdisk/cfdisk.c:2294
 msgid "                s - Table ordered by sectors"
@@ -1680,7 +1754,8 @@ msgstr "             Választhat MB-ok, szektorok és cilinderek között"
 
 #: fdisk/cfdisk.c:2300
 msgid "  W          Write partition table to disk (must enter upper case W)"
-msgstr "  W          Kiírja a partíciós táblát a lemezre (csak a nagy W érvényes)"
+msgstr ""
+"  W          Kiírja a partíciós táblát a lemezre (csak a nagy W érvényes)"
 
 #: fdisk/cfdisk.c:2301
 msgid "             Since this might destroy data on the disk, you must"
@@ -1938,7 +2013,8 @@ msgstr "Egység"
 
 #: fdisk/cfdisk.c:2739
 msgid "Change units of the partition size display (MB, sect, cyl)"
-msgstr "A partícióméret kijelzési egységének megváltoztatása (MB, Szekt., Cil.)"
+msgstr ""
+"A partícióméret kijelzési egységének megváltoztatása (MB, Szekt., Cil.)"
 
 #: fdisk/cfdisk.c:2740
 msgid "Write"
@@ -2306,7 +2382,9 @@ msgstr "cilinderenkénti szektorok"
 #: fdisk/fdiskbsdlabel.c:481
 #, c-format
 msgid "Must be <= sectors/track * tracks/cylinder (default).\n"
-msgstr "Ez nem lehet nagyobb, mint a sávonkénti szektorok száma * cilinderenkénti sávok száma (alapértelmezett).\n"
+msgstr ""
+"Ez nem lehet nagyobb, mint a sávonkénti szektorok száma * cilinderenkénti "
+"sávok száma (alapértelmezett).\n"
 
 #: fdisk/fdiskbsdlabel.c:483
 msgid "rpm"
@@ -2623,7 +2701,8 @@ msgstr ""
 "Ez nem jelent problémát, de ez az érték nagyobb mint 1024,\n"
 "és bizonyos rendszereken problémák lehetnek:\n"
 "1) rendszerinduláskor futó szoftverekkel (például a LILO régi verziói)\n"
-"2) másik operációs rendszerek indításával és azok partícionáló szoftvereinek\n"
+"2) másik operációs rendszerek indításával és azok partícionáló "
+"szoftvereinek\n"
 "   használatával (például DOS FDISK, OS/2 FDISK)\n"
 
 #: fdisk/fdisk.c:686
@@ -2693,8 +2772,12 @@ msgstr ""
 
 #: fdisk/fdisk.c:1035
 #, c-format
-msgid "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"
-msgstr "Az eszköz nem tartalmez érvényes DOS partíciós táblát, Sun, SGI vagy OSF lemezcímkét\n"
+msgid ""
+"Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
+"disklabel\n"
+msgstr ""
+"Az eszköz nem tartalmez érvényes DOS partíciós táblát, Sun, SGI vagy OSF "
+"lemezcímkét\n"
 
 #: fdisk/fdisk.c:1052
 #, c-format
@@ -2708,8 +2791,12 @@ msgstr "Érvénytelen plusz adatok a '%d' kiterjesztett partíción\n"
 
 #: fdisk/fdisk.c:1077
 #, c-format
-msgid "Warning: invalid flag 0x%04x of partition table %d will be corrected by w(rite)\n"
-msgstr "Figyelmeztetés: érvénytelen a 0x%04x jelző a partíciós táblán '%d'-re lesz korrigálva az írás után\n"
+msgid ""
+"Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
+"(rite)\n"
+msgstr ""
+"Figyelmeztetés: érvénytelen a 0x%04x jelző a partíciós táblán '%d'-re lesz "
+"korrigálva az írás után\n"
 
 #: fdisk/fdisk.c:1099
 #, c-format
@@ -2843,12 +2930,14 @@ msgstr ""
 #: fdisk/fdisk.c:1512
 #, c-format
 msgid "Changed system type of partition %d to %x (%s)\n"
-msgstr "A rendszer partíció típusának a megváltoztatása(z) %d -ról %x (%s)-re\n"
+msgstr ""
+"A rendszer partíció típusának a megváltoztatása(z) %d -ról %x (%s)-re\n"
 
 #: fdisk/fdisk.c:1515
 #, fuzzy, c-format
-msgid "System type of partition %d is unchangedto %x (%s)\n"
-msgstr "A rendszer partíció típusának a megváltoztatása(z) %d -ról %x (%s)-re\n"
+msgid "System type of partition %d is unchanged to %x (%s)\n"
+msgstr ""
+"A rendszer partíció típusának a megváltoztatása(z) %d -ról %x (%s)-re\n"
 
 #: fdisk/fdisk.c:1567
 #, c-format
@@ -3002,7 +3091,8 @@ msgstr "A(z) %d partíción a(z) %d cilinder nagyobb mint a maximális %d\n"
 #: fdisk/fdisk.c:1909
 #, c-format
 msgid "Partition %d: previous sectors %d disagrees with total %d\n"
-msgstr "A(z) %d partíción a %d-t megelőző szektor nem egyezik a teljes %d-vel\n"
+msgstr ""
+"A(z) %d partíción a %d-t megelőző szektor nem egyezik a teljes %d-vel\n"
 
 #: fdisk/fdisk.c:1941
 #, c-format
@@ -3078,7 +3168,9 @@ msgstr ""
 #: fdisk/fdisk.c:2179
 #, c-format
 msgid "You must delete some partition and add an extended partition first\n"
-msgstr "Le kell törölni néhány partíciót és hozzá kell adni kiterjesztett partíciót előbb\n"
+msgstr ""
+"Le kell törölni néhány partíciót és hozzá kell adni kiterjesztett partíciót "
+"előbb\n"
 
 #: fdisk/fdisk.c:2182
 #, fuzzy, c-format
@@ -3200,7 +3292,8 @@ msgstr "Figyelmeztetés: a szektor eltolás DOS módra állítom be\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't "
+"support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 
@@ -3227,12 +3320,18 @@ msgstr "%c: ismeretlen parancs \n"
 #: fdisk/fdisk.c:2628
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
-msgstr "Ez a rendszermag megállapítja szektor méret saját maga  a '-b' opció figyelmen kívül hagyva\n"
+msgstr ""
+"Ez a rendszermag megállapítja szektor méret saját maga  a '-b' opció "
+"figyelmen kívül hagyva\n"
 
 #: fdisk/fdisk.c:2632
 #, c-format
-msgid "Warning: the -b (set sector size) option should be used with one specified device\n"
-msgstr "Figyelmeztetés: a '-b'(a szektor méret beállítása) opcióhoz meg kell adni a egy eszközt\n"
+msgid ""
+"Warning: the -b (set sector size) option should be used with one specified "
+"device\n"
+msgstr ""
+"Figyelmeztetés: a '-b'(a szektor méret beállítása) opcióhoz meg kell adni a "
+"egy eszközt\n"
 
 #: fdisk/fdisk.c:2693
 #, c-format
@@ -3372,8 +3471,12 @@ msgstr "Linux RAID"
 
 #: fdisk/fdisksgilabel.c:163
 #, c-format
-msgid "According to MIPS Computer Systems, Inc the Label must not contain more than 512 bytes\n"
-msgstr "A MIPS Computer Systems, Inc szerint a címke nem tartalmazhat 512 bájtnál többet\n"
+msgid ""
+"According to MIPS Computer Systems, Inc the Label must not contain more than "
+"512 bytes\n"
+msgstr ""
+"A MIPS Computer Systems, Inc szerint a címke nem tartalmazhat 512 bájtnál "
+"többet\n"
 
 #: fdisk/fdisksgilabel.c:182
 #, c-format
@@ -3595,7 +3698,8 @@ msgstr ""
 "0 legyen, az IRIX rendszert csak a könyvtáraktól független\n"
 "eszközökkel lehet helyre rakni mint a sash és az fx.\n"
 "Csak az \"SGI kötet\" sértheti meg ezt,\n"
-"Írja be hogy IGEN ha biztos abban hogy fel szeretné tagolni ezt a partíciót.\n"
+"Írja be hogy IGEN ha biztos abban hogy fel szeretné tagolni ezt a "
+"partíciót.\n"
 
 #: fdisk/fdisksgilabel.c:555 fdisk/fdisksunlabel.c:545
 msgid "YES\n"
@@ -3656,7 +3760,8 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:729 fdisk/fdisksunlabel.c:220
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %d.\n"
+"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
+"d.\n"
 "This value may be truncated for devices > 33.8 GB.\n"
 msgstr ""
 
@@ -3730,7 +3835,8 @@ msgid ""
 "or force a fresh label (s command in main menu)\n"
 msgstr ""
 "Felismertem egy sgi lemezcímkét hibás ellenőrző kóddal.\n"
-"Talán elállított néhány paramétert PL fejek, szektorok, cilinderek és partíciók\n"
+"Talán elállított néhány paramétert PL fejek, szektorok, cilinderek és "
+"partíciók\n"
 "vagy frissítse a címke (a fő menü 's' parancsával)\n"
 
 #: fdisk/fdisksunlabel.c:147
@@ -3750,8 +3856,11 @@ msgstr "Felismertem egy sgi lemezcímkét hibás ellenőrző kóddal.\n"
 
 #: fdisk/fdisksunlabel.c:162
 #, fuzzy, c-format
-msgid "Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
-msgstr "Figyelmeztetés: érvénytelen a 0x%04x jelző a partíciós táblán '%d'-re lesz korrigálva az írás után\n"
+msgid ""
+"Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
+msgstr ""
+"Figyelmeztetés: érvénytelen a 0x%04x jelző a partíciós táblán '%d'-re lesz "
+"korrigálva az írás után\n"
 
 #: fdisk/fdisksunlabel.c:192
 #, c-format
@@ -4258,7 +4367,9 @@ msgstr "BBT"
 #: fdisk/sfdisk.c:178
 #, c-format
 msgid "seek error on %s - cannot seek to %lu\n"
-msgstr "pozícionálási hiba a(z) %s eszközön - nem lehet a(z) %lu helyre pozicionálni\n"
+msgstr ""
+"pozícionálási hiba a(z) %s eszközön - nem lehet a(z) %lu helyre "
+"pozicionálni\n"
 
 #: fdisk/sfdisk.c:183
 #, c-format
@@ -4301,7 +4412,8 @@ msgstr "nem lehet lekérdezni a partíció visszaállító fájlt (%s)\n"
 
 #: fdisk/sfdisk.c:346
 msgid "partition restore file has wrong size - not restoring\n"
-msgstr "a partíció visszaállító fájlnak hibás a mérete - -nem lehet visszahozni\n"
+msgstr ""
+"a partíció visszaállító fájlnak hibás a mérete - -nem lehet visszahozni\n"
 
 #: fdisk/sfdisk.c:350
 msgid "out of memory?\n"
@@ -4361,7 +4473,9 @@ msgstr "Figyelmeztetés: a HDIO_GETGEO azt mondja hogy itt %lu szektor van\n"
 #: fdisk/sfdisk.c:498
 #, c-format
 msgid "Warning: BLKGETSIZE/HDIO_GETGEO says that there are %lu cylinders\n"
-msgstr "Figyelmeztetés: a BLKGETSIZE/HDIO_GETGEO azt mondja hogy itt %lu cilinder van\n"
+msgstr ""
+"Figyelmeztetés: a BLKGETSIZE/HDIO_GETGEO azt mondja hogy itt %lu cilinder "
+"van\n"
 
 #: fdisk/sfdisk.c:503
 #, c-format
@@ -4370,7 +4484,8 @@ msgid ""
 "This will give problems with all software that uses C/H/S addressing.\n"
 msgstr ""
 "Figyelmeztetés: valószínőtlen szektorok száma (%lu). Ez általában 63\n"
-"Ez a gond jelentkezni fog az összes olyan programnál ami C/H/S címzést használ.\n"
+"Ez a gond jelentkezni fog az összes olyan programnál ami C/H/S címzést "
+"használ.\n"
 
 #: fdisk/sfdisk.c:507
 #, c-format
@@ -4383,18 +4498,29 @@ msgstr ""
 
 #: fdisk/sfdisk.c:589
 #, c-format
-msgid "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
-msgstr "A(z) \"%s\" partíció %s értéke érénytelen számú fej: %lu (aminek 0-%lu-nak kell lennie)\n"
+msgid ""
+"%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
+msgstr ""
+"A(z) \"%s\" partíció %s értéke érénytelen számú fej: %lu (aminek 0-%lu-nak "
+"kell lennie)\n"
 
 #: fdisk/sfdisk.c:594
 #, c-format
-msgid "%s of partition %s has impossible value for sector: %lu (should be in 1-%lu)\n"
-msgstr "A(z) \"%s\" partíció %s értéke érénytelen számú fej: %lu (aminek 1-%lu-nak kell lennie)\n"
+msgid ""
+"%s of partition %s has impossible value for sector: %lu (should be in 1-%"
+"lu)\n"
+msgstr ""
+"A(z) \"%s\" partíció %s értéke érénytelen számú fej: %lu (aminek 1-%lu-nak "
+"kell lennie)\n"
 
 #: fdisk/sfdisk.c:599
 #, c-format
-msgid "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%lu)\n"
-msgstr "A(z) \"%s\" partíció %s értéke érénytelen számú cilinder: %lu (aminek 0-%lu-nak kell lennie)\n"
+msgid ""
+"%s of partition %s has impossible value for cylinders: %lu (should be in 0-%"
+"lu)\n"
+msgstr ""
+"A(z) \"%s\" partíció %s értéke érénytelen számú cilinder: %lu (aminek 0-%lu-"
+"nak kell lennie)\n"
 
 #: fdisk/sfdisk.c:639
 #, c-format
@@ -4540,7 +4666,8 @@ msgstr "furcsa, csak %d partíció van létrehozva.\n"
 #: fdisk/sfdisk.c:1185
 #, c-format
 msgid "Warning: partition %s has size 0 but is not marked Empty\n"
-msgstr "Figyelmeztetés :a(z) \"%s\" partíció mérete 0, de nincs üresként bejelölve\n"
+msgstr ""
+"Figyelmeztetés :a(z) \"%s\" partíció mérete 0, de nincs üresként bejelölve\n"
 
 #: fdisk/sfdisk.c:1188
 #, c-format
@@ -4629,7 +4756,9 @@ msgstr ""
 msgid ""
 "Warning: no primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
-msgstr "Figyelmeztetés: nem elsődleges partíció van bejelölve indíthatóként Ez a LILO számára nem gond, de a DOS MBR nem fog elindulni ezen a lemezen.\n"
+msgstr ""
+"Figyelmeztetés: nem elsődleges partíció van bejelölve indíthatóként Ez a "
+"LILO számára nem gond, de a DOS MBR nem fog elindulni ezen a lemezen.\n"
 
 #: fdisk/sfdisk.c:1326
 #, fuzzy
@@ -4638,7 +4767,8 @@ msgstr "indítás"
 
 #: fdisk/sfdisk.c:1329
 #, c-format
-msgid "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
+msgid ""
+"partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr "partíció %s: eleje: (c,h,s) várt (%ld,%ld,%ld) talált (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1335
@@ -4654,7 +4784,9 @@ msgstr "partíció %s: vége: (c,h,s) várt (%ld,%ld,%ld) talált (%ld,%ld,%ld)\
 #: fdisk/sfdisk.c:1341
 #, c-format
 msgid "partition %s ends on cylinder %ld, beyond the end of the disk\n"
-msgstr "A(z) \"%s\" partíció a '%ld' cilindernél végződik, ez a lemez vége előtt van\n"
+msgstr ""
+"A(z) \"%s\" partíció a '%ld' cilindernél végződik, ez a lemez vége előtt "
+"van\n"
 
 #: fdisk/sfdisk.c:1366
 #, c-format
@@ -4662,7 +4794,8 @@ msgid ""
 "Warning: shifted start of the extd partition from %ld to %ld\n"
 "(For listing purposes only. Do not change its contents.)\n"
 msgstr ""
-"Figyelmeztetés: a kiterjesztett partíció át lett helyezve a %ld-ről a -%ld-re\n"
+"Figyelmeztetés: a kiterjesztett partíció át lett helyezve a %ld-ről a -%ld-"
+"re\n"
 "( Csak a listázásnál. Ne változtassa meg ezt a tartalmat.)\n"
 
 #: fdisk/sfdisk.c:1372
@@ -4766,7 +4899,8 @@ msgstr "Érvénytelen típus\n"
 #: fdisk/sfdisk.c:2102
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
-msgstr "Figyelmeztetés: a megadott méret (%lu) túllépte a maximum méretet (%lu)\n"
+msgstr ""
+"Figyelmeztetés: a megadott méret (%lu) túllépte a maximum méretet (%lu)\n"
 
 #: fdisk/sfdisk.c:2108
 msgid "Warning: empty partition\n"
@@ -4803,9 +4937,11 @@ msgid ""
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
 "Usually you only need to specify <start> and <size> (and perhaps <type>).\n"
 msgstr ""
-"A bevitel a következő formájú lehet; az üres mezők az alapértelmezett értéket használják.\n"
+"A bevitel a következő formájú lehet; az üres mezők az alapértelmezett "
+"értéket használják.\n"
 "<start> <méret> <típus [E,S,L,X,hex]> <indítható [-,*]> <c,h,s> <c,h,s>\n"
-"Általában csak a  <start> és a  <méret> -et kell megadni (és néha  <típust>).\n"
+"Általában csak a  <start> és a  <méret> -et kell megadni (és néha  "
+"<típust>).\n"
 
 #: fdisk/sfdisk.c:2289
 #, c-format
@@ -4841,8 +4977,12 @@ msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
 msgstr "    -i [vagy --increment]: cilinderek száma stb 1 helyet 0"
 
 #: fdisk/sfdisk.c:2297
-msgid "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB"
-msgstr "    -uS, -uB, -uC, -uM:  sorrendben a következőket írja ki szektorok/blokkok/cilinderek/MB"
+msgid ""
+"    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
+"MB"
+msgstr ""
+"    -uS, -uB, -uC, -uM:  sorrendben a következőket írja ki szektorok/blokkok/"
+"cilinderek/MB"
 
 #: fdisk/sfdisk.c:2298
 msgid "    -T [or --list-types]:list the known partition types"
@@ -4850,11 +4990,13 @@ msgstr "    -T [vagy --list-types]:kiírja az ismert partíció típusokat"
 
 #: fdisk/sfdisk.c:2299
 msgid "    -D [or --DOS]:       for DOS-compatibility: waste a little space"
-msgstr "    -D [vagy --DOS]:        DOS kompaktibiltás: egy kis helyveszteséggel jár"
+msgstr ""
+"    -D [vagy --DOS]:        DOS kompaktibiltás: egy kis helyveszteséggel jár"
 
 #: fdisk/sfdisk.c:2300
 msgid "    -R [or --re-read]:   make kernel reread partition table"
-msgstr "    -R [vagy --re-read]:   a rendszer mag újra olvassa a partíciós táblát"
+msgstr ""
+"    -R [vagy --re-read]:   a rendszer mag újra olvassa a partíciós táblát"
 
 #: fdisk/sfdisk.c:2301
 msgid "    -N# :                change only the partition with number #"
@@ -4865,8 +5007,10 @@ msgid "    -n :                 do not actually write to disk"
 msgstr "    -n :                 valóban nem írja ki a lemezre"
 
 #: fdisk/sfdisk.c:2303
-msgid "    -O file :            save the sectors that will be overwritten to file"
-msgstr "    -O fájl :            elmenti a szektorokat amivel felülírja a fájlt"
+msgid ""
+"    -O file :            save the sectors that will be overwritten to file"
+msgstr ""
+"    -O fájl :            elmenti a szektorokat amivel felülírja a fájlt"
 
 #: fdisk/sfdisk.c:2304
 msgid "    -I file :            restore these sectors again"
@@ -4886,12 +5030,16 @@ msgstr "veszélyes opciók:"
 
 #: fdisk/sfdisk.c:2308
 msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
-msgstr "    -g [vagy --show-geometry]: kiírja hogy mit gondol a kernel a geometriáról"
+msgstr ""
+"    -g [vagy --show-geometry]: kiírja hogy mit gondol a kernel a geometriáról"
 
 #: fdisk/sfdisk.c:2309
 #, fuzzy
-msgid "    -G [or --show-pt-geometry]: print geometry guessed from the partition table"
-msgstr "    -g [vagy --show-geometry]: kiírja hogy mit gondol a kernel a geometriáról"
+msgid ""
+"    -G [or --show-pt-geometry]: print geometry guessed from the partition "
+"table"
+msgstr ""
+"    -g [vagy --show-geometry]: kiírja hogy mit gondol a kernel a geometriáról"
 
 #: fdisk/sfdisk.c:2310
 msgid ""
@@ -4902,8 +5050,11 @@ msgstr ""
 "                                      vagy leírást vár a bemenetről"
 
 #: fdisk/sfdisk.c:2312
-msgid "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
-msgstr "    -L  [vagy --Linux]:      nem panaszkodik a Linux számára lényegtelen dolgok miatt"
+msgid ""
+"    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
+msgstr ""
+"    -L  [vagy --Linux]:      nem panaszkodik a Linux számára lényegtelen "
+"dolgok miatt"
 
 #: fdisk/sfdisk.c:2313
 msgid "    -q  [or --quiet]:      suppress warning messages"
@@ -4956,7 +5107,8 @@ msgstr "%s - Egy eszköz \t működő partíció n, nem működő a többi\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk doesn't support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk "
+"doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 
@@ -5075,7 +5227,8 @@ msgstr ""
 "\n"
 "Ez a lemez jelenleg használatban van - az újra particionálás hibás ötlet.\n"
 "Csatolja le az összes fájlrendszert és használja a 'swapoff' parancsot a \n"
-"lapozó partíciók lecsatolásához.Használja a --no-reread ha nem akarja ezt az ellenőzést.\n"
+"lapozó partíciók lecsatolásához.Használja a --no-reread ha nem akarja ezt az "
+"ellenőzést.\n"
 
 #: fdisk/sfdisk.c:3018
 msgid "Use the --force flag to overrule all checks.\n"
@@ -5155,7 +5308,8 @@ msgid ""
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
 "(See fdisk(8).)\n"
 msgstr ""
-"Ha létre hozott vagy módosított egy DOS partíciót, /dev/foo7 használja a dd(1)-t\n"
+"Ha létre hozott vagy módosított egy DOS partíciót, /dev/foo7 használja a dd"
+"(1)-t\n"
 "az első 512 bájt kinullázáshoz. dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
 "(Nézze meg az fdisk(8).-et)\n"
 
@@ -5188,8 +5342,11 @@ msgid "              parameters\n"
 msgstr "              paraméterek\n"
 
 #: getopt/getopt.c:330
-msgid "  -a, --alternative            Allow long options starting with single -\n"
-msgstr "  -a, --alternative                Engedélyezi a hosszú opciókat egy kötőjel (-)-el\n"
+msgid ""
+"  -a, --alternative            Allow long options starting with single -\n"
+msgstr ""
+"  -a, --alternative                Engedélyezi a hosszú opciókat egy kötőjel "
+"(-)-el\n"
 
 #: getopt/getopt.c:331
 msgid "  -h, --help                   This small usage guide\n"
@@ -5200,8 +5357,10 @@ msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr "  -l, --longoptions=hosszúopciók   Hosszú opcióként értelmezi\n"
 
 #: getopt/getopt.c:333
-msgid "  -n, --name=progname          The name under which errors are reported\n"
-msgstr "  -n, --name=programnév            A program amivel a hibákat jelenti\n"
+msgid ""
+"  -n, --name=progname          The name under which errors are reported\n"
+msgstr ""
+"  -n, --name=programnév            A program amivel a hibákat jelenti\n"
 
 #: getopt/getopt.c:334
 msgid "  -o, --options=optstring      Short options to be recognized\n"
@@ -5209,7 +5368,9 @@ msgstr "  -o, --options=optstring          Rövid opcióként értelmezi\n"
 
 #: getopt/getopt.c:335
 msgid "  -q, --quiet                  Disable error reporting by getopt(3)\n"
-msgstr "  -q, --quiet                      Letiltja a hiba jelentést a getopt(3)-nak\n"
+msgstr ""
+"  -q, --quiet                      Letiltja a hiba jelentést a getopt(3)-"
+"nak\n"
 
 #: getopt/getopt.c:336
 msgid "  -Q, --quiet-output           No normal output\n"
@@ -5217,7 +5378,9 @@ msgstr "  -Q, --quiet-output               Nincs kimenet\n"
 
 #: getopt/getopt.c:337
 msgid "  -s, --shell=shell            Set shell quoting conventions\n"
-msgstr "  -s, --shell=shell                Beállítja a parancsértelmező idézőjel átalakítást\n"
+msgstr ""
+"  -s, --shell=shell                Beállítja a parancsértelmező idézőjel "
+"átalakítást\n"
 
 #: getopt/getopt.c:338
 msgid "  -T, --test                   Test for getopt(1) version\n"
@@ -5282,7 +5445,8 @@ msgstr "Nem sikerült megkapni a jogot ezért feladom.\n"
 #: hwclock/cmos.c:605
 #, c-format
 msgid "%s is unable to get I/O port access:  the iopl(3) call failed.\n"
-msgstr "%s nem kapja meg az I/O port elérését. Az iopl(3) hívása nem sikerült.\n"
+msgstr ""
+"%s nem kapja meg az I/O port elérését. Az iopl(3) hívása nem sikerült.\n"
 
 #: hwclock/cmos.c:608
 #, c-format
@@ -5349,7 +5513,8 @@ msgstr "Érvénytelen érték a hardver órában: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n
 #: hwclock/hwclock.c:413
 #, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr "A hardver óra idő : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld másodperc 1969 óta\n"
+msgstr ""
+"A hardver óra idő : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld másodperc 1969 óta\n"
 
 #: hwclock/hwclock.c:441
 #, c-format
@@ -5377,8 +5542,12 @@ msgstr ""
 
 #: hwclock/hwclock.c:556
 #, c-format
-msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
-msgstr "A hardver óra regiszterei érvénytelen éréket tartalmaznak (a hónap 50.napja) vagy egy olyan tartományt amit nem tud kezelni(pl 2095-ős év)\n"
+msgid ""
+"The Hardware Clock registers contain values that are either invalid (e.g. "
+"50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
+msgstr ""
+"A hardver óra regiszterei érvénytelen éréket tartalmaznak (a hónap 50.napja) "
+"vagy egy olyan tartományt amit nem tud kezelni(pl 2095-ős év)\n"
 
 #: hwclock/hwclock.c:566
 #, c-format
@@ -5436,13 +5605,15 @@ msgstr ""
 #: hwclock/hwclock.c:647
 #, c-format
 msgid ""
-"The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
+"The date command issued by %s returned something other than an integer where "
+"the converted time value was expected.\n"
 "The command was:\n"
 "  %s\n"
 "The response was:\n"
 " %s\n"
 msgstr ""
-"A 'date' parancsot a(z) \"%s\" meghívta és egy más egészre alakítot idő váratlan volt.\n"
+"A 'date' parancsot a(z) \"%s\" meghívta és egy más egészre alakítot idő "
+"váratlan volt.\n"
 "A parancs \n"
 "  \"%s\"  volt\n"
 "Az válasz\n"
@@ -5455,8 +5626,12 @@ msgstr "dátum sztring %s egyenlő a %ld másodperccel 1969 óta.\n"
 
 #: hwclock/hwclock.c:690
 #, c-format
-msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it.\n"
-msgstr "Hardver Óra  érvényes időt tartalmaz, így nem lehet beállítani a Rendszer Időt.\n"
+msgid ""
+"The Hardware Clock does not contain a valid time, so we cannot set the "
+"System Time from it.\n"
+msgstr ""
+"Hardver Óra  érvényes időt tartalmaz, így nem lehet beállítani a Rendszer "
+"Időt.\n"
 
 #: hwclock/hwclock.c:712
 #, c-format
@@ -5489,8 +5664,12 @@ msgstr "settimeofday() sem sikerült"
 
 #: hwclock/hwclock.c:760
 #, c-format
-msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
-msgstr "Nem állítom be az elcsúszás faktort mert a hardver óra előzőleg szemetet tartalmazott.\n"
+msgid ""
+"Not adjusting drift factor because the Hardware Clock previously contained "
+"garbage.\n"
+msgstr ""
+"Nem állítom be az elcsúszás faktort mert a hardver óra előzőleg szemetet "
+"tartalmazott.\n"
 
 #: hwclock/hwclock.c:765
 #, c-format
@@ -5503,16 +5682,22 @@ msgstr ""
 
 #: hwclock/hwclock.c:771
 #, c-format
-msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
-msgstr "Nem állítottam be az elcsúszás faktort mert még nem telt el egy nap az utolsó igazítás óta.\n"
+msgid ""
+"Not adjusting drift factor because it has been less than a day since the "
+"last calibration.\n"
+msgstr ""
+"Nem állítottam be az elcsúszás faktort mert még nem telt el egy nap az "
+"utolsó igazítás óta.\n"
 
 #: hwclock/hwclock.c:819
 #, c-format
 msgid ""
-"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
+"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
+"of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
-"Az óra elcsúszása %.1f másodperc régebben %d másodperc volt  a  %f másodperc/nap elcsúszási faktor.\n"
+"Az óra elcsúszása %.1f másodperc régebben %d másodperc volt  a  %f másodperc/"
+"nap elcsúszási faktor.\n"
 "A elcsúszási faktor %f másodperc/napra van állítva\n"
 
 #: hwclock/hwclock.c:870
@@ -5523,7 +5708,8 @@ msgstr "Idő az utolsó beállítás óra(z) %d másodperc\n"
 #: hwclock/hwclock.c:872
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
-msgstr "Szükséges %d másodpercet beszúrni és az időt %.6f másodperccel hátra tolni\n"
+msgstr ""
+"Szükséges %d másodpercet beszúrni és az időt %.6f másodperccel hátra tolni\n"
 
 #: hwclock/hwclock.c:901
 #, c-format
@@ -5546,13 +5732,15 @@ msgstr "Az elcsúszás paraméterei nem lettek frissítve.\n"
 
 #: hwclock/hwclock.c:967
 #, c-format
-msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
+msgid ""
+"The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
 msgstr "A Hardver Óra nem tartalmaz érvényes időt, így nem tudom beállítani.\n"
 
 #: hwclock/hwclock.c:999
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
-msgstr "Szükséges beállítás kevesebb mint egy másodperc így nem kell órát állítani.\n"
+msgstr ""
+"Szükséges beállítás kevesebb mint egy másodperc így nem kell órát állítani.\n"
 
 #: hwclock/hwclock.c:1025
 #, c-format
@@ -5572,11 +5760,13 @@ msgstr "Nem lehet a rendszer órát beállítani.\n"
 #: hwclock/hwclock.c:1153
 #, c-format
 msgid ""
-"The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
+"The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
+"machine.\n"
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken.\n"
 msgstr ""
-"Csak az Alpha gépeken lehet beállítani a rendszermag a hardver óra kor értékét\n"
+"Csak az Alpha gépeken lehet beállítani a rendszermag a hardver óra kor "
+"értékét\n"
 "Ez a hwcolock másolot nem Alphára készült\n"
 "(és így  feltételezhetően nem Alfán fut a program). Nem történt semmi.\n"
 
@@ -5592,7 +5782,9 @@ msgstr "A rendszermag feltételezi a kor értékét %lu-nak\n"
 
 #: hwclock/hwclock.c:1167
 #, c-format
-msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it.\n"
+msgid ""
+"To set the epoch value, you must use the 'epoch' option to tell to what "
+"value to set it.\n"
 msgstr "A kor érték beállításához az 'epoch' opciót kell használnia\n"
 
 #: hwclock/hwclock.c:1170
@@ -5605,7 +5797,7 @@ msgstr "Nem állítom be a kor értéket %d-re - csak vizsgálom.\n"
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Nem lehet beállítani a kor értéket a rendszermagban.\n"
 
-#: hwclock/hwclock.c:1186 misc-utils/cal.c:333 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1186 misc-utils/cal.c:332 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s a(z) %s csomagból\n"
@@ -5677,7 +5869,8 @@ msgid ""
 "                tell hwclock the type of alpha you have (see hwclock(8))\n"
 msgstr ""
 "  --jensen, --arc, --srm, --funky-toy\n"
-"                elmondja a hwclock-nak hogy milyen típusú alpha processzort használ (lásd hwclock(8))\n"
+"                elmondja a hwclock-nak hogy milyen típusú alpha processzort "
+"használ (lásd hwclock(8))\n"
 
 #: hwclock/hwclock.c:1320
 #, fuzzy, c-format
@@ -5700,18 +5893,28 @@ msgstr ""
 
 #: hwclock/hwclock.c:1445
 #, c-format
-msgid "%s: The --utc and --localtime options are mutually exclusive.  You specified both.\n"
-msgstr "%s: Az '--utc' és a '--locatime' kölcsönösen kizárják egymást. Ön mindkettőt használta.\n"
+msgid ""
+"%s: The --utc and --localtime options are mutually exclusive.  You specified "
+"both.\n"
+msgstr ""
+"%s: Az '--utc' és a '--locatime' kölcsönösen kizárják egymást. Ön mindkettőt "
+"használta.\n"
 
 #: hwclock/hwclock.c:1452
 #, c-format
-msgid "%s: The --adjust and --noadjfile options are mutually exclusive.  You specified both.\n"
-msgstr "%s: Az '--adjust' és a  '--noadjfile' kölcsönösen kizárják egymást.Ön mindkettőt használta.\n"
+msgid ""
+"%s: The --adjust and --noadjfile options are mutually exclusive.  You "
+"specified both.\n"
+msgstr ""
+"%s: Az '--adjust' és a  '--noadjfile' kölcsönösen kizárják egymást.Ön "
+"mindkettőt használta.\n"
 
 #: hwclock/hwclock.c:1459
 #, c-format
 msgid "%s: With --noadjfile, you must specify either --utc or --localtime\n"
-msgstr "%s:A  '--noadjfile',haszálnia kell a '--utc' vagy  '--localtime' opciók közül valamelyiket\n"
+msgstr ""
+"%s:A  '--noadjfile',haszálnia kell a '--utc' vagy  '--localtime' opciók "
+"közül valamelyiket\n"
 
 #: hwclock/hwclock.c:1473
 #, c-format
@@ -5730,8 +5933,12 @@ msgstr "Sajnálom de csak  rendszergazda  módosíthatja a Rendszer Órát.\n"
 
 #: hwclock/hwclock.c:1499
 #, c-format
-msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel.\n"
-msgstr "Sajnálom de csak  rendszergazda  módosíthatja a Rendszer Óra korszakot a rendszermagban.\n"
+msgid ""
+"Sorry, only the superuser can change the Hardware Clock epoch in the "
+"kernel.\n"
+msgstr ""
+"Sajnálom de csak  rendszergazda  módosíthatja a Rendszer Óra korszakot a "
+"rendszermagban.\n"
 
 #: hwclock/hwclock.c:1519
 #, c-format
@@ -5740,8 +5947,11 @@ msgstr "Nem lehet elérni a Hardver Órát egy ismert módón sem.\n"
 
 #: hwclock/hwclock.c:1523
 #, c-format
-msgid "Use the --debug option to see the details of our search for an access method.\n"
-msgstr "Használja a '--debug' opciót az elérési módok részletes megnézésékez.\n"
+msgid ""
+"Use the --debug option to see the details of our search for an access "
+"method.\n"
+msgstr ""
+"Használja a '--debug' opciót az elérési módok részletes megnézésékez.\n"
 
 #: hwclock/kd.c:55
 #, c-format
@@ -5752,7 +5962,7 @@ msgstr "Várakozás a hurokra a KDGHWCLK megváltoztatásához\n"
 msgid "KDGHWCLK ioctl to read time failed"
 msgstr "KDGHWCLK ioctl az idő olvasása nem sikerült"
 
-#: hwclock/kd.c:79 hwclock/rtc.c:205
+#: hwclock/kd.c:79 hwclock/rtc.c:202
 #, c-format
 msgid "Timed out waiting for time change.\n"
 msgstr "Nem tudok tovább várni az idő megváltoztatására.\n"
@@ -5778,102 +5988,109 @@ msgstr "Nem lehet megnyitni a /dev/tty1 vagy /dev/vc/1"
 msgid "KDGHWCLK ioctl failed"
 msgstr "KDGHWCLK ioctl sikertelen"
 
-#: hwclock/rtc.c:133 hwclock/rtc.c:226
+#: hwclock/rtc.c:130 hwclock/rtc.c:223
 #, c-format
 msgid "open() of %s failed"
 msgstr "open() a(z) \"%s\"-e sikertelen"
 
-#: hwclock/rtc.c:167
+#: hwclock/rtc.c:164
 #, c-format
 msgid "ioctl() to %s to read the time failed.\n"
 msgstr "ioctl() az idő kiolvasása(z) \"%s\"-hez nem sikerült.\n"
 
-#: hwclock/rtc.c:189
+#: hwclock/rtc.c:186
 #, c-format
 msgid "Waiting in loop for time from %s to change\n"
 msgstr "Várakozás az időhurokra a(z) \"%s\" megváltoztatásához\n"
 
-#: hwclock/rtc.c:244
+#: hwclock/rtc.c:241
 #, c-format
 msgid "%s does not have interrupt functions. "
 msgstr "%s nincs ennek a funkciónak megszakítása. "
 
-#: hwclock/rtc.c:255
+#: hwclock/rtc.c:252
 #, c-format
 msgid "read() to %s to wait for clock tick failed"
 msgstr "read() a(z) \"%s\"-hez az óra ketyegésére várakozás nem sikerült"
 
-#: hwclock/rtc.c:273
+#: hwclock/rtc.c:270
 #, fuzzy, c-format
 msgid "select() to %s to wait for clock tick failed"
 msgstr "read() a(z) \"%s\"-hez az óra ketyegésére várakozás nem sikerült"
 
-#: hwclock/rtc.c:276
+#: hwclock/rtc.c:273
 #, fuzzy, c-format
 msgid "select() to %s to wait for clock tick timed out\n"
 msgstr "read() a(z) \"%s\"-hez az óra ketyegésére várakozás nem sikerült"
 
-#: hwclock/rtc.c:285
+#: hwclock/rtc.c:282
 #, c-format
 msgid "ioctl() to %s to turn off update interrupts failed"
 msgstr "ioctl() a  \"%s\"-től a megszakítás lekapcsolása nem sikerült"
 
-#: hwclock/rtc.c:288
+#: hwclock/rtc.c:285
 #, c-format
 msgid "ioctl() to %s to turn on update interrupts failed unexpectedly"
 msgstr "ioctl() a(z) \"%s\" visszakapcsolása váratlanul nem sikerült"
 
-#: hwclock/rtc.c:347
+#: hwclock/rtc.c:344
 #, c-format
 msgid "ioctl() to %s to set the time failed.\n"
 msgstr "ioctl() a(z) \"%s\" idő beállítás nem sikerült.\n"
 
-#: hwclock/rtc.c:353
+#: hwclock/rtc.c:350
 #, c-format
 msgid "ioctl(%s) was successful.\n"
 msgstr "ioctl(%s) sikerült.\n"
 
-#: hwclock/rtc.c:382
+#: hwclock/rtc.c:379
 #, c-format
 msgid "Open of %s failed"
 msgstr "A(z) \"%s\" megnyitása nem sikerült"
 
-#: hwclock/rtc.c:400 hwclock/rtc.c:446
+#: hwclock/rtc.c:397 hwclock/rtc.c:443
 #, c-format
-msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system.\n"
-msgstr "A korszak értékének a megváltoztatásához el kell érni a Linux 'rtc' eszközt egy speciális \"%s\" fájlon keresztül.Ami ezen a rendszeren nincs meg.\n"
+msgid ""
+"To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
+"device driver via the device special file %s.  This file does not exist on "
+"this system.\n"
+msgstr ""
+"A korszak értékének a megváltoztatásához el kell érni a Linux 'rtc' eszközt "
+"egy speciális \"%s\" fájlon keresztül.Ami ezen a rendszeren nincs meg.\n"
 
-#: hwclock/rtc.c:405 hwclock/rtc.c:451
+#: hwclock/rtc.c:402 hwclock/rtc.c:448
 #, c-format
 msgid "Unable to open %s"
 msgstr "%s megnyitása sikertelen"
 
-#: hwclock/rtc.c:412
+#: hwclock/rtc.c:409
 #, c-format
 msgid "ioctl(RTC_EPOCH_READ) to %s failed"
 msgstr "ioctl(RTC_EPOCH_READ) a(z) \"%s\"-hez nem sikerült"
 
-#: hwclock/rtc.c:418
+#: hwclock/rtc.c:415
 #, c-format
 msgid "we have read epoch %ld from %s with RTC_EPOCH_READ ioctl.\n"
-msgstr "a korszakot beolvastuk   %ld a(z) \"%s\"-ról RTC_EPOCH_READ ioctl-vel.\n"
+msgstr ""
+"a korszakot beolvastuk   %ld a(z) \"%s\"-ról RTC_EPOCH_READ ioctl-vel.\n"
 
-#: hwclock/rtc.c:438
+#: hwclock/rtc.c:435
 #, c-format
 msgid "The epoch value may not be less than 1900.  You requested %ld\n"
 msgstr "A kor értéke nem lehet kevesebb mint 1900. Ön pedig %ld adott meg\n"
 
-#: hwclock/rtc.c:456
+#: hwclock/rtc.c:453
 #, c-format
 msgid "setting epoch to %ld with RTC_EPOCH_SET ioctl to %s.\n"
 msgstr "a korszar beállítása a %ld-val a RTC_EPOCH_SET ioctl a %s-hoz.\n"
 
-#: hwclock/rtc.c:461
+#: hwclock/rtc.c:458
 #, c-format
-msgid "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
+msgid ""
+"The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
 msgstr "A rendszermag \"%s\" eszközvezérlőjében nincs TC_EPOCH_SET ioctl.\n"
 
-#: hwclock/rtc.c:464
+#: hwclock/rtc.c:461
 #, c-format
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) a(z) \"%s\"-hez sikertelen"
@@ -6006,11 +6223,15 @@ msgstr "%s: bemenet túlfutott"
 #: login-utils/agetty.c:1233
 #, fuzzy, c-format
 msgid ""
-"Usage: %s [-8hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\n"
-"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"
+"Usage: %s [-8hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
+"login_host] baud_rate,... line [termtype]\n"
+"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
+"line baud_rate,... [termtype]\n"
 msgstr ""
-"Használate: %s [-hiLmw] [-l beléptető_program] [-t időtúllépés] [-I indító_szöveg] [-H gépnév] átviteli_sebesség,... sor [termimáltípus]\n"
-"vagy\t[-hiLmw] [-l beléptető_program] [-t időtúllépés] [-I indító_szöveg] [-H gépnév] sor átviteli_sebesség,... [termimáltípus]\n"
+"Használate: %s [-hiLmw] [-l beléptető_program] [-t időtúllépés] [-I "
+"indító_szöveg] [-H gépnév] átviteli_sebesség,... sor [termimáltípus]\n"
+"vagy\t[-hiLmw] [-l beléptető_program] [-t időtúllépés] [-I indító_szöveg] [-"
+"H gépnév] sor átviteli_sebesség,... [termimáltípus]\n"
 
 #: login-utils/checktty.c:85 login-utils/checktty.c:106
 #, c-format
@@ -6035,68 +6256,69 @@ msgstr "Bejelentkezés a %s-ről a %s-re alapból megtagadva.\n"
 msgid "Login on %s from %s denied.\n"
 msgstr "Bejelentkezés a %s-ről a %s-re megtagadva.\n"
 
-#: login-utils/chfn.c:128 login-utils/chsh.c:114
+#: login-utils/chfn.c:133 login-utils/chsh.c:119
 #, c-format
 msgid "%s: you (user %d) don't exist.\n"
 msgstr "%s: (%d felhasználó) nem létezik.\n"
 
-#: login-utils/chfn.c:135 login-utils/chsh.c:121
+#: login-utils/chfn.c:140 login-utils/chsh.c:126
 #, c-format
 msgid "%s: user \"%s\" does not exist.\n"
 msgstr "%s: a \"%s\" felhasználó nem létezik.\n"
 
-#: login-utils/chfn.c:140 login-utils/chsh.c:126
+#: login-utils/chfn.c:145 login-utils/chsh.c:131
 #, c-format
 msgid "%s: can only change local entries; use yp%s instead.\n"
-msgstr "%s: csak a helyi bejegyzéseket lehet megváltoztatni, használja az yp\"%s\"-ot ehelyett.\n"
+msgstr ""
+"%s: csak a helyi bejegyzéseket lehet megváltoztatni, használja az yp\"%s\"-"
+"ot ehelyett.\n"
 
-#: login-utils/chfn.c:151 login-utils/chsh.c:137
+#: login-utils/chfn.c:156 login-utils/chsh.c:142
 #, fuzzy
 msgid "Unknown user context"
 msgstr "ismeretlen hiba a kulcsban"
 
-#: login-utils/chfn.c:152
+#: login-utils/chfn.c:157
 #, c-format
 msgid "%s: %s is not authorized to change the finger info of %s\n"
 msgstr ""
 
-#: login-utils/chfn.c:159 login-utils/chsh.c:145
+#: login-utils/chfn.c:164 login-utils/chsh.c:150
 #, c-format
 msgid "%s: Can't set default context for /etc/passwd"
 msgstr ""
 
-#: login-utils/chfn.c:173
+#: login-utils/chfn.c:178
 #, c-format
 msgid "Changing finger information for %s.\n"
 msgstr "A(z) \"%s\" finger adatainak a megváltozása .\n"
 
-#: login-utils/chfn.c:179 login-utils/chfn.c:183 login-utils/chfn.c:190
-#: login-utils/chfn.c:194 login-utils/chsh.c:177 login-utils/chsh.c:181
-#: login-utils/chsh.c:188 login-utils/chsh.c:192
-msgid "Password error."
-msgstr "Jelszó hiba."
+#: login-utils/chfn.c:189
+#, fuzzy, c-format
+msgid "chfn: PAM Failure, aborting: %s\n"
+msgstr "login: jelszó hitelesítés(PAM) sikertelen, megszakítva: %s\n"
 
-#: login-utils/chfn.c:203 login-utils/chsh.c:201 login-utils/login.c:798
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:333
 #: mount/lomount.c:336
 msgid "Password: "
 msgstr "Jelszó: "
 
-#: login-utils/chfn.c:206 login-utils/chsh.c:204
+#: login-utils/chfn.c:215 login-utils/chsh.c:214
 msgid "Incorrect password."
 msgstr "Hibás jelszó."
 
-#: login-utils/chfn.c:217
+#: login-utils/chfn.c:226
 #, c-format
 msgid "Finger information not changed.\n"
 msgstr "Finger információ nem változott.\n"
 
-#: login-utils/chfn.c:319
+#: login-utils/chfn.c:328
 #, c-format
 msgid "Usage: %s [ -f full-name ] [ -o office ] "
 msgstr "Használat: %s [ -f teljes_név ] [ -o hivatal ] "
 
-#: login-utils/chfn.c:320
+#: login-utils/chfn.c:329
 #, c-format
 msgid ""
 "[ -p office-phone ]\n"
@@ -6105,12 +6327,12 @@ msgstr ""
 "[ -p hivatali:szám ]\n"
 "\t[ -h otthoni_szám ] "
 
-#: login-utils/chfn.c:321
+#: login-utils/chfn.c:330
 #, c-format
 msgid "[ --help ] [ --version ]\n"
 msgstr "[ --help ] [ --version ]\n"
 
-#: login-utils/chfn.c:392 login-utils/chsh.c:312
+#: login-utils/chfn.c:401 login-utils/chsh.c:321
 #, c-format
 msgid ""
 "\n"
@@ -6119,134 +6341,144 @@ msgstr ""
 "\n"
 "Megszakítva.\n"
 
-#: login-utils/chfn.c:425
+#: login-utils/chfn.c:434
 #, c-format
 msgid "field is too long.\n"
 msgstr "a mező  túl hosszú.\n"
 
-#: login-utils/chfn.c:433
+#: login-utils/chfn.c:442
 #, c-format
 msgid "'%c' is not allowed.\n"
 msgstr "A '%c' nem engedélyezett.\n"
 
-#: login-utils/chfn.c:438
+#: login-utils/chfn.c:447
 #, c-format
 msgid "Control characters are not allowed.\n"
 msgstr "Vezérlő karakterek nem engedélyezettek.\n"
 
-#: login-utils/chfn.c:503
+#: login-utils/chfn.c:512
 #, c-format
 msgid "Finger information *NOT* changed.  Try again later.\n"
 msgstr "A Finger információ *NEM* változott. Próbálja meg újra később.\n"
 
-#: login-utils/chfn.c:506
+#: login-utils/chfn.c:515
 #, c-format
 msgid "Finger information changed.\n"
 msgstr "Finger információ megváltozott.\n"
 
-#: login-utils/chfn.c:520 login-utils/chsh.c:427 sys-utils/cytune.c:321
+#: login-utils/chfn.c:529 login-utils/chsh.c:439 sys-utils/cytune.c:321
 msgid "malloc failed"
 msgstr "malloc sikertelen"
 
-#: login-utils/chsh.c:138
+#: login-utils/chsh.c:143
 #, fuzzy, c-format
 msgid "%s: %s is not authorized to change the shell of %s\n"
 msgstr "%s: a \"%s nincs benne az '/etc/shells'-ben\n"
 
-#: login-utils/chsh.c:158
-#, c-format
-msgid "%s: Running UID doesn't match UID of user we're altering, shell change denied\n"
-msgstr ""
-
 #: login-utils/chsh.c:164
 #, c-format
-msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
-msgstr "%s:Ez a parancsértelmező nincs az '/etc/shells'-ben,a parancsértelmező módosítás megtagadva\n"
+msgid ""
+"%s: Running UID doesn't match UID of user we're altering, shell change "
+"denied\n"
+msgstr ""
 
-#: login-utils/chsh.c:171
+#: login-utils/chsh.c:170
+#, c-format
+msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
+msgstr ""
+"%s:Ez a parancsértelmező nincs az '/etc/shells'-ben,a parancsértelmező "
+"módosítás megtagadva\n"
+
+#: login-utils/chsh.c:177
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr " \"%s\" parancsértelmezőjének a  megváltoztatása .\n"
 
-#: login-utils/chsh.c:212
+#: login-utils/chsh.c:188
+#, fuzzy, c-format
+msgid "chsh: PAM Failure, aborting: %s\n"
+msgstr "login: jelszó hitelesítés(PAM) sikertelen, megszakítva: %s\n"
+
+#: login-utils/chsh.c:222
 msgid "New shell"
 msgstr "Új parancsértelmező"
 
-#: login-utils/chsh.c:219
+#: login-utils/chsh.c:229
 #, c-format
 msgid "Shell not changed.\n"
 msgstr "Parancsértelmező nem változott.\n"
 
-#: login-utils/chsh.c:226
+#: login-utils/chsh.c:235
 #, c-format
 msgid "Shell *NOT* changed.  Try again later.\n"
 msgstr "Parancsértelmező *NEM* változott.Próbálja újra később.\n"
 
-#: login-utils/chsh.c:229
+#: login-utils/chsh.c:238
 #, c-format
 msgid "Shell changed.\n"
 msgstr "Parancsértelmező megváltozott.\n"
 
-#: login-utils/chsh.c:294
+#: login-utils/chsh.c:303
 #, c-format
 msgid ""
 "Usage: %s [ -s shell ] [ --list-shells ] [ --help ] [ --version ]\n"
 "       [ username ]\n"
 msgstr ""
-"Használat: %s [ -s parancsértelmező ] [ --list-shells ] [ --help ] [ --version ]\n"
+"Használat: %s [ -s parancsértelmező ] [ --list-shells ] [ --help ] [ --"
+"version ]\n"
 "       [ felhasználó_név ]\n"
 
-#: login-utils/chsh.c:337
+#: login-utils/chsh.c:349
 #, c-format
 msgid "%s: shell must be a full path name.\n"
 msgstr "%s: A parancsértelmezőnek a teljes elérési útját meg kell adnija.\n"
 
-#: login-utils/chsh.c:341
+#: login-utils/chsh.c:353
 #, c-format
 msgid "%s: \"%s\" does not exist.\n"
 msgstr "%s: \"%s\" nem létezik.\n"
 
-#: login-utils/chsh.c:345
+#: login-utils/chsh.c:357
 #, c-format
 msgid "%s: \"%s\" is not executable.\n"
 msgstr "%s: \"%s\" nem futtatható.\n"
 
-#: login-utils/chsh.c:352
+#: login-utils/chsh.c:364
 #, c-format
 msgid "%s: '%c' is not allowed.\n"
 msgstr "%s: '%c' nem engedélyezett.\n"
 
-#: login-utils/chsh.c:356
+#: login-utils/chsh.c:368
 #, c-format
 msgid "%s: Control characters are not allowed.\n"
 msgstr "%s: Vezérlő karakterek nem engedélyezettek.\n"
 
-#: login-utils/chsh.c:363
+#: login-utils/chsh.c:375
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells\n"
 msgstr "Figyelmeztetés: a \"%s nincs benne az '/etc/shells'-ben\n"
 
-#: login-utils/chsh.c:365
+#: login-utils/chsh.c:377
 #, c-format
 msgid "%s: \"%s\" is not listed in /etc/shells.\n"
 msgstr "%s: a \"%s nincs benne az '/etc/shells'-ben\n"
 
-#: login-utils/chsh.c:367
+#: login-utils/chsh.c:379
 #, c-format
 msgid "%s: use -l option to see list\n"
 msgstr "%s: használja a '-l' opciót a listához\n"
 
-#: login-utils/chsh.c:373
+#: login-utils/chsh.c:385
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells.\n"
 msgstr "Figyelmeztetés: a \"%s nincs benne az '/etc/shells'-ben\n"
 
-#: login-utils/chsh.c:374
+#: login-utils/chsh.c:386
 #, c-format
 msgid "Use %s -l to see list.\n"
 msgstr "használja a '%s -l'-t a listához\n"
 
-#: login-utils/chsh.c:394
+#: login-utils/chsh.c:406
 #, c-format
 msgid "No known shells.\n"
 msgstr "Nem ismerem ezt a parancsértelmezőt.\n"
@@ -6258,7 +6490,8 @@ msgstr "Nem lehet olvasni a(z) \"%s\"-t kilépés."
 
 #: login-utils/last.c:148
 msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
-msgstr "használat: last [-#] [-f fájl] [-t tty] [-h gépnév] [felhasználó ...]\n"
+msgstr ""
+"használat: last [-#] [-f fájl] [-t tty] [-h gépnév] [felhasználó ...]\n"
 
 #: login-utils/last.c:284
 msgid "  still logged in"
@@ -6712,7 +6945,8 @@ msgstr "Nem lehet elindítani a 'swapoff'-ot. Nem túl jó!"
 
 #: login-utils/shutdown.c:575
 msgid "Cannot exec swapoff, hoping umount will do the trick."
-msgstr "Nem lehet végrehajtani a 'swapoff'-ot, talán egy cselel le tudom állítani."
+msgstr ""
+"Nem lehet végrehajtani a 'swapoff'-ot, talán egy cselel le tudom állítani."
 
 #: login-utils/shutdown.c:594
 msgid "Cannot fork for umount, trying manually."
@@ -6788,7 +7022,7 @@ msgstr "A könyvtár megnyitása sikertelen\n"
 msgid "fork failed\n"
 msgstr "elágaztatás sikertelen\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1619
+#: login-utils/simpleinit.c:539 text-utils/more.c:1634
 msgid "exec failed\n"
 msgstr "végrehajtás sikertelen\n"
 
@@ -6862,7 +7096,9 @@ msgstr "Nem lehet az időtúlcsordulás lekéredezni %s:%s\n"
 #: login-utils/vipw.c:217
 #, c-format
 msgid "%s: can't unlock %s: %s (your changes are still in %s)\n"
-msgstr "%s: nem lehet zárolást felodani %s:%s (az ön változásai még mindig a %s-ben vannak)\n"
+msgstr ""
+"%s: nem lehet zárolást felodani %s:%s (az ön változásai még mindig a %s-ben "
+"vannak)\n"
 
 #: login-utils/vipw.c:240
 #, c-format
@@ -6929,20 +7165,20 @@ msgstr "%s: nem lehet lekérdezni az ideiglenes fájlt.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: nem lehet olvasnini az ideiglenes fájlt.\n"
 
-#: misc-utils/cal.c:347
+#: misc-utils/cal.c:346
 msgid "illegal month value: use 1-12"
 msgstr "érvénytelen hónap: lehetséges értékék 1-12"
 
-#: misc-utils/cal.c:351
+#: misc-utils/cal.c:350
 msgid "illegal year value: use 1-9999"
 msgstr "érvénytelen év: lehetséges értékék 1-9999"
 
-#: misc-utils/cal.c:464
+#: misc-utils/cal.c:463
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:810
+#: misc-utils/cal.c:809
 #, c-format
 msgid "usage: cal [-13smjyV] [[month] year]\n"
 msgstr "használat: cal [-13smjyV] [[hónap] év]\n"
@@ -6998,10 +7234,13 @@ msgstr "logger: ismeretlen priorátás név: %s.\n"
 
 #: misc-utils/logger.c:285
 #, c-format
-msgid "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
-msgstr "használat: logger [-is] [-f fájl [-p pri] [-t tag] [-u csatlakozási_pont] [ üzenet ... ]\n"
+msgid ""
+"usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
+msgstr ""
+"használat: logger [-is] [-f fájl [-p pri] [-t tag] [-u csatlakozási_pont] "
+"[ üzenet ... ]\n"
 
-#: misc-utils/look.c:352
+#: misc-utils/look.c:351
 #, c-format
 msgid "usage: look [-dfa] [-t char] string [file]\n"
 msgstr "használat : look [-dfa] [-t betű] szöveg [fájl]\n"
@@ -7081,7 +7320,7 @@ msgstr "%s: a(z) \"%s\" átnevezése \"%s\"-re sikertelen: %s\n"
 msgid "call: %s from to files...\n"
 msgstr "hívás: \"%s\"-től a fájlhoz...\n"
 
-#: misc-utils/script.c:109
+#: misc-utils/script.c:110
 #, c-format
 msgid ""
 "Warning: `%s' is a link.\n"
@@ -7092,22 +7331,22 @@ msgstr ""
 "Használja '%s [opciók]  %s' -t ha tényleg használni akarja.\n"
 "A parancsállomány nem indult el.\n"
 
-#: misc-utils/script.c:172
+#: misc-utils/script.c:173
 #, c-format
 msgid "usage: script [-a] [-f] [-q] [-t] [file]\n"
 msgstr "használat: script [-a] [-f] [-q] [-t] [fájl]\n"
 
-#: misc-utils/script.c:195
+#: misc-utils/script.c:196
 #, c-format
 msgid "Script started, file is %s\n"
 msgstr "A parancsállomány elindult, a fájl: \"%s\".\n"
 
-#: misc-utils/script.c:290
+#: misc-utils/script.c:296
 #, c-format
 msgid "Script started on %s"
 msgstr "A parancsállomány elindult a(z) \"%s\"-en."
 
-#: misc-utils/script.c:404
+#: misc-utils/script.c:410
 #, c-format
 msgid ""
 "\n"
@@ -7116,17 +7355,17 @@ msgstr ""
 "\n"
 "A parancsállomány kész a(z) \"%s\"-en."
 
-#: misc-utils/script.c:411
+#: misc-utils/script.c:417
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "A parancsállomány kész, a fájl: \"%s\".\n"
 
-#: misc-utils/script.c:422
+#: misc-utils/script.c:428
 #, c-format
 msgid "openpty failed\n"
 msgstr "openpty sikertelen\n"
 
-#: misc-utils/script.c:456
+#: misc-utils/script.c:462
 #, c-format
 msgid "Out of pty's\n"
 msgstr "Vége a 'pty'-nek\n"
@@ -7372,52 +7611,52 @@ msgstr "%s: $TERM nem definiált.\n"
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr "whereis [ -sbmu ] [ -SBM könyvtár ... -f ] név...\n"
 
-#: misc-utils/write.c:99
+#: misc-utils/write.c:98
 #, c-format
 msgid "write: can't find your tty's name\n"
 msgstr "write: nem találom ezt a terminált\n"
 
-#: misc-utils/write.c:110
+#: misc-utils/write.c:109
 #, c-format
 msgid "write: you have write permission turned off.\n"
 msgstr "write: az írási engedély ki van kapcsolva.\n"
 
-#: misc-utils/write.c:131
+#: misc-utils/write.c:130
 #, c-format
 msgid "write: %s is not logged in on %s.\n"
 msgstr "write: a(z) \"%s\" nem naplózott a(z) \"%s\"-en.\n"
 
-#: misc-utils/write.c:139
+#: misc-utils/write.c:138
 #, c-format
 msgid "write: %s has messages disabled on %s\n"
 msgstr "write: \"%s\" üzenetek letiltva  \"%s\"-en\n"
 
-#: misc-utils/write.c:146
+#: misc-utils/write.c:145
 #, c-format
 msgid "usage: write user [tty]\n"
 msgstr "használat : write felhasználó [tty]\n"
 
-#: misc-utils/write.c:234
+#: misc-utils/write.c:233
 #, c-format
 msgid "write: %s is not logged in\n"
 msgstr "write: \"%s\" nincs belépve\n"
 
-#: misc-utils/write.c:243
+#: misc-utils/write.c:242
 #, c-format
 msgid "write: %s has messages disabled\n"
 msgstr "write: \"%s\" üzenetek letiltva\n"
 
-#: misc-utils/write.c:247
+#: misc-utils/write.c:246
 #, c-format
 msgid "write: %s is logged in more than once; writing to %s\n"
 msgstr "write: \"%s\" több helyen is be van lépve, írás a(z) \"%s\"-hez\n"
 
-#: misc-utils/write.c:313
+#: misc-utils/write.c:312
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %s ..."
 msgstr "Üzenet '%s@%s'-től (mint \"%s\") a(z) \"%s\"-en a(z) \"%s\"-nél ..."
 
-#: misc-utils/write.c:316
+#: misc-utils/write.c:315
 #, c-format
 msgid "Message from %s@%s on %s at %s ..."
 msgstr "Üzenet '%s@%s'-től a(z) \"%s\"-en a(z) \"%s\"-nél ..."
@@ -7450,22 +7689,29 @@ msgstr "figyelmeztetés: nem lehet megnyitni a '%s:%s'-t"
 #: mount/fstab.c:176
 #, c-format
 msgid "mount: could not open %s - using %s instead\n"
-msgstr "mount: nem lehet megnyitni a(z) \"%s\"-t - a(z) \"%s\" használom helyete\n"
+msgstr ""
+"mount: nem lehet megnyitni a(z) \"%s\"-t - a(z) \"%s\" használom helyete\n"
 
 #: mount/fstab.c:568
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
-msgstr "nem lehet létrehozni a zároló fájlt %s: %s (használja a '-n'-t a felülbíráláshoz)"
+msgstr ""
+"nem lehet létrehozni a zároló fájlt %s: %s (használja a '-n'-t a "
+"felülbíráláshoz)"
 
 #: mount/fstab.c:594
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
-msgstr "nem lehet hivatkozást létrehozni a zároló fájlhoz %s: %s (használja a '-n'-t a felülbíráláshoz)"
+msgstr ""
+"nem lehet hivatkozást létrehozni a zároló fájlhoz %s: %s (használja a '-n'-t "
+"a felülbíráláshoz)"
 
 #: mount/fstab.c:610
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
-msgstr "nem lehet megnyitni a zároló fájlt %s: %s (használja a '-n'-t a felülbíráláshoz)"
+msgstr ""
+"nem lehet megnyitni a zároló fájlt %s: %s (használja a '-n'-t a "
+"felülbíráláshoz)"
 
 #: mount/fstab.c:625
 #, c-format
@@ -7563,7 +7809,8 @@ msgid ""
 msgstr ""
 "mount: Nem találok egy 'loop' eszközt és a(z) %s értemében,\n"
 "       ez a rendszermag nem tud 'loop' eszközökről.\n"
-"       (fordítja újra a rendszermagot vagy használja a `insmod loop.o' utasítást.)"
+"       (fordítja újra a rendszermagot vagy használja a `insmod loop.o' "
+"utasítást.)"
 
 #: mount/lomount.c:224
 #, fuzzy, c-format
@@ -7580,27 +7827,29 @@ msgstr "Nem lehet lezárni a memóriába, kilépés.\n"
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:384
+#: mount/lomount.c:387
 #, fuzzy, c-format
 msgid "set_loop(%s,%s,%llu): success\n"
 msgstr "set_loop(%s,%s,%d): sikeres\n"
 
-#: mount/lomount.c:395
+#: mount/lomount.c:398
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: nem lehet törölni a '%s: %s' eszközt\n"
 
-#: mount/lomount.c:405
+#: mount/lomount.c:409
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): sikeres\n"
 
-#: mount/lomount.c:413
+#: mount/lomount.c:417
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
-msgstr "Ez a 'mount' parancs 'loop' támogatás nélkül lett lefordítva. Kérem fordítsa le újra.\n"
+msgstr ""
+"Ez a 'mount' parancs 'loop' támogatás nélkül lett lefordítva. Kérem fordítsa "
+"le újra.\n"
 
-#: mount/lomount.c:450
+#: mount/lomount.c:454
 #, c-format
 msgid ""
 "\n"
@@ -7622,12 +7871,12 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:478 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:482 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "nem elég a memória"
 
-#: mount/lomount.c:639
+#: mount/lomount.c:643
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Nincs 'loop' támogatás belefordítva. Kérem fordítsa le újra.\n"
@@ -7645,7 +7894,8 @@ msgstr "mount: nem találom a(z) \"%s\"-t a(z) \"%s\"-ben vagy a(z) \"%s\"-ben"
 #: mount/mount.c:510
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
-msgstr "mount: az 'mtab'-hoz fűzzés, a(z) \"%s\" már be van csatolva a(z) \"%s\"-re"
+msgstr ""
+"mount: az 'mtab'-hoz fűzzés, a(z) \"%s\" már be van csatolva a(z) \"%s\"-re"
 
 #: mount/mount.c:515
 #, c-format
@@ -7657,7 +7907,7 @@ msgstr "mount: az 'mtab'-hoz fűzzés, a(z) \"%s\" be csatolva a(z) \"%s\"-re"
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: nem sikerült a(z) \"%s\" megnyitása írásra:%s"
 
-#: mount/mount.c:552 mount/mount.c:950
+#: mount/mount.c:552 mount/mount.c:954
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: hiba az írás során%s: %s"
@@ -7667,162 +7917,180 @@ msgstr "mount: hiba az írás során%s: %s"
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: hiba a '%s:%s' mód váltásakor"
 
-#: mount/mount.c:676 mount/mount.c:1565
+#: mount/mount.c:638
+#, fuzzy, c-format
+msgid "mount: cannot set group id: %s"
+msgstr "mount: nem lehet a(z) \"%s\" sebességét beállítani"
+
+#: mount/mount.c:641
+#, fuzzy, c-format
+msgid "mount: cannot set user id: %s"
+msgstr "mount: nem lehet a(z) \"%s\" sebességét beállítani"
+
+#: mount/mount.c:680 mount/mount.c:1569
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: nem lehet elágaztani a(z) \"%s\"-t"
 
-#: mount/mount.c:690
+#: mount/mount.c:694
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: nem határozott meg fájlrendszert a(z) \"%s\"-nek\n"
 
-#: mount/mount.c:693
+#: mount/mount.c:697
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       Az összes típus kiprobálom a(z) \"%s\" vagy a(z) \"%s\"-ből\n"
 
-#: mount/mount.c:696
+#: mount/mount.c:700
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "      és ez úgy néz ki mint egy lapozó terület\n"
 
-#: mount/mount.c:698
+#: mount/mount.c:702
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "      Kiprobálom a(z) \"%s\" típust\n"
 
-#: mount/mount.c:725
+#: mount/mount.c:729
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s lapozó területnek tűnik - nincs be csatolva"
 
-#: mount/mount.c:816
+#: mount/mount.c:820
 msgid "mount failed"
 msgstr "a csatlakoztatás nem sikerült"
 
-#: mount/mount.c:818
+#: mount/mount.c:822
 #, c-format
 msgid "mount: only root can mount %s on %s"
-msgstr "mount: csak a rendszergazda van joga becsatlakoztani a(z) \"%s\"-t  a(z) \"%s\"-re"
+msgstr ""
+"mount: csak a rendszergazda van joga becsatlakoztani a(z) \"%s\"-t  a(z) \"%s"
+"\"-re"
 
-#: mount/mount.c:846
+#: mount/mount.c:850
 msgid "mount: loop device specified twice"
 msgstr "mount: a 'loop' eszközt kétszer határozta meg"
 
-#: mount/mount.c:851
+#: mount/mount.c:855
 msgid "mount: type specified twice"
 msgstr "mount: a típust kétszer határozta meg"
 
-#: mount/mount.c:863
+#: mount/mount.c:867
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: a 'loop' eszköz beállításának az átugrása\n"
 
-#: mount/mount.c:876
+#: mount/mount.c:880
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount:  a '%s loop' eszköz haszálatba vétele \n"
 
-#: mount/mount.c:885
+#: mount/mount.c:889
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:890
+#: mount/mount.c:894
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:895
+#: mount/mount.c:899
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: nem sikerült a 'loop' eszköz beállítása\n"
 
-#: mount/mount.c:906
+#: mount/mount.c:910
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: sikerült a 'loop' eszköz beállítása\n"
 
-#: mount/mount.c:945
+#: mount/mount.c:949
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: nem lehet megnyitni %s: %s"
 
-#: mount/mount.c:966
+#: mount/mount.c:970
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr ""
 
-#: mount/mount.c:979
+#: mount/mount.c:983
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: nem lehet a(z) \"%s\"-t megnyitni a sebeség beállításához"
 
-#: mount/mount.c:982
+#: mount/mount.c:986
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: nem lehet a(z) \"%s\" sebességét beállítani"
 
-#: mount/mount.c:1040
+#: mount/mount.c:1044
 #, fuzzy, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
-msgstr "mount: az 'mtab'-hoz fűzzés, a(z) \"%s\" már be van csatolva a(z) \"%s\"-re"
+msgstr ""
+"mount: az 'mtab'-hoz fűzzés, a(z) \"%s\" már be van csatolva a(z) \"%s\"-re"
 
-#: mount/mount.c:1115
-msgid "mount: I could not determine the filesystem type, and none was specified"
-msgstr "mount: nem tudom meghatározni a fájlrendszer típusát és nem határozott meg semilyet"
+#: mount/mount.c:1119
+msgid ""
+"mount: I could not determine the filesystem type, and none was specified"
+msgstr ""
+"mount: nem tudom meghatározni a fájlrendszer típusát és nem határozott meg "
+"semilyet"
 
-#: mount/mount.c:1118
+#: mount/mount.c:1122
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: meg kell határozni a fájlrendszer típusát"
 
-#: mount/mount.c:1121
+#: mount/mount.c:1125
 msgid "mount: mount failed"
 msgstr "mount: becsatolás nem sikerült"
 
-#: mount/mount.c:1127 mount/mount.c:1162
+#: mount/mount.c:1131 mount/mount.c:1166
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: a(z) \"%s\" becsatolási pont nem egy könyvtár"
 
-#: mount/mount.c:1129
+#: mount/mount.c:1133
 msgid "mount: permission denied"
 msgstr "mount: engedély megtagadva"
 
-#: mount/mount.c:1131
+#: mount/mount.c:1135
 msgid "mount: must be superuser to use mount"
 msgstr "mount: csak a rendszergazda használatja a 'mount'-ot"
 
-#: mount/mount.c:1135 mount/mount.c:1139
+#: mount/mount.c:1139 mount/mount.c:1143
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: a(z) \"%s\" foglalt"
 
-#: mount/mount.c:1141
+#: mount/mount.c:1145
 msgid "mount: proc already mounted"
 msgstr "mount: a 'proc' már be van csatolva"
 
-#: mount/mount.c:1143
+#: mount/mount.c:1147
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: a(z) \"%s\" már be van csatolva vagy a(z) \"%s\" foglalt"
 
-#: mount/mount.c:1149
+#: mount/mount.c:1153
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: a(z) \"%s\" becsatolási pont nem létezik"
 
-#: mount/mount.c:1151
+#: mount/mount.c:1155
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
-msgstr "mount: a(z) \"%s\" becsatolási pont egy szimbolikus hivatkozás ami nem mutat sehova"
+msgstr ""
+"mount: a(z) \"%s\" becsatolási pont egy szimbolikus hivatkozás ami nem mutat "
+"sehova"
 
-#: mount/mount.c:1154
+#: mount/mount.c:1158
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: a(z) \"%s\" speciális eszköz nem létezik"
 
-#: mount/mount.c:1164
+#: mount/mount.c:1168
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -7831,83 +8099,86 @@ msgstr ""
 "mount: a(z) \"%s\" speciális eszköz nem létezik\n"
 "       (az elérési út egyik tagja nem a könyvtár)\n"
 
-#: mount/mount.c:1177
+#: mount/mount.c:1181
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: a(z) \"%s\" nincs felcsatolva vagy hibás opció"
 
-#: mount/mount.c:1179
+#: mount/mount.c:1183
 #, fuzzy, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
-"       missing codepage or other error"
+"       missing codepage or helper program, or other error"
 msgstr ""
-"mount: hibás fájlrendszer típus, hibás opció, hibás szuperblokk a(z) \"%s\"-en,\n"
+"mount: hibás fájlrendszer típus, hibás opció, hibás szuperblokk a(z) \"%s\"-"
+"en,\n"
 "          vagy túl sok a becsatolt fájl rendszer"
 
-#: mount/mount.c:1189
+#: mount/mount.c:1193
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
 msgstr ""
 
-#: mount/mount.c:1195
+#: mount/mount.c:1199
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
 msgstr ""
 
-#: mount/mount.c:1212
+#: mount/mount.c:1216
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
 msgstr ""
 
-#: mount/mount.c:1218
+#: mount/mount.c:1222
 msgid "mount table full"
 msgstr "a becsatolási tábla megtelt"
 
-#: mount/mount.c:1220
+#: mount/mount.c:1224
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: nem lehet olvasni a(z) \"%s\" szuperblokkot"
 
-#: mount/mount.c:1226
+#: mount/mount.c:1230
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: a(z) \"%s\" ismeretlen eszköz"
 
-#: mount/mount.c:1231
+#: mount/mount.c:1235
 #, fuzzy, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "   l   lista az ismert fájlrendszerekről"
 
-#: mount/mount.c:1243
+#: mount/mount.c:1247
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: talán \"%s\"-t akart"
 
-#: mount/mount.c:1246
+#: mount/mount.c:1250
 #, fuzzy
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: esetleg iso9660-t akart?"
 
-#: mount/mount.c:1249
+#: mount/mount.c:1253
 #, fuzzy
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: esetleg iso9660-t akart?"
 
-#: mount/mount.c:1252
+#: mount/mount.c:1256
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
-msgstr "mount: a(z) \"%s\"-nek hibás az eszköz száma vagy a(z) \"%s\" fájlrendszer nem támogatott"
+msgstr ""
+"mount: a(z) \"%s\"-nek hibás az eszköz száma vagy a(z) \"%s\" fájlrendszer "
+"nem támogatott"
 
-#: mount/mount.c:1258
+#: mount/mount.c:1262
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: a(z) \"%s\" nem blokk eszköz és a lekérdezés nem sikerült?"
 
-#: mount/mount.c:1260
+#: mount/mount.c:1264
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -7916,66 +8187,72 @@ msgstr ""
 "mount: a rendszermag nem tudja értelmezni a(z) \"%s\"-t mint blokk eszköz\n"
 "       (lehet hogy a `insmod meghajtó' kéne?)"
 
-#: mount/mount.c:1263
+#: mount/mount.c:1267
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
-msgstr "mount: a(z) \"%s\" nem blokk eszköz (talán probálja a `-o loop' opciót)"
+msgstr ""
+"mount: a(z) \"%s\" nem blokk eszköz (talán probálja a `-o loop' opciót)"
 
-#: mount/mount.c:1266
+#: mount/mount.c:1270
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: a(z) \"%s\" nem blokk eszköz"
 
-#: mount/mount.c:1269
+#: mount/mount.c:1273
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: a(z) \"%s\" nem érvényes blokk eszköz"
 
-#: mount/mount.c:1272
+#: mount/mount.c:1276
 msgid "block device "
 msgstr "blokk eszköz "
 
-#: mount/mount.c:1274
+#: mount/mount.c:1278
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: nem lehet csak olvashatóként felcsatolni a '%s%s'-t"
 
-#: mount/mount.c:1278
+#: mount/mount.c:1282
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
-msgstr "mount: a '%s%s' írás védett, de felülbírálhatja a '-w' opció használatával"
+msgstr ""
+"mount: a '%s%s' írás védett, de felülbírálhatja a '-w' opció használatával"
 
-#: mount/mount.c:1293
+#: mount/mount.c:1297
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: a '%s%s' írás védett, felcsatolás csak olvashatóként"
 
-#: mount/mount.c:1393
+#: mount/mount.c:1397
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
-msgstr "mount: nem adott meg típust - 'nfs'-ként fogom feldolgozni a kettőspont miatt\n"
+msgstr ""
+"mount: nem adott meg típust - 'nfs'-ként fogom feldolgozni a kettőspont "
+"miatt\n"
 
-#: mount/mount.c:1399
+#: mount/mount.c:1403
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
-msgstr "mount: nem adott meg típust - 'smb'-ként fogom feldolgozni a // előtag miatt\n"
+msgstr ""
+"mount: nem adott meg típust - 'smb'-ként fogom feldolgozni a // előtag "
+"miatt\n"
 
-#: mount/mount.c:1416
+#: mount/mount.c:1420
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: a \"%s\" háttérbe rakás\n"
 
-#: mount/mount.c:1426
+#: mount/mount.c:1430
 #, c-format
 msgid "mount: giving up \"%s\"\n"
 msgstr "mount: feladom \"%s\"\n"
 
-#: mount/mount.c:1512
+#: mount/mount.c:1516
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: a(z) \"%s\" már be van csatlakoztatva a(z) \"%s\"-re\n"
 
-#: mount/mount.c:1650
+#: mount/mount.c:1654
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8013,44 +8290,51 @@ msgid ""
 msgstr ""
 "Használat: mount -V                   : verzió kiírása\n"
 "       mount -h                       : kiírja ezt a segítséget\n"
-"       mount                          : kiírja a felcsatolt fájlrendszereket\n"
+"       mount                          : kiírja a felcsatolt "
+"fájlrendszereket\n"
 "       mount -l                       : ugyanaz csak kiírja a címkéket\n"
-"Ez eddig az informális rész volt. Most a felcsatlakoztatás lehetőségei következik.\n"
+"Ez eddig az informális rész volt. Most a felcsatlakoztatás lehetőségei "
+"következik.\n"
 "A parancs használata `mount [-t fájlrendszer] valami valahol'.\n"
 "A részletek az '/etc/fstab'-ban vannak részletezve.\n"
-"       mount -a                 :      felcsatolja az összes eszközt az '/etc/fstab'-ból\n"
-"       mount eszköz                   : becsatolja az eszközt egy ismert helyre\n"
-"       mount könyvtár                 : becsatolja a könyvtárat egy ismert eszközhöz\n"
+"       mount -a                 :      felcsatolja az összes eszközt az '/"
+"etc/fstab'-ból\n"
+"       mount eszköz                   : becsatolja az eszközt egy ismert "
+"helyre\n"
+"       mount könyvtár                 : becsatolja a könyvtárat egy ismert "
+"eszközhöz\n"
 "       mount -t típus eszköz könyvtár : a parancs szokásos alakja\n"
-"Megjegyzés a most következő utasítások valójában nem csatlakoztat fel eszközöket\n"
+"Megjegyzés a most következő utasítások valójában nem csatlakoztat fel "
+"eszközöket\n"
 "szükséges hozzá egy felcsatolt fájlrendszer.\n"
 "Megteheti, hogy átirányít egy csatlakozást egy másik könyvtárba:\n"
 "       mount --bind régi_könyvtár új_könyvtár\n"
 "vagy átmozgatja:\n"
 "       mount --move régi_könyvtár új_könyvtár\n"
 "Az eszköz név megadható név szerint, pl /dev/hda1 vagy /dev/cdrom,\n"
-"vagy cím szerint, a  '-L címke' használatával  vagy az 'uuid'-vel, a '-U uuid' használatával.\n"
+"vagy cím szerint, a  '-L címke' használatával  vagy az 'uuid'-vel, a '-U "
+"uuid' használatával.\n"
 "Egyéb opciók: [-nfFrsvw] [-o opciók].\n"
 "Több részetért olvassa el a 'man 8 mount' oldalt .\n"
 
-#: mount/mount.c:1960
+#: mount/mount.c:1967
 msgid "mount: only root can do that"
 msgstr "mount: csak a rendszergazda teheti ezt meg"
 
-#: mount/mount.c:1965
+#: mount/mount.c:1972
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: nem találtam a(z) \"%s\"-t - létre kell hozni..\n"
 
-#: mount/mount.c:1975
+#: mount/mount.c:1982
 msgid "nothing was mounted"
 msgstr "semmi sem lett felcsatolva"
 
-#: mount/mount.c:1988 mount/mount.c:2014
+#: mount/mount.c:2000 mount/mount.c:2026
 msgid "mount: no such partition found"
 msgstr "mount: nincs ilyen partíció"
 
-#: mount/mount.c:1991
+#: mount/mount.c:2003
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: nem találom a(z) \"%s\"-t a(z) \"%s\"-ben vagy a(z) \"%s\"-ben"
@@ -8115,7 +8399,8 @@ msgstr "swapon: nem lehet lekérdezni %s: %s\n"
 #: mount/swapon.c:188
 #, fuzzy, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
-msgstr "figyelmeztetés: a(z) %s nem biztonságos jogosultságokat %04o, %04o ajánl\n"
+msgstr ""
+"figyelmeztetés: a(z) %s nem biztonságos jogosultságokat %04o, %04o ajánl\n"
 
 #: mount/swapon.c:200
 #, fuzzy, c-format
@@ -8142,81 +8427,91 @@ msgstr "%s: nem lehet megnyitni %s: %s\n"
 msgid "umount: compiled without support for -f\n"
 msgstr "umount: a '-f' támogatása nélkül lett lefordítva\n"
 
-#: mount/umount.c:130
+#: mount/umount.c:106
+#, fuzzy, c-format
+msgid "umount: cannot set group id: %s"
+msgstr "mount: nem lehet a(z) \"%s\" sebességét beállítani"
+
+#: mount/umount.c:109
+#, fuzzy, c-format
+msgid "umount: cannot set user id: %s"
+msgstr "mount: nem lehet a(z) \"%s\" sebességét beállítani"
+
+#: mount/umount.c:134
 #, fuzzy, c-format
 msgid "umount: cannot fork: %s"
 msgstr "mount: nem lehet elágaztani a(z) \"%s\"-t"
 
-#: mount/umount.c:142
+#: mount/umount.c:146
 #, c-format
 msgid "umount: %s: invalid block device"
 msgstr "umount: %s: érvénytelen blokk eszköz"
 
-#: mount/umount.c:144
+#: mount/umount.c:148
 #, c-format
 msgid "umount: %s: not mounted"
 msgstr "umount: %s: nincs felcsatolva"
 
-#: mount/umount.c:146
+#: mount/umount.c:150
 #, c-format
 msgid "umount: %s: can't write superblock"
 msgstr "umount: %s: nem lehet írni a szuperblokk-ot"
 
-#: mount/umount.c:150
+#: mount/umount.c:154
 #, c-format
 msgid "umount: %s: device is busy"
 msgstr "umount: %s: az eszköz foglalt"
 
-#: mount/umount.c:152
+#: mount/umount.c:156
 #, c-format
 msgid "umount: %s: not found"
 msgstr "umount: %s: nincs meg"
 
-#: mount/umount.c:154
+#: mount/umount.c:158
 #, c-format
 msgid "umount: %s: must be superuser to umount"
 msgstr "umount: %s: csak rendszergazda csatolhatja le"
 
-#: mount/umount.c:156
+#: mount/umount.c:160
 #, c-format
 msgid "umount: %s: block devices not permitted on fs"
 msgstr "umount: %s: blokk eszköz nem engedélyezett ezen a fájlrendszeren"
 
-#: mount/umount.c:158
+#: mount/umount.c:162
 #, c-format
 msgid "umount: %s: %s"
 msgstr "umount: %s: %s"
 
-#: mount/umount.c:207
+#: mount/umount.c:211
 #, c-format
 msgid "no umount2, trying umount...\n"
 msgstr "nincs 'umount2', probálom az 'umount'-ot...\n"
 
-#: mount/umount.c:223
+#: mount/umount.c:227
 #, c-format
 msgid "could not umount %s - trying %s instead\n"
 msgstr "nem lehet lecsatolni a(z) \"%s\"-t - a(z) \"%s\"-t probálom helyette\n"
 
-#: mount/umount.c:241
+#: mount/umount.c:245
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr "umount: %s foglalt - újra felcsatolva csak olvashatóként\n"
 
-#: mount/umount.c:252
+#: mount/umount.c:256
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr "umount: nem lehet újra felcsatolni a(z) \"%s\"-t csak olvashatóként\n"
 
-#: mount/umount.c:261
+#: mount/umount.c:265
 #, c-format
 msgid "%s umounted\n"
 msgstr "%s lecsatolva\n"
 
-#: mount/umount.c:359
+#: mount/umount.c:363
 msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: nem találom a fájlrendszerek listája között"
 
-#: mount/umount.c:389
+#: mount/umount.c:393
 #, fuzzy, c-format
 msgid ""
 "Usage: umount [-hV]\n"
@@ -8227,47 +8522,47 @@ msgstr ""
 "       umount -a [-f] [-r] [-n] [-v] [-t fájlrendszertípus]\n"
 "       umount [-f] [-r] [-n] [-v] speciális | csomópont...\n"
 
-#: mount/umount.c:441
+#: mount/umount.c:445
 #, fuzzy
 msgid "Cannot umount \"\"\n"
 msgstr "Nem lehet megnyitni "
 
-#: mount/umount.c:447
+#: mount/umount.c:451
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr "Próbálom lecsatolni a(z) \"%s\"-t\n"
 
-#: mount/umount.c:453
+#: mount/umount.c:457
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "Nem találom a(z) \"%s\"-t az 'mtab'-ban\n"
 
-#: mount/umount.c:460
+#: mount/umount.c:464
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: a(z) \"%s\" nincs felcsatolva (nincs az 'mtab'-ban)"
 
-#: mount/umount.c:484
+#: mount/umount.c:488
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: úgy tűnik hogy a(z) \"%s\" többször felcsatolva"
 
-#: mount/umount.c:497
+#: mount/umount.c:501
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: a(z) \"%s\" nincs az 'fstab'-ban (és ön nem rendszergazda)"
 
-#: mount/umount.c:501
+#: mount/umount.c:505
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: a(z) \"%s\" felcsatolása ellenkezik az 'fstab'-bal"
 
-#: mount/umount.c:542
+#: mount/umount.c:546
 #, fuzzy, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "umount: csak rendszergazda csatolhatja le a(z) \"%s\" a(z) \"%s\"-ról"
 
-#: mount/umount.c:623
+#: mount/umount.c:627
 msgid "umount: only root can do that"
 msgstr "umount: ezt csak rendszergazda teheti meg"
 
@@ -8293,10 +8588,12 @@ msgstr ""
 #: sys-utils/cytune.c:125
 #, c-format
 msgid ""
-"File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
+"File %s, For threshold value %lu and timrout value %lu, Maximum characters "
+"in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
-"A(z) \"%s\" fájl küszöb értéke %lu és az időtúlcsordulás értéke %lu Maximális karakter szám a 'fifo'-ban %d\n"
+"A(z) \"%s\" fájl küszöb értéke %lu és az időtúlcsordulás értéke %lu "
+"Maximális karakter szám a 'fifo'-ban %d\n"
 " és a maximális átviteli arány  %f karakter/másodperc\n"
 
 #: sys-utils/cytune.c:189
@@ -8326,8 +8623,12 @@ msgstr "Érénytelen alapértelmezett idő érték: %s\n"
 
 #: sys-utils/cytune.c:238
 #, c-format
-msgid "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) [-g|-G] file [file...]\n"
-msgstr "Használat: %s [-q [-i időköz]] ([-s érték]|[-S érték]) ([-t érték]|[-T érték]) [-g|-G] fájl [fájl...]\n"
+msgid ""
+"Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
+"[-g|-G] file [file...]\n"
+msgstr ""
+"Használat: %s [-q [-i időköz]] ([-s érték]|[-S érték]) ([-t érték]|[-T "
+"érték]) [-g|-G] fájl [fájl...]\n"
 
 #: sys-utils/cytune.c:250 sys-utils/cytune.c:269 sys-utils/cytune.c:289
 #: sys-utils/cytune.c:339
@@ -8363,7 +8664,9 @@ msgstr "%s: %ld a jellegi küszöb érték és %ld a jelenlegi időtúlcsordulá
 #: sys-utils/cytune.c:309
 #, c-format
 msgid "%s: %ld default threshold and %ld default timeout\n"
-msgstr "%s: %ld az alapértelmezett küszöb érték és %ld az alapértelmezett időtúlcsordulás\n"
+msgstr ""
+"%s: %ld az alapértelmezett küszöb érték és %ld az alapértelmezett "
+"időtúlcsordulás\n"
 
 #: sys-utils/cytune.c:327
 msgid "Can't set signal handler"
@@ -8380,8 +8683,11 @@ msgstr "Nem lehet lekérdezni a 'CYGETMON'-t %s:%s-en\n"
 
 #: sys-utils/cytune.c:418
 #, c-format
-msgid "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
-msgstr "%s: %lu egész, %lu/%lu karakter; fifo: %lu küszöb, %lu időtulfutás, %lu max, %lu most\n"
+msgid ""
+"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgstr ""
+"%s: %lu egész, %lu/%lu karakter; fifo: %lu küszöb, %lu időtulfutás, %lu max, "
+"%lu most\n"
 
 #: sys-utils/cytune.c:424
 #, c-format
@@ -8390,8 +8696,11 @@ msgstr "   %f  egész/mp; %f rec, %f küld (kar/mp)\n"
 
 #: sys-utils/cytune.c:429
 #, c-format
-msgid "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
-msgstr "%s: %lu egész, %lu karakter; fifo: %lu küszöb, %lu időtúlfutás, %lu max, %lu most\n"
+msgid ""
+"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgstr ""
+"%s: %lu egész, %lu karakter; fifo: %lu küszöb, %lu időtúlfutás, %lu max, %lu "
+"most\n"
 
 #: sys-utils/cytune.c:435
 #, c-format
@@ -8506,8 +8815,11 @@ msgstr "\t%s '-h' a segítségért.\n"
 
 #: sys-utils/ipcs.c:130
 #, c-format
-msgid "%s provides information on ipc facilities for which you have read access.\n"
-msgstr "A(z) %s információkat ad az elérhető ipc lehetőségről amitnek az olvasásához joga van.\n"
+msgid ""
+"%s provides information on ipc facilities for which you have read access.\n"
+msgstr ""
+"A(z) %s információkat ad az elérhető ipc lehetőségről amitnek az olvasásához "
+"joga van.\n"
 
 #: sys-utils/ipcs.c:132
 #, c-format
@@ -8655,7 +8967,8 @@ msgstr "gid"
 #: sys-utils/ipcs.c:306
 #, c-format
 msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
-msgstr "-------- Megosztott Memória Csatolás/Lekapcsolás/Módosítás száma -------\n"
+msgstr ""
+"-------- Megosztott Memória Csatolás/Lekapcsolás/Módosítás száma -------\n"
 
 #: sys-utils/ipcs.c:307
 #, c-format
@@ -8951,7 +9264,8 @@ msgstr ""
 #: sys-utils/ipcs.c:609
 #, c-format
 msgid "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\n"
-msgstr "felhasználó_azonosító(uid)=%d\tcsoport_azonosító(gid)=%d\tcuid=%d\tcgid=%d\n"
+msgstr ""
+"felhasználó_azonosító(uid)=%d\tcsoport_azonosító(gid)=%d\tcuid=%d\tcgid=%d\n"
 
 #: sys-utils/ipcs.c:611
 #, c-format
@@ -9066,20 +9380,26 @@ msgid "usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
 msgstr "használat: rdev [ -rv ] [ -o ELTOLÁS ] [ KÉP [ ÉRTÉK [ ELTOLÁS ] ] ]"
 
 #: sys-utils/rdev.c:70
-msgid "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
-msgstr "  rdev /dev/fd0  (vagy rdev /linux, stb.) megjeleníti aktuális gyökér eszközt"
+msgid ""
+"  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
+msgstr ""
+"  rdev /dev/fd0  (vagy rdev /linux, stb.) megjeleníti aktuális gyökér eszközt"
 
 #: sys-utils/rdev.c:71
 msgid "  rdev /dev/fd0 /dev/hda2         sets ROOT to /dev/hda2"
-msgstr "  rdev /dev/fd0 /dev/hda2         beállítja a gyökeret a '/dev/hda2'-re"
+msgstr ""
+"  rdev /dev/fd0 /dev/hda2         beállítja a gyökeret a '/dev/hda2'-re"
 
 #: sys-utils/rdev.c:72
 msgid "  rdev -R /dev/fd0 1              set the ROOTFLAGS (readonly status)"
-msgstr "  rdev -R /dev/fd0 1              beállítja a 'ROOTFLAGS' értékét (csak olvasható)"
+msgstr ""
+"  rdev -R /dev/fd0 1              beállítja a 'ROOTFLAGS' értékét (csak "
+"olvasható)"
 
 #: sys-utils/rdev.c:73
 msgid "  rdev -r /dev/fd0 627            set the RAMDISK size"
-msgstr "  rdev -r /dev/fd0 627            a memória lemez méretének a beállítása"
+msgstr ""
+"  rdev -r /dev/fd0 627            a memória lemez méretének a beállítása"
 
 #: sys-utils/rdev.c:74
 msgid "  rdev -v /dev/fd0 1              set the bootup VIDEOMODE"
@@ -9102,12 +9422,17 @@ msgid "  vidmode ...                     same as rdev -v"
 msgstr "  vidmode ...                     ugyanaz mint az rdev -v"
 
 #: sys-utils/rdev.c:79
-msgid "Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
-msgstr "Megjegyzés:a videomódok -3=rákérdezés, -2=Kibővített, -1 Normális VGA, 1=1.kulcs,2=2.kulcs,..."
+msgid ""
+"Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
+msgstr ""
+"Megjegyzés:a videomódok -3=rákérdezés, -2=Kibővített, -1 Normális VGA, 1=1."
+"kulcs,2=2.kulcs,..."
 
 #: sys-utils/rdev.c:80
 msgid "      use -R 1 to mount root readonly, -R 0 for read/write."
-msgstr "  a '-R 1' használatával felcsatolhatjuk a gyökeret csak olvashatóra, a '-R 0'-val írható és olvashatóra."
+msgstr ""
+"  a '-R 1' használatával felcsatolhatjuk a gyökeret csak olvashatóra, a '-R "
+"0'-val írható és olvashatóra."
 
 #: sys-utils/rdev.c:247
 msgid "missing comma"
@@ -9172,8 +9497,11 @@ msgstr "összesen"
 
 #: sys-utils/renice.c:68
 #, c-format
-msgid "usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
-msgstr "használat: renice Prioritás [ [ -p ] folyamat azonosító(pids) ] [ [ -g ] pgrps ] [ [ -u ] felhasználó ]\n"
+msgid ""
+"usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
+msgstr ""
+"használat: renice Prioritás [ [ -p ] folyamat azonosító(pids) ] [ [ -g ] "
+"pgrps ] [ [ -u ] felhasználó ]\n"
 
 #: sys-utils/renice.c:97
 #, c-format
@@ -9305,7 +9633,7 @@ msgstr ", kész"
 msgid "disable rtc alarm interrupt"
 msgstr ""
 
-#: sys-utils/setarch.c:57
+#: sys-utils/setarch.c:70
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -9313,46 +9641,46 @@ msgid ""
 "Options:\n"
 msgstr ""
 
-#: sys-utils/setarch.c:61
+#: sys-utils/setarch.c:74
 #, c-format
 msgid "\t-%c\tEnable %s\n"
 msgstr ""
 
-#: sys-utils/setarch.c:63
+#: sys-utils/setarch.c:76
 #, c-format
 msgid ""
 "\n"
 "For more information see setarch(8).\n"
 msgstr ""
 
-#: sys-utils/setarch.c:75
+#: sys-utils/setarch.c:88
 #, fuzzy, c-format
 msgid ""
 "%s: %s\n"
 "Try `%s --help' for more information.\n"
 msgstr "Próbálja ki `getopt --help'-et több információért.\n"
 
-#: sys-utils/setarch.c:133 sys-utils/setarch.c:149
+#: sys-utils/setarch.c:155 sys-utils/setarch.c:171
 #, fuzzy, c-format
 msgid "%s: Unrecognized architecture"
 msgstr " %s: ismeretlen partíció\n"
 
-#: sys-utils/setarch.c:166 sys-utils/setarch.c:173
+#: sys-utils/setarch.c:188 sys-utils/setarch.c:195
 #, fuzzy
 msgid "Not enough arguments"
 msgstr "Túl sok paraméter.\n"
 
-#: sys-utils/setarch.c:199
+#: sys-utils/setarch.c:237
 #, c-format
 msgid "Switching on %s.\n"
 msgstr ""
 
-#: sys-utils/setarch.c:206
+#: sys-utils/setarch.c:244
 #, fuzzy, c-format
 msgid "Unknown option `%c' ignored"
 msgstr "%s: ismeretlen jel %s\n"
 
-#: sys-utils/setarch.c:211
+#: sys-utils/setarch.c:249
 #, fuzzy, c-format
 msgid "Failed to set personality to %s"
 msgstr "Nem sikerült az írás a(z) \"%s\" partícióra\n"
@@ -9369,7 +9697,8 @@ msgid ""
 "          -a [on|off] | -o [on|off] | -C [on|off] | -q [on|off] | -s | \n"
 "          -T [on|off] ]\n"
 msgstr ""
-"Használat: %s <eszköz> [ -i <megszakítás> | -t <idő> | -c <karakterek> | -w <várakozás> | \n"
+"Használat: %s <eszköz> [ -i <megszakítás> | -t <idő> | -c <karakterek> | -w "
+"<várakozás> | \n"
 "          -a [on|off] | -o [on|off] | -C [on|off] | -q [on|off] | -s | \n"
 "          -T [on|off] ]\n"
 
@@ -9485,20 +9814,23 @@ msgstr "hexdump: hibás átugrási érték\n"
 
 #: text-utils/hexsyntax.c:131
 #, c-format
-msgid "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
-msgstr "hexdump: [-bcCdovx] [-e format_sztring] [-f format_fájl [-n hossz] [-s átugrás] [fájl ...]\n"
+msgid ""
+"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
+msgstr ""
+"hexdump: [-bcCdovx] [-e format_sztring] [-f format_fájl [-n hossz] [-s "
+"átugrás] [fájl ...]\n"
 
-#: text-utils/more.c:258
+#: text-utils/more.c:257
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr "használat: %s [-dflpcsu] [+sorszám | +/minta] név1 név2 ...\n"
 
-#: text-utils/more.c:481
+#: text-utils/more.c:480
 #, fuzzy, c-format
 msgid "%s: unknown option \"-%c\"\n"
 msgstr "%s: ismeretlen jel %s\n"
 
-#: text-utils/more.c:513
+#: text-utils/more.c:512
 #, c-format
 msgid ""
 "\n"
@@ -9509,7 +9841,7 @@ msgstr ""
 "*** %s: könyvtár ***\n"
 "\n"
 
-#: text-utils/more.c:557
+#: text-utils/more.c:556
 #, c-format
 msgid ""
 "\n"
@@ -9520,46 +9852,46 @@ msgstr ""
 "******** %s: Nem a szöveg fájl ********\n"
 "\n"
 
-#: text-utils/more.c:660
+#: text-utils/more.c:659
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Használja a 'q' vagy a 'Q'-t a kilépéshez]"
 
-#: text-utils/more.c:752
+#: text-utils/more.c:751
 #, c-format
 msgid "--More--"
 msgstr "--Tovább--"
 
-#: text-utils/more.c:754
+#: text-utils/more.c:753
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Következő fájl: %s)"
 
-#: text-utils/more.c:759
+#: text-utils/more.c:758
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Üsse le szóközt a folyatáshoz, vagy a 'q'-t a kilépéshez]"
 
-#: text-utils/more.c:1158
+#: text-utils/more.c:1173
 #, c-format
 msgid "...back %d pages"
 msgstr "...vissza(z) %d lappal"
 
-#: text-utils/more.c:1160
+#: text-utils/more.c:1175
 msgid "...back 1 page"
 msgstr "...vissza 1 lappal"
 
-#: text-utils/more.c:1203
+#: text-utils/more.c:1218
 #, fuzzy
 msgid "...skipping one line"
 msgstr "... %d sor átugrása"
 
-#: text-utils/more.c:1205
+#: text-utils/more.c:1220
 #, fuzzy, c-format
 msgid "...skipping %d lines"
 msgstr "... %d sor átugrása"
 
-#: text-utils/more.c:1242
+#: text-utils/more.c:1257
 msgid ""
 "\n"
 "***Back***\n"
@@ -9569,14 +9901,15 @@ msgstr ""
 "***Vissza***\n"
 "\n"
 
-#: text-utils/more.c:1280
+#: text-utils/more.c:1295
 msgid ""
 "\n"
-"Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
+"Most commands optionally preceded by integer argument k.  Defaults in "
+"brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 
-#: text-utils/more.c:1287
+#: text-utils/more.c:1302
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -9599,34 +9932,34 @@ msgid ""
 ".                       Repeat previous command\n"
 msgstr ""
 
-#: text-utils/more.c:1356 text-utils/more.c:1361
+#: text-utils/more.c:1371 text-utils/more.c:1376
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Használja a 'h'-t a segítségehez]"
 
-#: text-utils/more.c:1395
+#: text-utils/more.c:1410
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" sor %d"
 
-#: text-utils/more.c:1397
+#: text-utils/more.c:1412
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Nem egy fájl] %d sor"
 
-#: text-utils/more.c:1481
+#: text-utils/more.c:1496
 msgid "  Overflow\n"
 msgstr "  Túlfutás\n"
 
-#: text-utils/more.c:1528
+#: text-utils/more.c:1543
 msgid "...skipping\n"
 msgstr "  átugrás\n"
 
-#: text-utils/more.c:1557
+#: text-utils/more.c:1572
 msgid "Regular expression botch"
 msgstr "Elrontotta a kifejezést"
 
-#: text-utils/more.c:1569
+#: text-utils/more.c:1584
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -9634,15 +9967,15 @@ msgstr ""
 "\n"
 "A minta nem található.\n"
 
-#: text-utils/more.c:1572 text-utils/pg.c:1125 text-utils/pg.c:1276
+#: text-utils/more.c:1587 text-utils/pg.c:1123 text-utils/pg.c:1274
 msgid "Pattern not found"
 msgstr "A minta nem található."
 
-#: text-utils/more.c:1633
+#: text-utils/more.c:1648
 msgid "can't fork\n"
 msgstr "nem lehet elágaztatni\n"
 
-#: text-utils/more.c:1672
+#: text-utils/more.c:1687
 msgid ""
 "\n"
 "...Skipping "
@@ -9650,19 +9983,19 @@ msgstr ""
 "\n"
 ".. Átugrás  "
 
-#: text-utils/more.c:1676
+#: text-utils/more.c:1691
 msgid "...Skipping to file "
 msgstr "... Fájl árugrása"
 
-#: text-utils/more.c:1678
+#: text-utils/more.c:1693
 msgid "...Skipping back to file "
 msgstr "..Egy fájlal vissza ugrás "
 
-#: text-utils/more.c:1956
+#: text-utils/more.c:1971
 msgid "Line too long"
 msgstr "A sor túl hosszú"
 
-#: text-utils/more.c:1999
+#: text-utils/more.c:2014
 msgid "No previous command to substitute for"
 msgstr "Nem lehet az előző parancsot helyettesíteni"
 
@@ -9715,86 +10048,88 @@ msgstr "hexdump: hibás formátum {%s}\n"
 msgid "hexdump: bad conversion character %%%s.\n"
 msgstr "hexdump: hiba a karakter átalakításnál %%%s.\n"
 
-#: text-utils/pg.c:237
+#: text-utils/pg.c:235
 #, c-format
-msgid "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
-msgstr "%s: Használat: %s [-szám] [-p szöveg] [-cefnrs] [+sor] [+/minta/] [fájlok]\n"
+msgid ""
+"%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
+msgstr ""
+"%s: Használat: %s [-szám] [-p szöveg] [-cefnrs] [+sor] [+/minta/] [fájlok]\n"
 
-#: text-utils/pg.c:246
+#: text-utils/pg.c:244
 #, c-format
 msgid "%s: option requires an argument -- %s\n"
 msgstr "%s: paraméter szükséges -- %s\n"
 
-#: text-utils/pg.c:254
+#: text-utils/pg.c:252
 #, c-format
 msgid "%s: illegal option -- %s\n"
 msgstr "%s: érvénytelen opció -- %s\n"
 
-#: text-utils/pg.c:371
+#: text-utils/pg.c:369
 msgid "...skipping forward\n"
 msgstr "...előre ugrás\n"
 
-#: text-utils/pg.c:373
+#: text-utils/pg.c:371
 msgid "...skipping backward\n"
 msgstr "...hátra ugrás\n"
 
-#: text-utils/pg.c:395
+#: text-utils/pg.c:393
 msgid "No next file"
 msgstr "Nincs következő fájl"
 
-#: text-utils/pg.c:399
+#: text-utils/pg.c:397
 msgid "No previous file"
 msgstr "Nincs előző fájl"
 
-#: text-utils/pg.c:929
+#: text-utils/pg.c:927
 #, c-format
 msgid "%s: Read error from %s file\n"
 msgstr "%s: Olvasás hiba a(z) %s fájlban\n"
 
-#: text-utils/pg.c:935
+#: text-utils/pg.c:933
 #, c-format
 msgid "%s: Unexpected EOF in %s file\n"
 msgstr "%s:Váratlan fájlvég a(z) %s fájlban\n"
 
-#: text-utils/pg.c:938
+#: text-utils/pg.c:936
 #, c-format
 msgid "%s: Unknown error in %s file\n"
 msgstr "%s Ismeretlen hiba a(z) %s fájlban\n"
 
-#: text-utils/pg.c:1033
+#: text-utils/pg.c:1031
 #, c-format
 msgid "%s: Cannot create tempfile\n"
 msgstr "%s: Nem lehet létrehozni az ideiglenes fájlt\n"
 
-#: text-utils/pg.c:1042 text-utils/pg.c:1217
+#: text-utils/pg.c:1040 text-utils/pg.c:1215
 msgid "RE error: "
 msgstr "RE hiba: "
 
-#: text-utils/pg.c:1199
+#: text-utils/pg.c:1197
 msgid "(EOF)"
 msgstr "(A fájl vége)"
 
-#: text-utils/pg.c:1225
+#: text-utils/pg.c:1223
 msgid "No remembered search string"
 msgstr "Nincs régi keresési minta"
 
-#: text-utils/pg.c:1308
+#: text-utils/pg.c:1306
 msgid "Cannot open "
 msgstr "Nem lehet megnyitni "
 
-#: text-utils/pg.c:1356
+#: text-utils/pg.c:1354
 msgid "saved"
 msgstr "elmentve"
 
-#: text-utils/pg.c:1463
+#: text-utils/pg.c:1461
 msgid ": !command not allowed in rflag mode.\n"
 msgstr ": !parancs nem használható 'rflag' módban.\n"
 
-#: text-utils/pg.c:1495
+#: text-utils/pg.c:1493
 msgid "fork() failed, try again later\n"
 msgstr "fork() sikertelen, kísérelje meg később újra\n"
 
-#: text-utils/pg.c:1700
+#: text-utils/pg.c:1698
 msgid "(Next file: "
 msgstr "(Következő fájl: "
 
@@ -9847,3 +10182,12 @@ msgstr "Bemeneti sor túl hosszú.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "El fogyott a memória a puffer növelése során.\n"
+
+#~ msgid "`%s': bad directory: '.' isn't first\n"
+#~ msgstr " \"%s\": hibás könyvtár: a \".\" nem az első\n"
+
+#~ msgid "`%s': bad directory: '..' isn't second\n"
+#~ msgstr " \"%s\": hibás könyvtár: a \"..\" nem a második\n"
+
+#~ msgid "Password error."
+#~ msgstr "Jelszó hiba."

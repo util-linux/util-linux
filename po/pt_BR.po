@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11b\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-10-15 12:05+0200\n"
+"POT-Creation-Date: 2007-11-12 12:18+0100\n"
 "PO-Revision-Date: 2001-05-24 16:03-03:00\n"
 "Last-Translator: Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -1159,14 +1159,19 @@ msgstr ""
 
 #: disk-utils/mkswap.c:749
 #, fuzzy
+msgid "unable to matchpathcon()"
+msgstr "não foi possível stat %s"
+
+#: disk-utils/mkswap.c:752
+#, fuzzy
 msgid "unable to create new selinux context"
 msgstr "não foi possível gravar inodes"
 
-#: disk-utils/mkswap.c:751
+#: disk-utils/mkswap.c:754
 msgid "couldn't compute selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:757
+#: disk-utils/mkswap.c:760
 #, fuzzy, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "não foi possível renomear %s para %s: %s\n"
@@ -7832,27 +7837,27 @@ msgstr "Não é possível bloquear (lock) na memória, saindo\n"
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:384
+#: mount/lomount.c:387
 #, fuzzy, c-format
 msgid "set_loop(%s,%s,%llu): success\n"
 msgstr "set_loop(%s,%s,%d): sucesso\n"
 
-#: mount/lomount.c:395
+#: mount/lomount.c:398
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: não foi possível excluir o dispositivo %s: %s\n"
 
-#: mount/lomount.c:406
+#: mount/lomount.c:409
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): sucesso\n"
 
-#: mount/lomount.c:414
+#: mount/lomount.c:417
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Este mount foi compilado sem suporte a laços. Recompile-o.\n"
 
-#: mount/lomount.c:451
+#: mount/lomount.c:454
 #, c-format
 msgid ""
 "\n"
@@ -7874,12 +7879,12 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:479 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:482 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "não há memória suficiente"
 
-#: mount/lomount.c:640
+#: mount/lomount.c:643
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Não havia suporte a laço disponível quando da compilação. Recompile.\n"

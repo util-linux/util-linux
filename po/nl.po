@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng-2.13-rc3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-10-15 12:05+0200\n"
+"POT-Creation-Date: 2007-11-12 12:18+0100\n"
 "PO-Revision-Date: 2007-10-08 15:56+0200\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -1195,14 +1195,19 @@ msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr "%s: %s: kan geen SELinux-bestandslabel verkrijgen: %s\n"
 
 #: disk-utils/mkswap.c:749
+#, fuzzy
+msgid "unable to matchpathcon()"
+msgstr "kan status van %s niet bepalen"
+
+#: disk-utils/mkswap.c:752
 msgid "unable to create new selinux context"
 msgstr "kan geen nieuwe SELinux-context aanmaken"
 
-#: disk-utils/mkswap.c:751
+#: disk-utils/mkswap.c:754
 msgid "couldn't compute selinux context"
 msgstr "kan geen nieuwe SELinux-context berekenen"
 
-#: disk-utils/mkswap.c:757
+#: disk-utils/mkswap.c:760
 #, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "%s: kan %s niet herlabelen naar %s: %s\n"
@@ -7834,29 +7839,29 @@ msgstr "Kan pagina's niet vastzetten in het geheugen -- gestopt\n"
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr "ioctl(LOOP_SET_FD) is mislukt: %s\n"
 
-#: mount/lomount.c:384
+#: mount/lomount.c:387
 #, c-format
 msgid "set_loop(%s,%s,%llu): success\n"
 msgstr "lus-apparaat %s is ingeschakeld  (bestand %s, beginnend op %llu)\n"
 
-#: mount/lomount.c:395
+#: mount/lomount.c:398
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "kan lus-apparaat %s niet uitschakelen: %s\n"
 
-#: mount/lomount.c:406
+#: mount/lomount.c:409
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "lus-apparaat %s is uitgeschakeld\n"
 
-#: mount/lomount.c:414
+#: mount/lomount.c:417
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Deze versie van 'mount' is gecompileerd zonder lus-ondersteuning.  "
 "Hercompilatie is nodig.\n"
 
-#: mount/lomount.c:451
+#: mount/lomount.c:454
 #, c-format
 msgid ""
 "\n"
@@ -7895,12 +7900,12 @@ msgstr ""
 "  -s | --show                apparaatnaam tonen (met '-f <bestand>')\n"
 "  -v | --verbose             breedsprakige uitvoer\n"
 
-#: mount/lomount.c:479 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:482 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "onvoldoende geheugen beschikbaar"
 
-#: mount/lomount.c:640
+#: mount/lomount.c:643
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""

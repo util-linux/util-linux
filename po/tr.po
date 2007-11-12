@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-10-15 12:05+0200\n"
+"POT-Creation-Date: 2007-11-12 12:18+0100\n"
 "PO-Revision-Date: 2005-08-17 12:06+0300\n"
 "Last-Translator: Nilgün Belma Bugüner <nilgun@buguner.name.tr>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -1183,14 +1183,19 @@ msgstr ""
 
 #: disk-utils/mkswap.c:749
 #, fuzzy
+msgid "unable to matchpathcon()"
+msgstr "%s durum bilgileri alınamıyor"
+
+#: disk-utils/mkswap.c:752
+#, fuzzy
 msgid "unable to create new selinux context"
 msgstr "düğümler yazılamıyor"
 
-#: disk-utils/mkswap.c:751
+#: disk-utils/mkswap.c:754
 msgid "couldn't compute selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:757
+#: disk-utils/mkswap.c:760
 #, fuzzy, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "%s %s olarak değiştirilemiyor: %s\n"
@@ -7817,27 +7822,27 @@ msgstr "Bellek içinde kilitlenemedi, çıkılıyor.\n"
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:384
+#: mount/lomount.c:387
 #, c-format
 msgid "set_loop(%s,%s,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): başarılı\n"
 
-#: mount/lomount.c:395
+#: mount/lomount.c:398
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: %s aygıtı silinemiyor: %s\n"
 
-#: mount/lomount.c:406
+#: mount/lomount.c:409
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): başarılı\n"
 
-#: mount/lomount.c:414
+#: mount/lomount.c:417
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Bu mount loop desteği olmaksızın derlenmiş. Lütfen yeniden derleyin.\n"
 
-#: mount/lomount.c:451
+#: mount/lomount.c:454
 #, c-format
 msgid ""
 "\n"
@@ -7859,12 +7864,12 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:479 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:482 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "yeterli bellek yok"
 
-#: mount/lomount.c:640
+#: mount/lomount.c:643
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Derleme sırasında loop desteği verilmemiş. Lütfen yeniden derleyin.\n"
