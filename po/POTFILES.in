@@ -11,7 +11,6 @@ disk-utils/mkfs.minix.c
 disk-utils/mkswap.c
 disk-utils/raw.c
 fdisk/cfdisk.c
-fdisk/disksize.c
 fdisk/fdiskaixlabel.c
 fdisk/fdiskbsdlabel.c
 fdisk/fdisk.c
@@ -29,7 +28,9 @@ hwclock/cmos.c
 hwclock/hwclock.c
 hwclock/kd.c
 hwclock/rtc.c
+lib/blkdev.c
 lib/env.c
+lib/linux_version.c
 lib/md5.c
 lib/setproctitle.c
 login-utils/agetty.c
