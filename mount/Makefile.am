@@ -47,6 +47,7 @@ endif
 
 if HAVE_VOLUME_ID
 utils_common += fsprobe_volumeid.c
+swapon_SOURCES += ../lib/linux_version.c ../lib/blkdev.c
 LDADD_common += -lvolume_id
 endif
 
