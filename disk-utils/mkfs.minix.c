@@ -76,10 +76,6 @@
 #include "minix.h"
 #include "nls.h"
 
-#ifndef BLKGETSIZE
-#define BLKGETSIZE _IO(0x12,96)    /* return device size */
-#endif
-
 #ifndef __GNUC__
 #error "needs gcc for the bitop-__asm__'s"
 #endif
@@ -103,7 +99,7 @@
 static char * program_name = "mkfs";
 static char * device_name = NULL;
 static int DEV = -1;
-static long BLOCKS = 0;
+static unsigned long long BLOCKS = 0;
 static int check = 0;
 static int badblocks = 0;
 static int namelen = 30;	/* default (changed to 30, per Linus's
@@ -217,26 +213,6 @@ count_blocks (int fd) {
 	}
 	valid_offset (fd, 0);
 	return (low + 1);
-}
-
-static int
-get_size(const char  *file) {
-	int	fd;
-	long	size;
-
-	fd = open(file, O_RDWR);
-	if (fd < 0) {
-		perror(file);
-		exit(1);
-	}
-	if (ioctl(fd, BLKGETSIZE, &size) >= 0) {
-		close(fd);
-		return (size * 512);
-	}
-		
-	size = count_blocks(fd);
-	close(fd);
-	return size;
 }
 
 static void
@@ -680,19 +656,9 @@ main(int argc, char ** argv) {
      }
   }
 
-  if (device_name && !BLOCKS)
-    BLOCKS = get_size (device_name) / 1024;
-  if (!device_name || BLOCKS<10) {
+  if (!device_name) {
     usage();
   }
-  if (version2) {
-    if (namelen == 14)
-      magic = MINIX2_SUPER_MAGIC;
-    else
-      magic = MINIX2_SUPER_MAGIC2;
-  } else
-    if (BLOCKS > 65535)
-      BLOCKS = 65535;
   check_mount();		/* is it already mounted? */
   tmp = root_block;
   *(short *)tmp = 1;
@@ -718,10 +684,22 @@ main(int argc, char ** argv) {
 	    die(_("cannot determine sector size for %s"));
     if (BLOCK_SIZE < sectorsize)
 	    die(_("block size smaller than physical sector size of %s"));
+    if (!BLOCKS && blkdev_get_size(DEV, &BLOCKS) == -1)
+	die(_("cannot determine size of %s"));
   } else if (!S_ISBLK(statbuf.st_mode)) {
     check=0;
   } else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
     die(_("will not try to make filesystem on '%s'"));
+  if (BLOCKS < 10)
+	  die(_("number of blocks too small"));
+  if (version2) {
+    if (namelen == 14)
+      magic = MINIX2_SUPER_MAGIC;
+    else
+      magic = MINIX2_SUPER_MAGIC2;
+  } else
+    if (BLOCKS > 65535)
+      BLOCKS = 65535;
   setup_tables();
   if (check)
     check_blocks();
