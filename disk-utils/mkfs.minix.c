@@ -72,6 +72,7 @@
 #include <mntent.h>
 #include <getopt.h>
 
+#include "blkdev.h"
 #include "minix.h"
 #include "nls.h"
 
@@ -710,9 +711,16 @@ main(int argc, char ** argv) {
     DEV = open(device_name,O_RDWR);
   if (DEV<0)
     die(_("unable to open %s"));
-  if (!S_ISBLK(statbuf.st_mode))
+  if (S_ISBLK(statbuf.st_mode)) {
+    int sectorsize;
+
+    if (blkdev_get_sector_size(DEV, &sectorsize) == -1)
+	    die(_("cannot determine sector size for %s"));
+    if (BLOCK_SIZE < sectorsize)
+	    die(_("block size smaller than physical sector size of %s"));
+  } else if (!S_ISBLK(statbuf.st_mode)) {
     check=0;
-  else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
+  } else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
     die(_("will not try to make filesystem on '%s'"));
   setup_tables();
   if (check)

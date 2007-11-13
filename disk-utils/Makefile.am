@@ -1,11 +1,13 @@
 include $(top_srcdir)/config/include-Makefile.am
 
+utils_common = ../lib/linux_version.c ../lib/blkdev.c
+
 man_MANS = blockdev.8 isosize.8 mkfs.8 mkswap.8 \
            fsck.minix.8 mkfs.minix.8 mkfs.bfs.8
 
 sbin_PROGRAMS = mkfs mkswap blockdev fsck.minix mkfs.minix mkfs.bfs
 fsck_minix_SOURCES = fsck.minix.c bitops.h minix.h
-mkfs_minix_SOURCES = mkfs.minix.c bitops.h minix.h
+mkfs_minix_SOURCES = mkfs.minix.c bitops.h minix.h $(utils_common)
 mkfs_bfs_SOURCES = mkfs.bfs.c
 mkswap_SOURCES = mkswap.c swapheader.h ../lib/linux_version.c ../lib/blkdev.c
 blockdev_SOURCES = blockdev.c ../lib/linux_version.c ../lib/blkdev.c
