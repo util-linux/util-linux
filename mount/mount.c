@@ -658,7 +658,7 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
 
 		 if (verbose > 2) {
 			i = 0;
-			while(verbose > 2 && mountargs[i]) {
+			while(mountargs[i]) {
 				printf("mount: external mount: argv[%d] = \"%s\"\n",
 					i, mountargs[i]);
 				i++;
