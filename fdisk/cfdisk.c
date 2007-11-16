@@ -181,8 +181,6 @@ int pt_heads = 0, pt_sectors = 0;
 
 static void
 set_hsc0(unsigned char *h, unsigned char *s, int *c, long long sector) {
-	if (sector >= 1024*cylinder_size)
-		sector = 1024*cylinder_size - 1;
 	*s = sector % sectors + 1;
 	sector /= sectors;
 	*h = sector % heads;
@@ -195,6 +193,8 @@ set_hsc(unsigned char *h, unsigned char *s, unsigned char *c,
 	long long sector) {
 	int cc;
 
+	if (sector >= 1024*cylinder_size)
+		sector = 1024*cylinder_size - 1;
 	set_hsc0(h, s, &cc, sector);
 	*c = cc & 0xFF;
 	*s |= (cc >> 2) & 0xC0;
@@ -2164,7 +2164,7 @@ print_part_entry(FILE *fp, int num, partition_info *pi) {
 	set_hsc0(&eh, &es, &ec, end);
     }
 
-    fp_printf(fp, "%2d  0x%02X %4d %4d %4d 0x%02X %4d %4d %4d %11lld %11lld\n",
+    fp_printf(fp, "%2d  0x%02X %4d %4d %5d 0x%02X %4d %4d %5d %11lld %11lld\n",
 	      num+1, flags, sh, ss, sc, id, eh, es, ec, first, size);
 }
 
@@ -2202,9 +2202,9 @@ print_part_table(void) {
     fp_printf(fp, _("Partition Table for %s\n"), disk_device);
     fp_printf(fp, "\n");
     /* Three-line heading. Read "Start Sector" etc vertically. */
-    fp_printf(fp, _("         ---Starting---      ----Ending----    Start     Number of\n"));
-    fp_printf(fp, _(" # Flags Head Sect Cyl   ID  Head Sect Cyl     Sector    Sectors\n"));
-    fp_printf(fp, _("-- ----- ---- ---- ---- ---- ---- ---- ---- ----------- -----------\n"));
+    fp_printf(fp, _("         ---Starting----      ----Ending-----    Start     Number of\n"));
+    fp_printf(fp, _(" # Flags Head Sect  Cyl   ID  Head Sect  Cyl     Sector    Sectors\n"));
+    fp_printf(fp, _("-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- -----------\n"));
 
     for (i = 0; i < 4; i++) {
 	for (j = 0;
