@@ -1385,11 +1385,6 @@ mount_one (const char *spec, const char *node, const char *types,
 	/* Merge the fstab and command line options.  */
 	opts = append_opt(opts, cmdlineopts, NULL);
 
-	/* Handle possible LABEL= and UUID= forms of spec */
-	nspec = fsprobe_get_devname_for_mounting(spec);
-	if (nspec)
-		spec = nspec;
-
 	if (types == NULL && !mounttype && !is_existing_file(spec)) {
 		if (strchr (spec, ':') != NULL) {
 			types = "nfs";
@@ -1404,6 +1399,15 @@ mount_one (const char *spec, const char *node, const char *types,
 					 "I'll assume cifs because of "
 					 "the // prefix\n"));
 		}
+	}
+
+	/* Handle possible LABEL= and UUID= forms of spec */
+	if (types == NULL || (strncmp(types, "nfs", 3) &&
+			      strncmp(types, "cifs", 4) &&
+			      strncmp(types, "smbfs", 5))) {
+		nspec = fsprobe_get_devname_for_mounting(spec);
+		if (nspec)
+			spec = nspec;
 	}
 
 	/*
@@ -1439,15 +1443,14 @@ mount_one (const char *spec, const char *node, const char *types,
 static int
 mounted (const char *spec0, const char *node0) {
 	struct mntentchn *mc, *mc0;
-	char *spec, *node;
+	const char *spec, *node;
 	int ret = 0;
 
 	/* Handle possible UUID= and LABEL= in spec */
-	spec0 = fsprobe_get_devname(spec0);
-	if (!spec0)
+	spec = fsprobe_get_devname(spec0);
+	if (!spec)
 		return ret;
 
-	spec = canonicalize(spec0);
 	node = canonicalize(node0);
 
 	mc0 = mtab_head();
