@@ -291,6 +291,7 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 	}
 	if ((fd = open(device, mode)) < 0) {
 		perror (device);
+		close(ffd);
 		return 1;
 	}
 	*loopro = (mode == O_RDONLY);
