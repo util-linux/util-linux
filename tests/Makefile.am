@@ -12,16 +12,16 @@ EXTRA_DIST = 	expected \
 		ts-cal-y \
 		ts-col-multibyte \
 		ts-cramfs-mkfs \
-		ts-fstab-label \
-		ts-fstab-label2devname \
-		ts-fstab-label2uuid \
-		ts-fstab-uuid \
-		ts-fstab-uuid2devname \
-		ts-fstab-uuid2label \
 		ts-fstab-devname \
 		ts-fstab-devname2label \
 		ts-fstab-devname2uuid \
+		ts-fstab-label \
+		ts-fstab-label2devname \
+		ts-fstab-label2uuid \
 		ts-fstab-symlink \
+		ts-fstab-uuid \
+		ts-fstab-uuid2devname \
+		ts-fstab-uuid2label \
 		ts-hwclock-systohc \
 		ts-ipcs-headers \
 		ts-ipcs-limits \
@@ -29,6 +29,7 @@ EXTRA_DIST = 	expected \
 		ts-ipcs.sh \
 		ts-login-checktty \
 		ts-look-separator \
+		ts-mount-noncanonical \
 		ts-mount-devname \
 		ts-mount-label \
 		ts-mount-move \
