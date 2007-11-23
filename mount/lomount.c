@@ -1,7 +1,4 @@
 /* Originally from Ted's losetup.c */
-
-#define LOOPMAJOR	7
-
 /*
  * losetup.c - setup and control loop devices
  */
@@ -18,6 +15,7 @@
 #include <sys/mman.h>
 #include <sys/sysmacros.h>
 #include <inttypes.h>
+#include <dirent.h>
 
 #include "loop.h"
 #include "lomount.h"
@@ -61,20 +59,260 @@ loop_info64_to_old(const struct loop_info64 *info64, struct loop_info *info)
         return 0;
 }
 
+#define DEV_LOOP_PATH		"/dev/loop"
+#define DEV_PATH		"/dev"
+#define SYSFS_BLOCK_PATH	"/sys/block"
+#define LOOPMAJOR		7
+#define NLOOPS_DEFAULT		8	/* /dev/loop[0-7] */
+
+struct looplist {
+	int		flag;		/* scanning options */
+	int		ndef;		/* number of tested default devices */
+	struct dirent   **names;	/* scandir-like list of loop devices */
+	int		nnames;		/* number of items in names */
+	int		ncur;		/* current possition in direcotry */
+	char		name[32];	/* device name */
+	int		ct_perm;	/* count permission problems */
+	int		ct_succ;	/* count number of successfully
+					   detected devices */
+};
+
+#define LLFLG_USEDONLY	(1 << 1)	/* return used devices only */
+#define LLFLG_FREEONLY	(1 << 2)	/* return non-used devices */
+#define LLFLG_DONE	(1 << 3)	/* all is done */
+#define LLFLG_SYSFS	(1 << 4)	/* try to use /sys/block */
+#define LLFLG_SUBDIR	(1 << 5)	/* /dev/loop/N */
+#define LLFLG_DFLT	(1 << 6)	/* directly try to check default loops */
+
+int
+is_loop_device (const char *device) {
+	struct stat st;
+
+	return (stat(device, &st) == 0 &&
+		S_ISBLK(st.st_mode) &&
+		major(st.st_rdev) == LOOPMAJOR);
+}
+
+static int
+is_loop_used(int fd)
+{
+	struct loop_info li;
+	return ioctl (fd, LOOP_GET_STATUS, &li) == 0;
+}
+
+static char *
+looplist_mk_devname(struct looplist *ll, int num)
+{
+	if (ll->flag & LLFLG_SUBDIR)
+		snprintf(ll->name, sizeof(ll->name),
+				DEV_LOOP_PATH "/%d", num);
+	else
+		snprintf(ll->name, sizeof(ll->name),
+				DEV_PATH "/loop%d", num);
+
+	return is_loop_device(ll->name) ? ll->name : NULL;
+}
+
+/* ignores all non-loop devices, default loop devices */
+static int
+filter_loop(const struct dirent *d)
+{
+	return strncmp(d->d_name, "loop", 4) == 0;
+}
+
+/* all loops exclude default loops */
+static int
+filter_loop_ndflt(const struct dirent *d)
+{
+	int mn;
+
+	if (strncmp(d->d_name, "loop", 4) == 0 &&
+			sscanf(d->d_name, "loop%d", &mn) == 1 &&
+			mn >= NLOOPS_DEFAULT)
+		return 1;
+	return 0;
+}
+
+static int
+filter_loop_num(const struct dirent *d)
+{
+	char *end = NULL;
+	int mn = strtol(d->d_name, &end, 10);
+
+	if (mn >= NLOOPS_DEFAULT && end && *end == '\0')
+		return 1;
+	return 0;
+}
+
+static int
+looplist_open(struct looplist *ll, int flag)
+{
+	struct stat st;
+
+	memset(ll, 0, sizeof(*ll));
+	ll->flag = flag;
+	ll->ndef = -1;
+	ll->ncur = -1;
+
+	if (stat(DEV_PATH, &st) == -1 || (!S_ISDIR(st.st_mode)))
+		return -1;			/* /dev doesn't exist */
+
+	if (stat(DEV_LOOP_PATH, &st) == 0 && S_ISDIR(st.st_mode))
+		ll->flag |= LLFLG_SUBDIR;	/* /dev/loop/ exists */
+
+	if ((ll->flag & LLFLG_USEDONLY) &&
+			stat(SYSFS_BLOCK_PATH, &st) == 0 &&
+			S_ISDIR(st.st_mode))
+		ll->flag |= LLFLG_SYSFS;	/* try to use /sys/block/loopN */
+
+	ll->flag |= LLFLG_DFLT;			/* required! */
+	return 0;
+}
+
+static void
+looplist_close(struct looplist *ll)
+{
+	if (ll->names) {
+		for(++ll->ncur; ll->ncur < ll->nnames; ll->ncur++)
+			free(ll->names[ll->ncur]);
+
+		free(ll->names);
+		ll->names = NULL;
+		ll->nnames = 0;
+	}
+	ll->ncur = -1;
+	ll->flag |= LLFLG_DONE;
+}
+
+static int
+looplist_is_wanted(struct looplist *ll, int fd)
+{
+	int ret;
+
+	if (!(ll->flag & (LLFLG_USEDONLY | LLFLG_FREEONLY)))
+		return 1;
+	ret = is_loop_used(fd);
+
+	if ((ll->flag & LLFLG_USEDONLY) && ret == 0)
+		return 0;
+	if ((ll->flag & LLFLG_FREEONLY) && ret == 1)
+		return 0;
+
+	return 1;
+}
+
+static int
+looplist_next(struct looplist *ll)
+{
+	int fd;
+	int ret;
+	char *dirname, *dev;
+
+	if (ll->flag & LLFLG_DONE)
+		return -1;
+
+	/* A) try to use /sys/block/loopN devices (for losetup -a only)
+	 */
+	if (ll->flag & LLFLG_SYSFS) {
+		int mn;
+
+		if (!ll->nnames) {
+			ll->nnames = scandir(SYSFS_BLOCK_PATH, &ll->names,
+						filter_loop, versionsort);
+			ll->ncur = -1;
+		}
+		for(++ll->ncur; ll->ncur < ll->nnames; ll->ncur++) {
+			ret = sscanf(ll->names[ll->ncur]->d_name, "loop%d", &mn);
+			free(ll->names[ll->ncur]);
+			if (ret != 1)
+				continue;
+			dev = looplist_mk_devname(ll, mn);
+			if (dev) {
+				ll->ct_succ++;
+				if ((fd = open(dev, O_RDONLY)) > -1) {
+					if (looplist_is_wanted(ll, fd))
+						return fd;
+					close(fd);
+				} else if (errno == EACCES)
+					ll->ct_perm++;
+			}
+		}
+		if (ll->nnames)
+			free(ll->names);
+		ll->names = NULL;
+		ll->ncur = -1;
+		ll->nnames = 0;
+		ll->flag &= ~LLFLG_SYSFS;
+		goto done;
+	}
+
+	/* B) Classic way, try first eight loop devices (default number
+	 *    of loop devices). This is enough for 99% of all cases.
+	 */
+	if (ll->flag & LLFLG_DFLT) {
+		for (++ll->ncur; ll->ncur < NLOOPS_DEFAULT; ll->ncur++) {
+			dev = looplist_mk_devname(ll, ll->ncur);
+			if (dev) {
+				ll->ct_succ++;
+				if ((fd = open(dev, O_RDONLY)) > -1) {
+					if (looplist_is_wanted(ll, fd))
+						return fd;
+					close(fd);
+				} else if (errno == EACCES)
+					ll->ct_perm++;
+			}
+		}
+		ll->flag &= ~LLFLG_DFLT;
+		ll->ncur = -1;
+	}
+
+
+	/* C) the worst posibility, scan all /dev or /dev/loop
+	 */
+	dirname = ll->flag & LLFLG_SUBDIR ? DEV_LOOP_PATH : DEV_PATH;
+
+	if (!ll->nnames) {
+		ll->nnames = scandir(dirname, &ll->names,
+				ll->flag & LLFLG_SUBDIR ?
+					filter_loop_num : filter_loop_ndflt,
+				versionsort);
+		ll->ncur = -1;
+	}
+
+	for(++ll->ncur; ll->ncur < ll->nnames; ll->ncur++) {
+		struct stat st;
+
+		snprintf(ll->name, sizeof(ll->name),
+			"%s/%s", dirname, ll->names[ll->ncur]->d_name);
+		free(ll->names[ll->ncur]);
+		ret = stat(ll->name, &st);
+
+		if (ret == 0 &&	S_ISBLK(st.st_mode) &&
+				major(st.st_rdev) == LOOPMAJOR &&
+				minor(st.st_rdev) >= NLOOPS_DEFAULT) {
+			ll->ct_succ++;
+			fd = open(ll->name, O_RDONLY);
+
+			if (fd != -1) {
+				if (looplist_is_wanted(ll, fd))
+					return fd;
+				close(fd);
+			} else if (errno == EACCES)
+				ll->ct_perm++;
+		}
+	}
+done:
+	looplist_close(ll);
+	return -1;
+}
+
 #ifdef MAIN
 
 static int
-show_loop(char *device) {
+show_loop_fd(int fd, char *device) {
 	struct loop_info loopinfo;
 	struct loop_info64 loopinfo64;
-	int fd, errsv;
-
-	if ((fd = open(device, O_RDONLY)) < 0) {
-		int errsv = errno;
-		fprintf(stderr, _("loop: can't open device %s: %s\n"),
-			device, strerror (errsv));
-		return 2;
-	}
+	int errsv;
 
 	if (ioctl(fd, LOOP_GET_STATUS64, &loopinfo64) == 0) {
 
@@ -102,7 +340,6 @@ show_loop(char *device) {
 			       e, loopinfo64.lo_encrypt_type);
 		}
 		printf("\n");
-		close (fd);
 		return 0;
 	}
 
@@ -119,52 +356,55 @@ show_loop(char *device) {
 			       loopinfo.lo_encrypt_type);
 
 		printf("\n");
-		close (fd);
 		return 0;
 	}
 
 	errsv = errno;
 	fprintf(stderr, _("loop: can't get info on device %s: %s\n"),
 		device, strerror (errsv));
-	close (fd);
 	return 1;
 }
 
 static int
-show_used_loop_devices (void) {
-	char dev[20];
-	char *loop_formats[] = { "/dev/loop%d", "/dev/loop/%d" };
-	int i, j, fd, permission = 0, somedev = 0;
-	struct stat statbuf;
-	struct loop_info loopinfo;
+show_loop(char *device) {
+	int ret, fd;
 
-	for (j = 0; j < SIZE(loop_formats); j++) {
-	    for(i = 0; i < 256; i++) {
-		snprintf(dev, sizeof(dev), loop_formats[j], i);
-		if (stat (dev, &statbuf) == 0 && S_ISBLK(statbuf.st_mode)) {
-			fd = open (dev, O_RDONLY);
-			if (fd >= 0) {
-				if(ioctl (fd, LOOP_GET_STATUS, &loopinfo) == 0)
-					show_loop(dev);
-				close (fd);
-				somedev++;
-			} else if (errno == EACCES)
-				permission++;
-			continue; /* continue trying as long as devices exist */
-		}
-		break;
-	    }
+	if ((fd = open(device, O_RDONLY)) < 0) {
+		int errsv = errno;
+		fprintf(stderr, _("loop: can't open device %s: %s\n"),
+			device, strerror (errsv));
+		return 2;
+	}
+	ret = show_loop_fd(fd, device);
+	close(fd);
+	return ret;
+}
+
+
+static int
+show_used_loop_devices (void) {
+	struct looplist ll;
+	int fd;
+
+	if (looplist_open(&ll, LLFLG_USEDONLY) == -1) {
+		error(_("%s: /dev directory does not exist."), progname);
+		return 1;
 	}
 
-	if (somedev==0 && permission) {
+	while((fd = looplist_next(&ll)) != -1) {
+		show_loop_fd(fd, ll.name);
+		close(fd);
+	}
+	looplist_close(&ll);
+
+	if (ll.ct_succ && ll.ct_perm) {
 		error(_("%s: no permission to look at /dev/loop#"), progname);
 		return 1;
 	}
 	return 0;
 }
 
-
-#endif
+#endif /* MAIN */
 
 /* check if the loopfile is already associated with the same given
  * parameters.
@@ -204,37 +444,32 @@ is_associated(int dev, struct stat *file, unsigned long long offset)
  */
 char *
 loopfile_used (const char *filename, unsigned long long offset) {
-	char dev[20];
-	char *loop_formats[] = { "/dev/loop%d", "/dev/loop/%d" };
-	int i, j, fd;
-	struct stat devstat, filestat;
-	struct loop_info loopinfo;
+	struct looplist ll;
+	char *devname = NULL;
+	struct stat filestat;
+	int fd;
 
 	if (stat(filename, &filestat) == -1) {
 		perror(filename);
 		return NULL;
 	}
 
-	for (j = 0; j < SIZE(loop_formats); j++) {
-	    for(i = 0; i < 256; i++) {
-		snprintf(dev, sizeof(dev), loop_formats[j], i);
-		if (stat (dev, &devstat) == 0 && S_ISBLK(devstat.st_mode)) {
-			fd = open (dev, O_RDONLY);
-			if (fd >= 0) {
-				int res = 0;
-
-				if(ioctl (fd, LOOP_GET_STATUS, &loopinfo) == 0)
-					res = is_associated(fd, &filestat, offset);
-				close (fd);
-				if (res == 1)
-					return xstrdup(dev);
-			}
-			continue; /* continue trying as long as devices exist */
-		}
-		break;
-	    }
+	if (looplist_open(&ll, LLFLG_USEDONLY) == -1) {
+		error(_("%s: /dev directory does not exist."), progname);
+		return NULL;
 	}
-	return NULL;
+
+	while((fd = looplist_next(&ll)) != -1) {
+		int res = is_associated(fd, &filestat, offset);
+		close(fd);
+		if (res == 1) {
+			devname = xstrdup(ll.name);
+			break;
+		}
+	}
+	looplist_close(&ll);
+
+	return devname;
 }
 
 int
@@ -262,62 +497,36 @@ loopfile_used_with(char *devname, const char *filename, unsigned long long offse
 	return ret;
 }
 
-int
-is_loop_device (const char *device) {
-	struct stat statbuf;
-
-	return (stat(device, &statbuf) == 0 &&
-		S_ISBLK(statbuf.st_mode) &&
-		major(statbuf.st_rdev) == LOOPMAJOR);
-}
-
 char *
 find_unused_loop_device (void) {
-	/* Just creating a device, say in /tmp, is probably a bad idea -
-	   people might have problems with backup or so.
-	   So, we just try /dev/loop[0-7]. */
-	char dev[20];
-	char *loop_formats[] = { "/dev/loop%d", "/dev/loop/%d" };
-	int i, j, fd, somedev = 0, someloop = 0, permission = 0;
-	struct stat statbuf;
-	struct loop_info loopinfo;
+	struct looplist ll;
+	char *devname = NULL;
+	int fd;
 
-	for (j = 0; j < SIZE(loop_formats); j++) {
-	    for(i = 0; i < 256; i++) {
-		sprintf(dev, loop_formats[j], i);
-		if (stat (dev, &statbuf) == 0 && S_ISBLK(statbuf.st_mode)) {
-			somedev++;
-			fd = open (dev, O_RDONLY);
-			if (fd >= 0) {
-				if(ioctl (fd, LOOP_GET_STATUS, &loopinfo) == 0)
-					someloop++;		/* in use */
-				else if (errno == ENXIO) {
-					close (fd);
-					return xstrdup(dev);/* probably free */
-				}
-				close (fd);
-			} else if (errno == EACCES)
-				permission++;
-
-			continue;/* continue trying as long as devices exist */
-		}
-		break;
-	    }
+	if (looplist_open(&ll, LLFLG_FREEONLY) == -1) {
+		error(_("%s: /dev directory does not exist."), progname);
+		return NULL;
 	}
 
-	if (!somedev)
-		error(_("%s: could not find any device /dev/loop#"), progname);
-	else if (!someloop && permission)
+	if ((fd = looplist_next(&ll)) != -1) {
+		close(fd);
+		devname = xstrdup(ll.name);
+	}
+	looplist_close(&ll);
+	if (devname)
+		return devname;
+
+	if (ll.ct_succ && ll.ct_perm)
 		error(_("%s: no permission to look at /dev/loop#"), progname);
-	else if (!someloop)
+	else if (ll.ct_succ)
+		error(_("%s: could not find any free loop device"), progname);
+	else
 		error(_(
 		    "%s: Could not find any loop device. Maybe this kernel "
 		    "does not know\n"
 		    "       about the loop device? (If so, recompile or "
 		    "`modprobe loop'.)"), progname);
-	else
-		error(_("%s: could not find any free loop device"), progname);
-	return 0;
+	return NULL;
 }
 
 /*
@@ -531,7 +740,7 @@ mutter(void) {
 	fprintf(stderr,
 		_("This mount was compiled without loop support. "
 		  "Please recompile.\n"));
-}  
+}
 
 int
 set_loop (const char *device, const char *file, unsigned long long offset,
@@ -552,7 +761,7 @@ find_unused_loop_device (void) {
 	return 0;
 }
 
-#endif
+#endif /* !LOOP_SET_FD */
 
 #ifdef MAIN
 
@@ -728,5 +937,5 @@ main(int argc, char **argv) {
 		  "Please recompile.\n"));
 	return -1;
 }
-#endif
-#endif
+#endif /* !LOOP_SET_FD*/
+#endif /* MAIN */
