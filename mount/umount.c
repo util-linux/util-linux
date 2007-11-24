@@ -634,6 +634,8 @@ main (int argc, char *argv[]) {
 	argc -= optind;
 	argv += optind;
 
+	atexit(unlock_mtab);
+
 	if (all) {
 		/* nodev stuff: sysfs, usbfs, oprofilefs, ... */
 		if (types == NULL)
