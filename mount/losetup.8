@@ -11,6 +11,8 @@ Get info:
 .sp
 .B losetup -a
 .sp
+.B losetup -j <file> [-o offset]
+.sp
 .in -5
 Delete loop:
 .sp
@@ -73,14 +75,17 @@ enable data encryption with specified name or number
 .IP "\fB\-f, \-\-find\fP"
 find the first unused loop device. If a
 .I file
-argument is present, use this device. Otherwise, print its name.
+argument is present, use this device. Otherwise, print its name
 .IP "\fB\-h, \-\-help\fP"
 print help
+.IP "\fB\-j, \-\-associated \fIfile\fP"
+show status of all loop devices associated with given
+.I file
 .IP "\fB\-o, \-\-offset \fIoffset\fP"
-The data start is moved \fIoffset\fP bytes into the specified file or
-device.
+the data start is moved \fIoffset\fP bytes into the specified file or
+device
 .IP "\fB\-p, \-\-pass-fd \fInum\fP"
-Read the passphrase from file descriptor with number
+read the passphrase from file descriptor with number
 .I num
 instead of from the terminal
 .IP "\fB\-r, \-\-read-only\fP"

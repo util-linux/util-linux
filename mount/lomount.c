@@ -29,6 +29,8 @@
 
 #ifdef LOOP_SET_FD
 
+static int is_associated(int dev, struct stat *file, unsigned long long offset, int isoff);
+
 static int
 loop_info64_to_old(const struct loop_info64 *info64, struct loop_info *info)
 {
@@ -404,6 +406,34 @@ show_used_loop_devices (void) {
 	return 0;
 }
 
+/* list all associated loop devices */
+static int
+show_associated_loop_devices(char *filename, unsigned long long offset, int isoff)
+{
+	struct looplist ll;
+	struct stat filestat;
+	int fd;
+
+	if (stat(filename, &filestat) == -1) {
+		perror(filename);
+		return 1;
+	}
+
+	if (looplist_open(&ll, LLFLG_USEDONLY) == -1) {
+		error(_("%s: /dev directory does not exist."), progname);
+		return 1;
+	}
+
+	while((fd = looplist_next(&ll)) != -1) {
+		if (is_associated(fd, &filestat, offset, isoff) == 1)
+			show_loop_fd(fd, ll.name);
+		close(fd);
+	}
+	looplist_close(&ll);
+
+	return 0;
+}
+
 #endif /* MAIN */
 
 /* check if the loopfile is already associated with the same given
@@ -414,7 +444,7 @@ show_used_loop_devices (void) {
  *           1 loop device already used
  */
 static int
-is_associated(int dev, struct stat *file, unsigned long long offset)
+is_associated(int dev, struct stat *file, unsigned long long offset, int isoff)
 {
 	struct loop_info64 linfo64;
 	struct loop_info64 linfo;
@@ -423,14 +453,14 @@ is_associated(int dev, struct stat *file, unsigned long long offset)
 	if (ioctl(dev, LOOP_GET_STATUS64, &linfo64) == 0) {
 		if (file->st_dev == linfo64.lo_device &&
 	            file->st_ino == linfo64.lo_inode &&
-		    offset == linfo64.lo_offset)
+		    (isoff == 0 || offset == linfo64.lo_offset))
 			ret = 1;
 		return ret;
 	}
 	if (ioctl(dev, LOOP_GET_STATUS, &linfo) == 0) {
 		if (file->st_dev == linfo.lo_device &&
 	            file->st_ino == linfo.lo_inode &&
-		    offset == linfo.lo_offset)
+		    (isoff == 0 || offset == linfo.lo_offset))
 			ret = 1;
 		return ret;
 	}
@@ -460,7 +490,7 @@ loopfile_used (const char *filename, unsigned long long offset) {
 	}
 
 	while((fd = looplist_next(&ll)) != -1) {
-		int res = is_associated(fd, &filestat, offset);
+		int res = is_associated(fd, &filestat, offset, 1);
 		close(fd);
 		if (res == 1) {
 			devname = xstrdup(ll.name);
@@ -491,7 +521,7 @@ loopfile_used_with(char *devname, const char *filename, unsigned long long offse
 		perror(devname);
 		return -1;
 	}
-	ret = is_associated(fd, &statbuf, offset);
+	ret = is_associated(fd, &statbuf, offset, 1);
 
 	close(fd);
 	return ret;
@@ -773,11 +803,12 @@ find_unused_loop_device (void) {
 static void
 usage(void) {
 	fprintf(stderr, _("\nUsage:\n"
-  " %1$s loop_device                                  # give info\n"
-  " %1$s -a | --all                                   # list all used\n"
-  " %1$s -d | --detach loop_device                    # delete\n"
-  " %1$s -f | --find                                  # find unused\n"
-  " %1$s [ options ] {-f|--find|loop_device} file     # setup\n"
+  " %1$s loop_device                             give info\n"
+  " %1$s -a | --all                              list all used\n"
+  " %1$s -d | --detach <loopdev>                 delete\n"
+  " %1$s -f | --find                             find unused\n"
+  " %1$s -j | --associated <file> [-o <num>]     list all associated with <file>\n"
+  " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
   "\nOptions:\n"
   " -e | --encryption <type> enable data encryption with specified <name/num>\n"
   " -h | --help              this help\n"
@@ -792,7 +823,7 @@ usage(void) {
 
 int
 main(int argc, char **argv) {
-	char *p, *offset, *encryption, *passfd, *device, *file;
+	char *p, *offset, *encryption, *passfd, *device, *file, *assoc;
 	int delete, find, c, all;
 	int res = 0;
 	int showdev = 0;
@@ -805,6 +836,7 @@ main(int argc, char **argv) {
 		{ "encryption", 1, 0, 'e' },
 		{ "find", 0, 0, 'f' },
 		{ "help", 0, 0, 'h' },
+		{ "associated", 1, 0, 'j' },
 		{ "offset", 1, 0, 'o' },
 		{ "pass-fd", 1, 0, 'p' },
 		{ "read-only", 0, 0, 'r' },
@@ -819,13 +851,13 @@ main(int argc, char **argv) {
 
 	delete = find = all = 0;
 	off = 0;
-	offset = encryption = passfd = NULL;
+	assoc = offset = encryption = passfd = NULL;
 
 	progname = argv[0];
 	if ((p = strrchr(progname, '/')) != NULL)
 		progname = p+1;
 
-	while ((c = getopt_long(argc, argv, "ade:E:fho:p:rsv",
+	while ((c = getopt_long(argc, argv, "ade:E:fhj:o:p:rsv",
 				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':
@@ -843,6 +875,9 @@ main(int argc, char **argv) {
 			break;
 		case 'f':
 			find = 1;
+			break;
+		case 'j':
+			assoc = optarg;
 			break;
 		case 'o':
 			offset = optarg;
@@ -864,21 +899,30 @@ main(int argc, char **argv) {
 	if (argc == 1) {
 		usage();
 	} else if (delete) {
-		if (argc != optind+1 || encryption || offset || find || all || showdev)
+		if (argc != optind+1 || encryption || offset ||
+				find || all || showdev || assoc || ro)
 			usage();
 	} else if (find) {
-		if (all || argc < optind || argc > optind+1)
+		if (all || assoc || argc < optind || argc > optind+1)
 			usage();
 	} else if (all) {
 		if (argc > 2)
+			usage();
+	} else if (assoc) {
+		if (encryption || showdev || passfd || ro)
 			usage();
 	} else {
 		if (argc < optind+1 || argc > optind+2)
 			usage();
 	}
 
+	if (offset && sscanf(offset, "%llu", &off) != 1)
+		usage();
+
 	if (all)
 		return show_used_loop_devices();
+	else if (assoc)
+		return show_associated_loop_devices(assoc, off, offset ? 1 : 0);
 	else if (find) {
 		device = find_unused_loop_device();
 		if (device == NULL)
@@ -903,8 +947,6 @@ main(int argc, char **argv) {
 	else if (file == NULL)
 		res = show_loop(device);
 	else {
-		if (offset && sscanf(offset, "%llu", &off) != 1)
-			usage();
 		if (passfd && sscanf(passfd, "%d", &pfd) != 1)
 			usage();
 		do {
