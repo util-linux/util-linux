@@ -515,7 +515,7 @@ static void
 xbsd_write_bootstrap (void)
 {
   char *bootdir = BSD_LINUX_BOOTDIR;
-  char path[MAXPATHLEN];
+  char path[sizeof(BSD_LINUX_BOOTDIR) + 1 + 2 + 4];  /* BSD_LINUX_BOOTDIR + / + {sd,wd} + boot */
   char *dkbasename;
   struct xbsd_disklabel dl;
   char *d, *p, *e;
