@@ -67,6 +67,14 @@ void	makemsg __P((char *));
 
 #define	IGNOREUSER	"sleeper"
 
+#ifndef MAXHOSTNAMELEN
+# ifdef HOST_NAME_MAX
+#  define MAXHOSTNAMELEN HOST_NAME_MAX
+# else
+#  define MAXHOSTNAMELEN 64
+# endif
+#endif
+
 int nobanner;
 int mbufsize;
 char *mbuf;
