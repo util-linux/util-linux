@@ -116,22 +116,12 @@
 #define	TCSETAW	TCSETSW
 #endif
 
- /*
-  * This program tries to not use the standard-i/o library.  This keeps the
-  * executable small on systems that do not have shared libraries (System V
-  * Release <3).
-  */
-#ifndef BUFSIZ
-#define	BUFSIZ		1024
-#endif
-
-/* set a maximum length for the hostname,  */
-#ifdef HOST_NAME_MAX
-# define HOSTNAME_LENGTH HOST_NAME_MAX		/* defined by POSIX.1 */
-#elif defined(MAXHOSTNAMELEN)
-# define HOSTNAME_LENGTH MAXHOSTNAMELEN		/* implemented in current Unix-versions */
-#else
-# define HOSTNAME_LENGTH 255
+#ifndef MAXHOSTNAMELEN
+# ifdef HOST_NAME_MAX
+#  define MAXHOSTNAMELEN HOST_NAME_MAX
+# else
+#  define MAXHOSTNAMELEN 64
+# endif
 #endif
 
  /*
@@ -884,7 +874,7 @@ do_prompt(op, tp)
 
 		  case 'o':
 		   {
-		     char domainname[HOST_NAME_MAX+1];
+		     char domainname[MAXHOSTNAMELEN+1];
 #ifdef HAVE_GETDOMAINNAME
 		     if (getdomainname(domainname, sizeof(domainname)))
 #endif
@@ -897,7 +887,7 @@ do_prompt(op, tp)
 		  case 'O':
 		   {
 			char *dom = "unknown_domain";
-			char host[HOST_NAME_MAX + 1];
+			char host[MAXHOSTNAMELEN+1];
 			struct addrinfo hints, *info = NULL;
 
 			memset(&hints, 0, sizeof(hints));
@@ -992,7 +982,7 @@ do_prompt(op, tp)
     }
 #endif
     {
-	char hn[HOST_NAME_MAX+1];
+	char hn[MAXHOSTNAMELEN+1];
 	if (gethostname(hn, sizeof(hn)) == 0)
 	    write(1, hn, strlen(hn));
     }
