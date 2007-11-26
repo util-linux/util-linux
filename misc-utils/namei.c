@@ -73,6 +73,10 @@ int xflag = 0;
 #define MAXSYMLINKS 256
 #endif
 
+#ifndef PATH_MAX
+#define PATH_MAX 4096
+#endif
+
 static char *pperm(unsigned short);
 static void namei(char *, int, mode_t *);
 static void usage(void);
@@ -81,7 +85,11 @@ int
 main(int argc, char **argv) {
     extern int optind;
     int c;
-    char curdir[MAXPATHLEN];
+#ifdef HAVE_GET_CURRENT_DIR_NAME
+    char *curdir;
+#else
+    char curdir[PATH_MAX];
+#endif
 
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
@@ -106,7 +114,12 @@ main(int argc, char **argv) {
 	}
     }
 
-    if(getcwd(curdir, sizeof(curdir)) == NULL){
+#ifdef HAVE_GET_CURRENT_DIR_NAME
+    if (!(curdir = get_current_dir_name()))
+#else
+    if(getcwd(curdir, sizeof(curdir)) == NULL)
+#endif
+    {
 	(void)fprintf(stderr,
 		      _("namei: unable to get current directory - %s\n"),
 		      curdir);
@@ -139,8 +152,6 @@ usage(void) {
 #ifndef NODEV
 #define NODEV		(dev_t)(-1)
 #endif
-
-int kzak;
 
 static void
 namei(char *file, int lev, mode_t *lastmode) {

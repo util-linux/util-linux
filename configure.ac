@@ -56,6 +56,7 @@ AC_CHECK_FUNCS(
 	[inet_aton \
 	fsync \
 	getdomainname \
+	get_current_dir_name \
 	nanosleep \
 	personality \
 	updwtmp \
