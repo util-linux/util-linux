@@ -50,7 +50,7 @@
  *   [ -tabs [tab1 tab2 tab3 ... ] ]     (tabn = 1-160)
  *   [ -clrtabs [ tab1 tab2 tab3 ... ]   (tabn = 1-160)
  *   [ -regtabs [1-160] ]
- *   [ -blank [0-60] ]
+ *   [ -blank [0-60|force|poke|] ]
  *   [ -dump   [1-NR_CONS ] ]
  *   [ -append [1-NR_CONS ] ]
  *   [ -file dumpfilename ]
@@ -112,6 +112,9 @@
 #include <sys/param.h>		/* for MAXPATHLEN */
 #include <sys/ioctl.h>
 #include <sys/time.h>
+#ifdef HAVE_LINUX_TIOCL_H
+#include <linux/tiocl.h>
+#endif
 #include "nls.h"
 
 #if __GNU_LIBRARY__ < 5
@@ -150,6 +153,19 @@ extern int klogctl(int type, char *buf, int len);
 #define WHITE   7
 #define GREY	8
 #define DEFAULT 9
+
+/* Blank commands */
+#define BLANKSCREEN	-1
+#define UNBLANKSCREEN	-2
+#define BLANKEDSCREEN	-3
+
+/* <linux/tiocl.h> fallback */
+#ifndef TIOCL_BLANKSCREEN
+# define TIOCL_UNBLANKSCREEN	4       /* unblank screen */
+# define TIOCL_SETVESABLANK	10      /* set vesa blanking mode */
+# define TIOCL_BLANKSCREEN	14	/* keep screen blank even if a key is pressed */
+# define TIOCL_BLANKEDSCREEN	15	/* return which vt was blanked */
+#endif
 
 /* Control sequences. */
 #define ESC "\033"
@@ -391,11 +407,17 @@ parse_blank(int argc, char **argv, int *option, int *opt_all, int *bad_arg) {
 		*bad_arg = TRUE;
 	*option = TRUE;
 	if (argc == 1) {
-		*opt_all = atoi(argv[0]);
-		if ((*opt_all > 60) || (*opt_all < 0))
-			*bad_arg = TRUE;
+		if (!strcmp(argv[0], "force"))
+			*opt_all = BLANKSCREEN;
+		else if (!strcmp(argv[0], "poke"))
+			*opt_all = UNBLANKSCREEN;
+		else {
+			*opt_all = atoi(argv[0]);
+			if ((*opt_all > 60) || (*opt_all < 0))
+				*bad_arg = TRUE;
+		}
 	} else {
-		*opt_all = 0;
+		*opt_all = BLANKEDSCREEN;
 	}
 }
 
@@ -779,7 +801,7 @@ usage(char *prog_name) {
 	fprintf(stderr, _("  [ -tabs [ tab1 tab2 tab3 ... ] ]      (tabn = 1-160)\n"));
 	fprintf(stderr, _("  [ -clrtabs [ tab1 tab2 tab3 ... ] ]   (tabn = 1-160)\n"));
 	fprintf(stderr, _("  [ -regtabs [1-160] ]\n"));
-	fprintf(stderr, _("  [ -blank [0-60] ]\n"));
+	fprintf(stderr, _("  [ -blank [0-60|force|poke] ]\n"));
 	fprintf(stderr, _("  [ -dump   [1-NR_CONSOLES] ]\n"));
 	fprintf(stderr, _("  [ -append [1-NR_CONSOLES] ]\n"));
 	fprintf(stderr, _("  [ -file dumpfilename ]\n"));
@@ -1034,13 +1056,32 @@ perform_sequence(int vcterm) {
 	}
 
 	/* -blank [0-60]. */
-	if (opt_blank && vcterm) 
-		printf("\033[9;%d]", opt_bl_min);
-    
+	if (opt_blank && vcterm) {
+		if (opt_bl_min >= 0)
+			printf("\033[9;%d]", opt_bl_min);
+		else if (opt_bl_min == BLANKSCREEN) {
+			char ioctlarg = TIOCL_BLANKSCREEN;
+			if (ioctl(0,TIOCLINUX,&ioctlarg))
+				fprintf(stderr,_("cannot force blank\n"));
+		} else if (opt_bl_min == UNBLANKSCREEN) {
+			char ioctlarg = TIOCL_UNBLANKSCREEN;
+			if (ioctl(0,TIOCLINUX,&ioctlarg))
+				fprintf(stderr,_("cannot force unblank\n"));
+		} else if (opt_bl_min == BLANKEDSCREEN) {
+			char ioctlarg = TIOCL_BLANKEDSCREEN;
+			int ret;
+			ret = ioctl(0,TIOCLINUX,&ioctlarg);
+			if (ret < 0)
+				fprintf(stderr,_("cannot get blank status\n"));
+			else
+				printf("%d\n",ret);
+		}
+	}
+
 	/* -powersave [on|vsync|hsync|powerdown|off] (console) */
 	if (opt_powersave) {
 		char ioctlarg[2];
-		ioctlarg[0] = 10;	/* powersave */
+		ioctlarg[0] = TIOCL_SETVESABLANK;
 		ioctlarg[1] = opt_ps_mode;
 		if (ioctl(0,TIOCLINUX,ioctlarg))
 			fprintf(stderr,_("cannot (un)set powersave mode\n"));

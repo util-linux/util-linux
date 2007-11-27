@@ -133,10 +133,18 @@ Clears tab stops from the given horizontal cursor positions, in the range
 Clears all tab stops, then sets a regular tab stop pattern, with one tab
 every specified number of positions.  Without an argument, defaults to 8.
 .TP
-.BR \-blank " [0-60] (virtual consoles only)"
+.BR \-blank " [0-60|force|poke] (virtual consoles only)"
 Sets the interval of inactivity, in minutes, after which the screen will be
 automatically blanked (using APM if available).  Without an argument,
 defaults to 0 (disable console blanking).
+
+The
+.B force
+option keeps screen blank even if a key is pressed.
+
+The
+.B poke
+option returns which vt was blanked.
 .TP
 .BR \-dump " [1-NR_CONS]"
 Writes a snapshot of the given virtual console (with attributes) to the file

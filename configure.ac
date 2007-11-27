@@ -56,6 +56,7 @@ AC_CHECK_HEADERS(
 	sys/io.h \
 	pty.h \
 	err.h \
+	linux/tiocl.h \
 	linux/version.h])
 AC_CHECK_HEADERS([linux/raw.h],
 		 [AM_CONDITIONAL([HAVE_RAW], [true])],
