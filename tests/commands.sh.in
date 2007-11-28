@@ -7,7 +7,7 @@ AWK=@AWK@
 TS_TESTUSER=${TS_TESTUSER:-"test"}
 
 # helpers
-TS_HELPER_SYSINFO="$TS_TOPDIR/helpers/mnt_test_sysinfo"
+TS_HELPER_SYSINFO="$TS_TOPDIR/helpers/test_sysinfo"
 
 # external commands
 TS_ECMD_BLKID="@BLKID@"

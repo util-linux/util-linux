@@ -79,11 +79,11 @@ hlp_ulong_max32(void)
 	return 0;
 }
 
-mntHlpfnc hlps[] = 
+mntHlpfnc hlps[] =
 {
 	{ "WORDSIZE",	hlp_wordsize	},
 	{ "pagesize",	hlp_pagesize	},
-	{ "INT_MAX",	hlp_int_max	},	
+	{ "INT_MAX",	hlp_int_max	},
 	{ "UINT_MAX",   hlp_uint_max	},
 	{ "LONG_MAX",   hlp_long_max	},
 	{ "ULONG_MAX",  hlp_ulong_max	},
@@ -108,7 +108,7 @@ main(int argc, char **argv)
 		if (strcmp(argv[1], "--help") == 0 || strcmp(argv[1], "-h") == 0) {
 			printf("%s <option>\n", argv[0]);
 			fputs("options:\n", stdout);
-			for (fn = hlps; fn->name; fn++) 
+			for (fn = hlps; fn->name; fn++)
 				printf("\t%s\n", fn->name);
 			exit(EXIT_SUCCESS);
 		}
@@ -120,7 +120,7 @@ main(int argc, char **argv)
 			}
 		}
 	}
-	
+
 	exit(re ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
