@@ -46,7 +46,6 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/utsname.h>
-#include <linux/unistd.h>	/* _syscall */
 #include "nls.h"
 #include "blkdev.h"
 #include "linux_version.h"
