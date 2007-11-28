@@ -55,10 +55,15 @@ Set blocksize to
 bytes.
 .TP
 .B \--getsize
-Print device size in sectors.
+Print device size in sectors (BLKGETSIZE). Deprecated in favor of the
+.B \--getsz
+option.
 .TP
 .B \--getsize64
-Print device size in bytes.
+Print device size in bytes (BLKGETSIZE64)
+.TP
+.B \--getsz
+Get size in 512-byte sectors (BLKGETSIZE64 / 512).
 .TP
 .BI \--setra " N"
 Set readahead to
