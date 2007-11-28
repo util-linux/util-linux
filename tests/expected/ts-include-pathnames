@@ -15,7 +15,6 @@
  _PATH_SHUTDOWN_CONF /etc/shutdown.conf
         _PATH_SECURE /etc/securesingle
        _PATH_USERTTY /etc/usertty
-          _PATH_MTAB /etc/mtab
         _PATH_UMOUNT /bin/umount
         _PATH_PASSWD /etc/passwd
        _PATH_GSHADOW /etc/gshadow
@@ -32,3 +31,13 @@ _PATH_SHADOW_PTMPTMP /etc/sptmptmp
 _PATH_SHADOW_GTMPTMP /etc/sgtmptmp
          _PATH_WORDS /usr/share/dict/words
      _PATH_WORDS_ALT /usr/share/dict/web2
+        _PATH_UMOUNT /bin/umount
+   _PATH_FILESYSTEMS /etc/filesystems
+    _PATH_PROC_SWAPS /proc/swaps
+_PATH_PROC_FILESYSTEMS /proc/filesystems
+       _PATH_MOUNTED /etc/mtab
+        _PATH_MNTTAB /etc/fstab
+  _PATH_MOUNTED_LOCK /etc/mtab~
+   _PATH_MOUNTED_TMP /etc/mtab.tmp
+   _PATH_DEV_BYLABEL /dev/disk/by-label
+    _PATH_DEV_BYUUID /dev/disk/by-uuid

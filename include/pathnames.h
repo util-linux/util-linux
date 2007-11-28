@@ -42,8 +42,6 @@
 #define _PATH_USERTTY           "/etc/usertty"
 
 /* used in login-utils/shutdown.c */
-#define _PATH_MTAB		"/etc/mtab"
-#define _PATH_UMOUNT		"/bin/umount"
 
 /* used in login-utils/setpwnam.h and login-utils/islocal.c */
 #define _PATH_PASSWD            "/etc/passwd"
@@ -67,6 +65,37 @@
 /* used in misc-utils/look.c */
 #define _PATH_WORDS             "/usr/share/dict/words"
 #define _PATH_WORDS_ALT         "/usr/share/dict/web2"
+
+/* mount paths */
+#define _PATH_UMOUNT		"/bin/umount"
+
+#define _PATH_FILESYSTEMS	"/etc/filesystems"
+#define _PATH_PROC_SWAPS	"/proc/swaps"
+#define _PATH_PROC_FILESYSTEMS	"/proc/filesystems"
+#define _PATH_PROC_MOUNTS	"/proc/mounts"
+
+#ifndef _PATH_MOUNTED
+# ifdef MOUNTED					/* deprecated */
+#  define _PATH_MOUNTED		MOUNTED
+# else
+#  define _PATH_MOUNTED		"/etc/mtab"
+# endif
+#endif
+
+#ifndef _PATH_MNTTAB
+# ifdef MNTTAB					/* deprecated */
+#  define _PATH_MNTTAB		MNTTAB
+# else
+#  define _PATH_MNTTAB		"/etc/fstab"
+# endif
+#endif
+
+#define _PATH_MOUNTED_LOCK	_PATH_MOUNTED "~"
+#define _PATH_MOUNTED_TMP	_PATH_MOUNTED ".tmp"
+
+/* udev paths */
+#define _PATH_DEV_BYLABEL	"/dev/disk/by-label"
+#define _PATH_DEV_BYUUID	"/dev/disk/by-uuid"
 
 #endif /* PATHNAMES_H */
 
