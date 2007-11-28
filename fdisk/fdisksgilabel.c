@@ -22,7 +22,6 @@
 
 #include <endian.h>
 #include "nls.h"
-#include <linux/major.h>        /* FLOPPY_MAJOR */
 
 #include "blkdev.h"
 

@@ -27,7 +27,9 @@
 #include <scsi/scsi.h>		/* SCSI_IOCTL_GET_IDLUN */
 #undef u_char
 #endif
+#ifdef HAVE_LINUX_MAJOR_H
 #include <linux/major.h>	/* FLOPPY_MAJOR */
+#endif
 
 #include "common.h"
 #include "fdisk.h"
@@ -69,6 +71,9 @@ static inline __u32 __swap32(__u32 x) {
 #define SSWAP32(x) (other_endian ? __swap32(x) \
 				 : (__u32)(x))
 
+#ifndef FLOPPY_MAJOR
+#define FLOPPY_MAJOR 2
+#endif
 #ifndef IDE0_MAJOR
 #define IDE0_MAJOR 3
 #endif

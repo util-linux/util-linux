@@ -33,7 +33,7 @@ AC_PATH_PROG(VOLID, vol_id, [], [$PATH:/lib/udev])
 
 AC_SYS_LARGEFILE
 
-AC_CHECK_HEADERS([linux/compiler.h linux/blkpg.h], [], [], [
+AC_CHECK_HEADERS([linux/compiler.h linux/blkpg.h linux/major.h], [], [], [
 #ifdef HAVE_LINUX_COMPILER_H
 #include <linux/compiler.h>
 #endif

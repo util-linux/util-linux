@@ -25,11 +25,17 @@
 #include "nls.h"
 
 #include <sys/sysmacros.h>
+#ifdef HAVE_LINUX_MAJOR_H
 #include <linux/major.h>
+#endif
 
 #include "pathnames.h"
 #include "login.h"
 #include "xstrncpy.h"
+
+#ifndef TTY_MAJOR
+#define TTY_MAJOR 4
+#endif
 
 static gid_t mygroups[NGROUPS];
 static int   num_groups;
@@ -118,6 +124,7 @@ add_to_class(struct ttyclass *tc, char *tty)
 static int
 isapty(const char *tty)
 {
+#ifdef __linux__
     char devname[100];
     struct stat stb;
 
@@ -147,6 +154,7 @@ isapty(const char *tty)
 #endif
 
     }
+#endif	/* __linux__ */
     return 0;
 }
 
