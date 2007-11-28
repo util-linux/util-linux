@@ -53,12 +53,12 @@
 #include <sys/file.h>
 #include <sys/signal.h>
 #include <errno.h>
+#include <string.h>
+#include <getopt.h>
+#include <unistd.h>
+
 #include "nls.h"
 
-#ifdef __linux__
-#include <unistd.h>
-#include <string.h>
-#endif
 
 #ifdef HAVE_LIBUTIL
 #include <pty.h>
