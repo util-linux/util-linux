@@ -1335,7 +1335,7 @@ rootterm(char * ttyn)
     char buf[100],*p;
     int cnt, more = 0;
 
-    fd = open(SECURETTY, O_RDONLY);
+    fd = open(_PATH_SECURETTY, O_RDONLY);
     if(fd < 0) return 1;
 
     /* read each line in /etc/securetty, if a line matches our ttyline

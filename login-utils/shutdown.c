@@ -105,6 +105,8 @@ char	halt_action[256];		/* to find out what to do upon halt */
 #define WRCRLF	write(fd, "\r\n", 2)
 #define ERRSTRING strerror(errno)
 
+#define UMOUNT_ARGS		"umount", "-a", "-t", "nodevfs"
+#define SWAPOFF_ARGS            "swapoff", "-a"
 
 void
 usage(void)
