@@ -35,9 +35,9 @@
 #include <netdb.h>
 #include "xstrncpy.h"
 #include "nls.h"
+#include "pathnames.h"
 
 #ifdef __linux__
-#include "pathnames.h"
 #include <sys/param.h>
 #define USE_SYSLOG
 #endif
