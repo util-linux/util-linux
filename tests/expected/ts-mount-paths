@@ -1,4 +1,5 @@
 mount: fstab path: "/etc/fstab"
+mount: mtab path:  "/etc/mtab"
 mount: lock path:  "/etc/mtab~"
 mount: temp path:  "/etc/mtab.tmp"
 mount: no LABEL=, no UUID=, going to mount /dev/dummy by path

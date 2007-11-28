@@ -15,7 +15,7 @@
 #include "nls.h"
 #include "fsprobe.h"
 #include "realpath.h"
-#include "mount_paths.h"
+#include "pathnames.h"
 
 #ifdef HAVE_SYS_SWAP_H
 # include <sys/swap.h>
@@ -108,14 +108,14 @@ read_proc_swaps(void) {
 	numSwaps = 0;
 	swapFiles = NULL;
 
-	swaps = fopen(PROC_SWAPS, "r");
+	swaps = fopen(_PATH_PROC_SWAPS, "r");
 	if (swaps == NULL)
 		return;		/* nothing wrong */
 
 	/* skip the first line */
 	if (!fgets(line, sizeof(line), swaps)) {
 		fprintf (stderr, _("%s: %s: unexpected file format\n"),
-			progname, PROC_SWAPS);
+			progname, _PATH_PROC_SWAPS);
 		fclose(swaps);
 		return;
 	}
@@ -161,9 +161,9 @@ display_summary(void)
        FILE *swaps;
        char line[1024] ;
 
-       if ((swaps = fopen(PROC_SWAPS, "r")) == NULL) {
+       if ((swaps = fopen(_PATH_PROC_SWAPS, "r")) == NULL) {
                int errsv = errno;
-               fprintf(stderr, "%s: %s: %s\n", progname, PROC_SWAPS,
+               fprintf(stderr, "%s: %s: %s\n", progname, _PATH_PROC_SWAPS,
 			strerror(errsv));
                return -1;
        }
@@ -313,11 +313,11 @@ swapon_all(void) {
 
 	read_proc_swaps();
 
-	fp = setmntent(_PATH_FSTAB, "r");
+	fp = setmntent(_PATH_MNTTAB, "r");
 	if (fp == NULL) {
 		int errsv = errno;
 		fprintf(stderr, _("%s: cannot open %s: %s\n"),
-			progname, _PATH_FSTAB, strerror(errsv));
+			progname, _PATH_MNTTAB, strerror(errsv));
 		exit(2);
 	}
 
@@ -504,11 +504,11 @@ main_swapoff(int argc, char *argv[]) {
 		 * Probably it was unmounted already, so errors are not bad.
 		 * Doing swapoff -a twice should not give error messages.
 		 */
-		fp = setmntent(_PATH_FSTAB, "r");
+		fp = setmntent(_PATH_MNTTAB, "r");
 		if (fp == NULL) {
 			int errsv = errno;
 			fprintf(stderr, _("%s: cannot open %s: %s\n"),
-				progname, _PATH_FSTAB, strerror(errsv));
+				progname, _PATH_MNTTAB, strerror(errsv));
 			exit(2);
 		}
 		while ((fstab = getmntent(fp)) != NULL) {

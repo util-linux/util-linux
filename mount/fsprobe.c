@@ -5,7 +5,7 @@
 #include <unistd.h>
 #include <sys/stat.h>
 #include <sys/types.h>
-#include "mount_paths.h"
+#include "pathnames.h"
 #include "fsprobe.h"
 #include "sundries.h"		/* for xstrdup */
 #include "nls.h"
@@ -76,7 +76,7 @@ fsprobe_known_fstype_in_procfs(const char *type)
     char *fsname;
     int ret = -1;
 
-    procfs = fopen(PROC_FILESYSTEMS, "r");
+    procfs = fopen(_PATH_PROC_FILESYSTEMS, "r");
     if (procfs) {
 	ret = 0;
 	while ((fsname = procfsnext(procfs)) != NULL)
@@ -101,7 +101,7 @@ fsprobe_procfsloop_mount(int (*mount_fn)(struct mountargs *, int *, int *),
 			 const char **types,
 			 int *special, int *status)
 {
-	char *files[2] = { ETC_FILESYSTEMS, PROC_FILESYSTEMS };
+	char *files[2] = { _PATH_FILESYSTEMS, _PATH_PROC_FILESYSTEMS };
 	FILE *procfs;
 	char *fsname;
 	const char *notypes = NULL;
@@ -116,14 +116,14 @@ fsprobe_procfsloop_mount(int (*mount_fn)(struct mountargs *, int *, int *),
 	}
 	*types = NULL;
 
-	/* Use PROC_FILESYSTEMS only when ETC_FILESYSTEMS does not exist.
-	   In some cases trying a filesystem that the kernel knows about
-	   on the wrong data will crash the kernel; in such cases
-	   ETC_FILESYSTEMS can be used to list the filesystems that we
-	   are allowed to try, and in the order they should be tried.
-	   End ETC_FILESYSTEMS with a line containing a single '*' only,
-	   if PROC_FILESYSTEMS should be tried afterwards. */
-
+	/* Use _PATH_PROC_FILESYSTEMS only when _PATH_FILESYSTEMS
+	 * (/etc/filesystems) does not exist.  In some cases trying a
+	 * filesystem that the kernel knows about on the wrong data will crash
+	 * the kernel; in such cases _PATH_FILESYSTEMS can be used to list the
+	 * filesystems that we are allowed to try, and in the order they should
+	 * be tried.  End _PATH_FILESYSTEMS with a line containing a single '*'
+	 * only, if _PATH_PROC_FILESYSTEMS should be tried afterwards.
+	 */
 	for (i=0; i<2; i++) {
 		procfs = fopen(files[i], "r");
 		if (!procfs)

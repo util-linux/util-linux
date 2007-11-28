@@ -12,7 +12,7 @@
 
 #include "fsprobe.h"
 #include "realpath.h"
-#include "mount_paths.h"
+#include "pathnames.h"
 #include "sundries.h"
 
 enum probe_type {
@@ -113,8 +113,8 @@ fsprobe_get_devname_by_uuid(const char *uuid)
 	if (!uuid)
 		return NULL;
 
-	strcpy(dev, PATH_DEV_BYUUID "/");
-	len = strlen(PATH_DEV_BYUUID "/");
+	strcpy(dev, _PATH_DEV_BYUUID "/");
+	len = strlen(_PATH_DEV_BYUUID "/");
 	if (!volume_id_encode_string(uuid, &dev[len], sizeof(dev) - len) != 0)
 		return NULL;
 	return canonicalize(dev);
@@ -128,8 +128,8 @@ fsprobe_get_devname_by_label(const char *label)
 
 	if (!label)
 		return NULL;
-	strcpy(dev, PATH_DEV_BYLABEL "/");
-	len = strlen(PATH_DEV_BYLABEL "/");
+	strcpy(dev, _PATH_DEV_BYLABEL "/");
+	len = strlen(_PATH_DEV_BYLABEL "/");
 	if (!volume_id_encode_string(label, &dev[len], sizeof(dev) - len) != 0)
 		return NULL;
 	return canonicalize(dev);
