@@ -42,21 +42,21 @@
 .SH NAME
 swapon, swapoff \- enable/disable devices and files for paging and swapping
 .SH SYNOPSIS
-.B /sbin/swapon [\-h \-V]
+.B /sbin/swapon \-a [\-e] [\-v]
 .br
-.B /sbin/swapon \-a [\-v] [\-e]
+.BI "/sbin/swapon [\-p " "priority" "] [\-v]" " specialfile"...
 .br
-.BI "/sbin/swapon [\-v] [\-p " "priority" "] " " specialfile " ...
+.B /sbin/swapon \-s
 .br
-.B /sbin/swapon [\-s]
+.B /sbin/swapon \-h | \-V
 .br
-.B /sbin/swapoff [\-h \-V]
+.B /sbin/swapoff \-a [\-v]
 .br
-.B /sbin/swapoff \-a
+.BI "/sbin/swapoff [\-v]" " specialfile"...
 .br
-.BI /sbin/swapoff " specialfile " ...
+.B /sbin/swapoff \-h | \-V
 .SH DESCRIPTION
-.B Swapon
+.B swapon
 is used to specify devices on which paging and swapping are to take place.
 
 The device or file used is given by the
@@ -77,20 +77,16 @@ is interleaved across several devices and files.
 Normally, the first form is used:
 .TP
 .B \-a
-All devices marked as ``swap'' swap devices in
+All devices marked as ``swap'' in
 .I /etc/fstab
 are made available, except for those with the ``noauto'' option.
-Devices that are already running as swap are silently skipped.
+Devices that are already being used as swap are silently skipped.
 .TP 
 .B \-e
-When 
-.B \-a 
-is used with swapon, 
-.B \-e 
-makes swapon silently skip devices that do not exist.
+Silently skip devices that do not exist.
 .TP
 .B \-h
-Provide help
+Provide help.
 .TP
 .BI \-L " label"
 Use the partition that has the specified
@@ -100,11 +96,9 @@ Use the partition that has the specified
 is needed.)
 .TP
 .BI \-p " priority"
-Specify priority for
-.BR swapon .
-This option is only available if
+Specify the priority of the swap device.  This option is only available if
 .B swapon
-was compiled under and is used under a 1.3.2 or later kernel.
+was compiled and is used under a 1.3.2 or later kernel.
 .I priority
 is a value between 0 and 32767. Higher numbers indicate higher
 priority. See
@@ -131,9 +125,9 @@ is needed.)
 Be verbose.
 .TP
 .B \-V
-Display version
+Display version.
 .PP
-.B Swapoff
+.B swapoff
 disables swapping on the specified devices and files.
 When the
 .B \-a

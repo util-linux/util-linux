@@ -61,16 +61,16 @@ static int cannot_find(const char *special);
 #define PRINT_USAGE_SPECIAL(_fp) \
 		fprintf(_fp, _( \
 	"The <special> parameter:\n" \
-	" {-L label | LABEL=label}             volume LABEL\n" \
-	" {-U uuid  | UUID=uuid}               volume UUID\n" \
-	" <file>                               swap file\n" \
-	" <device>                             swap device\n\n"))
+	" {-L label | LABEL=label}             LABEL of device to be used\n" \
+	" {-U uuid  | UUID=uuid}               UUID of device to be used\n" \
+	" <device>                             name of device to be used\n" \
+	" <file>                               name of file to be used\n\n"))
 
 static void
 swapon_usage(FILE *fp, int n) {
 	fprintf(fp, _("\nUsage:\n"
 	" %1$s -a [-e] [-v]                  enable all swaps from /etc/fstab\n"
-	" %1$s [-v] [-p priority] <special>  enable swap\n"
+	" %1$s [-p priority] [-v] <special>  enable given swap\n"
 	" %1$s -s                            display swap usage summary\n"
 	" %1$s -h                            display help\n"
 	" %1$s -V                            display version\n\n"), progname);
@@ -83,10 +83,10 @@ swapon_usage(FILE *fp, int n) {
 static void
 swapoff_usage(FILE *fp, int n) {
 	fprintf(fp, _("\nUsage:\n"
-	" %1$s -a [-v]                       disable all swaps\n"
-	" %1$s [-v] <special>                disable given swap\n"
-	" %1$s -h                            display help\n"
-	" %1$s -V                            display version\n\n"), progname);
+	" %1$s -a [-v]                      disable all swaps\n"
+	" %1$s [-v] <special>               disable given swap\n"
+	" %1$s -h                           display help\n"
+	" %1$s -V                           display version\n\n"), progname);
 
 	PRINT_USAGE_SPECIAL(fp);
 
