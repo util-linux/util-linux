@@ -693,7 +693,7 @@ guess_fstype_by_devname(const char *devname)
       if (!type)
          printf (_("       I will try all types mentioned in %s or %s\n"),
 		      _PATH_FILESYSTEMS, _PATH_PROC_FILESYSTEMS);
-      else if (!strcmp(type, "swap"))
+      else if (!strcmp(type, MNTTYPE_SWAP))
          printf (_("       and it looks like this is swapspace\n"));
       else
          printf (_("       I will try type %s\n"), type);
@@ -722,7 +722,7 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
    if (!*types && !(flags & MS_REMOUNT)) {
       *types = guess_fstype_by_devname(spec);
       if (*types) {
-	  if (!strcmp(*types, "swap")) {
+	  if (!strcmp(*types, MNTTYPE_SWAP)) {
 	      error(_("%s looks like swapspace - not mounted"), spec);
 	      *types = NULL;
 	      return 1;
