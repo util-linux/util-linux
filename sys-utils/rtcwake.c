@@ -16,6 +16,7 @@
  * The best way to set the system's RTC is so that it holds the current
  * time in UTC.  Use the "-l" flag to tell this program that the system
  * RTC uses a local timezone instead (maybe you dual-boot MS-Windows).
+ * That flag should not be needed on systems with adjtime support.
  */
 
 #include <stdio.h>
@@ -163,14 +164,18 @@ static int get_basetimes(int fd)
 	}
 
 	if (verbose) {
-		if (clock_mode == CM_LOCAL) {
-			printf("\ttzone   = %ld\n", timezone);
-			printf("\ttzname  = %s\n", tzname[daylight]);
-			gmtime_r(&rtc_time, &tm);
-		}
-		printf("\tsystime = %ld, (UTC) %s\n",
+		/* Unless the system uses UTC, either delta or tzone
+		 * reflects a seconds offset from UTC.  The value can
+		 * help sort out problems like bugs in your C library.
+		 */
+		printf("\tdelta   = %ld\n", sys_time - rtc_time);
+		printf("\ttzone   = %ld\n", timezone);
+
+		printf("\ttzname  = %s\n", tzname[daylight]);
+		gmtime_r(&rtc_time, &tm);
+		printf("\tsystime = %ld, (UTC) %s",
 				(long) sys_time, asctime(gmtime(&sys_time)));
-		printf("\trtctime = %ld, (UTC) %s\n",
+		printf("\trtctime = %ld, (UTC) %s",
 				(long) rtc_time, asctime(&tm));
 	}
 
@@ -190,11 +195,14 @@ static int setup_alarm(int fd, time_t *wakeup)
 	wake.time.tm_mday = tm->tm_mday;
 	wake.time.tm_mon = tm->tm_mon;
 	wake.time.tm_year = tm->tm_year;
-	wake.time.tm_wday = tm->tm_wday;
-	wake.time.tm_yday = tm->tm_yday;
-	wake.time.tm_isdst = tm->tm_isdst;
+	/* wday, yday, and isdst fields are unused by Linux */
+	wake.time.tm_wday = -1;
+	wake.time.tm_yday = -1;
+	wake.time.tm_isdst = -1;
 
-	/* many rtc alarms only support up to 24 hours from 'now' ... */
+	/* many rtc alarms only support up to 24 hours from 'now',
+	 * so use the "more than 24 hours" request only if we must
+	 */
 	if ((rtc_time + (24 * 60 * 60)) > *wakeup) {
 		if (ioctl(fd, RTC_ALM_SET, &wake.time) < 0) {
 			perror(_("set rtc alarm"));
@@ -204,8 +212,6 @@ static int setup_alarm(int fd, time_t *wakeup)
 			perror(_("enable rtc alarm"));
 			return 0;
 		}
-
-		/* ... so use the "more than 24 hours" request only if we must */
 	} else {
 		/* avoid an extra AIE_ON call */
 		wake.enabled = 1;
@@ -321,8 +327,9 @@ int main(int argc, char **argv)
 				suspend = strdup(optarg);
 				break;
 			}
-			fprintf(stderr, _("%s: unrecognized suspend state '%s'\n"),
-					progname, optarg);
+			fprintf(stderr,
+				_("%s: unrecognized suspend state '%s'\n"),
+				progname, optarg);
 			usage(EXIT_FAILURE);
 
 			/* alarm time, seconds-to-sleep (relative) */
@@ -376,10 +383,10 @@ int main(int argc, char **argv)
 			printf(_("%s: assuming RTC uses UTC ...\n"), progname);
 			clock_mode = CM_UTC;
 		}
-		if (verbose)
-			printf(clock_mode == CM_UTC ? _("Using UTC time.\n") :
-					_("Using local time.\n"));
 	}
+	if (verbose)
+		printf(clock_mode == CM_UTC ? _("Using UTC time.\n") :
+				_("Using local time.\n"));
 
 	if (!alarm && !seconds) {
 		fprintf(stderr, _("%s: must provide wake time\n"), progname);
@@ -423,8 +430,9 @@ int main(int argc, char **argv)
 				alarm, sys_time, rtc_time, seconds);
 	if (alarm) {
 		if (alarm < sys_time) {
-			fprintf(stderr, _("%s: time doesn't go backward to %s\n"),
-					progname, ctime(&alarm));
+			fprintf(stderr,
+				_("%s: time doesn't go backward to %s\n"),
+				progname, ctime(&alarm));
 			exit(EXIT_FAILURE);
 		}
 		alarm += sys_time - rtc_time;

@@ -76,15 +76,20 @@ is the time in seconds since 1970-01-01, 00:00 UTC. Use the
 Use standby state \fImode\fP. Valid values are \fIstandby\fP,
 \fImem\fP, \fIdisk\fP and \fIon\fP (no suspend). The default is
 \fIstandby\fP.
+.SH NOTES
+Some PC systems can't currently exit sleep states such as \fImem\fP
+using only the kernel code accessed by this driver.
+They need help from userspace code to make the framebuffer work again.
 .SH HISTORY
-The program first appeared as kernel commit message for Linux 2.6 in the GIT
+The program was posted several times on LKML and other lists
+before appearing in kernel commit message for Linux 2.6 in the GIT
 commit 87ac84f42a7a580d0dd72ae31d6a5eb4bfe04c6d.
 .SH AVAILABILITY
 The rtcwake command is part of the util-linux-ng package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
 .SH AUTHOR
-The program was written by David Brownell <david-b@pacbell.net> and improved by
-Bernhard Walle <bwalle@suse.de>.
+The program was written by David Brownell <dbrownell@users.sourceforge.net>
+and improved by Bernhard Walle <bwalle@suse.de>.
 .SH COPYRIGHT
 This is free software.  You may redistribute copies of it  under  the  terms
 of  the  GNU General  Public  License <http://www.gnu.org/licenses/gpl.html>.
