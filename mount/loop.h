@@ -2,6 +2,7 @@
 #define MNT_LOOP_H
 
 #include <linux/posix_types.h>
+#include <stdint.h>
 #include "linux_version.h"
 
 #if LINUX_VERSION_CODE < KERNEL_VERSION(2,5,68)
@@ -40,24 +41,20 @@ struct loop_info {
 	char		reserved[4];
 };
 
-/*
- * Where to get __u8, __u32, __u64? Let us use unsigned char/int/long long
- * and get punished when someone comes with 128-bit long longs.
- */
 struct loop_info64 {
-	unsigned long long	lo_device;
-	unsigned long long	lo_inode;
-	unsigned long long	lo_rdevice;
-	unsigned long long	lo_offset;
-	unsigned long long	lo_sizelimit; /* bytes, 0 == max available */
-	unsigned int		lo_number;
-	unsigned int		lo_encrypt_type;
-	unsigned int		lo_encrypt_key_size;
-	unsigned int		lo_flags;
-	unsigned char		lo_file_name[LO_NAME_SIZE];
-	unsigned char		lo_crypt_name[LO_NAME_SIZE];
-	unsigned char		lo_encrypt_key[LO_KEY_SIZE];
-	unsigned long long	lo_init[2];
+	uint64_t	lo_device;
+	uint64_t	lo_inode;
+	uint64_t	lo_rdevice;
+	uint64_t	lo_offset;
+	uint64_t	lo_sizelimit; /* bytes, 0 == max available */
+	uint32_t	lo_number;
+	uint32_t	lo_encrypt_type;
+	uint32_t	lo_encrypt_key_size;
+	uint32_t	lo_flags;
+	uint8_t		lo_file_name[LO_NAME_SIZE];
+	uint8_t		lo_crypt_name[LO_NAME_SIZE];
+	uint8_t		lo_encrypt_key[LO_KEY_SIZE];
+	uint64_t	lo_init[2];
 };
 
 #endif /* MNT_LOOP_H */

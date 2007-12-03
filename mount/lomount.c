@@ -17,6 +17,7 @@
 #include <sys/stat.h>
 #include <sys/mman.h>
 #include <sys/sysmacros.h>
+#include <inttypes.h>
 
 #include "loop.h"
 #include "lomount.h"
@@ -81,15 +82,15 @@ show_loop(char *device) {
 		loopinfo64.lo_file_name[LO_NAME_SIZE-1] = 0;
 		loopinfo64.lo_crypt_name[LO_NAME_SIZE-1] = 0;
 
-		printf("%s: [%04llx]:%llu (%s)",
+		printf("%s: [%04" PRIx64 "]:%" PRIu64 " (%s)",
 		       device, loopinfo64.lo_device, loopinfo64.lo_inode,
 		       loopinfo64.lo_file_name);
 
 		if (loopinfo64.lo_offset)
-			printf(_(", offset %lld"), loopinfo64.lo_offset);
+			printf(_(", offset %" PRIu64 ), loopinfo64.lo_offset);
 
 		if (loopinfo64.lo_sizelimit)
-			printf(_(", sizelimit %lld"), loopinfo64.lo_sizelimit);
+			printf(_(", sizelimit %" PRIu64 ), loopinfo64.lo_sizelimit);
 
 		if (loopinfo64.lo_encrypt_type ||
 		    loopinfo64.lo_crypt_name[0]) {
@@ -97,7 +98,7 @@ show_loop(char *device) {
 
 			if (*e == 0 && loopinfo64.lo_encrypt_type == 1)
 				e = "XOR";
-			printf(_(", encryption %s (type %d)"),
+			printf(_(", encryption %s (type %" PRIu32 ")"),
 			       e, loopinfo64.lo_encrypt_type);
 		}
 		printf("\n");
