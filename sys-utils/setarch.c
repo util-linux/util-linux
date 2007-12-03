@@ -167,6 +167,10 @@ int set_arch(const char *pers, unsigned long options)
 #endif
 #if defined(__alpha__)
     {PER_LINUX, "alpha", "alpha"},
+    {PER_LINUX, "alphaev5", "alpha"},
+    {PER_LINUX, "alphaev56", "alpha"},
+    {PER_LINUX, "alphaev6", "alpha"},
+    {PER_LINUX, "alphaev67", "alpha"},
 #endif
     {-1, NULL, NULL}
   };
