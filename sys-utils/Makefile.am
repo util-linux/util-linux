@@ -35,21 +35,11 @@ dist_man_MANS += arch.1
 endif
 
 
+RDEV_LINKS =
 if BUILD_RDEV
-rdev_common_mans = rdev.8 ramsize.8 rootflags.8 vidmode.8
-rdev_common_links = ramsize vidmode rootflags
-
-if ARCH_I86
 usrsbinexec_PROGRAMS += rdev
-dist_man_MANS += $(rdev_common_mans)
-RDEV_LINKS = $(rdev_common_links)
-endif
-if ARCH_86_64
-usrsbinexec_PROGRAMS += rdev
-dist_man_MANS += $(rdev_common_mans)
-RDEV_LINKS = $(rdev_common_links)
-endif
-
+RDEV_LINKS += ramsize vidmode rootflags
+dist_man_MANS += rdev.8
 endif
 
 
@@ -80,9 +70,13 @@ if ARCH_HPPA
 SETARCH_LINKS += parisc parisc64 parisc32
 endif
 
+RDEV_MAN_LINKS = $(RDEV_LINKS:=.8)
 SETARCH_MAN_LINKS = $(SETARCH_LINKS:=.8)
-dist_man_MANS += $(SETARCH_MAN_LINKS)
-CLEANFILES=$(SETARCH_MAN_LINKS)
+man_MANS = $(RDEV_MAN_LINKS) $(SETARCH_MAN_LINKS)
+CLEANFILES = $(man_MANS)
+
+$(RDEV_MAN_LINKS): rdev.8
+	echo ".so rdev.8" > $@
 
 $(SETARCH_MAN_LINKS): setarch.8
 	echo ".so setarch.8" > $@
