@@ -113,7 +113,7 @@ open_rtc(void) {
 	for (p=fls; *p; ++p) {
 		int fd = open(*p, O_RDONLY);
 
-		if (fd < 0 && errno == ENOENT)
+		if (fd < 0 && (errno == ENOENT || errno == ENODEV))
 			continue;
 		rtc_dev_name = *p;
 		return fd;
