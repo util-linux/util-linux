@@ -8,7 +8,7 @@ fdisk_common = i386_sys_types.c common.h gpt.c gpt.h \
 if !ARCH_M68K
 
 sbin_PROGRAMS = fdisk
-man_MANS = fdisk.8
+dist_man_MANS = fdisk.8
 fdisk_SOURCES = fdisk.c fdiskbsdlabel.c fdisksgilabel.c \
 	fdisksunlabel.c fdiskaixlabel.c fdiskmaclabel.c partname.c \
 	fdisk.h fdisksunlabel.h fdisksgilabel.h fdiskaixlabel.h \
@@ -17,18 +17,18 @@ fdisk_SOURCES = fdisk.c fdiskbsdlabel.c fdisksgilabel.c \
 if !ARCH_SPARC
 
 sbin_PROGRAMS += sfdisk
-man_MANS += sfdisk.8
+dist_man_MANS += sfdisk.8
 sfdisk_SOURCES = sfdisk.c partname.c $(fdisk_common)
 
 if USE_SLANG
 sbin_PROGRAMS += cfdisk
-man_MANS += cfdisk.8
+dist_man_MANS += cfdisk.8
 cfdisk_SOURCES = cfdisk.c $(fdisk_common)
 cfdisk_LDADD = -lslang
 else
 if HAVE_NCURSES
 sbin_PROGRAMS += cfdisk
-man_MANS += cfdisk.8
+dist_man_MANS += cfdisk.8
 cfdisk_SOURCES = cfdisk.c $(fdisk_common)
 cfdisk_LDADD = -lncurses
 endif

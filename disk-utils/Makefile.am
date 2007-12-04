@@ -2,7 +2,7 @@ include $(top_srcdir)/config/include-Makefile.am
 
 utils_common = ../lib/linux_version.c ../lib/blkdev.c
 
-man_MANS = blockdev.8 isosize.8 mkfs.8 mkswap.8 \
+dist_man_MANS = blockdev.8 isosize.8 mkfs.8 mkswap.8 \
            fsck.minix.8 mkfs.minix.8 mkfs.bfs.8
 
 sbin_PROGRAMS = mkfs mkswap blockdev fsck.minix mkfs.minix mkfs.bfs
@@ -15,20 +15,20 @@ blockdev_SOURCES = blockdev.c $(utils_common)
 usrbinexec_PROGRAMS = isosize
 
 if LINUX
-man_MANS += fdformat.8
+dist_man_MANS += fdformat.8
 usrbinexec_PROGRAMS += fdformat
 endif
 
 if BUILD_ELVTUNE
 sbin_PROGRAMS += elvtune
-man_MANS += elvtune.8
+dist_man_MANS += elvtune.8
 elvtune_SOURCES = elvtune.c ../lib/linux_version.c
 endif
 
 if HAVE_RAW
 if BUILD_RAW
 sbin_PROGRAMS += raw
-man_MANS += raw.8
+dist_man_MANS += raw.8
 endif
 endif
 

@@ -10,4 +10,4 @@ AM_CFLAGS = -fsigned-char
 # Unlike with other dist primaries, the files are not distributed if the
 # conditional is false.
 # Work the bug around until it is fixed:
-dist_noinst_DATA = $(man_MANS)
+dist_noinst_DATA = $(dist_man_MANS)

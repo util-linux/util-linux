@@ -14,7 +14,7 @@ usrbinexec_SCRIPTS = chkdupexe scriptreplay
 
 CLEANFILES = chkdupexe scriptreplay
 
-man_MANS = cal.1 chkdupexe.1 ddate.1 logger.1 look.1 mcookie.1 \
+dist_man_MANS = cal.1 chkdupexe.1 ddate.1 logger.1 look.1 mcookie.1 \
 	namei.1 script.1 whereis.1 scriptreplay.1
 
 if HAVE_TINFO
@@ -36,7 +36,7 @@ endif
 if HAVE_NCURSES
 if LINUX
 usrbinexec_PROGRAMS += setterm
-man_MANS += setterm.1
+dist_man_MANS += setterm.1
 endif
 if HAVE_TINFO
 setterm_LDADD = -ltinfo
@@ -48,24 +48,24 @@ endif
 if BUILD_KILL
 bin_PROGRAMS += kill
 kill_SOURCES = kill.c procs.c kill.h
-man_MANS += kill.1
+dist_man_MANS += kill.1
 endif
 
 if BUILD_RENAME
 usrbinexec_PROGRAMS += rename
-man_MANS += rename.1
+dist_man_MANS += rename.1
 endif
 
 if BUILD_RESET
 dist_usrbinexec_SCRIPTS = reset
-man_MANS += reset.1
+dist_man_MANS += reset.1
 endif
 EXTRA_DIST += README.reset reset.033c
 
 if BUILD_WRITE
 
 usrbinexec_PROGRAMS += write
-man_MANS += write.1
+dist_man_MANS += write.1
 write_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 write_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 

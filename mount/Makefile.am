@@ -4,7 +4,7 @@ EXTRA_DIST = README.mount
 
 bin_PROGRAMS = mount umount
 sbin_PROGRAMS = losetup swapon
-man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
+dist_man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 
 utils_common = sundries.c xmalloc.c realpath.c fsprobe.c
 
@@ -53,7 +53,7 @@ endif
 
 if HAVE_PIVOT_ROOT
 sbin_PROGRAMS += pivot_root
-man_MANS += pivot_root.8
+dist_man_MANS += pivot_root.8
 endif
 
 noinst_PROGRAMS = mtab_lock_test

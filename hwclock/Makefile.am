@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-man_MANS = hwclock.8
+dist_man_MANS = hwclock.8
 
 sbin_PROGRAMS = hwclock
 

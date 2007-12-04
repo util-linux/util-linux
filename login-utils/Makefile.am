@@ -4,19 +4,19 @@ bin_PROGRAMS =
 usrbinexec_PROGRAMS =
 sbin_PROGRAMS =
 usrsbinexec_PROGRAMS =
-man_MANS =
+dist_man_MANS =
 
 EXTRA_DIST = README.getty  README.modems-with-agetty  README.poeigl
 
 if BUILD_AGETTY
 sbin_PROGRAMS += agetty
-man_MANS += agetty.8
+dist_man_MANS += agetty.8
 endif
 
 if BUILD_INIT
 
 sbin_PROGRAMS += simpleinit shutdown initctl
-man_MANS += fastboot.8 fasthalt.8 halt.8 reboot.8 simpleinit.8 shutdown.8 \
+dist_man_MANS += fastboot.8 fasthalt.8 halt.8 reboot.8 simpleinit.8 shutdown.8 \
 	initctl.8
 
 simpleinit_SOURCES = simpleinit.c my_crypt.h simpleinit.h
@@ -30,7 +30,7 @@ endif
 
 if BUILD_LAST
 usrbinexec_PROGRAMS += last
-man_MANS += last.1
+dist_man_MANS += last.1
 endif
 
 if BUILD_LOGIN_UTILS
@@ -38,7 +38,7 @@ if BUILD_LOGIN_UTILS
 bin_PROGRAMS += login
 usrbinexec_PROGRAMS += chfn chsh newgrp
 usrsbinexec_PROGRAMS += vipw
-man_MANS += chfn.1 chsh.1 login.1 newgrp.1 vipw.8 vigr.8
+dist_man_MANS += chfn.1 chsh.1 login.1 newgrp.1 vipw.8 vigr.8
 
 chfn_SOURCES = chfn.c $(chfn_chsh_common)
 chsh_SOURCES = chsh.c $(chfn_chsh_common)
@@ -97,13 +97,13 @@ endif
 
 if BUILD_MESG
 usrbinexec_PROGRAMS += mesg
-man_MANS += mesg.1
+dist_man_MANS += mesg.1
 endif
 
 if BUILD_WALL
 usrbinexec_PROGRAMS += wall
 wall_SOURCES = wall.c ttymsg.c ttymsg.h
-man_MANS += wall.1
+dist_man_MANS += wall.1
 
 if USE_TTY_GROUP
 if MAKEINSTALL_DO_CHOWN

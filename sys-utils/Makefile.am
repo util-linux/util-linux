@@ -23,7 +23,7 @@ endif
 
 tunelp_SOURCES = tunelp.c lp.h
 
-man_MANS = flock.1 readprofile.1 \
+dist_man_MANS = flock.1 readprofile.1 \
 	ctrlaltdel.8 cytune.8 dmesg.1 ipcrm.1 ipcs.1 renice.1 \
 	setsid.1 tunelp.8 setarch.8 rtcwake.8
 
@@ -31,7 +31,7 @@ info_TEXINFOS = ipc.texi
 
 if BUILD_ARCH
 bin_PROGRAMS += arch
-man_MANS += arch.1
+dist_man_MANS += arch.1
 endif
 
 
@@ -41,12 +41,12 @@ rdev_common_links = ramsize vidmode rootflags
 
 if ARCH_I86
 usrsbinexec_PROGRAMS += rdev
-man_MANS += $(rdev_common_mans)
+dist_man_MANS += $(rdev_common_mans)
 RDEV_LINKS = $(rdev_common_links)
 endif
 if ARCH_86_64
 usrsbinexec_PROGRAMS += rdev
-man_MANS += $(rdev_common_mans)
+dist_man_MANS += $(rdev_common_mans)
 RDEV_LINKS = $(rdev_common_links)
 endif
 
@@ -81,7 +81,7 @@ SETARCH_LINKS += parisc parisc64 parisc32
 endif
 
 SETARCH_MAN_LINKS = $(addsuffix .8, $(SETARCH_LINKS))
-man_MANS += $(SETARCH_MAN_LINKS)
+dist_man_MANS += $(SETARCH_MAN_LINKS)
 CLEANFILES=$(SETARCH_MAN_LINKS)
 
 $(SETARCH_MAN_LINKS): setarch.8
