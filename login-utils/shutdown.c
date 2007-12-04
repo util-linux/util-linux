@@ -628,8 +628,8 @@ unmount_disks_ourselves(void)
 	char *filesys;
 	
 	sync();
-	if (!(mtab = setmntent(_PATH_MTAB, "r"))) {
-		my_puts("shutdown: Cannot open " _PATH_MTAB ".");
+	if (!(mtab = setmntent(_PATH_MOUNTED, "r"))) {
+		my_puts("shutdown: Cannot open " _PATH_MOUNTED ".");
 		return;
 	}
 	n = 0;
