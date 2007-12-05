@@ -71,3 +71,7 @@ SCM (source code management):
     * A new tag object is created for:
         - every release, tag name: v<version>
 
+
+    KNOWN BUGS:
+	- tag v2.13.1 is typo. Please, ignore this tag.
+
