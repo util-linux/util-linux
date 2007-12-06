@@ -83,19 +83,14 @@ function ts_init {
 	TS_EXPECTED="$TS_EXPECTEDDIR/$TS_NAME"
 	TS_INPUT="$TS_INPUTDIR/$TS_NAME"
 	TS_MOUNTPOINT="$(pwd)/$TS_OUTDIR/${TS_NAME}_mnt"
-	TS_BLKIDCACHE=""
 	TS_HAS_VOLUMEID="no"
+	BLKID_FILE="$TS_OUTDIR/$TS_NAME.blkidtab"
+
+	export BLKID_FILE
 
 	ldd $TS_CMD_MOUNT | grep -q 'libvolume_id' &> /dev/null
 	if [ "$?" == "0" ]; then
 		TS_HAS_VOLUMEID="yes"
-	fi
-	if [ "$TS_HAS_VOLUMEID" != "yes" ]; then
-		if [ -f "/etc/blkid/blkid.tab" ]; then
-			TS_BLKIDCACHE="/etc/blkid/blkid.tab"
-		elif [ -f "/etc/blkid.tab" ]; then
-			TS_BLKIDCACHE="/etc/blkid.tab"
-		fi
 	fi
 
 	rm -f $TS_OUTPUT
@@ -155,27 +150,9 @@ function ts_die {
 	ts_finalize
 }
 
-function ts_backup_cache {
-	if [ "$TS_HAS_VOLUMEID" != "yes" ] && [ -f "$TS_BLKIDCACHE" ]; then
-		cp $TS_BLKIDCACHE $OUTDIR/$TS_NAME.cache
-	fi
-}
-
-function ts_restore_cache {
-	if [ "$TS_HAS_VOLUMEID" !=  "yes" ] && [ -f "$TS_BLKIDCACHE" ] && [ -s "$OUTDIR/$TS_NAME.cache" ]; then
-		# We have to remove the device from cache otherwise
-		# libblkid will reuse cached information. The cache
-		# refresh time is 2 seconds -- that's too long. We
-		# re-use the same device more quickly.  --kzak
-		mv -f $OUTDIR/$TS_NAME.cache $TS_BLKIDCACHE
-	fi
-}
-
 function ts_device_init {
 	local IMAGE="$TS_OUTDIR/$TS_NAME.img"
 	local DEV=""
-
-	ts_backup_cache
 
 	dd if=/dev/zero of="$IMAGE" bs=1M count=5 &> /dev/null
 
@@ -198,7 +175,6 @@ function ts_device_deinit {
 	if [ -b "$DEV" ]; then
 		$TS_CMD_UMOUNT "$DEV" &> /dev/null
 		$TS_CMD_LOSETUP -d "$DEV" &> /dev/null
-		ts_restore_cache
 	fi
 }
 
