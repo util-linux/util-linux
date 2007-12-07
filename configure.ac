@@ -61,6 +61,7 @@ AC_CHECK_FUNCS(
 	personality \
 	updwtmp \
 	lchown \
+	inotify_init \
 	rpmatch])
 AC_FUNC_FSEEKO
 
