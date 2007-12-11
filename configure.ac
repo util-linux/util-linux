@@ -155,7 +155,7 @@ if test $have_blkid = no && test $have_volume_id = no; then
 fi
 
 # These default values should work in most cases:
-: ${BLKID_LIBS='-lblkid -luuid'}
+: ${BLKID_LIBS='-lblkid'}
 : ${VOLUMEID_LIBS='-lvolume_id'}
 
 # OTOH, the following two has little chance to succeed; please specify the
