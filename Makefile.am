@@ -41,5 +41,5 @@ distclean-local:
 
 ENABLE_ALL = --enable-elvtune --enable-init --enable-kill --enable-last \
  --enable-mesg --enable-partx --enable-raw --enable-rdev --enable-reset \
- --enable-login-utils --enable-write
+ --enable-login-utils --enable-write --enable-arch
 DISTCHECK_CONFIGURE_FLAGS = --disable-use-tty-group $(ENABLE_ALL)
