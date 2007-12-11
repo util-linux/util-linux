@@ -75,6 +75,47 @@ AC_CHECK_FUNCS(
 	rpmatch])
 AC_FUNC_FSEEKO
 
+dnl Static compilation
+m4_define([UTIL_STATIC_PROGRAMS], [losetup, mount, umount, fdisk, sfdisk])
+
+AC_ARG_ENABLE([static-programs],
+  [AS_HELP_STRING([--enable-static-programs=LIST],
+      [link static the programs in LIST (comma-separated,
+      supported for ]m4_defn([UTIL_STATIC_PROGRAMS])[)])])
+
+case $enable_static_programs in
+yes) enable_static_programs=m4_quote(UTIL_STATIC_PROGRAMS) ;;
+no) enable_static_programs= ;;
+esac
+
+if test "$enable_static_programs" != ""; then
+  AC_CACHE_CHECK([whether linker accepts -static],
+  [static_cv_option],
+  [SAVE_LDFLAGS="$LDFLAGS"
+   LDFLAGS="$LDFLAGS -static"
+   AC_LINK_IFELSE([AC_LANG_PROGRAM([[
+#include <stdio.h>
+]], [[
+fflush(stdout);
+]])], [static_cv_option=yes],[static_cv_option=no])
+   LDFLAGS="$SAVE_LDFLAGS"
+  ])
+  if test "$static_cv_option" = "no"; then
+     AC_MSG_ERROR([the linker does not accept option -static])
+  fi
+fi
+AC_SUBST([LDFLAGS_STATIC], [-static])
+
+dnl Set all the individual AM_CONDITIONALs
+m4_foreach([UTIL_PRG], m4_defn([UTIL_STATIC_PROGRAMS]), [
+  case ,$enable_static_programs, in
+   *,UTIL_PRG,*) static_[]UTIL_PRG=yes ;;
+  esac
+  AM_CONDITIONAL([HAVE_STATIC_]m4_toupper(UTIL_PRG),
+    [test "$static_[]UTIL_PRG" = "yes"])
+])
+
+
 dnl UTIL_CHECK_LIB(LIBRARY, FUNCTION)
 dnl ---------------------------------
 AC_DEFUN([UTIL_CHECK_LIB], [
@@ -112,6 +153,22 @@ fi
 if test $have_blkid = no && test $have_volume_id = no; then
   AC_MSG_ERROR([blkid or volume_id is needed to build util-linux-ng.])
 fi
+
+# These default values should work in most cases:
+: ${BLKID_LIBS='-lblkid -luuid'}
+: ${VOLUMEID_LIBS='-lvolume_id'}
+
+# OTOH, the following two has little chance to succeed; please specify the
+# right values on the configure command-line:
+#
+: ${BLKID_LIBS_STATIC='$(BLKID_LIBS)'}
+: ${VOLUMEID_LIBS_STATIC='$(VOLUMEID_LIBS)'}
+
+AC_ARG_VAR([BLKID_LIBS], [-l options for linking dynamically with blkid])
+AC_ARG_VAR([BLKID_LIBS_STATIC], [-l options for linking statically with blkid])
+AC_ARG_VAR([VOLUMEID_LIBS], [-l options for linking dynamically with volume_id])
+AC_ARG_VAR([VOLUMEID_LIBS_STATIC], [-l options for linking statically with volume_id])
+
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
 AM_GNU_GETTEXT([external])
@@ -460,6 +517,12 @@ else
   esac
 fi
 
+if test "$have_selinux" = yes; then
+  SELINUX_LIBS="-lselinux -lsepol"
+  SELINUX_LIBS_STATIC="-lselinux -lsepol"
+fi
+AC_SUBST([SELINUX_LIBS])
+AC_SUBST([SELINUX_LIBS_STATIC])
 
 AC_ARG_WITH([audit],
   AS_HELP_STRING([--with-audit], [compile with audit support]),

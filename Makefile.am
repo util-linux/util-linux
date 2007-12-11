@@ -39,7 +39,8 @@ distclean-local:
 	-find . -name \*~ -o -name \*.orig -o -name \*.rej | xargs rm -f
 	rm -rf autom4te.cache
 
-ENABLE_ALL = --enable-elvtune --enable-init --enable-kill --enable-last \
+ENABLE_ALL = --enable-static-programs \
+ --enable-elvtune --enable-init --enable-kill --enable-last \
  --enable-mesg --enable-partx --enable-raw --enable-rdev --enable-reset \
  --enable-login-utils --enable-write --enable-arch
 DISTCHECK_CONFIGURE_FLAGS = --disable-use-tty-group $(ENABLE_ALL)

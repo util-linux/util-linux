@@ -35,20 +35,45 @@ umount_LDADD = $(LDADD_common)
 swapon_LDADD = $(LDADD_common)
 
 LDADD_common =
+LDADD_common_static =
+
+if HAVE_STATIC_MOUNT
+bin_PROGRAMS += mount.static
+mount_static_SOURCES = $(mount_SOURCES)
+mount_static_LDFLAGS = $(LDFLAGS_STATIC)
+mount_static_LDADD = $(LDADD_common_static)
+endif
+
+if HAVE_STATIC_UMOUNT
+bin_PROGRAMS += umount.static
+umount_static_SOURCES = $(umount_SOURCES)
+umount_static_LDFLAGS = $(LDFLAGS_STATIC)
+umount_static_LDADD = $(LDADD_common_static)
+endif
+
+if HAVE_STATIC_LOSETUP
+bin_PROGRAMS += losetup.static
+losetup_static_SOURCES = $(losetup_SOURCES)
+losetup_static_LDFLAGS = $(LDFLAGS_STATIC)
+losetup_static_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
+endif
 
 if HAVE_BLKID
 utils_common += fsprobe_blkid.c
-LDADD_common += -lblkid -luuid
+LDADD_common += $(BLKID_LIBS)
+LDADD_common_static += $(BLKID_LIBS_STATIC)
 endif
 
 if HAVE_SELINUX
-mount_LDADD += -lselinux
+mount_LDADD += $(SELINUX_LIBS)
+mount_static_LDADD = $(SELINUX_LIBS_STATIC)
 endif
 
 if HAVE_VOLUME_ID
 utils_common += fsprobe_volumeid.c
 swapon_SOURCES += ../lib/linux_version.c ../lib/blkdev.c
-LDADD_common += -lvolume_id
+LDADD_common += $(VOLUMEID_LIBS)
+LDADD_common_static += $(VOLUMEID_LIBS_STATIC)
 endif
 
 if HAVE_PIVOT_ROOT

@@ -14,11 +14,23 @@ fdisk_SOURCES = fdisk.c fdiskbsdlabel.c fdisksgilabel.c \
 	fdisk.h fdisksunlabel.h fdisksgilabel.h fdiskaixlabel.h \
 	fdiskbsdlabel.h fdiskmaclabel.h $(fdisk_common)
 
+if HAVE_STATIC_FDISK
+sbin_PROGRAMS += fdisk.static
+fdisk_static_SOURCES = $(fdisk_SOURCES)
+fdisk_static_LDFLAGS = $(LDFLAGS_STATIC)
+endif
+
 if !ARCH_SPARC
 
 sbin_PROGRAMS += sfdisk
 dist_man_MANS += sfdisk.8
 sfdisk_SOURCES = sfdisk.c partname.c $(fdisk_common)
+
+if HAVE_STATIC_SFDISK
+sbin_PROGRAMS += sfdisk.static
+sfdisk_static_SOURCES = $(sfdisk_SOURCES)
+sfdisk_static_LDFLAGS = $(LDFLAGS_STATIC)
+endif
 
 if USE_SLANG
 sbin_PROGRAMS += cfdisk
