@@ -154,15 +154,27 @@ if test $have_blkid = no && test $have_volume_id = no; then
   AC_MSG_ERROR([blkid or volume_id is needed to build util-linux-ng.])
 fi
 
+dnl UTIL_PKG_STATIC(VARIABLE, MODULES)
+dnl ----------------------------------
+AC_DEFUN([UTIL_PKG_STATIC], [
+  if AC_RUN_LOG([pkg-config --exists --print-errors "$2"]); then
+    $1=`pkg-config --libs --static "$2"`
+  else
+    AC_MSG_ERROR([pkg-config description of $2, needed for static build, is not available])
+  fi
+])
+
 # These default values should work in most cases:
 : ${BLKID_LIBS='-lblkid'}
 : ${VOLUMEID_LIBS='-lvolume_id'}
 
-# OTOH, the following two has little chance to succeed; please specify the
-# right values on the configure command-line:
-#
-: ${BLKID_LIBS_STATIC='$(BLKID_LIBS)'}
-: ${VOLUMEID_LIBS_STATIC='$(VOLUMEID_LIBS)'}
+# ... but for static build, we need to consult pkg-config:
+if test -n "$enable_static_programs"; then
+  case $with_fsprobe in
+  blkid) UTIL_PKG_STATIC([BLKID_LIBS_STATIC], [blkid]) ;;
+  volume_id) UTIL_PKG_STATIC([VOLUMEID_LIBS_STATIC], [libvolume_id]) ;;
+  esac
+fi
 
 AC_ARG_VAR([BLKID_LIBS], [-l options for linking dynamically with blkid])
 AC_ARG_VAR([BLKID_LIBS_STATIC], [-l options for linking statically with blkid])
