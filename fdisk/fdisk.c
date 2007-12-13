@@ -1171,36 +1171,61 @@ read_int(unsigned int low, unsigned int dflt, unsigned int high,
 		if (*line_ptr == '+' || *line_ptr == '-') {
 			int minus = (*line_ptr == '-');
 			int absolute = 0;
+			int suflen;
 
 			i = atoi(line_ptr+1);
 
- 			while (isdigit(*++line_ptr))
+			while (isdigit(*++line_ptr))
 				use_default = 0;
 
-			switch (*line_ptr) {
-				case 'c':
-				case 'C':
-					if (!display_in_cyl_units)
-						i *= heads * sectors;
-					break;
-				case 'K':
-					absolute = 1024;
-					break;
-				case 'k':
+			suflen = strlen(line_ptr) - 1;
+
+			while(isspace(*(line_ptr + suflen)))
+				*(line_ptr + suflen--) = '\0';
+
+			if ((*line_ptr == 'C' || *line_ptr == 'c') &&
+			    *(line_ptr + 1) == '\0') {
+				/*
+				 * Cylinders
+				 */
+				if (!display_in_cyl_units)
+					i *= heads * sectors;
+			} else if (*(line_ptr + 1) == 'B' &&
+				   *(line_ptr + 2) == '\0') {
+				/*
+				 * 10^N
+				 */
+				if (*line_ptr == 'K')
 					absolute = 1000;
-					break;
-				case 'm':
-				case 'M':
+				else if (*line_ptr == 'M')
 					absolute = 1000000;
-					break;
-				case 'g':
-				case 'G':
+				else if (*line_ptr == 'G')
 					absolute = 1000000000;
-					break;
-				default:
-					break;
+				else
+					absolute = -1;
+			} else if (*(line_ptr + 1) == '\0') {
+				/*
+				 * 2^N
+				 */
+				if (*line_ptr == 'K')
+					absolute = 1 << 10;
+				else if (*line_ptr == 'M')
+					absolute = 1 << 20;
+				else if (*line_ptr == 'G')
+					absolute = 1 << 30;
+				else
+					absolute = -1;
+			} else if (*line_ptr != '\0')
+				absolute = -1;
+
+			if (absolute == -1)  {
+				printf(_("Unsupported suffix: '%s'.\n"), line_ptr);
+				printf(_("Supported: 10^N: KB (KiloByte), MB (MegaByte), GB (GigaByte)\n"
+					 "            2^N: K  (KibiByte), M  (MebiByte), G  (GibiByte)\n"));
+				continue;
 			}
-			if (absolute) {
+
+			if (absolute && i) {
 				unsigned long long bytes;
 				unsigned long unit;
 
@@ -2061,8 +2086,9 @@ add_partition(int n, int sys) {
 		stop = limit;
 	} else {
 		snprintf(mesg, sizeof(mesg),
-			 _("Last %s or +size or +sizeM or +sizeK"),
-			 str_units(SINGULAR));
+			_("Last %1$s, +%2$s or +size{K,M,G}"),
+			 str_units(SINGULAR), str_units(PLURAL));
+
 		stop = read_int(cround(start), cround(limit), cround(limit),
 				cround(start), mesg);
 		if (display_in_cyl_units) {
