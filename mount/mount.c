@@ -1227,7 +1227,13 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 	       "       missing codepage or helper program, or other error"),
 	       spec);
 
-	if (stat(spec, &statbuf) == 0 && S_ISBLK(statbuf.st_mode)
+	if (stat(spec, &statbuf) < 0) {
+	  if (errno == ENOENT)         /* network FS? */
+	    error(_(
+	       "       (for several filesystems (e.g. nfs, cifs) you might\n"
+	       "       need a /sbin/mount.<type> helper program)"));
+
+	} else if (S_ISBLK(statbuf.st_mode)
 	                 && (fd = open(spec, O_RDONLY | O_NONBLOCK)) >= 0) {
 
 	  if (blkdev_get_size(fd, &size) == 0) {
