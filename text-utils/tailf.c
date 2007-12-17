@@ -38,7 +38,9 @@
 #include <ctype.h>
 #include <errno.h>
 #include <err.h>
+#ifdef HAVE_INOTIFY_INIT
 #include <sys/inotify.h>
+#endif
 #include "nls.h"
 
 #define DEFAULT_LINES  10
