@@ -16,6 +16,7 @@
 #include "fsprobe.h"
 #include "realpath.h"
 #include "pathnames.h"
+#include "sundries.h"
 
 #ifdef HAVE_SYS_SWAP_H
 # include <sys/swap.h>
@@ -35,8 +36,6 @@
 
 int all = 0;
 int priority = -1;	/* non-prioritized swap by default */
-int verbose;
-char *progname;
 
 /* If true, don't complain if the device/file doesn't exist */
 int ifexists = 0;
