@@ -32,20 +32,38 @@
 
 
 #ifdef WORDS_BIGENDIAN
+
 #define cpu_to_le16(x) swab16(x)
 #define cpu_to_le32(x) swab32(x)
 #define cpu_to_le64(x) swab64(x)
 #define cpu_to_be16(x) (x)
 #define cpu_to_be32(x) (x)
 #define cpu_to_be64(x) (x)
-#else
+
+#define le16_to_cpu(x) swab16(x)
+#define le32_to_cpu(x) swab32(x)
+#define le64_to_cpu(x) swab64(x)
+#define be16_to_cpu(x) (x)
+#define be32_to_cpu(x) (x)
+#define be64_to_cpu(x) (x)
+
+#else /* !WORDS_BIGENDIAN */
+
 #define cpu_to_le16(x) (x)
 #define cpu_to_le32(x) (x)
 #define cpu_to_le64(x) (x)
 #define cpu_to_be16(x) swab16(x)
 #define cpu_to_be32(x) swab32(x)
 #define cpu_to_be64(x) swab64(x)
-#endif
+
+#define le16_to_cpu(x) (x)
+#define le32_to_cpu(x) (x)
+#define le64_to_cpu(x) (x)
+#define be16_to_cpu(x) swab16(x)
+#define be32_to_cpu(x) swab32(x)
+#define be64_to_cpu(x) swab64(x)
+
+#endif /* !WORDS_BIGENDIAN */
 
 #endif /* BITOPS_H */
 
