@@ -39,25 +39,7 @@
 
 #include "gpt.h"
 #include "blkdev.h"
-
-#define _GET_BYTE(x, n)		( ((x) >> (8 * (n))) & 0xff )
-
-#define _PED_SWAP64(x)		( (_GET_BYTE(x, 0) << 56)	\
-				+ (_GET_BYTE(x, 1) << 48)	\
-				+ (_GET_BYTE(x, 2) << 40)	\
-				+ (_GET_BYTE(x, 3) << 32)	\
-				+ (_GET_BYTE(x, 4) << 24)	\
-				+ (_GET_BYTE(x, 5) << 16)	\
-				+ (_GET_BYTE(x, 6) << 8)	\
-				+ (_GET_BYTE(x, 7) << 0) )
-
-#define PED_SWAP64(x)           ((uint64_t) _PED_SWAP64( (uint64_t) (x) ))
-
-#if __BYTE_ORDER == __LITTLE_ENDIAN
-# define CPU_TO_LE64(x)	(x)
-#else
-# define CPU_TO_LE64(x)	PED_SWAP64(x)
-#endif
+#include "bitops.h"
 
 #define GPT_HEADER_SIGNATURE 0x5452415020494645LL
 #define GPT_PRIMARY_PARTITION_TABLE_LBA 1
@@ -211,7 +193,7 @@ gpt_check_signature(int fd, uint64_t lba)
 
 	if ((gpt = alloc_read_gpt_header(fd, lba)))
 	{
-		if (gpt->Signature == CPU_TO_LE64(GPT_HEADER_SIGNATURE))
+		if (gpt->Signature == cpu_to_le64(GPT_HEADER_SIGNATURE))
 			res = 1;
 		free(gpt);
 	}
