@@ -1,7 +1,6 @@
 #ifndef BITOPS_H
 #define BITOPS_H
 
-#include <linux/posix_types.h>
 #include <stdint.h>
 
 /*
