@@ -27,6 +27,14 @@ esac
 AC_PROG_CC_STDC
 AC_GNU_SOURCE
 
+linux_os=no
+case ${host_os} in
+  *linux*)
+    linux_os=yes
+    ;;
+esac
+AM_CONDITIONAL([LINUX], test x$linux_os = xyes)
+
 AC_PATH_PROG(PERL, perl)
 AC_PATH_PROG(BLKID, blkid, [], [$PATH:/sbin])
 AC_PATH_PROG(VOLID, vol_id, [], [$PATH:/lib/udev])
@@ -208,9 +216,11 @@ AC_DEFUN([UTIL_CHECK_SYSCALL], [
 	[syscall=_NR_$1],
 	[
 	  syscall=no
-	  case $host_cpu in
-	    _UTIL_CHECK_SYSCALL_FALLBACK(m4_shift($@))
-	  esac
+	  if test $linux_os = yes; then
+	    case $host_cpu in
+	      _UTIL_CHECK_SYSCALL_FALLBACK(m4_shift($@))
+	    esac
+	  fi
         ])
       ])
     util_cv_syscall_$1=$syscall
@@ -294,14 +304,6 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
 [AC_MSG_NOTICE([Your libc thinks that swapon has 1 arg only.])
 ])
 
-case ${host_os} in
-  *linux*)
-    AM_CONDITIONAL([LINUX], [true])
-    ;;
-  *)
-    AM_CONDITIONAL([LINUX], [false])
-    ;;
-esac
 
 dnl UTIL_SET_ARCH(ARCHNAME, PATTERN)
 dnl ---------------------------------
