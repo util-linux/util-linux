@@ -85,8 +85,16 @@
 #include "common.h"
 #include "gpt.h"
 
+#ifdef __GNU__
+#define DEFAULT_DEVICE "/dev/hd0"
+#define ALTERNATE_DEVICE "/dev/sd0"
+#elif defined(__FreeBSD__)
+#define DEFAULT_DEVICE "/dev/ad0"
+#define ALTERNATE_DEVICE "/dev/da0"
+#else
 #define DEFAULT_DEVICE "/dev/hda"
 #define ALTERNATE_DEVICE "/dev/sda"
+#endif
 
 /* With K=1024 we have `binary' megabytes, gigabytes, etc.
    Some misguided hackers like that.
