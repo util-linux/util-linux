@@ -16,28 +16,36 @@ Changelog:
 
 
 blockdev:
+   - add --getsz to blockdev.8  [Karel Zak]
    - add missing description about option --report in manpage  [Li Zefan]
 build-sys:
    - fix localedir (unsupported by autoconf < 2.60)  [Karel Zak]
    - nls/locale handling in util-linux-ng general  [Mike Frysinger]
+   - release++  [Karel Zak]
    - remove files that are no longer delivered from git  [LaMont Jones]
+   - remove hardcoded _GNU_SOURCE  [Karel Zak]
 cal:
    - add description about option -V to manpage  [Li Zefan]
 chfn:
    - add pam_end() call and cleanup PAM code  [Karel Zak]
 chsh:
-   - should use pam_end function to terminate the PAM transaction
-     [Yu Zhiguo, Karel Zak]
+   - should use pam_end function to terminate the PAM transaction  [Yu Zhiguo, Karel Zak]
 docs:
    - add info about .bugfix releases and branches  [Karel Zak]
+   - add note about incorrect tag 2.13.1  [Karel Zak]
+   - add v2.13.1 ReleaseNotes  [Karel Zak]
    - fix ChangeLog URL  [Pascal Terjan]
    - fix stable branche name in README.devel  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
+   - update AUTHORS file, add all translators  [Karel Zak]
 fdisk:
    - fix typo  [Karel Zak]
 flock:
    - typo in man page  [A. Costa]
+getopt:
+   - fix path to examples in getopt.1  [Karel Zak]
 hwclock:
+   - check for ENODEV  [David Woodhouse]
    - fix --rtc option  [Matthias Koenig, Karel Zak]
 ionice:
    - add a note about permissions to ionice.1  [Karel Zak]
@@ -49,20 +57,38 @@ mkswap:
    - possible to crash with SELinux relabeling support  [KaiGai Kohei]
 mount:
    - -L|-U segfault when label or uuid doesn't exist  [Karel Zak]
-   - chain of symlinks to fstab causes use of pointer after free
-     [Norbert Buchmuller]
+   - chain of symlinks to fstab causes use of pointer after free  [Norbert Buchmuller]
    - doesn't drop privileges properly when calling helpers  [Ludwig Nussel]
+   - don't call canonicalize(SPEC) for cifs, smbfs and nfs  [Karel Zak]
+   - fix fd leak  [Matthias Koenig]
    - improve error message when helper program not present  [LaMont Jones]
 pg:
    - fix segfault on search  [Rajeev V. Pillai]
 po:
+   - add eu.po (from translationproject.org)  [Mikel Olasagasti]
+   - add pl.po (from translationproject.org)  [Andrzej Krzysztofowicz]
    - fix typo in de.po  [Karel Zak]
+   - update ca.po (from translationproject.org)  [Josep Puigdemont]
+   - update cs.po (from translationproject.org)  [Petr Pisar]
+   - update da.po (from translationproject.org)  [Claus Hindsgaul]
    - update de.po (from translationproject.org)  [Michael Piefel]
+   - update es.po (from translationproject.org)  [Santiago Vila Doncel]
+   - update et.po (from translationproject.org)  [Meelis Roos]
    - update fi.po (from translationproject.org)  [Lauri Nurmi]
+   - update fr.po (from translationproject.org)  [Michel Robitaille]
    - update hu.po (from translationproject.org)  [Gabor Kelemen]
+   - update id.po (from translationproject.org)  [Arif E. Nugroho]
+   - update it.po (from translationproject.org)  [Marco Colombo]
+   - update ja.po (from translationproject.org)  [Daisuke Yamashita]
    - update nl.po (from translationproject.org)  [Benno Schulenberg]
    - update po files  [Karel Zak]
+   - update pt_BR.po (from translationproject.org)  [Rodrigo Stulzer Lopes]
+   - update ru.po (from translationproject.org)  [Pavel Maryanov]
+   - update sl.po (from translationproject.org)  [Simon Mihevc]
    - update sv.po (from translationproject.org)  [Daniel Nylander]
+   - update tr.po (from translationproject.org)  [Nilgün Belma Bugüner]
+   - update uk.po (from translationproject.org)  [Maxim V. Dziumanenko]
+   - update vi.po (from translationproject.org)  [Clytie Siddall]
 rename:
    - add description about option -V to manpage  [Li Zefan]
    - remove useless variable  [Li Zefan]
@@ -72,5 +98,7 @@ setarch:
    - adding groff symlinks to setarch manual page  [Arkadiusz Miskiewicz]
    - fix compiler warning  [LaMont Jones]
    - generate groff links in a better way  [Karel Zak]
+sfdisk:
+   - allow partitioning drives of over 2^31 sectors.  [Kunihiko IMAI]
 tests:
    - fix blkid cache usage  [Karel Zak]
