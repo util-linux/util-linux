@@ -30,53 +30,65 @@ CONTRIBUTORS:
 
       A. Costa <agcosta@gis.net>
       Alan Curry <pacman@TheWorld.com>
+      Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+      Arif E. Nugroho <arif_endro@yahoo.com>
       Arkadiusz Miskiewicz <arekm@maven.pl>
+      Attila Áfra <attila.afra@gmail.com>
       Balint Cristian <cbalint@redhat.com>
-      Benno Schulenberg <benno@vertaalt.nl>
+      Benno Schulenberg <bensberg@justemail.net>
       Bernhard Walle <bwalle@suse.de>
+      Claus Hindsgaul <claus_h@image.dk>
       Cliff Wickman <cpw@sgi.com>
+      Clytie Siddall <clytie@riverland.net.au>
+      Daisuke Yamashita <yamad@mb.infoweb.ne.jp>
       Daniel Nylander <po@danielnylander.se>
       David Brownell <david-b@pacbell.net>
       David Miller <davem@davemloft.net>
+      David Woodhouse <dwmw2@infradead.org>
       Dennis Gilmore <dennis@ausil.us>
       Flávio Leitner <fleitner@redhat.com>
+      Gabor Kelemen <kelemeng@gnome.hu>
       Gabriel Barazer <gabriel@oxeva.fr>
       H. Peter Anvin <hpa@zytor.com>
       Jason Vas Dias <jvdias@redhat.com>
+      Josep Puigdemont <josep.puigdemont@gmail.com>
       Justin B Rye <jbr@edlug.org.uk>
       KaiGai Kohei <kaigai@kaigai.gr.jp>
       Kay Sievers <kay.sievers@vrfy.org>
-      LaMont Jones <lamont@mmjgroup.com>
+      Kunihiko IMAI <kimai@iodata.jp>
+      LaMont Jones <lamont@debian.org>
+      Lauri Nurmi <lanurmi@iki.fi>
       Li Zefan <lizf@cn.fujitsu.com>
       Luciano Chavez <lnx1138@us.ibm.com>
       Ludwig Nussel <ludwig.nussel@suse.de>
+      Marco Colombo <m.colombo@ed.ac.uk>
       Marco d'Itri <md@Linux.IT>
       Martin Schlemmer <azarah@gentoo.org>
       Masatake YAMATO <jet@gyve.org>
       Matthias Koenig <mkoenig@suse.de>
+      Maxim V. Dziumanenko <mvd@mylinux.com.ua>
+      Meelis Roos <mroos@linux.ee>
       Michael Piefel <piefel@informatik.hu-berlin.de>
+      Michel Robitaille <robitail@IRO.UMontreal.CA>
       Mike Frysinger <vapier@gentoo.org>
+      Mikel Olasagasti <hey_neken@mundurat.net>
       Moritz Muehlenhoff <jmm@inutil.org>
+      Nilgün Belma Bugüner <nilgun@buguner.name.tr>
       Norbert Buchmuller <norbi@nix.hu>
       Pádraig Brady <P@draigBrady.com>
       Pascal Terjan <pterjan@cmoi.fasmz.org>
+      Pavel Maryanov <acid_jack@ukr.net>
+      Petr Pisar <petr.pisar@atlas.cz>
+      Phan Vinh Thinh <teppi82@gmail.com>
       Rajeev V. Pillai <rajeevvp@gmail.com>
       Ram Pai <linuxram@us.ibm.com>
+      Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>
       Samuel Thibault <samuel.thibault@ens-lyon.org>
+      Santiago Vila Doncel <sanvila@unex.es>
       Sascha Sommer <ssommer@suse.de>
+      Simon Mihevc <simonmihevc@email.si>
       Stepan Kasal <skasal@redhat.com>
       Steve Grubb <sgrubb@redhat.com>
       Valerie Henson <val_henson@linux.intel.com>
       Yu Zhiguo <yuzg@cn.fujitsu.com>
-
-
-TRANSLATORS (translationproject.org):
-
-      Benno Schulenberg <benno@vertaalt.nl>            (nl)
-      Daniel Nylander <po@danielnylander.se>           (sv)
-      Gabor Kelemen <kelemeng@gnome.hu>                (hu)
-      Lauri Nurmi <lanurmi@iki.fi>                     (fi)
-      Michael Piefel <piefel@informatik.hu-berlin.de>  (de)
-      Petr Pisar <petr.pisar@atlas.cz>                 (cs)
-      Phan Vinh Thinh <teppi82@gmail.com>              (vi)
 
