@@ -114,11 +114,6 @@
 #include <sys/time.h>
 #include "nls.h"
 
-#ifndef TCGETS
-/* TCGETS is either defined in termios.h, or here: */
-#include <asm/ioctls.h>
-#endif
-
 #if __GNU_LIBRARY__ < 5
 #ifndef __alpha__
 # include <linux/unistd.h>
