@@ -1308,12 +1308,12 @@ getloginname(void) {
 
 static void
 timedout2(int sig) {
-	struct termio ti;
+	struct termios ti;
 
 	/* reset echo */
-	ioctl(0, TCGETA, &ti);
+	tcgetattr(0, &ti);
 	ti.c_lflag |= ECHO;
-	ioctl(0, TCSETA, &ti);
+	tcsetattr(0, TCSANOW, &ti);
 	exit(0);			/* %% */
 }
 
