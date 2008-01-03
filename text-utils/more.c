@@ -1813,7 +1813,7 @@ retry:
     no_intty = tcgetattr(fileno(stdin), &otty);
     tcgetattr(fileno(stderr), &otty);
     savetty0 = otty;
-    slow_tty = (otty.c_cflag & CBAUD) < B1200;
+    slow_tty = cfgetispeed(&otty) < B1200;
     hardtabs = (otty.c_oflag & TABDLY) != XTABS;
     if (!no_tty) {
 	otty.c_lflag &= ~(ICANON|ECHO);
