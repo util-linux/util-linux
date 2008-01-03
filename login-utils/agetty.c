@@ -18,7 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <sys/ioctl.h>
-#include <termio.h>
+#include <termios.h>
 #include <signal.h>
 #include <errno.h>
 #include <sys/types.h>
@@ -94,27 +94,6 @@
 #define DEF_EOF		CTL('D')	/* default EOF char */
 #define DEF_EOL		0
 #define DEF_SWITCH	0		/* default switch char */
-
- /*
-  * SunOS 4.1.1 termio is broken. We must use the termios stuff instead,
-  * because the termio -> termios translation does not clear the termios
-  * CIBAUD bits. Therefore, the tty driver would sometimes report that input
-  * baud rate != output baud rate. I did not notice that problem with SunOS
-  * 4.1. We will use termios where available, and termio otherwise.
-  */
-
-/* linux 0.12 termio is broken too, if we use it c_cc[VERASE] isn't set
-   properly, but all is well if we use termios?! */
-
-#ifdef	TCGETS
-#undef	TCGETA
-#undef	TCSETA
-#undef	TCSETAW
-#define	termio	termios
-#define	TCGETA	TCGETS
-#define	TCSETA	TCSETS
-#define	TCSETAW	TCSETSW
-#endif
 
 #ifndef MAXHOSTNAMELEN
 # ifdef HOST_NAME_MAX
@@ -224,13 +203,13 @@ int main P_((int argc, char **argv));
 void parse_args P_((int argc, char **argv, struct options *op));
 void parse_speeds P_((struct options *op, char *arg));
 void update_utmp P_((char *line));
-void open_tty P_((char *tty, struct termio *tp, int local));
-void termio_init P_((struct termio *tp, int speed, struct options *op));
-void auto_baud P_((struct termio *tp));
-void do_prompt P_((struct options *op, struct termio *tp));
-void next_speed P_((struct termio *tp, struct options *op));
-char *get_logname P_((struct options *op, struct chardata *cp, struct termio *tp));
-void termio_final P_((struct options *op, struct termio *tp, struct chardata *cp));
+void open_tty P_((char *tty, struct termios *tp, int local));
+void termio_init P_((struct termios *tp, int speed, struct options *op));
+void auto_baud P_((struct termios *tp));
+void do_prompt P_((struct options *op, struct termios *tp));
+void next_speed P_((struct termios *tp, struct options *op));
+char *get_logname P_((struct options *op, struct chardata *cp, struct termios *tp));
+void termio_final P_((struct options *op, struct termios *tp, struct chardata *cp));
 int caps_lock P_((char *s));
 int bcode P_((char *s));
 void usage P_((void));
@@ -259,7 +238,7 @@ main(argc, argv)
 {
     char   *logname = NULL;		/* login name, given to /bin/login */
     struct chardata chardata;		/* set by get_logname() */
-    struct termio termio;		/* terminal mode bits */
+    struct termios termios;		/* terminal mode bits */
     static struct options options = {
 	F_ISSUE,			/* show /etc/issue (SYSV_STYLE) */
 	0,				/* no timeout */
@@ -314,19 +293,12 @@ main(argc, argv)
 
     debug("calling open_tty\n");
     /* Open the tty as standard { input, output, error }. */
-    open_tty(options.tty, &termio, options.flags & F_LOCAL);
+    open_tty(options.tty, &termios, options.flags & F_LOCAL);
 
-#ifdef __linux__
-	{
-		int iv;
-		
-		iv = getpid();
-		(void) ioctl(0, TIOCSPGRP, &iv);
-	}
-#endif
-    /* Initialize the termio settings (raw mode, eight-bit, blocking i/o). */
+    tcsetpgrp(0, getpid());
+    /* Initialize the termios settings (raw mode, eight-bit, blocking i/o). */
     debug("calling termio_init\n");
-    termio_init(&termio, options.speeds[FIRST_SPEED], &options);
+    termio_init(&termios, options.speeds[FIRST_SPEED], &options);
 
     /* write the modem init string and DON'T flush the buffers */
     if (options.flags & F_INITSTRING) {
@@ -342,7 +314,7 @@ main(argc, argv)
     /* Optionally detect the baud rate from the modem status message. */
     debug("before autobaud\n");
     if (options.flags & F_PARSE)
-	auto_baud(&termio);
+	auto_baud(&termios);
 
     /* Set the optional timer. */
     if (options.timeout)
@@ -366,8 +338,8 @@ main(argc, argv)
     if (!(options.flags & F_NOPROMPT)) {
 	/* Read the login name. */
 	debug("reading login name\n");
-	while ((logname = get_logname(&options, &chardata, &termio)) == 0)
-	  next_speed(&termio, &options);
+	while ((logname = get_logname(&options, &chardata, &termios)) == 0)
+	  next_speed(&termios, &options);
     }
 
     /* Disable timer. */
@@ -375,9 +347,9 @@ main(argc, argv)
     if (options.timeout)
 	(void) alarm(0);
 
-    /* Finalize the termio settings. */
+    /* Finalize the termios settings. */
 
-    termio_final(&options, &termio, &chardata);
+    termio_final(&options, &termios, &chardata);
 
     /* Now the newline character should be properly written. */
 
@@ -635,7 +607,7 @@ update_utmp(line)
 void
 open_tty(tty, tp, local)
      char   *tty;
-     struct termio *tp;
+     struct termios *tp;
      int    local;
 {
     /* Get rid of the present standard { output, error} if any. */
@@ -692,8 +664,8 @@ open_tty(tty, tp, local)
      * 5 seconds seems to be a good value.
      */
 
-    if (ioctl(0, TCGETA, tp) < 0)
-	error("%s: ioctl: %m", tty);
+    if (tcgetattr(0, tp) < 0)
+	error("%s: tcgetattr: %m", tty);
 
     /*
      * It seems to be a terminal. Set proper protections and ownership. Mode
@@ -711,35 +683,38 @@ open_tty(tty, tp, local)
     errno = 0;					/* ignore above errors */
 }
 
-/* termio_init - initialize termio settings */
+/* termio_init - initialize termios settings */
 
 char gbuf[1024];
 char area[1024];
 
 void
 termio_init(tp, speed, op)
-     struct termio *tp;
+     struct termios *tp;
      int     speed;
      struct options *op;
 {
 
     /*
-     * Initial termio settings: 8-bit characters, raw-mode, blocking i/o.
+     * Initial termios settings: 8-bit characters, raw-mode, blocking i/o.
      * Special characters are set after we have read the login name; all
      * reads will be done in raw mode anyway. Errors will be dealt with
      * lateron.
      */
-#ifdef __linux__
     /* flush input and output queues, important for modems! */
-    (void) ioctl(0, TCFLSH, TCIOFLUSH);
-#endif
+    (void) tcflush(0, TCIOFLUSH);
 
-    tp->c_cflag = CS8 | HUPCL | CREAD | speed;
+    tp->c_cflag = CS8 | HUPCL | CREAD;
+    cfsetispeed(tp, speed);
+    cfsetospeed(tp, speed);
     if (op->flags & F_LOCAL) {
 	tp->c_cflag |= CLOCAL;
     }
 
-    tp->c_iflag = tp->c_lflag = tp->c_oflag = tp->c_line = 0;
+    tp->c_iflag = tp->c_lflag = tp->c_oflag = 0;
+#ifndef __GNU__
+    tp->c_line = 0;
+#endif
     tp->c_cc[VMIN] = 1;
     tp->c_cc[VTIME] = 0;
 
@@ -750,7 +725,7 @@ termio_init(tp, speed, op)
 	tp->c_cflag |= CRTSCTS;
 #endif
 
-    (void) ioctl(0, TCSETA, tp);
+    (void) tcsetattr(0, TCSANOW, tp);
 
     /* go to blocking input even in local mode */
     fcntl(0, F_SETFL, fcntl(0, F_GETFL, 0) & ~O_NONBLOCK);
@@ -761,7 +736,7 @@ termio_init(tp, speed, op)
 /* auto_baud - extract baud rate from modem status message */
 void
 auto_baud(tp)
-     struct termio *tp;
+     struct termios *tp;
 {
     int     speed;
     int     vmin;
@@ -794,7 +769,7 @@ auto_baud(tp)
     tp->c_iflag |= ISTRIP;			/* enable 8th-bit stripping */
     vmin = tp->c_cc[VMIN];
     tp->c_cc[VMIN] = 0;				/* don't block if queue empty */
-    (void) ioctl(0, TCSETA, tp);
+    tcsetattr(0, TCSANOW, tp);
 
     /*
      * Wait for a while, then read everything the modem has said so far and
@@ -807,8 +782,8 @@ auto_baud(tp)
 	for (bp = buf; bp < buf + nread; bp++) {
 	    if (isascii(*bp) && isdigit(*bp)) {
 		if ((speed = bcode(bp))) {
-		    tp->c_cflag &= ~CBAUD;
-		    tp->c_cflag |= speed;
+		    cfsetispeed(tp, speed);
+		    cfsetospeed(tp, speed);
 		}
 		break;
 	    }
@@ -818,14 +793,14 @@ auto_baud(tp)
 
     tp->c_iflag = iflag;
     tp->c_cc[VMIN] = vmin;
-    (void) ioctl(0, TCSETA, tp);
+    (void) tcsetattr(0, TCSANOW, tp);
 }
 
 /* do_prompt - show login prompt, optionally preceded by /etc/issue contents */
 void
 do_prompt(op, tp)
      struct options *op;
-     struct termio *tp;
+     struct termios *tp;
 {
 #ifdef	ISSUE
     FILE    *fd;
@@ -841,7 +816,7 @@ do_prompt(op, tp)
     if ((op->flags & F_ISSUE) && (fd = fopen(op->issue, "r"))) {
 	oflag = tp->c_oflag;			/* save current setting */
 	tp->c_oflag |= (ONLCR | OPOST);		/* map NL in output to CR-NL */
-	(void) ioctl(0, TCSETAW, tp);
+	(void) tcsetattr(0, TCSADRAIN, tp);
 
 
 	while ((c = getc(fd)) != EOF)
@@ -945,7 +920,7 @@ do_prompt(op, tp)
 			int i;
 
 			for (i = 0; speedtab[i].speed; i++) {
-			    if (speedtab[i].code == (tp->c_cflag & CBAUD)) {
+			    if (speedtab[i].code == cfgetispeed(tp)) {
 				printf("%ld", speedtab[i].speed);
 				break;
 			    }
@@ -977,7 +952,7 @@ do_prompt(op, tp)
 	fflush(stdout);
 
 	tp->c_oflag = oflag;			/* restore settings */
-	(void) ioctl(0, TCSETAW, tp);		/* wait till output is gone */
+	(void) tcsetattr(0, TCSADRAIN, tp);	/* wait till output is gone */
 	(void) fclose(fd);
     }
 #endif
@@ -992,15 +967,15 @@ do_prompt(op, tp)
 /* next_speed - select next baud rate */
 void
 next_speed(tp, op)
-     struct termio *tp;
+     struct termios *tp;
      struct options *op;
 {
     static int baud_index = FIRST_SPEED;/* current speed index */
 
     baud_index = (baud_index + 1) % op->numspeed;
-    tp->c_cflag &= ~CBAUD;
-    tp->c_cflag |= op->speeds[baud_index];
-    (void) ioctl(0, TCSETA, tp);
+    cfsetispeed(tp, op->speeds[baud_index]);
+    cfsetospeed(tp, op->speeds[baud_index]);
+    (void) tcsetattr(0, TCSANOW, tp);
 }
 
 /* get_logname - get user name, establish parity, speed, erase, kill, eol */
@@ -1008,7 +983,7 @@ next_speed(tp, op)
 char   *get_logname(op, cp, tp)
      struct options *op;
      struct chardata *cp;
-     struct termio *tp;
+     struct termios *tp;
 {
     static char logname[BUFSIZ];
     char   *bp;
@@ -1030,7 +1005,7 @@ char   *get_logname(op, cp, tp)
     /* Flush pending input (esp. after parsing or switching the baud rate). */
 
     (void) sleep(1);
-    (void) ioctl(0, TCFLSH, TCIFLUSH);
+    (void) tcflush(0, TCIFLUSH);
 
     /* Prompt for and read a login name. */
 
@@ -1119,7 +1094,7 @@ char   *get_logname(op, cp, tp)
 void
 termio_final(op, tp, cp)
      struct options *op;
-     struct termio *tp;
+     struct termios *tp;
      struct chardata *cp;
 {
     /* General terminal-independent stuff. */
@@ -1135,7 +1110,7 @@ termio_final(op, tp, cp)
     tp->c_cc[VEOL] = DEF_EOL;
 #ifdef __linux__
     tp->c_cc[VSWTC] = DEF_SWITCH;		/* default switch character */
-#else
+#elif defined(VSWTCH)
     tp->c_cc[VSWTCH] = DEF_SWITCH;		/* default switch character */
 #endif
 
@@ -1169,7 +1144,9 @@ termio_final(op, tp, cp)
 
     if (cp->capslock) {
 	tp->c_iflag |= IUCLC;
+#ifdef XCASE	
 	tp->c_lflag |= XCASE;
+#endif
 	tp->c_oflag |= OLCUC;
     }
     /* Optionally enable hardware flow control */
@@ -1181,8 +1158,8 @@ termio_final(op, tp, cp)
 
     /* Finally, make the new settings effective */
 
-    if (ioctl(0, TCSETA, tp) < 0)
-	error("%s: ioctl: TCSETA: %m", op->tty);
+    if (tcsetattr(0, TCSANOW, tp) < 0)
+	error("%s: tcsetattr: TCSANOW: %m", op->tty);
 }
 
 /* caps_lock - string contains upper case without lower case */
