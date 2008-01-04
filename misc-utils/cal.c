@@ -241,7 +241,7 @@ struct fmt_st
 };
 
 char * ascii_day(char *, int);
-void center_str(const char* src, char* dest, size_t dest_size, int width);
+int center_str(const char* src, char* dest, size_t dest_size, int width);
 void center(const char *, int, int);
 void day_array(int, int, int, int *);
 int day_in_week(int, int, int);
@@ -387,24 +387,10 @@ main(int argc, char **argv) {
 	exit(0);
 }
 
-#ifndef HAVE_WIDECHAR
-static char *eos(char *s) {
-	while (s && *s)
-		s++;
-	return s;
-}
-#endif
-
 void headers_init(void)
 {
   int i, wd;
-#ifdef HAVE_WIDECHAR
-  wchar_t day_headings_wc[22],j_day_headings_wc[29];
   char *cur_dh = day_headings, *cur_j_dh = j_day_headings;
-
-  wcscpy(day_headings_wc, L"");
-  wcscpy(j_day_headings_wc, L"");
-#endif
 
   strcpy(day_headings,"");
   strcpy(j_day_headings,"");
@@ -418,27 +404,22 @@ void headers_init(void)
   for(i = 0 ; i < 7 ; i++ ) {
      ssize_t space_left;
      wd = (i + week1stday) % 7;
-#ifdef HAVE_WIDECHAR
-     swprintf(day_headings_wc, SIZE(day_headings_wc), L"%1.2s ", weekday(wd));
-     swprintf(j_day_headings_wc, SIZE(j_day_headings_wc), L"%3.3s ", weekday(wd));
 
+     if (i)
+        strcat(cur_dh++, " ");
      space_left = sizeof(day_headings) - (cur_dh - day_headings);
-     if(space_left <= 0)
-	     break;
-     cur_dh += wcstombs(cur_dh, day_headings_wc, space_left);
+     if(space_left <= 2)
+        break;
+     cur_dh += center_str(weekday(wd), cur_dh, space_left, 2);
 
-     space_left = sizeof(j_day_headings)-(cur_j_dh-j_day_headings);
-     if(space_left <= 0)
-	     break;
-     cur_j_dh +=  wcstombs(cur_j_dh,j_day_headings_wc, space_left);
-#else
-     sprintf(eos(day_headings), "%2.2s ", weekday(wd));
-     sprintf(eos(j_day_headings), "%3.3s ", weekday(wd));
-#endif
+     if (i)
+        strcat(cur_j_dh++, " ");
+     space_left = sizeof(j_day_headings) - (cur_j_dh - j_day_headings);
+     if(space_left <= 3)
+        break;
+     cur_j_dh += center_str(weekday(wd), cur_j_dh, space_left, 3);
   }
 
-  trim_trailing_spaces(day_headings);
-  trim_trailing_spaces(j_day_headings);
 #undef weekday
 
   for (i = 0; i < 12; i++) {
@@ -452,7 +433,7 @@ void headers_init(void)
 
 void
 do_monthly(int day, int month, int year, struct fmt_st *out) {
-	int col, row, len, days[MAXDAYS];
+	int col, row, days[MAXDAYS];
 	char *p, lineout[FMT_ST_CHARS];
 	int width = (julian ? J_WEEK_LEN : WEEK_LEN) - 1;
 
@@ -464,10 +445,11 @@ do_monthly(int day, int month, int year, struct fmt_st *out) {
 	 * Basque the translation should be: "%2$dko %1$s", and
 	 * the Vietnamese should be "%s na(m %d", etc.
 	 */
-	len = sprintf(lineout, _("%s %d"), full_month[month - 1], year);
+	snprintf(lineout, sizeof(lineout), _("%s %d"),
+			full_month[month - 1], year);
 	center_str(lineout, out->s[0], SIZE(out->s[0]), width);
 
-	sprintf(out->s[1],"%s",
+	snprintf(out->s[1], FMT_ST_CHARS, "%s",
 		julian ? j_day_headings : day_headings);
 	for (row = 0; row < 6; row++) {
 		int has_hl = 0;
@@ -479,7 +461,7 @@ do_monthly(int day, int month, int year, struct fmt_st *out) {
 		}
 		*p = '\0';
 		trim_trailing_spaces(lineout);
-		sprintf(out->s[row+2], "%s", lineout);
+		snprintf(out->s[row+2], FMT_ST_CHARS, "%s", lineout);
 		if (has_hl)
 			Hrow = out->s[row+2];
 	}
@@ -555,8 +537,8 @@ j_yearly(int day, int year) {
 	int days[12][MAXDAYS];
 	char *p, lineout[80];
 
-	sprintf(lineout, "%d", year);
-	center(lineout, J_WEEK_LEN * 2 + J_HEAD_SEP, 0);
+	snprintf(lineout, sizeof(lineout), "%d", year);
+	center(lineout, J_WEEK_LEN*2 + J_HEAD_SEP - 1, 0);
 	printf("\n\n");
 
 	for (i = 0; i < 12; i++)
@@ -564,8 +546,8 @@ j_yearly(int day, int year) {
 	memset(lineout, ' ', sizeof(lineout) - 1);
 	lineout[sizeof(lineout) - 1] = '\0';
 	for (month = 0; month < 12; month += 2) {
-		center(full_month[month], J_WEEK_LEN, J_HEAD_SEP);
-		center(full_month[month + 1], J_WEEK_LEN, 0);
+		center(full_month[month], J_WEEK_LEN-1, J_HEAD_SEP+1);
+		center(full_month[month + 1], J_WEEK_LEN-1, 0);
 		printf("\n%s%*s %s\n", j_day_headings, J_HEAD_SEP, "",
 		    j_day_headings);
 		for (row = 0; row < 6; row++) {
@@ -591,8 +573,8 @@ yearly(int day, int year) {
 	int days[12][MAXDAYS];
 	char *p, lineout[100];
 
-	sprintf(lineout, "%d", year);
-	center(lineout, WEEK_LEN * 3 + HEAD_SEP * 2, 0);
+	snprintf(lineout, sizeof(lineout), "%d", year);
+	center(lineout, WEEK_LEN*3 + HEAD_SEP*2 - 1, 0);
 	printf("\n\n");
 
 	for (i = 0; i < 12; i++)
@@ -600,9 +582,9 @@ yearly(int day, int year) {
 	memset(lineout, ' ', sizeof(lineout) - 1);
 	lineout[sizeof(lineout) - 1] = '\0';
 	for (month = 0; month < 12; month += 3) {
-		center(full_month[month], WEEK_LEN, HEAD_SEP);
-		center(full_month[month + 1], WEEK_LEN, HEAD_SEP);
-		center(full_month[month + 2], WEEK_LEN, 0);
+		center(full_month[month], WEEK_LEN-1, HEAD_SEP+1);
+		center(full_month[month + 1], WEEK_LEN-1, HEAD_SEP+1);
+		center(full_month[month + 2], WEEK_LEN-1, 0);
 		printf("\n%s%*s %s%*s %s\n", day_headings, HEAD_SEP,
 		    "", day_headings, HEAD_SEP, "", day_headings);
 		for (row = 0; row < 6; row++) {
@@ -752,11 +734,49 @@ trim_trailing_spaces(s)
 	*p = '\0';
 }
 
+#ifdef HAVE_WIDECHAR
+/* replace non printable chars.
+ * return 1 if replacement made, 0 otherwise */
+int wc_ensure_printable(wchar_t* wchars)
+{
+	int replaced=0;
+	wchar_t* wc = wchars;
+	while (*wc) {
+		if (!iswprint((wint_t) *wc)) {
+			*wc=L'\uFFFD';
+			replaced=1;
+		}
+		wc++;
+	}
+	return replaced;
+}
+
+/* truncate wchar string to width cells.
+ * returns number of cells used. */
+size_t wc_truncate(wchar_t* wchars, size_t width, size_t minchars)
+{
+	int wc=0;
+	int cells=0;
+	while (*(wchars+wc)) {
+		cells = wcswidth(wchars, wc+1);
+		if (cells > width) {
+			if (wc >= minchars) {
+				break;
+			}
+		}
+		wc++;
+	}
+	wchars[wc]=L'\0';
+	return cells;
+}
+#endif
+
 /*
  * Center string, handling multibyte characters appropriately.
  * In addition if the string is too large for the width it's truncated.
+ * The number of trailing spaces may be 1 less than the number of leading spaces.
  */
-void
+int
 center_str(const char* src, char* dest, size_t dest_size, int width)
 {
 #ifdef HAVE_WIDECHAR
@@ -764,36 +784,39 @@ center_str(const char* src, char* dest, size_t dest_size, int width)
 #endif
 	char str[FMT_ST_CHARS];
 	const char* str_to_print=src;
-	int len, spaces, wide_char_enabled=0;
-
-	len = strlen(src);
+	int used, spaces, wc_conversion=0, wc_enabled=0;
 
 #ifdef HAVE_WIDECHAR
-	if (mbstowcs(str_wc, src, FMT_ST_CHARS) > 0) {
-		wide_char_enabled = 1;
-		len = wcswidth(str_wc, SIZE(str_wc));
+	if (mbstowcs(str_wc, src, SIZE(str_wc)) > 0) {
+		str_wc[SIZE(str_wc)-1]=L'\0';
+		wc_enabled=1;
+		wc_conversion = wc_ensure_printable(str_wc);
+		used = wcswidth(str_wc, SIZE(str_wc));
 	}
+	else
 #endif
-	if (len > width) {
+		used = strlen(src);
+
+	if (wc_conversion || used > width) {
 		str_to_print=str;
-		if (wide_char_enabled) {
+		if (wc_enabled) {
 #ifdef HAVE_WIDECHAR
-			str_wc[width]=L'\0';
+			used = wc_truncate(str_wc, width, 1);
 			wcstombs(str, str_wc, SIZE(str));
 #endif
 		} else {
-			strncpy(str, src, SIZE(str));
+			memcpy(str, src, width);
 			str[width]='\0';
 		}
 	}
 
-	spaces = width - len;
+	spaces = width - used;
 	spaces = ( spaces < 0 ? 0 : spaces );
 
-	snprintf(dest, dest_size, "%*s%s%*s",
-		spaces / 2, "",
-                str_to_print,
-		spaces / 2 + spaces % 2, "" );
+	return snprintf(dest, dest_size, "%*s%s%*s",
+		spaces / 2 + spaces % 2, "",
+		str_to_print,
+		spaces / 2, "" );
 }
 
 void
@@ -806,13 +829,13 @@ center(str, len, separate)
 	center_str(str, lineout, SIZE(lineout), len);
 	fputs(lineout, stdout);
 	if (separate)
-		(void)printf("%*s", separate, "");
+		printf("%*s", separate, "");
 }
 
 void
 usage()
 {
 
-	(void)fprintf(stderr, _("usage: cal [-13smjyV] [[[day] month] year]\n"));
+	fprintf(stderr, _("usage: cal [-13smjyV] [[[day] month] year]\n"));
 	exit(1);
 }

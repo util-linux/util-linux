@@ -1,6 +1,6 @@
 
 Gregorian - Monday-based week
-    August 2006          September 2006         October 2006    
+     August 2006         September 2006         October 2006    
 Mo Tu We Th Fr Sa Su  Mo Tu We Th Fr Sa Su  Mo Tu We Th Fr Sa Su
     1  2  3  4  5  6               1  2  3                     1
  7  8  9 10 11 12 13   4  5  6  7  8  9 10   2  3  4  5  6  7  8
@@ -9,7 +9,7 @@ Mo Tu We Th Fr Sa Su  Mo Tu We Th Fr Sa Su  Mo Tu We Th Fr Sa Su
 28 29 30 31           25 26 27 28 29 30     23 24 25 26 27 28 29
                                             30 31               
 Gregorian - Sunday-based week
-    August 2006          September 2006         October 2006    
+     August 2006         September 2006         October 2006    
 Su Mo Tu We Th Fr Sa  Su Mo Tu We Th Fr Sa  Su Mo Tu We Th Fr Sa
        1  2  3  4  5                  1  2   1  2  3  4  5  6  7
  6  7  8  9 10 11 12   3  4  5  6  7  8  9   8  9 10 11 12 13 14
@@ -18,7 +18,7 @@ Su Mo Tu We Th Fr Sa  Su Mo Tu We Th Fr Sa  Su Mo Tu We Th Fr Sa
 27 28 29 30 31        24 25 26 27 28 29 30  29 30 31            
                                                                 
 Julian - Monday-based week
-        August 2006                September 2006                October 2006        
+        August 2006                 September 2006                October 2006       
 Mon Tue Wed Thu Fri Sat Sun  Mon Tue Wed Thu Fri Sat Sun  Mon Tue Wed Thu Fri Sat Sun
     213 214 215 216 217 218                  244 245 246                          274
 219 220 221 222 223 224 225  247 248 249 250 251 252 253  275 276 277 278 279 280 281
@@ -27,7 +27,7 @@ Mon Tue Wed Thu Fri Sat Sun  Mon Tue Wed Thu Fri Sat Sun  Mon Tue Wed Thu Fri Sa
 240 241 242 243              268 269 270 271 272 273      296 297 298 299 300 301 302
                                                           303 304                    
 Julian - Sunday-based week
-        August 2006                September 2006                October 2006        
+        August 2006                 September 2006                October 2006       
 Sun Mon Tue Wed Thu Fri Sat  Sun Mon Tue Wed Thu Fri Sat  Sun Mon Tue Wed Thu Fri Sat
         213 214 215 216 217                      244 245  274 275 276 277 278 279 280
 218 219 220 221 222 223 224  246 247 248 249 250 251 252  281 282 283 284 285 286 287
