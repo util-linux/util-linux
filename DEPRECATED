@@ -41,6 +41,12 @@ Why:	deprecated in favor of newgrp from shadow-utils
 
 ----------------------------
 
+What:	vipw/vigr(8)
+When:	undefined yet
+Why:	deprecated in favor of vipw/vigr(8) from shadow-utils
+
+----------------------------
+
 What:	last(1)
 Whan:	undefined yet
 Why:	nobody uses this implementation
