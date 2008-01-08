@@ -26,6 +26,7 @@ esac
 
 AC_PROG_CC_STDC
 AC_GNU_SOURCE
+AC_CANONICAL_HOST
 
 linux_os=no
 case ${host_os} in
