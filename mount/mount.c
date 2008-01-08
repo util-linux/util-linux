@@ -1819,6 +1819,22 @@ getfs(const char *spec, const char *uuid, const char *label)
 	return mc;
 }
 
+
+static void
+print_version(int rc) {
+	printf(	"mount from %s (with "
+#ifdef HAVE_LIBBLKID
+		"libblkid"
+#else
+		"libvolume_id"
+#endif
+#ifdef HAVE_LIBSELINUX
+		" and selinux"
+#endif
+		" support)\n", PACKAGE_STRING);
+	exit(rc);
+}
+
 int
 main(int argc, char *argv[]) {
 	int c, result = 0, specseen;
@@ -1908,8 +1924,8 @@ main(int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf ("mount (%s)\n", PACKAGE_STRING);
-			exit (0);
+			print_version(EXIT_SUCCESS);
+			break;
 		case 'w':		/* mount read/write */
 			readwrite = 1;
 			readonly = 0;
