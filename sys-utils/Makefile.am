@@ -76,10 +76,10 @@ man_MANS = $(RDEV_MAN_LINKS) $(SETARCH_MAN_LINKS)
 CLEANFILES = $(man_MANS)
 
 $(RDEV_MAN_LINKS): rdev.8
-	echo ".so rdev.8" > $@
+	echo ".so man8/rdev.8" > $@
 
 $(SETARCH_MAN_LINKS): setarch.8
-	echo ".so setarch.8" > $@
+	echo ".so man8/setarch.8" > $@
 
 install-exec-hook:
 	for I in $(RDEV_LINKS); do \
