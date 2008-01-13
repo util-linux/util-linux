@@ -48,6 +48,17 @@
 
 int donice(int,int,int);
 
+void usage(int rc)
+{
+	printf( _("\nUsage:\n"
+		" renice priority [-p|--pid] pid [... pid]\n"
+		" renice priority  -g|--pgrp pgrp [... pgrp]\n"
+		" renice priority  -u|--user user [... user]\n"
+		" renice -h | --help\n"
+		" renice -v | --version\n\n"));
+
+	exit(rc);
+}
 /*
  * Change the priority (nice) of processes
  * or groups of processes which are already
@@ -58,41 +69,53 @@ main(int argc, char **argv)
 {
 	int which = PRIO_PROCESS;
 	int who = 0, prio, errs = 0;
+	char *endptr = NULL;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	argc--, argv++;
-	if (argc < 2) {
-		fprintf(stderr, _("usage: renice priority [ [ -p ] pids ] "
-				  "[ [ -g ] pgrps ] [ [ -u ] users ]\n"));
-		exit(1);
+	argc--;
+	argv++;
+
+	if (argc == 1) {
+		if (strcmp(*argv, "-h") == 0 ||
+		    strcmp(*argv, "--help") == 0)
+			usage(EXIT_SUCCESS);
+
+		if (strcmp(*argv, "-v") == 0 ||
+		    strcmp(*argv, "--version") == 0) {
+			printf(_("renice from %s\n"), PACKAGE_STRING);
+			exit(EXIT_SUCCESS);
+		}
 	}
-	prio = atoi(*argv);
-	argc--, argv++;
-#if 0
-	if (prio > PRIO_MAX)
-		prio = PRIO_MAX;
-	if (prio < PRIO_MIN)
-		prio = PRIO_MIN;
-#endif
+
+	if (argc < 2)
+		usage(EXIT_FAILURE);
+
+	prio = strtol(*argv, &endptr, 10);
+	if (*endptr)
+		usage(EXIT_FAILURE);
+
+	argc--;
+	argv++;
+
 	for (; argc > 0; argc--, argv++) {
-		if (strcmp(*argv, "-g") == 0) {
+		if (strcmp(*argv, "-g") == 0 || strcmp(*argv, "--pgrp") == 0) {
 			which = PRIO_PGRP;
 			continue;
 		}
-		if (strcmp(*argv, "-u") == 0) {
+		if (strcmp(*argv, "-u") == 0 || strcmp(*argv, "--user") == 0) {
 			which = PRIO_USER;
 			continue;
 		}
-		if (strcmp(*argv, "-p") == 0) {
+		if (strcmp(*argv, "-p") == 0 || strcmp(*argv, "--pid") == 0) {
 			which = PRIO_PROCESS;
 			continue;
 		}
 		if (which == PRIO_USER) {
 			register struct passwd *pwd = getpwnam(*argv);
-			
+
 			if (pwd == NULL) {
 				fprintf(stderr, _("renice: %s: unknown user\n"),
 					*argv);
@@ -100,8 +123,8 @@ main(int argc, char **argv)
 			}
 			who = pwd->pw_uid;
 		} else {
-			who = atoi(*argv);
-			if (who < 0) {
+			who = strtol(*argv, &endptr, 10);
+			if (who < 0 || *endptr) {
 				fprintf(stderr, _("renice: %s: bad value\n"),
 					*argv);
 				continue;
@@ -109,7 +132,7 @@ main(int argc, char **argv)
 		}
 		errs += donice(which, who, prio);
 	}
-	return (errs != 0);
+	return errs != 0 ? EXIT_FAILURE : EXIT_SUCCESS;
 }
 
 int
@@ -121,19 +144,19 @@ donice(int which, int who, int prio) {
 	if (oldprio == -1 && errno) {
 		fprintf(stderr, "renice: %d: ", who);
 		perror(_("getpriority"));
-		return (1);
+		return 1;
 	}
 	if (setpriority(which, who, prio) < 0) {
 		fprintf(stderr, "renice: %d: ", who);
 		perror(_("setpriority"));
-		return (1);
+		return 1;
 	}
 	errno = 0;
 	newprio = getpriority(which, who);
 	if (newprio == -1 && errno) {
 		fprintf(stderr, "renice: %d: ", who);
 		perror(_("getpriority"));
-		return (1);
+		return 1;
 	}
 
 	printf(_("%d: old priority %d, new priority %d\n"),

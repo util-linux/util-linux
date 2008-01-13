@@ -52,6 +52,8 @@
 .Op Fl u
 .Ar user ...
 .Oc
+.Nm renice
+.Ad Fl h | Fl v
 .Sh DESCRIPTION
 .Nm Renice
 alters the 
@@ -72,18 +74,22 @@ their process ID's.
 Options supported by
 .Nm renice :
 .Bl -tag -width Ds
-.It Fl g
+.It Fl g, Fl Fl pgrp
 Force 
 .Ar who
 parameters to be interpreted as process group ID's.
-.It Fl u
+.It Fl u, Fl Fl user
 Force the
 .Ar who
 parameters to be interpreted as user names.
-.It Fl p
+.It Fl p, Fl Fl pid
 Resets the
 .Ar who
 interpretation to be (the default) process ID's.
+.It Fl v, Fl Fl version
+Print version.
+.It Fl h, Fl Fl help
+Print help.
 .El
 .Pp
 For example,
