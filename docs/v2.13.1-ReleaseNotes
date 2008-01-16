@@ -1,6 +1,6 @@
 
-Util-linux-ng 2.13.1 Release Notes
-==================================
+Util-linux-ng 2.13.1 Release Notes (16-Jan-2008)
+================================================
 
 Fixed security issues:
 ---------------------
@@ -22,6 +22,7 @@ build-sys:
    - fix localedir (unsupported by autoconf < 2.60)  [Karel Zak]
    - nls/locale handling in util-linux-ng general  [Mike Frysinger]
    - release++  [Karel Zak]
+   - release++ (-rc2)  [Karel Zak]
    - remove files that are no longer delivered from git  [LaMont Jones]
    - remove hardcoded _GNU_SOURCE  [Karel Zak]
 cal:
@@ -38,6 +39,7 @@ docs:
    - fix stable branche name in README.devel  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
    - update AUTHORS file, add all translators  [Karel Zak]
+   - update ReleaseNotes  [Karel Zak]
 fdisk:
    - fix typo  [Karel Zak]
 flock:
@@ -68,12 +70,14 @@ po:
    - add eu.po (from translationproject.org)  [Mikel Olasagasti]
    - add pl.po (from translationproject.org)  [Andrzej Krzysztofowicz]
    - fix typo in de.po  [Karel Zak]
+   - merge files  [Karel Zak]
    - update ca.po (from translationproject.org)  [Josep Puigdemont]
    - update cs.po (from translationproject.org)  [Petr Pisar]
    - update da.po (from translationproject.org)  [Claus Hindsgaul]
    - update de.po (from translationproject.org)  [Michael Piefel]
    - update es.po (from translationproject.org)  [Santiago Vila Doncel]
    - update et.po (from translationproject.org)  [Meelis Roos]
+   - update eu.po (from translationproject.org)  [Mikel Olasagasti]
    - update fi.po (from translationproject.org)  [Lauri Nurmi]
    - update fr.po (from translationproject.org)  [Michel Robitaille]
    - update hu.po (from translationproject.org)  [Gabor Kelemen]
@@ -81,6 +85,7 @@ po:
    - update it.po (from translationproject.org)  [Marco Colombo]
    - update ja.po (from translationproject.org)  [Daisuke Yamashita]
    - update nl.po (from translationproject.org)  [Benno Schulenberg]
+   - update pl.po (from translationproject.org)  [Andrzej Krzysztofowicz]
    - update po files  [Karel Zak]
    - update pt_BR.po (from translationproject.org)  [Rodrigo Stulzer Lopes]
    - update ru.po (from translationproject.org)  [Pavel Maryanov]
@@ -100,5 +105,7 @@ setarch:
    - generate groff links in a better way  [Karel Zak]
 sfdisk:
    - allow partitioning drives of over 2^31 sectors.  [Kunihiko IMAI]
+sys-utils:
+   - correct setarch.8 manpage link creation  [Frédéric Bothamy]
 tests:
    - fix blkid cache usage  [Karel Zak]
