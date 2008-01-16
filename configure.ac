@@ -21,6 +21,10 @@ NONE:NONE | NONE:/usr | /usr:*)
   case $sbindir in
   '${exec_prefix}/sbin') sbindir=/sbin
     AC_MSG_NOTICE([  --sbindir defaults to /sbin]) ;;
+  esac
+  case $libdir in
+  '${exec_prefix}/lib') libdir=/lib
+    AC_MSG_NOTICE([  --libdir defaults to /lib]) ;;
   esac ;;
 esac
 
