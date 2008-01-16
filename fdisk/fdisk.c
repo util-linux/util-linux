@@ -18,6 +18,7 @@
 #include <errno.h>
 #include <getopt.h>
 #include <sys/stat.h>
+#include <sys/time.h>
 #include <time.h>
 
 #include "nls.h"
@@ -148,6 +149,7 @@ get_random_id(void) {
 	int fd;
 	unsigned int v;
 	ssize_t rv = -1;
+	struct timeval tv;
 
 	fd = open("/dev/urandom", O_RDONLY);
 	if (fd >= 0) {
@@ -159,7 +161,8 @@ get_random_id(void) {
 		return v;
 
 	/* Fallback: sucks, but better than nothing */
-	return (unsigned int)(getpid() + time(NULL));
+	gettimeofday(&tv, NULL);
+	return (unsigned int)(tv.tv_sec + (tv.tv_usec << 12) + getpid());
 }
 
 /* normally O_RDWR, -l option gives O_RDONLY */
