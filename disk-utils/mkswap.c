@@ -329,7 +329,7 @@ bit_test_and_clear (unsigned long *addr, unsigned int nr) {
 static void
 usage(void) {
 	fprintf(stderr,
-		_("Usage: %s [-c] [-v0|-v1] [-pPAGESZ] [-L label] /dev/name [blocks]\n"),
+		_("Usage: %s [-c] [-v0|-v1] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"),
 		program_name);
 	exit(1);
 }
@@ -479,6 +479,7 @@ main(int argc, char ** argv) {
 	char *opt_label = NULL;
 	unsigned char *uuid = NULL;
 #ifdef HAVE_LIBUUID
+	unsigned char *opt_uuid = NULL;
 	uuid_t uuid_dat;
 #endif
 
@@ -523,6 +524,16 @@ main(int argc, char ** argv) {
 				case 'v':
 					version = atoi(argv[i]+2);
 					break;
+				case 'U':
+#ifdef HAVE_LIBUUID
+					opt_uuid = argv[i]+2;
+					if (!*opt_uuid && i+1 < argc)
+						opt_uuid = argv[++i];
+#else
+					fprintf(stderr, _("%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"),
+						program_name);
+#endif
+					break;
 				default:
 					usage();
 			}
@@ -535,7 +546,11 @@ main(int argc, char ** argv) {
 	}
 
 #ifdef HAVE_LIBUUID
-	uuid_generate(uuid_dat);
+	if(opt_uuid) {
+		if (uuid_parse(opt_uuid, uuid_dat) != 0)
+			die(_("error: UUID parsing failed"));
+	} else
+		uuid_generate(uuid_dat);
 	uuid = uuid_dat;
 #endif
 

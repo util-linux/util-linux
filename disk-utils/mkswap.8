@@ -7,7 +7,7 @@
 .SH NAME
 mkswap \- set up a Linux swap area
 .SH SYNOPSIS
-.BI "mkswap [\-c] [\-v" N "] [\-f] [\-p " PSZ "] [\-L " label "] " device  " [" size "]"
+.BI "mkswap [\-c] [\-v" N "] [\-f] [\-p " PSZ "] [\-L " label "] [\-U " uuid "] " device  " [" size "]"
 .SH DESCRIPTION
 .B mkswap
 sets up a Linux swap area on a device or in a file.
@@ -155,6 +155,10 @@ If you need to use both 2.0 and 2.2 kernels, use the \-v0 option
 when creating the swapspace.
 
 Version 0 (-v0) swap space format is no longer supported in 2.5+ kernels.
+
+.TP
+.B \-U uuid
+Specify the uuid to use. The default is to generate UUIDs.
 
 .SH "SEE ALSO"
 .BR fdisk (8),
