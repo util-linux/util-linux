@@ -579,6 +579,12 @@ main(int argc, char **argv)
     fprintf(stderr,"\033(K");
 #endif
 
+    if (username) {
+	/* we need't the original username. We have to follow PAM. */
+	free(username);
+	username = NULL;
+    }
+
     /* if fflag == 1, then the user has already been authenticated */
     if (fflag && (getuid() == 0))
 	passwd_req = 0;
@@ -590,8 +596,6 @@ main(int argc, char **argv)
 
 	/* if we didn't get a user on the command line, set it to NULL */
 	pam_get_item(pamh,  PAM_USER, (const void **) &username);
-	if (!username)
-		pam_set_item(pamh, PAM_USER, NULL);
 
 	/* there may be better ways to deal with some of these
 	   conditions, but at least this way I don't think we'll
