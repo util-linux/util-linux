@@ -41,6 +41,11 @@ get_mtab_info(void) {
 	}
 }
 
+void
+reset_mtab_info(void) {
+        have_mtab_info = 0;
+}
+
 int
 mtab_does_not_exist(void) {
 	get_mtab_info();

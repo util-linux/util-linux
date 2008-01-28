@@ -562,6 +562,8 @@ create_mtab (void) {
 	my_endmntent (mfp);
 
 	unlock_mtab();
+
+	reset_mtab_info();
 }
 
 /* count successful mount system calls */
@@ -982,6 +984,13 @@ update_mtab_entry(const char *spec, const char *node, const char *type,
 	   mount succeeded, even if the write to /etc/mtab should fail.  */
 	if (verbose)
 		print_one (&mnt);
+
+	if (!nomtab && mtab_does_not_exist()) {
+		if (verbose > 1)
+			printf(_("mount: no %s found - creating it..\n"),
+			       MOUNTED);
+		create_mtab ();
+	}
 
 	if (!nomtab && mtab_is_writable()) {
 		if (flags & MS_REMOUNT)
@@ -2015,13 +2024,6 @@ main(int argc, char *argv[]) {
 		if (types || options || readwrite || nomtab || mount_all ||
 		    fake || mounttype || (argc + specseen) != 1)
 			die (EX_USAGE, _("mount: only root can do that"));
-	}
-
-	if (!nomtab && mtab_does_not_exist()) {
-		if (verbose > 1)
-			printf(_("mount: no %s found - creating it..\n"),
-			       _PATH_MOUNTED);
-		create_mtab ();
 	}
 
 	atexit(unlock_mtab);
