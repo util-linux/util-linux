@@ -20,6 +20,8 @@ be caught.
 Most modern shells have a builtin kill function, with a usage rather similar
 to that of the command described here. The `-a' and `-p' options,
 and the possibility to specify pids by command name is a local extension.
+.PP
+If sig is 0, then no signal is sent, but error checking is still performed.
 .SH OPTIONS
 .TP
 .IR pid ...
