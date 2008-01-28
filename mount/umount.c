@@ -77,6 +77,10 @@ int delloop = 0;
 /* True if ruid != euid.  */
 int suid = 0;
 
+/* Last error message */
+int complained_err = 0;
+char *complained_dev = NULL;
+
 /*
  * check_special_umountprog()
  *	If there is a special umount program for this type, exec it.
@@ -142,6 +146,15 @@ check_special_umountprog(const char *spec, const char *node,
 
 /* complain about a failed umount */
 static void complain(int err, const char *dev) {
+
+  if (complained_err == err && complained_dev && dev &&
+		  strcmp(dev, complained_dev) == 0)
+    return;
+
+  complained_err = err;
+  free(complained_dev);
+  complained_dev = xstrdup(dev);
+
   switch (err) {
     case ENXIO:
       error (_("umount: %s: invalid block device"), dev); break;
