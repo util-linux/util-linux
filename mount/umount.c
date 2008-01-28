@@ -152,7 +152,10 @@ static void complain(int err, const char *dev) {
     case EBUSY:
      /* Let us hope fstab has a line "proc /proc ..."
 	and not "none /proc ..."*/
-      error (_("umount: %s: device is busy"), dev); break;
+      error (_("umount: %s: device is busy.\n"
+	       "        (In some cases useful info about processes that use\n"
+	       "         the device is found by lsof(8) or fuser(1))"), dev);
+      break;
     case ENOENT:
       error (_("umount: %s: not found"), dev); break;
     case EPERM:
