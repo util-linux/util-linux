@@ -187,7 +187,17 @@ static int setup_alarm(int fd, time_t *wakeup)
 	struct tm		*tm;
 	struct rtc_wkalrm	wake;
 
-	tm = gmtime(wakeup);
+	/* The wakeup time is in POSIX time (more or less UTC).
+	 * Ideally RTCs use that same time; but PCs can't do that
+	 * if they need to boot MS-Windows.  Messy...
+	 *
+	 * When clock_mode == CM_UTC this process's timezone is UTC,
+	 * so we'll pass a UTC date to the RTC.
+	 *
+	 * Else clock_mode == CM_LOCAL so the time given to the RTC
+	 * will instead use the local time zone.
+	 */
+	tm = localtime(wakeup);
 
 	wake.time.tm_sec = tm->tm_sec;
 	wake.time.tm_min = tm->tm_min;
