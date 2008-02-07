@@ -54,6 +54,20 @@ limits
 summary
 .SH SEE ALSO
 .BR ipcrm (1)
+.SH CONFORMING TO
+The Linux ipcs utility is not fully compatible to the POSIX ipcs utility.
+The Linux version does not support the
+.B \-b
+and
+.B \-o
+options, but does support the
+.B \-l
+and
+.B \-u
+options not defined by POSIX. The portable application shall not use the
+.B \-a, \-b, \-o, \-l,
+and
+.B \-u options.
 .SH AUTHOR
 krishna balasubramanian (balasub@cis.ohio-state.edu)
 .SH AVAILABILITY
