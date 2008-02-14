@@ -91,7 +91,7 @@ struct systypes i386_sys_types[] = {
 	{0xe4, N_("SpeedStor")},	/* SpeedStor 16-bit FAT extended
 					   partition < 1024 cyl. */
 	{0xeb, N_("BeOS fs")},
-	{0xee, N_("EFI GPT")},		/* Intel EFI GUID Partition Table */
+	{0xee, N_("GPT")},		/* Intel EFI GUID Partition Table */
 	{0xef, N_("EFI (FAT-12/16/32)")},/* Intel EFI System Partition */
 	{0xf0, N_("Linux/PA-RISC boot")},/* Linux/PA-RISC boot loader */
 	{0xf1, N_("SpeedStor")},
