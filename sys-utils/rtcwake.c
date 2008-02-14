@@ -22,6 +22,7 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <fcntl.h>
+#include <libgen.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
