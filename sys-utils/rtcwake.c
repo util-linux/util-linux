@@ -48,7 +48,7 @@ static char		*progname;
 
 #define VERSION_STRING		"rtcwake from " PACKAGE_STRING
 #define RTC_PATH		"/sys/class/rtc/%s/device/power/wakeup"
-#define SYS_POWER_SATE_PATH	"/sys/power/state"
+#define SYS_POWER_STATE_PATH	"/sys/power/state"
 #define ADJTIME_PATH		"/etc/adjtime"
 #define DEFAULT_DEVICE		"/dev/rtc0"
 #define DEFAULT_MODE		"suspend"
@@ -238,10 +238,10 @@ static int setup_alarm(int fd, time_t *wakeup)
 
 static void suspend_system(const char *suspend)
 {
-	FILE	*f = fopen(SYS_POWER_SATE_PATH, "w");
+	FILE	*f = fopen(SYS_POWER_STATE_PATH, "w");
 
 	if (!f) {
-		perror(SYS_POWER_SATE_PATH);
+		perror(SYS_POWER_STATE_PATH);
 		return;
 	}
 
