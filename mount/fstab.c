@@ -425,9 +425,22 @@ getfs_by_devname (const char *devname) {
 	struct mntentchn *mc, *mc0;
 
 	mc0 = fstab_head();
+
+	/* canonical devname in fstab */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
 		if (streq(mc->m.mnt_fsname, devname))
 			return mc;
+
+	/* noncanonical devname in fstab */
+	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
+		char *fs = canonicalize(mc->m.mnt_fsname);
+		if (streq(fs, devname)) {
+			free(fs);
+			return mc;
+		}
+		free(fs);
+	}
+
 	return NULL;
 }
 
