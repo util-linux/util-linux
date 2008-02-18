@@ -49,7 +49,7 @@ if [ ! -d "$IMAGE_DATA" ]; then
 fi
 
 ts_log "list checksums from original data"
-find $IMAGE_DATA -type f -exec md5sum {} \; >> $TS_OUTPUT
+find $IMAGE_DATA -type f -exec md5sum {} \; | sort >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "create cramfs image"
@@ -57,7 +57,7 @@ $TS_CMD_MKCRAMFS -n $LABEL $IMAGE_DATA $IMAGE 2>&1 >> $TS_OUTPUT
 [ -s "$IMAGE" ] || ts_die "Cannot create $IMAGE"
 
 ts_log "count MD5 from the image"
-md5sum $IMAGE 2>&1 >> $TS_OUTPUT
+md5sum $IMAGE 2>&1 | sort >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "create loop device from image"
@@ -82,7 +82,7 @@ ls -laR --time-style=long-iso $TS_MOUNTPOINT >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "list checksums from new data"
-find $TS_MOUNTPOINT -type f -exec md5sum {} \; >> $TS_OUTPUT
+find $TS_MOUNTPOINT -type f -exec md5sum {} \; | sort >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "umount the image"
