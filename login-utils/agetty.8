@@ -3,7 +3,7 @@
 agetty \- alternative Linux getty
 
 .SH SYNOPSIS
-.BR "agetty " [\-8ihLmnw]
+.BR "agetty " [\-8ihLmnUw]
 .RI "[-f " issue_file ]
 .RI "[-l " login_program ]
 .RI "[-I " init ]
@@ -162,6 +162,12 @@ lines.
 Force the line to be a local line with no need for carrier detect. This can
 be useful when you have a locally attached terminal where the serial line
 does not set the carrier detect signal.
+.TP
+\-U
+Turn on support for detecting an uppercase only terminal.  This setting will
+detect a login name containing only capitals as indicating an uppercase
+only terminal and turn on some upper to lower case conversions.  Note that
+this has no support for any unicode characters.
 .TP
 \-w 
 Wait for the user or the modem to send a carriage-return or a

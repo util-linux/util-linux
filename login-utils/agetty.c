@@ -134,6 +134,7 @@ struct options {
 #define F_WAITCRLF	(1<<5)		/* wait for CR or LF */
 #define F_CUSTISSUE	(1<<6)		/* give alternative issue file */
 #define F_NOPROMPT	(1<<7)		/* don't ask for login name! */
+#define F_LCUC		(1<<8)		/* Support for *LCUC stty modes */
 
 /* Storage for things detected while the login name was read. */
 
@@ -374,7 +375,7 @@ parse_args(argc, argv, op)
     extern int optind;			/* getopt */
     int     c;
 
-    while (isascii(c = getopt(argc, argv, "8I:LH:f:hil:mt:wn"))) {
+    while (isascii(c = getopt(argc, argv, "8I:LH:f:hil:mt:wUn"))) {
 	switch (c) {
 	case '8':
 	    op->eightbits = 1;
@@ -450,6 +451,9 @@ parse_args(argc, argv, op)
 	    break;
 	case 'w':
 	    op->flags |= F_WAITCRLF;
+	    break;
+	case 'U':
+	    op->flags |= F_LCUC;
 	    break;
 	default:
 	    usage();
@@ -1081,8 +1085,7 @@ char   *get_logname(op, cp, tp)
 	}
     }
     /* Handle names with upper case and no lower case. */
-
-    if ((cp->capslock = caps_lock(logname))) {
+    if ((op->flags & F_LCUC) && (cp->capslock = caps_lock(logname))) {
 	for (bp = logname; *bp; bp++)
 	    if (isupper(*bp))
 		*bp = tolower(*bp);		/* map name to lower case */
@@ -1197,7 +1200,7 @@ bcode(s)
 void
 usage()
 {
-    fprintf(stderr, _("Usage: %s [-8hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\nor\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"), progname);
+    fprintf(stderr, _("Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\nor\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"), progname);
     exit(1);
 }
 
