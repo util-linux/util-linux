@@ -13,10 +13,11 @@ mkswap_SOURCES = mkswap.c swapheader.h $(utils_common)
 blockdev_SOURCES = blockdev.c $(utils_common)
 
 usrbinexec_PROGRAMS = isosize
+usrsbinexec_PROGRAMS =
 
 if LINUX
 dist_man_MANS += fdformat.8
-usrbinexec_PROGRAMS += fdformat
+usrsbinexec_PROGRAMS += fdformat
 endif
 
 if BUILD_ELVTUNE
