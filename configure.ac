@@ -116,14 +116,19 @@ m4_foreach([UTIL_PRG], m4_defn([UTIL_STATIC_PROGRAMS]), [
 ])
 
 
-dnl UTIL_CHECK_LIB(LIBRARY, FUNCTION)
+
+dnl UTIL_CHECK_LIB(LIBRARY, FUNCTION, [VARSUFFIX = $1]))
+dnl The VARSUFFIX is optional and overrides the default behaviour. For example:
+dnl     UTIL_CHECK_LIB(yyy, func, xxx) generates have_xxx and HAVE_LIBXXX
+dnl     UTIL_CHECK_LIB(yyy, func)      generates have_yyy and HAVE_LIBYYY
 dnl ---------------------------------
 AC_DEFUN([UTIL_CHECK_LIB], [
-  dnl The trick is to keep the third argument to AC_CHECK_LIB empty,
-  dnl and thus keep the default action.
-  have_$1=yes
-  AC_CHECK_LIB([$1], [$2], [], [have_$1=no])
-  AM_CONDITIONAL(AS_TR_CPP(HAVE_$1), [test $have_$1 = yes])
+  m4_define([suffix], m4_default([$3],$1))
+  [have_]suffix=yes
+  m4_ifdef([$3],
+    [AC_CHECK_LIB([$1], [$2], [AC_DEFINE(AS_TR_CPP([HAVE_LIB]suffix), 1)], [[have_]suffix=no])],
+    [AC_CHECK_LIB([$1], [$2], [], [[have_]suffix=no])])
+  AM_CONDITIONAL(AS_TR_CPP([HAVE_]suffix), [test [$have_]suffix = yes])
 ])
 
 UTIL_CHECK_LIB(uuid, uuid_is_null)
