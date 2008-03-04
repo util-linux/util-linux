@@ -42,7 +42,7 @@ if HAVE_NCURSES
 sbin_PROGRAMS += cfdisk
 dist_man_MANS += cfdisk.8
 cfdisk_SOURCES = cfdisk.c $(fdisk_common)
-cfdisk_LDADD = -lncurses
+cfdisk_LDADD = @NCURSES_LIBS@
 endif
 endif
 

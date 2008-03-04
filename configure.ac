@@ -196,18 +196,35 @@ else
     ALL_LINGUAS="af am ar as be bg bn_IN bn ca cs cy da de el en_GB es et eu_ES fa fi fr gl gu he hi hr hu hy id is it ja ka kn ko ku lo lt lv mk ml mr ms my nb nl nn no nso or pa pl pt_BR pt ro ru si sk sl sq sr@Latn sr sv ta te th tr uk ur vi zh_CN zh_TW zu"
 fi
 
-have_ncurses=no
-AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [have_ncurses=yes])
-case $have_ncurses in
-yes)
-     AC_MSG_NOTICE([you have ncurses])
-     AC_DEFINE(HAVE_NCURSES, 1, [Do we have -lncurses?])
-     ;;
-no)
-     AC_MSG_NOTICE([you do not have ncurses])
-     ;;
-esac
-AM_CONDITIONAL(HAVE_NCURSES, test x$have_ncurses = xyes)
+AC_ARG_WITH([ncurses],
+  AS_HELP_STRING([--with-ncurses], [build with non-wide ncurses, default is wide version
+                                    (--without-ncurses disables all ncurses(w) support)]),
+  [], with_ncurses=auto
+)
+AM_CONDITIONAL(HAVE_NCURSES, false)
+
+if test "x$with_ncurses" != xno; then
+  have_ncurses=no
+  AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [
+    if test "x$with_ncurses" = xauto; then
+      UTIL_CHECK_LIB(ncursesw, tputs, ncurses)
+      if test "x$have_ncurses" = xyes; then
+        NCURSES_LIBS="-lncursesw"
+      fi
+    fi
+    if test x$have_ncurses = xno; then
+      UTIL_CHECK_LIB(ncurses, tputs)
+      if test x$have_ncurses = xyes; then
+        NCURSES_LIBS="-lncurses"
+      fi
+    fi
+  ])
+  if test x$have_ncurses = xno; then
+    AC_MSG_ERROR([ncurses or ncursesw selected, but library not found (--without-ncurses to disable)])
+  fi
+fi
+AC_SUBST([NCURSES_LIBS])
+
 
 AC_ARG_WITH([slang],
   AS_HELP_STRING([--with-slang], [compile cfdisk with slang]),

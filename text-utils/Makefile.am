@@ -14,12 +14,12 @@ bin_PROGRAMS = more
 usrbinexec_PROGRAMS += ul pg
 if HAVE_TINFO
 more_LDADD = -ltinfo
-pg_LDADD = -ltinfo -lncurses
+pg_LDADD = -ltinfo @NCURSES_LIBS@
 ul_LDADD = -ltinfo
 else
-more_LDADD = -lncurses
-pg_LDADD = -lncurses
-ul_LDADD = -lncurses
+more_LDADD = @NCURSES_LIBS@
+pg_LDADD = @NCURSES_LIBS@
+ul_LDADD = @NCURSES_LIBS@
 endif
 dist_man_MANS += ul.1 more.1 pg.1
 else
