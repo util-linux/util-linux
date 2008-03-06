@@ -433,7 +433,13 @@ getfs_by_devname (const char *devname) {
 
 	/* noncanonical devname in fstab */
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
-		char *fs = canonicalize(mc->m.mnt_fsname);
+		char *fs;
+
+		if (strncmp(mc->m.mnt_fsname, "LABEL=", 6) == 0 ||
+				strncmp(mc->m.mnt_fsname, "UUID=", 5) == 0)
+			continue;
+
+		fs = canonicalize(mc->m.mnt_fsname);
 		if (streq(fs, devname)) {
 			free(fs);
 			return mc;
