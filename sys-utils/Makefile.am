@@ -16,7 +16,7 @@ if LINUX
 sbin_PROGRAMS = ctrlaltdel
 endif
 
-usrsbinexec_PROGRAMS = readprofile
+usrsbinexec_PROGRAMS = ldattach readprofile
 if LINUX
 usrsbinexec_PROGRAMS += tunelp rtcwake
 endif
@@ -24,7 +24,7 @@ endif
 tunelp_SOURCES = tunelp.c lp.h
 
 dist_man_MANS = flock.1 readprofile.1 \
-	ctrlaltdel.8 cytune.8 dmesg.1 ipcrm.1 ipcs.1 renice.1 \
+	ctrlaltdel.8 cytune.8 dmesg.1 ipcrm.1 ipcs.1 ldattach.8 renice.1 \
 	setsid.1 tunelp.8 setarch.8 rtcwake.8
 
 info_TEXINFOS = ipc.texi
