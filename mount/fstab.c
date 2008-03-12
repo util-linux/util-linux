@@ -100,12 +100,6 @@ fstab_head() {
 }
 
 static void
-my_free(const void *s) {
-	if (s)
-		free((void *) s);
-}
-
-static void
 my_free_mc(struct mntentchn *mc) {
 	if (mc) {
 		my_free(mc->m.mnt_fsname);
@@ -334,7 +328,7 @@ getfs_by_specdir (const char *spec, const char *dir) {
 
 			if (streq(dr, dir))
 				ok = 1;
-			my_free(dr);
+			free(dr);
 			if (!ok)
 				continue;
 		}
@@ -354,7 +348,7 @@ getfs_by_specdir (const char *spec, const char *dir) {
 				if (has_uuid(spec, fs + 5))
 					ok = 1;
 			}
-			my_free(fs);
+			free(fs);
 			if (!ok)
 				continue;
 		}
@@ -404,7 +398,7 @@ getfs_by_spec (const char *spec) {
 		else if (!strcmp(name,"UUID"))
 			mc = getfs_by_uuid (value);
 
-		free((void *) name);
+		free(name);
 		return mc;
 	}
 
