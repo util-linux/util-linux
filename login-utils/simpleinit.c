@@ -1048,7 +1048,7 @@ static int run_command (const char *file, const char *name, pid_t pid)
 
 	if ( ( script = calloc (1, sizeof *script) ) == NULL )
 	{
-	    if (needer != NULL) free (needer);
+	    free (needer);
 	    return SIG_FAILED;
 	}
 	service = calloc (1, strlen (name) + sizeof *service);
@@ -1073,7 +1073,7 @@ static int run_command (const char *file, const char *name, pid_t pid)
 		unavailable_services->prev = service;
 	    unavailable_services = service;
 	    free (script);
-	    if (needer != NULL) free (needer);
+	    free (needer);
 	    return SIG_FAILED;
 	    /*break;*/
 	  default:  /*  Parent  */

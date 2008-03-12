@@ -146,8 +146,7 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 			newbuf = xmalloc(m + n + 1);
 			memcpy(newbuf, link_path, n);
 			memcpy(newbuf + n, path, m + 1);
-			if (buf)
-				free(buf);
+			free(buf);
 			path = buf = newbuf;
 #endif
 		}
@@ -159,12 +158,10 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 	/* Make sure it's null terminated. */
 	*npath = '\0';
 
-	if (buf)
-		free(buf);
+	free(buf);
 	return resolved_path;
 
  err:
-	if (buf)
-		free(buf);
+	free(buf);
 	return NULL;
 }

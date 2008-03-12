@@ -96,7 +96,7 @@ crc32init_le(void)
 static void
 crc32cleanup_le(void)
 {
-	if (crc32table_le) free(crc32table_le);
+	free(crc32table_le);
 	crc32table_le = NULL;
 }
 
@@ -198,7 +198,7 @@ crc32init_be(void)
 static void
 crc32cleanup_be(void)
 {
-	if (crc32table_be) free(crc32table_be);
+	free(crc32table_be);
 	crc32table_be = NULL;
 }
 

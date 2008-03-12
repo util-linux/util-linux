@@ -112,8 +112,7 @@ my_endmntent (mntFILE *mfp) {
 	if (mfp) {
 		if (mfp->mntent_fp)
 			fclose(mfp->mntent_fp);
-		if (mfp->mntent_file)
-			free(mfp->mntent_file);
+		free(mfp->mntent_file);
 		free(mfp);
 	}
 }

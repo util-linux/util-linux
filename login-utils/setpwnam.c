@@ -185,7 +185,7 @@ fail:
     if (fp != NULL) fclose (fp);
     if (pwf != NULL) fclose(pwf);
     if (fd >= 0) close (fd);
-    if (linebuf != NULL) free(linebuf);
+    free(linebuf);
     unlink(PTMP_FILE);
     errno = save_errno;
     return -1;

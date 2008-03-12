@@ -585,10 +585,8 @@ read_gpt_pt (int fd, struct slice all, struct slice *sp, int ns)
         int last_used_index=-1;
 
 	if (!find_valid_gpt (fd, &gpt, &ptes) || !gpt || !ptes) {
-		if (gpt)
-			free (gpt);
-		if (ptes)
-			free (ptes);
+		free (gpt);
+		free (ptes);
 		return 0;
 	}
 
