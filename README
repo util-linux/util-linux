@@ -23,9 +23,9 @@ DOWNLOAD:
 SOURCE CODE:
 
       Web interface:
-	  http://git.kernel.org/?p=utils/util-linux-ng/util-linux-ng.git
+          http://git.kernel.org/?p=utils/util-linux-ng/util-linux-ng.git
       Checkout:
-	  git clone git://git.kernel.org/pub/scm/utils/util-linux-ng/util-linux-ng.git util-linux-ng
+          git clone git://git.kernel.org/pub/scm/utils/util-linux-ng/util-linux-ng.git util-linux-ng
 
 NLS (PO TRANSLATIONS):
 
@@ -68,3 +68,31 @@ COMPILATION:
 
               This feature is currently supported for chfn, chsh, newgrp,
               write, mount, and umount.
+
+
+STATIC LINKING:
+
+      Use --enable-static-programs[=LIST] configure option when you want to use
+      statically linked programs.
+
+      Note, mount(8) uses get{pw,gr}nam() and getpwuid() functions for
+      translation from username and groupname to UID and GID. These functions
+      could be implemented by dynamically loaded independent modules (NSS) in
+      your libc (e.g. glibc). These modules are not statically linked to mount(8)
+      and mount.static is still using dlopen() like dynamically linked version.
+
+      The translation won't be work in environment where is not installed the
+      NSS modules.
+
+      For example normal system (NSS modules are available):
+
+              # ./mount.static -v -f -n -ouid=kzak /mnt/foo
+              LABEL=/mnt/foo on /mnt/foo type vfat (rw,uid=500)
+                                                       ^^^^^^^
+      and without NSS modules:
+
+              # chroot . ./mount.static -v -f -n -ouid=kzak /mnt/win
+              LABEL=/mnt/win on /mnt/win type vfat (rw,uid=kzak)
+                                                       ^^^^^^^^
+
+
