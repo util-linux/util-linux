@@ -1,55 +1,20 @@
-2.14:
-====
+v2.15:
+=====
 
- * clean up code, gcc warnings
-   (try compilation with "-Wall -Wp,-D_FORTIFY_SOURCE=2")
+ * add libfsprobe (see topic/fsprobe branch)
 
- * add --help and --version to all commands
+ * swapon -s  -- LABELs support
 
- * don't duplicate glibc code when possible,
-   for example things like:
-	- err.h (error(), warn(), ...)
-	- canonicalize_file_name()
-	- program_invocation_short_name
+   Although mkswap has recently been -L option to create a label nothing appears to
+   have been change to swapon to display said labels. (rh#430386)
 
  * try improve compilation against others libc:
-	- uClibc
+	- klibc
 	- ???
-
- * create lib/blkdevsize.c with blkdev_get_size(), blkdev_get_sectors(),
-   blkdev_get_pages()  (see mkswap.c and fdisk/disksize.c)
-
- * use EXIT_FAILED and EXIT_SUCCESS
 
  * rewrite the replay script to C to avoid dependence on perl
 
- * cryptoloop support in losetup (the patch is on the way)
-
-	Date:   Tue, 28 Aug 2007 15:23:58 -0600
-	From: LaMont Jones <lamont@mmjgroup.com>
-	Subject: Re: [PATCH] losetup: support password hashing and specifying the key length
-
- * convet po/ files to UTF-8
-
  * use rpmatch() for all Y/N questions
-
- * non-linux support
-
-	Date:   Sat, 11 Aug 2007 00:43:00 +0200
-	From: Samuel Thibault <samuel.thibault@ens-lyon.org>
-	Subject: non-linux support
-
- * CFS aware chrt in util linux (the patch is on the way)
-
-	From: Christian Casteyde <casteyde.christian@free.fr>
-	Subject: CFS aware chrt in util linux
-	Date: Sat, 21 Jul 2007 19:46:27 +0200
-
- * mount: nofail mount option (the patch is on the way)
-
-	From: Matthias Koenig <mkoenig@suse.de>
-	To: util-linux-ng@vger.kernel.org
-	Subject: [PATCH] mount: nofail mount option
 
  * mount -a -- reorder fstab entries by paths before mount (just idea only)
 
@@ -87,7 +52,6 @@
 	  do {
 		try to mount all unmounted entries
 	  } while (not all mounted && at least one new was successfully mounted)
-
 
 v2.??:
 =====
