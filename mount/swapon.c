@@ -144,17 +144,9 @@ read_proc_swaps(void) {
 static int
 is_in_proc_swaps(const char *fname) {
 	int i;
-	char canonical[PATH_MAX + 2];
-
-	if (!myrealpath(fname, canonical, PATH_MAX + 1)) {
-		fprintf(stderr, _("%s: cannot canonicalize %s: %s\n"),
-			progname, fname, strerror(errno));
-		strncpy(canonical, fname, PATH_MAX + 1);
-		*(canonical + (PATH_MAX + 1)) = '\0';
-	}
 
 	for (i = 0; i < numSwaps; i++)
-		if (swapFiles[i] && !strcmp(canonical, swapFiles[i]))
+		if (swapFiles[i] && !strcmp(fname, swapFiles[i]))
 			return 1;
 	return 0;
 }
