@@ -184,37 +184,6 @@ check_mount(void) {
 	die(_("%s is mounted; will not make a filesystem here!"));
 }
 
-static long
-valid_offset (int fd, int offset) {
-	char ch;
-
-	if (lseek (fd, offset, 0) < 0)
-		return 0;
-	if (read (fd, &ch, 1) < 1)
-		return 0;
-	return 1;
-}
-
-static int
-count_blocks (int fd) {
-	int high, low;
-
-	low = 0;
-	for (high = 1; valid_offset (fd, high); high *= 2)
-		low = high;
-	while (low < high - 1)
-	{
-		const int mid = (low + high) / 2;
-
-		if (valid_offset (fd, mid))
-			low = mid;
-		else
-			high = mid;
-	}
-	valid_offset (fd, 0);
-	return (low + 1);
-}
-
 static void
 write_tables(void) {
 	/* Mark the super block valid. */
