@@ -52,7 +52,7 @@ read_bsd_pt(int fd, struct slice all, struct slice *sp, int ns) {
 	struct bsd_partition *p;
 	unsigned int offset = all.start;
 	int max_partitions;
-	char *bp;
+	unsigned char *bp;
 	int n = 0;
 
 	bp = getblock(fd, offset+1); 	/* 1 sector suffices */

@@ -21,7 +21,7 @@ typedef int (ptreader)(int fd, struct slice all, struct slice *sp, int ns);
 
 extern ptreader read_dos_pt, read_bsd_pt, read_solaris_pt, read_unixware_pt, read_gpt_pt;
 
-char *getblock(int fd, unsigned int secnr);
+unsigned char *getblock(int fd, unsigned int secnr);
 
 static inline int
 four2int(unsigned char *p) {

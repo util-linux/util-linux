@@ -34,7 +34,7 @@ read_solaris_pt(int fd, struct slice all, struct slice *sp, int ns) {
 	struct solaris_x86_slice *s;
 	unsigned int offset = all.start;
 	int i, n;
-	char *bp;
+	unsigned char *bp;
 
 	bp = getblock(fd, offset+1); 	/* 1 sector suffices */
 	if (bp == NULL)

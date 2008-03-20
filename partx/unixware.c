@@ -52,7 +52,7 @@ read_unixware_pt(int fd, struct slice all, struct slice *sp, int ns) {
 	struct unixware_disklabel *l;
 	struct unixware_slice *p;
 	unsigned int offset = all.start;
-	char *bp;
+	unsigned char *bp;
 	int n = 0;
 
 	bp = getblock(fd, offset+29); 	/* 1 sector suffices */

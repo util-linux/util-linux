@@ -350,11 +350,11 @@ sseek(int fd, unsigned int secnr) {
 static
 struct block {
 	unsigned int secnr;
-	char *block;
+	unsigned char *block;
 	struct block *next;
 } *blockhead;
 
-char *
+unsigned char *
 getblock(int fd, unsigned int secnr) {
 	struct block *bp;
 
@@ -367,7 +367,7 @@ getblock(int fd, unsigned int secnr) {
 	bp->secnr = secnr;
 	bp->next = blockhead;
 	blockhead = bp;
-	bp->block = (char *) xmalloc(1024);
+	bp->block = (unsigned char *) xmalloc(1024);
 	if (read(fd, bp->block, 1024) != 1024) {
 		fprintf(stderr, "read error, sector %d\n", secnr);
 		bp->block = NULL;
