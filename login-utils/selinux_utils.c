@@ -10,7 +10,7 @@
 int checkAccess(char *chuser, int access) {
   int status=-1;
   security_context_t user_context;
-  char *user=NULL;
+  const char *user=NULL;
   if( getprevcon(&user_context)==0 ) {
     context_t c=context_new(user_context);
     user=context_user_get(c);
