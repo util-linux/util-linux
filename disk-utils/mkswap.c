@@ -479,7 +479,7 @@ main(int argc, char ** argv) {
 	char *opt_label = NULL;
 	unsigned char *uuid = NULL;
 #ifdef HAVE_LIBUUID
-	unsigned char *opt_uuid = NULL;
+	const char *opt_uuid = NULL;
 	uuid_t uuid_dat;
 #endif
 
