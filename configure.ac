@@ -34,7 +34,7 @@ case ${host_os} in
     linux_os=yes
     ;;
 esac
-AM_CONDITIONAL([LINUX], test x$linux_os = xyes)
+AM_CONDITIONAL([LINUX], test "x$linux_os" = xyes)
 
 AC_PATH_PROG(PERL, perl)
 AC_PATH_PROG(BLKID, blkid, [], [$PATH:/sbin])
@@ -100,7 +100,7 @@ fflush(stdout);
 ]])], [static_cv_option=yes],[static_cv_option=no])
    LDFLAGS="$SAVE_LDFLAGS"
   ])
-  if test "$static_cv_option" = "no"; then
+  if test "x$static_cv_option" = xno; then
      AC_MSG_ERROR([the linker does not accept option -static])
   fi
 fi
@@ -112,7 +112,7 @@ m4_foreach([UTIL_PRG], m4_defn([UTIL_STATIC_PROGRAMS]), [
    *,UTIL_PRG,*) static_[]UTIL_PRG=yes ;;
   esac
   AM_CONDITIONAL([HAVE_STATIC_]m4_toupper(UTIL_PRG),
-    [test "$static_[]UTIL_PRG" = "yes"])
+    [test "x$static_[]UTIL_PRG" = xyes])
 ])
 
 
@@ -132,7 +132,7 @@ AC_DEFUN([UTIL_CHECK_LIB], [
 ])
 
 UTIL_CHECK_LIB(uuid, uuid_is_null)
-if test $have_uuid = no; then
+if test "x$have_uuid" = xno; then
   AC_MSG_WARN([uuid library is not found; mkswap(8) will not generate UUIDs])
 fi
 
@@ -149,13 +149,13 @@ AM_CONDITIONAL(HAVE_VOLUME_ID, false)
 
 have_blkid=no
 have_volume_id=no
-if test x$with_fsprobe = xblkid; then
+if test "x$with_fsprobe" = xblkid; then
   UTIL_CHECK_LIB(blkid, blkid_known_fstype)
-elif test x$with_fsprobe = xvolume_id; then
+elif test "x$with_fsprobe" = xvolume_id; then
   UTIL_CHECK_LIB(volume_id, volume_id_encode_string)
 fi
 
-if test $have_blkid = no && test $have_volume_id = no; then
+if test "x$have_blkid" = xno && test "x$have_volume_id" = xno; then
   AC_MSG_ERROR([blkid or volume_id is needed to build util-linux-ng.])
 fi
 
@@ -189,7 +189,7 @@ AC_ARG_VAR([VOLUMEID_LIBS_STATIC], [-l options for linking statically with volum
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
 AM_GNU_GETTEXT([external])
-if test -d $srcdir/po
+if test -d "$srcdir/po"
 then
     ALL_LINGUAS=`cd $srcdir/po > /dev/null && echo *.po | sed 's/\.po//g'`
 else
@@ -212,14 +212,14 @@ if test "x$with_ncurses" != xno; then
         NCURSES_LIBS="-lncursesw"
       fi
     fi
-    if test x$have_ncurses = xno; then
+    if test "x$have_ncurses" = xno; then
       UTIL_CHECK_LIB(ncurses, tputs)
-      if test x$have_ncurses = xyes; then
+      if test "x$have_ncurses" = xyes; then
         NCURSES_LIBS="-lncurses"
       fi
     fi
   ])
-  if test x$have_ncurses = xno; then
+  if test "x$have_ncurses" = xno; then
     AC_MSG_ERROR([ncurses or ncursesw selected, but library not found (--without-ncurses to disable)])
   fi
 fi
@@ -233,16 +233,16 @@ AC_ARG_WITH([slang],
 
 have_tinfo=no
 AC_CHECK_LIB(tinfo, tgetent, [have_tinfo=yes])
-AM_CONDITIONAL(HAVE_TINFO, test x$have_tinfo = xyes)
+AM_CONDITIONAL(HAVE_TINFO, test "x$have_tinfo" = xyes)
 
 use_slang=no
-if test x$with_slang = xyes; then
+if test "x$with_slang" = xyes; then
   AC_CHECK_HEADERS([slcurses.h slang/slcurses.h], [use_slang=yes])
-  if test $use_slang = no; then
+  if test "x$use_slang" = xno; then
     AC_MSG_ERROR([slang selected but slcurses.h not found])
   fi
 fi
-AM_CONDITIONAL(USE_SLANG, test $use_slang = yes)
+AM_CONDITIONAL(USE_SLANG, test "x$use_slang" = xyes)
 
 
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
@@ -265,7 +265,7 @@ char *c = crypt("abc","pw");
   ])
 ])
 
-AM_CONDITIONAL(NEED_LIBCRYPT, test x$need_libcrypt = xyes)
+AM_CONDITIONAL(NEED_LIBCRYPT, test "x$need_libcrypt" = xyes)
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <stdio.h>
@@ -309,7 +309,7 @@ AC_DEFUN([UTIL_CHECK_SYSCALL], [
 	[syscall=_NR_$1],
 	[
 	  syscall=no
-	  if test $linux_os = yes; then
+	  if test "x$linux_os" = xyes; then
 	    case $host_cpu in
 	      _UTIL_CHECK_SYSCALL_FALLBACK(m4_shift($@))
 	    esac
@@ -318,7 +318,7 @@ AC_DEFUN([UTIL_CHECK_SYSCALL], [
       ])
     util_cv_syscall_$1=$syscall
     ])
-  AM_CONDITIONAL([HAVE_]m4_toupper($1), [test $util_cv_syscall_$1 != no])
+  AM_CONDITIONAL([HAVE_]m4_toupper($1), [test "x$util_cv_syscall_$1" != xno])
   case $util_cv_syscall_$1 in #(
   no) AC_MSG_WARN([Unable to detect syscall $1.]) ;;
   SYS_*) ;;
@@ -405,7 +405,7 @@ AC_DEFUN([UTIL_SET_ARCH], [
   case "$host" in
    $2) cpu_$1=true ;;
   esac
-  AM_CONDITIONAL(AS_TR_CPP(ARCH_$1), [test x$cpu_$1 = xtrue])
+  AM_CONDITIONAL(AS_TR_CPP(ARCH_$1), [test "x$cpu_$1" = xtrue])
 ])
 
 UTIL_SET_ARCH(I86, i?86-*)
@@ -422,20 +422,20 @@ AC_ARG_ENABLE([arch],
   AS_HELP_STRING([--enable-arch], [do build arch]),
   [], enable_arch=no
 )
-AM_CONDITIONAL(BUILD_ARCH, test x$enable_arch = xyes)
+AM_CONDITIONAL(BUILD_ARCH, test "x$enable_arch" = xyes)
 
 AC_ARG_ENABLE([agetty],
   AS_HELP_STRING([--disable-agetty], [do not build agetty]),
   [], enable_agetty=yes
 )
-AM_CONDITIONAL(BUILD_AGETTY, test x$enable_agetty = xyes)
+AM_CONDITIONAL(BUILD_AGETTY, test "x$enable_agetty" = xyes)
 
 AC_ARG_ENABLE([cramfs],
   AS_HELP_STRING([--disable-cramfs], [do not build fsck.cramfs, mkfs.cramfs]),
   [], enable_cramfs=check
 )
 
-if test $enable_cramfs = no; then
+if test "x$enable_cramfs" = xno; then
   build_cramfs=no
 else
   build_cramfs=yes
@@ -445,93 +445,93 @@ else
   yes:no) AC_MSG_ERROR([cramfs selected but libz not found]);;
   esac
 fi
-AM_CONDITIONAL(BUILD_CRAMFS, test $build_cramfs = yes)
+AM_CONDITIONAL(BUILD_CRAMFS, test "x$build_cramfs" = xyes)
 
 
 AC_ARG_ENABLE([elvtune],
   AS_HELP_STRING([--enable-elvtune], [build elvtune (only works with 2.2 and 2.4 kernels)]),
   [], enable_elvtune=no
 )
-AM_CONDITIONAL(BUILD_ELVTUNE, test x$enable_elvtune = xyes)
+AM_CONDITIONAL(BUILD_ELVTUNE, test "x$enable_elvtune" = xyes)
 
 
 AC_ARG_ENABLE([init],
   AS_HELP_STRING([--enable-init], [build simpleinit, shutdown, initctl]),
   [], enable_init=no
 )
-AM_CONDITIONAL(BUILD_INIT, test x$enable_init = xyes)
+AM_CONDITIONAL(BUILD_INIT, test "x$enable_init" = xyes)
 
 
 AC_ARG_ENABLE([kill],
   AS_HELP_STRING([--enable-kill], [build kill]),
   [], enable_kill=no
 )
-AM_CONDITIONAL(BUILD_KILL, test x$enable_kill = xyes)
+AM_CONDITIONAL(BUILD_KILL, test "x$enable_kill" = xyes)
 
 
 AC_ARG_ENABLE([last],
   AS_HELP_STRING([--enable-last], [build last]),
   [], enable_last=no
 )
-AM_CONDITIONAL(BUILD_LAST, test x$enable_last = xyes)
+AM_CONDITIONAL(BUILD_LAST, test "x$enable_last" = xyes)
 
 
 AC_ARG_ENABLE([mesg],
   AS_HELP_STRING([--enable-mesg], [build mesg]),
   [], enable_mesg=no
 )
-AM_CONDITIONAL(BUILD_MESG, test x$enable_mesg = xyes)
+AM_CONDITIONAL(BUILD_MESG, test "x$enable_mesg" = xyes)
 
 
 AC_ARG_ENABLE([partx],
   AS_HELP_STRING([--enable-partx], [build addpart, delpart, partx]),
   [], enable_partx=no
 )
-AM_CONDITIONAL(BUILD_PARTX, test x$enable_partx = xyes)
+AM_CONDITIONAL(BUILD_PARTX, test "x$enable_partx" = xyes)
 
 
 AC_ARG_ENABLE([raw],
   AS_HELP_STRING([--enable-raw], [build raw]),
   [], enable_raw=no
 )
-AM_CONDITIONAL(BUILD_RAW, test x$enable_raw = xyes)
+AM_CONDITIONAL(BUILD_RAW, test "x$enable_raw" = xyes)
 
 
 AC_ARG_ENABLE([rdev],
   AS_HELP_STRING([--enable-rdev], [build rdev on i386]),
   [], enable_rdev=no
 )
-AM_CONDITIONAL(BUILD_RDEV, test x$enable_rdev = xyes)
+AM_CONDITIONAL(BUILD_RDEV, test "x$enable_rdev" = xyes)
 
 
 AC_ARG_ENABLE([rename],
   AS_HELP_STRING([--disable-rename], [do not build rename]),
   [], enable_rename=yes
 )
-AM_CONDITIONAL(BUILD_RENAME, test x$enable_rename = xyes)
+AM_CONDITIONAL(BUILD_RENAME, test "x$enable_rename" = xyes)
 
 
 AC_ARG_ENABLE([reset],
   AS_HELP_STRING([--enable-reset], [build reset]),
   [], enable_reset=no
 )
-AM_CONDITIONAL(BUILD_RESET, test x$enable_reset = xyes)
+AM_CONDITIONAL(BUILD_RESET, test "x$enable_reset" = xyes)
 
 
 AC_ARG_ENABLE([login-utils],
   AS_HELP_STRING([--enable-login-utils], [build chfn, chsh, login, newgrp, vipw]),
   [], enable_login_utils=no
 )
-AM_CONDITIONAL(BUILD_LOGIN_UTILS, test x$enable_login_utils = xyes)
+AM_CONDITIONAL(BUILD_LOGIN_UTILS, test "x$enable_login_utils" = xyes)
 
 AC_ARG_WITH([pam],
   [AS_HELP_STRING([--without-pam], [compile login-utils without PAM support])])
 
 AM_CONDITIONAL(HAVE_PAM, false)
-if test x$enable_login_utils = xyes && test x$with_pam != xno; then
+if test "x$enable_login_utils" = xyes && test "x$with_pam" != xno; then
   AC_CHECK_HEADERS([security/pam_misc.h],
     [AM_CONDITIONAL(HAVE_PAM, true)],
-    [if test x$with_pam = xyes; then
+    [if test "x$with_pam" = xyes; then
 	AC_MSG_ERROR([PAM selected but security/pam_misc.h not found])
      fi
     ])
@@ -542,16 +542,16 @@ AC_ARG_WITH([selinux],
   [], with_selinux=no
 )
 
-if test x$with_selinux = xno; then
+if test "x$with_selinux" = xno; then
   AM_CONDITIONAL(HAVE_SELINUX, false)
 else
   UTIL_CHECK_LIB(selinux, getprevcon)
-  case $with_selinux:$have_selinux in
+  case "$with_selinux:$have_selinux" in
   yes:no) AC_MSG_ERROR([SELinux selected but libselinux not found]);;
   esac
 fi
 
-if test "$have_selinux" = yes; then
+if test "x$have_selinux" = xyes; then
   SELINUX_LIBS="-lselinux -lsepol"
   SELINUX_LIBS_STATIC="-lselinux -lsepol"
 fi
@@ -563,11 +563,11 @@ AC_ARG_WITH([audit],
   [], with_audit=no
 )
 
-if test x$with_audit = xno; then
+if test "x$with_audit" = xno; then
   AM_CONDITIONAL(HAVE_AUDIT, false)
 else
   UTIL_CHECK_LIB(audit, audit_log_user_message)
-  case $with_audit:$have_audit in
+  case "$with_audit:$have_audit" in
   yes:no)
    AC_MSG_ERROR([Audit selected but libaudit not found (or doesn't support audit_log_user_message())])
    ;;
@@ -579,21 +579,21 @@ AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
   [], enable_schedutils=yes
 )
-AM_CONDITIONAL(BUILD_SCHEDUTILS, test x$enable_schedutils = xyes)
+AM_CONDITIONAL(BUILD_SCHEDUTILS, test "x$enable_schedutils" = xyes)
 
 
 AC_ARG_ENABLE([wall],
   AS_HELP_STRING([--disable-wall], [do not build wall]),
   [], enable_wall=yes
 )
-AM_CONDITIONAL(BUILD_WALL, test x$enable_wall = xyes)
+AM_CONDITIONAL(BUILD_WALL, test "x$enable_wall" = xyes)
 
 
 AC_ARG_ENABLE([write],
   AS_HELP_STRING([--enable-write], [build write]),
   [], enable_write=no
 )
-AM_CONDITIONAL(BUILD_WRITE, test x$enable_write = xyes)
+AM_CONDITIONAL(BUILD_WRITE, test "x$enable_write" = xyes)
 
 
 AC_ARG_ENABLE([chsh-only-listed],
@@ -601,7 +601,7 @@ AC_ARG_ENABLE([chsh-only-listed],
   [], enable_chsh_only_listed=yes
 )
 
-if test x$enable_chsh_only_listed = xyes; then
+if test "x$enable_chsh_only_listed" = xyes; then
   AC_DEFINE(ONLY_LISTED_SHELLS, 1, [Should chsh allow only shells in /etc/shells?])
 fi
 
@@ -611,7 +611,7 @@ AC_ARG_ENABLE([login-chown-vcs],
   [], enable_login_chown_vcs=no
 )
 
-if test x$enable_login_chown_vcs = xyes; then
+if test "x$enable_login_chown_vcs" = xyes; then
   AC_DEFINE(LOGIN_CHOWN_VCS, 1, [Should login chown /dev/vcsN?])
 fi
 
@@ -621,7 +621,7 @@ AC_ARG_ENABLE([login-stat-mail],
   [], enable_login_stat_mail=no
 )
 
-if test x$enable_login_stat_mail = xyes; then
+if test "x$enable_login_stat_mail" = xyes; then
   AC_DEFINE(LOGIN_STAT_MAIL, 1, [Should login stat() the mailbox?])
 fi
 
@@ -631,7 +631,7 @@ AC_ARG_ENABLE([pg-bell],
   [], enable_pg_bell=yes
 )
 
-if test x$enable_pg_bell = xyes; then
+if test "x$enable_pg_bell" = xyes; then
   AC_DEFINE(PG_BELL, 1, [Should pg ring the bell on invalid keys?])
 fi
 
@@ -641,7 +641,7 @@ AC_ARG_ENABLE([require-password],
   [], enable_require_password=yes
 )
 
-if test x$enable_require_password = xyes; then
+if test "x$enable_require_password" = xyes; then
   AC_DEFINE(REQUIRE_PASSWORD, 1, [Should chfn and chsh require the user to enter the password?])
 fi
 
@@ -650,9 +650,9 @@ AC_ARG_ENABLE([use-tty-group],
   AS_HELP_STRING([--disable-use-tty-group], [do not install wall and write setgid tty]),
   [], enable_use_tty_group=yes
 )
-AM_CONDITIONAL(USE_TTY_GROUP, test x$enable_use_tty_group = xyes)
+AM_CONDITIONAL(USE_TTY_GROUP, test "x$enable_use_tty_group" = xyes)
 
-if test x$enable_use_tty_group = xyes; then
+if test "x$enable_use_tty_group" = xyes; then
   AC_DEFINE(USE_TTY_GROUP, 1, [Should wall and write be installed setgid tty?])
 fi
 
@@ -660,7 +660,7 @@ AC_ARG_ENABLE([makeinstall-chown],
   AS_HELP_STRING([--disable-makeinstall-chown], [do not do chown-like operations during "make install"]),
   [], enable_makeinstall_chown=yes
 )
-AM_CONDITIONAL(MAKEINSTALL_DO_CHOWN, test x$enable_makeinstall_chown = xyes)
+AM_CONDITIONAL(MAKEINSTALL_DO_CHOWN, test "x$enable_makeinstall_chown" = xyes)
 
 
 AC_ARG_VAR([SUID_CFLAGS],
