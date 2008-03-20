@@ -10,6 +10,9 @@
 #include <errno.h>
 #include <sys/stat.h>
 #include <unistd.h>
+#include <sys/types.h>
+#include <sys/wait.h>
+#include <fcntl.h>
 #include "xmalloc.h"
 #include "swap_constants.h"
 #include "nls.h"
@@ -17,6 +20,8 @@
 #include "realpath.h"
 #include "pathnames.h"
 #include "sundries.h"
+
+#define PATH_MKSWAP	"/sbin/mkswap"
 
 #ifdef HAVE_SYS_SWAP_H
 # include <sys/swap.h>
@@ -175,6 +180,64 @@ display_summary(void)
 }
 
 static int
+swap_is_suspend(const char *device) {
+	const char *type = fsprobe_get_fstype_by_devname(device);
+
+	return (type && strcmp(type, "suspend") == 0) ? 1 : 0;
+}
+
+/* calls mkswap */
+static int
+swap_reinitialize(const char *device) {
+	const char *label = fsprobe_get_label_by_devname(device);
+	const char *uuid  = fsprobe_get_uuid_by_devname(device);
+	pid_t pid;
+	int status, ret;
+	char *cmd[7];
+	int idx=0;
+
+	switch((pid=fork())) {
+	case -1: /* fork error */
+		fprintf(stderr, _("%s: cannot fork: %s\n"),
+			progname, strerror(errno));
+		return -1;
+
+	case 0:	/* child */
+		cmd[idx++] = PATH_MKSWAP;
+		if (label && *label) {
+			cmd[idx++] = "-L";
+			cmd[idx++] = (char *) label;
+		}
+		if (uuid && *uuid) {
+			cmd[idx++] = "-U";
+			cmd[idx++] = (char *) uuid;
+		}
+		cmd[idx++] = (char *) device;
+		cmd[idx++] = NULL;
+		execv(cmd[0], cmd);
+		perror("execv");
+		exit(1); /* error  */
+
+	default: /* parent */
+		do {
+			if ((ret = waitpid(pid, &status, 0)) < 0
+					&& errno == EINTR)
+				continue;
+			else if (ret < 0) {
+				fprintf(stderr, _("%s: waitpid: %s\n"),
+					progname, strerror(errno));
+				return -1;
+			}
+		} while (0);
+
+		/* mkswap returns: 0=suss, 1=error */
+		if (WIFEXITED(status) && WEXITSTATUS(status)==0)
+			return 0; /* ok */
+	}
+	return -1; /* error */
+}
+
+static int
 do_swapon(const char *orig_special, int prio, int canonic) {
 	int status;
 	struct stat st;
@@ -194,6 +257,18 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 		fprintf(stderr, _("%s: cannot stat %s: %s\n"),
 			progname, special, strerror(errsv));
 		return -1;
+	}
+
+	/* We have to reinitialize swap with old (=useless) software suspend
+	 * data. The problem is that if we don't do it, then we get data
+	 * corruption the next time an attempt at unsuspending is made.
+	 */
+	if (swap_is_suspend(special)) {
+		fprintf(stdout, _("%s: %s: software suspend data detected. "
+					"Reinitializing the swap.\n"),
+			progname, special);
+		if (swap_reinitialize(special) < 0)
+			return -1;
 	}
 
 	/* people generally dislike this warning - now it is printed
