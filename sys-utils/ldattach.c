@@ -25,6 +25,8 @@
 #include <unistd.h>
 #include <err.h>
 
+#include "nls.h"
+
 #define dbg(format, arg...) \
 	do { if (debug) fprintf(stderr , "%s:" format "\n" , progname , ## arg); } while (0)
 
@@ -180,9 +182,9 @@ static void __attribute__((__noreturn__)) usage(int exitcode)
     size_t i;
 
     fprintf(stderr,
-	    "\nUsage: %s [ -dhV78neo12 ] [ -s <speed> ] <ldisc> <device>\n",
+	    _("\nUsage: %s [ -dhV78neo12 ] [ -s <speed> ] <ldisc> <device>\n"),
 	    progname);
-    fprintf(stderr, "\nKnown <ldisc> names:\n");
+    fputs(_("\nKnown <ldisc> names:\n"), stderr);
     for (i = 0; i < ARRAY_SIZE(ld_table); i++)
 	fprintf(stderr, "  %s\n", ld_table[i].s);
     exit(exitcode);
@@ -212,8 +214,14 @@ int main(int argc, char **argv)
 	{0, 0, 0, 0}
     };
 
+
+    setlocale(LC_ALL, "");
+    bindtextdomain(PACKAGE, LOCALEDIR);
+    textdomain(PACKAGE);
+
     /* parse options */
-    progname = argv[0];
+    progname = program_invocation_short_name;
+
     if (argc == 0)
 	usage(EXIT_SUCCESS);
     while ((optc = getopt_long(argc, argv, "dhV78neo12s:", opttbl, NULL)) >= 0) {
@@ -237,15 +245,15 @@ int main(int argc, char **argv)
 	case 's':
 	    speed = strtol(optarg, &end, 10);
 	    if (*end || speed <= 0)
-		errx(EXIT_FAILURE, "invalid speed: %s", optarg);
+		errx(EXIT_FAILURE, _("invalid speed: %s"), optarg);
 	    break;
 	case 'V':
-	    printf("ldattach from %s\n", PACKAGE_STRING);
+	    printf(_("ldattach from %s\n"), PACKAGE_STRING);
 	    break;
 	case 'h':
 	    usage(EXIT_SUCCESS);
 	default:
-	    warnx("invalid option");
+	    warnx(_("invalid option"));
 	    usage(EXIT_FAILURE);
 	}
     }
@@ -257,24 +265,24 @@ int main(int argc, char **argv)
     if ((ldisc = lookup_ld(argv[optind])) < 0) {
 	ldisc = strtol(argv[optind], &end, 0);
 	if (*end || ldisc < 0)
-	    errx(EXIT_FAILURE, "invalid line discipline: %s", argv[optind]);
+	    errx(EXIT_FAILURE, _("invalid line discipline: %s"), argv[optind]);
     }
 
     /* open device */
     dev = argv[optind+1];
     if ((tty_fd = open(dev, O_RDWR|O_NOCTTY)) < 0)
-	err(EXIT_FAILURE, "cannot open %s", dev);
+	err(EXIT_FAILURE, _("cannot open %s"), dev);
     if (!isatty(tty_fd))
-	errx(EXIT_FAILURE, "%s is not a serial line", dev);
+	errx(EXIT_FAILURE, _("%s is not a serial line"), dev);
 
     dbg("opened %s", dev);
 
     /* set line speed and format */
     if (tcgetattr2(tty_fd, &ts) < 0)
-	err(EXIT_FAILURE, "cannot get terminal attributes for %s", dev);
+	err(EXIT_FAILURE, _("cannot get terminal attributes for %s"), dev);
     cfmakeraw2(&ts);
     if (speed && cfsetspeed2(&ts, speed) < 0)
-	errx(EXIT_FAILURE, "speed %d unsupported", speed);
+	errx(EXIT_FAILURE, _("speed %d unsupported"), speed);
     switch (stop) {
     case '1':
 	ts.c_cflag &= ~CSTOPB;
@@ -305,20 +313,20 @@ int main(int argc, char **argv)
     }
     ts.c_cflag |= CREAD;	/* just to be on the safe side */
     if (tcsetattr2(tty_fd, TCSAFLUSH, &ts) < 0)
-	err(EXIT_FAILURE, "cannot set terminal attributes for %s", dev);
+	err(EXIT_FAILURE, _("cannot set terminal attributes for %s"), dev);
 
     dbg("set to raw %d %c%c%c: cflag=0x%x",
 	speed, bits, parity, stop, ts.c_cflag);
 
     /* Attach the line discpline. */
     if (ioctl(tty_fd, TIOCSETD, &ldisc) < 0)
-	err(EXIT_FAILURE, "cannot set line discipline");
+	err(EXIT_FAILURE, _("cannot set line discipline"));
 
     dbg("line discipline set to %d", ldisc);
 
     /* Go into background if not in debug mode. */
     if (!debug && daemon(0, 0) < 0)
-	err(EXIT_FAILURE, "cannot daemonize");
+	err(EXIT_FAILURE, _("cannot daemonize"));
 
     /* Sleep to keep the line discipline active. */
     pause();
