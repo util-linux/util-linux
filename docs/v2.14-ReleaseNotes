@@ -1,0 +1,307 @@
+
+Util-linux-ng 2.14 Release Notes (26-Mar-2008)
+==============================================
+
+Release highlights:
+------------------
+
+ mount(8) supports new "nofail" mount option.
+
+ mount(8) supports auto-destruction of loop devices.
+
+ losetup(8) supports new command line option "-j" to show status of all
+ loop devices associated with given file.
+
+ losetup(8) supports unlimited number of loop devices.
+
+ ldattach(8) command has been added to util-linux-ng. The ldattach
+ daemon opens the specified device file and attaches the line discipline
+ to it for processing of the sent and/or received data.
+
+ setterm(8) supports new command line option "-blank [force|poke]" for
+ TIOCL_{BLANKED,BLANK}SCREEN.
+
+ tailf(8) has been reimplemented to use inotify.
+
+ tailf(8) supports new command line option "-n" to specifying output lines.
+
+ mkswap(8) supports new command line option "-U" to set UUID explicitly.
+
+ fdisk(8) has been fixed to calculate partition size in 2^N.
+
+ cal(8) supports highlighting an arbitrary date.
+
+ agetty(8) makes username-in-uppercase feature optional (off by
+ default). Uses who use uppercase-only terminals need to use option "-U"
+ now.
+
+ losetup(8), mount(8), umount(8), fdisk(8) and sfdisk(8) support static
+ linking when compiled with --enable-static-programs.
+
+
+ChangeLog between v2.13 and v2.14
+---------------------------------
+
+ For more details see ChangeLog files at:
+ ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.14/
+
+agetty:
+   - cleanup MAXHOSTNAMELEN  [Karel Zak]
+   - make username-in-uppercase feature optional (off by default.)  [Hamish Coleman]
+   - non-linux support (use pathnames.h)  [Karel Zak]
+   - replace termio with termios interface  [Samuel Thibault]
+   - ungettextize several debugging messages.  [Benno Schulenberg]
+blockdev:
+   - add --getsz to blockdev.8  [Karel Zak]
+   - add missing description about option --report in manpage  [Li Zefan]
+   - fix  opened file leaving unclosed  [lizf]
+   - use lib/blkdev.c, fix --report  [Karel Zak]
+build-sys:
+   - add --enable-static-programs  [Stepan Kasal, Karel Zak]
+   - add AC_CANONICAL_HOST  [Miklos Szeredi]
+   - add VARSUFFIX to UTIL_CHECK_LIB  [Karel Zak]
+   - add err.h check  [Karel Zak]
+   - add v2.14 to NEWS  [Karel Zak]
+   - autogen.sh reports versions of autotools now  [Karel Zak]
+   - build arch(1) during distcheck  [Stepan Kasal]
+   - cleanup "x$foo" usage  [Karel Zak]
+   - cleanup disk-utils/Makefile.am (use $utils_common)  [Karel Zak]
+   - cleanup usage of linux/major.h  [Samuel Thibault]
+   - disable syscall fallbacks for non-linux systems  [Karel Zak]
+   - do not add -luuid to BLKID_LIBS  [Stepan Kasal]
+   - fix missing deps for swapon  [Matthias Koenig]
+   - nls/locale handling in util-linux-ng general  [Mike Frysinger]
+   - non-linux support  [Samuel Thibault]
+   - release++  [Karel Zak]
+   - remove errs.h  [Karel Zak]
+   - remove files that are no longer delivered from git  [LaMont Jones]
+   - remove hardcoded _GNU_SOURCE  [Karel Zak]
+   - set AC_PREREQ to 2.60, increment version to 2.14  [Karel Zak]
+   - simplify code around RDEV_LINKS and SETARCH_LINKS  [Stepan Kasal]
+   - unify method for checking system calls and fallback handling  [Mike Frysinger, Stepan Kasal]
+   - use dist_man_MANS instead of man_MANS  [Stepan Kasal]
+   - use ncursesw (wide version) when possibe  [Karel Zak, Mike Frysinger]
+   - use pkg-config to find the libs for static build  [Stepan Kasal]
+   - use portable $(VAR =) instead of gmake-specific $(addsuffix)  [Stepan Kasal]
+cal:
+   - add description about option -V to manpage  [Li Zefan]
+   - add support for highlighting an arbitrary date  [Pádraig Brady]
+   - avoid -Wformat warnings  [Jim Meyering]
+   - fix weekday alignment for certain locales  [Pádraig Brady]
+   - replace errs.h with libc err.h  [Karel Zak]
+cfdisk:
+   - define portable {DEFAULT,ALTERNATE}_DEVICE  [Samuel Thibault]
+   - display cylinders beyond 1024  [Peter Breitenlohner]
+   - slightly increase the size of menu buttons  [Benno Schulenberg]
+   - translate partition-type names when they are printed.  [Benno Schulenberg]
+chfn:
+   - add pam_end() call and cleanup PAM code  [Karel Zak]
+   - fix compiler warnings in selinux stuff  [Karel Zak]
+chsh:
+   - should use pam_end function to terminate the PAM transaction  [Yu Zhiguo, Karel Zak]
+column:
+   - replace errs.h with libc err.h  [Karel Zak]
+docs:
+   - add a note about minix v3 to TODO file  [Karel Zak]
+   - add info about .bugfix releases and branches  [Karel Zak]
+   - add note about incorrect tag 2.13.1  [Karel Zak]
+   - add note about static linking  [Karel Zak]
+   - fix ChangeLog URL  [Pascal Terjan]
+   - fix stable branche name in README.devel  [Karel Zak]
+   - mark vipw(1) is deprecated in favor of vipw from shadow-utils  [Karel Zak]
+   - refresh TODO list  [Karel Zak]
+   - tweak a few messages for clarity  [Benno Schulenberg]
+   - update AUTHORS file  [Karel Zak]
+   - update TODO file  [Karel Zak]
+elvtune:
+   - use get_linux_version()  [Karel Zak]
+fdformat:
+   - install to /usr/sbin instead to /usr/bin  [Karel Zak]
+fdisk:
+   - better fallback for get_random_id()  [H. Peter Anvin]
+   - calculate +size{K,M,G} in 2^N  [Karel Zak]
+   - cleanup BLK* ioctls usage  [Karel Zak]
+   - doing useless ioctl when editing an image  [Pascal Terjan]
+   - fix building for AVR32 and CRIS  [Imre Kaloz]
+   - fix typo  [Karel Zak]
+   - non-linux support (MAXPATHLEN)  [Karel Zak]
+   - non-linux support (use standard uintxy_t instead __uxy)  [Samuel Thibault]
+   - use more readable "GPT" name rather than "EFI GPT"  [Robert Millan]
+   - use swab macros from bitops.h  [Karel Zak]
+flock:
+   - typo in man page  [A. Costa]
+fsck.cramfs:
+   - clean up gcc warnings  [Randy Dunlap]
+getopt:
+   - fix path to examples in getopt.1  [Karel Zak]
+   - install example scripts as SCRIPTS, not DATA  [Peter Breitenlohner]
+hwclock:
+   - check for ENODEV  [David Woodhouse]
+   - do not create a zero adjfile  [Alain Guibert]
+   - fix --rtc option  [Matthias Koenig, Karel Zak]
+include:
+   - <stdint.h> provides everything  [Samuel Thibault]
+   - add bitops.h with swab{16,32,64} macros  [Karel Zak]
+   - add mount paths to pathnames.h  [Karel Zak]
+   - cleanup pathnames.h  [Karel Zak]
+ionice:
+   - add a note about permissions to ionice.1  [Karel Zak]
+ipcs:
+   - add information about POSIX compatibility to ipcs.1  [Karel Zak]
+kill:
+   - man page is missing a description of "kill -0"  [Karel Zak]
+ldattach:
+   - add NLS support  [Karel Zak]
+   - new command  [Tilman Schmidt]
+lib:
+   - add blkdev.{c,h}  [Stefan Krah, Karel Zak]
+   - add linux_version.{c,h}  [Stefan Krah]
+login:
+   - fix a small memory leak and remove unnecessary zeroing  [Karel Zak]
+   - login segfaults on EOF (rh#298461)  [Karel Zak]
+   - replace termio with termios interface  [Samuel Thibault]
+losetup:
+   - add --associated option  [Karel Zak]
+   - canonicalize loopfile name  [Karel Zak, Matthias Koenig]
+   - clean up gcc warnings  [Randy Dunlap]
+   - fix errno usage  [Karel Zak]
+   - remove duplicate xstrdup() and error()  [Karel Zak]
+   - support unlimited number of loops  [Karel Zak]
+   - use standard uintxy_t types (struct loop_info64)  [Samuel Thibault]
+mesg:
+   - replace errs.h with libc err.h  [Karel Zak]
+mkfs.cramfs:
+   - clean up gcc warnings  [Randy Dunlap, Karel Zak]
+   - remove unused header file  [lizf]
+mkfs.minix:
+   - add sectorsize check  [Matthias Koenig]
+   - clean up gcc warnings  [Karel Zak]
+   - clean up gcc warnings  [Randy Dunlap]
+   - device size cleanup  [Matthias Koenig]
+mkswap:
+   - BLKGETSIZE cleanup  [Karel Zak]
+   - cleanup kB vs. KiB usage in error messages  [Karel Zak]
+   - fix compiler warnings  [Karel Zak]
+   - linux_version() code consolidation  [Karel Zak]
+   - possible to crash with SELinux relabeling support  [KaiGai Kohei]
+   - set UUID for swap space (add -U option)  [Martin Schulze]
+more:
+   - cleanup gcc warnings  [Randy Dunlap]
+   - non-linux support  [Samuel Thibault]
+   - replace CBAUD with cfgetispeed()  [Samuel Thibault]
+mount:
+   - "can't create lock file" message sometimes means failure, sometimes not  [Mark McLoughlin]
+   - "nofail" mount option  [Matthias Koenig, Karel Zak]
+   - -L|-U segfault when label or uuid doesn't exist  [Karel Zak]
+   - add more details to the --version output  [Karel Zak]
+   - allow auto-destruction of loop devices  [Bernardo Innocenti]
+   - chain of symlinks to fstab causes use of pointer after free  [Norbert Buchmuller]
+   - clean up gcc warnings (mount_mntent.c)  [Randy Dunlap]
+   - clean up global variables  [Karel Zak]
+   - cleanup "none" fstype usage  [Karel Zak]
+   - cleanup KERNEL_VERSION, remove my_dev_t.h  [Karel Zak]
+   - cleanup canonicalize() usage  [Karel Zak]
+   - cleanup error() and die()  [Karel Zak]
+   - cleanup usage of _PATH_*  [Karel Zak]
+   - doesn't drop privileges properly when calling helpers  [Ludwig Nussel]
+   - don't call canonicalize(SPEC) for cifs, smbfs and nfs  [Karel Zak]
+   - don't canonicalize LABEL= or UUID= spec  [Karel Zak]
+   - drop the part always true from a while condition  [Pascal Terjan]
+   - fix fd leak  [Matthias Koenig]
+   - hint about helper program if device doesn't exist  [Karel Zak]
+   - improve chmod & chown usage and clean up gcc warnings (fstab.c)  [Karel Zak]
+   - improve error message when helper program not present  [LaMont Jones]
+   - prevent loop mounting the same file twice  [Karel Zak, Matthias Koenig]
+   - remove MS_{REPLACE,AFTER,BEFORE,OVER}  [Karel Zak]
+   - remove redundant fflush  [Karel Zak]
+   - remove useless if-before-my_free, define my_free as a macro  [Karel Zak]
+   - use MNTTYPE_SWAP (from mntent.h)  [Karel Zak]
+   - use atexit() rather than (*at_die)()  [Karel Zak]
+   - use blkdev_get_size()  [Karel Zak]
+   - use canonicalize in getfs_by_devname  [Karel Zak]
+namei:
+   - add to identify FIFO (named pipe) and update manpage  [Li Zefan]
+   - cleanup tailing white-spaces  [Karel Zak]
+   - non-linux support (get_current_dir_name() and PATH_MAX)  [Karel Zak, Samuel Thibault]
+partx:
+   - fix compiler warnings  [Karel Zak]
+   - use swab macros from bitops.h  [Karel Zak]
+pg:
+   - fix segfault on search  [Rajeev V. Pillai]
+po:
+   - add eu.po (from translationproject.org)  [Mikel Olasagasti]
+   - add pl.po (from translationproject.org)  [Andrzej Krzysztofowicz]
+rename:
+   - add description about option -V to manpage  [Li Zefan]
+   - remove useless variable  [Li Zefan]
+renice:
+   - detect errors in arguments, add -v, -h and long options  [LaMont Jones, Karel Zak]
+rev:
+   - use warn() in errs.h  [Li Zefan]
+rtcwake:
+   - fix UTC time usage  [David Brownell]
+   - fix typo  [Karel Zak]
+   - fix typo SATE -> STATE  [Mike Frysinger]
+   - fix verbose message  [Karel Zak]
+   - include libgen.h for basename prototype  [Mike Frysinger]
+   - misc cleanups  [David Brownell]
+script:
+   - cleanup gcc warnings  [Randy Dunlap]
+   - cleanup includes  [Samuel Thibault]
+   - dies on SIGWINCH  [Karel Zak]
+setarch:
+   - add long options to setarch and update manpage  [Karel Zak, Li Zefan]
+   - add missing alpha subarchs  [Oliver Falk]
+   - adding groff symlinks to setarch manual page  [Arkadiusz Miskiewicz]
+   - fix compiler warning  [LaMont Jones]
+   - generate groff links in a better way  [Karel Zak]
+   - tweak the help text, and gettextize a forgotten message  [Benno Schulenberg]
+setterm:
+   - add -blan [force|poke] options for TIOCL_{BLANKED,BLANK}SCREEN  [Samuel Thibault, Karel Zak]
+   - dump by TIOCLINUX is deprecated since linux 1.1.92.  [Karel Zak]
+   - opened file leaving unclosed  [Karel Zak, lizf]
+   - remove unnecessaty ifndef TCGETS  [Samuel Thibault]
+sfdisk:
+   - allow partitioning drives of over 2^31 sectors.  [Kunihiko IMAI]
+   - cleanup 83 gcc warnings  [Randy Dunlap]
+   - opened files leaving unclosed  [Karel Zak, Li Zefan]
+   - remove unnecessary linux/unistd.h  [Samuel Thibault]
+   - use get_linux_version()  [Karel Zak]
+shutdown:
+   - use _PATH_MOUNTED instead of _PATH_MTAB  [Stepan Kasal]
+swapon:
+   - Reinitialize software suspend areas to avoid future corruption.  [Kees Cook, Karel Zak]
+   - add sundries.h  [Karel Zak]
+   - clean up gcc warnings  [Randy Dunlap]
+   - cleanup usage output  [Karel Zak]
+   - cleanup usage()  [Karel Zak]
+   - fix typo in usage()  [Karel Zak]
+   - readjust the usage summaries  [Benno Schulenberg]
+   - remove unnecessary myrealpath() call  [Karel Zak]
+sys-utils:
+   - correct setarch.8 manpage link creation  [Frédéric Bothamy]
+tailf:
+   - add option -n to specifying output lines  [Li Zefan]
+   - clean up gcc warnings & fix use of errno  [Karel Zak]
+   - inotify based reimplementation  [Karel Zak]
+   - non-linux support  [Samuel Thibault]
+   - opened file leaving unclosed  [lizf]
+   - replace errs.h with libc err.h  [Karel Zak]
+tests:
+   - add "sort" to cramfs test  [Karel Zak]
+   - add test for include/pathnames.h  [Karel Zak]
+   - add ts-mount-noncanonical  [Karel Zak]
+   - exactly define a time format in ls -l output  [Karel Zak]
+   - fix blkid cache usage  [Karel Zak]
+   - move test_bkdev to lib/  [Karel Zak]
+   - redirect libblkid cache to BLKID_FILE  [Karel Zak]
+   - rename test_sysinfo, remove tailing white-spaces  [Karel Zak]
+   - use losetup -s  [Karel Zak]
+umount:
+   - add hint about lsof & fuser  [Karel Zak]
+   - don't print duplicate error messages  [Karel Zak]
+   - use atexit() rather than (*at_die)()  [Karel Zak]
+wall:
+   - cleanup MAXHOSTNAMELEN  [Karel Zak]
+
+- cleanup MAXHOSTNAMELEN  [Karel Zak]
