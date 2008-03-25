@@ -1,5 +1,6 @@
-util-linux-ng 2.14
- [ unreleased yet; use 'git log' ]
+util-linux-ng 2.14-rc1
+* see docs/v2.14-ReleaseNotes or complete changelog at
+ ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.14/v2.14-rc1-ChangeLog
 
 util-linux-ng 2.13
 
