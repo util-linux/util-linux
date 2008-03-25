@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.12m\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2007-10-11 14:29+0200\n"
+"POT-Creation-Date: 2007-08-07 23:26+0200\n"
 "PO-Revision-Date: 2004-12-22 01:31+0100\n"
 "Last-Translator: Santiago Vila Doncel <sanvila@unex.es>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -99,11 +99,6 @@ msgstr "  %s [-v|-q] órdenes dispositivos\n"
 msgid "Available commands:\n"
 msgstr "Órdenes disponibles:\n"
 
-#: disk-utils/blockdev.c:123
-#, fuzzy
-msgid "get size in 512-byte sectors"
-msgstr "obtiene el tamaño en bytes"
-
 #: disk-utils/blockdev.c:275
 #, c-format
 msgid "%s: Unknown command: %s\n"
@@ -113,11 +108,6 @@ msgstr "%s: Orden desconocida: %s\n"
 #, c-format
 msgid "%s requires an argument\n"
 msgstr "%s necesita un argumento\n"
-
-#: disk-utils/blockdev.c:329
-#, fuzzy, c-format
-msgid "%s failed.\n"
-msgstr "Error de búsqueda"
 
 #: disk-utils/blockdev.c:366
 #, c-format
@@ -185,9 +175,9 @@ msgstr "uso: %s [ -n ] dispositivo\n"
 
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
 #: disk-utils/isosize.c:179 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
-#: disk-utils/mkfs.cramfs.c:785 disk-utils/mkfs.minix.c:629
+#: disk-utils/mkfs.cramfs.c:784 disk-utils/mkfs.minix.c:626
 #: disk-utils/mkswap.c:518 misc-utils/ddate.c:179 misc-utils/rename.c:79
-#: misc-utils/script.c:147 sys-utils/readprofile.c:197
+#: misc-utils/script.c:146 sys-utils/readprofile.c:197
 #, fuzzy, c-format
 msgid "%s (%s)\n"
 msgstr "%s: %s (%s)\n"
@@ -214,7 +204,7 @@ msgstr "Doble densidad"
 msgid "Single"
 msgstr "Simple densidad"
 
-#: disk-utils/fsck.cramfs.c:117
+#: disk-utils/fsck.cramfs.c:118
 #, c-format
 msgid ""
 "usage: %s [-hv] [-x dir] file\n"
@@ -338,11 +328,6 @@ msgstr "Campo s_zmap_blocks incorrecto en superbloque"
 msgid "Unable to allocate buffer for inode map"
 msgstr "No se puede asignar búfer para la tabla de nodos-i"
 
-#: disk-utils/fsck.minix.c:593
-#, fuzzy
-msgid "Unable to allocate buffer for zone map"
-msgstr "No se puede asignar búfer para la tabla de nodos-i"
-
 #: disk-utils/fsck.minix.c:598
 msgid "Unable to allocate buffer for inodes"
 msgstr "No se puede asignar búfer para los nodos-i"
@@ -432,7 +417,7 @@ msgstr "El fichero `%s' tiene el modo %05o\n"
 msgid "Warning: inode count too big.\n"
 msgstr "Atención: número de nodos-i demasiado elevado.\n"
 
-#: disk-utils/fsck.minix.c:731 disk-utils/fsck.minix.c:739
+#: disk-utils/fsck.minix.c:731
 msgid "root inode isn't a directory"
 msgstr "El nodo-i raíz no es un directorio"
 
@@ -469,17 +454,27 @@ msgstr ""
 msgid " Remove"
 msgstr " Eliminar"
 
-#: disk-utils/fsck.minix.c:956 disk-utils/fsck.minix.c:1023
+#: disk-utils/fsck.minix.c:956
+#, c-format
+msgid "`%s': bad directory: '.' isn't first\n"
+msgstr "`%s': directorio incorrecto: '.' no es el primero\n"
+
+#: disk-utils/fsck.minix.c:964
+#, c-format
+msgid "`%s': bad directory: '..' isn't second\n"
+msgstr "`%s': directorio incorrecto: '..' no es el segundo\n"
+
+#: disk-utils/fsck.minix.c:1023
 #, c-format
 msgid "%s: bad directory: '.' isn't first\n"
 msgstr "%s: directorio incorrecto: '.' no es el primero\n"
 
-#: disk-utils/fsck.minix.c:964 disk-utils/fsck.minix.c:1032
+#: disk-utils/fsck.minix.c:1032
 #, c-format
 msgid "%s: bad directory: '..' isn't second\n"
 msgstr "%s: directorio incorrecto: '..' no es el segundo\n"
 
-#: disk-utils/fsck.minix.c:1066 disk-utils/fsck.minix.c:1084
+#: disk-utils/fsck.minix.c:1066
 msgid "internal error"
 msgstr "Error interno"
 
@@ -506,10 +501,6 @@ msgstr "El nodo-i %d no está en uso; marcado como en uso en el mapa de bits."
 #, c-format
 msgid "Inode %d used, marked unused in the bitmap."
 msgstr "El nodo-i %d está en uso; marcado como no en uso en el mapa de bits."
-
-#: disk-utils/fsck.minix.c:1127 disk-utils/fsck.minix.c:1181
-msgid "Set"
-msgstr "Establecer"
 
 #: disk-utils/fsck.minix.c:1131 disk-utils/fsck.minix.c:1185
 #, c-format
@@ -539,8 +530,12 @@ msgstr "Zona %d: en uso, contados=%d\n"
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "Zona %d: no en uso, contados=%d\n"
 
-#: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:634
-#: disk-utils/mkfs.minix.c:636
+#: disk-utils/fsck.minix.c:1181
+msgid "Set"
+msgstr "Establecer"
+
+#: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:631
+#: disk-utils/mkfs.minix.c:633
 msgid "bad inode size"
 msgstr "tamaño de nodo-i incorrecto"
 
@@ -570,8 +565,7 @@ msgstr "Forzando comprobación del sistema de ficheros en %s.\n"
 #: disk-utils/fsck.minix.c:1307
 #, c-format
 msgid "Filesystem on %s is dirty, needs checking.\n"
-msgstr ""
-"El sistema de ficheros en %s contiene elementos extraños; debe comprobarse.\n"
+msgstr "El sistema de ficheros en %s contiene elementos extraños; debe comprobarse.\n"
 
 #: disk-utils/fsck.minix.c:1333
 #, c-format
@@ -702,7 +696,7 @@ msgstr "demasiados nodos-i; el máximo es 512"
 msgid "not enough space, need at least %lu blocks"
 msgstr "no hay suficiente espacio, se necesitan al menos %lu bloques"
 
-#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2314
+#: disk-utils/mkfs.bfs.c:228 fdisk/fdisk.c:2321
 #, c-format
 msgid "Device: %s\n"
 msgstr "Dispositivo: %s\n"
@@ -786,13 +780,12 @@ msgstr "%s: ¡No queda memoria!\n"
 #: disk-utils/mkfs.c:103
 #, fuzzy, c-format
 msgid "mkfs (%s)\n"
-msgstr "%s: %s (%s)\n"
+msgstr "mkfs versión %s (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:125
 #, fuzzy, c-format
 msgid ""
-"usage: %s [-h] [-v] [-b blksize] [-e edition] [-i file] [-n name] dirname "
-"outfile\n"
+"usage: %s [-h] [-v] [-b blksize] [-e edition] [-i file] [-n name] dirname outfile\n"
 " -h         print this help\n"
 " -v         be verbose\n"
 " -E         make all warnings errors (non-zero exit status)\n"
@@ -806,12 +799,10 @@ msgid ""
 " dirname    root of the filesystem to be compressed\n"
 " outfile    output file\n"
 msgstr ""
-"uso: %s [-h] [-v] [-b tambloq] [-e edición] [-i fich] [-n nombre] nombredir "
-"fsalida\n"
+"uso: %s [-h] [-v] [-b tambloq] [-e edición] [-i fich] [-n nombre] nombredir fsalida\n"
 " -h         muestra esta ayuda\n"
 " -v         sé explicativo\n"
-" -E         convierte en errores todos los avisos (estado de salida no "
-"cero)\n"
+" -E         convierte en errores todos los avisos (estado de salida no cero)\n"
 " -b tambloq utiliza este tamaño de bloque, debe ser el tamaño de página\n"
 " -e edición establece el número de edición (parte de fsid)\n"
 " -i fich    inserta la imagen de un fichero dentro del sistema de ficheros\n"
@@ -824,116 +815,108 @@ msgstr ""
 " fsalida    fichero de salida\n"
 
 #: disk-utils/mkfs.cramfs.c:337
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"Very long (%zu bytes) filename `%s' found.\n"
+"Very long (%u bytes) filename `%s' found.\n"
 " Please increase MAX_INPUT_NAMELEN in mkcramfs.c and recompile.  Exiting.\n"
 msgstr ""
 "Se encontró un nombre de fichero `%2$s' demasiado largo (%1$u bytes).\n"
-" Por favor incremente MAX_INPUT_NAMELEN en mkcramfs.c y recompile. "
-"Saliendo.\n"
+" Por favor incremente MAX_INPUT_NAMELEN en mkcramfs.c y recompile. Saliendo.\n"
 
 #: disk-utils/mkfs.cramfs.c:465
 #, c-format
 msgid "filesystem too big.  Exiting.\n"
 msgstr "sistema de ficheros demasiado grande. Saliendo.\n"
 
-#: disk-utils/mkfs.cramfs.c:628
+#: disk-utils/mkfs.cramfs.c:627
 #, c-format
 msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
 msgstr "YEPA: bloque \"comprimido\" a > 2*longituddelbloque (%ld)\n"
 
-#: disk-utils/mkfs.cramfs.c:647
-#, fuzzy, c-format
-msgid "%6.2f%% (%+ld bytes)\t%s\n"
+#: disk-utils/mkfs.cramfs.c:646
+#, c-format
+msgid "%6.2f%% (%+d bytes)\t%s\n"
 msgstr "%6.2f%% (%+d bytes)\t%s\n"
 
-#: disk-utils/mkfs.cramfs.c:826
-#, fuzzy, c-format
-msgid ""
-"warning: guestimate of required size (upper bound) is %lldMB, but maximum "
-"image size is %uMB.  We might die prematurely.\n"
+#: disk-utils/mkfs.cramfs.c:825
+#, c-format
+msgid "warning: guestimate of required size (upper bound) is %LdMB, but maximum image size is %uMB.  We might die prematurely.\n"
 msgstr ""
 "atención: la estimación del tamaño requerido (cota superior) es %LdMB, pero\n"
 "el tamaño máximo de la imagen es %uMB. Podría abortarse prematuramente.\n"
 
-#: disk-utils/mkfs.cramfs.c:867
+#: disk-utils/mkfs.cramfs.c:866
 #, c-format
 msgid "Including: %s\n"
 msgstr "Incluyendo: %s\n"
 
-#: disk-utils/mkfs.cramfs.c:873
-#, fuzzy, c-format
-msgid "Directory data: %zd bytes\n"
+#: disk-utils/mkfs.cramfs.c:872
+#, c-format
+msgid "Directory data: %d bytes\n"
 msgstr "Datos de directorios: %d bytes\n"
 
-#: disk-utils/mkfs.cramfs.c:881
-#, fuzzy, c-format
-msgid "Everything: %zd kilobytes\n"
+#: disk-utils/mkfs.cramfs.c:880
+#, c-format
+msgid "Everything: %d kilobytes\n"
 msgstr "Todo: %d kilobytes\n"
 
-#: disk-utils/mkfs.cramfs.c:886
-#, fuzzy, c-format
-msgid "Super block: %zd bytes\n"
+#: disk-utils/mkfs.cramfs.c:885
+#, c-format
+msgid "Super block: %d bytes\n"
 msgstr "Superbloque: %d bytes\n"
 
-#: disk-utils/mkfs.cramfs.c:893
+#: disk-utils/mkfs.cramfs.c:892
 #, c-format
 msgid "CRC: %x\n"
 msgstr "CRC: %x\n"
 
-#: disk-utils/mkfs.cramfs.c:898
-#, fuzzy, c-format
-msgid "not enough space allocated for ROM image (%lld allocated, %zu used)\n"
-msgstr ""
-"no hay suficiente espacio para la imagen ROM (asignado %Ld, usado %d)\n"
+#: disk-utils/mkfs.cramfs.c:897
+#, c-format
+msgid "not enough space allocated for ROM image (%Ld allocated, %d used)\n"
+msgstr "no hay suficiente espacio para la imagen ROM (asignado %Ld, usado %d)\n"
 
-#: disk-utils/mkfs.cramfs.c:910
-#, fuzzy, c-format
-msgid "ROM image write failed (%zd %zd)\n"
+#: disk-utils/mkfs.cramfs.c:909
+#, c-format
+msgid "ROM image write failed (%d %d)\n"
 msgstr "falló la escritura de la imagen ROM (%d %d)\n"
 
-#: disk-utils/mkfs.cramfs.c:919
+#: disk-utils/mkfs.cramfs.c:918
 #, c-format
 msgid "warning: filenames truncated to 255 bytes.\n"
 msgstr "atención: los nombres de ficheros se truncan a 255 bytes.\n"
 
-#: disk-utils/mkfs.cramfs.c:922
+#: disk-utils/mkfs.cramfs.c:921
 #, c-format
 msgid "warning: files were skipped due to errors.\n"
 msgstr "atención: se saltaron ficheros debido a errores.\n"
 
-#: disk-utils/mkfs.cramfs.c:925
+#: disk-utils/mkfs.cramfs.c:924
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte).\n"
-msgstr ""
-"atención: los tamaños de los ficheros se truncan a %luMB (menos 1 byte).\n"
+msgstr "atención: los tamaños de los ficheros se truncan a %luMB (menos 1 byte).\n"
 
-#: disk-utils/mkfs.cramfs.c:930
+#: disk-utils/mkfs.cramfs.c:929
 #, c-format
-msgid ""
-"warning: uids truncated to %u bits.  (This may be a security concern.)\n"
+msgid "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
 "atención: los uids se truncan a %u bites.  (Esto podría ser un problema\n"
 "de seguridad.)\n"
 
-#: disk-utils/mkfs.cramfs.c:935
+#: disk-utils/mkfs.cramfs.c:934
 #, c-format
-msgid ""
-"warning: gids truncated to %u bits.  (This may be a security concern.)\n"
+msgid "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
 "atención: los gids se truncan a %u bits. (Esto podría ser un problema\n"
 "de seguridad).\n"
 
-#: disk-utils/mkfs.cramfs.c:940
+#: disk-utils/mkfs.cramfs.c:939
 #, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
 "that some device files will be wrong.\n"
 msgstr ""
 "ATENCIÓN: los números de dispositivo se truncan a %u bits. Esto\n"
-"significa casi con certeza que algunos ficheros de dispositivos serán "
-"erróneos.\n"
+"significa casi con certeza que algunos ficheros de dispositivos serán erróneos.\n"
 
 #: disk-utils/mkfs.minix.c:163
 #, c-format
@@ -1018,12 +1001,12 @@ msgstr ""
 "Bloques incorrectos antes del área de datos: no se puede crear\n"
 "el sistema de ficheros"
 
-#: disk-utils/mkfs.minix.c:580 disk-utils/mkfs.minix.c:605
+#: disk-utils/mkfs.minix.c:580 disk-utils/mkfs.minix.c:602
 #, c-format
 msgid "%d bad blocks\n"
 msgstr "%d bloques incorrectos\n"
 
-#: disk-utils/mkfs.minix.c:582 disk-utils/mkfs.minix.c:607
+#: disk-utils/mkfs.minix.c:582 disk-utils/mkfs.minix.c:604
 #, c-format
 msgid "one bad block\n"
 msgstr "Un bloque incorrecto\n"
@@ -1032,32 +1015,22 @@ msgstr "Un bloque incorrecto\n"
 msgid "can't open file of bad blocks"
 msgstr "No se puede abrir el fichero de bloques incorrectos"
 
-#: disk-utils/mkfs.minix.c:596
-#, c-format
-msgid "badblock number input error on line %d\n"
-msgstr ""
-
-#: disk-utils/mkfs.minix.c:597
-#, fuzzy
-msgid "cannot read badblocks file"
-msgstr "No se puede leer la unidad de disco"
-
-#: disk-utils/mkfs.minix.c:677
+#: disk-utils/mkfs.minix.c:674
 #, c-format
 msgid "strtol error: number of blocks not specified"
 msgstr "error de strtol: no se ha especificado el número de bloques"
 
-#: disk-utils/mkfs.minix.c:706
+#: disk-utils/mkfs.minix.c:703
 #, c-format
 msgid "unable to stat %s"
 msgstr "No se puede ejecutar `stat' sobre %s"
 
-#: disk-utils/mkfs.minix.c:712
+#: disk-utils/mkfs.minix.c:709
 #, c-format
 msgid "unable to open %s"
 msgstr "No se puede abrir %s"
 
-#: disk-utils/mkfs.minix.c:716
+#: disk-utils/mkfs.minix.c:713
 #, c-format
 msgid "will not try to make filesystem on '%s'"
 msgstr "No se intentará crear el sistema de ficheros en '%s'"
@@ -1103,8 +1076,8 @@ msgstr "Uso: %s [-c] [-v0|-v1] [-pTAMPÁG] /dev/nombre [bloques]\n"
 msgid "too many bad pages"
 msgstr "Hay demasiadas páginas incorrectas"
 
-#: disk-utils/mkswap.c:391 misc-utils/look.c:182 misc-utils/setterm.c:1147
-#: text-utils/more.c:1987 text-utils/more.c:1998
+#: disk-utils/mkswap.c:391 misc-utils/look.c:183 misc-utils/setterm.c:1147
+#: text-utils/more.c:1972 text-utils/more.c:1983
 msgid "Out of memory"
 msgstr "No queda memoria"
 
@@ -1121,8 +1094,7 @@ msgstr "%lu páginas incorrectas\n"
 #: disk-utils/mkswap.c:569
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
-msgstr ""
-"%s: error: no se ha especificado dónde configurar el espacio de intercambio\n"
+msgstr "%s: error: no se ha especificado dónde configurar el espacio de intercambio\n"
 
 #: disk-utils/mkswap.c:587
 #, c-format
@@ -1147,8 +1119,7 @@ msgstr "%s: atención: el área de intercambio se trunca a %ldkB\n"
 #: disk-utils/mkswap.c:638
 #, fuzzy, c-format
 msgid "%s: error: label only with v1 swap area\n"
-msgstr ""
-"%s: error: no se ha especificado dónde configurar el espacio de intercambio\n"
+msgstr "%s: error: no se ha especificado dónde configurar el espacio de intercambio\n"
 
 #: disk-utils/mkswap.c:662
 #, fuzzy, c-format
@@ -1173,8 +1144,7 @@ msgid ""
 "the -f option to force it.\n"
 msgstr ""
 "%s: el dispositivo '%s' contiene una etiqueta de disco Sun válida.\n"
-"Esto probablemente significa que crear un espacio de intercambio v0 "
-"destruirá\n"
+"Esto probablemente significa que crear un espacio de intercambio v0 destruirá\n"
 "la tabla de particiones. No se ha creado el espacio de intercambio.\n"
 "Si realmente desea crear el espacio de intercambio swap v0 en dicho\n"
 "dispositivo, utilice la opción -f para forzar la operación.\n"
@@ -1272,8 +1242,7 @@ msgstr "Se ha modificado el disco.\n"
 #, c-format
 msgid "Reboot the system to ensure the partition table is correctly updated.\n"
 msgstr ""
-"Reinicie el sistema para asegurarse de que la tabla de particiones esté "
-"bien\n"
+"Reinicie el sistema para asegurarse de que la tabla de particiones esté bien\n"
 "actualizada.\n"
 
 #: fdisk/cfdisk.c:409
@@ -1346,21 +1315,16 @@ msgid "enlarged logical partitions overlap"
 msgstr "Solapamiento de particiones lógicas ampliadas"
 
 #: fdisk/cfdisk.c:991
-msgid ""
-"!!!! Internal error creating logical drive with no extended partition !!!!"
+msgid "!!!! Internal error creating logical drive with no extended partition !!!!"
 msgstr "¡¡¡¡ Error interno al crear unidad lógica sin partición extendida !!!!"
 
 #: fdisk/cfdisk.c:1002 fdisk/cfdisk.c:1014
-msgid ""
-"Cannot create logical drive here -- would create two extended partitions"
-msgstr ""
-"No se puede crear una unidad lógica aquí; se crearían dos particiones "
-"extendidas"
+msgid "Cannot create logical drive here -- would create two extended partitions"
+msgstr "No se puede crear una unidad lógica aquí; se crearían dos particiones extendidas"
 
 #: fdisk/cfdisk.c:1156
 msgid "Menu item too long. Menu may look odd."
-msgstr ""
-"Elemento de menú demasiado largo; la apariencia del menú puede ser extraña."
+msgstr "Elemento de menú demasiado largo; la apariencia del menú puede ser extraña."
 
 #: fdisk/cfdisk.c:1212
 msgid "Menu without direction. Defaulting horizontal."
@@ -1458,12 +1422,10 @@ msgstr "No se puede abrir la unidad de disco"
 
 #: fdisk/cfdisk.c:1663 fdisk/cfdisk.c:1850
 msgid "Opened disk read-only - you have no permission to write"
-msgstr ""
-"El disco abierto es de sólo lectura; no tiene permiso para escribir en él"
+msgstr "El disco abierto es de sólo lectura; no tiene permiso para escribir en él"
 
 #: fdisk/cfdisk.c:1674
-msgid ""
-"Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
+msgid "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
 msgstr ""
 
 #: fdisk/cfdisk.c:1691
@@ -1484,8 +1446,7 @@ msgstr "¡Atención!: esta operación puede destruir datos del disco"
 
 #: fdisk/cfdisk.c:1866
 #, fuzzy
-msgid ""
-"Are you sure you want to write the partition table to disk? (yes or no): "
+msgid "Are you sure you want to write the partition table to disk? (yes or no): "
 msgstr ""
 "¿Está seguro de que desea escribir la tabla de particiones en el disco?\n"
 "     (sí o no): "
@@ -1515,8 +1476,7 @@ msgid "Wrote partition table to disk"
 msgstr "Se ha escrito la tabla de particiones en el disco"
 
 #: fdisk/cfdisk.c:1909
-msgid ""
-"Wrote partition table, but re-read table failed.  Reboot to update table."
+msgid "Wrote partition table, but re-read table failed.  Reboot to update table."
 msgstr ""
 "Se ha escrito la tabla de particiones, pero la nueva lectura de la tabla\n"
 "ha fallado. Reinicie para actualizar la tabla."
@@ -1528,16 +1488,14 @@ msgstr ""
 "El MBR de DOS no podrá iniciar esto."
 
 #: fdisk/cfdisk.c:1921
-msgid ""
-"More than one primary partition is marked bootable. DOS MBR cannot boot this."
+msgid "More than one primary partition is marked bootable. DOS MBR cannot boot this."
 msgstr ""
 "Hay marcada como iniciable más de una partición primaria.\n"
 "El MBR de DOS no puede iniciar esto."
 
 #: fdisk/cfdisk.c:1979 fdisk/cfdisk.c:2098 fdisk/cfdisk.c:2182
 msgid "Enter filename or press RETURN to display on screen: "
-msgstr ""
-"Escriba el nombre de fichero o pulse Intro para visualizar en pantalla: "
+msgstr "Escriba el nombre de fichero o pulse Intro para visualizar en pantalla: "
 
 #: fdisk/cfdisk.c:1988 fdisk/cfdisk.c:2106 fdisk/cfdisk.c:2190
 #, c-format
@@ -1604,20 +1562,12 @@ msgid "               First       Last\n"
 msgstr "              Primer     Último\n"
 
 #: fdisk/cfdisk.c:2120
-msgid ""
-" # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
-"Flag\n"
-msgstr ""
-"Nº Tipo       Sector      Sector   Despl.  Longitud  Tipo sist. fich. (ID) "
-"Indicad.\n"
+msgid " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) Flag\n"
+msgstr "Nº Tipo       Sector      Sector   Despl.  Longitud  Tipo sist. fich. (ID) Indicad.\n"
 
 #: fdisk/cfdisk.c:2121
-msgid ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
-msgstr ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
+msgid "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
+msgstr "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
 
 #: fdisk/cfdisk.c:2204
 msgid "         ---Starting---      ----Ending----    Start     Number of\n"
@@ -1697,8 +1647,7 @@ msgstr "  d          Suprime la partición actual"
 
 #: fdisk/cfdisk.c:2282
 msgid "  g          Change cylinders, heads, sectors-per-track parameters"
-msgstr ""
-"  g          Cambia los parámetros de cilindros, cabezas y sectores por pista"
+msgstr "  g          Cambia los parámetros de cilindros, cabezas y sectores por pista"
 
 #: fdisk/cfdisk.c:2283
 msgid "             WARNING: This option should only be used by people who"
@@ -1730,8 +1679,7 @@ msgstr "  n          Crea una nueva partición a partir del espacio libre"
 
 #: fdisk/cfdisk.c:2290
 msgid "  p          Print partition table to the screen or to a file"
-msgstr ""
-"  p          Imprime la tabla de particiones en la pantalla o en un fichero"
+msgstr "  p          Imprime la tabla de particiones en la pantalla o en un fichero"
 
 #: fdisk/cfdisk.c:2291
 msgid "             There are several different formats for the partition"
@@ -1743,9 +1691,7 @@ msgstr "             entre los que puede elegir:"
 
 #: fdisk/cfdisk.c:2293
 msgid "                r - Raw data (exactly what would be written to disk)"
-msgstr ""
-"                r - Datos en bruto (exactamente lo que escribiría en el "
-"disco)"
+msgstr "                r - Datos en bruto (exactamente lo que escribiría en el disco)"
 
 #: fdisk/cfdisk.c:2294
 msgid "                s - Table ordered by sectors"
@@ -1765,8 +1711,7 @@ msgstr "  t          Cambia el tipo de sistema de ficheros"
 
 #: fdisk/cfdisk.c:2298
 msgid "  u          Change units of the partition size display"
-msgstr ""
-"  u          Cambia las unidades de visualización del tamaño de la partición"
+msgstr "  u          Cambia las unidades de visualización del tamaño de la partición"
 
 #: fdisk/cfdisk.c:2299
 msgid "             Rotates through MB, sectors and cylinders"
@@ -1774,8 +1719,7 @@ msgstr "             Alterna entre MB, sectores y cilindros"
 
 #: fdisk/cfdisk.c:2300
 msgid "  W          Write partition table to disk (must enter upper case W)"
-msgstr ""
-"  W          Escribe la tabla de particiones en el disco (W en mayúsculas)"
+msgstr "  W          Escribe la tabla de particiones en el disco (W en mayúsculas)"
 
 #: fdisk/cfdisk.c:2301
 msgid "             Since this might destroy data on the disk, you must"
@@ -1783,8 +1727,7 @@ msgstr "             Esta operación de escritura puede causar la destrucción"
 
 #: fdisk/cfdisk.c:2302
 msgid "             either confirm or deny the write by entering `yes' or"
-msgstr ""
-"             de datos del disco, por lo que debe confirmarla o rechazarla"
+msgstr "             de datos del disco, por lo que debe confirmarla o rechazarla"
 
 #: fdisk/cfdisk.c:2303
 msgid "             `no'"
@@ -1995,8 +1938,7 @@ msgstr "Maximizar"
 
 #: fdisk/cfdisk.c:2734
 msgid "Maximize disk usage of the current partition (experts only)"
-msgstr ""
-"Maximiza el uso de disco de la partición actual (sólo usuarios avanzados)"
+msgstr "Maximiza el uso de disco de la partición actual (sólo usuarios avanzados)"
 
 #: fdisk/cfdisk.c:2735
 msgid "New"
@@ -2044,8 +1986,7 @@ msgstr "Escribir"
 
 #: fdisk/cfdisk.c:2740
 msgid "Write partition table to disk (this might destroy data)"
-msgstr ""
-"Escribe la tabla de particiones en el disco (puede destruirse información)"
+msgstr "Escribe la tabla de particiones en el disco (puede destruirse información)"
 
 #: fdisk/cfdisk.c:2786
 msgid "Cannot make this partition bootable"
@@ -2209,8 +2150,7 @@ msgstr "   s   Muestra la etiqueta del disco completa"
 
 #: fdisk/fdiskbsdlabel.c:140
 msgid "   t   change a partition's filesystem id"
-msgstr ""
-"   t   Cambia el identificador del sistema de ficheros de una partición"
+msgstr "   t   Cambia el identificador del sistema de ficheros de una partición"
 
 #: fdisk/fdiskbsdlabel.c:141
 msgid "   u   change units (cylinders/sectors)"
@@ -2489,8 +2429,7 @@ msgid ""
 msgstr ""
 "Uso:   fdisk [-b SSZ] [-u] DISCO    Cambia tabla de particiones\n"
 "       fdisk -l [-b SSZ] [-u] DISCO Lista tabla(s) de particiones\n"
-"       fdisk -s PARTICIÓN           Obtiene tamaño de particiones en "
-"bloques\n"
+"       fdisk -s PARTICIÓN           Obtiene tamaño de particiones en bloques\n"
 "       fdisk -v                     Obtiene versión de fdisk\n"
 "El valor de DISCO tiene el formato /dev/hdb o /dev/sda\n"
 "y el valor de PARTICIÓN tiene el formato /dev/hda7\n"
@@ -2749,9 +2688,7 @@ msgstr "Atención: puntero de enlace adicional en tabla de particiones %d\n"
 #: fdisk/fdisk.c:727
 #, c-format
 msgid "Warning: ignoring extra data in partition table %d\n"
-msgstr ""
-"Atención: no se tienen en cuenta los datos adicionales de la tabla de "
-"particiones %d\n"
+msgstr "Atención: no se tienen en cuenta los datos adicionales de la tabla de particiones %d\n"
 
 #: fdisk/fdisk.c:779
 #, c-format
@@ -2797,12 +2734,8 @@ msgstr ""
 
 #: fdisk/fdisk.c:1035
 #, c-format
-msgid ""
-"Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
-"disklabel\n"
-msgstr ""
-"El dispositivo no contiene una tabla de particiones DOS válida ni una "
-"etiqueta de disco Sun o SGI o OSF\n"
+msgid "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"
+msgstr "El dispositivo no contiene una tabla de particiones DOS válida ni una etiqueta de disco Sun o SGI o OSF\n"
 
 #: fdisk/fdisk.c:1052
 #, c-format
@@ -2816,12 +2749,8 @@ msgstr "No se tiene en cuenta la partición extendida adicional %d\n"
 
 #: fdisk/fdisk.c:1077
 #, c-format
-msgid ""
-"Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
-"(rite)\n"
-msgstr ""
-"Atención: el indicador 0x%04x inválido de la tabla de particiones %d se "
-"corregirá mediante w(rite)\n"
+msgid "Warning: invalid flag 0x%04x of partition table %d will be corrected by w(rite)\n"
+msgstr "Atención: el indicador 0x%04x inválido de la tabla de particiones %d se corregirá mediante w(rite)\n"
 
 #: fdisk/fdisk.c:1099
 #, c-format
@@ -2959,14 +2888,13 @@ msgstr "Se ha cambiado el tipo de sistema de la partición %d por %x (%s)\n"
 
 #: fdisk/fdisk.c:1515
 #, fuzzy, c-format
-msgid "System type of partition %d is unchanged to %x (%s)\n"
+msgid "System type of partition %d is unchangedto %x (%s)\n"
 msgstr "Se ha cambiado el tipo de sistema de la partición %d por %x (%s)\n"
 
 #: fdisk/fdisk.c:1567
 #, c-format
 msgid "Partition %d has different physical/logical beginnings (non-Linux?):\n"
-msgstr ""
-"La partición %d tiene distintos principios físicos/lógicos (¿no Linux?):\n"
+msgstr "La partición %d tiene distintos principios físicos/lógicos (¿no Linux?):\n"
 
 #: fdisk/fdisk.c:1569 fdisk/fdisk.c:1577 fdisk/fdisk.c:1586 fdisk/fdisk.c:1596
 #, c-format
@@ -3150,8 +3078,7 @@ msgstr "%lld sectores no asignados\n"
 #: fdisk/fdisk.c:1998 fdisk/fdisksgilabel.c:632 fdisk/fdisksunlabel.c:407
 #, c-format
 msgid "Partition %d is already defined.  Delete it before re-adding it.\n"
-msgstr ""
-"La partición %d ya está definida. Suprímala antes de volver a añadirla.\n"
+msgstr "La partición %d ya está definida. Suprímala antes de volver a añadirla.\n"
 
 #: fdisk/fdisk.c:2040
 #, fuzzy, c-format
@@ -3192,8 +3119,7 @@ msgstr ""
 #: fdisk/fdisk.c:2179
 #, c-format
 msgid "You must delete some partition and add an extended partition first\n"
-msgstr ""
-"Primero debe suprimir alguna partición y añadir una partición extendida\n"
+msgstr "Primero debe suprimir alguna partición y añadir una partición extendida\n"
 
 #: fdisk/fdisk.c:2182
 #, c-format
@@ -3238,12 +3164,12 @@ msgstr ""
 "¡Se ha modificado la tabla de particiones!\n"
 "\n"
 
-#: fdisk/fdisk.c:2256
+#: fdisk/fdisk.c:2254
 #, c-format
 msgid "Calling ioctl() to re-read partition table.\n"
 msgstr "Llamando a ioctl() para volver a leer la tabla de particiones.\n"
 
-#: fdisk/fdisk.c:2263
+#: fdisk/fdisk.c:2270
 #, c-format
 msgid ""
 "\n"
@@ -3257,7 +3183,7 @@ msgstr ""
 "El núcleo todavía usa la tabla antigua.\n"
 "La nueva tabla se usará en el próximo reinicio.\n"
 
-#: fdisk/fdisk.c:2273
+#: fdisk/fdisk.c:2280
 #, c-format
 msgid ""
 "\n"
@@ -3270,7 +3196,7 @@ msgstr ""
 "particiones DOS 6.x, consulte la página man de fdisk\n"
 "para ver información adicional.\n"
 
-#: fdisk/fdisk.c:2279
+#: fdisk/fdisk.c:2286
 #, c-format
 msgid ""
 "\n"
@@ -3279,100 +3205,91 @@ msgstr ""
 "\n"
 "Error al cerrar el fichero\n"
 
-#: fdisk/fdisk.c:2283
+#: fdisk/fdisk.c:2290
 #, c-format
 msgid "Syncing disks.\n"
 msgstr "Se están sincronizando los discos.\n"
 
-#: fdisk/fdisk.c:2330
+#: fdisk/fdisk.c:2337
 #, c-format
 msgid "Partition %d has no data area\n"
 msgstr "La partición %d no tiene ninguna área de datos\n"
 
-#: fdisk/fdisk.c:2335
+#: fdisk/fdisk.c:2342
 msgid "New beginning of data"
 msgstr "Nuevo principio de datos"
 
-#: fdisk/fdisk.c:2351
+#: fdisk/fdisk.c:2358
 msgid "Expert command (m for help): "
 msgstr "Orden avanzada (m para obtener ayuda): "
 
-#: fdisk/fdisk.c:2364
+#: fdisk/fdisk.c:2371
 msgid "Number of cylinders"
 msgstr "Número de cilindros"
 
-#: fdisk/fdisk.c:2391
+#: fdisk/fdisk.c:2398
 msgid "Number of heads"
 msgstr "Número de cabezas"
 
-#: fdisk/fdisk.c:2418
+#: fdisk/fdisk.c:2425
 msgid "Number of sectors"
 msgstr "Número de sectores"
 
-#: fdisk/fdisk.c:2421
+#: fdisk/fdisk.c:2428
 #, c-format
 msgid "Warning: setting sector offset for DOS compatiblity\n"
-msgstr ""
-"Atención: estableciendo desplazamiento de sector para compatibilidad con "
-"DOS\n"
+msgstr "Atención: estableciendo desplazamiento de sector para compatibilidad con DOS\n"
 
-#: fdisk/fdisk.c:2480
+#: fdisk/fdisk.c:2487
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't "
-"support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 
-#: fdisk/fdisk.c:2502
+#: fdisk/fdisk.c:2509
 #, c-format
 msgid "Disk %s doesn't contain a valid partition table\n"
 msgstr "El disco %s no contiene una tabla de particiones válida\n"
 
-#: fdisk/fdisk.c:2513
+#: fdisk/fdisk.c:2520
 #, c-format
 msgid "Cannot open %s\n"
 msgstr "No se puede abrir %s\n"
 
-#: fdisk/fdisk.c:2531 fdisk/sfdisk.c:2423
+#: fdisk/fdisk.c:2538 fdisk/sfdisk.c:2423
 #, c-format
 msgid "cannot open %s\n"
 msgstr "No se puede abrir %s\n"
 
-#: fdisk/fdisk.c:2551
+#: fdisk/fdisk.c:2558
 #, c-format
 msgid "%c: unknown command\n"
 msgstr "%c: orden desconocida\n"
 
-#: fdisk/fdisk.c:2621
+#: fdisk/fdisk.c:2628
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
-msgstr ""
-"Este núcleo encuentra el tamaño del sector por sí mismo; no se tiene en "
-"cuenta la opción -b\n"
+msgstr "Este núcleo encuentra el tamaño del sector por sí mismo; no se tiene en cuenta la opción -b\n"
 
-#: fdisk/fdisk.c:2625
+#: fdisk/fdisk.c:2632
 #, c-format
-msgid ""
-"Warning: the -b (set sector size) option should be used with one specified "
-"device\n"
-msgstr ""
-"Atención: la opción -b (establecer tamaño de sector) debe utilizarse con un "
-"dispositivo especificado\n"
+msgid "Warning: the -b (set sector size) option should be used with one specified device\n"
+msgstr "Atención: la opción -b (establecer tamaño de sector) debe utilizarse con un dispositivo especificado\n"
 
-#: fdisk/fdisk.c:2686
+#: fdisk/fdisk.c:2693
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 "Se ha detectado una etiqueta de disco OSF/1 en %s, entrando en el modo de\n"
 "etiqueta de disco.\n"
 
-#: fdisk/fdisk.c:2696
+#: fdisk/fdisk.c:2703
 msgid "Command (m for help): "
 msgstr "Orden (m para obtener ayuda): "
 
-#: fdisk/fdisk.c:2712
+#: fdisk/fdisk.c:2719
 #, c-format
 msgid ""
 "\n"
@@ -3381,16 +3298,16 @@ msgstr ""
 "\n"
 "El fichero de inicio actual es: %s\n"
 
-#: fdisk/fdisk.c:2714
+#: fdisk/fdisk.c:2721
 msgid "Please enter the name of the new boot file: "
 msgstr "Escriba el nombre del nuevo fichero de inicio: "
 
-#: fdisk/fdisk.c:2716
+#: fdisk/fdisk.c:2723
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "No se ha modificado el fichero de inicio\n"
 
-#: fdisk/fdisk.c:2789
+#: fdisk/fdisk.c:2796
 #, c-format
 msgid ""
 "\n"
@@ -3501,19 +3418,13 @@ msgstr "Linux RAID"
 
 #: fdisk/fdisksgilabel.c:163
 #, c-format
-msgid ""
-"According to MIPS Computer Systems, Inc the Label must not contain more than "
-"512 bytes\n"
-msgstr ""
-"Según MIPS Computer Systems, Inc. la etiqueta puede contener como máximo 512 "
-"bytes\n"
+msgid "According to MIPS Computer Systems, Inc the Label must not contain more than 512 bytes\n"
+msgstr "Según MIPS Computer Systems, Inc. la etiqueta puede contener como máximo 512 bytes\n"
 
 #: fdisk/fdisksgilabel.c:182
 #, c-format
 msgid "Detected sgi disklabel with wrong checksum.\n"
-msgstr ""
-"Se ha detectado una etiqueta de disco sgi con suma de comprobación "
-"incorrecta.\n"
+msgstr "Se ha detectado una etiqueta de disco sgi con suma de comprobación incorrecta.\n"
 
 #: fdisk/fdisksgilabel.c:200
 #, fuzzy, c-format
@@ -3612,8 +3523,7 @@ msgid ""
 msgstr ""
 "\n"
 "\tTenga en cuenta que no se comprueba la existencia del fichero de inicio.\n"
-"\tEl valor predeterminado de SGI es \"/unix\" y para la copia de seguridad "
-"\"/unix.save\".\n"
+"\tEl valor predeterminado de SGI es \"/unix\" y para la copia de seguridad \"/unix.save\".\n"
 
 #: fdisk/fdisksgilabel.c:348
 #, c-format
@@ -3637,8 +3547,7 @@ msgstr "No hay ninguna partición definida\n"
 #: fdisk/fdisksgilabel.c:451
 #, c-format
 msgid "IRIX likes when Partition 11 covers the entire disk.\n"
-msgstr ""
-"Para IRIX se recomienda que la partición 11 abarque el disco completo.\n"
+msgstr "Para IRIX se recomienda que la partición 11 abarque el disco completo.\n"
 
 #: fdisk/fdisksgilabel.c:453
 #, c-format
@@ -3731,10 +3640,8 @@ msgstr ""
 "Se recomienda que la partición en el desplazamiento 0\n"
 "sea del tipo \"SGI volhdr\"; el sistema IRIX la utilizará para\n"
 "recuperar de su directorio herramientas autónomas como sash y fx.\n"
-"Sólo la sección de disco completo \"SGI volume\" puede infringir esta "
-"regla.\n"
-"Escriba SÍ si está seguro de querer dar una etiqueta distinta a esta "
-"partición.\n"
+"Sólo la sección de disco completo \"SGI volume\" puede infringir esta regla.\n"
+"Escriba SÍ si está seguro de querer dar una etiqueta distinta a esta partición.\n"
 
 #: fdisk/fdisksgilabel.c:555 fdisk/fdisksunlabel.c:545
 msgid "YES\n"
@@ -3748,8 +3655,7 @@ msgstr "Se ha producido un solapamiento de partición en el disco.\n"
 #: fdisk/fdisksgilabel.c:638
 #, c-format
 msgid "Attempting to generate entire disk entry automatically.\n"
-msgstr ""
-"Se está intentando generar una entrada de disco completo automáticamente.\n"
+msgstr "Se está intentando generar una entrada de disco completo automáticamente.\n"
 
 #: fdisk/fdisksgilabel.c:643
 #, c-format
@@ -3759,9 +3665,7 @@ msgstr "Ya existen particiones que abarcan el disco completo.\n"
 #: fdisk/fdisksgilabel.c:647
 #, c-format
 msgid "You got a partition overlap on the disk. Fix it first!\n"
-msgstr ""
-"Se ha producido un solapamiento de particiones en el disco. Corríjalo antes "
-"de continuar.\n"
+msgstr "Se ha producido un solapamiento de particiones en el disco. Corríjalo antes de continuar.\n"
 
 #: fdisk/fdisksgilabel.c:656 fdisk/fdisksgilabel.c:685
 #, c-format
@@ -3775,9 +3679,7 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:672
 #, c-format
 msgid "You will get a partition overlap on the disk. Fix it first!\n"
-msgstr ""
-"Se producirá un solapamiento de particiones en el disco. Corríjalo antes de "
-"continuar.\n"
+msgstr "Se producirá un solapamiento de particiones en el disco. Corríjalo antes de continuar.\n"
 
 #: fdisk/fdisksgilabel.c:677
 #, c-format
@@ -3800,8 +3702,7 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:729 fdisk/fdisksunlabel.c:220
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
-"d.\n"
+"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %d.\n"
 "This value may be truncated for devices > 33.8 GB.\n"
 msgstr ""
 "Atención: El ioctl de BLKGETSIZE falló en %s. Se usará un valor para\n"
@@ -3877,8 +3778,7 @@ msgid ""
 "e.g. heads, sectors, cylinders and partitions\n"
 "or force a fresh label (s command in main menu)\n"
 msgstr ""
-"Se ha detectado una etiqueta de disco sun con suma de comprobación "
-"incorrecta.\n"
+"Se ha detectado una etiqueta de disco sun con suma de comprobación incorrecta.\n"
 "Probablemente tendrá que establecer todos los valores,\n"
 "como cabezas, sectores, cilindros y particiones\n"
 "o forzar una nueva etiqueta (orden s en menú principal)\n"
@@ -3886,31 +3786,22 @@ msgstr ""
 #: fdisk/fdisksunlabel.c:147
 #, fuzzy, c-format
 msgid "Detected sun disklabel with wrong version [0x%08x].\n"
-msgstr ""
-"Se ha detectado una etiqueta de disco sgi con suma de comprobación "
-"incorrecta.\n"
+msgstr "Se ha detectado una etiqueta de disco sgi con suma de comprobación incorrecta.\n"
 
 #: fdisk/fdisksunlabel.c:152
 #, fuzzy, c-format
 msgid "Detected sun disklabel with wrong sanity [0x%08x].\n"
-msgstr ""
-"Se ha detectado una etiqueta de disco sgi con suma de comprobación "
-"incorrecta.\n"
+msgstr "Se ha detectado una etiqueta de disco sgi con suma de comprobación incorrecta.\n"
 
 #: fdisk/fdisksunlabel.c:157
 #, fuzzy, c-format
 msgid "Detected sun disklabel with wrong num_partitions [%u].\n"
-msgstr ""
-"Se ha detectado una etiqueta de disco sgi con suma de comprobación "
-"incorrecta.\n"
+msgstr "Se ha detectado una etiqueta de disco sgi con suma de comprobación incorrecta.\n"
 
 #: fdisk/fdisksunlabel.c:162
 #, fuzzy, c-format
-msgid ""
-"Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
-msgstr ""
-"Atención: el indicador 0x%04x inválido de la tabla de particiones %d se "
-"corregirá mediante w(rite)\n"
+msgid "Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
+msgstr "Atención: el indicador 0x%04x inválido de la tabla de particiones %d se corregirá mediante w(rite)\n"
 
 #: fdisk/fdisksunlabel.c:192
 #, c-format
@@ -4450,9 +4341,7 @@ msgstr "No se puede ejecutar stat para fichero de restaurar partición (%s)\n"
 
 #: fdisk/sfdisk.c:346
 msgid "partition restore file has wrong size - not restoring\n"
-msgstr ""
-"Tamaño incorrecto de fichero de restaurar partición; no se efectúa "
-"restauración\n"
+msgstr "Tamaño incorrecto de fichero de restaurar partición; no se efectúa restauración\n"
 
 #: fdisk/sfdisk.c:350
 msgid "out of memory?\n"
@@ -4534,26 +4423,21 @@ msgstr ""
 
 #: fdisk/sfdisk.c:589
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
+msgid "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
 msgstr ""
 "%s de partición %s tiene un valor imposible para cabeza: %lu\n"
 "(debe estar entre 0 y %lu)\n"
 
 #: fdisk/sfdisk.c:594
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for sector: %lu (should be in 1-%"
-"lu)\n"
+msgid "%s of partition %s has impossible value for sector: %lu (should be in 1-%lu)\n"
 msgstr ""
 "%s de partición %s tiene un valor imposible para sector: %lu\n"
 "(debe estar entre 1 y %lu)\n"
 
 #: fdisk/sfdisk.c:599
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for cylinders: %lu (should be in 0-%"
-"lu)\n"
+msgid "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%lu)\n"
 msgstr ""
 "%s de partición %s tiene un valor imposible para cilindros: %lu\n"
 "(debe estar entre 0 y %lu)\n"
@@ -4653,8 +4537,7 @@ msgid ""
 "Units = mebibytes of 1048576 bytes, blocks of 1024 bytes, counting from %d\n"
 "\n"
 msgstr ""
-"Unidades = megabytes de 1048576 bytes, bloques de 1024 bytes, contando desde "
-"%d\n"
+"Unidades = megabytes de 1048576 bytes, bloques de 1024 bytes, contando desde %d\n"
 "\n"
 
 #: fdisk/sfdisk.c:941
@@ -4665,21 +4548,17 @@ msgstr "   Disp.  Inic Princ.  Fin    MiB    Nºbloques Id  Sistema\n"
 #: fdisk/sfdisk.c:1101
 #, c-format
 msgid "\t\tstart: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"\t\tprincipio: (cil.,cab.,sect.) esperado (%ld,%ld,%ld) detectado (%ld,%ld,%"
-"ld)\n"
+msgstr "\t\tprincipio: (cil.,cab.,sect.) esperado (%ld,%ld,%ld) detectado (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1108
 #, c-format
 msgid "\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"\t\tfin: (cil.,cab.,sect.) esperado (%ld,%ld,%ld) detectado (%ld,%ld,%ld)\n"
+msgstr "\t\tfin: (cil.,cab.,sect.) esperado (%ld,%ld,%ld) detectado (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1111
 #, c-format
 msgid "partition ends on cylinder %ld, beyond the end of the disk\n"
-msgstr ""
-"La partición termina en el cilindro %ld, más allá del final del disco\n"
+msgstr "La partición termina en el cilindro %ld, más allá del final del disco\n"
 
 #: fdisk/sfdisk.c:1121
 msgid "No partitions found\n"
@@ -4708,8 +4587,7 @@ msgstr "Extrañamente sólo hay %d particiones definidas.\n"
 #: fdisk/sfdisk.c:1185
 #, c-format
 msgid "Warning: partition %s has size 0 but is not marked Empty\n"
-msgstr ""
-"Atención: la partición %s tiene tamaño 0 pero no está marcada como vacía\n"
+msgstr "Atención: la partición %s tiene tamaño 0 pero no está marcada como vacía\n"
 
 #: fdisk/sfdisk.c:1188
 #, c-format
@@ -4719,8 +4597,7 @@ msgstr "Atención: la partición %s tiene tamaño 0 y es iniciable\n"
 #: fdisk/sfdisk.c:1191
 #, c-format
 msgid "Warning: partition %s has size 0 and nonzero start\n"
-msgstr ""
-"Atención: la partición %s tiene tamaño 0 y principio distinto de cero\n"
+msgstr "Atención: la partición %s tiene tamaño 0 y principio distinto de cero\n"
 
 #: fdisk/sfdisk.c:1202
 #, c-format
@@ -4785,8 +4662,7 @@ msgid ""
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
 msgstr ""
 "Atención: hay más de una partición primaria marcada como iniciable (activa)\n"
-"Esto no es poblema para LILO, pero el MBR de DOS no se iniciará con este "
-"disco.\n"
+"Esto no es poblema para LILO, pero el MBR de DOS no se iniciará con este disco.\n"
 
 #: fdisk/sfdisk.c:1306
 msgid ""
@@ -4801,10 +4677,8 @@ msgid ""
 "Warning: no primary partition is marked bootable (active)\n"
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
 msgstr ""
-"Atención: no hay ninguna partición primaria marcada como iniciable "
-"(activa).\n"
-"Esto no es problema para LILO, pero el MBR de DOS no iniciará con este "
-"disco.\n"
+"Atención: no hay ninguna partición primaria marcada como iniciable (activa).\n"
+"Esto no es problema para LILO, pero el MBR de DOS no iniciará con este disco.\n"
 
 #: fdisk/sfdisk.c:1326
 msgid "start"
@@ -4812,11 +4686,8 @@ msgstr "comienzo"
 
 #: fdisk/sfdisk.c:1329
 #, c-format
-msgid ""
-"partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"Partición %s: principio: (cil.,cab.,sect.) esperado (%ld,%ld,%ld) detectado "
-"(%ld,%ld,%ld)\n"
+msgid "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
+msgstr "Partición %s: principio: (cil.,cab.,sect.) esperado (%ld,%ld,%ld) detectado (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1335
 msgid "end"
@@ -4825,15 +4696,12 @@ msgstr "final"
 #: fdisk/sfdisk.c:1338
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"Partición %s: fin: (cil.,cab.,sect.) esperado (%ld,%ld,%ld) detectado (%ld,%"
-"ld,%ld)\n"
+msgstr "Partición %s: fin: (cil.,cab.,sect.) esperado (%ld,%ld,%ld) detectado (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1341
 #, c-format
 msgid "partition %s ends on cylinder %ld, beyond the end of the disk\n"
-msgstr ""
-"La partición %s termina en el cilindro %ld, más allá del final del disco\n"
+msgstr "La partición %s termina en el cilindro %ld, más allá del final del disco\n"
 
 #: fdisk/sfdisk.c:1366
 #, c-format
@@ -4946,8 +4814,7 @@ msgstr "Tipo no permitido\n"
 #: fdisk/sfdisk.c:2102
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
-msgstr ""
-"Atención: el tamaño dado (%lu) supera el tamaño máximo permitido (%lu)\n"
+msgstr "Atención: el tamaño dado (%lu) supera el tamaño máximo permitido (%lu)\n"
 
 #: fdisk/sfdisk.c:2108
 msgid "Warning: empty partition\n"
@@ -4984,10 +4851,8 @@ msgid ""
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
 "Usually you only need to specify <start> and <size> (and perhaps <type>).\n"
 msgstr ""
-"Entrada con el formato siguiente; los campos ausentes utilizan el valor "
-"predeterminado.\n"
-"<principio> <tamaño> <tipo [E,S,L,X,hex]> <iniciable [-,*]> <cil,cab,sec> "
-"<cil,cab,sec>\n"
+"Entrada con el formato siguiente; los campos ausentes utilizan el valor predeterminado.\n"
+"<principio> <tamaño> <tipo [E,S,L,X,hex]> <iniciable [-,*]> <cil,cab,sec> <cil,cab,sec>\n"
 "Normalmente sólo debe especificar <principio> y <tamaño> (y quizás <tipo>).\n"
 
 #: fdisk/sfdisk.c:2289
@@ -5009,8 +4874,7 @@ msgstr "    -s [o --show-size]:  Muestra el tamaño de una partición"
 
 #: fdisk/sfdisk.c:2293
 msgid "    -c [or --id]:        print or change partition Id"
-msgstr ""
-"    -c [o --id]:         Imprime o cambia el identificador de partición"
+msgstr "    -c [o --id]:         Imprime o cambia el identificador de partición"
 
 #: fdisk/sfdisk.c:2294
 msgid "    -l [or --list]:      list partitions of each device"
@@ -5024,13 +4888,10 @@ msgstr ""
 
 #: fdisk/sfdisk.c:2296
 msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
-msgstr ""
-"    -i [o --increment]:  Número de cilindros, etc. desde 1 y no desde 0"
+msgstr "    -i [o --increment]:  Número de cilindros, etc. desde 1 y no desde 0"
 
 #: fdisk/sfdisk.c:2297
-msgid ""
-"    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
-"MB"
+msgid "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB"
 msgstr ""
 "    -uS, -uB, -uC, -uM:  Acepta/muestra en unidades de\n"
 "                         sectores/bloques/cilindros/MB"
@@ -5041,9 +4902,7 @@ msgstr "    -T [o --list-types]: Muestra los tipos de particiones conocidos"
 
 #: fdisk/sfdisk.c:2299
 msgid "    -D [or --DOS]:       for DOS-compatibility: waste a little space"
-msgstr ""
-"    -D [o --DOS]:        Para compatibilidad con DOS: se pierde algo de "
-"espacio"
+msgstr "    -D [o --DOS]:        Para compatibilidad con DOS: se pierde algo de espacio"
 
 #: fdisk/sfdisk.c:2300
 msgid "    -R [or --re-read]:   make kernel reread partition table"
@@ -5053,16 +4912,14 @@ msgstr ""
 
 #: fdisk/sfdisk.c:2301
 msgid "    -N# :                change only the partition with number #"
-msgstr ""
-"    -N# :                Cambia únicamente la partición con el número #"
+msgstr "    -N# :                Cambia únicamente la partición con el número #"
 
 #: fdisk/sfdisk.c:2302
 msgid "    -n :                 do not actually write to disk"
 msgstr "    -n :                 No escribe realmente en el disco"
 
 #: fdisk/sfdisk.c:2303
-msgid ""
-"    -O file :            save the sectors that will be overwritten to file"
+msgid "    -O file :            save the sectors that will be overwritten to file"
 msgstr ""
 "    -O fichero :         Guarda los sectores que se van a sobreescribir\n"
 "                         en `fichero'"
@@ -5085,16 +4942,12 @@ msgstr "opciones peligrosas:"
 
 #: fdisk/sfdisk.c:2308
 msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
-msgstr ""
-"    -g [o --show-geometry]:  Imprime la idea del núcleo sobre la geometría"
+msgstr "    -g [o --show-geometry]:  Imprime la idea del núcleo sobre la geometría"
 
 #: fdisk/sfdisk.c:2309
 #, fuzzy
-msgid ""
-"    -G [or --show-pt-geometry]: print geometry guessed from the partition "
-"table"
-msgstr ""
-"    -g [o --show-geometry]:  Imprime la idea del núcleo sobre la geometría"
+msgid "    -G [or --show-pt-geometry]: print geometry guessed from the partition table"
+msgstr "    -g [o --show-geometry]:  Imprime la idea del núcleo sobre la geometría"
 
 #: fdisk/sfdisk.c:2310
 msgid ""
@@ -5105,11 +4958,9 @@ msgstr ""
 "                             salida o espera sus descriptores en entrada"
 
 #: fdisk/sfdisk.c:2312
-msgid ""
-"    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
+msgid "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
 msgstr ""
-"    -L  [o --Linux]:       No muestra avisos sobre aspectos irrelevantes "
-"para\n"
+"    -L  [o --Linux]:       No muestra avisos sobre aspectos irrelevantes para\n"
 "                           Linux"
 
 #: fdisk/sfdisk.c:2313
@@ -5122,18 +4973,15 @@ msgstr "    Puede modificar la geometría detectada utilizando:"
 
 #: fdisk/sfdisk.c:2315
 msgid "    -C# [or --cylinders #]:set the number of cylinders to use"
-msgstr ""
-"    -C# [o --cylinders #]: Establece el número de cilindros que se utilizarán"
+msgstr "    -C# [o --cylinders #]: Establece el número de cilindros que se utilizarán"
 
 #: fdisk/sfdisk.c:2316
 msgid "    -H# [or --heads #]:    set the number of heads to use"
-msgstr ""
-"    -H# [o --heads #]:     Establece el número de cabezas que se utilizarán"
+msgstr "    -H# [o --heads #]:     Establece el número de cabezas que se utilizarán"
 
 #: fdisk/sfdisk.c:2317
 msgid "    -S# [or --sectors #]:  set the number of sectors to use"
-msgstr ""
-"    -S# [o --sectors #]:   Establece el número de sectores que se utilizarán"
+msgstr "    -S# [o --sectors #]:   Establece el número de sectores que se utilizarán"
 
 #: fdisk/sfdisk.c:2318
 msgid "You can disable all consistency checking with:"
@@ -5141,8 +4989,7 @@ msgstr "Puede desactivar toda comprobación de coherencia con:"
 
 #: fdisk/sfdisk.c:2319
 msgid "    -f  [or --force]:      do what I say, even if it is stupid"
-msgstr ""
-"    -f  [o --force]:       Hace lo que ordene el usuario, aunque sea ilógico"
+msgstr "    -f  [o --force]:       Hace lo que ordene el usuario, aunque sea ilógico"
 
 #: fdisk/sfdisk.c:2325
 msgid "Usage:"
@@ -5156,8 +5003,7 @@ msgstr "%s dispositivo\t\t Enumera las particiones activas del dispositivo\n"
 #: fdisk/sfdisk.c:2327
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
-msgstr ""
-"%s dispositivo n1 n2 ... activar particiones n1 ..., desactivar el resto\n"
+msgstr "%s dispositivo n1 n2 ... activar particiones n1 ..., desactivar el resto\n"
 
 #: fdisk/sfdisk.c:2328
 #, c-format
@@ -5168,8 +5014,7 @@ msgstr "%s -An dispositivo\t activa la partición n, desactiva el resto\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk "
-"doesn't support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 
@@ -5286,11 +5131,9 @@ msgid ""
 "Use the --no-reread flag to suppress this check.\n"
 msgstr ""
 "\n"
-"Este disco está actualmente en uso; no se aconseja volver a crear "
-"particiones.\n"
+"Este disco está actualmente en uso; no se aconseja volver a crear particiones.\n"
 "Desmonte todos los sistemas de ficheros y deshaga todas las particiones de\n"
-"intercambio de este disco. Utilice el indicador --no-reread para eliminar "
-"esta\n"
+"intercambio de este disco. Utilice el indicador --no-reread para eliminar esta\n"
 "comprobación.\n"
 
 #: fdisk/sfdisk.c:3018
@@ -5321,15 +5164,12 @@ msgid ""
 "I don't like these partitions - nothing changed.\n"
 "(If you really want this, use the --force option.)\n"
 msgstr ""
-"El sistema no encuentra adecuadas estas particiones; no se ha cambiado "
-"nada.\n"
+"El sistema no encuentra adecuadas estas particiones; no se ha cambiado nada.\n"
 "(Si realmente desea realizar esta operación, use la opción --force.)\n"
 
 #: fdisk/sfdisk.c:3051
 msgid "I don't like this - probably you should answer No\n"
-msgstr ""
-"El sistema no encuentra adecuada esta operación; probablemente deba "
-"responder No\n"
+msgstr "El sistema no encuentra adecuada esta operación; probablemente deba responder No\n"
 
 #: fdisk/sfdisk.c:3056
 #, c-format
@@ -5375,8 +5215,7 @@ msgid ""
 "(See fdisk(8).)\n"
 msgstr ""
 "Si ha creado o modificado una partición DOS, como /dev/foo7, utilice dd(1)\n"
-"para poner a cero los 512 primeros bytes: dd if=/dev/zero of=/dev/foo7 "
-"bs=512 count=1\n"
+"para poner a cero los 512 primeros bytes: dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
 "(Véase fdisk(8).)\n"
 
 #: getopt/getopt.c:235
@@ -5408,11 +5247,8 @@ msgid "              parameters\n"
 msgstr "              parámetros\n"
 
 #: getopt/getopt.c:330
-msgid ""
-"  -a, --alternative            Allow long options starting with single -\n"
-msgstr ""
-"  -a, --alternative            Permite opciones largas con un solo - "
-"inicial\n"
+msgid "  -a, --alternative            Allow long options starting with single -\n"
+msgstr "  -a, --alternative            Permite opciones largas con un solo - inicial\n"
 
 #: getopt/getopt.c:331
 msgid "  -h, --help                   This small usage guide\n"
@@ -5423,11 +5259,8 @@ msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr "  -l, --longoptions=opclargas  Opciones largas para reconocer\n"
 
 #: getopt/getopt.c:333
-msgid ""
-"  -n, --name=progname          The name under which errors are reported\n"
-msgstr ""
-"  -n, --name=nombreprograma    El nombre con el que se informa de los "
-"errores\n"
+msgid "  -n, --name=progname          The name under which errors are reported\n"
+msgstr "  -n, --name=nombreprograma    El nombre con el que se informa de los errores\n"
 
 #: getopt/getopt.c:334
 msgid "  -o, --options=optstring      Short options to be recognized\n"
@@ -5445,9 +5278,7 @@ msgstr "  -Q, --quiet-output           No hay salida normal\n"
 
 #: getopt/getopt.c:337
 msgid "  -s, --shell=shell            Set shell quoting conventions\n"
-msgstr ""
-"  -s, --shell=intérpr.órdenes  Define las convenciones de cita del "
-"intérprete\n"
+msgstr "  -s, --shell=intérpr.órdenes  Define las convenciones de cita del intérprete\n"
 
 #: getopt/getopt.c:338
 msgid "  -T, --test                   Test for getopt(1) version\n"
@@ -5513,8 +5344,7 @@ msgstr "No se ha podido obtener permiso porque no se ha intentado.\n"
 #: hwclock/cmos.c:605
 #, c-format
 msgid "%s is unable to get I/O port access:  the iopl(3) call failed.\n"
-msgstr ""
-"%s no puede obtener acceso al puerto de E/S: la llamada iopl(3) ha fallado.\n"
+msgstr "%s no puede obtener acceso al puerto de E/S: la llamada iopl(3) ha fallado.\n"
 
 #: hwclock/cmos.c:608
 #, c-format
@@ -5530,7 +5360,7 @@ msgstr "Se presupone que el reloj de hardware tiene la hora %s.\n"
 msgid "UTC"
 msgstr "UTC"
 
-#: hwclock/hwclock.c:230 hwclock/hwclock.c:323
+#: hwclock/hwclock.c:230 hwclock/hwclock.c:323 sys-utils/rtcwake.c:381
 msgid "local"
 msgstr "local"
 
@@ -5581,9 +5411,7 @@ msgstr "Valores inválidos en reloj de hardware: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 #: hwclock/hwclock.c:413
 #, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr ""
-"Hora del reloj de hardware: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld segundos "
-"desde 1969\n"
+msgstr "Hora del reloj de hardware: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld segundos desde 1969\n"
 
 #: hwclock/hwclock.c:441
 #, c-format
@@ -5593,8 +5421,7 @@ msgstr "Hora leída del reloj de hardware: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 #: hwclock/hwclock.c:468
 #, c-format
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr ""
-"Estableciendo reloj de hardware en %.2d:%.2d:%.2d = %ld segundos desde 1969\n"
+msgstr "Estableciendo reloj de hardware en %.2d:%.2d:%.2d = %ld segundos desde 1969\n"
 
 #: hwclock/hwclock.c:474
 #, c-format
@@ -5612,9 +5439,7 @@ msgstr ""
 
 #: hwclock/hwclock.c:556
 #, c-format
-msgid ""
-"The Hardware Clock registers contain values that are either invalid (e.g. "
-"50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
+msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
 msgstr ""
 "Los registros del reloj de hardware contienen valores que no son válidos\n"
 "(por ejemplo, día 50 del mes) o exceden el rango que puede utilizarse\n"
@@ -5651,9 +5476,7 @@ msgstr "Ejecutando orden date: %s\n"
 
 #: hwclock/hwclock.c:625
 msgid "Unable to run 'date' program in /bin/sh shell. popen() failed"
-msgstr ""
-"No se puede ejecutar el programa 'date' en intérprete de órdenes /bin/sh. "
-"popen() ha fallado"
+msgstr "No se puede ejecutar el programa 'date' en intérprete de órdenes /bin/sh. popen() ha fallado"
 
 #: hwclock/hwclock.c:633
 #, c-format
@@ -5678,15 +5501,13 @@ msgstr ""
 #: hwclock/hwclock.c:647
 #, c-format
 msgid ""
-"The date command issued by %s returned something other than an integer where "
-"the converted time value was expected.\n"
+"The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
 "The command was:\n"
 "  %s\n"
 "The response was:\n"
 " %s\n"
 msgstr ""
-"La orden date emitido por %s ha devuelto un valor no entero cuando se "
-"esperaba el valor de hora convertida.\n"
+"La orden date emitido por %s ha devuelto un valor no entero cuando se esperaba el valor de hora convertida.\n"
 "La orden fue:\n"
 "  %s\n"
 "La respuesta fue:\n"
@@ -5699,12 +5520,8 @@ msgstr "La cadena de fecha %s equivale a %ld segundos desde 1969.\n"
 
 #: hwclock/hwclock.c:690
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot set the "
-"System Time from it.\n"
-msgstr ""
-"El reloj de hardware no contiene una hora válida, por lo que no se puede "
-"establecer la hora del sistema a partir de ese valor.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it.\n"
+msgstr "El reloj de hardware no contiene una hora válida, por lo que no se puede establecer la hora del sistema a partir de ese valor.\n"
 
 #: hwclock/hwclock.c:712
 #, c-format
@@ -5724,9 +5541,7 @@ msgstr "\ttz.tz_minuteswest = %d\n"
 #: hwclock/hwclock.c:718
 #, c-format
 msgid "Not setting system clock because running in test mode.\n"
-msgstr ""
-"No se establece el reloj del sistema ya que la ejecución es en modo de "
-"prueba.\n"
+msgstr "No se establece el reloj del sistema ya que la ejecución es en modo de prueba.\n"
 
 #: hwclock/hwclock.c:727
 #, c-format
@@ -5739,9 +5554,7 @@ msgstr "settimeofday() ha fallado"
 
 #: hwclock/hwclock.c:760
 #, c-format
-msgid ""
-"Not adjusting drift factor because the Hardware Clock previously contained "
-"garbage.\n"
+msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
 msgstr ""
 "No se ajusta el factor de desfase debido a que el reloj de hardware\n"
 "contenía anteriormente datos extraños.\n"
@@ -5758,9 +5571,7 @@ msgstr ""
 
 #: hwclock/hwclock.c:771
 #, c-format
-msgid ""
-"Not adjusting drift factor because it has been less than a day since the "
-"last calibration.\n"
+msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
 msgstr ""
 "No se ajusta el factor de desfase debido a que hace menos de un día que se\n"
 "realizó la última calibración.\n"
@@ -5768,14 +5579,11 @@ msgstr ""
 #: hwclock/hwclock.c:819
 #, c-format
 msgid ""
-"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
-"of %f seconds/day.\n"
+"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
-"El reloj se ha desfasado %.1f segundos en los últimos %d segundos a pesar "
-"de\n"
-"utilizar un factor de desfase de %f segundos por día. Se ajusta el factor "
-"de\n"
+"El reloj se ha desfasado %.1f segundos en los últimos %d segundos a pesar de\n"
+"utilizar un factor de desfase de %f segundos por día. Se ajusta el factor de\n"
 "desfase en %f segundos por día\n"
 
 #: hwclock/hwclock.c:870
@@ -5786,9 +5594,7 @@ msgstr "El tiempo transcurrido desde el último ajuste es de %d segundos\n"
 #: hwclock/hwclock.c:872
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
-msgstr ""
-"Es preciso insertar %d segundos y establecer como referencia la hora %.6f "
-"segundos hacia atrás\n"
+msgstr "Es preciso insertar %d segundos y establecer como referencia la hora %.6f segundos hacia atrás\n"
 
 #: hwclock/hwclock.c:901
 #, c-format
@@ -5811,18 +5617,13 @@ msgstr "Parámetros de ajuste del desfase no actualizados.\n"
 
 #: hwclock/hwclock.c:967
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
-msgstr ""
-"El reloj de hardware no contiene una hora válida, por lo que no se puede "
-"ajustar.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
+msgstr "El reloj de hardware no contiene una hora válida, por lo que no se puede ajustar.\n"
 
 #: hwclock/hwclock.c:999
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
-msgstr ""
-"El ajuste necesario es inferior a un segundo, por lo que no se establece el "
-"reloj.\n"
+msgstr "El ajuste necesario es inferior a un segundo, por lo que no se establece el reloj.\n"
 
 #: hwclock/hwclock.c:1025
 #, c-format
@@ -5842,8 +5643,7 @@ msgstr "No se puede establecer el reloj del sistema.\n"
 #: hwclock/hwclock.c:1153
 #, c-format
 msgid ""
-"The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
-"machine.\n"
+"The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken.\n"
 msgstr ""
@@ -5864,26 +5664,21 @@ msgstr "El núcleo presupone el valor de época %lu\n"
 
 #: hwclock/hwclock.c:1167
 #, c-format
-msgid ""
-"To set the epoch value, you must use the 'epoch' option to tell to what "
-"value to set it.\n"
-msgstr ""
-"Para establecer el valor de época, debe utilizar la opción 'epoch' para "
-"indicar en qué valor debe definirse.\n"
+msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it.\n"
+msgstr "Para establecer el valor de época, debe utilizar la opción 'epoch' para indicar en qué valor debe definirse.\n"
 
 #: hwclock/hwclock.c:1170
 #, c-format
 msgid "Not setting the epoch to %d - testing only.\n"
-msgstr ""
-"No se está estableciendo el valor de época en %d; sólo se está probando.\n"
+msgstr "No se está estableciendo el valor de época en %d; sólo se está probando.\n"
 
 #: hwclock/hwclock.c:1173
 #, c-format
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "No se puede establecer el valor de época en el núcleo.\n"
 
-#: hwclock/hwclock.c:1186 misc-utils/cal.c:332 misc-utils/kill.c:189
-#, fuzzy, c-format
+#: hwclock/hwclock.c:1186 misc-utils/cal.c:333 misc-utils/kill.c:189
+#, c-format
 msgid "%s from %s\n"
 msgstr "%s de %s\n"
 
@@ -5927,26 +5722,21 @@ msgstr ""
 "  --help        Muestra esta ayuda\n"
 "  --show        Lee el reloj de hardware e imprime el resultado\n"
 "  --set         Establece el RTC en la hora proporcionada con --date\n"
-"  --hctosys     Establece la hora del sistema a partir del reloj de "
-"hardware\n"
-"  --systohc     Establece el reloj de hardware en la hora actual del "
-"sistema\n"
+"  --hctosys     Establece la hora del sistema a partir del reloj de hardware\n"
+"  --systohc     Establece el reloj de hardware en la hora actual del sistema\n"
 "  --adjust      Ajusta el RTC para compensar el desfase sistemático desde \n"
 "                la última vez que se estableció o ajustó el reloj\n"
 "  --getepoch    Imprime el valor de época del reloj de hardware del núcleo\n"
-"  --setepoch    Establece el valor de época del reloj de hardware del "
-"núcleo \n"
+"  --setepoch    Establece el valor de época del reloj de hardware del núcleo \n"
 "                en el valor proporcionado en --epoch\n"
 "  --version     Imprime la versión de hwclock en la salida estándar\n"
 "\n"
 "Opciones: \n"
-"  --utc         El reloj de hardware está en Tiempo Universal Coordinado "
-"(UTC)\n"
+"  --utc         El reloj de hardware está en Tiempo Universal Coordinado (UTC)\n"
 "  --localtime   El reloj de hardware tiene la hora local\n"
 "  --directisa   Accede al bus ISA directamente en lugar de a %s\n"
 "  --badyear     Hace caso omiso del año del RTC ya que el BIOS no funciona\n"
-"  --date        Especifica la fecha/hora en que se desea establecer el "
-"reloj\n"
+"  --date        Especifica la fecha/hora en que se desea establecer el reloj\n"
 "                de hardware\n"
 "  --epoch=año   Especifica el año que corresponde al principio del valor de\n"
 "                época del reloj de hardware\n"
@@ -5960,8 +5750,7 @@ msgid ""
 "                tell hwclock the type of alpha you have (see hwclock(8))\n"
 msgstr ""
 "  --jensen, --arc, --srm, --funky-toy\n"
-"                Indica al reloj de hardware el tipo de Alpha (ver hwclock"
-"(8))\n"
+"                Indica al reloj de hardware el tipo de Alpha (ver hwclock(8))\n"
 
 #: hwclock/hwclock.c:1320
 #, fuzzy, c-format
@@ -5984,27 +5773,18 @@ msgstr ""
 
 #: hwclock/hwclock.c:1445
 #, c-format
-msgid ""
-"%s: The --utc and --localtime options are mutually exclusive.  You specified "
-"both.\n"
-msgstr ""
-"%s: las opciones --utc y --localtime se excluyen mutuamente. Ha especificado "
-"ambas.\n"
+msgid "%s: The --utc and --localtime options are mutually exclusive.  You specified both.\n"
+msgstr "%s: las opciones --utc y --localtime se excluyen mutuamente. Ha especificado ambas.\n"
 
 #: hwclock/hwclock.c:1452
 #, c-format
-msgid ""
-"%s: The --adjust and --noadjfile options are mutually exclusive.  You "
-"specified both.\n"
-msgstr ""
-"%s: las opciones --adjust y --noadjfile se excluyen mutuamente. Ha "
-"especificado ambas.\n"
+msgid "%s: The --adjust and --noadjfile options are mutually exclusive.  You specified both.\n"
+msgstr "%s: las opciones --adjust y --noadjfile se excluyen mutuamente. Ha especificado ambas.\n"
 
 #: hwclock/hwclock.c:1459
 #, c-format
 msgid "%s: With --noadjfile, you must specify either --utc or --localtime\n"
-msgstr ""
-"%s: Con --noadjfile, debe especificarse o bien --utc o bien --localtime\n"
+msgstr "%s: Con --noadjfile, debe especificarse o bien --utc o bien --localtime\n"
 
 #: hwclock/hwclock.c:1473
 #, c-format
@@ -6023,12 +5803,8 @@ msgstr "Únicamente el superusuario puede cambiar el reloj del sistema.\n"
 
 #: hwclock/hwclock.c:1499
 #, c-format
-msgid ""
-"Sorry, only the superuser can change the Hardware Clock epoch in the "
-"kernel.\n"
-msgstr ""
-"Sólo el superusuario puede cambiar el valor de época del reloj de hardware "
-"del núcleo.\n"
+msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel.\n"
+msgstr "Sólo el superusuario puede cambiar el valor de época del reloj de hardware del núcleo.\n"
 
 #: hwclock/hwclock.c:1519
 #, c-format
@@ -6037,12 +5813,8 @@ msgstr "No se puede acceder al reloj de hardware por ningún método conocido.\n"
 
 #: hwclock/hwclock.c:1523
 #, c-format
-msgid ""
-"Use the --debug option to see the details of our search for an access "
-"method.\n"
-msgstr ""
-"Utilice la opción --debug para ver los detalles de la búsqueda para un "
-"método de acceso.\n"
+msgid "Use the --debug option to see the details of our search for an access method.\n"
+msgstr "Utilice la opción --debug para ver los detalles de la búsqueda para un método de acceso.\n"
 
 #: hwclock/kd.c:55
 #, c-format
@@ -6053,7 +5825,7 @@ msgstr "Esperando en bucle que cambie la hora de KDGHWCLK\n"
 msgid "KDGHWCLK ioctl to read time failed"
 msgstr "Error de ioctl KDGHWCLK al leer la hora"
 
-#: hwclock/kd.c:79 hwclock/rtc.c:202
+#: hwclock/kd.c:79 hwclock/rtc.c:205
 #, c-format
 msgid "Timed out waiting for time change.\n"
 msgstr "Se ha excedido el tiempo de espera del cambio de hora.\n"
@@ -6079,113 +5851,105 @@ msgstr "No se puede abrir /dev/tty1 o /dev/vc/1"
 msgid "KDGHWCLK ioctl failed"
 msgstr "Error de ioctl KDGHWCLK"
 
-#: hwclock/rtc.c:130 hwclock/rtc.c:223
+#: hwclock/rtc.c:133 hwclock/rtc.c:226
 #, c-format
 msgid "open() of %s failed"
 msgstr "Error de open() de %s"
 
-#: hwclock/rtc.c:164
+#: hwclock/rtc.c:167
 #, c-format
 msgid "ioctl() to %s to read the time failed.\n"
 msgstr "Error de ioctl() con %s al leer la hora.\n"
 
-#: hwclock/rtc.c:186
+#: hwclock/rtc.c:189
 #, c-format
 msgid "Waiting in loop for time from %s to change\n"
 msgstr "Esperando en bucle que cambie la hora de %s\n"
 
-#: hwclock/rtc.c:241
+#: hwclock/rtc.c:244
 #, c-format
 msgid "%s does not have interrupt functions. "
 msgstr "%s no tiene funciones de interrupción. "
 
-#: hwclock/rtc.c:252
+#: hwclock/rtc.c:255
 #, c-format
 msgid "read() to %s to wait for clock tick failed"
 msgstr "Error de read() de %s al esperar señal de reloj"
 
-#: hwclock/rtc.c:270
+#: hwclock/rtc.c:273
 #, c-format
 msgid "select() to %s to wait for clock tick failed"
 msgstr "La ejecución de select() a %s para esperar una señal de reloj falló"
 
-#: hwclock/rtc.c:273
+#: hwclock/rtc.c:276
 #, c-format
 msgid "select() to %s to wait for clock tick timed out\n"
 msgstr "La ejecución de select() a %s para esperar una señal de reloj expiró\n"
 
-#: hwclock/rtc.c:282
+#: hwclock/rtc.c:285
 #, c-format
 msgid "ioctl() to %s to turn off update interrupts failed"
 msgstr "Error de ioctl() con %s al desactivar interrupciones de actualización"
 
-#: hwclock/rtc.c:285
+#: hwclock/rtc.c:288
 #, c-format
 msgid "ioctl() to %s to turn on update interrupts failed unexpectedly"
-msgstr ""
-"Error inesperado de ioctl() con %s al activar interrupciones de actualización"
+msgstr "Error inesperado de ioctl() con %s al activar interrupciones de actualización"
 
-#: hwclock/rtc.c:344
+#: hwclock/rtc.c:347
 #, c-format
 msgid "ioctl() to %s to set the time failed.\n"
 msgstr "Error de ioctl() con %s al establecer la hora.\n"
 
-#: hwclock/rtc.c:350
+#: hwclock/rtc.c:353
 #, c-format
 msgid "ioctl(%s) was successful.\n"
 msgstr "ioctl(%s) ha finalizado correctamente.\n"
 
-#: hwclock/rtc.c:379
+#: hwclock/rtc.c:382
 #, c-format
 msgid "Open of %s failed"
 msgstr "Error al abrir %s"
 
-#: hwclock/rtc.c:397 hwclock/rtc.c:443
+#: hwclock/rtc.c:400 hwclock/rtc.c:446
 #, c-format
-msgid ""
-"To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
-"device driver via the device special file %s.  This file does not exist on "
-"this system.\n"
+msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system.\n"
 msgstr ""
-"Para modificar el valor de época del núcleo, se debe acceder al controlador "
-"de\n"
+"Para modificar el valor de época del núcleo, se debe acceder al controlador de\n"
 "dispositivo 'rtc' de Linux mediante el fichero especial de dispositivo %s.\n"
 "Este fichero no existe en este sistema.\n"
 
-#: hwclock/rtc.c:402 hwclock/rtc.c:448
+#: hwclock/rtc.c:405 hwclock/rtc.c:451
 #, c-format
 msgid "Unable to open %s"
 msgstr "No se puede abrir %s"
 
-#: hwclock/rtc.c:409
+#: hwclock/rtc.c:412
 #, c-format
 msgid "ioctl(RTC_EPOCH_READ) to %s failed"
 msgstr "Error de ioctl(RTC_EPOCH_READ) con %s"
 
-#: hwclock/rtc.c:415
+#: hwclock/rtc.c:418
 #, c-format
 msgid "we have read epoch %ld from %s with RTC_EPOCH_READ ioctl.\n"
 msgstr "Se ha leído el valor de época %ld de %s con ioctl RTC_EPOCH_READ.\n"
 
-#: hwclock/rtc.c:435
+#: hwclock/rtc.c:438
 #, c-format
 msgid "The epoch value may not be less than 1900.  You requested %ld\n"
 msgstr "El valor de época no puede ser inferior a 1900. Ha solicitado %ld\n"
 
-#: hwclock/rtc.c:453
+#: hwclock/rtc.c:456
 #, c-format
 msgid "setting epoch to %ld with RTC_EPOCH_SET ioctl to %s.\n"
 msgstr "Estableciendo época en %ld con ioctl RTC_EPOCH_SET en %s.\n"
 
-#: hwclock/rtc.c:458
-#, c-format
-msgid ""
-"The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
-msgstr ""
-"El controlador de dispositivo del núcleo para %s no tiene la ioctl "
-"RTC_EPOCH_SET.\n"
-
 #: hwclock/rtc.c:461
+#, c-format
+msgid "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
+msgstr "El controlador de dispositivo del núcleo para %s no tiene la ioctl RTC_EPOCH_SET.\n"
+
+#: hwclock/rtc.c:464
 #, c-format
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "Error de ioctl(RTC_EPOCH_SET) de %s"
@@ -6318,17 +6082,11 @@ msgstr "%s: desbordamiento de entrada"
 #: login-utils/agetty.c:1233
 #, fuzzy, c-format
 msgid ""
-"Usage: %s [-8hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
-"login_host] baud_rate,... line [termtype]\n"
-"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
-"line baud_rate,... [termtype]\n"
+"Usage: %s [-8hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\n"
+"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"
 msgstr ""
-"Uso: %s [-hiLmw] [-l programa_inicio_sesión] [-t tiempo_espera] [-I "
-"cadenainicialización] [-H host_inicio_sesión] velocidad_baudios,... línea "
-"[tipo_terminal]\n"
-"o bien\t[-hiLmw] [-l programa_inicio_sesión] [-t tiempo_espera] [-I "
-"cadena_inicialización] [-H host_inicio_sesión]línea velocidad_baudios,... "
-"[tipo_terminal]\n"
+"Uso: %s [-hiLmw] [-l programa_inicio_sesión] [-t tiempo_espera] [-I cadenainicialización] [-H host_inicio_sesión] velocidad_baudios,... línea [tipo_terminal]\n"
+"o bien\t[-hiLmw] [-l programa_inicio_sesión] [-t tiempo_espera] [-I cadena_inicialización] [-H host_inicio_sesión]línea velocidad_baudios,... [tipo_terminal]\n"
 
 #: login-utils/checktty.c:85 login-utils/checktty.c:106
 #, c-format
@@ -6353,67 +6111,67 @@ msgstr "Inicio de sesión en %s desde %s denegado de forma predeterminada.\n"
 msgid "Login on %s from %s denied.\n"
 msgstr "Inicio de sesión en %s desde %s denegado.\n"
 
-#: login-utils/chfn.c:133 login-utils/chsh.c:119
+#: login-utils/chfn.c:128 login-utils/chsh.c:114
 #, c-format
 msgid "%s: you (user %d) don't exist.\n"
 msgstr "%s: el usuario %d no existe.\n"
 
-#: login-utils/chfn.c:140 login-utils/chsh.c:126
+#: login-utils/chfn.c:135 login-utils/chsh.c:121
 #, c-format
 msgid "%s: user \"%s\" does not exist.\n"
 msgstr "%s: el usuario \"%s\" no existe.\n"
 
-#: login-utils/chfn.c:145 login-utils/chsh.c:131
+#: login-utils/chfn.c:140 login-utils/chsh.c:126
 #, c-format
 msgid "%s: can only change local entries; use yp%s instead.\n"
-msgstr ""
-"%s: sólo se pueden modificar entradas locales; utilice yp%s en su lugar.\n"
+msgstr "%s: sólo se pueden modificar entradas locales; utilice yp%s en su lugar.\n"
 
-#: login-utils/chfn.c:156 login-utils/chsh.c:142
+#: login-utils/chfn.c:151 login-utils/chsh.c:137
 msgid "Unknown user context"
 msgstr "Contexto de usuario desconocido"
 
-#: login-utils/chfn.c:157
+#: login-utils/chfn.c:152
 #, c-format
 msgid "%s: %s is not authorized to change the finger info of %s\n"
 msgstr "%s: %s no está autorizado a cambiar la información de finger de %s\n"
 
-#: login-utils/chfn.c:164 login-utils/chsh.c:150
+#: login-utils/chfn.c:159 login-utils/chsh.c:145
 #, c-format
 msgid "%s: Can't set default context for /etc/passwd"
 msgstr "%s: No se puede establecer el contexto predeterminado para /etc/passwd"
 
-#: login-utils/chfn.c:178
+#: login-utils/chfn.c:173
 #, c-format
 msgid "Changing finger information for %s.\n"
 msgstr "Cambiando información de finger para %s.\n"
 
-#: login-utils/chfn.c:189
-#, fuzzy, c-format
-msgid "chfn: PAM Failure, aborting: %s\n"
-msgstr "login: error de PAM; anulando: %s\n"
+#: login-utils/chfn.c:179 login-utils/chfn.c:183 login-utils/chfn.c:190
+#: login-utils/chfn.c:194 login-utils/chsh.c:177 login-utils/chsh.c:181
+#: login-utils/chsh.c:188 login-utils/chsh.c:192
+msgid "Password error."
+msgstr "Error de contraseña."
 
-#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
+#: login-utils/chfn.c:203 login-utils/chsh.c:201 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:333
 #: mount/lomount.c:336
 msgid "Password: "
 msgstr "Contraseña: "
 
-#: login-utils/chfn.c:215 login-utils/chsh.c:214
+#: login-utils/chfn.c:206 login-utils/chsh.c:204
 msgid "Incorrect password."
 msgstr "Contraseña incorrecta."
 
-#: login-utils/chfn.c:226
+#: login-utils/chfn.c:217
 #, c-format
 msgid "Finger information not changed.\n"
 msgstr "No se ha cambiado la información de finger.\n"
 
-#: login-utils/chfn.c:328
+#: login-utils/chfn.c:319
 #, c-format
 msgid "Usage: %s [ -f full-name ] [ -o office ] "
 msgstr "Uso: %s [ -f nombre-completo ] [ -o oficina ] "
 
-#: login-utils/chfn.c:329
+#: login-utils/chfn.c:320
 #, c-format
 msgid ""
 "[ -p office-phone ]\n"
@@ -6422,12 +6180,12 @@ msgstr ""
 "[ -p teléfono-oficina ]\n"
 "\t[ -h teléfono-particular ] "
 
-#: login-utils/chfn.c:330
+#: login-utils/chfn.c:321
 #, c-format
 msgid "[ --help ] [ --version ]\n"
 msgstr "[ --help ] [ --version ]\n"
 
-#: login-utils/chfn.c:401 login-utils/chsh.c:321
+#: login-utils/chfn.c:392 login-utils/chsh.c:312
 #, c-format
 msgid ""
 "\n"
@@ -6436,90 +6194,77 @@ msgstr ""
 "\n"
 "Operación anulada.\n"
 
-#: login-utils/chfn.c:434
+#: login-utils/chfn.c:425
 #, c-format
 msgid "field is too long.\n"
 msgstr "Campo demasiado largo.\n"
 
-#: login-utils/chfn.c:442
+#: login-utils/chfn.c:433
 #, c-format
 msgid "'%c' is not allowed.\n"
 msgstr "'%c' no está permitido.\n"
 
-#: login-utils/chfn.c:447
+#: login-utils/chfn.c:438
 #, c-format
 msgid "Control characters are not allowed.\n"
 msgstr "Los caracteres de control no están permitidos.\n"
 
-#: login-utils/chfn.c:512
+#: login-utils/chfn.c:503
 #, c-format
 msgid "Finger information *NOT* changed.  Try again later.\n"
-msgstr ""
-"*NO* se ha cambiado la información de finger. Inténtelo de nuevo más "
-"adelante.\n"
+msgstr "*NO* se ha cambiado la información de finger. Inténtelo de nuevo más adelante.\n"
 
-#: login-utils/chfn.c:515
+#: login-utils/chfn.c:506
 #, c-format
 msgid "Finger information changed.\n"
 msgstr "Se ha cambiado la información de finger.\n"
 
-#: login-utils/chfn.c:529 login-utils/chsh.c:439 sys-utils/cytune.c:321
+#: login-utils/chfn.c:520 login-utils/chsh.c:427 sys-utils/cytune.c:321
 msgid "malloc failed"
 msgstr "La asignación de memoria (malloc) ha fallado"
 
-#: login-utils/chsh.c:143
+#: login-utils/chsh.c:138
 #, c-format
 msgid "%s: %s is not authorized to change the shell of %s\n"
 msgstr "%s: %s no está autorizado a cambiar el shell de %s\n"
 
-#: login-utils/chsh.c:164
+#: login-utils/chsh.c:158
 #, c-format
-msgid ""
-"%s: Running UID doesn't match UID of user we're altering, shell change "
-"denied\n"
+msgid "%s: Running UID doesn't match UID of user we're altering, shell change denied\n"
 msgstr ""
 "%s: El UID en ejecución no coincide con el UID del usuario que se está\n"
 "alterando, cambio de shell denegado\n"
 
-#: login-utils/chsh.c:170
+#: login-utils/chsh.c:164
 #, c-format
 msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
-msgstr ""
-"%s: el intérprete de órdenes no está en /etc/shells; cambio de intérprete de "
-"órdenes denegado\n"
+msgstr "%s: el intérprete de órdenes no está en /etc/shells; cambio de intérprete de órdenes denegado\n"
 
-#: login-utils/chsh.c:177
+#: login-utils/chsh.c:171
 #, c-format
 msgid "Changing shell for %s.\n"
 msgstr "Cambiando intérprete de órdenes para %s.\n"
 
-#: login-utils/chsh.c:188
-#, fuzzy, c-format
-msgid "chsh: PAM Failure, aborting: %s\n"
-msgstr "login: error de PAM; anulando: %s\n"
-
-#: login-utils/chsh.c:222
+#: login-utils/chsh.c:212
 msgid "New shell"
 msgstr "Nuevo intérprete de órdenes"
 
-#: login-utils/chsh.c:229
+#: login-utils/chsh.c:219
 #, c-format
 msgid "Shell not changed.\n"
 msgstr "No se ha cambiado el intérprete de órdenes.\n"
 
-#: login-utils/chsh.c:235
+#: login-utils/chsh.c:226
 #, c-format
 msgid "Shell *NOT* changed.  Try again later.\n"
-msgstr ""
-"*NO* se ha cambiado el intérprete de órdenes. Inténtelo de nuevo más "
-"adelante.\n"
+msgstr "*NO* se ha cambiado el intérprete de órdenes. Inténtelo de nuevo más adelante.\n"
 
-#: login-utils/chsh.c:238
+#: login-utils/chsh.c:229
 #, c-format
 msgid "Shell changed.\n"
 msgstr "Se ha cambiado el intérprete de órdenes.\n"
 
-#: login-utils/chsh.c:303
+#: login-utils/chsh.c:294
 #, c-format
 msgid ""
 "Usage: %s [ -s shell ] [ --list-shells ] [ --help ] [ --version ]\n"
@@ -6528,57 +6273,57 @@ msgstr ""
 "Uso: %s [ -s shell ] [ --list-shells ] [ --help ] [ --version ]\n"
 "     [ nombredeusuario ]\n"
 
-#: login-utils/chsh.c:349
+#: login-utils/chsh.c:337
 #, c-format
 msgid "%s: shell must be a full path name.\n"
 msgstr "%s: el intérprete de órdenes debe ser un nombre de ruta completo.\n"
 
-#: login-utils/chsh.c:353
+#: login-utils/chsh.c:341
 #, c-format
 msgid "%s: \"%s\" does not exist.\n"
 msgstr "%s: \"%s\" no existe.\n"
 
-#: login-utils/chsh.c:357
+#: login-utils/chsh.c:345
 #, c-format
 msgid "%s: \"%s\" is not executable.\n"
 msgstr "%s: \"%s\" no es ejecutable.\n"
 
-#: login-utils/chsh.c:364
+#: login-utils/chsh.c:352
 #, c-format
 msgid "%s: '%c' is not allowed.\n"
 msgstr "%s: '%c' no está permitido.\n"
 
-#: login-utils/chsh.c:368
+#: login-utils/chsh.c:356
 #, c-format
 msgid "%s: Control characters are not allowed.\n"
 msgstr "%s: los caracteres de control no están permitidos.\n"
 
-#: login-utils/chsh.c:375
+#: login-utils/chsh.c:363
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells\n"
 msgstr "Atención: \"%s\" no figura en /etc/shells\n"
 
-#: login-utils/chsh.c:377
+#: login-utils/chsh.c:365
 #, c-format
 msgid "%s: \"%s\" is not listed in /etc/shells.\n"
 msgstr "%s: \"%s\" no figura en /etc/shells.\n"
 
-#: login-utils/chsh.c:379
+#: login-utils/chsh.c:367
 #, c-format
 msgid "%s: use -l option to see list\n"
 msgstr "%s: utilice la opción -l para ver una lista\n"
 
-#: login-utils/chsh.c:385
+#: login-utils/chsh.c:373
 #, c-format
 msgid "Warning: \"%s\" is not listed in /etc/shells.\n"
 msgstr "Atención: \"%s\" no figura en /etc/shells.\n"
 
-#: login-utils/chsh.c:386
+#: login-utils/chsh.c:374
 #, c-format
 msgid "Use %s -l to see list.\n"
 msgstr "Utilice %s -l para ver una lista.\n"
 
-#: login-utils/chsh.c:406
+#: login-utils/chsh.c:394
 #, c-format
 msgid "No known shells.\n"
 msgstr "No hay ningún intérprete de órdenes conocido.\n"
@@ -6803,8 +6548,7 @@ msgstr "login: no queda memoria para script de intérprete de órdenes.\n"
 #: login-utils/login.c:1244
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
-msgstr ""
-"login: no se ha podido ejecutar el script de intérprete de órdenes: %s.\n"
+msgstr "login: no se ha podido ejecutar el script de intérprete de órdenes: %s.\n"
 
 #: login-utils/login.c:1247
 #, c-format
@@ -7049,9 +6793,7 @@ msgstr "No se puede ejecutar swapoff; se intenta con umount."
 
 #: login-utils/shutdown.c:594
 msgid "Cannot fork for umount, trying manually."
-msgstr ""
-"No se puede realizar una operación fork para ejecutar umount; se intenta "
-"manualmente."
+msgstr "No se puede realizar una operación fork para ejecutar umount; se intenta manualmente."
 
 #: login-utils/shutdown.c:603
 #, c-format
@@ -7077,14 +6819,11 @@ msgstr "Iniciando en modo de un solo usuario.\n"
 
 #: login-utils/simpleinit.c:136
 msgid "exec of single user shell failed\n"
-msgstr ""
-"La ejecución (exec) de intérprete de órdenes de un solo usuario ha fallado\n"
+msgstr "La ejecución (exec) de intérprete de órdenes de un solo usuario ha fallado\n"
 
 #: login-utils/simpleinit.c:140
 msgid "fork of single user shell failed\n"
-msgstr ""
-"La bifurcación (fork) de intérprete de órdenes de un solo usuario ha "
-"fallado\n"
+msgstr "La bifurcación (fork) de intérprete de órdenes de un solo usuario ha fallado\n"
 
 #: login-utils/simpleinit.c:208
 msgid "error opening fifo\n"
@@ -7126,7 +6865,7 @@ msgstr "La apertura del directorio ha fallado\n"
 msgid "fork failed\n"
 msgstr "La bifurcación (fork) ha fallado\n"
 
-#: login-utils/simpleinit.c:539 text-utils/more.c:1634
+#: login-utils/simpleinit.c:539 text-utils/more.c:1619
 msgid "exec failed\n"
 msgstr "La ejecución (exec) ha fallado\n"
 
@@ -7269,27 +7008,22 @@ msgstr "%s: no se puede ejecutar stat para fichero temporal.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: no se puede leer el fichero temporal.\n"
 
-#: misc-utils/cal.c:346 misc-utils/cal.c:358
-#, fuzzy, c-format
-msgid "illegal day value: use 1-%d"
-msgstr "Valor de año no permitido: utilice 1-9999"
-
-#: misc-utils/cal.c:350
+#: misc-utils/cal.c:347
 msgid "illegal month value: use 1-12"
 msgstr "Valor de mes no permitido: utilice 1-12"
 
-#: misc-utils/cal.c:354
+#: misc-utils/cal.c:351
 msgid "illegal year value: use 1-9999"
 msgstr "Valor de año no permitido: utilice 1-9999"
 
-#: misc-utils/cal.c:467
+#: misc-utils/cal.c:464
 #, c-format
 msgid "%s %d"
 msgstr "%s de %d"
 
-#: misc-utils/cal.c:816
-#, fuzzy, c-format
-msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
+#: misc-utils/cal.c:810
+#, c-format
+msgid "usage: cal [-13smjyV] [[month] year]\n"
 msgstr "uso: cal [-13smjyV] [[mes] año]\n"
 
 #: misc-utils/ddate.c:203
@@ -7343,13 +7077,10 @@ msgstr "logger: nombre de prioridad desconocida: %s.\n"
 
 #: misc-utils/logger.c:285
 #, c-format
-msgid ""
-"usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
-msgstr ""
-"uso: logger [-is] [-f fichero] [-p pri] [-t etiqueta] [-u socket] "
-"[ mensaje ... ]\n"
+msgid "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
+msgstr "uso: logger [-is] [-f fichero] [-p pri] [-t etiqueta] [-u socket] [ mensaje ... ]\n"
 
-#: misc-utils/look.c:351
+#: misc-utils/look.c:352
 #, c-format
 msgid "usage: look [-dfa] [-t char] string [file]\n"
 msgstr "uso: look [-dfa] [-t carácter] cadena [fichero]\n"
@@ -7364,52 +7095,52 @@ msgstr "No se ha podido abrir %s\n"
 msgid "Got %d bytes from %s\n"
 msgstr "Se han obtenido %d bytes de %s\n"
 
-#: misc-utils/namei.c:111
+#: misc-utils/namei.c:107
 #, c-format
 msgid "namei: unable to get current directory - %s\n"
 msgstr "namei: no se puede obtener el directorio actual - %s\n"
 
-#: misc-utils/namei.c:125
+#: misc-utils/namei.c:121
 #, c-format
 msgid "namei: unable to chdir to %s - %s (%d)\n"
 msgstr "namei: no se puede ejecutar chdir para %s - %s (%d)\n"
 
-#: misc-utils/namei.c:135
+#: misc-utils/namei.c:131
 #, c-format
 msgid "usage: namei [-mx] pathname [pathname ...]\n"
 msgstr "uso: namei [-mx] nombreruta [nombreruta ...]\n"
 
-#: misc-utils/namei.c:162
+#: misc-utils/namei.c:158
 #, c-format
 msgid "namei: could not chdir to root!\n"
 msgstr "namei: no se puede ejecutar chdir para directorio raíz\n"
 
-#: misc-utils/namei.c:169
+#: misc-utils/namei.c:165
 #, c-format
 msgid "namei: could not stat root!\n"
 msgstr "namei: no se puede ejecutar stat para el directorio raíz\n"
 
-#: misc-utils/namei.c:183
+#: misc-utils/namei.c:179
 #, c-format
 msgid "namei: buf overflow\n"
 msgstr "namei: desbordamiento de búfer\n"
 
-#: misc-utils/namei.c:245
+#: misc-utils/namei.c:241
 #, c-format
 msgid " ? could not chdir into %s - %s (%d)\n"
 msgstr " ? no se puede ejecutar chdir para %s - %s (%d)\n"
 
-#: misc-utils/namei.c:273
+#: misc-utils/namei.c:269
 #, c-format
 msgid " ? problems reading symlink %s - %s (%d)\n"
 msgstr " ? problemas al leer el enlace simbólico %s - %s (%d)\n"
 
-#: misc-utils/namei.c:283
+#: misc-utils/namei.c:279
 #, c-format
 msgid "  *** EXCEEDED UNIX LIMIT OF SYMLINKS ***\n"
 msgstr "  *** Se ha superado límite de enlaces simbólicos de Unix ***\n"
 
-#: misc-utils/namei.c:328
+#: misc-utils/namei.c:317
 #, c-format
 msgid "namei: unknown file type 0%06o on file %s\n"
 msgstr "namei: tipo de fichero desconocido 0%06o en el fichero %s\n"
@@ -7430,7 +7161,7 @@ msgstr "%s: fallo al cambiar el nombre de %s a %s: %s\n"
 msgid "call: %s from to files...\n"
 msgstr "llamada: %s de los ficheros...\n"
 
-#: misc-utils/script.c:110
+#: misc-utils/script.c:109
 #, c-format
 msgid ""
 "Warning: `%s' is a link.\n"
@@ -7441,22 +7172,22 @@ msgstr ""
 "Utilice `%s [opciones] %s' si quiere utilizarlo de verdad.\n"
 "No se inicia la transcripción.\n"
 
-#: misc-utils/script.c:173
+#: misc-utils/script.c:172
 #, c-format
 msgid "usage: script [-a] [-f] [-q] [-t] [file]\n"
 msgstr "uso: script [-a] [-f] [-q] [-t] [fichero]\n"
 
-#: misc-utils/script.c:196
+#: misc-utils/script.c:195
 #, c-format
 msgid "Script started, file is %s\n"
 msgstr "Script iniciado; el fichero es %s\n"
 
-#: misc-utils/script.c:296
+#: misc-utils/script.c:290
 #, c-format
 msgid "Script started on %s"
 msgstr "Script iniciado (%s)"
 
-#: misc-utils/script.c:410
+#: misc-utils/script.c:404
 #, c-format
 msgid ""
 "\n"
@@ -7465,17 +7196,17 @@ msgstr ""
 "\n"
 "Script terminado (%s)"
 
-#: misc-utils/script.c:417
+#: misc-utils/script.c:411
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "Script terminado; el fichero es %s\n"
 
-#: misc-utils/script.c:428
+#: misc-utils/script.c:422
 #, c-format
 msgid "openpty failed\n"
 msgstr "openpty ha fallado\n"
 
-#: misc-utils/script.c:462
+#: misc-utils/script.c:456
 #, c-format
 msgid "Out of pty's\n"
 msgstr "No quedan pty\n"
@@ -7706,12 +7437,12 @@ msgstr "Error al leer %s\n"
 msgid "Error writing screendump\n"
 msgstr "Error al escribir vuelco de pantalla\n"
 
-#: misc-utils/setterm.c:1172
-#, fuzzy, c-format
-msgid "Couldn't read %s\n"
-msgstr "No se ha podido abrir %s\n"
+#: misc-utils/setterm.c:1180
+#, c-format
+msgid "couldn't read %s, and cannot ioctl dump\n"
+msgstr "No se ha podido leer %s y no se puede efectuar vuelco de ioctl\n"
 
-#: misc-utils/setterm.c:1223
+#: misc-utils/setterm.c:1246
 #, c-format
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: $TERM no está definido.\n"
@@ -7721,53 +7452,52 @@ msgstr "%s: $TERM no está definido.\n"
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr "whereis [ -sbmu ] [ -SBM dir ... -f ] nombre...\n"
 
-#: misc-utils/write.c:98
+#: misc-utils/write.c:99
 #, c-format
 msgid "write: can't find your tty's name\n"
 msgstr "write: no se puede encontrar el nombre de tty\n"
 
-#: misc-utils/write.c:109
+#: misc-utils/write.c:110
 #, c-format
 msgid "write: you have write permission turned off.\n"
 msgstr "write: tiene el permiso de escritura desactivado.\n"
 
-#: misc-utils/write.c:130
+#: misc-utils/write.c:131
 #, c-format
 msgid "write: %s is not logged in on %s.\n"
 msgstr "write: %s no tiene una sesión iniciada en %s.\n"
 
-#: misc-utils/write.c:138
+#: misc-utils/write.c:139
 #, c-format
 msgid "write: %s has messages disabled on %s\n"
 msgstr "write: %s tiene los mensajes desactivados en %s\n"
 
-#: misc-utils/write.c:145
+#: misc-utils/write.c:146
 #, c-format
 msgid "usage: write user [tty]\n"
 msgstr "uso: write usuario [tty]\n"
 
-#: misc-utils/write.c:233
+#: misc-utils/write.c:234
 #, c-format
 msgid "write: %s is not logged in\n"
 msgstr "write: %s no tiene iniciada una sesión\n"
 
-#: misc-utils/write.c:242
+#: misc-utils/write.c:243
 #, c-format
 msgid "write: %s has messages disabled\n"
 msgstr "write: %s tiene los mensajes desactivados\n"
 
-#: misc-utils/write.c:246
+#: misc-utils/write.c:247
 #, c-format
 msgid "write: %s is logged in more than once; writing to %s\n"
-msgstr ""
-"write: %s tiene iniciada una sesión más de una vez; escribiendo en %s\n"
+msgstr "write: %s tiene iniciada una sesión más de una vez; escribiendo en %s\n"
 
-#: misc-utils/write.c:312
+#: misc-utils/write.c:313
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %s ..."
 msgstr "Mensaje de %s@%s (como %s) en %s a las %s ..."
 
-#: misc-utils/write.c:315
+#: misc-utils/write.c:316
 #, c-format
 msgid "Message from %s@%s on %s at %s ..."
 msgstr "Mensaje de %s@%s el %s a las %s ..."
@@ -7805,23 +7535,17 @@ msgstr "mount: no se ha podido abrir %s; en su lugar se utiliza %s\n"
 #: mount/fstab.c:568
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
-msgstr ""
-"No se puede crear el fichero de bloqueo %s: %s (utilice -n para modificar "
-"este valor)"
+msgstr "No se puede crear el fichero de bloqueo %s: %s (utilice -n para modificar este valor)"
 
 #: mount/fstab.c:594
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
-msgstr ""
-"No se puede enlazar el fichero de bloqueo %s: %s (utilice -n para modificar "
-"este valor)"
+msgstr "No se puede enlazar el fichero de bloqueo %s: %s (utilice -n para modificar este valor)"
 
 #: mount/fstab.c:610
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
-msgstr ""
-"No se puede abrir el fichero de bloqueo %s: %s (utilice -n para modificar "
-"este valor)"
+msgstr "No se puede abrir el fichero de bloqueo %s: %s (utilice -n para modificar este valor)"
 
 #: mount/fstab.c:625
 #, c-format
@@ -7846,27 +7570,22 @@ msgstr ""
 "No se puede crear enlace %s\n"
 "Puede que haya un fichero de bloqueo obsoleto.\n"
 
-#: mount/fstab.c:688 mount/fstab.c:741
+#: mount/fstab.c:686 mount/fstab.c:739
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "No se puede abrir %s (%s) - mtab no actualizado"
 
-#: mount/fstab.c:750
+#: mount/fstab.c:748
 #, c-format
 msgid "error writing %s: %s"
 msgstr "Error al escribir %s: %s"
 
-#: mount/fstab.c:768
+#: mount/fstab.c:758
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "Error al cambiar el modo de %s: %s\n"
 
-#: mount/fstab.c:781
-#, fuzzy, c-format
-msgid "error changing owner of %s: %s\n"
-msgstr "Error al cambiar el modo de %s: %s\n"
-
-#: mount/fstab.c:792
+#: mount/fstab.c:776
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "No se puede cambiar el nombre %s por %s: %s\n"
@@ -7923,8 +7642,7 @@ msgid ""
 "       about the loop device? (If so, recompile or `modprobe loop'.)"
 msgstr ""
 "%s: No se puede encontrar ningún dispositivo de bucle. ¿Puede que este\n"
-"       núcleo no sepa acerca del dispositivo de bucle? (En tal caso, vuelva "
-"a\n"
+"       núcleo no sepa acerca del dispositivo de bucle? (En tal caso, vuelva a\n"
 "       realizar la compilación o `modprobe loop'.)"
 
 #: mount/lomount.c:224
@@ -7952,19 +7670,17 @@ msgstr "set_loop(%s,%s,%llu): ejecución correcta\n"
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: no se puede suprimir el dispositivo %s: %s\n"
 
-#: mount/lomount.c:406
+#: mount/lomount.c:405
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): ejecución correcta\n"
 
-#: mount/lomount.c:414
+#: mount/lomount.c:413
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
-msgstr ""
-"Este montaje se ha compilado sin soporte de bucle. Vuelva a realizar la "
-"compilación.\n"
+msgstr "Este montaje se ha compilado sin soporte de bucle. Vuelva a realizar la compilación.\n"
 
-#: mount/lomount.c:451
+#: mount/lomount.c:450
 #, c-format
 msgid ""
 "\n"
@@ -7986,17 +7702,15 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:479 mount/sundries.c:206 mount/xmalloc.c:29
+#: mount/lomount.c:478 mount/sundries.c:206 mount/xmalloc.c:29
 #, c-format
 msgid "not enough memory"
 msgstr "No hay suficiente memoria"
 
-#: mount/lomount.c:640
+#: mount/lomount.c:639
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
-msgstr ""
-"Al compilar no había soporte de bucle disponible. Vuelva a realizar la "
-"compilación.\n"
+msgstr "Al compilar no había soporte de bucle disponible. Vuelva a realizar la compilación.\n"
 
 #: mount/mount.c:321
 #, c-format
@@ -8023,7 +7737,7 @@ msgstr "mount: según mtab, %s está montado en %s"
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: no se puede abrir %s para escritura: %s"
 
-#: mount/mount.c:552 mount/mount.c:957
+#: mount/mount.c:552 mount/mount.c:950
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: error al escribir %s: %s"
@@ -8033,175 +7747,164 @@ msgstr "mount: error al escribir %s: %s"
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: error al cambiar el modo de %s: %s"
 
-#: mount/mount.c:641
-#, fuzzy, c-format
-msgid "mount: cannot set group id: %s"
-msgstr "mount: no se puede establecer la velocidad: %s"
-
-#: mount/mount.c:644
-#, fuzzy, c-format
-msgid "mount: cannot set user id: %s"
-msgstr "mount: no se puede establecer la velocidad: %s"
-
-#: mount/mount.c:683 mount/mount.c:1572
+#: mount/mount.c:676 mount/mount.c:1565
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: no se puede bifurcar (fork): %s"
 
-#: mount/mount.c:697
+#: mount/mount.c:690
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: no ha especificado ningún tipo de sistema de ficheros para %s\n"
 
-#: mount/mount.c:700
+#: mount/mount.c:693
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       Se probará con todos los tipos indicados en %s o %s\n"
 
-#: mount/mount.c:703
+#: mount/mount.c:696
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       y parece que sea un espacio de intercambio\n"
 
-#: mount/mount.c:705
+#: mount/mount.c:698
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       Se probará con el tipo %s\n"
 
-#: mount/mount.c:732
+#: mount/mount.c:725
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s parece espacio de intercambio - no montado"
 
-#: mount/mount.c:823
+#: mount/mount.c:816
 msgid "mount failed"
 msgstr "montaje erróneo"
 
-#: mount/mount.c:825
+#: mount/mount.c:818
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: sólo el usuario root puede montar %s en %s"
 
-#: mount/mount.c:853
+#: mount/mount.c:846
 msgid "mount: loop device specified twice"
 msgstr "mount: dispositivo de bucle especificado dos veces"
 
-#: mount/mount.c:858
+#: mount/mount.c:851
 msgid "mount: type specified twice"
 msgstr "mount: tipo especificado dos veces"
 
-#: mount/mount.c:870
+#: mount/mount.c:863
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: omitiendo la configuración de un dispositivo de bucle\n"
 
-#: mount/mount.c:883
+#: mount/mount.c:876
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: se va a utilizar el dispositivo de bucle %s\n"
 
-#: mount/mount.c:892
+#: mount/mount.c:885
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:897
+#: mount/mount.c:890
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:902
+#: mount/mount.c:895
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: error al configurar dispositivo de bucle\n"
 
-#: mount/mount.c:913
+#: mount/mount.c:906
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: configuración correcta de dispositivo de bucle\n"
 
-#: mount/mount.c:952
+#: mount/mount.c:945
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: no se puede abrir %s: %s"
 
-#: mount/mount.c:973
+#: mount/mount.c:966
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: el argumento para -p o --pass-fd debe ser un número"
 
-#: mount/mount.c:986
+#: mount/mount.c:979
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: no se puede abrir %s para establecer la velocidad"
 
-#: mount/mount.c:989
+#: mount/mount.c:982
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: no se puede establecer la velocidad: %s"
 
-#: mount/mount.c:1047
+#: mount/mount.c:1040
 #, fuzzy, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: según mtab, %s ya está montado en %s"
 
-#: mount/mount.c:1122
-msgid ""
-"mount: I could not determine the filesystem type, and none was specified"
+#: mount/mount.c:1115
+msgid "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: no se ha podido determinar el tipo de sistema de ficheros y no se ha\n"
 "especificado ninguno"
 
-#: mount/mount.c:1125
+#: mount/mount.c:1118
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: debe especificar el tipo de sistema de ficheros"
 
-#: mount/mount.c:1128
+#: mount/mount.c:1121
 msgid "mount: mount failed"
 msgstr "mount: montaje erróneo"
 
-#: mount/mount.c:1134 mount/mount.c:1169
+#: mount/mount.c:1127 mount/mount.c:1162
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: el punto de montaje %s no es un directorio"
 
-#: mount/mount.c:1136
+#: mount/mount.c:1129
 msgid "mount: permission denied"
 msgstr "mount: permiso denegado"
 
-#: mount/mount.c:1138
+#: mount/mount.c:1131
 msgid "mount: must be superuser to use mount"
 msgstr "mount: debe ser superusuario para utilizar mount"
 
-#: mount/mount.c:1142 mount/mount.c:1146
+#: mount/mount.c:1135 mount/mount.c:1139
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s está ocupado"
 
-#: mount/mount.c:1148
+#: mount/mount.c:1141
 msgid "mount: proc already mounted"
 msgstr "mount: proc ya está montado"
 
-#: mount/mount.c:1150
+#: mount/mount.c:1143
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s ya está montado o %s está ocupado"
 
-#: mount/mount.c:1156
+#: mount/mount.c:1149
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: el punto de montaje %s no existe"
 
-#: mount/mount.c:1158
+#: mount/mount.c:1151
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: el punto de montaje %s es un enlace simbólico sin destino"
 
-#: mount/mount.c:1161
+#: mount/mount.c:1154
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: el dispositivo especial %s no existe"
 
-#: mount/mount.c:1171
+#: mount/mount.c:1164
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -8210,22 +7913,22 @@ msgstr ""
 "mount: el dispositivo especial %s no existe\n"
 "       (un prefijo de ruta no es un directorio)\n"
 
-#: mount/mount.c:1184
+#: mount/mount.c:1177
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s no está montado todavía o una opción es incorrecta"
 
-#: mount/mount.c:1186
-#, fuzzy, c-format
+#: mount/mount.c:1179
+#, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
-"       missing codepage or helper program, or other error"
+"       missing codepage or other error"
 msgstr ""
 "mount: tipo de sistema de ficheros incorrecto, opción incorrecta,\n"
 "       superbloque incorrecto en %s, falta la página de códigos,\n"
 "       o algún otro error"
 
-#: mount/mount.c:1196
+#: mount/mount.c:1189
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -8233,7 +7936,7 @@ msgstr ""
 "       (¿puede que este sea el dispositivo IDE donde está\n"
 "       usando ide-scsi de forma que se necesite sr0 o sda?"
 
-#: mount/mount.c:1202
+#: mount/mount.c:1195
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -8241,7 +7944,7 @@ msgstr ""
 "       (¿no estará intentando montar una partición extendida,\n"
 "       en lugar de alguna partición lógica que haya dentro?"
 
-#: mount/mount.c:1219
+#: mount/mount.c:1212
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -8249,51 +7952,49 @@ msgstr ""
 "   En algunos casos se encuentra información en syslog, pruebe\n"
 "   dmesg | tail   o algo parecido\n"
 
-#: mount/mount.c:1225
+#: mount/mount.c:1218
 msgid "mount table full"
 msgstr "tabla de dispositivos montados completa"
 
-#: mount/mount.c:1227
+#: mount/mount.c:1220
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: no se puede leer el superbloque"
 
-#: mount/mount.c:1233
+#: mount/mount.c:1226
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "umount: %s: dispositivo desconocido"
 
-#: mount/mount.c:1238
+#: mount/mount.c:1231
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: tipo de sistema de ficheros '%s' desconocido"
 
-#: mount/mount.c:1250
+#: mount/mount.c:1243
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: probablemente quería referirse a %s"
 
-#: mount/mount.c:1253
+#: mount/mount.c:1246
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: ¿quiere decir 'iso9660?'"
 
-#: mount/mount.c:1256
+#: mount/mount.c:1249
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: ¿quiere decir 'vfat'?"
 
-#: mount/mount.c:1259
+#: mount/mount.c:1252
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
-msgstr ""
-"mount: %s con número de dispositivo incorrecto o tipo de sistema de ficheros "
-"%s no soportado"
+msgstr "mount: %s con número de dispositivo incorrecto o tipo de sistema de ficheros %s no soportado"
 
-#: mount/mount.c:1265
+#: mount/mount.c:1258
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s no es un dispositivo de bloques y ¿stat falla?"
 
-#: mount/mount.c:1267
+#: mount/mount.c:1260
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -8302,72 +8003,66 @@ msgstr ""
 "mount: el núcleo no reconoce %s como dispositivo de bloques\n"
 "       (¿tal vez `insmod driver'?)"
 
-#: mount/mount.c:1270
+#: mount/mount.c:1263
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s no es un dispositivo de bloques (pruebe `-o loop')"
 
-#: mount/mount.c:1273
+#: mount/mount.c:1266
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s no es un dispositivo de bloques"
 
-#: mount/mount.c:1276
+#: mount/mount.c:1269
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s no es un dispositivo de bloques válido"
 
-#: mount/mount.c:1279
+#: mount/mount.c:1272
 msgid "block device "
 msgstr "dispositivo de bloques "
 
-#: mount/mount.c:1281
+#: mount/mount.c:1274
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "umount: no se puede montar %s%s de sólo lectura"
 
-#: mount/mount.c:1285
+#: mount/mount.c:1278
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
-msgstr ""
-"mount: %s%s está protegido contra escritura pero se ha dado la opción `-w'"
+msgstr "mount: %s%s está protegido contra escritura pero se ha dado la opción `-w'"
 
-#: mount/mount.c:1300
+#: mount/mount.c:1293
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
-msgstr ""
-"mount: %s%s está protegido contra escritura; se monta como sólo lectura"
+msgstr "mount: %s%s está protegido contra escritura; se monta como sólo lectura"
 
-#: mount/mount.c:1400
+#: mount/mount.c:1393
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
-msgstr ""
-"mount: no se ha especificado ningún tipo; se presupone nfs por los dos "
-"puntos\n"
+msgstr "mount: no se ha especificado ningún tipo; se presupone nfs por los dos puntos\n"
 
-#: mount/mount.c:1406
+#: mount/mount.c:1399
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
-msgstr ""
-"mount: no se ha especificado ningún tipo; se presupone smbfs por el "
-"prefijo //\n"
+msgstr "mount: no se ha especificado ningún tipo; se presupone smbfs por el prefijo //\n"
 
-#: mount/mount.c:1423
+#: mount/mount.c:1416
 #, c-format
 msgid "mount: backgrounding \"%s\"\n"
 msgstr "mount: ejecutando en segundo plano \"%s\"\n"
 
-#: mount/mount.c:1433
+#: mount/mount.c:1426
 #, c-format
 msgid "mount: giving up \"%s\"\n"
 msgstr "mount: se abandona \"%s\"\n"
 
-#: mount/mount.c:1519
+#: mount/mount.c:1512
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s ya está montado en %s\n"
 
-#: mount/mount.c:1657
+#: mount/mount.c:1650
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8420,31 +8115,29 @@ msgstr ""
 "     mount --bind dirantiguo dirnuevo\n"
 "o mover un subárbol:\n"
 "     mount --move dirantiguo dirnuevo\n"
-"Se puede dar un dispositivo mediante el nombre, digamos /dev/hda1 o /dev/"
-"cdrom,\n"
-"o mediante la etiqueta, utilizando -L etiqueta, o mediante uuid, mediante -U "
-"uuid.\n"
+"Se puede dar un dispositivo mediante el nombre, digamos /dev/hda1 o /dev/cdrom,\n"
+"o mediante la etiqueta, utilizando -L etiqueta, o mediante uuid, mediante -U uuid.\n"
 "Otras opciones: [-nfFrsvw] [-o opciones] [-p passwdfd].\n"
 "Escriba man 8 mount para saber mucho más.\n"
 
-#: mount/mount.c:1967
+#: mount/mount.c:1960
 msgid "mount: only root can do that"
 msgstr "mount: sólo el usuario root puede efectuar esta acción"
 
-#: mount/mount.c:1972
+#: mount/mount.c:1965
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: no se ha encontrado %s; se está creando...\n"
 
-#: mount/mount.c:1982
+#: mount/mount.c:1975
 msgid "nothing was mounted"
 msgstr "no se ha montado nada"
 
-#: mount/mount.c:1995 mount/mount.c:2021
+#: mount/mount.c:1988 mount/mount.c:2014
 msgid "mount: no such partition found"
 msgstr "mount: no se ha encontrado esta partición"
 
-#: mount/mount.c:1998
+#: mount/mount.c:1991
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: no se puede encontrar %s en %s o %s"
@@ -8491,49 +8184,42 @@ msgstr ""
 "       %s -a [-v]\n"
 "       %s [-v] especial ...\n"
 
-#: mount/swapon.c:103
-#, fuzzy, c-format
-msgid "%s: %s: unexpected file format\n"
-msgstr "%s: EOF inesperado en el fichero %s\n"
-
-#: mount/swapon.c:132
+#: mount/swapon.c:128
 #, fuzzy, c-format
 msgid "%s: cannot canonicalize %s: %s\n"
 msgstr "%s: no se puede abrir %s: %s\n"
 
-#: mount/swapon.c:171 mount/swapon.c:259
+#: mount/swapon.c:167 mount/swapon.c:255
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s en %s\n"
 
-#: mount/swapon.c:181
+#: mount/swapon.c:177
 #, fuzzy, c-format
 msgid "%s: cannot stat %s: %s\n"
 msgstr "swapon: no se puede ejecutar stat para %s: %s\n"
 
-#: mount/swapon.c:192
+#: mount/swapon.c:188
 #, fuzzy, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
-msgstr ""
-"swapon: atención: %s tiene permisos %04o que no son seguros, se sugiere %"
-"04o\n"
+msgstr "swapon: atención: %s tiene permisos %04o que no son seguros, se sugiere %04o\n"
 
-#: mount/swapon.c:204
+#: mount/swapon.c:200
 #, fuzzy, c-format
 msgid "%s: Skipping file %s - it appears to have holes.\n"
 msgstr "swapon: omitiendo el fichero %s; parece que tiene huecos.\n"
 
-#: mount/swapon.c:237
+#: mount/swapon.c:233
 #, fuzzy, c-format
 msgid "%s: cannot find the device for %s\n"
 msgstr "%s: no se puede encontrar \"_stext\" en %s\n"
 
-#: mount/swapon.c:271
+#: mount/swapon.c:267
 #, c-format
 msgid "Not superuser.\n"
 msgstr "No es el superusuario.\n"
 
-#: mount/swapon.c:305 mount/swapon.c:496
+#: mount/swapon.c:301 mount/swapon.c:492
 #, c-format
 msgid "%s: cannot open %s: %s\n"
 msgstr "%s: no se puede abrir %s: %s\n"
@@ -8543,93 +8229,81 @@ msgstr "%s: no se puede abrir %s: %s\n"
 msgid "umount: compiled without support for -f\n"
 msgstr "umount: compilado sin soporte para -f\n"
 
-#: mount/umount.c:109
-#, fuzzy, c-format
-msgid "umount: cannot set group id: %s"
-msgstr "mount: no se puede establecer la velocidad: %s"
-
-#: mount/umount.c:112
-#, fuzzy, c-format
-msgid "umount: cannot set user id: %s"
-msgstr "mount: no se puede establecer la velocidad: %s"
-
-#: mount/umount.c:137
+#: mount/umount.c:130
 #, c-format
 msgid "umount: cannot fork: %s"
 msgstr "umount: no se puede bifurcar (fork): %s"
 
-#: mount/umount.c:149
+#: mount/umount.c:142
 #, c-format
 msgid "umount: %s: invalid block device"
 msgstr "umount: %s: dispositivo de bloques inválido"
 
-#: mount/umount.c:151
+#: mount/umount.c:144
 #, c-format
 msgid "umount: %s: not mounted"
 msgstr "umount: %s: no montado"
 
-#: mount/umount.c:153
+#: mount/umount.c:146
 #, c-format
 msgid "umount: %s: can't write superblock"
 msgstr "umount: %s: no se puede escribir el superbloque"
 
-#: mount/umount.c:157
+#: mount/umount.c:150
 #, c-format
 msgid "umount: %s: device is busy"
 msgstr "umount: %s: dispositivo ocupado"
 
-#: mount/umount.c:159
+#: mount/umount.c:152
 #, c-format
 msgid "umount: %s: not found"
 msgstr "umount: %s: no se ha encontrado"
 
-#: mount/umount.c:161
+#: mount/umount.c:154
 #, c-format
 msgid "umount: %s: must be superuser to umount"
 msgstr "umount: %s: debe ser superusuario para utilizar umount"
 
-#: mount/umount.c:163
+#: mount/umount.c:156
 #, c-format
 msgid "umount: %s: block devices not permitted on fs"
-msgstr ""
-"umount: %s: dispositivos de bloques no permitidos en sistema de ficheros"
+msgstr "umount: %s: dispositivos de bloques no permitidos en sistema de ficheros"
 
-#: mount/umount.c:165
+#: mount/umount.c:158
 #, c-format
 msgid "umount: %s: %s"
 msgstr "umount: %s: %s"
 
-#: mount/umount.c:214
+#: mount/umount.c:207
 #, c-format
 msgid "no umount2, trying umount...\n"
 msgstr "umount2 no existe; se está probando con umount...\n"
 
-#: mount/umount.c:230
+#: mount/umount.c:223
 #, c-format
 msgid "could not umount %s - trying %s instead\n"
 msgstr "no se ha podido ejecutar umount en %s; en su lugar se prueba con %s\n"
 
-#: mount/umount.c:248
+#: mount/umount.c:241
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr "umount: %s ocupado; se ha vuelto a montar como de sólo lectura\n"
 
-#: mount/umount.c:259
+#: mount/umount.c:252
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr "umount: no se ha podido volver a montar %s como de sólo lectura\n"
 
-#: mount/umount.c:268
+#: mount/umount.c:261
 #, c-format
 msgid "%s umounted\n"
 msgstr "Se ha ejecutado umount en %s\n"
 
-#: mount/umount.c:366
+#: mount/umount.c:359
 msgid "umount: cannot find list of filesystems to unmount"
-msgstr ""
-"umount: no se puede encontrar lista de sistemas de ficheros para desmontar"
+msgstr "umount: no se puede encontrar lista de sistemas de ficheros para desmontar"
 
-#: mount/umount.c:396
+#: mount/umount.c:389
 #, c-format
 msgid ""
 "Usage: umount [-hV]\n"
@@ -8640,54 +8314,53 @@ msgstr ""
 "       umount -a [-f] [-r] [-n] [-v] [-t vfstypes] [-O opciones]\n"
 "       umount [-f] [-r] [-n] [-v] special | node...\n"
 
-#: mount/umount.c:448
+#: mount/umount.c:441
 msgid "Cannot umount \"\"\n"
 msgstr "No se puede desmontar \"\"\n"
 
-#: mount/umount.c:454
+#: mount/umount.c:447
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr "Se está intentando ejecutar umount en %s\n"
 
-#: mount/umount.c:460
+#: mount/umount.c:453
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "No se puede encontrar %s en mtab\n"
 
-#: mount/umount.c:467
+#: mount/umount.c:460
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s no está montado (según mtab)"
 
-#: mount/umount.c:491
+#: mount/umount.c:484
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: parece que %s se ha montado varias veces"
 
-#: mount/umount.c:504
+#: mount/umount.c:497
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: %s no está en fstab (y usted no es el usuario root)"
 
-#: mount/umount.c:508
+#: mount/umount.c:501
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: montaje de %s no concuerda con fstab"
 
-#: mount/umount.c:549
+#: mount/umount.c:542
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "umount: sólo %s puede desmontar %s desde %s"
 
-#: mount/umount.c:630
+#: mount/umount.c:623
 msgid "umount: only root can do that"
 msgstr "umount: sólo el usuario root puede efectuar esta acción"
 
 #: sys-utils/ctrlaltdel.c:27
 #, c-format
 msgid "You must be root to set the Ctrl-Alt-Del behaviour.\n"
-msgstr ""
-"Debe ser el usuario root para definir el comportamiento de Ctrl-Alt-Supr.\n"
+msgstr "Debe ser el usuario root para definir el comportamiento de Ctrl-Alt-Supr.\n"
 
 #: sys-utils/ctrlaltdel.c:42
 #, c-format
@@ -8706,12 +8379,10 @@ msgstr ""
 #: sys-utils/cytune.c:125
 #, c-format
 msgid ""
-"File %s, For threshold value %lu and timrout value %lu, Maximum characters "
-"in fifo were %d,\n"
+"File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
-"Fichero %s, para valor de umbral %lu y valor de tiempo de espera %lu, máximo "
-"de caracteres en fifo fue %d\n"
+"Fichero %s, para valor de umbral %lu y valor de tiempo de espera %lu, máximo de caracteres en fifo fue %d\n"
 "y velocidad de transferencia máxima en caracteres por segundo fue %f\n"
 
 #: sys-utils/cytune.c:189
@@ -8741,12 +8412,8 @@ msgstr "Valor de hora predeterminado inválido: %s\n"
 
 #: sys-utils/cytune.c:238
 #, c-format
-msgid ""
-"Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
-"[-g|-G] file [file...]\n"
-msgstr ""
-"Uso: %s [-q [-i intervalo]] ([-s valor]|[-S valor]) ([-t valor]|[-T valor]) "
-"[-g|-G] fichero [fichero...]\n"
+msgid "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) [-g|-G] file [file...]\n"
+msgstr "Uso: %s [-q [-i intervalo]] ([-s valor]|[-S valor]) ([-t valor]|[-T valor]) [-g|-G] fichero [fichero...]\n"
 
 #: sys-utils/cytune.c:250 sys-utils/cytune.c:269 sys-utils/cytune.c:289
 #: sys-utils/cytune.c:339
@@ -8799,11 +8466,8 @@ msgstr "No se puede emitir CYGETMON en %s: %s\n"
 
 #: sys-utils/cytune.c:418
 #, c-format
-msgid ""
-"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
-msgstr ""
-"%s: %lu enteros, %lu/%lu caracteres; fifo: %lu umbral, %lu tiempo_espera, %"
-"lu máximo, %lu ahora\n"
+msgid "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgstr "%s: %lu enteros, %lu/%lu caracteres; fifo: %lu umbral, %lu tiempo_espera, %lu máximo, %lu ahora\n"
 
 #: sys-utils/cytune.c:424
 #, c-format
@@ -8812,11 +8476,8 @@ msgstr "   %f enteros/seg.; %f recepción, %f envío (caracteres/seg.)\n"
 
 #: sys-utils/cytune.c:429
 #, c-format
-msgid ""
-"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
-msgstr ""
-"%s: %lu enteros, %lu caracteres; fifo: %lu umbral, %lu tiempo_espera, %lu "
-"máximo, %lu ahora\n"
+msgid "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgstr "%s: %lu enteros, %lu caracteres; fifo: %lu umbral, %lu tiempo_espera, %lu máximo, %lu ahora\n"
 
 #: sys-utils/cytune.c:435
 #, c-format
@@ -8934,8 +8595,7 @@ msgstr "\t%s -h para obtener ayuda.\n"
 
 #: sys-utils/ipcs.c:130
 #, c-format
-msgid ""
-"%s provides information on ipc facilities for which you have read access.\n"
+msgid "%s provides information on ipc facilities for which you have read access.\n"
 msgstr ""
 "%s facilita información sobre los recursos ipc para los cuales tiene\n"
 "acceso de lectura.\n"
@@ -8985,9 +8645,7 @@ msgstr ""
 #: sys-utils/ipcs.c:136
 #, c-format
 msgid "-i id [-s -q -m] : details on resource identified by id\n"
-msgstr ""
-"-i id [-s -q -m] : información detallada sobre los recursos identificados "
-"por id\n"
+msgstr "-i id [-s -q -m] : información detallada sobre los recursos identificados por id\n"
 
 #: sys-utils/ipcs.c:268
 #, c-format
@@ -9496,15 +9154,11 @@ msgstr "pid"
 
 #: sys-utils/rdev.c:69
 msgid "usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
-msgstr ""
-"uso: rdev [ -rv ] [ -o DESPLAZAMIENTO ] [ IMAGEN [ VALOR "
-"[ DESPLAZAMIENTO ] ] ]"
+msgstr "uso: rdev [ -rv ] [ -o DESPLAZAMIENTO ] [ IMAGEN [ VALOR [ DESPLAZAMIENTO ] ] ]"
 
 #: sys-utils/rdev.c:70
-msgid ""
-"  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
-msgstr ""
-"  rdev /dev/fd0  (o rdev /linux, etc.) muestra el dispositivo ROOT actual"
+msgid "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
+msgstr "  rdev /dev/fd0  (o rdev /linux, etc.) muestra el dispositivo ROOT actual"
 
 #: sys-utils/rdev.c:71
 msgid "  rdev /dev/fd0 /dev/hda2         sets ROOT to /dev/hda2"
@@ -9512,9 +9166,7 @@ msgstr "  rdev /dev/fd0 /dev/hda2         Establece ROOT en /dev/hda2"
 
 #: sys-utils/rdev.c:72
 msgid "  rdev -R /dev/fd0 1              set the ROOTFLAGS (readonly status)"
-msgstr ""
-"  rdev -R /dev/fd0 1              Establece ROOTFLAGS (estado de sólo "
-"lectura)"
+msgstr "  rdev -R /dev/fd0 1              Establece ROOTFLAGS (estado de sólo lectura)"
 
 #: sys-utils/rdev.c:73
 msgid "  rdev -r /dev/fd0 627            set the RAMDISK size"
@@ -9541,8 +9193,7 @@ msgid "  vidmode ...                     same as rdev -v"
 msgstr "  vidmode ...                     Igual que rdev -v"
 
 #: sys-utils/rdev.c:79
-msgid ""
-"Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
+msgid "Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
 msgstr ""
 "Nota: los modos de vídeo son: -3=Ask, -2=Extended, -1=NormalVga,\n"
 "        1=key1, 2=key2,..."
@@ -9586,14 +9237,11 @@ msgstr ""
 "         -M <mult>     Establece el multiplicador de perfil en <mult>\n"
 "         -i            Muestra sólo información sobre paso de muestreo\n"
 "         -v            Muestra datos detallados\n"
-"         -a            Muestra todos los símbolos, incluso si número total "
-"es 0\n"
+"         -a            Muestra todos los símbolos, incluso si número total es 0\n"
 "         -b            Muestra histogramas individuales de los contadores\n"
-"         -s            Muestra contadores individuales dentro de cada "
-"función\n"
+"         -s            Muestra contadores individuales dentro de cada función\n"
 "         -r            Restablece todos los contadores (sólo root)\n"
-"         -n            Desactiva la detección automática del orden de los "
-"bytes\n"
+"         -n            Desactiva la detección automática del orden de los bytes\n"
 "         -V            Muestra la versión y sale\n"
 
 #: sys-utils/readprofile.c:284
@@ -9622,10 +9270,8 @@ msgstr "total"
 
 #: sys-utils/renice.c:68
 #, c-format
-msgid ""
-"usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
-msgstr ""
-"uso: renice prioridad [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] usuarios ]\n"
+msgid "usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
+msgstr "uso: renice prioridad [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] usuarios ]\n"
 
 #: sys-utils/renice.c:97
 #, c-format
@@ -9716,12 +9362,7 @@ msgstr ""
 
 #: sys-utils/rtcwake.c:380
 #, fuzzy, c-format
-msgid "Using UTC time.\n"
-msgstr "Utilizando %s.\n"
-
-#: sys-utils/rtcwake.c:381
-#, fuzzy, c-format
-msgid "Using local time.\n"
+msgid "Using %s time\n"
 msgstr "Utilizando %s.\n"
 
 #: sys-utils/rtcwake.c:385
@@ -9763,12 +9404,7 @@ msgstr ", preparado"
 msgid "disable rtc alarm interrupt"
 msgstr ""
 
-#: sys-utils/setarch.c:50
-#, c-format
-msgid "Switching on %s.\n"
-msgstr ""
-
-#: sys-utils/setarch.c:81
+#: sys-utils/setarch.c:57
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -9776,50 +9412,46 @@ msgid ""
 "Options:\n"
 msgstr ""
 
-#: sys-utils/setarch.c:85
+#: sys-utils/setarch.c:61
 #, c-format
-msgid ""
-" -h, --help               this help\n"
-" -v, --verbose            verbose mode\n"
-" -R, --addr-no-randomize  disables randomization of the virtual address "
-"space\n"
-" -F, --fdpic-funcptrs     turns on function pointers point to descriptors\n"
-" -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
-" -L, --addr-compat-layout changes the way virtual memory is allocated\n"
-" -X, --read-implies-exec  turns on READ_IMPLIES_EXEC\n"
-" -B, --32bit              turns on ADDR_LIMIT_32BIT\n"
-" -I, --short-inode        turns on SHORT_INODE\n"
-" -S, --whole-seconds      turns on WHOLE_SECONDS\n"
-" -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
-" -3, --3gb                turns on maximum of 3GB of address space\n"
-"     --4gb                ignored (for backward compatibility only\n"
+msgid "\t-%c\tEnable %s\n"
 msgstr ""
 
-#: sys-utils/setarch.c:99
+#: sys-utils/setarch.c:63
 #, c-format
 msgid ""
 "\n"
 "For more information see setarch(8).\n"
 msgstr ""
 
-#: sys-utils/setarch.c:111
+#: sys-utils/setarch.c:75
 #, fuzzy, c-format
 msgid ""
 "%s: %s\n"
 "Try `%s --help' for more information.\n"
 msgstr "Escriba `getopt --help' para obtener más información.\n"
 
-#: sys-utils/setarch.c:179 sys-utils/setarch.c:195
+#: sys-utils/setarch.c:133 sys-utils/setarch.c:149
 #, fuzzy, c-format
 msgid "%s: Unrecognized architecture"
 msgstr " %s: tipo de tabla de particiones no reconocido\n"
 
-#: sys-utils/setarch.c:213 sys-utils/setarch.c:220
+#: sys-utils/setarch.c:166 sys-utils/setarch.c:173
 #, fuzzy
 msgid "Not enough arguments"
 msgstr "Hay demasiados argumentos.\n"
 
-#: sys-utils/setarch.c:282
+#: sys-utils/setarch.c:199
+#, c-format
+msgid "Switching on %s.\n"
+msgstr ""
+
+#: sys-utils/setarch.c:206
+#, fuzzy, c-format
+msgid "Unknown option `%c' ignored"
+msgstr "%s: opción desconocida \"-%c\"\n"
+
+#: sys-utils/setarch.c:211
 #, fuzzy, c-format
 msgid "Failed to set personality to %s"
 msgstr "Error al escribir la partición en %s\n"
@@ -9952,23 +9584,20 @@ msgstr "hexdump: valor de salto incorrecto.\n"
 
 #: text-utils/hexsyntax.c:131
 #, c-format
-msgid ""
-"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
-msgstr ""
-"hexdump: [-bcCdovx] [-e fmt] [-f fichero_fmt] [-n longitud] [-s omitir] "
-"[fichero ...]\n"
+msgid "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
+msgstr "hexdump: [-bcCdovx] [-e fmt] [-f fichero_fmt] [-n longitud] [-s omitir] [fichero ...]\n"
 
-#: text-utils/more.c:257
+#: text-utils/more.c:258
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr "uso: %s [-dflpcsu] [+númlíneas | +/patrón] nombre1 nombre2 ...\n"
 
-#: text-utils/more.c:480
+#: text-utils/more.c:481
 #, c-format
 msgid "%s: unknown option \"-%c\"\n"
 msgstr "%s: opción desconocida \"-%c\"\n"
 
-#: text-utils/more.c:512
+#: text-utils/more.c:513
 #, c-format
 msgid ""
 "\n"
@@ -9979,7 +9608,7 @@ msgstr ""
 "*** %s: directorio ***\n"
 "\n"
 
-#: text-utils/more.c:556
+#: text-utils/more.c:557
 #, c-format
 msgid ""
 "\n"
@@ -9990,45 +9619,45 @@ msgstr ""
 "*** %s: No es un fichero de texto ***\n"
 "\n"
 
-#: text-utils/more.c:659
+#: text-utils/more.c:660
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Utilizar q o Q para salir]"
 
-#: text-utils/more.c:751
+#: text-utils/more.c:752
 #, c-format
 msgid "--More--"
 msgstr "--Más--"
 
-#: text-utils/more.c:753
+#: text-utils/more.c:754
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Siguiente fichero: %s)"
 
-#: text-utils/more.c:758
+#: text-utils/more.c:759
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Pulse la barra espaciadora para continuar; 'q' para salir.]"
 
-#: text-utils/more.c:1173
+#: text-utils/more.c:1158
 #, c-format
 msgid "...back %d pages"
 msgstr "...retroceder %d páginas"
 
-#: text-utils/more.c:1175
+#: text-utils/more.c:1160
 msgid "...back 1 page"
 msgstr "...retroceder 1 página"
 
-#: text-utils/more.c:1218
+#: text-utils/more.c:1203
 msgid "...skipping one line"
 msgstr "...omitiendo una línea"
 
-#: text-utils/more.c:1220
+#: text-utils/more.c:1205
 #, c-format
 msgid "...skipping %d lines"
 msgstr "...omitiendo %d líneas"
 
-#: text-utils/more.c:1257
+#: text-utils/more.c:1242
 msgid ""
 "\n"
 "***Back***\n"
@@ -10038,21 +9667,18 @@ msgstr ""
 "***Atrás***\n"
 "\n"
 
-#: text-utils/more.c:1295
+#: text-utils/more.c:1280
 msgid ""
 "\n"
-"Most commands optionally preceded by integer argument k.  Defaults in "
-"brackets.\n"
+"Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 "\n"
-"La mayoría de las órdenes pueden estar precedidas por un argumento entero "
-"k.\n"
+"La mayoría de las órdenes pueden estar precedidas por un argumento entero k.\n"
 "Los valores predeterminados están entre corchetes.\n"
-"Un asterisco (*) indica que el argumento será el nuevo valor "
-"predeterminado.\n"
+"Un asterisco (*) indica que el argumento será el nuevo valor predeterminado.\n"
 
-#: text-utils/more.c:1302
+#: text-utils/more.c:1287
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -10087,8 +9713,7 @@ msgstr ""
 "b o ctrl-B              Salta hacia atrás k pantallas de texto [1]\n"
 "'                       Va al sitio donde comenzó la búsqueda anterior\n"
 "=                       Muestra el número de la línea actual\n"
-"/<expresión regular>    Busca la k-ésima aparición de la expresión regular "
-"[1]\n"
+"/<expresión regular>    Busca la k-ésima aparición de la expresión regular [1]\n"
 "n                       Busca la k-ésima aparición de la última e.r. [1]\n"
 "!<orden> o :!<orden>    Ejecuta <orden> en un subshell\n"
 "v                       Inicia /usr/bin/vi en la línea actual\n"
@@ -10098,34 +9723,34 @@ msgstr ""
 ":f                      Muestra el fichero actual y el número de línea\n"
 ".                       Repite la orden anterior\n"
 
-#: text-utils/more.c:1371 text-utils/more.c:1376
+#: text-utils/more.c:1356 text-utils/more.c:1361
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Pulse 'h' para consultar las instrucciones.]"
 
-#: text-utils/more.c:1410
+#: text-utils/more.c:1395
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" línea %d"
 
-#: text-utils/more.c:1412
+#: text-utils/more.c:1397
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[No es un fichero] línea %d"
 
-#: text-utils/more.c:1496
+#: text-utils/more.c:1481
 msgid "  Overflow\n"
 msgstr "  Desbordamiento\n"
 
-#: text-utils/more.c:1543
+#: text-utils/more.c:1528
 msgid "...skipping\n"
 msgstr "...omitiendo\n"
 
-#: text-utils/more.c:1572
+#: text-utils/more.c:1557
 msgid "Regular expression botch"
 msgstr "Error en expresión regular"
 
-#: text-utils/more.c:1584
+#: text-utils/more.c:1569
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -10133,15 +9758,15 @@ msgstr ""
 "\n"
 "Patrón no encontrado\n"
 
-#: text-utils/more.c:1587 text-utils/pg.c:1123 text-utils/pg.c:1274
+#: text-utils/more.c:1572 text-utils/pg.c:1125 text-utils/pg.c:1276
 msgid "Pattern not found"
 msgstr "Patrón no encontrado"
 
-#: text-utils/more.c:1648
+#: text-utils/more.c:1633
 msgid "can't fork\n"
 msgstr "no se puede bifurcar\n"
 
-#: text-utils/more.c:1687
+#: text-utils/more.c:1672
 msgid ""
 "\n"
 "...Skipping "
@@ -10149,19 +9774,19 @@ msgstr ""
 "\n"
 "...Saltando "
 
-#: text-utils/more.c:1691
+#: text-utils/more.c:1676
 msgid "...Skipping to file "
 msgstr "...Saltando al fichero "
 
-#: text-utils/more.c:1693
+#: text-utils/more.c:1678
 msgid "...Skipping back to file "
 msgstr "...Retrocediendo al fichero "
 
-#: text-utils/more.c:1971
+#: text-utils/more.c:1956
 msgid "Line too long"
 msgstr "Línea demasiado larga"
 
-#: text-utils/more.c:2014
+#: text-utils/more.c:1999
 msgid "No previous command to substitute for"
 msgstr "No hay ningún comando anterior para sustituir"
 
@@ -10197,14 +9822,12 @@ msgstr "hexdump: número total de bytes con varios caracteres de conversión.\n"
 #: text-utils/parse.c:483
 #, c-format
 msgid "hexdump: bad byte count for conversion character %s.\n"
-msgstr ""
-"hexdump: número total de bytes incorrecto para carácter de conversión %s.\n"
+msgstr "hexdump: número total de bytes incorrecto para carácter de conversión %s.\n"
 
 #: text-utils/parse.c:490
 #, c-format
 msgid "hexdump: %%s requires a precision or a byte count.\n"
-msgstr ""
-"hexdump: %%s requiere un valor de precisión o un número total de bytes.\n"
+msgstr "hexdump: %%s requiere un valor de precisión o un número total de bytes.\n"
 
 #: text-utils/parse.c:496
 #, c-format
@@ -10216,89 +9839,87 @@ msgstr "hexdump: formato incorrecto {%s}\n"
 msgid "hexdump: bad conversion character %%%s.\n"
 msgstr "hexdump: carácter de conversión %%%s incorrecto.\n"
 
-#: text-utils/pg.c:235
+#: text-utils/pg.c:237
 #, c-format
-msgid ""
-"%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
-msgstr ""
-"%s: Uso: %s [-número] [-p cadena] [-cefrns] [+línea] [+/patrón/] [ficheros]\n"
+msgid "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
+msgstr "%s: Uso: %s [-número] [-p cadena] [-cefrns] [+línea] [+/patrón/] [ficheros]\n"
 
-#: text-utils/pg.c:244
+#: text-utils/pg.c:246
 #, c-format
 msgid "%s: option requires an argument -- %s\n"
 msgstr "%s: la opción necesita un argumento -- %s\n"
 
-#: text-utils/pg.c:252
+#: text-utils/pg.c:254
 #, c-format
 msgid "%s: illegal option -- %s\n"
 msgstr "%s: opción ilegal -- %s\n"
 
-#: text-utils/pg.c:369
+#: text-utils/pg.c:371
 msgid "...skipping forward\n"
 msgstr "...saltando hacia adelante\n"
 
-#: text-utils/pg.c:371
+#: text-utils/pg.c:373
 msgid "...skipping backward\n"
 msgstr "...saltando hacia atrás\n"
 
-#: text-utils/pg.c:393
+#: text-utils/pg.c:395
 msgid "No next file"
 msgstr "No hay ningún fichero siguiente"
 
-#: text-utils/pg.c:397
+#: text-utils/pg.c:399
 msgid "No previous file"
 msgstr "No hay ningún fichero anterior"
 
-#: text-utils/pg.c:927
+#: text-utils/pg.c:929
 #, c-format
 msgid "%s: Read error from %s file\n"
 msgstr "%s: Error de lectura en el fichero %s\n"
 
-#: text-utils/pg.c:933
+#: text-utils/pg.c:935
 #, c-format
 msgid "%s: Unexpected EOF in %s file\n"
 msgstr "%s: EOF inesperado en el fichero %s\n"
 
-#: text-utils/pg.c:936
+#: text-utils/pg.c:938
 #, c-format
 msgid "%s: Unknown error in %s file\n"
 msgstr "%s: Error desconocido en el fichero %s\n"
 
-#: text-utils/pg.c:1031
+#: text-utils/pg.c:1033
 #, c-format
 msgid "%s: Cannot create tempfile\n"
 msgstr "%s: No se puede crear un fichero temporal.\n"
 
 # ¿Qué significa?
-#: text-utils/pg.c:1040 text-utils/pg.c:1215
+#: text-utils/pg.c:1042 text-utils/pg.c:1217
 msgid "RE error: "
 msgstr "RE error:"
 
-#: text-utils/pg.c:1197
+#: text-utils/pg.c:1199
 msgid "(EOF)"
 msgstr "(EOF)"
 
-#: text-utils/pg.c:1223
+#: text-utils/pg.c:1225
 msgid "No remembered search string"
 msgstr "No se recuerda ninguna cadena de búsqueda"
 
-#: text-utils/pg.c:1306
+#: text-utils/pg.c:1308
 msgid "Cannot open "
 msgstr "No se puede abrir "
 
-#: text-utils/pg.c:1354
+#: text-utils/pg.c:1356
 msgid "saved"
 msgstr "guardado"
 
-#: text-utils/pg.c:1461
+#: text-utils/pg.c:1463
 msgid ": !command not allowed in rflag mode.\n"
 msgstr ": no se permite !orden en el modo rflag.\n"
 
-#: text-utils/pg.c:1493
+#: text-utils/pg.c:1495
 msgid "fork() failed, try again later\n"
 msgstr "falló la llamada al sistema fork(), inténtelo de nuevo más adelante\n"
 
-#: text-utils/pg.c:1698
+#: text-utils/pg.c:1700
 msgid "(Next file: "
 msgstr "(Siguiente fichero: "
 
@@ -10312,30 +9933,15 @@ msgstr "No se puede asignar espacio de búfer\n"
 msgid "usage: rev [file ...]\n"
 msgstr "uso: rev [fichero ...]\n"
 
-#: text-utils/tailf.c:59 text-utils/tailf.c:129
+#: text-utils/tailf.c:53 text-utils/tailf.c:105
 #, fuzzy, c-format
-msgid "Cannot open \"%s\" for read: %s\n"
+msgid "Cannot open \"%s\" for read\n"
 msgstr "No se puede abrir %s para lectura\n"
 
-#: text-utils/tailf.c:107 text-utils/tailf.c:111
-#, fuzzy
-msgid "Invalid number of lines"
-msgstr "Número inválido: %s\n"
-
-#: text-utils/tailf.c:114
-#, fuzzy
-msgid "Invalid option"
-msgstr "identificador inválido"
-
-#: text-utils/tailf.c:118
+#: text-utils/tailf.c:93
 #, fuzzy, c-format
-msgid "Usage: tailf [-n N | -N] logfile\n"
+msgid "Usage: tailf logfile\n"
 msgstr "uso: %s [fichero]\n"
-
-#: text-utils/tailf.c:137
-#, c-format
-msgid "Incomplete write to \"%s\" (written %d, expected %d)\n"
-msgstr ""
 
 #: text-utils/ul.c:141
 #, c-format
@@ -10367,33 +9973,7 @@ msgstr "Línea de entrada demasiado larga.\n"
 msgid "Out of memory when growing buffer.\n"
 msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 
-#~ msgid "Password error."
-#~ msgstr "Error de contraseña."
-
-#~ msgid "couldn't read %s, and cannot ioctl dump\n"
-#~ msgstr "No se ha podido leer %s y no se puede efectuar vuelco de ioctl\n"
-
-#, fuzzy
-#~ msgid "Unknown option `%c' ignored"
-#~ msgstr "%s: opción desconocida \"-%c\"\n"
-
-#~ msgid "`%s': bad directory: '.' isn't first\n"
-#~ msgstr "`%s': directorio incorrecto: '.' no es el primero\n"
-
-#~ msgid "`%s': bad directory: '..' isn't second\n"
-#~ msgstr "`%s': directorio incorrecto: '..' no es el segundo\n"
-
-#, fuzzy
-#~ msgid "%s from util-linux-%s\n"
-#~ msgstr "%s de %s\n"
-
-#, fuzzy
-#~ msgid "%s from %s%s\n"
-#~ msgstr "%s de %s\n"
-
-#~ msgid ""
-#~ "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  "
-#~ "Exiting.\n"
+#~ msgid "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  Exiting.\n"
 #~ msgstr ""
 #~ "Se excedió MAXENTRIES. Incremente este valor en mkcramfs.c y recompile.\n"
 #~ "Saliendo.\n"
@@ -10434,6 +10014,14 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgid "Linux custom"
 #~ msgstr "Linux personalizado"
 
+#, fuzzy
+#~ msgid "%s from util-linux-%s\n"
+#~ msgstr "%s de %s\n"
+
+#, fuzzy
+#~ msgid "%s from %s%s\n"
+#~ msgstr "%s de %s\n"
+
 #~ msgid ""
 #~ "usage:\n"
 #~ "  %s loop_device                                       # give info\n"
@@ -10442,11 +10030,9 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ "  %s [-e encryption] [-o offset] {-f|loop_device} file # setup\n"
 #~ msgstr ""
 #~ "uso:\n"
-#~ "  %s dispositivo_bucle                                   # dar "
-#~ "información\n"
+#~ "  %s dispositivo_bucle                                   # dar información\n"
 #~ "  %s -d dispositivo_bucle                                # eliminar\n"
-#~ "  %s -f                                                  # encuentra no "
-#~ "usados\n"
+#~ "  %s -f                                                  # encuentra no usados\n"
 #~ "  %s [ -e cifrado ] [ -o despl ] {-f|disp_bucle} fichero # configurar\n"
 
 #, fuzzy
@@ -10454,11 +10040,9 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgstr "mount: la etiqueta %s aparece tanto en %s como en %s\n"
 
 #, fuzzy
-#~ msgid ""
-#~ "%s: could not open %s, so UUID and LABEL conversion cannot be done.\n"
+#~ msgid "%s: could not open %s, so UUID and LABEL conversion cannot be done.\n"
 #~ msgstr ""
-#~ "mount: no se ha podido abrir %s; así que no se puede efectuar la "
-#~ "conversión\n"
+#~ "mount: no se ha podido abrir %s; así que no se puede efectuar la conversión\n"
 #~ "de UUID y ETIQUETA\n"
 
 #, fuzzy
@@ -10485,8 +10069,7 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgstr "mount: atención: varios nombres de host no soportados\n"
 
 #~ msgid "mount: directory to mount not in host:dir format\n"
-#~ msgstr ""
-#~ "mount: el directorio que se debe montar no tiene el formato host:dir\n"
+#~ msgstr "mount: el directorio que se debe montar no tiene el formato host:dir\n"
 
 #~ msgid "mount: can't get address for %s\n"
 #~ msgstr "mount: no se puede obtener la dirección para %s\n"
@@ -10528,8 +10111,7 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgstr "el servidor nfs informa de que el servicio no está disponible"
 
 #~ msgid "used portmapper to find NFS port\n"
-#~ msgstr ""
-#~ "Se ha utilizado el asignador de puertos para encontrar el puerto NFS\n"
+#~ msgstr "Se ha utilizado el asignador de puertos para encontrar el puerto NFS\n"
 
 #~ msgid "using port %d for nfs deamon\n"
 #~ msgstr "Utilizando puerto %d para daemon de nfs\n"
@@ -10579,8 +10161,7 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 
 # FIXME: Sobra el espacio final
 #~ msgid "%s: warning--unable to determine filesystem size \n"
-#~ msgstr ""
-#~ "%s: atención, no se puede determinar el tamaño del sistema de ficheros\n"
+#~ msgstr "%s: atención, no se puede determinar el tamaño del sistema de ficheros\n"
 
 #~ msgid "%s is not a block device or file\n"
 #~ msgstr "%s no es un dispositivo de bloques o un fichero\n"
@@ -10592,8 +10173,7 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgstr "%s: cramfs inválido, magia errónea\n"
 
 #~ msgid "%s: warning--file length too long, padded image?\n"
-#~ msgstr ""
-#~ "%s: atención, longitud de fichero demasiado grande, ¿imagen desplazada?\n"
+#~ msgstr "%s: atención, longitud de fichero demasiado grande, ¿imagen desplazada?\n"
 
 #~ msgid "%s: invalid cramfs--crc error\n"
 #~ msgstr "%s: error de crc, cramfs inválido\n"
@@ -10604,26 +10184,16 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgid "%s: invalid cramfs--bad superblock\n"
 #~ msgstr "%s: cramfs inválido, supoerbloque erróneo\n"
 
-#~ msgid ""
-#~ "%s: invalid cramfs--directory data end (%ld) != file data start (%ld)\n"
+#~ msgid "%s: invalid cramfs--directory data end (%ld) != file data start (%ld)\n"
 #~ msgstr ""
 #~ "%s: cramfs inválido, el final de los datos de directorios (%ld)\n"
 #~ "es distinto del comienzo de los datos de ficheros (%ld)\n"
 
 #~ msgid "%s: invalid cramfs--invalid file data offset\n"
-#~ msgstr ""
-#~ "%s: cramfs inválido, desplazamiento inválido de los datos de ficheros\n"
+#~ msgstr "%s: cramfs inválido, desplazamiento inválido de los datos de ficheros\n"
 
-#, fuzzy
-#~ msgid "mkfs from %s\n"
-#~ msgstr "%s de %s\n"
-
-#~ msgid "mkfs version %s (%s)\n"
-#~ msgstr "mkfs versión %s (%s)\n"
-
-#, fuzzy
-#~ msgid "flock: unknown option, aborting.\n"
-#~ msgstr "%s: opción desconocida \"-%c\"\n"
+#~ msgid "Invalid number: %s\n"
+#~ msgstr "Número inválido: %s\n"
 
 #~ msgid "Syntax error: '%s'\n"
 #~ msgstr "Error de sintaxis: '%s'\n"
@@ -10634,11 +10204,8 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgid "   %s [ -p ] dev name\n"
 #~ msgstr "   %s [ -p ] dispositivo nombre\n"
 
-#~ msgid ""
-#~ "   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
-#~ msgstr ""
-#~ "   %s [ -p ] disp. tamaño sect. cabez. pistas stretch gap rate spec1 "
-#~ "fmt_gap\n"
+#~ msgid "   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
+#~ msgstr "   %s [ -p ] disp. tamaño sect. cabez. pistas stretch gap rate spec1 fmt_gap\n"
 
 #~ msgid "   %s [ -c | -y | -n | -d ] dev\n"
 #~ msgstr "   %s [ -c | -y | -n | -d ] dispositivo\n"
@@ -10678,8 +10245,7 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgstr "Tiene demasiados procesos en ejecución.\n"
 
 #~ msgid "The password must have at least 6 characters, try again.\n"
-#~ msgstr ""
-#~ "La contraseña debe tener como mínimo 6 caracteres; inténtelo de nuevo.\n"
+#~ msgstr "La contraseña debe tener como mínimo 6 caracteres; inténtelo de nuevo.\n"
 
 #~ msgid ""
 #~ "The password must contain characters out of two of the following\n"
@@ -10687,29 +10253,23 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ "characters. See passwd(1) for more information.\n"
 #~ msgstr ""
 #~ "La contraseña debe contener caracteres de al menos dos de las siguientes\n"
-#~ "clases: letras mayúsculas y minúsculas, dígitos, y caracteres no "
-#~ "alfanuméricos.\n"
+#~ "clases: letras mayúsculas y minúsculas, dígitos, y caracteres no alfanuméricos.\n"
 #~ "Consulte passwd(1) para más información.\n"
 
 #~ msgid "You cannot reuse the old password.\n"
 #~ msgstr "No puede volver a utilizar la antigua contraseña.\n"
 
 #~ msgid "Please don't use something like your username as password!\n"
-#~ msgstr ""
-#~ "No utilice un valor como por ejemplo el nombre de usuario como "
-#~ "contraseña.\n"
+#~ msgstr "No utilice un valor como por ejemplo el nombre de usuario como contraseña.\n"
 
 #~ msgid "Please don't use something like your realname as password!\n"
-#~ msgstr ""
-#~ "No utilice un valor como por ejemplo su nombre real como contraseña.\n"
+#~ msgstr "No utilice un valor como por ejemplo su nombre real como contraseña.\n"
 
 #~ msgid "Usage: passwd [username [password]]\n"
 #~ msgstr "Uso: passwd [nombreusuario [contraseña]]\n"
 
 #~ msgid "Only root may use the one and two argument forms.\n"
-#~ msgstr ""
-#~ "Sólo el usuario root puede utilizar los formatos de uno y dos "
-#~ "argumentos.\n"
+#~ msgstr "Sólo el usuario root puede utilizar los formatos de uno y dos argumentos.\n"
 
 #~ msgid "Usage: passwd [-foqsvV] [user [password]]\n"
 #~ msgstr "Uso: passwd [-foqsvV] [usuario [contraseña]]\n"
@@ -10721,17 +10281,13 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgstr "No se puede encontrar el nombre de inicio de sesión"
 
 #~ msgid "Only root can change the password for others.\n"
-#~ msgstr ""
-#~ "Sólo el usuario root puede cambiar la contraseña de otros usuarios.\n"
+#~ msgstr "Sólo el usuario root puede cambiar la contraseña de otros usuarios.\n"
 
 #~ msgid "Can't find username anywhere. Is `%s' really a user?"
-#~ msgstr ""
-#~ "No se puede encontrar el nombre de usuario. ¿`%s' es realmente un usuario?"
+#~ msgstr "No se puede encontrar el nombre de usuario. ¿`%s' es realmente un usuario?"
 
 #~ msgid "Sorry, I can only change local passwords. Use yppasswd instead."
-#~ msgstr ""
-#~ "Este comando sólo puede cambiar las contraseñas locales. Utilice yppasswd "
-#~ "en su lugar."
+#~ msgstr "Este comando sólo puede cambiar las contraseñas locales. Utilice yppasswd en su lugar."
 
 #~ msgid "UID and username does not match, imposter!"
 #~ msgstr "El UID y el nombre de usuario no coinciden."
@@ -10770,8 +10326,7 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgstr "Llamando a setpwnam para establecer contraseña.\n"
 
 #~ msgid "Password *NOT* changed.  Try again later.\n"
-#~ msgstr ""
-#~ "*NO* se ha cambiado la contraseña. Inténtelo de nuevo más adelante.\n"
+#~ msgstr "*NO* se ha cambiado la contraseña. Inténtelo de nuevo más adelante.\n"
 
 #~ msgid "Password changed.\n"
 #~ msgstr "Se ha cambiado la contraseña.\n"
@@ -10786,8 +10341,7 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgstr "Error de ioctl BLKGETSIZE para %s\n"
 
 #~ msgid "mount: fs type %s not supported by kernel"
-#~ msgstr ""
-#~ "mount: el tipo de sistema de ficheros %s no está soportado por el núcleo"
+#~ msgstr "mount: el tipo de sistema de ficheros %s no está soportado por el núcleo"
 
 #~ msgid "mount: %s duplicate - not mounted"
 #~ msgstr "mount: %s duplicado - no se monta"
@@ -10796,8 +10350,7 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgstr "UUID"
 
 #~ msgid "mount: the label %s occurs on both %s and %s - not mounted\n"
-#~ msgstr ""
-#~ "mount: la etiqueta %s aparece tanto en %s como en %s - no se monta\n"
+#~ msgstr "mount: la etiqueta %s aparece tanto en %s como en %s - no se monta\n"
 
 #~ msgid "umount: only root can unmount %s from %s"
 #~ msgstr "umount: sólo el usuario root puede desmontar %s desde %s"
@@ -10817,10 +10370,8 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ "       about the loop device (then recompile or `insmod loop.o'), or\n"
 #~ "       maybe /dev/loop# has the wrong major number?"
 #~ msgstr ""
-#~ "mount: No se ha encontrado ningún dispositivo de bucle. Tal vez este "
-#~ "núcleo no\n"
-#~ "       conozca el dispositivo de bucle (vuelva a compilar o `insmod loop."
-#~ "o')\n"
+#~ "mount: No se ha encontrado ningún dispositivo de bucle. Tal vez este núcleo no\n"
+#~ "       conozca el dispositivo de bucle (vuelva a compilar o `insmod loop.o')\n"
 #~ "       o tal vez /dev/loop# tenga el número principal incorrecto."
 
 #~ msgid "Init (up to 16 hex digits): "
@@ -10866,11 +10417,9 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgstr "nuevo "
 
 #~ msgid "The password must contain characters out of two of the following\n"
-#~ msgstr ""
-#~ "La contraseña debe contener caracteres de dos de los tipos siguientes\n"
+#~ msgstr "La contraseña debe contener caracteres de dos de los tipos siguientes\n"
 
-#~ msgid ""
-#~ "classes:  upper and lower case letters, digits and non alphanumeric\n"
+#~ msgid "classes:  upper and lower case letters, digits and non alphanumeric\n"
 #~ msgstr "clases: letras mayúsculas y minúsculas, dígitos y caracteres\n"
 
 #~ msgid "characters. See passwd(1) for more information.\n"
@@ -10928,10 +10477,8 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ "Re-read table failed with error %d: %s.\n"
 #~ "Reboot your system to ensure the partition table is updated.\n"
 #~ msgstr ""
-#~ "La nueva lectura de la tabla de particiones ha fallado con el error %d: %"
-#~ "s.\n"
-#~ "Reinicie el sistema para asegurarse de que la tabla de particiones se "
-#~ "actualice.\n"
+#~ "La nueva lectura de la tabla de particiones ha fallado con el error %d: %s.\n"
+#~ "Reinicie el sistema para asegurarse de que la tabla de particiones se actualice.\n"
 
 #~ msgid "Warning: partition %s contains part of "
 #~ msgstr "Atención: la partición %s contiene parte de "
@@ -10979,14 +10526,10 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgstr "Atención: la cuenta caduca en %d %s del año %d.\n"
 
 #~ msgid "mount: warning: cannot change mounted device with a remount\n"
-#~ msgstr ""
-#~ "mount: atención: no se puede cambiar el dispositivo montado con un nuevo "
-#~ "montaje\n"
+#~ msgstr "mount: atención: no se puede cambiar el dispositivo montado con un nuevo montaje\n"
 
 #~ msgid "mount: warning: cannot change filesystem type with a remount\n"
-#~ msgstr ""
-#~ "mount: atención: no se puede cambiar el sistema de ficheros con un nuevo "
-#~ "montaje\n"
+#~ msgstr "mount: atención: no se puede cambiar el sistema de ficheros con un nuevo montaje\n"
 
 #~ msgid "not mounted anything"
 #~ msgstr "No se ha montado nada"
@@ -11040,8 +10583,7 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ msgstr "mount: %s tiene un número principal o secundario incorrecto"
 
 #~ msgid "mount: block device %s is not permitted on its filesystem"
-#~ msgstr ""
-#~ "mount: dispositivo de bloques %s no permitido en este sistema de ficheros"
+#~ msgstr "mount: dispositivo de bloques %s no permitido en este sistema de ficheros"
 
 #~ msgid ""
 #~ "Usage: mount [-hV]\n"
@@ -11054,8 +10596,7 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 #~ "       mount -a [-nfFrsvw] [-t vfstypes]\n"
 #~ "       mount [-nfrsvw] [-o opciones] special | node\n"
 #~ "       mount [-nfrsvw] [-t vfstype] [-o opciones] special node\n"
-#~ "       Un dispositivo especial puede indicarse mediante -L etiqueta o -U "
-#~ "uuid\n"
+#~ "       Un dispositivo especial puede indicarse mediante -L etiqueta o -U uuid\n"
 
 #~ msgid "mount: %s:%s failed, reason given by server: %s\n"
 #~ msgstr "mount: %s:%s ha fallado; motivo indicado por servidor: %s\n"
