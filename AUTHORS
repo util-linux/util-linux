@@ -24,49 +24,88 @@ AUTHORS (merged projects & commands):
                        Jindrich Novy <jnovy@redhat.com>
       rtcwake:         David Brownell <david-b@pacbell.net>
                        Bernhard Walle <bwalle@suse.de>
+      ldattach:        Tilman Schmidt <tilman@imap.cc>
 
 
 CONTRIBUTORS:
 
       A. Costa <agcosta@gis.net>
+      Alain Guibert <alguibert+ulng@free.fr>
       Alan Curry <pacman@TheWorld.com>
+      Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
+      Arif E. Nugroho <arif_endro@yahoo.com>
       Arkadiusz Miskiewicz <arekm@maven.pl>
       Balint Cristian <cbalint@redhat.com>
+      Benno Schulenberg <benno@vertaalt.nl>
+      Bernardo Innocenti <bernie@codewiz.org>
       Bernhard Walle <bwalle@suse.de>
+      Claus Hindsgaul <claus_h@image.dk>
       Cliff Wickman <cpw@sgi.com>
+      Clytie Siddall <clytie@riverland.net.au>
+      Daisuke Yamashita <yamad@mb.infoweb.ne.jp>
+      Daniel Nylander <po@danielnylander.se>
       David Brownell <david-b@pacbell.net>
       David Miller <davem@davemloft.net>
+      David Woodhouse <dwmw2@infradead.org>
       Dennis Gilmore <dennis@ausil.us>
       Flávio Leitner <fleitner@redhat.com>
+      Frédéric Bothamy <frederic.bothamy@free.fr>
+      Gabor Kelemen <kelemeng@gnome.hu>
       Gabriel Barazer <gabriel@oxeva.fr>
+      Hamish Coleman <hamish@zot.org>
       H. Peter Anvin <hpa@zytor.com>
+      Imre Kaloz <kaloz@openwrt.org>
       Jason Vas Dias <jvdias@redhat.com>
+      Jim Meyering <jim@meyering.net>
+      Josep Puigdemont <josep.puigdemont@gmail.com>
       Justin B Rye <jbr@edlug.org.uk>
+      KaiGai Kohei <kaigai@kaigai.gr.jp>
       Kay Sievers <kay.sievers@vrfy.org>
+      Kees Cook <kees.cook@canonical.com>
+      Kunihiko IMAI <kimai@iodata.jp>
+      LaMont Jones <lamont@debian.org>
       LaMont Jones <lamont@mmjgroup.com>
+      Lauri Nurmi <lanurmi@iki.fi>
       Li Zefan <lizf@cn.fujitsu.com>
+      lizf <lizf@cn.fujitsu.com>
       Luciano Chavez <lnx1138@us.ibm.com>
+      Ludwig Nussel <ludwig.nussel@suse.de>
+      Marco Colombo <m.colombo@ed.ac.uk>
       Marco d'Itri <md@Linux.IT>
+      Mark McLoughlin <markmc@redhat.com>
       Martin Schlemmer <azarah@gentoo.org>
+      Martin Schulze <joey@infodrom.org>
       Masatake YAMATO <jet@gyve.org>
       Matthias Koenig <mkoenig@suse.de>
+      Maxim V. Dziumanenko <mvd@mylinux.com.ua>
+      Meelis Roos <mroos@linux.ee>
+      Michael Piefel <piefel@informatik.hu-berlin.de>
+      Michel Robitaille <robitail@IRO.UMontreal.CA>
       Mike Frysinger <vapier@gentoo.org>
+      Mikel Olasagasti <hey_neken@mundurat.net>
+      Miklos Szeredi <mszeredi@suse.cz>
       Moritz Muehlenhoff <jmm@inutil.org>
+      Nilgün Belma Bugüner <nilgun@buguner.name.tr>
       Norbert Buchmuller <norbi@nix.hu>
+      Oliver Falk <oliver@linux-kernel.at>
       Pádraig Brady <P@draigBrady.com>
+      Pascal Terjan <pterjan@linuxfr.org>
+      Pavel Maryanov <acid_jack@ukr.net>
+      Peter Breitenlohner <peb@mppmu.mpg.de>
+      Petr Pisar <petr.pisar@atlas.cz>
+      Phan Vinh Thinh <teppi82@gmail.com>
+      Rajeev V. Pillai <rajeevvp@gmail.com>
       Ram Pai <linuxram@us.ibm.com>
+      Randy Dunlap <randy.dunlap@oracle.com>
+      Robert Millan <rmh@aybabtu.com>
+      Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>
       Samuel Thibault <samuel.thibault@ens-lyon.org>
+      Santiago Vila Doncel <sanvila@unex.es>
       Sascha Sommer <ssommer@suse.de>
+      Simon Mihevc <simonmihevc@email.si>
+      Stefan Krah <stefan@bytereef.org>
       Stepan Kasal <skasal@redhat.com>
       Steve Grubb <sgrubb@redhat.com>
+      Tilman Schmidt <tilman@imap.cc>
       Valerie Henson <val_henson@linux.intel.com>
-
-
-TRANSLATORS (translationproject.org):
-
-      Benno Schulenberg <benno@vertaalt.nl>            (nl)
-      Daniel Nylander <po@danielnylander.se>           (sv)
-      Michael Piefel <piefel@informatik.hu-berlin.de>  (de)
-      Phan Vinh Thinh <teppi82@gmail.com>              (vi)
-      Petr Pisar <petr.pisar@atlas.cz>                 (cs)
-
+      Yu Zhiguo <yuzg@cn.fujitsu.com>
