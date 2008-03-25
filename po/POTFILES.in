@@ -96,6 +96,7 @@ sys-utils/dmesg.c
 sys-utils/flock.c
 sys-utils/ipcrm.c
 sys-utils/ipcs.c
+sys-utils/ldattach.c
 sys-utils/rdev.c
 sys-utils/readprofile.c
 sys-utils/renice.c
