@@ -1,5 +1,6 @@
-The following is a list of commands or features that are going to be
-removed in the util-linux-ng source tree.
+The following is a list of commands or features that are deprecated.  All
+deprecated utils are in maintenace mode and we keep them in source tree for
+backward compatibilty only.
 
 
 What:	raw(8) command
