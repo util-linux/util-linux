@@ -21,7 +21,7 @@
 #include <fcntl.h>
 #include <sys/ioctl.h>
 #include <errno.h>
-#include <asm/termbits.h>
+#include <termios.h>
 #include <unistd.h>
 #include <err.h>
 
@@ -31,15 +31,16 @@
 	do { if (debug) fprintf(stderr , "%s:" format "\n" , progname , ## arg); } while (0)
 
 #ifndef N_GIGASET_M101
-#define N_GIGASET_M101 16
-#endif
-
-#ifndef PACKAGE_STRING
-#define PACKAGE_STRING "me"
+# define N_GIGASET_M101 16
 #endif
 
 #ifndef ARRAY_SIZE
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+# define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+#endif
+
+/* attach a line discipline ioctl */
+#ifndef TIOCSETD
+# define TIOCSETD   0x5423
 #endif
 
 static const char *progname;
@@ -78,105 +79,6 @@ static int lookup_ld(const char *s)
     return -1;
 }
 
-/* replacement for tcsetattr(3) and friends supporting arbitrary speed values */
-
-/* some archs don't have separate struct termios2 */
-#ifndef TCGETS2
-#define termios2 termios
-#define TCGETS2 TCGETS
-#define TCSETS2 TCSETS
-#define TCSETSW2 TCSETSW
-#define TCSETSF2 TCSETSF
-#endif
-
-static int tcgetattr2(int fd, struct termios2 *pts)
-{
-    return ioctl(fd, TCGETS2, pts);
-}
-
-static int tcsetattr2(int fd, int option, const struct termios2 *pts)
-{
-    int request;
-
-    switch (option) {
-    case TCSANOW:
-	request = TCSETS2;
-	break;
-    case TCSADRAIN:
-	request = TCSETSW2;
-	break;
-    case TCSAFLUSH:
-	request = TCSETSF2;
-	break;
-    default:
-	errno = -EINVAL;
-	return -1;
-    }
-    return ioctl(fd, request, pts);
-}
-
-static void cfmakeraw2(struct termios2 *pts)
-{
-    pts->c_iflag &= ~(IGNBRK|BRKINT|PARMRK|ISTRIP|INLCR|IGNCR|ICRNL|IXON);
-    pts->c_oflag &= ~OPOST;
-    pts->c_lflag &= ~(ECHO|ECHONL|ICANON|ISIG|IEXTEN);
-    pts->c_cflag &= ~(CSIZE|PARENB);
-    pts->c_cflag |= CS8;
-}
-
-/* table of standard line speeds */
-static const struct speed_entry { int s; speed_t v; }
-speed_table[] = {
-	{ 50,     B50 },
-	{ 75,     B75 },
-	{ 110,    B110 },
-	{ 134,    B134 },
-	{ 150,    B150 },
-	{ 200,    B200 },
-	{ 300,    B300 },
-	{ 600,    B600 },
-	{ 1200,   B1200 },
-	{ 1800,   B1800 },
-	{ 2400,   B2400 },
-	{ 4800,   B4800 },
-	{ 9600,   B9600 },
-	{ 19200,  B19200 },
-	{ 38400,  B38400 }
-#ifdef B57600
-	,{ 57600,  B57600 }
-#endif
-#ifdef B115200
-	,{ 115200, B115200 }
-#endif
-#ifdef B230400
-	,{ 230400, B230400 }
-#endif
-};
-
-static int cfsetspeed2(struct termios2 *pts, int speed)
-{
-    size_t i;
-
-    /* try POSIX method first */
-    for (i = 0; i < ARRAY_SIZE(speed_table); i++)
-	if (speed_table[i].s == speed) {
-	    pts->c_cflag &= ~CBAUD;
-	    pts->c_cflag |= speed_table[i].v;
-	    return 0;
-	}
-
-#ifdef BOTHER
-    /* new method available */
-    pts->c_ospeed = pts->c_ispeed = speed;
-    pts->c_cflag &= ~CBAUD;
-    pts->c_cflag |= BOTHER;
-    return 0;
-#else
-    /* new method not available */
-    return -1;
-#endif
-}
-
 static void __attribute__((__noreturn__)) usage(int exitcode)
 {
     size_t i;
@@ -190,10 +92,34 @@ static void __attribute__((__noreturn__)) usage(int exitcode)
     exit(exitcode);
 }
 
+static int my_cfsetspeed(struct termios *ts, int speed)
+{
+	/* Standard speeds
+	 * -- cfsetspeed() is able to translate number to Bxxx constants
+	 */
+	if (cfsetspeed(ts, speed) == 0)
+		return 0;
+
+	/* Nonstandard speeds
+	 * -- we have to bypass glibc and set the speed manually (because
+	 *    glibc checks for speed and supports Bxxx bit rates only)...
+	 */
+#ifdef _HAVE_STRUCT_TERMIOS_C_ISPEED
+# define BOTHER 0010000               /* non standard rate */
+	dbg("using non-standard speeds");
+	ts->c_ospeed = ts->c_ispeed = speed;
+	ts->c_cflag &= ~CBAUD;
+	ts->c_cflag |= BOTHER;
+	return 0;
+#else
+	return -1;
+#endif
+}
+
 int main(int argc, char **argv)
 {
     int tty_fd;
-    struct termios2 ts;
+    struct termios ts;
     int speed = 0, bits = '-', parity = '-', stop = '-';
     int ldisc;
     int optc;
@@ -278,10 +204,10 @@ int main(int argc, char **argv)
     dbg("opened %s", dev);
 
     /* set line speed and format */
-    if (tcgetattr2(tty_fd, &ts) < 0)
+    if (tcgetattr(tty_fd, &ts) < 0)
 	err(EXIT_FAILURE, _("cannot get terminal attributes for %s"), dev);
-    cfmakeraw2(&ts);
-    if (speed && cfsetspeed2(&ts, speed) < 0)
+    cfmakeraw(&ts);
+    if (speed && my_cfsetspeed(&ts, speed) < 0)
 	errx(EXIT_FAILURE, _("speed %d unsupported"), speed);
     switch (stop) {
     case '1':
@@ -312,7 +238,7 @@ int main(int argc, char **argv)
 	break;
     }
     ts.c_cflag |= CREAD;	/* just to be on the safe side */
-    if (tcsetattr2(tty_fd, TCSAFLUSH, &ts) < 0)
+    if (tcsetattr(tty_fd, TCSAFLUSH, &ts) < 0)
 	err(EXIT_FAILURE, _("cannot set terminal attributes for %s"), dev);
 
     dbg("set to raw %d %c%c%c: cflag=0x%x",
