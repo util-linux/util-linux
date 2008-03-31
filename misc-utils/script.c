@@ -301,8 +301,7 @@ dooutput() {
 #endif
 	tvec = time((time_t *)NULL);
 	my_strftime(obuf, sizeof obuf, "%c\n", localtime(&tvec));
-	if (!qflg)
-		fprintf(fscript, _("Script started on %s"), obuf);
+	fprintf(fscript, _("Script started on %s"), obuf);
 
 	if (die == 0 && child && kill(child, 0) == -1 && errno == ESRCH)
 		/*
