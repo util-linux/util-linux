@@ -5,14 +5,14 @@ EXTRA_DIST = README.flushb
 bin_PROGRAMS =
 
 usrbinexec_PROGRAMS = cal ddate logger look mcookie \
-	namei script whereis
+	namei script whereis scriptreplay
 EXTRA_DIST += README.cal README.ddate README.namei README.namei2
 
 mcookie_SOURCES = mcookie.c ../lib/md5.c
 
-usrbinexec_SCRIPTS = chkdupexe scriptreplay
+usrbinexec_SCRIPTS = chkdupexe
 
-CLEANFILES = chkdupexe scriptreplay
+CLEANFILES = chkdupexe
 
 dist_man_MANS = cal.1 chkdupexe.1 ddate.1 logger.1 look.1 mcookie.1 \
 	namei.1 script.1 whereis.1 scriptreplay.1

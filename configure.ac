@@ -693,7 +693,6 @@ tests/Makefile
 tests/helpers/Makefile
 tests/commands.sh
 misc-utils/chkdupexe:misc-utils/chkdupexe.pl
-misc-utils/scriptreplay:misc-utils/scriptreplay.pl
 ])
 
 AC_OUTPUT

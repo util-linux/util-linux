@@ -149,8 +149,18 @@ scriptreplay timingfile [typescript [divisor]]
 .IX Header "DESCRIPTION"
 This program replays a typescript, using timing information to ensure that
 output happens at the same speed as it originally appeared when the script
-was recorded. It is only guaranteed to work properly if run on the same
-terminal the script was recorded on.
+was recorded.
+.PP
+The replay simply displays the information again; the programs
+that were run when the typescript was being recorded are not run again.
+Since the same information is simply being displayed,
+.B scriptreplay
+is only guaranteed to work properly if run on the same type of
+terminal the typescript was recorded on.  Otherwise, any escape characters
+in the typescript may be interpreted differently by the terminal to
+which
+.B scriptreplay
+is sending its output.
 .PP
 The timings information is what script outputs to standard error if it is
 run with the \-t parameter.
@@ -158,8 +168,11 @@ run with the \-t parameter.
 By default, the typescript to display is assumed to be named \*(L"typescript\*(R",
 but other filenames may be specified, as the second parameter.
 .PP
-If the third parameter exits, it is used as a time divisor. For example,
-specifying a divisor of 2 makes the script be replayed twice as fast.
+If the third parameter is specified, it is used as a speed-up multiplier. For
+example, a speed-up of 2 makes
+.B scriptreplay
+go twice as fast and a speed-up of 0.1 makes it go ten times slower
+than the original session.
 .SH "EXAMPLE"
 .IX Header "EXAMPLE"
 .Vb 7
@@ -176,10 +189,23 @@ specifying a divisor of 2 makes the script be replayed twice as fast.
 .BR script (1)
 .SH "COPYRIGHT"
 .IX Header "COPYRIGHT"
-This program is in the public domain.
+Copyright \(co 2008 James Youngman
+.PP
+Copyright \(co 2008 Karel Zak
+.PP
+This is free software; see the source for copying conditions.  There is NO
+warranty; not even for MERCHANTABILITY or FITNESS FOR A PARTICULAR
+PURPOSE.
+.PP
+Released under the GNU General Public License version 2 or later.
 .SH "AUTHOR"
 .IX Header "AUTHOR"
-Joey Hess <joey@kitenet.net>
+The original
+.B scriptreplay
+program was written by Joey Hess <joey@kitenet.net>.
+The program was re-written in C by James Youngman <jay@gnu.org> and Karel Zak <kzak@redhat.com>.
 .SH AVAILABILITY
-The scriptreplay command is part of the util-linux-ng package and is available from
+The
+.B scriptreplay
+command is part of the util-linux-ng package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
