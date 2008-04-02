@@ -49,7 +49,5 @@ int parse_spec(const char *spec, char **name, char **value);
 #define EX_FAIL	       32	/* mount failure */
 #define EX_SOMEOK      64	/* some mount succeeded */
 
-#define EX_BG         256       /* retry in background (internal only) */
-
 #endif /* SUNDRIES_H */
 
