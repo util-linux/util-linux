@@ -103,6 +103,8 @@ struct clock_ops *ur;
 /* Here the information for time adjustments is kept. */
 #define ADJPATH "/etc/adjtime"
 
+const char *adj_file_name = NULL;
+
 /* Store the date here when "badyear" flag is set. */
 #define LASTDATE "/var/lib/lastdate"
 
@@ -249,7 +251,7 @@ read_adjtime(struct adjtime *adjtime_p) {
   int rc;  /* local return code */
   struct stat statbuf;  /* We don't even use the contents of this. */
 
-    rc = stat(ADJPATH, &statbuf);
+    rc = stat(adj_file_name, &statbuf);
     if (rc < 0 && errno == ENOENT) {
       /* He doesn't have a adjtime file, so we'll use defaults. */
       adjtime_p->drift_factor = 0;
@@ -262,9 +264,9 @@ read_adjtime(struct adjtime *adjtime_p) {
       return 0;
     }
 
-    adjfile = fopen(ADJPATH, "r");   /* open file for reading */
+    adjfile = fopen(adj_file_name, "r");   /* open file for reading */
     if (adjfile == NULL) {
-      outsyserr("cannot open file " ADJPATH);
+      outsyserr("cannot open file %s", adj_file_name);
       return EX_OSFILE;
     }
 
@@ -901,25 +903,25 @@ save_adjtime(const struct adjtime adjtime, const bool testing) {
     if (testing) {
       printf(_("Not updating adjtime file because of testing mode.\n"));
       printf(_("Would have written the following to %s:\n%s"),
-             ADJPATH, newfile);
+             adj_file_name, newfile);
     } else {
       FILE *adjfile;
       int err = 0;
 
-      adjfile = fopen(ADJPATH, "w");
+      adjfile = fopen(adj_file_name, "w");
       if (adjfile == NULL) {
         outsyserr("Could not open file with the clock adjustment parameters "
-               "in it (" ADJPATH ") for writing");
+               "in it (%s) for writing", adj_file_name);
 	err = 1;
       } else {
         if (fputs(newfile, adjfile) < 0) {
 	  outsyserr("Could not update file with the clock adjustment "
-		    "parameters (" ADJPATH ") in it");
+		    "parameters (%s) in it", adj_file_name);
 	  err = 1;
         }
         if (fclose(adjfile) < 0) {
           outsyserr("Could not update file with the clock adjustment "
-		    "parameters (" ADJPATH ") in it");
+		    "parameters (%s) in it", adj_file_name);
 	  err = 1;
         }
       }
@@ -1208,28 +1210,30 @@ usage( const char *fmt, ... ) {
     "hwclock - query and set the hardware clock (RTC)\n\n"
     "Usage: hwclock [function] [options...]\n\n"
     "Functions:\n"
-    "  --help        show this help\n"
-    "  --show        read hardware clock and print result\n"
-    "  --set         set the rtc to the time given with --date\n"
-    "  --hctosys     set the system time from the hardware clock\n"
-    "  --systohc     set the hardware clock to the current system time\n"
-    "  --adjust      adjust the rtc to account for systematic drift since \n"
-    "                the clock was last set or adjusted\n"
-    "  --getepoch    print out the kernel's hardware clock epoch value\n"
-    "  --setepoch    set the kernel's hardware clock epoch value to the \n"
-    "                value given with --epoch\n"
-    "  --version     print out the version of hwclock to stdout\n"
+    "  --help         show this help\n"
+    "  --show         read hardware clock and print result\n"
+    "  --set          set the rtc to the time given with --date\n"
+    "  --hctosys      set the system time from the hardware clock\n"
+    "  --systohc      set the hardware clock to the current system time\n"
+    "  --adjust       adjust the rtc to account for systematic drift since \n"
+    "                 the clock was last set or adjusted\n"
+    "  --getepoch     print out the kernel's hardware clock epoch value\n"
+    "  --setepoch     set the kernel's hardware clock epoch value to the \n"
+    "                 value given with --epoch\n"
+    "  --version      print out the version of hwclock to stdout\n"
     "\nOptions: \n"
-    "  --utc         the hardware clock is kept in coordinated universal time\n"
-    "  --localtime   the hardware clock is kept in local time\n"
-    "  --rtc=path    special /dev/... file to use instead of default\n"
-    "  --directisa   access the ISA bus directly instead of %s\n"
-    "  --badyear     ignore rtc's year because the bios is broken\n"
-    "  --date        specifies the time to which to set the hardware clock\n"
-    "  --epoch=year  specifies the year which is the beginning of the \n"
-    "                hardware clock's epoch value\n"
-    "  --noadjfile   do not access /etc/adjtime. Requires the use of\n"
-    "                either --utc or --localtime\n"
+    "  --utc          the hardware clock is kept in coordinated universal time\n"
+    "  --localtime    the hardware clock is kept in local time\n"
+    "  --rtc=path     special /dev/... file to use instead of default\n"
+    "  --directisa    access the ISA bus directly instead of %s\n"
+    "  --badyear      ignore rtc's year because the bios is broken\n"
+    "  --date         specifies the time to which to set the hardware clock\n"
+    "  --epoch=year   specifies the year which is the beginning of the \n"
+    "                 hardware clock's epoch value\n"
+    "  --noadjfile    do not access /etc/adjtime. Requires the use of\n"
+    "                 either --utc or --localtime\n"
+    "  --adjfile=path specifies the path to the adjust file (default is\n"
+    "                 /etc/adjtime)\n"
     ),RTC_DEV);
 #ifdef __alpha__
   fprintf(usageto, _(
@@ -1279,6 +1283,7 @@ static const struct option longopts[] = {
 	{ "date", 1, 0, 136 },
 	{ "epoch", 1, 0, 137 },
 	{ "rtc", 1, 0, 'f' },
+	{ "adjfile", 1, 0, 138 },
 	{ NULL, 0, 0, 0 }
 };
 
@@ -1404,6 +1409,9 @@ main(int argc, char **argv) {
 		case 137:
 			epoch_option = atoi(optarg);	/* --epoch */
 			break;
+		case 138:
+			adj_file_name = optarg;		/* --adjfile */
+			break;
 		case 'f':
 			rtc_dev_name = optarg;		/* --rtc */
 			break;
@@ -1455,6 +1463,15 @@ main(int argc, char **argv) {
 				  "both.\n"), MYNAME);
 		hwclock_exit(EX_USAGE);
 	}
+
+	if (adj_file_name && noadjfile) {
+		fprintf(stderr, _("%s: The --adjfile and --noadjfile options "
+				  "are mutually exclusive.  You specified "
+				  "both.\n"), MYNAME);
+		hwclock_exit(EX_USAGE);
+	}
+	if (!adj_file_name)
+		adj_file_name = ADJPATH;
 
 	if (noadjfile && !(utc || local_opt)) {
 		fprintf(stderr, _("%s: With --noadjfile, you must specify "

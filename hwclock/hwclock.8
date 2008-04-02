@@ -23,6 +23,7 @@ other options:
 .B "[\-u|\-\-utc]  \-\-localtime  \-\-noadjfile \-\-directisa"
 .B "\-\-test [\-D|\-\-debug]"
 .B "\-\-rtc=filename"
+.B "\-\-adjfile=filename"
 .PP
 and arcane options for DEC Alpha:
 .PP
@@ -181,6 +182,10 @@ will not read nor write to that file with this option. Either
 or
 .B \-\-localtime
 must be specified when using this option.
+
+.TP
+.B \-\-adjfile=filename
+overrides the default /etc/adjtime.
 
 .TP
 .B \-\-rtc=filename
