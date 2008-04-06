@@ -32,7 +32,7 @@ is_local(char *user)
 	FILE *fd;
 	char line[MAX_LENGTH];
 	int local = 0;
-	int len;
+	size_t len;
 
         if(!(fd = fopen(_PATH_PASSWD, "r"))) {
                 fprintf(stderr,_("Can't read %s, exiting."),_PATH_PASSWD);
@@ -40,7 +40,7 @@ is_local(char *user)
         }
 
 	len = strlen(user);
-        while(fgets(line, MAX_LENGTH, fd) > 0) {
+        while(fgets(line, MAX_LENGTH, fd)) {
                 if(!strncmp(line, user, len) && line[len] == ':') {
 			local = 1;
 			break;
