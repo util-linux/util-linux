@@ -86,6 +86,7 @@
  */
 
 #include <stdio.h>
+#include <stdarg.h>
 #include <errno.h>
 #include <unistd.h>
 #include <string.h>
@@ -188,9 +189,18 @@ usage(void) {
 	leave(16);
 }
 
+static void die(const char *fmt, ...)
+	__attribute__ ((__format__ (__printf__, 1, 2)));
+
 static void
-die(const char *str) {
-	fprintf(stderr, "%s: %s\n", program_name, str);
+die(const char *fmt, ...) {
+	va_list ap;
+
+	fprintf(stderr, "%s: ", program_name);
+	va_start(ap, fmt);
+	vfprintf(stderr, fmt, ap);
+	va_end (ap);
+	fputc('\n', stderr);
 	leave(8);
 }
 
@@ -1283,7 +1293,7 @@ main(int argc, char ** argv) {
 	}
 	IN = open(device_name,repair?O_RDWR:O_RDONLY);
 	if (IN < 0)
-		die(_("unable to open '%s'"));
+		die(_("unable to open '%s': %s"), device_name, strerror(errno));
 	for (count=0 ; count<3 ; count++)
 		sync();
 	read_superblock();
