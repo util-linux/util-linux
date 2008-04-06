@@ -286,7 +286,7 @@ my_strftime(char *buf, size_t len, const char *fmt, const struct tm *tm) {
 
 void
 dooutput() {
-	register int cc;
+	register ssize_t cc;
 	time_t tvec;
 	char obuf[BUFSIZ];
 	struct timeval tv;
@@ -338,7 +338,7 @@ dooutput() {
 			break;
 		if (tflg) {
 			newtime = tv.tv_sec + (double) tv.tv_usec / 1000000;
-			fprintf(stderr, "%f %i\n", newtime - oldtime, cc);
+			fprintf(stderr, "%f %zd\n", newtime - oldtime, cc);
 			oldtime = newtime;
 		}
 		wrt = write(1, obuf, cc);
