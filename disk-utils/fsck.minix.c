@@ -65,6 +65,10 @@
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
  * - added Native Language Support
  *
+ * 2008-04-06 James Youngman <jay@gnu.org>
+ * - Issue better error message if we fail to open the device.
+ * - Restore terminal state if we get a fatal signal.
+ *
  *
  * I've had no time to add comments - hopefully the function names
  * are comments enough. As with all file system checkers, this assumes
@@ -96,6 +100,7 @@
 #include <termios.h>
 #include <mntent.h>
 #include <sys/stat.h>
+#include <signal.h>
 
 #include "minix.h"
 #include "nls.h"
@@ -129,7 +134,7 @@ static int dirsize = 16;
 static int namelen = 14;
 static int version2 = 0;
 static struct termios termios;
-static int termios_set = 0;
+static volatile sig_atomic_t termios_set = 0;
 
 /* File-name data */
 #define MAX_DEPTH 50
@@ -174,10 +179,29 @@ static void recursive_check2(unsigned int ino);
 #define mark_zone(x) (setbit(zone_map,(x)-FIRSTZONE+1),changed=1)
 #define unmark_zone(x) (clrbit(zone_map,(x)-FIRSTZONE+1),changed=1)
 
+
 static void
-leave(int status) {
+reset(void) {
 	if (termios_set)
 		tcsetattr(0, TCSANOW, &termios);
+}
+
+
+static void
+fatalsig(int sig) {
+	/* We received a fatal signal.  Reset the terminal.
+	 * Also reset the signal handler and re-send the signal,
+	 * so that the parent process knows which signal actually
+	 * caused our death.
+	 */
+	signal(sig, SIG_DFL);
+	reset();
+	raise(sig);
+}
+
+static void
+leave(int status) {
+        reset();
 	exit(status);
 }
 
@@ -1318,6 +1342,13 @@ main(int argc, char ** argv) {
 			device_name);
 
 	read_tables();
+
+	/* Restore the terminal state on fatal signals.
+	 * We don't do this for SIGALRM, SIGUSR1 or SIGUSR2.
+	 */
+	signal(SIGINT, fatalsig);
+	signal(SIGQUIT, fatalsig);
+	signal(SIGTERM, fatalsig);
 
 	if (repair && !automatic) {
 		tcgetattr(0,&termios);
