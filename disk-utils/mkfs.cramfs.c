@@ -745,6 +745,10 @@ int main(int argc, char **argv)
 			progname = p+1;
 	}
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	/* command line options */
 	while ((c = getopt(argc, argv, "hb:Ee:i:n:psVvz")) != EOF) {
 		switch (c) {
