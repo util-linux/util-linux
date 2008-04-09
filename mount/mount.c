@@ -1377,19 +1377,6 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   return res;
 }
 
-/*
- * set_proc_name()
- *	Update the argument vector, so that this process may be easily
- *	identified in a "ps" listing.
- */
-static void
-set_proc_name (const char *spec)
-{
-#ifdef DO_PS_FIDDLING
-	setproctitle ("mount", spec);
-#endif
-}
-
 static char *
 subst_string(const char *s, const char *sub, int sublen, const char *repl) {
 	char *n;
