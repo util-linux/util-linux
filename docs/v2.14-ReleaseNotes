@@ -38,6 +38,11 @@ Release highlights:
  losetup(8), mount(8), umount(8), fdisk(8) and sfdisk(8) support static
  linking when compiled with --enable-static-programs.
 
+ hwclock(8) supports new command line option "adjfile" to override
+ the default /etc/adjtime.
+
+ scriptreplay(1) command has been re-written from Perl to C.
+
 
 ChangeLog between v2.13 and v2.14
 ---------------------------------
