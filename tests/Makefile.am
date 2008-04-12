@@ -28,6 +28,7 @@ EXTRA_DIST = 	expected \
 		ts-ipcs-limits2 \
 		ts-ipcs.sh \
 		ts-login-checktty \
+		ts-login-islocal \
 		ts-look-separator \
 		ts-mount-noncanonical \
 		ts-mount-devname \

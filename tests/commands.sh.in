@@ -36,6 +36,7 @@ TS_CMD_CAL=${TS_CMD_CAL-"$TOPDIR/misc-utils/cal"}
 TS_CMD_SCRIPT=${TS_CMD_SCRIPT-"$TOPDIR/misc-utils/script"}
 
 TS_CMD_CHECKTTY=${TS_CMD_CHECKTTY-"$TOPDIR/login-utils/checktty_test"}
+TS_CMD_ISLOCAL=${TS_CMD_ISLOCAL-"$TOPDIR/login-utils/islocal_test"}
 
 TS_CMD_HWCLOCK=${TS_CMD_HWCLOCK-"$TOPDIR/hwclock/hwclock"}
 

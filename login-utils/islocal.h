@@ -1,1 +1,1 @@
-extern int is_local(char *user);
+extern int is_local(const char *user);

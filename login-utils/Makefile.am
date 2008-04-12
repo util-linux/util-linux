@@ -130,7 +130,12 @@ install-exec-hook::
 
 endif
 
-noinst_PROGRAMS = checktty_test
+noinst_PROGRAMS = checktty_test islocal_test
 checktty_test_SOURCES = checktty.c login.h
 checktty_test_CPPFLAGS = -DMAIN_TEST_CHECKTTY $(AM_CPPFLAGS)
+islocal_test_SOURCES = islocal.c
+islocal_test_CPPFLAGS = -DMAIN_TEST_ISLOCAL $(AM_CPPFLAGS)
 
+check-local: islocal_test$(EXEEXT) checktty_test$(EXEEXT)
+	./islocal_test$(EXEEXT)
+	./checktty_test$(EXEEXT)
