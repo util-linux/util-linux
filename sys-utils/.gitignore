@@ -1,0 +1,16 @@
+ctrlaltdel
+cytune
+dmesg
+flock
+ipcrm
+ipcs
+ldattach
+readprofile
+renice
+rtcwake
+setarch
+setsid
+tunelp
+linux32.8
+linux64.8
+i386.8
