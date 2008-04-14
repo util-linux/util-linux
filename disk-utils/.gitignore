@@ -8,3 +8,5 @@ mkfs.bfs
 mkfs.minix
 mkswap
 mkfs.cramfs
+elvtune
+raw
