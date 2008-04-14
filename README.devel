@@ -7,7 +7,7 @@ AUTOTOOLS:
      * "./autogen.sh" generates all necessary files (run it after checkout from
        git)
 
-     * "make distclean" removes all unnecessary files, but code is still possible 
+     * "make distclean" removes all unnecessary files, but code is still possible
        recompile by "./configure; make"
 
      * "make dist-gzip" (or -bzip2) creates tarball which is possible use without
@@ -21,7 +21,8 @@ PATCHES:
 
      * diff -u
 
-     * don't include generated (autotools) stuff to your patches (use git-clean [-X])
+     * don't include generated (autotools) stuff to your patches
+       (hint: use git-clean [-X])
 
      * patches are delivered via email only.  Downloading them from internet
        servers is a pain.
@@ -30,20 +31,59 @@ PATCHES:
 
      * Subject: [PATCH] subsystem: description
 
-     * if someone else wrote the patch, they should be credited (and blamed) for it.
-       To communicate this, add a line:
+     * if someone else wrote the patch, they should be credited (and blamed)
+       for it. To communicate this, add a line:
 
           From: John Doe <jdoe@wherever.com>
 
-     * add a Signed-off-by line:
+     * add a Signed-off-by line (hint: use "git commit -s")
 
-          Signed-off-by: Foo Bar <fb@wherever.com>
+       The sign-off is a simple line at the end of the explanation for the
+       patch, which certifies that you wrote it or otherwise have the right to
+       pass it on as a open-source patch.  The rules are pretty simple: if you
+       can certify the below:
 
-     * there is a lot of really useful rules. Please, read:
+           By making a contribution to this project, I certify that:
+
+           (a) The contribution was created in whole or in part by me and I
+               have the right to submit it under the open source license
+               indicated in the file; or
+
+           (b) The contribution is based upon previous work that, to the best
+               of my knowledge, is covered under an appropriate open source
+               license and I have the right under that license to submit that
+               work with modifications, whether created in whole or in part
+               by me, under the same open source license (unless I am
+               permitted to submit under a different license), as indicated
+               in the file; or
+
+           (c) The contribution was provided directly to me by some other
+               person who certified (a), (b) or (c) and I have not modified it.
+
+           (d) I understand and agree that this project and the contribution
+               are public and that a record of the contribution (including all
+               personal information I submit with it, including my sign-off) is
+               maintained indefinitely and may be redistributed consistent with
+               this project or the open source license(s) involved.
+
+       then you just add a line saying
+
+               Signed-off-by: Random J Developer <random@developer.example.org>
+
+       using your real name (sorry, no pseudonyms or anonymous contributions.)
+
+
+     * for more details see:
 
        The perfect patch
                 http://www.zip.com.au/~akpm/linux/patches/stuff/tpp.txt
 
+CODING STYLE:
+
+     * the preferred coding style is based on the linux kernel Documentation/CodingStyle.
+       For more details see:
+
+       http://git.kernel.org/?p=linux/kernel/git/torvalds/linux-2.6.git;a=blob_plain;f=Documentation/CodingStyle
 
 
 SCM (source code management):
@@ -72,6 +112,6 @@ SCM (source code management):
         - every release, tag name: v<version>
 
 
-    KNOWN BUGS:
-	- tag v2.13.1 is typo. Please, ignore this tag.
+    * KNOWN BUGS:
+        - tag v2.13.1 is typo. Please, ignore this tag.
 
