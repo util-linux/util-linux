@@ -1519,8 +1519,8 @@ change_sysid(void) {
 				printf (_("Changed system type of partition %d "
 				        "to %x (%s)\n"), i + 1, sys, temp);
 			else
-				printf (_("System type of partition %d is unchanged "
-				        "to %x (%s)\n"), i + 1, sys, temp);
+				printf (_("System type of partition %d is unchanged: "
+				        "%x (%s)\n"), i + 1, sys, temp);
 			if (is_dos_partition(origsys) ||
 			    is_dos_partition(sys))
 				dos_changed = 1;
