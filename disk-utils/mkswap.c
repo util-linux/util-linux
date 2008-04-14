@@ -465,6 +465,22 @@ check_mount(void) {
 	return 1;
 }
 
+
+static int
+write_all(int fd, const void *buf, size_t count) {
+	while(count) {
+		ssize_t tmp = write(fd, buf, count);
+
+		if (tmp > 0) {
+			count -= tmp;
+			if (count)
+				buf += tmp;
+		} else if (errno != EINTR && errno != EAGAIN)
+			return -1;
+	}
+	return 0;
+}
+
 int
 main(int argc, char ** argv) {
 	struct stat statbuf;
@@ -711,9 +727,12 @@ use the -f option to force it.\n"),
 	offset = ((version == 0) ? 0 : 1024);
 	if (lseek(DEV, offset, SEEK_SET) != offset)
 		die(_("unable to rewind swap-device"));
-	if (write(DEV,(char*)signature_page+offset, pagesize-offset)
-	    != pagesize-offset)
-		die(_("unable to write signature page"));
+	if (write_all(DEV, (char *) signature_page + offset,
+				    pagesize - offset) == -1) {
+		fprintf(stderr, _("%s: %s: unable to write signature page: %s"),
+			program_name, device_name, strerror(errno));
+		exit(1);
+	}
 
 	/*
 	 * A subsequent swapon() will fail if the signature
