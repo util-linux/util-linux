@@ -236,7 +236,7 @@ int main(int argc, char *argv[])
    }
   #endif
 
-  while ((c = getopt_long(argc, argv, "hv3BFILRSTXZ", longopts, NULL)) != -1) {
+  while ((c = getopt_long(argc, argv, "+hv3BFILRSTXZ", longopts, NULL)) != -1) {
     switch (c) {
     case 'h':
       show_help();
