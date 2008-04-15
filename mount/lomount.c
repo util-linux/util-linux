@@ -832,8 +832,10 @@ usage(void) {
   " %1$s -d | --detach <loopdev>                 delete\n"
   " %1$s -f | --find                             find unused\n"
   " %1$s -j | --associated <file> [-o <num>]     list all associated with <file>\n"
-  " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
-  "\nOptions:\n"
+  " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"),
+		progname);
+
+	fprintf(stderr, _("\nOptions:\n"
   " -e | --encryption <type> enable data encryption with specified <name/num>\n"
   " -h | --help              this help\n"
   " -o | --offset <num>      start at offset <num> into file\n"
@@ -841,8 +843,7 @@ usage(void) {
   " -p | --pass-fd <num>     read passphrase from file descriptor <num>\n"
   " -r | --read-only         setup read-only loop device\n"
   "      --show              print device name (with -f <file>)\n"
-  " -v | --verbose           verbose mode\n\n"),
-		progname);
+  " -v | --verbose           verbose mode\n\n"));
 	exit(1);
  }
 
