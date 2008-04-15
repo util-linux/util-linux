@@ -185,8 +185,8 @@ main (int argc, char *argv[]) {
 
 	retcode = pam_start("chsh", pw->pw_name, &conv, &pamh);
 	if(retcode != PAM_SUCCESS) {
-	    fprintf(stderr, _("chsh: PAM Failure, aborting: %s\n"),
-			pam_strerror(pamh, retcode));
+	    fprintf(stderr, _("%s: PAM failure, aborting: %s\n"),
+		    whoami, pam_strerror(pamh, retcode));
 	    exit(1);
 	}
 

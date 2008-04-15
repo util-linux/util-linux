@@ -548,8 +548,8 @@ main(int argc, char **argv)
 
     retcode = pam_start("login",username, &conv, &pamh);
     if(retcode != PAM_SUCCESS) {
-	fprintf(stderr, _("login: PAM Failure, aborting: %s\n"),
-		pam_strerror(pamh, retcode));
+	fprintf(stderr, _("%s: PAM failure, aborting: %s\n"),
+		"login", pam_strerror(pamh, retcode));
 	syslog(LOG_ERR, _("Couldn't initialize PAM: %s"),
 	       pam_strerror(pamh, retcode));
 	exit(99);
