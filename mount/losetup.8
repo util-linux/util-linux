@@ -41,7 +41,7 @@ Setup loop device:
 .IR pfd ]
 .RB [ \-r ]
 .in +8
-.RB { \-f [ \-s ] | \fIloop_device\fP }
+.RB { \-f [ \-\-show ] | \fIloop_device\fP }
 .I file
 .in -13
 .ad b
@@ -94,12 +94,16 @@ read the passphrase from file descriptor with number
 instead of from the terminal
 .IP "\fB\-r, \-\-read-only\fP"
 setup read-only loop device
-.IP "\fB\-s, \-\-show\fP"
+.IP "\fB\-\-show\fP"
 print device name if the
 .I -f
 option and a
 .I file
-argument are present
+argument are present.
+
+The short form of this option (\fB\-s\fP) is deprecated.  This short form could
+be in collision with Loop-AES implementation where the same option is used for
+\fB\-\-sizelimit\fP.
 .IP "\fB\-v, \-\-verbose\fP"
 verbose mode
 

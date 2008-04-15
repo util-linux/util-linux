@@ -840,7 +840,7 @@ usage(void) {
   "      --sizelimit <num>   loop limited to only <num> bytes of the file\n"
   " -p | --pass-fd <num>     read passphrase from file descriptor <num>\n"
   " -r | --read-only         setup read-only loop device\n"
-  " -s | --show              print device name (with -f <file>)\n"
+  "      --show              print device name (with -f <file>)\n"
   " -v | --verbose           verbose mode\n\n"),
 		progname);
 	exit(1);
