@@ -927,7 +927,7 @@ loop_check(const char **spec, const char **type, int *flags,
 	if (verbose)
 	  printf(_("mount: going to use the loop device %s\n"), *loopdev);
 
-	if ((res = set_loop(*loopdev, *loopfile, offset,
+	if ((res = set_loop(*loopdev, *loopfile, offset, 0,
 			    opt_encryption, pfd, &loop_opts))) {
 	  if (res == 2) {
 	     /* loop dev has been grabbed by some other process,

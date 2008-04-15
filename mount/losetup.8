@@ -35,6 +35,8 @@ Setup loop device:
 .IR encryption ]
 .RB [ \-o
 .IR offset ]
+.RB [ \-\-sizelimit
+.IR limit ]
 .RB [ \-p
 .IR pfd ]
 .RB [ \-r ]
@@ -84,6 +86,8 @@ show status of all loop devices associated with given
 .IP "\fB\-o, \-\-offset \fIoffset\fP"
 the data start is moved \fIoffset\fP bytes into the specified file or
 device
+.IP "\fB\-\-sizelimit \fIlimit\fP"
+The data end is set to no more than \fIsizelimit\fP bytes after the data start.
 .IP "\fB\-p, \-\-pass-fd \fInum\fP"
 read the passphrase from file descriptor with number
 .I num
