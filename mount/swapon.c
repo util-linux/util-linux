@@ -175,7 +175,16 @@ static int
 swap_is_suspend(const char *device) {
 	const char *type = fsprobe_get_fstype_by_devname(device);
 
-	return (type && strcmp(type, "suspend") == 0) ? 1 : 0;
+	/* S1SUSPEND/S2SUSPEND =
+	 *
+	 *   "swsuspend" in libblkid
+	 *   "suspend" in libvolume_id
+	 */
+	if (type && (strcmp(type, "suspend") == 0 ||
+			strcmp(type, "swsuspend") == 0))
+		return 1;
+
+	return 0;
 }
 
 /* calls mkswap */
