@@ -35,8 +35,9 @@ CONTRIBUTORS:
       Andrzej Krzysztofowicz <ankry@mif.pg.gda.pl>
       Arif E. Nugroho <arif_endro@yahoo.com>
       Arkadiusz Miskiewicz <arekm@maven.pl>
+      Attila Áfra <attila.afra@gmail.com>
       Balint Cristian <cbalint@redhat.com>
-      Benno Schulenberg <benno@vertaalt.nl>
+      Benno Schulenberg <bensberg@justemail.net>
       Bernardo Innocenti <bernie@codewiz.org>
       Bernhard Walle <bwalle@suse.de>
       Claus Hindsgaul <claus_h@image.dk>
@@ -48,6 +49,7 @@ CONTRIBUTORS:
       David Miller <davem@davemloft.net>
       David Woodhouse <dwmw2@infradead.org>
       Dennis Gilmore <dennis@ausil.us>
+      Dmitry V. Levin <ldv@altlinux.org>
       Flávio Leitner <fleitner@redhat.com>
       Frédéric Bothamy <frederic.bothamy@free.fr>
       Gabor Kelemen <kelemeng@gnome.hu>
@@ -56,6 +58,7 @@ CONTRIBUTORS:
       H. Peter Anvin <hpa@zytor.com>
       Imre Kaloz <kaloz@openwrt.org>
       Jason Vas Dias <jvdias@redhat.com>
+      James Youngman <jay@gnu.org>
       Jim Meyering <jim@meyering.net>
       Josep Puigdemont <josep.puigdemont@gmail.com>
       Justin B Rye <jbr@edlug.org.uk>
@@ -67,7 +70,6 @@ CONTRIBUTORS:
       LaMont Jones <lamont@mmjgroup.com>
       Lauri Nurmi <lanurmi@iki.fi>
       Li Zefan <lizf@cn.fujitsu.com>
-      lizf <lizf@cn.fujitsu.com>
       Luciano Chavez <lnx1138@us.ibm.com>
       Ludwig Nussel <ludwig.nussel@suse.de>
       Marco Colombo <m.colombo@ed.ac.uk>
@@ -89,7 +91,7 @@ CONTRIBUTORS:
       Norbert Buchmuller <norbi@nix.hu>
       Oliver Falk <oliver@linux-kernel.at>
       Pádraig Brady <P@draigBrady.com>
-      Pascal Terjan <pterjan@linuxfr.org>
+      Pascal Terjan <pterjan@cmoi.fasmz.org>
       Pavel Maryanov <acid_jack@ukr.net>
       Peter Breitenlohner <peb@mppmu.mpg.de>
       Petr Pisar <petr.pisar@atlas.cz>
@@ -102,7 +104,7 @@ CONTRIBUTORS:
       Samuel Thibault <samuel.thibault@ens-lyon.org>
       Santiago Vila Doncel <sanvila@unex.es>
       Sascha Sommer <ssommer@suse.de>
-      Shachar Shemesh <shachar@lingnu.com>
+      Shachar Shemesh <shachar@debian.org>
       Simon Mihevc <simonmihevc@email.si>
       Stefan Krah <stefan@bytereef.org>
       Stepan Kasal <skasal@redhat.com>
