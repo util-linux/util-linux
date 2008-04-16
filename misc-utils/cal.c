@@ -66,7 +66,7 @@
 #include <err.h>
 #include "nls.h"
 
-#if defined(HAVE_NCURSES)
+#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
 
 #ifdef HAVE_NCURSES_H
 #include <ncurses.h>
@@ -122,7 +122,7 @@ my_tgetstr(char *s, char *ss) {
         return ret;
 }
 
-#else /* ! (HAVE_LIBTERMCAP || HAVE_NCURSES) */
+#else /* ! (HAVE_LIBTERMCAP || HAVE_LIBNCURSES || HAVE_LIBNCURSESW) */
 
 static void
 my_putstring(char *s) {
@@ -273,7 +273,7 @@ main(int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-#if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
+#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW) || defined(HAVE_LIBTERMCAP)
 	if ((term = getenv("TERM"))) {
 		int ret;
 		my_setupterm(term, 1, &ret);
@@ -516,7 +516,7 @@ monthly3(int day, int month, int year) {
 		int w1, w2, w3;
 		w1 = w2 = w3 = width;
 
-#if defined(HAVE_NCURSES) || defined(HAVE_LIBTERMCAP)
+#if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW) || defined(HAVE_LIBTERMCAP)
                 /* adjust width to allow for non printable characters */
                 w1 += (out_prev.s[i] == Hrow ? Slen : 0);
                 w2 += (out_curm.s[i] == Hrow ? Slen : 0);
