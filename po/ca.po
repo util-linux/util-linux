@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-03-25 23:00+0100\n"
+"POT-Creation-Date: 2008-04-16 22:22+0200\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -183,10 +183,10 @@ msgstr ""
 msgid "usage: %s [ -n ] device\n"
 msgstr "forma d'ús: %s [ -n ] dispositiu\n"
 
-#: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
+#: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1283
 #: disk-utils/isosize.c:181 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
-#: disk-utils/mkfs.cramfs.c:784 disk-utils/mkfs.minix.c:575
-#: disk-utils/mkswap.c:496 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/mkfs.minix.c:575
+#: disk-utils/mkswap.c:514 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, c-format
 msgid "%s (%s)\n"
@@ -229,51 +229,51 @@ msgstr ""
 " -v         mostra més missatges\n"
 " fitxer     fitxer a comprovar\n"
 
-#: disk-utils/fsck.minix.c:186
+#: disk-utils/fsck.minix.c:211
 #, c-format
 msgid "Usage: %s [-larvsmf] /dev/name\n"
 msgstr "Forma d'ús: %s [-larvsmf] /dev/nom\n"
 
-#: disk-utils/fsck.minix.c:293
+#: disk-utils/fsck.minix.c:327
 #, c-format
 msgid "%s is mounted.\t "
 msgstr "%s està muntat.\t "
 
-#: disk-utils/fsck.minix.c:295
+#: disk-utils/fsck.minix.c:329
 msgid "Do you really want to continue"
 msgstr "Esteu segur de voler continuar?"
 
-#: disk-utils/fsck.minix.c:299
+#: disk-utils/fsck.minix.c:333
 #, c-format
 msgid "check aborted.\n"
 msgstr "s'ha avortat la comprovació.\n"
 
-#: disk-utils/fsck.minix.c:318 disk-utils/fsck.minix.c:341
+#: disk-utils/fsck.minix.c:352 disk-utils/fsck.minix.c:375
 #, c-format
 msgid "Zone nr < FIRSTZONE in file `%s'."
 msgstr "Número de zona < FIRSTZONE en el fitxer «%s»."
 
-#: disk-utils/fsck.minix.c:322 disk-utils/fsck.minix.c:345
+#: disk-utils/fsck.minix.c:356 disk-utils/fsck.minix.c:379
 #, c-format
 msgid "Zone nr >= ZONES in file `%s'."
 msgstr "Número de zona >= ZONES en el fitxer «%s»."
 
-#: disk-utils/fsck.minix.c:327 disk-utils/fsck.minix.c:350
+#: disk-utils/fsck.minix.c:361 disk-utils/fsck.minix.c:384
 msgid "Remove block"
 msgstr "Elimina el bloc"
 
-#: disk-utils/fsck.minix.c:368
+#: disk-utils/fsck.minix.c:402
 #, c-format
 msgid "Read error: unable to seek to block in file '%s'\n"
 msgstr ""
 "S'ha produït un error de lectura: no es pot cercar el bloc al fitxer «%s»\n"
 
-#: disk-utils/fsck.minix.c:374
+#: disk-utils/fsck.minix.c:408
 #, c-format
 msgid "Read error: bad block in file '%s'\n"
 msgstr "S'ha produït un error de lectura: bloc erroni al fitxer «%s»\n"
 
-#: disk-utils/fsck.minix.c:389
+#: disk-utils/fsck.minix.c:423
 #, c-format
 msgid ""
 "Internal error: trying to write bad block\n"
@@ -282,132 +282,132 @@ msgstr ""
 "S'ha produït un error intern: s'està intentant escriure un bloc erroni\n"
 "S'ha ignorat la petició d'escriptura\n"
 
-#: disk-utils/fsck.minix.c:395 disk-utils/mkfs.minix.c:213
+#: disk-utils/fsck.minix.c:429 disk-utils/mkfs.minix.c:213
 msgid "seek failed in write_block"
 msgstr "s'ha produït un error en fer una cerca en write_block"
 
-#: disk-utils/fsck.minix.c:398
+#: disk-utils/fsck.minix.c:432
 #, c-format
 msgid "Write error: bad block in file '%s'\n"
 msgstr ""
 "S'ha produït un error d'escriptura: hi ha un bloc incorrecte al fitxer «%s»\n"
 
-#: disk-utils/fsck.minix.c:514
+#: disk-utils/fsck.minix.c:548
 msgid "seek failed in write_super_block"
 msgstr "s'ha produït un error en fer una cerca en write_super_block"
 
-#: disk-utils/fsck.minix.c:516 disk-utils/mkfs.minix.c:200
+#: disk-utils/fsck.minix.c:550 disk-utils/mkfs.minix.c:200
 msgid "unable to write super-block"
 msgstr "no es pot escriure el superbloc"
 
-#: disk-utils/fsck.minix.c:526
+#: disk-utils/fsck.minix.c:560
 msgid "Unable to write inode map"
 msgstr "No es pot escriure el mapa de nodes d'identificació"
 
-#: disk-utils/fsck.minix.c:528
+#: disk-utils/fsck.minix.c:562
 msgid "Unable to write zone map"
 msgstr "No es pot escriure el mapa de zona"
 
-#: disk-utils/fsck.minix.c:530
+#: disk-utils/fsck.minix.c:564
 msgid "Unable to write inodes"
 msgstr "No es poden escriure els nodes d'identificació"
 
-#: disk-utils/fsck.minix.c:557
+#: disk-utils/fsck.minix.c:591
 msgid "seek failed"
 msgstr "la cerca ha fallat"
 
-#: disk-utils/fsck.minix.c:559
+#: disk-utils/fsck.minix.c:593
 msgid "unable to read super block"
 msgstr "no es pot llegir el superbloc"
 
-#: disk-utils/fsck.minix.c:577
+#: disk-utils/fsck.minix.c:611
 msgid "bad magic number in super-block"
 msgstr "número màgic incorrecte en el superbloc"
 
-#: disk-utils/fsck.minix.c:579
+#: disk-utils/fsck.minix.c:613
 msgid "Only 1k blocks/zones supported"
 msgstr "Només es suporten blocs o zones de 1k"
 
-#: disk-utils/fsck.minix.c:581
+#: disk-utils/fsck.minix.c:615
 msgid "bad s_imap_blocks field in super-block"
 msgstr "Camp s_imap_blocks incorrecte al superbloc"
 
-#: disk-utils/fsck.minix.c:583
+#: disk-utils/fsck.minix.c:617
 msgid "bad s_zmap_blocks field in super-block"
 msgstr "Camp s_zmap_blocks incorrecte en el superbloc"
 
-#: disk-utils/fsck.minix.c:590
+#: disk-utils/fsck.minix.c:624
 msgid "Unable to allocate buffer for inode map"
 msgstr ""
 "No es pot assignar memòria intermèdia per al mapa de nodes d'identificació"
 
-#: disk-utils/fsck.minix.c:593
+#: disk-utils/fsck.minix.c:627
 #, fuzzy
 msgid "Unable to allocate buffer for zone map"
 msgstr ""
 "No es pot assignar memòria intermèdia per al mapa de nodes d'identificació"
 
-#: disk-utils/fsck.minix.c:598
+#: disk-utils/fsck.minix.c:632
 msgid "Unable to allocate buffer for inodes"
 msgstr "No es pot assignar memòria intermèdia per als nodes d'identificació"
 
-#: disk-utils/fsck.minix.c:601
+#: disk-utils/fsck.minix.c:635
 msgid "Unable to allocate buffer for inode count"
 msgstr ""
 "No es pot assignar memòria intermèdia per al nombre de nodes d'identificació"
 
-#: disk-utils/fsck.minix.c:604
+#: disk-utils/fsck.minix.c:638
 msgid "Unable to allocate buffer for zone count"
 msgstr "No es pot assignar memòria intermèdia per al nombre de zones"
 
-#: disk-utils/fsck.minix.c:606
+#: disk-utils/fsck.minix.c:640
 msgid "Unable to read inode map"
 msgstr "No es pot llegir el mapa de nodes d'identificació"
 
-#: disk-utils/fsck.minix.c:608
+#: disk-utils/fsck.minix.c:642
 msgid "Unable to read zone map"
 msgstr "No es pot llegir el mapa de zones"
 
-#: disk-utils/fsck.minix.c:610
+#: disk-utils/fsck.minix.c:644
 msgid "Unable to read inodes"
 msgstr "No es poden llegir els nodes d'identificació"
 
-#: disk-utils/fsck.minix.c:612
+#: disk-utils/fsck.minix.c:646
 #, c-format
 msgid "Warning: Firstzone != Norm_firstzone\n"
 msgstr "Atenció: Firstzone != Norm_firstzone\n"
 
-#: disk-utils/fsck.minix.c:617 disk-utils/mkfs.minix.c:454
+#: disk-utils/fsck.minix.c:651 disk-utils/mkfs.minix.c:454
 #, c-format
 msgid "%ld inodes\n"
 msgstr "%ld nodes d'identificació\n"
 
-#: disk-utils/fsck.minix.c:618 disk-utils/mkfs.minix.c:455
+#: disk-utils/fsck.minix.c:652 disk-utils/mkfs.minix.c:455
 #, c-format
 msgid "%ld blocks\n"
 msgstr "%ld blocs\n"
 
-#: disk-utils/fsck.minix.c:619 disk-utils/mkfs.minix.c:456
+#: disk-utils/fsck.minix.c:653 disk-utils/mkfs.minix.c:456
 #, c-format
 msgid "Firstdatazone=%ld (%ld)\n"
 msgstr "Primera zona de dades=%ld (%ld)\n"
 
-#: disk-utils/fsck.minix.c:620 disk-utils/mkfs.minix.c:457
+#: disk-utils/fsck.minix.c:654 disk-utils/mkfs.minix.c:457
 #, c-format
 msgid "Zonesize=%d\n"
 msgstr "Mida de la zona=%d\n"
 
-#: disk-utils/fsck.minix.c:621
+#: disk-utils/fsck.minix.c:655
 #, c-format
 msgid "Maxsize=%ld\n"
 msgstr "Mida màxima=%ld\n"
 
-#: disk-utils/fsck.minix.c:622
+#: disk-utils/fsck.minix.c:656
 #, c-format
 msgid "Filesystem state=%d\n"
 msgstr "Estat del sistema de fitxers=%d\n"
 
-#: disk-utils/fsck.minix.c:623
+#: disk-utils/fsck.minix.c:657
 #, c-format
 msgid ""
 "namelen=%d\n"
@@ -416,170 +416,170 @@ msgstr ""
 "longitud del nom=%d\n"
 "\n"
 
-#: disk-utils/fsck.minix.c:638 disk-utils/fsck.minix.c:689
+#: disk-utils/fsck.minix.c:672 disk-utils/fsck.minix.c:723
 #, c-format
 msgid "Inode %d marked unused, but used for file '%s'\n"
 msgstr ""
 "El node d'identificació %d està marcat com a no usat, però és usat pel "
 "fitxer «%s»\n"
 
-#: disk-utils/fsck.minix.c:642 disk-utils/fsck.minix.c:693
+#: disk-utils/fsck.minix.c:676 disk-utils/fsck.minix.c:727
 msgid "Mark in use"
 msgstr "Marca'l en ús"
 
-#: disk-utils/fsck.minix.c:664 disk-utils/fsck.minix.c:713
+#: disk-utils/fsck.minix.c:698 disk-utils/fsck.minix.c:747
 #, c-format
 msgid "The file `%s' has mode %05o\n"
 msgstr "El fitxer «%s» té el mode %05o\n"
 
-#: disk-utils/fsck.minix.c:671 disk-utils/fsck.minix.c:719
+#: disk-utils/fsck.minix.c:705 disk-utils/fsck.minix.c:753
 #, c-format
 msgid "Warning: inode count too big.\n"
 msgstr "Avís: el nombre de nodes d'identificació és massa gran.\n"
 
-#: disk-utils/fsck.minix.c:731 disk-utils/fsck.minix.c:739
+#: disk-utils/fsck.minix.c:765 disk-utils/fsck.minix.c:773
 msgid "root inode isn't a directory"
 msgstr "el node d'identificació arrel no és un directori"
 
-#: disk-utils/fsck.minix.c:753 disk-utils/fsck.minix.c:786
+#: disk-utils/fsck.minix.c:787 disk-utils/fsck.minix.c:820
 #, c-format
 msgid "Block has been used before. Now in file `%s'."
 msgstr "El bloc ja ha estat emprat anteriorment. Ara està en el fitxer \"%s\"."
 
-#: disk-utils/fsck.minix.c:755 disk-utils/fsck.minix.c:788
-#: disk-utils/fsck.minix.c:1111 disk-utils/fsck.minix.c:1120
-#: disk-utils/fsck.minix.c:1166 disk-utils/fsck.minix.c:1175
+#: disk-utils/fsck.minix.c:789 disk-utils/fsck.minix.c:822
+#: disk-utils/fsck.minix.c:1145 disk-utils/fsck.minix.c:1154
+#: disk-utils/fsck.minix.c:1200 disk-utils/fsck.minix.c:1209
 msgid "Clear"
 msgstr "Neteja"
 
-#: disk-utils/fsck.minix.c:765 disk-utils/fsck.minix.c:798
+#: disk-utils/fsck.minix.c:799 disk-utils/fsck.minix.c:832
 #, c-format
 msgid "Block %d in file `%s' is marked not in use."
 msgstr "El bloc %d en el fitxer `%s' està marcat com a no usat."
 
-#: disk-utils/fsck.minix.c:767 disk-utils/fsck.minix.c:800
+#: disk-utils/fsck.minix.c:801 disk-utils/fsck.minix.c:834
 msgid "Correct"
 msgstr "Corregeix"
 
-#: disk-utils/fsck.minix.c:939 disk-utils/fsck.minix.c:1006
+#: disk-utils/fsck.minix.c:973 disk-utils/fsck.minix.c:1040
 #, c-format
 msgid "The directory '%s' contains a bad inode number for file '%.*s'."
 msgstr ""
 "El directori `%s' conté un nombre de nodes d'identificació incorrecte per al "
 "fitxer «%.*s»."
 
-#: disk-utils/fsck.minix.c:942 disk-utils/fsck.minix.c:1009
+#: disk-utils/fsck.minix.c:976 disk-utils/fsck.minix.c:1043
 msgid " Remove"
 msgstr " Elimina"
 
-#: disk-utils/fsck.minix.c:956 disk-utils/fsck.minix.c:1023
+#: disk-utils/fsck.minix.c:990 disk-utils/fsck.minix.c:1057
 #, c-format
 msgid "%s: bad directory: '.' isn't first\n"
 msgstr "%s: directori incorrecte: «.» no és el primer\n"
 
-#: disk-utils/fsck.minix.c:964 disk-utils/fsck.minix.c:1032
+#: disk-utils/fsck.minix.c:998 disk-utils/fsck.minix.c:1066
 #, c-format
 msgid "%s: bad directory: '..' isn't second\n"
 msgstr "%s: directori incorrecte: «..» no és el segon\n"
 
-#: disk-utils/fsck.minix.c:1066 disk-utils/fsck.minix.c:1084
+#: disk-utils/fsck.minix.c:1100 disk-utils/fsck.minix.c:1118
 msgid "internal error"
 msgstr "error intern"
 
-#: disk-utils/fsck.minix.c:1069 disk-utils/fsck.minix.c:1087
+#: disk-utils/fsck.minix.c:1103 disk-utils/fsck.minix.c:1121
 #, c-format
 msgid "%s: bad directory: size < 32"
 msgstr "%s: directori incorrecte: mida < 32"
 
-#: disk-utils/fsck.minix.c:1100
+#: disk-utils/fsck.minix.c:1134
 msgid "seek failed in bad_zone"
 msgstr "s'ha produït un error en cercar a bad_zone"
 
-#: disk-utils/fsck.minix.c:1110 disk-utils/fsck.minix.c:1165
+#: disk-utils/fsck.minix.c:1144 disk-utils/fsck.minix.c:1199
 #, c-format
 msgid "Inode %d mode not cleared."
 msgstr "No s'ha esborrat el mode del node d'identificació %d."
 
-#: disk-utils/fsck.minix.c:1119 disk-utils/fsck.minix.c:1174
+#: disk-utils/fsck.minix.c:1153 disk-utils/fsck.minix.c:1208
 #, c-format
 msgid "Inode %d not used, marked used in the bitmap."
 msgstr ""
 "El node d'identificació %d no s'usa; s'ha marcat com a usat en el mapa de "
 "bits."
 
-#: disk-utils/fsck.minix.c:1125 disk-utils/fsck.minix.c:1180
+#: disk-utils/fsck.minix.c:1159 disk-utils/fsck.minix.c:1214
 #, c-format
 msgid "Inode %d used, marked unused in the bitmap."
 msgstr ""
 "S'està usant el node d'identificació %d; marcat com a en desús en el mapa de "
 "bits."
 
-#: disk-utils/fsck.minix.c:1127 disk-utils/fsck.minix.c:1181
+#: disk-utils/fsck.minix.c:1161 disk-utils/fsck.minix.c:1215
 msgid "Set"
 msgstr "Estableix"
 
-#: disk-utils/fsck.minix.c:1131 disk-utils/fsck.minix.c:1185
+#: disk-utils/fsck.minix.c:1165 disk-utils/fsck.minix.c:1219
 #, c-format
 msgid "Inode %d (mode = %07o), i_nlinks=%d, counted=%d."
 msgstr "Node d'identificació %d (mode = %07o), i_nlinks=%d, comptats=%d."
 
-#: disk-utils/fsck.minix.c:1133 disk-utils/fsck.minix.c:1187
+#: disk-utils/fsck.minix.c:1167 disk-utils/fsck.minix.c:1221
 msgid "Set i_nlinks to count"
 msgstr "Estableix i_nlinks als comptats"
 
-#: disk-utils/fsck.minix.c:1145 disk-utils/fsck.minix.c:1199
+#: disk-utils/fsck.minix.c:1179 disk-utils/fsck.minix.c:1233
 #, c-format
 msgid "Zone %d: marked in use, no file uses it."
 msgstr "Zona %d: marcada com a en ús; cap fitxer no l'utilitza."
 
-#: disk-utils/fsck.minix.c:1146 disk-utils/fsck.minix.c:1201
+#: disk-utils/fsck.minix.c:1180 disk-utils/fsck.minix.c:1235
 msgid "Unmark"
 msgstr "Elimina la marca"
 
-#: disk-utils/fsck.minix.c:1151 disk-utils/fsck.minix.c:1206
+#: disk-utils/fsck.minix.c:1185 disk-utils/fsck.minix.c:1240
 #, c-format
 msgid "Zone %d: in use, counted=%d\n"
 msgstr "Zona %d: en ús, comptada=%d\n"
 
-#: disk-utils/fsck.minix.c:1154 disk-utils/fsck.minix.c:1209
+#: disk-utils/fsck.minix.c:1188 disk-utils/fsck.minix.c:1243
 #, c-format
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "Zona %d: no en ús, comptada=%d\n"
 
-#: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:580
+#: disk-utils/fsck.minix.c:1288 disk-utils/mkfs.minix.c:580
 #: disk-utils/mkfs.minix.c:582
 msgid "bad inode size"
 msgstr "mida de node d'identificació incorrecte"
 
-#: disk-utils/fsck.minix.c:1256
+#: disk-utils/fsck.minix.c:1290
 msgid "bad v2 inode size"
 msgstr "mida de node d'identificació v2 incorrecte"
 
-#: disk-utils/fsck.minix.c:1282
+#: disk-utils/fsck.minix.c:1316
 msgid "need terminal for interactive repairs"
 msgstr "es necessita un terminal per a reparacions interactives"
 
-#: disk-utils/fsck.minix.c:1286
-#, c-format
-msgid "unable to open '%s'"
+#: disk-utils/fsck.minix.c:1320
+#, fuzzy, c-format
+msgid "unable to open '%s': %s"
 msgstr "no es pot obrir '%s'"
 
-#: disk-utils/fsck.minix.c:1301
+#: disk-utils/fsck.minix.c:1335
 #, c-format
 msgid "%s is clean, no check.\n"
 msgstr "%s està net; no es comprova.\n"
 
-#: disk-utils/fsck.minix.c:1305
+#: disk-utils/fsck.minix.c:1339
 #, c-format
 msgid "Forcing filesystem check on %s.\n"
 msgstr "S'està forçant la comprovació del sistema de fitxers a %s.\n"
 
-#: disk-utils/fsck.minix.c:1307
+#: disk-utils/fsck.minix.c:1341
 #, c-format
 msgid "Filesystem on %s is dirty, needs checking.\n"
 msgstr "Hi ha elements estranys al sistema de fitxers %s, s'ha de comprovar.\n"
 
-#: disk-utils/fsck.minix.c:1333
+#: disk-utils/fsck.minix.c:1374
 #, c-format
 msgid ""
 "\n"
@@ -588,12 +588,12 @@ msgstr ""
 "\n"
 "%6ld nodes d'identificació usats (%ld%%)\n"
 
-#: disk-utils/fsck.minix.c:1338
+#: disk-utils/fsck.minix.c:1379
 #, c-format
 msgid "%6ld zones used (%ld%%)\n"
 msgstr "%6ld zones usades (%ld%%)\n"
 
-#: disk-utils/fsck.minix.c:1340
+#: disk-utils/fsck.minix.c:1381
 #, c-format
 msgid ""
 "\n"
@@ -616,7 +616,7 @@ msgstr ""
 "------\n"
 "%6d fitxers\n"
 
-#: disk-utils/fsck.minix.c:1353
+#: disk-utils/fsck.minix.c:1394
 #, c-format
 msgid ""
 "----------------------------\n"
@@ -684,7 +684,7 @@ msgstr "no es pot fer \"stat\" al dispositiu %s"
 msgid "%s is not a block special device"
 msgstr "%s no es un dispositiu de bloc especial"
 
-#: disk-utils/mkfs.bfs.c:176 sys-utils/ldattach.c:274
+#: disk-utils/mkfs.bfs.c:176 sys-utils/ldattach.c:200
 #, c-format
 msgid "cannot open %s"
 msgstr "%s no es pot obrir"
@@ -855,7 +855,7 @@ msgstr "Ep: bloc \"comprimit\" a > 2*longituddelbloc (%ld)\n"
 msgid "%6.2f%% (%+ld bytes)\t%s\n"
 msgstr "%6.2f%% (%+d octets)\t%s\n"
 
-#: disk-utils/mkfs.cramfs.c:825
+#: disk-utils/mkfs.cramfs.c:829
 #, fuzzy, c-format
 msgid ""
 "warning: guestimate of required size (upper bound) is %lldMB, but maximum "
@@ -864,57 +864,57 @@ msgstr ""
 "avís: s'estima que la mida requerida (cota superior) és d %LdMB, però la "
 "mida màxima de la imatge és %uMB. Es podria sortir prematurament.\n"
 
-#: disk-utils/mkfs.cramfs.c:866
+#: disk-utils/mkfs.cramfs.c:870
 #, c-format
 msgid "Including: %s\n"
 msgstr "S'està incloent: %s\n"
 
-#: disk-utils/mkfs.cramfs.c:872
+#: disk-utils/mkfs.cramfs.c:876
 #, fuzzy, c-format
 msgid "Directory data: %zd bytes\n"
 msgstr "Dades del directori: %d octets\n"
 
-#: disk-utils/mkfs.cramfs.c:880
+#: disk-utils/mkfs.cramfs.c:884
 #, fuzzy, c-format
 msgid "Everything: %zd kilobytes\n"
 msgstr "Tot: %d kilooctets\n"
 
-#: disk-utils/mkfs.cramfs.c:885
+#: disk-utils/mkfs.cramfs.c:889
 #, fuzzy, c-format
 msgid "Super block: %zd bytes\n"
 msgstr "Súper bloc: %d octets\n"
 
-#: disk-utils/mkfs.cramfs.c:892
+#: disk-utils/mkfs.cramfs.c:896
 #, c-format
 msgid "CRC: %x\n"
 msgstr "CRC: %x\n"
 
-#: disk-utils/mkfs.cramfs.c:897
+#: disk-utils/mkfs.cramfs.c:901
 #, fuzzy, c-format
 msgid "not enough space allocated for ROM image (%lld allocated, %zu used)\n"
 msgstr "no hi ha prou espai per a la imatge ROM (assignats %Ld, emprats %d)\n"
 
-#: disk-utils/mkfs.cramfs.c:909
+#: disk-utils/mkfs.cramfs.c:913
 #, fuzzy, c-format
 msgid "ROM image write failed (%zd %zd)\n"
 msgstr "No és possible escriure la imatge ROM (%d %d)\n"
 
-#: disk-utils/mkfs.cramfs.c:918
+#: disk-utils/mkfs.cramfs.c:922
 #, c-format
 msgid "warning: filenames truncated to 255 bytes.\n"
 msgstr "avís: els noms de fitxer es trunquen a 255 octets.\n"
 
-#: disk-utils/mkfs.cramfs.c:921
+#: disk-utils/mkfs.cramfs.c:925
 #, c-format
 msgid "warning: files were skipped due to errors.\n"
 msgstr "avís: s'han saltat fitxers degut a errors.\n"
 
-#: disk-utils/mkfs.cramfs.c:924
+#: disk-utils/mkfs.cramfs.c:928
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte).\n"
 msgstr "avís: la mida dels fitxers es trunca a %luMB (menys 1 octet).\n"
 
-#: disk-utils/mkfs.cramfs.c:929
+#: disk-utils/mkfs.cramfs.c:933
 #, c-format
 msgid ""
 "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
@@ -922,7 +922,7 @@ msgstr ""
 "avís: els identificadors d'usuari (uid) es trunquen a %u bits,  (podria ser "
 "un problema de seguretat).\n"
 
-#: disk-utils/mkfs.cramfs.c:934
+#: disk-utils/mkfs.cramfs.c:938
 #, c-format
 msgid ""
 "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
@@ -930,7 +930,7 @@ msgstr ""
 "avís: els identificadors de grup (gid) es trunquen a %u bits.  (Podria ser "
 "un problema de seguretat).\n"
 
-#: disk-utils/mkfs.cramfs.c:939
+#: disk-utils/mkfs.cramfs.c:943
 #, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
@@ -1147,63 +1147,63 @@ msgstr "una pàgina incorrecta\n"
 msgid "%lu bad pages\n"
 msgstr "%lu pàgines incorrectes\n"
 
-#: disk-utils/mkswap.c:533
+#: disk-utils/mkswap.c:551
 #, c-format
 msgid "%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:551
+#: disk-utils/mkswap.c:569
 #, fuzzy
 msgid "error: UUID parsing failed"
 msgstr ""
 "\n"
 "S'ha produït un error en tancar el fitxer\n"
 
-#: disk-utils/mkswap.c:561
+#: disk-utils/mkswap.c:579
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: error: no es pot especificar l'espai d'intercanvi enlloc?\n"
 
-#: disk-utils/mkswap.c:579
+#: disk-utils/mkswap.c:597
 #, fuzzy, c-format
 msgid "%s: error: size %lu KiB is larger than device size %lu KiB\n"
 msgstr "%s: error: la mida %lu es més gran que a la mida del dispositiu %lu\n"
 
-#: disk-utils/mkswap.c:600
+#: disk-utils/mkswap.c:618
 #, c-format
 msgid "%s: error: unknown version %d\n"
 msgstr "%s: error: versió desconeguda %d\n"
 
-#: disk-utils/mkswap.c:607
+#: disk-utils/mkswap.c:625
 #, fuzzy, c-format
 msgid "%s: error: swap area needs to be at least %ld KiB\n"
 msgstr "%s: error: l'espai d'intercanvi ha de tenir com a mínim %ldkB\n"
 
-#: disk-utils/mkswap.c:624
+#: disk-utils/mkswap.c:642
 #, fuzzy, c-format
 msgid "%s: warning: truncating swap area to %ld KiB\n"
 msgstr "%s: avís: l'espai d'intercanvi s'ha truncat a %ldkB\n"
 
-#: disk-utils/mkswap.c:630
+#: disk-utils/mkswap.c:648
 #, c-format
 msgid "%s: error: label only with v1 swap area\n"
 msgstr "%s: error: etiqueta només amb espai d'intercanvi v1\n"
 
-#: disk-utils/mkswap.c:654
+#: disk-utils/mkswap.c:672
 #, fuzzy, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
 msgstr "No s'intentarà crear cap dispositiu d'intercanvi a '%s'"
 
-#: disk-utils/mkswap.c:660
+#: disk-utils/mkswap.c:678
 #, fuzzy, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
 msgstr "%s ja està muntat; no s'hi crearà cap sistema de fitxers."
 
-#: disk-utils/mkswap.c:673 disk-utils/mkswap.c:694
+#: disk-utils/mkswap.c:691 disk-utils/mkswap.c:712
 msgid "fatal: first page unreadable"
 msgstr "fatal: no es pot llegir la primera pàgina"
 
-#: disk-utils/mkswap.c:679
+#: disk-utils/mkswap.c:697
 #, fuzzy, c-format
 msgid ""
 "%s: Device '%s' contains a valid Sun disklabel.\n"
@@ -1217,47 +1217,48 @@ msgstr ""
 "No s'ha creat l'espai d'intercanvi. Si de realment voleu crear un espai\n"
 "d'intercanvi v0 en aquest dispositiu, useu l'opció -f per a forçar-ho.\n"
 
-#: disk-utils/mkswap.c:703
+#: disk-utils/mkswap.c:721
 msgid "Unable to set up swap-space: unreadable"
 msgstr "No s'ha pogut configurar l'espai d'intercanvi: no es pot llegir"
 
-#: disk-utils/mkswap.c:704
+#: disk-utils/mkswap.c:722
 #, fuzzy, c-format
 msgid "Setting up swapspace version %d, size = %llu KiB\n"
 msgstr "S'està configurant l'espai d'intercanvi versió %d, mida = %llu kB\n"
 
-#: disk-utils/mkswap.c:713
+#: disk-utils/mkswap.c:731
 msgid "unable to rewind swap-device"
 msgstr "no s'ha pogut rebobinar el dispositiu d'intercanvi"
 
-#: disk-utils/mkswap.c:716
-msgid "unable to write signature page"
+#: disk-utils/mkswap.c:734
+#, fuzzy, c-format
+msgid "%s: %s: unable to write signature page: %s"
 msgstr "no s'ha pogut escriure la pàgina de la signatura"
 
-#: disk-utils/mkswap.c:724
+#: disk-utils/mkswap.c:745
 msgid "fsync failed"
 msgstr "no s'ha pogut fer fsync"
 
-#: disk-utils/mkswap.c:735
+#: disk-utils/mkswap.c:756
 #, c-format
 msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:741
+#: disk-utils/mkswap.c:762
 #, fuzzy
 msgid "unable to matchpathcon()"
 msgstr "no es pot fer stat per a %s"
 
-#: disk-utils/mkswap.c:744
+#: disk-utils/mkswap.c:765
 #, fuzzy
 msgid "unable to create new selinux context"
 msgstr "no s'ha pogut escriure els nodes d'identificació"
 
-#: disk-utils/mkswap.c:746
+#: disk-utils/mkswap.c:767
 msgid "couldn't compute selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:752
+#: disk-utils/mkswap.c:773
 #, fuzzy, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "no s'ha pogut tornar a nomenar %s per %s: %s\n"
@@ -3024,7 +3025,7 @@ msgstr "S'ha canviat el tipus del sistema de la partició %d per %x (%s)\n"
 
 #: fdisk/fdisk.c:1522
 #, fuzzy, c-format
-msgid "System type of partition %d is unchanged to %x (%s)\n"
+msgid "System type of partition %d is unchanged: %x (%s)\n"
 msgstr "S'ha canviat el tipus del sistema de la partició %d per %x (%s)\n"
 
 #: fdisk/fdisk.c:1574
@@ -5572,91 +5573,91 @@ msgstr ""
 msgid "Probably you need root privileges.\n"
 msgstr "Probablement necessiteu privilegis de root.\n"
 
-#: hwclock/hwclock.c:229
+#: hwclock/hwclock.c:231
 #, c-format
 msgid "Assuming hardware clock is kept in %s time.\n"
 msgstr "S'està assumint que el rellotge del maquinari manté l'hora %s.\n"
 
-#: hwclock/hwclock.c:230 hwclock/hwclock.c:325
+#: hwclock/hwclock.c:232 hwclock/hwclock.c:327
 msgid "UTC"
 msgstr "UTC"
 
-#: hwclock/hwclock.c:230 hwclock/hwclock.c:324
+#: hwclock/hwclock.c:232 hwclock/hwclock.c:326
 msgid "local"
 msgstr "local"
 
-#: hwclock/hwclock.c:310
+#: hwclock/hwclock.c:312
 #, c-format
 msgid "%s: Warning: unrecognized third line in adjtime file\n"
 msgstr "%s: Avís: no s'ha reconegut la tercera línia del fitxer adjtime\n"
 
-#: hwclock/hwclock.c:312
+#: hwclock/hwclock.c:314
 #, c-format
 msgid "(Expected: `UTC' or `LOCAL' or nothing.)\n"
 msgstr "(S'esperava: `UTC', `LOCAL' o res).\n"
 
-#: hwclock/hwclock.c:319
+#: hwclock/hwclock.c:321
 #, c-format
 msgid "Last drift adjustment done at %ld seconds after 1969\n"
 msgstr "L'últim ajust de desfasament es va fer %ld segons després de 1969\n"
 
-#: hwclock/hwclock.c:321
+#: hwclock/hwclock.c:323
 #, c-format
 msgid "Last calibration done at %ld seconds after 1969\n"
 msgstr "L'última calibració es va fer %ld segons després de 1969\n"
 
-#: hwclock/hwclock.c:323
+#: hwclock/hwclock.c:325
 #, c-format
 msgid "Hardware clock is on %s time\n"
 msgstr "El rellotge del maquinari té l'hora %s\n"
 
-#: hwclock/hwclock.c:325
+#: hwclock/hwclock.c:327
 msgid "unknown"
 msgstr "desconegut"
 
-#: hwclock/hwclock.c:349
+#: hwclock/hwclock.c:351
 #, c-format
 msgid "Waiting for clock tick...\n"
 msgstr "S'està esperant el tic del rellotge...\n"
 
-#: hwclock/hwclock.c:353
+#: hwclock/hwclock.c:355
 #, c-format
 msgid "...got clock tick\n"
 msgstr "...s'ha rebut el tic del rellotge\n"
 
-#: hwclock/hwclock.c:406
+#: hwclock/hwclock.c:408
 #, c-format
 msgid "Invalid values in hardware clock: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 msgstr ""
 "Valors incorrectes en el rellotge del maquinari: %4d/%.2d/%.2d %.2d:%.2d:"
 "%.2d\n"
 
-#: hwclock/hwclock.c:414
+#: hwclock/hwclock.c:416
 #, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr ""
 "Hora del maquinari : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld segons després de "
 "1969\n"
 
-#: hwclock/hwclock.c:442
+#: hwclock/hwclock.c:444
 #, c-format
 msgid "Time read from Hardware Clock: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 msgstr ""
 "Hora llegida del rellotge del maquinari : %4d/%.2d/%.2d %02d:%02d:%02d\n"
 
-#: hwclock/hwclock.c:469
+#: hwclock/hwclock.c:471
 #, c-format
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr ""
 "S'està establint l'hora del maquinari en %.2d:%.2d:%.2d = %ld segons des de "
 "1969\n"
 
-#: hwclock/hwclock.c:475
+#: hwclock/hwclock.c:477
 #, c-format
 msgid "Clock not changed - testing only.\n"
 msgstr "El rellotge no s'ha modificat - només s'ha provat.\n"
 
-#: hwclock/hwclock.c:523
+#: hwclock/hwclock.c:525
 #, c-format
 msgid ""
 "Time elapsed since reference time has been %.6f seconds.\n"
@@ -5665,7 +5666,7 @@ msgstr ""
 "El temps transcorregut des de l'hora de referència és de %.6f segons.\n"
 "S'ha endarrerit el moment en què s'arribarà al següent segon complet.\n"
 
-#: hwclock/hwclock.c:557
+#: hwclock/hwclock.c:559
 #, c-format
 msgid ""
 "The Hardware Clock registers contain values that are either invalid (e.g. "
@@ -5674,22 +5675,22 @@ msgstr ""
 "Els registres del rellotge del maquinari contenen valores invàlids (p.ex. "
 "dia 50 del mes) o excedeixen el rang que poden usar (p.e. l'any 2095).\n"
 
-#: hwclock/hwclock.c:567
+#: hwclock/hwclock.c:569
 #, c-format
 msgid "%s  %.6f seconds\n"
 msgstr "%s  %.6f segons\n"
 
-#: hwclock/hwclock.c:601
+#: hwclock/hwclock.c:603
 #, c-format
 msgid "No --date option specified.\n"
 msgstr "No s'ha especificat l'opció --date.\n"
 
-#: hwclock/hwclock.c:607
+#: hwclock/hwclock.c:609
 #, c-format
 msgid "--date argument too long\n"
 msgstr "argument --date massa llarg\n"
 
-#: hwclock/hwclock.c:614
+#: hwclock/hwclock.c:616
 #, c-format
 msgid ""
 "The value of the --date option is not a valid date.\n"
@@ -5698,23 +5699,23 @@ msgstr ""
 "El valor de l'opció --date no és una data vàlida.\n"
 "En concret, conté cometes.\n"
 
-#: hwclock/hwclock.c:622
+#: hwclock/hwclock.c:624
 #, c-format
 msgid "Issuing date command: %s\n"
 msgstr "S'està executant l'ordre date: %s\n"
 
-#: hwclock/hwclock.c:626
+#: hwclock/hwclock.c:628
 msgid "Unable to run 'date' program in /bin/sh shell. popen() failed"
 msgstr ""
 "No s'ha pogut executar el programa «date» en l'interpret d'ordres /bin/sh. "
 "popen() ha fallat"
 
-#: hwclock/hwclock.c:634
+#: hwclock/hwclock.c:636
 #, c-format
 msgid "response from date command = %s\n"
 msgstr "resposta de l'ordre date = %s\n"
 
-#: hwclock/hwclock.c:636
+#: hwclock/hwclock.c:638
 #, c-format
 msgid ""
 "The date command issued by %s returned unexpected results.\n"
@@ -5729,7 +5730,7 @@ msgstr ""
 "La resposta ha estat:\n"
 "  %s\n"
 
-#: hwclock/hwclock.c:648
+#: hwclock/hwclock.c:650
 #, c-format
 msgid ""
 "The date command issued by %s returned something other than an integer where "
@@ -5746,12 +5747,12 @@ msgstr ""
 "La resposta ha estat:\n"
 " %s\n"
 
-#: hwclock/hwclock.c:659
+#: hwclock/hwclock.c:661
 #, c-format
 msgid "date string %s equates to %ld seconds since 1969.\n"
 msgstr "la cadena de la data %s equival a %ld segons des de 1969.\n"
 
-#: hwclock/hwclock.c:691
+#: hwclock/hwclock.c:693
 #, c-format
 msgid ""
 "The Hardware Clock does not contain a valid time, so we cannot set the "
@@ -5760,38 +5761,38 @@ msgstr ""
 "El rellotge de maquinari no conté una hora vàlida, pel que no es pot "
 "establir l'hora del sistema a partir d'aquest valor.\n"
 
-#: hwclock/hwclock.c:713
+#: hwclock/hwclock.c:715
 #, c-format
 msgid "Calling settimeofday:\n"
 msgstr "Cridant a settimeofday:\n"
 
-#: hwclock/hwclock.c:714
+#: hwclock/hwclock.c:716
 #, c-format
 msgid "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 msgstr "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 
-#: hwclock/hwclock.c:716
+#: hwclock/hwclock.c:718
 #, c-format
 msgid "\ttz.tz_minuteswest = %d\n"
 msgstr "\ttz.tz_minuteswest = %d\n"
 
-#: hwclock/hwclock.c:719
+#: hwclock/hwclock.c:721
 #, c-format
 msgid "Not setting system clock because running in test mode.\n"
 msgstr ""
 "No s'està configurant el rellotge del sistema perquè s'està executant en "
 "mode de prova.\n"
 
-#: hwclock/hwclock.c:728
+#: hwclock/hwclock.c:730
 #, c-format
 msgid "Must be superuser to set system clock.\n"
 msgstr "Heu de ser el superusuari per configurar rellotge del sistema.\n"
 
-#: hwclock/hwclock.c:731
+#: hwclock/hwclock.c:733
 msgid "settimeofday() failed"
 msgstr "settimeofday() ha fallat"
 
-#: hwclock/hwclock.c:761
+#: hwclock/hwclock.c:763
 #, c-format
 msgid ""
 "Not adjusting drift factor because the Hardware Clock previously contained "
@@ -5800,7 +5801,7 @@ msgstr ""
 "No s'ha ajustat el factor de desfasament perquè el rellotge del maquinari "
 "contenia valors despreciables.\n"
 
-#: hwclock/hwclock.c:766
+#: hwclock/hwclock.c:768
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -5810,7 +5811,7 @@ msgstr ""
 "calibració és zero, així que l'historial és dolent, i és necessària\n"
 "una calibració des del començament.\n"
 
-#: hwclock/hwclock.c:772
+#: hwclock/hwclock.c:774
 #, c-format
 msgid ""
 "Not adjusting drift factor because it has been less than a day since the "
@@ -5819,7 +5820,7 @@ msgstr ""
 "No s'ajusta el factor de desfasament perquè fa menys d'un dia de l'última "
 "calibració.\n"
 
-#: hwclock/hwclock.c:820
+#: hwclock/hwclock.c:822
 #, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
@@ -5830,24 +5831,24 @@ msgstr ""
 "un factor de desfasament de %f segons diaris.\n"
 "S'està ajustant el factor de desfasament a %f segons diaris\n"
 
-#: hwclock/hwclock.c:871
+#: hwclock/hwclock.c:873
 #, c-format
 msgid "Time since last adjustment is %d seconds\n"
 msgstr "Han transcorregut %d segons des de l'últim ajust\n"
 
-#: hwclock/hwclock.c:873
+#: hwclock/hwclock.c:875
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
 msgstr ""
 "S'han d'inserir %d segons i referir el temps anterior a fa %.6f segons\n"
 
-#: hwclock/hwclock.c:902
+#: hwclock/hwclock.c:904
 #, c-format
 msgid "Not updating adjtime file because of testing mode.\n"
 msgstr ""
 "No s'actualitzarà el fitxer adjtime perquè s'executa en mode de prova.\n"
 
-#: hwclock/hwclock.c:903
+#: hwclock/hwclock.c:905
 #, c-format
 msgid ""
 "Would have written the following to %s:\n"
@@ -5856,40 +5857,40 @@ msgstr ""
 "S'hauria escrit el següent a %s:\n"
 "%s"
 
-#: hwclock/hwclock.c:927
+#: hwclock/hwclock.c:929
 #, c-format
 msgid "Drift adjustment parameters not updated.\n"
 msgstr "No s'han actualitzat els paràmetres d'ajustament del desfasament.\n"
 
-#: hwclock/hwclock.c:968
+#: hwclock/hwclock.c:970
 #, c-format
 msgid ""
 "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
 msgstr ""
 "El rellotje de maquinari no conté una hora vàlida, i no es pot ajustar.\n"
 
-#: hwclock/hwclock.c:1000
+#: hwclock/hwclock.c:1002
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr ""
 "L'ajustament necessari és inferior a un segon, no s'ajustarà el rellotge.\n"
 
-#: hwclock/hwclock.c:1026
+#: hwclock/hwclock.c:1028
 #, c-format
 msgid "Using %s.\n"
 msgstr "Usant %s.\n"
 
-#: hwclock/hwclock.c:1028
+#: hwclock/hwclock.c:1030
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "No s'ha trobat cap interfície de rellotge usable.\n"
 
-#: hwclock/hwclock.c:1124
+#: hwclock/hwclock.c:1126
 #, c-format
 msgid "Unable to set system clock.\n"
 msgstr "No es pot establir el rellotge del sistema.\n"
 
-#: hwclock/hwclock.c:1154
+#: hwclock/hwclock.c:1156
 #, c-format
 msgid ""
 "The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
@@ -5903,17 +5904,17 @@ msgstr ""
 "possiblement ara no s'executi en cap màquina Alpha). No s'ha executat cap "
 "acció.\n"
 
-#: hwclock/hwclock.c:1163
+#: hwclock/hwclock.c:1165
 #, c-format
 msgid "Unable to get the epoch value from the kernel.\n"
 msgstr "No es pot obtenir el valor d'època del nucli.\n"
 
-#: hwclock/hwclock.c:1165
+#: hwclock/hwclock.c:1167
 #, c-format
 msgid "Kernel is assuming an epoch value of %lu\n"
 msgstr "El nucli assumeix un valor d'època de %lu\n"
 
-#: hwclock/hwclock.c:1168
+#: hwclock/hwclock.c:1170
 #, c-format
 msgid ""
 "To set the epoch value, you must use the 'epoch' option to tell to what "
@@ -5922,22 +5923,22 @@ msgstr ""
 "Per establir el valor d'època, haureu d'usar l'opció 'epoch' per a indicar a "
 "quin valor s'ha d'establir.\n"
 
-#: hwclock/hwclock.c:1171
+#: hwclock/hwclock.c:1173
 #, c-format
 msgid "Not setting the epoch to %d - testing only.\n"
 msgstr "No s'establirà el valor de l'època a  %d - només s'està provant.\n"
 
-#: hwclock/hwclock.c:1174
+#: hwclock/hwclock.c:1176
 #, c-format
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "No es pot establir el valor d'època en el nucli.\n"
 
-#: hwclock/hwclock.c:1187 misc-utils/cal.c:332 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1189 misc-utils/cal.c:332 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s de %s\n"
 
-#: hwclock/hwclock.c:1208
+#: hwclock/hwclock.c:1210
 #, fuzzy, c-format
 msgid ""
 "hwclock - query and set the hardware clock (RTC)\n"
@@ -5945,29 +5946,31 @@ msgid ""
 "Usage: hwclock [function] [options...]\n"
 "\n"
 "Functions:\n"
-"  --help        show this help\n"
-"  --show        read hardware clock and print result\n"
-"  --set         set the rtc to the time given with --date\n"
-"  --hctosys     set the system time from the hardware clock\n"
-"  --systohc     set the hardware clock to the current system time\n"
-"  --adjust      adjust the rtc to account for systematic drift since \n"
-"                the clock was last set or adjusted\n"
-"  --getepoch    print out the kernel's hardware clock epoch value\n"
-"  --setepoch    set the kernel's hardware clock epoch value to the \n"
-"                value given with --epoch\n"
-"  --version     print out the version of hwclock to stdout\n"
+"  --help         show this help\n"
+"  --show         read hardware clock and print result\n"
+"  --set          set the rtc to the time given with --date\n"
+"  --hctosys      set the system time from the hardware clock\n"
+"  --systohc      set the hardware clock to the current system time\n"
+"  --adjust       adjust the rtc to account for systematic drift since \n"
+"                 the clock was last set or adjusted\n"
+"  --getepoch     print out the kernel's hardware clock epoch value\n"
+"  --setepoch     set the kernel's hardware clock epoch value to the \n"
+"                 value given with --epoch\n"
+"  --version      print out the version of hwclock to stdout\n"
 "\n"
 "Options: \n"
-"  --utc         the hardware clock is kept in coordinated universal time\n"
-"  --localtime   the hardware clock is kept in local time\n"
-"  --rtc=path    special /dev/... file to use instead of default\n"
-"  --directisa   access the ISA bus directly instead of %s\n"
-"  --badyear     ignore rtc's year because the bios is broken\n"
-"  --date        specifies the time to which to set the hardware clock\n"
-"  --epoch=year  specifies the year which is the beginning of the \n"
-"                hardware clock's epoch value\n"
-"  --noadjfile   do not access /etc/adjtime. Requires the use of\n"
-"                either --utc or --localtime\n"
+"  --utc          the hardware clock is kept in coordinated universal time\n"
+"  --localtime    the hardware clock is kept in local time\n"
+"  --rtc=path     special /dev/... file to use instead of default\n"
+"  --directisa    access the ISA bus directly instead of %s\n"
+"  --badyear      ignore rtc's year because the bios is broken\n"
+"  --date         specifies the time to which to set the hardware clock\n"
+"  --epoch=year   specifies the year which is the beginning of the \n"
+"                 hardware clock's epoch value\n"
+"  --noadjfile    do not access /etc/adjtime. Requires the use of\n"
+"                 either --utc or --localtime\n"
+"  --adjfile=path specifies the path to the adjust file (default is\n"
+"                 /etc/adjtime)\n"
 msgstr ""
 "hwclock - Consulta i configura el rellotge de maquinari (RTC)\n"
 "\n"
@@ -5998,7 +6001,7 @@ msgstr ""
 "  --noadjfile   No accedeixis a /etc/adjtime. Requereix l'ús de --utc o bé\n"
 "                --localtime\n"
 
-#: hwclock/hwclock.c:1236
+#: hwclock/hwclock.c:1240
 #, c-format
 msgid ""
 "  --jensen, --arc, --srm, --funky-toy\n"
@@ -6007,17 +6010,17 @@ msgstr ""
 "  --jensen, --arc, --srm, --funky-toy\n"
 "                Indica al RTC el tipus d'Alpha que teniu (vegeu hwclock(8))\n"
 
-#: hwclock/hwclock.c:1321
+#: hwclock/hwclock.c:1326
 #, fuzzy, c-format
 msgid "%s: Unable to connect to audit system\n"
 msgstr "No es pot establir el rellotge del sistema.\n"
 
-#: hwclock/hwclock.c:1433
+#: hwclock/hwclock.c:1441
 #, c-format
 msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr "%s no admet arguments que no siguin opcions. Heu especificat %d.\n"
 
-#: hwclock/hwclock.c:1439
+#: hwclock/hwclock.c:1447
 #, c-format
 msgid ""
 "You have specified multiple functions.\n"
@@ -6026,7 +6029,7 @@ msgstr ""
 "Heu especificat múltiples funcions.\n"
 "Només podeu fer-ne una a la vegada.\n"
 
-#: hwclock/hwclock.c:1446
+#: hwclock/hwclock.c:1454
 #, c-format
 msgid ""
 "%s: The --utc and --localtime options are mutually exclusive.  You specified "
@@ -6035,7 +6038,7 @@ msgstr ""
 "%s: Les opcions --utc i --localtime s'exclouen mútuament. Les heu "
 "especificat totes dues.\n"
 
-#: hwclock/hwclock.c:1453
+#: hwclock/hwclock.c:1461
 #, c-format
 msgid ""
 "%s: The --adjust and --noadjfile options are mutually exclusive.  You "
@@ -6044,28 +6047,37 @@ msgstr ""
 "%s: Les opcions --adjust i --noadjfile s'exclouen mútuament. Les heu "
 "especificat totes dues.\n"
 
-#: hwclock/hwclock.c:1460
+#: hwclock/hwclock.c:1468
+#, fuzzy, c-format
+msgid ""
+"%s: The --adjfile and --noadjfile options are mutually exclusive.  You "
+"specified both.\n"
+msgstr ""
+"%s: Les opcions --adjust i --noadjfile s'exclouen mútuament. Les heu "
+"especificat totes dues.\n"
+
+#: hwclock/hwclock.c:1477
 #, c-format
 msgid "%s: With --noadjfile, you must specify either --utc or --localtime\n"
 msgstr "%s: Amb --noadjfile, haureu d'especificar --utc o --localtime\n"
 
-#: hwclock/hwclock.c:1474
+#: hwclock/hwclock.c:1491
 #, c-format
 msgid "No usable set-to time.  Cannot set clock.\n"
 msgstr ""
 "L'hora indicada per establir no és usable. No s'ha tocat el rellotge.\n"
 
-#: hwclock/hwclock.c:1490
+#: hwclock/hwclock.c:1507
 #, c-format
 msgid "Sorry, only the superuser can change the Hardware Clock.\n"
 msgstr "Només el superusuari pot canviar el rellotge del maquinari.\n"
 
-#: hwclock/hwclock.c:1495
+#: hwclock/hwclock.c:1512
 #, c-format
 msgid "Sorry, only the superuser can change the System Clock.\n"
 msgstr "Només el superusuari port canviar el rellotge del sistema.\n"
 
-#: hwclock/hwclock.c:1500
+#: hwclock/hwclock.c:1517
 #, c-format
 msgid ""
 "Sorry, only the superuser can change the Hardware Clock epoch in the "
@@ -6074,14 +6086,14 @@ msgstr ""
 "Només el superusuari pot canviar el valor de l'època del rellotge del "
 "maquinari en el nucli.\n"
 
-#: hwclock/hwclock.c:1520
+#: hwclock/hwclock.c:1537
 #, c-format
 msgid "Cannot access the Hardware Clock via any known method.\n"
 msgstr ""
 "No s'ha pogut accedir al rellotge del maquinari mitjançant cap dels mètodes "
 "coneguts.\n"
 
-#: hwclock/hwclock.c:1524
+#: hwclock/hwclock.c:1541
 #, c-format
 msgid ""
 "Use the --debug option to see the details of our search for an access "
@@ -6380,14 +6392,14 @@ msgstr "%s: No s'ha pogut establir el context per defecte per a /etc/passwd"
 msgid "Changing finger information for %s.\n"
 msgstr "S'està canviant la informació del finger per a l'usuari %s.\n"
 
-#: login-utils/chfn.c:189
+#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:551
 #, fuzzy, c-format
-msgid "chfn: PAM Failure, aborting: %s\n"
+msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: PAM ha fallat; s'està avortant: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:802
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:680
-#: mount/lomount.c:683
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:681
+#: mount/lomount.c:684
 msgid "Password: "
 msgstr "Contrasenya: "
 
@@ -6486,11 +6498,6 @@ msgstr ""
 msgid "Changing shell for %s.\n"
 msgstr "S'està canviant l'intèrpret d'ordres per %s.\n"
 
-#: login-utils/chsh.c:188
-#, fuzzy, c-format
-msgid "chsh: PAM Failure, aborting: %s\n"
-msgstr "login: PAM ha fallat; s'està avortant: %s\n"
-
 #: login-utils/chsh.c:222
 msgid "New shell"
 msgstr "Nou intèrpret d'ordres"
@@ -6571,10 +6578,10 @@ msgstr "Useu %s -l per veure'n la llista.\n"
 msgid "No known shells.\n"
 msgstr "No es coneix cap intèrpret d'ordres.\n"
 
-#: login-utils/islocal.c:38
-#, c-format
-msgid "Can't read %s, exiting."
-msgstr "No s'ha pogut llegir %s; s'està sortint."
+#: login-utils/islocal.c:87
+#, fuzzy, c-format
+msgid "Failed to open %s for reading, exiting."
+msgstr "no s'ha pogut obrir %s per a lectura"
 
 #: login-utils/last.c:148
 msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
@@ -6629,11 +6636,6 @@ msgstr "login: només el superusuari pot fer servir -h.\n"
 #, c-format
 msgid "usage: login [-fp] [username]\n"
 msgstr "forma d'ús: login [-fp] [nom_usuari]\n"
-
-#: login-utils/login.c:551
-#, c-format
-msgid "login: PAM Failure, aborting: %s\n"
-msgstr "login: PAM ha fallat; s'està avortant: %s\n"
 
 #: login-utils/login.c:553
 #, c-format
@@ -7441,22 +7443,22 @@ msgstr "S'ha iniciat l'execució de script, el fitxer és %s\n"
 msgid "%s: write error %d: %s\n"
 msgstr "s'ha produït un error d'escriptura a %s\n"
 
-#: misc-utils/script.c:305
+#: misc-utils/script.c:304
 #, c-format
 msgid "Script started on %s"
 msgstr "S'ha iniciat l'execució de script a %s"
 
-#: misc-utils/script.c:348
+#: misc-utils/script.c:347
 #, fuzzy, c-format
 msgid "%s: write error: %s\n"
 msgstr "s'ha produït un error d'escriptura a %s\n"
 
-#: misc-utils/script.c:355
+#: misc-utils/script.c:354
 #, fuzzy, c-format
 msgid "%s: cannot write script file, error: %s\n"
 msgstr "%s: no s'ha pogut trobar el dispositiu per a %s\n"
 
-#: misc-utils/script.c:431
+#: misc-utils/script.c:430
 #, c-format
 msgid ""
 "\n"
@@ -7465,17 +7467,17 @@ msgstr ""
 "\n"
 "S'ha finalitzat l'execució de script a %s"
 
-#: misc-utils/script.c:438
+#: misc-utils/script.c:437
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "S'ha fet la seqüència, el fitxer és %s\n"
 
-#: misc-utils/script.c:449
+#: misc-utils/script.c:448
 #, c-format
 msgid "openpty failed\n"
 msgstr "no ha estat possible executar openpty\n"
 
-#: misc-utils/script.c:483
+#: misc-utils/script.c:482
 #, c-format
 msgid "Out of pty's\n"
 msgstr "No queden pty\n"
@@ -7946,38 +7948,38 @@ msgstr ""
 msgid "warning: %s is already associated with %s\n"
 msgstr "El sector %d ja està assignat\n"
 
-#: mount/lomount.c:669
+#: mount/lomount.c:670
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "No s'ha pogut blocar en memòria, s'està sortint.\n"
 
-#: mount/lomount.c:696
+#: mount/lomount.c:697
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:761
-#, c-format
-msgid "set_loop(%s,%s,%llu): success\n"
+#: mount/lomount.c:762
+#, fuzzy, c-format
+msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): èxit\n"
 
-#: mount/lomount.c:774
+#: mount/lomount.c:775
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: no s'ha pogut suprimir el dispositiu %s: %s\n"
 
-#: mount/lomount.c:785
+#: mount/lomount.c:786
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): èxit\n"
 
-#: mount/lomount.c:793
+#: mount/lomount.c:794
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Aquest mount s'ha compilat sense suport per a loop. Recompileu-lo.\n"
 
-#: mount/lomount.c:827
-#, c-format
+#: mount/lomount.c:829
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -7988,172 +7990,183 @@ msgid ""
 " %1$s -j | --associated <file> [-o <num>]     list all associated with "
 "<file>\n"
 " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
+msgstr ""
+"forma d'ús:\n"
+"  %s dispositiu_loop                                   # dona informació\n"
+"  %s -d dispositiu_loop                                # elimina\n"
+"  %s -f                                                # cerca no usats\n"
+"  %s [ -e xifratge ] [ -o desplaçament ] {-f|disp_loop} fitxer # configura\n"
+
+#: mount/lomount.c:838
+#, c-format
+msgid ""
 "\n"
 "Options:\n"
 " -e | --encryption <type> enable data encryption with specified <name/num>\n"
 " -h | --help              this help\n"
 " -o | --offset <num>      start at offset <num> into file\n"
+"      --sizelimit <num>   loop limited to only <num> bytes of the file\n"
 " -p | --pass-fd <num>     read passphrase from file descriptor <num>\n"
 " -r | --read-only         setup read-only loop device\n"
-" -s | --show              print device name (with -f <file>)\n"
+"      --show              print device name (with -f <file>)\n"
 " -v | --verbose           verbose mode\n"
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1000
+#: mount/lomount.c:1014
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
 "Quan es va compilar el suport per a loop no estava disponible. Recompileu-"
 "lo.\n"
 
-#: mount/mount.c:312
+#: mount/mount.c:313
 #, c-format
 msgid "mount: improperly quoted option string '%s'"
 msgstr ""
 
-#: mount/mount.c:345
+#: mount/mount.c:346
 #, fuzzy, c-format
 msgid "mount: translated %s '%s' to '%s'\n"
 msgstr "mount: no s'ha pogut trobar %s a %s o %s"
 
-#: mount/mount.c:503
+#: mount/mount.c:504
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: segons mtab, %s ja està muntat a %s"
 
-#: mount/mount.c:508
+#: mount/mount.c:509
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: segons mtab, %s està muntat a %s"
 
-#: mount/mount.c:528
+#: mount/mount.c:529
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: no s'ha pogut obrir %s per a escriptura: %s"
 
-#: mount/mount.c:545 mount/mount.c:1014
+#: mount/mount.c:546 mount/mount.c:1016
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: s'ha produït un error en escriure %s: %s"
 
-#: mount/mount.c:553
+#: mount/mount.c:554
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: s'ha produït un error en canviar el mode de %s: %s"
 
-#: mount/mount.c:636
+#: mount/mount.c:637
 #, fuzzy, c-format
 msgid "mount: cannot set group id: %s"
 msgstr "mount : no s'ha pogut establir la velocitat de: %s"
 
-#: mount/mount.c:639
+#: mount/mount.c:640
 #, fuzzy, c-format
 msgid "mount: cannot set user id: %s"
 msgstr "mount : no s'ha pogut establir la velocitat de: %s"
 
-#: mount/mount.c:678 mount/mount.c:1635
+#: mount/mount.c:679 mount/mount.c:1594
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: no s'ha pogut bifurcar: %s"
 
-#: mount/mount.c:692
+#: mount/mount.c:693
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: no heu especificat cap tipus de sistema de fitxers per a %s\n"
 
-#: mount/mount.c:695
+#: mount/mount.c:696
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       Es provarà amb tots els tipus indicats a %s o %s\n"
 
-#: mount/mount.c:698
+#: mount/mount.c:699
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       i sembla que això és espai d'intercanvi\n"
 
-#: mount/mount.c:700
+#: mount/mount.c:701
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       Provaré amb el tipus %s\n"
 
-#: mount/mount.c:727
+#: mount/mount.c:728
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s sembla espai d'intercanvi - no s'ha muntat"
 
-#: mount/mount.c:818
+#: mount/mount.c:819
 msgid "mount failed"
 msgstr "no s'ha estat possible muntar"
 
-#: mount/mount.c:820
+#: mount/mount.c:821
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: només l'usuari root pot muntar %s a %s"
 
-#: mount/mount.c:890
+#: mount/mount.c:891
 msgid "mount: loop device specified twice"
 msgstr "mount: el dispositiu loop està especificat dues vegades"
 
-#: mount/mount.c:895
+#: mount/mount.c:896
 msgid "mount: type specified twice"
 msgstr "mount: el tipus està especificat dues vegades"
 
-#: mount/mount.c:907
+#: mount/mount.c:908
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: s'està ometent la configuració d'un dispositiu loop\n"
 
-#: mount/mount.c:918
+#: mount/mount.c:920
 #, fuzzy, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: segons mtab, %s ja està muntat a %s"
 
-#: mount/mount.c:928
+#: mount/mount.c:930
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: s'usarà el dispositiu loop %s\n"
 
-#: mount/mount.c:937
+#: mount/mount.c:939
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:942
+#: mount/mount.c:944
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:947
+#: mount/mount.c:949
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: no ha estat possible configurar el dispositiu loop\n"
 
-#: mount/mount.c:958
+#: mount/mount.c:960
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: s'ha configurat el dispositiu loop amb èxit\n"
 
-#: mount/mount.c:992
+#: mount/mount.c:994
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: no s'ha trobat %s; s'està creant...\n"
 
-#: mount/mount.c:1009
+#: mount/mount.c:1011
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: no s'ha pogut obrir %s: %s"
 
-#: mount/mount.c:1030
+#: mount/mount.c:1032
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: l'argument a -p o --pass-fd ha de ser un nombre"
 
-#: mount/mount.c:1043
+#: mount/mount.c:1045
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: no s'ha pogut obrir %s per establir-ne la velocitat"
 
-#: mount/mount.c:1046
+#: mount/mount.c:1048
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount : no s'ha pogut establir la velocitat de: %s"
@@ -8365,34 +8378,24 @@ msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr ""
 "mount: %s%s està protegit contra escriptura; es muntarà en només lectura"
 
-#: mount/mount.c:1454
+#: mount/mount.c:1440
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 "mount: no s'ha especificat cap tipus; s'assumirà nfs per als dos punts\n"
 
-#: mount/mount.c:1460
+#: mount/mount.c:1446
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: no s'ha especificat cap tipus; s'assumirà smb a causa del prefix //\n"
 
-#: mount/mount.c:1486
-#, c-format
-msgid "mount: backgrounding \"%s\"\n"
-msgstr "mount: s'està executant «%s» en segon plà\n"
-
-#: mount/mount.c:1496
-#, c-format
-msgid "mount: giving up \"%s\"\n"
-msgstr "mount: s'està abandonant «%s»\n"
-
-#: mount/mount.c:1582
+#: mount/mount.c:1541
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s ja està muntat a %s\n"
 
-#: mount/mount.c:1716
+#: mount/mount.c:1675
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8452,19 +8455,19 @@ msgstr ""
 "Altres opcions: [-nfFrsvw] [-o opcions] [-p dfcontrasenya].\n"
 "Per a més detalls, consulteu «man 8 mount».\n"
 
-#: mount/mount.c:2028
+#: mount/mount.c:1987
 msgid "mount: only root can do that"
 msgstr "mount: només l'usuari root pot fer això"
 
-#: mount/mount.c:2038
+#: mount/mount.c:1997
 msgid "nothing was mounted"
 msgstr "no s'ha muntat res"
 
-#: mount/mount.c:2056 mount/mount.c:2082
+#: mount/mount.c:2015 mount/mount.c:2041
 msgid "mount: no such partition found"
 msgstr "mount: no s'ha trobat aquesta partició"
 
-#: mount/mount.c:2059
+#: mount/mount.c:2018
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: no s'ha pogut trobar %s a %s o %s"
@@ -8532,53 +8535,53 @@ msgstr ""
 msgid "%s: %s: unexpected file format\n"
 msgstr "%s: No s'esperava EOF en el fitxer %s\n"
 
-#: mount/swapon.c:193
+#: mount/swapon.c:202
 #, fuzzy, c-format
 msgid "%s: cannot fork: %s\n"
 msgstr "%s: No s'ha pogut bifurcar\n"
 
-#: mount/swapon.c:219
+#: mount/swapon.c:228
 #, fuzzy, c-format
 msgid "%s: waitpid: %s\n"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: mount/swapon.c:239 mount/swapon.c:339
+#: mount/swapon.c:248 mount/swapon.c:348
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s a %s\n"
 
-#: mount/swapon.c:249
+#: mount/swapon.c:258
 #, c-format
 msgid "%s: cannot stat %s: %s\n"
 msgstr "%s: no s'ha pogut fer stat en %s: %s\n"
 
-#: mount/swapon.c:259
+#: mount/swapon.c:268
 #, c-format
 msgid "%s: %s: software suspend data detected. Reinitializing the swap.\n"
 msgstr ""
 
-#: mount/swapon.c:272
+#: mount/swapon.c:281
 #, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
 msgstr ""
 "%s: avís: %s té els permisos %04o que són insegurs, se suggereix %04o\n"
 
-#: mount/swapon.c:284
+#: mount/swapon.c:293
 #, c-format
 msgid "%s: Skipping file %s - it appears to have holes.\n"
 msgstr "%s: S'està ometent el fitxer %s - sembla que té forats.\n"
 
-#: mount/swapon.c:317
+#: mount/swapon.c:326
 #, c-format
 msgid "%s: cannot find the device for %s\n"
 msgstr "%s: no s'ha pogut trobar el dispositiu per a %s\n"
 
-#: mount/swapon.c:351
+#: mount/swapon.c:360
 #, c-format
 msgid "Not superuser.\n"
 msgstr "No sou el superusuari.\n"
 
-#: mount/swapon.c:385 mount/swapon.c:576
+#: mount/swapon.c:394 mount/swapon.c:585
 #, c-format
 msgid "%s: cannot open %s: %s\n"
 msgstr "%s: no s'ha pogut obrir %s: %s\n"
@@ -9543,65 +9546,65 @@ msgstr "zcount"
 msgid "pid"
 msgstr "pid"
 
-#: sys-utils/ldattach.c:185
+#: sys-utils/ldattach.c:87
 #, c-format
 msgid ""
 "\n"
 "Usage: %s [ -dhV78neo12 ] [ -s <speed> ] <ldisc> <device>\n"
 msgstr ""
 
-#: sys-utils/ldattach.c:187
+#: sys-utils/ldattach.c:89
 msgid ""
 "\n"
 "Known <ldisc> names:\n"
 msgstr ""
 
-#: sys-utils/ldattach.c:248
+#: sys-utils/ldattach.c:174
 #, fuzzy, c-format
 msgid "invalid speed: %s"
 msgstr "id invàlid : %s\n"
 
-#: sys-utils/ldattach.c:251
+#: sys-utils/ldattach.c:177
 #, fuzzy, c-format
 msgid "ldattach from %s\n"
 msgstr "%s de %s\n"
 
-#: sys-utils/ldattach.c:256 text-utils/tailf.c:196
+#: sys-utils/ldattach.c:182 text-utils/tailf.c:196
 #, fuzzy
 msgid "invalid option"
 msgstr "identificador invàlid"
 
-#: sys-utils/ldattach.c:268
+#: sys-utils/ldattach.c:194
 #, fuzzy, c-format
 msgid "invalid line discipline: %s"
 msgstr "id invàlid : %s\n"
 
-#: sys-utils/ldattach.c:276
+#: sys-utils/ldattach.c:202
 #, fuzzy, c-format
 msgid "%s is not a serial line"
 msgstr "%s no es un dispositiu de bloc especial"
 
-#: sys-utils/ldattach.c:282
+#: sys-utils/ldattach.c:208
 #, fuzzy, c-format
 msgid "cannot get terminal attributes for %s"
 msgstr "no es pot obtenir la mida de %s"
 
-#: sys-utils/ldattach.c:285
+#: sys-utils/ldattach.c:211
 #, c-format
 msgid "speed %d unsupported"
 msgstr ""
 
-#: sys-utils/ldattach.c:316
+#: sys-utils/ldattach.c:242
 #, fuzzy, c-format
 msgid "cannot set terminal attributes for %s"
 msgstr "no es pot obtenir la mida de %s"
 
-#: sys-utils/ldattach.c:323
+#: sys-utils/ldattach.c:249
 #, fuzzy
 msgid "cannot set line discipline"
 msgstr "No s'ha pogut cercar a la unitat de disc"
 
-#: sys-utils/ldattach.c:329
+#: sys-utils/ldattach.c:255
 #, fuzzy
 msgid "cannot daemonize"
 msgstr "no es pot obtenir la mida de %s"
@@ -10488,6 +10491,22 @@ msgid "Out of memory when growing buffer.\n"
 msgstr ""
 "S'ha esgotat la memòria en augmentar la mida de la memòria intermèdia.\n"
 
+#, fuzzy
+#~ msgid "chfn: PAM Failure, aborting: %s\n"
+#~ msgstr "login: PAM ha fallat; s'està avortant: %s\n"
+
+#~ msgid "Can't read %s, exiting."
+#~ msgstr "No s'ha pogut llegir %s; s'està sortint."
+
+#~ msgid "login: PAM Failure, aborting: %s\n"
+#~ msgstr "login: PAM ha fallat; s'està avortant: %s\n"
+
+#~ msgid "mount: backgrounding \"%s\"\n"
+#~ msgstr "mount: s'està executant «%s» en segon plà\n"
+
+#~ msgid "mount: giving up \"%s\"\n"
+#~ msgstr "mount: s'està abandonant «%s»\n"
+
 #~ msgid "`%s': bad directory: '.' isn't first\n"
 #~ msgstr "«%s»: directori incorrecte: «.» no és el primer\n"
 
@@ -10643,20 +10662,6 @@ msgstr ""
 
 #~ msgid "%s from %s%s\n"
 #~ msgstr "%s des de %s%s\n"
-
-#~ msgid ""
-#~ "usage:\n"
-#~ "  %s loop_device                                       # give info\n"
-#~ "  %s -d loop_device                                    # delete\n"
-#~ "  %s -f                                                # find unused\n"
-#~ "  %s [-e encryption] [-o offset] {-f|loop_device} file # setup\n"
-#~ msgstr ""
-#~ "forma d'ús:\n"
-#~ "  %s dispositiu_loop                                   # dona informació\n"
-#~ "  %s -d dispositiu_loop                                # elimina\n"
-#~ "  %s -f                                                # cerca no usats\n"
-#~ "  %s [ -e xifratge ] [ -o desplaçament ] {-f|disp_loop} fitxer # "
-#~ "configura\n"
 
 #~ msgid "%s: error: the label %s occurs on both %s and %s\n"
 #~ msgstr "%s: error: l'etiqueta %s apareix a %s i %s\n"
@@ -10858,9 +10863,6 @@ msgstr ""
 
 #~ msgid "couldn't read random data from /dev/urandom"
 #~ msgstr "no s'ha pogut llegir les dades aleatòries de /dev/urandom"
-
-#~ msgid "can't open %s for reading"
-#~ msgstr "no s'ha pogut obrir %s per a lectura"
 
 #~ msgid "can't stat(%s)"
 #~ msgstr "no s'ha pogut executar stat(%s)"

@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-03-25 23:00+0100\n"
+"POT-Creation-Date: 2008-04-16 22:22+0200\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -185,10 +185,10 @@ msgstr ""
 msgid "usage: %s [ -n ] device\n"
 msgstr "uporaba: %s [ -n ] naprava\n"
 
-#: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
+#: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1283
 #: disk-utils/isosize.c:181 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
-#: disk-utils/mkfs.cramfs.c:784 disk-utils/mkfs.minix.c:575
-#: disk-utils/mkswap.c:496 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/mkfs.minix.c:575
+#: disk-utils/mkswap.c:514 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, fuzzy, c-format
 msgid "%s (%s)\n"
@@ -231,50 +231,50 @@ msgstr ""
 " -v         prika¾i veè informacij\n"
 " datoteka   datoteka, ki jo testiramo\n"
 
-#: disk-utils/fsck.minix.c:186
+#: disk-utils/fsck.minix.c:211
 #, c-format
 msgid "Usage: %s [-larvsmf] /dev/name\n"
 msgstr "Uporaba: %s [-larvsmf] /dev/ime\n"
 
-#: disk-utils/fsck.minix.c:293
+#: disk-utils/fsck.minix.c:327
 #, c-format
 msgid "%s is mounted.\t "
 msgstr "%s je priklopljen.\t "
 
-#: disk-utils/fsck.minix.c:295
+#: disk-utils/fsck.minix.c:329
 msgid "Do you really want to continue"
 msgstr "Ali res ¾elite nadaljevati"
 
-#: disk-utils/fsck.minix.c:299
+#: disk-utils/fsck.minix.c:333
 #, c-format
 msgid "check aborted.\n"
 msgstr "preverjanje prekinjeno.\n"
 
-#: disk-utils/fsck.minix.c:318 disk-utils/fsck.minix.c:341
+#: disk-utils/fsck.minix.c:352 disk-utils/fsck.minix.c:375
 #, c-format
 msgid "Zone nr < FIRSTZONE in file `%s'."
 msgstr "¹tevilo obmoèja < PRVOOBMOÈJE v datoteki `%s'."
 
-#: disk-utils/fsck.minix.c:322 disk-utils/fsck.minix.c:345
+#: disk-utils/fsck.minix.c:356 disk-utils/fsck.minix.c:379
 #, c-format
 msgid "Zone nr >= ZONES in file `%s'."
 msgstr "¹tevilo obmoèja >= OBMOÈJA v datoteki `%s'."
 
-#: disk-utils/fsck.minix.c:327 disk-utils/fsck.minix.c:350
+#: disk-utils/fsck.minix.c:361 disk-utils/fsck.minix.c:384
 msgid "Remove block"
 msgstr "Odstrani blok"
 
-#: disk-utils/fsck.minix.c:368
+#: disk-utils/fsck.minix.c:402
 #, c-format
 msgid "Read error: unable to seek to block in file '%s'\n"
 msgstr "Napaka pri branju: iskanje do bloka v datoteki ni mo¾no '%s'\n"
 
-#: disk-utils/fsck.minix.c:374
+#: disk-utils/fsck.minix.c:408
 #, c-format
 msgid "Read error: bad block in file '%s'\n"
 msgstr "Napaka pri branju: po¹kodovan blok v datoteki ,%s`\n"
 
-#: disk-utils/fsck.minix.c:389
+#: disk-utils/fsck.minix.c:423
 #, c-format
 msgid ""
 "Internal error: trying to write bad block\n"
@@ -283,128 +283,128 @@ msgstr ""
 "Notranja napaka: poskus pisanja v po¹kodovan blok\n"
 "Zahteva po pisanju je ignorirana.\n"
 
-#: disk-utils/fsck.minix.c:395 disk-utils/mkfs.minix.c:213
+#: disk-utils/fsck.minix.c:429 disk-utils/mkfs.minix.c:213
 msgid "seek failed in write_block"
 msgstr "iskanje ni uspelo v write_block"
 
-#: disk-utils/fsck.minix.c:398
+#: disk-utils/fsck.minix.c:432
 #, c-format
 msgid "Write error: bad block in file '%s'\n"
 msgstr "Napaka pri pisanju: po¹kodovan blok v datoteki '%s'\n"
 
-#: disk-utils/fsck.minix.c:514
+#: disk-utils/fsck.minix.c:548
 msgid "seek failed in write_super_block"
 msgstr "neuspe¹no iskanje v write_super_block"
 
-#: disk-utils/fsck.minix.c:516 disk-utils/mkfs.minix.c:200
+#: disk-utils/fsck.minix.c:550 disk-utils/mkfs.minix.c:200
 msgid "unable to write super-block"
 msgstr "superbloka ni mo¾no zapisati"
 
-#: disk-utils/fsck.minix.c:526
+#: disk-utils/fsck.minix.c:560
 msgid "Unable to write inode map"
 msgstr "seznama inodov ni mo¾no zapisati"
 
-#: disk-utils/fsck.minix.c:528
+#: disk-utils/fsck.minix.c:562
 msgid "Unable to write zone map"
 msgstr "seznama obmoèij ni mo¾no zapisati"
 
-#: disk-utils/fsck.minix.c:530
+#: disk-utils/fsck.minix.c:564
 msgid "Unable to write inodes"
 msgstr "Zapis inodov ni mo¾en"
 
-#: disk-utils/fsck.minix.c:557
+#: disk-utils/fsck.minix.c:591
 msgid "seek failed"
 msgstr "iskanje je bilo neuspe¹no"
 
-#: disk-utils/fsck.minix.c:559
+#: disk-utils/fsck.minix.c:593
 msgid "unable to read super block"
 msgstr "branje superbloka ni mo¾no"
 
-#: disk-utils/fsck.minix.c:577
+#: disk-utils/fsck.minix.c:611
 msgid "bad magic number in super-block"
 msgstr "po¹kodovan tip datoteke v superbloku"
 
-#: disk-utils/fsck.minix.c:579
+#: disk-utils/fsck.minix.c:613
 msgid "Only 1k blocks/zones supported"
 msgstr "Samo 1k veliki bloki/podroèja so podprti"
 
-#: disk-utils/fsck.minix.c:581
+#: disk-utils/fsck.minix.c:615
 msgid "bad s_imap_blocks field in super-block"
 msgstr "po¹kodovano s_imap_blocks polje v superbloku"
 
-#: disk-utils/fsck.minix.c:583
+#: disk-utils/fsck.minix.c:617
 msgid "bad s_zmap_blocks field in super-block"
 msgstr "po¹kodovan s_zmap_blocks polje v superbloku"
 
-#: disk-utils/fsck.minix.c:590
+#: disk-utils/fsck.minix.c:624
 msgid "Unable to allocate buffer for inode map"
 msgstr "Dodelitev medpomnilnika za seznam inodov ni mo¾na"
 
-#: disk-utils/fsck.minix.c:593
+#: disk-utils/fsck.minix.c:627
 #, fuzzy
 msgid "Unable to allocate buffer for zone map"
 msgstr "Dodelitev medpomnilnika za seznam inodov ni mo¾na"
 
-#: disk-utils/fsck.minix.c:598
+#: disk-utils/fsck.minix.c:632
 msgid "Unable to allocate buffer for inodes"
 msgstr "Dodelitev medpomnilnika za inode ni mo¾na"
 
-#: disk-utils/fsck.minix.c:601
+#: disk-utils/fsck.minix.c:635
 msgid "Unable to allocate buffer for inode count"
 msgstr "Dodelitev medpomnilnika za ¹tevilo inodov ni mo¾na"
 
-#: disk-utils/fsck.minix.c:604
+#: disk-utils/fsck.minix.c:638
 msgid "Unable to allocate buffer for zone count"
 msgstr "Dodelitev medpomnilnika za ¹tevilo podroèij ni mo¾na"
 
-#: disk-utils/fsck.minix.c:606
+#: disk-utils/fsck.minix.c:640
 msgid "Unable to read inode map"
 msgstr "Branje seznama inodov ni mo¾no"
 
-#: disk-utils/fsck.minix.c:608
+#: disk-utils/fsck.minix.c:642
 msgid "Unable to read zone map"
 msgstr "Branje seznama podroèij ni mo¾no"
 
-#: disk-utils/fsck.minix.c:610
+#: disk-utils/fsck.minix.c:644
 msgid "Unable to read inodes"
 msgstr "Branje inodov ni mo¾no"
 
-#: disk-utils/fsck.minix.c:612
+#: disk-utils/fsck.minix.c:646
 #, c-format
 msgid "Warning: Firstzone != Norm_firstzone\n"
 msgstr "Opozorilo: Firstzone != Norm_firstzone\n"
 
-#: disk-utils/fsck.minix.c:617 disk-utils/mkfs.minix.c:454
+#: disk-utils/fsck.minix.c:651 disk-utils/mkfs.minix.c:454
 #, c-format
 msgid "%ld inodes\n"
 msgstr "%ld inodov\n"
 
-#: disk-utils/fsck.minix.c:618 disk-utils/mkfs.minix.c:455
+#: disk-utils/fsck.minix.c:652 disk-utils/mkfs.minix.c:455
 #, c-format
 msgid "%ld blocks\n"
 msgstr "%ld blokov\n"
 
-#: disk-utils/fsck.minix.c:619 disk-utils/mkfs.minix.c:456
+#: disk-utils/fsck.minix.c:653 disk-utils/mkfs.minix.c:456
 #, c-format
 msgid "Firstdatazone=%ld (%ld)\n"
 msgstr "Prvo podatkovno podroèje=%ld (%ld)\n"
 
-#: disk-utils/fsck.minix.c:620 disk-utils/mkfs.minix.c:457
+#: disk-utils/fsck.minix.c:654 disk-utils/mkfs.minix.c:457
 #, c-format
 msgid "Zonesize=%d\n"
 msgstr "Velikost podroèja=%d\n"
 
-#: disk-utils/fsck.minix.c:621
+#: disk-utils/fsck.minix.c:655
 #, c-format
 msgid "Maxsize=%ld\n"
 msgstr "Najveèja velikost=%ld\n"
 
-#: disk-utils/fsck.minix.c:622
+#: disk-utils/fsck.minix.c:656
 #, c-format
 msgid "Filesystem state=%d\n"
 msgstr "Stanje dat. sistema=%d\n"
 
-#: disk-utils/fsck.minix.c:623
+#: disk-utils/fsck.minix.c:657
 #, c-format
 msgid ""
 "namelen=%d\n"
@@ -413,163 +413,163 @@ msgstr ""
 "dol¾ina datoteke=%d\n"
 "\n"
 
-#: disk-utils/fsck.minix.c:638 disk-utils/fsck.minix.c:689
+#: disk-utils/fsck.minix.c:672 disk-utils/fsck.minix.c:723
 #, c-format
 msgid "Inode %d marked unused, but used for file '%s'\n"
 msgstr "Inod %d oznaèen kot prost, vendar je ¾e zaseden za datoteko ,%s`\n"
 
-#: disk-utils/fsck.minix.c:642 disk-utils/fsck.minix.c:693
+#: disk-utils/fsck.minix.c:676 disk-utils/fsck.minix.c:727
 msgid "Mark in use"
 msgstr "Oznaèi, da je v rabi"
 
-#: disk-utils/fsck.minix.c:664 disk-utils/fsck.minix.c:713
+#: disk-utils/fsck.minix.c:698 disk-utils/fsck.minix.c:747
 #, c-format
 msgid "The file `%s' has mode %05o\n"
 msgstr "Ta datoteka `%s' je v stanju %05o\n"
 
-#: disk-utils/fsck.minix.c:671 disk-utils/fsck.minix.c:719
+#: disk-utils/fsck.minix.c:705 disk-utils/fsck.minix.c:753
 #, c-format
 msgid "Warning: inode count too big.\n"
 msgstr "Opozorilo: ¹tevilo inodov preveliko.\n"
 
-#: disk-utils/fsck.minix.c:731 disk-utils/fsck.minix.c:739
+#: disk-utils/fsck.minix.c:765 disk-utils/fsck.minix.c:773
 msgid "root inode isn't a directory"
 msgstr "korenski inod ni imenik"
 
-#: disk-utils/fsck.minix.c:753 disk-utils/fsck.minix.c:786
+#: disk-utils/fsck.minix.c:787 disk-utils/fsck.minix.c:820
 #, c-format
 msgid "Block has been used before. Now in file `%s'."
 msgstr "Blok je ¾e bil v rabi. Sedaj je v datoteki `%s'."
 
-#: disk-utils/fsck.minix.c:755 disk-utils/fsck.minix.c:788
-#: disk-utils/fsck.minix.c:1111 disk-utils/fsck.minix.c:1120
-#: disk-utils/fsck.minix.c:1166 disk-utils/fsck.minix.c:1175
+#: disk-utils/fsck.minix.c:789 disk-utils/fsck.minix.c:822
+#: disk-utils/fsck.minix.c:1145 disk-utils/fsck.minix.c:1154
+#: disk-utils/fsck.minix.c:1200 disk-utils/fsck.minix.c:1209
 msgid "Clear"
 msgstr "Poèisti"
 
-#: disk-utils/fsck.minix.c:765 disk-utils/fsck.minix.c:798
+#: disk-utils/fsck.minix.c:799 disk-utils/fsck.minix.c:832
 #, c-format
 msgid "Block %d in file `%s' is marked not in use."
 msgstr "Blok %d v datoteki ,%s` je oznaèen kot prost."
 
-#: disk-utils/fsck.minix.c:767 disk-utils/fsck.minix.c:800
+#: disk-utils/fsck.minix.c:801 disk-utils/fsck.minix.c:834
 msgid "Correct"
 msgstr "Popravi"
 
-#: disk-utils/fsck.minix.c:939 disk-utils/fsck.minix.c:1006
+#: disk-utils/fsck.minix.c:973 disk-utils/fsck.minix.c:1040
 #, c-format
 msgid "The directory '%s' contains a bad inode number for file '%.*s'."
 msgstr "Direktory '%s' vsebuje po¹kodovan ¹tevilko inoda za datoteko '%.*s'."
 
-#: disk-utils/fsck.minix.c:942 disk-utils/fsck.minix.c:1009
+#: disk-utils/fsck.minix.c:976 disk-utils/fsck.minix.c:1043
 msgid " Remove"
 msgstr "Odstrani"
 
-#: disk-utils/fsck.minix.c:956 disk-utils/fsck.minix.c:1023
+#: disk-utils/fsck.minix.c:990 disk-utils/fsck.minix.c:1057
 #, c-format
 msgid "%s: bad directory: '.' isn't first\n"
 msgstr "%s: po¹kodovan imenik: '.' ni na prvem mestu\n"
 
-#: disk-utils/fsck.minix.c:964 disk-utils/fsck.minix.c:1032
+#: disk-utils/fsck.minix.c:998 disk-utils/fsck.minix.c:1066
 #, c-format
 msgid "%s: bad directory: '..' isn't second\n"
 msgstr "%s: po¹kodovan imenik: '..' ni na drugem mestu\n"
 
-#: disk-utils/fsck.minix.c:1066 disk-utils/fsck.minix.c:1084
+#: disk-utils/fsck.minix.c:1100 disk-utils/fsck.minix.c:1118
 msgid "internal error"
 msgstr "notranja napaka"
 
-#: disk-utils/fsck.minix.c:1069 disk-utils/fsck.minix.c:1087
+#: disk-utils/fsck.minix.c:1103 disk-utils/fsck.minix.c:1121
 #, c-format
 msgid "%s: bad directory: size < 32"
 msgstr "%s: po¹kodovan imenik: velikost < 32"
 
-#: disk-utils/fsck.minix.c:1100
+#: disk-utils/fsck.minix.c:1134
 msgid "seek failed in bad_zone"
 msgstr "iskanje v bad_zone ni uspelo"
 
-#: disk-utils/fsck.minix.c:1110 disk-utils/fsck.minix.c:1165
+#: disk-utils/fsck.minix.c:1144 disk-utils/fsck.minix.c:1199
 #, c-format
 msgid "Inode %d mode not cleared."
 msgstr "stanje %d inoda ni poèi¹èeno"
 
-#: disk-utils/fsck.minix.c:1119 disk-utils/fsck.minix.c:1174
+#: disk-utils/fsck.minix.c:1153 disk-utils/fsck.minix.c:1208
 #, c-format
 msgid "Inode %d not used, marked used in the bitmap."
 msgstr "Inod %d ni v rabu, oznaèen kot v rabi v sliki."
 
-#: disk-utils/fsck.minix.c:1125 disk-utils/fsck.minix.c:1180
+#: disk-utils/fsck.minix.c:1159 disk-utils/fsck.minix.c:1214
 #, c-format
 msgid "Inode %d used, marked unused in the bitmap."
 msgstr "Inod %d v rabi, oznaèen kot ni v rabi v sliki."
 
-#: disk-utils/fsck.minix.c:1127 disk-utils/fsck.minix.c:1181
+#: disk-utils/fsck.minix.c:1161 disk-utils/fsck.minix.c:1215
 msgid "Set"
 msgstr "Nastavi"
 
-#: disk-utils/fsck.minix.c:1131 disk-utils/fsck.minix.c:1185
+#: disk-utils/fsck.minix.c:1165 disk-utils/fsck.minix.c:1219
 #, c-format
 msgid "Inode %d (mode = %07o), i_nlinks=%d, counted=%d."
 msgstr "Inod %d (stanje = %07o), i_nlinks=%d, counted=%d."
 
-#: disk-utils/fsck.minix.c:1133 disk-utils/fsck.minix.c:1187
+#: disk-utils/fsck.minix.c:1167 disk-utils/fsck.minix.c:1221
 msgid "Set i_nlinks to count"
 msgstr "i_nlinks nastavi na count "
 
-#: disk-utils/fsck.minix.c:1145 disk-utils/fsck.minix.c:1199
+#: disk-utils/fsck.minix.c:1179 disk-utils/fsck.minix.c:1233
 #, c-format
 msgid "Zone %d: marked in use, no file uses it."
 msgstr ""
 "Podroèje %d: oznaèeno kot v rabi, vendar ga nobena datoteka ne uporablja."
 
-#: disk-utils/fsck.minix.c:1146 disk-utils/fsck.minix.c:1201
+#: disk-utils/fsck.minix.c:1180 disk-utils/fsck.minix.c:1235
 msgid "Unmark"
 msgstr "Odznaèi"
 
-#: disk-utils/fsck.minix.c:1151 disk-utils/fsck.minix.c:1206
+#: disk-utils/fsck.minix.c:1185 disk-utils/fsck.minix.c:1240
 #, c-format
 msgid "Zone %d: in use, counted=%d\n"
 msgstr "Podroèje %d: v rabi, counted=%d\n"
 
-#: disk-utils/fsck.minix.c:1154 disk-utils/fsck.minix.c:1209
+#: disk-utils/fsck.minix.c:1188 disk-utils/fsck.minix.c:1243
 #, c-format
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "Podroèje %d: ni v rabi, counted=%d\n"
 
-#: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:580
+#: disk-utils/fsck.minix.c:1288 disk-utils/mkfs.minix.c:580
 #: disk-utils/mkfs.minix.c:582
 msgid "bad inode size"
 msgstr "slaba velikost inoda"
 
-#: disk-utils/fsck.minix.c:1256
+#: disk-utils/fsck.minix.c:1290
 msgid "bad v2 inode size"
 msgstr "slaba velikost v2 inoda"
 
-#: disk-utils/fsck.minix.c:1282
+#: disk-utils/fsck.minix.c:1316
 msgid "need terminal for interactive repairs"
 msgstr "za interaktivna opravila je potreben terminal"
 
-#: disk-utils/fsck.minix.c:1286
-#, c-format
-msgid "unable to open '%s'"
+#: disk-utils/fsck.minix.c:1320
+#, fuzzy, c-format
+msgid "unable to open '%s': %s"
 msgstr "'%s' ni mogoèe odpreti"
 
-#: disk-utils/fsck.minix.c:1301
+#: disk-utils/fsck.minix.c:1335
 #, c-format
 msgid "%s is clean, no check.\n"
 msgstr "%s je èist, preverjanje ni potrebno.\n"
 
-#: disk-utils/fsck.minix.c:1305
+#: disk-utils/fsck.minix.c:1339
 #, c-format
 msgid "Forcing filesystem check on %s.\n"
 msgstr "Prisilni pregled datoteènega sistema na %s.\n"
 
-#: disk-utils/fsck.minix.c:1307
+#: disk-utils/fsck.minix.c:1341
 #, c-format
 msgid "Filesystem on %s is dirty, needs checking.\n"
 msgstr "Datoteèni sistem na %s ni èist, potrebuje pregled.\n"
 
-#: disk-utils/fsck.minix.c:1333
+#: disk-utils/fsck.minix.c:1374
 #, c-format
 msgid ""
 "\n"
@@ -578,12 +578,12 @@ msgstr ""
 "\n"
 "%6ld inodov porabljenih (%ld%%)\n"
 
-#: disk-utils/fsck.minix.c:1338
+#: disk-utils/fsck.minix.c:1379
 #, c-format
 msgid "%6ld zones used (%ld%%)\n"
 msgstr "%6ld podroèij porabljenih (%ld%%)\n"
 
-#: disk-utils/fsck.minix.c:1340
+#: disk-utils/fsck.minix.c:1381
 #, c-format
 msgid ""
 "\n"
@@ -606,7 +606,7 @@ msgstr ""
 "------\n"
 "%6d datotek\n"
 
-#: disk-utils/fsck.minix.c:1353
+#: disk-utils/fsck.minix.c:1394
 #, c-format
 msgid ""
 "----------------------------\n"
@@ -674,7 +674,7 @@ msgstr "stanja naprave %s ni mogoèe dobiti"
 msgid "%s is not a block special device"
 msgstr "%s ni posebna bloèna naprava"
 
-#: disk-utils/mkfs.bfs.c:176 sys-utils/ldattach.c:274
+#: disk-utils/mkfs.bfs.c:176 sys-utils/ldattach.c:200
 #, c-format
 msgid "cannot open %s"
 msgstr "ni mogoèe odpreti %s"
@@ -848,7 +848,7 @@ msgstr "AIEEE: blok \"stisnjen\" do > 2*blocklength (%ld)\n"
 msgid "%6.2f%% (%+ld bytes)\t%s\n"
 msgstr "%6.2f%% (%+d bajtov)\t%s\n"
 
-#: disk-utils/mkfs.cramfs.c:825
+#: disk-utils/mkfs.cramfs.c:829
 #, fuzzy, c-format
 msgid ""
 "warning: guestimate of required size (upper bound) is %lldMB, but maximum "
@@ -857,69 +857,69 @@ msgstr ""
 "opozorilo: pribli¾ek zahtevane velikosti (zgornja meja) je %LdMB, ampak "
 "najveèja velikost slike je %uMB. Lahko konèamo pred koncem.\n"
 
-#: disk-utils/mkfs.cramfs.c:866
+#: disk-utils/mkfs.cramfs.c:870
 #, c-format
 msgid "Including: %s\n"
 msgstr "Vkljuèno: %s\n"
 
-#: disk-utils/mkfs.cramfs.c:872
+#: disk-utils/mkfs.cramfs.c:876
 #, fuzzy, c-format
 msgid "Directory data: %zd bytes\n"
 msgstr "Podatki imenika: %d bajtov\n"
 
-#: disk-utils/mkfs.cramfs.c:880
+#: disk-utils/mkfs.cramfs.c:884
 #, fuzzy, c-format
 msgid "Everything: %zd kilobytes\n"
 msgstr "Vse skupaj: %d kilobajtov\n"
 
-#: disk-utils/mkfs.cramfs.c:885
+#: disk-utils/mkfs.cramfs.c:889
 #, fuzzy, c-format
 msgid "Super block: %zd bytes\n"
 msgstr "Superblok: %d bajtov\n"
 
-#: disk-utils/mkfs.cramfs.c:892
+#: disk-utils/mkfs.cramfs.c:896
 #, c-format
 msgid "CRC: %x\n"
 msgstr "CRC: %x\n"
 
-#: disk-utils/mkfs.cramfs.c:897
+#: disk-utils/mkfs.cramfs.c:901
 #, fuzzy, c-format
 msgid "not enough space allocated for ROM image (%lld allocated, %zu used)\n"
 msgstr "za ROM sliko ni zadosti prostora (%Ld rezervirano, %d v rabi)\n"
 
-#: disk-utils/mkfs.cramfs.c:909
+#: disk-utils/mkfs.cramfs.c:913
 #, fuzzy, c-format
 msgid "ROM image write failed (%zd %zd)\n"
 msgstr "zapisovanje ROM slike ni uspelo (%d %d)\n"
 
-#: disk-utils/mkfs.cramfs.c:918
+#: disk-utils/mkfs.cramfs.c:922
 #, c-format
 msgid "warning: filenames truncated to 255 bytes.\n"
 msgstr "opozorilo: imena datotek so skrèena na 255 bajtov.\n"
 
-#: disk-utils/mkfs.cramfs.c:921
+#: disk-utils/mkfs.cramfs.c:925
 #, c-format
 msgid "warning: files were skipped due to errors.\n"
 msgstr "opozorilo: nekatere datoteke so bile ignorirane zaradi napak.\n"
 
-#: disk-utils/mkfs.cramfs.c:924
+#: disk-utils/mkfs.cramfs.c:928
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte).\n"
 msgstr "warning: velikosti datotek zmanja¹ane na %luMB (1 bajt manj).\n"
 
-#: disk-utils/mkfs.cramfs.c:929
+#: disk-utils/mkfs.cramfs.c:933
 #, c-format
 msgid ""
 "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr "opozorilo: uid-i zmanj¹ani na %u bitov.  (Lahko vpliva na varnost.)\n"
 
-#: disk-utils/mkfs.cramfs.c:934
+#: disk-utils/mkfs.cramfs.c:938
 #, c-format
 msgid ""
 "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr "opozorilo: gid-i zmanj¹ani na %u bitov.  (Lahko vpliva na varnost.)\n"
 
-#: disk-utils/mkfs.cramfs.c:939
+#: disk-utils/mkfs.cramfs.c:943
 #, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
@@ -1131,63 +1131,63 @@ msgstr "ena po¹kodovana stran\n"
 msgid "%lu bad pages\n"
 msgstr "%lu po¹kodovanih strani\n"
 
-#: disk-utils/mkswap.c:533
+#: disk-utils/mkswap.c:551
 #, c-format
 msgid "%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:551
+#: disk-utils/mkswap.c:569
 #, fuzzy
 msgid "error: UUID parsing failed"
 msgstr ""
 "\n"
 "Napaka pri zapiranju datoteke\n"
 
-#: disk-utils/mkswap.c:561
+#: disk-utils/mkswap.c:579
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: napaka: izmenjalnega prostora ni mo¾no nikamor namestiti?\n"
 
-#: disk-utils/mkswap.c:579
+#: disk-utils/mkswap.c:597
 #, fuzzy, c-format
 msgid "%s: error: size %lu KiB is larger than device size %lu KiB\n"
 msgstr "%s: napaka: velikost %lu je veèja od velikosti naprave %lu\n"
 
-#: disk-utils/mkswap.c:600
+#: disk-utils/mkswap.c:618
 #, c-format
 msgid "%s: error: unknown version %d\n"
 msgstr "%s: napaka: neznana razlièica %d\n"
 
-#: disk-utils/mkswap.c:607
+#: disk-utils/mkswap.c:625
 #, fuzzy, c-format
 msgid "%s: error: swap area needs to be at least %ld KiB\n"
 msgstr "%s: napaka: velikost izmenjalnega prostora mora biti vsaj %ld KB\n"
 
-#: disk-utils/mkswap.c:624
+#: disk-utils/mkswap.c:642
 #, fuzzy, c-format
 msgid "%s: warning: truncating swap area to %ld KiB\n"
 msgstr "%s: opozorilo: meja izmenjalnega prostora postavljena na %ldKB\n"
 
-#: disk-utils/mkswap.c:630
+#: disk-utils/mkswap.c:648
 #, fuzzy, c-format
 msgid "%s: error: label only with v1 swap area\n"
 msgstr "%s: napaka: oznaka samo z v1 izmenjalnim prostorom\n"
 
-#: disk-utils/mkswap.c:654
+#: disk-utils/mkswap.c:672
 #, fuzzy, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
 msgstr "Naprava izmenjalnega prostora ne bo ustvarjena na ,%s`"
 
-#: disk-utils/mkswap.c:660
+#: disk-utils/mkswap.c:678
 #, fuzzy, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
 msgstr "%s je priklopljen; dat. sistema zato ne bo narejen!"
 
-#: disk-utils/mkswap.c:673 disk-utils/mkswap.c:694
+#: disk-utils/mkswap.c:691 disk-utils/mkswap.c:712
 msgid "fatal: first page unreadable"
 msgstr "usodna napaka: prva stran neberljiva"
 
-#: disk-utils/mkswap.c:679
+#: disk-utils/mkswap.c:697
 #, fuzzy, c-format
 msgid ""
 "%s: Device '%s' contains a valid Sun disklabel.\n"
@@ -1200,47 +1200,48 @@ msgstr ""
 "tabelo. Izmenjalni prostor ni bil ustvarjen. Èe res ¾elite ustvariti "
 "izmenjalni prostor v0 na tej napravi, uporabite izbiro -f.\n"
 
-#: disk-utils/mkswap.c:703
+#: disk-utils/mkswap.c:721
 msgid "Unable to set up swap-space: unreadable"
 msgstr "Izmenjalnega prostora ni mogoèe nastaviti: neberljiv"
 
-#: disk-utils/mkswap.c:704
+#: disk-utils/mkswap.c:722
 #, fuzzy, c-format
 msgid "Setting up swapspace version %d, size = %llu KiB\n"
 msgstr "Pripravljamo izmenjalni prostor razlièice %d, velikost = %llu kB\n"
 
-#: disk-utils/mkswap.c:713
+#: disk-utils/mkswap.c:731
 msgid "unable to rewind swap-device"
 msgstr "izmenjalne naprave ni mogoèe previti"
 
-#: disk-utils/mkswap.c:716
-msgid "unable to write signature page"
+#: disk-utils/mkswap.c:734
+#, fuzzy, c-format
+msgid "%s: %s: unable to write signature page: %s"
 msgstr "strani s podpisom ni mogoèe zapisati"
 
-#: disk-utils/mkswap.c:724
+#: disk-utils/mkswap.c:745
 msgid "fsync failed"
 msgstr "fsync ni uspel"
 
-#: disk-utils/mkswap.c:735
+#: disk-utils/mkswap.c:756
 #, c-format
 msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:741
+#: disk-utils/mkswap.c:762
 #, fuzzy
 msgid "unable to matchpathcon()"
 msgstr "stanja %s ni mogoèe dobiti"
 
-#: disk-utils/mkswap.c:744
+#: disk-utils/mkswap.c:765
 #, fuzzy
 msgid "unable to create new selinux context"
 msgstr "zapis inodov ni uspel"
 
-#: disk-utils/mkswap.c:746
+#: disk-utils/mkswap.c:767
 msgid "couldn't compute selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:752
+#: disk-utils/mkswap.c:773
 #, fuzzy, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "ni mogoèe preimenovati %s v %s: %s\n"
@@ -2995,7 +2996,7 @@ msgstr "Tip razdelka %d je spremenjen v %x (%s)\n"
 
 #: fdisk/fdisk.c:1522
 #, fuzzy, c-format
-msgid "System type of partition %d is unchanged to %x (%s)\n"
+msgid "System type of partition %d is unchanged: %x (%s)\n"
 msgstr "Tip razdelka %d je spremenjen v %x (%s)\n"
 
 #: fdisk/fdisk.c:1574
@@ -5492,85 +5493,85 @@ msgstr "%s ne more dobiti dostopa do V/I vrat: klic iopl(3) neuspe¹en.\n"
 msgid "Probably you need root privileges.\n"
 msgstr "Verjetno potrebujete pravice skrbnika sistema.\n"
 
-#: hwclock/hwclock.c:229
+#: hwclock/hwclock.c:231
 #, c-format
 msgid "Assuming hardware clock is kept in %s time.\n"
 msgstr "Privzemamo, da strojna ura teèe v %s èasu.\n"
 
-#: hwclock/hwclock.c:230 hwclock/hwclock.c:325
+#: hwclock/hwclock.c:232 hwclock/hwclock.c:327
 msgid "UTC"
 msgstr "UTC"
 
-#: hwclock/hwclock.c:230 hwclock/hwclock.c:324
+#: hwclock/hwclock.c:232 hwclock/hwclock.c:326
 msgid "local"
 msgstr "krajevnem"
 
-#: hwclock/hwclock.c:310
+#: hwclock/hwclock.c:312
 #, c-format
 msgid "%s: Warning: unrecognized third line in adjtime file\n"
 msgstr "%s: Opozorilo: neprepoznana tretja vrstica v datoteki adjtime\n"
 
-#: hwclock/hwclock.c:312
+#: hwclock/hwclock.c:314
 #, c-format
 msgid "(Expected: `UTC' or `LOCAL' or nothing.)\n"
 msgstr "(Prièakovano: `UTC' ali `LOCAL` ali niè.)\n"
 
-#: hwclock/hwclock.c:319
+#: hwclock/hwclock.c:321
 #, c-format
 msgid "Last drift adjustment done at %ld seconds after 1969\n"
 msgstr "Zadnja prilagoditev drsenju opravljena %ld sekund po letu 1969\n"
 
-#: hwclock/hwclock.c:321
+#: hwclock/hwclock.c:323
 #, c-format
 msgid "Last calibration done at %ld seconds after 1969\n"
 msgstr "Zadnje preverjanje mer je bilo opravljeno %ld sekund po letu 1969\n"
 
-#: hwclock/hwclock.c:323
+#: hwclock/hwclock.c:325
 #, c-format
 msgid "Hardware clock is on %s time\n"
 msgstr "Strojna ura teèe v %s èasu\n"
 
-#: hwclock/hwclock.c:325
+#: hwclock/hwclock.c:327
 msgid "unknown"
 msgstr "neznanem"
 
-#: hwclock/hwclock.c:349
+#: hwclock/hwclock.c:351
 #, c-format
 msgid "Waiting for clock tick...\n"
 msgstr "Èakamo na tiktak ure...\n"
 
-#: hwclock/hwclock.c:353
+#: hwclock/hwclock.c:355
 #, c-format
 msgid "...got clock tick\n"
 msgstr "...dobili tiktak.\n"
 
-#: hwclock/hwclock.c:406
+#: hwclock/hwclock.c:408
 #, c-format
 msgid "Invalid values in hardware clock: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 msgstr "Neveljavne vrednosti v strojni uri: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 
-#: hwclock/hwclock.c:414
+#: hwclock/hwclock.c:416
 #, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr ""
 "Èas strojne ure: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld sekund po letu 1969\n"
 
-#: hwclock/hwclock.c:442
+#: hwclock/hwclock.c:444
 #, c-format
 msgid "Time read from Hardware Clock: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 msgstr "Èas, prebran iz strojne ure: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 
-#: hwclock/hwclock.c:469
+#: hwclock/hwclock.c:471
 #, c-format
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr "Strojno uro nastavljamo na %.2d:%.2d:%.2d = %ld sekund po letu 1969\n"
 
-#: hwclock/hwclock.c:475
+#: hwclock/hwclock.c:477
 #, c-format
 msgid "Clock not changed - testing only.\n"
 msgstr "Ure ni spremenjena - zgolj preizkus.\n"
 
-#: hwclock/hwclock.c:523
+#: hwclock/hwclock.c:525
 #, c-format
 msgid ""
 "Time elapsed since reference time has been %.6f seconds.\n"
@@ -5579,7 +5580,7 @@ msgstr ""
 "Èas, ki je pretekel od referenènega, je  %.6f sekund.\n"
 "Poveèujemo zaostanek, da bi dosegli naslednjo celo sekundo.\n"
 
-#: hwclock/hwclock.c:557
+#: hwclock/hwclock.c:559
 #, c-format
 msgid ""
 "The Hardware Clock registers contain values that are either invalid (e.g. "
@@ -5588,22 +5589,22 @@ msgstr ""
 "Registri strojne ure vsebujejo vrednosti ki so bodisi neveljavne\n"
 "(npr. 50. dan v mesecu), bodisi izven na¹ega dosega (npr. leto 2095).\n"
 
-#: hwclock/hwclock.c:567
+#: hwclock/hwclock.c:569
 #, c-format
 msgid "%s  %.6f seconds\n"
 msgstr "%s  %.6f sekund\n"
 
-#: hwclock/hwclock.c:601
+#: hwclock/hwclock.c:603
 #, c-format
 msgid "No --date option specified.\n"
 msgstr "Izbira --date ni bila podana.\n"
 
-#: hwclock/hwclock.c:607
+#: hwclock/hwclock.c:609
 #, c-format
 msgid "--date argument too long\n"
 msgstr "Izbira --date je predolga.\n"
 
-#: hwclock/hwclock.c:614
+#: hwclock/hwclock.c:616
 #, c-format
 msgid ""
 "The value of the --date option is not a valid date.\n"
@@ -5612,21 +5613,21 @@ msgstr ""
 "Vrednost, podana pri izbiri --date ni veljaven datum.\n"
 "Med drugim vsebuje narekovaje.\n"
 
-#: hwclock/hwclock.c:622
+#: hwclock/hwclock.c:624
 #, c-format
 msgid "Issuing date command: %s\n"
 msgstr "Izvajamo ukaz date: %s\n"
 
-#: hwclock/hwclock.c:626
+#: hwclock/hwclock.c:628
 msgid "Unable to run 'date' program in /bin/sh shell. popen() failed"
 msgstr "Ne moremo pognati ukaza 'date' v lupini /bin/sh, klic popen() ni uspel"
 
-#: hwclock/hwclock.c:634
+#: hwclock/hwclock.c:636
 #, c-format
 msgid "response from date command = %s\n"
 msgstr "odziv ukaza date = %s\n"
 
-#: hwclock/hwclock.c:636
+#: hwclock/hwclock.c:638
 #, c-format
 msgid ""
 "The date command issued by %s returned unexpected results.\n"
@@ -5641,7 +5642,7 @@ msgstr ""
 "Odziv pa:\n"
 "  %s\n"
 
-#: hwclock/hwclock.c:648
+#: hwclock/hwclock.c:650
 #, c-format
 msgid ""
 "The date command issued by %s returned something other than an integer where "
@@ -5658,12 +5659,12 @@ msgstr ""
 "Odziv pa:\n"
 " %s\n"
 
-#: hwclock/hwclock.c:659
+#: hwclock/hwclock.c:661
 #, c-format
 msgid "date string %s equates to %ld seconds since 1969.\n"
 msgstr "niz datum %s je enak %ld sekund od leta 1969.\n"
 
-#: hwclock/hwclock.c:691
+#: hwclock/hwclock.c:693
 #, c-format
 msgid ""
 "The Hardware Clock does not contain a valid time, so we cannot set the "
@@ -5672,43 +5673,43 @@ msgstr ""
 "Strojna ura ne vsebuje veljavnega èasa, zato nastavljanje sistemskega èasa "
 "iz nje ni mogoèe.\n"
 
-#: hwclock/hwclock.c:713
+#: hwclock/hwclock.c:715
 #, c-format
 msgid "Calling settimeofday:\n"
 msgstr "Klièem settimeofday:\n"
 
-#: hwclock/hwclock.c:714
+#: hwclock/hwclock.c:716
 #, c-format
 msgid "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 msgstr "\ttv.tv_sec = %ld, tc.tc_usec = %ld\n"
 
-#: hwclock/hwclock.c:716
+#: hwclock/hwclock.c:718
 #, c-format
 msgid "\ttz.tz_minuteswest = %d\n"
 msgstr "\ttz.tz_minuteswest = %d\n"
 
-#: hwclock/hwclock.c:719
+#: hwclock/hwclock.c:721
 #, c-format
 msgid "Not setting system clock because running in test mode.\n"
 msgstr "Sistemska ura ne bo nastavljena, ker se izvaja testiranje.\n"
 
-#: hwclock/hwclock.c:728
+#: hwclock/hwclock.c:730
 #, c-format
 msgid "Must be superuser to set system clock.\n"
 msgstr "Samo sistemski skrbnik lahko nastavlja sistemsko uro.\n"
 
-#: hwclock/hwclock.c:731
+#: hwclock/hwclock.c:733
 msgid "settimeofday() failed"
 msgstr "klic settimeofday() ni uspel"
 
-#: hwclock/hwclock.c:761
+#: hwclock/hwclock.c:763
 #, c-format
 msgid ""
 "Not adjusting drift factor because the Hardware Clock previously contained "
 "garbage.\n"
 msgstr "Faktor drsenja ne bo nastavljen, ker je strojna ura vsebovala smeti.\n"
 
-#: hwclock/hwclock.c:766
+#: hwclock/hwclock.c:768
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -5717,7 +5718,7 @@ msgstr ""
 "Faktor drsenja ne bo nastavljen, ker ja zadnji kalibracijski èas 0,\n"
 "zgodovina je zato po¹kodovana. Potrebna je ponovna kalibracija.\n"
 
-#: hwclock/hwclock.c:772
+#: hwclock/hwclock.c:774
 #, c-format
 msgid ""
 "Not adjusting drift factor because it has been less than a day since the "
@@ -5726,7 +5727,7 @@ msgstr ""
 "Faktor drsenja ne bo nastavljen, zato ker je minil manj kot en dan od zadnje "
 "kalibracije.\n"
 
-#: hwclock/hwclock.c:820
+#: hwclock/hwclock.c:822
 #, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
@@ -5737,22 +5738,22 @@ msgstr ""
 "drsenja %f sekund/dan.\n"
 "Prilagajam faktor drsenja za %f sekund/dan\n"
 
-#: hwclock/hwclock.c:871
+#: hwclock/hwclock.c:873
 #, c-format
 msgid "Time since last adjustment is %d seconds\n"
 msgstr "Èas od zadnje prilagoditve je %d sekund\n"
 
-#: hwclock/hwclock.c:873
+#: hwclock/hwclock.c:875
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
 msgstr "Potrebno je vstaviti %d sekund in previti èas za %.6f sekund\n"
 
-#: hwclock/hwclock.c:902
+#: hwclock/hwclock.c:904
 #, c-format
 msgid "Not updating adjtime file because of testing mode.\n"
 msgstr "adjtime ne bo posodobljen zaradi testnega naèina.\n"
 
-#: hwclock/hwclock.c:903
+#: hwclock/hwclock.c:905
 #, c-format
 msgid ""
 "Would have written the following to %s:\n"
@@ -5761,40 +5762,40 @@ msgstr ""
 "Na %s bi bilo napisano sledeèe:\n"
 "%s"
 
-#: hwclock/hwclock.c:927
+#: hwclock/hwclock.c:929
 #, c-format
 msgid "Drift adjustment parameters not updated.\n"
 msgstr "Drsne prilagoditve parametrov ne bodo posodobljene.\n"
 
-#: hwclock/hwclock.c:968
+#: hwclock/hwclock.c:970
 #, c-format
 msgid ""
 "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
 msgstr ""
 "Strojna ura ne vsebuje veljavnega èasa, zato se je ne more prilagoditi.\n"
 
-#: hwclock/hwclock.c:1000
+#: hwclock/hwclock.c:1002
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr ""
 "Potrebna prilagoditev je manj¹a od ene sekund, zato ura ne bo nastavljena.\n"
 
-#: hwclock/hwclock.c:1026
+#: hwclock/hwclock.c:1028
 #, c-format
 msgid "Using %s.\n"
 msgstr "Uporabljam %s.\n"
 
-#: hwclock/hwclock.c:1028
+#: hwclock/hwclock.c:1030
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "Iskanje uporabnega urinega vmesnika ni bilo uspe¹no.\n"
 
-#: hwclock/hwclock.c:1124
+#: hwclock/hwclock.c:1126
 #, c-format
 msgid "Unable to set system clock.\n"
 msgstr "Sistemske ure se ne da nastaviti.\n"
 
-#: hwclock/hwclock.c:1154
+#: hwclock/hwclock.c:1156
 #, c-format
 msgid ""
 "The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
@@ -5806,39 +5807,39 @@ msgstr ""
 "Ta kopija strojne ure je bila zgrajena za drugega\n"
 "(in zdaj verjetno ne teèe na Alpha stroju). Brez ukrepov.\n"
 
-#: hwclock/hwclock.c:1163
+#: hwclock/hwclock.c:1165
 #, c-format
 msgid "Unable to get the epoch value from the kernel.\n"
 msgstr "Vrednosti epoch ni mogoèe dobiti od jedra.\n"
 
-#: hwclock/hwclock.c:1165
+#: hwclock/hwclock.c:1167
 #, c-format
 msgid "Kernel is assuming an epoch value of %lu\n"
 msgstr "Jedro predpostavlja, da je vrednost epoch %lu\n"
 
-#: hwclock/hwclock.c:1168
+#: hwclock/hwclock.c:1170
 #, c-format
 msgid ""
 "To set the epoch value, you must use the 'epoch' option to tell to what "
 "value to set it.\n"
 msgstr "Èe hoèete nastaviti vrednost epoch, morate uporabiti izbiro 'epoch'\n"
 
-#: hwclock/hwclock.c:1171
+#: hwclock/hwclock.c:1173
 #, c-format
 msgid "Not setting the epoch to %d - testing only.\n"
 msgstr "Epoch ne bo nastavljen na %d - samo preizku¹am.\n"
 
-#: hwclock/hwclock.c:1174
+#: hwclock/hwclock.c:1176
 #, c-format
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Vrednosti epoch ni bilo mo¾no nastaviti.\n"
 
-#: hwclock/hwclock.c:1187 misc-utils/cal.c:332 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1189 misc-utils/cal.c:332 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s iz %s\n"
 
-#: hwclock/hwclock.c:1208
+#: hwclock/hwclock.c:1210
 #, fuzzy, c-format
 msgid ""
 "hwclock - query and set the hardware clock (RTC)\n"
@@ -5846,29 +5847,31 @@ msgid ""
 "Usage: hwclock [function] [options...]\n"
 "\n"
 "Functions:\n"
-"  --help        show this help\n"
-"  --show        read hardware clock and print result\n"
-"  --set         set the rtc to the time given with --date\n"
-"  --hctosys     set the system time from the hardware clock\n"
-"  --systohc     set the hardware clock to the current system time\n"
-"  --adjust      adjust the rtc to account for systematic drift since \n"
-"                the clock was last set or adjusted\n"
-"  --getepoch    print out the kernel's hardware clock epoch value\n"
-"  --setepoch    set the kernel's hardware clock epoch value to the \n"
-"                value given with --epoch\n"
-"  --version     print out the version of hwclock to stdout\n"
+"  --help         show this help\n"
+"  --show         read hardware clock and print result\n"
+"  --set          set the rtc to the time given with --date\n"
+"  --hctosys      set the system time from the hardware clock\n"
+"  --systohc      set the hardware clock to the current system time\n"
+"  --adjust       adjust the rtc to account for systematic drift since \n"
+"                 the clock was last set or adjusted\n"
+"  --getepoch     print out the kernel's hardware clock epoch value\n"
+"  --setepoch     set the kernel's hardware clock epoch value to the \n"
+"                 value given with --epoch\n"
+"  --version      print out the version of hwclock to stdout\n"
 "\n"
 "Options: \n"
-"  --utc         the hardware clock is kept in coordinated universal time\n"
-"  --localtime   the hardware clock is kept in local time\n"
-"  --rtc=path    special /dev/... file to use instead of default\n"
-"  --directisa   access the ISA bus directly instead of %s\n"
-"  --badyear     ignore rtc's year because the bios is broken\n"
-"  --date        specifies the time to which to set the hardware clock\n"
-"  --epoch=year  specifies the year which is the beginning of the \n"
-"                hardware clock's epoch value\n"
-"  --noadjfile   do not access /etc/adjtime. Requires the use of\n"
-"                either --utc or --localtime\n"
+"  --utc          the hardware clock is kept in coordinated universal time\n"
+"  --localtime    the hardware clock is kept in local time\n"
+"  --rtc=path     special /dev/... file to use instead of default\n"
+"  --directisa    access the ISA bus directly instead of %s\n"
+"  --badyear      ignore rtc's year because the bios is broken\n"
+"  --date         specifies the time to which to set the hardware clock\n"
+"  --epoch=year   specifies the year which is the beginning of the \n"
+"                 hardware clock's epoch value\n"
+"  --noadjfile    do not access /etc/adjtime. Requires the use of\n"
+"                 either --utc or --localtime\n"
+"  --adjfile=path specifies the path to the adjust file (default is\n"
+"                 /etc/adjtime)\n"
 msgstr ""
 "hwclock - povpra¹aj in nastavi strojno uro (RTC)\n"
 "\n"
@@ -5897,7 +5900,7 @@ msgstr ""
 "  --noadjfile   ne dostopaj do /etc/adjtime. Zahteva uporabo --utc ali\n"
 "                --localtime\n"
 
-#: hwclock/hwclock.c:1236
+#: hwclock/hwclock.c:1240
 #, c-format
 msgid ""
 "  --jensen, --arc, --srm, --funky-toy\n"
@@ -5906,17 +5909,17 @@ msgstr ""
 "  --jensen, --arc, --srm, --funky-toy\n"
 "                povej hwclocku tip alpha, ki ga imap (glej hwclock(8))\n"
 
-#: hwclock/hwclock.c:1321
+#: hwclock/hwclock.c:1326
 #, fuzzy, c-format
 msgid "%s: Unable to connect to audit system\n"
 msgstr "Sistemske ure se ne da nastaviti.\n"
 
-#: hwclock/hwclock.c:1433
+#: hwclock/hwclock.c:1441
 #, c-format
 msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr "%s ne sprejema argumentov brez izbir. Podali ste: %d.\n"
 
-#: hwclock/hwclock.c:1439
+#: hwclock/hwclock.c:1447
 #, c-format
 msgid ""
 "You have specified multiple functions.\n"
@@ -5925,7 +5928,7 @@ msgstr ""
 "Podali ste veè funkcij.\n"
 "Izvedete lahko samo eno funkcijo naenkrat.\n"
 
-#: hwclock/hwclock.c:1446
+#: hwclock/hwclock.c:1454
 #, c-format
 msgid ""
 "%s: The --utc and --localtime options are mutually exclusive.  You specified "
@@ -5933,7 +5936,7 @@ msgid ""
 msgstr ""
 "%s: --utc in --localtime izbiri se medsebojno izkljuèujeta. Podali ste obe.\n"
 
-#: hwclock/hwclock.c:1453
+#: hwclock/hwclock.c:1461
 #, c-format
 msgid ""
 "%s: The --adjust and --noadjfile options are mutually exclusive.  You "
@@ -5942,27 +5945,36 @@ msgstr ""
 "%s: --adjust in --noadjfile izbiri se medsebojno izkljuèujeta. Podali ste "
 "obe.\n"
 
-#: hwclock/hwclock.c:1460
+#: hwclock/hwclock.c:1468
+#, fuzzy, c-format
+msgid ""
+"%s: The --adjfile and --noadjfile options are mutually exclusive.  You "
+"specified both.\n"
+msgstr ""
+"%s: --adjust in --noadjfile izbiri se medsebojno izkljuèujeta. Podali ste "
+"obe.\n"
+
+#: hwclock/hwclock.c:1477
 #, c-format
 msgid "%s: With --noadjfile, you must specify either --utc or --localtime\n"
 msgstr "%s: --noadjfile morate podati skupaj z --utc ali --localtime\n"
 
-#: hwclock/hwclock.c:1474
+#: hwclock/hwclock.c:1491
 #, c-format
 msgid "No usable set-to time.  Cannot set clock.\n"
 msgstr "Ni uporabnega nastavitvenega èasa. Ura ne bo nastavljena.\n"
 
-#: hwclock/hwclock.c:1490
+#: hwclock/hwclock.c:1507
 #, c-format
 msgid "Sorry, only the superuser can change the Hardware Clock.\n"
 msgstr "®al lahko samo sistemski skrbnik spreminja strojno uro.\n"
 
-#: hwclock/hwclock.c:1495
+#: hwclock/hwclock.c:1512
 #, c-format
 msgid "Sorry, only the superuser can change the System Clock.\n"
 msgstr "®al lahko samo sistemski skrbnik spreminj sistemsko uro.\n"
 
-#: hwclock/hwclock.c:1500
+#: hwclock/hwclock.c:1517
 #, c-format
 msgid ""
 "Sorry, only the superuser can change the Hardware Clock epoch in the "
@@ -5970,12 +5982,12 @@ msgid ""
 msgstr ""
 "®al lahko samo sistemski skrbnik spreminja razdobje strojne ure v jedru.\n"
 
-#: hwclock/hwclock.c:1520
+#: hwclock/hwclock.c:1537
 #, c-format
 msgid "Cannot access the Hardware Clock via any known method.\n"
 msgstr "Do strojne ure ni mogoèe dostopati po znanih metodah.\n"
 
-#: hwclock/hwclock.c:1524
+#: hwclock/hwclock.c:1541
 #, c-format
 msgid ""
 "Use the --debug option to see the details of our search for an access "
@@ -6266,14 +6278,14 @@ msgstr "%s: Ne more se nastaviti privzete zveze[context] za /etc/passwd"
 msgid "Changing finger information for %s.\n"
 msgstr "Spreminjam finger informacijo za %s.\n"
 
-#: login-utils/chfn.c:189
+#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:551
 #, fuzzy, c-format
-msgid "chfn: PAM Failure, aborting: %s\n"
+msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: PAM ni uspel, prekinjam: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:802
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:680
-#: mount/lomount.c:683
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:681
+#: mount/lomount.c:684
 msgid "Password: "
 msgstr "Geslo: "
 
@@ -6367,11 +6379,6 @@ msgstr "%s: Va¹a lupina ni v /etc/shells, sprememba lupine zanikana\n"
 msgid "Changing shell for %s.\n"
 msgstr "Spreminjam lupino za %s.\n"
 
-#: login-utils/chsh.c:188
-#, fuzzy, c-format
-msgid "chsh: PAM Failure, aborting: %s\n"
-msgstr "login: PAM ni uspel, prekinjam: %s\n"
-
 #: login-utils/chsh.c:222
 msgid "New shell"
 msgstr "Nova lupina"
@@ -6450,10 +6457,10 @@ msgstr "Uporabite %s -l za izpis seznama.\n"
 msgid "No known shells.\n"
 msgstr "Ni znanih lupin.\n"
 
-#: login-utils/islocal.c:38
-#, c-format
-msgid "Can't read %s, exiting."
-msgstr "%s ni mogoèe prebrati, zakljuèujem."
+#: login-utils/islocal.c:87
+#, fuzzy, c-format
+msgid "Failed to open %s for reading, exiting."
+msgstr "%s ni mogoèe odpreti za branje\n"
 
 #: login-utils/last.c:148
 msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
@@ -6508,11 +6515,6 @@ msgstr "login: -h je na voljo samo za sistemskega skrbnika.\n"
 #, c-format
 msgid "usage: login [-fp] [username]\n"
 msgstr "uporaba: login [-fp] [uporabnik]\n"
-
-#: login-utils/login.c:551
-#, c-format
-msgid "login: PAM Failure, aborting: %s\n"
-msgstr "login: PAM ni uspel, prekinjam: %s\n"
 
 #: login-utils/login.c:553
 #, c-format
@@ -7311,22 +7313,22 @@ msgstr "Script se je zaèel, dat. je %s\n"
 msgid "%s: write error %d: %s\n"
 msgstr "napaka pri pisanju na %s\n"
 
-#: misc-utils/script.c:305
+#: misc-utils/script.c:304
 #, c-format
 msgid "Script started on %s"
 msgstr "Script se je zaèel na %s"
 
-#: misc-utils/script.c:348
+#: misc-utils/script.c:347
 #, fuzzy, c-format
 msgid "%s: write error: %s\n"
 msgstr "napaka pri pisanju na %s\n"
 
-#: misc-utils/script.c:355
+#: misc-utils/script.c:354
 #, fuzzy, c-format
 msgid "%s: cannot write script file, error: %s\n"
 msgstr "%s: za %s ni mogoèe najti naprave\n"
 
-#: misc-utils/script.c:431
+#: misc-utils/script.c:430
 #, c-format
 msgid ""
 "\n"
@@ -7335,17 +7337,17 @@ msgstr ""
 "\n"
 "Script konèan na %s"
 
-#: misc-utils/script.c:438
+#: misc-utils/script.c:437
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "Script konèan, dat. je %s\n"
 
-#: misc-utils/script.c:449
+#: misc-utils/script.c:448
 #, c-format
 msgid "openpty failed\n"
 msgstr "openpty ni uspel\n"
 
-#: misc-utils/script.c:483
+#: misc-utils/script.c:482
 #, c-format
 msgid "Out of pty's\n"
 msgstr "Zmanjkalo pty-jev\n"
@@ -7811,40 +7813,40 @@ msgstr ""
 msgid "warning: %s is already associated with %s\n"
 msgstr "Sektor %d je ¾e dodeljen\n"
 
-#: mount/lomount.c:669
+#: mount/lomount.c:670
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "V pomnilnik ni mogoèe zakleniti, konèujem.\n"
 
-#: mount/lomount.c:696
+#: mount/lomount.c:697
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:761
-#, c-format
-msgid "set_loop(%s,%s,%llu): success\n"
+#: mount/lomount.c:762
+#, fuzzy, c-format
+msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): uspeh\n"
 
-#: mount/lomount.c:774
+#: mount/lomount.c:775
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: naprave %s ni mogoèe zbrisati: %s\n"
 
-#: mount/lomount.c:785
+#: mount/lomount.c:786
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): uspeh\n"
 
-#: mount/lomount.c:793
+#: mount/lomount.c:794
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Program mount je bil preveden brez podpore za loop. Poskusite ponovno "
 "prevesti mount.\n"
 
-#: mount/lomount.c:827
-#, c-format
+#: mount/lomount.c:829
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -7855,172 +7857,183 @@ msgid ""
 " %1$s -j | --associated <file> [-o <num>]     list all associated with "
 "<file>\n"
 " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
+msgstr ""
+"uporaba:\n"
+"  %s loop_naprava\t\t\t\t\t# dobi informacije\n"
+"  %s -d loop_naprava\t\t\t\t\t# zbri¹i\n"
+"  %s -f\t\t\t\t\t\t# najdi neuporabljene\n"
+"  %s [-e ¹ifriranje] [-o odmik] {-f|loop_naprava} dat. # nastavitev\n"
+
+#: mount/lomount.c:838
+#, c-format
+msgid ""
 "\n"
 "Options:\n"
 " -e | --encryption <type> enable data encryption with specified <name/num>\n"
 " -h | --help              this help\n"
 " -o | --offset <num>      start at offset <num> into file\n"
+"      --sizelimit <num>   loop limited to only <num> bytes of the file\n"
 " -p | --pass-fd <num>     read passphrase from file descriptor <num>\n"
 " -r | --read-only         setup read-only loop device\n"
-" -s | --show              print device name (with -f <file>)\n"
+"      --show              print device name (with -f <file>)\n"
 " -v | --verbose           verbose mode\n"
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1000
+#: mount/lomount.c:1014
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
 "Med prevajanjem ni bilo podpore za loop napravo. Poskusite ponovno "
 "prevesti.\n"
 
-#: mount/mount.c:312
+#: mount/mount.c:313
 #, c-format
 msgid "mount: improperly quoted option string '%s'"
 msgstr ""
 
-#: mount/mount.c:345
+#: mount/mount.c:346
 #, fuzzy, c-format
 msgid "mount: translated %s '%s' to '%s'\n"
 msgstr "mount: %s ni mogoèe najti v %s ali %s"
 
-#: mount/mount.c:503
+#: mount/mount.c:504
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: po evidenci mtab je %s ¾e priklopljeno na %s"
 
-#: mount/mount.c:508
+#: mount/mount.c:509
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: po evidenci mtab je %s priklopljeno na %s<"
 
-#: mount/mount.c:528
+#: mount/mount.c:529
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: enote %s ni moè odpreti za pisanje: %s"
 
-#: mount/mount.c:545 mount/mount.c:1014
+#: mount/mount.c:546 mount/mount.c:1016
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: napaka pri pisanju na %s: %s"
 
-#: mount/mount.c:553
+#: mount/mount.c:554
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: napaka pri spreminjanju naèina %s: %s"
 
-#: mount/mount.c:636
+#: mount/mount.c:637
 #, fuzzy, c-format
 msgid "mount: cannot set group id: %s"
 msgstr "mount: hitrosti ni mogoèe nastaviti: %s"
 
-#: mount/mount.c:639
+#: mount/mount.c:640
 #, fuzzy, c-format
 msgid "mount: cannot set user id: %s"
 msgstr "mount: hitrosti ni mogoèe nastaviti: %s"
 
-#: mount/mount.c:678 mount/mount.c:1635
+#: mount/mount.c:679 mount/mount.c:1594
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: ni mogoèe vejiti: %s"
 
-#: mount/mount.c:692
+#: mount/mount.c:693
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: za %s niste podali vrste dat. sistema\n"
 
-#: mount/mount.c:695
+#: mount/mount.c:696
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "\tUporabili se bodo vsi tipi omenjeni v %s ali %s\n"
 
-#: mount/mount.c:698
+#: mount/mount.c:699
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "\tin izgleda kot da je izmenjalni prostor\n"
 
-#: mount/mount.c:700
+#: mount/mount.c:701
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "\tUporabljen bo tip %s\n"
 
-#: mount/mount.c:727
+#: mount/mount.c:728
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s je podoben izmenjalnemu prostoru, zato ne bo priklopljen"
 
-#: mount/mount.c:818
+#: mount/mount.c:819
 msgid "mount failed"
 msgstr "priklop ni uspel"
 
-#: mount/mount.c:820
+#: mount/mount.c:821
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: samo sistemski skrbnik lahko priklopi %s na %s"
 
-#: mount/mount.c:890
+#: mount/mount.c:891
 msgid "mount: loop device specified twice"
 msgstr "mount: loop naprava je podana dvakrat"
 
-#: mount/mount.c:895
+#: mount/mount.c:896
 msgid "mount: type specified twice"
 msgstr "mount: tip je podan dvakrat"
 
-#: mount/mount.c:907
+#: mount/mount.c:908
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: nastavitev loop naprave bo preskoèena\n"
 
-#: mount/mount.c:918
+#: mount/mount.c:920
 #, fuzzy, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: po evidenci mtab je %s ¾e priklopljeno na %s"
 
-#: mount/mount.c:928
+#: mount/mount.c:930
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: loop naprava %s bo uporabljena\n"
 
-#: mount/mount.c:937
+#: mount/mount.c:939
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:942
+#: mount/mount.c:944
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:947
+#: mount/mount.c:949
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: nastavitev loop naprave ni uspela\n"
 
-#: mount/mount.c:958
+#: mount/mount.c:960
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: nastavitev loop naprave je uspela\n"
 
-#: mount/mount.c:992
+#: mount/mount.c:994
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s bo ustvarjen, ker ga nisem na¹el\n"
 
-#: mount/mount.c:1009
+#: mount/mount.c:1011
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: %s ni mogoèe odpreti: %s"
 
-#: mount/mount.c:1030
+#: mount/mount.c:1032
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argument pri -p ali --pass-fd mora biti ¹tevilka"
 
-#: mount/mount.c:1043
+#: mount/mount.c:1045
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: %s ni mogoèe odpreti za nastavitev hitrosti"
 
-#: mount/mount.c:1046
+#: mount/mount.c:1048
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: hitrosti ni mogoèe nastaviti: %s"
@@ -8226,32 +8239,22 @@ msgstr "mount: %s%s je za¹èitena pred pisanjem ampak podana je `-w' zastavica"
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s je za¹èitena pred pisanjem, priklapljam samo za branje"
 
-#: mount/mount.c:1454
+#: mount/mount.c:1440
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: tip ni bil podan - predpostavlja se nfs zaradi dvopièja\n"
 
-#: mount/mount.c:1460
+#: mount/mount.c:1446
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr "mount: tip ni bil podan - predpostavlja se smbfs zaradi predpone // \n"
 
-#: mount/mount.c:1486
-#, c-format
-msgid "mount: backgrounding \"%s\"\n"
-msgstr "mount: \"%s\" gre v ozadje\n"
-
-#: mount/mount.c:1496
-#, c-format
-msgid "mount: giving up \"%s\"\n"
-msgstr "mount: predaja se \"%s\"\n"
-
-#: mount/mount.c:1582
+#: mount/mount.c:1541
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s je ¾e priklopljen v %s\n"
 
-#: mount/mount.c:1716
+#: mount/mount.c:1675
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8316,19 +8319,19 @@ msgstr ""
 "Druge izbire: [-nfFrsvw] [-o izbire].\n"
 "Podrobnosti lahko poi¹èete v priroèniku z ukazom: man 8 mount\n"
 
-#: mount/mount.c:2028
+#: mount/mount.c:1987
 msgid "mount: only root can do that"
 msgstr "mount: to lahko izvede samo sistemski skrbnik"
 
-#: mount/mount.c:2038
+#: mount/mount.c:1997
 msgid "nothing was mounted"
 msgstr "niè ni bilo priklopljeno"
 
-#: mount/mount.c:2056 mount/mount.c:2082
+#: mount/mount.c:2015 mount/mount.c:2041
 msgid "mount: no such partition found"
 msgstr "mount: takega razdelka nisem na¹el"
 
-#: mount/mount.c:2059
+#: mount/mount.c:2018
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %s ni mogoèe najti v %s ali %s"
@@ -8397,52 +8400,52 @@ msgstr ""
 msgid "%s: %s: unexpected file format\n"
 msgstr "%s: Neprièakovan konec datoteke v %s\n"
 
-#: mount/swapon.c:193
+#: mount/swapon.c:202
 #, fuzzy, c-format
 msgid "%s: cannot fork: %s\n"
 msgstr "%s: Ni mogoèe vejiti\n"
 
-#: mount/swapon.c:219
+#: mount/swapon.c:228
 #, fuzzy, c-format
 msgid "%s: waitpid: %s\n"
 msgstr "%s: odpiranje ni uspelo: %s\n"
 
-#: mount/swapon.c:239 mount/swapon.c:339
+#: mount/swapon.c:248 mount/swapon.c:348
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s na %s\n"
 
-#: mount/swapon.c:249
+#: mount/swapon.c:258
 #, fuzzy, c-format
 msgid "%s: cannot stat %s: %s\n"
 msgstr "%s: za %s stanje ni znano: %s\n"
 
-#: mount/swapon.c:259
+#: mount/swapon.c:268
 #, c-format
 msgid "%s: %s: software suspend data detected. Reinitializing the swap.\n"
 msgstr ""
 
-#: mount/swapon.c:272
+#: mount/swapon.c:281
 #, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
 msgstr "%s: opozorilo: %s ima nevarna dovoljenja %04o, svetujem %04o\n"
 
-#: mount/swapon.c:284
+#: mount/swapon.c:293
 #, c-format
 msgid "%s: Skipping file %s - it appears to have holes.\n"
 msgstr "%s: dat. %s ne bo upo¹tevana zaradi lukenj.\n"
 
-#: mount/swapon.c:317
+#: mount/swapon.c:326
 #, fuzzy, c-format
 msgid "%s: cannot find the device for %s\n"
 msgstr "%s: za %s ni mogoèe najti naprave\n"
 
-#: mount/swapon.c:351
+#: mount/swapon.c:360
 #, c-format
 msgid "Not superuser.\n"
 msgstr "Niste sistemski skrbnik.\n"
 
-#: mount/swapon.c:385 mount/swapon.c:576
+#: mount/swapon.c:394 mount/swapon.c:585
 #, c-format
 msgid "%s: cannot open %s: %s\n"
 msgstr "%s: %s ni mogoèe odpreti: %s\n"
@@ -9395,65 +9398,65 @@ msgstr "zcount"
 msgid "pid"
 msgstr "pid"
 
-#: sys-utils/ldattach.c:185
+#: sys-utils/ldattach.c:87
 #, c-format
 msgid ""
 "\n"
 "Usage: %s [ -dhV78neo12 ] [ -s <speed> ] <ldisc> <device>\n"
 msgstr ""
 
-#: sys-utils/ldattach.c:187
+#: sys-utils/ldattach.c:89
 msgid ""
 "\n"
 "Known <ldisc> names:\n"
 msgstr ""
 
-#: sys-utils/ldattach.c:248
+#: sys-utils/ldattach.c:174
 #, fuzzy, c-format
 msgid "invalid speed: %s"
 msgstr "neveljavni id: %s\n"
 
-#: sys-utils/ldattach.c:251
+#: sys-utils/ldattach.c:177
 #, fuzzy, c-format
 msgid "ldattach from %s\n"
 msgstr "%s iz %s\n"
 
-#: sys-utils/ldattach.c:256 text-utils/tailf.c:196
+#: sys-utils/ldattach.c:182 text-utils/tailf.c:196
 #, fuzzy
 msgid "invalid option"
 msgstr "neveljaven id"
 
-#: sys-utils/ldattach.c:268
+#: sys-utils/ldattach.c:194
 #, fuzzy, c-format
 msgid "invalid line discipline: %s"
 msgstr "neveljavni id: %s\n"
 
-#: sys-utils/ldattach.c:276
+#: sys-utils/ldattach.c:202
 #, fuzzy, c-format
 msgid "%s is not a serial line"
 msgstr "%s ni posebna bloèna naprava"
 
-#: sys-utils/ldattach.c:282
+#: sys-utils/ldattach.c:208
 #, fuzzy, c-format
 msgid "cannot get terminal attributes for %s"
 msgstr "ni mogoèe dobiti velikosti %s"
 
-#: sys-utils/ldattach.c:285
+#: sys-utils/ldattach.c:211
 #, c-format
 msgid "speed %d unsupported"
 msgstr ""
 
-#: sys-utils/ldattach.c:316
+#: sys-utils/ldattach.c:242
 #, fuzzy, c-format
 msgid "cannot set terminal attributes for %s"
 msgstr "ni mogoèe dobiti velikosti %s"
 
-#: sys-utils/ldattach.c:323
+#: sys-utils/ldattach.c:249
 #, fuzzy
 msgid "cannot set line discipline"
 msgstr "Iskanje na disku ni mogoèe"
 
-#: sys-utils/ldattach.c:329
+#: sys-utils/ldattach.c:255
 #, fuzzy
 msgid "cannot daemonize"
 msgstr "ni mogoèe dobiti velikosti %s"
@@ -10331,6 +10334,22 @@ msgstr "Vhodna vrstica je predolga.\n"
 msgid "Out of memory when growing buffer.\n"
 msgstr "Pri poveèevanju medpomnilnika je zmanjkalo pomnilnika.\n"
 
+#, fuzzy
+#~ msgid "chfn: PAM Failure, aborting: %s\n"
+#~ msgstr "login: PAM ni uspel, prekinjam: %s\n"
+
+#~ msgid "Can't read %s, exiting."
+#~ msgstr "%s ni mogoèe prebrati, zakljuèujem."
+
+#~ msgid "login: PAM Failure, aborting: %s\n"
+#~ msgstr "login: PAM ni uspel, prekinjam: %s\n"
+
+#~ msgid "mount: backgrounding \"%s\"\n"
+#~ msgstr "mount: \"%s\" gre v ozadje\n"
+
+#~ msgid "mount: giving up \"%s\"\n"
+#~ msgstr "mount: predaja se \"%s\"\n"
+
 #~ msgid "`%s': bad directory: '.' isn't first\n"
 #~ msgstr "`%s': po¹kodovan imenik: '.' ni na prvem mestu\n"
 
@@ -10487,19 +10506,6 @@ msgstr "Pri poveèevanju medpomnilnika je zmanjkalo pomnilnika.\n"
 #, fuzzy
 #~ msgid "%s from %s%s\n"
 #~ msgstr "%s iz %s\n"
-
-#~ msgid ""
-#~ "usage:\n"
-#~ "  %s loop_device                                       # give info\n"
-#~ "  %s -d loop_device                                    # delete\n"
-#~ "  %s -f                                                # find unused\n"
-#~ "  %s [-e encryption] [-o offset] {-f|loop_device} file # setup\n"
-#~ msgstr ""
-#~ "uporaba:\n"
-#~ "  %s loop_naprava\t\t\t\t\t# dobi informacije\n"
-#~ "  %s -d loop_naprava\t\t\t\t\t# zbri¹i\n"
-#~ "  %s -f\t\t\t\t\t\t# najdi neuporabljene\n"
-#~ "  %s [-e ¹ifriranje] [-o odmik] {-f|loop_naprava} dat. # nastavitev\n"
 
 #~ msgid "%s: error: the label %s occurs on both %s and %s\n"
 #~ msgstr "%s: napaka: oznaka %s se pojavi na %s in %s\n"

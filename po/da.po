@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11y\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-03-25 23:00+0100\n"
+"POT-Creation-Date: 2008-04-16 22:22+0200\n"
 "PO-Revision-Date: 2005-08-15 21:00+0200\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
@@ -183,10 +183,10 @@ msgstr ""
 msgid "usage: %s [ -n ] device\n"
 msgstr "brug: %s [ -n ] enhed\n"
 
-#: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1249
+#: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1283
 #: disk-utils/isosize.c:181 disk-utils/mkfs.bfs.c:119 disk-utils/mkfs.c:52
-#: disk-utils/mkfs.cramfs.c:784 disk-utils/mkfs.minix.c:575
-#: disk-utils/mkswap.c:496 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: disk-utils/mkfs.cramfs.c:788 disk-utils/mkfs.minix.c:575
+#: disk-utils/mkswap.c:514 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, c-format
 msgid "%s (%s)\n"
@@ -229,50 +229,50 @@ msgstr ""
 " -v         vis flere meddelelser\n"
 " file       fil der skal tjekkes\n"
 
-#: disk-utils/fsck.minix.c:186
+#: disk-utils/fsck.minix.c:211
 #, c-format
 msgid "Usage: %s [-larvsmf] /dev/name\n"
 msgstr "Brug: %s [-larvsmf] /dev/navn\n"
 
-#: disk-utils/fsck.minix.c:293
+#: disk-utils/fsck.minix.c:327
 #, c-format
 msgid "%s is mounted.\t "
 msgstr "%s er monteret.\t "
 
-#: disk-utils/fsck.minix.c:295
+#: disk-utils/fsck.minix.c:329
 msgid "Do you really want to continue"
 msgstr "Vil du virkelig fortsætte"
 
-#: disk-utils/fsck.minix.c:299
+#: disk-utils/fsck.minix.c:333
 #, c-format
 msgid "check aborted.\n"
 msgstr "tjek afbrudt.\n"
 
-#: disk-utils/fsck.minix.c:318 disk-utils/fsck.minix.c:341
+#: disk-utils/fsck.minix.c:352 disk-utils/fsck.minix.c:375
 #, c-format
 msgid "Zone nr < FIRSTZONE in file `%s'."
 msgstr "Zone nr < FIRSTZONE i filen '%s'."
 
-#: disk-utils/fsck.minix.c:322 disk-utils/fsck.minix.c:345
+#: disk-utils/fsck.minix.c:356 disk-utils/fsck.minix.c:379
 #, c-format
 msgid "Zone nr >= ZONES in file `%s'."
 msgstr "Zone nr >= ZONES i filen '%s'."
 
-#: disk-utils/fsck.minix.c:327 disk-utils/fsck.minix.c:350
+#: disk-utils/fsck.minix.c:361 disk-utils/fsck.minix.c:384
 msgid "Remove block"
 msgstr "Fjern blok"
 
-#: disk-utils/fsck.minix.c:368
+#: disk-utils/fsck.minix.c:402
 #, c-format
 msgid "Read error: unable to seek to block in file '%s'\n"
 msgstr "Læsefejl: kunne ikke søge til blok i filen '%s'\n"
 
-#: disk-utils/fsck.minix.c:374
+#: disk-utils/fsck.minix.c:408
 #, c-format
 msgid "Read error: bad block in file '%s'\n"
 msgstr "Læsefejl: ugyldig blok i filen '%s'\n"
 
-#: disk-utils/fsck.minix.c:389
+#: disk-utils/fsck.minix.c:423
 #, c-format
 msgid ""
 "Internal error: trying to write bad block\n"
@@ -281,128 +281,128 @@ msgstr ""
 "Intern fejl: forsøger at skrive ugyldig blok\n"
 "Skriveforsøg ignoreret\n"
 
-#: disk-utils/fsck.minix.c:395 disk-utils/mkfs.minix.c:213
+#: disk-utils/fsck.minix.c:429 disk-utils/mkfs.minix.c:213
 msgid "seek failed in write_block"
 msgstr "søgning mislykkedes i write_block"
 
-#: disk-utils/fsck.minix.c:398
+#: disk-utils/fsck.minix.c:432
 #, c-format
 msgid "Write error: bad block in file '%s'\n"
 msgstr "Skrivefejl: ugyldig blok i fil '%s'\n"
 
-#: disk-utils/fsck.minix.c:514
+#: disk-utils/fsck.minix.c:548
 msgid "seek failed in write_super_block"
 msgstr "søgning mislykkedes i write_super_block"
 
-#: disk-utils/fsck.minix.c:516 disk-utils/mkfs.minix.c:200
+#: disk-utils/fsck.minix.c:550 disk-utils/mkfs.minix.c:200
 msgid "unable to write super-block"
 msgstr "kunne ikke skrive super-blok"
 
-#: disk-utils/fsck.minix.c:526
+#: disk-utils/fsck.minix.c:560
 msgid "Unable to write inode map"
 msgstr "Kunne ikke skrive inode-oversigten"
 
-#: disk-utils/fsck.minix.c:528
+#: disk-utils/fsck.minix.c:562
 msgid "Unable to write zone map"
 msgstr "Kunne ikke skrive zone-oversigten"
 
-#: disk-utils/fsck.minix.c:530
+#: disk-utils/fsck.minix.c:564
 msgid "Unable to write inodes"
 msgstr "Kunne ikke skrive inodes"
 
-#: disk-utils/fsck.minix.c:557
+#: disk-utils/fsck.minix.c:591
 msgid "seek failed"
 msgstr "søgning fejlede"
 
-#: disk-utils/fsck.minix.c:559
+#: disk-utils/fsck.minix.c:593
 msgid "unable to read super block"
 msgstr "kunne ikke læse super-blok"
 
-#: disk-utils/fsck.minix.c:577
+#: disk-utils/fsck.minix.c:611
 msgid "bad magic number in super-block"
 msgstr "ugyldigt magisk nummer i super-blok"
 
-#: disk-utils/fsck.minix.c:579
+#: disk-utils/fsck.minix.c:613
 msgid "Only 1k blocks/zones supported"
 msgstr "Kun 1k blokke/zoner understøttes"
 
-#: disk-utils/fsck.minix.c:581
+#: disk-utils/fsck.minix.c:615
 msgid "bad s_imap_blocks field in super-block"
 msgstr "ugyldigt s_imap_blocks-felt i super-blok"
 
-#: disk-utils/fsck.minix.c:583
+#: disk-utils/fsck.minix.c:617
 msgid "bad s_zmap_blocks field in super-block"
 msgstr "ugyldigt s_zmap_blocks-felt i super-blok"
 
-#: disk-utils/fsck.minix.c:590
+#: disk-utils/fsck.minix.c:624
 msgid "Unable to allocate buffer for inode map"
 msgstr "Kunne ikke allokere buffer til inode-oversigt"
 
-#: disk-utils/fsck.minix.c:593
+#: disk-utils/fsck.minix.c:627
 #, fuzzy
 msgid "Unable to allocate buffer for zone map"
 msgstr "Kunne ikke allokere buffer til inode-oversigt"
 
-#: disk-utils/fsck.minix.c:598
+#: disk-utils/fsck.minix.c:632
 msgid "Unable to allocate buffer for inodes"
 msgstr "Kunne ikke allokere buffer til inodes"
 
-#: disk-utils/fsck.minix.c:601
+#: disk-utils/fsck.minix.c:635
 msgid "Unable to allocate buffer for inode count"
 msgstr "Kunne ikke allokere buffer til inode-optælling"
 
-#: disk-utils/fsck.minix.c:604
+#: disk-utils/fsck.minix.c:638
 msgid "Unable to allocate buffer for zone count"
 msgstr "Kunne ikke allokere buffer til zoneoptælling"
 
-#: disk-utils/fsck.minix.c:606
+#: disk-utils/fsck.minix.c:640
 msgid "Unable to read inode map"
 msgstr "Kunne ikke læse inode-oversigt"
 
-#: disk-utils/fsck.minix.c:608
+#: disk-utils/fsck.minix.c:642
 msgid "Unable to read zone map"
 msgstr "Kunne ikke læse zoneoversigt"
 
-#: disk-utils/fsck.minix.c:610
+#: disk-utils/fsck.minix.c:644
 msgid "Unable to read inodes"
 msgstr "Kunne ikke læse inodes"
 
-#: disk-utils/fsck.minix.c:612
+#: disk-utils/fsck.minix.c:646
 #, c-format
 msgid "Warning: Firstzone != Norm_firstzone\n"
 msgstr "Advarsel: Firstzone != Norm_firstzone\n"
 
-#: disk-utils/fsck.minix.c:617 disk-utils/mkfs.minix.c:454
+#: disk-utils/fsck.minix.c:651 disk-utils/mkfs.minix.c:454
 #, c-format
 msgid "%ld inodes\n"
 msgstr "%ld inodes\n"
 
-#: disk-utils/fsck.minix.c:618 disk-utils/mkfs.minix.c:455
+#: disk-utils/fsck.minix.c:652 disk-utils/mkfs.minix.c:455
 #, c-format
 msgid "%ld blocks\n"
 msgstr "%ld blokke\n"
 
-#: disk-utils/fsck.minix.c:619 disk-utils/mkfs.minix.c:456
+#: disk-utils/fsck.minix.c:653 disk-utils/mkfs.minix.c:456
 #, c-format
 msgid "Firstdatazone=%ld (%ld)\n"
 msgstr "Førstedatazone=%ld (%ld)\n"
 
-#: disk-utils/fsck.minix.c:620 disk-utils/mkfs.minix.c:457
+#: disk-utils/fsck.minix.c:654 disk-utils/mkfs.minix.c:457
 #, c-format
 msgid "Zonesize=%d\n"
 msgstr "Zonestørrelse=%d\n"
 
-#: disk-utils/fsck.minix.c:621
+#: disk-utils/fsck.minix.c:655
 #, c-format
 msgid "Maxsize=%ld\n"
 msgstr "Maksstørrelse=%ld\n"
 
-#: disk-utils/fsck.minix.c:622
+#: disk-utils/fsck.minix.c:656
 #, c-format
 msgid "Filesystem state=%d\n"
 msgstr "Filsystem-tilstand=%d\n"
 
-#: disk-utils/fsck.minix.c:623
+#: disk-utils/fsck.minix.c:657
 #, c-format
 msgid ""
 "namelen=%d\n"
@@ -411,162 +411,162 @@ msgstr ""
 "navnelængde=%d\n"
 "\n"
 
-#: disk-utils/fsck.minix.c:638 disk-utils/fsck.minix.c:689
+#: disk-utils/fsck.minix.c:672 disk-utils/fsck.minix.c:723
 #, c-format
 msgid "Inode %d marked unused, but used for file '%s'\n"
 msgstr "Inode %d er markeret som ubrugt, men bruges af filen '%s'\n"
 
-#: disk-utils/fsck.minix.c:642 disk-utils/fsck.minix.c:693
+#: disk-utils/fsck.minix.c:676 disk-utils/fsck.minix.c:727
 msgid "Mark in use"
 msgstr "Markér i brug"
 
-#: disk-utils/fsck.minix.c:664 disk-utils/fsck.minix.c:713
+#: disk-utils/fsck.minix.c:698 disk-utils/fsck.minix.c:747
 #, c-format
 msgid "The file `%s' has mode %05o\n"
 msgstr "Filen '%s' har tilstand %05o\n"
 
-#: disk-utils/fsck.minix.c:671 disk-utils/fsck.minix.c:719
+#: disk-utils/fsck.minix.c:705 disk-utils/fsck.minix.c:753
 #, c-format
 msgid "Warning: inode count too big.\n"
 msgstr "Advarsel: inode-optælling for stor.\n"
 
-#: disk-utils/fsck.minix.c:731 disk-utils/fsck.minix.c:739
+#: disk-utils/fsck.minix.c:765 disk-utils/fsck.minix.c:773
 msgid "root inode isn't a directory"
 msgstr "rod-inode er ikke en mappe"
 
-#: disk-utils/fsck.minix.c:753 disk-utils/fsck.minix.c:786
+#: disk-utils/fsck.minix.c:787 disk-utils/fsck.minix.c:820
 #, c-format
 msgid "Block has been used before. Now in file `%s'."
 msgstr "Blokke blev brugt tidligere. Nu i filen '%s'."
 
-#: disk-utils/fsck.minix.c:755 disk-utils/fsck.minix.c:788
-#: disk-utils/fsck.minix.c:1111 disk-utils/fsck.minix.c:1120
-#: disk-utils/fsck.minix.c:1166 disk-utils/fsck.minix.c:1175
+#: disk-utils/fsck.minix.c:789 disk-utils/fsck.minix.c:822
+#: disk-utils/fsck.minix.c:1145 disk-utils/fsck.minix.c:1154
+#: disk-utils/fsck.minix.c:1200 disk-utils/fsck.minix.c:1209
 msgid "Clear"
 msgstr "Slet"
 
-#: disk-utils/fsck.minix.c:765 disk-utils/fsck.minix.c:798
+#: disk-utils/fsck.minix.c:799 disk-utils/fsck.minix.c:832
 #, c-format
 msgid "Block %d in file `%s' is marked not in use."
 msgstr "Blok %d i filen '%s' er markeret som ubrugt."
 
-#: disk-utils/fsck.minix.c:767 disk-utils/fsck.minix.c:800
+#: disk-utils/fsck.minix.c:801 disk-utils/fsck.minix.c:834
 msgid "Correct"
 msgstr "Korrigér"
 
-#: disk-utils/fsck.minix.c:939 disk-utils/fsck.minix.c:1006
+#: disk-utils/fsck.minix.c:973 disk-utils/fsck.minix.c:1040
 #, c-format
 msgid "The directory '%s' contains a bad inode number for file '%.*s'."
 msgstr "Mappen '%s' indeholder forkert inode-antal for filen '%.*s'."
 
-#: disk-utils/fsck.minix.c:942 disk-utils/fsck.minix.c:1009
+#: disk-utils/fsck.minix.c:976 disk-utils/fsck.minix.c:1043
 msgid " Remove"
 msgstr " Fjern"
 
-#: disk-utils/fsck.minix.c:956 disk-utils/fsck.minix.c:1023
+#: disk-utils/fsck.minix.c:990 disk-utils/fsck.minix.c:1057
 #, c-format
 msgid "%s: bad directory: '.' isn't first\n"
 msgstr "%s: ugyldig mappe: '.' er ikke først\n"
 
-#: disk-utils/fsck.minix.c:964 disk-utils/fsck.minix.c:1032
+#: disk-utils/fsck.minix.c:998 disk-utils/fsck.minix.c:1066
 #, c-format
 msgid "%s: bad directory: '..' isn't second\n"
 msgstr "%s: ugyldig mappe: ',.' er ikke nummer to\n"
 
-#: disk-utils/fsck.minix.c:1066 disk-utils/fsck.minix.c:1084
+#: disk-utils/fsck.minix.c:1100 disk-utils/fsck.minix.c:1118
 msgid "internal error"
 msgstr "intern fejl"
 
-#: disk-utils/fsck.minix.c:1069 disk-utils/fsck.minix.c:1087
+#: disk-utils/fsck.minix.c:1103 disk-utils/fsck.minix.c:1121
 #, c-format
 msgid "%s: bad directory: size < 32"
 msgstr "%s: ugyldig mappe: størrelse < 32"
 
-#: disk-utils/fsck.minix.c:1100
+#: disk-utils/fsck.minix.c:1134
 msgid "seek failed in bad_zone"
 msgstr "mislykket søgning i bad_zone"
 
-#: disk-utils/fsck.minix.c:1110 disk-utils/fsck.minix.c:1165
+#: disk-utils/fsck.minix.c:1144 disk-utils/fsck.minix.c:1199
 #, c-format
 msgid "Inode %d mode not cleared."
 msgstr "Inode %d-tilstand ikke slettet."
 
-#: disk-utils/fsck.minix.c:1119 disk-utils/fsck.minix.c:1174
+#: disk-utils/fsck.minix.c:1153 disk-utils/fsck.minix.c:1208
 #, c-format
 msgid "Inode %d not used, marked used in the bitmap."
 msgstr "Inode %d ikke brugt, markeret som brugt i bitoversigten."
 
-#: disk-utils/fsck.minix.c:1125 disk-utils/fsck.minix.c:1180
+#: disk-utils/fsck.minix.c:1159 disk-utils/fsck.minix.c:1214
 #, c-format
 msgid "Inode %d used, marked unused in the bitmap."
 msgstr "Inode %d i brug, markeret som ubrugt i bitoversigten."
 
-#: disk-utils/fsck.minix.c:1127 disk-utils/fsck.minix.c:1181
+#: disk-utils/fsck.minix.c:1161 disk-utils/fsck.minix.c:1215
 msgid "Set"
 msgstr "Sæt"
 
-#: disk-utils/fsck.minix.c:1131 disk-utils/fsck.minix.c:1185
+#: disk-utils/fsck.minix.c:1165 disk-utils/fsck.minix.c:1219
 #, c-format
 msgid "Inode %d (mode = %07o), i_nlinks=%d, counted=%d."
 msgstr "Inode %d (tilstand = %07o), i_nlinks=%d, optalt=%d."
 
-#: disk-utils/fsck.minix.c:1133 disk-utils/fsck.minix.c:1187
+#: disk-utils/fsck.minix.c:1167 disk-utils/fsck.minix.c:1221
 msgid "Set i_nlinks to count"
 msgstr "Sæt i_nlinks til det optalte"
 
-#: disk-utils/fsck.minix.c:1145 disk-utils/fsck.minix.c:1199
+#: disk-utils/fsck.minix.c:1179 disk-utils/fsck.minix.c:1233
 #, c-format
 msgid "Zone %d: marked in use, no file uses it."
 msgstr "Zone %d: markeret som brugt, ingen filer bruger den."
 
-#: disk-utils/fsck.minix.c:1146 disk-utils/fsck.minix.c:1201
+#: disk-utils/fsck.minix.c:1180 disk-utils/fsck.minix.c:1235
 msgid "Unmark"
 msgstr "Afmarkér"
 
-#: disk-utils/fsck.minix.c:1151 disk-utils/fsck.minix.c:1206
+#: disk-utils/fsck.minix.c:1185 disk-utils/fsck.minix.c:1240
 #, c-format
 msgid "Zone %d: in use, counted=%d\n"
 msgstr "Zone %d: i brug, optalt=%d\n"
 
-#: disk-utils/fsck.minix.c:1154 disk-utils/fsck.minix.c:1209
+#: disk-utils/fsck.minix.c:1188 disk-utils/fsck.minix.c:1243
 #, c-format
 msgid "Zone %d: not in use, counted=%d\n"
 msgstr "Zone %d: ikke i brug, optalt=%d\n"
 
-#: disk-utils/fsck.minix.c:1254 disk-utils/mkfs.minix.c:580
+#: disk-utils/fsck.minix.c:1288 disk-utils/mkfs.minix.c:580
 #: disk-utils/mkfs.minix.c:582
 msgid "bad inode size"
 msgstr "ugyldig inode-størrelse"
 
-#: disk-utils/fsck.minix.c:1256
+#: disk-utils/fsck.minix.c:1290
 msgid "bad v2 inode size"
 msgstr "ugyldig v2 inode-størrelse"
 
-#: disk-utils/fsck.minix.c:1282
+#: disk-utils/fsck.minix.c:1316
 msgid "need terminal for interactive repairs"
 msgstr "kræver terminal til interaktive reparationer"
 
-#: disk-utils/fsck.minix.c:1286
-#, c-format
-msgid "unable to open '%s'"
+#: disk-utils/fsck.minix.c:1320
+#, fuzzy, c-format
+msgid "unable to open '%s': %s"
 msgstr "kunne ikke åbne '%s'"
 
-#: disk-utils/fsck.minix.c:1301
+#: disk-utils/fsck.minix.c:1335
 #, c-format
 msgid "%s is clean, no check.\n"
 msgstr "%s er i orden, tjekkes ikke.\n"
 
-#: disk-utils/fsck.minix.c:1305
+#: disk-utils/fsck.minix.c:1339
 #, c-format
 msgid "Forcing filesystem check on %s.\n"
 msgstr "Gennemtvinger tjek af filsystem på %s.\n"
 
-#: disk-utils/fsck.minix.c:1307
+#: disk-utils/fsck.minix.c:1341
 #, c-format
 msgid "Filesystem on %s is dirty, needs checking.\n"
 msgstr "Filsystem på %s er måske ikke i orden, kræver et tjek.\n"
 
-#: disk-utils/fsck.minix.c:1333
+#: disk-utils/fsck.minix.c:1374
 #, c-format
 msgid ""
 "\n"
@@ -575,12 +575,12 @@ msgstr ""
 "\n"
 "%6ld inodes brugt (%ld%%)\n"
 
-#: disk-utils/fsck.minix.c:1338
+#: disk-utils/fsck.minix.c:1379
 #, c-format
 msgid "%6ld zones used (%ld%%)\n"
 msgstr "%6ld zoner brugt (%ld%%)\n"
 
-#: disk-utils/fsck.minix.c:1340
+#: disk-utils/fsck.minix.c:1381
 #, c-format
 msgid ""
 "\n"
@@ -603,7 +603,7 @@ msgstr ""
 "------\n"
 "%6d filer\n"
 
-#: disk-utils/fsck.minix.c:1353
+#: disk-utils/fsck.minix.c:1394
 #, c-format
 msgid ""
 "----------------------------\n"
@@ -671,7 +671,7 @@ msgstr "kunne ikke finde enheden %s"
 msgid "%s is not a block special device"
 msgstr "%s er ikke en blokenhed"
 
-#: disk-utils/mkfs.bfs.c:176 sys-utils/ldattach.c:274
+#: disk-utils/mkfs.bfs.c:176 sys-utils/ldattach.c:200
 #, c-format
 msgid "cannot open %s"
 msgstr "kunne ikke åbne %s"
@@ -836,7 +836,7 @@ msgstr "AAARGH: blok blev \"komprimeret\" til > 2*bloklængden (%ld)\n"
 msgid "%6.2f%% (%+ld bytes)\t%s\n"
 msgstr "%6.2f%% (%+d byte)\t%s\n"
 
-#: disk-utils/mkfs.cramfs.c:825
+#: disk-utils/mkfs.cramfs.c:829
 #, fuzzy, c-format
 msgid ""
 "warning: guestimate of required size (upper bound) is %lldMB, but maximum "
@@ -845,72 +845,72 @@ msgstr ""
 "advarsel: et gæt på den nødvendige størrelse (øvre grænse) er %LdMB, men det "
 "maksimale aftryksstørrelse er %uMB.  Vi bliver muligvis ikke færdige.\n"
 
-#: disk-utils/mkfs.cramfs.c:866
+#: disk-utils/mkfs.cramfs.c:870
 #, c-format
 msgid "Including: %s\n"
 msgstr "Medtager: %s\n"
 
-#: disk-utils/mkfs.cramfs.c:872
+#: disk-utils/mkfs.cramfs.c:876
 #, fuzzy, c-format
 msgid "Directory data: %zd bytes\n"
 msgstr "Mappedata: %d byte\n"
 
-#: disk-utils/mkfs.cramfs.c:880
+#: disk-utils/mkfs.cramfs.c:884
 #, fuzzy, c-format
 msgid "Everything: %zd kilobytes\n"
 msgstr "I alt: %d kilobyte\n"
 
-#: disk-utils/mkfs.cramfs.c:885
+#: disk-utils/mkfs.cramfs.c:889
 #, fuzzy, c-format
 msgid "Super block: %zd bytes\n"
 msgstr "Superblok: %d byte\n"
 
-#: disk-utils/mkfs.cramfs.c:892
+#: disk-utils/mkfs.cramfs.c:896
 #, c-format
 msgid "CRC: %x\n"
 msgstr "CRC: %x\n"
 
-#: disk-utils/mkfs.cramfs.c:897
+#: disk-utils/mkfs.cramfs.c:901
 #, fuzzy, c-format
 msgid "not enough space allocated for ROM image (%lld allocated, %zu used)\n"
 msgstr ""
 "der er frigjort for lidt plads til ROM-aftrykket (%Ld frigjort, %d brugt)\n"
 
-#: disk-utils/mkfs.cramfs.c:909
+#: disk-utils/mkfs.cramfs.c:913
 #, fuzzy, c-format
 msgid "ROM image write failed (%zd %zd)\n"
 msgstr "skrivning af ROM-aftryk mislykkedes (%d %d)\n"
 
-#: disk-utils/mkfs.cramfs.c:918
+#: disk-utils/mkfs.cramfs.c:922
 #, c-format
 msgid "warning: filenames truncated to 255 bytes.\n"
 msgstr "advarsel: filnavne afkortet til 255 byte.\n"
 
-#: disk-utils/mkfs.cramfs.c:921
+#: disk-utils/mkfs.cramfs.c:925
 #, c-format
 msgid "warning: files were skipped due to errors.\n"
 msgstr "advarsel: filer oversprunget p.g.a. fejl.\n"
 
-#: disk-utils/mkfs.cramfs.c:924
+#: disk-utils/mkfs.cramfs.c:928
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte).\n"
 msgstr "advarsel: filstørrelser afkortet til %luMB (minus 1 byte).\n"
 
-#: disk-utils/mkfs.cramfs.c:929
+#: disk-utils/mkfs.cramfs.c:933
 #, c-format
 msgid ""
 "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
 "advarsel: uids forkortet til %u bit.  (Dette kan give sikkerhedsproblemer.)\n"
 
-#: disk-utils/mkfs.cramfs.c:934
+#: disk-utils/mkfs.cramfs.c:938
 #, c-format
 msgid ""
 "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
 "advarsel: gids forkortet til %u bit.  (Dette kan give sikkerhedsproblemer.)\n"
 
-#: disk-utils/mkfs.cramfs.c:939
+#: disk-utils/mkfs.cramfs.c:943
 #, c-format
 msgid ""
 "WARNING: device numbers truncated to %u bits.  This almost certainly means\n"
@@ -1121,63 +1121,63 @@ msgstr "en ugyldig side\n"
 msgid "%lu bad pages\n"
 msgstr "%lu ugyldige sider\n"
 
-#: disk-utils/mkswap.c:533
+#: disk-utils/mkswap.c:551
 #, c-format
 msgid "%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:551
+#: disk-utils/mkswap.c:569
 #, fuzzy
 msgid "error: UUID parsing failed"
 msgstr ""
 "\n"
 "Fejl ved lukning af fil\n"
 
-#: disk-utils/mkswap.c:561
+#: disk-utils/mkswap.c:579
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: fejl: Ingen steder at opsætte swap?\n"
 
-#: disk-utils/mkswap.c:579
+#: disk-utils/mkswap.c:597
 #, fuzzy, c-format
 msgid "%s: error: size %lu KiB is larger than device size %lu KiB\n"
 msgstr "%s: fejl: størrelsen %lu er større end enhedsstørrelsen %lu\n"
 
-#: disk-utils/mkswap.c:600
+#: disk-utils/mkswap.c:618
 #, c-format
 msgid "%s: error: unknown version %d\n"
 msgstr "%s: fejl: ukendt version %d\n"
 
-#: disk-utils/mkswap.c:607
+#: disk-utils/mkswap.c:625
 #, fuzzy, c-format
 msgid "%s: error: swap area needs to be at least %ld KiB\n"
 msgstr "%s: fejl: swap-område skal mindst være på %ldkB\n"
 
-#: disk-utils/mkswap.c:624
+#: disk-utils/mkswap.c:642
 #, fuzzy, c-format
 msgid "%s: warning: truncating swap area to %ld KiB\n"
 msgstr "%s: fejl: afkorter swap-området til %ldkB\n"
 
-#: disk-utils/mkswap.c:630
+#: disk-utils/mkswap.c:648
 #, c-format
 msgid "%s: error: label only with v1 swap area\n"
 msgstr "%s: fejl: mærke med kun v1-swapområde\n"
 
-#: disk-utils/mkswap.c:654
+#: disk-utils/mkswap.c:672
 #, fuzzy, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
 msgstr "Vil ikke forsøge at oprette swap-enhed på '%s'"
 
-#: disk-utils/mkswap.c:660
+#: disk-utils/mkswap.c:678
 #, fuzzy, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
 msgstr "%s er monteret; vil ikke oprette et filsystem her!"
 
-#: disk-utils/mkswap.c:673 disk-utils/mkswap.c:694
+#: disk-utils/mkswap.c:691 disk-utils/mkswap.c:712
 msgid "fatal: first page unreadable"
 msgstr "fatalt: første side kan ikke læses"
 
-#: disk-utils/mkswap.c:679
+#: disk-utils/mkswap.c:697
 #, fuzzy, c-format
 msgid ""
 "%s: Device '%s' contains a valid Sun disklabel.\n"
@@ -1190,47 +1190,48 @@ msgstr ""
 "opretter en v0 swap. Ingen swap oprettet. Hvis du virkelig vil oprette en\n"
 "v0 swap på denne enhed, kan du gennemtvinge det med tilvalget -f.\n"
 
-#: disk-utils/mkswap.c:703
+#: disk-utils/mkswap.c:721
 msgid "Unable to set up swap-space: unreadable"
 msgstr "Kunne ikke klargøre swap-område: ulæseligt"
 
-#: disk-utils/mkswap.c:704
+#: disk-utils/mkswap.c:722
 #, fuzzy, c-format
 msgid "Setting up swapspace version %d, size = %llu KiB\n"
 msgstr "Klargører swap-område version %d, størrelse = %llu kB\n"
 
-#: disk-utils/mkswap.c:713
+#: disk-utils/mkswap.c:731
 msgid "unable to rewind swap-device"
 msgstr "kunne ikke spole tilbage på swap-enheden"
 
-#: disk-utils/mkswap.c:716
-msgid "unable to write signature page"
+#: disk-utils/mkswap.c:734
+#, fuzzy, c-format
+msgid "%s: %s: unable to write signature page: %s"
 msgstr "kunne ikke skrive signatur-side"
 
-#: disk-utils/mkswap.c:724
+#: disk-utils/mkswap.c:745
 msgid "fsync failed"
 msgstr "fsync mislykkedes"
 
-#: disk-utils/mkswap.c:735
+#: disk-utils/mkswap.c:756
 #, c-format
 msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:741
+#: disk-utils/mkswap.c:762
 #, fuzzy
 msgid "unable to matchpathcon()"
 msgstr "kunne ikke finde %s"
 
-#: disk-utils/mkswap.c:744
+#: disk-utils/mkswap.c:765
 #, fuzzy
 msgid "unable to create new selinux context"
 msgstr "kunne ikke skrive inodes"
 
-#: disk-utils/mkswap.c:746
+#: disk-utils/mkswap.c:767
 msgid "couldn't compute selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:752
+#: disk-utils/mkswap.c:773
 #, fuzzy, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "kunne ikke omdøbe %s til %s: %s\n"
@@ -2968,7 +2969,7 @@ msgstr "Ændrede systemtypen for partition %d til %x (%s)\n"
 
 #: fdisk/fdisk.c:1522
 #, fuzzy, c-format
-msgid "System type of partition %d is unchanged to %x (%s)\n"
+msgid "System type of partition %d is unchanged: %x (%s)\n"
 msgstr "Ændrede systemtypen for partition %d til %x (%s)\n"
 
 #: fdisk/fdisk.c:1574
@@ -5460,84 +5461,84 @@ msgstr "%s kan ikke få adgang til I/O-port: kaldet 'iopl(3)' mislykkedes.\n"
 msgid "Probably you need root privileges.\n"
 msgstr "Du behøver nok root-rettigheder.\n"
 
-#: hwclock/hwclock.c:229
+#: hwclock/hwclock.c:231
 #, c-format
 msgid "Assuming hardware clock is kept in %s time.\n"
 msgstr "Antager at maskinuret holdes i %s tid.\n"
 
-#: hwclock/hwclock.c:230 hwclock/hwclock.c:325
+#: hwclock/hwclock.c:232 hwclock/hwclock.c:327
 msgid "UTC"
 msgstr "GMT"
 
-#: hwclock/hwclock.c:230 hwclock/hwclock.c:324
+#: hwclock/hwclock.c:232 hwclock/hwclock.c:326
 msgid "local"
 msgstr "lokal"
 
-#: hwclock/hwclock.c:310
+#: hwclock/hwclock.c:312
 #, c-format
 msgid "%s: Warning: unrecognized third line in adjtime file\n"
 msgstr "%s: Advarsel: ukendt tredie linje i adjtime-fil\n"
 
-#: hwclock/hwclock.c:312
+#: hwclock/hwclock.c:314
 #, c-format
 msgid "(Expected: `UTC' or `LOCAL' or nothing.)\n"
 msgstr "(Forventet: 'UTC' (GMT), 'LOCAL' eller ingenting.)\n"
 
-#: hwclock/hwclock.c:319
+#: hwclock/hwclock.c:321
 #, c-format
 msgid "Last drift adjustment done at %ld seconds after 1969\n"
 msgstr "Sidste hastighedsjustering blev gjort %ld sekunder efter 1969\n"
 
-#: hwclock/hwclock.c:321
+#: hwclock/hwclock.c:323
 #, c-format
 msgid "Last calibration done at %ld seconds after 1969\n"
 msgstr "Sidste kalibrering blev foretaget %ld sekunder efter 1969\n"
 
-#: hwclock/hwclock.c:323
+#: hwclock/hwclock.c:325
 #, c-format
 msgid "Hardware clock is on %s time\n"
 msgstr "Maskinuret er i %s-tid\n"
 
-#: hwclock/hwclock.c:325
+#: hwclock/hwclock.c:327
 msgid "unknown"
 msgstr "ukendt"
 
-#: hwclock/hwclock.c:349
+#: hwclock/hwclock.c:351
 #, c-format
 msgid "Waiting for clock tick...\n"
 msgstr "Venter på et ur-tik...\n"
 
-#: hwclock/hwclock.c:353
+#: hwclock/hwclock.c:355
 #, c-format
 msgid "...got clock tick\n"
 msgstr "...fangede ur-tik\n"
 
-#: hwclock/hwclock.c:406
+#: hwclock/hwclock.c:408
 #, c-format
 msgid "Invalid values in hardware clock: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 msgstr "Ugyldige værdier i maskinur: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 
-#: hwclock/hwclock.c:414
+#: hwclock/hwclock.c:416
 #, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr "Maskinur-tid: %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld sekunder siden 1969\n"
 
-#: hwclock/hwclock.c:442
+#: hwclock/hwclock.c:444
 #, c-format
 msgid "Time read from Hardware Clock: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 msgstr "Tid læst fra maskinuret: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 
-#: hwclock/hwclock.c:469
+#: hwclock/hwclock.c:471
 #, c-format
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
 msgstr "Sætter maskinuret til %.2d:%.2d:%.2d = %ld sekunder siden 1969\n"
 
-#: hwclock/hwclock.c:475
+#: hwclock/hwclock.c:477
 #, c-format
 msgid "Clock not changed - testing only.\n"
 msgstr "Uret uændret - testede kun.\n"
 
-#: hwclock/hwclock.c:523
+#: hwclock/hwclock.c:525
 #, c-format
 msgid ""
 "Time elapsed since reference time has been %.6f seconds.\n"
@@ -5546,7 +5547,7 @@ msgstr ""
 "Der er gået %.6f sekunder siden referencetiden.\n"
 "Udskyder yderligere for at nå til næste hele sekund.\n"
 
-#: hwclock/hwclock.c:557
+#: hwclock/hwclock.c:559
 #, c-format
 msgid ""
 "The Hardware Clock registers contain values that are either invalid (e.g. "
@@ -5555,22 +5556,22 @@ msgstr ""
 "Maskinurets registre indeholder værdier, der enten er ugyldige (f.eks. 50. "
 "dag i måneden) eller udenfor det område, vi kan håndtere (f.eks. år 2095).\n"
 
-#: hwclock/hwclock.c:567
+#: hwclock/hwclock.c:569
 #, c-format
 msgid "%s  %.6f seconds\n"
 msgstr "%s  %.6f sekunder\n"
 
-#: hwclock/hwclock.c:601
+#: hwclock/hwclock.c:603
 #, c-format
 msgid "No --date option specified.\n"
 msgstr "Intet --date tilvalg angivet.\n"
 
-#: hwclock/hwclock.c:607
+#: hwclock/hwclock.c:609
 #, c-format
 msgid "--date argument too long\n"
 msgstr "parametret til --date er for langt\n"
 
-#: hwclock/hwclock.c:614
+#: hwclock/hwclock.c:616
 #, c-format
 msgid ""
 "The value of the --date option is not a valid date.\n"
@@ -5579,22 +5580,22 @@ msgstr ""
 "Værdien af --date tilvalget er ikke en gyldig dato.\n"
 "Mere specifikt, indeholder den anførselstegn.\n"
 
-#: hwclock/hwclock.c:622
+#: hwclock/hwclock.c:624
 #, c-format
 msgid "Issuing date command: %s\n"
 msgstr "Udfører 'date'-kommandoen: %s\n"
 
-#: hwclock/hwclock.c:626
+#: hwclock/hwclock.c:628
 msgid "Unable to run 'date' program in /bin/sh shell. popen() failed"
 msgstr ""
 "Kunne ikke køre 'date'-programmet i /bin/sh skallen. popen() mislykkedes"
 
-#: hwclock/hwclock.c:634
+#: hwclock/hwclock.c:636
 #, c-format
 msgid "response from date command = %s\n"
 msgstr "svar fra 'date'-kommandoen = %s\n"
 
-#: hwclock/hwclock.c:636
+#: hwclock/hwclock.c:638
 #, c-format
 msgid ""
 "The date command issued by %s returned unexpected results.\n"
@@ -5609,7 +5610,7 @@ msgstr ""
 "Svaret var:\n"
 "  %s\n"
 
-#: hwclock/hwclock.c:648
+#: hwclock/hwclock.c:650
 #, c-format
 msgid ""
 "The date command issued by %s returned something other than an integer where "
@@ -5626,12 +5627,12 @@ msgstr ""
 "Svaret var:\n"
 "  %s\n"
 
-#: hwclock/hwclock.c:659
+#: hwclock/hwclock.c:661
 #, c-format
 msgid "date string %s equates to %ld seconds since 1969.\n"
 msgstr "Datoteksten %s svarer til %ld sekunder siden 1969.\n"
 
-#: hwclock/hwclock.c:691
+#: hwclock/hwclock.c:693
 #, c-format
 msgid ""
 "The Hardware Clock does not contain a valid time, so we cannot set the "
@@ -5640,36 +5641,36 @@ msgstr ""
 "Maskinuret indeholder ikke en gyldig tid, så vi kan ikke sætte systemuret "
 "med det.\n"
 
-#: hwclock/hwclock.c:713
+#: hwclock/hwclock.c:715
 #, c-format
 msgid "Calling settimeofday:\n"
 msgstr "Kalder 'settimeofday':\n"
 
-#: hwclock/hwclock.c:714
+#: hwclock/hwclock.c:716
 #, c-format
 msgid "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 msgstr "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 
-#: hwclock/hwclock.c:716
+#: hwclock/hwclock.c:718
 #, c-format
 msgid "\ttz.tz_minuteswest = %d\n"
 msgstr "\ttz.tz_minuteswest = %d\n"
 
-#: hwclock/hwclock.c:719
+#: hwclock/hwclock.c:721
 #, c-format
 msgid "Not setting system clock because running in test mode.\n"
 msgstr "Sætter ikke systemuret, da der køres i testtilstand.\n"
 
-#: hwclock/hwclock.c:728
+#: hwclock/hwclock.c:730
 #, c-format
 msgid "Must be superuser to set system clock.\n"
 msgstr "Skal være superbruger for at sætte systemuret.\n"
 
-#: hwclock/hwclock.c:731
+#: hwclock/hwclock.c:733
 msgid "settimeofday() failed"
 msgstr "settimeofday() mislykkedes"
 
-#: hwclock/hwclock.c:761
+#: hwclock/hwclock.c:763
 #, c-format
 msgid ""
 "Not adjusting drift factor because the Hardware Clock previously contained "
@@ -5678,7 +5679,7 @@ msgstr ""
 "Justerede ikke hastighedsfaktoren, da maskinuret tidligere havde en ugyldig "
 "værdi.\n"
 
-#: hwclock/hwclock.c:766
+#: hwclock/hwclock.c:768
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -5688,7 +5689,7 @@ msgstr ""
 "og kan derfor ikke bruges. Det er nødvendigt at starte \n"
 "kalibreringen forfra.\n"
 
-#: hwclock/hwclock.c:772
+#: hwclock/hwclock.c:774
 #, c-format
 msgid ""
 "Not adjusting drift factor because it has been less than a day since the "
@@ -5697,7 +5698,7 @@ msgstr ""
 "Justerede ikke hastighedsfaktoren, da det er mindre en et døgn siden sidste "
 "kalibrering.\n"
 
-#: hwclock/hwclock.c:820
+#: hwclock/hwclock.c:822
 #, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
@@ -5708,22 +5709,22 @@ msgstr ""
 "hastighedsfaktor på %f sekunder/døgn.\n"
 "Justerer hastighedsfaktoren med %f sekunder/døgn\n"
 
-#: hwclock/hwclock.c:871
+#: hwclock/hwclock.c:873
 #, c-format
 msgid "Time since last adjustment is %d seconds\n"
 msgstr "%d sekunder siden sidste justering\n"
 
-#: hwclock/hwclock.c:873
+#: hwclock/hwclock.c:875
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
 msgstr "Skal indsætte %d sekunder og stille uret %.6f sekunder tilbage\n"
 
-#: hwclock/hwclock.c:902
+#: hwclock/hwclock.c:904
 #, c-format
 msgid "Not updating adjtime file because of testing mode.\n"
 msgstr "Opdaterer ikke adjtime-filen, da der køres i testtilstand.\n"
 
-#: hwclock/hwclock.c:903
+#: hwclock/hwclock.c:905
 #, c-format
 msgid ""
 "Would have written the following to %s:\n"
@@ -5732,40 +5733,40 @@ msgstr ""
 "Ville have skrevet følgende til %s:\n"
 "%s"
 
-#: hwclock/hwclock.c:927
+#: hwclock/hwclock.c:929
 #, c-format
 msgid "Drift adjustment parameters not updated.\n"
 msgstr "Hastighedsjusteringen blev ikke opdateret.\n"
 
-#: hwclock/hwclock.c:968
+#: hwclock/hwclock.c:970
 #, c-format
 msgid ""
 "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
 msgstr ""
 "Maskinuret indeholder ikke en gyldig tid, så vi kan ikke justere det.\n"
 
-#: hwclock/hwclock.c:1000
+#: hwclock/hwclock.c:1002
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr ""
 "Den krævede justering er mindre end ét sekund, så vi sætter ikke uret.\n"
 
-#: hwclock/hwclock.c:1026
+#: hwclock/hwclock.c:1028
 #, c-format
 msgid "Using %s.\n"
 msgstr "Bruger %s.\n"
 
-#: hwclock/hwclock.c:1028
+#: hwclock/hwclock.c:1030
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "Fandt ingen brugbare ur-grænseflader.\n"
 
-#: hwclock/hwclock.c:1124
+#: hwclock/hwclock.c:1126
 #, c-format
 msgid "Unable to set system clock.\n"
 msgstr "Kunne ikke sætte systemuret.\n"
 
-#: hwclock/hwclock.c:1154
+#: hwclock/hwclock.c:1156
 #, c-format
 msgid ""
 "The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
@@ -5777,17 +5778,17 @@ msgstr ""
 "Denne kopi af hwclock blev kompileret til en anden maskine end Alpha\n"
 "(og kører derfor sandsynligvis ikke på en Alpha nu). Intet blev gjort.\n"
 
-#: hwclock/hwclock.c:1163
+#: hwclock/hwclock.c:1165
 #, c-format
 msgid "Unable to get the epoch value from the kernel.\n"
 msgstr "Kunne ikke hente en epokeværdi fra kernen.\n"
 
-#: hwclock/hwclock.c:1165
+#: hwclock/hwclock.c:1167
 #, c-format
 msgid "Kernel is assuming an epoch value of %lu\n"
 msgstr "Kernen går ud fra en epokeværdi på %lu\n"
 
-#: hwclock/hwclock.c:1168
+#: hwclock/hwclock.c:1170
 #, c-format
 msgid ""
 "To set the epoch value, you must use the 'epoch' option to tell to what "
@@ -5796,22 +5797,22 @@ msgstr ""
 "For at sætte epokeværdien, skal du bruge tilvalget 'epoch' for at angive "
 "hvilken værdi, den skal sættes til\n"
 
-#: hwclock/hwclock.c:1171
+#: hwclock/hwclock.c:1173
 #, c-format
 msgid "Not setting the epoch to %d - testing only.\n"
 msgstr "Sætter IKKE epokeværdien til %d - tester bare.\n"
 
-#: hwclock/hwclock.c:1174
+#: hwclock/hwclock.c:1176
 #, c-format
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Kunne ikke sætte epokeværdien i kernen.\n"
 
-#: hwclock/hwclock.c:1187 misc-utils/cal.c:332 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1189 misc-utils/cal.c:332 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s fra %s\n"
 
-#: hwclock/hwclock.c:1208
+#: hwclock/hwclock.c:1210
 #, fuzzy, c-format
 msgid ""
 "hwclock - query and set the hardware clock (RTC)\n"
@@ -5819,29 +5820,31 @@ msgid ""
 "Usage: hwclock [function] [options...]\n"
 "\n"
 "Functions:\n"
-"  --help        show this help\n"
-"  --show        read hardware clock and print result\n"
-"  --set         set the rtc to the time given with --date\n"
-"  --hctosys     set the system time from the hardware clock\n"
-"  --systohc     set the hardware clock to the current system time\n"
-"  --adjust      adjust the rtc to account for systematic drift since \n"
-"                the clock was last set or adjusted\n"
-"  --getepoch    print out the kernel's hardware clock epoch value\n"
-"  --setepoch    set the kernel's hardware clock epoch value to the \n"
-"                value given with --epoch\n"
-"  --version     print out the version of hwclock to stdout\n"
+"  --help         show this help\n"
+"  --show         read hardware clock and print result\n"
+"  --set          set the rtc to the time given with --date\n"
+"  --hctosys      set the system time from the hardware clock\n"
+"  --systohc      set the hardware clock to the current system time\n"
+"  --adjust       adjust the rtc to account for systematic drift since \n"
+"                 the clock was last set or adjusted\n"
+"  --getepoch     print out the kernel's hardware clock epoch value\n"
+"  --setepoch     set the kernel's hardware clock epoch value to the \n"
+"                 value given with --epoch\n"
+"  --version      print out the version of hwclock to stdout\n"
 "\n"
 "Options: \n"
-"  --utc         the hardware clock is kept in coordinated universal time\n"
-"  --localtime   the hardware clock is kept in local time\n"
-"  --rtc=path    special /dev/... file to use instead of default\n"
-"  --directisa   access the ISA bus directly instead of %s\n"
-"  --badyear     ignore rtc's year because the bios is broken\n"
-"  --date        specifies the time to which to set the hardware clock\n"
-"  --epoch=year  specifies the year which is the beginning of the \n"
-"                hardware clock's epoch value\n"
-"  --noadjfile   do not access /etc/adjtime. Requires the use of\n"
-"                either --utc or --localtime\n"
+"  --utc          the hardware clock is kept in coordinated universal time\n"
+"  --localtime    the hardware clock is kept in local time\n"
+"  --rtc=path     special /dev/... file to use instead of default\n"
+"  --directisa    access the ISA bus directly instead of %s\n"
+"  --badyear      ignore rtc's year because the bios is broken\n"
+"  --date         specifies the time to which to set the hardware clock\n"
+"  --epoch=year   specifies the year which is the beginning of the \n"
+"                 hardware clock's epoch value\n"
+"  --noadjfile    do not access /etc/adjtime. Requires the use of\n"
+"                 either --utc or --localtime\n"
+"  --adjfile=path specifies the path to the adjust file (default is\n"
+"                 /etc/adjtime)\n"
 msgstr ""
 "hwclock - læs og sæt maskinuret (RTC)\n"
 "\n"
@@ -5871,7 +5874,7 @@ msgstr ""
 "  --noadjfile   tilgå ikke /etc/adjtime. Det kræver, at der bruges\n"
 "                enten --utc eller --localtime\n"
 
-#: hwclock/hwclock.c:1236
+#: hwclock/hwclock.c:1240
 #, c-format
 msgid ""
 "  --jensen, --arc, --srm, --funky-toy\n"
@@ -5880,17 +5883,17 @@ msgstr ""
 "  --jensen, --arc, --srm, --funky-toy\n"
 "                angiv hvilken slags alpha du har (se hwclock(8))\n"
 
-#: hwclock/hwclock.c:1321
+#: hwclock/hwclock.c:1326
 #, fuzzy, c-format
 msgid "%s: Unable to connect to audit system\n"
 msgstr "Kunne ikke sætte systemuret.\n"
 
-#: hwclock/hwclock.c:1433
+#: hwclock/hwclock.c:1441
 #, c-format
 msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr "%s accepterer ingen parametre. Du angav parameteren %d.\n"
 
-#: hwclock/hwclock.c:1439
+#: hwclock/hwclock.c:1447
 #, c-format
 msgid ""
 "You have specified multiple functions.\n"
@@ -5899,7 +5902,7 @@ msgstr ""
 "Du har angivet flere funktionstilvalg.\n"
 "Du kan kun udføre én funktion ad gangen.\n"
 
-#: hwclock/hwclock.c:1446
+#: hwclock/hwclock.c:1454
 #, c-format
 msgid ""
 "%s: The --utc and --localtime options are mutually exclusive.  You specified "
@@ -5907,7 +5910,7 @@ msgid ""
 msgstr ""
 "%s: Tilvalgene --utc og --localtime udelukker hinanden. Du angav begge.\n"
 
-#: hwclock/hwclock.c:1453
+#: hwclock/hwclock.c:1461
 #, c-format
 msgid ""
 "%s: The --adjust and --noadjfile options are mutually exclusive.  You "
@@ -5915,27 +5918,35 @@ msgid ""
 msgstr ""
 "%s: Tilvalgene --adjust og --noadjfile udelukker hinanden. Du angav begge.\n"
 
-#: hwclock/hwclock.c:1460
+#: hwclock/hwclock.c:1468
+#, fuzzy, c-format
+msgid ""
+"%s: The --adjfile and --noadjfile options are mutually exclusive.  You "
+"specified both.\n"
+msgstr ""
+"%s: Tilvalgene --adjust og --noadjfile udelukker hinanden. Du angav begge.\n"
+
+#: hwclock/hwclock.c:1477
 #, c-format
 msgid "%s: With --noadjfile, you must specify either --utc or --localtime\n"
 msgstr "%s: --noadjfile kræver enten --utc or --localtime\n"
 
-#: hwclock/hwclock.c:1474
+#: hwclock/hwclock.c:1491
 #, c-format
 msgid "No usable set-to time.  Cannot set clock.\n"
 msgstr "Ingen brugbar set-til-tid. Kan ikke sætte uret.\n"
 
-#: hwclock/hwclock.c:1490
+#: hwclock/hwclock.c:1507
 #, c-format
 msgid "Sorry, only the superuser can change the Hardware Clock.\n"
 msgstr "Beklager, kun superbrugeren kan ændre maskinuret.\n"
 
-#: hwclock/hwclock.c:1495
+#: hwclock/hwclock.c:1512
 #, c-format
 msgid "Sorry, only the superuser can change the System Clock.\n"
 msgstr "Beklager, kun superbrugeren kan ændre systemuret.\n"
 
-#: hwclock/hwclock.c:1500
+#: hwclock/hwclock.c:1517
 #, c-format
 msgid ""
 "Sorry, only the superuser can change the Hardware Clock epoch in the "
@@ -5943,12 +5954,12 @@ msgid ""
 msgstr ""
 "Beklager, kun superbrugeren kan ændre maskinurets epokeværdi i kernen.\n"
 
-#: hwclock/hwclock.c:1520
+#: hwclock/hwclock.c:1537
 #, c-format
 msgid "Cannot access the Hardware Clock via any known method.\n"
 msgstr "Kan ikke tilgå maskinuret med nogen kendt metode.\n"
 
-#: hwclock/hwclock.c:1524
+#: hwclock/hwclock.c:1541
 #, c-format
 msgid ""
 "Use the --debug option to see the details of our search for an access "
@@ -6238,14 +6249,14 @@ msgstr "%s: Kan ikke sætte standardkontekst for /etc/passwd"
 msgid "Changing finger information for %s.\n"
 msgstr "Ændrer finger-information for %s.\n"
 
-#: login-utils/chfn.c:189
+#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:551
 #, fuzzy, c-format
-msgid "chfn: PAM Failure, aborting: %s\n"
+msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: PAM-fejl, afbryder: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:802
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:680
-#: mount/lomount.c:683
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:681
+#: mount/lomount.c:684
 msgid "Password: "
 msgstr "Adgangskode: "
 
@@ -6339,11 +6350,6 @@ msgstr "%s: Din skal er ikke i /etc/shells, udskiftning af skal afvist\n"
 msgid "Changing shell for %s.\n"
 msgstr "Udskifter skal for %s.\n"
 
-#: login-utils/chsh.c:188
-#, fuzzy, c-format
-msgid "chsh: PAM Failure, aborting: %s\n"
-msgstr "login: PAM-fejl, afbryder: %s\n"
-
 #: login-utils/chsh.c:222
 msgid "New shell"
 msgstr "Ny skal"
@@ -6422,10 +6428,10 @@ msgstr "Brug %s -l for at se en liste.\n"
 msgid "No known shells.\n"
 msgstr "Ingen kendte skaller.\n"
 
-#: login-utils/islocal.c:38
-#, c-format
-msgid "Can't read %s, exiting."
-msgstr "Kunne ikke læse %s, afbryder."
+#: login-utils/islocal.c:87
+#, fuzzy, c-format
+msgid "Failed to open %s for reading, exiting."
+msgstr "kunne ikke åbne for læsning af %s"
 
 #: login-utils/last.c:148
 msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
@@ -6479,11 +6485,6 @@ msgstr "login: -h er kun for superbrugeren.\n"
 #, c-format
 msgid "usage: login [-fp] [username]\n"
 msgstr "brug: login [-fp] [brugernavn]\n"
-
-#: login-utils/login.c:551
-#, c-format
-msgid "login: PAM Failure, aborting: %s\n"
-msgstr "login: PAM-fejl, afbryder: %s\n"
 
 #: login-utils/login.c:553
 #, c-format
@@ -7281,22 +7282,22 @@ msgstr "Skript påbegyndt, filen er %s\n"
 msgid "%s: write error %d: %s\n"
 msgstr "skrivefejl på %s\n"
 
-#: misc-utils/script.c:305
+#: misc-utils/script.c:304
 #, c-format
 msgid "Script started on %s"
 msgstr "Skript påbegyndt på %s"
 
-#: misc-utils/script.c:348
+#: misc-utils/script.c:347
 #, fuzzy, c-format
 msgid "%s: write error: %s\n"
 msgstr "skrivefejl på %s\n"
 
-#: misc-utils/script.c:355
+#: misc-utils/script.c:354
 #, fuzzy, c-format
 msgid "%s: cannot write script file, error: %s\n"
 msgstr "%s: kunne ikke finde enheden for %s\n"
 
-#: misc-utils/script.c:431
+#: misc-utils/script.c:430
 #, c-format
 msgid ""
 "\n"
@@ -7305,17 +7306,17 @@ msgstr ""
 "\n"
 "Skript kørt på %s"
 
-#: misc-utils/script.c:438
+#: misc-utils/script.c:437
 #, c-format
 msgid "Script done, file is %s\n"
 msgstr "Skript færdigt, filen er %s\n"
 
-#: misc-utils/script.c:449
+#: misc-utils/script.c:448
 #, c-format
 msgid "openpty failed\n"
 msgstr "openpty mislykkedes\n"
 
-#: misc-utils/script.c:483
+#: misc-utils/script.c:482
 #, c-format
 msgid "Out of pty's\n"
 msgstr "Løbet tør for pty-er\n"
@@ -7779,39 +7780,39 @@ msgstr ""
 msgid "warning: %s is already associated with %s\n"
 msgstr "Sektor %d er allerede allokeret\n"
 
-#: mount/lomount.c:669
+#: mount/lomount.c:670
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "Kunne ikke låse ind i hukommelsen, afslutter.\n"
 
-#: mount/lomount.c:696
+#: mount/lomount.c:697
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:761
-#, c-format
-msgid "set_loop(%s,%s,%llu): success\n"
+#: mount/lomount.c:762
+#, fuzzy, c-format
+msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): lykkedes\n"
 
-#: mount/lomount.c:774
+#: mount/lomount.c:775
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: kunne ikke slette enheden %s: %s\n"
 
-#: mount/lomount.c:785
+#: mount/lomount.c:786
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): lykkedes\n"
 
-#: mount/lomount.c:793
+#: mount/lomount.c:794
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Denne 'mount' er oversat uden loop-understøttelse. Genoversæt venligst.\n"
 
-#: mount/lomount.c:827
-#, c-format
+#: mount/lomount.c:829
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -7822,172 +7823,183 @@ msgid ""
 " %1$s -j | --associated <file> [-o <num>]     list all associated with "
 "<file>\n"
 " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
+msgstr ""
+"brug:\n"
+"  %s loop_enhed                                          # vis info\n"
+"  %s -d loop_enhed                                       # slet\n"
+"  %s -f                                                  # find ubenyttet\n"
+"  %s [ -e kryptering ] [ -o forskydning ] {-f|loop_enhed} fil # klargør\n"
+
+#: mount/lomount.c:838
+#, c-format
+msgid ""
 "\n"
 "Options:\n"
 " -e | --encryption <type> enable data encryption with specified <name/num>\n"
 " -h | --help              this help\n"
 " -o | --offset <num>      start at offset <num> into file\n"
+"      --sizelimit <num>   loop limited to only <num> bytes of the file\n"
 " -p | --pass-fd <num>     read passphrase from file descriptor <num>\n"
 " -r | --read-only         setup read-only loop device\n"
-" -s | --show              print device name (with -f <file>)\n"
+"      --show              print device name (with -f <file>)\n"
 " -v | --verbose           verbose mode\n"
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1000
+#: mount/lomount.c:1014
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
 "Der var ingen loop-understøttelse tilgængelig ved oversættelsen. Genoversæt "
 "venligst.\n"
 
-#: mount/mount.c:312
+#: mount/mount.c:313
 #, c-format
 msgid "mount: improperly quoted option string '%s'"
 msgstr ""
 
-#: mount/mount.c:345
+#: mount/mount.c:346
 #, fuzzy, c-format
 msgid "mount: translated %s '%s' to '%s'\n"
 msgstr "mount: kunne ikke finde %s i %s eller %s"
 
-#: mount/mount.c:503
+#: mount/mount.c:504
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: ifølge mtab er %s allerede monteret som %s"
 
-#: mount/mount.c:508
+#: mount/mount.c:509
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: ifølge mtab er %s monteret som %s"
 
-#: mount/mount.c:528
+#: mount/mount.c:529
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: kunne ikke åbne %s for skrivning: %s"
 
-#: mount/mount.c:545 mount/mount.c:1014
+#: mount/mount.c:546 mount/mount.c:1016
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: fejl ved skrivning til %s: %s"
 
-#: mount/mount.c:553
+#: mount/mount.c:554
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: fejl ved ændring af filtilstand for %s: %s"
 
-#: mount/mount.c:636
+#: mount/mount.c:637
 #, fuzzy, c-format
 msgid "mount: cannot set group id: %s"
 msgstr "mount: kunne ikke sætte hastigheden: %s"
 
-#: mount/mount.c:639
+#: mount/mount.c:640
 #, fuzzy, c-format
 msgid "mount: cannot set user id: %s"
 msgstr "mount: kunne ikke sætte hastigheden: %s"
 
-#: mount/mount.c:678 mount/mount.c:1635
+#: mount/mount.c:679 mount/mount.c:1594
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: kunne ikke forgrene: %s"
 
-#: mount/mount.c:692
+#: mount/mount.c:693
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: du angav ikke filsystemtype for %s\n"
 
-#: mount/mount.c:695
+#: mount/mount.c:696
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       Jeg vil forsøge alle typerne, der nævnes i %s eller %s\n"
 
-#: mount/mount.c:698
+#: mount/mount.c:699
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       og det ser ud til, at dette er swapområde\n"
 
-#: mount/mount.c:700
+#: mount/mount.c:701
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       Jeg vil forsøge type %s\n"
 
-#: mount/mount.c:727
+#: mount/mount.c:728
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s ligner et swap-område - ikke monteret"
 
-#: mount/mount.c:818
+#: mount/mount.c:819
 msgid "mount failed"
 msgstr "montering mislykkedes"
 
-#: mount/mount.c:820
+#: mount/mount.c:821
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: kun root kan montere %s som %s"
 
-#: mount/mount.c:890
+#: mount/mount.c:891
 msgid "mount: loop device specified twice"
 msgstr "mount: loop-enheden angivet to gange"
 
-#: mount/mount.c:895
+#: mount/mount.c:896
 msgid "mount: type specified twice"
 msgstr "mount: type angivet to gange"
 
-#: mount/mount.c:907
+#: mount/mount.c:908
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: dropper opsætning af loop-enhed\n"
 
-#: mount/mount.c:918
+#: mount/mount.c:920
 #, fuzzy, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: ifølge mtab er %s allerede monteret som %s"
 
-#: mount/mount.c:928
+#: mount/mount.c:930
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: skal til at benytte loop-enheden %s\n"
 
-#: mount/mount.c:937
+#: mount/mount.c:939
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:942
+#: mount/mount.c:944
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:947
+#: mount/mount.c:949
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: klargøring af loop-enhed mislykkedes\n"
 
-#: mount/mount.c:958
+#: mount/mount.c:960
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: klargøringen af loop-enhed lykkedes\n"
 
-#: mount/mount.c:992
+#: mount/mount.c:994
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: ingen %s fundet - opretter den..\n"
 
-#: mount/mount.c:1009
+#: mount/mount.c:1011
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: kunne ikke åbne %s: %s"
 
-#: mount/mount.c:1030
+#: mount/mount.c:1032
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argumentet til -p eller --pass-fd skal være et tal"
 
-#: mount/mount.c:1043
+#: mount/mount.c:1045
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: kunne ikke åbne %s for at sætte hastigheden"
 
-#: mount/mount.c:1046
+#: mount/mount.c:1048
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: kunne ikke sætte hastigheden: %s"
@@ -8191,34 +8203,24 @@ msgstr "mount: %s%s er skrivebeskyttet, men eksplicit '-w'-tilvalg blev givet"
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s er skrivebeskyttet, monterer skrivebeskyttet"
 
-#: mount/mount.c:1454
+#: mount/mount.c:1440
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: ingen type blev angive - Jeg antager nfs på grund af kolonnet\n"
 
-#: mount/mount.c:1460
+#: mount/mount.c:1446
 #, fuzzy, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: ingen type blev angivet - Jeg antager smbfs p.g.a. det "
 "foranstillede //\n"
 
-#: mount/mount.c:1486
-#, c-format
-msgid "mount: backgrounding \"%s\"\n"
-msgstr "mount: kører \"%s\" i baggrunden\n"
-
-#: mount/mount.c:1496
-#, c-format
-msgid "mount: giving up \"%s\"\n"
-msgstr "mount: opgiver \"%s\"\n"
-
-#: mount/mount.c:1582
+#: mount/mount.c:1541
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s er allerede monteret som %s\n"
 
-#: mount/mount.c:1716
+#: mount/mount.c:1675
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8276,19 +8278,19 @@ msgstr ""
 "Andre tilvalg: [-nfFrsvw] [-o tilvalg] [-p adgangskodefd].\n"
 "se mange flere detaljer med 'man 8 mount'.\n"
 
-#: mount/mount.c:2028
+#: mount/mount.c:1987
 msgid "mount: only root can do that"
 msgstr "mount: dette kan kun root gøre"
 
-#: mount/mount.c:2038
+#: mount/mount.c:1997
 msgid "nothing was mounted"
 msgstr "intet blev monteret"
 
-#: mount/mount.c:2056 mount/mount.c:2082
+#: mount/mount.c:2015 mount/mount.c:2041
 msgid "mount: no such partition found"
 msgstr "mount: fandt ingen sådan partition"
 
-#: mount/mount.c:2059
+#: mount/mount.c:2018
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: kunne ikke finde %s i %s eller %s"
@@ -8357,52 +8359,52 @@ msgstr ""
 msgid "%s: %s: unexpected file format\n"
 msgstr "%s: Uventet filafslutning i %s-fil\n"
 
-#: mount/swapon.c:193
+#: mount/swapon.c:202
 #, fuzzy, c-format
 msgid "%s: cannot fork: %s\n"
 msgstr "%s: Kunne ikke forgrene (fork)\n"
 
-#: mount/swapon.c:219
+#: mount/swapon.c:228
 #, fuzzy, c-format
 msgid "%s: waitpid: %s\n"
 msgstr "%s: Kunne ikke åbne: %s\n"
 
-#: mount/swapon.c:239 mount/swapon.c:339
+#: mount/swapon.c:248 mount/swapon.c:348
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s på %s\n"
 
-#: mount/swapon.c:249
+#: mount/swapon.c:258
 #, c-format
 msgid "%s: cannot stat %s: %s\n"
 msgstr "%s: kan ikke finde %s: %s\n"
 
-#: mount/swapon.c:259
+#: mount/swapon.c:268
 #, c-format
 msgid "%s: %s: software suspend data detected. Reinitializing the swap.\n"
 msgstr ""
 
-#: mount/swapon.c:272
+#: mount/swapon.c:281
 #, c-format
 msgid "%s: warning: %s has insecure permissions %04o, %04o suggested\n"
 msgstr "%s: advarsel: %s har usikre filrettigheder %04o, %04o anbefales\n"
 
-#: mount/swapon.c:284
+#: mount/swapon.c:293
 #, c-format
 msgid "%s: Skipping file %s - it appears to have holes.\n"
 msgstr "%s: Dropper filen %s - den lader til at være fragmenteret.\n"
 
-#: mount/swapon.c:317
+#: mount/swapon.c:326
 #, c-format
 msgid "%s: cannot find the device for %s\n"
 msgstr "%s: kunne ikke finde enheden for %s\n"
 
-#: mount/swapon.c:351
+#: mount/swapon.c:360
 #, c-format
 msgid "Not superuser.\n"
 msgstr "Ikke superbruger.\n"
 
-#: mount/swapon.c:385 mount/swapon.c:576
+#: mount/swapon.c:394 mount/swapon.c:585
 #, c-format
 msgid "%s: cannot open %s: %s\n"
 msgstr "%s: kunne ikke åbne %s: %s\n"
@@ -9355,65 +9357,65 @@ msgstr "zantal"
 msgid "pid"
 msgstr "pid"
 
-#: sys-utils/ldattach.c:185
+#: sys-utils/ldattach.c:87
 #, c-format
 msgid ""
 "\n"
 "Usage: %s [ -dhV78neo12 ] [ -s <speed> ] <ldisc> <device>\n"
 msgstr ""
 
-#: sys-utils/ldattach.c:187
+#: sys-utils/ldattach.c:89
 msgid ""
 "\n"
 "Known <ldisc> names:\n"
 msgstr ""
 
-#: sys-utils/ldattach.c:248
+#: sys-utils/ldattach.c:174
 #, fuzzy, c-format
 msgid "invalid speed: %s"
 msgstr "ugyldigt id: %s\n"
 
-#: sys-utils/ldattach.c:251
+#: sys-utils/ldattach.c:177
 #, fuzzy, c-format
 msgid "ldattach from %s\n"
 msgstr "%s fra %s\n"
 
-#: sys-utils/ldattach.c:256 text-utils/tailf.c:196
+#: sys-utils/ldattach.c:182 text-utils/tailf.c:196
 #, fuzzy
 msgid "invalid option"
 msgstr "ugyldigt id"
 
-#: sys-utils/ldattach.c:268
+#: sys-utils/ldattach.c:194
 #, fuzzy, c-format
 msgid "invalid line discipline: %s"
 msgstr "ugyldigt id: %s\n"
 
-#: sys-utils/ldattach.c:276
+#: sys-utils/ldattach.c:202
 #, fuzzy, c-format
 msgid "%s is not a serial line"
 msgstr "%s er ikke en blokenhed"
 
-#: sys-utils/ldattach.c:282
+#: sys-utils/ldattach.c:208
 #, fuzzy, c-format
 msgid "cannot get terminal attributes for %s"
 msgstr "Kan ikke få størrelsen af %s"
 
-#: sys-utils/ldattach.c:285
+#: sys-utils/ldattach.c:211
 #, c-format
 msgid "speed %d unsupported"
 msgstr ""
 
-#: sys-utils/ldattach.c:316
+#: sys-utils/ldattach.c:242
 #, fuzzy, c-format
 msgid "cannot set terminal attributes for %s"
 msgstr "Kan ikke få størrelsen af %s"
 
-#: sys-utils/ldattach.c:323
+#: sys-utils/ldattach.c:249
 #, fuzzy
 msgid "cannot set line discipline"
 msgstr "Kan ikke søge på drev"
 
-#: sys-utils/ldattach.c:329
+#: sys-utils/ldattach.c:255
 #, fuzzy
 msgid "cannot daemonize"
 msgstr "Kan ikke få størrelsen af %s"
@@ -10289,6 +10291,22 @@ msgstr "For lang inddatalinje.\n"
 msgid "Out of memory when growing buffer.\n"
 msgstr "Løb tør for hukommelse under forstørring af buffer.\n"
 
+#, fuzzy
+#~ msgid "chfn: PAM Failure, aborting: %s\n"
+#~ msgstr "login: PAM-fejl, afbryder: %s\n"
+
+#~ msgid "Can't read %s, exiting."
+#~ msgstr "Kunne ikke læse %s, afbryder."
+
+#~ msgid "login: PAM Failure, aborting: %s\n"
+#~ msgstr "login: PAM-fejl, afbryder: %s\n"
+
+#~ msgid "mount: backgrounding \"%s\"\n"
+#~ msgstr "mount: kører \"%s\" i baggrunden\n"
+
+#~ msgid "mount: giving up \"%s\"\n"
+#~ msgstr "mount: opgiver \"%s\"\n"
+
 #~ msgid "`%s': bad directory: '.' isn't first\n"
 #~ msgstr "'%s': ugyldig mappe: '.' er ikke først\n"
 
@@ -10443,20 +10461,6 @@ msgstr "Løb tør for hukommelse under forstørring af buffer.\n"
 
 #~ msgid "%s from %s%s\n"
 #~ msgstr "%s fra %s%s\n"
-
-#~ msgid ""
-#~ "usage:\n"
-#~ "  %s loop_device                                       # give info\n"
-#~ "  %s -d loop_device                                    # delete\n"
-#~ "  %s -f                                                # find unused\n"
-#~ "  %s [-e encryption] [-o offset] {-f|loop_device} file # setup\n"
-#~ msgstr ""
-#~ "brug:\n"
-#~ "  %s loop_enhed                                          # vis info\n"
-#~ "  %s -d loop_enhed                                       # slet\n"
-#~ "  %s -f                                                  # find "
-#~ "ubenyttet\n"
-#~ "  %s [ -e kryptering ] [ -o forskydning ] {-f|loop_enhed} fil # klargør\n"
 
 #~ msgid "%s: error: the label %s occurs on both %s and %s\n"
 #~ msgstr "%s: fejl: mærket %s optræder på både %s og %s\n"
@@ -10650,9 +10654,6 @@ msgstr "Løb tør for hukommelse under forstørring af buffer.\n"
 
 #~ msgid "couldn't read random data from /dev/urandom"
 #~ msgstr "kunne ikke læse tilfældige data fra /dev/urandom"
-
-#~ msgid "can't open %s for reading"
-#~ msgstr "kunne ikke åbne for læsning af %s"
 
 #~ msgid "can't stat(%s)"
 #~ msgstr "kunne ikke stat(%s)"
