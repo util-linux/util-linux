@@ -469,8 +469,10 @@ check_mount(void) {
 static int
 write_all(int fd, const void *buf, size_t count) {
 	while(count) {
-		ssize_t tmp = write(fd, buf, count);
+		ssize_t tmp;
 
+		errno = 0;
+		tmp = write(fd, buf, count);
 		if (tmp > 0) {
 			count -= tmp;
 			if (count)
