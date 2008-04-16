@@ -1051,7 +1051,7 @@ void prbuf (register char *s, register int n)
 		    my_putstring(state ? ULenter : ULexit);
 	    }
 	    if (c != ' ' || pstate == 0 || state != 0 || ulglitch == 0)
-#ifdef ENABLE_WIDECHAR
+#ifdef HAVE_WIDECHAR
 	    {
 		wchar_t wc;
 		size_t mblength;
@@ -1067,7 +1067,7 @@ void prbuf (register char *s, register int n)
 	    }
 #else
 	        putchar(c);
-#endif /* ENABLE_WIDECHAR */
+#endif /* HAVE_WIDECHAR */
 	    if (state && *chUL) {
 		putsout(chBS);
 		my_putstring(chUL);
