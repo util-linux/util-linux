@@ -324,7 +324,6 @@ static void
 logaudit(const char *tty, const char *username, const char *hostname,
 					struct passwd *pwd, int status)
 {
-	char buf[64];
 	int audit_fd;
 
 	audit_fd = audit_open();
@@ -332,13 +331,10 @@ logaudit(const char *tty, const char *username, const char *hostname,
 		return;
 	if (!pwd && username)
 		pwd = getpwnam(username);
-	if (pwd)
-		snprintf(buf, sizeof(buf), "uid=%d", pwd->pw_uid);
-	else
-		snprintf(buf, sizeof(buf), "acct=%s", username ? username : "(unknown)");
 
-	audit_log_user_message(audit_fd, AUDIT_USER_LOGIN,
-		buf, hostname, NULL, tty, status);
+	audit_log_acct_message(audit_fd, AUDIT_USER_LOGIN,
+		NULL, "login", username ? username : "(unknown)",
+		pwd ? pwd->pw_uid : -1, hostname, NULL, tty, status);
 
 	close(audit_fd);
 }
