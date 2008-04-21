@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-01-02 14:15+0100\n"
+"POT-Creation-Date: 2008-04-21 23:22+0200\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -6266,7 +6266,7 @@ msgstr "Spreminjam finger informacijo za %s.\n"
 msgid "chfn: PAM Failure, aborting: %s\n"
 msgstr "login: PAM ni uspel, prekinjam: %s\n"
 
-#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:794
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:334
 #: mount/lomount.c:337
 msgid "Password: "
@@ -6499,36 +6499,36 @@ msgstr "USODNA NAPAKA: tty ni mogoèe znova odpreti: %s"
 msgid "FATAL: bad tty"
 msgstr "USODNA NAPAKA: po¹kodovan tty"
 
-#: login-utils/login.c:415
+#: login-utils/login.c:411
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: -h je na voljo samo za sistemskega skrbnika.\n"
 
-#: login-utils/login.c:458
+#: login-utils/login.c:454
 #, c-format
 msgid "usage: login [-fp] [username]\n"
 msgstr "uporaba: login [-fp] [uporabnik]\n"
 
-#: login-utils/login.c:551
+#: login-utils/login.c:547
 #, c-format
 msgid "login: PAM Failure, aborting: %s\n"
 msgstr "login: PAM ni uspel, prekinjam: %s\n"
 
-#: login-utils/login.c:553
+#: login-utils/login.c:549
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "PAM ni moè inicializirati: %s"
 
-#: login-utils/login.c:570
+#: login-utils/login.c:566
 msgid "login: "
 msgstr "prijava: "
 
-#: login-utils/login.c:610
+#: login-utils/login.c:606
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "NEUSPE©NA PRIJAVA %d IZ %s ZA UPORABNIKA %s, %s"
 
-#: login-utils/login.c:615
+#: login-utils/login.c:611
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -6537,17 +6537,17 @@ msgstr ""
 "Nepravilna prijava\n"
 "\n"
 
-#: login-utils/login.c:624
+#: login-utils/login.c:620
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "PREVEÈ POSKUSOV PRIJAVE (%d) IZ %s ZA %s, %s"
 
-#: login-utils/login.c:628
+#: login-utils/login.c:624
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "NEUSPE©NA PRIJAVNA SEJA IZ %s za %s, %s"
 
-#: login-utils/login.c:633
+#: login-utils/login.c:629
 #, c-format
 msgid ""
 "\n"
@@ -6556,7 +6556,7 @@ msgstr ""
 "\n"
 "Neuspe¹na prijava\n"
 
-#: login-utils/login.c:661 login-utils/login.c:668 login-utils/login.c:702
+#: login-utils/login.c:657 login-utils/login.c:664 login-utils/login.c:698
 #, c-format
 msgid ""
 "\n"
@@ -6565,120 +6565,120 @@ msgstr ""
 "\n"
 "Napaka pri nastavljanju seje, prekinjam.\n"
 
-#: login-utils/login.c:662
+#: login-utils/login.c:658
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "nièelno uporabni¹ko ime v %s:%d. Prekinjam."
 
-#: login-utils/login.c:669
+#: login-utils/login.c:665
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Nepravilno uporabni¹ko ime \"%s\" v %s:%d. Prekinjam."
 
-#: login-utils/login.c:688
+#: login-utils/login.c:684
 #, c-format
 msgid "login: Out of memory\n"
 msgstr "login: Zmanjkalo je prostega pomnilnika\n"
 
-#: login-utils/login.c:732
+#: login-utils/login.c:728
 msgid "Illegal username"
 msgstr "Neveljavno uporabni¹ko ime"
 
-#: login-utils/login.c:775
+#: login-utils/login.c:771
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "%s na tem terminalu je vpis zanikan.\n"
 
-#: login-utils/login.c:780
+#: login-utils/login.c:776
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "VPIS %s ZANIKAN OD %s NA TTY %s"
 
-#: login-utils/login.c:784
+#: login-utils/login.c:780
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "LOGIN %s ZANIKAN NA TTY %s"
 
-#: login-utils/login.c:838
+#: login-utils/login.c:834
 #, c-format
 msgid "Login incorrect\n"
 msgstr "Prijava ni uspela\n"
 
-#: login-utils/login.c:1063
+#: login-utils/login.c:1059
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "TELEFONSKA PRIJAVA Z LINIJE %s, UPORABNIK %s"
 
-#: login-utils/login.c:1070
+#: login-utils/login.c:1066
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "SKRBNI©KA PRIJAVA Z RAÈUNALNIKA %s, UPORABNIK %s"
 
-#: login-utils/login.c:1073
+#: login-utils/login.c:1069
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "SKRBNI©KA PRIJAVA NA LINIJI %s"
 
-#: login-utils/login.c:1076
+#: login-utils/login.c:1072
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "PRIJAVA NA LINIJI %s UPORABNIKA %s Z RAÈUNALNIKA %s"
 
-#: login-utils/login.c:1079
+#: login-utils/login.c:1075
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "PRIJAVA NA LINIJI %s UPORABNIKA %s"
 
-#: login-utils/login.c:1100
+#: login-utils/login.c:1096
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Èaka vas nova po¹ta.\n"
 
-#: login-utils/login.c:1102
+#: login-utils/login.c:1098
 #, c-format
 msgid "You have mail.\n"
 msgstr "Èaka vas po¹ta.\n"
 
-#: login-utils/login.c:1146
+#: login-utils/login.c:1142
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "login: vejitev ni uspela: %s"
 
-#: login-utils/login.c:1193
+#: login-utils/login.c:1189
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY ni uspel: %m"
 
-#: login-utils/login.c:1199
+#: login-utils/login.c:1195
 msgid "setuid() failed"
 msgstr "klic setuid() ni uspel"
 
-#: login-utils/login.c:1205
+#: login-utils/login.c:1201
 #, c-format
 msgid "No directory %s!\n"
 msgstr "Imenik %s ne obstaja!\n"
 
-#: login-utils/login.c:1209
+#: login-utils/login.c:1205
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Vpisujem se s domaèim imenikom = \"/\".\n"
 
-#: login-utils/login.c:1217
+#: login-utils/login.c:1213
 #, c-format
 msgid "login: no memory for shell script.\n"
 msgstr "login: ni prostega pomnilnika za lupinski skript.\n"
 
-#: login-utils/login.c:1244
+#: login-utils/login.c:1240
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr "login: skripta ukazne lupine ni moè pognati: %s.\n"
 
-#: login-utils/login.c:1247
+#: login-utils/login.c:1243
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "login: ni ukazne lupine: %s.\n"
 
-#: login-utils/login.c:1262
+#: login-utils/login.c:1258
 #, c-format
 msgid ""
 "\n"
@@ -6687,65 +6687,65 @@ msgstr ""
 "\n"
 "%s prijava: "
 
-#: login-utils/login.c:1273
+#: login-utils/login.c:1269
 #, c-format
 msgid "login name much too long.\n"
 msgstr "Prijavno ime je predolgo.\n"
 
-#: login-utils/login.c:1274
+#: login-utils/login.c:1270
 msgid "NAME too long"
 msgstr "IME je predolgo"
 
-#: login-utils/login.c:1281
+#: login-utils/login.c:1277
 #, c-format
 msgid "login names may not start with '-'.\n"
 msgstr "Prijavna imena se ne morejo zaèeti z znakom '-'.\n"
 
-#: login-utils/login.c:1291
+#: login-utils/login.c:1287
 #, c-format
 msgid "too many bare linefeeds.\n"
 msgstr "preveè pomikov v novo vrsto\n"
 
-#: login-utils/login.c:1292
+#: login-utils/login.c:1288
 msgid "EXCESSIVE linefeeds"
 msgstr "PREKOMERNI pomiki v novo vrsto"
 
-#: login-utils/login.c:1324
+#: login-utils/login.c:1320
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "Prijava je potekla po %d sekundah.\n"
 
-#: login-utils/login.c:1412
+#: login-utils/login.c:1408
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Zadnja prijava: %.*s "
 
-#: login-utils/login.c:1416
+#: login-utils/login.c:1412
 #, c-format
 msgid "from %.*s\n"
 msgstr "z raèunalnika %.*s\n"
 
-#: login-utils/login.c:1419
+#: login-utils/login.c:1415
 #, c-format
 msgid "on %.*s\n"
 msgstr "z linije %.*s\n"
 
-#: login-utils/login.c:1439
+#: login-utils/login.c:1435
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "NEUSPE©NA PRIJAVA Z %s, %s"
 
-#: login-utils/login.c:1442
+#: login-utils/login.c:1438
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "NEUSPE©NA PRIJAVA NA %s, %s"
 
-#: login-utils/login.c:1446
+#: login-utils/login.c:1442
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "%d NEUSPE©NIH PRIJAV Z %s, %s"
 
-#: login-utils/login.c:1449
+#: login-utils/login.c:1445
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%d NEUSPE©NIH PRIJAV NA %s, %s"

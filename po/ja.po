@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11n\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-01-02 14:15+0100\n"
+"POT-Creation-Date: 2008-04-21 23:22+0200\n"
 "PO-Revision-Date: 2001-12-11 22:43+0900\n"
 "Last-Translator: Daisuke Yamashita <yamad@mb.infoweb.ne.jp>\n"
 "Language-Team: Japanese <ja@li.org>\n"
@@ -6225,7 +6225,7 @@ msgstr "%s の finger 情報を変更します。\n"
 msgid "chfn: PAM Failure, aborting: %s\n"
 msgstr "login: PAM 失敗。中断します: %s\n"
 
-#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:794
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:334
 #: mount/lomount.c:337
 msgid "Password: "
@@ -6457,36 +6457,36 @@ msgstr "mount: %s がオープンできません: %s"
 msgid "FATAL: bad tty"
 msgstr ""
 
-#: login-utils/login.c:415
+#: login-utils/login.c:411
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: -h はスーパーユーザ専用です。\n"
 
-#: login-utils/login.c:458
+#: login-utils/login.c:454
 #, c-format
 msgid "usage: login [-fp] [username]\n"
 msgstr "使い方: login [-fp] [ユーザ名]\n"
 
-#: login-utils/login.c:551
+#: login-utils/login.c:547
 #, c-format
 msgid "login: PAM Failure, aborting: %s\n"
 msgstr "login: PAM 失敗。中断します: %s\n"
 
-#: login-utils/login.c:553
+#: login-utils/login.c:549
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "PAM の初期化ができません: %s"
 
-#: login-utils/login.c:570
+#: login-utils/login.c:566
 msgid "login: "
 msgstr "ログイン: "
 
-#: login-utils/login.c:610
+#: login-utils/login.c:606
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "FAILED LOGIN %d FROM %s FOR %s, %s"
 
-#: login-utils/login.c:615
+#: login-utils/login.c:611
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -6495,17 +6495,17 @@ msgstr ""
 "Login が間違っています\n"
 "\n"
 
-#: login-utils/login.c:624
+#: login-utils/login.c:620
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "*ログイントライが多すぎます* (%d) %s から %s へ, %s"
 
-#: login-utils/login.c:628
+#: login-utils/login.c:624
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "失敗したログインセッション %s から %s へ, %s"
 
-#: login-utils/login.c:633
+#: login-utils/login.c:629
 #, c-format
 msgid ""
 "\n"
@@ -6514,7 +6514,7 @@ msgstr ""
 "\n"
 "Login が間違っています\n"
 
-#: login-utils/login.c:661 login-utils/login.c:668 login-utils/login.c:702
+#: login-utils/login.c:657 login-utils/login.c:664 login-utils/login.c:698
 #, c-format
 msgid ""
 "\n"
@@ -6523,120 +6523,120 @@ msgstr ""
 "\n"
 "セッションセットアップに問題。中断します。\n"
 
-#: login-utils/login.c:662
+#: login-utils/login.c:658
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "NULL ユーザ名が %s:%d にあります。中断します。"
 
-#: login-utils/login.c:669
+#: login-utils/login.c:665
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "無効なユーザ名 \"%s\" が %s:%d にあります。中断します"
 
-#: login-utils/login.c:688
+#: login-utils/login.c:684
 #, c-format
 msgid "login: Out of memory\n"
 msgstr "login: メモリが足りません\n"
 
-#: login-utils/login.c:732
+#: login-utils/login.c:728
 msgid "Illegal username"
 msgstr "不正なユーザ名"
 
-#: login-utils/login.c:775
+#: login-utils/login.c:771
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "%s のログインはこの端末では拒否されました。\n"
 
-#: login-utils/login.c:780
+#: login-utils/login.c:776
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "ログイン %s を拒絶、%s から TTY %s 上で"
 
-#: login-utils/login.c:784
+#: login-utils/login.c:780
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "ログイン %s を拒絶、TTY %s 上で"
 
-#: login-utils/login.c:838
+#: login-utils/login.c:834
 #, c-format
 msgid "Login incorrect\n"
 msgstr "Login が間違っています\n"
 
-#: login-utils/login.c:1063
+#: login-utils/login.c:1059
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "ダイアルアップで %s に、%s による"
 
-#: login-utils/login.c:1070
+#: login-utils/login.c:1066
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "%s に ROOT がログイン、%s から"
 
-#: login-utils/login.c:1073
+#: login-utils/login.c:1069
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "%s に ROOT がログイン"
 
-#: login-utils/login.c:1076
+#: login-utils/login.c:1072
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "%s に %s がログイン、%s から"
 
-#: login-utils/login.c:1079
+#: login-utils/login.c:1075
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "%s に %s がログイン"
 
-#: login-utils/login.c:1100
+#: login-utils/login.c:1096
 #, c-format
 msgid "You have new mail.\n"
 msgstr "新しいメイルが届いています。\n"
 
-#: login-utils/login.c:1102
+#: login-utils/login.c:1098
 #, c-format
 msgid "You have mail.\n"
 msgstr "メイルが届いています。\n"
 
-#: login-utils/login.c:1146
+#: login-utils/login.c:1142
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "login: fork に失敗: %s"
 
-#: login-utils/login.c:1193
+#: login-utils/login.c:1189
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr ""
 
-#: login-utils/login.c:1199
+#: login-utils/login.c:1195
 msgid "setuid() failed"
 msgstr "setuid() に失敗"
 
-#: login-utils/login.c:1205
+#: login-utils/login.c:1201
 #, c-format
 msgid "No directory %s!\n"
 msgstr "ディレクトリ %s がありません！\n"
 
-#: login-utils/login.c:1209
+#: login-utils/login.c:1205
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "ホームディレクトリ \"/\" でログインします。\n"
 
-#: login-utils/login.c:1217
+#: login-utils/login.c:1213
 #, c-format
 msgid "login: no memory for shell script.\n"
 msgstr "login: シェルスクリプト用のメモリがありません。\n"
 
-#: login-utils/login.c:1244
+#: login-utils/login.c:1240
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr "login: シェルスクリプトを実行できませんでした: %s\n"
 
-#: login-utils/login.c:1247
+#: login-utils/login.c:1243
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "login: シェルがありません: %s.\n"
 
-#: login-utils/login.c:1262
+#: login-utils/login.c:1258
 #, c-format
 msgid ""
 "\n"
@@ -6645,65 +6645,65 @@ msgstr ""
 "\n"
 "%s ログイン: "
 
-#: login-utils/login.c:1273
+#: login-utils/login.c:1269
 #, c-format
 msgid "login name much too long.\n"
 msgstr "ログイン名が長すぎます。\n"
 
-#: login-utils/login.c:1274
+#: login-utils/login.c:1270
 msgid "NAME too long"
 msgstr "名前が長すぎます"
 
-#: login-utils/login.c:1281
+#: login-utils/login.c:1277
 #, c-format
 msgid "login names may not start with '-'.\n"
 msgstr "ログイン名は '-' で始まっていてはいけません。\n"
 
-#: login-utils/login.c:1291
+#: login-utils/login.c:1287
 #, c-format
 msgid "too many bare linefeeds.\n"
 msgstr "行送り(linefeed) が多すぎます。\n"
 
-#: login-utils/login.c:1292
+#: login-utils/login.c:1288
 msgid "EXCESSIVE linefeeds"
 msgstr "過大な行送り(linefeed)"
 
-#: login-utils/login.c:1324
+#: login-utils/login.c:1320
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "%d 秒後にログインの時間切れ\n"
 
-#: login-utils/login.c:1412
+#: login-utils/login.c:1408
 #, c-format
 msgid "Last login: %.*s "
 msgstr "最終ログイン: %.*s "
 
-#: login-utils/login.c:1416
+#: login-utils/login.c:1412
 #, c-format
 msgid "from %.*s\n"
 msgstr " %.*s から\n"
 
-#: login-utils/login.c:1419
+#: login-utils/login.c:1415
 #, c-format
 msgid "on %.*s\n"
 msgstr " %.*s 上\n"
 
-#: login-utils/login.c:1439
+#: login-utils/login.c:1435
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "%s からのログインが失敗, %s"
 
-#: login-utils/login.c:1442
+#: login-utils/login.c:1438
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "%s でのログインが失敗, %s"
 
-#: login-utils/login.c:1446
+#: login-utils/login.c:1442
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "%d 回 %s からのログインが失敗, %s"
 
-#: login-utils/login.c:1449
+#: login-utils/login.c:1445
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%d 回 %s でのログインが失敗, %s"

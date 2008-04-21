@@ -6,7 +6,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.13.1-rc1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-01-02 14:15+0100\n"
+"POT-Creation-Date: 2008-04-21 23:22+0200\n"
 "PO-Revision-Date: 2007-12-01 23:43+1030\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -6257,7 +6257,7 @@ msgstr "Thay đổi thông tin finger cho %s.\n"
 msgid "chfn: PAM Failure, aborting: %s\n"
 msgstr "chfn: PAM thất bại nên hủy bỏ : %s\n"
 
-#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:794
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:334
 #: mount/lomount.c:337
 msgid "Password: "
@@ -6492,36 +6492,36 @@ msgstr "LỖI NẶNG: không thể mở lại tty: %s"
 msgid "FATAL: bad tty"
 msgstr "LỖI NẶNG: tty xấu"
 
-#: login-utils/login.c:415
+#: login-utils/login.c:411
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: -h chỉ dành cho siêu người dùng (root).\n"
 
-#: login-utils/login.c:458
+#: login-utils/login.c:454
 #, c-format
 msgid "usage: login [-fp] [username]\n"
 msgstr "sử dụng: login [-fp] [tên_người_dùng]\n"
 
-#: login-utils/login.c:551
+#: login-utils/login.c:547
 #, c-format
 msgid "login: PAM Failure, aborting: %s\n"
 msgstr "login: PAM Thất bại nên hủy bỏ : %s\n"
 
-#: login-utils/login.c:553
+#: login-utils/login.c:549
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "Không thể bắt đầu PAM: %s"
 
-#: login-utils/login.c:570
+#: login-utils/login.c:566
 msgid "login: "
 msgstr "đăng nhập: "
 
-#: login-utils/login.c:610
+#: login-utils/login.c:606
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "ĐĂNG NHẬP KHÔNG THÀNH CÔNG %d TỪ %s CHO %s, %s"
 
-#: login-utils/login.c:615
+#: login-utils/login.c:611
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -6530,17 +6530,17 @@ msgstr ""
 "Sai tên người dùng hoặc mật khẩu\n"
 "\n"
 
-#: login-utils/login.c:624
+#: login-utils/login.c:620
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "QUÁ NHIỀU LẦN THỬ ĐĂNG NHẬP (%d) TỪ %s CHO %s, %s"
 
-#: login-utils/login.c:628
+#: login-utils/login.c:624
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "ĐĂNG NHẬP KHÔNG THÀNH CÔNG TỪ %s CHO %s, %s"
 
-#: login-utils/login.c:633
+#: login-utils/login.c:629
 #, c-format
 msgid ""
 "\n"
@@ -6549,7 +6549,7 @@ msgstr ""
 "\n"
 "Sai tên người dùng hoặc mật khẩu\n"
 
-#: login-utils/login.c:661 login-utils/login.c:668 login-utils/login.c:702
+#: login-utils/login.c:657 login-utils/login.c:664 login-utils/login.c:698
 #, c-format
 msgid ""
 "\n"
@@ -6558,120 +6558,120 @@ msgstr ""
 "\n"
 "Có vấn đề cấu hình buổi làm việc, thoát.\n"
 
-#: login-utils/login.c:662
+#: login-utils/login.c:658
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "Tên người dùng bằng KHÔNG (NULL) trong %s:%d. Thoát."
 
-#: login-utils/login.c:669
+#: login-utils/login.c:665
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Tên người dùng sai \"%s\" trong %s:%d. Thoát."
 
-#: login-utils/login.c:688
+#: login-utils/login.c:684
 #, c-format
 msgid "login: Out of memory\n"
 msgstr "login: Không đủ bộ nhớ\n"
 
-#: login-utils/login.c:732
+#: login-utils/login.c:728
 msgid "Illegal username"
 msgstr "Tên người dùng không hợp pháp"
 
-#: login-utils/login.c:775
+#: login-utils/login.c:771
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "%s đăng nhập từ chối trên thiết bị cuối này.\n"
 
-#: login-utils/login.c:780
+#: login-utils/login.c:776
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "ĐĂNG NHẬP %s TỪ CHỐI TỪ %s TRÊN TTY %s"
 
-#: login-utils/login.c:784
+#: login-utils/login.c:780
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "ĐĂNG NHẬP %s TỪ CHỐI TRÊN TTY %s"
 
-#: login-utils/login.c:838
+#: login-utils/login.c:834
 #, c-format
 msgid "Login incorrect\n"
 msgstr "Sai tên người dùng hoặc mật khẩu\n"
 
-#: login-utils/login.c:1063
+#: login-utils/login.c:1059
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "QUAY SỐ TẠI %s BỞI %s"
 
-#: login-utils/login.c:1070
+#: login-utils/login.c:1066
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "ĐĂNG NHẬP NGƯỜI CHỦ TRÊN %s TỪ %s"
 
-#: login-utils/login.c:1073
+#: login-utils/login.c:1069
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "ĐĂNG NHẬP NGƯỜI CHỦ TRÊN %s"
 
-#: login-utils/login.c:1076
+#: login-utils/login.c:1072
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "ĐĂNG NHẬP TRÊN %s BỞI %s TỪ %s"
 
-#: login-utils/login.c:1079
+#: login-utils/login.c:1075
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "ĐĂNG NHẬP TRÊN %s BỞI %s"
 
-#: login-utils/login.c:1100
+#: login-utils/login.c:1096
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Bạn có thư mới.\n"
 
-#: login-utils/login.c:1102
+#: login-utils/login.c:1098
 #, c-format
 msgid "You have mail.\n"
 msgstr "Bạn có thư.\n"
 
-#: login-utils/login.c:1146
+#: login-utils/login.c:1142
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "login: phân nhánh (fork) thất bại: %s"
 
-#: login-utils/login.c:1193
+#: login-utils/login.c:1189
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY không thành công: %m"
 
-#: login-utils/login.c:1199
+#: login-utils/login.c:1195
 msgid "setuid() failed"
 msgstr "setuid() thất bại"
 
-#: login-utils/login.c:1205
+#: login-utils/login.c:1201
 #, c-format
 msgid "No directory %s!\n"
 msgstr "Không có thư mục %s!\n"
 
-#: login-utils/login.c:1209
+#: login-utils/login.c:1205
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Đang đăng nhập với thư mục cá nhân = \"/\".\n"
 
-#: login-utils/login.c:1217
+#: login-utils/login.c:1213
 #, c-format
 msgid "login: no memory for shell script.\n"
 msgstr "login: không có bộ nhớ cho văn lệnh trình bao.\n"
 
-#: login-utils/login.c:1244
+#: login-utils/login.c:1240
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr "login: không thực hiện được văn lệnh trình bao : %s.\n"
 
-#: login-utils/login.c:1247
+#: login-utils/login.c:1243
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "login: không có trình bao : %s.\n"
 
-#: login-utils/login.c:1262
+#: login-utils/login.c:1258
 #, c-format
 msgid ""
 "\n"
@@ -6680,65 +6680,65 @@ msgstr ""
 "\n"
 "%s đăng nhập: "
 
-#: login-utils/login.c:1273
+#: login-utils/login.c:1269
 #, c-format
 msgid "login name much too long.\n"
 msgstr "tên đăng nhập quá dài.\n"
 
-#: login-utils/login.c:1274
+#: login-utils/login.c:1270
 msgid "NAME too long"
 msgstr "TÊN quá dài"
 
-#: login-utils/login.c:1281
+#: login-utils/login.c:1277
 #, c-format
 msgid "login names may not start with '-'.\n"
 msgstr "tên đăng nhập không được bắt đầu với '-'.\n"
 
-#: login-utils/login.c:1291
+#: login-utils/login.c:1287
 #, c-format
 msgid "too many bare linefeeds.\n"
 msgstr "quá nhiều dòng nhập vào trống\n"
 
-#: login-utils/login.c:1292
+#: login-utils/login.c:1288
 msgid "EXCESSIVE linefeeds"
 msgstr "dòng nhập vào THỪA"
 
-#: login-utils/login.c:1324
+#: login-utils/login.c:1320
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "Hết thời gian chờ đăng nhập sau %d giây\n"
 
-#: login-utils/login.c:1412
+#: login-utils/login.c:1408
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Đăng nhập lần cuối: %.*s "
 
-#: login-utils/login.c:1416
+#: login-utils/login.c:1412
 #, c-format
 msgid "from %.*s\n"
 msgstr "từ %.*s\n"
 
-#: login-utils/login.c:1419
+#: login-utils/login.c:1415
 #, c-format
 msgid "on %.*s\n"
 msgstr "trên %.*s\n"
 
-#: login-utils/login.c:1439
+#: login-utils/login.c:1435
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "ĐĂNG NHẬP THẤT BẠI TỪ %s, %s"
 
-#: login-utils/login.c:1442
+#: login-utils/login.c:1438
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "ĐĂNG NHẬP THẤT BẠI TRÊN %s, %s"
 
-#: login-utils/login.c:1446
+#: login-utils/login.c:1442
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "%d ĐĂNG NHẬP THẤT BẠI TỪ %s, %s"
 
-#: login-utils/login.c:1449
+#: login-utils/login.c:1445
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%d ĐĂNG NHẬP THẤT BẠI TRÊN %s, %s"
