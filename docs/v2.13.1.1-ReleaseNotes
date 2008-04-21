@@ -1,0 +1,27 @@
+
+Util-linux-ng 2.13.1.1 Release Notes (22-Apr-2008)
+==================================================
+
+Fixed security issues:
+---------------------
+
+ - audit log injection attack. This bug allows attackers to write
+   arbitrary characters to an audit log via a crafted username.
+
+ The problem was originaly reported for OpenSSH few months ago
+ (CVE-2007-3102). The login(1) is affected by the same bug when
+ built with the option "--with-audit".
+
+Changelog:
+---------
+
+ For more details see ChangeLog files at:
+ ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.13/
+
+
+login:
+   - audit log injection attack via login  [Steve Grubb]
+po:
+   - merge changes  [Karel Zak]
+   - update it.po (from translationproject.org)  [Marco Colombo]
+   - update nl.po (from translationproject.org)  [Benno Schulenberg]
