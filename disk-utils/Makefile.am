@@ -1,6 +1,9 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-utils_common = ../lib/linux_version.c ../lib/blkdev.c
+utils_common = ../lib/blkdev.c
+if LINUX
+utils_common += ../lib/linux_version.c 
+endif
 
 dist_man_MANS = blockdev.8 isosize.8 mkfs.8 mkswap.8 \
            fsck.minix.8 mkfs.minix.8 mkfs.bfs.8

@@ -607,9 +607,12 @@ main(int argc, char ** argv) {
 			version = 1;
 		else
 		/* use version 1 as default, if possible */
+#ifdef __linux__
 		if (get_linux_version() < KERNEL_VERSION(2,1,117))
 			version = 0;
-		else if (pagesize < 2048)
+		else
+#endif
+		if (pagesize < 2048)
 			version = 0;
 		else
 			version = 1;
@@ -629,10 +632,12 @@ main(int argc, char ** argv) {
 
 	if (version == 0)
 		maxpages = V0_MAX_PAGES;
+#ifdef __linux__
 	else if (get_linux_version() >= KERNEL_VERSION(2,3,4))
 		maxpages = PAGES;
 	else if (get_linux_version() >= KERNEL_VERSION(2,2,1))
 		maxpages = V1_MAX_PAGES;
+#endif
 	else
 		maxpages = V1_OLD_MAX_PAGES;
 
