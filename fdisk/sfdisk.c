@@ -1508,7 +1508,10 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
     struct sector *s;
     struct part_desc *partitions = &(z->partitions[0]);
     int pno = z->partno;
-    int bsd_later = (get_linux_version() >= KERNEL_VERSION(2,3,40));
+    int bsd_later = 1;
+#ifdef __linux__
+    bsd_later = (get_linux_version() >= KERNEL_VERSION(2,3,40));
+#endif
 
     if (!(s = get_sector(dev, fd, start)))
 	return 0;
