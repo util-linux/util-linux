@@ -60,6 +60,7 @@ misc-utils/namei.c
 misc-utils/procs.c
 misc-utils/rename.c
 misc-utils/script.c
+misc-utils/scriptreplay.c
 misc-utils/setterm.c
 misc-utils/whereis.c
 misc-utils/write.c

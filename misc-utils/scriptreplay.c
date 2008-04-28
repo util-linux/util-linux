@@ -35,7 +35,7 @@
 void __attribute__((__noreturn__))
 usage(int rc)
 {
-	printf("%s <timingfile> [<typescript> [<divisor>]]\n",
+	printf(_("%s <timingfile> [<typescript> [<divisor>]]\n"),
 			program_invocation_short_name);
 	exit(rc);
 }
@@ -101,7 +101,7 @@ emit(FILE *fd, const char *filename, size_t ct)
 		ct -= len;
 		cc = write(STDOUT_FILENO, buf, len);
 		if (cc != len)
-			err(EXIT_FAILURE, "write to stdout failed");
+			err(EXIT_FAILURE, _("write to stdout failed"));
 	}
 
 	if (!ct)
@@ -160,7 +160,7 @@ main(int argc, char *argv[])
 				break;
 			if (ferror(tfile))
 				err(EXIT_FAILURE,
-					"failed to read timing file %s", tname);
+					_("failed to read timing file %s"), tname);
 			errx(EXIT_FAILURE,
 				_("timings file %s: %lu: expected format"),
 				tname, line);
