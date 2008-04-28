@@ -50,16 +50,17 @@ static void usage(void)
 	printf("\t-c\tScheduling class\n");
 	printf("\t\t\t1: realtime, 2: best-effort, 3: idle\n");
 	printf("\t-p\tProcess pid\n");
+	printf("\t-t\tIgnore failures to set priority, run command unconditionally\n");
 	printf("\t-h\tThis help page\n");
 	printf("\nJens Axboe <axboe@suse.de> (C) 2005\n");
 }
 
 int main(int argc, char *argv[])
 {
-	int ioprio = 4, set = 0, ioprio_class = IOPRIO_CLASS_BE;
+	int ioprio = 4, set = 0, tolerant = 0, ioprio_class = IOPRIO_CLASS_BE;
 	int c, pid = 0;
 
-	while ((c = getopt(argc, argv, "+n:c:p:h")) != EOF) {
+	while ((c = getopt(argc, argv, "+n:c:p:th")) != EOF) {
 		switch (c) {
 		case 'n':
 			ioprio = strtol(optarg, NULL, 10);
@@ -71,6 +72,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'p':
 			pid = strtol(optarg, NULL, 10);
+			break;
+		case 't':
+			tolerant = 1;
 			break;
 		case 'h':
 		default:
@@ -115,8 +119,10 @@ int main(int argc, char *argv[])
 		}
 	} else {
 		if (ioprio_set(IOPRIO_WHO_PROCESS, pid, ioprio | ioprio_class << IOPRIO_CLASS_SHIFT) == -1) {
-			perror("ioprio_set");
-			exit(EXIT_FAILURE);
+			if (!tolerant) {
+				perror("ioprio_set");
+				exit(EXIT_FAILURE);
+			}
 		}
 
 		if (argv[optind]) {

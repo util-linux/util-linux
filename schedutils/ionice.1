@@ -50,6 +50,11 @@ data.
 Pass in a process pid to change an already running process. If this argument
 is not given, \fBionice\fP will run the listed program with the given
 parameters.
+.TP 7
+\fB-t\fP
+Ignore failure to set requested priority. If COMMAND is specified, run it
+even in case it was not possible to set desired scheduling priority, what
+can happen due to insufficient privilegies or old kernel version.
 
 .SH EXAMPLES
 .LP
