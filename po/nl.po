@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng-2.13.1-rc1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-04-16 22:22+0200\n"
+"POT-Creation-Date: 2008-04-28 14:00+0200\n"
 "PO-Revision-Date: 2008-04-07 21:35+0200\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -6323,12 +6323,12 @@ msgstr "%s: Kan standaardcontext voor /etc/passwd niet instellen"
 msgid "Changing finger information for %s.\n"
 msgstr "Wijzigen van finger-informatie voor %s.\n"
 
-#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:551
+#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:547
 #, fuzzy, c-format
 msgid "%s: PAM failure, aborting: %s\n"
 msgstr "chsh: PAM-fout -- gestopt: %s\n"
 
-#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:802
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:681
 #: mount/lomount.c:684
 msgid "Password: "
@@ -6553,31 +6553,31 @@ msgstr "FATAAL: kan tty niet heropenen: %s"
 msgid "FATAL: bad tty"
 msgstr "FATAAL: slechte tty"
 
-#: login-utils/login.c:415
+#: login-utils/login.c:411
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: optie '-h' kan alleen door root gebruikt worden\n"
 
-#: login-utils/login.c:458
+#: login-utils/login.c:454
 #, c-format
 msgid "usage: login [-fp] [username]\n"
 msgstr "Gebruik:  login [-fp] [gebruikersnaam]\n"
 
-#: login-utils/login.c:553
+#: login-utils/login.c:549
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "Kan PAM niet initialiseren: %s"
 
-#: login-utils/login.c:570
+#: login-utils/login.c:566
 msgid "login: "
 msgstr "inlognaam: "
 
-#: login-utils/login.c:614
+#: login-utils/login.c:610
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "INLOGPOGING %d IS MISLUKT VANAF %s VOOR %s -- %s"
 
-#: login-utils/login.c:619
+#: login-utils/login.c:615
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -6586,17 +6586,17 @@ msgstr ""
 "Inloggegevens onjuist\n"
 "\n"
 
-#: login-utils/login.c:628
+#: login-utils/login.c:624
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "TE VEEL INLOGPOGINGEN (%d) VANAF %s VOOR %s -- %s"
 
-#: login-utils/login.c:632
+#: login-utils/login.c:628
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "INLOGSESSIE IS MISLUKT VANAF %s VOOR %s -- %s"
 
-#: login-utils/login.c:637
+#: login-utils/login.c:633
 #, c-format
 msgid ""
 "\n"
@@ -6605,7 +6605,7 @@ msgstr ""
 "\n"
 "Inloggegevens onjuist\n"
 
-#: login-utils/login.c:665 login-utils/login.c:672 login-utils/login.c:706
+#: login-utils/login.c:661 login-utils/login.c:668 login-utils/login.c:702
 #, c-format
 msgid ""
 "\n"
@@ -6614,120 +6614,120 @@ msgstr ""
 "\n"
 "Sessie-instellingsprobleem -- gestopt\n"
 
-#: login-utils/login.c:666
+#: login-utils/login.c:662
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "Lege gebruikersnaam in %s:%d -- gestopt"
 
-#: login-utils/login.c:673
+#: login-utils/login.c:669
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Onjuiste gebruikersnaam '%s' in %s:%d -- gestopt"
 
-#: login-utils/login.c:692
+#: login-utils/login.c:688
 #, c-format
 msgid "login: Out of memory\n"
 msgstr "login: Onvoldoende geheugen beschikbaar\n"
 
-#: login-utils/login.c:736
+#: login-utils/login.c:732
 msgid "Illegal username"
 msgstr "Ongeldige gebruikersnaam"
 
-#: login-utils/login.c:779
+#: login-utils/login.c:775
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "Inloggen door %s op deze terminal is geweigerd.\n"
 
-#: login-utils/login.c:784
+#: login-utils/login.c:780
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "INLOGGEN DOOR %s VANAF %s IS GEWEIGERD OP TTY %s"
 
-#: login-utils/login.c:788
+#: login-utils/login.c:784
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "INLOGGEN DOOR %s IS GEWEIGERD OP TTY %s"
 
-#: login-utils/login.c:842
+#: login-utils/login.c:838
 #, c-format
 msgid "Login incorrect\n"
 msgstr "Inloggegevens onjuist\n"
 
-#: login-utils/login.c:1067
+#: login-utils/login.c:1063
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "INBELLEN OP %s DOOR %s"
 
-#: login-utils/login.c:1074
+#: login-utils/login.c:1070
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "ROOT-LOGIN OP %s VANAF %s"
 
-#: login-utils/login.c:1077
+#: login-utils/login.c:1073
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "ROOT-LOGIN OP %s"
 
-#: login-utils/login.c:1080
+#: login-utils/login.c:1076
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "LOGIN OP %s DOOR %s VANAF %s"
 
-#: login-utils/login.c:1083
+#: login-utils/login.c:1079
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "LOGIN OP %s DOOR %s"
 
-#: login-utils/login.c:1104
+#: login-utils/login.c:1100
 #, c-format
 msgid "You have new mail.\n"
 msgstr "U hebt nieuwe e-mail.\n"
 
-#: login-utils/login.c:1106
+#: login-utils/login.c:1102
 #, c-format
 msgid "You have mail.\n"
 msgstr "U hebt e-mail.\n"
 
-#: login-utils/login.c:1150
+#: login-utils/login.c:1146
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "login: kan geen nieuw proces starten: %s"
 
-#: login-utils/login.c:1197
+#: login-utils/login.c:1193
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "ioctl(TIOCSCTTY) is mislukt: %m"
 
-#: login-utils/login.c:1203
+#: login-utils/login.c:1199
 msgid "setuid() failed"
 msgstr "setuid() is mislukt"
 
-#: login-utils/login.c:1209
+#: login-utils/login.c:1205
 #, c-format
 msgid "No directory %s!\n"
 msgstr "Er is geen map %s!\n"
 
-#: login-utils/login.c:1213
+#: login-utils/login.c:1209
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Ingelogd met home = '/'.\n"
 
-#: login-utils/login.c:1221
+#: login-utils/login.c:1217
 #, c-format
 msgid "login: no memory for shell script.\n"
 msgstr "login: onvoldoende geheugen beschikbaar voor shell-script\n"
 
-#: login-utils/login.c:1248
+#: login-utils/login.c:1244
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr "login: kan shell-script niet uitvoeren: %s\n"
 
-#: login-utils/login.c:1251
+#: login-utils/login.c:1247
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "login: geen shell: %s\n"
 
-#: login-utils/login.c:1266
+#: login-utils/login.c:1262
 #, c-format
 msgid ""
 "\n"
@@ -6736,65 +6736,65 @@ msgstr ""
 "\n"
 "%s inlognaam: "
 
-#: login-utils/login.c:1277
+#: login-utils/login.c:1273
 #, c-format
 msgid "login name much too long.\n"
 msgstr "inlognaam is veel te lang\n"
 
-#: login-utils/login.c:1278
+#: login-utils/login.c:1274
 msgid "NAME too long"
 msgstr "NAAM is te lang"
 
-#: login-utils/login.c:1285
+#: login-utils/login.c:1281
 #, c-format
 msgid "login names may not start with '-'.\n"
 msgstr "inlognamen mogen niet beginnen met '-'\n"
 
-#: login-utils/login.c:1295
+#: login-utils/login.c:1291
 #, c-format
 msgid "too many bare linefeeds.\n"
 msgstr "te veel witregels\n"
 
-#: login-utils/login.c:1296
+#: login-utils/login.c:1292
 msgid "EXCESSIVE linefeeds"
 msgstr "EXCESSIEF aantal witregels"
 
-#: login-utils/login.c:1328
+#: login-utils/login.c:1324
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "Inloggen duurde te lang: afgebroken na %d seconden.\n"
 
-#: login-utils/login.c:1416
+#: login-utils/login.c:1412
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Laatste keer ingelogd: %.*s "
 
-#: login-utils/login.c:1420
+#: login-utils/login.c:1416
 #, c-format
 msgid "from %.*s\n"
 msgstr "vanaf %.*s\n"
 
-#: login-utils/login.c:1423
+#: login-utils/login.c:1419
 #, c-format
 msgid "on %.*s\n"
 msgstr "op %.*s\n"
 
-#: login-utils/login.c:1443
+#: login-utils/login.c:1439
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "INLOGGEN IS MISLUKT VANAF %s -- %s"
 
-#: login-utils/login.c:1446
+#: login-utils/login.c:1442
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "INLOGGEN IS MISLUKT OP %s -- %s"
 
-#: login-utils/login.c:1450
+#: login-utils/login.c:1446
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "%d INLOGMISLUKKINGEN VANAF %s -- %s"
 
-#: login-utils/login.c:1453
+#: login-utils/login.c:1449
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%d INLOGMISLUKKINGEN OP %s --  %s"
@@ -7398,6 +7398,56 @@ msgstr "openpty() is mislukt\n"
 #, c-format
 msgid "Out of pty's\n"
 msgstr "Onvoldoende PTY's\n"
+
+#: misc-utils/scriptreplay.c:38
+#, c-format
+msgid "%s <timingfile> [<typescript> [<divisor>]]\n"
+msgstr ""
+
+#: misc-utils/scriptreplay.c:53
+#, c-format
+msgid "expected a number, but got '%s'"
+msgstr ""
+
+#: misc-utils/scriptreplay.c:56 misc-utils/scriptreplay.c:60
+#, c-format
+msgid "divisor '%s'"
+msgstr ""
+
+#: misc-utils/scriptreplay.c:104
+#, fuzzy
+msgid "write to stdout failed"
+msgstr "Openen van %s is mislukt"
+
+#: misc-utils/scriptreplay.c:110
+#, c-format
+msgid "unexpected end of file on %s"
+msgstr ""
+
+#: misc-utils/scriptreplay.c:112
+#, fuzzy, c-format
+msgid "failed to read typescript file %s"
+msgstr "ioctl() kan geen tijd lezen uit %s"
+
+#: misc-utils/scriptreplay.c:144
+#, fuzzy, c-format
+msgid "cannot open timing file %s"
+msgstr "Kan bestand '%s' niet openen"
+
+#: misc-utils/scriptreplay.c:147
+#, fuzzy, c-format
+msgid "cannot open typescript file %s"
+msgstr "Kan bestand '%s' niet openen"
+
+#: misc-utils/scriptreplay.c:163
+#, fuzzy, c-format
+msgid "failed to read timing file %s"
+msgstr "ioctl() kan geen tijd lezen uit %s"
+
+#: misc-utils/scriptreplay.c:165
+#, fuzzy, c-format
+msgid "timings file %s: %lu: expected format"
+msgstr "%s: Onverwachte EOF in bestand %s\n"
 
 #: misc-utils/setterm.c:763
 #, c-format

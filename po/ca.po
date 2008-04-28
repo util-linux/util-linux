@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-04-16 22:22+0200\n"
+"POT-Creation-Date: 2008-04-28 14:00+0200\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -6392,12 +6392,12 @@ msgstr "%s: No s'ha pogut establir el context per defecte per a /etc/passwd"
 msgid "Changing finger information for %s.\n"
 msgstr "S'està canviant la informació del finger per a l'usuari %s.\n"
 
-#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:551
+#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:547
 #, fuzzy, c-format
 msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: PAM ha fallat; s'està avortant: %s\n"
 
-#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:802
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:681
 #: mount/lomount.c:684
 msgid "Password: "
@@ -6627,32 +6627,32 @@ msgstr "S'ha produït un error fatal: no s'ha pogut reobrir tty: %s"
 msgid "FATAL: bad tty"
 msgstr "S'ha produït un error fatal: terminal erroni"
 
-#: login-utils/login.c:415
+#: login-utils/login.c:411
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: només el superusuari pot fer servir -h.\n"
 
-#: login-utils/login.c:458
+#: login-utils/login.c:454
 #, c-format
 msgid "usage: login [-fp] [username]\n"
 msgstr "forma d'ús: login [-fp] [nom_usuari]\n"
 
-#: login-utils/login.c:553
+#: login-utils/login.c:549
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "No s'ha pogut inicialitzar PAM: %s"
 
-#: login-utils/login.c:570
+#: login-utils/login.c:566
 msgid "login: "
 msgstr "entrada: "
 
 # FIXME, please describe parameters
-#: login-utils/login.c:614
+#: login-utils/login.c:610
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "S'HA INTENTAT ACCEDIR SENSE ÈXIT %d VEGADES DES DE %s PER A %s, %s"
 
-#: login-utils/login.c:619
+#: login-utils/login.c:615
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -6661,17 +6661,17 @@ msgstr ""
 "L'entrada no és correcta\n"
 "\n"
 
-#: login-utils/login.c:628
+#: login-utils/login.c:624
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "S'HA INTENTAT ENTRAR MASSA VEGADES (%d) DES DE %s PER A %s, %s"
 
-#: login-utils/login.c:632
+#: login-utils/login.c:628
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "NO S'HA POGUT INICIAR LA SESSIÓ DES DE %s PER A %s, %s"
 
-#: login-utils/login.c:637
+#: login-utils/login.c:633
 #, c-format
 msgid ""
 "\n"
@@ -6680,7 +6680,7 @@ msgstr ""
 "\n"
 "Entrada incorrecta\n"
 
-#: login-utils/login.c:665 login-utils/login.c:672 login-utils/login.c:706
+#: login-utils/login.c:661 login-utils/login.c:668 login-utils/login.c:702
 #, c-format
 msgid ""
 "\n"
@@ -6689,122 +6689,122 @@ msgstr ""
 "\n"
 "S'ha produït un problema en iniciar la sessió, s'avortarà.\n"
 
-#: login-utils/login.c:666
+#: login-utils/login.c:662
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "Nom d'usuari NUL a %s:%d. S'avortarà."
 
-#: login-utils/login.c:673
+#: login-utils/login.c:669
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Nom d'usuari invàlid \"%s\" a %s:%d. S'avortarà."
 
-#: login-utils/login.c:692
+#: login-utils/login.c:688
 #, c-format
 msgid "login: Out of memory\n"
 msgstr "login: No hi ha prou memòria\n"
 
-#: login-utils/login.c:736
+#: login-utils/login.c:732
 msgid "Illegal username"
 msgstr "Nom d'usuari il·legal"
 
-#: login-utils/login.c:779
+#: login-utils/login.c:775
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "S'ha refusat l'entrada de %s en aquest terminal.\n"
 
-#: login-utils/login.c:784
+#: login-utils/login.c:780
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "S'HA REFUSAT L'ENTRADA DE %s DES DE %s A LA TTY %s"
 
-#: login-utils/login.c:788
+#: login-utils/login.c:784
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "S'HA REFUSAT L'ENTRADA DE %s A LA TTY %s"
 
-#: login-utils/login.c:842
+#: login-utils/login.c:838
 #, c-format
 msgid "Login incorrect\n"
 msgstr "Entrada incorrecta\n"
 
-#: login-utils/login.c:1067
+#: login-utils/login.c:1063
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "MARCATGE DIRECTE A %s PER %s"
 
-#: login-utils/login.c:1074
+#: login-utils/login.c:1070
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "ENTRADA DEL ROOT A %s DES DE %s"
 
-#: login-utils/login.c:1077
+#: login-utils/login.c:1073
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "ENTRADA DEL ROOT A %s"
 
-#: login-utils/login.c:1080
+#: login-utils/login.c:1076
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "ENTRADA A %s PER %s DES DE %s"
 
-#: login-utils/login.c:1083
+#: login-utils/login.c:1079
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "ENTRADA A %s PER %s"
 
-#: login-utils/login.c:1104
+#: login-utils/login.c:1100
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Teniu correu nou.\n"
 
-#: login-utils/login.c:1106
+#: login-utils/login.c:1102
 #, c-format
 msgid "You have mail.\n"
 msgstr "Teniu correu.\n"
 
-#: login-utils/login.c:1150
+#: login-utils/login.c:1146
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "login: s'ha produït un error en bifurcar: %s"
 
-#: login-utils/login.c:1197
+#: login-utils/login.c:1193
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY ha fallat: %m"
 
-#: login-utils/login.c:1203
+#: login-utils/login.c:1199
 msgid "setuid() failed"
 msgstr "setuid() ha fallat"
 
-#: login-utils/login.c:1209
+#: login-utils/login.c:1205
 #, c-format
 msgid "No directory %s!\n"
 msgstr "No hi ha cap directori %s\n"
 
-#: login-utils/login.c:1213
+#: login-utils/login.c:1209
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "S'està entrant amb el directori inicial = «/».\n"
 
-#: login-utils/login.c:1221
+#: login-utils/login.c:1217
 #, c-format
 msgid "login: no memory for shell script.\n"
 msgstr ""
 "login: no hi ha prou memòria per a la seqüència de l'intèrpret d'ordres.\n"
 
-#: login-utils/login.c:1248
+#: login-utils/login.c:1244
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr ""
 "login: no s'ha pogut executar la seqüènca de l'intèrpret d'ordres: %s.\n"
 
-#: login-utils/login.c:1251
+#: login-utils/login.c:1247
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "login: no hi ha l'intèrpret d'ordres: %s.\n"
 
-#: login-utils/login.c:1266
+#: login-utils/login.c:1262
 #, c-format
 msgid ""
 "\n"
@@ -6813,66 +6813,66 @@ msgstr ""
 "\n"
 "Entrada a %s: "
 
-#: login-utils/login.c:1277
+#: login-utils/login.c:1273
 #, c-format
 msgid "login name much too long.\n"
 msgstr "el nom d'entrada és massa llarg.\n"
 
-#: login-utils/login.c:1278
+#: login-utils/login.c:1274
 msgid "NAME too long"
 msgstr "NOM és massa llarg"
 
-#: login-utils/login.c:1285
+#: login-utils/login.c:1281
 #, c-format
 msgid "login names may not start with '-'.\n"
 msgstr "els noms d'entrada no poden començar per «-».\n"
 
 # FIXME
-#: login-utils/login.c:1295
+#: login-utils/login.c:1291
 #, c-format
 msgid "too many bare linefeeds.\n"
 msgstr "massa salts de pàgina solitaris.\n"
 
-#: login-utils/login.c:1296
+#: login-utils/login.c:1292
 msgid "EXCESSIVE linefeeds"
 msgstr "MASSA salts de pàgina"
 
-#: login-utils/login.c:1328
+#: login-utils/login.c:1324
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "S'ha excedit el temps d'espera per a l'entrada al cap de %d segons.\n"
 
-#: login-utils/login.c:1416
+#: login-utils/login.c:1412
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Última entrada: %.*s "
 
-#: login-utils/login.c:1420
+#: login-utils/login.c:1416
 #, c-format
 msgid "from %.*s\n"
 msgstr "des de %.*s\n"
 
-#: login-utils/login.c:1423
+#: login-utils/login.c:1419
 #, c-format
 msgid "on %.*s\n"
 msgstr "a %.*s\n"
 
-#: login-utils/login.c:1443
+#: login-utils/login.c:1439
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "HA FALLAT L'ENTRADA DE %s, %s"
 
-#: login-utils/login.c:1446
+#: login-utils/login.c:1442
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "HA FALLAT L'ENTRADA A %s, %s"
 
-#: login-utils/login.c:1450
+#: login-utils/login.c:1446
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "HA FALLAT %d VEGADES L'ENTRADA DES DE %s, %s"
 
-#: login-utils/login.c:1453
+#: login-utils/login.c:1449
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "HA FALLAT %d VEGADES L'ENTRADA A %s, %s"
@@ -7481,6 +7481,56 @@ msgstr "no ha estat possible executar openpty\n"
 #, c-format
 msgid "Out of pty's\n"
 msgstr "No queden pty\n"
+
+#: misc-utils/scriptreplay.c:38
+#, c-format
+msgid "%s <timingfile> [<typescript> [<divisor>]]\n"
+msgstr ""
+
+#: misc-utils/scriptreplay.c:53
+#, c-format
+msgid "expected a number, but got '%s'"
+msgstr ""
+
+#: misc-utils/scriptreplay.c:56 misc-utils/scriptreplay.c:60
+#, c-format
+msgid "divisor '%s'"
+msgstr ""
+
+#: misc-utils/scriptreplay.c:104
+#, fuzzy
+msgid "write to stdout failed"
+msgstr "S'ha produït un error en obrir %s"
+
+#: misc-utils/scriptreplay.c:110
+#, c-format
+msgid "unexpected end of file on %s"
+msgstr ""
+
+#: misc-utils/scriptreplay.c:112
+#, fuzzy, c-format
+msgid "failed to read typescript file %s"
+msgstr "no ha estat possible executar ioctl() per llegir l'hora de %s"
+
+#: misc-utils/scriptreplay.c:144
+#, fuzzy, c-format
+msgid "cannot open timing file %s"
+msgstr "No s'ha pogut obrir el fitxer '%s'"
+
+#: misc-utils/scriptreplay.c:147
+#, fuzzy, c-format
+msgid "cannot open typescript file %s"
+msgstr "No s'ha pogut obrir el fitxer '%s'"
+
+#: misc-utils/scriptreplay.c:163
+#, fuzzy, c-format
+msgid "failed to read timing file %s"
+msgstr "no ha estat possible executar ioctl() per llegir l'hora de %s"
+
+#: misc-utils/scriptreplay.c:165
+#, fuzzy, c-format
+msgid "timings file %s: %lu: expected format"
+msgstr "%s: No s'esperava EOF en el fitxer %s\n"
 
 #: misc-utils/setterm.c:763
 #, c-format

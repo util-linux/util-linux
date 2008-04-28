@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11y\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-04-16 22:22+0200\n"
+"POT-Creation-Date: 2008-04-28 14:00+0200\n"
 "PO-Revision-Date: 2005-08-15 21:00+0200\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
@@ -6249,12 +6249,12 @@ msgstr "%s: Kan ikke sætte standardkontekst for /etc/passwd"
 msgid "Changing finger information for %s.\n"
 msgstr "Ændrer finger-information for %s.\n"
 
-#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:551
+#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:547
 #, fuzzy, c-format
 msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: PAM-fejl, afbryder: %s\n"
 
-#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:802
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:681
 #: mount/lomount.c:684
 msgid "Password: "
@@ -6476,31 +6476,31 @@ msgstr "FATALT: kunne ikke genåbne tty: %s"
 msgid "FATAL: bad tty"
 msgstr "FATALT: ugyldig tty"
 
-#: login-utils/login.c:415
+#: login-utils/login.c:411
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: -h er kun for superbrugeren.\n"
 
-#: login-utils/login.c:458
+#: login-utils/login.c:454
 #, c-format
 msgid "usage: login [-fp] [username]\n"
 msgstr "brug: login [-fp] [brugernavn]\n"
 
-#: login-utils/login.c:553
+#: login-utils/login.c:549
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "Kunne ikke klargøre PAM: %s"
 
-#: login-utils/login.c:570
+#: login-utils/login.c:566
 msgid "login: "
 msgstr "login: "
 
-#: login-utils/login.c:614
+#: login-utils/login.c:610
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "MISLYKKET LOGIN %d FRA %s FOR %s, %s"
 
-#: login-utils/login.c:619
+#: login-utils/login.c:615
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -6509,17 +6509,17 @@ msgstr ""
 "Login ugyldigt\n"
 "\n"
 
-#: login-utils/login.c:628
+#: login-utils/login.c:624
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "FOR MANGE LOGINFORSØG (%d) FRA %s FOR %s, %s"
 
-#: login-utils/login.c:632
+#: login-utils/login.c:628
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "MISLYKKET LOGINSESSION FRA %s FOR %s, %s"
 
-#: login-utils/login.c:637
+#: login-utils/login.c:633
 #, c-format
 msgid ""
 "\n"
@@ -6528,7 +6528,7 @@ msgstr ""
 "\n"
 "Login ugyldigt\n"
 
-#: login-utils/login.c:665 login-utils/login.c:672 login-utils/login.c:706
+#: login-utils/login.c:661 login-utils/login.c:668 login-utils/login.c:702
 #, c-format
 msgid ""
 "\n"
@@ -6537,120 +6537,120 @@ msgstr ""
 "\n"
 "Problem med sessions-opsætning, afbryder.\n"
 
-#: login-utils/login.c:666
+#: login-utils/login.c:662
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "TOMT brugernavn i %s: %d. Afbryder."
 
-#: login-utils/login.c:673
+#: login-utils/login.c:669
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Ugyldigt brugernavn \"%s\" i %s:%d. Afbryder."
 
-#: login-utils/login.c:692
+#: login-utils/login.c:688
 #, c-format
 msgid "login: Out of memory\n"
 msgstr "login: Hukommelse opbrugt\n"
 
-#: login-utils/login.c:736
+#: login-utils/login.c:732
 msgid "Illegal username"
 msgstr "Ugyldigt brugernavn"
 
-#: login-utils/login.c:779
+#: login-utils/login.c:775
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "%s login afvist på denne terminal.\n"
 
-#: login-utils/login.c:784
+#: login-utils/login.c:780
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "LOGIN %s AFVIST FRA %s PÅ TTY %s"
 
-#: login-utils/login.c:788
+#: login-utils/login.c:784
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "LOGIN %s AFVIST PÅ TTY %s"
 
-#: login-utils/login.c:842
+#: login-utils/login.c:838
 #, c-format
 msgid "Login incorrect\n"
 msgstr "Login ugyldigt\n"
 
-#: login-utils/login.c:1067
+#: login-utils/login.c:1063
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "OPRINGNING KLOKKEN %s AF %s"
 
-#: login-utils/login.c:1074
+#: login-utils/login.c:1070
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "ROOT LOGIN PÅ %s FRA %s"
 
-#: login-utils/login.c:1077
+#: login-utils/login.c:1073
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "ROOT LOGIN PÅ %s"
 
-#: login-utils/login.c:1080
+#: login-utils/login.c:1076
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "LOGIN PÅ %s AF %s FRA %s"
 
-#: login-utils/login.c:1083
+#: login-utils/login.c:1079
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "LOGIN PÅ %s AF %s"
 
-#: login-utils/login.c:1104
+#: login-utils/login.c:1100
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Du har ny post.\n"
 
-#: login-utils/login.c:1106
+#: login-utils/login.c:1102
 #, c-format
 msgid "You have mail.\n"
 msgstr "Du har post.\n"
 
-#: login-utils/login.c:1150
+#: login-utils/login.c:1146
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "login: mislykket forgrening: %s"
 
-#: login-utils/login.c:1197
+#: login-utils/login.c:1193
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY mislykkedes: %m"
 
-#: login-utils/login.c:1203
+#: login-utils/login.c:1199
 msgid "setuid() failed"
 msgstr "setuid() mislykkedes"
 
-#: login-utils/login.c:1209
+#: login-utils/login.c:1205
 #, c-format
 msgid "No directory %s!\n"
 msgstr "Ingen mappe %s!\n"
 
-#: login-utils/login.c:1213
+#: login-utils/login.c:1209
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Logger ind med hjemmemappe = \"/\".\n"
 
-#: login-utils/login.c:1221
+#: login-utils/login.c:1217
 #, c-format
 msgid "login: no memory for shell script.\n"
 msgstr "login: ingen hukommelse for skal-skript.\n"
 
-#: login-utils/login.c:1248
+#: login-utils/login.c:1244
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr "login: kunne ikke køre skal-skript: %s.\n"
 
-#: login-utils/login.c:1251
+#: login-utils/login.c:1247
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "login: ingen skal: %s.\n"
 
-#: login-utils/login.c:1266
+#: login-utils/login.c:1262
 #, c-format
 msgid ""
 "\n"
@@ -6659,65 +6659,65 @@ msgstr ""
 "\n"
 "%s login: "
 
-#: login-utils/login.c:1277
+#: login-utils/login.c:1273
 #, c-format
 msgid "login name much too long.\n"
 msgstr "loginnavn alt for langt.\n"
 
-#: login-utils/login.c:1278
+#: login-utils/login.c:1274
 msgid "NAME too long"
 msgstr "for langt NAVN"
 
-#: login-utils/login.c:1285
+#: login-utils/login.c:1281
 #, c-format
 msgid "login names may not start with '-'.\n"
 msgstr "loginnavne må ikke starte med '-'.\n"
 
-#: login-utils/login.c:1295
+#: login-utils/login.c:1291
 #, c-format
 msgid "too many bare linefeeds.\n"
 msgstr "for mange tomme linjeskift,\n"
 
-#: login-utils/login.c:1296
+#: login-utils/login.c:1292
 msgid "EXCESSIVE linefeeds"
 msgstr "VOLDSOMT MANGE linjeskift"
 
-#: login-utils/login.c:1328
+#: login-utils/login.c:1324
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "Login udløb efter %d sekunder\n"
 
-#: login-utils/login.c:1416
+#: login-utils/login.c:1412
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Sidste login: %.*s "
 
-#: login-utils/login.c:1420
+#: login-utils/login.c:1416
 #, c-format
 msgid "from %.*s\n"
 msgstr "fra %.*s\n"
 
-#: login-utils/login.c:1423
+#: login-utils/login.c:1419
 #, c-format
 msgid "on %.*s\n"
 msgstr "på %.*s\n"
 
-#: login-utils/login.c:1443
+#: login-utils/login.c:1439
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "LOGINFEJL FRA %s, %s"
 
-#: login-utils/login.c:1446
+#: login-utils/login.c:1442
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "LOGINFEJL på %s, %s"
 
-#: login-utils/login.c:1450
+#: login-utils/login.c:1446
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "%d LOGINFEJL fra %s, %s"
 
-#: login-utils/login.c:1453
+#: login-utils/login.c:1449
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%d LOGINFEJL PÅ %s, %s"
@@ -7320,6 +7320,56 @@ msgstr "openpty mislykkedes\n"
 #, c-format
 msgid "Out of pty's\n"
 msgstr "Løbet tør for pty-er\n"
+
+#: misc-utils/scriptreplay.c:38
+#, c-format
+msgid "%s <timingfile> [<typescript> [<divisor>]]\n"
+msgstr ""
+
+#: misc-utils/scriptreplay.c:53
+#, c-format
+msgid "expected a number, but got '%s'"
+msgstr ""
+
+#: misc-utils/scriptreplay.c:56 misc-utils/scriptreplay.c:60
+#, c-format
+msgid "divisor '%s'"
+msgstr ""
+
+#: misc-utils/scriptreplay.c:104
+#, fuzzy
+msgid "write to stdout failed"
+msgstr "Åbning af %s mislykkedes"
+
+#: misc-utils/scriptreplay.c:110
+#, c-format
+msgid "unexpected end of file on %s"
+msgstr ""
+
+#: misc-utils/scriptreplay.c:112
+#, fuzzy, c-format
+msgid "failed to read typescript file %s"
+msgstr "ioctl() kunne ikke aflæse tiden fra %s"
+
+#: misc-utils/scriptreplay.c:144
+#, fuzzy, c-format
+msgid "cannot open timing file %s"
+msgstr "Kan ikke åbne filen '%s'"
+
+#: misc-utils/scriptreplay.c:147
+#, fuzzy, c-format
+msgid "cannot open typescript file %s"
+msgstr "Kan ikke åbne filen '%s'"
+
+#: misc-utils/scriptreplay.c:163
+#, fuzzy, c-format
+msgid "failed to read timing file %s"
+msgstr "ioctl() kunne ikke aflæse tiden fra %s"
+
+#: misc-utils/scriptreplay.c:165
+#, fuzzy, c-format
+msgid "timings file %s: %lu: expected format"
+msgstr "%s: Uventet filafslutning i %s-fil\n"
 
 #: misc-utils/setterm.c:763
 #, c-format
