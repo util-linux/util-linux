@@ -2,7 +2,7 @@
 Util-linux-ng 2.14 Release Notes (??-May-2008)
 ==============================================
 
-Release highlights:
+Release highlights
 ------------------
 
  mount(8) supports new "nofail" mount option.
@@ -52,6 +52,30 @@ Deprecated
  now.  This short form of the option '--show' could be in collision with
  Loop-AES losetup implementation where the same option is used for the loop
  sizelimit.
+
+
+Fixed security issues
+---------------------
+
+ CVE-2008-1926 - audit log injection via login
+
+		 The problem was originally reported for OpenSSH few months
+                 ago (CVE-2007-3102). The login(1) is affected by the same
+                 bug when built with the option "--with-audit".
+
+
+Stable maintenance releases between v2.13 and v2.14
+---------------------------------------------------
+
+util-linux-ng 2.13.1.1 [22-Apr-2008]
+
+ * ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.13/v2.13.1.1-ReleaseNotes
+   ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.13/v2.13.1.1-ChangeLog
+
+util-linux-ng 2.13.1 [16-Jan-2008]
+
+ * ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.13/v2.13.1-ReleaseNotes
+   ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.13/v2.13.1-ChangeLog
 
 
 ChangeLog between v2.13 and v2.14
@@ -135,6 +159,7 @@ docs:
    - fix stable branche name in README.devel  [Karel Zak]
    - mark vipw(1) is deprecated in favor of vipw from shadow-utils  [Karel Zak]
    - refresh TODO list  [Karel Zak]
+   - remove date from ReleasNotes  [Karel Zak]
    - tweak a few messages for clarity  [Benno Schulenberg]
    - update AUTHORS file  [Karel Zak]
    - update TODO file  [Karel Zak]
@@ -177,6 +202,7 @@ include:
    - cleanup pathnames.h  [Karel Zak]
 ionice:
    - add a note about permissions to ionice.1  [Karel Zak]
+   - update man page to reflect IDLE class change in  2.6.25  [Karel Zak]
 ipcs:
    - add information about POSIX compatibility to ipcs.1  [Karel Zak]
 kill:
@@ -189,6 +215,7 @@ lib:
    - add blkdev.{c,h}  [Stefan Krah, Karel Zak]
    - add linux_version.{c,h}  [Stefan Krah]
 login:
+   - audit log injection attack via login  [Steve Grubb]
    - fix a small memory leak and remove unnecessary zeroing  [Karel Zak]
    - login segfaults on EOF (rh#298461)  [Karel Zak]
    - replace termio with termios interface  [Samuel Thibault]
@@ -301,6 +328,7 @@ script:
    - cleanup includes  [Samuel Thibault]
    - dies on SIGWINCH  [Karel Zak]
    - read returns a size_t  [James Youngman]
+   - revert "improve quiet mode"  [Karel Zak]
 scriptreplay:
    - rewrite in C  [Karel Zak, James Youngman]
 setarch:
