@@ -13,8 +13,9 @@ this writing, Linux supports 3 scheduling classes:
 A program running with idle io priority will only get disk time when no other
 program has asked for disk io for a defined grace period. The impact of idle
 io processes on normal system activity should be zero. This scheduling
-class does not take a priority argument. This scheduling class is not
-permitted for an ordinary (i.e., non-root) user.
+class does not take a priority argument. Presently, this scheduling class
+is permitted for an ordinary user (since kernel 2.6.25).
+
 
 \fBBest effort\fR.
 This is the default scheduling class for any process that hasn't asked for
