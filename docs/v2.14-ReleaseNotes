@@ -163,6 +163,7 @@ docs:
    - tweak a few messages for clarity  [Benno Schulenberg]
    - update AUTHORS file  [Karel Zak]
    - update TODO file  [Karel Zak]
+   - update v2.14 ReleaseNotes  [Karel Zak]
    - update v2.14-ReleaseNotes  [Karel Zak]
 elvtune:
    - use get_linux_version()  [Karel Zak]
@@ -330,6 +331,7 @@ script:
    - read returns a size_t  [James Youngman]
    - revert "improve quiet mode"  [Karel Zak]
 scriptreplay:
+   - gettextize a forgotten messages  [Karel Zak]
    - rewrite in C  [Karel Zak, James Youngman]
 setarch:
    - add long options to setarch and update manpage  [Karel Zak, Li Zefan]
