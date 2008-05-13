@@ -50,6 +50,38 @@
 			printf(_("Switching on %s.\n"), #_flag); \
 	} while(0)
 
+
+#if !HAVE_DECL_ADDR_NO_RANDOMIZE
+# define ADDR_NO_RANDOMIZE       0x0040000
+#endif
+#if !HAVE_DECL_FDPIC_FUNCPTRS
+# define FDPIC_FUNCPTRS          0x0080000
+#endif
+#if !HAVE_DECL_MMAP_PAGE_ZERO
+# define MMAP_PAGE_ZERO          0x0100000
+#endif
+#if !HAVE_DECL_ADDR_COMPAT_LAYOUT
+# define ADDR_COMPAT_LAYOUT      0x0200000
+#endif
+#if !HAVE_DECL_READ_IMPLIES_EXEC
+# define READ_IMPLIES_EXEC       0x0400000
+#endif
+#if !HAVE_DECL_ADDR_LIMIT_32BIT
+# define ADDR_LIMIT_32BIT        0x0800000
+#endif
+#if !HAVE_DECL_SHORT_INODE
+# define SHORT_INODE             0x1000000
+#endif
+#if !HAVE_DECL_WHOLE_SECONDS
+# define WHOLE_SECONDS           0x2000000
+#endif
+#if !HAVE_DECL_STICKY_TIMEOUTS
+# define STICKY_TIMEOUTS         0x4000000
+#endif
+#if !HAVE_DECL_ADDR_LIMIT_3GB
+# define ADDR_LIMIT_3GB          0x8000000
+#endif
+
 /* Options --3gb and --4gb are for compatibitity with an old Debian setarch
    implementation. */
 struct option longopts[] =
