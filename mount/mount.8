@@ -679,6 +679,27 @@ This option implies the options
 Attempt to remount an already-mounted file system.  This is commonly
 used to change the mount flags for a file system, especially to make a
 readonly file system writeable. It does not change device or mount point.
+
+The remount functionality follows the standard way how the mount command works
+with options from fstab. It means the mount command doesn't read fstab (or
+mtab) only when a
+.IR device
+and
+.IR dir
+are fully specified.
+
+.BR "mount -o remount,rw /dev/foo /dir"
+
+After this call all old mount options are replaced and arbitrary stuff from
+fstab is ignored, except the loop= option which is internally generated and
+maintained by the mount command.
+
+.BR "mount -o remount,rw  /dir"
+
+After this call mount reads fstab (or mtab) and merges these options with
+options from command line (
+.B -o
+).
 .TP
 .B ro
 Mount the file system read-only.

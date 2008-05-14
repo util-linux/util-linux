@@ -669,6 +669,88 @@ lock_mtab (void) {
 	}
 }
 
+static char *
+get_option(const char *optname, const char *src, size_t *len)
+{
+	char *opt, *end;
+	size_t sz;
+
+	if (!src)
+		return NULL;
+
+	opt = strstr(src, optname);
+	if (!opt)
+		return NULL;
+
+	end = strchr(opt, ',');
+	sz = end ? end - opt : strlen(opt);
+
+	if (len)
+		*len = sz;
+
+	if ((opt == src || *(opt - 1) == ',') &&
+	    (*(opt + sz) == '\0' || *(opt + sz) == ','))
+		return opt;
+
+	return NULL;
+}
+
+static int
+cpy_option(const char *optname, char *dest, const char *src)
+{
+	char *opt;
+	size_t sz;
+
+	opt = get_option(optname, src, &sz);
+	if (!opt)
+		/* the option doesn't exist */
+		return 0;
+
+	if (get_option(optname, dest, NULL))
+		/* the options is already in dest */
+		return 0;
+
+	if (*dest) {
+		dest = dest + strlen(dest);
+		*dest++ = ',';		/* separator */
+	}
+	memcpy(dest, opt, sz);	/* copy option */
+	*(dest + sz) = '\0';	/* terminator */
+
+	return 1;
+}
+
+/* Generates (and allocates) new options for remount
+ *
+ * We cannot blindly replace the old options, otherwise we will lost some
+ * internally generated stuff (e.g loop=).
+ */
+static char *
+mk_remount_opts(const char *old, const char *instead)
+{
+	char *new;
+	size_t sz;
+
+	if (old == NULL && instead == NULL)
+		return NULL;
+	if (!old)
+		return xstrdup(instead);
+
+	/* max size of new options is:
+	 * old + new + '\0' + separator (for each copied option)
+	 */
+	sz = strlen(old) + (instead ? strlen(instead) : 0) + 2;
+	new = xmalloc(sz);
+	if (instead && *instead)
+		strncpy(new, instead, sz);
+	else
+		*new = '\0';
+
+	cpy_option("loop=", new, old);
+
+	return new;
+}
+
 /*
  * Update the mtab.
  *  Used by umount with null INSTEAD: remove the last DIR entry.
@@ -721,8 +803,10 @@ update_mtab (const char *dir, struct my_mntent *instead) {
 			}
 		} else if (!strcmp(mc->m.mnt_dir, instead->mnt_dir)) {
 			/* A remount */
+			char *opts = mk_remount_opts(mc->m.mnt_opts,
+					instead->mnt_opts);
 			my_free(mc->m.mnt_opts);
-			mc->m.mnt_opts = xstrdup(instead->mnt_opts);
+			mc->m.mnt_opts = opts;
 		} else {
 			/* A move */
 			my_free(mc->m.mnt_dir);
