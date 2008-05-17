@@ -12,8 +12,6 @@ v2.15:
 	- klibc
 	- ???
 
- * rewrite the replay script to C to avoid dependence on perl
-
  * use rpmatch() for all Y/N questions
 
  * mount -a -- reorder fstab entries by paths before mount (just idea only)
