@@ -358,6 +358,7 @@ UTIL_CHECK_SYSCALL([ioprio_set],
   [powerpc*], [273],
   [s390*],    [282],
   [sparc*],   [196],
+  [sh*],      [288],
   [x86_64*],  [251])
 UTIL_CHECK_SYSCALL([ioprio_get],
   [alpha],    [443],
@@ -366,6 +367,7 @@ UTIL_CHECK_SYSCALL([ioprio_get],
   [powerpc*], [274],
   [s390*],    [283],
   [sparc*],   [218],
+  [sh*],      [289],
   [x86_64*],  [252])
 
 
