@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-04-28 14:00+0200\n"
+"POT-Creation-Date: 2008-05-19 10:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3563,7 +3563,7 @@ msgstr ""
 msgid "SunOS reserved"
 msgstr ""
 
-#: fdisk/fdisksunlabel.c:58 fdisk/i386_sys_types.c:100
+#: fdisk/fdisksunlabel.c:58 fdisk/i386_sys_types.c:102
 msgid "Linux raid autodetect"
 msgstr ""
 
@@ -4054,11 +4054,19 @@ msgstr ""
 msgid "DOS secondary"
 msgstr ""
 
-#: fdisk/i386_sys_types.c:103
+#: fdisk/i386_sys_types.c:100
+msgid "VMware VMFS"
+msgstr ""
+
+#: fdisk/i386_sys_types.c:101
+msgid "VMware VMKCORE"
+msgstr ""
+
+#: fdisk/i386_sys_types.c:105
 msgid "LANstep"
 msgstr ""
 
-#: fdisk/i386_sys_types.c:104
+#: fdisk/i386_sys_types.c:106
 msgid "BBT"
 msgstr ""
 
@@ -7211,27 +7219,27 @@ msgid ""
 "Perhaps there is a stale lock file?\n"
 msgstr ""
 
-#: mount/fstab.c:703 mount/fstab.c:756
+#: mount/fstab.c:785 mount/fstab.c:840
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr ""
 
-#: mount/fstab.c:765
+#: mount/fstab.c:849
 #, c-format
 msgid "error writing %s: %s"
 msgstr ""
 
-#: mount/fstab.c:783
+#: mount/fstab.c:867
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr ""
 
-#: mount/fstab.c:796
+#: mount/fstab.c:880
 #, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr ""
 
-#: mount/fstab.c:807
+#: mount/fstab.c:891
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr ""
@@ -9116,7 +9124,7 @@ msgstr ""
 msgid "Switching on %s.\n"
 msgstr ""
 
-#: sys-utils/setarch.c:81
+#: sys-utils/setarch.c:113
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -9124,7 +9132,7 @@ msgid ""
 "Options:\n"
 msgstr ""
 
-#: sys-utils/setarch.c:85
+#: sys-utils/setarch.c:117
 #, c-format
 msgid ""
 " -h, --help               displays this help text\n"
@@ -9144,30 +9152,30 @@ msgid ""
 "     --4gb                ignored (for backward compatibility only)\n"
 msgstr ""
 
-#: sys-utils/setarch.c:99
+#: sys-utils/setarch.c:131
 #, c-format
 msgid ""
 "\n"
 "For more information see setarch(8).\n"
 msgstr ""
 
-#: sys-utils/setarch.c:111
+#: sys-utils/setarch.c:143
 #, c-format
 msgid ""
 "%s: %s\n"
 "Try `%s --help' for more information.\n"
 msgstr ""
 
-#: sys-utils/setarch.c:183 sys-utils/setarch.c:199
+#: sys-utils/setarch.c:215 sys-utils/setarch.c:231
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr ""
 
-#: sys-utils/setarch.c:217 sys-utils/setarch.c:224
+#: sys-utils/setarch.c:249 sys-utils/setarch.c:256
 msgid "Not enough arguments"
 msgstr ""
 
-#: sys-utils/setarch.c:233 sys-utils/setarch.c:286
+#: sys-utils/setarch.c:265 sys-utils/setarch.c:318
 #, c-format
 msgid "Failed to set personality to %s"
 msgstr ""

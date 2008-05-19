@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.13.1-rc1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-04-28 14:00+0200\n"
+"POT-Creation-Date: 2008-05-19 10:56+0200\n"
 "PO-Revision-Date: 2008-01-14 12:16+0100\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -3888,7 +3888,7 @@ msgstr "SunOS cachefs"
 msgid "SunOS reserved"
 msgstr "SunOS fenntartott"
 
-#: fdisk/fdisksunlabel.c:58 fdisk/i386_sys_types.c:100
+#: fdisk/fdisksunlabel.c:58 fdisk/i386_sys_types.c:102
 msgid "Linux raid autodetect"
 msgstr "Linux raid automatikus felismeréssel"
 
@@ -4412,11 +4412,19 @@ msgstr "Linux/PA-RISC indító"
 msgid "DOS secondary"
 msgstr "DOS másodlagos"
 
-#: fdisk/i386_sys_types.c:103
+#: fdisk/i386_sys_types.c:100
+msgid "VMware VMFS"
+msgstr ""
+
+#: fdisk/i386_sys_types.c:101
+msgid "VMware VMKCORE"
+msgstr ""
+
+#: fdisk/i386_sys_types.c:105
 msgid "LANstep"
 msgstr "LANstep"
 
-#: fdisk/i386_sys_types.c:104
+#: fdisk/i386_sys_types.c:106
 msgid "BBT"
 msgstr "BBT"
 
@@ -7846,27 +7854,27 @@ msgstr ""
 "Nem lehet létrehozni a(z) %s linket\n"
 "Lehet, hogy egy elárvult a zárolási fájl miatt?\n"
 
-#: mount/fstab.c:703 mount/fstab.c:756
+#: mount/fstab.c:785 mount/fstab.c:840
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "nem nyitható meg a(z) %s fájl (%s) - az mtab nem frissült"
 
-#: mount/fstab.c:765
+#: mount/fstab.c:849
 #, c-format
 msgid "error writing %s: %s"
 msgstr "hiba a(z) %s írásakor: %s"
 
-#: mount/fstab.c:783
+#: mount/fstab.c:867
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "hiba a(z) %s módjának módosításakor: %s\n"
 
-#: mount/fstab.c:796
+#: mount/fstab.c:880
 #, fuzzy, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr "hiba a(z) %s módjának módosításakor: %s\n"
 
-#: mount/fstab.c:807
+#: mount/fstab.c:891
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "%s nem nevezhető át %s névre: %s\n"
@@ -9934,7 +9942,7 @@ msgstr "rtc riasztási megszakítás letiltása"
 msgid "Switching on %s.\n"
 msgstr "%s bekapcsolása.\n"
 
-#: sys-utils/setarch.c:81
+#: sys-utils/setarch.c:113
 #, c-format
 msgid ""
 "Usage: %s%s [options] [program [program arguments]]\n"
@@ -9945,7 +9953,7 @@ msgstr ""
 "\n"
 "Kapcsolók:\n"
 
-#: sys-utils/setarch.c:85
+#: sys-utils/setarch.c:117
 #, c-format
 msgid ""
 " -h, --help               displays this help text\n"
@@ -9965,7 +9973,7 @@ msgid ""
 "     --4gb                ignored (for backward compatibility only)\n"
 msgstr ""
 
-#: sys-utils/setarch.c:99
+#: sys-utils/setarch.c:131
 #, c-format
 msgid ""
 "\n"
@@ -9974,7 +9982,7 @@ msgstr ""
 "\n"
 "További információkért tekintse meg a setarch(8) kézikönyvoldalt.\n"
 
-#: sys-utils/setarch.c:111
+#: sys-utils/setarch.c:143
 #, c-format
 msgid ""
 "%s: %s\n"
@@ -9983,16 +9991,16 @@ msgstr ""
 "%s: %s\n"
 "További információkért adja ki a \"%s --help\" parancsot.\n"
 
-#: sys-utils/setarch.c:183 sys-utils/setarch.c:199
+#: sys-utils/setarch.c:215 sys-utils/setarch.c:231
 #, c-format
 msgid "%s: Unrecognized architecture"
 msgstr "%s: ismeretlen architektúra"
 
-#: sys-utils/setarch.c:217 sys-utils/setarch.c:224
+#: sys-utils/setarch.c:249 sys-utils/setarch.c:256
 msgid "Not enough arguments"
 msgstr "Túl kevés argumentum"
 
-#: sys-utils/setarch.c:233 sys-utils/setarch.c:286
+#: sys-utils/setarch.c:265 sys-utils/setarch.c:318
 #, c-format
 msgid "Failed to set personality to %s"
 msgstr "A személyiség beállítása meghiúsult a következőre: %s"
