@@ -1101,8 +1101,9 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
         } else if (set) {
           set_hardware_clock_exact(set_time, startup_time,
 				      universal, testing);
-          adjust_drift_factor(&adjtime, set_time, hclock_valid, hclocktime,
-			      time_diff(read_time, startup_time));
+	  if (!noadjfile)
+            adjust_drift_factor(&adjtime, set_time, hclock_valid, hclocktime,
+			        time_diff(read_time, startup_time));
         } else if (adjust) {
           do_adjustment(&adjtime, hclock_valid, hclocktime,
                         read_time, universal, testing);
@@ -1118,8 +1119,9 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 
           set_hardware_clock_exact((time_t) reftime.tv_sec, reftime,
                                    universal, testing);
-          adjust_drift_factor(&adjtime, (time_t) reftime.tv_sec, hclock_valid,
-                              hclocktime, (double) read_time.tv_usec / 1E6);
+	  if (!noadjfile)
+            adjust_drift_factor(&adjtime, (time_t) reftime.tv_sec, hclock_valid,
+                                hclocktime, (double) read_time.tv_usec / 1E6);
         } else if (hctosys) {
           rc = set_system_clock(hclock_valid, hclocktime, testing);
           if (rc) {
