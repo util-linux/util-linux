@@ -130,7 +130,7 @@ default_fmt
 #define DY(y) (y+1166)
 
 static inline char *ending(int i) {
-	return (i%10==1)?"st":(i%10==2?"nd":(i%10==3?"rd":"th"));
+	return i/10==1?"th":(i%10==1?"st":(i%10==2?"nd":(i%10==3?"rd":"th")));
 }
 
 static inline int leapp(int i) {
