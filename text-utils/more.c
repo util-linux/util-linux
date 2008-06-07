@@ -54,7 +54,6 @@
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <sys/wait.h>
-#include <a.out.h>
 #include "xstrncpy.h"
 #include "nls.h"
 #include "widechar.h"
@@ -546,9 +545,9 @@ magic(f, fs)
 
 	if (fread(twobytes, 2, 1, f) == 1) {
 		switch(twobytes[0] + (twobytes[1]<<8)) {
-		case OMAGIC:	/* 0407 */
-		case NMAGIC:	/* 0410 */
-		case ZMAGIC:	/* 0413 */
+		case 0407:	/* a.out obj */
+		case 0410:	/* a.out exec */
+		case 0413:	/* a.out demand exec */
 		case 0405:
 		case 0411:
 		case 0177545:
