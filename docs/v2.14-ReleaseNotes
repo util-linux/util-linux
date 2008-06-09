@@ -147,6 +147,8 @@ chsh:
    - should use pam_end function to terminate the PAM transaction  [Yu Zhiguo, Karel Zak]
 column:
    - replace errs.h with libc err.h  [Karel Zak]
+ddate:
+   - 11th, 12th and 13th of month  [Volker Schatz]
 docs:
    - add a note about minix v3 to TODO file  [Karel Zak]
    - add info about .bugfix releases and branches  [Karel Zak]
@@ -165,7 +167,6 @@ docs:
    - update AUTHORS file  [Karel Zak]
    - update TODO file  [Karel Zak]
    - update v2.14 ReleaseNotes  [Karel Zak]
-   - update v2.14-ReleaseNotes  [Karel Zak]
    - we already rewrote the scriptreplay script; remove that TODO entry  [James Youngman]
 elvtune:
    - use get_linux_version()  [Karel Zak]
@@ -282,6 +283,7 @@ mount:
    - don't call canonicalize(SPEC) for cifs, smbfs and nfs  [Karel Zak]
    - don't canonicalize LABEL= or UUID= spec  [Karel Zak]
    - drop the part always true from a while condition  [Pascal Terjan]
+   - fix a small typo in mount.8  [Christophe Blaess]
    - fix fd leak  [Matthias Koenig]
    - fix typo in mount.8  [Karel Zak]
    - hint about helper program if device doesn't exist  [Karel Zak]
@@ -343,6 +345,7 @@ rev:
    - use warn() in errs.h  [Li Zefan]
 rtcwake:
    - fix UTC time usage  [David Brownell]
+   - fix the default mode to "standby"  [Paulius Zaleckas]
    - fix typo  [Karel Zak]
    - fix typo SATE -> STATE  [Mike Frysinger]
    - fix verbose message  [Karel Zak]
