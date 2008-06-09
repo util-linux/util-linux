@@ -51,7 +51,7 @@ static char		*progname;
 #define SYS_POWER_STATE_PATH	"/sys/power/state"
 #define ADJTIME_PATH		"/etc/adjtime"
 #define DEFAULT_DEVICE		"/dev/rtc0"
-#define DEFAULT_MODE		"suspend"
+#define DEFAULT_MODE		"standby"
 
 enum ClockMode {
 	CM_AUTO,
