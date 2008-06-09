@@ -1076,6 +1076,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   int loop = 0;
   const char *loopdev = 0, *loopfile = 0;
   struct stat statbuf;
+  int retries = 0;	/* Nr of retries for mount in case of ENOMEDIUM */
 
   /* copies for freeing on exit */
   const char *opts1, *spec1, *node1, *types1, *extra_opts1;
@@ -1138,6 +1139,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       goto out;
   }
 
+mount_retry:
   block_signals (SIG_BLOCK);
 
   if (!fake) {
@@ -1367,6 +1369,17 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       }
       break;
     }
+    case ENOMEDIUM:
+      if (retries < CRDOM_NOMEDIUM_RETRIES) {
+	      if (verbose)
+		      printf(_("mount: no medium found on %s ...trying again\n"),
+				 spec);
+              sleep(3);
+	      ++retries;
+              goto mount_retry;
+      }
+      error(_("mount: no medium found on %s"), spec);
+      break;
     default:
       error ("mount: %s", strerror (mnt_err)); break;
     }
