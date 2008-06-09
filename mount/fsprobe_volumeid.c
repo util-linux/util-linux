@@ -3,6 +3,7 @@
 #include <unistd.h>
 #include <string.h>
 #include <stddef.h>
+#include <errno.h>
 #include <sys/mount.h>
 #include <sys/ioctl.h>
 #include <fcntl.h>
@@ -30,10 +31,18 @@ static char
 	struct volume_id *id;
 	const char *val;
 	char *value = NULL;
+	int retries = 0;
 
+retry:
 	fd = open(device, O_RDONLY);
-	if (fd < 0)
+	if (fd < 0) {
+		if (errno == ENOMEDIUM && retries < CRDOM_NOMEDIUM_RETRIES) {
+			++retries;
+			sleep(3);
+			goto retry;
+		}
 		return NULL;
+	}
 
 	id = volume_id_open_fd(fd);
 	if (!id) {
