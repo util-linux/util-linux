@@ -641,6 +641,12 @@ current modify or change time. (Similar to noatime, but doesn't break
 mutt or other applications that need to know if a file has been read
 since the last time it was modified.)
 .TP
+.B norelatime
+Do not use
+.B realatime
+feature (e.g, for systems where the feature is enabled by default, for
+more details see mount options in /proc/mounts).
+.TP
 .B noauto
 Can only be mounted explicitly (i.e., the
 .B \-a
