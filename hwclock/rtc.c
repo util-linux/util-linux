@@ -163,7 +163,7 @@ do_rtc_read_ioctl(int rtc_fd, struct tm *tm) {
 		perror(ioctlname);
 		fprintf(stderr, _("ioctl() to %s to read the time failed.\n"),
 			rtc_dev_name);
-		hwclock_exit(EX_IOERR);
+		return -1;
 	}
 
 	tm->tm_isdst = -1;          /* don't know whether it's dst */

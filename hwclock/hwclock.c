@@ -425,7 +425,7 @@ mktime_tz(struct tm tm, const bool universal,
 }
 
 
-static void
+static int
 read_hardware_clock(const bool universal, bool *valid_p, time_t *systime_p){
 /*----------------------------------------------------------------------------
   Read the hardware clock and return the current time via <tm> argument.
@@ -436,6 +436,8 @@ read_hardware_clock(const bool universal, bool *valid_p, time_t *systime_p){
   int err;
 
   err = ur->read_hardware_clock(&tm);
+  if (err)
+	  return err;
 
   if (badyear)
     read_date_from_file(&tm);
@@ -445,6 +447,8 @@ read_hardware_clock(const bool universal, bool *valid_p, time_t *systime_p){
 	    tm.tm_year+1900, tm.tm_mon+1, tm.tm_mday,
             tm.tm_hour, tm.tm_min, tm.tm_sec);
   mktime_tz(tm, universal, valid_p, systime_p);
+
+  return 0;
 }
 
 
@@ -1073,27 +1077,31 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 	adjtime.dirty = TRUE;
       }
 
-      rc = synchronize_to_clock_tick();  /* this takes up to 1 second */
-      if (rc)
-	      return rc;
-
       {
         struct timeval read_time;
           /* The time at which we read the Hardware Clock */
 
-        bool hclock_valid;
+        bool hclock_valid = FALSE;
           /* The Hardware Clock gives us a valid time, or at least something
              close enough to fool mktime().
              */
 
-        time_t hclocktime;
+        time_t hclocktime = 0;
           /* The time the hardware clock had just after we
              synchronized to its next clock tick when we started up.
              Defined only if hclock_valid is true.
              */
 
-        gettimeofday(&read_time, NULL);
-        read_hardware_clock(universal, &hclock_valid, &hclocktime);
+       if (show || adjust || hctosys || !noadjfile) {
+          /* data from HW-clock are required */
+          rc = synchronize_to_clock_tick();
+          if (rc)
+             return EX_IOERR;
+          gettimeofday(&read_time, NULL);
+          rc = read_hardware_clock(universal, &hclock_valid, &hclocktime);
+          if (rc)
+             return EX_IOERR;
+	}
 
         if (show) {
           display_time(hclock_valid, hclocktime,
