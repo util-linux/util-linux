@@ -327,7 +327,7 @@ append_context(const char *optname, char *optdata, char **extra_opts)
 	security_context_t raw = NULL;
 	char *data = NULL;
 
-	if (!is_selinux_enabled())
+	if (is_selinux_enabled() != 1)
 		/* ignore the option if we running without selinux */
 		return 0;
 
@@ -338,8 +338,8 @@ append_context(const char *optname, char *optdata, char **extra_opts)
 	data = *optdata =='"' ? strip_quotes(optdata) : optdata;
 
 	if (selinux_trans_to_raw_context(
-			(security_context_t) data, &raw)==-1 ||
-			raw==NULL)
+			(security_context_t) data, &raw) == -1 ||
+			raw == NULL)
 		return -1;
 
 	if (verbose)
@@ -1370,6 +1370,29 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   res = EX_FAIL;
 
  out:
+
+#ifdef HAVE_LIBSELINUX
+  if (res != EX_FAIL && is_selinux_enabled() > 0) {
+      security_context_t raw = NULL, def = NULL;
+
+      if (getfilecon(node, &raw) > 0 &&
+		     security_get_initial_context("file", &def) == 0) {
+
+	  if (!selinux_file_context_cmp(raw, def))
+	      printf(_("mount: %s does not contain SELinux labels.\n"
+                   "       You just mounted an file system that supports labels which does not\n"
+                   "       contain labels, onto an SELinux box. It is likely that confined\n"
+                   "       applications will generate AVC messages and not be allowed access to\n"
+                   "       this file system.  You can add labels to this file system by executing\n"
+                   "       restorecon(8). If you do not want to add labels to this file system,\n"
+                   "       you should mount the file system using one of the \"context\" mount\n"
+                   "       option."), node);
+      }
+      freecon(raw);
+      freecon(def);
+  }
+#endif
+
   my_free(extra_opts1);
   my_free(spec1);
   my_free(node1);
