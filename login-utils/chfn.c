@@ -148,7 +148,7 @@ int main (int argc, char **argv) {
     }
 
 #ifdef HAVE_LIBSELINUX
-    if (is_selinux_enabled()) {
+    if (is_selinux_enabled() > 0) {
       if(uid == 0) {
 	if (checkAccess(oldf.username,PASSWD__CHFN)!=0) {
 	  security_context_t user_context;

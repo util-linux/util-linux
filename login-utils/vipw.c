@@ -195,7 +195,7 @@ pw_unlock(void) {
 	link(orig_file, tmp);
 
 #ifdef HAVE_LIBSELINUX
-	if (is_selinux_enabled()) {
+	if (is_selinux_enabled() > 0) {
 	  security_context_t passwd_context=NULL;
 	  int ret=0;
 	  if (getfilecon(orig_file,&passwd_context) < 0) {

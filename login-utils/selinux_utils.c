@@ -36,7 +36,7 @@ int checkAccess(char *chuser, int access) {
 }
 
 int setupDefaultContext(char *orig_file) {
-  if (is_selinux_enabled()) {
+  if (is_selinux_enabled() > 0) {
     security_context_t scontext;
     
     if (getfilecon(orig_file,&scontext)<0) {
