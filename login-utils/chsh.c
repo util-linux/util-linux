@@ -134,7 +134,7 @@ main (int argc, char *argv[]) {
     }
 
 #ifdef HAVE_LIBSELINUX
-    if (is_selinux_enabled()) {
+    if (is_selinux_enabled() > 0) {
       if(uid == 0) {
 	if (checkAccess(pw->pw_name,PASSWD__CHSH)!=0) {
 	  security_context_t user_context;

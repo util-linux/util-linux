@@ -746,7 +746,7 @@ use the -f option to force it.\n"),
 #endif
 
 #ifdef HAVE_LIBSELINUX
-	if (S_ISREG(statbuf.st_mode) && is_selinux_enabled()) {
+	if (S_ISREG(statbuf.st_mode) && is_selinux_enabled() > 0) {
 		security_context_t context_string;
 		security_context_t oldcontext;
 		context_t newcontext;
