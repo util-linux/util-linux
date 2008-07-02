@@ -102,6 +102,29 @@ is_loop_used(int fd)
 	return ioctl (fd, LOOP_GET_STATUS, &li) == 0;
 }
 
+int
+is_loop_autoclear(const char *device)
+{
+	struct loop_info lo;
+	struct loop_info64 lo64;
+	int fd, rc = 0;
+
+	if ((fd = open(device, O_RDONLY)) < 0)
+		return 0;
+
+	if (ioctl(fd, LOOP_GET_STATUS64, &lo64) == 0) {
+		if (lo64.lo_flags & LO_FLAGS_AUTOCLEAR)
+			rc = 1;
+
+	} else if (ioctl(fd, LOOP_GET_STATUS, &lo) == 0) {
+		if (lo.lo_flags & LO_FLAGS_AUTOCLEAR)
+			rc = 1;
+	}
+
+	close(fd);
+	return rc;
+}
+
 static char *
 looplist_mk_devname(struct looplist *ll, int num)
 {
