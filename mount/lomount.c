@@ -102,24 +102,31 @@ is_loop_used(int fd)
 	return ioctl (fd, LOOP_GET_STATUS, &li) == 0;
 }
 
-int
-is_loop_autoclear(const char *device)
+static int
+is_loopfd_autoclear(int fd)
 {
 	struct loop_info lo;
 	struct loop_info64 lo64;
-	int fd, rc = 0;
-
-	if ((fd = open(device, O_RDONLY)) < 0)
-		return 0;
 
 	if (ioctl(fd, LOOP_GET_STATUS64, &lo64) == 0) {
 		if (lo64.lo_flags & LO_FLAGS_AUTOCLEAR)
-			rc = 1;
+			return 1;
 
 	} else if (ioctl(fd, LOOP_GET_STATUS, &lo) == 0) {
 		if (lo.lo_flags & LO_FLAGS_AUTOCLEAR)
-			rc = 1;
+			return 1;
 	}
+	return 0;
+}
+
+int
+is_loop_autoclear(const char *device)
+{
+	int fd, rc;
+
+	if ((fd = open(device, O_RDONLY)) < 0)
+		return 0;
+	rc = is_loopfd_autoclear(fd);
 
 	close(fd);
 	return rc;
@@ -748,23 +755,15 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 			i = ioctl(fd, LOOP_SET_STATUS, &loopinfo);
 			if (i)
 				perror("ioctl: LOOP_SET_STATUS");
-			else if (*options & SETLOOP_AUTOCLEAR)
-			{
-				i = ioctl(fd, LOOP_GET_STATUS, &loopinfo);
-				if (i || !(loopinfo.lo_flags & LO_FLAGS_AUTOCLEAR))
-					*options &= ~SETLOOP_AUTOCLEAR;
-			}
 		}
 		memset(&loopinfo, 0, sizeof(loopinfo));
 	}
-	else if (*options & SETLOOP_AUTOCLEAR)
-	{
-		i = ioctl(fd, LOOP_GET_STATUS64, &loopinfo64);
-		if (i || !(loopinfo64.lo_flags & LO_FLAGS_AUTOCLEAR))
-			*options &= ~SETLOOP_AUTOCLEAR;
-	}
-	memset(&loopinfo64, 0, sizeof(loopinfo64));
 
+	if ((*options & SETLOOP_AUTOCLEAR) && !is_loopfd_autoclear(fd))
+		/* kernel doesn't support loop auto-destruction */
+		*options &= ~SETLOOP_AUTOCLEAR;
+
+	memset(&loopinfo64, 0, sizeof(loopinfo64));
 
 	if (i) {
 		ioctl (fd, LOOP_CLR_FD, 0);
