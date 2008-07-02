@@ -190,6 +190,7 @@ umount_one (const char *spec, const char *node, const char *type,
 	int res;
 	int status;
 	const char *loopdev;
+	int myloop = 0;
 
 	/* Special case for root.  As of 0.99pl10 we can (almost) unmount root;
 	   the kernel will remount it readonly so that we can carry on running
@@ -201,13 +202,20 @@ umount_one (const char *spec, const char *node, const char *type,
 		  || streq (node, "rootfs"));
 	if (isroot)
 		nomtab++;
-	
+
 	/*
 	 * Call umount.TYPE for types that require a separate umount program.
 	 * All such special things must occur isolated in the types string.
 	 */
 	if (check_special_umountprog(spec, node, type, &status))
 		return status;
+
+	/*
+	 * Ignore the option "-d" for non-loop devices and loop devices with
+	 * LO_FLAGS_AUTOCLEAR flag.
+	 */
+	if (delloop && is_loop_device(spec) && !is_loop_autoclear(spec))
+		myloop = 1;
 
 	umnt_err = umnt_err2 = 0;
 	if (lazy) {
@@ -310,7 +318,7 @@ umount_one (const char *spec, const char *node, const char *type,
 		}
 
 		/* Also free loop devices when -d flag is given */
-		if (delloop && is_loop_device(spec))
+		if (myloop)
 			loopdev = spec;
 	}
  gotloop:
