@@ -72,6 +72,8 @@ static void done(int);
 int term_chk(char *, int *, time_t *, int);
 int utmp_chk(char *, char *);
 
+static gid_t myegid;
+
 int
 main(int argc, char **argv) {
 	time_t atime;
@@ -82,6 +84,8 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
+
+	myegid = getegid();
 
 	/* check that sender has write enabled */
 	if (isatty(fileno(stdin)))
@@ -267,7 +271,9 @@ int term_chk(char *tty, int *msgsokP, time_t *atimeP, int showerror)
 			    "write: %s: %s\n", path, strerror(errno));
 		return(1);
 	}
-	*msgsokP = (s.st_mode & (S_IWRITE >> 3)) != 0;	/* group write bit */
+
+	/* group write bit and group ownership */
+	*msgsokP = (s.st_mode & (S_IWRITE >> 3)) && myegid == s.st_gid;
 	*atimeP = s.st_atime;
 	return(0);
 }
