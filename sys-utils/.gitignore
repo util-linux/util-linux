@@ -8,6 +8,7 @@ ldattach
 readprofile
 renice
 rtcwake
+lscpu
 setarch
 setsid
 tunelp

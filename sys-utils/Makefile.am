@@ -7,7 +7,7 @@ endif
 
 usrbinexec_PROGRAMS = flock ipcrm ipcs renice setsid
 if LINUX
-usrbinexec_PROGRAMS += cytune setarch
+usrbinexec_PROGRAMS += cytune setarch lscpu
 endif
 
 cytune_SOURCES = cytune.c cyclades.h
@@ -25,7 +25,7 @@ tunelp_SOURCES = tunelp.c lp.h
 
 dist_man_MANS = flock.1 readprofile.1 \
 	ctrlaltdel.8 cytune.8 dmesg.1 ipcrm.1 ipcs.1 ldattach.8 renice.1 \
-	setsid.1 tunelp.8 setarch.8 rtcwake.8
+	setsid.1 tunelp.8 setarch.8 rtcwake.8 lscpu.1
 
 info_TEXINFOS = ipc.texi
 

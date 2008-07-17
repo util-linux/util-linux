@@ -1,0 +1,29 @@
+.\" Process this file with
+.\" groff -man -Tascii lscpu.1
+.\"
+.TH LSCPU 1 "JULY 2008" Linux "User Manuals"
+.SH NAME
+lscpu \- CPU architecture information helper
+.SH SYNOPSIS
+.B lscpu [-hp]
+.SH DESCRIPTION
+.B lscpu
+gathers CPU architecture information like number of CPUs, threads,
+cores, sockets, NUMA nodes, information about CPU caches, CPU family,
+model and stepping from sysfs and /proc/cpuinfo, and prints it in
+human-readable format. Alternatively, it can print out in parsable
+format including how different caches are shared by different CPUs,
+which can also be fed to other programs.
+.SH OPTIONS
+.IP -h, --help
+Print a help message.
+.IP -p, --parse
+Print out in parsable instead of printable format.
+.SH BUGS
+The program at the moment does not handle the system installed with
+different types of physical processors.
+.SH AUTHOR
+Cai Qian <qcai@redhat.com>
+.SH AVAILABILITY
+The setarch command is part of the util-linux-ng package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.

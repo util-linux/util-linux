@@ -2,6 +2,8 @@
 The project utils-linux-ng doesn't use same license for all code. There are
 code with:
 
+   * GPLv3+ (GNU General Public License version 3, or any later version)
+
    * GPLv2+ (GNU General Public License version 2, or any later version)
 
    * GPLv2 (GNU General Public License version 2)
