@@ -12,9 +12,6 @@
 #include <signal.h>
 #include <stdarg.h>
 #include <stdlib.h>
-#if !defined(bool_t) && !defined(__GLIBC__)
-#include <rpc/types.h>
-#endif
 
 /* global mount, umount, and losetup variables */
 extern int mount_quiet;
