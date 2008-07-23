@@ -992,7 +992,7 @@ update_mtab_entry(const char *spec, const char *node, const char *type,
 	if (!nomtab && mtab_does_not_exist()) {
 		if (verbose > 1)
 			printf(_("mount: no %s found - creating it..\n"),
-			       MOUNTED);
+			       _PATH_MOUNTED);
 		create_mtab ();
 	}
 
