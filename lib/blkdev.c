@@ -1,30 +1,74 @@
 
 #include <sys/types.h>
 #include <sys/ioctl.h>
+#include <unistd.h>
 
 #include "blkdev.h"
 #include "linux_version.h"
+
+static long
+blkdev_valid_offset (int fd, off_t offset) {
+	char ch;
+
+	if (lseek (fd, offset, 0) < 0)
+		return 0;
+	if (read (fd, &ch, 1) < 1)
+		return 0;
+	return 1;
+}
+
+off_t
+blkdev_find_size (int fd) {
+	off_t high, low;
+
+	low = 0;
+	for (high = 1; high > 0 && blkdev_valid_offset (fd, high); high *= 2)
+		low = high;
+	while (low < high - 1)
+	{
+		const off_t mid = (low + high) / 2;
+
+		if (blkdev_valid_offset (fd, mid))
+			low = mid;
+		else
+			high = mid;
+	}
+	blkdev_valid_offset (fd, 0);
+	return (low + 1);
+}
 
 /* get size in bytes */
 int
 blkdev_get_size(int fd, unsigned long long *bytes)
 {
-	unsigned long size;
-	int ver = get_linux_version();
+	/* TODO: use stat as well */
 
+#ifdef BLKGETSIZE64
+#ifdef __linux__
+	int ver = get_linux_version();
 	/* kernels 2.4.15-2.4.17, had a broken BLKGETSIZE64 */
 	if (ver >= KERNEL_VERSION (2,6,0) ||
-	   (ver >= KERNEL_VERSION (2,4,18) && ver < KERNEL_VERSION (2,5,0))) {
-
+	   (ver >= KERNEL_VERSION (2,4,18) && ver < KERNEL_VERSION (2,5,0)))
+#endif
 		if (ioctl(fd, BLKGETSIZE64, bytes) >= 0)
 			return 0;
-	}
-	if (ioctl(fd, BLKGETSIZE, &size) >= 0) {
-		*bytes = ((unsigned long long)size << 9);
-		return 0;
+#endif /* BLKGETSIZE64 */
+
+#ifdef BLKGETSIZE
+	{
+		unsigned long size;
+
+		if (ioctl(fd, BLKGETSIZE, &size) >= 0) {
+			*bytes = ((unsigned long long)size << 9);
+			return 0;
+		}
 	}
 
 	return -1;
+#endif /* BLKGETSIZE */
+
+	*bytes = blkdev_find_size(fd);
+	return 0;
 }
 
 /* get 512-byte sector count */
@@ -45,14 +89,21 @@ blkdev_get_sectors(int fd, unsigned long long *sectors)
 int
 blkdev_get_sector_size(int fd, int *sector_size)
 {
+#ifdef BLKSSZGET
+#ifdef __linux__
 	if (get_linux_version() < KERNEL_VERSION(2,3,3)) {
 		*sector_size = DEFAULT_SECTOR_SIZE;
 		return 0;
 	}
+#endif
 	if (ioctl(fd, BLKSSZGET, sector_size) >= 0)
 		return 0;
 
 	return -1;
+#else
+	*sector_size = DEFAULT_SECTOR_SIZE;
+	return 0;
+#endif
 }
 
 
