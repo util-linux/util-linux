@@ -446,7 +446,10 @@ get_geometry(char *dev, int fd, int silent) {
     unsigned long long sectors;
     struct geometry R;
 
-    if (ioctl(fd, HDIO_GETGEO, &g)) {
+#ifdef HDIO_GETGEO
+    if (ioctl(fd, HDIO_GETGEO, &g))
+#endif
+    {
 	g.heads = g.sectors = g.cylinders = g.start = 0;
 	if (!silent)
 	    do_warn(_("Disk %s: cannot get geometry\n"), dev);
@@ -790,7 +793,12 @@ add_sector_and_offset(struct disk_desc *z) {
 /* tell the kernel to reread the partition tables */
 static int
 reread_ioctl(int fd) {
-    if (ioctl(fd, BLKRRPART)) {
+#ifdef BLKRRPART
+    if (ioctl(fd, BLKRRPART))
+#else
+    errno = ENOSYS;
+#endif
+    {
 	perror("BLKRRPART");
 
 	/* 2.6.8 returns EIO for a zero table */

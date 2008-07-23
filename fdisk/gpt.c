@@ -131,6 +131,7 @@ last_lba(int fd)
 	return sectors - 1;
 }
 
+#ifdef __linux__
 static ssize_t
 read_lastoddsector(int fd, uint64_t lba, void *buffer, size_t count)
 {
@@ -148,6 +149,7 @@ read_lastoddsector(int fd, uint64_t lba, void *buffer, size_t count)
 
         return !rc;
 }
+#endif
 
 static ssize_t
 read_lba(int fd, uint64_t lba, void *buffer, size_t bytes)
@@ -159,6 +161,7 @@ read_lba(int fd, uint64_t lba, void *buffer, size_t bytes)
 	lseek(fd, offset, SEEK_SET);
 	bytesread = read(fd, buffer, bytes);
 
+#ifdef __linux__
         /* Kludge.  This is necessary to read/write the last
            block of an odd-sized disk, until Linux 2.5.x kernel fixes.
            This is only used by gpt.c, and only to read
@@ -166,6 +169,7 @@ read_lba(int fd, uint64_t lba, void *buffer, size_t bytes)
         */
         if (!bytesread && !(last_lba(fd) & 1) && lba == last_lba(fd))
                 bytesread = read_lastoddsector(fd, lba, buffer, bytes);
+#endif
         return bytesread;
 }
 

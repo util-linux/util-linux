@@ -713,6 +713,7 @@ create_sgilabel(void)
 
 	res = blkdev_get_sectors(fd, &llsectors);
 
+#ifdef HDIO_GETGEO
 	if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
 		heads = geometry.heads;
 		sectors = geometry.sectors;
@@ -733,6 +734,7 @@ create_sgilabel(void)
 				  " > 33.8 GB.\n"), disk_device, cylinders);
 		}
 	}
+#endif
 	for (i = 0; i < 4; i++) {
 		old[i].sysid = 0;
 		if (valid_part_table_flag(MBRbuffer)) {

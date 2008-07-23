@@ -1685,6 +1685,7 @@ fill_p_info(void) {
 	 clear_warning();
     }
 
+#ifdef BLKFLSBUF
     /* Blocks are visible in more than one way:
        e.g. as block on /dev/hda and as block on /dev/hda3
        By a bug in the Linux buffer cache, we will see the old
@@ -1694,6 +1695,7 @@ fill_p_info(void) {
        so this only plays a role if we want to show volume labels. */
     ioctl(fd, BLKFLSBUF);	/* ignore errors */
 				/* e.g. Permission Denied */
+#endif
 
     if (blkdev_get_sectors(fd, &llsectors) == -1)
 	    fatal(_("Cannot get disk size"), 3);
@@ -1903,10 +1905,12 @@ write_part_table(void) {
 	}
 
     if (is_bdev) {
+#ifdef BLKRRPART
 	 sync();
 	 sleep(2);
 	 if (!ioctl(fd,BLKRRPART))
 	      changed = TRUE;
+#endif
 	 sync();
 	 sleep(4);
 

@@ -212,6 +212,7 @@ void create_sunlabel(void)
 	res = blkdev_get_sectors(fd, &llsectors);
 	sec_fac = sector_size / 512;
 
+#ifdef HDIO_GETGEO
 	if (!ioctl(fd, HDIO_GETGEO, &geometry)) {
 	        heads = geometry.heads;
 	        sectors = geometry.sectors;
@@ -228,7 +229,9 @@ void create_sunlabel(void)
 				  "This value may be truncated for devices"
 				  " > 33.8 GB.\n"), disk_device, cylinders);
 		}
-	} else {
+	} else
+#endif
+	{
 	        heads = read_int(1,1,1024,0,_("Heads"));
 		sectors = read_int(1,1,1024,0,_("Sectors/track"));
 		cylinders = read_int(1,1,65535,0,_("Cylinders"));

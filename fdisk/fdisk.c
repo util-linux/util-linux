@@ -2261,10 +2261,15 @@ reread_partition_table(int leave) {
 
 	i = fstat(fd, &statbuf);
 	if (i == 0 && S_ISBLK(statbuf.st_mode)) {
-		printf(_("Calling ioctl() to re-read partition table.\n"));
 		sync();
 		sleep(2);
+#ifdef BLKRRPART
+		printf(_("Calling ioctl() to re-read partition table.\n"));
 		i = ioctl(fd, BLKRRPART);
+#else
+		errno = ENOSYS;
+		i = 1;
+#endif
         }
 
 	if (i) {
