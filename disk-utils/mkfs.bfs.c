@@ -16,11 +16,7 @@
 #include <string.h>
 #include <time.h>
 #include "nls.h"
-
-/* cannot include <linux/fs.h> */
-#ifndef BLKGETSIZE
-#define BLKGETSIZE _IO(0x12,96)    /* return device size */
-#endif
+#include "blkdev.h"
 
 #define BFS_ROOT_INO		2
 #define BFS_NAMELEN		14
@@ -95,8 +91,8 @@ int
 main(int argc, char *argv[]) {
 	char *device, *volume, *fsname;
 	int inodes;
-	unsigned long total_blocks, ino_bytes, ino_blocks, data_blocks;
-	unsigned long user_specified_total_blocks = 0;
+	unsigned long long total_blocks, ino_bytes, ino_blocks, data_blocks;
+	unsigned long long user_specified_total_blocks = 0;
 	int verbose = 0;
 	int fd;
 	struct bfssb sb;
@@ -177,19 +173,19 @@ main(int argc, char *argv[]) {
 	}
 
 	if (optind == argc-1)
-		user_specified_total_blocks = atoi(argv[optind]);
+		user_specified_total_blocks = atoll(argv[optind]);
 	else if (optind != argc)
 		usage();
 
-	if (ioctl(fd, BLKGETSIZE, &total_blocks) == -1) {
+	if (blkdev_get_sectors(fd, &total_blocks) == -1) {
 		if (!user_specified_total_blocks) {
-			perror("BLKGETSIZE");
+			perror("blkdev_get_sectors");
 			fatal(_("cannot get size of %s"), device);
 		}
 		total_blocks = user_specified_total_blocks;
 	} else if (user_specified_total_blocks) {
 		if (user_specified_total_blocks > total_blocks)
-			fatal(_("blocks argument too large, max is %lu"),
+			fatal(_("blocks argument too large, max is %llu"),
 			      total_blocks);
 		total_blocks = user_specified_total_blocks;
 	}
@@ -213,7 +209,7 @@ main(int argc, char *argv[]) {
 
 	/* mimic the behaviour of SCO's mkfs - maybe this limit is needed */
 	if (data_blocks < 32)
-		fatal(_("not enough space, need at least %lu blocks"),
+		fatal(_("not enough space, need at least %llu blocks"),
 		      ino_blocks + 33);
 
 	memset(&sb, 0, sizeof(sb));
@@ -233,9 +229,9 @@ main(int argc, char *argv[]) {
 			fprintf(stderr, _("Inodes: %d (in 1 block)\n"),
 				inodes);
 		else
-			fprintf(stderr, _("Inodes: %d (in %ld blocks)\n"),
+			fprintf(stderr, _("Inodes: %d (in %lld blocks)\n"),
 				inodes, ino_blocks);
-		fprintf(stderr, _("Blocks: %ld\n"), total_blocks);
+		fprintf(stderr, _("Blocks: %lld\n"), total_blocks);
 		fprintf(stderr, _("Inode end: %d, Data end: %d\n"),
 			sb.s_start-1, sb.s_end);
 	}

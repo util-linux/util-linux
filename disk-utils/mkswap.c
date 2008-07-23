@@ -388,35 +388,6 @@ check_blocks(void) {
 		printf(_("%lu bad pages\n"), badpages);
 }
 
-static long
-valid_offset (int fd, off_t offset) {
-	char ch;
-
-	if (lseek (fd, offset, 0) < 0)
-		return 0;
-	if (read (fd, &ch, 1) < 1)
-		return 0;
-	return 1;
-}
-
-static off_t
-find_size (int fd) {
-	off_t high, low;
-
-	low = 0;
-	for (high = 1; high > 0 && valid_offset (fd, high); high *= 2)
-		low = high;
-	while (low < high - 1) {
-		const off_t mid = (low + high) / 2;
-
-		if (valid_offset (fd, mid))
-			low = mid;
-		else
-			high = mid;
-	}
-	return (low + 1);
-}
-
 /* return size in pages, to avoid integer overflow */
 static unsigned long
 get_size(const char  *file) {
@@ -431,7 +402,7 @@ get_size(const char  *file) {
 	if (blkdev_get_size(fd, &size) == 0)
 		size /= pagesize;
 	else
-		size = find_size(fd) / pagesize;
+		size = blkdev_find_size(fd) / pagesize;
 
 	close(fd);
 	return size;
