@@ -1376,7 +1376,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
  out:
 
 #ifdef HAVE_LIBSELINUX
-  if (res != EX_FAIL && is_selinux_enabled() > 0) {
+  if (res != EX_FAIL && verbose && is_selinux_enabled() > 0) {
       security_context_t raw = NULL, def = NULL;
 
       if (getfilecon(node, &raw) > 0 &&
@@ -1387,10 +1387,8 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
                    "       You just mounted an file system that supports labels which does not\n"
                    "       contain labels, onto an SELinux box. It is likely that confined\n"
                    "       applications will generate AVC messages and not be allowed access to\n"
-                   "       this file system.  You can add labels to this file system by executing\n"
-                   "       restorecon(8). If you do not want to add labels to this file system,\n"
-                   "       you should mount the file system using one of the \"context\" mount\n"
-                   "       option."), node);
+                   "       this file system.  For more details see restorecon(8) and mount(8).\n"),
+                   node);
       }
       freecon(raw);
       freecon(def);
