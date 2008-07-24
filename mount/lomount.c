@@ -25,6 +25,10 @@
 #include "xmalloc.h"
 #include "realpath.h"
 
+#ifndef HAVE_VERSIONSORT
+# include "strverscmp.h"
+#endif
+
 #define SIZE(a) (sizeof(a)/sizeof(a[0]))
 
 #ifdef LOOP_SET_FD

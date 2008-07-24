@@ -8,13 +8,18 @@ dist_man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 
 utils_common = sundries.c xmalloc.c realpath.c fsprobe.c
 
+if !HAVE_VERSIONSORT
+fallback =  ../lib/strverscmp.c
+endif
+
 headers_common = fstab.h mount_mntent.h mount_constants.h \
 	lomount.h fsprobe.h realpath.h xmalloc.h \
 	getusername.h loop.h sundries.h
 
 mount_common = fstab.c mount_mntent.c getusername.c lomount.c \
 	$(utils_common) $(headers_common) ../lib/env.c ../lib/linux_version.c \
-	../lib/blkdev.c
+	../lib/blkdev.c $(fallback)
+
 
 mount_SOURCES = mount.c $(mount_common) ../lib/setproctitle.c
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
@@ -27,8 +32,9 @@ umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 swapon_SOURCES = swapon.c swap_constants.h $(utils_common)
 
 losetup_SOURCES = lomount.c sundries.c xmalloc.c realpath.c \
-	loop.h lomount.h xmalloc.h sundries.h realpath.h
+	loop.h lomount.h xmalloc.h sundries.h realpath.h $(fallback)
 losetup_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
+
 
 mount_LDADD = $(LDADD_common)
 umount_LDADD = $(LDADD_common)
