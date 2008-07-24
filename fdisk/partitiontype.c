@@ -8,6 +8,7 @@
  */
 #include <stdio.h>
 #include <fcntl.h>
+#include <stdlib.h>
 
 struct aix_label {
 	unsigned int   magic;
