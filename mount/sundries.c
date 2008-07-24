@@ -1,6 +1,5 @@
 /*
  * Support functions.  Exported functions are prototyped in sundries.h.
- * sundries.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
  *
  * added fcntl locking by Kjetil T. (kjetilho@math.uio.no) - aeb, 950927
  *

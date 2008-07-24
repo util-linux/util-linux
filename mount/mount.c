@@ -1,6 +1,5 @@
 /*
- * A mount(8) for Linux 0.99.
- * mount.c,v 1.1.1.1 1993/11/18 08:40:51 jrs Exp
+ * A mount(8) for Linux.
  *
  * Modifications by many people. Distributed under GPL.
  */

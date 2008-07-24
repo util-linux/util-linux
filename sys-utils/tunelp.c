@@ -6,7 +6,7 @@
 *	for information on distribution conditions.			     *
 \****************************************************************************/
 
-/* $Id: tunelp.c,v 1.9 1998/06/08 19:37:11 janl Exp $
+/*
  * $Log: tunelp.c,v $
  * Revision 1.9  1998/06/08 19:37:11  janl
  * Thus compiles tunelp with 2.1.103 kernels

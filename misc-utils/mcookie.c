@@ -4,8 +4,6 @@
  * Public Domain 1995, 1999 Rickard E. Faith (faith@acm.org)
  * This program comes with ABSOLUTELY NO WARRANTY.
  * 
- * $Id: mcookie.c,v 1.5 1997/07/06 00:13:06 aebr Exp $
- *
  * This program gathers some random bits of data and used the MD5
  * message-digest algorithm to generate a 128-bit hexadecimal number for
  * use with xauth(1).
