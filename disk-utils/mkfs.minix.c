@@ -75,6 +75,7 @@
 #include "blkdev.h"
 #include "minix.h"
 #include "nls.h"
+#include "pathnames.h"
 
 #ifndef __GNUC__
 #error "needs gcc for the bitop-__asm__'s"
@@ -172,7 +173,7 @@ check_mount(void) {
 	FILE * f;
 	struct mntent * mnt;
 
-	if ((f = setmntent (MOUNTED, "r")) == NULL)
+	if ((f = setmntent (_PATH_MOUNTED, "r")) == NULL)
 		return;
 	while ((mnt = getmntent (f)) != NULL)
 		if (strcmp (device_name, mnt->mnt_fsname) == 0)

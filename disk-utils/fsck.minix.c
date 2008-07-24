@@ -104,6 +104,7 @@
 
 #include "minix.h"
 #include "nls.h"
+#include "pathnames.h"
 
 #ifndef __linux__
 #define volatile
@@ -304,7 +305,7 @@ check_mount(void) {
 	int cont;
 	int fd;
 
-	if ((f = setmntent (MOUNTED, "r")) == NULL)
+	if ((f = setmntent (_PATH_MOUNTED, "r")) == NULL)
 		return;
 	while ((mnt = getmntent (f)) != NULL)
 		if (strcmp (device_name, mnt->mnt_fsname) == 0)
@@ -318,7 +319,7 @@ check_mount(void) {
 	 * probably not correct; so we won't issue a warning based on
 	 * it.
 	 */
-	fd = open(MOUNTED, O_RDWR);
+	fd = open(_PATH_MOUNTED, O_RDWR);
 	if (fd < 0 && errno == EROFS)
 		return;
 	else

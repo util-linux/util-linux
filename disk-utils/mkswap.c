@@ -51,6 +51,7 @@
 #include "xstrncpy.h"
 #include "nls.h"
 #include "blkdev.h"
+#include "pathnames.h"
 
 #ifdef HAVE_LIBUUID
 #include <uuid/uuid.h>
@@ -425,7 +426,7 @@ check_mount(void) {
 	FILE * f;
 	struct mntent * mnt;
 
-	if ((f = setmntent (MOUNTED, "r")) == NULL)
+	if ((f = setmntent (_PATH_MOUNTED, "r")) == NULL)
 		return 0;
 	while ((mnt = getmntent (f)) != NULL)
 		if (strcmp (device_name, mnt->mnt_fsname) == 0)
