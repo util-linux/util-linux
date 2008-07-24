@@ -38,8 +38,9 @@
  */
 
 #include <sys/param.h>
-#include <sys/dir.h>
+#include <sys/types.h>
 #include <sys/stat.h>
+#include <dirent.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -318,7 +319,7 @@ find(char **dirs, char *cp) {
 void
 findin(char *dir, char *cp) {
 	DIR *dirp;
-	struct direct *dp;
+	struct dirent *dp;
 	char *d, *dd;
 	int l;
 	char dirbuf[1024];
