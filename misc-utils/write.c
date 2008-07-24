@@ -56,7 +56,6 @@
 #include <stdlib.h>
 #include <signal.h>
 #include <sys/param.h>
-#include <sys/signal.h>
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <sys/time.h>

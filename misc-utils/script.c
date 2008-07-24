@@ -51,7 +51,7 @@
 #include <sys/ioctl.h>
 #include <sys/time.h>
 #include <sys/file.h>
-#include <sys/signal.h>
+#include <signal.h>
 #include <errno.h>
 #include <string.h>
 #include <getopt.h>
