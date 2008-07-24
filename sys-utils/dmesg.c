@@ -33,20 +33,9 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <stdlib.h>
-#include "nls.h"
-
-#if __GNU_LIBRARY__ < 5
-
-#ifndef __alpha__
-# define __NR_klogctl __NR_syslog
-  static inline _syscall3(int, klogctl, int, type, char *, b, int, len);
-#else /* __alpha__ */
-#define klogctl syslog
-#endif
-
-#else
 # include <sys/klog.h>
-#endif
+
+#include "nls.h"
 
 static char *progname;
 
