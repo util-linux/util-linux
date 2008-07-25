@@ -1671,10 +1671,10 @@ static struct option longopts[] = {
 	{ "test-opts", 1, 0, 'O' },
 	{ "pass-fd", 1, 0, 'p' },
 	{ "types", 1, 0, 't' },
-	{ "bind", 0, 0, 128 },
-	{ "move", 0, 0, 133 },
+	{ "bind", 0, 0, 'B' },
+	{ "move", 0, 0, 'M' },
 	{ "guess-fstype", 1, 0, 134 },
-	{ "rbind", 0, 0, 135 },
+	{ "rbind", 0, 0, 'R' },
 	{ "make-shared", 0, 0, 136 },
 	{ "make-slave", 0, 0, 137 },
 	{ "make-private", 0, 0, 138 },
@@ -1861,11 +1861,14 @@ main(int argc, char *argv[]) {
 	initproctitle(argc, argv);
 #endif
 
-	while ((c = getopt_long (argc, argv, "afFhilL:no:O:p:rsU:vVwt:",
+	while ((c = getopt_long (argc, argv, "aBfFhilL:Mno:O:p:rRsU:vVwt:",
 				 longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':	       /* mount everything in fstab */
 			++mount_all;
+			break;
+		case 'B': /* bind */
+			mounttype = MS_BIND;
 			break;
 		case 'f':	       /* fake: don't actually call mount(2) */
 			++fake;
@@ -1885,6 +1888,9 @@ main(int argc, char *argv[]) {
 		case 'L':
 			label = optarg;
 			break;
+		case 'M': /* move */
+			mounttype = MS_MOVE;
+			break;
 		case 'n':		/* do not write /etc/mtab */
 			++nomtab;
 			break;
@@ -1900,6 +1906,9 @@ main(int argc, char *argv[]) {
 		case 'r':		/* mount readonly */
 			readonly = 1;
 			readwrite = 0;
+			break;
+		case 'R': /* rbind */
+			mounttype = (MS_BIND | MS_REC);
 			break;
 		case 's':		/* allow sloppy mount options */
 			sloppy = 1;
@@ -1923,12 +1932,6 @@ main(int argc, char *argv[]) {
 		case 0:
 			break;
 
-		case 128: /* bind */
-			mounttype = MS_BIND;
-			break;
-		case 133: /* move */
-			mounttype = MS_MOVE;
-			break;
 		case 134:
 			/* undocumented, may go away again:
 			   call: mount --guess-fstype device
@@ -1940,9 +1943,6 @@ main(int argc, char *argv[]) {
 			printf("%s\n", fstype ? fstype : "unknown");
 			exit(fstype ? 0 : EX_FAIL);
 		    }
-		case 135:
-			mounttype = (MS_BIND | MS_REC);
-			break;
 
 		case 136:
 			mounttype = MS_SHARED;

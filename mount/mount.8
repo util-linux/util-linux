@@ -108,6 +108,11 @@ file hierarchy somewhere else. The call is
 .br
 .B "mount --bind olddir newdir"
 .RE
+or shortoption
+.RS
+.br
+.B "mount -B olddir newdir"
+.RE
 or fstab entry is:
 .RS
 .br
@@ -123,6 +128,11 @@ a second place using
 .br
 .B "mount --rbind olddir newdir"
 .RE
+or shortoption
+.RS
+.br
+.B "mount -R olddir newdir"
+.RE
 .\" available since Linux 2.4.11.
 
 Note that the filesystem mount options will remain the same as those
@@ -134,6 +144,11 @@ to another place. The call is
 .RS
 .br
 .B "mount --move olddir newdir"
+.RE
+or shortoption
+.RS
+.br
+.B "mount -M olddir newdir"
 .RE
 
 Since Linux 2.6.15 it is possible to mark a mount and its submounts as shared,
@@ -787,11 +802,15 @@ For more details see
 .BR selinux (8)
 .RE
 .TP
-.B \-\-bind
+.B \-B, \-\-bind
 Remount a subtree somewhere else (so that its contents are available
 in both places). See above.
 .TP
-.B \-\-move
+.B \-R, \-\-rbind
+Remount a subtree and all possible submounts somewhere else (so that its
+contents are available in both places). See above.
+.TP
+.B \-M, \-\-move
 Move a subtree to some other place. See above.
 
 .SH "FILESYSTEM SPECIFIC MOUNT OPTIONS"
