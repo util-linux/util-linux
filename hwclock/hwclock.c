@@ -851,8 +851,7 @@ calculate_adjustment(const double factor,
                      const double not_adjusted,
                      const time_t systime,
                      int *adjustment_p,
-                     double *retro_p,
-                     const int debug ) {
+                     double *retro_p) {
 /*----------------------------------------------------------------------------
   Do the drift adjustment calculation.
 
@@ -992,8 +991,7 @@ do_adjustment(struct adjtime *adjtime_p,
                          adjtime_p->last_adj_time,
                          adjtime_p->not_adjusted,
                          hclocktime,
-                         &adjustment, &retro,
-                         debug );
+                         &adjustment, &retro);
     if (adjustment > 0 || adjustment < -1) {
       set_hardware_clock_exact(hclocktime + adjustment,
                                time_inc(read_time, -retro),
@@ -1512,7 +1510,7 @@ main(int argc, char **argv) {
 		permitted = TRUE;
 	else {
 		/* program is designed to run setuid (in some situations) */
-		if (set || hctosys || systohc || adjust) {
+		if (set || systohc || adjust) {
 			fprintf(stderr,
 				_("Sorry, only the superuser can change "
 				  "the Hardware Clock.\n"));
