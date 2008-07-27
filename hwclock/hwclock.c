@@ -526,28 +526,32 @@ set_hardware_clock_exact(const time_t sethwtime,
 
   time_t newhwtime;
   struct timeval beginsystime, nowsystime;
+  double tdiff;
 
  time_resync:
   gettimeofday(&beginsystime, NULL);
-  newhwtime = sethwtime + (int) time_diff(beginsystime, refsystime) + 1;
+  tdiff = time_diff(beginsystime, refsystime);
+  newhwtime = sethwtime + (int) (tdiff + 0.5);
   if (debug)
     printf(_("Time elapsed since reference time has been %.6f seconds.\n"
-           "Delaying further to reach the next full second.\n"),
-           time_diff(beginsystime, refsystime));
+           "Delaying further to reach the new time.\n"), tdiff);
 
   /*
-   * Now delay some more until Hardware Clock time newhwtime arrives.  The -500
-   * ms is because the Hardware Clock always sets to your set time plus 500 ms
+   * Now delay some more until Hardware Clock time newhwtime arrives.  The 0.5 s
+   * is because the Hardware Clock always sets to your set time plus 500 ms
    * (because it is designed to update to the next second precisely 500 ms
    * after you finish the setting).
    */
   do {
-	  float tdiff;
 	  gettimeofday(&nowsystime, NULL);
 	  tdiff = time_diff(nowsystime, beginsystime);
 	  if (tdiff < 0)
-		  goto time_resync;	/* probably time was reset */
-  } while (time_diff(nowsystime, refsystime) - 0.5 < newhwtime - sethwtime);
+		  goto time_resync;	/* probably backward time reset */
+	  if (tdiff > 0.1)
+		  goto time_resync;	/* probably forward time reset */
+	  beginsystime = nowsystime;
+	  tdiff = time_diff(nowsystime, refsystime);
+  } while (newhwtime == sethwtime + (int) (tdiff + 0.5));
 
   set_hardware_clock(newhwtime, universal, testing);
 }
