@@ -1197,6 +1197,14 @@ Character set to use for converting between 8 bit characters
 and 16 bit Unicode characters. The default is iso8859-1.
 Long filenames are stored on disk in Unicode format.
 .TP
+.BI tz=UTC
+This option disables the conversion of timestamps
+between local time (as used by Windows on FAT) and UTC
+(which Linux uses internally).  This is particuluarly
+useful when mounting devices (like digital cameras)
+that are set to UTC in order to avoid the pitfalls of
+local time.
+.TP
 .B quiet
 Turn on the
 .I quiet
