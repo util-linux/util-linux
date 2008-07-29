@@ -408,7 +408,7 @@ fixtty() {
 	rtt = tt;
 	cfmakeraw(&rtt);
 	rtt.c_lflag &= ~ECHO;
-	(void) tcsetattr(0, TCSAFLUSH, &rtt);
+	(void) tcsetattr(0, TCSANOW, &rtt);
 }
 
 void
@@ -432,7 +432,7 @@ done() {
 		(void) fclose(fscript);
 		(void) close(master);
 	} else {
-		(void) tcsetattr(0, TCSAFLUSH, &tt);
+		(void) tcsetattr(0, TCSADRAIN, &tt);
 		if (!qflg)
 			printf(_("Script done, file is %s\n"), fname);
 	}
@@ -493,7 +493,7 @@ getslave() {
 		perror(line);
 		fail();
 	}
-	(void) tcsetattr(slave, TCSAFLUSH, &tt);
+	(void) tcsetattr(slave, TCSANOW, &tt);
 	(void) ioctl(slave, TIOCSWINSZ, (char *)&win);
 #endif
 	(void) setsid();
