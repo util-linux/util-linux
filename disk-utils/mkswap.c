@@ -131,10 +131,6 @@ is_sparc64(void) {
  *
  * What to do? Let us allow the user to specify the pagesize explicitly.
  *
- * Update 05-Feb-2007 (kzak):
- *      - use sysconf(_SC_PAGESIZE) to be consistent with the rest of
- *        util-linux code.  It is the standardized and preferred way of
- *        querying page size.
  */
 static int user_pagesize;
 static int pagesize;
@@ -144,7 +140,7 @@ struct swap_header_v1 *p;
 static void
 init_signature_page(void) {
 
-	int kernel_pagesize = pagesize = (int) sysconf(_SC_PAGESIZE);
+	int kernel_pagesize = pagesize = getpagesize();
 
 	if (user_pagesize) {
 		if ((user_pagesize & (user_pagesize-1)) ||
