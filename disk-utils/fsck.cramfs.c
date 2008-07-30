@@ -675,7 +675,7 @@ int main(int argc, char **argv)
 	int start = 0;
 	size_t length;
 
-	page_size = sysconf(_SC_PAGESIZE);
+	page_size = getpagesize();
 
 	if (argc)
 		progname = argv[0];
