@@ -121,6 +121,7 @@ main(int argc, char *argv[])
 	double divi;
 	int c;
 	unsigned long line;
+	size_t oldblk = 0;
 
 	/* Because we use space as a separator, we can't afford to use any
 	 * locale which tolerates a space in a number.  In any case, script.c
@@ -170,7 +171,9 @@ main(int argc, char *argv[])
 		if (delay > SCRIPT_MIN_DELAY)
 			delay_for(delay);
 
-		emit(sfile, sname, blk);
+		if (oldblk)
+			emit(sfile, sname, oldblk);
+		oldblk = blk;
 	}
 
 	fclose(sfile);
