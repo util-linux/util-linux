@@ -14,7 +14,7 @@ sbin_PROGRAMS += ctrlaltdel
 usrbinexec_PROGRAMS += cytune setarch lscpu
 usrsbinexec_PROGRAMS += ldattach tunelp rtcwake
 
-dist_man_MANS += dmesg ctrlaltdel.8 cytune.8 setarch.8 \
+dist_man_MANS += dmesg.1 ctrlaltdel.8 cytune.8 setarch.8 \
 		ldattach.8 lscpu.1 tunelp.8 rtcwake.8
 endif
 
