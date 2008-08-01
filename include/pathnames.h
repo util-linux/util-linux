@@ -73,6 +73,7 @@
 #define _PATH_PROC_SWAPS	"/proc/swaps"
 #define _PATH_PROC_FILESYSTEMS	"/proc/filesystems"
 #define _PATH_PROC_MOUNTS	"/proc/mounts"
+#define _PATH_PROC_PARTITIONS	"/proc/partitions"
 
 #ifndef _PATH_MOUNTED
 # ifdef MOUNTED					/* deprecated */
