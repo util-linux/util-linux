@@ -211,25 +211,24 @@ static int setup_alarm(int fd, time_t *wakeup)
 	wake.time.tm_yday = -1;
 	wake.time.tm_isdst = -1;
 
-	/* many rtc alarms only support up to 24 hours from 'now',
-	 * so use the "more than 24 hours" request only if we must
-	 */
-	if ((rtc_time + (24 * 60 * 60)) > *wakeup) {
-		if (ioctl(fd, RTC_ALM_SET, &wake.time) < 0) {
-			perror(_("set rtc alarm"));
-			return 0;
-		}
-		if (ioctl(fd, RTC_AIE_ON, 0) < 0) {
-			perror(_("enable rtc alarm"));
-			return 0;
-		}
-	} else {
-		/* avoid an extra AIE_ON call */
-		wake.enabled = 1;
-
-		if (ioctl(fd, RTC_WKALM_SET, &wake) < 0) {
+	wake.enabled = 1;
+	/* First try the preferred RTC_WKALM_SET */
+	if (ioctl(fd, RTC_WKALM_SET, &wake) < 0) {
+		wake.enabled = 0;
+		/* Fall back on the non-preferred way of setting wakeups; only
+		* works for alarms < 24 hours from now */
+		if ((rtc_time + (24 * 60 * 60)) > *wakeup) {
+			if (ioctl(fd, RTC_ALM_SET, &wake.time) < 0) {
+				perror(_("set rtc alarm"));
+				return -1;
+			}
+			if (ioctl(fd, RTC_AIE_ON, 0) < 0) {
+				perror(_("enable rtc alarm"));
+				return -1;
+			}
+		} else {
 			perror(_("set rtc wake alarm"));
-			return 0;
+			return -1;
 		}
 	}
 
