@@ -91,7 +91,7 @@ static void usage(int retval)
 	exit(retval);
 }
 
-static int may_wakeup(const char *devname)
+static int is_wakeup_enabled(const char *devname)
 {
 	char	buf[128], *s;
 	FILE	*f;
@@ -138,12 +138,12 @@ static int get_basetimes(int fd)
 	 */
 	if (ioctl(fd, RTC_RD_TIME, &rtc) < 0) {
 		perror(_("read rtc time"));
-		return 0;
+		return -1;
 	}
 	sys_time = time(0);
 	if (sys_time == (time_t)-1) {
 		perror(_("read system time"));
-		return 0;
+		return -1;
 	}
 
 	/* convert rtc_time to normal arithmetic-friendly form,
@@ -161,7 +161,7 @@ static int get_basetimes(int fd)
 
 	if (rtc_time == (time_t)-1) {
 		perror(_("convert rtc time"));
-		return 0;
+		return -1;
 	}
 
 	if (verbose) {
@@ -180,7 +180,7 @@ static int get_basetimes(int fd)
 				(long) rtc_time, asctime(&tm));
 	}
 
-	return 1;
+	return 0;
 }
 
 static int setup_alarm(int fd, time_t *wakeup)
@@ -232,7 +232,7 @@ static int setup_alarm(int fd, time_t *wakeup)
 		}
 	}
 
-	return 1;
+	return 0;
 }
 
 static void suspend_system(const char *suspend)
@@ -259,24 +259,24 @@ static int read_clock_mode(void)
 
 	fp = fopen(ADJTIME_PATH, "r");
 	if (!fp)
-		return 0;
+		return -1;
 
 	/* skip first line */
 	if (!fgets(linebuf, MAX_LINE, fp)) {
 		fclose(fp);
-		return 0;
+		return -1;
 	}
 
 	/* skip second line */
 	if (!fgets(linebuf, MAX_LINE, fp)) {
 		fclose(fp);
-		return 0;
+		return -1;
 	}
 
 	/* read third line */
 	if (!fgets(linebuf, MAX_LINE, fp)) {
 		fclose(fp);
-		return 0;
+		return -1;
 	}
 
 	if (strncmp(linebuf, "UTC", 3) == 0)
@@ -286,7 +286,7 @@ static int read_clock_mode(void)
 
 	fclose(fp);
 
-	return 1;
+	return 0;
 }
 
 int main(int argc, char **argv)
@@ -389,7 +389,7 @@ int main(int argc, char **argv)
 	}
 
 	if (clock_mode == CM_AUTO) {
-		if (!read_clock_mode()) {
+		if (read_clock_mode() < 0) {
 			printf(_("%s: assuming RTC uses UTC ...\n"), progname);
 			clock_mode = CM_UTC;
 		}
@@ -419,7 +419,7 @@ int main(int argc, char **argv)
 		devname = new_devname;
 	}
 
-	if (strcmp(suspend, "on") != 0 && !may_wakeup(devname)) {
+	if (strcmp(suspend, "on") != 0 && !is_wakeup_enabled(devname)) {
 		fprintf(stderr, _("%s: %s not enabled for wakeup events\n"),
 				progname, devname);
 		exit(EXIT_FAILURE);
@@ -433,7 +433,7 @@ int main(int argc, char **argv)
 	}
 
 	/* relative or absolute alarm time, normalized to time_t */
-	if (!get_basetimes(fd))
+	if (get_basetimes(fd) < 0)
 		exit(EXIT_FAILURE);
 	if (verbose)
 		printf(_("alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"),
