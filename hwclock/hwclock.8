@@ -1,37 +1,8 @@
-.TH HWCLOCK 8 "02 March 1998"
+.TH HWCLOCK 8 "06 August 2008"
 .SH NAME
 hwclock \- query and set the hardware clock (RTC)
 .SH SYNOPSIS
-.BR "hwclock \-r" " or " "hwclock \-\-show"
-.br
-.BR "hwclock \-w" " or " "hwclock \-\-systohc"
-.br
-.BR "hwclock \-s" " or " "hwclock \-\-hctosys"
-.br
-.BR "hwclock \-a" " or " "hwclock \-\-adjust"
-.br
-.BR "hwclock \-v" " or " "hwclock \-\-version"
-.br
-.B "hwclock \-\-set \-\-date=newdate"
-.br
-.B "hwclock \-\-getepoch"
-.br
-.B "hwclock \-\-setepoch \-\-epoch=year"
-.PP
-other options:
-.PP
-.B "[\-u|\-\-utc]  \-\-localtime  \-\-noadjfile \-\-directisa"
-.B "\-\-test [\-D|\-\-debug]"
-.B "\-\-rtc=filename"
-.B "\-\-adjfile=filename"
-.PP
-and arcane options for DEC Alpha:
-.PP
-.B "[\-A|\-\-arc] [\-J|\-\-jensen] [\-S|\-\-srm] [\-F|\-\-funky-toy]"
-.PP
-Minimum unique abbreviations of all options are acceptable.
-.PP
-Also, \-h asks for a help message.
+.BR "hwclock [functions] [options]"
 
 .SH DESCRIPTION
 .B hwclock
@@ -46,13 +17,13 @@ periodically to insert or remove time from the Hardware Clock to
 compensate for systematic drift (where the clock consistently gains or
 loses time at a certain rate if left to run).
 
-.SH OPTIONS
+.SH FUNCTIONS
 You need exactly one of the following options to tell
 .B hwclock
 what function to perform:
 .PP
 .TP
-.B \-\-show
+.B \-r, \-\-show
 Read the Hardware Clock and print the time on Standard Output.
 The time shown is always in local time, even if you keep your Hardware Clock
 in Coordinated Universal Time.  See the
@@ -65,7 +36,7 @@ Set the Hardware Clock to the time given by the
 .B \-\-date
 option.
 .TP
-.B \-\-hctosys
+.B \-s, \-\-hctosys
 Set the System Time from the Hardware Clock.
 
 Also set the kernel's timezone value to the local timezone
@@ -80,7 +51,7 @@ to DST_NONE. (For details on what this field used to mean, see
 
 This is a good option to use in one of the system startup scripts.
 .TP
-.B \-\-systohc
+.B \-w, \-\-systohc
 Set the Hardware Clock to the current System Time.
 .TP
 .B \-\-adjust
@@ -105,7 +76,7 @@ option.  See the
 .B \-\-getepoch
 option for details.
 .TP
-.B \-\-version
+.B \-v, \-\-version
 Print the version of
 .B hwclock
 on Standard Output.
@@ -140,10 +111,12 @@ For example, on a Digital Unix machine:
 .sp
 .I hwclock --setepoch --epoch=1952
 
+
+.SH OPTIONS
 .PP
 The following options apply to most functions.
 .TP
-.B \-\-utc
+.B \-u, \-\-utc
 .TP
 .B \-\-localtime
 Indicates that the Hardware Clock is kept in Coordinated Universal
@@ -188,7 +161,7 @@ must be specified when using this option.
 overrides the default /etc/adjtime.
 
 .TP
-.B \-\-rtc=filename
+.B \-f, \-\-rtc=filename
 overrides the default /dev file name, which is
 .IR /dev/rtc
 on many platforms but may be
