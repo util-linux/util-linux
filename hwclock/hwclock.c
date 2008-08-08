@@ -352,7 +352,12 @@ synchronize_to_clock_tick(void) {
 
 	rc = ur->synchronize_to_clock_tick();
 
-	if (debug) printf(_("...got clock tick\n"));
+	if (debug) {
+		if (rc)
+			printf(_("...synchronization failed\n"));
+		else
+			printf(_("...got clock tick\n"));
+	}
 
 	return rc;
 }
@@ -1093,8 +1098,8 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
        if (show || adjust || hctosys || !noadjfile) {
           /* data from HW-clock are required */
           rc = synchronize_to_clock_tick();
-          if (rc)
-             return EX_IOERR;
+          if (rc && rc != 2)		/* 2= synchronization timeout */
+            return EX_IOERR;
           gettimeofday(&read_time, NULL);
           rc = read_hardware_clock(universal, &hclock_valid, &hclocktime);
           if (rc)
