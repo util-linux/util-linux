@@ -207,13 +207,13 @@ if test "x$with_ncurses" != xno; then
   have_ncurses=no
   AC_CHECK_HEADERS([ncurses.h ncurses/ncurses.h], [
     if test "x$with_ncurses" = xauto; then
-      UTIL_CHECK_LIB(ncursesw, tputs, ncurses)
+      UTIL_CHECK_LIB(ncursesw, initscr, ncurses)
       if test "x$have_ncurses" = xyes; then
         NCURSES_LIBS="-lncursesw"
       fi
     fi
     if test "x$have_ncurses" = xno; then
-      UTIL_CHECK_LIB(ncurses, tputs)
+      UTIL_CHECK_LIB(ncurses, initscr)
       if test "x$have_ncurses" = xyes; then
         NCURSES_LIBS="-lncurses"
       fi
