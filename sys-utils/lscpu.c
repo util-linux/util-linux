@@ -36,17 +36,24 @@
 #define CACHE_MAX 100
 
 /* /sys paths */
-#define _PATH_SYS_SYSTEM	"/sys/devices/system"
+#define _PATH_SYS_SYSTEM	"sys/devices/system"
 #define _PATH_SYS_CPU0		_PATH_SYS_SYSTEM "/cpu/cpu0"
-#define _PATH_PROC_XENCAP	"/proc/xen/capabilities"
-#define _PATH_PROC_CPUINFO	"/proc/cpuinfo"
+#define _PATH_PROC_XENCAP	"proc/xen/capabilities"
+#define _PATH_PROC_CPUINFO	"proc/cpuinfo"
 
 int have_topology;
 int have_cache;
 int have_node;
 
+/* cache(s) description */
+struct ca_desc {
+	char	*caname;
+	char	*casize;
+	int	camap;
+};
+
 /* CPU(s) description */
-struct cpu_decs {
+struct cpu_desc {
 	/* counters */
 	int	ct_cpu;
 	int	ct_thread;
@@ -62,9 +69,7 @@ struct cpu_decs {
 	char	*model;
 
 	/* caches */
-	char	*caname[CACHE_MAX];
-	char	*casize[CACHE_MAX];
-	int	camap[CACHE_MAX];
+	struct ca_desc	cache[CACHE_MAX];
 
 	/* misc */
 	char	*mhz;
@@ -75,7 +80,7 @@ struct cpu_decs {
 	int	*nodecpu;
 };
 
-char pathbuf[PATH_MAX];
+char pathbuf[PATH_MAX] = "/";
 
 static void path_scanstr(char *result, const char *path, ...)
 		__attribute__ ((__format__ (__printf__, 2, 3)));
@@ -211,7 +216,7 @@ int lookup(char *line, char *pattern, char **value)
 }
 
 static void
-read_basicinfo(struct cpu_decs *cpu)
+read_basicinfo(struct cpu_desc *cpu)
 {
 	FILE *fp = xfopen(_PATH_PROC_CPUINFO, "r");
 	char buf[BUFSIZ];
@@ -245,7 +250,7 @@ read_basicinfo(struct cpu_decs *cpu)
 }
 
 static void
-read_topology(struct cpu_decs *cpu)
+read_topology(struct cpu_desc *cpu)
 {
 	/* number of threads */
 	cpu->ct_thread = path_sibling(
@@ -261,7 +266,7 @@ read_topology(struct cpu_decs *cpu)
 }
 
 static void
-read_cache(struct cpu_decs *cpu)
+read_cache(struct cpu_desc *cpu)
 {
 	char buf[256];
 	DIR *dp;
@@ -295,14 +300,14 @@ read_cache(struct cpu_decs *cpu)
 		else
 			snprintf(buf, sizeof(buf), "L%d", level);
 
-		cpu->caname[cpu->ct_cache] = xstrdup(buf);
+		cpu->cache[cpu->ct_cache].caname = xstrdup(buf);
 
 		/* cache size */
 		path_scanstr(buf, _PATH_SYS_CPU0 "/cache/%s/size", dir->d_name);
-		cpu->casize[cpu->ct_cache] = xstrdup(buf);
+		cpu->cache[cpu->ct_cache].casize = xstrdup(buf);
 
 		/* information about how CPUs share different caches */
-		cpu->camap[cpu->ct_cache] = path_sibling(
+		cpu->cache[cpu->ct_cache].camap = path_sibling(
 				_PATH_SYS_CPU0 "/cache/%s/shared_cpu_map",
 				dir->d_name);
 		cpu->ct_cache++;
@@ -310,7 +315,7 @@ read_cache(struct cpu_decs *cpu)
 }
 
 static void
-read_nodes(struct cpu_decs *cpu)
+read_nodes(struct cpu_desc *cpu)
 {
 	int i;
 
@@ -346,7 +351,8 @@ check_system(void)
 
 	/* Read through sysfs. */
 	if (access(_PATH_SYS_SYSTEM, F_OK))
-		errx(1, _("error: /sys filesystem is not accessable."));
+		errx(EXIT_FAILURE,
+		     _("error: /sys filesystem is not accessable."));
 
 	if (!access(_PATH_SYS_SYSTEM "/node", F_OK))
 		have_node = 1;
@@ -359,22 +365,22 @@ check_system(void)
 }
 
 static void
-print_parsable(struct cpu_decs *cpu)
+print_parsable(struct cpu_desc *cpu)
 {
 	int i, j;
 
-	puts(
+	printf(_(
 	"# The following is the parsable format, which can be fed to other\n"
-	"# programs. Each different item in every column has a unique ID\n"
+	"# programs. Each different item in every column has an unique ID\n"
 	"# starting from zero.\n"
-	"# CPU,Core,Socket,Node");
+	"# CPU,Core,Socket,Node"));
 
 	if (have_cache) {
 		/* separator between CPU topology and cache information */
 		putchar(',');
 
 		for (i = cpu->ct_cache - 1; i >= 0; i--)
-			printf(",%s", cpu->caname[i]);
+			printf(",%s", cpu->cache[i].caname);
 	}
 	putchar('\n');
 
@@ -407,11 +413,11 @@ print_parsable(struct cpu_decs *cpu)
 			for (j = cpu->ct_cache - 1; j >= 0; j--) {
 				/* If shared_cpu_map is 0, all CPUs share the same
 				   cache. */
-				if (cpu->camap[j] == 0)
-					cpu->camap[j] = cpu->ct_core *
-							cpu->ct_thread;
+				if (cpu->cache[j].camap == 0)
+					cpu->cache[j].camap = cpu->ct_core *
+							      cpu->ct_thread;
 
-				printf(",%d", i / cpu->camap[j]);
+				printf(",%d", i / cpu->cache[j].camap);
 			}
 		}
 		putchar('\n');
@@ -424,7 +430,7 @@ print_parsable(struct cpu_decs *cpu)
 #define print_n(_key, _val)	printf("%-23s%d\n", _key, _val)
 
 static void
-print_readable(struct cpu_decs *cpu)
+print_readable(struct cpu_desc *cpu)
 {
 	char buf[BUFSIZ];
 
@@ -462,8 +468,8 @@ print_readable(struct cpu_decs *cpu)
 
 		for (i = cpu->ct_cache - 1; i >= 0; i--) {
 			snprintf(buf, sizeof(buf),
-					_("%s cache:"), cpu->caname[i]);
-			print_s(buf, cpu->casize[i]);
+					_("%s cache:"), cpu->cache[i].caname);
+			print_s(buf, cpu->cache[i].casize);
 		}
 	}
 }
@@ -475,18 +481,29 @@ void usage(int rc)
 
 	puts(_(	"CPU architecture information helper\n\n"
 		"  -h, --help     usage information\n"
-		"  -p, --parse    print out in parsable instead of printable format.\n"));
+		"  -p, --parse    print out in parsable instead of printable format.\n"
+		"  -s, --sysroot  use the directory as a new system root.\n"));
 	exit(rc);
+}
+
+static int
+ca_compare(const void *a, const void *b)
+{
+	struct ca_desc *cache1 = (struct ca_desc *) a;
+	struct ca_desc *cache2 = (struct ca_desc *) b;
+
+	return strcmp(cache2->caname, cache1->caname);
 }
 
 int main(int argc, char *argv[])
 {
-	struct cpu_decs _cpu, *cpu = &_cpu;
+	struct cpu_desc _cpu, *cpu = &_cpu;
 	int parsable = 0, c;
 
 	struct option longopts[] = {
-		{ "help",	no_argument, 0, 'h' },
-		{ "parse",	no_argument, 0, 'p' },
+		{ "help",	no_argument,       0, 'h' },
+		{ "parse",	no_argument,       0, 'p' },
+		{ "sysroot",	required_argument, 0, 's' },
 		{ NULL,		0, 0, 0 }
 	};
 
@@ -494,17 +511,24 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while((c = getopt_long(argc, argv, "hp", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "hps:", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(EXIT_SUCCESS);
 		case 'p':
 			parsable = 1;
 			break;
+		case 's':
+			strncpy(pathbuf, optarg, sizeof(pathbuf));
+			break;
 		default:
 			usage(EXIT_FAILURE);
 		}
 	}
+
+	if (chdir(pathbuf) == -1)
+		errx(EXIT_FAILURE,
+		     _("error: change working directory to %s."), pathbuf);
 
 	memset(cpu, 0, sizeof(*cpu));
 
@@ -514,8 +538,10 @@ int main(int argc, char *argv[])
 
 	if (have_topology)
 		read_topology(cpu);
-	if (have_cache)
+	if (have_cache) {
 		read_cache(cpu);
+		qsort(cpu->cache, cpu->ct_cache, sizeof(struct ca_desc), ca_compare);
+	}
 	if (have_node)
 		read_nodes(cpu);
 
