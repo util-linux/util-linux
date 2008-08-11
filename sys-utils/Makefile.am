@@ -1,31 +1,25 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS =
+sbin_PROGRAMS =
+usrbinexec_PROGRAMS = flock ipcrm ipcs renice setsid
+usrsbinexec_PROGRAMS = ldattach readprofile
+
+dist_man_MANS = flock.1 ipcrm.1 ipcs.1 renice.1 setsid.1 \
+		ldattach.8 readprofile.1
+
 if LINUX
 bin_PROGRAMS += dmesg
-endif
-
-usrbinexec_PROGRAMS = flock ipcrm ipcs renice setsid
-if LINUX
+sbin_PROGRAMS += ctrlaltdel
 usrbinexec_PROGRAMS += cytune setarch
+usrsbinexec_PROGRAMS += tunelp rtcwake
+
+dist_man_MANS += dmesg ctrlaltdel.8 cytune.8 setarch.8 \
+		tunelp.8 rtcwake.8
 endif
 
 cytune_SOURCES = cytune.c cyclades.h
-
-if LINUX
-sbin_PROGRAMS = ctrlaltdel
-endif
-
-usrsbinexec_PROGRAMS = ldattach readprofile
-if LINUX
-usrsbinexec_PROGRAMS += tunelp rtcwake
-endif
-
 tunelp_SOURCES = tunelp.c lp.h
-
-dist_man_MANS = flock.1 readprofile.1 \
-	ctrlaltdel.8 cytune.8 dmesg.1 ipcrm.1 ipcs.1 ldattach.8 renice.1 \
-	setsid.1 tunelp.8 setarch.8 rtcwake.8
 
 info_TEXINFOS = ipc.texi
 
@@ -34,14 +28,12 @@ bin_PROGRAMS += arch
 dist_man_MANS += arch.1
 endif
 
-
 RDEV_LINKS =
 if BUILD_RDEV
 usrsbinexec_PROGRAMS += rdev
 RDEV_LINKS += ramsize vidmode rootflags
 dist_man_MANS += rdev.8
 endif
-
 
 SETARCH_LINKS = linux32 linux64
 
