@@ -179,8 +179,8 @@ busywait_for_rtc_clock_tick(const int rtc_fd) {
   struct tm start_time;
     /* The time when we were called (and started waiting) */
   struct tm nowtime;
-  int i;  /* local loop index */
   int rc;
+  struct timeval begin, now;
 
   if (debug)
     printf(_("Waiting in loop for time from %s to change\n"),
@@ -191,24 +191,25 @@ busywait_for_rtc_clock_tick(const int rtc_fd) {
     return 1;
 
   /* Wait for change.  Should be within a second, but in case something
-     weird happens, we have a limit on this loop to reduce the impact
-     of this failure.
-     */
-  for (i = 0;
-       (rc = do_rtc_read_ioctl(rtc_fd, &nowtime)) == 0
-        && start_time.tm_sec == nowtime.tm_sec;
-       i++)
-    if (i >= 1000000) {
+   * weird happens, we have a time limit (1.5s) on this loop to reduce the
+   * impact of this failure.
+   */
+  gettimeofday(&begin, NULL);
+  do {
+    rc = do_rtc_read_ioctl(rtc_fd, &nowtime);
+    if (rc || start_time.tm_sec != nowtime.tm_sec)
+      break;
+    gettimeofday(&now, NULL);
+    if (time_diff(now, begin) > 1.5) {
       fprintf(stderr, _("Timed out waiting for time change.\n"));
       return 2;
     }
+  } while(1);
 
   if (rc)
     return 3;
   return 0;
 }
-
-
 
 static int
 synchronize_to_clock_tick_rtc(void) {

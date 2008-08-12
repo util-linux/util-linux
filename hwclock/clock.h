@@ -33,6 +33,7 @@ extern void outsyserr(char *msg, ...)
 #else
         ;
 #endif
+extern double time_diff(struct timeval subtrahend, struct timeval subtractor);
 /* cmos.c */
 extern void set_cmos_epoch(int ARCconsole, int SRM);
 extern void set_cmos_access(int Jensen, int funky_toy);

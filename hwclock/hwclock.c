@@ -182,7 +182,7 @@ read_date_from_file (struct tm *tm) {
   write_date_to_file (tm);
 }
 
-static double
+double
 time_diff(struct timeval subtrahend, struct timeval subtractor) {
 /*---------------------------------------------------------------------------
   The difference in seconds between two times in "timeval" format.
