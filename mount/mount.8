@@ -1772,9 +1772,10 @@ before trying
 .IR name~num.ext .
 .TP
 .B utf8
-UTF8 is the filesystem safe 8-bit encoding of Unicode that is used
-by the console. It can be be enabled for the filesystem with this option.
-If `uni_xlate' gets set, UTF8 gets disabled.
+UTF8 is the filesystem safe 8-bit encoding of Unicode that is used by the
+console. It can be be enabled for the filesystem with this option or disabled
+with utf8=0, utf8=no or utf8=false. If `uni_xlate' gets set, UTF8 gets
+disabled.
 .TP
 .B shortname=[lower|win95|winnt|mixed]
 
