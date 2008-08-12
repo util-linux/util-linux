@@ -225,7 +225,7 @@ int ret;
   } else {
     int rc;  /* Return code from ioctl */
     /* Turn on update interrupts (one per second) */
-#if defined(__alpha__) || defined(__sparc__) || defined(__x86_64__)
+#if defined(__alpha__) || defined(__sparc__)
     /* Not all alpha kernels reject RTC_UIE_ON, but probably they should. */
     rc = -1;
     errno = EINVAL;
