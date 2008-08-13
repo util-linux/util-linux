@@ -295,15 +295,15 @@ int ret;
 
 static int
 read_hardware_clock_rtc(struct tm *tm) {
-	int rtc_fd;
+	int rtc_fd, rc;
 
 	rtc_fd = open_rtc_or_exit();
 
 	/* Read the RTC time/date, return answer via tm */
-	do_rtc_read_ioctl(rtc_fd, tm);
+	rc = do_rtc_read_ioctl(rtc_fd, tm);
 
 	close(rtc_fd);
-	return 0;
+	return rc;
 }
 
 
