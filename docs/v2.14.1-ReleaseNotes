@@ -1,0 +1,40 @@
+Util-linux-ng 2.14.1 Release Notes (??-Aug-2008)
+================================================
+
+ChangeLog between v2.14 and v2.14.1
+-----------------------------------
+
+ For more details see ChangeLog files at:
+ ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.14/
+
+build-sys:
+   - cleanup sys-utils/Makefile.am  [Karel Zak]
+   - fix dmesg.1 installation  [Karel Zak]
+   - tgets is not in ncurses but in tinfo  [Arkadiusz Miskiewicz]
+docs:
+   - update AUTHORS file  [Karel Zak]
+hwclock:
+   - omit warning about drift if --noadjfile given  [Matthias Koenig]
+   - unshadow a diagnostic printf  [Kalev Soikonen]
+mount:
+   - add docs about utf8=0 for vfat  [Karel Zak]
+   - add fallback for versionsort()  [Karel Zak]
+   - add info about tz=UTC option for FAT to mount.8  [Karel Zak]
+   - add norealtime to mount.8  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update cs.po (from translationproject.org)  [Petr Pisar]
+   - update nl.po (from translationproject.org)  [Benno Schulenberg]
+rtcwake:
+   - cleanup return codes  [Karel Zak]
+   - prefer RTC_WKALM_SET over RTC_ALM_SET  [Gabriel Burt]
+scriptreplay:
+   - new implementation is out-of-sync  [Karel Zak]
+selinux:
+   - is_selinux_enabled() returns 0, 1 and -1  [Karel Zak]
+sfdisk:
+   - print version should end with a newline  [Denis ChengRq]
+umount:
+   - improve "-d" option for autoclear loops  [Karel Zak]
+write:
+   - doesn't check for tty group  [Karel Zak]
