@@ -44,7 +44,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.13.1-rc1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-05-19 10:56+0200\n"
+"POT-Creation-Date: 2008-08-13 22:00+0200\n"
 "PO-Revision-Date: 2008-01-09 17:38+0200\n"
 "Last-Translator: Michael Piefel <piefel@informatik.hu-berlin.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -5898,13 +5898,13 @@ msgstr ""
 "Der Faktor wird um %4$f Sekunden/Tag geändert.\n"
 
 # Egger
-#: hwclock/hwclock.c:873
+#: hwclock/hwclock.c:872
 #, c-format
 msgid "Time since last adjustment is %d seconds\n"
 msgstr "Es vergingen %d Sekunden seit der letzten Anpassung.\n"
 
 # Egger
-#: hwclock/hwclock.c:875
+#: hwclock/hwclock.c:874
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
 msgstr ""
@@ -5912,14 +5912,14 @@ msgstr ""
 "Sekunden zugegriffen werden\n"
 
 # merge with next
-#: hwclock/hwclock.c:904
+#: hwclock/hwclock.c:903
 #, c-format
 msgid "Not updating adjtime file because of testing mode.\n"
 msgstr "Die adjtime Datei wird nicht aktualisiert – Testmodus \n"
 
 # "Hätte das folgende in die Datei %s geschrieben:\n"
 # passiv, Konjunktiv in der Umschreibungsform
-#: hwclock/hwclock.c:905
+#: hwclock/hwclock.c:904
 #, c-format
 msgid ""
 "Would have written the following to %s:\n"
@@ -5929,13 +5929,13 @@ msgstr ""
 "%s"
 
 # "Abweichungsparameter"
-#: hwclock/hwclock.c:929
+#: hwclock/hwclock.c:928
 #, c-format
 msgid "Drift adjustment parameters not updated.\n"
 msgstr "Die Abweichungsparameter wurden nicht verändert.\n"
 
 # "anpassen"
-#: hwclock/hwclock.c:970
+#: hwclock/hwclock.c:969
 #, c-format
 msgid ""
 "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
@@ -5944,20 +5944,20 @@ msgstr ""
 "werden.\n"
 
 # "Justierung"
-#: hwclock/hwclock.c:1002
+#: hwclock/hwclock.c:1000
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr ""
 "Da die Anpassung weniger als eine Sekunde betragen hätte, wird sie nicht "
 "durchgeführt.\n"
 
-#: hwclock/hwclock.c:1028
+#: hwclock/hwclock.c:1026
 #, c-format
 msgid "Using %s.\n"
 msgstr "Benutze %s.\n"
 
 # "Schnittstelle"
-#: hwclock/hwclock.c:1030
+#: hwclock/hwclock.c:1028
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "Keine brauchbare Uhrschnittstelle gefunden.\n"
@@ -6481,8 +6481,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: PAM-Fehlschlag, breche ab: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:681
-#: mount/lomount.c:684
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:708
+#: mount/lomount.c:711
 msgid "Password: "
 msgstr "Passwort: "
 
@@ -7606,22 +7606,22 @@ msgstr ""
 msgid "failed to read typescript file %s"
 msgstr "ioctl() konnte Zeit nicht von %s lesen."
 
-#: misc-utils/scriptreplay.c:144
+#: misc-utils/scriptreplay.c:145
 #, fuzzy, c-format
 msgid "cannot open timing file %s"
 msgstr "Konnte „%s“ nicht öffnen"
 
-#: misc-utils/scriptreplay.c:147
+#: misc-utils/scriptreplay.c:148
 #, fuzzy, c-format
 msgid "cannot open typescript file %s"
 msgstr "Konnte „%s“ nicht öffnen"
 
-#: misc-utils/scriptreplay.c:163
+#: misc-utils/scriptreplay.c:164
 #, fuzzy, c-format
 msgid "failed to read timing file %s"
 msgstr "ioctl() konnte Zeit nicht von %s lesen."
 
-#: misc-utils/scriptreplay.c:165
+#: misc-utils/scriptreplay.c:166
 #, fuzzy, c-format
 msgid "timings file %s: %lu: expected format"
 msgstr "%s: unerwartetes Dateiende in %s-Datei\n"
@@ -7879,52 +7879,52 @@ msgstr "%s: Die Umgebungsvariable TERM ist nicht gesetzt.\n"
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr "whereis [ -sbmu ] [ -SBM Verzeichnis … -f ] Name…\n"
 
-#: misc-utils/write.c:98
+#: misc-utils/write.c:102
 #, c-format
 msgid "write: can't find your tty's name\n"
 msgstr "write: kann den Namen Ihres TTYs nicht feststellen\n"
 
-#: misc-utils/write.c:109
+#: misc-utils/write.c:113
 #, c-format
 msgid "write: you have write permission turned off.\n"
 msgstr "write: Ihr Schreibzugriff ist abgeschaltet.\n"
 
-#: misc-utils/write.c:130
+#: misc-utils/write.c:134
 #, c-format
 msgid "write: %s is not logged in on %s.\n"
 msgstr "write: %s ist nicht auf %s eingeloggt.\n"
 
-#: misc-utils/write.c:138
+#: misc-utils/write.c:142
 #, c-format
 msgid "write: %s has messages disabled on %s\n"
 msgstr "write: %s hat Benachrichtigung auf %s deaktiviert\n"
 
-#: misc-utils/write.c:145
+#: misc-utils/write.c:149
 #, c-format
 msgid "usage: write user [tty]\n"
 msgstr "Aufruf: write Nutzer [TTY]\n"
 
-#: misc-utils/write.c:233
+#: misc-utils/write.c:237
 #, c-format
 msgid "write: %s is not logged in\n"
 msgstr "write: %s ist nicht eingeloggt\n"
 
-#: misc-utils/write.c:242
+#: misc-utils/write.c:246
 #, c-format
 msgid "write: %s has messages disabled\n"
 msgstr "write: %s hat Benachrichtigung deaktiviert\n"
 
-#: misc-utils/write.c:246
+#: misc-utils/write.c:250
 #, c-format
 msgid "write: %s is logged in more than once; writing to %s\n"
 msgstr "write: %s ist mehr als einmal eingeloggt; schreibe auf %s\n"
 
-#: misc-utils/write.c:312
+#: misc-utils/write.c:318
 #, c-format
 msgid "Message from %s@%s (as %s) on %s at %s ..."
 msgstr "Nachricht von %s@%s (als %s) auf %s um %s …"
 
-#: misc-utils/write.c:315
+#: misc-utils/write.c:321
 #, c-format
 msgid "Message from %s@%s on %s at %s ..."
 msgstr "Nachricht von %s@%s auf %s um %s …"
@@ -8031,60 +8031,60 @@ msgstr "Fehler beim Ändern der Zugriffsrechte von %s: %s\n"
 msgid "can't rename %s to %s: %s\n"
 msgstr "Konnte %s nicht in %s umbenennen: %s\n"
 
-#: mount/lomount.c:330
+#: mount/lomount.c:357
 #, fuzzy, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", Offset %d"
 
-#: mount/lomount.c:333
+#: mount/lomount.c:360
 #, fuzzy, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", Größenbeschränkung %lld"
 
 # Verschlüsselungstyp
-#: mount/lomount.c:341
+#: mount/lomount.c:368
 #, fuzzy, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", Verschlüsselungsmethode %s (Typ %d)"
 
-#: mount/lomount.c:354
+#: mount/lomount.c:381
 #, c-format
 msgid ", offset %d"
 msgstr ", Offset %d"
 
 # Verschlüsselungstyp
-#: mount/lomount.c:357
+#: mount/lomount.c:384
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", Verschlüsselungstyp %d\n"
 
-#: mount/lomount.c:365
+#: mount/lomount.c:392
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: Konnte keine Informationen über das Gerät %s erhalten: %s\n"
 
-#: mount/lomount.c:376
+#: mount/lomount.c:403
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: Konnte das Gerät %s nicht öffnen: %s\n"
 
-#: mount/lomount.c:392 mount/lomount.c:423 mount/lomount.c:488
-#: mount/lomount.c:537
+#: mount/lomount.c:419 mount/lomount.c:450 mount/lomount.c:515
+#: mount/lomount.c:564
 #, fuzzy, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: Nutzer „%s“ existiert nicht.\n"
 
-#: mount/lomount.c:403 mount/lomount.c:550
+#: mount/lomount.c:430 mount/lomount.c:577
 #, c-format
 msgid "%s: no permission to look at /dev/loop#"
 msgstr "%s: Keine Zugriffsrechte, um auf /dev/loop# zu schauen"
 
-#: mount/lomount.c:552
+#: mount/lomount.c:579
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: Konnte kein freies „loop“-Gerät finden"
 
-#: mount/lomount.c:555
+#: mount/lomount.c:582
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -8094,45 +8094,45 @@ msgstr ""
 "       kein „loop“-Gerät? (Wenn dies der Fall ist, dann sollten Sie den\n"
 "       Kernel neu kompilieren oder „modprobe loop“ ausführen.)"
 
-#: mount/lomount.c:622
+#: mount/lomount.c:649
 #, fuzzy, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "Sektor %d wird bereits benutzt\n"
 
-#: mount/lomount.c:670
+#: mount/lomount.c:697
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "Konnte kein Lock im Speicher bekommen, beende.\n"
 
-#: mount/lomount.c:697
+#: mount/lomount.c:724
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:762
+#: mount/lomount.c:789
 #, fuzzy, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): Erfolg\n"
 
 # this is actually an open()…
-#: mount/lomount.c:775
+#: mount/lomount.c:802
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: Konnte das Gerät %s nicht löschen: %s\n"
 
-#: mount/lomount.c:786
+#: mount/lomount.c:813
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): Erfolg\n"
 
-#: mount/lomount.c:794
+#: mount/lomount.c:821
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Dieses mount wurde ohne Loop-Unterstützung übersetzt. Bitte neu übersetzen.\n"
 
 # Setup
-#: mount/lomount.c:829
+#: mount/lomount.c:856
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8155,7 +8155,7 @@ msgstr ""
 "  Setup:\n"
 "    %s [ -e Verschlüsselung ] [ -o Offset ] {-f|loop-Gerät} Datei\n"
 
-#: mount/lomount.c:838
+#: mount/lomount.c:865
 #, c-format
 msgid ""
 "\n"
@@ -8171,7 +8171,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1014
+#: mount/lomount.c:1041
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -8831,37 +8831,37 @@ msgstr "umount: %s: Blockgeräte auf Dateisystem nicht erlaubt"
 msgid "umount: %s: %s"
 msgstr "umount: %s: %s"
 
-#: mount/umount.c:228
+#: mount/umount.c:236
 #, c-format
 msgid "no umount2, trying umount...\n"
 msgstr "kein umount2, versuche umount…\n"
 
-#: mount/umount.c:244
+#: mount/umount.c:252
 #, c-format
 msgid "could not umount %s - trying %s instead\n"
 msgstr "konnte %s nicht aushängen – versuche stattdessen %s\n"
 
-#: mount/umount.c:262
+#: mount/umount.c:270
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr ""
 "umount: %s wird momentan noch benutzt – im Nur-Lese-Modus wiedereingehängt\n"
 
-#: mount/umount.c:273
+#: mount/umount.c:281
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr "umount: konnte %s nicht im Nur-Lese-Modus wieder einhängen\n"
 
-#: mount/umount.c:282
+#: mount/umount.c:290
 #, c-format
 msgid "%s umounted\n"
 msgstr "%s ausgehängt\n"
 
-#: mount/umount.c:380
+#: mount/umount.c:388
 msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: Kann die Liste der Dateisysteme zum Aushängen nicht finden"
 
-#: mount/umount.c:410
+#: mount/umount.c:418
 #, c-format
 msgid ""
 "Usage: umount [-hV]\n"
@@ -8872,46 +8872,46 @@ msgstr ""
 "        umount -a [-f] [-r] [-n] [-v] [-t VFS-Typen] [-O optionen]\n"
 "        umount [-f] [-r] [-n] [-v] Spezialdatei | Verzeichnis …\n"
 
-#: mount/umount.c:460
+#: mount/umount.c:468
 msgid "Cannot umount \"\"\n"
 msgstr "Kann \"\" nicht aushängen\n"
 
-#: mount/umount.c:466
+#: mount/umount.c:474
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr "Versuche, %s auszuhängen\n"
 
-#: mount/umount.c:472
+#: mount/umount.c:480
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "Konnte %s nicht in „mtab“ finden\n"
 
-#: mount/umount.c:479
+#: mount/umount.c:487
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s ist laut „mtab“ nicht eingehängt"
 
-#: mount/umount.c:503
+#: mount/umount.c:511
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: %s scheint mehrfach eingehängt zu sein"
 
-#: mount/umount.c:516
+#: mount/umount.c:524
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: fstab enthält %s nicht (Nur root kann es aushängen)"
 
-#: mount/umount.c:520
+#: mount/umount.c:528
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: %s mount und fstab stimmen nicht überein"
 
-#: mount/umount.c:561
+#: mount/umount.c:569
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "umount: Nur %s kann %s von %s unmounten"
 
-#: mount/umount.c:640
+#: mount/umount.c:648
 msgid "umount: only root can do that"
 msgstr "umount: Nur „root“ kann dies tun"
 
@@ -9987,88 +9987,88 @@ msgstr "System-Zeit lesen"
 msgid "convert rtc time"
 msgstr "RTC-Zeit konvertieren"
 
-#: sys-utils/rtcwake.c:219
+#: sys-utils/rtcwake.c:222
 msgid "set rtc alarm"
 msgstr "RTC-Alarm setzen"
 
-#: sys-utils/rtcwake.c:223
+#: sys-utils/rtcwake.c:226
 msgid "enable rtc alarm"
 msgstr "RTC-Alarm aktivieren"
 
-#: sys-utils/rtcwake.c:231
+#: sys-utils/rtcwake.c:230
 msgid "set rtc wake alarm"
 msgstr "RTC-Weck-Alarm setzen"
 
-#: sys-utils/rtcwake.c:342
+#: sys-utils/rtcwake.c:341
 #, c-format
 msgid "%s: unrecognized suspend state '%s'\n"
 msgstr " %s: nicht erkannter Energiesparmodus „%s“\n"
 
-#: sys-utils/rtcwake.c:351
+#: sys-utils/rtcwake.c:350
 #, c-format
 msgid "%s: illegal interval %s seconds\n"
 msgstr "%s: unzulässiges Intervall %s Sekunden\n"
 
-#: sys-utils/rtcwake.c:365
+#: sys-utils/rtcwake.c:364
 #, c-format
 msgid "%s: illegal time_t value %s\n"
 msgstr "%s: unzulässige time_t-Wert %s\n"
 
 # c-format
-#: sys-utils/rtcwake.c:381
+#: sys-utils/rtcwake.c:380
 #, c-format
 msgid "%s: version %s\n"
 msgstr "%s: Version %s\n"
 
-#: sys-utils/rtcwake.c:394
+#: sys-utils/rtcwake.c:393
 #, c-format
 msgid "%s: assuming RTC uses UTC ...\n"
 msgstr "%s: interpretiere RTC als UTC …\n"
 
-#: sys-utils/rtcwake.c:399
+#: sys-utils/rtcwake.c:398
 #, fuzzy, c-format
 msgid "Using UTC time.\n"
 msgstr "Benutze %s-Zeit.\n"
 
-#: sys-utils/rtcwake.c:400
+#: sys-utils/rtcwake.c:399
 #, fuzzy, c-format
 msgid "Using local time.\n"
 msgstr "Benutze %s-Zeit.\n"
 
-#: sys-utils/rtcwake.c:403
+#: sys-utils/rtcwake.c:402
 #, c-format
 msgid "%s: must provide wake time\n"
 msgstr "%s: Weckzeit muss angegeben werden\n"
 
-#: sys-utils/rtcwake.c:413
+#: sys-utils/rtcwake.c:412
 msgid "malloc() failed"
 msgstr "„malloc“ schlug fehl"
 
-#: sys-utils/rtcwake.c:424
+#: sys-utils/rtcwake.c:423
 #, c-format
 msgid "%s: %s not enabled for wakeup events\n"
 msgstr "%s: %s nicht für Weckereignisse geeignet\n"
 
-#: sys-utils/rtcwake.c:440
+#: sys-utils/rtcwake.c:439
 #, c-format
 msgid "alarm %ld, sys_time %ld, rtc_time %ld, seconds %u\n"
 msgstr "Alarm %ld, sys_time %ld, rtc_time %ld, Sekunden %u\n"
 
-#: sys-utils/rtcwake.c:445
+#: sys-utils/rtcwake.c:444
 #, c-format
 msgid "%s: time doesn't go backward to %s\n"
 msgstr "%s: Zeit geht nicht rückwärts zu %s\n"
 
-#: sys-utils/rtcwake.c:456
+#: sys-utils/rtcwake.c:455
 #, c-format
 msgid "%s: wakeup from \"%s\" using %s at %s\n"
 msgstr "%s: Weckereignis von „%s“, benutze %s bei %s\n"
 
-#: sys-utils/rtcwake.c:470
+#: sys-utils/rtcwake.c:469
 msgid "rtc read"
 msgstr "RTC gelesen"
 
-#: sys-utils/rtcwake.c:479
+#: sys-utils/rtcwake.c:478
 msgid "disable rtc alarm interrupt"
 msgstr ""
 
