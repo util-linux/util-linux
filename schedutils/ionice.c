@@ -14,6 +14,9 @@
 #include <sys/ptrace.h>
 #include <sys/syscall.h>
 #include <asm/unistd.h>
+#include <err.h>
+
+#include "nls.h"
 
 static inline int ioprio_set(int which, int who, int ioprio)
 {
@@ -42,23 +45,29 @@ enum {
 
 const char *to_prio[] = { "none", "realtime", "best-effort", "idle", };
 
-static void usage(void)
+static void usage(int rc)
 {
-	printf("Usage: ionice [OPTIONS] [COMMAND [ARG]...]\n");
-	printf("Sets or gets process io scheduling class and priority.\n");
-	printf("\n\t-n\tClass data (typically 0-7, lower being higher prio)\n");
-	printf("\t-c\tScheduling class\n");
-	printf("\t\t\t1: realtime, 2: best-effort, 3: idle\n");
-	printf("\t-p\tProcess pid\n");
-	printf("\t-t\tIgnore failures to set priority, run command unconditionally\n");
-	printf("\t-h\tThis help page\n");
-	printf("\nJens Axboe <axboe@suse.de> (C) 2005\n");
+	fprintf(stdout, _(
+	"\nionice - sets or gets process io scheduling class and priority.\n\n"
+	"Usage: ionice [OPTIONS] [COMMAND [ARG]...]\n\n"
+	"  -n <classdata>      class data (0-7, lower being higher prio)\n"
+	"  -c <class>          scheduling class\n"
+	"                      1: realtime, 2: best-effort, 3: idle\n"
+	"  -p <pid>            process pid\n"
+	"  -t                  ignore failures, run command unconditionally\n"
+	"  -h                  this help\n\n"));
+
+	exit(rc);
 }
 
 int main(int argc, char *argv[])
 {
 	int ioprio = 4, set = 0, tolerant = 0, ioprio_class = IOPRIO_CLASS_BE;
 	int c, pid = 0;
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	while ((c = getopt(argc, argv, "+n:c:p:th")) != EOF) {
 		switch (c) {
@@ -77,9 +86,9 @@ int main(int argc, char *argv[])
 			tolerant = 1;
 			break;
 		case 'h':
+			usage(EXIT_SUCCESS);
 		default:
-			usage();
-			exit(EXIT_SUCCESS);
+			usage(EXIT_FAILURE);
 		}
 	}
 
@@ -92,12 +101,11 @@ int main(int argc, char *argv[])
 			break;
 		case IOPRIO_CLASS_IDLE:
 			if (set & 1)
-				printf("Ignoring given class data for idle class\n");
+				warnx(_("ignoring given class data for idle class"));
 			ioprio = 7;
 			break;
 		default:
-			printf("bad prio class %d\n", ioprio_class);
-			exit(EXIT_FAILURE);
+			errx(EXIT_FAILURE, _("bad prio class %d"), ioprio_class);
 	}
 
 	if (!set) {
@@ -106,10 +114,9 @@ int main(int argc, char *argv[])
 
 		ioprio = ioprio_get(IOPRIO_WHO_PROCESS, pid);
 
-		if (ioprio == -1) {
-			perror("ioprio_get");
-			exit(EXIT_FAILURE);
-		} else {
+		if (ioprio == -1)
+			err(EXIT_FAILURE, _("ioprio_get failed"));
+		else {
 			ioprio_class = ioprio >> IOPRIO_CLASS_SHIFT;
 			if (ioprio_class != IOPRIO_CLASS_IDLE) {
 				ioprio = ioprio & 0xff;
@@ -119,17 +126,14 @@ int main(int argc, char *argv[])
 		}
 	} else {
 		if (ioprio_set(IOPRIO_WHO_PROCESS, pid, ioprio | ioprio_class << IOPRIO_CLASS_SHIFT) == -1) {
-			if (!tolerant) {
-				perror("ioprio_set");
-				exit(EXIT_FAILURE);
-			}
+			if (!tolerant)
+				err(EXIT_FAILURE, _("ioprio_set failed"));
 		}
 
 		if (argv[optind]) {
 			execvp(argv[optind], &argv[optind]);
 			/* execvp should never return */
-			perror("execvp");
-			exit(EXIT_FAILURE);
+			err(EXIT_FAILURE, _("execvp failed"));
 		}
 	}
 
