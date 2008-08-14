@@ -1,0 +1,3 @@
+#!/bin/bash
+export TS_DESC=ia64-hpmatterhorn
+. ./ts-lscpu.sh

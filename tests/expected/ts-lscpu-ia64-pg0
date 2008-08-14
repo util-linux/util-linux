@@ -1,0 +1,35 @@
+CPU(s):                16
+Thread(s) per core:    1
+Core(s) per socket:    2
+CPU socket(s):         8
+NUMA node(s):          2
+Vendor ID:             GenuineIntel
+CPU family:            Itanium 2
+Model:                 0
+CPU MHz:               1418.000227
+L1d cache:             16K
+L1i cache:             16K
+L2d cache:             256K
+L2i cache:             1024K
+L3 cache:              6144K
+
+# The following is the parsable format, which can be fed to other
+# programs. Each different item in every column has an unique ID
+# starting from zero.
+# CPU,Core,Socket,Node,,L1d,L1i,L2d,L2i,L3
+0,0,0,0,,0,0,0,0,0
+1,1,0,0,,1,1,1,0,0
+2,2,1,0,,2,2,2,1,1
+3,3,1,0,,3,3,3,1,1
+4,4,2,0,,4,4,4,2,2
+5,5,2,0,,5,5,5,2,2
+6,6,3,0,,6,6,6,3,3
+7,7,3,0,,7,7,7,3,3
+8,8,4,1,,8,8,8,4,4
+9,9,4,1,,9,9,9,4,4
+10,10,5,1,,10,10,10,5,5
+11,11,5,1,,11,11,11,5,5
+12,12,6,1,,12,12,12,6,6
+13,13,6,1,,13,13,13,6,6
+14,14,7,1,,14,14,14,7,7
+15,15,7,1,,15,15,15,7,7

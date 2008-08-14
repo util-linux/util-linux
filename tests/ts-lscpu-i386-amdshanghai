@@ -1,0 +1,3 @@
+#!/bin/bash
+export TS_DESC="i386-amdshanghai"
+. ./ts-lscpu.sh

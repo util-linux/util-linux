@@ -1,0 +1,3 @@
+#!/bin/bash
+export TS_DESC=x86_64-necem14
+. ./ts-lscpu.sh

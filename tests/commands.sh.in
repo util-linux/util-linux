@@ -39,6 +39,7 @@ TS_CMD_CHECKTTY=${TS_CMD_CHECKTTY-"$TOPDIR/login-utils/checktty_test"}
 TS_CMD_ISLOCAL=${TS_CMD_ISLOCAL-"$TOPDIR/login-utils/islocal_test"}
 
 TS_CMD_HWCLOCK=${TS_CMD_HWCLOCK-"$TOPDIR/hwclock/hwclock"}
+TS_CMD_LSCPU=${TS_CMD_LSCPU-"$TOPDIR/sys-utils/lscpu"}
 
 
 
