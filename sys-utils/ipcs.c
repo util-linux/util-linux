@@ -339,7 +339,7 @@ void do_shm (char format)
 			else
 				printf ("%-10d %-10d", shmid, ipcp->uid);
 			/* ctime uses static buffer: use separate calls */
-			printf("  %-20.16s", shmseg.shm_atime
+			printf(" %-20.16s", shmseg.shm_atime
 			       ? ctime(&shmseg.shm_atime) + 4 : _("Not set"));
 			printf(" %-20.16s", shmseg.shm_dtime
 			       ? ctime(&shmseg.shm_dtime) + 4 : _("Not set"));
@@ -361,7 +361,7 @@ void do_shm (char format)
 				printf ("%-10d %-10.10s", shmid, pw->pw_name);
 			else
 				printf ("%-10d %-10d", shmid, ipcp->uid);
-			printf ("%-10o %-10lu %-10ld %-6s %-6s\n", 
+			printf (" %-10o %-10lu %-10ld %-6s %-6s\n",
 				ipcp->mode & 0777,
 				/*
 				 * earlier: int, Austin has size_t
@@ -465,10 +465,10 @@ void do_sem (char format)
 		default:
 		        printf("0x%08x ", ipcp->KEY);
 			if (pw)
-				printf ("%-10d %-10.9s", semid, pw->pw_name);
+				printf ("%-10d %-10.10s", semid, pw->pw_name);
 			else
-				printf ("%-10d %-9d", semid, ipcp->uid);
-			printf ("%-10o %-10ld\n",
+				printf ("%-10d %-10d", semid, ipcp->uid);
+			printf (" %-10o %-10ld\n",
 				ipcp->mode & 0777,
 				/*
 				 * glibc-2.1.3 and earlier has unsigned short;
