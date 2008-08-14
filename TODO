@@ -1,6 +1,8 @@
 v2.15:
 =====
 
+ * add NLS and err.h stuff to schedutils (chrt.c, taskset.c)
+
  * add libfsprobe (see topic/fsprobe branch)
 
  * swapon -s  -- LABELs support
