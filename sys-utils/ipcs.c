@@ -298,26 +298,26 @@ void do_shm (char format)
 
 	case CREATOR:
 		printf (_("------ Shared Memory Segment Creators/Owners --------\n"));
-		printf (_("%-10s %-10s %-10s %-10s %-10s %-10s\n"),
-		 _("shmid"),_("perms"),_("cuid"),_("cgid"),_("uid"),_("gid"));
+		printf ("%-10s %-10s %-10s %-10s %-10s %-10s\n",
+			_("shmid"),_("perms"),_("cuid"),_("cgid"),_("uid"),_("gid"));
 		break;
 
 	case TIME:
 		printf (_("------ Shared Memory Attach/Detach/Change Times --------\n"));
-		printf (_("%-10s %-10s %-20s %-20s %-20s\n"),
+		printf ("%-10s %-10s %-20s %-20s %-20s\n",
 			_("shmid"),_("owner"),_("attached"),_("detached"),
 			_("changed"));
 		break;
 
 	case PID:
 		printf (_("------ Shared Memory Creator/Last-op --------\n"));
-		printf (_("%-10s %-10s %-10s %-10s\n"),
+		printf ("%-10s %-10s %-10s %-10s\n",
 			_("shmid"),_("owner"),_("cpid"),_("lpid"));
 		break;
 
 	default:
 		printf (_("------ Shared Memory Segments --------\n"));
-		printf (_("%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"),
+		printf ("%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n",
 			_("key"),_("shmid"),_("owner"),_("perms"),_("bytes"),
 			_("nattch"),_("status"));
 		break;
@@ -418,13 +418,13 @@ void do_sem (char format)
 
 	case CREATOR:
 		printf (_("------ Semaphore Arrays Creators/Owners --------\n"));
-		printf (_("%-10s %-10s %-10s %-10s %-10s %-10s\n"),
-		 _("semid"),_("perms"),_("cuid"),_("cgid"),_("uid"),_("gid"));
+		printf ("%-10s %-10s %-10s %-10s %-10s %-10s\n",
+			_("semid"),_("perms"),_("cuid"),_("cgid"),_("uid"),_("gid"));
 		break;
 
 	case TIME:
 		printf (_("------ Semaphore Operation/Change Times --------\n"));
-		printf (_("%-8s %-10s %-26.24s %-26.24s\n"),
+		printf ("%-8s %-10s %-26.24s %-26.24s\n",
 			_("semid"),_("owner"),_("last-op"),_("last-changed"));
 		break;
 
@@ -433,7 +433,7 @@ void do_sem (char format)
 
 	default:
 		printf (_("------ Semaphore Arrays --------\n"));
-		printf (_("%-10s %-10s %-10s %-10s %-10s\n"), 
+		printf ("%-10s %-10s %-10s %-10s %-10s\n",
 			_("key"),_("semid"),_("owner"),_("perms"),_("nsems"));
 		break;
 	}
@@ -516,25 +516,25 @@ void do_msg (char format)
 
 	case CREATOR:
 		printf (_("------ Message Queues: Creators/Owners --------\n"));
-		printf (_("%-10s %-10s %-10s %-10s %-10s %-10s\n"),
-		 _("msqid"),_("perms"),_("cuid"),_("cgid"),_("uid"),_("gid"));
+		printf ("%-10s %-10s %-10s %-10s %-10s %-10s\n",
+			_("msqid"),_("perms"),_("cuid"),_("cgid"),_("uid"),_("gid"));
 		break;
 
 	case TIME:
 		printf (_("------ Message Queues Send/Recv/Change Times --------\n"));
-		printf (_("%-8s %-10s %-20s %-20s %-20s\n"),
+		printf ("%-8s %-10s %-20s %-20s %-20s\n",
 			_("msqid"),_("owner"),_("send"),_("recv"),_("change"));
 		break;
 
 	case PID:
  		printf (_("------ Message Queues PIDs --------\n"));
- 		printf (_("%-10s %-10s %-10s %-10s\n"),
+		printf ("%-10s %-10s %-10s %-10s\n",
 			_("msqid"),_("owner"),_("lspid"),_("lrpid"));
 		break;
 
 	default:
 		printf (_("------ Message Queues --------\n"));
-		printf (_("%-10s %-10s %-10s %-10s %-12s %-12s\n"),
+		printf ("%-10s %-10s %-10s %-10s %-12s %-12s\n",
 			_("key"), _("msqid"), _("owner"), _("perms"),
 			_("used-bytes"), _("messages"));
 		break;
@@ -675,7 +675,7 @@ void print_sem (int semid)
 		semds.sem_otime ? ctime (&semds.sem_otime) : _("Not set"));
 	printf (_("ctime = %-26.24s\n"), ctime (&semds.sem_ctime));	
 
-	printf (_("%-10s %-10s %-10s %-10s %-10s\n"),
+	printf ("%-10s %-10s %-10s %-10s %-10s\n",
 		_("semnum"),_("value"),_("ncount"),_("zcount"),_("pid"));
 	arg.val = 0;
 	for (i=0; i< semds.sem_nsems; i++) {
