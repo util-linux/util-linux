@@ -2,29 +2,30 @@
 .SH NAME
 ionice \- get/set program io scheduling class and priority
 .SH SYNOPSIS
-.B ionice
-[\fI-c\fR] \fI[-n\fR] [\fI-p\fR] [COMMAND [ARG...]]
+.BI "ionice [\-p " pid "] [\-c " class "] [\-n " classdata " ] [\-t] [COMMAND [ARG ...]]"
 
 .SH DESCRIPTION
-This program sets the io scheduling class and priority for a program. As of
-this writing, Linux supports 3 scheduling classes:
+This program sets or gets the io scheduling class and priority for a program.
+If no arguments or just \fI-p\fR is given, \fIionice\fR will query the current
+io scheduling class and priority for that process.
 
-\fBIdle\fR.
+As of this writing, Linux supports 3 scheduling classes:
+
+.IP "\fBIdle\fP"
 A program running with idle io priority will only get disk time when no other
 program has asked for disk io for a defined grace period. The impact of idle
 io processes on normal system activity should be zero. This scheduling
 class does not take a priority argument. Presently, this scheduling class
 is permitted for an ordinary user (since kernel 2.6.25).
 
-
-\fBBest effort\fR.
+.IP "\fBBest effort\fP"
 This is the default scheduling class for any process that hasn't asked for
 a specific io priority. Programs inherit the CPU nice setting for io
 priorities. This class takes a priority argument from \fI0-7\fR, with lower
 number being higher priority. Programs running at the same best effort
 priority are served in a round-robin fashion.
 
-\fBReal time\fR.
+.IP "\fBReal time\fP"
 The RT scheduling class is given first access to the disk, regardless of
 what else is going on in the system. Thus the RT class needs to be used with
 some care, as it can starve other processes. As with the best effort class,
@@ -32,26 +33,18 @@ some care, as it can starve other processes. As with the best effort class,
 will receive on each scheduling window. This scheduling class is not
 permitted for an ordinary (i.e., non-root) user.
 
-If no arguments or just \fI-p\fR is given, \fIionice\fR will query the
-current io scheduling class and priority for that process.
-
 .SH OPTIONS
-.LP
-.TP 7
-\fB-c\fP
-The scheduling class. 1 for real time, 2 for best-effort, 3 for idle.
-.TP 7
-\fB-n\fP
+.IP "\fB-c \fIclass\fP"
+The scheduling class. \fI1\fR for real time, \fI2\fR for best-effort, \fI3\fR for idle.
+.IP "\fB-n \fIclassdata\fP"
 The scheduling class data. This defines the class data, if the class
 accepts an argument. For real time and best-effort, \fI0-7\fR is valid
 data.
-.TP 7
-\fB-p\fP
+.IP "\fB-p \fIpid\fP"
 Pass in a process pid to change an already running process. If this argument
 is not given, \fBionice\fP will run the listed program with the given
 parameters.
-.TP 7
-\fB-t\fP
+.IP "\fB-t\fP"
 Ignore failure to set requested priority. If COMMAND is specified, run it
 even in case it was not possible to set desired scheduling priority, what
 can happen due to insufficient privilegies or old kernel version.
@@ -59,15 +52,15 @@ can happen due to insufficient privilegies or old kernel version.
 .SH EXAMPLES
 .LP
 .TP 7
-# \fBionice\fP -c3 -p89
+# \fBionice\fP -c 3 -p 89
 .TP 7
 Sets process with PID 89 as an idle io process.
 .TP 7
-# \fBionice\fP -c2 -n0 bash
+# \fBionice\fP -c 2 -n 0 bash
 .TP 7
 Runs 'bash' as a best-effort program with highest priority.
 .TP 7
-# \fBionice\fP -p89
+# \fBionice\fP -p 89
 .TP 7
 Returns the class and priority of the process with PID 89.
 
