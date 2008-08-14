@@ -88,9 +88,11 @@ function ts_init {
 
 	export BLKID_FILE
 
-	ldd $TS_CMD_MOUNT | grep -q 'libvolume_id' &> /dev/null
-	if [ "$?" == "0" ]; then
-		TS_HAS_VOLUMEID="yes"
+	if [ -x $TS_CMD_MOUNT ]; then
+		ldd $TS_CMD_MOUNT | grep -q 'libvolume_id' &> /dev/null
+		if [ "$?" == "0" ]; then
+			TS_HAS_VOLUMEID="yes"
+		fi
 	fi
 
 	rm -f $TS_OUTPUT
