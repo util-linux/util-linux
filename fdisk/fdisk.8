@@ -49,30 +49,20 @@ it is not designed for large partitions. In particular case use more advanced GN
 
 The
 .I device
-is usually one of the following:
-.br
-.nf
-.RS
-/dev/hda
-/dev/hdb
-/dev/sda
-/dev/sdb
-.RE
-.fi
-(/dev/hd[a-h] for IDE disks, /dev/sd[a-p] for SCSI disks,
-/dev/ed[a-d] for ESDI disks, /dev/xd[ab] for XT disks).
-A device name refers to the entire disk.
+is usually /dev/sda, /dev/sdb or so. A device name refers to the entire disk.
+The old systems without libata (a library used inside the Linux kernel to
+support ATA host controllers and devices) make a difference between IDE and
+SCSI disks. In partition case a device name is /dev/hd* (IDE) or /dev/sd*
+(SCSI).
 
 The
 .I partition
 is a
 .I device
 name followed by a partition number.  For example,
-.B /dev/hda1
-is the first partition on the first IDE hard disk in the system.
-IDE disks can have up to 63 partitions, SCSI disks up to 15.
-See also
-.IR /usr/src/linux/Documentation/devices.txt .
+.B /dev/sda1
+is the first partition on the first hard disk in the system.
+See also Linux kernel documentation (the Documentation/devices.txt file).
 
 A BSD/SUN type disklabel can describe 8 partitions,
 the third of which should be a `whole disk' partition.
@@ -159,9 +149,9 @@ DOS partition table entry, then you must also use
 .B dd
 to zero the first 512 bytes of that partition before using DOS FORMAT to
 format the partition.  For example, if you were using cfdisk to make a DOS
-partition table entry for /dev/hda1, then (after exiting fdisk or cfdisk
+partition table entry for /dev/sda1, then (after exiting fdisk or cfdisk
 and rebooting Linux so that the partition table information is valid) you
-would use the command "dd if=/dev/zero of=/dev/hda1 bs=512 count=1" to zero
+would use the command "dd if=/dev/zero of=/dev/sda1 bs=512 count=1" to zero
 the first 512 bytes of the partition.
 
 .B BE EXTREMELY CAREFUL
