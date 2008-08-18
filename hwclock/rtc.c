@@ -92,6 +92,15 @@ struct linux_rtc_time {
 /* default or user defined dev (by hwclock --rtc=<path>) */
 char *rtc_dev_name;
 
+static int rtc_dev_fd = -1;
+
+static void
+close_rtc(void) {
+	if (rtc_dev_fd != -1)
+		close(rtc_dev_fd);
+	rtc_dev_fd = -1;
+}
+
 static int
 open_rtc(void) {
 	char *fls[] = {
@@ -106,20 +115,28 @@ open_rtc(void) {
 	};
 	char **p;
 
+	if (rtc_dev_fd != -1)
+		return rtc_dev_fd;
+
 	/* --rtc option has been given */
 	if (rtc_dev_name)
-		return open(rtc_dev_name, O_RDONLY);
+		rtc_dev_fd = open(rtc_dev_name, O_RDONLY);
+	else {
+		for (p=fls; *p; ++p) {
+			rtc_dev_fd = open(*p, O_RDONLY);
 
-	for (p=fls; *p; ++p) {
-		int fd = open(*p, O_RDONLY);
-
-		if (fd < 0 && (errno == ENOENT || errno == ENODEV))
-			continue;
-		rtc_dev_name = *p;
-		return fd;
+			if (rtc_dev_fd < 0 && (errno == ENOENT || errno == ENODEV))
+				continue;
+			rtc_dev_name = *p;
+			break;
+		}
+		if (rtc_dev_fd < 0)
+			rtc_dev_name = *fls;	/* default for error messages */
 	}
-	rtc_dev_name = *fls;	/* default */
-	return -1;
+
+	if (rtc_dev_fd != 1)
+		atexit(close_rtc);
+	return rtc_dev_fd;
 }
 
 static int
@@ -219,7 +236,7 @@ synchronize_to_clock_tick_rtc(void) {
 int rtc_fd;  /* File descriptor of /dev/rtc */
 int ret;
 
-  rtc_fd = open(rtc_dev_name, O_RDONLY);
+  rtc_fd = open_rtc();
   if (rtc_fd == -1) {
     outsyserr(_("open() of %s failed"), rtc_dev_name);
     ret = 1;
@@ -287,7 +304,6 @@ int ret;
 		"failed unexpectedly"), rtc_dev_name);
       ret = 1;
     }
-    close(rtc_fd);
   }
   return ret;
 }
@@ -302,7 +318,6 @@ read_hardware_clock_rtc(struct tm *tm) {
 	/* Read the RTC time/date, return answer via tm */
 	rc = do_rtc_read_ioctl(rtc_fd, tm);
 
-	close(rtc_fd);
 	return rc;
 }
 
@@ -350,7 +365,6 @@ set_hardware_clock_rtc(const struct tm *new_broken_time) {
 	if (debug)
 		printf(_("ioctl(%s) was successful.\n"), ioctlname);
 
-	close(rtc_fd);
 	return 0;
 }
 
@@ -372,10 +386,8 @@ static struct clock_ops rtc = {
 struct clock_ops *
 probe_for_rtc_clock(){
 	int rtc_fd = open_rtc();
-	if (rtc_fd >= 0) {
-		close(rtc_fd);
+	if (rtc_fd >= 0)
 		return &rtc;
-	}
 	if (debug)
 		outsyserr(_("Open of %s failed"), rtc_dev_name);
 	return NULL;
@@ -408,7 +420,6 @@ get_epoch_rtc(unsigned long *epoch_p, int silent) {
   if (ioctl(rtc_fd, RTC_EPOCH_READ, epoch_p) == -1) {
     if (!silent)
       outsyserr(_("ioctl(RTC_EPOCH_READ) to %s failed"), rtc_dev_name);
-    close(rtc_fd);
     return 1;
   }
 
@@ -416,7 +427,6 @@ get_epoch_rtc(unsigned long *epoch_p, int silent) {
 	  printf(_("we have read epoch %ld from %s "
 		 "with RTC_EPOCH_READ ioctl.\n"), *epoch_p, rtc_dev_name);
 
-  close(rtc_fd);
   return 0;
 }
 
@@ -460,10 +470,8 @@ set_epoch_rtc(unsigned long epoch) {
 	      "does not have the RTC_EPOCH_SET ioctl.\n"), rtc_dev_name);
     else
       outsyserr(_("ioctl(RTC_EPOCH_SET) to %s failed"), rtc_dev_name);
-    close(rtc_fd);
     return 1;
   }
 
-  close(rtc_fd);
   return 0;
 }
