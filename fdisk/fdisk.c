@@ -2665,7 +2665,6 @@ main(int argc, char **argv) {
 
 		for (j = optind; j < argc; j++) {
 			disk_device = argv[j];
-			gpt_warning(disk_device);
 			if ((fd = open(disk_device, type_open)) < 0)
 				fatal(unable_to_open);
 			if (blkdev_get_sectors(fd, &size) == -1)
