@@ -20,6 +20,7 @@
 #include <sys/stat.h>
 #include <sys/time.h>
 #include <time.h>
+#include <limits.h>
 
 #include "nls.h"
 #include "blkdev.h"
@@ -672,6 +673,17 @@ warn_cylinders(void) {
 "2) booting and partitioning software from other OSs\n"
 "   (e.g., DOS FDISK, OS/2 FDISK)\n"),
 			cylinders);
+
+	if (total_number_of_sectors > UINT_MAX) {
+		int giga = (total_number_of_sectors << 9) / 1000000000;
+		fprintf(stderr, _("\n"
+"WARNING: The size of this disk is %d.%d TB (%llu bytes).\n"
+"DOS partition table format can not be used on drivers for volumes\n"
+"larger than 2.2 TB (2199023255040 bytes). Use parted(1) and GUID \n"
+"partition table format (GPT).\n\n"),
+			giga/1000, (giga/100)%10,
+			total_number_of_sectors << 9);
+	}
 }
 
 static void
