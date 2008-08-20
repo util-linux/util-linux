@@ -676,12 +676,14 @@ warn_cylinders(void) {
 
 	if (total_number_of_sectors > UINT_MAX) {
 		int giga = (total_number_of_sectors << 9) / 1000000000;
+		int hectogiga = (giga + 50) / 100;
+
 		fprintf(stderr, _("\n"
 "WARNING: The size of this disk is %d.%d TB (%llu bytes).\n"
-"DOS partition table format can not be used on drivers for volumes\n"
+"DOS partition table format can not be used on drives for volumes\n"
 "larger than 2.2 TB (2199023255040 bytes). Use parted(1) and GUID \n"
 "partition table format (GPT).\n\n"),
-			giga/1000, (giga/100)%10,
+			hectogiga / 10, hectogiga % 10,
 			total_number_of_sectors << 9);
 	}
 }
@@ -1627,9 +1629,11 @@ list_disk_geometry(void) {
 	if (megabytes < 10000)
 		printf(_("\nDisk %s: %ld MB, %lld bytes\n"),
 		       disk_device, megabytes, bytes);
-	else
+	else {
+		long hectomega = (megabytes + 50) / 100;
 		printf(_("\nDisk %s: %ld.%ld GB, %lld bytes\n"),
-		       disk_device, megabytes/1000, (megabytes/100)%10, bytes);
+		       disk_device, hectomega / 10, hectomega % 10, bytes);
+	}
 	printf(_("%d heads, %llu sectors/track, %d cylinders"),
 	       heads, sectors, cylinders);
 	if (units_per_sector == 1)
