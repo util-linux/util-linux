@@ -317,8 +317,7 @@ looplist_next(struct looplist *ll)
 		ret = stat(ll->name, &st);
 
 		if (ret == 0 &&	S_ISBLK(st.st_mode) &&
-				major(st.st_rdev) == LOOPMAJOR &&
-				minor(st.st_rdev) >= NLOOPS_DEFAULT) {
+				major(st.st_rdev) == LOOPMAJOR) {
 			ll->ct_succ++;
 			fd = open(ll->name, O_RDONLY);
 
