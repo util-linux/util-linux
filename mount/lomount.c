@@ -301,6 +301,10 @@ looplist_next(struct looplist *ll)
 				continue;
 			if (m != LOOPMAJOR)
 				continue;
+			/* unfortunately, real minor numbers needn't to match
+			 * loop<N> device name. We have to follow device name.
+			 */
+			n = name2minor(1, name);
 			fd = looplist_open_dev(ll, n);
 			if (fd != -1)
 				return fd;
