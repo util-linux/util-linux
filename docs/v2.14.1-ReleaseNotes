@@ -10,18 +10,27 @@ ChangeLog between v2.14 and v2.14.1
 build-sys:
    - cleanup sys-utils/Makefile.am  [Karel Zak]
    - fix dmesg.1 installation  [Karel Zak]
+   - release++ (v2.14.1-rc1)  [Karel Zak]
    - tgets is not in ncurses but in tinfo  [Arkadiusz Miskiewicz]
 docs:
    - update AUTHORS file  [Karel Zak]
+   - update v2.14.1 ReleaseNotes  [Karel Zak]
+fdisk:
+   - don't check for GPT when asked for disk size only  [Karel Zak]
 hwclock:
    - omit warning about drift if --noadjfile given  [Matthias Koenig]
    - unshadow a diagnostic printf  [Kalev Soikonen]
+ipcs:
+   - ungettextize the spacing of the table headers  [Benno Schulenberg]
+losetup:
+   - remove unnecessary minor number check  [Karel Zak]
 mount:
    - add docs about utf8=0 for vfat  [Karel Zak]
    - add fallback for versionsort()  [Karel Zak]
    - add info about tz=UTC option for FAT to mount.8  [Karel Zak]
    - add norealtime to mount.8  [Karel Zak]
 po:
+   - add zh_CN.po (from translationproject.org)  [Ray Wang]
    - merge changes  [Karel Zak]
    - update cs.po (from translationproject.org)  [Petr Pisar]
    - update nl.po (from translationproject.org)  [Benno Schulenberg]
