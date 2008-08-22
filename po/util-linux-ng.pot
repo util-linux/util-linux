@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-08-13 22:00+0200\n"
+"POT-Creation-Date: 2008-08-22 12:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3148,32 +3148,32 @@ msgid ""
 "device\n"
 msgstr ""
 
-#: fdisk/fdisk.c:2694
+#: fdisk/fdisk.c:2693
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 
-#: fdisk/fdisk.c:2704
+#: fdisk/fdisk.c:2703
 msgid "Command (m for help): "
 msgstr ""
 
-#: fdisk/fdisk.c:2720
+#: fdisk/fdisk.c:2719
 #, c-format
 msgid ""
 "\n"
 "The current boot file is: %s\n"
 msgstr ""
 
-#: fdisk/fdisk.c:2722
+#: fdisk/fdisk.c:2721
 msgid "Please enter the name of the new boot file: "
 msgstr ""
 
-#: fdisk/fdisk.c:2724
+#: fdisk/fdisk.c:2723
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr ""
 
-#: fdisk/fdisk.c:2797
+#: fdisk/fdisk.c:2796
 #, c-format
 msgid ""
 "\n"
@@ -5770,8 +5770,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr ""
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:708
-#: mount/lomount.c:711
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:707
+#: mount/lomount.c:710
 msgid "Password: "
 msgstr ""
 
@@ -7244,100 +7244,100 @@ msgstr ""
 msgid "can't rename %s to %s: %s\n"
 msgstr ""
 
-#: mount/lomount.c:357
+#: mount/lomount.c:356
 #, c-format
 msgid ", offset %<PRIu64>"
 msgstr ""
 
-#: mount/lomount.c:360
+#: mount/lomount.c:359
 #, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ""
 
-#: mount/lomount.c:368
+#: mount/lomount.c:367
 #, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ""
 
-#: mount/lomount.c:381
+#: mount/lomount.c:380
 #, c-format
 msgid ", offset %d"
 msgstr ""
 
-#: mount/lomount.c:384
+#: mount/lomount.c:383
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ""
 
-#: mount/lomount.c:392
+#: mount/lomount.c:391
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr ""
 
-#: mount/lomount.c:403
+#: mount/lomount.c:402
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr ""
 
-#: mount/lomount.c:419 mount/lomount.c:450 mount/lomount.c:515
-#: mount/lomount.c:564
+#: mount/lomount.c:418 mount/lomount.c:449 mount/lomount.c:514
+#: mount/lomount.c:563
 #, c-format
 msgid "%s: /dev directory does not exist."
 msgstr ""
 
-#: mount/lomount.c:430 mount/lomount.c:577
+#: mount/lomount.c:429 mount/lomount.c:576
 #, c-format
 msgid "%s: no permission to look at /dev/loop#"
 msgstr ""
 
-#: mount/lomount.c:579
+#: mount/lomount.c:578
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr ""
 
-#: mount/lomount.c:582
+#: mount/lomount.c:581
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
 "       about the loop device? (If so, recompile or `modprobe loop'.)"
 msgstr ""
 
-#: mount/lomount.c:649
+#: mount/lomount.c:648
 #, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr ""
 
-#: mount/lomount.c:697
+#: mount/lomount.c:696
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr ""
 
-#: mount/lomount.c:724
+#: mount/lomount.c:723
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:789
+#: mount/lomount.c:788
 #, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr ""
 
-#: mount/lomount.c:802
+#: mount/lomount.c:801
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr ""
 
-#: mount/lomount.c:813
+#: mount/lomount.c:812
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr ""
 
-#: mount/lomount.c:821
+#: mount/lomount.c:820
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 
-#: mount/lomount.c:856
+#: mount/lomount.c:855
 #, c-format
 msgid ""
 "\n"
@@ -7351,7 +7351,7 @@ msgid ""
 " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
 msgstr ""
 
-#: mount/lomount.c:865
+#: mount/lomount.c:864
 #, c-format
 msgid ""
 "\n"
@@ -7367,7 +7367,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1041
+#: mount/lomount.c:1040
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -8373,11 +8373,6 @@ msgstr ""
 msgid "------ Shared Memory Segment Creators/Owners --------\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:301 sys-utils/ipcs.c:421 sys-utils/ipcs.c:519
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
-msgstr ""
-
 #: sys-utils/ipcs.c:302 sys-utils/ipcs.c:308 sys-utils/ipcs.c:315
 #: sys-utils/ipcs.c:321
 msgid "shmid"
@@ -8409,11 +8404,6 @@ msgstr ""
 msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:307
-#, c-format
-msgid "%-10s %-10s %-20s %-20s %-20s\n"
-msgstr ""
-
 #: sys-utils/ipcs.c:308 sys-utils/ipcs.c:315 sys-utils/ipcs.c:321
 #: sys-utils/ipcs.c:428 sys-utils/ipcs.c:437 sys-utils/ipcs.c:526
 #: sys-utils/ipcs.c:532 sys-utils/ipcs.c:538
@@ -8437,11 +8427,6 @@ msgstr ""
 msgid "------ Shared Memory Creator/Last-op --------\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:314 sys-utils/ipcs.c:531
-#, c-format
-msgid "%-10s %-10s %-10s %-10s\n"
-msgstr ""
-
 #: sys-utils/ipcs.c:315
 msgid "cpid"
 msgstr ""
@@ -8453,11 +8438,6 @@ msgstr ""
 #: sys-utils/ipcs.c:319
 #, c-format
 msgid "------ Shared Memory Segments --------\n"
-msgstr ""
-
-#: sys-utils/ipcs.c:320
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
 msgstr ""
 
 #: sys-utils/ipcs.c:321 sys-utils/ipcs.c:437 sys-utils/ipcs.c:538
@@ -8556,11 +8536,6 @@ msgstr ""
 msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:427
-#, c-format
-msgid "%-8s %-10s %-26.24s %-26.24s\n"
-msgstr ""
-
 #: sys-utils/ipcs.c:428
 msgid "last-op"
 msgstr ""
@@ -8572,11 +8547,6 @@ msgstr ""
 #: sys-utils/ipcs.c:435
 #, c-format
 msgid "------ Semaphore Arrays --------\n"
-msgstr ""
-
-#: sys-utils/ipcs.c:436 sys-utils/ipcs.c:678
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s\n"
 msgstr ""
 
 #: sys-utils/ipcs.c:437
@@ -8643,11 +8613,6 @@ msgstr ""
 msgid "------ Message Queues Send/Recv/Change Times --------\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:525
-#, c-format
-msgid "%-8s %-10s %-20s %-20s %-20s\n"
-msgstr ""
-
 #: sys-utils/ipcs.c:526
 msgid "send"
 msgstr ""
@@ -8676,11 +8641,6 @@ msgstr ""
 #: sys-utils/ipcs.c:536
 #, c-format
 msgid "------ Message Queues --------\n"
-msgstr ""
-
-#: sys-utils/ipcs.c:537
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 msgstr ""
 
 #: sys-utils/ipcs.c:539

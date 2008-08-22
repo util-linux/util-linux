@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng-2.14-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-08-13 22:00+0200\n"
+"POT-Creation-Date: 2008-08-22 12:23+0200\n"
 "PO-Revision-Date: 2008-07-01 19:55+0200\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -3404,16 +3404,16 @@ msgstr ""
 "Waarschuwing: optie '-b' (sectorgrootte instellen) dient met\n"
 "slechts één apparaat gebruikt te worden.\n"
 
-#: fdisk/fdisk.c:2694
+#: fdisk/fdisk.c:2693
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr "OSF/1-schijflabel gevonden op %s; overgegaan in schijflabelmodus.\n"
 
-#: fdisk/fdisk.c:2704
+#: fdisk/fdisk.c:2703
 msgid "Command (m for help): "
 msgstr "Opdracht (m voor hulp): "
 
-#: fdisk/fdisk.c:2720
+#: fdisk/fdisk.c:2719
 #, c-format
 msgid ""
 "\n"
@@ -3422,16 +3422,16 @@ msgstr ""
 "\n"
 "Het huidige opstartbestand is: %s\n"
 
-#: fdisk/fdisk.c:2722
+#: fdisk/fdisk.c:2721
 msgid "Please enter the name of the new boot file: "
 msgstr "Geef de naam van het nieuwe opstartbestand: "
 
-#: fdisk/fdisk.c:2724
+#: fdisk/fdisk.c:2723
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "Opstartbestand blijft ongewijzigd.\n"
 
-#: fdisk/fdisk.c:2797
+#: fdisk/fdisk.c:2796
 #, c-format
 msgid ""
 "\n"
@@ -6333,8 +6333,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "%s: PAM-fout -- gestopt: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:708
-#: mount/lomount.c:711
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:707
+#: mount/lomount.c:710
 msgid "Password: "
 msgstr "Wachtwoord: "
 
@@ -7852,58 +7852,58 @@ msgstr "fout bij wijzigen van eigenaar van %s: %s\n"
 msgid "can't rename %s to %s: %s\n"
 msgstr "kan %s niet hernoemen tot %s: %s\n"
 
-#: mount/lomount.c:357
+#: mount/lomount.c:356
 #, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", beginpunt %<PRIu64>"
 
-#: mount/lomount.c:360
+#: mount/lomount.c:359
 #, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", maximale grootte %<PRIu64>"
 
-#: mount/lomount.c:368
+#: mount/lomount.c:367
 #, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", codering %s (soort %<PRIu32>)"
 
-#: mount/lomount.c:381
+#: mount/lomount.c:380
 #, c-format
 msgid ", offset %d"
 msgstr ", beginpunt %d"
 
-#: mount/lomount.c:384
+#: mount/lomount.c:383
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", coderingssoort %d\n"
 
-#: mount/lomount.c:392
+#: mount/lomount.c:391
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: kan geen informatie verkrijgen over apparaat %s: %s\n"
 
-#: mount/lomount.c:403
+#: mount/lomount.c:402
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: kan apparaat %s niet openen: %s\n"
 
-#: mount/lomount.c:419 mount/lomount.c:450 mount/lomount.c:515
-#: mount/lomount.c:564
+#: mount/lomount.c:418 mount/lomount.c:449 mount/lomount.c:514
+#: mount/lomount.c:563
 #, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: map '/dev' bestaat niet."
 
-#: mount/lomount.c:430 mount/lomount.c:577
+#: mount/lomount.c:429 mount/lomount.c:576
 #, c-format
 msgid "%s: no permission to look at /dev/loop#"
 msgstr "%s: geen toegangsrechten tot /dev/loop#"
 
-#: mount/lomount.c:579
+#: mount/lomount.c:578
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: kan geen vrij lus-apparaat vinden"
 
-#: mount/lomount.c:582
+#: mount/lomount.c:581
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -7913,44 +7913,44 @@ msgstr ""
 "        lus-apparaat?  (Dan moet u de kernel opnieuw compileren,\n"
 "        of misschien een 'modprobe loop' doen?)"
 
-#: mount/lomount.c:649
+#: mount/lomount.c:648
 #, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "waarschuwing: %s is al gerelateerd aan %s\n"
 
-#: mount/lomount.c:697
+#: mount/lomount.c:696
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "Kan pagina's niet vastzetten in het geheugen -- gestopt\n"
 
-#: mount/lomount.c:724
+#: mount/lomount.c:723
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr "ioctl(LOOP_SET_FD) is mislukt: %s\n"
 
-#: mount/lomount.c:789
+#: mount/lomount.c:788
 #, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu,%llu) is gelukt\n"
 
-#: mount/lomount.c:802
+#: mount/lomount.c:801
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "kan lus-apparaat %s niet uitschakelen: %s\n"
 
-#: mount/lomount.c:813
+#: mount/lomount.c:812
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "lus-apparaat %s is uitgeschakeld\n"
 
-#: mount/lomount.c:821
+#: mount/lomount.c:820
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Deze versie van 'mount' is gecompileerd zonder lus-ondersteuning.\n"
 "Hercompilatie is nodig.\n"
 
-#: mount/lomount.c:856
+#: mount/lomount.c:855
 #, c-format
 msgid ""
 "\n"
@@ -7972,7 +7972,7 @@ msgstr ""
 "  %1$s -j | --associated <bestand> [-o <nummer>]      gerelateerden tonen\n"
 "  %1$s [opties] {-f|--find|<lus-apparaat>} <bestand>  instellen\n"
 
-#: mount/lomount.c:865
+#: mount/lomount.c:864
 #, c-format
 msgid ""
 "\n"
@@ -7999,7 +7999,7 @@ msgstr ""
 "       --show                apparaatnaam tonen (bij '-f <bestand>')\n"
 "  -v | --verbose             gedetailleerde uitvoer produceren\n"
 
-#: mount/lomount.c:1041
+#: mount/lomount.c:1040
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -9126,11 +9126,6 @@ msgstr "Wisselgeheugenprestaties: %ld pogingen, %ld succesvol\n"
 msgid "------ Shared Memory Segment Creators/Owners --------\n"
 msgstr "------ Gedeeld geheugen: segmentaanmakers/eigenaars --------\n"
 
-#: sys-utils/ipcs.c:301 sys-utils/ipcs.c:421 sys-utils/ipcs.c:519
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
-
 #: sys-utils/ipcs.c:302 sys-utils/ipcs.c:308 sys-utils/ipcs.c:315
 #: sys-utils/ipcs.c:321
 msgid "shmid"
@@ -9162,11 +9157,6 @@ msgstr "GID"
 msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
 msgstr "------ Gedeeld geheugen: aanhecht/onthecht/wijzigingstijden --------\n"
 
-#: sys-utils/ipcs.c:307
-#, c-format
-msgid "%-10s %-10s %-20s %-20s %-20s\n"
-msgstr "%-10s %-10s %-20s %-20s %-20s\n"
-
 #: sys-utils/ipcs.c:308 sys-utils/ipcs.c:315 sys-utils/ipcs.c:321
 #: sys-utils/ipcs.c:428 sys-utils/ipcs.c:437 sys-utils/ipcs.c:526
 #: sys-utils/ipcs.c:532 sys-utils/ipcs.c:538
@@ -9190,11 +9180,6 @@ msgstr "gewijzigd"
 msgid "------ Shared Memory Creator/Last-op --------\n"
 msgstr "------ Gedeeld geheugen: aanmaker/laatste-operatie --------\n"
 
-#: sys-utils/ipcs.c:314 sys-utils/ipcs.c:531
-#, c-format
-msgid "%-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s\n"
-
 #: sys-utils/ipcs.c:315
 msgid "cpid"
 msgstr "maker-PID"
@@ -9207,11 +9192,6 @@ msgstr "laatste-PID"
 #, c-format
 msgid "------ Shared Memory Segments --------\n"
 msgstr "------ Gedeeld geheugen: segmenten --------\n"
-
-#: sys-utils/ipcs.c:320
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
-msgstr "%-10s %-10s %-9s %-10s %-10s %-10s %-12s\n"
 
 #: sys-utils/ipcs.c:321 sys-utils/ipcs.c:437 sys-utils/ipcs.c:538
 msgid "key"
@@ -9309,11 +9289,6 @@ msgstr "sem-ID"
 msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "------ Semaforen: operatie/wijzigingstijden --------\n"
 
-#: sys-utils/ipcs.c:427
-#, c-format
-msgid "%-8s %-10s %-26.24s %-26.24s\n"
-msgstr "%-8s %-10s %-26.24s %-26.24s\n"
-
 #: sys-utils/ipcs.c:428
 msgid "last-op"
 msgstr "laatste operatie"
@@ -9326,11 +9301,6 @@ msgstr "laatst gewijzigd"
 #, c-format
 msgid "------ Semaphore Arrays --------\n"
 msgstr "------ Semaforen: arrays --------\n"
-
-#: sys-utils/ipcs.c:436 sys-utils/ipcs.c:678
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s %-10s\n"
 
 #: sys-utils/ipcs.c:437
 msgid "nsems"
@@ -9396,11 +9366,6 @@ msgstr "msq-ID"
 msgid "------ Message Queues Send/Recv/Change Times --------\n"
 msgstr "------ Berichtwachtrijen: verzend/ontvang/wijzigingstijden --------\n"
 
-#: sys-utils/ipcs.c:525
-#, c-format
-msgid "%-8s %-10s %-20s %-20s %-20s\n"
-msgstr "%-8s %-10s %-20s %-20s %-20s\n"
-
 #: sys-utils/ipcs.c:526
 msgid "send"
 msgstr "verzend"
@@ -9430,11 +9395,6 @@ msgstr "la.ov.PID"
 #, c-format
 msgid "------ Message Queues --------\n"
 msgstr "------ Berichtwachtrijen --------\n"
-
-#: sys-utils/ipcs.c:537
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
-msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 
 #: sys-utils/ipcs.c:539
 msgid "used-bytes"
@@ -10537,3 +10497,27 @@ msgstr "Invoerregel is te lang\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Onvoldoende geheugen beschikbaar tijdens groeien van buffer\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-10s %-10s %-20s %-20s %-20s\n"
+#~ msgstr "%-10s %-10s %-20s %-20s %-20s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
+#~ msgstr "%-10s %-10s %-9s %-10s %-10s %-10s %-12s\n"
+
+#~ msgid "%-8s %-10s %-26.24s %-26.24s\n"
+#~ msgstr "%-8s %-10s %-26.24s %-26.24s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-8s %-10s %-20s %-20s %-20s\n"
+#~ msgstr "%-8s %-10s %-20s %-20s %-20s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"

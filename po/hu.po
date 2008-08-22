@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.14-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-08-13 22:00+0200\n"
+"POT-Creation-Date: 2008-08-22 12:23+0200\n"
 "PO-Revision-Date: 2008-05-21 18:25+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -3394,17 +3394,17 @@ msgstr ""
 "Figyelmeztetés: a -b (szektorméret beállítása) kapcsolóhoz meg kell adni egy "
 "eszközt\n"
 
-#: fdisk/fdisk.c:2694
+#: fdisk/fdisk.c:2693
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 "OSF/1 lemezcímke található a(z) %s eszközön, lemezcímke módra váltás.\n"
 
-#: fdisk/fdisk.c:2704
+#: fdisk/fdisk.c:2703
 msgid "Command (m for help): "
 msgstr "Parancs (m = súgó): "
 
-#: fdisk/fdisk.c:2720
+#: fdisk/fdisk.c:2719
 #, c-format
 msgid ""
 "\n"
@@ -3413,16 +3413,16 @@ msgstr ""
 "\n"
 "Az aktuális indítófájl: %s\n"
 
-#: fdisk/fdisk.c:2722
+#: fdisk/fdisk.c:2721
 msgid "Please enter the name of the new boot file: "
 msgstr "Adja meg az új indítófájl nevét: "
 
-#: fdisk/fdisk.c:2724
+#: fdisk/fdisk.c:2723
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "Az indítófájl változatlan\n"
 
-#: fdisk/fdisk.c:2797
+#: fdisk/fdisk.c:2796
 #, c-format
 msgid ""
 "\n"
@@ -6347,8 +6347,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "%s: jelszó-hitelesítési (PAM) hiba, megszakítva: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:708
-#: mount/lomount.c:711
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:707
+#: mount/lomount.c:710
 msgid "Password: "
 msgstr "Jelszó: "
 
@@ -7872,58 +7872,58 @@ msgstr "hiba a(z) %s tulajdonosának módosításakor: %s\n"
 msgid "can't rename %s to %s: %s\n"
 msgstr "%s nem nevezhető át %s névre: %s\n"
 
-#: mount/lomount.c:357
+#: mount/lomount.c:356
 #, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", eltolás: %<PRIu64>"
 
-#: mount/lomount.c:360
+#: mount/lomount.c:359
 #, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", méretkorlát: %<PRIu64>"
 
-#: mount/lomount.c:368
+#: mount/lomount.c:367
 #, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", %s titkosítás (típus: %<PRIu32>)"
 
-#: mount/lomount.c:381
+#: mount/lomount.c:380
 #, c-format
 msgid ", offset %d"
 msgstr ", eltolás: %d"
 
-#: mount/lomount.c:384
+#: mount/lomount.c:383
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", titkosítástípus: %d\n"
 
-#: mount/lomount.c:392
+#: mount/lomount.c:391
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: nem kaphatók információk a(z) %s eszközről: %s\n"
 
-#: mount/lomount.c:403
+#: mount/lomount.c:402
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: nem nyitható meg a(z) %s eszköz: %s\n"
 
-#: mount/lomount.c:419 mount/lomount.c:450 mount/lomount.c:515
-#: mount/lomount.c:564
+#: mount/lomount.c:418 mount/lomount.c:449 mount/lomount.c:514
+#: mount/lomount.c:563
 #, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: a /dev könyvtár nem létezik."
 
-#: mount/lomount.c:430 mount/lomount.c:577
+#: mount/lomount.c:429 mount/lomount.c:576
 #, c-format
 msgid "%s: no permission to look at /dev/loop#"
 msgstr "%s: nincs jogosultsága a /dev/loop# megjelenítéséhez"
 
-#: mount/lomount.c:579
+#: mount/lomount.c:578
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: nem található szabad hurokeszköz"
 
-#: mount/lomount.c:582
+#: mount/lomount.c:581
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -7933,44 +7933,44 @@ msgstr ""
 "       ismeri a hurokeszközt?. (fordítsa újra a rendszermagot vagy\n"
 "       adja ki a „modprobe loop” parancsot.)"
 
-#: mount/lomount.c:649
+#: mount/lomount.c:648
 #, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "figyelmeztetés: a(z) %s már társítva van a következőhöz: %s\n"
 
-#: mount/lomount.c:697
+#: mount/lomount.c:696
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "Nem lehet zárolni a memóriába, kilépés.\n"
 
-#: mount/lomount.c:724
+#: mount/lomount.c:723
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr "A LOOP_SET_FD ioctl meghiúsult: %s\n"
 
-#: mount/lomount.c:789
+#: mount/lomount.c:788
 #, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu,%llu): siker\n"
 
-#: mount/lomount.c:802
+#: mount/lomount.c:801
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: nem törölhető a(z) %s eszköz: %s\n"
 
-#: mount/lomount.c:813
+#: mount/lomount.c:812
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): siker\n"
 
-#: mount/lomount.c:821
+#: mount/lomount.c:820
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Ez a „mount” parancs hurokeszköz-támogatás nélkül lett lefordítva. Fordítsa "
 "újra.\n"
 
-#: mount/lomount.c:856
+#: mount/lomount.c:855
 #, c-format
 msgid ""
 "\n"
@@ -7993,7 +7993,7 @@ msgstr ""
 "felsorolása\n"
 " %1$s [ kapcsolók ] {-f|--find|hurokeszköz} fájl   beállítás\n"
 
-#: mount/lomount.c:865
+#: mount/lomount.c:864
 #, c-format
 msgid ""
 "\n"
@@ -8021,7 +8021,7 @@ msgstr ""
 " -v | --verbose            részletes mód\n"
 "\n"
 
-#: mount/lomount.c:1041
+#: mount/lomount.c:1040
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -9158,11 +9158,6 @@ msgstr "Lapozóterület teljesítménye: %ld kísérlet\t %ld sikeres\n"
 msgid "------ Shared Memory Segment Creators/Owners --------\n"
 msgstr "------- Osztott memóriaszegmens létrehozói/tulajdonosai ------\n"
 
-#: sys-utils/ipcs.c:301 sys-utils/ipcs.c:421 sys-utils/ipcs.c:519
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
-
 #: sys-utils/ipcs.c:302 sys-utils/ipcs.c:308 sys-utils/ipcs.c:315
 #: sys-utils/ipcs.c:321
 msgid "shmid"
@@ -9195,11 +9190,6 @@ msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
 msgstr ""
 "-------- Osztott memória csatolási/leválasztási/módosítási számai -------\n"
 
-#: sys-utils/ipcs.c:307
-#, c-format
-msgid "%-10s %-10s %-20s %-20s %-20s\n"
-msgstr "%-10s %-10s %-20s %-20s %-20s\n"
-
 #: sys-utils/ipcs.c:308 sys-utils/ipcs.c:315 sys-utils/ipcs.c:321
 #: sys-utils/ipcs.c:428 sys-utils/ipcs.c:437 sys-utils/ipcs.c:526
 #: sys-utils/ipcs.c:532 sys-utils/ipcs.c:538
@@ -9223,11 +9213,6 @@ msgstr "módosítva"
 msgid "------ Shared Memory Creator/Last-op --------\n"
 msgstr "-------- Osztott memória létrehozója/utolsó művelete --------\n"
 
-#: sys-utils/ipcs.c:314 sys-utils/ipcs.c:531
-#, c-format
-msgid "%-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s\n"
-
 #: sys-utils/ipcs.c:315
 msgid "cpid"
 msgstr "l.f.az"
@@ -9240,11 +9225,6 @@ msgstr "u.f.az"
 #, c-format
 msgid "------ Shared Memory Segments --------\n"
 msgstr "------- Osztott memóriaszegmensek --------\n"
-
-#: sys-utils/ipcs.c:320
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
-msgstr "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
 
 #: sys-utils/ipcs.c:321 sys-utils/ipcs.c:437 sys-utils/ipcs.c:538
 msgid "key"
@@ -9342,11 +9322,6 @@ msgstr "szem.az"
 msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "---------- Szemaforműveletek/módosítások számai -------\n"
 
-#: sys-utils/ipcs.c:427
-#, c-format
-msgid "%-8s %-10s %-26.24s %-26.24s\n"
-msgstr "%-8s %-10s %-26.24s %-26.24s\n"
-
 #: sys-utils/ipcs.c:428
 msgid "last-op"
 msgstr "ut.művelet"
@@ -9359,11 +9334,6 @@ msgstr "ut.változás"
 #, c-format
 msgid "------ Semaphore Arrays --------\n"
 msgstr "------- Szemafortömbök ----------\n"
-
-#: sys-utils/ipcs.c:436 sys-utils/ipcs.c:678
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s %-10s\n"
 
 #: sys-utils/ipcs.c:437
 msgid "nsems"
@@ -9429,11 +9399,6 @@ msgstr "üz.az"
 msgid "------ Message Queues Send/Recv/Change Times --------\n"
 msgstr "-------- Üzenetsorok küldések/fogadások/módosítások számai -------\n"
 
-#: sys-utils/ipcs.c:525
-#, c-format
-msgid "%-8s %-10s %-20s %-20s %-20s\n"
-msgstr "%-8s %-10s %-20s %-20s %-20s\n"
-
 #: sys-utils/ipcs.c:526
 msgid "send"
 msgstr "küldés"
@@ -9463,11 +9428,6 @@ msgstr "u.f.f.az"
 #, c-format
 msgid "------ Message Queues --------\n"
 msgstr "------- Üzenetsorok ---------\n"
-
-#: sys-utils/ipcs.c:537
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
-msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 
 #: sys-utils/ipcs.c:539
 msgid "used-bytes"
@@ -10574,3 +10534,27 @@ msgstr "A bemeneti sor túl hosszú.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Elfogyott a memória a puffer növelésekor.\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-10s %-10s %-20s %-20s %-20s\n"
+#~ msgstr "%-10s %-10s %-20s %-20s %-20s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
+
+#~ msgid "%-8s %-10s %-26.24s %-26.24s\n"
+#~ msgstr "%-8s %-10s %-26.24s %-26.24s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-8s %-10s %-20s %-20s %-20s\n"
+#~ msgstr "%-8s %-10s %-20s %-20s %-20s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"

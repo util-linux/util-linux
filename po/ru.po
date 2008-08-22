@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-08-13 22:00+0200\n"
+"POT-Creation-Date: 2008-08-22 12:23+0200\n"
 "PO-Revision-Date: 2006-03-07 12:42+0200\n"
 "Last-Translator: Pavel Maryanov <acid_jack@ukr.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -3401,18 +3401,18 @@ msgstr ""
 "Предупреждение: опция -b (установка размера сектора) должна быть "
 "использована с одним указанным устройством\n"
 
-#: fdisk/fdisk.c:2694
+#: fdisk/fdisk.c:2693
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 "Обнаружена метка диска OSF/1 на %s, выполняется переход в режим метки "
 "диска.\n"
 
-#: fdisk/fdisk.c:2704
+#: fdisk/fdisk.c:2703
 msgid "Command (m for help): "
 msgstr "Команда (m для справки): "
 
-#: fdisk/fdisk.c:2720
+#: fdisk/fdisk.c:2719
 #, c-format
 msgid ""
 "\n"
@@ -3421,16 +3421,16 @@ msgstr ""
 "\n"
 "Текущий boot-файл: %s\n"
 
-#: fdisk/fdisk.c:2722
+#: fdisk/fdisk.c:2721
 msgid "Please enter the name of the new boot file: "
 msgstr "Пожалуйста, введите имя нового boot-файла: "
 
-#: fdisk/fdisk.c:2724
+#: fdisk/fdisk.c:2723
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "Boot-файл не изменен\n"
 
-#: fdisk/fdisk.c:2797
+#: fdisk/fdisk.c:2796
 #, c-format
 msgid ""
 "\n"
@@ -6353,8 +6353,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: сбой PAM, выполняется прерывание: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:708
-#: mount/lomount.c:711
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:707
+#: mount/lomount.c:710
 msgid "Password: "
 msgstr "Пароль: "
 
@@ -7873,58 +7873,58 @@ msgstr "ошибка смены режима %s: %s\n"
 msgid "can't rename %s to %s: %s\n"
 msgstr "невозможно переименовать %s в %s: %s\n"
 
-#: mount/lomount.c:357
+#: mount/lomount.c:356
 #, fuzzy, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", смещение %d"
 
-#: mount/lomount.c:360
+#: mount/lomount.c:359
 #, fuzzy, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", ограничение на размер %lld"
 
-#: mount/lomount.c:368
+#: mount/lomount.c:367
 #, fuzzy, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", шифрование %s (тип %d)"
 
-#: mount/lomount.c:381
+#: mount/lomount.c:380
 #, c-format
 msgid ", offset %d"
 msgstr ", смещение %d"
 
-#: mount/lomount.c:384
+#: mount/lomount.c:383
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", тип шифрования %d\n"
 
-#: mount/lomount.c:392
+#: mount/lomount.c:391
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: невозможно получить информацию об устройстве %s: %s\n"
 
-#: mount/lomount.c:403
+#: mount/lomount.c:402
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: невозможно открыть устройство %s: %s\n"
 
-#: mount/lomount.c:419 mount/lomount.c:450 mount/lomount.c:515
-#: mount/lomount.c:564
+#: mount/lomount.c:418 mount/lomount.c:449 mount/lomount.c:514
+#: mount/lomount.c:563
 #, fuzzy, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: пользователь \"%s\" не существует.\n"
 
-#: mount/lomount.c:430 mount/lomount.c:577
+#: mount/lomount.c:429 mount/lomount.c:576
 #, c-format
 msgid "%s: no permission to look at /dev/loop#"
 msgstr "%s: нет разрешения на просмотр /dev/loop#"
 
-#: mount/lomount.c:579
+#: mount/lomount.c:578
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: невозможно найти ни одного свободного устройства обратной связи"
 
-#: mount/lomount.c:582
+#: mount/lomount.c:581
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -7934,44 +7934,44 @@ msgstr ""
 "    это ядро не знает об устройствах обратной связи. (В этом случае\n"
 "    перекомпилируйте ядро или выполните `modprobe loop.o'.)"
 
-#: mount/lomount.c:649
+#: mount/lomount.c:648
 #, fuzzy, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "Сектор %d уже выделен\n"
 
-#: mount/lomount.c:697
+#: mount/lomount.c:696
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "Невозможно заблокировать в памяти, завершение работы.\n"
 
-#: mount/lomount.c:724
+#: mount/lomount.c:723
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:789
+#: mount/lomount.c:788
 #, fuzzy, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): успешно завершен\n"
 
-#: mount/lomount.c:802
+#: mount/lomount.c:801
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: невозможно удалить устройство %s: %s\n"
 
-#: mount/lomount.c:813
+#: mount/lomount.c:812
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): успешно завершен\n"
 
-#: mount/lomount.c:821
+#: mount/lomount.c:820
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Эта версия mount была откомпилирована без поддержки loop. Пожалуйста, "
 "выполните перекомпиляцю.\n"
 
-#: mount/lomount.c:856
+#: mount/lomount.c:855
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -7992,7 +7992,7 @@ msgstr ""
 "неиспользуемых\n"
 "  %s [ -e шифрование ] [ -o смещение ] loop_устройство файл # установка\n"
 
-#: mount/lomount.c:865
+#: mount/lomount.c:864
 #, c-format
 msgid ""
 "\n"
@@ -8008,7 +8008,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1041
+#: mount/lomount.c:1040
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -9092,11 +9092,6 @@ msgstr "Производительность свопа: %ld попыток \t %ld успехов\n"
 msgid "------ Shared Memory Segment Creators/Owners --------\n"
 msgstr "------ Создатели/владельцы сегмента совм. исп. памяти --------\n"
 
-#: sys-utils/ipcs.c:301 sys-utils/ipcs.c:421 sys-utils/ipcs.c:519
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
-
 #: sys-utils/ipcs.c:302 sys-utils/ipcs.c:308 sys-utils/ipcs.c:315
 #: sys-utils/ipcs.c:321
 msgid "shmid"
@@ -9129,11 +9124,6 @@ msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
 msgstr ""
 "------ Число подключений/отключений/изменения совм. исп. памяти --------\n"
 
-#: sys-utils/ipcs.c:307
-#, c-format
-msgid "%-10s %-10s %-20s %-20s %-20s\n"
-msgstr "%-10s %-10s %-20s %-20s %-20s\n"
-
 #: sys-utils/ipcs.c:308 sys-utils/ipcs.c:315 sys-utils/ipcs.c:321
 #: sys-utils/ipcs.c:428 sys-utils/ipcs.c:437 sys-utils/ipcs.c:526
 #: sys-utils/ipcs.c:532 sys-utils/ipcs.c:538
@@ -9157,11 +9147,6 @@ msgstr "изменено"
 msgid "------ Shared Memory Creator/Last-op --------\n"
 msgstr "------ Создатель/последняя операция совм. исп. памяти --------\n"
 
-#: sys-utils/ipcs.c:314 sys-utils/ipcs.c:531
-#, c-format
-msgid "%-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s\n"
-
 #: sys-utils/ipcs.c:315
 msgid "cpid"
 msgstr "cpid"
@@ -9174,11 +9159,6 @@ msgstr "lpid"
 #, c-format
 msgid "------ Shared Memory Segments --------\n"
 msgstr "------ Сегменты совм. исп. памяти --------\n"
-
-#: sys-utils/ipcs.c:320
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
-msgstr "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
 
 #: sys-utils/ipcs.c:321 sys-utils/ipcs.c:437 sys-utils/ipcs.c:538
 msgid "key"
@@ -9276,11 +9256,6 @@ msgstr "semid"
 msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "------ Количество операций/изменений совм. исп. памяти --------\n"
 
-#: sys-utils/ipcs.c:427
-#, c-format
-msgid "%-8s %-10s %-26.24s %-26.24s\n"
-msgstr "%-8s %-10s %-26.24s %-26.24s\n"
-
 #: sys-utils/ipcs.c:428
 msgid "last-op"
 msgstr "последняя операция"
@@ -9293,11 +9268,6 @@ msgstr "последнее изменение"
 #, c-format
 msgid "------ Semaphore Arrays --------\n"
 msgstr "------ Массивы семафоров --------\n"
-
-#: sys-utils/ipcs.c:436 sys-utils/ipcs.c:678
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s %-10s\n"
 
 #: sys-utils/ipcs.c:437
 msgid "nsems"
@@ -9364,11 +9334,6 @@ msgid "------ Message Queues Send/Recv/Change Times --------\n"
 msgstr ""
 "------ Количество отправлений/приема/изменений очереди сообщений --------\n"
 
-#: sys-utils/ipcs.c:525
-#, c-format
-msgid "%-8s %-10s %-20s %-20s %-20s\n"
-msgstr "%-8s %-10s %-20s %-20s %-20s\n"
-
 #: sys-utils/ipcs.c:526
 msgid "send"
 msgstr "отправлено"
@@ -9398,11 +9363,6 @@ msgstr "lrpid"
 #, c-format
 msgid "------ Message Queues --------\n"
 msgstr "------ Очереди сообщений --------\n"
-
-#: sys-utils/ipcs.c:537
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
-msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 
 #: sys-utils/ipcs.c:539
 msgid "used-bytes"
@@ -10476,6 +10436,30 @@ msgstr "Строка входных данных слишком длинная.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Не хватает памяти при увеличении буфера.\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-10s %-10s %-20s %-20s %-20s\n"
+#~ msgstr "%-10s %-10s %-20s %-20s %-20s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
+
+#~ msgid "%-8s %-10s %-26.24s %-26.24s\n"
+#~ msgstr "%-8s %-10s %-26.24s %-26.24s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-8s %-10s %-20s %-20s %-20s\n"
+#~ msgstr "%-8s %-10s %-20s %-20s %-20s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 
 #, fuzzy
 #~ msgid "chfn: PAM Failure, aborting: %s\n"

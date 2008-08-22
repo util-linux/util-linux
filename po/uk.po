@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-08-13 22:00+0200\n"
+"POT-Creation-Date: 2008-08-22 12:23+0200\n"
 "PO-Revision-Date: 2006-04-06 10:45+0200\n"
 "Last-Translator: Maxim V. Dziumanenko <mvd@mylinux.com.ua>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
@@ -3376,16 +3376,16 @@ msgstr ""
 "Попередження: з вказаним пристроєм повинен використовуватись параметр -b "
 "(встановити розмір сектора)\n"
 
-#: fdisk/fdisk.c:2694
+#: fdisk/fdisk.c:2693
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr "Знайдено OSF/1 етикетку диску на %s, перехід у режим етикетки диску.\n"
 
-#: fdisk/fdisk.c:2704
+#: fdisk/fdisk.c:2703
 msgid "Command (m for help): "
 msgstr "Команда (m - довідка): "
 
-#: fdisk/fdisk.c:2720
+#: fdisk/fdisk.c:2719
 #, c-format
 msgid ""
 "\n"
@@ -3394,16 +3394,16 @@ msgstr ""
 "\n"
 "Поточний файл завантаження: %s\n"
 
-#: fdisk/fdisk.c:2722
+#: fdisk/fdisk.c:2721
 msgid "Please enter the name of the new boot file: "
 msgstr "Введіть назву нового файлу завантаження: "
 
-#: fdisk/fdisk.c:2724
+#: fdisk/fdisk.c:2723
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "Файл завантаження не змінено\n"
 
-#: fdisk/fdisk.c:2797
+#: fdisk/fdisk.c:2796
 #, c-format
 msgid ""
 "\n"
@@ -6308,8 +6308,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: помилка PAM, перервано: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:708
-#: mount/lomount.c:711
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:707
+#: mount/lomount.c:710
 msgid "Password: "
 msgstr "Пароль: "
 
@@ -7827,58 +7827,58 @@ msgstr "помилка зімни режиму доступу до %s: %s\n"
 msgid "can't rename %s to %s: %s\n"
 msgstr "не вдається перейменувати %s у %s: %s\n"
 
-#: mount/lomount.c:357
+#: mount/lomount.c:356
 #, fuzzy, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", зсув %d"
 
-#: mount/lomount.c:360
+#: mount/lomount.c:359
 #, fuzzy, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", обмеження на розмір %lld"
 
-#: mount/lomount.c:368
+#: mount/lomount.c:367
 #, fuzzy, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", шифрування %s (тип %d)"
 
-#: mount/lomount.c:381
+#: mount/lomount.c:380
 #, c-format
 msgid ", offset %d"
 msgstr ", зсув %d"
 
-#: mount/lomount.c:384
+#: mount/lomount.c:383
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", тип шифрування %d\n"
 
-#: mount/lomount.c:392
+#: mount/lomount.c:391
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: не вдається отримати інформацію про пристрій %s: %s\n"
 
-#: mount/lomount.c:403
+#: mount/lomount.c:402
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: не вдається відкрити пристрій %s: %s\n"
 
-#: mount/lomount.c:419 mount/lomount.c:450 mount/lomount.c:515
-#: mount/lomount.c:564
+#: mount/lomount.c:418 mount/lomount.c:449 mount/lomount.c:514
+#: mount/lomount.c:563
 #, fuzzy, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: користувач \"%s\" не існує.\n"
 
-#: mount/lomount.c:430 mount/lomount.c:577
+#: mount/lomount.c:429 mount/lomount.c:576
 #, c-format
 msgid "%s: no permission to look at /dev/loop#"
 msgstr "%s: немає прав доступу до /dev/loop#"
 
-#: mount/lomount.c:579
+#: mount/lomount.c:578
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: не вдається знайти жодний вільний loop-пристрій"
 
-#: mount/lomount.c:582
+#: mount/lomount.c:581
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -7888,44 +7888,44 @@ msgstr ""
 "       підтримує роботу з loop-пристроями (Якщо це так - перекомпілюйте\n"
 "       його або виконайте `modprobe loop')."
 
-#: mount/lomount.c:649
+#: mount/lomount.c:648
 #, fuzzy, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "Сектор %d вже розподілений\n"
 
-#: mount/lomount.c:697
+#: mount/lomount.c:696
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "не вдається заблокувати у пам'яті, завершення.\n"
 
-#: mount/lomount.c:724
+#: mount/lomount.c:723
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:789
+#: mount/lomount.c:788
 #, fuzzy, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): успішно завершено\n"
 
-#: mount/lomount.c:802
+#: mount/lomount.c:801
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: не вдається видалити пристрій %s: %s\n"
 
-#: mount/lomount.c:813
+#: mount/lomount.c:812
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): успішно завершено\n"
 
-#: mount/lomount.c:821
+#: mount/lomount.c:820
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Програма mount була скомпільована без підтримки loop-пристроїв. "
 "Перекомпілюйте її \n"
 
-#: mount/lomount.c:856
+#: mount/lomount.c:855
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -7944,7 +7944,7 @@ msgstr ""
 "  %s -f                                               # знайти вільний\n"
 "  %s [ -e шифрування ] [ -o зсув ] loop_пристрій файл # встановити\n"
 
-#: mount/lomount.c:865
+#: mount/lomount.c:864
 #, c-format
 msgid ""
 "\n"
@@ -7960,7 +7960,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1041
+#: mount/lomount.c:1040
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -9039,11 +9039,6 @@ msgstr "Швидкодія підкачки: %ld спроб\t %ld вдалих\n
 msgid "------ Shared Memory Segment Creators/Owners --------\n"
 msgstr "------ Автори/Власники сегментів спільної пам'яті --------\n"
 
-#: sys-utils/ipcs.c:301 sys-utils/ipcs.c:421 sys-utils/ipcs.c:519
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
-msgstr "%-20s %-20s %-20s %-20s %-20s %-20s\n"
-
 #: sys-utils/ipcs.c:302 sys-utils/ipcs.c:308 sys-utils/ipcs.c:315
 #: sys-utils/ipcs.c:321
 msgid "shmid"
@@ -9075,11 +9070,6 @@ msgstr "gid"
 msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
 msgstr "------ Час приєднання/від'єднання/зміни спільної пам'яті --------\n"
 
-#: sys-utils/ipcs.c:307
-#, c-format
-msgid "%-10s %-10s %-20s %-20s %-20s\n"
-msgstr "%-10s %-10s %-20s %-20s %-20s\n"
-
 #: sys-utils/ipcs.c:308 sys-utils/ipcs.c:315 sys-utils/ipcs.c:321
 #: sys-utils/ipcs.c:428 sys-utils/ipcs.c:437 sys-utils/ipcs.c:526
 #: sys-utils/ipcs.c:532 sys-utils/ipcs.c:538
@@ -9103,11 +9093,6 @@ msgstr "змінено"
 msgid "------ Shared Memory Creator/Last-op --------\n"
 msgstr "------ Автор/останній-оп спільної пам'яті --------\n"
 
-#: sys-utils/ipcs.c:314 sys-utils/ipcs.c:531
-#, c-format
-msgid "%-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s\n"
-
 #: sys-utils/ipcs.c:315
 msgid "cpid"
 msgstr "cpid"
@@ -9120,11 +9105,6 @@ msgstr "lpid"
 #, c-format
 msgid "------ Shared Memory Segments --------\n"
 msgstr "------ Сегменти спільної пам'яті --------\n"
-
-#: sys-utils/ipcs.c:320
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
-msgstr "%-14s %-10s %-16s %-16s %-10s %-24s %-24s\n"
 
 #: sys-utils/ipcs.c:321 sys-utils/ipcs.c:437 sys-utils/ipcs.c:538
 msgid "key"
@@ -9222,11 +9202,6 @@ msgstr "semid"
 msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "------ Час операції/зміни спільної пам'яті --------\n"
 
-#: sys-utils/ipcs.c:427
-#, c-format
-msgid "%-8s %-10s %-26.24s %-26.24s\n"
-msgstr "%-8s %-10s %-26.24s %-26.24s\n"
-
 #: sys-utils/ipcs.c:428
 msgid "last-op"
 msgstr "остан-оп"
@@ -9239,11 +9214,6 @@ msgstr "остан-змін"
 #, c-format
 msgid "------ Semaphore Arrays --------\n"
 msgstr "------ Масиви семафорів --------\n"
-
-#: sys-utils/ipcs.c:436 sys-utils/ipcs.c:678
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s %-10s\n"
 
 #: sys-utils/ipcs.c:437
 msgid "nsems"
@@ -9309,11 +9279,6 @@ msgstr "msqid"
 msgid "------ Message Queues Send/Recv/Change Times --------\n"
 msgstr "------ Час відправлення/отримання/зміни черг повідомлень--------\n"
 
-#: sys-utils/ipcs.c:525
-#, c-format
-msgid "%-8s %-10s %-20s %-20s %-20s\n"
-msgstr "%-8s %-10s %-20s %-20s %-20s\n"
-
 #: sys-utils/ipcs.c:526
 msgid "send"
 msgstr "відправлено"
@@ -9343,11 +9308,6 @@ msgstr "lrpid"
 #, c-format
 msgid "------ Message Queues --------\n"
 msgstr "------ Черги повідомлень --------\n"
-
-#: sys-utils/ipcs.c:537
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
-msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 
 #: sys-utils/ipcs.c:539
 msgid "used-bytes"
@@ -10421,6 +10381,30 @@ msgstr "Вхідний рядок надто довгий.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Недостатньо пам'яті для збільшення буфера.\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-20s %-20s %-20s %-20s %-20s %-20s\n"
+
+#~ msgid "%-10s %-10s %-20s %-20s %-20s\n"
+#~ msgstr "%-10s %-10s %-20s %-20s %-20s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
+#~ msgstr "%-14s %-10s %-16s %-16s %-10s %-24s %-24s\n"
+
+#~ msgid "%-8s %-10s %-26.24s %-26.24s\n"
+#~ msgstr "%-8s %-10s %-26.24s %-26.24s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-8s %-10s %-20s %-20s %-20s\n"
+#~ msgstr "%-8s %-10s %-20s %-20s %-20s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 
 #, fuzzy
 #~ msgid "chfn: PAM Failure, aborting: %s\n"

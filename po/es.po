@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.12m\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-08-13 22:00+0200\n"
+"POT-Creation-Date: 2008-08-22 12:23+0200\n"
 "PO-Revision-Date: 2004-12-22 01:31+0100\n"
 "Last-Translator: Santiago Vila Doncel <sanvila@unex.es>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -3421,18 +3421,18 @@ msgstr ""
 "Atención: la opción -b (establecer tamaño de sector) debe utilizarse con un "
 "dispositivo especificado\n"
 
-#: fdisk/fdisk.c:2694
+#: fdisk/fdisk.c:2693
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 "Se ha detectado una etiqueta de disco OSF/1 en %s, entrando en el modo de\n"
 "etiqueta de disco.\n"
 
-#: fdisk/fdisk.c:2704
+#: fdisk/fdisk.c:2703
 msgid "Command (m for help): "
 msgstr "Orden (m para obtener ayuda): "
 
-#: fdisk/fdisk.c:2720
+#: fdisk/fdisk.c:2719
 #, c-format
 msgid ""
 "\n"
@@ -3441,16 +3441,16 @@ msgstr ""
 "\n"
 "El fichero de inicio actual es: %s\n"
 
-#: fdisk/fdisk.c:2722
+#: fdisk/fdisk.c:2721
 msgid "Please enter the name of the new boot file: "
 msgstr "Escriba el nombre del nuevo fichero de inicio: "
 
-#: fdisk/fdisk.c:2724
+#: fdisk/fdisk.c:2723
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "No se ha modificado el fichero de inicio\n"
 
-#: fdisk/fdisk.c:2797
+#: fdisk/fdisk.c:2796
 #, c-format
 msgid ""
 "\n"
@@ -6417,8 +6417,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: error de PAM; anulando: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:798
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:708
-#: mount/lomount.c:711
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:707
+#: mount/lomount.c:710
 msgid "Password: "
 msgstr "Contraseña: "
 
@@ -7949,58 +7949,58 @@ msgstr "Error al cambiar el modo de %s: %s\n"
 msgid "can't rename %s to %s: %s\n"
 msgstr "No se puede cambiar el nombre %s por %s: %s\n"
 
-#: mount/lomount.c:357
+#: mount/lomount.c:356
 #, fuzzy, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", desplazamiento %d"
 
-#: mount/lomount.c:360
+#: mount/lomount.c:359
 #, fuzzy, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", tamaño límite %lld"
 
-#: mount/lomount.c:368
+#: mount/lomount.c:367
 #, fuzzy, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", cifrado %s (tipo %d)"
 
-#: mount/lomount.c:381
+#: mount/lomount.c:380
 #, c-format
 msgid ", offset %d"
 msgstr ", desplazamiento %d"
 
-#: mount/lomount.c:384
+#: mount/lomount.c:383
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", tipo de cifrado %d\n"
 
-#: mount/lomount.c:392
+#: mount/lomount.c:391
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: no se puede obtener información sobre el dispositivo %s: %s\n"
 
-#: mount/lomount.c:403
+#: mount/lomount.c:402
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: no se puede abrir el dispositivo %s: %s\n"
 
-#: mount/lomount.c:419 mount/lomount.c:450 mount/lomount.c:515
-#: mount/lomount.c:564
+#: mount/lomount.c:418 mount/lomount.c:449 mount/lomount.c:514
+#: mount/lomount.c:563
 #, fuzzy, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: el usuario \"%s\" no existe.\n"
 
-#: mount/lomount.c:430 mount/lomount.c:577
+#: mount/lomount.c:429 mount/lomount.c:576
 #, c-format
 msgid "%s: no permission to look at /dev/loop#"
 msgstr "%s: no existe permiso para mirar en /dev/loop#"
 
-#: mount/lomount.c:579
+#: mount/lomount.c:578
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: no se ha encontrado ningún dispositivo de bucle libre"
 
-#: mount/lomount.c:582
+#: mount/lomount.c:581
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -8011,44 +8011,44 @@ msgstr ""
 "a\n"
 "       realizar la compilación o `modprobe loop'.)"
 
-#: mount/lomount.c:649
+#: mount/lomount.c:648
 #, fuzzy, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "El sector %d ya está asignado\n"
 
-#: mount/lomount.c:697
+#: mount/lomount.c:696
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "No se pudo bloquear en memoria, saliendo.\n"
 
-#: mount/lomount.c:724
+#: mount/lomount.c:723
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:789
+#: mount/lomount.c:788
 #, fuzzy, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): ejecución correcta\n"
 
-#: mount/lomount.c:802
+#: mount/lomount.c:801
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: no se puede suprimir el dispositivo %s: %s\n"
 
-#: mount/lomount.c:813
+#: mount/lomount.c:812
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): ejecución correcta\n"
 
-#: mount/lomount.c:821
+#: mount/lomount.c:820
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Este montaje se ha compilado sin soporte de bucle. Vuelva a realizar la "
 "compilación.\n"
 
-#: mount/lomount.c:856
+#: mount/lomount.c:855
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8068,7 +8068,7 @@ msgstr ""
 "usados\n"
 "  %s [ -e cifrado ] [ -o despl ] {-f|disp_bucle} fichero # configurar\n"
 
-#: mount/lomount.c:865
+#: mount/lomount.c:864
 #, c-format
 msgid ""
 "\n"
@@ -8084,7 +8084,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1041
+#: mount/lomount.c:1040
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -9177,11 +9177,6 @@ msgstr "Rendimiento de intercambio: %ld intentos\t %ld correctos\n"
 msgid "------ Shared Memory Segment Creators/Owners --------\n"
 msgstr "-- Creadores/propietarios segmento mem. compartida --\n"
 
-#: sys-utils/ipcs.c:301 sys-utils/ipcs.c:421 sys-utils/ipcs.c:519
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
-
 #: sys-utils/ipcs.c:302 sys-utils/ipcs.c:308 sys-utils/ipcs.c:315
 #: sys-utils/ipcs.c:321
 msgid "shmid"
@@ -9213,11 +9208,6 @@ msgstr "gid"
 msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
 msgstr "-- Tiempos conexión/desconexión/modificac. mem. comp. --\n"
 
-#: sys-utils/ipcs.c:307
-#, c-format
-msgid "%-10s %-10s %-20s %-20s %-20s\n"
-msgstr "%-10s %-10s %-20s %-20s %-20s\n"
-
 #: sys-utils/ipcs.c:308 sys-utils/ipcs.c:315 sys-utils/ipcs.c:321
 #: sys-utils/ipcs.c:428 sys-utils/ipcs.c:437 sys-utils/ipcs.c:526
 #: sys-utils/ipcs.c:532 sys-utils/ipcs.c:538
@@ -9241,11 +9231,6 @@ msgstr "modificado"
 msgid "------ Shared Memory Creator/Last-op --------\n"
 msgstr "---- Creador/último op. memoria compart. ----\n"
 
-#: sys-utils/ipcs.c:314 sys-utils/ipcs.c:531
-#, c-format
-msgid "%-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s\n"
-
 #: sys-utils/ipcs.c:315
 msgid "cpid"
 msgstr "cpid"
@@ -9258,11 +9243,6 @@ msgstr "lpid"
 #, c-format
 msgid "------ Shared Memory Segments --------\n"
 msgstr "---- Segmentos memoria compartida ----\n"
-
-#: sys-utils/ipcs.c:320
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
-msgstr "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
 
 #: sys-utils/ipcs.c:321 sys-utils/ipcs.c:437 sys-utils/ipcs.c:538
 msgid "key"
@@ -9360,11 +9340,6 @@ msgstr "semid"
 msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "--- Tiempos operación/modificación memoria comp. ---\n"
 
-#: sys-utils/ipcs.c:427
-#, c-format
-msgid "%-8s %-10s %-26.24s %-26.24s\n"
-msgstr "%-8s %-10s %-26.24s %-26.24s\n"
-
 #: sys-utils/ipcs.c:428
 msgid "last-op"
 msgstr "última operación"
@@ -9377,11 +9352,6 @@ msgstr "última modificación"
 #, c-format
 msgid "------ Semaphore Arrays --------\n"
 msgstr "------ Matrices semáforo -------\n"
-
-#: sys-utils/ipcs.c:436 sys-utils/ipcs.c:678
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-10s\n"
-msgstr "%-10s %-10s %-10s %-10s %-10s\n"
 
 #: sys-utils/ipcs.c:437
 msgid "nsems"
@@ -9447,11 +9417,6 @@ msgstr "msqid"
 msgid "------ Message Queues Send/Recv/Change Times --------\n"
 msgstr "--- Tiempos envío/recep./modific. colas mensajes ----\n"
 
-#: sys-utils/ipcs.c:525
-#, c-format
-msgid "%-8s %-10s %-20s %-20s %-20s\n"
-msgstr "%-8s %-10s  %-20s %-20s %-20s\n"
-
 #: sys-utils/ipcs.c:526
 msgid "send"
 msgstr "envío"
@@ -9481,11 +9446,6 @@ msgstr "lrpid"
 #, c-format
 msgid "------ Message Queues --------\n"
 msgstr "------ Colas de mensajes -----\n"
-
-#: sys-utils/ipcs.c:537
-#, c-format
-msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
-msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 
 #: sys-utils/ipcs.c:539
 msgid "used-bytes"
@@ -10564,6 +10524,30 @@ msgstr "Línea de entrada demasiado larga.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-10s %-10s %-20s %-20s %-20s\n"
+#~ msgstr "%-10s %-10s %-20s %-20s %-20s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-10s %-10s %-12s\n"
+
+#~ msgid "%-8s %-10s %-26.24s %-26.24s\n"
+#~ msgstr "%-8s %-10s %-26.24s %-26.24s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-10s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-10s\n"
+
+#~ msgid "%-8s %-10s %-20s %-20s %-20s\n"
+#~ msgstr "%-8s %-10s  %-20s %-20s %-20s\n"
+
+#~ msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
+#~ msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 
 #, fuzzy
 #~ msgid "chfn: PAM Failure, aborting: %s\n"
