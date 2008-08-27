@@ -10,6 +10,23 @@ AC_CONFIG_SRCDIR(mount/mount.c)
 
 AC_PREFIX_DEFAULT([/usr])
 
+dnl libblkid version definition
+dnl -----------------------------
+BLKID_VERSION_MAJOR=1
+BLKID_VERSION_MINOR=41
+BLKID_VERSION_RELEASE=0
+BLKID_DATE="10-Jul-2008"
+
+BLKID_VERSION=$BLKID_VERSION_MAJOR.$BLKID_VERSION_MINOR.$BLKID_VERSION_RELEASE
+
+AC_SUBST(BLKID_VERSION_MAJOR)
+AC_SUBST(BLKID_VERSION_MINOR)
+AC_SUBST(BLKID_VERSION_RELEASE)
+AC_SUBST(BLKID_VERSION)
+
+AC_DEFINE_UNQUOTED(BLKID_VERSION, "$BLKID_VERSION", [libblkid version string])
+AC_DEFINE_UNQUOTED(BLKID_DATE, "$BLKID_DATE", [libblkid date string])
+
 # Check whether exec_prefix=/usr:
 case $exec_prefix:$prefix in
 NONE:NONE | NONE:/usr | /usr:*)
@@ -32,6 +49,7 @@ AC_PROG_CC_STDC
 AC_GNU_SOURCE
 AC_CANONICAL_HOST
 AC_C_BIGENDIAN
+AC_PROG_RANLIB
 
 linux_os=no
 case ${host_os} in
@@ -53,16 +71,29 @@ AC_CHECK_HEADERS([linux/compiler.h linux/blkpg.h linux/major.h], [], [], [
 #endif
 ])
 AC_CHECK_HEADERS(
-	[scsi/scsi.h \
+	[err.h \
+	errno.h \
+	getopt.h \
 	langinfo.h \
-	locale.h \
-	sys/user.h \
-	rpcsvc/nfs_prot.h \
-	sys/io.h \
-	pty.h \
-	err.h \
+	linux/fd.h \
 	linux/tiocl.h \
-	linux/version.h])
+	linux/version.h \
+	locale.h \
+	pty.h \
+	rpcsvc/nfs_prot.h \
+	scsi/scsi.h \
+	stdlib.h \
+	sys/disk.h \
+	sys/disklabel.h \
+	sys/ioctl.h \
+	sys/io.h \
+	sys/mkdev.h \
+	sys/prctl.h \
+	sys/queue.h \
+	sys/stat.h \
+	sys/types.h \
+	sys/user.h \
+	unistd.h ])
 AC_CHECK_HEADERS([linux/raw.h],
 		 [AM_CONDITIONAL([HAVE_RAW], [true])],
 		 [AM_CONDITIONAL([HAVE_RAW], [false])])
@@ -76,7 +107,12 @@ AC_CHECK_FUNCS(
 	personality \
 	updwtmp \
 	lchown \
+	llseek \
+	lseek64 \
+	strtoull \
 	inotify_init \
+	prctl \
+	__secure_getenv \
 	rpmatch])
 AC_FUNC_FSEEKO
 
@@ -608,22 +644,25 @@ fi
 
 # TODO remove devmapper from blkid
 #
-STATIC_BLKID_DEVMAPPER_LIBS=''
 AC_ARG_ENABLE([blkid-devmapper],
    AS_HELP_STRING([--enable-blkid-devmapper], [build with device-mapper support]),
    [], with_blkid-devmapper=no
 )
 if test x$with_devmapper = xno; then
+  AC_MSG_RESULT([Disabling device-mapper support])
   AM_CONDITIONAL(HAVE_DEVMAPPER, false)
   DEVMAPPER_LIBS_STATIC=''
   DEVMAPPER_REQ=''
   DEVMAPPER_PC_LIBS=''
+  DEVMAPPER_LIBS=''
 else
+  AC_MSG_RESULT([Enabling device-mapper support])
   UTIL_CHECK_LIB(devmapper, dm_tree_create)
   case $with_blkid-devmapper:$have_blkid-devmapper in
   yes:no) AC_MSG_ERROR([devmapper selected but libdevmapper not found]);;
   esac
   UTIL_PKG_STATIC([DEVMAPPER_LIBS_STATIC], [devmapper])
+  DEVMAPPER_LIBS="-ldevmapper"
   DEVMAPPER_REQ="devmapper"
   DEVMAPPER_PC_LIBS="-ldevmapper"
 
@@ -638,9 +677,10 @@ else
   esac
 fi
 
-AC_SUBST(DEVMAPPER_REQ)
-AC_SUBST(DEVMAPPER_PC_LIBS)
-AC_SUBST(DEVMAPPER_LIBS_STATIC)
+AC_SUBST([DEVMAPPER_LIBS])
+AC_SUBST([DEVMAPPER_REQ])
+AC_SUBST([DEVMAPPER_PC_LIBS])
+AC_SUBST([DEVMAPPER_LIBS_STATIC])
 
 
 AC_ARG_ENABLE([schedutils],
@@ -750,8 +790,11 @@ hwclock/Makefile
 include/Makefile
 lib/Makefile
 libs/Makefile
-libs/blkid/Makefile
 libs/blkid/blkid.pc
+libs/blkid/libblkid.3
+libs/blkid/Makefile
+libs/blkid/src/blkid_types.h
+libs/blkid/src/Makefile
 login-utils/Makefile
 misc-utils/Makefile
 mount/Makefile

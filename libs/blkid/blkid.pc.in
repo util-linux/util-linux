@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: blkid
 Description: Block device id library
-Version: @VERSION@
+Version: @BLKID_VERSION@
 Requires: uuid @DEVMAPPER_REQ@
 Cflags: -I${includedir}
 Libs: -L${libdir} -lblkid

@@ -1,0 +1,29 @@
+{ global:
+	blkid_dev_devname;
+	blkid_dev_has_tag;
+	blkid_dev_iterate_begin;
+	blkid_dev_iterate_end;
+	blkid_dev_next;
+	blkid_devno_to_devname;
+	blkid_dev_set_search;
+	blkid_find_dev_with_tag;
+	blkid_gc_cache;
+	blkid_get_cache;
+	blkid_get_dev;
+	blkid_get_devname;
+	blkid_get_dev_size;
+	blkid_get_library_version;
+	blkid_get_tag_value;
+	blkid_known_fstype;
+	blkid_parse_tag_string;
+	blkid_parse_version_string;
+	blkid_probe_all;
+	blkid_probe_all_new;
+	blkid_put_cache;
+	blkid_tag_iterate_begin;
+	blkid_tag_iterate_end;
+	blkid_tag_next;
+	blkid_verify;
+local:
+	*;
+};
