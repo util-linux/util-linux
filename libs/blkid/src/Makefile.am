@@ -6,7 +6,7 @@ AM_CPPFLAGS += -I$(top_builddir)/blkid/src
 lib_LIBRARIES = libblkid.a
 libblkid_a_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 		     probe.c read.c resolve.c save.c tag.c version.c \
-		     blkid.h blkidP.h list.h
+		     blkid.h blkidP.h list.h blkid_types.h
 libblkid_a_CFLAGS = -fPIC
 
 # shared library (note that we don't use LIBTOOL!)
@@ -20,14 +20,14 @@ if HAVE_DEVMAPPER
 blkid_OTHERLDADD = $(DEVMAPPER_LIBS)
 endif
 
-EXTRA_DIST = blkid.sym
+EXTRA_DIST = blkid.sym blkid_types.h.in
 
 all-local: $(blkid_LIB)
 
 $(blkid_LIB): $(lib_LIBRARIES) $(blkid_LDSCRIPT)
 	$(CC) --shared -o $(blkid_LIB) $(AM_LDFLAGS) \
               -Wl,-soname,$(blkid_SONAME),--version-script,$(blkid_LDSCRIPT) \
-	      $(blkid_a_OBJECTS) $(blkid_OTHERLDADD)
+	      $(libblkid_a_OBJECTS) $(blkid_OTHERLDADD)
 	for I in $(blkid_LINKS); do \
 		ln -sf $(blkid_LIB) $$I; \
 	done
