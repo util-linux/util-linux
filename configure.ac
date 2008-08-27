@@ -709,6 +709,8 @@ getopt/Makefile
 hwclock/Makefile
 include/Makefile
 lib/Makefile
+libs/Makefile
+libs/blkid/Makefile
 login-utils/Makefile
 misc-utils/Makefile
 mount/Makefile

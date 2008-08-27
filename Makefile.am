@@ -6,6 +6,7 @@ SUBDIRS = \
 	fdisk \
 	getopt \
 	lib \
+	libs \
 	login-utils \
 	misc-utils \
 	po \
