@@ -2,7 +2,9 @@
 .SH NAME
 ionice \- get/set program io scheduling class and priority
 .SH SYNOPSIS
-.BI "ionice [\-p " pid "] [\-c " class "] [\-n " classdata " ] [\-t] [COMMAND [ARG ...]]"
+.BI "ionice [[\-c " class "] [\-n " classdata " ] [\-t]] \-p " PID " [" PID " ...]"
+
+.BI "ionice [\-c " class "] [\-n " classdata " ] [\-t] COMMAND [ARG ...]"
 
 .SH DESCRIPTION
 This program sets or gets the io scheduling class and priority for a program.
@@ -41,11 +43,11 @@ The scheduling class data. This defines the class data, if the class
 accepts an argument. For real time and best-effort, \fI0-7\fR is valid
 data.
 .IP "\fB-p \fIpid\fP"
-Pass in process PIDs to view or change already running processes. If this argument
+Pass in process PID(s) to view or change already running processes. If this argument
 is not given, \fBionice\fP will run the listed program with the given
 parameters.
 .IP "\fB-t\fP"
-Ignore failure to set requested priority. If COMMAND is specified, run it
+Ignore failure to set requested priority. If COMMAND or PID(s) is specified, run it
 even in case it was not possible to set desired scheduling priority, what
 can happen due to insufficient privilegies or old kernel version.
 
