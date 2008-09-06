@@ -792,9 +792,12 @@ lib/Makefile
 libs/Makefile
 libs/blkid/blkid.pc
 libs/blkid/libblkid.3
+libs/blkid/blkid.8
 libs/blkid/Makefile
+libs/blkid/bin/Makefile
 libs/blkid/src/blkid_types.h
 libs/blkid/src/Makefile
+libs/blkid/src/probers/Makefile
 login-utils/Makefile
 misc-utils/Makefile
 mount/Makefile

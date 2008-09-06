@@ -16,8 +16,8 @@
 #include <sys/types.h>
 #include <stdio.h>
 
-#include <blkid/blkid.h>
-#include <list.h>
+#include "blkid.h"
+#include "list.h"
 
 #ifdef __GNUC__
 #define __BLKID_ATTR(x) __attribute__(x)
@@ -68,6 +68,73 @@ struct blkid_struct_tag
 typedef struct blkid_struct_tag *blkid_tag;
 
 /*
+ * Low-level probe result
+ */
+#define BLKID_PROBVAL_BUFSIZ	64
+#define BLKID_PROBVAL_NVALS	8	/* see blkid.h BLKID_PROBREQ_* */
+
+struct blkid_prval
+{
+	const char	*name;			/* value name */
+	unsigned char	data[BLKID_PROBVAL_BUFSIZ]; /* value data */
+	size_t		len;			/* length of value data */
+};
+
+/*
+ * Low-level probing control struct
+ */
+struct blkid_struct_probe
+{
+	int			fd;		/* device file descriptor */
+	blkid_loff_t		off;		/* begin of data on the device */
+	blkid_loff_t		size;		/* end of data on the device */
+
+	unsigned char		*sbbuf;		/* superblok buffer */
+	size_t			sbbuf_len;	/* size of data in superblock buffer */
+
+	unsigned char		*buf;		/* seek buffer */
+	off_t			buf_off;	/* offset of seek buffer */
+	size_t			buf_len;	/* size of data in seek buffer */
+	size_t			buf_max;	/* allocated size of seek buffer */
+
+	struct blkid_prval	vals[BLKID_PROBVAL_NVALS];
+	int			nvals;
+
+	int			probreq;	/* BLKID_PROBREQ_* flags */
+
+	unsigned long		*fltr;		/* filter */
+};
+
+#define BLKID_SB_BUFSIZ		0x11000
+
+/*
+ * Filesystem / Raid magic strings
+ */
+struct blkid_idmag
+{
+	const char	*magic;		/* magic string */
+	unsigned	len;		/* length of magic */
+
+	long		kboff;		/* kilobyte offset of superblock */
+	unsigned	sboff;		/* byte offset within superblock */
+};
+
+/*
+ * Filesystem / Raid description
+ */
+struct blkid_idinfo
+{
+	const char	*name;			/* FS/RAID name */
+	const char	*secname;		/* second FS/RAID name */
+	int		usage;			/* BLKID_USAGE_* flag */
+
+						/* probe function */
+	int		(*probefunc)(blkid_probe pr, const struct blkid_idmag *mag);
+
+	struct blkid_idmag	magics[];	/* NULL or array with magic strings */
+};
+
+/*
  * Minimum number of seconds between device probes, even when reading
  * from the cache.  This is to avoid re-probing all devices which were
  * just probed by another program that does not share the cache.
@@ -92,9 +159,10 @@ struct blkid_struct_cache
 	struct list_head	bic_devs;	/* List head of all devices */
 	struct list_head	bic_tags;	/* List head of all tag types */
 	time_t			bic_time;	/* Last probe time */
-	time_t			bic_ftime; 	/* Mod time of the cachefile */
+	time_t			bic_ftime;	/* Mod time of the cachefile */
 	unsigned int		bic_flags;	/* Status flags of the cache */
 	char			*bic_filename;	/* filename of cache */
+	blkid_probe		probe;		/* low-level probing stuff */
 };
 
 #define BLKID_BIC_FL_PROBED	0x0002	/* We probed /proc/partition devices */
@@ -174,6 +242,26 @@ extern int blkid_set_tag(blkid_dev dev, const char *name,
  */
 extern blkid_dev blkid_new_dev(void);
 extern void blkid_free_dev(blkid_dev dev);
+
+/* probe.c */
+unsigned char *blkid_probe_get_buffer(blkid_probe pr,
+                                blkid_loff_t off, blkid_loff_t len);
+extern int blkid_probe_set_value(blkid_probe pr, const char *name,
+                unsigned char *data, size_t len);
+extern int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
+                const char *fmt, va_list ap);
+extern int blkid_probe_set_version(blkid_probe pr, const char *version);
+extern int blkid_probe_sprintf_version(blkid_probe pr, const char *fmt, ...);
+extern int blkid_probe_set_label(blkid_probe pr, unsigned char *label, size_t len);
+extern int blkid_probe_set_utf8label(blkid_probe pr, unsigned char *label,
+                size_t len, int enc);
+extern int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
+                                size_t len, const char *fmt, ...);
+extern int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid);
+
+
+#define BLKID_ENC_UTF16BE	0
+#define BLKID_ENC_UTF16LE	1
 
 #ifdef __cplusplus
 }

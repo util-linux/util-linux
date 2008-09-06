@@ -22,6 +22,8 @@ extern "C" {
 
 typedef struct blkid_struct_dev *blkid_dev;
 typedef struct blkid_struct_cache *blkid_cache;
+typedef struct blkid_struct_probe *blkid_probe;
+
 typedef __s64 blkid_loff_t;
 
 typedef struct blkid_struct_tag_iterate *blkid_tag_iterate;
@@ -70,8 +72,7 @@ extern blkid_dev blkid_get_dev(blkid_cache cache, const char *devname,
 /* getsize.c */
 extern blkid_loff_t blkid_get_dev_size(int fd);
 
-/* probe.c */
-int blkid_known_fstype(const char *fstype);
+/* verify.c */
 extern blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev);
 
 /* read.c */
@@ -99,6 +100,50 @@ extern int blkid_parse_tag_string(const char *token, char **ret_type,
 extern int blkid_parse_version_string(const char *ver_string);
 extern int blkid_get_library_version(const char **ver_string,
 				     const char **date_string);
+
+
+
+/* probe.c */
+extern int blkid_known_fstype(const char *fstype);
+extern blkid_probe blkid_new_probe(void);
+extern void blkid_free_probe(blkid_probe pr);
+extern void blkid_reset_probe(blkid_probe pr);
+
+extern int blkid_probe_set_device(blkid_probe pr, int fd,
+	                blkid_loff_t off, blkid_loff_t size);
+
+#define	BLKID_PROBREQ_LABEL		(1 << 1)
+#define BLKID_PROBREQ_LABELRAW		(1 << 2)
+#define BLKID_PROBREQ_UUID		(1 << 3)
+#define BLKID_PROBREQ_UUIDRAW		(1 << 4)
+#define BLKID_PROBREQ_TYPE		(1 << 5)
+#define BLKID_PROBREQ_SECTYPE		(1 << 6)
+#define BLKID_PROBREQ_USAGE		(1 << 7)
+#define BLKID_PROBREQ_VERSION		(1 << 8)
+extern int blkid_probe_set_request(blkid_probe pr, int flags);
+
+#define BLKID_USAGE_FILESYSTEM		(1 << 1)
+#define BLKID_USAGE_RAID		(1 << 2)
+#define BLKID_USAGE_CRYPTO		(1 << 3)
+#define BLKID_USAGE_OTHER		(1 << 4)
+extern int blkid_probe_filter_usage(blkid_probe pr, int flag, int usage);
+
+#define BLKID_FLTR_NOTIN		1
+#define BLKID_FLTR_ONLYIN		2
+extern int blkid_probe_filter_types(blkid_probe pr,
+			int flag, char *names[]);
+
+
+extern int blkid_probe_invert_filter(blkid_probe pr);
+extern int blkid_probe_reset_filter(blkid_probe pr);
+
+extern int blkid_do_probe(blkid_probe pr);
+extern int blkid_probe_numof_values(blkid_probe pr);
+extern int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
+                        unsigned char **data, size_t *len);
+extern int blkid_probe_lookup_value(blkid_probe pr, const char *name,
+                        unsigned char **data, size_t *len);
+extern int blkid_probe_has_value(blkid_probe pr, const char *name);
 
 #ifdef __cplusplus
 }

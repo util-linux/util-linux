@@ -5,6 +5,7 @@ usrsbinexecdir = ${exec_prefix}/sbin
 AM_CPPFLAGS = -include $(top_builddir)/config.h -I$(top_srcdir)/include \
 	-DLOCALEDIR=\"$(localedir)\"
 AM_CFLAGS = -fsigned-char
+AM_LDFLAGS =
 
 # Automake (at least up to 1.10) mishandles dist_man_MANS inside conditionals.
 # Unlike with other dist primaries, the files are not distributed if the
