@@ -1,11 +1,10 @@
 #include <stdio.h>
 #include <time.h>		/* time_t */
+#include <sys/types.h>
 #include "partx.h"
 
 #define SOLARIS_X86_NUMSLICE	8
 #define SOLARIS_X86_VTOC_SANE	(0x600DDEEEUL)
-
-typedef int daddr_t;		/* or long - check */
 
 struct solaris_x86_slice {
 	unsigned short	s_tag;		/* ID tag of partition */
