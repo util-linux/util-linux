@@ -19,5 +19,6 @@ extern const struct blkid_idinfo cramfs_idinfo;
 extern const struct blkid_idinfo swap_idinfo;
 extern const struct blkid_idinfo swsuspend_idinfo;
 extern const struct blkid_idinfo adraid_idinfo;
+extern const struct blkid_idinfo ddfraid_idinfo;
 
 #endif /* _BLKID_PROBE_H */
