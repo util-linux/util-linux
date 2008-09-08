@@ -484,6 +484,9 @@ int blkid_probe_set_label(blkid_probe pr, unsigned char *label, size_t len)
 	struct blkid_prval *v;
 	int i;
 
+	if (len > BLKID_PROBVAL_BUFSIZ)
+		len = BLKID_PROBVAL_BUFSIZ;
+
 	if ((pr->probreq & BLKID_PROBREQ_LABELRAW) &&
 	    blkid_probe_set_value(pr, "LABEL_RAW", label, len) < 0)
 		return -1;
@@ -575,8 +578,11 @@ static int uuid_is_empty(const unsigned char *buf, size_t len)
 int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
 				size_t len, const char *fmt, ...)
 {
+	int rc = -1;
 	va_list ap;
-	int rc;
+
+	if (len > BLKID_PROBVAL_BUFSIZ)
+		len = BLKID_PROBVAL_BUFSIZ;
 
 	if (uuid_is_empty(uuid, len))
 		return 0;
@@ -588,7 +594,22 @@ int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
 		return 0;
 
 	va_start(ap, fmt);
-	rc = blkid_probe_vsprintf_value(pr, "UUID", fmt, ap);
+
+	if (!strcmp(fmt, "%s")) {
+		struct blkid_prval *v = NULL;
+		const char *str = va_arg(ap, char *);
+
+		if (str && *str)
+			v = blkid_probe_assign_value(pr, "UUID");
+		if (v) {
+			memcpy(v->data, str, len);
+			v->data[len] = '\0';
+			v->len = len;
+			rc = 0;
+		}
+	} else
+		rc = blkid_probe_vsprintf_value(pr, "UUID", fmt, ap);
+
 	va_end(ap);
 
 	/* convert to lower case (..be paranoid) */
