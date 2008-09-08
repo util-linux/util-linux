@@ -41,7 +41,8 @@ static const struct blkid_idinfo *idinfos[] =
 	&adraid_idinfo,
 	&ddfraid_idinfo,
 	&iswraid_idinfo,
-	&jmicron_idinfo
+	&jmicron_idinfo,
+	&lsi_idinfo
 };
 
 #ifndef ARRAY_SIZE
