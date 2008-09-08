@@ -9,6 +9,7 @@ libprobers_a_SOURCES =	probers.h \
 			swap.c \
 			adaptec_raid.c \
 			ddf_raid.c \
-			isw_raid.c
+			isw_raid.c \
+			jmicron_raid.c
 
 all-local: $(lib_LIBRARIES)

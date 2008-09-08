@@ -21,5 +21,6 @@ extern const struct blkid_idinfo swsuspend_idinfo;
 extern const struct blkid_idinfo adraid_idinfo;
 extern const struct blkid_idinfo ddfraid_idinfo;
 extern const struct blkid_idinfo iswraid_idinfo;
+extern const struct blkid_idinfo jmicron_idinfo;
 
 #endif /* _BLKID_PROBE_H */
