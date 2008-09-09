@@ -30,6 +30,7 @@
 #endif
 #include <stdarg.h>
 
+#include "blkdev.h"
 #include "blkidP.h"
 #include "probers/probers.h"
 
@@ -41,8 +42,8 @@ static const struct blkid_idinfo *idinfos[] =
 	&adraid_idinfo,
 	&ddfraid_idinfo,
 	&iswraid_idinfo,
-	&jmicron_idinfo,
-	&lsi_idinfo,
+	&jmraid_idinfo,
+	&lsiraid_idinfo,
 	&nvraid_idinfo,
 	&pdcraid_idinfo,
 	&silraid_idinfo,
@@ -215,7 +216,11 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 	pr->fd = fd;
 	pr->off = off;
-	pr->size = size;
+
+	if (!size)
+		blkdev_get_size(fd, (unsigned long long *) &pr->size);
+	else
+		pr->size = size;
 
 	/* read SB to test if the device is readable */
 	if (!blkid_probe_get_buffer(pr, 0, 0x200))
