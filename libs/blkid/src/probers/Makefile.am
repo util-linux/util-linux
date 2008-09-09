@@ -12,6 +12,7 @@ libprobers_a_SOURCES =	probers.h \
 			isw_raid.c \
 			jmicron_raid.c \
 			lsi_raid.c \
-			nvidia_raid.c
+			nvidia_raid.c \
+			promise_raid.c
 
 all-local: $(lib_LIBRARIES)
