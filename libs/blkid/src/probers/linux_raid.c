@@ -159,7 +159,8 @@ int probe_raid(blkid_probe pr, const struct blkid_idmag *mag)
 const struct blkid_idinfo linuxraid_idinfo = {
 	.name		= "linux_raid_member",
 	.usage		= BLKID_USAGE_RAID,
-	.probefunc	= probe_raid
+	.probefunc	= probe_raid,
+	.magics		= BLKID_NONE_MAGIC
 };
 
 

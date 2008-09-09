@@ -50,7 +50,8 @@ static int probe_lsiraid(blkid_probe pr, const struct blkid_idmag *mag)
 const struct blkid_idinfo lsiraid_idinfo = {
 	.name		= "lsi_mega_raid_member",
 	.usage		= BLKID_USAGE_RAID,
-	.probefunc	= probe_lsiraid
+	.probefunc	= probe_lsiraid,
+	.magics		= BLKID_NONE_MAGIC
 };
 
 

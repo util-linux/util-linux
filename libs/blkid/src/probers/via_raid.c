@@ -77,7 +77,8 @@ static int probe_viaraid(blkid_probe pr, const struct blkid_idmag *mag)
 const struct blkid_idinfo viaraid_idinfo = {
 	.name		= "via_raid_member",
 	.usage		= BLKID_USAGE_RAID,
-	.probefunc	= probe_viaraid
+	.probefunc	= probe_viaraid,
+	.magics		= BLKID_NONE_MAGIC
 };
 
 

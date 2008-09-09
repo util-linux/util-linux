@@ -62,7 +62,8 @@ static int probe_iswraid(blkid_probe pr, const struct blkid_idmag *mag)
 const struct blkid_idinfo iswraid_idinfo = {
 	.name		= "isw_raid_member",
 	.usage		= BLKID_USAGE_RAID,
-	.probefunc	= probe_iswraid
+	.probefunc	= probe_iswraid,
+	.magics		= BLKID_NONE_MAGIC
 };
 
 

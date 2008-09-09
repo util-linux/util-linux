@@ -60,7 +60,8 @@ static int probe_jmraid(blkid_probe pr, const struct blkid_idmag *mag)
 const struct blkid_idinfo jmraid_idinfo = {
 	.name		= "jmicron_raid_member",
 	.usage		= BLKID_USAGE_RAID,
-	.probefunc	= probe_jmraid
+	.probefunc	= probe_jmraid,
+	.magics		= BLKID_NONE_MAGIC
 };
 
 

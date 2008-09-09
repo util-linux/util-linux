@@ -109,7 +109,8 @@ static int probe_adraid(blkid_probe pr, const struct blkid_idmag *mag)
 const struct blkid_idinfo adraid_idinfo = {
 	.name		= "adaptec_raid_member",
 	.usage		= BLKID_USAGE_RAID,
-	.probefunc	= probe_adraid
+	.probefunc	= probe_adraid,
+	.magics		= BLKID_NONE_MAGIC
 };
 
 

@@ -58,7 +58,8 @@ static int probe_ddf(blkid_probe pr, const struct blkid_idmag *mag)
 const struct blkid_idinfo ddfraid_idinfo = {
 	.name		= "ddf_raid_member",
 	.usage		= BLKID_USAGE_RAID,
-	.probefunc	= probe_ddf
+	.probefunc	= probe_ddf,
+	.magics		= BLKID_NONE_MAGIC
 };
 
 

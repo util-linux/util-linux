@@ -57,7 +57,8 @@ static int probe_nvraid(blkid_probe pr, const struct blkid_idmag *mag)
 const struct blkid_idinfo nvraid_idinfo = {
 	.name		= "nvidia_raid_member",
 	.usage		= BLKID_USAGE_RAID,
-	.probefunc	= probe_nvraid
+	.probefunc	= probe_nvraid,
+	.magics		= BLKID_NONE_MAGIC
 };
 
 

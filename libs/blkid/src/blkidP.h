@@ -136,6 +136,8 @@ struct blkid_idinfo
 	struct blkid_idmag	magics[];	/* NULL or array with magic strings */
 };
 
+#define BLKID_NONE_MAGIC	{{ NULL }}
+
 /*
  * Minimum number of seconds between device probes, even when reading
  * from the cache.  This is to avoid re-probing all devices which were

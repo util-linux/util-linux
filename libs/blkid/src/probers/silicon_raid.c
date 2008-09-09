@@ -74,7 +74,8 @@ static int probe_silraid(blkid_probe pr, const struct blkid_idmag *mag)
 const struct blkid_idinfo silraid_idinfo = {
 	.name		= "silicon_medley_raid_member",
 	.usage		= BLKID_USAGE_RAID,
-	.probefunc	= probe_silraid
+	.probefunc	= probe_silraid,
+	.magics		= BLKID_NONE_MAGIC
 };
 
 

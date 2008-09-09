@@ -60,7 +60,8 @@ static int probe_pdcraid(blkid_probe pr, const struct blkid_idmag *mag)
 const struct blkid_idinfo pdcraid_idinfo = {
 	.name		= "promise_fasttrack_raid_member",
 	.usage		= BLKID_USAGE_RAID,
-	.probefunc	= probe_pdcraid
+	.probefunc	= probe_pdcraid,
+	.magics		= BLKID_NONE_MAGIC
 };
 
 
