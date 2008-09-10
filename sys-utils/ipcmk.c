@@ -2,6 +2,7 @@
  *  ipcmk.c - used to create ad-hoc IPC segments
  *
  *  Copyright (C) 2008 Hayden A. James (hayden.james@gmail.com)
+ *  Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  *
  *  This program is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by
@@ -22,6 +23,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <errno.h>
+#include <err.h>
 #include <time.h>
 
 #include <unistd.h>
@@ -30,6 +32,8 @@
 #include <sys/shm.h>
 #include <sys/sem.h>
 #include <sys/msg.h>
+
+static const char *progname;
 
 key_t createKey(void)
 {
@@ -73,9 +77,17 @@ int createSem(int nsems, int permission)
 	return result;
 }
 
-void usage(char *progname)
+void usage(int rc)
 {
-	   fprintf(stderr, "usage: %s [-M size] [-S nsems] [-Q] [-p permission]\n", progname);
+	printf("\nUsage: %s [options]\n\n", progname);
+	printf(
+	"  -M <size>     create shared memory segment of size <size>\n"
+	"  -S <nsems>    create semaphore array with <nsems> elements\n"
+	"  -Q            create message queue\n"
+        "  -p <mode>     permission for the resource (default is 0644)\n");
+	printf("\nFor more information see ipcmk(1).\n\n");
+
+	exit(rc);
 }
 
 int main(int argc, char **argv)
@@ -84,10 +96,13 @@ int main(int argc, char **argv)
 	int opt;
 	size_t size = 0;
 	int nsems = 0;
-
 	int doShm = 0, doMsg = 0, doSem = 0;
 
-	while((opt = getopt(argc, argv, "M:QS:p:")) != -1) {
+	progname = program_invocation_short_name;
+	if (!progname)
+		progname = "ipcmk";
+
+	while((opt = getopt(argc, argv, "hM:QS:p:")) != -1) {
 		switch(opt) {
 		case 'M':
 			size = atoi(optarg);
@@ -103,38 +118,41 @@ int main(int argc, char **argv)
 		case 'p':
 			permission = strtoul(optarg, NULL, 8);
 			break;
+		case 'h':
+			usage(EXIT_SUCCESS);
+			break;
 		default:
 			doShm = doMsg = doSem = 0;
 			break;
 		}
 	}
 
+	if(!doShm && !doMsg && !doSem)
+		usage(EXIT_FAILURE);
+
 	if (doShm) {
 		int shmid;
 		if (-1 == (shmid = createShm(size, permission)))
-			fprintf(stderr, "%s\n", strerror(errno));
+			err(EXIT_FAILURE, "create share memory failed");
 		else
-			fprintf(stdout, "%s%d\n", "Shared memory id: ", shmid);
+			printf("Shared memory id: %d\n", shmid);
 	}
 
 	if (doMsg) {
 		int msgid;
 		if (-1 == (msgid = createMsg(permission)))
-			fprintf(stderr, "%s\n", strerror(errno));
+			err(EXIT_FAILURE, "create message queue failed");
 		else
-			fprintf(stdout, "%s%d\n", "Message queue id: ", msgid);
+			printf("Message queue id: %d\n", msgid);
 	}
 
 	if (doSem) {
 		int semid;
 		if (-1 == (semid = createSem(nsems, permission)))
-			fprintf(stderr, "%s\n", strerror(errno));
+			err(EXIT_FAILURE, "create semaphore failed");
 		else
-			fprintf(stdout, "%s%d\n", "Semaphore id: ", semid);
+			printf("Semaphore id: %d\n", semid);
 	}
 
-	if(!doShm && !doMsg && !doSem)
-		usage(argv[0]);
-
-	return 0;
+	return EXIT_SUCCESS;
 }
