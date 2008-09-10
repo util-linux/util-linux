@@ -95,6 +95,7 @@ sys-utils/ctrlaltdel.c
 sys-utils/cytune.c
 sys-utils/dmesg.c
 sys-utils/flock.c
+sys-utils/ipcmk.c
 sys-utils/ipcrm.c
 sys-utils/ipcs.c
 sys-utils/ldattach.c

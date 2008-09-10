@@ -33,6 +33,8 @@
 #include <sys/sem.h>
 #include <sys/msg.h>
 
+#include "nls.h"
+
 static const char *progname;
 
 key_t createKey(void)
@@ -79,13 +81,13 @@ int createSem(int nsems, int permission)
 
 void usage(int rc)
 {
-	printf("\nUsage: %s [options]\n\n", progname);
-	printf(
+	printf(_("\nUsage: %s [options]\n\n"), progname);
+	printf(_(
 	"  -M <size>     create shared memory segment of size <size>\n"
 	"  -S <nsems>    create semaphore array with <nsems> elements\n"
 	"  -Q            create message queue\n"
-        "  -p <mode>     permission for the resource (default is 0644)\n");
-	printf("\nFor more information see ipcmk(1).\n\n");
+	"  -p <mode>     permission for the resource (default is 0644)\n"));
+	printf(_("\nFor more information see ipcmk(1).\n\n"));
 
 	exit(rc);
 }
@@ -101,6 +103,10 @@ int main(int argc, char **argv)
 	progname = program_invocation_short_name;
 	if (!progname)
 		progname = "ipcmk";
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	while((opt = getopt(argc, argv, "hM:QS:p:")) != -1) {
 		switch(opt) {
@@ -133,25 +139,25 @@ int main(int argc, char **argv)
 	if (doShm) {
 		int shmid;
 		if (-1 == (shmid = createShm(size, permission)))
-			err(EXIT_FAILURE, "create share memory failed");
+			err(EXIT_FAILURE, _("create share memory failed"));
 		else
-			printf("Shared memory id: %d\n", shmid);
+			printf(_("Shared memory id: %d\n"), shmid);
 	}
 
 	if (doMsg) {
 		int msgid;
 		if (-1 == (msgid = createMsg(permission)))
-			err(EXIT_FAILURE, "create message queue failed");
+			err(EXIT_FAILURE, _("create message queue failed"));
 		else
-			printf("Message queue id: %d\n", msgid);
+			printf(_("Message queue id: %d\n"), msgid);
 	}
 
 	if (doSem) {
 		int semid;
 		if (-1 == (semid = createSem(nsems, permission)))
-			err(EXIT_FAILURE, "create semaphore failed");
+			err(EXIT_FAILURE, _("create semaphore failed"));
 		else
-			printf("Semaphore id: %d\n", semid);
+			printf(_("Semaphore id: %d\n"), semid);
 	}
 
 	return EXIT_SUCCESS;
