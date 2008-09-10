@@ -1,0 +1,39 @@
+.\" Copyright 2008 Hayden A. James (hayden.james@gmail.com)
+.\" May be distributed under the GNU General Public License
+.TH "IPCMK" "1" "21 March 2008" "ipcmk" "Linux Programmer's Manual"
+.SH "NAME"
+ipcmk \- create various ipc resources
+.SH "SYNOPSIS"
+.B ipcmk [ \-M \fIsize\fR ] [ \-p \fImode\fR ]
+.br
+.B ipcmk [ \-S \fInsems\fR ] [ \-p \fImode\fR ]
+.br
+.B ipcmk [ \-Q ] [ \-p \fImode\fR ]
+.SH "DESCRIPTION"
+.B ipcmk
+allows you to create shared memory segments, message queues or semaphore arrays.
+.SH "OPTIONS"
+Resources may be specified as follows:
+.TP
+.BI \-M " size"
+shared memory segment of size \fB\fIsize\fR\fR
+.TP
+.BI \-S " nsems"
+semaphore array with \fB\fInsems\fR\fR elements
+.TP
+.BI \-Q
+message queue
+.TP
+Other options
+.TP
+.BI \-p " mode"
+permission for the resource (default is 0644)
+.PP
+.SH "SEE ALSO"
+.BR ipcrm (1),
+.BR ipcs (1)
+.SH "AUTHOR"
+Hayden A. James (hayden.james@gmail.com)
+.SH "AVAILABILITY"
+The ipcmk command is part of the util\-linux\-ng package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util\-linux\-ng/.

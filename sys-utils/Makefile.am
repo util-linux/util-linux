@@ -2,10 +2,10 @@ include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS =
 sbin_PROGRAMS =
-usrbinexec_PROGRAMS = flock ipcrm ipcs renice setsid
+usrbinexec_PROGRAMS = flock ipcrm ipcs ipcmk renice setsid
 usrsbinexec_PROGRAMS = readprofile
 
-dist_man_MANS = flock.1 ipcrm.1 ipcs.1 renice.1 setsid.1 \
+dist_man_MANS = flock.1 ipcrm.1 ipcs.1 ipcmk.1 renice.1 setsid.1 \
 		readprofile.1
 
 if LINUX

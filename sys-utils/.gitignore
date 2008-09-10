@@ -4,6 +4,7 @@ dmesg
 flock
 ipcrm
 ipcs
+ipcmk
 ldattach
 readprofile
 renice
