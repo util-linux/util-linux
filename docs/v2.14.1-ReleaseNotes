@@ -1,4 +1,4 @@
-Util-linux-ng 2.14.1 Release Notes (??-Aug-2008)
+Util-linux-ng 2.14.1 Release Notes (10-Aug-2008)
 ================================================
 
 ChangeLog between v2.14 and v2.14.1
@@ -11,6 +11,7 @@ build-sys:
    - cleanup sys-utils/Makefile.am  [Karel Zak]
    - fix dmesg.1 installation  [Karel Zak]
    - release++ (v2.14.1-rc1)  [Karel Zak]
+   - release++ (v2.14.1-rc2)  [Karel Zak]
    - tgets is not in ncurses but in tinfo  [Arkadiusz Miskiewicz]
 docs:
    - update AUTHORS file  [Karel Zak]
@@ -33,7 +34,11 @@ po:
    - add zh_CN.po (from translationproject.org)  [Ray Wang]
    - merge changes  [Karel Zak]
    - update cs.po (from translationproject.org)  [Petr Pisar]
+   - update fi.po (from translationproject.org)  [Lauri Nurmi]
+   - update id.po (from translationproject.org)  [Arif E. Nugroho]
    - update nl.po (from translationproject.org)  [Benno Schulenberg]
+   - update vi.po (from translationproject.org)  [Clytie Siddall]
+   - update zh_CN.po (from translationproject.org)  [Ray Wang]
 rtcwake:
    - cleanup return codes  [Karel Zak]
    - prefer RTC_WKALM_SET over RTC_ALM_SET  [Gabriel Burt]
@@ -47,3 +52,4 @@ umount:
    - improve "-d" option for autoclear loops  [Karel Zak]
 write:
    - doesn't check for tty group  [Karel Zak]
+
