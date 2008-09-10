@@ -10,7 +10,8 @@ msgstr ""
 "POT-Creation-Date: 2008-08-22 12:23+0200\n"
 "PO-Revision-Date: 2008-08-23 23:20+0800\n"
 "Last-Translator: Ray Wang <wanglei1123@gmail.com>\n"
-"Language-Team: Chinese (simplified) <translation-team-zh-cn@lists.sourceforge.net>\n"
+"Language-Team: Chinese (simplified) <translation-team-zh-cn@lists."
+"sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
@@ -762,7 +763,8 @@ msgstr ""
 #: disk-utils/mkfs.cramfs.c:124
 #, c-format
 msgid ""
-"usage: %s [-h] [-v] [-b blksize] [-e edition] [-i file] [-n name] dirname outfile\n"
+"usage: %s [-h] [-v] [-b blksize] [-e edition] [-i file] [-n name] dirname "
+"outfile\n"
 " -h         print this help\n"
 " -v         be verbose\n"
 " -E         make all warnings errors (non-zero exit status)\n"
@@ -801,7 +803,9 @@ msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:829
 #, c-format
-msgid "warning: guestimate of required size (upper bound) is %lldMB, but maximum image size is %uMB.  We might die prematurely.\n"
+msgid ""
+"warning: guestimate of required size (upper bound) is %lldMB, but maximum "
+"image size is %uMB.  We might die prematurely.\n"
 msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:870
@@ -856,12 +860,14 @@ msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:933
 #, c-format
-msgid "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
+msgid ""
+"warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:938
 #, c-format
-msgid "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
+msgid ""
+"warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:943
@@ -1044,7 +1050,8 @@ msgstr ""
 
 #: disk-utils/mkswap.c:332
 #, c-format
-msgid "Usage: %s [-c] [-v0|-v1] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"
+msgid ""
+"Usage: %s [-c] [-v0|-v1] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"
 msgstr ""
 
 #: disk-utils/mkswap.c:355
@@ -1292,11 +1299,13 @@ msgid "enlarged logical partitions overlap"
 msgstr ""
 
 #: fdisk/cfdisk.c:999
-msgid "!!!! Internal error creating logical drive with no extended partition !!!!"
+msgid ""
+"!!!! Internal error creating logical drive with no extended partition !!!!"
 msgstr ""
 
 #: fdisk/cfdisk.c:1010 fdisk/cfdisk.c:1022
-msgid "Cannot create logical drive here -- would create two extended partitions"
+msgid ""
+"Cannot create logical drive here -- would create two extended partitions"
 msgstr ""
 
 #: fdisk/cfdisk.c:1164
@@ -1402,7 +1411,8 @@ msgid "Opened disk read-only - you have no permission to write"
 msgstr ""
 
 #: fdisk/cfdisk.c:1682
-msgid "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
+msgid ""
+"Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
 msgstr ""
 
 #: fdisk/cfdisk.c:1699
@@ -1422,7 +1432,8 @@ msgid "Warning!!  This may destroy data on your disk!"
 msgstr ""
 
 #: fdisk/cfdisk.c:1874
-msgid "Are you sure you want to write the partition table to disk? (yes or no): "
+msgid ""
+"Are you sure you want to write the partition table to disk? (yes or no): "
 msgstr ""
 
 #: fdisk/cfdisk.c:1880
@@ -1450,7 +1461,8 @@ msgid "Wrote partition table to disk"
 msgstr ""
 
 #: fdisk/cfdisk.c:1917
-msgid "Wrote partition table, but re-read table failed.  Reboot to update table."
+msgid ""
+"Wrote partition table, but re-read table failed.  Reboot to update table."
 msgstr ""
 
 #: fdisk/cfdisk.c:1927
@@ -1458,7 +1470,8 @@ msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
 msgstr ""
 
 #: fdisk/cfdisk.c:1929
-msgid "More than one primary partition is marked bootable. DOS MBR cannot boot this."
+msgid ""
+"More than one primary partition is marked bootable. DOS MBR cannot boot this."
 msgstr ""
 
 #: fdisk/cfdisk.c:1987 fdisk/cfdisk.c:2106 fdisk/cfdisk.c:2190
@@ -1528,11 +1541,15 @@ msgid "               First       Last\n"
 msgstr ""
 
 #: fdisk/cfdisk.c:2128
-msgid " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) Flag\n"
+msgid ""
+" # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
+"Flag\n"
 msgstr ""
 
 #: fdisk/cfdisk.c:2129
-msgid "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
+msgid ""
+"-- ------- ----------- ----------- ------ ----------- -------------------- "
+"----\n"
 msgstr ""
 
 #: fdisk/cfdisk.c:2212
@@ -2634,7 +2651,9 @@ msgstr ""
 
 #: fdisk/fdisk.c:1017
 #, c-format
-msgid "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"
+msgid ""
+"Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
+"disklabel\n"
 msgstr ""
 
 #: fdisk/fdisk.c:1034
@@ -2649,7 +2668,9 @@ msgstr ""
 
 #: fdisk/fdisk.c:1059
 #, c-format
-msgid "Warning: invalid flag 0x%04x of partition table %d will be corrected by w(rite)\n"
+msgid ""
+"Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
+"(rite)\n"
 msgstr ""
 
 #: fdisk/fdisk.c:1081
@@ -3107,7 +3128,8 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't "
+"support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 
@@ -3138,7 +3160,9 @@ msgstr ""
 
 #: fdisk/fdisk.c:2633
 #, c-format
-msgid "Warning: the -b (set sector size) option should be used with one specified device\n"
+msgid ""
+"Warning: the -b (set sector size) option should be used with one specified "
+"device\n"
 msgstr ""
 
 #: fdisk/fdisk.c:2693
@@ -3261,7 +3285,9 @@ msgstr ""
 
 #: fdisk/fdisksgilabel.c:164
 #, c-format
-msgid "According to MIPS Computer Systems, Inc the Label must not contain more than 512 bytes\n"
+msgid ""
+"According to MIPS Computer Systems, Inc the Label must not contain more than "
+"512 bytes\n"
 msgstr ""
 
 #: fdisk/fdisksgilabel.c:183
@@ -3495,7 +3521,8 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:730 fdisk/fdisksunlabel.c:226
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %d.\n"
+"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
+"d.\n"
 "This value may be truncated for devices > 33.8 GB.\n"
 msgstr ""
 
@@ -3583,7 +3610,8 @@ msgstr ""
 
 #: fdisk/fdisksunlabel.c:168
 #, c-format
-msgid "Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
+msgid ""
+"Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
 msgstr ""
 
 #: fdisk/fdisksunlabel.c:198
@@ -4180,17 +4208,22 @@ msgstr ""
 
 #: fdisk/sfdisk.c:607
 #, c-format
-msgid "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
+msgid ""
+"%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
 msgstr ""
 
 #: fdisk/sfdisk.c:612
 #, c-format
-msgid "%s of partition %s has impossible value for sector: %lu (should be in 1-%lu)\n"
+msgid ""
+"%s of partition %s has impossible value for sector: %lu (should be in 1-%"
+"lu)\n"
 msgstr ""
 
 #: fdisk/sfdisk.c:617
 #, c-format
-msgid "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%lu)\n"
+msgid ""
+"%s of partition %s has impossible value for cylinders: %lu (should be in 0-%"
+"lu)\n"
 msgstr ""
 
 #: fdisk/sfdisk.c:657
@@ -4411,7 +4444,8 @@ msgstr ""
 
 #: fdisk/sfdisk.c:1347
 #, c-format
-msgid "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
+msgid ""
+"partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 
 #: fdisk/sfdisk.c:1353
@@ -4606,7 +4640,9 @@ msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
 msgstr ""
 
 #: fdisk/sfdisk.c:2300
-msgid "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB"
+msgid ""
+"    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
+"MB"
 msgstr ""
 
 #: fdisk/sfdisk.c:2301
@@ -4630,7 +4666,8 @@ msgid "    -n :                 do not actually write to disk"
 msgstr ""
 
 #: fdisk/sfdisk.c:2306
-msgid "    -O file :            save the sectors that will be overwritten to file"
+msgid ""
+"    -O file :            save the sectors that will be overwritten to file"
 msgstr ""
 
 #: fdisk/sfdisk.c:2307
@@ -4654,7 +4691,9 @@ msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
 msgstr ""
 
 #: fdisk/sfdisk.c:2312
-msgid "    -G [or --show-pt-geometry]: print geometry guessed from the partition table"
+msgid ""
+"    -G [or --show-pt-geometry]: print geometry guessed from the partition "
+"table"
 msgstr ""
 
 #: fdisk/sfdisk.c:2313
@@ -4664,7 +4703,8 @@ msgid ""
 msgstr ""
 
 #: fdisk/sfdisk.c:2315
-msgid "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
+msgid ""
+"    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
 msgstr ""
 
 #: fdisk/sfdisk.c:2316
@@ -4718,7 +4758,8 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk doesn't support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk "
+"doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 
@@ -4933,7 +4974,8 @@ msgid "              parameters\n"
 msgstr ""
 
 #: getopt/getopt.c:330
-msgid "  -a, --alternative            Allow long options starting with single -\n"
+msgid ""
+"  -a, --alternative            Allow long options starting with single -\n"
 msgstr ""
 
 #: getopt/getopt.c:331
@@ -4945,7 +4987,8 @@ msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr ""
 
 #: getopt/getopt.c:333
-msgid "  -n, --name=progname          The name under which errors are reported\n"
+msgid ""
+"  -n, --name=progname          The name under which errors are reported\n"
 msgstr ""
 
 #: getopt/getopt.c:334
@@ -5120,7 +5163,9 @@ msgstr ""
 
 #: hwclock/hwclock.c:559
 #, c-format
-msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
+msgid ""
+"The Hardware Clock registers contain values that are either invalid (e.g. "
+"50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
 msgstr ""
 
 #: hwclock/hwclock.c:569
@@ -5172,7 +5217,8 @@ msgstr ""
 #: hwclock/hwclock.c:650
 #, c-format
 msgid ""
-"The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
+"The date command issued by %s returned something other than an integer where "
+"the converted time value was expected.\n"
 "The command was:\n"
 "  %s\n"
 "The response was:\n"
@@ -5186,7 +5232,9 @@ msgstr ""
 
 #: hwclock/hwclock.c:693
 #, c-format
-msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it.\n"
+msgid ""
+"The Hardware Clock does not contain a valid time, so we cannot set the "
+"System Time from it.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:715
@@ -5220,7 +5268,9 @@ msgstr ""
 
 #: hwclock/hwclock.c:763
 #, c-format
-msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
+msgid ""
+"Not adjusting drift factor because the Hardware Clock previously contained "
+"garbage.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:768
@@ -5232,13 +5282,16 @@ msgstr ""
 
 #: hwclock/hwclock.c:774
 #, c-format
-msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
+msgid ""
+"Not adjusting drift factor because it has been less than a day since the "
+"last calibration.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:822
 #, c-format
 msgid ""
-"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
+"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
+"of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
 
@@ -5271,7 +5324,8 @@ msgstr ""
 
 #: hwclock/hwclock.c:969
 #, c-format
-msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
+msgid ""
+"The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:1000
@@ -5297,7 +5351,8 @@ msgstr ""
 #: hwclock/hwclock.c:1156
 #, c-format
 msgid ""
-"The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
+"The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
+"machine.\n"
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken.\n"
 msgstr ""
@@ -5314,7 +5369,9 @@ msgstr ""
 
 #: hwclock/hwclock.c:1170
 #, c-format
-msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it.\n"
+msgid ""
+"To set the epoch value, you must use the 'epoch' option to tell to what "
+"value to set it.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:1173
@@ -5393,17 +5450,23 @@ msgstr ""
 
 #: hwclock/hwclock.c:1454
 #, c-format
-msgid "%s: The --utc and --localtime options are mutually exclusive.  You specified both.\n"
+msgid ""
+"%s: The --utc and --localtime options are mutually exclusive.  You specified "
+"both.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:1461
 #, c-format
-msgid "%s: The --adjust and --noadjfile options are mutually exclusive.  You specified both.\n"
+msgid ""
+"%s: The --adjust and --noadjfile options are mutually exclusive.  You "
+"specified both.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:1468
 #, c-format
-msgid "%s: The --adjfile and --noadjfile options are mutually exclusive.  You specified both.\n"
+msgid ""
+"%s: The --adjfile and --noadjfile options are mutually exclusive.  You "
+"specified both.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:1477
@@ -5428,7 +5491,9 @@ msgstr ""
 
 #: hwclock/hwclock.c:1517
 #, c-format
-msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel.\n"
+msgid ""
+"Sorry, only the superuser can change the Hardware Clock epoch in the "
+"kernel.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:1537
@@ -5438,7 +5503,9 @@ msgstr ""
 
 #: hwclock/hwclock.c:1541
 #, c-format
-msgid "Use the --debug option to see the details of our search for an access method.\n"
+msgid ""
+"Use the --debug option to see the details of our search for an access "
+"method.\n"
 msgstr ""
 
 #: hwclock/kd.c:55
@@ -5538,7 +5605,10 @@ msgstr ""
 
 #: hwclock/rtc.c:397 hwclock/rtc.c:443
 #, c-format
-msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system.\n"
+msgid ""
+"To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
+"device driver via the device special file %s.  This file does not exist on "
+"this system.\n"
 msgstr ""
 
 #: hwclock/rtc.c:402 hwclock/rtc.c:448
@@ -5568,7 +5638,8 @@ msgstr ""
 
 #: hwclock/rtc.c:458
 #, c-format
-msgid "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
+msgid ""
+"The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
 msgstr ""
 
 #: hwclock/rtc.c:461
@@ -5647,8 +5718,10 @@ msgstr ""
 #: login-utils/agetty.c:1203
 #, c-format
 msgid ""
-"Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\n"
-"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"
+"Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H "
+"login_host] baud_rate,... line [termtype]\n"
+"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
+"line baud_rate,... [termtype]\n"
 msgstr ""
 
 #: login-utils/checktty.c:91 login-utils/checktty.c:112
@@ -5788,7 +5861,9 @@ msgstr ""
 
 #: login-utils/chsh.c:164
 #, c-format
-msgid "%s: Running UID doesn't match UID of user we're altering, shell change denied\n"
+msgid ""
+"%s: Running UID doesn't match UID of user we're altering, shell change "
+"denied\n"
 msgstr ""
 
 #: login-utils/chsh.c:170
@@ -6601,7 +6676,8 @@ msgstr ""
 
 #: misc-utils/logger.c:285
 #, c-format
-msgid "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
+msgid ""
+"usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
 msgstr ""
 
 #: misc-utils/look.c:351
@@ -7287,7 +7363,8 @@ msgid ""
 " %1$s -a | --all                              list all used\n"
 " %1$s -d | --detach <loopdev>                 delete\n"
 " %1$s -f | --find                             find unused\n"
-" %1$s -j | --associated <file> [-o <num>]     list all associated with <file>\n"
+" %1$s -j | --associated <file> [-o <num>]     list all associated with "
+"<file>\n"
 " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
 msgstr ""
 
@@ -7469,7 +7546,8 @@ msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr ""
 
 #: mount/mount.c:1179
-msgid "mount: I could not determine the filesystem type, and none was specified"
+msgid ""
+"mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 
 #: mount/mount.c:1182
@@ -7993,7 +8071,8 @@ msgstr ""
 #: sys-utils/cytune.c:125
 #, c-format
 msgid ""
-"File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
+"File %s, For threshold value %lu and timrout value %lu, Maximum characters "
+"in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
 
@@ -8024,7 +8103,9 @@ msgstr ""
 
 #: sys-utils/cytune.c:238
 #, c-format
-msgid "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) [-g|-G] file [file...]\n"
+msgid ""
+"Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
+"[-g|-G] file [file...]\n"
 msgstr ""
 
 #: sys-utils/cytune.c:250 sys-utils/cytune.c:269 sys-utils/cytune.c:289
@@ -8078,7 +8159,8 @@ msgstr ""
 
 #: sys-utils/cytune.c:418
 #, c-format
-msgid "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid ""
+"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
 
 #: sys-utils/cytune.c:424
@@ -8088,7 +8170,8 @@ msgstr ""
 
 #: sys-utils/cytune.c:429
 #, c-format
-msgid "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid ""
+"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
 
 #: sys-utils/cytune.c:435
@@ -8202,7 +8285,8 @@ msgstr ""
 
 #: sys-utils/ipcs.c:130
 #, c-format
-msgid "%s provides information on ipc facilities for which you have read access.\n"
+msgid ""
+"%s provides information on ipc facilities for which you have read access.\n"
 msgstr ""
 
 #: sys-utils/ipcs.c:132
@@ -8765,7 +8849,8 @@ msgid "usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
 msgstr ""
 
 #: sys-utils/rdev.c:70
-msgid "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
+msgid ""
+"  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
 msgstr ""
 
 #: sys-utils/rdev.c:71
@@ -8801,7 +8886,8 @@ msgid "  vidmode ...                     same as rdev -v"
 msgstr ""
 
 #: sys-utils/rdev.c:79
-msgid "Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
+msgid ""
+"Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
 msgstr ""
 
 #: sys-utils/rdev.c:80
@@ -9028,7 +9114,8 @@ msgstr ""
 msgid ""
 " -h, --help               displays this help text\n"
 " -v, --verbose            says what options are being switched on\n"
-" -R, --addr-no-randomize  disables randomization of the virtual address space\n"
+" -R, --addr-no-randomize  disables randomization of the virtual address "
+"space\n"
 " -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
 " -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
 " -L, --addr-compat-layout changes the way virtual memory is allocated\n"
@@ -9037,7 +9124,8 @@ msgid ""
 " -I, --short-inode        turns on SHORT_INODE\n"
 " -S, --whole-seconds      turns on WHOLE_SECONDS\n"
 " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
-" -3, --3gb                limits the used address space to a maximum of 3 GB\n"
+" -3, --3gb                limits the used address space to a maximum of 3 "
+"GB\n"
 "     --4gb                ignored (for backward compatibility only)\n"
 msgstr ""
 
@@ -9194,7 +9282,8 @@ msgstr ""
 
 #: text-utils/hexsyntax.c:131
 #, c-format
-msgid "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
+msgid ""
+"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
 msgstr ""
 
 #: text-utils/more.c:257
@@ -9271,7 +9360,8 @@ msgstr ""
 #: text-utils/more.c:1295
 msgid ""
 "\n"
-"Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
+"Most commands optionally preceded by integer argument k.  Defaults in "
+"brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 
@@ -9412,7 +9502,8 @@ msgstr ""
 
 #: text-utils/pg.c:235
 #, c-format
-msgid "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
+msgid ""
+"%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
 msgstr ""
 
 #: text-utils/pg.c:244
