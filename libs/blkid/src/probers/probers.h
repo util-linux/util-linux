@@ -28,5 +28,10 @@ extern const struct blkid_idinfo pdcraid_idinfo;
 extern const struct blkid_idinfo silraid_idinfo;
 extern const struct blkid_idinfo viaraid_idinfo;
 extern const struct blkid_idinfo linuxraid_idinfo;
+extern const struct blkid_idinfo ext4dev_idinfo;
+extern const struct blkid_idinfo ext4_idinfo;
+extern const struct blkid_idinfo ext3_idinfo;
+extern const struct blkid_idinfo ext2_idinfo;
+extern const struct blkid_idinfo jbd_idinfo;
 
 #endif /* _BLKID_PROBE_H */

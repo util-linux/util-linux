@@ -48,7 +48,12 @@ static const struct blkid_idinfo *idinfos[] =
 	&pdcraid_idinfo,
 	&silraid_idinfo,
 	&viaraid_idinfo,
-	&linuxraid_idinfo
+	&linuxraid_idinfo,
+	&ext4dev_idinfo,
+	&ext4_idinfo,
+	&ext3_idinfo,
+	&ext2_idinfo,
+	&jbd_idinfo
 };
 
 #ifndef ARRAY_SIZE
@@ -639,20 +644,23 @@ int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
 }
 
 /* default _set_uuid function to set DCE UUIDs */
-int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid)
+int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const char *name)
 {
 	struct blkid_prval *v;
 
 	if (uuid_is_empty(uuid, 16))
 		return 0;
 
-	if ((pr->probreq & BLKID_PROBREQ_UUIDRAW) &&
-	    blkid_probe_set_value(pr, "UUID_RAW", uuid, 16) < 0)
-		return -1;
-	if (!(pr->probreq & BLKID_PROBREQ_UUID))
-		return 0;
+	if (!name) {
+		if ((pr->probreq & BLKID_PROBREQ_UUIDRAW) &&
+		    blkid_probe_set_value(pr, "UUID_RAW", uuid, 16) < 0)
+			return -1;
+		if (!(pr->probreq & BLKID_PROBREQ_UUID))
+			return 0;
 
-	v = blkid_probe_assign_value(pr, "UUID");
+		v = blkid_probe_assign_value(pr, "UUID");
+	} else
+		v = blkid_probe_assign_value(pr, name);
 
 #ifdef HAVE_LIBUUID
 	{
@@ -670,6 +678,11 @@ int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid)
 	v->len++;
 #endif
 	return 0;
+}
+
+int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid)
+{
+	return blkid_probe_set_uuid_as(pr, uuid, NULL);
 }
 
 int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
