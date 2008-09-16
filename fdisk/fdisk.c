@@ -1470,7 +1470,7 @@ change_sysid(void) {
 	/* If sgi_label then don't use get_existing_partition,
 	   let the user select a partition, since get_existing_partition()
 	   only works for Linux like partition tables. */
-	if (!sgi_label) { 
+	if (!sgi_label) {
 		i = get_existing_partition(0, partitions);
 	} else {
 		i = get_partition(0, partitions);
@@ -2289,11 +2289,9 @@ reread_partition_table(int leave) {
         }
 
 	if (i) {
-		printf(_("\nWARNING: Re-reading the partition table "
-			 "failed with error %d: %s.\n"
-			 "The kernel still uses the old table.\n"
-			 "The new table will be used "
-			 "at the next reboot.\n"),
+		printf(_("\nWARNING: Re-reading the partition table failed with error %d: %s.\n"
+			 "The kernel still uses the old table. The new table will be used at\n"
+			 "the next reboot or after you run partprobe(8) or kpartx(8)\n"),
 			errno, strerror(errno));
 	}
 
@@ -2599,7 +2597,7 @@ main(int argc, char **argv) {
 	 *  fdisk [-b sectorsize] [-u] device
 	 *
 	 * Options -C, -H, -S set the geometry.
-	 * 
+	 *
 	 */
 	while ((c = getopt(argc, argv, "b:C:H:lsS:uvV")) != -1) {
 		switch (c) {

@@ -413,7 +413,7 @@ fdexit(int ret) {
 	fprintf(stderr, _("Reboot the system to ensure the partition "
 			"table is correctly updated.\n"));
 #endif
-	
+
 	fprintf( stderr, _("\nWARNING: If you have created or modified any\n"
 		         "DOS 6.x partitions, please see the cfdisk manual\n"
 		         "page for additional information.\n") );
@@ -1423,7 +1423,7 @@ new_part(int i) {
             { ESC, N_("Cancel"), N_("Don't create a partition") },
             { 0, NULL, NULL }
         };
-        
+
 	c = menuSimple( menuPartType, 0 );
 	if (toupper(c) == 'P')
 	    num = find_primary();
@@ -1918,7 +1918,7 @@ write_part_table(void) {
 	 if (changed)
 	      print_warning(_("Wrote partition table to disk"));
 	 else
-	      print_warning(_("Wrote partition table, but re-read table failed.  Reboot to update table."));
+	      print_warning(_("Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx(8) or reboot to update table."));
     } else
 	 print_warning(_("Wrote partition table to disk"));
 
@@ -2254,7 +2254,7 @@ print_tables(void) {
         { ESC, N_("Cancel"), N_("Don't print the table") },
         { 0, NULL, NULL }
     };
-    
+
     while (!done)
 	switch ( toupper(menuSimple( menuFormat, 2)) ) {
 	case 'R':

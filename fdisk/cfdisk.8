@@ -349,11 +349,14 @@ Write partition table to disk (must enter an upper case W).  Since
 this might destroy data on the disk, you must either confirm or deny
 the write by entering `yes' or `no'.  If you enter `yes',
 .B cfdisk
-will write the partition table to disk and the tell the kernel to
-re-read the partition table from the disk.  The re-reading of the
-partition table works in most cases, but I have seen it fail.  Don't
-panic.  It will be correct after you reboot the system.  In all cases,
-I still recommend rebooting the system -- just to be safe.
+will write the partition table to disk and the tell the kernel to re-read the
+partition table from the disk.  The re-reading of the partition table does not
+work in some cases, for example for device-mapper devices.  In
+particular case you need to inform kernel about new
+partitions by
+.B partprobe(8),
+.B kpartx(8)
+or reboot the system.
 .TP
 .I Up Arrow
 .TP
@@ -419,9 +422,11 @@ command (above) for more information on the print formats.
 3: cannot get geometry; 4: bad partition table on disk.
 .SH "SEE ALSO"
 .BR fdisk (8),
+.BR sfdisk (8),
 .BR mkfs (8),
 .BR parted (8),
-.BR sfdisk (8)
+.BR partprobe (8),
+.BR kpartx(8)
 .SH BUGS
 The current version does not support multiple disks.
 .SH AUTHOR

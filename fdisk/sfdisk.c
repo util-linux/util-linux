@@ -809,7 +809,7 @@ reread_ioctl(int fd) {
 }
 
 static int
-is_blockdev(int fd) {
+is_blockdev(int fd, ) {
     struct stat statbuf;
 
     return(fstat(fd, &statbuf) == 0 && S_ISBLK(statbuf.st_mode));
@@ -824,8 +824,9 @@ reread_disk_partition(char *dev, int fd) {
     sleep(3);			/* superfluous since 1.3.20 */
 
     if (reread_ioctl(fd) && is_blockdev(fd))
-      do_warn(_("The command to re-read the partition table failed\n"
-	     "Reboot your system now, before using mkfs\n"));
+      do_warn(_("The command to re-read the partition table failed.\n"
+	        "Run partprobe(8), kpartx(8) or reboot your system now,\n"
+	        "before using mkfs\n"));
 
     if (close(fd)) {
 	perror(dev);
@@ -1588,7 +1589,7 @@ msdos_partition(char *dev, int fd, unsigned long start, struct disk_desc *z) {
 	    }
 	}
     }
-	    
+
     return 1;
 }
 
@@ -1912,7 +1913,7 @@ max_length(int pno, int is_extended, struct part_desc *ep, int format,
 	  pp = outer_extended_partition(ep);
     }
     fu = pp ? (pp->start + pp->size) / unit : get_disksize(format);
-	
+
     for(pp = partitions; pp < partitions+pno; pp++)
       if (!is_parent(pp, ep) && pp->size > 0
 	  && pp->start / unit >= start && pp->start / unit < fu)
@@ -1963,7 +1964,7 @@ compute_start_sect(struct part_desc *p, struct part_desc *ep) {
     }
     p->p.nr_sects = p->size;
     return 1;
-}    
+}
 
 /* build the extended partition surrounding a given logical partition */
 static int
