@@ -175,7 +175,7 @@ AC_DEFUN([UTIL_PKG_STATIC], [
 ])
 
 # These default values should work in most cases:
-: ${BLKID_LIBS='-lblkid'}
+: ${BLKID_LIBS='-lblkid -luuid'}
 : ${VOLUMEID_LIBS='-lvolume_id'}
 
 # ... but for static build, we need to consult pkg-config:
