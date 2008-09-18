@@ -46,7 +46,9 @@ static int probe_jfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct jfs_super_block *js;
 
-	js = (struct jfs_super_block *) blkid_probe_get_buffer(pr, 0x8000, 0x200);
+	js = blkid_probe_get_sb(pr, mag, struct jfs_super_block);
+	if (!js)
+		return -1;
 
 	if (le32_to_cpu(js->js_bsize) != (1 << le16_to_cpu(js->js_l2bsize)))
 		return 1;

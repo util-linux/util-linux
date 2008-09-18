@@ -44,8 +44,8 @@ static int probe_cramfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct cramfs_super *cs;
 
-	cs = (struct cramfs_super *) blkid_probe_get_buffer(pr, 0, 0x200);
-	if (cs == NULL)
+	cs = blkid_probe_get_sb(pr, mag, struct cramfs_super);
+	if (!cs)
 		return -1;
 
 	blkid_probe_set_label(pr, cs->name, sizeof(cs->name));

@@ -95,7 +95,7 @@ struct blkid_struct_probe
 	size_t			sbbuf_len;	/* size of data in superblock buffer */
 
 	unsigned char		*buf;		/* seek buffer */
-	off_t			buf_off;	/* offset of seek buffer */
+	blkid_loff_t		buf_off;	/* offset of seek buffer */
 	size_t			buf_len;	/* size of data in seek buffer */
 	size_t			buf_max;	/* allocated size of seek buffer */
 
@@ -250,6 +250,11 @@ extern void blkid_free_dev(blkid_dev dev);
 /* probe.c */
 unsigned char *blkid_probe_get_buffer(blkid_probe pr,
                                 blkid_loff_t off, blkid_loff_t len);
+
+#define blkid_probe_get_sb(_pr, _mag, type) \
+			((type *) blkid_probe_get_buffer((_pr),\
+					(_mag)->kboff << 10, sizeof(type)))
+
 extern int blkid_probe_set_value(blkid_probe pr, const char *name,
                 unsigned char *data, size_t len);
 extern int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
