@@ -17,6 +17,7 @@ libprobers_a_SOURCES =	probers.h \
 			silicon_raid.c \
 			via_raid.c \
 			linux_raid.c \
+			jfs.c \
 			ext.c
 
 all-local: $(lib_LIBRARIES)

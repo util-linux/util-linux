@@ -33,5 +33,6 @@ extern const struct blkid_idinfo ext4_idinfo;
 extern const struct blkid_idinfo ext3_idinfo;
 extern const struct blkid_idinfo ext2_idinfo;
 extern const struct blkid_idinfo jbd_idinfo;
+extern const struct blkid_idinfo jfs_idinfo;
 
 #endif /* _BLKID_PROBE_H */
