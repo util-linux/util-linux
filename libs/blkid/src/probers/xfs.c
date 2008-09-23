@@ -50,7 +50,8 @@ static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 		return -1;
 
 	if (strlen(xs->xs_fname))
-		blkid_probe_set_label(pr, xs->xs_fname, sizeof(xs->xs_fname));
+		blkid_probe_set_label(pr, (unsigned char *) xs->xs_fname,
+				sizeof(xs->xs_fname));
 	blkid_probe_set_uuid(pr, xs->xs_uuid);
 	return 0;
 }
