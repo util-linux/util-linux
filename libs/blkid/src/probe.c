@@ -57,6 +57,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&jfs_idinfo,
 	&gfs_idinfo,
 	&gfs2_idinfo,
+	&romfs_idinfo,
 	&jbd_idinfo
 };
 
