@@ -27,6 +27,9 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <errno.h>
+#include <err.h>
+
+#include "nls.h"
 
 /* the SCHED_BATCH is supported since Linux 2.6.16
  *  -- temporary workaround for people with old glibc headers
@@ -43,34 +46,32 @@
 # define SCHED_IDLE 5
 #endif
 
-static void show_usage(const char *cmd)
+#ifndef ARRAY_SIZE
+# define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+#endif
+
+static void show_usage(int rc)
 {
-	fprintf(stderr, "chrt (%s)\n", PACKAGE_STRING);
-	fprintf(stderr, "usage: %s [options] [prio] [pid | cmd [args...]]\n",
-			cmd);
-	fprintf(stderr, "manipulate real-time attributes of a process\n");
-	fprintf(stderr, "  -b, --batch                        "
-			"set policy to SCHED_BATCH\n");
-	fprintf(stderr, "  -f, --fifo                         "
-			"set policy to SCHED_FIFO\n");
-	fprintf(stderr, "  -i, --idle                         "
-			"set policy to SCHED_IDLE\n");
-	fprintf(stderr, "  -p, --pid                          "
-			"operate on existing given pid\n");
-	fprintf(stderr, "  -m, --max                          "
-			"show min and max valid priorities\n");
-	fprintf(stderr, "  -o, --other                        "
-			"set policy to SCHED_OTHER\n");
-	fprintf(stderr, "  -r, --rr                           "
-			"set policy to SCHED_RR (default)\n");
-	fprintf(stderr, "  -h, --help                         "
-			"display this help\n");
-	fprintf(stderr, "  -v, --verbose                      "
-			"display status information\n");
-	fprintf(stderr, "  -V, --version                      "
-			"output version information\n\n");
-	fprintf(stderr, "You must give a priority if changing policy.\n\n");
-	fprintf(stderr, "Report bugs and send patches to <rml@tech9.net>\n");
+	fprintf(stdout, _(
+	"\nchrt - manipulate real-time attributes of a process.\n"
+	"\nSet policy:\n"
+	"  chrt [options] <policy> <priority> {<pid> | <command> [<arg> ...]}\n"
+	"\nGet policy:\n"
+	"  chrt [options] {<pid> | <command> [<arg> ...]}\n\n"
+	"\nScheduling policies:\n"
+	"  -b | --batch         set policy to SCHED_BATCH\n"
+	"  -f | --fifo          set policy to SCHED_FIFO\n"
+	"  -i | --idle          set policy to SCHED_IDLE\n"
+	"  -o | --other         set policy to SCHED_OTHER\n"
+	"  -r | --rr            set policy to SCHED_RR (default)\n"
+	"\nOptions:\n"
+	"  -h | --help          display this help\n"
+	"  -p | --pid           operate on existing given pid\n"
+	"  -m | --max           show min and max valid priorities\n"
+	"  -v | --verbose       display status information\n"
+	"  -V | --version       output version information\n\n"));
+
+	exit(rc);
 }
 
 static void show_rt_info(const char *what, pid_t pid)
@@ -83,13 +84,10 @@ static void show_rt_info(const char *what, pid_t pid)
 		pid = getpid();
 
 	policy = sched_getscheduler(pid);
-	if (policy == -1) {
-		perror("sched_getscheduler");
-		fprintf(stderr, "failed to get pid %d's policy\n", pid);
-		exit(1);
-	}
+	if (policy == -1)
+		err(EXIT_FAILURE, _("failed to get pid %d's policy"), pid);
 
-	printf("pid %d's %s scheduling policy: ", pid, what);
+	printf(_("pid %d's %s scheduling policy: "), pid, what);
 	switch (policy) {
 	case SCHED_OTHER:
 		printf("SCHED_OTHER\n");
@@ -106,57 +104,33 @@ static void show_rt_info(const char *what, pid_t pid)
 		printf("SCHED_BATCH\n");
 		break;
 	default:
-		printf("unknown\n");
+		printf(_("unknown\n"));
 	}
 
-	if (sched_getparam(pid, &sp)) {
-		perror("sched_getparam");
-		fprintf(stderr, "failed to get pid %d's attributes\n", pid);
-		exit(1);
-	}
+	if (sched_getparam(pid, &sp))
+		err(EXIT_FAILURE, _("failed to get pid %d's attributes"), pid);
 
-	printf("pid %d's %s scheduling priority: %d\n",
+	printf(_("pid %d's %s scheduling priority: %d\n"),
 		pid, what, sp.sched_priority);
 }
 
 static void show_min_max(void)
 {
-	int max, min;
+	int i;
+	int policies[] = { SCHED_OTHER, SCHED_FIFO, SCHED_RR,
+			   SCHED_BATCH, SCHED_IDLE };
+	const char *names[] = { "OTHER", "FIFO", "RR", "BATCH", "IDLE" };
 
-	max = sched_get_priority_max(SCHED_OTHER);
-	min = sched_get_priority_min(SCHED_OTHER);
-	if (max >= 0 && min >= 0)
-		printf("SCHED_OTHER min/max priority\t: %d/%d\n", min, max);
-	else
-		printf("SCHED_OTHER not supported?\n");
+	for (i = 0; i < ARRAY_SIZE(policies); i++) {
+		int max = sched_get_priority_max(policies[i]);
+		int min = sched_get_priority_min(policies[i]);
 
-	max = sched_get_priority_max(SCHED_FIFO);
-	min = sched_get_priority_min(SCHED_FIFO);
-	if (max >= 0 && min >= 0)
-		printf("SCHED_FIFO min/max priority\t: %d/%d\n", min, max);
-	else
-		printf("SCHED_FIFO not supported?\n");
-
-	max = sched_get_priority_max(SCHED_RR);
-	min = sched_get_priority_min(SCHED_RR);
-	if (max >= 0 && min >= 0)
-		printf("SCHED_RR min/max priority\t: %d/%d\n", min, max);
-	else
-		printf("SCHED_RR not supported?\n");
-
-	max = sched_get_priority_max(SCHED_BATCH);
-	min = sched_get_priority_min(SCHED_BATCH);
-	if (max >= 0 && min >= 0)
-		printf("SCHED_BATCH min/max priority\t: %d/%d\n", min, max);
-	else
-		printf("SCHED_BATCH not supported?\n");
-
-	max = sched_get_priority_max(SCHED_IDLE);
-	min = sched_get_priority_min(SCHED_IDLE);
-	if (max >= 0 && min >= 0)
-		printf("SCHED_IDLE min/max priority\t: %d/%d\n", min, max);
-	else
-		printf("SCHED_IDLE not supported?\n");
+		if (max >= 0 && min >= 0)
+			printf(_("SCHED_%s min/max priority\t: %d/%d\n"),
+					names[i], min, max);
+		else
+			printf(_("SCHED_%s not supported?\n"), names[i]);
+	}
 }
 
 int main(int argc, char *argv[])
@@ -179,9 +153,13 @@ int main(int argc, char *argv[])
 		{ NULL,		0, NULL, 0 }
 	};
 
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	while((i = getopt_long(argc, argv, "+bfiphmorvV", longopts, NULL)) != -1)
 	{
-		int ret = 1;
+		int ret = EXIT_FAILURE;
 
 		switch (i) {
 		case 'b':
@@ -202,11 +180,8 @@ int main(int argc, char *argv[])
 		case 'p':
 			errno = 0;
 			pid = strtol(argv[argc - 1], NULL, 10);
-			if (errno) {
-				perror("strtol");
-				fprintf(stderr, "failed to parse pid!\n");
-				return 1;
-			}
+			if (errno)
+				err(EXIT_FAILURE, _("failed to parse pid"));
 			break;
 		case 'r':
 			policy = SCHED_RR;
@@ -218,41 +193,31 @@ int main(int argc, char *argv[])
 			printf("chrt (%s)\n", PACKAGE_STRING);
 			return 0;
 		case 'h':
-			ret = 0;
+			ret = EXIT_SUCCESS;
 		default:
-			show_usage(argv[0]);
-			return ret;
+			show_usage(ret);
 		}
-		
 	}
 
-	if (((pid > -1) && argc - optind < 1) || ((pid == -1) && argc - optind < 2)) {
-		show_usage(argv[0]);
-		return 1;
-	}
+	if (((pid > -1) && argc - optind < 1) || ((pid == -1) && argc - optind < 2))
+		show_usage(EXIT_FAILURE);
 
 	if ((pid > -1) && (verbose || argc - optind == 1)) {
-		show_rt_info("current", pid);
+		show_rt_info(_("current"), pid);
 		if (argc - optind == 1)
-			return 0;
+			return EXIT_SUCCESS;
 	}
 
 	errno = 0;
 	priority = strtol(argv[optind], NULL, 10);
-	if (errno) {
-		perror("strtol");
-		fprintf(stderr, "failed to parse priority!\n");
-		return 1;
-	}
+	if (errno)
+		err(EXIT_FAILURE, _("failed to parse priority"));
 
 	if (pid == -1)
 		pid = 0;
 	sp.sched_priority = priority;
-	if (sched_setscheduler(pid, policy, &sp) == -1) {
-		perror("sched_setscheduler");
-		fprintf(stderr, "failed to set pid %d's policy\n", pid);
-		return 1;
-	}
+	if (sched_setscheduler(pid, policy, &sp) == -1)
+		err(EXIT_FAILURE, _("failed to set pid %d's policy"), pid);
 
 	if (verbose)
 		show_rt_info("new", pid);
@@ -261,9 +226,8 @@ int main(int argc, char *argv[])
 		argv += optind + 1;
 		execvp(argv[0], argv);
 		perror("execvp");
-		fprintf(stderr, "failed to execute %s\n", argv[0]);
-		return 1;
+		err(EXIT_FAILURE, _("failed to execute %s"), argv[0]);
 	}
 
-	return 0;
+	return EXIT_SUCCESS;
 }
