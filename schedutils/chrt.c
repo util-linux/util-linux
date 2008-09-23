@@ -35,6 +35,14 @@
 # define SCHED_BATCH 3
 #endif
 
+/* the SCHED_IDLE is supported since Linux 2.6.23
+ * commit id 0e6aca43e08a62a48d6770e9a159dbec167bf4c6
+ * -- temporary workaround for people with old glibc headers
+ */
+#ifndef SCHED_IDLE
+# define SCHED_IDLE 5
+#endif
+
 static void show_usage(const char *cmd)
 {
 	fprintf(stderr, "chrt (%s)\n", PACKAGE_STRING);
@@ -45,6 +53,8 @@ static void show_usage(const char *cmd)
 			"set policy to SCHED_BATCH\n");
 	fprintf(stderr, "  -f, --fifo                         "
 			"set policy to SCHED_FIFO\n");
+	fprintf(stderr, "  -i, --idle                         "
+			"set policy to SCHED_IDLE\n");
 	fprintf(stderr, "  -p, --pid                          "
 			"operate on existing given pid\n");
 	fprintf(stderr, "  -m, --max                          "
@@ -87,6 +97,8 @@ static void show_rt_info(const char *what, pid_t pid)
 	case SCHED_FIFO:
 		printf("SCHED_FIFO\n");
 		break;
+	case SCHED_IDLE:
+		printf("SCHED_IDLE\n");
 	case SCHED_RR:
 		printf("SCHED_RR\n");
 		break;
@@ -138,6 +150,13 @@ static void show_min_max(void)
 		printf("SCHED_BATCH min/max priority\t: %d/%d\n", min, max);
 	else
 		printf("SCHED_BATCH not supported?\n");
+
+	max = sched_get_priority_max(SCHED_IDLE);
+	min = sched_get_priority_min(SCHED_IDLE);
+	if (max >= 0 && min >= 0)
+		printf("SCHED_IDLE min/max priority\t: %d/%d\n", min, max);
+	else
+		printf("SCHED_IDLE not supported?\n");
 }
 
 int main(int argc, char *argv[])
@@ -149,6 +168,7 @@ int main(int argc, char *argv[])
 	struct option longopts[] = {
 		{ "batch",	0, NULL, 'b' },
 		{ "fifo",	0, NULL, 'f' },
+		{ "idle",	0, NULL, 'i' },
 		{ "pid",	0, NULL, 'p' },
 		{ "help",	0, NULL, 'h' },
 		{ "max",        0, NULL, 'm' },
@@ -159,7 +179,7 @@ int main(int argc, char *argv[])
 		{ NULL,		0, NULL, 0 }
 	};
 
-	while((i = getopt_long(argc, argv, "+bfphmorvV", longopts, NULL)) != -1)
+	while((i = getopt_long(argc, argv, "+bfiphmorvV", longopts, NULL)) != -1)
 	{
 		int ret = 1;
 
@@ -169,6 +189,9 @@ int main(int argc, char *argv[])
 			break;
 		case 'f':
 			policy = SCHED_FIFO;
+			break;
+		case 'i':
+			policy = SCHED_IDLE;
 			break;
 		case 'm':
 			show_min_max();

@@ -45,13 +45,16 @@ runs COMMAND with the given attributes.  Both policy (one of
 .BR SCHED_OTHER ,
 .BR SCHED_FIFO ,
 .BR SCHED_RR ,
+.BR SCHED_BATCH ,
 or
-.BR SCHED_BATCH )
+.BR SCHED_IDLE )
 and priority can be set and retrieved.
 .PP
 The
 .BR SCHED_BATCH
-policy is supported since Linux 2.6.16.
+policy is supported since Linux 2.6.16. The
+.BR SCHED_IDLE
+policy is supported since Linux 2.6.23.
 .SH OPTIONS
 .TP
 .B -p, --pid
@@ -64,6 +67,10 @@ set scheduling policy to
 .B -f, --fifo
 set scheduling policy to
 .BR SCHED_FIFO
+.TP
+.B -i, --idle
+set schedulng policy to
+.BR SCHED_IDLE
 .TP
 .B -m, --max
 show minimum and maximum valid priorities, then exit
