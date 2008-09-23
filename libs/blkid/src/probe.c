@@ -387,10 +387,6 @@ int blkid_do_probe(blkid_probe pr)
 			blkid_probe_set_value(pr, "TYPE",
 				(unsigned char *) id->name,
 				strlen(id->name) + 1);
-		if ((pr->probreq & BLKID_PROBREQ_SECTYPE) && id->secname)
-			blkid_probe_set_value(pr, "SEC_TYPE",
-				(unsigned char *) id->secname,
-				strlen(id->secname) + 1);
 		if (pr->probreq & BLKID_PROBREQ_USAGE)
 			blkid_probe_set_usage(pr, id->usage);
 

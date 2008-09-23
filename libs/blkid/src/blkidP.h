@@ -127,7 +127,6 @@ struct blkid_idmag
 struct blkid_idinfo
 {
 	const char	*name;			/* FS/RAID name */
-	const char	*secname;		/* second FS/RAID name */
 	int		usage;			/* BLKID_USAGE_* flag */
 
 						/* probe function */

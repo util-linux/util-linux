@@ -225,8 +225,13 @@ static void ext_get_info(blkid_probe pr, int ver, struct ext2_super_block *es)
 
 	if (ver != 2 && (pr->probreq & BLKID_PROBREQ_SECTYPE) &&
 	    ((le32_to_cpu(es->s_feature_incompat) & EXT2_FEATURE_INCOMPAT_UNSUPPORTED) == 0))
-		blkid_probe_sprintf_version(pr, "%u.%u",
-		 le32_to_cpu(es->s_rev_level), le16_to_cpu(es->s_minor_rev_level));
+		blkid_probe_set_value(pr, "SEC_TYPE",
+				(unsigned char *) "ext2",
+				sizeof("ext2"));
+
+	blkid_probe_sprintf_version(pr, "%u.%u",
+		le32_to_cpu(es->s_rev_level),
+		le16_to_cpu(es->s_minor_rev_level));
 }
 
 
