@@ -61,6 +61,8 @@ static const struct blkid_idinfo *idinfos[] =
 	&ocfs_idinfo,
 	&ocfs2_idinfo,
 	&oracleasm_idinfo,
+	&reiser_idinfo,
+	&reiser4_idinfo,
 	&jbd_idinfo
 };
 
