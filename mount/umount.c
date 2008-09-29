@@ -474,8 +474,27 @@ umount_file (char *arg) {
 		printf(_("Trying to umount %s\n"), file);
 
 	mc = getmntdirbackward(file, NULL);
-	if (!mc)
+	if (!mc) {
 		mc = getmntdevbackward(file, NULL);
+		if (mc) {
+			struct mntentchn *mc1;
+
+			mc1 = getmntdirbackward(mc->m.mnt_dir, NULL);
+			if (!mc1)
+				/* 'mc1' must exist, though not necessarily
+				    equals to `mc'. Otherwise we go mad. */
+				die(EX_SOFTWARE,
+				    _("umount: confused when analyzing mtab"));
+
+			if (strcmp(file, mc1->m.mnt_fsname)) {
+				/* Something was stacked over `file' on the
+				   same mount point. */
+				die(EX_FAIL, _("umount: cannot umount %s -- %s is "
+				    "mounted over it on the same point."),
+				    file, mc1->m.mnt_fsname);
+			}
+		}
+	}
 	if (!mc && verbose)
 		printf(_("Could not find %s in mtab\n"), file);
 
