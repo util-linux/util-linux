@@ -673,7 +673,7 @@ int main(int argc, char **argv)
 {
 	int c;			/* for getopt */
 	int start = 0;
-	size_t length;
+	size_t length = 0;
 
 	page_size = getpagesize();
 
