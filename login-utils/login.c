@@ -1435,7 +1435,13 @@ dolastlog(int quiet) {
 	    lseek(fd, (off_t)pwd->pw_uid * sizeof(ll), SEEK_SET);
 	}
 	memset((char *)&ll, 0, sizeof(ll));
-	time(&ll.ll_time);
+
+	{
+		time_t t;
+		time(&t);
+		ll.ll_time = t; /* ll_time is always 32bit */
+	}
+
 	xstrncpy(ll.ll_line, tty_name, sizeof(ll.ll_line));
 	if (hostname)
 	    xstrncpy(ll.ll_host, hostname, sizeof(ll.ll_host));
