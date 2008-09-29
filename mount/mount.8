@@ -595,7 +595,13 @@ Options are specified with a
 flag followed by a comma separated string of options.
 Some of these options are only useful when they appear in the
 .I /etc/fstab
-file.  The following options apply to any file system that is being
+file.
+
+Some of these options could be enabled or disabled by default
+in the system kernel. To check the current setting see the options
+in /proc/mounts.
+
+The following options apply to any file system that is being
 mounted (but not every file system actually honors them - e.g., the
 .B sync
 option today has effect only for ext2, ext3, fat, vfat and ufs):
