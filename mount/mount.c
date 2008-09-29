@@ -54,7 +54,7 @@ static int fake = 0;
 /* True if we are allowed to call /sbin/mount.${FSTYPE} */
 static int external_allowed = 1;
 
-/* Don't write a entry in /etc/mtab (-n).  */
+/* Don't write an entry in /etc/mtab (-n).  */
 static int nomtab = 0;
 
 /* True for explicit readonly (-r).  */
