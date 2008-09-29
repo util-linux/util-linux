@@ -185,7 +185,7 @@ static void complain(int err, const char *dev) {
 static int
 umount_one (const char *spec, const char *node, const char *type,
 	    const char *opts, struct mntentchn *mc) {
-	int umnt_err, umnt_err2;
+	int umnt_err = 0;
 	int isroot;
 	int res;
 	int status;
@@ -217,7 +217,6 @@ umount_one (const char *spec, const char *node, const char *type,
 	if (delloop && is_loop_device(spec) && !is_loop_autoclear(spec))
 		myloop = 1;
 
-	umnt_err = umnt_err2 = 0;
 	if (lazy) {
 		res = umount2 (node, MNT_DETACH);
 		if (res < 0)
@@ -240,27 +239,10 @@ umount_one (const char *spec, const char *node, const char *type,
 	} else
 		res = umount (node);
 
-	if (res < 0) {
+	if (res < 0)
 		umnt_err = errno;
-		/* A device might have been mounted on a node that has since
-		   been deleted or renamed, so if node fails, also try spec. */
-		/* Note that this is incorrect in case spec was mounted
-		   several times. */
-		/* if (umnt_err == ENOENT || umnt_err == EINVAL) */
-		if (umnt_err != EBUSY && strcmp(node, spec)) {
-			if (verbose)
-				printf (_("could not umount %s - trying %s instead\n"),
-					node, spec);
-			res = umount (spec);
-			if (res < 0)
-				umnt_err2 = errno;
-			/* Do not complain about remote NFS mount points */
-			if (errno == ENOENT && index(spec, ':'))
-				umnt_err2 = 0;
-		}
-	}
 
-	if (res < 0 && remount && (umnt_err == EBUSY || umnt_err2 == EBUSY)) {
+	if (res < 0 && remount && umnt_err == EBUSY) {
 		/* Umount failed - let us try a remount */
 		res = mount(spec, node, NULL,
 			    MS_MGC_VAL | MS_REMOUNT | MS_RDONLY, NULL);
@@ -333,10 +315,7 @@ umount_one (const char *spec, const char *node, const char *type,
 
 	if (res >= 0)
 		return 0;
-
-	if (umnt_err2)
-		complain(umnt_err2, spec);
-	if (umnt_err && umnt_err != umnt_err2)
+	if (umnt_err)
 		complain(umnt_err, node);
 	return 1;
 }
