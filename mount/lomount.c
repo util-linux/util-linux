@@ -633,6 +633,12 @@ digits_only(const char *s) {
 	return 1;
 }
 
+/*
+ * return codes:
+ *	0	- success
+ *	1	- error
+ *	2	- error (EBUSY)
+ */
 int
 set_loop(const char *device, const char *file, unsigned long long offset,
 	 unsigned long long sizelimit, const char *encryption, int pfd, int *options) {
@@ -1026,11 +1032,16 @@ main(int argc, char **argv) {
 			}
 		} while (find && res == 2);
 
-		if (verbose && res == 0)
-			printf("Loop device is %s\n", device);
-
-		if (res == 0 && showdev && find)
-			printf("%s\n", device);
+		if (device) {
+			if (res == 2)
+				error(_("%s: %s: device is busy"), progname, device);
+			else if (res == 0) {
+				if (verbose)
+					printf("Loop device is %s\n", device);
+				if (showdev && find)
+					printf("%s\n", device);
+			}
+		}
 	}
 	return res;
 }
