@@ -38,8 +38,10 @@
 /* /sys paths */
 #define _PATH_SYS_SYSTEM	"sys/devices/system"
 #define _PATH_SYS_CPU0		_PATH_SYS_SYSTEM "/cpu/cpu0"
-#define _PATH_PROC_XENCAP	"proc/xen/capabilities"
+#define _PATH_PROC_XEN		"proc/xen"
+#define _PATH_PROC_XENCAP	_PATH_PROC_XEN "/capabilities"
 #define _PATH_PROC_CPUINFO	"proc/cpuinfo"
+#define _PATH_PROC_PCIDEVS	"proc/bus/pci/devices"
 
 int have_topology;
 int have_cache;
@@ -51,6 +53,33 @@ struct ca_desc {
 	char	*casize;
 	int	camap;
 };
+
+/* virtualization types */
+enum {
+	VIRT_NONE	= 0,
+	VIRT_PARA,
+	VIRT_FULL
+};
+const char *virt_types[] = {
+	[VIRT_NONE]	= N_("none"),
+	[VIRT_PARA]	= N_("para"),
+	[VIRT_FULL]	= N_("full")
+};
+
+/* hypervisor vendors */
+enum {
+	HYPER_NONE	= 0,
+	HYPER_XEN,
+	HYPER_KVM,
+	HYPER_MSHV
+};
+const char *hv_vendors[] = {
+	[HYPER_NONE]	= NULL,
+	[HYPER_XEN]	= "Xen",
+	[HYPER_KVM]	= "KVM",
+	[HYPER_MSHV]	= "Microsoft"
+};
+
 
 /* CPU(s) description */
 struct cpu_desc {
@@ -67,6 +96,9 @@ struct cpu_desc {
 	char	*vendor;
 	char	*family;
 	char	*model;
+	char	*virtflag;	/* virtualization flag (vmx, svm) */
+	int	hyper;		/* hypervisor vendor ID */
+	int	virtype;	/* VIRT_PARA|FULL|NONE ? */
 
 	/* caches */
 	struct ca_desc	cache[CACHE_MAX];
@@ -246,7 +278,128 @@ read_basicinfo(struct cpu_desc *cpu)
 		else
 			continue;
 	}
+
+	if (cpu->flags) {
+		snprintf(buf, sizeof(buf), " %s ", cpu->flags);
+		if (strstr(buf, " svm "))
+			cpu->virtflag = strdup("svm");
+		else if (strstr(buf, " vmx "))
+			cpu->virtflag = strdup("vmx");
+	}
+
 	fclose(fp);
+}
+
+static int
+has_pci_device(int vendor, int device)
+{
+	FILE *f;
+	int num, fn, ven, dev;
+	int res = 1;
+
+	f = fopen(_PATH_PROC_PCIDEVS, "r");
+	if (!f)
+		return 0;
+
+	 /* for more details about bus/pci/devices format see
+	  * drivers/pci/proc.c in linux kernel
+	  */
+	while(fscanf(f, "%02x%02x\t%04x%04x\t%*[^\n]",
+			&num, &fn, &ven, &dev) == 4) {
+
+		if (ven == vendor && dev == device)
+			goto found;
+	}
+
+	res = 0;
+found:
+	fclose(f);
+	return res;
+}
+
+#if defined(__x86_64__) || defined(__i386__)
+
+/*
+ * This CPUID leaf returns the information about the hypervisor.
+ * EAX : maximum input value for CPUID supported by the hypervisor.
+ * EBX, ECX, EDX : Hypervisor vendor ID signature. E.g. VMwareVMware.
+ */
+#define HYPERVISOR_INFO_LEAF   0x40000000
+
+static inline void
+cpuid(unsigned int op, unsigned int *eax, unsigned int *ebx,
+			 unsigned int *ecx, unsigned int *edx)
+{
+	__asm__("cpuid"
+		: "=a" (*eax),
+		  "=b" (*ebx),
+		  "=c" (*ecx),
+		  "=d" (*edx)
+		: "0" (op), "c"(0));
+}
+
+static void
+read_hypervisor_cpuid(struct cpu_desc *cpu)
+{
+	unsigned int eax = 0, ebx = 0, ecx = 0, edx = 0;
+	char hyper_vendor_id[13];
+
+	memset(hyper_vendor_id, 0, sizeof(hyper_vendor_id));
+
+	cpuid(HYPERVISOR_INFO_LEAF, &eax, &ebx, &ecx, &edx);
+	memcpy(hyper_vendor_id + 0, &ebx, 4);
+	memcpy(hyper_vendor_id + 4, &ecx, 4);
+	memcpy(hyper_vendor_id + 8, &edx, 4);
+	hyper_vendor_id[12] = '\0';
+
+	if (!hyper_vendor_id[0])
+		return;
+
+	if (!strncmp("XenVMMXenVMM", hyper_vendor_id, 12))
+		cpu->hyper = HYPER_XEN;
+	else if (!strncmp("KVMKVMKVM", hyper_vendor_id, 9))
+		cpu->hyper = HYPER_KVM;
+	else if (!strncmp("Microsoft Hv", hyper_vendor_id, 12))
+		cpu->hyper = HYPER_MSHV;
+}
+
+#else	/* ! __x86_64__ */
+static void
+read_hypervisor_cpuid(struct cpu_desc *cpu)
+{
+}
+#endif
+
+static void
+read_hypervisor(struct cpu_desc *cpu)
+{
+	read_hypervisor_cpuid(cpu);
+
+	if (cpu->hyper)
+		/* hvm */
+		cpu->virtype = VIRT_FULL;
+
+	else if (!access(_PATH_PROC_XEN, F_OK)) {
+		/* Xen para-virt or dom0 */
+		FILE *fd = fopen(_PATH_PROC_XENCAP, "r");
+		int dom0 = 0;
+
+		if (fd) {
+			char buf[256];
+
+			if (fscanf(fd, "%s", buf) == 1 &&
+			    !strcmp(buf, "control_d"))
+				dom0 = 1;
+			fclose(fd);
+		}
+		cpu->virtype = dom0 ? VIRT_NONE : VIRT_PARA;
+		cpu->hyper = HYPER_XEN;
+
+	} else if (has_pci_device(0x5853, 0x0001)) {
+		/* Xen full-virt on non-x86_64 */
+		cpu->hyper = HYPER_XEN;
+		cpu->virtype = VIRT_FULL;
+	}
 }
 
 static void
@@ -337,18 +490,6 @@ read_nodes(struct cpu_desc *cpu)
 static void
 check_system(void)
 {
-	FILE *fd;
-	char buf[256];
-
-	/* Dom0 Kernel gives wrong information. */
-	fd = fopen(_PATH_PROC_XENCAP, "r");
-	if (fd) {
-		if (fscanf(fd, "%s", buf) == 1 && !strcmp(buf, "control_d"))
-			errx(EXIT_FAILURE,
-			     _("error: Dom0 Kernel is unsupported."));
-		fclose(fd);
-	}
-
 	/* Read through sysfs. */
 	if (access(_PATH_SYS_SYSTEM, F_OK))
 		errx(EXIT_FAILURE,
@@ -432,8 +573,6 @@ print_parsable(struct cpu_desc *cpu)
 static void
 print_readable(struct cpu_desc *cpu)
 {
-	char buf[BUFSIZ];
-
 	print_s("Architecture:", cpu->arch);
 	print_n("CPU(s):", cpu->ct_cpu);
 
@@ -455,15 +594,18 @@ print_readable(struct cpu_desc *cpu)
 		print_s(_("Stepping:"), cpu->stepping);
 	if (cpu->mhz)
 		print_s(_("CPU MHz:"), cpu->mhz);
-	if (cpu->flags) {
-		snprintf(buf, sizeof(buf), " %s ", cpu->flags);
-		if (strstr(buf, " svm "))
+	if (cpu->virtflag) {
+		if (!strcmp(cpu->virtflag, "svm"))
 			print_s(_("Virtualization:"), "AMD-V");
-		else if (strstr(buf, " vmx "))
+		else if (!strcmp(cpu->virtflag, "vmx"))
 			print_s(_("Virtualization:"), "VT-x");
 	}
-
+	if (cpu->hyper) {
+		print_s(_("Hypervisor vendor:"), hv_vendors[cpu->hyper]);
+		print_s(_("Virtualization type:"), virt_types[cpu->virtype]);
+	}
 	if (have_cache) {
+		char buf[512];
 		int i;
 
 		for (i = cpu->ct_cache - 1; i >= 0; i--) {
@@ -544,6 +686,8 @@ int main(int argc, char *argv[])
 	}
 	if (have_node)
 		read_nodes(cpu);
+
+	read_hypervisor(cpu);
 
 	/* Show time! */
 	if (parsable)
