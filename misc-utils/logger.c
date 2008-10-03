@@ -64,7 +64,7 @@ myopenlog(const char *sock) {
        static struct sockaddr_un s_addr; /* AF_UNIX address of local logger */
 
        if (strlen(sock) >= sizeof(s_addr.sun_path)) {
-	       printf ("logger: openlog: pathname too long\n");
+	       printf (_("logger: openlog: pathname too long\n"));
 	       exit(1);
        }
 
@@ -72,12 +72,12 @@ myopenlog(const char *sock) {
        (void)strcpy(s_addr.sun_path, sock);
 
        if ((fd = socket(AF_UNIX, optd ? SOCK_DGRAM : SOCK_STREAM, 0)) == -1) {
-               printf ("socket: %s.\n", strerror(errno));
+               printf (_("socket: %s.\n"), strerror(errno));
                exit (1);
        }
 
        if (connect(fd, (struct sockaddr *) &s_addr, sizeof(s_addr)) == -1) {
-               printf ("connect: %s.\n", strerror(errno));
+               printf (_("connect: %s.\n"), strerror(errno));
                exit (1);
        }
        return fd;
