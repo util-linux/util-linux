@@ -144,16 +144,16 @@ static void test_super(int *start, size_t *length) {
 
 	/* find the physical size of the file or block device */
 	if (stat(filename, &st) < 0) {
-		die(FSCK_ERROR, 1, "stat failed: %s", filename);
+		die(FSCK_ERROR, 1, _("stat failed: %s"), filename);
 	}
 	fd = open(filename, O_RDONLY);
 	if (fd < 0) {
-		die(FSCK_ERROR, 1, "open failed: %s", filename);
+		die(FSCK_ERROR, 1, _("open failed: %s"), filename);
 	}
 	if (S_ISBLK(st.st_mode)) {
 		unsigned long long bytes;
 		if (blkdev_get_size(fd, &bytes)) {
-			die(FSCK_ERROR, 1, "ioctl failed: unable to determine device size: %s", filename);
+			die(FSCK_ERROR, 1, _("ioctl failed: unable to determine device size: %s"), filename);
 		}
 		*length = bytes;
 	}
@@ -161,16 +161,16 @@ static void test_super(int *start, size_t *length) {
 		*length = st.st_size;
 	}
 	else {
-		die(FSCK_ERROR, 0, "not a block device or file: %s", filename);
+		die(FSCK_ERROR, 0, _("not a block device or file: %s"), filename);
 	}
 
 	if (*length < sizeof(struct cramfs_super)) {
-		die(FSCK_UNCORRECTED, 0, "file length too short");
+		die(FSCK_UNCORRECTED, 0, _("file length too short"));
 	}
 
 	/* find superblock */
 	if (read(fd, &super, sizeof(super)) != sizeof(super)) {
-		die(FSCK_ERROR, 1, "read failed: %s", filename);
+		die(FSCK_ERROR, 1, _("read failed: %s"), filename);
 	}
 	if (super.magic == CRAMFS_MAGIC) {
 		*start = 0;
@@ -178,7 +178,7 @@ static void test_super(int *start, size_t *length) {
 	else if (*length >= (PAD_SIZE + sizeof(super))) {
 		lseek(fd, PAD_SIZE, SEEK_SET);
 		if (read(fd, &super, sizeof(super)) != sizeof(super)) {
-			die(FSCK_ERROR, 1, "read failed: %s", filename);
+			die(FSCK_ERROR, 1, _("read failed: %s"), filename);
 		}
 		if (super.magic == CRAMFS_MAGIC) {
 			*start = PAD_SIZE;
@@ -187,27 +187,27 @@ static void test_super(int *start, size_t *length) {
 
 	/* superblock tests */
 	if (super.magic != CRAMFS_MAGIC) {
-		die(FSCK_UNCORRECTED, 0, "superblock magic not found");
+		die(FSCK_UNCORRECTED, 0, _("superblock magic not found"));
 	}
 	if (super.flags & ~CRAMFS_SUPPORTED_FLAGS) {
-		die(FSCK_ERROR, 0, "unsupported filesystem features");
+		die(FSCK_ERROR, 0, _("unsupported filesystem features"));
 	}
 	if (super.size < page_size) {
-		die(FSCK_UNCORRECTED, 0, "superblock size (%d) too small", super.size);
+		die(FSCK_UNCORRECTED, 0, _("superblock size (%d) too small"), super.size);
 	}
 	if (super.flags & CRAMFS_FLAG_FSID_VERSION_2) {
 		if (super.fsid.files == 0) {
-			die(FSCK_UNCORRECTED, 0, "zero file count");
+			die(FSCK_UNCORRECTED, 0, _("zero file count"));
 		}
 		if (*length < super.size) {
-			die(FSCK_UNCORRECTED, 0, "file length too short");
+			die(FSCK_UNCORRECTED, 0, _("file length too short"));
 		}
 		else if (*length > super.size) {
-			fprintf(stderr, "warning: file extends past end of filesystem\n");
+			fprintf(stderr, _("warning: file extends past end of filesystem\n"));
 		}
 	}
 	else {
-		fprintf(stderr, "warning: old cramfs format\n");
+		fprintf(stderr, _("warning: old cramfs format\n"));
 	}
 }
 
@@ -220,7 +220,7 @@ static void test_crc(int start)
 #ifdef INCLUDE_FS_TESTS
 		return;
 #else /* not INCLUDE_FS_TESTS */
-		die(FSCK_USAGE, 0, "unable to test CRC: old cramfs format");
+		die(FSCK_USAGE, 0, _("unable to test CRC: old cramfs format"));
 #endif /* not INCLUDE_FS_TESTS */
 	}
 
@@ -232,7 +232,7 @@ static void test_crc(int start)
 		if (buf != MAP_FAILED) {
 			lseek(fd, 0, SEEK_SET);
 			if (read(fd, buf, super.size) < 0)
-				die(FSCK_ERROR, 1, "read failed: %s", filename);
+				die(FSCK_ERROR, 1, _("read failed: %s"), filename);
 		}
 	}
 	if (buf != MAP_FAILED) {
@@ -246,13 +246,13 @@ static void test_crc(int start)
 
 		buf = malloc(4096);
 		if (!buf) {
-			die(FSCK_ERROR, 1, "malloc failed");
+			die(FSCK_ERROR, 1, _("malloc failed"));
 		}
 		lseek(fd, start, SEEK_SET);
 		for (;;) {
 			retval = read(fd, buf, 4096);
 			if (retval < 0) {
-				die(FSCK_ERROR, 1, "read failed: %s", filename);
+				die(FSCK_ERROR, 1, _("read failed: %s"), filename);
 			}
 			else if (retval == 0) {
 				break;
@@ -271,7 +271,7 @@ static void test_crc(int start)
 	}
 
 	if (crc != super.fsid.crc) {
-		die(FSCK_UNCORRECTED, 0, "crc error");
+		die(FSCK_UNCORRECTED, 0, _("crc error"));
 	}
 }
 
@@ -312,7 +312,7 @@ static struct cramfs_inode *cramfs_iget(struct cramfs_inode * i)
 	struct cramfs_inode *inode = malloc(sizeof(struct cramfs_inode));
 
 	if (!inode) {
-		die(FSCK_ERROR, 1, "malloc failed");
+		die(FSCK_ERROR, 1, _("malloc failed"));
 	}
 	*inode = *i;
 	return inode;
@@ -336,12 +336,12 @@ static struct cramfs_inode *read_super(void)
 	unsigned long offset = super.root.offset << 2;
 
 	if (!S_ISDIR(super.root.mode))
-		die(FSCK_UNCORRECTED, 0, "root inode is not directory");
+		die(FSCK_UNCORRECTED, 0, _("root inode is not directory"));
 	if (!(super.flags & CRAMFS_FLAG_SHIFTED_ROOT_OFFSET) &&
 	    ((offset != sizeof(struct cramfs_super)) &&
 	     (offset != PAD_SIZE + sizeof(struct cramfs_super))))
 	{
-		die(FSCK_UNCORRECTED, 0, "bad root offset (%lu)", offset);
+		die(FSCK_UNCORRECTED, 0, _("bad root offset (%lu)"), offset);
 	}
 	return cramfs_iget(&super.root);
 }
@@ -359,11 +359,11 @@ static int uncompress_block(void *src, int len)
 	inflateReset(&stream);
 
 	if (len > page_size*2) {
-		die(FSCK_UNCORRECTED, 0, "data block too large");
+		die(FSCK_UNCORRECTED, 0, _("data block too large"));
 	}
 	err = inflate(&stream, Z_FINISH);
 	if (err != Z_STREAM_END) {
-		die(FSCK_UNCORRECTED, 0, "decompression error %p(%d): %s",
+		die(FSCK_UNCORRECTED, 0, _("decompression error %p(%d): %s"),
 		    zError(err), src, len);
 	}
 	return stream.total_out;
@@ -387,7 +387,7 @@ static void do_uncompress(char *path, int fd, unsigned long offset, unsigned lon
 		offset += 4;
 		if (curr == next) {
 			if (opt_verbose > 1) {
-				printf("  hole at %ld (%d)\n", curr, page_size);
+				printf(_("  hole at %ld (%d)\n"), curr, page_size);
 			}
 			if (size < page_size)
 				out = size;
@@ -395,23 +395,23 @@ static void do_uncompress(char *path, int fd, unsigned long offset, unsigned lon
 		}
 		else {
 			if (opt_verbose > 1) {
-				printf("  uncompressing block at %ld to %ld (%ld)\n", curr, next, next - curr);
+				printf(_("  uncompressing block at %ld to %ld (%ld)\n"), curr, next, next - curr);
 			}
 			out = uncompress_block(romfs_read(curr), next - curr);
 		}
 		if (size >= page_size) {
 			if (out != page_size) {
-				die(FSCK_UNCORRECTED, 0, "non-block (%ld) bytes", out);
+				die(FSCK_UNCORRECTED, 0, _("non-block (%ld) bytes"), out);
 			}
 		} else {
 			if (out != size) {
-				die(FSCK_UNCORRECTED, 0, "non-size (%ld vs %ld) bytes", out, size);
+				die(FSCK_UNCORRECTED, 0, _("non-size (%ld vs %ld) bytes"), out, size);
 			}
 		}
 		size -= out;
 		if (opt_extract) {
 			if (write(fd, outbuffer, out) < 0) {
-				die(FSCK_ERROR, 1, "write failed: %s", path);
+				die(FSCK_ERROR, 1, _("write failed: %s"), path);
 			}
 		}
 		curr = next;
@@ -424,20 +424,20 @@ static void change_file_status(char *path, struct cramfs_inode *i)
 
 	if (euid == 0) {
 		if (lchown(path, i->uid, i->gid) < 0) {
-			die(FSCK_ERROR, 1, "lchown failed: %s", path);
+			die(FSCK_ERROR, 1, _("lchown failed: %s"), path);
 		}
 		if (S_ISLNK(i->mode))
 			return;
 		if ((S_ISUID | S_ISGID) & i->mode) {
 			if (chmod(path, i->mode) < 0) {
-				die(FSCK_ERROR, 1, "chown failed: %s", path);
+				die(FSCK_ERROR, 1, _("chown failed: %s"), path);
 			}
 		}
 	}
 	if (S_ISLNK(i->mode))
 		return;
 	if (utime(path, &epoch) < 0) {
-		die(FSCK_ERROR, 1, "utime failed: %s", path);
+		die(FSCK_ERROR, 1, _("utime failed: %s"), path);
 	}
 }
 
@@ -449,10 +449,10 @@ static void do_directory(char *path, struct cramfs_inode *i)
 	char *newpath = malloc(pathlen + 256);
 
 	if (!newpath) {
-		die(FSCK_ERROR, 1, "malloc failed");
+		die(FSCK_ERROR, 1, _("malloc failed"));
 	}
 	if (offset == 0 && count != 0) {
-		die(FSCK_UNCORRECTED, 0, "directory inode has zero offset and non-zero size: %s", path);
+		die(FSCK_UNCORRECTED, 0, _("directory inode has zero offset and non-zero size: %s"), path);
 	}
 	if (offset != 0 && offset < start_dir) {
 		start_dir = offset;
@@ -466,7 +466,7 @@ static void do_directory(char *path, struct cramfs_inode *i)
 	}
 	if (opt_extract) {
 		if (mkdir(path, i->mode) < 0) {
-			die(FSCK_ERROR, 1, "mkdir failed: %s", path);
+			die(FSCK_ERROR, 1, _("mkdir failed: %s"), path);
 		}
 		change_file_status(path, i);
 	}
@@ -483,17 +483,17 @@ static void do_directory(char *path, struct cramfs_inode *i)
 		memcpy(newpath + pathlen, romfs_read(offset), newlen);
 		newpath[pathlen + newlen] = 0;
 		if (newlen == 0) {
-			die(FSCK_UNCORRECTED, 0, "filename length is zero");
+			die(FSCK_UNCORRECTED, 0, _("filename length is zero"));
 		}
 		if ((pathlen + newlen) - strlen(newpath) > 3) {
-			die(FSCK_UNCORRECTED, 0, "bad filename length");
+			die(FSCK_UNCORRECTED, 0, _("bad filename length"));
 		}
 		expand_fs(newpath, child);
 
 		offset += newlen;
 
 		if (offset <= start_dir) {
-			die(FSCK_UNCORRECTED, 0, "bad inode offset");
+			die(FSCK_UNCORRECTED, 0, _("bad inode offset"));
 		}
 		if (offset > end_dir) {
 			end_dir = offset;
@@ -509,10 +509,10 @@ static void do_file(char *path, struct cramfs_inode *i)
 	int fd = 0;
 
 	if (offset == 0 && i->size != 0) {
-		die(FSCK_UNCORRECTED, 0, "file inode has zero offset and non-zero size");
+		die(FSCK_UNCORRECTED, 0, _("file inode has zero offset and non-zero size"));
 	}
 	if (i->size == 0 && offset != 0) {
-		die(FSCK_UNCORRECTED, 0, "file inode has zero size and non-zero offset");
+		die(FSCK_UNCORRECTED, 0, _("file inode has zero size and non-zero offset"));
 	}
 	if (offset != 0 && offset < start_data) {
 		start_data = offset;
@@ -523,7 +523,7 @@ static void do_file(char *path, struct cramfs_inode *i)
 	if (opt_extract) {
 		fd = open(path, O_WRONLY | O_CREAT | O_TRUNC, i->mode);
 		if (fd < 0) {
-			die(FSCK_ERROR, 1, "open failed: %s", path);
+			die(FSCK_ERROR, 1, _("open failed: %s"), path);
 		}
 	}
 	if (i->size) {
@@ -543,10 +543,10 @@ static void do_symlink(char *path, struct cramfs_inode *i)
 	unsigned long size;
 
 	if (offset == 0) {
-		die(FSCK_UNCORRECTED, 0, "symbolic link has zero offset");
+		die(FSCK_UNCORRECTED, 0, _("symbolic link has zero offset"));
 	}
 	if (i->size == 0) {
-		die(FSCK_UNCORRECTED, 0, "symbolic link has zero size");
+		die(FSCK_UNCORRECTED, 0, _("symbolic link has zero size"));
 	}
 
 	if (offset < start_data) {
@@ -558,7 +558,7 @@ static void do_symlink(char *path, struct cramfs_inode *i)
 
 	size = uncompress_block(romfs_read(curr), next - curr);
 	if (size != i->size) {
-		die(FSCK_UNCORRECTED, 0, "size error in symlink: %s", path);
+		die(FSCK_UNCORRECTED, 0, _("size error in symlink: %s"), path);
 	}
 	outbuffer[size] = 0;
 	if (opt_verbose) {
@@ -567,13 +567,13 @@ static void do_symlink(char *path, struct cramfs_inode *i)
 		asprintf(&str, "%s -> %s", path, outbuffer);
 		print_node('l', i, str);
 		if (opt_verbose > 1) {
-			printf("  uncompressing block at %ld to %ld (%ld)\n", curr, next, next - curr);
+			printf(_("  uncompressing block at %ld to %ld (%ld)\n"), curr, next, next - curr);
 		}
 		free(str);
 	}
 	if (opt_extract) {
 		if (symlink(outbuffer, path) < 0) {
-			die(FSCK_ERROR, 1, "symlink failed: %s", path);
+			die(FSCK_ERROR, 1, _("symlink failed: %s"), path);
 		}
 		change_file_status(path, i);
 	}
@@ -585,7 +585,7 @@ static void do_special_inode(char *path, struct cramfs_inode *i)
 	char type;
 
 	if (i->offset) {	/* no need to shift offset */
-		die(FSCK_UNCORRECTED, 0, "special file has non-zero offset: %s", path);
+		die(FSCK_UNCORRECTED, 0, _("special file has non-zero offset: %s"), path);
 	}
 	if (S_ISCHR(i->mode)) {
 		devtype = i->size;
@@ -597,18 +597,18 @@ static void do_special_inode(char *path, struct cramfs_inode *i)
 	}
 	else if (S_ISFIFO(i->mode)) {
 		if (i->size != 0) {
-			die(FSCK_UNCORRECTED, 0, "fifo has non-zero size: %s", path);
+			die(FSCK_UNCORRECTED, 0, _("fifo has non-zero size: %s"), path);
 		}
 		type = 'p';
 	}
 	else if (S_ISSOCK(i->mode)) {
 		if (i->size != 0) {
-			die(FSCK_UNCORRECTED, 0, "socket has non-zero size: %s", path);
+			die(FSCK_UNCORRECTED, 0, _("socket has non-zero size: %s"), path);
 		}
 		type = 's';
 	}
 	else {
-		die(FSCK_UNCORRECTED, 0, "bogus mode: %s (%o)", path, i->mode);
+		die(FSCK_UNCORRECTED, 0, _("bogus mode: %s (%o)"), path, i->mode);
 		return;		/* not reached */
 	}
 
@@ -618,7 +618,7 @@ static void do_special_inode(char *path, struct cramfs_inode *i)
 
 	if (opt_extract) {
 		if (mknod(path, i->mode, devtype) < 0) {
-			die(FSCK_ERROR, 1, "mknod failed: %s", path);
+			die(FSCK_ERROR, 1, _("mknod failed: %s"), path);
 		}
 		change_file_status(path, i);
 	}
@@ -654,15 +654,15 @@ static void test_fs(int start)
 	inflateEnd(&stream);
 	if (start_data != ~0UL) {
 		if (start_data < (sizeof(struct cramfs_super) + start)) {
-			die(FSCK_UNCORRECTED, 0, "directory data start (%ld) < sizeof(struct cramfs_super) + start (%ld)", start_data, sizeof(struct cramfs_super) + start);
+			die(FSCK_UNCORRECTED, 0, _("directory data start (%ld) < sizeof(struct cramfs_super) + start (%ld)"), start_data, sizeof(struct cramfs_super) + start);
 		}
 		if (end_dir != start_data) {
-			die(FSCK_UNCORRECTED, 0, "directory data end (%ld) != file data start (%ld)", end_dir, start_data);
+			die(FSCK_UNCORRECTED, 0, _("directory data end (%ld) != file data start (%ld)"), end_dir, start_data);
 		}
 	}
 	if (super.flags & CRAMFS_FLAG_FSID_VERSION_2) {
 		if (end_data > super.size) {
-			die(FSCK_UNCORRECTED, 0, "invalid file data offset");
+			die(FSCK_UNCORRECTED, 0, _("invalid file data offset"));
 		}
 	}
 	iput(root);		/* free(root) */
@@ -675,6 +675,10 @@ int main(int argc, char **argv)
 	int start = 0;
 	size_t length = 0;
 
+	setlocale(LC_MESSAGES, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
 	page_size = getpagesize();
 
 	if (argc)
@@ -682,7 +686,7 @@ int main(int argc, char **argv)
 
 	outbuffer = malloc(page_size * 2);
 	if (!outbuffer)
-		die(FSCK_ERROR, 1, "failed to allocate outbuffer");
+		die(FSCK_ERROR, 1, _("failed to allocate outbuffer"));
 
 	/* command line options */
 	while ((c = getopt(argc, argv, "hx:v")) != EOF) {
@@ -695,7 +699,7 @@ int main(int argc, char **argv)
 			extract_dir = optarg;
 			break;
 #else /* not INCLUDE_FS_TESTS */
-			die(FSCK_USAGE, 0, "compiled without -x support");
+			die(FSCK_USAGE, 0, _("compiled without -x support"));
 #endif /* not INCLUDE_FS_TESTS */
 		case 'v':
 			opt_verbose++;
