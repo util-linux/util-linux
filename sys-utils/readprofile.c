@@ -224,7 +224,7 @@ main(int argc, char **argv) {
 			exit(1);
 		}
 		if (write(fd, &multiplier, to_write) != to_write) {
-			fprintf(stderr, "readprofile: error writing %s: %s\n",
+			fprintf(stderr, _("readprofile: error writing %s: %s\n"),
 				defaultpro, strerror(errno));
 			exit(1);
 		}
@@ -265,8 +265,8 @@ main(int argc, char **argv) {
 				small++;
 		}
 		if (big > small) {
-			fprintf(stderr,"Assuming reversed byte order. "
-				"Use -n to force native byte order.\n");
+			fprintf(stderr,_("Assuming reversed byte order. "
+				"Use -n to force native byte order.\n"));
 			for (p = buf; p < buf+entries; p++)
 				for (i = 0; i < sizeof(*buf)/2; i++) {
 					unsigned char *b = (unsigned char *) p;
