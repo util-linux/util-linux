@@ -443,9 +443,9 @@ void add_sun_partition(int n, int sys)
 				first += cs - x;
 		}
 		if (n == 2 && first != 0)
-			printf ("\
+			printf (_("\
 It is highly recommended that the third partition covers the whole disk\n\
-and is of type `Whole disk'\n");
+and is of type `Whole disk'\n"));
 		/* ewt asks to add: "don't start a partition at cyl 0"
 		   However, edmundo@rano.demon.co.uk writes:
 		   "In addition to having a Sun partition table, to be able to

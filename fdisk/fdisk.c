@@ -761,7 +761,7 @@ read_extended(int ext) {
 
 		if (!get_nr_sects(pe->part_table) &&
 		    (partitions > 5 || ptes[4].part_table->sys_ind)) {
-			printf("omitting empty partition (%d)\n", i+1);
+			printf(_("omitting empty partition (%d)\n"), i+1);
 			delete_partition(i);
 			goto remove; 	/* numbering changed */
 		}
@@ -1763,7 +1763,7 @@ fix_partition_table_order(void) {
 	if (i)
 		fix_chain_of_logicals();
 
-	printf("Done.\n");
+	printf(_("Done.\n"));
 
 }
 
