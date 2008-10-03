@@ -620,7 +620,7 @@ xgetpass(int pfd, const char *prompt) {
 			pass = realloc(tmppass, buflen);
 			if (pass == NULL) {
 				/* realloc failed. Stop reading. */
-				error("Out of memory while reading passphrase");
+				error(_("Out of memory while reading passphrase"));
 				pass = tmppass; /* the old buffer hasn't changed */
 				break;
 			}
@@ -1001,7 +1001,7 @@ main(int argc, char **argv) {
 			return -1;
 		if (argc == optind) {
 			if (verbose)
-				printf("Loop device is %s\n", device);
+				printf(_("Loop device is %s\n"), device);
 			printf("%s\n", device);
 			return 0;
 		}
@@ -1025,7 +1025,7 @@ main(int argc, char **argv) {
 			res = set_loop(device, file, off, slimit, encryption, pfd, &ro);
 			if (res == 2 && find) {
 				if (verbose)
-					printf("stolen loop=%s...trying again\n",
+					printf(_("stolen loop=%s...trying again\n"),
 						device);
 				free(device);
 				if (!(device = find_unused_loop_device()))
@@ -1038,7 +1038,7 @@ main(int argc, char **argv) {
 				error(_("%s: %s: device is busy"), progname, device);
 			else if (res == 0) {
 				if (verbose)
-					printf("Loop device is %s\n", device);
+					printf(_("Loop device is %s\n"), device);
 				if (showdev && find)
 					printf("%s\n", device);
 			}
