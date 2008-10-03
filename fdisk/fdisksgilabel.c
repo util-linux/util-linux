@@ -465,7 +465,7 @@ verify_sgi(int verbose)
 		if (verbose)
 			printf(_("One Partition (#11) should cover the entire disk.\n"));
 		if (debug>2)
-			printf("sysid=%d\tpartition=%d\n",
+			printf(_("sysid=%d\tpartition=%d\n"),
 			       sgi_get_sysid(Index[0]), Index[0]+1);
 	}
 	for (i=1, start=0; i<sortcount; i++) {
