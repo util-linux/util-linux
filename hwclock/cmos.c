@@ -291,10 +291,10 @@ unsigned long cmos_read(unsigned long reg)
     unsigned char v = reg | 0x80;
     lseek(dev_port_fd, clock_ctl_addr, 0);
     if (write(dev_port_fd, &v, 1) == -1 && debug)
-      printf("cmos_read(): write to control address %X failed: %s\n", clock_ctl_addr, strerror(errno));
+      printf(_("cmos_read(): write to control address %X failed: %s\n"), clock_ctl_addr, strerror(errno));
     lseek(dev_port_fd, clock_data_addr, 0);
     if (read(dev_port_fd, &v, 1) == -1 && debug)
-      printf("cmos_read(): read data address %X failed: %s\n", clock_data_addr, strerror(errno));
+      printf(_("cmos_read(): read data address %X failed: %s\n"), clock_data_addr, strerror(errno));
     return v;
   } else {
     /* We only want to read CMOS data, but unfortunately
@@ -325,11 +325,11 @@ unsigned long cmos_write(unsigned long reg, unsigned long val)
     unsigned char v = reg | 0x80;
     lseek(dev_port_fd, clock_ctl_addr, 0);
     if (write(dev_port_fd, &v, 1) == -1 && debug)
-      printf("cmos_write(): write to control address %X failed: %s\n", clock_ctl_addr, strerror(errno));
+      printf(_("cmos_write(): write to control address %X failed: %s\n"), clock_ctl_addr, strerror(errno));
     v = (val & 0xff);
     lseek(dev_port_fd, clock_data_addr, 0);
     if (write(dev_port_fd, &v, 1) == -1 && debug)
-      printf("cmos_write(): write to data address %X failed: %s\n", clock_data_addr, strerror(errno));
+      printf(_("cmos_write(): write to data address %X failed: %s\n"), clock_data_addr, strerror(errno));
   } else {
     outb (reg, clock_ctl_addr);
     outb (val, clock_data_addr);
