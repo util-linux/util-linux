@@ -337,12 +337,12 @@ static int check_single_ok (void)
 
     for (i = 0; i < MAXTRIES; i++)
     {
-	pass = getpass (_ ("Password: ") );
+	pass = getpass (_("Password: ") );
 	if (pass == NULL) continue;
 		
 	if ( !strcmp (crypt (pass, rootpass), rootpass) ) return 1;
 
-	puts (_ ("\nWrong password.\n") );
+	puts (_("\nWrong password.\n") );
     }
     return 0;
 }
@@ -944,7 +944,7 @@ static void process_command (const struct command_struct *command)
 		while (waitpid (pid, &ival, 0) != pid) /*  Nothing  */;
 		if ( WIFEXITED (ival) && (WEXITSTATUS (ival) == 0) )
 		{
-		    sprintf (txt, "Stopped service: %s\n",
+		    sprintf (txt, _("Stopped service: %s\n"),
 			     victim->first_service->name);
 		    remove_entry (&available_list, victim);
 		    free (victim);
