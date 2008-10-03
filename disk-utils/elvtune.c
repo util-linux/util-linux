@@ -50,7 +50,7 @@ usage(void) {
 		        " /dev/blkdev1 [/dev/blkdev2...]\n");
 	fprintf(stderr, "\telvtune -h\n");
 	fprintf(stderr, "\telvtune -v\n");
-	fprintf(stderr, "\tNOTE: elvtune only works with 2.4 kernels\n");
+	fprintf(stderr, _("\tNOTE: elvtune only works with 2.4 kernels\n"));
 	/* (ioctls exist in 2.2.16 - 2.5.57) */
 }
 
@@ -68,6 +68,10 @@ main(int argc, char * argv[]) {
 	blkelv_ioctl_arg_t elevator;
 
 	read_set = write_set = bomb_set = set = 0;
+
+	setlocale(LC_MESSAGES, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
 
 	for (;;) {
 		int opt;
@@ -97,13 +101,13 @@ main(int argc, char * argv[]) {
 		case '?':
 		default:
 		case ':':
-			fprintf(stderr, "parse error\n");
+			fprintf(stderr, _("parse error\n"));
 			exit(1);
 		}
 	}
 
 	if (optind >= argc)
-		fprintf(stderr, "missing blockdevice, use -h for help\n"), exit(1);
+		fprintf(stderr, _("missing blockdevice, use -h for help\n")), exit(1);
 
 	while (optind < argc) {
 		devname = argv[optind++];
@@ -124,9 +128,9 @@ main(int argc, char * argv[]) {
 			if ((errsv == EINVAL || errsv == ENOTTY) &&
 			    get_linux_version() >= KERNEL_VERSION(2,5,58)) {
 				fprintf(stderr,
-					"\nelvtune is only useful on older "
+					_("\nelvtune is only useful on older "
 					"kernels;\nfor 2.6 use IO scheduler "
-					"sysfs tunables instead..\n");
+					"sysfs tunables instead..\n"));
 			}
 			break;
 		}
