@@ -853,7 +853,7 @@ int main(int argc, char **argv)
 			 -1, 0);
 
 	if (-1 == (int) (long) rom_image) {
-		perror("ROM image map");
+		perror(_("ROM image map"));
 		exit(8);
 	}
 
@@ -906,7 +906,7 @@ int main(int argc, char **argv)
 
 	written = write(fd, rom_image, offset);
 	if (written < 0) {
-		perror("ROM image");
+		perror(_("ROM image"));
 		exit(8);
 	}
 	if (offset != written) {
