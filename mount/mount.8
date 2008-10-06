@@ -1666,26 +1666,79 @@ and the current version of
 None.
 
 .SH "Mount options for tmpfs"
-The following parameters accept a suffix
+.TP
+.BI size= nbytes
+Override default maximum size of the filesystem.
+The size is given in bytes, and rounded down to entire pages.
+The default is half of the memory. The size parameter also accepts a suffix %
+to limit this tmpfs instance to that percentage of your physical RAM:
+the default, when neither size nor nr_blocks is specified, is size=50%
+.TP
+.B nr_blocks=
+The same as size, but in blocks of PAGE_CACHE_SIZE
+.TP
+.B nr_inodes=
+The maximum number of inodes for this instance. The default
+is half of the number of your physical RAM pages, or (on a
+machine with highmem) the number of lowmem RAM pages,
+whichever is the lower.
+.PP
+The tmpfs mount options for sizing (
+.BR size ,
+.BR nr_blocks ,
+and
+.BR nr_inodes )
+accept a suffix
 .BR k ,
 .B m
 or
 .B g
 for Ki, Mi, Gi (binary kilo, mega and giga) and can be changed on remount.
-.TP
-.BI size= nbytes
-Override default maximum size of the filesystem.
-The size is given in bytes, and rounded down to entire pages.
-The default is half of the memory.
-.TP
-.B nr_blocks=
-Set number of blocks.
-.TP
-.B nr_inodes=
-Set number of inodes.
+
 .TP
 .B mode=
 Set initial permissions of the root directory.
+.TP
+.B uid=
+The user id.
+.TP
+.B gid=
+The group id.
+.TP
+.B mpol=[default|prefer:Node|bind:NodeList|interleave|interleave:NodeList]
+Set the NUMA memory allocation policy for all files in that
+instance (if the kernel CONFIG_NUMA is enabled) - which can be adjusted on the
+fly via 'mount -o remount ...'
+.RS
+.TP
+.B default
+prefers to allocate memory from the local node
+.TP
+.B prefer:Node
+prefers to allocate memory from the given Node
+.TP
+.B bind:NodeList
+allocates memory only from nodes in NodeList
+.TP
+.B interleave
+prefers to allocate from each node in turn
+.TP
+.B interleave:NodeList
+allocates from each node of NodeList in turn.
+.PP
+The NodeList format is a comma-separated list of decimal numbers and ranges, a
+range being two hyphen-separated decimal numbers, the smallest and largest node
+numbers in the range.  For example, mpol=bind:0-3,5,7,9-15
+
+Note that trying to mount a tmpfs with an mpol option will fail if the
+running kernel does not support NUMA; and will fail if its nodelist
+specifies a node which is not online.  If your system relies on that
+tmpfs being mounted, but from time to time runs a kernel built without
+NUMA capability (perhaps a safe recovery kernel), or with fewer nodes
+online, then it is advisable to omit the mpol option from automatic
+mount options.  It can be added later, when the tmpfs is already mounted
+on MountPoint, by 'mount -o remount,mpol=Policy:NodeList MountPoint'.
+.PE
 
 .SH "Mount options for udf"
 udf is the "Universal Disk Format" filesystem defined by the Optical
