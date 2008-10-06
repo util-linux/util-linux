@@ -1141,7 +1141,28 @@ The default is the umask of the current process.
 The value is given in octal.
 .\" Present since Linux 2.5.43.
 .TP
-.BI check= value 
+.BI allow_utime= value
+This option controls the permission check of mtime/atime.
+.RS
+.TP
+.B 20
+If current process is in group of file's group ID, you can change timestamp.
+.TP
+.B 2
+Other users can change timestamp.
+.PP
+The default is set from `dmask' option. (If the directory is writable,
+.B utime(2)
+is also allowed. I.e. ~dmask & 022)
+
+Normally
+.B utime(2)
+checks current process is owner of the file, or it has
+CAP_FOWNER capability.  But FAT filesystem doesn't have uid/gid on disk, so
+normal check is too unflexible. With this option you can relax it.
+.RE
+.TP
+.BI check= value
 Three different levels of pickyness can be chosen:
 .RS
 .TP
@@ -1236,7 +1257,27 @@ Turn on the
 flag.  Attempts to chown or chmod files do not return errors,
 although they fail. Use with caution!
 .TP
-.B "sys_immutable, showexec, dots, nodots, dotsOK=[yes|no]"
+.B showexec
+If set, the execute permission bits of the file will be allowed only if
+the extension part of the name is .EXE, .COM, or .BAT. Not set by default.
+.TP
+.B sys_immutable
+If set, ATTR_SYS attribute on FAT is handled as IMMUTABLE flag on Linux.
+Not set by default.
+.TP
+.B flush
+If set, the filesystem will try to flush to disk more early than normal.
+Not set by default.
+.TP
+.B usefree
+Use the "free clusters" value stored on FSINFO. It'll
+be used to determine number of free clusters without
+scanning disk. But it's not used by default, because
+recent Windows don't update it correctly in some
+case. If you are sure the "free clusters" on FSINFO is
+correct, by this option you can avoid scanning disk.
+.TP
+.B "dots, nodots, dotsOK=[yes|no]"
 Various misguided attempts to force Unix or DOS conventions
 onto a FAT file system.
 
@@ -1805,26 +1846,27 @@ disabled.
 Defines the behaviour for creation and display of filenames which fit into
 8.3 characters. If a long name for a file exists, it will always be
 preferred display. There are four modes:
+:
 .RS
 .TP
 .I lower
-Force the short name to lower case upon display; store a long name when 
-the short name is not all upper case.
+Force the short name to lower case upon display; store a long name when
+the short name is not all upper case. This mode is the default.
 .TP
 .I win95
 Force the short name to upper case upon display; store a long name when
 the short name is not all upper case.
 .TP
 .I winnt
-Display the shortname as is; store a long name when the short name is 
+Display the shortname as is; store a long name when the short name is
 not all lower case or all upper case.
 .TP
 .I mixed
 Display the short name as is; store a long name when the short name is not
 all upper case.
 .RE
+.TP
 
-The default is "lower".
 
 .SH "Mount options for usbfs"
 .TP
