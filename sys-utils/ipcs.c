@@ -26,16 +26,14 @@
 #include <pwd.h>
 #include <grp.h>
 #include <unistd.h>
-#include "nls.h"
-
-/* X/OPEN tells us to use <sys/{types,ipc,sem}.h> for semctl() */
-/* X/OPEN tells us to use <sys/{types,ipc,msg}.h> for msgctl() */
-/* X/OPEN tells us to use <sys/{types,ipc,shm}.h> for shmctl() */
+#include <err.h>
 #include <sys/types.h>
 #include <sys/ipc.h>
 #include <sys/sem.h>
 #include <sys/msg.h>
 #include <sys/shm.h>
+
+#include "nls.h"
 
 /*-------------------------------------------------------------------*/
 /* SHM_DEST and SHM_LOCKED are defined in kernel headers,
@@ -118,15 +116,15 @@ void print_sem (int id);
 static char *progname;
 
 static void
-usage(void) {
+usage(int rc) {
 	printf (_("usage : %s -asmq -tclup \n"), progname);
 	printf (_("\t%s [-s -m -q] -i id\n"), progname);
-	printf (_("\t%s -h for help.\n"), progname); 
-	return;
+	printf (_("\t%s -h for help.\n"), progname);
+	exit(rc);
 }
 
 static void
-help (void) {
+help (int rc) {
 	printf (_("%s provides information on ipc facilities for"
 		  " which you have read access.\n"), progname);
 	printf (_("Resource Specification:\n\t-m : shared_mem\n\t-q : messages\n"));
@@ -134,13 +132,12 @@ help (void) {
 	printf (_("Output Format:\n\t-t : time\n\t-p : pid\n\t-c : creator\n"));
 	printf (_("\t-l : limits\n\t-u : summary\n"));
 	printf (_("-i id [-s -q -m] : details on resource identified by id\n"));
-	usage();
-	return;
+	usage(rc);
 }
 
 int
 main (int argc, char **argv) {
-	int opt, msg = 0, sem = 0, shm = 0, id=0, print=0; 
+	int opt, msg = 0, sem = 0, shm = 0, id=0, print=0;
 	char format = 0;
 	char options[] = "atcluphsmqi:";
 
@@ -182,48 +179,41 @@ main (int argc, char **argv) {
 		case 'u':
 			format = STATUS;
 			break;
-		case 'h': 
-			help();
-			exit (0);
+		case 'h':
+			help(EXIT_SUCCESS);
 		case '?':
-			usage();
-			exit (0);
+			usage(EXIT_SUCCESS);
 		}
 	}
 
 	if  (print) {
-		if (shm) { 
+		if (shm)
 			print_shm (id);
-			exit (0);
-		}
-		if (sem) { 
+		else if (sem)
 			print_sem (id);
-			exit (0);
+		else if (msg)
+			print_msg (id);
+		else
+			usage (EXIT_FAILURE);
+	} else {
+		if ( !shm && !msg && !sem)
+			msg = sem = shm = 1;
+		printf ("\n");
+
+		if (shm) {
+			do_shm (format);
+			printf ("\n");
+		}
+		if (sem) {
+			do_sem (format);
+			printf ("\n");
 		}
 		if (msg) {
-			print_msg (id);
-			exit (0);
+			do_msg (format);
+			printf ("\n");
 		}
-		usage();
 	}
-
-	if ( !shm && !msg && !sem)
-		msg = sem = shm = 1;
-	printf ("\n");
-
-	if (shm) {	
-		do_shm (format);
-		printf ("\n");
-	}
-	if (sem) {	
-		do_sem (format);
-		printf ("\n");
-	}
-	if (msg) {	
-		do_msg (format);
-		printf ("\n");
-	}
-	return 0;
+	return EXIT_SUCCESS;
 }
 
 
@@ -268,7 +258,7 @@ void do_shm (char format)
 		printf (_("kernel not configured for shared memory\n"));
 		return;
 	}
-	
+
 	switch (format) {
 	case LIMITS:
 		printf (_("------ Shared Memory Limits --------\n"));
@@ -292,7 +282,7 @@ void do_shm (char format)
 		printf (_("pages allocated %ld\n"), shm_info.shm_tot);
 		printf (_("pages resident  %ld\n"), shm_info.shm_rss);
 		printf (_("pages swapped   %ld\n"), shm_info.shm_swp);
-		printf (_("Swap performance: %ld attempts\t %ld successes\n"), 
+		printf (_("Swap performance: %ld attempts\t %ld successes\n"),
 			shm_info.swap_attempts, shm_info.swap_successes);
 		return;
 
@@ -325,7 +315,7 @@ void do_shm (char format)
 
 	for (id = 0; id <= maxid; id++) {
 		shmid = shmctl (id, SHM_STAT, &shmseg);
-		if (shmid < 0) 
+		if (shmid < 0)
 			continue;
 		if (format == CREATOR)  {
 			print_perms (shmid, ipcp);
@@ -333,7 +323,7 @@ void do_shm (char format)
 		}
 		pw = getpwuid(ipcp->uid);
 		switch (format) {
-		case TIME: 
+		case TIME:
 			if (pw)
 				printf ("%-10d %-10.10s", shmid, pw->pw_name);
 			else
@@ -354,7 +344,7 @@ void do_shm (char format)
 			printf (" %-10d %-10d\n",
 				shmseg.shm_cpid, shmseg.shm_lpid);
 			break;
-			
+
 		default:
 		        printf("0x%08x ",ipcp->KEY );
 			if (pw)
@@ -396,7 +386,7 @@ void do_sem (char format)
 		printf (_("kernel not configured for semaphores\n"));
 		return;
 	}
-	
+
 	switch (format) {
 	case LIMITS:
 		printf (_("------ Semaphore Limits --------\n"));
@@ -449,7 +439,7 @@ void do_sem (char format)
 		}
 		pw = getpwuid(ipcp->uid);
 		switch (format) {
-		case TIME: 
+		case TIME:
 			if (pw)
 				printf ("%-8d %-10.10s", semid, pw->pw_name);
 			else
@@ -461,7 +451,7 @@ void do_sem (char format)
 			break;
 		case PID:
 			break;
-			
+
 		default:
 		        printf("0x%08x ", ipcp->KEY);
 			if (pw)
@@ -496,7 +486,7 @@ void do_msg (char format)
 		printf (_("kernel not configured for message queues\n"));
 		return;
 	}
-	
+
 	switch (format) {
 	case LIMITS:
 		if ((msgctl (0, IPC_INFO, (struct msqid_ds *) (void *) &msginfo)) < 0 )
@@ -527,7 +517,7 @@ void do_msg (char format)
 		break;
 
 	case PID:
- 		printf (_("------ Message Queues PIDs --------\n"));
+		printf (_("------ Message Queues PIDs --------\n"));
 		printf ("%-10s %-10s %-10s %-10s\n",
 			_("msqid"),_("owner"),_("lspid"),_("lrpid"));
 		break;
@@ -563,13 +553,13 @@ void do_msg (char format)
 				? ctime(&msgque.msg_ctime) + 4 : _("Not set"));
 			break;
 		case PID:
- 			if (pw)
- 				printf ("%-8d %-10.10s", msqid, pw->pw_name);
- 			else
- 				printf ("%-8d %-10d", msqid, ipcp->uid);
- 			printf ("  %5d     %5d\n",
+			if (pw)
+				printf ("%-8d %-10.10s", msqid, pw->pw_name);
+			else
+				printf ("%-8d %-10d", msqid, ipcp->uid);
+			printf ("  %5d     %5d\n",
 				msgque.msg_lspid, msgque.msg_lrpid);
-  			break;
+			break;
 
 		default:
 		        printf( "0x%08x ",ipcp->KEY );
@@ -599,10 +589,8 @@ void print_shm (int shmid)
 	struct shmid_ds shmds;
 	struct ipc_perm *ipcp = &shmds.shm_perm;
 
-	if (shmctl (shmid, IPC_STAT, &shmds) == -1) {
-		perror ("shmctl ");
-		return;
-	}
+	if (shmctl (shmid, IPC_STAT, &shmds) == -1)
+		err(EXIT_FAILURE, _("shmctl failed"));
 
 	printf (_("\nShared memory Segment shmid=%d\n"), shmid);
 	printf (_("uid=%d\tgid=%d\tcuid=%d\tcgid=%d\n"),
@@ -627,10 +615,9 @@ void print_msg (int msqid)
 	struct msqid_ds buf;
 	struct ipc_perm *ipcp = &buf.msg_perm;
 
-	if (msgctl (msqid, IPC_STAT, &buf) == -1) {
-		perror ("msgctl ");
-		return;
-	}
+	if (msgctl (msqid, IPC_STAT, &buf) == -1)
+		err(EXIT_FAILURE, _("msgctl failed"));
+
 	printf (_("\nMessage Queue msqid=%d\n"), msqid);
 	printf (_("uid=%d\tgid=%d\tcuid=%d\tcgid=%d\tmode=%#o\n"),
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid, ipcp->mode);
@@ -661,10 +648,9 @@ void print_sem (int semid)
 	int i;
 
 	arg.buf = &semds;
-	if (semctl (semid, 0, IPC_STAT, arg) < 0) {
-		perror ("semctl ");
-		return;
-	}
+	if (semctl (semid, 0, IPC_STAT, arg) < 0)
+		err(EXIT_FAILURE, _("semctl failed"));
+
 	printf (_("\nSemaphore Array semid=%d\n"), semid);
 	printf (_("uid=%d\t gid=%d\t cuid=%d\t cgid=%d\n"),
 		ipcp->uid, ipcp->gid, ipcp->cuid, ipcp->cgid);
@@ -673,7 +659,7 @@ void print_sem (int semid)
 	printf (_("nsems = %ld\n"), (long) semds.sem_nsems);
 	printf (_("otime = %-26.24s\n"),
 		semds.sem_otime ? ctime (&semds.sem_otime) : _("Not set"));
-	printf (_("ctime = %-26.24s\n"), ctime (&semds.sem_ctime));	
+	printf (_("ctime = %-26.24s\n"), ctime (&semds.sem_ctime));
 
 	printf ("%-10s %-10s %-10s %-10s %-10s\n",
 		_("semnum"),_("value"),_("ncount"),_("zcount"),_("pid"));
@@ -684,10 +670,9 @@ void print_sem (int semid)
 		ncnt = semctl (semid, i, GETNCNT, arg);
 		zcnt = semctl (semid, i, GETZCNT, arg);
 		pid = semctl (semid, i, GETPID, arg);
-		if (val < 0 || ncnt < 0 || zcnt < 0 || pid < 0) {
-			perror ("semctl ");
-			exit (1);
-		}
+		if (val < 0 || ncnt < 0 || zcnt < 0 || pid < 0)
+			err(EXIT_FAILURE, _("semctl failed"));
+
 		printf ("%-10d %-10d %-10d %-10d %-10d\n",
 			i, val, ncnt, zcnt, pid);
 	}
