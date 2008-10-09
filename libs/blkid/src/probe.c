@@ -63,7 +63,9 @@ static const struct blkid_idinfo *idinfos[] =
 	&oracleasm_idinfo,
 	&reiser_idinfo,
 	&reiser4_idinfo,
-	&jbd_idinfo
+	&jbd_idinfo,
+	&hfsplus_idinfo,
+	&hfs_idinfo
 };
 
 #ifndef ARRAY_SIZE
@@ -541,8 +543,7 @@ static size_t encode_to_utf8(int enc, unsigned char *dest, size_t len,
 	size_t i, j;
 	uint16_t c;
 
-	j = 0;
-	for (i = 0; i + 2 <= count; i += 2) {
+	for (j = i = 0; i + 2 <= count; i += 2) {
 		if (enc == BLKID_ENC_UTF16LE)
 			c = (src[i+1] << 8) | src[i];
 		else /* BLKID_ENC_UTF16BE */
@@ -584,8 +585,8 @@ int blkid_probe_set_utf8label(blkid_probe pr, unsigned char *label,
 	v = blkid_probe_assign_value(pr, "LABEL");
 	if (!v)
 		return -1;
+
 	v->len = encode_to_utf8(enc, v->data, sizeof(v->data), label, len);
-	v->len++; /* \0 */
 	return 0;
 }
 

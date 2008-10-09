@@ -43,6 +43,8 @@ extern const struct blkid_idinfo ocfs2_idinfo;
 extern const struct blkid_idinfo oracleasm_idinfo;
 extern const struct blkid_idinfo reiser_idinfo;
 extern const struct blkid_idinfo reiser4_idinfo;
+extern const struct blkid_idinfo hfs_idinfo;
+extern const struct blkid_idinfo hfsplus_idinfo;
 
 
 #endif /* _BLKID_PROBE_H */
