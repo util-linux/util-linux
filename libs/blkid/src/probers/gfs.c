@@ -69,7 +69,10 @@ struct gfs2_sb {
 
 	char sb_lockproto[GFS_LOCKNAME_LEN];
 	char sb_locktable[GFS_LOCKNAME_LEN];
-	/* In gfs1, quota and license dinodes followed */
+
+	struct gfs2_inum __pad3; /* Was quota inode in gfs1 */
+	struct gfs2_inum __pad4; /* Was licence inode in gfs1 */
+	uint8_t sb_uuid[16]; /* The UUID maybe 0 for backwards compat */
 };
 
 static int probe_gfs(blkid_probe pr, const struct blkid_idmag *mag)
@@ -87,8 +90,11 @@ static int probe_gfs(blkid_probe pr, const struct blkid_idmag *mag)
 			blkid_probe_set_label(pr,
 				(unsigned char *) sbd->sb_locktable,
 				sizeof(sbd->sb_locktable));
+
+		blkid_probe_set_uuid(pr, sbd->sb_uuid);
 		return 0;
 	}
+
 	return -1;
 }
 
