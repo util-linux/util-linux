@@ -25,6 +25,7 @@ libprobers_a_SOURCES =	probers.h \
 			reiserfs.c \
 			romfs.c \
 			ntfs.c \
-			hfs.c
+			hfs.c \
+			iso9660.c
 
 all-local: $(lib_LIBRARIES)

@@ -66,7 +66,8 @@ static const struct blkid_idinfo *idinfos[] =
 	&jbd_idinfo,
 	&hfsplus_idinfo,
 	&hfs_idinfo,
-	&ntfs_idinfo
+	&ntfs_idinfo,
+	&iso9660_idinfo
 };
 
 #ifndef ARRAY_SIZE
