@@ -250,6 +250,7 @@ extern void blkid_free_dev(blkid_dev dev);
 unsigned char *blkid_probe_get_buffer(blkid_probe pr,
                                 blkid_loff_t off, blkid_loff_t len);
 
+/* returns superblok according to 'struct blkid_idmag' */
 #define blkid_probe_get_sb(_pr, _mag, type) \
 			((type *) blkid_probe_get_buffer((_pr),\
 					(_mag)->kboff << 10, sizeof(type)))

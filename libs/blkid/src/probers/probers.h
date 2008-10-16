@@ -47,5 +47,6 @@ extern const struct blkid_idinfo hfs_idinfo;
 extern const struct blkid_idinfo hfsplus_idinfo;
 extern const struct blkid_idinfo ntfs_idinfo;
 extern const struct blkid_idinfo iso9660_idinfo;
+extern const struct blkid_idinfo lvm2_idinfo;
 
 #endif /* _BLKID_PROBE_H */

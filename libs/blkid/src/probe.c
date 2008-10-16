@@ -67,7 +67,8 @@ static const struct blkid_idinfo *idinfos[] =
 	&hfsplus_idinfo,
 	&hfs_idinfo,
 	&ntfs_idinfo,
-	&iso9660_idinfo
+	&iso9660_idinfo,
+	&lvm2_idinfo
 };
 
 #ifndef ARRAY_SIZE
@@ -630,9 +631,9 @@ int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
 		if (str && *str)
 			v = blkid_probe_assign_value(pr, "UUID");
 		if (v) {
-			memcpy(v->data, str, len);
-			v->data[len] = '\0';
-			v->len = len;
+			strncpy((char *) v->data, str, BLKID_PROBVAL_BUFSIZ);
+			v->data[BLKID_PROBVAL_BUFSIZ - 1] = '\0';
+			v->len = strlen((char *) v->data);
 			rc = 0;
 		}
 	} else
