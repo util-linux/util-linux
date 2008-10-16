@@ -3,7 +3,10 @@ v2.15:
 
  * add NLS and err.h stuff to schedutils (chrt.c, taskset.c)
 
- * add libfsprobe (see topic/fsprobe branch)
+ * move libblkid to util-linux-ng (see the topic/blkid branch)
+
+ * add mllockall() and SCHED_FIFO to hwclock,
+   see http://lkml.org/lkml/2008/10/12/132
 
  * swapon -s  -- LABELs support
 
