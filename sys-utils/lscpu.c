@@ -695,5 +695,5 @@ int main(int argc, char *argv[])
 	else
 		print_readable(cpu);
 
-	return EXIT_FAILURE;
+	return EXIT_SUCCESS;
 }
