@@ -1,0 +1,3 @@
+#!/bin/bash
+TS_DESC=x86_64-xenfull
+. ./ts-lscpu.sh
