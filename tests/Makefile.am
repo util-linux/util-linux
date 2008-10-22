@@ -6,6 +6,7 @@ EXTRA_DIST = 	expected \
 		functions.sh \
 		input \
 		README \
+		mk-lscpu-input.sh \
 		run.sh \
 		ts-cal-1 \
 		ts-cal-3 \
