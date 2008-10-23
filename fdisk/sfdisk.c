@@ -809,7 +809,7 @@ reread_ioctl(int fd) {
 }
 
 static int
-is_blockdev(int fd, ) {
+is_blockdev(int fd) {
     struct stat statbuf;
 
     return(fstat(fd, &statbuf) == 0 && S_ISBLK(statbuf.st_mode));
