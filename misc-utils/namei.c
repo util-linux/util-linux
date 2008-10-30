@@ -30,7 +30,10 @@
 #include <sys/stat.h>
 #include <sys/param.h>
 #include <err.h>
+#include <pwd.h>
+#include <grp.h>
 #include "nls.h"
+#include "widechar.h"
 
 #ifndef MAXSYMLINKS
 #define MAXSYMLINKS 256
@@ -40,11 +43,15 @@
 #define PATH_MAX 4096
 #endif
 
+#ifndef LOGIN_NAME_MAX
+#define LOGIN_NAME_MAX 256
+#endif
+
 #define NAMEI_NOLINKS	(1 << 1)
 #define NAMEI_MODES	(1 << 2)
 #define NAMEI_MNTS	(1 << 3)
+#define NAMEI_OWNERS	(1 << 4)
 
-static int flags;
 
 struct namei {
 	struct stat	st;		/* item lstat() */
@@ -54,6 +61,109 @@ struct namei {
 	struct namei	*next;		/* next item */
 	int		level;
 };
+
+struct idcache {
+	unsigned long int	id;
+	char			*name;
+	struct idcache		*next;
+};
+
+static int flags;
+static int uwidth;		/* maximal width of username */
+static int gwidth;		/* maximal width of groupname */
+static struct idcache *gcache;	/* groupnames */
+static struct idcache *ucache;	/* usernames */
+
+static struct idcache *
+get_id(struct idcache *ic, unsigned long int id)
+{
+	while(ic) {
+		if (ic->id == id)
+			return ic;
+		ic = ic->next;
+	}
+	return NULL;
+}
+
+static void
+free_idcache(struct idcache *ic)
+{
+	while(ic) {
+		struct idcache *next = ic->next;
+		free(ic->name);
+		free(ic);
+		ic = next;
+	}
+}
+
+static void
+add_id(struct idcache **ic, char *name, unsigned long int id, int *width)
+{
+	struct idcache *nc, *x;
+	int w = 0;
+
+	nc = calloc(1, sizeof(*nc));
+	if (!nc)
+		goto alloc_err;
+	nc->id = id;
+
+	if (name) {
+#ifdef HAVE_WIDECHAR
+		wchar_t wc[LOGIN_NAME_MAX + 1];
+
+		if (mbstowcs(wc, name, LOGIN_NAME_MAX) > 0) {
+			wc[LOGIN_NAME_MAX] = '\0';
+			w = wcswidth(wc, LOGIN_NAME_MAX);
+		}
+		else
+#endif
+			w = strlen(name);
+	}
+	/* note, we ignore names with non-printable widechars */
+	if (w > 0)
+		nc->name = strdup(name);
+	else if (asprintf(&nc->name, "%lu", id) == -1)
+		nc->name = NULL;
+	if (!nc->name)
+		goto alloc_err;
+
+	for (x = *ic; x && x->next; x = x->next);
+
+	/* add 'nc' at end of the 'ic' list */
+	if (x)
+		x->next = nc;
+	else
+		*ic = nc;
+	if (w <= 0)
+		w = strlen(nc->name);
+	*width = *width < w ? w : *width;
+
+	return;
+alloc_err:
+	err(EXIT_FAILURE, _("out of memory?"));
+}
+
+static void
+add_uid(unsigned long int id)
+{
+	struct idcache *ic = get_id(ucache, id);
+
+	if (!ic) {
+		struct passwd *pw = getpwuid((uid_t) id);
+		add_id(&ucache, pw ? pw->pw_name : NULL, id, &uwidth);
+	}
+}
+
+static void
+add_gid(unsigned long int id)
+{
+	struct idcache *ic = get_id(gcache, id);
+
+	if (!ic) {
+		struct group *gr = getgrgid((gid_t) id);
+		add_id(&gcache, gr ? gr->gr_name : NULL, id, &gwidth);
+	}
+}
 
 static void
 free_namei(struct namei *nm)
@@ -155,7 +265,10 @@ add_namei(struct namei *parent, const char *orgpath, int start, struct namei **l
 			first = nm;
 		if (S_ISLNK(nm->st.st_mode))
 			readlink_to_namei(nm, path);
-
+		if (flags & NAMEI_OWNERS) {
+			add_uid(nm->st.st_uid);
+			add_gid(nm->st.st_gid);
+		}
 		/* set begin of the next filename */
 		if (end) {
 			*end++ = '/';
@@ -260,6 +373,12 @@ print_namei(struct namei *nm, char *path)
 		else
 			printf(" %c", md[0]);
 
+		if (flags & NAMEI_OWNERS) {
+			printf(" %-*s", uwidth,
+				get_id(ucache, nm->st.st_uid)->name);
+			printf(" %-*s", gwidth,
+				get_id(gcache, nm->st.st_gid)->name);
+		}
 		if (S_ISLNK(nm->st.st_mode))
 			printf(" %s -> %s\n", nm->name,
 					nm->abslink + nm->relstart);
@@ -283,6 +402,8 @@ usage(int rc)
 	" -h, --help          displays this help text\n"
 	" -x, --mountpoints   show mount point directories with a 'D'\n"
 	" -m, --modes         show the mode bits of each file\n"
+	" -o, --owners        show owner and group name of each file\n"
+	" -l, --long          use a long listing format (-m -o)\n"
 	" -n, --nosymlinks    don't follow symlinks\n"));
 
 	printf(_("\nFor more information see namei(1).\n"));
@@ -294,6 +415,8 @@ struct option longopts[] =
 	{ "help",	0, 0, 'h' },
 	{ "mountpoints",0, 0, 'x' },
 	{ "modes",	0, 0, 'm' },
+	{ "owners",	0, 0, 'o' },
+	{ "long",       0, 0, 'l' },
 	{ "nolinks",	0, 0, 'n' },
 	{ NULL,		0, 0, 0 },
 };
@@ -311,20 +434,26 @@ main(int argc, char **argv)
 	if (argc < 2)
 		usage(EXIT_FAILURE);
 
-	while ((c = getopt_long(argc, argv, "+h?xmn", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+h?lmnox", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 		case '?':
 			usage(EXIT_SUCCESS);
 			break;
+		case 'l':
+			flags |= (NAMEI_OWNERS | NAMEI_MODES);
+			break;
 		case 'm':
 			flags |= NAMEI_MODES;
 			break;
-		case 'x':
-			flags |= NAMEI_MNTS;
-			break;
 		case 'n':
 			flags |= NAMEI_NOLINKS;
+			break;
+		case 'o':
+			flags |= NAMEI_OWNERS;
+			break;
+		case 'x':
+			flags |= NAMEI_MNTS;
 			break;
 		}
 	}
@@ -340,7 +469,6 @@ main(int argc, char **argv)
 		nm = add_namei(NULL, path, 0, NULL);
 		if (nm) {
 			int sml = 0;
-
 			if (!(flags & NAMEI_NOLINKS))
 				sml = follow_symlinks(nm);
 			print_namei(nm, path);
@@ -351,6 +479,9 @@ main(int argc, char **argv)
 					path);
 		}
 	}
+
+	free_idcache(ucache);
+	free_idcache(gcache);
 
 	return EXIT_SUCCESS;
 }
