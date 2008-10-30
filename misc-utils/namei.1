@@ -5,10 +5,7 @@
 .SH NAME
 namei - follow a pathname until a terminal point is found
 .SH SYNOPSIS
-.B namei
-.I [-mx]
-.I pathname
-.I "[ pathname ... ]"
+\fBnamei\fR [\fIoptions\fR] \fIpathname\fR [\fIpathname\fR ...]
 .SH DESCRIPTION
 .I Namei
 uses its arguments as pathnames to any type
@@ -42,15 +39,18 @@ outputs a the following characters to identify the file types found:
 prints an informative message when
 the maximum number of symbolic links this system can have has been exceeded.
 .SH OPTIONS
-.TP 8
-.B -x
+.IP "\fB\-x, \-\-mountpoints\fP"
 Show mount point directories with a 'D', rather than a 'd'.
-.TP 8
-.B -m
+.IP "\fB\-m, \-\-modes\fP"
 Show the mode bits of each file type in the style of ls(1),
 for example 'rwxr-xr-x'.
+.IP "\fB\-n, \-\-nosymlinks\fP"
+Don't follow symlinks.
 .SH AUTHOR
-Roger Southwick  (rogers@amadeus.wr.tek.com)
+The original
+.B namei
+program was written by Roger Southwick <rogers@amadeus.wr.tek.com>.
+The program was re-written by Karel Zak <kzak@redhat.com>.
 .SH BUGS
 To be discovered.
 .SH "SEE ALSO"

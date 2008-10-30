@@ -1,59 +1,27 @@
-/*-------------------------------------------------------------
-
-The namei program
-
-By: Roger S. Southwick
-
-May 2, 1990
-
-
-Modifications by Steve Tell  March 28, 1991
-
-usage: namei pathname [pathname ... ]
-
-This program reads it's arguments as pathnames to any type
-of Unix file (symlinks, files, directories, and so forth).
-The program then follows each pathname until a terminal
-point is found (a file, directory, char device, etc).
-If it finds a symbolic link, we show the link, and start
-following it, indenting the output to show the context.
-
-This program is useful for finding a "too many levels of
-symbolic links" problems.
-
-For each line output, the program puts a file type first:
-
-   f: = the pathname we are currently trying to resolve
-    d = directory
-    D = directory that is a mount point
-    l = symbolic link (both the link and it's contents are output)
-    s = socket
-    b = block device
-    c = character device
-    p = FIFO (named pipe)
-    - = regular file
-    ? = an error of some kind
-
-The program prints an informative messages when we exceed
-the maximum number of symbolic links this system can have.
-
-The program exits with a 1 status ONLY if it finds it cannot
-chdir to /,  or if it encounters an unknown file type.
-
-1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
-- added Native Language Support
-
-2006-12-15 Karel Zak <kzak@redhat.com>
-- fixed logic; don't follow the path if a component is not directory
-- fixed infinite loop of symbolic links; stack size is very limited
-
-2007-09-10 Li Zefan <lizf@cn.fujitsu.com>
-- added to identify FIFO
-
--------------------------------------------------------------*/
-
+/*
+ * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
+ *
+ * This file is part of util-linux-ng.
+ *
+ * This file is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This file is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * The original namei(1) was writtent by:
+ *	Roger S. Southwick (May 2, 1990)
+ *	Steve Tell (March 28, 1991)
+ *	Arkadiusz Mikiewicz (1999-02-22)
+ *	Li Zefan (2007-09-10).
+ */
 #include <stdio.h>
 #include <unistd.h>
+#include <getopt.h>
 #include <string.h>
 #include <strings.h>
 #include <stdlib.h>
@@ -61,13 +29,8 @@ chdir to /,  or if it encounters an unknown file type.
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/param.h>
+#include <err.h>
 #include "nls.h"
-
-#define ERR	strerror(errno),errno
-
-int symcount;
-int mflag = 0;
-int xflag = 0;
 
 #ifndef MAXSYMLINKS
 #define MAXSYMLINKS 256
@@ -77,316 +40,318 @@ int xflag = 0;
 #define PATH_MAX 4096
 #endif
 
-static char *pperm(unsigned short);
-static void namei(char *, int, mode_t *);
-static void usage(void);
+#define NAMEI_NOLINKS	(1 << 1)
+#define NAMEI_MODES	(1 << 2)
+#define NAMEI_MNTS	(1 << 3)
 
-int
-main(int argc, char **argv) {
-    extern int optind;
-    int c;
-#ifdef HAVE_GET_CURRENT_DIR_NAME
-    char *curdir;
-#else
-    char curdir[PATH_MAX];
-#endif
+static int flags;
 
-    setlocale(LC_ALL, "");
-    bindtextdomain(PACKAGE, LOCALEDIR);
-    textdomain(PACKAGE);
+struct namei {
+	struct stat	st;		/* item lstat() */
+	char		*name;		/* item name */
+	char		*abslink;	/* absolute symlink path */
+	int		relstart;	/* offset of relative path in 'abslink' */
+	struct namei	*next;		/* next item */
+	int		level;
+};
 
-    if(argc < 2)
-	usage();
-
-    while((c = getopt(argc, argv, "mx")) != -1){
-	switch(c){
-	    case 'm':
-		mflag = !mflag;
-		break;
-
-	    case 'x':
-		xflag = !xflag;
-		break;
-
-	    case '?':
-	    default:
-		usage();
+static void
+free_namei(struct namei *nm)
+{
+	while (nm) {
+		struct namei *next = nm->next;
+		free(nm->name);
+		free(nm->abslink);
+		free(nm);
+		nm = next;
 	}
-    }
-
-#ifdef HAVE_GET_CURRENT_DIR_NAME
-    if (!(curdir = get_current_dir_name()))
-#else
-    if(getcwd(curdir, sizeof(curdir)) == NULL)
-#endif
-    {
-	(void)fprintf(stderr,
-		      _("namei: unable to get current directory - %s\n"),
-		      curdir);
-	exit(1);
-    }
-
-
-    for(; optind < argc; optind++){
-	mode_t lastmode = 0;
-	(void)printf("f: %s\n", argv[optind]);
-	symcount = 1;
-	namei(argv[optind], 0, &lastmode);
-
-	if(chdir(curdir) == -1){
-	    (void)fprintf(stderr,
-			  _("namei: unable to chdir to %s - %s (%d)\n"),
-			  curdir, ERR);
-	    exit(1);
-	}
-    }
-    return 0;
 }
 
 static void
-usage(void) {
-    (void)fprintf(stderr,_("usage: namei [-mx] pathname [pathname ...]\n"));
-    exit(1);
+readlink_to_namei(struct namei *nm, const char *path)
+{
+	char sym[PATH_MAX];
+	size_t sz;
+
+	sz = readlink(path, sym, sizeof(sym));
+	if (sz < 1)
+		err(EXIT_FAILURE, _("failed to read symlink: %s"), path);
+	if (*sym != '/') {
+		char *p = strrchr(path, '/');
+
+		nm->relstart = p ? p - path : strlen(path);
+		sz += nm->relstart + 1;
+	}
+	nm->abslink = malloc(sz + 1);
+	if (!nm->abslink)
+		err(EXIT_FAILURE, _("out of memory?"));
+
+	if (*sym != '/') {
+		memcpy(nm->abslink, path, nm->relstart);
+		*(nm->abslink + nm->relstart) = '/';
+		nm->relstart++;
+		memcpy(nm->abslink + nm->relstart, sym, sz);
+	} else
+		memcpy(nm->abslink, sym, sz);
+	nm->abslink[sz] = '\0';
 }
 
-#ifndef NODEV
-#define NODEV		(dev_t)(-1)
-#endif
+static struct namei *
+new_namei(struct namei *parent, const char *path, const char *fname, int lev)
+{
+	struct namei *nm;
+
+	if (!fname)
+		return NULL;
+	nm = calloc(1, sizeof(*nm));
+	if (!nm)
+		err(EXIT_FAILURE, _("out of memory?"));
+	if (parent)
+		parent->next = nm;
+
+	nm->level = lev;
+	nm->name = strdup(fname);
+	if (!nm->name)
+		err(EXIT_FAILURE, _("out of memory?"));
+	if (lstat(path, &nm->st) == -1)
+		err(EXIT_FAILURE, _("could not stat '%s'"), path);
+	return nm;
+}
+
+static struct namei *
+add_namei(struct namei *parent, const char *orgpath, int start, struct namei **last)
+{
+	struct namei *nm = NULL, *first = NULL;
+	char *fname, *end, *path;
+	int level = 0;
+
+	if (!orgpath)
+		return NULL;
+	if (parent) {
+		nm = parent;
+		level = parent->level + 1;
+	}
+	path = strdup(orgpath);
+	if (!path)
+		err(EXIT_FAILURE, _("out of memory?"));
+	fname = path + start;
+
+	/* root directory */
+	if (*fname == '/') {
+		while (*fname == '/')
+			fname++; /* eat extra '/' */
+		first = nm = new_namei(nm, "/", "/", level);
+	}
+
+	for (end = fname; fname && end; ) {
+		/* set end of filename */
+		end = strchr(fname, '/');
+		if (end)
+			*end = '\0';
+
+		/* create a new entry */
+		nm = new_namei(nm, path, fname, level);
+		if (!first)
+			first = nm;
+		if (S_ISLNK(nm->st.st_mode))
+			readlink_to_namei(nm, path);
+
+		/* set begin of the next filename */
+		if (end) {
+			*end++ = '/';
+			while (*end == '/')
+				end++; /* eat extra '/' */
+		}
+		fname = end;
+	}
+
+	if (last)
+		*last = nm;
+	return first;
+}
+
+
+static int
+follow_symlinks(struct namei *nm)
+{
+	int symcount = 0;
+
+	for (; nm; nm = nm->next) {
+		struct namei *next, *last;
+
+		if (!S_ISLNK(nm->st.st_mode))
+			continue;
+		if (++symcount > MAXSYMLINKS) {
+			/* drop the rest of the list */
+			free_namei(nm->next);
+			nm->next = NULL;
+			return -1;
+		}
+		next = nm->next;
+		nm->next = add_namei(nm, nm->abslink, nm->relstart, &last);
+		if (last)
+			last->next = next;
+		else
+			nm->next = next;
+	}
+	return 0;
+}
 
 static void
-namei(char *file, int lev, mode_t *lastmode) {
-    char *cp;
-    char buf[BUFSIZ], sym[BUFSIZ];
-    struct stat stb;
-    int i;
-    dev_t lastdev = NODEV;
+strmode(mode_t mode, char *str)
+{
+	if (S_ISDIR(mode))
+		str[0] = 'd';
+	else if (S_ISLNK(mode))
+		str[0] = 'l';
+	else if (S_ISCHR(mode))
+		str[0] = 'c';
+	else if (S_ISBLK(mode))
+		str[0] = 'b';
+	else if (S_ISSOCK(mode))
+		str[0] = 's';
+	else if (S_ISFIFO(mode))
+		str[0] = 'p';
+	else if (S_ISREG(mode))
+		str[0] = '-';
 
-    /*
-     * See if the file has a leading /, and if so cd to root
-     */
-
-    if(file && *file == '/'){
-	while(*file == '/')
-	    file++;
-
-	if(chdir("/") == -1){
-	    (void)fprintf(stderr,_("namei: could not chdir to root!\n"));
-	    exit(1);
-	}
-	for(i = 0; i < lev; i++)
-	    (void)printf("  ");
-
-	if(stat("/", &stb) == -1){
-	    (void)fprintf(stderr, _("namei: could not stat root!\n"));
-	    exit(1);
-	}
-	lastdev = stb.st_dev;
-
-	if(mflag)
-	    (void)printf(" d%s /\n", pperm(stb.st_mode));
-	else
-	    (void)printf(" d /\n");
-    }
-
-    for(; file && *file;){
-
-	if (strlen(file) >= BUFSIZ) {
-		fprintf(stderr,_("namei: buf overflow\n"));
-		return;
-	}
-
-	/*
-	 * Copy up to the next / (or nil) into buf
-	 */
-
-	for(cp = buf; *file != '\0' && *file != '/'; cp++, file++)
-	    *cp = *file;
-
-	while(*file == '/')	/* eat extra /'s	*/
-	    file++;
-
-	*cp = '\0';
-
-	if(buf[0] == '\0'){
-
-	    /*
-	     * Buf is empty, so therefore we are done
-	     * with this level of file
-	     */
-
-	    return;
-	}
-
-	for(i = 0; i < lev; i++)
-	    (void)printf("  ");
-
-
-	/*
-	 * We cannot walk on *path* if a previous element, in the path wasn't
-	 * directory, because there could be a component with same name. Try:
-	 *
-	 * $ touch a b
-	 * $ namei a/b    <-- "a" is not directory so namei shouldn't
-	 *                    check for "b"
-	 */
-	if (*lastmode && S_ISDIR(*lastmode)==0 && S_ISLNK(*lastmode)==0){
-	    (void)printf(" ? %s - %s (%d)\n", buf, strerror(ENOENT), ENOENT);
-	    return;
-	}
-
-	/*
-	 * See what type of critter this file is
-	 */
-
-	if(lstat(buf, &stb) == -1){
-	    (void)printf(" ? %s - %s (%d)\n", buf, ERR);
-	    return;
-	}
-
-	*lastmode = stb.st_mode;
-
-	switch(stb.st_mode & S_IFMT){
-	    case S_IFDIR:
-
-		/*
-		 * File is a directory, chdir to it
-		 */
-
-		if(chdir(buf) == -1){
-		    (void)printf(_(" ? could not chdir into %s - %s (%d)\n"), buf, ERR );
-		    return;
-		}
-		if(xflag && lastdev != stb.st_dev && lastdev != NODEV){
-		    /* Across mnt point */
-		    if(mflag)
-			(void)printf(" D%s %s\n", pperm(stb.st_mode), buf);
-		    else
-			(void)printf(" D %s\n", buf);
-		}
-		else {
-		    if(mflag)
-			(void)printf(" d%s %s\n", pperm(stb.st_mode), buf);
-		    else
-			(void)printf(" d %s\n", buf);
-		}
-		lastdev = stb.st_dev;
-
-		(void)fflush(stdout);
-		break;
-
-	    case S_IFLNK:
-		/*
-		 * Sigh, another symlink.  Read its contents and
-		 * call namei()
-		 */
-		bzero(sym, BUFSIZ);
-		if(readlink(buf, sym, BUFSIZ) == -1){
-		    (void)printf(_(" ? problems reading symlink %s - %s (%d)\n"), buf, ERR);
-		    return;
-		}
-
-		if(mflag)
-		    (void)printf(" l%s %s -> %s", pperm(stb.st_mode), buf, sym);
-		else
-		    (void)printf(" l %s -> %s", buf, sym);
-
-		if(symcount > 0 && symcount++ > MAXSYMLINKS){
-		    (void)printf(_("  *** EXCEEDED UNIX LIMIT OF SYMLINKS ***\n"));
-		} else {
-		    (void)printf("\n");
-		    namei(sym, lev + 1, lastmode);
-		}
-		if (symcount > MAXSYMLINKS)
-		    return;
-		break;
-
-	    case S_IFCHR:
-		if(mflag)
-		    (void)printf(" c%s %s\n", pperm(stb.st_mode), buf);
-		else
-		    (void)printf(" c %s\n", buf);
-		break;
-
-	    case S_IFBLK:
-		if(mflag)
-		    (void)printf(" b%s %s\n", pperm(stb.st_mode), buf);
-		else
-		    (void)printf(" b %s\n", buf);
-		break;
-
-	    case S_IFSOCK:
-		if(mflag)
-		    (void)printf(" s%s %s\n", pperm(stb.st_mode), buf);
-		else
-		    (void)printf(" s %s\n", buf);
-		break;
-
-	    case S_IFIFO:
-		if (mflag)
-			printf(" p%s %s\n", pperm(stb.st_mode), buf);
-		else
-			printf(" p %s\n", buf);
-		break;
-
-	    case S_IFREG:
-		if(mflag)
-		    (void)printf(" -%s %s\n", pperm(stb.st_mode), buf);
-		else
-		    (void)printf(" - %s\n", buf);
-		break;
-
-	    default:
-		(void)fprintf(stderr,_("namei: unknown file type 0%06o on file %s\n"), stb.st_mode, buf );
-		exit(1);
-
-	}
-    }
+	str[1] = mode & S_IRUSR ? 'r' : '-';
+	str[2] = mode & S_IWUSR ? 'w' : '-';
+	str[3] = (mode & S_ISUID
+		? (mode & S_IXUSR ? 's' : 'S')
+		: (mode & S_IXUSR ? 'x' : '-'));
+	str[4] = mode & S_IRGRP ? 'r' : '-';
+	str[5] = mode & S_IWGRP ? 'w' : '-';
+	str[6] = (mode & S_ISGID
+		? (mode & S_IXGRP ? 's' : 'S')
+		: (mode & S_IXGRP ? 'x' : '-'));
+	str[7] = mode & S_IROTH ? 'r' : '-';
+	str[8] = mode & S_IWOTH ? 'w' : '-';
+	str[9] = (mode & S_ISVTX
+		? (mode & S_IXOTH ? 't' : 'T')
+		: (mode & S_IXOTH ? 'x' : '-'));
+	str[10] = '\0';
 }
 
-/* Take a
- * Mode word, as from a struct stat, and return
- * a pointer to a static string containing a printable version like ls.
- * For example 0755 produces "rwxr-xr-x"
- */
-static char *
-pperm(unsigned short mode) {
-	unsigned short m;
-	static char buf[16];
-	char *bp;
-	char *lschars = "xwrxwrxwr";  /* the complete string backwards */
-	char *cp;
+static void
+print_namei(struct namei *nm, char *path)
+{
+	struct namei *prev = NULL;
 	int i;
 
-	for(i = 0, cp = lschars, m = mode, bp = &buf[8];
-	    i < 9;
-	    i++, cp++, m >>= 1, bp--) {
+	if (path)
+		printf("f: %s\n", path);
 
-		if(m & 1)
-			*bp = *cp;
-		else
-			*bp = '-';
-	    }
-	buf[9] = '\0';
+	for (; nm; prev = nm, nm = nm->next) {
+		char md[11];
 
-	if(mode & S_ISUID)  {
-		if(buf[2] == 'x')
-			buf[2] = 's';
+		strmode(nm->st.st_mode, md);
+
+		if ((flags & NAMEI_MNTS) && prev &&
+		    S_ISDIR(nm->st.st_mode) && S_ISDIR(prev->st.st_mode) &&
+		    prev->st.st_dev != nm->st.st_dev)
+			md[0] = 'D';
+
+		for (i = 0; i < nm->level; i++)
+			fputs("  ", stdout);
+
+		if (flags & NAMEI_MODES)
+			printf(" %s", md);
 		else
-			buf[2] = 'S';
+			printf(" %c", md[0]);
+
+		if (S_ISLNK(nm->st.st_mode))
+			printf(" %s -> %s\n", nm->name,
+					nm->abslink + nm->relstart);
+		else
+			printf(" %s\n", nm->name);
 	}
-	if(mode & S_ISGID)  {
-		if(buf[5] == 'x')
-			buf[5] = 's';
-		else
-			buf[5] = 'S';
-	}
-	if(mode & S_ISVTX)  {
-		if(buf[8] == 'x')
-			buf[8] = 't';
-		else
-			buf[8] = 'T';
+}
+
+static void
+usage(int rc)
+{
+	const char *p = program_invocation_short_name;
+
+	if (!*p)
+		p = "namei";
+
+	printf(_("\nUsage: %s [options] pathname [pathname ...]\n"), p);
+	printf(_("\nOptions:\n"));
+
+	printf(_(
+	" -h, --help          displays this help text\n"
+	" -x, --mountpoints   show mount point directories with a 'D'\n"
+	" -m, --modes         show the mode bits of each file\n"
+	" -n, --nosymlinks    don't follow symlinks\n"));
+
+	printf(_("\nFor more information see namei(1).\n"));
+	exit(rc);
+}
+
+struct option longopts[] =
+{
+	{ "help",	0, 0, 'h' },
+	{ "mountpoints",0, 0, 'x' },
+	{ "modes",	0, 0, 'm' },
+	{ "nolinks",	0, 0, 'n' },
+	{ NULL,		0, 0, 0 },
+};
+
+int
+main(int argc, char **argv)
+{
+	extern int optind;
+	int c;
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
+	if (argc < 2)
+		usage(EXIT_FAILURE);
+
+	while ((c = getopt_long(argc, argv, "+h?xmn", longopts, NULL)) != -1) {
+		switch(c) {
+		case 'h':
+		case '?':
+			usage(EXIT_SUCCESS);
+			break;
+		case 'm':
+			flags |= NAMEI_MODES;
+			break;
+		case 'x':
+			flags |= NAMEI_MNTS;
+			break;
+		case 'n':
+			flags |= NAMEI_NOLINKS;
+			break;
+		}
 	}
 
-	return &buf[0];
+	for(; optind < argc; optind++) {
+		char *path = argv[optind];
+		struct namei *nm = NULL;
+		struct stat st;
+
+		if (stat(path, &st) != 0)
+			err(EXIT_FAILURE, _("failed to stat: %s"), path);
+
+		nm = add_namei(NULL, path, 0, NULL);
+		if (nm) {
+			int sml = 0;
+
+			if (!(flags & NAMEI_NOLINKS))
+				sml = follow_symlinks(nm);
+			print_namei(nm, path);
+			free_namei(nm);
+			if (sml == -1)
+				errx(EXIT_FAILURE,
+					_("%s: exceeded limit of symlinks"),
+					path);
+		}
+	}
+
+	return EXIT_SUCCESS;
 }
 
