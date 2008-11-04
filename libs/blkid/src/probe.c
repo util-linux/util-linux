@@ -68,6 +68,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&hfs_idinfo,
 	&ntfs_idinfo,
 	&iso9660_idinfo,
+	&udf_idinfo,
 	&lvm2_idinfo
 };
 
