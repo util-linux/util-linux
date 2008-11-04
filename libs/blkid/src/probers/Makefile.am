@@ -28,6 +28,7 @@ libprobers_a_SOURCES =	probers.h \
 			hfs.c \
 			iso9660.c \
 			udf.c \
+			vfat.c \
 			lvm.c
 
 all-local: $(lib_LIBRARIES)
