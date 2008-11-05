@@ -36,41 +36,56 @@
 
 static const struct blkid_idinfo *idinfos[] =
 {
-	&swsuspend_idinfo,
-	&cramfs_idinfo,
-	&swap_idinfo,
-	&adraid_idinfo,
+	/* RAIDs */
+	&linuxraid_idinfo,
 	&ddfraid_idinfo,
 	&iswraid_idinfo,
-	&jmraid_idinfo,
 	&lsiraid_idinfo,
+	&viaraid_idinfo,
+	&silraid_idinfo,
 	&nvraid_idinfo,
 	&pdcraid_idinfo,
-	&silraid_idinfo,
-	&viaraid_idinfo,
-	&linuxraid_idinfo,
+	/* TODO: 45x highpoint_raid */
+	/* TODO: 37x highpoint_raid */
+	&adraid_idinfo,
+	&jmraid_idinfo,
+	&lvm2_idinfo,
+	/* TODO: lvm1 */
+	/* TODO: LUKS */
+
+	/* Filesystems */
+	&vfat_idinfo,
+	&swsuspend_idinfo,
+	&swap_idinfo,
+	&xfs_idinfo,
 	&ext4dev_idinfo,
 	&ext4_idinfo,
 	&ext3_idinfo,
 	&ext2_idinfo,
-	&xfs_idinfo,
+	&jbd_idinfo,
+	&reiser_idinfo,
+	&reiser4_idinfo,
 	&jfs_idinfo,
+	&udf_idinfo,
+	&iso9660_idinfo,
+	/* TODO: zfs */
+	&hfsplus_idinfo,
+	&hfs_idinfo,
+	/* TODO: ufs */
+	/* TODO: hpfs */
+	/* TODO: sysv / xenix */
+	&ntfs_idinfo,
+	&cramfs_idinfo,
+	&romfs_idinfo,
+	/* TODO: minix */
 	&gfs_idinfo,
 	&gfs2_idinfo,
-	&romfs_idinfo,
 	&ocfs_idinfo,
 	&ocfs2_idinfo,
 	&oracleasm_idinfo,
-	&reiser_idinfo,
-	&reiser4_idinfo,
-	&jbd_idinfo,
-	&hfsplus_idinfo,
-	&hfs_idinfo,
-	&ntfs_idinfo,
-	&iso9660_idinfo,
-	&udf_idinfo,
-	&vfat_idinfo,
-	&lvm2_idinfo
+	/* TODO: vxfs */
+	/* TODO: squashfs */
+	/* TODO: netware */
 };
 
 #ifndef ARRAY_SIZE
