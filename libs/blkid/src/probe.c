@@ -51,7 +51,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&jmraid_idinfo,
 	&lvm2_idinfo,
 	/* TODO: lvm1 */
-	/* TODO: LUKS */
+	&luks_idinfo,
 
 	/* Filesystems */
 	&vfat_idinfo,
