@@ -1,6 +1,10 @@
 #include <ctype.h>
 #include <stdio.h>
 #include <string.h>
+#include <sys/types.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include "blkdev.h"
 #include "common.h"
 
 /*
