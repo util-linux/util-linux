@@ -659,7 +659,8 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 
 	mode = (*options & SETLOOP_RDONLY) ? O_RDONLY : O_RDWR;
 	if ((ffd = open(file, mode)) < 0) {
-		if (!(*options & SETLOOP_RDONLY) && errno == EROFS)
+		if (!(*options & SETLOOP_RDONLY) &&
+		    (errno == EROFS || errno == EACCES))
 			ffd = open(file, mode = O_RDONLY);
 		if (ffd < 0) {
 			perror(file);
