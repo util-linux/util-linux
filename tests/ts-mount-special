@@ -26,12 +26,12 @@ MOUNTER="/sbin/mount.mytest"
 ts_init "$*"
 ts_skip_nonroot
 
-cat > $MOUNTER << EOF
+cat > $MOUNTER <<\EOF
 #!/bin/bash
 # This util-linux-ng regression test component
 # It's safe to remove me...
 #
-echo "\$0 called with \"\$*\""
+echo "$0 called with \"$*\""
 EOF
 chmod +x $MOUNTER
 

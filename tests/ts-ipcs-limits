@@ -21,14 +21,10 @@
 TS_COMPONENT="ipcs"
 TS_DESC="limits overflow"
 
-if [ $UID != 0 ]; then
-	ts_init "$*"
-	ts_skip_nonroot
-fi
-
 . ./ts-ipcs.sh
 
 ts_init "$*"
+ts_skip_nonroot
 
 ts_log "load original values"
 for i in $IPCS_IDX; do
