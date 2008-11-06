@@ -1877,10 +1877,12 @@ write_part_table(void) {
 	      clear_warning();
 	      if (len == GS_ESCAPE)
 		   return;
-	      else if (strcasecmp(response, _("no")) == 0) {
+	      else if (strcasecmp(response, _("no")) == 0 ||
+		       strcasecmp(response, "no") == 0) {
 		   print_warning(_("Did not write partition table to disk"));
 		   return;
-	      } else if (strcasecmp(response, _("yes")) == 0)
+	      } else if (strcasecmp(response, _("yes")) == 0 ||
+			 strcasecmp(response, "yes") == 0)
 		   done = TRUE;
 	      else
 		   print_warning(_("Please enter `yes' or `no'"));
