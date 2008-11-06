@@ -653,9 +653,14 @@ main(int argc, char ** argv) {
 	    die(_("cannot determine sector size for %s"));
     if (BLOCK_SIZE < sectorsize)
 	    die(_("block size smaller than physical sector size of %s"));
-    if (!BLOCKS && blkdev_get_size(DEV, &BLOCKS) == -1)
-	die(_("cannot determine size of %s"));
+    if (!BLOCKS) {
+	    if (blkdev_get_size(DEV, &BLOCKS) == -1)
+		die(_("cannot determine size of %s"));
+	    BLOCKS /= BLOCK_SIZE;
+    }
   } else if (!S_ISBLK(statbuf.st_mode)) {
+    if (!BLOCKS)
+	    BLOCKS = statbuf.st_size / BLOCK_SIZE;
     check=0;
   } else if (statbuf.st_rdev == 0x0300 || statbuf.st_rdev == 0x0340)
     die(_("will not try to make filesystem on '%s'"));
