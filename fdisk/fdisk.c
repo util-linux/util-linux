@@ -1207,7 +1207,8 @@ read_int(unsigned int low, unsigned int dflt, unsigned int high,
 				 */
 				if (!display_in_cyl_units)
 					i *= heads * sectors;
-			} else if (*(line_ptr + 1) == 'B' &&
+			} else if (*line_ptr &&
+				   *(line_ptr + 1) == 'B' &&
 				   *(line_ptr + 2) == '\0') {
 				/*
 				 * 10^N
@@ -1220,7 +1221,8 @@ read_int(unsigned int low, unsigned int dflt, unsigned int high,
 					absolute = 1000000000;
 				else
 					absolute = -1;
-			} else if (*(line_ptr + 1) == '\0') {
+			} else if (*line_ptr &&
+				   *(line_ptr + 1) == '\0') {
 				/*
 				 * 2^N
 				 */
