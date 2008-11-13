@@ -2033,7 +2033,7 @@ add_partition(int n, int sys) {
 	do {
 		temp = start;
 		for (i = 0; i < partitions; i++) {
-			int lastplusoff;
+			unsigned int lastplusoff;
 
 			if (start == ptes[i].offset)
 				start += sector_offset;
