@@ -2049,7 +2049,7 @@ add_partition(int n, int sys) {
 	do {
 		temp = start;
 		for (i = 0; i < partitions; i++) {
-			unsigned int lastplusoff;
+			unsigned long long lastplusoff;
 
 			if (start == ptes[i].offset)
 				start += sector_offset;
@@ -2065,7 +2065,7 @@ add_partition(int n, int sys) {
 			read = 0;
 		}
 		if (!read && start == temp) {
-			unsigned int i = start;
+			unsigned long long i = start;
 
 			start = read_int(cround(i), cround(i), cround(limit),
 					 0, mesg);
@@ -2551,7 +2551,8 @@ static void
 tryprocpt(void) {
 	FILE *procpt;
 	char line[100], ptname[100], devname[120];
-	int ma, mi, sz;
+	int ma, mi;
+	unsigned long long sz;
 
 	procpt = fopen(PROC_PARTITIONS, "r");
 	if (procpt == NULL) {
@@ -2560,7 +2561,7 @@ tryprocpt(void) {
 	}
 
 	while (fgets(line, sizeof(line), procpt)) {
-		if (sscanf (line, " %d %d %d %[^\n ]",
+		if (sscanf (line, " %d %d %llu %100[^\n ]",
 			    &ma, &mi, &sz, ptname) != 4)
 			continue;
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
