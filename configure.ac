@@ -144,20 +144,32 @@ AC_ARG_WITH([fsprobe],
   [], [with_fsprobe=blkid]
 )
 
+AC_ARG_ENABLE([mount],
+  AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
+  [], enable_mount=check
+)
+
 AM_CONDITIONAL(HAVE_BLKID, false)
 AM_CONDITIONAL(HAVE_VOLUME_ID, false)
-
-have_blkid=no
-have_volume_id=no
-if test "x$with_fsprobe" = xblkid; then
-  UTIL_CHECK_LIB(blkid, blkid_known_fstype)
-elif test "x$with_fsprobe" = xvolume_id; then
-  UTIL_CHECK_LIB(volume_id, volume_id_encode_string)
+if test "${enable_mount}" = "no"; then
+  build_mount=no
+elif test "x$linux_os" = xyes; then
+  build_mount=yes
+  have_blkid=no
+  have_volume_id=no
+  if test "x$with_fsprobe" = xblkid; then
+    UTIL_CHECK_LIB(blkid, blkid_known_fstype)
+  elif test "x$with_fsprobe" = xvolume_id; then
+    UTIL_CHECK_LIB(volume_id, volume_id_encode_string)
+  fi
+  if test "x$have_blkid" = xno && test "x$have_volume_id" = xno; then
+    AC_MSG_ERROR([blkid or volume_id is needed to build util-linux-ng mount utilities])
+  fi
+else
+  AC_MSG_WARN([non-linux system; do not build mount utilities])
+  build_mount=no
 fi
-
-if test "x$have_blkid" = xno && test "x$have_volume_id" = xno; then
-  AC_MSG_ERROR([blkid or volume_id is needed to build util-linux-ng.])
-fi
+AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
 
 dnl UTIL_PKG_STATIC(VARIABLE, MODULES)
 dnl ----------------------------------

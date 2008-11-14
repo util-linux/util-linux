@@ -17,8 +17,11 @@ SUBDIRS = \
 if LINUX
 SUBDIRS += \
 	hwclock \
-	mount \
 	partx
+endif
+
+if BUILD_MOUNT
+SUBDIRS += mount
 endif
 
 ACLOCAL_AMFLAGS = -I m4
@@ -42,5 +45,5 @@ distclean-local:
 ENABLE_ALL = --enable-static-programs \
  --enable-elvtune --enable-init --enable-kill --enable-last \
  --enable-mesg --enable-partx --enable-raw --enable-rdev --enable-reset \
- --enable-login-utils --enable-write --enable-arch
+ --enable-login-utils --enable-write --enable-arch --enable-mount
 DISTCHECK_CONFIGURE_FLAGS = --disable-use-tty-group $(ENABLE_ALL)
