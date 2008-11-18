@@ -678,6 +678,9 @@ set_loop(const char *device, const char *file, unsigned long long offset,
 			perror(file);
 			return 1;
 		}
+		if (verbose)
+			printf(_("warning: %s: is write-protected, using read-only.\n"),
+					file);
 		*options |= SETLOOP_RDONLY;
 	}
 	if ((fd = open(device, mode)) < 0) {
