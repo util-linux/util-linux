@@ -10,10 +10,4 @@ f: output/namei/namei1/namei2/b
  d namei1
  d namei2
  - b
-f: output/namei/namei1/namei2/a/b
- d output
- d namei
- d namei1
- d namei2
- - a
- ? b - No such file or directory (2)
+namei: failed to stat: output/namei/namei1/namei2/a/b: Not a directory
