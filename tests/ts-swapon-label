@@ -31,19 +31,17 @@ set -o pipefail
 DEVICE=$(ts_device_init)
 [ "$?" == 0 ] || ts_die "Cannot init device"
 
-$TS_CMD_MKSWAP -L $LABEL $DEVICE > /dev/null 2>> $TS_OUTPUT
-[ "$?" == "0" ] || ts_die "Cannot make swap on $DEVICE" $DEVICE
+$TS_CMD_MKSWAP -L $LABEL $DEVICE > /dev/null 2>> $TS_OUTPUT \
+ || ts_die "Cannot make swap on $DEVICE" $DEVICE
 
-ts_device_has "LABEL" $LABEL $DEVICE
-[ "$?" == "0" ] || ts_die "Cannot found LABEL '$LABEL' on $DEVICE" $DEVICE
+ts_device_has "LABEL" $LABEL $DEVICE \
+ || ts_die "Cannot found LABEL '$LABEL' on $DEVICE" $DEVICE
 
-ts_udev_dev_support "by-label" $LABEL
-[ "$?" == "0" ] || ts_skip "udev ignores /dev/loop*" $DEVICE
+ts_udev_dev_support "by-label" $LABEL || ts_skip "udev ignores /dev/loop*" $DEVICE
 
 $TS_CMD_SWAPON -L $LABEL 2>&1 >> $TS_OUTPUT
 
-grep -q $DEVICE /proc/swaps
-[ "$?" == "0" ] || ts_die "Cannot found $DEVICE in /proc/swaps" $DEVICE
+grep -q $DEVICE /proc/swaps || ts_die "Cannot found $DEVICE in /proc/swaps" $DEVICE
 
 ts_swapoff $DEVICE
 ts_device_deinit $DEVICE

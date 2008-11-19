@@ -29,21 +29,18 @@ set -o pipefail
 DEVICE=$(ts_device_init)
 [ "$?" == 0 ] || ts_die "Cannot init device"
 
-$TS_CMD_MKSWAP $DEVICE > /dev/null 2>> $TS_OUTPUT
-[ "$?" == "0" ] || ts_die "Cannot make swap $DEVICE" $DEVICE
+$TS_CMD_MKSWAP $DEVICE > /dev/null 2>> $TS_OUTPUT \
+ || ts_die "Cannot make swap $DEVICE" $DEVICE
 
-ts_device_has_uuid $DEVICE
-[ "$?" == "0" ] || ts_die "Cannot found UUID on $DEVICE" $DEVICE
+ts_device_has_uuid $DEVICE || ts_die "Cannot found UUID on $DEVICE" $DEVICE
 
 UUID=$(ts_uuid_by_devname $DEVICE)
 
-ts_udev_dev_support "by-uuid" $UUID
-[ "$?" == "0" ] || ts_skip "udev ignores /dev/loop*" $DEVICE
+ts_udev_dev_support "by-uuid" $UUID || ts_skip "udev ignores /dev/loop*" $DEVICE
 
 $TS_CMD_SWAPON -U $UUID 2>&1 >> $TS_OUTPUT
 
-grep -q $DEVICE /proc/swaps
-[ "$?" == "0" ] || ts_die "Cannot found $DEVICE in /proc/swaps" $DEVICE
+grep -q $DEVICE /proc/swaps || ts_die "Cannot found $DEVICE in /proc/swaps" $DEVICE
 
 ts_swapoff $DEVICE
 ts_device_deinit $DEVICE
