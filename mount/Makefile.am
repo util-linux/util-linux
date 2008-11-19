@@ -76,11 +76,6 @@ LDADD_common += $(VOLUMEID_LIBS)
 LDADD_common_static += $(VOLUMEID_LIBS_STATIC)
 endif
 
-if HAVE_PIVOT_ROOT
-sbin_PROGRAMS += pivot_root
-dist_man_MANS += pivot_root.8
-endif
-
 noinst_PROGRAMS = mtab_lock_test
 mtab_lock_test_SOURCES = fstab.c sundries.c xmalloc.c $(headers_common)
 mtab_lock_test_CPPFLAGS = -DMAIN_TEST_MTABLOCK $(AM_CPPFLAGS)

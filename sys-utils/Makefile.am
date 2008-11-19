@@ -23,6 +23,11 @@ tunelp_SOURCES = tunelp.c lp.h
 
 info_TEXINFOS = ipc.texi
 
+if HAVE_PIVOT_ROOT
+sbin_PROGRAMS += pivot_root
+dist_man_MANS += pivot_root.8
+endif
+
 if BUILD_ARCH
 bin_PROGRAMS += arch
 dist_man_MANS += arch.1

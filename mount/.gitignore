@@ -1,6 +1,5 @@
 losetup
 mount
 mtab_lock_test
-pivot_root
 swapon
 umount
