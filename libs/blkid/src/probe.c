@@ -263,6 +263,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	if (!blkid_probe_get_buffer(pr, 0, 0x200))
 		return -1;
 
+	pr->idx = 0;
 	return 0;
 }
 
@@ -280,6 +281,7 @@ int blkid_probe_reset_filter(blkid_probe pr)
 		return -1;
 	if (pr->fltr)
 		memset(pr->fltr, 0, BLKID_FLTR_SIZE * sizeof(unsigned long));
+	pr->idx = 0;
 	return 0;
 }
 
@@ -323,6 +325,7 @@ int blkid_probe_filter_types(blkid_probe pr, int flag, char *names[])
 				blkid_bmp_set_item(pr->fltr, i);
 		}
 	}
+	pr->idx = 0;
 	return 0;
 }
 
@@ -356,6 +359,7 @@ int blkid_probe_filter_usage(blkid_probe pr, int flag, int usage)
 		} else if (flag & BLKID_FLTR_ONLYIN)
 			blkid_bmp_set_item(pr->fltr, i);
 	}
+	pr->idx = 0;
 	return 0;
 }
 
@@ -368,21 +372,62 @@ int blkid_probe_invert_filter(blkid_probe pr)
 		return -1;
 	for (i = 0; i < BLKID_FLTR_SIZE; i++)
 		pr->fltr[i] = ~pr->fltr[i];
+
+	pr->idx = 0;
 	return 0;
 }
 
+/*
+ * The blkid_do_probe() calls the probe functions. This routine could be used
+ * in a loop when you need to probe for all possible filesystems/raids.
+ *
+ * 1/ basic case -- use the first result:
+ *
+ *	if (blkid_do_probe(pr) == 0) {
+ *		int nvals = blkid_probe_numof_values(pr);
+ *		for (n = 0; n < nvals; n++) {
+ *			if (blkid_probe_get_value(pr, n, &name, &data, &len) == 0)
+ *				printf("%s = %s\n", name, data);
+ *		}
+ *	}
+ *
+ * 2/ advanced case -- probe for all signatures (don't forget that some
+ *                     filesystems can co-exist on one volume (e.g. CD-ROM).
+ *
+ *	while (blkid_do_probe(pr) == 0) {
+ *		int nvals = blkid_probe_numof_values(pr);
+ *		...
+ *	}
+ *
+ *    The internal probing index (pointer to the last probing function) is
+ *    always reseted when you touch probing filter or set a new device. It
+ *    means you cannot use:
+ *
+ *      blkid_probe_invert_filter()
+ *      blkid_probe_filter_usage()
+ *      blkid_probe_filter_types()
+ *      blkid_probe_reset_filter()
+ *      blkid_probe_set_device()
+ *
+ *    in the loop (e.g while()) when you iterate on all signatures.
+ */
 int blkid_do_probe(blkid_probe pr)
 {
-	int i;
+	int i = 0;
 
 	if (!pr)
 		return -1;
 
 	blkid_probe_reset_vals(pr);
 
+	if (pr->idx)
+		i = pr->idx + 1;
+
 	for (i = 0; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id;
 		const struct blkid_idmag *mag;
+
+		pr->idx = i;
 
 		if (pr->fltr && blkid_bmp_get_item(pr->fltr, i))
 			continue;

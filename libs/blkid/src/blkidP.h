@@ -103,6 +103,7 @@ struct blkid_struct_probe
 	int			nvals;
 
 	int			probreq;	/* BLKID_PROBREQ_* flags */
+	int			idx;		/* index of the last prober */
 
 	unsigned long		*fltr;		/* filter */
 };
