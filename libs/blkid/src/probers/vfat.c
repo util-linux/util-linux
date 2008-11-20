@@ -45,7 +45,7 @@ struct vfat_super_block {
 /* 28*/	uint16_t	vs_flags;
 /* 2a*/	uint8_t		vs_version[2];
 /* 2c*/	uint32_t	vs_root_cluster;
-/* 30*/	uint16_t	vs_insfo_sector;
+/* 30*/	uint16_t	vs_fsinfo_sector;
 /* 32*/	uint16_t	vs_backup_boot;
 /* 34*/	uint16_t	vs_reserved2[6];
 /* 40*/	unsigned char	vs_unknown[3];
@@ -92,6 +92,15 @@ struct vfat_dir_entry {
 	uint16_t	date_write;
 	uint16_t	cluster_low;
 	uint32_t	size;
+};
+
+struct fat32_fsinfo {
+	uint8_t signature1[4];
+	uint32_t reserved1[120];
+	uint8_t signature2[4];
+	uint32_t free_clusters;
+	uint32_t next_cluster;
+	uint32_t reserved2[4];
 };
 
 /* maximum number of clusters */
@@ -188,6 +197,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 	uint16_t sector_size, dir_entries, reserved;
 	uint32_t sect_count, fat_size, dir_size, cluster_count, fat_length;
 	uint32_t buf_size, start_data_sect, next, root_start, root_dir_entries;
+	const char *version = NULL;
 
 
 	/* non-standard magic strings */
@@ -251,11 +261,20 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 
 		blkid_probe_set_value(pr, "SEC_TYPE", (unsigned char *) "msdos",
                               sizeof("msdos"));
+
+		if (cluster_count < FAT12_MAX)
+			version = "FAT12";
+		else if (cluster_count < FAT16_MAX)
+			version = "FAT16";
 	} else {
 		unsigned char *buf;
+		uint16_t fsinfo_sect;
+
 		/* Search the FAT32 root dir for the label attribute */
 		buf_size = vs->vs_cluster_size * sector_size;
 		start_data_sect = reserved + fat_size;
+
+		version = "FAT32";
 
 		next = le32_to_cpu(vs->vs_root_cluster);
 		while (next && --maxloop) {
@@ -292,6 +311,30 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 		if (!vol_label || !memcmp(vol_label, no_name, 11))
 			vol_label = vs->vs_label;
 		vol_serno = vs->vs_serno;
+
+		/*
+		 * FAT32 should have a valid signature in the fsinfo block,
+		 * but also allow all bytes set to '\0', because some volumes
+		 * do not set the signature at all.
+		 */
+		fsinfo_sect = le16_to_cpu(vs->vs_fsinfo_sector);
+		if (fsinfo_sect) {
+			struct fat32_fsinfo *fsinfo;
+
+			buf = blkid_probe_get_buffer(pr,
+					fsinfo_sect * sector_size,
+					sizeof(struct fat32_fsinfo));
+			if (buf == NULL)
+				return -1;
+
+			fsinfo = (struct fat32_fsinfo *) buf;
+			if (memcmp(fsinfo->signature1, "\x52\x52\x61\x41", 4) != 0 &&
+			    memcmp(fsinfo->signature1, "\x00\x00\x00\x00", 4) != 0)
+				return -1;
+			if (memcmp(fsinfo->signature2, "\x72\x72\x41\x61", 4) != 0 &&
+			    memcmp(fsinfo->signature2, "\x00\x00\x00\x00", 4) != 0)
+				return -1;
+		}
 	}
 
 	if (vol_label && memcmp(vol_label, no_name, 11))
@@ -300,6 +343,9 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 	/* We can't just print them as %04X, because they are unaligned */
 	blkid_probe_sprintf_uuid(pr, vol_serno, 4, "%02X%02X-%02X%02X",
 		vol_serno[3], vol_serno[2], vol_serno[1], vol_serno[0]);
+
+	if (version)
+		blkid_probe_set_version(pr, version);
 
 	return 0;
 }
