@@ -45,8 +45,8 @@ static const struct blkid_idinfo *idinfos[] =
 	&silraid_idinfo,
 	&nvraid_idinfo,
 	&pdcraid_idinfo,
-	/* TODO: 45x highpoint_raid */
-	/* TODO: 37x highpoint_raid */
+	&highpoint45x_idinfo,
+	&highpoint37x_idinfo,
 	&adraid_idinfo,
 	&jmraid_idinfo,
 	&lvm2_idinfo,
