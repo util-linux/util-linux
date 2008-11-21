@@ -115,8 +115,7 @@ static int probe_lvm2(blkid_probe pr, const struct blkid_idmag *mag)
 }
 
 
-/* NOTE: libblkid uses "lvm2pv" as a name */
-
+/* NOTE: the original libblkid uses "lvm2pv" as a name */
 const struct blkid_idinfo lvm2_idinfo =
 {
 	.name		= "LVM2_member",
@@ -128,6 +127,17 @@ const struct blkid_idinfo lvm2_idinfo =
 		{ .magic = "LVM2 001", .len = 8, .sboff = 0x018 },
 		{ .magic = "LVM2 001", .len = 8, .kboff = 1, .sboff = 0x018 },
 		{ .magic = "LVM2 001", .len = 8, .kboff = 1, .sboff = 0x218 },
+		{ NULL }
+	}
+};
+
+const struct blkid_idinfo lvm1_idinfo =
+{
+	.name		= "LVM1_member",
+	.usage		= BLKID_USAGE_RAID,
+	.magics		=
+	{
+		{ .magic = "HM", .len = 2, .sboff = 0x400 },
 		{ NULL }
 	}
 };

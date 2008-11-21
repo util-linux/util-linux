@@ -50,6 +50,7 @@ extern const struct blkid_idinfo iso9660_idinfo;
 extern const struct blkid_idinfo udf_idinfo;
 extern const struct blkid_idinfo vfat_idinfo;
 extern const struct blkid_idinfo lvm2_idinfo;
+extern const struct blkid_idinfo lvm1_idinfo;
 extern const struct blkid_idinfo luks_idinfo;
 extern const struct blkid_idinfo highpoint37x_idinfo;
 extern const struct blkid_idinfo highpoint45x_idinfo;
