@@ -62,6 +62,7 @@ static void usage(int ex)
 	  "flock (%s)\n"
 	  "Usage: %s [-sxun][-w #] fd#\n"
 	  "       %s [-sxon][-w #] file [-c] command...\n"
+	  "       %s [-sxon][-w #] directory [-c] command...\n"
 	  "  -s  --shared     Get a shared lock\n"
 	  "  -x  --exclusive  Get an exclusive lock\n"
 	  "  -u  --unlock     Remove a lock\n"
@@ -201,7 +202,11 @@ int main(int argc, char *argv[])
     }
 
     filename = argv[optind];
-    fd = open(filename, O_RDONLY|O_CREAT, 0666);
+    fd = open(filename, O_RDONLY|O_NOCTTY|O_CREAT, 0666);
+    /* Linux doesn't like O_CREAT on a directory, even though it should be a
+       no-op */
+    if (fd < 0 && errno == EISDIR)
+        fd = open(filename, O_RDONLY|O_NOCTTY);
 
     if ( fd < 0 ) {
       err = errno;

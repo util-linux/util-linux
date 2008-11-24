@@ -30,6 +30,8 @@ flock \- Manage locks from shell scripts
 .SH SYNOPSIS
 \fBflock\fP [\fB\-sxon\fP] [\fB\-w\fP \fItimeout\fP] \fIlockfile\fP [\fB\-c\fP] \fIcommand...\fP
 .PP
+\fBflock\fP [\fB\-sxon\fP] [\fB\-w\fP \fItimeout\fP] \fIlockdir\fP [\fB\-c\fP] \fIcommand...\fP
+.PP
 \fBflock\fP [\fB\-sxun\fP] [\fB\-w\fP \fItimeout\fP] \fIfd\fP
 .SH DESCRIPTION
 .PP
@@ -37,14 +39,14 @@ This utility manages
 .BR flock (2)
 locks from within shell scripts or the command line.
 .PP
-The first form wraps the lock around the executing a command, in a manner similar to
+The first and second forms wraps the lock around the executing a command, in a manner similar to
 .BR su (1)
 or
 .BR newgrp (1).
-It locks a specified file, which is created (assuming appropriate
+It locks a specified file or directory, which is created (assuming appropriate
 permissions), if it does not already exist.
 .PP
-The second form is convenient inside shell scripts, and is usually
+The third form is convenient inside shell scripts, and is usually
 used the following manner:
 .PP
 \fC(
