@@ -83,7 +83,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&ocfs_idinfo,
 	&ocfs2_idinfo,
 	&oracleasm_idinfo,
-	/* TODO: vxfs */
+	&vxfs_idinfo,
 	/* TODO: squashfs */
 	/* TODO: netware */
 };
