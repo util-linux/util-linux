@@ -77,7 +77,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&ntfs_idinfo,
 	&cramfs_idinfo,
 	&romfs_idinfo,
-	/* TODO: minix */
+	&minix_idinfo,
 	&gfs_idinfo,
 	&gfs2_idinfo,
 	&ocfs_idinfo,

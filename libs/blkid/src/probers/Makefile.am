@@ -32,6 +32,7 @@ libprobers_a_SOURCES =	probers.h \
 			luks.c \
 			highpoint_raid.c \
 			vxfs.c \
+			minix.c \
 			lvm.c
 
 all-local: $(lib_LIBRARIES)
