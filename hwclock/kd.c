@@ -1,8 +1,8 @@
 /* kd.c - KDGHWCLK stuff, possibly m68k only - deprecated */
 
-#ifndef __m68k__
-
 #include "clock.h"
+
+#ifndef __m68k__
 
 struct clock_ops *
 probe_for_kd_clock() {
@@ -13,11 +13,9 @@ probe_for_kd_clock() {
 
 #include <unistd.h>		/* for close() */
 #include <fcntl.h>		/* for O_RDONLY */
-#include <errno.h>
 #include <sysexits.h>
 #include <sys/ioctl.h>
 
-#include "clock.h"
 #include "nls.h"
 
 static int con_fd = -1;		/* opened by probe_for_kd_clock() */
