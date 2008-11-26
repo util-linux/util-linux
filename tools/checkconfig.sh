@@ -30,8 +30,14 @@ while (( "$#" )); do
 
 	[ ! -f "$srcfile" ] && continue;
 
+	# Note that we use HAVE_ macros since util-linux-ng-2.14. The
+	# previous version also have used ENABLE_ too.
+	#
+	# ENABLE_ and HAVE_ macros shouldn't be used for any other pupose that
+	# for config/build options.
+	#
 	DEFINES=$(sed -n -e 's/.*[ \t(]\+\(HAVE_[[:alnum:]]\+[^ \t);]*\).*/\1/p' \
-                         -e 's/.*[ \t(]\+\(ENABLE_[[:alnum:]]\+[^ \t);]*\).*/\1/p' \
+			 -e 's/.*[ \t(]\+\(ENABLE_[[:alnum:]]\+[^ \t);]*\).*/\1/p' \
                          $srcfile | sort -u)
 	[ -z "$DEFINES" ] && continue
 

@@ -56,7 +56,7 @@ struct device_parameter { /* 48 bytes */
 #define	TRACK_MULTIVOL	0x08
 #define	IGNORE_ERRORS	0x10
 #define	RESEEK		0x20
-#define	ENABLE_CMDTAGQ	0x40
+#define	CMDTAGQ_ENABLE	0x40
 
 typedef struct {
 	unsigned int   magic;		 /* expect SGI_LABEL_MAGIC */
