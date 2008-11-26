@@ -30,9 +30,9 @@
 #include <getopt.h>
 #include <time.h>
 #include <sys/file.h>
-#include <sys/types.h>
 #include <sys/socket.h>
 #include <netdb.h>
+
 #include "xstrncpy.h"
 #include "nls.h"
 #include "pathnames.h"
@@ -72,7 +72,6 @@
 #ifdef	SYSV_STYLE
 #define	ISSUE "/etc/issue"		/* displayed before the login prompt */
 #include <sys/utsname.h>
-#include <time.h>
 #endif
 
 #define LOGIN " login: "		/* login prompt */
