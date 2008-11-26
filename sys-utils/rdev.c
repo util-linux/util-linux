@@ -59,6 +59,14 @@ Wed Jun 22 21:12:29 1994: Applied patches from Dave
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
+#include <errno.h>
+#include <fcntl.h>
+#include <dirent.h>
+#include <unistd.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 #include "nls.h"
 
 /* rdev.c  -  query/set root device. */
@@ -81,16 +89,6 @@ usage(void) {
     exit(-1);
 }
 
-#include <stdio.h>
-#include <string.h>
-#include <ctype.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <dirent.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <sys/types.h>
-#include <sys/stat.h>
 
 #define DEFAULT_OFFSET 508
 
