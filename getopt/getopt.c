@@ -44,12 +44,7 @@
 #include <string.h>
 #include <unistd.h>
 #include <ctype.h>
-
-#if LIBCGETOPT
 #include <getopt.h>
-#else
-#include "getopt.h"
-#endif
 
 #include "nls.h"
 
@@ -373,12 +368,9 @@ int main(int argc, char *argv[])
 	int opt;
 	int compatible=0;
 
-#if WITHOUT_GETTEXT
-#else
 	setlocale(LC_ALL,"");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-#endif
 
 	init_longopt();
 

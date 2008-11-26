@@ -1,9 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 usrbinexec_PROGRAMS = getopt
-
-getopt_CPPFLAGS = -DLIBCGETOPT=1 $(AM_CPPFLAGS)
-
 dist_man_MANS = getopt.1
 
 exampledir = $(datadir)/getopt/
