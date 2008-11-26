@@ -102,23 +102,20 @@
 #include <utmp.h>
 #include <setjmp.h>
 #include <stdlib.h>
-#include <string.h>
 #include <sys/syslog.h>
 #include <sys/sysmacros.h>
+#include <linux/major.h>
 #include <netdb.h>
 #ifdef HAVE_LIBAUDIT
 # include <libaudit.h>
 #endif
+
 #include "pathnames.h"
 #include "my_crypt.h"
 #include "login.h"
 #include "xstrncpy.h"
 #include "nls.h"
 
-#include <sys/sysmacros.h>
-#include <linux/major.h>
-
-#include <utmp.h>
 
 #ifdef HAVE_SECURITY_PAM_MISC_H
 #  include <security/pam_appl.h>
