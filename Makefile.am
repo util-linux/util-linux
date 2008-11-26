@@ -48,9 +48,14 @@ distclean-local:
 
 
 checkincludes:
-	-find * $(RCS_FIND_IGNORE) \
+	@find * $(RCS_FIND_IGNORE) \
 		-name '*.[hcS]' -type f -print | sort -u \
 		| xargs $(top_srcdir)/tools/checkincludes.pl
+
+checkconfig:
+	@find * $(RCS_FIND_IGNORE) \
+		-name '*.[hcS]' -type f -print | sort -u \
+		| xargs $(top_srcdir)/tools/checkconfig.sh $(top_srcdir)
 
 
 ENABLE_ALL = --enable-static-programs \
