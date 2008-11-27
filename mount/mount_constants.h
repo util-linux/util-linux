@@ -56,6 +56,9 @@
 #ifndef MS_SHARED
 #define MS_SHARED	(1<<20)	/* 1048576 Shared*/
 #endif
+#ifndef MS_I_VERSION
+#define MS_I_VERSION	(1<<23)	/* update inode I_version field */
+#endif
 /*
  * Magic mount flag number. Had to be or-ed to the flag values.
  */
