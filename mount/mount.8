@@ -65,8 +65,11 @@ The standard form of the
 .B mount
 command, is
 .RS
+
 .br
 .BI "mount \-t" " type device dir"
+.br
+
 .RE
 This tells the kernel to attach the file system found on
 .I device
@@ -82,25 +85,25 @@ the pathname
 refers to the root of the file system on
 .IR device .
 
+.B The listing and help.
+.RS
 Three forms of invocation do not actually mount anything:
-.RS
-.br
+.TP
 .B "mount \-h"
-.RE
-prints a help message;
-.RS
-.br
+prints a help message
+.TP
 .B "mount \-V"
-.RE
-prints a version string; and just
-.RS
+prints a version string
+.TP
 .BI "mount [-l] [-t" " type" ]
-.RE
 lists all mounted file systems (of type
 .IR type ).
 The option \-l adds the (ext2, ext3 and XFS) labels in this listing.
 See below.
+.RE
 
+.B The bind mounts.
+.RS
 .\" In fact since 2.3.99. At first the syntax was mount -t bind.
 Since Linux 2.4.0 it is possible to remount part of the
 file hierarchy somewhere else. The call is
@@ -113,6 +116,7 @@ or fstab entry is:
 .br
 .B "/olddir  /newdir  none  bind"
 .RE
+
 After this call the same contents is accessible in two places.
 One can also remount a single file (on a single file).
 
@@ -128,14 +132,20 @@ a second place using
 Note that the filesystem mount options will remain the same as those
 on the original mount point, and cannot be changed by passing the -o
 option along with --bind/--rbind.
+.RE
 
+.B The move operation.
+.RS
 Since Linux 2.5.1 it is possible to atomically move a mounted tree
 to another place. The call is
 .RS
 .br
 .B "mount --move olddir newdir"
 .RE
+.RE
 
+.B The shared subtrees operations.
+.RS
 Since Linux 2.6.15 it is possible to mark a mount and its submounts as shared,
 private, slave or unbindable. A shared mount provides ability to create mirrors
 of that mount such that mounts and umounts within any of the mirrors propagate
@@ -169,6 +179,22 @@ mounts under a given mountpoint.
 .B "mount --make-runbindable mountpoint"
 .br
 .RE
+.RE
+
+.B The device indication.
+.RS
+Most devices are indicated by a file name (of a block special device), like
+.IR /dev/sda1 ,
+but there are other possibilities. For example, in the case of an NFS mount,
+.I device
+may look like
+.IR knuth.cwi.nl:/dir .
+It is possible to indicate a block special device using its
+volume
+.B LABEL
+or
+.B UUID
+(see the \-L and \-U options below).
 
 The
 .I proc
@@ -181,24 +207,18 @@ can be used instead of a device specification.
 is less fortunate: the error message `none busy' from
 .B umount
 can be confusing.)
+.RE
 
-Most devices are indicated by a file name (of a block special device), like
-.IR /dev/sda1 ,
-but there are other possibilities. For example, in the case of an NFS mount,
-.I device
-may look like
-.IR knuth.cwi.nl:/dir .
-It is possible to indicate a block special device using its
-volume label or UUID (see the \-L and \-U options below).
-
+.B The /etc/fstab, /etc/mtab and /proc/mounts files.
+.RS
 The file
 .I /etc/fstab
 (see
 .BR fstab (5)),
 may contain lines describing what devices are usually
-mounted where, using which options. This file is used in three ways:
+mounted where, using which options.
 .LP
-(i) The command
+The command
 .RS
 .br
 .BI "mount \-a [\-t " type "] [\-O " optlist ]
@@ -213,11 +233,47 @@ keyword. Adding the
 option will make mount fork, so that the
 filesystems are mounted simultaneously.
 .LP
-(ii) When mounting a file system mentioned in
+When mounting a file system mentioned in
 .IR fstab ,
 it suffices to give only the device, or only the mount point.
-.LP
-(iii) Normally, only the superuser can mount file systems.
+
+
+The programs
+.B mount
+and
+.B umount
+maintain a list of currently mounted file systems in the file
+.IR /etc/mtab .
+If no arguments are given to
+.BR mount ,
+this list is printed.
+
+When the
+.I proc
+filesystem is mounted (say at
+.IR /proc ),
+the files
+.I /etc/mtab
+and
+.I /proc/mounts
+have very similar contents. The former has somewhat
+more information, such as the mount options used,
+but is not necessarily up-to-date (cf. the
+.B \-n
+option below). It is possible to replace
+.I /etc/mtab
+by a symbolic link to
+.IR /proc/mounts ,
+and especially when you have very large numbers of mounts
+things will be much faster with that symlink,
+but some information is lost that way, and in particular
+working with the loop device will be less convenient,
+and using the "user" option will fail.
+.RE
+
+.B The non-superuser mounts.
+.RS
+Normally, only the superuser can mount file systems.
 However, when
 .I fstab
 contains the
@@ -262,38 +318,7 @@ The
 .B group
 option is similar, with the restriction that the user must be
 member of the group of the special file.
-
-The programs
-.B mount
-and
-.B umount
-maintain a list of currently mounted file systems in the file
-.IR /etc/mtab .
-If no arguments are given to
-.BR mount ,
-this list is printed.
-
-When the
-.I proc
-filesystem is mounted (say at
-.IR /proc ),
-the files
-.I /etc/mtab
-and
-.I /proc/mounts
-have very similar contents. The former has somewhat
-more information, such as the mount options used,
-but is not necessarily up-to-date (cf. the
-.B \-n
-option below). It is possible to replace
-.I /etc/mtab
-by a symbolic link to
-.IR /proc/mounts ,
-and especially when you have very large numbers of mounts
-things will be much faster with that symlink,
-but some information is lost that way, and in particular
-working with the loop device will be less convenient,
-and using the "user" option will fail.
+.RE
 
 .SH COMMAND LINE OPTIONS
 The full set of mount options used by an invocation of
