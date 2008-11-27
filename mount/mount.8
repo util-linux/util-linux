@@ -296,11 +296,11 @@ but some information is lost that way, and in particular
 working with the loop device will be less convenient,
 and using the "user" option will fail.
 
-.SH OPTIONS
-The full set of options used by an invocation of
+.SH COMMAND LINE OPTIONS
+The full set of mount options used by an invocation of
 .B mount
 is determined by first extracting the
-options for the file system from the
+mount options for the file system from the
 .I fstab
 table, then applying any options specified by the
 .B \-o
@@ -308,7 +308,7 @@ argument, and finally applying a
 .BR \-r " or " \-w
 option, when present.
 
-Options available for the
+Command line options available for the
 .B mount
 command:
 .TP
@@ -577,7 +577,35 @@ that are either ext2 or have the _netdev option specified.
 .B \-o
 Options are specified with a
 .B \-o
-flag followed by a comma separated string of options.
+flag followed by a comma separated string of options. For example:
+.RS
+.RS
+.B "mount LABEL=mydisk \-o noatime,nouser"
+.RE
+
+For more details, see
+.B FILESYSTEM INDEPENDENT MOUNT OPTIONS
+and
+.B FILESYSTEM SPECIFIC MOUNT OPTIONS
+sections.
+.RE
+.TP
+.B \-B, \-\-bind
+Remount a subtree somewhere else (so that its contents are available
+in both places). See above.
+.TP
+.B \-R, \-\-rbind
+Remount a subtree and all possible submounts somewhere else (so that its
+contents are available in both places). See above.
+.TP
+.B \-M, \-\-move
+Move a subtree to some other place. See above.
+.RE
+
+.SH FILESYSTEM INDEPENDENT MOUNT OPTIONS
+
+
+
 Some of these options are only useful when they appear in the
 .I /etc/fstab
 file.
@@ -590,7 +618,7 @@ The following options apply to any file system that is being
 mounted (but not every file system actually honors them - e.g., the
 .B sync
 option today has effect only for ext2, ext3, fat, vfat and ufs):
-.RS
+
 .TP
 .B async
 All I/O to the file system should be done asynchronously. (See also the
@@ -655,7 +683,7 @@ You can set the default security context for unlabeled files using
 option. This overrides the value set for unlabeled files in the policy and requires a
 file system that supports xattr labeling.
 
-For more details see
+For more details, see
 .BR selinux (8)
 
 .TP
