@@ -24,7 +24,8 @@ umount_SOURCES = umount.c $(mount_common)
 umount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
-swapon_SOURCES = swapon.c swap_constants.h $(utils_common)
+swapon_SOURCES = swapon.c swap_constants.h $(utils_common) \
+	../lib/linux_version.c ../lib/blkdev.c
 
 losetup_SOURCES = lomount.c sundries.c xmalloc.c realpath.c \
 	loop.h lomount.h xmalloc.h sundries.h realpath.h
@@ -71,7 +72,6 @@ endif
 
 if HAVE_VOLUME_ID
 utils_common += fsprobe_volumeid.c
-swapon_SOURCES += ../lib/linux_version.c ../lib/blkdev.c
 LDADD_common += $(VOLUMEID_LIBS)
 LDADD_common_static += $(VOLUMEID_LIBS_STATIC)
 endif

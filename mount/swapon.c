@@ -13,6 +13,9 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #include <fcntl.h>
+#include <stdint.h>
+#include "bitops.h"
+#include "blkdev.h"
 #include "xmalloc.h"
 #include "swap_constants.h"
 #include "nls.h"
@@ -20,6 +23,7 @@
 #include "realpath.h"
 #include "pathnames.h"
 #include "sundries.h"
+#include "swapheader.h"
 
 #define PATH_MKSWAP	"/sbin/mkswap"
 
@@ -38,6 +42,8 @@
 
 #define QUIET	1
 #define CANONIC	1
+
+#define MAX_PAGESIZE	(64 * 1024)
 
 int all = 0;
 int priority = -1;	/* non-prioritized swap by default */
@@ -238,11 +244,120 @@ swap_reinitialize(const char *device) {
 	return -1; /* error */
 }
 
+int
+swap_detect_signature(const char *buf)
+{
+	if ((memcmp(buf, "SWAP-SPACE", 10) == 0) ||
+            (memcmp(buf, "SWAPSPACE2", 10) == 0))
+		return 1;
+
+	return 0;
+}
+
+/* return the pagesize the swap format has been built with
+ * as swap metadata depends on the pagesize, we have to
+ * reinitialize if it does not match with the current pagesize
+ * returns 0 if not a valid swap format
+ */
+unsigned int
+swap_get_pagesize(const char *dev)
+{
+	int fd;
+	char *buf;
+	unsigned int page, last_page = 0;
+	unsigned int pagesize = 0;
+	unsigned long long size, swap_size;
+	int swap_version = 0;
+	int flip = 0;
+	int datasz;
+	struct swap_header_v1_2 *s;
+	struct stat sb;
+
+	fd = open(dev, O_RDONLY);
+	if (fd == -1) {
+		perror("open");
+		return 0;
+	}
+
+	/* get size */
+	if (fstat(fd, &sb)) {
+		perror("fstat");
+		goto err;
+	}
+	if (S_ISBLK(sb.st_mode)) {
+		if (blkdev_get_size(fd, &size)) {
+			perror("blkdev_get_size");
+			goto err;
+		}
+	} else
+		size = sb.st_size;
+
+	buf = malloc(MAX_PAGESIZE);
+	if (!buf) {
+		perror("malloc");
+		goto err;
+	}
+
+	datasz = read(fd, buf, MAX_PAGESIZE);
+	if (datasz == (ssize_t) -1) {
+		perror("read");
+		goto err1;
+	}
+
+	for (page = 0x1000; page <= MAX_PAGESIZE; page <<= 1) {
+		/* skip 32k pagesize since this does not seem to
+		 * be supported */
+		if (page == 0x8000)
+			continue;
+		/* the smallest swap area is PAGE_SIZE*10, it means
+		 * 40k, that's less than MAX_PAGESIZE */
+		if (datasz < (page - 10))
+			break;
+		if (swap_detect_signature(buf + page - 10)) {
+			pagesize = page;
+			break;
+		}
+	}
+
+	if (pagesize) {
+		s = (struct swap_header_v1_2 *)buf;
+		if (s->version == 1) {
+			swap_version = 1;
+			last_page = s->last_page;
+		} else if (swab32(s->version) == 1) {
+			flip = 1;
+			swap_version = 1;
+			last_page = swab32(s->last_page);
+		}
+		if (verbose)
+			fprintf(stderr, _("found %sswap v%d signature string"
+					" for %d KiB PAGE_SIZE\n"),
+				flip ? "other-endian " : "", swap_version,
+				pagesize / 1024);
+		swap_size = (last_page + 1) * pagesize;
+		if (swap_size > size) {
+			if (verbose)
+				fprintf(stderr, _("last_page 0x%08llx is larger"
+					" than actual size of swapspace\n"),
+					(unsigned long long)swap_size);
+			pagesize = 0;
+		}
+	}
+
+err1:
+	free(buf);
+err:
+	close(fd);
+	return pagesize;
+}
+
 static int
 do_swapon(const char *orig_special, int prio, int canonic) {
 	int status;
+	int reinitialize = 0;
 	struct stat st;
 	const char *special = orig_special;
+	unsigned int swap_pagesize = 0;
 
 	if (verbose)
 		printf(_("%s on %s\n"), progname, orig_special);
@@ -260,6 +375,15 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 		return -1;
 	}
 
+	swap_pagesize = swap_get_pagesize(special);
+	if (swap_pagesize && (getpagesize() != swap_pagesize)) {
+		if (verbose)
+			fprintf(stderr, _("%s: %s: swap format pagesize does not match."
+				" Reinitializing the swap.\n"),
+				progname, special);
+		reinitialize = 1;
+	}
+
 	/* We have to reinitialize swap with old (=useless) software suspend
 	 * data. The problem is that if we don't do it, then we get data
 	 * corruption the next time an attempt at unsuspending is made.
@@ -268,6 +392,10 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 		fprintf(stdout, _("%s: %s: software suspend data detected. "
 					"Reinitializing the swap.\n"),
 			progname, special);
+		reinitialize = 1;
+	}
+
+	if (reinitialize) {
 		if (swap_reinitialize(special) < 0)
 			return -1;
 	}
