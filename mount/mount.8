@@ -593,166 +593,26 @@ option today has effect only for ext2, ext3, fat, vfat and ufs):
 .RS
 .TP
 .B async
-All I/O to the file system should be done asynchronously.
+All I/O to the file system should be done asynchronously. (See also the
+.B sync
+option.)
 .TP
 .B atime
 Update inode access time for each access. This is the default.
+.TP
+.B noatime
+Do not update inode access times on this file system (e.g, for faster
+access on the news spool to speed up news servers).
 .TP
 .B auto
 Can be mounted with the
 .B \-a
 option.
 .TP
-.B defaults
-Use default options:
-.BR rw ", " suid ", " dev ", " exec ", " auto ", " nouser ", and " async.
-.TP
-.B dev
-Interpret character or block special devices on the file system.
-.TP
-.B exec
-Permit execution of binaries.
-.TP
-.B group
-Allow an ordinary (i.e., non-root) user to mount the file system if one
-of his groups matches the group of the device.
-This option implies the options
-.BR nosuid " and " nodev
-(unless overridden by subsequent options, as in the option line
-.BR group,dev,suid ).
-.TP
-.B iversion
-Every time the inode is modified, the i_version field will be incremented.
-.TP
-.B noiversion
-Do not increment the i_version inode field.
-.TP
-.B nofail
-Do not report errors for this device if it does not exist.
-.TP
-.B mand
-Allow mandatory locks on this filesystem. See
-.BR fcntl (2).
-.TP
-.B _netdev
-The filesystem resides on a device that requires network access
-(used to prevent the system from attempting to mount these filesystems
-until the network has been enabled on the system).
-.TP
-.B noatime
-Do not update inode access times on this file system (e.g, for faster
-access on the news spool to speed up news servers).
-.TP
-.B nodiratime
-Do not update directory inode access times on this filesystem.
-.TP
-.B relatime
-Update inode access times relative to modify or change time.  Access
-time is only updated if the previous access time was earlier than the
-current modify or change time. (Similar to noatime, but doesn't break
-mutt or other applications that need to know if a file has been read
-since the last time it was modified.)
-.TP
-.B norelatime
-Do not use
-.B realatime
-feature (e.g, for systems where the feature is enabled by default, for
-more details see mount options in /proc/mounts).
-.TP
 .B noauto
 Can only be mounted explicitly (i.e., the
 .B \-a
 option will not cause the file system to be mounted).
-.TP
-.B nodev
-Do not interpret character or block special devices on the file
-system.
-.TP
-.B noexec
-Do not allow direct execution of any binaries on the mounted file system.
-(Until recently it was possible to run binaries anyway using a command like
-/lib/ld*.so /mnt/binary. This trick fails since Linux 2.4.25 / 2.6.0.)
-.TP
-.B nomand
-Do not allow mandatory locks on this filesystem.
-.TP
-.B nosuid
-Do not allow set-user-identifier or set-group-identifier bits to take
-effect. (This seems safe, but is in fact rather unsafe if you have
-suidperl(1) installed.)
-.TP
-.B nouser
-Forbid an ordinary (i.e., non-root) user to mount the file system.
-This is the default.
-.TP
-.B owner
-Allow an ordinary (i.e., non-root) user to mount the file system if he
-is the owner of the device.
-This option implies the options
-.BR nosuid " and " nodev
-(unless overridden by subsequent options, as in the option line
-.BR owner,dev,suid ).
-.TP
-.B remount
-Attempt to remount an already-mounted file system.  This is commonly
-used to change the mount flags for a file system, especially to make a
-readonly file system writeable. It does not change device or mount point.
-
-The remount functionality follows the standard way how the mount command works
-with options from fstab. It means the mount command doesn't read fstab (or
-mtab) only when a
-.IR device
-and
-.IR dir
-are fully specified.
-
-.BR "mount -o remount,rw /dev/foo /dir"
-
-After this call all old mount options are replaced and arbitrary stuff from
-fstab is ignored, except the loop= option which is internally generated and
-maintained by the mount command.
-
-.BR "mount -o remount,rw  /dir"
-
-After this call mount reads fstab (or mtab) and merges these options with
-options from command line (
-.B -o
-).
-.TP
-.B ro
-Mount the file system read-only.
-.TP
-.B rw
-Mount the file system read-write.
-.TP
-.B suid
-Allow set-user-identifier or set-group-identifier bits to take
-effect.
-.TP
-.B sync
-All I/O to the file system should be done synchronously. In case of media with limited number of write cycles 
-(e.g. some flash drives) "sync" may cause life-cycle shortening.
-.TP
-.B dirsync
-All directory updates within the file system should be done synchronously.
-This affects the following system calls: creat, link, unlink, symlink,
-mkdir, rmdir, mknod and rename.
-.TP
-.B user
-Allow an ordinary user to mount the file system.
-The name of the mounting user is written to mtab so that he can unmount
-the file system again.
-This option implies the options
-.BR noexec ", " nosuid ", and " nodev
-(unless overridden by subsequent options, as in the option line
-.BR user,exec,dev,suid ).
-.TP
-.B users
-Allow every user to mount and unmount the file system.
-This option implies the options
-.BR noexec ", " nosuid ", and " nodev
-(unless overridden by subsequent options, as in the option line
-.BR users,exec,dev,suid ).
 .TP
 \fBcontext=\fP\fIcontext\fP, \fBfscontext=\fP\fIcontext\fP and \fBdefcontext=\fP\fIcontext\fP
 The
@@ -797,6 +657,152 @@ file system that supports xattr labeling.
 
 For more details see
 .BR selinux (8)
+
+.TP
+.B defaults
+Use default options:
+.BR rw ", " suid ", " dev ", " exec ", " auto ", " nouser ", and " async.
+.TP
+.B dev
+Interpret character or block special devices on the file system.
+.TP
+.B nodev
+Do not interpret character or block special devices on the file
+system.
+.TP
+.B diratime
+Update directory inode access times on this filesystem. This is the default.
+.TP
+.B nodiratime
+Do not update directory inode access times on this filesystem.
+.TP
+.B dirsync
+All directory updates within the file system should be done synchronously.
+This affects the following system calls: creat, link, unlink, symlink,
+mkdir, rmdir, mknod and rename.
+.TP
+.B exec
+Permit execution of binaries.
+.TP
+.B noexec
+Do not allow direct execution of any binaries on the mounted file system.
+(Until recently it was possible to run binaries anyway using a command like
+/lib/ld*.so /mnt/binary. This trick fails since Linux 2.4.25 / 2.6.0.)
+.TP
+.B group
+Allow an ordinary (i.e., non-root) user to mount the file system if one
+of his groups matches the group of the device.
+This option implies the options
+.BR nosuid " and " nodev
+(unless overridden by subsequent options, as in the option line
+.BR group,dev,suid ).
+.TP
+.B iversion
+Every time the inode is modified, the i_version field will be incremented.
+.TP
+.B noiversion
+Do not increment the i_version inode field.
+.TP
+.B mand
+Allow mandatory locks on this filesystem. See
+.BR fcntl (2).
+.TP
+.B nomand
+Do not allow mandatory locks on this filesystem.
+.TP
+.B _netdev
+The filesystem resides on a device that requires network access
+(used to prevent the system from attempting to mount these filesystems
+until the network has been enabled on the system).
+.TP
+.B nofail
+Do not report errors for this device if it does not exist.
+.TP
+.B relatime
+Update inode access times relative to modify or change time.  Access
+time is only updated if the previous access time was earlier than the
+current modify or change time. (Similar to noatime, but doesn't break
+mutt or other applications that need to know if a file has been read
+since the last time it was modified.)
+.TP
+.B norelatime
+Do not use
+.B realatime
+feature (e.g, for systems where the feature is enabled by default, for
+more details see mount options in /proc/mounts).
+.TP
+.B suid
+Allow set-user-identifier or set-group-identifier bits to take
+effect.
+.TP
+.B nosuid
+Do not allow set-user-identifier or set-group-identifier bits to take
+effect. (This seems safe, but is in fact rather unsafe if you have
+suidperl(1) installed.)
+.TP
+.B owner
+Allow an ordinary (i.e., non-root) user to mount the file system if he
+is the owner of the device.
+This option implies the options
+.BR nosuid " and " nodev
+(unless overridden by subsequent options, as in the option line
+.BR owner,dev,suid ).
+.TP
+.B remount
+Attempt to remount an already-mounted file system.  This is commonly
+used to change the mount flags for a file system, especially to make a
+readonly file system writeable. It does not change device or mount point.
+
+The remount functionality follows the standard way how the mount command works
+with options from fstab. It means the mount command doesn't read fstab (or
+mtab) only when a
+.IR device
+and
+.IR dir
+are fully specified.
+
+.BR "mount -o remount,rw /dev/foo /dir"
+
+After this call all old mount options are replaced and arbitrary stuff from
+fstab is ignored, except the loop= option which is internally generated and
+maintained by the mount command.
+
+.BR "mount -o remount,rw  /dir"
+
+After this call mount reads fstab (or mtab) and merges these options with
+options from command line (
+.B -o
+).
+.TP
+.B ro
+Mount the file system read-only.
+.TP
+.B rw
+Mount the file system read-write.
+.TP
+.B sync
+All I/O to the file system should be done synchronously. In case of media with limited number of write cycles 
+(e.g. some flash drives) "sync" may cause life-cycle shortening.
+.TP
+.B user
+Allow an ordinary user to mount the file system.
+The name of the mounting user is written to mtab so that he can unmount
+the file system again.
+This option implies the options
+.BR noexec ", " nosuid ", and " nodev
+(unless overridden by subsequent options, as in the option line
+.BR user,exec,dev,suid ).
+.TP
+.B nouser
+Forbid an ordinary (i.e., non-root) user to mount the file system.
+This is the default.
+.TP
+.B users
+Allow every user to mount and unmount the file system.
+This option implies the options
+.BR noexec ", " nosuid ", and " nodev
+(unless overridden by subsequent options, as in the option line
+.BR users,exec,dev,suid ).
 .RE
 .TP
 .B \-\-bind
