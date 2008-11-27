@@ -636,6 +636,12 @@ This option implies the options
 (unless overridden by subsequent options, as in the option line
 .BR group,dev,suid ).
 .TP
+.B iversion
+Every time the inode is modified, the i_version field will be incremented.
+.TP
+.B noiversion
+Do not increment the i_version inode field.
+.TP
 .B nofail
 Do not report errors for this device if it does not exist.
 .TP

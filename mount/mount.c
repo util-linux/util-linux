@@ -165,6 +165,10 @@ static const struct opt_map opt_map[] = {
   { "atime",	0, 1, MS_NOATIME },	/* Update access time */
   { "noatime",	0, 0, MS_NOATIME },	/* Do not update access time */
 #endif
+#ifdef MS_I_VERSION
+  { "iversion",	0, 0, MS_I_VERSION },	/* Update inode I_version time */
+  { "noiversion", 0, 1, MS_I_VERSION },	/* Don't update inode I_version time */
+#endif
 #ifdef MS_NODIRATIME
   { "diratime",	0, 1, MS_NODIRATIME },	/* Update dir access times */
   { "nodiratime", 0, 0, MS_NODIRATIME },/* Do not update dir access times */
