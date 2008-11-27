@@ -12,7 +12,7 @@ sbin_PROGRAMS = mkfs mkswap fsck.minix mkfs.minix mkfs.bfs
 fsck_minix_SOURCES = fsck.minix.c bitops.h minix.h
 mkfs_minix_SOURCES = mkfs.minix.c bitops.h minix.h $(utils_common)
 mkfs_bfs_SOURCES = mkfs.bfs.c $(utils_common)
-mkswap_SOURCES = mkswap.c swapheader.h $(utils_common)
+mkswap_SOURCES = mkswap.c $(utils_common)
 
 usrbinexec_PROGRAMS = isosize
 usrsbinexec_PROGRAMS =
