@@ -27,6 +27,10 @@
 #define __BLKID_ATTR(x)
 #endif
 
+/* TODO: move to some top-level util-linux include file */
+#ifndef ARRAY_SIZE
+#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
+#endif
 
 /*
  * This describes the attributes of a specific device.

@@ -71,7 +71,7 @@ static const struct blkid_idinfo *idinfos[] =
 	/* TODO: zfs */
 	&hfsplus_idinfo,
 	&hfs_idinfo,
-	/* TODO: ufs */
+	&ufs_idinfo,
 	/* TODO: hpfs */
 	/* TODO: sysv / xenix */
 	&ntfs_idinfo,
