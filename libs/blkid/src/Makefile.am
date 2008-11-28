@@ -4,8 +4,6 @@ SUBDIRS = probers .
 
 AM_CPPFLAGS += -I$(top_builddir)/libs/blkid/src
 
-probers = prober-cramfs.c
-
 # static library
 lib_LIBRARIES = libblkid.a
 libblkid_a_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
