@@ -247,7 +247,7 @@ identical_file(struct entry *e1, struct entry *e2){
  */
 #define MAX_INPUT_NAMELEN 255
 
-static int find_identical_file(struct entry *orig, struct entry *new)
+static int find_identical_file(struct entry *orig, struct entry *new, loff_t *fslen_ub)
 {
         if (orig == new)
 		return 1;
@@ -264,19 +264,20 @@ static int find_identical_file(struct entry *orig, struct entry *new)
 		    !memcmp(orig->md5sum, new->md5sum, 16) &&
 		    identical_file(orig, new)) {
 			new->same = orig;
+			*fslen_ub -= new->size;
 			return 1;
 		}
         }
-        return find_identical_file(orig->child, new) ||
-                   find_identical_file(orig->next, new);
+        return find_identical_file(orig->child, new, fslen_ub) ||
+                   find_identical_file(orig->next, new, fslen_ub);
 }
 
-static void eliminate_doubles(struct entry *root, struct entry *orig) {
+static void eliminate_doubles(struct entry *root, struct entry *orig, loff_t *fslen_ub) {
         if (orig) {
                 if (orig->size && orig->path)
-			find_identical_file(root,orig);
-                eliminate_doubles(root,orig->child);
-                eliminate_doubles(root,orig->next);
+			find_identical_file(root,orig, fslen_ub);
+                eliminate_doubles(root,orig->child, fslen_ub);
+                eliminate_doubles(root,orig->next, fslen_ub);
         }
 }
 
@@ -859,7 +860,7 @@ int main(int argc, char **argv)
 	}
 
         /* find duplicate files */
-        eliminate_doubles(root_entry,root_entry);
+        eliminate_doubles(root_entry,root_entry, &fslen_ub);
 
 	/* TODO: Why do we use a private/anonymous mapping here
            followed by a write below, instead of just a shared mapping
