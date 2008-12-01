@@ -1,0 +1,25 @@
+
+ - add blkid --low-probe
+
+ - add hex-encoding from libudev
+
+ - add blkid -o | --format=full|value|udev
+
+ - add MD5(lib/md5.c) UUID to HFS, for more details see libvolume_id
+ - consolidate "getsize" stuff (see getsize.c and lib/blkdev.c)
+
+ - add a new flag to keep information that FS is ready to share the device with
+   any other FS (iso9960, udf, ...)
+
+ - create a new function
+
+	blkid_do_safeprobe()
+
+   that scan for all filesystems and check for collisions (fat vs. swap)
+
+
+ - rebase to the latest util-linux-ng
+
+ - add regression tests:
+	- add to tests/input/blkid/ FS images
+	- create ts-blkid-fs to tests FS detection
