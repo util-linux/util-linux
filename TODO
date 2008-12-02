@@ -74,3 +74,14 @@ v2.??:
 	(though I am not really sure how much people us minix fs ;-)
 	This might require some major code cleanup in mkfs.minix.
 
+ * rtcwake does not support wake from S5/off
+   http://bugzilla.redhat.com/show_bug.cgi?id=449115
+
+ * add SELinux security contexts support to the 'ipcs' utility
+   http://bugzilla.redhat.com/show_bug.cgi?id=225342
+
+   Would be great to list the current system IPC Objects with their respective
+   security labels (where allowed) with something like 'ipcs -Z' - following the
+   way other tools reports those.
+
+
