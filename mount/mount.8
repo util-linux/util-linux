@@ -46,9 +46,9 @@ mount \- mount a file system
 .BI "mount [\-lhV]"
 .LP
 .BI "mount \-a [\-fFnrsvw] [\-t " vfstype "] [\-O " optlist ]
-.br
+.LP
 .BI "mount [\-fnrsvw] [\-o " options " [,...]] " "device " | " dir"
-.br
+.LP
 .BI "mount [\-fnrsvw] [\-t " vfstype "] [\-o " options "] " "device dir"
 .SH DESCRIPTION
 All files accessible in a Unix system are arranged in one big
@@ -154,30 +154,26 @@ any not vice-versa.  A private mount carries no propagation abilities.  A
 unbindable mount is a private mount which cannot cloned through a bind
 operation. Detailed semantics is documented in Documentation/sharedsubtree.txt
 file in the kernel source tree.
+
 .RS
-.br
+.nf
 .B "mount --make-shared mountpoint"
-.br
 .B "mount --make-slave mountpoint"
-.br
 .B "mount --make-private mountpoint"
-.br
 .B "mount --make-unbindable mountpoint"
-.br
+.fi
 .RE
 
 The following commands allows one to recursively change the type of all the
 mounts under a given mountpoint.
+
 .RS
-.br
+.nf
 .B "mount --make-rshared mountpoint"
-.br
 .B "mount --make-rslave mountpoint"
-.br
 .B "mount --make-rprivate mountpoint"
-.br
 .B "mount --make-runbindable mountpoint"
-.br
+.fi
 .RE
 .RE
 
@@ -220,8 +216,9 @@ mounted where, using which options.
 .LP
 The command
 .RS
-.br
+.sp
 .BI "mount \-a [\-t " type "] [\-O " optlist ]
+.sp
 .RE
 (usually given in a bootscript) causes all file systems mentioned in
 .I fstab
@@ -282,19 +279,22 @@ option on a line, anybody can mount the corresponding system.
 .LP
 Thus, given a line
 .RS
-.br
+.sp
 .B "/dev/cdrom  /cd  iso9660  ro,user,noauto,unhide"
+.sp
 .RE
 any user can mount the iso9660 file system found on his CDROM
 using the command
 .RS
-.br
+.sp
 .B "mount /dev/cdrom"
+.sp
 .RE
 or
 .RS
-.br
+.sp
 .B "mount /cd"
+.sp
 .RE
 For more details, see
 .BR fstab (5).
@@ -557,14 +557,12 @@ option.)
 
 For example, the command:
 .RS
-.RS
 .B "mount \-a \-t nomsdos,ext"
 .RE
 mounts all file systems except those of type
 .I msdos
 and
 .IR ext .
-.RE
 .TP
 .B \-O
 Used in conjunction with
@@ -577,8 +575,9 @@ in this regard except that it is useless except in the context of
 .BR \-a .
 For example, the command:
 .RS
-.RS
+.sp
 .B "mount \-a \-O no_netdev"
+.sp
 .RE
 mounts all file systems except those which have the option
 .I _netdev
@@ -598,11 +597,12 @@ and
 .B \-O
 options are cumulative in effect; that is, the command
 .RS
+.sp
 .B "mount \-a \-t ext2 \-O _netdev"
+.sp
 .RE
 mounts all ext2 filesystems with the _netdev option, not all filesystems
 that are either ext2 or have the _netdev option specified.
-.RE
 .TP
 .B \-o
 Options are specified with a
@@ -1016,7 +1016,6 @@ field the total number of blocks of the file system, while the
 .B bsddf
 behaviour (which is the default) is to subtract the overhead blocks
 used by the ext2 file system and not available for file storage. Thus
-.RE
 .nf
 
 % mount /k -o minixdf; df /k; umount /k
@@ -1151,7 +1150,6 @@ in files after a crash and journal recovery.
 Sync all data and metadata every
 .I nrsec
 seconds. The default value is 5 seconds. Zero means default.
-.RE
 .TP
 .BR user_xattr
 Enable Extended User Attributes. See the
@@ -2273,9 +2271,9 @@ some mount succeeded
 .SH NOTES
 The syntax of external mount helpers is:
 
-.br
-.BI "/sbin/mount.<suffix> spec dir [\-sfnv] [\-o options]
-.br
+.RS
+.B "/sbin/mount.<suffix> spec dir [\-sfnv] [\-o options]
+.RE
 
 where the <suffix> is filesystem type and \-sfnvo options have same meaning like
 standard mount options.
