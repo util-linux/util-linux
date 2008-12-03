@@ -19,10 +19,6 @@ struct hpt45x_metadata {
 	uint32_t	magic;
 };
 
-#define HPT37X_CONFIG_OFF		0x1200
-#define HPT37X_MAGIC_OK			0x5a7816f0
-#define HPT37X_MAGIC_BAD		0x5a7816fd
-
 #define HPT45X_MAGIC_OK			0x5a7816f3
 #define HPT45X_MAGIC_BAD		0x5a7816fd
 
@@ -59,8 +55,8 @@ const struct blkid_idinfo highpoint37x_idinfo = {
 	.name		= "highpoint_raid_member",
 	.usage		= BLKID_USAGE_RAID,
 	.magics		= {
-		{ .magic = "\xf0\x16\x78\x5a", .len = 4, .sboff = 32 },
-		{ .magic = "\xfd\x16\x78\x5a", .len = 4, .sboff = 32 },
+		{ .magic = "\xf0\x16\x78\x5a", .len = 4, .kboff = 4 },
+		{ .magic = "\xfd\x16\x78\x5a", .len = 4, .kboff = 4 },
 		{ NULL }
 	}
 };
