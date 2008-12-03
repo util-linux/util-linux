@@ -52,6 +52,7 @@ extern const struct blkid_idinfo vxfs_idinfo;
 extern const struct blkid_idinfo minix_idinfo;
 extern const struct blkid_idinfo vfat_idinfo;
 extern const struct blkid_idinfo ufs_idinfo;
+extern const struct blkid_idinfo hpfs_idinfo;
 extern const struct blkid_idinfo lvm2_idinfo;
 extern const struct blkid_idinfo lvm1_idinfo;
 extern const struct blkid_idinfo luks_idinfo;

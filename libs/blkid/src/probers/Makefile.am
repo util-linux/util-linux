@@ -33,7 +33,8 @@ libprobers_a_SOURCES =	probers.h \
 			highpoint_raid.c \
 			vxfs.c \
 			minix.c \
-			ufs.c
+			ufs.c \
+			hpfs.c \
 			lvm.c
 
 all-local: $(lib_LIBRARIES)
