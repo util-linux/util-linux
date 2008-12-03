@@ -12,8 +12,6 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <errno.h>
-#include <ctype.h>
 #include <stdint.h>
 
 #include "blkidP.h"
@@ -22,13 +20,13 @@
 
 struct lvm2_pv_label_header {
 	/* label_header */
-	__u8	id[8];		/* LABELONE */
-	__u64	sector_xl;	/* Sector number of this label */
-	__u32	crc_xl;		/* From next field to end of sector */
-	__u32	offset_xl;	/* Offset from start of struct to contents */
-	__u8	type[8];	/* LVM2 001 */
+	uint8_t		id[8];		/* LABELONE */
+	uint64_t	sector_xl;	/* Sector number of this label */
+	uint32_t	crc_xl;		/* From next field to end of sector */
+	uint32_t	offset_xl;	/* Offset from start of struct to contents */
+	uint8_t		type[8];	/* LVM2 001 */
 	/* pv_header */
-	__u8	pv_uuid[LVM2_ID_LEN];
+	uint8_t		pv_uuid[LVM2_ID_LEN];
 } __attribute__ ((packed));
 
 #define LVM2_LABEL_SIZE 512
@@ -41,7 +39,7 @@ static unsigned int lvm2_calc_crc(const void *buf, unsigned int size)
 		0x9b64c2b0, 0x86d3d2d4, 0xa00ae278, 0xbdbdf21c
 	};
 	unsigned int i, crc = 0xf597a6cf;
-	const __u8 *data = (const __u8 *) buf;
+	const uint8_t *data = (const uint8_t *) buf;
 
 	for (i = 0; i < size; i++) {
 		crc ^= *data++;
