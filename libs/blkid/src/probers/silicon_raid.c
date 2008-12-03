@@ -2,17 +2,12 @@
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  * Copyright (C) 2005 Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * Inspired by libvolume_id by
+ *     Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -23,7 +18,7 @@
 
 #include "blkidP.h"
 
-struct silicon_meta {
+struct silicon_metadata {
 	uint8_t		unknown0[0x2E];
 	uint8_t		ascii_version[0x36 - 0x2E];
 	uint8_t		diskname[0x56 - 0x36];
@@ -47,16 +42,17 @@ struct silicon_meta {
 
 static int probe_silraid(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	uint64_t meta_off;
-	struct silicon_meta *sil;
+	uint64_t off;
+	struct silicon_metadata *sil;
 
 	if (pr->size < 0x10000)
 		return -1;
 
-	meta_off = ((pr->size / 0x200) - 1) * 0x200;
+	off = ((pr->size / 0x200) - 1) * 0x200;
 
-	sil = (struct silicon_meta *) blkid_probe_get_buffer(pr,
-						meta_off, 0x200);
+	sil = (struct silicon_metadata *)
+			blkid_probe_get_buffer(pr, off,
+				sizeof(struct silicon_metadata));
 	if (!sil)
 		return -1;
 

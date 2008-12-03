@@ -1,29 +1,21 @@
 /*
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
- * Copyright (C) 2006 Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * Inspired by libvolume_id by
+ *     Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <errno.h>
-#include <ctype.h>
 #include <stdint.h>
 
 #include "blkidP.h"
 
-struct adaptec_meta {
+struct adaptec_metadata {
 	uint32_t	b0idcode;
 	uint8_t		lunsave[8];
 	uint16_t	sdtype;
@@ -80,26 +72,25 @@ struct adaptec_meta {
 #define AD_SIGNATURE	"DPTM"
 #define AD_MAGIC	0x37FC4D1E
 
-
 static int probe_adraid(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	uint64_t meta_off;
-	struct adaptec_meta *ad;
+	uint64_t off;
+	struct adaptec_metadata *ad;
 
 	if (pr->size < 0x10000)
 		return -1;
 
-	meta_off = ((pr->size / 0x200)-1) * 0x200;
-	ad = (struct adaptec_meta *) blkid_probe_get_buffer(pr, meta_off, 0x200);
+	off = ((pr->size / 0x200)-1) * 0x200;
+	ad = (struct adaptec_metadata *)
+			blkid_probe_get_buffer(pr,
+					off,
+					sizeof(struct adaptec_metadata));
 	if (!ad)
 		return -1;
-
 	if (memcmp(ad->smagic, AD_SIGNATURE, sizeof(AD_SIGNATURE)) != 0)
 		return -1;
-
 	if (ad->b0idcode != be32_to_cpu(AD_MAGIC))
 		return -1;
-
 	if (blkid_probe_sprintf_version(pr, "%u", ad->resver) != 0)
 		return -1;
 

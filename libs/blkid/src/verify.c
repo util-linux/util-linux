@@ -1,10 +1,8 @@
 /*
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  *
- * %Begin-Header%
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
- * %End-Header%
  */
 
 #include <stdio.h>

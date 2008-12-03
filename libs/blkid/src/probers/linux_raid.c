@@ -1,24 +1,16 @@
 /*
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
- * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * Inspired by libvolume_id by
+ *     Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <errno.h>
-#include <ctype.h>
 #include <stdint.h>
 
 #include "blkidP.h"
@@ -65,7 +57,9 @@ static int probe_raid0(blkid_probe pr, off_t off)
 	if (pr->size < 0x10000)
 		return -1;
 	mdp0 = (struct mdp0_super_block *)
-			blkid_probe_get_buffer(pr, off, 0x800);
+			blkid_probe_get_buffer(pr,
+				off,
+				sizeof(struct mdp0_super_block));
 	if (!mdp0)
 		return -1;
 
@@ -110,7 +104,9 @@ static int probe_raid1(blkid_probe pr, off_t off)
 	struct mdp1_super_block *mdp1;
 
 	mdp1 = (struct mdp1_super_block *)
-			blkid_probe_get_buffer(pr, off, 0x800);
+			blkid_probe_get_buffer(pr,
+				off,
+				sizeof(struct mdp1_super_block));
 	if (!mdp1)
 		return -1;
 	if (le32_to_cpu(mdp1->magic) != MD_SB_MAGIC)
@@ -119,7 +115,8 @@ static int probe_raid1(blkid_probe pr, off_t off)
 		return -1;
 	if (blkid_probe_set_uuid(pr, (unsigned char *) mdp1->set_uuid) != 0)
 		return -1;
-	if (blkid_probe_set_label(pr, mdp1->set_name, sizeof(mdp1->set_name)) != 0)
+	if (blkid_probe_set_label(pr, mdp1->set_name,
+				sizeof(mdp1->set_name)) != 0)
 		return -1;
 
 	return 0;

@@ -1,16 +1,11 @@
 /*
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
- * Copyright (C) 2005 Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * Inspired by libvolume_id by
+ *     Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
 
 #include <stdio.h>
@@ -21,7 +16,7 @@
 
 #include "blkidP.h"
 
-struct lsi_meta {
+struct lsi_metadata {
 	uint8_t		sig[6];
 };
 
@@ -30,14 +25,17 @@ struct lsi_meta {
 
 static int probe_lsiraid(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	uint64_t meta_off;
-	struct lsi_meta *lsi;
+	uint64_t off;
+	struct lsi_metadata *lsi;
 
 	if (pr->size < 0x10000)
 		return -1;
 
-	meta_off = ((pr->size / 0x200) - 1) * 0x200;
-	lsi = (struct lsi_meta *) blkid_probe_get_buffer(pr, meta_off, 0x200);
+	off = ((pr->size / 0x200) - 1) * 0x200;
+	lsi = (struct lsi_metadata *)
+		blkid_probe_get_buffer(pr,
+				off,
+				sizeof(struct lsi_metadata));
 	if (!lsi)
 		return -1;
 

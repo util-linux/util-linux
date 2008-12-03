@@ -1,19 +1,12 @@
 /*
- * Copyright (C) 1999, 2001 by Andries Brouwer
- * Copyright (C) 1999, 2000, 2003 by Theodore Ts'o
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * Inspired by libvolume_id by
+ *     Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -48,7 +41,7 @@ struct hpfs_boot_block
 	uint8_t		magic[2];
 };
 
-struct hpfs_super
+struct hpfs_super_block
 {
 	uint8_t		magic[4];
 	uint8_t		magic1[4];
@@ -67,13 +60,13 @@ struct hpfs_spare_super
 
 static int probe_hpfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	struct hpfs_super *hs;
+	struct hpfs_super_block *hs;
 	struct hpfs_spare_super *hss;
 	struct hpfs_boot_block *hbb;
 	uint8_t version;
 
 	/* super block */
-	hs = blkid_probe_get_sb(pr, mag, struct hpfs_super);
+	hs = blkid_probe_get_sb(pr, mag, struct hpfs_super_block);
 	if (!hs)
 		return -1;
 	version = hs->version;

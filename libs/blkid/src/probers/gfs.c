@@ -1,35 +1,22 @@
 /*
- * Copyright (C) 1999, 2001 by Andries Brouwer
+ * Copyright (C) 1999 by Andries Brouwer
  * Copyright (C) 1999, 2000, 2003 by Theodore Ts'o
+ * Copyright (C) 2001 by Andreas Dilger
+ * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This file is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <errno.h>
-#include <ctype.h>
 #include <stdint.h>
 
 #include "blkidP.h"
 
 /* Common gfs/gfs2 constants: */
-#define GFS_MAGIC               0x01161970
-#define GFS_DEFAULT_BSIZE       4096
-#define GFS_SUPERBLOCK_OFFSET	(0x10 * GFS_DEFAULT_BSIZE)
-#define GFS_METATYPE_SB         1
-#define GFS_FORMAT_SB           100
 #define GFS_LOCKNAME_LEN        64
 
 /* gfs1 constants: */

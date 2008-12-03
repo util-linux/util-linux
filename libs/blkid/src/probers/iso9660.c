@@ -5,23 +5,16 @@
  * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * Inspired also by libvolume_id by
+ *     Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <errno.h>
-#include <ctype.h>
 #include <stdint.h>
 
 #include "blkidP.h"
@@ -75,7 +68,7 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	struct iso_volume_descriptor *iso;
 	unsigned char label[32];
 	int i;
-	int vd_offset;
+	int off;
 
 	if (strcmp(mag->magic, "CDROM") == 0)
 		return probe_iso9660_hsfs(pr, mag);
@@ -87,13 +80,13 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	memcpy(label, iso->volume_id, sizeof(label));
 
 	/* Joliet Extension */
-	vd_offset = ISO_VD_OFFSET;
+	off = ISO_VD_OFFSET;
 	for (i = 0; i < ISO_VD_MAX; i++) {
 		uint8_t svd_label[64];
 
 		iso = (struct iso_volume_descriptor *)
 			blkid_probe_get_buffer(pr,
-					vd_offset,
+					off,
 					sizeof(struct iso_volume_descriptor));
 
 		if (iso == NULL || iso->vd_type == ISO_VD_END)
@@ -113,7 +106,7 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 			blkid_probe_set_version(pr, "Joliet Extension");
 			goto has_label;
 		}
-		vd_offset += ISO_SECTOR_SIZE;
+		off += ISO_SECTOR_SIZE;
 	}
 
 	/* Joliet not found, let use standard iso label */

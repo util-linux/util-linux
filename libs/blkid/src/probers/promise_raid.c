@@ -1,18 +1,12 @@
 /*
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
- * Copyright (C) 2005 Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * Inspired by libvolume_id by
+ *     Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -23,7 +17,7 @@
 
 #include "blkidP.h"
 
-struct promise_meta {
+struct promise_metadata {
 	uint8_t	sig[24];
 };
 
@@ -41,12 +35,14 @@ static int probe_pdcraid(blkid_probe pr, const struct blkid_idmag *mag)
 		return -1;
 
 	for (i = 0; sectors[i] != 0; i++) {
-		uint64_t meta_off;
-		struct promise_meta *pdc;
+		uint64_t off;
+		struct promise_metadata *pdc;
 
-		meta_off = ((pr->size / 0x200) - sectors[i]) * 0x200;
-		pdc = (struct promise_meta *)
-				blkid_probe_get_buffer(pr, meta_off, 0x200);
+		off = ((pr->size / 0x200) - sectors[i]) * 0x200;
+		pdc = (struct promise_metadata *)
+				blkid_probe_get_buffer(pr,
+					off,
+					sizeof(struct promise_metadata));
 		if (!pdc)
 			return -1;
 

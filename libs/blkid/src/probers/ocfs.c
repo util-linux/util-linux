@@ -3,22 +3,13 @@
  * Copyright (C) 1999, 2000, 2003 by Theodore Ts'o
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This file is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include <errno.h>
-#include <ctype.h>
 #include <stdint.h>
 
 #include "blkidP.h"
@@ -52,8 +43,6 @@ struct ocfs_volume_label {
 #define ocfslabellen(o)	((__u32)o.label_len[0] + (((__u32) o.label_len[1]) << 8))
 #define ocfsmountlen(o)	((__u32)o.mount_len[0] + (((__u32) o.mount_len[1]) << 8))
 
-#define OCFS_MAGIC "OracleCFS"
-
 struct ocfs2_super_block {
 	unsigned char  signature[8];
 	unsigned char  s_dummy1[184];
@@ -62,21 +51,11 @@ struct ocfs2_super_block {
 	unsigned char  s_uuid[16];
 };
 
-#define OCFS2_MIN_BLOCKSIZE             512
-#define OCFS2_MAX_BLOCKSIZE             4096
-
-#define OCFS2_SUPER_BLOCK_BLKNO         2
-
-#define OCFS2_SUPER_BLOCK_SIGNATURE     "OCFSV2"
-
 struct oracle_asm_disk_label {
 	char dummy[32];
 	char dl_tag[8];
 	char dl_id[24];
 };
-
-#define ORACLE_ASM_DISK_LABEL_MARKED    "ORCLDISK"
-#define ORACLE_ASM_DISK_LABEL_OFFSET    32
 
 static int probe_ocfs(blkid_probe pr, const struct blkid_idmag *mag)
 {

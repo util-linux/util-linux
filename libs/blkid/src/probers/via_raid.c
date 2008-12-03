@@ -1,16 +1,11 @@
 /*
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
- * Copyright (C) 2004-2006 Heinz Mauelshagen, Red Hat GmbH
  *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
+ * Inspired by libvolume_id by
+ *     Kay Sievers <kay.sievers@vrfy.org>
  *
- * This file is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
 
 #include <stdio.h>
@@ -23,7 +18,7 @@
 
 #include "blkidP.h"
 
-struct via_meta {
+struct via_metadata {
 	uint16_t	signature;
 	uint8_t		version_number;
 	struct via_array {
@@ -40,36 +35,39 @@ struct via_meta {
 #define VIA_SIGNATURE		0xAA55
 
 /* 8 bit checksum on first 50 bytes of metadata. */
-static uint8_t meta_checksum(struct via_meta *via)
+static uint8_t via_checksum(struct via_metadata *v)
 {
-	uint8_t i = 50, sum = 0;
+	uint8_t i = 50, cs = 0;
 
 	while (i--)
-		sum += ((uint8_t*) via)[i];
+		cs += ((uint8_t*) v)[i];
 
-	return sum == via->checksum;
+	return cs == v->checksum;
 }
 
 static int probe_viaraid(blkid_probe pr, const struct blkid_idmag *mag)
 {
-	uint64_t meta_off;
-	struct via_meta *via;
+	uint64_t off;
+	struct via_metadata *v;
 
 	if (pr->size < 0x10000)
 		return -1;
 
-	meta_off = ((pr->size / 0x200)-1) * 0x200;
+	off = ((pr->size / 0x200)-1) * 0x200;
 
-	via = (struct via_meta *) blkid_probe_get_buffer(pr, meta_off, 0x200);
-	if (!via)
+	v = (struct via_metadata *)
+			blkid_probe_get_buffer(pr,
+				off,
+				sizeof(struct via_metadata));
+	if (!v)
 		return -1;
-	if (le16_to_cpu(via->signature) != VIA_SIGNATURE)
+	if (le16_to_cpu(v->signature) != VIA_SIGNATURE)
 		return -1;
-	if (via->version_number > 1)
+	if (v->version_number > 1)
 		return -1;
-	if (!meta_checksum(via))
+	if (!via_checksum(v))
 		return -1;
-	if (blkid_probe_sprintf_version(pr, "%u", via->version_number) != 0)
+	if (blkid_probe_sprintf_version(pr, "%u", v->version_number) != 0)
 		return -1;
 	return 0;
 }

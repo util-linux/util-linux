@@ -1,13 +1,12 @@
 /*
- * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
- *
- * This is a derivative work from libvolume_id (udev) and libblkid (e2fsprogs).
- *
- * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
  * Copyright (C) 1999 by Andries Brouwer
  * Copyright (C) 1999, 2000, 2003 by Theodore Ts'o
  * Copyright (C) 2001 by Andreas Dilger
+ * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
+ * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  *
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
 #include <stdio.h>
 #include <stdlib.h>

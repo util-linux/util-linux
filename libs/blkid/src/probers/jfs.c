@@ -5,17 +5,9 @@
  * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  *
- * This file is free software; you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation; either version 2 of the License, or
- * (at your option) any later version.
- *
- * This file is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
+ * This file may be redistributed under the terms of the
+ * GNU Lesser General Public License.
  */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -49,13 +41,10 @@ static int probe_jfs(blkid_probe pr, const struct blkid_idmag *mag)
 	js = blkid_probe_get_sb(pr, mag, struct jfs_super_block);
 	if (!js)
 		return -1;
-
 	if (le32_to_cpu(js->js_bsize) != (1 << le16_to_cpu(js->js_l2bsize)))
 		return 1;
-
 	if (le32_to_cpu(js->js_pbsize) != (1 << le16_to_cpu(js->js_l2pbsize)))
 		return 1;
-
 	if ((le16_to_cpu(js->js_l2bsize) - le16_to_cpu(js->js_l2pbsize)) !=
 	    le16_to_cpu(js->js_l2bfactor))
 		return 1;
