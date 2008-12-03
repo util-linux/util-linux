@@ -1,5 +1,5 @@
 /*
- * This testing program makes sure the blkid_types header file
+ * This testing program makes sure the stdint.h header file
  *
  * Copyright (C) 2006 by Theodore Ts'o.
  *
@@ -10,54 +10,54 @@
  */
 
 #include <sys/types.h>
-#include "blkid/blkid_types.h"
+#include <stdint.h>
 
 #include <stdlib.h>
 #include <stdio.h>
 
 int main(int argc, char **argv)
 {
-	if (sizeof(__u8) != 1) {
-		printf("Sizeof(__u8) is %d should be 1\n",
-		       (int)sizeof(__u8));
+	if (sizeof(uint8_t) != 1) {
+		printf("Sizeof(uint8_t) is %d should be 1\n",
+		       (int)sizeof(uint8_t));
 		exit(1);
 	}
-	if (sizeof(__s8) != 1) {
-		printf("Sizeof(_s8) is %d should be 1\n",
-		       (int)sizeof(__s8));
+	if (sizeof(int8_t) != 1) {
+		printf("Sizeof(int8_t) is %d should be 1\n",
+		       (int)sizeof(int8_t));
 		exit(1);
 	}
-	if (sizeof(__u16) != 2) {
-		printf("Sizeof(__u16) is %d should be 2\n",
-		       (int)sizeof(__u16));
+	if (sizeof(uint16_t) != 2) {
+		printf("Sizeof(uint16_t) is %d should be 2\n",
+		       (int)sizeof(uint16_t));
 		exit(1);
 	}
-	if (sizeof(__s16) != 2) {
-		printf("Sizeof(__s16) is %d should be 2\n",
-		       (int)sizeof(__s16));
+	if (sizeof(int16_t) != 2) {
+		printf("Sizeof(int16_t) is %d should be 2\n",
+		       (int)sizeof(int16_t));
 		exit(1);
 	}
-	if (sizeof(__u32) != 4) {
-		printf("Sizeof(__u32) is %d should be 4\n",
-		       (int)sizeof(__u32));
+	if (sizeof(uint32_t) != 4) {
+		printf("Sizeof(uint32_t) is %d should be 4\n",
+		       (int)sizeof(uint32_t));
 		exit(1);
 	}
-	if (sizeof(__s32) != 4) {
-		printf("Sizeof(__s32) is %d should be 4\n",
-		       (int)sizeof(__s32));
+	if (sizeof(int32_t) != 4) {
+		printf("Sizeof(int32_t) is %d should be 4\n",
+		       (int)sizeof(int32_t));
 		exit(1);
 	}
-	if (sizeof(__u64) != 8) {
-		printf("Sizeof(__u64) is %d should be 8\n",
-		       (int)sizeof(__u64));
+	if (sizeof(uint64_t) != 8) {
+		printf("Sizeof(uint64_t) is %d should be 8\n",
+		       (int)sizeof(uint64_t));
 		exit(1);
 	}
-	if (sizeof(__s64) != 8) {
-		printf("Sizeof(__s64) is %d should be 8\n",
-		       (int)sizeof(__s64));
+	if (sizeof(int64_t) != 8) {
+		printf("Sizeof(int64_t) is %d should be 8\n",
+		       (int)sizeof(int64_t));
 		exit(1);
 	}
-	printf("The blkid_types.h types are correct.\n");
+	printf("The stdint.h types are correct.\n");
 	exit(0);
 }
 

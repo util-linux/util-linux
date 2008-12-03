@@ -1,4 +1,3 @@
 *.[38]
-blkid_types.h
 *.sh
 bin/blkid

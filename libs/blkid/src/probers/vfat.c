@@ -272,7 +272,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 		next = le32_to_cpu(vs->vs_root_cluster);
 		while (next && --maxloop) {
 			uint32_t next_sect_off;
-			__u64 next_off, fat_entry_off;
+			uint64_t next_off, fat_entry_off;
 			int count;
 
 			next_sect_off = (next - 2) * vs->vs_cluster_size;

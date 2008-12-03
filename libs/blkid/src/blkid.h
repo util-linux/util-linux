@@ -23,8 +23,8 @@
 #ifndef _BLKID_BLKID_H
 #define _BLKID_BLKID_H
 
+#include <stdint.h>
 #include <sys/types.h>
-#include <blkid/blkid_types.h>
 
 #ifdef __cplusplus
 extern "C" {
@@ -34,7 +34,7 @@ typedef struct blkid_struct_dev *blkid_dev;
 typedef struct blkid_struct_cache *blkid_cache;
 typedef struct blkid_struct_probe *blkid_probe;
 
-typedef __s64 blkid_loff_t;
+typedef int64_t blkid_loff_t;
 
 typedef struct blkid_struct_tag_iterate *blkid_tag_iterate;
 typedef struct blkid_struct_dev_iterate *blkid_dev_iterate;

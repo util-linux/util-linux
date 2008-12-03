@@ -8,7 +8,7 @@ AM_CPPFLAGS += -I$(top_builddir)/libs/blkid/src
 lib_LIBRARIES = libblkid.a
 libblkid_a_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 		     probe.c read.c resolve.c save.c tag.c version.c verify.c \
-		     blkid.h blkidP.h list.h blkid_types.h probers/probers.h \
+		     blkid.h blkidP.h list.h probers/probers.h \
 		     $(top_srcdir)/lib/blkdev.c $(top_srcdir)/lib/linux_version.c
 libblkid_a_LIBADD = probers/libprobers.a
 libblkid_a_CFLAGS = -fPIC
@@ -28,7 +28,7 @@ if HAVE_UUID
 blkid_OTHERLDADD += -luuid	#TODO $(UUID_LIBS)
 endif
 
-EXTRA_DIST = blkid.sym blkid_types.h.in
+EXTRA_DIST = blkid.sym
 
 all-local: $(blkid_LIB)
 
