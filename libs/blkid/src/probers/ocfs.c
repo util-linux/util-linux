@@ -30,18 +30,18 @@ struct ocfs_volume_label {
 	unsigned char   vol_id_len[2];
 };
 
-#define ocfsmajor(o) ( (__u32) o.major_version[0] \
-                   + (((__u32) o.major_version[1]) << 8) \
-                   + (((__u32) o.major_version[2]) << 16) \
-                   + (((__u32) o.major_version[3]) << 24))
+#define ocfsmajor(o) ( (uint32_t) o.major_version[0] \
+                   + (((uint32_t) o.major_version[1]) << 8) \
+                   + (((uint32_t) o.major_version[2]) << 16) \
+                   + (((uint32_t) o.major_version[3]) << 24))
 
-#define ocfsminor(o) ( (__u32) o.minor_version[0] \
-                   + (((__u32) o.minor_version[1]) << 8) \
-                   + (((__u32) o.minor_version[2]) << 16) \
-                   + (((__u32) o.minor_version[3]) << 24))
+#define ocfsminor(o) ( (uint32_t) o.minor_version[0] \
+                   + (((uint32_t) o.minor_version[1]) << 8) \
+                   + (((uint32_t) o.minor_version[2]) << 16) \
+                   + (((uint32_t) o.minor_version[3]) << 24))
 
-#define ocfslabellen(o)	((__u32)o.label_len[0] + (((__u32) o.label_len[1]) << 8))
-#define ocfsmountlen(o)	((__u32)o.mount_len[0] + (((__u32) o.mount_len[1]) << 8))
+#define ocfslabellen(o)	((uint32_t)o.label_len[0] + (((uint32_t) o.label_len[1]) << 8))
+#define ocfsmountlen(o)	((uint32_t)o.mount_len[0] + (((uint32_t) o.mount_len[1]) << 8))
 
 struct ocfs2_super_block {
 	unsigned char  signature[8];
