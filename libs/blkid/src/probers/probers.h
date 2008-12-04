@@ -51,5 +51,7 @@ extern const struct blkid_idinfo luks_idinfo;
 extern const struct blkid_idinfo highpoint37x_idinfo;
 extern const struct blkid_idinfo highpoint45x_idinfo;
 extern const struct blkid_idinfo squashfs_idinfo;
+extern const struct blkid_idinfo netware_idinfo;
+
 
 #endif /* _BLKID_PROBE_H */

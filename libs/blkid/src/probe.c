@@ -85,7 +85,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&oracleasm_idinfo,
 	&vxfs_idinfo,
 	&squashfs_idinfo,
-	/* TODO: netware */
+	&netware_idinfo
 };
 
 #ifndef ARRAY_SIZE
