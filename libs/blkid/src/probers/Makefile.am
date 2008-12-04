@@ -35,6 +35,7 @@ libprobers_a_SOURCES =	probers.h \
 			minix.c \
 			ufs.c \
 			hpfs.c \
+			squashfs.c \
 			lvm.c
 
 all-local: $(lib_LIBRARIES)
