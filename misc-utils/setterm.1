@@ -135,8 +135,8 @@ every specified number of positions.  Without an argument, defaults to 8.
 .TP
 .BR \-blank " [0-60|force|poke] (virtual consoles only)"
 Sets the interval of inactivity, in minutes, after which the screen will be
-automatically blanked (using APM if available).  Without an argument,
-defaults to 0 (disable console blanking).
+automatically blanked (using APM if available).  Without an argument, gets the
+blank status (returns which vt was blanked or zero for unblanked vt).
 
 The
 .B force
@@ -144,7 +144,7 @@ option keeps screen blank even if a key is pressed.
 
 The
 .B poke
-option returns which vt was blanked.
+option unblank the screen.
 .TP
 .BR \-dump " [1-NR_CONS]"
 Writes a snapshot of the given virtual console (with attributes) to the file
