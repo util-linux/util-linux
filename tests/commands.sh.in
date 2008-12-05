@@ -9,6 +9,7 @@ TS_TESTUSER=${TS_TESTUSER:-"test"}
 # helpers
 TS_HELPER_SYSINFO="$TS_TOPDIR/helpers/test_sysinfo"
 TS_HELPER_PATHS="$TS_TOPDIR/helpers/test_pathnames"
+TS_HELPER_BYTESWAP="$TS_TOPDIR/helpers/test_byteswap"
 
 # external commands
 TS_ECMD_BLKID="@BLKID@"
