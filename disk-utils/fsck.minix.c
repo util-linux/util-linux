@@ -1,5 +1,5 @@
 /*
- * fsck.c - a file system consistency checker for Linux.
+ * fsck.minix.c - a file system consistency checker for Linux.
  *
  * (C) 1991, 1992 Linus Torvalds. This file may be redistributed
  * as per the GNU copyleft.
@@ -169,7 +169,7 @@ static unsigned char * zone_count = NULL;
 static void recursive_check(unsigned int ino);
 static void recursive_check2(unsigned int ino);
 
-#include "bitops.h"
+#include "minix_bitops.h"
 
 #define inode_in_use(x) (bit(inode_map,(x)))
 #define zone_in_use(x) (bit(zone_map,(x)-FIRSTZONE+1))

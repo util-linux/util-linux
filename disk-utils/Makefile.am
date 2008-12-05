@@ -9,8 +9,8 @@ dist_man_MANS = isosize.8 mkfs.8 mkswap.8 \
            fsck.minix.8 mkfs.minix.8 mkfs.bfs.8
 
 sbin_PROGRAMS = mkfs mkswap fsck.minix mkfs.minix mkfs.bfs
-fsck_minix_SOURCES = fsck.minix.c bitops.h minix.h
-mkfs_minix_SOURCES = mkfs.minix.c bitops.h minix.h $(utils_common)
+fsck_minix_SOURCES = fsck.minix.c minix_bitops.h minix.h
+mkfs_minix_SOURCES = mkfs.minix.c minix_bitops.h minix.h $(utils_common)
 mkfs_bfs_SOURCES = mkfs.bfs.c $(utils_common)
 mkswap_SOURCES = mkswap.c $(utils_common)
 

@@ -1,5 +1,5 @@
 /*
- * mkfs.c - make a linux (minix) file-system.
+ * mkfs.minix.c - make a linux (minix) file-system.
  *
  * (C) 1991 Linus Torvalds. This file may be redistributed as per
  * the Linux copyright.
@@ -135,7 +135,7 @@ static unsigned short good_blocks_table[MAX_GOOD_BLOCKS];
 static int used_good_blocks = 0;
 static unsigned long req_nr_inodes = 0;
 
-#include "bitops.h"
+#include "minix_bitops.h"
 
 #define inode_in_use(x) (bit(inode_map,(x)))
 #define zone_in_use(x) (bit(zone_map,(x)-FIRSTZONE+1))
