@@ -5,7 +5,6 @@
 
  - add blkid -o | --format=full|value|udev
 
- - add MD5(lib/md5.c) UUID to HFS, for more details see libvolume_id
  - consolidate "getsize" stuff (see getsize.c and lib/blkdev.c)
 
  - add a new flag to keep information that FS is ready to share the device with

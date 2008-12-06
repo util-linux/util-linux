@@ -1,8 +1,5 @@
 /*
- * Copyright (C) 1999 by Andries Brouwer
- * Copyright (C) 1999, 2000, 2003 by Theodore Ts'o
- * Copyright (C) 2001 by Andreas Dilger
- * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
+ * Copyright (C) 2004-2008 Kay Sievers <kay.sievers@vrfy.org>
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  *
  * This file may be redistributed under the terms of the
@@ -15,6 +12,7 @@
 #include <inttypes.h>
 
 #include "blkidP.h"
+#include "md5.h"
 
 /* HFS / HFS+ */
 struct hfs_finder_info {
@@ -128,10 +126,27 @@ struct hfsplus_vol_header {
 	struct hfsplus_fork start_file;
 }  __attribute__((packed));
 
+static int hfs_set_uuid(blkid_probe pr, unsigned char const *hfs_info)
+{
+	static unsigned char const hash_init[16] = {
+		0xb3, 0xe2, 0x0f, 0x39, 0xf2, 0x92, 0x11, 0xd6,
+		0x97, 0xa4, 0x00, 0x30, 0x65, 0x43, 0xec, 0xac
+	};
+	unsigned char uuid[16];
+	struct MD5Context md5c;
+
+	MD5Init(&md5c);
+	MD5Update(&md5c, hash_init, 16);
+	MD5Update(&md5c, hfs_info, 8);
+	MD5Final(uuid, &md5c);
+	uuid[6] = 0x30 | (uuid[6] & 0x0f);
+	uuid[8] = 0x80 | (uuid[8] & 0x3f);
+	return blkid_probe_set_uuid(pr, uuid);
+}
+
 static int probe_hfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct hfs_mdb	*hfs;
-	uint64_t	uuid;
 
 	hfs = blkid_probe_get_sb(pr, mag, struct hfs_mdb);
 	if (!hfs)
@@ -141,12 +156,7 @@ static int probe_hfs(blkid_probe pr, const struct blkid_idmag *mag)
 	    (memcmp(hfs->embed_sig, "HX", 2) == 0))
 		return 1;	/* Not hfs, but an embedded HFS+ */
 
-	uuid = le64_to_cpu(*((uint64_t *) hfs->finder_info.id));
-	if (uuid)
-		blkid_probe_sprintf_uuid(pr,
-				hfs->finder_info.id,
-				sizeof(hfs->finder_info.id),
-				"%016" PRIX64, uuid);
+	hfs_set_uuid(pr, hfs->finder_info.id);
 
 	blkid_probe_set_label(pr, hfs->label, hfs->label_len);
 	return 0;
@@ -174,7 +184,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	unsigned int leaf_node_size;
 	unsigned int leaf_block;
 	int ext;
-	uint64_t leaf_off, uuid;
+	uint64_t leaf_off;
 	unsigned char *buf;
 
 	sbd = blkid_probe_get_sb(pr, mag, struct hfs_mdb);
@@ -210,12 +220,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	    (memcmp(hfsplus->signature, "HX", 2) != 0))
 		return 1;
 
-	uuid = be64_to_cpu(*((unsigned long long *) hfsplus->finder_info.id));
-	if (uuid)
-		blkid_probe_sprintf_uuid(pr,
-				hfsplus->finder_info.id,
-				sizeof(hfsplus->finder_info.id),
-				"%016" PRIX64, uuid);
+	hfs_set_uuid(pr, hfsplus->finder_info.id);
 
 	blocksize = be32_to_cpu(hfsplus->blocksize);
 	memcpy(extents, hfsplus->cat_file.extents, sizeof(extents));
