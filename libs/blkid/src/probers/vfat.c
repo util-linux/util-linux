@@ -133,8 +133,7 @@ static unsigned char *search_fat_label(struct vfat_dir_entry *dir, int count)
 /*
  * The FAT filesystem could be without a magic string in superblock
  * (e.g. old floppies).  This heuristic for FAT detection is inspired
- * by http://vrfy.org/projects/volume_id/ and Linux kernel.
- * [7-Jul-2005, Karel Zak <kzak@redhat.com>]
+ * by libvolume_id and the Linux kernel.
  */
 static int probe_fat_nomagic(blkid_probe pr, const struct blkid_idmag *mag)
 {
@@ -344,7 +343,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 }
 
 
-const struct blkid_idinfo _idinfo =
+const struct blkid_idinfo vfat_idinfo =
 {
 	.name		= "vfat",
 	.usage		= BLKID_USAGE_FILESYSTEM,
