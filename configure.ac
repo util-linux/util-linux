@@ -642,47 +642,6 @@ else
   esac
 fi
 
-# TODO remove devmapper from blkid
-#
-AC_ARG_ENABLE([blkid-devmapper],
-   AS_HELP_STRING([--enable-blkid-devmapper], [build with device-mapper support]),
-   [], with_blkid-devmapper=no
-)
-if test x$with_devmapper = xno; then
-  AC_MSG_RESULT([Disabling device-mapper support])
-  AM_CONDITIONAL(HAVE_DEVMAPPER, false)
-  DEVMAPPER_LIBS_STATIC=''
-  DEVMAPPER_REQ=''
-  DEVMAPPER_PC_LIBS=''
-  DEVMAPPER_LIBS=''
-else
-  AC_MSG_RESULT([Enabling device-mapper support])
-  UTIL_CHECK_LIB(devmapper, dm_tree_create)
-  case $with_blkid-devmapper:$have_blkid-devmapper in
-  yes:no) AC_MSG_ERROR([devmapper selected but libdevmapper not found]);;
-  esac
-  UTIL_PKG_STATIC([DEVMAPPER_LIBS_STATIC], [devmapper])
-  DEVMAPPER_LIBS="-ldevmapper"
-  DEVMAPPER_REQ="devmapper"
-  DEVMAPPER_PC_LIBS="-ldevmapper"
-
-  # work around stupid devmapper.pc bug in Debian
-  case "$DEVMAPPER_LIBS_STATIC" in
-  *pthread*)
-     ;;
-  *)
-    AC_MSG_WARN([Working around Debian bug 390243...])
-    DEVMAPPER_LIBS_STATIC="-pthread $DEVMAPPER_LIBS_STATIC"
-    ;;
-  esac
-fi
-
-AC_SUBST([DEVMAPPER_LIBS])
-AC_SUBST([DEVMAPPER_REQ])
-AC_SUBST([DEVMAPPER_PC_LIBS])
-AC_SUBST([DEVMAPPER_LIBS_STATIC])
-
-
 AC_ARG_ENABLE([schedutils],
   AS_HELP_STRING([--disable-schedutils], [do not build chrt, ionice, teskset]),
   [], enable_schedutils=yes

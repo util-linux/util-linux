@@ -23,9 +23,6 @@ blkid_SONAME = $(blkid_IMAGE).$(BLKID_VERSION_MAJOR)
 blkid_LINKS = $(blkid_IMAGE) $(blkid_SONAME)
 blkid_OTHERLDADD =
 
-if HAVE_DEVMAPPER
-blkid_OTHERLDADD += $(DEVMAPPER_LIBS)
-endif
 if HAVE_UUID
 blkid_OTHERLDADD += -luuid	#TODO $(UUID_LIBS)
 endif
