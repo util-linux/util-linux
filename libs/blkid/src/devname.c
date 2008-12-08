@@ -65,6 +65,8 @@ blkid_dev blkid_get_dev(blkid_cache cache, const char *devname, int flags)
 	}
 
 	if (!dev && (flags & BLKID_DEV_CREATE)) {
+		if (access(devname, F_OK) < 0)
+			return NULL;
 		dev = blkid_new_dev();
 		if (!dev)
 			return NULL;
