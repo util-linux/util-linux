@@ -135,6 +135,8 @@ static int hfs_set_uuid(blkid_probe pr, unsigned char const *hfs_info)
 	unsigned char uuid[16];
 	struct MD5Context md5c;
 
+	if (memcmp(hfs_info, "\0\0\0\0\0\0\0\0", 8) == 0)
+		return -1;
 	MD5Init(&md5c);
 	MD5Update(&md5c, hash_init, 16);
 	MD5Update(&md5c, hfs_info, 8);
