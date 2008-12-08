@@ -275,10 +275,6 @@ static int probe_ext3(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!es)
 		return -BLKID_ERR_PARAM;
 
-	/* Distinguish from ext4dev */
-	if (le32_to_cpu(es->s_flags) & EXT2_FLAGS_TEST_FILESYS)
-		return -BLKID_ERR_PARAM;
-
 	/* ext3 requires journal */
 	if (!(fc & EXT3_FEATURE_COMPAT_HAS_JOURNAL))
 		return -BLKID_ERR_PARAM;
