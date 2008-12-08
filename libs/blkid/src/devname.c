@@ -25,6 +25,7 @@
 #if HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
+#include <dirent.h>
 #if HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
@@ -117,6 +118,38 @@ blkid_dev blkid_get_dev(blkid_cache cache, const char *devname, int flags)
 /* Directories where we will try to search for device names */
 static const char *dirlist[] = { "/dev", "/devfs", "/devices", NULL };
 
+static int is_dm_leaf(const char *devname)
+{
+	struct dirent	*de, *d_de;
+	DIR		*dir, *d_dir;
+	char		path[256];
+	int		ret = 1;
+
+	if ((dir = opendir("/sys/block")) == NULL)
+		return 0;
+	while ((de = readdir(dir)) != NULL) {
+		if (!strcmp(de->d_name, ".") || !strcmp(de->d_name, "..") ||
+		    !strcmp(de->d_name, devname) ||
+		    strncmp(de->d_name, "dm-", 3) ||
+		    strlen(de->d_name) > sizeof(path)-32)
+			continue;
+		sprintf(path, "/sys/block/%s/slaves", de->d_name);
+		if ((d_dir = opendir(path)) == NULL)
+			continue;
+		while ((d_de = readdir(d_dir)) != NULL) {
+			if (!strcmp(d_de->d_name, devname)) {
+				ret = 0;
+				break;
+			}
+		}
+		closedir(d_dir);
+		if (!ret)
+			break;
+	}
+	closedir(dir);
+	return ret;
+}
+
 /*
  * Probe a single block device to add to the device cache.
  */
@@ -180,9 +213,11 @@ set_pri:
 	if (dev) {
 		if (pri)
 			dev->bid_pri = pri;
-		else if (!strncmp(dev->bid_name, "/dev/mapper/", 11))
+		else if (!strncmp(dev->bid_name, "/dev/mapper/", 11)) {
 			dev->bid_pri = BLKID_PRI_DM;
-		else if (!strncmp(ptname, "md", 2))
+			if (is_dm_leaf(ptname))
+				dev->bid_pri += 5;
+		} else if (!strncmp(ptname, "md", 2))
 			dev->bid_pri = BLKID_PRI_MD;
 	}
 	return;
@@ -198,7 +233,6 @@ set_pri:
  * safe thing to do?)
  */
 #ifdef VG_DIR
-#include <dirent.h>
 static dev_t lvm_get_devno(const char *lvm_device)
 {
 	FILE *lvf;
