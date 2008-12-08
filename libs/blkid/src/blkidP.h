@@ -180,7 +180,6 @@ extern char *blkid_strdup(const char *s);
 extern char *blkid_strndup(const char *s, const int length);
 
 #define BLKID_CACHE_FILE "/etc/blkid.tab"
-extern const char *blkid_devdirs[];
 
 #define BLKID_ERR_IO	 5
 #define BLKID_ERR_PROC	 9

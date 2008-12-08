@@ -131,7 +131,7 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 }
 
 /* Directories where we will try to search for device numbers */
-const char *blkid_devdirs[] = { "/devices", "/devfs", "/dev", NULL };
+static const char *devdirs[] = { "/devices", "/devfs", "/dev", NULL };
 
 /*
  * This function finds the pathname to a block device with a given
@@ -148,7 +148,7 @@ char *blkid_devno_to_devname(dev_t devno)
 	 * Add the starting directories to search in reverse order of
 	 * importance, since we are using a stack...
 	 */
-	for (dir = blkid_devdirs; *dir; dir++)
+	for (dir = devdirs; *dir; dir++)
 		add_to_dirlist(*dir, &list);
 
 	while (list) {
