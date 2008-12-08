@@ -38,6 +38,8 @@
 
 #include "blkidP.h"
 
+#undef HAVE_DEVMAPPER
+
 #ifdef HAVE_DEVMAPPER
 #include <libdevmapper.h>
 #endif
@@ -122,6 +124,9 @@ blkid_dev blkid_get_dev(blkid_cache cache, const char *devname, int flags)
 static int dm_device_is_leaf(const dev_t dev);
 #endif
 
+/* Directories where we will try to search for device names */
+static const char *dirlist[] = { "/dev", "/devfs", "/devices", NULL };
+
 /*
  * Probe a single block device to add to the device cache.
  */
@@ -159,7 +164,7 @@ static void probe_one(blkid_cache cache, const char *ptname,
 	 * the stat information doesn't check out, use blkid_devno_to_devname()
 	 * to find it via an exhaustive search for the device major/minor.
 	 */
-	for (dir = blkid_devdirs; *dir; dir++) {
+	for (dir = dirlist; *dir; dir++) {
 		struct stat st;
 		char device[256];
 
@@ -174,6 +179,9 @@ static void probe_one(blkid_cache cache, const char *ptname,
 			break;
 		}
 	}
+	/* Do a short-cut scan of /dev/mapper first */
+	if (!devname)
+		blkid__scan_dir("/dev/mapper", devno, 0, &devname);
 	if (!devname) {
 		devname = blkid_devno_to_devname(devno);
 		if (!devname)
@@ -183,10 +191,14 @@ static void probe_one(blkid_cache cache, const char *ptname,
 	free(devname);
 
 set_pri:
-	if (!pri && !strncmp(ptname, "md", 2))
-		pri = BLKID_PRI_MD;
-	if (dev)
-		dev->bid_pri = pri;
+	if (dev) {
+		if (pri)
+			dev->bid_pri = pri;
+		else if (!strncmp(dev->bid_name, "/dev/mapper/", 11))
+			dev->bid_pri = BLKID_PRI_DM;
+		else if (!strncmp(ptname, "md", 2))
+			dev->bid_pri = BLKID_PRI_MD;
+	}
 	return;
 }
 

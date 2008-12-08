@@ -33,11 +33,6 @@
 
 #include "blkidP.h"
 
-struct dir_list {
-	char	*name;
-	struct dir_list *next;
-};
-
 char *blkid_strndup(const char *s, int length)
 {
 	char *ret;
@@ -95,8 +90,8 @@ static void free_dirlist(struct dir_list **list)
 	*list = NULL;
 }
 
-static void scan_dir(char *dirname, dev_t devno, struct dir_list **list,
-			    char **devname)
+void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
+		     char **devname)
 {
 	DIR	*dir;
 	struct dirent *dp;
@@ -127,7 +122,7 @@ static void scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 				   path, *devname));
 			break;
 		}
-		if (S_ISDIR(st.st_mode) && !lstat(path, &st) &&
+		if (list && S_ISDIR(st.st_mode) && !lstat(path, &st) &&
 		    S_ISDIR(st.st_mode))
 			add_to_dirlist(path, list);
 	}
@@ -161,7 +156,7 @@ char *blkid_devno_to_devname(dev_t devno)
 
 		list = list->next;
 		DBG(DEBUG_DEVNO, printf("directory %s\n", current->name));
-		scan_dir(current->name, devno, &new_list, &devname);
+		blkid__scan_dir(current->name, devno, &new_list, &devname);
 		free(current->name);
 		free(current);
 		if (devname)

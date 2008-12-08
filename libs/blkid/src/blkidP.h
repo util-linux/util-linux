@@ -228,6 +228,13 @@ extern void blkid_debug_dump_dev(blkid_dev dev);
 extern void blkid_debug_dump_tag(blkid_tag tag);
 #endif
 
+/* devno.c */
+struct dir_list {
+	char	*name;
+	struct dir_list *next;
+};
+extern void blkid__scan_dir(char *, dev_t, struct dir_list **, char **);
+
 /* lseek.c */
 extern blkid_loff_t blkid_llseek(int fd, blkid_loff_t offset, int whence);
 
