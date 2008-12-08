@@ -20,7 +20,6 @@
 #ifdef HAVE_SYS_MKDEV_H
 #include <sys/mkdev.h>
 #endif
-#include <sys/utsname.h>
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
