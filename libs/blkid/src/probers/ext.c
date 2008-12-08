@@ -371,8 +371,10 @@ static int check_for_modules(const char *fs_name)
 			if (!strcmp(t, ".ko"))
 				*t = 0;
 		}
-		if (!strcmp(cp, fs_name))
+		if (!strcmp(cp, fs_name)) {
+			fclose(f);
 			return 1;
+		}
 	}
 	fclose(f);
 #endif /* __linux__ */
