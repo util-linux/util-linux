@@ -288,8 +288,4 @@ extern int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const ch
 #define BLKID_ENC_UTF16BE	0
 #define BLKID_ENC_UTF16LE	1
 
-#ifdef __cplusplus
-}
-#endif
-
 #endif /* _BLKID_BLKIDP_H */
