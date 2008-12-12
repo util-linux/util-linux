@@ -3,19 +3,19 @@ include $(top_srcdir)/config/include-Makefile.am
 bin_PROGRAMS =
 sbin_PROGRAMS =
 usrbinexec_PROGRAMS = flock ipcrm ipcs renice setsid
-usrsbinexec_PROGRAMS = ldattach readprofile
+usrsbinexec_PROGRAMS = readprofile
 
 dist_man_MANS = flock.1 ipcrm.1 ipcs.1 renice.1 setsid.1 \
-		ldattach.8 readprofile.1
+		readprofile.1
 
 if LINUX
 bin_PROGRAMS += dmesg
 sbin_PROGRAMS += ctrlaltdel
 usrbinexec_PROGRAMS += cytune setarch
-usrsbinexec_PROGRAMS += tunelp rtcwake
+usrsbinexec_PROGRAMS += ldattach tunelp rtcwake
 
 dist_man_MANS += dmesg.1 ctrlaltdel.8 cytune.8 setarch.8 \
-		tunelp.8 rtcwake.8
+		tunelp.8 rtcwake.8 ldattach.8
 endif
 
 cytune_SOURCES = cytune.c cyclades.h
