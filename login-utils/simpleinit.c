@@ -337,12 +337,12 @@ static int check_single_ok (void)
 
     for (i = 0; i < MAXTRIES; i++)
     {
-	pass = getpass (_ ("Password: ") );
+	pass = getpass (_("Password: "));
 	if (pass == NULL) continue;
-		
+
 	if ( !strcmp (crypt (pass, rootpass), rootpass) ) return 1;
 
-	puts (_ ("\nWrong password.\n") );
+	puts (_("\nWrong password.\n"));
     }
     return 0;
 }
@@ -415,7 +415,7 @@ static int process_path (const char *path, int (*func) (const char *path),
 
     if (lstat (path, &statbuf) != 0)
     {
-	err (_ ("lstat of path failed\n") );
+	err (_("lstat of path failed\n") );
 	return 1;
     }
     if ( S_ISLNK (statbuf.st_mode) )
@@ -423,7 +423,7 @@ static int process_path (const char *path, int (*func) (const char *path),
 	if (stat (path, &statbuf) != 0)
 	{
 	    if ( (errno == ENOENT) && ignore_dangling_symlink ) return 0;
-	    err (_ ("stat of path failed\n") );
+	    err (_("stat of path failed\n") );
 	    return 1;
 	}
     }
@@ -431,7 +431,7 @@ static int process_path (const char *path, int (*func) (const char *path),
     if ( !S_ISDIR (statbuf.st_mode) ) return (*func) (path);
     if ( ( dp = opendir (path) ) == NULL )
     {
-	err (_ ("open of directory failed\n") );
+	err (_("open of directory failed\n") );
 	return 1;
     }
     while ( ( de = readdir (dp) ) != NULL )
@@ -440,7 +440,7 @@ static int process_path (const char *path, int (*func) (const char *path),
 	char newpath[PATH_SIZE];
 
 	if (de->d_name[0] == '.') continue;
-	retval = sprintf (newpath, "%s/%s", path, de->d_name);
+	retval = snprintf (newpath, sizeof(newpath), "%s/%s", path, de->d_name);
 	if (newpath[retval - 1] == '~') continue;  /*  Common mistake  */
 	if ( ( retval = process_path (newpath, func, 1) ) ) return retval;
     }
@@ -497,9 +497,10 @@ static void spawn (int i)
 		inittab[i].toks[0] = NULL;
 		inittab[i].pid = -1;
 		inittab[i].rate = 0;
-		sprintf (txt,"respawning: \"%s\" too fast: quenching entry\n",
+		snprintf (txt, sizeof(txt),
+			_("respawning: \"%s\" too fast: quenching entry\n"),
 			 inittab[i].tty);
-		err (_(txt));
+		err (txt);
 		return;
 	}
 
@@ -526,11 +527,11 @@ static void spawn (int i)
 		for(j = 0; j < getdtablesize(); j++)
 			(void) close(j);
 
-		(void) sprintf(term, "TERM=%s", inittab[i].termcap);
+		snprintf(term, sizeof(term), "TERM=%s", inittab[i].termcap);
 		env[0] = term;
 		env[1] = (char *)0;
 #ifdef SET_TZ
-		(void) sprintf(tz, "TZ=%s", tzone);
+		snprintf(tz, sizeof(tz), "TZ=%s", tzone);
 		env[1] = tz;
 #endif
 		env[2] = (char *)0;
@@ -625,7 +626,7 @@ static void read_inittab (void)
 
 #ifdef SPECIAL_CONSOLE_TERM
 		/* special-case termcap for the console ttys */
-		(void) sprintf(tty, "/dev/%s", inittab[i].tty);
+		snprintf(tty, sizeof(tty), "/dev/%s", inittab[i].tty);
 		if(!termenv || stat(tty, &stb) < 0) {
 			err(_("no TERM or cannot stat tty\n"));
 		} else {
@@ -933,7 +934,8 @@ static void process_command (const struct command_struct *command)
 		dup2 (1, 2);
 		execlp (get_path (victim->first_service->name),
 			victim->first_service->name, "stop", NULL);
-		sprintf (txt, _("error stopping service: \"%s\""),
+		snprintf (txt, sizeof(txt),
+			_("error stopping service: \"%s\"\n"),
 			 victim->first_service->name);
 		err (txt);
 		_exit (SIG_NOT_STOPPED);
@@ -944,7 +946,8 @@ static void process_command (const struct command_struct *command)
 		while (waitpid (pid, &ival, 0) != pid) /*  Nothing  */;
 		if ( WIFEXITED (ival) && (WEXITSTATUS (ival) == 0) )
 		{
-		    sprintf (txt, "Stopped service: %s\n",
+		    snprintf (txt, sizeof(txt),
+			     _("Stopped service: %s\n"),
 			     victim->first_service->name);
 		    remove_entry (&available_list, victim);
 		    free (victim);
@@ -1063,8 +1066,9 @@ static int run_command (const char *file, const char *name, pid_t pid)
 	  case 0:   /*  Child   */
 	    for (i = 1; i < NSIG; i++) signal (i, SIG_DFL);
 	    execlp (get_path (file), service->name, "start", NULL);
-	    sprintf (txt, "error running programme: \"%s\"\n", service->name);
-	    err ( _(txt) );
+	    snprintf (txt, sizeof(txt),
+		_("error running programme: \"%s\"\n"), service->name);
+	    err (txt);
 	    _exit (SIG_FAILED);
 	    break;
 	  case -1:  /*  Error   */
