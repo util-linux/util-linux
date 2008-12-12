@@ -890,13 +890,11 @@ do_prompt(op, tp)
 		  case 'd':
 		  case 't':
 		    {
-		      char *weekday[] = { N_("Sun"), N_("Mon"), N_("Tue"),
-					  N_("Wed"), N_("Thu"), N_("Fri"),
-					  N_("Sat") };
-		      char *month[] = { N_("Jan"), N_("Feb"), N_("Mar"),
-					N_("Apr"), N_("May"), N_("Jun"),
-					N_("Jul"), N_("Aug"), N_("Sep"),
-					N_("Oct"), N_("Nov"), N_("Dec") };
+		      char *weekday[] = { "Sun", "Mon", "Tue", "Wed", "Thu",
+					  "Fri", "Sat" };
+		      char *month[] = { "Jan", "Feb", "Mar", "Apr", "May",
+					"Jun", "Jul", "Aug", "Sep", "Oct",
+					"Nov", "Dec" };
 		      time_t now;
 		      struct tm *tm;
 

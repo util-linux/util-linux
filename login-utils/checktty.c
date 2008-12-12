@@ -316,7 +316,7 @@ main(int argc, char **argv)
 
 	for (item = alist; item->range; item++) {
 
-		printf(_("hnmatch() on %-30s <-- %-15s: "), item->range, item->ip);
+		printf("hnmatch() on %-30s <-- %-15s: ", item->range, item->ip);
 
 		if (getaddrinfo(item->ip, NULL, &hints, &info)==0 && info) {
 			if (info->ai_family == AF_INET)	{
@@ -334,18 +334,17 @@ main(int argc, char **argv)
 			hostfamily = info->ai_family;
 			freeaddrinfo(info);
 			printf("%s\n", hnmatch("dummy", item->range) ?
-						_("match") : _("mismatch"));
+						"match" : "mismatch");
 		}
 		else
-			printf(_("getaddrinfo() failed\n"));
+			printf("getaddrinfo() failed\n");
 
 	}
 	return 0;
 }
 #endif /* MAIN_TEST_CHECKTTY */
 
-static char *wdays[] = { N_("sun"), N_("mon"), N_("tue"), N_("wed"),
-			 N_("thu"), N_("fri"), N_("sat") };
+static char *wdays[] = { "sun", "mon", "tue", "wed", "thu", "fri", "sat" };
 
 /* example timespecs:
 
