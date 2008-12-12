@@ -220,7 +220,8 @@ smalloc(size_t s)
 {
         char *m = (char *)malloc(s);
         if (m == NULL) {
-                write(2, _("Out of memory\n"), 14);
+		char *p = _("Out of memory\n");
+                write(2, p, strlen(p));
                 quit(++exitstatus);
         }
         return m;
@@ -1502,12 +1503,15 @@ found_bw:
 				}
 				goto newcmd;
 			case 'h':
+			{
 				/*
 				 * Help!
 				 */
+				char *help = _(helpscreen);
 				write(1, copyright + 4, strlen(copyright + 4));
-				write(1, helpscreen, strlen(helpscreen));
+				write(1, help, strlen(help));
 				goto newcmd;
+			}
 			case 'n':
 				/*
 				 * Next file.
