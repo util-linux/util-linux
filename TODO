@@ -59,6 +59,9 @@ v2.15:
 v2.??:
 =====
 
+ * agetty: use nl_langinfo() for days and months rather than hardcoded
+   English names.
+
  * rewrite ipcs to use /proc/sys/kernel rather than unreliable syscalls
    (there are problems with 32bit userspace on 64bit kernel)
 

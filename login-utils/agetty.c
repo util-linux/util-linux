@@ -890,6 +890,7 @@ do_prompt(op, tp)
 		  case 'd':
 		  case 't':
 		    {
+		      /* TODO: use nl_langinfo() */
 		      char *weekday[] = { "Sun", "Mon", "Tue", "Wed", "Thu",
 					  "Fri", "Sat" };
 		      char *month[] = { "Jan", "Feb", "Mar", "Apr", "May",
