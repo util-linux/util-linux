@@ -42,12 +42,13 @@ swapon_LDADD = $(LDADD_common)
 
 LDADD_common =
 LDADD_common_static =
+mount_static_LDADD =
 
 if HAVE_STATIC_MOUNT
 bin_PROGRAMS += mount.static
 mount_static_SOURCES = $(mount_SOURCES)
 mount_static_LDFLAGS = $(LDFLAGS_STATIC)
-mount_static_LDADD = $(LDADD_common_static)
+mount_static_LDADD += $(LDADD_common_static)
 endif
 
 if HAVE_STATIC_UMOUNT
@@ -72,7 +73,7 @@ endif
 
 if HAVE_SELINUX
 mount_LDADD += $(SELINUX_LIBS)
-mount_static_LDADD = $(SELINUX_LIBS_STATIC)
+mount_static_LDADD += $(SELINUX_LIBS_STATIC)
 endif
 
 if HAVE_VOLUME_ID
