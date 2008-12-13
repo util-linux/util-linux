@@ -170,6 +170,9 @@ fsprobe_get_devname_for_mounting(const char *spec)
 	if (!spec)
 		return NULL;
 
+	if (is_pseudo_fs(spec))
+		return xstrdup(spec);
+
 	if (parse_spec(spec, &name, &value) != 0)
 		return NULL;				/* parse error */
 
@@ -203,6 +206,8 @@ fsprobe_get_devname(const char *spec)
 
 	if (!spec)
 		return NULL;
+	if (is_pseudo_fs(spec))
+		return xstrdup(spec);
 
 	if (parse_spec(spec, &name, &value) != 0)
 		return NULL;				/* parse error */

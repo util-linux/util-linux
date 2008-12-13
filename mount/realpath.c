@@ -29,6 +29,19 @@
 # define MAXSYMLINKS 256
 #endif
 
+int
+is_pseudo_fs(const char *type)
+{
+	if (type == NULL || *type == '/')
+		return 0;
+	if (streq(type, "none") ||
+	    streq(type, "proc") ||
+	    streq(type, "tmpfs") ||
+	    streq(type, "sysfs") ||
+	    streq(type, "devpts"))
+		return 1;
+	return 0;
+}
 
 /* Make a canonical pathname from PATH.  Returns a freshly malloced string.
    It is up the *caller* to ensure that the PATH is sensible.  i.e.
@@ -36,15 +49,12 @@
    is not a legal pathname for ``/dev/fd0''.  Anything we cannot parse
    we return unmodified.   */
 char *
-canonicalize_mountpoint (const char *path) {
+canonicalize_spec (const char *path)
+{
 	if (path == NULL)
 		return NULL;
-
-	if (streq(path, "none") ||
-	    streq(path, "proc") ||
-	    streq(path, "devpts"))
+	if (is_pseudo_fs(path))
 		return xstrdup(path);
-
 	return canonicalize(path);
 }
 
