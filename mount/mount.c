@@ -241,7 +241,7 @@ print_one (const struct my_mntent *me) {
 		printf (" type %s", me->mnt_type);
 	if (me->mnt_opts != NULL)
 		printf (" (%s)", me->mnt_opts);
-	if (list_with_volumelabel) {
+	if (list_with_volumelabel && is_pseudo_fs(me->mnt_type) == 0) {
 		const char *devname = fsprobe_get_devname(me->mnt_fsname);
 
 		if (devname) {
@@ -499,9 +499,11 @@ fix_opts_string (int flags, const char *extra_opts, const char *user) {
 }
 
 static int
-already (const char *spec, const char *node) {
+already (const char *spec0, const char *node0) {
 	struct mntentchn *mc;
 	int ret = 1;
+	char *spec = canonicalize_spec(spec0);
+	char *node = canonicalize(node0);
 
 	if ((mc = getmntfile(node)) != NULL)
 		error (_("mount: according to mtab, "
@@ -513,6 +515,10 @@ already (const char *spec, const char *node) {
 		       spec, mc->m.mnt_dir);
 	else
 		ret = 0;
+
+	free(spec);
+	free(node);
+
 	return ret;
 }
 
@@ -840,7 +846,7 @@ is_mounted_same_loopfile(const char *node0, const char *loopfile, unsigned long 
 	char *node;
 	int res = 0;
 
-	node = canonicalize_mountpoint(node0);
+	node = canonicalize(node0);
 
 	/* Search for mountpoint node in mtab,
 	 * procceed if any of these has the loop option set or
@@ -980,8 +986,8 @@ update_mtab_entry(const char *spec, const char *node, const char *type,
 		  const char *opts, int flags, int freq, int pass) {
 	struct my_mntent mnt;
 
-	mnt.mnt_fsname = canonicalize (spec);
-	mnt.mnt_dir = canonicalize_mountpoint (node);
+	mnt.mnt_fsname = is_pseudo_fs(type) ? xstrdup(spec) : canonicalize(spec);
+	mnt.mnt_dir = canonicalize (node);
 	mnt.mnt_type = type;
 	mnt.mnt_opts = opts;
 	mnt.mnt_freq = freq;
@@ -1510,7 +1516,7 @@ mounted (const char *spec0, const char *node0) {
 	if (!spec)
 		return ret;
 
-	node = canonicalize_mountpoint(node0);
+	node = canonicalize(node0);
 
 	mc0 = mtab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
