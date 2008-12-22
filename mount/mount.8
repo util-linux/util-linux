@@ -678,7 +678,7 @@ Can only be mounted explicitly (i.e., the
 .B \-a
 option will not cause the file system to be mounted).
 .TP
-\fBcontext=\fP\fIcontext\fP, \fBfscontext=\fP\fIcontext\fP and \fBdefcontext=\fP\fIcontext\fP
+\fBcontext=\fP\fIcontext\fP, \fBfscontext=\fP\fIcontext\fP, \fBdefcontext=\fP\fIcontext\fP and \fBrootcontext=\fP\fIcontext\fP
 The
 .BR context=
 option is useful when mounting filesystems that do not support
@@ -718,6 +718,12 @@ You can set the default security context for unlabeled files using
 .BR defcontext=
 option. This overrides the value set for unlabeled files in the policy and requires a
 file system that supports xattr labeling.
+
+The
+.BR rootcontext=
+option allows you to explicitly label the root inode of a FS being mounted
+before that FS or inode because visable to userspace. This was found to be
+useful for things like stateless linux.
 
 For more details, see
 .BR selinux (8)
