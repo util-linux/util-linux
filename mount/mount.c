@@ -423,6 +423,10 @@ parse_opt(char *opt, int *mask, char **extra_opts) {
 		if (append_context("defcontext=", opt+11, extra_opts) == 0)
 			return;
 	}
+	if (strncmp(opt, "rootcontext=", 12) == 0 && *(opt+12)) {
+		if (append_context("rootcontext=", opt+12, extra_opts) == 0)
+			return;
+	}
 #endif
 	*extra_opts = append_opt(*extra_opts, opt, NULL);
 }
