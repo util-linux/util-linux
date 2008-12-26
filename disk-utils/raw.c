@@ -23,14 +23,12 @@
 #include <linux/major.h>
 #include "nls.h"
 
-#ifdef OLD_RAW_DEVS
-#define RAWCTLDEV "/dev/raw"
-#define RAWDEVDIR "/dev/"
-#else
-#define RAWCTLDEV "/dev/rawctl"
+
 #define RAWDEVDIR "/dev/raw/"
-#endif
-#define DEVFS_RAWCTLDEV "/dev/raw/rawctl"
+#define RAWDEVCTL RAWDEVDIR "rawctl"
+/* deprecated */
+#define RAWDEVCTL_OLD "/dev/rawctl"
+
 
 #define RAW_NR_MINORS 8192
 
@@ -196,14 +194,14 @@ void open_raw_ctl(void)
 {
 	int errsv;
 
-	master_fd = open(RAWCTLDEV, O_RDWR, 0);
+	master_fd = open(RAWDEVCTL, O_RDWR, 0);
 	if (master_fd < 0) {
 		errsv = errno;
-		master_fd = open(DEVFS_RAWCTLDEV, O_RDWR, 0);
+		master_fd = open(RAWDEVCTL_OLD, O_RDWR, 0);
 		if (master_fd < 0) {
-			fprintf (stderr, 
+			fprintf (stderr,
 				 _("Cannot open master raw device '"
-				 RAWCTLDEV
+				 RAWDEVCTL
 				 "' (%s)\n"), strerror(errsv));
 			exit(2);
 		}
