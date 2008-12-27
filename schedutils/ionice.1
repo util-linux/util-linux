@@ -6,25 +6,27 @@ ionice \- get/set program io scheduling class and priority
 [\fI-c\fR] \fI[-n\fR] [\fI-p\fR] [COMMAND [ARG...]]
 
 .SH DESCRIPTION
-This program sets the io scheduling class and priority for a program. As of
-this writing, Linux supports 3 scheduling classes:
+This program sets or gets the io scheduling class and priority for a program.
+If no arguments or just \fI-p\fR is given, \fIionice\fR will query the current
+io scheduling class and priority for that process.
 
-\fBIdle\fR.
+As of this writing, a process can be in one of four scheduling classes:
+
+.IP "\fBIdle\fR"
 A program running with idle io priority will only get disk time when no other
 program has asked for disk io for a defined grace period. The impact of idle
 io processes on normal system activity should be zero. This scheduling
 class does not take a priority argument. Presently, this scheduling class
 is permitted for an ordinary user (since kernel 2.6.25).
 
-
-\fBBest effort\fR.
-This is the default scheduling class for any process that hasn't asked for
-a specific io priority. Programs inherit the CPU nice setting for io
-priorities. This class takes a priority argument from \fI0-7\fR, with lower
+.IP "\fBBest effort\fP"
+This is the effective scheduling class for any process that hasn't asked for
+a specific io priority.
+This class takes a priority argument from \fI0-7\fR, with lower
 number being higher priority. Programs running at the same best effort
 priority are served in a round-robin fashion.
 
-\fBReal time\fR.
+.IP "\fBReal time\fR"
 The RT scheduling class is given first access to the disk, regardless of
 what else is going on in the system. Thus the RT class needs to be used with
 some care, as it can starve other processes. As with the best effort class,
@@ -32,8 +34,13 @@ some care, as it can starve other processes. As with the best effort class,
 will receive on each scheduling window. This scheduling class is not
 permitted for an ordinary (i.e., non-root) user.
 
-If no arguments or just \fI-p\fR is given, \fIionice\fR will query the
-current io scheduling class and priority for that process.
+.IP "\fBNone\fP"
+A process that that hasn't asked for a specific io priority will formally be
+in this class. The io scheduler will treat a process that is in this class as
+if it were in the best effort class. The priority within the best effort
+class will be dynamically derived from the cpu nice level of the process:
+io_priority = (cpu_nice + 20) / 5
+
 
 .SH OPTIONS
 .LP
