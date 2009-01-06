@@ -197,10 +197,11 @@ readlink_to_namei(struct namei *nm, const char *path)
 		err(EXIT_FAILURE, _("out of memory?"));
 
 	if (*sym != '/') {
+		/* create the absolute path from the relative symlink */
 		memcpy(nm->abslink, path, nm->relstart);
 		*(nm->abslink + nm->relstart) = '/';
 		nm->relstart++;
-		memcpy(nm->abslink + nm->relstart, sym, sz);
+		memcpy(nm->abslink + nm->relstart, sym, sz - nm->relstart);
 	} else
 		memcpy(nm->abslink, sym, sz);
 	nm->abslink[sz] = '\0';
