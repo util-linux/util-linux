@@ -288,6 +288,16 @@ getmntoptfile (const char *file) {
 	return NULL;
 }
 
+/* compares "quoted" or 'quoted' with unquoted */
+static int
+streq_quoted(const char *quoted, const char *unquoted)
+{
+	if (*quoted == '"' || *quoted == '\'')
+		return !strncmp(quoted + 1, unquoted, strlen(quoted) - 2);
+
+	return streq(quoted, unquoted);
+}
+
 static int
 has_label(const char *device, const char *label) {
 	const char *devlabel;
@@ -297,7 +307,7 @@ has_label(const char *device, const char *label) {
 	if (!devlabel)
 		return 0;
 
-	ret = !strcmp(label, devlabel);
+	ret = streq_quoted(label, devlabel);
 	my_free(devlabel);
 	return ret;
 }
@@ -311,7 +321,7 @@ has_uuid(const char *device, const char *uuid){
 	if (!devuuid)
 		return 0;
 
-	ret = !strcmp(uuid, devuuid);
+	ret = streq_quoted(uuid, devuuid);
 	my_free(devuuid);
 	return ret;
 }
@@ -456,7 +466,7 @@ getfs_by_uuid (const char *uuid) {
 	mc0 = fstab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
 		if (strncmp (mc->m.mnt_fsname, "UUID=", 5) == 0
-		    && streq(mc->m.mnt_fsname + 5, uuid))
+		    && streq_quoted(mc->m.mnt_fsname + 5, uuid))
 			return mc;
 	return NULL;
 }
@@ -469,7 +479,7 @@ getfs_by_label (const char *label) {
 	mc0 = fstab_head();
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt)
 		if (strncmp (mc->m.mnt_fsname, "LABEL=", 6) == 0
-		    && streq(mc->m.mnt_fsname + 6, label))
+		    && streq_quoted(mc->m.mnt_fsname + 6, label))
 			return mc;
 	return NULL;
 }
