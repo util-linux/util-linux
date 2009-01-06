@@ -326,46 +326,39 @@ has_uuid(const char *device, const char *uuid){
 	return ret;
 }
 
-/* Find the entry (SPEC,DIR) in fstab -- spec and dir must be canonicalized! */
+/* Find the entry (DEV,DIR) in fstab -- spec and dir must be canonicalized! */
 struct mntentchn *
-getfs_by_specdir (const char *spec, const char *dir) {
+getfs_by_devdir (const char *dev, const char *dir) {
 	struct mntentchn *mc, *mc0;
 
 	mc0 = fstab_head();
 
 	for (mc = mc0->nxt; mc && mc != mc0; mc = mc->nxt) {
+		int ok = 1;
+
 		/* dir */
 		if (!streq(mc->m.mnt_dir, dir)) {
 			char *dr = canonicalize(mc->m.mnt_dir);
-			int ok = 0;
-
-			if (streq(dr, dir))
-				ok = 1;
-			free(dr);
-			if (!ok)
-				continue;
+			ok = streq(dr, dir);
+			my_free(dr);
 		}
 
 		/* spec */
-		if (!streq(mc->m.mnt_fsname, spec)) {
-			char *fs = canonicalize_spec(mc->m.mnt_fsname);
-			int ok = 0;
+		if (ok && !streq(mc->m.mnt_fsname, dev)) {
+			const char *fs = mc->m.mnt_fsname;
 
-			if (streq(fs, spec))
-				ok = 1;
-			else if (strncmp (fs, "LABEL=", 6) == 0) {
-				if (has_label(spec, fs + 6))
-					ok = 1;
+			if (strncmp (fs, "LABEL=", 6) == 0) {
+				ok = has_label(dev, fs + 6);
+			} else if (strncmp (fs, "UUID=", 5) == 0) {
+				ok = has_uuid(dev, fs + 5);
+			} else {
+				fs = canonicalize_spec(mc->m.mnt_fsname);
+				ok = streq(fs, dev);
+				my_free(fs);
 			}
-			else if (strncmp (fs, "UUID=", 5) == 0) {
-				if (has_uuid(spec, fs + 5))
-					ok = 1;
-			}
-			free(fs);
-			if (!ok)
-				continue;
 		}
-		return mc;
+		if (ok)
+			return mc;
 	}
 
 	return NULL;

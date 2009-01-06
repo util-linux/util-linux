@@ -22,7 +22,7 @@ struct mntentchn *fstab_head (void);
 struct mntentchn *getfs_by_dir (const char *dir);
 struct mntentchn *getfs_by_spec (const char *spec);
 struct mntentchn *getfs_by_devname (const char *devname);
-struct mntentchn *getfs_by_specdir (const char *spec, const char *dir);
+struct mntentchn *getfs_by_devdir (const char *dev, const char *dir);
 struct mntentchn *getfs_by_uuid (const char *uuid);
 struct mntentchn *getfs_by_label (const char *label);
 
