@@ -409,6 +409,12 @@ autofs\-based automounter.
 .B \-r
 Mount the file system read-only. A synonym is
 .BR "\-o ro" .
+
+Note that, depending on the filesystem type, state and kernel behavior, the
+system may still write to the device. For example, Ext3 will replay its journal
+if the filesystem is dirty. To prevent this kind of write access, you may want
+to map the device through a read-only loop device, see command
+.BR losetup (8).
 .TP
 .B \-w
 Mount the file system read/write. This is the default. A synonym is
