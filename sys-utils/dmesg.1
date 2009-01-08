@@ -4,7 +4,7 @@
 .SH NAME
 dmesg \- print or control the kernel ring buffer
 .SH SYNOPSIS
-.BI "dmesg [ \-c ] [ \-n " level " ] [ \-s " bufsize " ]"
+.BI "dmesg [ \-c ] [ -r ] [ \-n " level " ] [ \-s " bufsize " ]"
 .SH DESCRIPTION
 .B dmesg
 is used to examine or control the kernel ring buffer.
@@ -21,6 +21,9 @@ file to whoever can debug their problem.
 .TP
 .B \-c
 Clear the ring buffer contents after printing.
+.TP
+.B \-r
+Print the raw message buffer, i.e., don't strip the log level prefixes.
 .TP
 .BI \-s bufsize
 Use a buffer of size

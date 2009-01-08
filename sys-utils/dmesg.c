@@ -56,13 +56,14 @@ main(int argc, char *argv[]) {
 	int  level = 0;
 	int  lastc;
 	int  cmd = 3;		/* Read all messages in the ring buffer */
+	int  raw = 0;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
 	progname = argv[0];
-	while ((c = getopt(argc, argv, "cn:s:")) != -1) {
+	while ((c = getopt(argc, argv, "crn:s:")) != -1) {
 		switch (c) {
 		case 'c':
 			cmd = 4;	/* Read and clear all messages */
@@ -70,6 +71,9 @@ main(int argc, char *argv[]) {
 		case 'n':
 			cmd = 8;	/* Set level of messages */
 			level = atoi(optarg);
+			break;
+		case 'r':
+			raw = 1;
 			break;
 		case 's':
 			bufsize = atoi(optarg);
@@ -131,7 +135,7 @@ main(int argc, char *argv[]) {
 
 	lastc = '\n';
 	for (i = 0; i < n; i++) {
-		if ((i == 0 || buf[i - 1] == '\n') && buf[i] == '<') {
+		if (!raw && (i == 0 || buf[i - 1] == '\n') && buf[i] == '<') {
 			i++;
 			while (buf[i] >= '0' && buf[i] <= '9')
 				i++;
