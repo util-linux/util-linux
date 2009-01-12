@@ -38,6 +38,7 @@ libprobers_a_SOURCES =	probers.h \
 			squashfs.c \
 			netware.c \
 			sysv.c \
+			btrfs.c \
 			lvm.c
 
 all-local: $(lib_LIBRARIES)
