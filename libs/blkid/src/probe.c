@@ -447,7 +447,7 @@ int blkid_do_probe(blkid_probe pr)
 		id = idinfos[i];
 		mag = id->magics ? &id->magics[0] : NULL;
 
-		DBG(DEBUG_LOWPROBE, printf("%s ", id->name));
+		DBG(DEBUG_LOWPROBE, printf("\n  %s", id->name));
 
 		/* try to detect by magic string */
 		while(mag && mag->magic) {
@@ -460,7 +460,7 @@ int blkid_do_probe(blkid_probe pr)
 			if (buf && !memcmp(mag->magic,
 					buf + (mag->sboff & 0x3ff), mag->len)) {
 				DBG(DEBUG_LOWPROBE, printf(
-					"{ detected magic string sboff=%d, kboff=%d } ",
+					"\n      --> magic at sboff=%u, kboff=%ld;",
 					mag->sboff, mag->kboff));
 				break;
 			}
@@ -474,7 +474,7 @@ int blkid_do_probe(blkid_probe pr)
 		/* final check by probing function */
 		if (id->probefunc) {
 			DBG(DEBUG_LOWPROBE, printf(
-				"{ calling probing function } \n"));
+				"\n      --> calling probing function"));
 			if (id->probefunc(pr, mag) != 0)
 				continue;
 		}
@@ -487,10 +487,11 @@ int blkid_do_probe(blkid_probe pr)
 		if (pr->probreq & BLKID_PROBREQ_USAGE)
 			blkid_probe_set_usage(pr, id->usage);
 
-		DBG(DEBUG_LOWPROBE, printf("*** leaving probing loop (success)\n"));
+		DBG(DEBUG_LOWPROBE,
+			printf("\n*** leaving probing loop (type=%s)\n", id->name));
 		return 0;
 	}
-	DBG(DEBUG_LOWPROBE, printf("*** leaving probing loop (failed)\n"));
+	DBG(DEBUG_LOWPROBE, printf("\n*** leaving probing loop (failed)\n"));
 	return 1;
 }
 
@@ -516,7 +517,7 @@ static struct blkid_prval *blkid_probe_assign_value(
 	v->name = name;
 	pr->nvals++;
 
-	DBG(DEBUG_LOWPROBE, printf("assigning %s value\n", name));
+	DBG(DEBUG_LOWPROBE, printf("assigning %s\n", name));
 	return v;
 }
 

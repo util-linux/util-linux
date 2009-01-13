@@ -1,13 +1,11 @@
 
- - add blkid --low-probe
-
  - add hex-encoding from libudev
 
  - do we really need to depend on libuuid? Maybe the default should be
    use in-tree code rather and link against libuuid -- especially when we
    need it for uuid_unparse() only.
 
- - add blkid -o | --format=full|value|udev
+ - add "blkid -f udev" (vol_id compatible output format)
 
  - consolidate "getsize" stuff (see getsize.c and lib/blkdev.c)
 

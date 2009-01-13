@@ -13,6 +13,9 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 #ifdef HAVE_TERMIOS_H
 #include <termios.h>
 #endif
@@ -49,18 +52,23 @@ static void usage(int error)
 
 	print_version(out);
 	fprintf(out,
-		"usage:\t%s [-c <file>] [-ghlLv] [-o format] "
-		"[-s <tag>] [-t <token>]\n    [-w <file>] [dev ...]\n"
-		"\t-c\tcache file (default: /etc/blkid.tab, /dev/null = none)\n"
-		"\t-h\tprint this usage message and exit\n"
-		"\t-g\tgarbage collect the blkid cache\n"
-		"\t-s\tshow specified tag(s) (default show all tags)\n"
-		"\t-t\tfind device with a specific token (NAME=value pair)\n"
-		"\t-l\tlookup the the first device with arguments specified by -t\n"
-		"\t-v\tprint version and exit\n"
-		"\t-w\twrite cache to different file (/dev/null = no write)\n"
-		"\tdev\tspecify device(s) to probe (default: all devices)\n",
-		progname);
+		"Usage:\n"
+		"  %1$s [-c <file>] [-ghlLv] [-o format] [-s <tag>] \n"
+		"         [-t <token>] [-w <file>] [dev ...]\n\n"
+		"  %1$s -p [-O <offset>] [-S <size>] <dev> [dev ...]\n\n"
+		"Options:\n"
+		"  -c <file>   cache file (default: /etc/blkid.tab, /dev/null = none)\n"
+		"  -h          print this usage message and exit\n"
+		"  -g          garbage collect the blkid cache\n"
+		"  -p          switch to low-probe mode (bypass cache)\n"
+		"  -s <tag>    show specified tag(s) (default show all tags)\n"
+		"  -t <token>  find device with a specific token (NAME=value pair)\n"
+		"  -l          lookup the the first device with arguments specified by -t\n"
+		"  -v          print version and exit\n"
+		"  -w <file>   write cache to different file (/dev/null = no write)\n"
+		"  <dev>       specify device(s) to probe (default: all devices)\n\n",
+				progname);
+
 	exit(error);
 }
 
@@ -220,11 +228,33 @@ static void pretty_print_dev(blkid_dev dev)
 #endif
 }
 
+static void print_value(int output, int num, blkid_dev dev,
+			const char *value, const char *name, size_t valsz)
+{
+	if (output & OUTPUT_VALUE_ONLY) {
+		fputs(value, stdout);
+		fputc('\n', stdout);
+
+	/* TODO: print vol_id compatible output
+	 * } else if (output && OUTPUT_UDEV) {
+	 *
+	 */
+
+	} else {
+		if (num == 1 && dev)
+			printf("%s: ", blkid_dev_devname(dev));
+		fputs(name, stdout);
+		fputs("=\"", stdout);
+		safe_print(value, valsz);
+		fputs("\" ", stdout);
+	}
+}
+
 static void print_tags(blkid_dev dev, char *show[], int numtag, int output)
 {
 	blkid_tag_iterate	iter;
 	const char		*type, *value;
-	int 			i, first = 1;
+	int			i, num = 1;
 
 	if (!dev)
 		return;
@@ -248,24 +278,48 @@ static void print_tags(blkid_dev dev, char *show[], int numtag, int output)
 			if (i >= numtag)
 				continue;
 		}
-		if (output & OUTPUT_VALUE_ONLY) {
-			fputs(value, stdout);
-			fputc('\n', stdout);
-		} else {
-			if (first) {
-				printf("%s: ", blkid_dev_devname(dev));
-				first = 0;
-			}
-			fputs(type, stdout);
-			fputs("=\"", stdout);
-			safe_print(value, -1);
-			fputs("\" ", stdout);
-		}
+		print_value(output, num++, dev, value, type, strlen(value));
 	}
 	blkid_tag_iterate_end(iter);
 
-	if (!first && !(output & OUTPUT_VALUE_ONLY))
+	if (num > 1 && !(output & OUTPUT_VALUE_ONLY))
 		printf("\n");
+}
+
+static int lowprobe_device(blkid_probe pr, const char *devname, int output,
+		blkid_loff_t offset, blkid_loff_t size)
+{
+	unsigned char *data;
+	const char *name;
+	int nvals, n;
+	size_t len;
+	int fd;
+
+	fd = open(devname, O_RDONLY);
+	if (fd < 0) {
+		perror(devname);
+		return -1;
+	}
+
+	if (blkid_probe_set_device(pr, fd, offset, size))
+		goto error;
+	if (blkid_do_probe(pr))
+		goto error;
+
+	nvals = blkid_probe_numof_values(pr);
+
+	for (n = 0; n < nvals; n++) {
+		if (blkid_probe_get_value(pr, n, &name, &data, &len))
+			continue;
+
+		len = strnlen((char *) data, len);
+		print_value(output, n + 1, NULL, (char *) data, name, len);
+	}
+
+	return 0;
+error:
+	close(fd);
+	return -1;
 }
 
 int main(int argc, char **argv)
@@ -281,10 +335,11 @@ int main(int argc, char **argv)
 	int err = 4;
 	unsigned int i;
 	int output_format = 0;
-	int lookup = 0, gc = 0;
+	int lookup = 0, gc = 0, lowprobe = 0;
 	int c;
+	blkid_loff_t offset = 0, size = 0;
 
-	while ((c = getopt (argc, argv, "c:f:ghlLo:s:t:w:v")) != EOF)
+	while ((c = getopt (argc, argv, "c:f:ghlLo:O:ps:S:t:w:v")) != EOF)
 		switch (c) {
 		case 'c':
 			if (optarg && !*optarg)
@@ -319,12 +374,21 @@ int main(int argc, char **argv)
 				exit(1);
 			}
 			break;
+		case 'O':
+			offset = strtoll(optarg, NULL, 10);
+			break;
+		case 'p':
+			lowprobe++;
+			break;
 		case 's':
 			if (numtag >= sizeof(show) / sizeof(*show)) {
 				fprintf(stderr, "Too many tags specified\n");
 				usage(err);
 			}
 			show[numtag++] = optarg;
+			break;
+		case 'S':
+			size = strtoll(optarg, NULL, 10);
 			break;
 		case 't':
 			if (search_type) {
@@ -362,7 +426,7 @@ int main(int argc, char **argv)
 		goto exit;
 	}
 
-	if (blkid_get_cache(&cache, read) < 0)
+	if (!lowprobe && blkid_get_cache(&cache, read) < 0)
 		goto exit;
 
 	err = 2;
@@ -373,7 +437,27 @@ int main(int argc, char **argv)
 	if (output_format & OUTPUT_PRETTY_LIST)
 		pretty_print_dev(NULL);
 
-	if (lookup) {
+	if (lowprobe) {
+		blkid_probe pr;
+
+		if (!numdev) {
+			fprintf(stderr, "The low-probe option requires a device\n");
+			exit(1);
+		}
+		pr = blkid_new_probe();
+		if (!pr)
+			goto exit;
+		blkid_probe_set_request(pr,
+				BLKID_PROBREQ_LABEL | BLKID_PROBREQ_LABELRAW |
+				BLKID_PROBREQ_UUID | BLKID_PROBREQ_UUIDRAW |
+				BLKID_PROBREQ_TYPE | BLKID_PROBREQ_SECTYPE |
+				BLKID_PROBREQ_USAGE | BLKID_PROBREQ_VERSION);
+
+		for (i = 0; i < numdev; i++)
+			err += lowprobe_device(pr, devices[i],
+					output_format, offset, size);
+		blkid_free_probe(pr);
+	} else if (lookup) {
 		blkid_dev dev;
 
 		if (!search_type) {
@@ -427,6 +511,7 @@ exit:
 		free(search_type);
 	if (search_value)
 		free(search_value);
-	blkid_put_cache(cache);
+	if (!lowprobe)
+		blkid_put_cache(cache);
 	return err;
 }

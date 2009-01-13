@@ -90,7 +90,8 @@ void blkid_debug_init(int mask)
 	} else
 		blkid_debug_mask = mask;
 
-	printf("libblkid: debug mask set to 0x%04x.\n", blkid_debug_mask);
+	if (blkid_debug_mask)
+		printf("libblkid: debug mask set to 0x%04x.\n", blkid_debug_mask);
 
 	blkid_debug_mask |= DEBUG_INIT;
 }
