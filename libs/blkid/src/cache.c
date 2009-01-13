@@ -75,19 +75,32 @@ static blkid_debug_dump_cache(int mask, blkid_cache cache)
 }
 #endif
 
-int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
-{
-	blkid_cache cache;
-
 #ifdef CONFIG_BLKID_DEBUG
-	if (!(blkid_debug_mask & DEBUG_INIT)) {
+void blkid_debug_init(int mask)
+{
+	if (blkid_debug_mask & DEBUG_INIT)
+		return;
+
+	if (!mask)
+	{
 		char *dstr = getenv("BLKID_DEBUG");
 
 		if (dstr)
 			blkid_debug_mask = strtoul(dstr, 0, 0);
-		blkid_debug_mask |= DEBUG_INIT;
-	}
+	} else
+		blkid_debug_mask = mask;
+
+	printf("libblkid: debug mask set to 0x%04x.\n", blkid_debug_mask);
+
+	blkid_debug_mask |= DEBUG_INIT;
+}
 #endif
+
+int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
+{
+	blkid_cache cache;
+
+	blkid_debug_init(0);
 
 	DBG(DEBUG_CACHE, printf("creating blkid cache (using %s)\n",
 				filename ? filename : "default cache"));
@@ -183,7 +196,8 @@ int main(int argc, char** argv)
 	blkid_cache cache = NULL;
 	int ret;
 
-	blkid_debug_mask = DEBUG_ALL;
+	blkid_debug_init(DEBUG_ALL);
+
 	if ((argc > 2)) {
 		fprintf(stderr, "Usage: %s [filename] \n", argv[0]);
 		exit(1);

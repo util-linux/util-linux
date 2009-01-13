@@ -13,6 +13,9 @@
 #ifndef _BLKID_BLKIDP_H
 #define _BLKID_BLKIDP_H
 
+
+#define CONFIG_BLKID_DEBUG 1
+
 #include <sys/types.h>
 #include <stdio.h>
 
@@ -211,21 +214,23 @@ extern char *blkid_strndup(const char *s, const int length);
 #define DEBUG_RESOLVE	0x0080
 #define DEBUG_SAVE	0x0100
 #define DEBUG_TAG	0x0200
+#define DEBUG_LOWPROBE	0x0400
 #define DEBUG_INIT	0x8000
 #define DEBUG_ALL	0xFFFF
 
 #ifdef CONFIG_BLKID_DEBUG
 #include <stdio.h>
-extern int	blkid_debug_mask;
-#define DBG(m,x)	if ((m) & blkid_debug_mask) x;
-#else
-#define DBG(m,x)
-#endif
-
-#ifdef CONFIG_BLKID_DEBUG
+extern int blkid_debug_mask;
+extern void blkid_debug_init(int mask);
 extern void blkid_debug_dump_dev(blkid_dev dev);
 extern void blkid_debug_dump_tag(blkid_tag tag);
-#endif
+
+#define DBG(m,x)	if ((m) & blkid_debug_mask) x;
+
+#else /* !CONFIG_BLKID_DEBUG */
+#define DBG(m,x)
+#define blkid_debug_init(x)
+#endif /* CONFIG_BLKID_DEBUG */
 
 /* devno.c */
 struct dir_list {

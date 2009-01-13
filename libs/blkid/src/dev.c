@@ -218,13 +218,16 @@ int main(int argc, char **argv)
 			file = optarg;
 			break;
 		case 'm':
-			blkid_debug_mask = strtoul (optarg, &tmp, 0);
+		{
+			int mask = strtoul (optarg, &tmp, 0);
 			if (*tmp) {
 				fprintf(stderr, "Invalid debug mask: %s\n",
 					optarg);
 				exit(1);
 			}
+			blkid_debug_init(mask);
 			break;
+		}
 		case '?':
 			usage(argv[0]);
 		}

@@ -476,7 +476,7 @@ int main(int argc, char**argv)
 	blkid_cache cache = NULL;
 	int ret;
 
-	blkid_debug_mask = DEBUG_ALL;
+	blkid_debug_init(DEBUG_ALL);
 	if (argc > 2) {
 		fprintf(stderr, "Usage: %s [filename]\n"
 			"Test parsing of the cache (filename)\n", argv[0]);

@@ -157,7 +157,7 @@ found_type:
 		blkid_probe_to_tags(cache->probe, dev);
 
 		DBG(DEBUG_PROBE, printf("%s: devno 0x%04llx, type %s\n",
-			   dev->bid_name, (long long)st.st_rdev, type));
+			   dev->bid_name, (long long)st.st_rdev, dev->bid_type));
 	}
 
 	blkid_reset_probe(cache->probe);

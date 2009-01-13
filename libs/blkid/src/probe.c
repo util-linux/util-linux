@@ -136,6 +136,7 @@ int blkid_known_fstype(const char *fstype)
  */
 blkid_probe blkid_new_probe(void)
 {
+	blkid_debug_init(0);
 	return calloc(1, sizeof(struct blkid_struct_probe));
 }
 
@@ -163,6 +164,7 @@ void blkid_reset_probe(blkid_probe pr)
 {
 	if (!pr)
 		return;
+	DBG(DEBUG_LOWPROBE, printf("reseting blkid_probe\n"));
 	if (pr->buf)
 		memset(pr->buf, 0, pr->buf_max);
 	pr->buf_off = 0;
@@ -261,9 +263,13 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		pr->size = size;
 
 	/* read SB to test if the device is readable */
-	if (!blkid_probe_get_buffer(pr, 0, 0x200))
+	if (!blkid_probe_get_buffer(pr, 0, 0x200)) {
+		DBG(DEBUG_LOWPROBE,
+			printf("failed to prepare a device for low-probing\n"));
 		return -1;
+	}
 
+	DBG(DEBUG_LOWPROBE, printf("a new device prepared for low-probing\n"));
 	pr->idx = 0;
 	return 0;
 }
@@ -326,6 +332,7 @@ int blkid_probe_filter_types(blkid_probe pr, int flag, char *names[])
 				blkid_bmp_set_item(pr->fltr, i);
 		}
 	}
+	DBG(DEBUG_LOWPROBE, printf("a new probing type-filter initialized\n"));
 	pr->idx = 0;
 	return 0;
 }
@@ -360,6 +367,7 @@ int blkid_probe_filter_usage(blkid_probe pr, int flag, int usage)
 		} else if (flag & BLKID_FLTR_ONLYIN)
 			blkid_bmp_set_item(pr->fltr, i);
 	}
+	DBG(DEBUG_LOWPROBE, printf("a new probing usage-filter initialized\n"));
 	pr->idx = 0;
 	return 0;
 }
@@ -374,6 +382,7 @@ int blkid_probe_invert_filter(blkid_probe pr)
 	for (i = 0; i < BLKID_FLTR_SIZE; i++)
 		pr->fltr[i] = ~pr->fltr[i];
 
+	DBG(DEBUG_LOWPROBE, printf("probing filter inverted\n"));
 	pr->idx = 0;
 	return 0;
 }
@@ -424,6 +433,8 @@ int blkid_do_probe(blkid_probe pr)
 	if (pr->idx)
 		i = pr->idx + 1;
 
+	DBG(DEBUG_LOWPROBE, printf("*** starting probing loop\n"));
+
 	for (i = 0; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id;
 		const struct blkid_idmag *mag;
@@ -436,6 +447,8 @@ int blkid_do_probe(blkid_probe pr)
 		id = idinfos[i];
 		mag = id->magics ? &id->magics[0] : NULL;
 
+		DBG(DEBUG_LOWPROBE, printf("%s ", id->name));
+
 		/* try to detect by magic string */
 		while(mag && mag->magic) {
 			int idx;
@@ -445,8 +458,12 @@ int blkid_do_probe(blkid_probe pr)
 			buf = blkid_probe_get_buffer(pr, idx << 10, 1024);
 
 			if (buf && !memcmp(mag->magic,
-					buf + (mag->sboff & 0x3ff), mag->len))
+					buf + (mag->sboff & 0x3ff), mag->len)) {
+				DBG(DEBUG_LOWPROBE, printf(
+					"{ detected magic string sboff=%d, kboff=%d } ",
+					mag->sboff, mag->kboff));
 				break;
+			}
 			mag++;
 		}
 
@@ -455,8 +472,12 @@ int blkid_do_probe(blkid_probe pr)
 			continue;
 
 		/* final check by probing function */
-		if (id->probefunc && id->probefunc(pr, mag) != 0)
-			continue;
+		if (id->probefunc) {
+			DBG(DEBUG_LOWPROBE, printf(
+				"{ calling probing function } \n"));
+			if (id->probefunc(pr, mag) != 0)
+				continue;
+		}
 
 		/* all cheks passed */
 		if (pr->probreq & BLKID_PROBREQ_TYPE)
@@ -466,8 +487,10 @@ int blkid_do_probe(blkid_probe pr)
 		if (pr->probreq & BLKID_PROBREQ_USAGE)
 			blkid_probe_set_usage(pr, id->usage);
 
+		DBG(DEBUG_LOWPROBE, printf("*** leaving probing loop (success)\n"));
 		return 0;
 	}
+	DBG(DEBUG_LOWPROBE, printf("*** leaving probing loop (failed)\n"));
 	return 1;
 }
 
@@ -492,6 +515,8 @@ static struct blkid_prval *blkid_probe_assign_value(
 	v = &pr->vals[pr->nvals];
 	v->name = name;
 	pr->nvals++;
+
+	DBG(DEBUG_LOWPROBE, printf("assigning %s value\n", name));
 	return v;
 }
 
@@ -773,6 +798,8 @@ int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
 		*data = v->data;
 	if (len)
 		*len = v->len;
+
+	DBG(DEBUG_LOWPROBE, printf("returning %s value\n", v->name));
 	return 0;
 }
 
@@ -792,6 +819,7 @@ int blkid_probe_lookup_value(blkid_probe pr, const char *name,
 				*data = v->data;
 			if (len)
 				*len = v->len;
+			DBG(DEBUG_LOWPROBE, printf("returning %s value\n", v->name));
 			return 0;
 		}
 	}
