@@ -111,7 +111,9 @@ extern int blkid_parse_version_string(const char *ver_string);
 extern int blkid_get_library_version(const char **ver_string,
 				     const char **date_string);
 
-
+/* encode.c */
+extern int blkid_encode_string(const char *str, char *str_enc, size_t len);
+extern int blkid_safe_string(const char *str, char *str_safe, size_t len);
 
 /* probe.c */
 extern int blkid_known_fstype(const char *fstype);
