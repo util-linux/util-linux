@@ -1,4 +1,7 @@
 
+ TODO
+ ----
+
  - do we really need to depend on libuuid? Maybe the default should be
    use in-tree code rather and link against libuuid -- especially when we
    need it for uuid_unparse() only.
@@ -19,3 +22,39 @@
  - add regression tests:
 	- add to tests/input/blkid/ FS images
 	- create ts-blkid-fs to tests FS detection
+
+ - create a new simple API for LABEL/UUID evaluation:
+
+	blkid_eval_spec()
+	blkid_eval_uuid()
+	blkid_eval_spec()	(spec: <NAME>=<value>)
+
+   this API has to follow the EVALUATE= blkid.conf option (see below).
+
+ - create a new config file /etc/blkid.conf; options:
+
+        * EVALUATE=<method>[,<method>]
+
+	  where the method is "udev" and/or "scan". Default: "udev,scan".
+
+	* CACHE_FILE=<path>
+
+	  where the <path> is path to the blkid.tab cache file. Default:
+	  /etc/blkid.tab.
+
+	* SEND_UEVENTS=<yes|no>
+
+	  write to /sys/block/..../uevent when we found that /dev/disk-by/*
+          links are not valid (when EVALUATE=udev).
+
+ - modify /sbin/blkid code to use blkid_eval_..() API for "-t LABEL|UUID" option.
+
+ Brainstorming
+ -------------
+
+ - try to write inotify based blkid-daemon that watch block devices and update
+   blkid cache and inform udev (by uevents) when a new LABEL/UUID/FS is
+   detected.
+
+   The daemon should be also useful during system start-up for massive parallel
+   devices scanning.
