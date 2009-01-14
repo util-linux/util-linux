@@ -126,7 +126,7 @@ struct hfsplus_vol_header {
 	struct hfsplus_fork start_file;
 }  __attribute__((packed));
 
-static int hfs_set_uuid(blkid_probe pr, unsigned char const *hfs_info)
+static int hfs_set_uuid(blkid_probe pr, unsigned char const *hfs_info, size_t len)
 {
 	static unsigned char const hash_init[16] = {
 		0xb3, 0xe2, 0x0f, 0x39, 0xf2, 0x92, 0x11, 0xd6,
@@ -135,11 +135,11 @@ static int hfs_set_uuid(blkid_probe pr, unsigned char const *hfs_info)
 	unsigned char uuid[16];
 	struct MD5Context md5c;
 
-	if (memcmp(hfs_info, "\0\0\0\0\0\0\0\0", 8) == 0)
+	if (memcmp(hfs_info, "\0\0\0\0\0\0\0\0", len) == 0)
 		return -1;
 	MD5Init(&md5c);
 	MD5Update(&md5c, hash_init, 16);
-	MD5Update(&md5c, hfs_info, 8);
+	MD5Update(&md5c, hfs_info, len);
 	MD5Final(uuid, &md5c);
 	uuid[6] = 0x30 | (uuid[6] & 0x0f);
 	uuid[8] = 0x80 | (uuid[8] & 0x3f);
@@ -158,7 +158,7 @@ static int probe_hfs(blkid_probe pr, const struct blkid_idmag *mag)
 	    (memcmp(hfs->embed_sig, "HX", 2) == 0))
 		return 1;	/* Not hfs, but an embedded HFS+ */
 
-	hfs_set_uuid(pr, hfs->finder_info.id);
+	hfs_set_uuid(pr, hfs->finder_info.id, sizeof(hfs->finder_info.id));
 
 	blkid_probe_set_label(pr, hfs->label, hfs->label_len);
 	return 0;
@@ -222,7 +222,7 @@ static int probe_hfsplus(blkid_probe pr, const struct blkid_idmag *mag)
 	    (memcmp(hfsplus->signature, "HX", 2) != 0))
 		return 1;
 
-	hfs_set_uuid(pr, hfsplus->finder_info.id);
+	hfs_set_uuid(pr, hfsplus->finder_info.id, sizeof(hfsplus->finder_info.id));
 
 	blocksize = be32_to_cpu(hfsplus->blocksize);
 	memcpy(extents, hfsplus->cat_file.extents, sizeof(extents));
