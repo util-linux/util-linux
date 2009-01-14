@@ -36,6 +36,7 @@ extern int optind;
 #define OUTPUT_VALUE_ONLY	0x0001
 #define OUTPUT_DEVICE_ONLY	0x0002
 #define OUTPUT_PRETTY_LIST	0x0004
+#define OUTPUT_UDEV_LIST	0x0008
 
 #include <blkid.h>
 
@@ -60,6 +61,8 @@ static void usage(int error)
 		"  -c <file>   cache file (default: /etc/blkid.tab, /dev/null = none)\n"
 		"  -h          print this usage message and exit\n"
 		"  -g          garbage collect the blkid cache\n"
+		"  -o <format> output format; can be one of:\n"
+		"              value, device, list, udev or full; (default: full)\n"
 		"  -p          switch to low-probe mode (bypass cache)\n"
 		"  -s <tag>    show specified tag(s) (default show all tags)\n"
 		"  -t <token>  find device with a specific token (NAME=value pair)\n"
@@ -228,6 +231,31 @@ static void pretty_print_dev(blkid_dev dev)
 #endif
 }
 
+static void print_udev_format(const char *name, const char *value, size_t sz)
+{
+	char enc[265], safe[256];
+	int has_enc_name = 0;
+
+	*safe = *enc = '\0';
+
+	if (!strcmp(name, "TYPE") || !strcmp(name, "VERSION"))
+		blkid_encode_string(value, enc, sizeof(enc));
+
+	else if (!strcmp(name, "UUID") ||
+		 !strcmp(name, "LABEL") ||
+		 !strcmp(name, "UUID_SUB")) {
+
+		blkid_safe_string(value, safe, sizeof(safe));
+		blkid_encode_string(value, enc, sizeof(enc));
+		has_enc_name = 1;
+	}
+
+	printf("ID_FS_%s=%s\n", name, *enc ? enc : *safe ? safe : value);
+
+	if (*enc && has_enc_name)
+		printf("ID_FS_%s_ENC=%s\n", name, enc);
+}
+
 static void print_value(int output, int num, blkid_dev dev,
 			const char *value, const char *name, size_t valsz)
 {
@@ -235,10 +263,8 @@ static void print_value(int output, int num, blkid_dev dev,
 		fputs(value, stdout);
 		fputc('\n', stdout);
 
-	/* TODO: print vol_id compatible output
-	 * } else if (output && OUTPUT_UDEV) {
-	 *
-	 */
+	} else if (output & OUTPUT_UDEV_LIST) {
+		print_udev_format(name, value, valsz);
 
 	} else {
 		if (num == 1 && dev)
@@ -339,7 +365,7 @@ int main(int argc, char **argv)
 	int c;
 	blkid_loff_t offset = 0, size = 0;
 
-	while ((c = getopt (argc, argv, "c:f:ghlLo:O:ps:S:t:w:v")) != EOF)
+	while ((c = getopt (argc, argv, "c:f:ghlo:O:ps:S:t:w:v")) != EOF)
 		switch (c) {
 		case 'c':
 			if (optarg && !*optarg)
@@ -352,9 +378,6 @@ int main(int argc, char **argv)
 		case 'l':
 			lookup++;
 			break;
-		case 'L':
-			output_format = OUTPUT_PRETTY_LIST;
-			break;
 		case 'g':
 			gc = 1;
 			break;
@@ -365,6 +388,8 @@ int main(int argc, char **argv)
 				output_format = OUTPUT_DEVICE_ONLY;
 			else if (!strcmp(optarg, "list"))
 				output_format = OUTPUT_PRETTY_LIST;
+			else if (!strcmp(optarg, "udev"))
+				output_format = OUTPUT_UDEV_LIST;
 			else if (!strcmp(optarg, "full"))
 				output_format = 0;
 			else {
@@ -448,8 +473,7 @@ int main(int argc, char **argv)
 		if (!pr)
 			goto exit;
 		blkid_probe_set_request(pr,
-				BLKID_PROBREQ_LABEL | BLKID_PROBREQ_LABELRAW |
-				BLKID_PROBREQ_UUID | BLKID_PROBREQ_UUIDRAW |
+				BLKID_PROBREQ_LABEL | BLKID_PROBREQ_UUID |
 				BLKID_PROBREQ_TYPE | BLKID_PROBREQ_SECTYPE |
 				BLKID_PROBREQ_USAGE | BLKID_PROBREQ_VERSION);
 
