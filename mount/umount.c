@@ -74,8 +74,8 @@ int nomtab = 0;
 /* Call losetup -d for each unmounted loop device. */
 int delloop = 0;
 
-/* True if ruid != euid.  */
-int suid = 0;
+/* True if (ruid != euid) or (0 != ruid), i.e. only "user" umounts permitted. */
+int restricted = 1;
 
 /* Last error message */
 int complained_err = 0;
@@ -477,7 +477,7 @@ umount_file (char *arg) {
 	if (!mc && verbose)
 		printf(_("Could not find %s in mtab\n"), file);
 
-	if (suid) {
+	if (restricted) {
 		char *mtab_user = NULL;
 
 		if (!mc)
@@ -640,10 +640,18 @@ main (int argc, char *argv[]) {
 			usage (stderr, 1);
 		}
 
-	if (getuid () != geteuid ()) {
-		suid = 1;
-		if (all || types || nomtab || force || remount)
-			die (2, _("umount: only root can do that"));
+	{
+		const uid_t ruid = getuid();
+		const uid_t euid = geteuid();
+
+		/* if we're really root and aren't running setuid */
+		if (((uid_t)0 == ruid) && (ruid == euid)) {
+			restricted = 0;
+		}
+	}
+
+	if (restricted && (all || types || nomtab || force || remount)) {
+		die (2, _("umount: only root can do that"));
 	}
 
 	argc -= optind;

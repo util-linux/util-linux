@@ -80,8 +80,8 @@ static int list_with_volumelabel = 0;
  */
 static int mounttype = 0;
 
-/* True if ruid != euid.  */
-static int suid = 0;
+/* True if (ruid != euid) or (0 != ruid), i.e. only "user" mounts permitted.  */
+static int restricted = 1;
 
 /* Contains the fd to read the passphrase from, if any. */
 static int pfd = -1;
@@ -774,12 +774,12 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
 }
 
 /*
- * suid_check()
+ * restricted_check()
  *	Die if the user is not allowed to do this.
  */
 static void
-suid_check(const char *spec, const char *node, int *flags, char **user) {
-  if (suid) {
+restricted_check(const char *spec, const char *node, int *flags, char **user) {
+  if (restricted) {
       /*
        * MS_OWNER: Allow owners to mount when fstab contains
        * the owner option.  Note that this should never be used
@@ -1109,7 +1109,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   if (mount_all && (flags & MS_NOAUTO))
       goto out;
 
-  suid_check(spec, node, &flags, &user);
+  restricted_check(spec, node, &flags, &user);
 
   /* The "mount -f" checks for for existing record in /etc/mtab (with
    * regular non-fake mount this is usually done by kernel)
@@ -1190,7 +1190,7 @@ mount_retry:
   /* Mount failed, complain, but don't die.  */
 
   if (types == 0) {
-    if (suid)
+    if (restricted)
       error (_("mount: I could not determine the filesystem type, "
 	       "and none was specified"));
     else
@@ -2027,11 +2027,20 @@ main(int argc, char *argv[]) {
 		return print_all (types);
 	}
 
-	if (getuid () != geteuid ()) {
-		suid = 1;
-		if (types || options || readwrite || nomtab || mount_all ||
-		    fake || mounttype || (argc + specseen) != 1)
-			die (EX_USAGE, _("mount: only root can do that"));
+	{
+		const uid_t ruid = getuid();
+		const uid_t euid = geteuid();
+
+		/* if we're really root and aren't running setuid */
+		if (((uid_t)0 == ruid) && (ruid == euid)) {
+			restricted = 0;
+		}
+	}
+
+	if (restricted &&
+	    (types || options || readwrite || nomtab || mount_all ||
+	     fake || mounttype || (argc + specseen) != 1)) {
+		die (EX_USAGE, _("mount: only root can do that"));
 	}
 
 	atexit(unlock_mtab);
