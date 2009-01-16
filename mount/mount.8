@@ -991,6 +991,61 @@ A value of
 and 
 .B gid=5
 makes "mesg y" the default on newly created PTYs.
+.TP
+\fBnewinstance
+Create a private instance of devpts filesystem, such that
+indices of ptys allocated in this new instance are
+independent of indices created in other instances of devpts.
+
+All mounts of devpts without this
+.B newinstance
+option share the same set of pty indices (i.e legacy mode).
+Each mount of devpts with the
+.B newinstance
+option has a private set of pty indices.
+
+This option is mainly used to support containers in the
+linux kernel. It is implemented in linux kernel versions
+starting with 2.6.29.  Further, this mount option is valid
+only if CONFIG_DEVPTS_MULTIPLE_INSTANCES is enabled in the
+kernel configuration.
+
+To use this option effectively,
+.IR /dev/ptmx
+must be a symbolic link to
+.IR pts/ptmx.
+See
+.IR Documentation/filesystems/devpts.txt
+in the linux kernel source tree for details.
+.TP
+.BI ptmxmode= value
+
+Set the mode for the new
+.IR ptmx
+device node in the devpts filesystem.
+
+With the support for multiple instances of devpts (see
+.B newinstance
+option above), each instance has a private
+.IR ptmx
+node in the root of the devpts filesystem (typically
+.IR /dev/pts/ptmx).
+
+For compatibility with older versions of the kernel, the
+default mode of the new
+.IR ptmx
+node is 0000.
+.BI ptmxmode= value
+specifies a more useful mode for the
+.IR ptmx
+node and is highly recommended when the
+.B newinstance
+option is specified.
+
+This option is only implemented in linux kernel versions
+starting with 2.6.29. Further this option is valid only if
+CONFIG_DEVPTS_MULTIPLE_INSTANCES is enabled in the kernel
+configuration.
 
 .SH "Mount options for ext"
 None.
