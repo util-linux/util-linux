@@ -85,7 +85,7 @@ static void usage(int rc)
 	"\nOptions:\n"
 	"  -n <classdata>      class data (0-7, lower being higher prio)\n"
 	"  -c <class>          scheduling class\n"
-	"                      1: realtime, 2: best-effort, 3: idle\n"
+	"                      0: none, 1: realtime, 2: best-effort, 3: idle\n"
 	"  -t                  ignore failures\n"
 	"  -h                  this help\n\n"));
 	exit(rc);
@@ -147,7 +147,9 @@ int main(int argc, char *argv[])
 
 	switch (ioclass) {
 		case IOPRIO_CLASS_NONE:
-			ioclass = IOPRIO_CLASS_BE;
+			if (set & 1)
+				warnx(_("ignoring given class data for none class"));
+			ioprio = 0;
 			break;
 		case IOPRIO_CLASS_RT:
 		case IOPRIO_CLASS_BE:
