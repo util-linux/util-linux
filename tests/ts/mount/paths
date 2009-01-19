@@ -14,13 +14,11 @@
 # but WITHOUT ANY WARRANTY; without even the implied warranty of
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
-#
-. ./commands.sh
-. ./functions.sh
 
-TS_COMPONENT="mount"
+TS_TOPDIR="$(dirname $0)/../.."
 TS_DESC="basic paths"
 
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 
 $TS_CMD_MOUNT -n -f -v -v -v /dev/dummy /mnt &> $TS_OUTPUT

@@ -15,20 +15,16 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="move"
 
-TS_COMPONENT="mount"
-TS_DESC="move "
-
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 ts_skip_nonroot
 
-PWD=$(pwd)
-
-DIR_SRC="$PWD/$TS_OUTDIR/mnt-move-src"
-DIR_A="$PWD/$TS_OUTDIR/mnt-move-A"
-DIR_B="$PWD/$TS_OUTDIR/mnt-move-B"
+DIR_SRC="$TS_OUTDIR/mnt-move-src"
+DIR_A="$TS_OUTDIR/mnt-move-A"
+DIR_B="$TS_OUTDIR/mnt-move-B"
 
 [ -d $DIR_SRC ] || mkdir $DIR_SRC
 [ -d $DIR_A ] || mkdir $DIR_A

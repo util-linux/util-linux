@@ -15,12 +15,10 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="mtab lock"
 
-TS_COMPONENT="mount"
-TS_DESC="mtablock"
-
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 ts_skip_nonroot
 

@@ -15,18 +15,17 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
 
-TS_COMPONENT="fstab"
-TS_DESC="symlink"
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="by devname (fstab symlink)"
 
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 ts_skip_nonroot
 
 set -o pipefail
 
-LINKNAME="$(pwd)/$TS_OUTDIR/${TS_NS}_lnk"
+LINKNAME="$TS_OUTDIR/${TS_TESTNAME}_lnk"
 
 DEVICE=$(ts_device_init)
 [ "$?" == 0 ] || ts_die "Cannot init device"
