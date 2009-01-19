@@ -109,7 +109,7 @@ function ts_init {
 	rm -f $TS_OUTPUT
 	touch $TS_OUTPUT
 
-	printf "%15s: %-25s ..." "$TS_COMPONENT" "$TS_DESC"
+	printf "%15s: %-30s ..." "$TS_COMPONENT" "$TS_DESC"
 
 	if [ "$TS_VERBOSE" == "yes" ]; then
 		echo
