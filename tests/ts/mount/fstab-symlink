@@ -26,7 +26,7 @@ ts_skip_nonroot
 
 set -o pipefail
 
-LINKNAME="$(pwd)/$TS_OUTDIR/${TS_NAME}_lnk"
+LINKNAME="$(pwd)/$TS_OUTDIR/${TS_NS}_lnk"
 
 DEVICE=$(ts_device_init)
 [ "$?" == 0 ] || ts_die "Cannot init device"

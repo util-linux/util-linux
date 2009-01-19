@@ -23,7 +23,7 @@ TS_DESC="race conditions"
 
 ts_init "$*"
 
-bingofile="$TS_OUTDIR/$TS_NAME-bingo"
+bingofile="$TS_OUTDIR/${TS_NS}-bingo"
 
 set -o pipefail
 

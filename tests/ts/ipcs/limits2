@@ -15,15 +15,13 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
 
-TS_COMPONENT="ipcs"
 TS_DESC="basic limits"
 
-. ./ts-ipcs.sh
-
+. ./functions.sh
 ts_init "$*"
+
+. $TS_SELF/functions.sh
 
 ts_log "check for difference between kernel and IPC"
 ipcs_limits_check >> $TS_OUTPUT

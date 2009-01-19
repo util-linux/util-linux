@@ -23,7 +23,7 @@ TS_DESC="multibyte"
 
 ts_init "$*"
 
-cat $TS_INPUT | $TS_CMD_COL > /dev/null  2> $TS_OUTPUT
+cat $TS_SELF/multibyte.data | $TS_CMD_COL > /dev/null  2> $TS_OUTPUT
 
 ts_finalize
 

@@ -22,7 +22,7 @@ TS_COMPONENT="login"
 TS_DESC="islocal"
 
 ts_init "$*"
-$TS_CMD_ISLOCAL "$TS_INPUT" root nobody "" youngman youngman2 \
+$TS_CMD_ISLOCAL "$TS_SELF/islocal.data" root nobody "" youngman youngman2 \
     abcdefghx nobo long rot al malformed \
     nonl znobody >> $TS_OUTPUT
 ts_finalize

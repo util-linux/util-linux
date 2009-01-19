@@ -20,6 +20,8 @@ TS_EXPECTEDDIR="expected"
 TS_INPUTDIR="input"
 TS_VERBOSE="no"
 
+. ./commands.sh
+
 function ts_skip {
 	echo " IGNORE ($1)"
 	if [ -n "$2" -a -b "$2" ]; then
@@ -36,7 +38,7 @@ function ts_skip_nonroot {
 
 function ts_failed {
 	if [ x"$1" == x"" ]; then
-		echo " FAILED ($TS_NAME)"
+		echo " FAILED ($TS_NS)"
 	else
 		echo " FAILED ($1)"
 	fi
@@ -64,27 +66,36 @@ function ts_has_option {
 }
 
 function ts_init {
+	local is_fake
+
 	export LANG="en_US.UTF-8":
-	TS_NAME=$(basename $0)
-	if [ ! -d $TS_OUTDIR ]; then
-		mkdir -p $TS_OUTDIR
-	fi
-	if [ ! -d $TS_DIFFDIR ]; then
-		mkdir -p $TS_DIFFDIR
-	fi
+
+	TS_VERBOSE=$( ts_has_option "verbose" "$*")
+	is_fake=$( ts_has_option "fake" "$*")
+
+	TS_SCRIPT="$0"
+	TS_SUBDIR=$(dirname $TS_SCRIPT)
+	TS_TESTNAME=$(basename $TS_SCRIPT)
+	TS_COMPONENT=$(basename $TS_SUBDIR)
+
+	TS_NS="$TS_COMPONENT/$TS_TESTNAME"
+	TS_SELF="$TS_SUBDIR"
+
+	TS_OUTPUT="$TS_OUTDIR/$TS_NS"
+	TS_DIFF="$TS_DIFFDIR/$TS_NS"
+	TS_EXPECTED="$TS_EXPECTEDDIR/$TS_NS"
+	TS_MOUNTPOINT="$(pwd)/$TS_OUTDIR/${TS_NS}_mnt"
+
+	TS_HAS_VOLUMEID="no"
+
+	BLKID_FILE="$TS_OUTDIR/${TS_NS}.blkidtab"
+
+	[ ! -d "$(dirname $TS_OUTPUT)" ] && mkdir -p $(dirname $TS_OUTPUT)
+	[ ! -d "$(dirname $TS_DIFF)" ] && mkdir -p $(dirname $TS_DIFF)
 
 	declare -a TS_SUID_PROGS
 	declare -a TS_SUID_USER
 	declare -a TS_SUID_GROUP
-
-	TS_VERBOSE=$( ts_has_option "verbose" "$*")
-	TS_OUTPUT="$TS_OUTDIR/$TS_NAME"
-	TS_DIFF="$TS_DIFFDIR/$TS_NAME"
-	TS_EXPECTED="$TS_EXPECTEDDIR/$TS_NAME"
-	TS_INPUT="$TS_INPUTDIR/$TS_NAME"
-	TS_MOUNTPOINT="$(pwd)/$TS_OUTDIR/${TS_NAME}_mnt"
-	TS_HAS_VOLUMEID="no"
-	BLKID_FILE="$TS_OUTDIR/$TS_NAME.blkidtab"
 
 	export BLKID_FILE
 
@@ -99,6 +110,26 @@ function ts_init {
 	touch $TS_OUTPUT
 
 	printf "%15s: %-25s ..." "$TS_COMPONENT" "$TS_DESC"
+
+	if [ "$TS_VERBOSE" == "yes" ]; then
+		echo
+		echo "     script: $TS_SCRIPT"
+		echo "    top dir: $TS_TOPDIR"
+		echo "    sub dir: $TS_SUBDIR"
+		echo "       self: $TS_SELF"
+		echo "  test name: $TS_TESTNAME"
+		echo "  test desc: $TS_DESC"
+		echo "  component: $TS_COMPONENT"
+		echo "  namespace: $TS_NS"
+		echo "    verbose: $TS_VERBOSE"
+		echo "     output: $TS_OUTPUT"
+		echo "   expected: $TS_EXPECTED"
+		echo " mountpoint: $TS_MOUNTPOINT"
+		echo
+	fi
+
+	[ "$is_fake" == "yes" ] && ts_skip "fake mode"
+
 }
 
 function ts_init_suid {
@@ -153,7 +184,7 @@ function ts_die {
 }
 
 function ts_device_init {
-	local IMAGE="$TS_OUTDIR/$TS_NAME.img"
+	local IMAGE="$TS_OUTDIR/${TS_NS}.img"
 	local DEV=""
 
 	dd if=/dev/zero of="$IMAGE" bs=1M count=5 &> /dev/null

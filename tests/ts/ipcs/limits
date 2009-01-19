@@ -21,10 +21,9 @@
 TS_COMPONENT="ipcs"
 TS_DESC="limits overflow"
 
-. ./ts-ipcs.sh
-
 ts_init "$*"
 ts_skip_nonroot
+. $TS_SELF/functions.sh
 
 ts_log "load original values"
 for i in $IPCS_IDX; do
