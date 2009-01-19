@@ -14,13 +14,11 @@
 # GNU General Public License for more details.
 #
 
-TS_OUTDIR="output"
-TS_DIFFDIR="diff"
-TS_EXPECTEDDIR="expected"
-TS_INPUTDIR="input"
-TS_VERBOSE="no"
 
-. ./commands.sh
+function ts_abspath {
+	cd $1
+	pwd
+}
 
 function ts_skip {
 	echo " IGNORE ($1)"
@@ -62,18 +60,17 @@ function ts_log {
 function ts_has_option {
 	NAME="$1"
 	ALL="$2"
-	echo -n $ALL | sed 's/ //g' | $AWK 'BEGIN { FS="="; RS="--" } /('$NAME'$|'$NAME'=)/ { print "yes" }'
+	echo -n $ALL | sed 's/ //g' | awk 'BEGIN { FS="="; RS="--" } /('$NAME'$|'$NAME'=)/ { print "yes" }'
 }
 
 function ts_init {
-	local is_fake
+	local is_fake=$( ts_has_option "fake" "$*")
+	local mydir=$(ts_abspath $(dirname $0))
 
-	export LANG="en_US.UTF-8":
+	export LANG="en_US.UTF-8"
 
-	TS_VERBOSE=$( ts_has_option "verbose" "$*")
-	is_fake=$( ts_has_option "fake" "$*")
-
-	TS_SCRIPT="$0"
+	TS_TOPDIR=$(ts_abspath $mydir/../../)
+	TS_SCRIPT="$mydir/$(basename $0)"
 	TS_SUBDIR=$(dirname $TS_SCRIPT)
 	TS_TESTNAME=$(basename $TS_SCRIPT)
 	TS_COMPONENT=$(basename $TS_SUBDIR)
@@ -81,11 +78,12 @@ function ts_init {
 	TS_NS="$TS_COMPONENT/$TS_TESTNAME"
 	TS_SELF="$TS_SUBDIR"
 
-	TS_OUTPUT="$TS_OUTDIR/$TS_NS"
-	TS_DIFF="$TS_DIFFDIR/$TS_NS"
-	TS_EXPECTED="$TS_EXPECTEDDIR/$TS_NS"
-	TS_MOUNTPOINT="$(pwd)/$TS_OUTDIR/${TS_NS}_mnt"
+	TS_OUTPUT="$TS_TOPDIR/output/$TS_NS"
+	TS_DIFF="$TS_TOPDIR/diff/$TS_NS"
+	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS"
+	TS_MOUNTPOINT="$TS_OUTPUT/${TS_NS}_mnt"
 
+	TS_VERBOSE=$( ts_has_option "verbose" "$*")
 	TS_HAS_VOLUMEID="no"
 
 	BLKID_FILE="$TS_OUTDIR/${TS_NS}.blkidtab"
@@ -97,13 +95,13 @@ function ts_init {
 	declare -a TS_SUID_USER
 	declare -a TS_SUID_GROUP
 
+	. $TS_TOPDIR/commands.sh
+
 	export BLKID_FILE
 
 	if [ -x $TS_CMD_MOUNT ]; then
 		ldd $TS_CMD_MOUNT | grep -q 'libvolume_id' &> /dev/null
-		if [ "$?" == "0" ]; then
-			TS_HAS_VOLUMEID="yes"
-		fi
+		[ "$?" == "0" ] && TS_HAS_VOLUMEID="yes"
 	fi
 
 	rm -f $TS_OUTPUT
@@ -114,8 +112,8 @@ function ts_init {
 	if [ "$TS_VERBOSE" == "yes" ]; then
 		echo
 		echo "     script: $TS_SCRIPT"
-		echo "    top dir: $TS_TOPDIR"
 		echo "    sub dir: $TS_SUBDIR"
+		echo "    top dir: $TS_TOPDIR"
 		echo "       self: $TS_SELF"
 		echo "  test name: $TS_TESTNAME"
 		echo "  test desc: $TS_DESC"
@@ -129,7 +127,6 @@ function ts_init {
 	fi
 
 	[ "$is_fake" == "yes" ] && ts_skip "fake mode"
-
 }
 
 function ts_init_suid {
