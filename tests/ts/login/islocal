@@ -15,13 +15,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
-
-TS_COMPONENT="login"
+TS_TOPDIR="$(dirname $0)/../.."
 TS_DESC="islocal"
 
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
+
 $TS_CMD_ISLOCAL "$TS_SELF/islocal.data" root nobody "" youngman youngman2 \
     abcdefghx nobo long rot al malformed \
     nonl znobody >> $TS_OUTPUT
