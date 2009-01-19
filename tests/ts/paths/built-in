@@ -15,12 +15,10 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="built-in"
 
-TS_COMPONENT="include"
-TS_DESC="basic paths"
-
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 
 $TS_HELPER_PATHS &> $TS_OUTPUT
