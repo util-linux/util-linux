@@ -15,15 +15,14 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
 
-TS_COMPONENT="script"
+TS_TOPDIR="$(dirname $0)/../.."
 TS_DESC="race conditions"
 
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-bingofile="$TS_OUTDIR/${TS_NS}-bingo"
+bingofile="$TS_OUTDIR/${TS_TESTNAME}-bingo"
 
 set -o pipefail
 
