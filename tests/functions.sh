@@ -78,18 +78,20 @@ function ts_init {
 	TS_NS="$TS_COMPONENT/$TS_TESTNAME"
 	TS_SELF="$TS_SUBDIR"
 
-	TS_OUTPUT="$TS_TOPDIR/output/$TS_NS"
-	TS_DIFF="$TS_TOPDIR/diff/$TS_NS"
+	TS_OUTDIR="$TS_TOPDIR/output/$TS_COMPONENT"
+	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME"
+	TS_DIFFDIR="$TS_DIFFDIR/diff/$TS_COMPONENT"
+	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME"
 	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS"
-	TS_MOUNTPOINT="$TS_OUTPUT/${TS_NS}_mnt"
+	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME}-mnt"
 
-	TS_VERBOSE=$( ts_has_option "verbose" "$*")
+	TS_VERBOSE=$(ts_has_option "verbose" "$*")
 	TS_HAS_VOLUMEID="no"
 
 	BLKID_FILE="$TS_OUTDIR/${TS_NS}.blkidtab"
 
-	[ ! -d "$(dirname $TS_OUTPUT)" ] && mkdir -p $(dirname $TS_OUTPUT)
-	[ ! -d "$(dirname $TS_DIFF)" ] && mkdir -p $(dirname $TS_DIFF)
+	[ -d "$TS_OUTDIR" ]  || mkdir -p "$TS_OUTDIR"
+	[ -d "$TS_DIFFDIR" ] || mkdir -p "$TS_DIFFDIR"
 
 	declare -a TS_SUID_PROGS
 	declare -a TS_SUID_USER

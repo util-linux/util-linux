@@ -15,31 +15,30 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="mkfs checksums"
 
-TS_COMPONENT="mkfs.cramfs"
-TS_DESC="mkfs"
-
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 ts_skip_nonroot
 
 set -o pipefail
 
-IMAGE="$TS_OUTDIR/cramfs-loop.img"
-IMAGE_DATA="$TS_OUTDIR/cramfs-data"
+ORIGPWD=$(pwd)
+IMAGE_NAME="${TS_TESTNAME}-loop.img"
+IMAGE_PATH="$TS_OUTDIR/$IMAGE_NAME"
+IMAGE_SRC="$TS_OUTDIR/${TS_TESTNAME}-data"
 LABEL="testCramfs"
-TS_MOUNTPOINT="$TS_OUTDIR/cramfs-mnt"
 
 ts_log "create mountpoint dir"
 
 [ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
 ts_log "generate data"
-if [ ! -d "$IMAGE_DATA" ]; then
-	mkdir -p $IMAGE_DATA
+if [ ! -d "$IMAGE_SRC" ]; then
+	mkdir -p $IMAGE_SRC
 	for d in `seq 0 110`; do
-		DIRNAME="$IMAGE_DATA/$(printf "dir-%03d" $d)"
+		DIRNAME="$IMAGE_SRC/$(printf "dir-%03d" $d)"
 		mkdir -p $DIRNAME
 		for f in `seq 0 10`; do
 			FILENAME="$DIRNAME/$(printf "data.%03d" $f)"
@@ -48,20 +47,24 @@ if [ ! -d "$IMAGE_DATA" ]; then
 	done
 fi
 
+cd $IMAGE_SRC
+
 ts_log "list checksums from original data"
-find $IMAGE_DATA -type f -exec md5sum {} \; | sort >> $TS_OUTPUT
+find -type f -exec md5sum {} \; | sort >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "create cramfs image"
-$TS_CMD_MKCRAMFS -n $LABEL $IMAGE_DATA $IMAGE 2>&1 >> $TS_OUTPUT
-[ -s "$IMAGE" ] || ts_die "Cannot create $IMAGE"
+$TS_CMD_MKCRAMFS -n $LABEL $IMAGE_SRC $IMAGE_PATH 2>&1 >> $TS_OUTPUT
+[ -s "$IMAGE_PATH" ] || ts_die "Cannot create $IMAGE_PATH"
+
+cd $TS_OUTDIR
 
 ts_log "count MD5 from the image"
-md5sum $IMAGE 2>&1 | sort >> $TS_OUTPUT
+md5sum $IMAGE_NAME 2>&1 | sort >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "create loop device from image"
-DEVICE=$( $TS_CMD_LOSETUP -s -f $IMAGE)
+DEVICE=$($TS_CMD_LOSETUP -s -f $IMAGE_PATH)
 
 ts_log "check the image"
 ts_device_has "TYPE" "cramfs" $DEVICE
@@ -76,13 +79,17 @@ $TS_CMD_MOUNT -L $LABEL $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
 # check it
 ts_is_mounted $DEVICE || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE
 
+cd $TS_MOUNTPOINT
+
 ts_log "list the image"
-ls -laR --time-style=long-iso $TS_MOUNTPOINT >> $TS_OUTPUT
+ls -laR --time-style=long-iso . >> $TS_OUTPUT
 echo >> $TS_OUTPUT
 
 ts_log "list checksums from new data"
-find $TS_MOUNTPOINT -type f -exec md5sum {} \; | sort >> $TS_OUTPUT
+find . -type f -exec md5sum {} \; | sort >> $TS_OUTPUT
 echo >> $TS_OUTPUT
+
+cd $ORIGPWD
 
 ts_log "umount the image"
 $TS_CMD_UMOUNT $DEVICE
