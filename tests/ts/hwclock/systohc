@@ -15,14 +15,12 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
 
-TS_COMPONENT="hwclock"
-TS_DESC="systohc"
-
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="system to hw"
 NTP_SERVER="0.fedora.pool.ntp.org"
 
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 ts_skip_nonroot
 
