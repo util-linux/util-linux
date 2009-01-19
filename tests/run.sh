@@ -17,6 +17,23 @@
 #
 . functions.sh
 
+comps=$(find ts/ -type f -perm /a+x -regex "[^\.~]*" |  sort)
+
+if [ -n "$1" ]; then
+	if [ -d "ts/$1" ]; then
+		comps=$(find ts/$1 -type f -perm /a+x -regex "[^\.~]*" |  sort)
+	else
+		echo
+		echo "usage: $0 [<component>]"
+		echo "supported components:"
+			for ts in $comps; do
+				echo -e "\t$(basename $(dirname $ts))"
+			done | sort -u
+		echo
+		exit 1
+	fi
+fi
+
 echo
 echo "------------------ Utils-linux-ng regression tests ------------------"
 echo
@@ -26,7 +43,7 @@ echo
 
 res=0
 count=0
-for ts in $(find ts/ -type f -perm /a+x -regex "[^\.~]*" |  sort); do
+for ts in $comps; do
 	./$ts "$1"
 	res=$(( $res + $? ))
 	count=$(( $count + 1 ))
