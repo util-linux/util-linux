@@ -15,22 +15,20 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="basic functionality"
 
-TS_COMPONENT="namei"
-TS_DESC="logic"
-
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 
-SANDBOX="$TS_OUTDIR/namei"
+cd $TS_OUTDIR
 
-mkdir -p $SANDBOX/namei1/namei2
-touch $SANDBOX/namei1/namei2/a $SANDBOX/namei1/namei2/b
+mkdir -p namei1/namei2
+touch namei1/namei2/a namei1/namei2/b
 
-$TS_CMD_NAMEI $SANDBOX/namei1/namei2/a   >> $TS_OUTPUT 2>&1
-$TS_CMD_NAMEI $SANDBOX/namei1/namei2/b   >> $TS_OUTPUT 2>&1
-$TS_CMD_NAMEI $SANDBOX/namei1/namei2/a/b >> $TS_OUTPUT 2>&1
+$TS_CMD_NAMEI namei1/namei2/a   >> $TS_OUTPUT 2>&1
+$TS_CMD_NAMEI namei1/namei2/b   >> $TS_OUTPUT 2>&1
+$TS_CMD_NAMEI namei1/namei2/a/b >> $TS_OUTPUT 2>&1
 
 ts_finalize
 

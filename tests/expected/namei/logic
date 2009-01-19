@@ -1,13 +1,9 @@
-f: output/namei/namei1/namei2/a
- d output
- d namei
+f: namei1/namei2/a
  d namei1
  d namei2
  - a
-f: output/namei/namei1/namei2/b
- d output
- d namei
+f: namei1/namei2/b
  d namei1
  d namei2
  - b
-namei: failed to stat: output/namei/namei1/namei2/a/b: Not a directory
+namei: failed to stat: namei1/namei2/a/b: Not a directory
