@@ -28,12 +28,10 @@
 #		uniq >  words
 #
 
-. ./commands.sh
-. ./functions.sh
-
-TS_COMPONENT="look"
+TS_TOPDIR="$(dirname $0)/../.."
 TS_DESC="separator"
 
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 
 [ -f "/usr/share/dict/words" ] || ts_skip "/usr/share/dict/words not such file"
