@@ -16,9 +16,10 @@
 # GNU General Public License for more details.
 #
 
+TS_TOPDIR="$(dirname $0)/../.."
 TS_DESC="basic limits"
 
-. ./functions.sh
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 
 . $TS_SELF/functions.sh

@@ -38,9 +38,9 @@ IPCS_KERNEL_CMD=(
 
 # data from the ipcs command
 IPCS_CMD=(
-	"$TS_CMD_IPCS -m -l | $AWK '/max number of segments/ { print \$6 }'"
-	"$TS_CMD_IPCS -m -l | $AWK '/max total shared memory/ { print \$7 }'"
-	"$TS_CMD_IPCS -m -l | $AWK '/max seg size/ { print \$6 }'"
+	"$TS_CMD_IPCS -m -l | awk '/max number of segments/ { print \$6 }'"
+	"$TS_CMD_IPCS -m -l | awk '/max total shared memory/ { print \$7 }'"
+	"$TS_CMD_IPCS -m -l | awk '/max seg size/ { print \$6 }'"
 )
 
 

@@ -15,14 +15,15 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
 
-TS_COMPONENT="ipcs"
+TS_TOPDIR="$(dirname $0)/../.."
 TS_DESC="limits overflow"
+
+. $TS_TOPDIR/functions.sh
 
 ts_init "$*"
 ts_skip_nonroot
+
 . $TS_SELF/functions.sh
 
 ts_log "load original values"
