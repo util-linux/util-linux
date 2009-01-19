@@ -88,7 +88,7 @@ function ts_init {
 	TS_VERBOSE=$(ts_has_option "verbose" "$*")
 	TS_HAS_VOLUMEID="no"
 
-	BLKID_FILE="$TS_OUTDIR/${TS_NS}.blkidtab"
+	BLKID_FILE="$TS_OUTDIR/${TS_TESTNAME}.blkidtab"
 
 	[ -d "$TS_OUTDIR" ]  || mkdir -p "$TS_OUTDIR"
 	[ -d "$TS_DIFFDIR" ] || mkdir -p "$TS_DIFFDIR"
@@ -183,19 +183,19 @@ function ts_die {
 }
 
 function ts_device_init {
-	local IMAGE="$TS_OUTDIR/${TS_NS}.img"
-	local DEV=""
+	local img="$TS_OUTDIR/${TS_TESTNAME}.img"
+	local dev=""
 
-	dd if=/dev/zero of="$IMAGE" bs=1M count=5 &> /dev/null
+	dd if=/dev/zero of="$img" bs=1M count=5 &> /dev/null
 
-	DEV=$($TS_CMD_LOSETUP -s -f "$IMAGE")
+	dev=$($TS_CMD_LOSETUP -s -f "$img")
 
-	if [ -z "$DEV" ]; then
-		ts_device_deinit $DEV
+	if [ -z "$dev" ]; then
+		ts_device_deinit $dev
 		return 1		# error
 	fi
 
-	echo $DEV
+	echo $dev
 	return 0			# succes
 }
 
