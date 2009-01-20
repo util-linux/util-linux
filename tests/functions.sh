@@ -218,14 +218,6 @@ function ts_finalize {
 		chown ${TS_SUID_USER[$idx]}.${TS_SUID_GROUP[$idx]} $PROG &> /dev/null
 	done
 
-	if [ -s $TS_EXPECTED ]; then
-		ts_gen_diff
-		if [ $? -eq 1 ]; then
-			ts_failed "$1"
-		fi
-		ts_ok "$1"
-	fi
-
 	if [ $TS_NSUBTESTS -ne 0 ]; then
 		printf "%13s..."
 		if [ $TS_NSUBFAILED -ne 0 ]; then
@@ -234,6 +226,15 @@ function ts_finalize {
 			ts_ok "all $TS_NSUBTESTS sub-tests PASSED"
 		fi
 	fi
+
+	if [ -s $TS_EXPECTED ]; then
+		ts_gen_diff
+		if [ $? -eq 1 ]; then
+			ts_failed "$1"
+		fi
+		ts_ok "$1"
+	fi
+
 	ts_skip "output undefined"
 }
 
