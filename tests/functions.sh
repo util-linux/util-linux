@@ -63,8 +63,7 @@ function ts_has_option {
 	echo -n $ALL | sed 's/ //g' | awk 'BEGIN { FS="="; RS="--" } /('$NAME'$|'$NAME'=)/ { print "yes" }'
 }
 
-function ts_init {
-	local is_fake=$( ts_has_option "fake" "$*")
+function ts_init_env {
 	local mydir=$(ts_abspath $(dirname $0))
 
 	export LANG="en_US.UTF-8"
@@ -109,8 +108,6 @@ function ts_init {
 	rm -f $TS_OUTPUT
 	touch $TS_OUTPUT
 
-	printf "%15s: %-30s ..." "$TS_COMPONENT" "$TS_DESC"
-
 	if [ "$TS_VERBOSE" == "yes" ]; then
 		echo
 		echo "     script: $TS_SCRIPT"
@@ -127,6 +124,14 @@ function ts_init {
 		echo " mountpoint: $TS_MOUNTPOINT"
 		echo
 	fi
+}
+
+function ts_init {
+	local is_fake=$( ts_has_option "fake" "$*")
+
+	ts_init_env "$*"
+
+	printf "%15s: %-30s ..." "$TS_COMPONENT" "$TS_DESC"
 
 	[ "$is_fake" == "yes" ] && ts_skip "fake mode"
 }
