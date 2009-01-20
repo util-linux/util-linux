@@ -2,6 +2,9 @@
  TODO
  ----
 
+ - add -<BE|LE> suffix to test images for native-endian filesystems (e.g. swap)
+   and add support for such functionality to tests/ts/blkid/low-probe
+
  - do we really need to depend on libuuid? Maybe the default should be
    use in-tree code rather and link against libuuid -- especially when we
    need it for uuid_unparse() only.
