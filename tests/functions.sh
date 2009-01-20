@@ -20,8 +20,12 @@ function ts_abspath {
 	pwd
 }
 
-function ts_skip {
+function ts_skip_subtest {
 	echo " IGNORE ($1)"
+}
+
+function ts_skip {
+	ts_skip_subtest "$1"
 	if [ -n "$2" -a -b "$2" ]; then
 		ts_device_deinit "$2"
 	fi
@@ -34,7 +38,7 @@ function ts_skip_nonroot {
 	fi
 }
 
-function ts_failed {
+function ts_failed_subtest {
 	if [ x"$1" == x"" ]; then
 		echo " FAILED ($TS_NS)"
 	else
@@ -43,12 +47,21 @@ function ts_failed {
 	exit 1
 }
 
-function ts_ok {
+function ts_failed {
+	ts_failed_subtest "$1"
+	exit 1
+}
+
+function ts_ok_subtest {
 	if [ x"$1" == x"" ]; then
 		echo " OK"
 	else
 		echo " OK ($1)"
 	fi
+}
+
+function ts_ok {
+	ts_ok_subtest "$1"
 	exit 0
 }
 
@@ -73,6 +86,9 @@ function ts_init_env {
 	TS_SUBDIR=$(dirname $TS_SCRIPT)
 	TS_TESTNAME=$(basename $TS_SCRIPT)
 	TS_COMPONENT=$(basename $TS_SUBDIR)
+
+	TS_NSUBTESTS=0
+	TS_NSUBFAILED=0
 
 	TS_NS="$TS_COMPONENT/$TS_TESTNAME"
 	TS_SELF="$TS_SUBDIR"
@@ -126,6 +142,21 @@ function ts_init_env {
 	fi
 }
 
+function ts_init_subtest {
+
+	TS_SUBNAME="$1"
+
+	TS_OUTPUT="$TS_OUTDIR/$TS_TESTNAME-$TS_SUBNAME"
+	TS_DIFF="$TS_DIFFDIR/$TS_TESTNAME-$TS_SUBNAME"
+	TS_EXPECTED="$TS_TOPDIR/expected/$TS_NS-$TS_SUBNAME"
+	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME-$TS_SUBNAME}-mnt"
+
+	[ $TS_NSUBTESTS -eq 0 ] && echo
+	TS_NSUBTESTS=$(( $TS_NSUBTESTS + 1 ))
+
+	printf "%18s: %-27s ..." "" "$TS_SUBNAME"
+}
+
 function ts_init {
 	local is_fake=$( ts_has_option "fake" "$*")
 
@@ -149,9 +180,38 @@ function ts_init_suid {
 	chmod u+s $PROG &> /dev/null
 }
 
-function ts_finalize {
+function ts_gen_diff {
 	local res=0
 
+	if [ -s $TS_OUTPUT ]; then
+		diff -u $TS_EXPECTED $TS_OUTPUT > $TS_DIFF
+		[ -s $TS_DIFF ] && res=1
+	else
+		res=1
+	fi
+	return $res
+}
+
+function ts_finalize_subtest {
+	local res=0
+
+	if [ -s $TS_EXPECTED ]; then
+		ts_gen_diff
+		if [ $? -eq 1 ]; then
+			ts_failed_subtest "$1"
+			res=1
+		else
+			ts_ok_subtest "$1"
+		fi
+	else
+		ts_skip_subtest "output undefined"
+	fi
+
+	[ $res -ne 0 ] && TS_NSUBFAILED=$(( $TS_NSUBFAILED + 1 ))
+	return $res
+}
+
+function ts_finalize {
 	for idx in $(seq 0 $((${#TS_SUID_PROGS[*]} - 1))); do
 		PROG=${TS_SUID_PROGS[$idx]}
 		chmod a-s $PROG &> /dev/null
@@ -159,23 +219,22 @@ function ts_finalize {
 	done
 
 	if [ -s $TS_EXPECTED ]; then
-		if [ -s $TS_OUTPUT ]; then
-			diff -u $TS_EXPECTED $TS_OUTPUT > $TS_DIFF
-			if [ -s $TS_DIFF ]; then
-				res=1
-			fi
-		else
-			res=1
+		ts_gen_diff
+		if [ $? -eq 1 ]; then
+			ts_failed "$1"
 		fi
-	else
-		echo " IGNORE (expected output undefined)"
-		exit 0
+		ts_ok "$1"
 	fi
-	if [ $res -eq 0 ]; then
-		ts_ok $1
-	else
-		ts_failed $1
+
+	if [ $TS_NSUBTESTS -ne 0 ]; then
+		printf "%13s..."
+		if [ $TS_NSUBFAILED -ne 0 ]; then
+			ts_failed "$TS_NSUBFAILED from $TS_NSUBTESTS sub-tests"
+		else
+			ts_ok "all $TS_NSUBTESTS sub-tests PASSED"
+		fi
 	fi
+	ts_skip "output undefined"
 }
 
 function ts_die {
@@ -203,8 +262,6 @@ function ts_device_init {
 	echo $dev
 	return 0			# succes
 }
-
-
 
 function ts_device_deinit {
 	local DEV="$1"
