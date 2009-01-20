@@ -18,8 +18,12 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
-
+#include <endian.h>
 #include <limits.h>
+
+#if !defined __BYTE_ORDER || !(__BYTE_ORDER == __LITTLE_ENDIAN) && !(__BYTE_ORDER == __BIG_ENDIAN)
+#error missing __BYTE_ORDER
+#endif
 
 typedef struct {
 	const char	*name;
@@ -32,6 +36,18 @@ hlp_wordsize(void)
 	printf("%d\n", __WORDSIZE);
 	return 0;
 }
+
+int
+hlp_endianness(void)
+{
+#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+	printf("LE\n");
+#else
+	printf("BE\n");
+#endif
+	return 0;
+}
+
 
 int
 hlp_pagesize(void)
@@ -88,6 +104,7 @@ mntHlpfnc hlps[] =
 	{ "LONG_MAX",   hlp_long_max	},
 	{ "ULONG_MAX",  hlp_ulong_max	},
 	{ "ULONG_MAX32",hlp_ulong_max32	},
+	{ "byte-order", hlp_endianness  },
 	{ NULL, NULL }
 };
 
