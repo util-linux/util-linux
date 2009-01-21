@@ -44,7 +44,6 @@ function ts_failed_subtest {
 	else
 		echo " FAILED ($1)"
 	fi
-	exit 1
 }
 
 function ts_failed {
