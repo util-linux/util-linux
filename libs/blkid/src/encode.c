@@ -282,7 +282,7 @@ err:
  */
 int blkid_safe_string(const char *str, char *str_safe, size_t len)
 {
-	replace_whitespace(str, str_safe, sizeof(len));
+	replace_whitespace(str, str_safe, len);
 	replace_chars(str_safe, UDEV_ALLOWED_CHARS_INPUT);
 	return 0;
 }
