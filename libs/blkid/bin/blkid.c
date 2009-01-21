@@ -234,26 +234,25 @@ static void pretty_print_dev(blkid_dev dev)
 static void print_udev_format(const char *name, const char *value, size_t sz)
 {
 	char enc[265], safe[256];
-	int has_enc_name = 0;
 
 	*safe = *enc = '\0';
 
-	if (!strcmp(name, "TYPE") || !strcmp(name, "VERSION"))
+	if (!strcmp(name, "TYPE") || !strcmp(name, "VERSION")) {
 		blkid_encode_string(value, enc, sizeof(enc));
+		printf("ID_FS_%s=%s\n", name, enc);
 
-	else if (!strcmp(name, "UUID") ||
+	} else if (!strcmp(name, "UUID") ||
 		 !strcmp(name, "LABEL") ||
 		 !strcmp(name, "UUID_SUB")) {
 
 		blkid_safe_string(value, safe, sizeof(safe));
+		printf("ID_FS_%s=%s\n", name, safe);
+
 		blkid_encode_string(value, enc, sizeof(enc));
-		has_enc_name = 1;
-	}
-
-	printf("ID_FS_%s=%s\n", name, *enc ? enc : *safe ? safe : value);
-
-	if (*enc && has_enc_name)
 		printf("ID_FS_%s_ENC=%s\n", name, enc);
+	}
+	else
+		printf("ID_FS_%s=%s\n", name, value);
 }
 
 static void print_value(int output, int num, blkid_dev dev,
