@@ -63,7 +63,7 @@ struct netware_super_block {
 	uint8_t		SBH_SS_Guid[16];
 	uint16_t	SBH_SS_OriginalName[64];
 	uint32_t	reserved2[64-(2+46)];
-};
+} __attribute__((__packed__));
 
 static int probe_netware(blkid_probe pr, const struct blkid_idmag *mag)
 {
