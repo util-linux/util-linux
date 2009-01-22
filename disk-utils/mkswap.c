@@ -36,6 +36,7 @@
 #include <string.h>
 #include <fcntl.h>
 #include <stdlib.h>
+#include <limits.h>
 #include <mntent.h>
 #include <sys/ioctl.h>		/* for _IO */
 #include <sys/utsname.h>
@@ -60,7 +61,7 @@
 static char * program_name = "mkswap";
 static char * device_name = NULL;
 static int DEV = -1;
-static unsigned long PAGES = 0;
+static unsigned long long PAGES = 0;
 static unsigned long badpages = 0;
 static int check = 0;
 static int version = -1;
@@ -263,6 +264,7 @@ It is roughly 2GB on i386, PPC, m68k, ARM, 1GB on sparc, 512MB on mips,
 */
 
 #define MAX_BADPAGES	((pagesize-1024-128*sizeof(int)-10)/sizeof(int))
+#define MIN_GOODPAGES	10
 
 /*
  * One more point of lossage - Linux swapspace really is a mess.
@@ -385,8 +387,8 @@ check_blocks(void) {
 		printf(_("%lu bad pages\n"), badpages);
 }
 
-/* return size in pages, to avoid integer overflow */
-static unsigned long
+/* return size in pages */
+static unsigned long long
 get_size(const char  *file) {
 	int	fd;
 	unsigned long long size;
@@ -455,9 +457,9 @@ int
 main(int argc, char ** argv) {
 	struct stat statbuf;
 	int i;
-	unsigned long maxpages;
-	unsigned long goodpages;
-	unsigned long sz;
+	unsigned long long maxpages;
+	unsigned long long goodpages;
+	unsigned long long sz;
 	off_t offset;
 	int force = 0;
 	char *block_count = 0;
@@ -553,7 +555,7 @@ main(int argc, char ** argv) {
 		   explicitly */
 		char *tmp;
 		int blocks_per_page = pagesize/1024;
-		PAGES = strtoul(block_count,&tmp,0)/blocks_per_page;
+		PAGES = strtoull(block_count,&tmp,0)/blocks_per_page;
 		if (*tmp)
 			usage();
 	}
@@ -563,7 +565,7 @@ main(int argc, char ** argv) {
 	} else if (PAGES > sz && !force) {
 		fprintf(stderr,
 			_("%s: error: "
-			  "size %lu KiB is larger than device size %lu KiB\n"),
+			  "size %llu KiB is larger than device size %llu KiB\n"),
 			program_name,
 			PAGES*(pagesize/1024), sz*(pagesize/1024));
 		exit(1);
@@ -591,10 +593,10 @@ main(int argc, char ** argv) {
 		usage();
 	}
 
-	if (PAGES < 10) {
+	if (PAGES < MIN_GOODPAGES) {
 		fprintf(stderr,
 			_("%s: error: swap area needs to be at least %ld KiB\n"),
-			program_name, (long)(10 * pagesize/1024));
+			program_name, (long)(MIN_GOODPAGES * pagesize/1024));
 		usage();
 	}
 
@@ -602,7 +604,7 @@ main(int argc, char ** argv) {
 		maxpages = V0_MAX_PAGES;
 #ifdef __linux__
 	else if (get_linux_version() >= KERNEL_VERSION(2,3,4))
-		maxpages = PAGES;
+		maxpages = UINT_MAX + 1ULL;
 	else if (get_linux_version() >= KERNEL_VERSION(2,2,1))
 		maxpages = V1_MAX_PAGES;
 #endif
@@ -612,7 +614,7 @@ main(int argc, char ** argv) {
 	if (PAGES > maxpages) {
 		PAGES = maxpages;
 		fprintf(stderr,
-			_("%s: warning: truncating swap area to %ld KiB\n"),
+			_("%s: warning: truncating swap area to %llu KiB\n"),
 			program_name, PAGES * pagesize / 1024);
 	}
 
@@ -689,11 +691,11 @@ use the -f option to force it.\n"),
 		p->nr_badpages = badpages;
 	}
 
-	goodpages = PAGES - badpages - 1;
-	if ((long) goodpages <= 0)
+	if (badpages > PAGES - MIN_GOODPAGES)
 		die(_("Unable to set up swap-space: unreadable"));
+	goodpages = PAGES - badpages - 1;
 	printf(_("Setting up swapspace version %d, size = %llu KiB\n"),
-		version, (unsigned long long)goodpages * pagesize / 1024);
+		version, goodpages * pagesize / 1024);
 	write_signature((version == 0) ? "SWAP-SPACE" : "SWAPSPACE2");
 
 	if (version == 1)
