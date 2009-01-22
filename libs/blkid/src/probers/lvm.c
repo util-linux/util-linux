@@ -73,12 +73,8 @@ static int probe_lvm2(blkid_probe pr, const struct blkid_idmag *mag)
 		return 1;
 	}
 
-	if (le64_to_cpu(label->sector_xl) != (unsigned) sector) {
-		DBG(DEBUG_PROBE,
-		    printf("LVM2: label for sector %llu found at sector %d\n",
-			   le64_to_cpu(label->sector_xl), sector));
+	if (le64_to_cpu(label->sector_xl) != (unsigned) sector)
 		return 1;
-	}
 
 	if (lvm2_calc_crc(&label->offset_xl, LVM2_LABEL_SIZE -
 			((char *) &label->offset_xl - (char *) label)) !=
