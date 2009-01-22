@@ -451,6 +451,7 @@ int blkid_do_probe(blkid_probe pr)
 	for (i = 0; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id;
 		const struct blkid_idmag *mag;
+		int hasmag = 0;
 
 		pr->idx = i;
 
@@ -475,12 +476,13 @@ int blkid_do_probe(blkid_probe pr)
 				DBG(DEBUG_LOWPROBE, printf(
 					"\n      --> magic at sboff=%u, kboff=%ld;",
 					mag->sboff, mag->kboff));
+				hasmag = 1;
 				break;
 			}
 			mag++;
 		}
 
-		if (id->magics && id->magics[0].magic)
+		if (hasmag == 0 && id->magics && id->magics[0].magic)
 			/* magic string(s) defined, but not found */
 			continue;
 
