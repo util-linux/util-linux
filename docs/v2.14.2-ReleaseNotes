@@ -1,4 +1,4 @@
-Util-linux-ng 2.14.2 Release Notes (??-Dec-2008)
+Util-linux-ng 2.14.2 Release Notes (??-Jan-2009)
 ================================================
 
 ChangeLog between v2.14.1 and v2.14.2
@@ -9,12 +9,14 @@ ChangeLog between v2.14.1 and v2.14.2
 
 build-sys:
    - add -luuid to BLKID_LIBS  [Karel Zak]
+   - release++ (v2.14.2-rc1)  [Karel Zak]
 cfdisk:
    - accept yes/no as fallback  [Matthias Koenig]
 chrt:
    - support CFS SCHED_IDLE priority and document it  [Martin Steigerwald]
 docs:
    - update AUTHORS file  [Karel Zak]
+   - update v2.14.2 ReleaseNotes  [Karel Zak]
 fdisk:
    - add some missing includes  [Matthias Koenig]
    - cannot create partition with starting beyond 1 TB  [Karel Zak]
@@ -28,6 +30,9 @@ hwclock:
    - remove x86_64-specific bogon  [David Brownell]
 include:
    - use __BYTE_ORDER rather than AC specific WORDS_BIGENDIAN  [Karel Zak]
+ionice:
+   - Extend the man page to explain the "none" class and cpu-nice inheritance  [Jakob Unterwurzacher]
+   - a little cleanup of "none" description  [Karel Zak]
 ldattach:
    - don't compile for non-linux systems  [Samuel Thibault]
 lib:
@@ -52,9 +57,12 @@ more:
 mount:
    - add i_version support  [Karel Zak]
    - add info about /proc/mounts to mount.1  [Karel Zak]
+   - add info about semantics of read-only mount to mount.8  [Karel Zak]
    - add rootcontext= SELinux mount option  [Karel Zak]
    - clean up SPEC canonicalization  [Karel Zak]
+   - cleans up mount(8) troff markup  [Sam Varshavchik]
    - create separate section for fs-independent options in mount.8  [Karel Zak]
+   - finalize support of quoted LABELs/UUIDs  [Karel Zak]
    - fix mount_static_LDADD  [Karel Zak]
    - fix typo  [Guan Xin]
    - fix typo  [Karel Zak]
@@ -64,6 +72,7 @@ mount:
    - remove spurious newline from mount.8  [Mike Frysinger]
    - reorder list of options in mount.8  [Karel Zak]
    - retry on ENOMEDIUM  [Matthias Koenig]
+   - suggest to use blockdev --setro rather than losetup  [Karel Zak]
    - sundries.h add klibc support  [maximilian attems]
    - sync FAT info in mount.8 with Documentation/filesystems/vfat.txt  [Karel Zak]
    - sync tmpfs info in mount.8 with Documentation/filesystems/tmpfs.txt  [Karel Zak]
