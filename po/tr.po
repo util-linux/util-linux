@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-12-22 18:56+0100\n"
+"POT-Creation-Date: 2009-01-22 14:07+0100\n"
 "PO-Revision-Date: 2006-03-06 15:45+0200\n"
 "Last-Translator: Nilgün Belma Bugüner <nilgun@buguner.name.tr>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -7846,39 +7846,39 @@ msgstr "uyarı: %s açılamıyor: %s"
 msgid "mount: could not open %s - using %s instead\n"
 msgstr "mount: %s açılamadı - yerine %s kullanılıyor\n"
 
-#: mount/fstab.c:586
+#: mount/fstab.c:596
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
 msgstr ""
 "kilit dosyası %s oluşturulamıyor: %s (zorlamak için -n seçeneğini kullanın)"
 
-#: mount/fstab.c:612
+#: mount/fstab.c:622
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
 msgstr ""
 "%s kilit dosyası için bağ oluşturulamıyor: %s (zorlamak için -n seçeneğini "
 "kullanın)"
 
-#: mount/fstab.c:628
+#: mount/fstab.c:638
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
 msgstr "%s kilit dosyası açılamıyor: %s (zorlamak için -n seçeneğini kullanın)"
 
-#: mount/fstab.c:643
+#: mount/fstab.c:653
 #, c-format
 msgid "Can't lock lock file %s: %s\n"
 msgstr "%s kilit dosyası kilitlenemiyor: %s\n"
 
-#: mount/fstab.c:657
+#: mount/fstab.c:667
 #, c-format
 msgid "can't lock lock file %s: %s"
 msgstr "%s kilit dosyası kilitlenemiyor: %s"
 
-#: mount/fstab.c:659
+#: mount/fstab.c:669
 msgid "timed out"
 msgstr "zaman aşımı"
 
-#: mount/fstab.c:666
+#: mount/fstab.c:676
 #, c-format
 msgid ""
 "Cannot create link %s\n"
@@ -7887,27 +7887,27 @@ msgstr ""
 "%s bağı oluşturulamıyor\n"
 "Kalmış bir kilit dosyası olabilir mi?\n"
 
-#: mount/fstab.c:788 mount/fstab.c:843
+#: mount/fstab.c:798 mount/fstab.c:853
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "%s açılamıyor (%s) - mtab güncel değil"
 
-#: mount/fstab.c:852
+#: mount/fstab.c:862
 #, c-format
 msgid "error writing %s: %s"
 msgstr "%s yazılırken hata: %s"
 
-#: mount/fstab.c:870
+#: mount/fstab.c:880
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "%s için kip değiştirilirken hata: %s\n"
 
-#: mount/fstab.c:883
+#: mount/fstab.c:893
 #, fuzzy, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr "%s için kip değiştirilirken hata: %s\n"
 
-#: mount/fstab.c:894
+#: mount/fstab.c:904
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "%s %s olarak değiştirilemiyor: %s\n"

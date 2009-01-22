@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-12-22 18:56+0100\n"
+"POT-Creation-Date: 2009-01-22 14:07+0100\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -7937,42 +7937,42 @@ msgstr "avís: no s'ha pogut obrir %s: %s"
 msgid "mount: could not open %s - using %s instead\n"
 msgstr "mount: no s'ha pogut obrir %s; s'usarà %s\n"
 
-#: mount/fstab.c:586
+#: mount/fstab.c:596
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
 msgstr ""
 "no s'ha pogut crear el fitxer de blocat %s: %s (useu el senyalador -n per a "
 "modificar aquest valor)"
 
-#: mount/fstab.c:612
+#: mount/fstab.c:622
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
 msgstr ""
 "no s'ha pogut enllaçar el fitxer de blocat %s: %s (useu el senyalador -n per "
 "a modificar aquest valor)"
 
-#: mount/fstab.c:628
+#: mount/fstab.c:638
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
 msgstr ""
 "no s'ha pogut obrir el fitxer de blocat %s: %s (useu el senyalador -n per a "
 "modificar aquest valor)"
 
-#: mount/fstab.c:643
+#: mount/fstab.c:653
 #, c-format
 msgid "Can't lock lock file %s: %s\n"
 msgstr "No s'ha pogut blocar el fitxer de blocat %s: %s\n"
 
-#: mount/fstab.c:657
+#: mount/fstab.c:667
 #, c-format
 msgid "can't lock lock file %s: %s"
 msgstr "no s'ha pogut blocar al fitxer de blocat %s: %s"
 
-#: mount/fstab.c:659
+#: mount/fstab.c:669
 msgid "timed out"
 msgstr "s'ha exhaurit el temps d'espera"
 
-#: mount/fstab.c:666
+#: mount/fstab.c:676
 #, c-format
 msgid ""
 "Cannot create link %s\n"
@@ -7981,27 +7981,27 @@ msgstr ""
 "No s'ha pogut crear l'enllaç %s\n"
 "Potser hi ha un fitxer de blocat obsolet?\n"
 
-#: mount/fstab.c:788 mount/fstab.c:843
+#: mount/fstab.c:798 mount/fstab.c:853
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "no s'ha pogut obrir %s (%s) - no s'ha actualitzat mtab"
 
-#: mount/fstab.c:852
+#: mount/fstab.c:862
 #, c-format
 msgid "error writing %s: %s"
 msgstr "s'ha produït un error en escriure %s: %s"
 
-#: mount/fstab.c:870
+#: mount/fstab.c:880
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "s'ha produït un error en canviar el mode de %s: %s\n"
 
-#: mount/fstab.c:883
+#: mount/fstab.c:893
 #, fuzzy, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr "s'ha produït un error en canviar el mode de %s: %s\n"
 
-#: mount/fstab.c:894
+#: mount/fstab.c:904
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "no s'ha pogut tornar a nomenar %s per %s: %s\n"

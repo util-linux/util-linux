@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.13.1-rc1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-12-22 18:56+0100\n"
+"POT-Creation-Date: 2009-01-22 14:07+0100\n"
 "PO-Revision-Date: 2008-04-18 13:44+0100\n"
 "Last-Translator: Marco Colombo <m.colombo@ed.ac.uk>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -7841,38 +7841,38 @@ msgstr "attenzione: impossibile aprire %s: %s"
 msgid "mount: could not open %s - using %s instead\n"
 msgstr "mount: impossibile aprire %s - si sta utilizzando al suo posto %s\n"
 
-#: mount/fstab.c:586
+#: mount/fstab.c:596
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
 msgstr ""
 "impossibile creare un file di lock %s: %s (usare il flag -n per cambiare)"
 
-#: mount/fstab.c:612
+#: mount/fstab.c:622
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
 msgstr ""
 "impossibile collegare il file di lock %s: %s  (usare il flag -n per cambiare)"
 
-#: mount/fstab.c:628
+#: mount/fstab.c:638
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
 msgstr "impossibile aprire il file di lock %s: %s (usare flag -n per cambiare)"
 
-#: mount/fstab.c:643
+#: mount/fstab.c:653
 #, c-format
 msgid "Can't lock lock file %s: %s\n"
 msgstr "Impossibile fare il lock del file di lock %s: %s\n"
 
-#: mount/fstab.c:657
+#: mount/fstab.c:667
 #, c-format
 msgid "can't lock lock file %s: %s"
 msgstr "impossibile fare il lock del file di lock %s: %s"
 
-#: mount/fstab.c:659
+#: mount/fstab.c:669
 msgid "timed out"
 msgstr "scaduto"
 
-#: mount/fstab.c:666
+#: mount/fstab.c:676
 #, c-format
 msgid ""
 "Cannot create link %s\n"
@@ -7881,27 +7881,27 @@ msgstr ""
 "Impossibile creare il collegamento %s\n"
 "Forse c'è un vecchio file di lock?\n"
 
-#: mount/fstab.c:788 mount/fstab.c:843
+#: mount/fstab.c:798 mount/fstab.c:853
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "impossibile aprire %s (%s) - mtab non aggiornato"
 
-#: mount/fstab.c:852
+#: mount/fstab.c:862
 #, c-format
 msgid "error writing %s: %s"
 msgstr "errore durante la scrittura di %s: %s"
 
-#: mount/fstab.c:870
+#: mount/fstab.c:880
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "errore durante il cambiamento della modalità di %s: %s\n"
 
-#: mount/fstab.c:883
+#: mount/fstab.c:893
 #, fuzzy, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr "errore durante il cambiamento della modalità di %s: %s\n"
 
-#: mount/fstab.c:894
+#: mount/fstab.c:904
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "impossibile rinominare %s in %s: %s\n"

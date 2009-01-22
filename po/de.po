@@ -44,7 +44,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.13.1-rc1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-12-22 18:56+0100\n"
+"POT-Creation-Date: 2009-01-22 14:07+0100\n"
 "PO-Revision-Date: 2008-01-09 17:38+0200\n"
 "Last-Translator: Michael Piefel <piefel@informatik.hu-berlin.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -8026,21 +8026,21 @@ msgstr "Warnung: Konnte %s nicht öffnen: %s"
 msgid "mount: could not open %s - using %s instead\n"
 msgstr "mount: Konnte %s nicht öffnen – benutze %s stattdessen\n"
 
-#: mount/fstab.c:586
+#: mount/fstab.c:596
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
 msgstr ""
 "Konnte die Lock-Datei %s nicht anlegen: %s (benutzen Sie die Option -n, um "
 "dies zu umgehen)"
 
-#: mount/fstab.c:612
+#: mount/fstab.c:622
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
 msgstr ""
 "Konnte keinen Link für die Lock-Datei %s anlegen: %s (benutzen Sie die "
 "Option -n, um dies zu umgehen)"
 
-#: mount/fstab.c:628
+#: mount/fstab.c:638
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
 msgstr ""
@@ -8049,22 +8049,22 @@ msgstr ""
 
 # This one should be merged with the next one by using
 # error() instead of printf()
-#: mount/fstab.c:643
+#: mount/fstab.c:653
 #, c-format
 msgid "Can't lock lock file %s: %s\n"
 msgstr "Konnte die Lock-Datei %s nicht sperren: %s\n"
 
 # sperren
-#: mount/fstab.c:657
+#: mount/fstab.c:667
 #, c-format
 msgid "can't lock lock file %s: %s"
 msgstr "Konnte die Lock-Datei %s nicht sperren: %s"
 
-#: mount/fstab.c:659
+#: mount/fstab.c:669
 msgid "timed out"
 msgstr "Zeitüberschreitung"
 
-#: mount/fstab.c:666
+#: mount/fstab.c:676
 #, c-format
 msgid ""
 "Cannot create link %s\n"
@@ -8073,27 +8073,27 @@ msgstr ""
 "Konnte Verknüpfung %s nicht anlegen\n"
 "Vielleicht gibt es noch eine abgelaufene Lock-Datei?\n"
 
-#: mount/fstab.c:788 mount/fstab.c:843
+#: mount/fstab.c:798 mount/fstab.c:853
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "Konnte %s nicht öffnen (%s) – mtab nicht aktualisiert"
 
-#: mount/fstab.c:852
+#: mount/fstab.c:862
 #, c-format
 msgid "error writing %s: %s"
 msgstr "Fehler beim Schreiben von %s: %s"
 
-#: mount/fstab.c:870
+#: mount/fstab.c:880
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "Fehler beim Ändern der Zugriffsrechte von %s: %s\n"
 
-#: mount/fstab.c:883
+#: mount/fstab.c:893
 #, fuzzy, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr "Fehler beim Ändern der Zugriffsrechte von %s: %s\n"
 
-#: mount/fstab.c:894
+#: mount/fstab.c:904
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "Konnte %s nicht in %s umbenennen: %s\n"

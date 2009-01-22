@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2008-12-22 18:56+0100\n"
+"POT-Creation-Date: 2009-01-22 14:07+0100\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -7807,37 +7807,37 @@ msgstr "opozorilo: ne morem odpreti %s: %s"
 msgid "mount: could not open %s - using %s instead\n"
 msgstr "mount: ni mogoèe odpreti %s - uporabljam %s namesto tega\n"
 
-#: mount/fstab.c:586
+#: mount/fstab.c:596
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
 msgstr ""
 "ni mogoèe ustvariti omejitvene datoteke %s: %s (za povozitev uporabi -n)"
 
-#: mount/fstab.c:612
+#: mount/fstab.c:622
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
 msgstr "omejitvene datoteke %s ni mogoèe vezati : %s (za povozitev uporabi -n)"
 
-#: mount/fstab.c:628
+#: mount/fstab.c:638
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
 msgstr "omejitvene datoteke %s ni mogoèe odpreti: %s (za povozitev uporabi -n)"
 
-#: mount/fstab.c:643
+#: mount/fstab.c:653
 #, c-format
 msgid "Can't lock lock file %s: %s\n"
 msgstr "Omejitvene datoteke %s ni mogoèe zakleniti: %s\n"
 
-#: mount/fstab.c:657
+#: mount/fstab.c:667
 #, c-format
 msgid "can't lock lock file %s: %s"
 msgstr "omejitvene datoteke %s ni mogoèe zakleniti: %s"
 
-#: mount/fstab.c:659
+#: mount/fstab.c:669
 msgid "timed out"
 msgstr "èas se je iztekel"
 
-#: mount/fstab.c:666
+#: mount/fstab.c:676
 #, c-format
 msgid ""
 "Cannot create link %s\n"
@@ -7846,27 +7846,27 @@ msgstr ""
 "Povezave %s ni mogoèe ustvariti\n"
 "Mogoèe obstaja neveljavna zaklepna datoteka?\n"
 
-#: mount/fstab.c:788 mount/fstab.c:843
+#: mount/fstab.c:798 mount/fstab.c:853
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "%s ni mogoèe odpreti (%s) - mtab ni a¾uriran"
 
-#: mount/fstab.c:852
+#: mount/fstab.c:862
 #, c-format
 msgid "error writing %s: %s"
 msgstr "napaka pri pisanju %s: %s"
 
-#: mount/fstab.c:870
+#: mount/fstab.c:880
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "Napaka pri spreminjanju naèina %s: %s\n"
 
-#: mount/fstab.c:883
+#: mount/fstab.c:893
 #, fuzzy, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr "Napaka pri spreminjanju naèina %s: %s\n"
 
-#: mount/fstab.c:894
+#: mount/fstab.c:904
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "ni mogoèe preimenovati %s v %s: %s\n"
