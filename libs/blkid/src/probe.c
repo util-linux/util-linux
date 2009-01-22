@@ -256,11 +256,23 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 	pr->fd = fd;
 	pr->off = off;
+	pr->size = 0;
 
-	if (!size)
-		blkdev_get_size(fd, (unsigned long long *) &pr->size);
-	else
+	if (size)
 		pr->size = size;
+	else {
+		struct stat sb;
+
+		if (fstat(fd, &sb))
+			return -1;
+
+		if (S_ISBLK(sb.st_mode))
+			blkdev_get_size(fd, (unsigned long long *) &pr->size);
+		else
+			pr->size = sb.st_size;
+	}
+	if (!pr->size)
+		return -1;
 
 	/* read SB to test if the device is readable */
 	if (!blkid_probe_get_buffer(pr, 0, 0x200)) {
@@ -269,7 +281,8 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		return -1;
 	}
 
-	DBG(DEBUG_LOWPROBE, printf("a new device prepared for low-probing\n"));
+	DBG(DEBUG_LOWPROBE, printf("ready for low-probing, offset=%zd, size=%zd\n",
+				pr->off, pr->size));
 	pr->idx = 0;
 	return 0;
 }
@@ -467,7 +480,7 @@ int blkid_do_probe(blkid_probe pr)
 			mag++;
 		}
 
-		if (mag && mag->magic == NULL)
+		if (id->magics && id->magics[0].magic)
 			/* magic string(s) defined, but not found */
 			continue;
 
@@ -712,22 +725,7 @@ int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
 		return 0;
 
 	va_start(ap, fmt);
-
-	if (!strcmp(fmt, "%s")) {
-		struct blkid_prval *v = NULL;
-		const char *str = va_arg(ap, char *);
-
-		if (str && *str)
-			v = blkid_probe_assign_value(pr, "UUID");
-		if (v) {
-			strncpy((char *) v->data, str, BLKID_PROBVAL_BUFSIZ);
-			v->data[BLKID_PROBVAL_BUFSIZ - 1] = '\0';
-			v->len = strlen((char *) v->data);
-			rc = 0;
-		}
-	} else
-		rc = blkid_probe_vsprintf_value(pr, "UUID", fmt, ap);
-
+	rc = blkid_probe_vsprintf_value(pr, "UUID", fmt, ap);
 	va_end(ap);
 
 	/* convert to lower case (..be paranoid) */
@@ -740,6 +738,34 @@ int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
 				v->data[i] = (v->data[i] - 'A') + 'a';
 	}
 	return rc;
+}
+
+/* function to set UUIDs that are in suberblocks stored as strings */
+int blkid_probe_strncpy_uuid(blkid_probe pr, unsigned char *str, size_t len)
+{
+	struct blkid_prval *v;
+
+	if (str == NULL || *str == '\0')
+		return -1;
+	if (!len)
+		len = strlen((char *) str);
+	if (len > BLKID_PROBVAL_BUFSIZ)
+		len = BLKID_PROBVAL_BUFSIZ;
+
+	if ((pr->probreq & BLKID_PROBREQ_UUIDRAW) &&
+	    blkid_probe_set_value(pr, "UUID_RAW", str, len) < 0)
+		return -1;
+	if (!(pr->probreq & BLKID_PROBREQ_UUID))
+		return 0;
+
+	v = blkid_probe_assign_value(pr, "UUID");
+	if (v) {
+		memcpy((char *) v->data, str, len);
+		v->data[len - 1] = '\0';
+		v->len = len;
+		return 0;
+	}
+	return -1;
 }
 
 /* default _set_uuid function to set DCE UUIDs */

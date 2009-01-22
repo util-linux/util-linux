@@ -285,10 +285,10 @@ extern int blkid_probe_set_utf8label(blkid_probe pr, unsigned char *label,
 extern int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
                 size_t len, const char *fmt, ...)
 		__attribute__ ((format (printf, 4, 5)));
+extern int blkid_probe_strncpy_uuid(blkid_probe pr, unsigned char *str, size_t len);
 
 extern int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid);
 extern int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const char *name);
-
 
 #define BLKID_ENC_UTF16BE	0
 #define BLKID_ENC_UTF16LE	1
