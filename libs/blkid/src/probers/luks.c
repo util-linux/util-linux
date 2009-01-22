@@ -47,7 +47,7 @@ static int probe_luks(blkid_probe pr, const struct blkid_idmag *mag)
 	if (header == NULL)
 		return -1;
 
-	blkid_probe_sprintf_uuid(pr, header->uuid, 36, "%s", header->uuid);
+	blkid_probe_strncpy_uuid(pr, (char *) header->uuid, sizeof(header->uuid));
 	blkid_probe_sprintf_version(pr, "%u", le16_to_cpu(header->version));
 	return 0;
 }
