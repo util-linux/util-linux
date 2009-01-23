@@ -20,7 +20,7 @@ struct ocfs_volume_header {
 	unsigned char	signature[128];
 	char		mount[128];
 	unsigned char   mount_len[2];
-};
+} __attribute__((packed));
 
 struct ocfs_volume_label {
 	unsigned char	disk_lock[48];
@@ -28,7 +28,7 @@ struct ocfs_volume_label {
 	unsigned char	label_len[2];
 	unsigned char   vol_id[16];
 	unsigned char   vol_id_len[2];
-};
+} __attribute__((packed));
 
 #define ocfsmajor(o) ( (uint32_t) o.major_version[0] \
                    + (((uint32_t) o.major_version[1]) << 8) \
@@ -44,18 +44,59 @@ struct ocfs_volume_label {
 #define ocfsmountlen(o)	((uint32_t)o.mount_len[0] + (((uint32_t) o.mount_len[1]) << 8))
 
 struct ocfs2_super_block {
-	unsigned char  signature[8];
-	unsigned char  s_dummy1[184];
-	unsigned char  s_dummy2[80];
-	char	       s_label[64];
-	unsigned char  s_uuid[16];
-};
+	uint8_t		i_signature[8];
+	uint32_t	i_generation;
+	int16_t		i_suballoc_slot;
+	uint16_t	i_suballoc_bit;
+	uint32_t	i_reserved0;
+	uint32_t	i_clusters;
+	uint32_t	i_uid;
+	uint32_t	i_gid;
+	uint64_t	i_size;
+	uint16_t	i_mode;
+	uint16_t	i_links_count;
+	uint32_t	i_flags;
+	uint64_t	i_atime;
+	uint64_t	i_ctime;
+	uint64_t	i_mtime;
+	uint64_t	i_dtime;
+	uint64_t	i_blkno;
+	uint64_t	i_last_eb_blk;
+	uint32_t	i_fs_generation;
+	uint32_t	i_atime_nsec;
+	uint32_t	i_ctime_nsec;
+	uint32_t	i_mtime_nsec;
+	uint64_t	i_reserved1[9];
+	uint64_t	i_pad1;
+	uint16_t	s_major_rev_level;
+	uint16_t	s_minor_rev_level;
+	uint16_t	s_mnt_count;
+	int16_t		s_max_mnt_count;
+	uint16_t	s_state;
+	uint16_t	s_errors;
+	uint32_t	s_checkinterval;
+	uint64_t	s_lastcheck;
+	uint32_t	s_creator_os;
+	uint32_t	s_feature_compat;
+	uint32_t	s_feature_incompat;
+	uint32_t	s_feature_ro_compat;
+	uint64_t	s_root_blkno;
+	uint64_t	s_system_dir_blkno;
+	uint32_t	s_blocksize_bits;
+	uint32_t	s_clustersize_bits;
+	uint16_t	s_max_slots;
+	uint16_t	s_reserved1;
+	uint32_t	s_reserved2;
+	uint64_t	s_first_cluster_group;
+	uint8_t		s_label[64];
+	uint8_t		s_uuid[16];
+} __attribute__((packed));
 
 struct oracle_asm_disk_label {
 	char dummy[32];
 	char dl_tag[8];
 	char dl_id[24];
-};
+} __attribute__((packed));
 
 static int probe_ocfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
@@ -107,6 +148,10 @@ static int probe_ocfs2(blkid_probe pr, const struct blkid_idmag *mag)
 
 	blkid_probe_set_label(pr, (unsigned char *) osb->s_label, sizeof(osb->s_label));
 	blkid_probe_set_uuid(pr, osb->s_uuid);
+
+	blkid_probe_sprintf_version(pr, "%u.%u",
+			osb->s_major_rev_level, osb->s_minor_rev_level);
+
 	return 0;
 }
 
