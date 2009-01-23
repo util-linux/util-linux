@@ -763,7 +763,7 @@ int blkid_probe_strncpy_uuid(blkid_probe pr, unsigned char *str, size_t len)
 	v = blkid_probe_assign_value(pr, "UUID");
 	if (v) {
 		memcpy((char *) v->data, str, len);
-		v->data[len - 1] = '\0';
+		*(v->data + len) = '\0';
 		v->len = len;
 		return 0;
 	}
