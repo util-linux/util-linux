@@ -59,12 +59,19 @@ static int probe_reiser(blkid_probe pr, const struct blkid_idmag *mag)
 
 	/* LABEL/UUID are only valid for later versions of Reiserfs v3.6. */
 	if (mag->magic[6] == '2' || mag->magic[6] == '3') {
-		if (strlen(rs->rs_label))
+		if (*rs->rs_label)
 			blkid_probe_set_label(pr,
 					(unsigned char *) rs->rs_label,
 					sizeof(rs->rs_label));
 		blkid_probe_set_uuid(pr, rs->rs_uuid);
 	}
+
+	if (mag->magic[6] == '3')
+		blkid_probe_set_version(pr, "JR");
+	else if (mag->magic[6] == '2')
+		blkid_probe_set_version(pr, "3.6");
+	else
+		blkid_probe_set_version(pr, "3.5");
 
 	return 0;
 }
@@ -77,9 +84,10 @@ static int probe_reiser4(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!rs4)
 		return -1;
 
-	if (strlen((char *) rs4->rs4_label))
+	if (*rs4->rs4_label)
 		blkid_probe_set_label(pr, rs4->rs4_label, sizeof(rs4->rs4_label));
 	blkid_probe_set_uuid(pr, rs4->rs4_uuid);
+	blkid_probe_set_version(pr, "4");
 
 	return 0;
 }
