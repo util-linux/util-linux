@@ -333,6 +333,7 @@ int main(int argc, char **argv)
 					|| strcmp(optarg, "mem") == 0
 					|| strcmp(optarg, "disk") == 0
 					|| strcmp(optarg, "on") == 0
+					|| strcmp(optarg, "no") == 0
 			   ) {
 				suspend = strdup(optarg);
 				break;
@@ -419,7 +420,8 @@ int main(int argc, char **argv)
 		devname = new_devname;
 	}
 
-	if (strcmp(suspend, "on") != 0 && !is_wakeup_enabled(devname)) {
+	if (strcmp(suspend, "on") != 0 && strcmp(suspend, "no") != 0
+			&& !is_wakeup_enabled(devname)) {
 		fprintf(stderr, _("%s: %s not enabled for wakeup events\n"),
 				progname, devname);
 		exit(EXIT_FAILURE);
@@ -451,16 +453,18 @@ int main(int argc, char **argv)
 	if (setup_alarm(fd, &alarm) < 0)
 		exit(EXIT_FAILURE);
 
-	sync();
 	printf(_("%s: wakeup from \"%s\" using %s at %s\n"),
 			progname, suspend, devname,
 			ctime(&alarm));
 	fflush(stdout);
 	usleep(10 * 1000);
 
-	if (strcmp(suspend, "on") != 0)
+	if (strcmp(suspend, "no") == 0)
+		exit(EXIT_SUCCESS);
+	else if (strcmp(suspend, "on") != 0) {
+		sync();
 		suspend_system(suspend);
-	else {
+	} else {
 		unsigned long data;
 
 		do {
