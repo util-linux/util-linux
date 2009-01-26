@@ -256,12 +256,15 @@ add_namei(struct namei *parent, const char *orgpath, int start, struct namei **l
 
 	for (end = fname; fname && end; ) {
 		/* set end of filename */
-		end = strchr(fname, '/');
-		if (end)
-			*end = '\0';
+		if (*fname) {
+			end = strchr(fname, '/');
+			if (end)
+				*end = '\0';
 
-		/* create a new entry */
-		nm = new_namei(nm, path, fname, level);
+			/* create a new entry */
+			nm = new_namei(nm, path, fname, level);
+		} else
+			end = NULL;
 		if (!first)
 			first = nm;
 		if (S_ISLNK(nm->st.st_mode))
