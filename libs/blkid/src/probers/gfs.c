@@ -1,8 +1,4 @@
 /*
- * Copyright (C) 1999 by Andries Brouwer
- * Copyright (C) 1999, 2000, 2003 by Theodore Ts'o
- * Copyright (C) 2001 by Andreas Dilger
- * Copyright (C) 2004 Kay Sievers <kay.sievers@vrfy.org>
  * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
  *
  * This file may be redistributed under the terms of the
@@ -73,7 +69,7 @@ static int probe_gfs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (be32_to_cpu(sbd->sb_fs_format) == GFS_FORMAT_FS &&
 	    be32_to_cpu(sbd->sb_multihost_format) == GFS_FORMAT_MULTI)
 	{
-		if (strlen(sbd->sb_locktable))
+		if (*sbd->sb_locktable)
 			blkid_probe_set_label(pr,
 				(unsigned char *) sbd->sb_locktable,
 				sizeof(sbd->sb_locktable));
@@ -96,10 +92,12 @@ static int probe_gfs2(blkid_probe pr, const struct blkid_idmag *mag)
 	if (be32_to_cpu(sbd->sb_fs_format) == GFS2_FORMAT_FS &&
 	    be32_to_cpu(sbd->sb_multihost_format) == GFS2_FORMAT_MULTI)
 	{
-		if (strlen(sbd->sb_locktable))
+		if (*sbd->sb_locktable)
 			blkid_probe_set_label(pr,
 				(unsigned char *) sbd->sb_locktable,
 				sizeof(sbd->sb_locktable));
+		blkid_probe_set_uuid(pr, sbd->sb_uuid);
+		blkid_probe_set_version(pr, "1");
 		return 0;
 	}
 	return -1;
