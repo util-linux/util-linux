@@ -73,9 +73,32 @@ is the time in seconds since 1970-01-01, 00:00 UTC. Use the
 \fBdate\fP tool to convert between human-readable time and \fItime_t\fP.
 .TP
 \fB-m\fP \fImode\fP | \fB--mode\fP \fImode\fP
-Use standby state \fImode\fP. Valid values are \fIstandby\fP,
-\fImem\fP, \fIdisk\fP, \fIno\fP (no suspend) and \fIon\fP (for debugging).
-The default is \fIstandby\fP.
+Use standby state \fImode\fP. Valid values are:
+.RS
+.TP
+.B standby
+ACPI state S1. This state offers minimal, though real, power savings, while
+providing a very low-latency transition back to a working system. This is the
+default mode.
+.TP
+.B mem
+ACPI state S3 (Suspend-to-RAM). This state offers significant power savings as
+everything in the system is put into a low-power state, except for memory,
+which is placed in self-refresh mode to retain its contents.
+.TP
+.B disk
+ACPI state S4 (Suspend-to-disk). This state offers the greatest power savings,
+and can be used even in the absence of low-level platform support for power
+management. This state operates similarly to Suspend-to-RAM, but includes a
+final step of writing memory contents to disk.
+.TP
+.B no
+Don't suspend. The rtcwake command sets RTC wakeup time only.
+.TP
+.B on
+Don't suspend, but read RTC device until alarm time appears. This mode is
+useful for debugging.
+.PP
 .SH NOTES
 Some PC systems can't currently exit sleep states such as \fImem\fP
 using only the kernel code accessed by this driver.
