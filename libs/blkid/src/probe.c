@@ -447,7 +447,7 @@ int blkid_do_probe(blkid_probe pr)
 	if (pr->idx)
 		i = pr->idx + 1;
 
-	DBG(DEBUG_LOWPROBE, printf("*** starting probing loop\n"));
+	DBG(DEBUG_LOWPROBE, printf("--> starting probing loop\n"));
 
 	for ( ; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id;
@@ -462,8 +462,6 @@ int blkid_do_probe(blkid_probe pr)
 		id = idinfos[i];
 		mag = id->magics ? &id->magics[0] : NULL;
 
-		DBG(DEBUG_LOWPROBE, printf("\n  %s", id->name));
-
 		/* try to detect by magic string */
 		while(mag && mag->magic) {
 			int idx;
@@ -475,8 +473,8 @@ int blkid_do_probe(blkid_probe pr)
 			if (buf && !memcmp(mag->magic,
 					buf + (mag->sboff & 0x3ff), mag->len)) {
 				DBG(DEBUG_LOWPROBE, printf(
-					"\n      --> magic at sboff=%u, kboff=%ld;",
-					mag->sboff, mag->kboff));
+					"%s: magic sboff=%u, kboff=%ld\n",
+					id->name, mag->sboff, mag->kboff));
 				hasmag = 1;
 				break;
 			}
@@ -490,7 +488,7 @@ int blkid_do_probe(blkid_probe pr)
 		/* final check by probing function */
 		if (id->probefunc) {
 			DBG(DEBUG_LOWPROBE, printf(
-				"\n      --> calling probing function"));
+				"%s: call probefunc()\n", id->name));
 			if (id->probefunc(pr, mag) != 0)
 				continue;
 		}
@@ -504,10 +502,10 @@ int blkid_do_probe(blkid_probe pr)
 			blkid_probe_set_usage(pr, id->usage);
 
 		DBG(DEBUG_LOWPROBE,
-			printf("\n*** leaving probing loop (type=%s)\n", id->name));
+			printf("<-- leaving probing loop (type=%s)\n", id->name));
 		return 0;
 	}
-	DBG(DEBUG_LOWPROBE, printf("\n*** leaving probing loop (failed)\n"));
+	DBG(DEBUG_LOWPROBE, printf("<-- leaving probing loop (failed)\n"));
 	return 1;
 }
 
@@ -536,8 +534,12 @@ int blkid_do_safeprobe(blkid_probe pr)
 	}
 	if (rc < 0)
 		return rc;		/* error */
-	if (count > 1 && intol)
+	if (count > 1 && intol) {
+		DBG(DEBUG_LOWPROBE,
+			printf("ERROR: ambivalent result detected (%d filesystems)!\n",
+			count));
 		return -2;		/* error, ambivalent result (more FS) */
+	}
 	if (!count)
 		return 1;		/* nothing detected */
 
