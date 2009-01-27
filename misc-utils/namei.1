@@ -39,19 +39,24 @@ outputs a the following characters to identify the file types found:
 prints an informative message when
 the maximum number of symbolic links this system can have has been exceeded.
 .SH OPTIONS
-.IP "\fB\-x, \-\-mountpoints\fP"
-Show mount point directories with a 'D', rather than a 'd'.
+.IP "\fB\-l, \-\-long\fP"
+Use a long listing format (same as -m -o -v).
 .IP "\fB\-m, \-\-modes\fP"
 Show the mode bits of each file type in the style of ls(1),
 for example 'rwxr-xr-x'.
+.IP "\fB\-o, \-\-owners\fP"
+Show owner and group name of each file.
 .IP "\fB\-n, \-\-nosymlinks\fP"
 Don't follow symlinks.
 .IP "\fB\-v, \-\-vertical\fP"
 Vertical align of modes and owners.
+.IP "\fB\-x, \-\-mountpoints\fP"
+Show mount point directories with a 'D', rather than a 'd'.
 .SH AUTHOR
 The original
 .B namei
 program was written by Roger Southwick <rogers@amadeus.wr.tek.com>.
+
 The program was re-written by Karel Zak <kzak@redhat.com>.
 .SH BUGS
 To be discovered.
