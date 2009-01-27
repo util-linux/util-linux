@@ -51,6 +51,7 @@
 #define NAMEI_MODES	(1 << 2)
 #define NAMEI_MNTS	(1 << 3)
 #define NAMEI_OWNERS	(1 << 4)
+#define NAMEI_VERTICAL	(1 << 5)
 
 
 struct namei {
@@ -369,13 +370,16 @@ print_namei(struct namei *nm, char *path)
 		    prev->st.st_dev != nm->st.st_dev)
 			md[0] = 'D';
 
-		for (i = 0; i < nm->level; i++)
-			fputs("  ", stdout);
+		if (!(flags & NAMEI_VERTICAL)) {
+			for (i = 0; i < nm->level; i++)
+				fputs("  ", stdout);
+			fputc(' ', stdout);
+		}
 
 		if (flags & NAMEI_MODES)
-			printf(" %s", md);
+			printf("%s", md);
 		else
-			printf(" %c", md[0]);
+			printf("%c", md[0]);
 
 		if (flags & NAMEI_OWNERS) {
 			printf(" %-*s", uwidth,
@@ -383,6 +387,11 @@ print_namei(struct namei *nm, char *path)
 			printf(" %-*s", gwidth,
 				get_id(gcache, nm->st.st_gid)->name);
 		}
+
+		if (flags & NAMEI_VERTICAL)
+			for (i = 0; i < nm->level; i++)
+				fputs("  ", stdout);
+
 		if (S_ISLNK(nm->st.st_mode))
 			printf(" %s -> %s\n", nm->name,
 					nm->abslink + nm->relstart);
@@ -407,8 +416,9 @@ usage(int rc)
 	" -x, --mountpoints   show mount point directories with a 'D'\n"
 	" -m, --modes         show the mode bits of each file\n"
 	" -o, --owners        show owner and group name of each file\n"
-	" -l, --long          use a long listing format (-m -o)\n"
-	" -n, --nosymlinks    don't follow symlinks\n"));
+	" -l, --long          use a long listing format (-m -o -v) \n"
+	" -n, --nosymlinks    don't follow symlinks\n"
+	" -v, --vertical      vertical align of modes and owners\n"));
 
 	printf(_("\nFor more information see namei(1).\n"));
 	exit(rc);
@@ -422,6 +432,7 @@ struct option longopts[] =
 	{ "owners",	0, 0, 'o' },
 	{ "long",       0, 0, 'l' },
 	{ "nolinks",	0, 0, 'n' },
+	{ "vertical",   0, 0, 'v' },
 	{ NULL,		0, 0, 0 },
 };
 
@@ -438,14 +449,14 @@ main(int argc, char **argv)
 	if (argc < 2)
 		usage(EXIT_FAILURE);
 
-	while ((c = getopt_long(argc, argv, "+h?lmnox", longopts, NULL)) != -1) {
+	while ((c = getopt_long(argc, argv, "+h?lmnovx", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'h':
 		case '?':
 			usage(EXIT_SUCCESS);
 			break;
 		case 'l':
-			flags |= (NAMEI_OWNERS | NAMEI_MODES);
+			flags |= (NAMEI_OWNERS | NAMEI_MODES | NAMEI_VERTICAL);
 			break;
 		case 'm':
 			flags |= NAMEI_MODES;
@@ -459,6 +470,8 @@ main(int argc, char **argv)
 		case 'x':
 			flags |= NAMEI_MNTS;
 			break;
+		case 'v':
+			flags |= NAMEI_VERTICAL;
 		}
 	}
 
