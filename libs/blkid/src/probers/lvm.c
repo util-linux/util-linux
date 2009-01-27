@@ -95,6 +95,10 @@ static int probe_lvm2(blkid_probe pr, const struct blkid_idmag *mag)
 	uuid[LVM2_ID_LEN+6] = '\0';
 	blkid_probe_sprintf_uuid(pr, label->pv_uuid, sizeof(label->pv_uuid),
 			"%s", uuid);
+
+	/* the mag->magic is the same string as label->type,
+	 * but zero terminated */
+	blkid_probe_set_version(pr, mag->magic);
 	return 0;
 }
 
