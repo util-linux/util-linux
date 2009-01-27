@@ -319,6 +319,7 @@ static int lowprobe_device(blkid_probe pr, const char *devname, int output,
 	int nvals, n;
 	size_t len;
 	int fd;
+	int rc = 0;
 
 	fd = open(devname, O_RDONLY);
 	if (fd < 0) {
@@ -328,7 +329,8 @@ static int lowprobe_device(blkid_probe pr, const char *devname, int output,
 
 	if (blkid_probe_set_device(pr, fd, offset, size))
 		goto error;
-	if (blkid_do_probe(pr))
+	rc = blkid_do_safeprobe(pr);
+	if (rc)
 		goto error;
 
 	nvals = blkid_probe_numof_values(pr);
@@ -341,8 +343,13 @@ static int lowprobe_device(blkid_probe pr, const char *devname, int output,
 		print_value(output, n + 1, NULL, (char *) data, name, len);
 	}
 
+	close(fd);
 	return 0;
 error:
+	if (rc == -2)
+		fprintf(stderr, "%s: ambivalent result "
+				"(probably more filesystems on the device)\n",
+				devname);
 	close(fd);
 	return -1;
 }

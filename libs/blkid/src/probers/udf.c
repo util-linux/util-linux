@@ -144,6 +144,7 @@ const struct blkid_idinfo udf_idinfo =
 	.name		= "udf",
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_udf,
+	.flags		= BLKID_IDINFO_TOLERANT,
 	.magics		=
 	{
 		{ .magic = "BEA01", .len = 5, .kboff = 32, .sboff = 1 },

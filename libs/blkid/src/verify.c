@@ -141,8 +141,8 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 	/*
 	 * Probe for all types.
 	 */
-	if (blkid_do_probe(cache->probe)) {
-		/* found nothing */
+	if (blkid_do_safeprobe(cache->probe)) {
+		/* found nothing or error */
 		blkid_free_dev(dev);
 		dev = NULL;
 	}

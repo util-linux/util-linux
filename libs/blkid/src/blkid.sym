@@ -7,6 +7,7 @@
 	blkid_devno_to_devname;
 	blkid_dev_set_search;
 	blkid_do_probe;
+	blkid_do_safeprobe;
 	blkid_encode_string;
 	blkid_find_dev_with_tag;
 	blkid_free_probe;

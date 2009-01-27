@@ -169,6 +169,7 @@ void blkid_reset_probe(blkid_probe pr)
 		memset(pr->buf, 0, pr->buf_max);
 	pr->buf_off = 0;
 	pr->buf_len = 0;
+	pr->idx = 0;
 	if (pr->sbbuf)
 		memset(pr->sbbuf, 0, BLKID_SB_BUFSIZ);
 	pr->sbbuf_len = 0;
@@ -448,7 +449,7 @@ int blkid_do_probe(blkid_probe pr)
 
 	DBG(DEBUG_LOWPROBE, printf("*** starting probing loop\n"));
 
-	for (i = 0; i < ARRAY_SIZE(idinfos); i++) {
+	for ( ; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id;
 		const struct blkid_idmag *mag;
 		int hasmag = 0;
@@ -508,6 +509,44 @@ int blkid_do_probe(blkid_probe pr)
 	}
 	DBG(DEBUG_LOWPROBE, printf("\n*** leaving probing loop (failed)\n"));
 	return 1;
+}
+
+/*
+ * This is the same function as blkid_do_probe(), but returns only one result
+ * (cannot be used in while()) and checks for ambivalen results (more
+ * filesystems on the device) -- in such case returns -2.
+ */
+int blkid_do_safeprobe(blkid_probe pr)
+{
+	struct blkid_struct_probe first;
+	int count = 0;
+	int intol = 0;
+	int rc;
+
+	while ((rc = blkid_do_probe(pr)) == 0) {
+		if (!count) {
+			/* store the fist result */
+			memcpy(first.vals, pr->vals, sizeof(first.vals));
+			first.nvals = pr->nvals;
+			first.idx = pr->idx;
+		}
+		if (!(idinfos[pr->idx]->flags & BLKID_IDINFO_TOLERANT))
+			intol++;
+		count++;
+	}
+	if (rc < 0)
+		return rc;		/* error */
+	if (count > 1 && intol)
+		return -2;		/* error, ambivalent result (more FS) */
+	if (!count)
+		return 1;		/* nothing detected */
+
+	/* restore the first result */
+	memcpy(pr->vals, first.vals, sizeof(first.vals));
+	pr->nvals = first.nvals;
+	pr->idx = first.idx;
+
+	return 0;
 }
 
 int blkid_probe_numof_values(blkid_probe pr)

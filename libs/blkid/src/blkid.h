@@ -150,6 +150,8 @@ extern int blkid_probe_invert_filter(blkid_probe pr);
 extern int blkid_probe_reset_filter(blkid_probe pr);
 
 extern int blkid_do_probe(blkid_probe pr);
+extern int blkid_do_safeprobe(blkid_probe pr);
+
 extern int blkid_probe_numof_values(blkid_probe pr);
 extern int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
                         unsigned char **data, size_t *len);

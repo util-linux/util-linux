@@ -122,6 +122,7 @@ const struct blkid_idinfo iso9660_idinfo =
 	.name		= "iso9660",
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_iso9660,
+	.flags		= BLKID_IDINFO_TOLERANT,
 	.magics		=
 	{
 		{ .magic = "CD001", .len = 5, .kboff = 32, .sboff = 1 },

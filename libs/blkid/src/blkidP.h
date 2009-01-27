@@ -134,16 +134,24 @@ struct blkid_idmag
  */
 struct blkid_idinfo
 {
-	const char	*name;			/* FS/RAID name */
-	int		usage;			/* BLKID_USAGE_* flag */
+	const char	*name;		/* FS/RAID name */
+	int		usage;		/* BLKID_USAGE_* flag */
+	int		flags;		/* BLKID_IDINFO_* flags */
 
-						/* probe function */
+					/* probe function */
 	int		(*probefunc)(blkid_probe pr, const struct blkid_idmag *mag);
 
 	struct blkid_idmag	magics[];	/* NULL or array with magic strings */
 };
 
 #define BLKID_NONE_MAGIC	{{ NULL }}
+
+/*
+ * tolerant FS - can share the same device with more filesystems (e.g. typical
+ * on CD-ROMs). We need this flag to detect ambivalent results (e.g. valid fat
+ * and valid linux swap on the same device).
+ */
+#define BLKID_IDINFO_TOLERANT	(1 << 1)
 
 /*
  * Minimum number of seconds between device probes, even when reading
