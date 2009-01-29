@@ -63,7 +63,7 @@ static int probe_viaraid(blkid_probe pr, const struct blkid_idmag *mag)
 		return -1;
 	if (le16_to_cpu(v->signature) != VIA_SIGNATURE)
 		return -1;
-	if (v->version_number > 1)
+	if (v->version_number > 2)
 		return -1;
 	if (!via_checksum(v))
 		return -1;
