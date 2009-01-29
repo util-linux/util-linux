@@ -10,32 +10,33 @@
 blkid \- command\-line utility to locate/print block device attributes
 .SH SYNOPSIS
 .B blkid
-[
-.B \-ghlLv
-]
-[
-[
-.B \-c
-.I cachefile
-]
-.B \-w
-.I writecachefile
-]
-[
-.B \-o
-.I format
-]
-[
-.B \-s
-.I tag
-]
-[
-.B \-t
-.IR NAME = value
-]
-[
-.I device ...
-]
+.RB [ \-ghlLv ]
+.RB [ \-c
+.IR file ]
+.RB [ \-w
+.IR file ]
+.RB [ \-o
+.IR format ]
+.in +6
+.RB [ \-s
+.IR tag ]
+.RB [ \-t
+.IR NAME=value ]
+.I device
+[\fIdevice\fR ...]
+.in -6
+
+.B blkid
+.RB -p
+.RB [ \-O
+.IR offset ]
+.RB [ \-S
+.IR size ]
+.RB [ \-o
+.IR format ]
+.I device
+[\fIdevice\fR ...]
+
 .SH DESCRIPTION
 The
 .B blkid
@@ -79,25 +80,39 @@ block devices.  If this option is not specified,
 .B blkid
 will print all of the devices that match the search parameter.
 .TP
+.B \-L
+Print the devices in a user-friendly list format.  This is the
+equivalent of using the option \fB-o list\fR.
+.TP
 .BI \-o " format"
 Display
 .BR blkid 's
 output using the specified format.  The
 .I format
-parameter may be
-.I full
-(the default),
-.I value
-(only print the value of the tags),
-.I list
-(print the devices in a user-friendly format),
-or
-.I device
-(only print the device name).
+parameter may be:
+.RS
 .TP
-.B \-L
-Print the devices in a user-friendly list format.  This is the
-equivalent of using the option \fB-o list\fR.
+.B full
+print all tags (the default)
+.TP
+.B value
+print the value of the tags
+.TP
+.B list
+print the devices in a user-friendly format
+.TP
+.B device
+print the device name only
+.TP
+.B udev
+vol_id compatible mode; usable in udev rules
+.RE
+.TP
+.BI \-O " bytes"
+Probe at the given offset (only useful with \fB-p\fR).
+.TP
+.BI \-p
+Switch to low-level probing mode (bypass cache)"
 .TP
 .BI \-s " tag"
 For each (specified) device, show only the tags that match
@@ -109,6 +124,9 @@ options.  If no tag is specified, then all tokens are shown for all
 In order to just refresh the cache without showing any tokens, use
 .B "-s none"
 with no other options.
+.TP
+.BI \-S " bytes"
+Ooverwrite device/file size (only useful with \fB-p\fR).
 .TP
 .BI \-t " NAME" = "value"
 Search for block devices with tokens named
@@ -155,10 +173,10 @@ devices, 0 is returned.  If the specified token was not found, or no
 For usage or other errors, an exit code of 4 is returned.
 .SH AUTHOR
 .B blkid
-was written by Andreas Dilger for libblkid.
+was written by Andreas Dilger for libblkid and improved by Theodore Ts'o
+and Karel Zak.
 .SH AVAILABILITY
-.B blkid
-is part the e2fsprogs package since version 1.26 and is available from
-http://e2fsprogs.sourceforge.net.
+The blkid command is part of the util-linux-ng package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
 .SH "SEE ALSO"
 .BR libblkid (3)

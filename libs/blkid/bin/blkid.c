@@ -56,20 +56,23 @@ static void usage(int error)
 		"Usage:\n"
 		"  %1$s [-c <file>] [-ghlLv] [-o format] [-s <tag>] \n"
 		"         [-t <token>] [-w <file>] [dev ...]\n\n"
-		"  %1$s -p [-O <offset>] [-S <size>] <dev> [dev ...]\n\n"
+		"  %1$s -p [-O <offset>] [-S <size>] [-o format] <dev> [dev ...]\n\n"
 		"Options:\n"
 		"  -c <file>   cache file (default: /etc/blkid.tab, /dev/null = none)\n"
 		"  -h          print this usage message and exit\n"
 		"  -g          garbage collect the blkid cache\n"
 		"  -o <format> output format; can be one of:\n"
 		"              value, device, list, udev or full; (default: full)\n"
-		"  -p          switch to low-probe mode (bypass cache)\n"
 		"  -s <tag>    show specified tag(s) (default show all tags)\n"
 		"  -t <token>  find device with a specific token (NAME=value pair)\n"
 		"  -l          lookup the the first device with arguments specified by -t\n"
 		"  -v          print version and exit\n"
 		"  -w <file>   write cache to different file (/dev/null = no write)\n"
-		"  <dev>       specify device(s) to probe (default: all devices)\n\n",
+		"  <dev>       specify device(s) to probe (default: all devices)\n\n"
+		"Low-level probing options:\n"
+		"  -p          switch to low-level mode (bypass cache)\n"
+		"  -S <bytes>  overwrite device size\n"
+		"  -O <bytes>  probe at the given offset\n\n"
 				progname);
 
 	exit(error);
