@@ -124,7 +124,7 @@ fsprobe_get_devname_by_uuid(const char *uuid)
 
 	strcpy(dev, _PATH_DEV_BYUUID "/");
 	len = strlen(_PATH_DEV_BYUUID "/");
-	if (!volume_id_encode_string(uuid, &dev[len], sizeof(dev) - len) != 0)
+	if (!volume_id_encode_string(uuid, &dev[len], sizeof(dev) - len))
 		return NULL;
 	return canonicalize(dev);
 }
@@ -139,7 +139,7 @@ fsprobe_get_devname_by_label(const char *label)
 		return NULL;
 	strcpy(dev, _PATH_DEV_BYLABEL "/");
 	len = strlen(_PATH_DEV_BYLABEL "/");
-	if (!volume_id_encode_string(label, &dev[len], sizeof(dev) - len) != 0)
+	if (!volume_id_encode_string(label, &dev[len], sizeof(dev) - len))
 		return NULL;
 	return canonicalize(dev);
 }
