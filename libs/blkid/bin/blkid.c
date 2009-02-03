@@ -72,7 +72,7 @@ static void usage(int error)
 		"Low-level probing options:\n"
 		"  -p          switch to low-level mode (bypass cache)\n"
 		"  -S <bytes>  overwrite device size\n"
-		"  -O <bytes>  probe at the given offset\n\n"
+		"  -O <bytes>  probe at the given offset\n\n",
 				progname);
 
 	exit(error);
