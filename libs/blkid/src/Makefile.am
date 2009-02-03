@@ -13,17 +13,18 @@ lib_LIBRARIES = libblkid.a
 libblkid_a_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 		     probe.c read.c resolve.c save.c tag.c version.c verify.c \
 		     encode.c blkid.h list.h probers/probers.h \
-		     config.c \
+		     config.c evaluate.c \
 		     $(blkidinc_HEADERS) \
 		     $(top_srcdir)/lib/blkdev.c \
 		     $(top_srcdir)/lib/linux_version.c \
+		     $(top_srcdir)/lib/canonicalize.c \
 		     $(top_srcdir)/lib/md5.c
 
 libblkid_a_LIBADD = probers/libprobers.a
 libblkid_a_CFLAGS = -fPIC
 
 tests = test_cache test_config test_dev test_devname test_devno test_getsize \
-	test_read test_resolve test_save test_tag test_verify
+	test_read test_resolve test_save test_tag test_verify test_evaluate
 
 # shared library (note that we don't use LIBTOOL!)
 blkid_IMAGE = libblkid.so

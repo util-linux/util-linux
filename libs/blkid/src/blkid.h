@@ -115,6 +115,11 @@ extern int blkid_get_library_version(const char **ver_string,
 extern int blkid_encode_string(const char *str, char *str_enc, size_t len);
 extern int blkid_safe_string(const char *str, char *str_safe, size_t len);
 
+/* evaluate.c */
+extern int blkid_send_uevent(const char *devname, const char *action);
+extern char *blkid_evaluate_spec(const char *token, const char *value,
+				blkid_cache *cache);
+
 /* probe.c */
 extern int blkid_known_fstype(const char *fstype);
 extern blkid_probe blkid_new_probe(void);

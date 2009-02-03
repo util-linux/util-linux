@@ -9,6 +9,7 @@
 	blkid_do_probe;
 	blkid_do_safeprobe;
 	blkid_encode_string;
+	blkid_evaluate_spec;
 	blkid_find_dev_with_tag;
 	blkid_free_probe;
 	blkid_gc_cache;
@@ -37,6 +38,7 @@
 	blkid_put_cache;
 	blkid_reset_probe;
 	blkid_safe_string;
+	blkid_send_uevent;
 	blkid_tag_iterate_begin;
 	blkid_tag_iterate_end;
 	blkid_tag_next;

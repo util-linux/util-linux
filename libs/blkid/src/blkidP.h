@@ -34,6 +34,11 @@
 #define FALSE 1
 #endif
 
+#include <limits.h>
+#ifndef PATH_MAX
+# define PATH_MAX 4096
+#endif
+
 /* TODO: move to some top-level util-linux include file */
 #ifndef ARRAY_SIZE
 #define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
@@ -252,6 +257,7 @@ extern char *blkid_strndup(const char *s, const int length);
 #define DEBUG_TAG	0x0200
 #define DEBUG_LOWPROBE	0x0400
 #define DEBUG_CONFIG	0x0800
+#define DEBUG_EVALUATE	0x1000
 #define DEBUG_INIT	0x8000
 #define DEBUG_ALL	0xFFFF
 
