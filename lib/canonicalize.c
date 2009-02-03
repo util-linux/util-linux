@@ -1,5 +1,5 @@
 /*
- * realpath.c -- canonicalize pathname by removing symlinks
+ * canonicalize.c -- canonicalize pathname by removing symlinks
  * Copyright (C) 1993 Rick Sladkey <jrs@world.std.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -11,67 +11,27 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU Library Public License for more details.
+ *
  */
-
-#define resolve_symlinks
 
 /*
  * This routine is part of libc.  We include it nevertheless,
  * since the libc version has some security flaws.
+ *
+ * TODO: use canonicalize_file_name() when exist in glibc
  */
 #include <unistd.h>
 #include <string.h>
 #include <errno.h>
-#include "realpath.h"
-#include "sundries.h"		/* for xstrdup */
+#include <stdlib.h>
+
+#include "canonicalize.h"
 
 #ifndef MAXSYMLINKS
 # define MAXSYMLINKS 256
 #endif
 
-int
-is_pseudo_fs(const char *type)
-{
-	if (type == NULL || *type == '/')
-		return 0;
-	if (streq(type, "none") ||
-	    streq(type, "proc") ||
-	    streq(type, "tmpfs") ||
-	    streq(type, "sysfs") ||
-	    streq(type, "devpts"))
-		return 1;
-	return 0;
-}
-
-/* Make a canonical pathname from PATH.  Returns a freshly malloced string.
-   It is up the *caller* to ensure that the PATH is sensible.  i.e.
-   canonicalize ("/dev/fd0/.") returns "/dev/fd0" even though ``/dev/fd0/.''
-   is not a legal pathname for ``/dev/fd0''.  Anything we cannot parse
-   we return unmodified.   */
-char *
-canonicalize_spec (const char *path)
-{
-	if (path == NULL)
-		return NULL;
-	if (is_pseudo_fs(path))
-		return xstrdup(path);
-	return canonicalize(path);
-}
-
-char *
-canonicalize (const char *path) {
-	char canonical[PATH_MAX+2];
-
-	if (path == NULL)
-		return NULL;
-
-	if (myrealpath (path, canonical, PATH_MAX+1))
-		return xstrdup(canonical);
-
-	return xstrdup(path);
-}
-
-char *
+static char *
 myrealpath(const char *path, char *resolved_path, int maxreslth) {
 	int readlinks = 0;
 	char *npath;
@@ -137,7 +97,6 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 			if (errno != EINVAL)
 				goto err;
 		} else {
-#ifdef resolve_symlinks		/* Richard Gooch dislikes sl resolution */
 			int m;
 			char *newbuf;
 
@@ -153,12 +112,13 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 
 			/* Insert symlink contents into path. */
 			m = strlen(path);
-			newbuf = xmalloc(m + n + 1);
+			newbuf = malloc(m + n + 1);
+			if (!newbuf)
+				goto err;
 			memcpy(newbuf, link_path, n);
 			memcpy(newbuf + n, path, m + 1);
 			free(buf);
 			path = buf = newbuf;
-#endif
 		}
 		*npath++ = '/';
 	}
@@ -175,3 +135,18 @@ myrealpath(const char *path, char *resolved_path, int maxreslth) {
 	free(buf);
 	return NULL;
 }
+
+char *
+canonicalize_path(const char *path) {
+	char canonical[PATH_MAX+2];
+
+	if (path == NULL)
+		return NULL;
+
+	if (myrealpath (path, canonical, PATH_MAX+1))
+		return strdup(canonical);
+
+	return strdup(path);
+}
+
+

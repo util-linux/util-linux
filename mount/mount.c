@@ -40,7 +40,6 @@
 #include "env.h"
 #include "nls.h"
 #include "blkdev.h"
-#include "realpath.h"
 
 #define DO_PS_FIDDLING
 

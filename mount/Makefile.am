@@ -6,15 +6,15 @@ bin_PROGRAMS = mount umount
 sbin_PROGRAMS = losetup swapon
 dist_man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 
-utils_common = sundries.c xmalloc.c realpath.c fsprobe.c
+utils_common = sundries.c xmalloc.c ../lib/canonicalize.c
 
 headers_common = fstab.h mount_mntent.h mount_constants.h \
-	lomount.h fsprobe.h realpath.h xmalloc.h \
+	lomount.h fsprobe.h xmalloc.h \
 	getusername.h loop.h sundries.h
 
 mount_common = fstab.c mount_mntent.c getusername.c lomount.c \
 	$(utils_common) $(headers_common) ../lib/env.c ../lib/linux_version.c \
-	../lib/blkdev.c
+	../lib/blkdev.c fsprobe.c
 
 mount_SOURCES = mount.c $(mount_common) ../lib/setproctitle.c
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
@@ -25,10 +25,10 @@ umount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
 swapon_SOURCES = swapon.c swap_constants.h $(utils_common) \
-	../lib/linux_version.c ../lib/blkdev.c
+	../lib/linux_version.c ../lib/blkdev.c fsprobe.c
 
-losetup_SOURCES = lomount.c sundries.c xmalloc.c realpath.c \
-	loop.h lomount.h xmalloc.h sundries.h realpath.h
+losetup_SOURCES = lomount.c $(utils_common) \
+	loop.h lomount.h xmalloc.h sundries.h
 losetup_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
 
 mount_LDADD = $(LDADD_common)
@@ -61,7 +61,8 @@ losetup_static_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
 endif
 
 if HAVE_BLKID
-utils_common += fsprobe_blkid.c
+mount_common += fsprobe_blkid.c
+swapon_SOURCES += fsprobe_blkid.c
 LDADD_common += $(BLKID_LIBS)
 LDADD_common_static += $(BLKID_LIBS_STATIC)
 endif
@@ -72,13 +73,15 @@ mount_static_LDADD += $(SELINUX_LIBS_STATIC)
 endif
 
 if HAVE_VOLUME_ID
-utils_common += fsprobe_volumeid.c
+mount_common += fsprobe_volumeid.c
+swapon_SOURCES += fsprobe_volumeid.c
 LDADD_common += $(VOLUMEID_LIBS)
 LDADD_common_static += $(VOLUMEID_LIBS_STATIC)
 endif
 
 noinst_PROGRAMS = mtab_lock_test
-mtab_lock_test_SOURCES = fstab.c sundries.c xmalloc.c $(headers_common)
+mtab_lock_test_SOURCES = fstab.c sundries.c xmalloc.c $(headers_common) \
+			../lib/canonicalize.c
 mtab_lock_test_CPPFLAGS = -DMAIN_TEST_MTABLOCK $(AM_CPPFLAGS)
 
 install-exec-hook:

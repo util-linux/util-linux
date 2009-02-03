@@ -20,7 +20,6 @@
 #include "swap_constants.h"
 #include "nls.h"
 #include "fsprobe.h"
-#include "realpath.h"
 #include "pathnames.h"
 #include "sundries.h"
 #include "swapheader.h"

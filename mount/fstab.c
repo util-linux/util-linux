@@ -19,7 +19,6 @@
 #include "fsprobe.h"
 #include "pathnames.h"
 #include "nls.h"
-#include "realpath.h"
 
 #define streq(s, t)	(strcmp ((s), (t)) == 0)
 
@@ -923,10 +922,6 @@ struct my_mntent *my_getmntent (mntFILE *mfp) { return NULL; }
 mntFILE *my_setmntent (const char *file, char *mode) { return NULL; }
 void my_endmntent (mntFILE *mfp) { }
 int my_addmntent (mntFILE *mfp, struct my_mntent *mnt) { return 0; }
-
-char *canonicalize (const char *path) {  return NULL; }
-char *canonicalize_spec (const char *path) { return NULL; }
-int is_pseudo_fs(const char *type) { return 0; };
 
 int
 main(int argc, char **argv)

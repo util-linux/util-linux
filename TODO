@@ -12,6 +12,8 @@
    Although mkswap has recently been -L option to create a label nothing appears to
    have been change to swapon to display said labels. (rh#430386)
 
+ * use canonicalize_file_name() when exist in glibc (see lib/canonicalize.v)
+
  * try improve compilation against others libc:
 	- klibc
 	- ???

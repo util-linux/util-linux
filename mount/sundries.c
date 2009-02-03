@@ -11,9 +11,11 @@
 #include <stdio.h>
 #include <string.h>
 #include <mntent.h>		/* for MNTTYPE_SWAP */
+
+#include "canonicalize.h"
+
 #include "fstab.h"
 #include "sundries.h"
-#include "realpath.h"
 #include "xmalloc.h"
 #include "nls.h"
 
@@ -274,5 +276,49 @@ parse_spec(const char *spec, char **name, char **value)
 	*name = tk;
 	*value = vl;
 	return 0;
+}
+
+int
+is_pseudo_fs(const char *type)
+{
+	if (type == NULL || *type == '/')
+		return 0;
+	if (streq(type, "none") ||
+	    streq(type, "proc") ||
+	    streq(type, "tmpfs") ||
+	    streq(type, "sysfs") ||
+	    streq(type, "devpts"))
+		return 1;
+	return 0;
+}
+
+/* Make a canonical pathname from PATH.  Returns a freshly malloced string.
+   It is up the *caller* to ensure that the PATH is sensible.  i.e.
+   canonicalize ("/dev/fd0/.") returns "/dev/fd0" even though ``/dev/fd0/.''
+   is not a legal pathname for ``/dev/fd0''.  Anything we cannot parse
+   we return unmodified.   */
+char *
+canonicalize_spec (const char *path)
+{
+	char *res;
+
+	if (path == NULL)
+		return NULL;
+	if (is_pseudo_fs(path))
+		return xstrdup(path);
+
+	res = canonicalize_path(path);
+	if (!res)
+		die(EX_SYSERR, _("not enough memory"));
+	return res;
+}
+
+char *canonicalize (const char *path)
+{
+	char *res = canonicalize_path(path);
+
+	if (!res)
+		die(EX_SYSERR, _("not enough memory"));
+	return res;
 }
 

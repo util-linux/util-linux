@@ -12,7 +12,6 @@
 #include "blkdev.h"
 
 #include "fsprobe.h"
-#include "realpath.h"
 #include "pathnames.h"
 #include "sundries.h"
 

@@ -22,7 +22,6 @@
 #include "nls.h"
 #include "sundries.h"
 #include "xmalloc.h"
-#include "realpath.h"
 #include "pathnames.h"
 
 #define SIZE(a) (sizeof(a)/sizeof(a[0]))
