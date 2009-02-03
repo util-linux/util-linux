@@ -99,6 +99,7 @@ static void show_rt_info(const char *what, pid_t pid)
 		break;
 	case SCHED_IDLE:
 		printf("SCHED_IDLE\n");
+		break;
 	case SCHED_RR:
 		printf("SCHED_RR\n");
 		break;
