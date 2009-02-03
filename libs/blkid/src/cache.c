@@ -34,7 +34,7 @@
 int blkid_debug_mask = 0;
 
 
-static char *safe_getenv(const char *arg)
+char *blkid_safe_getenv(const char *arg)
 {
 	if ((getuid() != geteuid()) || (getgid() != getegid()))
 		return NULL;
@@ -112,13 +112,20 @@ int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
 	INIT_LIST_HEAD(&cache->bic_devs);
 	INIT_LIST_HEAD(&cache->bic_tags);
 
-	if (filename && !strlen(filename))
-		filename = 0;
+	if (filename && !*filename)
+		filename = NULL;
 	if (!filename)
-		filename = safe_getenv("BLKID_FILE");
-	if (!filename)
-		filename = BLKID_CACHE_FILE;
-	cache->bic_filename = blkid_strdup(filename);
+		filename = blkid_safe_getenv("BLKID_FILE");
+	if (filename)
+		cache->bic_filename = blkid_strdup(filename);
+	else {
+		struct blkid_config *conf = blkid_read_config(NULL);
+		if (!conf)
+			return -BLKID_ERR_PARAM;
+		cache->bic_filename = conf->cachefile;
+		conf->cachefile = NULL;
+		blkid_free_config(conf);
+	}
 
 	blkid_read_cache(cache);
 
@@ -189,7 +196,6 @@ void blkid_gc_cache(blkid_cache cache)
 		}
 	}
 }
-
 
 #ifdef TEST_PROGRAM
 int main(int argc, char** argv)

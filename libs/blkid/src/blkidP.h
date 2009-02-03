@@ -20,7 +20,6 @@
 #include <stdio.h>
 
 #include "bitops.h"	/* $(top_srcdir)/include/ */
-
 #include "blkid.h"
 #include "list.h"
 
@@ -28,6 +27,11 @@
 #define __BLKID_ATTR(x) __attribute__(x)
 #else
 #define __BLKID_ATTR(x)
+#endif
+
+#ifndef TRUE
+#define TRUE 1
+#define FALSE 1
 #endif
 
 /* TODO: move to some top-level util-linux include file */
@@ -154,6 +158,29 @@ struct blkid_idinfo
 #define BLKID_IDINFO_TOLERANT	(1 << 1)
 
 /*
+ * Evaluation methods (for blkid_eval_* API)
+ */
+enum {
+	BLKID_EVAL_UDEV = 0,
+	BLKID_EVAL_SCAN,
+
+	__BLKID_EVAL_LAST
+};
+
+/*
+ * Library config options
+ */
+struct blkid_config {
+	int eval[__BLKID_EVAL_LAST];	/* array with EVALUATION=<udev,cache> options */
+	int nevals;			/* number of elems in eval array */
+	int uevent;			/* SEND_UEVENT=<yes|not> option */
+	char *cachefile;		/* CACHE_FILE=<path> option */
+};
+
+extern struct blkid_config *blkid_read_config(const char *filename);
+extern void blkid_free_config(struct blkid_config *conf);
+
+/*
  * Minimum number of seconds between device probes, even when reading
  * from the cache.  This is to avoid re-probing all devices which were
  * just probed by another program that does not share the cache.
@@ -190,7 +217,8 @@ struct blkid_struct_cache
 extern char *blkid_strdup(const char *s);
 extern char *blkid_strndup(const char *s, const int length);
 
-#define BLKID_CACHE_FILE "/etc/blkid.tab"
+#define BLKID_CACHE_FILE	"/etc/blkid.tab"
+#define BLKID_CONFIG_FILE	"/etc/blkid.conf"
 
 #define BLKID_ERR_IO	 5
 #define BLKID_ERR_PROC	 9
@@ -223,6 +251,7 @@ extern char *blkid_strndup(const char *s, const int length);
 #define DEBUG_SAVE	0x0100
 #define DEBUG_TAG	0x0200
 #define DEBUG_LOWPROBE	0x0400
+#define DEBUG_CONFIG	0x0800
 #define DEBUG_INIT	0x8000
 #define DEBUG_ALL	0xFFFF
 
@@ -255,6 +284,9 @@ extern void blkid_read_cache(blkid_cache cache);
 
 /* save.c */
 extern int blkid_flush_cache(blkid_cache cache);
+
+/* cache */
+extern char *blkid_safe_getenv(const char *arg);
 
 /*
  * Functions to create and find a specific tag type: tag.c

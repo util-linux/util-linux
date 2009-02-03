@@ -2,6 +2,9 @@
  TODO
  ----
 
+ - (?) we need to ignore cache and config files when the files are writable
+   for non-root users and the library is linked with suid programs
+
  - add -<BE|LE> suffix to test images for native-endian filesystems (e.g. swap)
    and add support for such functionality to tests/ts/blkid/low-probe
 
