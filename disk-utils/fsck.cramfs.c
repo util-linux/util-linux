@@ -67,7 +67,7 @@ struct cramfs_super super;	/* just find the cramfs superblock once */
 static int cramfs_is_big_endian = 0;	/* source is big endian */
 static int opt_verbose = 0;	/* 1 = verbose (-v), 2+ = very verbose (-vv) */
 
-char *extract_dir = NULL;	/* extraction directory (-x) */
+char *extract_dir = "";	/* extraction directory (-x) */
 
 /* Exit codes used by fsck-type programs */
 #define FSCK_OK          0	/* No errors */
@@ -314,7 +314,8 @@ static void print_node(char type, struct cramfs_inode *i, char *name)
 	}
 
 	printf("%c %04o %s %5d:%-3d %s\n",
-	       type, i->mode & ~S_IFMT, info, i->uid, i->gid, name);
+	       type, i->mode & ~S_IFMT, info, i->uid, i->gid,
+	       !*name && type == 'd' ? "/" : name);
 }
 
 /*
