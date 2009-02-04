@@ -244,6 +244,17 @@ function ts_device_has_uuid {
 	return $?
 }
 
+function ts_is_mounted {
+	local DEV=$1
+
+	grep -q $DEV /proc/mounts && return 0
+
+	if [ "${DEV#/dev/loop/}" != "$DEV" ]; then
+		return grep -q "/dev/loop${DEV#/dev/loop/}" /proc/mounts
+	fi
+	return 1
+}
+
 function ts_swapoff {
 	local DEV="$1"
 

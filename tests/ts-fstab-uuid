@@ -43,17 +43,17 @@ ts_fstab_add "UUID=$UUID"
 
 # varian A)
 $TS_CMD_MOUNT $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
-grep -q $DEVICE /proc/mounts || ts_die "A) Cannot found $DEVICE in /proc/mounts" $DEVICE
+ts_is_mounted $DEVICE || ts_die "A) Cannot found $DEVICE in /proc/mounts" $DEVICE
 $TS_CMD_UMOUNT $DEVICE || ts_die "A) Cannot umount $DEVICE" $DEVICE
 
 # varian B)
 $TS_CMD_MOUNT -U $UUID 2>&1 >> $TS_OUTPUT
-grep -q $DEVICE /proc/mounts || ts_die "B) Cannot found $DEVICE in /proc/mounts" $DEVICE
+ts_is_mounted $DEVICE || ts_die "B) Cannot found $DEVICE in /proc/mounts" $DEVICE
 $TS_CMD_UMOUNT $DEVICE || ts_die "B) Cannot umount $DEVICE" $DEVICE
 
 # varian C)
 $TS_CMD_MOUNT UUID=$UUID 2>&1 >> $TS_OUTPUT
-grep -q $DEVICE /proc/mounts || ts_die "C) Cannot found $DEVICE in /proc/mounts" $DEVICE
+ts_is_mounted $DEVICE || ts_die "C) Cannot found $DEVICE in /proc/mounts" $DEVICE
 $TS_CMD_UMOUNT $DEVICE || ts_die "C) Cannot umount $DEVICE" $DEVICE
 
 ts_device_deinit $DEVICE

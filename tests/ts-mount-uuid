@@ -42,12 +42,12 @@ ts_udev_dev_support "by-uuid" $UUID \
 
 # variant A)
 $TS_CMD_MOUNT -U $UUID $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
-grep -q $DEVICE /proc/mounts || ts_die "A) Cannot found $DEVICE in /proc/mounts" $DEVICE
+ts_is_mounted $DEVICE || ts_die "A) Cannot found $DEVICE in /proc/mounts" $DEVICE
 $TS_CMD_UMOUNT $DEVICE || ts_die "A) Cannot umount $DEVICE" $DEVICE
 
 # variant B)
 $TS_CMD_MOUNT UUID=$UUID $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
-grep -q $DEVICE /proc/mounts || ts_die "B) Cannot found $DEVICE in /proc/mounts" $DEVICE
+ts_is_mounted $DEVICE || ts_die "B) Cannot found $DEVICE in /proc/mounts" $DEVICE
 $TS_CMD_UMOUNT $DEVICE || ts_die "B) Cannot umount $DEVICE" $DEVICE
 
 ts_device_deinit $DEVICE

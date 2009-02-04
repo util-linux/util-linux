@@ -74,8 +74,7 @@ ts_log "mount the image"
 $TS_CMD_MOUNT -L $LABEL $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
 
 # check it
-grep -q $DEVICE /proc/mounts
-[ "$?" == "0" ] || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE
+ts_is_mounted $DEVICE || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE
 
 ts_log "list the image"
 ls -laR --time-style=long-iso $TS_MOUNTPOINT >> $TS_OUTPUT

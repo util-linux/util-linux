@@ -37,7 +37,7 @@ ts_device_has "TYPE" "ext3" $DEVICE || ts_die "Cannot found ext3 on $DEVICE" $DE
 
 $TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
 
-grep -q $DEVICE /proc/mounts || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE
+ts_is_mounted $DEVICE || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE
 
 $TS_CMD_UMOUNT $DEVICE || ts_die "Cannot umount $DEVICE" $DEVICE
 
