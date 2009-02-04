@@ -54,8 +54,9 @@ static void usage(int error)
 	print_version(out);
 	fprintf(out,
 		"Usage:\n"
+		"  %1$s -L <label> | -U <uuid>\n\n"
 		"  %1$s [-c <file>] [-ghlLv] [-o format] [-s <tag>] \n"
-		"         [-t <token>] [-w <file>] [dev ...]\n\n"
+		"        [-t <token>] [-w <file>] [dev ...]\n\n"
 		"  %1$s -p [-O <offset>] [-S <size>] [-o format] <dev> [dev ...]\n\n"
 		"Options:\n"
 		"  -c <file>   cache file (default: /etc/blkid.tab, /dev/null = none)\n"
@@ -66,6 +67,8 @@ static void usage(int error)
 		"  -s <tag>    show specified tag(s) (default show all tags)\n"
 		"  -t <token>  find device with a specific token (NAME=value pair)\n"
 		"  -l          lookup the the first device with arguments specified by -t\n"
+		"  -L <label>  convert LABEL to device name\n"
+		"  -U <uuid>   convert UUID to device name\n"
 		"  -v          print version and exit\n"
 		"  -w <file>   write cache to different file (/dev/null = no write)\n"
 		"  <dev>       specify device(s) to probe (default: all devices)\n\n"
@@ -370,11 +373,11 @@ int main(int argc, char **argv)
 	int err = 4;
 	unsigned int i;
 	int output_format = 0;
-	int lookup = 0, gc = 0, lowprobe = 0;
+	int lookup = 0, gc = 0, lowprobe = 0, eval = 0;
 	int c;
 	blkid_loff_t offset = 0, size = 0;
 
-	while ((c = getopt (argc, argv, "c:f:ghlo:O:ps:S:t:w:v")) != EOF)
+	while ((c = getopt (argc, argv, "c:f:ghlL:o:O:ps:S:t:U:w:v")) != EOF)
 		switch (c) {
 		case 'c':
 			if (optarg && !*optarg)
@@ -383,6 +386,16 @@ int main(int argc, char **argv)
 				read = optarg;
 			if (!write)
 				write = read;
+			break;
+		case 'L':
+			eval++;
+			search_value = strdup(optarg);
+			search_type = strdup("LABEL");
+			break;
+		case 'U':
+			eval++;
+			search_value = strdup(optarg);
+			search_type = strdup("UUID");
 			break;
 		case 'l':
 			lookup++;
@@ -460,7 +473,14 @@ int main(int argc, char **argv)
 		goto exit;
 	}
 
-	if (!lowprobe && blkid_get_cache(&cache, read) < 0)
+	/* convert LABEL/UUID lookup to evaluate request */
+	if (lookup && output_format == OUTPUT_DEVICE_ONLY && search_type &&
+	    (!strcmp(search_type, "LABEL") || !strcmp(search_type, "UUID"))) {
+		eval++;
+		lookup = 0;
+	}
+
+	if (!lowprobe && !eval && blkid_get_cache(&cache, read) < 0)
 		goto exit;
 
 	err = 2;
@@ -472,6 +492,9 @@ int main(int argc, char **argv)
 		pretty_print_dev(NULL);
 
 	if (lowprobe) {
+		/*
+		 * Low-level API
+		 */
 		blkid_probe pr;
 
 		if (!numdev) {
@@ -490,7 +513,17 @@ int main(int argc, char **argv)
 			err += lowprobe_device(pr, devices[i],
 					output_format, offset, size);
 		blkid_free_probe(pr);
+	} else if (eval) {
+		/*
+		 * Evaluate API
+		 */
+		char *res = blkid_evaluate_spec(search_type, search_value, NULL);
+		if (res)
+			printf("%s\n", res);
 	} else if (lookup) {
+		/*
+		 * Classic (cache based) API
+		 */
 		blkid_dev dev;
 
 		if (!search_type) {
@@ -540,11 +573,9 @@ int main(int argc, char **argv)
 	}
 
 exit:
-	if (search_type)
-		free(search_type);
-	if (search_value)
-		free(search_value);
-	if (!lowprobe)
+	free(search_type);
+	free(search_value);
+	if (!lowprobe && !eval)
 		blkid_put_cache(cache);
 	return err;
 }
