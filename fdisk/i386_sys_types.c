@@ -71,6 +71,7 @@ struct systypes i386_sys_types[] = {
 	{0xa8, N_("Darwin UFS")},
 	{0xa9, N_("NetBSD")},
 	{0xab, N_("Darwin boot")},
+	{0xaf, N_("HFS / HFS+")},
 	{0xb7, N_("BSDI fs")},
 	{0xb8, N_("BSDI swap")},
 	{0xbb, N_("Boot Wizard hidden")},
