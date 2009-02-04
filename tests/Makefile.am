@@ -13,6 +13,8 @@ EXTRA_DIST = 	expected \
 		ts-cal-y \
 		ts-col-multibyte \
 		ts-cramfs-mkfs \
+		ts-cramfs-endianness-mkfs \
+		ts-cramfs-endianness-fsck \
 		ts-fstab-devname \
 		ts-fstab-devname2label \
 		ts-fstab-devname2uuid \

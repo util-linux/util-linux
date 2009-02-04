@@ -38,6 +38,7 @@
 #include <zlib.h>
 
 #include "cramfs.h"
+#include "cramfs_common.h"
 #include "md5.h"
 #include "nls.h"
 
@@ -55,6 +56,7 @@ static int verbose = 0;
 static unsigned int blksize; /* settable via -b option */
 static long total_blocks = 0, total_nodes = 1; /* pre-count the root node */
 static int image_length = 0;
+static int cramfs_is_big_endian = 0; /* target is big endian */
 
 /*
  * If opt_holes is set, then mkcramfs can create explicit holes in the
@@ -121,7 +123,7 @@ usage(int status) {
 	FILE *stream = status ? stderr : stdout;
 
 	fprintf(stream,
-		_("usage: %s [-h] [-v] [-b blksize] [-e edition] [-i file] "
+		_("usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] "
 		  "[-n name] dirname outfile\n"
 		  " -h         print this help\n"
 		  " -v         be verbose\n"
@@ -129,6 +131,7 @@ usage(int status) {
 		    "(non-zero exit status)\n"
 		  " -b blksize use this blocksize, must equal page size\n"
 		  " -e edition set edition number (part of fsid)\n"
+		  " -N endian  set cramfs endianness (big|little|host), default host\n"
 		  " -i file    insert a file image into the filesystem "
 		    "(requires >= 2.4.0)\n"
 		  " -n name    set name of cramfs filesystem\n"
@@ -454,17 +457,22 @@ static unsigned int write_superblock(struct entry *root, char *base, int size)
 	super->root.size = root->size;
 	super->root.offset = offset >> 2;
 
+	super_toggle_endianness(cramfs_is_big_endian, super);
+	inode_from_host(cramfs_is_big_endian, &super->root, &super->root);
+
 	return offset;
 }
 
 static void set_data_offset(struct entry *entry, char *base, unsigned long offset)
 {
 	struct cramfs_inode *inode = (struct cramfs_inode *) (base + entry->dir_offset);
+	inode_to_host(cramfs_is_big_endian, inode, inode);
 	if (offset >= (1 << (2 + CRAMFS_OFFSET_WIDTH))) {
 		fprintf(stderr, _("filesystem too big.  Exiting.\n"));
 		exit(8);
 	}
 	inode->offset = (offset >> 2);
+	inode_from_host(cramfs_is_big_endian, inode, inode);
 }
 
 
@@ -523,6 +531,7 @@ static unsigned int write_directory_structure(struct entry *entry, char *base, u
 				entry_stack[stack_entries] = entry;
 				stack_entries++;
 			}
+			inode_from_host(cramfs_is_big_endian, inode, inode);
 			entry = entry->next;
 		}
 
@@ -630,7 +639,7 @@ do_compress(char *base, unsigned int offset, unsigned char const *name,
 			exit(8);
 		}
 
-		*(u32 *) (base + offset) = curr;
+		*(u32 *) (base + offset) = u32_toggle_endianness(cramfs_is_big_endian, curr);
 		offset += 4;
 	} while (size);
 
@@ -734,6 +743,7 @@ int main(int argc, char **argv)
 	char const *dirname, *outfile;
 	u32 crc = crc32(0L, Z_NULL, 0);
 	int c;
+	cramfs_is_big_endian = HOST_IS_BIG_ENDIAN; /* default is to use host order */
 
 	blksize = getpagesize();
 	total_blocks = 0;
@@ -750,7 +760,7 @@ int main(int argc, char **argv)
 	textdomain(PACKAGE);
 
 	/* command line options */
-	while ((c = getopt(argc, argv, "hb:Ee:i:n:psVvz")) != EOF) {
+	while ((c = getopt(argc, argv, "hb:Ee:i:n:N:psVvz")) != EOF) {
 		switch (c) {
 		case 'h':
 			usage(0);
@@ -764,6 +774,20 @@ int main(int argc, char **argv)
 			break;
 		case 'e':
 			opt_edition = atoi(optarg);
+			break;
+		case 'N':
+			if (strcmp(optarg, "big") == 0)  {
+				cramfs_is_big_endian = 1;
+			}
+			else if (strcmp(optarg, "little") == 0) {
+				cramfs_is_big_endian = 0;
+			}
+			else if (strcmp(optarg, "host") == 0);	/* default */
+			else 	{
+				perror("invalid endianness given. Must be 'big', 'little', or 'host'");
+				exit(16);
+			}
+
 			break;
 		case 'i':
 			opt_image = optarg;
@@ -891,7 +915,7 @@ int main(int argc, char **argv)
 
 	/* Put the checksum in. */
 	crc = crc32(crc, (unsigned char *) (rom_image+opt_pad), (offset-opt_pad));
-	((struct cramfs_super *) (rom_image+opt_pad))->fsid.crc = crc;
+	((struct cramfs_super *) (rom_image+opt_pad))->fsid.crc = u32_toggle_endianness(cramfs_is_big_endian, crc);
 	if (verbose)
 		printf(_("CRC: %x\n"), crc);
 

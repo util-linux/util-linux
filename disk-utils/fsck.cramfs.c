@@ -55,6 +55,7 @@
 #include <sys/sysmacros.h>	/* for major, minor */
 
 #include "cramfs.h"
+#include "cramfs_common.h"
 #include "nls.h"
 #include "blkdev.h"
 
@@ -63,6 +64,7 @@ static const char *progname = "cramfsck";
 static int fd;			/* ROM image file descriptor */
 static char *filename;		/* ROM image filename */
 struct cramfs_super super;	/* just find the cramfs superblock once */
+static int cramfs_is_big_endian = 0;	/* source is big endian */
 static int opt_verbose = 0;	/* 1 = verbose (-v), 2+ = very verbose (-vv) */
 
 char *extract_dir = NULL;	/* extraction directory (-x) */
@@ -139,6 +141,21 @@ static void die(int status, int syserr, const char *fmt, ...)
 	exit(status);
 }
 
+int get_superblock_endianness(u32 magic)
+{
+	if (magic == CRAMFS_MAGIC) {
+		cramfs_is_big_endian = HOST_IS_BIG_ENDIAN;
+		return 0;
+	}
+	else if (magic == u32_toggle_endianness(!HOST_IS_BIG_ENDIAN, CRAMFS_MAGIC)) {
+		cramfs_is_big_endian = !HOST_IS_BIG_ENDIAN;
+		return 0;
+	}
+	else {
+		return -1;
+	}
+}
+
 static void test_super(int *start, size_t *length) {
 	struct stat st;
 
@@ -172,7 +189,7 @@ static void test_super(int *start, size_t *length) {
 	if (read(fd, &super, sizeof(super)) != sizeof(super)) {
 		die(FSCK_ERROR, 1, _("read failed: %s"), filename);
 	}
-	if (super.magic == CRAMFS_MAGIC) {
+	if (get_superblock_endianness(super.magic) != -1) {
 		*start = 0;
 	}
 	else if (*length >= (PAD_SIZE + sizeof(super))) {
@@ -180,15 +197,22 @@ static void test_super(int *start, size_t *length) {
 		if (read(fd, &super, sizeof(super)) != sizeof(super)) {
 			die(FSCK_ERROR, 1, _("read failed: %s"), filename);
 		}
-		if (super.magic == CRAMFS_MAGIC) {
+		if (get_superblock_endianness(super.magic) != -1) {
 			*start = PAD_SIZE;
 		}
+		else {
+			die(FSCK_UNCORRECTED, 0, "superblock magic not found");
+		}
 	}
-
-	/* superblock tests */
-	if (super.magic != CRAMFS_MAGIC) {
+	else {
 		die(FSCK_UNCORRECTED, 0, _("superblock magic not found"));
 	}
+
+	if (opt_verbose) {
+		printf("cramfs endianness is %s\n", cramfs_is_big_endian ? "big" : "little");
+	}
+
+	super_toggle_endianness(cramfs_is_big_endian, &super);
 	if (super.flags & ~CRAMFS_SUPPORTED_FLAGS) {
 		die(FSCK_ERROR, 0, _("unsupported filesystem features"));
 	}
@@ -314,7 +338,7 @@ static struct cramfs_inode *cramfs_iget(struct cramfs_inode * i)
 	if (!inode) {
 		die(FSCK_ERROR, 1, _("malloc failed"));
 	}
-	*inode = *i;
+	inode_to_host(cramfs_is_big_endian, i, inode);
 	return inode;
 }
 
@@ -333,9 +357,10 @@ static void iput(struct cramfs_inode *inode)
  */
 static struct cramfs_inode *read_super(void)
 {
-	unsigned long offset = super.root.offset << 2;
+	struct cramfs_inode * root = cramfs_iget(&super.root);
+	unsigned long offset = root->offset << 2;
 
-	if (!S_ISDIR(super.root.mode))
+	if (!S_ISDIR(root->mode))
 		die(FSCK_UNCORRECTED, 0, _("root inode is not directory"));
 	if (!(super.flags & CRAMFS_FLAG_SHIFTED_ROOT_OFFSET) &&
 	    ((offset != sizeof(struct cramfs_super)) &&
@@ -343,7 +368,7 @@ static struct cramfs_inode *read_super(void)
 	{
 		die(FSCK_UNCORRECTED, 0, _("bad root offset (%lu)"), offset);
 	}
-	return cramfs_iget(&super.root);
+	return root;
 }
 
 static int uncompress_block(void *src, int len)
@@ -378,7 +403,7 @@ static void do_uncompress(char *path, int fd, unsigned long offset, unsigned lon
 
 	do {
 		unsigned long out = page_size;
-		unsigned long next = *(u32 *) romfs_read(offset);
+		unsigned long next = u32_toggle_endianness(cramfs_is_big_endian, *(u32 *) romfs_read(offset));
 
 		if (next > end_data) {
 			end_data = next;
@@ -387,7 +412,7 @@ static void do_uncompress(char *path, int fd, unsigned long offset, unsigned lon
 		offset += 4;
 		if (curr == next) {
 			if (opt_verbose > 1) {
-				printf(_("  hole at %ld (%d)\n"), curr, page_size);
+				printf(_("  hole at %ld (%zd)\n"), curr, page_size);
 			}
 			if (size < page_size)
 				out = size;
@@ -539,7 +564,7 @@ static void do_symlink(char *path, struct cramfs_inode *i)
 {
 	unsigned long offset = i->offset << 2;
 	unsigned long curr = offset + 4;
-	unsigned long next = *(u32 *) romfs_read(offset);
+	unsigned long next = u32_toggle_endianness(cramfs_is_big_endian, *(u32 *) romfs_read(offset));
 	unsigned long size;
 
 	if (offset == 0) {

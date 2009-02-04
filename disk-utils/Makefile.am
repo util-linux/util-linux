@@ -38,9 +38,10 @@ endif
 endif
 
 if BUILD_CRAMFS
+cramfs_common = $(utils_common) cramfs.h cramfs_common.c cramfs_common.h
 sbin_PROGRAMS += fsck.cramfs mkfs.cramfs
-fsck_cramfs_SOURCES = fsck.cramfs.c cramfs.h $(utils_common)
-mkfs_cramfs_SOURCES = mkfs.cramfs.c cramfs.h ../lib/md5.c $(utils_common)
+fsck_cramfs_SOURCES = fsck.cramfs.c $(cramfs_common)
+mkfs_cramfs_SOURCES = mkfs.cramfs.c $(cramfs_common) ../lib/md5.c
 fsck_cramfs_LDADD = -lz
 mkfs_cramfs_LDADD = -lz
 endif
