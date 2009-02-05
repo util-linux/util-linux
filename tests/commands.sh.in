@@ -29,6 +29,7 @@ TS_CMD_MKSWAP=${TS_CMD_MKSWAP:-"$TOPDIR/disk-utils/mkswap"}
 TS_CMD_MKCRAMFS=${TS_CMD_MKCRAMFS:-"$TOPDIR/disk-utils/mkfs.cramfs"}
 TS_CMD_MKMINIX=${TS_CMD_MKMINIX:-"$TOPDIR/disk-utils/mkfs.minix"}
 TS_CMD_FSCKCRAMFS=${TS_CMD_FSCKCRAMFS:-"$TOPDIR/disk-utils/fsck.cramfs"}
+TS_CMD_FSCKMINIX=${TS_CMD_FSCKMINIX:-"$TOPDIR/disk-utils/fsck.minix"}
 
 TS_CMD_IPCS=${TS_CMD_IPCS:-"$TOPDIR/sys-utils/ipcs"}
 
