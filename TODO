@@ -1,5 +1,4 @@
-v2.15:
-=====
+ * use TZ=UTC for tests
 
  * add NLS and err.h stuff to schedutils (chrt.c, taskset.c)
 
@@ -55,9 +54,6 @@ v2.15:
 	  do {
 		try to mount all unmounted entries
 	  } while (not all mounted && at least one new was successfully mounted)
-
-v2.??:
-=====
 
  * agetty: use nl_langinfo() for days and months rather than hardcoded
    English names.
