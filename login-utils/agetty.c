@@ -715,7 +715,7 @@ termio_init(tp, speed, op)
     }
 
     tp->c_iflag = tp->c_lflag = tp->c_oflag = 0;
-#ifndef __GNU__
+#ifdef HAVE_STRUCT_TERMIOS_C_LINE
     tp->c_line = 0;
 #endif
     tp->c_cc[VMIN] = 1;

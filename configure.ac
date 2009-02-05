@@ -396,6 +396,9 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 [AC_DEFINE(HAVE_TM_GMTOFF,1,[Does struct tm have a field tm_gmtoff?])
 ])
 
+AC_CHECK_MEMBERS([struct termios.c_line],,,
+    [[#include <termios.h>]])
+
 AC_CHECK_DECLS([
  ADDR_NO_RANDOMIZE,
  FDPIC_FUNCPTRS,
