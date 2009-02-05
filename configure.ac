@@ -750,8 +750,6 @@ include/Makefile
 lib/Makefile
 libs/Makefile
 libs/blkid/blkid.pc
-libs/blkid/libblkid.3
-libs/blkid/blkid.8
 libs/blkid/Makefile
 libs/blkid/bin/Makefile
 libs/blkid/src/Makefile

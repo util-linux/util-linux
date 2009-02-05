@@ -5,12 +5,18 @@
 .\" This file may be copied under the terms of the GNU Public License.
 .\"
 .\" Based on uuidgen, Mon Sep 17 10:42:12 2000, Andreas Dilger
-.TH BLKID 8 "@E2FSPROGS_MONTH@ @E2FSPROGS_YEAR@" "E2fsprogs version @E2FSPROGS_VERSION@"
+.TH BLKID 8 "February 2009" "Linux" "MAINTENANCE COMMANDS"
 .SH NAME
 blkid \- command\-line utility to locate/print block device attributes
 .SH SYNOPSIS
 .B blkid
-.RB [ \-ghlLv ]
+.RB \-L
+.IR label " | "
+.RB \-U
+.IR uuid
+
+.B blkid
+.RB [ \-ghlv ]
 .RB [ \-c
 .IR file ]
 .RB [ \-w
@@ -80,9 +86,15 @@ block devices.  If this option is not specified,
 .B blkid
 will print all of the devices that match the search parameter.
 .TP
-.B \-L
-Print the devices in a user-friendly list format.  This is the
-equivalent of using the option \fB-o list\fR.
+.B \-L " label "
+Look up one device that uses the label (same as: -l -o device -t
+LABEL=<label>).  This look up method is able to reliable use /dev/disk/by-label
+udev symlinks (depends on setting in /etc/blkid.conf). Avoid to use the
+symlinks directly. It is not reliable to use the symlinks without verification.
+The \fB-L\fR option is portable and works on systems with and without udev.
+.TP
+.B \-U " uuid "
+Look up one device that uses the uuid. For more details see the \fB-L\fR option.
 .TP
 .BI \-o " format"
 Display
@@ -180,3 +192,4 @@ The blkid command is part of the util-linux-ng package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
 .SH "SEE ALSO"
 .BR libblkid (3)
+.BR findfs (8)

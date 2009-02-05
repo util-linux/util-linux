@@ -4,6 +4,7 @@ AM_LDFLAGS += -L$(top_builddir)/libs/blkid/src -lblkid
 AM_CPPFLAGS += -I$(top_builddir)/libs/blkid/src/
 
 sbin_PROGRAMS = blkid
+dist_man_MANS = blkid.8
 
 shell_in_files = blkid.sh.in
 noinst_SCRIPTS = $(shell_in_files:.sh.in=.sh)

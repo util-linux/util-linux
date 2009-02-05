@@ -1,4 +1,3 @@
-*.[38]
 *.sh
 bin/blkid
 test_*
