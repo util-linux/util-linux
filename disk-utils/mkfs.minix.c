@@ -69,6 +69,7 @@
 #include <termios.h>
 #include <sys/stat.h>
 #include <sys/ioctl.h>
+#include <sys/param.h>
 #include <mntent.h>
 #include <getopt.h>
 
@@ -76,10 +77,6 @@
 #include "minix.h"
 #include "nls.h"
 #include "pathnames.h"
-
-#ifndef __GNUC__
-#error "needs gcc for the bitop-__asm__'s"
-#endif
 
 #define MINIX_ROOT_INO 1
 #define MINIX_BAD_INO 2
@@ -135,10 +132,8 @@ static unsigned short good_blocks_table[MAX_GOOD_BLOCKS];
 static int used_good_blocks = 0;
 static unsigned long req_nr_inodes = 0;
 
-#include "minix_bitops.h"
-
-#define inode_in_use(x) (bit(inode_map,(x)))
-#define zone_in_use(x) (bit(zone_map,(x)-FIRSTZONE+1))
+#define inode_in_use(x) (isset(inode_map,(x)))
+#define zone_in_use(x) (isset(zone_map,(x)-FIRSTZONE+1))
 
 #define mark_inode(x) (setbit(inode_map,(x)))
 #define unmark_inode(x) (clrbit(inode_map,(x)))
