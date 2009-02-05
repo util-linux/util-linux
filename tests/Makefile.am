@@ -45,6 +45,7 @@ EXTRA_DIST = 	expected \
 		ts-lscpu-x86_64-ibme326m \
 		ts-lscpu-x86_64-necem14 \
 		ts-lscpu-x86_64-xenfull \
+		ts-minix-mkfs \
 		ts-mount-devname \
 		ts-mount-label \
 		ts-mount-move \
