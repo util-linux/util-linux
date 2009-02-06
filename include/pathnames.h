@@ -97,6 +97,8 @@
 /* udev paths */
 #define _PATH_DEV_BYLABEL	"/dev/disk/by-label"
 #define _PATH_DEV_BYUUID	"/dev/disk/by-uuid"
+#define _PATH_DEV_BYID		"/dev/disk/by-id"
+#define _PATH_DEV_BYPATH	"/dev/disk/by-path"
 
 #endif /* PATHNAMES_H */
 

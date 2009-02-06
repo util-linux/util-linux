@@ -3,10 +3,6 @@
 
 /* common stuff for fdisk, cfdisk, sfdisk */
 
-/* udev paths */
-#define PATH_DEV_BYID   "/dev/disk/by-id"
-#define PATH_DEV_BYPATH "/dev/disk/by-path"
-
 struct systypes {
 	unsigned char type;
 	char *name;
