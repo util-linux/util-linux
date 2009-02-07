@@ -1,3 +1,4 @@
 *.sh
 bin/blkid
+bin/findfs
 test_*
