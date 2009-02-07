@@ -16,32 +16,6 @@
 
  - rebase to the latest util-linux-ng
 
- - create a new simple API for LABEL/UUID evaluation:
-
-	blkid_eval_label()
-	blkid_eval_uuid()
-	blkid_eval_spec()	(spec: <NAME>=<value>)
-
-   this API has to follow the EVALUATE= blkid.conf option (see below).
-
- - create a new config file /etc/blkid.conf; options:
-
-        * EVALUATE=<method>[,<method>]
-
-	  where the method is "udev" and/or "scan". Default: "udev,scan".
-
-	* CACHE_FILE=<path>
-
-	  where the <path> is path to the blkid.tab cache file. Default:
-	  /etc/blkid.tab.
-
-	* SEND_UEVENTS=<yes|no>
-
-	  write to /sys/block/..../uevent when we found that /dev/disk-by/*
-          links are not valid (when EVALUATE=udev).
-
- - modify /sbin/blkid code to use blkid_eval_..() API for "-t LABEL|UUID" option.
-
  Brainstorming
  -------------
 
