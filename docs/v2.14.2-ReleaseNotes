@@ -1,4 +1,4 @@
-Util-linux-ng 2.14.2 Release Notes (??-Jan-2009)
+Util-linux-ng 2.14.2 Release Notes (9-Feb-2009)
 ================================================
 
 ChangeLog between v2.14.1 and v2.14.2
@@ -10,9 +10,11 @@ ChangeLog between v2.14.1 and v2.14.2
 build-sys:
    - add -luuid to BLKID_LIBS  [Karel Zak]
    - release++ (v2.14.2-rc1)  [Karel Zak]
+   - release++ (v2.14.2-rc2)  [Karel Zak]
 cfdisk:
    - accept yes/no as fallback  [Matthias Koenig]
 chrt:
+   - output buglet when reporting scheduling class  [Karel Zak]
    - support CFS SCHED_IDLE priority and document it  [Martin Steigerwald]
 docs:
    - update AUTHORS file  [Karel Zak]
@@ -66,6 +68,7 @@ mount:
    - fix mount_static_LDADD  [Karel Zak]
    - fix typo  [Guan Xin]
    - fix typo  [Karel Zak]
+   - fix typo in volume_id code  [Karel Zak]
    - make file_t SELinux warning optional and shorter  [Karel Zak]
    - mtab created multiple times with -a option  [Karel Zak]
    - remove link to namesys.com  [Karel Zak]
@@ -82,11 +85,15 @@ po:
    - merge changes  [Karel Zak]
    - update cs.po (from translationproject.org)  [Petr Pisar]
    - update fr.po (from translationproject.org)  [Nicolas Provost]
+   - update ja.po (from translationproject.org)  [Makoto Kato]
+   - update nl.po (from translationproject.org)  [Benno Schulenberg]
    - update pt_BR.po (from translationproject.org)  [Rodrigo Stulzer Lopes]
    - update sv.po (from translationproject.org)  [Daniel Nylander]
+   - update vi.po (from translationproject.org)  [Clytie Siddall]
 readprofile:
    - several strings without gettext calls  [Pedro Ribeiro]
 setterm:
    - fix -blank man page  [Karel Zak]
 
+- refresh gitignore  [Karel Zak]
 - use getpagesize()  [maximilian attems]
