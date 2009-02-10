@@ -1,4 +1,13 @@
-{ global:
+/*
+ * The symbol versioning ensures that a new application requiring symbol foo()
+ * can't run with old libblkid.so not providing foo() - the global SONAME
+ * version info can't enforce this since we never change the SONAME.
+ *
+ * The original libblkid (.so version 1.0) from e2fsprogs does not to use
+ * symbol versioning -- all the original symbols are in BLKID_1.0 now.
+ */
+BLKID_1.0 {
+global:
 	blkid_dev_devname;
 	blkid_dev_has_tag;
 	blkid_dev_iterate_begin;
@@ -6,12 +15,7 @@
 	blkid_dev_next;
 	blkid_devno_to_devname;
 	blkid_dev_set_search;
-	blkid_do_probe;
-	blkid_do_safeprobe;
-	blkid_encode_string;
-	blkid_evaluate_spec;
 	blkid_find_dev_with_tag;
-	blkid_free_probe;
 	blkid_gc_cache;
 	blkid_get_cache;
 	blkid_get_dev;
@@ -20,9 +24,31 @@
 	blkid_get_library_version;
 	blkid_get_tag_value;
 	blkid_known_fstype;
-	blkid_new_probe;
 	blkid_parse_tag_string;
 	blkid_parse_version_string;
+	blkid_probe_all;
+	blkid_probe_all_new;
+	blkid_put_cache;
+	blkid_tag_iterate_begin;
+	blkid_tag_iterate_end;
+	blkid_tag_next;
+	blkid_verify;
+local:
+	*;
+};
+
+
+/*
+ * util-linux-ng version(s)
+ */
+BLKID_1.42 {
+global:
+	blkid_do_probe;
+	blkid_do_safeprobe;
+	blkid_encode_string;
+	blkid_evaluate_spec;
+	blkid_free_probe;
+	blkid_new_probe;
 	blkid_probe_all;
 	blkid_probe_all_new;
 	blkid_probe_filter_types;
@@ -35,14 +61,8 @@
 	blkid_probe_reset_filter;
 	blkid_probe_set_device;
 	blkid_probe_set_request;
-	blkid_put_cache;
 	blkid_reset_probe;
 	blkid_safe_string;
 	blkid_send_uevent;
-	blkid_tag_iterate_begin;
-	blkid_tag_iterate_end;
-	blkid_tag_next;
-	blkid_verify;
-local:
-	*;
-};
+} BLKID_1.0;
+

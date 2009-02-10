@@ -10,12 +10,13 @@ AC_CONFIG_SRCDIR(mount/mount.c)
 
 AC_PREFIX_DEFAULT([/usr])
 
-dnl libblkid version definition
-dnl -----------------------------
+dnl blkid version definition (the library SONAME is
+dnl "libblkid.so.$BLKID_VERSION_MAJOR", see blkid/Makefile.am)
+dnl ----------------------------------------------------------
 BLKID_VERSION_MAJOR=1
-BLKID_VERSION_MINOR=41
+BLKID_VERSION_MINOR=42
 BLKID_VERSION_RELEASE=0
-BLKID_DATE="10-Jul-2008"
+BLKID_DATE="10-Feb-2009"
 
 BLKID_VERSION=$BLKID_VERSION_MAJOR.$BLKID_VERSION_MINOR.$BLKID_VERSION_RELEASE
 
