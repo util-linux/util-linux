@@ -2,9 +2,9 @@ include $(top_srcdir)/config/include-Makefile.am
 
 AM_CPPFLAGS += -I$(top_builddir)/libs/blkid/src
 
-lib_LIBRARIES = libprobers.a
-libprobers_a_CFLAGS = -fPIC
-libprobers_a_SOURCES =	probers.h \
+noinst_LTLIBRARIES = libblkid_probers.la
+libblkid_probers_la_SOURCES = \
+			probers.h \
 			cramfs.c \
 			swap.c \
 			adaptec_raid.c \
@@ -40,5 +40,3 @@ libprobers_a_SOURCES =	probers.h \
 			sysv.c \
 			btrfs.c \
 			lvm.c
-
-all-local: $(lib_LIBRARIES)

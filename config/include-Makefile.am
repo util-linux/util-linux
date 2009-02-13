@@ -12,3 +12,12 @@ AM_LDFLAGS =
 # conditional is false.
 # Work the bug around until it is fixed:
 dist_noinst_DATA = $(dist_man_MANS)
+
+# Paths to in-tree libraries (use ul_ prefix to avoid possible collisions)
+#
+ul_libblkid_srcdir = $(top_builddir)/libs/blkid/src
+ul_libblkid_la = $(ul_libblkid_srcdir)/libblkid.la
+
+$(ul_libblkid_la):
+	$(MAKE) -C $(ul_libblkid_srcdir)
+

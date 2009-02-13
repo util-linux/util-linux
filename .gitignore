@@ -2,6 +2,8 @@
 *.[ao]
 *.static
 *.so
+*.lo
+*.la
 *.so.*
 *.pc
 Makefile
@@ -32,3 +34,4 @@ missing
 ltmain.sh
 libtool
 .deps
+.libs
