@@ -135,24 +135,6 @@ yes) enable_static_programs=m4_quote(UTIL_STATIC_PROGRAMS) ;;
 no) enable_static_programs= ;;
 esac
 
-if test "$enable_static_programs" != ""; then
-  AC_CACHE_CHECK([whether linker accepts -static],
-  [static_cv_option],
-  [SAVE_LDFLAGS="$LDFLAGS"
-   LDFLAGS="$LDFLAGS -static"
-   AC_LINK_IFELSE([AC_LANG_PROGRAM([[
-#include <stdio.h>
-]], [[
-fflush(stdout);
-]])], [static_cv_option=yes],[static_cv_option=no])
-   LDFLAGS="$SAVE_LDFLAGS"
-  ])
-  if test "x$static_cv_option" = xno; then
-     AC_MSG_ERROR([the linker does not accept option -static])
-  fi
-fi
-AC_SUBST([LDFLAGS_STATIC], [-static])
-
 dnl Set all the individual AM_CONDITIONALs
 m4_foreach([UTIL_PRG], m4_defn([UTIL_STATIC_PROGRAMS]), [
   case ,$enable_static_programs, in
@@ -161,8 +143,6 @@ m4_foreach([UTIL_PRG], m4_defn([UTIL_STATIC_PROGRAMS]), [
   AM_CONDITIONAL([HAVE_STATIC_]m4_toupper(UTIL_PRG),
     [test "x$static_[]UTIL_PRG" = xyes])
 ])
-
-
 
 dnl UTIL_CHECK_LIB(LIBRARY, FUNCTION, [VARSUFFIX = $1]))
 dnl The VARSUFFIX is optional and overrides the default behaviour. For example:
