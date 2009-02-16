@@ -2,6 +2,30 @@
  TODO
  ----
 
+ e2fsprogs:
+
+    - add --disable-blkid
+    - "#ifdef BUILD_BLKID" for findfs code in tune2fs.c
+    - move fsck.c to util-linux-ng
+
+ udev:
+    - add --disable-volumeid to udev package
+    - test blkid within udev rules
+
+
+ - add command line interface for blkid_probe_filter_usage():
+
+	# blkid -p -o udev --filter-usage filesystems
+
+        # blkid -p -o udev --filter-usage noraid
+
+   and blkid_probe_filter_types():
+
+       # blkid -p -o udev --filter-type nofat
+
+   note that "--filter-usage" is necessary for compatibility with vol_id where
+   we in udev rules use things like "vol_id --skip-raid"
+
  - (?) we need to ignore cache and config files when the files are writable
    for non-root users and the library is linked with suid programs
 
@@ -13,15 +37,3 @@
    need it for uuid_unparse() only.
 
  - consolidate "getsize" stuff (see getsize.c and lib/blkdev.c)
-
- - rebase to the latest util-linux-ng
-
- Brainstorming
- -------------
-
- - try to write inotify based blkid-daemon that watch block devices and update
-   blkid cache and inform udev (by uevents) when a new LABEL/UUID/FS is
-   detected.
-
-   The daemon should be also useful during system start-up for massive parallel
-   devices scanning.
