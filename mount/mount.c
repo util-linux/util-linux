@@ -29,6 +29,7 @@
 
 #include "pathnames.h"
 #include "fsprobe.h"
+#include "devname.h"
 #include "mount_constants.h"
 #include "sundries.h"
 #include "xmalloc.h"
@@ -84,6 +85,15 @@ static int restricted = 1;
 
 /* Contains the fd to read the passphrase from, if any. */
 static int pfd = -1;
+
+/* mount(2) options */
+struct mountargs {
+       const char *spec;
+       const char *node;
+       const char *type;
+       int flags;
+       void *data;
+};
 
 /* Map from -o and fstab option strings to the flag argument to mount(2).  */
 struct opt_map {
@@ -241,7 +251,7 @@ print_one (const struct my_mntent *me) {
 	if (me->mnt_opts != NULL)
 		printf (" (%s)", me->mnt_opts);
 	if (list_with_volumelabel && is_pseudo_fs(me->mnt_type) == 0) {
-		const char *devname = fsprobe_get_devname(me->mnt_fsname);
+		const char *devname = spec_to_devname(me->mnt_fsname);
 
 		if (devname) {
 			const char *label;
@@ -547,7 +557,7 @@ create_mtab (void) {
 		char *extra_opts;
 		parse_opts (fstab->m.mnt_opts, &flags, &extra_opts);
 		mnt.mnt_dir = "/";
-		mnt.mnt_fsname = fsprobe_get_devname(fstab->m.mnt_fsname);
+		mnt.mnt_fsname = spec_to_devname(fstab->m.mnt_fsname);
 		mnt.mnt_type = fstab->m.mnt_type;
 		mnt.mnt_opts = fix_opts_string (flags, extra_opts, NULL);
 		mnt.mnt_freq = mnt.mnt_passno = 0;
@@ -696,6 +706,157 @@ check_special_mountprog(const char *spec, const char *node, const char *type, in
 }
 
 
+/* list of already tested filesystems by procfsloop_mount() */
+static struct tried {
+	struct tried *next;
+	char *type;
+} *tried = NULL;
+
+static int
+was_tested(const char *fstype) {
+	struct tried *t;
+
+	if (fsprobe_known_fstype(fstype))
+		return 1;
+	for (t = tried; t; t = t->next) {
+		if (!strcmp(t->type, fstype))
+			return 1;
+	}
+	return 0;
+}
+
+static void
+set_tested(const char *fstype) {
+	struct tried *t = xmalloc(sizeof(struct tried));
+
+	t->next = tried;
+	t->type = xstrdup(fstype);
+	tried = t;
+}
+
+static void
+free_tested(void) {
+	struct tried *t, *tt;
+
+	t = tried;
+	while(t) {
+		free(t->type);
+		tt = t->next;
+		free(t);
+		t = tt;
+	}
+	tried = NULL;
+}
+
+static char *
+procfsnext(FILE *procfs) {
+   char line[100];
+   char fsname[100];
+
+   while (fgets(line, sizeof(line), procfs)) {
+      if (sscanf (line, "nodev %[^\n]\n", fsname) == 1) continue;
+      if (sscanf (line, " %[^ \n]\n", fsname) != 1) continue;
+      return xstrdup(fsname);
+   }
+   return 0;
+}
+
+/* Only use /proc/filesystems here, this is meant to test what
+   the kernel knows about, so /etc/filesystems is irrelevant.
+   Return: 1: yes, 0: no, -1: cannot open procfs */
+static int
+known_fstype_in_procfs(const char *type)
+{
+    FILE *procfs;
+    char *fsname;
+    int ret = -1;
+
+    procfs = fopen(_PATH_PROC_FILESYSTEMS, "r");
+    if (procfs) {
+	ret = 0;
+	while ((fsname = procfsnext(procfs)) != NULL)
+	    if (!strcmp(fsname, type)) {
+		ret = 1;
+		break;
+	    }
+	fclose(procfs);
+	procfs = NULL;
+    }
+    return ret;
+}
+
+/* Try all types in FILESYSTEMS, except those in *types,
+   in case *types starts with "no" */
+/* return: 0: OK, -1: error in errno, 1: type not found */
+/* when 0 or -1 is returned, *types contains the type used */
+/* when 1 is returned, *types is NULL */
+static int
+procfsloop_mount(int (*mount_fn)(struct mountargs *, int *, int *),
+			 struct mountargs *args,
+			 const char **types,
+			 int *special, int *status)
+{
+	char *files[2] = { _PATH_FILESYSTEMS, _PATH_PROC_FILESYSTEMS };
+	FILE *procfs;
+	char *fsname;
+	const char *notypes = NULL;
+	int no = 0;
+	int ret = 1;
+	int errsv = 0;
+	int i;
+
+	if (*types && !strncmp(*types, "no", 2)) {
+		no = 1;
+		notypes = (*types) + 2;
+	}
+	*types = NULL;
+
+	/* Use _PATH_PROC_FILESYSTEMS only when _PATH_FILESYSTEMS
+	 * (/etc/filesystems) does not exist.  In some cases trying a
+	 * filesystem that the kernel knows about on the wrong data will crash
+	 * the kernel; in such cases _PATH_FILESYSTEMS can be used to list the
+	 * filesystems that we are allowed to try, and in the order they should
+	 * be tried.  End _PATH_FILESYSTEMS with a line containing a single '*'
+	 * only, if _PATH_PROC_FILESYSTEMS should be tried afterwards.
+	 */
+	for (i=0; i<2; i++) {
+		procfs = fopen(files[i], "r");
+		if (!procfs)
+			continue;
+		while ((fsname = procfsnext(procfs)) != NULL) {
+			if (!strcmp(fsname, "*")) {
+				fclose(procfs);
+				goto nexti;
+			}
+			if (was_tested (fsname))
+				continue;
+			if (no && matching_type(fsname, notypes))
+				continue;
+			set_tested (fsname);
+			args->type = fsname;
+			if (verbose)
+				printf(_("Trying %s\n"), fsname);
+			if ((*mount_fn) (args, special, status) == 0) {
+				*types = fsname;
+				ret = 0;
+				break;
+			} else if (errno != EINVAL &&
+				   known_fstype_in_procfs(fsname) == 1) {
+				*types = "guess";
+				ret = -1;
+				errsv = errno;
+				break;
+			}
+		}
+		free_tested();
+		fclose(procfs);
+		errno = errsv;
+		return ret;
+	nexti:;
+	}
+	return 1;
+}
+
 static const char *
 guess_fstype_by_devname(const char *devname)
 {
@@ -769,7 +930,7 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
       return do_mount (&args, special, status);
    }
 
-   return fsprobe_procfsloop_mount(do_mount, &args, types, special, status);
+   return procfsloop_mount(do_mount, &args, types, special, status);
 }
 
 /*
@@ -1296,7 +1457,7 @@ mount_retry:
       error (_("mount: %s: can't read superblock"), spec); break;
     case ENODEV:
     {
-      int pfs = fsprobe_known_fstype_in_procfs(types);
+      int pfs = known_fstype_in_procfs(types);
 
       if (pfs == 1 || !strcmp(types, "guess"))
         error(_("mount: %s: unknown device"), spec);
@@ -1315,13 +1476,13 @@ mount_retry:
 	    u++;
 	  }
 	}
-	if (u && fsprobe_known_fstype_in_procfs(lowtype) == 1)
+	if (u && known_fstype_in_procfs(lowtype) == 1)
 	  error (_("mount: probably you meant %s"), lowtype);
 	else if (!strncmp(lowtype, "iso", 3) &&
-			fsprobe_known_fstype_in_procfs("iso9660") == 1)
+			known_fstype_in_procfs("iso9660") == 1)
 	  error (_("mount: maybe you meant 'iso9660'?"));
 	else if (!strncmp(lowtype, "fat", 3) &&
-			fsprobe_known_fstype_in_procfs("vfat") == 1)
+			known_fstype_in_procfs("vfat") == 1)
 	  error (_("mount: maybe you meant 'vfat'?"));
 	free(lowtype);
       } else
@@ -1499,7 +1660,7 @@ mount_one (const char *spec, const char *node, const char *types,
 	if (types == NULL || (strncmp(types, "nfs", 3) &&
 			      strncmp(types, "cifs", 4) &&
 			      strncmp(types, "smbfs", 5))) {
-		nspec = fsprobe_get_devname_for_mounting(spec);
+		nspec = spec_to_devname(spec);
 		if (nspec)
 			spec = nspec;
 	}
@@ -1515,7 +1676,7 @@ mounted (const char *spec0, const char *node0) {
 	int ret = 0;
 
 	/* Handle possible UUID= and LABEL= in spec */
-	spec = fsprobe_get_devname(spec0);
+	spec = spec_to_devname(spec0);
 	if (!spec)
 		return ret;
 
@@ -1791,7 +1952,7 @@ getfs(const char *spec, const char *uuid, const char *label)
 	else if (label)
 		devname = fsprobe_get_devname_by_label(label);
 	else
-		devname = fsprobe_get_devname(spec);
+		devname = spec_to_devname(spec);
 
 	if (devname)
 		mc = getfs_by_devname(devname);

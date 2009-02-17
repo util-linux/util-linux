@@ -20,6 +20,7 @@
 #include "swap_constants.h"
 #include "nls.h"
 #include "fsprobe.h"
+#include "devname.h"
 #include "pathnames.h"
 #include "sundries.h"
 #include "swapheader.h"
@@ -362,7 +363,7 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 		printf(_("%s on %s\n"), progname, orig_special);
 
 	if (!canonic) {
-		special = fsprobe_get_devname(orig_special);
+		special = spec_to_devname(orig_special);
 		if (!special)
 			return cannot_find(orig_special);
 	}
@@ -475,7 +476,7 @@ do_swapoff(const char *orig_special, int quiet, int canonic) {
 		printf(_("%s on %s\n"), progname, orig_special);
 
 	if (!canonic) {
-		special = fsprobe_get_devname(orig_special);
+		special = spec_to_devname(orig_special);
 		if (!special)
 			return cannot_find(orig_special);
 	}
@@ -546,7 +547,7 @@ swapon_all(void) {
 		if (skip)
 			continue;
 
-		special = fsprobe_get_devname(fstab->mnt_fsname);
+		special = spec_to_devname(fstab->mnt_fsname);
 		if (!special) {
 			if (!ifexists)
 				status |= cannot_find(fstab->mnt_fsname);
@@ -727,7 +728,7 @@ main_swapoff(int argc, char *argv[]) {
 			if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
 				continue;
 
-			special = fsprobe_get_devname(fstab->mnt_fsname);
+			special = spec_to_devname(fstab->mnt_fsname);
 			if (!special)
 				continue;
 

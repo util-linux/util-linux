@@ -11,12 +11,12 @@ srcs_common = sundries.c xmalloc.c ../lib/canonicalize.c
 
 # generic header for mount and umount
 hdrs_mount = fstab.h mount_mntent.h mount_constants.h \
-	lomount.h fsprobe.h xmalloc.h getusername.h loop.h sundries.h
+	lomount.h xmalloc.h getusername.h loop.h sundries.h
 
 # generic sources for mount and umount
-srcs_mount = fstab.c mount_mntent.c getusername.c lomount.c \
+srcs_mount = fstab.c mount_mntent.c getusername.c lomount.c devname.c devname.h \
 	$(srcs_common) $(hdrs_mount) ../lib/env.c ../lib/linux_version.c \
-	../lib/blkdev.c fsprobe.c
+	../lib/blkdev.c ../lib/fsprobe.c
 
 # generic flags for all programs (except losetup)
 # -- note that pkg-config autoconf macros (pkg.m4) does not differentiate
@@ -38,8 +38,8 @@ umount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) $(cflags_common)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 umount_LDADD = $(ldadd_common)
 
-swapon_SOURCES = swapon.c swap_constants.h $(srcs_common) \
-	../lib/linux_version.c ../lib/blkdev.c fsprobe.c
+swapon_SOURCES = swapon.c swap_constants.h $(srcs_common) devname.c devname.h \
+	../lib/linux_version.c ../lib/blkdev.c ../lib/fsprobe.c
 swapon_CFLAGS = $(cflags_common)
 swapon_LDADD = $(ldadd_common)
 
@@ -51,6 +51,7 @@ mount_static_LDADD =
 if HAVE_STATIC_MOUNT
 bin_PROGRAMS += mount.static
 mount_static_SOURCES = $(mount_SOURCES)
+mount_static_CFLAGS = $(cflags_common)
 mount_static_LDFLAGS = $(ldflags_static)
 mount_static_LDADD += $(ldadd_static)
 endif
@@ -58,6 +59,7 @@ endif
 if HAVE_STATIC_UMOUNT
 bin_PROGRAMS += umount.static
 umount_static_SOURCES = $(umount_SOURCES)
+umount_static_CFLAGS = $(cflags_common)
 umount_static_LDFLAGS = $(ldflags_static)
 umount_static_LDADD = $(ldadd_static)
 endif
@@ -70,8 +72,6 @@ losetup_static_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
 endif
 
 if HAVE_BLKID
-srcs_mount += fsprobe_blkid.c
-swapon_SOURCES += fsprobe_blkid.c
 if BUILD_LIBBLKID
 ldadd_common += $(ul_libblkid_la)
 ldadd_static += $(ul_libblkid_la)
@@ -84,8 +84,6 @@ endif
 endif
 
 if HAVE_VOLUME_ID
-srcs_mount += fsprobe_volumeid.c
-swapon_SOURCES += fsprobe_volumeid.c
 ldadd_common += $(VOLUMEID_LIBS)
 ldadd_static += $(VOLUMEID_LIBS_STATIC)
 cflags_common += $(VOLUMEID_CFLAGS)

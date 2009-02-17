@@ -190,6 +190,7 @@ elif test "x$with_fsprobe" = xvolume_id; then
 elif test "x$with_fsprobe" = xbuiltin; then
   have_blkid=yes
   AC_DEFINE(HAVE_LIBBLKID,1,[Define to 1 if you have the -lblkid.])
+  AC_DEFINE(HAVE_BLKID_EVALUATE_SPEC,1,[Define to 1 if you have the blkid_evaluate_spec().])
   AM_CONDITIONAL(HAVE_BLKID, true)
   AM_CONDITIONAL(BUILD_LIBBLKID, true)
 fi
