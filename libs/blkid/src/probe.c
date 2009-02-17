@@ -324,6 +324,9 @@ int blkid_probe_filter_types(blkid_probe pr, int flag, char *names[])
 	else
 		blkid_probe_reset_filter(pr);
 
+	if (!pr->fltr)
+		return -1;
+
 	for (i = 0; i < ARRAY_SIZE(idinfos); i++) {
 		int has = 0;
 		const struct blkid_idinfo *id = idinfos[i];
@@ -371,6 +374,9 @@ int blkid_probe_filter_usage(blkid_probe pr, int flag, int usage)
 		pr->fltr = calloc(BLKID_FLTR_SIZE, sizeof(unsigned long));
 	else
 		blkid_probe_reset_filter(pr);
+
+	if (!pr->fltr)
+		return -1;
 
 	for (i = 0; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id = idinfos[i];
