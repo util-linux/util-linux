@@ -47,3 +47,8 @@
    [ -- Christoph Hellwig, 16 Feb 2009 ]
    (1) http://git.kernel.org/?p=fs/xfs/xfsprogs-dev.git;a=tree;f=libdisk;
 
+ - use /sys/block/<devname>/dm/name rather than scan /dev/mapper/ for the name
+   (see devname.c: probe_one()). The sysfs entry has been introduced by kernel
+   patch 784aae735d9b0bba3f8b9faef4c8b30df3bf0128.
+
+
