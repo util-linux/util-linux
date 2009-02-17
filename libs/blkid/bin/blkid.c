@@ -325,24 +325,27 @@ static int lowprobe_device(blkid_probe pr, const char *devname, int output,
 {
 	unsigned char *data;
 	const char *name;
-	int nvals, n;
+	int nvals = 0, n;
 	size_t len;
 	int fd;
 	int rc = 0;
 
 	fd = open(devname, O_RDONLY);
-	if (fd < 0) {
-		perror(devname);
-		return -1;
-	}
+	if (fd < 0)
+		return 2;
 
 	if (blkid_probe_set_device(pr, fd, offset, size))
-		goto error;
+		goto done;
 	rc = blkid_do_safeprobe(pr);
 	if (rc)
-		goto error;
+		goto done;
 
 	nvals = blkid_probe_numof_values(pr);
+
+	if (output & OUTPUT_DEVICE_ONLY) {
+		printf("%s\n", devname);
+		goto done;
+	}
 
 	for (n = 0; n < nvals; n++) {
 		if (blkid_probe_get_value(pr, n, &name, &data, &len))
@@ -352,15 +355,13 @@ static int lowprobe_device(blkid_probe pr, const char *devname, int output,
 		print_value(output, n + 1, NULL, (char *) data, name, len);
 	}
 
-	close(fd);
-	return 0;
-error:
+done:
 	if (rc == -2)
 		fprintf(stderr, "%s: ambivalent result "
 				"(probably more filesystems on the device)\n",
 				devname);
 	close(fd);
-	return -1;
+	return !nvals ? 2 : 0;
 }
 
 /* converts comma separated list to BLKID_USAGE_* mask */
@@ -387,7 +388,7 @@ static int list_to_usage(const char *list, int *flag)
 			else {
 				fprintf(stderr, "unknown usage keyword '%*s'\n",
 						(int) (p - word), word);
-				exit(1);
+				exit(4);
 			}
 			word = p + 1;
 		}
@@ -457,8 +458,8 @@ int main(int argc, char **argv)
 			else {
 				fprintf(stderr, "Invalid output format %s. "
 					"Choose from value,\n\t"
-					"device, list, or full\n", optarg);
-				exit(1);
+					"device, list, udev or full\n", optarg);
+				exit(4);
 			}
 			break;
 		case 'O':
@@ -539,7 +540,7 @@ int main(int argc, char **argv)
 
 		if (!numdev) {
 			fprintf(stderr, "The low-probe option requires a device\n");
-			exit(1);
+			exit(4);
 		}
 		pr = blkid_new_probe();
 		if (!pr)
@@ -553,7 +554,7 @@ int main(int argc, char **argv)
 			goto exit;
 
 		for (i = 0; i < numdev; i++)
-			err += lowprobe_device(pr, devices[i],
+			err = lowprobe_device(pr, devices[i],
 					output_format, offset, size);
 		blkid_free_probe(pr);
 	} else if (eval) {
@@ -572,7 +573,7 @@ int main(int argc, char **argv)
 		if (!search_type) {
 			fprintf(stderr, "The lookup option requires a "
 				"search type specified using -t\n");
-			exit(1);
+			exit(4);
 		}
 		/* Load any additional devices not in the cache */
 		for (i = 0; i < numdev; i++)
