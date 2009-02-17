@@ -42,4 +42,6 @@
    (see devname.c: probe_one()). The sysfs entry has been introduced by kernel
    patch 784aae735d9b0bba3f8b9faef4c8b30df3bf0128.
 
+ - in lib/fsprobe.c wrapper use blkid_parse_tag_string() rather than a local
+   parser implementation
 
