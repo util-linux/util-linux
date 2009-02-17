@@ -7,7 +7,7 @@
 #include <sys/types.h>
 #include <stdlib.h>
 
-#include <blkid/blkid.h> /* TODO: <blkid.h>, -I/usr/include/blkid */
+#include <blkid.h>
 
 #include "blkdev.h"
 #include "canonicalize.h"

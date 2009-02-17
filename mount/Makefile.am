@@ -84,9 +84,9 @@ endif
 endif
 
 if HAVE_VOLUME_ID
-ldadd_common += $(VOLUMEID_LIBS)
-ldadd_static += $(VOLUMEID_LIBS_STATIC)
-cflags_common += $(VOLUMEID_CFLAGS)
+ldadd_common += $(VOLUME_ID_LIBS)
+ldadd_static += $(VOLUME_ID_LIBS_STATIC)
+cflags_common += $(VOLUME_ID_CFLAGS)
 endif
 
 if HAVE_SELINUX

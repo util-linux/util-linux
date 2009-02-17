@@ -22,14 +22,6 @@ BLKID_DATE="10-Feb-2009"
 BLKID_VERSION=$BLKID_VERSION_MAJOR.$BLKID_VERSION_MINOR.$BLKID_VERSION_RELEASE
 BLKID_VERSION_INFO=`expr $BLKID_VERSION_MAJOR + $BLKID_VERSION_MINOR`:$BLKID_VERSION_RELEASE:$BLKID_VERSION_MINOR
 
-AC_SUBST(BLKID_VERSION_MAJOR)
-AC_SUBST(BLKID_VERSION_MINOR)
-AC_SUBST(BLKID_VERSION_RELEASE)
-AC_SUBST(BLKID_VERSION)
-AC_SUBST(BLKID_VERSION_INFO)
-
-AC_DEFINE_UNQUOTED(BLKID_VERSION, "$BLKID_VERSION", [libblkid version string])
-AC_DEFINE_UNQUOTED(BLKID_DATE, "$BLKID_DATE", [libblkid date string])
 
 # Check whether exec_prefix=/usr:
 case $exec_prefix:$prefix in
@@ -56,6 +48,8 @@ AC_C_BIGENDIAN
 
 dnl libtool-2
 LT_INIT
+
+PKG_PROG_PKG_CONFIG
 
 linux_os=no
 case ${host_os} in
@@ -166,35 +160,53 @@ fi
 UTIL_CHECK_LIB(util, openpty)
 UTIL_CHECK_LIB(termcap, tgetnum)
 
+
 AC_ARG_WITH([fsprobe],
-  [AS_HELP_STRING([--with-fsprobe], [library to guess filesystems (blkid|volume_id), default is blkid])],
+  [AS_HELP_STRING([--with-fsprobe], [library to guess filesystems (builtin|blkid|volume_id), default is blkid])],
   [], [with_fsprobe=blkid]
 )
+
+build_libblkid=no
+have_blkid_evaluate=no
+have_blkid=no
+have_volume_id=no
+
+if test "x$with_fsprobe" = xblkid; then
+  PKG_CHECK_MODULES(BLKID, blkid, [have_blkid=yes], [])
+  AC_CHECK_LIB(blkid, blkid_evaluate_spec, [have_blkid_evaluate=yes], [])
+elif test "x$with_fsprobe" = xvolume_id; then
+  PKG_CHECK_MODULES(VOLUME_ID, volume_id, [have_volume_id=yes], [])
+elif test "x$with_fsprobe" = xbuiltin; then
+  have_blkid=yes
+  build_libblkid=yes
+  have_blkid_evaluate=yes
+  AC_SUBST(BLKID_VERSION_MAJOR)
+  AC_SUBST(BLKID_VERSION_MINOR)
+  AC_SUBST(BLKID_VERSION_RELEASE)
+  AC_SUBST(BLKID_VERSION)
+  AC_SUBST(BLKID_VERSION_INFO)
+  AC_DEFINE_UNQUOTED(BLKID_VERSION, "$BLKID_VERSION", [libblkid version string])
+  AC_DEFINE_UNQUOTED(BLKID_DATE, "$BLKID_DATE", [libblkid date string])
+fi
+
+if  test "x$have_blkid" = xyes; then
+  AC_DEFINE(HAVE_LIBBLKID, 1, [Define to 1 if you have the -lblkid.])
+  if test "x$have_blkid_evaluate" = xyes; then
+    AC_DEFINE(HAVE_BLKID_EVALUATE_SPEC, 1, [Define to 1 if you have the blkid_evaluate_spec().])
+  fi
+fi
+
+AM_CONDITIONAL(HAVE_BLKID, test "x$have_blkid" = xyes)
+AM_CONDITIONAL(HAVE_VOLUME_ID, test "x$have_volume_id" = xyes)
+AM_CONDITIONAL(BUILD_LIBBLKID, test "x$build_libblkid" = xyes)
+
 
 AC_ARG_ENABLE([mount],
   AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
   [], enable_mount=check
 )
 
-AM_CONDITIONAL(HAVE_BLKID, false)
-AM_CONDITIONAL(HAVE_VOLUME_ID, false)
-AM_CONDITIONAL(BUILD_LIBBLKID, false)
-
 build_mount=yes
-have_blkid=no
-have_volume_id=no
-if test "x$with_fsprobe" = xblkid; then
-  UTIL_CHECK_LIB(blkid, blkid_known_fstype)
-elif test "x$with_fsprobe" = xvolume_id; then
-  UTIL_CHECK_LIB(volume_id, volume_id_encode_string)
-elif test "x$with_fsprobe" = xbuiltin; then
-  have_blkid=yes
-  AC_DEFINE(HAVE_LIBBLKID,1,[Define to 1 if you have the -lblkid.])
-  AC_DEFINE(HAVE_BLKID_EVALUATE_SPEC,1,[Define to 1 if you have the blkid_evaluate_spec().])
-  AM_CONDITIONAL(HAVE_BLKID, true)
-  AM_CONDITIONAL(BUILD_LIBBLKID, true)
-fi
-
 if test "${enable_mount}" = "no"; then
   build_mount=no
 elif test "x$linux_os" = xyes; then
@@ -221,20 +233,18 @@ AC_DEFUN([UTIL_PKG_STATIC], [
 
 # These default values should work in most cases:
 : ${BLKID_LIBS='-lblkid -luuid'}
-: ${VOLUMEID_LIBS='-lvolume_id'}
+: ${VOLUME_ID_LIBS='-lvolume_id'}
 
 # ... but for static build, we need to consult pkg-config:
 if test -n "$enable_static_programs"; then
   case $with_fsprobe in
   blkid) UTIL_PKG_STATIC([BLKID_LIBS_STATIC], [blkid]) ;;
-  volume_id) UTIL_PKG_STATIC([VOLUMEID_LIBS_STATIC], [libvolume_id]) ;;
+  volume_id) UTIL_PKG_STATIC([VOLUME_ID_LIBS_STATIC], [libvolume_id]) ;;
   esac
 fi
 
-AC_ARG_VAR([BLKID_LIBS], [-l options for linking dynamically with blkid])
 AC_ARG_VAR([BLKID_LIBS_STATIC], [-l options for linking statically with blkid])
-AC_ARG_VAR([VOLUMEID_LIBS], [-l options for linking dynamically with volume_id])
-AC_ARG_VAR([VOLUMEID_LIBS_STATIC], [-l options for linking statically with volume_id])
+AC_ARG_VAR([VOLUME_ID_LIBS_STATIC], [-l options for linking statically with volume_id])
 
 
 AM_GNU_GETTEXT_VERSION([0.14.1])
