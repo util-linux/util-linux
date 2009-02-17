@@ -76,7 +76,9 @@ static void usage(int error)
 		"Low-level probing options:\n"
 		"  -p          switch to low-level mode (bypass cache)\n"
 		"  -S <bytes>  overwrite device size\n"
-		"  -O <bytes>  probe at the given offset\n\n",
+		"  -O <bytes>  probe at the given offset\n"
+		"  -u <list>   filter by \"usage\" (e.g. -u filesystem,raid)\n"
+		"\n",
 				progname);
 
 	exit(error);
@@ -361,6 +363,38 @@ error:
 	return -1;
 }
 
+/* converts comma separated list to BLKID_USAGE_* mask */
+static int list_to_usage(const char *list, int *flag)
+{
+	int mask = 0;
+	const char *word, *p = list;
+
+	if (p && strncmp(p, "no", 2) == 0) {
+		*flag = BLKID_FLTR_NOTIN;
+		p += 2;
+	}
+
+	for (word = p; p && *p; p++) {
+		if (*p == ',' || *(p + 1) == '\0') {
+			if (!strncmp(word, "filesystem", 10))
+				mask |= BLKID_USAGE_FILESYSTEM;
+			else if (!strncmp(word, "raid", 4))
+				mask |= BLKID_USAGE_RAID;
+			else if (!strncmp(word, "crypto", 6))
+				mask |= BLKID_USAGE_CRYPTO;
+			else if (!strncmp(word, "other", 5))
+				mask |= BLKID_USAGE_OTHER;
+			else {
+				fprintf(stderr, "unknown usage keyword '%*s'\n",
+						(int) (p - word), word);
+				exit(1);
+			}
+			word = p + 1;
+		}
+	}
+	return mask;
+}
+
 int main(int argc, char **argv)
 {
 	blkid_cache cache = NULL;
@@ -369,6 +403,8 @@ int main(int argc, char **argv)
 	char *search_type = NULL, *search_value = NULL;
 	char *read = NULL;
 	char *write = NULL;
+	int fltr_usage = 0;
+	int fltr_flag = BLKID_FLTR_ONLYIN;
 	unsigned int numdev = 0, numtag = 0;
 	int version = 0;
 	int err = 4;
@@ -378,7 +414,7 @@ int main(int argc, char **argv)
 	int c;
 	blkid_loff_t offset = 0, size = 0;
 
-	while ((c = getopt (argc, argv, "c:f:ghlL:o:O:ps:S:t:U:w:v")) != EOF)
+	while ((c = getopt (argc, argv, "c:f:ghlL:o:O:ps:S:t:u:U:w:v")) != EOF)
 		switch (c) {
 		case 'c':
 			if (optarg && !*optarg)
@@ -392,6 +428,9 @@ int main(int argc, char **argv)
 			eval++;
 			search_value = strdup(optarg);
 			search_type = strdup("LABEL");
+			break;
+		case 'u':
+			fltr_usage = list_to_usage(optarg, &fltr_flag);
 			break;
 		case 'U':
 			eval++;
@@ -509,6 +548,9 @@ int main(int argc, char **argv)
 				BLKID_PROBREQ_LABEL | BLKID_PROBREQ_UUID |
 				BLKID_PROBREQ_TYPE | BLKID_PROBREQ_SECTYPE |
 				BLKID_PROBREQ_USAGE | BLKID_PROBREQ_VERSION);
+		if (fltr_usage &&
+		    blkid_probe_filter_usage(pr, fltr_flag, fltr_usage))
+			goto exit;
 
 		for (i = 0; i < numdev; i++)
 			err += lowprobe_device(pr, devices[i],

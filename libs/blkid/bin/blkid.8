@@ -40,6 +40,8 @@ blkid \- command\-line utility to locate/print block device attributes
 .IR size ]
 .RB [ \-o
 .IR format ]
+.RB [ \-u
+.IR list ]
 .I device
 [\fIdevice\fR ...]
 
@@ -93,6 +95,20 @@ udev symlinks (depends on setting in /etc/blkid.conf). Avoid to use the
 symlinks directly. It is not reliable to use the symlinks without verification.
 The \fB-L\fR option is portable and works on systems with and without udev.
 .TP
+.B \-u " list "
+Restrict probing functions to defined (comma separated) list of "usage" types.
+Supported usage types are: filesystem, raid, crypto and other. The list can be
+prefixed with "no" to specify the usage types which should be ignored. For example:
+.sp
+  blkid -p -u filesystem,other /dev/sda1
+.sp
+probes for all filesystems and others (e.g. swap) formats, and
+.sp
+  blkid -p -u noraid /dev/sda1
+.sp
+probes for all supported formats exclude RAIDs. This option is useful with
+\fB-p\fR only.
+.TP
 .B \-U " uuid "
 Look up one device that uses the uuid. For more details see the \fB-L\fR option.
 .TP
@@ -138,7 +154,7 @@ In order to just refresh the cache without showing any tokens, use
 with no other options.
 .TP
 .BI \-S " bytes"
-Ooverwrite device/file size (only useful with \fB-p\fR).
+Overwrite device/file size (only useful with \fB-p\fR).
 .TP
 .BI \-t " NAME" = "value"
 Search for block devices with tokens named

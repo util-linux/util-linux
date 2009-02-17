@@ -13,18 +13,9 @@
     - test blkid within udev rules
 
 
- - add command line interface for blkid_probe_filter_usage():
-
-	# blkid -p -o udev --filter-usage filesystems
-
-        # blkid -p -o udev --filter-usage noraid
-
-   and blkid_probe_filter_types():
+ - add command line interface for blkid_probe_filter_types():
 
        # blkid -p -o udev --filter-type nofat
-
-   note that "--filter-usage" is necessary for compatibility with vol_id where
-   we in udev rules use things like "vol_id --skip-raid"
 
  - (?) we need to ignore cache and config files when the files are writable
    for non-root users and the library is linked with suid programs
