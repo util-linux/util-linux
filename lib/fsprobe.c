@@ -14,6 +14,7 @@
 #include "pathnames.h"
 #include "fsprobe.h"
 
+#if defined(HAVE_BLKID_EVALUATE_SPEC) || defined(HAVE_LIBVOLUME_ID)
 /* ask kernel developers why we need such ugly open() method... */
 static int
 open_device(const char *devname)
@@ -34,6 +35,7 @@ open_device(const char *devname)
 
 	return -1;
 }
+#endif
 
 /*
  * Parses NAME=value, returns -1 on parse error, 0 success. The success is also
