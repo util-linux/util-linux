@@ -15,19 +15,17 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="mkfs endianness"
 
-TS_COMPONENT="mkfs.cramfs"
-TS_DESC="endianness-mkfs"
-
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 ts_skip_nonroot
 
 set -o pipefail
 
-IMAGE_DATA="$TS_OUTDIR/cramfs-endianness-data"
-IMAGE_CREATED="$TS_OUTDIR/cramfs.img"		#Image created during the test and compared against the known images.
+IMAGE_DATA="$TS_OUTDIR/${TS_TESTNAME}-data"
+IMAGE_CREATED="$TS_OUTDIR/${TS_TESTNAME}-cramfs.img"	#Image created during the test and compared against the known images.
 
 test_image() {
 	local TO_ENDIANNESS="$1"; shift
