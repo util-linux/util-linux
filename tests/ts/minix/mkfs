@@ -14,26 +14,32 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="mkfs"
 
-TS_COMPONENT="minix"
-TS_DESC="fsck"
-
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 ts_skip_nonroot
 
 set -o pipefail
 
-IMAGE="$TS_OUTDIR/minix-loop.img"
+IMAGE="$TS_OUTDIR/${TS_TESTNAME}-loop.img"
 DEVICE=$(ts_device_init)
 
 ts_log "create minix fs"
 $TS_CMD_MKMINIX $DEVICE 2>&1 >> $TS_OUTPUT
 
-ts_log "fsck minix fs"
-$TS_CMD_FSCKMINIX $DEVICE 2>&1 >> $TS_OUTPUT
+ts_log "create mountpoint dir"
+[ -d "$TS_MOUNTPOINT" ] || mkdir -p $TS_MOUNTPOINT
 
+ts_log "mount the filesystem"
+$TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
+
+# check it
+ts_is_mounted $DEVICE || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE
+
+ts_log "umount the image"
+$TS_CMD_UMOUNT $DEVICE
 ts_device_deinit $DEVICE
 ts_finalize
 
