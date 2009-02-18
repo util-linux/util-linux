@@ -2,7 +2,8 @@ mount: fstab path: "/etc/fstab"
 mount: mtab path:  "/etc/mtab"
 mount: lock path:  "/etc/mtab~"
 mount: temp path:  "/etc/mtab.tmp"
-mount: no LABEL=, no UUID=, going to mount /foo by path
+mount: UID:        0
+mount: eUID:       0
 mount: spec:  "/foo"
 mount: node:  "/bar"
 mount: types: "mytest"
