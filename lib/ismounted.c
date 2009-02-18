@@ -190,11 +190,14 @@ int main(int argc, char **argv)
 {
 	if (argc < 2) {
 		fprintf(stderr, "Usage: %s device\n", argv[0]);
-		exit(1);
+		return EXIT_FAILURE;
 	}
 
-	if (is_mounted(argv[1]))
-		printf("\t%s is mounted.\n", argv[1]);
-	exit(0);
+	if (is_mounted(argv[1])) {
+		printf("mounted\n");
+		return EXIT_SUCCESS;
+	}
+	printf("not mounted\n");
+	return EXIT_FAILURE;
 }
 #endif /* DEBUG */

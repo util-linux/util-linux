@@ -9,6 +9,8 @@ TS_HELPER_PATHS="$TS_TOPDIR/helpers/test_pathnames"
 TS_HELPER_BYTESWAP="$TS_TOPDIR/helpers/test_byteswap"
 TS_HELPER_MD5="$TS_TOPDIR/helpers/test_md5"
 
+TS_HELPER_ISMOUNTED="$TOPDIR/lib/test_ismounted"
+
 # external commands
 TS_ECMD_BLKID="@BLKID@"
 TS_ECMD_VOLID="@VOLID@"
