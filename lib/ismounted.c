@@ -17,6 +17,7 @@
 #include <sys/stat.h>
 #include <ctype.h>
 
+#include "pathnames.h"
 #include "ismounted.h"
 
 /*
@@ -66,7 +67,7 @@ static int check_mntent_file(const char *mtab_file, const char *file,
 	int		retval = 0;
 	dev_t		file_dev=0, file_rdev=0;
 	ino_t		file_ino=0;
-	FILE 		*f;
+	FILE		*f;
 	char		buf[1024], *device = 0, *mnt_dir = 0, *cp;
 
 	*mount_flags = 0;
@@ -172,13 +173,13 @@ int is_mounted(const char *file)
 	int	mount_flags = 0;
 
 #ifdef __linux__
-	retval = check_mntent_file("/proc/mounts", file, &mount_flags);
+	retval = check_mntent_file(_PATH_PROC_MOUNTS, file, &mount_flags);
 	if (retval)
 		return 0;
 	if (mount_flags)
 		return 1;
 #endif /* __linux__ */
-	retval = check_mntent_file("/etc/mtab", file, &mount_flags);
+	retval = check_mntent_file(_PATH_MOUNTED, file, &mount_flags);
 	if (retval)
 		return 0;
 	return mount_flags;

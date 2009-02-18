@@ -1110,10 +1110,10 @@ static void PRS(int argc, char *argv[])
 				 * Check to see if we failed because
 				 * /proc/partitions isn't found.
 				 */
-				if (access("/proc/partitions", R_OK) < 0) {
-					fprintf(stderr, "Couldn't open /proc/partitions: %s\n",
-						strerror(errno));
-					fprintf(stderr, "Is /proc mounted?\n");
+				if (access(_PATH_PROC_PARTITIONS, R_OK) < 0) {
+					fprintf(stderr, _("Couldn't open %s: %s\n"),
+						_PATH_PROC_PARTITIONS, strerror(errno));
+					fprintf(stderr, _("Is /proc mounted?\n"));
 					exit(EXIT_ERROR);
 				}
 				/*
@@ -1122,10 +1122,10 @@ static void PRS(int argc, char *argv[])
 				 */
 				if (geteuid())
 					fprintf(stderr,
-		"Must be root to scan for matching filesystems: %s\n", arg);
+		_("Must be root to scan for matching filesystems: %s\n"), arg);
 				else
 					fprintf(stderr,
-		"Couldn't find matching filesystem: %s\n", arg);
+		_("Couldn't find matching filesystem: %s\n"), arg);
 				exit(EXIT_ERROR);
 			}
 			devices[num_devices++] = dev ? dev : string_copy(arg);
@@ -1253,7 +1253,7 @@ int main(int argc, char *argv[])
 	PRS(argc, argv);
 
 	if (!notitle)
-		printf("fsck from %s\n", PACKAGE_STRING);
+		printf(_("fsck from %s\n"), PACKAGE_STRING);
 
 	fstab = getenv("FSTAB_FILE");
 	if (!fstab)
@@ -1265,7 +1265,7 @@ int main(int argc, char *argv[])
 		fsck_path = malloc (strlen (fsck_prefix_path) + 1 +
 				    strlen (oldpath) + 1);
 		if (!fsck_path) {
-			fprintf(stderr, "%s: Unable to allocate memory for fsck_path\n", progname);
+			fprintf(stderr, _("%s: Unable to allocate memory for fsck_path\n"), progname);
 			exit(EXIT_ERROR);
 		}
 		strcpy (fsck_path, fsck_prefix_path);
@@ -1323,3 +1323,4 @@ int main(int argc, char *argv[])
 	fsprobe_exit();
 	return status;
 }
+
