@@ -1,3 +1,4 @@
+#!/bin/bash
 #
 # Copyright (C) 2008 Cai Qian <qcai@redhat.com>
 #
@@ -16,19 +17,25 @@
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #
-. ./commands.sh
-. ./functions.sh
-
-TS_COMPONENT="lscpu"
+TS_TOPDIR="$(dirname $0)/../.."
+. $TS_TOPDIR/functions.sh
 
 ts_init "$*"
 
-# Architecture information is not applicable with -s.
-"${TS_CMD_LSCPU}" -s "${TS_INPUT}" | grep -v "Architecture" \
- >"${TS_OUTPUT}" 2>&1
+for name in $(ls $TS_SELF/proc-dumps/ | sort); do
+	path=$TS_SELF/proc-dumps/$name
+	ts_init_subtest $name
 
-echo >>"${TS_OUTPUT}"
+	# Architecture information is not applicable with -s.
+	"${TS_CMD_LSCPU}" -s "${path}" | grep -v "Architecture" \
+	 >"${TS_OUTPUT}" 2>&1
 
-"${TS_CMD_LSCPU}" -p -s "${TS_INPUT}" >>"${TS_OUTPUT}" 2>&1
+	echo >>"${TS_OUTPUT}"
+
+	"${TS_CMD_LSCPU}" -p -s "${path}" >>"${TS_OUTPUT}" 2>&1
+
+	ts_finalize_subtest
+done
 
 ts_finalize
+

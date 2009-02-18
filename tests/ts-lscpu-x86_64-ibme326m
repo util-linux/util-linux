@@ -1,3 +1,0 @@
-#!/bin/bash
-export TS_DESC=x86_64-ibme326m
-. ./ts-lscpu.sh

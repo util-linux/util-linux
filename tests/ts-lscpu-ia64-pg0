@@ -1,3 +1,0 @@
-#!/bin/bash
-export TS_DESC=ia64-pg0
-. ./ts-lscpu.sh

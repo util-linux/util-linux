@@ -1,3 +1,0 @@
-#!/bin/bash
-export TS_DESC=i386-intels5000phb
-. ./ts-lscpu.sh

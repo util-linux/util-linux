@@ -1,3 +1,0 @@
-#!/bin/bash
-export TS_DESC=ia64-hprx1620
-. ./ts-lscpu.sh
