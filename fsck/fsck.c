@@ -44,7 +44,7 @@
 #include <malloc.h>
 #include <signal.h>
 
-#include <blkid.h>
+#include "fsprobe.h"
 
 #include "nls.h"
 #include "pathnames.h"
@@ -107,7 +107,6 @@ struct fs_info *filesys_info = NULL, *filesys_last = NULL;
 struct fsck_instance *instance_list;
 const char *fsck_prefix_path = "/sbin:/sbin/fs.d:/sbin/fs:/etc/fs:/etc";
 char *fsck_path = 0;
-blkid_cache cache = NULL;
 
 static char *string_copy(const char *s)
 {
@@ -285,7 +284,7 @@ static int parse_fstab_line(char *line, struct fs_info **ret_fs)
 	parse_escape(freq);
 	parse_escape(passno);
 
-	dev = blkid_get_devname(cache, device, NULL);
+	dev = fsprobe_get_devname_by_spec(device);
 	if (dev)
 		device = dev;
 
@@ -310,7 +309,7 @@ static void interpret_type(struct fs_info *fs)
 
 	if (strcmp(fs->type, "auto") != 0)
 		return;
-	t = blkid_get_tag_value(cache, "TYPE", fs->device);
+	t = fsprobe_get_fstype_by_devname(fs->device);
 	if (t) {
 		free(fs->type);
 		fs->type = t;
@@ -1105,7 +1104,7 @@ static void PRS(int argc, char *argv[])
 					progname);
 				exit(EXIT_ERROR);
 			}
-			dev = blkid_get_devname(cache, arg, NULL);
+			dev = fsprobe_get_devname_by_spec(arg);
 			if (!dev && strchr(arg, '=')) {
 				/*
 				 * Check to see if we failed because
@@ -1250,7 +1249,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	blkid_get_cache(&cache, NULL);
+	fsprobe_init();
 	PRS(argc, argv);
 
 	if (!notitle)
@@ -1321,6 +1320,6 @@ int main(int argc, char *argv[])
 	}
 	status |= wait_many(FLAG_WAIT_ALL);
 	free(fsck_path);
-	blkid_put_cache(cache);
+	fsprobe_exit();
 	return status;
 }
