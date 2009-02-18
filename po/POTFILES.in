@@ -1,4 +1,5 @@
 disk-utils/blockdev.c
+disk-utils/cramfs_common.c
 disk-utils/elvtune.c
 disk-utils/fdformat.c
 disk-utils/fsck.cramfs.c
@@ -22,6 +23,8 @@ fdisk/i386_sys_types.c
 fdisk/partitiontype.c
 fdisk/partname.c
 fdisk/sfdisk.c
+fsck/base_device.c
+fsck/fsck.c
 getopt/getopt.c
 hwclock/clock-ppc.c
 hwclock/cmos.c
@@ -29,7 +32,10 @@ hwclock/hwclock.c
 hwclock/kd.c
 hwclock/rtc.c
 lib/blkdev.c
+lib/canonicalize.c
 lib/env.c
+lib/fsprobe.c
+lib/ismounted.c
 lib/linux_version.c
 lib/md5.c
 lib/setproctitle.c
@@ -64,15 +70,12 @@ misc-utils/scriptreplay.c
 misc-utils/setterm.c
 misc-utils/whereis.c
 misc-utils/write.c
-mount/fsprobe_blkid.c
-mount/fsprobe.c
-mount/fsprobe_volumeid.c
+mount/devname.c
 mount/fstab.c
 mount/getusername.c
 mount/lomount.c
 mount/mount.c
 mount/mount_mntent.c
-mount/realpath.c
 mount/sundries.c
 mount/swapon.c
 mount/umount.c
