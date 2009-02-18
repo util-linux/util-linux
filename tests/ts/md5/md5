@@ -1,7 +1,7 @@
 #!/bin/bash
 
 #
-# Copyright (C) 2007 Karel Zak <kzak@redhat.com>
+# Copyright (C) 2009 Karel Zak <kzak@redhat.com>
 #
 # This file is part of util-linux-ng.
 #
@@ -15,21 +15,16 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
+TS_TOPDIR="$(dirname $0)/../.."
 
-TS_COMPONENT="md5"
-TS_DESC=""
-
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
+
 > $TS_OUTPUT
 
-MY_MD5_UTIL="$TS_HELPER_MD5"
-#MY_MD5_UTIL="md5sum"
-
-cat $TS_INPUT | while read data
+cat $TS_SELF/data | while read data
 do
-	echo -n $data | $MY_MD5_UTIL >> $TS_OUTPUT
+	echo -n $data | $TS_HELPER_MD5 >> $TS_OUTPUT
 done
 
 ts_finalize
