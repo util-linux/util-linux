@@ -107,7 +107,7 @@ blkdev_get_sector_size(int fd, int *sector_size)
 }
 
 
-#ifdef MAIN_TEST_BLKDEV
+#ifdef TEST_PROGRAM
 #include <stdio.h>
 #include <stdlib.h>
 #include <fcntl.h>

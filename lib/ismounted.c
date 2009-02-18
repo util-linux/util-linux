@@ -185,7 +185,7 @@ int is_mounted(const char *file)
 	return mount_flags;
 }
 
-#ifdef DEBUG
+#ifdef TEST_PROGRAM
 int main(int argc, char **argv)
 {
 	if (argc < 2) {
