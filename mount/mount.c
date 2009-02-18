@@ -2174,6 +2174,8 @@ main(int argc, char *argv[]) {
 		printf("mount: mtab path:  \"%s\"\n", _PATH_MOUNTED);
 		printf("mount: lock path:  \"%s\"\n", _PATH_MOUNTED_LOCK);
 		printf("mount: temp path:  \"%s\"\n", _PATH_MOUNTED_TMP);
+		printf("mount: UID:        %d\n", getuid());
+		printf("mount: eUID:       %d\n", geteuid());
 	}
 
 	argc -= optind;
