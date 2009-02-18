@@ -79,7 +79,9 @@ AC_CHECK_HEADERS(
 	linux/tiocl.h \
 	linux/version.h \
 	locale.h \
+	stdlib.h \
 	pty.h \
+	mntent.h \
 	rpcsvc/nfs_prot.h \
 	scsi/scsi.h \
 	stdlib.h \
@@ -205,7 +207,6 @@ AC_ARG_ENABLE([mount],
   AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
   [], enable_mount=check
 )
-
 build_mount=yes
 if test "${enable_mount}" = "no"; then
   build_mount=no
@@ -217,8 +218,19 @@ else
   AC_MSG_WARN([non-linux system; do not build mount utilities])
   build_mount=no
 fi
-
 AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
+
+
+AC_ARG_ENABLE([fsck],
+  AS_HELP_STRING([--enable-fsck], [do build fsck]),
+  [], enable_fsck=no
+)
+if test "x$enable_fsck" = xyes; then
+  if test "x$have_blkid" = xno && test "x$have_volume_id" = xno; then
+    AC_MSG_ERROR([libblkid or libvolume_id is needed to build util-linux-ng fsck])
+  fi
+fi
+AM_CONDITIONAL(BUILD_FSCK, test "x$enable_fsck" = xyes)
 
 
 dnl UTIL_PKG_STATIC(VARIABLE, MODULES)
@@ -751,6 +763,7 @@ AC_CONFIG_FILES([
 Makefile
 disk-utils/Makefile
 fdisk/Makefile
+fsck/Makefile
 getopt/Makefile
 hwclock/Makefile
 include/Makefile

@@ -29,6 +29,10 @@ if BUILD_MOUNT
 SUBDIRS += mount
 endif
 
+if BUILD_FSCK
+SUBDIRS += fsck
+endif
+
 ACLOCAL_AMFLAGS = -I m4
 
 EXTRA_DIST = \
