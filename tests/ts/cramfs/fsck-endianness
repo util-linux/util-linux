@@ -15,12 +15,10 @@
 # MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 # GNU General Public License for more details.
 #
-. ./commands.sh
-. ./functions.sh
+TS_TOPDIR="$(dirname $0)/../.."
+TS_DESC="fsck endianness"
 
-TS_COMPONENT="mkfs.cramfs"
-TS_DESC="endianness-fsck"
-
+. $TS_TOPDIR/functions.sh
 ts_init "$*"
 ts_skip_nonroot
 
@@ -29,11 +27,11 @@ set -o pipefail
 ($TS_CMD_FSCKCRAMFS -x TEST_X_FLAG 2>&1 || true) \
 	| grep -q "compiled without -x support" && ts_skip "fsck: compiled without -x support"
 
-IMAGE_LITTLE="$TS_INPUTDIR/cramfs-little.img"	#Known good little endian image
-IMAGE_BIG="$TS_INPUTDIR/cramfs-big.img"		#Known good big endian image
+IMAGE_LITTLE="$TS_SELF/cramfs-little.img"	#Known good little endian image
+IMAGE_BIG="$TS_SELF/cramfs-big.img"		#Known good big endian image
 
-IMAGE_CREATED="$TS_OUTDIR/cramfs.img"		#Image created during the test and compared against the known images.
-IMAGE_DATA="$TS_OUTDIR/cramfs-endianness-data"
+IMAGE_CREATED="$TS_OUTDIR/${TS_TESTNAME}-cramfs.img"	#Image created during the test and compared against the known images.
+IMAGE_DATA="$TS_OUTDIR/${TS_TESTNAME}-data"
 
 test_image() {
 	local FROM_ENDIANNESS="$1"; shift
