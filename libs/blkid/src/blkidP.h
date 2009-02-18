@@ -293,6 +293,7 @@ extern int blkid_flush_cache(blkid_cache cache);
 
 /* cache */
 extern char *blkid_safe_getenv(const char *arg);
+extern char *blkid_get_cache_filename(struct blkid_config *conf);
 
 /*
  * Functions to create and find a specific tag type: tag.c

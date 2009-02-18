@@ -158,7 +158,7 @@ failed:
 }
 
 static char *evaluate_by_scan(const char *token, const char *value,
-		blkid_cache *cache, const char *cachefile)
+		blkid_cache *cache, struct blkid_config *conf)
 {
 	blkid_cache c = cache ? *cache : NULL;
 	char *res;
@@ -166,8 +166,11 @@ static char *evaluate_by_scan(const char *token, const char *value,
 	DBG(DEBUG_EVALUATE,
 	    printf("evaluating by blkid scan %s=%s\n", token, value));
 
-	if (!c)
+	if (!c) {
+		char *cachefile = blkid_get_cache_filename(conf);
 		blkid_get_cache(&c, cachefile);
+		free(cachefile);
+	}
 	if (!c)
 		return NULL;
 
@@ -226,7 +229,7 @@ char *blkid_evaluate_spec(const char *token, const char *value, blkid_cache *cac
 		if (conf->eval[i] == BLKID_EVAL_UDEV)
 			ret = evaluate_by_udev(token, value, conf->uevent);
 		else if (conf->eval[i] == BLKID_EVAL_SCAN)
-			ret = evaluate_by_scan(token, value, cache, conf->cachefile);
+			ret = evaluate_by_scan(token, value, cache, conf);
 		if (ret)
 			break;
 	}

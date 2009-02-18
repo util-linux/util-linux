@@ -97,6 +97,27 @@ void blkid_debug_init(int mask)
 }
 #endif
 
+/* returns allocated path to cache */
+char *blkid_get_cache_filename(struct blkid_config *conf)
+{
+	char *filename;
+
+	filename = blkid_safe_getenv("BLKID_FILE");
+	if (filename)
+		filename = blkid_strdup(filename);
+	else if (conf)
+		filename = blkid_strdup(conf->cachefile);
+	else {
+		struct blkid_config *c = blkid_read_config(NULL);
+		if (!c)
+			return -BLKID_ERR_PARAM;
+		filename = c->cachefile;  /* already allocated */
+		c->cachefile = NULL;
+		blkid_free_config(c);
+	}
+	return filename;
+}
+
 int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
 {
 	blkid_cache cache;
@@ -114,21 +135,12 @@ int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
 
 	if (filename && !*filename)
 		filename = NULL;
-	if (!filename)
-		filename = blkid_safe_getenv("BLKID_FILE");
 	if (filename)
 		cache->bic_filename = blkid_strdup(filename);
-	else {
-		struct blkid_config *conf = blkid_read_config(NULL);
-		if (!conf)
-			return -BLKID_ERR_PARAM;
-		cache->bic_filename = conf->cachefile;
-		conf->cachefile = NULL;
-		blkid_free_config(conf);
-	}
+	else
+		cache->bic_filename = blkid_get_cache_filename(NULL);
 
 	blkid_read_cache(cache);
-
 	*ret_cache = cache;
 	return 0;
 }
