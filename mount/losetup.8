@@ -19,6 +19,8 @@ Delete loop:
 .in +5
 .B "losetup \-d"
 .I loop_device
+.RB [ \fIloop_device\fP
+.RB ...]
 .sp
 .in -5
 Print name of first unused loop device:
@@ -71,7 +73,7 @@ and finds the module that knows how to perform that encryption.
 .IP "\fB\-a, \-\-all\fP"
 show status of all loop devices
 .IP "\fB\-d, \-\-detach\fP"
-detach the file or device associated with the specified loop device
+detach the file or device associated with the specified loop device(s)
 .IP "\fB\-e, \-E, \-\-encryption \fIencryption_type\fP"
 enable data encryption with specified name or number
 .IP "\fB\-f, \-\-find\fP"
