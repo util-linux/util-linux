@@ -7,19 +7,22 @@ Get info:
 .sp
 .in +5
 .B losetup
-.I loop_device
+.I loopdev
 .sp
 .B losetup -a
 .sp
-.B losetup -j <file> [-o offset]
+.B losetup -j
+.I file
+.RB [ \-o
+.IR offset ]
 .sp
 .in -5
 Delete loop:
 .sp
 .in +5
 .B "losetup \-d"
-.I loop_device
-.RB [ \fIloop_device\fP
+.I loopdev
+.RB [ \fIloopdev\fP
 .RB ...]
 .sp
 .in -5
@@ -39,11 +42,11 @@ Setup loop device:
 .IR offset ]
 .RB [ \-\-sizelimit
 .IR limit ]
+.in +8
 .RB [ \-p
 .IR pfd ]
 .RB [ \-r ]
-.in +8
-.RB { \-f [ \-\-show ] | \fIloop_device\fP }
+.RB { \-f [ \-\-show ] | \fIloopdev\fP }
 .I file
 .in -13
 .ad b
@@ -51,7 +54,7 @@ Setup loop device:
 .B losetup
 is used to associate loop devices with regular files or block devices,
 to detach loop devices and to query the status of a loop device. If only the
-\fIloop_device\fP argument is given, the status of the corresponding loop
+\fIloopdev\fP argument is given, the status of the corresponding loop
 device is shown.
 
 .SS "Encryption"
@@ -72,7 +75,7 @@ and finds the module that knows how to perform that encryption.
 .SH OPTIONS
 .IP "\fB\-a, \-\-all\fP"
 show status of all loop devices
-.IP "\fB\-d, \-\-detach\fP"
+.IP "\fB\-d, \-\-detach\fP \fIloopdev\fP [\fIloopdev\fP ...]" 
 detach the file or device associated with the specified loop device(s)
 .IP "\fB\-e, \-E, \-\-encryption \fIencryption_type\fP"
 enable data encryption with specified name or number
