@@ -217,12 +217,9 @@ static void parse_escape(char *word)
 
 static void free_instance(struct fsck_instance *i)
 {
-	if (i->prog)
-		free(i->prog);
-	if (i->device)
-		free(i->device);
-	if (i->base_device)
-		free(i->base_device);
+	free(i->prog);
+	free(i->device);
+	free(i->base_device);
 	free(i);
 	return;
 }
@@ -294,8 +291,7 @@ static int parse_fstab_line(char *line, struct fs_info **ret_fs)
 	fs = create_fs_device(device, mntpnt, type ? type : "auto", opts,
 			      freq ? atoi(freq) : -1,
 			      passno ? atoi(passno) : -1);
-	if (dev)
-		free(dev);
+	free(dev);
 
 	if (!fs)
 		return -1;
