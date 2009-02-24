@@ -114,8 +114,7 @@ const char *normalize(const char *arg)
 	const char *argptr=arg;
 	char *bufptr;
 
-	if (BUFFER != NULL)
-		free(BUFFER);
+	free(BUFFER);
 
 	if (!quote) { /* Just copy arg */
 		BUFFER=our_malloc(strlen(arg)+1);
@@ -406,8 +405,7 @@ int main(int argc, char *argv[])
 			print_help();
 			exit(0);
 		case 'o':
-			if (optstr)
-				free(optstr);
+			free(optstr);
 			optstr=our_malloc(strlen(optarg)+1);
 			strcpy(optstr,optarg);
 			break;
@@ -415,8 +413,7 @@ int main(int argc, char *argv[])
 			add_long_options(optarg);
 			break;
 		case 'n':
-			if (name)
-				free(name);
+			free(name);
 			name=our_malloc(strlen(optarg)+1);
 			strcpy(name,optarg);
 			break;
