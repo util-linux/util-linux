@@ -45,8 +45,7 @@ void blkid_free_dev(blkid_dev dev)
 					   bit_tags);
 		blkid_free_tag(tag);
 	}
-	if (dev->bid_name)
-		free(dev->bid_name);
+	free(dev->bid_name);
 	free(dev);
 }
 
@@ -137,18 +136,14 @@ extern int blkid_dev_set_search(blkid_dev_iterate iter,
 	new_type = malloc(strlen(search_type)+1);
 	new_value = malloc(strlen(search_value)+1);
 	if (!new_type || !new_value) {
-		if (new_type)
-			free(new_type);
-		if (new_value)
-			free(new_value);
+		free(new_type);
+		free(new_value);
 		return -1;
 	}
 	strcpy(new_type, search_type);
 	strcpy(new_value, search_value);
-	if (iter->search_type)
-		free(iter->search_type);
-	if (iter->search_value)
-		free(iter->search_value);
+	free(iter->search_type);
+	free(iter->search_value);
 	iter->search_type = new_type;
 	iter->search_value = new_value;
 	return 0;
