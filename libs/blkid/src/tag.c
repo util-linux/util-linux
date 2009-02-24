@@ -204,7 +204,8 @@ int blkid_set_tag(blkid_dev dev, const char *name,
 errout:
 	if (t)
 		blkid_free_tag(t);
-	else free(val);
+	else
+		free(val);
 	if (head)
 		blkid_free_tag(head);
 	return -BLKID_ERR_MEM;
