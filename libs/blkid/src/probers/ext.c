@@ -359,8 +359,9 @@ static int check_for_modules(const char *fs_name)
 			*cp = 0;
 		else
 			continue;
-		if ((cp = strrchr(buf, '/')) != NULL)
-			cp++;
+		if ((cp = strrchr(buf, '/')) == NULL)
+			continue;
+		cp++;
 		i = strlen(cp);
 		if (i > 3) {
 			t = cp + i - 3;
