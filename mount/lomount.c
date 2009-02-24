@@ -156,8 +156,7 @@ looplist_open(struct looplist *ll, int flag)
 static void
 looplist_close(struct looplist *ll)
 {
-	if (ll->minors)
-		free(ll->minors);
+	free(ll->minors);
 	if (ll->proc)
 		fclose(ll->proc);
 	ll->minors = NULL;
