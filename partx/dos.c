@@ -1,4 +1,7 @@
 #include <stdio.h>
+
+#include "blkdev.h"
+
 #include "partx.h"
 #include "dos.h"
 
@@ -25,7 +28,7 @@ partition_size(struct partition *p) {
 
 static int
 read_extended_partition(int fd, struct partition *ep,
-			struct slice *sp, int ns)
+			struct slice *sp, int ns, int ssf)
 {
 	struct partition *p;
 	unsigned long start, here;
@@ -54,8 +57,8 @@ read_extended_partition(int fd, struct partition *ep,
 			if (partition_size(p) == 0 || is_extended(p->sys_type))
 				continue;
 			if (n < ns) {
-				sp[n].start = here + partition_start(p);
-				sp[n].size = partition_size(p);
+				sp[n].start = (here + partition_start(p)) * ssf;
+				sp[n].size = partition_size(p) * ssf;
 				n++;
 			} else {
 				fprintf(stderr,
@@ -89,6 +92,7 @@ read_dos_pt(int fd, struct slice all, struct slice *sp, int ns) {
 	unsigned long offset = all.start;
 	int i, n=0;
 	unsigned char *bp;
+	int ssf;
 
 	bp = getblock(fd, offset);
 	if (bp == NULL)
@@ -96,6 +100,13 @@ read_dos_pt(int fd, struct slice all, struct slice *sp, int ns) {
 
 	if (bp[510] != 0x55 || bp[511] != 0xaa)
 		return -1;
+
+	/* msdos PT depends sector size... */
+	if (blkdev_get_sector_size(fd, &ssf) != 0)
+		ssf = DEFAULT_SECTOR_SIZE;
+
+	/* ... but partx counts everything in 512-byte sectors */
+	ssf /= 512;
 
 	p = (struct partition *) (bp + 0x1be);
 	for (i=0; i<4; i++) {
@@ -107,8 +118,8 @@ read_dos_pt(int fd, struct slice all, struct slice *sp, int ns) {
 	for (i=0; i<4; i++) {
 		/* always add, even if zero length */
 		if (n < ns) {
-			sp[n].start = partition_start(p);
-			sp[n].size = partition_size(p);
+			sp[n].start = partition_start(p) * ssf;
+			sp[n].size = partition_size(p) * ssf;
 			n++;
 		} else {
 			fprintf(stderr,
@@ -120,7 +131,7 @@ read_dos_pt(int fd, struct slice all, struct slice *sp, int ns) {
 	p = (struct partition *) (bp + 0x1be);
 	for (i=0; i<4; i++) {
 		if (is_extended(p->sys_type))
-			n += read_extended_partition(fd, p, sp+n, ns-n);
+			n += read_extended_partition(fd, p, sp+n, ns-n, ssf);
 		p++;
 	}
 	return n;
