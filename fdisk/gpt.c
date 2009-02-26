@@ -76,12 +76,6 @@ typedef struct _GuidPartitionTableHeader_t {
 	uint8_t Reserved2[512 - 92];
 } __attribute__ ((packed)) GuidPartitionTableHeader_t;
 
-struct blkdev_ioctl_param {
-        unsigned int block;
-        size_t content_length;
-        char * block_contents;
-};
-
 static int
 _get_sector_size (int fd)
 {
@@ -131,46 +125,14 @@ last_lba(int fd)
 	return sectors - 1;
 }
 
-#ifdef __linux__
-static ssize_t
-read_lastoddsector(int fd, uint64_t lba, void *buffer, size_t count)
-{
-        int rc;
-        struct blkdev_ioctl_param ioctl_param;
-
-        if (!buffer) return 0;
-
-        ioctl_param.block = 0; /* read the last sector */
-        ioctl_param.content_length = count;
-        ioctl_param.block_contents = buffer;
-
-        rc = ioctl(fd, BLKGETLASTSECT, &ioctl_param);
-        if (rc == -1) perror("read failed");
-
-        return !rc;
-}
-#endif
-
 static ssize_t
 read_lba(int fd, uint64_t lba, void *buffer, size_t bytes)
 {
 	int sector_size = _get_sector_size(fd);
 	off_t offset = lba * sector_size;
-        ssize_t bytesread;
 
 	lseek(fd, offset, SEEK_SET);
-	bytesread = read(fd, buffer, bytes);
-
-#ifdef __linux__
-        /* Kludge.  This is necessary to read/write the last
-           block of an odd-sized disk, until Linux 2.5.x kernel fixes.
-           This is only used by gpt.c, and only to read
-           one sector, so we don't have to be fancy.
-        */
-        if (!bytesread && !(last_lba(fd) & 1) && lba == last_lba(fd))
-                bytesread = read_lastoddsector(fd, lba, buffer, bytes);
-#endif
-        return bytesread;
+	return read(fd, buffer, bytes);
 }
 
 static GuidPartitionTableHeader_t *

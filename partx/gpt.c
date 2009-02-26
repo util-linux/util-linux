@@ -38,16 +38,9 @@
 #include "partx.h"
 #include "bitops.h"
 
-#define BLKGETLASTSECT  _IO(0x12,108)   /* get last sector of block device */
 #define BLKGETSIZE _IO(0x12,96)	        /* return device size */
 #define BLKSSZGET  _IO(0x12,104)	/* get block device sector size */
 #define BLKGETSIZE64 _IOR(0x12,114,sizeof(uint64_t))	/* return device size in bytes (u64 *arg) */
-
-struct blkdev_ioctl_param {
-        unsigned int block;
-        size_t content_length;
-        char * block_contents;
-};
 
 /**
  * efi_crc32() - EFI version of crc32 function
@@ -184,44 +177,14 @@ last_lba(int filedes)
 	return sectors - 1;
 }
 
-
-static ssize_t
-read_lastoddsector(int fd, uint64_t lba, void *buffer, size_t count)
-{
-        int rc;
-        struct blkdev_ioctl_param ioctl_param;
-
-        if (!buffer) return 0; 
-
-        ioctl_param.block = 0; /* read the last sector */
-        ioctl_param.content_length = count;
-        ioctl_param.block_contents = buffer;
-
-        rc = ioctl(fd, BLKGETLASTSECT, &ioctl_param);
-        if (rc == -1) perror("read failed");
-
-        return !rc;
-}
-
 static ssize_t
 read_lba(int fd, uint64_t lba, void *buffer, size_t bytes)
 {
 	int sector_size = get_sector_size(fd);
 	off_t offset = lba * sector_size;
-        ssize_t bytesread;
 
 	lseek(fd, offset, SEEK_SET);
-	bytesread = read(fd, buffer, bytes);
-
-        /* Kludge.  This is necessary to read/write the last
-           block of an odd-sized disk, until Linux 2.5.x kernel fixes.
-           This is only used by gpt.c, and only to read
-           one sector, so we don't have to be fancy.
-        */
-        if (!bytesread && !(last_lba(fd) & 1) && lba == last_lba(fd)) {
-                bytesread = read_lastoddsector(fd, lba, buffer, bytes);
-        }
-        return bytesread;
+	return read(fd, buffer, bytes);
 }
 
 /**

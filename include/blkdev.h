@@ -28,8 +28,6 @@
 #define BLKELVGET  _IOR(0x12,106,size_t) /* elevator get */
 #define BLKELVSET  _IOW(0x12,107,size_t) /* elevator set */
 
-#define BLKGETLASTSECT _IO(0x12,108) /* get last sector of block device */
-
 #define BLKBSZGET  _IOR(0x12,112,size_t)
 #define BLKBSZSET  _IOW(0x12,113,size_t)
 #define BLKGETSIZE64 _IOR(0x12,114,size_t) /* return device size in bytes (u64 *arg) */
