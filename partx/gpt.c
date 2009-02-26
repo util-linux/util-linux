@@ -22,38 +22,21 @@
     Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
-#define _FILE_OFFSET_BITS 64
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
 #include <inttypes.h>
 #include <sys/stat.h>
-#include <sys/ioctl.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <errno.h>
+
+#include "blkdev.h"
 #include "crc32.h"
 #include "gpt.h"
 #include "partx.h"
 #include "bitops.h"
 
-#define BLKGETSIZE _IO(0x12,96)	        /* return device size */
-#define BLKSSZGET  _IO(0x12,104)	/* get block device sector size */
-#define BLKGETSIZE64 _IOR(0x12,114,sizeof(uint64_t))	/* return device size in bytes (u64 *arg) */
-
-/**
- * efi_crc32() - EFI version of crc32 function
- * @buf: buffer to calculate crc32 of
- * @len - length of buf
- *
- * Description: Returns EFI-style CRC32 value for @buf
- * 
- * This function uses the little endian Ethernet polynomial
- * but seeds the function with ~0, and xor's with ~0 at the end.
- * Note, the EFI Specification, v1.02, has a reference to
- * Dr. Dobbs Journal, May 1994 (actually it's in May 1992).
- */
 static inline uint32_t
 efi_crc32(const void *buf, unsigned long len)
 {
@@ -86,70 +69,25 @@ is_pmbr_valid(legacy_mbr *mbr)
 	return (signature && found);
 }
 
-
-/************************************************************
- * get_sector_size
- * Requires:
- *  - filedes is an open file descriptor, suitable for reading
- * Modifies: nothing
- * Returns:
- *  sector size, or 512.
- ************************************************************/
 static int
-get_sector_size(int filedes)
+get_sector_size (int fd)
 {
-	int rc, sector_size = 512;
+	int sector_size;
 
-	rc = ioctl(filedes, BLKSSZGET, &sector_size);
-	if (rc)
-		sector_size = 512;
+	if (blkdev_get_sector_size(fd, &sector_size) == -1)
+		return DEFAULT_SECTOR_SIZE;
 	return sector_size;
 }
 
-/************************************************************
- * _get_num_sectors
- * Requires:
- *  - filedes is an open file descriptor, suitable for reading
- * Modifies: nothing
- * Returns:
- *  Last LBA value on success 
- *  0 on error
- *
- * Try getting BLKGETSIZE64 and BLKSSZGET first,
- * then BLKGETSIZE if necessary.
- *  Kernels 2.4.15-2.4.18 and 2.5.0-2.5.3 have a broken BLKGETSIZE64
- *  which returns the number of 512-byte sectors, not the size of
- *  the disk in bytes. Fixed in kernels 2.4.18-pre8 and 2.5.4-pre3.
- ************************************************************/
 static uint64_t
-_get_num_sectors(int filedes)
+get_num_sectors(int fd)
 {
-	unsigned long sectors=0;
-	int rc;
-#if 0
-        uint64_t bytes=0;
+	unsigned long long bytes=0;
 
- 	rc = ioctl(filedes, BLKGETSIZE64, &bytes);
-	if (!rc)
-		return bytes / get_sector_size(filedes);
-#endif
-        rc = ioctl(filedes, BLKGETSIZE, &sectors);
-        if (rc)
-                return 0;
-        
-	return sectors;
+	if (blkdev_get_size(fd, &bytes) == -1)
+		return 0;
+	return bytes / get_sector_size(fd);
 }
-
-/************************************************************
- * last_lba(): return number of last logical block of device
- * 
- * @fd
- * 
- * Description: returns Last LBA value on success, 0 on error.
- * Notes: The value st_blocks gives the size of the file
- *        in 512-byte blocks, which is OK if
- *        EFI_BLOCK_SIZE_SHIFT == 9.
- ************************************************************/
 
 static uint64_t
 last_lba(int filedes)
@@ -166,7 +104,7 @@ last_lba(int filedes)
 	}
 
 	if (S_ISBLK(s.st_mode)) {
-		sectors = _get_num_sectors(filedes);
+		sectors = get_num_sectors(filedes);
 	} else {
 		fprintf(stderr,
 			"last_lba(): I don't know how to handle files with mode %x\n",
