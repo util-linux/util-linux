@@ -212,6 +212,7 @@ unsigned long long sector_offset = 1, extended_offset = 0, sectors;
 unsigned int	heads,
 	cylinders,
 	sector_size = DEFAULT_SECTOR_SIZE,
+	sector_factor = 1,
 	user_set_sector_size = 0,
 	units_per_sector = 1,
 	display_in_cyl_units = 1;
@@ -905,11 +906,10 @@ get_partition_table_geometry(void) {
 
 void
 get_geometry(int fd, struct geom *g) {
-	int sec_fac;
 	unsigned long long llsectors, llcyls;
 
 	get_sectorsize(fd);
-	sec_fac = sector_size / 512;
+	sector_factor = sector_size / 512;
 	guess_device_type(fd);
 	heads = cylinders = sectors = 0;
 	kern_heads = kern_sectors = 0;
@@ -934,7 +934,7 @@ get_geometry(int fd, struct geom *g) {
 	if (dos_compatible_flag)
 		sector_offset = sectors;
 
-	llcyls = total_number_of_sectors / (heads * sectors * sec_fac);
+	llcyls = total_number_of_sectors / (heads * sectors * sector_factor);
 	cylinders = llcyls;
 	if (cylinders != llcyls)	/* truncated? */
 		cylinders = ~0;
@@ -1640,7 +1640,7 @@ list_disk_geometry(void) {
 	       heads, sectors, cylinders);
 	if (units_per_sector == 1)
 		printf(_(", total %llu sectors"),
-		       total_number_of_sectors / (sector_size/512));
+		       total_number_of_sectors / sector_factor);
 	printf("\n");
 	printf(_("Units = %s of %d * %d = %d bytes\n"),
 	       str_units(PLURAL),
@@ -2030,7 +2030,7 @@ add_partition(int n, int sys) {
 		if (display_in_cyl_units || !total_number_of_sectors)
 			llimit = heads * sectors * cylinders - 1;
 		else
-			llimit = total_number_of_sectors - 1;
+			llimit = (total_number_of_sectors / sector_factor) - 1;
 		limit = llimit;
 		if (limit != llimit)
 			limit = 0x7fffffff;
