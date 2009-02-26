@@ -42,7 +42,8 @@
 #include <linux/compiler.h>
 #endif
 #include <linux/blkpg.h>
-#define BLKGETSIZE _IO(0x12,96)    /* return device size */
+
+#include "blkdev.h"
 
 #include "partx.h"
 #include "crc32.h"
@@ -99,7 +100,7 @@ int force_gpt=0;
 int
 main(int argc, char **argv){
         int fd, fd2, c, i, j, k, n;
-	long size;
+	unsigned long long size;
 	struct hd_geometry g;
 	struct slice all;
         struct blkpg_ioctl_arg a;
@@ -240,11 +241,11 @@ main(int argc, char **argv){
 	}
 	all.start = g.start;
 
-	if(ioctl(fd2, BLKGETSIZE, &size)) {
-		perror("BLKGETSIZE");
+	if (blkdev_get_sectors(fd2, &size) != 0) {
+		perror("partx");
 		exit(1);
 	}
-	all.size = size;
+	all.size = (unsigned int) size;
 
 	if (verbose)
 		printf("device %s: start %d size %d\n",
