@@ -217,7 +217,7 @@ unsigned int	heads,
 	units_per_sector = 1,
 	display_in_cyl_units = 1;
 
-unsigned long long total_number_of_sectors;
+unsigned long long total_number_of_sectors;	/* (!) 512-byte sectors */
 
 #define dos_label (!sun_label && !sgi_label && !aix_label && !mac_label && !osf_label)
 int	sun_label = 0;			/* looking at sun disklabel */
@@ -682,10 +682,12 @@ warn_cylinders(void) {
 		fprintf(stderr, _("\n"
 "WARNING: The size of this disk is %d.%d TB (%llu bytes).\n"
 "DOS partition table format can not be used on drives for volumes\n"
-"larger than 2.2 TB (2199023255040 bytes). Use parted(1) and GUID \n"
+"larger than (%llu bytes) for %d-byte sectors. Use parted(1) and GUID \n"
 "partition table format (GPT).\n\n"),
 			hectogiga / 10, hectogiga % 10,
-			total_number_of_sectors << 9);
+			total_number_of_sectors << 9,
+			(unsigned long long ) UINT_MAX * sector_size,
+			sector_size);
 	}
 }
 
@@ -906,7 +908,7 @@ get_partition_table_geometry(void) {
 
 void
 get_geometry(int fd, struct geom *g) {
-	unsigned long long llsectors, llcyls;
+	unsigned long long llcyls;
 
 	get_sectorsize(fd);
 	sector_factor = sector_size / 512;
@@ -925,10 +927,8 @@ get_geometry(int fd, struct geom *g) {
 		pt_sectors ? pt_sectors :
 		kern_sectors ? kern_sectors : 63;
 
-	if (blkdev_get_sectors(fd, &llsectors) == -1)
-		llsectors = 0;
-
-	total_number_of_sectors = llsectors;
+	if (blkdev_get_sectors(fd, &total_number_of_sectors) == -1)
+		total_number_of_sectors = 0;
 
 	sector_offset = 1;
 	if (dos_compatible_flag)
@@ -1938,7 +1938,8 @@ check(int n, unsigned int h, unsigned int s, unsigned int c,
 static void
 verify(void) {
 	int i, j;
-	unsigned long total = 1;
+	unsigned long long total = 1;
+	unsigned long long n_sectors = (total_number_of_sectors / sector_factor);
 	unsigned long long first[partitions], last[partitions];
 	struct partition *p;
 
@@ -2001,12 +2002,12 @@ verify(void) {
 		}
 	}
 
-	if (total > total_number_of_sectors)
-		printf(_("Total allocated sectors %ld greater than the maximum"
-			" %lld\n"), total, total_number_of_sectors);
-	else if (total < total_number_of_sectors)
-		printf(_("%lld unallocated sectors\n"),
-		       total_number_of_sectors - total);
+	if (total > n_sectors)
+		printf(_("Total allocated sectors %llu greater than the maximum"
+			" %llu\n"), total, n_sectors);
+	else if (total < n_sectors)
+		printf(_("%lld unallocated %d-byte sectors\n"),
+		       n_sectors - total, sector_size);
 }
 
 static void
