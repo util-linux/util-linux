@@ -7,6 +7,12 @@
  * add mllockall() and SCHED_FIFO to hwclock,
    see http://lkml.org/lkml/2008/10/12/132
 
+ * partx: copy sun.c, mac.c and dash.c from kpartx
+   git://git.kernel.org/pub/scm/linux/storage/multipath-tools/.git
+
+   It would be nice to merge kpartx and partx to the one project. We duplicate
+   a lot of code (include losetup code in kpartx).
+
  * swapon -s  -- LABELs support
 
    Although mkswap has recently been -L option to create a label nothing appears to
