@@ -316,28 +316,18 @@ swap_get_size(const char *hdr, const char *devname, unsigned int pagesize)
 }
 
 static int
-do_swapon(const char *orig_special, int prio, int canonic) {
-	int status;
+swapon_checks(const char *special)
+{
 	int reinitialize = 0;
 	struct stat st;
-	const char *special = orig_special;
-	int fd, sig;
-	char *hdr;
+	int fd = -1, sig;
+	char *hdr = NULL;
 	unsigned int pagesize;
 	unsigned long long devsize = 0;
 
-	if (verbose)
-		printf(_("%s on %s\n"), progname, orig_special);
-
-	if (!canonic) {
-		special = fsprobe_get_devname_by_spec(orig_special);
-		if (!special)
-			return cannot_find(orig_special);
-	}
-
 	if (stat(special, &st) < 0) {
 		warn(_("%s: stat failed"), special);
-		return -1;
+		goto err;
 	}
 
 	/* people generally dislike this warning - now it is printed
@@ -356,7 +346,7 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 		if (st.st_blocks * 512 < st.st_size) {
 			warnx(_("%s: skipping - it appears to have holes."),
 				special);
-			return -1;
+			goto err;
 		}
 		devsize = st.st_size;
 	}
@@ -364,25 +354,19 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 	fd = open(special, O_RDONLY);
 	if (fd == -1) {
 		warn(_("%s: open failed"), special);
-		return -1;
+		goto err;
 	}
 
-	if (S_ISBLK(st.st_mode)) {
-		if (blkdev_get_size(fd, &devsize)) {
-			warn(_("%s: get size failed"), special);
-			close(fd);
-			return -1;
-		}
+	if (S_ISBLK(st.st_mode) && blkdev_get_size(fd, &devsize)) {
+		warn(_("%s: get size failed"), special);
+		goto err;
 	}
 
 	hdr = swap_get_header(fd, &sig, &pagesize);
 	if (!hdr) {
 		warn(_("%s: read swap header failed"), special);
-		close(fd);
-		return -1;
+		goto err;
 	}
-
-	close(fd);
 
 	if (sig == SIG_SWAPSPACE && pagesize) {
 		unsigned long long swapsize =
@@ -413,29 +397,50 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 		reinitialize = 1;
 	}
 
-	free(hdr);
-
 	if (reinitialize) {
 		if (swap_reinitialize(special) < 0)
-			return -1;
+			goto err;
 	}
 
+	free(hdr);
+	close(fd);
+	return 0;
 
-	{
-		int flags = 0;
+err:
+	if (fd != -1)
+		close(fd);
+	free(hdr);
+	return -1;
+}
+
+static int
+do_swapon(const char *orig_special, int prio, int canonic) {
+	int status;
+	const char *special = orig_special;
+	int flags = 0;
+
+	if (verbose)
+		printf(_("%s on %s\n"), progname, orig_special);
+
+	if (!canonic) {
+		special = fsprobe_get_devname_by_spec(orig_special);
+		if (!special)
+			return cannot_find(orig_special);
+	}
+
+	if (swapon_checks(special))
+		return -1;
 
 #ifdef SWAP_FLAG_PREFER
-		if (prio >= 0) {
-			if (prio > SWAP_FLAG_PRIO_MASK)
-				prio = SWAP_FLAG_PRIO_MASK;
-			flags = SWAP_FLAG_PREFER
-				| ((prio & SWAP_FLAG_PRIO_MASK)
-				   << SWAP_FLAG_PRIO_SHIFT);
-		}
-#endif
-		status = swapon(special, flags);
+	if (prio >= 0) {
+		if (prio > SWAP_FLAG_PRIO_MASK)
+			prio = SWAP_FLAG_PRIO_MASK;
+		flags = SWAP_FLAG_PREFER
+			| ((prio & SWAP_FLAG_PRIO_MASK)
+			   << SWAP_FLAG_PRIO_SHIFT);
 	}
-
+#endif
+	status = swapon(special, flags);
 	if (status < 0)
 		warn(_("%s: swapon failed"), orig_special);
 
