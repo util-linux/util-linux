@@ -45,6 +45,11 @@
 
 #define MAX_PAGESIZE	(64 * 1024)
 
+enum {
+	SIG_SWAPSPACE = 1,
+	SIG_SWSUSPEND
+};
+
 int all = 0;
 int priority = -1;	/* non-prioritized swap by default */
 
@@ -177,22 +182,6 @@ display_summary(void)
        return 0 ;
 }
 
-static int
-swap_is_suspend(const char *device) {
-	const char *type = fsprobe_get_fstype_by_devname(device);
-
-	/* S1SUSPEND/S2SUSPEND =
-	 *
-	 *   "swsuspend" in libblkid
-	 *   "suspend" in libvolume_id
-	 */
-	if (type && (strcmp(type, "suspend") == 0 ||
-			strcmp(type, "swsuspend") == 0))
-		return 1;
-
-	return 0;
-}
-
 /* calls mkswap */
 static int
 swap_reinitialize(const char *device) {
@@ -244,65 +233,41 @@ swap_reinitialize(const char *device) {
 	return -1; /* error */
 }
 
-int
-swap_detect_signature(const char *buf)
+static int
+swap_detect_signature(const char *buf, int *sig)
 {
-	if ((memcmp(buf, "SWAP-SPACE", 10) == 0) ||
-            (memcmp(buf, "SWAPSPACE2", 10) == 0))
-		return 1;
+	if (memcmp(buf, "SWAP-SPACE", 10) == 0 ||
+            memcmp(buf, "SWAPSPACE2", 10) == 0)
+		*sig = SIG_SWAPSPACE;
 
-	return 0;
+	else if (memcmp(buf, "S1SUSPEND", 9) == 0 ||
+		 memcmp(buf, "S2SUSPEND", 9) == 0 ||
+		 memcmp(buf, "ULSUSPEND", 9) == 0 ||
+		 memcmp(buf, "\xed\xc3\x02\xe9\x98\x56\xe5\x0c", 8) == 0)
+		*sig = SIG_SWSUSPEND;
+	else
+		return 0;
+
+	return 1;
 }
 
-/* return the pagesize the swap format has been built with
- * as swap metadata depends on the pagesize, we have to
- * reinitialize if it does not match with the current pagesize
- * returns 0 if not a valid swap format
- */
-unsigned int
-swap_get_pagesize(const char *dev)
+static char *
+swap_get_header(int fd, int *sig, unsigned int *pagesize)
 {
-	int fd;
 	char *buf;
-	unsigned int page, last_page = 0;
-	unsigned int pagesize = 0;
-	unsigned long long size, swap_size;
-	int swap_version = 0;
-	int flip = 0;
-	int datasz;
-	struct swap_header_v1_2 *s;
-	struct stat sb;
+	ssize_t datasz;
+	unsigned int page;
 
-	fd = open(dev, O_RDONLY);
-	if (fd == -1) {
-		perror("open");
-		return 0;
-	}
-
-	/* get size */
-	if (fstat(fd, &sb)) {
-		perror("fstat");
-		goto err;
-	}
-	if (S_ISBLK(sb.st_mode)) {
-		if (blkdev_get_size(fd, &size)) {
-			perror("blkdev_get_size");
-			goto err;
-		}
-	} else
-		size = sb.st_size;
+	*pagesize = 0;
+	*sig = 0;
 
 	buf = malloc(MAX_PAGESIZE);
-	if (!buf) {
-		perror("malloc");
-		goto err;
-	}
+	if (!buf)
+		return NULL;
 
 	datasz = read(fd, buf, MAX_PAGESIZE);
-	if (datasz == (ssize_t) -1) {
-		perror("read");
-		goto err1;
-	}
+	if (datasz == (ssize_t) -1)
+		goto err;
 
 	for (page = 0x1000; page <= MAX_PAGESIZE; page <<= 1) {
 		/* skip 32k pagesize since this does not seem to
@@ -313,42 +278,47 @@ swap_get_pagesize(const char *dev)
 		 * 40k, that's less than MAX_PAGESIZE */
 		if (datasz < (page - 10))
 			break;
-		if (swap_detect_signature(buf + page - 10)) {
-			pagesize = page;
+		if (swap_detect_signature(buf + page - 10, sig)) {
+			*pagesize = page;
 			break;
 		}
 	}
 
-	if (pagesize) {
-		s = (struct swap_header_v1_2 *)buf;
-		if (s->version == 1) {
-			swap_version = 1;
-			last_page = s->last_page;
-		} else if (swab32(s->version) == 1) {
-			flip = 1;
-			swap_version = 1;
-			last_page = swab32(s->last_page);
-		}
-		if (verbose)
-			fprintf(stderr, _("found %sswap v%d signature string"
-					" for %d KiB PAGE_SIZE\n"),
-				flip ? "other-endian " : "", swap_version,
-				pagesize / 1024);
-		swap_size = (last_page + 1) * pagesize;
-		if (swap_size > size) {
-			if (verbose)
-				fprintf(stderr, _("last_page 0x%08llx is larger"
-					" than actual size of swapspace\n"),
-					(unsigned long long)swap_size);
-			pagesize = 0;
-		}
-	}
+	if (*pagesize)
+		return buf;
 
-err1:
-	free(buf);
 err:
-	close(fd);
-	return pagesize;
+	free(buf);
+	return NULL;
+}
+
+/* returns real size of swap space */
+unsigned long long
+swap_get_size(const char *hdr, const char *devname, unsigned int pagesize)
+{
+	unsigned int last_page = 0;
+	int swap_version = 0;
+	int flip = 0;
+	struct swap_header_v1_2 *s;
+
+	s = (struct swap_header_v1_2 *) hdr;
+	if (s->version == 1) {
+		swap_version = 1;
+		last_page = s->last_page;
+	} else if (swab32(s->version) == 1) {
+		flip = 1;
+		swap_version = 1;
+		last_page = swab32(s->last_page);
+	}
+	if (verbose)
+		fprintf(stderr, _("%s: found %sswap v%d signature string"
+				" for %d KiB PAGE_SIZE\n"),
+			devname,
+			flip ? "other-endian " : "",
+			swap_version,
+			pagesize / 1024);
+
+	return (last_page + 1) * pagesize;
 }
 
 static int
@@ -357,7 +327,10 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 	int reinitialize = 0;
 	struct stat st;
 	const char *special = orig_special;
-	unsigned int swap_pagesize = 0;
+	int fd, sig;
+	char *hdr;
+	unsigned int pagesize;
+	unsigned long long devsize = 0;
 
 	if (verbose)
 		printf(_("%s on %s\n"), progname, orig_special);
@@ -398,27 +371,69 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 				progname, special);
 			return -1;
 		}
+		devsize = st.st_size;
 	}
 
-	swap_pagesize = swap_get_pagesize(special);
-	if (swap_pagesize && (getpagesize() != swap_pagesize)) {
+	fd = open(special, O_RDONLY);
+	if (fd == -1) {
+		int errsv = errno;
+		fprintf(stderr, "%s: %s: open failed: %s\n",
+			progname, orig_special, strerror(errsv));
+		return -1;
+	}
+
+	if (S_ISBLK(st.st_mode)) {
+		if (blkdev_get_size(fd, &devsize)) {
+			int errsv = errno;
+			fprintf(stderr, "%s: %s: get size failed: %s\n",
+				progname, orig_special, strerror(errsv));
+			close(fd);
+			return -1;
+		}
+	}
+
+	hdr = swap_get_header(fd, &sig, &pagesize);
+	if (!hdr) {
+		int errsv = errno;
+		fprintf(stderr, "%s: %s: failed to read swap header: %s\n",
+			progname, orig_special, strerror(errsv));
+		close(fd);
+		return -1;
+	}
+
+	close(fd);
+
+	if (sig == SIG_SWAPSPACE && pagesize) {
+		unsigned long long swapsize =
+				swap_get_size(hdr, special, pagesize);
 		if (verbose)
-			fprintf(stderr, _("%s: %s: swap format pagesize does not match."
-				" Reinitializing the swap.\n"),
-				progname, special);
-		reinitialize = 1;
-	}
+			fprintf(stderr,
+				_("%s: pagesize=%d, swapsize=%llu, devsize=%llu\n"),
+				special, pagesize, swapsize, devsize);
 
-	/* We have to reinitialize swap with old (=useless) software suspend
-	 * data. The problem is that if we don't do it, then we get data
-	 * corruption the next time an attempt at unsuspending is made.
-	 */
-	if (swap_is_suspend(special)) {
+		if (swapsize > devsize) {
+			if (verbose)
+				fprintf(stderr, _("%s: last_page 0x%08llx is larger"
+					" than actual size of swapspace\n"),
+					special, swapsize);
+		} else if (getpagesize() != pagesize) {
+			fprintf(stderr, _("%s: %s: swap format pagesize does not match."
+					" Reinitializing the swap.\n"),
+				progname, special);
+			reinitialize = 1;
+		}
+	} else if (sig == SIG_SWSUSPEND) {
+		/* We have to reinitialize swap with old (=useless) software suspend
+		 * data. The problem is that if we don't do it, then we get data
+		 * corruption the next time an attempt at unsuspending is made.
+		 */
 		fprintf(stdout, _("%s: %s: software suspend data detected. "
 					"Reinitializing the swap.\n"),
 			progname, special);
 		reinitialize = 1;
 	}
+
+	free(hdr);
 
 	if (reinitialize) {
 		if (swap_reinitialize(special) < 0)
