@@ -48,6 +48,9 @@ enum {
 	SIG_SWSUSPEND
 };
 
+#define SWAP_SIGNATURE		"SWAPSPACE2"
+#define SWAP_SIGNATURE_SZ	(sizeof(SWAP_SIGNATURE) - 1)
+
 int all;
 int priority = -1;	/* non-prioritized swap by default */
 
@@ -229,6 +232,30 @@ swap_reinitialize(const char *device) {
 }
 
 static int
+swap_rewrite_signature(const char *devname, unsigned int pagesize)
+{
+	int fd, rc = -1;
+
+	fd = open(devname, O_WRONLY);
+	if (fd == -1) {
+		warn(_("%s: open failed"), devname);
+		return -1;
+	}
+
+	if (lseek(fd, pagesize - SWAP_SIGNATURE_SZ, SEEK_SET) < 0)
+		goto err;
+
+	if (write(fd, (void *) SWAP_SIGNATURE,
+			SWAP_SIGNATURE_SZ) != SWAP_SIGNATURE_SZ)
+		goto err;
+
+	rc  = 0;
+err:
+	close(fd);
+	return rc;
+}
+
+static int
 swap_detect_signature(const char *buf, int *sig)
 {
 	if (memcmp(buf, "SWAP-SPACE", 10) == 0 ||
@@ -271,9 +298,9 @@ swap_get_header(int fd, int *sig, unsigned int *pagesize)
 			continue;
 		/* the smallest swap area is PAGE_SIZE*10, it means
 		 * 40k, that's less than MAX_PAGESIZE */
-		if (datasz < (page - 10))
+		if (datasz < (page - SWAP_SIGNATURE_SZ))
 			break;
-		if (swap_detect_signature(buf + page - 10, sig)) {
+		if (swap_detect_signature(buf + page - SWAP_SIGNATURE_SZ, sig)) {
 			*pagesize = page;
 			break;
 		}
@@ -318,7 +345,6 @@ swap_get_size(const char *hdr, const char *devname, unsigned int pagesize)
 static int
 swapon_checks(const char *special)
 {
-	int reinitialize = 0;
 	struct stat st;
 	int fd = -1, sig;
 	char *hdr = NULL;
@@ -384,7 +410,8 @@ swapon_checks(const char *special)
 			warn(_("%s: swap format pagesize does not match."
 				" Reinitializing the swap."),
 				special);
-			reinitialize = 1;
+			if (swap_reinitialize(special) < 0)
+				goto err;
 		}
 	} else if (sig == SIG_SWSUSPEND) {
 		/* We have to reinitialize swap with old (=useless) software suspend
@@ -392,20 +419,15 @@ swapon_checks(const char *special)
 		 * corruption the next time an attempt at unsuspending is made.
 		 */
 		warnx(_("%s: software suspend data detected. "
-				"Reinitializing the swap."),
+				"Rewriting the swap signature."),
 			special);
-		reinitialize = 1;
-	}
-
-	if (reinitialize) {
-		if (swap_reinitialize(special) < 0)
+		if (swap_rewrite_signature(special, pagesize) < 0)
 			goto err;
 	}
 
 	free(hdr);
 	close(fd);
 	return 0;
-
 err:
 	if (fd != -1)
 		close(fd);
