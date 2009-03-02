@@ -1,7 +1,6 @@
 /*
  * A swapon(8)/swapoff(8) for Linux 0.99.
  */
-#include <ctype.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <getopt.h>
@@ -14,15 +13,13 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <stdint.h>
+
 #include "bitops.h"
 #include "blkdev.h"
-#include "xmalloc.h"
 #include "swap_constants.h"
 #include "nls.h"
 #include "fsprobe.h"
-#include "devname.h"
 #include "pathnames.h"
-#include "sundries.h"
 #include "swapheader.h"
 
 #define PATH_MKSWAP	"/sbin/mkswap"
@@ -50,11 +47,14 @@ enum {
 	SIG_SWSUSPEND
 };
 
-int all = 0;
+int all;
 int priority = -1;	/* non-prioritized swap by default */
 
 /* If true, don't complain if the device/file doesn't exist */
-int ifexists = 0;
+int ifexists;
+
+int verbose;
+char *progname;
 
 static struct option longswaponopts[] = {
 		/* swapon only */
@@ -336,7 +336,7 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 		printf(_("%s on %s\n"), progname, orig_special);
 
 	if (!canonic) {
-		special = spec_to_devname(orig_special);
+		special = fsprobe_get_devname_by_spec(orig_special);
 		if (!special)
 			return cannot_find(orig_special);
 	}
@@ -492,7 +492,7 @@ do_swapoff(const char *orig_special, int quiet, int canonic) {
 		printf(_("%s on %s\n"), progname, orig_special);
 
 	if (!canonic) {
-		special = spec_to_devname(orig_special);
+		special = fsprobe_get_devname_by_spec(orig_special);
 		if (!special)
 			return cannot_find(orig_special);
 	}
@@ -563,7 +563,7 @@ swapon_all(void) {
 		if (skip)
 			continue;
 
-		special = spec_to_devname(fstab->mnt_fsname);
+		special = fsprobe_get_devname_by_spec(fstab->mnt_fsname);
 		if (!special) {
 			if (!ifexists)
 				status |= cannot_find(fstab->mnt_fsname);
@@ -587,12 +587,16 @@ static const char **ulist = NULL;
 static int ulct = 0;
 
 static void addl(const char *label) {
-	llist = (const char **) xrealloc(llist, (++llct) * sizeof(char *));
+	llist = (const char **) realloc(llist, (++llct) * sizeof(char *));
+	if (!llist)
+		exit(EXIT_FAILURE);
 	llist[llct-1] = label;
 }
 
 static void addu(const char *uuid) {
-	ulist = (const char **) xrealloc(ulist, (++ulct) * sizeof(char *));
+	ulist = (const char **) realloc(ulist, (++ulct) * sizeof(char *));
+	if (!ulist)
+		exit(EXIT_FAILURE);
 	ulist[ulct-1] = uuid;
 }
 
@@ -744,7 +748,7 @@ main_swapoff(int argc, char *argv[]) {
 			if (!streq(fstab->mnt_type, MNTTYPE_SWAP))
 				continue;
 
-			special = spec_to_devname(fstab->mnt_fsname);
+			special = fsprobe_get_devname_by_spec(fstab->mnt_fsname);
 			if (!special)
 				continue;
 

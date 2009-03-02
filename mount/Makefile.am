@@ -6,12 +6,12 @@ bin_PROGRAMS = mount umount
 sbin_PROGRAMS = losetup swapon
 dist_man_MANS = fstab.5 mount.8 swapoff.8 swapon.8 umount.8 losetup.8
 
-# generic sources for all programs (mount, umount, swapon, losetup)
-srcs_common = sundries.c xmalloc.c ../lib/canonicalize.c
+# generic sources for all programs (mount, umount, losetup)
+srcs_common = sundries.c xmalloc.c ../lib/canonicalize.c sundries.h xmalloc.h
 
 # generic header for mount and umount
 hdrs_mount = fstab.h mount_mntent.h mount_constants.h \
-	lomount.h xmalloc.h getusername.h loop.h sundries.h
+	lomount.h getusername.h loop.h
 
 # generic sources for mount and umount
 srcs_mount = fstab.c mount_mntent.c getusername.c lomount.c devname.c devname.h \
@@ -38,12 +38,12 @@ umount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) $(cflags_common)
 umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 umount_LDADD = $(ldadd_common)
 
-swapon_SOURCES = swapon.c swap_constants.h $(srcs_common) devname.c devname.h \
-	../lib/linux_version.c ../lib/blkdev.c ../lib/fsprobe.c
+swapon_SOURCES = swapon.c swap_constants.h ../lib/linux_version.c \
+	../lib/blkdev.c ../lib/fsprobe.c ../lib/canonicalize.c
 swapon_CFLAGS = $(cflags_common)
 swapon_LDADD = $(ldadd_common)
 
-losetup_SOURCES = lomount.c $(srcs_common) loop.h lomount.h xmalloc.h sundries.h
+losetup_SOURCES = lomount.c $(srcs_common) loop.h lomount.h
 losetup_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
 
 mount_static_LDADD =
