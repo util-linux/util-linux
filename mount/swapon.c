@@ -13,6 +13,7 @@
 #include <sys/wait.h>
 #include <fcntl.h>
 #include <stdint.h>
+#include <err.h>
 
 #include "bitops.h"
 #include "blkdev.h"
@@ -129,8 +130,7 @@ read_proc_swaps(void) {
 
 	/* skip the first line */
 	if (!fgets(line, sizeof(line), swaps)) {
-		fprintf (stderr, _("%s: %s: unexpected file format\n"),
-			progname, _PATH_PROC_SWAPS);
+		warnx(_("%s: unexpected file format"), _PATH_PROC_SWAPS);
 		fclose(swaps);
 		return;
 	}
@@ -169,9 +169,7 @@ display_summary(void)
        char line[1024] ;
 
        if ((swaps = fopen(_PATH_PROC_SWAPS, "r")) == NULL) {
-               int errsv = errno;
-               fprintf(stderr, "%s: %s: %s\n", progname, _PATH_PROC_SWAPS,
-			strerror(errsv));
+               warn(_("%s: open failed"), _PATH_PROC_SWAPS);
                return -1;
        }
 
@@ -194,8 +192,7 @@ swap_reinitialize(const char *device) {
 
 	switch((pid=fork())) {
 	case -1: /* fork error */
-		fprintf(stderr, _("%s: cannot fork: %s\n"),
-			progname, strerror(errno));
+		warn(_("fork failed"));
 		return -1;
 
 	case 0:	/* child */
@@ -211,8 +208,7 @@ swap_reinitialize(const char *device) {
 		cmd[idx++] = (char *) device;
 		cmd[idx++] = NULL;
 		execv(cmd[0], cmd);
-		perror("execv");
-		exit(1); /* error  */
+		err(EXIT_FAILURE, _("execv failed"));
 
 	default: /* parent */
 		do {
@@ -220,8 +216,7 @@ swap_reinitialize(const char *device) {
 					&& errno == EINTR)
 				continue;
 			else if (ret < 0) {
-				fprintf(stderr, _("%s: waitpid: %s\n"),
-					progname, strerror(errno));
+				warn(_("waitpid failed"));
 				return -1;
 			}
 		} while (0);
@@ -286,7 +281,6 @@ swap_get_header(int fd, int *sig, unsigned int *pagesize)
 
 	if (*pagesize)
 		return buf;
-
 err:
 	free(buf);
 	return NULL;
@@ -311,7 +305,7 @@ swap_get_size(const char *hdr, const char *devname, unsigned int pagesize)
 		last_page = swab32(s->last_page);
 	}
 	if (verbose)
-		fprintf(stderr, _("%s: found %sswap v%d signature string"
+		warnx(_("%s: found %sswap v%d signature string"
 				" for %d KiB PAGE_SIZE\n"),
 			devname,
 			flip ? "other-endian " : "",
@@ -342,9 +336,7 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 	}
 
 	if (stat(special, &st) < 0) {
-		int errsv = errno;
-		fprintf(stderr, _("%s: cannot stat %s: %s\n"),
-			progname, special, strerror(errsv));
+		warn(_("%s: stat failed"), special);
 		return -1;
 	}
 
@@ -353,22 +345,17 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 	if (verbose) {
 		int permMask = (S_ISBLK(st.st_mode) ? 07007 : 07077);
 
-		if ((st.st_mode & permMask) != 0) {
-			fprintf(stderr, _("%s: warning: %s has "
-					  "insecure permissions %04o, "
-					  "%04o suggested\n"),
-				progname, special, st.st_mode & 07777,
+		if ((st.st_mode & permMask) != 0)
+			warnx(_("%s: insecure permissions %04o, %04o suggested."),
+				special, st.st_mode & 07777,
 				~permMask & 0666);
-		}
 	}
 
 	/* test for holes by LBT */
 	if (S_ISREG(st.st_mode)) {
 		if (st.st_blocks * 512 < st.st_size) {
-			fprintf(stderr,
-				_("%s: Skipping file %s - it appears "
-				  "to have holes.\n"),
-				progname, special);
+			warnx(_("%s: skipping - it appears to have holes."),
+				special);
 			return -1;
 		}
 		devsize = st.st_size;
@@ -376,17 +363,13 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 
 	fd = open(special, O_RDONLY);
 	if (fd == -1) {
-		int errsv = errno;
-		fprintf(stderr, "%s: %s: open failed: %s\n",
-			progname, orig_special, strerror(errsv));
+		warn(_("%s: open failed"), special);
 		return -1;
 	}
 
 	if (S_ISBLK(st.st_mode)) {
 		if (blkdev_get_size(fd, &devsize)) {
-			int errsv = errno;
-			fprintf(stderr, "%s: %s: get size failed: %s\n",
-				progname, orig_special, strerror(errsv));
+			warn(_("%s: get size failed"), special);
 			close(fd);
 			return -1;
 		}
@@ -394,9 +377,7 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 
 	hdr = swap_get_header(fd, &sig, &pagesize);
 	if (!hdr) {
-		int errsv = errno;
-		fprintf(stderr, "%s: %s: failed to read swap header: %s\n",
-			progname, orig_special, strerror(errsv));
+		warn(_("%s: read swap header failed"), special);
 		close(fd);
 		return -1;
 	}
@@ -407,19 +388,18 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 		unsigned long long swapsize =
 				swap_get_size(hdr, special, pagesize);
 		if (verbose)
-			fprintf(stderr,
-				_("%s: pagesize=%d, swapsize=%llu, devsize=%llu\n"),
+			warnx("%s: pagesize=%d, swapsize=%llu, devsize=%llu",
 				special, pagesize, swapsize, devsize);
 
 		if (swapsize > devsize) {
 			if (verbose)
-				fprintf(stderr, _("%s: last_page 0x%08llx is larger"
-					" than actual size of swapspace\n"),
+				warnx(_("%s: last_page 0x%08llx is larger"
+					" than actual size of swapspace"),
 					special, swapsize);
 		} else if (getpagesize() != pagesize) {
-			fprintf(stderr, _("%s: %s: swap format pagesize does not match."
-					" Reinitializing the swap.\n"),
-				progname, special);
+			warn(_("%s: swap format pagesize does not match."
+				" Reinitializing the swap."),
+				special);
 			reinitialize = 1;
 		}
 	} else if (sig == SIG_SWSUSPEND) {
@@ -427,9 +407,9 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 		 * data. The problem is that if we don't do it, then we get data
 		 * corruption the next time an attempt at unsuspending is made.
 		 */
-		fprintf(stdout, _("%s: %s: software suspend data detected. "
-					"Reinitializing the swap.\n"),
-			progname, special);
+		warnx(_("%s: software suspend data detected. "
+				"Reinitializing the swap."),
+			special);
 		reinitialize = 1;
 	}
 
@@ -456,19 +436,15 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 		status = swapon(special, flags);
 	}
 
-	if (status < 0) {
-		int errsv = errno;
-		fprintf(stderr, "%s: %s: %s\n",
-			progname, orig_special, strerror(errsv));
-	}
+	if (status < 0)
+		warn(_("%s: swapon failed"), orig_special);
 
 	return status;
 }
 
 static int
 cannot_find(const char *special) {
-	fprintf(stderr, _("%s: cannot find the device for %s\n"),
-		progname, special);
+	warnx(_("cannot find the device for %s"), special);
 	return -1;
 }
 
@@ -500,15 +476,12 @@ do_swapoff(const char *orig_special, int quiet, int canonic) {
 	if (swapoff(special) == 0)
 		return 0;	/* success */
 
-	if (errno == EPERM) {
-		fprintf(stderr, _("Not superuser.\n"));
-		exit(1);	/* any further swapoffs will also fail */
-	}
+	if (errno == EPERM)
+		errx(EXIT_FAILURE, _("Not superuser."));
 
-	if (!quiet || errno == ENOMEM) {
-		fprintf(stderr, "%s: %s: %s\n",
-			progname, orig_special, strerror(errno));
-	}
+	if (!quiet || errno == ENOMEM)
+		warn(_("%s: swapoff failed"), orig_special);
+
 	return -1;
 }
 
@@ -533,12 +506,8 @@ swapon_all(void) {
 	read_proc_swaps();
 
 	fp = setmntent(_PATH_MNTTAB, "r");
-	if (fp == NULL) {
-		int errsv = errno;
-		fprintf(stderr, _("%s: cannot open %s: %s\n"),
-			progname, _PATH_MNTTAB, strerror(errsv));
-		exit(2);
-	}
+	if (fp == NULL)
+		err(2, _("%s: open failed"), _PATH_MNTTAB);
 
 	while ((fstab = getmntent(fp)) != NULL) {
 		const char *special;
@@ -736,12 +705,9 @@ main_swapoff(int argc, char *argv[]) {
 		 * Doing swapoff -a twice should not give error messages.
 		 */
 		fp = setmntent(_PATH_MNTTAB, "r");
-		if (fp == NULL) {
-			int errsv = errno;
-			fprintf(stderr, _("%s: cannot open %s: %s\n"),
-				progname, _PATH_MNTTAB, strerror(errsv));
-			exit(2);
-		}
+		if (fp == NULL)
+			err(2, _("%s: open failed"), _PATH_MNTTAB);
+
 		while ((fstab = getmntent(fp)) != NULL) {
 			const char *special;
 
@@ -763,16 +729,16 @@ main_swapoff(int argc, char *argv[]) {
 
 int
 main(int argc, char *argv[]) {
-	char *p;
 
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	progname = argv[0];
-	p = strrchr(progname, '/');
-	if (p)
-		progname = p+1;
+	progname = program_invocation_short_name;
+	if (!progname) {
+		char *p = strrchr(argv[0], '/');
+		progname = p ? p+1 : argv[0];
+	}
 
 	if (streq(progname, "swapon"))
 		return main_swapon(argc, argv);
