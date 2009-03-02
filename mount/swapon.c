@@ -375,6 +375,31 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 		return -1;
 	}
 
+	/* people generally dislike this warning - now it is printed
+	   only when `verbose' is set */
+	if (verbose) {
+		int permMask = (S_ISBLK(st.st_mode) ? 07007 : 07077);
+
+		if ((st.st_mode & permMask) != 0) {
+			fprintf(stderr, _("%s: warning: %s has "
+					  "insecure permissions %04o, "
+					  "%04o suggested\n"),
+				progname, special, st.st_mode & 07777,
+				~permMask & 0666);
+		}
+	}
+
+	/* test for holes by LBT */
+	if (S_ISREG(st.st_mode)) {
+		if (st.st_blocks * 512 < st.st_size) {
+			fprintf(stderr,
+				_("%s: Skipping file %s - it appears "
+				  "to have holes.\n"),
+				progname, special);
+			return -1;
+		}
+	}
+
 	swap_pagesize = swap_get_pagesize(special);
 	if (swap_pagesize && (getpagesize() != swap_pagesize)) {
 		if (verbose)
@@ -400,30 +425,6 @@ do_swapon(const char *orig_special, int prio, int canonic) {
 			return -1;
 	}
 
-	/* people generally dislike this warning - now it is printed
-	   only when `verbose' is set */
-	if (verbose) {
-		int permMask = (S_ISBLK(st.st_mode) ? 07007 : 07077);
-
-		if ((st.st_mode & permMask) != 0) {
-			fprintf(stderr, _("%s: warning: %s has "
-					  "insecure permissions %04o, "
-					  "%04o suggested\n"),
-				progname, special, st.st_mode & 07777,
-				~permMask & 0666);
-		}
-	}
-
-	/* test for holes by LBT */
-	if (S_ISREG(st.st_mode)) {
-		if (st.st_blocks * 512 < st.st_size) {
-			fprintf(stderr,
-				_("%s: Skipping file %s - it appears "
-				  "to have holes.\n"),
-				progname, special);
-			return -1;
-		}
-	}
 
 	{
 		int flags = 0;
