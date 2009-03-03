@@ -135,7 +135,7 @@ static const char *
 fsprobe_get_value(const char *name, const char *devname)
 {
 	int fd;
-	unsigned char *data = NULL;
+	const char *data = NULL;
 
 	if (!devname || !name)
 		return NULL;
