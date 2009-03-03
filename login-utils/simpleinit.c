@@ -843,7 +843,7 @@ static pid_t mywait (int *status)
     }
     do_longjmp = 1;  /*  After this, SIGCHLD will cause a jump backwards  */
     sigprocmask (SIG_UNBLOCK, &ss, NULL);
-    read (initctl_fd, buffer, COMMAND_SIZE);
+    read (initctl_fd, buffer, sizeof(buffer));
     do_longjmp = 0;
     process_command (command);
     return 0;
