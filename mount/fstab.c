@@ -388,7 +388,7 @@ getfs_by_dir (const char *dir) {
 /* Find the device SPEC in fstab.  */
 struct mntentchn *
 getfs_by_spec (const char *spec) {
-	char *name, *value, *cspec;
+	char *name = NULL, *value = NULL, *cspec;
 	struct mntentchn *mc = NULL;
 
 	if (!spec)
