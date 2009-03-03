@@ -56,6 +56,7 @@ int priority = -1;	/* non-prioritized swap by default */
 
 /* If true, don't complain if the device/file doesn't exist */
 int ifexists;
+int fixpgsz;
 
 int verbose;
 char *progname;
@@ -65,6 +66,7 @@ static struct option longswaponopts[] = {
 	{ "priority", required_argument, 0, 'p' },
 	{ "ifexists", 0, 0, 'e' },
 	{ "summary", 0, 0, 's' },
+	{ "fixpgsz", 0, 0, 'f' },
 		/* also for swapoff */
 	{ "all", 0, 0, 'a' },
 	{ "help", 0, 0, 'h' },
@@ -73,7 +75,7 @@ static struct option longswaponopts[] = {
 	{ NULL, 0, 0, 0 }
 };
 
-static struct option *longswapoffopts = &longswaponopts[3];
+static struct option *longswapoffopts = &longswaponopts[4];
 
 static int cannot_find(const char *special);
 
@@ -88,8 +90,8 @@ static int cannot_find(const char *special);
 static void
 swapon_usage(FILE *fp, int n) {
 	fprintf(fp, _("\nUsage:\n"
-	" %1$s -a [-e] [-v]                  enable all swaps from /etc/fstab\n"
-	" %1$s [-p priority] [-v] <special>  enable given swap\n"
+	" %1$s -a [-e] [-v] [-f]             enable all swaps from /etc/fstab\n"
+	" %1$s [-p priority] [-v] [-f] <special>  enable given swap\n"
 	" %1$s -s                            display swap usage summary\n"
 	" %1$s -h                            display help\n"
 	" %1$s -V                            display version\n\n"), progname);
@@ -192,6 +194,8 @@ swap_reinitialize(const char *device) {
 	int status, ret;
 	char *cmd[7];
 	int idx=0;
+
+	warnx(_("%s: reinitializing the swap."), device);
 
 	switch((pid=fork())) {
 	case -1: /* fork error */
@@ -407,11 +411,15 @@ swapon_checks(const char *special)
 					" than actual size of swapspace"),
 					special, swapsize);
 		} else if (getpagesize() != pagesize) {
-			warn(_("%s: swap format pagesize does not match."
-				" Reinitializing the swap."),
-				special);
-			if (swap_reinitialize(special) < 0)
-				goto err;
+			if (fixpgsz) {
+				warn(_("%s: swap format pagesize does not match."),
+					special);
+				if (swap_reinitialize(special) < 0)
+					goto err;
+			} else
+				warn(_("%s: swap format pagesize does not match. "
+					"(may try --fixpgsz to reinitialize)"),
+					special);
 		}
 	} else if (sig == SIG_SWSUSPEND) {
 		/* We have to reinitialize swap with old (=useless) software suspend
@@ -601,7 +609,7 @@ main_swapon(int argc, char *argv[]) {
 	int status = 0;
 	int c, i;
 
-	while ((c = getopt_long(argc, argv, "ahep:svVL:U:",
+	while ((c = getopt_long(argc, argv, "ahefp:svVL:U:",
 				longswaponopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':		/* all */
@@ -621,6 +629,9 @@ main_swapon(int argc, char *argv[]) {
 			break;
 		case 'e':               /* ifexists */
 		        ifexists = 1;
+			break;
+		case 'f':
+			fixpgsz = 1;
 			break;
 		case 's':		/* status report */
 			status = display_summary();

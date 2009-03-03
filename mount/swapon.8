@@ -54,6 +54,7 @@ Enable/disable:
 .br
 .in +5
 .B swapon
+.RB [ \-f ]
 .RB [ \-p
 .IR priority ]
 .RB [ \-v ]
@@ -73,6 +74,7 @@ Enable/disable all:
 .in +5
 .B swapon \-a
 .RB [ \-e ]
+.RB [ \-f ]
 .RB [ \-v ]
 .br
 .B swapoff \-a
@@ -115,6 +117,12 @@ Devices that are already being used as swap are silently skipped.
 .TP 
 .B "\-e, \-\-ifexists"
 Silently skip devices that do not exist.
+.TP
+.B "\-f, \-\-fixpgsz"
+Reinitialize (exec /sbin/mkswap) the swap space when the page size mismatch between
+the current running kernel and swap space is detected. Note that in such a case
+.B mkswap(2)
+initializes the whole device and does not check for bad blocks.
 .TP
 .B \-h, \-\-help
 Provide help.
