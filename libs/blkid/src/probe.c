@@ -860,7 +860,7 @@ int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid)
 }
 
 int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
-			unsigned char **data, size_t *len)
+			const char **data, size_t *len)
 {
 	struct blkid_prval *v;
 
@@ -871,7 +871,7 @@ int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
 	if (name)
 		*name = v->name;
 	if (data)
-		*data = v->data;
+		*data = (char *) v->data;
 	if (len)
 		*len = v->len;
 
@@ -880,7 +880,7 @@ int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
 }
 
 int blkid_probe_lookup_value(blkid_probe pr, const char *name,
-			unsigned char **data, size_t *len)
+			const char **data, size_t *len)
 {
 	int i;
 
@@ -892,7 +892,7 @@ int blkid_probe_lookup_value(blkid_probe pr, const char *name,
 
 		if (v->name && strcmp(name, v->name) == 0) {
 			if (data)
-				*data = v->data;
+				*data = (char *) v->data;
 			if (len)
 				*len = v->len;
 			DBG(DEBUG_LOWPROBE, printf("returning %s value\n", v->name));

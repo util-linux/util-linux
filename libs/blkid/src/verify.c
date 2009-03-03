@@ -22,7 +22,7 @@
 
 static void blkid_probe_to_tags(blkid_probe pr, blkid_dev dev)
 {
-	unsigned char *data;
+	const char *data;
 	const char *name;
 	int nvals, n;
 	size_t len;
@@ -31,7 +31,7 @@ static void blkid_probe_to_tags(blkid_probe pr, blkid_dev dev)
 
 	for (n = 0; n < nvals; n++) {
 		if (blkid_probe_get_value(pr, n, &name, &data, &len) == 0)
-			blkid_set_tag(dev, name, (char *) data, len);
+			blkid_set_tag(dev, name, data, len);
 	}
 }
 

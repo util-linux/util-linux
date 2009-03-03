@@ -323,7 +323,7 @@ static void print_tags(blkid_dev dev, char *show[], int numtag, int output)
 static int lowprobe_device(blkid_probe pr, const char *devname, int output,
 		blkid_loff_t offset, blkid_loff_t size)
 {
-	unsigned char *data;
+	const char *data;
 	const char *name;
 	int nvals = 0, n;
 	size_t len;

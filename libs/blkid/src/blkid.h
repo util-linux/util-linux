@@ -159,9 +159,9 @@ extern int blkid_do_safeprobe(blkid_probe pr);
 
 extern int blkid_probe_numof_values(blkid_probe pr);
 extern int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
-                        unsigned char **data, size_t *len);
+                        const char **data, size_t *len);
 extern int blkid_probe_lookup_value(blkid_probe pr, const char *name,
-                        unsigned char **data, size_t *len);
+                        const char **data, size_t *len);
 extern int blkid_probe_has_value(blkid_probe pr, const char *name);
 
 #ifdef __cplusplus

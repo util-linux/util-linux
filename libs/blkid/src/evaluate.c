@@ -44,7 +44,7 @@ static int verify_tag(const char *devname, const char *name, const char *value)
 	blkid_probe pr;
 	int fd = -1, rc = -1;
 	size_t len;
-	unsigned char *data;
+	const char *data;
 
 	pr = blkid_new_probe();
 	if (!pr)
