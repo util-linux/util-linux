@@ -110,10 +110,12 @@ char *blkid_get_cache_filename(struct blkid_config *conf)
 	else {
 		struct blkid_config *c = blkid_read_config(NULL);
 		if (!c)
-			return -BLKID_ERR_PARAM;
-		filename = c->cachefile;  /* already allocated */
-		c->cachefile = NULL;
-		blkid_free_config(c);
+			filename = blkid_strdup(BLKID_CONFIG_FILE);
+		else {
+			filename = c->cachefile;  /* already allocated */
+			c->cachefile = NULL;
+			blkid_free_config(c);
+		}
 	}
 	return filename;
 }
