@@ -73,7 +73,7 @@ fsprobe_parse_spec(const char *spec, char **name, char **value)
 	return 0;
 }
 
-const char *
+char *
 fsprobe_get_devname_by_spec(const char *spec)
 {
 	char *name, *value;
@@ -83,7 +83,7 @@ fsprobe_get_devname_by_spec(const char *spec)
 	if (fsprobe_parse_spec(spec, &name, &value) != 0)
 		return NULL;				/* parse error */
 	if (name) {
-		const char *nspec = NULL;
+		char *nspec = NULL;
 
 		if (!strcmp(name,"LABEL"))
 			nspec = fsprobe_get_devname_by_label(value);
@@ -131,7 +131,7 @@ fsprobe_exit(void)
 /* returns device LABEL, UUID, FSTYPE, ... by low-level
  * probing interface
  */
-static const char *
+static char *
 fsprobe_get_value(const char *name, const char *devname)
 {
 	int fd;
@@ -160,31 +160,31 @@ done:
 	return data ? strdup((char *) data) : NULL;
 }
 
-const char *
+char *
 fsprobe_get_label_by_devname(const char *devname)
 {
 	return fsprobe_get_value("LABEL", devname);
 }
 
-const char *
+char *
 fsprobe_get_uuid_by_devname(const char *devname)
 {
 	return fsprobe_get_value("UUID", devname);
 }
 
-const char *
+char *
 fsprobe_get_fstype_by_devname(const char *devname)
 {
 	return fsprobe_get_value("TYPE", devname);
 }
 
-const char *
+char *
 fsprobe_get_devname_by_uuid(const char *uuid)
 {
 	return blkid_evaluate_spec("UUID", uuid, &blcache);
 }
 
-const char *
+char *
 fsprobe_get_devname_by_label(const char *label)
 {
 	return blkid_evaluate_spec("LABEL", label, &blcache);
@@ -205,7 +205,7 @@ fsprobe_exit(void)
 		blkid_put_cache(blcache);
 }
 
-const char *
+char *
 fsprobe_get_devname_by_uuid(const char *uuid)
 {
 	if (!blcache)
@@ -214,7 +214,7 @@ fsprobe_get_devname_by_uuid(const char *uuid)
 	return blkid_get_devname(blcache, "UUID", uuid);
 }
 
-const char *
+char *
 fsprobe_get_devname_by_label(const char *label)
 {
 	if (!blcache)
@@ -223,7 +223,7 @@ fsprobe_get_devname_by_label(const char *label)
 	return blkid_get_devname(blcache, "LABEL", label);
 }
 
-const char *
+char *
 fsprobe_get_fstype_by_devname(const char *devname)
 {
 	blkid_cache c;
@@ -243,7 +243,7 @@ fsprobe_get_fstype_by_devname(const char *devname)
 	return tp;
 }
 
-const char *
+char *
 fsprobe_get_label_by_devname(const char *devname)
 {
 	if (!blcache)
@@ -252,7 +252,7 @@ fsprobe_get_label_by_devname(const char *devname)
 	return blkid_get_tag_value(blcache, "LABEL", devname);
 }
 
-const char *
+char *
 fsprobe_get_uuid_by_devname(const char *devname)
 {
 	if (!blcache)
@@ -301,15 +301,15 @@ static char
 		switch(type) {
 		case VOLUME_ID_LABEL:
 			if (volume_id_get_label(id, &val))
-				value  = xstrdup(val);
+				value  = strdup(val);
 			break;
 		case VOLUME_ID_UUID:
 			if (volume_id_get_uuid(id, &val))
-				value  = xstrdup(val);
+				value  = strdup(val);
 			break;
 		case VOLUME_ID_TYPE:
 			if (volume_id_get_type(id, &val))
-				value  = xstrdup(val);
+				value  = strdup(val);
 			break;
 		default:
 			break;
@@ -338,25 +338,25 @@ fsprobe_known_fstype(const char *fstype)
 	return 0;
 }
 
-const char *
+char *
 fsprobe_get_uuid_by_devname(const char *devname)
 {
 	return probe(devname, VOLUME_ID_UUID);
 }
 
-const char *
+char *
 fsprobe_get_label_by_devname(const char *devname)
 {
 	return probe(devname, VOLUME_ID_LABEL);
 }
 
-const char *
+char *
 fsprobe_get_fstype_by_devname(const char *devname)
 {
 	return probe(devname, VOLUME_ID_TYPE);
 }
 
-const char *
+char *
 fsprobe_get_devname_by_uuid(const char *uuid)
 {
 	char dev[PATH_MAX];
@@ -372,7 +372,7 @@ fsprobe_get_devname_by_uuid(const char *uuid)
 	return canonicalize_path(dev);
 }
 
-const char *
+char *
 fsprobe_get_devname_by_label(const char *label)
 {
 	char dev[PATH_MAX];
