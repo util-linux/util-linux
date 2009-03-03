@@ -42,19 +42,42 @@
 .SH NAME
 swapon, swapoff \- enable/disable devices and files for paging and swapping
 .SH SYNOPSIS
-.B /sbin/swapon \-a [\-e] [\-v]
+Get info:
 .br
-.BI "/sbin/swapon [\-p " "priority" "] [\-v]" " specialfile"...
+.in +5
+.B swapon \-s
+.RB [ \-h ]
+.RB [ \-V ]
+.sp
+.in -5
+Enable/disable:
 .br
-.B /sbin/swapon \-s
+.in +5
+.B swapon
+.RB [ \-p
+.IR priority ]
+.RB [ \-v ]
+. I specialfile
+.RB [ \fIspecialfile\fP
+.RB ...]
 .br
-.B /sbin/swapon \-h | \-V
+.B swapoff
+.RB [ \-v ]
+. I specialfile
+.RB [ \fIspecialfile\fP
+.RB ...]
+.sp
+.in -5
+Enable/disable all:
 .br
-.B /sbin/swapoff \-a [\-v]
+.in +5
+.B swapon \-a
+.RB [ \-e ]
+.RB [ \-v ]
 .br
-.BI "/sbin/swapoff [\-v]" " specialfile"...
-.br
-.B /sbin/swapoff \-h | \-V
+.B swapoff \-a
+.RB [ \-v ]
+.in -5
 .SH DESCRIPTION
 .B swapon
 is used to specify devices on which paging and swapping are to take place.
@@ -69,36 +92,42 @@ to indicate a device by label or uuid.
 
 Calls to
 .B swapon
-normally occur in the system multi-user initialization file
-.I /etc/rc
-making all swap devices available, so that the paging and swapping activity
-is interleaved across several devices and files.
+normally occur in the system boot scripts making all swap devices available, so
+that the paging and swapping activity is interleaved across several devices and
+files.
 
-Normally, the first form is used:
-.TP
+.B swapoff
+disables swapping on the specified devices and files.
+When the
 .B \-a
+flag is given, swapping is disabled on all known swap devices and files
+(as found in
+.I /proc/swaps
+or
+.IR /etc/fstab ).
+
+.TP
+.B "\-a, \-\-all"
 All devices marked as ``swap'' in
 .I /etc/fstab
 are made available, except for those with the ``noauto'' option.
 Devices that are already being used as swap are silently skipped.
 .TP 
-.B \-e
+.B "\-e, \-\-ifexists"
 Silently skip devices that do not exist.
 .TP
-.B \-h
+.B \-h, \-\-help
 Provide help.
 .TP
-.BI \-L " label"
+.B "\-L \fIlabel\fP"
 Use the partition that has the specified
 .IR label .
 (For this, access to
 .I /proc/partitions
 is needed.)
 .TP
-.BI \-p " priority"
-Specify the priority of the swap device.  This option is only available if
-.B swapon
-was compiled and is used under a 1.3.2 or later kernel.
+.B "\-p, \-\-priority \fIpriprity\fP"
+Specify the priority of the swap device.
 .I priority
 is a value between 0 and 32767. Higher numbers indicate higher
 priority. See
@@ -110,37 +139,30 @@ to the option field of
 for use with
 .BR "swapon -a" .
 .TP
-.B \-s
+.B "\-s, \-\-summary"
 Display swap usage summary by device. Equivalent to "cat /proc/swaps".
 Not available before Linux 2.1.25.
 .TP
-.BI \-U " uuid"
+.B "\-U \fIuuid\fP"
 Use the partition that has the specified
 .IR uuid .
-(For this, access to
-.I /proc/partitions
-is needed.)
 .TP
-.B \-v
+.B "\-v, \-\-verbose"
 Be verbose.
 .TP
-.B \-V
+.B "\-V, \-\-version"
 Display version.
-.PP
-.B swapoff
-disables swapping on the specified devices and files.
-When the
-.B \-a
-flag is given, swapping is disabled on all known swap devices and files
-(as found in
-.I /proc/swaps
-or
-.IR /etc/fstab ).
-.SH NOTE
+.SH NOTES
 You should not use
 .B swapon
 on a file with holes.
 Swap over NFS may not work.
+.PP
+.B swapon
+automatically detects and rewrites swap space signature with old software
+suspend data (e.g S1SUSPEND, S2SUSPEND, ...). The problem is that if we don't
+do it, then we get data corruption the next time an attempt at unsuspending is
+made.
 .SH SEE ALSO
 .BR swapon (2),
 .BR swapoff (2),
@@ -150,11 +172,9 @@ Swap over NFS may not work.
 .BR rc (8),
 .BR mount (8)
 .SH FILES
-.I /dev/hd??
-standard paging devices
 .br
 .I /dev/sd??
-standard (SCSI) paging devices
+standard paging devices
 .br
 .I /etc/fstab
 ascii filesystem description table

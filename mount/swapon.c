@@ -73,7 +73,7 @@ static struct option longswaponopts[] = {
 	{ NULL, 0, 0, 0 }
 };
 
-static struct option *longswapoffopts = &longswaponopts[2];
+static struct option *longswapoffopts = &longswaponopts[3];
 
 static int cannot_find(const char *special);
 
