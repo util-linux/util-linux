@@ -54,6 +54,25 @@ This is a good option to use in one of the system startup scripts.
 .B \-w, \-\-systohc
 Set the Hardware Clock to the current System Time.
 .TP
+.B \-\-systz
+Reset the System Time based on the current timezone.
+
+Also set the kernel's timezone value to the local timezone
+as indicated by the TZ environment variable and/or
+.IR /usr/share/zoneinfo ,
+as
+.BR tzset (3)
+would interpret them.
+The obsolete tz_dsttime field of the kernel's timezone value is set
+to DST_NONE. (For details on what this field used to mean, see
+.BR settimeofday (2).)
+
+This is an alternate option to
+.B \-\-hctosys
+that does not read the hardware clock, and may be used in system startup
+scripts for recent 2.6 kernels where you know the System Time contains
+the Hardware Clock time.
+.TP
 .B \-\-adjust
 Add or subtract time from the Hardware Clock to account for systematic
 drift since the last time the clock was set or adjusted.  See discussion

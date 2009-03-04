@@ -753,6 +753,82 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
 }
 
 
+static int
+set_system_clock_timezone(const bool testing) {
+/*----------------------------------------------------------------------------
+   Reset the System Clock from local time to UTC, based on its current
+   value and the timezone.
+
+   Also set the kernel time zone value to the value indicated by the
+   TZ environment variable and/or /usr/lib/zoneinfo/, interpreted as
+   tzset() would interpret them.
+
+   If 'testing' is true, don't actually update anything -- just say we
+   would have.
+-----------------------------------------------------------------------------*/
+  int retcode;
+  struct timeval tv;
+  struct tm *broken;
+  int minuteswest;
+  int rc;
+
+  gettimeofday(&tv, NULL);
+  if (debug) {
+    struct tm broken_time;
+    char ctime_now[200];
+
+    broken_time = *gmtime(&tv.tv_sec);
+    strftime(ctime_now, sizeof(ctime_now), "%Y/%m/%d %H:%M:%S", &broken_time);
+    printf(_("Current system time: %ld = %s\n"), (long) tv.tv_sec, ctime_now);
+  }
+
+  broken = localtime(&tv.tv_sec);
+#ifdef HAVE_TM_GMTOFF
+  minuteswest = -broken->tm_gmtoff/60;		/* GNU extension */
+#else
+  minuteswest = timezone/60;
+  if (broken->tm_isdst)
+	  minuteswest -= 60;
+#endif
+
+  gettimeofday(&tv, NULL);
+  tv.tv_sec += minuteswest * 60;
+
+  if (debug) {
+    struct tm broken_time;
+    char ctime_now[200];
+
+    broken_time = *gmtime(&tv.tv_sec);
+    strftime(ctime_now, sizeof(ctime_now), "%Y/%m/%d %H:%M:%S", &broken_time);
+
+    printf(_("Calling settimeofday:\n"));
+    printf(_("\tUTC: %s\n"), ctime_now);
+    printf(_("\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"),
+           (long) tv.tv_sec, (long) tv.tv_usec);
+    printf(_("\ttz.tz_minuteswest = %d\n"), minuteswest);
+  }
+  if (testing) {
+    printf(_("Not setting system clock because running in test mode.\n"));
+    retcode = 0;
+  } else {
+    const struct timezone tz = { minuteswest, 0 };
+
+    rc = settimeofday(&tv, &tz);
+    if (rc) {
+	    if (errno == EPERM) {
+		    fprintf(stderr,
+			    _("Must be superuser to set system clock.\n"));
+		    retcode = EX_NOPERM;
+	    } else {
+		    outsyserr(_("settimeofday() failed"));
+		    retcode = 1;
+	    }
+    } else retcode = 0;
+  }
+  return retcode;
+}
+
+
 static void
 adjust_drift_factor(struct adjtime *adjtime_p,
                     const time_t nowtime,
@@ -1045,7 +1121,7 @@ determine_clock_access_method(const bool user_requests_ISA) {
 static int
 manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
                  const bool set, const time_t set_time,
-                 const bool hctosys, const bool systohc,
+                 const bool hctosys, const bool systohc, const bool systz,
                  const struct timeval startup_time,
                  const bool utc, const bool local_opt,
 		 const bool testing) {
@@ -1099,7 +1175,7 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
              Defined only if hclock_valid is true.
              */
 
-       if (show || adjust || hctosys || !noadjfile) {
+	if (show || adjust || hctosys || (!noadjfile && !systz)) {
           /* data from HW-clock are required */
           rc = synchronize_to_clock_tick();
           if (rc && rc != 2)		/* 2= synchronization timeout */
@@ -1143,6 +1219,16 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
             printf(_("Unable to set system clock.\n"));
 	    return rc;
           }
+	} else if (systz) {
+	  if (!universal) {
+	    rc = set_system_clock_timezone(testing);
+	    if (rc) {
+	      printf(_("Unable to set system clock.\n"));
+	      return rc;
+	    }
+	  } else if (debug) {
+	    printf(_("Clock in UTC, not changed.\n"));
+	  }
         }
         if (!noadjfile)
          save_adjtime(adjtime, testing);
@@ -1232,6 +1318,7 @@ usage( const char *fmt, ... ) {
 	"       --set          set the rtc to the time given with --date\n"
 	"  -s | --hctosys      set the system time from the hardware clock\n"
 	"  -w | --systohc      set the hardware clock to the current system time\n"
+	"       --systz        set the system time based on the current timezone\n"
 	"       --adjust       adjust the rtc to account for systematic drift since\n"
 	"                      the clock was last set or adjusted\n"
 	"       --getepoch     print out the kernel's hardware clock epoch value\n"
@@ -1305,6 +1392,7 @@ static const struct option longopts[] = {
 	{ "epoch", 1, 0, 137 },
 	{ "rtc", 1, 0, 'f' },
 	{ "adjfile", 1, 0, 138 },
+	{ "systz", 0, 0, 139 },
 	{ NULL, 0, 0, 0 }
 };
 
@@ -1330,7 +1418,7 @@ main(int argc, char **argv) {
 
 	/* Variables set by various options; show may also be set later */
 	/* The options debug, badyear and epoch_option are global */
-	bool show, set, systohc, hctosys, adjust, getepoch, setepoch;
+	bool show, set, systohc, hctosys, systz, adjust, getepoch, setepoch;
 	bool utc, testing, local_opt, noadjfile, directisa;
 	bool ARCconsole, Jensen, SRM, funky_toy;
 	char *date_opt;
@@ -1360,7 +1448,7 @@ main(int argc, char **argv) {
 	textdomain(PACKAGE);
 
 	/* Set option defaults */
-	show = set = systohc = hctosys = adjust = noadjfile = FALSE;
+	show = set = systohc = hctosys = systz = adjust = noadjfile = FALSE;
 	getepoch = setepoch = utc = local_opt = testing = debug = FALSE;
 	ARCconsole = Jensen = SRM = funky_toy = directisa = badyear = FALSE;
 	date_opt = NULL;
@@ -1433,6 +1521,9 @@ main(int argc, char **argv) {
 		case 138:
 			adj_file_name = optarg;		/* --adjfile */
 			break;
+		case 139:
+			systz = TRUE;			/* --systz */
+			break;
 		case 'f':
 			rtc_dev_name = optarg;		/* --rtc */
 			break;
@@ -1464,7 +1555,8 @@ main(int argc, char **argv) {
 		      MYNAME, argc);
 	}
 
-	if (show + set + systohc + hctosys + adjust + getepoch + setepoch > 1){
+	if (show + set + systohc + hctosys + systz + adjust + getepoch
+	    + setepoch > 1){
 		fprintf(stderr, _("You have specified multiple functions.\n"
 				  "You can only perform one function "
 				  "at a time.\n"));
@@ -1515,7 +1607,8 @@ main(int argc, char **argv) {
 		}
 	}
 
-	if (!(show | set | systohc | hctosys | adjust | getepoch | setepoch))
+	if (!(show | set | systohc | hctosys | systz | adjust | getepoch
+	      | setepoch))
 		show = 1; /* default to show */
 
 
@@ -1528,7 +1621,7 @@ main(int argc, char **argv) {
 				_("Sorry, only the superuser can change "
 				  "the Hardware Clock.\n"));
 			permitted = FALSE;
-		} else if (hctosys) {
+		} else if (systz || hctosys) {
 			fprintf(stderr,
 				_("Sorry, only the superuser can change "
 				  "the System Clock.\n"));
@@ -1565,7 +1658,7 @@ main(int argc, char **argv) {
 	}
 
 	rc = manipulate_clock(show, adjust, noadjfile, set, set_time,
-				hctosys, systohc, startup_time, utc,
+				hctosys, systohc, systz, startup_time, utc,
 				local_opt, testing);
 	hwclock_exit(rc);
 	return rc;	/* Not reached */
