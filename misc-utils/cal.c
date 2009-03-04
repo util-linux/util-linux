@@ -205,9 +205,9 @@ int sep1752[MAXDAYS] = {
 
 /* utf-8 can have up to 6 bytes per char; and an extra byte for ending \0 */
 char day_headings[WEEK_LEN*6+1];
-/* week1stday = 1  =>   " M Tu  W Th  F  S  S " */
+/* weekstart = 1  =>   " M Tu  W Th  F  S  S " */
 char j_day_headings[J_WEEK_LEN*6+1];
-/* week1stday = 1  =>   "  M  Tu   W  Th   F   S   S " */
+/* weekstart = 1  =>   "  M  Tu   W  Th   F   S   S " */
 const char *full_month[12];
 
 /* leap year -- account for gregorian reformation in 1752 */
@@ -227,8 +227,8 @@ const char *full_month[12];
 #define	leap_years_since_year_1(yr) \
 	((yr) / 4 - centuries_since_1700(yr) + quad_centuries_since_1700(yr))
 
-/* 0 => sunday (default), 1 => monday */
-int week1stday=0;
+/* 0 => sunday, 1 => monday */
+int weekstart=0;
 int julian;
 
 #define TODAY_FLAG		0x400		/* flag day for highlighting */
@@ -285,26 +285,39 @@ main(int argc, char **argv) {
 	}
 #endif
 
-#if 0				/* setting week1stday is against man page */
 /*
- * What *is* the first day of the week? Note that glibc does not
- * provide any information today, it (almost) always answers Monday.
- * Sunday is the Jewish and Christian tradition.
- * Sometimes an answer is built into the language:
- * German calls Wednesday "Mittwoch", so starts at Sunday.
- * Portuguese calls Monday "segunda-feira", so starts at Sunday.
- * Russian calls Friday "pyatnitsa", so starts at Monday.
- * ISO 8601 decided to start at Monday.
- *
- * The traditional Unix cal utility starts at Sunday.
- * We start at Sunday and have an option -m for starting at Monday.
- *
- * At some future time this may become -s for Sunday, -m for Monday,
- * no option for glibc-determined locale-dependent version.
+ * The traditional Unix cal utility starts the week at Sunday,
+ * while ISO 8601 starts at Monday. We read the start day from
+ * the locale database, which can be overridden with the
+ * -s (Sunday) or -m (Monday) options.
  */
 #ifdef HAVE_LANGINFO_H
-	week1stday = (int)(nl_langinfo(_NL_TIME_FIRST_WEEKDAY))[0];
-#endif
+	/*
+	 * You need to use 2 locale variables to get the first day of the week.
+	 * This is needed to support first_weekday=2 and first_workday=1 for
+	 * the rare case where working days span across 2 weeks.
+	 * This shell script shows the combinations and calculations involved:
+
+	 for LANG in en_US ru_RU fr_FR csb_PL POSIX; do
+	   printf "%s:\t%s + %s -1 = " $LANG $(locale week-1stday first_weekday)
+	   date -d"$(locale week-1stday) +$(($(locale first_weekday)-1))day" +%w
+	 done
+
+	 en_US:  19971130 + 1 -1 = 0  #0 = sunday
+	 ru_RU:  19971130 + 2 -1 = 1
+	 fr_FR:  19971201 + 1 -1 = 1
+	 csb_PL: 19971201 + 2 -1 = 2
+	 POSIX:  19971201 + 7 -1 = 0
+	 */
+	{
+		int wfd;
+		union { unsigned int word; char *string; } val;
+		val.string = nl_langinfo(_NL_TIME_WEEK_1STDAY);
+
+		wfd = val.word;
+		wfd = day_in_week(wfd % 100, (wfd / 100) % 100, wfd / (100 * 100));
+		weekstart = (wfd + *nl_langinfo(_NL_TIME_FIRST_WEEKDAY) - 1) % 7;
+	}
 #endif
 
 	yflag = 0;
@@ -317,10 +330,10 @@ main(int argc, char **argv) {
 			num_months = 3;
 			break;
 		case 's':
-			week1stday = 0;		/* default */
+			weekstart = 0;		/* default */
 			break;
 		case 'm':
-			week1stday = 1;
+			weekstart = 1;
 			break;
 		case 'j':
 			julian = 1;
@@ -403,7 +416,7 @@ void headers_init(void)
 
   for(i = 0 ; i < 7 ; i++ ) {
      ssize_t space_left;
-     wd = (i + week1stday) % 7;
+     wd = (i + weekstart) % 7;
 
      if (i)
         strcat(cur_dh++, " ");
@@ -618,7 +631,7 @@ day_array(int day, int month, int year, int *days) {
 
 	if (month == 9 && year == 1752) {
 		d_sep1752 = julian ? j_sep1752 : sep1752;
-		memcpy(days, d_sep1752 + week1stday, MAXDAYS * sizeof(int));
+		memcpy(days, d_sep1752 + weekstart, MAXDAYS * sizeof(int));
 		for (dm=0; dm<MAXDAYS; dm++)
 			if (j_sep1752[dm] == day)
 				days[dm] |= TODAY_FLAG;
@@ -626,7 +639,7 @@ day_array(int day, int month, int year, int *days) {
 	}
 	memcpy(days, empty, MAXDAYS * sizeof(int));
 	dm = days_in_month[leap_year(year)][month];
-	dw = (day_in_week(1, month, year) - week1stday + 7) % 7;
+	dw = (day_in_week(1, month, year) - weekstart + 7) % 7;
 	julday = day_in_year(1, month, year);
 	daynum = julian ? julday : 1;
 	while (dm--) {
