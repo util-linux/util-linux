@@ -119,8 +119,8 @@ Devices that are already being used as swap are silently skipped.
 Silently skip devices that do not exist.
 .TP
 .B "\-f, \-\-fixpgsz"
-Reinitialize (exec /sbin/mkswap) the swap space when the page size mismatch between
-the current running kernel and swap space is detected. Note that in such a case
+Reinitialize (exec /sbin/mkswap) the swap space if its page size does not
+match that of the the current running kernel.
 .B mkswap(2)
 initializes the whole device and does not check for bad blocks.
 .TP
