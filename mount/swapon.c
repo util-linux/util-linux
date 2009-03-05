@@ -412,13 +412,13 @@ swapon_checks(const char *special)
 					special, swapsize);
 		} else if (getpagesize() != pagesize) {
 			if (fixpgsz) {
-				warn(_("%s: swap format pagesize does not match."),
+				warnx(_("%s: swap format pagesize does not match."),
 					special);
 				if (swap_reinitialize(special) < 0)
 					goto err;
 			} else
-				warn(_("%s: swap format pagesize does not match. "
-					"(may try --fixpgsz to reinitialize)"),
+				warnx(_("%s: swap format pagesize does not match. "
+					"(Use --fixpgsz to reinitialize it.)"),
 					special);
 		}
 	} else if (sig == SIG_SWSUSPEND) {
