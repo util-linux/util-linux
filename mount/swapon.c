@@ -246,12 +246,16 @@ swap_rewrite_signature(const char *devname, unsigned int pagesize)
 		return -1;
 	}
 
-	if (lseek(fd, pagesize - SWAP_SIGNATURE_SZ, SEEK_SET) < 0)
+	if (lseek(fd, pagesize - SWAP_SIGNATURE_SZ, SEEK_SET) < 0) {
+		warn(_("%s: lseek failed"), devname);
 		goto err;
+	}
 
 	if (write(fd, (void *) SWAP_SIGNATURE,
-			SWAP_SIGNATURE_SZ) != SWAP_SIGNATURE_SZ)
+			SWAP_SIGNATURE_SZ) != SWAP_SIGNATURE_SZ) {
+		warn(_("%s: write signature failed"), devname);
 		goto err;
+	}
 
 	rc  = 0;
 err:
