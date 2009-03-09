@@ -18,6 +18,7 @@
 #endif
 #include <time.h>
 
+#include "linux_version.h"
 #include "blkidP.h"
 
 struct ext2_super_block {
@@ -178,6 +179,132 @@ struct ext2_super_block {
 #endif
 
 /*
+ * Check to see if a filesystem is in /proc/filesystems.
+ * Returns 1 if found, 0 if not
+ */
+static int fs_proc_check(const char *fs_name)
+{
+	FILE	*f;
+	char	buf[80], *cp, *t;
+
+	f = fopen("/proc/filesystems", "r");
+	if (!f)
+		return 0;
+	while (!feof(f)) {
+		if (!fgets(buf, sizeof(buf), f))
+			break;
+		cp = buf;
+		if (!isspace(*cp)) {
+			while (*cp && !isspace(*cp))
+				cp++;
+		}
+		while (*cp && isspace(*cp))
+			cp++;
+		if ((t = strchr(cp, '\n')) != NULL)
+			*t = 0;
+		if ((t = strchr(cp, '\t')) != NULL)
+			*t = 0;
+		if ((t = strchr(cp, ' ')) != NULL)
+			*t = 0;
+		if (!strcmp(fs_name, cp)) {
+			fclose(f);
+			return 1;
+		}
+	}
+	fclose(f);
+	return (0);
+}
+
+/*
+ * Check to see if a filesystem is available as a module
+ * Returns 1 if found, 0 if not
+ */
+static int check_for_modules(const char *fs_name)
+{
+#ifdef __linux__
+	struct utsname	uts;
+	FILE		*f;
+	char		buf[1024], *cp, *t;
+	int		i;
+
+	if (uname(&uts))
+		return 0;
+	snprintf(buf, sizeof(buf), "/lib/modules/%s/modules.dep", uts.release);
+
+	f = fopen(buf, "r");
+	if (!f)
+		return 0;
+	while (!feof(f)) {
+		if (!fgets(buf, sizeof(buf), f))
+			break;
+		if ((cp = strchr(buf, ':')) != NULL)
+			*cp = 0;
+		else
+			continue;
+		if ((cp = strrchr(buf, '/')) == NULL)
+			continue;
+		cp++;
+		i = strlen(cp);
+		if (i > 3) {
+			t = cp + i - 3;
+			if (!strcmp(t, ".ko"))
+				*t = 0;
+		}
+		if (!strcmp(cp, fs_name)) {
+			fclose(f);
+			return 1;
+		}
+	}
+	fclose(f);
+#endif /* __linux__ */
+	return 0;
+}
+
+/*
+ * Starting in 2.6.29, ext4 can be used to support filesystems
+ * without a journal.
+ */
+#define EXT4_SUPPORTS_EXT2 KERNEL_VERSION(2, 6, 29)
+
+static int system_supports_ext2(void)
+{
+	static time_t	last_check = 0;
+	static int	ret = -1;
+	time_t		now = time(0);
+
+	if (ret != -1 || (now - last_check) < 5)
+		return ret;
+	last_check = now;
+	ret = (fs_proc_check("ext2") || check_for_modules("ext2"));
+	return ret;
+}
+
+static int system_supports_ext4(void)
+{
+	static time_t	last_check = 0;
+	static int	ret = -1;
+	time_t		now = time(0);
+
+	if (ret != -1 || (now - last_check) < 5)
+		return ret;
+	last_check = now;
+	ret = (fs_proc_check("ext4") || check_for_modules("ext4"));
+	return ret;
+}
+
+static int system_supports_ext4dev(void)
+{
+	static time_t	last_check = 0;
+	static int	ret = -1;
+	time_t		now = time(0);
+
+	if (ret != -1 || (now - last_check) < 5)
+		return ret;
+	last_check = now;
+	ret = (fs_proc_check("ext4dev") || check_for_modules("ext4dev"));
+	return ret;
+}
+/*
  * reads superblock and returns:
  *	fc = feature_compat
  *	fi = feature_incompat
@@ -262,6 +389,15 @@ static int probe_ext2(blkid_probe pr, const struct blkid_idmag *mag)
 	    (fi  & EXT2_FEATURE_INCOMPAT_UNSUPPORTED))
 		return -BLKID_ERR_PARAM;
 
+	/*
+	 * If ext2 is not present, but ext4 or ext4dev are, then
+	 * disclaim we are ext2
+	 */
+	if (!system_supports_ext2() &&
+	    (system_supports_ext4() || system_supports_ext4dev()) &&
+	    get_linux_version() >= EXT4_SUPPORTS_EXT2)
+		return -BLKID_ERR_PARAM;
+
 	ext_get_info(pr, 2, es);
 	return 0;
 }
@@ -288,121 +424,6 @@ static int probe_ext3(blkid_probe pr, const struct blkid_idmag *mag)
 	return 0;
 }
 
-/***
- * PLEASE, close your eyes and press PageDown quickly.
- *
- * ... the code below is ugly heuristic to detect if
- *     system supports ext4 or ext4dev.
- *                                        --kzak
- ****/
-
-/*
- * Check to see if a filesystem is in /proc/filesystems.
- * Returns 1 if found, 0 if not
- */
-static int fs_proc_check(const char *fs_name)
-{
-	FILE	*f;
-	char	buf[80], *cp, *t;
-
-	f = fopen("/proc/filesystems", "r");
-	if (!f)
-		return 0;
-	while (!feof(f)) {
-		if (!fgets(buf, sizeof(buf), f))
-			break;
-		cp = buf;
-		if (!isspace(*cp)) {
-			while (*cp && !isspace(*cp))
-				cp++;
-		}
-		while (*cp && isspace(*cp))
-			cp++;
-		if ((t = strchr(cp, '\n')) != NULL)
-			*t = 0;
-		if ((t = strchr(cp, '\t')) != NULL)
-			*t = 0;
-		if ((t = strchr(cp, ' ')) != NULL)
-			*t = 0;
-		if (!strcmp(fs_name, cp)) {
-			fclose(f);
-			return 1;
-		}
-	}
-	fclose(f);
-	return (0);
-}
-
-/*
- * Check to see if a filesystem is available as a module
- * Returns 1 if found, 0 if not
- */
-static int check_for_modules(const char *fs_name)
-{
-#ifdef __linux__
-	struct utsname	uts;
-	FILE		*f;
-	char		buf[1024], *cp, *t;
-	int		i;
-
-	if (uname(&uts))
-		return 0;
-	snprintf(buf, sizeof(buf), "/lib/modules/%s/modules.dep", uts.release);
-
-	f = fopen(buf, "r");
-	if (!f)
-		return 0;
-	while (!feof(f)) {
-		if (!fgets(buf, sizeof(buf), f))
-			break;
-		if ((cp = strchr(buf, ':')) != NULL)
-			*cp = 0;
-		else
-			continue;
-		if ((cp = strrchr(buf, '/')) == NULL)
-			continue;
-		cp++;
-		i = strlen(cp);
-		if (i > 3) {
-			t = cp + i - 3;
-			if (!strcmp(t, ".ko"))
-				*t = 0;
-		}
-		if (!strcmp(cp, fs_name)) {
-			fclose(f);
-			return 1;
-		}
-	}
-	fclose(f);
-#endif /* __linux__ */
-	return 0;
-}
-
-static int system_supports_ext4(void)
-{
-	static time_t	last_check = 0;
-	static int	ret = -1;
-	time_t		now = time(0);
-
-	if (ret != -1 || (now - last_check) < 5)
-		return ret;
-	last_check = now;
-	ret = (fs_proc_check("ext4") || check_for_modules("ext4"));
-	return ret;
-}
-
-static int system_supports_ext4dev(void)
-{
-	static time_t	last_check = 0;
-	static int	ret = -1;
-	time_t		now = time(0);
-
-	if (ret != -1 || (now - last_check) < 5)
-		return ret;
-	last_check = now;
-	ret = (fs_proc_check("ext4dev") || check_for_modules("ext4dev"));
-	return ret;
-}
 
 static int probe_ext4dev(blkid_probe pr, const struct blkid_idmag *mag)
 {
@@ -416,6 +437,17 @@ static int probe_ext4dev(blkid_probe pr, const struct blkid_idmag *mag)
 	/* Distinguish from jbd */
 	if (fi & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV)
 		return -BLKID_ERR_PARAM;
+
+	/*
+	 * If the filesystem does not have a journal and ext2 and ext4
+	 * is not present, then force this to be detected as an
+	 * ext4dev filesystem.
+	 */
+	if (!(fc & EXT3_FEATURE_COMPAT_HAS_JOURNAL) &&
+	    !system_supports_ext2() && !system_supports_ext4() &&
+	    system_supports_ext4dev() &&
+	    get_linux_version() >= EXT4_SUPPORTS_EXT2)
+		goto force_ext4dev;
 
 	/*
 	 * If the filesystem is marked as OK for use by in-development
@@ -433,6 +465,7 @@ static int probe_ext4dev(blkid_probe pr, const struct blkid_idmag *mag)
 	} else
 		return -BLKID_ERR_PARAM;
 
+force_ext4dev:
 	ext_get_info(pr, 4, es);
 	return 0;
 }
@@ -456,6 +489,16 @@ static int probe_ext4(blkid_probe pr, const struct blkid_idmag *mag)
 		return -BLKID_ERR_PARAM;
 
 	/*
+	 * If the filesystem does not have a journal and ext2 is not
+	 * present, then force this to be detected as an ext2
+	 * filesystem.
+	 */
+	if (!(fc & EXT3_FEATURE_COMPAT_HAS_JOURNAL) &&
+	    !system_supports_ext2() && system_supports_ext4() &&
+	    get_linux_version() >= EXT4_SUPPORTS_EXT2)
+		goto force_ext4;
+
+	/*
 	 * If the filesystem is a OK for use by in-development
 	 * filesystem code, and ext4dev is supported or ext4 is not
 	 * supported, then don't call ourselves ext4, so we can redo
@@ -469,6 +512,8 @@ static int probe_ext4(blkid_probe pr, const struct blkid_idmag *mag)
 		if (system_supports_ext4dev() || !system_supports_ext4())
 			return -BLKID_ERR_PARAM;
 	}
+
+force_ext4:
 	ext_get_info(pr, 4, es);
 	return 0;
 }
