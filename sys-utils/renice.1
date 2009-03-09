@@ -29,7 +29,7 @@
 .\" OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 .\" SUCH DAMAGE.
 .\"
-.\"     @(#)renice.8	8.1 (Berkeley) 6/9/93
+.\"     @(#)renice.8   8.1 (Berkeley) 6/9/93
 .\"
 .Dd June 9, 1993
 .Dt RENICE 1
@@ -39,6 +39,7 @@
 .Nd alter priority of running processes
 .Sh SYNOPSIS
 .Nm renice
+.Op Fl n
 .Ar priority
 .Oo
 .Op Fl p
@@ -74,6 +75,10 @@ their process ID's.
 Options supported by
 .Nm renice :
 .Bl -tag -width Ds
+.It Fl n, Fl Fl priority
+The scheduling
+.Ar priority
+of the process, process group, or user.
 .It Fl g, Fl Fl pgrp
 Force 
 .Ar who

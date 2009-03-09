@@ -51,14 +51,15 @@ int donice(int,int,int);
 void usage(int rc)
 {
 	printf( _("\nUsage:\n"
-		" renice priority [-p|--pid] pid [... pid]\n"
-		" renice priority  -g|--pgrp pgrp [... pgrp]\n"
-		" renice priority  -u|--user user [... user]\n"
+		" renice [-n] priority [-p|--pid] pid  [... pid]\n"
+		" renice [-n] priority  -g|--pgrp pgrp [... pgrp]\n"
+		" renice [-n] priority  -u|--user user [... user]\n"
 		" renice -h | --help\n"
 		" renice -v | --version\n\n"));
 
 	exit(rc);
 }
+
 /*
  * Change the priority (nice) of processes
  * or groups of processes which are already
@@ -92,6 +93,11 @@ main(int argc, char **argv)
 
 	if (argc < 2)
 		usage(EXIT_FAILURE);
+
+	if (strcmp(*argv, "-n") == 0 || strcmp(*argv, "--priority") == 0) {
+		argc--;
+		argv++;
+	}
 
 	prio = strtol(*argv, &endptr, 10);
 	if (*endptr)
