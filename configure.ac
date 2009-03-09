@@ -164,7 +164,7 @@ UTIL_CHECK_LIB(termcap, tgetnum)
 
 
 AC_ARG_WITH([fsprobe],
-  [AS_HELP_STRING([--with-fsprobe], [library to guess filesystems (builtin|blkid|volume_id), default is blkid])],
+  [AS_HELP_STRING([--with-fsprobe=LIB], [library to guess filesystems, LIB should be builtin|blkid|volume_id, default is blkid])],
   [], [with_fsprobe=blkid]
 )
 
