@@ -2612,7 +2612,7 @@ main(int argc, char **argv) {
 			*/
 			sector_size = atoi(optarg);
 			if (sector_size != 512 && sector_size != 1024 &&
-			    sector_size != 2048)
+			    sector_size != 2048 && sector_size != 4096)
 				fatal(usage);
 			sector_offset = 2;
 			user_set_sector_size = 1;
