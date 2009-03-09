@@ -119,7 +119,7 @@ AC_CHECK_FUNCS(
 AC_FUNC_FSEEKO
 
 dnl Static compilation
-m4_define([UTIL_STATIC_PROGRAMS], [losetup, mount, umount, fdisk, sfdisk])
+m4_define([UTIL_STATIC_PROGRAMS], [losetup, mount, umount, fdisk, sfdisk, blkid])
 
 AC_ARG_ENABLE([static-programs],
   [AS_HELP_STRING([--enable-static-programs=LIST],
