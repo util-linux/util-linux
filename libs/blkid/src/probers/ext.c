@@ -417,10 +417,6 @@ static int probe_ext4dev(blkid_probe pr, const struct blkid_idmag *mag)
 	if (fi & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV)
 		return -BLKID_ERR_PARAM;
 
-	/* ext4dev requires a journal */
-	if (!(fc & EXT3_FEATURE_COMPAT_HAS_JOURNAL))
-		return -BLKID_ERR_PARAM;
-
 	/*
 	 * If the filesystem is marked as OK for use by in-development
 	 * filesystem code, but ext4dev is not supported, and ext4 is,
@@ -452,10 +448,6 @@ static int probe_ext4(blkid_probe pr, const struct blkid_idmag *mag)
 
 	/* Distinguish from jbd */
 	if (fi & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV)
-		return -BLKID_ERR_PARAM;
-
-	/* ext4 requires journal */
-	if (!(fc & EXT3_FEATURE_COMPAT_HAS_JOURNAL))
 		return -BLKID_ERR_PARAM;
 
 	/* Ext4 has at least one feature which ext3 doesn't understand */
