@@ -58,11 +58,11 @@ const char *program;
 
 static void usage(int ex)
 {
+  fputs("flock (" PACKAGE_STRING ")\n", stderr);
   fprintf(stderr,
-	  "flock (%s)\n"
-	  "Usage: %s [-sxun][-w #] fd#\n"
-	  "       %s [-sxon][-w #] file [-c] command...\n"
-	  "       %s [-sxon][-w #] directory [-c] command...\n"
+	  "Usage: %1$s [-sxun][-w #] fd#\n"
+	  "       %1$s [-sxon][-w #] file [-c] command...\n"
+	  "       %1$s [-sxon][-w #] directory [-c] command...\n"
 	  "  -s  --shared     Get a shared lock\n"
 	  "  -x  --exclusive  Get an exclusive lock\n"
 	  "  -u  --unlock     Remove a lock\n"
@@ -72,7 +72,7 @@ static void usage(int ex)
 	  "  -c  --command    Run a single command string through the shell\n"
 	  "  -h  --help       Display this text\n"
 	  "  -V  --version    Display version\n",
-	  PACKAGE_STRING, program, program);
+	  program);
   exit(ex);
 }
 
