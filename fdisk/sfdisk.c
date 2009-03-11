@@ -50,7 +50,7 @@
 #include "blkdev.h"
 #include "linux_version.h"
 #include "common.h"
-
+#include "wholedisk.h"
 #include "gpt.h"
 
 #define SIZE(a)	(sizeof(a)/sizeof(a[0]))
@@ -2443,7 +2443,7 @@ nextproc(FILE *procf) {
 			    &ma, &mi, &sz, ptname) != 4)
 			continue;
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
-		if (!is_probably_full_disk(devname))
+		if (!is_whole_disk(devname))
 			continue;
 		return devname;
 	}

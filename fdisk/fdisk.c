@@ -26,6 +26,7 @@
 #include "blkdev.h"
 #include "common.h"
 #include "fdisk.h"
+#include "wholedisk.h"
 
 #include "fdisksunlabel.h"
 #include "fdisksgilabel.h"
@@ -2568,7 +2569,7 @@ tryprocpt(void) {
 			    &ma, &mi, &sz, ptname) != 4)
 			continue;
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
-		if (is_probably_full_disk(devname))
+		if (is_whole_disk(devname))
 			try(devname, 0);
 	}
 	fclose(procpt);

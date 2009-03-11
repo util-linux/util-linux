@@ -3,6 +3,8 @@
 
 #include <sys/types.h>
 #include <sys/ioctl.h>
+#include <fcntl.h>
+#include <unistd.h>
 
 #define DEFAULT_SECTOR_SIZE       512
 

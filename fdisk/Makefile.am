@@ -3,7 +3,7 @@ include $(top_srcdir)/config/include-Makefile.am
 EXTRA_DIST = README.fdisk README.cfdisk sfdisk.examples partitiontype.c
 
 fdisk_common = i386_sys_types.c common.h gpt.c gpt.h \
-	../lib/blkdev.c
+	../lib/blkdev.c ../lib/wholedisk.c
 
 if LINUX
 fdisk_common += ../lib/linux_version.c

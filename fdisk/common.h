@@ -11,6 +11,5 @@ struct systypes {
 extern struct systypes i386_sys_types[];
 
 extern char *partname(char *dev, int pno, int lth);
-extern int is_probably_full_disk(char *name);
 
 #endif /* FDISK_COMMON_H */
