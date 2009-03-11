@@ -217,7 +217,7 @@ int main(int argc, char *argv[])
 	   EX_NOINPUT);
     }
 
-  } else {
+  } else if (optind < argc) {
     /* Use provided file descriptor */
 
     fd = (int)strtol(argv[optind], &eon, 10);
@@ -226,7 +226,14 @@ int main(int argc, char *argv[])
       exit(EX_USAGE);
     }
 
+  } else {
+    /* Bad options */
+
+    fprintf(stderr, "%s: requires file descriptor, file or directory\n",
+		program);
+    exit(EX_USAGE);
   }
+
 
   if ( have_timeout ) {
     if ( timeout.it_value.tv_sec == 0 &&
