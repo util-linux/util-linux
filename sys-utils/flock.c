@@ -1,5 +1,5 @@
 /* ----------------------------------------------------------------------- *
- *   
+ *
  *   Copyright 2003-2005 H. Peter Anvin - All Rights Reserved
  *
  *   Permission is hereby granted, free of charge, to any person
@@ -10,10 +10,10 @@
  *   sell copies of the Software, and to permit persons to whom
  *   the Software is furnished to do so, subject to the following
  *   conditions:
- *   
+ *
  *   The above copyright notice and this permission notice shall
  *   be included in all copies or substantial portions of the Software.
- *   
+ *
  *   THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  *   EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
  *   OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -40,6 +40,8 @@
 #include <sys/time.h>
 #include <sys/wait.h>
 
+#include "nls.h"
+
 static const struct option long_options[] = {
   { "shared",       0, NULL, 's' },
   { "exclusive",    0, NULL, 'x' },
@@ -60,7 +62,7 @@ static void usage(int ex)
 {
   fputs("flock (" PACKAGE_STRING ")\n", stderr);
   fprintf(stderr,
-	  "Usage: %1$s [-sxun][-w #] fd#\n"
+	_("Usage: %1$s [-sxun][-w #] fd#\n"
 	  "       %1$s [-sxon][-w #] file [-c] command...\n"
 	  "       %1$s [-sxon][-w #] directory [-c] command...\n"
 	  "  -s  --shared     Get a shared lock\n"
@@ -71,7 +73,7 @@ static void usage(int ex)
 	  "  -o  --close      Close file descriptor before running command\n"
 	  "  -c  --command    Run a single command string through the shell\n"
 	  "  -h  --help       Display this text\n"
-	  "  -V  --version    Display version\n",
+	  "  -V  --version    Display version\n"),
 	  program);
   exit(ex);
 }
@@ -92,13 +94,13 @@ static char * strtotimeval(const char *str, struct timeval *tv)
   char *s;
   long fs;			/* Fractional seconds */
   int i;
-  
+
   tv->tv_sec = strtol(str, &s, 10);
   fs = 0;
-  
+
   if ( *s == '.' ) {
     s++;
-    
+
     for ( i = 0 ; i < 6 ; i++ ) {
       if ( !isdigit(*s) )
 	break;
@@ -134,11 +136,15 @@ int main(int argc, char *argv[])
   const char *filename = NULL;
   struct sigaction sa, old_sa;
 
+  setlocale(LC_ALL, "");
+  bindtextdomain(PACKAGE, LOCALEDIR);
+  textdomain(PACKAGE);
+
   program = argv[0];
 
   if ( argc < 2 )
     usage(EX_USAGE);
-  
+
   memset(&timeout, 0, sizeof timeout);
 
   optopt = 0;
@@ -183,7 +189,7 @@ int main(int argc, char *argv[])
 	 !strcmp(argv[optind+1], "--command") ) {
 
       if ( argc != optind+3 ) {
-	fprintf(stderr, "%s: %s requires exactly one command argument\n",
+	fprintf(stderr, _("%s: %s requires exactly one command argument\n"),
 		program, argv[optind+1]);
 	exit(EX_USAGE);
       }
@@ -210,7 +216,7 @@ int main(int argc, char *argv[])
 
     if ( fd < 0 ) {
       err = errno;
-      fprintf(stderr, "%s: cannot open lock file %s: %s\n",
+      fprintf(stderr, _("%s: cannot open lock file %s: %s\n"),
 	      program, argv[optind], strerror(err));
       exit((err == ENOMEM||err == EMFILE||err == ENFILE) ? EX_OSERR :
 	   (err == EROFS||err == ENOSPC) ? EX_CANTCREAT :
@@ -222,14 +228,14 @@ int main(int argc, char *argv[])
 
     fd = (int)strtol(argv[optind], &eon, 10);
     if ( *eon || !argv[optind] ) {
-      fprintf(stderr, "%s: bad number: %s\n", program, argv[optind]);
+      fprintf(stderr, _("%s: bad number: %s\n"), program, argv[optind]);
       exit(EX_USAGE);
     }
 
   } else {
     /* Bad options */
 
-    fprintf(stderr, "%s: requires file descriptor, file or directory\n",
+    fprintf(stderr, _("%s: requires file descriptor, file or directory\n"),
 		program);
     exit(EX_USAGE);
   }
@@ -245,11 +251,11 @@ int main(int argc, char *argv[])
       block = LOCK_NB;
     } else {
       memset(&sa, 0, sizeof sa);
-      
+
       sa.sa_handler = timeout_handler;
       sa.sa_flags   = SA_ONESHOT;
       sigaction(SIGALRM, &sa, &old_sa);
-      
+
       setitimer(ITIMER_REAL, &timeout, &old_timer);
     }
   }
@@ -274,10 +280,10 @@ int main(int argc, char *argv[])
   if ( have_timeout ) {
     setitimer(ITIMER_REAL, &old_timer, NULL); /* Cancel itimer */
     sigaction(SIGALRM, &old_sa, NULL); /* Cancel signal handler */
-  }  
+  }
 
   status = 0;
-  
+
   if ( cmd_argv ) {
     pid_t w, f;
 
@@ -285,7 +291,7 @@ int main(int argc, char *argv[])
 
     if ( f < 0 ) {
       err = errno;
-      fprintf(stderr, "%s: fork: %s\n", program, strerror(err));
+      fprintf(stderr, _("%s: fork failed: %s\n"), program, strerror(err));
       exit(EX_OSERR);
     } else if ( f == 0 ) {
       if ( do_close )
