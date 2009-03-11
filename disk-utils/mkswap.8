@@ -7,7 +7,7 @@
 .SH NAME
 mkswap \- set up a Linux swap area
 .SH SYNOPSIS
-.BI "mkswap [\-c] [\-v" N "] [\-f] [\-p " PSZ "] [\-L " label "] [\-U " uuid "] " device  " [" size "]"
+.BI "mkswap [\-c] [\-f] [\-p " PSZ "] [\-L " label "] [\-U " uuid "] " device  " [" size "]"
 .SH DESCRIPTION
 .B mkswap
 sets up a Linux swap area on a device or in a file.
@@ -138,23 +138,15 @@ Specify the page size to use.
 Specify a label, to allow swapon by label.
 (Only for new style swap areas.)
 .TP
-.B \-v0
-Create an old style swap area.
-.TP
-.B \-v1
-Create a new style swap area.
+.B \-v0, \-v1
+Specify the swap space version. This option is deprecated and \-v1 is
+supported only.
 
-.LP
-If no \-v option is given,
-.B mkswap
-will default to new style, but use old style if the current kernel
-is older than 2.1.117 (and also if PAGE_SIZE is less than 2048).
-The new style header does not touch the first block, so may be
+The kernel has not supported v0 swap space format since 2.5.22. The new version
+v1 is supported since 2.1.117.
+
+The new v1 style header does not touch the first block, so may be
 preferable, in case you have a boot loader or disk label there.
-If you need to use both 2.0 and 2.2 kernels, use the \-v0 option
-when creating the swapspace.
-
-Version 0 (-v0) swap space format is no longer supported in 2.5+ kernels.
 
 .TP
 .B \-U uuid

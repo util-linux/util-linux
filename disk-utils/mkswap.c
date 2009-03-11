@@ -64,7 +64,6 @@ static int DEV = -1;
 static unsigned long long PAGES = 0;
 static unsigned long badpages = 0;
 static int check = 0;
-static int version = -1;
 
 #define SELINUX_SWAPFILE_TYPE	"swapfile_t"
 
@@ -213,7 +212,6 @@ write_uuid_and_label(unsigned char *uuid, char *volume_name) {
  * swap space as it can handle, but until 2.3.4 it would return an error
  * to swapon() if the swapspace was too large.
  */
-#define V0_MAX_PAGES	(8 * (pagesize - 10))
 /* Before 2.2.0pre9 */
 #define V1_OLD_MAX_PAGES	((0x7fffffff / pagesize) - 1)
 /* Since 2.2.0pre9, before 2.3.4:
@@ -266,69 +264,10 @@ It is roughly 2GB on i386, PPC, m68k, ARM, 1GB on sparc, 512MB on mips,
 #define MAX_BADPAGES	((pagesize-1024-128*sizeof(int)-10)/sizeof(int))
 #define MIN_GOODPAGES	10
 
-/*
- * One more point of lossage - Linux swapspace really is a mess.
- * The definition of the bitmap used is architecture dependent,
- * and requires one to know whether the machine is bigendian,
- * and if so, whether it will use 32-bit or 64-bit units in
- * test_bit().
- * davem writes: "... is based upon an unsigned long type of
- * the cpu and the native endianness".
- * So, it seems we can write `unsigned long' below.
- * However, sparc64 uses 64-bit units in the kernel, while
- * mkswap may have been translated with 32-bit longs. Thus,
- * we need an explicit test for version 0 swap on sparc64.
- */
-
-static void
-bit_set (unsigned long *addr, unsigned int nr) {
-	unsigned int r, m;
-
-	if(is_be64()) {
-		unsigned long long *bitmap = (unsigned long long *) addr;
-		unsigned long long bitnum = (unsigned long long) nr;
-		unsigned long long rl, ml;
-
-		bitmap += bitnum / (8 * sizeof(long long));
-		rl = *bitmap;
-		ml = 1ULL << (bitnum & (8ULL * sizeof(long long) - 1ULL));
-		*bitmap = rl | ml;
-		return;
-	}
-
-	addr += nr / (8 * sizeof(unsigned long));
-	r = *addr;
-	m = 1 << (nr & (8 * sizeof(unsigned long) - 1));
-	*addr = r | m;
-}
-
-static int
-bit_test_and_clear (unsigned long *addr, unsigned int nr) {
-	unsigned int r, m;
-
-	if(is_be64()) {
-		unsigned long long *bitmap = (unsigned long long *) addr;
-		unsigned long long bitnum = (unsigned long long) nr;
-		unsigned long long rl, ml;
-
-		bitmap += bitnum / (8 * sizeof(long long));
-		rl = *bitmap;
-		ml = 1ULL << (bitnum & (8ULL * sizeof(long long) - 1ULL));
-		*bitmap = rl & ~ml;
-		return ((rl & ml) != 0ULL);
-	}
-
-	addr += nr / (8 * sizeof(unsigned long));
-	r = *addr;
-	m = 1 << (nr & (8 * sizeof(unsigned long) - 1));
-	*addr = r & ~m;
-	return (r & m) != 0;
-}
-
 static void
 usage(void) {
 	fprintf(stderr,
-		_("Usage: %s [-c] [-v0|-v1] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"),
+		_("Usage: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"),
 		program_name);
 	exit(1);
 }
@@ -340,20 +279,10 @@ die(const char *str) {
 }
 
 static void
-page_ok(int page) {
-	if (version==0)
-		bit_set(signature_page, page);
-}
-
-static void
 page_bad(int page) {
-	if (version == 0)
-		bit_test_and_clear(signature_page, page);
-	else {
-		if (badpages == MAX_BADPAGES)
-			die(_("too many bad pages"));
-		p->badpages[badpages] = page;
-	}
+	if (badpages == MAX_BADPAGES)
+		die(_("too many bad pages"));
+	p->badpages[badpages] = page;
 	badpages++;
 }
 
@@ -368,10 +297,8 @@ check_blocks(void) {
 		die(_("Out of memory"));
 	current_page = 0;
 	while (current_page < PAGES) {
-		if (!check) {
-			page_ok(current_page++);
+		if (!check)
 			continue;
-		}
 		if (do_seek && lseek(DEV,current_page*pagesize,SEEK_SET) !=
 		    current_page*pagesize)
 			die(_("seek failed in check_blocks"));
@@ -379,7 +306,6 @@ check_blocks(void) {
 			page_bad(current_page++);
 			continue;
 		}
-		page_ok(current_page++);
 	}
 	if (badpages == 1)
 		printf(_("one bad page\n"));
@@ -462,6 +388,7 @@ main(int argc, char ** argv) {
 	unsigned long long sz;
 	off_t offset;
 	int force = 0;
+	int version = 1;
 	char *block_count = 0;
 	char *pp;
 	char *opt_label = NULL;
@@ -533,6 +460,12 @@ main(int argc, char ** argv) {
 			usage();
 	}
 
+	if (version != 1) {
+		fprintf(stderr, _("%s: does not support swapspace version %d.\n"),
+			program_name, version);
+		exit(EXIT_FAILURE);
+	}
+
 #ifdef HAVE_LIBUUID
 	if(opt_uuid) {
 		if (uuid_parse(opt_uuid, uuid_dat) != 0)
@@ -571,28 +504,6 @@ main(int argc, char ** argv) {
 		exit(1);
 	}
 
-	if (version == -1) {
-		/* labels only for v1 */
-		if (opt_label)
-			version = 1;
-		else
-		/* use version 1 as default, if possible */
-#ifdef __linux__
-		if (get_linux_version() < KERNEL_VERSION(2,1,117))
-			version = 0;
-		else
-#endif
-		if (pagesize < 2048)
-			version = 0;
-		else
-			version = 1;
-	}
-	if (version != 0 && version != 1) {
-		fprintf(stderr, _("%s: error: unknown version %d\n"),
-			program_name, version);
-		usage();
-	}
-
 	if (PAGES < MIN_GOODPAGES) {
 		fprintf(stderr,
 			_("%s: error: swap area needs to be at least %ld KiB\n"),
@@ -600,15 +511,13 @@ main(int argc, char ** argv) {
 		usage();
 	}
 
-	if (version == 0)
-		maxpages = V0_MAX_PAGES;
 #ifdef __linux__
-	else if (get_linux_version() >= KERNEL_VERSION(2,3,4))
+	if (get_linux_version() >= KERNEL_VERSION(2,3,4))
 		maxpages = UINT_MAX + 1ULL;
 	else if (get_linux_version() >= KERNEL_VERSION(2,2,1))
 		maxpages = V1_MAX_PAGES;
-#endif
 	else
+#endif
 		maxpages = V1_OLD_MAX_PAGES;
 
 	if (PAGES > maxpages) {
@@ -616,13 +525,6 @@ main(int argc, char ** argv) {
 		fprintf(stderr,
 			_("%s: warning: truncating swap area to %llu KiB\n"),
 			program_name, PAGES * pagesize / 1024);
-	}
-
-	if (opt_label && version == 0) {
-		fprintf(stderr,
-			_("%s: error: label only with v1 swap area\n"),
-			program_name);
-		usage();
 	}
 
 	if (stat(device_name, &statbuf) < 0) {
@@ -656,52 +558,24 @@ main(int argc, char ** argv) {
 		exit(1);
 	}
 
-#ifdef __sparc__
-	if (!force && version == 0) {
-		/* Don't overwrite partition table unless forced */
-		unsigned char *buffer = (unsigned char *)signature_page;
-		unsigned short *q, sum;
-
-		if (read(DEV, buffer, 512) != 512)
-			die(_("fatal: first page unreadable"));
-		if (buffer[508] == 0xDA && buffer[509] == 0xBE) {
-			q = (unsigned short *)(buffer + 510);
-			for (sum = 0; q >= (unsigned short *) buffer;)
-				sum ^= *q--;
-			if (!sum) {
-				fprintf(stderr, _("\
-%s: Device '%s' contains a valid Sun disklabel.\n\
-This probably means creating v0 swap would destroy your partition table.\n\
-No swap was created. If you really want to create v0 swap on that device,\n\
-use the -f option to force it.\n"),
-					program_name, device_name);
-				exit(1);
-			}
-		}
-	}
-#endif
-
-	if (version == 0 || check)
+	if (check)
 		check_blocks();
-	if (version == 0 && !bit_test_and_clear(signature_page,0))
-		die(_("fatal: first page unreadable"));
-	if (version == 1) {
-		p->version = version;
-		p->last_page = PAGES-1;
-		p->nr_badpages = badpages;
-	}
+
+	p->version = 1;
+	p->last_page = PAGES-1;
+	p->nr_badpages = badpages;
 
 	if (badpages > PAGES - MIN_GOODPAGES)
 		die(_("Unable to set up swap-space: unreadable"));
+
 	goodpages = PAGES - badpages - 1;
-	printf(_("Setting up swapspace version %d, size = %llu KiB\n"),
-		version, goodpages * pagesize / 1024);
-	write_signature((version == 0) ? "SWAP-SPACE" : "SWAPSPACE2");
+	printf(_("Setting up swapspace version 1, size = %llu KiB\n"),
+		goodpages * pagesize / 1024);
 
-	if (version == 1)
-		write_uuid_and_label(uuid, opt_label);
+	write_signature("SWAPSPACE2");
+	write_uuid_and_label(uuid, opt_label);
 
-	offset = ((version == 0) ? 0 : 1024);
+	offset = 1024;
 	if (lseek(DEV, offset, SEEK_SET) != offset)
 		die(_("unable to rewind swap-device"));
 	if (write_all(DEV, (char *) signature_page + offset,
