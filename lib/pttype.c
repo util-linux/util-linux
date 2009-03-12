@@ -13,6 +13,9 @@
 
 #include "blkdev.h"
 
+/* we need to read two sectors, beacuse BSD label offset is 512 */
+#define PTTYPE_BUFSIZ	(2 * DEFAULT_SECTOR_SIZE)	/* 1024 */
+
 /*
  * SGI
  */
@@ -212,16 +215,35 @@ mac_parttable(char *base)
 		ntohs(maclabel(base)->magic) == MAC_OLD_PARTITION_MAGIC);
 }
 
+/*
+ * BSD subpartitions listed in a disklabel, under a dos-like partition.
+ */
+#define BSD_DISKMAGIC		0x82564557UL		/* The disk magic number */
+#define BSD_DISKMAGIC_SWAPED	0x57455682UL
+struct bsd_disklabel {
+	uint32_t	magic;		/* the magic number */
+	/* ... */
+};
+
+static int
+bsd_parttable(char *base)
+{
+	struct bsd_disklabel *l = (struct bsd_disklabel *)
+					(base + (DEFAULT_SECTOR_SIZE * 1));
+
+	return (l->magic == BSD_DISKMAGIC || l->magic == BSD_DISKMAGIC_SWAPED);
+}
+
 const char *
 get_pt_type(const char *device)
 {
 	int	fd;
 	char	*type = NULL;
-	char	buf[DEFAULT_SECTOR_SIZE];
+	char	buf[PTTYPE_BUFSIZ];
 
 	if ((fd = open(device, O_RDONLY)) < 0)
 		;
-	else if (read(fd, buf, DEFAULT_SECTOR_SIZE) != DEFAULT_SECTOR_SIZE)
+	else if (read(fd, buf, PTTYPE_BUFSIZ) != PTTYPE_BUFSIZ)
 		;
 	else {
 		if (sgi_parttable(buf))
@@ -234,6 +256,8 @@ get_pt_type(const char *device)
 			type = "DOS";
 		else if (mac_parttable(buf))
 			type = "Mac";
+		else if (bsd_parttable(buf))
+			type = "BSD";
 	}
 
 	if (fd >= 0)
