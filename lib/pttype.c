@@ -235,15 +235,12 @@ bsd_parttable(unsigned char *base)
 }
 
 const char *
-get_pt_type(const char *device)
+get_pt_type_fd(int fd)
 {
-	int	fd;
 	char	*type = NULL;
 	unsigned char	buf[PTTYPE_BUFSIZ];
 
-	if ((fd = open(device, O_RDONLY)) < 0)
-		;
-	else if (read(fd, buf, PTTYPE_BUFSIZ) != PTTYPE_BUFSIZ)
+	if (read(fd, buf, PTTYPE_BUFSIZ) != PTTYPE_BUFSIZ)
 		;
 	else {
 		if (sgi_parttable(buf))
@@ -259,9 +256,20 @@ get_pt_type(const char *device)
 		else if (bsd_parttable(buf))
 			type = "BSD";
 	}
+	return type;
+}
 
-	if (fd >= 0)
-		close(fd);
+const char *
+get_pt_type(const char *device)
+{
+	int fd;
+	const char *type;
+
+	fd = open(device, O_RDONLY);
+	if (fd == -1)
+		return NULL;
+	type = get_pt_type_fd(fd);
+	close(fd);
 	return type;
 }
 

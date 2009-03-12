@@ -6,5 +6,6 @@
  * libdisk from xfsprogs to util-linux-ng.
  */
 extern const char *get_pt_type(const char *device);
+extern const char *get_pt_type_pt(int fd);
 
 #endif
