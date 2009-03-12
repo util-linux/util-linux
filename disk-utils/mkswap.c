@@ -53,6 +53,8 @@
 #include "nls.h"
 #include "blkdev.h"
 #include "pathnames.h"
+#include "pttype.h"
+#include "wholedisk.h"
 
 #ifdef HAVE_LIBUUID
 #include <uuid/uuid.h>
@@ -379,6 +381,47 @@ write_all(int fd, const void *buf, size_t count) {
 	return 0;
 }
 
+static void
+zap_bootbits(int fd, const char *devname, int force)
+{
+	const char *type = NULL;
+	int zap = 1;
+
+	if (!force) {
+		if (lseek(fd, 0, SEEK_SET) != 0)
+	                die(_("unable to rewind swap-device"));
+
+		if (is_whole_disk_fd(fd, devname))
+			/* don't zap bootbits on whole disk -- we know nothing
+			 * about bootloaders on the device */
+			zap = 0;
+
+		else if ((type = get_pt_type_fd(fd)))
+			/* don't zap partition table */
+			zap = 0;
+	}
+
+	if (zap) {
+		char buf[1024];
+
+		if (lseek(fd, 0, SEEK_SET) != 0)
+	                die(_("unable to rewind swap-device"));
+
+		memset(buf, 0, sizeof(buf));
+		if (write_all(fd, buf, sizeof(buf)))
+			die(_("unable to erase bootbits sectors"));
+		return;
+	}
+
+	fprintf(stderr, _("%s: %s: warning: don't erase bootbits sectors\n"),
+		program_name, devname);
+	if (type)
+		fprintf(stderr, _("        (%s partition table detected). "), type);
+	else
+		fprintf(stderr, _("        on whole disk. "));
+	fprintf(stderr, "Use -f to force.\n");
+}
+
 int
 main(int argc, char ** argv) {
 	struct stat statbuf;
@@ -560,6 +603,8 @@ main(int argc, char ** argv) {
 
 	if (check)
 		check_blocks();
+
+	zap_bootbits(DEV, device_name, force);
 
 	p->version = 1;
 	p->last_page = PAGES-1;
