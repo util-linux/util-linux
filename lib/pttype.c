@@ -104,7 +104,7 @@ twos_complement_32bit_sum(u_int32_t *base, int size)
 }
 
 static int
-sgi_parttable(char *base)
+sgi_parttable(unsigned char *base)
 {
 	u_int32_t csum;
 	struct sgi_volume_header *vh = (struct sgi_volume_header *) base;
@@ -120,7 +120,7 @@ sgi_parttable(char *base)
  * DOS
  */
 static int
-dos_parttable(char *base)
+dos_parttable(unsigned char *base)
 {
 	return (base[510] == 0x55 && base[511] == 0xaa);
 }
@@ -138,7 +138,7 @@ typedef struct {
 #define aixlabel(x) ((aix_partition *)x)
 
 static int
-aix_parttable(char *base)
+aix_parttable(unsigned char *base)
 {
 	return (aixlabel(base)->magic == AIX_LABEL_MAGIC ||
 		aixlabel(base)->magic == AIX_LABEL_MAGIC_SWAPPED);
@@ -180,7 +180,7 @@ typedef struct {
 #define sunlabel(x) ((sun_partition *)x)
 
 static int
-sun_parttable(char *base)
+sun_parttable(unsigned char *base)
 {
 	unsigned short *ush;
 	int csum = 0;
@@ -208,7 +208,7 @@ typedef struct {
 #define maclabel(x) ((mac_partition *)x)
 
 static int
-mac_parttable(char *base)
+mac_parttable(unsigned char *base)
 {
 	return (ntohs(maclabel(base)->magic) == MAC_LABEL_MAGIC ||
 		ntohs(maclabel(base)->magic) == MAC_PARTITION_MAGIC ||
@@ -226,7 +226,7 @@ struct bsd_disklabel {
 };
 
 static int
-bsd_parttable(char *base)
+bsd_parttable(unsigned char *base)
 {
 	struct bsd_disklabel *l = (struct bsd_disklabel *)
 					(base + (DEFAULT_SECTOR_SIZE * 1));
@@ -239,7 +239,7 @@ get_pt_type(const char *device)
 {
 	int	fd;
 	char	*type = NULL;
-	char	buf[PTTYPE_BUFSIZ];
+	unsigned char	buf[PTTYPE_BUFSIZ];
 
 	if ((fd = open(device, O_RDONLY)) < 0)
 		;
