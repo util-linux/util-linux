@@ -13,8 +13,9 @@ dist_noinst_HEADERS = \
 	md5.h \
 	nls.h \
 	pathnames.h \
+	pttype.h \
 	setproctitle.h \
 	swapheader.h \
+	wholedisk.h \
 	widechar.h \
-	xstrncpy.h \
-	pttype.h
+	xstrncpy.h
