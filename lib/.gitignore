@@ -1,3 +1,1 @@
-test_blkdev
-test_ismounted
-test_pttype
+test_*
