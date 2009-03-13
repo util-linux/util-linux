@@ -3,7 +3,7 @@
 .\" May be distributed under the GNU General Public License
 .\" Rewritten for 2.1.117, aeb, 981010.
 .\"
-.TH MKSWAP 8 "25 March 1999" "Linux 2.2.4" "Linux Programmer's Manual"
+.TH MKSWAP 8 "13 March 2009" "Linux" "Linux Programmer's Manual"
 .SH NAME
 mkswap \- set up a Linux swap area
 .SH SYNOPSIS
@@ -12,26 +12,16 @@ mkswap \- set up a Linux swap area
 .B mkswap
 sets up a Linux swap area on a device or in a file.
 
-(After creating the swap area, you need the
-.B swapon
-command to start using it. Usually swap areas are listed in
-.I /etc/fstab
-so that they can be taken into use at boot time by a
-.B swapon -a
-command in some boot script.)
-
 The
 .I device
 argument will usually be a disk partition (something like
-.I /dev/hda4
-or
 .IR /dev/sdb7 )
 but can also be a file.
 The Linux kernel does not look at partition Id's, but
 many installation scripts will assume that partitions
 of hex type 82 (LINUX_SWAP) are meant to be swap partitions.
-(Warning: Solaris also uses this type. Be careful not to kill
-your Solaris partitions.)
+(\fBWarning: Solaris also uses this type. Be careful not to kill
+your Solaris partitions.\fP)
 
 The
 .I size
@@ -53,30 +43,62 @@ fails because no swap signature is found. Typical values for
 .I PSZ
 are 4096 or 8192.
 
-Linux knows about two styles of swap areas, old style and new style.
-The last 10 bytes of the first page of the swap area distinguishes
-them: old style has `SWAP_SPACE', new style has `SWAPSPACE2' as
-signature.
+After creating the swap area, you need the
+.B swapon
+command to start using it. Usually swap areas are listed in
+.I /etc/fstab
+so that they can be taken into use at boot time by a
+.B swapon -a
+command in some boot script.
 
-In the old style, the rest of this first page was a bit map,
-with a 1 bit for each usable page of the swap area.
-Since the first page holds this bit map, the first bit is 0.
-Also, the last 10 bytes hold the signature. So, if the page
-size is S, an old style swap area can describe at most
-8*(S-10)-1 pages used for swapping.
-With S=4096 (as on i386), the useful area is at most 133890048 bytes
-(almost 128 MiB), and the rest is wasted.
-On an alpha and sparc64, with S=8192, the useful area is at most
-535560992 bytes (almost 512 MiB).
+.SH WARNING
+The swap header does not touch the first block. A boot loader or disk label
+can be there, but it is not recommended setup. The recommended setup is to
+use a separate partition for a Linux swap area.
 
-The old setup wastes most of this bitmap page, because zero bits
-denote bad blocks or blocks past the end of the swap space,
-and a simple integer suffices to indicate the size of the swap space,
-while the bad blocks, if any, can simply be listed. Nobody wants
-to use a swap space with hundreds of bad blocks. (I would not even
-use a swap space with 1 bad block.)
-In the new style swap area this is precisely what is done.
+.B mkswap like many others mkfs-like utils erases the first block to remove
+.B old on-disk filesystems.
 
+.B mkswap
+refuses to erase the first block on a device with a disk
+label (SUN, BSD, ...) or on whole disk (e.g. /dev/sda).
+
+.SH OPTIONS
+.TP
+.B \-c
+Check the device (if it is a block device) for bad blocks
+before creating the swap area.
+If any are found, the count is printed.
+.TP
+.B \-f
+Force - go ahead even if the command is stupid.
+This allows the creation of a swap area larger than the file
+or partition it resides on.
+
+Without this option
+.B mkswap
+will refuse to erase the first block on a device with a partition table or on
+whole disk (e.g. /dec/sda).
+.TP
+.BI "\-p " PSZ
+Specify the page size to use.
+.TP
+.BI "\-L " label
+Specify a label, to allow swapon by label.
+(Only for new style swap areas.)
+.TP
+.B \-v0, \-v1
+Specify the swap space version. This option is deprecated and \-v1 is
+supported only.
+
+The kernel has not supported v0 swap space format since 2.5.22. The new version
+v1 is supported since 2.1.117.
+
+.TP
+.B \-U uuid
+Specify the uuid to use. The default is to generate UUIDs.
+
+.SH NOTES
 The maximum useful size of a swap area depends on the architecture and
 the kernel version.
 It is roughly 2GiB on i386, PPC, m68k, ARM, 1GiB on sparc, 512MiB on mips,
@@ -114,43 +136,6 @@ Note that a swap file must not contain any holes (so, using
 .BR cp (1)
 to create the file is not acceptable).
 
-.SH OPTIONS
-.TP
-.B \-c
-Check the device (if it is a block device) for bad blocks
-before creating the swap area.
-If any are found, the count is printed.
-.TP
-.B \-f
-Force - go ahead even if the command is stupid.
-This allows the creation of a swap area larger than the file
-or partition it resides on.
-On SPARC, force creation of the swap area.
-Without this option
-.B mkswap
-will refuse to create a v0 swap on a device with a valid SPARC superblock,
-as that probably means one is going to erase the partition table.
-.TP
-.BI "\-p " PSZ
-Specify the page size to use.
-.TP
-.BI "\-L " label
-Specify a label, to allow swapon by label.
-(Only for new style swap areas.)
-.TP
-.B \-v0, \-v1
-Specify the swap space version. This option is deprecated and \-v1 is
-supported only.
-
-The kernel has not supported v0 swap space format since 2.5.22. The new version
-v1 is supported since 2.1.117.
-
-The new v1 style header does not touch the first block, so may be
-preferable, in case you have a boot loader or disk label there.
-
-.TP
-.B \-U uuid
-Specify the uuid to use. The default is to generate UUIDs.
 
 .SH "SEE ALSO"
 .BR fdisk (8),
