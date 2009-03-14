@@ -264,7 +264,7 @@ static void print_udev_format(const char *name, const char *value, size_t sz)
 		printf("ID_FS_%s=%s\n", name, value);
 }
 
-static void print_value(int output, int num, blkid_dev dev,
+static void print_value(int output, int num, const char *devname,
 			const char *value, const char *name, size_t valsz)
 {
 	if (output & OUTPUT_VALUE_ONLY) {
@@ -275,8 +275,8 @@ static void print_value(int output, int num, blkid_dev dev,
 		print_udev_format(name, value, valsz);
 
 	} else {
-		if (num == 1 && dev)
-			printf("%s: ", blkid_dev_devname(dev));
+		if (num == 1 && devname)
+			printf("%s: ", devname);
 		fputs(name, stdout);
 		fputs("=\"", stdout);
 		safe_print(value, valsz);
@@ -287,7 +287,7 @@ static void print_value(int output, int num, blkid_dev dev,
 static void print_tags(blkid_dev dev, char *show[], int numtag, int output)
 {
 	blkid_tag_iterate	iter;
-	const char		*type, *value;
+	const char		*type, *value, *devname;
 	int			i, num = 1;
 
 	if (!dev)
@@ -298,8 +298,10 @@ static void print_tags(blkid_dev dev, char *show[], int numtag, int output)
 		return;
 	}
 
+	devname = blkid_dev_devname(dev);
+
 	if (output & OUTPUT_DEVICE_ONLY) {
-		printf("%s\n", blkid_dev_devname(dev));
+		printf("%s\n", devname);
 		return;
 	}
 
@@ -312,11 +314,11 @@ static void print_tags(blkid_dev dev, char *show[], int numtag, int output)
 			if (i >= numtag)
 				continue;
 		}
-		print_value(output, num++, dev, value, type, strlen(value));
+		print_value(output, num++, devname, value, type, strlen(value));
 	}
 	blkid_tag_iterate_end(iter);
 
-	if (num > 1 && !(output & OUTPUT_VALUE_ONLY))
+	if (num > 1 && !(output & (OUTPUT_VALUE_ONLY | OUTPUT_UDEV_LIST)))
 		printf("\n");
 }
 
@@ -352,9 +354,11 @@ static int lowprobe_device(blkid_probe pr, const char *devname, int output,
 			continue;
 
 		len = strnlen((char *) data, len);
-		print_value(output, n + 1, NULL, (char *) data, name, len);
+		print_value(output, n + 1, devname, (char *) data, name, len);
 	}
 
+	if (nvals > 1 && !(output & (OUTPUT_VALUE_ONLY | OUTPUT_UDEV_LIST)))
+		printf("\n");
 done:
 	if (rc == -2)
 		fprintf(stderr, "%s: ambivalent result "
