@@ -227,7 +227,7 @@ char *
 fsprobe_get_fstype_by_devname(const char *devname)
 {
 	blkid_cache c;
-	const char *tp;
+	char *tp;
 
 	if (blcache)
 		return blkid_get_tag_value(blcache, "TYPE", devname);
