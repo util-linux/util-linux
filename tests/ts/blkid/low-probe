@@ -22,6 +22,11 @@ TS_DESC="low-probe"
 . $TS_TOPDIR/functions.sh
 
 ts_init "$*"
+
+if [ ! -x "$TS_CMD_BLKID" ]; then
+	ts_skip "blkid disabled"
+fi
+
 mkdir -p $TS_OUTDIR/images
 
 for img in $(ls $TS_SELF/images/*.img.bz2 | sort); do
