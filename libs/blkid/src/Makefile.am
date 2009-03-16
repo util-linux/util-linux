@@ -17,7 +17,7 @@ blkidinc_HEADERS = blkid.h
 lib_LTLIBRARIES = libblkid.la
 libblkid_la_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 		     probe.c read.c resolve.c save.c tag.c version.c verify.c \
-		     encode.c blkid.h list.h probers/probers.h \
+		     encode.c blkid.h list.h blkidP.h probers/probers.h \
 		     config.c evaluate.c \
 		     $(blkidinc_HEADERS) \
 		     $(top_srcdir)/lib/blkdev.c \
