@@ -23,7 +23,7 @@ TS_TOPDIR="$(dirname $0)/../.."
 ts_init "$*"
 
 for name in $(ls $TS_SELF/proc-dumps/ | sort); do
-	path=$TS_SELF/proc-dumps/$name
+	path=$TS_SELF/dumps/$name
 	ts_init_subtest $name
 
 	# Architecture information is not applicable with -s.

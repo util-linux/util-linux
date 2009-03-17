@@ -8,7 +8,7 @@
 # For exmaple:
 #
 #   # mk-lscpu-input ts-lscpu-i386-coolhw
-#   # lscpu --sysroot input/ts-lscpu-i386-coolhw
+#   # lscpu --sysroot dumps/ts-lscpu-i386-coolhw
 #
 
 progname=$(basename $0)
@@ -19,7 +19,7 @@ if [ -z "$1" ]; then
 fi
 
 TS_NAME="$1"
-TS_INPUT="input/$TS_NAME"
+TS_INPUT="dumps/$TS_NAME"
 CP="cp -r --parents"
 
 mkdir -p $TS_INPUT/{proc,sys}
