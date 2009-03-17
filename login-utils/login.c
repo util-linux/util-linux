@@ -552,7 +552,7 @@ main(int argc, char **argv)
      * Therefore, we are safe not setting it to anything
      */
 
-    retcode = pam_start("login",username, &conv, &pamh);
+    retcode = pam_start(hflag?"remote":"login",username, &conv, &pamh);
     if(retcode != PAM_SUCCESS) {
 	fprintf(stderr, _("%s: PAM failure, aborting: %s\n"),
 		"login", pam_strerror(pamh, retcode));

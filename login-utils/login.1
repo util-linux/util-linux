@@ -105,6 +105,14 @@ to pass the name of the remote host to
 so that it may be placed in utmp and wtmp.  Only the superuser may use
 this option.
 
+Note that the \fB-h\fP option has impact on the \fBPAM service name\fP. The standard
+service name is "login", with the \fB-h\fP option the name is "remote". It's
+necessary to create a proper PAM config files (e.g.
+.I /etc/pam.d/login
+and 
+.I /etc/pam.d/remote
+).
+
 .SH "SPECIAL ACCESS RESTRICTIONS"
 The file
 .I /etc/securetty
@@ -297,6 +305,8 @@ are allowed to log in from anywhere as is standard behavior.
 .I /etc/passwd
 .I /etc/nologin
 .I /etc/usertty
+.I /etc/pam.d/login
+.I /etc/pam.d/remote
 .I .hushlogin
 .fi
 .SH "SEE ALSO"
