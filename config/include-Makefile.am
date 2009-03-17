@@ -1,6 +1,7 @@
 # The original default vaues of bindir and sbindir:
 usrbinexecdir = ${exec_prefix}/bin
 usrsbinexecdir = ${exec_prefix}/sbin
+usrlibexecdir = ${exec_prefix}/$(libdirname)
 
 AM_CPPFLAGS = -include $(top_builddir)/config.h -I$(top_srcdir)/include \
 	-DLOCALEDIR=\"$(localedir)\"

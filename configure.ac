@@ -22,7 +22,6 @@ BLKID_DATE="10-Feb-2009"
 BLKID_VERSION=$BLKID_VERSION_MAJOR.$BLKID_VERSION_MINOR.$BLKID_VERSION_RELEASE
 BLKID_VERSION_INFO=`expr $BLKID_VERSION_MAJOR + $BLKID_VERSION_MINOR`:$BLKID_VERSION_RELEASE:$BLKID_VERSION_MINOR
 
-
 # Check whether exec_prefix=/usr:
 case $exec_prefix:$prefix in
 NONE:NONE | NONE:/usr | /usr:*)
@@ -40,6 +39,13 @@ NONE:NONE | NONE:/usr | /usr:*)
     AC_MSG_NOTICE([  --libdir defaults to /lib]) ;;
   esac ;;
 esac
+
+# lib64
+case ${libdir} in
+  *lib64) libdirname=lib64 ;;
+  *) libdirname=lib
+esac
+AC_SUBST([libdirname])
 
 AC_PROG_CC_STDC
 AC_GNU_SOURCE
