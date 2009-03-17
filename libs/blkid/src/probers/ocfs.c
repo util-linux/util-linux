@@ -150,7 +150,8 @@ static int probe_ocfs2(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_probe_set_uuid(pr, osb->s_uuid);
 
 	blkid_probe_sprintf_version(pr, "%u.%u",
-			osb->s_major_rev_level, osb->s_minor_rev_level);
+		le16_to_cpu(osb->s_major_rev_level),
+		le16_to_cpu(osb->s_minor_rev_level));
 
 	return 0;
 }
