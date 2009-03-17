@@ -2,6 +2,7 @@
 #define BITOPS_H
 
 #include <stdint.h>
+#include <endian.h>
 
 #if !defined __BYTE_ORDER || !(__BYTE_ORDER == __LITTLE_ENDIAN) && !(__BYTE_ORDER == __BIG_ENDIAN)
 #error missing __BYTE_ORDER
