@@ -38,7 +38,9 @@ lib/fsprobe.c
 lib/ismounted.c
 lib/linux_version.c
 lib/md5.c
+lib/pttype.c
 lib/setproctitle.c
+lib/wholedisk.c
 login-utils/agetty.c
 login-utils/checktty.c
 login-utils/chfn.c
