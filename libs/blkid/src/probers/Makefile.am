@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-AM_CPPFLAGS += -I$(top_builddir)/libs/blkid/src
+AM_CPPFLAGS += -I$(top_srcdir)/libs/blkid/src
 
 noinst_LTLIBRARIES = libblkid_probers.la
 libblkid_probers_la_SOURCES = \

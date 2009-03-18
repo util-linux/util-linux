@@ -2,7 +2,7 @@ include $(top_srcdir)/config/include-Makefile.am
 
 SUBDIRS = probers .
 
-AM_CPPFLAGS += -I$(top_builddir)/libs/blkid/src
+AM_CPPFLAGS += -I$(top_srcdir)/libs/blkid/src
 
 common_ldadd =
 
@@ -28,7 +28,10 @@ libblkid_la_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 libblkid_la_LIBADD = probers/libblkid_probers.la $(common_ldadd)
 libblkid_la_DEPENDENCIES = $(libblkid_la_LIBADD) blkid.sym
 
-libblkid_la_LDFLAGS = -Wl,--version-script=blkid.sym -version-info @BLKID_VERSION_INFO@
+# TODO: for unknown reason "make distcheck" requires
+#       full path to the version string
+libblkid_la_LDFLAGS = -Wl,--version-script=$(top_srcdir)/libs/blkid/src/blkid.sym \
+                      -version-info @BLKID_VERSION_INFO@
 
 tests = test_cache test_config test_dev test_devname test_devno test_getsize \
 	test_read test_resolve test_save test_tag test_verify test_evaluate
