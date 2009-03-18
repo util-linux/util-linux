@@ -1,4 +1,4 @@
-AC_INIT(util-linux-ng, 2.14, kzak@redhat.com)
+AC_INIT(util-linux-ng, 2.15-rc1, kzak@redhat.com)
 
 AC_PREREQ(2.60)
 
@@ -15,7 +15,7 @@ dnl blkid version definition (the library SONAME is
 dnl "libblkid.so.$BLKID_VERSION_MAJOR", see blkid/Makefile.am)
 dnl ----------------------------------------------------------
 BLKID_VERSION_MAJOR=1
-BLKID_VERSION_MINOR=42
+BLKID_VERSION_MINOR=99
 BLKID_VERSION_RELEASE=0
 BLKID_DATE="10-Feb-2009"
 
