@@ -1,11 +1,13 @@
 #!/bin/sh
 #
+# Copyright (C) 2009 Karel Zak <kzak@redhat.com>
 #
 
-> POTFILES.in
+# find all *.c files, 
+# sort the list
+# exclude ../tests/ from the list 
+#         and remove "../" prefix
 
-cd ..
-for x in */*.c; do
-echo "$x" >> po/POTFILES.in
-done
-cd po
+find ../ -name "*.c" | \
+sort | \
+gawk '! /^\.\.\/tests\// { print gensub(/^\.\.\//, "", 1) }' > POTFILES.in
