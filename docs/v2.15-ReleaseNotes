@@ -26,7 +26,7 @@ login(1):
     executed with "-h <hostname>" option. The "-h" option is used by other
     servers (i.e., telnetd(8)) to pass the name of the remote host to login.
 
-cal(8):
+cal(1):
   - determines the first day of week from the locale.
 
 libblkid, blkid(8) and findfs(8):
