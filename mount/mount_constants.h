@@ -59,6 +59,9 @@
 #ifndef MS_I_VERSION
 #define MS_I_VERSION	(1<<23)	/* update inode I_version field */
 #endif
+#ifndef MS_STRICTATIME
+#define MS_STRICTATIME	(1<<24) /* strict atime semantics */
+#endif
 /*
  * Magic mount flag number. Had to be or-ed to the flag values.
  */

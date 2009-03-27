@@ -188,6 +188,10 @@ static const struct opt_map opt_map[] = {
   { "norelatime", 0, 1, MS_RELATIME }, /* Update access time without regard
 					  to mtime/ctime */
 #endif
+#ifdef MS_STRICTATIME
+  { "strictatime", 0, 0, MS_STRICTATIME }, /* Strict atime semantics */
+  { "nostrictatime", 0, 1, MS_STRICTATIME }, /* kernel default atime */
+#endif
   { "nofail",	0, 0, MS_COMMENT},	/* Do not fail if ENOENT on dev */
   { NULL,	0, 0, 0		}
 };

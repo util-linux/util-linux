@@ -807,6 +807,13 @@ Do not use
 feature (e.g, for systems where the feature is enabled by default, for
 more details see mount options in /proc/mounts).
 .TP
+.B strictatime
+Update inode access times whenever a file is accessed. Disables noatime and
+.B relatime.
+.TP
+.B nostrictatime
+Use the kernel's default behaviour for inode access time updates.
+.TP
 .B suid
 Allow set-user-identifier or set-group-identifier bits to take
 effect.
