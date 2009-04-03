@@ -258,6 +258,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	pr->fd = fd;
 	pr->off = off;
 	pr->size = 0;
+	pr->idx = 0;
 
 	if (size)
 		pr->size = size;
@@ -284,7 +285,6 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 	DBG(DEBUG_LOWPROBE, printf("ready for low-probing, offset=%zd, size=%zd\n",
 				pr->off, pr->size));
-	pr->idx = 0;
 	return 0;
 }
 
@@ -452,6 +452,9 @@ int blkid_do_probe(blkid_probe pr)
 
 	if (pr->idx)
 		i = pr->idx + 1;
+
+	if (i < 0 && i >= ARRAY_SIZE(idinfos))
+		return -1;
 
 	DBG(DEBUG_LOWPROBE, printf("--> starting probing loop\n"));
 
