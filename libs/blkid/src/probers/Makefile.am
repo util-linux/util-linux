@@ -39,4 +39,5 @@ libblkid_probers_la_SOURCES = \
 			netware.c \
 			sysv.c \
 			btrfs.c \
-			lvm.c
+			lvm.c \
+			zfs.c

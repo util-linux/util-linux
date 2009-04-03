@@ -55,5 +55,6 @@ extern const struct blkid_idinfo netware_idinfo;
 extern const struct blkid_idinfo sysv_idinfo;
 extern const struct blkid_idinfo xenix_idinfo;
 extern const struct blkid_idinfo btrfs_idinfo;
+extern const struct blkid_idinfo zfs_idinfo;
 
 #endif /* _BLKID_PROBE_H */
