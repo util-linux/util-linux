@@ -2,17 +2,6 @@
  TODO
  ----
 
- e2fsprogs:
-
-    - add --disable-blkid
-    - "#ifdef BUILD_BLKID" for findfs code in tune2fs.c
-    - move fsck.c to util-linux-ng
-
- udev:
-    - add --disable-volumeid to udev package
-    - test blkid within udev rules
-
-
  - add command line interface for blkid_probe_filter_types():
 
        # blkid -p -o udev --filter-type nofat
@@ -38,10 +27,15 @@
    [ -- Christoph Hellwig, 16 Feb 2009 ]
    (1) http://git.kernel.org/?p=fs/xfs/xfsprogs-dev.git;a=tree;f=libdisk;
 
+   [ .. or move whole libdisk to util-linux-ng and merge partx code to the 
+     library -- kzak ]
+
  - use /sys/block/<devname>/dm/name rather than scan /dev/mapper/ for the name
    (see devname.c: probe_one()). The sysfs entry has been introduced by kernel
    patch 784aae735d9b0bba3f8b9faef4c8b30df3bf0128.
 
  - in lib/fsprobe.c wrapper use blkid_parse_tag_string() rather than a local
    parser implementation
+
+ - use fstatat() in blkid__scan_dir()
 
