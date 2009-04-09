@@ -42,3 +42,13 @@
  - add evaluate.c: blkid_evaluate_spec_to_buffer() (and add lib/canonicalize.c:
    canonicalize_path_to_buffer())
 
+ - add values:
+
+	FSSIZE   -- filesystem size (klibc requirement)
+
+	SBOFFSET -- superblock offset; offset where SB was detected 
+                    (swapon requirement to check details from swap header)
+
+        MAGIC    -- magic string
+	MAGICLEN -- length of magic string
+
