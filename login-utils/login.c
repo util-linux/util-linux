@@ -352,6 +352,21 @@ get_pam_username(pam_handle_t *pamh, char **name)
 }
 #endif
 
+/*
+ * We need to check effective UID/GID. For example $HOME could be on root
+ * squashed NFS or on NFS with UID mapping and access(2) uses real UID/GID.
+ * The open(2) seems as the surest solution.
+ * -- kzak@redhat.com (10-Apr-2009)
+ */
+int
+effective_access(const char *path, int mode)
+{
+	int fd = open(path, mode);
+	if (fd != -1)
+		close(fd);
+	return fd == -1 ? -1 : 0;
+}
+
 int
 main(int argc, char **argv)
 {
@@ -885,7 +900,7 @@ main(int argc, char **argv)
 		sprintf(tmpstr, "%s/%s", pwd->pw_dir, _PATH_HUSHLOGIN);
 		setregid(-1, pwd->pw_gid);
 		setreuid(0, pwd->pw_uid);
-		quietlog = (access(tmpstr, R_OK) == 0);
+		quietlog = (effective_access(tmpstr, O_RDONLY) == 0);
 		setuid(0); /* setreuid doesn't do it alone! */
 		setreuid(ruid, 0);
 		setregid(-1, egid);
