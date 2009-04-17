@@ -36,7 +36,7 @@ libblkid_la_LDFLAGS = -Wl,--version-script=$(top_srcdir)/libs/blkid/src/blkid.sy
 tests = test_cache test_config test_dev test_devname test_devno test_getsize \
 	test_read test_resolve test_save test_tag test_verify test_evaluate
 
-EXTRA_DIST = blkid.sym
+EXTRA_DIST = blkid.sym tst_types.c
 CLEANFILES = $(tests)
 
 tests: all $(tests)
