@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.14.2-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-03-18 10:52+0100\n"
+"POT-Creation-Date: 2009-04-17 12:43+0200\n"
 "PO-Revision-Date: 2009-02-14 17:00+0700\n"
 "Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -6754,6 +6754,16 @@ msgstr "Kernel device driver untuk %s tidak memiliki ioctl RTC_EPOCH_SET.\n"
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) ke %s gagal"
 
+#: libs/blkid/bin/findfs.c:24
+#, c-format
+msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
+msgstr ""
+
+#: libs/blkid/bin/findfs.c:55
+#, fuzzy, c-format
+msgid "unable to resolve '%s'"
+msgstr "tidak dapat membuka %s"
+
 #: login-utils/agetty.c:361
 #, c-format
 msgid "%s: can't exec %s: %m"
@@ -6892,12 +6902,12 @@ msgstr "%s: Tidak dapat menset default context untuk /etc/passwd"
 msgid "Changing finger information for %s.\n"
 msgstr "Mengubah informasi finger untuk %s.\n"
 
-#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:557
+#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:572
 #, c-format
 msgid "%s: PAM failure, aborting: %s\n"
 msgstr "%s: PAM Gagal, membatalkan: %s\n"
 
-#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:808
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:823
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:727
 #: mount/lomount.c:730
 msgid "Password: "
@@ -7129,31 +7139,31 @@ msgstr "FATAL: tidak dapat membuka tty: %s"
 msgid "FATAL: bad tty"
 msgstr "FATAL: tty buruk"
 
-#: login-utils/login.c:421
+#: login-utils/login.c:436
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: -h hanya untuk super-user.\n"
 
-#: login-utils/login.c:464
+#: login-utils/login.c:479
 #, c-format
 msgid "usage: login [-fp] [username]\n"
 msgstr "penggunaan: login [-fp] [pengguna]\n"
 
-#: login-utils/login.c:559
+#: login-utils/login.c:574
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "Tidak dapat menginitialisasi PAM: %s"
 
-#: login-utils/login.c:576
+#: login-utils/login.c:591
 msgid "login: "
 msgstr "login: "
 
-#: login-utils/login.c:620
+#: login-utils/login.c:635
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "GAGAL LOGIN %d DARI %s UNTUK %s, %s"
 
-#: login-utils/login.c:625
+#: login-utils/login.c:640
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -7162,17 +7172,17 @@ msgstr ""
 "Login tidak benar\n"
 "\n"
 
-#: login-utils/login.c:634
+#: login-utils/login.c:649
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "TERLALU BANYAK LOGIN DICOBA (%d) DARI %s UNTUK %s, %s"
 
-#: login-utils/login.c:638
+#: login-utils/login.c:653
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "GAGAL SESI LOGIN DARI %s UNTUK %s, %s"
 
-#: login-utils/login.c:643
+#: login-utils/login.c:658
 #, c-format
 msgid ""
 "\n"
@@ -7181,7 +7191,7 @@ msgstr ""
 "\n"
 "Login tidak benar\n"
 
-#: login-utils/login.c:671 login-utils/login.c:678 login-utils/login.c:712
+#: login-utils/login.c:686 login-utils/login.c:693 login-utils/login.c:727
 #, c-format
 msgid ""
 "\n"
@@ -7190,120 +7200,120 @@ msgstr ""
 "\n"
 "Masalah dari sesi setup, batal.\n"
 
-#: login-utils/login.c:672
+#: login-utils/login.c:687
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "KOSONG di pengguna (username) dalam %s: %d. Batal."
 
-#: login-utils/login.c:679
+#: login-utils/login.c:694
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Pengguna (username) tidak valid \"%s\" dalam %s:%d. Batal."
 
-#: login-utils/login.c:698
+#: login-utils/login.c:713
 #, c-format
 msgid "login: Out of memory\n"
 msgstr "login: Kehabisan memory\n"
 
-#: login-utils/login.c:742
+#: login-utils/login.c:757
 msgid "Illegal username"
 msgstr "Username (pengguna) tidak legal"
 
-#: login-utils/login.c:785
+#: login-utils/login.c:800
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "%s login ditolak di terminal ini.\n"
 
-#: login-utils/login.c:790
+#: login-utils/login.c:805
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "LOGIN %s DITOLAK DARI %s DI TTY %s"
 
-#: login-utils/login.c:794
+#: login-utils/login.c:809
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "LOGIN %s DITOLAK DI TTY %s"
 
-#: login-utils/login.c:848
+#: login-utils/login.c:863
 #, c-format
 msgid "Login incorrect\n"
 msgstr "Login tidak benar\n"
 
-#: login-utils/login.c:1073
+#: login-utils/login.c:1088
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "DIALUP PADA %s OLEH %s"
 
-#: login-utils/login.c:1080
+#: login-utils/login.c:1095
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "ROOT LOGIN DI %s DARI %s"
 
-#: login-utils/login.c:1083
+#: login-utils/login.c:1098
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "ROOT LOGIN DI %s"
 
-#: login-utils/login.c:1086
+#: login-utils/login.c:1101
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "LOGIN DI %s OLEH %s DARI %s"
 
-#: login-utils/login.c:1089
+#: login-utils/login.c:1104
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "LOGIN DI %s OLEH %s"
 
-#: login-utils/login.c:1110
+#: login-utils/login.c:1125
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Anda memiliki mail baru.\n"
 
-#: login-utils/login.c:1112
+#: login-utils/login.c:1127
 #, c-format
 msgid "You have mail.\n"
 msgstr "Anda memiliki mail.\n"
 
-#: login-utils/login.c:1156
+#: login-utils/login.c:1171
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "login: gagal forking: %s"
 
-#: login-utils/login.c:1203
+#: login-utils/login.c:1218
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY gagal: %m"
 
-#: login-utils/login.c:1209
+#: login-utils/login.c:1224
 msgid "setuid() failed"
 msgstr "setuid() gagal"
 
-#: login-utils/login.c:1215
+#: login-utils/login.c:1230
 #, c-format
 msgid "No directory %s!\n"
 msgstr "Bukan direktori %s!\n"
 
-#: login-utils/login.c:1219
+#: login-utils/login.c:1234
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Logging in dengan home = \"/\".\n"
 
-#: login-utils/login.c:1227
+#: login-utils/login.c:1242
 #, c-format
 msgid "login: no memory for shell script.\n"
 msgstr "login: tidak ada memory untuk shell script.\n"
 
-#: login-utils/login.c:1254
+#: login-utils/login.c:1269
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr "login: tidak dapat mengeksekusi shell script: %s.\n"
 
-#: login-utils/login.c:1257
+#: login-utils/login.c:1272
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "login: tidak ada shell: %s.\n"
 
-#: login-utils/login.c:1272
+#: login-utils/login.c:1287
 #, c-format
 msgid ""
 "\n"
@@ -7312,65 +7322,65 @@ msgstr ""
 "\n"
 "%s login: "
 
-#: login-utils/login.c:1283
+#: login-utils/login.c:1298
 #, c-format
 msgid "login name much too long.\n"
 msgstr "nama login terlalu panjang.\n"
 
-#: login-utils/login.c:1284
+#: login-utils/login.c:1299
 msgid "NAME too long"
 msgstr "NAMA terlalu panjang"
 
-#: login-utils/login.c:1291
+#: login-utils/login.c:1306
 #, c-format
 msgid "login names may not start with '-'.\n"
 msgstr "nama login tidak boleh diawali dengan '-'.\n"
 
-#: login-utils/login.c:1301
+#: login-utils/login.c:1316
 #, c-format
 msgid "too many bare linefeeds.\n"
 msgstr "terlalu banyak linefeeds bare.\n"
 
-#: login-utils/login.c:1302
+#: login-utils/login.c:1317
 msgid "EXCESSIVE linefeeds"
 msgstr "TERLALU BANYAK linefeeds"
 
-#: login-utils/login.c:1334
+#: login-utils/login.c:1349
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "Waktu habis untuk Login sesudah %d detik\n"
 
-#: login-utils/login.c:1422
+#: login-utils/login.c:1437
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Login terakhir: %.*s"
 
-#: login-utils/login.c:1426
+#: login-utils/login.c:1441
 #, c-format
 msgid "from %.*s\n"
 msgstr "dari %.*s\n"
 
-#: login-utils/login.c:1429
+#: login-utils/login.c:1444
 #, c-format
 msgid "on %.*s\n"
 msgstr "di %.*s\n"
 
-#: login-utils/login.c:1455
+#: login-utils/login.c:1470
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "LOGIN GAGAL DARI %s, %s"
 
-#: login-utils/login.c:1458
+#: login-utils/login.c:1473
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "LOGIN GAGAL DI %s, %s"
 
-#: login-utils/login.c:1462
+#: login-utils/login.c:1477
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "%d LOGIN GAGAL DARI %s, %s"
 
-#: login-utils/login.c:1465
+#: login-utils/login.c:1480
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%d LOGIN GAGAL DI %s, %s"
@@ -8631,226 +8641,226 @@ msgstr "%s: %s: perangkat sedang sibuk"
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Layanan loop tidak ada pada waktu dikompile. Tolong di rekompile.\n"
 
-#: mount/mount.c:325
+#: mount/mount.c:329
 #, c-format
 msgid "mount: improperly quoted option string '%s'"
 msgstr "mount: opsi string tidak dinyatakan dengan benar '%s'"
 
-#: mount/mount.c:358
+#: mount/mount.c:362
 #, c-format
 msgid "mount: translated %s '%s' to '%s'\n"
 msgstr "mount: ditranslasikan %s '%s' ke '%s'\n"
 
-#: mount/mount.c:522
+#: mount/mount.c:526
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: menurut mtab, %s telah dimount di %s"
 
-#: mount/mount.c:527
+#: mount/mount.c:531
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: menurut mtab, %s telah di mount di %s"
 
-#: mount/mount.c:551
+#: mount/mount.c:555
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: tidak dapat membuka %s untuk menulis: %s"
 
-#: mount/mount.c:568 mount/mount.c:1189
+#: mount/mount.c:572 mount/mount.c:1193
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: error dalam menulis %s: %s"
 
-#: mount/mount.c:576
+#: mount/mount.c:580
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: error mengubah mode dari %s: %s"
 
-#: mount/mount.c:659
+#: mount/mount.c:663
 #, c-format
 msgid "mount: cannot set group id: %s"
 msgstr "mount tidak dapat menset grup id: %s"
 
-#: mount/mount.c:662
+#: mount/mount.c:666
 #, c-format
 msgid "mount: cannot set user id: %s"
 msgstr "mount: tidak dapat menset id pengguna: %s"
 
-#: mount/mount.c:701 mount/mount.c:1801
+#: mount/mount.c:705 mount/mount.c:1805
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: tidak dapat melakukan fork: %s"
 
-#: mount/mount.c:838
+#: mount/mount.c:842
 #, c-format
 msgid "Trying %s\n"
 msgstr "Mencoba %s\n"
 
-#: mount/mount.c:866
+#: mount/mount.c:870
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr ""
 "mount: anda tidak menspesifikasikan sebuah tipe dari filesystem untuk %s\n"
 
-#: mount/mount.c:869
+#: mount/mount.c:873
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       Saya akan mencoba semua tipe yang disebutkan dalam %s atau %s\n"
 
-#: mount/mount.c:872
+#: mount/mount.c:876
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       dan ini sepertinya merupakan sebuah swapspace\n"
 
-#: mount/mount.c:874
+#: mount/mount.c:878
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       Saya akan mencoba tipe %s\n"
 
-#: mount/mount.c:901
+#: mount/mount.c:905
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s kelihatannya seperti swapspace - tidak di mount"
 
-#: mount/mount.c:992
+#: mount/mount.c:996
 msgid "mount failed"
 msgstr "mount gagal"
 
-#: mount/mount.c:994
+#: mount/mount.c:998
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: hanya root yang dapat melakukan mount %s di %s"
 
-#: mount/mount.c:1064
+#: mount/mount.c:1068
 msgid "mount: loop device specified twice"
 msgstr "mount: perangkat loop dispesifikasikan dua kali"
 
-#: mount/mount.c:1069
+#: mount/mount.c:1073
 msgid "mount: type specified twice"
 msgstr "mount: tipe dispesifikasikan dua kali"
 
-#: mount/mount.c:1081
+#: mount/mount.c:1085
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: melewatkan setup dari perangkat loop\n"
 
-#: mount/mount.c:1093
+#: mount/mount.c:1097
 #, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: menurut mtab, %s telah dimount di %s sebagai loop"
 
-#: mount/mount.c:1103
+#: mount/mount.c:1107
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: akan menggunakan perangkat loop %s\n"
 
-#: mount/mount.c:1112
+#: mount/mount.c:1116
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr "mount: tercuri loop=%s ...mencoba lagi\n"
 
-#: mount/mount.c:1117
+#: mount/mount.c:1121
 #, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: tercuri loop=%s"
 
-#: mount/mount.c:1122
+#: mount/mount.c:1126
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: gagal menset-up perangkat loop\n"
 
-#: mount/mount.c:1133
+#: mount/mount.c:1137
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: setup perangkat loop telah berhasil\n"
 
-#: mount/mount.c:1167
+#: mount/mount.c:1171
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s tidak ditemukan - membuatnya..\n"
 
-#: mount/mount.c:1184
+#: mount/mount.c:1188
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: tidak dapat membuka %s: %s"
 
-#: mount/mount.c:1205
+#: mount/mount.c:1209
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argument untuk -p atau --pass-fd harus berupa sebuah nomor"
 
-#: mount/mount.c:1218
+#: mount/mount.c:1222
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: tidak dapat membuka %s untuk menset kecepatan"
 
-#: mount/mount.c:1221
+#: mount/mount.c:1225
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount tidak dapat menset kecepatan: %s"
 
-#: mount/mount.c:1278
+#: mount/mount.c:1282
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: menurut mtab, %s telah dimount di %s\n"
 
-#: mount/mount.c:1354
+#: mount/mount.c:1358
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: Saya tidak dapat menentukan tipe dari filesystem, dan tidak diberikan "
 "spesifikasi di argument perintah"
 
-#: mount/mount.c:1357
+#: mount/mount.c:1361
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: anda harus menspesifikasikan tipe filesystem"
 
-#: mount/mount.c:1360
+#: mount/mount.c:1364
 msgid "mount: mount failed"
 msgstr "mount: mount gagal"
 
-#: mount/mount.c:1366 mount/mount.c:1403
+#: mount/mount.c:1370 mount/mount.c:1407
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: titik mount %s bukan berupa sebuah direktori"
 
-#: mount/mount.c:1368
+#: mount/mount.c:1372
 msgid "mount: permission denied"
 msgstr "mount: ijin ditolak"
 
-#: mount/mount.c:1370
+#: mount/mount.c:1374
 msgid "mount: must be superuser to use mount"
 msgstr "mount: harus menjadi superuser untuk menggunakan mount"
 
-#: mount/mount.c:1374 mount/mount.c:1378
+#: mount/mount.c:1378 mount/mount.c:1382
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s sedang sibuk"
 
-#: mount/mount.c:1380
+#: mount/mount.c:1384
 msgid "mount: proc already mounted"
 msgstr "mount: proc telah dimount"
 
-#: mount/mount.c:1382
+#: mount/mount.c:1386
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s telah dimount atau %s sedang sibuk"
 
-#: mount/mount.c:1388
+#: mount/mount.c:1392
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: titik mount %s tidak ada"
 
-#: mount/mount.c:1390
+#: mount/mount.c:1394
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: titik mount %s berupa symbolic link ke suatu tempat"
 
-#: mount/mount.c:1395
+#: mount/mount.c:1399
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: perangkat spesial %s tidak ada"
 
-#: mount/mount.c:1407
+#: mount/mount.c:1411
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -8859,12 +8869,12 @@ msgstr ""
 "mount: perangkat spesial %s tidak ada\n"
 "       (sebuah path prefix bukan berupa sebuah direktori)\n"
 
-#: mount/mount.c:1419
+#: mount/mount.c:1423
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s sudah tidak dimount, atau opsi buruk"
 
-#: mount/mount.c:1421
+#: mount/mount.c:1425
 #, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -8873,7 +8883,7 @@ msgstr ""
 "mount: tipe fs salah, opsi buruk, superblock buruk di %s,\n"
 "       hilang codepage atau aplikasi pembantu, atau error lain"
 
-#: mount/mount.c:1428
+#: mount/mount.c:1432
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
@@ -8881,7 +8891,7 @@ msgstr ""
 "       (untuk beberapa filesystem (e.g. nfs, cifs) anda mungkin\n"
 "       membutuhkan aplikasi pembantu /sbin/mount.<tipe>)"
 
-#: mount/mount.c:1437
+#: mount/mount.c:1441
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -8890,7 +8900,7 @@ msgstr ""
 "       ide-scsi sehingga sr0 atau sda atau perangkat sepertinya yang "
 "diperlukan?)"
 
-#: mount/mount.c:1442
+#: mount/mount.c:1446
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -8898,7 +8908,7 @@ msgstr ""
 "       (apakah anda mencoba memount sebuah partisi extended,\n"
 "       daripada sebuah partisi logical didalamnya?)"
 
-#: mount/mount.c:1449
+#: mount/mount.c:1453
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -8907,51 +8917,51 @@ msgstr ""
 "coba\n"
 "       dmesg | tail atau yang serupa\n"
 
-#: mount/mount.c:1455
+#: mount/mount.c:1459
 msgid "mount table full"
 msgstr "tabel mount penuh"
 
-#: mount/mount.c:1457
+#: mount/mount.c:1461
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: tidak dapat membaca superblock"
 
-#: mount/mount.c:1463
+#: mount/mount.c:1467
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: perangkat tidak diketahui"
 
-#: mount/mount.c:1468
+#: mount/mount.c:1472
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: tipe filesystem tidak diketahui '%s'"
 
-#: mount/mount.c:1480
+#: mount/mount.c:1484
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: mungkin yang anda maksudkan %s"
 
-#: mount/mount.c:1483
+#: mount/mount.c:1487
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: mungkin yang anda maksud 'iso9660'?"
 
-#: mount/mount.c:1486
+#: mount/mount.c:1490
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: mungkin yang anda maksud 'vfat'?"
 
-#: mount/mount.c:1489
+#: mount/mount.c:1493
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s memiliki nomor perangkat yang salah atau tipe fs %s tidak disupport"
 
-#: mount/mount.c:1497
+#: mount/mount.c:1501
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr ""
 "mount: %s bukan sebuak perangkat block, dan gagal memperoleh statistik?"
 
-#: mount/mount.c:1499
+#: mount/mount.c:1503
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -8960,55 +8970,55 @@ msgstr ""
 "mount: kernel tidak mengenal %s sebagai sebuah perangkat block\n"
 "       (mungkin `insmod driver'?)"
 
-#: mount/mount.c:1502
+#: mount/mount.c:1506
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr ""
 "mount: %s bukan sebuah perangkat block (mungkin dicoba dengan menggunakan "
 "opsi `-o loop'?"
 
-#: mount/mount.c:1505
+#: mount/mount.c:1509
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s bukan sebuah perangkat block"
 
-#: mount/mount.c:1510
+#: mount/mount.c:1514
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s bukan sebuah perangkat block yang valid"
 
-#: mount/mount.c:1513
+#: mount/mount.c:1517
 msgid "block device "
 msgstr "perangkat block "
 
-#: mount/mount.c:1515
+#: mount/mount.c:1519
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: tidak dapat me-mount %s%s hanya-baca"
 
-#: mount/mount.c:1519
+#: mount/mount.c:1523
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr ""
 "mount: %s%s memiliki proteksi untuk ditulis tetapi secara eksplisit opsi `-"
 "w' diberikan"
 
-#: mount/mount.c:1534
+#: mount/mount.c:1538
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s memiliki proteksi untuk ditulis, memount secara hanya-baca"
 
-#: mount/mount.c:1544
+#: mount/mount.c:1548
 #, c-format
 msgid "mount: no medium found on %s ...trying again\n"
 msgstr "mount: tidak ada media ditemukan di %s ...mencoba lagi\n"
 
-#: mount/mount.c:1550
+#: mount/mount.c:1554
 #, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: tidak ada media ditemukan di %s"
 
-#: mount/mount.c:1568
+#: mount/mount.c:1572
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9025,26 +9035,26 @@ msgstr ""
 "       sistem berkas ini. Untuk lebih lengkapnya lihat restorecon(8) dan "
 "mount(8).\n"
 
-#: mount/mount.c:1647
+#: mount/mount.c:1651
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 "mount: tipe tidak diberikan - Saya akan mengasumsikan nfs karena adanya "
 "colon\n"
 
-#: mount/mount.c:1653
+#: mount/mount.c:1657
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: tipe tidak diberikan - Saya akan mengasumsikan cifs karena adanya "
 "awalan //\n"
 
-#: mount/mount.c:1748
+#: mount/mount.c:1752
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s telah dimount di %s\n"
 
-#: mount/mount.c:1882
+#: mount/mount.c:1886
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9116,19 +9126,19 @@ msgstr ""
 "uuid. Opsi lain: [-nfFrsvw] [-o opsi] [-p passwdfd].\n"
 "Untuk informasi lebih detail, lihat man 8 mount.\n"
 
-#: mount/mount.c:2205
+#: mount/mount.c:2209
 msgid "mount: only root can do that"
 msgstr "mount: hanya root yang dapat melakukan itu"
 
-#: mount/mount.c:2215
+#: mount/mount.c:2219
 msgid "nothing was mounted"
 msgstr "tidak ada yang telah dimount"
 
-#: mount/mount.c:2233 mount/mount.c:2259
+#: mount/mount.c:2237 mount/mount.c:2263
 msgid "mount: no such partition found"
 msgstr "mount: partisi seperti itu tidak ditemukan"
 
-#: mount/mount.c:2236
+#: mount/mount.c:2240
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: tidak dapat menemukan %s dalam %s atau %s"

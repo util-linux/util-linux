@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-03-18 10:52+0100\n"
+"POT-Creation-Date: 2009-04-17 12:43+0200\n"
 "PO-Revision-Date: 2006-03-06 15:45+0200\n"
 "Last-Translator: Nilgün Belma Bugüner <nilgun@buguner.name.tr>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -6761,6 +6761,16 @@ msgstr "%s için çekirdek aygıt sürücüsünde RTC_EPOCH_SET ioctl yok.\n"
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) %s için hata verdi"
 
+#: libs/blkid/bin/findfs.c:24
+#, c-format
+msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
+msgstr ""
+
+#: libs/blkid/bin/findfs.c:55
+#, fuzzy, c-format
+msgid "unable to resolve '%s'"
+msgstr "%s açılamıyor"
+
 #: login-utils/agetty.c:361
 #, c-format
 msgid "%s: can't exec %s: %m"
@@ -6902,12 +6912,12 @@ msgstr "%s: /etc/passwd için öntanımlı bağlam belirtilemiyor"
 msgid "Changing finger information for %s.\n"
 msgstr "%s için kullanıcı bilgileri değiştiriliyor.\n"
 
-#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:557
+#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:572
 #, fuzzy, c-format
 msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: PAM hatası, çıkılıyor: %s\n"
 
-#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:808
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:823
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:727
 #: mount/lomount.c:730
 msgid "Password: "
@@ -7138,31 +7148,31 @@ msgstr "ÖLÜMCÜL: tty tekrar açılamıyor: %s"
 msgid "FATAL: bad tty"
 msgstr "ÖLÜMCÜL: tty hatalı"
 
-#: login-utils/login.c:421
+#: login-utils/login.c:436
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: -h sadece root tarafından kullanılabilir.\n"
 
-#: login-utils/login.c:464
+#: login-utils/login.c:479
 #, c-format
 msgid "usage: login [-fp] [username]\n"
 msgstr "Kullanımı: login [-fp] [kullanıcı]\n"
 
-#: login-utils/login.c:559
+#: login-utils/login.c:574
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "PAM başlatılamadı: %s"
 
-#: login-utils/login.c:576
+#: login-utils/login.c:591
 msgid "login: "
 msgstr "Kullanıcı ismi: "
 
-#: login-utils/login.c:620
+#: login-utils/login.c:635
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "%3$s %2$s ÜZERİNDEN %1$d DEFA GİREMEDİ, %4$s"
 
-#: login-utils/login.c:625
+#: login-utils/login.c:640
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -7171,17 +7181,17 @@ msgstr ""
 "Giriş başarısız\n"
 "\n"
 
-#: login-utils/login.c:634
+#: login-utils/login.c:649
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "%3$s %2$s ÜZERİNDEN ÇOK FAZLA GİRİŞ DENEDİ (%1$d), %4$s"
 
-#: login-utils/login.c:638
+#: login-utils/login.c:653
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "%s MAKİNASINA %s İÇİN GİRİŞ OTURUMU KAPANDI, %s"
 
-#: login-utils/login.c:643
+#: login-utils/login.c:658
 #, c-format
 msgid ""
 "\n"
@@ -7190,7 +7200,7 @@ msgstr ""
 "\n"
 "Giriş başarısız\n"
 
-#: login-utils/login.c:671 login-utils/login.c:678 login-utils/login.c:712
+#: login-utils/login.c:686 login-utils/login.c:693 login-utils/login.c:727
 #, c-format
 msgid ""
 "\n"
@@ -7199,121 +7209,121 @@ msgstr ""
 "\n"
 "Oturum ayarları sorunu, çıkılıyor.\n"
 
-#: login-utils/login.c:672
+#: login-utils/login.c:687
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "%s işlevinin %d. satırında kullanıcı ismi yok (NULL)."
 
-#: login-utils/login.c:679
+#: login-utils/login.c:694
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr ""
 "%2$s işlevinin %3$d. satırında kullanıcı ismi \"%1$s\" geçersiz. Çıkılıyor."
 
-#: login-utils/login.c:698
+#: login-utils/login.c:713
 #, c-format
 msgid "login: Out of memory\n"
 msgstr "login: Bellek yetersiz\n"
 
-#: login-utils/login.c:742
+#: login-utils/login.c:757
 msgid "Illegal username"
 msgstr "Kullanıcı ismi kuraldışı"
 
-#: login-utils/login.c:785
+#: login-utils/login.c:800
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "%s için bu terminalden giriş reddedildi.\n"
 
-#: login-utils/login.c:790
+#: login-utils/login.c:805
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "%s İÇİN %s MAKİNASINDAN %s TERMİNALİNE GİRİŞ REDDEDİLDİ"
 
-#: login-utils/login.c:794
+#: login-utils/login.c:809
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "%s İÇİN %s TERMİNALİNE GİRİŞ REDDEDİLDİ"
 
-#: login-utils/login.c:848
+#: login-utils/login.c:863
 #, c-format
 msgid "Login incorrect\n"
 msgstr "Giriş başarısız\n"
 
-#: login-utils/login.c:1073
+#: login-utils/login.c:1088
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "%s ÜZERİNDEN %s İSMİYLE DIALUP"
 
-#: login-utils/login.c:1080
+#: login-utils/login.c:1095
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "%s ÜZERİNDEN %s MAKİNASINA ROOT GİRİŞİ"
 
-#: login-utils/login.c:1083
+#: login-utils/login.c:1098
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "%s ÜZERİNDE ROOT GİRİŞİ"
 
-#: login-utils/login.c:1086
+#: login-utils/login.c:1101
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "%s ÜZERİNDEN %s, %s MAKİNASINA GİRDİ"
 
-#: login-utils/login.c:1089
+#: login-utils/login.c:1104
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "%s ÜZERİNDEN %s SİSTEME GİRDİ"
 
-#: login-utils/login.c:1110
+#: login-utils/login.c:1125
 #, c-format
 msgid "You have new mail.\n"
 msgstr "Yeni e-postanız var.\n"
 
-#: login-utils/login.c:1112
+#: login-utils/login.c:1127
 #, c-format
 msgid "You have mail.\n"
 msgstr "E-postanız var.\n"
 
-#: login-utils/login.c:1156
+#: login-utils/login.c:1171
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "login: ast süreç oluşturma başarısız: %s"
 
-#: login-utils/login.c:1203
+#: login-utils/login.c:1218
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "TIOCSCTTY başarısız: %m"
 
-#: login-utils/login.c:1209
+#: login-utils/login.c:1224
 msgid "setuid() failed"
 msgstr "setuid() başarısız"
 
-#: login-utils/login.c:1215
+#: login-utils/login.c:1230
 #, c-format
 msgid "No directory %s!\n"
 msgstr "%s dizini yok!\n"
 
-#: login-utils/login.c:1219
+#: login-utils/login.c:1234
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Ev dizini \"/\" ile giriş.\n"
 
-#: login-utils/login.c:1227
+#: login-utils/login.c:1242
 #, c-format
 msgid "login: no memory for shell script.\n"
 msgstr "login: kabuk betiği için bellek yetersiz.\n"
 
-#: login-utils/login.c:1254
+#: login-utils/login.c:1269
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr "login: kabuk betiği çalıştırılamadı: %s.\n"
 
-#: login-utils/login.c:1257
+#: login-utils/login.c:1272
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "login: kabuk yok: %s.\n"
 
-#: login-utils/login.c:1272
+#: login-utils/login.c:1287
 #, c-format
 msgid ""
 "\n"
@@ -7322,65 +7332,65 @@ msgstr ""
 "\n"
 "%s kullanıcı ismi: "
 
-#: login-utils/login.c:1283
+#: login-utils/login.c:1298
 #, c-format
 msgid "login name much too long.\n"
 msgstr "Kullanıcı adınız çok uzun.\n"
 
-#: login-utils/login.c:1284
+#: login-utils/login.c:1299
 msgid "NAME too long"
 msgstr "İSİM çok uzun"
 
-#: login-utils/login.c:1291
+#: login-utils/login.c:1306
 #, c-format
 msgid "login names may not start with '-'.\n"
 msgstr "kullanıcı isimleri bir '-' ile başlayamaz.\n"
 
-#: login-utils/login.c:1301
+#: login-utils/login.c:1316
 #, c-format
 msgid "too many bare linefeeds.\n"
 msgstr "çok fazla boş geçildi.\n"
 
-#: login-utils/login.c:1302
+#: login-utils/login.c:1317
 msgid "EXCESSIVE linefeeds"
 msgstr "HADDİNDEN FAZLA boş giriş"
 
-#: login-utils/login.c:1334
+#: login-utils/login.c:1349
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "Giriş %d saniye sonra zaman aşımına uğradı\n"
 
-#: login-utils/login.c:1422
+#: login-utils/login.c:1437
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Son giriş: %.*s "
 
-#: login-utils/login.c:1426
+#: login-utils/login.c:1441
 #, c-format
 msgid "from %.*s\n"
 msgstr "sularında %.*s makinasına yapıldı\n"
 
-#: login-utils/login.c:1429
+#: login-utils/login.c:1444
 #, c-format
 msgid "on %.*s\n"
 msgstr "sularında %.*s konsoluna yapıldı\n"
 
-#: login-utils/login.c:1455
+#: login-utils/login.c:1470
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "%s MAKİNASINDAN %s GİRİŞİ BAŞARISIZ"
 
-#: login-utils/login.c:1458
+#: login-utils/login.c:1473
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "%s ÜZERİNDEN %s GİRİŞİ BAŞARISIZ"
 
-#: login-utils/login.c:1462
+#: login-utils/login.c:1477
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "%3$s %2$s MAKİNASINDAN %1$d KERE GİREMEDİ"
 
-#: login-utils/login.c:1465
+#: login-utils/login.c:1480
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%3$s %2$s ÜZERİNDEN %1$d KERE GİREMEDİ"
@@ -8620,223 +8630,223 @@ msgstr "umount: %s: aygıt meşgul"
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Derleme sırasında loop desteği verilmemiş. Lütfen yeniden derleyin.\n"
 
-#: mount/mount.c:325
+#: mount/mount.c:329
 #, c-format
 msgid "mount: improperly quoted option string '%s'"
 msgstr ""
 
-#: mount/mount.c:358
+#: mount/mount.c:362
 #, fuzzy, c-format
 msgid "mount: translated %s '%s' to '%s'\n"
 msgstr "mount: %s  %s ya da %s içinde bulunamıyor"
 
-#: mount/mount.c:522
+#: mount/mount.c:526
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: mtab'a göre, %s zaten %s üzerinde bağlı"
 
-#: mount/mount.c:527
+#: mount/mount.c:531
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: mtab'a göre, %s %s üzerinde bağlı"
 
-#: mount/mount.c:551
+#: mount/mount.c:555
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: %s yazmak için açılamıyor: %s"
 
-#: mount/mount.c:568 mount/mount.c:1189
+#: mount/mount.c:572 mount/mount.c:1193
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: %s yazılırken hata: %s"
 
-#: mount/mount.c:576
+#: mount/mount.c:580
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: %s kipi değiştirilirken hata: %s"
 
-#: mount/mount.c:659
+#: mount/mount.c:663
 #, fuzzy, c-format
 msgid "mount: cannot set group id: %s"
 msgstr "mount: hız ayarlanamıyor: %s"
 
-#: mount/mount.c:662
+#: mount/mount.c:666
 #, fuzzy, c-format
 msgid "mount: cannot set user id: %s"
 msgstr "mount: hız ayarlanamıyor: %s"
 
-#: mount/mount.c:701 mount/mount.c:1801
+#: mount/mount.c:705 mount/mount.c:1805
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: ast süreç oluşturulamıyor: %s"
 
-#: mount/mount.c:838
+#: mount/mount.c:842
 #, c-format
 msgid "Trying %s\n"
 msgstr "%s deneniyor\n"
 
-#: mount/mount.c:866
+#: mount/mount.c:870
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: %s için bir dosya sistemi türü belirtilmemiş\n"
 
-#: mount/mount.c:869
+#: mount/mount.c:873
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       %s ya da %s içindeki anılan tüm türler denenecek\n"
 
-#: mount/mount.c:872
+#: mount/mount.c:876
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       ve bu takas alanı gibi görünüyor\n"
 
-#: mount/mount.c:874
+#: mount/mount.c:878
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       %s türü denenecek\n"
 
-#: mount/mount.c:901
+#: mount/mount.c:905
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s takas alanı gibi görünüyor - bağlanmadı"
 
-#: mount/mount.c:992
+#: mount/mount.c:996
 msgid "mount failed"
 msgstr "mount başarısız"
 
-#: mount/mount.c:994
+#: mount/mount.c:998
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: %s %s üzerinde sadece root tarafından bağlanabilir"
 
-#: mount/mount.c:1064
+#: mount/mount.c:1068
 msgid "mount: loop device specified twice"
 msgstr "mount: loop aygıtı iki kere belirtilmiş"
 
-#: mount/mount.c:1069
+#: mount/mount.c:1073
 msgid "mount: type specified twice"
 msgstr "mount: türü iki defa belirtilmiş"
 
-#: mount/mount.c:1081
+#: mount/mount.c:1085
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: loop aygıtı ayarları atlanıyor\n"
 
-#: mount/mount.c:1093
+#: mount/mount.c:1097
 #, fuzzy, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: mtab'a göre, %s zaten %s üzerinde bağlı"
 
-#: mount/mount.c:1103
+#: mount/mount.c:1107
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: %s loop aygıtının kullanımına gidiliyor\n"
 
-#: mount/mount.c:1112
+#: mount/mount.c:1116
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:1117
+#: mount/mount.c:1121
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:1122
+#: mount/mount.c:1126
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: loop aygıtı ayarları yapılamadı\n"
 
-#: mount/mount.c:1133
+#: mount/mount.c:1137
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: loop aygıtı ayarları tamamlandı\n"
 
-#: mount/mount.c:1167
+#: mount/mount.c:1171
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s yok - oluşturuluyor...\n"
 
-#: mount/mount.c:1184
+#: mount/mount.c:1188
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: %s açılamıyor: %s"
 
-#: mount/mount.c:1205
+#: mount/mount.c:1209
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: -p ve --pass-fd seçeneklerinin argümanı bir sayı olmalıdır"
 
-#: mount/mount.c:1218
+#: mount/mount.c:1222
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: hızı ayarlamak için %s açılamıyor"
 
-#: mount/mount.c:1221
+#: mount/mount.c:1225
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: hız ayarlanamıyor: %s"
 
-#: mount/mount.c:1278
+#: mount/mount.c:1282
 #, fuzzy, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: mtab'a göre, %s zaten %s üzerinde bağlı"
 
-#: mount/mount.c:1354
+#: mount/mount.c:1358
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr "mount: Dosya sistemi türü saptanamadı ve belirtilmemiş"
 
-#: mount/mount.c:1357
+#: mount/mount.c:1361
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: dosya sistemi türünü belirtmelisiniz"
 
-#: mount/mount.c:1360
+#: mount/mount.c:1364
 msgid "mount: mount failed"
 msgstr "mount: bağlanamadı"
 
-#: mount/mount.c:1366 mount/mount.c:1403
+#: mount/mount.c:1370 mount/mount.c:1407
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: bağlama noktası %s bir dizin değil"
 
-#: mount/mount.c:1368
+#: mount/mount.c:1372
 msgid "mount: permission denied"
 msgstr "mount: erişim engellendi"
 
-#: mount/mount.c:1370
+#: mount/mount.c:1374
 msgid "mount: must be superuser to use mount"
 msgstr "mount: root tarafından kullanılmalı"
 
-#: mount/mount.c:1374 mount/mount.c:1378
+#: mount/mount.c:1378 mount/mount.c:1382
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s meşgul"
 
-#: mount/mount.c:1380
+#: mount/mount.c:1384
 msgid "mount: proc already mounted"
 msgstr "mount: proc zaten bağlı"
 
-#: mount/mount.c:1382
+#: mount/mount.c:1386
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: ya %s zaten bağlı ya da %s meşgul"
 
-#: mount/mount.c:1388
+#: mount/mount.c:1392
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: bağlama noktası %s yok"
 
-#: mount/mount.c:1390
+#: mount/mount.c:1394
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: bağlama noktası %s hiçbir yere sembolik bağ sağlamıyor"
 
-#: mount/mount.c:1395
+#: mount/mount.c:1399
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: özel aygıt %s yok"
 
-#: mount/mount.c:1407
+#: mount/mount.c:1411
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -8845,12 +8855,12 @@ msgstr ""
 "mount: özel aygıt %s yok\n"
 "       (dosya yolu öneki bir dizin değil)\n"
 
-#: mount/mount.c:1419
+#: mount/mount.c:1423
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s zaten bağlı değil, ya da seçenek yanlış"
 
-#: mount/mount.c:1421
+#: mount/mount.c:1425
 #, fuzzy, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -8859,13 +8869,13 @@ msgstr ""
 "mount: dosya sistemi türü yanlış, seçenek yanlış, %s üzerinde superblok\n"
 "       hatalı, karakter kümesi eksik, ya da başka bir hata olabilir"
 
-#: mount/mount.c:1428
+#: mount/mount.c:1432
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
 msgstr ""
 
-#: mount/mount.c:1437
+#: mount/mount.c:1441
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -8873,7 +8883,7 @@ msgstr ""
 "       (fiilen ide-scsi kullanıldığına göre bu bir IDE aygıt\n"
 "        olabilir mi? Burada sr0, sda gibi birşeyler olmalı, değil mi?)"
 
-#: mount/mount.c:1442
+#: mount/mount.c:1446
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -8881,7 +8891,7 @@ msgstr ""
 "       (içindeki bir mantıksal disk bölümü yerine\n"
 "        bir ek disk bölümünü bağlamaya çalışmıyor musunuz?)"
 
-#: mount/mount.c:1449
+#: mount/mount.c:1453
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -8889,53 +8899,53 @@ msgstr ""
 "       Bazı durumlarda syslog'da bulunan bilgiler yararlıdır.\n"
 "       dmesg | tail  gibi birşeyler deneyin\n"
 
-#: mount/mount.c:1455
+#: mount/mount.c:1459
 msgid "mount table full"
 msgstr "bağ tablosu dolu"
 
-#: mount/mount.c:1457
+#: mount/mount.c:1461
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: superblok okunamıyor"
 
-#: mount/mount.c:1463
+#: mount/mount.c:1467
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: aygıt bilinmiyor"
 
-#: mount/mount.c:1468
+#: mount/mount.c:1472
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: dosya sistemi türü '%s' bilinmiyor"
 
-#: mount/mount.c:1480
+#: mount/mount.c:1484
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: herhalde %s kastettiniz"
 
-#: mount/mount.c:1483
+#: mount/mount.c:1487
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: 'iso9660' kastetmiş olabilir misiniz?"
 
-#: mount/mount.c:1486
+#: mount/mount.c:1490
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: 'vfat' kastetmiş olabilir misiniz?"
 
-#: mount/mount.c:1489
+#: mount/mount.c:1493
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s yanlış aygıt numarasına sahip ya da dosya sistemi türü %s "
 "desteklenmiyor"
 
-#: mount/mount.c:1497
+#: mount/mount.c:1501
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr ""
 "mount: %s bir blok aygıtı olmayabilir mi ve durum bilgileri alınamayabilir "
 "mi?"
 
-#: mount/mount.c:1499
+#: mount/mount.c:1503
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -8944,52 +8954,52 @@ msgstr ""
 "mount: çekirdek %s aygıtını bir blok aygıtı olarak tanımıyor\n"
 "       (`insmod sürücü' denenebilir?)"
 
-#: mount/mount.c:1502
+#: mount/mount.c:1506
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s bir blok aygıtı değil ( `-o loop' denenebilir mi?)"
 
-#: mount/mount.c:1505
+#: mount/mount.c:1509
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s bir blok aygıtı değil"
 
-#: mount/mount.c:1510
+#: mount/mount.c:1514
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s geçerli bir blok aygıtı değil"
 
-#: mount/mount.c:1513
+#: mount/mount.c:1517
 msgid "block device "
 msgstr "blok aygıtı "
 
-#: mount/mount.c:1515
+#: mount/mount.c:1519
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: %s%s salt-okunur bağlanamıyor"
 
-#: mount/mount.c:1519
+#: mount/mount.c:1523
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr ""
 "mount: %s%s yazma korumalı olduğu halde alenen `-w' seçeneği belirtilmiş"
 
-#: mount/mount.c:1534
+#: mount/mount.c:1538
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s yazma korumalı, salt-okunur olarak bağlanıyor"
 
-#: mount/mount.c:1544
+#: mount/mount.c:1548
 #, fuzzy, c-format
 msgid "mount: no medium found on %s ...trying again\n"
 msgstr "mount: %s yok - oluşturuluyor...\n"
 
-#: mount/mount.c:1550
+#: mount/mount.c:1554
 #, fuzzy, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: %s zaten %s üzerinde bağlı\n"
 
-#: mount/mount.c:1568
+#: mount/mount.c:1572
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -8999,22 +9009,22 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 
-#: mount/mount.c:1647
+#: mount/mount.c:1651
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: tür belirtilmemiş - ':' içerdiğinden nfs varsayılıyor\n"
 
-#: mount/mount.c:1653
+#: mount/mount.c:1657
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr "mount: tür belirtilmemiş - '//' öneki içerdiğinden cifs varsayılıyor\n"
 
-#: mount/mount.c:1748
+#: mount/mount.c:1752
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s zaten %s üzerinde bağlı\n"
 
-#: mount/mount.c:1882
+#: mount/mount.c:1886
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9077,19 +9087,19 @@ msgstr ""
 "Çeviri hatalarını <gnu-tr@belgeler.org> adresine bildiriniz.\n"
 "Daha fazla bilgi edinmek için 'man 8 mount' yazabilirsiniz.\n"
 
-#: mount/mount.c:2205
+#: mount/mount.c:2209
 msgid "mount: only root can do that"
 msgstr "mount: bunu sadece root yapabilir"
 
-#: mount/mount.c:2215
+#: mount/mount.c:2219
 msgid "nothing was mounted"
 msgstr "hiçbir şey bağlanmadı"
 
-#: mount/mount.c:2233 mount/mount.c:2259
+#: mount/mount.c:2237 mount/mount.c:2263
 msgid "mount: no such partition found"
 msgstr "mount: böyle bir disk bölümü yok"
 
-#: mount/mount.c:2236
+#: mount/mount.c:2240
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %s  %s ya da %s içinde bulunamıyor"

@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng-2.14.2-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-03-18 10:52+0100\n"
+"POT-Creation-Date: 2009-04-17 12:43+0200\n"
 "PO-Revision-Date: 2009-01-31 20:52+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -6768,6 +6768,16 @@ msgstr "Het kernelstuurprogramma voor %s heeft geen ioctl(RTC_EPOCH_SET).\n"
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) op %s is mislukt"
 
+#: libs/blkid/bin/findfs.c:24
+#, c-format
+msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
+msgstr ""
+
+#: libs/blkid/bin/findfs.c:55
+#, fuzzy, c-format
+msgid "unable to resolve '%s'"
+msgstr "openen van %s is mislukt"
+
 #: login-utils/agetty.c:361
 #, c-format
 msgid "%s: can't exec %s: %m"
@@ -6906,12 +6916,12 @@ msgstr "%s: Kan standaardcontext voor /etc/passwd niet instellen"
 msgid "Changing finger information for %s.\n"
 msgstr "Wijzigen van finger-informatie voor %s.\n"
 
-#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:557
+#: login-utils/chfn.c:189 login-utils/chsh.c:188 login-utils/login.c:572
 #, c-format
 msgid "%s: PAM failure, aborting: %s\n"
 msgstr "%s: PAM-fout -- gestopt: %s\n"
 
-#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:808
+#: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:823
 #: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:727
 #: mount/lomount.c:730
 msgid "Password: "
@@ -7144,31 +7154,31 @@ msgstr "FATAAL: kan tty niet heropenen: %s"
 msgid "FATAL: bad tty"
 msgstr "FATAAL: slechte tty"
 
-#: login-utils/login.c:421
+#: login-utils/login.c:436
 #, c-format
 msgid "login: -h for super-user only.\n"
 msgstr "login: optie '-h' kan alleen door root gebruikt worden\n"
 
-#: login-utils/login.c:464
+#: login-utils/login.c:479
 #, c-format
 msgid "usage: login [-fp] [username]\n"
 msgstr "Gebruik:  login [-fp] [gebruikersnaam]\n"
 
-#: login-utils/login.c:559
+#: login-utils/login.c:574
 #, c-format
 msgid "Couldn't initialize PAM: %s"
 msgstr "Kan PAM niet initialiseren: %s"
 
-#: login-utils/login.c:576
+#: login-utils/login.c:591
 msgid "login: "
 msgstr "inlognaam: "
 
-#: login-utils/login.c:620
+#: login-utils/login.c:635
 #, c-format
 msgid "FAILED LOGIN %d FROM %s FOR %s, %s"
 msgstr "INLOGPOGING %d IS MISLUKT VANAF %s VOOR %s -- %s"
 
-#: login-utils/login.c:625
+#: login-utils/login.c:640
 #, c-format
 msgid ""
 "Login incorrect\n"
@@ -7177,17 +7187,17 @@ msgstr ""
 "Inloggegevens onjuist\n"
 "\n"
 
-#: login-utils/login.c:634
+#: login-utils/login.c:649
 #, c-format
 msgid "TOO MANY LOGIN TRIES (%d) FROM %s FOR %s, %s"
 msgstr "TE VEEL INLOGPOGINGEN (%d) VANAF %s VOOR %s -- %s"
 
-#: login-utils/login.c:638
+#: login-utils/login.c:653
 #, c-format
 msgid "FAILED LOGIN SESSION FROM %s FOR %s, %s"
 msgstr "INLOGSESSIE IS MISLUKT VANAF %s VOOR %s -- %s"
 
-#: login-utils/login.c:643
+#: login-utils/login.c:658
 #, c-format
 msgid ""
 "\n"
@@ -7196,7 +7206,7 @@ msgstr ""
 "\n"
 "Inloggegevens onjuist\n"
 
-#: login-utils/login.c:671 login-utils/login.c:678 login-utils/login.c:712
+#: login-utils/login.c:686 login-utils/login.c:693 login-utils/login.c:727
 #, c-format
 msgid ""
 "\n"
@@ -7205,120 +7215,120 @@ msgstr ""
 "\n"
 "Sessie-instellingsprobleem -- gestopt\n"
 
-#: login-utils/login.c:672
+#: login-utils/login.c:687
 #, c-format
 msgid "NULL user name in %s:%d. Abort."
 msgstr "Lege gebruikersnaam in %s:%d -- gestopt"
 
-#: login-utils/login.c:679
+#: login-utils/login.c:694
 #, c-format
 msgid "Invalid user name \"%s\" in %s:%d. Abort."
 msgstr "Onjuiste gebruikersnaam '%s' in %s:%d -- gestopt"
 
-#: login-utils/login.c:698
+#: login-utils/login.c:713
 #, c-format
 msgid "login: Out of memory\n"
 msgstr "login: Onvoldoende geheugen beschikbaar\n"
 
-#: login-utils/login.c:742
+#: login-utils/login.c:757
 msgid "Illegal username"
 msgstr "Ongeldige gebruikersnaam"
 
-#: login-utils/login.c:785
+#: login-utils/login.c:800
 #, c-format
 msgid "%s login refused on this terminal.\n"
 msgstr "Inloggen door %s op deze terminal is geweigerd.\n"
 
-#: login-utils/login.c:790
+#: login-utils/login.c:805
 #, c-format
 msgid "LOGIN %s REFUSED FROM %s ON TTY %s"
 msgstr "INLOGGEN DOOR %s VANAF %s IS GEWEIGERD OP TTY %s"
 
-#: login-utils/login.c:794
+#: login-utils/login.c:809
 #, c-format
 msgid "LOGIN %s REFUSED ON TTY %s"
 msgstr "INLOGGEN DOOR %s IS GEWEIGERD OP TTY %s"
 
-#: login-utils/login.c:848
+#: login-utils/login.c:863
 #, c-format
 msgid "Login incorrect\n"
 msgstr "Inloggegevens onjuist\n"
 
-#: login-utils/login.c:1073
+#: login-utils/login.c:1088
 #, c-format
 msgid "DIALUP AT %s BY %s"
 msgstr "INBELLEN OP %s DOOR %s"
 
-#: login-utils/login.c:1080
+#: login-utils/login.c:1095
 #, c-format
 msgid "ROOT LOGIN ON %s FROM %s"
 msgstr "ROOT-LOGIN OP %s VANAF %s"
 
-#: login-utils/login.c:1083
+#: login-utils/login.c:1098
 #, c-format
 msgid "ROOT LOGIN ON %s"
 msgstr "ROOT-LOGIN OP %s"
 
-#: login-utils/login.c:1086
+#: login-utils/login.c:1101
 #, c-format
 msgid "LOGIN ON %s BY %s FROM %s"
 msgstr "LOGIN OP %s DOOR %s VANAF %s"
 
-#: login-utils/login.c:1089
+#: login-utils/login.c:1104
 #, c-format
 msgid "LOGIN ON %s BY %s"
 msgstr "LOGIN OP %s DOOR %s"
 
-#: login-utils/login.c:1110
+#: login-utils/login.c:1125
 #, c-format
 msgid "You have new mail.\n"
 msgstr "U hebt nieuwe e-mail.\n"
 
-#: login-utils/login.c:1112
+#: login-utils/login.c:1127
 #, c-format
 msgid "You have mail.\n"
 msgstr "U hebt e-mail.\n"
 
-#: login-utils/login.c:1156
+#: login-utils/login.c:1171
 #, c-format
 msgid "login: failure forking: %s"
 msgstr "login: kan geen nieuw proces starten: %s"
 
-#: login-utils/login.c:1203
+#: login-utils/login.c:1218
 #, c-format
 msgid "TIOCSCTTY failed: %m"
 msgstr "ioctl(TIOCSCTTY) is mislukt: %m"
 
-#: login-utils/login.c:1209
+#: login-utils/login.c:1224
 msgid "setuid() failed"
 msgstr "setuid() is mislukt"
 
-#: login-utils/login.c:1215
+#: login-utils/login.c:1230
 #, c-format
 msgid "No directory %s!\n"
 msgstr "Er is geen map %s!\n"
 
-#: login-utils/login.c:1219
+#: login-utils/login.c:1234
 #, c-format
 msgid "Logging in with home = \"/\".\n"
 msgstr "Ingelogd met home = '/'.\n"
 
-#: login-utils/login.c:1227
+#: login-utils/login.c:1242
 #, c-format
 msgid "login: no memory for shell script.\n"
 msgstr "login: onvoldoende geheugen beschikbaar voor shell-script\n"
 
-#: login-utils/login.c:1254
+#: login-utils/login.c:1269
 #, c-format
 msgid "login: couldn't exec shell script: %s.\n"
 msgstr "login: kan shell-script niet uitvoeren: %s\n"
 
-#: login-utils/login.c:1257
+#: login-utils/login.c:1272
 #, c-format
 msgid "login: no shell: %s.\n"
 msgstr "login: geen shell: %s\n"
 
-#: login-utils/login.c:1272
+#: login-utils/login.c:1287
 #, c-format
 msgid ""
 "\n"
@@ -7327,65 +7337,65 @@ msgstr ""
 "\n"
 "%s inlognaam: "
 
-#: login-utils/login.c:1283
+#: login-utils/login.c:1298
 #, c-format
 msgid "login name much too long.\n"
 msgstr "inlognaam is veel te lang\n"
 
-#: login-utils/login.c:1284
+#: login-utils/login.c:1299
 msgid "NAME too long"
 msgstr "NAAM is te lang"
 
-#: login-utils/login.c:1291
+#: login-utils/login.c:1306
 #, c-format
 msgid "login names may not start with '-'.\n"
 msgstr "inlognamen mogen niet beginnen met '-'\n"
 
-#: login-utils/login.c:1301
+#: login-utils/login.c:1316
 #, c-format
 msgid "too many bare linefeeds.\n"
 msgstr "te veel witregels\n"
 
-#: login-utils/login.c:1302
+#: login-utils/login.c:1317
 msgid "EXCESSIVE linefeeds"
 msgstr "EXCESSIEF aantal witregels"
 
-#: login-utils/login.c:1334
+#: login-utils/login.c:1349
 #, c-format
 msgid "Login timed out after %d seconds\n"
 msgstr "Inloggen duurde te lang: afgebroken na %d seconden.\n"
 
-#: login-utils/login.c:1422
+#: login-utils/login.c:1437
 #, c-format
 msgid "Last login: %.*s "
 msgstr "Laatste keer ingelogd: %.*s "
 
-#: login-utils/login.c:1426
+#: login-utils/login.c:1441
 #, c-format
 msgid "from %.*s\n"
 msgstr "vanaf %.*s\n"
 
-#: login-utils/login.c:1429
+#: login-utils/login.c:1444
 #, c-format
 msgid "on %.*s\n"
 msgstr "op %.*s\n"
 
-#: login-utils/login.c:1455
+#: login-utils/login.c:1470
 #, c-format
 msgid "LOGIN FAILURE FROM %s, %s"
 msgstr "INLOGGEN IS MISLUKT VANAF %s -- %s"
 
-#: login-utils/login.c:1458
+#: login-utils/login.c:1473
 #, c-format
 msgid "LOGIN FAILURE ON %s, %s"
 msgstr "INLOGGEN IS MISLUKT OP %s -- %s"
 
-#: login-utils/login.c:1462
+#: login-utils/login.c:1477
 #, c-format
 msgid "%d LOGIN FAILURES FROM %s, %s"
 msgstr "%d INLOGMISLUKKINGEN VANAF %s -- %s"
 
-#: login-utils/login.c:1465
+#: login-utils/login.c:1480
 #, c-format
 msgid "%d LOGIN FAILURES ON %s, %s"
 msgstr "%d INLOGMISLUKKINGEN OP %s --  %s"
@@ -8647,226 +8657,226 @@ msgstr ""
 "Bij het compileren was geen lus-ondersteuning beschikbaar.  Hercompilatie is "
 "nodig.\n"
 
-#: mount/mount.c:325
+#: mount/mount.c:329
 #, c-format
 msgid "mount: improperly quoted option string '%s'"
 msgstr "mount: onjuist aangehaalde tekenreeks '%s'"
 
-#: mount/mount.c:358
+#: mount/mount.c:362
 #, c-format
 msgid "mount: translated %s '%s' to '%s'\n"
 msgstr "mount: argument van %s is vertaald van '%s' naar '%s'\n"
 
-#: mount/mount.c:522
+#: mount/mount.c:526
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s"
 msgstr "mount: volgens mtab is %s al aangekoppeld op %s"
 
-#: mount/mount.c:527
+#: mount/mount.c:531
 #, c-format
 msgid "mount: according to mtab, %s is mounted on %s"
 msgstr "mount: volgens mtab is %s aangekoppeld op %s"
 
-#: mount/mount.c:551
+#: mount/mount.c:555
 #, c-format
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: kan %s niet openen om te schrijven: %s"
 
-#: mount/mount.c:568 mount/mount.c:1189
+#: mount/mount.c:572 mount/mount.c:1193
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: fout bij schrijven van %s: %s"
 
-#: mount/mount.c:576
+#: mount/mount.c:580
 #, c-format
 msgid "mount: error changing mode of %s: %s"
 msgstr "mount: fout bij wijzigen van modus van %s: %s"
 
-#: mount/mount.c:659
+#: mount/mount.c:663
 #, c-format
 msgid "mount: cannot set group id: %s"
 msgstr "mount: kan groep-ID niet instellen: %s"
 
-#: mount/mount.c:662
+#: mount/mount.c:666
 #, c-format
 msgid "mount: cannot set user id: %s"
 msgstr "mount: kan gebruiker-ID niet instellen: %s"
 
-#: mount/mount.c:701 mount/mount.c:1801
+#: mount/mount.c:705 mount/mount.c:1805
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: kan geen nieuw proces starten: %s"
 
-#: mount/mount.c:838
+#: mount/mount.c:842
 #, c-format
 msgid "Trying %s\n"
 msgstr "soort %s wordt geprobeerd\n"
 
-#: mount/mount.c:866
+#: mount/mount.c:870
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
 msgstr "mount: U gaf geen bestandssysteemsoort aan voor %s;\n"
 
-#: mount/mount.c:869
+#: mount/mount.c:873
 #, c-format
 msgid "       I will try all types mentioned in %s or %s\n"
 msgstr "       alle soorten genoemd in %s of %s worden geprobeerd\n"
 
-#: mount/mount.c:872
+#: mount/mount.c:876
 #, c-format
 msgid "       and it looks like this is swapspace\n"
 msgstr "       het lijkt erop dat dit wisselgeheugen is\n"
 
-#: mount/mount.c:874
+#: mount/mount.c:878
 #, c-format
 msgid "       I will try type %s\n"
 msgstr "       soort %s wordt geprobeerd\n"
 
-#: mount/mount.c:901
+#: mount/mount.c:905
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s ziet er uit als wisselgeheugen -- niet aangekoppeld"
 
-#: mount/mount.c:992
+#: mount/mount.c:996
 msgid "mount failed"
 msgstr "aankoppelen is mislukt"
 
-#: mount/mount.c:994
+#: mount/mount.c:998
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: alleen root kan %s aankoppelen op %s"
 
-#: mount/mount.c:1064
+#: mount/mount.c:1068
 msgid "mount: loop device specified twice"
 msgstr "mount: lus-apparaat is twee keer aangegeven"
 
-#: mount/mount.c:1069
+#: mount/mount.c:1073
 msgid "mount: type specified twice"
 msgstr "mount: soort is twee keer aangegeven"
 
-#: mount/mount.c:1081
+#: mount/mount.c:1085
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: instellen van lus-apparaat wordt overgeslagen\n"
 
-#: mount/mount.c:1093
+#: mount/mount.c:1097
 #, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: volgens mtab is %s al als lus-apparaat aangekoppeld op %s"
 
-#: mount/mount.c:1103
+#: mount/mount.c:1107
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: lus-apparaat %s zal worden gebruikt\n"
 
-#: mount/mount.c:1112
+#: mount/mount.c:1116
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 "mount: lus-apparaat %s is door ander proces afgepakt; ... nieuwe poging\n"
 
-#: mount/mount.c:1117
+#: mount/mount.c:1121
 #, c-format
 msgid "mount: stolen loop=%s"
 msgstr "mount: lus-apparaat %s is door ander proces afgepakt"
 
-#: mount/mount.c:1122
+#: mount/mount.c:1126
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: instellen van lus-apparaat is mislukt\n"
 
-#: mount/mount.c:1133
+#: mount/mount.c:1137
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: lus-apparaat is succesvol ingesteld\n"
 
-#: mount/mount.c:1167
+#: mount/mount.c:1171
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: geen %s gevonden -- wordt nu aangemaakt...\n"
 
-#: mount/mount.c:1184
+#: mount/mount.c:1188
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: kan %s niet openen: %s"
 
-#: mount/mount.c:1205
+#: mount/mount.c:1209
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argument van '-p' of '--pass-fd' moet een getal zijn"
 
-#: mount/mount.c:1218
+#: mount/mount.c:1222
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: kan %s niet openen om snelheid in te stellen"
 
-#: mount/mount.c:1221
+#: mount/mount.c:1225
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: kan snelheid niet instellen: %s"
 
-#: mount/mount.c:1278
+#: mount/mount.c:1282
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: volgens mtab is %s al aangekoppeld op %s\n"
 
-#: mount/mount.c:1354
+#: mount/mount.c:1358
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr "mount: kan bestandssysteemsoort niet bepalen, en er is geen aangegeven"
 
-#: mount/mount.c:1357
+#: mount/mount.c:1361
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: u moet een bestandssysteemsoort aangeven"
 
-#: mount/mount.c:1360
+#: mount/mount.c:1364
 msgid "mount: mount failed"
 msgstr "mount: aankoppelen is mislukt"
 
-#: mount/mount.c:1366 mount/mount.c:1403
+#: mount/mount.c:1370 mount/mount.c:1407
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: aankoppelingspunt %s is geen map"
 
-#: mount/mount.c:1368
+#: mount/mount.c:1372
 msgid "mount: permission denied"
 msgstr "mount: toegang geweigerd"
 
-#: mount/mount.c:1370
+#: mount/mount.c:1374
 msgid "mount: must be superuser to use mount"
 msgstr "mount: u moet root zijn om aan te kunnen koppelen"
 
-#: mount/mount.c:1374 mount/mount.c:1378
+#: mount/mount.c:1378 mount/mount.c:1382
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s is bezig"
 
-#: mount/mount.c:1380
+#: mount/mount.c:1384
 msgid "mount: proc already mounted"
 msgstr "mount: proc is al aangekoppeld"
 
-#: mount/mount.c:1382
+#: mount/mount.c:1386
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s is al aangekoppeld of %s is bezig"
 
-#: mount/mount.c:1388
+#: mount/mount.c:1392
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: aankoppelingspunt %s bestaat niet"
 
-#: mount/mount.c:1390
+#: mount/mount.c:1394
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr ""
 "mount: aankoppelingspunt %s is een symbolische koppeling die nergens naar "
 "wijst"
 
-#: mount/mount.c:1395
+#: mount/mount.c:1399
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: apparaat %s bestaat niet"
 
-#: mount/mount.c:1407
+#: mount/mount.c:1411
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -8874,12 +8884,12 @@ msgid ""
 msgstr ""
 "mount: apparaat %s bestaat niet  (het pad bevat iets dat geen map is)\n"
 
-#: mount/mount.c:1419
+#: mount/mount.c:1423
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s is nog niet aangekoppeld, of een ongeldige optie"
 
-#: mount/mount.c:1421
+#: mount/mount.c:1425
 #, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -8889,7 +8899,7 @@ msgstr ""
 "codepagina,\n"
 "       ontbrekend hulpprogramma, slecht superblok op %s, of een andere fout"
 
-#: mount/mount.c:1428
+#: mount/mount.c:1432
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
@@ -8897,7 +8907,7 @@ msgstr ""
 "       (voor sommige bestandssystemen (bijvoorbeeld nfs of cifs) kan\n"
 "       een /sbin/mount.<type> hulpprogramma nodig zijn)"
 
-#: mount/mount.c:1437
+#: mount/mount.c:1441
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -8906,7 +8916,7 @@ msgstr ""
 "gebruikt,\n"
 "       zodat sr0 of sda of iets dergelijks nodig is?)"
 
-#: mount/mount.c:1442
+#: mount/mount.c:1446
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -8914,7 +8924,7 @@ msgstr ""
 "       (probeert u misschien een uitgebreide partitie aan te koppelen,\n"
 "       in plaats van een daarin opgenomen logische partitie?)"
 
-#: mount/mount.c:1449
+#: mount/mount.c:1453
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -8922,51 +8932,51 @@ msgstr ""
 "       Soms staat er nuttige informatie in het systeemlog --\n"
 "       probeer zoiets als:  dmesg | tail\n"
 
-#: mount/mount.c:1455
+#: mount/mount.c:1459
 msgid "mount table full"
 msgstr "aankoppelingstabel is vol"
 
-#: mount/mount.c:1457
+#: mount/mount.c:1461
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: kan superblok niet lezen"
 
-#: mount/mount.c:1463
+#: mount/mount.c:1467
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: onbekend apparaat"
 
-#: mount/mount.c:1468
+#: mount/mount.c:1472
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: onbekende bestandssysteemsoort '%s'"
 
-#: mount/mount.c:1480
+#: mount/mount.c:1484
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: waarschijnlijk bedoelde u %s"
 
-#: mount/mount.c:1483
+#: mount/mount.c:1487
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: mogelijk bedoelde u 'iso9660'?"
 
-#: mount/mount.c:1486
+#: mount/mount.c:1490
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: mogelijk bedoelde u 'vfat'?"
 
-#: mount/mount.c:1489
+#: mount/mount.c:1493
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s heeft onjuist apparaatnummer, of bestandssysteemsoort %s wordt "
 "niet ondersteund"
 
-#: mount/mount.c:1497
+#: mount/mount.c:1501
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s is geen blok-apparaat, en stat() is mislukt... heel vreemd"
 
-#: mount/mount.c:1499
+#: mount/mount.c:1503
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -8975,51 +8985,51 @@ msgstr ""
 "mount: de kernel herkent %s niet als een blok-apparaat\n"
 "       (misschien is 'insmod stuurprogramma' nodig?)"
 
-#: mount/mount.c:1502
+#: mount/mount.c:1506
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s is geen blok-apparaat  (misschien '-o loop' proberen?)"
 
-#: mount/mount.c:1505
+#: mount/mount.c:1509
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s is geen blok-apparaat"
 
-#: mount/mount.c:1510
+#: mount/mount.c:1514
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s is geen geldig blok-apparaat"
 
-#: mount/mount.c:1513
+#: mount/mount.c:1517
 msgid "block device "
 msgstr "blok-apparaat "
 
-#: mount/mount.c:1515
+#: mount/mount.c:1519
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: kan %s%s niet aankoppelen voor alleen-lezen"
 
-#: mount/mount.c:1519
+#: mount/mount.c:1523
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s is schrijfbeveiligd, maar expliciete optie '-w' is gegeven"
 
-#: mount/mount.c:1534
+#: mount/mount.c:1538
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s is schrijfbeveiligd en wordt als alleen-lezen aangekoppeld"
 
-#: mount/mount.c:1544
+#: mount/mount.c:1548
 #, c-format
 msgid "mount: no medium found on %s ...trying again\n"
 msgstr "mount: geen medium gevonden op %s; ... nieuwe poging\n"
 
-#: mount/mount.c:1550
+#: mount/mount.c:1554
 #, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: geen medium gevonden op %s"
 
-#: mount/mount.c:1568
+#: mount/mount.c:1572
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9037,23 +9047,23 @@ msgstr ""
 "bestandssysteem\n"
 "    kunnen krijgen.  Voor meer details zie restorecon(8) en mount(8).\n"
 
-#: mount/mount.c:1647
+#: mount/mount.c:1651
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: geen soort gegeven -- NFS aangenomen, vanwege de dubbele punt\n"
 
-#: mount/mount.c:1653
+#: mount/mount.c:1657
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: geen soort gegeven -- CIFS aangenomen, vanwege het //-voorvoegsel\n"
 
-#: mount/mount.c:1748
+#: mount/mount.c:1752
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s is al aangekoppeld op %s\n"
 
-#: mount/mount.c:1882
+#: mount/mount.c:1886
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9126,19 +9136,19 @@ msgstr ""
 "wachtwoordbestandsdescriptor].\n"
 "Voor meer informatie, zie man mount(8).\n"
 
-#: mount/mount.c:2205
+#: mount/mount.c:2209
 msgid "mount: only root can do that"
 msgstr "mount: alleen root kan dat doen"
 
-#: mount/mount.c:2215
+#: mount/mount.c:2219
 msgid "nothing was mounted"
 msgstr "er is niets aangekoppeld"
 
-#: mount/mount.c:2233 mount/mount.c:2259
+#: mount/mount.c:2237 mount/mount.c:2263
 msgid "mount: no such partition found"
 msgstr "mount: die partitie is niet gevonden"
 
-#: mount/mount.c:2236
+#: mount/mount.c:2240
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: kan %s niet vinden in %s noch in %s"
