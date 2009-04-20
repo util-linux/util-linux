@@ -477,7 +477,7 @@ int main(int argc, char **argv)
 	blkid_cache cache = NULL;
 	int ret;
 
-	blkid_debug_init(DEBUG_ALL);
+	blkid_init_debug(DEBUG_ALL);
 	if (argc != 1) {
 		fprintf(stderr, "Usage: %s\n"
 			"Probe all devices and exit\n", argv[0]);

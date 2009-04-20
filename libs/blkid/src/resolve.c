@@ -111,7 +111,7 @@ int main(int argc, char **argv)
 	char *value;
 	blkid_cache cache;
 
-	blkid_debug_init(DEBUG_ALL);
+	blkid_init_debug(DEBUG_ALL);
 	if (argc != 2 && argc != 3) {
 		fprintf(stderr, "Usage:\t%s tagname=value\n"
 			"\t%s tagname devname\n"

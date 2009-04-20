@@ -264,7 +264,7 @@ extern char *blkid_strndup(const char *s, const int length);
 #ifdef CONFIG_BLKID_DEBUG
 #include <stdio.h>
 extern int blkid_debug_mask;
-extern void blkid_debug_init(int mask);
+extern void blkid_init_debug(int mask);
 extern void blkid_debug_dump_dev(blkid_dev dev);
 extern void blkid_debug_dump_tag(blkid_tag tag);
 
@@ -272,7 +272,7 @@ extern void blkid_debug_dump_tag(blkid_tag tag);
 
 #else /* !CONFIG_BLKID_DEBUG */
 #define DBG(m,x)
-#define blkid_debug_init(x)
+#define blkid_init_debug(x)
 #endif /* CONFIG_BLKID_DEBUG */
 
 /* devno.c */

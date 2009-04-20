@@ -194,7 +194,7 @@ int main(int argc, char** argv)
 	dev_t	devno;
 	const char *errmsg = "Couldn't parse %s: %s\n";
 
-	blkid_debug_init(DEBUG_ALL);
+	blkid_init_debug(DEBUG_ALL);
 	if ((argc != 2) && (argc != 3)) {
 		fprintf(stderr, "Usage:\t%s device_number\n\t%s major minor\n"
 			"Resolve a device number to a device name\n",

@@ -220,7 +220,7 @@ int main(int argc, char **argv)
 					optarg);
 				exit(1);
 			}
-			blkid_debug_init(mask);
+			blkid_init_debug(mask);
 			break;
 		}
 		case '?':

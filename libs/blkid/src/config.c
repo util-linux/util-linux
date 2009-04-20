@@ -185,7 +185,7 @@ int main(int argc, char *argv[])
 	struct blkid_config *conf;
 	char *filename = NULL;
 
-	blkid_debug_init(DEBUG_ALL);
+	blkid_init_debug(DEBUG_ALL);
 
 	if (argc == 2)
 		filename = argv[1];

@@ -76,7 +76,7 @@ static blkid_debug_dump_cache(int mask, blkid_cache cache)
 #endif
 
 #ifdef CONFIG_BLKID_DEBUG
-void blkid_debug_init(int mask)
+void blkid_init_debug(int mask)
 {
 	if (blkid_debug_mask & DEBUG_INIT)
 		return;
@@ -124,7 +124,7 @@ int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
 {
 	blkid_cache cache;
 
-	blkid_debug_init(0);
+	blkid_init_debug(0);
 
 	DBG(DEBUG_CACHE, printf("creating blkid cache (using %s)\n",
 				filename ? filename : "default cache"));
@@ -216,7 +216,7 @@ int main(int argc, char** argv)
 	blkid_cache cache = NULL;
 	int ret;
 
-	blkid_debug_init(DEBUG_ALL);
+	blkid_init_debug(DEBUG_ALL);
 
 	if ((argc > 2)) {
 		fprintf(stderr, "Usage: %s [filename] \n", argv[0]);

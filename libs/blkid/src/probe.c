@@ -136,7 +136,7 @@ int blkid_known_fstype(const char *fstype)
  */
 blkid_probe blkid_new_probe(void)
 {
-	blkid_debug_init(0);
+	blkid_init_debug(0);
 	return calloc(1, sizeof(struct blkid_struct_probe));
 }
 

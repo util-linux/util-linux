@@ -203,7 +203,7 @@ char *blkid_evaluate_spec(const char *token, const char *value, blkid_cache *cac
 		return NULL;
 
 	if (!cache || !*cache)
-		blkid_debug_init(0);
+		blkid_init_debug(0);
 
 	DBG(DEBUG_EVALUATE,
 	    printf("evaluating  %s%s%s\n", token, value ? "=" : "",
@@ -254,7 +254,7 @@ int main(int argc, char *argv[])
 		return EXIT_FAILURE;
 	}
 
-	blkid_debug_init(0);
+	blkid_init_debug(0);
 
 	res = blkid_evaluate_spec(argv[1], argv[2], &cache);
 	if (res)
