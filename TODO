@@ -1,3 +1,9 @@
+ * mkswap: use /proc/sys/kernel/random/uuid as a fallback solution for builds 
+   without libuuid
+
+ * add --without-libuuid to disable mkswap(8) and libblkid linking against 
+   libuuid
+
  * use TZ=UTC for tests
 
  * add NLS and err.h stuff to schedutils (chrt.c, taskset.c)
