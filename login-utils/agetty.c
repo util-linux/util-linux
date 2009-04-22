@@ -1146,11 +1146,15 @@ termio_final(op, tp, cp)
     /* Account for upper case without lower case. */
 
     if (cp->capslock) {
+#ifdef IUCLC
 	tp->c_iflag |= IUCLC;
+#endif
 #ifdef XCASE	
 	tp->c_lflag |= XCASE;
 #endif
+#ifdef OLCUC
 	tp->c_oflag |= OLCUC;
+#endif
     }
     /* Optionally enable hardware flow control */
 
