@@ -34,7 +34,7 @@
 /* the SCHED_BATCH is supported since Linux 2.6.16
  *  -- temporary workaround for people with old glibc headers
  */
-#ifndef SCHED_BATCH
+#if defined (__linux__) && !defined(SCHED_BATCH)
 # define SCHED_BATCH 3
 #endif
 
@@ -42,7 +42,7 @@
  * commit id 0e6aca43e08a62a48d6770e9a159dbec167bf4c6
  * -- temporary workaround for people with old glibc headers
  */
-#ifndef SCHED_IDLE
+#if defined (__linux__) && !defined(SCHED_IDLE)
 # define SCHED_IDLE 5
 #endif
 
@@ -95,15 +95,19 @@ static void show_rt_info(const char *what, pid_t pid)
 	case SCHED_FIFO:
 		printf("SCHED_FIFO\n");
 		break;
+#ifdef SCHED_IDLE
 	case SCHED_IDLE:
 		printf("SCHED_IDLE\n");
 		break;
+#endif
 	case SCHED_RR:
 		printf("SCHED_RR\n");
 		break;
+#ifdef SCHED_BATCH
 	case SCHED_BATCH:
 		printf("SCHED_BATCH\n");
 		break;
+#endif
 	default:
 		printf(_("unknown\n"));
 	}
@@ -119,8 +123,21 @@ static void show_min_max(void)
 {
 	int i;
 	int policies[] = { SCHED_OTHER, SCHED_FIFO, SCHED_RR,
-			   SCHED_BATCH, SCHED_IDLE };
-	const char *names[] = { "OTHER", "FIFO", "RR", "BATCH", "IDLE" };
+#ifdef SCHED_BATCH
+			   SCHED_BATCH,
+#endif
+#ifdef SCHED_IDLE
+			   SCHED_IDLE,
+#endif
+			 };
+	const char *names[] = { "OTHER", "FIFO", "RR",
+#ifdef SCHED_BATCH
+				"BATCH",
+#endif
+#ifdef SCHED_IDLE
+				"IDLE",
+#endif
+			      };
 
 	for (i = 0; i < ARRAY_SIZE(policies); i++) {
 		int max = sched_get_priority_max(policies[i]);
@@ -164,13 +181,17 @@ int main(int argc, char *argv[])
 
 		switch (i) {
 		case 'b':
+#ifdef SCHED_BATCH
 			policy = SCHED_BATCH;
+#endif
 			break;
 		case 'f':
 			policy = SCHED_FIFO;
 			break;
 		case 'i':
+#ifdef SCHED_IDLE
 			policy = SCHED_IDLE;
+#endif
 			break;
 		case 'm':
 			show_min_max();
