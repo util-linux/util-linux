@@ -1,7 +1,7 @@
 /*
  * ionice: set or get process io scheduling class and priority
  *
- * Copyright (C) 2005 Jens Axboe <axboe@suse.de> SUSE Labs
+ * Copyright (C) 2005 Jens Axboe <jens@axboe.dk>
  *
  * Released under the terms of the GNU General Public License version 2
  *
