@@ -97,7 +97,11 @@ static int
 is_loop_used(int fd)
 {
 	struct loop_info li;
-	return ioctl (fd, LOOP_GET_STATUS, &li) == 0;
+
+	errno = 0;
+	if (ioctl (fd, LOOP_GET_STATUS, &li) < 0 && errno == ENXIO)
+		return 0;
+	return 1;
 }
 
 static int
