@@ -365,6 +365,7 @@ static int probe_all(blkid_cache cache, int only_if_new)
 	unsigned long long sz;
 	int lens[2] = { 0, 0 };
 	int which = 0, last = 0;
+	struct list_head *p, *pnext;
 
 	ptnames[0] = ptname0;
 	ptnames[1] = ptname1;
@@ -424,6 +425,29 @@ static int probe_all(blkid_cache cache, int only_if_new)
 			lens[which] = 0;	/* mark as checked */
 		}
 
+		/*
+		 * If last was a whole disk and we just found a partition
+		 * on it, remove the whole-disk dev from the cache if
+		 * it exists.
+		 */
+		if (lens[last] && !strncmp(ptnames[last], ptname, lens[last])) {
+			list_for_each_safe(p, pnext, &cache->bic_devs) {
+				blkid_dev tmp;
+
+				/* find blkid dev for the whole-disk devno */
+				tmp = list_entry(p, struct blkid_struct_dev,
+						 bid_devs);
+				if (tmp->bid_devno == devs[last]) {
+					DBG(DEBUG_DEVNAME,
+						printf("freeing %s\n",
+						       tmp->bid_name));
+					blkid_free_dev(tmp);
+					cache->bic_flags |= BLKID_BIC_FL_CHANGED;
+					break;
+				}
+			}
+			lens[last] = 0;
+		}
 		/*
 		 * If last was not checked because it looked like a whole-disk
 		 * dev, and the device's base name has changed,
