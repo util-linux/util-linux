@@ -153,6 +153,30 @@ static int is_dm_leaf(const char *devname)
 }
 
 /*
+ * Since 2.6.29 (patch 784aae735d9b0bba3f8b9faef4c8b30df3bf0128) kernel sysfs
+ * provides the real DM device names in /sys/block/<ptname>/dm/name
+ */
+static char *get_dm_name(const char *ptname)
+{
+	FILE	*f;
+	size_t	sz;
+	char	path[256], name[256], *res = NULL;
+
+	snprintf(path, sizeof(path), "/sys/block/%s/dm/name", ptname);
+	if ((f = fopen(path, "r")) == NULL)
+		return NULL;
+
+	/* read "<name>\n" from sysfs */
+	if (fgets(name, sizeof(name), f) && (sz = strlen(name)) > 1) {
+		name[sz - 1] = '\0';
+		snprintf(path, sizeof(path), "/dev/mapper/%s", name);
+		res = blkid_strdup(path);
+	}
+	fclose(f);
+	return res;
+}
+
+/*
  * Probe a single block device to add to the device cache.
  */
 static void probe_one(blkid_cache cache, const char *ptname,
@@ -183,7 +207,9 @@ static void probe_one(blkid_cache cache, const char *ptname,
 	 * to standard /dev/mapper/<name>.
 	 */
 	if (!strncmp(ptname, "dm-", 3) && isdigit(ptname[3])) {
-		blkid__scan_dir("/dev/mapper", devno, 0, &devname);
+		devname = get_dm_name(ptname);
+		if (!devname)
+			blkid__scan_dir("/dev/mapper", devno, 0, &devname);
 		if (devname)
 			goto get_dev;
 	}
