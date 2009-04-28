@@ -11,16 +11,15 @@ AC_CONFIG_SRCDIR(mount/mount.c)
 
 AC_PREFIX_DEFAULT([/usr])
 
-dnl blkid version definition (the library SONAME is
-dnl "libblkid.so.$BLKID_VERSION_MAJOR", see blkid/Makefile.am)
-dnl ----------------------------------------------------------
-BLKID_VERSION_MAJOR=1
-BLKID_VERSION_MINOR=99
-BLKID_VERSION_RELEASE=0
-BLKID_DATE="10-Feb-2009"
+dnl version details from <major>.<minor>[-<suffix>]
+PACKAGE_VERSION_MAJOR=$(echo $PACKAGE_VERSION | awk -F. '{print $1}')
+PACKAGE_VERSION_MINOR=$(echo $PACKAGE_VERSION | awk -F. '{print $2}' \
+                                              | awk -F- '{print $1}')
+PACKAGE_VERSION_RELEASE=0
 
-BLKID_VERSION=$BLKID_VERSION_MAJOR.$BLKID_VERSION_MINOR.$BLKID_VERSION_RELEASE
-BLKID_VERSION_INFO=`expr $BLKID_VERSION_MAJOR + $BLKID_VERSION_MINOR`:$BLKID_VERSION_RELEASE:$BLKID_VERSION_MINOR
+dnl libblkid version
+LIBBLKID_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
+LIBBLKID_DATE="10-Feb-2009"
 
 # Check whether exec_prefix=/usr:
 case $exec_prefix:$prefix in
@@ -188,13 +187,9 @@ elif test "x$with_fsprobe" = xbuiltin; then
   have_blkid=yes
   build_libblkid=yes
   have_blkid_evaluate=yes
-  AC_SUBST(BLKID_VERSION_MAJOR)
-  AC_SUBST(BLKID_VERSION_MINOR)
-  AC_SUBST(BLKID_VERSION_RELEASE)
-  AC_SUBST(BLKID_VERSION)
-  AC_SUBST(BLKID_VERSION_INFO)
-  AC_DEFINE_UNQUOTED(BLKID_VERSION, "$BLKID_VERSION", [libblkid version string])
-  AC_DEFINE_UNQUOTED(BLKID_DATE, "$BLKID_DATE", [libblkid date string])
+  AC_SUBST(LIBBLKID_VERSION)
+  AC_DEFINE_UNQUOTED(LIBBLKID_VERSION, "$LIBBLKID_VERSION", [libblkid version string])
+  AC_DEFINE_UNQUOTED(LIBBLKID_DATE, "$LIBBLKID_DATE", [libblkid date string])
 fi
 
 if  test "x$have_blkid" = xyes; then

@@ -45,7 +45,7 @@ const char *progname = "blkid";
 static void print_version(FILE *out)
 {
 	fprintf(out, "%s from %s (libblkid %s, %s)\n",
-		progname, PACKAGE_STRING, BLKID_VERSION, BLKID_DATE);
+		progname, PACKAGE_STRING, LIBBLKID_VERSION, LIBBLKID_DATE);
 }
 
 static void usage(int error)

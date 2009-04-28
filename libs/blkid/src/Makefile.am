@@ -29,9 +29,9 @@ libblkid_la_LIBADD = probers/libblkid_probers.la $(common_ldadd)
 libblkid_la_DEPENDENCIES = $(libblkid_la_LIBADD) blkid.sym
 
 # TODO: for unknown reason "make distcheck" requires
-#       full path to the version string
+#       full path to the version script
 libblkid_la_LDFLAGS = -Wl,--version-script=$(top_srcdir)/libs/blkid/src/blkid.sym \
-                      -version-info @BLKID_VERSION_INFO@
+                      -version-info 1:0:0
 
 tests = test_cache test_config test_dev test_devname test_devno test_getsize \
 	test_read test_resolve test_save test_tag test_verify test_evaluate

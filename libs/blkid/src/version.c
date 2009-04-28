@@ -18,8 +18,9 @@
 
 #include "blkid.h"
 
-static const char *lib_version = BLKID_VERSION;
-static const char *lib_date = BLKID_DATE;
+/* LIBBLKID_* defined in the global config.h */
+static const char *lib_version = LIBBLKID_VERSION;	/* release version */
+static const char *lib_date = LIBBLKID_DATE;
 
 int blkid_parse_version_string(const char *ver_string)
 {
@@ -36,6 +37,13 @@ int blkid_parse_version_string(const char *ver_string)
 	return version;
 }
 
+/**
+ * blkid_get_library_version:
+ * @ver_string: returns relese version (!= SONAME version)
+ * @date_string: returns date
+ *
+ * Returns release version code.
+ */
 int blkid_get_library_version(const char **ver_string,
 			       const char **date_string)
 {

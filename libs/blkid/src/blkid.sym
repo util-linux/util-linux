@@ -3,7 +3,7 @@
  * can't run with old libblkid.so not providing foo() - the global SONAME
  * version info can't enforce this since we never change the SONAME.
  *
- * The original libblkid (.so version 1.0) from e2fsprogs does not to use
+ * The original libblkid from e2fsprogs (<=1.41.4) does not to use
  * symbol versioning -- all the original symbols are in BLKID_1.0 now.
  */
 BLKID_1.0 {
@@ -39,9 +39,9 @@ local:
 
 
 /*
- * util-linux-ng version(s)
+ * version(s) since util-linux-ng 2.15
  */
-BLKID_1.42 {
+BLKID_2.15 {
 global:
 	blkid_do_probe;
 	blkid_do_safeprobe;
