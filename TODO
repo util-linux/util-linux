@@ -1,3 +1,5 @@
+ * fdisk/* -- use off_t instead "long long"
+
  * mkswap: use /proc/sys/kernel/random/uuid as a fallback solution for builds 
    without libuuid
 

@@ -303,7 +303,7 @@ partition_info ext_info;
 int num_parts = 0;
 
 int logical = 0;
-int logical_sectors[MAXIMUM_PARTS];
+long long logical_sectors[MAXIMUM_PARTS];
 
 __sighandler_t old_SIGINT, old_SIGTERM;
 
