@@ -196,6 +196,11 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 {
 	ssize_t ret_read = 0;
 
+	if (off < 0 || len < 0) {
+		DBG(DEBUG_LOWPROBE,
+			printf("unexpected offset or length of buffer requested\n"));
+		return NULL;
+	}
 	if (off + len <= BLKID_SB_BUFSIZ) {
 		if (!pr->sbbuf) {
 			pr->sbbuf = malloc(BLKID_SB_BUFSIZ);

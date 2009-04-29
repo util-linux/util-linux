@@ -125,25 +125,29 @@ static int probe_raid1(blkid_probe pr, off_t off)
 int probe_raid(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	const char *ver = NULL;
-	uint64_t sboff;
 
-	/* version 0 at the end of the device */
-	sboff = (pr->size & ~(MD_RESERVED_BYTES - 1)) - MD_RESERVED_BYTES;
-	if (probe_raid0(pr, sboff) == 0)
-		return 0;
+	if (pr->size > MD_RESERVED_BYTES) {
+		/* version 0 at the end of the device */
+		uint64_t sboff = (pr->size & ~(MD_RESERVED_BYTES - 1))
+			         - MD_RESERVED_BYTES;
+		if (probe_raid0(pr, sboff) == 0)
+			return 0;
 
-	/* version 1.0 at the end of the device */
-	sboff = (pr->size & ~(0x1000 - 1)) - 0x2000;
-	if (probe_raid1(pr, sboff) == 0)
-		ver = "1.0";
+		/* version 1.0 at the end of the device */
+		sboff = (pr->size & ~(0x1000 - 1)) - 0x2000;
+		if (probe_raid1(pr, sboff) == 0)
+			ver = "1.0";
+	}
 
-	/* version 1.1 at the start of the device */
-	else if (probe_raid1(pr, 0) == 0)
-		ver = "1.1";
+	if (!ver) {
+		/* version 1.1 at the start of the device */
+		if (probe_raid1(pr, 0) == 0)
+			ver = "1.1";
 
-	/* version 1.2 at 4k offset from the start */
-	else if (probe_raid1(pr, 0x1000) == 0)
-		ver = "1.2";
+		/* version 1.2 at 4k offset from the start */
+		else if (probe_raid1(pr, 0x1000) == 0)
+			ver = "1.2";
+	}
 
 	if (ver) {
 		blkid_probe_set_version(pr, ver);
