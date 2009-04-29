@@ -9,10 +9,10 @@
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux-ng 2.14.2-rc2\n"
+"Project-Id-Version: util-linux-ng 2.15-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
 "POT-Creation-Date: 2009-04-17 12:43+0200\n"
-"PO-Revision-Date: 2009-02-14 17:00+0700\n"
+"PO-Revision-Date: 2009-04-20 09:00+0700\n"
 "Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -142,17 +142,17 @@ msgstr "penggunaan:\n"
 #: disk-utils/elvtune.c:53
 #, c-format
 msgid "\tNOTE: elvtune only works with 2.4 kernels\n"
-msgstr ""
+msgstr "\tNOTE: elvtune hanya bekerja dengan kernels 2.4\n"
 
 #: disk-utils/elvtune.c:104
-#, fuzzy, c-format
+#, c-format
 msgid "parse error\n"
-msgstr "seek error"
+msgstr "error mengambil\n"
 
 #: disk-utils/elvtune.c:110
-#, fuzzy, c-format
+#, c-format
 msgid "missing blockdevice, use -h for help\n"
-msgstr "%s bukan sebuah perangkat block atau file\n"
+msgstr "hilang perangkat blok, gunakan -h untuk bantuan\n"
 
 #: disk-utils/elvtune.c:131
 #, c-format
@@ -161,6 +161,9 @@ msgid ""
 "elvtune is only useful on older kernels;\n"
 "for 2.6 use IO scheduler sysfs tunables instead..\n"
 msgstr ""
+"\n"
+"elvtune hanya berguna untuk kernal lama;\n"
+"untuk 2.6 lebih baik gunakan IO scheduler sysfs tunebles..\n"
 
 #: disk-utils/fdformat.c:31
 #, c-format
@@ -247,67 +250,65 @@ msgstr ""
 " file       file untuk ditest\n"
 
 #: disk-utils/fsck.cramfs.c:164
-#, fuzzy, c-format
+#, c-format
 msgid "stat failed: %s"
-msgstr "(File selanjutnya: %s)"
+msgstr "stat gagal: %s"
 
 #: disk-utils/fsck.cramfs.c:168 disk-utils/fsck.cramfs.c:552
-#, fuzzy, c-format
+#, c-format
 msgid "open failed: %s"
-msgstr "openpty gagal\n"
+msgstr "gagal membuka: %s"
 
 #: disk-utils/fsck.cramfs.c:173
-#, fuzzy, c-format
+#, c-format
 msgid "ioctl failed: unable to determine device size: %s"
-msgstr "%s: peringatan--tidak dapat menentukan ukuran filesystem \n"
+msgstr "ioctl gagal: tidak dapat menentukan ukuran perangkat: %s"
 
 #: disk-utils/fsck.cramfs.c:181
-#, fuzzy, c-format
+#, c-format
 msgid "not a block device or file: %s"
-msgstr "%s bukan sebuah perangkat block atau file\n"
+msgstr "bukan sebuah perangkat blok atau berkas: %s"
 
 #: disk-utils/fsck.cramfs.c:185 disk-utils/fsck.cramfs.c:227
-#, fuzzy
 msgid "file length too short"
-msgstr "%s: cramfs tidak valid--panjang file terlalu pendek\n"
+msgstr "panjang berkas terlalu pendek"
 
 #: disk-utils/fsck.cramfs.c:190 disk-utils/fsck.cramfs.c:198
 #: disk-utils/fsck.cramfs.c:259 disk-utils/fsck.cramfs.c:279
-#, fuzzy, c-format
+#, c-format
 msgid "read failed: %s"
-msgstr "(File selanjutnya: %s)"
+msgstr "gagal membaca: %s"
 
 #: disk-utils/fsck.cramfs.c:208
 msgid "superblock magic not found"
-msgstr ""
+msgstr "tanda super blok tidak ditemukan"
 
 #: disk-utils/fsck.cramfs.c:217
-#, fuzzy
 msgid "unsupported filesystem features"
-msgstr "Masukkan tipe filesystem: "
+msgstr "Layanan sistem berkas tidak didukung"
 
 #: disk-utils/fsck.cramfs.c:220
-#, fuzzy, c-format
+#, c-format
 msgid "superblock size (%d) too small"
-msgstr "Jumlah dari blok terlalu kecil"
+msgstr "ukuran super blok (%d) terlalu kecil"
 
 #: disk-utils/fsck.cramfs.c:224
 msgid "zero file count"
-msgstr ""
+msgstr "berkas beukuran kosong"
 
 #: disk-utils/fsck.cramfs.c:230
-#, fuzzy, c-format
+#, c-format
 msgid "warning: file extends past end of filesystem\n"
-msgstr "Peringatan: partisi %s meluas melewati akhir dari disk\n"
+msgstr "Peringatan: berkas melewati akhir dari sistem berkas\n"
 
 #: disk-utils/fsck.cramfs.c:234
-#, fuzzy, c-format
+#, c-format
 msgid "warning: old cramfs format\n"
-msgstr "%s: peringatan-image cramfs lama, tidak ada CRC\n"
+msgstr "peringatan: format cramfs lama\n"
 
 #: disk-utils/fsck.cramfs.c:247
 msgid "unable to test CRC: old cramfs format"
-msgstr ""
+msgstr "tidak dapat memeriksa CRC: format cramfs lama"
 
 #: disk-utils/fsck.cramfs.c:273 disk-utils/fsck.cramfs.c:340
 #: disk-utils/fsck.cramfs.c:478 login-utils/chfn.c:529 login-utils/chsh.c:439
@@ -316,33 +317,31 @@ msgid "malloc failed"
 msgstr "malloc gagal"
 
 #: disk-utils/fsck.cramfs.c:298
-#, fuzzy
 msgid "crc error"
-msgstr ", error"
+msgstr "crc error"
 
 #: disk-utils/fsck.cramfs.c:365
-#, fuzzy
 msgid "root inode is not directory"
-msgstr "root inode tidak berupa sebuah direktori"
+msgstr "akar inode bukan sebuah direktori"
 
 #: disk-utils/fsck.cramfs.c:370
 #, c-format
 msgid "bad root offset (%lu)"
-msgstr ""
+msgstr "ofset akar buruk (%lu)"
 
 #: disk-utils/fsck.cramfs.c:388
 msgid "data block too large"
-msgstr ""
+msgstr "data blok terlalu besar"
 
 #: disk-utils/fsck.cramfs.c:392
 #, c-format
 msgid "decompression error %p(%d): %s"
-msgstr ""
+msgstr "dekompresi error %p(%d): %s"
 
 #: disk-utils/fsck.cramfs.c:416
-#, fuzzy, c-format
+#, c-format
 msgid "  hole at %ld (%zd)\n"
-msgstr "  lubang di %ld (%d)\n"
+msgstr "  lubang di %ld (%zd)\n"
 
 #: disk-utils/fsck.cramfs.c:424 disk-utils/fsck.cramfs.c:596
 #, c-format
@@ -350,134 +349,129 @@ msgid "  uncompressing block at %ld to %ld (%ld)\n"
 msgstr "  mengekstrak block di %ld ke %ld (%ld)\n"
 
 #: disk-utils/fsck.cramfs.c:430
-#, fuzzy, c-format
+#, c-format
 msgid "non-block (%ld) bytes"
-msgstr "%s: Bukan block (%ld) bytes\n"
+msgstr "Bukan block (%ld) bytes"
 
 #: disk-utils/fsck.cramfs.c:434
-#, fuzzy, c-format
+#, c-format
 msgid "non-size (%ld vs %ld) bytes"
-msgstr "%s: Bukan ukuran (%ld vs %ld) bytes\n"
+msgstr "bukan ukuran (%ld vs %ld) bytes"
 
 #: disk-utils/fsck.cramfs.c:440
-#, fuzzy, c-format
+#, c-format
 msgid "write failed: %s"
-msgstr "(File selanjutnya: %s)"
+msgstr "gagal menulis: %s"
 
 #: disk-utils/fsck.cramfs.c:453
-#, fuzzy, c-format
+#, c-format
 msgid "lchown failed: %s"
-msgstr "mount gagal"
+msgstr "lchown gagal: %s"
 
 #: disk-utils/fsck.cramfs.c:459
-#, fuzzy, c-format
+#, c-format
 msgid "chown failed: %s"
-msgstr "mount gagal"
+msgstr "chown gagal: %s"
 
 #: disk-utils/fsck.cramfs.c:466
-#, fuzzy, c-format
+#, c-format
 msgid "utime failed: %s"
-msgstr "nilai waktu timeout buruk: %s"
+msgstr "utime gagal: %s"
 
 #: disk-utils/fsck.cramfs.c:481
 #, c-format
 msgid "directory inode has zero offset and non-zero size: %s"
-msgstr ""
+msgstr "direktori inode memiliki ofset kosong dan ukuran tidak kosong: %s"
 
 #: disk-utils/fsck.cramfs.c:495
-#, fuzzy, c-format
+#, c-format
 msgid "mkdir failed: %s"
-msgstr "/dev: chdir() gagal: %m"
+msgstr "gagal mkdir: %s"
 
 #: disk-utils/fsck.cramfs.c:512
 msgid "filename length is zero"
-msgstr ""
+msgstr "panjang nama berkas nol"
 
 #: disk-utils/fsck.cramfs.c:515
 msgid "bad filename length"
-msgstr ""
+msgstr "panjang nama berkas buruk"
 
 #: disk-utils/fsck.cramfs.c:522
-#, fuzzy
 msgid "bad inode offset"
-msgstr "ukuran inode buruk"
+msgstr "ofset inode buruk"
 
 #: disk-utils/fsck.cramfs.c:538
 msgid "file inode has zero offset and non-zero size"
-msgstr ""
+msgstr "berkas inode memiliki ofset nol dan ukuran bukan nol"
 
 #: disk-utils/fsck.cramfs.c:541
 msgid "file inode has zero size and non-zero offset"
-msgstr ""
+msgstr "berkas inode memiliki ukuran nol dan ofset bukan nol"
 
 #: disk-utils/fsck.cramfs.c:572
 msgid "symbolic link has zero offset"
-msgstr ""
+msgstr "link simbolik memiliki ofset nol"
 
 #: disk-utils/fsck.cramfs.c:575
 msgid "symbolic link has zero size"
-msgstr ""
+msgstr "link simbolik memiliki ukuran nol"
 
 #: disk-utils/fsck.cramfs.c:587
-#, fuzzy, c-format
+#, c-format
 msgid "size error in symlink: %s"
-msgstr "%s: kesalahan ukuran dalam symlink `%s'\n"
+msgstr "kesalahan ukuran dalam symlink %s"
 
 #: disk-utils/fsck.cramfs.c:602
-#, fuzzy, c-format
+#, c-format
 msgid "symlink failed: %s"
-msgstr "fsync gagal"
+msgstr "symlink gagal: %s"
 
 #: disk-utils/fsck.cramfs.c:614
 #, c-format
 msgid "special file has non-zero offset: %s"
-msgstr ""
+msgstr "berkas spesial memiliki ofset bukan nol: %s"
 
 #: disk-utils/fsck.cramfs.c:626
 #, c-format
 msgid "fifo has non-zero size: %s"
-msgstr ""
+msgstr "fifo memiliki ukuran bukan nol: %s"
 
 #: disk-utils/fsck.cramfs.c:632
 #, c-format
 msgid "socket has non-zero size: %s"
-msgstr ""
+msgstr "soket memiliki ukuran bukan nol: %s"
 
 #: disk-utils/fsck.cramfs.c:637
-#, fuzzy, c-format
+#, c-format
 msgid "bogus mode: %s (%o)"
-msgstr "%s: bogus mode di `%s' (%o)\n"
+msgstr "mode palsu: %s (%o)"
 
 #: disk-utils/fsck.cramfs.c:647
-#, fuzzy, c-format
+#, c-format
 msgid "mknod failed: %s"
-msgstr "mount gagal"
+msgstr "mknod gagal: %s"
 
 #: disk-utils/fsck.cramfs.c:683
 #, c-format
 msgid "directory data start (%ld) < sizeof(struct cramfs_super) + start (%ld)"
-msgstr ""
+msgstr "direktori data berawal (%ld) < sizeof(struct cramfs_super) + awal (%ld)"
 
 #: disk-utils/fsck.cramfs.c:686
-#, fuzzy, c-format
+#, c-format
 msgid "directory data end (%ld) != file data start (%ld)"
-msgstr ""
-"%s: cramfs tidak valid--akhir data direktori (%ld) != awal data start (%ld)\n"
+msgstr "akhir data direktori (%ld) != berkas data start (%ld)"
 
 #: disk-utils/fsck.cramfs.c:691
-#, fuzzy
 msgid "invalid file data offset"
-msgstr "%s: cramfs tidak valid--invalid file data offset\n"
+msgstr "ofset berkas data tidak valid"
 
 #: disk-utils/fsck.cramfs.c:715
-#, fuzzy
 msgid "failed to allocate outbuffer"
-msgstr "Tidak dapat mengalokasikan buffer.\n"
+msgstr "gagal mengalokasikan outbuffer"
 
 #: disk-utils/fsck.cramfs.c:728
-#, fuzzy
 msgid "compiled without -x support"
-msgstr "%s: dikompile tanpa menggunakan layanan opsi -x\n"
+msgstr "dikompile tanpa dukungan -x"
 
 #: disk-utils/fsck.minix.c:210
 #, c-format
@@ -766,8 +760,7 @@ msgstr "Set i_nlinks ke jumlah"
 #: disk-utils/fsck.minix.c:1178 disk-utils/fsck.minix.c:1232
 #, c-format
 msgid "Zone %d: marked in use, no file uses it."
-msgstr ""
-"Zone %d: ditandai sedang digunakan, tidak ada file yang menggunakannya."
+msgstr "Zone %d: ditandai sedang digunakan, tidak ada file yang menggunakannya."
 
 #: disk-utils/fsck.minix.c:1179 disk-utils/fsck.minix.c:1234
 msgid "Unmark"
@@ -931,18 +924,18 @@ msgid "cannot get size of %s"
 msgstr "tidak dapat memperoleh ukuran dari %s"
 
 #: disk-utils/mkfs.bfs.c:188
-#, fuzzy, c-format
+#, c-format
 msgid "blocks argument too large, max is %llu"
-msgstr "block argument terlalu besar, maksimal adalah %lu"
+msgstr "block argument terlalu besar, maksimal adalah %llu"
 
 #: disk-utils/mkfs.bfs.c:203
 msgid "too many inodes - max is 512"
 msgstr "terlalu banyak inodes - maksimal adalah 512"
 
 #: disk-utils/mkfs.bfs.c:212
-#, fuzzy, c-format
+#, c-format
 msgid "not enough space, need at least %llu blocks"
-msgstr "tempat tidak cukup, butuh sedikitnya %lu blocks"
+msgstr "ruang tidak cukup, butuh paling tidak %llu blok"
 
 #: disk-utils/mkfs.bfs.c:224 fdisk/fdisk.c:2345
 #, c-format
@@ -970,14 +963,14 @@ msgid "Inodes: %d (in 1 block)\n"
 msgstr "Inodes: %d (dalam 1 block)\n"
 
 #: disk-utils/mkfs.bfs.c:232
-#, fuzzy, c-format
+#, c-format
 msgid "Inodes: %d (in %lld blocks)\n"
-msgstr "Inodes: %d (dalam %ld blocks)\n"
+msgstr "Inodes: %d (dalam %lld blok)\n"
 
 #: disk-utils/mkfs.bfs.c:234
-#, fuzzy, c-format
+#, c-format
 msgid "Blocks: %lld\n"
-msgstr "Blocks: %ld\n"
+msgstr "Blok: %lld\n"
 
 #: disk-utils/mkfs.bfs.c:235
 #, c-format
@@ -1030,10 +1023,9 @@ msgid "mkfs (%s)\n"
 msgstr "mkfs (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:126
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n "
-"name] dirname outfile\n"
+"usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n name] dirname outfile\n"
 " -h         print this help\n"
 " -v         be verbose\n"
 " -E         make all warnings errors (non-zero exit status)\n"
@@ -1048,19 +1040,17 @@ msgid ""
 " dirname    root of the filesystem to be compressed\n"
 " outfile    output file\n"
 msgstr ""
-"penggunaan: %s [-h] [-v] [-b blksize] [-e edition] [-i file] [-n name] "
-"dirname outfile\n"
+"penggunaan: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n name] dirname outfile\n"
 " -h         tampilkan bantuan ini\n"
 " -v         menjadi lebih verbose\n"
-" -E         membuat semua peringatan menjadi errors (status exit yang tidak "
-"nol)\n"
+" -E         membuat semua peringatan menjadi errors (status exit yang tidak nol)\n"
 " -b blksize menggunakan ukuran blksz, harus sama dengan ukuran page\n"
 " -e edition menset nomor edisi (bagian dari fsid)\n"
-" -i file    memasukkan file image kedalam filesystem (butuh kernel >= "
-"2.4.0)\n"
+" -N endian  set tipe endian dari cramfs (big|little|host), baku host\n"
+" -i file    memasukkan file image kedalam filesystem (butuh kernel >= 2.4.0)\n"
 " -n name    menset nama dari filesystem cramfs\n"
 " -p         pad dengan %d bytes dari boot code\n"
-" -s         sort masukan direktori (opsi lama, diabaikan)\n"
+" -s         sort masukan direktori (pilihan lama, diabaikan)\n"
 " -z         membuat lobang secara eksplisit (butuh kernel >= 2.3.39)\n"
 " dirname    akar dari filesystem yang akan di kompress\n"
 " outfile    output file\n"
@@ -1091,13 +1081,8 @@ msgstr "%6.2f%% (%+ld bytes)\t%s\n"
 
 #: disk-utils/mkfs.cramfs.c:854
 #, c-format
-msgid ""
-"warning: guestimate of required size (upper bound) is %lldMB, but maximum "
-"image size is %uMB.  We might die prematurely.\n"
-msgstr ""
-"peringatan: perkiraan dari ukuran yang dibutuhkan (batas atas) adalah %"
-"lldMB, tetapi maksimal ukuran image adalah %uMB. Kita mungkin akan mati "
-"secara premature.\n"
+msgid "warning: guestimate of required size (upper bound) is %lldMB, but maximum image size is %uMB.  We might die prematurely.\n"
+msgstr "peringatan: perkiraan dari ukuran yang dibutuhkan (batas atas) adalah %lldMB, tetapi maksimal ukuran image adalah %uMB. Kita mungkin akan mati secara premature.\n"
 
 #: disk-utils/mkfs.cramfs.c:881
 msgid "ROM image map"
@@ -1131,9 +1116,7 @@ msgstr "CRC: %x\n"
 #: disk-utils/mkfs.cramfs.c:926
 #, c-format
 msgid "not enough space allocated for ROM image (%lld allocated, %zu used)\n"
-msgstr ""
-"tidak cukup ruang untuk mengalokasikan image ROM (%lld teralokasi, %zu "
-"digunakan)\n"
+msgstr "tidak cukup ruang untuk mengalokasikan image ROM (%lld teralokasi, %zu digunakan)\n"
 
 #: disk-utils/mkfs.cramfs.c:934
 msgid "ROM image"
@@ -1161,19 +1144,13 @@ msgstr "peringatan: ukuran file dikecilkan menjadi %luMB (kurang 1 byte).\n"
 
 #: disk-utils/mkfs.cramfs.c:958
 #, c-format
-msgid ""
-"warning: uids truncated to %u bits.  (This may be a security concern.)\n"
-msgstr ""
-"Peringatan: uids dipotong menjadi %u bits. (Ini mungkin merupakan masalah "
-"keamanan.)\n"
+msgid "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
+msgstr "Peringatan: uids dipotong menjadi %u bits. (Ini mungkin merupakan masalah keamanan.)\n"
 
 #: disk-utils/mkfs.cramfs.c:963
 #, c-format
-msgid ""
-"warning: gids truncated to %u bits.  (This may be a security concern.)\n"
-msgstr ""
-"Peringatan: gids dipotong menjadi %u bits. (Ini mungkin merupakan masalah "
-"keamanan.)\n"
+msgid "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
+msgstr "Peringatan: gids dipotong menjadi %u bits. (Ini mungkin merupakan masalah keamanan.)\n"
 
 #: disk-utils/mkfs.cramfs.c:968
 #, c-format
@@ -1335,9 +1312,7 @@ msgstr "Ukuran page %d yang dispesifikasikan pengguna tidak baik\n"
 #: disk-utils/mkswap.c:159
 #, c-format
 msgid "Using user-specified page size %d, instead of the system value %d\n"
-msgstr ""
-"Menggunakan ukuran page %d yang dispesifikasikan pengguna, dari pada "
-"menggunakan ukuran system %d\n"
+msgstr "Menggunakan ukuran page %d yang dispesifikasikan pengguna, dari pada menggunakan ukuran system %d\n"
 
 #: disk-utils/mkswap.c:183
 #, c-format
@@ -1360,11 +1335,9 @@ msgid "no uuid\n"
 msgstr "tidak ada uuid\n"
 
 #: disk-utils/mkswap.c:272
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"
-msgstr ""
-"Penggunaan: %s [-c] [-v0|-v1] [-pPAGESZ] [-L label] [-U UUID] /dev/name "
-"[blocks]\n"
+msgstr "Penggunaan: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blok]\n"
 
 #: disk-utils/mkswap.c:286
 msgid "too many bad pages"
@@ -1390,24 +1363,23 @@ msgid "unable to rewind swap-device"
 msgstr "tidak dapat merewind perangkat swap"
 
 #: disk-utils/mkswap.c:412
-#, fuzzy
 msgid "unable to erase bootbits sectors"
-msgstr "tidak dapat membersihkan boot sector"
+msgstr "tidak dapat menghapus sektor bootbits"
 
 #: disk-utils/mkswap.c:416
 #, c-format
 msgid "%s: %s: warning: don't erase bootbits sectors\n"
-msgstr ""
+msgstr "%s: %s: peringatan: jangan hapus sektor bootbits\n"
 
 #: disk-utils/mkswap.c:419
-#, fuzzy, c-format
+#, c-format
 msgid "        (%s partition table detected). "
-msgstr "   p   cetak tabel partisi BSD"
+msgstr "        (%s tabel partisi terdeteksi). "
 
 #: disk-utils/mkswap.c:421
-#, fuzzy, c-format
+#, c-format
 msgid "        on whole disk. "
-msgstr "   s   tampilkan disklabel secara lengkap"
+msgstr "        diseluruh disk. "
 
 #: disk-utils/mkswap.c:491
 #, c-format
@@ -1415,9 +1387,9 @@ msgid "%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"
 msgstr "%1$s: peringatan: mengabaikan -U (UUIDs tidak didukung oleh %1$s)\n"
 
 #: disk-utils/mkswap.c:507
-#, fuzzy, c-format
+#, c-format
 msgid "%s: does not support swapspace version %d.\n"
-msgstr "%s: error: versi tidak diketahui %d\n"
+msgstr "%s: tidak mendukung versi swapsapce %d.\n"
 
 #: disk-utils/mkswap.c:515
 msgid "error: UUID parsing failed"
@@ -1429,9 +1401,9 @@ msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: error: Tidak ada tempat untuk menset swap?\n"
 
 #: disk-utils/mkswap.c:543
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error: size %llu KiB is larger than device size %llu KiB\n"
-msgstr "%s: error: ukuran %lu KiB lebih besar dari ukuran perangkat %lu KiB\n"
+msgstr "%s: error: ukuran %llu KiB lebih besar dari ukuran perangkat %llu KiB\n"
 
 #: disk-utils/mkswap.c:552
 #, c-format
@@ -1439,9 +1411,9 @@ msgid "%s: error: swap area needs to be at least %ld KiB\n"
 msgstr "%s: error: daerah swap membutuhkan setidaknya %ld kiB\n"
 
 #: disk-utils/mkswap.c:569
-#, fuzzy, c-format
+#, c-format
 msgid "%s: warning: truncating swap area to %llu KiB\n"
-msgstr "%s: peringatan: memotong daerah swap menjadi %ld kiB\n"
+msgstr "%s: peringatan: memotong daerah swap menjadi %llu kiB\n"
 
 #: disk-utils/mkswap.c:592
 #, c-format
@@ -1458,9 +1430,9 @@ msgid "Unable to set up swap-space: unreadable"
 msgstr "Tidak dapat men set-up swap-space: tidak dapat dibaca"
 
 #: disk-utils/mkswap.c:617
-#, fuzzy, c-format
+#, c-format
 msgid "Setting up swapspace version 1, size = %llu KiB\n"
-msgstr "Menbuat swapspace versi %d, ukuran = %llu kiB\n"
+msgstr "Membuat swapspace versi 1, ukuran = %llu kiB\n"
 
 #: disk-utils/mkswap.c:628
 #, c-format
@@ -1494,62 +1466,63 @@ msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "%s: tidak dapat mengganti nama %s menjadi %s: %s\n"
 
 #: disk-utils/raw.c:50
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage:\n"
 "  %s "
-msgstr "Penggunaan:\n"
+msgstr ""
+"Penggunaan:\n"
+"  %s "
 
 #: disk-utils/raw.c:122
 #, c-format
-msgid ""
-"Device '%s' is control raw dev (use raw<N> where <N> is greater than zero)\n"
-msgstr ""
+msgid "Device '%s' is control raw dev (use raw<N> where <N> is greater than zero)\n"
+msgstr "Perangkat '%s' adalah perangkat kontrol raw (gunakan raw<N> dimana <N> lebih besar dari nol)\n"
 
 #: disk-utils/raw.c:130
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot locate raw device '%s' (%s)\n"
-msgstr "tidak dapat memperoleh statistik perangkat %s"
+msgstr "tidak dapat mengalokasikan perangkat raw '%s' (%s)\n"
 
 #: disk-utils/raw.c:136
-#, fuzzy, c-format
+#, c-format
 msgid "Raw device '%s' is not a character dev\n"
-msgstr "/dev/%s: bukan sebuah character device"
+msgstr "Perangkat raw '%s' bukan sebuah perangkat karakter\n"
 
 #: disk-utils/raw.c:141
-#, fuzzy, c-format
+#, c-format
 msgid "Device '%s' is not a raw dev\n"
-msgstr "%s bukan sebuah baris serial"
+msgstr "Perangkat '%s' bukan sebuah perangkat raw\n"
 
 #: disk-utils/raw.c:162
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot locate block device '%s' (%s)\n"
-msgstr "Tidak dapat mengunci file kunci %s: %s\n"
+msgstr "Tidak dapat melokasikan perangkat blok '%s' (%s)\n"
 
 #: disk-utils/raw.c:168
-#, fuzzy, c-format
+#, c-format
 msgid "Device '%s' is not a block dev\n"
-msgstr "Peringatan: %s bukan sebuah perangkat block\n"
+msgstr "Perangkat '%s' bukan sebuah perangkat blok\n"
 
 #: disk-utils/raw.c:203
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot open master raw device '"
-msgstr "tidak dapat memperoleh statistik perangkat %s"
+msgstr "Tidak dapat membuka perangkat master raw '"
 
 #: disk-utils/raw.c:225
 #, c-format
 msgid "Error querying raw device (%s)\n"
-msgstr ""
+msgstr "Error menanyakan perangkat raw (%s)\n"
 
 #: disk-utils/raw.c:235 disk-utils/raw.c:255
 #, c-format
 msgid "raw%d:\tbound to major %d, minor %d\n"
-msgstr ""
+msgstr "raw%d:\tterikat ke major %d, minor %d\n"
 
 #: disk-utils/raw.c:251
-#, fuzzy, c-format
+#, c-format
 msgid "Error setting raw device (%s)\n"
-msgstr "error menghentikan layanan: \"%s\""
+msgstr "Error mengkonfigurasi perangkat raw (%s)\n"
 
 #: fdisk/cfdisk.c:376 fdisk/cfdisk.c:2080
 msgid "Unusable"
@@ -1603,9 +1576,7 @@ msgstr "Disk sudah berubah.\n"
 #: fdisk/cfdisk.c:413
 #, c-format
 msgid "Reboot the system to ensure the partition table is correctly updated.\n"
-msgstr ""
-"Reboot komputer anda untuk memastikan tabel partisi telah benar - benar di-"
-"update.\n"
+msgstr "Reboot komputer anda untuk memastikan tabel partisi telah benar - benar di-update.\n"
 
 #: fdisk/cfdisk.c:417
 #, c-format
@@ -1677,18 +1648,12 @@ msgid "enlarged logical partitions overlap"
 msgstr "memperbesar partisi logical yang saling beroverlap"
 
 #: fdisk/cfdisk.c:999
-msgid ""
-"!!!! Internal error creating logical drive with no extended partition !!!!"
-msgstr ""
-"!!!! Kesalahan internal membuat drive logical dengan tidak menggunakan "
-"partisi extended !!!!"
+msgid "!!!! Internal error creating logical drive with no extended partition !!!!"
+msgstr "!!!! Kesalahan internal membuat drive logical dengan tidak menggunakan partisi extended !!!!"
 
 #: fdisk/cfdisk.c:1010 fdisk/cfdisk.c:1022
-msgid ""
-"Cannot create logical drive here -- would create two extended partitions"
-msgstr ""
-"Tidak dapat membuat drive logical disini -- apakah anda akan membuat dua "
-"partisi extended"
+msgid "Cannot create logical drive here -- would create two extended partitions"
+msgstr "Tidak dapat membuat drive logical disini -- apakah anda akan membuat dua partisi extended"
 
 #: fdisk/cfdisk.c:1164
 msgid "Menu item too long. Menu may look odd."
@@ -1793,11 +1758,8 @@ msgid "Opened disk read-only - you have no permission to write"
 msgstr "Disk terbuka hanya-baca - anda tidak mempunyai ijin untuk menulis"
 
 #: fdisk/cfdisk.c:1682
-msgid ""
-"Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
-msgstr ""
-"Peringatan!! GPT Tidak didukung (GUID Tabel Partisi) Terdeteksi. Gunakan GNU "
-"Parted."
+msgid "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
+msgstr "Peringatan!! GPT Tidak didukung (GUID Tabel Partisi) Terdeteksi. Gunakan GNU Parted."
 
 #: fdisk/cfdisk.c:1701
 msgid "Cannot get disk size"
@@ -1816,10 +1778,8 @@ msgid "Warning!!  This may destroy data on your disk!"
 msgstr "Peringatan!! Ini mungkin akan menghancurkan data di disk anda!"
 
 #: fdisk/cfdisk.c:1876
-msgid ""
-"Are you sure you want to write the partition table to disk? (yes or no): "
-msgstr ""
-"Apakah anda yakin ingin menulis tabel partisi ke disk? (ya atau tidak): "
+msgid "Are you sure you want to write the partition table to disk? (yes or no): "
+msgstr "Apakah anda yakin ingin menulis tabel partisi ke disk? (ya atau tidak): "
 
 #: fdisk/cfdisk.c:1882
 msgid "no"
@@ -1846,31 +1806,20 @@ msgid "Wrote partition table to disk"
 msgstr "Tabel partisi telah tertulis di disk"
 
 #: fdisk/cfdisk.c:1923
-#, fuzzy
-msgid ""
-"Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx"
-"(8) or reboot to update table."
-msgstr ""
-"Tabel partisi telah ditulis, tetapi gagal untuk membaca ulang tabel partisi. "
-"Reboot untuk mengupdate tabel."
+msgid "Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx(8) or reboot to update table."
+msgstr "Tabel partisi telah ditulis, tetapi gagal untuk membaca ulang tabel partisi. Jalankan partprobe(8), kpartx(8) atau reboot untuk memperbarui tabel."
 
 #: fdisk/cfdisk.c:1933
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
-msgstr ""
-"Tidak ada partisi primary yang diberi tanda bootable. DOS MBR tidak dapat "
-"memboot disk ini."
+msgstr "Tidak ada partisi primary yang diberi tanda bootable. DOS MBR tidak dapat memboot disk ini."
 
 #: fdisk/cfdisk.c:1935
-msgid ""
-"More than one primary partition is marked bootable. DOS MBR cannot boot this."
-msgstr ""
-"Lebih dari satu partisi primary yang diberi tanda bootable. DOS MBR tidak "
-"dapat memboot disk ini."
+msgid "More than one primary partition is marked bootable. DOS MBR cannot boot this."
+msgstr "Lebih dari satu partisi primary yang diberi tanda bootable. DOS MBR tidak dapat memboot disk ini."
 
 #: fdisk/cfdisk.c:1993 fdisk/cfdisk.c:2112 fdisk/cfdisk.c:2196
 msgid "Enter filename or press RETURN to display on screen: "
-msgstr ""
-"Masukkan nama file atau tekan RETURN untuk menampilkan display di layar: "
+msgstr "Masukkan nama file atau tekan RETURN untuk menampilkan display di layar: "
 
 #: fdisk/cfdisk.c:2002 fdisk/cfdisk.c:2120 fdisk/cfdisk.c:2204
 #, c-format
@@ -1935,25 +1884,16 @@ msgid "               First       Last\n"
 msgstr "               Pertama     Akhir\n"
 
 #: fdisk/cfdisk.c:2134
-msgid ""
-" # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
-"Flag\n"
-msgstr ""
-" # Tipe       Sektor      Sektor   Offset     Length  Tipe Filesystem (ID) "
-"Tanda\n"
+msgid " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) Flag\n"
+msgstr " # Tipe       Sektor      Sektor   Offset     Length  Tipe Filesystem (ID) Tanda\n"
 
 #: fdisk/cfdisk.c:2135
-msgid ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
-msgstr ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
+msgid "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
+msgstr "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
 
 #: fdisk/cfdisk.c:2218
 msgid "         ---Starting----      ----Ending-----    Start     Number of\n"
-msgstr ""
-"         ----Berawal----      ----Berakhir----   Awal      Nomor dari\n"
+msgstr "         ----Berawal----      ----Berakhir----   Awal      Nomor dari\n"
 
 #: fdisk/cfdisk.c:2219
 msgid " # Flags Head Sect  Cyl   ID  Head Sect  Cyl     Sector    Sectors\n"
@@ -1961,8 +1901,7 @@ msgstr " # Tanda Head Sect  Cyl   ID  Head Sect  Cyl     Sector    Sectors\n"
 
 #: fdisk/cfdisk.c:2220
 msgid "-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- -----------\n"
-msgstr ""
-"-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- -----------\n"
+msgstr "-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- -----------\n"
 
 #: fdisk/cfdisk.c:2253
 msgid "Raw"
@@ -1998,14 +1937,11 @@ msgstr "Layar bantuan untuk cfdisk"
 
 #: fdisk/cfdisk.c:2286
 msgid "This is cfdisk, a curses based disk partitioning program, which"
-msgstr ""
-"Ini adalah cfdisk, sebuah program untuk mempartisi disk berbasis curses, yang"
+msgstr "Ini adalah cfdisk, sebuah program untuk mempartisi disk berbasis curses, yang"
 
 #: fdisk/cfdisk.c:2287
 msgid "allows you to create, delete and modify partitions on your hard"
-msgstr ""
-"memungkinkan anda untuk membuat, menghapus, dan memodifikasi partisi di "
-"perangkat"
+msgstr "memungkinkan anda untuk membuat, menghapus, dan memodifikasi partisi di perangkat"
 
 #: fdisk/cfdisk.c:2288
 msgid "disk drive."
@@ -2037,9 +1973,7 @@ msgstr "  g          Ubah parameter cylinders, heads, sector-per-tracks"
 
 #: fdisk/cfdisk.c:2297
 msgid "             WARNING: This option should only be used by people who"
-msgstr ""
-"             PERINGATAN: Opsi ini seharusnya hanya boleh digunakan oleh "
-"orang yang"
+msgstr "             PERINGATAN: Pilihan ini seharusnya hanya boleh digunakan oleh orang yang"
 
 #: fdisk/cfdisk.c:2298
 msgid "             know what they are doing."
@@ -2055,9 +1989,7 @@ msgstr "  m          Maksimalkan penggunaan disk dari partisi terpilih"
 
 #: fdisk/cfdisk.c:2301
 msgid "             Note: This may make the partition incompatible with"
-msgstr ""
-"             Catatan: Ini mungkin akan membuat partisi tidak kompatibel "
-"dengan"
+msgstr "             Catatan: Ini mungkin akan membuat partisi tidak kompatibel dengan"
 
 #: fdisk/cfdisk.c:2302
 msgid "             DOS, OS/2, ..."
@@ -2081,8 +2013,7 @@ msgstr "             yang dapat anda pilih dari:"
 
 #: fdisk/cfdisk.c:2307
 msgid "                r - Raw data (exactly what would be written to disk)"
-msgstr ""
-"                r - Data mentah (sama seperti yang akan ditulis di disk)"
+msgstr "                r - Data mentah (sama seperti yang akan ditulis di disk)"
 
 #: fdisk/cfdisk.c:2308
 msgid "                s - Table ordered by sectors"
@@ -2110,8 +2041,7 @@ msgstr "             Rotasi melalui MB, sektor, dan cylinders"
 
 #: fdisk/cfdisk.c:2314
 msgid "  W          Write partition table to disk (must enter upper case W)"
-msgstr ""
-"  W          Tulis tabel partisi ke disk (harus mengetikkan huruf besar W)"
+msgstr "  W          Tulis tabel partisi ke disk (harus mengetikkan huruf besar W)"
 
 #: fdisk/cfdisk.c:2315
 msgid "             Since this might destroy data on the disk, you must"
@@ -2119,9 +2049,7 @@ msgstr "             Karen ini mungkin menghancurkan data di disk, anda harus"
 
 #: fdisk/cfdisk.c:2316
 msgid "             either confirm or deny the write by entering `yes' or"
-msgstr ""
-"             mengkonfirmasikan atau menolak penulisan dengan mengetikkan "
-"'yes' atau"
+msgstr "             mengkonfirmasikan atau menolak penulisan dengan mengetikkan 'yes' atau"
 
 #: fdisk/cfdisk.c:2317
 msgid "             `no'"
@@ -2442,16 +2370,14 @@ msgstr ""
 "Tampilkan versi dari aplikasi:\n"
 "             %s -v\n"
 "Tampilkan tabel partisi:\n"
-"             %s -P {r|s|t} [opsi] perangkat\n"
+"             %s -P {r|s|t} [pilihan] perangkat\n"
 "Penggunaan interaktive:\n"
-"             %s [opsi] perangkat\n"
+"             %s [pilihan] perangkat\n"
 "\n"
-"Opsi:\n"
+"Pilihan:\n"
 "-a: Gunakan panah daripada penonjolan;\n"
-"-z: Mulai dari sebuah tabel partisi kosong, dari pada membaca dari tabel "
-"partisi disk;\n"
-"-c C -h H -s S; memaksa ide kernel mengenai jumlah cylinders, jumlah "
-"heads, \n"
+"-z: Mulai dari sebuah tabel partisi kosong, dari pada membaca dari tabel partisi disk;\n"
+"-c C -h H -s S; memaksa ide kernel mengenai jumlah cylinders, jumlah heads, \n"
 "                dan jumlah dari sectors/track.\n"
 
 #: fdisk/fdiskaixlabel.c:27
@@ -2473,8 +2399,7 @@ msgstr ""
 "\tTerdapat sebuah AIX label yang valid di disk ini.\n"
 "\tSayangnya Linux tidak dapat menangani disk ini saat\n"
 "\tini. Beberapa saran:\n"
-"\t1. fdisk akan menghancurkan isi dari AIX label pada waktu menulis ke "
-"disk.\n"
+"\t1. fdisk akan menghancurkan isi dari AIX label pada waktu menulis ke disk.\n"
 "\t2. Pastikan disk ini BUKAN bagian vital dari volume group. (Jika \n"
 "\t   anda mungkin akan menghapus disk lain juga, jika tidak di mirror.)\n"
 "\t3. Sebelum menghapus physical volume ini pastikan untuk menghapus disk\n"
@@ -2822,13 +2747,11 @@ msgid ""
 msgstr ""
 "Penggunaan: fdisk [-b SSZ] [-u] DISK     Ubah tabel partisi\n"
 "            fdisk -l [-b SSZ] [-u] DISK  Tampilkan daftar tabel partisi\n"
-"            fdisk -s PARTISI             Berikan ukuran partisi dalam "
-"blocks\n"
+"            fdisk -s PARTISI             Berikan ukuran partisi dalam blocks\n"
 "            fdisk -v                     Tampilkan versi dari fdisk\n"
 "Disini DISK  memiliki nama seperti /dev/hdb atau /dev/sda\n"
 "dan PARTISI ini memiliki nama seperti /dev/hda7\n"
-"-u: memberikan Awal dan Akhir dalam satuan sector (dari pada dalam "
-"cylinders)\n"
+"-u: memberikan Awal dan Akhir dalam satuan sector (dari pada dalam cylinders)\n"
 "-b 2048: (untuk beberapa MO disks) gunakan 2048-byte dari sector\n"
 
 #: fdisk/fdisk.c:256
@@ -3070,6 +2993,12 @@ msgid ""
 "partition table format (GPT).\n"
 "\n"
 msgstr ""
+"\n"
+"PERINGATAN: Ukuran dari disk ini adalah %d.%d TB (%llu bytes).\n"
+"Format tabel partisi DOS tidak dapat digunakan di drive untuk\n"
+"isi lebih besar dari (%llu bytes) untuk %d-byte sektor. Gunakan\n"
+"parted(1) format tabel partisi GUID (GPT).\n"
+"\n"
 
 #: fdisk/fdisk.c:708
 #, c-format
@@ -3119,8 +3048,7 @@ msgid ""
 "\n"
 msgstr ""
 "Membuat sebuah DOS disklabel baru dengan identifikasi disk 0x%08x.\n"
-"Perubahan akan tetap berada di memori, sampai anda memutuskan untuk "
-"menulisnya.\n"
+"Perubahan akan tetap berada di memori, sampai anda memutuskan untuk menulisnya.\n"
 "Sesudah itu, tentu, isi sebelumnya tidak dapat dikembalikan lagi.\n"
 "\n"
 
@@ -3145,12 +3073,8 @@ msgstr ""
 
 #: fdisk/fdisk.c:1032
 #, c-format
-msgid ""
-"Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
-"disklabel\n"
-msgstr ""
-"Perangkat tidak berisi tabel partisi yang valid baik untuk DOS, Sun, SGI "
-"ataupun OSF disklabel\n"
+msgid "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"
+msgstr "Perangkat tidak berisi tabel partisi yang valid baik untuk DOS, Sun, SGI ataupun OSF disklabel\n"
 
 #: fdisk/fdisk.c:1049
 #, c-format
@@ -3164,12 +3088,8 @@ msgstr "Mengabaikan extra partisi extended %d\n"
 
 #: fdisk/fdisk.c:1074
 #, c-format
-msgid ""
-"Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
-"(rite)\n"
-msgstr ""
-"Peringatan: tanda tidak valid 0x%04x dari tabel partisi %d akan dibetulkan w"
-"(rite)\n"
+msgid "Warning: invalid flag 0x%04x of partition table %d will be corrected by w(rite)\n"
+msgstr "Peringatan: tanda tidak valid 0x%04x dari tabel partisi %d akan dibetulkan w(rite)\n"
 
 #: fdisk/fdisk.c:1096
 #, c-format
@@ -3327,8 +3247,7 @@ msgstr "Tipe sistem dari parisi %d tidak berubah: %x (%s)\n"
 #: fdisk/fdisk.c:1591
 #, c-format
 msgid "Partition %d has different physical/logical beginnings (non-Linux?):\n"
-msgstr ""
-"Partisi %d memiliki physical/logical awal yang berbeda (bukan-Linux?):\n"
+msgstr "Partisi %d memiliki physical/logical awal yang berbeda (bukan-Linux?):\n"
 
 #: fdisk/fdisk.c:1593 fdisk/fdisk.c:1601 fdisk/fdisk.c:1610 fdisk/fdisk.c:1620
 #, c-format
@@ -3503,14 +3422,14 @@ msgid "Logical partition %d not entirely in partition %d\n"
 msgstr "Partisi logical %d tidak seluruhnya berada di partisi %d\n"
 
 #: fdisk/fdisk.c:2007
-#, fuzzy, c-format
+#, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu\n"
-msgstr "Total alokasi sektor %ld lebih besar dari pada maksimal %lld\n"
+msgstr "Total sektor teralokasi %llu lebih besar dari pada maksimal %llu\n"
 
 #: fdisk/fdisk.c:2010
-#, fuzzy, c-format
+#, c-format
 msgid "%lld unallocated %d-byte sectors\n"
-msgstr "%lld sektor tidak dialokasikan\n"
+msgstr "%lld sektor tidak dialokasikan %d-byte sektor\n"
 
 #: fdisk/fdisk.c:2025 fdisk/fdisksgilabel.c:633 fdisk/fdisksunlabel.c:416
 #, c-format
@@ -3561,9 +3480,7 @@ msgstr ""
 #: fdisk/fdisk.c:2207
 #, c-format
 msgid "You must delete some partition and add an extended partition first\n"
-msgstr ""
-"Anda harus menghapus beberapa partisi dan menambahkan sebuah partisi "
-"extended terlebih dahulu\n"
+msgstr "Anda harus menghapus beberapa partisi dan menambahkan sebuah partisi extended terlebih dahulu\n"
 
 #: fdisk/fdisk.c:2210
 #, c-format
@@ -3614,7 +3531,7 @@ msgid "Calling ioctl() to re-read partition table.\n"
 msgstr "Memanggil ioctl() untuk membaca kembali tabel partisi.\n"
 
 #: fdisk/fdisk.c:2296
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "WARNING: Re-reading the partition table failed with error %d: %s.\n"
@@ -3623,8 +3540,8 @@ msgid ""
 msgstr ""
 "\n"
 "PERINGATAN: Membaca kembali table partisi gagal dengan error %d: %s.\n"
-"Kernel masih menggunakan tabel yang lama.\n"
-"Tabel yang baru akan digunakan sesudah system reboot.\n"
+"Kernel masih menggunakan tabel yang lama.Tabel yang baru akan digunakan\n"
+"setelah reboot atau setelah anda menjalankan partprobe(8) atau kpartx(8)\n"
 
 #: fdisk/fdisk.c:2304
 #, c-format
@@ -3687,13 +3604,11 @@ msgstr "Peringatan: setting sektor offset untuk DOS kompatibilitas\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't "
-"support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 "\n"
-"PERINGATAN: GPT (GUID Tabel Partisi) terdeteksi di '%s'! aplikasi fdisk "
-"tidak mendukung GPT. Gunakan GNU Parted.\n"
+"PERINGATAN: GPT (GUID Tabel Partisi) terdeteksi di '%s'! aplikasi fdisk tidak mendukung GPT. Gunakan GNU Parted.\n"
 
 #: fdisk/fdisk.c:2533
 #, c-format
@@ -3718,16 +3633,12 @@ msgstr "%c: perintah tidak diketahui\n"
 #: fdisk/fdisk.c:2653
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
-msgstr "Kernel ini mencari ukuran sektornya sendiri - opsi -b diabaikan\n"
+msgstr "Kernel ini mencari ukuran sektornya sendiri - pilihan -b diabaikan\n"
 
 #: fdisk/fdisk.c:2657
 #, c-format
-msgid ""
-"Warning: the -b (set sector size) option should be used with one specified "
-"device\n"
-msgstr ""
-"Peringatan: opsi -b (set ukuran sektor) seharusnya digunakan dengan salah "
-"satuperangkat yang digunakan\n"
+msgid "Warning: the -b (set sector size) option should be used with one specified device\n"
+msgstr "Peringatan: pilihan -b (set ukuran sektor) seharusnya digunakan dengan salah satuperangkat yang digunakan\n"
 
 #: fdisk/fdisk.c:2717
 #, c-format
@@ -3861,12 +3772,8 @@ msgstr "Linux RAID"
 
 #: fdisk/fdisksgilabel.c:164
 #, c-format
-msgid ""
-"According to MIPS Computer Systems, Inc the Label must not contain more than "
-"512 bytes\n"
-msgstr ""
-"Menurut MIPS Computer Systems, Inc. label harus berisi tidak lebih dari 512 "
-"bytes\n"
+msgid "According to MIPS Computer Systems, Inc the Label must not contain more than 512 bytes\n"
+msgstr "Menurut MIPS Computer Systems, Inc. label harus berisi tidak lebih dari 512 bytes\n"
 
 #: fdisk/fdisksgilabel.c:183
 #, c-format
@@ -4074,8 +3981,7 @@ msgstr "\tAnda telah memilih sebuah nama file boot yang tidak biasa.\n"
 #: fdisk/fdisksgilabel.c:545
 #, c-format
 msgid "Sorry You may change the Tag of non-empty partitions.\n"
-msgstr ""
-"Maaf Anda mungkin telah merubah Tag dari sebuah partisi yang tidak kosong.\n"
+msgstr "Maaf Anda mungkin telah merubah Tag dari sebuah partisi yang tidak kosong.\n"
 
 #: fdisk/fdisksgilabel.c:551
 msgid ""
@@ -4098,8 +4004,7 @@ msgstr "YA\n"
 #: fdisk/fdisksgilabel.c:581
 #, c-format
 msgid "Do You know, You got a partition overlap on the disk?\n"
-msgstr ""
-"Apakah anda tahu, Anda memperoleh sebuah partisi yang overlap di disk?\n"
+msgstr "Apakah anda tahu, Anda memperoleh sebuah partisi yang overlap di disk?\n"
 
 #: fdisk/fdisksgilabel.c:639
 #, c-format
@@ -4114,9 +4019,7 @@ msgstr "Seluruh disk sudah dilingkupi oleh partisi.\n"
 #: fdisk/fdisksgilabel.c:648
 #, c-format
 msgid "You got a partition overlap on the disk. Fix it first!\n"
-msgstr ""
-"Anda memperoleh sebuah partisi yang overlap di disk. Betulkan ini terlebih "
-"dahulu!\n"
+msgstr "Anda memperoleh sebuah partisi yang overlap di disk. Betulkan ini terlebih dahulu!\n"
 
 #: fdisk/fdisksgilabel.c:657 fdisk/fdisksgilabel.c:686
 #, c-format
@@ -4130,9 +4033,7 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:673
 #, c-format
 msgid "You will get a partition overlap on the disk. Fix it first!\n"
-msgstr ""
-"Anda akan memperoleh sebuah partisi yang overlap di disk. Betulkan ini "
-"terlebih dahulu!\n"
+msgstr "Anda akan memperoleh sebuah partisi yang overlap di disk. Betulkan ini terlebih dahulu!\n"
 
 #: fdisk/fdisksgilabel.c:678
 #, c-format
@@ -4155,12 +4056,10 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:731 fdisk/fdisksunlabel.c:227
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
-"d.\n"
+"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %d.\n"
 "This value may be truncated for devices > 33.8 GB.\n"
 msgstr ""
-"Peringatan: BLKGETSIZE ioctl gagal di %s. Menggunakan nilai geometri "
-"cylinder dari %d.\n"
+"Peringatan: BLKGETSIZE ioctl gagal di %s. Menggunakan nilai geometri cylinder dari %d.\n"
 "Nilai ini mungkin akan dipotong untuk perangkat yang berukuran > 33.8 GB.\n"
 
 #: fdisk/fdisksgilabel.c:745
@@ -4251,10 +4150,8 @@ msgstr "Terdeteksi sun disklabel dengan num_partitions salah [%u].\n"
 
 #: fdisk/fdisksunlabel.c:168
 #, c-format
-msgid ""
-"Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
-msgstr ""
-"Peringatan: Nilai salah butuh untuk perbaiki dan akan diperbaiki w(rite)\n"
+msgid "Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
+msgstr "Peringatan: Nilai salah butuh untuk perbaiki dan akan diperbaiki w(rite)\n"
 
 #: fdisk/fdisksunlabel.c:198
 #, c-format
@@ -4322,8 +4219,7 @@ msgid ""
 "%d %s covers some other partition. Your entry has been changed\n"
 "to %d %s\n"
 msgstr ""
-"Anda belum melingkupi seluruh disk dengan partisi ke tiga, tetapi nilai "
-"anda\n"
+"Anda belum melingkupi seluruh disk dengan partisi ke tiga, tetapi nilai anda\n"
 "%d %s melingkupi beberapa partisi yang lain. Masukan anda telah berubah \n"
 "menjadi %d %s\n"
 
@@ -4334,8 +4230,7 @@ msgid ""
 "partition as Whole disk (5), starting at 0, with %u sectors\n"
 msgstr ""
 "Jika anda ingin menjaga kompatibilitas dengan SunOS/Solaris, pertimbangkan \n"
-"untuk meninggalkan partisi ini sebagai Whole disk (5), mulai di 0, dengan %u "
-"sectors\n"
+"untuk meninggalkan partisi ini sebagai Whole disk (5), mulai di 0, dengan %u sectors\n"
 
 #: fdisk/fdisksunlabel.c:549
 msgid ""
@@ -4348,8 +4243,7 @@ msgstr ""
 "Ini sangat direkomendasikan bahwa partisi di offset 0 adalah UFS, EXT2FS \n"
 "filesystem atau SunOS swap. Menempatkan Linux swap disana mungkin akan \n"
 "menghancurkan tabel partisi anda dan bootblock. Ketik YES jika anda sangat \n"
-"yakin, akankah anda menset (tag) partisi tersebut dengan tipe 82 (Linux "
-"swap): "
+"yakin, akankah anda menset (tag) partisi tersebut dengan tipe 82 (Linux swap): "
 
 #: fdisk/fdisksunlabel.c:581
 #, c-format
@@ -4672,9 +4566,8 @@ msgid "Darwin boot"
 msgstr "Darwin boot"
 
 #: fdisk/i386_sys_types.c:74
-#, fuzzy
 msgid "HFS / HFS+"
-msgstr "OS/2 HPFS"
+msgstr "HFS / HPF+"
 
 #: fdisk/i386_sys_types.c:75
 msgid "BSDI fs"
@@ -4818,9 +4711,7 @@ msgstr "tidak dapat memperoleh statistik dari file restore (%s)\n"
 
 #: fdisk/sfdisk.c:355
 msgid "partition restore file has wrong size - not restoring\n"
-msgstr ""
-"file partisi untuk restore memiliki ukuran yang salah - tidak melakukan "
-"restore\n"
+msgstr "file partisi untuk restore memiliki ukuran yang salah - tidak melakukan restore\n"
 
 #: fdisk/sfdisk.c:359
 msgid "out of memory?\n"
@@ -4865,7 +4756,7 @@ msgid ""
 msgstr ""
 "Peringatan: start=%lu - ini mungkin seperti sebuah partisi dari pada\n"
 "seluruh disk. Menggunakan fdisk untuk ini mungkin tidak berarti.\n"
-"[Gunakan opsi --force jika anda benar - benar menginginkan hal ini]\n"
+"[Gunakan pilihan --force jika anda benar - benar menginginkan hal ini]\n"
 
 #: fdisk/sfdisk.c:512
 #, c-format
@@ -4880,9 +4771,7 @@ msgstr "Peringatan: HDIO_GETGEO mengatakan bahwa disana ada %lu sektor\n"
 #: fdisk/sfdisk.c:519
 #, c-format
 msgid "Warning: BLKGETSIZE/HDIO_GETGEO says that there are %lu cylinders\n"
-msgstr ""
-"Peringatan: BLKGETSIZE/HDIO_GETGEO mengatakan bahwa disana ada %lu "
-"cylinders\n"
+msgstr "Peringatan: BLKGETSIZE/HDIO_GETGEO mengatakan bahwa disana ada %lu cylinders\n"
 
 #: fdisk/sfdisk.c:524
 #, c-format
@@ -4891,8 +4780,7 @@ msgid ""
 "This will give problems with all software that uses C/H/S addressing.\n"
 msgstr ""
 "Peringatan: tidak seperti jumlah sektor (%lu) - biasanya ada di 63\n"
-"Ini akan memberikan masalah dengan seluruh software yang pengalamatan "
-"mengunakan C/H/S.\n"
+"Ini akan memberikan masalah dengan seluruh software yang pengalamatan mengunakan C/H/S.\n"
 
 #: fdisk/sfdisk.c:528
 #, c-format
@@ -4905,29 +4793,18 @@ msgstr ""
 
 #: fdisk/sfdisk.c:610
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
-msgstr ""
-"%s dari partisi %s memiliki jumlah head yang tidak mungkin: %lu (seharusnya "
-"berada dalam 0-%lu)\n"
+msgid "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
+msgstr "%s dari partisi %s memiliki jumlah head yang tidak mungkin: %lu (seharusnya berada dalam 0-%lu)\n"
 
 #: fdisk/sfdisk.c:615
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for sector: %lu (should be in 1-%"
-"lu)\n"
-msgstr ""
-"%s dari partisi %s memiliki jumlah sektor yang tidak mungkin: %lu "
-"(seharusnya berada dalam 1-%lu)\n"
+msgid "%s of partition %s has impossible value for sector: %lu (should be in 1-%lu)\n"
+msgstr "%s dari partisi %s memiliki jumlah sektor yang tidak mungkin: %lu (seharusnya berada dalam 1-%lu)\n"
 
 #: fdisk/sfdisk.c:620
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for cylinders: %lu (should be in 0-%"
-"lu)\n"
-msgstr ""
-"%s dari partisi %s memiliki jumlah cylinders yang tidak mungkin: %lu "
-"(seharusnya berada dalam 0-%lu)\n"
+msgid "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%lu)\n"
+msgstr "%s dari partisi %s memiliki jumlah cylinders yang tidak mungkin: %lu (seharusnya berada dalam 0-%lu)\n"
 
 #: fdisk/sfdisk.c:660
 #, c-format
@@ -4944,14 +4821,14 @@ msgid "Re-reading the partition table ...\n"
 msgstr "Membaca kembali tabel partisi ...\n"
 
 #: fdisk/sfdisk.c:827
-#, fuzzy
 msgid ""
 "The command to re-read the partition table failed.\n"
 "Run partprobe(8), kpartx(8) or reboot your system now,\n"
 "before using mkfs\n"
 msgstr ""
-"Perintah untuk membaca kembali tabel partisi gagal\n"
-"Reboot system anda sekarang, sebelum menggunakan mkfs\n"
+"Perintah untuk membaca kembali tabel partisi gagal.\n"
+"Jalankan partprobe(8), kpartx(8) atau reboot sistem anda sekarang,\n"
+"sebelum menggunakan mkfs\n"
 
 #: fdisk/sfdisk.c:833
 #, c-format
@@ -5034,8 +4911,7 @@ msgid ""
 "Units = mebibytes of 1048576 bytes, blocks of 1024 bytes, counting from %d\n"
 "\n"
 msgstr ""
-"Satuan = mebibytes dari 1048576 bytes, blocks dari 1024 bytes, dihitung dari "
-"%d\n"
+"Satuan = mebibytes dari 1048576 bytes, blocks dari 1024 bytes, dihitung dari %d\n"
 "\n"
 
 #: fdisk/sfdisk.c:968
@@ -5066,8 +4942,7 @@ msgstr "\t\tawal: (c,h,s) diperkirakan (%ld,%ld,%ld) ditemukan (%ld,%ld,%ld)\n"
 #: fdisk/sfdisk.c:1135
 #, c-format
 msgid "\t\tend: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"\t\takhir: (c,h,s) diperkirakan (%ld,%ld,%ld) ditemukan (%ld,%ld,%ld)\n"
+msgstr "\t\takhir: (c,h,s) diperkirakan (%ld,%ld,%ld) ditemukan (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1138
 #, c-format
@@ -5101,8 +4976,7 @@ msgstr "aneh, hanya %d partisi yang didefinisikan.\n"
 #: fdisk/sfdisk.c:1212
 #, c-format
 msgid "Warning: partition %s has size 0 but is not marked Empty\n"
-msgstr ""
-"Peringatan: partisi %s memiliki ukuran 0 tetapi tidak ditandai Kosong\n"
+msgstr "Peringatan: partisi %s memiliki ukuran 0 tetapi tidak ditandai Kosong\n"
 
 #: fdisk/sfdisk.c:1215
 #, c-format
@@ -5177,8 +5051,7 @@ msgid ""
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
 msgstr ""
 "Peringatan: lebih dari satu partis primary yang ditandai bootable (active)\n"
-"Ini tidak menjadi masalah untuk LILO, tetapi DOS MBR tidak akan mem-boot "
-"disk ini.\n"
+"Ini tidak menjadi masalah untuk LILO, tetapi DOS MBR tidak akan mem-boot disk ini.\n"
 
 #: fdisk/sfdisk.c:1333
 msgid ""
@@ -5194,8 +5067,7 @@ msgid ""
 "This does not matter for LILO, but the DOS MBR will not boot this disk.\n"
 msgstr ""
 "Peringatan: tidak ada partisi primary yang ditandai bootable (active)\n"
-"Ini tidak menjadi masalah untuk LILO, tetapi DOS MBR tidak akan dapat mem-"
-"boot disk ini.\n"
+"Ini tidak menjadi masalah untuk LILO, tetapi DOS MBR tidak akan dapat mem-boot disk ini.\n"
 
 #: fdisk/sfdisk.c:1353
 msgid "start"
@@ -5203,11 +5075,8 @@ msgstr "awal"
 
 #: fdisk/sfdisk.c:1356
 #, c-format
-msgid ""
-"partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"partisi %s: awal: (c,h,s) diperkirakan (%ld,%ld,%ld) ditemukan (%ld,%ld,%"
-"ld)\n"
+msgid "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
+msgstr "partisi %s: awal: (c,h,s) diperkirakan (%ld,%ld,%ld) ditemukan (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1362
 msgid "end"
@@ -5216,9 +5085,7 @@ msgstr "akhir"
 #: fdisk/sfdisk.c:1365
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"partisi %s: akhir: (c,h,s) diperkirakan (%ld,%ld,%ld) ditemukan (%ld,%ld,%"
-"ld)\n"
+msgstr "partisi %s: akhir: (c,h,s) diperkirakan (%ld,%ld,%ld) ditemukan (%ld,%ld,%ld)\n"
 
 #: fdisk/sfdisk.c:1368
 #, c-format
@@ -5274,7 +5141,7 @@ msgstr " %s: tipe tabel partisi tidak diketahui\n"
 
 #: fdisk/sfdisk.c:1631
 msgid "-n flag was given: Nothing changed\n"
-msgstr "opsi -n telah diberikan: Tidak ada yang berubah\n"
+msgstr "pilihan -n telah diberikan: Tidak ada yang berubah\n"
 
 #: fdisk/sfdisk.c:1647
 msgid "Failed saving the old sectors - aborting\n"
@@ -5335,9 +5202,7 @@ msgstr "Tipe ilegal\n"
 #: fdisk/sfdisk.c:2117
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
-msgstr ""
-"Peringatan: diberikan ukuran (%lu) melebihi ukuran maksimal yang diijinkan (%"
-"lu)\n"
+msgstr "Peringatan: diberikan ukuran (%lu) melebihi ukuran maksimal yang diijinkan (%lu)\n"
 
 #: fdisk/sfdisk.c:2123
 msgid "Warning: empty partition\n"
@@ -5374,16 +5239,14 @@ msgid ""
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
 "Usually you only need to specify <start> and <size> (and perhaps <type>).\n"
 msgstr ""
-"Masukkan dengan menggunakan format berikut; field yang kosong akan "
-"memperoleh\n"
+"Masukkan dengan menggunakan format berikut; field yang kosong akan memperoleh\n"
 "nilai default. <awal> <ukuran> <tipe [E,S,L,X,hex]> <bootable [-,*] <c,h,s>\n"
-"<c,h,s> biasanya anda hanya perlu untuk menspesikan <awal> dan <ukuran> (dan "
-"mungkin <tipe>).\n"
+"<c,h,s> biasanya anda hanya perlu untuk menspesikan <awal> dan <ukuran> (dan mungkin <tipe>).\n"
 
 #: fdisk/sfdisk.c:2304
 #, c-format
 msgid "Usage: %s [options] device ...\n"
-msgstr "Penggunaan: %s [opsi] perangkat ...\n"
+msgstr "Penggunaan: %s [pilihan] perangkat ...\n"
 
 #: fdisk/sfdisk.c:2305
 msgid "device: something like /dev/hda or /dev/sda"
@@ -5391,7 +5254,7 @@ msgstr "perangkat: sesuatu seperti /dev/hda atau /dev/sda"
 
 #: fdisk/sfdisk.c:2306
 msgid "useful options:"
-msgstr "opsi yang berguna:"
+msgstr "pilihan yang berguna:"
 
 #: fdisk/sfdisk.c:2307
 msgid "    -s [or --show-size]: list size of a partition"
@@ -5407,32 +5270,23 @@ msgstr "    -l [atau --list]:    tampilkan partisi di setiap perangkat"
 
 #: fdisk/sfdisk.c:2310
 msgid "    -d [or --dump]:      idem, but in a format suitable for later input"
-msgstr ""
-"    -d [atau --dump]:    idem, tetapi dalam sebuah format yang sesuai untuk "
-"input selanjutnya"
+msgstr "    -d [atau --dump]:    idem, tetapi dalam sebuah format yang sesuai untuk input selanjutnya"
 
 #: fdisk/sfdisk.c:2311
 msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
-msgstr ""
-"    -i [atau --increment]: nomor cylinders etc. dari 1 dari pada dari 0"
+msgstr "    -i [atau --increment]: nomor cylinders etc. dari 1 dari pada dari 0"
 
 #: fdisk/sfdisk.c:2312
-msgid ""
-"    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
-"MB"
-msgstr ""
-"    -uS, -uB, -uC, -uM:  menerima/melaporkan dalam satuan dari sektor/block/"
-"cylinders/MB"
+msgid "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB"
+msgstr "    -uS, -uB, -uC, -uM:  menerima/melaporkan dalam satuan dari sektor/block/cylinders/MB"
 
 #: fdisk/sfdisk.c:2313
 msgid "    -T [or --list-types]:list the known partition types"
-msgstr ""
-"    -T [atau --list-types]:tampilkan daftar dari tipe partisi yang diketahui"
+msgstr "    -T [atau --list-types]:tampilkan daftar dari tipe partisi yang diketahui"
 
 #: fdisk/sfdisk.c:2314
 msgid "    -D [or --DOS]:       for DOS-compatibility: waste a little space"
-msgstr ""
-"    -D [atau --DOS]:     untuk DOS-kompatibilitas: membuat sedikit ruang"
+msgstr "    -D [atau --DOS]:     untuk DOS-kompatibilitas: membuat sedikit ruang"
 
 #: fdisk/sfdisk.c:2315
 msgid "    -R [or --re-read]:   make kernel reread partition table"
@@ -5447,8 +5301,7 @@ msgid "    -n :                 do not actually write to disk"
 msgstr "    -n :                 tidak menulis sebenarnya ke disk"
 
 #: fdisk/sfdisk.c:2318
-msgid ""
-"    -O file :            save the sectors that will be overwritten to file"
+msgid "    -O file :            save the sectors that will be overwritten to file"
 msgstr "    -O file :            menyimpan sectors yang akan ditulis ke file"
 
 #: fdisk/sfdisk.c:2319
@@ -5465,36 +5318,27 @@ msgstr "    -? [atau --help]:    tampilkan pesan ini"
 
 #: fdisk/sfdisk.c:2322
 msgid "dangerous options:"
-msgstr "opsi yang berbahaya:"
+msgstr "pilihan yang berbahaya:"
 
 #: fdisk/sfdisk.c:2323
 msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
 msgstr "    -g [atau --show-geometry]: tampilkan ide kernel mengenai geometri"
 
 #: fdisk/sfdisk.c:2324
-msgid ""
-"    -G [or --show-pt-geometry]: print geometry guessed from the partition "
-"table"
-msgstr ""
-"    -G [atau --show-pt-geometry]: tampilkan geometry yang ditebak dari tabel "
-"partisi"
+msgid "    -G [or --show-pt-geometry]: print geometry guessed from the partition table"
+msgstr "    -G [atau --show-pt-geometry]: tampilkan geometry yang ditebak dari tabel partisi"
 
 #: fdisk/sfdisk.c:2325
 msgid ""
 "    -x [or --show-extended]: also list extended partitions on output\n"
 "                             or expect descriptors for them on input"
 msgstr ""
-"    -x [atau --show-extended]: juga menampilkan partisi extended dalam "
-"output\n"
-"                               atau memperkirakan deskripsi dari partisi di "
-"input"
+"    -x [atau --show-extended]: juga menampilkan partisi extended dalam output\n"
+"                               atau memperkirakan deskripsi dari partisi di input"
 
 #: fdisk/sfdisk.c:2327
-msgid ""
-"    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
-msgstr ""
-"    -L  [atau --Linux]:    jangan mengkomplain mengenai sesuatu yang tidak "
-"berhubungan dengan Linux"
+msgid "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
+msgstr "    -L  [atau --Linux]:    jangan mengkomplain mengenai sesuatu yang tidak berhubungan dengan Linux"
 
 #: fdisk/sfdisk.c:2328
 msgid "    -q  [or --quiet]:      suppress warning messages"
@@ -5522,9 +5366,7 @@ msgstr "Anda dapat mematikan seluruh pemeriksaan konsistensi dengan:"
 
 #: fdisk/sfdisk.c:2334
 msgid "    -f  [or --force]:      do what I say, even if it is stupid"
-msgstr ""
-"    -f  [atau --force]:    lakukan seperti yang SAYA katakan, meskipun ini "
-"merupakan perbuatan yang bodoh"
+msgstr "    -f  [atau --force]:    lakukan seperti yang SAYA katakan, meskipun ini merupakan perbuatan yang bodoh"
 
 #: fdisk/sfdisk.c:2340
 msgid "Usage:"
@@ -5538,8 +5380,7 @@ msgstr "%s perangkat\t\t daftar dari partisi aktif di perangkat\n"
 #: fdisk/sfdisk.c:2342
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
-msgstr ""
-"%s perangkat n1 n2 ... aktivasi partisi n1 ..., menonaktifkan sisanya\n"
+msgstr "%s perangkat n1 n2 ... aktivasi partisi n1 ..., menonaktifkan sisanya\n"
 
 #: fdisk/sfdisk.c:2343
 #, c-format
@@ -5550,19 +5391,17 @@ msgstr "%s -An perangkat\t aktivasi partisi n, menonaktifkan yang lainnya\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk "
-"doesn't support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 "\n"
-"PERINGATAN: GPT (GUID Tabel Partisi) terdeteksi di '%s'! Aplikasi sfdisk "
-"tidak mendukung GPT. Gunakan GNU Parted.\n"
+"PERINGATAN: GPT (GUID Tabel Partisi) terdeteksi di '%s'! Aplikasi sfdisk tidak mendukung GPT. Gunakan GNU Parted.\n"
 "\n"
 
 #: fdisk/sfdisk.c:2465
 #, c-format
 msgid "Use the --force flag to overrule this check.\n"
-msgstr "Gunakan opsi --force untuk memaksa pemeriksaan ini.\n"
+msgstr "Gunakan pilihan --force untuk memaksa pemeriksaan ini.\n"
 
 #: fdisk/sfdisk.c:2504
 msgid "no command?\n"
@@ -5587,9 +5426,7 @@ msgstr "penggunaan: sfdisk --id perangkat nomor-partisi [Id]\n"
 
 #: fdisk/sfdisk.c:2690
 msgid "can specify only one device (except with -l or -s)\n"
-msgstr ""
-"tidak dapat menspesifikasikan hanya untuk satu perangkat (kecuali dengan "
-"opsi -l atau -s)\n"
+msgstr "tidak dapat menspesifikasikan hanya untuk satu perangkat (kecuali dengan pilihan -l atau -s)\n"
 
 #: fdisk/sfdisk.c:2716
 #, c-format
@@ -5635,8 +5472,7 @@ msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
 "but the DOS MBR will only boot a disk with 1 active partition.\n"
 msgstr ""
-"Anda memiliki %d primary partisi yang aktif. Ini tidak bermasalah untuk "
-"LILO,\n"
+"Anda memiliki %d primary partisi yang aktif. Ini tidak bermasalah untuk LILO,\n"
 "tetapi DOS MBR hanya akan memboot sebuah disk dengan 1 active partisi.\n"
 
 #: fdisk/sfdisk.c:2937
@@ -5677,11 +5513,11 @@ msgstr ""
 "\n"
 "Disk ini saat ini sedang digunakan - repartitioning mungkin merupakan ide \n"
 "Buruk. Umount seluruh filesystem, dan swapoff seluruh partisi swap di disk \n"
-"ini. Gunakan opsi --no-reread untuk menekan pengechekan ini.\n"
+"ini. Gunakan pilihan --no-reread untuk menekan pengechekan ini.\n"
 
 #: fdisk/sfdisk.c:3047
 msgid "Use the --force flag to overrule all checks.\n"
-msgstr "Gunakan opsi --force untuk memaksa pemeriksaan secara keseluruhan.\n"
+msgstr "Gunakan pilihan --force untuk memaksa pemeriksaan secara keseluruhan.\n"
 
 #: fdisk/sfdisk.c:3051
 msgid "OK\n"
@@ -5708,7 +5544,7 @@ msgid ""
 "(If you really want this, use the --force option.)\n"
 msgstr ""
 "Saya tidak suka partisi ini -- tidah ada yang diubah.\n"
-"(Jika anda benar - benar menginginkan ini, gunakan opsi --force.)\n"
+"(Jika anda benar - benar menginginkan ini, gunakan pilihan --force.)\n"
 
 #: fdisk/sfdisk.c:3080
 msgid "I don't like this - probably you should answer No\n"
@@ -5762,14 +5598,14 @@ msgstr ""
 "of=/dev/foo7 bs=512 count=1 (Lihat fdisk(8).)\n"
 
 #: fsck/fsck.c:327
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: couldn't open %s: %s\n"
-msgstr "%s: tidak dapat membuka %s: %s\n"
+msgstr "PERINGATAN: tidak dapat membuka %s: %s\n"
 
 #: fsck/fsck.c:337
 #, c-format
 msgid "WARNING: bad format on line %d of %s\n"
-msgstr ""
+msgstr "PERINGATAN: format buruk di baris %d dari %s\n"
 
 #: fsck/fsck.c:353
 msgid ""
@@ -5778,115 +5614,115 @@ msgid ""
 "\tshould fix your /etc/fstab file as soon as you can.\n"
 "\n"
 msgstr ""
+"PERINGATAN: /etc/fstab anda tida berisi bagian nomor tahap\n"
+"\tfsck. saya akan membentulkan ini untuk anda, tetapi anda\n"
+"\tseharusnya membetulkan berkas /etc/fstab anda secepatnya.\n"
+"\n"
 
 #: fsck/fsck.c:461
-#, fuzzy, c-format
+#, c-format
 msgid "fsck: %s: not found\n"
-msgstr "umount: %s: tidak ditemukan"
+msgstr "fsck: %s: tidak ditemukan\n"
 
 #: fsck/fsck.c:577
 #, c-format
 msgid "%s: wait: No more child process?!?\n"
-msgstr ""
+msgstr "%s: tunggu: Tida ada proses anak lagi?!?\n"
 
 #: fsck/fsck.c:599
 #, c-format
 msgid "Warning... %s for device %s exited with signal %d.\n"
-msgstr ""
+msgstr "Peringatan... %s untuk perangkat %s keluar dengan sinyal %d.\n"
 
 #: fsck/fsck.c:605
 #, c-format
 msgid "%s %s: status is %x, should never happen.\n"
-msgstr ""
+msgstr "%s %s: status adalah %x, seharusnya tidak pernah terjadi.\n"
 
 #: fsck/fsck.c:644
 #, c-format
 msgid "Finished with %s (exit status %d)\n"
-msgstr ""
+msgstr "Selesai dengan %s (status keluar %d)\n"
 
 #: fsck/fsck.c:704
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Error %d while executing fsck.%s for %s\n"
-msgstr "%s: error %d ketika mendekompress! %p(%d)\n"
+msgstr "%s: Error %d ketika menjalankan fsck.%s untuk %s\n"
 
 #: fsck/fsck.c:725
 msgid ""
 "Either all or none of the filesystem types passed to -t must be prefixed\n"
 "with 'no' or '!'.\n"
 msgstr ""
+"Baik seluruh atau kosong dari tipe sistem berkas dilewatkan ke -t harus\n"
+"diawali dengan 'no' atau '!'.\n"
 
 #: fsck/fsck.c:744
-#, fuzzy
 msgid "Couldn't allocate memory for filesystem types\n"
-msgstr "mount: anda harus menspesifikasikan tipe filesystem"
+msgstr "Tidak dapat mengalokasikan memori untuk tipe sistem berkas\n"
 
 #: fsck/fsck.c:867
 #, c-format
-msgid ""
-"%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass "
-"number\n"
-msgstr ""
+msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number\n"
+msgstr "%s: melewatkan baris buruk dalam /etc/fstab: jalankan mount dengan tahap bukan nol di fsck\n"
 
 #: fsck/fsck.c:894
 #, c-format
 msgid "fsck: cannot check %s: fsck.%s not found\n"
-msgstr ""
+msgstr "fsck: tidak dapat memeriksa %s: fsck.%s tidak ditemukan\n"
 
 #: fsck/fsck.c:950
-#, fuzzy
 msgid "Checking all file systems.\n"
-msgstr "Memaksa pemeriksaan filesystem di %s.\n"
+msgstr "Memeriksa seluruh sistem berkas.\n"
 
 #: fsck/fsck.c:1041
 #, c-format
 msgid "--waiting-- (pass %d)\n"
-msgstr ""
+msgstr "--menunggu-- (tahap %d)\n"
 
 #: fsck/fsck.c:1061
-#, fuzzy
-msgid ""
-"Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
-msgstr "Penggunaan: mkfs [-V] [-t fstype] [fs-options] device [size]\n"
+msgid "Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
+msgstr "Penggunaan: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-optoins] [filesys ...]\n"
 
 #: fsck/fsck.c:1099
-#, fuzzy, c-format
+#, c-format
 msgid "%s: too many devices\n"
-msgstr "%s: %s bukan sebuah perangkat lp.\n"
+msgstr "%s: terlalu banyak perangkat\n"
 
 #: fsck/fsck.c:1110
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't open %s: %s\n"
 msgstr "Tidak dapat membuka %s: %s\n"
 
 #: fsck/fsck.c:1112
-#, fuzzy, c-format
+#, c-format
 msgid "Is /proc mounted?\n"
-msgstr "%s sudah tidak dimount\n"
+msgstr "Apakah /proc telah terpasang?\n"
 
 #: fsck/fsck.c:1121
 #, c-format
 msgid "Must be root to scan for matching filesystems: %s\n"
-msgstr ""
+msgstr "Harus root untuk dapat memindai untuk mencocokan sistem berkas: %s\n"
 
 #: fsck/fsck.c:1124
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find matching filesystem: %s\n"
-msgstr "Unmounting seluruh filesystem yang ada..."
+msgstr "Tidak dapat menemukan sistem berkas yang cocok: %s\n"
 
 #: fsck/fsck.c:1132 fsck/fsck.c:1218
-#, fuzzy, c-format
+#, c-format
 msgid "%s: too many arguments\n"
-msgstr "%s: argument tidak diketahui: %s\n"
+msgstr "%s: terlalu banyak argumen\n"
 
 #: fsck/fsck.c:1252
-#, fuzzy, c-format
+#, c-format
 msgid "fsck from %s\n"
-msgstr "%s dari %s\n"
+msgstr "fsck dari %s\n"
 
 #: fsck/fsck.c:1264
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Unable to allocate memory for fsck_path\n"
-msgstr "Tidak dapat mengalokasikan buffer untuk inodes"
+msgstr "%s: Tidak dapat mengalokasikan memori untuk fsck_path\n"
 
 #: getopt/getopt.c:229
 msgid "Try `getopt --help' for more information.\n"
@@ -5894,11 +5730,11 @@ msgstr "Coba `getopt --help' untuk informasi lebih lanjut.\n"
 
 #: getopt/getopt.c:295
 msgid "empty long option after -l or --long argument"
-msgstr "long opsi kosong setelah opsi -l atau --long argumen"
+msgstr "long pilihan kosong setelah pilihan -l atau --long argumen"
 
 #: getopt/getopt.c:315
 msgid "unknown shell after -s or --shell argument"
-msgstr "tidak diketahui shell setelah opsi -s atau --shell argumen"
+msgstr "tidak diketahui shell setelah pilihan -s atau --shell argumen"
 
 #: getopt/getopt.c:320
 msgid "Usage: getopt optstring parameters\n"
@@ -5906,22 +5742,19 @@ msgstr "Penggunaan: getopt optstring parameters\n"
 
 #: getopt/getopt.c:321
 msgid "       getopt [options] [--] optstring parameters\n"
-msgstr "       getopt [opsi] [--] optstring parameters\n"
+msgstr "       getopt [pilihan] [--] optstring parameters\n"
 
 #: getopt/getopt.c:322
 msgid "       getopt [options] -o|--options optstring [options] [--]\n"
-msgstr "       getopt [opsi] -o | --options optstring [opsi] [--]\n"
+msgstr "       getopt [pilihan] -o | --options optstring [pilihan] [--]\n"
 
 #: getopt/getopt.c:323
 msgid "              parameters\n"
 msgstr "              parameters\n"
 
 #: getopt/getopt.c:324
-msgid ""
-"  -a, --alternative            Allow long options starting with single -\n"
-msgstr ""
-"  -a, --alternative            Membolehkan opsi panjang dimulai dengan "
-"sebuah -\n"
+msgid "  -a, --alternative            Allow long options starting with single -\n"
+msgstr "  -a, --alternative            Membolehkan pilihan panjang dimulai dengan sebuah -\n"
 
 #: getopt/getopt.c:325
 msgid "  -h, --help                   This small usage guide\n"
@@ -5929,21 +5762,19 @@ msgstr "  -h, --help                   Ini sedikit petunjuk penggunaan\n"
 
 #: getopt/getopt.c:326
 msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
-msgstr "  -l, --longoptions=longopts   Opsi panjang yang dikenal\n"
+msgstr "  -l, --longoptions=longopts   Pilihan panjang yang dikenal\n"
 
 #: getopt/getopt.c:327
-msgid ""
-"  -n, --name=progname          The name under which errors are reported\n"
+msgid "  -n, --name=progname          The name under which errors are reported\n"
 msgstr "  -n, --name=progname          Nama dimana error tersebut dilaporkan\n"
 
 #: getopt/getopt.c:328
 msgid "  -o, --options=optstring      Short options to be recognized\n"
-msgstr "  -o, --options=optstring      Opsi pendek yang dikenal\n"
+msgstr "  -o, --options=optstring      Pilihan pendek yang dikenal\n"
 
 #: getopt/getopt.c:329
 msgid "  -q, --quiet                  Disable error reporting by getopt(3)\n"
-msgstr ""
-"  -q, --quiet                  Mematikan laporan error oleh getopt(3)\n"
+msgstr "  -q, --quiet                  Mematikan laporan error oleh getopt(3)\n"
 
 #: getopt/getopt.c:330
 msgid "  -Q, --quiet-output           No normal output\n"
@@ -6006,22 +5837,22 @@ msgstr "%s: atomic %s gagal untuk 1000 iterasi!"
 #: hwclock/cmos.c:273
 #, c-format
 msgid "cmos_read(): write to control address %X failed: %s\n"
-msgstr ""
+msgstr "cmos_read(): penulisan ke alamat kontrol %X gagal: %s\n"
 
 #: hwclock/cmos.c:276
 #, c-format
 msgid "cmos_read(): read data address %X failed: %s\n"
-msgstr ""
+msgstr "cmos_read(): penulisan ke alamat data %X gagal: %s\n"
 
 #: hwclock/cmos.c:307
 #, c-format
 msgid "cmos_write(): write to control address %X failed: %s\n"
-msgstr ""
+msgstr "cmos_write(): penulisan ke alamat kontrol %X gagal: %s\n"
 
 #: hwclock/cmos.c:311
 #, c-format
 msgid "cmos_write(): write to data address %X failed: %s\n"
-msgstr ""
+msgstr "cmos_write(): penulisan ke alamat data %X gagal: %s\n"
 
 #: hwclock/cmos.c:574
 #, c-format
@@ -6036,8 +5867,7 @@ msgstr "Saya gagal memperoleh ijin karen Saya tidak mencobanya.\n"
 #: hwclock/cmos.c:584
 #, c-format
 msgid "%s is unable to get I/O port access:  the iopl(3) call failed.\n"
-msgstr ""
-"%s tidak dapat memperoleh ijin I/O port akses: iopl(3) panggilan gagal.\n"
+msgstr "%s tidak dapat memperoleh ijin I/O port akses: iopl(3) panggilan gagal.\n"
 
 #: hwclock/cmos.c:587
 #, c-format
@@ -6094,7 +5924,7 @@ msgstr "Menunggu untuk clock tick...\n"
 #: hwclock/hwclock.c:357
 #, c-format
 msgid "...synchronization failed\n"
-msgstr ""
+msgstr "...sinkronisasi gagal\n"
 
 #: hwclock/hwclock.c:359
 #, c-format
@@ -6119,8 +5949,7 @@ msgstr "Waktu terbaca dari Hardware Clock: %4d/%.2d/%.2d %02d:%02d:%02d\n"
 #: hwclock/hwclock.c:480
 #, c-format
 msgid "Setting Hardware Clock to %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr ""
-"Menset Hardware Clock menjadi %.2d:%.2d:%.2d = %ld detik semenjak 1969\n"
+msgstr "Menset Hardware Clock menjadi %.2d:%.2d:%.2d = %ld detik semenjak 1969\n"
 
 #: hwclock/hwclock.c:486
 #, c-format
@@ -6128,22 +5957,18 @@ msgid "Clock not changed - testing only.\n"
 msgstr "Clock tidak diubah - hanya mencoba.\n"
 
 #: hwclock/hwclock.c:536
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Time elapsed since reference time has been %.6f seconds.\n"
 "Delaying further to reach the new time.\n"
 msgstr ""
-"Waktu terlewatkan sejak referensi waktu sejak %.6f detik.\n"
-"Menunda lebih jauh untuk mencapai detik penuh selanjutnya.\n"
+"Waktu terlewatkan sejak referensi waktu telah lewat %.6f detik.\n"
+"Menunda lebih jauh untuk mencapai waktu baru.\n"
 
 #: hwclock/hwclock.c:572
 #, c-format
-msgid ""
-"The Hardware Clock registers contain values that are either invalid (e.g. "
-"50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
-msgstr ""
-"Register Hardware Clock berisi nilai yang tidak valid (hari ke 50 dari "
-"bulan) atau diluar dari jangkauan yang dapat kita tangani (Tahun 2095).\n"
+msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
+msgstr "Register Hardware Clock berisi nilai yang tidak valid (hari ke 50 dari bulan) atau diluar dari jangkauan yang dapat kita tangani (Tahun 2095).\n"
 
 #: hwclock/hwclock.c:582
 #, c-format
@@ -6153,7 +5978,7 @@ msgstr "%s  %.6f detik\n"
 #: hwclock/hwclock.c:616
 #, c-format
 msgid "No --date option specified.\n"
-msgstr "Opsi --date tidak dispesifikasikan.\n"
+msgstr "Pilihan --date tidak dispesifikasikan.\n"
 
 #: hwclock/hwclock.c:622
 #, c-format
@@ -6166,7 +5991,7 @@ msgid ""
 "The value of the --date option is not a valid date.\n"
 "In particular, it contains quotation marks.\n"
 msgstr ""
-"Nilai dari opsi --date tidak meupakan tanggal yang sah.\n"
+"Nilai dari pilihan --date tidak meupakan tanggal yang sah.\n"
 "Kadang kala, itu berisi tanda petik.\n"
 
 #: hwclock/hwclock.c:637
@@ -6176,8 +6001,7 @@ msgstr "Mengisukan perintah date: %s\n"
 
 #: hwclock/hwclock.c:641
 msgid "Unable to run 'date' program in /bin/sh shell. popen() failed"
-msgstr ""
-"Tidak dapat menjalankan aplikasi 'date' di shell /bin/sh. popen() gagal"
+msgstr "Tidak dapat menjalankan aplikasi 'date' di shell /bin/sh. popen() gagal"
 
 #: hwclock/hwclock.c:649
 #, c-format
@@ -6202,15 +6026,13 @@ msgstr ""
 #: hwclock/hwclock.c:663
 #, c-format
 msgid ""
-"The date command issued by %s returned something other than an integer where "
-"the converted time value was expected.\n"
+"The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
 "The command was:\n"
 "  %s\n"
 "The response was:\n"
 " %s\n"
 msgstr ""
-"Perintah date diberikan oleh %s memberikan sesuatu selain integer dimana "
-"nilai waktu yang diconvert seperti diperkirakan.\n"
+"Perintah date diberikan oleh %s memberikan sesuatu selain integer dimana nilai waktu yang diconvert seperti diperkirakan.\n"
 "Perintah adalah:\n"
 "  %s\n"
 " %s\n"
@@ -6222,12 +6044,8 @@ msgstr "date string %s sama dengan %ld detik semenjak 1969.\n"
 
 #: hwclock/hwclock.c:706
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot set the "
-"System Time from it.\n"
-msgstr ""
-"Hardware Clock tidak berisi waktu yang valid, jadi kita tidak dapat menset "
-"Waktu System dari waktu ini.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it.\n"
+msgstr "Hardware Clock tidak berisi waktu yang valid, jadi kita tidak dapat menset Waktu System dari waktu ini.\n"
 
 #: hwclock/hwclock.c:728 hwclock/hwclock.c:804
 #, c-format
@@ -6259,23 +6077,19 @@ msgid "settimeofday() failed"
 msgstr "settimeofday() gagal"
 
 #: hwclock/hwclock.c:782
-#, fuzzy, c-format
+#, c-format
 msgid "Current system time: %ld = %s\n"
-msgstr "baca waktu sistem"
+msgstr "Waktu sistem sekarang: %ld = %s\n"
 
 #: hwclock/hwclock.c:805
 #, c-format
 msgid "\tUTC: %s\n"
-msgstr ""
+msgstr "\tUTC: %s\n"
 
 #: hwclock/hwclock.c:852
 #, c-format
-msgid ""
-"Not adjusting drift factor because the Hardware Clock previously contained "
-"garbage.\n"
-msgstr ""
-"Tidak menyesuaikan faktor drift karena Clock Hardwre sebelumnya berisi "
-"sampah.\n"
+msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
+msgstr "Tidak menyesuaikan faktor drift karena Clock Hardwre sebelumnya berisi sampah.\n"
 
 #: hwclock/hwclock.c:857
 #, c-format
@@ -6288,22 +6102,16 @@ msgstr ""
 
 #: hwclock/hwclock.c:863
 #, c-format
-msgid ""
-"Not adjusting drift factor because it has been less than a day since the "
-"last calibration.\n"
-msgstr ""
-"Tidak menyesuaikan faktor drift karena ini lebih kecil dari hari semenjak "
-"terakhir dikalibrasi.\n"
+msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
+msgstr "Tidak menyesuaikan faktor drift karena ini lebih kecil dari hari semenjak terakhir dikalibrasi.\n"
 
 #: hwclock/hwclock.c:911
 #, c-format
 msgid ""
-"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
-"of %f seconds/day.\n"
+"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
-"Clock digeser %.1f detik dari waktu sebelumnya, %d detik  dari pada faktor "
-"drift %f detik/hari.\n"
+"Clock digeser %.1f detik dari waktu sebelumnya, %d detik  dari pada faktor drift %f detik/hari.\n"
 "menyesuaikan faktor drift sebesar %f detik/hari.\n"
 
 #: hwclock/hwclock.c:961
@@ -6314,9 +6122,7 @@ msgstr "Waktu semenjak penyesuaian terakhir adalah %d detik\n"
 #: hwclock/hwclock.c:963
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
-msgstr ""
-"Butuh untuk memasukkan %d detik dan referensi waktu kembali %.6f detik yang "
-"lalu\n"
+msgstr "Butuh untuk memasukkan %d detik dan referensi waktu kembali %.6f detik yang lalu\n"
 
 #: hwclock/hwclock.c:992
 #, c-format
@@ -6334,15 +6140,13 @@ msgstr ""
 
 #: hwclock/hwclock.c:1001
 #, c-format
-msgid ""
-"Could not open file with the clock adjustment parameters in it (%s) for "
-"writing"
-msgstr ""
+msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
+msgstr "Tidak dapat membuka berkas dengan parameter penyesuaian jam didalamnya (%s) untuk ditulis"
 
 #: hwclock/hwclock.c:1006 hwclock/hwclock.c:1011
 #, c-format
 msgid "Could not update file with the clock adjustment parameters (%s) in it"
-msgstr ""
+msgstr "Tidak dapat memperbarui berkas dengan parameter penyesuaian jam (%s) didalamnya"
 
 #: hwclock/hwclock.c:1017
 #, c-format
@@ -6351,26 +6155,18 @@ msgstr "Parameter adjusment drift tidak di update.\n"
 
 #: hwclock/hwclock.c:1058
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
-msgstr ""
-"Clock hardware tidak berisi waktu yang valid, jadi kita tidak bisa "
-"membetulkannya.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
+msgstr "Clock hardware tidak berisi waktu yang valid, jadi kita tidak bisa membetulkannya.\n"
 
 #: hwclock/hwclock.c:1066
-#, fuzzy, c-format
-msgid ""
-"Not setting clock because last adjustment time is zero, so history is bad."
-msgstr ""
-"Tidak menyesuaikan faktor drift karena waktu kalibrasi terakhir adalah nol,\n"
-"jadi history buruk dan pengulangan kalibrasi diperlukan.\n"
+#, c-format
+msgid "Not setting clock because last adjustment time is zero, so history is bad."
+msgstr "Tidak menyesuaikan jam karena waktu kalibrasi terakhir adalah nol, jadi sejarah buruk."
 
 #: hwclock/hwclock.c:1089
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
-msgstr ""
-"Penyesuaian yang dibutuhkan mungkin lebih kecil dari satu detik, jadi tidak "
-"menset clock.\n"
+msgstr "Penyesuaian yang dibutuhkan mungkin lebih kecil dari satu detik, jadi tidak menset clock.\n"
 
 #: hwclock/hwclock.c:1115
 #, c-format
@@ -6388,20 +6184,18 @@ msgid "Unable to set system clock.\n"
 msgstr "Tidak dapat menset system clock.\n"
 
 #: hwclock/hwclock.c:1230
-#, fuzzy, c-format
+#, c-format
 msgid "Clock in UTC, not changed.\n"
-msgstr "Shell tidak berubah.\n"
+msgstr "Jam dalam UTC, tidak diubah.\n"
 
 #: hwclock/hwclock.c:1259
 #, c-format
 msgid ""
-"The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
-"machine.\n"
+"The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken.\n"
 msgstr ""
-"Kernel menyimpan nilai epoch dari Hardware clock hanya di sebuah mesin Alpha "
-"Salinan dari hwclock ini telah dibuat untuk mesin selain Alpha\n"
+"Kernel menyimpan nilai epoch dari Hardware clock hanya di sebuah mesin Alpha Salinan dari hwclock ini telah dibuat untuk mesin selain Alpha\n"
 "(dan jadi diasumsikan saat ini tidak berjalan di Alpha).\n"
 "Tidak ada aksi yang dilakukan.\n"
 
@@ -6417,12 +6211,8 @@ msgstr "Kernel mengasumsikan menggunakan nilai epoch dari %lu\n"
 
 #: hwclock/hwclock.c:1273
 #, c-format
-msgid ""
-"To set the epoch value, you must use the 'epoch' option to tell to what "
-"value to set it.\n"
-msgstr ""
-"Untuk menset nilai epoch, anda harus menggunakan opsi 'epoch' untuk "
-"memberitahukan nilai untuk mensetnya.\n"
+msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it.\n"
+msgstr "Untuk menset nilai epoch, anda harus menggunakan pilihan 'epoch' untuk memberitahukan nilai untuk mensetnya.\n"
 
 #: hwclock/hwclock.c:1276
 #, c-format
@@ -6440,7 +6230,7 @@ msgid "%s from %s\n"
 msgstr "%s dari %s\n"
 
 #: hwclock/hwclock.c:1313
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "hwclock - query and set the hardware clock (RTC)\n"
 "\n"
@@ -6480,44 +6270,50 @@ msgid ""
 msgstr ""
 "hwclock - melihat dan menset hardware clock (RTC)\n"
 "\n"
-"Penggunaan: hwclock [fungsi] [opsi...]\n"
+"Penggunaan: hwclock [fungsi] [pilihan...]\n"
 "\n"
 "Fungsi:\n"
-"  --help         tampilkan bantuan ini\n"
-"  --show         baca hardware clock dan tampilkan hasilnya\n"
-"  --set          set rtc ke waktu yang telah diberikan dengan --date\n"
-"  --hctosys      set waktu system dari hardware clock\n"
-"  --systohc      set hardware clock ke waktu system saat ini\n"
-"  --adjust       adjust the rtc to account for systematic drift since \n"
-"                 the clock was last set or adjusted\n"
-"  --getepoch     tampilkan nilai epoch dari kernel hardware clock\n"
-"  --setepoch     set nilai epoch kernel hardware clock ke nilai yang \n"
-"                 diberikan oleh --epoch\n"
-"  --version      tampilkan versi dari hwclock ke stdout\n"
+"  -h | --help         tampilkan bantuan ini\n"
+"  -r | --show         baca hardware clock dan tampilkan hasilnya\n"
+"       --set          set rtc ke waktu yang telah diberikan dengan --date\n"
+"  -s | --hctosys      set waktu system dari hardware clock\n"
+"  -w | --systohc      set hardware clock ke waktu system saat ini\n"
+"       --systz        set waktu sistem berdasarkan zona waktu sekarang\n"
+"       --adjust       adjust the rtc to account for systematic drift since \n"
+"                      the clock was last set or adjusted\n"
+"       --getepoch     tampilkan nilai epoch dari kernel hardware clock\n"
+"       --setepoch     set nilai epoch kernel hardware clock ke nilai yang \n"
+"                      diberikan oleh --epoch\n"
+"       --version      tampilkan versi dari hwclock ke stdout\n"
 "\n"
-"Opsi: \n"
-"  --utc          hardware clock disimpan dalam coordinat universal time\n"
-"  --localtime    hardware clock disimpan dalam local time\n"
-"  --directisa    akses ISA bus secara langsung dari pada %s\n"
-"  --badyear      abaikan rtc's tahun karen bios rusak\n"
-"  --date         spesifikasikan waktu untuk menset hardware clock\n"
-"  --epoch=tahun  spesifikasikan tahun dimana awal dari nilai dari\n"
-"                 nilai epoch hardware clock\n"
-"  --noadjfile    jangan mengakses file /etc/adjtime. Dibutuhkan saat \n"
-"                 menggunakan opsi --utc atau --localtime.\n"
-"  --adjfile=path spesifikasikan path ke berkas adjust (default adalah\n"
-"                 /etc/adjtime)\n"
+"Pilihan: \n"
+"  -u | --utc          hardware clock disimpan dalam coordinat universal time\n"
+"       --localtime    hardware clock disimpan dalam local time\n"
+"  -f | --rtc=jalur    menggunakan berkas /dev... spesial daripada baku\n"
+"       --directisa    akses ISA bus secara langsung dari pada %s\n"
+"       --badyear      abaikan rtc's tahun karen bios rusak\n"
+"       --date         spesifikasikan waktu untuk menset hardware clock\n"
+"       --epoch=tahun  spesifikasikan tahun dimana awal dari nilai dari\n"
+"                      nilai epoch hardware clock\n"
+"       --noadjfile    jangan mengakses file /etc/adjtime. Dibutuhkan saat \n"
+"                      menggunakan pilihan --utc atau --localtime.\n"
+"       --adjfile=path spesifikasikan path ke berkas adjust (default adalah\n"
+"                      /etc/adjtime)\n"
+"       --test         lakukan apapun kecuali tanpa memperbarui perangkat waktu\n"
+"                      atau hal lainnya\n"
+"  -D | --debug        mode penelusuran\n"
+"\n"
 
 #: hwclock/hwclock.c:1348
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "  -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
 "       tell hwclock the type of alpha you have (see hwclock(8))\n"
 "\n"
 msgstr ""
-"  --jensen, --arc, --srm, --funky-toy\n"
-"                 beritahu hwclock tipe dari alpha yang anda miliki (lihat "
-"hwclock (8))\n"
+"  -J|--jensen, -A|--arc, -A|--srm, -F|--funky-toy\n"
+"       beritahu hwclock tipe dari alpha yang anda miliki (lihat hwclock (8))\n"
+"\n"
 
 #: hwclock/hwclock.c:1435
 #, c-format
@@ -6540,37 +6336,23 @@ msgstr ""
 
 #: hwclock/hwclock.c:1567
 #, c-format
-msgid ""
-"%s: The --utc and --localtime options are mutually exclusive.  You specified "
-"both.\n"
-msgstr ""
-"%s: Opsi --utc dan --localtime adalah mutually eksklusive. Anda "
-"menspesifikasikan keduanya.\n"
+msgid "%s: The --utc and --localtime options are mutually exclusive.  You specified both.\n"
+msgstr "%s: Pilihan --utc dan --localtime adalah mutually eksklusive. Anda menspesifikasikan keduanya.\n"
 
 #: hwclock/hwclock.c:1574
 #, c-format
-msgid ""
-"%s: The --adjust and --noadjfile options are mutually exclusive.  You "
-"specified both.\n"
-msgstr ""
-"%s: Opsi --adjust dan --noadjfile adalah mutually eksklusive. Anda "
-"menspesifikasikan keduanya.\n"
+msgid "%s: The --adjust and --noadjfile options are mutually exclusive.  You specified both.\n"
+msgstr "%s: Pilihan --adjust dan --noadjfile adalah mutually eksklusive. Anda menspesifikasikan keduanya.\n"
 
 #: hwclock/hwclock.c:1581
 #, c-format
-msgid ""
-"%s: The --adjfile and --noadjfile options are mutually exclusive.  You "
-"specified both.\n"
-msgstr ""
-"%s: Opsi --adjfile dan --noadjfile adalah mutually eksklusive. Anda "
-"menspesifikasikan keduanya.\n"
+msgid "%s: The --adjfile and --noadjfile options are mutually exclusive.  You specified both.\n"
+msgstr "%s: Pilihan --adjfile dan --noadjfile adalah mutually eksklusive. Anda menspesifikasikan keduanya.\n"
 
 #: hwclock/hwclock.c:1590
 #, c-format
 msgid "%s: With --noadjfile, you must specify either --utc or --localtime\n"
-msgstr ""
-"%s: Dengan --noadjfile, anda harus menspesifikasi baik --utc atau --"
-"localtime\n"
+msgstr "%s: Dengan --noadjfile, anda harus menspesifikasi baik --utc atau --localtime\n"
 
 #: hwclock/hwclock.c:1604
 #, c-format
@@ -6589,27 +6371,18 @@ msgstr "Maaf, hanya superuser yang dapat mengubah System Clock.\n"
 
 #: hwclock/hwclock.c:1631
 #, c-format
-msgid ""
-"Sorry, only the superuser can change the Hardware Clock epoch in the "
-"kernel.\n"
-msgstr ""
-"Maaf, hanya superuser yang dapat mengubah Hardware Clock epoch di dalam "
-"kernel.\n"
+msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel.\n"
+msgstr "Maaf, hanya superuser yang dapat mengubah Hardware Clock epoch di dalam kernel.\n"
 
 #: hwclock/hwclock.c:1651
 #, c-format
 msgid "Cannot access the Hardware Clock via any known method.\n"
-msgstr ""
-"Tidak dapat mengakses Hardware Clock melalui semua metode yang diketahui.\n"
+msgstr "Tidak dapat mengakses Hardware Clock melalui semua metode yang diketahui.\n"
 
 #: hwclock/hwclock.c:1655
 #, c-format
-msgid ""
-"Use the --debug option to see the details of our search for an access "
-"method.\n"
-msgstr ""
-"Gunakan opsi --debug untuk melihat detail dari pencarian kita untuk sebuah "
-"metode akses.\n"
+msgid "Use the --debug option to see the details of our search for an access method.\n"
+msgstr "Gunakan pilihan --debug untuk melihat detail dari pencarian kita untuk sebuah metode akses.\n"
 
 #: hwclock/kd.c:53
 #, c-format
@@ -6689,8 +6462,7 @@ msgstr "ioctl() untuk %s untuk mematikan interupsi update gagal"
 #: hwclock/rtc.c:303
 #, c-format
 msgid "ioctl() to %s to turn on update interrupts failed unexpectedly"
-msgstr ""
-"ioctl() untuk %s untuk menyalakan update interupsi gagal secara tidak terduga"
+msgstr "ioctl() untuk %s untuk menyalakan update interupsi gagal secara tidak terduga"
 
 #: hwclock/rtc.c:360
 #, c-format
@@ -6709,14 +6481,8 @@ msgstr "Membuka untuk %s gagal"
 
 #: hwclock/rtc.c:410 hwclock/rtc.c:454
 #, c-format
-msgid ""
-"To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
-"device driver via the device special file %s.  This file does not exist on "
-"this system.\n"
-msgstr ""
-"Untuk memanipulasi nilai epoch dalam kernel, kita harus mengakses Linux "
-"'rtc' device driver melalui file spesial %s. File ini mungkin tidak ada di "
-"system ini.\n"
+msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system.\n"
+msgstr "Untuk memanipulasi nilai epoch dalam kernel, kita harus mengakses Linux 'rtc' device driver melalui file spesial %s. File ini mungkin tidak ada di system ini.\n"
 
 #: hwclock/rtc.c:415 hwclock/rtc.c:459
 #, c-format
@@ -6745,8 +6511,7 @@ msgstr "Menset epoch menjadi %ld dengan RTC_EPOCH_SET ioctl menjadi %s.\n"
 
 #: hwclock/rtc.c:469
 #, c-format
-msgid ""
-"The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
+msgid "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
 msgstr "Kernel device driver untuk %s tidak memiliki ioctl RTC_EPOCH_SET.\n"
 
 #: hwclock/rtc.c:472
@@ -6757,12 +6522,12 @@ msgstr "ioctl(RTC_EPOCH_SET) ke %s gagal"
 #: libs/blkid/bin/findfs.c:24
 #, c-format
 msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
-msgstr ""
+msgstr "Penggunaan: %s LABEL=<nama>|UUID=<uuid>\n"
 
 #: libs/blkid/bin/findfs.c:55
-#, fuzzy, c-format
+#, c-format
 msgid "unable to resolve '%s'"
-msgstr "tidak dapat membuka %s"
+msgstr "tidak dapat menentukan '%s'"
 
 #: login-utils/agetty.c:361
 #, c-format
@@ -6835,15 +6600,11 @@ msgstr "%s: masukan overrun"
 #: login-utils/agetty.c:1203
 #, c-format
 msgid ""
-"Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H "
-"login_host] baud_rate,... line [termtype]\n"
-"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
-"line baud_rate,... [termtype]\n"
+"Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\n"
+"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"
 msgstr ""
-"Penggunaan: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-"
-"H login_host] baud_rate,... baris [termtype]\n"
-"atau\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H "
-"login_host] line baud_rate, ... [termtype]\n"
+"Penggunaan: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... baris [termtype]\n"
+"atau\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate, ... [termtype]\n"
 
 #: login-utils/checktty.c:91 login-utils/checktty.c:112
 #, c-format
@@ -6943,15 +6704,15 @@ msgstr "[ --help ] [ --version ]\n"
 
 #: login-utils/chfn.c:378
 msgid "Office"
-msgstr ""
+msgstr "Kantor"
 
 #: login-utils/chfn.c:379
 msgid "Office Phone"
-msgstr ""
+msgstr "Telepon Kantor"
 
 #: login-utils/chfn.c:380
 msgid "Home Phone"
-msgstr ""
+msgstr "Telepon Rumah"
 
 #: login-utils/chfn.c:401 login-utils/chsh.c:321
 #, c-format
@@ -6994,18 +6755,13 @@ msgstr "%s: %s tidak diijinkan untuk mengubah shell dari %s\n"
 
 #: login-utils/chsh.c:164
 #, c-format
-msgid ""
-"%s: Running UID doesn't match UID of user we're altering, shell change "
-"denied\n"
-msgstr ""
-"%s: UID yang digunakan tidak cocok dengan UID dari pengguna yang "
-"mengubahnya, perubahan shell ditolak\n"
+msgid "%s: Running UID doesn't match UID of user we're altering, shell change denied\n"
+msgstr "%s: UID yang digunakan tidak cocok dengan UID dari pengguna yang mengubahnya, perubahan shell ditolak\n"
 
 #: login-utils/chsh.c:170
 #, c-format
 msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
-msgstr ""
-"%s: Shell anda tidak ada dalam daftar /etc/shells, perubahan shell ditolak\n"
+msgstr "%s: Shell anda tidak ada dalam daftar /etc/shells, perubahan shell ditolak\n"
 
 #: login-utils/chsh.c:177
 #, c-format
@@ -7078,7 +6834,7 @@ msgstr "%s: \"%s\" tidak terdaftar dalam /etc/shells.\n"
 #: login-utils/chsh.c:379
 #, c-format
 msgid "%s: Use -l option to see list.\n"
-msgstr "%s: gunakan opsi -l untuk melihat daftar.\n"
+msgstr "%s: gunakan pilihan -l untuk melihat daftar.\n"
 
 #: login-utils/chsh.c:386
 #, c-format
@@ -7097,8 +6853,7 @@ msgstr "Gagal membuka %s untuk membaca, keluar."
 
 #: login-utils/last.c:148
 msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
-msgstr ""
-"penggunaan: last [-#] [-f file] [-t tty] [-h hostname] [pengguna ...]\n"
+msgstr "penggunaan: last [-#] [-f file] [-t tty] [-h hostname] [pengguna ...]\n"
 
 #: login-utils/last.c:284
 msgid "  still logged in"
@@ -7542,8 +7297,7 @@ msgstr "Tidak dapat melakukan fork untuk swapoff. Shrug!"
 
 #: login-utils/shutdown.c:577
 msgid "Cannot exec swapoff, hoping umount will do the trick."
-msgstr ""
-"Tidak dapat menjalankan swapoff, semoga umount akan melakukan sebuah trick."
+msgstr "Tidak dapat menjalankan swapoff, semoga umount akan melakukan sebuah trick."
 
 #: login-utils/shutdown.c:596
 msgid "Cannot fork for umount, trying manually."
@@ -7601,7 +7355,7 @@ msgid ""
 "Wrong password.\n"
 msgstr ""
 "\n"
-"Password salah.\n"
+"Kata sandi salah.\n"
 
 #: login-utils/simpleinit.c:418
 msgid "lstat of path failed\n"
@@ -7618,7 +7372,7 @@ msgstr "gagal membuka direktori\n"
 #: login-utils/simpleinit.c:501
 #, c-format
 msgid "respawning: \"%s\" too fast: quenching entry\n"
-msgstr ""
+msgstr "respawning: \"%s\" terlalu cepat: menahan masukan\n"
 
 #: login-utils/simpleinit.c:509
 msgid "fork failed\n"
@@ -7637,19 +7391,19 @@ msgid "no TERM or cannot stat tty\n"
 msgstr "tidak ada TERM atau tidak dapat memperoleh statistik tty\n"
 
 #: login-utils/simpleinit.c:938
-#, fuzzy, c-format
+#, c-format
 msgid "error stopping service: \"%s\"\n"
-msgstr "error menghentikan layanan: \"%s\""
+msgstr "error menghentikan layanan: \"%s\"\n"
 
 #: login-utils/simpleinit.c:950
-#, fuzzy, c-format
+#, c-format
 msgid "Stopped service: %s\n"
-msgstr "error menghentikan layanan: \"%s\""
+msgstr "Layanan terhent: %s\n"
 
 #: login-utils/simpleinit.c:1070
-#, fuzzy, c-format
+#, c-format
 msgid "error running programme: \"%s\"\n"
-msgstr "error menjalankan finalprog\n"
+msgstr "error menjalankan aplikasi: \"%s\"\n"
 
 #: login-utils/ttymsg.c:75
 msgid "too many iov's (change code in wall/ttymsg.c)"
@@ -7708,9 +7462,7 @@ msgstr "%s: Tidak dapat menset context untuk %s"
 #: login-utils/vipw.c:217
 #, c-format
 msgid "%s: can't unlock %s: %s (your changes are still in %s)\n"
-msgstr ""
-"%s: tidak dapat membuka %s: %s (perubahan yang anda lakukan masih berada "
-"dalam %s)\n"
+msgstr "%s: tidak dapat membuka %s: %s (perubahan yang anda lakukan masih berada dalam %s)\n"
 
 #: login-utils/vipw.c:240
 #, c-format
@@ -7866,11 +7618,8 @@ msgstr "logger: nama priority tidak diketahui: %s.\n"
 
 #: misc-utils/logger.c:285
 #, c-format
-msgid ""
-"usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
-msgstr ""
-"penggunaan: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] "
-"[ message ...]\n"
+msgid "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
+msgstr "penggunaan: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ...]\n"
 
 #: misc-utils/look.c:351
 #, c-format
@@ -7889,35 +7638,36 @@ msgstr "Memperoleh %d bytes dari %s\n"
 
 #: misc-utils/namei.c:144 misc-utils/namei.c:198 misc-utils/namei.c:220
 #: misc-utils/namei.c:227 misc-utils/namei.c:248
-#, fuzzy
 msgid "out of memory?"
-msgstr "kehabisan memory?\n"
+msgstr "kehabisan memory?"
 
 #: misc-utils/namei.c:189
-#, fuzzy, c-format
+#, c-format
 msgid "failed to read symlink: %s"
-msgstr "gagal membaca berkas pewaktu %s"
+msgstr "gagal membaca symlink: %s"
 
 #: misc-utils/namei.c:229
-#, fuzzy, c-format
+#, c-format
 msgid "could not stat '%s'"
-msgstr "tidak dapat memperoleh statistik \"%s\""
+msgstr "tidak dapat memperoleh statistik '%s'"
 
 #: misc-utils/namei.c:411
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage: %s [options] pathname [pathname ...]\n"
-msgstr "penggunaan: namei [-mx] pathname [pathname ...]\n"
+msgstr ""
+"\n"
+"Penggunaan: %s [pilihan] pathname [pathname ...]\n"
 
 #: misc-utils/namei.c:412
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Options:\n"
 msgstr ""
 "\n"
-"%d partisi:\n"
+"Pilihan:\n"
 
 #: misc-utils/namei.c:415
 #, c-format
@@ -7930,30 +7680,37 @@ msgid ""
 " -n, --nosymlinks    don't follow symlinks\n"
 " -v, --vertical      vertical align of modes and owners\n"
 msgstr ""
+" -h, --help          tampilkan teks bantuan ini\n"
+" -x, --mountpoints   tampilkan titik pemasangan direktori dengan sebuah 'D'\n"
+" -m, --modes         tampilkan mode bit dari setiap berkas\n"
+" -o, --owners        tampilkan nama pemilik atau grup dari setiap berkas\n"
+" -l, --long          gunakan sebuah format penampilan panjang (-m -o -v)\n"
+" -n, --nosymlinks    jangan ikuti symlinks\n"
+" -v, --vertical      sesuaikan vertikal dari mode dan pemilik\n"
 
 #: misc-utils/namei.c:423
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "For more information see namei(1).\n"
 msgstr ""
 "\n"
-"Untuk informasi lebih lanjut lihat setarch(8).\n"
+"Untuk informasi lebih lanjut lihat namei(1).\n"
 
 #: misc-utils/namei.c:484
-#, fuzzy, c-format
+#, c-format
 msgid "failed to stat: %s"
-msgstr "tidak dapat memperoleh statistik %s"
+msgstr "gagal untuk mendapatkan statistik: %s"
 
 #: misc-utils/namei.c:495
 #, c-format
 msgid "%s: exceeded limit of symlinks"
-msgstr ""
+msgstr "%s: melewati batas dari symlinks"
 
 #: misc-utils/rename.c:38
 #, c-format
 msgid "%s: out of memory\n"
-msgstr "%s: kehabisa memori\n"
+msgstr "%s: kehabisan memori\n"
 
 #: misc-utils/rename.c:56
 #, c-format
@@ -7973,7 +7730,7 @@ msgid ""
 "Script not started.\n"
 msgstr ""
 "Peringatan: `%s' adalah sebuah link.\n"
-"Penggunaan `%s [opsi] %s' jika anda benar - benar ingin menggunakannya.\n"
+"Penggunaan `%s [pilihan] %s' jika anda benar - benar ingin menggunakannya.\n"
 "Script tidak berjalan.\n"
 
 #: misc-utils/script.c:173
@@ -8398,23 +8155,17 @@ msgstr "mount: tidak dapat membuka %s - menggunakan %s\n"
 #: mount/fstab.c:588
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
-msgstr ""
-"tidak dapat membuat file kunci %s: %s (gunakan opsi -n untuk memaksa "
-"menjalankan)"
+msgstr "tidak dapat membuat file kunci %s: %s (gunakan pilihan -n untuk memaksa menjalankan)"
 
 #: mount/fstab.c:614
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
-msgstr ""
-"tidak dapat menlink file kunci %s: %s (gunakan opsi -n untuk memaksa "
-"menjalankan)"
+msgstr "tidak dapat menlink file kunci %s: %s (gunakan pilihan -n untuk memaksa menjalankan)"
 
 #: mount/fstab.c:630
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
-msgstr ""
-"tidak dapat membuka file kunci %s: %s (gunakan opsi -n untuk memaksa "
-"menjalankan)"
+msgstr "tidak dapat membuka file kunci %s: %s (gunakan pilihan -n untuk memaksa menjalankan)"
 
 #: mount/fstab.c:645
 #, c-format
@@ -8506,9 +8257,9 @@ msgid "%s: /dev directory does not exist."
 msgstr "%s: /dev direktori tidak ada."
 
 #: mount/lomount.c:437 mount/lomount.c:585
-#, fuzzy, c-format
+#, c-format
 msgid "%s: no permission to look at /dev/loop%s<N>"
-msgstr "%s: tidak ada ijin untuk melihat di /dev/loop#"
+msgstr "%s: tidak ada ijin untuk melihat di /dev/loop%s<N>"
 
 #: mount/lomount.c:588
 #, c-format
@@ -8521,8 +8272,7 @@ msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
 "       about the loop device? (If so, recompile or `modprobe loop'.)"
 msgstr ""
-"%s: Tidak dapat menemukan perangkat loop. Mungkin kernel ini tidak "
-"mengetahui\n"
+"%s: Tidak dapat menemukan perangkat loop. Mungkin kernel ini tidak mengetahui\n"
 "    mengenai perangkat loop? (Jika demikian, recompile atau `modprobe loop'.)"
 
 #: mount/lomount.c:621
@@ -8537,8 +8287,7 @@ msgstr "peringatan: %s sudah diasosiasikan dengan %s\n"
 #: mount/lomount.c:680
 #, c-format
 msgid "warning: %s: is write-protected, using read-only.\n"
-msgstr ""
-"peringatan: %s: memiliki proteksi untuk ditulis, menggunakan baca-saja.\n"
+msgstr "peringatan: %s: memiliki proteksi untuk ditulis, menggunakan baca-saja.\n"
 
 #: mount/lomount.c:716
 #, c-format
@@ -8571,7 +8320,7 @@ msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Mount ini telah dikompile tanpa layanan loop. Tolong di rekompile.\n"
 
 #: mount/lomount.c:871
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -8579,19 +8328,17 @@ msgid ""
 " %1$s -a | --all                              list all used\n"
 " %1$s -d | --detach <loopdev> [<loopdev> ...] delete\n"
 " %1$s -f | --find                             find unused\n"
-" %1$s -j | --associated <file> [-o <num>]     list all associated with "
-"<file>\n"
+" %1$s -j | --associated <file> [-o <num>]     list all associated with <file>\n"
 " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
 msgstr ""
 "\n"
 "penggunaan:\n"
-"  %1$s loop_device                            memberikan info\n"
-"  %1$s -a | --all                             daftar seluruh yang digunakan\n"
-"  %1$s -d | --detach <loopdev>                menghapus\n"
-"  %1$s -f | --find                            mencari yang tidak digunakan\n"
-"  %1$s -j | --associated <berkas> [-o <num>]  daftar seluruh asosiasi dengan "
-"<berkas>\n"
-"  %1$s [ opsi ] {-f|--find|loopdev} <berkas>  setup\n"
+" %1$s loop_device                             memberikan info\n"
+" %1$s -a | --all                              daftar seluruh yang digunakan\n"
+" %1$s -d | --detach <loopdev> [<loopdev> ...] menghapus\n"
+" %1$s -f | --find                             mencari yang tidak digunakan\n"
+" %1$s -j | --associated <berkas> [-o <num>]   daftar seluruh asosiasi dengan <berkas>\n"
+" %1$s [ pilihan ] {-f|--find|loopdev} <berkas> konfigurasi\n"
 
 #: mount/lomount.c:880
 #, c-format
@@ -8609,9 +8356,8 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"Opsi:\n"
-" -e | --encryption <tipe> mengaktifkan data enkripsi dengan spesifikasi "
-"<nama/nomor>\n"
+"Pilihan:\n"
+" -e | --encryption <tipe> mengaktifkan data enkripsi dengan spesifikasi <nama/nomor>\n"
 " -h | --help              bantuan ini\n"
 " -o | --offset <nomor>    awal dari offset <nomor> kedalam berkas\n"
 "      --sizelimit <nomor> loop dibatasi hanya <nomor> bytes dari berkas\n"
@@ -8644,7 +8390,7 @@ msgstr "Layanan loop tidak ada pada waktu dikompile. Tolong di rekompile.\n"
 #: mount/mount.c:329
 #, c-format
 msgid "mount: improperly quoted option string '%s'"
-msgstr "mount: opsi string tidak dinyatakan dengan benar '%s'"
+msgstr "mount: pilihan string tidak dinyatakan dengan benar '%s'"
 
 #: mount/mount.c:362
 #, c-format
@@ -8699,8 +8445,7 @@ msgstr "Mencoba %s\n"
 #: mount/mount.c:870
 #, c-format
 msgid "mount: you didn't specify a filesystem type for %s\n"
-msgstr ""
-"mount: anda tidak menspesifikasikan sebuah tipe dari filesystem untuk %s\n"
+msgstr "mount: anda tidak menspesifikasikan sebuah tipe dari filesystem untuk %s\n"
 
 #: mount/mount.c:873
 #, c-format
@@ -8804,11 +8549,8 @@ msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: menurut mtab, %s telah dimount di %s\n"
 
 #: mount/mount.c:1358
-msgid ""
-"mount: I could not determine the filesystem type, and none was specified"
-msgstr ""
-"mount: Saya tidak dapat menentukan tipe dari filesystem, dan tidak diberikan "
-"spesifikasi di argument perintah"
+msgid "mount: I could not determine the filesystem type, and none was specified"
+msgstr "mount: Saya tidak dapat menentukan tipe dari filesystem, dan tidak diberikan spesifikasi di argument perintah"
 
 #: mount/mount.c:1361
 msgid "mount: you must specify the filesystem type"
@@ -8872,7 +8614,7 @@ msgstr ""
 #: mount/mount.c:1423
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
-msgstr "mount: %s sudah tidak dimount, atau opsi buruk"
+msgstr "mount: %s sudah tidak dimount, atau pilihan buruk"
 
 #: mount/mount.c:1425
 #, c-format
@@ -8880,7 +8622,7 @@ msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
 "       missing codepage or helper program, or other error"
 msgstr ""
-"mount: tipe fs salah, opsi buruk, superblock buruk di %s,\n"
+"mount: tipe fs salah, pilihan buruk, superblock buruk di %s,\n"
 "       hilang codepage atau aplikasi pembantu, atau error lain"
 
 #: mount/mount.c:1432
@@ -8897,8 +8639,7 @@ msgid ""
 "       ide-scsi so that sr0 or sda or so is needed?)"
 msgstr ""
 "       (apakah ini mungkin sebuah perangkat IDE dimana anda menggunakan\n"
-"       ide-scsi sehingga sr0 atau sda atau perangkat sepertinya yang "
-"diperlukan?)"
+"       ide-scsi sehingga sr0 atau sda atau perangkat sepertinya yang diperlukan?)"
 
 #: mount/mount.c:1446
 msgid ""
@@ -8913,8 +8654,7 @@ msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
 msgstr ""
-"       Dalam beberapa kasus informasi berguna dapat ditemukan di syslog - "
-"coba\n"
+"       Dalam beberapa kasus informasi berguna dapat ditemukan di syslog - coba\n"
 "       dmesg | tail atau yang serupa\n"
 
 #: mount/mount.c:1459
@@ -8952,14 +8692,12 @@ msgstr "mount: mungkin yang anda maksud 'vfat'?"
 #: mount/mount.c:1493
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
-msgstr ""
-"mount: %s memiliki nomor perangkat yang salah atau tipe fs %s tidak disupport"
+msgstr "mount: %s memiliki nomor perangkat yang salah atau tipe fs %s tidak disupport"
 
 #: mount/mount.c:1501
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
-msgstr ""
-"mount: %s bukan sebuak perangkat block, dan gagal memperoleh statistik?"
+msgstr "mount: %s bukan sebuak perangkat block, dan gagal memperoleh statistik?"
 
 #: mount/mount.c:1503
 #, c-format
@@ -8973,9 +8711,7 @@ msgstr ""
 #: mount/mount.c:1506
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
-msgstr ""
-"mount: %s bukan sebuah perangkat block (mungkin dicoba dengan menggunakan "
-"opsi `-o loop'?"
+msgstr "mount: %s bukan sebuah perangkat block (mungkin dicoba dengan menggunakan pilihan `-o loop'?"
 
 #: mount/mount.c:1509
 #, c-format
@@ -8999,9 +8735,7 @@ msgstr "mount: tidak dapat me-mount %s%s hanya-baca"
 #: mount/mount.c:1523
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
-msgstr ""
-"mount: %s%s memiliki proteksi untuk ditulis tetapi secara eksplisit opsi `-"
-"w' diberikan"
+msgstr "mount: %s%s memiliki proteksi untuk ditulis tetapi secara eksplisit pilihan `-w' diberikan"
 
 #: mount/mount.c:1538
 #, c-format
@@ -9030,24 +8764,18 @@ msgstr ""
 "mount: %s tidak berisi label SELinux.\n"
 "       Anda telah memasang sistem berkas yang mendukung label yang tidak\n"
 "       berisi label, kedalam kotak SELinux. Ini sepertinya berisi aplikasi\n"
-"       yang akan menghasilkan pesan AVC dan tidak diperbolehkan mengakses "
-"ke\n"
-"       sistem berkas ini. Untuk lebih lengkapnya lihat restorecon(8) dan "
-"mount(8).\n"
+"       yang akan menghasilkan pesan AVC dan tidak diperbolehkan mengakses ke\n"
+"       sistem berkas ini. Untuk lebih lengkapnya lihat restorecon(8) dan mount(8).\n"
 
 #: mount/mount.c:1651
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
-msgstr ""
-"mount: tipe tidak diberikan - Saya akan mengasumsikan nfs karena adanya "
-"colon\n"
+msgstr "mount: tipe tidak diberikan - Saya akan mengasumsikan nfs karena adanya colon\n"
 
 #: mount/mount.c:1657
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
-msgstr ""
-"mount: tipe tidak diberikan - Saya akan mengasumsikan cifs karena adanya "
-"awalan //\n"
+msgstr "mount: tipe tidak diberikan - Saya akan mengasumsikan cifs karena adanya awalan //\n"
 
 #: mount/mount.c:1752
 #, c-format
@@ -9092,8 +8820,7 @@ msgid ""
 msgstr ""
 "Penggunan: mount -V             : tampilkan versi\n"
 "           mount -h             : tampilkan bantuan ini\n"
-"           mount                : tampilkan seluruh filesystem yang di "
-"mount\n"
+"           mount                : tampilkan seluruh filesystem yang di mount\n"
 "           mount -l             : idem, termasuk volume labels\n"
 "Sebelumnya adalah bagian untuk informasi. Selanjutnya mengenai mounting.\n"
 "Perintah adalah `mount [-t fstype] sesuatu suatu-tempat'.\n"
@@ -9119,11 +8846,9 @@ msgstr ""
 "           mount --make-rslave dir\n"
 "           mount --make-rpivate dir\n"
 "           mount --make-runbindable dir\n"
-"Sebuah perangkat dapat diberikan berdasarkan nama, katakanlah /dev/hda1 "
-"atau\n"
-"/dev/cdrom, atau melalui label, dengan menggunakan opsi -L label atau "
-"melalui\n"
-"uuid. Opsi lain: [-nfFrsvw] [-o opsi] [-p passwdfd].\n"
+"Sebuah perangkat dapat diberikan berdasarkan nama, katakanlah /dev/hda1 atau\n"
+"/dev/cdrom, atau melalui label, dengan menggunakan pilihan -L label atau melalui\n"
+"uuid. Pilihan lain: [-nfFrsvw] [-o pilihan] [-p passwdfd].\n"
 "Untuk informasi lebih detail, lihat man 8 mount.\n"
 
 #: mount/mount.c:2209
@@ -9184,7 +8909,7 @@ msgstr ""
 "\n"
 
 #: mount/swapon.c:92
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -9197,9 +8922,8 @@ msgid ""
 msgstr ""
 "\n"
 "Penggunaan:\n"
-" %1$s -a [-e] [-v]                  mengaktifkan seluruh swap dari /etc/"
-"fstab\n"
-" %1$s [-p prioritas] [-v] <spesial> mengaktifkan swap yang diberikan\n"
+" %1$s -a [-e] [-v] [-f]             mengaktifkan seluruh swap dari /etc/fstab\n"
+" %1$s [-p prioritas] [-v] [-f] <spesial> mengaktifkan swap yang diberikan\n"
 " %1$s -s                            menampilkan ringkasan pengunaan swap\n"
 " %1$s -h                            menampilkan bantuan\n"
 " %1$s -V                            menampilkan versi\n"
@@ -9225,98 +8949,92 @@ msgstr ""
 "\n"
 
 #: mount/swapon.c:138
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unexpected file format"
-msgstr "%s: %s: format berkas tidak terduga\n"
+msgstr "%s: format berkas tidak terduga"
 
 #: mount/swapon.c:177 mount/swapon.c:245 mount/swapon.c:390 mount/swapon.c:549
 #: mount/swapon.c:751
-#, fuzzy, c-format
+#, c-format
 msgid "%s: open failed"
-msgstr "openpty gagal\n"
+msgstr "%s: gagal membuka"
 
 #: mount/swapon.c:198
-#, fuzzy, c-format
+#, c-format
 msgid "%s: reinitializing the swap."
-msgstr "%s: %s: aplikasi suspend data terdeteksi. Menginisialisasi swap.\n"
+msgstr "%s: Menginisialisasi ulang swap."
 
 #: mount/swapon.c:202
-#, fuzzy
 msgid "fork failed"
-msgstr "gagal fork\n"
+msgstr "gagal fork"
 
 #: mount/swapon.c:218
-#, fuzzy
 msgid "execv failed"
-msgstr "gagal eksekusi\n"
+msgstr "gagal eksekusi"
 
 #: mount/swapon.c:226
-#, fuzzy
 msgid "waitpid failed"
-msgstr "setuid() gagal"
+msgstr "waitpid gagal"
 
 #: mount/swapon.c:250
-#, fuzzy, c-format
+#, c-format
 msgid "%s: lseek failed"
-msgstr "gagal seek"
+msgstr "%s: lseek gagal"
 
 #: mount/swapon.c:256
-#, fuzzy, c-format
+#, c-format
 msgid "%s: write signature failed"
-msgstr "gagal menulis ke stdout"
+msgstr "%s: gagal menulis tanda tangan"
 
 #: mount/swapon.c:343
 #, c-format
 msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
-msgstr ""
+msgstr "%s: ditemukan tanda %sswap v%d untuk %d KiB PAGE_SIZE\n"
 
 #: mount/swapon.c:363
-#, fuzzy, c-format
+#, c-format
 msgid "%s: stat failed"
-msgstr "%s gagal.\n"
+msgstr "%s: stat gagal"
 
 #: mount/swapon.c:373
-#, fuzzy, c-format
+#, c-format
 msgid "%s: insecure permissions %04o, %04o suggested."
-msgstr ""
-"%s: peringatan: %s memiliki mode yang tidak aman %04o, disarankan "
-"menggunakan mode %04o\n"
+msgstr "%s: mode tidak aman %04o, disarankan menggunakan mode %04o."
 
 #: mount/swapon.c:381
-#, fuzzy, c-format
+#, c-format
 msgid "%s: skipping - it appears to have holes."
-msgstr "%s: Melewati file %s - kelihatannya tidak memiliki lubang.\n"
+msgstr "%s: dilewatkan  - kelihatannya memiliki lubang."
 
 #: mount/swapon.c:395
-#, fuzzy, c-format
+#, c-format
 msgid "%s: get size failed"
-msgstr "gagal seek"
+msgstr "%s: gagal mendapatkan ukuran"
 
 #: mount/swapon.c:401
 #, c-format
 msgid "%s: read swap header failed"
-msgstr ""
+msgstr "%s: pembacaan header swap gagal"
 
 #: mount/swapon.c:414
 #, c-format
 msgid "%s: last_page 0x%08llx is larger than actual size of swapspace"
-msgstr ""
+msgstr "%s: last_page 0x%08llx berukuran lebih besar dari swapspace sebenarnya"
 
 #: mount/swapon.c:419
 #, c-format
 msgid "%s: swap format pagesize does not match."
-msgstr ""
+msgstr "%s: format swap pagesize tidak cocok."
 
 #: mount/swapon.c:424
 #, c-format
-msgid ""
-"%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
-msgstr ""
+msgid "%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
+msgstr "%s: format swap pagesize tidak cocok. (Gunakan --fixpgsz untuk menginisialisasi ulang.)"
 
 #: mount/swapon.c:433
-#, fuzzy, c-format
+#, c-format
 msgid "%s: software suspend data detected. Rewriting the swap signature."
-msgstr "%s: %s: aplikasi suspend data terdeteksi. Menginisialisasi swap.\n"
+msgstr "%s: aplikasi suspend data terdeteksi. Menulis ulang tanda swap."
 
 #: mount/swapon.c:457 mount/swapon.c:507
 #, c-format
@@ -9324,24 +9042,23 @@ msgid "%s on %s\n"
 msgstr "%s di %s\n"
 
 #: mount/swapon.c:479
-#, fuzzy, c-format
+#, c-format
 msgid "%s: swapon failed"
-msgstr "%s gagal.\n"
+msgstr "%s: swapon gagal"
 
 #: mount/swapon.c:486
-#, fuzzy, c-format
+#, c-format
 msgid "cannot find the device for %s"
-msgstr "%s: tidak dapat mencari perangkat untuk %s\n"
+msgstr "tidak dapat menemukan perangkat %s"
 
 #: mount/swapon.c:519
-#, fuzzy
 msgid "Not superuser."
-msgstr "Bukan superuser.\n"
+msgstr "Bukan superuser."
 
 #: mount/swapon.c:522
-#, fuzzy, c-format
+#, c-format
 msgid "%s: swapoff failed"
-msgstr "%s gagal.\n"
+msgstr "%s: gagal swapoff"
 
 #: mount/umount.c:40
 #, c-format
@@ -9386,8 +9103,7 @@ msgid ""
 "         the device is found by lsof(8) or fuser(1))"
 msgstr ""
 "umount: %s: perangkat sibuk.\n"
-"        (Dalam beberapa kasus informasi berharga tentang proses yang "
-"digunakan\n"
+"        (Dalam beberapa kasus informasi berharga tentang proses yang digunakan\n"
 "         oleh perangkat dapat ditemukan oleh lsof(8) atau fuser(1))"
 
 #: mount/umount.c:172
@@ -9456,12 +9172,12 @@ msgstr "Mencoba untuk umount %s\n"
 
 #: mount/umount.c:465
 msgid "umount: confused when analyzing mtab"
-msgstr ""
+msgstr "umount: bingung ketika menganalisa mtab"
 
 #: mount/umount.c:470
 #, c-format
 msgid "umount: cannot umount %s -- %s is mounted over it on the same point."
-msgstr ""
+msgstr "umount: tidak dapat umount %s -- %s telah dipasang di titik yang sama."
 
 #: mount/umount.c:477
 #, c-format
@@ -9525,76 +9241,95 @@ msgid ""
 "  -V | --version       output version information\n"
 "\n"
 msgstr ""
+"\n"
+"chrt - manipulasi atribut waktu-nyata dari sebuah proses.\n"
+"\n"
+"Set kebijakan:\n"
+"  chrt [pilihan] <kebijakan> <prioritas> {<pid> | <perintah> [<argumen ...]}\n"
+"\n"
+"Dapatkan kebijakan:\n"
+"  chrt [pilihan] {<pid> | <perintah> [<argumen> ...]}\n"
+"\n"
+"\n"
+"Kebijakan antrian:\n"
+"  -b | --batch        set kebijakan ke SCHED_BATCH\n"
+"  -f | --fifo         set kebijakan ke SCHED_FIFO\n"
+"  -i | --idle         set kebijakan ke SCHED_IDLE\n"
+"  -o | --other        set kebijakan ke SCHED_OTHER\n"
+"  -r | --rr           set kebijakan ke SCHED_RR (baku)\n"
+"\n"
+"Pilihan:\n"
+"  -h | --help         tampilkan bantuan ini\n"
+"  -p | --pid          beroperasi di pid diberikan yang telah ada\n"
+"  -m | --max          tampilkan min dan max prioritas yang sah\n"
+"  -v | --verbose      tampilkan informasi keadaan\n"
+"  -V | --version      keluarkan informasi versi\n"
+"\n"
 
 #: schedutils/chrt.c:88
-#, fuzzy, c-format
+#, c-format
 msgid "failed to get pid %d's policy"
-msgstr "Gagal menset personality ke %s"
+msgstr "gagal mendapatkan kebijakan pid %d"
 
 #: schedutils/chrt.c:90
 #, c-format
 msgid "pid %d's %s scheduling policy: "
-msgstr ""
+msgstr "pid %d %s kebijakan antrian: "
 
 #: schedutils/chrt.c:108
-#, fuzzy, c-format
+#, c-format
 msgid "unknown\n"
-msgstr "tidak diketahui"
+msgstr "tidak diketahui\n"
 
 #: schedutils/chrt.c:112
 #, c-format
 msgid "failed to get pid %d's attributes"
-msgstr ""
+msgstr "gagal mendapatkan atribut pid %d"
 
 #: schedutils/chrt.c:114
 #, c-format
 msgid "pid %d's %s scheduling priority: %d\n"
-msgstr ""
+msgstr "pid %d %s prioritas antrian: %d\n"
 
 #: schedutils/chrt.c:130
 #, c-format
 msgid "SCHED_%s min/max priority\t: %d/%d\n"
-msgstr ""
+msgstr "SCHED_%s min/max prioritas\t: %d/%d\n"
 
 #: schedutils/chrt.c:133
-#, fuzzy, c-format
+#, c-format
 msgid "SCHED_%s not supported?\n"
-msgstr "NFS melalui TCP tidak dilayani.\n"
+msgstr "SCHED_%s tidak didukung?\n"
 
 #: schedutils/chrt.c:185
-#, fuzzy
 msgid "failed to parse pid"
-msgstr "%s: gagal untuk membuka: %s\n"
+msgstr "gagal mendapatkan pid"
 
 #: schedutils/chrt.c:207
-#, fuzzy
 msgid "current"
-msgstr "ncount"
+msgstr "sekarang"
 
 #: schedutils/chrt.c:215
-#, fuzzy
 msgid "failed to parse priority"
-msgstr "Gagal menset personality ke %s"
+msgstr "gagal mendapatkan prioritas"
 
 #: schedutils/chrt.c:221
-#, fuzzy, c-format
+#, c-format
 msgid "failed to set pid %d's policy"
-msgstr "Gagal menset personality ke %s"
+msgstr "gagal menset kebijakan pid %d"
 
 #: schedutils/chrt.c:230
-#, fuzzy, c-format
+#, c-format
 msgid "failed to execute %s"
-msgstr "gagal membaca typescript berkas %s"
+msgstr "gagal menjalankan %s"
 
 #: schedutils/ionice.c:57
-#, fuzzy
 msgid "ioprio_get failed"
-msgstr "openpty gagal\n"
+msgstr "ioprio_get gagal"
 
 #: schedutils/ionice.c:75
-#, fuzzy
 msgid "ioprio_set failed"
-msgstr "openpty gagal\n"
+msgstr "ioprio_set gagal"
 
 #: schedutils/ionice.c:81
 #, c-format
@@ -9614,25 +9349,38 @@ msgid ""
 "  -h                  this help\n"
 "\n"
 msgstr ""
+"\n"
+"ionice - set atau dapatkan kelas dan prioritas antrian dalam proses.\n"
+"\n"
+"Penggunaan:\n"
+"  ionice [ pilihan ] -p <pid> [<pid> ...]\n"
+"  ionice [ pilihan ] <perintah> [<arg> ...]\n"
+"\n"
+"Pilihan:\n"
+"  -n <datakelas>      data kelas (0-7, lebih rendah menjadi prioritas lebih tinggi)\n"
+"  -c <kelas>          kelas antrian\n"
+"                      1: waktu-nyata, 2: usaha-terbaik, 3: diam\n"
+"  -t                  abaikan kegagalan\n"
+"  -h                  bantuan ini\n"
+"\n"
 
 #: schedutils/ionice.c:110 schedutils/ionice.c:112
-#, fuzzy, c-format
+#, c-format
 msgid "cannot parse number '%s'"
-msgstr "tidak dapat membuka %s"
+msgstr "tidak dapat mendapatkan angka '%s'"
 
 #: schedutils/ionice.c:157
 msgid "ignoring given class data for idle class"
-msgstr ""
+msgstr "mengabaikan data kelas yang diberikan untuk kelas kosong"
 
 #: schedutils/ionice.c:161
 #, c-format
 msgid "bad prio class %d"
-msgstr ""
+msgstr "prioritas kelas %d buruk"
 
 #: schedutils/ionice.c:185
-#, fuzzy
 msgid "execvp failed"
-msgstr "gagal eksekusi\n"
+msgstr "gagal eksekusi"
 
 #: sys-utils/ctrlaltdel.c:27
 #, c-format
@@ -9650,19 +9398,16 @@ msgid ""
 "File %s, For threshold value %lu, Maximum characters in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
-"File %s, Untuk nilai threshold %lu, Maksimal character dalam fifo adalah %"
-"d,\n"
+"File %s, Untuk nilai threshold %lu, Maksimal character dalam fifo adalah %d,\n"
 "dan maksimum dari kecepatan transfer dalam characters/detik adalah %f\n"
 
 #: sys-utils/cytune.c:125
 #, c-format
 msgid ""
-"File %s, For threshold value %lu and timrout value %lu, Maximum characters "
-"in fifo were %d,\n"
+"File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
-"File %s, Untuk nilai threshold %lu dan nilai timrout %lu, Maksimal "
-"characters dalam fifo adalah %d,\n"
+"File %s, Untuk nilai threshold %lu dan nilai timrout %lu, Maksimal characters dalam fifo adalah %d,\n"
 "dan maksimum dari kecepatan transfer dalam characters/detik adalah %f\n"
 
 #: sys-utils/cytune.c:189
@@ -9692,12 +9437,8 @@ msgstr "Nilai dafault waktu tidak valid: %s\n"
 
 #: sys-utils/cytune.c:238
 #, c-format
-msgid ""
-"Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
-"[-g|-G] file [file...]\n"
-msgstr ""
-"Penggunaan: %s [-q [-i interval]] ([-s nilai]|[-S nilai]) ([-t nilai]|[-T "
-"nilai]) [-g|-G] file [file...]\n"
+msgid "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) [-g|-G] file [file...]\n"
+msgstr "Penggunaan: %s [-q [-i interval]] ([-s nilai]|[-S nilai]) ([-t nilai]|[-T nilai]) [-g|-G] file [file...]\n"
 
 #: sys-utils/cytune.c:250 sys-utils/cytune.c:269 sys-utils/cytune.c:289
 #: sys-utils/cytune.c:339
@@ -9750,10 +9491,8 @@ msgstr "Tidak dapat mengisukan CYGETMON di %s: %s\n"
 
 #: sys-utils/cytune.c:418
 #, c-format
-msgid ""
-"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
-msgstr ""
-"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgstr "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 
 #: sys-utils/cytune.c:424
 #, c-format
@@ -9762,10 +9501,8 @@ msgstr "   %f int/sec; %f rec, %f send (char/sec)\n"
 
 #: sys-utils/cytune.c:429
 #, c-format
-msgid ""
-"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
-msgstr ""
-"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgstr "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 
 #: sys-utils/cytune.c:435
 #, c-format
@@ -9793,39 +9530,54 @@ msgid ""
 "  -h  --help       Display this text\n"
 "  -V  --version    Display version\n"
 msgstr ""
+"Penggunaan: %1$s [-sxun][-w #] fd#\n"
+"            %1$s [-sxon][-w #] berkas [-c] perintah...\n"
+"            %1$s [-sxon][-w #] direktori [-c] perintah...\n"
+"  -s  --shared     Dapatkan sebuah kunci terbagi\n"
+"  -x  --exclusive  Dapatkan sebuah kunci ekslusive\n"
+"  -u  --unlock     Hapus sebuah kunci\n"
+"  -n  --nonblock   Gagalkan daripada menunggu\n"
+"  -w  --timeout    Tunggu beberapa saat dengan lama terbatas\n"
+"  -o  --close      Tutup berkas deskripsi sebelum menjalankan perintah\n"
+"  -c  --command    Jalankan sebuah kata perintah tunggal melalui shell\n"
+"  -h  --help       Tampilkan teks ini\n"
+"  -V  --version    Tampilkan versi\n"
 
 #: sys-utils/flock.c:192
-#, fuzzy, c-format
+#, c-format
 msgid "%s: %s requires exactly one command argument\n"
-msgstr "%s membutuhkan sebuah argument\n"
+msgstr "%s: %s membutuhkan tepat sebuah argument perintah\n"
 
 #: sys-utils/flock.c:219
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot open lock file %s: %s\n"
-msgstr "%s: tidak dapat membuka %s: %s\n"
+msgstr "%s: tidak dapat membuka berkas kunci%s: %s\n"
 
 #: sys-utils/flock.c:231
-#, fuzzy, c-format
+#, c-format
 msgid "%s: bad number: %s\n"
-msgstr "%s: nilai tidak baik\n"
+msgstr "%s: angka buruk: %s\n"
 
 #: sys-utils/flock.c:238
 #, c-format
 msgid "%s: requires file descriptor, file or directory\n"
-msgstr ""
+msgstr "%s: membutuhkan berkas deskripsi, berkas atau direktori\n"
 
 #: sys-utils/flock.c:294
-#, fuzzy, c-format
+#, c-format
 msgid "%s: fork failed: %s\n"
-msgstr "gagal fork\n"
+msgstr "%s: gagal fork: %s\n"
 
 #: sys-utils/ipcmk.c:84
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage: %s [options]\n"
 "\n"
-msgstr "Penggunaan: %s [opsi] perangkat ...\n"
+msgstr ""
+"\n"
+"Penggunaan: %s [pilihan]\n"
+"\n"
 
 #: sys-utils/ipcmk.c:86
 #, c-format
@@ -9835,50 +9587,48 @@ msgid ""
 "  -Q            create message queue\n"
 "  -p <mode>     permission for the resource (default is 0644)\n"
 msgstr ""
+"  -M <besar>    buat bagian memori terbagi dalam ukuran <besar>\n"
+"  -S <nsems>    buat rangkaian semaphor dengan <nsems> elemen\n"
+"  -Q            buat antrian pesan\n"
+"  -p <mode>     ijin untuk sumber daya (baku adalah 0644)\n"
 
 #: sys-utils/ipcmk.c:90
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "For more information see ipcmk(1).\n"
 "\n"
 msgstr ""
 "\n"
-"Untuk informasi lebih lanjut lihat setarch(8).\n"
+"Untuk informasi lebih lanjut lihat ipcmk(1).\n"
+"\n"
 
 #: sys-utils/ipcmk.c:142
 msgid "create share memory failed"
-msgstr ""
+msgstr "pembuatan memori terbagi gagal"
 
 #: sys-utils/ipcmk.c:144
-#, fuzzy, c-format
+#, c-format
 msgid "Shared memory id: %d\n"
-msgstr ""
-"\n"
-"Bagian memory share shmid=%d\n"
+msgstr "Identitas memori terbagi: %d\n"
 
 #: sys-utils/ipcmk.c:150
 msgid "create message queue failed"
-msgstr ""
+msgstr "pembuatan atrian pesan gagal"
 
 #: sys-utils/ipcmk.c:152
-#, fuzzy, c-format
+#, c-format
 msgid "Message queue id: %d\n"
-msgstr ""
-"\n"
-"Antrian Pesan msgid=%d\n"
+msgstr "Identitas antrian pesan: %d\n"
 
 #: sys-utils/ipcmk.c:158
-#, fuzzy
 msgid "create semaphore failed"
-msgstr "semaphores yang dialokasikan = %d\n"
+msgstr "pembuatan semaphor gagal"
 
 #: sys-utils/ipcmk.c:160
-#, fuzzy, c-format
+#, c-format
 msgid "Semaphore id: %d\n"
-msgstr ""
-"\n"
-"Semaphore Array semid=%d\n"
+msgstr "Identitas semaphor: %d\n"
 
 #: sys-utils/ipcrm.c:66
 #, c-format
@@ -9917,7 +9667,7 @@ msgstr ""
 #: sys-utils/ipcrm.c:181
 #, c-format
 msgid "%s: illegal option -- %c\n"
-msgstr "%s: opsi illegal -- %c\n"
+msgstr "%s: pilihan illegal -- %c\n"
 
 #: sys-utils/ipcrm.c:193
 #, c-format
@@ -9983,11 +9733,8 @@ msgstr "\t%s -h untuk bantuan.\n"
 
 #: sys-utils/ipcs.c:128
 #, c-format
-msgid ""
-"%s provides information on ipc facilities for which you have read access.\n"
-msgstr ""
-"%s memberikan informasi di fasilitas ipc dimana anda memiliki ijin untuk "
-"membaca.\n"
+msgid "%s provides information on ipc facilities for which you have read access.\n"
+msgstr "%s memberikan informasi di fasilitas ipc dimana anda memiliki ijin untuk membaca.\n"
 
 #: sys-utils/ipcs.c:130
 #, c-format
@@ -10380,9 +10127,8 @@ msgid "messages"
 msgstr "pesan"
 
 #: sys-utils/ipcs.c:593
-#, fuzzy
 msgid "shmctl failed"
-msgstr "fsync gagal"
+msgstr "shmctl gagal"
 
 #: sys-utils/ipcs.c:595
 #, c-format
@@ -10424,9 +10170,8 @@ msgid "change_time=%-26.24s\n"
 msgstr "change_time=%-26.24s\n"
 
 #: sys-utils/ipcs.c:619
-#, fuzzy
 msgid "msgctl failed"
-msgstr "fsync gagal"
+msgstr "msgctl gagal"
 
 #: sys-utils/ipcs.c:621
 #, c-format
@@ -10458,9 +10203,8 @@ msgid "rcv_time=%-26.24s\n"
 msgstr "rcv_time=%-26.24s\n"
 
 #: sys-utils/ipcs.c:652 sys-utils/ipcs.c:674
-#, fuzzy
 msgid "semctl failed"
-msgstr "gagal seek"
+msgstr "semctl gagal"
 
 #: sys-utils/ipcs.c:654
 #, c-format
@@ -10545,7 +10289,7 @@ msgstr "ldattach dari %s\n"
 
 #: sys-utils/ldattach.c:182 text-utils/tailf.c:195
 msgid "invalid option"
-msgstr "opsi tidak valid"
+msgstr "pilihan tidak valid"
 
 #: sys-utils/ldattach.c:194
 #, c-format
@@ -10581,46 +10325,42 @@ msgid "cannot daemonize"
 msgstr "tidak dapat daemonize"
 
 #: sys-utils/lscpu.c:64
-#, fuzzy
 msgid "none"
-msgstr "Kosong"
+msgstr "kosong"
 
 #: sys-utils/lscpu.c:65
 msgid "para"
-msgstr ""
+msgstr "para"
 
 #: sys-utils/lscpu.c:66
 msgid "full"
-msgstr ""
+msgstr "penuh"
 
 #: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:431
-#, fuzzy, c-format
+#, c-format
 msgid "error: %s"
-msgstr "RE error: "
+msgstr "error: %s"
 
 #: sys-utils/lscpu.c:154
-#, fuzzy, c-format
+#, c-format
 msgid "error parse: %s"
-msgstr "error dalam membaca %s\n"
+msgstr "error mengambil: %s"
 
 #: sys-utils/lscpu.c:176
-#, fuzzy
 msgid "error: strdup failed"
-msgstr "gagal menulis ke stdout"
+msgstr "error: strdup gagal"
 
 #: sys-utils/lscpu.c:259
-#, fuzzy
 msgid "error: uname failed"
-msgstr "error: UUID parsing gagal"
+msgstr "error: uname gagal"
 
 #: sys-utils/lscpu.c:481
-#, fuzzy
 msgid "error: malloc failed"
-msgstr "malloc gagal"
+msgstr "error: malloc gagal"
 
 #: sys-utils/lscpu.c:496
 msgid "error: /sys filesystem is not accessable."
-msgstr ""
+msgstr "error: sistem berkas /sys tidak dapat diakses."
 
 #: sys-utils/lscpu.c:514
 #, c-format
@@ -10630,65 +10370,68 @@ msgid ""
 "# starting from zero.\n"
 "# CPU,Core,Socket,Node"
 msgstr ""
+"# Berikut adalah format yang dapat diambil, yang dapat dimasukan ke\n"
+"# aplikasi lain. Setiap bagian yang berbeda dalam setiap kolom memiliki\n"
+"# ID unik berawal dari nol.\n"
+"# CPU,Core,Soket,Node"
 
 #: sys-utils/lscpu.c:580
 msgid "Thread(s) per core:"
-msgstr ""
+msgstr "Thread(s) setiap inti:"
 
 #: sys-utils/lscpu.c:581
 msgid "Core(s) per socket:"
-msgstr ""
+msgstr "Inti setiap soket:"
 
 #: sys-utils/lscpu.c:582
 msgid "CPU socket(s):"
-msgstr ""
+msgstr "CPU soket:"
 
 #: sys-utils/lscpu.c:586
 msgid "NUMA node(s):"
-msgstr ""
+msgstr "Titik NUMA:"
 
 #: sys-utils/lscpu.c:588
 msgid "Vendor ID:"
-msgstr ""
+msgstr "ID Pembuat:"
 
 #: sys-utils/lscpu.c:590
 msgid "CPU family:"
-msgstr ""
+msgstr "Keluarga CPU:"
 
 #: sys-utils/lscpu.c:592
 msgid "Model:"
-msgstr ""
+msgstr "Model:"
 
 #: sys-utils/lscpu.c:594
 msgid "Stepping:"
-msgstr ""
+msgstr "Stepping:"
 
 #: sys-utils/lscpu.c:596
 msgid "CPU MHz:"
-msgstr ""
+msgstr "CPU MHz:"
 
 #: sys-utils/lscpu.c:599 sys-utils/lscpu.c:601
-#, fuzzy
 msgid "Virtualization:"
-msgstr "Keadaan lama:\n"
+msgstr "Virtualisasi:"
 
 #: sys-utils/lscpu.c:604
 msgid "Hypervisor vendor:"
-msgstr ""
+msgstr "Pembuat Hypervisor:"
 
 #: sys-utils/lscpu.c:605
 msgid "Virtualization type:"
-msgstr ""
+msgstr "Tipe virtualisasi:"
 
 #: sys-utils/lscpu.c:613
 #, c-format
 msgid "%s cache:"
-msgstr ""
+msgstr "%s persediaan:"
 
 #: sys-utils/lscpu.c:621
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [option]\n"
-msgstr "Penggunaan: %s [opsi] perangkat ...\n"
+msgstr "Penggunaan: %s [pilihan]\n"
 
 #: sys-utils/lscpu.c:624
 msgid ""
@@ -10698,21 +10441,24 @@ msgid ""
 "  -p, --parse    print out in parsable instead of printable format.\n"
 "  -s, --sysroot  use the directory as a new system root.\n"
 msgstr ""
+"Informasi pembantu arsitektur CPU\n"
+"\n"
+"  -h, --help     informasi penggunaan\n"
+"  -p, --parse    tampilkan dalam bentuk yang dapat diambil daripada format tercetak.\n"
+"  -s, --sysroot   gunakan direktori sebagai sistem root baru.\n"
 
 #: sys-utils/lscpu.c:673
-#, fuzzy, c-format
+#, c-format
 msgid "error: change working directory to %s."
-msgstr "error mengubah mode dari %s: %s\n"
+msgstr "error: mengubah direktori kerja ke %s."
 
 #: sys-utils/rdev.c:77
 msgid "usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
 msgstr "penggunaan: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
 
 #: sys-utils/rdev.c:78
-msgid ""
-"  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
-msgstr ""
-"  rdev /dev/fd0  (atau rdev /linux, etc.) tampilkan ROOT device yang dipakai"
+msgid "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
+msgstr "  rdev /dev/fd0  (atau rdev /linux, etc.) tampilkan ROOT device yang dipakai"
 
 #: sys-utils/rdev.c:79
 msgid "  rdev /dev/fd0 /dev/hda2         sets ROOT to /dev/hda2"
@@ -10747,11 +10493,8 @@ msgid "  vidmode ...                     same as rdev -v"
 msgstr "  vidmode ...                     sama dengan rdev -v"
 
 #: sys-utils/rdev.c:87
-msgid ""
-"Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
-msgstr ""
-"Catatan: mode video adalah: -3=Tanya, -2=Extended, -1=NormalVga, 1=kunci1, "
-"2=kunci2,..."
+msgid "Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
+msgstr "Catatan: mode video adalah: -3=Tanya, -2=Extended, -1=NormalVga, 1=kunci1, 2=kunci2,..."
 
 #: sys-utils/rdev.c:88
 msgid "      use -R 1 to mount root readonly, -R 0 for read/write."
@@ -10783,7 +10526,7 @@ msgid ""
 "\t -n            disable byte order auto-detection\n"
 "\t -V            print version and exit\n"
 msgstr ""
-"%s: Penggunaan: \"%s [opsi]\n"
+"%s: Penggunaan: \"%s [pilihan]\n"
 "\t -m <mapfile> (defaults: \"%s\" dan \n"
 "\t\t\t\t  \"%s\")\n"
 "\t -p <pro-file> (default: \"%s\")\n"
@@ -10805,9 +10548,7 @@ msgstr "readprofile: error dalam menulis %s: %s\n"
 #: sys-utils/readprofile.c:268
 #, c-format
 msgid "Assuming reversed byte order. Use -n to force native byte order.\n"
-msgstr ""
-"Mengasumsikan urutan byte terbalik. Gunakan -n untuk memaksa urutan byte "
-"asal.\n"
+msgstr "Mengasumsikan urutan byte terbalik. Gunakan -n untuk memaksa urutan byte asal.\n"
 
 #: sys-utils/readprofile.c:284
 #, c-format
@@ -10834,7 +10575,7 @@ msgid "total"
 msgstr "total"
 
 #: sys-utils/renice.c:53
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -10847,9 +10588,9 @@ msgid ""
 msgstr ""
 "\n"
 "Penggunaan:\n"
-" renice prioritas [-p|--pid] pid [... pid]\n"
-" renice prioritas  -g|--pgrp pgrp [... pgrp]\n"
-" renice prioritas  -u|--user user [... user]\n"
+" renice [-n] prioritas [-p|--pid] pid [... pid]\n"
+" renice [-n] prioritas  -g|--pgrp pgrp [... pgrp]\n"
+" renice [-n] prioritas  -u|--user user [... user]\n"
 " renice -h | --help\n"
 " renice -v | --version\n"
 "\n"
@@ -10895,7 +10636,7 @@ msgid ""
 "    -v | --verbose            verbose messages\n"
 "    -V | --version            show version\n"
 msgstr ""
-"penggunaan: %s [opsi]\n"
+"penggunaan: %s [pilihan]\n"
 "    -d | --device <perangkat> pilih perangkat rtc (rtc0|rtc1|...)\n"
 "    -l | --local              RTC menggunakan daerah waktu lokal\n"
 "    -m | --mode               standby|mem... mode tidur\n"
@@ -11013,17 +10754,16 @@ msgid ""
 "\n"
 "Options:\n"
 msgstr ""
-"Penggunaan: %s%s [opsi] [aplikasi [aplikasi argumen]]\n"
+"Penggunaan: %s%s [pilihan] [aplikasi [aplikasi argumen]]\n"
 "\n"
-"Opsi:\n"
+"Pilihan:\n"
 
 #: sys-utils/setarch.c:117
 #, c-format
 msgid ""
 " -h, --help               displays this help text\n"
 " -v, --verbose            says what options are being switched on\n"
-" -R, --addr-no-randomize  disables randomization of the virtual address "
-"space\n"
+" -R, --addr-no-randomize  disables randomization of the virtual address space\n"
 " -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
 " -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
 " -L, --addr-compat-layout changes the way virtual memory is allocated\n"
@@ -11032,14 +10772,12 @@ msgid ""
 " -I, --short-inode        turns on SHORT_INODE\n"
 " -S, --whole-seconds      turns on WHOLE_SECONDS\n"
 " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
-" -3, --3gb                limits the used address space to a maximum of 3 "
-"GB\n"
+" -3, --3gb                limits the used address space to a maximum of 3 GB\n"
 "     --4gb                ignored (for backward compatibility only)\n"
 msgstr ""
 " -h, --help               tampilkan pesan bantuan ini\n"
-" -v, --verbose            tampilkan opsi apa saja yang sedang aktif\n"
-" -R, --addr-no-randomize  menonaktifkan randomization dari virtual address "
-"space\n"
+" -v, --verbose            tampilkan pilihan apa saja yang sedang aktif\n"
+" -R, --addr-no-randomize  menonaktifkan randomization dari virtual address space\n"
 " -F, --fdpic-funcptrs     buat pointer fungsi menunjuk ke deskripsi\n"
 " -Z, --mmap-page-zero     aktifkan MMAP_PAGE_ZERO\n"
 " -L, --addr-compat-layout ubah cara pengalokasian memori virtual\n"
@@ -11049,8 +10787,7 @@ msgstr ""
 " -S, --whole-seconds      aktifkan WHOLE_SECODS\n"
 " -T, --sticky-timeouts    aktifkan STICKY_TIMEOUTS\n"
 " -3, --3gb                batasi penggunaan address space ke maksimal 3 GB\n"
-"     --4gb                abaikan (hanya untuk kompabilitas ke versi "
-"sebelumnya saja)\n"
+"     --4gb                abaikan (hanya untuk kompabilitas ke versi sebelumnya saja)\n"
 
 #: sys-utils/setarch.c:131
 #, c-format
@@ -11096,10 +10833,8 @@ msgid ""
 "          -a [on|off] | -o [on|off] | -C [on|off] | -q [on|off] | -s | \n"
 "          -T [on|off] ]\n"
 msgstr ""
-"Penggunaan: %s <perangkat> [ -i <IRQ> | -t <TIME> | -c <CHARS> | -w <WAIT> "
-"| \n"
-"               -a [on|off] | -o [nyala|mati] | -C [nyala|mati] | -q [nyala|"
-"mati] | -s | \n"
+"Penggunaan: %s <perangkat> [ -i <IRQ> | -t <TIME> | -c <CHARS> | -w <WAIT> | \n"
+"               -a [on|off] | -o [nyala|mati] | -C [nyala|mati] | -q [nyala|mati] | -s | \n"
 "               -T [nyala|mati] ]\n"
 
 #: sys-utils/tunelp.c:91
@@ -11163,7 +10898,7 @@ msgstr "%s menggunakan polling\n"
 #: text-utils/col.c:154
 #, c-format
 msgid "col: bad -l argument %s.\n"
-msgstr "col: argumen %s untuk opsi -l tidak baik.\n"
+msgstr "col: argumen %s untuk pilihan -l tidak baik.\n"
 
 #: text-utils/col.c:544
 #, c-format
@@ -11214,11 +10949,8 @@ msgstr "hexdump: angka skip tidak baik.\n"
 
 #: text-utils/hexsyntax.c:131
 #, c-format
-msgid ""
-"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
-msgstr ""
-"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n panjang] [-s skip] "
-"[file ...]\n"
+msgid "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
+msgstr "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n panjang] [-s skip] [file ...]\n"
 
 #: text-utils/more.c:256
 #, c-format
@@ -11228,7 +10960,7 @@ msgstr "penggunaan: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 #: text-utils/more.c:479
 #, c-format
 msgid "%s: unknown option \"-%c\"\n"
-msgstr "%s: opsi tidak diketahui \"-%c\"\n"
+msgstr "%s: pilihan tidak diketahui \"-%c\"\n"
 
 #: text-utils/more.c:511
 #, c-format
@@ -11303,13 +11035,11 @@ msgstr ""
 #: text-utils/more.c:1294
 msgid ""
 "\n"
-"Most commands optionally preceded by integer argument k.  Defaults in "
-"brackets.\n"
+"Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 "\n"
-"Sebagian besar perintah bisa diawali dengan argumen integer k. Default dalam "
-"brackets.\n"
+"Sebagian besar perintah bisa diawali dengan argumen integer k. Default dalam brackets.\n"
 "Bintang (*) mengindikasikan argument menjadi baru secara default.\n"
 
 #: text-utils/more.c:1301
@@ -11334,21 +11064,17 @@ msgid ""
 ":f                      Display current file name and line number\n"
 ".                       Repeat previous command\n"
 msgstr ""
-"<spasi>                 Tampilkan k baris berikutnya dari text [ukuran "
-"screen saat ini]\n"
-"z                       Tampilkan k baris berikutnya dari text [ukuran "
-"screen saat ini]*\n"
+"<spasi>                 Tampilkan k baris berikutnya dari text [ukuran screen saat ini]\n"
+"z                       Tampilkan k baris berikutnya dari text [ukuran screen saat ini]*\n"
 "<return>                Tampilkan k baris berikutnya dari text [1]*\n"
-"d atau ctrl-D           Scroll k baris [ ukuran scroll saat ini, inisial 11]"
-"*\n"
+"d atau ctrl-D           Scroll k baris [ ukuran scroll saat ini, inisial 11]*\n"
 "q atau Q atau <interup> Keluar dari more\n"
 "s                       Skip forward k baris dari text [1]\n"
 "f                       Skip forward k screenfuls dari text [1]\n"
 "b atau ctrl-B           Skip backwards k screenfuls dari text [1]\n"
 "'                       Pergi ke tempat dimana pencarian sebelumnya dimulai\n"
 "=                       Tampilkan nomor baris saat ini\n"
-"/<regular expression>   Pencarian untuk ke k kejadian dari regualar "
-"expression [1]\n"
+"/<regular expression>   Pencarian untuk ke k kejadian dari regualar expression [1]\n"
 "n                       Pencarian untuk ke k kejadian dari terakhir r.e [1]\n"
 "!<cmd> atau :!<cmd>     Menjalankan <cmd> dalam subshell\n"
 "v                       Start up /usr/bin/vi di baris saat ini\n"
@@ -11433,7 +11159,7 @@ msgstr "od: od(1) sudah ditinggalkan untuk hexdump(1).\n"
 #: text-utils/odsyntax.c:133
 #, c-format
 msgid "od: hexdump(1) compatibility doesn't support the -%c option%s\n"
-msgstr "od: hexdump(1) kompatibilitas tidak mensupport opsi -%c %s\n"
+msgstr "od: hexdump(1) kompatibilitas tidak mensupport pilihan -%c %s\n"
 
 #: text-utils/odsyntax.c:134
 msgid "; see strings(1)."
@@ -11495,35 +11221,53 @@ msgid ""
 "  n                       go to next file\n"
 "\n"
 "Many commands accept preceding numbers, for example:\n"
-"+1<newline> (next page); -1<newline> (previous page); 1<newline> (first "
-"page).\n"
+"+1<newline> (next page); -1<newline> (previous page); 1<newline> (first page).\n"
 "\n"
 "See pg(1) for more information.\n"
 "-------------------------------------------------------\n"
 msgstr ""
+"Semua hak dilindungi.\n"
+"-------------------------------------------------------\n"
+"  h                       lihat layar\n"
+"  q atau Q                berhenti dari aplikasi\n"
+"  <baris baru>            halaman selanjutnya\n"
+"  f                       lewatkan sebuah halaman kedepan\n"
+"  d atau ^D               selanjutnya setengah halaman\n"
+"  l                       baris selanjutnya\n"
+"  $                       halaman terakhir\n"
+"  /regex/                 cari kedepan untuk regex\n"
+"  ?regex? atau ^regex^    cari kebelakang untuk regex\n"
+"  . atau ^L               gambar ulang layar\n"
+"  w atau z                set ukuran halaman dan pergi ke halaman selanjutnya\n"
+"  s nama berkas           simpan berkas sekarang ke nama berkas\n"
+"  !perintah               keluar ke shell\n"
+"  p                       pergi ke berkas sebelumnya\n"
+"  n                       pergi ke berkas selanjutnya\n"
+"\n"
+"Banyak perintah menerima awalan angka, sebagai contoh:\n"
+"+1<baris baru> (halaman selanjutnya); -1<baris baru> (halaman sebelumnya); 1<baris baru> (halaman pertama).\n"
+"\n"
+"Lihat pg(1) untuk informasi lebih lanjut.\n"
+"-------------------------------------------------------\n"
 
 #: text-utils/pg.c:223
-#, fuzzy
 msgid "Out of memory\n"
-msgstr "Kekurangan memory"
+msgstr "Kehabisan memori\n"
 
 #: text-utils/pg.c:236
 #, c-format
-msgid ""
-"%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
-msgstr ""
-"%s: Penggunaan: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] "
-"[files]\n"
+msgid "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
+msgstr "%s: Penggunaan: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
 
 #: text-utils/pg.c:245
 #, c-format
 msgid "%s: option requires an argument -- %s\n"
-msgstr "%s: opsi membutuhkan sebuah argumen -- %s\n"
+msgstr "%s: pilihan membutuhkan sebuah argumen -- %s\n"
 
 #: text-utils/pg.c:253
 #, c-format
 msgid "%s: illegal option -- %s\n"
-msgstr "%s: opsi illegal -- %s\n"
+msgstr "%s: pilihan illegal -- %s\n"
 
 #: text-utils/pg.c:370
 msgid "...skipping forward\n"
@@ -11664,16 +11408,13 @@ msgstr "Kehabisan memori ketika meningkatkan buffer.\n"
 #~ msgid ""
 #~ "%s: Device '%s' contains a valid Sun disklabel.\n"
 #~ "This probably means creating v0 swap would destroy your partition table.\n"
-#~ "No swap was created. If you really want to create v0 swap on that "
-#~ "device,\n"
+#~ "No swap was created. If you really want to create v0 swap on that device,\n"
 #~ "use the -f option to force it.\n"
 #~ msgstr ""
 #~ "%s: Perangkat '%s' memiliki sebuah disklabel Sun yang valid.\n"
-#~ "Ini mungkin berarti membuat swap versi 0 akan menghancurkan tabel "
-#~ "partisi \n"
-#~ "anda, Swap tidak dibuat. Jika anda benar - benar ingin membuat swap v0 "
-#~ "di \n"
-#~ "perangkat itu, gunakan opsi -f untuk memaksanya.\n"
+#~ "Ini mungkin berarti membuat swap versi 0 akan menghancurkan tabel partisi \n"
+#~ "anda, Swap tidak dibuat. Jika anda benar - benar ingin membuat swap v0 di \n"
+#~ "perangkat itu, gunakan pilihan -f untuk memaksanya.\n"
 
 #~ msgid "namei: unable to get current directory - %s\n"
 #~ msgstr "namei: tidak dapat memperoleh direktori saat ini - %s\n"
@@ -11846,22 +11587,15 @@ msgstr "Kehabisan memori ketika meningkatkan buffer.\n"
 #~ msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 #~ msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 
-#~ msgid ""
-#~ "usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
-#~ msgstr ""
-#~ "penggunaan: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] "
-#~ "pengguna ]\n"
+#~ msgid "usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
+#~ msgstr "penggunaan: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] pengguna ]\n"
 
 #, fuzzy
 #~ msgid "Unknown option `%c' ignored"
-#~ msgstr "%s: opsi tidak diketahui \"-%c\"\n"
+#~ msgstr "%s: pilihan tidak diketahui \"-%c\"\n"
 
-#~ msgid ""
-#~ "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  "
-#~ "Exiting.\n"
-#~ msgstr ""
-#~ "Melebihi MAXENTRIES. Naikkan nilai ini dalam mkcramfs.c dan recompile. "
-#~ "Keluar.\n"
+#~ msgid "Exceeded MAXENTRIES.  Raise this value in mkcramfs.c and recompile.  Exiting.\n"
+#~ msgstr "Melebihi MAXENTRIES. Naikkan nilai ini dalam mkcramfs.c dan recompile. Keluar.\n"
 
 #~ msgid "Assuming pages of size %d (not %d)\n"
 #~ msgstr "Mengasumsikan ukuran page %d (bukan %d)\n"
@@ -11908,11 +11642,8 @@ msgstr "Kehabisan memori ketika meningkatkan buffer.\n"
 #~ msgid "%s: error: the label %s occurs on both %s and %s\n"
 #~ msgstr "%s: error: label %s terjadi di kedua %s dan %s\n"
 
-#~ msgid ""
-#~ "%s: could not open %s, so UUID and LABEL conversion cannot be done.\n"
-#~ msgstr ""
-#~ "%s: tidak dapat membuka %s, jadi UUID dan LABEL conversi tidak dapat "
-#~ "dilakukan.\n"
+#~ msgid "%s: could not open %s, so UUID and LABEL conversion cannot be done.\n"
+#~ msgstr "%s: tidak dapat membuka %s, jadi UUID dan LABEL conversi tidak dapat dilakukan.\n"
 
 #~ msgid "%s: bad UUID"
 #~ msgstr "%s: bad UUID"
@@ -11945,22 +11676,22 @@ msgstr "Kehabisan memori ketika meningkatkan buffer.\n"
 #~ msgstr "mount: memperoleh hp-h_length yang buruk\n"
 
 #~ msgid "mount: excessively long option argument\n"
-#~ msgstr "mount: opsi argument terlalu panjang\n"
+#~ msgstr "mount: pilihan argument terlalu panjang\n"
 
 #~ msgid "Warning: Unrecognized proto= option.\n"
-#~ msgstr "Peringatan: opsi proto= tidak dikenal.\n"
+#~ msgstr "Peringatan: pilihan proto= tidak dikenal.\n"
 
 #~ msgid "Warning: Option namlen is not supported.\n"
-#~ msgstr "Peringatan: Opsi namlen tidak dilayani.\n"
+#~ msgstr "Peringatan: Pilihan namlen tidak dilayani.\n"
 
 #~ msgid "unknown nfs mount parameter: %s=%d\n"
 #~ msgstr "parameter untuk nfs mount tidak diketahui: %s=%d\n"
 
 #~ msgid "Warning: option nolock is not supported.\n"
-#~ msgstr "Peringatan: opsi untuk nolock tidak dilayani.\n"
+#~ msgstr "Peringatan: pilihan untuk nolock tidak dilayani.\n"
 
 #~ msgid "unknown nfs mount option: %s%s\n"
-#~ msgstr "opsi untuk mount nfs tidak diketahui: %s%s\n"
+#~ msgstr "pilihan untuk mount nfs tidak diketahui: %s%s\n"
 
 #~ msgid "mount: got bad hp->h_length?\n"
 #~ msgstr "mount: memperoleh hp->h_length yang buruk?\n"
@@ -12011,10 +11742,7 @@ msgstr "Kehabisan memori ketika meningkatkan buffer.\n"
 #~ msgstr "%s: cramfs tidak valid--superblock buruk\n"
 
 #~ msgid "flock: unknown option, aborting.\n"
-#~ msgstr "flock: opsi tidak diketahui, dibatalkan.\n"
+#~ msgstr "flock: pilihan tidak diketahui, dibatalkan.\n"
 
-#~ msgid ""
-#~ "Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
-#~ msgstr ""
-#~ "Penggunaan: flock [--shared] [--timeout=detik] filename command {arg "
-#~ "arg...}\n"
+#~ msgid "Usage flock [--shared] [--timeout=seconds] filename command {arg arg...}\n"
+#~ msgstr "Penggunaan: flock [--shared] [--timeout=detik] filename command {arg arg...}\n"
