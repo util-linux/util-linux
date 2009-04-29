@@ -17,11 +17,11 @@
 #
 
 TS_TOPDIR=$(cd $(dirname $0) && pwd)
-comps=$(find $TS_TOPDIR/ts/ -type f -perm /a+x -regex "[^\.~]*" |  sort)
+comps=$(find $TS_TOPDIR/ts/ -type f -perm /a+x -regex ".*/[^\.~]*" |  sort)
 
 if [ -n "$1" ]; then
 	if [ -d "$TS_TOPDIR/ts/$1" ]; then
-		comps=$(find $TS_TOPDIR/ts/$1 -type f -perm /a+x -regex "[^\.~]*" |  sort)
+		comps=$(find $TS_TOPDIR/ts/$1 -type f -perm /a+x -regex ".*/[^\.~]*" |  sort)
 	else
 		echo
 		echo "usage: $0 [<component>]"
