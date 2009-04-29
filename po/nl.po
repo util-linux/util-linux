@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng-2.14.2-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-04-17 12:43+0200\n"
+"POT-Creation-Date: 2009-04-29 15:34+0200\n"
 "PO-Revision-Date: 2009-01-31 20:52+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -3721,7 +3721,7 @@ msgstr "Schijf %s bevat geen geldige partitietabel\n"
 msgid "Cannot open %s\n"
 msgstr "kan %s niet openen\n"
 
-#: fdisk/fdisk.c:2563 fdisk/sfdisk.c:2617
+#: fdisk/fdisk.c:2563 fdisk/sfdisk.c:2618
 #, c-format
 msgid "cannot open %s\n"
 msgstr "kan %s niet openen\n"
@@ -5556,7 +5556,7 @@ msgid "%s -An device\t activate partition n, inactivate the other ones\n"
 msgstr ""
 "%s -An apparaat        partitie n activeren, alle andere de-activeren\n"
 
-#: fdisk/sfdisk.c:2462
+#: fdisk/sfdisk.c:2463
 #, c-format
 msgid ""
 "\n"
@@ -5569,67 +5569,67 @@ msgstr ""
 "Het programma 'sfdisk' ondersteunt GPT niet.  Gebruik GNU 'parted'.\n"
 "\n"
 
-#: fdisk/sfdisk.c:2465
+#: fdisk/sfdisk.c:2466
 #, c-format
 msgid "Use the --force flag to overrule this check.\n"
 msgstr "Gebruik '--force' om deze controle over te slaan.\n"
 
-#: fdisk/sfdisk.c:2504
+#: fdisk/sfdisk.c:2505
 msgid "no command?\n"
 msgstr "geen opdracht?\n"
 
-#: fdisk/sfdisk.c:2636
+#: fdisk/sfdisk.c:2637
 #, c-format
 msgid "total: %llu blocks\n"
 msgstr "totaal: %llu blokken\n"
 
-#: fdisk/sfdisk.c:2679
+#: fdisk/sfdisk.c:2680
 msgid "usage: sfdisk --print-id device partition-number\n"
 msgstr "Gebruik:  sfdisk --print-id apparaat partitienummer\n"
 
-#: fdisk/sfdisk.c:2681
+#: fdisk/sfdisk.c:2682
 msgid "usage: sfdisk --change-id device partition-number Id\n"
 msgstr "Gebruik:  sfdisk --change-id apparaat partitienummer ID\n"
 
-#: fdisk/sfdisk.c:2683
+#: fdisk/sfdisk.c:2684
 msgid "usage: sfdisk --id device partition-number [Id]\n"
 msgstr "Gebruik:  sfdisk --id apparaat partitienummer [ID]\n"
 
-#: fdisk/sfdisk.c:2690
+#: fdisk/sfdisk.c:2691
 msgid "can specify only one device (except with -l or -s)\n"
 msgstr "slechts één apparaat is mogelijk (behalve met '-l' of '-s')\n"
 
-#: fdisk/sfdisk.c:2716
+#: fdisk/sfdisk.c:2717
 #, c-format
 msgid "cannot open %s read-write\n"
 msgstr "kan %s niet openen voor lezen-en-schrijven\n"
 
-#: fdisk/sfdisk.c:2718
+#: fdisk/sfdisk.c:2719
 #, c-format
 msgid "cannot open %s for reading\n"
 msgstr "kan %s niet openen om te lezen\n"
 
-#: fdisk/sfdisk.c:2743
+#: fdisk/sfdisk.c:2744
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: OK\n"
 
-#: fdisk/sfdisk.c:2762 fdisk/sfdisk.c:2795
+#: fdisk/sfdisk.c:2763 fdisk/sfdisk.c:2796
 #, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s: %ld cilinders, %ld koppen, %ld sectoren/spoor\n"
 
-#: fdisk/sfdisk.c:2814
+#: fdisk/sfdisk.c:2815
 #, c-format
 msgid "Cannot get size of %s\n"
 msgstr "kan grootte van %s niet opvragen\n"
 
-#: fdisk/sfdisk.c:2894
+#: fdisk/sfdisk.c:2895
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "onjuiste 'opstartbaar'-vlag: 0x%x in plaats van 0x80\n"
 
-#: fdisk/sfdisk.c:2912 fdisk/sfdisk.c:2967 fdisk/sfdisk.c:3000
+#: fdisk/sfdisk.c:2913 fdisk/sfdisk.c:2968 fdisk/sfdisk.c:3001
 msgid ""
 "Done\n"
 "\n"
@@ -5637,7 +5637,7 @@ msgstr ""
 "Voltooid\n"
 "\n"
 
-#: fdisk/sfdisk.c:2921
+#: fdisk/sfdisk.c:2922
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -5646,35 +5646,35 @@ msgstr ""
 "U hebt %d actieve, primaire partities.  Dit maakt niets uit voor LILO,\n"
 "maar DOS MBR start alleen op van een schijf met 1 actieve partitie.\n"
 
-#: fdisk/sfdisk.c:2937
+#: fdisk/sfdisk.c:2938
 #, c-format
 msgid "partition %s has id %x and is not hidden\n"
 msgstr "partitie %s heeft ID %x en is niet verborgen\n"
 
-#: fdisk/sfdisk.c:2996
+#: fdisk/sfdisk.c:2997
 #, c-format
 msgid "Bad Id %lx\n"
 msgstr "Ongeldig ID %lx\n"
 
-#: fdisk/sfdisk.c:3013
+#: fdisk/sfdisk.c:3014
 msgid "This disk is currently in use.\n"
 msgstr "Deze schijf is op dit moment in gebruik.\n"
 
-#: fdisk/sfdisk.c:3032
+#: fdisk/sfdisk.c:3033
 #, c-format
 msgid "Fatal error: cannot find %s\n"
 msgstr "Fatale fout: kan %s niet vinden\n"
 
-#: fdisk/sfdisk.c:3035
+#: fdisk/sfdisk.c:3036
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "Waarschuwing: %s is geen blok-apparaat\n"
 
-#: fdisk/sfdisk.c:3041
+#: fdisk/sfdisk.c:3042
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr "Even controleren of iemand deze schijf nu gebruikt...\n"
 
-#: fdisk/sfdisk.c:3043
+#: fdisk/sfdisk.c:3044
 msgid ""
 "\n"
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -5687,30 +5687,30 @@ msgstr ""
 "wisselgeheugenpartities op deze schijf uit.\n"
 "Of gebruik optie '--no-reread' om deze controle te onderdrukken.\n"
 
-#: fdisk/sfdisk.c:3047
+#: fdisk/sfdisk.c:3048
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "Gebruik --force om alle controles te negeren.\n"
 
-#: fdisk/sfdisk.c:3051
+#: fdisk/sfdisk.c:3052
 msgid "OK\n"
 msgstr "OK\n"
 
-#: fdisk/sfdisk.c:3060
+#: fdisk/sfdisk.c:3061
 #, c-format
 msgid "Old situation:\n"
 msgstr "Oude situatie:\n"
 
-#: fdisk/sfdisk.c:3064
+#: fdisk/sfdisk.c:3065
 #, c-format
 msgid "Partition %d does not exist, cannot change it\n"
 msgstr "Partitie %d bestaat niet; kan deze dus niet veranderen!\n"
 
-#: fdisk/sfdisk.c:3072
+#: fdisk/sfdisk.c:3073
 #, c-format
 msgid "New situation:\n"
 msgstr "Nieuwe situatie:\n"
 
-#: fdisk/sfdisk.c:3077
+#: fdisk/sfdisk.c:3078
 msgid ""
 "I don't like these partitions - nothing changed.\n"
 "(If you really want this, use the --force option.)\n"
@@ -5718,21 +5718,21 @@ msgstr ""
 "Hmm... vreemde partities -- er is niets gewijzigd.\n"
 "(Als u dit echt wilt, kunt u --force gebruiken.)\n"
 
-#: fdisk/sfdisk.c:3080
+#: fdisk/sfdisk.c:3081
 msgid "I don't like this - probably you should answer No\n"
 msgstr "Hmm... vreemde partities -- misschien moet u Nee antwoorden.\n"
 
-#: fdisk/sfdisk.c:3085
+#: fdisk/sfdisk.c:3086
 #, c-format
 msgid "Are you satisfied with this? [ynq] "
 msgstr "Bent u hiermee tevreden? [ynq] "
 
-#: fdisk/sfdisk.c:3087
+#: fdisk/sfdisk.c:3088
 #, c-format
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "Wilt u dit naar de schijf schrijven? [ynq] "
 
-#: fdisk/sfdisk.c:3092
+#: fdisk/sfdisk.c:3093
 #, c-format
 msgid ""
 "\n"
@@ -5741,16 +5741,16 @@ msgstr ""
 "\n"
 "sfdisk: voortijdig einde van de invoer\n"
 
-#: fdisk/sfdisk.c:3094
+#: fdisk/sfdisk.c:3095
 msgid "Quitting - nothing changed\n"
 msgstr "Gestopt -- er is niets gewijzigd.\n"
 
-#: fdisk/sfdisk.c:3100
+#: fdisk/sfdisk.c:3101
 #, c-format
 msgid "Please answer one of y,n,q\n"
 msgstr "Antwoord met 'y' (ja) of 'n' (nee) of 'q' (stoppen).\n"
 
-#: fdisk/sfdisk.c:3108
+#: fdisk/sfdisk.c:3109
 #, c-format
 msgid ""
 "Successfully wrote the new partition table\n"
@@ -5759,7 +5759,7 @@ msgstr ""
 "De nieuwe partitietabel is succesvol geschreven.\n"
 "\n"
 
-#: fdisk/sfdisk.c:3114
+#: fdisk/sfdisk.c:3115
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -6846,7 +6846,7 @@ msgstr "%s: gelezen: %m"
 msgid "%s: input overrun"
 msgstr "%s: invoeroverloop"
 
-#: login-utils/agetty.c:1203
+#: login-utils/agetty.c:1207
 #, c-format
 msgid ""
 "Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H "
@@ -6922,8 +6922,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "%s: PAM-fout -- gestopt: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:823
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:727
-#: mount/lomount.c:730
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:731
+#: mount/lomount.c:734
 msgid "Password: "
 msgstr "Wachtwoord: "
 
@@ -8477,58 +8477,58 @@ msgstr "fout bij wijzigen van eigenaar van %s: %s\n"
 msgid "can't rename %s to %s: %s\n"
 msgstr "kan %s niet hernoemen tot %s: %s\n"
 
-#: mount/lomount.c:364
+#: mount/lomount.c:368
 #, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", beginpunt %<PRIu64>"
 
-#: mount/lomount.c:367
+#: mount/lomount.c:371
 #, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", maximale grootte %<PRIu64>"
 
-#: mount/lomount.c:375
+#: mount/lomount.c:379
 #, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", codering %s (soort %<PRIu32>)"
 
-#: mount/lomount.c:388
+#: mount/lomount.c:392
 #, c-format
 msgid ", offset %d"
 msgstr ", beginpunt %d"
 
-#: mount/lomount.c:391
+#: mount/lomount.c:395
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", coderingssoort %d\n"
 
-#: mount/lomount.c:399
+#: mount/lomount.c:403
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: kan geen informatie verkrijgen over apparaat %s: %s\n"
 
-#: mount/lomount.c:410
+#: mount/lomount.c:414
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: kan apparaat %s niet openen: %s\n"
 
-#: mount/lomount.c:426 mount/lomount.c:458 mount/lomount.c:523
-#: mount/lomount.c:572
+#: mount/lomount.c:430 mount/lomount.c:462 mount/lomount.c:527
+#: mount/lomount.c:576
 #, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: map '/dev' bestaat niet."
 
-#: mount/lomount.c:437 mount/lomount.c:585
+#: mount/lomount.c:441 mount/lomount.c:589
 #, fuzzy, c-format
 msgid "%s: no permission to look at /dev/loop%s<N>"
 msgstr "%s: geen toegangsrechten tot /dev/loop#"
 
-#: mount/lomount.c:588
+#: mount/lomount.c:592
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: kan geen vrij lus-apparaat vinden"
 
-#: mount/lomount.c:591
+#: mount/lomount.c:595
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -8538,55 +8538,55 @@ msgstr ""
 "        lus-apparaat?  (Dan moet u de kernel opnieuw compileren,\n"
 "        of misschien een 'modprobe loop' doen?)"
 
-#: mount/lomount.c:621
+#: mount/lomount.c:625
 msgid "Out of memory while reading passphrase"
 msgstr "Onvoldoende geheugen beschikbaar tijdens lezen van wachtwoord"
 
-#: mount/lomount.c:664
+#: mount/lomount.c:668
 #, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "waarschuwing: %s is al gerelateerd aan %s\n"
 
-#: mount/lomount.c:680
+#: mount/lomount.c:684
 #, c-format
 msgid "warning: %s: is write-protected, using read-only.\n"
 msgstr ""
 "waarschuwing: %s is schrijfbeveiligd en wordt als alleen-lezen "
 "aangekoppeld.\n"
 
-#: mount/lomount.c:716
+#: mount/lomount.c:720
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "Kan pagina's niet vastzetten in het geheugen -- gestopt\n"
 
-#: mount/lomount.c:743
+#: mount/lomount.c:747
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr "ioctl(LOOP_SET_FD) is mislukt: %s\n"
 
-#: mount/lomount.c:800
+#: mount/lomount.c:804
 #, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu,%llu) is gelukt\n"
 
-#: mount/lomount.c:821
+#: mount/lomount.c:825
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "lus-apparaat %s is uitgeschakeld\n"
 
-#: mount/lomount.c:825
+#: mount/lomount.c:829
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "kan lus-apparaat %s niet uitschakelen: %s\n"
 
-#: mount/lomount.c:836
+#: mount/lomount.c:840
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Deze versie van 'mount' is gecompileerd zonder lus-ondersteuning.\n"
 "Hercompilatie is nodig.\n"
 
-#: mount/lomount.c:871
+#: mount/lomount.c:875
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8608,7 +8608,7 @@ msgstr ""
 "  %1$s -j | --associated <bestand> [-o <nummer>]      gerelateerden tonen\n"
 "  %1$s [opties] {-f|--find|<lus-apparaat>} <bestand>  instellen\n"
 
-#: mount/lomount.c:880
+#: mount/lomount.c:884
 #, c-format
 msgid ""
 "\n"
@@ -8635,22 +8635,22 @@ msgstr ""
 "       --show                apparaatnaam tonen (bij '-f <bestand>')\n"
 "  -v | --verbose             gedetailleerde uitvoer produceren\n"
 
-#: mount/lomount.c:1010 mount/lomount.c:1048
+#: mount/lomount.c:1014 mount/lomount.c:1052
 #, c-format
 msgid "Loop device is %s\n"
 msgstr "Lus-apparaat is %s\n"
 
-#: mount/lomount.c:1035
+#: mount/lomount.c:1039
 #, c-format
 msgid "stolen loop=%s...trying again\n"
 msgstr "afgepakt lus-apparaat=%s; ... nieuwe poging\n"
 
-#: mount/lomount.c:1045
+#: mount/lomount.c:1049
 #, c-format
 msgid "%s: %s: device is busy"
 msgstr "%s: apparaat %s is bezig"
 
-#: mount/lomount.c:1062
+#: mount/lomount.c:1066
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""

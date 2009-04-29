@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11b\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-04-17 12:43+0200\n"
+"POT-Creation-Date: 2009-04-29 15:34+0200\n"
 "PO-Revision-Date: 2001-05-24 16:03-03:00\n"
 "Last-Translator: Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -3690,7 +3690,7 @@ msgstr "O disco %s não contém uma tabela de partições válida\n"
 msgid "Cannot open %s\n"
 msgstr "Não foi possível abrir %s\n"
 
-#: fdisk/fdisk.c:2563 fdisk/sfdisk.c:2617
+#: fdisk/fdisk.c:2563 fdisk/sfdisk.c:2618
 #, c-format
 msgid "cannot open %s\n"
 msgstr "não foi possível abrir %s\n"
@@ -5546,7 +5546,7 @@ msgstr ""
 "%s -An dispositivo\n"
 " ativa a partição n, desativa as demais\n"
 
-#: fdisk/sfdisk.c:2462
+#: fdisk/sfdisk.c:2463
 #, c-format
 msgid ""
 "\n"
@@ -5555,67 +5555,67 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2465
+#: fdisk/sfdisk.c:2466
 #, fuzzy, c-format
 msgid "Use the --force flag to overrule this check.\n"
 msgstr "Use a opção --force para cancelar todas as verificações.\n"
 
-#: fdisk/sfdisk.c:2504
+#: fdisk/sfdisk.c:2505
 msgid "no command?\n"
 msgstr "nenhum comando?\n"
 
-#: fdisk/sfdisk.c:2636
+#: fdisk/sfdisk.c:2637
 #, fuzzy, c-format
 msgid "total: %llu blocks\n"
 msgstr "total: %d blocos\n"
 
-#: fdisk/sfdisk.c:2679
+#: fdisk/sfdisk.c:2680
 msgid "usage: sfdisk --print-id device partition-number\n"
 msgstr "Uso: sfdisk --print-id dispositivo número-partição\n"
 
-#: fdisk/sfdisk.c:2681
+#: fdisk/sfdisk.c:2682
 msgid "usage: sfdisk --change-id device partition-number Id\n"
 msgstr "Uso: sfdisk --change-id dispositivo número-partição ID\n"
 
-#: fdisk/sfdisk.c:2683
+#: fdisk/sfdisk.c:2684
 msgid "usage: sfdisk --id device partition-number [Id]\n"
 msgstr "Uso: sfdisk --id dispositivo número-partição [ID]\n"
 
-#: fdisk/sfdisk.c:2690
+#: fdisk/sfdisk.c:2691
 msgid "can specify only one device (except with -l or -s)\n"
 msgstr "pode especificar somente um dispositivo (exceto com -l ou -s)\n"
 
-#: fdisk/sfdisk.c:2716
+#: fdisk/sfdisk.c:2717
 #, fuzzy, c-format
 msgid "cannot open %s read-write\n"
 msgstr "não foi possível abrir %s\n"
 
-#: fdisk/sfdisk.c:2718
+#: fdisk/sfdisk.c:2719
 #, fuzzy, c-format
 msgid "cannot open %s for reading\n"
 msgstr "não foi possível abrir %s para leitura"
 
-#: fdisk/sfdisk.c:2743
+#: fdisk/sfdisk.c:2744
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: OK\n"
 
-#: fdisk/sfdisk.c:2762 fdisk/sfdisk.c:2795
+#: fdisk/sfdisk.c:2763 fdisk/sfdisk.c:2796
 #, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s: %ld cilindros, %ld cabeças, %ld setores/trilha\n"
 
-#: fdisk/sfdisk.c:2814
+#: fdisk/sfdisk.c:2815
 #, fuzzy, c-format
 msgid "Cannot get size of %s\n"
 msgstr "Não foi possível obter o tamanho de %s"
 
-#: fdisk/sfdisk.c:2894
+#: fdisk/sfdisk.c:2895
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "byte ativo inválido: 0x%x em vez de 0x80\n"
 
-#: fdisk/sfdisk.c:2912 fdisk/sfdisk.c:2967 fdisk/sfdisk.c:3000
+#: fdisk/sfdisk.c:2913 fdisk/sfdisk.c:2968 fdisk/sfdisk.c:3001
 msgid ""
 "Done\n"
 "\n"
@@ -5623,7 +5623,7 @@ msgstr ""
 "Concluído\n"
 "\n"
 
-#: fdisk/sfdisk.c:2921
+#: fdisk/sfdisk.c:2922
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -5632,35 +5632,35 @@ msgstr ""
 "Você possui %d partições primárias ativas. Isto não faz diferença para o\n"
 "LILO, mas o MBR DOS só inicializará em discos com uma partição ativa.\n"
 
-#: fdisk/sfdisk.c:2937
+#: fdisk/sfdisk.c:2938
 #, c-format
 msgid "partition %s has id %x and is not hidden\n"
 msgstr "a partição %s possui ID %x e não está escondida\n"
 
-#: fdisk/sfdisk.c:2996
+#: fdisk/sfdisk.c:2997
 #, c-format
 msgid "Bad Id %lx\n"
 msgstr "ID inválida: %lx\n"
 
-#: fdisk/sfdisk.c:3013
+#: fdisk/sfdisk.c:3014
 msgid "This disk is currently in use.\n"
 msgstr "Este disco está atualmente sendo usado.\n"
 
-#: fdisk/sfdisk.c:3032
+#: fdisk/sfdisk.c:3033
 #, c-format
 msgid "Fatal error: cannot find %s\n"
 msgstr "Erro fatal: não foi possível encontrar %s\n"
 
-#: fdisk/sfdisk.c:3035
+#: fdisk/sfdisk.c:3036
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "Aviso: %s não é um dispositivo de blocos\n"
 
-#: fdisk/sfdisk.c:3041
+#: fdisk/sfdisk.c:3042
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr "Verificando se ninguém está usando este disco no momento...\n"
 
-#: fdisk/sfdisk.c:3043
+#: fdisk/sfdisk.c:3044
 msgid ""
 "\n"
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -5673,30 +5673,30 @@ msgstr ""
 "todas as partições de permuta deste disco. Use a opção --no-reread para "
 "suprimir esta verificação.\n"
 
-#: fdisk/sfdisk.c:3047
+#: fdisk/sfdisk.c:3048
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "Use a opção --force para cancelar todas as verificações.\n"
 
-#: fdisk/sfdisk.c:3051
+#: fdisk/sfdisk.c:3052
 msgid "OK\n"
 msgstr "OK\n"
 
-#: fdisk/sfdisk.c:3060
+#: fdisk/sfdisk.c:3061
 #, c-format
 msgid "Old situation:\n"
 msgstr "Situação antiga:\n"
 
-#: fdisk/sfdisk.c:3064
+#: fdisk/sfdisk.c:3065
 #, c-format
 msgid "Partition %d does not exist, cannot change it\n"
 msgstr "A partição %d não existe; não é possível alterá-la.\n"
 
-#: fdisk/sfdisk.c:3072
+#: fdisk/sfdisk.c:3073
 #, c-format
 msgid "New situation:\n"
 msgstr "Situação nova:\n"
 
-#: fdisk/sfdisk.c:3077
+#: fdisk/sfdisk.c:3078
 msgid ""
 "I don't like these partitions - nothing changed.\n"
 "(If you really want this, use the --force option.)\n"
@@ -5704,21 +5704,21 @@ msgstr ""
 "Eu não gosto destas partições: nada foi alterado\n"
 "(se você realmente quiser usá-las, use a opção --force).\n"
 
-#: fdisk/sfdisk.c:3080
+#: fdisk/sfdisk.c:3081
 msgid "I don't like this - probably you should answer No\n"
 msgstr "Eu não gosto disto - provavelmente você deveria responder Não\n"
 
-#: fdisk/sfdisk.c:3085
+#: fdisk/sfdisk.c:3086
 #, c-format
 msgid "Are you satisfied with this? [ynq] "
 msgstr "Você está satisfeito com isto? [ynq] "
 
-#: fdisk/sfdisk.c:3087
+#: fdisk/sfdisk.c:3088
 #, c-format
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "Deseja gravar isto no disco? [ynq] "
 
-#: fdisk/sfdisk.c:3092
+#: fdisk/sfdisk.c:3093
 #, c-format
 msgid ""
 "\n"
@@ -5727,16 +5727,16 @@ msgstr ""
 "\n"
 "sfdisk: final de entrada prematuro\n"
 
-#: fdisk/sfdisk.c:3094
+#: fdisk/sfdisk.c:3095
 msgid "Quitting - nothing changed\n"
 msgstr "Saindo - nada foi alterado\n"
 
-#: fdisk/sfdisk.c:3100
+#: fdisk/sfdisk.c:3101
 #, c-format
 msgid "Please answer one of y,n,q\n"
 msgstr "Responda y, n ou q\n"
 
-#: fdisk/sfdisk.c:3108
+#: fdisk/sfdisk.c:3109
 #, c-format
 msgid ""
 "Successfully wrote the new partition table\n"
@@ -5745,7 +5745,7 @@ msgstr ""
 "Nova tabela de partições gravada com sucesso\n"
 "\n"
 
-#: fdisk/sfdisk.c:3114
+#: fdisk/sfdisk.c:3115
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -6843,7 +6843,7 @@ msgstr "%s: leitura: %m"
 msgid "%s: input overrun"
 msgstr "%s: entrada excedida"
 
-#: login-utils/agetty.c:1203
+#: login-utils/agetty.c:1207
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H "
@@ -6919,8 +6919,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: falha de PAM; abortando: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:823
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:727
-#: mount/lomount.c:730
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:731
+#: mount/lomount.c:734
 msgid "Password: "
 msgstr "Senha:"
 
@@ -8471,58 +8471,58 @@ msgstr "erro ao alterar o modo de %s: %s\n"
 msgid "can't rename %s to %s: %s\n"
 msgstr "não foi possível renomear %s para %s: %s\n"
 
-#: mount/lomount.c:364
+#: mount/lomount.c:368
 #, c-format
 msgid ", offset %<PRIu64>"
 msgstr ""
 
-#: mount/lomount.c:367
+#: mount/lomount.c:371
 #, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ""
 
-#: mount/lomount.c:375
+#: mount/lomount.c:379
 #, fuzzy, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr "Tipo de criptografia não suportado: %s\n"
 
-#: mount/lomount.c:388
+#: mount/lomount.c:392
 #, c-format
 msgid ", offset %d"
 msgstr ""
 
-#: mount/lomount.c:391
+#: mount/lomount.c:395
 #, fuzzy, c-format
 msgid ", encryption type %d\n"
 msgstr "Tipo de criptografia não suportado: %s\n"
 
-#: mount/lomount.c:399
+#: mount/lomount.c:403
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: não foi possível obter informações sobre o dispositivo %s: %s\n"
 
-#: mount/lomount.c:410
+#: mount/lomount.c:414
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: não foi possível abrir o dispositivo %s: %s\n"
 
-#: mount/lomount.c:426 mount/lomount.c:458 mount/lomount.c:523
-#: mount/lomount.c:572
+#: mount/lomount.c:430 mount/lomount.c:462 mount/lomount.c:527
+#: mount/lomount.c:576
 #, fuzzy, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: usuário \"%s\" não existe.\n"
 
-#: mount/lomount.c:437 mount/lomount.c:585
+#: mount/lomount.c:441 mount/lomount.c:589
 #, c-format
 msgid "%s: no permission to look at /dev/loop%s<N>"
 msgstr ""
 
-#: mount/lomount.c:588
+#: mount/lomount.c:592
 #, fuzzy, c-format
 msgid "%s: could not find any free loop device"
 msgstr "mount: não foi possível localizar nenhum dispositivo de laço livre"
 
-#: mount/lomount.c:591
+#: mount/lomount.c:595
 #, fuzzy, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -8533,52 +8533,52 @@ msgstr ""
 "       este kernel não conhece o dispositivo de laço\n"
 "       (se for este o caso, recompile ou use `insmod loop.o')."
 
-#: mount/lomount.c:621
+#: mount/lomount.c:625
 #, fuzzy
 msgid "Out of memory while reading passphrase"
 msgstr "Falta memória quando o buffer cresce.\n"
 
-#: mount/lomount.c:664
+#: mount/lomount.c:668
 #, fuzzy, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "O setor %d já está alocado\n"
 
-#: mount/lomount.c:680
+#: mount/lomount.c:684
 #, fuzzy, c-format
 msgid "warning: %s: is write-protected, using read-only.\n"
 msgstr "mount: %s%s é protegido contra gravação; montando somente para leitura"
 
-#: mount/lomount.c:716
+#: mount/lomount.c:720
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "Não é possível bloquear (lock) na memória, saindo\n"
 
-#: mount/lomount.c:743
+#: mount/lomount.c:747
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:800
+#: mount/lomount.c:804
 #, fuzzy, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%d): sucesso\n"
 
-#: mount/lomount.c:821
+#: mount/lomount.c:825
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): sucesso\n"
 
-#: mount/lomount.c:825
+#: mount/lomount.c:829
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: não foi possível excluir o dispositivo %s: %s\n"
 
-#: mount/lomount.c:836
+#: mount/lomount.c:840
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Este mount foi compilado sem suporte a laços. Recompile-o.\n"
 
-#: mount/lomount.c:871
+#: mount/lomount.c:875
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8599,7 +8599,7 @@ msgstr ""
 "  %s [ -e criptografia ] [ -o deslocamento ] dispositivo_laço arquivo # "
 "configuração\n"
 
-#: mount/lomount.c:880
+#: mount/lomount.c:884
 #, c-format
 msgid ""
 "\n"
@@ -8615,22 +8615,22 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1010 mount/lomount.c:1048
+#: mount/lomount.c:1014 mount/lomount.c:1052
 #, fuzzy, c-format
 msgid "Loop device is %s\n"
 msgstr "loop: não foi possível abrir o dispositivo %s: %s\n"
 
-#: mount/lomount.c:1035
+#: mount/lomount.c:1039
 #, c-format
 msgid "stolen loop=%s...trying again\n"
 msgstr ""
 
-#: mount/lomount.c:1045
+#: mount/lomount.c:1049
 #, fuzzy, c-format
 msgid "%s: %s: device is busy"
 msgstr "umount: %s: o dispositivo está ocupado"
 
-#: mount/lomount.c:1062
+#: mount/lomount.c:1066
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Não havia suporte a laço disponível quando da compilação. Recompile.\n"

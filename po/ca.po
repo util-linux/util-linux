@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-04-17 12:43+0200\n"
+"POT-Creation-Date: 2009-04-29 15:34+0200\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -3751,7 +3751,7 @@ msgstr "El disc %s no conté una taula de particions vàlida\n"
 msgid "Cannot open %s\n"
 msgstr "No es pot obrir %s\n"
 
-#: fdisk/fdisk.c:2563 fdisk/sfdisk.c:2617
+#: fdisk/fdisk.c:2563 fdisk/sfdisk.c:2618
 #, c-format
 msgid "cannot open %s\n"
 msgstr "no es pot obrir %s\n"
@@ -5614,7 +5614,7 @@ msgstr "%s dispositiu n1 n2 ... activa particions n1 ..., desactiva la resta\n"
 msgid "%s -An device\t activate partition n, inactivate the other ones\n"
 msgstr "%s -Un perifèric\t activa la partició n, desactiva la resta\n"
 
-#: fdisk/sfdisk.c:2462
+#: fdisk/sfdisk.c:2463
 #, c-format
 msgid ""
 "\n"
@@ -5623,67 +5623,67 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2465
+#: fdisk/sfdisk.c:2466
 #, fuzzy, c-format
 msgid "Use the --force flag to overrule this check.\n"
 msgstr "Useu el senyalador --force per a obviar totes les comprovacions.\n"
 
-#: fdisk/sfdisk.c:2504
+#: fdisk/sfdisk.c:2505
 msgid "no command?\n"
 msgstr "cap ordre?\n"
 
-#: fdisk/sfdisk.c:2636
+#: fdisk/sfdisk.c:2637
 #, c-format
 msgid "total: %llu blocks\n"
 msgstr "total: %llu blocs\n"
 
-#: fdisk/sfdisk.c:2679
+#: fdisk/sfdisk.c:2680
 msgid "usage: sfdisk --print-id device partition-number\n"
 msgstr "forma d'ús: sfdisk --print-id dispositiu número_partició\n"
 
-#: fdisk/sfdisk.c:2681
+#: fdisk/sfdisk.c:2682
 msgid "usage: sfdisk --change-id device partition-number Id\n"
 msgstr "forma d'ús: sfdisk --change-id dispositiu número_partició Id\n"
 
-#: fdisk/sfdisk.c:2683
+#: fdisk/sfdisk.c:2684
 msgid "usage: sfdisk --id device partition-number [Id]\n"
 msgstr "forma d'ús: sfdisk --id dispositiu partició_número [Id]\n"
 
-#: fdisk/sfdisk.c:2690
+#: fdisk/sfdisk.c:2691
 msgid "can specify only one device (except with -l or -s)\n"
 msgstr "només podeu especificar un dispositiu (excepte amb -l o -s)\n"
 
-#: fdisk/sfdisk.c:2716
+#: fdisk/sfdisk.c:2717
 #, c-format
 msgid "cannot open %s read-write\n"
 msgstr "no es pot obrir %s per a lectura-escriptura\n"
 
-#: fdisk/sfdisk.c:2718
+#: fdisk/sfdisk.c:2719
 #, c-format
 msgid "cannot open %s for reading\n"
 msgstr "no es pot obrir %s per a lectura\n"
 
-#: fdisk/sfdisk.c:2743
+#: fdisk/sfdisk.c:2744
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: Correcte\n"
 
-#: fdisk/sfdisk.c:2762 fdisk/sfdisk.c:2795
+#: fdisk/sfdisk.c:2763 fdisk/sfdisk.c:2796
 #, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s : %ld cilindres, %ld capçals, %ld sectors/pista\n"
 
-#: fdisk/sfdisk.c:2814
+#: fdisk/sfdisk.c:2815
 #, c-format
 msgid "Cannot get size of %s\n"
 msgstr "No s'ha pogut obtenir la mida de %s\n"
 
-#: fdisk/sfdisk.c:2894
+#: fdisk/sfdisk.c:2895
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "octet actiu incorrecte: 0x%x en comptes de 0x80\n"
 
-#: fdisk/sfdisk.c:2912 fdisk/sfdisk.c:2967 fdisk/sfdisk.c:3000
+#: fdisk/sfdisk.c:2913 fdisk/sfdisk.c:2968 fdisk/sfdisk.c:3001
 msgid ""
 "Done\n"
 "\n"
@@ -5691,7 +5691,7 @@ msgstr ""
 "Fet\n"
 "\n"
 
-#: fdisk/sfdisk.c:2921
+#: fdisk/sfdisk.c:2922
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -5700,36 +5700,36 @@ msgstr ""
 "Teniu %d particions primàries actives. Això no és important per al LILO,\n"
 "però l'MBR del DOS només pot arrencar discs amb una partició activa.\n"
 
-#: fdisk/sfdisk.c:2937
+#: fdisk/sfdisk.c:2938
 #, c-format
 msgid "partition %s has id %x and is not hidden\n"
 msgstr "la partició %s té l'identificador %x i no està oculta\n"
 
-#: fdisk/sfdisk.c:2996
+#: fdisk/sfdisk.c:2997
 #, c-format
 msgid "Bad Id %lx\n"
 msgstr "Identificador dolent %lx\n"
 
-#: fdisk/sfdisk.c:3013
+#: fdisk/sfdisk.c:3014
 msgid "This disk is currently in use.\n"
 msgstr "Aquest disc està actualment en ús.\n"
 
-#: fdisk/sfdisk.c:3032
+#: fdisk/sfdisk.c:3033
 #, c-format
 msgid "Fatal error: cannot find %s\n"
 msgstr "S'ha produït un error fatal: no s'ha pogut trobar %s\n"
 
-#: fdisk/sfdisk.c:3035
+#: fdisk/sfdisk.c:3036
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "Avís: %s no és un dispositiu de blocs\n"
 
-#: fdisk/sfdisk.c:3041
+#: fdisk/sfdisk.c:3042
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr ""
 "S'està comprovant que en aquest moment ningú estigui usant aquest disc...\n"
 
-#: fdisk/sfdisk.c:3043
+#: fdisk/sfdisk.c:3044
 msgid ""
 "\n"
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -5742,30 +5742,30 @@ msgstr ""
 "swapoff en totes les particions d'intercanvi del disc.\n"
 "Useu el senyalador --no-reread per a suprimir aquesta comprovació.\n"
 
-#: fdisk/sfdisk.c:3047
+#: fdisk/sfdisk.c:3048
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "Useu el senyalador --force per a obviar totes les comprovacions.\n"
 
-#: fdisk/sfdisk.c:3051
+#: fdisk/sfdisk.c:3052
 msgid "OK\n"
 msgstr "Correcte\n"
 
-#: fdisk/sfdisk.c:3060
+#: fdisk/sfdisk.c:3061
 #, c-format
 msgid "Old situation:\n"
 msgstr "Antiga situació:\n"
 
-#: fdisk/sfdisk.c:3064
+#: fdisk/sfdisk.c:3065
 #, c-format
 msgid "Partition %d does not exist, cannot change it\n"
 msgstr "La partició %d no existeix; no s'ha pogut canviar\n"
 
-#: fdisk/sfdisk.c:3072
+#: fdisk/sfdisk.c:3073
 #, c-format
 msgid "New situation:\n"
 msgstr "Nova situació:\n"
 
-#: fdisk/sfdisk.c:3077
+#: fdisk/sfdisk.c:3078
 msgid ""
 "I don't like these partitions - nothing changed.\n"
 "(If you really want this, use the --force option.)\n"
@@ -5773,21 +5773,21 @@ msgstr ""
 "Aquestes particions no em semblen bé - no s'ha canviat res.\n"
 "(Si realment desitgeu fer això, useu l'opció --force).\n"
 
-#: fdisk/sfdisk.c:3080
+#: fdisk/sfdisk.c:3081
 msgid "I don't like this - probably you should answer No\n"
 msgstr "No em sembla bé - probablement hagueu de respondre No\n"
 
-#: fdisk/sfdisk.c:3085
+#: fdisk/sfdisk.c:3086
 #, c-format
 msgid "Are you satisfied with this? [ynq] "
 msgstr "Esteu satisfet amb això? [ynq] "
 
-#: fdisk/sfdisk.c:3087
+#: fdisk/sfdisk.c:3088
 #, c-format
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "Desitgeu escriure això al disc? [ynq] "
 
-#: fdisk/sfdisk.c:3092
+#: fdisk/sfdisk.c:3093
 #, c-format
 msgid ""
 "\n"
@@ -5796,17 +5796,17 @@ msgstr ""
 "\n"
 "sfdisk: final prematur de l'entrada\n"
 
-#: fdisk/sfdisk.c:3094
+#: fdisk/sfdisk.c:3095
 msgid "Quitting - nothing changed\n"
 msgstr "S'està sortint - no s'ha canviat res\n"
 
 # FIXME: 'y', 'n', 'q'. Are they translatable?
-#: fdisk/sfdisk.c:3100
+#: fdisk/sfdisk.c:3101
 #, c-format
 msgid "Please answer one of y,n,q\n"
 msgstr "Respongueu amb una: y,n,q\n"
 
-#: fdisk/sfdisk.c:3108
+#: fdisk/sfdisk.c:3109
 #, c-format
 msgid ""
 "Successfully wrote the new partition table\n"
@@ -5815,7 +5815,7 @@ msgstr ""
 "S'ha escrit correctament la nova taula de particions\n"
 "\n"
 
-#: fdisk/sfdisk.c:3114
+#: fdisk/sfdisk.c:3115
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -6920,7 +6920,7 @@ msgstr "%s: lectura: %m"
 msgid "%s: input overrun"
 msgstr "%s: desbordament de l'entrada"
 
-#: login-utils/agetty.c:1203
+#: login-utils/agetty.c:1207
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H "
@@ -6998,8 +6998,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: PAM ha fallat; s'està avortant: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:823
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:727
-#: mount/lomount.c:730
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:731
+#: mount/lomount.c:734
 msgid "Password: "
 msgstr "Contrasenya: "
 
@@ -8566,58 +8566,58 @@ msgstr "s'ha produït un error en canviar el mode de %s: %s\n"
 msgid "can't rename %s to %s: %s\n"
 msgstr "no s'ha pogut tornar a nomenar %s per %s: %s\n"
 
-#: mount/lomount.c:364
+#: mount/lomount.c:368
 #, fuzzy, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", desplaçament %d"
 
-#: mount/lomount.c:367
+#: mount/lomount.c:371
 #, fuzzy, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", límit de mida %lld"
 
-#: mount/lomount.c:375
+#: mount/lomount.c:379
 #, fuzzy, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", xifratge %s (tipus %d)"
 
-#: mount/lomount.c:388
+#: mount/lomount.c:392
 #, c-format
 msgid ", offset %d"
 msgstr ", desplaçament %d"
 
-#: mount/lomount.c:391
+#: mount/lomount.c:395
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", tipus de xifratge %d\n"
 
-#: mount/lomount.c:399
+#: mount/lomount.c:403
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: no s'ha pogut obtenir informació sobre el dispositiu %s: %s\n"
 
-#: mount/lomount.c:410
+#: mount/lomount.c:414
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: no s'ha pogut obrir el dispositiu %s: %s\n"
 
-#: mount/lomount.c:426 mount/lomount.c:458 mount/lomount.c:523
-#: mount/lomount.c:572
+#: mount/lomount.c:430 mount/lomount.c:462 mount/lomount.c:527
+#: mount/lomount.c:576
 #, fuzzy, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: l'usuari \"%s\" no existeix.\n"
 
-#: mount/lomount.c:437 mount/lomount.c:585
+#: mount/lomount.c:441 mount/lomount.c:589
 #, fuzzy, c-format
 msgid "%s: no permission to look at /dev/loop%s<N>"
 msgstr "%s: no teniu permisos per llegir /dev/loop#"
 
-#: mount/lomount.c:588
+#: mount/lomount.c:592
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: no s'ha trobat cap dispositiu loop lliure"
 
-#: mount/lomount.c:591
+#: mount/lomount.c:595
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -8627,54 +8627,54 @@ msgstr ""
 "       no reconegui els dispositius loop? (Si es així, recompileu-lo o feu\n"
 "       «modprobe loop».)"
 
-#: mount/lomount.c:621
+#: mount/lomount.c:625
 #, fuzzy
 msgid "Out of memory while reading passphrase"
 msgstr ""
 "S'ha esgotat la memòria en augmentar la mida de la memòria intermèdia.\n"
 
-#: mount/lomount.c:664
+#: mount/lomount.c:668
 #, fuzzy, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "El sector %d ja està assignat\n"
 
-#: mount/lomount.c:680
+#: mount/lomount.c:684
 #, fuzzy, c-format
 msgid "warning: %s: is write-protected, using read-only.\n"
 msgstr ""
 "mount: %s%s està protegit contra escriptura; es muntarà en només lectura"
 
-#: mount/lomount.c:716
+#: mount/lomount.c:720
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "No s'ha pogut blocar en memòria, s'està sortint.\n"
 
-#: mount/lomount.c:743
+#: mount/lomount.c:747
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:800
+#: mount/lomount.c:804
 #, fuzzy, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): èxit\n"
 
-#: mount/lomount.c:821
+#: mount/lomount.c:825
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): èxit\n"
 
-#: mount/lomount.c:825
+#: mount/lomount.c:829
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: no s'ha pogut suprimir el dispositiu %s: %s\n"
 
-#: mount/lomount.c:836
+#: mount/lomount.c:840
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Aquest mount s'ha compilat sense suport per a loop. Recompileu-lo.\n"
 
-#: mount/lomount.c:871
+#: mount/lomount.c:875
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8693,7 +8693,7 @@ msgstr ""
 "  %s -f                                                # cerca no usats\n"
 "  %s [ -e xifratge ] [ -o desplaçament ] {-f|disp_loop} fitxer # configura\n"
 
-#: mount/lomount.c:880
+#: mount/lomount.c:884
 #, c-format
 msgid ""
 "\n"
@@ -8709,22 +8709,22 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1010 mount/lomount.c:1048
+#: mount/lomount.c:1014 mount/lomount.c:1052
 #, fuzzy, c-format
 msgid "Loop device is %s\n"
 msgstr "loop: no s'ha pogut obrir el dispositiu %s: %s\n"
 
-#: mount/lomount.c:1035
+#: mount/lomount.c:1039
 #, c-format
 msgid "stolen loop=%s...trying again\n"
 msgstr ""
 
-#: mount/lomount.c:1045
+#: mount/lomount.c:1049
 #, fuzzy, c-format
 msgid "%s: %s: device is busy"
 msgstr "umount: %s: dispositiu ocupat"
 
-#: mount/lomount.c:1062
+#: mount/lomount.c:1066
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""

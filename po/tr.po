@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-04-17 12:43+0200\n"
+"POT-Creation-Date: 2009-04-29 15:34+0200\n"
 "PO-Revision-Date: 2006-03-06 15:45+0200\n"
 "Last-Translator: Nilgün Belma Bugüner <nilgun@buguner.name.tr>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -3715,7 +3715,7 @@ msgstr "%s diski geçerli bir disk bölümleme tablosu içermiyor\n"
 msgid "Cannot open %s\n"
 msgstr "%s açılamıyor\n"
 
-#: fdisk/fdisk.c:2563 fdisk/sfdisk.c:2617
+#: fdisk/fdisk.c:2563 fdisk/sfdisk.c:2618
 #, c-format
 msgid "cannot open %s\n"
 msgstr "%s açılamıyor\n"
@@ -5565,7 +5565,7 @@ msgstr ""
 "%s -An aygıt\t n. disk bölümünü etkinleştirilir, diğerlerini "
 "etkisizleştirilir\n"
 
-#: fdisk/sfdisk.c:2462
+#: fdisk/sfdisk.c:2463
 #, c-format
 msgid ""
 "\n"
@@ -5574,67 +5574,67 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2465
+#: fdisk/sfdisk.c:2466
 #, fuzzy, c-format
 msgid "Use the --force flag to overrule this check.\n"
 msgstr "Tüm denetimleri kaldırmak için --force seçeneğini kullanın.\n"
 
-#: fdisk/sfdisk.c:2504
+#: fdisk/sfdisk.c:2505
 msgid "no command?\n"
 msgstr "Komut?\n"
 
-#: fdisk/sfdisk.c:2636
+#: fdisk/sfdisk.c:2637
 #, c-format
 msgid "total: %llu blocks\n"
 msgstr "toplam: %llu blok\n"
 
-#: fdisk/sfdisk.c:2679
+#: fdisk/sfdisk.c:2680
 msgid "usage: sfdisk --print-id device partition-number\n"
 msgstr "Kullanımı: sfdisk --print-id aygıt disk-bölümü-numarası\n"
 
-#: fdisk/sfdisk.c:2681
+#: fdisk/sfdisk.c:2682
 msgid "usage: sfdisk --change-id device partition-number Id\n"
 msgstr "kullanımı: sfdisk --change-id aygıt disk-bölümü-numarası kimlik\n"
 
-#: fdisk/sfdisk.c:2683
+#: fdisk/sfdisk.c:2684
 msgid "usage: sfdisk --id device partition-number [Id]\n"
 msgstr "kullanımı: sfdisk --id aygıt disk-bölümü-numarası [kimlik]\n"
 
-#: fdisk/sfdisk.c:2690
+#: fdisk/sfdisk.c:2691
 msgid "can specify only one device (except with -l or -s)\n"
 msgstr "sadece bir aygıt belirtilebilir (-l ya da -s ile gerekir)\n"
 
-#: fdisk/sfdisk.c:2716
+#: fdisk/sfdisk.c:2717
 #, c-format
 msgid "cannot open %s read-write\n"
 msgstr "%s oku-yaz açılamıyor\n"
 
-#: fdisk/sfdisk.c:2718
+#: fdisk/sfdisk.c:2719
 #, c-format
 msgid "cannot open %s for reading\n"
 msgstr "%s okumak için açılamıyor\n"
 
-#: fdisk/sfdisk.c:2743
+#: fdisk/sfdisk.c:2744
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: TAMAM\n"
 
-#: fdisk/sfdisk.c:2762 fdisk/sfdisk.c:2795
+#: fdisk/sfdisk.c:2763 fdisk/sfdisk.c:2796
 #, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s: %ld silindir, %ld kafa, %ld sektör/iz\n"
 
-#: fdisk/sfdisk.c:2814
+#: fdisk/sfdisk.c:2815
 #, c-format
 msgid "Cannot get size of %s\n"
 msgstr "%s gibi bir boyut alınamıyor\n"
 
-#: fdisk/sfdisk.c:2894
+#: fdisk/sfdisk.c:2895
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "hatalı etkin bayt: 0x80 yerine 0x%x\n"
 
-#: fdisk/sfdisk.c:2912 fdisk/sfdisk.c:2967 fdisk/sfdisk.c:3000
+#: fdisk/sfdisk.c:2913 fdisk/sfdisk.c:2968 fdisk/sfdisk.c:3001
 msgid ""
 "Done\n"
 "\n"
@@ -5642,7 +5642,7 @@ msgstr ""
 "Bitti\n"
 "\n"
 
-#: fdisk/sfdisk.c:2921
+#: fdisk/sfdisk.c:2922
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -5651,35 +5651,35 @@ msgstr ""
 "%d etkin birincil disk bölümü var. Bu LILO için sorun olmamakla beraber\n"
 "DOS MBR sadece 1 etkin disk bölümü önyüklemesi yapabilir.\n"
 
-#: fdisk/sfdisk.c:2937
+#: fdisk/sfdisk.c:2938
 #, c-format
 msgid "partition %s has id %x and is not hidden\n"
 msgstr "%s disk bölümünün kimliği %x ve gizli değil\n"
 
-#: fdisk/sfdisk.c:2996
+#: fdisk/sfdisk.c:2997
 #, c-format
 msgid "Bad Id %lx\n"
 msgstr "Kimlik %lx hatalı\n"
 
-#: fdisk/sfdisk.c:3013
+#: fdisk/sfdisk.c:3014
 msgid "This disk is currently in use.\n"
 msgstr "Bu disk şu an kullanılıyor.\n"
 
-#: fdisk/sfdisk.c:3032
+#: fdisk/sfdisk.c:3033
 #, c-format
 msgid "Fatal error: cannot find %s\n"
 msgstr "Ölümcül hata: %s bulunamıyor\n"
 
-#: fdisk/sfdisk.c:3035
+#: fdisk/sfdisk.c:3036
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "Uyarı: %s bir blok aygıtı değil\n"
 
-#: fdisk/sfdisk.c:3041
+#: fdisk/sfdisk.c:3042
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr "Diskin kullanımda olup olmadığı denetleniyor...\n"
 
-#: fdisk/sfdisk.c:3043
+#: fdisk/sfdisk.c:3044
 msgid ""
 "\n"
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -5692,30 +5692,30 @@ msgstr ""
 "alanlarını swapoff ile kapatın. --no-reread bayrağını kullanarak\n"
 "yeniden okuma işlemini engelleyin.\n"
 
-#: fdisk/sfdisk.c:3047
+#: fdisk/sfdisk.c:3048
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "Tüm denetimleri kaldırmak için --force seçeneğini kullanın.\n"
 
-#: fdisk/sfdisk.c:3051
+#: fdisk/sfdisk.c:3052
 msgid "OK\n"
 msgstr "TAMAM\n"
 
-#: fdisk/sfdisk.c:3060
+#: fdisk/sfdisk.c:3061
 #, c-format
 msgid "Old situation:\n"
 msgstr "Eski durum:\n"
 
-#: fdisk/sfdisk.c:3064
+#: fdisk/sfdisk.c:3065
 #, c-format
 msgid "Partition %d does not exist, cannot change it\n"
 msgstr "%d. disk bölümü olmadığından geçilemiyor\n"
 
-#: fdisk/sfdisk.c:3072
+#: fdisk/sfdisk.c:3073
 #, c-format
 msgid "New situation:\n"
 msgstr "Yeni durum:\n"
 
-#: fdisk/sfdisk.c:3077
+#: fdisk/sfdisk.c:3078
 msgid ""
 "I don't like these partitions - nothing changed.\n"
 "(If you really want this, use the --force option.)\n"
@@ -5723,21 +5723,21 @@ msgstr ""
 "Bu disk bölümlerinde hiç bir değişiklik yapılmadı.\n"
 "(Bunu gerçekten istiyorsanız --force seçeneğini kullanın.)\n"
 
-#: fdisk/sfdisk.c:3080
+#: fdisk/sfdisk.c:3081
 msgid "I don't like this - probably you should answer No\n"
 msgstr "Uygulanamıyor - siz de Hayır derdiniz, büyük ihtimalle\n"
 
-#: fdisk/sfdisk.c:3085
+#: fdisk/sfdisk.c:3086
 #, c-format
 msgid "Are you satisfied with this? [ynq] "
 msgstr "Bundan memnun musunuz? [ehs] "
 
-#: fdisk/sfdisk.c:3087
+#: fdisk/sfdisk.c:3088
 #, c-format
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "Bunu diske yazmak ister misiniz? [ehs] "
 
-#: fdisk/sfdisk.c:3092
+#: fdisk/sfdisk.c:3093
 #, c-format
 msgid ""
 "\n"
@@ -5746,16 +5746,16 @@ msgstr ""
 "\n"
 "sfdisk: girdi sonu eksik\n"
 
-#: fdisk/sfdisk.c:3094
+#: fdisk/sfdisk.c:3095
 msgid "Quitting - nothing changed\n"
 msgstr "Çıkılıyor - Değişiklik yok\n"
 
-#: fdisk/sfdisk.c:3100
+#: fdisk/sfdisk.c:3101
 #, c-format
 msgid "Please answer one of y,n,q\n"
 msgstr "Lütfen e, h, s harflerinden biri ile yanıtlayın\n"
 
-#: fdisk/sfdisk.c:3108
+#: fdisk/sfdisk.c:3109
 #, c-format
 msgid ""
 "Successfully wrote the new partition table\n"
@@ -5764,7 +5764,7 @@ msgstr ""
 "Yeni disk bölümleme tablosu başarıyla yazıldı\n"
 "\n"
 
-#: fdisk/sfdisk.c:3114
+#: fdisk/sfdisk.c:3115
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -6839,7 +6839,7 @@ msgstr "%s: okunan: %m"
 msgid "%s: input overrun"
 msgstr "%s: girdi geçersiz"
 
-#: login-utils/agetty.c:1203
+#: login-utils/agetty.c:1207
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H "
@@ -6918,8 +6918,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: PAM hatası, çıkılıyor: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:823
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:727
-#: mount/lomount.c:730
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:731
+#: mount/lomount.c:734
 msgid "Password: "
 msgstr "Parola: "
 
@@ -8468,58 +8468,58 @@ msgstr "%s için kip değiştirilirken hata: %s\n"
 msgid "can't rename %s to %s: %s\n"
 msgstr "%s %s olarak değiştirilemiyor: %s\n"
 
-#: mount/lomount.c:364
+#: mount/lomount.c:368
 #, fuzzy, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", başl %d"
 
-#: mount/lomount.c:367
+#: mount/lomount.c:371
 #, fuzzy, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", boysınırı %lld"
 
-#: mount/lomount.c:375
+#: mount/lomount.c:379
 #, fuzzy, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", %s şifreleme türü (%d) bilinmiyor"
 
-#: mount/lomount.c:388
+#: mount/lomount.c:392
 #, c-format
 msgid ", offset %d"
 msgstr ", başl %d"
 
-#: mount/lomount.c:391
+#: mount/lomount.c:395
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", şifreleme türü %d bilinmiyor\n"
 
-#: mount/lomount.c:399
+#: mount/lomount.c:403
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: %s aygıtı hakkında bilgi alınamıyor: %s\n"
 
-#: mount/lomount.c:410
+#: mount/lomount.c:414
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: %s aygıtı açılamıyor: %s\n"
 
-#: mount/lomount.c:426 mount/lomount.c:458 mount/lomount.c:523
-#: mount/lomount.c:572
+#: mount/lomount.c:430 mount/lomount.c:462 mount/lomount.c:527
+#: mount/lomount.c:576
 #, fuzzy, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: \"%s\" yok.\n"
 
-#: mount/lomount.c:437 mount/lomount.c:585
+#: mount/lomount.c:441 mount/lomount.c:589
 #, fuzzy, c-format
 msgid "%s: no permission to look at /dev/loop%s<N>"
 msgstr "%s: /dev/loop# için izinler yetersiz"
 
-#: mount/lomount.c:588
+#: mount/lomount.c:592
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: hiç serbest loop aygıtı yok"
 
-#: mount/lomount.c:591
+#: mount/lomount.c:595
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -8529,52 +8529,52 @@ msgstr ""
 "       bilgiye sahip değil. (`modprobe loop' deneyin, sonuç alamazsanız\n"
 "       çekirdeği yeniden derleyin.)"
 
-#: mount/lomount.c:621
+#: mount/lomount.c:625
 #, fuzzy
 msgid "Out of memory while reading passphrase"
 msgstr "Tampon büyütülürken bellek yetmedi.\n"
 
-#: mount/lomount.c:664
+#: mount/lomount.c:668
 #, fuzzy, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "Sektör %d zaten kullanımda\n"
 
-#: mount/lomount.c:680
+#: mount/lomount.c:684
 #, fuzzy, c-format
 msgid "warning: %s: is write-protected, using read-only.\n"
 msgstr "mount: %s%s yazma korumalı, salt-okunur olarak bağlanıyor"
 
-#: mount/lomount.c:716
+#: mount/lomount.c:720
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "Bellek içinde kilitlenemedi, çıkılıyor.\n"
 
-#: mount/lomount.c:743
+#: mount/lomount.c:747
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:800
+#: mount/lomount.c:804
 #, fuzzy, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): başarılı\n"
 
-#: mount/lomount.c:821
+#: mount/lomount.c:825
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): başarılı\n"
 
-#: mount/lomount.c:825
+#: mount/lomount.c:829
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: %s aygıtı silinemiyor: %s\n"
 
-#: mount/lomount.c:836
+#: mount/lomount.c:840
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Bu mount loop desteği olmaksızın derlenmiş. Lütfen yeniden derleyin.\n"
 
-#: mount/lomount.c:871
+#: mount/lomount.c:875
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8594,7 +8594,7 @@ msgstr ""
 "kullanılmamışlar\n"
 "  %s [ -e şifreleme ] [ -o konum ] {-f|loop_aygıtı} dosya # ayarlama\n"
 
-#: mount/lomount.c:880
+#: mount/lomount.c:884
 #, c-format
 msgid ""
 "\n"
@@ -8610,22 +8610,22 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1010 mount/lomount.c:1048
+#: mount/lomount.c:1014 mount/lomount.c:1052
 #, fuzzy, c-format
 msgid "Loop device is %s\n"
 msgstr "loop: %s aygıtı açılamıyor: %s\n"
 
-#: mount/lomount.c:1035
+#: mount/lomount.c:1039
 #, c-format
 msgid "stolen loop=%s...trying again\n"
 msgstr ""
 
-#: mount/lomount.c:1045
+#: mount/lomount.c:1049
 #, fuzzy, c-format
 msgid "%s: %s: device is busy"
 msgstr "umount: %s: aygıt meşgul"
 
-#: mount/lomount.c:1062
+#: mount/lomount.c:1066
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Derleme sırasında loop desteği verilmemiş. Lütfen yeniden derleyin.\n"

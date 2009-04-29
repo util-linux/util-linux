@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-04-17 12:43+0200\n"
+"POT-Creation-Date: 2009-04-29 15:34+0200\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -3717,7 +3717,7 @@ msgstr "Disk %s ne vsebuje veljavne tabele razdelkov\n"
 msgid "Cannot open %s\n"
 msgstr "%s ne morem odpreti\n"
 
-#: fdisk/fdisk.c:2563 fdisk/sfdisk.c:2617
+#: fdisk/fdisk.c:2563 fdisk/sfdisk.c:2618
 #, c-format
 msgid "cannot open %s\n"
 msgstr "%s ne morem odpreti\n"
@@ -5541,7 +5541,7 @@ msgstr "%s naprava ¹t1 ¹t2 ... aktiviraj razdelek n1 ..., deaktiviraj ostale\n"
 msgid "%s -An device\t activate partition n, inactivate the other ones\n"
 msgstr "%s - Naprava\t aktivira razdelek n, deaktivira ostale\n"
 
-#: fdisk/sfdisk.c:2462
+#: fdisk/sfdisk.c:2463
 #, c-format
 msgid ""
 "\n"
@@ -5550,67 +5550,67 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/sfdisk.c:2465
+#: fdisk/sfdisk.c:2466
 #, fuzzy, c-format
 msgid "Use the --force flag to overrule this check.\n"
 msgstr "Uporabite --force izbiro da obidete vsa preverjanja.\n"
 
-#: fdisk/sfdisk.c:2504
+#: fdisk/sfdisk.c:2505
 msgid "no command?\n"
 msgstr "ni ukaza?\n"
 
-#: fdisk/sfdisk.c:2636
+#: fdisk/sfdisk.c:2637
 #, fuzzy, c-format
 msgid "total: %llu blocks\n"
 msgstr "skupno: %llu blokov\n"
 
-#: fdisk/sfdisk.c:2679
+#: fdisk/sfdisk.c:2680
 msgid "usage: sfdisk --print-id device partition-number\n"
 msgstr "uporaba: sfdisk --print-id naprava ¹t. razdelka\n"
 
-#: fdisk/sfdisk.c:2681
+#: fdisk/sfdisk.c:2682
 msgid "usage: sfdisk --change-id device partition-number Id\n"
 msgstr "uporaba: sfdisk --change-id naprava ¹t. razdelka Id\n"
 
-#: fdisk/sfdisk.c:2683
+#: fdisk/sfdisk.c:2684
 msgid "usage: sfdisk --id device partition-number [Id]\n"
 msgstr "uporaba: sfdisk --id naprava ¹t. razdelka [Id]\n"
 
-#: fdisk/sfdisk.c:2690
+#: fdisk/sfdisk.c:2691
 msgid "can specify only one device (except with -l or -s)\n"
 msgstr "navedete lahko samo eno napravo (razen z -l ali -s)\n"
 
-#: fdisk/sfdisk.c:2716
+#: fdisk/sfdisk.c:2717
 #, c-format
 msgid "cannot open %s read-write\n"
 msgstr "%s ni mogoèe odpreti za branje in pisanje\n"
 
-#: fdisk/sfdisk.c:2718
+#: fdisk/sfdisk.c:2719
 #, c-format
 msgid "cannot open %s for reading\n"
 msgstr "%s ni mogoèe odpreti za branje\n"
 
-#: fdisk/sfdisk.c:2743
+#: fdisk/sfdisk.c:2744
 #, c-format
 msgid "%s: OK\n"
 msgstr "%s: Vredu\n"
 
-#: fdisk/sfdisk.c:2762 fdisk/sfdisk.c:2795
+#: fdisk/sfdisk.c:2763 fdisk/sfdisk.c:2796
 #, c-format
 msgid "%s: %ld cylinders, %ld heads, %ld sectors/track\n"
 msgstr "%s: %ld stez, %ld glav, %ld sektorjev/sled\n"
 
-#: fdisk/sfdisk.c:2814
+#: fdisk/sfdisk.c:2815
 #, fuzzy, c-format
 msgid "Cannot get size of %s\n"
 msgstr "Velikosti %s ni mogoèe ugotoviti\n"
 
-#: fdisk/sfdisk.c:2894
+#: fdisk/sfdisk.c:2895
 #, c-format
 msgid "bad active byte: 0x%x instead of 0x80\n"
 msgstr "slab dejavni bajt: 0x%x namesto 0x80\n"
 
-#: fdisk/sfdisk.c:2912 fdisk/sfdisk.c:2967 fdisk/sfdisk.c:3000
+#: fdisk/sfdisk.c:2913 fdisk/sfdisk.c:2968 fdisk/sfdisk.c:3001
 msgid ""
 "Done\n"
 "\n"
@@ -5618,7 +5618,7 @@ msgstr ""
 "Opravljeno\n"
 "\n"
 
-#: fdisk/sfdisk.c:2921
+#: fdisk/sfdisk.c:2922
 #, c-format
 msgid ""
 "You have %d active primary partitions. This does not matter for LILO,\n"
@@ -5627,35 +5627,35 @@ msgstr ""
 "Imate %d dejavnih primarnih razdelkov. Za LILO to ni te¾ava,\n"
 "ampak DOS MBR se bo nalo¾il samo z diskov, ki imajo 1 dejaven razdelek.\n"
 
-#: fdisk/sfdisk.c:2937
+#: fdisk/sfdisk.c:2938
 #, c-format
 msgid "partition %s has id %x and is not hidden\n"
 msgstr "razdelek %s ima id %x in ni skrit\n"
 
-#: fdisk/sfdisk.c:2996
+#: fdisk/sfdisk.c:2997
 #, c-format
 msgid "Bad Id %lx\n"
 msgstr "Slab Id %lx\n"
 
-#: fdisk/sfdisk.c:3013
+#: fdisk/sfdisk.c:3014
 msgid "This disk is currently in use.\n"
 msgstr "Ta disk je trenutno v rabi.\n"
 
-#: fdisk/sfdisk.c:3032
+#: fdisk/sfdisk.c:3033
 #, c-format
 msgid "Fatal error: cannot find %s\n"
 msgstr "Usodna napaka: %s ni mogoèe najti\n"
 
-#: fdisk/sfdisk.c:3035
+#: fdisk/sfdisk.c:3036
 #, c-format
 msgid "Warning: %s is not a block device\n"
 msgstr "Opozorilo: %s ni blokovna naprava\n"
 
-#: fdisk/sfdisk.c:3041
+#: fdisk/sfdisk.c:3042
 msgid "Checking that no-one is using this disk right now ...\n"
 msgstr "Preverjam, da nihèe ne uporablja tega diska ...\n"
 
-#: fdisk/sfdisk.c:3043
+#: fdisk/sfdisk.c:3044
 msgid ""
 "\n"
 "This disk is currently in use - repartitioning is probably a bad idea.\n"
@@ -5668,30 +5668,30 @@ msgstr ""
 "disku.\n"
 "Uporabite --no-reread zastavico da izkljuèite to preverjanje.\n"
 
-#: fdisk/sfdisk.c:3047
+#: fdisk/sfdisk.c:3048
 msgid "Use the --force flag to overrule all checks.\n"
 msgstr "Uporabite --force izbiro da obidete vsa preverjanja.\n"
 
-#: fdisk/sfdisk.c:3051
+#: fdisk/sfdisk.c:3052
 msgid "OK\n"
 msgstr "VREDU\n"
 
-#: fdisk/sfdisk.c:3060
+#: fdisk/sfdisk.c:3061
 #, c-format
 msgid "Old situation:\n"
 msgstr "Staro stanje:\n"
 
-#: fdisk/sfdisk.c:3064
+#: fdisk/sfdisk.c:3065
 #, c-format
 msgid "Partition %d does not exist, cannot change it\n"
 msgstr "Razdelek %d ne obstaja in ne more biti spremenjen\n"
 
-#: fdisk/sfdisk.c:3072
+#: fdisk/sfdisk.c:3073
 #, c-format
 msgid "New situation:\n"
 msgstr "Novo stanje:\n"
 
-#: fdisk/sfdisk.c:3077
+#: fdisk/sfdisk.c:3078
 msgid ""
 "I don't like these partitions - nothing changed.\n"
 "(If you really want this, use the --force option.)\n"
@@ -5699,21 +5699,21 @@ msgstr ""
 "Te razdelki mi ne ustrezajo - ni sprememb.\n"
 "(Èe res ¾elite to, uporabite izbiro --force.)\n"
 
-#: fdisk/sfdisk.c:3080
+#: fdisk/sfdisk.c:3081
 msgid "I don't like this - probably you should answer No\n"
 msgstr "To mi ne ustreza - verjetno bi morali odgovoriti Ne\n"
 
-#: fdisk/sfdisk.c:3085
+#: fdisk/sfdisk.c:3086
 #, c-format
 msgid "Are you satisfied with this? [ynq] "
 msgstr "Ali ste zadovoljni s tem? [ynq] "
 
-#: fdisk/sfdisk.c:3087
+#: fdisk/sfdisk.c:3088
 #, c-format
 msgid "Do you want to write this to disk? [ynq] "
 msgstr "Ali ¾elite zapisati to na disk? [ynq] "
 
-#: fdisk/sfdisk.c:3092
+#: fdisk/sfdisk.c:3093
 #, c-format
 msgid ""
 "\n"
@@ -5722,16 +5722,16 @@ msgstr ""
 "\n"
 "sfdisk: prezgoden konec vnosa\n"
 
-#: fdisk/sfdisk.c:3094
+#: fdisk/sfdisk.c:3095
 msgid "Quitting - nothing changed\n"
 msgstr "Konèujem - brez sprememb\n"
 
-#: fdisk/sfdisk.c:3100
+#: fdisk/sfdisk.c:3101
 #, c-format
 msgid "Please answer one of y,n,q\n"
 msgstr "Prosim, da odgovorizo z y,n,q\n"
 
-#: fdisk/sfdisk.c:3108
+#: fdisk/sfdisk.c:3109
 #, c-format
 msgid ""
 "Successfully wrote the new partition table\n"
@@ -5740,7 +5740,7 @@ msgstr ""
 "Tabela razdelkov je uspe¹no zapisana\n"
 "\n"
 
-#: fdisk/sfdisk.c:3114
+#: fdisk/sfdisk.c:3115
 msgid ""
 "If you created or changed a DOS partition, /dev/foo7, say, then use dd(1)\n"
 "to zero the first 512 bytes:  dd if=/dev/zero of=/dev/foo7 bs=512 count=1\n"
@@ -6803,7 +6803,7 @@ msgstr "%s: beri: %m"
 msgid "%s: input overrun"
 msgstr "%s: vhod je preplavljen"
 
-#: login-utils/agetty.c:1203
+#: login-utils/agetty.c:1207
 #, fuzzy, c-format
 msgid ""
 "Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H "
@@ -6881,8 +6881,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "login: PAM ni uspel, prekinjam: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:823
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:727
-#: mount/lomount.c:730
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:731
+#: mount/lomount.c:734
 msgid "Password: "
 msgstr "Geslo: "
 
@@ -8428,58 +8428,58 @@ msgstr "Napaka pri spreminjanju naèina %s: %s\n"
 msgid "can't rename %s to %s: %s\n"
 msgstr "ni mogoèe preimenovati %s v %s: %s\n"
 
-#: mount/lomount.c:364
+#: mount/lomount.c:368
 #, fuzzy, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", odmik %d"
 
-#: mount/lomount.c:367
+#: mount/lomount.c:371
 #, fuzzy, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", omejitev_velikosti %lld"
 
-#: mount/lomount.c:375
+#: mount/lomount.c:379
 #, fuzzy, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", ¹ifriranje %s (tip %d)"
 
-#: mount/lomount.c:388
+#: mount/lomount.c:392
 #, c-format
 msgid ", offset %d"
 msgstr ", odmik %d"
 
-#: mount/lomount.c:391
+#: mount/lomount.c:395
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", ¹ifrirni tip %d\n"
 
-#: mount/lomount.c:399
+#: mount/lomount.c:403
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: informacij o napravi %s ni mogoèe dobiti: %s\n"
 
-#: mount/lomount.c:410
+#: mount/lomount.c:414
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: ni mogoèe odpreti naprave %s: %s\n"
 
-#: mount/lomount.c:426 mount/lomount.c:458 mount/lomount.c:523
-#: mount/lomount.c:572
+#: mount/lomount.c:430 mount/lomount.c:462 mount/lomount.c:527
+#: mount/lomount.c:576
 #, fuzzy, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: uporabnik \"%s\" ne obstja.\n"
 
-#: mount/lomount.c:437 mount/lomount.c:585
+#: mount/lomount.c:441 mount/lomount.c:589
 #, fuzzy, c-format
 msgid "%s: no permission to look at /dev/loop%s<N>"
 msgstr "%s: za vpogled v /dev/loop# ni dovoljenja"
 
-#: mount/lomount.c:588
+#: mount/lomount.c:592
 #, fuzzy, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: iskanje proste loop naprave ni bilo uspe¹no\n"
 
-#: mount/lomount.c:591
+#: mount/lomount.c:595
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -8489,54 +8489,54 @@ msgstr ""
 "\tte vrste. (Èe je to res, ponovno prevedi jedro ali si pomagaj z `modprobe "
 "loop'.)"
 
-#: mount/lomount.c:621
+#: mount/lomount.c:625
 #, fuzzy
 msgid "Out of memory while reading passphrase"
 msgstr "Pri poveèevanju medpomnilnika je zmanjkalo pomnilnika.\n"
 
-#: mount/lomount.c:664
+#: mount/lomount.c:668
 #, fuzzy, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "Sektor %d je ¾e dodeljen\n"
 
-#: mount/lomount.c:680
+#: mount/lomount.c:684
 #, fuzzy, c-format
 msgid "warning: %s: is write-protected, using read-only.\n"
 msgstr "mount: %s%s je za¹èitena pred pisanjem, priklapljam samo za branje"
 
-#: mount/lomount.c:716
+#: mount/lomount.c:720
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "V pomnilnik ni mogoèe zakleniti, konèujem.\n"
 
-#: mount/lomount.c:743
+#: mount/lomount.c:747
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:800
+#: mount/lomount.c:804
 #, fuzzy, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu): uspeh\n"
 
-#: mount/lomount.c:821
+#: mount/lomount.c:825
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): uspeh\n"
 
-#: mount/lomount.c:825
+#: mount/lomount.c:829
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: naprave %s ni mogoèe zbrisati: %s\n"
 
-#: mount/lomount.c:836
+#: mount/lomount.c:840
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Program mount je bil preveden brez podpore za loop. Poskusite ponovno "
 "prevesti mount.\n"
 
-#: mount/lomount.c:871
+#: mount/lomount.c:875
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8555,7 +8555,7 @@ msgstr ""
 "  %s -f\t\t\t\t\t\t# najdi neuporabljene\n"
 "  %s [-e ¹ifriranje] [-o odmik] {-f|loop_naprava} dat. # nastavitev\n"
 
-#: mount/lomount.c:880
+#: mount/lomount.c:884
 #, c-format
 msgid ""
 "\n"
@@ -8571,22 +8571,22 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1010 mount/lomount.c:1048
+#: mount/lomount.c:1014 mount/lomount.c:1052
 #, fuzzy, c-format
 msgid "Loop device is %s\n"
 msgstr "loop: ni mogoèe odpreti naprave %s: %s\n"
 
-#: mount/lomount.c:1035
+#: mount/lomount.c:1039
 #, c-format
 msgid "stolen loop=%s...trying again\n"
 msgstr ""
 
-#: mount/lomount.c:1045
+#: mount/lomount.c:1049
 #, fuzzy, c-format
 msgid "%s: %s: device is busy"
 msgstr "umount: %s: naprava je zaposlena"
 
-#: mount/lomount.c:1062
+#: mount/lomount.c:1066
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
