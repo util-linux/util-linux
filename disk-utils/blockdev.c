@@ -313,7 +313,7 @@ report_all_devices(void) {
 	}
 
 	while (fgets(line, sizeof(line), procpt)) {
-		if (sscanf (line, " %d %d %d %[^\n ]",
+		if (sscanf (line, " %d %d %d %200[^\n ]",
 			    &ma, &mi, &sz, ptname) != 4)
 			continue;
 
