@@ -185,14 +185,14 @@ static char *evaluate_by_scan(const char *token, const char *value,
 }
 
 /**
- * blkid_evaluate_spec:
+ * blkid_evaluate_tag:
  * @token: token name (e.g "LABEL" or "UUID")
  * @value: token data
  * @cache: pointer to cache (or NULL when you don't want to re-use the cache)
  *
  * Returns allocated string with device name.
  */
-char *blkid_evaluate_spec(const char *token, const char *value, blkid_cache *cache)
+char *blkid_evaluate_tag(const char *token, const char *value, blkid_cache *cache)
 {
 	struct blkid_config *conf = NULL;
 	char *t = NULL, *v = NULL;
@@ -256,7 +256,7 @@ int main(int argc, char *argv[])
 
 	blkid_init_debug(0);
 
-	res = blkid_evaluate_spec(argv[1], argv[2], &cache);
+	res = blkid_evaluate_tag(argv[1], argv[2], &cache);
 	if (res)
 		printf("%s\n", res);
 	if (cache)

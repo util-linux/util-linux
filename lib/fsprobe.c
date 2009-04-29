@@ -14,7 +14,7 @@
 #include "pathnames.h"
 #include "fsprobe.h"
 
-#if defined(HAVE_BLKID_EVALUATE_SPEC) || defined(HAVE_LIBVOLUME_ID)
+#if defined(HAVE_BLKID_EVALUATE_TAG) || defined(HAVE_LIBVOLUME_ID)
 /* ask kernel developers why we need such ugly open() method... */
 static int
 open_device(const char *devname)
@@ -112,7 +112,7 @@ fsprobe_known_fstype(const char *fstype)
 	return blkid_known_fstype(fstype);
 }
 
-#ifdef HAVE_BLKID_EVALUATE_SPEC
+#ifdef HAVE_BLKID_EVALUATE_TAG
 /*
  * libblkid from util-linux-ng
  * -- recommended
@@ -181,19 +181,19 @@ fsprobe_get_fstype_by_devname(const char *devname)
 char *
 fsprobe_get_devname_by_uuid(const char *uuid)
 {
-	return blkid_evaluate_spec("UUID", uuid, &blcache);
+	return blkid_evaluate_tag("UUID", uuid, &blcache);
 }
 
 char *
 fsprobe_get_devname_by_label(const char *label)
 {
-	return blkid_evaluate_spec("LABEL", label, &blcache);
+	return blkid_evaluate_tag("LABEL", label, &blcache);
 }
 
-#else /* !HAVE_BLKID_EVALUATE_SPEC */
+#else /* !HAVE_BLKID_EVALUATE_TAG */
 
 /*
- * Classic libblkid (from e2fsprogs) without blkid_evaluate_spec()
+ * Classic libblkid (from e2fsprogs) without blkid_evaluate_tag()
  * -- deprecated
  */
 #define BLKID_EMPTY_CACHE	"/dev/null"
@@ -261,7 +261,7 @@ fsprobe_get_uuid_by_devname(const char *devname)
 	return blkid_get_tag_value(blcache, "UUID", devname);
 }
 
-#endif /* !HAVE_BLKID_EVALUATE_SPEC */
+#endif /* !HAVE_BLKID_EVALUATE_TAG */
 #else  /* !HAVE_LIBBLKID */
 
 /*

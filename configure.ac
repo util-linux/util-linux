@@ -180,7 +180,7 @@ have_volume_id=no
 
 if test "x$with_fsprobe" = xblkid; then
   PKG_CHECK_MODULES(BLKID, blkid, [have_blkid=yes], [])
-  AC_CHECK_LIB(blkid, blkid_evaluate_spec, [have_blkid_evaluate=yes], [])
+  AC_CHECK_LIB(blkid, blkid_evaluate_tag, [have_blkid_evaluate=yes], [])
 elif test "x$with_fsprobe" = xvolume_id; then
   PKG_CHECK_MODULES(VOLUME_ID, volume_id, [have_volume_id=yes], [])
 elif test "x$with_fsprobe" = xbuiltin; then
@@ -195,7 +195,7 @@ fi
 if  test "x$have_blkid" = xyes; then
   AC_DEFINE(HAVE_LIBBLKID, 1, [Define to 1 if you have the -lblkid.])
   if test "x$have_blkid_evaluate" = xyes; then
-    AC_DEFINE(HAVE_BLKID_EVALUATE_SPEC, 1, [Define to 1 if you have the blkid_evaluate_spec().])
+    AC_DEFINE(HAVE_BLKID_EVALUATE_TAG, 1, [Define to 1 if you have the blkid_evaluate_tag().])
   fi
 fi
 

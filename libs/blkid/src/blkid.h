@@ -117,7 +117,7 @@ extern int blkid_safe_string(const char *str, char *str_safe, size_t len);
 
 /* evaluate.c */
 extern int blkid_send_uevent(const char *devname, const char *action);
-extern char *blkid_evaluate_spec(const char *token, const char *value,
+extern char *blkid_evaluate_tag(const char *token, const char *value,
 				blkid_cache *cache);
 
 /* probe.c */

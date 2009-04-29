@@ -39,7 +39,7 @@
 
  - use fstatat() in blkid__scan_dir()
 
- - add evaluate.c: blkid_evaluate_spec_to_buffer() (and add lib/canonicalize.c:
+ - add evaluate.c: blkid_evaluate_tag_to_buffer() (and add lib/canonicalize.c:
    canonicalize_path_to_buffer())
 
  - add values:

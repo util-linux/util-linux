@@ -46,7 +46,7 @@ global:
 	blkid_do_probe;
 	blkid_do_safeprobe;
 	blkid_encode_string;
-	blkid_evaluate_spec;
+	blkid_evaluate_tag;
 	blkid_free_probe;
 	blkid_new_probe;
 	blkid_probe_all;

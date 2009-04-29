@@ -567,7 +567,7 @@ int main(int argc, char **argv)
 		/*
 		 * Evaluate API
 		 */
-		char *res = blkid_evaluate_spec(search_type, search_value, NULL);
+		char *res = blkid_evaluate_tag(search_type, search_value, NULL);
 		if (res) {
 			err = 0;
 			printf("%s\n", res);

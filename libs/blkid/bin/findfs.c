@@ -50,7 +50,7 @@ int main(int argc, char **argv)
 	} else
 		usage(2);
 
-	dev = blkid_evaluate_spec(tk, vl, NULL);
+	dev = blkid_evaluate_tag(tk, vl, NULL);
 	if (!dev)
 		errx(EXIT_FAILURE, _("unable to resolve '%s'"),	argv[1]);
 
