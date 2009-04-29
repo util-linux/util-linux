@@ -2432,14 +2432,15 @@ is_ide_cdrom_or_tape(char *device) {
 
 static char *
 nextproc(FILE *procf) {
-	static char devname[120];
-	char line[100], ptname[100];
-	int ma, mi, sz;
+	static char devname[256];
+	char line[1024], ptname[128];
+	int ma, mi;
+	unsigned long long sz;
 
 	if (procf == NULL)
 		return NULL;
 	while (fgets(line, sizeof(line), procf) != NULL) {
-		if (sscanf (line, " %d %d %d %[^\n ]",
+		if (sscanf (line, " %d %d %llu %128[^\n ]",
 			    &ma, &mi, &sz, ptname) != 4)
 			continue;
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
