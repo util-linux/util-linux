@@ -1,3 +1,8 @@
+
+ * add to lib/blkdev.c code for /proc/partitions parsing -- unfortunate we
+   duplicate this code in many places. The parser has to support unlimited
+   size (or 4096 bytes) of partition name.
+
  * fdisk/* -- use off_t instead "long long"
 
  * mkswap: use /proc/sys/kernel/random/uuid as a fallback solution for builds 
