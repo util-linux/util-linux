@@ -2554,7 +2554,7 @@ try(char *device, int user_specified) {
 static void
 tryprocpt(void) {
 	FILE *procpt;
-	char line[100], ptname[100], devname[120];
+	char line[128], ptname[128], devname[256];
 	int ma, mi;
 	unsigned long long sz;
 
@@ -2565,7 +2565,7 @@ tryprocpt(void) {
 	}
 
 	while (fgets(line, sizeof(line), procpt)) {
-		if (sscanf (line, " %d %d %llu %100[^\n ]",
+		if (sscanf (line, " %d %d %llu %128[^\n ]",
 			    &ma, &mi, &sz, ptname) != 4)
 			continue;
 		snprintf(devname, sizeof(devname), "/dev/%s", ptname);
