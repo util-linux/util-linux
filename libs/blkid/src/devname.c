@@ -179,6 +179,15 @@ static void probe_one(blkid_cache cache, const char *ptname,
 	if (dev && dev->bid_devno == devno)
 		goto set_pri;
 
+	/* Try to translate private device-mapper dm-<N> names
+	 * to standard /dev/mapper/<name>.
+	 */
+	if (!strncmp(ptname, "dm-", 3) && isdigit(ptname[3])) {
+		blkid__scan_dir("/dev/mapper", devno, 0, &devname);
+		if (devname)
+			goto get_dev;
+	}
+
 	/*
 	 * Take a quick look at /dev/ptname for the device number.  We check
 	 * all of the likely device directories.  If we don't find it, or if
@@ -197,7 +206,7 @@ static void probe_one(blkid_cache cache, const char *ptname,
 		if (stat(device, &st) == 0 && S_ISBLK(st.st_mode) &&
 		    st.st_rdev == devno) {
 			devname = blkid_strdup(device);
-			break;
+			goto get_dev;
 		}
 	}
 	/* Do a short-cut scan of /dev/mapper first */
@@ -208,6 +217,8 @@ static void probe_one(blkid_cache cache, const char *ptname,
 		if (!devname)
 			return;
 	}
+
+get_dev:
 	dev = blkid_get_dev(cache, devname, BLKID_DEV_NORMAL);
 	free(devname);
 
