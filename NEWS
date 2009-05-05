@@ -1,3 +1,7 @@
+util-linux-ng 2.15: May 5 2009
+* see docs/v2.15-ReleaseNotes or complete changelog at
+  ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/v2.15-ChangeLog
+
 util-linux-ng 2.15-rc2: Apr 17 2009
 * see docs/v2.15-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/v2.15-rc2-ChangeLog
