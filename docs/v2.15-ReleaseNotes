@@ -126,10 +126,10 @@ ChangeLog between v2.14 and v2.15
  For more details see ChangeLog files at:
  ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/
 
-
 addpart:
    - 512-byte sectors in code, bytes in man-page  [Karel Zak]
 agetty:
+   - IUCLC and OLCUC are Linux extensions  [Aurelien Jarno]
    - check for termios.c_line struct member by autoconf  [Karel Zak]
    - sys/types.h and time.h are included more than once  [Karel Zak]
 blkid:
@@ -244,6 +244,7 @@ blkid:
    - hfs - do not set UUID for emtpy finder info  [Kay Sievers]
    - hfs - use proper native UUID format  [Kay Sievers]
    - improve ddf detection  [Karel Zak]
+   - linux_raid - fix logic for volumes with size == 0  [Karel Zak]
    - merge libblkid code from e2fsprogs/lib/blkid  [Karel Zak]
    - minor changes to library build system  [Karel Zak]
    - netware SB has to be packed  [Karel Zak]
@@ -257,22 +258,30 @@ blkid:
    - remove unnecessary ifdef __cplusplus  [Karel Zak]
    - remove unused stuff from Makefile  [Karel Zak]
    - remove useless if-before-free tests  [Jim Meyering]
+   - remove whole-disk entries from cache when partitions are found  [Eric Sandeen]
+   - rename blkid_debug_init to blkid_init_debug  [Karel Zak]
+   - rename blkid_evaluate_spec to blkid_evaluate_tag  [Karel Zak]
    - set size for non-blkdevs, add blkid_probe_strcpy_uuid()  [Karel Zak]
+   - split SONAME and LIBBLKID_VERSION  [Karel Zak]
    - start to use ABI versioning  [Karel Zak]
    - support detection of multiple signatures  [Karel Zak]
    - support via raid version 2  [Sven Jost]
    - update TODO  [Karel Zak]
    - update gitignore  [Karel Zak]
    - use "char **" rather than "unsigned char **"  [Karel Zak]
+   - use /dev/mapper/<name> rather than /dev/dm-<N>  [Karel Zak]
+   - use /sys/block/dm-<N>/dm/name  [Karel Zak]
    - use Requires.private and fix the include directory  [Karel Zak]
    - use blkid_probe_strcpy_uuid() for luks  [Karel Zak]
    - use posix uint32_t in ocfs superblock  [Karel Zak]
    - use posix uintXX_t in lvm code  [Karel Zak]
    - use sizeof() for hfs uuid  [Karel Zak]
    - vfat - fix declaration  [Kay Sievers]
+blkis:
    - fix detection of ext4dev as ext4  [Eric Sandeen]
 blockdev:
    - add note that the StartSec is in 512-byte sectors  [Karel Zak]
+   - fix possible buffer overflow  [Karel Zak]
 build-sys:
    - add $usrlibexecdir and fix paths for [/usr]/lib64  [Karel Zak]
    - add --disable-mount  [Alon Bar-Lev]
@@ -291,6 +300,7 @@ build-sys:
    - move pivot_root(8) to sys-utils  [Karel Zak]
    - refresh generated libtool-2 stuff  [Karel Zak]
    - release++ (v2.15-rc1)  [Karel Zak]
+   - release++ (v2.15-rc2)  [Karel Zak]
    - remove use of devmapper library  [Karel Zak]
    - tgets is not in ncurses but in tinfo  [Arkadiusz Miskiewicz]
    - use pkg-config for blkid and volume_id  [Karel Zak]
@@ -299,10 +309,12 @@ cal:
    - remove gcc-ism from nl_langinfo() call  [Karel Zak]
 cfdisk:
    - accept yes/no as fallback  [Matthias Koenig]
+   - fix "cannot seek on disk drive" bug  [Karel Zak]
 chfn:
    - several strings without gettext calls  [Karel Zak]
 chrt:
    - add NLS support, clean error messages and return codes  [Karel Zak]
+   - add a comment about non POSIX 1003.1b attributes in chrt.1  [Aurelien Jarno]
    - output buglet when reporting scheduling class  [Karel Zak]
    - support CFS SCHED_IDLE priority and document it  [Martin Steigerwald]
 disk-utils:
@@ -313,9 +325,11 @@ dmesg:
    - Add -r (raw) option.  [Adam Jackson]
    - nuke old glibc 5 support  [maximilian attems]
 docs:
-   - TODO update  [Karel Zak]
    - TODO: add request to use nl_langinfo()  [Karel Zak]
+   - TODO update  [Karel Zak]
+   - add a note about /proc/sys/kernel/random/uuid  [Karel Zak]
    - add a note about kpartx to TODO  [Karel Zak]
+   - add entry about /proc/partitions parsing  [Karel Zak]
    - add feature-requests from RH bugzilla to TODO list  [Karel Zak]
    - add suggestion about TZ=UTC to TODO file  [Karel Zak]
    - fix typo, cal(8) --> cal(1)  [Karel Zak]
@@ -335,6 +349,7 @@ fdisk:
    - don't use get_linux_version() for non-linux  [Samuel Thibault]
    - exit(3) needs stdlib.h include  [maximilian attems]
    - fix man page typo  [Karel Zak]
+   - fix max. ptname  [Karel Zak]
    - non-linux support (BLK* and HDIO_*)  [Samuel Thibault]
    - read /proc/partitions in more robust way  [Karel Zak]
    - remove obsolete information from man page  [Karel Zak]
@@ -393,6 +408,7 @@ ionice:
    - a little cleanup of "none" description  [Karel Zak]
    - add -t option  [Lubomir Kundrak]
    - add strtol() checks, cleanup usage text and man page  [Karel Zak]
+   - change Jens Axboe's email  [Karel Zak]
    - cleanup error messages, add NLS support  [Karel Zak]
    - cleanup man page  [Karel Zak]
    - fix typo in manpage  [Karel Zak]
@@ -413,6 +429,7 @@ lib:
    - add pttype.c for PT types detection  [Karel Zak]
    - add test_ismounted for regression test  [Karel Zak]
    - blkdev.c clean up, non-linux support  [Samuel Thibault]
+   - do not include <linux/fd.h> in ismounted.c  [Aurelien Jarno]
    - fix fsprobe wrapper (const char * is nonsense)  [Karel Zak]
    - fsprobe - fix gcc warning  [Karel Zak]
    - gcc warning in fix fsprobe  [Karel Zak]
@@ -440,6 +457,7 @@ losetup:
    - detach more devices by "-d <loop> [<loop> ..]"  [Karel Zak]
    - looplist_* refactoring, remove scandir()  [Karel Zak]
    - missing EBUSY error hint message  [Karel Zak]
+   - mount endless loop hang  [Karel Zak]
    - remove dependence on minor numbers  [Karel Zak]
    - several strings without gettext strings  [Pedro Ribeiro]
    - try to set up loop readonly if EACCES  [Matthias Koenig]
@@ -562,6 +580,7 @@ setterm:
    - fix -blank man page  [Karel Zak]
 sfdisk:
    - fix Compilation Error  [CAI Qian]
+   - fix possible buffer overflow  [Karel Zak]
    - print version should end with a newline  [Denis ChengRq]
 simmpleinit:
    - fix gcc warning (buffer size in read())  [Karel Zak]
@@ -621,6 +640,7 @@ tests:
    - detect libvolume_id when mount(8) is compiled  [Karel Zak]
    - disable blkid tests when blkid(8) is not compiled  [Karel Zak]
    - disable suid mount test  [Karel Zak]
+   - fix -regex in run.sh  [Karel Zak]
    - fix TS_* paths  [Karel Zak]
    - fix file name is too long (max 99) - gtar  [Karel Zak]
    - fix output string  [Karel Zak]
