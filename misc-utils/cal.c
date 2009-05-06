@@ -348,6 +348,9 @@ main(int argc, char **argv) {
 	argc -= optind;
 	argv += optind;
 
+	time(&now);
+	local_time = localtime(&now);
+
 	day = month = year = 0;
 	switch(argc) {
 	case 3:
@@ -366,13 +369,13 @@ main(int argc, char **argv) {
 			if (day > dm)
 				errx(1, _("illegal day value: use 1-%d"), dm);
 			day = day_in_year(day, month, year);
+		} else if ((local_time->tm_year + 1900) == year) {
+			day = local_time->tm_yday + 1;
 		}
 		if (!month)
 			yflag=1;
 		break;
 	case 0:
-		time(&now);
-		local_time = localtime(&now);
 		day = local_time->tm_yday + 1;
 		year = local_time->tm_year + 1900;
 		month = local_time->tm_mon + 1;
