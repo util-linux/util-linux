@@ -16,6 +16,7 @@
 
 #include "blkidP.h"
 
+#define LVM1_ID_LEN 128
 #define LVM2_ID_LEN 32
 
 struct lvm2_pv_label_header {
@@ -27,6 +28,13 @@ struct lvm2_pv_label_header {
 	uint8_t		type[8];	/* LVM2 001 */
 	/* pv_header */
 	uint8_t		pv_uuid[LVM2_ID_LEN];
+} __attribute__ ((packed));
+
+struct lvm1_pv_label_header {
+	uint8_t id[2];			/* HM */
+	uint16_t version;		/* version 1 or 2 */
+	uint32_t _notused[10];		/* lvm1 internals */
+	uint8_t pv_uuid[LVM1_ID_LEN];
 } __attribute__ ((packed));
 
 #define LVM2_LABEL_SIZE 512
@@ -49,12 +57,24 @@ static unsigned int lvm2_calc_crc(const void *buf, unsigned int size)
 	return crc;
 }
 
+/* Length of real UUID is always LVM2_ID_LEN */
+static void format_lvm_uuid(char *dst_uuid, char *src_uuid)
+{
+	unsigned int i, b;
+
+	for (i = 0, b = 1; i < LVM2_ID_LEN; i++, b <<= 1) {
+		if (b & 0x4444440)
+			*dst_uuid++ = '-';
+		*dst_uuid++ = *src_uuid++;
+	}
+	*dst_uuid = '\0';
+}
+
 static int probe_lvm2(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	int sector = mag->kboff << 1;
 	struct lvm2_pv_label_header *label;
-	char *p, *q, uuid[40];
-	unsigned int i, b;
+	char uuid[LVM2_ID_LEN + 7];
 	unsigned char *buf;
 
 	buf = blkid_probe_get_buffer(pr,
@@ -85,14 +105,7 @@ static int probe_lvm2(blkid_probe pr, const struct blkid_idmag *mag)
 		return 1;
 	}
 
-	for (i = 0, b = 1, p = uuid, q = (char *) label->pv_uuid; i <= 32;
-	     i++, b <<= 1) {
-		if (b & 0x4444440)
-			*p++ = '-';
-		*p++ = *q++;
-	}
-
-	uuid[LVM2_ID_LEN+6] = '\0';
+	format_lvm_uuid(uuid, (char *) label->pv_uuid);
 	blkid_probe_sprintf_uuid(pr, label->pv_uuid, sizeof(label->pv_uuid),
 			"%s", uuid);
 
@@ -102,6 +115,26 @@ static int probe_lvm2(blkid_probe pr, const struct blkid_idmag *mag)
 	return 0;
 }
 
+static int probe_lvm1(blkid_probe pr, const struct blkid_idmag *mag)
+{
+	struct lvm1_pv_label_header *label;
+	char uuid[LVM2_ID_LEN + 7];
+	unsigned int version;
+
+	label = blkid_probe_get_sb(pr, mag, struct lvm1_pv_label_header);
+	if (!label)
+		return -1;
+
+	version = le16_to_cpu(label->version);
+	if (version != 1 && version != 2)
+		return 1;
+
+	format_lvm_uuid(uuid, (char *) label->pv_uuid);
+	blkid_probe_sprintf_uuid(pr, label->pv_uuid, sizeof(label->pv_uuid),
+			"%s", uuid);
+
+	return 0;
+}
 
 /* NOTE: the original libblkid uses "lvm2pv" as a name */
 const struct blkid_idinfo lvm2_idinfo =
@@ -123,9 +156,10 @@ const struct blkid_idinfo lvm1_idinfo =
 {
 	.name		= "LVM1_member",
 	.usage		= BLKID_USAGE_RAID,
+	.probefunc	= probe_lvm1,
 	.magics		=
 	{
-		{ .magic = "HM", .len = 2, .sboff = 0x400 },
+		{ .magic = "HM", .len = 2 },
 		{ NULL }
 	}
 };
