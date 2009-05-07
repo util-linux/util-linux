@@ -164,4 +164,13 @@ const struct blkid_idinfo lvm1_idinfo =
 	}
 };
 
-
+const struct blkid_idinfo snapcow_idinfo =
+{
+	.name		= "DM_snapshot_cow",
+	.usage		= BLKID_USAGE_OTHER,
+	.magics		=
+	{
+		{ .magic = "SnAp", .len = 4 },
+		{ NULL }
+	}
+};
