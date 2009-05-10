@@ -35,7 +35,7 @@ With no arguments,
 .B ldattach
 prints usage information.
 .SH LINE DISCIPLINES
-As of kernel release 2.6.21, the following line disciplines are supported:
+Depending on the kernel release, the following line disciplines are supported:
 .TP
 .BR TTY ( 0 )
 The default line discipline,
@@ -80,6 +80,9 @@ Bluetooth HCI UART driver.
 .TP
 .BR GIGASET_M101 ( 16 )
 Driver for Siemens Gigaset M101 serial DECT adapter.
+.TP
+.BR PPS ( 18 )
+Driver for serial line Pulse Per Second (PPS) source.
 .SH OPTIONS
 .TP
 \fB-d\fP | \fB--debug\fP

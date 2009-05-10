@@ -34,6 +34,10 @@
 # define N_GIGASET_M101 16
 #endif
 
+#ifndef N_PPS
+# define N_PPS 18
+#endif
+
 #ifndef ARRAY_SIZE
 # define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 #endif
@@ -65,7 +69,8 @@ ld_table[] = {
 	{ "HCI",	N_HCI },
 	{ "GIGASET_M101",	N_GIGASET_M101 },
 	{ "GIGASET",	N_GIGASET_M101 },
-	{ "M101",	N_GIGASET_M101 }
+	{ "M101",	N_GIGASET_M101 },
+	{ "PPS",	N_PPS },
 };
 
 /* look up line discipline code */
