@@ -330,9 +330,19 @@ static inline void
 cpuid(unsigned int op, unsigned int *eax, unsigned int *ebx,
 			 unsigned int *ecx, unsigned int *edx)
 {
-	__asm__("cpuid"
-		: "=a" (*eax),
-		  "=b" (*ebx),
+	__asm__(
+#if defined(__PIC__) && defined(__i386__)
+		/* x86 PIC cannot clobber ebx -- gcc bitches */
+		"pushl %%ebx;"
+		"cpuid;"
+		"movl %%ebx, %%esi;"
+		"popl %%ebx;"
+		: "=S" (*ebx),
+#else
+		"cpuid;"
+		: "=b" (*ebx),
+#endif
+		  "=a" (*eax),
 		  "=c" (*ecx),
 		  "=d" (*edx)
 		: "0" (op), "c"(0));
