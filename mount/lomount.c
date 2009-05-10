@@ -256,7 +256,7 @@ loop_scandir(const char *dirname, int **ary, int hasprefix)
 	*ary = NULL;
 
 	while((d = readdir(dir))) {
-		if (d->d_type != DT_BLK && d->d_type != DT_UNKNOWN)
+		if (d->d_type != DT_BLK && d->d_type != DT_UNKNOWN && d->d_type != DT_LNK)
 			continue;
 		n = name2minor(hasprefix, d->d_name);
 		if (n == -1 || n < NLOOPS_DEFAULT)
