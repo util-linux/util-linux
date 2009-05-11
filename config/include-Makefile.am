@@ -17,6 +17,7 @@ dist_noinst_DATA = $(dist_man_MANS)
 # Paths to in-tree libraries (use ul_ prefix to avoid possible collisions)
 #
 ul_libblkid_srcdir = $(top_srcdir)/libs/blkid/src
+ul_libblkid_builddir = $(top_builddir)/libs/blkid/src
 ul_libblkid_la = $(top_builddir)/libs/blkid/src/libblkid.la
 
 $(ul_libblkid_la):
