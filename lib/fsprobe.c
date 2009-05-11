@@ -7,7 +7,11 @@
 #include <sys/types.h>
 #include <stdlib.h>
 
+#ifdef HAVE_BLKID_BLKID_H
+#include <blkid/blkid.h>
+#else
 #include <blkid.h>
+#endif
 
 #include "blkdev.h"
 #include "canonicalize.h"

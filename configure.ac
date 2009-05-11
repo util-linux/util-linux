@@ -180,7 +180,19 @@ have_volume_id=no
 
 if test "x$with_fsprobe" = xblkid; then
   PKG_CHECK_MODULES(BLKID, blkid, [have_blkid=yes], [])
-  AC_CHECK_LIB(blkid, blkid_evaluate_tag, [have_blkid_evaluate=yes], [])
+  if test "x$have_blkid" = xyes; then
+    old_CFLAGS="$CFLAGS"
+    old_CPPFLAGS="$CPPFLAGS"
+    old_LDFLAGS="$LDFLAGS"
+    CFLAGS="$CFLAGS $BLKID_CFLAGS"
+    CPPFLAGS="$CPPFLAGS $BLKID_CFLAGS"
+    LDFLAGS="$LDFLAGS $BLKID_LIBS"
+    AC_CHECK_HEADERS([blkid.h blkid/blkid.h], [break], [])
+    AC_CHECK_FUNC(blkid_evaluate_tag, [have_blkid_evaluate=yes], [])
+    CFLAGS="$old_CFLAGS"
+    CPPFLAGS="$old_CPPFLAGS"
+    LDFLAGS="$old_LDFLAGS"
+  fi
 elif test "x$with_fsprobe" = xvolume_id; then
   PKG_CHECK_MODULES(VOLUME_ID, volume_id, [have_volume_id=yes], [])
 elif test "x$with_fsprobe" = xbuiltin; then
