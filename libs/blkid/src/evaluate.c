@@ -27,9 +27,6 @@
 #include <errno.h>
 #endif
 #include <stdint.h>
-#ifdef HAVE_LIBUUID
-#include <uuid/uuid.h>
-#endif
 #include <stdarg.h>
 
 #include "pathnames.h"
