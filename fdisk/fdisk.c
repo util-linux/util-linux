@@ -2623,7 +2623,7 @@ main(int argc, char **argv) {
 			break;
 		case 'H':
 			user_heads = atoi(optarg);
-			if (user_heads <= 0 || user_heads >= 256)
+			if (user_heads <= 0 || user_heads > 256)
 				user_heads = 0;
 			break;
 		case 'S':

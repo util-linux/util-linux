@@ -107,7 +107,7 @@
 
 #define SECTOR_SIZE 512
 
-#define MAX_HEADS 255
+#define MAX_HEADS 256
 #define MAX_SECTORS 63
 
 #define ACTIVE_FLAG 0x80
