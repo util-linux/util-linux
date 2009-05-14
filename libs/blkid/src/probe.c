@@ -529,6 +529,10 @@ int blkid_do_probe(blkid_probe pr)
  * This is the same function as blkid_do_probe(), but returns only one result
  * (cannot be used in while()) and checks for ambivalen results (more
  * filesystems on the device) -- in such case returns -2.
+ *
+ * The function does not check for filesystems when a RAID signature is
+ * detected.  The function also does not check for collision between RAIDs. The
+ * first detected RAID is returned.
  */
 int blkid_do_safeprobe(blkid_probe pr)
 {
@@ -544,9 +548,12 @@ int blkid_do_safeprobe(blkid_probe pr)
 			first.nvals = pr->nvals;
 			first.idx = pr->idx;
 		}
+		count++;
+
+		if (idinfos[pr->idx]->usage & BLKID_USAGE_RAID)
+			break;
 		if (!(idinfos[pr->idx]->flags & BLKID_IDINFO_TOLERANT))
 			intol++;
-		count++;
 	}
 	if (rc < 0)
 		return rc;		/* error */
