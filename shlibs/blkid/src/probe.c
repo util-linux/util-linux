@@ -453,17 +453,16 @@ int blkid_do_probe(blkid_probe pr)
 {
 	int i = 0;
 
-	if (!pr)
+	if (!pr || pr->idx < -1)
 		return -1;
 
 	blkid_probe_reset_vals(pr);
 
+	DBG(DEBUG_LOWPROBE,
+		printf("--> starting probing loop [idx=%d]\n",
+		pr->idx));
+
 	i = pr->idx + 1;
-
-	if (i < 0 && i >= ARRAY_SIZE(idinfos))
-		return -1;
-
-	DBG(DEBUG_LOWPROBE, printf("--> starting probing loop\n"));
 
 	for ( ; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id;
@@ -518,10 +517,13 @@ int blkid_do_probe(blkid_probe pr)
 			blkid_probe_set_usage(pr, id->usage);
 
 		DBG(DEBUG_LOWPROBE,
-			printf("<-- leaving probing loop (type=%s)\n", id->name));
+			printf("<-- leaving probing loop (type=%s) [idx=%d]\n",
+			id->name, pr->idx));
 		return 0;
 	}
-	DBG(DEBUG_LOWPROBE, printf("<-- leaving probing loop (failed)\n"));
+	DBG(DEBUG_LOWPROBE,
+		printf("<-- leaving probing loop (failed) [idx=%d]\n",
+		pr->idx));
 	return 1;
 }
 
