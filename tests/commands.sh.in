@@ -45,6 +45,6 @@ TS_CMD_ISLOCAL=${TS_CMD_ISLOCAL-"$TOPDIR/login-utils/islocal_test"}
 TS_CMD_HWCLOCK=${TS_CMD_HWCLOCK-"$TOPDIR/hwclock/hwclock"}
 TS_CMD_LSCPU=${TS_CMD_LSCPU-"$TOPDIR/sys-utils/lscpu"}
 
-TS_CMD_BLKID=${TS_CMD_BLKID-"$TOPDIR/libs/blkid/bin/blkid"}
+TS_CMD_BLKID=${TS_CMD_BLKID-"$TOPDIR/shlibs/blkid/bin/blkid"}
 
 

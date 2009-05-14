@@ -773,7 +773,6 @@ LIBS=""
 AC_CONFIG_HEADERS(config.h)
 
 AC_CONFIG_FILES([
-Makefile
 disk-utils/Makefile
 fdisk/Makefile
 fsck/Makefile
@@ -781,24 +780,25 @@ getopt/Makefile
 hwclock/Makefile
 include/Makefile
 lib/Makefile
-libs/Makefile
-libs/blkid/blkid.pc
-libs/blkid/Makefile
-libs/blkid/bin/Makefile
-libs/blkid/src/Makefile
-libs/blkid/src/probers/Makefile
 login-utils/Makefile
+Makefile
+misc-utils/chkdupexe:misc-utils/chkdupexe.pl
 misc-utils/Makefile
 mount/Makefile
 partx/Makefile
 po/Makefile.in
 schedutils/Makefile
+shlibs/blkid/bin/Makefile
+shlibs/blkid/blkid.pc
+shlibs/blkid/Makefile
+shlibs/blkid/src/Makefile
+shlibs/blkid/src/probers/Makefile
+shlibs/Makefile
 sys-utils/Makefile
-text-utils/Makefile
-tests/Makefile
-tests/helpers/Makefile
 tests/commands.sh
-misc-utils/chkdupexe:misc-utils/chkdupexe.pl
+tests/helpers/Makefile
+tests/Makefile
+text-utils/Makefile
 ])
 
 AC_OUTPUT
