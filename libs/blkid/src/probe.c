@@ -160,6 +160,11 @@ static void blkid_probe_reset_vals(blkid_probe pr)
 	pr->nvals = 0;
 }
 
+static void blkid_probe_reset_idx(blkid_probe pr)
+{
+	pr->idx = -1;
+}
+
 void blkid_reset_probe(blkid_probe pr)
 {
 	if (!pr)
@@ -169,13 +174,12 @@ void blkid_reset_probe(blkid_probe pr)
 		memset(pr->buf, 0, pr->buf_max);
 	pr->buf_off = 0;
 	pr->buf_len = 0;
-	pr->idx = 0;
 	if (pr->sbbuf)
 		memset(pr->sbbuf, 0, BLKID_SB_BUFSIZ);
 	pr->sbbuf_len = 0;
 	blkid_probe_reset_vals(pr);
+	blkid_probe_reset_idx(pr);
 }
-
 
 /*
  * Note that we have two offsets:
@@ -263,7 +267,6 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	pr->fd = fd;
 	pr->off = off;
 	pr->size = 0;
-	pr->idx = 0;
 
 	if (size)
 		pr->size = size;
@@ -307,7 +310,7 @@ int blkid_probe_reset_filter(blkid_probe pr)
 		return -1;
 	if (pr->fltr)
 		memset(pr->fltr, 0, BLKID_FLTR_SIZE * sizeof(unsigned long));
-	pr->idx = 0;
+	blkid_probe_reset_idx(pr);
 	return 0;
 }
 
@@ -324,9 +327,10 @@ int blkid_probe_filter_types(blkid_probe pr, int flag, char *names[])
 
 	if (!pr || !names)
 		return -1;
-	if (!pr->fltr)
+	if (!pr->fltr) {
 		pr->fltr = calloc(BLKID_FLTR_SIZE, sizeof(unsigned long));
-	else
+		blkid_probe_reset_idx(pr);
+	} else
 		blkid_probe_reset_filter(pr);
 
 	if (!pr->fltr)
@@ -355,7 +359,6 @@ int blkid_probe_filter_types(blkid_probe pr, int flag, char *names[])
 		}
 	}
 	DBG(DEBUG_LOWPROBE, printf("a new probing type-filter initialized\n"));
-	pr->idx = 0;
 	return 0;
 }
 
@@ -375,9 +378,10 @@ int blkid_probe_filter_usage(blkid_probe pr, int flag, int usage)
 
 	if (!pr || !usage)
 		return -1;
-	if (!pr->fltr)
+	if (!pr->fltr) {
 		pr->fltr = calloc(BLKID_FLTR_SIZE, sizeof(unsigned long));
-	else
+		blkid_probe_reset_idx(pr);
+	} else
 		blkid_probe_reset_filter(pr);
 
 	if (!pr->fltr)
@@ -393,7 +397,6 @@ int blkid_probe_filter_usage(blkid_probe pr, int flag, int usage)
 			blkid_bmp_set_item(pr->fltr, i);
 	}
 	DBG(DEBUG_LOWPROBE, printf("a new probing usage-filter initialized\n"));
-	pr->idx = 0;
 	return 0;
 }
 
@@ -407,8 +410,8 @@ int blkid_probe_invert_filter(blkid_probe pr)
 	for (i = 0; i < BLKID_FLTR_SIZE; i++)
 		pr->fltr[i] = ~pr->fltr[i];
 
+	blkid_probe_reset_idx(pr);
 	DBG(DEBUG_LOWPROBE, printf("probing filter inverted\n"));
-	pr->idx = 0;
 	return 0;
 }
 
@@ -455,8 +458,7 @@ int blkid_do_probe(blkid_probe pr)
 
 	blkid_probe_reset_vals(pr);
 
-	if (pr->idx)
-		i = pr->idx + 1;
+	i = pr->idx + 1;
 
 	if (i < 0 && i >= ARRAY_SIZE(idinfos))
 		return -1;
