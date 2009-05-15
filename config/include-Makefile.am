@@ -16,10 +16,19 @@ dist_noinst_DATA = $(dist_man_MANS)
 
 # Paths to in-tree libraries (use ul_ prefix to avoid possible collisions)
 #
+# blkid
 ul_libblkid_srcdir = $(top_srcdir)/shlibs/blkid/src
 ul_libblkid_builddir = $(top_builddir)/shlibs/blkid/src
 ul_libblkid_la = $(top_builddir)/shlibs/blkid/src/libblkid.la
 
 $(ul_libblkid_la):
 	$(MAKE) -C $(ul_libblkid_builddir)
+
+# uuid
+ul_libuuid_srcdir = $(top_srcdir)/shlibs/uuid/src
+ul_libuuid_builddir = $(top_builddir)/shlibs/uuid/src
+ul_libuuid_la = $(top_builddir)/shlibs/uuid/src/libuuid.la
+
+$(ul_libuuid_la):
+	$(MAKE) -C $(ul_libuuid_builddir)
 

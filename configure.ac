@@ -84,9 +84,13 @@ AC_CHECK_HEADERS(
 	linux/tiocl.h \
 	linux/version.h \
 	locale.h \
-	stdlib.h \
+	stdint.h \
+	inttypes.h \
 	pty.h \
 	mntent.h \
+        net/if.h \
+	net/if_dl.h \
+        netinet/in.h \
 	rpcsvc/nfs_prot.h \
 	scsi/scsi.h \
 	stdlib.h \
@@ -94,12 +98,18 @@ AC_CHECK_HEADERS(
 	sys/disklabel.h \
 	sys/ioctl.h \
 	sys/io.h \
+	sys/time.h \
 	sys/mkdev.h \
 	sys/prctl.h \
 	sys/queue.h \
+	sys/sockio.h \
+	sys/file.h \
+	sys/ioctl.h \
 	sys/stat.h \
 	sys/types.h \
+	sys/un.h \
 	sys/user.h \
+	sys/resource.h \
 	unistd.h ])
 AC_CHECK_HEADERS([linux/raw.h],
 		 [AM_CONDITIONAL([HAVE_RAW], [true])],
@@ -119,11 +129,20 @@ AC_CHECK_FUNCS(
 	llseek \
 	lseek64 \
 	strtoull \
+	sysconf \
+	getdtablesize \
+	getrlimit \
+	srandom \
 	inotify_init \
 	prctl \
 	__secure_getenv \
 	rpmatch])
 AC_FUNC_FSEEKO
+
+AC_CHECK_MEMBER(struct sockaddr.sa_len,
+		AC_DEFINE_UNQUOTED(HAVE_SA_LEN,1,[Define if struct sockaddr contains sa_len]),,
+	[#include <sys/types.h>
+	 #include <sys/socket.h>])
 
 dnl Static compilation
 m4_define([UTIL_STATIC_PROGRAMS], [losetup, mount, umount, fdisk, sfdisk, blkid])
@@ -800,6 +819,10 @@ shlibs/blkid/blkid.pc
 shlibs/blkid/Makefile
 shlibs/blkid/src/Makefile
 shlibs/blkid/src/probers/Makefile
+shlibs/uuid/uuid.pc
+shlibs/uuid/Makefile
+shlibs/uuid/man/Makefile
+shlibs/uuid/src/Makefile
 shlibs/Makefile
 sys-utils/Makefile
 tests/commands.sh
