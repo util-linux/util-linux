@@ -21,6 +21,9 @@ dnl libblkid version
 LIBBLKID_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
 LIBBLKID_DATE="10-Feb-2009"
 
+dnl libuuid version
+LIBUUID_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
+
 # Check whether exec_prefix=/usr:
 case $exec_prefix:$prefix in
 NONE:NONE | NONE:/usr | /usr:*)
@@ -242,7 +245,7 @@ AC_ARG_ENABLE([mount],
   [], enable_mount=check
 )
 build_mount=yes
-if test "${enable_mount}" = "no"; then
+if test "x$enable_mount" = xno; then
   build_mount=no
 elif test "x$linux_os" = xyes; then
   if test "x$have_blkid" = xno && test "x$have_volume_id" = xno; then
@@ -253,6 +256,14 @@ else
   build_mount=no
 fi
 AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
+
+
+AC_ARG_ENABLE([libuuid],
+  AS_HELP_STRING([--disable-libuuid], [do not build libuuid and uuid utilities]),
+  [], enable_libuuid=yes
+)
+AC_SUBST(LIBUUID_VERSION)
+AM_CONDITIONAL(BUILD_LIBUUID, test "x$enable_libuuid" = xyes)
 
 
 AC_ARG_ENABLE([fsck],

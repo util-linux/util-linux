@@ -5,7 +5,7 @@ includedir=@includedir@
 
 Name: uuid
 Description: Universally unique id library
-Version: @E2FSPROGS_VERSION@
+Version: @LIBUUID_VERSION@
 Requires:
 Cflags: -I${includedir}/uuid
 Libs: -L${libdir} -luuid
