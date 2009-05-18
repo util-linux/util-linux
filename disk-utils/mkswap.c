@@ -57,7 +57,11 @@
 #include "wholedisk.h"
 
 #ifdef HAVE_LIBUUID
-#include <uuid/uuid.h>
+# ifdef HAVE_UUID_UUID_H
+#  include <uuid/uuid.h>
+#else
+# include <uuid.h>
+# endif
 #endif
 
 static char * program_name = "mkswap";

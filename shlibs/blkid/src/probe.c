@@ -24,10 +24,15 @@
 #include <errno.h>
 #endif
 #include <stdint.h>
-#ifdef HAVE_LIBUUID
-#include <uuid/uuid.h>
-#endif
 #include <stdarg.h>
+
+#ifdef HAVE_LIBUUID
+# ifdef HAVE_UUID_UUID_H
+#  include <uuid/uuid.h>
+#else
+# include <uuid.h>
+# endif
+#endif
 
 #include "blkdev.h"
 #include "blkidP.h"
