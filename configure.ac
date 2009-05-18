@@ -161,6 +161,24 @@ AC_DEFUN([UTIL_CHECK_LIB], [
   AM_CONDITIONAL(AS_TR_CPP([HAVE_]suffix), [test [$have_]suffix = yes])
 ])
 
+dnl UTIL_SET_FLAGS(CFLAGS, CPPFLAGS, LDFLAGS)
+AC_DEFUN([UTIL_SET_FLAGS], [
+  old_CFLAGS="$CFLAGS"
+  old_CPPFLAGS="$CPPFLAGS"
+  old_LDFLAGS="$LDFLAGS"
+  CFLAGS="$CFLAGS $1"
+  CPPFLAGS="$CPPFLAGS $2"
+  LDFLAGS="$LDFLAGS $3"
+])
+
+dnl UTIL_RESTORE_FLAGS()
+AC_DEFUN([UTIL_RESTORE_FLAGS], [
+  CFLAGS="$old_CFLAGS"
+  CPPFLAGS="$old_CPPFLAGS"
+  LDFLAGS="$old_LDFLAGS"
+])
+
+
 UTIL_CHECK_LIB(uuid, uuid_is_null)
 if test "x$have_uuid" = xno; then
   AC_MSG_WARN([uuid library is not found; mkswap(8) will not generate UUIDs])
@@ -183,17 +201,10 @@ have_volume_id=no
 if test "x$with_fsprobe" = xblkid; then
   PKG_CHECK_MODULES(BLKID, blkid, [have_blkid=yes], [])
   if test "x$have_blkid" = xyes; then
-    old_CFLAGS="$CFLAGS"
-    old_CPPFLAGS="$CPPFLAGS"
-    old_LDFLAGS="$LDFLAGS"
-    CFLAGS="$CFLAGS $BLKID_CFLAGS"
-    CPPFLAGS="$CPPFLAGS $BLKID_CFLAGS"
-    LDFLAGS="$LDFLAGS $BLKID_LIBS"
+    UTIL_SET_FLAGS($BLKID_CFLAGS, $BLKID_CFLAGS, $BLKID_LIBS)
     AC_CHECK_HEADERS([blkid.h blkid/blkid.h], [break], [])
     AC_CHECK_FUNC(blkid_evaluate_tag, [have_blkid_evaluate=yes], [])
-    CFLAGS="$old_CFLAGS"
-    CPPFLAGS="$old_CPPFLAGS"
-    LDFLAGS="$old_LDFLAGS"
+    UTIL_RESTORE_FLAGS
   fi
 elif test "x$with_fsprobe" = xvolume_id; then
   PKG_CHECK_MODULES(VOLUME_ID, volume_id, [have_volume_id=yes], [])
