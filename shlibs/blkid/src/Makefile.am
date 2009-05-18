@@ -2,13 +2,20 @@ include $(top_srcdir)/config/include-Makefile.am
 
 SUBDIRS = probers .
 
-AM_CPPFLAGS += -I$(ul_libblkid_srcdir)
-
 common_ldadd =
+common_cflags =
 
 if HAVE_UUID
-common_ldadd += -luuid	#TODO $(UUID_LIBS)
+if BUILD_LIBUUID
+common_ldadd += $(ul_libuuid_la)
+common_cflags += -I$(ul_libuuid_srcdir)
+else
+common_ldadd += $(UUID_LIBS)
+common_cflags += $(UUID_CFLAGS)
 endif
+endif
+
+AM_CPPFLAGS += -I$(ul_libblkid_srcdir) $(common_cflags)
 
 # includes
 blkidincdir = $(includedir)/blkid

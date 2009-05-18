@@ -12,7 +12,10 @@ sbin_PROGRAMS = mkfs mkswap fsck.minix mkfs.minix mkfs.bfs
 fsck_minix_SOURCES = fsck.minix.c minix.h
 mkfs_minix_SOURCES = mkfs.minix.c minix.h $(utils_common)
 mkfs_bfs_SOURCES = mkfs.bfs.c $(utils_common)
+
 mkswap_SOURCES = mkswap.c $(utils_common) ../lib/wholedisk.c ../lib/pttype.c
+mkswap_LDADD =
+mkswap_CFLAGS =
 
 usrbinexec_PROGRAMS = isosize
 usrsbinexec_PROGRAMS =
@@ -46,10 +49,14 @@ fsck_cramfs_LDADD = -lz
 mkfs_cramfs_LDADD = -lz
 endif
 
-mkswap_LDADD =
-
 if HAVE_UUID
-mkswap_LDADD += -luuid
+if BUILD_LIBUUID
+mkswap_LDADD += $(ul_libuuid_la)
+mkswap_CFLAGS += -I$(ul_libuuid_srcdir)
+else
+mkswap_LDADD += $(UUID_LIBS)
+mkswap_CFLAGS += $(UUID_CFLAGS)
+endif
 endif
 
 if HAVE_SELINUX
