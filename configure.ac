@@ -228,8 +228,8 @@ AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
 
 
 AC_ARG_ENABLE([fsck],
-  AS_HELP_STRING([--enable-fsck], [do build fsck]),
-  [], enable_fsck=no
+  AS_HELP_STRING([--disable-fsck], [do not build fsck]),
+  [], enable_fsck=yes
 )
 AM_CONDITIONAL(BUILD_FSCK, test "x$enable_fsck" = xyes)
 
