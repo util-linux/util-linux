@@ -169,6 +169,16 @@ m4_foreach([UTIL_PRG], m4_defn([UTIL_STATIC_PROGRAMS]), [
     [test "x$static_[]UTIL_PRG" = xyes])
 ])
 
+dnl UTIL_PKG_STATIC(VARIABLE, MODULES)
+dnl ----------------------------------
+AC_DEFUN([UTIL_PKG_STATIC], [
+  if AC_RUN_LOG([pkg-config --exists --print-errors "$2"]); then
+    $1=`pkg-config --libs --static "$2"`
+  else
+    AC_MSG_ERROR([pkg-config description of $2, needed for static build, is not available])
+  fi
+])
+
 dnl UTIL_CHECK_LIB(LIBRARY, FUNCTION, [VARSUFFIX = $1]))
 dnl The VARSUFFIX is optional and overrides the default behaviour. For example:
 dnl     UTIL_CHECK_LIB(yyy, func, xxx) generates have_xxx and HAVE_LIBXXX
@@ -201,6 +211,29 @@ AC_DEFUN([UTIL_RESTORE_FLAGS], [
 ])
 
 
+AC_ARG_ENABLE([mount],
+  AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
+  [], enable_mount=check
+)
+build_mount=yes
+if test "x$enable_mount" = xcheck; then
+  if test "x$linux_os" = xno; then
+    AC_MSG_WARN([non-linux system; do not build mount utilities])
+    build_mount=no
+  fi
+elif test "x$enable_mount" = xno; then
+    build_mount=no
+fi
+AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
+
+
+AC_ARG_ENABLE([fsck],
+  AS_HELP_STRING([--enable-fsck], [do build fsck]),
+  [], enable_fsck=no
+)
+AM_CONDITIONAL(BUILD_FSCK, test "x$enable_fsck" = xyes)
+
+
 AC_ARG_ENABLE([libuuid],
   AS_HELP_STRING([--disable-libuuid], [do not build libuuid and uuid utilities]),
   [], enable_libuuid=yes
@@ -222,7 +255,7 @@ if test "x$enable_libuuid" = xno; then
     UTIL_RESTORE_FLAGS
   fi
 else
-  # internal librray
+  # internal library
   AC_DEFINE(HAVE_UUID_H, 1, [Define to 1 if you have the <uuid.h> header file.])
 fi
 
@@ -236,104 +269,56 @@ AM_CONDITIONAL(HAVE_UUID, test "x$have_uuid" = xyes)
 : ${UUID_LIBS='-luuid'}
 
 
-AC_ARG_WITH([fsprobe],
-  [AS_HELP_STRING([--with-fsprobe=LIB], [library to guess filesystems, LIB should be builtin|blkid|volume_id, default is blkid])],
-  [], [with_fsprobe=blkid]
+AC_ARG_ENABLE([libblkid],
+  AS_HELP_STRING([--disable-libblkid], [do not build libblkid and blkid utilities]),
+  [], enable_libblkid=yes
 )
+AC_SUBST(LIBBLKID_VERSION)
+AM_CONDITIONAL(BUILD_LIBBLKID, test "x$enable_libblkid" = xyes)
+AC_DEFINE_UNQUOTED(LIBBLKID_VERSION, "$LIBBLKID_VERSION", [libblkid version string])
+AC_DEFINE_UNQUOTED(LIBBLKID_DATE, "$LIBBLKID_DATE", [libblkid date string])
+have_blkid=yes
 
-build_libblkid=no
-have_blkid_evaluate=no
-have_blkid=no
-have_volume_id=no
-
-if test "x$with_fsprobe" = xblkid; then
-  PKG_CHECK_MODULES(BLKID, blkid, [have_blkid=yes], [])
-  if test "x$have_blkid" = xyes; then
-    UTIL_SET_FLAGS($BLKID_CFLAGS, $BLKID_CFLAGS, $BLKID_LIBS)
-    AC_CHECK_HEADERS([blkid.h blkid/blkid.h], [break], [])
-    AC_CHECK_FUNC(blkid_evaluate_tag, [have_blkid_evaluate=yes], [])
-    UTIL_RESTORE_FLAGS
-  fi
-elif test "x$with_fsprobe" = xvolume_id; then
-  PKG_CHECK_MODULES(VOLUME_ID, volume_id, [have_volume_id=yes], [])
-elif test "x$with_fsprobe" = xbuiltin; then
-  have_blkid=yes
-  build_libblkid=yes
-  have_blkid_evaluate=yes
-  AC_SUBST(LIBBLKID_VERSION)
-  AC_DEFINE_UNQUOTED(LIBBLKID_VERSION, "$LIBBLKID_VERSION", [libblkid version string])
-  AC_DEFINE_UNQUOTED(LIBBLKID_DATE, "$LIBBLKID_DATE", [libblkid date string])
-fi
-
-if  test "x$have_blkid" = xyes; then
-  AC_DEFINE(HAVE_LIBBLKID, 1, [Define to 1 if you have the -lblkid.])
-  if test "x$have_blkid_evaluate" = xyes; then
-    AC_DEFINE(HAVE_BLKID_EVALUATE_TAG, 1, [Define to 1 if you have the blkid_evaluate_tag().])
-  fi
-fi
-
-AM_CONDITIONAL(HAVE_BLKID, test "x$have_blkid" = xyes)
-AM_CONDITIONAL(HAVE_VOLUME_ID, test "x$have_volume_id" = xyes)
-AM_CONDITIONAL(BUILD_LIBBLKID, test "x$build_libblkid" = xyes)
-
-
-AC_ARG_ENABLE([mount],
-  AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
-  [], enable_mount=check
-)
-build_mount=yes
-if test "x$enable_mount" = xno; then
-  build_mount=no
-elif test "x$linux_os" = xyes; then
-  if test "x$have_blkid" = xno && test "x$have_volume_id" = xno; then
-    AC_MSG_ERROR([blkid or volume_id is needed to build util-linux-ng mount utilities])
+if test "x$enable_libblkid" = xno; then
+  if test "x$build_mount" = xyes || test "x$enable_fsck" = xyes; then
+    # Check for external (e2fsprogs) libblkid
+    PKG_CHECK_MODULES(BLKID, blkid, [have_blkid=yes], [have_blkid=no])
+    if test "x$have_blkid" = xno; then
+      # system without pkg-config or so, try classic check
+      AC_CHECK_LIB(blkid, blkid_get_cache, [have_blkid=yes], [have_blkid=no])
+    fi
+    if test "x$have_blkid" = xyes; then
+      UTIL_SET_FLAGS($BLKID_CFLAGS, $BLKID_CFLAGS, $BLKID_LIBS)
+      AC_CHECK_HEADERS([blkid.h blkid/blkid.h], [break], [])
+      UTIL_RESTORE_FLAGS
+    fi
+    if test -n "$enable_static_programs"; then
+      # TODO check only when mount of fsck are requested
+      UTIL_PKG_STATIC([BLKID_LIBS_STATIC], [blkid])
+    fi
   fi
 else
-  AC_MSG_WARN([non-linux system; do not build mount utilities])
-  build_mount=no
+  # internal library
+  AC_DEFINE(HAVE_BLKID_H, 1, [Define to 1 if you have the <blkid.h> header file.])
+  AC_DEFINE(HAVE_BLKID_EVALUATE_TAG, 1, [Define to 1 if you have the blkid_evaluate_tag().])
 fi
-AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
 
-
-AC_ARG_ENABLE([fsck],
-  AS_HELP_STRING([--enable-fsck], [do build fsck]),
-  [], enable_fsck=no
-)
-if test "x$enable_fsck" = xyes; then
-  if test "x$have_blkid" = xno && test "x$have_volume_id" = xno; then
-    AC_MSG_ERROR([libblkid or libvolume_id is needed to build util-linux-ng fsck])
+if test "x$have_blkid" = xyes; then
+  AC_DEFINE(HAVE_LIBBLKID, 1, [Define to 1 if you have the -lblkid.])
+else
+  if test "x$build_mount" = xyes; then
+    AC_MSG_ERROR([libblkid is needed to build util-linux-ng mount])
+  fi
+  if test "x$enable_fsck" = xyes; then
+    AC_MSG_ERROR([libblkid is needed to build util-linux-ng fsck])
   fi
 fi
-AM_CONDITIONAL(BUILD_FSCK, test "x$enable_fsck" = xyes)
-
-
-
-
-dnl UTIL_PKG_STATIC(VARIABLE, MODULES)
-dnl ----------------------------------
-AC_DEFUN([UTIL_PKG_STATIC], [
-  if AC_RUN_LOG([pkg-config --exists --print-errors "$2"]); then
-    $1=`pkg-config --libs --static "$2"`
-  else
-    AC_MSG_ERROR([pkg-config description of $2, needed for static build, is not available])
-  fi
-])
-
-
-# These default values should work in most cases:
+AM_CONDITIONAL(HAVE_BLKID, test "x$have_blkid" = xyes)
+# default
 : ${BLKID_LIBS='-lblkid -luuid'}
-: ${VOLUME_ID_LIBS='-lvolume_id'}
-
-# ... but for static build, we need to consult pkg-config:
-if test -n "$enable_static_programs"; then
-  case $with_fsprobe in
-  blkid) UTIL_PKG_STATIC([BLKID_LIBS_STATIC], [blkid]) ;;
-  volume_id) UTIL_PKG_STATIC([VOLUME_ID_LIBS_STATIC], [libvolume_id]) ;;
-  esac
-fi
 
 AC_ARG_VAR([BLKID_LIBS_STATIC], [-l options for linking statically with blkid])
-AC_ARG_VAR([VOLUME_ID_LIBS_STATIC], [-l options for linking statically with volume_id])
+
 
 UTIL_CHECK_LIB(util, openpty)
 UTIL_CHECK_LIB(termcap, tgetnum)
