@@ -71,7 +71,6 @@ losetup_static_LDFLAGS = $(ldflags_static)
 losetup_static_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
 endif
 
-if HAVE_BLKID
 if BUILD_LIBBLKID
 ldadd_common += $(ul_libblkid_la)
 ldadd_static += $(ul_libblkid_la)
@@ -80,13 +79,6 @@ else
 ldadd_common += $(BLKID_LIBS)
 ldadd_static += $(BLKID_LIBS_STATIC)
 cflags_common += $(BLKID_CFLAGS)
-endif
-endif
-
-if HAVE_VOLUME_ID
-ldadd_common += $(VOLUME_ID_LIBS)
-ldadd_static += $(VOLUME_ID_LIBS_STATIC)
-cflags_common += $(VOLUME_ID_CFLAGS)
 endif
 
 if HAVE_SELINUX

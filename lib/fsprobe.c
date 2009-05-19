@@ -18,7 +18,9 @@
 #include "pathnames.h"
 #include "fsprobe.h"
 
-#if defined(HAVE_BLKID_EVALUATE_TAG) || defined(HAVE_LIBVOLUME_ID)
+static blkid_cache blcache;
+
+#ifdef HAVE_BLKID_EVALUATE_TAG
 /* ask kernel developers why we need such ugly open() method... */
 static int
 open_device(const char *devname)
@@ -100,9 +102,6 @@ fsprobe_get_devname_by_spec(const char *spec)
 
 	return canonicalize_path(spec);
 }
-
-#ifdef HAVE_LIBBLKID
-static blkid_cache blcache;
 
 void
 fsprobe_init(void)
@@ -266,129 +265,3 @@ fsprobe_get_uuid_by_devname(const char *devname)
 }
 
 #endif /* !HAVE_BLKID_EVALUATE_TAG */
-#else  /* !HAVE_LIBBLKID */
-
-/*
- * libvolume_id from udev
- * -- deprecated
- */
-#include <libvolume_id.h>
-
-enum probe_type {
-	VOLUME_ID_NONE,
-	VOLUME_ID_LABEL,
-	VOLUME_ID_UUID,
-	VOLUME_ID_TYPE,
-};
-
-static char
-*probe(const char *device, enum probe_type type)
-{
-	int fd;
-	uint64_t size;
-	struct volume_id *id;
-	const char *val;
-	char *value = NULL;
-	int retries = 0;
-
-	fd = open_device(devname);
-	if (fd < 0)
-		return NULL;
-	id = volume_id_open_fd(fd);
-	if (!id) {
-		close(fd);
-		return NULL;
-	}
-	if (blkdev_get_size(fd, &size) != 0)
-		size = 0;
-	if (volume_id_probe_all(id, 0, size) == 0) {
-		switch(type) {
-		case VOLUME_ID_LABEL:
-			if (volume_id_get_label(id, &val))
-				value  = strdup(val);
-			break;
-		case VOLUME_ID_UUID:
-			if (volume_id_get_uuid(id, &val))
-				value  = strdup(val);
-			break;
-		case VOLUME_ID_TYPE:
-			if (volume_id_get_type(id, &val))
-				value  = strdup(val);
-			break;
-		default:
-			break;
-		}
-	}
-	volume_id_close(id);
-	close(fd);
-	return value;
-}
-
-void
-fsprobe_init(void)
-{
-}
-
-void
-fsprobe_exit(void)
-{
-}
-
-int
-fsprobe_known_fstype(const char *fstype)
-{
-	if (volume_id_get_prober_by_type(fstype) != NULL)
-		return 1;
-	return 0;
-}
-
-char *
-fsprobe_get_uuid_by_devname(const char *devname)
-{
-	return probe(devname, VOLUME_ID_UUID);
-}
-
-char *
-fsprobe_get_label_by_devname(const char *devname)
-{
-	return probe(devname, VOLUME_ID_LABEL);
-}
-
-char *
-fsprobe_get_fstype_by_devname(const char *devname)
-{
-	return probe(devname, VOLUME_ID_TYPE);
-}
-
-char *
-fsprobe_get_devname_by_uuid(const char *uuid)
-{
-	char dev[PATH_MAX];
-	size_t len;
-
-	if (!uuid)
-		return NULL;
-
-	strcpy(dev, _PATH_DEV_BYUUID "/");
-	len = strlen(_PATH_DEV_BYUUID "/");
-	if (!volume_id_encode_string(uuid, &dev[len], sizeof(dev) - len))
-		return NULL;
-	return canonicalize_path(dev);
-}
-
-char *
-fsprobe_get_devname_by_label(const char *label)
-{
-	char dev[PATH_MAX];
-	size_t len;
-
-	if (!label)
-		return NULL;
-	strcpy(dev, _PATH_DEV_BYLABEL "/");
-	len = strlen(_PATH_DEV_BYLABEL "/");
-	if (!volume_id_encode_string(label, &dev[len], sizeof(dev) - len))
-		return NULL;
-	return canonicalize_path(dev);
-}
-
-#endif /* HAVE_LIBVOLUME_ID  */
