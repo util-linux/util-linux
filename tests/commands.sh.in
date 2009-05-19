@@ -47,4 +47,4 @@ TS_CMD_LSCPU=${TS_CMD_LSCPU-"$TOPDIR/sys-utils/lscpu"}
 
 TS_CMD_BLKID=${TS_CMD_BLKID-"$TOPDIR/shlibs/blkid/bin/blkid"}
 
-
+TS_CMD_FDISK=${TS_CMD_FDISK-"$TOPDIR/fdisk/fdisk"}
