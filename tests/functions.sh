@@ -246,13 +246,23 @@ function ts_die {
 	ts_finalize
 }
 
+function ts_image_md5sum {
+	local img=${1:-"$TS_OUTDIR/${TS_TESTNAME}.img"}
+	echo $(md5sum "$img" | awk '{printf $1}') $(basename "$img")
+}
+
+function ts_image_init {
+	local mib=${1:-"5"}	# size in MiBs
+	local img=${2:-"$TS_OUTDIR/${TS_TESTNAME}.img"}
+	
+	dd if=/dev/zero of="$img" bs=1M count=$mib &> /dev/null
+	echo "$img"
+	return 0
+}
+
 function ts_device_init {
-	local img="$TS_OUTDIR/${TS_TESTNAME}.img"
-	local dev=""
-
-	dd if=/dev/zero of="$img" bs=1M count=5 &> /dev/null
-
-	dev=$($TS_CMD_LOSETUP -s -f "$img")
+	local img=$(ts_image_init)
+	local dev=$($TS_CMD_LOSETUP -s -f "$img")
 
 	if [ -z "$dev" ]; then
 		ts_device_deinit $dev
