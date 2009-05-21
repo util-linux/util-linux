@@ -175,7 +175,6 @@ static void get_random_bytes(void *buf, int nbytes)
 	int i, n = nbytes, fd = get_random_fd();
 	int lose_counter = 0;
 	unsigned char *cp = (unsigned char *) buf;
-	unsigned short tmp_seed[3];
 
 	if (fd >= 0) {
 		while (n > 0) {
@@ -197,13 +196,18 @@ static void get_random_bytes(void *buf, int nbytes)
 	 */
 	for (cp = buf, i = 0; i < nbytes; i++)
 		*cp++ ^= (rand() >> 7) & 0xFF;
+
 #ifdef DO_JRAND_MIX
-	memcpy(tmp_seed, jrand_seed, sizeof(tmp_seed));
-	jrand_seed[2] = jrand_seed[2] ^ syscall(__NR_gettid);
-	for (cp = buf, i = 0; i < nbytes; i++)
-		*cp++ ^= (jrand48(tmp_seed) >> 7) & 0xFF;
-	memcpy(jrand_seed, tmp_seed,
-	       sizeof(jrand_seed)-sizeof(unsigned short));
+	{
+		unsigned short tmp_seed[3];
+
+		memcpy(tmp_seed, jrand_seed, sizeof(tmp_seed));
+		jrand_seed[2] = jrand_seed[2] ^ syscall(__NR_gettid);
+		for (cp = buf, i = 0; i < nbytes; i++)
+			*cp++ ^= (jrand48(tmp_seed) >> 7) & 0xFF;
+		memcpy(jrand_seed, tmp_seed,
+		       sizeof(jrand_seed)-sizeof(unsigned short));
+	}
 #endif
 
 	return;
@@ -415,6 +419,8 @@ try_again:
 	return 0;
 }
 
+#if defined(USE_UUIDD) && defined(HAVE_SYS_UN_H)
+/* used in get_uuid_via_daemon() only */
 static ssize_t read_all(int fd, char *buf, size_t count)
 {
 	ssize_t ret;
@@ -459,7 +465,6 @@ static void close_all_fds(void)
 		close(i);
 }
 
-
 /*
  * Try using the uuidd daemon to generate the UUID
  *
@@ -467,7 +472,6 @@ static void close_all_fds(void)
  */
 static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 {
-#if defined(USE_UUIDD) && defined(HAVE_SYS_UN_H)
 	char op_buf[64];
 	int op_len;
 	int s;
@@ -534,9 +538,15 @@ static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 
 fail:
 	close(s);
-#endif
 	return -1;
 }
+
+#else /* !defined(USE_UUIDD) && defined(HAVE_SYS_UN_H) */
+static int get_uuid_via_daemon(int op, uuid_t out, int *num)
+{
+	return -1;
+}
+#endif
 
 void uuid__generate_time(uuid_t out, int *num)
 {

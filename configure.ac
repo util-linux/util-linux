@@ -128,6 +128,7 @@ AC_CHECK_FUNCS(
 	nanosleep \
 	personality \
 	updwtmp \
+	jrand48 \
 	lchown \
 	llseek \
 	lseek64 \
@@ -209,6 +210,15 @@ AC_DEFUN([UTIL_RESTORE_FLAGS], [
   CPPFLAGS="$old_CPPFLAGS"
   LDFLAGS="$old_LDFLAGS"
 ])
+
+
+AC_ARG_ENABLE([tls],
+  AS_HELP_STRING([--disable-tls], [disable use of thread local support]),
+  [], enable_tls=yes
+)
+if test "x$enable_tls" = xyes; then
+  AX_TLS
+fi
 
 
 AC_ARG_ENABLE([mount],
