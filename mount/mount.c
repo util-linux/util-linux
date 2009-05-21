@@ -1561,7 +1561,7 @@ mount_retry:
 
  out:
 
-#ifdef HAVE_LIBSELINUX
+#if defined(HAVE_LIBSELINUX) && defined(HAVE_SECURITY_GET_INITIAL_CONTEXT)
   if (res != EX_FAIL && verbose && is_selinux_enabled() > 0) {
       security_context_t raw = NULL, def = NULL;
 
