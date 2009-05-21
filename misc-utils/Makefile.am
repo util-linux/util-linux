@@ -17,6 +17,13 @@ CLEANFILES = chkdupexe
 dist_man_MANS = cal.1 chkdupexe.1 ddate.1 logger.1 look.1 mcookie.1 \
 	namei.1 script.1 whereis.1 scriptreplay.1
 
+if BUILD_LIBUUID
+usrbinexec_PROGRAMS += uuidgen
+dist_man_MANS += uuidgen.1
+uuidgen_LDADD = $(ul_libuuid_la)
+uuidgen_CFLAGS = -I$(ul_libuuid_srcdir)
+endif
+
 if HAVE_TINFO
 cal_LDADD = -ltinfo @NCURSES_LIBS@
 else
@@ -63,7 +70,6 @@ endif
 EXTRA_DIST += README.reset reset.033c
 
 if BUILD_WRITE
-
 usrbinexec_PROGRAMS += write
 dist_man_MANS += write.1
 write_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS)

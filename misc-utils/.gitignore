@@ -12,3 +12,4 @@ setterm
 whereis
 kill
 write
+uuidgen
