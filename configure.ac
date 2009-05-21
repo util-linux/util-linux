@@ -656,6 +656,11 @@ fi
 if test "x$have_selinux" = xyes; then
   SELINUX_LIBS="-lselinux -lsepol"
   SELINUX_LIBS_STATIC="-lselinux -lsepol"
+  old_LDFLAGS="$LDFLAGS"
+  LDFLAGS="$LDFLAGS $SELINUX_LIBS"
+  # This function is missing in old libselinux 1.xx versions
+  AC_CHECK_FUNCS([security_get_initial_context])
+  LDFLAGS="$old_LDFLAGS"
 fi
 AC_SUBST([SELINUX_LIBS])
 AC_SUBST([SELINUX_LIBS_STATIC])
