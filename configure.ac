@@ -137,6 +137,8 @@ AC_CHECK_FUNCS(
 	getdtablesize \
 	getrlimit \
 	srandom \
+	setresgid \
+	setresuid \
 	inotify_init \
 	prctl \
 	__secure_getenv \

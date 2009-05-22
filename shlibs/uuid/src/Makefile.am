@@ -13,7 +13,7 @@ uuidinc_HEADERS = uuid.h
 lib_LTLIBRARIES = libuuid.la
 libuuid_la_SOURCES = clear.c compare.c copy.c gen_uuid.c \
            isnull.c pack.c parse.c unpack.c unparse.c uuidd.h \
-           uuid.h uuidP.h uuid_time.c $(uuidinc_HEADERS)
+           uuidd.h uuidP.h uuid_time.c $(uuidinc_HEADERS)
 
 libuuid_la_DEPENDENCIES = $(libuuid_la_LIBADD) uuid.sym
 
