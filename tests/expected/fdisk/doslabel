@@ -15,4 +15,4 @@ Create another logical partition
 Delete primary partition
 1e6d646e5df66a2664cfbbb13fa9a08a doslabel.img
 Delete extended partition
-16a9e8009ee95d2e2341e6657acee4c2 doslabel.img
+fc3cdb12326656d7996b09b6f76973e7 doslabel.img
