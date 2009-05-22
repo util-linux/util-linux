@@ -419,7 +419,7 @@ try_again:
 	return 0;
 }
 
-#if defined(USE_UUIDD) && defined(HAVE_SYS_UN_H)
+#if defined(HAVE_UUIDD) && defined(HAVE_SYS_UN_H)
 /* used in get_uuid_via_daemon() only */
 static ssize_t read_all(int fd, char *buf, size_t count)
 {
@@ -541,7 +541,7 @@ fail:
 	return -1;
 }
 
-#else /* !defined(USE_UUIDD) && defined(HAVE_SYS_UN_H) */
+#else /* !defined(HAVE_UUIDD) && defined(HAVE_SYS_UN_H) */
 static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 {
 	return -1;

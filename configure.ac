@@ -281,6 +281,23 @@ AM_CONDITIONAL(HAVE_UUID, test "x$have_uuid" = xyes)
 : ${UUID_LIBS='-luuid'}
 
 
+AC_ARG_ENABLE([uuidd],
+  AS_HELP_STRING([--disable-uuidd], [do not build the uuid daemon]),
+  [], enable_uuidd=auto
+)
+
+case "$enable_uuidd:$have_uuid" in
+yes:no)
+  AC_MSG_ERROR([cannot enable uuidd when libuuid is disabled]) ;;
+auto:*)
+  enable_uuidd=$have_uuid ;;
+esac
+if test "x$enable_uuidd" = xyes; then
+  AC_DEFINE(HAVE_UUIDD, 1, [Define to 1 if you want to use uuid daemon.])
+fi
+AM_CONDITIONAL(BUILD_UUIDD, test "x$enable_uuidd" = xyes)
+
+
 AC_ARG_ENABLE([libblkid],
   AS_HELP_STRING([--disable-libblkid], [do not build libblkid and blkid utilities]),
   [], enable_libblkid=yes
