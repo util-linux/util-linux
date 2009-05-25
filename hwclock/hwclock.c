@@ -676,7 +676,7 @@ interpret_date_string(const char *date_opt, time_t * const time_p) {
 				       date_opt, (long) *time_p);
 		}
 	}
-	fclose(date_child_fp);
+	pclose(date_child_fp);
 
 	return retcode;
 }
