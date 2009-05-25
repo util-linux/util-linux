@@ -95,7 +95,7 @@ static int probe_reiser4(blkid_probe pr, const struct blkid_idmag *mag)
 
 const struct blkid_idinfo reiser_idinfo =
 {
-	.name		= "reiser",
+	.name		= "reiserfs",
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_reiser,
 	.magics		=
