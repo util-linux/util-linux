@@ -153,7 +153,7 @@ function ts_init_subtest {
 	[ $TS_NSUBTESTS -eq 0 ] && echo
 	TS_NSUBTESTS=$(( $TS_NSUBTESTS + 1 ))
 
-	printf "%18s: %-27s ..." "" "$TS_SUBNAME"
+	printf "%16s: %-27s ..." "" "$TS_SUBNAME"
 }
 
 function ts_init {
@@ -161,7 +161,7 @@ function ts_init {
 
 	ts_init_env "$*"
 
-	printf "%15s: %-30s ..." "$TS_COMPONENT" "$TS_DESC"
+	printf "%13s: %-30s ..." "$TS_COMPONENT" "$TS_DESC"
 
 	[ "$is_fake" == "yes" ] && ts_skip "fake mode"
 }
@@ -218,7 +218,7 @@ function ts_finalize {
 	done
 
 	if [ $TS_NSUBTESTS -ne 0 ]; then
-		printf "%13s..."
+		printf "%11s..."
 		if [ $TS_NSUBFAILED -ne 0 ]; then
 			ts_failed "$TS_NSUBFAILED from $TS_NSUBTESTS sub-tests"
 		else

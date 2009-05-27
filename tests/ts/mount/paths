@@ -20,6 +20,7 @@ TS_DESC="basic paths"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+ts_skip_nonroot
 
 $TS_CMD_MOUNT -n -f -v -v -v /dev/dummy /mnt &> $TS_OUTPUT
 
