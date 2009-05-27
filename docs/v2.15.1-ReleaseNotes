@@ -1,0 +1,47 @@
+Util-linux-ng 2.15.1 Release Notes
+==================================
+
+Changes since v2.15
+-------------------
+
+ For more details see ChangeLog files at:
+ ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/
+
+build-sys:
+   - add UTIL_{SET,RESTORE}_FLAGS  [Karel Zak]
+   - fix "make -C" bug  [Karel Zak]
+   - fix blkid detection in configure.ac  [Karel Zak]
+   - fix blkid.h include for old e2fsprogs  [Karel Zak]
+cal:
+   - Highlight today even when month or year specified  [Rajeev V. Pillai]
+   - uClibc has langinfo.h but not _NL_TIME_WEEK_1STDAY.  [Tom Prince]
+chrt:
+   - don't assume SCHED_BATCH and SCHED_IDLE exist  [Aurelien Jarno]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fdisk:
+   - (and cfdisk) fix to be consistent about maximum heads  [Chris Webb]
+libblkid:
+   - fix reiserfs name  [Karel Zak]
+   - update man page  [Karel Zak]
+   - blkid_do_safeprobe() has to be tolerant to RAIDs  [Karel Zak]
+   - cleanup debug messages and return codes in blkid_do_probe()  [Karel Zak]
+   - fix "hangs forever with partition type mdraid"  [Karel Zak]
+   - make libuuid optional  [Karel Zak]
+losetup:
+   - handle symlinks in /dev/loop/  [Mike Frysinger]
+lscpu:
+   - fix cpuid code on x86/PIC  [Mike Frysinger]
+mount:
+   - fix undefined reference to `security_get_initial_context'  [Karel Zak]
+po:
+   - merge changes  [Karel Zak]
+   - update vi.po (from translationproject.org)  [Clytie Siddall]
+tests:
+   - add mdraid libblkid test  [Karel Zak]
+   - don't run some mount tests for non-root users  [Karel Zak]
+   - fix reiserfs test  [Karel Zak]
+   - fix script that creates lscpu dumps  [Karel Zak]
+   - move lscpu /proc and /sys dumps to tarballs  [Karel Zak]
+   - remove broken Xen dumps for lscpu  [Karel Zak]
+
