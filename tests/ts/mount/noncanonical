@@ -20,6 +20,7 @@ TS_DESC="non canonical path"
 
 . $TS_TOPDIR/functions.sh
 ts_init "$*"
+ts_skip_nonroot
 
 [ ! -e "/etc" ] && ts_skip "/etc not such file of directory"
 
