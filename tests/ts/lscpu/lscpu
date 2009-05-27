@@ -22,17 +22,23 @@ TS_TOPDIR="$(dirname $0)/../.."
 
 ts_init "$*"
 
-for name in $(ls $TS_SELF/dumps/ | sort); do
-	path=$TS_SELF/dumps/$name
+for dump in $(ls $TS_SELF/dumps/*.tar.gz | sort); do
+	name=$(basename $dump .tar.gz)
+	dumpdir="$TS_OUTDIR/dumps"
+
 	ts_init_subtest $name
+	mkdir -p $dumpdir
+
+	tar -C $dumpdir -zxf $dump 
 
 	# Architecture information is not applicable with -s.
-	"${TS_CMD_LSCPU}" -s "${path}" | grep -v "Architecture" \
-	 >"${TS_OUTPUT}" 2>&1
+	"${TS_CMD_LSCPU}" -s "${dumpdir}/${name}" | \
+		grep -v "Architecture" >"${TS_OUTPUT}" 2>&1
 
 	echo >>"${TS_OUTPUT}"
 
-	"${TS_CMD_LSCPU}" -p -s "${path}" >>"${TS_OUTPUT}" 2>&1
+	"${TS_CMD_LSCPU}" -p -s "${dumpdir}/${name}" \
+		 >>"${TS_OUTPUT}" 2>&1
 
 	ts_finalize_subtest
 done
