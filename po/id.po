@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.15-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-04-29 15:34+0200\n"
+"POT-Creation-Date: 2009-05-27 21:39+0200\n"
 "PO-Revision-Date: 2009-04-20 09:00+0700\n"
 "Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -7800,25 +7800,25 @@ msgstr "%s: tidak dapat memperoleh statistik file sementara.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: tidak dapat membaca file sementara.\n"
 
-#: misc-utils/cal.c:355 misc-utils/cal.c:367
+#: misc-utils/cal.c:358 misc-utils/cal.c:370
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "nilai hari ilegal: gunakan 1-%d"
 
-#: misc-utils/cal.c:359
+#: misc-utils/cal.c:362
 msgid "illegal month value: use 1-12"
 msgstr "nilai bulan ilegal: gunakan 1-12"
 
-#: misc-utils/cal.c:363
+#: misc-utils/cal.c:366
 msgid "illegal year value: use 1-9999"
 msgstr "nilai tahun ilegal: gunakan 1-9999"
 
-#: misc-utils/cal.c:457
+#: misc-utils/cal.c:460
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:848
+#: misc-utils/cal.c:851
 #, c-format
 msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
 msgstr "penggunaan: cal [-13smjyV] [[[hari] bulan] tahun]\n"
@@ -9588,49 +9588,49 @@ msgstr "gagal mendapatkan kebijakan pid %d"
 msgid "pid %d's %s scheduling policy: "
 msgstr "pid %d %s kebijakan antrian: "
 
-#: schedutils/chrt.c:108
+#: schedutils/chrt.c:112
 #, c-format
 msgid "unknown\n"
 msgstr "tidak diketahui\n"
 
-#: schedutils/chrt.c:112
+#: schedutils/chrt.c:116
 #, c-format
 msgid "failed to get pid %d's attributes"
 msgstr "gagal mendapatkan atribut pid %d"
 
-#: schedutils/chrt.c:114
+#: schedutils/chrt.c:118
 #, c-format
 msgid "pid %d's %s scheduling priority: %d\n"
 msgstr "pid %d %s prioritas antrian: %d\n"
 
-#: schedutils/chrt.c:130
+#: schedutils/chrt.c:147
 #, c-format
 msgid "SCHED_%s min/max priority\t: %d/%d\n"
 msgstr "SCHED_%s min/max prioritas\t: %d/%d\n"
 
-#: schedutils/chrt.c:133
+#: schedutils/chrt.c:150
 #, c-format
 msgid "SCHED_%s not supported?\n"
 msgstr "SCHED_%s tidak didukung?\n"
 
-#: schedutils/chrt.c:185
+#: schedutils/chrt.c:206
 msgid "failed to parse pid"
 msgstr "gagal mendapatkan pid"
 
-#: schedutils/chrt.c:207
+#: schedutils/chrt.c:228
 msgid "current"
 msgstr "sekarang"
 
-#: schedutils/chrt.c:215
+#: schedutils/chrt.c:236
 msgid "failed to parse priority"
 msgstr "gagal mendapatkan prioritas"
 
-#: schedutils/chrt.c:221
+#: schedutils/chrt.c:242
 #, c-format
 msgid "failed to set pid %d's policy"
 msgstr "gagal menset kebijakan pid %d"
 
-#: schedutils/chrt.c:230
+#: schedutils/chrt.c:251
 #, c-format
 msgid "failed to execute %s"
 msgstr "gagal menjalankan %s"
@@ -10663,7 +10663,7 @@ msgstr "para"
 msgid "full"
 msgstr "penuh"
 
-#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:431
+#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:441
 #, c-format
 msgid "error: %s"
 msgstr "error: %s"
@@ -10681,15 +10681,15 @@ msgstr "error: strdup gagal"
 msgid "error: uname failed"
 msgstr "error: uname gagal"
 
-#: sys-utils/lscpu.c:481
+#: sys-utils/lscpu.c:491
 msgid "error: malloc failed"
 msgstr "error: malloc gagal"
 
-#: sys-utils/lscpu.c:496
+#: sys-utils/lscpu.c:506
 msgid "error: /sys filesystem is not accessable."
 msgstr "error: sistem berkas /sys tidak dapat diakses."
 
-#: sys-utils/lscpu.c:514
+#: sys-utils/lscpu.c:524
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -10702,65 +10702,65 @@ msgstr ""
 "# ID unik berawal dari nol.\n"
 "# CPU,Core,Soket,Node"
 
-#: sys-utils/lscpu.c:580
+#: sys-utils/lscpu.c:590
 msgid "Thread(s) per core:"
 msgstr "Thread(s) setiap inti:"
 
-#: sys-utils/lscpu.c:581
+#: sys-utils/lscpu.c:591
 msgid "Core(s) per socket:"
 msgstr "Inti setiap soket:"
 
-#: sys-utils/lscpu.c:582
+#: sys-utils/lscpu.c:592
 msgid "CPU socket(s):"
 msgstr "CPU soket:"
 
-#: sys-utils/lscpu.c:586
+#: sys-utils/lscpu.c:596
 msgid "NUMA node(s):"
 msgstr "Titik NUMA:"
 
-#: sys-utils/lscpu.c:588
+#: sys-utils/lscpu.c:598
 msgid "Vendor ID:"
 msgstr "ID Pembuat:"
 
-#: sys-utils/lscpu.c:590
+#: sys-utils/lscpu.c:600
 msgid "CPU family:"
 msgstr "Keluarga CPU:"
 
-#: sys-utils/lscpu.c:592
+#: sys-utils/lscpu.c:602
 msgid "Model:"
 msgstr "Model:"
 
-#: sys-utils/lscpu.c:594
+#: sys-utils/lscpu.c:604
 msgid "Stepping:"
 msgstr "Stepping:"
 
-#: sys-utils/lscpu.c:596
+#: sys-utils/lscpu.c:606
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:599 sys-utils/lscpu.c:601
+#: sys-utils/lscpu.c:609 sys-utils/lscpu.c:611
 msgid "Virtualization:"
 msgstr "Virtualisasi:"
 
-#: sys-utils/lscpu.c:604
+#: sys-utils/lscpu.c:614
 msgid "Hypervisor vendor:"
 msgstr "Pembuat Hypervisor:"
 
-#: sys-utils/lscpu.c:605
+#: sys-utils/lscpu.c:615
 msgid "Virtualization type:"
 msgstr "Tipe virtualisasi:"
 
-#: sys-utils/lscpu.c:613
+#: sys-utils/lscpu.c:623
 #, c-format
 msgid "%s cache:"
 msgstr "%s persediaan:"
 
-#: sys-utils/lscpu.c:621
+#: sys-utils/lscpu.c:631
 #, c-format
 msgid "Usage: %s [option]\n"
 msgstr "Penggunaan: %s [pilihan]\n"
 
-#: sys-utils/lscpu.c:624
+#: sys-utils/lscpu.c:634
 msgid ""
 "CPU architecture information helper\n"
 "\n"
@@ -10775,7 +10775,7 @@ msgstr ""
 "tercetak.\n"
 "  -s, --sysroot   gunakan direktori sebagai sistem root baru.\n"
 
-#: sys-utils/lscpu.c:673
+#: sys-utils/lscpu.c:683
 #, c-format
 msgid "error: change working directory to %s."
 msgstr "error: mengubah direktori kerja ke %s."

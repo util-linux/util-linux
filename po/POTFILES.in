@@ -86,6 +86,7 @@ libs/blkid/src/probers/vfat.c
 libs/blkid/src/probers/via_raid.c
 libs/blkid/src/probers/vxfs.c
 libs/blkid/src/probers/xfs.c
+libs/blkid/src/probers/zfs.c
 libs/blkid/src/read.c
 libs/blkid/src/resolve.c
 libs/blkid/src/save.c

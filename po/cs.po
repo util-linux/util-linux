@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.15-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-04-29 15:34+0200\n"
+"POT-Creation-Date: 2009-05-27 21:39+0200\n"
 "PO-Revision-Date: 2009-04-20 13:39+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -7755,25 +7755,25 @@ msgstr "%s: volání stat pro dočasný soubor selhalo.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: dočasný soubor nelze číst.\n"
 
-#: misc-utils/cal.c:355 misc-utils/cal.c:367
+#: misc-utils/cal.c:358 misc-utils/cal.c:370
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "chybná hodnota pro den: použijte 1–%d"
 
-#: misc-utils/cal.c:359
+#: misc-utils/cal.c:362
 msgid "illegal month value: use 1-12"
 msgstr "chybná hodnota pro měsíc: použijte 1–12"
 
-#: misc-utils/cal.c:363
+#: misc-utils/cal.c:366
 msgid "illegal year value: use 1-9999"
 msgstr "chybná hodnota pro rok: použijte 1–9999"
 
-#: misc-utils/cal.c:457
+#: misc-utils/cal.c:460
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:848
+#: misc-utils/cal.c:851
 #, c-format
 msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
 msgstr "Použití: cal [-13smjyV] [[[DEN] MĚSÍC] ROK]\n"
@@ -9532,52 +9532,52 @@ msgid "pid %d's %s scheduling policy: "
 msgstr "%2$s plánovací politika procesu %1$d: "
 
 # unknown policy
-#: schedutils/chrt.c:108
+#: schedutils/chrt.c:112
 #, c-format
 msgid "unknown\n"
 msgstr "neznámá\n"
 
-#: schedutils/chrt.c:112
+#: schedutils/chrt.c:116
 #, c-format
 msgid "failed to get pid %d's attributes"
 msgstr "nepodařilo se získat vlastnosti procesu %d"
 
 # XXX: Second argument is "new" or "current"
-#: schedutils/chrt.c:114
+#: schedutils/chrt.c:118
 #, c-format
 msgid "pid %d's %s scheduling priority: %d\n"
 msgstr "%2$s plánovací priorita procesu %1$d: %3$d\n"
 
 # First argument just completes literal policy name
-#: schedutils/chrt.c:130
+#: schedutils/chrt.c:147
 #, c-format
 msgid "SCHED_%s min/max priority\t: %d/%d\n"
 msgstr "SCHED_%s min./max. priorita\t: %d/%d\n"
 
-#: schedutils/chrt.c:133
+#: schedutils/chrt.c:150
 #, c-format
 msgid "SCHED_%s not supported?\n"
 msgstr "SCHED_%s není podporována?\n"
 
-#: schedutils/chrt.c:185
+#: schedutils/chrt.c:206
 msgid "failed to parse pid"
 msgstr "PID se nezdařilo rozebrat"
 
 # current policy/priority
-#: schedutils/chrt.c:207
+#: schedutils/chrt.c:228
 msgid "current"
 msgstr "současná"
 
-#: schedutils/chrt.c:215
+#: schedutils/chrt.c:236
 msgid "failed to parse priority"
 msgstr "prioritu se nezdařilo rozebrat"
 
-#: schedutils/chrt.c:221
+#: schedutils/chrt.c:242
 #, c-format
 msgid "failed to set pid %d's policy"
 msgstr "politiku procesu %d se nepodařilo nastavit"
 
-#: schedutils/chrt.c:230
+#: schedutils/chrt.c:251
 #, c-format
 msgid "failed to execute %s"
 msgstr "spuštění %s selhalo"
@@ -10611,7 +10611,7 @@ msgstr "paravirtualizace"
 msgid "full"
 msgstr "plná"
 
-#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:431
+#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:441
 #, c-format
 msgid "error: %s"
 msgstr "chyba: %s"
@@ -10629,15 +10629,15 @@ msgstr "chyba: funkce strdup selhala"
 msgid "error: uname failed"
 msgstr "chyba: volání uname selhalo"
 
-#: sys-utils/lscpu.c:481
+#: sys-utils/lscpu.c:491
 msgid "error: malloc failed"
 msgstr "chyba: funkce malloc selhala"
 
-#: sys-utils/lscpu.c:496
+#: sys-utils/lscpu.c:506
 msgid "error: /sys filesystem is not accessable."
 msgstr "chyba: souborový systém /sys není přístupný."
 
-#: sys-utils/lscpu.c:514
+#: sys-utils/lscpu.c:524
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -10650,67 +10650,67 @@ msgstr ""
 "# které se počítá od nuly.\n"
 "# CPU,Jádro,Patice,Uzel"
 
-#: sys-utils/lscpu.c:580
+#: sys-utils/lscpu.c:590
 msgid "Thread(s) per core:"
 msgstr "Vláken na jádro:"
 
-#: sys-utils/lscpu.c:581
+#: sys-utils/lscpu.c:591
 msgid "Core(s) per socket:"
 msgstr "Jader na patici:"
 
-#: sys-utils/lscpu.c:582
+#: sys-utils/lscpu.c:592
 msgid "CPU socket(s):"
 msgstr "Patic CPU:"
 
-#: sys-utils/lscpu.c:586
+#: sys-utils/lscpu.c:596
 msgid "NUMA node(s):"
 msgstr "Uzly NUMA:"
 
-#: sys-utils/lscpu.c:588
+#: sys-utils/lscpu.c:598
 msgid "Vendor ID:"
 msgstr "ID výrobce:"
 
-#: sys-utils/lscpu.c:590
+#: sys-utils/lscpu.c:600
 msgid "CPU family:"
 msgstr "Rodina CPU:"
 
-#: sys-utils/lscpu.c:592
+#: sys-utils/lscpu.c:602
 msgid "Model:"
 msgstr "Model:"
 
 # ???: Existuje český překlad?
-#: sys-utils/lscpu.c:594
+#: sys-utils/lscpu.c:604
 msgid "Stepping:"
 msgstr "Stepping:"
 
-#: sys-utils/lscpu.c:596
+#: sys-utils/lscpu.c:606
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:599 sys-utils/lscpu.c:601
+#: sys-utils/lscpu.c:609 sys-utils/lscpu.c:611
 msgid "Virtualization:"
 msgstr "Virtualizace:"
 
-#: sys-utils/lscpu.c:604
+#: sys-utils/lscpu.c:614
 msgid "Hypervisor vendor:"
 msgstr "Výrobce hypervizoru:"
 
-#: sys-utils/lscpu.c:605
+#: sys-utils/lscpu.c:615
 msgid "Virtualization type:"
 msgstr "Druh virtualizace:"
 
 # ???: keš
-#: sys-utils/lscpu.c:613
+#: sys-utils/lscpu.c:623
 #, c-format
 msgid "%s cache:"
 msgstr "%s cache:"
 
-#: sys-utils/lscpu.c:621
+#: sys-utils/lscpu.c:631
 #, c-format
 msgid "Usage: %s [option]\n"
 msgstr "Použití: %s [PŘEPÍNAČ]\n"
 
-#: sys-utils/lscpu.c:624
+#: sys-utils/lscpu.c:634
 msgid ""
 "CPU architecture information helper\n"
 "\n"
@@ -10725,7 +10725,7 @@ msgstr ""
 "čitelné\n"
 "  -s, --sysroot  použije adresář jako kořen nového systému\n"
 
-#: sys-utils/lscpu.c:673
+#: sys-utils/lscpu.c:683
 #, c-format
 msgid "error: change working directory to %s."
 msgstr "chyba: změna pracovního adresáře do %s."

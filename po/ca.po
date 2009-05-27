@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-04-29 15:34+0200\n"
+"POT-Creation-Date: 2009-05-27 21:39+0200\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -7879,25 +7879,25 @@ msgstr "%s: no s'ha pogut executar stat al fitxer temporal.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: no s'hapogut llegir el fitxer temporal.\n"
 
-#: misc-utils/cal.c:355 misc-utils/cal.c:367
+#: misc-utils/cal.c:358 misc-utils/cal.c:370
 #, fuzzy, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "el valor de l'any no és legal: utilitzeu 1-9999"
 
-#: misc-utils/cal.c:359
+#: misc-utils/cal.c:362
 msgid "illegal month value: use 1-12"
 msgstr "el valor del mes és il·legal: utilitzeu 1-12"
 
-#: misc-utils/cal.c:363
+#: misc-utils/cal.c:366
 msgid "illegal year value: use 1-9999"
 msgstr "el valor de l'any no és legal: utilitzeu 1-9999"
 
-#: misc-utils/cal.c:457
+#: misc-utils/cal.c:460
 #, c-format
 msgid "%s %d"
 msgstr "%2$d de %1$s"
 
-#: misc-utils/cal.c:848
+#: misc-utils/cal.c:851
 #, fuzzy, c-format
 msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
 msgstr "forma d'ús: cal [-13smjyV] [[mes] any]\n"
@@ -9576,52 +9576,52 @@ msgstr "No s'ha pogut escriure la partició a %s\n"
 msgid "pid %d's %s scheduling policy: "
 msgstr ""
 
-#: schedutils/chrt.c:108
+#: schedutils/chrt.c:112
 #, fuzzy, c-format
 msgid "unknown\n"
 msgstr "desconegut"
 
-#: schedutils/chrt.c:112
+#: schedutils/chrt.c:116
 #, c-format
 msgid "failed to get pid %d's attributes"
 msgstr ""
 
-#: schedutils/chrt.c:114
+#: schedutils/chrt.c:118
 #, c-format
 msgid "pid %d's %s scheduling priority: %d\n"
 msgstr ""
 
-#: schedutils/chrt.c:130
+#: schedutils/chrt.c:147
 #, c-format
 msgid "SCHED_%s min/max priority\t: %d/%d\n"
 msgstr ""
 
-#: schedutils/chrt.c:133
+#: schedutils/chrt.c:150
 #, fuzzy, c-format
 msgid "SCHED_%s not supported?\n"
 msgstr "NFS sobre TCP no està implementat.\n"
 
-#: schedutils/chrt.c:185
+#: schedutils/chrt.c:206
 #, fuzzy
 msgid "failed to parse pid"
 msgstr "%s: s'ha produït un error en obrir: %s\n"
 
-#: schedutils/chrt.c:207
+#: schedutils/chrt.c:228
 #, fuzzy
 msgid "current"
 msgstr "ncount"
 
-#: schedutils/chrt.c:215
+#: schedutils/chrt.c:236
 #, fuzzy
 msgid "failed to parse priority"
 msgstr "No s'ha pogut escriure la partició a %s\n"
 
-#: schedutils/chrt.c:221
+#: schedutils/chrt.c:242
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "No s'ha pogut escriure la partició a %s\n"
 
-#: schedutils/chrt.c:230
+#: schedutils/chrt.c:251
 #, fuzzy, c-format
 msgid "failed to execute %s"
 msgstr "no ha estat possible executar ioctl() per llegir l'hora de %s"
@@ -10638,7 +10638,7 @@ msgstr ""
 msgid "full"
 msgstr ""
 
-#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:431
+#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:441
 #, fuzzy, c-format
 msgid "error: %s"
 msgstr "Error RE:"
@@ -10660,16 +10660,16 @@ msgstr ""
 "\n"
 "S'ha produït un error en tancar el fitxer\n"
 
-#: sys-utils/lscpu.c:481
+#: sys-utils/lscpu.c:491
 #, fuzzy
 msgid "error: malloc failed"
 msgstr "l'assignació de memòria (malloc) ha fallat"
 
-#: sys-utils/lscpu.c:496
+#: sys-utils/lscpu.c:506
 msgid "error: /sys filesystem is not accessable."
 msgstr ""
 
-#: sys-utils/lscpu.c:514
+#: sys-utils/lscpu.c:524
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -10678,66 +10678,66 @@ msgid ""
 "# CPU,Core,Socket,Node"
 msgstr ""
 
-#: sys-utils/lscpu.c:580
+#: sys-utils/lscpu.c:590
 msgid "Thread(s) per core:"
 msgstr ""
 
-#: sys-utils/lscpu.c:581
+#: sys-utils/lscpu.c:591
 msgid "Core(s) per socket:"
 msgstr ""
 
-#: sys-utils/lscpu.c:582
+#: sys-utils/lscpu.c:592
 msgid "CPU socket(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:586
+#: sys-utils/lscpu.c:596
 msgid "NUMA node(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:588
+#: sys-utils/lscpu.c:598
 msgid "Vendor ID:"
 msgstr ""
 
-#: sys-utils/lscpu.c:590
+#: sys-utils/lscpu.c:600
 msgid "CPU family:"
 msgstr ""
 
-#: sys-utils/lscpu.c:592
+#: sys-utils/lscpu.c:602
 msgid "Model:"
 msgstr ""
 
-#: sys-utils/lscpu.c:594
+#: sys-utils/lscpu.c:604
 msgid "Stepping:"
 msgstr ""
 
-#: sys-utils/lscpu.c:596
+#: sys-utils/lscpu.c:606
 msgid "CPU MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:599 sys-utils/lscpu.c:601
+#: sys-utils/lscpu.c:609 sys-utils/lscpu.c:611
 #, fuzzy
 msgid "Virtualization:"
 msgstr "Antiga situació:\n"
 
-#: sys-utils/lscpu.c:604
+#: sys-utils/lscpu.c:614
 msgid "Hypervisor vendor:"
 msgstr ""
 
-#: sys-utils/lscpu.c:605
+#: sys-utils/lscpu.c:615
 msgid "Virtualization type:"
 msgstr ""
 
-#: sys-utils/lscpu.c:613
+#: sys-utils/lscpu.c:623
 #, c-format
 msgid "%s cache:"
 msgstr ""
 
-#: sys-utils/lscpu.c:621
+#: sys-utils/lscpu.c:631
 #, fuzzy, c-format
 msgid "Usage: %s [option]\n"
 msgstr "Forma d'ús: %s [opcions] dispositiu ...\n"
 
-#: sys-utils/lscpu.c:624
+#: sys-utils/lscpu.c:634
 msgid ""
 "CPU architecture information helper\n"
 "\n"
@@ -10746,7 +10746,7 @@ msgid ""
 "  -s, --sysroot  use the directory as a new system root.\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:673
+#: sys-utils/lscpu.c:683
 #, fuzzy, c-format
 msgid "error: change working directory to %s."
 msgstr "s'ha produït un error en canviar el mode de %s: %s\n"

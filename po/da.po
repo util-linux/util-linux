@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11y\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-04-29 15:34+0200\n"
+"POT-Creation-Date: 2009-05-27 21:39+0200\n"
 "PO-Revision-Date: 2005-08-15 21:00+0200\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
@@ -7715,25 +7715,25 @@ msgstr "%s: kunne ikke finde midlertidig fil.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: kunne ikke læse midlertidig fil.\n"
 
-#: misc-utils/cal.c:355 misc-utils/cal.c:367
+#: misc-utils/cal.c:358 misc-utils/cal.c:370
 #, fuzzy, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "ugyldig årsværdi: brug 1-9999"
 
-#: misc-utils/cal.c:359
+#: misc-utils/cal.c:362
 msgid "illegal month value: use 1-12"
 msgstr "ugyldig månedsværdi: brug 1-12"
 
-#: misc-utils/cal.c:363
+#: misc-utils/cal.c:366
 msgid "illegal year value: use 1-9999"
 msgstr "ugyldig årsværdi: brug 1-9999"
 
-#: misc-utils/cal.c:457
+#: misc-utils/cal.c:460
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:848
+#: misc-utils/cal.c:851
 #, fuzzy, c-format
 msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
 msgstr "brug: cal [-13smjyV] [[måned] år]\n"
@@ -9391,52 +9391,52 @@ msgstr "Mislykket skrivning af partition på %s\n"
 msgid "pid %d's %s scheduling policy: "
 msgstr ""
 
-#: schedutils/chrt.c:108
+#: schedutils/chrt.c:112
 #, fuzzy, c-format
 msgid "unknown\n"
 msgstr "ukendt"
 
-#: schedutils/chrt.c:112
+#: schedutils/chrt.c:116
 #, c-format
 msgid "failed to get pid %d's attributes"
 msgstr ""
 
-#: schedutils/chrt.c:114
+#: schedutils/chrt.c:118
 #, c-format
 msgid "pid %d's %s scheduling priority: %d\n"
 msgstr ""
 
-#: schedutils/chrt.c:130
+#: schedutils/chrt.c:147
 #, c-format
 msgid "SCHED_%s min/max priority\t: %d/%d\n"
 msgstr ""
 
-#: schedutils/chrt.c:133
+#: schedutils/chrt.c:150
 #, fuzzy, c-format
 msgid "SCHED_%s not supported?\n"
 msgstr "NFS via TCP understøttes ikke.\n"
 
-#: schedutils/chrt.c:185
+#: schedutils/chrt.c:206
 #, fuzzy
 msgid "failed to parse pid"
 msgstr "%s: Kunne ikke åbne: %s\n"
 
-#: schedutils/chrt.c:207
+#: schedutils/chrt.c:228
 #, fuzzy
 msgid "current"
 msgstr "nantal"
 
-#: schedutils/chrt.c:215
+#: schedutils/chrt.c:236
 #, fuzzy
 msgid "failed to parse priority"
 msgstr "Mislykket skrivning af partition på %s\n"
 
-#: schedutils/chrt.c:221
+#: schedutils/chrt.c:242
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "Mislykket skrivning af partition på %s\n"
 
-#: schedutils/chrt.c:230
+#: schedutils/chrt.c:251
 #, fuzzy, c-format
 msgid "failed to execute %s"
 msgstr "ioctl() kunne ikke aflæse tiden fra %s"
@@ -10442,7 +10442,7 @@ msgstr ""
 msgid "full"
 msgstr ""
 
-#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:431
+#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:441
 #, fuzzy, c-format
 msgid "error: %s"
 msgstr "RE fejl: "
@@ -10464,16 +10464,16 @@ msgstr ""
 "\n"
 "Fejl ved lukning af fil\n"
 
-#: sys-utils/lscpu.c:481
+#: sys-utils/lscpu.c:491
 #, fuzzy
 msgid "error: malloc failed"
 msgstr "hukommelsesallokering mislykkedes (malloc)"
 
-#: sys-utils/lscpu.c:496
+#: sys-utils/lscpu.c:506
 msgid "error: /sys filesystem is not accessable."
 msgstr ""
 
-#: sys-utils/lscpu.c:514
+#: sys-utils/lscpu.c:524
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -10482,66 +10482,66 @@ msgid ""
 "# CPU,Core,Socket,Node"
 msgstr ""
 
-#: sys-utils/lscpu.c:580
+#: sys-utils/lscpu.c:590
 msgid "Thread(s) per core:"
 msgstr ""
 
-#: sys-utils/lscpu.c:581
+#: sys-utils/lscpu.c:591
 msgid "Core(s) per socket:"
 msgstr ""
 
-#: sys-utils/lscpu.c:582
+#: sys-utils/lscpu.c:592
 msgid "CPU socket(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:586
+#: sys-utils/lscpu.c:596
 msgid "NUMA node(s):"
 msgstr ""
 
-#: sys-utils/lscpu.c:588
+#: sys-utils/lscpu.c:598
 msgid "Vendor ID:"
 msgstr ""
 
-#: sys-utils/lscpu.c:590
+#: sys-utils/lscpu.c:600
 msgid "CPU family:"
 msgstr ""
 
-#: sys-utils/lscpu.c:592
+#: sys-utils/lscpu.c:602
 msgid "Model:"
 msgstr ""
 
-#: sys-utils/lscpu.c:594
+#: sys-utils/lscpu.c:604
 msgid "Stepping:"
 msgstr ""
 
-#: sys-utils/lscpu.c:596
+#: sys-utils/lscpu.c:606
 msgid "CPU MHz:"
 msgstr ""
 
-#: sys-utils/lscpu.c:599 sys-utils/lscpu.c:601
+#: sys-utils/lscpu.c:609 sys-utils/lscpu.c:611
 #, fuzzy
 msgid "Virtualization:"
 msgstr "Gammel situation:\n"
 
-#: sys-utils/lscpu.c:604
+#: sys-utils/lscpu.c:614
 msgid "Hypervisor vendor:"
 msgstr ""
 
-#: sys-utils/lscpu.c:605
+#: sys-utils/lscpu.c:615
 msgid "Virtualization type:"
 msgstr ""
 
-#: sys-utils/lscpu.c:613
+#: sys-utils/lscpu.c:623
 #, c-format
 msgid "%s cache:"
 msgstr ""
 
-#: sys-utils/lscpu.c:621
+#: sys-utils/lscpu.c:631
 #, fuzzy, c-format
 msgid "Usage: %s [option]\n"
 msgstr "Brug: %s [tilvalg] enhed ...\n"
 
-#: sys-utils/lscpu.c:624
+#: sys-utils/lscpu.c:634
 msgid ""
 "CPU architecture information helper\n"
 "\n"
@@ -10550,7 +10550,7 @@ msgid ""
 "  -s, --sysroot  use the directory as a new system root.\n"
 msgstr ""
 
-#: sys-utils/lscpu.c:673
+#: sys-utils/lscpu.c:683
 #, fuzzy, c-format
 msgid "error: change working directory to %s."
 msgstr "fejl ved ændring af filtilstand for %s: %s\n"
