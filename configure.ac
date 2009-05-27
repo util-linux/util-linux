@@ -178,6 +178,28 @@ AC_DEFUN([UTIL_RESTORE_FLAGS], [
   LDFLAGS="$old_LDFLAGS"
 ])
 
+AC_ARG_ENABLE([mount],
+  AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
+  [], enable_mount=check
+)
+build_mount=yes
+if test "x$enable_mount" = xcheck; then
+  if test "x$linux_os" = xno; then
+    AC_MSG_WARN([non-linux system; do not build mount utilities])
+    build_mount=no
+  fi
+elif test "x$enable_mount" = xno; then
+    build_mount=no
+fi
+AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
+
+
+AC_ARG_ENABLE([fsck],
+  AS_HELP_STRING([--enable-fsck], [do build fsck]),
+  [], enable_fsck=no
+)
+AM_CONDITIONAL(BUILD_FSCK, test "x$enable_fsck" = xyes)
+
 
 UTIL_CHECK_LIB(uuid, uuid_is_null)
 if test "x$have_uuid" = xno; then
@@ -194,69 +216,52 @@ AC_ARG_WITH([fsprobe],
 )
 
 build_libblkid=no
-have_blkid_evaluate=no
 have_blkid=no
 have_volume_id=no
 
-if test "x$with_fsprobe" = xblkid; then
-  PKG_CHECK_MODULES(BLKID, blkid, [have_blkid=yes], [])
-  if test "x$have_blkid" = xyes; then
-    UTIL_SET_FLAGS($BLKID_CFLAGS, $BLKID_CFLAGS, $BLKID_LIBS)
-    AC_CHECK_HEADERS([blkid.h blkid/blkid.h], [break], [])
-    AC_CHECK_FUNC(blkid_evaluate_tag, [have_blkid_evaluate=yes], [])
-    UTIL_RESTORE_FLAGS
-  fi
-elif test "x$with_fsprobe" = xvolume_id; then
-  PKG_CHECK_MODULES(VOLUME_ID, volume_id, [have_volume_id=yes], [])
-elif test "x$with_fsprobe" = xbuiltin; then
+if test "x$with_fsprobe" = xbuiltin; then
   have_blkid=yes
   build_libblkid=yes
-  have_blkid_evaluate=yes
   AC_SUBST(LIBBLKID_VERSION)
   AC_DEFINE_UNQUOTED(LIBBLKID_VERSION, "$LIBBLKID_VERSION", [libblkid version string])
   AC_DEFINE_UNQUOTED(LIBBLKID_DATE, "$LIBBLKID_DATE", [libblkid date string])
+  AC_DEFINE(HAVE_BLKID_EVALUATE_TAG, 1, [Define to 1 if you have the blkid_evaluate_tag().])
+  AC_DEFINE(HAVE_BLKID_H, 1, [Define to 1 if you have the <blkid.h> header file.])
+elif test "x$build_mount" = xyes || test "x$enable_fsck" = xyes; then
+  if test "x$with_fsprobe" = xblkid; then
+    PKG_CHECK_MODULES(BLKID, blkid, [have_blkid=yes], [have_blkid=no])
+    if test "x$have_blkid" = xno; then
+      # system without pkg-config or so, try classic check
+      AC_CHECK_LIB(blkid, blkid_get_cache, [have_blkid=yes], [have_blkid=no])
+    fi
+    if test "x$have_blkid" = xyes; then
+      UTIL_SET_FLAGS($BLKID_CFLAGS, $BLKID_CFLAGS, $BLKID_LIBS)
+      AC_CHECK_HEADERS([blkid.h blkid/blkid.h], [break], [])
+      UTIL_RESTORE_FLAGS
+    fi
+  elif test "x$with_fsprobe" = xvolume_id; then
+    PKG_CHECK_MODULES(VOLUME_ID, volume_id, [have_volume_id=yes], [have_volume_id=no])
+    if test "x$have_volume_id" = xno; then
+      # system without pkg-config or so, try classic check
+      AC_CHECK_LIB(volume_id, volume_id_probe_all, [have_volume_id=yes], [have_volume_id=no])
+    fi
+  fi
 fi
 
 if  test "x$have_blkid" = xyes; then
   AC_DEFINE(HAVE_LIBBLKID, 1, [Define to 1 if you have the -lblkid.])
-  if test "x$have_blkid_evaluate" = xyes; then
-    AC_DEFINE(HAVE_BLKID_EVALUATE_TAG, 1, [Define to 1 if you have the blkid_evaluate_tag().])
+elif test "x$have_volume_id" = xno; then
+  if test "x$build_mount" = xyes; then
+    AC_MSG_ERROR([libblkid or libvolume_id is needed to build util-linux-ng mount])
+  fi
+  if test "x$enable_fsck" = xyes; then
+    AC_MSG_ERROR([libblkid or libvoume_id is needed to build util-linux-ng fsck])
   fi
 fi
 
 AM_CONDITIONAL(HAVE_BLKID, test "x$have_blkid" = xyes)
 AM_CONDITIONAL(HAVE_VOLUME_ID, test "x$have_volume_id" = xyes)
 AM_CONDITIONAL(BUILD_LIBBLKID, test "x$build_libblkid" = xyes)
-
-
-AC_ARG_ENABLE([mount],
-  AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
-  [], enable_mount=check
-)
-build_mount=yes
-if test "${enable_mount}" = "no"; then
-  build_mount=no
-elif test "x$linux_os" = xyes; then
-  if test "x$have_blkid" = xno && test "x$have_volume_id" = xno; then
-    AC_MSG_ERROR([blkid or volume_id is needed to build util-linux-ng mount utilities])
-  fi
-else
-  AC_MSG_WARN([non-linux system; do not build mount utilities])
-  build_mount=no
-fi
-AM_CONDITIONAL(BUILD_MOUNT, test "x$build_mount" = xyes)
-
-
-AC_ARG_ENABLE([fsck],
-  AS_HELP_STRING([--enable-fsck], [do build fsck]),
-  [], enable_fsck=no
-)
-if test "x$enable_fsck" = xyes; then
-  if test "x$have_blkid" = xno && test "x$have_volume_id" = xno; then
-    AC_MSG_ERROR([libblkid or libvolume_id is needed to build util-linux-ng fsck])
-  fi
-fi
-AM_CONDITIONAL(BUILD_FSCK, test "x$enable_fsck" = xyes)
 
 
 dnl UTIL_PKG_STATIC(VARIABLE, MODULES)
