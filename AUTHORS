@@ -17,14 +17,18 @@ AUTHORS (merged projects & commands):
 
       flock:           H. Peter Anvin <hpa@zytor.com>
       getopt:          Frodo Looijaard <frodol@dds.nl>
-      schedutils:      Robert Love <rlove@rlove.org>
-      simpleinit:      Richard Gooch <rgooch@atnf.csiro.au>
       hwclock:         Bryan Henderson <bryanh@giraffe-data.com>
-      setarch:         Elliot Lee <sopwith@redhat.com>
-                       Jindrich Novy <jnovy@redhat.com>
+      ipcmk:           Hayden James <hayden.james@gmail.com>
+      ldattach:        Tilman Schmidt <tilman@imap.cc>
+      libblkid:        Theodore Ts'o <tytso@mit.edu>
+      libuuid:         Theodore Ts'o <tytso@mit.edu>
+      lscpu:           Cai Qian <qcai@redhat.com>
       rtcwake:         David Brownell <david-b@pacbell.net>
                        Bernhard Walle <bwalle@suse.de>
-      ldattach:        Tilman Schmidt <tilman@imap.cc>
+      schedutils:      Robert Love <rlove@rlove.org>
+      setarch:         Elliot Lee <sopwith@redhat.com>
+                       Jindrich Novy <jnovy@redhat.com>
+      simpleinit:      Richard Gooch <rgooch@atnf.csiro.au>
 
 
 CONTRIBUTORS:
