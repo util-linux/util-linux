@@ -47,35 +47,16 @@ open_device(const char *devname)
  * Parses NAME=value, returns -1 on parse error, 0 success. The success is also
  * when the 'spec' doesn't contain name=value pair (because the spec could be
  * a devname too). In particular case the pointer 'name' is set to NULL.
-
- * The result is a new allocated string (the 'name' pointer).
  */
 int
 fsprobe_parse_spec(const char *spec, char **name, char **value)
 {
-	char *vl, *tk, *cp;
-
 	*name = NULL;
 	*value = NULL;
 
-	if (!(cp = strchr(spec, '=')))
-		return 0;				/* no name= */
+	if (strchr(spec, '='))
+		return blkid_parse_tag_string(spec, name, value);
 
-	tk = strdup(spec);
-	vl = tk + (cp - spec);
-	*vl++ = '\0';
-
-	if (*vl == '"' || *vl == '\'') {
-		if (!(cp = strrchr(vl+1, *vl))) {
-			free(tk);
-			return -1;			/* parse error */
-		}
-		vl++;
-		*cp = '\0';
-	}
-
-	*name = tk;
-	*value = vl;
 	return 0;
 }
 
@@ -96,7 +77,8 @@ fsprobe_get_devname_by_spec(const char *spec)
 		else if (!strcmp(name,"UUID"))
 			nspec = fsprobe_get_devname_by_uuid(value);
 
-		free((void *) name);
+		free(name);
+		free(value);
 		return nspec;
 	}
 

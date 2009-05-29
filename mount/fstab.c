@@ -404,6 +404,7 @@ getfs_by_spec (const char *spec) {
 			mc = getfs_by_uuid (value);
 
 		free(name);
+		free(value);
 		return mc;
 	}
 
