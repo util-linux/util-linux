@@ -48,7 +48,14 @@ Setup loop device:
 .RB [ \-r ]
 .RB { \-f [ \-\-show ] | \fIloopdev\fP }
 .I file
+.sp
 .in -13
+Resize loop device:
+.sp
+.in +5
+.B "losetup \-c"
+.I loopdev
+.in -5
 .ad b
 .SH DESCRIPTION
 .B losetup
@@ -75,6 +82,8 @@ and finds the module that knows how to perform that encryption.
 .SH OPTIONS
 .IP "\fB\-a, \-\-all\fP"
 show status of all loop devices
+.IP "\fB\-c, \-\-set-capacity\fP \fIloopdev\fP
+force loop driver to reread size of the file associated with the specified loop device
 .IP "\fB\-d, \-\-detach\fP \fIloopdev\fP [\fIloopdev\fP ...]" 
 detach the file or device associated with the specified loop device(s)
 .IP "\fB\-e, \-E, \-\-encryption \fIencryption_type\fP"

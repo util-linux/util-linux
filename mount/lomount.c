@@ -349,6 +349,28 @@ done:
 #ifdef MAIN
 
 static int
+set_capacity(const char *device)
+{
+	int errsv;
+	int fd = open(device, O_RDONLY);
+
+	if (fd == -1)
+		goto err;
+
+	if (ioctl(fd, LOOP_SET_CAPACITY) != 0)
+		goto err;
+
+	return 0;
+err:
+	errsv = errno;
+	fprintf(stderr, _("loop: can't set capacity on device %s: %s\n"),
+					device, strerror (errsv));
+	if (fd != -1)
+		close(fd);
+	return 2;
+}
+
+static int
 show_loop_fd(int fd, char *device) {
 	struct loop_info loopinfo;
 	struct loop_info64 loopinfo64;
@@ -877,6 +899,7 @@ usage(void) {
   " %1$s -a | --all                              list all used\n"
   " %1$s -d | --detach <loopdev> [<loopdev> ...] delete\n"
   " %1$s -f | --find                             find unused\n"
+  " %1$s -c | --set-capacity <loopdev>           resize\n"
   " %1$s -j | --associated <file> [-o <num>]     list all associated with <file>\n"
   " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"),
 		progname);
@@ -896,7 +919,7 @@ usage(void) {
 int
 main(int argc, char **argv) {
 	char *p, *offset, *sizelimit, *encryption, *passfd, *device, *file, *assoc;
-	int delete, find, c, all;
+	int delete, find, c, all, capacity;
 	int res = 0;
 	int showdev = 0;
 	int ro = 0;
@@ -904,6 +927,7 @@ main(int argc, char **argv) {
 	unsigned long long off, slimit;
 	struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
+		{ "set-capacity", 0, 0, 'c' },
 		{ "detach", 0, 0, 'd' },
 		{ "encryption", 1, 0, 'e' },
 		{ "find", 0, 0, 'f' },
@@ -922,7 +946,7 @@ main(int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	delete = find = all = 0;
+	capacity = delete = find = all = 0;
 	off = 0;
         slimit = 0;
 	assoc = offset = sizelimit = encryption = passfd = NULL;
@@ -931,11 +955,14 @@ main(int argc, char **argv) {
 	if ((p = strrchr(progname, '/')) != NULL)
 		progname = p+1;
 
-	while ((c = getopt_long(argc, argv, "ade:E:fhj:o:p:rsv",
+	while ((c = getopt_long(argc, argv, "acde:E:fhj:o:p:rsv",
 				longopts, NULL)) != -1) {
 		switch (c) {
 		case 'a':
 			all = 1;
+			break;
+		case 'c':
+			capacity = 1;
 			break;
 		case 'r':
 			ro = 1;
@@ -979,16 +1006,20 @@ main(int argc, char **argv) {
 		usage();
 	} else if (delete) {
 		if (argc < optind+1 || encryption || offset || sizelimit ||
-				find || all || showdev || assoc || ro)
+		    capacity || find || all || showdev || assoc || ro)
 			usage();
 	} else if (find) {
-		if (all || assoc || argc < optind || argc > optind+1)
+		if (capacity || all || assoc || argc < optind || argc > optind+1)
 			usage();
 	} else if (all) {
 		if (argc > 2)
 			usage();
 	} else if (assoc) {
-		if (encryption || showdev || passfd || ro)
+		if (capacity || encryption || showdev || passfd || ro)
+			usage();
+	} else if (capacity) {
+		if (argc != optind + 1 || encryption || offset || sizelimit ||
+		    showdev || ro)
 			usage();
 	} else {
 		if (argc < optind+1 || argc > optind+2)
@@ -1027,6 +1058,8 @@ main(int argc, char **argv) {
 	if (delete) {
 		while (optind < argc)
 			res += del_loop(argv[optind++]);
+	} else if (capacity) {
+		res = set_capacity(device);
 	} else if (file == NULL)
 		res = show_loop(device);
 	else {

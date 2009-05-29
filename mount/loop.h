@@ -22,6 +22,8 @@
 #define LOOP_GET_STATUS		0x4C03
 #define LOOP_SET_STATUS64	0x4C04
 #define LOOP_GET_STATUS64	0x4C05
+/* #define LOOP_CHANGE_FD	0x4C06 */
+#define LOOP_SET_CAPACITY	0x4C07
 
 /* Flags for loop_into{64,}->lo_flags */
 enum {
