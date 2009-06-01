@@ -98,7 +98,7 @@ prints a version string
 .BI "mount [-l] [-t" " type" ]
 lists all mounted file systems (of type
 .IR type ).
-The option \-l adds the (ext2, ext3 and XFS) labels in this listing.
+The option \-l adds the labels in this listing.
 See below.
 .RE
 
@@ -393,7 +393,7 @@ exists (with regular non-fake mount, this check is done by kernel).
 Don't call the /sbin/mount.<filesystem> helper even if it exists.
 .TP
 .B \-l
-Add the ext2, ext3 and XFS labels in the mount output. Mount must have
+Add the labels in the mount output. Mount must have
 permission to read the disk device (e.g. be suid root) for this to work.
 One can set such a label for ext2 or ext3 using the
 .BR e2label (8)
