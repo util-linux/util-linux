@@ -426,10 +426,12 @@ Mount the file system read-only. A synonym is
 .BR "\-o ro" .
 
 Note that, depending on the filesystem type, state and kernel behavior, the
-system may still write to the device. For example, Ext3 will replay its journal
-if the filesystem is dirty. To prevent this kind of write access, you may want
-to set the block device to read-only mode, see command
-.BR blockdev (8).
+system may still write to the device. For example, Ext3 or ext4 will replay its
+journal if the filesystem is dirty. To prevent this kind of write access, you
+may want to mount ext3 or ext4 filesystem with "ro,noload" mount options or
+set the block device to read-only mode, see command
+.BR blockdev (8)
+.
 .TP
 .B \-w
 Mount the file system read/write. This is the default. A synonym is
@@ -1226,7 +1228,105 @@ manual page.
 Enable POSIX Access Control Lists. See the
 .BR acl (5)
 manual page.
- 
+
+.SH "Mount options for ext4"
+The `ext4' is an an advanced level of the ext3 filesystem which incorporates
+scalability and reliability enhancements for supporting large filesystem.
+
+The options
+.B journal_dev, noload, data, commit, orlov, oldalloc, [no]user_xattr
+.B [no]acl, bsddf, minixdf, debug, errors, data_err, grpid, bsdgroups, nogrpid
+.B sysvgroups, resgid, resuid, sb, quota, noquota, grpquota, usrquota
+and
+.B [no]bh
+are backwardly compatible with ext3 or ext2.
+.TP
+.BR journal_checksum
+Enable checksumming of the journal transactions.  This will allow the recovery
+code in e2fsck and the kernel to detect corruption in the kernel.  It is a
+compatible change and will be ignored by older kernels.
+.TP
+.BR journal_async_commit
+Commit block can be written to disk without waiting for descriptor blocks. If
+enabled older kernels cannot mount the device. This will enable
+'journal_checksum' internally.
+.TP
+.BR journal=update
+Update the ext4 file system's journal to the current format.
+.TP
+.BR barrier=0 " / "  barrier=1 " / " barrier " / " nobarrier
+This enables/disables the use of write barriers in the jbd code.  barrier=0
+disables, barrier=1 enables.  This also requires an IO stack which can support
+barriers, and if jbd gets an error on a barrier write, it will disable again
+with a warning.  Write barriers enforce proper on-disk ordering of journal
+commits, making volatile disk write caches safe to use, at some performance
+penalty.  If your disks are battery-backed in one way or another, disabling
+barriers may safely improve performance.  The mount options "barrier" and
+"nobarrier" can also be used to enable or disable barriers, for consistency
+with other ext4 mount options.
+.TP
+.BI inode_readahead= n
+This tuning parameter controls the maximum number of inode table blocks that
+ext4's inode table readahead algorithm will pre-read into the buffer cache.
+The default value is 32 blocks.
+.TP
+.BI stripe= n
+Number of filesystem blocks that mballoc will try to use for allocation size
+and alignment. For RAID5/6 systems this should be the number of data disks *
+RAID chunk size in file system blocks.
+.TP
+.BR delalloc
+Deferring block allocation until write-out time.
+.TP
+.BR nodelalloc
+Disable delayed allocation. Blocks are allocation when data is copied from user
+to page cache.
+.TP
+.BI max_batch_time= usec
+Maximum amount of time ext4 should wait for additional filesystem operations to
+be batch together with a synchronous write operation. Since a synchronous
+write operation is going to force a commit and then a wait for the I/O
+complete, it doesn't cost much, and can be a huge throughput win, we wait for a
+small amount of time to see if any other transactions can piggyback on the
+synchronous write. The algorithm used is designed to automatically tune for
+the speed of the disk, by measuring the amount of time (on average) that it
+takes to finish committing a transaction. Call this time the "commit time".
+If the time that the transactoin has been running is less than the commit time,
+ext4 will try sleeping for the commit time to see if other operations will join
+the transaction. The commit time is capped by the max_batch_time, which
+defaults to 15000us (15ms). This optimization can be turned off entirely by
+setting max_batch_time to 0.
+.TP
+.BI min_batch_time= usec
+This parameter sets the commit time (as described above) to be at least
+min_batch_time. It defaults to zero microseconds. Increasing this parameter
+may improve the throughput of multi-threaded, synchronous workloads on very
+fast disks, at the cost of increasing latency.
+.TP
+.BI journal_ioprio= prio
+The I/O priority (from 0 to 7, where 0 is the highest priorty) which should be
+used for I/O operations submitted by kjournald2 during a commit operation.
+This defaults to 3, which is a slightly higher priority than the default I/O
+priority.
+.TP
+.BR auto_da_alloc " / " noauto_da_alloc
+Many broken applications don't use fsync() when noauto_da_alloc
+replacing existing files via patterns such as
+
+fd = open("foo.new")/write(fd,..)/close(fd)/ rename("foo.new", "foo")
+
+or worse yet
+
+fd = open("foo", O_TRUNC)/write(fd,..)/close(fd).
+
+If auto_da_alloc is enabled, ext4 will detect the replace-via-rename and
+replace-via-truncate patterns and force that any delayed allocation blocks are
+allocated such that at the next journal commit, in the default data=ordered
+mode, the data blocks of the new file are forced to disk before the rename()
+operation is commited.  This provides roughly the same level of guarantees as
+ext3, and avoids the "zero-length" problem that can happen when a system
+crashes before the delayed allocation blocks are forced to disk.
+
 .SH "Mount options for fat"
 (Note:
 .I fat
