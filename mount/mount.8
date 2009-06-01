@@ -395,7 +395,7 @@ Don't call the /sbin/mount.<filesystem> helper even if it exists.
 .B \-l
 Add the labels in the mount output. Mount must have
 permission to read the disk device (e.g. be suid root) for this to work.
-One can set such a label for ext2 or ext3 using the
+One can set such a label for ext2, ext3 or ext4 using the
 .BR e2label (8)
 utility, or for XFS using
 .BR xfs_admin (8),
@@ -466,6 +466,7 @@ currently supported include:
 .IR ext ,
 .IR ext2 ,
 .IR ext3 ,
+.IR ext4 ,
 .IR hfs ,
 .IR hfsplus ,
 .IR hpfs ,
