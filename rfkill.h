@@ -52,31 +52,40 @@ enum rfkill_type {
 
 /**
  * enum rfkill_operation - operation types
+ * @RFKILL_OP_ADD: a device was added
+ * @RFKILL_OP_DEL: a device was removed
+ * @RFKILL_OP_CHANGE: a device's state changed -- userspace changes one device
+ * @RFKILL_OP_CHANGE_ALL: userspace changes all devices (of a type, or all)
  */
 enum rfkill_operation {
 	RFKILL_OP_ADD = 0,
 	RFKILL_OP_DEL,
 	RFKILL_OP_CHANGE,
+	RFKILL_OP_CHANGE_ALL,
 };
 
 /**
  * struct rfkill_event - events for userspace on /dev/rfkill
- * @len: length of this structure
  * @idx: index of dev rfkill
  * @type: type of the rfkill struct
  * @op: operation code
  * @hard: hard state (0/1)
  * @soft: soft state (0/1)
  *
- * TBD
+ * Structure used for userspace communication on /dev/rfkill,
+ * used for events from the kernel and control to the kernel.
  */
 struct rfkill_event {
-	__u32 len;
 	__u32 idx;
-	__u32 type;
+	__u8  type;
 	__u8  op;
-	__u8  hard, soft;
-};
+	__u8  soft, hard;
+} __packed;
+
+/* ioctl for turning off rfkill-input (if present) */
+#define RFKILL_IOC_MAGIC	'R'
+#define RFKILL_IOC_NOINPUT	1
+#define RFKILL_IOCTL_NOINPUT	_IO(RFKILL_IOC_MAGIC, RFKILL_IOC_NOINPUT)
 
 /* and that's all userspace gets */
 #ifdef __KERNEL__
@@ -115,11 +124,7 @@ struct rfkill;
  *	the rfkill core query your driver before setting a requested
  *	block.
  * @set_block: turn the transmitter on (blocked == false) or off
- *	(blocked == true) -- this is called only while the transmitter
- *	is not hard-blocked, but note that the core's view of whether
- *	the transmitter is hard-blocked might differ from your driver's
- *	view due to race conditions, so it is possible that it is still
- *	called at the same time as you are calling rfkill_set_hw_state().
+ *	(blocked == true) -- ignore and return 0 when hard blocked.
  *	This callback must be assigned.
  */
 struct rfkill_ops {
