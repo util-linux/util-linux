@@ -1,3 +1,4 @@
 version.c
 *.o
 rfkill
+*~
