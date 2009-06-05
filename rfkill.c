@@ -24,7 +24,7 @@ static void rfkill_event(void)
 	ssize_t len;
 	int fd, n;
 
-	fd = open("/dev/rfkill", O_RDWR);
+	fd = open("/dev/rfkill", O_RDONLY);
 	if (fd < 0) {
 		perror("Can't open RFKILL control device");
 		return;
@@ -119,7 +119,7 @@ static void rfkill_list(void)
 	ssize_t len;
 	int fd;
 
-	fd = open("/dev/rfkill", O_RDWR);
+	fd = open("/dev/rfkill", O_RDONLY);
 	if (fd < 0) {
 		perror("Can't open RFKILL control device");
 		return;
