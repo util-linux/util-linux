@@ -145,6 +145,8 @@ AC_CHECK_FUNCS(
 	rpmatch])
 AC_FUNC_FSEEKO
 
+AC_CHECK_FUNCS([openat fstatat unlinkat], [have_openat=yes], [have_openat=no])
+
 AC_CHECK_MEMBER(struct sockaddr.sa_len,
 		AC_DEFINE_UNQUOTED(HAVE_SA_LEN,1,[Define if struct sockaddr contains sa_len]),,
 	[#include <sys/types.h>
@@ -630,9 +632,27 @@ AM_CONDITIONAL(BUILD_CRAMFS, test "x$build_cramfs" = xyes)
 
 AC_ARG_ENABLE([switch_root],
   AS_HELP_STRING([--disable-switch_root], [do not build switch_root]),
-  [], enable_switch_root=no
+  [], enable_switch_root=check
 )
-AM_CONDITIONAL(BUILD_SWITCH_ROOT, test "x$enable_switch_root" = xyes)
+
+if test "x$enable_switch_root" = xno; then
+  build_switch_root=no
+else
+  build_switch_root=yes
+  case $enable_switch_root:$linux_os in
+  yes:no) AC_MSG_ERROR([switch_root selected for non-linux system]);;
+  check:no) AC_MSG_WARN([non-linux system; do not build switch_root])
+            build_switch_root=no;;
+  esac
+  if test "x$build_switch_root" = xyes; then
+    case $enable_switch_root:$have_openat in
+    yes:no) AC_MSG_ERROR([switch_root selected but openat() function not found]);;
+    check:no) AC_MSG_WARN([openat() function not found; do not build switch_root])
+              build_switch_root=no;;
+    esac
+  fi
+fi
+AM_CONDITIONAL(BUILD_SWITCH_ROOT, test "x$build_switch_root" = xyes)
 
 
 AC_ARG_ENABLE([elvtune],
