@@ -628,6 +628,13 @@ fi
 AM_CONDITIONAL(BUILD_CRAMFS, test "x$build_cramfs" = xyes)
 
 
+AC_ARG_ENABLE([switch_root],
+  AS_HELP_STRING([--disable-switch_root], [do not build switch_root]),
+  [], enable_switch_root=no
+)
+AM_CONDITIONAL(BUILD_SWITCH_ROOT, test "x$enable_switch_root" = xyes)
+
+
 AC_ARG_ENABLE([elvtune],
   AS_HELP_STRING([--enable-elvtune], [build elvtune (only works with 2.2 and 2.4 kernels)]),
   [], enable_elvtune=no

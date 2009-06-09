@@ -1,7 +1,7 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS =
-sbin_PROGRAMS = switch_root
+sbin_PROGRAMS =
 usrbinexec_PROGRAMS = flock ipcrm ipcs ipcmk renice setsid
 usrsbinexec_PROGRAMS = readprofile
 
@@ -26,6 +26,10 @@ info_TEXINFOS = ipc.texi
 if HAVE_PIVOT_ROOT
 sbin_PROGRAMS += pivot_root
 dist_man_MANS += pivot_root.8
+endif
+
+if BUILD_SWITCH_ROOT
+sbin_PROGRAMS += switch_root
 endif
 
 if BUILD_ARCH
