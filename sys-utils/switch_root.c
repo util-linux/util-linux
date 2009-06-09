@@ -32,6 +32,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <dirent.h>
+#include <err.h>
 
 #ifndef MS_MOVE
 #define MS_MOVE 8192
@@ -52,14 +53,14 @@ static int recursiveRemove(char *dirName)
 	int dfd;
 
 	if (!(dir = opendir(dirName))) {
-		printf("error opening %s: %m\n", dirName);
+		warn("failed to open %s", dirName);
 		goto done;
 	}
 
 	dfd = dirfd(dir);
 
 	if (fstat(dfd, &rb)) {
-		printf("unable to stat %s: %m\n", dirName);
+		warn("failed to stat %s", dirName);
 		goto done;
 	}
 
@@ -69,7 +70,7 @@ static int recursiveRemove(char *dirName)
 		errno = 0;
 		if (!(d = readdir(dir))) {
 			if (errno) {
-				printf("error reading from %s: %m\n", dirName);
+				warn("failed to read %s", dirName);
 				goto done;
 			}
 			break;	/* end of directory */
@@ -82,8 +83,7 @@ static int recursiveRemove(char *dirName)
 			struct stat sb;
 
 			if (fstatat(dfd, d->d_name, &sb, AT_SYMLINK_NOFOLLOW)) {
-				printf("failed to stat %s/%s: %m\n",
-						dirName, d->d_name);
+				warn("failed to stat %s/%s", dirName, d->d_name);
 				continue;
 			}
 
@@ -100,7 +100,7 @@ static int recursiveRemove(char *dirName)
 
 		if (unlinkat(dfd, d->d_name,
 			     d->d_type == DT_DIR ? AT_REMOVEDIR : 0))
-			printf("failed to unlink %s/%s: %m\n", dirName, d->d_name);
+			warn("failed to unlink %s/%s", dirName, d->d_name);
 	}
 
 	rc = 0;	/* success */
@@ -123,42 +123,39 @@ static int switchroot(const char *newroot)
 		strcpy(newmount, newroot);
 		strcat(newmount, umounts[i]);
 		if (mount(umounts[i], newmount, NULL, MS_MOVE, NULL) < 0) {
-			fprintf(stderr, "Error mount moving old %s %s %m\n",
+			warn("failed to mount moving %s to %s",
 				umounts[i], newmount);
-			fprintf(stderr, "Forcing unmount of %s\n", umounts[i]);
+			warnx("forcing unmount of %s", umounts[i]);
 			umount2(umounts[i], MNT_FORCE);
 		}
 	}
 
-	if (chdir(newroot) < 0) {
-		errnum=errno;
-		fprintf(stderr, "switchroot: chdir failed: %m\n");
-		errno=errnum;
+	if (chdir(newroot)) {
+		warn("failed to change directory to %s", newroot);
 		return -1;
 	}
+
 	recursiveRemove("/");
+
 	if (mount(newroot, "/", NULL, MS_MOVE, NULL) < 0) {
-		errnum = errno;
-		fprintf(stderr, "switchroot: mount failed: %m\n");
-		errno = errnum;
+		warn("failed to mount moving %s to /", newroot);
 		return -1;
 	}
 
 	if (chroot(".")) {
-		errnum = errno;
-		fprintf(stderr, "switchroot: chroot failed: %m\n");
-		errno = errnum;
-		return -2;
+		warn("failed to change root");
+		return -1;
 	}
-	return 1;
+	return 0;
 }
 
 static void usage(FILE *output)
 {
-	fprintf(output, "usage: switchroot <newrootdir> <init> <args to init>\n");
+	fprintf(output, "usage: %s <newrootdir> <init> <args to init>\n",
+			program_invocation_short_name);
 	if (output == stderr)
-		exit(err_usage);
-	exit(ok);
+		exit(EXIT_FAILURE);
+	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
@@ -172,12 +169,11 @@ int main(int argc, char *argv[])
 		usage(stderr);
 	}
 
-	if (switchroot(newroot) < 0) {
-		fprintf(stderr, "switchroot has failed.  Sorry.\n");
-		return 1;
-	}
+	if (switchroot(newroot))
+		errx(EXIT_FAILURE, "failed. Sorry.");
+
 	if (access(initargs[0], X_OK))
-		fprintf(stderr, "WARNING: can't access %s\n", initargs[0]);
+		warn("cannot access %s", initargs[0]);
 
 	/* get session leader */
 	setsid();
@@ -185,5 +181,6 @@ int main(int argc, char *argv[])
 	ioctl (0, TIOCSCTTY, 1);
 
 	execv(initargs[0], initargs);
+	err(EXIT_FAILURE, "failed to execute %s", initargs[0]);
 }
 
