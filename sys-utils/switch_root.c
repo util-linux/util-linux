@@ -20,9 +20,6 @@
  *	Peter Jones <pjones@redhat.com>
  *	Jeremy Katz <katzj@redhat.com>
  */
-
-#define _GNU_SOURCE 1
-
 #include <sys/mount.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -40,10 +37,6 @@
 #define MS_MOVE 8192
 #endif
 
-#ifndef MNT_DETACH
-#define MNT_DETACH 0x2
-#endif
-
 enum {
 	ok,
 	err_no_directory,
@@ -53,69 +46,69 @@ enum {
 /* remove all files/directories below dirName -- don't cross mountpoints */
 static int
 recursiveRemove(char * dirName)
- {
-    struct stat sb,rb;
-    DIR * dir;
-    struct dirent * d;
-    char * strBuf = alloca(strlen(dirName) + 1024);
+{
+	struct stat sb,rb;
+	DIR * dir;
+	struct dirent * d;
+	char * strBuf = alloca(strlen(dirName) + 1024);
 
-    if (!(dir = opendir(dirName))) {
-        printf("error opening %s: %m\n", dirName);
-        return 0;
-    }
+	if (!(dir = opendir(dirName))) {
+		printf("error opening %s: %m\n", dirName);
+		return 0;
+	}
 
-    if (fstat(dirfd(dir),&rb)) {
-        printf("unable to stat %s: %m\n", dirName);
-        closedir(dir);
-        return 0;
-    }
+	if (fstat(dirfd(dir),&rb)) {
+		printf("unable to stat %s: %m\n", dirName);
+		closedir(dir);
+		return 0;
+	}
 
-    errno = 0;
-    while ((d = readdir(dir))) {
-        errno = 0;
+	errno = 0;
 
-        if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, "..")) {
-            errno = 0;
-            continue;
-        }
+	while ((d = readdir(dir))) {
+		errno = 0;
 
-        strcpy(strBuf, dirName);
-        strcat(strBuf, "/");
-        strcat(strBuf, d->d_name);
+		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, "..")) {
+			errno = 0;
+			continue;
+		}
 
-        if (lstat(strBuf, &sb)) {
-            printf("failed to stat %s: %m\n", strBuf);
-            errno = 0;
-            continue;
-        }
+		strcpy(strBuf, dirName);
+		strcat(strBuf, "/");
+		strcat(strBuf, d->d_name);
 
-        /* only descend into subdirectories if device is same as dir */
-        if (S_ISDIR(sb.st_mode)) {
-            if (sb.st_dev == rb.st_dev) {
-	        recursiveRemove(strBuf);
-                if (rmdir(strBuf))
-                    printf("failed to rmdir %s: %m\n", strBuf);
-            }
-            errno = 0;
-            continue;
-        }
-        if (unlink(strBuf)) {
-            printf("failed to remove %s: %m\n", strBuf);
-            errno = 0;
-            continue;
-        }
-    }
+		if (lstat(strBuf, &sb)) {
+			printf("failed to stat %s: %m\n", strBuf);
+			errno = 0;
+			continue;
+		}
 
-    if (errno) {
-        closedir(dir);
-        printf("error reading from %s: %m\n", dirName);
-        return 1;
-    }
+		/* only descend into subdirectories if device is same as dir */
+		if (S_ISDIR(sb.st_mode)) {
+			if (sb.st_dev == rb.st_dev) {
+				recursiveRemove(strBuf);
+				if (rmdir(strBuf))
+					printf("failed to rmdir %s: %m\n", strBuf);
+			}
+			errno = 0;
+			continue;
+		}
+		if (unlink(strBuf)) {
+			printf("failed to remove %s: %m\n", strBuf);
+			errno = 0;
+			continue;
+		}
+	}
 
-    closedir(dir);
+	if (errno) {
+		closedir(dir);
+		printf("error reading from %s: %m\n", dirName);
+		return 1;
+	}
 
-    return 0;
- }
+	closedir(dir);
+	return 0;
+}
 
 static int switchroot(const char *newroot)
 {
@@ -137,10 +130,10 @@ static int switchroot(const char *newroot)
 	}
 
 	if (chdir(newroot) < 0) {
-	  errnum=errno;
-	  fprintf(stderr, "switchroot: chdir failed: %m\n");
-	  errno=errnum;
-	  return -1;
+		errnum=errno;
+		fprintf(stderr, "switchroot: chdir failed: %m\n");
+		errno=errnum;
+		return -1;
 	}
 	recursiveRemove("/");
 	if (mount(newroot, "/", NULL, MS_MOVE, NULL) < 0) {
@@ -179,11 +172,11 @@ int main(int argc, char *argv[])
 	}
 
 	if (switchroot(newroot) < 0) {
-	  fprintf(stderr, "switchroot has failed.  Sorry.\n");
-	  return 1;
+		fprintf(stderr, "switchroot has failed.  Sorry.\n");
+		return 1;
 	}
 	if (access(initargs[0], X_OK))
-	  fprintf(stderr, "WARNING: can't access %s\n", initargs[0]);
+		fprintf(stderr, "WARNING: can't access %s\n", initargs[0]);
 
 	/* get session leader */
 	setsid();
@@ -193,6 +186,3 @@ int main(int argc, char *argv[])
 	execv(initargs[0], initargs);
 }
 
-/*
- * vim:noet:ts=8:sw=8:sts=8
- */
