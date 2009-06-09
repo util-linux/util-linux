@@ -895,7 +895,7 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
    if (*types && strcasecmp (*types, "auto") == 0)
       *types = NULL;
 
-   if (flags & (MS_BIND | MS_MOVE))
+   if (flags & (MS_BIND | MS_MOVE | MS_PROPAGATION))
       *types = "none";
 
    if (!*types && !(flags & MS_REMOUNT)) {
