@@ -29,6 +29,8 @@ AUTHORS (merged projects & commands):
       setarch:         Elliot Lee <sopwith@redhat.com>
                        Jindrich Novy <jnovy@redhat.com>
       simpleinit:      Richard Gooch <rgooch@atnf.csiro.au>
+      switch_root:     Peter Jones <pjones@redhat.com>
+                       Jeremy Katz <katzj@redhat.com>
 
 
 CONTRIBUTORS:

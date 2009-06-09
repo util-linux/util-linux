@@ -36,6 +36,7 @@ sparc32.8
 sparc32bash.8
 sparc64.8
 sparc.8
+switch_root
 tunelp
 vidmode.8
 x86_64.8

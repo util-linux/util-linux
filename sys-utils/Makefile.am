@@ -1,7 +1,7 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS =
-sbin_PROGRAMS =
+sbin_PROGRAMS = switch_root
 usrbinexec_PROGRAMS = flock ipcrm ipcs ipcmk renice setsid
 usrsbinexec_PROGRAMS = readprofile
 

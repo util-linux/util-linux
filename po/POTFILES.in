@@ -180,6 +180,7 @@ sys-utils/renice.c
 sys-utils/rtcwake.c
 sys-utils/setarch.c
 sys-utils/setsid.c
+sys-utils/switch_root.c
 sys-utils/tunelp.c
 text-utils/col.c
 text-utils/colcrt.c
