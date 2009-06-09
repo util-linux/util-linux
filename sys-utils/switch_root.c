@@ -1,7 +1,7 @@
 /*
  * switchroot.c - switch to new root directory and start init.
  *
- * Copyright 2002-2008 Red Hat, Inc.  All rights reserved.
+ * Copyright 2002-2009 Red Hat, Inc.  All rights reserved.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,8 +113,9 @@ static int switchroot(const char *newroot)
 
 	for (i = 0; umounts[i] != NULL; i++) {
 		char newmount[PATH_MAX];
-		strcpy(newmount, newroot);
-		strcat(newmount, umounts[i]);
+
+		snprintf(newmount, sizeof(newmount), "%s%s", newroot, umounts[i]);
+
 		if (mount(umounts[i], newmount, NULL, MS_MOVE, NULL) < 0) {
 			warn("failed to mount moving %s to %s",
 				umounts[i], newmount);
