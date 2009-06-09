@@ -38,12 +38,6 @@
 #define MS_MOVE 8192
 #endif
 
-enum {
-	ok,
-	err_no_directory,
-	err_usage,
-};
-
 /* remove all files/directories below dirName -- don't cross mountpoints */
 static int recursiveRemove(char *dirName)
 {
@@ -115,7 +109,6 @@ static int switchroot(const char *newroot)
 {
 	/*  Don't try to unmount the old "/", there's no way to do it. */
 	const char *umounts[] = { "/dev", "/proc", "/sys", NULL };
-	int errnum;
 	int i;
 
 	for (i = 0; umounts[i] != NULL; i++) {
@@ -153,34 +146,48 @@ static void usage(FILE *output)
 {
 	fprintf(output, "usage: %s <newrootdir> <init> <args to init>\n",
 			program_invocation_short_name);
-	if (output == stderr)
-		exit(EXIT_FAILURE);
+	exit(output == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
+}
+
+static void version(void)
+{
+	fprintf(stdout,  "%s from %s\n", program_invocation_short_name,
+			PACKAGE_STRING);
 	exit(EXIT_SUCCESS);
 }
 
 int main(int argc, char *argv[])
 {
-	char *newroot = argv[1];
-	char *init = argv[2];
-	char **initargs = &argv[2];
+	char *newroot, *init, **initargs;
 
-	if (newroot == NULL || newroot[0] == '\0' ||
-	    init == NULL || init[0] == '\0' ) {
+	if (argv[1] && (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")))
+		usage(stdout);
+	if (argv[1] && (!strcmp(argv[1], "--version") || !strcmp(argv[1], "-V")))
+		version();
+	if (argc < 3)
 		usage(stderr);
-	}
+
+	newroot = argv[1];
+	init = argv[2];
+	initargs = &argv[2];
+
+	if (!*newroot || !*init)
+		usage(stderr);
 
 	if (switchroot(newroot))
 		errx(EXIT_FAILURE, "failed. Sorry.");
 
-	if (access(initargs[0], X_OK))
-		warn("cannot access %s", initargs[0]);
+	if (access(init, X_OK))
+		warn("cannot access %s", init);
 
 	/* get session leader */
 	setsid();
-	/* set controlling terminal */
-	ioctl (0, TIOCSCTTY, 1);
 
-	execv(initargs[0], initargs);
-	err(EXIT_FAILURE, "failed to execute %s", initargs[0]);
+	/* set controlling terminal */
+	if (ioctl (0, TIOCSCTTY, 1))
+		warn("failed to TIOCSCTTY");
+
+	execv(init, initargs);
+	err(EXIT_FAILURE, "failed to execute %s", init);
 }
 
