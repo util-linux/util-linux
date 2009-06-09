@@ -44,70 +44,71 @@ enum {
 };
 
 /* remove all files/directories below dirName -- don't cross mountpoints */
-static int
-recursiveRemove(char * dirName)
+static int recursiveRemove(char *dirName)
 {
-	struct stat sb,rb;
-	DIR * dir;
-	struct dirent * d;
-	char * strBuf = alloca(strlen(dirName) + 1024);
+	struct stat rb;
+	DIR *dir;
+	int rc = -1;
+	int dfd;
 
 	if (!(dir = opendir(dirName))) {
 		printf("error opening %s: %m\n", dirName);
-		return 0;
+		goto done;
 	}
 
-	if (fstat(dirfd(dir),&rb)) {
+	dfd = dirfd(dir);
+
+	if (fstat(dfd, &rb)) {
 		printf("unable to stat %s: %m\n", dirName);
-		closedir(dir);
-		return 0;
+		goto done;
 	}
 
-	errno = 0;
+	while(1) {
+		struct dirent *d;
 
-	while ((d = readdir(dir))) {
 		errno = 0;
-
-		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, "..")) {
-			errno = 0;
-			continue;
-		}
-
-		strcpy(strBuf, dirName);
-		strcat(strBuf, "/");
-		strcat(strBuf, d->d_name);
-
-		if (lstat(strBuf, &sb)) {
-			printf("failed to stat %s: %m\n", strBuf);
-			errno = 0;
-			continue;
-		}
-
-		/* only descend into subdirectories if device is same as dir */
-		if (S_ISDIR(sb.st_mode)) {
-			if (sb.st_dev == rb.st_dev) {
-				recursiveRemove(strBuf);
-				if (rmdir(strBuf))
-					printf("failed to rmdir %s: %m\n", strBuf);
+		if (!(d = readdir(dir))) {
+			if (errno) {
+				printf("error reading from %s: %m\n", dirName);
+				goto done;
 			}
-			errno = 0;
-			continue;
+			break;	/* end of directory */
 		}
-		if (unlink(strBuf)) {
-			printf("failed to remove %s: %m\n", strBuf);
-			errno = 0;
+
+		if (!strcmp(d->d_name, ".") || !strcmp(d->d_name, ".."))
 			continue;
+
+		if (d->d_type == DT_DIR) {
+			struct stat sb;
+
+			if (fstatat(dfd, d->d_name, &sb, AT_SYMLINK_NOFOLLOW)) {
+				printf("failed to stat %s/%s: %m\n",
+						dirName, d->d_name);
+				continue;
+			}
+
+			/* remove subdirectories if device is same as dir */
+			if (sb.st_dev == rb.st_dev) {
+				char subdir[ strlen(dirName) +
+					     strlen(d->d_name) + 2 ];
+
+				sprintf(subdir, "%s/%s", dirName, d->d_name);
+				recursiveRemove(subdir);
+			} else
+				continue;
 		}
+
+		if (unlinkat(dfd, d->d_name,
+			     d->d_type == DT_DIR ? AT_REMOVEDIR : 0))
+			printf("failed to unlink %s/%s: %m\n", dirName, d->d_name);
 	}
 
-	if (errno) {
+	rc = 0;	/* success */
+
+done:
+	if (dir)
 		closedir(dir);
-		printf("error reading from %s: %m\n", dirName);
-		return 1;
-	}
-
-	closedir(dir);
-	return 0;
+	return rc;
 }
 
 static int switchroot(const char *newroot)
