@@ -30,6 +30,7 @@ endif
 
 if BUILD_SWITCH_ROOT
 sbin_PROGRAMS += switch_root
+dist_man_MANS += switch_root.8
 endif
 
 if BUILD_ARCH
