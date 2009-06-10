@@ -895,9 +895,6 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
    if (*types && strcasecmp (*types, "auto") == 0)
       *types = NULL;
 
-   if (flags & (MS_BIND | MS_MOVE | MS_PROPAGATION))
-      *types = "none";
-
    if (!*types && !(flags & MS_REMOUNT)) {
       *types = guess_fstype_by_devname(spec);
       if (*types) {
@@ -1301,6 +1298,9 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
 
   if (loop)
       opt_loopdev = loopdev;
+
+  if (flags & (MS_BIND | MS_MOVE | MS_PROPAGATION))
+      types = "none";
 
   /*
    * Call mount.TYPE for types that require a separate mount program.
