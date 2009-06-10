@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-05-27 21:39+0200\n"
+"POT-Creation-Date: 2009-06-10 14:23+0200\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -8756,7 +8756,7 @@ msgstr "mount: segons mtab, %s està muntat a %s"
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: no s'ha pogut obrir %s per a escriptura: %s"
 
-#: mount/mount.c:572 mount/mount.c:1193
+#: mount/mount.c:572 mount/mount.c:1190
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: s'ha produït un error en escriure %s: %s"
@@ -8806,88 +8806,88 @@ msgstr "       i sembla que això és espai d'intercanvi\n"
 msgid "       I will try type %s\n"
 msgstr "       Provaré amb el tipus %s\n"
 
-#: mount/mount.c:905
+#: mount/mount.c:902
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s sembla espai d'intercanvi - no s'ha muntat"
 
-#: mount/mount.c:996
+#: mount/mount.c:993
 msgid "mount failed"
 msgstr "no s'ha estat possible muntar"
 
-#: mount/mount.c:998
+#: mount/mount.c:995
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: només l'usuari root pot muntar %s a %s"
 
-#: mount/mount.c:1068
+#: mount/mount.c:1065
 msgid "mount: loop device specified twice"
 msgstr "mount: el dispositiu loop està especificat dues vegades"
 
-#: mount/mount.c:1073
+#: mount/mount.c:1070
 msgid "mount: type specified twice"
 msgstr "mount: el tipus està especificat dues vegades"
 
-#: mount/mount.c:1085
+#: mount/mount.c:1082
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: s'està ometent la configuració d'un dispositiu loop\n"
 
-#: mount/mount.c:1097
+#: mount/mount.c:1094
 #, fuzzy, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: segons mtab, %s ja està muntat a %s"
 
-#: mount/mount.c:1107
+#: mount/mount.c:1104
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: s'usarà el dispositiu loop %s\n"
 
-#: mount/mount.c:1116
+#: mount/mount.c:1113
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:1121
+#: mount/mount.c:1118
 #, fuzzy, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: %s: %s"
 
-#: mount/mount.c:1126
+#: mount/mount.c:1123
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: no ha estat possible configurar el dispositiu loop\n"
 
-#: mount/mount.c:1137
+#: mount/mount.c:1134
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: s'ha configurat el dispositiu loop amb èxit\n"
 
-#: mount/mount.c:1171
+#: mount/mount.c:1168
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: no s'ha trobat %s; s'està creant...\n"
 
-#: mount/mount.c:1188
+#: mount/mount.c:1185
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: no s'ha pogut obrir %s: %s"
 
-#: mount/mount.c:1209
+#: mount/mount.c:1206
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: l'argument a -p o --pass-fd ha de ser un nombre"
 
-#: mount/mount.c:1222
+#: mount/mount.c:1219
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: no s'ha pogut obrir %s per establir-ne la velocitat"
 
-#: mount/mount.c:1225
+#: mount/mount.c:1222
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount : no s'ha pogut establir la velocitat de: %s"
 
-#: mount/mount.c:1282
+#: mount/mount.c:1279
 #, fuzzy, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: segons mtab, %s ja està muntat a %s"

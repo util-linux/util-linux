@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.15-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-05-27 21:39+0200\n"
+"POT-Creation-Date: 2009-06-10 14:23+0200\n"
 "PO-Revision-Date: 2009-04-19 22:13+0100\n"
 "Last-Translator: Nicolas Provost <nprovost@quadriv.com>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -8822,7 +8822,7 @@ msgstr "mount: selon mtab %s est monté sur %s"
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: ne peut ouvrir %s en écriture: %s"
 
-#: mount/mount.c:572 mount/mount.c:1193
+#: mount/mount.c:572 mount/mount.c:1190
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: erreur d'écriture %s: %s"
@@ -8873,89 +8873,89 @@ msgstr "       et il semble que c'est un espace de swap\n"
 msgid "       I will try type %s\n"
 msgstr "       Je vais essayer le type %s\n"
 
-#: mount/mount.c:905
+#: mount/mount.c:902
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s ressemble à un esapce de swap - n'a pas été monté"
 
-#: mount/mount.c:996
+#: mount/mount.c:993
 msgid "mount failed"
 msgstr "échec de mount"
 
-#: mount/mount.c:998
+#: mount/mount.c:995
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: seul l'usager ROOT peut monter %s sur %s"
 
-#: mount/mount.c:1068
+#: mount/mount.c:1065
 msgid "mount: loop device specified twice"
 msgstr "mount: périphérique de type loop spécifié deux fois"
 
-#: mount/mount.c:1073
+#: mount/mount.c:1070
 msgid "mount: type specified twice"
 msgstr "mount: type spécifié deux fois"
 
-#: mount/mount.c:1085
+#: mount/mount.c:1082
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: escamotage du setup du périphérique de type loop\n"
 
-#: mount/mount.c:1097
+#: mount/mount.c:1094
 #, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount : selon mtab %s est déjà monté sur %s en tant que \"loop\""
 
-#: mount/mount.c:1107
+#: mount/mount.c:1104
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: on se prépare à utiliser le périphérique de type loop %s\n"
 
-#: mount/mount.c:1116
+#: mount/mount.c:1113
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 "mount : périph. récupéré par un autre processus=%s... nouvelle tentative\n"
 
-#: mount/mount.c:1121
+#: mount/mount.c:1118
 #, c-format
 msgid "mount: stolen loop=%s"
 msgstr "mount : périph. repris par un autre processus=%s"
 
-#: mount/mount.c:1126
+#: mount/mount.c:1123
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: échec d'initialisation du périphérique de type loop\n"
 
-#: mount/mount.c:1137
+#: mount/mount.c:1134
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: réussite d'initialisation du périphérique de type loop\n"
 
-#: mount/mount.c:1171
+#: mount/mount.c:1168
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s n'a pas été repéré - on le crée..\n"
 
-#: mount/mount.c:1188
+#: mount/mount.c:1185
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: ne peut ouvrir %s: %s"
 
-#: mount/mount.c:1209
+#: mount/mount.c:1206
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argument à -p ou --pass-fd doit être un nombre"
 
-#: mount/mount.c:1222
+#: mount/mount.c:1219
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: ne peut ouvrir %s pour ajuster la vitesse"
 
-#: mount/mount.c:1225
+#: mount/mount.c:1222
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: ne peut initialiser la vitesse: %s"
 
-#: mount/mount.c:1282
+#: mount/mount.c:1279
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount : selon mtab %s est déjà monté sur %s\n"

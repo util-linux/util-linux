@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.14.2-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-05-27 21:39+0200\n"
+"POT-Creation-Date: 2009-06-10 14:23+0200\n"
 "PO-Revision-Date: 2009-01-28 16:54+0900\n"
 "Last-Translator: Makoto Kato <makoto.kt@gmail.com>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -8568,7 +8568,7 @@ msgstr "mount: mtab によると、%s は %s にマウントされています"
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: %s を書き込み用にオープンできません: %s"
 
-#: mount/mount.c:572 mount/mount.c:1193
+#: mount/mount.c:572 mount/mount.c:1190
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: %s の書き込みエラー: %s"
@@ -8618,88 +8618,88 @@ msgstr "       そして、それはスワップ空間の様です。\n"
 msgid "       I will try type %s\n"
 msgstr "       タイプ %s を試してみます\n"
 
-#: mount/mount.c:905
+#: mount/mount.c:902
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s はスワップ空間のようですね -- マウントしません"
 
-#: mount/mount.c:996
+#: mount/mount.c:993
 msgid "mount failed"
 msgstr "マウントに失敗しました"
 
-#: mount/mount.c:998
+#: mount/mount.c:995
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: root だけが %s を %s にマウントできます"
 
-#: mount/mount.c:1068
+#: mount/mount.c:1065
 msgid "mount: loop device specified twice"
 msgstr "mount: loop デバイスが 2 回指定されました"
 
-#: mount/mount.c:1073
+#: mount/mount.c:1070
 msgid "mount: type specified twice"
 msgstr "mount: タイプが 2 回指定されました"
 
-#: mount/mount.c:1085
+#: mount/mount.c:1082
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: loop デバイスの設定をスキップします\n"
 
-#: mount/mount.c:1097
+#: mount/mount.c:1094
 #, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: mtab によると、%s は loop として %s にマウント済です"
 
-#: mount/mount.c:1107
+#: mount/mount.c:1104
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: loop デバイス %s を使います\n"
 
-#: mount/mount.c:1116
+#: mount/mount.c:1113
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:1121
+#: mount/mount.c:1118
 #, c-format
 msgid "mount: stolen loop=%s"
 msgstr "mount: stolen loop=%s"
 
-#: mount/mount.c:1126
+#: mount/mount.c:1123
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: loop デバイスの設定に失敗しました\n"
 
-#: mount/mount.c:1137
+#: mount/mount.c:1134
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: loop デバイスの設定に成功しました\n"
 
-#: mount/mount.c:1171
+#: mount/mount.c:1168
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s が見つかりません -- 作成します..\n"
 
-#: mount/mount.c:1188
+#: mount/mount.c:1185
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: %s がオープンできません: %s"
 
-#: mount/mount.c:1209
+#: mount/mount.c:1206
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: -p または --pass-fd 引数は数字でなければなりません"
 
-#: mount/mount.c:1222
+#: mount/mount.c:1219
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: %s を速度設定用にオープンできません"
 
-#: mount/mount.c:1225
+#: mount/mount.c:1222
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: 速度の設定ができません: %s"
 
-#: mount/mount.c:1282
+#: mount/mount.c:1279
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: mtab によると、%s は %s にマウント済です\n"
