@@ -1,4 +1,4 @@
-AC_INIT(util-linux-ng, 2.15.1-rc1, kzak@redhat.com)
+AC_INIT(util-linux-ng, 2.15.1, kzak@redhat.com)
 
 AC_PREREQ(2.60)
 
