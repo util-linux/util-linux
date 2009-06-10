@@ -34,6 +34,8 @@ lscpu:
    - fix cpuid code on x86/PIC  [Mike Frysinger]
 mount:
    - fix undefined reference to `security_get_initial_context'  [Karel Zak]
+   - move MS_{PROPAGATION,BIND,MOVE} detection  [Karel Zak]
+   - use "none" fstype for MS_PROPAGATION mounts  [Karel Zak]
 po:
    - merge changes  [Karel Zak]
    - update vi.po (from translationproject.org)  [Clytie Siddall]
