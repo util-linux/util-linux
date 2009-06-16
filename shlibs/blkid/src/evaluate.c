@@ -42,6 +42,7 @@ static int verify_tag(const char *devname, const char *name, const char *value)
 	int fd = -1, rc = -1;
 	size_t len;
 	const char *data;
+	int errsv = 0;
 
 	pr = blkid_new_probe();
 	if (!pr)
@@ -50,8 +51,10 @@ static int verify_tag(const char *devname, const char *name, const char *value)
 	blkid_probe_set_request(pr, BLKID_PROBREQ_LABEL | BLKID_PROBREQ_UUID);
 
 	fd = open(devname, O_RDONLY);
-	if (fd < 0)
+	if (fd < 0) {
+		errsv = errno;
 		goto done;
+	}
 	if (blkid_probe_set_device(pr, fd, 0, 0))
 		goto done;
 	rc = blkid_do_safeprobe(pr);
@@ -66,7 +69,9 @@ done:
 	if (fd >= 0)
 		close(fd);
 	blkid_free_probe(pr);
-	return rc;
+
+	/* for non-root users we use unverified udev links */
+	return errsv == EACCES ? 0 : rc;
 }
 
 /**
