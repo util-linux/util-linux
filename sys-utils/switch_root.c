@@ -135,15 +135,6 @@ static int switchroot(const char *newroot)
 	}
 
 	cfd = open("/", O_RDONLY);
-	if (cfd >= 0) {
-		pid = fork();
-		if (pid <= 0) {
-			recursiveRemove(cfd);
-			if (pid == 0)
-				exit(EXIT_SUCCESS);
-		}
-		close(cfd);
-	}
 
 	if (mount(newroot, "/", NULL, MS_MOVE, NULL) < 0) {
 		warn("failed to mount moving %s to /", newroot);
@@ -153,6 +144,16 @@ static int switchroot(const char *newroot)
 	if (chroot(".")) {
 		warn("failed to change root");
 		return -1;
+	}
+
+	if (cfd >= 0) {
+		pid = fork();
+		if (pid <= 0) {
+			recursiveRemove(cfd);
+			if (pid == 0)
+				exit(EXIT_SUCCESS);
+		}
+		close(cfd);
 	}
 	return 0;
 }
