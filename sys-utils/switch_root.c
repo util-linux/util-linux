@@ -114,6 +114,7 @@ static int switchroot(const char *newroot)
 	const char *umounts[] = { "/dev", "/proc", "/sys", NULL };
 	int i;
 	int cfd;
+	pid_t pid;
 
 	for (i = 0; umounts[i] != NULL; i++) {
 		char newmount[PATH_MAX];
@@ -135,7 +136,12 @@ static int switchroot(const char *newroot)
 
 	cfd = open("/", O_RDONLY);
 	if (cfd >= 0) {
-		recursiveRemove(cfd);
+		pid = fork();
+		if (pid <= 0) {
+			recursiveRemove(cfd);
+			if (pid == 0)
+				exit(EXIT_SUCCESS);
+		}
 		close(cfd);
 	}
 
