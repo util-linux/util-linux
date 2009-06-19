@@ -39,22 +39,23 @@
 #endif
 
 /* remove all files/directories below dirName -- don't cross mountpoints */
-static int recursiveRemove(char *dirName)
+static int recursiveRemove(int fd)
 {
 	struct stat rb;
 	DIR *dir;
 	int rc = -1;
 	int dfd;
 
-	if (!(dir = opendir(dirName))) {
-		warn("failed to open %s", dirName);
+	if (!(dir = fdopendir(fd))) {
+		warn("failed to open directory");
 		goto done;
 	}
 
+	/* fdopendir() precludes us from continuing to use the input fd */
 	dfd = dirfd(dir);
 
 	if (fstat(dfd, &rb)) {
-		warn("failed to stat %s", dirName);
+		warn("failed to stat directory");
 		goto done;
 	}
 
@@ -64,7 +65,7 @@ static int recursiveRemove(char *dirName)
 		errno = 0;
 		if (!(d = readdir(dir))) {
 			if (errno) {
-				warn("failed to read %s", dirName);
+				warn("failed to read directory");
 				goto done;
 			}
 			break;	/* end of directory */
@@ -77,24 +78,26 @@ static int recursiveRemove(char *dirName)
 			struct stat sb;
 
 			if (fstatat(dfd, d->d_name, &sb, AT_SYMLINK_NOFOLLOW)) {
-				warn("failed to stat %s/%s", dirName, d->d_name);
+				warn("failed to stat %s", d->d_name);
 				continue;
 			}
 
 			/* remove subdirectories if device is same as dir */
 			if (sb.st_dev == rb.st_dev) {
-				char subdir[ strlen(dirName) +
-					     strlen(d->d_name) + 2 ];
+				int cfd;
 
-				sprintf(subdir, "%s/%s", dirName, d->d_name);
-				recursiveRemove(subdir);
+				cfd = openat(dfd, d->d_name, O_RDONLY);
+				if (cfd >= 0) {
+					recursiveRemove(cfd);
+					close(cfd);
+				}
 			} else
 				continue;
 		}
 
 		if (unlinkat(dfd, d->d_name,
 			     d->d_type == DT_DIR ? AT_REMOVEDIR : 0))
-			warn("failed to unlink %s/%s", dirName, d->d_name);
+			warn("failed to unlink %s", d->d_name);
 	}
 
 	rc = 0;	/* success */
@@ -110,6 +113,7 @@ static int switchroot(const char *newroot)
 	/*  Don't try to unmount the old "/", there's no way to do it. */
 	const char *umounts[] = { "/dev", "/proc", "/sys", NULL };
 	int i;
+	int cfd;
 
 	for (i = 0; umounts[i] != NULL; i++) {
 		char newmount[PATH_MAX];
@@ -129,7 +133,11 @@ static int switchroot(const char *newroot)
 		return -1;
 	}
 
-	recursiveRemove("/");
+	cfd = open("/", O_RDONLY);
+	if (cfd >= 0) {
+		recursiveRemove(cfd);
+		close(cfd);
+	}
 
 	if (mount(newroot, "/", NULL, MS_MOVE, NULL) < 0) {
 		warn("failed to mount moving %s to /", newroot);
