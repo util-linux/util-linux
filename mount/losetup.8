@@ -138,12 +138,12 @@ from determining the status of the device.
 If you are using the loadable module you must have the module loaded
 first with the command
 .IP
-# insmod loop.o
+# modprobe loop
 .LP
 Maybe also encryption modules are needed.
 .IP
-# insmod des.o
-# insmod cryptoloop.o
+# modprobe des
+# modprobe cryptoloop
 .LP
 The following commands can be used as an example of using the loop device.
 .nf
