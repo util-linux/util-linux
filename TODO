@@ -1,42 +1,81 @@
+libblkid
+--------
+
+ - add command line interface for blkid_probe_filter_types():
+
+       # blkid -p -o udev --filter-type nofat
+
+ - (?) we need to ignore cache and config files when the files are writable
+   for non-root users and the library is linked with suid programs
+
+ - add -<BE|LE> suffix to test images for native-endian filesystems (e.g. swap)
+   and add support for such functionality to tests/ts/blkid/low-probe
+
+ - do we really need to depend on libuuid? Maybe the default should be
+   use in-tree code rather and link against libuuid -- especially when we
+   need it for uuid_unparse() only.
+
+ - consolidate "getsize" stuff (see getsize.c and lib/blkdev.c)
+
+ - cleanup __attribute__ usage
+
+ - add stripe size / alignment retrival support to libbkid for use
+   with mkfs.  This would allow to deprecate libdisk from xfsprogs (1)
+   in favour of a common libblkid.
+
+   [ -- Christoph Hellwig, 16 Feb 2009 ]
+   (1) http://git.kernel.org/?p=fs/xfs/xfsprogs-dev.git;a=tree;f=libdisk;
+
+ - use fstatat() in blkid__scan_dir()
+
+ - add values:
+
+	FSSIZE   -- filesystem size (klibc requirement)
+
+	SBOFFSET -- superblock offset; offset where SB was detected 
+                    (swapon requirement to check details from swap header)
+
+        MAGIC    -- magic string
+	MAGICLEN -- length of magic string
+
+fdisk(s)
+--------
+
+ * use off_t instead "long long"
+
+ * fdisk/* refactoring
+
+ * add GPT support
+
+misc
+----
+
+ * add a new command (unshare, clone, or so...) with all kinds of
+   clone(2) options.
+   http://thread.gmane.org/gmane.linux.utilities.util-linux-ng/2178
 
  * add to lib/blkdev.c code for /proc/partitions parsing -- unfortunate we
    duplicate this code in many places. The parser has to support unlimited
    size (or 4096 bytes) of partition name.
 
- * fdisk/* -- use off_t instead "long long"
-
- * mkswap: use /proc/sys/kernel/random/uuid as a fallback solution for builds 
-   without libuuid
-
- * add --without-libuuid to disable mkswap(8) and libblkid linking against 
-   libuuid
-
- * use TZ=UTC for tests
-
- * add NLS and err.h stuff to schedutils (chrt.c, taskset.c)
-
- * move libblkid to util-linux-ng (see the topic/blkid branch)
-
- * add mllockall() and SCHED_FIFO to hwclock,
-   see http://lkml.org/lkml/2008/10/12/132
-
  * partx: copy sun.c, mac.c and dash.c from kpartx
    git://git.kernel.org/pub/scm/linux/storage/multipath-tools/.git
 
-   It would be nice to merge kpartx and partx to the one project. We duplicate
-   a lot of code (include losetup code in kpartx).
+ * mkswap: use /proc/sys/kernel/random/uuid as a fallback solution for builds 
+   without libuuid
 
  * swapon -s  -- LABELs support
 
    Although mkswap has recently been -L option to create a label nothing appears to
    have been change to swapon to display said labels. (rh#430386)
 
- * use canonicalize_file_name() when exist in glibc (see lib/canonicalize.v)
+ * use TZ=UTC for tests
 
- * try improve compilation against others libc:
-	- klibc
-	- ???
+ * add NLS and err.h stuff to schedutils (chrt.c, taskset.c)
 
+ * add mllockall() and SCHED_FIFO to hwclock,
+   see http://lkml.org/lkml/2008/10/12/132
+ 
  * use rpmatch() for all Y/N questions
 
  * mount -a -- reorder fstab entries by paths before mount (just idea only)
