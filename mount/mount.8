@@ -1339,7 +1339,7 @@ and
 filesystems.)
 .TP
 .BR blocksize=512 " / " blocksize=1024 " / " blocksize=2048
-Set blocksize (default 512).
+Set blocksize (default 512). This option is obsolete.
 .TP
 \fBuid=\fP\fIvalue\fP and \fBgid=\fP\fIvalue\fP
 Set the owner and group of all files.
@@ -1437,7 +1437,7 @@ Programs that do computed lseeks won't like in-kernel text conversion.
 Several people have had their data ruined by this translation. Beware!
 
 For file systems mounted in binary mode, a conversion tool
-(fromdos/todos) is available.
+(fromdos/todos) is available. This option is obsolete.
 .RE
 .TP
 .BI cvf_format= module
@@ -1445,9 +1445,10 @@ Forces the driver to use the CVF (Compressed Volume File) module
 .RI cvf_ module
 instead of auto-detection. If the kernel supports kmod, the
 cvf_format=xxx option also controls on-demand CVF module loading.
+This option is obsolete.
 .TP
 .BI cvf_option= option
-Option passed to the CVF module.
+Option passed to the CVF module. This option is obsolete.
 .TP
 .B debug
 Turn on the
@@ -1766,7 +1767,7 @@ and 1 a byteswapped bigendian encoding.
 .B posix=[0|1]
 If enabled (posix=1), the file system distinguishes between
 upper and lower case. The 8.3 alias names are presented as
-hard links instead of being suppressed.
+hard links instead of being suppressed. This option is obsolete.
 .TP
 \fBuid=\fP\fIvalue\fP, \fBgid=\fP\fIvalue\fP and \fBumask=\fP\fIvalue\fP
 Set the file permission on the filesystem.
@@ -2373,7 +2374,7 @@ One further possible type is a mount via the loop device. For example,
 the command
 
 .nf
-.B "  mount /tmp/fdimage /mnt -t msdos -o loop=/dev/loop3,blocksize=1024"
+.B "  mount /tmp/fdimage /mnt -t vfat -o loop=/dev/loop3
 .fi
 
 will set up the loop device
