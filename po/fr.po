@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.15-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-04-29 15:34+0200\n"
+"POT-Creation-Date: 2009-06-28 22:12+0200\n"
 "PO-Revision-Date: 2009-04-19 22:13+0100\n"
 "Last-Translator: Nicolas Provost <nprovost@quadriv.com>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -210,7 +210,7 @@ msgstr "Utilisation : %s [ -n ] périphérique\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1282
 #: disk-utils/isosize.c:181 disk-utils/mkfs.bfs.c:115 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:813 disk-utils/mkfs.minix.c:571
-#: disk-utils/mkswap.c:454 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: disk-utils/mkswap.c:458 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, c-format
 msgid "%s (%s)\n"
@@ -1274,7 +1274,7 @@ msgstr "échec de positionnement durant le test des blocs"
 msgid "Weird values in do_check: probably bugs\n"
 msgstr "Valeurs étranges dans do_check: probablement un bug\n"
 
-#: disk-utils/mkfs.minix.c:507 disk-utils/mkswap.c:306
+#: disk-utils/mkfs.minix.c:507 disk-utils/mkswap.c:310
 msgid "seek failed in check_blocks"
 msgstr "échec de positionnement dans check_blocks"
 
@@ -1345,175 +1345,175 @@ msgstr "abandon de la création d'un système de fichiers sur « %s »"
 msgid "number of blocks too small"
 msgstr "nombre de blocs trop petit"
 
-#: disk-utils/mkswap.c:151
+#: disk-utils/mkswap.c:155
 #, c-format
 msgid "Bad user-specified page size %d\n"
 msgstr "Taille de page spécifiée par l'utilisateur erronée %d\n"
 
-#: disk-utils/mkswap.c:159
+#: disk-utils/mkswap.c:163
 #, c-format
 msgid "Using user-specified page size %d, instead of the system value %d\n"
 msgstr ""
 "Utilise la taille de page spécifiée par l'usager %d, au lieu de la valeur "
 "système %d\n"
 
-#: disk-utils/mkswap.c:183
+#: disk-utils/mkswap.c:187
 #, c-format
 msgid "Bad swap header size, no label written.\n"
 msgstr "Taille erronée d'entête de swap, aucune étiquette n'a été écrite.\n"
 
-#: disk-utils/mkswap.c:193
+#: disk-utils/mkswap.c:197
 #, c-format
 msgid "Label was truncated.\n"
 msgstr "L'étiquette a été tronquée.\n"
 
-#: disk-utils/mkswap.c:199
+#: disk-utils/mkswap.c:203
 #, c-format
 msgid "no label, "
 msgstr "pas d'étiquette, "
 
-#: disk-utils/mkswap.c:207
+#: disk-utils/mkswap.c:211
 #, c-format
 msgid "no uuid\n"
 msgstr "pas d'uuid\n"
 
-#: disk-utils/mkswap.c:272
+#: disk-utils/mkswap.c:276
 #, c-format
 msgid "Usage: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"
 msgstr "Usage : %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocs]\n"
 
-#: disk-utils/mkswap.c:286
+#: disk-utils/mkswap.c:290
 msgid "too many bad pages"
 msgstr "trop de pages corrompues"
 
-#: disk-utils/mkswap.c:299 misc-utils/look.c:182 misc-utils/setterm.c:1183
+#: disk-utils/mkswap.c:303 misc-utils/look.c:182 misc-utils/setterm.c:1183
 #: text-utils/more.c:1982 text-utils/more.c:1993
 msgid "Out of memory"
 msgstr "Mémoire épuisée"
 
-#: disk-utils/mkswap.c:313
+#: disk-utils/mkswap.c:317
 #, c-format
 msgid "one bad page\n"
 msgstr "une page corrompue\n"
 
-#: disk-utils/mkswap.c:315
+#: disk-utils/mkswap.c:319
 #, c-format
 msgid "%lu bad pages\n"
 msgstr "%lu pages corrompues\n"
 
 # disk-utils/mkswap.c:612
-#: disk-utils/mkswap.c:392 disk-utils/mkswap.c:408 disk-utils/mkswap.c:625
+#: disk-utils/mkswap.c:396 disk-utils/mkswap.c:412 disk-utils/mkswap.c:629
 msgid "unable to rewind swap-device"
 msgstr "Impossible de réinitialiser le périphérique d'échange"
 
-#: disk-utils/mkswap.c:412
+#: disk-utils/mkswap.c:416
 msgid "unable to erase bootbits sectors"
 msgstr "impossible d'effacer le secteur d'amorçage"
 
-#: disk-utils/mkswap.c:416
+#: disk-utils/mkswap.c:420
 #, c-format
 msgid "%s: %s: warning: don't erase bootbits sectors\n"
 msgstr "%s : %s : attention, ne pas effacer les secteurs de démarrage\n"
 
-#: disk-utils/mkswap.c:419
+#: disk-utils/mkswap.c:423
 #, c-format
 msgid "        (%s partition table detected). "
 msgstr "        (%s table de partitions détectée). "
 
-#: disk-utils/mkswap.c:421
+#: disk-utils/mkswap.c:425
 #, c-format
 msgid "        on whole disk. "
 msgstr "        tout le disque."
 
-#: disk-utils/mkswap.c:491
+#: disk-utils/mkswap.c:495
 #, c-format
 msgid "%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"
 msgstr ""
 "%1$s: attention: option -U ignorée (les UUID ne sont pas supportés par %1"
 "$s)\n"
 
-#: disk-utils/mkswap.c:507
+#: disk-utils/mkswap.c:511
 #, c-format
 msgid "%s: does not support swapspace version %d.\n"
 msgstr "%s : ne supporte pas cette version d'espace d'échange %d.\n"
 
-#: disk-utils/mkswap.c:515
+#: disk-utils/mkswap.c:519
 msgid "error: UUID parsing failed"
 msgstr "erreur : échec d'analyse de l'UUID"
 
-#: disk-utils/mkswap.c:525
+#: disk-utils/mkswap.c:529
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: erreur: aucun endroit pour définir un espace d'échange ?\n"
 
-#: disk-utils/mkswap.c:543
+#: disk-utils/mkswap.c:547
 #, c-format
 msgid "%s: error: size %llu KiB is larger than device size %llu KiB\n"
 msgstr ""
 "%s : erreur : taille %llu Ko supérieure à la taille du périphérique %llu Ko\n"
 
-#: disk-utils/mkswap.c:552
+#: disk-utils/mkswap.c:556
 #, c-format
 msgid "%s: error: swap area needs to be at least %ld KiB\n"
 msgstr ""
 "%s: erreur : la zone d'échange (swap) doit être au moins de taille %ld Ko\n"
 
-#: disk-utils/mkswap.c:569
+#: disk-utils/mkswap.c:573
 #, c-format
 msgid "%s: warning: truncating swap area to %llu KiB\n"
 msgstr "%s: AVERTISSEMENT : troncage de la zone d'échange (swap) à %llu Ko\n"
 
 # disk-utils/mkswap.c:566
-#: disk-utils/mkswap.c:592
+#: disk-utils/mkswap.c:596
 #, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
 msgstr "%s: impossible de créer une zone d'échange sur \"%s\"\n"
 
-#: disk-utils/mkswap.c:598
+#: disk-utils/mkswap.c:602
 #, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
 msgstr ""
 "%s: erreur - %s est monté ; impossible de créer une zone d'échange ici.\n"
 
 # disk-utils/mkswap.c:605
-#: disk-utils/mkswap.c:614
+#: disk-utils/mkswap.c:618
 msgid "Unable to set up swap-space: unreadable"
 msgstr "Impossible d'initialiser l'espace d'échange : illisible"
 
 # disk-utils/mkswap.c:606
-#: disk-utils/mkswap.c:617
+#: disk-utils/mkswap.c:621
 #, c-format
 msgid "Setting up swapspace version 1, size = %llu KiB\n"
 msgstr "Configure l'espace d'échange (swap) en version 1, taille = %llu Ko\n"
 
-#: disk-utils/mkswap.c:628
+#: disk-utils/mkswap.c:632
 #, c-format
 msgid "%s: %s: unable to write signature page: %s"
 msgstr "%s : %s : impossible d'écrire la page de signature %s"
 
 # disk-utils/mkswap.c:623
-#: disk-utils/mkswap.c:639
+#: disk-utils/mkswap.c:643
 msgid "fsync failed"
 msgstr "Échec de la synchronisation du système de fichiers par fsync"
 
-#: disk-utils/mkswap.c:650
+#: disk-utils/mkswap.c:654
 #, c-format
 msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr "%s: %s: impossible d'obtenir l'étiquette du fichier selinux : %s\n"
 
-#: disk-utils/mkswap.c:656
+#: disk-utils/mkswap.c:660
 msgid "unable to matchpathcon()"
 msgstr "matchpathcon() inutilisable"
 
-#: disk-utils/mkswap.c:659
+#: disk-utils/mkswap.c:663
 msgid "unable to create new selinux context"
 msgstr "impossible de créer un nouveau contexte selinux"
 
-#: disk-utils/mkswap.c:661
+#: disk-utils/mkswap.c:665
 msgid "couldn't compute selinux context"
 msgstr "impossible d'évaluer le contexte selinux"
 
-#: disk-utils/mkswap.c:667
+#: disk-utils/mkswap.c:671
 #, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "%s: impossible d'étiqueter de %s en %s: %s\n"
@@ -6894,16 +6894,6 @@ msgstr ""
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "Échec de ioctl(RTC_EPOCH_SET) vers %s"
 
-#: libs/blkid/bin/findfs.c:24
-#, c-format
-msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
-msgstr "Usage : %s LABEL=<label>|UUID=<uuid>\n"
-
-#: libs/blkid/bin/findfs.c:55
-#, c-format
-msgid "unable to resolve '%s'"
-msgstr "impossible de résoudre '%s'"
-
 #: login-utils/agetty.c:361
 #, c-format
 msgid "%s: can't exec %s: %m"
@@ -7050,8 +7040,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "%s: échec de login PAM, fin d'exécution : %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:823
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:731
-#: mount/lomount.c:734
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:753
+#: mount/lomount.c:756
 msgid "Password: "
 msgstr "Mot de passe: "
 
@@ -7920,25 +7910,25 @@ msgstr "%s: ne peut évaluer par stat() le fichier temporaire.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: ne peut lire du fichier temporaire.\n"
 
-#: misc-utils/cal.c:355 misc-utils/cal.c:367
+#: misc-utils/cal.c:358 misc-utils/cal.c:370
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "valeur de jour incorrecte : utiliser 1-%d"
 
-#: misc-utils/cal.c:359
+#: misc-utils/cal.c:362
 msgid "illegal month value: use 1-12"
 msgstr "valeur de mois illégal: utiliser 1-12"
 
-#: misc-utils/cal.c:363
+#: misc-utils/cal.c:366
 msgid "illegal year value: use 1-9999"
 msgstr "valeur d'année illégale: utiliser 1-9999"
 
-#: misc-utils/cal.c:457
+#: misc-utils/cal.c:460
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:848
+#: misc-utils/cal.c:851
 #, c-format
 msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
 msgstr "Utilisation : cal [-13smjyV] [[[jour] mois] année]\n"
@@ -8477,6 +8467,148 @@ msgstr "Impossible de lire %s\n"
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: $TERM n'est pas défini.\n"
 
+#: misc-utils/uuidd.c:46
+#, fuzzy, c-format
+msgid "Usage: %s [-d] [-p pidfile] [-s socketpath] [-T timeout]\n"
+msgstr ""
+"Utilisation : last [-#] [-f fichier] [-t tty] [-h nom-de-l'hôte] "
+"[usager ...]\n"
+
+#: misc-utils/uuidd.c:48
+#, c-format
+msgid "       %s [-r|t] [-n num] [-s socketpath]\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:50
+#, fuzzy, c-format
+msgid "       %s -k\n"
+msgstr "       %s -l [ signal ]\n"
+
+#: misc-utils/uuidd.c:148
+#, fuzzy
+msgid "bad arguments"
+msgstr "col: argument erroné pour -l %s.\n"
+
+#: misc-utils/uuidd.c:155
+#, fuzzy
+msgid "socket"
+msgstr "socket nfs"
+
+#: misc-utils/uuidd.c:166
+#, fuzzy
+msgid "connect"
+msgstr "connexion nfs"
+
+#: misc-utils/uuidd.c:185
+#, fuzzy
+msgid "write"
+msgstr "Ecrire"
+
+#: misc-utils/uuidd.c:193
+#, fuzzy
+msgid "read count"
+msgstr "lire %c\n"
+
+#: misc-utils/uuidd.c:199
+#, fuzzy
+msgid "bad response length"
+msgstr "mauvaise longueur de nom de fichier"
+
+#: misc-utils/uuidd.c:264
+#, c-format
+msgid "uuidd daemon already running at pid %s\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:272
+#, c-format
+msgid "Couldn't create unix stream socket: %s"
+msgstr ""
+
+#: misc-utils/uuidd.c:289
+#, fuzzy, c-format
+msgid "Couldn't bind unix socket %s: %s\n"
+msgstr "Impossible d'ouvrir %s : %s\n"
+
+#: misc-utils/uuidd.c:297
+#, fuzzy, c-format
+msgid "Couldn't listen on unix socket %s: %s\n"
+msgstr "Impossible d'ouvrir %s : %s\n"
+
+#: misc-utils/uuidd.c:335
+#, fuzzy, c-format
+msgid "Error reading from client, len = %d\n"
+msgstr "Erreur de lecture %s\n"
+
+#: misc-utils/uuidd.c:343
+#, c-format
+msgid "operation %d, incoming num = %d\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:362
+#, c-format
+msgid "Generated time UUID: %s\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:372
+#, c-format
+msgid "Generated random UUID: %s\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:381
+#, c-format
+msgid "Generated time UUID %s and %d following\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:399
+#, c-format
+msgid "Generated %d UUID's:\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:411
+#, fuzzy, c-format
+msgid "Invalid operation %d\n"
+msgstr "option non valide"
+
+#: misc-utils/uuidd.c:452 misc-utils/uuidd.c:473
+#, fuzzy, c-format
+msgid "Bad number: %s\n"
+msgstr "%s : nombre non valide : %s\n"
+
+#: misc-utils/uuidd.c:508 misc-utils/uuidd.c:535
+#, fuzzy, c-format
+msgid "Error calling uuidd daemon (%s): %s\n"
+msgstr "erreur de changement de mode de %s: %s\n"
+
+#: misc-utils/uuidd.c:518
+#, c-format
+msgid "%s and subsequent %d UUID's\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:520
+#, c-format
+msgid "List of UUID's:\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:541
+#, c-format
+msgid "Unexpected reply length from server %d\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:558
+#, c-format
+msgid "Couldn't kill uuidd running at pid %d: %s\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:564
+#, c-format
+msgid "Killed uuidd running at pid %d\n"
+msgstr ""
+
+#: misc-utils/uuidgen.c:32
+#, fuzzy, c-format
+msgid "Usage: %s [-r] [-t]\n"
+msgstr "Utilisation : %s [options]\n"
+
 #: misc-utils/whereis.c:159
 #, c-format
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
@@ -8547,39 +8679,39 @@ msgstr "AVERTISSEMENT: ne peut ouvrir %s: %s"
 msgid "mount: could not open %s - using %s instead\n"
 msgstr "mount: ne peut ouvrir %s - on utilise %s à la place\n"
 
-#: mount/fstab.c:588
+#: mount/fstab.c:589
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
 msgstr ""
 "ne peut créer le fichier verrou %s: %s (utiliser l'option -n pour l'écraser)"
 
-#: mount/fstab.c:614
+#: mount/fstab.c:615
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
 msgstr ""
 "ne peut lier le fichier verrou %s: %s (utiliser l'option  -n pour l'écraser)"
 
-#: mount/fstab.c:630
+#: mount/fstab.c:631
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
 msgstr ""
 "ne peut ouvrir le fichier verrou %s: %s (utiliser l'option -n pour l'écraser)"
 
-#: mount/fstab.c:645
+#: mount/fstab.c:646
 #, c-format
 msgid "Can't lock lock file %s: %s\n"
 msgstr "Ne peut verrrouiller le fichier verrou %s: %s\n"
 
-#: mount/fstab.c:659
+#: mount/fstab.c:660
 #, c-format
 msgid "can't lock lock file %s: %s"
 msgstr "ne peut verrouiller le fichier verrou %s: %s"
 
-#: mount/fstab.c:661
+#: mount/fstab.c:662
 msgid "timed out"
 msgstr "expiration du délai"
 
-#: mount/fstab.c:668
+#: mount/fstab.c:669
 #, c-format
 msgid ""
 "Cannot create link %s\n"
@@ -8588,83 +8720,88 @@ msgstr ""
 "Ne peut créer le lien %s\n"
 "Peut-être y-a-t-il un fichier verrouillé en panne?\n"
 
-#: mount/fstab.c:790 mount/fstab.c:845
+#: mount/fstab.c:791 mount/fstab.c:846
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "ne peut ouvrir %s (%s) - mtab n'est pas à jour"
 
-#: mount/fstab.c:854
+#: mount/fstab.c:855
 #, c-format
 msgid "error writing %s: %s"
 msgstr "erreur d'écriture %s: %s"
 
-#: mount/fstab.c:872
+#: mount/fstab.c:873
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "erreur de changement de mode de %s: %s\n"
 
-#: mount/fstab.c:885
+#: mount/fstab.c:886
 #, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr "erreur de changement de propriétaire de %s: %s\n"
 
-#: mount/fstab.c:896
+#: mount/fstab.c:897
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "ne peut renommer %s à %s: %s\n"
 
-#: mount/lomount.c:368
+#: mount/lomount.c:366
+#, fuzzy, c-format
+msgid "loop: can't set capacity on device %s: %s\n"
+msgstr "loop: ne peut obtenir les infos sur le périphérique %s: %s\n"
+
+#: mount/lomount.c:390
 #, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", décalage %<PRIu64>"
 
-#: mount/lomount.c:371
+#: mount/lomount.c:393
 #, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", taille limite %<PRIu64>"
 
-#: mount/lomount.c:379
+#: mount/lomount.c:401
 #, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", cryptage %s (type %<PRIu32>)"
 
-#: mount/lomount.c:392
+#: mount/lomount.c:414
 #, c-format
 msgid ", offset %d"
 msgstr ", décalage %d"
 
-#: mount/lomount.c:395
+#: mount/lomount.c:417
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", encryptage type %d\n"
 
-#: mount/lomount.c:403
+#: mount/lomount.c:425
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: ne peut obtenir les infos sur le périphérique %s: %s\n"
 
-#: mount/lomount.c:414
+#: mount/lomount.c:436
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: ne peut ouvrir le périphérique %s: %s\n"
 
-#: mount/lomount.c:430 mount/lomount.c:462 mount/lomount.c:527
-#: mount/lomount.c:576
+#: mount/lomount.c:452 mount/lomount.c:484 mount/lomount.c:549
+#: mount/lomount.c:598
 #, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: le répertoire /dev n'existe pas."
 
-#: mount/lomount.c:441 mount/lomount.c:589
+#: mount/lomount.c:463 mount/lomount.c:611
 #, c-format
 msgid "%s: no permission to look at /dev/loop%s<N>"
 msgstr "%s : pas de permission pour observer /dev/loop%s<N>"
 
-#: mount/lomount.c:592
+#: mount/lomount.c:614
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: ne peut trouver un périphérique de type loop libre"
 
-#: mount/lomount.c:595
+#: mount/lomount.c:617
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -8674,54 +8811,54 @@ msgstr ""
 "       ne supporte pas le type loop de périphérique? (si oui, recompiler ou "
 "utiliser `modprobe loop')."
 
-#: mount/lomount.c:625
+#: mount/lomount.c:647
 msgid "Out of memory while reading passphrase"
 msgstr "Mémoire épuisée lors de la lecture de la phrase secrète"
 
-#: mount/lomount.c:668
+#: mount/lomount.c:690
 #, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "attention : %s est déjà associé(e) avec %s\n"
 
-#: mount/lomount.c:684
+#: mount/lomount.c:706
 #, c-format
 msgid "warning: %s: is write-protected, using read-only.\n"
 msgstr "attention: %s est protégé en écriture, monté en lecture seule.\n"
 
-#: mount/lomount.c:720
+#: mount/lomount.c:742
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "Ne peut verrouiller en mémoire, fin d'exécution.\n"
 
-#: mount/lomount.c:747
+#: mount/lomount.c:769
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr "échec de ioctl LOOP_SET_FD : %s\n"
 
-#: mount/lomount.c:804
+#: mount/lomount.c:826
 #, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu,%llu) : succès\n"
 
-#: mount/lomount.c:825
+#: mount/lomount.c:847
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): succès\n"
 
-#: mount/lomount.c:829
+#: mount/lomount.c:851
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: ne peut détruire le périphérique %s: %s\n"
 
-#: mount/lomount.c:840
+#: mount/lomount.c:862
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Cette version de mount a été compilée sans support de boucle. SVP "
 "recompiler.\n"
 
-#: mount/lomount.c:875
-#, c-format
+#: mount/lomount.c:897
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -8729,6 +8866,7 @@ msgid ""
 " %1$s -a | --all                              list all used\n"
 " %1$s -d | --detach <loopdev> [<loopdev> ...] delete\n"
 " %1$s -f | --find                             find unused\n"
+" %1$s -c | --set-capacity <loopdev>           resize\n"
 " %1$s -j | --associated <file> [-o <num>]     list all associated with "
 "<file>\n"
 " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
@@ -8743,7 +8881,7 @@ msgstr ""
 "<fichier>\n"
 " %1$s [ options ] {-f|--find|loopdev} <fichier>  configurer\n"
 
-#: mount/lomount.c:884
+#: mount/lomount.c:907
 #, c-format
 msgid ""
 "\n"
@@ -8775,22 +8913,22 @@ msgstr ""
 " -v | --verbose                   mode verbeux\n"
 "\n"
 
-#: mount/lomount.c:1014 mount/lomount.c:1052
+#: mount/lomount.c:1045 mount/lomount.c:1085
 #, c-format
 msgid "Loop device is %s\n"
 msgstr "Périphérique boucle (loop) : %s\n"
 
-#: mount/lomount.c:1039
+#: mount/lomount.c:1072
 #, c-format
 msgid "stolen loop=%s...trying again\n"
 msgstr "périph. boucle perdu (loop)=%s...nouvel essai\n"
 
-#: mount/lomount.c:1049
+#: mount/lomount.c:1082
 #, c-format
 msgid "%s: %s: device is busy"
 msgstr "%s: %s: périphérique occupé"
 
-#: mount/lomount.c:1066
+#: mount/lomount.c:1099
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -8822,7 +8960,7 @@ msgstr "mount: selon mtab %s est monté sur %s"
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: ne peut ouvrir %s en écriture: %s"
 
-#: mount/mount.c:572 mount/mount.c:1193
+#: mount/mount.c:572 mount/mount.c:1190
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: erreur d'écriture %s: %s"
@@ -8873,89 +9011,89 @@ msgstr "       et il semble que c'est un espace de swap\n"
 msgid "       I will try type %s\n"
 msgstr "       Je vais essayer le type %s\n"
 
-#: mount/mount.c:905
+#: mount/mount.c:902
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s ressemble à un espace de swap - n'a pas été monté"
 
-#: mount/mount.c:996
+#: mount/mount.c:993
 msgid "mount failed"
 msgstr "échec de mount"
 
-#: mount/mount.c:998
+#: mount/mount.c:995
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: seul l'usager ROOT peut monter %s sur %s"
 
-#: mount/mount.c:1068
+#: mount/mount.c:1065
 msgid "mount: loop device specified twice"
 msgstr "mount: périphérique de type loop spécifié deux fois"
 
-#: mount/mount.c:1073
+#: mount/mount.c:1070
 msgid "mount: type specified twice"
 msgstr "mount: type spécifié deux fois"
 
-#: mount/mount.c:1085
+#: mount/mount.c:1082
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: escamotage du setup du périphérique de type loop\n"
 
-#: mount/mount.c:1097
+#: mount/mount.c:1094
 #, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount : selon mtab %s est déjà monté sur %s en tant que \"loop\""
 
-#: mount/mount.c:1107
+#: mount/mount.c:1104
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: on se prépare à utiliser le périphérique de type loop %s\n"
 
-#: mount/mount.c:1116
+#: mount/mount.c:1113
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr ""
 "mount : périph. récupéré par un autre processus=%s... nouvelle tentative\n"
 
-#: mount/mount.c:1121
+#: mount/mount.c:1118
 #, c-format
 msgid "mount: stolen loop=%s"
 msgstr "mount : périph. repris par un autre processus=%s"
 
-#: mount/mount.c:1126
+#: mount/mount.c:1123
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: échec d'initialisation du périphérique de type loop\n"
 
-#: mount/mount.c:1137
+#: mount/mount.c:1134
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: réussite d'initialisation du périphérique de type loop\n"
 
-#: mount/mount.c:1171
+#: mount/mount.c:1168
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s n'a pas été repéré - on le crée..\n"
 
-#: mount/mount.c:1188
+#: mount/mount.c:1185
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: ne peut ouvrir %s: %s"
 
-#: mount/mount.c:1209
+#: mount/mount.c:1206
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argument à -p ou --pass-fd doit être un nombre"
 
-#: mount/mount.c:1222
+#: mount/mount.c:1219
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: ne peut ouvrir %s pour ajuster la vitesse"
 
-#: mount/mount.c:1225
+#: mount/mount.c:1222
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount: ne peut initialiser la vitesse: %s"
 
-#: mount/mount.c:1282
+#: mount/mount.c:1279
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount : selon mtab %s est déjà monté sur %s\n"
@@ -9586,11 +9724,11 @@ msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: ne peut repérer la liste des systèmes de fichiers à démonter"
 
 #: mount/umount.c:396
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Usage: umount [-hV]\n"
-"       umount -a [-f] [-r] [-n] [-v] [-t vfstypes] [-O opts]\n"
-"       umount [-f] [-r] [-n] [-v] special | node...\n"
+"Usage: umount -h | -V\n"
+"       umount -a [-d] [-f] [-r] [-n] [-v] [-t vfstypes] [-O opts]\n"
+"       umount [-d] [-f] [-r] [-n] [-v] special | node...\n"
 msgstr ""
 "Utilisation : umount [-hV]\n"
 "       umount -a [-f] [-r] [-n] [-v] [-t type-vfs] [-O opts]\n"
@@ -9711,49 +9849,49 @@ msgstr "impossible d'obtenir la stratégie d'exécution du pid %d"
 msgid "pid %d's %s scheduling policy: "
 msgstr "stratégie de planification d'exécution pour pid %d %s :"
 
-#: schedutils/chrt.c:108
+#: schedutils/chrt.c:112
 #, c-format
 msgid "unknown\n"
 msgstr "inconnu\n"
 
-#: schedutils/chrt.c:112
+#: schedutils/chrt.c:116
 #, c-format
 msgid "failed to get pid %d's attributes"
 msgstr "impossible d'obtenir les attributs pour le pid %d"
 
-#: schedutils/chrt.c:114
+#: schedutils/chrt.c:118
 #, c-format
 msgid "pid %d's %s scheduling priority: %d\n"
 msgstr "priorité de planification d'exécution pour le pid %d %s : %d\n"
 
-#: schedutils/chrt.c:130
+#: schedutils/chrt.c:147
 #, c-format
 msgid "SCHED_%s min/max priority\t: %d/%d\n"
 msgstr "SCHED_%s priorité min/max \t: %d/%d\n"
 
-#: schedutils/chrt.c:133
+#: schedutils/chrt.c:150
 #, c-format
 msgid "SCHED_%s not supported?\n"
 msgstr "SCHED_%s non supporté(e) ?\n"
 
-#: schedutils/chrt.c:185
+#: schedutils/chrt.c:206
 msgid "failed to parse pid"
 msgstr "analyse impossible pour ce pid"
 
-#: schedutils/chrt.c:207
+#: schedutils/chrt.c:228
 msgid "current"
 msgstr "actuel"
 
-#: schedutils/chrt.c:215
+#: schedutils/chrt.c:236
 msgid "failed to parse priority"
 msgstr "impossible d'analyser la priorité"
 
-#: schedutils/chrt.c:221
+#: schedutils/chrt.c:242
 #, c-format
 msgid "failed to set pid %d's policy"
 msgstr "impossible de fixer la stratégie d'exécution du pid %d"
 
-#: schedutils/chrt.c:230
+#: schedutils/chrt.c:251
 #, c-format
 msgid "failed to execute %s"
 msgstr "impossible d'exécuter %s"
@@ -9767,7 +9905,7 @@ msgid "ioprio_set failed"
 msgstr "échec de la fonction \"ioprio_set\""
 
 #: schedutils/ionice.c:81
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "ionice - sets or gets process io scheduling class and priority.\n"
@@ -9779,7 +9917,7 @@ msgid ""
 "Options:\n"
 "  -n <classdata>      class data (0-7, lower being higher prio)\n"
 "  -c <class>          scheduling class\n"
-"                      1: realtime, 2: best-effort, 3: idle\n"
+"                      0: none, 1: realtime, 2: best-effort, 3: idle\n"
 "  -t                  ignore failures\n"
 "  -h                  this help\n"
 "\n"
@@ -9805,18 +9943,33 @@ msgstr ""
 msgid "cannot parse number '%s'"
 msgstr "impossible d'analyser le nombre '%s'"
 
-#: schedutils/ionice.c:157
+#: schedutils/ionice.c:151
+#, fuzzy
+msgid "ignoring given class data for none class"
+msgstr "classe de veille spécifiée ignorée"
+
+#: schedutils/ionice.c:159
 msgid "ignoring given class data for idle class"
 msgstr "classe de veille spécifiée ignorée"
 
-#: schedutils/ionice.c:161
+#: schedutils/ionice.c:163
 #, c-format
 msgid "bad prio class %d"
 msgstr "mauvaise classe de priorité %d"
 
-#: schedutils/ionice.c:185
+#: schedutils/ionice.c:187
 msgid "execvp failed"
 msgstr "échec de \"execvp\""
+
+#: shlibs/blkid/bin/findfs.c:24
+#, c-format
+msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
+msgstr "Usage : %s LABEL=<label>|UUID=<uuid>\n"
+
+#: shlibs/blkid/bin/findfs.c:55
+#, c-format
+msgid "unable to resolve '%s'"
+msgstr "impossible de résoudre '%s'"
 
 #: sys-utils/ctrlaltdel.c:27
 #, c-format
@@ -10791,7 +10944,7 @@ msgstr "para"
 msgid "full"
 msgstr "complet"
 
-#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:431
+#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:441
 #, c-format
 msgid "error: %s"
 msgstr "erreur : %s "
@@ -10809,15 +10962,15 @@ msgstr "erreur : échec de \"strdup\""
 msgid "error: uname failed"
 msgstr "erreur : échec de \"uname\""
 
-#: sys-utils/lscpu.c:481
+#: sys-utils/lscpu.c:491
 msgid "error: malloc failed"
 msgstr "erreur : échec de \"malloc\""
 
-#: sys-utils/lscpu.c:496
+#: sys-utils/lscpu.c:506
 msgid "error: /sys filesystem is not accessable."
 msgstr "erreur : le système de fichiers /sys est inaccessible."
 
-#: sys-utils/lscpu.c:514
+#: sys-utils/lscpu.c:524
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -10830,65 +10983,65 @@ msgstr ""
 "# un unique numéro ID partant de zéro.\n"
 "# CPU, coeur, support (socket), noeud"
 
-#: sys-utils/lscpu.c:580
+#: sys-utils/lscpu.c:590
 msgid "Thread(s) per core:"
 msgstr "Thread(s) par coeur :"
 
-#: sys-utils/lscpu.c:581
+#: sys-utils/lscpu.c:591
 msgid "Core(s) per socket:"
 msgstr "Coeur(s) par support CPU :"
 
-#: sys-utils/lscpu.c:582
+#: sys-utils/lscpu.c:592
 msgid "CPU socket(s):"
 msgstr "Support(s) CPU :"
 
-#: sys-utils/lscpu.c:586
+#: sys-utils/lscpu.c:596
 msgid "NUMA node(s):"
 msgstr "Noeud(s) NUMA :"
 
-#: sys-utils/lscpu.c:588
+#: sys-utils/lscpu.c:598
 msgid "Vendor ID:"
 msgstr "ID du vendeur :"
 
-#: sys-utils/lscpu.c:590
+#: sys-utils/lscpu.c:600
 msgid "CPU family:"
 msgstr "Famille CPU :"
 
-#: sys-utils/lscpu.c:592
+#: sys-utils/lscpu.c:602
 msgid "Model:"
 msgstr "Modèle :"
 
-#: sys-utils/lscpu.c:594
+#: sys-utils/lscpu.c:604
 msgid "Stepping:"
 msgstr "Version :"
 
-#: sys-utils/lscpu.c:596
+#: sys-utils/lscpu.c:606
 msgid "CPU MHz:"
 msgstr "CPU MHz :"
 
-#: sys-utils/lscpu.c:599 sys-utils/lscpu.c:601
+#: sys-utils/lscpu.c:609 sys-utils/lscpu.c:611
 msgid "Virtualization:"
 msgstr "Virtualisation :"
 
-#: sys-utils/lscpu.c:604
+#: sys-utils/lscpu.c:614
 msgid "Hypervisor vendor:"
 msgstr "Vendeur hyperviseur :"
 
-#: sys-utils/lscpu.c:605
+#: sys-utils/lscpu.c:615
 msgid "Virtualization type:"
 msgstr "Type de virtualisation :"
 
-#: sys-utils/lscpu.c:613
+#: sys-utils/lscpu.c:623
 #, c-format
 msgid "%s cache:"
 msgstr "%s cache :"
 
-#: sys-utils/lscpu.c:621
+#: sys-utils/lscpu.c:631
 #, c-format
 msgid "Usage: %s [option]\n"
 msgstr "Utilisation : %s [options]\n"
 
-#: sys-utils/lscpu.c:624
+#: sys-utils/lscpu.c:634
 msgid ""
 "CPU architecture information helper\n"
 "\n"
@@ -10902,7 +11055,7 @@ msgstr ""
 "  -p, --parse    sortie en format analysable et non affichable.\n"
 "  -s, --sysroot  spécifie un répertoire comme racine du système.\n"
 
-#: sys-utils/lscpu.c:673
+#: sys-utils/lscpu.c:683
 #, c-format
 msgid "error: change working directory to %s."
 msgstr "erreur : changement de répertoire de travail en %s."
@@ -11984,9 +12137,6 @@ msgstr "Mémoire épuisée lors de l'accroissement du tampon.\n"
 #~ msgid "waiting for cr-lf\n"
 #~ msgstr "en attente de cr-lf\n"
 
-#~ msgid "read %c\n"
-#~ msgstr "lire %c\n"
-
 #~ msgid "reading login name\n"
 #~ msgstr "lecture du nom de login\n"
 
@@ -12022,9 +12172,6 @@ msgstr "Mémoire épuisée lors de l'accroissement du tampon.\n"
 
 #~ msgid "timeout = %d, quiet = %d, reboot = %d\n"
 #~ msgstr "expiration du délai = %d, silencieux = %d, réamorçage = %d\n"
-
-#~ msgid "Error reading %s\n"
-#~ msgstr "Erreur de lecture %s\n"
 
 #~ msgid "couldn't read %s, and cannot ioctl dump\n"
 #~ msgstr "ne peut lire %s et ne peut peut faire un dump via ioctl()\n"
@@ -12215,9 +12362,6 @@ msgstr "Mémoire épuisée lors de l'accroissement du tampon.\n"
 #~ msgid "mount: got bad hp->h_length?\n"
 #~ msgstr "mount: a obtenu un hp->h_length erroné?\n"
 
-#~ msgid "nfs socket"
-#~ msgstr "socket nfs"
-
 #~ msgid "nfs bindresvport"
 #~ msgstr "bindresvport nfs"
 
@@ -12229,9 +12373,6 @@ msgstr "Mémoire épuisée lors de l'accroissement du tampon.\n"
 
 #~ msgid "using port %d for nfs deamon\n"
 #~ msgstr "utilisation du port %d pour le démon nfs\n"
-
-#~ msgid "nfs connect"
-#~ msgstr "connexion nfs"
 
 #~ msgid "unknown nfs status return value: %d"
 #~ msgstr "valeur d'état retournée nfs inconnue: %d"

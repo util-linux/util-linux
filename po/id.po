@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.15-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-04-29 15:34+0200\n"
+"POT-Creation-Date: 2009-06-28 22:12+0200\n"
 "PO-Revision-Date: 2009-04-20 09:00+0700\n"
 "Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -206,7 +206,7 @@ msgstr "penggunaan: %s [ -n ] perangkat\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1282
 #: disk-utils/isosize.c:181 disk-utils/mkfs.bfs.c:115 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:813 disk-utils/mkfs.minix.c:571
-#: disk-utils/mkswap.c:454 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: disk-utils/mkswap.c:458 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, c-format
 msgid "%s (%s)\n"
@@ -1253,7 +1253,7 @@ msgstr "seek gagal selama pengetesan blocks"
 msgid "Weird values in do_check: probably bugs\n"
 msgstr "Nilai aneh dalam do_check: mungkin bugs\n"
 
-#: disk-utils/mkfs.minix.c:507 disk-utils/mkswap.c:306
+#: disk-utils/mkfs.minix.c:507 disk-utils/mkswap.c:310
 msgid "seek failed in check_blocks"
 msgstr "seek gagal dalam check_blocks"
 
@@ -1323,166 +1323,166 @@ msgstr "tidak akan mencoba untuk membuat filesystem pada '%s'"
 msgid "number of blocks too small"
 msgstr "Jumlah dari blok terlalu kecil"
 
-#: disk-utils/mkswap.c:151
+#: disk-utils/mkswap.c:155
 #, c-format
 msgid "Bad user-specified page size %d\n"
 msgstr "Ukuran page %d yang dispesifikasikan pengguna tidak baik\n"
 
-#: disk-utils/mkswap.c:159
+#: disk-utils/mkswap.c:163
 #, c-format
 msgid "Using user-specified page size %d, instead of the system value %d\n"
 msgstr ""
 "Menggunakan ukuran page %d yang dispesifikasikan pengguna, dari pada "
 "menggunakan ukuran system %d\n"
 
-#: disk-utils/mkswap.c:183
+#: disk-utils/mkswap.c:187
 #, c-format
 msgid "Bad swap header size, no label written.\n"
 msgstr "Ukuran swap header tidak baik, label tidak akan ditulis.\n"
 
-#: disk-utils/mkswap.c:193
+#: disk-utils/mkswap.c:197
 #, c-format
 msgid "Label was truncated.\n"
 msgstr "Label telah dipotong.\n"
 
-#: disk-utils/mkswap.c:199
+#: disk-utils/mkswap.c:203
 #, c-format
 msgid "no label, "
 msgstr "tidak terdapat label, "
 
-#: disk-utils/mkswap.c:207
+#: disk-utils/mkswap.c:211
 #, c-format
 msgid "no uuid\n"
 msgstr "tidak ada uuid\n"
 
-#: disk-utils/mkswap.c:272
+#: disk-utils/mkswap.c:276
 #, c-format
 msgid "Usage: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"
 msgstr "Penggunaan: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blok]\n"
 
-#: disk-utils/mkswap.c:286
+#: disk-utils/mkswap.c:290
 msgid "too many bad pages"
 msgstr "terlalu banyak pages yang buruk"
 
-#: disk-utils/mkswap.c:299 misc-utils/look.c:182 misc-utils/setterm.c:1183
+#: disk-utils/mkswap.c:303 misc-utils/look.c:182 misc-utils/setterm.c:1183
 #: text-utils/more.c:1982 text-utils/more.c:1993
 msgid "Out of memory"
 msgstr "Kekurangan memory"
 
-#: disk-utils/mkswap.c:313
+#: disk-utils/mkswap.c:317
 #, c-format
 msgid "one bad page\n"
 msgstr "sebuah page buruk\n"
 
-#: disk-utils/mkswap.c:315
+#: disk-utils/mkswap.c:319
 #, c-format
 msgid "%lu bad pages\n"
 msgstr "%lu page buruk\n"
 
-#: disk-utils/mkswap.c:392 disk-utils/mkswap.c:408 disk-utils/mkswap.c:625
+#: disk-utils/mkswap.c:396 disk-utils/mkswap.c:412 disk-utils/mkswap.c:629
 msgid "unable to rewind swap-device"
 msgstr "tidak dapat merewind perangkat swap"
 
-#: disk-utils/mkswap.c:412
+#: disk-utils/mkswap.c:416
 msgid "unable to erase bootbits sectors"
 msgstr "tidak dapat menghapus sektor bootbits"
 
-#: disk-utils/mkswap.c:416
+#: disk-utils/mkswap.c:420
 #, c-format
 msgid "%s: %s: warning: don't erase bootbits sectors\n"
 msgstr "%s: %s: peringatan: jangan hapus sektor bootbits\n"
 
-#: disk-utils/mkswap.c:419
+#: disk-utils/mkswap.c:423
 #, c-format
 msgid "        (%s partition table detected). "
 msgstr "        (%s tabel partisi terdeteksi). "
 
-#: disk-utils/mkswap.c:421
+#: disk-utils/mkswap.c:425
 #, c-format
 msgid "        on whole disk. "
 msgstr "        diseluruh disk. "
 
-#: disk-utils/mkswap.c:491
+#: disk-utils/mkswap.c:495
 #, c-format
 msgid "%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"
 msgstr "%1$s: peringatan: mengabaikan -U (UUIDs tidak didukung oleh %1$s)\n"
 
-#: disk-utils/mkswap.c:507
+#: disk-utils/mkswap.c:511
 #, c-format
 msgid "%s: does not support swapspace version %d.\n"
 msgstr "%s: tidak mendukung versi swapsapce %d.\n"
 
-#: disk-utils/mkswap.c:515
+#: disk-utils/mkswap.c:519
 msgid "error: UUID parsing failed"
 msgstr "error: UUID parsing gagal"
 
-#: disk-utils/mkswap.c:525
+#: disk-utils/mkswap.c:529
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: error: Tidak ada tempat untuk menset swap?\n"
 
-#: disk-utils/mkswap.c:543
+#: disk-utils/mkswap.c:547
 #, c-format
 msgid "%s: error: size %llu KiB is larger than device size %llu KiB\n"
 msgstr ""
 "%s: error: ukuran %llu KiB lebih besar dari ukuran perangkat %llu KiB\n"
 
-#: disk-utils/mkswap.c:552
+#: disk-utils/mkswap.c:556
 #, c-format
 msgid "%s: error: swap area needs to be at least %ld KiB\n"
 msgstr "%s: error: daerah swap membutuhkan setidaknya %ld kiB\n"
 
-#: disk-utils/mkswap.c:569
+#: disk-utils/mkswap.c:573
 #, c-format
 msgid "%s: warning: truncating swap area to %llu KiB\n"
 msgstr "%s: peringatan: memotong daerah swap menjadi %llu kiB\n"
 
-#: disk-utils/mkswap.c:592
+#: disk-utils/mkswap.c:596
 #, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
 msgstr "%s: error: Tidak akan mencoba untuk membuat perangkat swap di '%s'\n"
 
-#: disk-utils/mkswap.c:598
+#: disk-utils/mkswap.c:602
 #, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
 msgstr "%s: error: %s ter-mount; tidak akan membuat swapspace.\n"
 
-#: disk-utils/mkswap.c:614
+#: disk-utils/mkswap.c:618
 msgid "Unable to set up swap-space: unreadable"
 msgstr "Tidak dapat men set-up swap-space: tidak dapat dibaca"
 
-#: disk-utils/mkswap.c:617
+#: disk-utils/mkswap.c:621
 #, c-format
 msgid "Setting up swapspace version 1, size = %llu KiB\n"
 msgstr "Membuat swapspace versi 1, ukuran = %llu kiB\n"
 
-#: disk-utils/mkswap.c:628
+#: disk-utils/mkswap.c:632
 #, c-format
 msgid "%s: %s: unable to write signature page: %s"
 msgstr "%s: %s: tidak dapat menulis page signature: %s"
 
-#: disk-utils/mkswap.c:639
+#: disk-utils/mkswap.c:643
 msgid "fsync failed"
 msgstr "fsync gagal"
 
-#: disk-utils/mkswap.c:650
+#: disk-utils/mkswap.c:654
 #, c-format
 msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr "%s: %s: tidak dapat memperoleh selinux file label: %s\n"
 
-#: disk-utils/mkswap.c:656
+#: disk-utils/mkswap.c:660
 msgid "unable to matchpathcon()"
 msgstr "tidak dapat melakukan matchpathcon()"
 
-#: disk-utils/mkswap.c:659
+#: disk-utils/mkswap.c:663
 msgid "unable to create new selinux context"
 msgstr "tidak dapat membuat context selinux baru"
 
-#: disk-utils/mkswap.c:661
+#: disk-utils/mkswap.c:665
 msgid "couldn't compute selinux context"
 msgstr "tidak dapat menentukan context selinux"
 
-#: disk-utils/mkswap.c:667
+#: disk-utils/mkswap.c:671
 #, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "%s: tidak dapat mengganti nama %s menjadi %s: %s\n"
@@ -6777,16 +6777,6 @@ msgstr "Kernel device driver untuk %s tidak memiliki ioctl RTC_EPOCH_SET.\n"
 msgid "ioctl(RTC_EPOCH_SET) to %s failed"
 msgstr "ioctl(RTC_EPOCH_SET) ke %s gagal"
 
-#: libs/blkid/bin/findfs.c:24
-#, c-format
-msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
-msgstr "Penggunaan: %s LABEL=<nama>|UUID=<uuid>\n"
-
-#: libs/blkid/bin/findfs.c:55
-#, c-format
-msgid "unable to resolve '%s'"
-msgstr "tidak dapat menentukan '%s'"
-
 #: login-utils/agetty.c:361
 #, c-format
 msgid "%s: can't exec %s: %m"
@@ -6931,8 +6921,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "%s: PAM Gagal, membatalkan: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:823
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:731
-#: mount/lomount.c:734
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:753
+#: mount/lomount.c:756
 msgid "Password: "
 msgstr "Password: "
 
@@ -7800,25 +7790,25 @@ msgstr "%s: tidak dapat memperoleh statistik file sementara.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: tidak dapat membaca file sementara.\n"
 
-#: misc-utils/cal.c:355 misc-utils/cal.c:367
+#: misc-utils/cal.c:358 misc-utils/cal.c:370
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "nilai hari ilegal: gunakan 1-%d"
 
-#: misc-utils/cal.c:359
+#: misc-utils/cal.c:362
 msgid "illegal month value: use 1-12"
 msgstr "nilai bulan ilegal: gunakan 1-12"
 
-#: misc-utils/cal.c:363
+#: misc-utils/cal.c:366
 msgid "illegal year value: use 1-9999"
 msgstr "nilai tahun ilegal: gunakan 1-9999"
 
-#: misc-utils/cal.c:457
+#: misc-utils/cal.c:460
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:848
+#: misc-utils/cal.c:851
 #, c-format
 msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
 msgstr "penggunaan: cal [-13smjyV] [[[hari] bulan] tahun]\n"
@@ -8356,6 +8346,147 @@ msgstr "Tidak dapat membaca %s\n"
 msgid "%s: $TERM is not defined.\n"
 msgstr "%s: $TERM tidak didefinisikan.\n"
 
+#: misc-utils/uuidd.c:46
+#, fuzzy, c-format
+msgid "Usage: %s [-d] [-p pidfile] [-s socketpath] [-T timeout]\n"
+msgstr ""
+"penggunaan: last [-#] [-f file] [-t tty] [-h hostname] [pengguna ...]\n"
+
+#: misc-utils/uuidd.c:48
+#, c-format
+msgid "       %s [-r|t] [-n num] [-s socketpath]\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:50
+#, fuzzy, c-format
+msgid "       %s -k\n"
+msgstr "       %s -l [ signal ]\n"
+
+#: misc-utils/uuidd.c:148
+#, fuzzy
+msgid "bad arguments"
+msgstr "col: argumen %s untuk pilihan -l tidak baik.\n"
+
+#: misc-utils/uuidd.c:155
+#, fuzzy
+msgid "socket"
+msgstr "nfs socket"
+
+#: misc-utils/uuidd.c:166
+#, fuzzy
+msgid "connect"
+msgstr "nfs terhubung"
+
+#: misc-utils/uuidd.c:185
+#, fuzzy
+msgid "write"
+msgstr "Tulis"
+
+#: misc-utils/uuidd.c:193
+#, fuzzy
+msgid "read count"
+msgstr "membaca %c\n"
+
+#: misc-utils/uuidd.c:199
+#, fuzzy
+msgid "bad response length"
+msgstr "panjang nama berkas buruk"
+
+#: misc-utils/uuidd.c:264
+#, c-format
+msgid "uuidd daemon already running at pid %s\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:272
+#, c-format
+msgid "Couldn't create unix stream socket: %s"
+msgstr ""
+
+#: misc-utils/uuidd.c:289
+#, fuzzy, c-format
+msgid "Couldn't bind unix socket %s: %s\n"
+msgstr "Tidak dapat membuka %s: %s\n"
+
+#: misc-utils/uuidd.c:297
+#, fuzzy, c-format
+msgid "Couldn't listen on unix socket %s: %s\n"
+msgstr "Tidak dapat membuka %s: %s\n"
+
+#: misc-utils/uuidd.c:335
+#, fuzzy, c-format
+msgid "Error reading from client, len = %d\n"
+msgstr "Error dalam membaca %s\n"
+
+#: misc-utils/uuidd.c:343
+#, c-format
+msgid "operation %d, incoming num = %d\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:362
+#, c-format
+msgid "Generated time UUID: %s\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:372
+#, c-format
+msgid "Generated random UUID: %s\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:381
+#, c-format
+msgid "Generated time UUID %s and %d following\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:399
+#, c-format
+msgid "Generated %d UUID's:\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:411
+#, fuzzy, c-format
+msgid "Invalid operation %d\n"
+msgstr "pilihan tidak valid"
+
+#: misc-utils/uuidd.c:452 misc-utils/uuidd.c:473
+#, fuzzy, c-format
+msgid "Bad number: %s\n"
+msgstr "%s: angka buruk: %s\n"
+
+#: misc-utils/uuidd.c:508 misc-utils/uuidd.c:535
+#, fuzzy, c-format
+msgid "Error calling uuidd daemon (%s): %s\n"
+msgstr "error mengubah mode dari %s: %s\n"
+
+#: misc-utils/uuidd.c:518
+#, c-format
+msgid "%s and subsequent %d UUID's\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:520
+#, c-format
+msgid "List of UUID's:\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:541
+#, c-format
+msgid "Unexpected reply length from server %d\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:558
+#, c-format
+msgid "Couldn't kill uuidd running at pid %d: %s\n"
+msgstr ""
+
+#: misc-utils/uuidd.c:564
+#, c-format
+msgid "Killed uuidd running at pid %d\n"
+msgstr ""
+
+#: misc-utils/uuidgen.c:32
+#, fuzzy, c-format
+msgid "Usage: %s [-r] [-t]\n"
+msgstr "Penggunaan: %s [pilihan]\n"
+
 #: misc-utils/whereis.c:159
 #, c-format
 msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
@@ -8426,42 +8557,42 @@ msgstr "peringatan: tidak dapat membuka %s: %s"
 msgid "mount: could not open %s - using %s instead\n"
 msgstr "mount: tidak dapat membuka %s - menggunakan %s\n"
 
-#: mount/fstab.c:588
+#: mount/fstab.c:589
 #, c-format
 msgid "can't create lock file %s: %s (use -n flag to override)"
 msgstr ""
 "tidak dapat membuat file kunci %s: %s (gunakan pilihan -n untuk memaksa "
 "menjalankan)"
 
-#: mount/fstab.c:614
+#: mount/fstab.c:615
 #, c-format
 msgid "can't link lock file %s: %s (use -n flag to override)"
 msgstr ""
 "tidak dapat menlink file kunci %s: %s (gunakan pilihan -n untuk memaksa "
 "menjalankan)"
 
-#: mount/fstab.c:630
+#: mount/fstab.c:631
 #, c-format
 msgid "can't open lock file %s: %s (use -n flag to override)"
 msgstr ""
 "tidak dapat membuka file kunci %s: %s (gunakan pilihan -n untuk memaksa "
 "menjalankan)"
 
-#: mount/fstab.c:645
+#: mount/fstab.c:646
 #, c-format
 msgid "Can't lock lock file %s: %s\n"
 msgstr "Tidak dapat mengunci file kunci %s: %s\n"
 
-#: mount/fstab.c:659
+#: mount/fstab.c:660
 #, c-format
 msgid "can't lock lock file %s: %s"
 msgstr "tidak dapat mengunci file kunci %s: %s"
 
-#: mount/fstab.c:661
+#: mount/fstab.c:662
 msgid "timed out"
 msgstr "waktu habis"
 
-#: mount/fstab.c:668
+#: mount/fstab.c:669
 #, c-format
 msgid ""
 "Cannot create link %s\n"
@@ -8470,83 +8601,88 @@ msgstr ""
 "Tidak dapt membuat link %s\n"
 "Mungkin disana ada sebuah file kunci yang masih ada?\n"
 
-#: mount/fstab.c:790 mount/fstab.c:845
+#: mount/fstab.c:791 mount/fstab.c:846
 #, c-format
 msgid "cannot open %s (%s) - mtab not updated"
 msgstr "tidak dapat membuka %s (%s) - mtab tidak diupdate"
 
-#: mount/fstab.c:854
+#: mount/fstab.c:855
 #, c-format
 msgid "error writing %s: %s"
 msgstr "error menulis %s: %s"
 
-#: mount/fstab.c:872
+#: mount/fstab.c:873
 #, c-format
 msgid "error changing mode of %s: %s\n"
 msgstr "error mengubah mode dari %s: %s\n"
 
-#: mount/fstab.c:885
+#: mount/fstab.c:886
 #, c-format
 msgid "error changing owner of %s: %s\n"
 msgstr "error mengubah kepemilikan dari %s: %s\n"
 
-#: mount/fstab.c:896
+#: mount/fstab.c:897
 #, c-format
 msgid "can't rename %s to %s: %s\n"
 msgstr "tidak dapat mengganti nama %s menjadi %s: %s\n"
 
-#: mount/lomount.c:368
+#: mount/lomount.c:366
+#, fuzzy, c-format
+msgid "loop: can't set capacity on device %s: %s\n"
+msgstr "loop: tidak dapat memperoleh info di perangkat %s: %s\n"
+
+#: mount/lomount.c:390
 #, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", offset %<PRIu64>"
 
-#: mount/lomount.c:371
+#: mount/lomount.c:393
 #, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", sizelimit %<PRIu64>"
 
-#: mount/lomount.c:379
+#: mount/lomount.c:401
 #, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", enkripsi %s (tipe %<PRIu32>)"
 
-#: mount/lomount.c:392
+#: mount/lomount.c:414
 #, c-format
 msgid ", offset %d"
 msgstr ", offset %d"
 
-#: mount/lomount.c:395
+#: mount/lomount.c:417
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", encryption type %d\n"
 
-#: mount/lomount.c:403
+#: mount/lomount.c:425
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: tidak dapat memperoleh info di perangkat %s: %s\n"
 
-#: mount/lomount.c:414
+#: mount/lomount.c:436
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: tidak dapat membuka perangkat %s: %s\n"
 
-#: mount/lomount.c:430 mount/lomount.c:462 mount/lomount.c:527
-#: mount/lomount.c:576
+#: mount/lomount.c:452 mount/lomount.c:484 mount/lomount.c:549
+#: mount/lomount.c:598
 #, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: /dev direktori tidak ada."
 
-#: mount/lomount.c:441 mount/lomount.c:589
+#: mount/lomount.c:463 mount/lomount.c:611
 #, c-format
 msgid "%s: no permission to look at /dev/loop%s<N>"
 msgstr "%s: tidak ada ijin untuk melihat di /dev/loop%s<N>"
 
-#: mount/lomount.c:592
+#: mount/lomount.c:614
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: tidak dapat menemukan perangkat loop yang tidak dipakai"
 
-#: mount/lomount.c:595
+#: mount/lomount.c:617
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -8556,53 +8692,53 @@ msgstr ""
 "mengetahui\n"
 "    mengenai perangkat loop? (Jika demikian, recompile atau `modprobe loop'.)"
 
-#: mount/lomount.c:625
+#: mount/lomount.c:647
 msgid "Out of memory while reading passphrase"
 msgstr "Kehabisan memori ketika membaca kata sandi"
 
-#: mount/lomount.c:668
+#: mount/lomount.c:690
 #, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "peringatan: %s sudah diasosiasikan dengan %s\n"
 
-#: mount/lomount.c:684
+#: mount/lomount.c:706
 #, c-format
 msgid "warning: %s: is write-protected, using read-only.\n"
 msgstr ""
 "peringatan: %s: memiliki proteksi untuk ditulis, menggunakan baca-saja.\n"
 
-#: mount/lomount.c:720
+#: mount/lomount.c:742
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "Tidak dapat mengunci ke memory, keluar.\n"
 
-#: mount/lomount.c:747
+#: mount/lomount.c:769
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr "ioctl LOOP_SET_FD gagal: %s\n"
 
-#: mount/lomount.c:804
+#: mount/lomount.c:826
 #, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu, %llu): berhasil\n"
 
-#: mount/lomount.c:825
+#: mount/lomount.c:847
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): berhasil\n"
 
-#: mount/lomount.c:829
+#: mount/lomount.c:851
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: tidak dapat menghapus perangkat %s: %s\n"
 
-#: mount/lomount.c:840
+#: mount/lomount.c:862
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr "Mount ini telah dikompile tanpa layanan loop. Tolong di rekompile.\n"
 
-#: mount/lomount.c:875
-#, c-format
+#: mount/lomount.c:897
+#, fuzzy, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -8610,6 +8746,7 @@ msgid ""
 " %1$s -a | --all                              list all used\n"
 " %1$s -d | --detach <loopdev> [<loopdev> ...] delete\n"
 " %1$s -f | --find                             find unused\n"
+" %1$s -c | --set-capacity <loopdev>           resize\n"
 " %1$s -j | --associated <file> [-o <num>]     list all associated with "
 "<file>\n"
 " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
@@ -8624,7 +8761,7 @@ msgstr ""
 "<berkas>\n"
 " %1$s [ pilihan ] {-f|--find|loopdev} <berkas> konfigurasi\n"
 
-#: mount/lomount.c:884
+#: mount/lomount.c:907
 #, c-format
 msgid ""
 "\n"
@@ -8652,22 +8789,22 @@ msgstr ""
 " -v | --verbose           mode verbose\n"
 "\n"
 
-#: mount/lomount.c:1014 mount/lomount.c:1052
+#: mount/lomount.c:1045 mount/lomount.c:1085
 #, c-format
 msgid "Loop device is %s\n"
 msgstr "Perangkat loop adalah %s\n"
 
-#: mount/lomount.c:1039
+#: mount/lomount.c:1072
 #, c-format
 msgid "stolen loop=%s...trying again\n"
 msgstr "tercuri loop=%s ...mencoba lagi\n"
 
-#: mount/lomount.c:1049
+#: mount/lomount.c:1082
 #, c-format
 msgid "%s: %s: device is busy"
 msgstr "%s: %s: perangkat sedang sibuk"
 
-#: mount/lomount.c:1066
+#: mount/lomount.c:1099
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr "Layanan loop tidak ada pada waktu dikompile. Tolong di rekompile.\n"
@@ -8697,7 +8834,7 @@ msgstr "mount: menurut mtab, %s telah di mount di %s"
 msgid "mount: can't open %s for writing: %s"
 msgstr "mount: tidak dapat membuka %s untuk menulis: %s"
 
-#: mount/mount.c:572 mount/mount.c:1193
+#: mount/mount.c:572 mount/mount.c:1190
 #, c-format
 msgid "mount: error writing %s: %s"
 msgstr "mount: error dalam menulis %s: %s"
@@ -8748,88 +8885,88 @@ msgstr "       dan ini sepertinya merupakan sebuah swapspace\n"
 msgid "       I will try type %s\n"
 msgstr "       Saya akan mencoba tipe %s\n"
 
-#: mount/mount.c:905
+#: mount/mount.c:902
 #, c-format
 msgid "%s looks like swapspace - not mounted"
 msgstr "%s kelihatannya seperti swapspace - tidak di mount"
 
-#: mount/mount.c:996
+#: mount/mount.c:993
 msgid "mount failed"
 msgstr "mount gagal"
 
-#: mount/mount.c:998
+#: mount/mount.c:995
 #, c-format
 msgid "mount: only root can mount %s on %s"
 msgstr "mount: hanya root yang dapat melakukan mount %s di %s"
 
-#: mount/mount.c:1068
+#: mount/mount.c:1065
 msgid "mount: loop device specified twice"
 msgstr "mount: perangkat loop dispesifikasikan dua kali"
 
-#: mount/mount.c:1073
+#: mount/mount.c:1070
 msgid "mount: type specified twice"
 msgstr "mount: tipe dispesifikasikan dua kali"
 
-#: mount/mount.c:1085
+#: mount/mount.c:1082
 #, c-format
 msgid "mount: skipping the setup of a loop device\n"
 msgstr "mount: melewatkan setup dari perangkat loop\n"
 
-#: mount/mount.c:1097
+#: mount/mount.c:1094
 #, c-format
 msgid "mount: according to mtab %s is already mounted on %s as loop"
 msgstr "mount: menurut mtab, %s telah dimount di %s sebagai loop"
 
-#: mount/mount.c:1107
+#: mount/mount.c:1104
 #, c-format
 msgid "mount: going to use the loop device %s\n"
 msgstr "mount: akan menggunakan perangkat loop %s\n"
 
-#: mount/mount.c:1116
+#: mount/mount.c:1113
 #, c-format
 msgid "mount: stolen loop=%s ...trying again\n"
 msgstr "mount: tercuri loop=%s ...mencoba lagi\n"
 
-#: mount/mount.c:1121
+#: mount/mount.c:1118
 #, c-format
 msgid "mount: stolen loop=%s"
 msgstr "umount: tercuri loop=%s"
 
-#: mount/mount.c:1126
+#: mount/mount.c:1123
 #, c-format
 msgid "mount: failed setting up loop device\n"
 msgstr "mount: gagal menset-up perangkat loop\n"
 
-#: mount/mount.c:1137
+#: mount/mount.c:1134
 #, c-format
 msgid "mount: setup loop device successfully\n"
 msgstr "mount: setup perangkat loop telah berhasil\n"
 
-#: mount/mount.c:1171
+#: mount/mount.c:1168
 #, c-format
 msgid "mount: no %s found - creating it..\n"
 msgstr "mount: %s tidak ditemukan - membuatnya..\n"
 
-#: mount/mount.c:1188
+#: mount/mount.c:1185
 #, c-format
 msgid "mount: can't open %s: %s"
 msgstr "mount: tidak dapat membuka %s: %s"
 
-#: mount/mount.c:1209
+#: mount/mount.c:1206
 msgid "mount: argument to -p or --pass-fd must be a number"
 msgstr "mount: argument untuk -p atau --pass-fd harus berupa sebuah nomor"
 
-#: mount/mount.c:1222
+#: mount/mount.c:1219
 #, c-format
 msgid "mount: cannot open %s for setting speed"
 msgstr "mount: tidak dapat membuka %s untuk menset kecepatan"
 
-#: mount/mount.c:1225
+#: mount/mount.c:1222
 #, c-format
 msgid "mount: cannot set speed: %s"
 msgstr "mount tidak dapat menset kecepatan: %s"
 
-#: mount/mount.c:1282
+#: mount/mount.c:1279
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: menurut mtab, %s telah dimount di %s\n"
@@ -9462,11 +9599,11 @@ msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: tidak dapat mencari daftar dari filesystems untuk di unmount"
 
 #: mount/umount.c:396
-#, c-format
+#, fuzzy, c-format
 msgid ""
-"Usage: umount [-hV]\n"
-"       umount -a [-f] [-r] [-n] [-v] [-t vfstypes] [-O opts]\n"
-"       umount [-f] [-r] [-n] [-v] special | node...\n"
+"Usage: umount -h | -V\n"
+"       umount -a [-d] [-f] [-r] [-n] [-v] [-t vfstypes] [-O opts]\n"
+"       umount [-d] [-f] [-r] [-n] [-v] special | node...\n"
 msgstr ""
 "Penggunaan: umount [-hV]\n"
 "            umount -a [-f] [-r] [-n] [-v] [-t vfstypes] [-O opts]\n"
@@ -9588,49 +9725,49 @@ msgstr "gagal mendapatkan kebijakan pid %d"
 msgid "pid %d's %s scheduling policy: "
 msgstr "pid %d %s kebijakan antrian: "
 
-#: schedutils/chrt.c:108
+#: schedutils/chrt.c:112
 #, c-format
 msgid "unknown\n"
 msgstr "tidak diketahui\n"
 
-#: schedutils/chrt.c:112
+#: schedutils/chrt.c:116
 #, c-format
 msgid "failed to get pid %d's attributes"
 msgstr "gagal mendapatkan atribut pid %d"
 
-#: schedutils/chrt.c:114
+#: schedutils/chrt.c:118
 #, c-format
 msgid "pid %d's %s scheduling priority: %d\n"
 msgstr "pid %d %s prioritas antrian: %d\n"
 
-#: schedutils/chrt.c:130
+#: schedutils/chrt.c:147
 #, c-format
 msgid "SCHED_%s min/max priority\t: %d/%d\n"
 msgstr "SCHED_%s min/max prioritas\t: %d/%d\n"
 
-#: schedutils/chrt.c:133
+#: schedutils/chrt.c:150
 #, c-format
 msgid "SCHED_%s not supported?\n"
 msgstr "SCHED_%s tidak didukung?\n"
 
-#: schedutils/chrt.c:185
+#: schedutils/chrt.c:206
 msgid "failed to parse pid"
 msgstr "gagal mendapatkan pid"
 
-#: schedutils/chrt.c:207
+#: schedutils/chrt.c:228
 msgid "current"
 msgstr "sekarang"
 
-#: schedutils/chrt.c:215
+#: schedutils/chrt.c:236
 msgid "failed to parse priority"
 msgstr "gagal mendapatkan prioritas"
 
-#: schedutils/chrt.c:221
+#: schedutils/chrt.c:242
 #, c-format
 msgid "failed to set pid %d's policy"
 msgstr "gagal menset kebijakan pid %d"
 
-#: schedutils/chrt.c:230
+#: schedutils/chrt.c:251
 #, c-format
 msgid "failed to execute %s"
 msgstr "gagal menjalankan %s"
@@ -9644,7 +9781,7 @@ msgid "ioprio_set failed"
 msgstr "ioprio_set gagal"
 
 #: schedutils/ionice.c:81
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "ionice - sets or gets process io scheduling class and priority.\n"
@@ -9656,7 +9793,7 @@ msgid ""
 "Options:\n"
 "  -n <classdata>      class data (0-7, lower being higher prio)\n"
 "  -c <class>          scheduling class\n"
-"                      1: realtime, 2: best-effort, 3: idle\n"
+"                      0: none, 1: realtime, 2: best-effort, 3: idle\n"
 "  -t                  ignore failures\n"
 "  -h                  this help\n"
 "\n"
@@ -9682,18 +9819,33 @@ msgstr ""
 msgid "cannot parse number '%s'"
 msgstr "tidak dapat mendapatkan angka '%s'"
 
-#: schedutils/ionice.c:157
+#: schedutils/ionice.c:151
+#, fuzzy
+msgid "ignoring given class data for none class"
+msgstr "mengabaikan data kelas yang diberikan untuk kelas kosong"
+
+#: schedutils/ionice.c:159
 msgid "ignoring given class data for idle class"
 msgstr "mengabaikan data kelas yang diberikan untuk kelas kosong"
 
-#: schedutils/ionice.c:161
+#: schedutils/ionice.c:163
 #, c-format
 msgid "bad prio class %d"
 msgstr "prioritas kelas %d buruk"
 
-#: schedutils/ionice.c:185
+#: schedutils/ionice.c:187
 msgid "execvp failed"
 msgstr "gagal eksekusi"
+
+#: shlibs/blkid/bin/findfs.c:24
+#, c-format
+msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
+msgstr "Penggunaan: %s LABEL=<nama>|UUID=<uuid>\n"
+
+#: shlibs/blkid/bin/findfs.c:55
+#, c-format
+msgid "unable to resolve '%s'"
+msgstr "tidak dapat menentukan '%s'"
 
 #: sys-utils/ctrlaltdel.c:27
 #, c-format
@@ -10663,7 +10815,7 @@ msgstr "para"
 msgid "full"
 msgstr "penuh"
 
-#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:431
+#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:441
 #, c-format
 msgid "error: %s"
 msgstr "error: %s"
@@ -10681,15 +10833,15 @@ msgstr "error: strdup gagal"
 msgid "error: uname failed"
 msgstr "error: uname gagal"
 
-#: sys-utils/lscpu.c:481
+#: sys-utils/lscpu.c:491
 msgid "error: malloc failed"
 msgstr "error: malloc gagal"
 
-#: sys-utils/lscpu.c:496
+#: sys-utils/lscpu.c:506
 msgid "error: /sys filesystem is not accessable."
 msgstr "error: sistem berkas /sys tidak dapat diakses."
 
-#: sys-utils/lscpu.c:514
+#: sys-utils/lscpu.c:524
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -10702,65 +10854,65 @@ msgstr ""
 "# ID unik berawal dari nol.\n"
 "# CPU,Core,Soket,Node"
 
-#: sys-utils/lscpu.c:580
+#: sys-utils/lscpu.c:590
 msgid "Thread(s) per core:"
 msgstr "Thread(s) setiap inti:"
 
-#: sys-utils/lscpu.c:581
+#: sys-utils/lscpu.c:591
 msgid "Core(s) per socket:"
 msgstr "Inti setiap soket:"
 
-#: sys-utils/lscpu.c:582
+#: sys-utils/lscpu.c:592
 msgid "CPU socket(s):"
 msgstr "CPU soket:"
 
-#: sys-utils/lscpu.c:586
+#: sys-utils/lscpu.c:596
 msgid "NUMA node(s):"
 msgstr "Titik NUMA:"
 
-#: sys-utils/lscpu.c:588
+#: sys-utils/lscpu.c:598
 msgid "Vendor ID:"
 msgstr "ID Pembuat:"
 
-#: sys-utils/lscpu.c:590
+#: sys-utils/lscpu.c:600
 msgid "CPU family:"
 msgstr "Keluarga CPU:"
 
-#: sys-utils/lscpu.c:592
+#: sys-utils/lscpu.c:602
 msgid "Model:"
 msgstr "Model:"
 
-#: sys-utils/lscpu.c:594
+#: sys-utils/lscpu.c:604
 msgid "Stepping:"
 msgstr "Stepping:"
 
-#: sys-utils/lscpu.c:596
+#: sys-utils/lscpu.c:606
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:599 sys-utils/lscpu.c:601
+#: sys-utils/lscpu.c:609 sys-utils/lscpu.c:611
 msgid "Virtualization:"
 msgstr "Virtualisasi:"
 
-#: sys-utils/lscpu.c:604
+#: sys-utils/lscpu.c:614
 msgid "Hypervisor vendor:"
 msgstr "Pembuat Hypervisor:"
 
-#: sys-utils/lscpu.c:605
+#: sys-utils/lscpu.c:615
 msgid "Virtualization type:"
 msgstr "Tipe virtualisasi:"
 
-#: sys-utils/lscpu.c:613
+#: sys-utils/lscpu.c:623
 #, c-format
 msgid "%s cache:"
 msgstr "%s persediaan:"
 
-#: sys-utils/lscpu.c:621
+#: sys-utils/lscpu.c:631
 #, c-format
 msgid "Usage: %s [option]\n"
 msgstr "Penggunaan: %s [pilihan]\n"
 
-#: sys-utils/lscpu.c:624
+#: sys-utils/lscpu.c:634
 msgid ""
 "CPU architecture information helper\n"
 "\n"
@@ -10775,7 +10927,7 @@ msgstr ""
 "tercetak.\n"
 "  -s, --sysroot   gunakan direktori sebagai sistem root baru.\n"
 
-#: sys-utils/lscpu.c:673
+#: sys-utils/lscpu.c:683
 #, c-format
 msgid "error: change working directory to %s."
 msgstr "error: mengubah direktori kerja ke %s."
@@ -11841,9 +11993,6 @@ msgstr "Kehabisan memori ketika meningkatkan buffer.\n"
 #~ msgid "waiting for cr-lf\n"
 #~ msgstr "menunggu untuk cr-lf\n"
 
-#~ msgid "read %c\n"
-#~ msgstr "membaca %c\n"
-
 #~ msgid "reading login name\n"
 #~ msgstr "membaca nama login\n"
 
@@ -11879,9 +12028,6 @@ msgstr "Kehabisan memori ketika meningkatkan buffer.\n"
 
 #~ msgid "timeout = %d, quiet = %d, reboot = %d\n"
 #~ msgstr "timeout = %d, quiet = %d, reboot = %d\n"
-
-#~ msgid "Error reading %s\n"
-#~ msgstr "Error dalam membaca %s\n"
 
 #~ msgid "couldn't read %s, and cannot ioctl dump\n"
 #~ msgstr "tidak dapat membaca %s, dan tidak dapat melakukan ioctl dump\n"
@@ -12065,9 +12211,6 @@ msgstr "Kehabisan memori ketika meningkatkan buffer.\n"
 #~ msgid "mount: got bad hp->h_length?\n"
 #~ msgstr "mount: memperoleh hp->h_length yang buruk?\n"
 
-#~ msgid "nfs socket"
-#~ msgstr "nfs socket"
-
 #~ msgid "nfs bindresvport"
 #~ msgstr "nfs bindresvport"
 
@@ -12079,9 +12222,6 @@ msgstr "Kehabisan memori ketika meningkatkan buffer.\n"
 
 #~ msgid "using port %d for nfs deamon\n"
 #~ msgstr "menggunakan port %d untuk nfs daemon\n"
-
-#~ msgid "nfs connect"
-#~ msgstr "nfs terhubung"
 
 #~ msgid "unknown nfs status return value: %d"
 #~ msgstr "nilai status balik nfs tidak diketahui: %d"
