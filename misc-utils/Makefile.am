@@ -23,11 +23,12 @@ usrbinexec_PROGRAMS += uuidgen
 dist_man_MANS += uuidgen.1
 uuidgen_LDADD = $(ul_libuuid_la)
 uuidgen_CFLAGS = -I$(ul_libuuid_srcdir)
-
+if BUILD_UUIDD
 usrsbinexec_PROGRAMS += uuidd
 dist_man_MANS += uuidd.8
 uuidd_LDADD = $(ul_libuuid_la)
 uuidd_CFLAGS = -I$(ul_libuuid_srcdir)
+endif
 endif
 
 if HAVE_TINFO
