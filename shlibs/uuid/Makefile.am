@@ -6,5 +6,5 @@ SUBDIRS = src man
 pkgconfigdir = $(usrlibexecdir)/pkgconfig
 pkgconfig_DATA = uuid.pc
 
-EXTRA_DIST = README.uuid blkid.pc blkid.pc.in
+EXTRA_DIST = uuid.pc uuid.pc.in
 
