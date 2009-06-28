@@ -5,6 +5,17 @@ Util-linux-ng 2.16 Release Notes
 Release highlights
 ------------------
 
+libuuid, uuidgen(1) and uuidd(8):
+  - the libuuid library has been moved from e2fsprogs to util-linux-ng
+
+switch_root:
+  - this NEW COMMAND allows to switch to another filesystem as the root
+    of the mount tree.
+
+mount, umount, fsck:
+  - DOES NOT SUPPORT linking against obsolete libvolume_id (from udev)
+
+
 Stable maintenance releases between v2.15 and v2.16
 ---------------------------------------------------
 
@@ -13,6 +24,7 @@ util-linux-ng 2.15.1 [10-Jun-2009]
  * ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/v2.15.1-ReleaseNotes
    ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.15/v2.15.1-ChangeLog
 
+
 ChangeLog between v2.15 and v2.16
 ---------------------------------
 
@@ -20,13 +32,6 @@ ChangeLog between v2.15 and v2.16
  ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.16/
 
 
-blkid:
-   - add device-mapper snapshot cow device probe  [Milan Broz]
-   - blkid_do_safeprobe() has to be tolerant to RAIDs  [Karel Zak]
-   - cleanup debug messages and return codes in blkid_do_probe()  [Karel Zak]
-   - fix "hangs forever with partition type mdraid"  [Karel Zak]
-   - fix LVM1 probe  [Milan Broz]
-   - make libuuid optional  [Karel Zak]
 build-sys:
    - add --disable-libblkid, remove volume_id support  [Karel Zak]
    - add --disable-switch_root  [Karel Zak]
@@ -61,8 +66,14 @@ hwclock:
 ionice:
    - Allow setting the none class  [Jakob Unterwurzacher]
 libblkid:
+   - add device-mapper snapshot cow device probe  [Milan Broz]
+   - blkid_do_safeprobe() has to be tolerant to RAIDs  [Karel Zak]
+   - cleanup debug messages and return codes in blkid_do_probe()  [Karel Zak]
    - don't require udev symlinks verification for non-root users  [Karel Zak]
+   - fix "hangs forever with partition type mdraid"  [Karel Zak]
+   - fix LVM1 probe  [Milan Broz]
    - fix reiserfs name  [Karel Zak]
+   - make libuuid optional  [Karel Zak]
    - update man page  [Karel Zak]
 libuuid:
    - add --disable-libuuid and LIBUUID_VERSION  [Karel Zak]
@@ -117,3 +128,4 @@ uuidd:
    - new command (UUID daemon from e2fsprogs)  [Karel Zak]
 uuidgen:
    - new command (from e2fsprogs)  [Karel Zak]
+
