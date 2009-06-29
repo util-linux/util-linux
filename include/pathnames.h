@@ -19,7 +19,6 @@
 #undef _PATH_DEFPATH_ROOT
 #define	_PATH_DEFPATH_ROOT	"/usr/local/sbin:/usr/local/bin:/sbin:/bin:/usr/sbin:/usr/bin"
 
-#define _PATH_TTY		"/dev/tty"
 #define _PATH_SECURETTY		"/etc/securetty"
 #define _PATH_WTMPLOCK		"/etc/wtmplock"
 
@@ -93,6 +92,13 @@
 
 #define _PATH_MOUNTED_LOCK	_PATH_MOUNTED "~"
 #define _PATH_MOUNTED_TMP	_PATH_MOUNTED ".tmp"
+
+#ifndef _PATH_DEV
+# define _PATH_DEV		"/dev"
+#endif
+
+#define _PATH_DEV_LOOP		"/dev/loop"
+#define _PATH_DEV_TTY		"/dev/tty"
 
 /* udev paths */
 #define _PATH_DEV_BYLABEL	"/dev/disk/by-label"

@@ -14,6 +14,7 @@
 #include "mount_constants.h"
 #include "sundries.h"
 #include "getusername.h"
+#include "pathnames.h"
 #include "lomount.h"
 #include "loop.h"
 #include "fstab.h"
@@ -445,7 +446,8 @@ is_valid_loop(struct mntentchn *mc, struct mntentchn *fs)
 	char *p;
 
 	/* check if it begins with /dev/loop */
-	if (strncmp(mc->m.mnt_fsname, "/dev/loop", 9))
+	if (strncmp(mc->m.mnt_fsname, _PATH_DEV_LOOP,
+				sizeof(_PATH_DEV_LOOP) - 1))
 		return 0;
 
 	/* check for loop option in fstab */

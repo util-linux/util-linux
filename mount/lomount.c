@@ -60,8 +60,6 @@ loop_info64_to_old(const struct loop_info64 *info64, struct loop_info *info)
         return 0;
 }
 
-#define DEV_LOOP_PATH		"/dev/loop"
-#define DEV_PATH		"/dev"
 #define LOOPMAJOR		7
 #define NLOOPS_DEFAULT		8	/* /dev/loop[0-7] */
 
@@ -143,10 +141,10 @@ looplist_open(struct looplist *ll, int flag)
 	ll->flag = flag;
 	ll->ncur = -1;
 
-	if (stat(DEV_PATH, &st) == -1 || (!S_ISDIR(st.st_mode)))
+	if (stat(_PATH_DEV, &st) == -1 || (!S_ISDIR(st.st_mode)))
 		return -1;			/* /dev doesn't exist */
 
-	if (stat(DEV_LOOP_PATH, &st) == 0 && S_ISDIR(st.st_mode))
+	if (stat(_PATH_DEV_LOOP, &st) == 0 && S_ISDIR(st.st_mode))
 		ll->flag |= LLFLG_SUBDIR;	/* /dev/loop/ exists */
 
 	if ((ll->flag & LLFLG_USEDONLY) &&
@@ -179,8 +177,8 @@ looplist_open_dev(struct looplist *ll, int lnum)
 	/* create a full device path */
 	snprintf(ll->name, sizeof(ll->name),
 		ll->flag & LLFLG_SUBDIR ?
-			DEV_LOOP_PATH "/%d" :
-			DEV_PATH "/loop%d",
+			_PATH_DEV_LOOP "/%d" :
+			_PATH_DEV "/loop%d",
 		lnum);
 
 	fd = open(ll->name, O_RDONLY);
@@ -331,8 +329,8 @@ looplist_next(struct looplist *ll)
 	 */
 	if (!ll->minors) {
 		ll->nminors = (ll->flag & LLFLG_SUBDIR) ?
-			loop_scandir(DEV_LOOP_PATH, &ll->minors, 0) :
-			loop_scandir(DEV_PATH, &ll->minors, 1);
+			loop_scandir(_PATH_DEV_LOOP, &ll->minors, 0) :
+			loop_scandir(_PATH_DEV, &ll->minors, 1);
 		ll->ncur = -1;
 	}
 	for (++ll->ncur; ll->ncur < ll->nminors; ll->ncur++) {

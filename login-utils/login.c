@@ -378,7 +378,7 @@ main(int argc, char **argv)
     int ask, fflag, hflag, pflag, cnt, errsv;
     int quietlog, passwd_req;
     char *domain, *ttyn;
-    char tbuf[MAXPATHLEN + 2], tname[sizeof(_PATH_TTY) + 10];
+    char tbuf[MAXPATHLEN + 2], tname[sizeof(_PATH_DEV_TTY) + 10];
     char *termenv;
     char *childArgv[10];
     char *buff;
@@ -499,7 +499,7 @@ main(int argc, char **argv)
 
     if (ttyn == NULL || *ttyn == '\0') {
 	/* no snprintf required - see definition of tname */
-	sprintf(tname, "%s??", _PATH_TTY);
+	snprintf(tname, sizeof(tname), "%s??", _PATH_DEV_TTY);
 	ttyn = tname;
     }
 

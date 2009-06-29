@@ -371,7 +371,7 @@ doshell() {
 #if 0
 	int t;
 
-	t = open(_PATH_TTY, O_RDWR);
+	t = open(_PATH_DEV_TTY, O_RDWR);
 	if (t >= 0) {
 		(void) ioctl(t, TIOCNOTTY, (char *)0);
 		(void) close(t);
