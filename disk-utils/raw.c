@@ -40,11 +40,11 @@ int	master_fd;
 int	raw_minor;
 
 void open_raw_ctl(void);
-int  query(int minor, int quiet);
+int  query(int minor, const char *raw_name, int quiet);
 int  bind (int minor, int block_major, int block_minor);
 
 
-static void usage(int err) 
+static void usage(int err)
 {
 	fprintf(stderr,
 		_("Usage:\n"
@@ -99,7 +99,7 @@ int main(int argc, char *argv[])
 		if (optind < argc)
 			usage(1);
 		for (i = 1; i < RAW_NR_MINORS; i++)
-			query(i, 1);
+			query(i, NULL, 1);
 		exit(0);
 	}
 
@@ -117,7 +117,10 @@ int main(int argc, char *argv[])
 	 * causes udev to *remove* /dev/rawctl
 	 */
 	rc = sscanf(raw_name, RAWDEVDIR "raw%d", &raw_minor);
-	if (rc == 1 && raw_minor == 0) {
+	if (rc != 1)
+		usage(1);
+
+	if (raw_minor == 0) {
 		fprintf (stderr,
 			_("Device '%s' is control raw dev "
 			"(use raw<N> where <N> is greater than zero)\n"),
@@ -125,28 +128,8 @@ int main(int argc, char *argv[])
 		exit(2);
 	}
 
-	err = stat(raw_name, &statbuf);
-	if (err) {
-		fprintf (stderr, _("Cannot locate raw device '%s' (%s)\n"),
-			 raw_name, strerror(errno));
-		exit(2);
-	}
-
-	if (!S_ISCHR(statbuf.st_mode)) {
-		fprintf (stderr, _("Raw device '%s' is not a character dev\n"),
-			 raw_name);
-		exit(2);
-	}
-	if (major(statbuf.st_rdev) != RAW_MAJOR) {
-		fprintf (stderr, _("Device '%s' is not a raw dev\n"),
-			 raw_name);
-		exit(2);
-	}
-
-	raw_minor = minor(statbuf.st_rdev);
-
 	if (do_query)
-		return query(raw_minor, 0);
+		return query(raw_minor, raw_name, 0);
 
 	/*
 	 * It's not a query, so we still have some parsing to do.  Have
@@ -208,11 +191,34 @@ void open_raw_ctl(void)
 	}
 }
 
-int query(int minor, int quiet)
+int query(int minor, const char *raw_name, int quiet)
 {
 	struct raw_config_request rq;
 	static int has_worked = 0;
 	int err;
+
+	if (raw_name) {
+		struct stat statbuf;
+
+		err = stat(raw_name, &statbuf);
+		if (err) {
+			fprintf (stderr, _("Cannot locate raw device '%s' (%s)\n"),
+				 raw_name, strerror(errno));
+			exit(2);
+		}
+
+		if (!S_ISCHR(statbuf.st_mode)) {
+			fprintf (stderr, _("Raw device '%s' is not a character dev\n"),
+				 raw_name);
+			exit(2);
+		}
+		if (major(statbuf.st_rdev) != RAW_MAJOR) {
+			fprintf (stderr, _("Device '%s' is not a raw dev\n"),
+				 raw_name);
+			exit(2);
+		}
+		minor = minor(statbuf.st_rdev);
+	}
 
 	rq.raw_minor = minor;
 	err = ioctl(master_fd, RAW_GETBIND, &rq);
