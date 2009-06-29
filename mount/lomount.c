@@ -500,8 +500,7 @@ show_associated_loop_devices(char *filename, unsigned long long offset, int isof
 /* check if the loopfile is already associated with the same given
  * parameters.
  *
- * returns: -1 error
- *           0 unused
+ * returns:  0 unused / error
  *           1 loop device already used
  */
 static int
@@ -516,17 +515,15 @@ is_associated(int dev, struct stat *file, unsigned long long offset, int isoff)
 	            file->st_ino == linfo64.lo_inode &&
 		    (isoff == 0 || offset == linfo64.lo_offset))
 			ret = 1;
-		return ret;
-	}
-	if (ioctl(dev, LOOP_GET_STATUS, &linfo) == 0) {
+
+	} else if (ioctl(dev, LOOP_GET_STATUS, &linfo) == 0) {
 		if (file->st_dev == linfo.lo_device &&
 	            file->st_ino == linfo.lo_inode &&
 		    (isoff == 0 || offset == linfo.lo_offset))
 			ret = 1;
-		return ret;
 	}
 
-	return errno == ENXIO ? 0 : -1;
+	return ret;
 }
 
 /* check if the loop file is already used with the same given
@@ -572,18 +569,14 @@ loopfile_used_with(char *devname, const char *filename, unsigned long long offse
 	if (!is_loop_device(devname))
 		return 0;
 
-	if (stat(filename, &statbuf) == -1) {
-		perror(filename);
-		return -1;
-	}
+	if (stat(filename, &statbuf) == -1)
+		return 0;
 
 	fd = open(devname, O_RDONLY);
-	if (fd == -1) {
-		perror(devname);
-		return -1;
-	}
-	ret = is_associated(fd, &statbuf, offset, 1);
+	if (fd == -1)
+		return 0;
 
+	ret = is_associated(fd, &statbuf, offset, 1);
 	close(fd);
 	return ret;
 }
