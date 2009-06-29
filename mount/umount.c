@@ -406,7 +406,7 @@ static int
 contains(const char *list, const char *s) {
 	int n = strlen(s);
 
-	while (*list) {
+	while (list && *list) {
 		if (strncmp(list, s, n) == 0 &&
 		    (list[n] == 0 || list[n] == ','))
 			return 1;
@@ -423,7 +423,7 @@ get_value(const char *list, const char *s) {
 	const char *t;
 	int n = strlen(s);
 
-	while (*list) {
+	while (list && *list) {
 		if (strncmp(list, s, n) == 0) {
 			s = t = list+n;
 			while (*s && *s != ',')
@@ -432,6 +432,43 @@ get_value(const char *list, const char *s) {
 		}
 		while (*list && *list++ != ',') ;
 	}
+	return NULL;
+}
+
+/* check if @mc contains a loop device which is associated
+ * with the @file in fs
+ */
+static int
+is_valid_loop(struct mntentchn *mc, struct mntentchn *fs)
+{
+	unsigned long long offset = 0;
+	char *p;
+
+	/* check if it begins with /dev/loop */
+	if (strncmp(mc->m.mnt_fsname, "/dev/loop", 9))
+		return 0;
+
+	/* check for loop option in fstab */
+	if (!contains(fs->m.mnt_opts, "loop"))
+		return 0;
+
+	/* check for offset option in fstab */
+	p = get_value(fs->m.mnt_opts, "offset=");
+	if (p)
+		offset = strtoull(p, NULL, 10);
+
+	/* check association */
+	if (loopfile_used_with((char *) mc->m.mnt_fsname,
+				fs->m.mnt_fsname, offset) == 1) {
+		if (verbose > 1)
+			printf(_("device %s is associated with %s\n"),
+			       mc->m.mnt_fsname, fs->m.mnt_fsname);
+		return 1;
+	}
+
+	if (verbose > 1)
+		printf(_("device %s is not associated with %s\n"),
+		       mc->m.mnt_fsname, fs->m.mnt_fsname);
 	return 0;
 }
 
@@ -516,12 +553,15 @@ umount_file (char *arg) {
 		   the pair (dev,file) in fstab. */
 		fs = getfs_by_devdir(mc->m.mnt_fsname, mc->m.mnt_dir);
 		if (!fs) {
-			if (!getfs_by_spec (file) && !getfs_by_dir (file))
+			fs = getfs_by_dir(file);
+			if (!fs && !getfs_by_spec(file))
 				die (2,
 				     _("umount: %s is not in the fstab "
 				       "(and you are not root)"),
 				     file);
-			else
+
+			/* spec could be a file which is loop mounted */
+			if (fs && !is_valid_loop(mc, fs))
 				die (2, _("umount: %s mount disagrees with "
 					  "the fstab"), file);
 		}
