@@ -49,6 +49,17 @@ case ${libdir} in
 esac
 AC_SUBST([libdirname])
 
+# The original default values of {bin,sbin,lib}dir
+usrbinexecdir='${exec_prefix}/bin'
+AC_SUBST([usrbinexecdir])
+
+usrsbinexecdir='${exec_prefix}/sbin'
+AC_SUBST([usrsbinexecdir])
+
+usrlibexecdir='${exec_prefix}/'$libdirname
+AC_SUBST([usrlibexecdir])
+
+
 AC_PROG_CC_STDC
 AC_GNU_SOURCE
 AC_CANONICAL_HOST
@@ -916,5 +927,6 @@ tests/helpers/Makefile
 tests/Makefile
 text-utils/Makefile
 ])
+
 
 AC_OUTPUT
