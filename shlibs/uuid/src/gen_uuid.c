@@ -461,8 +461,11 @@ static void close_all_fds(void)
 	max = OPEN_MAX;
 #endif
 
-	for (i=0; i < max; i++)
+	for (i=0; i < max; i++) {
 		close(i);
+		if (i <= 2)
+			open("/dev/null", O_RDWR);
+	}
 }
 
 /*
