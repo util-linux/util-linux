@@ -109,8 +109,6 @@
 THREAD_LOCAL unsigned short jrand_seed[3];
 #endif
 
-#define UUID_CLOCK_STATE	"/var/run/libuuid/clock"
-
 #ifdef _WIN32
 static void gettimeofday (struct timeval *tv, void *dummy)
 {
@@ -324,7 +322,8 @@ static int get_clock(uint32_t *clock_high, uint32_t *clock_low,
 
 	if (state_fd == -2) {
 		save_umask = umask(0);
-		state_fd = open(UUID_CLOCK_STATE, O_RDWR|O_CREAT, 0660);
+		state_fd = open("/var/lib/libuuid/clock.txt",
+				O_RDWR|O_CREAT, 0660);
 		(void) umask(save_umask);
 		state_f = fdopen(state_fd, "r+");
 		if (!state_f) {
