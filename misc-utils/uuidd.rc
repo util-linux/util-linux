@@ -38,7 +38,7 @@ case "$1" in
 	    exit 0;
 	else
 	    echo "$DAEMON is NOT running";
-	    if test -f /var/run/uuidd.pid; then exit 2; fi
+	    if test -f $PIDFILE; then exit 2; fdi
 	    exit 3;
 	fi
 	;;
