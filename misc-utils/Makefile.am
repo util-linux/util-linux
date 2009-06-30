@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-EXTRA_DIST = README.flushb
+EXTRA_DIST = README.flushb uuidd.rc
 
 bin_PROGRAMS =
 usrsbinexec_PROGRAMS =
