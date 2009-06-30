@@ -48,3 +48,20 @@ tests: all $(tests)
 test_%: %.c
 	$(COMPILE) -DTEST_PROGRAM $< .libs/libblkid.a -o $@ $(common_ldadd)
 
+
+# move devel files from $(libdir) to $(usrlibexecdir) if needed
+install-data-hook:
+	rm  $(DESTDIR)$(libdir)/$(lib_LTLIBRARIES)
+	if test "$(usrlibexecdir)" != "$(libdir)"; then \
+		mkdir -p $(DESTDIR)$(usrlibexecdir); \
+		mv $(DESTDIR)$(libdir)/libblkid.a $(DESTDIR)$(usrlibexecdir)/; \
+		so_img_name=$$(readlink $(DESTDIR)$(libdir)/libblkid.so); \
+		rm $(DESTDIR)$(libdir)/libblkid.so; \
+		so_img_rel_target=$$(echo $(usrlibexecdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
+		ln -sf  $$so_img_rel_target$(libdir)/$$so_img_name \
+			$(DESTDIR)$(usrlibexecdir)/libblkid.so; \
+	fi
+
+uninstall-hook:
+	rm -f $(DESTDIR)$(usrlibexecdir)/libblkid.a
+	rm -f $(DESTDIR)$(usrlibexecdir)/libblkid.so*
