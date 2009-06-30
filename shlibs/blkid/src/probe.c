@@ -29,8 +29,8 @@
 #ifdef HAVE_LIBUUID
 # ifdef HAVE_UUID_UUID_H
 #  include <uuid/uuid.h>
-#else
-# include <uuid.h>
+# else
+#  include <uuid.h>
 # endif
 #endif
 
