@@ -425,15 +425,19 @@ static ssize_t read_all(int fd, char *buf, size_t count)
 {
 	ssize_t ret;
 	ssize_t c = 0;
+	int tries = 0;
 
 	memset(buf, 0, count);
 	while (count > 0) {
 		ret = read(fd, buf, count);
-		if (ret < 0) {
-			if ((errno == EAGAIN) || (errno == EINTR))
+		if (ret <= 0) {
+			if ((errno == EAGAIN || errno == EINTR || ret == 0) &&
+			    (tries++ < 5))
 				continue;
-			return -1;
+			return c ? c : -1;
 		}
+		if (ret > 0)
+			tries = 0;
 		count -= ret;
 		buf += ret;
 		c += ret;
@@ -461,8 +465,11 @@ static void close_all_fds(void)
 	max = OPEN_MAX;
 #endif
 
-	for (i=0; i < max; i++)
+	for (i=0; i < max; i++) {
 		close(i);
+		if (i <= 2)
+			open("/dev/null", O_RDWR);
+	}
 }
 
 /*
@@ -478,6 +485,7 @@ static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 	ssize_t ret;
 	int32_t reply_len = 0, expected = 16;
 	struct sockaddr_un srv_addr;
+	struct stat st;
 	pid_t pid;
 	static const char *uuidd_path = UUIDD_PATH;
 	static int access_ret = -2;
@@ -493,6 +501,10 @@ static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 		    sizeof(struct sockaddr_un)) < 0) {
 		if (access_ret == -2)
 			access_ret = access(uuidd_path, X_OK);
+		if (access_ret == 0)
+			access_ret = stat(uuidd_path, &st);
+		if (access_ret == 0 && (st.st_mode & (S_ISUID | S_ISGID)) == 0)
+			access_ret = access(UUIDD_DIR, W_OK);
 		if (access_ret == 0 && start_attempts++ < 5) {
 			if ((pid = fork()) == 0) {
 				close_all_fds();
