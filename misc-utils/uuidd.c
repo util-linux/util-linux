@@ -275,6 +275,18 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	}
 
 	/*
+	 * Make sure the socket isn't using fd numbers 0-2 to avoid it
+	 * getting closed by create_daemon()
+	 */
+	while (!debug && s <= 2) {
+		s = dup(s);
+		if (s < 0) {
+			perror("dup");
+			exit(1);
+		}
+	}
+
+	/*
 	 * Create the address we will be binding to.
 	 */
 	my_addr.sun_family = AF_UNIX;
