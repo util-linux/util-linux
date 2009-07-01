@@ -485,6 +485,7 @@ static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 	ssize_t ret;
 	int32_t reply_len = 0, expected = 16;
 	struct sockaddr_un srv_addr;
+	struct stat st;
 	pid_t pid;
 	static const char *uuidd_path = UUIDD_PATH;
 	static int access_ret = -2;
@@ -500,6 +501,10 @@ static int get_uuid_via_daemon(int op, uuid_t out, int *num)
 		    sizeof(struct sockaddr_un)) < 0) {
 		if (access_ret == -2)
 			access_ret = access(uuidd_path, X_OK);
+		if (access_ret == 0)
+			access_ret = stat(uuidd_path, &st);
+		if (access_ret == 0 && (st.st_mode & (S_ISUID | S_ISGID)) == 0)
+			access_ret = access(UUIDD_DIR, W_OK);
 		if (access_ret == 0 && start_attempts++ < 5) {
 			if ((pid = fork()) == 0) {
 				close_all_fds();
