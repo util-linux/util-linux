@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-06-28 22:12+0200\n"
+"POT-Creation-Date: 2009-07-02 14:56+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -881,7 +881,7 @@ msgstr ""
 msgid "%s is not a block special device"
 msgstr ""
 
-#: disk-utils/mkfs.bfs.c:172 sys-utils/ldattach.c:200
+#: disk-utils/mkfs.bfs.c:172 sys-utils/ldattach.c:205
 #, c-format
 msgid "cannot open %s"
 msgstr ""
@@ -1425,53 +1425,53 @@ msgid ""
 "  %s "
 msgstr ""
 
-#: disk-utils/raw.c:122
+#: disk-utils/raw.c:125
 #, c-format
 msgid ""
 "Device '%s' is control raw dev (use raw<N> where <N> is greater than zero)\n"
 msgstr ""
 
-#: disk-utils/raw.c:130
-#, c-format
-msgid "Cannot locate raw device '%s' (%s)\n"
-msgstr ""
-
-#: disk-utils/raw.c:136
-#, c-format
-msgid "Raw device '%s' is not a character dev\n"
-msgstr ""
-
-#: disk-utils/raw.c:141
-#, c-format
-msgid "Device '%s' is not a raw dev\n"
-msgstr ""
-
-#: disk-utils/raw.c:162
+#: disk-utils/raw.c:145
 #, c-format
 msgid "Cannot locate block device '%s' (%s)\n"
 msgstr ""
 
-#: disk-utils/raw.c:168
+#: disk-utils/raw.c:151
 #, c-format
 msgid "Device '%s' is not a block dev\n"
 msgstr ""
 
-#: disk-utils/raw.c:203
+#: disk-utils/raw.c:186
 #, c-format
 msgid "Cannot open master raw device '"
 msgstr ""
 
-#: disk-utils/raw.c:225
+#: disk-utils/raw.c:205
+#, c-format
+msgid "Cannot locate raw device '%s' (%s)\n"
+msgstr ""
+
+#: disk-utils/raw.c:211
+#, c-format
+msgid "Raw device '%s' is not a character dev\n"
+msgstr ""
+
+#: disk-utils/raw.c:216
+#, c-format
+msgid "Device '%s' is not a raw dev\n"
+msgstr ""
+
+#: disk-utils/raw.c:231
 #, c-format
 msgid "Error querying raw device (%s)\n"
 msgstr ""
 
-#: disk-utils/raw.c:235 disk-utils/raw.c:255
+#: disk-utils/raw.c:241 disk-utils/raw.c:261
 #, c-format
 msgid "raw%d:\tbound to major %d, minor %d\n"
 msgstr ""
 
-#: disk-utils/raw.c:251
+#: disk-utils/raw.c:257
 #, c-format
 msgid "Error setting raw device (%s)\n"
 msgstr ""
@@ -6328,8 +6328,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr ""
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:823
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:753
-#: mount/lomount.c:756
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:744
+#: mount/lomount.c:747
 msgid "Password: "
 msgstr ""
 
@@ -7198,6 +7198,16 @@ msgstr ""
 msgid "St. Tib's Day"
 msgstr ""
 
+#: misc-utils/findfs.c:24
+#, c-format
+msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
+msgstr ""
+
+#: misc-utils/findfs.c:55
+#, c-format
+msgid "unable to resolve '%s'"
+msgstr ""
+
 #: misc-utils/kill.c:207
 #, c-format
 msgid "%s: unknown signal %s\n"
@@ -7717,116 +7727,116 @@ msgstr ""
 msgid "       %s -k\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:148
+#: misc-utils/uuidd.c:152
 msgid "bad arguments"
 msgstr ""
 
-#: misc-utils/uuidd.c:155
+#: misc-utils/uuidd.c:159
 msgid "socket"
 msgstr ""
 
-#: misc-utils/uuidd.c:166
+#: misc-utils/uuidd.c:170
 msgid "connect"
 msgstr ""
 
-#: misc-utils/uuidd.c:185
+#: misc-utils/uuidd.c:189
 msgid "write"
 msgstr ""
 
-#: misc-utils/uuidd.c:193
+#: misc-utils/uuidd.c:197
 msgid "read count"
 msgstr ""
 
-#: misc-utils/uuidd.c:199
+#: misc-utils/uuidd.c:203
 msgid "bad response length"
 msgstr ""
 
-#: misc-utils/uuidd.c:264
+#: misc-utils/uuidd.c:268
 #, c-format
 msgid "uuidd daemon already running at pid %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:272
+#: misc-utils/uuidd.c:276
 #, c-format
 msgid "Couldn't create unix stream socket: %s"
 msgstr ""
 
-#: misc-utils/uuidd.c:289
+#: misc-utils/uuidd.c:305
 #, c-format
 msgid "Couldn't bind unix socket %s: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:297
+#: misc-utils/uuidd.c:313
 #, c-format
 msgid "Couldn't listen on unix socket %s: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:335
+#: misc-utils/uuidd.c:351
 #, c-format
 msgid "Error reading from client, len = %d\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:343
+#: misc-utils/uuidd.c:359
 #, c-format
 msgid "operation %d, incoming num = %d\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:362
+#: misc-utils/uuidd.c:378
 #, c-format
 msgid "Generated time UUID: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:372
+#: misc-utils/uuidd.c:388
 #, c-format
 msgid "Generated random UUID: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:381
+#: misc-utils/uuidd.c:397
 #, c-format
 msgid "Generated time UUID %s and %d following\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:399
+#: misc-utils/uuidd.c:415
 #, c-format
 msgid "Generated %d UUID's:\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:411
+#: misc-utils/uuidd.c:427
 #, c-format
 msgid "Invalid operation %d\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:452 misc-utils/uuidd.c:473
+#: misc-utils/uuidd.c:468 misc-utils/uuidd.c:489
 #, c-format
 msgid "Bad number: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:508 misc-utils/uuidd.c:535
+#: misc-utils/uuidd.c:524 misc-utils/uuidd.c:551
 #, c-format
 msgid "Error calling uuidd daemon (%s): %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:518
+#: misc-utils/uuidd.c:534
 #, c-format
 msgid "%s and subsequent %d UUID's\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:520
+#: misc-utils/uuidd.c:536
 #, c-format
 msgid "List of UUID's:\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:541
+#: misc-utils/uuidd.c:557
 #, c-format
 msgid "Unexpected reply length from server %d\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:558
+#: misc-utils/uuidd.c:574
 #, c-format
 msgid "Couldn't kill uuidd running at pid %d: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:564
+#: misc-utils/uuidd.c:580
 #, c-format
 msgid "Killed uuidd running at pid %d\n"
 msgstr ""
@@ -7967,114 +7977,114 @@ msgstr ""
 msgid "can't rename %s to %s: %s\n"
 msgstr ""
 
-#: mount/lomount.c:366
+#: mount/lomount.c:364
 #, c-format
 msgid "loop: can't set capacity on device %s: %s\n"
 msgstr ""
 
-#: mount/lomount.c:390
+#: mount/lomount.c:388
 #, c-format
 msgid ", offset %<PRIu64>"
 msgstr ""
 
-#: mount/lomount.c:393
+#: mount/lomount.c:391
 #, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ""
 
-#: mount/lomount.c:401
+#: mount/lomount.c:399
 #, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ""
 
-#: mount/lomount.c:414
+#: mount/lomount.c:412
 #, c-format
 msgid ", offset %d"
 msgstr ""
 
-#: mount/lomount.c:417
+#: mount/lomount.c:415
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ""
 
-#: mount/lomount.c:425
+#: mount/lomount.c:423
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr ""
 
-#: mount/lomount.c:436
+#: mount/lomount.c:434
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr ""
 
-#: mount/lomount.c:452 mount/lomount.c:484 mount/lomount.c:549
-#: mount/lomount.c:598
+#: mount/lomount.c:450 mount/lomount.c:482 mount/lomount.c:544
+#: mount/lomount.c:589
 #, c-format
 msgid "%s: /dev directory does not exist."
 msgstr ""
 
-#: mount/lomount.c:463 mount/lomount.c:611
+#: mount/lomount.c:461 mount/lomount.c:602
 #, c-format
 msgid "%s: no permission to look at /dev/loop%s<N>"
 msgstr ""
 
-#: mount/lomount.c:614
+#: mount/lomount.c:605
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr ""
 
-#: mount/lomount.c:617
+#: mount/lomount.c:608
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
 "       about the loop device? (If so, recompile or `modprobe loop'.)"
 msgstr ""
 
-#: mount/lomount.c:647
+#: mount/lomount.c:638
 msgid "Out of memory while reading passphrase"
 msgstr ""
 
-#: mount/lomount.c:690
+#: mount/lomount.c:681
 #, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr ""
 
-#: mount/lomount.c:706
+#: mount/lomount.c:697
 #, c-format
 msgid "warning: %s: is write-protected, using read-only.\n"
 msgstr ""
 
-#: mount/lomount.c:742
+#: mount/lomount.c:733
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr ""
 
-#: mount/lomount.c:769
+#: mount/lomount.c:760
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr ""
 
-#: mount/lomount.c:826
+#: mount/lomount.c:817
 #, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr ""
 
-#: mount/lomount.c:847
+#: mount/lomount.c:838
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr ""
 
-#: mount/lomount.c:851
+#: mount/lomount.c:842
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr ""
 
-#: mount/lomount.c:862
+#: mount/lomount.c:853
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 
-#: mount/lomount.c:897
+#: mount/lomount.c:888
 #, c-format
 msgid ""
 "\n"
@@ -8089,7 +8099,7 @@ msgid ""
 " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
 msgstr ""
 
-#: mount/lomount.c:907
+#: mount/lomount.c:898
 #, c-format
 msgid ""
 "\n"
@@ -8105,22 +8115,22 @@ msgid ""
 "\n"
 msgstr ""
 
-#: mount/lomount.c:1045 mount/lomount.c:1085
+#: mount/lomount.c:1036 mount/lomount.c:1076
 #, c-format
 msgid "Loop device is %s\n"
 msgstr ""
 
-#: mount/lomount.c:1072
+#: mount/lomount.c:1063
 #, c-format
 msgid "stolen loop=%s...trying again\n"
 msgstr ""
 
-#: mount/lomount.c:1082
+#: mount/lomount.c:1073
 #, c-format
 msgid "%s: %s: device is busy"
 msgstr ""
 
-#: mount/lomount.c:1099
+#: mount/lomount.c:1090
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -8728,42 +8738,42 @@ msgstr ""
 msgid "%s: swapoff failed"
 msgstr ""
 
-#: mount/umount.c:40
+#: mount/umount.c:41
 #, c-format
 msgid "umount: compiled without support for -f\n"
 msgstr ""
 
-#: mount/umount.c:110
+#: mount/umount.c:111
 #, c-format
 msgid "umount: cannot set group id: %s"
 msgstr ""
 
-#: mount/umount.c:113
+#: mount/umount.c:114
 #, c-format
 msgid "umount: cannot set user id: %s"
 msgstr ""
 
-#: mount/umount.c:138
+#: mount/umount.c:139
 #, c-format
 msgid "umount: cannot fork: %s"
 msgstr ""
 
-#: mount/umount.c:159
+#: mount/umount.c:160
 #, c-format
 msgid "umount: %s: invalid block device"
 msgstr ""
 
-#: mount/umount.c:161
+#: mount/umount.c:162
 #, c-format
 msgid "umount: %s: not mounted"
 msgstr ""
 
-#: mount/umount.c:163
+#: mount/umount.c:164
 #, c-format
 msgid "umount: %s: can't write superblock"
 msgstr ""
 
-#: mount/umount.c:167
+#: mount/umount.c:168
 #, c-format
 msgid ""
 "umount: %s: device is busy.\n"
@@ -8771,51 +8781,51 @@ msgid ""
 "         the device is found by lsof(8) or fuser(1))"
 msgstr ""
 
-#: mount/umount.c:172
+#: mount/umount.c:173
 #, c-format
 msgid "umount: %s: not found"
 msgstr ""
 
-#: mount/umount.c:174
+#: mount/umount.c:175
 #, c-format
 msgid "umount: %s: must be superuser to umount"
 msgstr ""
 
-#: mount/umount.c:176
+#: mount/umount.c:177
 #, c-format
 msgid "umount: %s: block devices not permitted on fs"
 msgstr ""
 
-#: mount/umount.c:178
+#: mount/umount.c:179
 #, c-format
 msgid "umount: %s: %s"
 msgstr ""
 
-#: mount/umount.c:234
+#: mount/umount.c:235
 #, c-format
 msgid "no umount2, trying umount...\n"
 msgstr ""
 
-#: mount/umount.c:251
+#: mount/umount.c:252
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr ""
 
-#: mount/umount.c:262
+#: mount/umount.c:263
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr ""
 
-#: mount/umount.c:271
+#: mount/umount.c:272
 #, c-format
 msgid "%s umounted\n"
 msgstr ""
 
-#: mount/umount.c:366
+#: mount/umount.c:367
 msgid "umount: cannot find list of filesystems to unmount"
 msgstr ""
 
-#: mount/umount.c:396
+#: mount/umount.c:397
 #, c-format
 msgid ""
 "Usage: umount -h | -V\n"
@@ -8823,55 +8833,65 @@ msgid ""
 "       umount [-d] [-f] [-r] [-n] [-v] special | node...\n"
 msgstr ""
 
-#: mount/umount.c:446
+#: mount/umount.c:466
+#, c-format
+msgid "device %s is associated with %s\n"
+msgstr ""
+
+#: mount/umount.c:472
+#, c-format
+msgid "device %s is not associated with %s\n"
+msgstr ""
+
+#: mount/umount.c:485
 msgid "Cannot umount \"\"\n"
 msgstr ""
 
-#: mount/umount.c:452
+#: mount/umount.c:491
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr ""
 
-#: mount/umount.c:465
+#: mount/umount.c:504
 msgid "umount: confused when analyzing mtab"
 msgstr ""
 
-#: mount/umount.c:470
+#: mount/umount.c:509
 #, c-format
 msgid "umount: cannot umount %s -- %s is mounted over it on the same point."
 msgstr ""
 
-#: mount/umount.c:477
+#: mount/umount.c:516
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr ""
 
-#: mount/umount.c:484
+#: mount/umount.c:523
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr ""
 
-#: mount/umount.c:508
+#: mount/umount.c:547
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr ""
 
-#: mount/umount.c:521
+#: mount/umount.c:561
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr ""
 
-#: mount/umount.c:525
+#: mount/umount.c:567
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr ""
 
-#: mount/umount.c:566
+#: mount/umount.c:608
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr ""
 
-#: mount/umount.c:653
+#: mount/umount.c:695
 msgid "umount: only root can do that"
 msgstr ""
 
@@ -9008,16 +9028,6 @@ msgstr ""
 
 #: schedutils/ionice.c:187
 msgid "execvp failed"
-msgstr ""
-
-#: shlibs/blkid/bin/findfs.c:24
-#, c-format
-msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
-msgstr ""
-
-#: shlibs/blkid/bin/findfs.c:55
-#, c-format
-msgid "unable to resolve '%s'"
 msgstr ""
 
 #: sys-utils/ctrlaltdel.c:27
@@ -9859,63 +9869,63 @@ msgstr ""
 msgid "pid"
 msgstr ""
 
-#: sys-utils/ldattach.c:87
+#: sys-utils/ldattach.c:92
 #, c-format
 msgid ""
 "\n"
 "Usage: %s [ -dhV78neo12 ] [ -s <speed> ] <ldisc> <device>\n"
 msgstr ""
 
-#: sys-utils/ldattach.c:89
+#: sys-utils/ldattach.c:94
 msgid ""
 "\n"
 "Known <ldisc> names:\n"
 msgstr ""
 
-#: sys-utils/ldattach.c:174
+#: sys-utils/ldattach.c:179
 #, c-format
 msgid "invalid speed: %s"
 msgstr ""
 
-#: sys-utils/ldattach.c:177
+#: sys-utils/ldattach.c:182
 #, c-format
 msgid "ldattach from %s\n"
 msgstr ""
 
-#: sys-utils/ldattach.c:182 text-utils/tailf.c:195
+#: sys-utils/ldattach.c:187 text-utils/tailf.c:195
 msgid "invalid option"
 msgstr ""
 
-#: sys-utils/ldattach.c:194
+#: sys-utils/ldattach.c:199
 #, c-format
 msgid "invalid line discipline: %s"
 msgstr ""
 
-#: sys-utils/ldattach.c:202
+#: sys-utils/ldattach.c:207
 #, c-format
 msgid "%s is not a serial line"
 msgstr ""
 
-#: sys-utils/ldattach.c:208
+#: sys-utils/ldattach.c:213
 #, c-format
 msgid "cannot get terminal attributes for %s"
 msgstr ""
 
-#: sys-utils/ldattach.c:211
+#: sys-utils/ldattach.c:216
 #, c-format
 msgid "speed %d unsupported"
 msgstr ""
 
-#: sys-utils/ldattach.c:242
+#: sys-utils/ldattach.c:247
 #, c-format
 msgid "cannot set terminal attributes for %s"
 msgstr ""
 
-#: sys-utils/ldattach.c:249
+#: sys-utils/ldattach.c:254
 msgid "cannot set line discipline"
 msgstr ""
 
-#: sys-utils/ldattach.c:255
+#: sys-utils/ldattach.c:260
 msgid "cannot daemonize"
 msgstr ""
 

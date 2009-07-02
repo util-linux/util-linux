@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.14-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-06-28 22:12+0200\n"
+"POT-Creation-Date: 2009-07-02 14:56+0200\n"
 "PO-Revision-Date: 2008-05-21 18:25+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -921,7 +921,7 @@ msgstr "a(z) „%s” eszköz nem érhető el"
 msgid "%s is not a block special device"
 msgstr "a(z) %s nem egy speciális blokkos eszköz"
 
-#: disk-utils/mkfs.bfs.c:172 sys-utils/ldattach.c:200
+#: disk-utils/mkfs.bfs.c:172 sys-utils/ldattach.c:205
 #, c-format
 msgid "cannot open %s"
 msgstr "a(z) %s nem nyitható meg"
@@ -1508,53 +1508,53 @@ msgid ""
 "  %s "
 msgstr "Használat:\n"
 
-#: disk-utils/raw.c:122
+#: disk-utils/raw.c:125
 #, c-format
 msgid ""
 "Device '%s' is control raw dev (use raw<N> where <N> is greater than zero)\n"
 msgstr ""
 
-#: disk-utils/raw.c:130
-#, fuzzy, c-format
-msgid "Cannot locate raw device '%s' (%s)\n"
-msgstr "a(z) „%s” eszköz nem érhető el"
-
-#: disk-utils/raw.c:136
-#, fuzzy, c-format
-msgid "Raw device '%s' is not a character dev\n"
-msgstr "/dev/%s: nem egy karaktereszköz"
-
-#: disk-utils/raw.c:141
-#, fuzzy, c-format
-msgid "Device '%s' is not a raw dev\n"
-msgstr "%s nem soros vonal"
-
-#: disk-utils/raw.c:162
+#: disk-utils/raw.c:145
 #, fuzzy, c-format
 msgid "Cannot locate block device '%s' (%s)\n"
 msgstr "Nem lehet zárolni a(z) %s zárolási fájlt: %s\n"
 
-#: disk-utils/raw.c:168
+#: disk-utils/raw.c:151
 #, fuzzy, c-format
 msgid "Device '%s' is not a block dev\n"
 msgstr "Figyelmeztetés: a(z) %s nem blokkeszköz\n"
 
-#: disk-utils/raw.c:203
+#: disk-utils/raw.c:186
 #, fuzzy, c-format
 msgid "Cannot open master raw device '"
 msgstr "a(z) „%s” eszköz nem érhető el"
 
-#: disk-utils/raw.c:225
+#: disk-utils/raw.c:205
+#, fuzzy, c-format
+msgid "Cannot locate raw device '%s' (%s)\n"
+msgstr "a(z) „%s” eszköz nem érhető el"
+
+#: disk-utils/raw.c:211
+#, fuzzy, c-format
+msgid "Raw device '%s' is not a character dev\n"
+msgstr "/dev/%s: nem egy karaktereszköz"
+
+#: disk-utils/raw.c:216
+#, fuzzy, c-format
+msgid "Device '%s' is not a raw dev\n"
+msgstr "%s nem soros vonal"
+
+#: disk-utils/raw.c:231
 #, c-format
 msgid "Error querying raw device (%s)\n"
 msgstr ""
 
-#: disk-utils/raw.c:235 disk-utils/raw.c:255
+#: disk-utils/raw.c:241 disk-utils/raw.c:261
 #, c-format
 msgid "raw%d:\tbound to major %d, minor %d\n"
 msgstr ""
 
-#: disk-utils/raw.c:251
+#: disk-utils/raw.c:257
 #, fuzzy, c-format
 msgid "Error setting raw device (%s)\n"
 msgstr "hiba a szolgáltatás leállításakor: „%s”"
@@ -6923,8 +6923,8 @@ msgid "%s: PAM failure, aborting: %s\n"
 msgstr "%s: jelszó-hitelesítési (PAM) hiba, megszakítva: %s\n"
 
 #: login-utils/chfn.c:212 login-utils/chsh.c:211 login-utils/login.c:823
-#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:753
-#: mount/lomount.c:756
+#: login-utils/newgrp.c:85 login-utils/simpleinit.c:340 mount/lomount.c:744
+#: mount/lomount.c:747
 msgid "Password: "
 msgstr "Jelszó: "
 
@@ -7828,6 +7828,16 @@ msgstr "Használat: %s [+formátum] [nap hónap év]\n"
 msgid "St. Tib's Day"
 msgstr "Szent Tib napja"
 
+#: misc-utils/findfs.c:24
+#, c-format
+msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
+msgstr ""
+
+#: misc-utils/findfs.c:55
+#, fuzzy, c-format
+msgid "unable to resolve '%s'"
+msgstr "%s nem nyitható meg"
+
 #: misc-utils/kill.c:207
 #, c-format
 msgid "%s: unknown signal %s\n"
@@ -8360,121 +8370,121 @@ msgstr ""
 msgid "       %s -k\n"
 msgstr "       %s -l [ jelzés ]\n"
 
-#: misc-utils/uuidd.c:148
+#: misc-utils/uuidd.c:152
 #, fuzzy
 msgid "bad arguments"
 msgstr "col: hibás -l kapcsoló: %s.\n"
 
-#: misc-utils/uuidd.c:155
+#: misc-utils/uuidd.c:159
 #, fuzzy
 msgid "socket"
 msgstr "Blokkméret: %d\n"
 
-#: misc-utils/uuidd.c:166
+#: misc-utils/uuidd.c:170
 #, fuzzy
 msgid "connect"
 msgstr "n.szám"
 
-#: misc-utils/uuidd.c:185
+#: misc-utils/uuidd.c:189
 #, fuzzy
 msgid "write"
 msgstr "Kiírás"
 
-#: misc-utils/uuidd.c:193
+#: misc-utils/uuidd.c:197
 #, fuzzy
 msgid "read count"
 msgstr "időtúllépés"
 
-#: misc-utils/uuidd.c:199
+#: misc-utils/uuidd.c:203
 msgid "bad response length"
 msgstr ""
 
-#: misc-utils/uuidd.c:264
+#: misc-utils/uuidd.c:268
 #, c-format
 msgid "uuidd daemon already running at pid %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:272
+#: misc-utils/uuidd.c:276
 #, c-format
 msgid "Couldn't create unix stream socket: %s"
 msgstr ""
 
-#: misc-utils/uuidd.c:289
+#: misc-utils/uuidd.c:305
 #, fuzzy, c-format
 msgid "Couldn't bind unix socket %s: %s\n"
 msgstr "%s nem nyitható meg: %s\n"
 
-#: misc-utils/uuidd.c:297
+#: misc-utils/uuidd.c:313
 #, fuzzy, c-format
 msgid "Couldn't listen on unix socket %s: %s\n"
 msgstr "%s nem nyitható meg: %s\n"
 
-#: misc-utils/uuidd.c:335
+#: misc-utils/uuidd.c:351
 #, c-format
 msgid "Error reading from client, len = %d\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:343
+#: misc-utils/uuidd.c:359
 #, c-format
 msgid "operation %d, incoming num = %d\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:362
+#: misc-utils/uuidd.c:378
 #, c-format
 msgid "Generated time UUID: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:372
+#: misc-utils/uuidd.c:388
 #, c-format
 msgid "Generated random UUID: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:381
+#: misc-utils/uuidd.c:397
 #, c-format
 msgid "Generated time UUID %s and %d following\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:399
+#: misc-utils/uuidd.c:415
 #, c-format
 msgid "Generated %d UUID's:\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:411
+#: misc-utils/uuidd.c:427
 #, fuzzy, c-format
 msgid "Invalid operation %d\n"
 msgstr "érvénytelen kapcsoló"
 
-#: misc-utils/uuidd.c:452 misc-utils/uuidd.c:473
+#: misc-utils/uuidd.c:468 misc-utils/uuidd.c:489
 #, fuzzy, c-format
 msgid "Bad number: %s\n"
 msgstr "%s: hibás érték\n"
 
-#: misc-utils/uuidd.c:508 misc-utils/uuidd.c:535
+#: misc-utils/uuidd.c:524 misc-utils/uuidd.c:551
 #, fuzzy, c-format
 msgid "Error calling uuidd daemon (%s): %s\n"
 msgstr "hiba a(z) %s módjának módosításakor: %s\n"
 
-#: misc-utils/uuidd.c:518
+#: misc-utils/uuidd.c:534
 #, c-format
 msgid "%s and subsequent %d UUID's\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:520
+#: misc-utils/uuidd.c:536
 #, c-format
 msgid "List of UUID's:\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:541
+#: misc-utils/uuidd.c:557
 #, c-format
 msgid "Unexpected reply length from server %d\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:558
+#: misc-utils/uuidd.c:574
 #, c-format
 msgid "Couldn't kill uuidd running at pid %d: %s\n"
 msgstr ""
 
-#: misc-utils/uuidd.c:564
+#: misc-utils/uuidd.c:580
 #, c-format
 msgid "Killed uuidd running at pid %d\n"
 msgstr ""
@@ -8624,63 +8634,63 @@ msgstr "hiba a(z) %s tulajdonosának módosításakor: %s\n"
 msgid "can't rename %s to %s: %s\n"
 msgstr "%s nem nevezhető át %s névre: %s\n"
 
-#: mount/lomount.c:366
+#: mount/lomount.c:364
 #, fuzzy, c-format
 msgid "loop: can't set capacity on device %s: %s\n"
 msgstr "loop: nem kaphatók információk a(z) %s eszközről: %s\n"
 
-#: mount/lomount.c:390
+#: mount/lomount.c:388
 #, c-format
 msgid ", offset %<PRIu64>"
 msgstr ", eltolás: %<PRIu64>"
 
-#: mount/lomount.c:393
+#: mount/lomount.c:391
 #, c-format
 msgid ", sizelimit %<PRIu64>"
 msgstr ", méretkorlát: %<PRIu64>"
 
-#: mount/lomount.c:401
+#: mount/lomount.c:399
 #, c-format
 msgid ", encryption %s (type %<PRIu32>)"
 msgstr ", %s titkosítás (típus: %<PRIu32>)"
 
-#: mount/lomount.c:414
+#: mount/lomount.c:412
 #, c-format
 msgid ", offset %d"
 msgstr ", eltolás: %d"
 
-#: mount/lomount.c:417
+#: mount/lomount.c:415
 #, c-format
 msgid ", encryption type %d\n"
 msgstr ", titkosítástípus: %d\n"
 
-#: mount/lomount.c:425
+#: mount/lomount.c:423
 #, c-format
 msgid "loop: can't get info on device %s: %s\n"
 msgstr "loop: nem kaphatók információk a(z) %s eszközről: %s\n"
 
-#: mount/lomount.c:436
+#: mount/lomount.c:434
 #, c-format
 msgid "loop: can't open device %s: %s\n"
 msgstr "loop: nem nyitható meg a(z) %s eszköz: %s\n"
 
-#: mount/lomount.c:452 mount/lomount.c:484 mount/lomount.c:549
-#: mount/lomount.c:598
+#: mount/lomount.c:450 mount/lomount.c:482 mount/lomount.c:544
+#: mount/lomount.c:589
 #, c-format
 msgid "%s: /dev directory does not exist."
 msgstr "%s: a /dev könyvtár nem létezik."
 
-#: mount/lomount.c:463 mount/lomount.c:611
+#: mount/lomount.c:461 mount/lomount.c:602
 #, fuzzy, c-format
 msgid "%s: no permission to look at /dev/loop%s<N>"
 msgstr "%s: nincs jogosultsága a /dev/loop# megjelenítéséhez"
 
-#: mount/lomount.c:614
+#: mount/lomount.c:605
 #, c-format
 msgid "%s: could not find any free loop device"
 msgstr "%s: nem található szabad hurokeszköz"
 
-#: mount/lomount.c:617
+#: mount/lomount.c:608
 #, c-format
 msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
@@ -8690,54 +8700,54 @@ msgstr ""
 "       ismeri a hurokeszközt?. (fordítsa újra a rendszermagot vagy\n"
 "       adja ki a „modprobe loop” parancsot.)"
 
-#: mount/lomount.c:647
+#: mount/lomount.c:638
 #, fuzzy
 msgid "Out of memory while reading passphrase"
 msgstr "Elfogyott a memória a puffer növelésekor.\n"
 
-#: mount/lomount.c:690
+#: mount/lomount.c:681
 #, c-format
 msgid "warning: %s is already associated with %s\n"
 msgstr "figyelmeztetés: a(z) %s már társítva van a következőhöz: %s\n"
 
-#: mount/lomount.c:706
+#: mount/lomount.c:697
 #, fuzzy, c-format
 msgid "warning: %s: is write-protected, using read-only.\n"
 msgstr "mount: a(z) %2$s%1$s írásvédett, csatolás csak olvashatóként"
 
-#: mount/lomount.c:742
+#: mount/lomount.c:733
 #, c-format
 msgid "Couldn't lock into memory, exiting.\n"
 msgstr "Nem lehet zárolni a memóriába, kilépés.\n"
 
-#: mount/lomount.c:769
+#: mount/lomount.c:760
 #, c-format
 msgid "ioctl LOOP_SET_FD failed: %s\n"
 msgstr "A LOOP_SET_FD ioctl meghiúsult: %s\n"
 
-#: mount/lomount.c:826
+#: mount/lomount.c:817
 #, c-format
 msgid "set_loop(%s,%s,%llu,%llu): success\n"
 msgstr "set_loop(%s,%s,%llu,%llu): siker\n"
 
-#: mount/lomount.c:847
+#: mount/lomount.c:838
 #, c-format
 msgid "del_loop(%s): success\n"
 msgstr "del_loop(%s): siker\n"
 
-#: mount/lomount.c:851
+#: mount/lomount.c:842
 #, c-format
 msgid "loop: can't delete device %s: %s\n"
 msgstr "loop: nem törölhető a(z) %s eszköz: %s\n"
 
-#: mount/lomount.c:862
+#: mount/lomount.c:853
 #, c-format
 msgid "This mount was compiled without loop support. Please recompile.\n"
 msgstr ""
 "Ez a „mount” parancs hurokeszköz-támogatás nélkül lett lefordítva. Fordítsa "
 "újra.\n"
 
-#: mount/lomount.c:897
+#: mount/lomount.c:888
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -8761,7 +8771,7 @@ msgstr ""
 "felsorolása\n"
 " %1$s [ kapcsolók ] {-f|--find|hurokeszköz} fájl   beállítás\n"
 
-#: mount/lomount.c:907
+#: mount/lomount.c:898
 #, c-format
 msgid ""
 "\n"
@@ -8789,23 +8799,23 @@ msgstr ""
 " -v | --verbose            részletes mód\n"
 "\n"
 
-#: mount/lomount.c:1045 mount/lomount.c:1085
+#: mount/lomount.c:1036 mount/lomount.c:1076
 #, fuzzy, c-format
 msgid "Loop device is %s\n"
 msgstr "loop: nem nyitható meg a(z) %s eszköz: %s\n"
 
-#: mount/lomount.c:1072
+#: mount/lomount.c:1063
 #, fuzzy, c-format
 msgid "stolen loop=%s...trying again\n"
 msgstr ""
 "mount: a(z) %s hurokeszközt egy másik folyamat ellopta... újrapróbálom\n"
 
-#: mount/lomount.c:1082
+#: mount/lomount.c:1073
 #, fuzzy, c-format
 msgid "%s: %s: device is busy"
 msgstr "mount: a(z) %s foglalt"
 
-#: mount/lomount.c:1099
+#: mount/lomount.c:1090
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
 msgstr ""
@@ -9512,42 +9522,42 @@ msgstr "Nem rendszergazda.\n"
 msgid "%s: swapoff failed"
 msgstr "%s meghiúsult.\n"
 
-#: mount/umount.c:40
+#: mount/umount.c:41
 #, c-format
 msgid "umount: compiled without support for -f\n"
 msgstr "umount: a program a -f kapcsoló támogatása nélkül lett lefordítva\n"
 
-#: mount/umount.c:110
+#: mount/umount.c:111
 #, c-format
 msgid "umount: cannot set group id: %s"
 msgstr "umount: nem állítható be a csoportazonosító: %s"
 
-#: mount/umount.c:113
+#: mount/umount.c:114
 #, c-format
 msgid "umount: cannot set user id: %s"
 msgstr "mount: nem állítható be a felhasználóazonosító: %s"
 
-#: mount/umount.c:138
+#: mount/umount.c:139
 #, c-format
 msgid "umount: cannot fork: %s"
 msgstr "mount: nem indítható program: %s"
 
-#: mount/umount.c:159
+#: mount/umount.c:160
 #, c-format
 msgid "umount: %s: invalid block device"
 msgstr "umount: %s érvénytelen blokkeszköz"
 
-#: mount/umount.c:161
+#: mount/umount.c:162
 #, c-format
 msgid "umount: %s: not mounted"
 msgstr "umount: %s nincs csatolva"
 
-#: mount/umount.c:163
+#: mount/umount.c:164
 #, c-format
 msgid "umount: %s: can't write superblock"
 msgstr "umount: %s szuperblokkja nem írható"
 
-#: mount/umount.c:167
+#: mount/umount.c:168
 #, c-format
 msgid ""
 "umount: %s: device is busy.\n"
@@ -9558,51 +9568,51 @@ msgstr ""
 "        (Egyes esetekben az eszközt használó folyamatokról hasznos\n"
 "         információkat talál az lsof(8) vagy fuser(1))"
 
-#: mount/umount.c:172
+#: mount/umount.c:173
 #, c-format
 msgid "umount: %s: not found"
 msgstr "umount: %s nem található"
 
-#: mount/umount.c:174
+#: mount/umount.c:175
 #, c-format
 msgid "umount: %s: must be superuser to umount"
 msgstr "umount: %s leválasztásához rendszergazdai jog szükséges"
 
-#: mount/umount.c:176
+#: mount/umount.c:177
 #, c-format
 msgid "umount: %s: block devices not permitted on fs"
 msgstr "umount: a blokkeszközök nem engedélyezettek ezen a fájlrendszeren (%s)"
 
-#: mount/umount.c:178
+#: mount/umount.c:179
 #, c-format
 msgid "umount: %s: %s"
 msgstr "umount: %s: %s"
 
-#: mount/umount.c:234
+#: mount/umount.c:235
 #, c-format
 msgid "no umount2, trying umount...\n"
 msgstr "nem található az umount2, kísérlet az umount használatára...\n"
 
-#: mount/umount.c:251
+#: mount/umount.c:252
 #, c-format
 msgid "umount: %s busy - remounted read-only\n"
 msgstr "umount: a(z) %s foglalt - újracsatolva csak olvashatóként\n"
 
-#: mount/umount.c:262
+#: mount/umount.c:263
 #, c-format
 msgid "umount: could not remount %s read-only\n"
 msgstr "umount: nem csatolható újra csak olvashatóként a következő: %s\n"
 
-#: mount/umount.c:271
+#: mount/umount.c:272
 #, c-format
 msgid "%s umounted\n"
 msgstr "%s leválasztva\n"
 
-#: mount/umount.c:366
+#: mount/umount.c:367
 msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: nem található a leválasztandó fájlrendszerek listája"
 
-#: mount/umount.c:396
+#: mount/umount.c:397
 #, fuzzy, c-format
 msgid ""
 "Usage: umount -h | -V\n"
@@ -9614,56 +9624,66 @@ msgstr ""
 "kapcsolók]\n"
 "           umount [-f] [-r] [-n] [-v] speciális | csomópont...\n"
 
-#: mount/umount.c:446
+#: mount/umount.c:466
+#, fuzzy, c-format
+msgid "device %s is associated with %s\n"
+msgstr "figyelmeztetés: a(z) %s már társítva van a következőhöz: %s\n"
+
+#: mount/umount.c:472
+#, fuzzy, c-format
+msgid "device %s is not associated with %s\n"
+msgstr "figyelmeztetés: a(z) %s már társítva van a következőhöz: %s\n"
+
+#: mount/umount.c:485
 msgid "Cannot umount \"\"\n"
 msgstr "Nem választható le: „”\n"
 
-#: mount/umount.c:452
+#: mount/umount.c:491
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr "Kísérlet a következő leválasztására: %s\n"
 
-#: mount/umount.c:465
+#: mount/umount.c:504
 msgid "umount: confused when analyzing mtab"
 msgstr ""
 
-#: mount/umount.c:470
+#: mount/umount.c:509
 #, c-format
 msgid "umount: cannot umount %s -- %s is mounted over it on the same point."
 msgstr ""
 
-#: mount/umount.c:477
+#: mount/umount.c:516
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "A(z) %s nem található az mtab fájlban\n"
 
-#: mount/umount.c:484
+#: mount/umount.c:523
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: a(z) %s nincs csatolva (az mtab fájl alapján)"
 
-#: mount/umount.c:508
+#: mount/umount.c:547
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: úgy tűnik, hogy a(z) %s többször került csatolásra"
 
-#: mount/umount.c:521
+#: mount/umount.c:561
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr "umount: a(z) %s nincs az fstab fájlban (és Ön nem rendszergazda)"
 
-#: mount/umount.c:525
+#: mount/umount.c:567
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: a(z) %s csatolás nem egyezik az fstab tartalmával"
 
-#: mount/umount.c:566
+#: mount/umount.c:608
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr ""
 "umount: csak a(z) %s felhasználó választhatja le a(z) %s eszközt a(z) %s alól"
 
-#: mount/umount.c:653
+#: mount/umount.c:695
 msgid "umount: only root can do that"
 msgstr "umount: ezt csak a rendszergazda teheti meg"
 
@@ -9807,16 +9827,6 @@ msgstr ""
 #, fuzzy
 msgid "execvp failed"
 msgstr "a végrehajtás meghiúsult\n"
-
-#: shlibs/blkid/bin/findfs.c:24
-#, c-format
-msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
-msgstr ""
-
-#: shlibs/blkid/bin/findfs.c:55
-#, fuzzy, c-format
-msgid "unable to resolve '%s'"
-msgstr "%s nem nyitható meg"
 
 #: sys-utils/ctrlaltdel.c:27
 #, c-format
@@ -10707,7 +10717,7 @@ msgstr "z.szám"
 msgid "pid"
 msgstr "f.az"
 
-#: sys-utils/ldattach.c:87
+#: sys-utils/ldattach.c:92
 #, c-format
 msgid ""
 "\n"
@@ -10716,7 +10726,7 @@ msgstr ""
 "\n"
 "Használat: %s [ -dhV78neo12 ] [ -s <sebesség> ] <llemez> <eszköz>\n"
 
-#: sys-utils/ldattach.c:89
+#: sys-utils/ldattach.c:94
 msgid ""
 "\n"
 "Known <ldisc> names:\n"
@@ -10724,51 +10734,51 @@ msgstr ""
 "\n"
 "Ismert <llemez> nevek:\n"
 
-#: sys-utils/ldattach.c:174
+#: sys-utils/ldattach.c:179
 #, c-format
 msgid "invalid speed: %s"
 msgstr "érvénytelen sebesség: %s"
 
-#: sys-utils/ldattach.c:177
+#: sys-utils/ldattach.c:182
 #, c-format
 msgid "ldattach from %s\n"
 msgstr "ldattach innen: %s\n"
 
-#: sys-utils/ldattach.c:182 text-utils/tailf.c:195
+#: sys-utils/ldattach.c:187 text-utils/tailf.c:195
 msgid "invalid option"
 msgstr "érvénytelen kapcsoló"
 
 # fixme: mi ez?
-#: sys-utils/ldattach.c:194
+#: sys-utils/ldattach.c:199
 #, c-format
 msgid "invalid line discipline: %s"
 msgstr "érvénytelen sorelv: %s"
 
-#: sys-utils/ldattach.c:202
+#: sys-utils/ldattach.c:207
 #, c-format
 msgid "%s is not a serial line"
 msgstr "%s nem soros vonal"
 
-#: sys-utils/ldattach.c:208
+#: sys-utils/ldattach.c:213
 #, c-format
 msgid "cannot get terminal attributes for %s"
 msgstr "a(z) %s terminálattribútumai nem kérhetők le"
 
-#: sys-utils/ldattach.c:211
+#: sys-utils/ldattach.c:216
 #, c-format
 msgid "speed %d unsupported"
 msgstr "a sebesség (%d) nem támogatott"
 
-#: sys-utils/ldattach.c:242
+#: sys-utils/ldattach.c:247
 #, c-format
 msgid "cannot set terminal attributes for %s"
 msgstr "a(z) %s terminálattribútumai nem állíthatók be"
 
-#: sys-utils/ldattach.c:249
+#: sys-utils/ldattach.c:254
 msgid "cannot set line discipline"
 msgstr "nem állítható be a sorelv"
 
-#: sys-utils/ldattach.c:255
+#: sys-utils/ldattach.c:260
 msgid "cannot daemonize"
 msgstr "nem démonizálható"
 

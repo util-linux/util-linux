@@ -58,8 +58,10 @@ login-utils/simpleinit.c
 login-utils/ttymsg.c
 login-utils/vipw.c
 login-utils/wall.c
+misc-utils/blkid.c
 misc-utils/cal.c
 misc-utils/ddate.c
+misc-utils/findfs.c
 misc-utils/kill.c
 misc-utils/logger.c
 misc-utils/look.c
@@ -96,8 +98,6 @@ partx/unixware.c
 schedutils/chrt.c
 schedutils/ionice.c
 schedutils/taskset.c
-shlibs/blkid/bin/blkid.c
-shlibs/blkid/bin/findfs.c
 shlibs/blkid/src/cache.c
 shlibs/blkid/src/config.c
 shlibs/blkid/src/dev.c
