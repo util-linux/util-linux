@@ -94,7 +94,7 @@
 #define _PATH_MOUNTED_TMP	_PATH_MOUNTED ".tmp"
 
 #ifndef _PATH_DEV
-# define _PATH_DEV		"/dev"
+# define _PATH_DEV		"/dev/"
 #endif
 
 #define _PATH_DEV_LOOP		"/dev/loop"

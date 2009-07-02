@@ -178,7 +178,7 @@ looplist_open_dev(struct looplist *ll, int lnum)
 	snprintf(ll->name, sizeof(ll->name),
 		ll->flag & LLFLG_SUBDIR ?
 			_PATH_DEV_LOOP "/%d" :
-			_PATH_DEV "/loop%d",
+			_PATH_DEV "loop%d",
 		lnum);
 
 	fd = open(ll->name, O_RDONLY);
