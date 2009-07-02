@@ -14,3 +14,5 @@ kill
 write
 uuidgen
 uuidd
+findfs
+blkid

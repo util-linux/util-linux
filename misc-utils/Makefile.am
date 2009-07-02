@@ -3,6 +3,7 @@ include $(top_srcdir)/config/include-Makefile.am
 EXTRA_DIST = README.flushb uuidd.rc
 
 bin_PROGRAMS =
+sbin_PROGRAMS =
 usrsbinexec_PROGRAMS =
 
 usrbinexec_PROGRAMS = cal ddate logger look mcookie \
@@ -28,6 +29,22 @@ usrsbinexec_PROGRAMS += uuidd
 dist_man_MANS += uuidd.8
 uuidd_LDADD = $(ul_libuuid_la)
 uuidd_CFLAGS = -I$(ul_libuuid_srcdir)
+endif
+endif
+
+if BUILD_LIBBLKID
+sbin_PROGRAMS += blkid findfs
+dist_man_MANS += blkid.8 findfs.8
+blkid_LDADD = $(ul_libblkid_la)
+blkid_CFLAGS = -I$(ul_libblkid_srcdir)
+findfs_LDADD = $(ul_libblkid_la)
+findfs_CFLAGS = -I$(ul_libblkid_srcdir)
+if HAVE_STATIC_BLKID
+sbin_PROGRAMS += blkid.static
+blkid_static_SOURCES = $(blkid_SOURCES)
+blkid_static_LDFLAGS = "-all-static"		# libtool option
+blkid_static_LDADD = $(ul_libblkid_la)
+blkid_static_CFLAGS = -I$(ul_libblkid_srcdir)
 endif
 endif
 

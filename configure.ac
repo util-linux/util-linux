@@ -911,7 +911,6 @@ mount/Makefile
 partx/Makefile
 po/Makefile.in
 schedutils/Makefile
-shlibs/blkid/bin/Makefile
 shlibs/blkid/blkid.pc
 shlibs/blkid/Makefile
 shlibs/blkid/src/Makefile

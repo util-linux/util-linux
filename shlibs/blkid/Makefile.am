@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-SUBDIRS = src bin
+SUBDIRS = src
 
 # pkg-config stuff
 pkgconfigdir = $(usrlibexecdir)/pkgconfig
