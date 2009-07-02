@@ -42,12 +42,15 @@ build-sys:
    - cleanup libuuid stuff  [Karel Zak]
    - complete /libs to /shlibs rename  [Karel Zak]
    - enable fsck by default  [Karel Zak]
+   - fix "make -C" bug  [Karel Zak]
+   - fix --disable-uuidd  [Karel Zak]
    - fix blkid.h include for old e2fsprogs  [Karel Zak]
-   - fix --disable-uuidd
    - fix headers in mkswap and libblkid  [Karel Zak]
    - fix libuuid Makefile.am  [Karel Zak]
-   - fix "make -C" bug  [Karel Zak]
+   - release++ (v2.16-rc1)  [Karel Zak]
    - rename /libs to /shlibs  [Karel Zak]
+buildsys:
+   - move $usr{bin,sbin,lib}execdir definition to ./configure  [Karel Zak]
 cal:
    - Highlight today even when month or year specified  [Rajeev V. Pillai]
    - uClibc has langinfo.h but not _NL_TIME_WEEK_1STDAY.  [Tom Prince]
@@ -55,33 +58,52 @@ chrt:
    - don't assume SCHED_BATCH and SCHED_IDLE exist  [Aurelien Jarno]
 docs:
    - add missing commands/projects to AUTHORS file  [Karel Zak]
+   - add v2.16 ReleaseNotes  [Karel Zak]
    - refresh TODO list  [Karel Zak]
+   - remove example.files/rc[.local]  [Karel Zak]
    - remove obsolete information from fstab example  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
+   - update v2.16-ReleaseNotes  [Karel Zak]
 fdisk:
    - (and cfdisk) fix to be consistent about maximum heads  [Chris Webb]
    - add simple test for doslabel stuff  [Zdenek Behan]
 hwclock:
    - fix mismatched popen/fclose.  [John Keeping]
+include:
+   - clean up _PATH_DEV_* macros  [Karel Zak]
+   - fix _PATH_DEV  [Karel Zak]
 ionice:
    - Allow setting the none class  [Jakob Unterwurzacher]
+ldattach:
+   - add N_PPS support  [Tilman Schmidt]
 libblkid:
    - add device-mapper snapshot cow device probe  [Milan Broz]
+   - add install-hook for libuuid.[a,so] devel files  [Karel Zak]
    - blkid_do_safeprobe() has to be tolerant to RAIDs  [Karel Zak]
    - cleanup debug messages and return codes in blkid_do_probe()  [Karel Zak]
    - don't require udev symlinks verification for non-root users  [Karel Zak]
    - fix "hangs forever with partition type mdraid"  [Karel Zak]
+   - fix #ifdefs readability  [Karel Zak]
+   - fix $libdir in blkid.pc  [Karel Zak]
    - fix LVM1 probe  [Milan Broz]
    - fix reiserfs name  [Karel Zak]
    - make libuuid optional  [Karel Zak]
+   - move to misc-utils/ directory  [Karel Zak]
    - update man page  [Karel Zak]
 libuuid:
+   - Don't run uuidd if it would fail due to permission problems  [Theodore Ts'o]
+   - Make sure fd's 0, 1, and 2 are valid before exec'ing uuidd  [Theodore Ts'o]
    - add --disable-libuuid and LIBUUID_VERSION  [Karel Zak]
    - add .gitignore  [Karel Zak]
    - add info about u-l-ng to man pages  [Karel Zak]
+   - add install-hook for libuuid.[a,so] devel files  [Karel Zak]
+   - fix $libdir in uuid.pc  [Karel Zak]
    - import UUID library from e2fsprogs  [Karel Zak]
+libuuid, uuidd:
+   - Avoid infinite loop while reading from the socket fd  [Theodore Ts'o]
 losetup:
    - add --set-capacity  [Karel Zak]
+   - fix return codes of functions arounf is_associated()  [Karel Zak]
    - handle symlinks in /dev/loop/  [Mike Frysinger]
    - suggest to use modprobe rather than insmod in losetup.8  [Karel Zak]
 lscpu:
@@ -92,6 +114,7 @@ mount:
    - add ext4 to mount.8  [Karel Zak]
    - add ext4 to the list of filesystems in mount.8  [Karel Zak]
    - add info about obsolete vfat options to mount.8  [Karel Zak]
+   - allow loop suid umount  [Kay Sievers]
    - cleanup notes about -l option in mount.8  [Karel Zak]
    - fix undefined reference to `security_get_initial_context'  [Karel Zak]
    - move MS_{PROPAGATION,BIND,MOVE} detection  [Karel Zak]
@@ -102,6 +125,9 @@ po:
    - merge changes  [Karel Zak]
    - refresh POTFILES.in  [Karel Zak]
    - update vi.po (from translationproject.org)  [Clytie Siddall]
+raw:
+   - Use the RAW_SETBIND ioctl without stat'ing the raw# file  [Jeff Mahoney]
+   - undeprecate raw  [Karel Zak]
 switch_root:
    - add man page  [Karel Zak]
    - clean up argv[] usage, add -h and -V  [Karel Zak]
@@ -125,7 +151,11 @@ tests:
 umount:
    - clean up help output  [Karel Zak]
 uuidd:
+   - Avoid closing the server socket when calling create_daemon()  [Theodore Ts'o]
+   - fix $PIDFILE in uuidd.rc  [Karel Zak]
+   - init /var/run/uuidd, add option for on-demand mode to .rc file  [Karel Zak]
+   - move uuidd files from /var/lib/libuuid to /var/run/uuidd  [Karel Zak]
+   - move uuidd.rc to misc-utils directory  [Karel Zak]
    - new command (UUID daemon from e2fsprogs)  [Karel Zak]
 uuidgen:
    - new command (from e2fsprogs)  [Karel Zak]
-
