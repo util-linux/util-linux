@@ -124,6 +124,8 @@ install-exec-hook::
 	cd $(DESTDIR)$(sbindir) && ln -sf initctl need
 	cd $(DESTDIR)$(sbindir) && ln -sf initctl display-services
 	cd $(DESTDIR)$(sbindir) && ln -sf initctl provide
+
+install-data-hook:
 	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 need.8
 	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 display-services.8
 	cd $(DESTDIR)$(mandir)/man8 && ln -sf initctl.8 provide.8

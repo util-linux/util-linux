@@ -50,7 +50,7 @@ test_%: %.c
 
 
 # move lib from $(usrlibexecdir) to $(libdir) if needed
-install-data-hook:
+install-exec-hook:
 	if test "$(usrlibexecdir)" != "$(libdir)"; then \
 		mkdir -p $(DESTDIR)$(libdir); \
 		mv $(DESTDIR)$(usrlibexecdir)/libblkid.so.* $(DESTDIR)$(libdir); \
