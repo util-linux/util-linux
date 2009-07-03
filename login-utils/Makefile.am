@@ -1,9 +1,9 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS =
-usrbinexec_PROGRAMS =
+usrbin_exec_PROGRAMS =
 sbin_PROGRAMS =
-usrsbinexec_PROGRAMS =
+usrsbin_exec_PROGRAMS =
 dist_man_MANS =
 
 EXTRA_DIST = README.getty  README.modems-with-agetty  README.poeigl
@@ -29,15 +29,15 @@ endif
 endif
 
 if BUILD_LAST
-usrbinexec_PROGRAMS += last
+usrbin_exec_PROGRAMS += last
 dist_man_MANS += last.1
 endif
 
 if BUILD_LOGIN_UTILS
 
 bin_PROGRAMS += login
-usrbinexec_PROGRAMS += chfn chsh newgrp
-usrsbinexec_PROGRAMS += vipw
+usrbin_exec_PROGRAMS += chfn chsh newgrp
+usrsbin_exec_PROGRAMS += vipw
 dist_man_MANS += chfn.1 chsh.1 login.1 newgrp.1 vipw.8 vigr.8
 
 chfn_SOURCES = chfn.c $(chfn_chsh_common)
@@ -91,25 +91,25 @@ endif
 
 
 install-exec-hook::
-	cd $(DESTDIR)$(usrsbinexecdir) && ln -sf vipw vigr
+	cd $(DESTDIR)$(usrsbin_execdir) && ln -sf vipw vigr
 
 endif
 
 if BUILD_MESG
-usrbinexec_PROGRAMS += mesg
+usrbin_exec_PROGRAMS += mesg
 dist_man_MANS += mesg.1
 endif
 
 if BUILD_WALL
-usrbinexec_PROGRAMS += wall
+usrbin_exec_PROGRAMS += wall
 wall_SOURCES = wall.c ttymsg.c ttymsg.h
 dist_man_MANS += wall.1
 
 if USE_TTY_GROUP
 if MAKEINSTALL_DO_CHOWN
 install-exec-hook::
-	chgrp tty $(DESTDIR)$(usrbinexecdir)/wall
-	chmod g+s $(DESTDIR)$(usrbinexecdir)/wall
+	chgrp tty $(DESTDIR)$(usrbin_execdir)/wall
+	chmod g+s $(DESTDIR)$(usrbin_execdir)/wall
 endif
 endif
 endif

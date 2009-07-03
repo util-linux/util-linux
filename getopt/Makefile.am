@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-usrbinexec_PROGRAMS = getopt
+usrbin_exec_PROGRAMS = getopt
 dist_man_MANS = getopt.1
 
 exampledir = $(datadir)/getopt/

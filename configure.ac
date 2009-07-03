@@ -50,14 +50,14 @@ esac
 AC_SUBST([libdirname])
 
 # The original default values of {bin,sbin,lib}dir
-usrbinexecdir='${exec_prefix}/bin'
-AC_SUBST([usrbinexecdir])
+usrbin_execdir='${_exec_prefix}/bin'
+AC_SUBST([usrbin_execdir])
 
-usrsbinexecdir='${exec_prefix}/sbin'
-AC_SUBST([usrsbinexecdir])
+usrsbin_execdir='${_exec_prefix}/sbin'
+AC_SUBST([usrsbin_execdir])
 
-usrlibexecdir='${exec_prefix}/'$libdirname
-AC_SUBST([usrlibexecdir])
+usrlib_execdir='${_exec_prefix}/'$libdirname
+AC_SUBST([usrlib_execdir])
 
 
 AC_PROG_CC_STDC

@@ -17,13 +17,13 @@ mkswap_SOURCES = mkswap.c $(utils_common) ../lib/wholedisk.c ../lib/pttype.c
 mkswap_LDADD =
 mkswap_CFLAGS =
 
-usrbinexec_PROGRAMS = isosize
-usrsbinexec_PROGRAMS =
+usrbin_exec_PROGRAMS = isosize
+usrsbin_exec_PROGRAMS =
 
 if LINUX
 dist_man_MANS += fdformat.8 blockdev.8
 sbin_PROGRAMS += blockdev
-usrsbinexec_PROGRAMS += fdformat
+usrsbin_exec_PROGRAMS += fdformat
 blockdev_SOURCES = blockdev.c $(utils_common)
 endif
 

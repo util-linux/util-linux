@@ -3,7 +3,7 @@ include $(top_srcdir)/config/include-Makefile.am
 SUBDIRS = src
 
 # pkg-config stuff
-pkgconfigdir = $(usrlibexecdir)/pkgconfig
+pkgconfigdir = $(usrlib_execdir)/pkgconfig
 pkgconfig_DATA = blkid.pc
 
 dist_man_MANS = libblkid.3

@@ -21,7 +21,7 @@ AM_CPPFLAGS += -I$(ul_libblkid_srcdir) $(common_cflags)
 blkidincdir = $(includedir)/blkid
 blkidinc_HEADERS = blkid.h
 
-usrlibexec_LTLIBRARIES = libblkid.la
+usrlib_exec_LTLIBRARIES = libblkid.la
 libblkid_la_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 		     probe.c read.c resolve.c save.c tag.c version.c verify.c \
 		     encode.c blkid.h list.h blkidP.h probers/probers.h \
@@ -49,14 +49,14 @@ test_%: %.c
 	$(COMPILE) -DTEST_PROGRAM $< .libs/libblkid.a -o $@ $(common_ldadd)
 
 
-# move lib from $(usrlibexecdir) to $(libdir) if needed
+# move lib from $(usrlib_execdir) to $(libdir) if needed
 install-exec-hook:
-	if test "$(usrlibexecdir)" != "$(libdir)"; then \
+	if test "$(usrlib_execdir)" != "$(libdir)"; then \
 		mkdir -p $(DESTDIR)$(libdir); \
-		mv $(DESTDIR)$(usrlibexecdir)/libblkid.so.* $(DESTDIR)$(libdir); \
-		so_img_name=$$(readlink $(DESTDIR)$(usrlibexecdir)/libblkid.so); \
-		so_img_rel_target=$$(echo $(usrlibexecdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
-		(cd $(DESTDIR)$(usrlibexecdir) && \
+		mv $(DESTDIR)$(usrlib_execdir)/libblkid.so.* $(DESTDIR)$(libdir); \
+		so_img_name=$$(readlink $(DESTDIR)$(usrlib_execdir)/libblkid.so); \
+		so_img_rel_target=$$(echo $(usrlib_execdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
+		(cd $(DESTDIR)$(usrlib_execdir) && \
 			rm -f libblkid.so && \
 			$(LN_S) $$so_img_rel_target$(libdir)/$$so_img_name libblkid.so); \
 	fi

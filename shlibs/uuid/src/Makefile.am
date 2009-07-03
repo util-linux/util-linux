@@ -10,7 +10,7 @@ tst_uuid_CFLAGS = -I$(ul_libuuid_srcdir)
 uuidincdir = $(includedir)/uuid
 uuidinc_HEADERS = uuid.h
 
-usrlibexec_LTLIBRARIES = libuuid.la
+usrlib_exec_LTLIBRARIES = libuuid.la
 libuuid_la_SOURCES = clear.c compare.c copy.c gen_uuid.c \
            isnull.c pack.c parse.c unpack.c unparse.c uuidd.h \
            uuidd.h uuidP.h uuid_time.c $(uuidinc_HEADERS)
@@ -30,14 +30,14 @@ test_%: %.c
 	$(COMPILE) -DTEST_PROGRAM $< .libs/libuuid.a -o $@
 
 
-# move lib from $(usrlibexecdir) to $(libdir) if needed
+# move lib from $(usrlib_execdir) to $(libdir) if needed
 install-exec-hook:
-	if test "$(usrlibexecdir)" != "$(libdir)"; then \
+	if test "$(usrlib_execdir)" != "$(libdir)"; then \
 		mkdir -p $(DESTDIR)$(libdir); \
-		mv $(DESTDIR)$(usrlibexecdir)/libuuid.so.* $(DESTDIR)$(libdir); \
-		so_img_name=$$(readlink $(DESTDIR)$(usrlibexecdir)/libuuid.so); \
-		so_img_rel_target=$$(echo $(usrlibexecdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
-		(cd $(DESTDIR)$(usrlibexecdir) && \
+		mv $(DESTDIR)$(usrlib_execdir)/libuuid.so.* $(DESTDIR)$(libdir); \
+		so_img_name=$$(readlink $(DESTDIR)$(usrlib_execdir)/libuuid.so); \
+		so_img_rel_target=$$(echo $(usrlib_execdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
+		(cd $(DESTDIR)$(usrlib_execdir) && \
 			rm -f libuuid.so && \
 			$(LN_S) $$so_img_rel_target$(libdir)/$$so_img_name libuuid.so); \
 	fi

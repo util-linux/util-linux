@@ -2,8 +2,8 @@ include $(top_srcdir)/config/include-Makefile.am
 
 bin_PROGRAMS =
 sbin_PROGRAMS =
-usrbinexec_PROGRAMS = flock ipcrm ipcs ipcmk renice setsid
-usrsbinexec_PROGRAMS = readprofile
+usrbin_exec_PROGRAMS = flock ipcrm ipcs ipcmk renice setsid
+usrsbin_exec_PROGRAMS = readprofile
 
 dist_man_MANS = flock.1 ipcrm.1 ipcs.1 ipcmk.1 renice.1 setsid.1 \
 		readprofile.1
@@ -11,8 +11,8 @@ dist_man_MANS = flock.1 ipcrm.1 ipcs.1 ipcmk.1 renice.1 setsid.1 \
 if LINUX
 bin_PROGRAMS += dmesg
 sbin_PROGRAMS += ctrlaltdel
-usrbinexec_PROGRAMS += cytune setarch lscpu
-usrsbinexec_PROGRAMS += ldattach tunelp rtcwake
+usrbin_exec_PROGRAMS += cytune setarch lscpu
+usrsbin_exec_PROGRAMS += ldattach tunelp rtcwake
 
 dist_man_MANS += dmesg.1 ctrlaltdel.8 cytune.8 setarch.8 \
 		ldattach.8 lscpu.1 tunelp.8 rtcwake.8
@@ -40,7 +40,7 @@ endif
 
 RDEV_LINKS =
 if BUILD_RDEV
-usrsbinexec_PROGRAMS += rdev
+usrsbin_exec_PROGRAMS += rdev
 RDEV_LINKS += ramsize vidmode rootflags
 dist_man_MANS += rdev.8
 endif
@@ -85,17 +85,17 @@ $(SETARCH_MAN_LINKS): setarch.8
 
 install-exec-hook:
 	for I in $(RDEV_LINKS); do \
-		cd $(DESTDIR)$(usrsbinexecdir) && ln -sf rdev $$I ; \
+		cd $(DESTDIR)$(usrsbin_execdir) && ln -sf rdev $$I ; \
 	done
 	for I in $(SETARCH_LINKS); do \
-		cd $(DESTDIR)$(usrbinexecdir) && ln -sf setarch $$I ; \
+		cd $(DESTDIR)$(usrbin_execdir) && ln -sf setarch $$I ; \
 	done
 
 uninstall-hook:
 	for I in $(RDEV_LINKS); do \
-		rm -f $(DESTDIR)$(usrbinexecdir)/$$I ; \
+		rm -f $(DESTDIR)$(usrbin_execdir)/$$I ; \
 	done
 	for I in $(SETARCH_LINKS); do \
-		rm -f $(DESTDIR)$(usrbinexecdir)/$$I ; \
+		rm -f $(DESTDIR)$(usrbin_execdir)/$$I ; \
 	done
 
