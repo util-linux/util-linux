@@ -37,7 +37,9 @@ install-exec-hook:
 		mv $(DESTDIR)$(usrlibexecdir)/libuuid.so.* $(DESTDIR)$(libdir); \
 		so_img_name=$$(readlink $(DESTDIR)$(usrlibexecdir)/libuuid.so); \
 		so_img_rel_target=$$(echo $(usrlibexecdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
-		ln -sf  $$so_img_rel_target$(libdir)/$$so_img_name $(DESTDIR)$(usrlibexecdir)/libuuid.so; \
+		(cd $(DESTDIR)$(usrlibexecdir) && \
+			rm -f libuuid.so && \
+			$(LN_S) $$so_img_rel_target$(libdir)/$$so_img_name libuuid.so); \
 	fi
 
 uninstall-hook:

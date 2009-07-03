@@ -56,7 +56,9 @@ install-exec-hook:
 		mv $(DESTDIR)$(usrlibexecdir)/libblkid.so.* $(DESTDIR)$(libdir); \
 		so_img_name=$$(readlink $(DESTDIR)$(usrlibexecdir)/libblkid.so); \
 		so_img_rel_target=$$(echo $(usrlibexecdir) | sed 's,\(^/\|\)[^/][^/]*,..,g'); \
-		ln -sf  $$so_img_rel_target$(libdir)/$$so_img_name $(DESTDIR)$(usrlibexecdir)/libblkid.so; \
+		(cd $(DESTDIR)$(usrlibexecdir) && \
+			rm -f libblkid.so && \
+			$(LN_S) $$so_img_rel_target$(libdir)/$$so_img_name libblkid.so); \
 	fi
 
 uninstall-hook:
