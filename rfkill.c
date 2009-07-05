@@ -49,7 +49,7 @@ static void rfkill_event(void)
 			break;
 		}
 
-		if (len != sizeof(event)) {
+		if (len != RFKILL_EVENT_SIZE_V1) {
 			fprintf(stderr, "Wrong size of RFKILL event\n");
 			continue;
 		}
@@ -137,7 +137,7 @@ static void rfkill_list(void)
 			break;
 		}
 
-		if (len != sizeof(event)) {
+		if (len != RFKILL_EVENT_SIZE_V1) {
 			fprintf(stderr, "Wrong size of RFKILL event\n");
 			continue;
 		}
