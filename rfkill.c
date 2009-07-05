@@ -18,8 +18,7 @@
 
 static void rfkill_event(void)
 {
-	unsigned char buf[32];
-	struct rfkill_event *event = (void *) buf;
+	struct rfkill_event event;
 	struct pollfd p;
 	ssize_t len;
 	int fd, n;
@@ -44,20 +43,20 @@ static void rfkill_event(void)
 		if (n == 0)
 			continue;
 
-		len = read(fd, buf, sizeof(buf));
+		len = read(fd, &event, sizeof(event));
 		if (len < 0) {
 			perror("Reading of RFKILL events failed");
 			break;
 		}
 
-		if (len != sizeof(struct rfkill_event)) {
+		if (len != sizeof(event)) {
 			fprintf(stderr, "Wrong size of RFKILL event\n");
 			continue;
 		}
 
 		printf("RFKILL event: idx %u type %u op %u soft %u hard %u\n",
-					event->idx, event->type, event->op,
-						event->soft, event->hard);
+					event.idx, event.type, event.op,
+					event.soft, event.hard);
 	}
 
 	close(fd);
@@ -113,8 +112,7 @@ static const char *type2string(enum rfkill_type type)
 
 static void rfkill_list(void)
 {
-	unsigned char buf[32];
-	struct rfkill_event *event = (void *) buf;
+	struct rfkill_event event;
 	const char *name;
 	ssize_t len;
 	int fd;
@@ -131,7 +129,7 @@ static void rfkill_list(void)
 	}
 
 	while (1) {
-		len = read(fd, buf, sizeof(buf));
+		len = read(fd, &event, sizeof(event));
 		if (len < 0) {
 			if (errno == EAGAIN)
 				break;
@@ -139,20 +137,20 @@ static void rfkill_list(void)
 			break;
 		}
 
-		if (len != sizeof(struct rfkill_event)) {
+		if (len != sizeof(event)) {
 			fprintf(stderr, "Wrong size of RFKILL event\n");
 			continue;
 		}
 
-		if (event->op != RFKILL_OP_ADD)
+		if (event.op != RFKILL_OP_ADD)
 			continue;
 
-		name = get_name(event->idx);
+		name = get_name(event.idx);
 
-		printf("%u: %s: %s\n", event->idx, name,
-						type2string(event->type));
-		printf("\tSoft blocked: %s\n", event->soft ? "yes" : "no");
-		printf("\tHard blocked: %s\n", event->hard ? "yes" : "no");
+		printf("%u: %s: %s\n", event.idx, name,
+						type2string(event.type));
+		printf("\tSoft blocked: %s\n", event.soft ? "yes" : "no");
+		printf("\tHard blocked: %s\n", event.hard ? "yes" : "no");
 	}
 
 	close(fd);
