@@ -17,7 +17,7 @@ libuuid_la_SOURCES = clear.c compare.c copy.c gen_uuid.c \
 libuuid_la_DEPENDENCIES = uuid.sym
 
 libuuid_la_LDFLAGS = -Wl,--version-script=$(ul_libuuid_srcdir)/uuid.sym \
-                     -version-info 1:0:0
+                     -version-info $(LIBUUID_VERSION_INFO)
 
 EXTRA_DIST = uuid.sym gen_uuid_nt.c
 

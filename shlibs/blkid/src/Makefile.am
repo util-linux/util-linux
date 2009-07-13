@@ -36,7 +36,7 @@ libblkid_la_LIBADD = probers/libblkid_probers.la $(common_ldadd)
 libblkid_la_DEPENDENCIES = $(libblkid_la_LIBADD) blkid.sym
 
 libblkid_la_LDFLAGS = -Wl,--version-script=$(ul_libblkid_srcdir)/blkid.sym \
-                      -version-info 1:0:0
+                      -version-info $(LIBBLKID_VERSION_INFO)
 
 tests = test_cache test_config test_dev test_devname test_devno test_getsize \
 	test_read test_resolve test_save test_tag test_verify test_evaluate
