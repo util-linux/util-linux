@@ -42,11 +42,7 @@ NONE:NONE | NONE:/usr | /usr:*)
   esac ;;
 esac
 
-# lib64
-case ${libdir} in
-  *lib64) libdirname=lib64 ;;
-  *) libdirname=lib
-esac
+libdirname=`basename "$libdir"`
 AC_SUBST([libdirname])
 
 # The original default values of {bin,sbin,lib}dir
