@@ -18,6 +18,7 @@
 
 #include <sys/types.h>
 #include <stdio.h>
+#include <stdarg.h>
 
 #include "bitops.h"	/* $(top_srcdir)/include/ */
 #include "blkid.h"
