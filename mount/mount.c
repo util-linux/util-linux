@@ -1523,6 +1523,10 @@ mount_retry:
 	  error (_("mount: %s%s is write-protected but explicit `-w' flag given"),
 		 bd, spec);
 	  break;
+      } else if (flags & MS_REMOUNT) {
+	  error (_("mount: cannot remount %s%s read-write, is write-protected"),
+		 bd, spec);
+	  break;
       } else {
 	 opts = opts0;
 	 types = types0;
