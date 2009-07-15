@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-07-02 14:56+0200\n"
+"POT-Creation-Date: 2009-07-15 23:23+0200\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -8180,7 +8180,7 @@ msgstr ""
 msgid "mount: cannot set user id: %s"
 msgstr ""
 
-#: mount/mount.c:705 mount/mount.c:1805
+#: mount/mount.c:705 mount/mount.c:1809
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr ""
@@ -8472,22 +8472,27 @@ msgstr ""
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr ""
 
-#: mount/mount.c:1538
+#: mount/mount.c:1527
+#, c-format
+msgid "mount: cannot remount %s%s read-write, is write-protected"
+msgstr ""
+
+#: mount/mount.c:1542
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr ""
 
-#: mount/mount.c:1548
+#: mount/mount.c:1552
 #, c-format
 msgid "mount: no medium found on %s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:1554
+#: mount/mount.c:1558
 #, c-format
 msgid "mount: no medium found on %s"
 msgstr ""
 
-#: mount/mount.c:1572
+#: mount/mount.c:1576
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -8497,22 +8502,22 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 
-#: mount/mount.c:1651
+#: mount/mount.c:1655
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 
-#: mount/mount.c:1657
+#: mount/mount.c:1661
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 
-#: mount/mount.c:1752
+#: mount/mount.c:1756
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr ""
 
-#: mount/mount.c:1886
+#: mount/mount.c:1890
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -8549,19 +8554,19 @@ msgid ""
 "For many more details, say  man 8 mount .\n"
 msgstr ""
 
-#: mount/mount.c:2209
+#: mount/mount.c:2213
 msgid "mount: only root can do that"
 msgstr ""
 
-#: mount/mount.c:2219
+#: mount/mount.c:2223
 msgid "nothing was mounted"
 msgstr ""
 
-#: mount/mount.c:2237 mount/mount.c:2263
+#: mount/mount.c:2241 mount/mount.c:2267
 msgid "mount: no such partition found"
 msgstr ""
 
-#: mount/mount.c:2240
+#: mount/mount.c:2244
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr ""

@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng-2.14.2-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-07-02 14:56+0200\n"
+"POT-Creation-Date: 2009-07-15 23:23+0200\n"
 "PO-Revision-Date: 2009-01-31 20:52+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -8848,7 +8848,7 @@ msgstr "mount: kan groep-ID niet instellen: %s"
 msgid "mount: cannot set user id: %s"
 msgstr "mount: kan gebruiker-ID niet instellen: %s"
 
-#: mount/mount.c:705 mount/mount.c:1805
+#: mount/mount.c:705 mount/mount.c:1809
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: kan geen nieuw proces starten: %s"
@@ -9160,22 +9160,27 @@ msgstr "mount: kan %s%s niet aankoppelen voor alleen-lezen"
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s is schrijfbeveiligd, maar expliciete optie '-w' is gegeven"
 
-#: mount/mount.c:1538
+#: mount/mount.c:1527
+#, fuzzy, c-format
+msgid "mount: cannot remount %s%s read-write, is write-protected"
+msgstr "mount: kan %s%s niet aankoppelen voor alleen-lezen"
+
+#: mount/mount.c:1542
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s is schrijfbeveiligd en wordt als alleen-lezen aangekoppeld"
 
-#: mount/mount.c:1548
+#: mount/mount.c:1552
 #, c-format
 msgid "mount: no medium found on %s ...trying again\n"
 msgstr "mount: geen medium gevonden op %s; ... nieuwe poging\n"
 
-#: mount/mount.c:1554
+#: mount/mount.c:1558
 #, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: geen medium gevonden op %s"
 
-#: mount/mount.c:1572
+#: mount/mount.c:1576
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9193,23 +9198,23 @@ msgstr ""
 "bestandssysteem\n"
 "    kunnen krijgen.  Voor meer details zie restorecon(8) en mount(8).\n"
 
-#: mount/mount.c:1651
+#: mount/mount.c:1655
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: geen soort gegeven -- NFS aangenomen, vanwege de dubbele punt\n"
 
-#: mount/mount.c:1657
+#: mount/mount.c:1661
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: geen soort gegeven -- CIFS aangenomen, vanwege het //-voorvoegsel\n"
 
-#: mount/mount.c:1752
+#: mount/mount.c:1756
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s is al aangekoppeld op %s\n"
 
-#: mount/mount.c:1886
+#: mount/mount.c:1890
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9282,19 +9287,19 @@ msgstr ""
 "wachtwoordbestandsdescriptor].\n"
 "Voor meer informatie, zie man mount(8).\n"
 
-#: mount/mount.c:2209
+#: mount/mount.c:2213
 msgid "mount: only root can do that"
 msgstr "mount: alleen root kan dat doen"
 
-#: mount/mount.c:2219
+#: mount/mount.c:2223
 msgid "nothing was mounted"
 msgstr "er is niets aangekoppeld"
 
-#: mount/mount.c:2237 mount/mount.c:2263
+#: mount/mount.c:2241 mount/mount.c:2267
 msgid "mount: no such partition found"
 msgstr "mount: die partitie is niet gevonden"
 
-#: mount/mount.c:2240
+#: mount/mount.c:2244
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: kan %s niet vinden in %s noch in %s"

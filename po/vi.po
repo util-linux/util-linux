@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.15-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-07-02 14:56+0200\n"
+"POT-Creation-Date: 2009-07-15 23:23+0200\n"
 "PO-Revision-Date: 2009-05-13 20:37+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -8852,7 +8852,7 @@ msgstr "mount: không đặt được ID nhóm: %s"
 msgid "mount: cannot set user id: %s"
 msgstr "mount: không đặt được ID người dùng: %s"
 
-#: mount/mount.c:705 mount/mount.c:1805
+#: mount/mount.c:705 mount/mount.c:1809
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: không thể phân nhánh %s"
@@ -9163,22 +9163,27 @@ msgstr "mount: không gắn được %s%s với chế độ chỉ đọc"
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s được bảo vệ khỏi ghi nhưng đưa ra cờ `-w' (write, ghi)"
 
-#: mount/mount.c:1538
+#: mount/mount.c:1527
+#, fuzzy, c-format
+msgid "mount: cannot remount %s%s read-write, is write-protected"
+msgstr "mount: không gắn được %s%s với chế độ chỉ đọc"
+
+#: mount/mount.c:1542
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s được bảo vệ khỏi ghi, đang gắn chỉ đọc"
 
-#: mount/mount.c:1548
+#: mount/mount.c:1552
 #, c-format
 msgid "mount: no medium found on %s ...trying again\n"
 msgstr "mount: không tìm thấy vật chứa trên %s... nên thử lại\n"
 
-#: mount/mount.c:1554
+#: mount/mount.c:1558
 #, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: không tìm thấy vật chứa trên %s"
 
-#: mount/mount.c:1572
+#: mount/mount.c:1576
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9194,26 +9199,26 @@ msgstr ""
 "\tvà không có quyền truy cập đến hệ thống tập tin này.\n"
 "\tĐể tìm chi tiết, xem trang hướng dẫn (man) restorecon(8) và mount(8).\n"
 
-#: mount/mount.c:1651
+#: mount/mount.c:1655
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 "mount: không đưa ra kiểu hệ thống tập tin nên coi như nfs vì có dấu hai "
 "chấm\n"
 
-#: mount/mount.c:1657
+#: mount/mount.c:1661
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: không đưa ra kiểu hệ thống tập tin nên giả sử smbfs vì có // đằng "
 "trước\n"
 
-#: mount/mount.c:1752
+#: mount/mount.c:1756
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: đã gắn %s trên %s\n"
 
-#: mount/mount.c:1886
+#: mount/mount.c:1890
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9291,19 +9296,19 @@ msgstr ""
 "Tùy chọn khác: [-nfFrsvw] [-o tùy_chọn] [-p thư_mục_chứa_tập_tin_mật_khẩu].\n"
 "Để xem rất nhiều chi tiết, dùng lệnh « man 8 mount ».\n"
 
-#: mount/mount.c:2209
+#: mount/mount.c:2213
 msgid "mount: only root can do that"
 msgstr "mount: chỉ người chủ (root) có quyền thực hiện"
 
-#: mount/mount.c:2219
+#: mount/mount.c:2223
 msgid "nothing was mounted"
 msgstr "không gắn gì cả"
 
-#: mount/mount.c:2237 mount/mount.c:2263
+#: mount/mount.c:2241 mount/mount.c:2267
 msgid "mount: no such partition found"
 msgstr "mount: không tìm thấy phân vùng như vậy"
 
-#: mount/mount.c:2240
+#: mount/mount.c:2244
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: không tìm thấy %s trong %s hoặc %s"

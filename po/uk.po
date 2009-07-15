@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-07-02 14:56+0200\n"
+"POT-Creation-Date: 2009-07-15 23:23+0200\n"
 "PO-Revision-Date: 2006-04-06 10:45+0200\n"
 "Last-Translator: Maxim V. Dziumanenko <mvd@mylinux.com.ua>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
@@ -8803,7 +8803,7 @@ msgstr "mount: помилка встановлення швидкості: %s"
 msgid "mount: cannot set user id: %s"
 msgstr "mount: помилка встановлення швидкості: %s"
 
-#: mount/mount.c:705 mount/mount.c:1805
+#: mount/mount.c:705 mount/mount.c:1809
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: помилка створення процесу: %s"
@@ -9113,22 +9113,27 @@ msgstr "mount: не вдається підключити %s%s лише для �
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s захищений від запису, але було вказано ключ `-w'"
 
-#: mount/mount.c:1538
+#: mount/mount.c:1527
+#, fuzzy, c-format
+msgid "mount: cannot remount %s%s read-write, is write-protected"
+msgstr "mount: не вдається підключити %s%s лише для читання"
+
+#: mount/mount.c:1542
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s захищений від запису, монтується лише для читання"
 
-#: mount/mount.c:1548
+#: mount/mount.c:1552
 #, fuzzy, c-format
 msgid "mount: no medium found on %s ...trying again\n"
 msgstr "mount: не знайдено %s - створюється..\n"
 
-#: mount/mount.c:1554
+#: mount/mount.c:1558
 #, fuzzy, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: %s вже підключений у %s\n"
 
-#: mount/mount.c:1572
+#: mount/mount.c:1576
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9138,22 +9143,22 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 
-#: mount/mount.c:1651
+#: mount/mount.c:1655
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: не вказано тип - вважається nfs, через наявність двокрапки\n"
 
-#: mount/mount.c:1657
+#: mount/mount.c:1661
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr "mount: не вказано тип - вважається cifs, через наявність префіксу //\n"
 
-#: mount/mount.c:1752
+#: mount/mount.c:1756
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s вже підключений у %s\n"
 
-#: mount/mount.c:1886
+#: mount/mount.c:1890
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9213,19 +9218,19 @@ msgstr ""
 "Інші параметри: [-nfFrsvw] [-o параметри] [-p пароль].\n"
 "Додаткову інформацію дивіться у man 8 mount .\n"
 
-#: mount/mount.c:2209
+#: mount/mount.c:2213
 msgid "mount: only root can do that"
 msgstr "mount: це може робити лише адміністратор(root)"
 
-#: mount/mount.c:2219
+#: mount/mount.c:2223
 msgid "nothing was mounted"
 msgstr "нічого не було підключено"
 
-#: mount/mount.c:2237 mount/mount.c:2263
+#: mount/mount.c:2241 mount/mount.c:2267
 msgid "mount: no such partition found"
 msgstr "mount: не знайдено такого розділу"
 
-#: mount/mount.c:2240
+#: mount/mount.c:2244
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: не вдається знайти %s у %s або %s"
