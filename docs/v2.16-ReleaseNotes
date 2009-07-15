@@ -1,6 +1,6 @@
 
-Util-linux-ng 2.16 Release Notes
-================================
+Util-linux-ng 2.16 Release Notes (15-Jul-2009)
+==============================================
 
 Release highlights
 ------------------
@@ -14,6 +14,9 @@ switch_root:
 
 mount, umount, fsck:
   - DOES NOT SUPPORT linking against obsolete libvolume_id (from udev)
+
+libblkid:
+  - development files (.so, .a, ...) have been moved from /lib to /usr/lib.
 
 
 Stable maintenance releases between v2.15 and v2.16
@@ -45,10 +48,18 @@ build-sys:
    - fix "make -C" bug  [Karel Zak]
    - fix --disable-uuidd  [Karel Zak]
    - fix blkid.h include for old e2fsprogs  [Karel Zak]
+   - fix exec/data install hooks  [Karel Zak]
    - fix headers in mkswap and libblkid  [Karel Zak]
    - fix libuuid Makefile.am  [Karel Zak]
+   - fix libuuid and libblkid version-info  [Karel Zak]
+   - fix typo from 30688dde55f637c9b984809c685b61378b82805f  [Robert Förster]
+   - improve $libdirname definition  [Karel Zak]
+   - improve symlinks creation in shlibs/  [Karel Zak]
    - release++ (v2.16-rc1)  [Karel Zak]
+   - release++ (v2.16-rc2)  [Karel Zak]
    - rename /libs to /shlibs  [Karel Zak]
+   - rename to _execdir  [Karel Zak]
+   - reverse shlibs installation  [Kay Sievers]
 buildsys:
    - move $usr{bin,sbin,lib}execdir definition to ./configure  [Karel Zak]
 cal:
@@ -63,6 +74,7 @@ docs:
    - remove example.files/rc[.local]  [Karel Zak]
    - remove obsolete information from fstab example  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
+   - update v2.16 ReleaseNotes  [Karel Zak]
    - update v2.16-ReleaseNotes  [Karel Zak]
 fdisk:
    - (and cfdisk) fix to be consistent about maximum heads  [Chris Webb]
@@ -79,6 +91,7 @@ ldattach:
 libblkid:
    - add device-mapper snapshot cow device probe  [Milan Broz]
    - add install-hook for libuuid.[a,so] devel files  [Karel Zak]
+   - add stdarg.h to blkidP.h  [Karel Zak]
    - blkid_do_safeprobe() has to be tolerant to RAIDs  [Karel Zak]
    - cleanup debug messages and return codes in blkid_do_probe()  [Karel Zak]
    - don't require udev symlinks verification for non-root users  [Karel Zak]
@@ -91,14 +104,17 @@ libblkid:
    - move to misc-utils/ directory  [Karel Zak]
    - update man page  [Karel Zak]
 libuuid:
-   - Don't run uuidd if it would fail due to permission problems  [Theodore Ts'o]
-   - Make sure fd's 0, 1, and 2 are valid before exec'ing uuidd  [Theodore Ts'o]
    - add --disable-libuuid and LIBUUID_VERSION  [Karel Zak]
    - add .gitignore  [Karel Zak]
    - add info about u-l-ng to man pages  [Karel Zak]
    - add install-hook for libuuid.[a,so] devel files  [Karel Zak]
+   - Don't run uuidd if it would fail due to permission problems  [Theodore Ts'o]
    - fix $libdir in uuid.pc  [Karel Zak]
+   - fix parallel building  [Karel Zak]
+   - generate uuid_generate_{random,time}.3 man page links [Karel Zak]
    - import UUID library from e2fsprogs  [Karel Zak]
+   - Make sure fd's 0, 1, and 2 are valid before exec'ing uuidd  [Theodore Ts'o]
+   - move clock state file from /var/lib to /var/run  [Karel Zak]
 libuuid, uuidd:
    - Avoid infinite loop while reading from the socket fd  [Theodore Ts'o]
 losetup:
@@ -120,16 +136,21 @@ mount:
    - move MS_{PROPAGATION,BIND,MOVE} detection  [Karel Zak]
    - use "none" fstype for MS_PROPAGATION mounts  [Karel Zak]
    - use TAG parsing function from libblkid  [Karel Zak]
+   - when a remount to rw fails, quit and return an error  [Valerie Aurora]
 po:
    - fix typo in French translation  [Olivier Blin]
    - merge changes  [Karel Zak]
    - refresh POTFILES.in  [Karel Zak]
+   - update cs.po (from translationproject.org)  [Petr Pisar]
+   - update fi.po (from translationproject.org)  [Lauri Nurmi]
+   - update fr.po (from translationproject.org)  [Nicolas Provost]
    - update vi.po (from translationproject.org)  [Clytie Siddall]
 raw:
    - Use the RAW_SETBIND ioctl without stat'ing the raw# file  [Jeff Mahoney]
    - undeprecate raw  [Karel Zak]
 switch_root:
    - add man page  [Karel Zak]
+   - add subroot support  [Daniel Drake]
    - clean up argv[] usage, add -h and -V  [Karel Zak]
    - do recursiveRemove after our root is moved to avoid races.  [Peter Jones]
    - fix coding style  [Karel Zak]
