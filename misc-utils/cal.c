@@ -354,7 +354,7 @@ main(int argc, char **argv) {
 	day = month = year = 0;
 	switch(argc) {
 	case 3:
-		if ((day = atoi(*argv++)) < 1 || month > 31)
+		if ((day = atoi(*argv++)) < 1 || day > 31)
 			errx(1, _("illegal day value: use 1-%d"), 31);
 		/* FALLTHROUGH */
 	case 2:
