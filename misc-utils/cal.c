@@ -162,7 +162,7 @@ char		*Hrow;		/* pointer to highlighted row in month */
 #define	FIRST_MISSING_DAY	639799		/* 3 Sep 1752 */
 #define	NUMBER_MISSING_DAYS	11		/* 11 day correction */
 
-#define	MAXDAYS			43		/* max slots in a month array */
+#define	MAXDAYS			42		/* slots in a month array */
 #define	SPACE			-1		/* used in day array */
 
 static int days_in_month[2][13] = {
@@ -170,30 +170,34 @@ static int days_in_month[2][13] = {
 	{0, 31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31},
 };
 
-int sep1752[MAXDAYS] = {
+#define SEP1752_OFS		4		/* sep1752[4] is a Sunday */
+
+/* 1 Sep 1752 is represented by sep1752[6] and j_sep1752[6] */
+int sep1752[MAXDAYS+6] = {
+				SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	1,	2,	14,	15,	16,
 	17,	18,	19,	20,	21,	22,	23,
 	24,	25,	26,	27,	28,	29,	30,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE
-}, j_sep1752[MAXDAYS] = {
+	SPACE,	SPACE
+}, j_sep1752[MAXDAYS+6] = {
+				SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	245,	246,	258,	259,	260,
 	261,	262,	263,	264,	265,	266,	267,
 	268,	269,	270,	271,	272,	273,	274,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE
+	SPACE,	SPACE
 }, empty[MAXDAYS] = {
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
 	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,
-	SPACE
+	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE,	SPACE
 };
 
 #define	DAY_LEN		3		/* 3 spaces per day */
@@ -629,10 +633,11 @@ day_array(int day, int month, int year, int *days) {
 	int *d_sep1752;
 
 	if (month == 9 && year == 1752) {
+		int sep1752_ofs = (weekstart + SEP1752_OFS) % 7;
 		d_sep1752 = julian ? j_sep1752 : sep1752;
-		memcpy(days, d_sep1752 + weekstart, MAXDAYS * sizeof(int));
+		memcpy(days, d_sep1752 + sep1752_ofs, MAXDAYS * sizeof(int));
 		for (dm=0; dm<MAXDAYS; dm++)
-			if (j_sep1752[dm] == day)
+			if (j_sep1752[dm + sep1752_ofs] == day)
 				days[dm] |= TODAY_FLAG;
 		return;
 	}
