@@ -163,7 +163,7 @@ main(int argc, char *argv[])
 				err(EXIT_FAILURE,
 					_("failed to read timing file %s"), tname);
 			errx(EXIT_FAILURE,
-				_("timings file %s: %lu: expected format"),
+				_("timings file %s: %lu: unexpected format"),
 				tname, line);
 		}
 		delay /= divi;
