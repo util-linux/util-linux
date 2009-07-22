@@ -4,7 +4,8 @@
 .SH NAME
 newgrp \- log in to a new group
 .SH SYNOPSIS
-.BI "newgrp [ " group " ]"
+.B newgrp
+.RI [ group ]
 .SH DESCRIPTION
 .B Newgrp
 changes the group identification of its caller, analogously to
@@ -21,10 +22,11 @@ If no group is specified, the GID is changed to the login GID.
 .I /etc/passwd
 
 .SH "SEE ALSO"
-.BR login "(1), " group (5)
+.BR login (1),
+.BR group (5)
 
 .SH AUTHOR
-Originally by Michael Haardt. Currently maintained by 
+Originally by Michael Haardt. Currently maintained by
 Peter Orbaek (poe@daimi.aau.dk).
 
 .SH AVAILABILITY
