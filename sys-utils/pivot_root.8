@@ -3,12 +3,11 @@
 pivot_root \- change the root file system
 .SH SYNOPSIS
 .B pivot_root
-.RB \fInew_root\fP
-.RB \fIput_old\fP
+.I new_root put_old
 .SH DESCRIPTION
 \fBpivot_root\fP moves the root file system of the current process to the
 directory \fIput_old\fP and makes \fInew_root\fP the new root file system.
-Since \fBpivot_root(8)\fP simply calls \fBpivot_root(2)\fP, we refer to
+Since \fBpivot_root\fP(8) simply calls \fBpivot_root\fP(2), we refer to
 the man page of the latter for further details.
 
 Note that, depending on the implementation of \fBpivot_root\fP, root and
@@ -59,10 +58,10 @@ exec chroot . sh -c 'umount /old_root; exec /sbin/init' \\
   <dev/console >dev/console 2>&1
 .fi
 .SH "SEE ALSO"
-.BR chroot(1),
-.BR mount(8),
-.BR pivot_root(2),
-.BR umount(8)
+.BR chroot (1),
+.BR mount (8),
+.BR pivot_root (2),
+.BR umount (8)
 .SH AVAILABILITY
 The pivot_root command is part of the util-linux-ng package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
