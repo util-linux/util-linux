@@ -7,7 +7,8 @@
 delpart \-
 simple wrapper around the "del partition" ioctl
 .SH SYNOPSIS
-.B delpart device partition
+.B delpart
+.I device partition
 .SH DESCRIPTION
 .B delpart
 is a program that asks the Linux kernel to remove a partition.
@@ -16,10 +17,10 @@ This command doesn't manipulate with partitions on hard drive.
 
 .SH OPTIONS
 .TP
-.BI device
+.I device
 Specify the disk device.
 .TP
-.BI partition
+.I partition
 Specify the partition number.
 
 .SH SEE ALSO
