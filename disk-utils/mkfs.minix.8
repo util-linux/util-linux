@@ -4,15 +4,16 @@
 .SH NAME
 mkfs.minix \- make a Linux MINIX filesystem
 .SH SYNOPSIS
-.BR "mkfs.minix [ \-c | \-l filename ] [ \-n"
-namelength
-.B ] [ \-i
-inodecount
-.B ] [ \-v ]
-device 
-.B [ 
-size-in-blocks
-.B ]
+.B mkfs.minix
+.RB [ \-c | \-l
+.IR filename ]
+.RB [ \-n
+.IR namelength ]
+.RB [ \-i
+.IR inodecount ]
+.RB [ \-v ]
+.I device
+.RI [ size-in-blocks ]
 .SH DESCRIPTION
 .B mkfs.minix
 creates a Linux MINIX file-system on a device (usually a disk partition).
