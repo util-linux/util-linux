@@ -5,7 +5,9 @@
 .SH NAME
 simpleinit \- process control initialization
 .SH SYNOPSIS
-.B "init [ single ] [ script ]"
+.B init
+.RB [ single ]
+.RI [ script ]
 .SH DESCRIPTION
 .B init
 is invoked as the last step in the Linux boot sequence.  If the
@@ -85,7 +87,7 @@ finalprog   = /sbin/rc.xdm
 Lines beginning with the
 .B #
 character are treated as comments.  Please see documentation for the
-.B getty (8)
+.BR getty (8)
 command that you are using, since there are several of these in the Linux
 community at this time.
 
