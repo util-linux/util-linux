@@ -5,14 +5,26 @@
 .SH NAME
 fdisk \- Partition table manipulator for Linux
 .SH SYNOPSIS
-.BI "fdisk [\-u] [\-b " sectorsize ]
-.BI "[\-C " cyls "] [\-H " heads "] [\-S " sects "] " device
+.B fdisk
+.RB [ \-u ]
+.RB [ \-b
+.IR sectorsize ]
+.RB [ \-C
+.IR cyls ]
+.RB [ \-H
+.IR heads ]
+.RB [ \-S
+.IR sects ]
+.I device
 .sp
-.BI "fdisk \-l [\-u] [" "device ..." ]
+.B fdisk \-l
+.RB [ \-u ]
+.RI [ device ...]
 .sp
-.BI "fdisk \-s " "partition ..."
+.B fdisk \-s
+.IR partition ...
 .sp
-.BI "fdisk \-v
+.B fdisk \-v
 .SH DESCRIPTION
 Hard disks can be divided into one or more logical disks called
 .IR partitions .
@@ -45,7 +57,7 @@ It understands DOS type partition tables and BSD or SUN type disklabels.
 .B fdisk
 doesn't understand GUID Partition Table (GPT) and
 it is not designed for large partitions. In particular case use more advanced GNU
-.B parted(8).
+.BR parted (8).
 
 The
 .I device
