@@ -2,9 +2,9 @@ include $(top_srcdir)/config/include-Makefile.am
 
 AM_CPPFLAGS += -I$(ul_libblkid_srcdir)
 
-noinst_LTLIBRARIES = libblkid_probers.la
-libblkid_probers_la_SOURCES = \
-			probers.h \
+noinst_LTLIBRARIES = libblkid_superblocks.la
+libblkid_superblocks_la_SOURCES = \
+			superblocks.h \
 			cramfs.c \
 			swap.c \
 			adaptec_raid.c \

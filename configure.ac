@@ -921,7 +921,7 @@ schedutils/Makefile
 shlibs/blkid/blkid.pc
 shlibs/blkid/Makefile
 shlibs/blkid/src/Makefile
-shlibs/blkid/src/probers/Makefile
+shlibs/blkid/src/superblocks/Makefile
 shlibs/uuid/uuid.pc
 shlibs/uuid/Makefile
 shlibs/uuid/man/Makefile

@@ -36,7 +36,8 @@
 
 #include "blkdev.h"
 #include "blkidP.h"
-#include "probers/probers.h"
+
+#include "superblocks/superblocks.h"
 
 static const struct blkid_idinfo *idinfos[] =
 {
