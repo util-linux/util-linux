@@ -35,15 +35,11 @@
 whereis \- locate the binary, source, and manual page files for a command
 .SH SYNOPSIS
 .B whereis
-[
-.B \-bmsu
-] [
-.B \-BMS
-.IR directory .\|.\|.
-.B \-f
-]
-\fIfilename\fP\|
-\&.\|.\|.
+.RB [ \-bmsu ]
+.RB [ \-BMS
+.IR directory ...
+.BR \-f ]
+.IR filename ...
 .IX  "whereis command"  ""  "\fLwhereis\fP \(em find program"
 .IX  find "program \(em \fLwhereis\fP"
 .IX  "locate program"  ""   "locate program \(em \fLwhereis\fP"
@@ -54,7 +50,7 @@ locates source/binary and manuals sections for specified
 files.
 The supplied names are first stripped of leading pathname components
 and any (single) trailing extension of the form
-.BI . ext,
+.BI . ext\fR,\fP
 for example,
 .BR .c .
 Prefixes of
@@ -65,7 +61,7 @@ then attempts to locate the desired program in
 a list of standard Linux places.
 .SH OPTIONS
 .TP
-\fB\-b
+.B \-b
 Search only for binaries.
 .TP
 .B \-m
