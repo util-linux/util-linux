@@ -12,9 +12,8 @@
 .SH NAME
 setterm \- set terminal attributes
 .SH SYNOPSIS
-.nf
-.BR "setterm " [ options ]
-.fi
+.B setterm
+.RI [ options ]
 .SH DESCRIPTION
 .B setterm
 writes to standard output a character string that will invoke the
@@ -121,19 +120,19 @@ Clears the screen and "homes" the cursor, as
 .B \-clear rest
 Clears from the current cursor position to the end of the screen.
 .TP
-.BR \-tabs " [tab1 tab2 tab3 ...] (virtual consoles only)"
+.BR \-tabs " [\fItab1 tab2 tab3\fP ...] (virtual consoles only)"
 Sets tab stops at the given horizontal cursor positions, in the range 1-160.
 Without arguments, shows the current tab stop settings.
 .TP
-.BR \-clrtabs " [tab1 tab2 tab3 ...] (virtual consoles only)"
+.BR \-clrtabs " [\fItab1 tab2 tab3\fP ...] (virtual consoles only)"
 Clears tab stops from the given horizontal cursor positions, in the range
 1-160.  Without arguments, clears all tab stops.
 .TP
-.BR \-regtabs " [1-160] (virtual consoles only)"
+.BR \-regtabs " [\fI1-160\fP] (virtual consoles only)"
 Clears all tab stops, then sets a regular tab stop pattern, with one tab
 every specified number of positions.  Without an argument, defaults to 8.
 .TP
-.BR \-blank " [0-60|force|poke] (virtual consoles only)"
+.BR \-blank " [\fI0-60\fP|\fBforce\fP|\fBpoke\fP] (virtual consoles only)"
 Sets the interval of inactivity, in minutes, after which the screen will be
 automatically blanked (using APM if available).  Without an argument, gets the
 blank status (returns which vt was blanked or zero for unblanked vt).
@@ -146,17 +145,17 @@ The
 .B poke
 option unblank the screen.
 .TP
-.BR \-dump " [1-NR_CONS]"
+.BR \-dump " [\fI1-NR_CONS\fP]"
 Writes a snapshot of the given virtual console (with attributes) to the file
 specified in the \fB\-file\fP option, overwriting its contents; the default
 is screen.dump.  Without an argument, dumps the current virtual console.
 Overrides \fB\-append\fP.
 .TP
-.BR \-append " [1-NR_CONS]"
+.BR \-append " [\fI1-NR_CONS\fP]"
 Like \fB\-dump\fP, but appends to the snapshot file instead of overwriting
 it.  Only works if no \fB\-dump\fP options are given.
 .TP
-.BR \-file " dumpfilename"
+.BI \-file " dumpfilename"
 Sets the snapshot file name for any \fB\-dump\fP or \fB\-append\fP options
 on the same command line.  If this option is not present, the default is
 screen.dump in the current directory.
@@ -165,7 +164,7 @@ screen.dump in the current directory.
 Enables or disables the sending of kernel \fBprintk()\fP messages to the
 console.
 .TP
-.BR \-msglevel " 1-8 (virtual consoles only)"
+.BR \-msglevel " \fI1-8\fP (virtual consoles only)"
 Sets the console logging level for kernel \fBprintk()\fP messages.  All
 messages strictly more important than this will be printed, so a logging
 level of 0 has the same effect as \fB\-msg on\fP and a logging level of 8
@@ -185,16 +184,16 @@ Puts the monitor into VESA powerdown mode.
 .BR \-powersave " [" off "]"
 Turns off monitor VESA powersaving features.
 .TP
-.BR \-powerdown " [0-60]"
+.BR \-powerdown " [\fI0-60\fP]"
 Sets the VESA powerdown interval in minutes.  Without an argument, defaults
 to 0 (disable powerdown).  If the console is blanked or the monitor is in
 suspend mode, then the monitor will go into vsync suspend mode or powerdown
 mode respectively after this period of time has elapsed.
 .TP
-.BR \-blength " [0-2000]"
+.BR \-blength " [\fI0-2000\fP]"
 Sets the bell duration in milliseconds.  Without an argument, defaults to 0.
 .TP
-.BR \-bfreq " [freqnumber]"
+.BR \-bfreq " [\fIfreqnumber\fP]"
 Sets the bell frequency in Hz.  Without an argument, defaults to 0.
 .SH "SEE ALSO"
 .BR tput (1),
