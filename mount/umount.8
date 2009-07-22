@@ -27,11 +27,19 @@
 .SH NAME
 umount \- unmount file systems
 .SH SYNOPSIS
-.BI "umount [\-hV]"
+.B umount
+.RB [ \-hV ]
 .LP
-.BI "umount -a [\-dflnrv] [\-t " vfstype "] [\-O " options ]
+.B umount \-a
+.RB [ \-dflnrv ]
+.RB [ \-t
+.IR vfstype ]
+.RB [ \-O
+.IR options ]
 .br
-.BI "umount [\-dflnrv] " "dir " | " device " [...]
+.B umount
+.RB [ \-dflnrv ]
+.RI { dir | device }...
 .SH DESCRIPTION
 The
 .B umount
@@ -126,7 +134,9 @@ Any pending loop devices can be freed using `losetup -d', see
 The syntax of external umount helpers is:
 
 .br
-.BI "/sbin/umount.<suffix> [\-nlfvr] " "dir " | " device "
+.BI /sbin/umount. <suffix>
+.RI { dir | device }
+.RB [ \-nlfvr ]
 .br
 
 where the <suffix> is filesystem type or a value from "uhelper=" mtab option.
