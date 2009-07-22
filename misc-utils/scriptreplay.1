@@ -144,7 +144,10 @@
 scriptreplay \- play back typescripts, using timing information
 .SH "SYNOPSIS"
 .IX Header "SYNOPSIS"
-scriptreplay timingfile [typescript [divisor]]
+.B scriptreplay
+.I timingfile
+.RI [ typescript
+.RI [ divisor ]]
 .SH "DESCRIPTION"
 .IX Header "DESCRIPTION"
 This program replays a typescript, using timing information to ensure that
@@ -162,8 +165,12 @@ which
 .B scriptreplay
 is sending its output.
 .PP
-The timings information is what script outputs to standard error if it is
-run with the \-t parameter.
+The timings information is what
+.BR script (1)
+outputs to standard error if it is
+run with the
+.B \-t
+parameter.
 .PP
 By default, the typescript to display is assumed to be named \*(L"typescript\*(R",
 but other filenames may be specified, as the second parameter.
