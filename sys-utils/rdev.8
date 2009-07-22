@@ -5,13 +5,41 @@
 .SH NAME
 rdev \- query/set image root device, RAM disk size, or video mode
 .SH SYNOPSIS
-.nf
-.BR "rdev [ \-Rrvh ] [ \-o " offset " ] [ " image " [ " value " [ " offset " ] ] ]"
-.BR "rdev [ \-o " offset " ] [ " image " [ " root_device " [ " offset " ] ] ]"
-.BR "ramsize [ \-o " offset " ] [ " image " [ " size " [ " offset " ] ] ]"
-.BR "vidmode [ \-o " offset " ] [ " image " [ " mode " [ " offset " ] ] ]"
-.BR "rootflags [ \-o " offset " ] [ " image " [ " flags " [ " offset " ] ] ]"
-.fi
+.B rdev
+.RB [ \-Rrvh ]
+.RB [ \-o
+.IR offset ]
+.RI [ image
+.RI [ value
+.RI [  offset ]]]
+.br
+.B rdev
+.RB [ \-o
+.IR offset ]
+.RI [ image
+.RI [ root_device
+.RI [  offset ]]]
+.br
+.B ramsize
+.RB [ \-o
+.IR offset ]
+.RI [ image
+.RI [ size
+.RI [  offset ]]]
+.br
+.B vidmode
+.RB [ \-o
+.IR offset ]
+.RI [ image
+.RI [ mode
+.RI [  offset ]]]
+.br
+.B rootflags
+.RB [ \-o
+.IR offset ]
+.RI [ image
+.RI [ flags
+.RI [  offset ]]]
 .SH DESCRIPTION
 With no arguments,
 .B rdev
@@ -78,24 +106,24 @@ of decimal integers
 For the
 .B ramsize
 command, the
-.B size
+.I size
 parameter specifies the size of the RAM disk in kilobytes. 2.0.x kernels
 and newer dynamically allocate the ramdisk and do not need this setting.
 
 For the
 .B rootflags
 command, the
-.B flags
+.I flags
 parameter contains extra information used when mounting root.
 Currently the only effect of these flags is to force the kernel to
 mount the root filesystem in readonly mode if
-.B flags
+.I flags
 is non-zero.
 
 For the
 .B vidmode
 command, the
-.B mode
+.I mode
 parameter specifies the video mode:
 
 .nf
