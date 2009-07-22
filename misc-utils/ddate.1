@@ -4,28 +4,30 @@
 .SH NAME
 ddate \- converts Gregorian dates to Discordian dates
 .SH SYNOPSIS
-.B ddate [+format] [date]
+.B ddate
+.RI [ \fB+\fPformat]
+.RI [ date ]
 .SH DESCRIPTION
 .B ddate
 prints the date in Discordian date format.
 .PP
 If called with no arguments,
-.B ddate 
+.B ddate
 will get the current system date, convert this to the Discordian
 date format and print this on the standard output. Alternatively, a
 Gregorian date may be specified on the command line, in the form of a numerical
 day, month and year.
 .PP
-If a format string is specified, the Discordian date will be printed in 
-a format specified by the string. This mechanism works similarly to the 
+If a format string is specified, the Discordian date will be printed in
+a format specified by the string. This mechanism works similarly to the
 format string mechanism of
-.B date(1), 
+.B date(1),
 only almost completely differently. The fields are:
 .IP %A
 Full name of the day of the week (i.e., Sweetmorn)
-.IP %a 
+.IP %a
 Abbreviated name of the day of the week (i.e., SM)
-.IP %B 
+.IP %B
 Full name of the season (i.e., Chaos)
 .IP %b
 Abbreviated name of the season (i.e., Chs)
@@ -38,9 +40,9 @@ Name of current Holyday, if any
 .IP %N
 Magic code to prevent rest of format from being printed unless today is
 a Holyday.
-.IP %n 
+.IP %n
 Newline
-.IP %t 
+.IP %t
 Tab
 .IP %X
 Number of days remaining until X-Day. (Not valid if the SubGenius options
@@ -60,24 +62,24 @@ Sweetmorn, Bureaucracy 42, 3161 YOLD
 .PP
 % ddate +'Today is %{%A, the %e of %B%}, %Y. %N%nCelebrate %H'
 .br
-Today is Sweetmorn, the 42nd of Bureaucracy, 3161. 
+Today is Sweetmorn, the 42nd of Bureaucracy, 3161.
 .PP
 % ddate +"It's %{%A, the %e of %B%}, %Y. %N%nCelebrate %H" 26 9 1995
 .br
-It's Prickle-Prickle, the 50th of Bureaucracy, 3161. 
+It's Prickle-Prickle, the 50th of Bureaucracy, 3161.
 .br
 Celebrate Bureflux
 .PP
 % ddate +"Today's %{%A, the %e of %B%}, %Y. %N%nCelebrate %H" 29 2 1996
 .br
-Today's St. Tib's Day, 3162. 
+Today's St. Tib's Day, 3162.
 .br
 
 .SH BUGS
 
 .B ddate(1)
 will produce undefined behaviour if asked to produce the date for St. Tib's
-day and its format string does not contain the St. Tib's Day delimiters 
+day and its format string does not contain the St. Tib's Day delimiters
 %{ and %}.
 
 .SH NOTE
@@ -104,7 +106,7 @@ date(1),
 .br
 http://www.subgenius.com/
 .br
-Malaclypse the Younger, 
+Malaclypse the Younger,
 .I "Principia Discordia, Or How I Found Goddess And What I Did To Her When I Found Her"
 
 .SH AVAILABILITY
