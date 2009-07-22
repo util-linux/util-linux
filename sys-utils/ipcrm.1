@@ -28,14 +28,8 @@ ipcrm \- remove a message queue, semaphore set or shared memory id
 deprecated usage
 
 .BI ipcrm
-[
-.B shm
-|
-.B msg
-|
-.B sem
-]
-.IR id " ..."
+.RB { shm | msg | sem }
+.IR id ...
 .SH DESCRIPTION
 .I ipcrm
 removes System V interprocess communication (IPC) objects
