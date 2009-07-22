@@ -4,17 +4,15 @@
 .SH NAME
 mkfs.bfs \- make an SCO bfs filesystem
 .SH SYNOPSIS
-.BR "mkfs.bfs [ \-N"
-nr-of-inodes
-.B ] [ \-V
-volume-name
-.B ] [ \-F
-fsname
-.B ]
-device 
-.B [ 
-size-in-blocks
-.B ]
+.B mkfs.bfs
+.RB [ \-N
+.IR nr-of-inodes ]
+.RB [ \-V
+.IR volume-name ]
+.RB [ \-F
+.IR fsname ]
+.I device
+.RI [ size-in-blocks ]
 .SH DESCRIPTION
 .B mkfs.bfs
 creates an SCO bfs file-system on a block device
@@ -24,7 +22,6 @@ The
 .I size-in-blocks
 parameter is the desired size of the file system, in blocks.
 If nothing is specified, the entire partition will be used.
-
 .SH OPTIONS
 .TP
 .B \-N
