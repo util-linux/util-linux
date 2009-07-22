@@ -9,9 +9,12 @@
 .SH NAME
 sfdisk \- Partition table manipulator for Linux
 .SH SYNOPSIS
-.BR sfdisk " [options] device"
+.B sfdisk
+.RI [ options ]
+.I device
 .br
-.BR "sfdisk \-s " [partition]
+.B sfdisk \-s
+.RI [ partition ]
 .SH DESCRIPTION
 .B sfdisk
 has four (main) uses: list the size of a partition, list the partitions
@@ -21,14 +24,14 @@ repartition a device.
 .B sfdisk
 doesn't understand GUID Partition Table (GPT) and
 it is not designed for large partitions. In particular case use more advanced GNU
-.B parted(8).
+.BR parted (8).
 
 .SS "List Sizes"
 .BI "sfdisk \-s " partition
 gives the size of
 .I partition
 in blocks. This may be useful in connection with programs like
-.B mkswap
+.BR mkswap (8)
 or so. Here
 .I partition
 is usually something like
@@ -68,7 +71,9 @@ total: 12901917 blocks
 
 .SS "List Partitions"
 The second type of invocation:
-.BI "sfdisk \-l " "[options] device"
+.B sfdisk \-l
+.RB [ options ]
+.I device
 will list the partitions on this device.
 If the device argument is omitted, the partitions on all hard disks
 are listed.
@@ -213,7 +218,7 @@ and change nothing else. (Probably this fifth partition
 is called /dev/hdb5, but you are free to call it something else,
 like `/my_equipment/disks/2/5' or so).
 .TP
-.BI \-A "number"
+.BI \-A " number"
 Make the indicated partition(s) active, and all others inactive.
 .TP
 .BI \-c "\fR or " \-\-id " number [Id]"
@@ -539,10 +544,6 @@ itself seems to use the full byte. I have not been able to reproduce
 any corruption with DRDOS or its fdisk.
 
 .SH BUGS
-A corresponding interactive
-.B cfdisk
-(with curses interface) is still lacking.
-.LP
 There are too many options.
 .LP
 There is no support for non-DOS partition types.
