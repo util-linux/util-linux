@@ -4,9 +4,13 @@
 .SH NAME
 ipcs \- provide information on ipc facilities
 .SH SYNOPSIS
-.B ipcs [ \-asmq ] [ \-tclup ]
+.B ipcs
+.RB [ \-asmq ]
+.RB [ \-tclup ]
 .br
-.BI "ipcs [ \-smq ] \-i " id
+.B ipcs
+.RB [ \-smq ]
+.BI \-i " id"
 .br
 .B ipcs \-h
 .SH DESCRIPTION
@@ -66,9 +70,13 @@ options, but does support the
 and
 .B \-u
 options not defined by POSIX. The portable application shall not use the
-.B \-a, \-b, \-o, \-l,
+.BR \-a ,
+.BR \-b ,
+.BR \-o ,
+.BR \-l ,
 and
-.B \-u options.
+.B \-u
+options.
 .SH AUTHOR
 krishna balasubramanian (balasub@cis.ohio-state.edu)
 .SH AVAILABILITY
