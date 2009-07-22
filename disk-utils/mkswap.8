@@ -7,7 +7,16 @@
 .SH NAME
 mkswap \- set up a Linux swap area
 .SH SYNOPSIS
-.BI "mkswap [\-c] [\-f] [\-p " PSZ "] [\-L " label "] [\-U " uuid "] " device  " [" size "]"
+.B mkswap
+.RB [ \-c ]
+.RB [ \-f ]
+.RB [ \-p
+.IR PSZ ]
+.RB [ \-L
+.IR label ]
+.RB [ \-U
+.IR uuid ]
+.RI [ size ]
 .SH DESCRIPTION
 .B mkswap
 sets up a Linux swap area on a device or in a file.
@@ -80,14 +89,14 @@ Without this option
 will refuse to erase the first block on a device with a partition table or on
 whole disk (e.g. /dec/sda).
 .TP
-.BI "\-p " PSZ
+.BI \-p \ PSZ
 Specify the page size to use.
 .TP
-.BI "\-L " label
+.BI \-L \ label
 Specify a label, to allow swapon by label.
 (Only for new style swap areas.)
 .TP
-.B \-v0, \-v1
+.BR \-v0 , \ \-v1
 Specify the swap space version. This option is deprecated and \-v1 is
 supported only.
 
@@ -95,7 +104,7 @@ The kernel has not supported v0 swap space format since 2.5.22. The new version
 v1 is supported since 2.1.117.
 
 .TP
-.B \-U uuid
+.BI \-U \ uuid
 Specify the uuid to use. The default is to generate UUIDs.
 
 .SH NOTES
@@ -123,7 +132,7 @@ the contents of this file depend on architecture and kernel version).
 
 To setup a swap file, it is necessary to create that file before
 initializing it with
-.B mkswap ,
+.BR mkswap ,
 e.g. using a command like
 
 .nf
