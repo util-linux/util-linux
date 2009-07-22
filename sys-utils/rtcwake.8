@@ -20,7 +20,13 @@
 .SH NAME
 rtcwake - enter a system sleep state until specified wakeup time
 .SH SYNOPSIS
-\fBrtcwake\fP [-hvVlua] [-d \fIdevice\fP] [-m \fIstandby_mode\fP] -t \fItime_t\fP | -s \fIseconds\fP
+.B rtcwake
+.RB [ \-hvVlua ]
+.RB [ \-d
+.IR device ]
+.RB [ \-m
+.IR standby_mode ]
+.RB { "\-t \fItime_t\fP" | "\-s \fIseconds\fP" }
 .SH DESCRIPTION
 This program is used to enter a system sleep state until specified wakeup time.
 .PP
@@ -48,8 +54,9 @@ Displays version information and exists.
 .TP
 \fB-a\fP | \fB--auto\fP
 Reads the clock mode (whether the hardware clock is set to UTC or local time)
-from \fI/etc/adjtime\fP. That's the location where the \fBhwclock\fP stores
-that information.
+from \fI/etc/adjtime\fP. That's the location where the
+.BR hwclock (8)
+stores that information.
 .TP
 \fB-l\fP | \fB--local\fP
 Assumes that the hardware clock is set to local time, regardless of the
@@ -70,7 +77,8 @@ Sets the wakeup time to \fIseconds\fP in future from now.
 \fB-t\fP \fItime_t\fP | \fB--time\fP \fItime_t\fP
 Sets the wakeup time to the absolute time \fItime_t\fP. \fItime_t\fP
 is the time in seconds since 1970-01-01, 00:00 UTC. Use the
-\fBdate\fP tool to convert between human-readable time and \fItime_t\fP.
+.BR date (1)
+tool to convert between human-readable time and \fItime_t\fP.
 .TP
 \fB-m\fP \fImode\fP | \fB--mode\fP \fImode\fP
 Use standby state \fImode\fP. Valid values are:
