@@ -58,7 +58,7 @@ or spaces.  Lines starting with '#' are comments.  The order of records in
 is important because
 .BR fsck (8),
 .BR mount (8),
-and 
+and
 .BR umount (8)
 sequentially iterate through
 .B fstab
@@ -182,7 +182,7 @@ is used by the
 program to determine the order in which filesystem checks are done at
 reboot time.  The root filesystem should be specified with a
 .I fs_passno
-of 1, and other filesystems should have a 
+of 1, and other filesystems should have a
 .I fs_passno
 of 2.  Filesystems within a drive will be checked sequentially, but
 filesystems on different drives will be checked at the same time to utilize
@@ -201,7 +201,7 @@ is to use the routines
 .BR getmntent (3),
 .BR mount (8),
 .BR swapon (8),
-.BR fs (5)
+.BR fs (5),
 .BR nfs (5)
 .SH HISTORY
 The ancestor of this
