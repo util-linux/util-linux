@@ -4,20 +4,12 @@
 mkfs \- build a Linux file system
 .SH SYNOPSIS
 .B mkfs
-[
-.B \-V
-]
-[
-.B \-t
-.I fstype
-]
-[
-.B fs-options
-]
+.RB [ \-V ]
+.RB [ \-t
+.IR fstype ]
+.RI [ fs-options ]
 .I filesys
-[
-.I blocks
-]
+.RI [ blocks ]
 .SH DESCRIPTION
 .B mkfs
 is used to build a Linux file system on a device, usually
@@ -25,7 +17,8 @@ a hard disk partition.
 .I filesys
 is either the device name (e.g.
 .IR /dev/hda1 ,
-.IR /dev/sdb2 ).
+.IR /dev/sdb2 ),
+or a regular file that shall contain the file system.
 .I blocks
 is the number of blocks to be used for the file system.
 .PP
@@ -36,7 +29,7 @@ is 0 on success and 1 on failure.
 In actuality,
 .B mkfs
 is simply a front-end for the various file system builders
-(\fBmkfs\fR.\fIfstype\fR)
+(\fBmkfs.\fIfstype\fR)
 available under Linux.
 The file system-specific builder is searched for in a number
 of directories like perhaps
@@ -68,8 +61,8 @@ Specifies the type of file system to be built.
 If not specified, the default file system type
 (currently ext2) is used.
 .TP
-.B fs-options
-File system-specific options to be passed to the real file 
+.I fs-options
+File system-specific options to be passed to the real file
 system builder.
 Although not guaranteed, the following options are supported
 by most file system builders.
