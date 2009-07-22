@@ -1,18 +1,40 @@
 .\" Copyright 1992 Rickard E. Faith (faith@cs.unc.edu)
 .\" May be distributed under the GNU General Public License
 .\"
-.\" 
+.\"
 .TH SHUTDOWN 8 "2 March 2000" "Linux 2.0" "Linux Programmer's Manual"
 .SH NAME
 shutdown \- close down the system
 .SH SYNOPSIS
-.nf
-.BR "shutdown [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ] [ " message " ]"
-.BR "reboot [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ] [ " message " ]"
-.BR "fastboot [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ] [ " message " ]"
-.BR "halt [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ] [ " message " ]"
-.BR "fasthalt [ \-h | \-r ] [ \-fqs ] [ now | " hh:ss " | " +mins " ] [ " message " ]"
-.fi
+.B shutdown
+.RB [ \-h | \-r ]
+.RB [ \-fqs ]
+.RB [ now | \fIhh\fP:\fIss\fP | +\fImins\fP ]
+.RI [ message ]
+.br
+.B reboot
+.RB [ \-h | \-r ]
+.RB [ \-fqs ]
+.RB [ now | \fIhh\fP:\fIss\fP | +\fImins\fP ]
+.RI [ message ]
+.br
+.B fastboot
+.RB [ \-h | \-r ]
+.RB [ \-fqs ]
+.RB [ now | \fIhh\fP:\fIss\fP | +\fImins\fP ]
+.RI [ message ]
+.br
+.B halt
+.RB [ \-h | \-r ]
+.RB [ \-fqs ]
+.RB [ now | \fIhh\fP:\fIss\fP | +\fImins\fP ]
+.RI [ message ]
+.br
+.B fasthalt
+.RB [ \-h | \-r ]
+.RB [ \-fqs ]
+.RB [ now | \fIhh\fP:\fIss\fP | +\fImins\fP ]
+.RI [ message ]
 .SH DESCRIPTION
 .\" " for emacs hilit19
 In general,
@@ -21,7 +43,7 @@ prepares the system for a power down or reboot.  A absolute or delta time
 can be given, and periodic messages will be sent to all users warning of
 the shutdown. If no message is specified on the command line,
 .B shutdown
-will ask for a message to be sent, unless the 
+will ask for a message to be sent, unless the
 .B \-q
 option is set.
 
@@ -48,7 +70,7 @@ minutes away), the
 .I /etc/nologin
 file is created with a message stating that the system is going down and
 that logins are no longer permitted.  The
-.B login (1)
+.BR login (1)
 program will not allow non-superusers to login during this period.  A
 message will be sent to all users at this time.
 
