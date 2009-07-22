@@ -5,7 +5,8 @@
 .SH NAME
 lscpu \- CPU architecture information helper
 .SH SYNOPSIS
-.B lscpu [-hp]
+.B lscpu
+.RB [ \-hp ]
 .SH DESCRIPTION
 .B lscpu
 gathers CPU architecture information like number of CPUs, threads,
@@ -15,9 +16,11 @@ human-readable format. Alternatively, it can print out in parsable
 format including how different caches are shared by different CPUs,
 which can also be fed to other programs.
 .SH OPTIONS
-.IP -h, --help
+.TP
+.BR \-h , " \-\-help"
 Print a help message.
-.IP -p, --parse
+.TP
+.BR \-p , " \-\-parse"
 Print out in parsable instead of printable format.
 .SH BUGS
 The program at the moment does not handle the system installed with
