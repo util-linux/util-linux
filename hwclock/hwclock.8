@@ -2,7 +2,9 @@
 .SH NAME
 hwclock \- query and set the hardware clock (RTC)
 .SH SYNOPSIS
-.BR "hwclock [functions] [options]"
+.B hwclock
+.RI [ functions ]
+.RI [ options ]
 
 .SH DESCRIPTION
 .B hwclock
@@ -23,7 +25,7 @@ You need exactly one of the following options to tell
 what function to perform:
 .PP
 .TP
-.B \-r, \-\-show
+.BR \-r , \ \-\-show
 Read the Hardware Clock and print the time on Standard Output.
 The time shown is always in local time, even if you keep your Hardware Clock
 in Coordinated Universal Time.  See the
@@ -36,7 +38,7 @@ Set the Hardware Clock to the time given by the
 .B \-\-date
 option.
 .TP
-.B \-s, \-\-hctosys
+.BR \-s , \ \-\-hctosys
 Set the System Time from the Hardware Clock.
 
 Also set the kernel's timezone value to the local timezone
@@ -51,7 +53,7 @@ to DST_NONE. (For details on what this field used to mean, see
 
 This is a good option to use in one of the system startup scripts.
 .TP
-.B \-w, \-\-systohc
+.BR \-w , \ \-\-systohc
 Set the Hardware Clock to the current System Time.
 .TP
 .B \-\-systz
@@ -95,12 +97,12 @@ option.  See the
 .B \-\-getepoch
 option for details.
 .TP
-.B \-v, \-\-version
+.BR \-v , \ \-\-version
 Print the version of
 .B hwclock
 on Standard Output.
 .TP
-.B \-\-date=date_string
+.BI \-\-date= date_string
 You need this option if you specify the
 .B \-\-set
 option.  Otherwise, it is ignored.
@@ -118,7 +120,7 @@ Coordinated Universal time.  See the
 option.
 
 .TP
-.B \-\-epoch=year
+.BI \-\-epoch= year
 Specifies the year which is the beginning of the Hardware Clock's
 epoch.  I.e. the number of years into AD to which a zero value in the
 Hardware Clock's year counter refers. It is used together with
@@ -135,7 +137,7 @@ For example, on a Digital Unix machine:
 .PP
 The following options apply to most functions.
 .TP
-.B \-u, \-\-utc
+.BR \-u , \ \-\-utc
 .TP
 .B \-\-localtime
 Indicates that the Hardware Clock is kept in Coordinated Universal
@@ -155,10 +157,8 @@ nor
 , the default is whichever was specified the last time
 .B hwclock
 was used to set the clock (i.e. hwclock was successfully run with the
-.B \-\-set
-,
-.B \-\-systohc
-,
+.BR \-\-set ,
+.BR \-\-systohc ,
 or
 .B \-\-adjust
 options), as recorded in the adjtime file.  If the adjtime file doesn't
@@ -176,11 +176,11 @@ or
 must be specified when using this option.
 
 .TP
-.B \-\-adjfile=filename
+.BI \-\-adjfile= filename
 overrides the default /etc/adjtime.
 
 .TP
-.B \-f, \-\-rtc=filename
+.BR \-f , \ \-\-rtc=\fIfilename\fB
 overrides the default /dev file name, which is
 .IR /dev/rtc
 on many platforms but may be
@@ -287,9 +287,9 @@ in the option name refers to the Time Of Year facility of the machine.
 .B \-\-test
 Do everything except actually updating the Hardware Clock or anything
 else.  This is useful, especially in conjunction with
-.B \-\-debug,
+.BR \-\-debug ,
 in learning about
-.B hwclock.
+.BR hwclock .
 .TP
 .B \-\-debug
 Display a lot of information about what
@@ -386,7 +386,7 @@ This second field is not used under Linux and is always zero.
 .SH How hwclock Accesses the Hardware Clock
 .PP
 .B hwclock
-Uses many different ways to get and set Hardware Clock values.
+uses many different ways to get and set Hardware Clock values.
 The most normal way is to do I/O to the device special file /dev/rtc,
 which is presumed to be driven by the rtc device driver.  However,
 this method is not always available.  For one thing, the rtc driver is
@@ -439,7 +439,9 @@ machine, you can force
 .B hwclock
 to use the direct manipulation of the CMOS registers without even trying
 .I /dev/rtc
-by specifying the \-\-directisa option.
+by specifying the
+.B \-\-directisa
+option.
 
 
 .SH The Adjust Function
@@ -454,7 +456,7 @@ systematic drift.
 It works like this:
 .B hwclock
 keeps a file,
-.I /etc/adjtime,
+.IR /etc/adjtime ,
 that keeps some historical information.  This is called the adjtime file.
 .PP
 Suppose you start with no adjtime file.  You issue a
@@ -478,7 +480,7 @@ day when left alone and that it has been left alone for exactly one
 day.  So it subtracts 2 seconds from the Hardware Clock.  It then
 records the current time as the last time the clock was adjusted.
 Another 24 hours goes by and you issue another
-.I hwclock \-\-adjust.
+.IR "hwclock \-\-adjust" .
 .B Hwclock
 does the same thing: subtracts 2 seconds and updates the adjtime file
 with the current time as the last time the clock was adjusted.
@@ -486,8 +488,7 @@ with the current time as the last time the clock was adjusted.
 Every time you calibrate (set) the clock (using
 .I \-\-set
 or
-.I \-\-systohc
-),
+.IR \-\-systohc ),
 .B hwclock
 recalculates the systematic drift rate based on how long it has been
 since the last calibration, how long it has been since the last
@@ -537,7 +538,7 @@ command line.
 You can use an adjtime file that was previously used with the
 .BR clock (8)
 program with
-.B hwclock.
+.BR hwclock .
 
 
 .SH "Automatic Hardware Clock Synchronization By the Kernel"
