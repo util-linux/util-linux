@@ -2,24 +2,34 @@
 .SH NAME
 ionice \- get/set program io scheduling class and priority
 .SH SYNOPSIS
-.BI "ionice [[\-c " class "] [\-n " classdata " ] [\-t]] \-p " PID " [" PID " ...]"
-
-.BI "ionice [\-c " class "] [\-n " classdata " ] [\-t] COMMAND [ARG ...]"
-
+.B ionice
+.RB [[ \-c
+.IR class ]
+.RB [ \-n
+.IR classdata ]
+.RB [ \-t ]]
+.BI \-p \ PID
+.RI [ PID  ]...
+.br
+.B ionice
+.RB [ \-c
+.IR class ]
+.RB [ \-n
+.IR classdata ]
+.RB [ \-t ]
+.IR COMMAND\  [ ARG  ]...
 .SH DESCRIPTION
 This program sets or gets the io scheduling class and priority for a program.
-If no arguments or just \fI-p\fR is given, \fIionice\fR will query the current
+If no arguments or just \fB\-p\fR is given, \fBionice\fR will query the current
 io scheduling class and priority for that process.
 
 As of this writing, a process can be in one of three scheduling classes:
-
 .IP "\fBIdle\fP"
 A program running with idle io priority will only get disk time when no other
 program has asked for disk io for a defined grace period. The impact of idle
 io processes on normal system activity should be zero. This scheduling
 class does not take a priority argument. Presently, this scheduling class
 is permitted for an ordinary user (since kernel 2.6.25).
-
 .IP "\fBBest effort\fP"
 This is the effective scheduling class for any process that has not asked for
 a specific io priority.
@@ -32,7 +42,6 @@ scheduling class, but the io scheduler will treat such processes as if it
 were in the best effort class. The priority within the best effort class will
 be dynamically derived from the cpu nice level of the process: io_priority =
 (cpu_nice + 20) / 5.
-
 .IP "\fBReal time\fP"
 The RT scheduling class is given first access to the disk, regardless of
 what else is going on in the system. Thus the RT class needs to be used with
@@ -40,7 +49,6 @@ some care, as it can starve other processes. As with the best effort class,
 8 priority levels are defined denoting how big a time slice a given process
 will receive on each scheduling window. This scheduling class is not
 permitted for an ordinary (i.e., non-root) user.
-
 .SH OPTIONS
 .IP "\fB-c \fIclass\fP"
 The scheduling class. \fI0\fR for none, \fI1\fR for real time, \fI2\fR for
@@ -57,7 +65,6 @@ parameters.
 Ignore failure to set requested priority. If COMMAND or PID(s) is specified, run it
 even in case it was not possible to set desired scheduling priority, what
 can happen due to insufficient privilegies or old kernel version.
-
 .SH EXAMPLES
 .LP
 .TP 7
@@ -72,14 +79,11 @@ Runs 'bash' as a best-effort program with highest priority.
 # \fBionice\fP -p 89 91
 .TP 7
 Prints the class and priority of the processes with PID 89 and 91.
-
 .SH NOTES
 Linux supports io scheduling priorities and classes since 2.6.13 with the CFQ
 io scheduler.
-
 .SH AUTHORS
 Jens Axboe <jens@axboe.dk>
-
 .SH AVAILABILITY
 The ionice command is part of the util-linux-ng package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
