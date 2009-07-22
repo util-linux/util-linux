@@ -58,15 +58,11 @@ Enable/disable:
 .RB [ \-p
 .IR priority ]
 .RB [ \-v ]
-. I specialfile
-.RB [ \fIspecialfile\fP
-.RB ...]
+.IR specialfile ...
 .br
 .B swapoff
 .RB [ \-v ]
-. I specialfile
-.RB [ \fIspecialfile\fP
-.RB ...]
+.IR specialfile ...
 .sp
 .in -5
 Enable/disable all:
@@ -114,7 +110,7 @@ All devices marked as ``swap'' in
 .I /etc/fstab
 are made available, except for those with the ``noauto'' option.
 Devices that are already being used as swap are silently skipped.
-.TP 
+.TP
 .B "\-e, \-\-ifexists"
 Silently skip devices that do not exist.
 .TP
