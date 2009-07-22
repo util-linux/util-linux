@@ -15,7 +15,12 @@
 chsh \- change your login shell
 .SH SYNOPSIS
 .B chsh
-[\ \-s\ shell\ ] [\ \-l\ ] [\ \-u\ ] [\ \-v\ ] [\ username\ ]
+.RB [ \-s
+.IR shell ]
+.RB [ \-l ]
+.RB [ \-u ]
+.RB [ \-v ]
+.RI [ username ]
 .SH DESCRIPTION
 .B chsh
 is used to change your login shell.
@@ -32,18 +37,18 @@ On the other hand, it can also be configured such that it will
 only accept shells listed in this file, unless you are root.
 .SH OPTIONS
 .TP
-.I "\-s, \-\-shell"
+.BI "\-s, \-\-shell " shell
 Specify your login shell.
 .TP
-.I "\-l, \-\-list-shells"
+.B "\-l, \-\-list-shells"
 Print the list of shells listed in
 .I /etc/shells
 and exit.
 .TP
-.I "\-u, \-\-help"
+.B "\-u, \-\-help"
 Print a usage message and exit.
 .TP
-.I "-v, \-\-version"
+.B "-v, \-\-version"
 Print version information and exit.
 .SH "SEE ALSO"
 .BR login (1),
