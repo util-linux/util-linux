@@ -4,28 +4,17 @@
 elvtune \- I/O elevator tuner
 .SH SYNOPSIS
 .B elvtune
-[
-.B \-r
-.I r_lat
-]
-[
-.B \-w
-.I w_lat
-]
-[
-.B \-b
-.I b_max
-]
-.B /dev/blkdev1
-[
-.B /dev/blkdev2 ...
-]
-
-.B elvtune
-.B -h
-
-.B elvtune
-.B -v
+.RB [ \-r
+.IR r_lat ]
+.RB [ \-w
+.IR w_lat ]
+.RB [ \-b
+.IR b_max ]
+.IR device ...
+.br
+.B elvtune \-h
+.br
+.B elvtune \-v
 .SH DESCRIPTION
 .B elvtune
 allows to tune the I/O elevator per blockdevice queue basis. The
