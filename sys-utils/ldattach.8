@@ -4,9 +4,11 @@
 .SH NAME
 ldattach \- attach a line discipline to a serial line
 .SH SYNOPSIS
-.nf
-.BI "ldattach [ \-dhV78neo12 ] [ \-s " speed " ] " "ldisc device"
-.fi
+.B ldattach
+.RB [ \-dhV78neo12 ]
+.RB [ \-s
+.IR speed ]
+.I ldisc device
 .SH DESCRIPTION
 The
 .B ldattach
@@ -15,13 +17,13 @@ daemon opens the specified
 file
 (which should refer to a serial device)
 and attaches the line discipline
-.B ldisc
+.I ldisc
 to it for processing of the sent and/or received data.
 It then goes into the background keeping the device open so that the
 line discipline stays loaded.
 
 The line discipline
-.B ldisc
+.I ldisc
 may be specified either by name
 or by number.
 
