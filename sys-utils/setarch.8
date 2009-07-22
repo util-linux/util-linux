@@ -2,10 +2,16 @@
 .SH NAME
 setarch \- change reported architecture in new program environment and set personality flags
 .SH SYNOPSIS
-\fBsetarch\fR <\fIarch\fR> [\fBoptions\fR] [\fIprogram\fR [\fBarguments\fR]]
-
-\fIarch\fR [\fBoptions\fR] [\fIprogram\fR [\fBarguments\fR]]
-
+.B setarch
+.I arch
+.RI [ options ]
+.RI [ program
+.RI [ arguments ]]
+.br
+.I arch
+.RI [ options ]
+.RI [ program
+.RI [ arguments ]]
 .SH DESCRIPTION
 .B setarch
 This utility currently only affects the output of uname -m. For example, on an AMD64 system, running 'setarch i386 program' will cause 'program' to see
