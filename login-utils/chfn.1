@@ -15,8 +15,17 @@
 chfn \- change your finger information
 .SH SYNOPSIS
 .B chfn
-[\ \-f\ full-name\ ] [\ \-o\ office\ ] [\ \-p\ office-phone\ ]
-[\ \-h\ home-phone\ ] [\ \-u\ ] [\ \-v\ ] [\ username\ ]
+.RB [ \-f
+.IR full-name ]
+.RB [ \-o
+.IR office ]
+,RB [ \-p
+.IR office-phone ]
+.RB [ \-h
+.IR home-phone ]
+.BR \-u ]
+.RB [ \-v ]
+.RI [ username ]
 .SH DESCRIPTION
 .B chfn
 is used to change your finger information.  This information is
@@ -27,8 +36,8 @@ file, and is displayed by the
 program.  The Linux
 .B finger
 command will display four pieces of information that can be changed by
-.B chfn
-: your real name, your work room and phone, and your home phone.
+.BR chfn :
+your real name, your work room and phone, and your home phone.
 .SS COMMAND LINE
 Any of the four pieces of information can be specified on the command
 line.  If no information is given on the command line,
@@ -42,22 +51,22 @@ or just press return to leave the field unchanged.  Enter the keyword
 "none" to make the field blank.
 .SH OPTIONS
 .TP
-.I "\-f, \-\-full-name"
+.BI "\-f, \-\-full-name " full-name
 Specify your real name.
 .TP
-.I "\-o, \-\-office"
+.BI "\-o, \-\-office " office
 Specify your office room number.
 .TP
-.I "\-p, \-\-office-phone"
+.BI "\-p, \-\-office-phone " office-phone
 Specify your office phone number.
 .TP
-.I "\-h, \-\-home-phone"
+.BI "\-h, \-\-home-phone " home-phone
 Specify your home phone number.
 .TP
-.I "\-u, \-\-help"
+.B "\-u, \-\-help"
 Print a usage message and exit.
 .TP
-.I "-v, \-\-version"
+.B "-v, \-\-version"
 Print version information and exit.
 .SH "SEE ALSO"
 .BR finger (1),
