@@ -1,17 +1,19 @@
-.\" 
+.\"
 .\" Version 1.4 of namei
 .\"
 .TH NAMEI 1 "Local"
 .SH NAME
 namei - follow a pathname until a terminal point is found
 .SH SYNOPSIS
-\fBnamei\fR [\fIoptions\fR] \fIpathname\fR [\fIpathname\fR ...]
+.B fBnamei
+.RI [ options ]
+.IR  pathname ...
 .SH DESCRIPTION
-.I Namei
+.B Namei
 uses its arguments as pathnames to any type
-of Unix file (symlinks, files, directories, and so forth). 
-.I Namei
-then follows each pathname until a terminal 
+of Unix file (symlinks, files, directories, and so forth).
+.B Namei
+then follows each pathname until a terminal
 point is found (a file, directory, char device, etc).
 If it finds a symbolic link, we show the link, and start
 following it, indenting the output to show the context.
@@ -20,7 +22,7 @@ This program is useful for finding a "too many levels of
 symbolic links" problems.
 .PP
 For each line output,
-.I namei
+.B namei
 outputs a the following characters to identify the file types found:
 .LP
 .nf
@@ -35,7 +37,7 @@ outputs a the following characters to identify the file types found:
     ? = an error of some kind
 .fi
 .PP
-.I Namei
+.B Namei
 prints an informative message when
 the maximum number of symbolic links this system can have has been exceeded.
 .SH OPTIONS
@@ -61,7 +63,8 @@ The program was re-written by Karel Zak <kzak@redhat.com>.
 .SH BUGS
 To be discovered.
 .SH "SEE ALSO"
-ls(1), stat(1)
+.BR ls (1),
+.BR stat (1)
 .SH AVAILABILITY
 The namei command is part of the util-linux-ng package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
