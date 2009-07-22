@@ -43,13 +43,29 @@
 .SH NAME
 mount \- mount a file system
 .SH SYNOPSIS
-.BI "mount [\-lhV]"
+.B mount
+.RB [ \-lhV ]
 .LP
-.BI "mount \-a [\-fFnrsvw] [\-t " vfstype "] [\-O " optlist ]
+.BI "mount \-a
+.RB [ \-fFnrsvw ]
+.RB [ \-t
+.IR vfstype ]
+.RB [ \-O
+.IR optlist ]
 .LP
-.BI "mount [\-fnrsvw] [\-o " options " [,...]] " "device " | " dir"
+.B mount
+.RB [ \-fnrsvw ]
+.RB [ \-o
+.IR option [ \fB,\fPoption ]...]
+.IR device | dir
 .LP
-.BI "mount [\-fnrsvw] [\-t " vfstype "] [\-o " options "] " "device dir"
+.B mount
+.RB [ \-fnrsvw ]
+.RB [ \-t
+.IB vfstype ]
+.RB [ \-o
+.IR options ]
+.I device dir
 .SH DESCRIPTION
 All files accessible in a Unix system are arranged in one big
 tree, the file hierarchy, rooted at
@@ -95,7 +111,7 @@ prints a help message
 .B "mount \-V"
 prints a version string
 .TP
-.BI "mount [-l] [-t" " type" ]
+.BR "mount " [ -l "] [" "-t \fItype\fP" ]
 lists all mounted file systems (of type
 .IR type ).
 The option \-l adds the labels in this listing.
@@ -109,17 +125,21 @@ Since Linux 2.4.0 it is possible to remount part of the
 file hierarchy somewhere else. The call is
 .RS
 .br
-.B "mount --bind olddir newdir"
+.B mount --bind
+.I olddir newdir
 .RE
 or shortoption
 .RS
 .br
-.B "mount -B olddir newdir"
+.B mount -B
+.I olddir newdir
 .RE
 or fstab entry is:
 .RS
 .br
-.B "/olddir  /newdir  none  bind"
+.I /olddir
+.I /newdir
+.B  none  bind
 .RE
 
 After this call the same contents is accessible in two places.
@@ -130,12 +150,14 @@ submounts. The entire file hierarchy including submounts is attached
 a second place using
 .RS
 .br
-.B "mount --rbind olddir newdir"
+.B mount --rbind
+.I olddir newdir
 .RE
 or shortoption
 .RS
 .br
-.B "mount -R olddir newdir"
+.B mount -R
+.I olddir newdir
 .RE
 .\" available since Linux 2.4.11.
 
@@ -150,12 +172,14 @@ Since Linux 2.5.1 it is possible to atomically move a mounted tree
 to another place. The call is
 .RS
 .br
-.B "mount --move olddir newdir"
+.B mount --move
+.I olddir newdir
 .RE
 or shortoption
 .RS
 .br
-.B "mount -M olddir newdir"
+.B mount -M
+.I olddir newdir
 .RE
 .RE
 
@@ -172,10 +196,10 @@ file in the kernel source tree.
 
 .RS
 .nf
-.B "mount --make-shared mountpoint"
-.B "mount --make-slave mountpoint"
-.B "mount --make-private mountpoint"
-.B "mount --make-unbindable mountpoint"
+.BI "mount --make-shared " mountpoint
+.BI "mount --make-slave " mountpoint
+.BI "mount --make-private " mountpoint
+.BI "mount --make-unbindable " mountpoint
 .fi
 .RE
 
@@ -184,10 +208,10 @@ mounts under a given mountpoint.
 
 .RS
 .nf
-.B "mount --make-rshared mountpoint"
-.B "mount --make-rslave mountpoint"
-.B "mount --make-rprivate mountpoint"
-.B "mount --make-runbindable mountpoint"
+.BI "mount --make-rshared " mountpoint
+.BI "mount --make-rslave " mountpoint
+.BI "mount --make-rprivate " mountpoint
+.BI "mount --make-runbindable " mountpoint
 .fi
 .RE
 .RE
@@ -232,7 +256,11 @@ mounted where, using which options.
 The command
 .RS
 .sp
-.BI "mount \-a [\-t " type "] [\-O " optlist ]
+.B mount \-a
+.RB [ \-t
+.IR type ]
+.RB [ \-O
+.IR optlist ]
 .sp
 .RE
 (usually given in a bootscript) causes all file systems mentioned in
@@ -430,8 +458,7 @@ system may still write to the device. For example, Ext3 or ext4 will replay its
 journal if the filesystem is dirty. To prevent this kind of write access, you
 may want to mount ext3 or ext4 filesystem with "ro,noload" mount options or
 set the block device to read-only mode, see command
-.BR blockdev (8)
-.
+.BR blockdev (8).
 .TP
 .B \-w
 Mount the file system read/write. This is the default. A synonym is
@@ -520,13 +547,13 @@ For a few types however (like nfs, nfs4, cifs, smbfs, ncpfs) ad hoc code is
 necessary. The nfs, nfs4, cifs, smbfs, and ncpfs
 have a separate mount program. In order to make it possible to
 treat all types in a uniform way, mount will execute the program
-.I /sbin/mount.TYPE
+.BI /sbin/mount. TYPE
 (if that exists) when called with type
 .IR TYPE .
 Since various versions of the
-.I smbmount
+.B smbmount
 program have different calling conventions,
-.I /sbin/mount.smbfs
+.B /sbin/mount.smbfs
 may have to be a shell script that sets up the desired call.
 
 If no
@@ -575,12 +602,14 @@ option.)
 
 For example, the command:
 .RS
+.RS
 .B "mount \-a \-t nomsdos,ext"
 .RE
 mounts all file systems except those of type
 .I msdos
 and
 .IR ext .
+.RE
 .TP
 .B \-O
 Used in conjunction with
@@ -592,6 +621,7 @@ is applied.  Like
 in this regard except that it is useless except in the context of
 .BR \-a .
 For example, the command:
+.RS
 .RS
 .sp
 .B "mount \-a \-O no_netdev"
@@ -621,6 +651,7 @@ options are cumulative in effect; that is, the command
 .RE
 mounts all ext2 filesystems with the _netdev option, not all filesystems
 that are either ext2 or have the _netdev option specified.
+.RE
 .TP
 .B \-o
 Options are specified with a
@@ -867,7 +898,7 @@ Mount the file system read-only.
 Mount the file system read-write.
 .TP
 .B sync
-All I/O to the file system should be done synchronously. In case of media with limited number of write cycles 
+All I/O to the file system should be done synchronously. In case of media with limited number of write cycles
 (e.g. some flash drives) "sync" may cause life-cycle shortening.
 .TP
 .B user
@@ -956,7 +987,7 @@ Give explicitly the location of the root block.
 .BI bs= value
 Give blocksize. Allowed values are 512, 1024, 2048, 4096.
 .TP
-.BR grpquota " / " noquota " / " quota " / " usrquota
+.BR grpquota | noquota | quota | usrquota
 These options are accepted but ignored.
 (However, quota utilities may react to such strings in
 .IR /etc/fstab .)
@@ -996,9 +1027,9 @@ will cause newly created PTYs to belong to the tty group.
 .BI mode= value
 Set the mode of newly created PTYs to the specified value.
 The default is 0600.
-A value of 
+A value of
 .B mode=620
-and 
+and
 .B gid=5
 makes "mesg y" the default on newly created PTYs.
 .TP
@@ -1070,11 +1101,11 @@ Since Linux 2.5.46, for most mount options the default
 is determined by the filesystem superblock. Set them with
 .BR tune2fs (8).
 .TP
-.BR acl " / " noacl
+.BR acl | noacl
 Support POSIX Access Control Lists (or not).
 .\" requires CONFIG_EXT2_FS_POSIX_ACL
 .TP
-.BR bsddf " / " minixdf
+.BR bsddf | minixdf
 Set the behaviour for the
 .I statfs
 system call. The
@@ -1100,7 +1131,7 @@ to the options given in
 .IR /etc/fstab .)
 
 .TP
-.BR check=none " / " nocheck
+.BR check= { none | nocheck }
 No checking is done at mount time. This is the default. This is fast.
 It is wise to invoke
 .BR e2fsck (8)
@@ -1109,7 +1140,7 @@ every now and then, e.g. at boot time.
 .B debug
 Print debugging info upon each (re)mount.
 .TP
-.BR errors=continue " / " errors=remount-ro " / " errors=panic
+.BR errors= { continue | remount-ro | panic }
 Define the behaviour when an error is encountered.
 (Either ignore errors and just mark the file system erroneous and continue,
 or remount the file system read-only, or panic and halt the system.)
@@ -1117,7 +1148,7 @@ The default is set in the filesystem superblock, and can be
 changed using
 .BR tune2fs (8).
 .TP
-.BR grpid " or " bsdgroups " / " nogrpid " or " sysvgroups
+.BR grpid | bsdgroups " and " nogrpid | sysvgroups
 These options define what group id a newly created file gets.
 When
 .BR grpid
@@ -1127,7 +1158,7 @@ the directory has the setgid bit set, in which case it takes the gid
 from the parent directory, and also gets the setgid bit set
 if it is a directory itself.
 .TP
-.BR grpquota " / " noquota " / " quota " / " usrquota
+.BR grpquota | noquota | quota | usrquota
 These options are accepted but ignored.
 .TP
 .BR nobh
@@ -1165,7 +1196,7 @@ cannot be mounted r/w under Linux 2.0.*.)
 The block number here uses 1k units. Thus, if you want to use logical
 block 32768 on a filesystem with 4k blocks, use "sb=131072".
 .TP
-.BR user_xattr " / " nouser_xattr
+.BR user_xattr | nouser_xattr
 Support "user." extended attributes (or not).
 .\" requires CONFIG_EXT2_FS_XATTR
 
@@ -1191,7 +1222,7 @@ of the file whose inode number is
 .BR noload
 Do not load the ext3 file system's journal on mounting.
 .TP
-.BR data=journal " / " data=ordered " / " data=writeback
+.BR data= { journal | ordered | writeback }
 Specifies the journalling mode for file data.  Metadata is always journaled.
 To use modes other than
 .B ordered
@@ -1310,7 +1341,7 @@ used for I/O operations submitted by kjournald2 during a commit operation.
 This defaults to 3, which is a slightly higher priority than the default I/O
 priority.
 .TP
-.BR auto_da_alloc " / " noauto_da_alloc
+.BR auto_da_alloc | noauto_da_alloc
 Many broken applications don't use fsync() when noauto_da_alloc
 replacing existing files via patterns such as
 
@@ -1338,7 +1369,7 @@ and
 .I vfat
 filesystems.)
 .TP
-.BR blocksize=512 " / " blocksize=1024 " / " blocksize=2048
+.BR blocksize= { 512 | 1024 | 2048 }
 Set blocksize (default 512). This option is obsolete.
 .TP
 \fBuid=\fP\fIvalue\fP and \fBgid=\fP\fIvalue\fP
@@ -1388,7 +1419,7 @@ normal check is too unflexible. With this option you can relax it.
 Three different levels of pickyness can be chosen:
 .RS
 .TP
-.B r[elaxed]
+.BR r [ elaxed ]
 Upper and lower case are accepted and equivalent, long name parts are
 truncated (e.g.
 .I verylongname.foobar
@@ -1396,11 +1427,11 @@ becomes
 .IR verylong.foo ),
 leading and embedded spaces are accepted in each name part (name and extension).
 .TP
-.B n[ormal]
+.BR n [ ormal ]
 Like "relaxed", but many special characters (*, ?, <, spaces, etc.) are
 rejected.  This is the default.
 .TP
-.B s[trict]
+.BR s [ trict ]
 Like "normal", but names may not contain long parts and special characters
 that are sometimes used on Linux, but are not accepted by MS-DOS are
 rejected. (+, =, spaces, etc.)
@@ -1410,7 +1441,7 @@ rejected. (+, =, spaces, etc.)
 Sets the codepage for converting to shortname characters on FAT
 and VFAT filesystems. By default, codepage 437 is used.
 .TP
-.BR conv=b[inary] " / " conv=t[ext] " / " conv=a[uto]
+.BR conv= {b [ inary ]| t [ ext ]| a [ uto ]}
 The
 .I fat
 file system can perform CRLF<-->NL (MS-DOS text format to UNIX text
@@ -1457,7 +1488,7 @@ flag.  A version string and a list of file system parameters will be
 printed (these data are also printed if the parameters appear to be
 inconsistent).
 .TP
-.BR fat=12 " / " fat=16 " / " fat=32
+.BR fat= {12 | 16 | 32 }
 Specify a 12, 16 or 32 bit fat.  This overrides
 the automatic FAT type detection routine.  Use with caution!
 .TP
@@ -1500,7 +1531,7 @@ recent Windows don't update it correctly in some
 case. If you are sure the "free clusters" on FSINFO is
 correct, by this option you can avoid scanning disk.
 .TP
-.B "dots, nodots, dotsOK=[yes|no]"
+.BR dots ", " nodots ", " dotsOK= [ yes | no ]
 Various misguided attempts to force Unix or DOS conventions
 onto a FAT file system.
 
@@ -1543,12 +1574,12 @@ Set the umask (the bitmask of the permissions that are
 present). The default is the umask of the current process.
 The value is given in octal.
 .TP
-.BR case=lower " / " case=asis
+.BR case= { lower | asis }
 Convert all files names to lower case, or leave them.
 (Default:
 .BR case=lower .)
 .TP
-.BR conv=binary " / " conv=text " / " conv=auto
+.BR conv= { binary | text | auto }
 For
 .BR conv=text ,
 delete some random CRs (in particular, all followed by NL)
@@ -1591,7 +1622,7 @@ Disable the use of Rock Ridge extensions, even if available. Cf.\&
 Disable the use of Microsoft Joliet extensions, even if available. Cf.\&
 .BR map .
 .TP
-.BR check=r[elaxed] " / " check=s[trict]
+.BR check= { r [ elaxed ]| s [ trict ]}
 With
 .BR check=relaxed ,
 a filename is first converted to lower case before doing the lookup.
@@ -1608,7 +1639,7 @@ possibly overriding the information found in the Rock Ridge extensions.
 (Default:
 .BR uid=0,gid=0 .)
 .TP
-.BR map=n[ormal] " / " map=o[ff] " / " map=a[corn]
+.BR map= { n [ ormal ]| o [ ff ]| a [ corn ]}
 For non-Rock Ridge volumes, normal name translation maps upper
 to lower case ASCII, drops a trailing `;1', and converts `;' to `.'.
 With
@@ -1633,12 +1664,12 @@ Also show hidden and associated files.
 (If the ordinary files and the associated or hidden files have
 the same filenames, this may make the ordinary files inaccessible.)
 .TP
-.B block=[512|1024|2048]
+.BR block= { 512 | 1024 | 2048 }
 Set the block size to the indicated value.
 (Default:
 .BR block=1024 .)
 .TP
-.BR conv=a[uto] " / " conv=b[inary] " / " conv=m[text] " / " conv=t[ext]
+.BR conv= { a [ uto ]| b [ inary ]| m [ text ]| t [ ext ]}
 (Default:
 .BR conv=binary .)
 Since Linux 1.3.54 this option has no effect anymore.
@@ -1696,12 +1727,12 @@ a volume where the
 .B nointegrity
 option was previously specified in order to restore normal behavior.
 .TP
-.BR errors=continue " / " errors=remount-ro " / " errors=panic
+.BR errors= { continue | remount-ro | panic }
 Define the behaviour when an error is encountered.
 (Either ignore errors and just mark the file system erroneous and continue,
 or remount the file system read-only, or panic and halt the system.)
 .TP
-.BR noquota " / " quota " / " usrquota " / " grpquota
+.BR noquota | quota | usrquota | grpquota
 These options are accepted but ignored.
 
 .SH "Mount options for minix"
@@ -1757,7 +1788,7 @@ New name for the option earlier called
 .BR utf8
 Use UTF-8 for converting file names.
 .TP
-.B uni_xlate=[0|1|2]
+.BR uni_xlate= { 0 | 1 | 2 }
 For 0 (or `no' or `false'), do not use escape sequences
 for unknown Unicode characters.
 For 1 (or `yes' or `true') or 2, use vfat-style 4-byte escape sequences
@@ -1792,7 +1823,7 @@ Instructs version 3.6 reiserfs software to mount a version 3.5 file system,
 using the 3.6 format for newly created objects. This file system will no
 longer be compatible with reiserfs 3.5 tools.
 .TP
-.BR hash=rupasov " / " hash=tea " / " hash=r5 " / " hash=detect
+.BR hash= { rupasov | tea | r5 | detect }
 Choose which hash function reiserfs will use to find files within directories.
 .RS
 .TP
@@ -1800,18 +1831,18 @@ Choose which hash function reiserfs will use to find files within directories.
 A hash invented by Yury Yu. Rupasov.  It is fast and preserves locality,
 mapping lexicographically close file names to close hash values.
 This option should not be used, as it causes a high probability of hash
-collisions. 
+collisions.
 .TP
 .B tea
 A Davis-Meyer function implemented by Jeremy Fitzhardinge.
 It uses hash permuting bits in the name.  It gets high randomness
 and, therefore, low probability of hash collisions at some CPU cost.
-This may be used if EHASHCOLLISION errors are experienced with the r5 hash. 
+This may be used if EHASHCOLLISION errors are experienced with the r5 hash.
 .TP
 .B r5
 A modified version of the rupasov hash. It is used by default and is
 the best choice unless the file system has huge directories and
-unusual file-name patterns. 
+unusual file-name patterns.
 .TP
 .B detect
 Instructs
@@ -1819,12 +1850,12 @@ Instructs
 to detect which hash function is in use by examining
 the file system being mounted,  and to write this information into
 the reiserfs superblock. This is only useful on the first mount of
-an old format file system. 
+an old format file system.
 .RE
 .TP
 .BR hashed_relocation
 Tunes the block allocator. This may provide performance improvements
-in some situations. 
+in some situations.
 .TP
 .BR no_unhashed_relocation
 Tunes the block allocator. This may provide performance improvements
@@ -1846,8 +1877,8 @@ is a work in progress.
 .BR notail
 By default, reiserfs stores small files and `file tails' directly into its
 tree. This confuses some utilities such as
-.BR LILO (8) .
-This option is used to disable packing of files into the tree. 
+.BR LILO (8).
+This option is used to disable packing of files into the tree.
 .TP
 .BR replayonly
 Replay the transactions which are in the journal, but do not actually
@@ -2072,7 +2103,7 @@ Set behaviour on error:
 .B panic
 If an error is encountered, cause a kernel panic.
 .TP
-.B [lock|umount|repair]
+.RB [ lock | umount | repair ]
 These mount options don't do anything at present;
 when an error is encountered only a console message is printed.
 .RE
@@ -2117,7 +2148,7 @@ console. It can be be enabled for the filesystem with this option or disabled
 with utf8=0, utf8=no or utf8=false. If `uni_xlate' gets set, UTF8 gets
 disabled.
 .TP
-.B shortname=[lower|win95|winnt|mixed]
+.BR shortname= { lower | win95 | winnt | mixed }
 
 Defines the behaviour for creation and display of filenames which fit into
 8.3 characters. If a long name for a file exists, it will always be
@@ -2141,7 +2172,6 @@ not all lower case or all upper case.
 Display the short name as is; store a long name when the short name is not
 all upper case.
 .RE
-.TP
 
 
 .SH "Mount options for usbfs"
@@ -2170,7 +2200,7 @@ doing delayed allocation writeout (default size is 64KiB).
 Valid values for this option are page size (typically 4KiB)
 through to 1GiB, inclusive, in power-of-2 increments.
 .TP
-.BR attr2 " / " noattr2
+.BR attr2 | noattr2
 The options enable/disable (default is disabled for backward
 compatibility on-disk) an "opportunistic" improvement to be
 made in the way inline extended attributes are stored on-disk.
@@ -2190,7 +2220,7 @@ Use with the
 .B mtpt
 option.
 .TP
-\fBgrpid\fP / \fBbsdgroups\fP and \fBnogrpid\fP / \fBsysvgroups\fP
+.BR grpid | bsdgroups " and " nogrpid | sysvgroups
 These options define what group ID a newly created file gets.
 When grpid is set, it takes the group ID of the directory in
 which it is created; otherwise (the default) it takes the fsgid
@@ -2205,7 +2235,7 @@ of zero is used, the value selected by the default algorithm
 will be displayed in
 .IR /proc/mounts .
 .TP
-.BR ikeep " / " noikeep
+.BR ikeep | noikeep
 When inode clusters are emptied of inodes, keep them around
 on the disk (ikeep) - this is the traditional XFS behaviour
 and is still the default for now.  Using the noikeep option,
@@ -2218,7 +2248,7 @@ numbers occupying more than 32 bits of significance.  This is
 provided for backwards compatibility, but causes problems for
 backup applications that cannot handle large inode numbers.
 .TP
-.BR largeio " / " nolargeio
+.BR largeio | nolargeio
 If
 .B nolargeio
 is specified, the optimal I/O reported in
@@ -2320,19 +2350,19 @@ If timestamp updates are critical, use the
 .B osyncisosync
 option.
 .TP
-.BR uquota " / " usrquota " / " uqnoenforce " / " quota
+.BR uquota | usrquota | uqnoenforce | quota
 User disk quota accounting enabled, and limits (optionally)
 enforced.  Refer to
 .BR xfs_quota (8)
 for further details.
 .TP
-.BR gquota " / " grpquota " / " gqnoenforce
+.BR gquota | grpquota | gqnoenforce
 Group disk quota accounting enabled and limits (optionally)
 enforced. Refer to
 .BR xfs_quota (8)
 for further details.
 .TP
-.BR pquota " / " prjquota " / " pqnoenforce
+.BR pquota | prjquota | pqnoenforce
 Project disk quota accounting enabled and limits (optionally)
 enforced. Refer to
 .BR xfs_quota (8)
@@ -2396,13 +2426,13 @@ If no explicit loop device is mentioned
 .B mount
 will try to find some unused loop device and use that.
 
-Since Linux 2.6.25 is supported auto-destruction of loop devices and 
+Since Linux 2.6.25 is supported auto-destruction of loop devices and
 then any loop device allocated by
 .B mount
 will be freed by
 .B umount
 independently on
-.I /etc/mtab .
+.IR /etc/mtab .
 
 You can also free a loop device by hand, using `losetup -d' or `umount -d`.
 
@@ -2440,7 +2470,11 @@ some mount succeeded
 The syntax of external mount helpers is:
 
 .RS
-.B "/sbin/mount.<suffix> spec dir [\-sfnv] [\-o options]
+.BI /sbin/mount. <suffix>
+.I spec dir
+.RB [ \-sfnv ]
+.RB [ \-o
+.IR options ]
 .RE
 
 where the <suffix> is filesystem type and \-sfnvo options have same meaning like
@@ -2487,7 +2521,7 @@ Some Linux file systems don't support
 .I do
 support synchronous updates (a la BSD) when mounted with the
 .B sync
-option). 
+option).
 .PP
 The
 .B "\-o remount"
