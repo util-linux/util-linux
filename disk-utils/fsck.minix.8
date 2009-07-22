@@ -5,8 +5,9 @@
 .SH NAME
 fsck.minix \- a file system consistency checker for Linux
 .SH SYNOPSIS
-.B "fsck.minix [ \-larvsmf ]"
-device
+.B fsck.minix
+.RB [ \-larvsmf ]
+.I device
 .SH DESCRIPTION
 .B fsck.minix
 performs a consistency check for the Linux MINIX filesystem.  The current
@@ -85,7 +86,7 @@ marking is done by the kernel when the file system is unmounted).
 .BR mkfs.minix (8),
 .BR mkfs.ext (8),
 .BR mkfs.ext2 (8),
-.BR mkfs.xiafs (8).
+.BR mkfs.xiafs (8),
 .BR reboot (8)
 .SH DIAGNOSTICS
 There are numerous diagnostic messages.  The ones mentioned here are the
