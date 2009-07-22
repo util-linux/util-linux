@@ -4,22 +4,31 @@
 .SH "NAME"
 ipcmk \- create various ipc resources
 .SH "SYNOPSIS"
-.B ipcmk [ \-M \fIsize\fR ] [ \-p \fImode\fR ]
+.B ipcmk \-h
 .br
-.B ipcmk [ \-S \fInsems\fR ] [ \-p \fImode\fR ]
-.br
-.B ipcmk [ \-Q ] [ \-p \fImode\fR ]
+.B ipcmk
+.RB [ \-M
+.IR size ]
+.RB [ \-S
+.IR nsems ]
+.RB [ \-Q ]
+.RB [ \-p
+.IR mode ]
 .SH "DESCRIPTION"
 .B ipcmk
 allows you to create shared memory segments, message queues or semaphore arrays.
 .SH "OPTIONS"
+.TP
 Resources may be specified as follows:
 .TP
 .BI \-M " size"
-shared memory segment of size \fB\fIsize\fR\fR
+shared memory segment of size
+.I size
 .TP
 .BI \-S " nsems"
-semaphore array with \fB\fInsems\fR\fR elements
+semaphore array with
+.I nsems
+elements
 .TP
 .BI \-Q
 message queue
@@ -28,6 +37,9 @@ Other options
 .TP
 .BI \-p " mode"
 permission for the resource (default is 0644)
+.TP
+.B \-h
+display a short help message and exit
 .PP
 .SH "SEE ALSO"
 .BR ipcrm (1),
