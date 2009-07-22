@@ -7,7 +7,8 @@
 addpart \-
 simple wrapper around the "add partition" ioctl
 .SH SYNOPSIS
-.B addpart device partition start length
+.B addpart
+.I device partition start length
 .SH DESCRIPTION
 .B addpart
 is a program that informs the Linux kernel of new partition.
@@ -16,16 +17,16 @@ This command doesn't manipulate with partitions on hard drive.
 
 .SH PARAMETERS
 .TP
-.BI device
+.I device
 Specify the disk device.
 .TP
-.BI partition
+.I partition
 Specify the partition number.
 .TP
-.BI start
+.I start
 Specify the begin of the partition (in 512-byte sectors).
 .TP
-.BI length
+.I length
 Specify the length of the partition (in 512-byte sectors).
 
 .SH SEE ALSO
