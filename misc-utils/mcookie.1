@@ -1,10 +1,13 @@
-.\" mcookie.1 -- 
+.\" mcookie.1 --
 .\" Public Domain 1995 Rickard E. Faith (faith@cs.unc.edu)
 .TH MCOOKIE 1 "25 September 1995" "" "Linux Programmer's Manual"
 .SH NAME
 mcookie \- generate magic cookies for xauth
 .SH SYNOPSIS
-.BI "mcookie [\-v] [\-f " filename " ]"
+.B mcookie
+.RB [ \-v ]
+.RB [ \-f
+.IR filename ]
 .SH DESCRIPTION
 .B mcookie
 generates a 128-bit random hexadecimal number for use with the X authority
@@ -14,7 +17,7 @@ xauth add :0 . `mcookie`
 .RE
 .PP
 The "random" number generated is actually the output of the MD5 message
-digest fed with various piece of random information: the current time, the
+digest fed with various pieces of random information: the current time, the
 process id, the parent process id, the contents of an input file (if
 .B \-f
 is specified), and several bytes of information from the first of the
