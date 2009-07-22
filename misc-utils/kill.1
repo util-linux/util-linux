@@ -5,9 +5,15 @@
 .SH NAME
 kill \- terminate a process
 .SH SYNOPSIS
-.BI "kill [ \-s " signal " | \-p ] [ \-a ] [ \-\- ] " "pid ..."
+.B kill
+.RB [ \-s
+.IR signal  | \fB\-p\fP ]
+.RN [ \-a ]
+.RB [ \-\- ]
+.IR pid ...
 .br
-.BI "kill -l [ " signal " ]"
+.B kill -l
+.RI [ signal ]
 .SH DESCRIPTION
 The command
 .B kill
@@ -47,8 +53,8 @@ All processes in the current process group are signaled.
 All processes with pid larger than 1 will be signaled.
 .TP
 .BI - n
-where 
-.I n 
+where
+.I n
 is larger than 1.
 All processes in process group
 .I n
