@@ -110,22 +110,25 @@ static const char *type2string(enum rfkill_type type)
 	return NULL;
 }
 
-static void rfkill_list(void)
+static struct rfkill_event *rfkill_get_event_list(int *num_events)
 {
 	struct rfkill_event event;
-	const char *name;
+	struct rfkill_event *events = NULL;
 	ssize_t len;
 	int fd;
+
+	*num_events = 0;
 
 	fd = open("/dev/rfkill", O_RDONLY);
 	if (fd < 0) {
 		perror("Can't open RFKILL control device");
-		return;
+		return NULL;
 	}
 
 	if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
 		perror("Can't set RFKILL control device to non-blocking");
 		close(fd);
+		return NULL;
 	}
 
 	while (1) {
@@ -145,15 +148,42 @@ static void rfkill_list(void)
 		if (event.op != RFKILL_OP_ADD)
 			continue;
 
-		name = get_name(event.idx);
+		events = realloc(events,(*num_events+1)*sizeof(struct rfkill_event));
+		if (!events) {
+			perror("Cannot realloc events");
+			break;
+		}
 
-		printf("%u: %s: %s\n", event.idx, name,
-						type2string(event.type));
-		printf("\tSoft blocked: %s\n", event.soft ? "yes" : "no");
-		printf("\tHard blocked: %s\n", event.hard ? "yes" : "no");
+		events[*num_events] = event;
+		*num_events += 1;
 	}
 
 	close(fd);
+	return events;
+}
+
+static void rfkill_list(void)
+{
+	int num_events;
+	struct rfkill_event *events;
+	const char *name;
+	int i;
+
+	events = rfkill_get_event_list(&num_events);
+	if (!events)
+		return;
+
+	for (i = 0; i < num_events; i++) {
+
+		name = get_name(events[i].idx);
+
+		printf("%u: %s: %s\n", events[i].idx, name,
+						type2string(events[i].type));
+		printf("\tSoft blocked: %s\n", events[i].soft ? "yes" : "no");
+		printf("\tHard blocked: %s\n", events[i].hard ? "yes" : "no");
+	}
+
+	free(events);
 }
 
 static void rfkill_block(__u32 idx, __u8 block)
