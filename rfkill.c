@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 #include <sys/types.h>
 #include <sys/poll.h>
 
@@ -221,15 +222,41 @@ static void rfkill_block_all(enum rfkill_type type, __u8 block)
 		return;
 
 	for (i = 0; i < num_events; i++) {
-		if ((events[i].type == type) || (type == RFKILL_TYPE_ALL)) {
+		if ((events[i].type == type) || (type == RFKILL_TYPE_ALL))
 			rfkill_block(events[i].idx, block);
-		}
 	}
 
 	free(events);
 }
 
+struct rfkill_type_str {
+	enum rfkill_type type;
+	char *name;
+};
+static struct rfkill_type_str rfkill_type_strings[] = {
+	{	.type = RFKILL_TYPE_ALL,		.name = "all"	},
+	{	.type = RFKILL_TYPE_WLAN,		.name = "wifi"	},
+	{	.type = RFKILL_TYPE_BLUETOOTH,	.name = "bluetooth"	},
+	{	.type = RFKILL_TYPE_UWB,		.name = "uwb"	},
+	{	.type = RFKILL_TYPE_WIMAX,		.name = "wimax"	},
+	{	.type = RFKILL_TYPE_WWAN,		.name = "wwan"	},
+	{	.name = NULL }
+};
+
+static enum rfkill_type rfkill_str_to_type(char *s)
+{
+	struct rfkill_type_str *p;
+
+	for (p = rfkill_type_strings; p->name != NULL; p++) {
+		if ((strlen(s) == strlen(p->name)) && (!strcmp(s,p->name)))
+			return p->type;
+	}
+	return NUM_RFKILL_TYPES;
+}
+
 static const char *argv0;
+
+#define BLOCK_PARAMS "{<idx>,all,wifi,bluetooth,uwb,wimax,wwan}"
 
 static void usage(void)
 {
@@ -240,13 +267,38 @@ static void usage(void)
 	fprintf(stderr, "\thelp\n");
 	fprintf(stderr, "\tevent\n");
 	fprintf(stderr, "\tlist\n");
-	fprintf(stderr, "\tblock <idx>\n");
-	fprintf(stderr, "\tunblock <idx>\n");
+	fprintf(stderr, "\tblock "BLOCK_PARAMS"\n");
+	fprintf(stderr, "\tunblock "BLOCK_PARAMS"\n");
 }
 
 static void version(void)
 {
 	printf("rfkill %s\n", rfkill_version);
+}
+
+static void do_block_unblock(__u8 block, char *param)
+{
+	enum rfkill_type t;
+	__u32 idx;
+
+	if (islower(*param)) {
+		/* assume alphabetic characters imply a wireless type name */
+		t = rfkill_str_to_type(param);
+		if ( t < NUM_RFKILL_TYPES)
+			rfkill_block_all(t,block);
+		else
+			goto err;
+	} else if (isdigit(*param)) {
+		/* assume a numeric character implies an index. */
+		idx = atoi(param);
+		rfkill_block(idx, block);
+	} else
+		goto err;
+
+	return;
+err:
+	fprintf(stderr,"Bogus %sblock argument '%s'.\n",block?"":"un",param);
+	exit(1);
 }
 
 int main(int argc, char **argv)
@@ -272,13 +324,11 @@ int main(int argc, char **argv)
 	} else if (strcmp(*argv, "block") == 0 && argc > 1) {
 		argc--;
 		argv++;
-		__u32 idx = atoi(*argv);
-		rfkill_block(idx, 1);
+		do_block_unblock(1,*argv);
 	} else if (strcmp(*argv, "unblock") == 0 && argc > 1) {
 		argc--;
 		argv++;
-		__u32 idx = atoi(*argv);
-		rfkill_block(idx, 0);
+		do_block_unblock(0,*argv);
 	} else {
 		usage();
 		return 1;
