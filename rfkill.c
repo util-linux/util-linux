@@ -11,6 +11,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
+#include <stdbool.h>
 #include <sys/types.h>
 #include <sys/poll.h>
 
@@ -111,25 +112,22 @@ static const char *type2string(enum rfkill_type type)
 	return NULL;
 }
 
-static struct rfkill_event *rfkill_get_event_list(int *num_events)
+static void rfkill_list(void)
 {
 	struct rfkill_event event;
-	struct rfkill_event *events = NULL;
+	const char *name;
 	ssize_t len;
 	int fd;
-
-	*num_events = 0;
 
 	fd = open("/dev/rfkill", O_RDONLY);
 	if (fd < 0) {
 		perror("Can't open RFKILL control device");
-		return NULL;
+		return;
 	}
 
 	if (fcntl(fd, F_SETFL, O_NONBLOCK) < 0) {
 		perror("Can't set RFKILL control device to non-blocking");
 		close(fd);
-		return NULL;
 	}
 
 	while (1) {
@@ -149,45 +147,18 @@ static struct rfkill_event *rfkill_get_event_list(int *num_events)
 		if (event.op != RFKILL_OP_ADD)
 			continue;
 
-		events = realloc(events,(*num_events+1)*sizeof(struct rfkill_event));
-		if (!events) {
-			perror("Cannot realloc events");
-			break;
-		}
+		name = get_name(event.idx);
 
-		events[*num_events] = event;
-		*num_events += 1;
+		printf("%u: %s: %s\n", event.idx, name,
+						type2string(event.type));
+		printf("\tSoft blocked: %s\n", event.soft ? "yes" : "no");
+		printf("\tHard blocked: %s\n", event.hard ? "yes" : "no");
 	}
 
 	close(fd);
-	return events;
 }
 
-static void rfkill_list(void)
-{
-	int num_events;
-	struct rfkill_event *events;
-	const char *name;
-	int i;
-
-	events = rfkill_get_event_list(&num_events);
-	if (!events)
-		return;
-
-	for (i = 0; i < num_events; i++) {
-
-		name = get_name(events[i].idx);
-
-		printf("%u: %s: %s\n", events[i].idx, name,
-						type2string(events[i].type));
-		printf("\tSoft blocked: %s\n", events[i].soft ? "yes" : "no");
-		printf("\tHard blocked: %s\n", events[i].hard ? "yes" : "no");
-	}
-
-	free(events);
-}
-
-static void rfkill_block(__u32 idx, __u8 block)
+static void rfkill_block(bool all, __u32 idx, __u8 block, __u8 type)
 {
 	struct rfkill_event event;
 	ssize_t len;
@@ -200,8 +171,13 @@ static void rfkill_block(__u32 idx, __u8 block)
 	}
 
 	memset(&event, 0, sizeof(event));
-	event.idx = idx;
-	event.op = RFKILL_OP_CHANGE;
+	if (!all) {
+		event.idx = idx;
+		event.op = RFKILL_OP_CHANGE;
+	} else {
+		event.op = RFKILL_OP_CHANGE_ALL;
+		event.type = type;
+	}
 	event.soft = block;
 
 	len = write(fd, &event, sizeof(event));
@@ -209,24 +185,6 @@ static void rfkill_block(__u32 idx, __u8 block)
 		perror("Failed to change RFKILL state");
 
 	close(fd);
-}
-
-static void rfkill_block_all(enum rfkill_type type, __u8 block)
-{
-	int num_events;
-	struct rfkill_event *events;
-	int i;
-
-	events = rfkill_get_event_list(&num_events);
-	if (!events)
-		return;
-
-	for (i = 0; i < num_events; i++) {
-		if ((events[i].type == type) || (type == RFKILL_TYPE_ALL))
-			rfkill_block(events[i].idx, block);
-	}
-
-	free(events);
 }
 
 struct rfkill_type_str {
@@ -284,14 +242,14 @@ static void do_block_unblock(__u8 block, char *param)
 	if (islower(*param)) {
 		/* assume alphabetic characters imply a wireless type name */
 		t = rfkill_str_to_type(param);
-		if ( t < NUM_RFKILL_TYPES)
-			rfkill_block_all(t,block);
+		if (t < NUM_RFKILL_TYPES)
+			rfkill_block(true, 0, block, t);
 		else
 			goto err;
 	} else if (isdigit(*param)) {
 		/* assume a numeric character implies an index. */
 		idx = atoi(param);
-		rfkill_block(idx, block);
+		rfkill_block(false, idx, block, 0);
 	} else
 		goto err;
 
