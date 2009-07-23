@@ -210,6 +210,25 @@ static void rfkill_block(__u32 idx, __u8 block)
 	close(fd);
 }
 
+static void rfkill_block_all(enum rfkill_type type, __u8 block)
+{
+	int num_events;
+	struct rfkill_event *events;
+	int i;
+
+	events = rfkill_get_event_list(&num_events);
+	if (!events)
+		return;
+
+	for (i = 0; i < num_events; i++) {
+		if ((events[i].type == type) || (type == RFKILL_TYPE_ALL)) {
+			rfkill_block(events[i].idx, block);
+		}
+	}
+
+	free(events);
+}
+
 static const char *argv0;
 
 static void usage(void)
