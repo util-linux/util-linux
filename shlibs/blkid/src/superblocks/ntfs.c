@@ -11,7 +11,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct ntfs_super_block {
 	uint8_t		jump[3];

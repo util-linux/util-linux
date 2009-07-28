@@ -13,7 +13,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct adaptec_metadata {
 	uint32_t	b0idcode;

@@ -13,7 +13,7 @@
 #include <unistd.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 #define XENIX_NICINOD				100
 #define XENIX_NICFREE				100

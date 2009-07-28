@@ -14,7 +14,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct jm_metadata {
 	int8_t		signature[2];

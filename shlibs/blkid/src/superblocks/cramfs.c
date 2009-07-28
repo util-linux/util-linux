@@ -15,7 +15,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct cramfs_super
 {

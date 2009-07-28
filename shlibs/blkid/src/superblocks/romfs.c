@@ -15,7 +15,7 @@
 #include <ctype.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct romfs_super_block {
 	unsigned char	ros_magic[8];

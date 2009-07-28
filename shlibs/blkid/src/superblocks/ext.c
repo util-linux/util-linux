@@ -19,7 +19,7 @@
 #include <time.h>
 
 #include "linux_version.h"
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct ext2_super_block {
 	uint32_t		s_inodes_count;

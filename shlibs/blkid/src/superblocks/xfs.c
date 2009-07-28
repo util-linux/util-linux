@@ -17,7 +17,7 @@
 #include <ctype.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct xfs_super_block {
 	unsigned char	xs_magic[4];

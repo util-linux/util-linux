@@ -17,7 +17,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct iso_volume_descriptor {
 	unsigned char	vd_type;

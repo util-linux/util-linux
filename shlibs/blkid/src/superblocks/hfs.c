@@ -11,7 +11,7 @@
 #include <string.h>
 #include <inttypes.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 #include "md5.h"
 
 /* HFS / HFS+ */

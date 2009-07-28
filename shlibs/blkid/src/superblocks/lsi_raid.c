@@ -14,7 +14,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct lsi_metadata {
 	uint8_t		sig[6];

@@ -13,7 +13,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct mdp0_super_block {
 	uint32_t	md_magic;

@@ -1,11 +1,13 @@
 /*
- * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2008-2009 Karel Zak <kzak@redhat.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
-#ifndef _BLKID_PROBE_H
-#define _BLKID_PROBE_H
+#ifndef _BLKID_SUPERBLOCKS_H
+#define _BLKID_SUPERBLOCKS_H
+
+#include "blkidP.h"
 
 extern const struct blkid_idinfo cramfs_idinfo;
 extern const struct blkid_idinfo swap_idinfo;
@@ -58,4 +60,4 @@ extern const struct blkid_idinfo xenix_idinfo;
 extern const struct blkid_idinfo btrfs_idinfo;
 extern const struct blkid_idinfo zfs_idinfo;
 
-#endif /* _BLKID_PROBE_H */
+#endif /* _BLKID_SUPERBLOCKS_H */

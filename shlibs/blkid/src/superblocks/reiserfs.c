@@ -12,7 +12,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct reiserfs_super_block {
 	uint32_t	rs_blocks_count;

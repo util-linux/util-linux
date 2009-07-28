@@ -16,7 +16,7 @@
 #include <ctype.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct ufs_super_block {
 	uint32_t	fs_link;

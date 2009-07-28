@@ -9,7 +9,7 @@
  * GNU Lesser General Public License.
  */
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 static int probe_minix(blkid_probe pr, const struct blkid_idmag *mag)
 {

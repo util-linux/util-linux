@@ -14,7 +14,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 #define LVM1_ID_LEN 128
 #define LVM2_ID_LEN 32

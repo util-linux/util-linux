@@ -14,7 +14,7 @@
 #include <stdint.h>
 
 #include "bitops.h"	/* swab16() */
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct sqsh_super_block {
 	uint32_t	s_magic;

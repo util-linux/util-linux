@@ -7,7 +7,7 @@
 
 #include <stdio.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct vxfs_super_block {
 	uint32_t		vs_magic;

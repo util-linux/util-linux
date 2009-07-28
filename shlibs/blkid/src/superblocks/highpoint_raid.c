@@ -13,7 +13,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct hpt45x_metadata {
 	uint32_t	magic;

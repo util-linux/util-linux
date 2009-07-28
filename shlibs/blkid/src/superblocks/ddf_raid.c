@@ -13,7 +13,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 /* http://www.snia.org/standards/home */
 #define DDF_GUID_LENGTH			24

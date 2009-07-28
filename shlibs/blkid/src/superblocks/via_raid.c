@@ -16,7 +16,7 @@
 #include <ctype.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct via_metadata {
 	uint16_t	signature;

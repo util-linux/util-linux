@@ -15,7 +15,7 @@
 #include <ctype.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct promise_metadata {
 	uint8_t	sig[24];

@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct btrfs_super_block {
 	uint8_t csum[32];

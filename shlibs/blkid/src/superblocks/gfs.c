@@ -10,7 +10,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 /* Common gfs/gfs2 constants: */
 #define GFS_LOCKNAME_LEN        64

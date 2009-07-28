@@ -16,7 +16,7 @@
 #include <ctype.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct jfs_super_block {
 	unsigned char	js_magic[4];

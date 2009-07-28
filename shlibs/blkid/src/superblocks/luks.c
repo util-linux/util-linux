@@ -15,7 +15,7 @@
 #include <ctype.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 #define LUKS_CIPHERNAME_L		32
 #define LUKS_CIPHERMODE_L		32

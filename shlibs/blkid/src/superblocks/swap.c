@@ -16,7 +16,7 @@
 #include <ctype.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 /* linux-2.6/include/linux/swap.h */
 struct swap_header_v1_2 {

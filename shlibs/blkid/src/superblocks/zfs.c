@@ -13,7 +13,7 @@
 #include <ctype.h>
 #include <inttypes.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 /* #include <sys/uberblock_impl.h> */
 #define UBERBLOCK_MAGIC         0x00bab10c              /* oo-ba-bloc!  */

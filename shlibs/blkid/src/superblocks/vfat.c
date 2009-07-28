@@ -16,7 +16,7 @@
 #include <ctype.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 /* Yucky misaligned values */
 struct vfat_super_block {

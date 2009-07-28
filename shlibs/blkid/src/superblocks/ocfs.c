@@ -12,7 +12,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct ocfs_volume_header {
 	unsigned char	minor_version[4];

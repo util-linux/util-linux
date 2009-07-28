@@ -14,7 +14,7 @@
 #include <string.h>
 #include <stdint.h>
 
-#include "blkidP.h"
+#include "superblocks.h"
 
 struct nv_metadata {
 	uint8_t		vendor[8];
