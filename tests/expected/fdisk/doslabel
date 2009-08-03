@@ -6,6 +6,8 @@ Create primary partition
 ae4f9b12f4a768849f72ea36938c30c7 doslabel.img
 Set partition type
 4a5dba818f9962a82a086d8b99b89a17 doslabel.img
+Set primary partition active
+c30e9c761b71cf95c67e758b93706ac5 doslabel.img
 Re-create primary partition
 ae4f9b12f4a768849f72ea36938c30c7 doslabel.img
 Create extended partition

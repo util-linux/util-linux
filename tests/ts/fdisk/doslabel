@@ -26,6 +26,7 @@ FDISK_CMD_WRITE_CLOSE="w\nq\n"
 FDISK_CMD_CREATE_DOSLABEL="o\n" #create dos label
 FDISK_CMD_CREATE_PRIMARY="n\np\n1\n\n+1M\n" # create primary partition 1 of size 1MB
 FDISK_CMD_CHANGE_PARTTYPE="t\nbf\n" # change partition type to "bf - solaris", this requires that there is only one partition to change
+FDISK_CMD_SET_ACTIVE="a\n1\n" # set first partition active
 FDISK_CMD_CREATE_EXTENDED="n\ne\n2\n\n+10\n" # create extended partition 2 of size 11 cylinders
 FDISK_CMD_CREATE_LOGICAL="n\nl\n\n+1\n" # create next logical partition of size 2 cyl
 FDISK_CMD_DELETE_LOGICALS="d\n6\nd\n5\nd\n6\d5\n" # delete middle, head, tail, last partitions
@@ -52,6 +53,11 @@ ts_image_md5sum 2>&1 >> $TS_OUTPUT
 
 ts_log "Set partition type"
 echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CHANGE_PARTTYPE}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum 2>&1 >> $TS_OUTPUT
+
+ts_log "Set primary partition active"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_SET_ACTIVE}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum 2>&1 >> $TS_OUTPUT
 
