@@ -21,15 +21,16 @@ TS_DESC="doslabel tests"
 ts_init "$*"
 
 # cmd to change number of cylinders to 1024 and changes system id to 0x1
-FDISK_CMD_INIT='x\nc\n1024\ni\n0x1\nr\n'
-FDISK_CMD_WRITE_CLOSE='w\nq\n'
-FDISK_CMD_CREATE_DOSLABEL='o\n' #create dos label
-FDISK_CMD_CREATE_PRIMARY='n\np\n1\n\n+1M\n' # create primary partition 1 of size 1MB
-FDISK_CMD_CREATE_EXTENDED='n\ne\n2\n\n+10\n' # create extended partition 2 of size 11 cylinders
-FDISK_CMD_CREATE_LOGICAL='n\nl\n\n+1\n' # create next logical partition of size 2 cyl
-FDISK_CMD_DELETE_LOGICALS='d\n6\nd\n5\nd\n6\d5\n' # delete middle, head, tail, last partitions
-FDISK_CMD_DELETE_PRIMARY='d\n1\n' # delete first primary
-FDISK_CMD_DELETE_EXTENDED='d\n2\n' # delete second primary
+FDISK_CMD_INIT="x\nc\n1024\ni\n0x1\nr\n"
+FDISK_CMD_WRITE_CLOSE="w\nq\n"
+FDISK_CMD_CREATE_DOSLABEL="o\n" #create dos label
+FDISK_CMD_CREATE_PRIMARY="n\np\n1\n\n+1M\n" # create primary partition 1 of size 1MB
+FDISK_CMD_CHANGE_PARTTYPE="t\nbf\n" # change partition type to "bf - solaris", this requires that there is only one partition to change
+FDISK_CMD_CREATE_EXTENDED="n\ne\n2\n\n+10\n" # create extended partition 2 of size 11 cylinders
+FDISK_CMD_CREATE_LOGICAL="n\nl\n\n+1\n" # create next logical partition of size 2 cyl
+FDISK_CMD_DELETE_LOGICALS="d\n6\nd\n5\nd\n6\d5\n" # delete middle, head, tail, last partitions
+FDISK_CMD_DELETE_PRIMARY="d\n1\n" # delete first primary
+FDISK_CMD_DELETE_EXTENDED="d\n2\n" # delete second primary
 
 #set -x 
 
@@ -46,6 +47,16 @@ ts_image_md5sum 2>&1 >> $TS_OUTPUT
 
 ts_log "Create primary partition"
 echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CREATE_PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum 2>&1 >> $TS_OUTPUT
+
+ts_log "Set partition type"
+echo -e "${FDISK_CMD_INIT}${FDISK_CMD_CHANGE_PARTTYPE}${FDISK_CMD_WRITE_CLOSE}" | \
+	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
+ts_image_md5sum 2>&1 >> $TS_OUTPUT
+
+ts_log "Re-create primary partition"
+echo -e "${FDISK_CMD_INIT}d\n${FDISK_CMD_CREATE_PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
 ts_image_md5sum 2>&1 >> $TS_OUTPUT
 

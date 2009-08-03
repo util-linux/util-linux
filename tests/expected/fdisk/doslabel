@@ -4,6 +4,10 @@ Create new DOS partition table
 57e721e38d1266c2df055067c18f2cf9 doslabel.img
 Create primary partition
 ae4f9b12f4a768849f72ea36938c30c7 doslabel.img
+Set partition type
+4a5dba818f9962a82a086d8b99b89a17 doslabel.img
+Re-create primary partition
+ae4f9b12f4a768849f72ea36938c30c7 doslabel.img
 Create extended partition
 76987a00b353687cd1dba3ddea9d66f9 doslabel.img
 Create logical partitions
