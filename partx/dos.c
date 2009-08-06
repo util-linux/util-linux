@@ -44,7 +44,7 @@ read_extended_partition(int fd, struct partition *ep,
 		if (++loopct > 100)
 			return n;
 
-		bp = getblock(fd, here);
+		bp = getblock(fd, here * ssf);	/* in 512 blocks */
 		if (bp == NULL)
 			return n;
 
