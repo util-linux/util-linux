@@ -141,12 +141,22 @@ watch_file_inotify(const char *filename, off_t *size)
 		return 0;
 
 	ffd = inotify_add_watch(fd, filename, EVENTS);
+	if (ffd == -1) {
+		if (errno == ENOSPC)
+			errx(EXIT_FAILURE, _("%s: cannot add inotify watch "
+				"(limit of inotify watches was reached)."),
+				filename);
+
+		err(EXIT_FAILURE, _("%s: cannot add inotify watch."), filename);
+	}
+
 	while (ffd >= 0) {
 		len = read(fd, buf, sizeof(buf));
 		if (len < 0 && (errno == EINTR || errno == EAGAIN))
 			continue;
 		if (len < 0)
-			err(EXIT_FAILURE, "%s: cannot read inotify events", filename);
+			err(EXIT_FAILURE,
+				_("%s: cannot read inotify events"), filename);
 
 		for (e = 0; e < len; ) {
 			struct inotify_event *ev = (struct inotify_event *) &buf[e];
