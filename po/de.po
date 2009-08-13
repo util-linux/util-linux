@@ -3466,7 +3466,7 @@ msgstr ""
 #: fdisk/fdisk.c:1640
 #, c-format
 msgid "%d heads, %llu sectors/track, %d cylinders"
-msgstr "%d Köpfe, %llu Sektoren/Spuren, %d Zylinder"
+msgstr "%d Köpfe, %llu Sektoren/Spur, %d Zylinder"
 
 #: fdisk/fdisk.c:1643
 #, c-format
