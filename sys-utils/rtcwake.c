@@ -158,7 +158,7 @@ static int get_basetimes(int fd)
 	tm.tm_mday = rtc.tm_mday;
 	tm.tm_mon = rtc.tm_mon;
 	tm.tm_year = rtc.tm_year;
-	tm.tm_isdst = rtc.tm_isdst;	/* stays unspecified? */
+	tm.tm_isdst = -1;  /* assume the system knows better than the RTC */
 	rtc_time = mktime(&tm);
 
 	if (rtc_time == (time_t)-1) {
