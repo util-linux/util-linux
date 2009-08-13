@@ -483,11 +483,6 @@ static int probe_ext4(blkid_probe pr, const struct blkid_idmag *mag)
 	if (fi & EXT3_FEATURE_INCOMPAT_JOURNAL_DEV)
 		return -BLKID_ERR_PARAM;
 
-	/* Ext4 has at least one feature which ext3 doesn't understand */
-	if (!(frc & EXT3_FEATURE_RO_COMPAT_UNSUPPORTED) &&
-	    !(fi  & EXT3_FEATURE_INCOMPAT_UNSUPPORTED))
-		return -BLKID_ERR_PARAM;
-
 	/*
 	 * If the filesystem does not have a journal and ext2 is not
 	 * present, then force this to be detected as an ext2
@@ -498,6 +493,12 @@ static int probe_ext4(blkid_probe pr, const struct blkid_idmag *mag)
 	    get_linux_version() >= EXT4_SUPPORTS_EXT2)
 		goto force_ext4;
 
+	/* Ext4 has at least one feature which ext3 doesn't understand */
+	if (!(frc & EXT3_FEATURE_RO_COMPAT_UNSUPPORTED) &&
+	    !(fi  & EXT3_FEATURE_INCOMPAT_UNSUPPORTED))
+		return -BLKID_ERR_PARAM;
+
+force_ext4:
 	/*
 	 * If the filesystem is a OK for use by in-development
 	 * filesystem code, and ext4dev is supported or ext4 is not
@@ -513,7 +514,6 @@ static int probe_ext4(blkid_probe pr, const struct blkid_idmag *mag)
 			return -BLKID_ERR_PARAM;
 	}
 
-force_ext4:
 	ext_get_info(pr, 4, es);
 	return 0;
 }
