@@ -87,8 +87,13 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 		   (unsigned long)st.st_mtime, (unsigned long)diff));
 
 
-	if (!cache->probe)
+	if (!cache->probe) {
 		cache->probe = blkid_new_probe();
+		if (!cache->probe) {
+			blkid_free_dev(dev);
+			return NULL;
+		}
+	}
 
 	fd = open(dev->bid_name, O_RDONLY);
 	if (fd < 0) {

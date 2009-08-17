@@ -181,8 +181,10 @@ void blkid_put_cache(blkid_cache cache)
 		}
 		blkid_free_tag(tag);
 	}
-	free(cache->bic_filename);
 
+	blkid_free_probe(cache->probe);
+
+	free(cache->bic_filename);
 	free(cache);
 }
 
