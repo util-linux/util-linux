@@ -76,6 +76,7 @@
 #include "pathnames.h"
 #include "xstrncpy.h"
 #include "nls.h"
+#include "usleep.h"
 
 static void usage(void), int_handler(int), write_user(struct utmp *);
 static void wall(void), write_wtmp(void), unmount_disks(void);

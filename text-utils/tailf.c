@@ -41,6 +41,7 @@
 #include <sys/inotify.h>
 #endif
 #include "nls.h"
+#include "usleep.h"
 
 #define DEFAULT_LINES  10
 

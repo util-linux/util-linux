@@ -36,6 +36,7 @@
 #include <linux/rtc.h>
 
 #include "nls.h"
+#include "usleep.h"
 
 /* constants from legacy PC/AT hardware */
 #define	RTC_PF	0x40

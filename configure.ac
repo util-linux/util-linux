@@ -140,6 +140,7 @@ AC_CHECK_FUNCS(
 	fsync \
 	getdomainname \
 	get_current_dir_name \
+	usleep \
 	nanosleep \
 	personality \
 	updwtmp \

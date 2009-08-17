@@ -17,6 +17,7 @@ probe_for_kd_clock() {
 #include <sys/ioctl.h>
 
 #include "nls.h"
+#include "usleep.h"
 
 static int con_fd = -1;		/* opened by probe_for_kd_clock() */
 				/* never closed */

@@ -16,6 +16,7 @@ dist_noinst_HEADERS = \
 	pttype.h \
 	setproctitle.h \
 	swapheader.h \
+	usleep.h \
 	wholedisk.h \
 	widechar.h \
 	xstrncpy.h
