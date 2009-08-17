@@ -554,6 +554,9 @@ UTIL_CHECK_SYSCALL([ioprio_get],
   [sh*],      [289],
   [x86_64*],  [252])
 
+dnl Old versions of glib don't provide fallocate(2)
+UTIL_CHECK_SYSCALL([fallocate])
+AC_CHECK_FUNC([fallocate])
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <time.h>
