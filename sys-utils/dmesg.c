@@ -42,7 +42,7 @@ static char *progname;
 static void
 usage(void) {
 	fprintf(stderr,
-		_("Usage: %s [-c] [-n level] [-s bufsize]\n"), progname);
+		_("Usage: %s [-c] [-n level] [-r] [-s bufsize]\n"), progname);
 }
 
 int
@@ -88,7 +88,7 @@ main(int argc, char *argv[]) {
 	}
 	argc -= optind;
 	argv += optind;
-   
+
 	if (argc > 1) {
 		usage();
 		exit(1);
