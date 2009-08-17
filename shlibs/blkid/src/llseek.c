@@ -30,7 +30,7 @@
 
 #ifdef __linux__
 
-#if defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE)
+#if defined(HAVE_LSEEK64) && defined(HAVE_LSEEK64_PROTOTYPE) || defined(__UCLIBC__)
 
 #define my_llseek lseek64
 
