@@ -1246,6 +1246,10 @@ internal file system integrity, however it can allow old data to appear
 in files after a crash and journal recovery.
 .RE
 .TP
+.BR barrier=0 " / "  barrier=1 "
+This enables/disables barriers.  barrier=0 disables it, barrier=1 enables it.
+The ext3 does not enable write barriers by default.
+.TP
 .BI commit= nrsec
 Sync all data and metadata every
 .I nrsec
@@ -1296,6 +1300,8 @@ penalty.  If your disks are battery-backed in one way or another, disabling
 barriers may safely improve performance.  The mount options "barrier" and
 "nobarrier" can also be used to enable or disable barriers, for consistency
 with other ext4 mount options.
+
+The ext4 enables write barriers by default.
 .TP
 .BI inode_readahead= n
 This tuning parameter controls the maximum number of inode table blocks that
