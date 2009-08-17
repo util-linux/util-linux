@@ -42,7 +42,7 @@
 
 #include <stdio.h>
 #include <unistd.h>		/* for getopt(), isatty() */
-#include <string.h>		/* for bzero(), strcpy() */
+#include <string.h>		/* for memset(), strcpy() */
 #include <term.h>		/* for setupterm() */
 #include <stdlib.h>		/* for getenv() */
 #include <limits.h>		/* for INT_MAX */

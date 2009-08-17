@@ -357,7 +357,7 @@ xmalloc (size_t size) {
 /* Some libc's have their own basename() */
 static char *
 my_basename(char *devname) {
-    char *s = rindex(devname, '/');
+    char *s = strrchr(devname, '/');
     return s ? s+1 : devname;
 }
 

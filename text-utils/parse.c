@@ -64,7 +64,7 @@ void addfile(char *name)
 		exit(1);
 	}
 	while (fgets(buf, sizeof(buf), fp)) {
-		if ((p = index(buf, '\n')) == NULL) {
+		if ((p = strchr(buf, '\n')) == NULL) {
 			(void)fprintf(stderr, _("hexdump: line too long.\n"));
 			while ((ch = getchar()) != '\n' && ch != EOF);
 			continue;
@@ -171,7 +171,7 @@ int size(FS *fs)
 			 * skip any special chars -- save precision in
 			 * case it's a %s format.
 			 */
-			while (index(spec + 1, *++fmt));
+			while (strchr(spec + 1, *++fmt));
 			if (*fmt == '.' && isdigit((unsigned char)*++fmt)) {
 				prec = atoi(fmt);
 				while (isdigit((unsigned char)*++fmt));
@@ -244,10 +244,10 @@ void rewrite(FS *fs)
 			if (fu->bcnt) {
 				sokay = USEBCNT;
 				/* skip to conversion character */
-				for (++p1; index(spec, *p1); ++p1);
+				for (++p1; strchr(spec, *p1); ++p1);
 			} else {
 				/* skip any special chars, field width */
-				while (index(spec + 1, *++p1));
+				while (strchr(spec + 1, *++p1));
 				if (*p1 == '.' &&
 				    isdigit((unsigned char)*++p1)) {
 					sokay = USEPREC;

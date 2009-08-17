@@ -311,8 +311,8 @@ int main(int argc, char *argv[]) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	bzero(tmp_file, FILENAMELEN);
-	progname = (rindex(argv[0], '/')) ? rindex(argv[0], '/') + 1 : argv[0];
+	memset(tmp_file, '\0', FILENAMELEN);
+	progname = (strrchr(argv[0], '/')) ? strrchr(argv[0], '/') + 1 : argv[0];
 	if (!strcmp(progname, "vigr")) {
 		program = VIGR;
 		xstrncpy(orig_file, GROUP_FILE, sizeof(orig_file));

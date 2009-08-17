@@ -418,7 +418,7 @@ main(int argc, char **argv)
      */
     gethostname(tbuf, sizeof(tbuf));
     xstrncpy(thishost, tbuf, sizeof(thishost));
-    domain = index(tbuf, '.');
+    domain = strchr(tbuf, '.');
 
     username = tty_name = hostname = NULL;
     fflag = hflag = pflag = 0;
@@ -437,7 +437,7 @@ main(int argc, char **argv)
 	      exit(1);
 	  }
 	  hflag = 1;
-	  if (domain && (p = index(optarg, '.')) &&
+	  if (domain && (p = strchr(optarg, '.')) &&
 	      strcasecmp(p, domain) == 0)
 	    *p = 0;
 
@@ -1251,7 +1251,7 @@ Michael Riepe <michael@stud.uni-hannover.de>
 	childArgv[childArgc++] = buff;
     } else {
 	tbuf[0] = '-';
-	xstrncpy(tbuf + 1, ((p = rindex(pwd->pw_shell, '/')) ?
+	xstrncpy(tbuf + 1, ((p = strrchr(pwd->pw_shell, '/')) ?
 			   p + 1 : pwd->pw_shell),
 		sizeof(tbuf)-1);
 

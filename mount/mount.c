@@ -911,11 +911,11 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
 
    /* Accept a comma-separated list of types, and try them one by one */
    /* A list like "nonfs,.." indicates types not to use */
-   if (*types && strncmp(*types, "no", 2) && index(*types,',')) {
+   if (*types && strncmp(*types, "no", 2) && strchr(*types,',')) {
       char *t = strdup(*types);
       char *p;
 
-      while((p = index(t,',')) != NULL) {
+      while((p = strchr(t,',')) != NULL) {
 	 *p = 0;
 	 args.type = *types = t;
 	 if (do_mount (&args, special, status) == 0)

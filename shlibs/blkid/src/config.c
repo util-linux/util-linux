@@ -68,12 +68,12 @@ static int parse_next(FILE *fd, struct blkid_config *conf)
 	do {
 		if (fgets (buf, sizeof(buf), fd) == NULL)
 			return feof(fd) ? 0 : -1;
-		s = index (buf, '\n');
+		s = strchr (buf, '\n');
 		if (!s) {
 			/* Missing final newline?  Otherwise extremely */
 			/* long line - assume file was corrupted */
 			if (feof(fd))
-				s = index (buf, '\0');
+				s = strchr (buf, '\0');
 			else {
 				DBG(DEBUG_CONFIG, fprintf(stderr,
 					"libblkid: config file: missing newline at line '%s'.\n",

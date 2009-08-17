@@ -95,7 +95,7 @@ main(int argc, char **argv) {
         textdomain(PACKAGE);
 
 	progname = argv[0];
-	p = rindex(progname, '/');
+	p = strrchr(progname, '/');
 	if (p)
 	     progname = p+1;
 

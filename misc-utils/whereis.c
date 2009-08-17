@@ -325,14 +325,14 @@ findin(char *dir, char *cp) {
 	char dirbuf[1024];
 	struct stat statbuf;
 
-	dd = index(dir, '*');
+	dd = strchr(dir, '*');
 	if (!dd)
 		goto noglob;
 
 	l = strlen(dir);
 	if (l < sizeof(dirbuf)) {	/* refuse excessively long names */
 		strcpy (dirbuf, dir);
-		d = index(dirbuf, '*');
+		d = strchr(dirbuf, '*');
 		*d = 0;
 		dirp = opendir(dirbuf);
 		if (dirp == NULL)

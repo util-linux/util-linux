@@ -131,7 +131,7 @@ main(int argc, char **argv){
 	case 'n':
 		p = optarg;
 		lower = atoi(p);
-		p = index(p, '-');
+		p = strchr(p, '-');
 		if (p)
 			upper = atoi(p+1);
 		else

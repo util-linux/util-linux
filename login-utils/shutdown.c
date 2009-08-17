@@ -281,7 +281,7 @@ main(int argc, char *argv[])
 			if (fgets (line, sizeof(line), fp) != NULL &&
 			    strncasecmp (line, "HALT_ACTION", 11) == 0 &&
 			    iswhitespace(line[11])) {
-				p = index(line, '\n');
+				p = strchr(line, '\n');
 				if (p)
 					*p = 0;		/* strip final '\n' */
 				p = line+11;

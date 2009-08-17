@@ -196,7 +196,7 @@ main(int argc, char **argv) {
 			} else {
 				if (p != buf)
 					*p++ = ' ';
-				bcopy(*argv++, p, len);
+				memmove(p, *argv++, len);
 				*(p += len) = '\0';
 			}
 		}

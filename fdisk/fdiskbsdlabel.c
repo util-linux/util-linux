@@ -538,7 +538,7 @@ xbsd_write_bootstrap (void)
 
   /* We need a backup of the disklabel (xbsd_dlabel might have changed). */
   d = &disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE];
-  bcopy (d, &dl, sizeof (struct xbsd_disklabel));
+  memmove (&dl, d, sizeof (struct xbsd_disklabel));
 
   /* The disklabel will be overwritten by 0's from bootxx anyway */
   bzero (d, sizeof (struct xbsd_disklabel));
@@ -555,7 +555,7 @@ xbsd_write_bootstrap (void)
       exit ( EXIT_FAILURE );
     }
 
-  bcopy (&dl, d, sizeof (struct xbsd_disklabel));
+  memmove (d, &dl, sizeof (struct xbsd_disklabel));
 
 #if defined (__powerpc__) || defined (__hppa__)
   sector = 0;
@@ -740,8 +740,9 @@ xbsd_readlabel (struct partition *p, struct xbsd_disklabel *d)
 	if (BSD_BBSIZE != read (fd, disklabelbuffer, BSD_BBSIZE))
 		fatal (unable_to_read);
 
-	bcopy (&disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE + BSD_LABELOFFSET],
-	       d, sizeof (struct xbsd_disklabel));
+	memmove (d,
+	         &disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE + BSD_LABELOFFSET],
+	         sizeof (struct xbsd_disklabel));
 
 	if (d -> d_magic != BSD_DISKMAGIC || d -> d_magic2 != BSD_DISKMAGIC)
 		return 0;
@@ -776,8 +777,8 @@ xbsd_writelabel (struct partition *p, struct xbsd_disklabel *d)
   /* This is necessary if we want to write the bootstrap later,
      otherwise we'd write the old disklabel with the bootstrap.
   */
-  bcopy (d, &disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE + BSD_LABELOFFSET],
-	 sizeof (struct xbsd_disklabel));
+  memmove (&disklabelbuffer[BSD_LABELSECTOR * SECTOR_SIZE + BSD_LABELOFFSET], d,
+           sizeof (struct xbsd_disklabel));
 
 #if defined (__alpha__) && BSD_LABELSECTOR == 0
   alpha_bootblock_checksum (disklabelbuffer);

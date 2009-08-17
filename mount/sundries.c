@@ -157,7 +157,7 @@ matching_type (const char *type, const char *types) {
 	     if (strncmp(p, type, len) == 0 &&
 		 (p[len] == 0 || p[len] == ','))
 		     return !no;
-	     p = index(p,',');
+	     p = strchr(p,',');
 	     if (!p)
 		     break;
 	     p++;

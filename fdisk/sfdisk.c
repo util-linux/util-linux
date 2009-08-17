@@ -40,7 +40,7 @@
 #include <unistd.h>		/* read, write */
 #include <fcntl.h>		/* O_RDWR */
 #include <errno.h>		/* ERANGE */
-#include <string.h>		/* index() */
+#include <string.h>		/* strchr(), strrchr() */
 #include <ctype.h>
 #include <getopt.h>
 #include <sys/ioctl.h>
@@ -1725,12 +1725,12 @@ read_stdin(char **fields, char *line, int fieldssize, int linesize) {
 	eof = 1;
 	return RD_EOF;
     }
-    if (!(lp = index(lp, '\n')))
+    if (!(lp = strchr(lp, '\n')))
       fatal(_("long or incomplete input line - quitting\n"));
     *lp = 0;
 
     /* remove comments, if any */
-    if ((lp = index(line+2, '#')) != 0)
+    if ((lp = strchr(line+2, '#')) != 0)
       *lp = 0;
 
     /* recognize a few commands - to be expanded */
@@ -1740,7 +1740,7 @@ read_stdin(char **fields, char *line, int fieldssize, int linesize) {
     }
 
     /* dump style? - then bad input is fatal */
-    if ((ip = index(line+2, ':')) != 0) {
+    if ((ip = strchr(line+2, ':')) != 0) {
 	struct dumpfld *d;
 
       nxtfld:
@@ -2503,7 +2503,7 @@ main(int argc, char **argv) {
 
     if (argc < 1)
       fatal(_("no command?\n"));
-    if ((progn = rindex(argv[0], '/')) == NULL)
+    if ((progn = strrchr(argv[0], '/')) == NULL)
       progn = argv[0];
     else
       progn++;

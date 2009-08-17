@@ -252,8 +252,8 @@ void pflush(int ol)
 		}
 		putwchar('\n');
 	}
-	bcopy(page[ol], page, (267 - ol) * 132 * sizeof(wchar_t));
-	bzero(page[267- ol], ol * 132 * sizeof(wchar_t));
+	memmove(page, page[ol], (267 - ol) * 132 * sizeof(wchar_t));
+	memset(page[267- ol], '\0', ol * 132 * sizeof(wchar_t));
 	outline -= ol;
 	outcol = 0;
 	first = 1;
