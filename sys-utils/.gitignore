@@ -2,6 +2,7 @@ arch
 ctrlaltdel
 cytune
 dmesg
+fallocate
 flock
 i386.8
 ia64.8

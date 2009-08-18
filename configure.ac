@@ -558,6 +558,9 @@ UTIL_CHECK_SYSCALL([ioprio_get],
   [sh*],      [289],
   [x86_64*],  [252])
 
+dnl fallocate could be available as libc function or as syscall only
+UTIL_CHECK_SYSCALL([fallocate])
+AC_CHECK_FUNCS([fallocate])
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <time.h>

@@ -31,6 +31,7 @@ AUTHORS (merged projects & commands):
       simpleinit:      Richard Gooch <rgooch@atnf.csiro.au>
       switch_root:     Peter Jones <pjones@redhat.com>
                        Jeremy Katz <katzj@redhat.com>
+      fallocate:       Eric Sandeen <sandeen@redhat.com>
 
 
 CONTRIBUTORS:
