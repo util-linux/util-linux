@@ -100,6 +100,10 @@ and can be used even in the absence of low-level platform support for power
 management. This state operates similarly to Suspend-to-RAM, but includes a
 final step of writing memory contents to disk.
 .TP
+.B off
+ACPI state S5 (Poweroff). This is done by calling '/sbin/shutdown'.
+Not officially supported by ACPI, but usually working.
+.TP
 .B no
 Don't suspend. The rtcwake command sets RTC wakeup time only.
 .TP

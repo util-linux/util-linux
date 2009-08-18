@@ -34,6 +34,7 @@
 #define _PATH_INITTAB		"/etc/inittab"
 #define _PATH_RC		"/etc/rc"
 #define _PATH_REBOOT		"/sbin/reboot"
+#define _PATH_SHUTDOWN		"/sbin/shutdown"
 #define _PATH_SINGLE		"/etc/singleboot"
 #define _PATH_SHUTDOWN_CONF	"/etc/shutdown.conf"
 

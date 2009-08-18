@@ -36,6 +36,7 @@
 #include <linux/rtc.h>
 
 #include "nls.h"
+#include "pathnames.h"
 #include "usleep.h"
 
 /* constants from legacy PC/AT hardware */
@@ -296,6 +297,7 @@ int main(int argc, char **argv)
 	unsigned	seconds = 0;
 	char		*suspend = DEFAULT_MODE;
 
+	int		rc = EXIT_SUCCESS;
 	int		t;
 	int		fd;
 	time_t		alarm = 0;
@@ -335,6 +337,7 @@ int main(int argc, char **argv)
 					|| strcmp(optarg, "disk") == 0
 					|| strcmp(optarg, "on") == 0
 					|| strcmp(optarg, "no") == 0
+					|| strcmp(optarg, "off") == 0
 			   ) {
 				suspend = strdup(optarg);
 				break;
@@ -429,7 +432,11 @@ int main(int argc, char **argv)
 	}
 
 	/* this RTC must exist and (if we'll sleep) be wakeup-enabled */
+#ifdef O_CLOEXEC
+	fd = open(devname, O_RDONLY | O_CLOEXEC);
+#else
 	fd = open(devname, O_RDONLY);
+#endif
 	if (fd < 0) {
 		perror(devname);
 		exit(EXIT_FAILURE);
@@ -451,6 +458,7 @@ int main(int argc, char **argv)
 		alarm += sys_time - rtc_time;
 	} else
 		alarm = rtc_time + seconds + 1;
+
 	if (setup_alarm(fd, &alarm) < 0)
 		exit(EXIT_FAILURE);
 
@@ -465,6 +473,20 @@ int main(int argc, char **argv)
 	else if (strcmp(suspend, "on") != 0) {
 		sync();
 		suspend_system(suspend);
+	} else if (strcmp(suspend, "off") == 0) {
+		char *arg[4];
+		int i = 0;
+
+		arg[i++] = _PATH_SHUTDOWN;
+		arg[i++] = "-P";
+		arg[i++] = "now";
+		arg[i]   = NULL;
+
+		execv(arg[0], arg);
+
+		fprintf(stderr, _("%s: unable to execute %s: %s\n"),
+				progname, _PATH_SHUTDOWN, strerror(errno));
+		rc = EXIT_FAILURE;
 	} else {
 		unsigned long data;
 
@@ -484,5 +506,5 @@ int main(int argc, char **argv)
 
 	close(fd);
 
-	exit(EXIT_SUCCESS);
+	return rc;
 }
