@@ -23,13 +23,6 @@ tunelp_SOURCES = tunelp.c lp.h
 
 info_TEXINFOS = ipc.texi
 
-if LINUX
-if HAVE_FALLOCATE
-usrbin_PROGRAMS += fallocate
-dist_man_MANS += fallocate.1
-endif
-endif
-
 if HAVE_PIVOT_ROOT
 sbin_PROGRAMS += pivot_root
 dist_man_MANS += pivot_root.8
