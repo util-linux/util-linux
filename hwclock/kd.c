@@ -44,10 +44,10 @@ synchronize_to_clock_tick_kd(void) {
    Wait for the top of a clock tick by calling KDGHWCLK in a busy loop until
    we see it.
 -----------------------------------------------------------------------------*/
-  int i;
 
   /* The time when we were called (and started waiting) */
   struct hwclk_time start_time, nowtime;
+  struct timeval begin, now;
 
   if (debug)
     printf(_("Waiting in loop for time from KDGHWCLK to change\n"));
@@ -57,31 +57,31 @@ synchronize_to_clock_tick_kd(void) {
     return 3;
   }
 
-  i = 0;
+  /* Wait for change.  Should be within a second, but in case something
+   * weird happens, we have a time limit (1.5s) on this loop to reduce the
+   * impact of this failure.
+   */
+  gettimeofday(&begin, NULL);
   do {
-    /* Added by Roman Hodek <Roman.Hodek@informatik.uni-erlangen.de> */
-    /* "The culprit is the fast loop with KDGHWCLK ioctls. It seems
-       the kernel gets confused by those on Amigas with A2000 RTCs
-       and simply hangs after some time. Inserting a nanosleep helps." */
-    /* Christian T. Steigies: 1 instead of 1000000 is still sufficient
-       to keep the machine from freezing. */
-
-#ifdef HAVE_NANOSLEEP
-    struct timespec xsleep = { 0, 1 };
-    nanosleep( &xsleep, NULL );
-#else
+    /* Added by Roman Hodek <Roman.Hodek@informatik.uni-erlangen.de>
+     * "The culprit is the fast loop with KDGHWCLK ioctls. It seems
+     *  the kernel gets confused by those on Amigas with A2000 RTCs
+     *  and simply hangs after some time. Inserting a sleep helps."
+     */
     usleep(1);
-#endif
 
-    if (i++ >= 1000000) {
-      fprintf(stderr, _("Timed out waiting for time change.\n"));
-      return 2;
-    }
     if (ioctl(con_fd, KDGHWCLK, &nowtime) == -1) {
       outsyserr(_("KDGHWCLK ioctl to read time failed in loop"));
       return 3;
     }
-  } while (start_time.sec == nowtime.sec);
+    if (start_time.tm_sec != nowtime.tm_sec)
+      break;
+    gettimeofday(&now, NULL);
+    if (time_diff(now, begin) > 1.5) {
+      fprintf(stderr, _("Timed out waiting for time change.\n"));
+      return 2;
+    }
+  } while(1);
 
   return 0;
 }
