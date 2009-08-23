@@ -224,8 +224,8 @@ static int check_for_modules(const char *fs_name)
 #ifdef __linux__
 	struct utsname	uts;
 	FILE		*f;
-	char		buf[1024], *cp, *t;
-	int		i;
+	char		buf[1024], *cp;
+	int		namesz;
 
 	if (uname(&uts))
 		return 0;
@@ -234,6 +234,9 @@ static int check_for_modules(const char *fs_name)
 	f = fopen(buf, "r");
 	if (!f)
 		return 0;
+
+	namesz = strlen(fs_name);
+
 	while (!feof(f)) {
 		if (!fgets(buf, sizeof(buf), f))
 			break;
@@ -244,13 +247,10 @@ static int check_for_modules(const char *fs_name)
 		if ((cp = strrchr(buf, '/')) == NULL)
 			continue;
 		cp++;
-		i = strlen(cp);
-		if (i > 3) {
-			t = cp + i - 3;
-			if (!strcmp(t, ".ko"))
-				*t = 0;
-		}
-		if (!strcmp(cp, fs_name)) {
+
+		if (!strncmp(cp, fs_name, namesz) &&
+		    (!strcmp(cp + namesz, ".ko") ||
+		     !strcmp(cp + namesz, ".ko.gz"))) {
 			fclose(f);
 			return 1;
 		}
