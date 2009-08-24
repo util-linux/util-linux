@@ -130,7 +130,8 @@ static const struct blkid_idinfo *idinfos[] =
 	&vxfs_idinfo,
 	&squashfs_idinfo,
 	&netware_idinfo,
-	&btrfs_idinfo
+	&btrfs_idinfo,
+	&ubifs_idinfo
 };
 
 /*
