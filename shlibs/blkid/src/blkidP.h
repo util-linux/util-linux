@@ -294,6 +294,7 @@ extern char *blkid_strndup(const char *s, const int length);
 /*
  * Priority settings for different types of devices
  */
+#define BLKID_PRI_UBI	50
 #define BLKID_PRI_DM	40
 #define BLKID_PRI_EVMS	30
 #define BLKID_PRI_LVM	20

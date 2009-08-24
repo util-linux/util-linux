@@ -522,12 +522,17 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 		pr->mode = sb.st_mode;
 
-		if (S_ISBLK(sb.st_mode)) {
+		if (S_ISBLK(sb.st_mode))
 			blkdev_get_size(fd, (unsigned long long *) &pr->size);
+		else if (S_ISCHR(sb.st_mode))
+			pr->size = 1;		/* UBI devices are char... */
+		else
+			pr->size = sb.st_size;	/* regular file */
+
+		if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode))
 			pr->devno = sb.st_rdev;
-		} else
-			pr->size = sb.st_size;
 	}
+
 	if (!pr->size)
 		return -1;
 
@@ -842,7 +847,8 @@ dev_t blkid_probe_get_devno(blkid_probe pr)
 	if (!pr->devno) {
 		struct stat sb;
 
-		if (fstat(pr->fd, &sb) == 0 && S_ISBLK(sb.st_mode))
+		if (fstat(pr->fd, &sb) == 0 &&
+		    (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode)))
 			pr->devno = sb.st_rdev;
 	}
 	return pr->devno;
