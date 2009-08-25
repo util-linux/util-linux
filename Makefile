@@ -46,13 +46,13 @@ check:
 	@$(NQ) ' GZIP' $<
 	$(Q)gzip < $< > $@
 
-install: rfkill # rfkill.8.gz
+install: rfkill rfkill.1.gz
 	@$(NQ) ' INST rfkill'
 	$(Q)$(MKDIR) $(DESTDIR)$(BINDIR)
 	$(Q)$(INSTALL) -m 755 -t $(DESTDIR)$(BINDIR) rfkill
-#	@$(NQ) ' INST rfkill.8'
-#	$(Q)$(MKDIR) $(DESTDIR)$(MANDIR)/man8/
-#	$(Q)$(INSTALL) -m 644 -t $(DESTDIR)$(MANDIR)/man8/ rfkill.8.gz
+	@$(NQ) ' INST rfkill.1'
+	$(Q)$(MKDIR) $(DESTDIR)$(MANDIR)/man1/
+	$(Q)$(INSTALL) -m 644 -t $(DESTDIR)$(MANDIR)/man1/ rfkill.1.gz
 
 clean:
 	$(Q)rm -f rfkill *.o *~ *.gz version.c *-stamp
