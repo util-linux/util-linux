@@ -105,6 +105,8 @@ static const char *type2string(enum rfkill_type type)
 		return "WiMAX";
 	case RFKILL_TYPE_WWAN:
 		return "Wireless WAN";
+	case RFKILL_TYPE_GPS:
+		return "GPS";
 	case NUM_RFKILL_TYPES:
 		return NULL;
 	}
@@ -198,6 +200,7 @@ static struct rfkill_type_str rfkill_type_strings[] = {
 	{	.type = RFKILL_TYPE_UWB,		.name = "uwb"	},
 	{	.type = RFKILL_TYPE_WIMAX,		.name = "wimax"	},
 	{	.type = RFKILL_TYPE_WWAN,		.name = "wwan"	},
+	{	.type = RFKILL_TYPE_GPS,		.name = "gps"	},
 	{	.name = NULL }
 };
 
@@ -214,7 +217,7 @@ static enum rfkill_type rfkill_str_to_type(char *s)
 
 static const char *argv0;
 
-#define BLOCK_PARAMS "{<idx>,all,wifi,bluetooth,uwb,wimax,wwan}"
+#define BLOCK_PARAMS "{<idx>,all,wifi,bluetooth,uwb,wimax,wwan,gps}"
 
 static void usage(void)
 {

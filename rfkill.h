@@ -47,6 +47,7 @@ enum rfkill_type {
 	RFKILL_TYPE_UWB,
 	RFKILL_TYPE_WIMAX,
 	RFKILL_TYPE_WWAN,
+	RFKILL_TYPE_GPS,
 	NUM_RFKILL_TYPES,
 };
 
@@ -82,6 +83,20 @@ struct rfkill_event {
 	__u8  soft, hard;
 } __packed;
 
+/*
+ * We are planning to be backward and forward compatible with changes
+ * to the event struct, by adding new, optional, members at the end.
+ * When reading an event (whether the kernel from userspace or vice
+ * versa) we need to accept anything that's at least as large as the
+ * version 1 event size, but might be able to accept other sizes in
+ * the future.
+ *
+ * One exception is the kernel -- we already have two event sizes in
+ * that we've made the 'hard' member optional since our only option
+ * is to ignore it anyway.
+ */
+#define RFKILL_EVENT_SIZE_V1	8
+
 /* ioctl for turning off rfkill-input (if present) */
 #define RFKILL_IOC_MAGIC	'R'
 #define RFKILL_IOC_NOINPUT	1
@@ -99,12 +114,12 @@ enum rfkill_user_states {
 #undef RFKILL_STATE_UNBLOCKED
 #undef RFKILL_STATE_HARD_BLOCKED
 
-#include <linux/types.h>
 #include <linux/kernel.h>
 #include <linux/list.h>
 #include <linux/mutex.h>
 #include <linux/device.h>
 #include <linux/leds.h>
+#include <linux/err.h>
 
 /* this is opaque */
 struct rfkill;
@@ -156,8 +171,15 @@ struct rfkill * __must_check rfkill_alloc(const char *name,
  * @rfkill: rfkill structure to be registered
  *
  * This function should be called by the transmitter driver to register
- * the rfkill structure needs to be registered. Before calling this function
- * the driver needs to be ready to service method calls from rfkill.
+ * the rfkill structure. Before calling this function the driver needs
+ * to be ready to service method calls from rfkill.
+ *
+ * If rfkill_init_sw_state() is not called before registration,
+ * set_block() will be called to initialize the software blocked state
+ * to a default value.
+ *
+ * If the hardware blocked state is not set before registration,
+ * it is assumed to be unblocked.
  */
 int __must_check rfkill_register(struct rfkill *rfkill);
 
@@ -205,7 +227,7 @@ void rfkill_destroy(struct rfkill *rfkill);
  *
  * rfkill drivers that get events when the hard-blocked state changes
  * use this function to notify the rfkill core (and through that also
- * userspace) of the current state -- they should also use this after
+ * userspace) of the current state.  They should also use this after
  * resume if the state could have changed.
  *
  * You need not (but may) call this function if poll_state is assigned.
@@ -217,7 +239,7 @@ void rfkill_destroy(struct rfkill *rfkill);
  * should be blocked) so that drivers need not keep track of the soft
  * block state -- which they might not be able to.
  */
-bool __must_check rfkill_set_hw_state(struct rfkill *rfkill, bool blocked);
+bool rfkill_set_hw_state(struct rfkill *rfkill, bool blocked);
 
 /**
  * rfkill_set_sw_state - Set the internal rfkill software block state
@@ -227,8 +249,11 @@ bool __must_check rfkill_set_hw_state(struct rfkill *rfkill, bool blocked);
  * rfkill drivers that get events when the soft-blocked state changes
  * (yes, some platforms directly act on input but allow changing again)
  * use this function to notify the rfkill core (and through that also
- * userspace) of the current state -- they should also use this after
- * resume if the state could have changed.
+ * userspace) of the current state.
+ *
+ * Drivers should also call this function after resume if the state has
+ * been changed by the user.  This only makes sense for "persistent"
+ * devices (see rfkill_init_sw_state()).
  *
  * This function can be called in any context, even from within rfkill
  * callbacks.
@@ -237,6 +262,22 @@ bool __must_check rfkill_set_hw_state(struct rfkill *rfkill, bool blocked);
  * should be blocked).
  */
 bool rfkill_set_sw_state(struct rfkill *rfkill, bool blocked);
+
+/**
+ * rfkill_init_sw_state - Initialize persistent software block state
+ * @rfkill: pointer to the rfkill class to modify.
+ * @state: the current software block state to set
+ *
+ * rfkill drivers that preserve their software block state over power off
+ * use this function to notify the rfkill core (and through that also
+ * userspace) of their initial state.  It should only be used before
+ * registration.
+ *
+ * In addition, it marks the device as "persistent", an attribute which
+ * can be read by userspace.  Persistent devices are expected to preserve
+ * their own state when suspended.
+ */
+void rfkill_init_sw_state(struct rfkill *rfkill, bool blocked);
 
 /**
  * rfkill_set_states - Set the internal rfkill block states
@@ -248,19 +289,6 @@ bool rfkill_set_sw_state(struct rfkill *rfkill, bool blocked);
  * callbacks.
  */
 void rfkill_set_states(struct rfkill *rfkill, bool sw, bool hw);
-
-/**
- * rfkill_set_global_sw_state - set global sw block default
- * @type: rfkill type to set default for
- * @blocked: default to set
- *
- * This function sets the global default -- use at boot if your platform has
- * an rfkill switch. If not early enough this call may be ignored.
- *
- * XXX: instead of ignoring -- how about just updating all currently
- *	registered drivers?
- */
-void rfkill_set_global_sw_state(const enum rfkill_type type, bool blocked);
 
 /**
  * rfkill_blocked - query rfkill block
@@ -312,12 +340,11 @@ static inline bool rfkill_set_sw_state(struct rfkill *rfkill, bool blocked)
 	return blocked;
 }
 
-static inline void rfkill_set_states(struct rfkill *rfkill, bool sw, bool hw)
+static inline void rfkill_init_sw_state(struct rfkill *rfkill, bool blocked)
 {
 }
 
-static inline void rfkill_set_global_sw_state(const enum rfkill_type type,
-					      bool blocked)
+static inline void rfkill_set_states(struct rfkill *rfkill, bool sw, bool hw)
 {
 }
 
