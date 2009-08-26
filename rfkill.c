@@ -1,7 +1,5 @@
 /*
  * rfkill userspace tool
- *
- * Copyright 2009	Johannes Berg <johannes@sipsolutions.net>
  */
 
 #include <stdio.h>
