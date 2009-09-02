@@ -1,5 +1,5 @@
 
-                          utils-linux-ng
+                          util-linux-ng
            (fork of util-linux, based on version 2.13-pre7)
 
          util-linux is a random collection of Linux utilities
@@ -78,11 +78,12 @@ STATIC LINKING:
       Note, mount(8) uses get{pw,gr}nam() and getpwuid() functions for
       translation from username and groupname to UID and GID. These functions
       could be implemented by dynamically loaded independent modules (NSS) in
-      your libc (e.g. glibc). These modules are not statically linked to mount(8)
-      and mount.static is still using dlopen() like dynamically linked version.
+      your libc (e.g. glibc). These modules are not statically linked to
+      mount(8) and mount.static is still using dlopen() like dynamically
+      linked version.
 
-      The translation won't be work in environment where is not installed the
-      NSS modules.
+      The translation won't work in environment where NSS modules are
+      not installed.
 
       For example normal system (NSS modules are available):
 
