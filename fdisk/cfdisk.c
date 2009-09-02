@@ -137,7 +137,9 @@
 #define TAB '\011'
 #define REDRAWKEY '\014'	/* ^L */
 #define UPKEY '\020'		/* ^P */
+#define UPKEYVI '\153'		/* k */
 #define DOWNKEY '\016'		/* ^N */
+#define DOWNKEYVI '\152'	/* j */
 
 /* Display units */
 #define GIGABYTES 1
@@ -1270,6 +1272,7 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
                         key = MENU_RIGHT;
                         break;
                     case 'D': /* Left arrow */
+                    case 'Z': /* Shift Tab */
                         key = MENU_LEFT;
                         break;
 		    default:
@@ -1286,9 +1289,9 @@ menuSelect( int y, int x, struct MenuItem *menuItems, int itemLength,
 	   swallows these */
 	if (key == TAB)
 	    key = MENU_RIGHT;
-        if (key == UPKEY)	/* ^P */
+        if (key == UPKEY || key == UPKEYVI)	/* ^P or k */
 	    key = MENU_UP;
-	if (key == DOWNKEY)	/* ^N */
+	if (key == DOWNKEY || key == DOWNKEYVI)	/* ^N or j */
 	    key = MENU_DOWN;
 
 	if (key == MENU_UP) {
