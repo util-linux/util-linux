@@ -309,9 +309,9 @@ check_blocks(void) {
 		    current_page*pagesize)
 			die(_("seek failed in check_blocks"));
 		if ((do_seek = (pagesize != read(DEV, buffer, pagesize)))) {
-			page_bad(current_page++);
-			continue;
+			page_bad(current_page);
 		}
+		current_page++;
 	}
 	if (badpages == 1)
 		printf(_("one bad page\n"));
