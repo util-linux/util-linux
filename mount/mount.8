@@ -1945,7 +1945,7 @@ None.
 .TP
 .BI size= nbytes
 Override default maximum size of the filesystem.
-The size is given in bytes, and rounded down to entire pages.
+The size is given in bytes, and rounded up to entire pages.
 The default is half of the memory. The size parameter also accepts a suffix %
 to limit this tmpfs instance to that percentage of your physical RAM:
 the default, when neither size nor nr_blocks is specified, is size=50%
