@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng-2.14.2-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-07-15 23:23+0200\n"
+"POT-Creation-Date: 2009-09-07 10:26+0200\n"
 "PO-Revision-Date: 2009-01-31 20:52+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -210,7 +210,7 @@ msgstr "Gebruik:  %s [ -n ] apparaat\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1282
 #: disk-utils/isosize.c:181 disk-utils/mkfs.bfs.c:115 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:813 disk-utils/mkfs.minix.c:571
-#: disk-utils/mkswap.c:458 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: disk-utils/mkswap.c:461 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, c-format
 msgid "%s (%s)\n"
@@ -1272,7 +1272,7 @@ msgid "Weird values in do_check: probably bugs\n"
 msgstr ""
 "Vreemde waarden in do_check(): waarschijnlijk een interne programmafout\n"
 
-#: disk-utils/mkfs.minix.c:507 disk-utils/mkswap.c:310
+#: disk-utils/mkfs.minix.c:507 disk-utils/mkswap.c:313
 msgid "seek failed in check_blocks"
 msgstr "'seek' is mislukt in check_blocks()"
 
@@ -1354,159 +1354,159 @@ msgstr ""
 "De opgegeven paginagrootte %d wordt gebruikt, in plaats van systeemwaarde %"
 "d.\n"
 
-#: disk-utils/mkswap.c:187
+#: disk-utils/mkswap.c:192
 #, c-format
 msgid "Bad swap header size, no label written.\n"
 msgstr ""
 "Onjuiste grootte van kop van wisselgeheugen; er is geen label geschreven.\n"
 
-#: disk-utils/mkswap.c:197
+#: disk-utils/mkswap.c:202
 #, c-format
 msgid "Label was truncated.\n"
 msgstr "Label is afgekapt.\n"
 
-#: disk-utils/mkswap.c:203
+#: disk-utils/mkswap.c:208
 #, c-format
 msgid "no label, "
 msgstr "geen label, "
 
-#: disk-utils/mkswap.c:211
+#: disk-utils/mkswap.c:216
 #, c-format
 msgid "no uuid\n"
 msgstr "geen UUID\n"
 
-#: disk-utils/mkswap.c:276
+#: disk-utils/mkswap.c:281
 #, fuzzy, c-format
 msgid "Usage: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"
 msgstr ""
 "Gebruik:  %s [-c] [-v0|-v1] [-ppaginagrootte]           [-L label] [-U "
 "UUID]  /dev/naam  [blokken]\n"
 
-#: disk-utils/mkswap.c:290
+#: disk-utils/mkswap.c:295
 msgid "too many bad pages"
 msgstr "te veel slechte pagina's"
 
-#: disk-utils/mkswap.c:303 misc-utils/look.c:182 misc-utils/setterm.c:1183
+#: disk-utils/mkswap.c:308 misc-utils/look.c:182 misc-utils/setterm.c:1183
 #: text-utils/more.c:1982 text-utils/more.c:1993
 msgid "Out of memory"
 msgstr "Onvoldoende geheugen beschikbaar"
 
-#: disk-utils/mkswap.c:317
+#: disk-utils/mkswap.c:319
 #, c-format
 msgid "one bad page\n"
 msgstr "één slechte pagina\n"
 
-#: disk-utils/mkswap.c:319
+#: disk-utils/mkswap.c:321
 #, c-format
 msgid "%lu bad pages\n"
 msgstr "%lu slechte pagina's\n"
 
-#: disk-utils/mkswap.c:396 disk-utils/mkswap.c:412 disk-utils/mkswap.c:629
+#: disk-utils/mkswap.c:399 disk-utils/mkswap.c:415 disk-utils/mkswap.c:633
 msgid "unable to rewind swap-device"
 msgstr "terugspoelen van wisselgeheugenapparaat is mislukt"
 
-#: disk-utils/mkswap.c:416
+#: disk-utils/mkswap.c:419
 #, fuzzy
 msgid "unable to erase bootbits sectors"
 msgstr "wissen van opstartsector is mislukt"
 
-#: disk-utils/mkswap.c:420
+#: disk-utils/mkswap.c:423
 #, c-format
 msgid "%s: %s: warning: don't erase bootbits sectors\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:423
+#: disk-utils/mkswap.c:426
 #, fuzzy, c-format
 msgid "        (%s partition table detected). "
 msgstr "   p      BSD-partitietabel weergeven"
 
-#: disk-utils/mkswap.c:425
+#: disk-utils/mkswap.c:428
 #, fuzzy, c-format
 msgid "        on whole disk. "
 msgstr "   s      complete schijflabel weergeven"
 
-#: disk-utils/mkswap.c:495
+#: disk-utils/mkswap.c:498
 #, c-format
 msgid "%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"
 msgstr ""
 "%1$s: waarschuwing: optie '-U' wordt genegeerd\n"
 "(UUID's worden door %1$s niet ondersteund)\n"
 
-#: disk-utils/mkswap.c:511
+#: disk-utils/mkswap.c:514
 #, fuzzy, c-format
 msgid "%s: does not support swapspace version %d.\n"
 msgstr "%s: fout: onbekende versie %d\n"
 
-#: disk-utils/mkswap.c:519
+#: disk-utils/mkswap.c:522
 msgid "error: UUID parsing failed"
 msgstr "fout: kan UUID niet ontleden"
 
-#: disk-utils/mkswap.c:529
+#: disk-utils/mkswap.c:533
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: fout: Nergens om wisselgeheugen op in te stellen?\n"
 
-#: disk-utils/mkswap.c:547
+#: disk-utils/mkswap.c:551
 #, fuzzy, c-format
 msgid "%s: error: size %llu KiB is larger than device size %llu KiB\n"
 msgstr "%s: fout: grootte %lu KiB is groter dan apparaatgrootte van %lu KiB\n"
 
-#: disk-utils/mkswap.c:556
+#: disk-utils/mkswap.c:560
 #, c-format
 msgid "%s: error: swap area needs to be at least %ld KiB\n"
 msgstr "%s: fout: wisselgeheugen moet minstens %ld KiB zijn\n"
 
-#: disk-utils/mkswap.c:573
+#: disk-utils/mkswap.c:577
 #, fuzzy, c-format
 msgid "%s: warning: truncating swap area to %llu KiB\n"
 msgstr "%s: waarschuwing: wisselgeheugen is afgekapt tot %ld KiB\n"
 
-#: disk-utils/mkswap.c:596
+#: disk-utils/mkswap.c:600
 #, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
 msgstr "%s: fout: zal niet proberen wisselgeheugen te maken op '%s'\n"
 
-#: disk-utils/mkswap.c:602
+#: disk-utils/mkswap.c:606
 #, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
 msgstr "%s: fout: %s is aangekoppeld; zal hier geen wisselgeheugen maken\n"
 
-#: disk-utils/mkswap.c:618
+#: disk-utils/mkswap.c:622
 msgid "Unable to set up swap-space: unreadable"
 msgstr "Instellen van wisselgeheugen is mislukt: onleesbaar"
 
-#: disk-utils/mkswap.c:621
+#: disk-utils/mkswap.c:625
 #, fuzzy, c-format
 msgid "Setting up swapspace version 1, size = %llu KiB\n"
 msgstr "Instellen van wisselgeheugen, versie %d, grootte = %llu KiB\n"
 
-#: disk-utils/mkswap.c:632
+#: disk-utils/mkswap.c:636
 #, c-format
 msgid "%s: %s: unable to write signature page: %s"
 msgstr "%s: %s: schrijven van vingerafdrukpagina is mislukt: %s"
 
-#: disk-utils/mkswap.c:643
+#: disk-utils/mkswap.c:647
 msgid "fsync failed"
 msgstr "fsync() is mislukt"
 
-#: disk-utils/mkswap.c:654
+#: disk-utils/mkswap.c:658
 #, c-format
 msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr "%s: %s: kan geen SELinux-bestandslabel verkrijgen: %s\n"
 
-#: disk-utils/mkswap.c:660
+#: disk-utils/mkswap.c:664
 msgid "unable to matchpathcon()"
 msgstr "kan uit het pad geen context bepalen"
 
-#: disk-utils/mkswap.c:663
+#: disk-utils/mkswap.c:667
 msgid "unable to create new selinux context"
 msgstr "kan geen nieuwe SELinux-context aanmaken"
 
-#: disk-utils/mkswap.c:665
+#: disk-utils/mkswap.c:669
 msgid "couldn't compute selinux context"
 msgstr "kan geen nieuwe SELinux-context berekenen"
 
-#: disk-utils/mkswap.c:671
+#: disk-utils/mkswap.c:675
 #, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "%s: kan %s niet herlabelen naar %s: %s\n"
@@ -2803,12 +2803,12 @@ msgstr "Het maximum aantal partities is aangemaakt.\n"
 msgid "This partition already exists.\n"
 msgstr "Deze partitie bestaat al.\n"
 
-#: fdisk/fdiskbsdlabel.c:756
+#: fdisk/fdiskbsdlabel.c:757
 #, c-format
 msgid "Warning: too many partitions (%d, maximum is %d).\n"
 msgstr "Waarschuwing: te veel partities (%d, maximum is %d).\n"
 
-#: fdisk/fdiskbsdlabel.c:804
+#: fdisk/fdiskbsdlabel.c:805
 #, c-format
 msgid ""
 "\n"
@@ -6451,7 +6451,7 @@ msgstr "Tijdperk wordt niet ingesteld op %d -- in testmodus.\n"
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Instellen van de tijdperkwaarde in de kernel is mislukt.\n"
 
-#: hwclock/hwclock.c:1292 misc-utils/cal.c:341 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1292 misc-utils/cal.c:345 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s (%s)\n"
@@ -7780,25 +7780,25 @@ msgstr "%s: kan tijdelijk bestand niet vinden\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: kan tijdelijk bestand niet lezen\n"
 
-#: misc-utils/cal.c:358 misc-utils/cal.c:370
+#: misc-utils/cal.c:362 misc-utils/cal.c:374
 #, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "onjuiste dagwaarde;  gebruik 1-%d"
 
-#: misc-utils/cal.c:362
+#: misc-utils/cal.c:366
 msgid "illegal month value: use 1-12"
 msgstr "onjuiste maandwaarde;  gebruik 1-12"
 
-#: misc-utils/cal.c:366
+#: misc-utils/cal.c:370
 msgid "illegal year value: use 1-9999"
 msgstr "onjuiste jaarwaarde;  gebruik 1-9999"
 
-#: misc-utils/cal.c:460
+#: misc-utils/cal.c:464
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:851
+#: misc-utils/cal.c:856
 #, c-format
 msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
 msgstr "Gebruik:  cal [-13smjyV] [[[dag] maand] jaar]\n"
@@ -8088,8 +8088,8 @@ msgid "failed to read timing file %s"
 msgstr "kan timingsbestand %s niet lezen"
 
 #: misc-utils/scriptreplay.c:166
-#, c-format
-msgid "timings file %s: %lu: expected format"
+#, fuzzy, c-format
+msgid "timings file %s: %lu: unexpected format"
 msgstr "timingsbestand %s: %lu: onverwachte opmaak"
 
 #: misc-utils/setterm.c:763
@@ -9957,8 +9957,8 @@ msgid "   %f int/sec; %f rec (char/sec)\n"
 msgstr "   %f onderbrekingen/sec; %f ontvangen (tekens/sec)\n"
 
 #: sys-utils/dmesg.c:45
-#, c-format
-msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
+#, fuzzy, c-format
+msgid "Usage: %s [-c] [-n level] [-r] [-s bufsize]\n"
 msgstr "Gebruik:  %s [-c] [-n niveau] [-s buffergrootte]\n"
 
 #: sys-utils/flock.c:65
@@ -10728,7 +10728,7 @@ msgstr "ongeldige snelheid: %s"
 msgid "ldattach from %s\n"
 msgstr "ldattach (%s)\n"
 
-#: sys-utils/ldattach.c:187 text-utils/tailf.c:195
+#: sys-utils/ldattach.c:187 text-utils/tailf.c:205
 msgid "invalid option"
 msgstr "ongeldige optie"
 
@@ -11792,7 +11792,7 @@ msgstr "Gebruik:  rev [bestand ...]\n"
 msgid "cannot open \"%s\" for read"
 msgstr "Kan '%s' niet openen voor lezen"
 
-#: text-utils/tailf.c:95 text-utils/tailf.c:204
+#: text-utils/tailf.c:95 text-utils/tailf.c:214
 #, c-format
 msgid "cannot stat \"%s\""
 msgstr "kan status van '%s' niet opvragen"
@@ -11802,11 +11802,26 @@ msgstr "kan status van '%s' niet opvragen"
 msgid "incomplete write to \"%s\" (written %ld, expected %ld)\n"
 msgstr "onvolledige schrijfoperatie naar '%s' (%ld geschreven, %ld verwacht)\n"
 
-#: text-utils/tailf.c:188 text-utils/tailf.c:192
+#: text-utils/tailf.c:146
+#, c-format
+msgid "%s: cannot add inotify watch (limit of inotify watches was reached)."
+msgstr ""
+
+#: text-utils/tailf.c:150
+#, c-format
+msgid "%s: cannot add inotify watch."
+msgstr ""
+
+#: text-utils/tailf.c:159
+#, fuzzy, c-format
+msgid "%s: cannot read inotify events"
+msgstr "%s: kan %s niet openen\n"
+
+#: text-utils/tailf.c:198 text-utils/tailf.c:202
 msgid "invalid number of lines"
 msgstr "ongeldig aantal regels"
 
-#: text-utils/tailf.c:199
+#: text-utils/tailf.c:209
 msgid "usage: tailf [-n N | -N] logfile"
 msgstr "Gebruik:  tailf [-n <getal> | -<getal>]  logbestand"
 

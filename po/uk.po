@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-07-15 23:23+0200\n"
+"POT-Creation-Date: 2009-09-07 10:26+0200\n"
 "PO-Revision-Date: 2006-04-06 10:45+0200\n"
 "Last-Translator: Maxim V. Dziumanenko <mvd@mylinux.com.ua>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
@@ -202,7 +202,7 @@ msgstr "використання: %s [ -n ] пристрій\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1282
 #: disk-utils/isosize.c:181 disk-utils/mkfs.bfs.c:115 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:813 disk-utils/mkfs.minix.c:571
-#: disk-utils/mkswap.c:458 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: disk-utils/mkswap.c:461 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, c-format
 msgid "%s (%s)\n"
@@ -1254,7 +1254,7 @@ msgstr "помилка позиціювання при перевірці бло
 msgid "Weird values in do_check: probably bugs\n"
 msgstr "Незрозуміле значення у функції do_check: можливо помилка\n"
 
-#: disk-utils/mkfs.minix.c:507 disk-utils/mkswap.c:310
+#: disk-utils/mkfs.minix.c:507 disk-utils/mkswap.c:313
 msgid "seek failed in check_blocks"
 msgstr "помилка позиціювання у функції check_blocks"
 
@@ -1338,161 +1338,161 @@ msgstr ""
 "Використовується вказаний користувачем розмір сторінки %d, замість системних "
 "значень %d/%d\n"
 
-#: disk-utils/mkswap.c:187
+#: disk-utils/mkswap.c:192
 #, c-format
 msgid "Bad swap header size, no label written.\n"
 msgstr ""
 "Неправильний розмір заголовку розділу підкачки, етикетку не записано.\n"
 
-#: disk-utils/mkswap.c:197
+#: disk-utils/mkswap.c:202
 #, c-format
 msgid "Label was truncated.\n"
 msgstr "Етикетку обрізано.\n"
 
-#: disk-utils/mkswap.c:203
+#: disk-utils/mkswap.c:208
 #, c-format
 msgid "no label, "
 msgstr "немає етикетки, "
 
-#: disk-utils/mkswap.c:211
+#: disk-utils/mkswap.c:216
 #, c-format
 msgid "no uuid\n"
 msgstr "немає uuid\n"
 
-#: disk-utils/mkswap.c:276
+#: disk-utils/mkswap.c:281
 #, fuzzy, c-format
 msgid "Usage: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"
 msgstr ""
 "Використання: %s [-c] [-v0|-v1] [-pPAGESZ] [-L етикетка] /dev/назва [блоки]\n"
 
-#: disk-utils/mkswap.c:290
+#: disk-utils/mkswap.c:295
 msgid "too many bad pages"
 msgstr "надто багато пошкоджених сторінок"
 
-#: disk-utils/mkswap.c:303 misc-utils/look.c:182 misc-utils/setterm.c:1183
+#: disk-utils/mkswap.c:308 misc-utils/look.c:182 misc-utils/setterm.c:1183
 #: text-utils/more.c:1982 text-utils/more.c:1993
 msgid "Out of memory"
 msgstr "Недостатньо пам'яті"
 
-#: disk-utils/mkswap.c:317
+#: disk-utils/mkswap.c:319
 #, c-format
 msgid "one bad page\n"
 msgstr "одна пошкоджена сторінка\n"
 
-#: disk-utils/mkswap.c:319
+#: disk-utils/mkswap.c:321
 #, c-format
 msgid "%lu bad pages\n"
 msgstr "%lu пошкоджених сторінок\n"
 
-#: disk-utils/mkswap.c:396 disk-utils/mkswap.c:412 disk-utils/mkswap.c:629
+#: disk-utils/mkswap.c:399 disk-utils/mkswap.c:415 disk-utils/mkswap.c:633
 msgid "unable to rewind swap-device"
 msgstr "помилка встановлення позиції на початок пристрою підкачки"
 
-#: disk-utils/mkswap.c:416
+#: disk-utils/mkswap.c:419
 #, fuzzy
 msgid "unable to erase bootbits sectors"
 msgstr "не вдається очистити завантажувальний сектор"
 
-#: disk-utils/mkswap.c:420
+#: disk-utils/mkswap.c:423
 #, c-format
 msgid "%s: %s: warning: don't erase bootbits sectors\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:423
+#: disk-utils/mkswap.c:426
 #, fuzzy, c-format
 msgid "        (%s partition table detected). "
 msgstr "   p   вивести таблицю розділів BSD"
 
-#: disk-utils/mkswap.c:425
+#: disk-utils/mkswap.c:428
 #, fuzzy, c-format
 msgid "        on whole disk. "
 msgstr "   s   показати всю етикетку диску"
 
-#: disk-utils/mkswap.c:495
+#: disk-utils/mkswap.c:498
 #, c-format
 msgid "%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:511
+#: disk-utils/mkswap.c:514
 #, fuzzy, c-format
 msgid "%s: does not support swapspace version %d.\n"
 msgstr "%s: помилка: невідома версія %d\n"
 
-#: disk-utils/mkswap.c:519
+#: disk-utils/mkswap.c:522
 #, fuzzy
 msgid "error: UUID parsing failed"
 msgstr ""
 "\n"
 "Помилка закривання файлу\n"
 
-#: disk-utils/mkswap.c:529
+#: disk-utils/mkswap.c:533
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: помилка: Не вказано де створити область підкачки?\n"
 
-#: disk-utils/mkswap.c:547
+#: disk-utils/mkswap.c:551
 #, fuzzy, c-format
 msgid "%s: error: size %llu KiB is larger than device size %llu KiB\n"
 msgstr "%s: помилка: розмір %lu більший ніж розмір пристрою %lu\n"
 
-#: disk-utils/mkswap.c:556
+#: disk-utils/mkswap.c:560
 #, fuzzy, c-format
 msgid "%s: error: swap area needs to be at least %ld KiB\n"
 msgstr "%s: помилка: область підкачки повинна бути принаймні %ldкб\n"
 
-#: disk-utils/mkswap.c:573
+#: disk-utils/mkswap.c:577
 #, fuzzy, c-format
 msgid "%s: warning: truncating swap area to %llu KiB\n"
 msgstr "%s: попередження: область підкачки відсікається до %ldкб\n"
 
-#: disk-utils/mkswap.c:596
+#: disk-utils/mkswap.c:600
 #, fuzzy, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
 msgstr "Не буде створено пристрій підкачки на '%s'"
 
-#: disk-utils/mkswap.c:602
+#: disk-utils/mkswap.c:606
 #, fuzzy, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
 msgstr "%s підключений; тут не можна створювати файлову систему!"
 
-#: disk-utils/mkswap.c:618
+#: disk-utils/mkswap.c:622
 msgid "Unable to set up swap-space: unreadable"
 msgstr "не вдається встановити простір підкачки: не вдається прочитати"
 
-#: disk-utils/mkswap.c:621
+#: disk-utils/mkswap.c:625
 #, fuzzy, c-format
 msgid "Setting up swapspace version 1, size = %llu KiB\n"
 msgstr "Встановлюється область підкачки версії %d, розмір = %llu кб\n"
 
-#: disk-utils/mkswap.c:632
+#: disk-utils/mkswap.c:636
 #, fuzzy, c-format
 msgid "%s: %s: unable to write signature page: %s"
 msgstr "не вдається записати сторінку підпису"
 
-#: disk-utils/mkswap.c:643
+#: disk-utils/mkswap.c:647
 msgid "fsync failed"
 msgstr "помилка виконання fsync"
 
-#: disk-utils/mkswap.c:654
+#: disk-utils/mkswap.c:658
 #, c-format
 msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:660
+#: disk-utils/mkswap.c:664
 #, fuzzy
 msgid "unable to matchpathcon()"
 msgstr "не вдається запустити %s"
 
-#: disk-utils/mkswap.c:663
+#: disk-utils/mkswap.c:667
 #, fuzzy
 msgid "unable to create new selinux context"
 msgstr "не вдається записати вузли"
 
-#: disk-utils/mkswap.c:665
+#: disk-utils/mkswap.c:669
 msgid "couldn't compute selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:671
+#: disk-utils/mkswap.c:675
 #, fuzzy, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "не вдається перейменувати %s у %s: %s\n"
@@ -2789,12 +2789,12 @@ msgstr "Вже створено максимальну кількість роз
 msgid "This partition already exists.\n"
 msgstr "Цей розділ вже існує.\n"
 
-#: fdisk/fdiskbsdlabel.c:756
+#: fdisk/fdiskbsdlabel.c:757
 #, c-format
 msgid "Warning: too many partitions (%d, maximum is %d).\n"
 msgstr "Попередження: надто багато розділів (%d, максимум - %d).\n"
 
-#: fdisk/fdiskbsdlabel.c:804
+#: fdisk/fdiskbsdlabel.c:805
 #, c-format
 msgid ""
 "\n"
@@ -6422,7 +6422,7 @@ msgstr "Епоха не встановлюється у %d - лише тесту
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "не вдається встановити значення епохи у ядрі.\n"
 
-#: hwclock/hwclock.c:1292 misc-utils/cal.c:341 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1292 misc-utils/cal.c:345 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s з %s\n"
@@ -7750,25 +7750,25 @@ msgstr "%s: не вдається отримати інформацію про �
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: не вдається прочитати тимчасовий файл.\n"
 
-#: misc-utils/cal.c:358 misc-utils/cal.c:370
+#: misc-utils/cal.c:362 misc-utils/cal.c:374
 #, fuzzy, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "неправильне значення року: використовуйте 1-9999"
 
-#: misc-utils/cal.c:362
+#: misc-utils/cal.c:366
 msgid "illegal month value: use 1-12"
 msgstr "неправильне значення місяця: використовуйте 1-12"
 
-#: misc-utils/cal.c:366
+#: misc-utils/cal.c:370
 msgid "illegal year value: use 1-9999"
 msgstr "неправильне значення року: використовуйте 1-9999"
 
-#: misc-utils/cal.c:460
+#: misc-utils/cal.c:464
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:851
+#: misc-utils/cal.c:856
 #, fuzzy, c-format
 msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
 msgstr "використання: cal [-13smjyV] [[місяць] рік]\n"
@@ -8059,7 +8059,7 @@ msgstr "помилка зчитування часу у ioctl() з %s"
 
 #: misc-utils/scriptreplay.c:166
 #, fuzzy, c-format
-msgid "timings file %s: %lu: expected format"
+msgid "timings file %s: %lu: unexpected format"
 msgstr "%s: Неочікуваний кінець файла у файлі %s\n"
 
 #: misc-utils/setterm.c:763
@@ -9855,8 +9855,8 @@ msgid "   %f int/sec; %f rec (char/sec)\n"
 msgstr "   %f перерв/сек; %f отрим (симв/сек)\n"
 
 #: sys-utils/dmesg.c:45
-#, c-format
-msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
+#, fuzzy, c-format
+msgid "Usage: %s [-c] [-n level] [-r] [-s bufsize]\n"
 msgstr "Використання: %s [-c] [-n рівень] [-s розмір_буферу]\n"
 
 #: sys-utils/flock.c:65
@@ -10618,7 +10618,7 @@ msgstr "неправильний ідентифікатор: %s\n"
 msgid "ldattach from %s\n"
 msgstr "%s з %s\n"
 
-#: sys-utils/ldattach.c:187 text-utils/tailf.c:195
+#: sys-utils/ldattach.c:187 text-utils/tailf.c:205
 #, fuzzy
 msgid "invalid option"
 msgstr "неправильний ідентифікатор"
@@ -11657,7 +11657,7 @@ msgstr "використання: rev [файл ...]\n"
 msgid "cannot open \"%s\" for read"
 msgstr "Не вдається відкрити \"%s\" для читання\n"
 
-#: text-utils/tailf.c:95 text-utils/tailf.c:204
+#: text-utils/tailf.c:95 text-utils/tailf.c:214
 #, fuzzy, c-format
 msgid "cannot stat \"%s\""
 msgstr "не вдається отримати інформацію про %s"
@@ -11667,12 +11667,27 @@ msgstr "не вдається отримати інформацію про %s"
 msgid "incomplete write to \"%s\" (written %ld, expected %ld)\n"
 msgstr ""
 
-#: text-utils/tailf.c:188 text-utils/tailf.c:192
+#: text-utils/tailf.c:146
+#, c-format
+msgid "%s: cannot add inotify watch (limit of inotify watches was reached)."
+msgstr ""
+
+#: text-utils/tailf.c:150
+#, c-format
+msgid "%s: cannot add inotify watch."
+msgstr ""
+
+#: text-utils/tailf.c:159
+#, fuzzy, c-format
+msgid "%s: cannot read inotify events"
+msgstr "%s: не вдається відкрити %s\n"
+
+#: text-utils/tailf.c:198 text-utils/tailf.c:202
 #, fuzzy
 msgid "invalid number of lines"
 msgstr "Неправильне число: %s\n"
 
-#: text-utils/tailf.c:199
+#: text-utils/tailf.c:209
 #, fuzzy
 msgid "usage: tailf [-n N | -N] logfile"
 msgstr "Використання: tailf файл_журналу\n"

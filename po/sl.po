@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-07-15 23:23+0200\n"
+"POT-Creation-Date: 2009-09-07 10:26+0200\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -211,7 +211,7 @@ msgstr "uporaba: %s [ -n ] naprava\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1282
 #: disk-utils/isosize.c:181 disk-utils/mkfs.bfs.c:115 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:813 disk-utils/mkfs.minix.c:571
-#: disk-utils/mkswap.c:458 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: disk-utils/mkswap.c:461 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, fuzzy, c-format
 msgid "%s (%s)\n"
@@ -1268,7 +1268,7 @@ msgstr "iskanje med testiranjem blokov ni uspelo"
 msgid "Weird values in do_check: probably bugs\n"
 msgstr "Nenavadne vrednosti v do_check: verjetno programska napaka\n"
 
-#: disk-utils/mkfs.minix.c:507 disk-utils/mkswap.c:310
+#: disk-utils/mkfs.minix.c:507 disk-utils/mkswap.c:313
 msgid "seek failed in check_blocks"
 msgstr "iskanje v check_blocks ni uspelo"
 
@@ -1352,159 +1352,159 @@ msgid "Using user-specified page size %d, instead of the system value %d\n"
 msgstr ""
 "Uporabljamo podano velikost strani %d namesto sistemske vrednosti %d/%d\n"
 
-#: disk-utils/mkswap.c:187
+#: disk-utils/mkswap.c:192
 #, c-format
 msgid "Bad swap header size, no label written.\n"
 msgstr "Po¹kodovana velikost glava izmenjalnega prostora, oznaka ni zapisana\n"
 
-#: disk-utils/mkswap.c:197
+#: disk-utils/mkswap.c:202
 #, c-format
 msgid "Label was truncated.\n"
 msgstr "Oznaka je bila skraj¹ana\n"
 
-#: disk-utils/mkswap.c:203
+#: disk-utils/mkswap.c:208
 #, fuzzy, c-format
 msgid "no label, "
 msgstr "ni oznake"
 
-#: disk-utils/mkswap.c:211
+#: disk-utils/mkswap.c:216
 #, c-format
 msgid "no uuid\n"
 msgstr "ni uuid-a\n"
 
-#: disk-utils/mkswap.c:276
+#: disk-utils/mkswap.c:281
 #, fuzzy, c-format
 msgid "Usage: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"
 msgstr "Uporaba: %s [-c] [-v0|-v1] [-p vel. strani] /dev/ime [bloki]\n"
 
-#: disk-utils/mkswap.c:290
+#: disk-utils/mkswap.c:295
 msgid "too many bad pages"
 msgstr "preveè po¹kodovanih strani"
 
-#: disk-utils/mkswap.c:303 misc-utils/look.c:182 misc-utils/setterm.c:1183
+#: disk-utils/mkswap.c:308 misc-utils/look.c:182 misc-utils/setterm.c:1183
 #: text-utils/more.c:1982 text-utils/more.c:1993
 msgid "Out of memory"
 msgstr "Zmanjkalo je pomnilnika"
 
-#: disk-utils/mkswap.c:317
+#: disk-utils/mkswap.c:319
 #, c-format
 msgid "one bad page\n"
 msgstr "ena po¹kodovana stran\n"
 
-#: disk-utils/mkswap.c:319
+#: disk-utils/mkswap.c:321
 #, fuzzy, c-format
 msgid "%lu bad pages\n"
 msgstr "%lu po¹kodovanih strani\n"
 
-#: disk-utils/mkswap.c:396 disk-utils/mkswap.c:412 disk-utils/mkswap.c:629
+#: disk-utils/mkswap.c:399 disk-utils/mkswap.c:415 disk-utils/mkswap.c:633
 msgid "unable to rewind swap-device"
 msgstr "izmenjalne naprave ni mogoèe previti"
 
-#: disk-utils/mkswap.c:416
+#: disk-utils/mkswap.c:419
 #, fuzzy
 msgid "unable to erase bootbits sectors"
 msgstr "zagonskega sektorja ni mogoèe poèistiti"
 
-#: disk-utils/mkswap.c:420
+#: disk-utils/mkswap.c:423
 #, c-format
 msgid "%s: %s: warning: don't erase bootbits sectors\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:423
+#: disk-utils/mkswap.c:426
 #, fuzzy, c-format
 msgid "        (%s partition table detected). "
 msgstr "   p   izpi¹i BSD-jevo tabelo razdelkov"
 
-#: disk-utils/mkswap.c:425
+#: disk-utils/mkswap.c:428
 #, fuzzy, c-format
 msgid "        on whole disk. "
 msgstr "   s   prika¾i celostno oznako diska"
 
-#: disk-utils/mkswap.c:495
+#: disk-utils/mkswap.c:498
 #, c-format
 msgid "%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:511
+#: disk-utils/mkswap.c:514
 #, fuzzy, c-format
 msgid "%s: does not support swapspace version %d.\n"
 msgstr "%s: napaka: neznana razlièica %d\n"
 
-#: disk-utils/mkswap.c:519
+#: disk-utils/mkswap.c:522
 #, fuzzy
 msgid "error: UUID parsing failed"
 msgstr ""
 "\n"
 "Napaka pri zapiranju datoteke\n"
 
-#: disk-utils/mkswap.c:529
+#: disk-utils/mkswap.c:533
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: napaka: izmenjalnega prostora ni mo¾no nikamor namestiti?\n"
 
-#: disk-utils/mkswap.c:547
+#: disk-utils/mkswap.c:551
 #, fuzzy, c-format
 msgid "%s: error: size %llu KiB is larger than device size %llu KiB\n"
 msgstr "%s: napaka: velikost %lu je veèja od velikosti naprave %lu\n"
 
-#: disk-utils/mkswap.c:556
+#: disk-utils/mkswap.c:560
 #, fuzzy, c-format
 msgid "%s: error: swap area needs to be at least %ld KiB\n"
 msgstr "%s: napaka: velikost izmenjalnega prostora mora biti vsaj %ld KB\n"
 
-#: disk-utils/mkswap.c:573
+#: disk-utils/mkswap.c:577
 #, fuzzy, c-format
 msgid "%s: warning: truncating swap area to %llu KiB\n"
 msgstr "%s: opozorilo: meja izmenjalnega prostora postavljena na %ldKB\n"
 
-#: disk-utils/mkswap.c:596
+#: disk-utils/mkswap.c:600
 #, fuzzy, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
 msgstr "Naprava izmenjalnega prostora ne bo ustvarjena na ,%s`"
 
-#: disk-utils/mkswap.c:602
+#: disk-utils/mkswap.c:606
 #, fuzzy, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
 msgstr "%s je priklopljen; dat. sistema zato ne bo narejen!"
 
-#: disk-utils/mkswap.c:618
+#: disk-utils/mkswap.c:622
 msgid "Unable to set up swap-space: unreadable"
 msgstr "Izmenjalnega prostora ni mogoèe nastaviti: neberljiv"
 
-#: disk-utils/mkswap.c:621
+#: disk-utils/mkswap.c:625
 #, fuzzy, c-format
 msgid "Setting up swapspace version 1, size = %llu KiB\n"
 msgstr "Pripravljamo izmenjalni prostor razlièice %d, velikost = %llu kB\n"
 
-#: disk-utils/mkswap.c:632
+#: disk-utils/mkswap.c:636
 #, fuzzy, c-format
 msgid "%s: %s: unable to write signature page: %s"
 msgstr "strani s podpisom ni mogoèe zapisati"
 
-#: disk-utils/mkswap.c:643
+#: disk-utils/mkswap.c:647
 msgid "fsync failed"
 msgstr "fsync ni uspel"
 
-#: disk-utils/mkswap.c:654
+#: disk-utils/mkswap.c:658
 #, c-format
 msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:660
+#: disk-utils/mkswap.c:664
 #, fuzzy
 msgid "unable to matchpathcon()"
 msgstr "stanja %s ni mogoèe dobiti"
 
-#: disk-utils/mkswap.c:663
+#: disk-utils/mkswap.c:667
 #, fuzzy
 msgid "unable to create new selinux context"
 msgstr "zapis inodov ni uspel"
 
-#: disk-utils/mkswap.c:665
+#: disk-utils/mkswap.c:669
 msgid "couldn't compute selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:671
+#: disk-utils/mkswap.c:675
 #, fuzzy, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "ni mogoèe preimenovati %s v %s: %s\n"
@@ -2813,12 +2813,12 @@ msgstr "Najveèje mo¾no ¹tevilo razdelkov je bilo ustvarjeno\n"
 msgid "This partition already exists.\n"
 msgstr "Ta razdelek ¾e obstaja.\n"
 
-#: fdisk/fdiskbsdlabel.c:756
+#: fdisk/fdiskbsdlabel.c:757
 #, c-format
 msgid "Warning: too many partitions (%d, maximum is %d).\n"
 msgstr "Opozorilo: preveè particij (%d, najveè pa je %d).\n"
 
-#: fdisk/fdiskbsdlabel.c:804
+#: fdisk/fdiskbsdlabel.c:805
 #, c-format
 msgid ""
 "\n"
@@ -6415,7 +6415,7 @@ msgstr "Epoch ne bo nastavljen na %d - samo preizku¹am.\n"
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Vrednosti epoch ni bilo mo¾no nastaviti.\n"
 
-#: hwclock/hwclock.c:1292 misc-utils/cal.c:341 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1292 misc-utils/cal.c:345 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s iz %s\n"
@@ -7737,25 +7737,25 @@ msgstr "%s ni mogoèe dobiti stanja zaèasne datoteke.\n"
 msgid "%s: can't read temporary file.\n"
 msgstr "%s: ni mogoèe brati iz zaèasne datoteke.\n"
 
-#: misc-utils/cal.c:358 misc-utils/cal.c:370
+#: misc-utils/cal.c:362 misc-utils/cal.c:374
 #, fuzzy, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "neveljavna vrednost leta: uporabite 1-9999"
 
-#: misc-utils/cal.c:362
+#: misc-utils/cal.c:366
 msgid "illegal month value: use 1-12"
 msgstr "neveljavna vrednost meseca: uporabite 1-12"
 
-#: misc-utils/cal.c:366
+#: misc-utils/cal.c:370
 msgid "illegal year value: use 1-9999"
 msgstr "neveljavna vrednost leta: uporabite 1-9999"
 
-#: misc-utils/cal.c:460
+#: misc-utils/cal.c:464
 #, c-format
 msgid "%s %d"
 msgstr "%s %d"
 
-#: misc-utils/cal.c:851
+#: misc-utils/cal.c:856
 #, fuzzy, c-format
 msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
 msgstr "uporaba: cal [-13smjyV] [[mesec] leto]\n"
@@ -8045,7 +8045,7 @@ msgstr "klic ioctl() ni uspel prebrati èasa iz %s"
 
 #: misc-utils/scriptreplay.c:166
 #, fuzzy, c-format
-msgid "timings file %s: %lu: expected format"
+msgid "timings file %s: %lu: unexpected format"
 msgstr "%s: Neprièakovan konec datoteke v %s\n"
 
 #: misc-utils/setterm.c:763
@@ -9837,8 +9837,8 @@ msgid "   %f int/sec; %f rec (char/sec)\n"
 msgstr "   %f ¹t./sek; %f sprejetih (znak/sek)\n"
 
 #: sys-utils/dmesg.c:45
-#, c-format
-msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
+#, fuzzy, c-format
+msgid "Usage: %s [-c] [-n level] [-r] [-s bufsize]\n"
 msgstr "Uporaba: %s [-c] [-n stopnja] [-s vel_medpom]\n"
 
 #: sys-utils/flock.c:65
@@ -10597,7 +10597,7 @@ msgstr "neveljavni id: %s\n"
 msgid "ldattach from %s\n"
 msgstr "%s iz %s\n"
 
-#: sys-utils/ldattach.c:187 text-utils/tailf.c:195
+#: sys-utils/ldattach.c:187 text-utils/tailf.c:205
 #, fuzzy
 msgid "invalid option"
 msgstr "neveljaven id"
@@ -11629,7 +11629,7 @@ msgstr "Uporaba: rev [dat ...]\n"
 msgid "cannot open \"%s\" for read"
 msgstr "\"%s\" ni mogoèe odpreti za branje\n"
 
-#: text-utils/tailf.c:95 text-utils/tailf.c:204
+#: text-utils/tailf.c:95 text-utils/tailf.c:214
 #, fuzzy, c-format
 msgid "cannot stat \"%s\""
 msgstr "stanja naprave %s ni mogoèe dobiti"
@@ -11639,12 +11639,27 @@ msgstr "stanja naprave %s ni mogoèe dobiti"
 msgid "incomplete write to \"%s\" (written %ld, expected %ld)\n"
 msgstr ""
 
-#: text-utils/tailf.c:188 text-utils/tailf.c:192
+#: text-utils/tailf.c:146
+#, c-format
+msgid "%s: cannot add inotify watch (limit of inotify watches was reached)."
+msgstr ""
+
+#: text-utils/tailf.c:150
+#, c-format
+msgid "%s: cannot add inotify watch."
+msgstr ""
+
+#: text-utils/tailf.c:159
+#, fuzzy, c-format
+msgid "%s: cannot read inotify events"
+msgstr "%s: ni mogoèe odpreti %s\n"
+
+#: text-utils/tailf.c:198 text-utils/tailf.c:202
 #, fuzzy
 msgid "invalid number of lines"
 msgstr "Neveljavno ¹tevilo: %s\n"
 
-#: text-utils/tailf.c:199
+#: text-utils/tailf.c:209
 #, fuzzy
 msgid "usage: tailf [-n N | -N] logfile"
 msgstr "Uporaba: tailf dnevdat[log]\n"

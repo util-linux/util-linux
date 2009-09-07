@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-07-15 23:23+0200\n"
+"POT-Creation-Date: 2009-09-07 10:26+0200\n"
 "PO-Revision-Date: 2005-08-15 18:45+0200\n"
 "Last-Translator: Mikel Olasagasti <hey_neken@mundurat.net>\n"
 "Language-Team: Basque <translation-team-eu@lists.sourceforge.net>\n"
@@ -202,7 +202,7 @@ msgstr "erabilera: %s [ -n] gailua\n"
 #: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1282
 #: disk-utils/isosize.c:181 disk-utils/mkfs.bfs.c:115 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:813 disk-utils/mkfs.minix.c:571
-#: disk-utils/mkswap.c:458 misc-utils/ddate.c:179 misc-utils/rename.c:79
+#: disk-utils/mkswap.c:461 misc-utils/ddate.c:179 misc-utils/rename.c:79
 #: misc-utils/script.c:147 sys-utils/readprofile.c:197
 #, c-format
 msgid "%s (%s)\n"
@@ -1192,7 +1192,7 @@ msgstr ""
 msgid "Weird values in do_check: probably bugs\n"
 msgstr ""
 
-#: disk-utils/mkfs.minix.c:507 disk-utils/mkswap.c:310
+#: disk-utils/mkfs.minix.c:507 disk-utils/mkswap.c:313
 msgid "seek failed in check_blocks"
 msgstr ""
 
@@ -1273,154 +1273,154 @@ msgstr ""
 msgid "Using user-specified page size %d, instead of the system value %d\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:187
+#: disk-utils/mkswap.c:192
 #, c-format
 msgid "Bad swap header size, no label written.\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:197
+#: disk-utils/mkswap.c:202
 #, c-format
 msgid "Label was truncated.\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:203
+#: disk-utils/mkswap.c:208
 #, c-format
 msgid "no label, "
 msgstr "etiketa gabea, "
 
-#: disk-utils/mkswap.c:211
+#: disk-utils/mkswap.c:216
 #, c-format
 msgid "no uuid\n"
 msgstr "uuid-rik ez\n"
 
-#: disk-utils/mkswap.c:276
+#: disk-utils/mkswap.c:281
 #, c-format
 msgid "Usage: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:290
+#: disk-utils/mkswap.c:295
 msgid "too many bad pages"
 msgstr "orri txar gehiegi"
 
-#: disk-utils/mkswap.c:303 misc-utils/look.c:182 misc-utils/setterm.c:1183
+#: disk-utils/mkswap.c:308 misc-utils/look.c:182 misc-utils/setterm.c:1183
 #: text-utils/more.c:1982 text-utils/more.c:1993
 msgid "Out of memory"
 msgstr "Memoriarik ez"
 
-#: disk-utils/mkswap.c:317
+#: disk-utils/mkswap.c:319
 #, c-format
 msgid "one bad page\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:319
+#: disk-utils/mkswap.c:321
 #, c-format
 msgid "%lu bad pages\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:396 disk-utils/mkswap.c:412 disk-utils/mkswap.c:629
+#: disk-utils/mkswap.c:399 disk-utils/mkswap.c:415 disk-utils/mkswap.c:633
 msgid "unable to rewind swap-device"
 msgstr ""
 
-#: disk-utils/mkswap.c:416
+#: disk-utils/mkswap.c:419
 #, fuzzy
 msgid "unable to erase bootbits sectors"
 msgstr "Inprimatu taula sektore bidez ordenatua"
 
-#: disk-utils/mkswap.c:420
+#: disk-utils/mkswap.c:423
 #, c-format
 msgid "%s: %s: warning: don't erase bootbits sectors\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:423
+#: disk-utils/mkswap.c:426
 #, c-format
 msgid "        (%s partition table detected). "
 msgstr ""
 
-#: disk-utils/mkswap.c:425
+#: disk-utils/mkswap.c:428
 #, c-format
 msgid "        on whole disk. "
 msgstr ""
 
-#: disk-utils/mkswap.c:495
+#: disk-utils/mkswap.c:498
 #, c-format
 msgid "%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:511
+#: disk-utils/mkswap.c:514
 #, c-format
 msgid "%s: does not support swapspace version %d.\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:519
+#: disk-utils/mkswap.c:522
 msgid "error: UUID parsing failed"
 msgstr ""
 
-#: disk-utils/mkswap.c:529
+#: disk-utils/mkswap.c:533
 #, c-format
 msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:547
+#: disk-utils/mkswap.c:551
 #, c-format
 msgid "%s: error: size %llu KiB is larger than device size %llu KiB\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:556
+#: disk-utils/mkswap.c:560
 #, c-format
 msgid "%s: error: swap area needs to be at least %ld KiB\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:573
+#: disk-utils/mkswap.c:577
 #, c-format
 msgid "%s: warning: truncating swap area to %llu KiB\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:596
+#: disk-utils/mkswap.c:600
 #, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:602
+#: disk-utils/mkswap.c:606
 #, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:618
+#: disk-utils/mkswap.c:622
 msgid "Unable to set up swap-space: unreadable"
 msgstr ""
 
-#: disk-utils/mkswap.c:621
+#: disk-utils/mkswap.c:625
 #, c-format
 msgid "Setting up swapspace version 1, size = %llu KiB\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:632
+#: disk-utils/mkswap.c:636
 #, c-format
 msgid "%s: %s: unable to write signature page: %s"
 msgstr ""
 
-#: disk-utils/mkswap.c:643
+#: disk-utils/mkswap.c:647
 msgid "fsync failed"
 msgstr "fsync-ek huts egin du"
 
-#: disk-utils/mkswap.c:654
+#: disk-utils/mkswap.c:658
 #, c-format
 msgid "%s: %s: unable to obtain selinux file label: %s\n"
 msgstr ""
 
-#: disk-utils/mkswap.c:660
+#: disk-utils/mkswap.c:664
 msgid "unable to matchpathcon()"
 msgstr ""
 
-#: disk-utils/mkswap.c:663
+#: disk-utils/mkswap.c:667
 msgid "unable to create new selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:665
+#: disk-utils/mkswap.c:669
 msgid "couldn't compute selinux context"
 msgstr ""
 
-#: disk-utils/mkswap.c:671
+#: disk-utils/mkswap.c:675
 #, c-format
 msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr ""
@@ -2669,12 +2669,12 @@ msgstr ""
 msgid "This partition already exists.\n"
 msgstr ""
 
-#: fdisk/fdiskbsdlabel.c:756
+#: fdisk/fdiskbsdlabel.c:757
 #, c-format
 msgid "Warning: too many partitions (%d, maximum is %d).\n"
 msgstr ""
 
-#: fdisk/fdiskbsdlabel.c:804
+#: fdisk/fdiskbsdlabel.c:805
 #, c-format
 msgid ""
 "\n"
@@ -5945,7 +5945,7 @@ msgstr ""
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr ""
 
-#: hwclock/hwclock.c:1292 misc-utils/cal.c:341 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1292 misc-utils/cal.c:345 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr ""
@@ -7192,25 +7192,25 @@ msgstr ""
 msgid "%s: can't read temporary file.\n"
 msgstr ""
 
-#: misc-utils/cal.c:358 misc-utils/cal.c:370
+#: misc-utils/cal.c:362 misc-utils/cal.c:374
 #, fuzzy, c-format
 msgid "illegal day value: use 1-%d"
 msgstr "Baliogabeok buru baloreak"
 
-#: misc-utils/cal.c:362
+#: misc-utils/cal.c:366
 msgid "illegal month value: use 1-12"
 msgstr ""
 
-#: misc-utils/cal.c:366
+#: misc-utils/cal.c:370
 msgid "illegal year value: use 1-9999"
 msgstr ""
 
-#: misc-utils/cal.c:460
+#: misc-utils/cal.c:464
 #, c-format
 msgid "%s %d"
 msgstr ""
 
-#: misc-utils/cal.c:851
+#: misc-utils/cal.c:856
 #, c-format
 msgid "usage: cal [-13smjyV] [[[day] month] year]\n"
 msgstr ""
@@ -7490,7 +7490,7 @@ msgstr ""
 
 #: misc-utils/scriptreplay.c:166
 #, c-format
-msgid "timings file %s: %lu: expected format"
+msgid "timings file %s: %lu: unexpected format"
 msgstr ""
 
 #: misc-utils/setterm.c:763
@@ -9201,7 +9201,7 @@ msgstr ""
 
 #: sys-utils/dmesg.c:45
 #, c-format
-msgid "Usage: %s [-c] [-n level] [-s bufsize]\n"
+msgid "Usage: %s [-c] [-n level] [-r] [-s bufsize]\n"
 msgstr ""
 
 #: sys-utils/flock.c:65
@@ -9936,7 +9936,7 @@ msgstr ""
 msgid "ldattach from %s\n"
 msgstr "Gailua: %s\n"
 
-#: sys-utils/ldattach.c:187 text-utils/tailf.c:195
+#: sys-utils/ldattach.c:187 text-utils/tailf.c:205
 msgid "invalid option"
 msgstr ""
 
@@ -10894,7 +10894,7 @@ msgstr ""
 msgid "cannot open \"%s\" for read"
 msgstr "Ezin da disko unitatea ireki"
 
-#: text-utils/tailf.c:95 text-utils/tailf.c:204
+#: text-utils/tailf.c:95 text-utils/tailf.c:214
 #, c-format
 msgid "cannot stat \"%s\""
 msgstr ""
@@ -10904,11 +10904,26 @@ msgstr ""
 msgid "incomplete write to \"%s\" (written %ld, expected %ld)\n"
 msgstr ""
 
-#: text-utils/tailf.c:188 text-utils/tailf.c:192
+#: text-utils/tailf.c:146
+#, c-format
+msgid "%s: cannot add inotify watch (limit of inotify watches was reached)."
+msgstr ""
+
+#: text-utils/tailf.c:150
+#, c-format
+msgid "%s: cannot add inotify watch."
+msgstr ""
+
+#: text-utils/tailf.c:159
+#, c-format
+msgid "%s: cannot read inotify events"
+msgstr ""
+
+#: text-utils/tailf.c:198 text-utils/tailf.c:202
 msgid "invalid number of lines"
 msgstr ""
 
-#: text-utils/tailf.c:199
+#: text-utils/tailf.c:209
 msgid "usage: tailf [-n N | -N] logfile"
 msgstr ""
 
