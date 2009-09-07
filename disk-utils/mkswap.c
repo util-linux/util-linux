@@ -141,7 +141,7 @@ is_sparc64(void) {
  */
 static int user_pagesize;
 static int pagesize;
-static unsigned long *signature_page;
+static unsigned long *signature_page = NULL;
 struct swap_header_v1 *p;
 
 static void
@@ -167,6 +167,11 @@ init_signature_page(void) {
 	signature_page = (unsigned long *) malloc(pagesize);
 	memset(signature_page, 0, pagesize);
 	p = (struct swap_header_v1 *) signature_page;
+}
+
+static void
+deinit_signature_page(void) {
+	free(signature_page);
 }
 
 static void
@@ -303,20 +308,18 @@ check_blocks(void) {
 		die(_("Out of memory"));
 	current_page = 0;
 	while (current_page < PAGES) {
-		if (!check)
-			continue;
 		if (do_seek && lseek(DEV,current_page*pagesize,SEEK_SET) !=
 		    current_page*pagesize)
 			die(_("seek failed in check_blocks"));
-		if ((do_seek = (pagesize != read(DEV, buffer, pagesize)))) {
+		if ((do_seek = (pagesize != read(DEV, buffer, pagesize))))
 			page_bad(current_page);
-		}
 		current_page++;
 	}
 	if (badpages == 1)
 		printf(_("one bad page\n"));
 	else if (badpages > 1)
 		printf(_("%lu bad pages\n"), badpages);
+	free(buffer);
 }
 
 /* return size in pages */
@@ -523,6 +526,7 @@ main(int argc, char ** argv) {
 #endif
 
 	init_signature_page();	/* get pagesize */
+	atexit(deinit_signature_page);
 
 	if (!device_name) {
 		fprintf(stderr,
