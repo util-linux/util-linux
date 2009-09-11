@@ -930,8 +930,8 @@ get_disksize(int format) {
 static void
 out_partition_header(char *dev, int format, struct geometry G) {
     if (dump) {
-	printf(_("# partition table of %s\n"), dev);
-	printf(_("unit: sectors\n\n"));
+	printf("# partition table of %s\n", dev);
+	printf("unit: sectors\n\n");
 	return;
     }
 
@@ -1059,12 +1059,12 @@ out_partition(char *dev, int format, struct part_desc *p,
     size = p->size;
 
     if (dump) {
-	printf(_(" start=%9lu"), start);
-	printf(_(", size=%9lu"), size);
+	printf(" start=%9lu", start);
+	printf(", size=%9lu", size);
 	if (p->ptype == DOS_TYPE) {
 	    printf(", Id=%2x", p->p.sys_type);
 	    if (p->p.bootable == 0x80)
-		printf(_(", bootable"));
+		printf(", bootable");
 	}
 	printf("\n");
 	return;
