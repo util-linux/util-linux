@@ -17,28 +17,27 @@
 #
 
 TS_TOPDIR="$(dirname $0)/../.."
-TS_DESC="low-level superblocks probing"
+TS_DESC="partitions probing"
 
 . $TS_TOPDIR/functions.sh
 
 ts_init "$*"
 
-if [ ! -x "$TS_CMD_BLKID" ]; then
+if [ ! -x "$TS_HELPER_PARTITIONS" ]; then
 	ts_skip "blkid disabled"
 fi
 
-mkdir -p $TS_OUTDIR/images-fs
+mkdir -p $TS_OUTDIR/images-pt
 
-for img in $(ls $TS_SELF/images-fs/*.img.bz2 | sort); do
+for img in $(ls $TS_SELF/images-pt/*.img.bz2 | sort); do
 	name=$(basename $img .img.bz2)
-	outimg=$TS_OUTDIR/images-fs/${name}.img
+	outimg=$TS_OUTDIR/images-pt/${name}.img
 
 	ts_init_subtest $name
 
 	bunzip2 < $img > $outimg
 
-	#/lib/udev/vol_id $outimg  | egrep -v '[[:alnum:]_]*=$' | sort > $TS_OUTPUT 2>&1
-	$TS_CMD_BLKID -p -o udev $outimg 2>&1 | sort > $TS_OUTPUT
+	$TS_HELPER_PARTITIONS $outimg &> $TS_OUTPUT
 	ts_finalize_subtest
 done
 
