@@ -17,7 +17,7 @@
 #
 
 TS_TOPDIR="$(dirname $0)/../.."
-TS_DESC="low-probe"
+TS_DESC="low-level probing"
 
 . $TS_TOPDIR/functions.sh
 
@@ -27,11 +27,14 @@ if [ ! -x "$TS_CMD_BLKID" ]; then
 	ts_skip "blkid disabled"
 fi
 
-mkdir -p $TS_OUTDIR/images
+#
+# Superblocks
+#
+mkdir -p $TS_OUTDIR/images-fs
 
-for img in $(ls $TS_SELF/images/*.img.bz2 | sort); do
+for img in $(ls $TS_SELF/images-fs/*.img.bz2 | sort); do
 	name=$(basename $img .img.bz2)
-	outimg=$TS_OUTDIR/images/${name}.img
+	outimg=$TS_OUTDIR/images-fs/${name}.img
 
 	ts_init_subtest $name
 
