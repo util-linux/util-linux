@@ -704,7 +704,9 @@ All I/O to the filesystem should be done asynchronously. (See also the
 option.)
 .TP
 .B atime
-Update inode access time for each access. This is the default.
+Update inode access time for each access. See also the
+.B strictatime
+mount option.
 .TP
 .B noatime
 Do not update inode access times on this filesystem (e.g, for faster
@@ -840,12 +842,18 @@ since the last time it was modified.)
 .B norelatime
 Do not use
 .B relatime
-feature (e.g, for systems where the feature is enabled by default, for
-more details see mount options in /proc/mounts).
+feature. See also the
+.B strictatime
+mount option.
 .TP
 .B strictatime
-Update inode access times whenever a file is accessed. Disables noatime and
-.B relatime.
+Allows to explicitly requesting full atime updates. This makes it
+possible for kernel to defaults to
+.B relatime
+or
+.B noatime
+but still allow userspace to override it. For more details about the default
+system mount options see /proc/mounts.
 .TP
 .B nostrictatime
 Use the kernel's default behaviour for inode access time updates.
