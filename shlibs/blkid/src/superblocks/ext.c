@@ -331,6 +331,8 @@ static struct ext2_super_block *ext_get_super(
 
 static void ext_get_info(blkid_probe pr, int ver, struct ext2_super_block *es)
 {
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
 	DBG(DEBUG_PROBE, printf("ext2_sb.compat = %08X:%08X:%08X\n",
 		   le32_to_cpu(es->s_feature_compat),
 		   le32_to_cpu(es->s_feature_incompat),
@@ -344,7 +346,7 @@ static void ext_get_info(blkid_probe pr, int ver, struct ext2_super_block *es)
 	if (le32_to_cpu(es->s_feature_compat) & EXT3_FEATURE_COMPAT_HAS_JOURNAL)
 		blkid_probe_set_uuid_as(pr, es->s_journal_uuid, "EXT_JOURNAL");
 
-	if (ver != 2 && (pr->probreq & BLKID_PROBREQ_SECTYPE) &&
+	if (ver != 2 && (chn->flags & BLKID_SUBLKS_SECTYPE) &&
 	    ((le32_to_cpu(es->s_feature_incompat) & EXT2_FEATURE_INCOMPAT_UNSUPPORTED) == 0))
 		blkid_probe_set_value(pr, "SEC_TYPE",
 				(unsigned char *) "ext2",

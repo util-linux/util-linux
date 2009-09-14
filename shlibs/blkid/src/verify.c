@@ -110,9 +110,11 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 		return NULL;
 	}
 
-	blkid_probe_set_request(cache->probe,
-		BLKID_PROBREQ_LABEL | BLKID_PROBREQ_UUID |
-		BLKID_PROBREQ_TYPE | BLKID_PROBREQ_SECTYPE);
+	blkid_probe_enable_superblocks(cache->probe, TRUE);
+
+	blkid_probe_set_superblocks_flags(cache->probe,
+		BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
+		BLKID_SUBLKS_TYPE | BLKID_SUBLKS_SECTYPE);
 
 	/*
 	 * If we already know the type, then try that first.
@@ -124,12 +126,12 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 		fltr[0] = dev->bid_type;
 		fltr[1] = NULL;
 
-		blkid_probe_filter_types(cache->probe,
+		blkid_probe_filter_superblocks_type(cache->probe,
 				BLKID_FLTR_ONLYIN, fltr);
 
 		if (!blkid_do_probe(cache->probe))
 			goto found_type;
-		blkid_probe_invert_filter(cache->probe);
+		blkid_probe_invert_superblocks_filter(cache->probe);
 
 		/*
 		 * Zap the device filesystem information and try again
@@ -166,7 +168,7 @@ found_type:
 	}
 
 	blkid_reset_probe(cache->probe);
-	blkid_probe_reset_filter(cache->probe);
+	blkid_probe_reset_superblocks_filter(cache->probe);
 	close(fd);
 	return dev;
 }

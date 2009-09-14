@@ -133,9 +133,12 @@ fsprobe_get_value(const char *name, const char *devname)
 		goto done;
 	if (blkid_probe_set_device(blprobe, fd, 0, 0))
 		goto done;
-	if (blkid_probe_set_request(blprobe, BLKID_PROBREQ_LABEL |
-			 BLKID_PROBREQ_UUID | BLKID_PROBREQ_TYPE ))
-		goto done;
+
+	blkid_probe_enable_superblocks(blprobe, 1);
+
+	blkid_probe_set_superblocks_flags(blprobe,
+		BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID | BLKID_SUBLKS_TYPE);
+
 	if (blkid_do_safeprobe(blprobe))
 		goto done;
 	if (blkid_probe_lookup_value(blprobe, name, &data, NULL))

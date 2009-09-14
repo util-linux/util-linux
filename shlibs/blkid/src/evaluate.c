@@ -48,7 +48,9 @@ static int verify_tag(const char *devname, const char *name, const char *value)
 	if (!pr)
 		return -1;
 
-	blkid_probe_set_request(pr, BLKID_PROBREQ_LABEL | BLKID_PROBREQ_UUID);
+	blkid_probe_enable_superblocks(pr, TRUE);
+	blkid_probe_set_superblocks_flags(pr,
+			BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID);
 
 	fd = open(devname, O_RDONLY);
 	if (fd < 0) {

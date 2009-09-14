@@ -551,12 +551,16 @@ int main(int argc, char **argv)
 		pr = blkid_new_probe();
 		if (!pr)
 			goto exit;
-		blkid_probe_set_request(pr,
-				BLKID_PROBREQ_LABEL | BLKID_PROBREQ_UUID |
-				BLKID_PROBREQ_TYPE | BLKID_PROBREQ_SECTYPE |
-				BLKID_PROBREQ_USAGE | BLKID_PROBREQ_VERSION);
+
+		blkid_probe_enable_superblocks(pr, 1);
+
+		blkid_probe_set_superblocks_flags(pr,
+				BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
+				BLKID_SUBLKS_TYPE | BLKID_SUBLKS_SECTYPE |
+				BLKID_SUBLKS_USAGE | BLKID_SUBLKS_VERSION);
+
 		if (fltr_usage &&
-		    blkid_probe_filter_usage(pr, fltr_flag, fltr_usage))
+		    blkid_probe_filter_superblocks_usage(pr, fltr_flag, fltr_usage))
 			goto exit;
 
 		for (i = 0; i < numdev; i++)
