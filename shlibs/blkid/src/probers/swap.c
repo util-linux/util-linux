@@ -118,7 +118,7 @@ const struct blkid_idinfo swap_idinfo =
 
 const struct blkid_idinfo swsuspend_idinfo =
 {
-	.name		= "swsupend",
+	.name		= "swsuspend",
 	.usage		= BLKID_USAGE_OTHER,
 	.probefunc	= probe_swsuspend,
 	.magics		=
