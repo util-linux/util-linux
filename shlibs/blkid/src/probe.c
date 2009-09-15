@@ -580,7 +580,7 @@ static struct blkid_prval *blkid_probe_assign_value(
 
 	if (!name)
 		return NULL;
-	if (pr->nvals >= BLKID_PROBVAL_NVALS)
+	if (pr->nvals >= BLKID_NVALS)
 		return NULL;
 
 	v = &pr->vals[pr->nvals];

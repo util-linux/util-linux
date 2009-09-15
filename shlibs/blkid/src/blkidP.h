@@ -87,42 +87,67 @@ struct blkid_struct_tag
 typedef struct blkid_struct_tag *blkid_tag;
 
 /*
+ * Chain IDs
+ */
+enum {
+	BLKID_CHAIN_SUBLKS,	/* FS/RAID superblocks (enabled by default) */
+/*	BLKID_CHAIN_TOPLGY,	   Block device topology */
+/*	BLKID_CHAIN_PARTS,	   Partition tables */
+
+	BLKID_NCHAINS		/* number of chains */
+};
+
+struct blkid_chain {
+	const struct blkid_chaindrv *driver;	/* chain driver */
+
+	int		enabled;	/* boolean */
+	int		flags;		/* BLKID_<chain>_* */
+	int		binary;		/* boolean */
+	int		idx;		/* index of the current prober */
+	unsigned long	*fltr;		/* filter or NULL */
+	void		*data;		/* private chain data or NULL */
+};
+
+/*
+ * Chain driver
+ */
+struct blkid_chaindrv {
+	const int	id;		/* BLKID_CHAIN_* */
+	const char	*name;		/* name of chain (for debug purpose) */
+	const int	dflt_flags;	/* default chain flags */
+	const int	dflt_enabled;	/* default enabled boolean */
+	int		has_fltr;	/* boolean */
+
+	const struct blkid_idinfo **idinfos; /* description of probing functions */
+	const size_t	nidinfos;	/* number of idinfos */
+
+	/* driver operations */
+	int		(*probe)(blkid_probe, struct blkid_chain *);
+	int		(*safeprobe)(blkid_probe, struct blkid_chain *);
+	void		(*free_data)(blkid_probe, void *);
+};
+
+/*
  * Low-level probe result
  */
 #define BLKID_PROBVAL_BUFSIZ	64
-#define BLKID_PROBVAL_NVALS	8	/* see blkid.h BLKID_PROBREQ_* */
+
+#define BLKID_NVALS_SUBLKS	10
+#define BLKID_NVALS_TOPLGY	3
+#define BLKID_NVALS_PARTS	1
+
+/* Max number of all values in probing result */
+#define BLKID_NVALS             (BLKID_NVALS_SUBLKS + \
+				 BLKID_NVALS_TOPLGY + \
+				 BLKID_NVALS_PARTS)
 
 struct blkid_prval
 {
 	const char	*name;			/* value name */
 	unsigned char	data[BLKID_PROBVAL_BUFSIZ]; /* value data */
 	size_t		len;			/* length of value data */
-};
 
-/*
- * Low-level probing control struct
- */
-struct blkid_struct_probe
-{
-	int			fd;		/* device file descriptor */
-	blkid_loff_t		off;		/* begin of data on the device */
-	blkid_loff_t		size;		/* end of data on the device */
-
-	unsigned char		*sbbuf;		/* superblok buffer */
-	size_t			sbbuf_len;	/* size of data in superblock buffer */
-
-	unsigned char		*buf;		/* seek buffer */
-	blkid_loff_t		buf_off;	/* offset of seek buffer */
-	size_t			buf_len;	/* size of data in seek buffer */
-	size_t			buf_max;	/* allocated size of seek buffer */
-
-	struct blkid_prval	vals[BLKID_PROBVAL_NVALS];
-	int			nvals;
-
-	int			probreq;	/* BLKID_PROBREQ_* flags */
-	int			idx;		/* index of the last prober */
-
-	unsigned long		*fltr;		/* filter */
+	struct blkid_chain	*chain;		/* owner */
 };
 
 #define BLKID_SB_BUFSIZ		0x11000
@@ -144,7 +169,7 @@ struct blkid_idmag
  */
 struct blkid_idinfo
 {
-	const char	*name;		/* FS/RAID name */
+	const char	*name;		/* fs, raid or partition table name */
 	int		usage;		/* BLKID_USAGE_* flag */
 	int		flags;		/* BLKID_IDINFO_* flags */
 
@@ -162,6 +187,38 @@ struct blkid_idinfo
  * and valid linux swap on the same device).
  */
 #define BLKID_IDINFO_TOLERANT	(1 << 1)
+
+/*
+ * Low-level probing control struct
+ */
+struct blkid_struct_probe
+{
+	int			fd;		/* device file descriptor */
+	blkid_loff_t		off;		/* begin of data on the device */
+	blkid_loff_t		size;		/* end of data on the device */
+	dev_t			devno;		/* device number (st.st_rdev) */
+	unsigned int		blkssz;		/* sector size (BLKSSZGET ioctl) */
+	mode_t			mode;		/* struct stat.sb_mode */
+
+	unsigned char		*sbbuf;		/* superblok buffer */
+	size_t			sbbuf_len;	/* size of data in superblock buffer */
+
+	unsigned char		*buf;		/* seek buffer */
+	blkid_loff_t		buf_off;	/* offset of seek buffer */
+	size_t			buf_len;	/* size of data in seek buffer */
+	size_t			buf_max;	/* allocated size of seek buffer */
+
+	struct blkid_chain	chains[BLKID_NCHAINS];	/* array of chains */
+	struct blkid_chain	*cur_chain;		/* current chain */
+
+	struct blkid_prval	vals[BLKID_NVALS];	/* results */
+	int			nvals;		/* number of assigned vals */
+
+	/* obsolete */
+	int                     probreq;        /* BLKID_PROBREQ_* flags */
+	int                     idx;            /* index of the last prober */
+	unsigned long           *fltr;          /* filter */
+};
 
 /*
  * Evaluation methods (for blkid_eval_* API)
