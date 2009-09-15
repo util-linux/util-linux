@@ -340,6 +340,9 @@ extern int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const ch
 
 extern void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len);
 
+extern size_t blkid_encode_to_utf8(int enc, unsigned char *dest, size_t len,
+			const unsigned char *src, size_t count);
+
 #define BLKID_ENC_UTF16BE	0
 #define BLKID_ENC_UTF16LE	1
 
