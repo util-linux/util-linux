@@ -437,3 +437,79 @@ static int blkid_probe_set_usage(blkid_probe pr, int usage)
 
 	return blkid_probe_set_value(pr, "USAGE", (unsigned char *) u, strlen(u) + 1);
 }
+
+
+/*
+ * DEPRECATED FUNCTIONS
+ */
+
+/**
+ * blkid_probe_set_request:
+ * @pr: probe
+ * @flags: BLKID_PROBREQ_* (deprecated) or BLKID_SUBLKS_* flags
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ *
+ * Deprecated: Use blkid_probe_set_superblocks_flags().
+ */
+int blkid_probe_set_request(blkid_probe pr, int flags)
+{
+	return blkid_probe_set_superblocks_flags(pr, flags);
+}
+
+/**
+ * blkid_probe_reset_filter:
+ * @pr: prober
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ *
+ * Deprecated: Use blkid_probe_reset_superblocks_filter().
+ */
+int blkid_probe_reset_filter(blkid_probe pr)
+{
+	return __blkid_probe_reset_filter(pr, BLKID_CHAIN_SUBLKS);
+}
+
+/**
+ * blkid_probe_invert_filter:
+ * @pr: prober
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ *
+ * Deprecated: Use blkid_probe_invert_superblocks_filter().
+ */
+int blkid_probe_invert_filter(blkid_probe pr)
+{
+	return __blkid_probe_invert_filter(pr, BLKID_CHAIN_SUBLKS);
+}
+
+/**
+ * blkid_probe_filter_types
+ * @pr: prober
+ * @flag: filter BLKID_FLTR_{NOTIN,ONLYIN} flag
+ * @names: NULL terminated array of probing function names (e.g. "vfat").
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ *
+ * Deprecated: Use blkid_probe_filter_superblocks_types().
+ */
+int blkid_probe_filter_types(blkid_probe pr, int flag, char *names[])
+{
+	return __blkid_probe_filter_types(pr, BLKID_CHAIN_SUBLKS, flag, names);
+}
+
+/**
+ * blkid_probe_filter_usage
+ * @pr: prober
+ * @flag: filter BLKID_FLTR_{NOTIN,ONLYIN} flag
+ * @usage: BLKID_USAGE_* flags
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ *
+ * Deprecated: Use blkid_probe_filter_superblocks_usage().
+ */
+int blkid_probe_filter_usage(blkid_probe pr, int flag, int usage)
+{
+	return blkid_probe_filter_superblocks_usage(pr, flag, usage);
+}
+
