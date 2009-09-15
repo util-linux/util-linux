@@ -60,4 +60,23 @@ extern const struct blkid_idinfo xenix_idinfo;
 extern const struct blkid_idinfo btrfs_idinfo;
 extern const struct blkid_idinfo zfs_idinfo;
 
+/*
+ * superblock functions
+ */
+extern int blkid_probe_set_version(blkid_probe pr, const char *version);
+extern int blkid_probe_sprintf_version(blkid_probe pr, const char *fmt, ...)
+		__attribute__ ((format (printf, 2, 3)));
+
+extern int blkid_probe_set_label(blkid_probe pr, unsigned char *label, size_t len);
+extern int blkid_probe_set_utf8label(blkid_probe pr, unsigned char *label,
+                size_t len, int enc);
+extern int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
+                size_t len, const char *fmt, ...)
+		__attribute__ ((format (printf, 4, 5)));
+extern int blkid_probe_strncpy_uuid(blkid_probe pr, unsigned char *str, size_t len);
+
+extern int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid);
+extern int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const char *name);
+
+
 #endif /* _BLKID_SUPERBLOCKS_H */

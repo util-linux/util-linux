@@ -420,6 +420,31 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 	return 0;
 }
 
+int blkid_probe_set_version(blkid_probe pr, const char *version)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
+	if (chn->flags & BLKID_SUBLKS_VERSION)
+		return blkid_probe_set_value(pr, "VERSION",
+			   (unsigned char *) version, strlen(version) + 1);
+	return 0;
+}
+
+int blkid_probe_sprintf_version(blkid_probe pr, const char *fmt, ...)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+	int rc = 0;
+
+	if (chn->flags & BLKID_SUBLKS_VERSION) {
+		va_list ap;
+
+		va_start(ap, fmt);
+		rc = blkid_probe_vsprintf_value(pr, "VERSION", fmt, ap);
+		va_end(ap);
+	}
+	return rc;
+}
+
 static int blkid_probe_set_usage(blkid_probe pr, int usage)
 {
 	char *u = NULL;
@@ -438,6 +463,170 @@ static int blkid_probe_set_usage(blkid_probe pr, int usage)
 	return blkid_probe_set_value(pr, "USAGE", (unsigned char *) u, strlen(u) + 1);
 }
 
+int blkid_probe_set_label(blkid_probe pr, unsigned char *label, size_t len)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+	struct blkid_prval *v;
+	int i;
+
+	if (len > BLKID_PROBVAL_BUFSIZ)
+		len = BLKID_PROBVAL_BUFSIZ;
+
+	if ((chn->flags & BLKID_SUBLKS_LABELRAW) &&
+	    blkid_probe_set_value(pr, "LABEL_RAW", label, len) < 0)
+		return -1;
+	if (!(chn->flags & BLKID_SUBLKS_LABEL))
+		return 0;
+	v = blkid_probe_assign_value(pr, "LABEL");
+	if (!v)
+		return -1;
+
+	if (len == BLKID_PROBVAL_BUFSIZ)
+		len--;				/* make a space for \0 */
+
+	memcpy(v->data, label, len);
+	v->data[len] = '\0';
+
+	/* remove trailing whitespace */
+	i = strlen((char *) v->data);
+	while (i--) {
+		if (!isspace(v->data[i]))
+			break;
+	}
+	v->data[++i] = '\0';
+	v->len = i + 1;
+	return 0;
+}
+
+int blkid_probe_set_utf8label(blkid_probe pr, unsigned char *label,
+				size_t len, int enc)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+	struct blkid_prval *v;
+
+	if ((chn->flags & BLKID_SUBLKS_LABELRAW) &&
+	    blkid_probe_set_value(pr, "LABEL_RAW", label, len) < 0)
+		return -1;
+	if (!(chn->flags & BLKID_SUBLKS_LABEL))
+		return 0;
+	v = blkid_probe_assign_value(pr, "LABEL");
+	if (!v)
+		return -1;
+
+	v->len = blkid_encode_to_utf8(enc, v->data, sizeof(v->data), label, len);
+	return 0;
+}
+
+/* like uuid_is_null() from libuuid, but works with arbitrary size of UUID */
+static int uuid_is_empty(const unsigned char *buf, size_t len)
+{
+	int i;
+
+	for (i = 0; i < len; i++)
+		if (buf[i])
+			return 0;
+	return 1;
+}
+
+int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
+				size_t len, const char *fmt, ...)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+	int rc = -1;
+	va_list ap;
+
+	if (len > BLKID_PROBVAL_BUFSIZ)
+		len = BLKID_PROBVAL_BUFSIZ;
+
+	if (uuid_is_empty(uuid, len))
+		return 0;
+
+	if ((chn->flags & BLKID_SUBLKS_UUIDRAW) &&
+	    blkid_probe_set_value(pr, "UUID_RAW", uuid, len) < 0)
+		return -1;
+	if (!(chn->flags & BLKID_SUBLKS_UUID))
+		return 0;
+
+	va_start(ap, fmt);
+	rc = blkid_probe_vsprintf_value(pr, "UUID", fmt, ap);
+	va_end(ap);
+
+	/* convert to lower case (..be paranoid) */
+	if (!rc) {
+		int i;
+		struct blkid_prval *v = __blkid_probe_get_value(pr,
+						blkid_probe_numof_values(pr));
+		if (v) {
+			for (i = 0; i < v->len; i++)
+				if (v->data[i] >= 'A' && v->data[i] <= 'F')
+					v->data[i] = (v->data[i] - 'A') + 'a';
+		}
+	}
+	return rc;
+}
+
+/* function to set UUIDs that are in suberblocks stored as strings */
+int blkid_probe_strncpy_uuid(blkid_probe pr, unsigned char *str, size_t len)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+	struct blkid_prval *v;
+
+	if (str == NULL || *str == '\0')
+		return -1;
+	if (!len)
+		len = strlen((char *) str);
+	if (len > BLKID_PROBVAL_BUFSIZ)
+		len = BLKID_PROBVAL_BUFSIZ;
+
+	if ((chn->flags & BLKID_SUBLKS_UUIDRAW) &&
+	    blkid_probe_set_value(pr, "UUID_RAW", str, len) < 0)
+		return -1;
+	if (!(chn->flags & BLKID_SUBLKS_UUID))
+		return 0;
+
+	v = blkid_probe_assign_value(pr, "UUID");
+	if (v) {
+		if (len == BLKID_PROBVAL_BUFSIZ)
+			len--;		/* make a space for \0 */
+
+		memcpy((char *) v->data, str, len);
+		v->data[len] = '\0';
+		v->len = len + 1;
+		return 0;
+	}
+	return -1;
+}
+
+/* default _set_uuid function to set DCE UUIDs */
+int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const char *name)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+	struct blkid_prval *v;
+
+	if (uuid_is_empty(uuid, 16))
+		return 0;
+
+	if (!name) {
+		if ((chn->flags & BLKID_SUBLKS_UUIDRAW) &&
+		    blkid_probe_set_value(pr, "UUID_RAW", uuid, 16) < 0)
+			return -1;
+		if (!(chn->flags & BLKID_SUBLKS_UUID))
+			return 0;
+
+		v = blkid_probe_assign_value(pr, "UUID");
+	} else
+		v = blkid_probe_assign_value(pr, name);
+
+	blkid_unparse_uuid(uuid, (char *) v->data, sizeof(v->data));
+	v->len = 37;
+
+	return 0;
+}
+
+int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid)
+{
+	return blkid_probe_set_uuid_as(pr, uuid, NULL);
+}
 
 /*
  * DEPRECATED FUNCTIONS

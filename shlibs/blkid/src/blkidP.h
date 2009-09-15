@@ -383,6 +383,10 @@ extern int blkid_probe_chain_copy_vals(blkid_probe pr, struct blkid_chain *chn,
 extern struct blkid_prval *blkid_probe_assign_value(blkid_probe pr, const char *name);
 extern void blkid_probe_append_vals(blkid_probe pr, struct blkid_prval *vals, int nvals);
 
+extern struct blkid_chain *blkid_probe_get_chain(blkid_probe pr);
+
+extern struct blkid_prval *__blkid_probe_get_value(blkid_probe pr, int num);
+extern struct blkid_prval *__blkid_probe_lookup_value(blkid_probe pr, const char *name);
 
 extern unsigned long *blkid_probe_get_filter(blkid_probe pr, int chain, int create);
 extern int __blkid_probe_invert_filter(blkid_probe pr, int chain);
@@ -394,20 +398,6 @@ extern int blkid_probe_set_value(blkid_probe pr, const char *name,
                 unsigned char *data, size_t len);
 extern int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
                 const char *fmt, va_list ap);
-extern int blkid_probe_set_version(blkid_probe pr, const char *version);
-extern int blkid_probe_sprintf_version(blkid_probe pr, const char *fmt, ...)
-		__attribute__ ((format (printf, 2, 3)));
-
-extern int blkid_probe_set_label(blkid_probe pr, unsigned char *label, size_t len);
-extern int blkid_probe_set_utf8label(blkid_probe pr, unsigned char *label,
-                size_t len, int enc);
-extern int blkid_probe_sprintf_uuid(blkid_probe pr, unsigned char *uuid,
-                size_t len, const char *fmt, ...)
-		__attribute__ ((format (printf, 4, 5)));
-extern int blkid_probe_strncpy_uuid(blkid_probe pr, unsigned char *str, size_t len);
-
-extern int blkid_probe_set_uuid(blkid_probe pr, unsigned char *uuid);
-extern int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const char *name);
 
 extern void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len);
 
