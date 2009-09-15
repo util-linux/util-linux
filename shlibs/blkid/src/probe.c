@@ -237,6 +237,30 @@ struct blkid_chain *blkid_probe_get_chain(blkid_probe pr)
 	return pr->cur_chain;
 }
 
+void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn)
+{
+	int rc;
+
+	if (!pr && !chn)
+		return NULL;
+
+	pr->cur_chain = chn;
+	chn->binary = TRUE;
+
+	rc = chn->driver->probe(pr, chn);
+
+	chn->binary = FALSE;
+	pr->cur_chain = NULL;
+
+	if (rc < 0)
+		return NULL;
+
+	DBG(DEBUG_LOWPROBE,
+		printf("returning %s binary data\n", chn->driver->name));
+	return chn->data;
+}
+
+
 /**
  * blkid_reset_probe:
  * @pr: probe
