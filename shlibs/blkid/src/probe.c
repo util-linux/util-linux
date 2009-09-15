@@ -699,15 +699,23 @@ static int blkid_probe_set_usage(blkid_probe pr, int usage)
 	return blkid_probe_set_value(pr, "USAGE", (unsigned char *) u, strlen(u) + 1);
 }
 
+/**
+ * blkid_probe_get_value:
+ * @pr: probe
+ * @num: wanted value in range 0..N, where N is blkid_probe_numof_values() - 1
+ * @name: pointer to return value name or NULL
+ * @data: pointer to return value data or NULL
+ * @len: pointer to return value length or NULL
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
 int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
 			const char **data, size_t *len)
 {
-	struct blkid_prval *v;
+	struct blkid_prval *v = __blkid_probe_get_value(pr, num);
 
-	if (pr == NULL || num < 0 || num >= pr->nvals)
+	if (!v)
 		return -1;
-
-	v = &pr->vals[num];
 	if (name)
 		*name = v->name;
 	if (data)
@@ -719,29 +727,37 @@ int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
 	return 0;
 }
 
+/**
+ * blkid_probe_lookup_value:
+ * @pr: probe
+ * @name: name of value
+ * @data: pointer to return value data or NULL
+ * @len: pointer to return value length or NULL
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
 int blkid_probe_lookup_value(blkid_probe pr, const char *name,
 			const char **data, size_t *len)
 {
-	int i;
+	struct blkid_prval *v = __blkid_probe_lookup_value(pr, name);
 
-	if (pr == NULL || pr->nvals == 0 || name == NULL)
+	if (!v)
 		return -1;
-
-	for (i = 0; i < pr->nvals; i++) {
-		struct blkid_prval *v = &pr->vals[i];
-
-		if (v->name && strcmp(name, v->name) == 0) {
-			if (data)
-				*data = (char *) v->data;
-			if (len)
-				*len = v->len;
-			DBG(DEBUG_LOWPROBE, printf("returning %s value\n", v->name));
-			return 0;
-		}
-	}
-	return -1;
+	if (data)
+		*data = (char *) v->data;
+	if (len)
+		*len = v->len;
+	DBG(DEBUG_LOWPROBE, printf("returning %s value\n", v->name));
+	return 0;
 }
 
+/**
+ * blkid_probe_has_value:
+ * @pr: probe
+ * @name: name of value
+ *
+ * Returns: 1 if value exist in probing result, otherwise 0.
+ */
 int blkid_probe_has_value(blkid_probe pr, const char *name)
 {
 	if (blkid_probe_lookup_value(pr, name, NULL, NULL) == 0)
