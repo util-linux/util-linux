@@ -66,3 +66,19 @@ global:
 	blkid_send_uevent;
 } BLKID_1.0;
 
+/*
+ * version(s) since util-linux-ng 2.17
+ */
+BLKID_2.17 {
+global:
+	blkid_do_fullprobe;
+	blkid_probe_enable_superblocks;
+	blkid_probe_filter_superblocks_type;
+	blkid_probe_filter_superblocks_usage;
+	blkid_probe_get_devno;
+	blkid_probe_get_sectorsize;
+	blkid_probe_get_size;
+	blkid_probe_invert_superblocks_filter;
+	blkid_probe_reset_superblocks_filter;
+	blkid_probe_set_superblocks_flags;
+} BLKID_2.15;

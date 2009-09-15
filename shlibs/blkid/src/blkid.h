@@ -43,13 +43,13 @@ typedef struct blkid_struct_dev_iterate *blkid_dev_iterate;
  * Flags for blkid_get_dev
  *
  * BLKID_DEV_CREATE	Create an empty device structure if not found
- * 			in the cache.
+ *			in the cache.
  * BLKID_DEV_VERIFY	Make sure the device structure corresponds
- * 			with reality.
+ *			with reality.
  * BLKID_DEV_FIND	Just look up a device entry, and return NULL
- * 			if it is not found.
+ *			if it is not found.
  * BLKID_DEV_NORMAL	Get a valid device structure, either from the
- * 			cache or by probing the device.
+ *			cache or by probing the device.
  */
 #define BLKID_DEV_FIND		0x0000
 #define BLKID_DEV_CREATE	0x0001
@@ -121,7 +121,6 @@ extern char *blkid_evaluate_tag(const char *token, const char *value,
 				blkid_cache *cache);
 
 /* probe.c */
-extern int blkid_known_fstype(const char *fstype);
 extern blkid_probe blkid_new_probe(void);
 extern void blkid_free_probe(blkid_probe pr);
 extern void blkid_reset_probe(blkid_probe pr);
@@ -136,6 +135,9 @@ extern unsigned int blkid_probe_get_sectorsize(blkid_probe pr);
 /*
  * superblocks probing
  */
+extern int blkid_known_fstype(const char *fstype);
+extern int blkid_probe_enable_superblocks(blkid_probe pr, int enable);
+
 #define BLKID_SUBLKS_LABEL	(1 << 1) /* read LABEL from superblock */
 #define BLKID_SUBLKS_LABELRAW	(1 << 2) /* read and define LABEL_RAW result value*/
 #define BLKID_SUBLKS_UUID	(1 << 3) /* read UUID from superblock */
@@ -148,16 +150,27 @@ extern unsigned int blkid_probe_get_sectorsize(blkid_probe pr);
 #define BLKID_SUBLKS_DEFAULT	(BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID | \
 				 BLKID_SUBLKS_TYPE | BLKID_SUBLKS_SECTYPE)
 
+extern int blkid_probe_set_superblocks_flags(blkid_probe pr, int flags);
+
+extern int blkid_probe_reset_superblocks_filter(blkid_probe pr);
+extern int blkid_probe_invert_superblocks_filter(blkid_probe pr);
+
+#define BLKID_FLTR_NOTIN		1
+#define BLKID_FLTR_ONLYIN		2
+extern int blkid_probe_filter_superblocks_type(blkid_probe pr, int flag, char *names[]);
+
 #define BLKID_USAGE_FILESYSTEM		(1 << 1)
 #define BLKID_USAGE_RAID		(1 << 2)
 #define BLKID_USAGE_CRYPTO		(1 << 3)
 #define BLKID_USAGE_OTHER		(1 << 4)
+extern int blkid_probe_filter_superblocks_usage(blkid_probe pr, int flag, int usage);
 
-#define BLKID_FLTR_NOTIN		1
-#define BLKID_FLTR_ONLYIN		2
-
+/*
+ * NAME=value low-level interface
+ */
 extern int blkid_do_probe(blkid_probe pr);
 extern int blkid_do_safeprobe(blkid_probe pr);
+extern int blkid_do_fullprobe(blkid_probe pr);
 
 extern int blkid_probe_numof_values(blkid_probe pr);
 extern int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
@@ -165,7 +178,6 @@ extern int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
 extern int blkid_probe_lookup_value(blkid_probe pr, const char *name,
                         const char **data, size_t *len);
 extern int blkid_probe_has_value(blkid_probe pr, const char *name);
-
 
 /***
  * Deprecated functions/macros
