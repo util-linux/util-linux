@@ -509,6 +509,39 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	return 0;
 }
 
+int blkid_probe_get_dimension(blkid_probe pr,
+		blkid_loff_t *off, blkid_loff_t *size)
+{
+	if (!pr)
+		return -1;
+
+	*off = pr->off;
+	*size = pr->size;
+	return 0;
+}
+
+int blkid_probe_set_dimension(blkid_probe pr,
+		blkid_loff_t off, blkid_loff_t size)
+{
+	if (!pr)
+		return -1;
+
+	DBG(DEBUG_LOWPROBE, printf(
+		"changing probing area: size=%llu, off=%llu "
+		"-to-> size=%llu, off=%llu\n",
+		(unsigned long long) pr->size,
+		(unsigned long long) pr->off,
+		(unsigned long long) size,
+		(unsigned long long) off));
+
+	pr->off = off;
+	pr->size = size;
+
+	blkid_probe_reset_buffer(pr);
+
+	return 0;
+}
+
 /**
  * blkid_do_probe:
  * @pr: prober
