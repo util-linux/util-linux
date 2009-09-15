@@ -149,6 +149,27 @@ const struct blkid_chaindrv superblocks_drv = {
 };
 
 
+/**
+ * blkid_known_fstype:
+ * @fstype: filesystem name
+ *
+ * Returns: 1 for known filesytems, or 0 for unknown filesystem.
+ */
+int blkid_known_fstype(const char *fstype)
+{
+	int i;
+
+	if (!fstype)
+		return 0;
+
+	for (i = 0; i < ARRAY_SIZE(idinfos); i++) {
+		const struct blkid_idinfo *id = idinfos[i];
+		if (strcmp(id->name, fstype) == 0)
+			return 1;
+	}
+	return 0;
+}
+
 /*
  * The blkid_do_probe() backend.
  */

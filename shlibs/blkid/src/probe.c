@@ -105,21 +105,6 @@ static const struct blkid_idinfo *idinfos[] =
 
 static int blkid_probe_set_usage(blkid_probe pr, int usage);
 
-int blkid_known_fstype(const char *fstype)
-{
-	int i;
-
-	if (!fstype)
-		return 0;
-
-	for (i = 0; i < ARRAY_SIZE(idinfos); i++) {
-		const struct blkid_idinfo *id = idinfos[i];
-		if (strcmp(id->name, fstype) == 0)
-			return 1;
-	}
-	return 0;
-}
-
 /*
  * Returns a pointer to the newly allocated probe struct
  */
