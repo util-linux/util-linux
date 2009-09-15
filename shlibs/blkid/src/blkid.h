@@ -128,31 +128,28 @@ extern void blkid_reset_probe(blkid_probe pr);
 
 extern int blkid_probe_set_device(blkid_probe pr, int fd,
 	                blkid_loff_t off, blkid_loff_t size);
+/*
+ * superblocks probing
+ */
+#define BLKID_SUBLKS_LABEL	(1 << 1) /* read LABEL from superblock */
+#define BLKID_SUBLKS_LABELRAW	(1 << 2) /* read and define LABEL_RAW result value*/
+#define BLKID_SUBLKS_UUID	(1 << 3) /* read UUID from superblock */
+#define BLKID_SUBLKS_UUIDRAW	(1 << 4) /* read and define UUID_RAW result value */
+#define BLKID_SUBLKS_TYPE	(1 << 5) /* define TYPE result value */
+#define BLKID_SUBLKS_SECTYPE	(1 << 6) /* define compatible fs type (second type) */
+#define BLKID_SUBLKS_USAGE	(1 << 7) /* define USAGE result value */
+#define BLKID_SUBLKS_VERSION	(1 << 8) /* read FS type from superblock */
 
-#define	BLKID_PROBREQ_LABEL		(1 << 1)
-#define BLKID_PROBREQ_LABELRAW		(1 << 2)
-#define BLKID_PROBREQ_UUID		(1 << 3)
-#define BLKID_PROBREQ_UUIDRAW		(1 << 4)
-#define BLKID_PROBREQ_TYPE		(1 << 5)
-#define BLKID_PROBREQ_SECTYPE		(1 << 6)
-#define BLKID_PROBREQ_USAGE		(1 << 7)
-#define BLKID_PROBREQ_VERSION		(1 << 8)
-extern int blkid_probe_set_request(blkid_probe pr, int flags);
+#define BLKID_SUBLKS_DEFAULT	(BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID | \
+				 BLKID_SUBLKS_TYPE | BLKID_SUBLKS_SECTYPE)
 
 #define BLKID_USAGE_FILESYSTEM		(1 << 1)
 #define BLKID_USAGE_RAID		(1 << 2)
 #define BLKID_USAGE_CRYPTO		(1 << 3)
 #define BLKID_USAGE_OTHER		(1 << 4)
-extern int blkid_probe_filter_usage(blkid_probe pr, int flag, int usage);
 
 #define BLKID_FLTR_NOTIN		1
 #define BLKID_FLTR_ONLYIN		2
-extern int blkid_probe_filter_types(blkid_probe pr,
-			int flag, char *names[]);
-
-
-extern int blkid_probe_invert_filter(blkid_probe pr);
-extern int blkid_probe_reset_filter(blkid_probe pr);
 
 extern int blkid_do_probe(blkid_probe pr);
 extern int blkid_do_safeprobe(blkid_probe pr);
@@ -163,6 +160,25 @@ extern int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
 extern int blkid_probe_lookup_value(blkid_probe pr, const char *name,
                         const char **data, size_t *len);
 extern int blkid_probe_has_value(blkid_probe pr, const char *name);
+
+
+/***
+ * Deprecated functions/macros
+ */
+#define BLKID_PROBREQ_LABEL     BLKID_SUBLKS_LABEL
+#define BLKID_PROBREQ_LABELRAW  BLKID_SUBLKS_LABELRAW
+#define BLKID_PROBREQ_UUID      BLKID_SUBLKS_UUID
+#define BLKID_PROBREQ_UUIDRAW   BLKID_SUBLKS_UUIDRAW
+#define BLKID_PROBREQ_TYPE      BLKID_SUBLKS_TYPE
+#define BLKID_PROBREQ_SECTYPE   BLKID_SUBLKS_SECTYPE
+#define BLKID_PROBREQ_USAGE     BLKID_SUBLKS_USAGE
+#define BLKID_PROBREQ_VERSION   BLKID_SUBLKS_VERSION
+
+extern int blkid_probe_set_request(blkid_probe pr, int flags);
+extern int blkid_probe_filter_usage(blkid_probe pr, int flag, int usage);
+extern int blkid_probe_filter_types(blkid_probe pr, int flag, char *names[]);
+extern int blkid_probe_invert_filter(blkid_probe pr);
+extern int blkid_probe_reset_filter(blkid_probe pr);
 
 #ifdef __cplusplus
 }
