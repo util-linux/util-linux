@@ -5,6 +5,7 @@ AM_CPPFLAGS += -I$(ul_libblkid_srcdir)
 noinst_LTLIBRARIES = libblkid_superblocks.la
 libblkid_superblocks_la_SOURCES = \
 			superblocks.h \
+			superblocks.c \
 			cramfs.c \
 			swap.c \
 			adaptec_raid.c \
