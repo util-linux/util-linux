@@ -128,6 +128,11 @@ extern void blkid_reset_probe(blkid_probe pr);
 
 extern int blkid_probe_set_device(blkid_probe pr, int fd,
 	                blkid_loff_t off, blkid_loff_t size);
+
+extern dev_t blkid_probe_get_devno(blkid_probe pr);
+extern blkid_loff_t blkid_probe_get_size(blkid_probe pr);
+extern unsigned int blkid_probe_get_sectorsize(blkid_probe pr);
+
 /*
  * superblocks probing
  */

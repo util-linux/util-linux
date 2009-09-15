@@ -745,6 +745,65 @@ int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
 }
 
 /**
+ * blkid_probe_get_devno:
+ * @pr: probe
+ *
+ * Returns: block device number, or 0 for regilar files.
+ */
+dev_t blkid_probe_get_devno(blkid_probe pr)
+{
+	if (!pr->devno) {
+		struct stat sb;
+
+		if (fstat(pr->fd, &sb) == 0 && S_ISBLK(sb.st_mode))
+			pr->devno = sb.st_rdev;
+	}
+	return pr->devno;
+}
+
+/**
+ * blkid_probe_get_size:
+ * @pr: probe
+ *
+ * Returns: block device (or file) size in bytes or -1 in case of error.
+ */
+blkid_loff_t blkid_probe_get_size(blkid_probe pr)
+{
+	return pr ? pr->size : -1;
+}
+
+/**
+ * blkid_probe_get_sectorsize:
+ * @pr: probe
+ *
+ * Returns: block device hardware sector size (BLKSSZGET ioctl, default 512).
+ */
+unsigned int blkid_probe_get_sectorsize(blkid_probe pr)
+{
+	if (!pr)
+		return DEFAULT_SECTOR_SIZE;  /*... and good luck! */
+	if (pr->blkssz)
+		return pr->blkssz;
+	if (!pr->mode) {
+		struct stat st;
+
+		if (fstat(pr->fd, &st))
+			goto fallback;
+		pr->mode = st.st_mode;
+	}
+	if (S_ISBLK(pr->mode)) {
+	    if (blkdev_get_sector_size(pr->fd, (int *) &pr->blkssz))
+		goto fallback;
+
+	    return pr->blkssz;
+	}
+
+fallback:
+	pr->blkssz = DEFAULT_SECTOR_SIZE;
+	return pr->blkssz;
+}
+
+/**
  * blkid_probe_numof_values:
  * @pr: probe
  *
