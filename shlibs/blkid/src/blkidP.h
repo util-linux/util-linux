@@ -371,6 +371,8 @@ extern void blkid_free_dev(blkid_dev dev);
 unsigned char *blkid_probe_get_buffer(blkid_probe pr,
                                 blkid_loff_t off, blkid_loff_t len);
 
+extern unsigned char *blkid_probe_get_sector(blkid_probe pr, unsigned int sector);
+
 extern int blkid_probe_get_dimension(blkid_probe pr,
 	                blkid_loff_t *off, blkid_loff_t *size);
 

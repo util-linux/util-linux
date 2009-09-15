@@ -720,6 +720,13 @@ done:
 	return count ? 0 : 1;
 }
 
+/* same sa blkid_probe_get_buffer() but works with 512-sectors */
+unsigned char *blkid_probe_get_sector(blkid_probe pr, unsigned int sector)
+{
+	return pr ? blkid_probe_get_buffer(pr,
+			((blkid_loff_t) sector) << 9, 0x200) : NULL;
+}
+
 struct blkid_prval *blkid_probe_assign_value(
 			blkid_probe pr, const char *name)
 {
