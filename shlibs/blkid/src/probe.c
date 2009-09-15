@@ -143,6 +143,63 @@ void blkid_free_probe(blkid_probe pr)
 	free(pr);
 }
 
+/*
+ * Removes chain values from probing result.
+ */
+void blkid_probe_chain_reset_vals(blkid_probe pr, struct blkid_chain *chn)
+{
+	int nvals = pr->nvals;
+	int i, x;
+
+	for (x = 0, i = 0; i < pr->nvals; i++) {
+		struct blkid_prval *v = &pr->vals[i];
+
+		if (v->chain != chn && x == i) {
+			x++;
+			continue;
+		}
+		if (v->chain == chn) {
+			--nvals;
+			continue;
+		}
+		memcpy(&pr->vals[x++], v, sizeof(struct blkid_prval));
+	}
+	pr->nvals = nvals;
+}
+
+/*
+ * Copies chain values from probing result to @vals, the max size of @vals is
+ * @nvals and returns real number of values.
+ */
+int blkid_probe_chain_copy_vals(blkid_probe pr, struct blkid_chain *chn,
+		struct blkid_prval *vals, int nvals)
+{
+	int i, x;
+
+	for (x = 0, i = 0; i < pr->nvals && x < nvals; i++) {
+		struct blkid_prval *v = &pr->vals[i];
+
+		if (v->chain != chn)
+			continue;
+		memcpy(&vals[x++], v, sizeof(struct blkid_prval));
+	}
+	return x;
+}
+
+/*
+ * Appends values from @vals to the probing result
+ */
+void blkid_probe_append_vals(blkid_probe pr, struct blkid_prval *vals, int nvals)
+{
+	int i = 0;
+
+	while (i < nvals && pr->nvals < BLKID_NVALS) {
+		memcpy(&pr->vals[pr->nvals++], &vals[i++],
+				sizeof(struct blkid_prval));
+	}
+}
+
+
 static void blkid_probe_reset_vals(blkid_probe pr)
 {
 	memset(pr->vals, 0, sizeof(pr->vals));
@@ -572,8 +629,7 @@ int blkid_probe_numof_values(blkid_probe pr)
 	return pr->nvals;
 }
 
-
-static struct blkid_prval *blkid_probe_assign_value(
+struct blkid_prval *blkid_probe_assign_value(
 			blkid_probe pr, const char *name)
 {
 	struct blkid_prval *v;
@@ -585,9 +641,11 @@ static struct blkid_prval *blkid_probe_assign_value(
 
 	v = &pr->vals[pr->nvals];
 	v->name = name;
+	v->chain = pr->cur_chain;
 	pr->nvals++;
 
-	DBG(DEBUG_LOWPROBE, printf("assigning %s\n", name));
+	DBG(DEBUG_LOWPROBE,
+		printf("assigning %s [%s]\n", name, v->chain->driver->name));
 	return v;
 }
 

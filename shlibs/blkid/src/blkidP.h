@@ -376,6 +376,14 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 			((type *) blkid_probe_get_buffer((_pr),\
 					(_mag)->kboff << 10, sizeof(type)))
 
+
+extern void blkid_probe_chain_reset_vals(blkid_probe pr, struct blkid_chain *chn);
+extern int blkid_probe_chain_copy_vals(blkid_probe pr, struct blkid_chain *chn,
+			                struct blkid_prval *vals, int nvals);
+extern struct blkid_prval *blkid_probe_assign_value(blkid_probe pr, const char *name);
+extern void blkid_probe_append_vals(blkid_probe pr, struct blkid_prval *vals, int nvals);
+
+
 extern int blkid_probe_set_value(blkid_probe pr, const char *name,
                 unsigned char *data, size_t len);
 extern int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
