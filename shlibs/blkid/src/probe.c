@@ -1,10 +1,68 @@
 /*
- * probe.c - reads tags (LABEL, UUID, FS type, ..) from a block device
+ * Low-level libblkid probing API
  *
- * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2008-2009 Karel Zak <kzak@redhat.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
+ */
+
+/**
+ * SECTION: lowprobe
+ * @title: Low-level probing
+ * @short_description: low-level prober initialization
+ *
+ * The low-level probing routines always and directly read information from
+ * the selected (see blkid_probe_set_device()) device.
+ *
+ * The probing routines are grouped together into separate chains. Currently,
+ * the librray provides superblocks, partitions and topology chains.
+ *
+ * The probing routines is possible to filter (enable/disable) by type (e.g.
+ * fstype "vfat" or partype "gpt") or by usage flags (e.g. BLKID_USAGE_RAID).
+ * These filters are per-chain. For more details see the chain specific
+ * documenation.
+ *
+ * The low-level API provides two ways how access to probing results.
+ *
+ *   1. The NAME=value (tag) interface. This interface is older and returns all data
+ *      as strings. This interface is generic for all chains.
+ *
+ *   2. The binary interfaces. These interfaces return data in the native formats.
+ *      The interface is always specific to the probing chain.
+ */
+
+/**
+ * SECTION: lowprobe-tags
+ * @title: Low-level tags
+ * @short_description: generic NAME=value interface.
+ *
+ * The probing routines inside the chain are mutually exclusive by default --
+ * only few probing routines are marked as "tolerant". The "tolerant" probing
+ * routines are used for filesystem which can share the same device with any
+ * other filesystem. The blkid_do_safeprobe() checks for the "tolerant" flag.
+ *
+ * The SUPERBLOCKS chain is enabled by default. The all others chains is
+ * necessary to enable by blkid_probe_enable_'CHAINNAME'(). See chains specific
+ * documenation.
+ *
+ * The blkid_do_probe() function returns a result from only one probing
+ * routine, and the next call from the next probing routine. It means you need
+ * to call the function in loop, for example:
+ *
+ * <informalexample>
+ *   <programlisting>
+ *	while((blkid_do_probe(pr) == 0)
+ *		... use result ...
+ *   </programlisting>
+ * </informalexample>
+ *
+ * The blkid_do_safeprobe() is the same as blkid_do_probe(), but returns only
+ * first probing result for every enabled chain. This function checks for
+ * ambivalent results (e.g. more "intolerant" filesystems superblocks on the
+ * device).
+ *
+ * The probing result is set of NAME=value pairs (the NAME is always unique).
  */
 
 #include <stdio.h>
@@ -629,13 +687,6 @@ done:
 	return count ? 0 : 1;
 }
 
-int blkid_probe_numof_values(blkid_probe pr)
-{
-	if (!pr)
-		return -1;
-	return pr->nvals;
-}
-
 struct blkid_prval *blkid_probe_assign_value(
 			blkid_probe pr, const char *name)
 {
@@ -691,6 +742,19 @@ int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
 	}
 	v->len = len + 1;
 	return 0;
+}
+
+/**
+ * blkid_probe_numof_values:
+ * @pr: probe
+ *
+ * Returns: number of values in probing result or -1 in case of error.
+ */
+int blkid_probe_numof_values(blkid_probe pr)
+{
+	if (!pr)
+		return -1;
+	return pr->nvals;
 }
 
 /**
