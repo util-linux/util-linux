@@ -862,21 +862,9 @@ int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const char *nam
 	} else
 		v = blkid_probe_assign_value(pr, name);
 
-#ifdef HAVE_LIBUUID
-	{
-		uuid_unparse(uuid, (char *) v->data);
-		v->len = 37;
-	}
-#else
-	v->len = snprintf(v->data, sizeof(v->data),
-		"%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
-		uuid[0], uuid[1], uuid[2], uuid[3],
-		uuid[4], uuid[5],
-		uuid[6], uuid[7],
-		uuid[8], uuid[9],
-		uuid[10], uuid[11], uuid[12], uuid[13], uuid[14],uuid[15]);
-	v->len++;
-#endif
+	blkid_unparse_uuid(uuid, (char *) v->data, sizeof(v->data));
+	v->len = 37;
+
 	return 0;
 }
 
@@ -933,5 +921,23 @@ int blkid_probe_has_value(blkid_probe pr, const char *name)
 	if (blkid_probe_lookup_value(pr, name, NULL, NULL) == 0)
 		return 1;
 	return 0;
+}
+
+
+/* converts DCE UUID (uuid[16]) to human readable string
+ * - the @len should be always 37 */
+void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len)
+{
+#ifdef HAVE_LIBUUID
+	uuid_unparse(uuid, str);
+#else
+	snprintf(str, len,
+		"%02x%02x%02x%02x-%02x%02x-%02x%02x-%02x%02x-%02x%02x%02x%02x%02x%02x",
+		uuid[0], uuid[1], uuid[2], uuid[3],
+		uuid[4], uuid[5],
+		uuid[6], uuid[7],
+		uuid[8], uuid[9],
+		uuid[10], uuid[11], uuid[12], uuid[13], uuid[14],uuid[15]);
+#endif
 }
 
