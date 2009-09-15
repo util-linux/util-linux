@@ -100,26 +100,8 @@ static const struct blkid_idinfo *idinfos[] =
 # define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 #endif
 
-/* filter bitmap macros */
-#define blkid_bmp_wordsize		(8 * sizeof(unsigned long))
-#define blkid_bmp_idx_bit(item)		(1UL << ((item) % blkid_bmp_wordsize))
-#define blkid_bmp_idx_byte(item)	((item) / blkid_bmp_wordsize)
-
-#define blkid_bmp_set_item(bmp, item)	\
-		((bmp)[ blkid_bmp_idx_byte(item) ] |= blkid_bmp_idx_bit(item))
-
-#define blkid_bmp_unset_item(bmp, item)	\
-		((bmp)[ bmp_idx_byte(item) ] &= ~bmp_idx_bit(item))
-
-#define blkid_bmp_get_item(bmp, item)	\
-		((bmp)[ blkid_bmp_idx_byte(item) ] & blkid_bmp_idx_bit(item))
-
-#define blkid_bmp_size(max_items) \
-		(((max_items) + blkid_bmp_wordsize) / blkid_bmp_wordsize)
-
 #define BLKID_FLTR_ITEMS	ARRAY_SIZE(idinfos)
-#define BLKID_FLTR_SIZE		blkid_bmp_size(BLKID_FLTR_ITEMS)
-
+#define BLKID_FLTR_SIZE		blkid_bmp_nwords(BLKID_FLTR_ITEMS)
 
 static int blkid_probe_set_usage(blkid_probe pr, int usage);
 

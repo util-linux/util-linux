@@ -340,6 +340,27 @@ extern int blkid_probe_set_uuid_as(blkid_probe pr, unsigned char *uuid, const ch
 
 extern void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len);
 
+/* filter bitmap macros */
+#define blkid_bmp_wordsize		(8 * sizeof(unsigned long))
+#define blkid_bmp_idx_bit(item)		(1UL << ((item) % blkid_bmp_wordsize))
+#define blkid_bmp_idx_byte(item)	((item) / blkid_bmp_wordsize)
+
+#define blkid_bmp_set_item(bmp, item)	\
+		((bmp)[ blkid_bmp_idx_byte(item) ] |= blkid_bmp_idx_bit(item))
+
+#define blkid_bmp_unset_item(bmp, item)	\
+		((bmp)[ bmp_idx_byte(item) ] &= ~bmp_idx_bit(item))
+
+#define blkid_bmp_get_item(bmp, item)	\
+		((bmp)[ blkid_bmp_idx_byte(item) ] & blkid_bmp_idx_bit(item))
+
+#define blkid_bmp_nwords(max_items) \
+		(((max_items) + blkid_bmp_wordsize) / blkid_bmp_wordsize)
+
+#define blkid_bmp_nbytes(max_items) \
+		(blkid_bmp_nwords(max_items) * sizeof(unsigned long))
+
+/* encode.c */
 extern size_t blkid_encode_to_utf8(int enc, unsigned char *dest, size_t len,
 			const unsigned char *src, size_t count);
 
