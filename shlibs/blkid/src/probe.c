@@ -37,8 +37,6 @@
 #include "blkdev.h"
 #include "blkidP.h"
 
-#include "superblocks/superblocks.h"
-
 /* chains */
 extern const struct blkid_chaindrv superblocks_drv;
 
@@ -50,72 +48,6 @@ static const struct blkid_chaindrv *chains_drvs[] = {
 };
 
 static void blkid_probe_reset_vals(blkid_probe pr);
-
-static const struct blkid_idinfo *idinfos[] =
-{
-	/* RAIDs */
-	&linuxraid_idinfo,
-	&ddfraid_idinfo,
-	&iswraid_idinfo,
-	&lsiraid_idinfo,
-	&viaraid_idinfo,
-	&silraid_idinfo,
-	&nvraid_idinfo,
-	&pdcraid_idinfo,
-	&highpoint45x_idinfo,
-	&highpoint37x_idinfo,
-	&adraid_idinfo,
-	&jmraid_idinfo,
-	&lvm2_idinfo,
-	&lvm1_idinfo,
-	&snapcow_idinfo,
-	&luks_idinfo,
-
-	/* Filesystems */
-	&vfat_idinfo,
-	&swsuspend_idinfo,
-	&swap_idinfo,
-	&xfs_idinfo,
-	&ext4dev_idinfo,
-	&ext4_idinfo,
-	&ext3_idinfo,
-	&ext2_idinfo,
-	&jbd_idinfo,
-	&reiser_idinfo,
-	&reiser4_idinfo,
-	&jfs_idinfo,
-	&udf_idinfo,
-	&iso9660_idinfo,
-	&zfs_idinfo,
-	&hfsplus_idinfo,
-	&hfs_idinfo,
-	&ufs_idinfo,
-	&hpfs_idinfo,
-	&sysv_idinfo,
-        &xenix_idinfo,
-	&ntfs_idinfo,
-	&cramfs_idinfo,
-	&romfs_idinfo,
-	&minix_idinfo,
-	&gfs_idinfo,
-	&gfs2_idinfo,
-	&ocfs_idinfo,
-	&ocfs2_idinfo,
-	&oracleasm_idinfo,
-	&vxfs_idinfo,
-	&squashfs_idinfo,
-	&netware_idinfo,
-	&btrfs_idinfo
-};
-
-#ifndef ARRAY_SIZE
-# define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
-#endif
-
-#define BLKID_FLTR_ITEMS	ARRAY_SIZE(idinfos)
-#define BLKID_FLTR_SIZE		blkid_bmp_nwords(BLKID_FLTR_ITEMS)
-
-static int blkid_probe_set_usage(blkid_probe pr, int usage);
 
 /**
  * blkid_new_probe:
@@ -519,13 +451,20 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	return 0;
 }
 
-
-
-/*
- * The blkid_do_probe() calls the probe functions. This routine could be used
- * in a loop when you need to probe for all possible filesystems/raids.
+/**
+ * blkid_do_probe:
+ * @pr: prober
  *
- * 1/ basic case -- use the first result:
+ * Calls probing functions in all enabled chains. The superblocks chain is
+ * enabled by default. The blkid_do_probe() stores result from only one
+ * probing function. It's necessary to call this routine in a loop to get
+ * resuluts from all probing functions in all chains.
+ *
+ * This is string-based NAME=value interface only.
+ *
+ * <example>
+ *   <title>basic case - use the first result only</title>
+ *   <programlisting>
  *
  *	if (blkid_do_probe(pr) == 0) {
  *		int nvals = blkid_probe_numof_values(pr);
@@ -534,152 +473,160 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
  *				printf("%s = %s\n", name, data);
  *		}
  *	}
+ *  </programlisting>
+ * </example>
  *
- * 2/ advanced case -- probe for all signatures (don't forget that some
- *                     filesystems can co-exist on one volume (e.g. CD-ROM).
+ * <example>
+ *   <title>advanced case - probe for all signatures</title>
+ *   <programlisting>
  *
  *	while (blkid_do_probe(pr) == 0) {
  *		int nvals = blkid_probe_numof_values(pr);
  *		...
  *	}
+ *  </programlisting>
+ * </example>
  *
- *    The internal probing index (pointer to the last probing function) is
- *    always reseted when you touch probing filter or set a new device. It
- *    means you cannot use:
+ * See also blkid_reset_probe().
  *
- *      blkid_probe_invert_filter()
- *      blkid_probe_filter_usage()
- *      blkid_probe_filter_types()
- *      blkid_probe_reset_filter()
- *      blkid_probe_set_device()
- *
- *    in the loop (e.g while()) when you iterate on all signatures.
+ * Returns: 0 on success, 1 when probing is done and -1 in case of error.
  */
 int blkid_do_probe(blkid_probe pr)
 {
-	int i = 0;
+	int rc = 1;
 
-	if (!pr || pr->idx < -1)
+	if (!pr)
 		return -1;
 
-	blkid_probe_reset_vals(pr);
+	do {
+		struct blkid_chain *chn;
 
-	DBG(DEBUG_LOWPROBE,
-		printf("--> starting probing loop [idx=%d]\n",
-		pr->idx));
+		if (!pr->cur_chain)
+			pr->cur_chain = &pr->chains[0];
+		else if (pr->cur_chain < &pr->chains[BLKID_NCHAINS - 1])
+			pr->cur_chain += sizeof(struct blkid_chain);
+		else
+			return 1;	/* all chains already probed */
 
-	i = pr->idx + 1;
+		chn = pr->cur_chain;
+		chn->binary = FALSE;		/* for sure... */
 
-	for ( ; i < ARRAY_SIZE(idinfos); i++) {
-		const struct blkid_idinfo *id;
-		const struct blkid_idmag *mag;
-		int hasmag = 0;
+		DBG(DEBUG_LOWPROBE, printf("chain probe %s %s\n",
+				chn->driver->name,
+				chn->enabled? "ENABLED" : "DISABLED"));
 
-		pr->idx = i;
-
-		if (pr->fltr && blkid_bmp_get_item(pr->fltr, i))
+		if (!chn->enabled)
 			continue;
 
-		id = idinfos[i];
-		mag = id->magics ? &id->magics[0] : NULL;
+		/* rc: -1 = error, 0 = success, 1 = no result */
+		rc = chn->driver->probe(pr, chn);
 
-		/* try to detect by magic string */
-		while(mag && mag->magic) {
-			int idx;
-			unsigned char *buf;
+	} while (rc == 1);
 
-			idx = mag->kboff + (mag->sboff >> 10);
-			buf = blkid_probe_get_buffer(pr, idx << 10, 1024);
-
-			if (buf && !memcmp(mag->magic,
-					buf + (mag->sboff & 0x3ff), mag->len)) {
-				DBG(DEBUG_LOWPROBE, printf(
-					"%s: magic sboff=%u, kboff=%ld\n",
-					id->name, mag->sboff, mag->kboff));
-				hasmag = 1;
-				break;
-			}
-			mag++;
-		}
-
-		if (hasmag == 0 && id->magics && id->magics[0].magic)
-			/* magic string(s) defined, but not found */
-			continue;
-
-		/* final check by probing function */
-		if (id->probefunc) {
-			DBG(DEBUG_LOWPROBE, printf(
-				"%s: call probefunc()\n", id->name));
-			if (id->probefunc(pr, mag) != 0)
-				continue;
-		}
-
-		/* all cheks passed */
-		if (pr->probreq & BLKID_PROBREQ_TYPE)
-			blkid_probe_set_value(pr, "TYPE",
-				(unsigned char *) id->name,
-				strlen(id->name) + 1);
-		if (pr->probreq & BLKID_PROBREQ_USAGE)
-			blkid_probe_set_usage(pr, id->usage);
-
-		DBG(DEBUG_LOWPROBE,
-			printf("<-- leaving probing loop (type=%s) [idx=%d]\n",
-			id->name, pr->idx));
-		return 0;
-	}
-	DBG(DEBUG_LOWPROBE,
-		printf("<-- leaving probing loop (failed) [idx=%d]\n",
-		pr->idx));
-	return 1;
+	return rc;
 }
 
-/*
- * This is the same function as blkid_do_probe(), but returns only one result
- * (cannot be used in while()) and checks for ambivalen results (more
- * filesystems on the device) -- in such case returns -2.
+/**
+ * blkid_do_safeprobe:
+ * @pr: prober
  *
- * The function does not check for filesystems when a RAID signature is
- * detected.  The function also does not check for collision between RAIDs. The
- * first detected RAID is returned.
+ * This function gathers probing results from all enabled chains and checks
+ * for ambivalent results (e.g. more filesystems on the device).
+ *
+ * This is string-based NAME=value interface only.
+ *
+ * Note about suberblocks chain -- the function does not check for filesystems
+ * when a RAID signature is detected.  The function also does not check for
+ * collision between RAIDs. The first detected RAID is returned.
+ *
+ * Returns: 0 on success, 1 if nothing is detected, -2 if ambivalen result is
+ * detected and -1 on case of error.
  */
 int blkid_do_safeprobe(blkid_probe pr)
 {
-	struct blkid_struct_probe first;
-	int count = 0;
-	int intol = 0;
-	int rc;
+	int i, count = 0, rc = 0;
 
-	while ((rc = blkid_do_probe(pr)) == 0) {
-		if (!count) {
-			/* store the fist result */
-			memcpy(first.vals, pr->vals, sizeof(first.vals));
-			first.nvals = pr->nvals;
-			first.idx = pr->idx;
-		}
-		count++;
+	if (!pr)
+		return -1;
 
-		if (idinfos[pr->idx]->usage & BLKID_USAGE_RAID)
-			break;
-		if (!(idinfos[pr->idx]->flags & BLKID_IDINFO_TOLERANT))
-			intol++;
+	for (i = 0; i < BLKID_NCHAINS; i++) {
+		struct blkid_chain *chn;
+
+		chn = pr->cur_chain = &pr->chains[i];
+		chn->binary = FALSE;		/* for sure... */
+
+		DBG(DEBUG_LOWPROBE, printf("chain safeprobe %s %s\n",
+				chn->driver->name,
+				chn->enabled? "ENABLED" : "DISABLED"));
+
+		if (!chn->enabled)
+			continue;
+
+		chn->idx = - 1;
+
+		/* rc: -2 ambivalent, -1 = error, 0 = success, 1 = no result */
+		rc = chn->driver->safeprobe(pr, chn);
+		if (rc < 0)
+			goto done;	/* error */
+		if (rc == 0)
+			count++;	/* success */
 	}
+
+done:
+	pr->cur_chain = NULL;
 	if (rc < 0)
-		return rc;		/* error */
-	if (count > 1 && intol) {
-		DBG(DEBUG_LOWPROBE,
-			printf("ERROR: ambivalent result detected (%d filesystems)!\n",
-			count));
-		return -2;		/* error, ambivalent result (more FS) */
+		return rc;
+	return count ? 0 : 1;
+}
+
+/**
+ * blkid_do_fullprobe:
+ * @pr: prober
+ *
+ * This function gathers probing results from all enabled chains. Same as
+ * blkid_so_safeprobe() but does not check for collision between probing
+ * result.
+ *
+ * This is string-based NAME=value interface only.
+ *
+ * Returns: 0 on success, 1 if nothing is detected or -1 on case of error.
+ */
+int blkid_do_fullprobe(blkid_probe pr)
+{
+	int i, count = 0, rc = 0;
+
+	if (!pr)
+		return -1;
+
+	for (i = 0; i < BLKID_NCHAINS; i++) {
+		int rc;
+		struct blkid_chain *chn;
+
+		chn = pr->cur_chain = &pr->chains[i];
+		chn->binary = FALSE;		/* for sure... */
+
+		DBG(DEBUG_LOWPROBE, printf("chain fullprobe %s: %s\n",
+				chn->driver->name,
+				chn->enabled? "ENABLED" : "DISABLED"));
+
+		if (!chn->enabled)
+			continue;
+
+		chn->idx = - 1;
+
+		/* rc: -1 = error, 0 = success, 1 = no result */
+		rc = chn->driver->probe(pr, chn);
+		if (rc < 0)
+			goto done;	/* error */
+		if (rc == 0)
+			count++;	/* success */
 	}
-	if (!count)
-		return 1;		/* nothing detected */
 
-	/* restore the first result */
-	memcpy(pr->vals, first.vals, sizeof(first.vals));
-	pr->nvals = first.nvals;
-	pr->idx = first.idx;
-
-	return 0;
+done:
+	pr->cur_chain = NULL;
+	if (rc < 0)
+		return rc;
+	return count ? 0 : 1;
 }
 
 int blkid_probe_numof_values(blkid_probe pr)
@@ -744,24 +691,6 @@ int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
 	}
 	v->len = len + 1;
 	return 0;
-}
-
-static int blkid_probe_set_usage(blkid_probe pr, int usage)
-{
-	char *u = NULL;
-
-	if (usage & BLKID_USAGE_FILESYSTEM)
-		u = "filesystem";
-	else if (usage & BLKID_USAGE_RAID)
-		u = "raid";
-	else if (usage & BLKID_USAGE_CRYPTO)
-		u = "crypto";
-	else if (usage & BLKID_USAGE_OTHER)
-		u = "other";
-	else
-		u = "unknown";
-
-	return blkid_probe_set_value(pr, "USAGE", (unsigned char *) u, strlen(u) + 1);
 }
 
 /**
