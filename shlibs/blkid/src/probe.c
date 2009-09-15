@@ -39,6 +39,18 @@
 
 #include "superblocks/superblocks.h"
 
+/* chains */
+extern const struct blkid_chaindrv superblocks_drv;
+
+/*
+ * All supported chains
+ */
+static const struct blkid_chaindrv *chains_drvs[] = {
+	[BLKID_CHAIN_SUBLKS] = &superblocks_drv,
+};
+
+static void blkid_probe_reset_vals(blkid_probe pr);
+
 static const struct blkid_idinfo *idinfos[] =
 {
 	/* RAIDs */
@@ -105,28 +117,68 @@ static const struct blkid_idinfo *idinfos[] =
 
 static int blkid_probe_set_usage(blkid_probe pr, int usage);
 
-/*
- * Returns a pointer to the newly allocated probe struct
+/**
+ * blkid_new_probe:
+ *
+ * Returns: a pointer to the newly allocated probe struct.
  */
 blkid_probe blkid_new_probe(void)
 {
+	int i;
+	blkid_probe pr;
+
 	blkid_init_debug(0);
-	return calloc(1, sizeof(struct blkid_struct_probe));
+	pr = calloc(1, sizeof(struct blkid_struct_probe));
+	if (!pr)
+		return NULL;
+
+	/* initialize chains */
+	for (i = 0; i < BLKID_NCHAINS; i++) {
+		pr->chains[i].driver = chains_drvs[i];
+		pr->chains[i].flags = chains_drvs[i]->dflt_flags;
+		pr->chains[i].enabled = chains_drvs[i]->dflt_enabled;
+	}
+	return pr;
 }
 
-/*
- * Deallocates probe struct, buffers and all allocated
+/**
+ * blkid_free_probe:
+ * @pr: probe
+ *
+ * Deallocates the probe struct, buffers and all allocated
  * data that are associated with this probing control struct.
  */
 void blkid_free_probe(blkid_probe pr)
 {
+	int i;
+
 	if (!pr)
 		return;
-	free(pr->fltr);
+
+	for (i = 0; i < BLKID_NCHAINS; i++) {
+		struct blkid_chain *ch = &pr->chains[i];
+
+		if (ch->driver->free_data)
+			ch->driver->free_data(pr, ch->data);
+		free(ch->fltr);
+	}
 	free(pr->buf);
 	free(pr->sbbuf);
 	free(pr);
 }
+
+static void blkid_probe_reset_buffer(blkid_probe pr)
+{
+	DBG(DEBUG_LOWPROBE, printf("reseting blkid probe buffer\n"));
+	if (pr->buf)
+		memset(pr->buf, 0, pr->buf_max);
+	pr->buf_off = 0;
+	pr->buf_len = 0;
+	if (pr->sbbuf)
+		memset(pr->sbbuf, 0, BLKID_SB_BUFSIZ);
+	pr->sbbuf_len = 0;
+}
+
 
 /*
  * Removes chain values from probing result.
@@ -195,25 +247,25 @@ struct blkid_chain *blkid_probe_get_chain(blkid_probe pr)
 	return pr->cur_chain;
 }
 
-static void blkid_probe_reset_idx(blkid_probe pr)
-{
-	pr->idx = -1;
-}
-
+/**
+ * blkid_reset_probe:
+ * @pr: probe
+ *
+ * Cleanup probing result. This function does not touch probing filters
+ * and keeps assigned device.
+ */
 void blkid_reset_probe(blkid_probe pr)
 {
+	int i;
+
 	if (!pr)
 		return;
-	DBG(DEBUG_LOWPROBE, printf("reseting blkid_probe\n"));
-	if (pr->buf)
-		memset(pr->buf, 0, pr->buf_max);
-	pr->buf_off = 0;
-	pr->buf_len = 0;
-	if (pr->sbbuf)
-		memset(pr->sbbuf, 0, BLKID_SB_BUFSIZ);
-	pr->sbbuf_len = 0;
+
+	blkid_probe_reset_buffer(pr);
 	blkid_probe_reset_vals(pr);
-	blkid_probe_reset_idx(pr);
+
+	for (i = 0; i < BLKID_NCHAINS; i++)
+		pr->chains[i].idx = -1;
 }
 
 /***
@@ -238,7 +290,6 @@ static int blkid_probe_dump_filter(blkid_probe pr, int chain)
 			id->name,
 			blkid_bmp_get_item(chn->fltr, i)
 				? "disabled" : "enabled <--"));
-
 	}
 	return 0;
 }
@@ -410,11 +461,17 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 	}
 }
 
-/*
- * Assignes the device to probe control struct, resets internal buffers and
+/**
+ * blkid_probe_set_device:
+ * @pr: probe
+ * @fd: device file descriptor
+ * @off: begin of probing area
+ * @size: size of probing area
+ *
+ * Assigns the device to probe control struct, resets internal buffers and
  * reads 512 bytes from device to the buffers.
  *
- * Returns -1 in case of failure, or 0 on success.
+ * Returns: -1 in case of failure, or 0 on success.
  */
 int blkid_probe_set_device(blkid_probe pr, int fd,
 		blkid_loff_t off, blkid_loff_t size)
@@ -427,6 +484,9 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	pr->fd = fd;
 	pr->off = off;
 	pr->size = 0;
+	pr->devno = 0;
+	pr->mode = 0;
+	pr->blkssz = 0;
 
 	if (size)
 		pr->size = size;
@@ -436,9 +496,12 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		if (fstat(fd, &sb))
 			return -1;
 
-		if (S_ISBLK(sb.st_mode))
+		pr->mode = sb.st_mode;
+
+		if (S_ISBLK(sb.st_mode)) {
 			blkdev_get_size(fd, (unsigned long long *) &pr->size);
-		else
+			pr->devno = sb.st_rdev;
+		} else
 			pr->size = sb.st_size;
 	}
 	if (!pr->size)
@@ -455,6 +518,8 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 				pr->off, pr->size));
 	return 0;
 }
+
+
 
 /*
  * The blkid_do_probe() calls the probe functions. This routine could be used
