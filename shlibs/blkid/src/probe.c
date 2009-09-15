@@ -227,6 +227,131 @@ void blkid_reset_probe(blkid_probe pr)
 	blkid_probe_reset_idx(pr);
 }
 
+/***
+static int blkid_probe_dump_filter(blkid_probe pr, int chain)
+{
+	struct blkid_chain *chn;
+	int i;
+
+	if (!pr || chain < 0 || chain >= BLKID_NCHAINS)
+		return -1;
+
+	chn = &pr->chains[chain];
+
+	if (!chn->fltr)
+		return -1;
+
+	for (i = 0; i < chn->driver->nidinfos; i++) {
+		const struct blkid_idinfo *id = chn->driver->idinfos[i];
+
+		DBG(DEBUG_LOWPROBE, printf("%d: %s: %s\n",
+			i,
+			id->name,
+			blkid_bmp_get_item(chn->fltr, i)
+				? "disabled" : "enabled <--"));
+
+	}
+	return 0;
+}
+***/
+
+/*
+ * Returns properly initialized chain filter
+ */
+unsigned long *blkid_probe_get_filter(blkid_probe pr, int chain, int create)
+{
+	struct blkid_chain *chn;
+
+	if (!pr || chain < 0 || chain >= BLKID_NCHAINS)
+		return NULL;
+
+	chn = &pr->chains[chain];
+
+	/* always when you touch the chain filter all indexes are reseted and
+	 * probing starts from scratch
+	 */
+	chn->idx = -1;
+	pr->cur_chain = NULL;
+
+	if (!chn->driver->has_fltr || (!chn->fltr && !create))
+		return NULL;
+
+	if (!chn->fltr)
+		chn->fltr = calloc(1, blkid_bmp_nbytes(chn->driver->nidinfos));
+	else
+		memset(chn->fltr, 0, blkid_bmp_nbytes(chn->driver->nidinfos));
+
+	/* blkid_probe_dump_filter(pr, chain); */
+	return chn->fltr;
+}
+
+/*
+ * Generic private functions for filter setting
+ */
+int __blkid_probe_invert_filter(blkid_probe pr, int chain)
+{
+	int i;
+	struct blkid_chain *chn;
+	unsigned long *fltr;
+
+	fltr = blkid_probe_get_filter(pr, chain, FALSE);
+	if (!fltr)
+		return -1;
+
+	chn = &pr->chains[chain];
+
+	for (i = 0; i < blkid_bmp_nwords(chn->driver->nidinfos); i++)
+		fltr[i] = ~fltr[i];
+
+	DBG(DEBUG_LOWPROBE, printf("probing filter inverted\n"));
+	/* blkid_probe_dump_filter(pr, chain); */
+	return 0;
+}
+
+int __blkid_probe_reset_filter(blkid_probe pr, int chain)
+{
+	return blkid_probe_get_filter(pr, chain, FALSE) ? 0 : -1;
+}
+
+int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[])
+{
+	unsigned long *fltr;
+	struct blkid_chain *chn;
+	int i;
+
+	fltr = blkid_probe_get_filter(pr, chain, TRUE);
+	if (!fltr)
+		return -1;
+
+	chn = &pr->chains[chain];
+
+	for (i = 0; i < chn->driver->nidinfos; i++) {
+		int has = 0;
+		const struct blkid_idinfo *id = chn->driver->idinfos[i];
+		char **n;
+
+		for (n = names; *n; n++) {
+			if (!strcmp(id->name, *n)) {
+				has = 1;
+				break;
+			}
+		}
+		if (flag & BLKID_FLTR_ONLYIN) {
+		       if (!has)
+				blkid_bmp_set_item(fltr, i);
+		} else if (flag & BLKID_FLTR_NOTIN) {
+			if (has)
+				blkid_bmp_set_item(fltr, i);
+		}
+	}
+
+	DBG(DEBUG_LOWPROBE,
+		printf("%s: a new probing type-filter initialized\n",
+		chn->driver->name));
+	/* blkid_probe_dump_filter(pr, chain); */
+	return 0;
+}
+
 /*
  * Note that we have two offsets:
  *

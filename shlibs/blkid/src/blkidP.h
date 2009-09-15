@@ -384,6 +384,12 @@ extern struct blkid_prval *blkid_probe_assign_value(blkid_probe pr, const char *
 extern void blkid_probe_append_vals(blkid_probe pr, struct blkid_prval *vals, int nvals);
 
 
+extern unsigned long *blkid_probe_get_filter(blkid_probe pr, int chain, int create);
+extern int __blkid_probe_invert_filter(blkid_probe pr, int chain);
+extern int __blkid_probe_reset_filter(blkid_probe pr, int chain);
+extern int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[]);
+
+
 extern int blkid_probe_set_value(blkid_probe pr, const char *name,
                 unsigned char *data, size_t len);
 extern int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
