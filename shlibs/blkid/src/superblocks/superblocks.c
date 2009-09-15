@@ -150,6 +150,123 @@ const struct blkid_chaindrv superblocks_drv = {
 
 
 /**
+ * blkid_probe_enable_superblocks:
+ * @pr: probe
+ * @enable: TRUE/FALSE
+ *
+ * Enables/disables the superblocks probing for non-binary interface.
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
+int blkid_probe_enable_superblocks(blkid_probe pr, int enable)
+{
+	if (!pr)
+		return -1;
+	pr->chains[BLKID_CHAIN_SUBLKS].enabled = enable;
+	return 0;
+}
+
+/**
+ * blkid_probe_set_superblocks_flags:
+ * @pr: prober
+ * @flags: BLKID_SUBLKS_* flags
+ *
+ * Sets probing flags to the superblocks prober. This function is optional, the
+ * default are BLKID_SUBLKS_DEFAULTS flags.
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
+int blkid_probe_set_superblocks_flags(blkid_probe pr, int flags)
+{
+	if (!pr)
+		return -1;
+
+	pr->chains[BLKID_CHAIN_SUBLKS].flags = flags;
+	return 0;
+}
+
+/**
+ * blkid_probe_reset_superblocks_filter:
+ * @pr: prober
+ *
+ * Resets superblocks probing filter
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
+int blkid_probe_reset_superblocks_filter(blkid_probe pr)
+{
+	return __blkid_probe_reset_filter(pr, BLKID_CHAIN_SUBLKS);
+}
+
+/**
+ * blkid_probe_invert_superblocks_filter:
+ * @pr: prober
+ *
+ * Inverts superblocks probing filter
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
+int blkid_probe_invert_superblocks_filter(blkid_probe pr)
+{
+	return __blkid_probe_invert_filter(pr, BLKID_CHAIN_SUBLKS);
+}
+
+/**
+ * blkid_probe_filter_superblocks_type:
+ * @pr: prober
+ * @flag: filter BLKID_FLTR_{NOTIN,ONLYIN} flag
+ * @names: NULL terminated array of probing function names (e.g. "vfat").
+ *
+ *  BLKID_FLTR_NOTIN  - probe for all items which are NOT IN @names
+ *  BLKID_FLTR_ONLYIN - probe for items which are IN @names
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
+int blkid_probe_filter_superblocks_type(blkid_probe pr, int flag, char *names[])
+{
+	return __blkid_probe_filter_types(pr, BLKID_CHAIN_SUBLKS, flag, names);
+}
+
+/**
+ * blkid_probe_filter_superblocks_usage:
+ * @pr: prober
+ * @flag: filter BLKID_FLTR_{NOTIN,ONLYIN} flag
+ * @usage: BLKID_USAGE_* flags
+ *
+ *  BLKID_FLTR_NOTIN  - probe for all items which are NOT IN @usage
+ *  BLKID_FLTR_ONLYIN - probe for items which are IN @usage
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
+int blkid_probe_filter_superblocks_usage(blkid_probe pr, int flag, int usage)
+{
+	unsigned long *fltr;
+	struct blkid_chain *chn;
+	int i;
+
+	if (!pr)
+		return -1;
+
+	fltr = blkid_probe_get_filter(pr, BLKID_CHAIN_SUBLKS, TRUE);
+	if (!fltr)
+		return -1;
+
+	chn = &pr->chains[BLKID_CHAIN_SUBLKS];
+
+	for (i = 0; i < chn->driver->nidinfos; i++) {
+		const struct blkid_idinfo *id = chn->driver->idinfos[i];
+
+		if (id->usage & usage) {
+			if (flag & BLKID_FLTR_NOTIN)
+				blkid_bmp_set_item(chn->fltr, i);
+		} else if (flag & BLKID_FLTR_ONLYIN)
+			blkid_bmp_set_item(chn->fltr, i);
+	}
+	DBG(DEBUG_LOWPROBE, printf("a new probing usage-filter initialized\n"));
+	return 0;
+}
+
+/**
  * blkid_known_fstype:
  * @fstype: filesystem name
  *
