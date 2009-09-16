@@ -30,7 +30,8 @@ libblkid_la_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 		     $(top_srcdir)/lib/blkdev.c \
 		     $(top_srcdir)/lib/linux_version.c \
 		     $(top_srcdir)/lib/canonicalize.c \
-		     $(top_srcdir)/lib/md5.c
+		     $(top_srcdir)/lib/md5.c \
+		     $(top_srcdir)/lib/crc32.c
 
 libblkid_la_LIBADD = superblocks/libblkid_superblocks.la \
 		     topology/libblkid_topology.la \
