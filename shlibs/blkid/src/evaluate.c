@@ -1,15 +1,11 @@
 /*
  * evaluate.c - very high-level API to evaluate LABELs or UUIDs
  *
- * This is simular to blkid_get_devname() from resolve.c, but this
- * API supports udev /dev/disk/by-{label,uuid} links.
- *
  * Copyright (C) 2009 Karel Zak <kzak@redhat.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
-
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -34,6 +30,26 @@
 
 #include "blkdev.h"
 #include "blkidP.h"
+
+/**
+ * SECTION:evaluate
+ * @title: Tags evaluation
+ * @short_description: top-level API for LABEL and UUID evaluation.
+ *
+ * This API provides very simple and portable way how evaluate LABEL and UUID
+ * tags.  The blkid_evaluate_tag() works on 2.4 and 2.6 systems and on systems
+ * with or without udev. Currently, the libblkid library supports "udev" and
+ * "scan" methods. The "udev" method uses udev /dev/disk/by-* symlinks and the
+ * "scan" method scans all block devices from the /proc/partitions file. The
+ * evaluation could be controlled by the /etc/blkid.conf config file. The
+ * default is to try "udev" and then "scan" method.
+ *
+ * The blkid_evaluate_tag() also automatically informs udevd when an obsolete
+ * /dev/disk/by-* symlink is detected.
+ *
+ * If you are not sure how translate LABEL or UUID to the device name use this
+ * API.
+ */
 
 /* returns zero when the device has NAME=value (LABEL/UUID) */
 static int verify_tag(const char *devname, const char *name, const char *value)
@@ -80,7 +96,7 @@ done:
  * blkid_send_uevent:
  * @devname: absolute path to the device
  *
- * Returns -1 in case of failure, or 0 on success.
+ * Returns: -1 in case of failure, or 0 on success.
  */
 int blkid_send_uevent(const char *devname, const char *action)
 {
@@ -194,7 +210,7 @@ static char *evaluate_by_scan(const char *token, const char *value,
  * @value: token data
  * @cache: pointer to cache (or NULL when you don't want to re-use the cache)
  *
- * Returns allocated string with device name.
+ * Returns: allocated string with a device name.
  */
 char *blkid_evaluate_tag(const char *token, const char *value, blkid_cache *cache)
 {

@@ -509,6 +509,14 @@ static int probe_all(blkid_cache cache, int only_if_new)
 	return 0;
 }
 
+/**
+ * blkid_probe_all:
+ * @cache: cache handler
+ *
+ * Probes all block devices.
+ *
+ * Returns: 0 on success, or number less than zero in case of error.
+ */
 int blkid_probe_all(blkid_cache cache)
 {
 	int ret;
@@ -521,6 +529,14 @@ int blkid_probe_all(blkid_cache cache)
 	return ret;
 }
 
+/**
+ * blkid_probe_all_new:
+ * @cache: cache handler
+ *
+ * Probes all new block devices.
+ *
+ * Returns: 0 on success, or number less than zero in case of error.
+ */
 int blkid_probe_all_new(blkid_cache cache)
 {
 	int ret;

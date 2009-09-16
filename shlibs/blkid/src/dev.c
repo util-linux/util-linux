@@ -15,6 +15,21 @@
 
 #include "blkidP.h"
 
+/*
+ * NOTE: reference manual is not structured as code. The following section is a generic
+ * section for all high-level cache search+iterate routines.
+ */
+
+/**
+ * SECTION:search
+ * @title: Search and iterate
+ * @short_description: search devices and iterate over devices in the cache.
+ *
+ * Note that high-level probing API provides information about superblocks
+ * (filesystems/raids) only.  For partitions and topology is necessary to use
+ * the low-level API.
+ */
+
 blkid_dev blkid_new_dev(void)
 {
 	blkid_dev dev;

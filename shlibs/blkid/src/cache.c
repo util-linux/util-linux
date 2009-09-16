@@ -33,6 +33,30 @@
 
 int blkid_debug_mask = 0;
 
+/**
+ * SECTION:cache
+ * @title: Cache
+ * @short_description: basic routines to work with libblkid cache
+ *
+ * Block device information is normally kept in a cache file /etc/blkid.tab and is
+ * verified to still be valid before being returned to the user (if the user has
+ * read permission on the raw block device, otherwise not).  The cache file also
+ * allows unprivileged users (normally anyone other than root, or those not in the
+ * "disk" group) to locate devices by label/id.  The standard location of the
+ * cache file can be overridden by the environment variable BLKID_FILE.
+ *
+ * In situations where one is getting information about a single known device, it
+ * does not impact performance whether the cache is used or not (unless you are
+ * not able to read the block device directly).  If you are dealing with multiple
+ * devices, use of the cache is highly recommended (even if empty) as devices will
+ * be scanned at most one time and the on-disk cache will be updated if possible.
+ * There is rarely a reason not to use the cache.
+ *
+ * In some cases (modular kernels), block devices are not even visible until after
+ * they are accessed the first time, so it is critical that there is some way to
+ * locate these devices without enumerating only visible devices, so the use of
+ * the cache file is required in this situation.
+ */
 
 char *blkid_safe_getenv(const char *arg)
 {
@@ -120,6 +144,15 @@ char *blkid_get_cache_filename(struct blkid_config *conf)
 	return filename;
 }
 
+/**
+ * blkid_get_cache:
+ * @cache: pointer to return cache handler
+ * @filename: path to the cache file or NULL for the default path
+ *
+ * Allocates and initialize librray cache handler.
+ *
+ * Returns: 0 on success or number less than zero in case of error.
+ */
 int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
 {
 	blkid_cache cache;
@@ -147,6 +180,12 @@ int blkid_get_cache(blkid_cache *ret_cache, const char *filename)
 	return 0;
 }
 
+/**
+ * blkid_put_cache:
+ * @cache: cache handler
+ *
+ * Saves changes to cache file.
+ */
 void blkid_put_cache(blkid_cache cache)
 {
 	if (!cache)
@@ -188,6 +227,12 @@ void blkid_put_cache(blkid_cache cache)
 	free(cache);
 }
 
+/**
+ * blkid_gc_cache:
+ * @cache: cache handler
+ *
+ * Removes garbage (non-existing devices) from the cache.
+ */
 void blkid_gc_cache(blkid_cache cache)
 {
 	struct list_head *p, *pnext;

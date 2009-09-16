@@ -20,8 +20,12 @@
  *
  * The probing routines is possible to filter (enable/disable) by type (e.g.
  * fstype "vfat" or partype "gpt") or by usage flags (e.g. BLKID_USAGE_RAID).
- * These filters are per-chain. For more details see the chain specific
- * documenation.
+ * These filters are per-chain. Note that always when you touch the chain
+ * filter the current probing position is reseted and probing starts from
+ * scratch.  It means that the chain filter should not be modified during
+ * probing, for example in loop where you call blkid_do_probe().
+ *
+ * For more details see the chain specific documentation.
  *
  * The low-level API provides two ways how access to probing results.
  *
@@ -30,6 +34,7 @@
  *
  *   2. The binary interfaces. These interfaces return data in the native formats.
  *      The interface is always specific to the probing chain.
+ *
  */
 
 /**
@@ -44,7 +49,7 @@
  *
  * The SUPERBLOCKS chain is enabled by default. The all others chains is
  * necessary to enable by blkid_probe_enable_'CHAINNAME'(). See chains specific
- * documenation.
+ * documentation.
  *
  * The blkid_do_probe() function returns a result from only one probing
  * routine, and the next call from the next probing routine. It means you need

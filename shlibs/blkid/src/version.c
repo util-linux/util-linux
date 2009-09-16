@@ -42,7 +42,7 @@ int blkid_parse_version_string(const char *ver_string)
  * @ver_string: returns relese version (!= SONAME version)
  * @date_string: returns date
  *
- * Returns release version code.
+ * Returns: release version code.
  */
 int blkid_get_library_version(const char **ver_string,
 			       const char **date_string)

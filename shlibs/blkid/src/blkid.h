@@ -30,8 +30,25 @@
 extern "C" {
 #endif
 
+/**
+ * blkid_dev:
+ *
+ * The device object keeps information about one device
+ */
 typedef struct blkid_struct_dev *blkid_dev;
+
+/**
+ * blkid_cache:
+ *
+ * information about all system devices
+ */
 typedef struct blkid_struct_cache *blkid_cache;
+
+/**
+ * blkid_probe:
+ *
+ * low-level probing setting
+ */
 typedef struct blkid_struct_probe *blkid_probe;
 
 /**
@@ -62,9 +79,25 @@ typedef struct blkid_struct_partition *blkid_partition;
  */
 typedef struct blkid_struct_parttable *blkid_parttable;
 
+/**
+ * blkid_loff_t:
+ *
+ * 64-bit signed number for offsets and sizes
+ */
 typedef int64_t blkid_loff_t;
 
+/**
+ * blkid_tag_iterate:
+ *
+ * tags iterator for high-level (blkid_cache) API
+ */
 typedef struct blkid_struct_tag_iterate *blkid_tag_iterate;
+
+/**
+ * blkid_dev_iterate:
+ *
+ * devices iterator for high-level (blkid_cache) API
+ */
 typedef struct blkid_struct_dev_iterate *blkid_dev_iterate;
 
 /*

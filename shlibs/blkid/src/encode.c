@@ -22,6 +22,13 @@
 
 #define UDEV_ALLOWED_CHARS_INPUT               "/ $%?,"
 
+/**
+ * SECTION: encode
+ * @title: Encoding utils
+ * @short_description: encode strings to safe udev-compatible formats
+ *
+ */
+
 /* count of characters used to encode one unicode char */
 static int utf8_encoded_expected_len(const char *str)
 {
@@ -321,6 +328,8 @@ err:
  *
  * Allows plain ascii, hex-escaping and valid utf8. Replaces all whitespaces
  * with '_'.
+ *
+ * Returns: 0 on success or -1 in case of error.
  */
 int blkid_safe_string(const char *str, char *str_safe, size_t len)
 {
