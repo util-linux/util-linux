@@ -102,6 +102,7 @@ static void partitions_free_data(blkid_probe pr, void *data);
  */
 static const struct blkid_idinfo *idinfos[] =
 {
+	&aix_pt_idinfo
 };
 
 /*

@@ -32,4 +32,9 @@ extern int blkid_partition_set_utf8name(blkid_partition par,
 extern int blkid_partition_set_uuid(blkid_partition par,
 		const unsigned char *uuid);
 
+/*
+ * partition probers
+ */
+extern const struct blkid_idinfo aix_pt_idinfo;
+
 #endif /* BLKID_PARTITIONS_H */

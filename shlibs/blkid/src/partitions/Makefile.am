@@ -6,4 +6,6 @@ libblkid_partitions_la_LIBADD =
 noinst_LTLIBRARIES = libblkid_partitions.la
 libblkid_partitions_la_SOURCES = partitions.c \
 				partitions.h \
-				blkid_parttypes.h
+				blkid_parttypes.h \
+				aix.c \
+				aix.h
