@@ -91,7 +91,7 @@ typedef struct blkid_struct_tag *blkid_tag;
  */
 enum {
 	BLKID_CHAIN_SUBLKS,	/* FS/RAID superblocks (enabled by default) */
-/*	BLKID_CHAIN_TOPLGY,	   Block device topology */
+	BLKID_CHAIN_TOPLGY,	/* Block device topology */
 /*	BLKID_CHAIN_PARTS,	   Partition tables */
 
 	BLKID_NCHAINS		/* number of chains */
@@ -407,6 +407,8 @@ extern int blkid_probe_set_value(blkid_probe pr, const char *name,
                 unsigned char *data, size_t len);
 extern int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
                 const char *fmt, va_list ap);
+extern int blkid_probe_sprintf_value(blkid_probe pr, const char *name,
+                const char *fmt, ...);
 
 extern void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len);
 

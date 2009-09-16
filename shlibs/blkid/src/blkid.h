@@ -34,6 +34,13 @@ typedef struct blkid_struct_dev *blkid_dev;
 typedef struct blkid_struct_cache *blkid_cache;
 typedef struct blkid_struct_probe *blkid_probe;
 
+/**
+ * blkid_topology:
+ *
+ * device topology information
+ */
+typedef struct blkid_struct_topology *blkid_topology;
+
 typedef int64_t blkid_loff_t;
 
 typedef struct blkid_struct_tag_iterate *blkid_tag_iterate;
@@ -166,6 +173,18 @@ extern int blkid_probe_filter_superblocks_type(blkid_probe pr, int flag, char *n
 #define BLKID_USAGE_CRYPTO		(1 << 3)
 #define BLKID_USAGE_OTHER		(1 << 4)
 extern int blkid_probe_filter_superblocks_usage(blkid_probe pr, int flag, int usage);
+
+/*
+ * topology probing
+ */
+extern int blkid_probe_enable_topology(blkid_probe pr, int enable);
+
+/* binary interface */
+extern blkid_topology blkid_probe_get_topology(blkid_probe pr);
+
+extern unsigned long blkid_topology_get_alignment_offset(blkid_topology tp);
+extern unsigned long blkid_topology_get_minimum_io_size(blkid_topology tp);
+extern unsigned long blkid_topology_get_optimal_io_size(blkid_topology tp);
 
 /*
  * NAME=value low-level interface

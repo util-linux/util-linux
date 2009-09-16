@@ -97,12 +97,14 @@
 
 /* chains */
 extern const struct blkid_chaindrv superblocks_drv;
+extern const struct blkid_chaindrv topology_drv;
 
 /*
  * All supported chains
  */
 static const struct blkid_chaindrv *chains_drvs[] = {
 	[BLKID_CHAIN_SUBLKS] = &superblocks_drv,
+	[BLKID_CHAIN_TOPLGY] = &topology_drv,
 };
 
 static void blkid_probe_reset_vals(blkid_probe pr);
@@ -806,6 +808,19 @@ int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
 	}
 	v->len = len + 1;
 	return 0;
+}
+
+int blkid_probe_sprintf_value(blkid_probe pr, const char *name,
+		const char *fmt, ...)
+{
+	int rc;
+	va_list ap;
+
+	va_start(ap, fmt);
+	rc = blkid_probe_vsprintf_value(pr, name, fmt, ap);
+	va_end(ap);
+
+	return rc;
 }
 
 /**

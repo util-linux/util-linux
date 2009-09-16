@@ -74,12 +74,17 @@ global:
 	blkid_devno_to_wholedisk;
 	blkid_do_fullprobe;
 	blkid_probe_enable_superblocks;
+	blkid_probe_enable_topology;
 	blkid_probe_filter_superblocks_type;
 	blkid_probe_filter_superblocks_usage;
 	blkid_probe_get_devno;
 	blkid_probe_get_sectorsize;
 	blkid_probe_get_size;
+	blkid_probe_get_topology;
 	blkid_probe_invert_superblocks_filter;
 	blkid_probe_reset_superblocks_filter;
 	blkid_probe_set_superblocks_flags;
+	blkid_topology_get_alignment_offset;
+	blkid_topology_get_minimum_io_size;
+	blkid_topology_get_optimal_io_size;
 } BLKID_2.15;

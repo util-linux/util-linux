@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-SUBDIRS = superblocks .
+SUBDIRS = superblocks topology .
 
 common_ldadd =
 common_cflags =
@@ -32,7 +32,10 @@ libblkid_la_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 		     $(top_srcdir)/lib/canonicalize.c \
 		     $(top_srcdir)/lib/md5.c
 
-libblkid_la_LIBADD = superblocks/libblkid_superblocks.la $(common_ldadd)
+libblkid_la_LIBADD = superblocks/libblkid_superblocks.la \
+		     topology/libblkid_topology.la \
+		     $(common_ldadd)
+
 libblkid_la_DEPENDENCIES = $(libblkid_la_LIBADD) blkid.sym
 
 libblkid_la_LDFLAGS = -Wl,--version-script=$(ul_libblkid_srcdir)/blkid.sym \
