@@ -923,6 +923,7 @@ shlibs/blkid/Makefile
 shlibs/blkid/src/Makefile
 shlibs/blkid/src/superblocks/Makefile
 shlibs/blkid/src/topology/Makefile
+shlibs/blkid/src/partitions/Makefile
 shlibs/blkid/samples/Makefile
 shlibs/uuid/uuid.pc
 shlibs/uuid/Makefile

@@ -41,6 +41,27 @@ typedef struct blkid_struct_probe *blkid_probe;
  */
 typedef struct blkid_struct_topology *blkid_topology;
 
+/**
+ * blkid_partlist
+ *
+ * list of all detected partitions and partitions tables
+ */
+typedef struct blkid_struct_partlist *blkid_partlist;
+
+/**
+ * blkid_partition:
+ *
+ * information about a partition
+ */
+typedef struct blkid_struct_partition *blkid_partition;
+
+/**
+ * blkid_parttable:
+ *
+ * information about a partition table
+ */
+typedef struct blkid_struct_parttable *blkid_parttable;
+
 typedef int64_t blkid_loff_t;
 
 typedef struct blkid_struct_tag_iterate *blkid_tag_iterate;
@@ -185,6 +206,37 @@ extern blkid_topology blkid_probe_get_topology(blkid_probe pr);
 extern unsigned long blkid_topology_get_alignment_offset(blkid_topology tp);
 extern unsigned long blkid_topology_get_minimum_io_size(blkid_topology tp);
 extern unsigned long blkid_topology_get_optimal_io_size(blkid_topology tp);
+
+/*
+ * partitions probing
+ */
+extern int blkid_known_pttype(const char *pttype);
+extern int blkid_probe_enable_partitions(blkid_probe pr, int enable);
+
+/* partitions probing flags */
+#define BLKID_PARTS_FORCE_GPT	(1 << 1)
+extern int blkid_probe_set_partitions_flags(blkid_probe pr, int flags);
+
+/* binary interface */
+extern blkid_partlist blkid_probe_get_partitions(blkid_probe pr);
+
+extern int blkid_partlist_numof_partitions(blkid_partlist ls);
+extern blkid_partition blkid_partlist_get_partition(blkid_partlist ls, int n);
+
+extern blkid_parttable blkid_partition_get_table(blkid_partition par);
+extern const char *blkid_partition_get_name(blkid_partition par);
+extern const char *blkid_partition_get_uuid(blkid_partition par);
+extern int blkid_partition_get_partno(blkid_partition par);
+extern blkid_loff_t blkid_partition_get_start(blkid_partition par);
+extern blkid_loff_t blkid_partition_get_size(blkid_partition par);
+extern int blkid_partition_get_type(blkid_partition par);
+extern int blkid_partition_is_logical(blkid_partition par);
+extern int blkid_partition_is_extended(blkid_partition par);
+extern int blkid_partition_is_primary(blkid_partition par);
+
+extern const char *blkid_parttable_get_type(blkid_parttable tab);
+extern blkid_loff_t blkid_parttable_get_offset(blkid_parttable tab);
+extern blkid_partition blkid_parttable_get_parent(blkid_parttable tab);
 
 /*
  * NAME=value low-level interface

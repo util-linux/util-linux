@@ -92,7 +92,7 @@ typedef struct blkid_struct_tag *blkid_tag;
 enum {
 	BLKID_CHAIN_SUBLKS,	/* FS/RAID superblocks (enabled by default) */
 	BLKID_CHAIN_TOPLGY,	/* Block device topology */
-/*	BLKID_CHAIN_PARTS,	   Partition tables */
+	BLKID_CHAIN_PARTS,	/* Partition tables */
 
 	BLKID_NCHAINS		/* number of chains */
 };
@@ -384,6 +384,7 @@ extern int blkid_probe_set_dimension(blkid_probe pr,
 			((type *) blkid_probe_get_buffer((_pr),\
 					(_mag)->kboff << 10, sizeof(type)))
 
+extern blkid_partlist blkid_probe_get_partlist(blkid_probe pr);
 
 extern void blkid_probe_chain_reset_vals(blkid_probe pr, struct blkid_chain *chn);
 extern int blkid_probe_chain_copy_vals(blkid_probe pr, struct blkid_chain *chn,

@@ -98,6 +98,7 @@
 /* chains */
 extern const struct blkid_chaindrv superblocks_drv;
 extern const struct blkid_chaindrv topology_drv;
+extern const struct blkid_chaindrv partitions_drv;
 
 /*
  * All supported chains
@@ -105,6 +106,7 @@ extern const struct blkid_chaindrv topology_drv;
 static const struct blkid_chaindrv *chains_drvs[] = {
 	[BLKID_CHAIN_SUBLKS] = &superblocks_drv,
 	[BLKID_CHAIN_TOPLGY] = &topology_drv,
+	[BLKID_CHAIN_PARTS] = &partitions_drv
 };
 
 static void blkid_probe_reset_vals(blkid_probe pr);

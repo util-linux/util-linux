@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-SUBDIRS = superblocks topology .
+SUBDIRS = superblocks topology partitions .
 
 common_ldadd =
 common_cflags =
@@ -34,6 +34,7 @@ libblkid_la_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 
 libblkid_la_LIBADD = superblocks/libblkid_superblocks.la \
 		     topology/libblkid_topology.la \
+		     partitions/libblkid_partitions.la \
 		     $(common_ldadd)
 
 libblkid_la_DEPENDENCIES = $(libblkid_la_LIBADD) blkid.sym
