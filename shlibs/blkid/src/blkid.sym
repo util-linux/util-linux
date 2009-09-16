@@ -71,6 +71,7 @@ global:
  */
 BLKID_2.17 {
 global:
+	blkid_devno_to_wholedisk;
 	blkid_do_fullprobe;
 	blkid_probe_enable_superblocks;
 	blkid_probe_filter_superblocks_type;

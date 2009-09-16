@@ -72,6 +72,8 @@ extern void blkid_dev_iterate_end(blkid_dev_iterate iterate);
 
 /* devno.c */
 extern char *blkid_devno_to_devname(dev_t devno);
+extern int blkid_devno_to_wholedisk(dev_t dev, char *diskname,
+                        size_t len, dev_t *diskdevno);
 
 /* devname.c */
 extern int blkid_probe_all(blkid_cache cache);

@@ -133,10 +133,21 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 /* Directories where we will try to search for device numbers */
 static const char *devdirs[] = { "/devices", "/devfs", "/dev", NULL };
 
-/*
+/**
+ * SECTION: misc
+ * @title: Miscellaneous utils
+ * @short_description: mix of various utils for low-level and high-level API
+ */
+
+/**
+ * blkid_devno_to_devname:
+ * @devno: device number
+ *
  * This function finds the pathname to a block device with a given
- * device number.  It returns a pointer to allocated memory to the
- * pathname on success, and NULL on failure.
+ * device number.
+ *
+ * Returns: a pointer to allocated memory to the pathname on success,
+ * and NULL on failure.
  */
 char *blkid_devno_to_devname(dev_t devno)
 {
@@ -185,6 +196,138 @@ char *blkid_devno_to_devname(dev_t devno)
 
 	return devname;
 }
+
+
+/* returns basename and keeps dirname in the @path */
+static char *stripoff_last_component(char *path)
+{
+	char *p = strrchr(path, '/');
+
+	if (!p)
+		return NULL;
+	*p = '\0';
+	return ++p;
+}
+
+/**
+ * blkid_devno_to_wholedisk:
+ * @dev: device number
+ * @diskname: buffer to return diskname (or NULL)
+ * @len: diskname buffer size (or 0)
+ * @diskdevno: pointer to returns devno of entire disk (or NULL)
+ *
+ * This function uses sysfs to convert the @devno device number to the *name*
+ * of the whole disk. The function DOES NOT return full device name. The @dev
+ * argument could be partition or whole disk -- both is converted.
+ *
+ * For example: sda1, 0x0801 --> sda, 0x0800
+ *
+ * For conversion to the full disk *path* use blkid_devno_to_devname(), for
+ * example:
+ *
+ * <informalexample>
+ *  <programlisting>
+ *
+ *	dev_t dev = 0x0801, disk;		// sda1 = 8:1
+ *	char *diskpath, diskname[32];
+ *
+ *	blkid_devno_to_wholedisk(dev, diskname, sizeof(diskname), &disk);
+ *	diskpath = blkid_devno_to_devname(disk);
+ *
+ *	// print "0x0801: sda, /dev/sda, 8:0
+ *	printf("0x%x: %s, %s, %d:%d\n",
+ *		dev, diskname, diskpath, major(disk), minor(disk));
+ *
+ *	free(diskpath);
+ *
+ *  </programlisting>
+ * </informalexample>
+ *
+ * Returns: 0 on success or -1 in case of error.
+ */
+int blkid_devno_to_wholedisk(dev_t dev, char *diskname,
+			size_t len, dev_t *diskdevno)
+{
+	char path[PATH_MAX];
+	char linkpath[PATH_MAX];
+	struct stat info;
+	char *name;
+	int rc, linklen;
+
+	if (!dev)
+		goto err;
+
+	/* check if dev is a partition */
+	rc = snprintf(path, sizeof(path), "/sys/dev/block/%d:%d/partition",
+			major(dev), minor(dev));
+	if (rc < 0 || rc + 1 > sizeof(path))
+		goto err;
+
+	rc = stat(path, &info);		/* 'rc == 0' means partitioned dev */
+
+	 /* aka dirname (remove "/partition" from the path*/
+	stripoff_last_component(path);
+
+	/*
+	 * Unpartitioned device:
+	 *	- readlink /sys/dev/block/8:0 = ../../block/sda
+	 *	- basename ../../block/sda    = sda
+	 *
+	 * Partitioned device:
+	 *	- readlink /sys/dev/block/8:1   = ../../block/sda/sda1
+	 *	- dirname  ../../block/sda/sda1 = ../../block/sda
+	 *	- basename ../../block/sda      = sda
+	 */
+	linklen = readlink(path, linkpath, sizeof(linkpath));
+	if (linklen < 0)
+		goto err;
+	linkpath[linklen] = '\0';
+
+	if (rc == 0)
+		/* partitioned device */
+		stripoff_last_component(linkpath);	/* dirname */
+
+	name = stripoff_last_component(linkpath);	/* basename */
+	if (!name)
+		goto err;
+
+	if (diskname && len) {
+		strncpy(diskname, name, len);
+		diskname[len - 1] = '\0';
+	}
+
+	if (diskdevno) {
+		int maj, min;
+		FILE *f;
+
+		/* read wholedisk devno */
+		rc = snprintf(path, sizeof(path), "/sys/dev/block/%s/dev", name);
+		if (rc < 0 || rc + 1 > sizeof(path))
+			goto err;
+
+		f = fopen(path, "r");
+		if (!f)
+			goto err;
+
+		rc = fscanf(f, "%d:%d", &maj, &min);
+		fclose(f);
+		if (rc != 2)
+			goto err;
+
+		*diskdevno = makedev(maj, min);
+	}
+
+	DBG(DEBUG_DEVNO,
+	    printf("found entire diskname for devno 0x%04llx as %s\n",
+	    (long long) dev, name));
+	return 0;
+err:
+	DBG(DEBUG_DEVNO,
+	    printf("failed to convert 0x%04llx to wholedisk name, errno=%d\n",
+	    (long long) dev, errno));
+	return -1;
+}
+
 
 #ifdef TEST_PROGRAM
 int main(int argc, char** argv)
