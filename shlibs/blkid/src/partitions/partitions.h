@@ -36,5 +36,6 @@ extern int blkid_partition_set_uuid(blkid_partition par,
  * partition probers
  */
 extern const struct blkid_idinfo aix_pt_idinfo;
+extern const struct blkid_idinfo bsd_pt_idinfo;
 
 #endif /* BLKID_PARTITIONS_H */

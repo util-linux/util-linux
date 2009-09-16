@@ -8,4 +8,5 @@ libblkid_partitions_la_SOURCES = partitions.c \
 				partitions.h \
 				blkid_parttypes.h \
 				aix.c \
-				aix.h
+				aix.h \
+				bsd.c
