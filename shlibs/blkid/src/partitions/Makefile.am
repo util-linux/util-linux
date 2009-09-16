@@ -14,4 +14,6 @@ libblkid_partitions_la_SOURCES = partitions.c \
 				solaris_x86.c \
 				sun.c \
 				sgi.c \
-				mac.c
+				mac.c \
+				dos.c \
+				dos.h
