@@ -213,6 +213,11 @@ extern unsigned long blkid_topology_get_optimal_io_size(blkid_topology tp);
 extern int blkid_known_pttype(const char *pttype);
 extern int blkid_probe_enable_partitions(blkid_probe pr, int enable);
 
+extern int blkid_probe_reset_partitions_filter(blkid_probe pr);
+extern int blkid_probe_invert_partitions_filter(blkid_probe pr);
+extern int blkid_probe_filter_partitions_type(blkid_probe pr, int flag, char *names[]);
+
+
 /* partitions probing flags */
 #define BLKID_PARTS_FORCE_GPT	(1 << 1)
 extern int blkid_probe_set_partitions_flags(blkid_probe pr, int flags);

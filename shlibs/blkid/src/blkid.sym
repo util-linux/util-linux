@@ -92,6 +92,7 @@ global:
 	blkid_probe_enable_partitions;
 	blkid_probe_enable_superblocks;
 	blkid_probe_enable_topology;
+	blkid_probe_filter_partitions_type;
 	blkid_probe_filter_superblocks_type;
 	blkid_probe_filter_superblocks_usage;
 	blkid_probe_get_devno;
@@ -99,7 +100,9 @@ global:
 	blkid_probe_get_sectorsize;
 	blkid_probe_get_size;
 	blkid_probe_get_topology;
+	blkid_probe_invert_partitions_filter;
 	blkid_probe_invert_superblocks_filter;
+	blkid_probe_reset_partitions_filter;
 	blkid_probe_reset_superblocks_filter;
 	blkid_probe_set_partitions_flags;
 	blkid_probe_set_superblocks_flags;

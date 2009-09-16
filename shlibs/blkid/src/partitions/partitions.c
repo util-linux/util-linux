@@ -199,6 +199,48 @@ int blkid_probe_set_partitions_flags(blkid_probe pr, int flags)
 }
 
 /**
+ * blkid_probe_reset_partitions_filter:
+ * @pr: prober
+ *
+ * Resets partitions probing filter
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
+int blkid_probe_reset_partitions_filter(blkid_probe pr)
+{
+	return __blkid_probe_reset_filter(pr, BLKID_CHAIN_PARTS);
+}
+
+/**
+ * blkid_probe_invert_partitions_filter:
+ * @pr: prober
+ *
+ * Inverts partitions probing filter
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
+int blkid_probe_invert_partitions_filter(blkid_probe pr)
+{
+	return __blkid_probe_invert_filter(pr, BLKID_CHAIN_PARTS);
+}
+
+/**
+ * blkid_probe_filter_partitions_type:
+ * @pr: prober
+ * @flag: filter BLKID_FLTR_{NOTIN,ONLYIN} flag
+ * @names: NULL terminated array of probing function names (e.g. "vfat").
+ *
+ *  BLKID_FLTR_NOTIN  - probe for all items which are NOT IN @names
+ *  BLKID_FLTR_ONLYIN - probe for items which are IN @names
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
+int blkid_probe_filter_partitions_type(blkid_probe pr, int flag, char *names[])
+{
+	return __blkid_probe_filter_types(pr, BLKID_CHAIN_PARTS, flag, names);
+}
+
+/**
  * blkid_probe_get_partitions:
  * @pr: probe
  *
