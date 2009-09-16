@@ -109,7 +109,8 @@ static const struct blkid_idinfo *idinfos[] =
 	&mac_pt_idinfo,
 	&bsd_pt_idinfo,
 	&unixware_pt_idinfo,
-	&solaris_x86_pt_idinfo
+	&solaris_x86_pt_idinfo,
+	&minix_pt_idinfo
 };
 
 /*
