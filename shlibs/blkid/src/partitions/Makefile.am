@@ -10,4 +10,5 @@ libblkid_partitions_la_SOURCES = partitions.c \
 				aix.c \
 				aix.h \
 				bsd.c \
-				unixware.c
+				unixware.c \
+				solaris_x86.c

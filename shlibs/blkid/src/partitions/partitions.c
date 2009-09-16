@@ -105,6 +105,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&aix_pt_idinfo,
 	&bsd_pt_idinfo,
 	&unixware_pt_idinfo,
+	&solaris_x86_pt_idinfo
 };
 
 /*
