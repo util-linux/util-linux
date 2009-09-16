@@ -34,6 +34,7 @@ missing
 libtool
 .deps
 .libs
+gtk-doc.make
 
 # libtool-2 stuff -- temporary added to repository (because libtool-2.x.x is
 #                    still not in avaialable in many Linux distributions)

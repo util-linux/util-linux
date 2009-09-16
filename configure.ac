@@ -11,6 +11,9 @@ AC_CONFIG_SRCDIR(mount/mount.c)
 
 AC_PREFIX_DEFAULT([/usr])
 
+GTK_DOC_CHECK(1.10)
+AC_PATH_PROG([XSLTPROC], [xsltproc])
+
 dnl version details from <major>.<minor>[-<suffix>]
 PACKAGE_VERSION_MAJOR=$(echo $PACKAGE_VERSION | awk -F. '{print $1}')
 PACKAGE_VERSION_MINOR=$(echo $PACKAGE_VERSION | awk -F. '{print $2}' \
@@ -920,6 +923,8 @@ po/Makefile.in
 schedutils/Makefile
 shlibs/blkid/blkid.pc
 shlibs/blkid/Makefile
+shlibs/blkid/docs/Makefile
+shlibs/blkid/docs/version.xml
 shlibs/blkid/src/Makefile
 shlibs/blkid/src/superblocks/Makefile
 shlibs/blkid/src/topology/Makefile
