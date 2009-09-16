@@ -41,5 +41,6 @@ extern const struct blkid_idinfo unixware_pt_idinfo;
 extern const struct blkid_idinfo solaris_x86_pt_idinfo;
 extern const struct blkid_idinfo sun_pt_idinfo;
 extern const struct blkid_idinfo sgi_pt_idinfo;
+extern const struct blkid_idinfo mac_pt_idinfo;
 
 #endif /* BLKID_PARTITIONS_H */
