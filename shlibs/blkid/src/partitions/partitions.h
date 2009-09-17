@@ -32,6 +32,12 @@ extern int blkid_partition_set_utf8name(blkid_partition par,
 extern int blkid_partition_set_uuid(blkid_partition par,
 		const unsigned char *uuid);
 
+extern int blkid_partition_set_type_string(blkid_partition par,
+                const unsigned char *type, size_t len);
+
+extern int blkid_partition_set_type_uuid(blkid_partition par,
+		const unsigned char *uuid);
+
 /*
  * partition probers
  */

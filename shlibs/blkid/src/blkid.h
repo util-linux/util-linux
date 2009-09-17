@@ -268,6 +268,7 @@ extern int blkid_partition_get_partno(blkid_partition par);
 extern blkid_loff_t blkid_partition_get_start(blkid_partition par);
 extern blkid_loff_t blkid_partition_get_size(blkid_partition par);
 extern int blkid_partition_get_type(blkid_partition par);
+extern const char *blkid_partition_get_type_string(blkid_partition par);
 extern int blkid_partition_is_logical(blkid_partition par);
 extern int blkid_partition_is_extended(blkid_partition par);
 extern int blkid_partition_is_primary(blkid_partition par);

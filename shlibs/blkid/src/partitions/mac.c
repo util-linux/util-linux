@@ -150,6 +150,9 @@ static int probe_mac_pt(blkid_probe pr, const struct blkid_idmag *mag)
 
 		blkid_partition_set_name(par, (unsigned char *) p->name,
 						sizeof(p->name));
+
+		blkid_partition_set_type_string(par, (unsigned char *) p->type,
+						sizeof(p->type));
 	}
 
 	return 0;

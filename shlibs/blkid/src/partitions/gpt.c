@@ -324,6 +324,9 @@ static int probe_gpt_pt(blkid_probe pr, const struct blkid_idmag *mag)
 
 		blkid_partition_set_uuid(par,
 			(const unsigned char *) &e->unique_partition_guid);
+
+		blkid_partition_set_type_uuid(par,
+			(const unsigned char *) &e->partition_type_guid);
 	}
 
 	return 0;

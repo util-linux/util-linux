@@ -152,7 +152,9 @@ struct blkid_struct_parttable {
 struct blkid_struct_partition {
 	blkid_loff_t	start;		/* begin of the partition */
 	blkid_loff_t	size;		/* size of the partitions */
+
 	int		type;		/* partition type */
+	char		typestr[37];	/* partition type string (GPT and Mac) */
 
 	int		partno;		/* partition number */
 	char		uuid[37];	/* UUID (when supported by PT), e.g GPT */
@@ -850,26 +852,33 @@ int blkid_partition_is_logical(blkid_partition par)
 	return partition_get_logical_type(par) == 'L' ? TRUE : FALSE;
 }
 
-int blkid_partition_set_name(blkid_partition par,
-		const unsigned char *name, size_t len)
+static void set_string(unsigned char *item, size_t max,
+				const unsigned char *data, size_t len)
 {
 	int i;
 
-	if (!par)
-		return -1;
-	if (len >= sizeof(par->name))
-		len = sizeof(par->name) - 1;
+	if (len >= max)
+		len = max - 1;
 
-	memcpy(par->name, name, len);
-	par->name[len] = '\0';
+	memcpy(item, data, len);
+	item[len] = '\0';
 
 	/* remove trailing whitespace */
-	i = strlen((char *) par->name);
+	i = strlen((char *) item);
 	while (i--) {
-		if (!isspace(par->name[i]))
+		if (!isspace(item[i]))
 			break;
 	}
-	par->name[++i] = '\0';
+	item[++i] = '\0';
+}
+
+int blkid_partition_set_name(blkid_partition par,
+		const unsigned char *name, size_t len)
+{
+	if (!par)
+		return -1;
+
+	set_string(par->name, sizeof(par->name), name, len);
 	return 0;
 }
 
@@ -973,9 +982,51 @@ blkid_loff_t blkid_partition_get_size(blkid_partition par)
  * blkid_partition_get_type:
  * @par: partition
  *
- * Returns: partition type (see BLKID_*_PARTITION in blkid_parttypes.h).
+ * Returns: partition type.
  */
 int blkid_partition_get_type(blkid_partition par)
 {
 	return par ? par->type : 0;
 }
+
+/* Sets partition 'type' for PT where the type is defined by string rather
+ * than by number
+ */
+int blkid_partition_set_type_string(blkid_partition par,
+		const unsigned char *type, size_t len)
+{
+	if (!par)
+		return -1;
+
+	set_string((unsigned char *) par->typestr,
+			sizeof(par->typestr), type, len);
+	return 0;
+}
+
+/* Sets partition 'type' for PT where the type is defined by UUIDrather
+ * than by number
+ */
+int blkid_partition_set_type_uuid(blkid_partition par, const unsigned char *uuid)
+{
+	if (!par)
+		return -1;
+
+	blkid_unparse_uuid(uuid, par->typestr, sizeof(par->typestr));
+	return 0;
+}
+
+/**
+ * blkid_partition_get_type_string:
+ * @par: partition
+ *
+ * The type string is supported by a small subset of partition tables (e.g Mac
+ * and EFI GPT).  Note that GPT uses type UUID and this function returns this
+ * UUID as string.
+ *
+ * Returns: partition type string or NULL.
+ */
+const char *blkid_partition_get_type_string(blkid_partition par)
+{
+	return par && *par->typestr ? par->typestr : NULL;
+}
+

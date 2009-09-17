@@ -80,6 +80,7 @@ global:
 	blkid_partition_get_start;
 	blkid_partition_get_table;
 	blkid_partition_get_type;
+	blkid_partition_get_type_string;
 	blkid_partition_get_uuid;
 	blkid_partition_is_extended;
 	blkid_partition_is_logical;

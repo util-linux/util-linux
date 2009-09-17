@@ -83,6 +83,9 @@ int main(int argc, char *argv[])
 		p = blkid_partition_get_uuid(par);
 		if (p)
 			printf(" uuid='%s'", p);
+		p = blkid_partition_get_type_string(par);
+		if (p)
+			printf(" type='%s'", p);
 
 		putc('\n', stdout);
 	}
