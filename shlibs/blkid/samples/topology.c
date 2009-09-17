@@ -63,11 +63,9 @@ int main(int argc, char *argv[])
 	else if (rc == 1)
 		warnx("%s: missing topology information", devname);
 	else {
-		int i, nvals;
+		int i, nvals = blkid_probe_numof_values(pr);
 
 		printf("----- NAME=value interface (values: %d):\n", nvals);
-
-		nvals = blkid_probe_numof_values(pr);
 
 		for (i = 0; i < nvals; i++) {
 			const char *name, *data;
