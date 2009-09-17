@@ -2218,9 +2218,9 @@ Valid values for this option are page size (typically 4KiB)
 through to 1GiB, inclusive, in power-of-2 increments.
 .TP
 .BR attr2 | noattr2
-The options enable/disable (default is disabled for backward
-compatibility on-disk) an "opportunistic" improvement to be
-made in the way inline extended attributes are stored on-disk.
+The options enable/disable (default is enabled) an "opportunistic"
+improvement to be made in the way inline extended attributes are
+stored on-disk.
 When the new form is used for the first time (by setting or
 removing extended attributes) the on-disk superblock feature
 bit field will be updated to reflect this format being in use.
