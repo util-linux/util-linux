@@ -160,7 +160,7 @@ dev_topology_attribute(const char *attribute, dev_t dev, dev_t *primary)
 	DBG(DEBUG_LOWPROBE,
 		printf("topology: attribute %s = %lu (sectors)\n", attribute, result));
 
-	return result * DEFAULT_SECTOR_SIZE;
+	return result;
 err:
 	if (fp)
 		fclose(fp);
