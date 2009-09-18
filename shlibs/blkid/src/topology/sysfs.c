@@ -11,7 +11,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <stddef.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -82,44 +81,27 @@ err:
  * Sysfs topology values
  */
 static struct topology_val {
-	const char *val_name;		/* NAME=value */
-	const char *sysfs_name;		/* /sys/dev/block/<maj>:<min>/NAME */
-	const size_t bin_offset;	/* blkid_struct_topology member */
+
+	/* /sys/dev/block/<maj>:<min>/NAME */
+	const char *sysfs_name;
+
+	/* function to set probing resut */
+	int (*set_result)(blkid_probe, unsigned long);
+
 } topology_vals[] = {
-	{ "ALIGNMENT_OFFSET", "alignment_offset",
-		offsetof(struct blkid_struct_topology, alignment_offset) },
-	{ "MINIMUM_IO_SIZE", "queue/minimum_io_size",
-		offsetof(struct blkid_struct_topology, minimum_io_size) },
-	{"OPTIMAL_IO_SIZE", "queue/optimal_io_size",
-		offsetof(struct blkid_struct_topology, optimal_io_size) }
+	{ "alignment_offset", blkid_topology_set_alignment_offset },
+	{ "queue/minimum_io_size", blkid_topology_set_minimum_io_size },
+	{ "queue/optimal_io_size", blkid_topology_set_optimal_io_size },
 };
-
-static int set_value(blkid_probe pr, struct blkid_chain *chn,
-				struct topology_val *val, unsigned long data)
-{
-	if (chn->binary) {
-		unsigned long *v =
-			(unsigned long *) (chn->data + val->bin_offset);
-		*v = data;
-		return 0;
-	}
-	return blkid_probe_sprintf_value(pr, val->val_name, "%llu", data);
-}
-
 
 static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	dev_t dev, pri_dev = 0;
 	int i, rc = 0, count = 0;
-	struct blkid_chain *chn;
 
 	dev = blkid_probe_get_devno(pr);
 	if (!dev)
 		goto nothing;		/* probably not a block device */
-
-	chn = blkid_probe_get_chain(pr);
-	if (!chn)
-		goto err;
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
 		struct topology_val *val = &topology_vals[i];
@@ -133,7 +115,7 @@ static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)
 		if (!data)
 			continue;
 
-		rc = set_value(pr, chn, val, data);
+		rc = val->set_result(pr, data);
 		if (rc)
 			goto err;
 		count++;

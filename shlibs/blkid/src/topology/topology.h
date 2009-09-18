@@ -3,14 +3,9 @@
 
 #include "blkidP.h"
 
-/*
- * Binary interface
- */
-struct blkid_struct_topology {
-	unsigned long	alignment_offset;
-	unsigned long	minimum_io_size;
-	unsigned long	optimal_io_size;
-};
+extern int blkid_topology_set_alignment_offset(blkid_probe pr, unsigned long val);
+extern int blkid_topology_set_minimum_io_size(blkid_probe pr, unsigned long val);
+extern int blkid_topology_set_optimal_io_size(blkid_probe pr, unsigned long val);
 
 /*
  * topology probers

@@ -10,6 +10,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stddef.h>
 
 #include "topology.h"
 
@@ -41,6 +42,15 @@
  */
 static int topology_probe(blkid_probe pr, struct blkid_chain *chn);
 static void topology_free(blkid_probe pr, void *data);
+
+/*
+ * Binary interface
+ */
+struct blkid_struct_topology {
+	unsigned long	alignment_offset;
+	unsigned long	minimum_io_size;
+	unsigned long	optimal_io_size;
+};
 
 /*
  * Topology chain probing functions
@@ -162,6 +172,47 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 static void topology_free(blkid_probe pr, void *data)
 {
 	free(data);
+}
+
+static int topology_set_value(blkid_probe pr, const char *name,
+				size_t structoff, unsigned long data)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
+	if (!chn)
+		return -1;
+
+	if (chn->binary) {
+		unsigned long *v =
+			(unsigned long *) (chn->data + structoff);
+		*v = data;
+		return 0;
+	}
+	return blkid_probe_sprintf_value(pr, name, "%llu", data);
+}
+
+int blkid_topology_set_alignment_offset(blkid_probe pr, unsigned long val)
+{
+	return topology_set_value(pr,
+			"ALIGNMENT_OFFSET",
+			offsetof(struct blkid_struct_topology, alignment_offset),
+			val);
+}
+
+int blkid_topology_set_minimum_io_size(blkid_probe pr, unsigned long val)
+{
+	return topology_set_value(pr,
+			"MINIMUM_IO_SIZE",
+			offsetof(struct blkid_struct_topology, minimum_io_size),
+			val);
+}
+
+int blkid_topology_set_optimal_io_size(blkid_probe pr, unsigned long val)
+{
+	return topology_set_value(pr,
+			"OPTIMAL_IO_SIZE",
+			offsetof(struct blkid_struct_topology, optimal_io_size),
+			val);
 }
 
 /**
