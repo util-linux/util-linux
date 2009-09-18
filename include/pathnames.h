@@ -74,6 +74,7 @@
 #define _PATH_PROC_FILESYSTEMS	"/proc/filesystems"
 #define _PATH_PROC_MOUNTS	"/proc/mounts"
 #define _PATH_PROC_PARTITIONS	"/proc/partitions"
+#define _PATH_PROC_DEVICES	"/proc/devices"
 
 #ifndef _PATH_MOUNTED
 # ifdef MOUNTED					/* deprecated */

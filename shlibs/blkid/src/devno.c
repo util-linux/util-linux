@@ -32,6 +32,7 @@
 #endif
 
 #include "blkidP.h"
+#include "pathnames.h"
 
 char *blkid_strndup(const char *s, int length)
 {
@@ -328,6 +329,43 @@ err:
 	return -1;
 }
 
+/*
+ * Returns 1 if the @major number is associated with @drvname.
+ */
+int blkid_driver_has_major(const char *drvname, int major)
+{
+	FILE *f;
+	char buf[128];
+	int match = 0;
+
+	f = fopen(_PATH_PROC_DEVICES, "r");
+	if (!f)
+		return 0;
+
+	while (fgets(buf, sizeof(buf), f)) {	/* skip to block dev section */
+		if (strncmp("Block devices:\n", buf, sizeof(buf)) == 0)
+			break;
+	}
+
+	while (fgets(buf, sizeof(buf), f)) {
+		unsigned int maj;
+		char name[64];
+
+		if (sscanf(buf, "%u %64[^\n ]", &maj, name) != 2)
+			continue;
+
+		if (maj == major && strcmp(name, drvname) == 0) {
+			match = 1;
+			break;
+		}
+	}
+
+	fclose(f);
+
+	DBG(DEBUG_DEVNO, printf("major %d %s associated with '%s' driver\n",
+			major, match ? "is" : "is NOT", drvname));
+	return match;
+}
 
 #ifdef TEST_PROGRAM
 int main(int argc, char** argv)
