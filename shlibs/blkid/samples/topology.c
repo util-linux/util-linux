@@ -48,6 +48,20 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, "failed to assign device to libblkid probe");
 
 	/*
+	 * Binary interface
+	 */
+	tp = blkid_probe_get_topology(pr);
+	if (tp) {
+		printf("----- binary interface:\n");
+		printf("\talignment offset : %lu\n",
+				blkid_topology_get_alignment_offset(tp));
+		printf("\tminimum io size  : %lu\n",
+				blkid_topology_get_minimum_io_size(tp));
+		printf("\toptimal io size  : %lu\n",
+				blkid_topology_get_optimal_io_size(tp));
+	}
+
+	/*
 	 * NAME=value interface
 	 */
 
@@ -75,19 +89,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-	/*
-	 * Binary interface
-	 */
-	tp = blkid_probe_get_topology(pr);
-	if (tp) {
-		printf("----- binary interface:\n");
-		printf("alignment offset : %lu\n",
-				blkid_topology_get_alignment_offset(tp));
-		printf("minimum io size  : %lu\n",
-				blkid_topology_get_minimum_io_size(tp));
-		printf("optimal io size  : %lu\n",
-				blkid_topology_get_optimal_io_size(tp));
-	}
 
 	return EXIT_SUCCESS;
 }
