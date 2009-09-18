@@ -301,7 +301,7 @@ int blkid_devno_to_wholedisk(dev_t dev, char *diskname,
 		FILE *f;
 
 		/* read wholedisk devno */
-		rc = snprintf(path, sizeof(path), "/sys/dev/block/%s/dev", name);
+		rc = snprintf(path, sizeof(path), "/sys/block/%s/dev", name);
 		if (rc < 0 || rc + 1 > sizeof(path))
 			goto err;
 
