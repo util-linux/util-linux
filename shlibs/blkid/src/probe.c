@@ -254,6 +254,7 @@ void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn)
 		return NULL;
 
 	pr->cur_chain = chn;
+	chn->idx = -1;			/* start probing from scratch */
 	chn->binary = TRUE;
 
 	rc = chn->driver->probe(pr, chn);
