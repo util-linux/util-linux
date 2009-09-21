@@ -8,4 +8,5 @@ libblkid_topology_la_SOURCES =	topology.c \
 				topology.h \
 				sysfs.c \
 				md.c \
-				dm.c
+				dm.c \
+				evms.c
