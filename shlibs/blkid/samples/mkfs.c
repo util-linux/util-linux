@@ -38,14 +38,14 @@ int main(int argc, char *argv[])
 
 	fd = open(devname, O_RDONLY);
 	if (fd < 0)
-		err(EXIT_FAILURE, "%s: open() failed", devname);
+		errx(EXIT_FAILURE, "%s: open() failed", devname);
 
 	pr = blkid_new_probe();
 	if (!pr)
-		err(EXIT_FAILURE, "faild to allocate a new libblkid probe");
+		errx(EXIT_FAILURE, "faild to allocate a new libblkid probe");
 
 	if (blkid_probe_set_device(pr, fd, 0, 0) != 0)
-		err(EXIT_FAILURE, "failed to assign device to libblkid probe");
+		errx(EXIT_FAILURE, "failed to assign device to libblkid probe");
 
 	/*
 	 * check Filesystems / Partitions overwrite
@@ -74,15 +74,16 @@ int main(int argc, char *argv[])
 	 */
 	tp = blkid_probe_get_topology(pr);
 	if (!tp)
-		err(EXIT_FAILURE, "%s: failed to read topology", devname);
+		errx(EXIT_FAILURE, "%s: failed to read topology", devname);
 
 
 	/* ... your mkfs.<type> code or so ...
 
 	off = blkid_topology_get_alignment_offset(tp);
 
-
 	 */
+
+	blkid_free_probe(pr);
 
 	return EXIT_SUCCESS;
 }

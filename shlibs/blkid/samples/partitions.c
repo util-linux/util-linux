@@ -38,10 +38,10 @@ int main(int argc, char *argv[])
 
 	pr = blkid_new_probe();
 	if (!pr)
-		err(EXIT_FAILURE, "failed to allocate a new libblkid probe");
+		errx(EXIT_FAILURE, "failed to allocate a new libblkid probe");
 
 	if (blkid_probe_set_device(pr, fd, 0, 0) != 0)
-		err(EXIT_FAILURE, "failed to assign device to libblkid probe");
+		errx(EXIT_FAILURE, "failed to assign device to libblkid probe");
 
 	/* Binary interface */
 	ls = blkid_probe_get_partitions(pr);

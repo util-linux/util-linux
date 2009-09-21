@@ -42,10 +42,10 @@ int main(int argc, char *argv[])
 
 	pr = blkid_new_probe();
 	if (!pr)
-		err(EXIT_FAILURE, "faild to allocate a new libblkid probe");
+		errx(EXIT_FAILURE, "faild to allocate a new libblkid probe");
 
 	if (blkid_probe_set_device(pr, fd, 0, 0) != 0)
-		err(EXIT_FAILURE, "failed to assign device to libblkid probe");
+		errx(EXIT_FAILURE, "failed to assign device to libblkid probe");
 
 	/*
 	 * Binary interface
@@ -89,6 +89,6 @@ int main(int argc, char *argv[])
 		}
 	}
 
-
+	blkid_free_probe(pr);
 	return EXIT_SUCCESS;
 }
