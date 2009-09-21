@@ -60,7 +60,8 @@ struct blkid_struct_topology {
 static const struct blkid_idinfo *idinfos[] =
 {
 	&sysfs_tp_idinfo,
-	&md_tp_idinfo
+	&md_tp_idinfo,
+	&dm_tp_idinfo
 };
 
 

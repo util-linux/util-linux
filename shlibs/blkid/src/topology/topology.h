@@ -12,6 +12,7 @@ extern int blkid_topology_set_optimal_io_size(blkid_probe pr, unsigned long val)
  */
 extern const struct blkid_idinfo sysfs_tp_idinfo;
 extern const struct blkid_idinfo md_tp_idinfo;
+extern const struct blkid_idinfo dm_tp_idinfo;
 
 #endif /* BLKID_TOPOLOGY_H */
 
