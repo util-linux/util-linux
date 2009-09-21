@@ -27,9 +27,11 @@
  * NAME=value (tags) interface is enabled by blkid_probe_enable_topology(),
  * and provides:
  *
- * @MINIMUM_IO_SIZE: minimum size which is the device's preferred unit of I/O
+ * @MINIMUM_IO_SIZE: minimum size which is the device's preferred unit of I/O.
+ *                   For RAID arrays it is often the stripe chunk size.
  *
- * @OPTIMAL_IO_SIZE: usually the stripe width for RAID or zero
+ * @OPTIMAL_IO_SIZE: usually the stripe width for RAID or zero. For RAID arrays
+ *                   it is usually the stripe width or the internal track size.
  *
  * @ALIGNMENT_OFFSET: indicates how many bytes the beginning o the device is
  *                    offset from the disk's natural alignment.
@@ -57,7 +59,8 @@ struct blkid_struct_topology {
  */
 static const struct blkid_idinfo *idinfos[] =
 {
-	&sysfs_tp_idinfo
+	&sysfs_tp_idinfo,
+	&md_tp_idinfo
 };
 
 
