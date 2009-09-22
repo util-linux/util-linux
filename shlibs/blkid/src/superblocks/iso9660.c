@@ -19,6 +19,7 @@
 
 #include "superblocks.h"
 
+/* PVD - Primary volume descriptor */
 struct iso_volume_descriptor {
 	unsigned char	vd_type;
 	unsigned char	vd_id[5];
@@ -47,6 +48,20 @@ struct high_sierra_volume_descriptor {
 	unsigned char	system_id[32];
 	unsigned char   volume_id[32];
 };
+
+/* returns 1 if the begin of @ascii is equal to @utf16 string.
+ */
+static int ascii_eq_utf16be(unsigned char *ascii,
+			unsigned char *utf16, size_t len)
+{
+	int a, u;
+
+	for (a = 0, u = 0; u < len; a++, u += 2) {
+		if (utf16[u] != 0x0 || ascii[a] != utf16[u + 1])
+			return 0;
+	}
+	return 1;
+}
 
 /* old High Sierra format */
 static int probe_iso9660_hsfs(blkid_probe pr, const struct blkid_idmag *mag)
@@ -95,6 +110,13 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 		if (memcmp(iso->escape_sequences, "%/@", 3) == 0 ||
 		    memcmp(iso->escape_sequences, "%/C", 3) == 0 ||
 		    memcmp(iso->escape_sequences, "%/E", 3) == 0) {
+
+			/* Is the Joliet (UTF16BE) label equal to the label in
+			 * the PVD? If yes, use PVD label.  The Jolied version
+			 * of the label could be trimed (because UTF16..).
+			 */
+			if (ascii_eq_utf16be(label, iso->volume_id, 32))
+				break;
 
 			blkid_probe_set_utf8label(pr,
 					iso->volume_id,
