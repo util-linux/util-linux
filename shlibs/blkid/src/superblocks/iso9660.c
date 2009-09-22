@@ -82,8 +82,6 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 	/* Joliet Extension */
 	off = ISO_VD_OFFSET;
 	for (i = 0; i < ISO_VD_MAX; i++) {
-		uint8_t svd_label[64];
-
 		iso = (struct iso_volume_descriptor *)
 			blkid_probe_get_buffer(pr,
 					off,
@@ -100,7 +98,7 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 
 			blkid_probe_set_utf8label(pr,
 					iso->volume_id,
-					sizeof(svd_label),
+					sizeof(iso->volume_id),
 					BLKID_ENC_UTF16BE);
 
 			blkid_probe_set_version(pr, "Joliet Extension");
