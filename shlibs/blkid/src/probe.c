@@ -911,6 +911,9 @@ int blkid_probe_numof_values(blkid_probe pr)
  * @data: pointer to return value data or NULL
  * @len: pointer to return value length or NULL
  *
+ * Note, the @len returns length of the @data, including the terminating
+ * '\0' character.
+ *
  * Returns: 0 on success, or -1 in case of error.
  */
 int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
@@ -937,6 +940,9 @@ int blkid_probe_get_value(blkid_probe pr, int num, const char **name,
  * @name: name of value
  * @data: pointer to return value data or NULL
  * @len: pointer to return value length or NULL
+ *
+ * Note, the @len returns length of the @data, including the terminating
+ * '\0' character.
  *
  * Returns: 0 on success, or -1 in case of error.
  */
@@ -1011,5 +1017,23 @@ void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len)
 		uuid[8], uuid[9],
 		uuid[10], uuid[11], uuid[12], uuid[13], uuid[14],uuid[15]);
 #endif
+}
+
+
+/* Removes whitespace from the right-hand side of a string (trailing
+ * whitespace).
+ *
+ * Returns size of the new string (without \0).
+ */
+size_t blkid_rtrim_whitespace(unsigned char *str)
+{
+	size_t i = strlen((char *) str);
+
+	while (i--) {
+		if (!isspace(str[i]))
+			break;
+	}
+	str[++i] = '\0';
+	return i;
 }
 

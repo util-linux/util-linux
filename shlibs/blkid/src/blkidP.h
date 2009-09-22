@@ -413,6 +413,7 @@ extern int blkid_probe_sprintf_value(blkid_probe pr, const char *name,
                 const char *fmt, ...);
 
 extern void blkid_unparse_uuid(const unsigned char *uuid, char *str, size_t len);
+extern size_t blkid_rtrim_whitespace(unsigned char *str);
 
 /* filter bitmap macros */
 #define blkid_bmp_wordsize		(8 * sizeof(unsigned long))

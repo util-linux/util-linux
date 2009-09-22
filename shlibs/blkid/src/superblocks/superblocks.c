@@ -467,8 +467,6 @@ int blkid_probe_set_label(blkid_probe pr, unsigned char *label, size_t len)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 	struct blkid_prval *v;
-	int i;
-
 	if (len > BLKID_PROBVAL_BUFSIZ)
 		len = BLKID_PROBVAL_BUFSIZ;
 
@@ -487,14 +485,7 @@ int blkid_probe_set_label(blkid_probe pr, unsigned char *label, size_t len)
 	memcpy(v->data, label, len);
 	v->data[len] = '\0';
 
-	/* remove trailing whitespace */
-	i = strlen((char *) v->data);
-	while (i--) {
-		if (!isspace(v->data[i]))
-			break;
-	}
-	v->data[++i] = '\0';
-	v->len = i + 1;
+	v->len = blkid_rtrim_whitespace(v->data) + 1;
 	return 0;
 }
 
@@ -513,7 +504,8 @@ int blkid_probe_set_utf8label(blkid_probe pr, unsigned char *label,
 	if (!v)
 		return -1;
 
-	v->len = blkid_encode_to_utf8(enc, v->data, sizeof(v->data), label, len);
+	blkid_encode_to_utf8(enc, v->data, sizeof(v->data), label, len);
+	v->len = blkid_rtrim_whitespace(v->data) + 1;
 	return 0;
 }
 
