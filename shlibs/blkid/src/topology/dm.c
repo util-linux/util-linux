@@ -22,12 +22,9 @@
 
 #include "topology.h"
 
-
 static int is_dm_device(dev_t devno)
 {
-	if (blkid_driver_has_major("device-mapper", major(devno)))
-		return 1;
-	return 0;
+	return blkid_driver_has_major("device-mapper", major(devno));
 }
 
 static int probe_dm_tp(blkid_probe pr, const struct blkid_idmag *mag)

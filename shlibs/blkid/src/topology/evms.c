@@ -34,9 +34,7 @@ static int is_evms_device(dev_t devno)
 {
 	if (major(devno) == EVMS_MAJOR)
 		return 1;
-	if (blkid_driver_has_major("evms", major(devno)))
-		return 1;
-	return 0;
+	return blkid_driver_has_major("evms", major(devno));
 }
 
 static int probe_evms_tp(blkid_probe pr, const struct blkid_idmag *mag)

@@ -65,9 +65,7 @@ static int is_md_device(dev_t devno)
 {
 	if (major(devno) == MD_MAJOR)
 		return 1;
-	if (blkid_driver_has_major("md", major(devno)))
-		return 1;
-	return 0;
+	return blkid_driver_has_major("md", major(devno));
 }
 
 static int probe_md_tp(blkid_probe pr, const struct blkid_idmag *mag)
