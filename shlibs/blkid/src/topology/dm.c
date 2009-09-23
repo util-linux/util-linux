@@ -36,7 +36,7 @@ static int probe_dm_tp(blkid_probe pr, const struct blkid_idmag *mag)
 	};
 	int i, dmpipe[] = { -1, -1 }, stripes, stripesize;
 	char *cmd = NULL;
-	FILE *stream;
+	FILE *stream = NULL;
 	long long  offset, size;
 	dev_t devno = blkid_probe_get_devno(pr);
 
@@ -103,28 +103,26 @@ static int probe_dm_tp(blkid_probe pr, const struct blkid_idmag *mag)
 		break;
 	}
 
-	close(dmpipe[1]);
-	dmpipe[1] = -1;
-
 	stream = fdopen(dmpipe[0], "r");
 	if (!stream)
 		goto nothing;
 
 	i = fscanf(stream, "%lld %lld striped %d %d ",
 			&offset, &size, &stripes, &stripesize);
-	fclose(stream);
-	dmpipe[0] = -1;
-
 	if (i != 4)
 		goto nothing;
 
 	blkid_topology_set_minimum_io_size(pr, stripesize << 9);
 	blkid_topology_set_optimal_io_size(pr, (stripes * stripesize) << 9);
 
+	fclose(stream);
+	close(dmpipe[1]);
 	return 0;
 
 nothing:
-	if (dmpipe[0] != -1)
+	if (stream)
+		fclose(stream);
+	else if (dmpipe[0] != -1)
 		close(dmpipe[0]);
 	if (dmpipe[1] != -1)
 		close(dmpipe[1]);
