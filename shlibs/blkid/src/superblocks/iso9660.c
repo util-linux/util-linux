@@ -111,6 +111,8 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 		    memcmp(iso->escape_sequences, "%/C", 3) == 0 ||
 		    memcmp(iso->escape_sequences, "%/E", 3) == 0) {
 
+			blkid_probe_set_version(pr, "Joliet Extension");
+
 			/* Is the Joliet (UTF16BE) label equal to the label in
 			 * the PVD? If yes, use PVD label.  The Jolied version
 			 * of the label could be trimed (because UTF16..).
@@ -122,8 +124,6 @@ static int probe_iso9660(blkid_probe pr, const struct blkid_idmag *mag)
 					iso->volume_id,
 					sizeof(iso->volume_id),
 					BLKID_ENC_UTF16BE);
-
-			blkid_probe_set_version(pr, "Joliet Extension");
 			goto has_label;
 		}
 		off += ISO_SECTOR_SIZE;
