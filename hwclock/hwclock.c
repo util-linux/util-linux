@@ -753,10 +753,10 @@ set_system_clock(const bool hclock_valid, const time_t newtime,
 
 
 static int
-set_system_clock_timezone(const bool testing) {
+set_system_clock_timezone(const bool universal, const bool testing) {
 /*----------------------------------------------------------------------------
    Reset the System Clock from local time to UTC, based on its current
-   value and the timezone.
+   value and the timezone unless universal is TRUE.
 
    Also set the kernel time zone value to the value indicated by the
    TZ environment variable and/or /usr/lib/zoneinfo/, interpreted as
@@ -791,7 +791,8 @@ set_system_clock_timezone(const bool testing) {
 #endif
 
   gettimeofday(&tv, NULL);
-  tv.tv_sec += minuteswest * 60;
+  if (!universal)
+    tv.tv_sec += minuteswest * 60;
 
   if (debug) {
     struct tm broken_time;
@@ -1221,14 +1222,10 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 	    return rc;
           }
 	} else if (systz) {
-	  if (!universal) {
-	    rc = set_system_clock_timezone(testing);
-	    if (rc) {
-	      printf(_("Unable to set system clock.\n"));
-	      return rc;
-	    }
-	  } else if (debug) {
-	    printf(_("Clock in UTC, not changed.\n"));
+	  rc = set_system_clock_timezone(universal, testing);
+	  if (rc) {
+	    printf(_("Unable to set system clock.\n"));
+	    return rc;
 	  }
         }
         if (!noadjfile)
