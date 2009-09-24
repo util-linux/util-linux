@@ -518,7 +518,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		struct stat sb;
 
 		if (fstat(fd, &sb))
-			return -1;
+			goto err;
 
 		pr->mode = sb.st_mode;
 
@@ -526,7 +526,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 			blkdev_get_size(fd, (unsigned long long *) &pr->size);
 		else if (S_ISCHR(sb.st_mode))
 			pr->size = 1;		/* UBI devices are char... */
-		else
+		else if (S_ISREG(sb.st_mode))
 			pr->size = sb.st_size;	/* regular file */
 
 		if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode))
@@ -534,18 +534,16 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	}
 
 	if (!pr->size)
-		return -1;
-
-	/* read SB to test if the device is readable */
-	if (!blkid_probe_get_buffer(pr, 0, 0x200)) {
-		DBG(DEBUG_LOWPROBE,
-			printf("failed to prepare a device for low-probing\n"));
-		return -1;
-	}
+		goto err;
 
 	DBG(DEBUG_LOWPROBE, printf("ready for low-probing, offset=%zd, size=%zd\n",
 				pr->off, pr->size));
 	return 0;
+err:
+	DBG(DEBUG_LOWPROBE,
+		printf("failed to prepare a device for low-probing\n"));
+	return -1;
+
 }
 
 int blkid_probe_get_dimension(blkid_probe pr,
