@@ -40,6 +40,9 @@ blkid \- command\-line utility to locate/print block device attributes
 .IR size ]
 .RB [ \-o
 .IR format ]
+.RB [ \-s
+.IR tag ]
+.in +9
 .RB [ \-u
 .IR list ]
 .I device
@@ -140,7 +143,7 @@ vol_id compatible mode; usable in udev rules
 Probe at the given offset (only useful with \fB-p\fR).
 .TP
 .BI \-p
-Switch to low-level probing mode (bypass cache)"
+Switch to low-level probing mode (bypass cache)
 .TP
 .BI \-s " tag"
 For each (specified) device, show only the tags that match

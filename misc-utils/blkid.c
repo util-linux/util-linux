@@ -264,6 +264,16 @@ static void print_udev_format(const char *name, const char *value, size_t sz)
 		printf("ID_FS_%s=%s\n", name, value);
 }
 
+static int has_item(char *ary[], const char *item)
+{
+	char **p;
+
+	for (p = ary; *p != NULL; p++)
+		if (!strcmp(item, *p))
+			return 1;
+	return 0;
+}
+
 static void print_value(int output, int num, const char *devname,
 			const char *value, const char *name, size_t valsz)
 {
@@ -284,11 +294,11 @@ static void print_value(int output, int num, const char *devname,
 	}
 }
 
-static void print_tags(blkid_dev dev, char *show[], int numtag, int output)
+static void print_tags(blkid_dev dev, char *show[], int output)
 {
 	blkid_tag_iterate	iter;
 	const char		*type, *value, *devname;
-	int			i, num = 1;
+	int			num = 1;
 
 	if (!dev)
 		return;
@@ -307,13 +317,8 @@ static void print_tags(blkid_dev dev, char *show[], int numtag, int output)
 
 	iter = blkid_tag_iterate_begin(dev);
 	while (blkid_tag_next(iter, &type, &value) == 0) {
-		if (numtag && show) {
-			for (i=0; i < numtag; i++)
-				if (!strcmp(type, show[i]))
-					break;
-			if (i >= numtag)
-				continue;
-		}
+		if (show[0] && !has_item(show, type))
+			continue;
 		print_value(output, num++, devname, value, type, strlen(value));
 	}
 	blkid_tag_iterate_end(iter);
@@ -322,12 +327,12 @@ static void print_tags(blkid_dev dev, char *show[], int numtag, int output)
 		printf("\n");
 }
 
-static int lowprobe_device(blkid_probe pr, const char *devname, int output,
-		blkid_loff_t offset, blkid_loff_t size)
+static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
+			int output, blkid_loff_t offset, blkid_loff_t size)
 {
 	const char *data;
 	const char *name;
-	int nvals = 0, n;
+	int nvals = 0, n, num = 1;
 	size_t len;
 	int fd;
 	int rc = 0;
@@ -352,9 +357,10 @@ static int lowprobe_device(blkid_probe pr, const char *devname, int output,
 	for (n = 0; n < nvals; n++) {
 		if (blkid_probe_get_value(pr, n, &name, &data, &len))
 			continue;
-
+		if (show[0] && !has_item(show, name))
+			continue;
 		len = strnlen((char *) data, len);
-		print_value(output, n + 1, devname, (char *) data, name, len);
+		print_value(output, num++, devname, (char *) data, name, len);
 	}
 
 	if (nvals > 1 && !(output & (OUTPUT_VALUE_ONLY | OUTPUT_UDEV_LIST)))
@@ -419,6 +425,8 @@ int main(int argc, char **argv)
 	int c;
 	blkid_loff_t offset = 0, size = 0;
 
+	show[0] = NULL;
+
 	while ((c = getopt (argc, argv, "c:f:ghlL:o:O:ps:S:t:u:U:w:v")) != EOF)
 		switch (c) {
 		case 'c':
@@ -473,11 +481,12 @@ int main(int argc, char **argv)
 			lowprobe++;
 			break;
 		case 's':
-			if (numtag >= sizeof(show) / sizeof(*show)) {
+			if (numtag + 1 >= sizeof(show) / sizeof(*show)) {
 				fprintf(stderr, "Too many tags specified\n");
 				usage(err);
 			}
 			show[numtag++] = optarg;
+			show[numtag] = NULL;
 			break;
 		case 'S':
 			size = strtoll(optarg, NULL, 10);
@@ -564,7 +573,7 @@ int main(int argc, char **argv)
 			goto exit;
 
 		for (i = 0; i < numdev; i++)
-			err = lowprobe_device(pr, devices[i],
+			err = lowprobe_device(pr, devices[i], show,
 					output_format, offset, size);
 		blkid_free_probe(pr);
 	} else if (eval) {
@@ -593,7 +602,7 @@ int main(int argc, char **argv)
 
 		if ((dev = blkid_find_dev_with_tag(cache, search_type,
 						   search_value))) {
-			print_tags(dev, show, numtag, output_format);
+			print_tags(dev, show, output_format);
 			err = 0;
 		}
 	/* If we didn't specify a single device, show all available devices */
@@ -609,7 +618,7 @@ int main(int argc, char **argv)
 			dev = blkid_verify(cache, dev);
 			if (!dev)
 				continue;
-			print_tags(dev, show, numtag, output_format);
+			print_tags(dev, show, output_format);
 			err = 0;
 		}
 		blkid_dev_iterate_end(iter);
@@ -623,7 +632,7 @@ int main(int argc, char **argv)
 			    !blkid_dev_has_tag(dev, search_type,
 					       search_value))
 				continue;
-			print_tags(dev, show, numtag, output_format);
+			print_tags(dev, show, output_format);
 			err = 0;
 		}
 	}
