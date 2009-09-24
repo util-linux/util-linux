@@ -1137,9 +1137,11 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
     int rc;  /* local return code */
     bool no_auth;  /* User lacks necessary authorization to access the clock */
 
-    no_auth = ur->get_permissions();
-    if (no_auth)
-	  return EX_NOPERM;
+    if (!systz) {
+      no_auth = ur->get_permissions();
+      if (no_auth)
+              return EX_NOPERM;
+    }
 
     if (!noadjfile && (adjust || set || systohc || (!utc && !local_opt))) {
       rc = read_adjtime(&adjtime);
@@ -1645,16 +1647,19 @@ main(int argc, char **argv) {
 
 	if (debug)
 		out_version();
-	determine_clock_access_method(directisa);
-	if (!ur) {
-		fprintf(stderr,
-			_("Cannot access the Hardware Clock via "
-			  "any known method.\n"));
-		if (!debug)
+	if (!systz) {
+		determine_clock_access_method(directisa);
+		if (!ur) {
 			fprintf(stderr,
-				_("Use the --debug option to see the details "
-				  "of our search for an access method.\n"));
-		hwclock_exit(1);
+				_("Cannot access the Hardware Clock via "
+				  "any known method.\n"));
+			if (!debug)
+				fprintf(stderr,
+					_("Use the --debug option to see the "
+					  "details of our search for an access "
+					  "method.\n"));
+			hwclock_exit(1);
+		}
 	}
 
 	rc = manipulate_clock(show, adjust, noadjfile, set, set_time,
