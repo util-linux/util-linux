@@ -11,20 +11,9 @@ libblkid
  - add -<BE|LE> suffix to test images for native-endian filesystems (e.g. swap)
    and add support for such functionality to tests/ts/blkid/low-probe
 
- - do we really need to depend on libuuid? Maybe the default should be
-   use in-tree code rather and link against libuuid -- especially when we
-   need it for uuid_unparse() only.
-
  - consolidate "getsize" stuff (see getsize.c and lib/blkdev.c)
 
  - cleanup __attribute__ usage
-
- - add stripe size / alignment retrival support to libbkid for use
-   with mkfs.  This would allow to deprecate libdisk from xfsprogs (1)
-   in favour of a common libblkid.
-
-   [ -- Christoph Hellwig, 16 Feb 2009 ]
-   (1) http://git.kernel.org/?p=fs/xfs/xfsprogs-dev.git;a=tree;f=libdisk;
 
  - add values:
 
