@@ -30,6 +30,7 @@
 #if HAVE_SYS_MKDEV_H
 #include <sys/mkdev.h>
 #endif
+#include <fcntl.h>
 
 #include "blkidP.h"
 #include "pathnames.h"
@@ -57,17 +58,68 @@ char *blkid_strdup(const char *s)
 	return blkid_strndup(s, 0);
 }
 
+char *blkid_strconcat(const char *a, const char *b, const char *c)
+{
+	char *res, *p;
+	size_t len, al, bl, cl;
+
+	al = a ? strlen(a) : 0;
+	bl = b ? strlen(b) : 0;
+	cl = c ? strlen(c) : 0;
+
+	len = al + bl + cl;
+	if (!len)
+		return NULL;
+	p = res = malloc(len + 1);
+	if (!res)
+		return NULL;
+	if (al) {
+		memcpy(p, a, al);
+		p += al;
+	}
+	if (bl) {
+		memcpy(p, b, bl);
+		p += bl;
+	}
+	if (cl) {
+		memcpy(p, c, cl);
+		p += cl;
+	}
+	*p = '\0';
+	return res;
+}
+
+int blkid_fstatat(DIR *dir, const char *dirname, const char *filename,
+			struct stat *st, int nofollow)
+{
+#ifdef HAVE_FSTATAT
+	return fstatat(dirfd(dir), filename, st,
+			nofollow ? AT_SYMLINK_NOFOLLOW : 0);
+#else
+	char device[PATH_MAX];
+	int len;
+
+	len = snprintf(device, sizeof(device), "%s/%s", *dirname, name);
+	if (len < 0 || len + 1 > sizeof(path))
+		return -1;
+
+	return nofollow ? lstat(device, st) : stat(device, st);
+#endif
+}
+
 /*
  * This function adds an entry to the directory list
  */
-static void add_to_dirlist(const char *name, struct dir_list **list)
+static void add_to_dirlist(const char *dir, const char *subdir,
+				struct dir_list **list)
 {
 	struct dir_list *dp;
 
 	dp = malloc(sizeof(struct dir_list));
 	if (!dp)
 		return;
-	dp->name = blkid_strdup(name);
+	dp->name = subdir ? blkid_strconcat(dir, "/", subdir) :
+			    blkid_strdup(dir);
 	if (!dp->name) {
 		free(dp);
 		return;
@@ -96,36 +148,48 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 {
 	DIR	*dir;
 	struct dirent *dp;
-	char	path[1024];
-	int	dirlen;
 	struct stat st;
 
 	if ((dir = opendir(dirname)) == NULL)
 		return;
-	dirlen = strlen(dirname) + 2;
-	while ((dp = readdir(dir)) != 0) {
-		if (dirlen + strlen(dp->d_name) >= sizeof(path))
-			continue;
 
+	while ((dp = readdir(dir)) != 0) {
+#ifdef _DIRENT_HAVE_D_TYPE
+		if (dp->d_type != DT_UNKNOWN && dp->d_type != DT_BLK &&
+		    dp->d_type != DT_LNK && dp->d_type != DT_DIR)
+			continue;
+#endif
 		if (dp->d_name[0] == '.' &&
 		    ((dp->d_name[1] == 0) ||
 		     ((dp->d_name[1] == '.') && (dp->d_name[2] == 0))))
 			continue;
 
-		sprintf(path, "%s/%s", dirname, dp->d_name);
-		if (stat(path, &st) < 0)
+		if (blkid_fstatat(dir, dirname, dp->d_name, &st, 0))
 			continue;
 
 		if (S_ISBLK(st.st_mode) && st.st_rdev == devno) {
-			*devname = blkid_strdup(path);
+			*devname = blkid_strconcat(dirname, "/", dp->d_name);
 			DBG(DEBUG_DEVNO,
-			    printf("found 0x%llx at %s (%p)\n", (long long)devno,
-				   path, *devname));
+			    printf("found 0x%llx at %s\n", (long long)devno,
+				   *devname));
 			break;
 		}
-		if (list && S_ISDIR(st.st_mode) && !lstat(path, &st) &&
-		    S_ISDIR(st.st_mode))
-			add_to_dirlist(path, list);
+
+		if (!list || !S_ISDIR(st.st_mode))
+			continue;
+
+		/* add subdirectory (but not symlink) to the list */
+#ifdef _DIRENT_HAVE_D_TYPE
+		if (dp->d_type == DT_LNK)
+			continue;
+		if (dp->d_type == DT_UNKNOWN)
+#endif
+		{
+			if (blkid_fstatat(dir, dirname, dp->d_name, &st, 1) ||
+			    !S_ISDIR(st.st_mode))
+				continue;	/* symlink or lstat() failed */
+		}
+		add_to_dirlist(dirname, dp->d_name, list);
 	}
 	closedir(dir);
 	return;
@@ -161,7 +225,7 @@ char *blkid_devno_to_devname(dev_t devno)
 	 * importance, since we are using a stack...
 	 */
 	for (dir = devdirs; *dir; dir++)
-		add_to_dirlist(*dir, &list);
+		add_to_dirlist(*dir, NULL, &list);
 
 	while (list) {
 		struct dir_list *current = list;

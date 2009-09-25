@@ -407,35 +407,31 @@ ubi_probe_all(blkid_cache cache, int only_if_new)
 			continue ;
 
 		while ((iter = readdir(dir)) != NULL) {
-			char		*name, *device;
+			char		*name;
 			struct stat	st;
 			dev_t		dev;
 
 			name = iter->d_name;
-
+#ifdef _DIRENT_HAVE_D_TYPE
+			if (iter->d_type != DT_UNKNOWN &&
+			    iter->d_type != DT_CHR && iter->d_type != DT_LNK)
+				continue;
+#endif
 			if (!strcmp(name, ".") || !strcmp(name, "..") ||
 			    !strstr(name, "ubi"))
 				continue;
 			if (!strcmp(name, "ubi_ctrl"))
 				continue;
-			device = malloc(strlen(*dirname) + strlen(name) + 2);
-			if (!device)
-				break ;
-			sprintf(device, "%s/%s", *dirname, name);
-			if (stat(device, &st))
-				break ;
+			if (blkid_fstatat(dir, *dirname, name, &st, 0))
+				continue;
 
-			if (!(st.st_rdev & 0xFF)) { // It's an UBI Device
-				free(device);
-				continue ;
-			}
 			dev = st.st_rdev;
-			DBG(DEBUG_DEVNAME, printf("UBI vol %s: devno 0x%04X\n",
-						  device,
-						  (int) dev));
-			probe_one(cache, name, dev, BLKID_PRI_UBI,
-				  only_if_new);
-			free(device);
+
+			if (!S_ISCHR(st.st_mode) || !minor(dev))
+				continue;
+			DBG(DEBUG_DEVNAME, printf("UBI vol %s/%s: devno 0x%04X\n",
+				  *dirname, name, (int) dev));
+			probe_one(cache, name, dev, BLKID_PRI_UBI, only_if_new);
 		}
 		closedir(dir);
 	}

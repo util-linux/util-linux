@@ -26,8 +26,6 @@ libblkid
    [ -- Christoph Hellwig, 16 Feb 2009 ]
    (1) http://git.kernel.org/?p=fs/xfs/xfsprogs-dev.git;a=tree;f=libdisk;
 
- - use fstatat() in blkid__scan_dir()
-
  - add values:
 
 	FSSIZE   -- filesystem size (klibc requirement)

@@ -17,6 +17,8 @@
 #define CONFIG_BLKID_DEBUG 1
 
 #include <sys/types.h>
+#include <dirent.h>
+#include <sys/stat.h>
 #include <stdio.h>
 #include <stdarg.h>
 
@@ -279,6 +281,9 @@ struct blkid_struct_cache
 
 extern char *blkid_strdup(const char *s);
 extern char *blkid_strndup(const char *s, const int length);
+extern char *blkid_strconcat(const char *a, const char *b, const char *c);
+extern int blkid_fstatat(DIR *dir, const char *dirname, const char *filename,
+			struct stat *st, int nofollow);
 
 #define BLKID_CACHE_FILE	"/etc/blkid.tab"
 #define BLKID_CONFIG_FILE	"/etc/blkid.conf"
