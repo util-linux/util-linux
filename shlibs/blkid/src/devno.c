@@ -189,6 +189,11 @@ void blkid__scan_dir(char *dirname, dev_t devno, struct dir_list **list,
 			    !S_ISDIR(st.st_mode))
 				continue;	/* symlink or lstat() failed */
 		}
+
+		if (strcmp(".udev", dp->d_name) == 0)
+			/* udev private direcory is huge and uninteresting */
+			continue;
+
 		add_to_dirlist(dirname, dp->d_name, list);
 	}
 	closedir(dir);
