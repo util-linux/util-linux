@@ -53,15 +53,18 @@
 #include "nls.h"
 #include "blkdev.h"
 #include "pathnames.h"
-#include "pttype.h"
 #include "wholedisk.h"
 
 #ifdef HAVE_LIBUUID
 # ifdef HAVE_UUID_UUID_H
 #  include <uuid/uuid.h>
-#else
-# include <uuid.h>
+# else
+#  include <uuid.h>
 # endif
+#endif
+
+#ifdef HAVE_BLKID_PROBE_ENABLE_PARTITIONS
+# include <blkid.h>
 #endif
 
 static char * program_name = "mkswap";
@@ -391,21 +394,43 @@ write_all(int fd, const void *buf, size_t count) {
 static void
 zap_bootbits(int fd, const char *devname, int force)
 {
-	const char *type = NULL;
+	char *type = NULL;
+	int whole = 0;
 	int zap = 1;
 
 	if (!force) {
 		if (lseek(fd, 0, SEEK_SET) != 0)
 	                die(_("unable to rewind swap-device"));
 
-		if (is_whole_disk_fd(fd, devname))
+		if (is_whole_disk_fd(fd, devname)) {
 			/* don't zap bootbits on whole disk -- we know nothing
 			 * about bootloaders on the device */
+			whole = 1;
 			zap = 0;
+		} else {
+#ifdef HAVE_BLKID_PROBE_ENABLE_PARTITIONS
+			blkid_probe pr = blkid_new_probe();
+			if (!pr)
+				die(_("unable to alloc new libblkid probe"));
+			if (blkid_probe_set_device(pr, fd, 0, 0))
+				die(_("unable to assign device to liblkid probe"));
 
-		else if ((type = get_pt_type_fd(fd)))
-			/* don't zap partition table */
+			blkid_probe_enable_partitions(pr, 1);
+			blkid_probe_enable_superblocks(pr, 0);
+
+			if (blkid_do_fullprobe(pr) == 0)
+				blkid_probe_lookup_value(pr, "PTTYPE",
+						(const char **) &type, NULL);
+			if (type) {
+				type = strdup(type);
+				zap = 0;
+			}
+			blkid_free_probe(pr);
+#else
+			/* don't zap if compiled without libblkid */
 			zap = 0;
+#endif
+		}
 	}
 
 	if (zap) {
@@ -424,8 +449,10 @@ zap_bootbits(int fd, const char *devname, int force)
 		program_name, devname);
 	if (type)
 		fprintf(stderr, _("        (%s partition table detected). "), type);
-	else
+	else if (whole)
 		fprintf(stderr, _("        on whole disk. "));
+	else
+		fprintf(stderr, _("        (compiled without libblkid). "));
 	fprintf(stderr, "Use -f to force.\n");
 }
 

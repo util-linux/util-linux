@@ -353,6 +353,7 @@ else
   # internal library
   AC_DEFINE(HAVE_BLKID_H, 1, [Define to 1 if you have the <blkid.h> header file.])
   AC_DEFINE(HAVE_BLKID_EVALUATE_TAG, 1, [Define to 1 if you have the blkid_evaluate_tag().])
+  AC_DEFINE(HAVE_BLKID_PROBE_ENABLE_PARTITIONS, 1, [Define to 1 if you have the blkid_probe_enable_partitions().])
 fi
 
 if test "x$have_blkid" = xyes; then
