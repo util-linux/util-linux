@@ -185,6 +185,7 @@ extern char *blkid_evaluate_tag(const char *token, const char *value,
 
 /* probe.c */
 extern blkid_probe blkid_new_probe(void);
+extern blkid_probe blkid_new_probe_from_filename(const char *filename);
 extern void blkid_free_probe(blkid_probe pr);
 extern void blkid_reset_probe(blkid_probe pr);
 

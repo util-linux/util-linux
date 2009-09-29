@@ -141,6 +141,47 @@ blkid_probe blkid_new_probe(void)
 }
 
 /**
+ * blkid_new_probe_from_filename:
+ * @filename: device or regular file
+ *
+ * This function is same as call open(filename), blkid_new_probe() and
+ * blkid_probe_set_device(pr, fd, 0, 0).
+ *
+ * The @filename is closed by blkid_free_probe() or by the
+ * blkid_probe_set_device() call.
+ *
+ * Returns: a pointer to the newly allocated probe struct or NULL in case of
+ * error.
+ */
+blkid_probe blkid_new_probe_from_filename(const char *filename)
+{
+	int fd = -1;
+	blkid_probe pr = NULL;
+
+	if (!filename)
+		return NULL;
+
+	fd = open(filename, O_RDONLY);
+	if (fd < 0)
+		return NULL;
+
+	pr = blkid_new_probe();
+	if (!pr)
+		goto err;
+
+	if (blkid_probe_set_device(pr, fd, 0, 0))
+		goto err;
+
+	pr->flags |= BLKID_PRIVATE_FD;
+	return pr;
+err:
+	if (fd >= 0)
+		close(fd);
+	blkid_free_probe(pr);
+	return NULL;
+}
+
+/**
  * blkid_free_probe:
  * @pr: probe
  *
@@ -163,6 +204,9 @@ void blkid_free_probe(blkid_probe pr)
 	}
 	free(pr->buf);
 	free(pr->sbbuf);
+
+	if ((pr->flags & BLKID_PRIVATE_FD) && pr->fd >= 0)
+		close(pr->fd);
 	free(pr);
 }
 
@@ -490,7 +534,7 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
  * @pr: probe
  * @fd: device file descriptor
  * @off: begin of probing area
- * @size: size of probing area
+ * @size: size of probing area (zero means whole device/file)
  *
  * Assigns the device to probe control struct, resets internal buffers and
  * reads 512 bytes from device to the buffers.
@@ -505,6 +549,10 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 	blkid_reset_probe(pr);
 
+	if ((pr->flags & BLKID_PRIVATE_FD) && pr->fd >= 0)
+		close(pr->fd);
+
+	pr->flags &= ~BLKID_PRIVATE_FD;
 	pr->fd = fd;
 	pr->off = off;
 	pr->size = 0;

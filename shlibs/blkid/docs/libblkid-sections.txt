@@ -39,6 +39,7 @@ blkid_tag_next
 blkid_probe
 blkid_free_probe
 blkid_new_probe
+blkid_new_probe_from_filename
 blkid_probe_get_devno
 blkid_probe_get_sectorsize
 blkid_probe_get_size

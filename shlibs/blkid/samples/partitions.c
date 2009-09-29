@@ -17,7 +17,7 @@
 
 int main(int argc, char *argv[])
 {
-	int fd, i, nparts;
+	int i, nparts;
 	char *devname;
 	blkid_probe pr;
 	blkid_partlist ls;
@@ -31,18 +31,10 @@ int main(int argc, char *argv[])
 	}
 
 	devname = argv[1];
-
-	fd = open(devname, O_RDONLY);
-	if (fd < 0)
-		err(EXIT_FAILURE, "%s: open() failed", devname);
-
-	pr = blkid_new_probe();
+	pr = blkid_new_probe_from_filename(devname);
 	if (!pr)
-		errx(EXIT_FAILURE, "failed to allocate a new libblkid probe");
-
-	if (blkid_probe_set_device(pr, fd, 0, 0) != 0)
-		errx(EXIT_FAILURE, "failed to assign device to libblkid probe");
-
+		err(EXIT_FAILURE, "%s: faild to create a new libblkid probe",
+				devname);
 	/* Binary interface */
 	ls = blkid_probe_get_partitions(pr);
 	if (!ls)

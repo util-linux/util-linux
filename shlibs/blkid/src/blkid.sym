@@ -74,6 +74,7 @@ global:
 	blkid_devno_to_wholedisk;
 	blkid_do_fullprobe;
 	blkid_known_pttype;
+	blkid_new_probe_from_filename;
 	blkid_partition_get_name;
 	blkid_partition_get_partno;
 	blkid_partition_get_size;
