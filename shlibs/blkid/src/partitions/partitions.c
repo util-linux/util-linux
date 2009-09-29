@@ -38,12 +38,11 @@
  * <informalexample>
  *  <programlisting>
  * blkid_probe pr;
- * int fd;
  * const char *ptname;
  *
- * fd = open(devname, O_RDONLY);
- * pr = blkid_new_probe();
- * blkid_probe_set_device(pr, fd, 0, 0);
+ * pr = blkid_new_probe_from_filename(devname);
+ * if (!pr)
+ *	err("%s: faild to open device", devname);
  *
  * blkid_probe_enable_partitions(pr, TRUE);
  * blkid_do_fullprobe(pr);
@@ -52,7 +51,6 @@
  * printf("%s partition type detected\n", pttype);
  *
  * blkid_free_probe(pr);
- * close(fd);
  *
  * // don't forget to check return codes in your code!
  *  </programlisting>
@@ -65,11 +63,10 @@
  * blkid_probe pr;
  * blkid_partlist ls;
  * int nparts, i;
- * int fd;
  *
- * fd = open(devname, O_RDONLY);
- * pr = blkid_new_probe();
- * blkid_probe_set_device(pr, fd, 0, 0);
+ * pr = blkid_new_probe_from_filename(devname);
+ * if (!pr)
+ *	err("%s: faild to open device", devname);
  *
  * ls = blkid_probe_get_partitions(pr);
  * nparts = blkid_partlist_numof_partitions(ls);
@@ -84,7 +81,6 @@
  * }
  *
  * blkid_free_probe(pr);
- * close(fd);
  *
  * // don't forget to check return codes in your code!
  *  </programlisting>
