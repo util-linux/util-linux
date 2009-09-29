@@ -143,7 +143,11 @@ int blkid_flush_cache(blkid_cache cache)
 			if (backup) {
 				sprintf(backup, "%s.old", filename);
 				unlink(backup);
-				link(filename, backup);
+				if (link(filename, backup)) {
+					DBG(DEBUG_SAVE,
+						printf("can't link %s to %s\n",
+							filename, backup));
+				}
 				free(backup);
 			}
 			rename(opened, filename);
