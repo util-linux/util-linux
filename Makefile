@@ -1,7 +1,7 @@
 MAKEFLAGS += --no-print-directory
 
 PREFIX ?= /usr
-BINDIR ?= $(PREFIX)/bin
+SBINDIR ?= $(PREFIX)/sbin
 MANDIR ?= $(PREFIX)/share/man
 
 MKDIR ?= mkdir -p
@@ -48,8 +48,8 @@ check:
 
 install: rfkill rfkill.1.gz
 	@$(NQ) ' INST rfkill'
-	$(Q)$(MKDIR) $(DESTDIR)$(BINDIR)
-	$(Q)$(INSTALL) -m 755 -t $(DESTDIR)$(BINDIR) rfkill
+	$(Q)$(MKDIR) $(DESTDIR)$(SBINDIR)
+	$(Q)$(INSTALL) -m 755 -t $(DESTDIR)$(SBINDIR) rfkill
 	@$(NQ) ' INST rfkill.1'
 	$(Q)$(MKDIR) $(DESTDIR)$(MANDIR)/man1/
 	$(Q)$(INSTALL) -m 644 -t $(DESTDIR)$(MANDIR)/man1/ rfkill.1.gz
