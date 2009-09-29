@@ -13,7 +13,6 @@ dist_noinst_HEADERS = \
 	md5.h \
 	nls.h \
 	pathnames.h \
-	pttype.h \
 	setproctitle.h \
 	swapheader.h \
 	usleep.h \

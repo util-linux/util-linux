@@ -2,7 +2,7 @@ include $(top_srcdir)/config/include-Makefile.am
 
 AM_CPPFLAGS += -DTEST_PROGRAM
 
-noinst_PROGRAMS = test_blkdev test_ismounted test_pttype test_wholedisk
+noinst_PROGRAMS = test_blkdev test_ismounted test_wholedisk
 
 test_blkdev_SOURCES = blkdev.c
 test_ismounted_SOURCES = ismounted.c
