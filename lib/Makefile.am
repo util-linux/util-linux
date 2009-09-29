@@ -6,7 +6,6 @@ noinst_PROGRAMS = test_blkdev test_ismounted test_wholedisk
 
 test_blkdev_SOURCES = blkdev.c
 test_ismounted_SOURCES = ismounted.c
-test_pttype_SOURCES = pttype.c
 test_wholedisk_SOURCES = wholedisk.c
 
 if LINUX
