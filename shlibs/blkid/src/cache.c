@@ -110,7 +110,7 @@ char *blkid_get_cache_filename(struct blkid_config *conf)
 	else {
 		struct blkid_config *c = blkid_read_config(NULL);
 		if (!c)
-			filename = blkid_strdup(BLKID_CONFIG_FILE);
+			filename = blkid_strdup(BLKID_CACHE_FILE);
 		else {
 			filename = c->cachefile;  /* already allocated */
 			c->cachefile = NULL;
