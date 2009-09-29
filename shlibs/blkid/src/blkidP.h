@@ -134,7 +134,7 @@ struct blkid_chaindrv {
  */
 #define BLKID_PROBVAL_BUFSIZ	64
 
-#define BLKID_NVALS_SUBLKS	10
+#define BLKID_NVALS_SUBLKS	12
 #define BLKID_NVALS_TOPLGY	3
 #define BLKID_NVALS_PARTS	1
 
@@ -160,10 +160,10 @@ struct blkid_prval
 struct blkid_idmag
 {
 	const char	*magic;		/* magic string */
-	unsigned	len;		/* length of magic */
+	unsigned int	len;		/* length of magic */
 
 	long		kboff;		/* kilobyte offset of superblock */
-	unsigned	sboff;		/* byte offset within superblock */
+	unsigned int	sboff;		/* byte offset within superblock */
 };
 
 /*

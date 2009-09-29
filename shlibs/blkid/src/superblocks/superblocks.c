@@ -60,9 +60,9 @@
  *
  * @MOUNT: cluster mount name (?) -- ocfs only
  *
- * @SBMAGIC: super block magic string [not-implemented yet]
+ * @SBMAGIC: super block magic string
  *
- * @SBOFFSET: offset of superblock [not-implemented yet]
+ * @SBMAGIC_OFFSET: offset of SBMAGIC
  *
  * @FSSIZE: size of filessystem [not-implemented yet]
  */
@@ -310,6 +310,8 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 	for ( ; i < ARRAY_SIZE(idinfos); i++) {
 		const struct blkid_idinfo *id;
 		const struct blkid_idmag *mag;
+		blkid_loff_t off = 0;
+
 		int hasmag = 0;
 
 		chn->idx = i;
@@ -322,11 +324,10 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 
 		/* try to detect by magic string */
 		while(mag && mag->magic) {
-			blkid_loff_t off;
 			unsigned char *buf;
 
-			off = mag->kboff + ((blkid_loff_t) mag->sboff >> 10);
-			buf = blkid_probe_get_buffer(pr, off << 10, 1024);
+			off = (mag->kboff + (mag->sboff >> 10)) << 10;
+			buf = blkid_probe_get_buffer(pr, off, 1024);
 
 			if (buf && !memcmp(mag->magic,
 					buf + (mag->sboff & 0x3ff), mag->len)) {
@@ -334,6 +335,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 					"%s: magic sboff=%u, kboff=%ld\n",
 					id->name, mag->sboff, mag->kboff));
 				hasmag = 1;
+				off += mag->sboff & 0x3ff;
 				break;
 			}
 			mag++;
@@ -356,8 +358,16 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 			blkid_probe_set_value(pr, "TYPE",
 				(unsigned char *) id->name,
 				strlen(id->name) + 1);
+
 		if (chn->flags & BLKID_SUBLKS_USAGE)
 			blkid_probe_set_usage(pr, id->usage);
+
+		if (hasmag && (chn->flags & BLKID_SUBLKS_MAGIC)) {
+			blkid_probe_set_value(pr, "SBMAGIC",
+				(unsigned char *) mag->magic, mag->len);
+			blkid_probe_sprintf_value(pr, "SBMAGIC_OFFSET",
+				"%llu",	off);
+		}
 
 		DBG(DEBUG_LOWPROBE,
 			printf("<-- leaving probing loop (type=%s) [SUBLKS idx=%d]\n",

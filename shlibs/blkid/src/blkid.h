@@ -209,6 +209,7 @@ extern int blkid_probe_enable_superblocks(blkid_probe pr, int enable);
 #define BLKID_SUBLKS_SECTYPE	(1 << 6) /* define compatible fs type (second type) */
 #define BLKID_SUBLKS_USAGE	(1 << 7) /* define USAGE result value */
 #define BLKID_SUBLKS_VERSION	(1 << 8) /* read FS type from superblock */
+#define BLKID_SUBLKS_MAGIC	(1 << 9) /* define SBMAGIC and SBMAGIC_OFFSET */
 
 #define BLKID_SUBLKS_DEFAULT	(BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID | \
 				 BLKID_SUBLKS_TYPE | BLKID_SUBLKS_SECTYPE)
