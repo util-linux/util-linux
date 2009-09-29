@@ -285,10 +285,9 @@ static void eliminate_doubles(struct entry *root, struct entry *orig, loff_t *fs
  * We define our own sorting function instead of using alphasort which
  * uses strcoll and changes ordering based on locale information.
  */
-static int cramsort (const void *a, const void *b)
+static int cramsort (const struct dirent **a, const struct dirent **b)
 {
-	return strcmp ((*(const struct dirent **) a)->d_name,
-		       (*(const struct dirent **) b)->d_name);
+	return strcmp((*a)->d_name, (*b)->d_name);
 }
 
 static unsigned int parse_directory(struct entry *root_entry, const char *name, struct entry **prev, loff_t *fslen_ub)
