@@ -898,6 +898,12 @@ AC_ARG_ENABLE([makeinstall-chown],
 )
 AM_CONDITIONAL(MAKEINSTALL_DO_CHOWN, test "x$enable_makeinstall_chown" = xyes)
 
+AC_ARG_ENABLE([makeinstall-setuid],
+  AS_HELP_STRING([--disable-makeinstall-setuid], [do not do setuid chmod operations during "make install"]),
+  [], enable_makeinstall_setuid=yes
+)
+AM_CONDITIONAL(MAKEINSTALL_DO_SETUID, test "x$enable_makeinstall_setuid" = xyes)
+
 
 AC_ARG_VAR([SUID_CFLAGS],
 	   [CFLAGS used for binaries which are usually with the suid bit])

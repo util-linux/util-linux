@@ -91,6 +91,9 @@ mtab_lock_test_SOURCES = fstab.c $(srcs_common) $(hdrs_mount)
 mtab_lock_test_CPPFLAGS = -DMAIN_TEST_MTABLOCK $(AM_CPPFLAGS)
 
 install-exec-hook:
+	cd $(DESTDIR)$(sbindir) && ln -sf swapon swapoff
+if MAKEINSTALL_DO_SETUID
 	chmod 4755 $(DESTDIR)$(bindir)/mount
 	chmod 4755 $(DESTDIR)$(bindir)/umount
-	cd $(DESTDIR)$(sbindir) && ln -sf swapon swapoff
+endif
+
