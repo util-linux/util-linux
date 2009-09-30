@@ -2205,12 +2205,18 @@ main(int argc, char *argv[]) {
 		if (((uid_t)0 == ruid) && (ruid == euid)) {
 			restricted = 0;
 		}
-	}
 
-	if (restricted &&
-	    (types || options || readwrite || nomtab || mount_all ||
-	     fake || mounttype || (argc + specseen) != 1)) {
-		die (EX_USAGE, _("mount: only root can do that"));
+		if (restricted &&
+		    (types || options || readwrite || nomtab || mount_all ||
+		     fake || mounttype || (argc + specseen) != 1)) {
+
+			if (ruid == 0 && euid != 0)
+				/* user is root, but setuid to non-root */
+				die (EX_USAGE, _("mount: only root can do that "
+					"(effective UID is %d)"), euid);
+
+			die (EX_USAGE, _("mount: only root can do that"));
+		}
 	}
 
 	atexit(unlock_mtab);
