@@ -108,6 +108,14 @@ int blkid_probe_enable_topology(blkid_probe pr, int enable)
  * This function is independent on blkid_do_[safe,full]probe() and
  * blkid_probe_enable_topology() calls.
  *
+ * WARNING: the returned object will be overwritten by the next
+ *          blkid_probe_get_topology() call for the same @pr. If you want to
+ *          use more blkid_tolopogy objects in the same time you have to create
+ *          more blkid_probe handlers (see blkid_new_probe()).
+ *
+ * TODO:    add blkid_ref() and blkid_unref() to allows to use blkid_topology
+ *          independently on libblkid probing stuff.
+ *
  * Returns: blkid_tolopogy, or NULL in case of error.
  */
 blkid_topology blkid_probe_get_topology(blkid_probe pr)

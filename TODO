@@ -19,11 +19,15 @@ libblkid
 
 	FSSIZE   -- filesystem size (klibc requirement)
 
-	SBOFFSET -- superblock offset; offset where SB was detected 
-                    (swapon requirement to check details from swap header)
+ - add reference counters to the binary interfaces. Currently, all chain 
+   data are allocated in blkid_probe and cannot be used independently on 
+   the probing stuff.
 
-        MAGIC    -- magic string
-	MAGICLEN -- length of magic string
+	blkid_topology tp = blkdi_probe_get_topology(pr)
+
+	blkid_ref(tp);
+	...
+	blkid_unref(tp);
 
 fdisk(s)
 --------

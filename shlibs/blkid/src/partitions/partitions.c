@@ -258,6 +258,14 @@ int blkid_probe_filter_partitions_type(blkid_probe pr, int flag, char *names[])
  * This function is independent on blkid_do_[safe,full]probe() and
  * blkid_probe_enable_partitions() calls.
  *
+ * WARNING: the returned object will be overwritten by the next
+ *          blkid_probe_get_partitions() call for the same @pr. If you want to
+ *          use more blkid_partlist objects in the same time you have to create
+ *          more blkid_probe handlers (see blkid_new_probe()).
+ *
+ * TODO:    add blkid_ref() and blkid_unref() to allows to use blkid_partlist
+ *          independently on libblkid probing stuff.
+ *
  * Returns: list of partitions, or NULL in case of error.
  */
 blkid_partlist blkid_probe_get_partitions(blkid_probe pr)
