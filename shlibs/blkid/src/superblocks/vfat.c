@@ -46,7 +46,7 @@ struct vfat_super_block {
 /* 47*/	unsigned char	vs_label[11];
 /* 52*/	unsigned char   vs_magic[8];
 /* 5a*/	unsigned char	vs_dummy2[164];
-/*1fe*/	unsigned char	vs_pmagic[2];
+/* fe*/	unsigned char	vs_pmagic[2];
 };
 
 /* Yucky misaligned values */
@@ -58,19 +58,21 @@ struct msdos_super_block {
 /* 0e*/	uint16_t	ms_reserved;
 /* 10*/	uint8_t		ms_fats;
 /* 11*/	unsigned char	ms_dir_entries[2];
-/* 13*/	unsigned char	ms_sectors[2];
+/* 13*/	unsigned char	ms_sectors[2]; /* =0 iff V3 or later */
 /* 15*/	unsigned char	ms_media;
-/* 16*/	uint16_t	ms_fat_length;
+/* 16*/	uint16_t	ms_fat_length; /* Sectors per FAT */
 /* 18*/	uint16_t	ms_secs_track;
 /* 1a*/	uint16_t	ms_heads;
 /* 1c*/	uint32_t	ms_hidden;
-/* 20*/	uint32_t	ms_total_sect;
-/* 24*/	unsigned char	ms_unknown[3];
+/* V3 BPB */
+/* 20*/	uint32_t	ms_total_sect; /* iff ms_sectors == 0 */
+/* V4 BPB */
+/* 24*/	unsigned char	ms_unknown[3]; /* Phys drive no., resvd, V4 sig (0x29) */
 /* 27*/	unsigned char	ms_serno[4];
 /* 2b*/	unsigned char	ms_label[11];
 /* 36*/	unsigned char   ms_magic[8];
-/* 3d*/	unsigned char	ms_dummy2[192];
-/*1fe*/	unsigned char	ms_pmagic[2];
+/* 3e*/	unsigned char	ms_dummy2[192];
+/* fe*/	unsigned char	ms_pmagic[2];
 };
 
 struct vfat_dir_entry {
@@ -138,6 +140,15 @@ static unsigned char *search_fat_label(struct vfat_dir_entry *dir, int count)
 static int probe_fat_nomagic(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct msdos_super_block *ms;
+	unsigned char *buf;
+
+	buf = blkid_probe_get_sector(pr, 0);
+	if (!buf)
+		return -1;
+
+	/* Old floppies have a valid MBR signature */
+	if (buf[510] != 0x55 || buf[511] != 0xAA)
+		return 1;
 
 	ms = blkid_probe_get_sb(pr, mag, struct msdos_super_block);
 	if (!ms)
