@@ -133,8 +133,6 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 
 	if (!pr || chn->idx < -1)
 		return -1;
-	if (chn->idx < -1)
-		return -1;
 
 	if (chn->binary) {
 		DBG(DEBUG_LOWPROBE, printf("initialize topology binary data\n"));

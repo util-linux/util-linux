@@ -297,8 +297,6 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 
 	if (!pr || chn->idx < -1)
 		return -1;
-	if (chn->idx < -1)
-		return -1;
 	blkid_probe_chain_reset_vals(pr, chn);
 
 	DBG(DEBUG_LOWPROBE,
