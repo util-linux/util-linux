@@ -679,10 +679,14 @@ int blkid_do_probe(blkid_probe pr)
 
 		if (!pr->cur_chain)
 			pr->cur_chain = &pr->chains[0];
-		else if (pr->cur_chain < &pr->chains[BLKID_NCHAINS - 1])
-			pr->cur_chain += sizeof(struct blkid_chain);
-		else
-			return 1;	/* all chains already probed */
+		else {
+			int idx = pr->cur_chain->driver->id + 1;
+
+			if (idx < BLKID_NCHAINS)
+				pr->cur_chain = &pr->chains[idx];
+			else
+				return 1;	/* all chains already probed */
+		}
 
 		chn = pr->cur_chain;
 		chn->binary = FALSE;		/* for sure... */
