@@ -372,6 +372,20 @@ AM_CONDITIONAL(HAVE_BLKID, test "x$have_blkid" = xyes)
 
 AC_ARG_VAR([BLKID_LIBS_STATIC], [-l options for linking statically with blkid])
 
+AC_ARG_ENABLE([unshare],
+  AS_HELP_STRING([--disable-unshare], [do not build unshare]),
+  [], enable_unshare=check
+)
+build_unshare=yes
+if test "x$enable_unshare" = xcheck; then
+  if test "x$linux_os" = xno; then
+    AC_MSG_WARN([non-linux system; do not build unshare])
+    build_unshare=no
+  fi
+elif test "x$enable_unshare" = xno; then
+    build_unshare=no
+fi
+AM_CONDITIONAL(BUILD_UNSHARE, test "x$build_unshare" = xyes)
 
 UTIL_CHECK_LIB(util, openpty)
 UTIL_CHECK_LIB(termcap, tgetnum)
@@ -562,6 +576,10 @@ UTIL_CHECK_SYSCALL([ioprio_get],
 dnl fallocate could be available as libc function or as syscall only
 UTIL_CHECK_SYSCALL([fallocate])
 AC_CHECK_FUNCS([fallocate])
+
+dnl unshare could be available as libc function or as syscall only
+UTIL_CHECK_SYSCALL([unshare])
+AC_CHECK_FUNCS([unshare])
 
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <time.h>

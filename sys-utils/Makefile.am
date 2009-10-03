@@ -38,6 +38,11 @@ sbin_PROGRAMS += switch_root
 dist_man_MANS += switch_root.8
 endif
 
+if BUILD_UNSHARE
+usrbin_exec_PROGRAMS += unshare
+dist_man_MANS += unshare.1
+endif
+
 if BUILD_ARCH
 bin_PROGRAMS += arch
 dist_man_MANS += arch.1

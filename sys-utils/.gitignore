@@ -39,5 +39,6 @@ sparc64.8
 sparc.8
 switch_root
 tunelp
+unshare
 vidmode.8
 x86_64.8

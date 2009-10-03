@@ -41,10 +41,6 @@ fdisk(s)
 misc
 ----
 
- * add a new command (unshare, clone, or so...) with all kinds of
-   clone(2) options.
-   http://thread.gmane.org/gmane.linux.utilities.util-linux-ng/2178
-
  * add to lib/blkdev.c code for /proc/partitions parsing -- unfortunate we
    duplicate this code in many places. The parser has to support unlimited
    size (or 4096 bytes) of partition name.
