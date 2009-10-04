@@ -72,6 +72,7 @@ static void verify_disk(char *name)
 	    fprintf(stderr,
 		    _("Problem reading cylinder %d, expected %d, read %d\n"),
 		    cyl, cyl_size, read_bytes);
+	    free(data);
 	    exit(1);
 	}
 	for (count = 0; count < cyl_size; count++)
@@ -81,6 +82,7 @@ static void verify_disk(char *name)
 		break;
 	    }
     }
+    free(data);
     printf(_("done\n"));
     if (close(fd) < 0) PERROR("close");
 }
