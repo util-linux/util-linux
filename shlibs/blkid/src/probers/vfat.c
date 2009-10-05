@@ -45,8 +45,8 @@ struct vfat_super_block {
 /* 43*/	unsigned char	vs_serno[4];
 /* 47*/	unsigned char	vs_label[11];
 /* 52*/	unsigned char   vs_magic[8];
-/* 5a*/	unsigned char	vs_dummy2[164];
-/*1fe*/	unsigned char	vs_pmagic[2];
+/* 5a*/ unsigned char   vs_dummy2[0x1fe - 0x5a];
+/*1fe*/ unsigned char   vs_pmagic[2];
 } __attribute__((packed));
 
 /* Yucky misaligned values */
@@ -69,8 +69,8 @@ struct msdos_super_block {
 /* 27*/	unsigned char	ms_serno[4];
 /* 2b*/	unsigned char	ms_label[11];
 /* 36*/	unsigned char   ms_magic[8];
-/* 3d*/	unsigned char	ms_dummy2[192];
-/*1fe*/	unsigned char	ms_pmagic[2];
+/* 3e*/ unsigned char   ms_dummy2[0x1fe - 0x3e];
+/*1fe*/ unsigned char   ms_pmagic[2];
 } __attribute__((packed));
 
 struct vfat_dir_entry {
@@ -142,6 +142,9 @@ static int probe_fat_nomagic(blkid_probe pr, const struct blkid_idmag *mag)
 	ms = blkid_probe_get_sb(pr, mag, struct msdos_super_block);
 	if (!ms)
 		return -1;
+
+	if (ms->ms_pmagic[0] != 0x55 || ms->ms_pmagic[1] != 0xAA)
+		return 1;
 
 	/* heads check */
 	if (ms->ms_heads == 0)
