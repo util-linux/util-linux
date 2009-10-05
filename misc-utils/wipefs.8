@@ -1,0 +1,45 @@
+.\" -*- nroff -*-
+.\" Copyright 2009 by Karel Zak.  All Rights Reserved.
+.\" This file may be copied under the terms of the GNU Public License.
+.\"
+.TH WIPEFS 8 "October 2009" "Linux" "MAINTENANCE COMMANDS"
+.SH NAME
+wipefs \- wipe a filesystem signature from a device
+.SH SYNOPSIS
+.B wipefs
+.RB [ \-ahnp ]
+.RB [ \-o
+.IR offset ]
+.I device
+.SH DESCRIPTION
+.B wipefs
+allows to erase filesystem or raid signatures (magic strings) from the
+.I device
+to make the device invisible for libblkid.
+.B wipefs
+does not erase the whole filesystem or any other data from the device.
+When used without options -a or -o, it lists all visible filesystems and offsets
+of their signatures.
+.SH OPTIONS
+.IP "\fB\-a, \-\-all\fP"
+Erase all available signatures.
+.IP "\fB\-h, \-\-help\fP"
+Print help and exit.
+.IP "\fB\-n, \-\-no\-act\fP"
+Causes everything to be done except for the write() call.
+.IP "\fB\-o, \-\-offset\fP \fIoffset\fP
+Specifies location (in bytes) of the signature which should be erased from the
+device. The offset number may include a "0x" prefix, and then the number will be
+read as a hex value. It is possible to specify multiple -o options.
+.IP "\fB\-p, \-\-parsable\fP"
+Print out in parsable instead of printable format. Encode all potentially unsafe
+characters of a string to the corresponding hex value prefixed by '\\x'.
+.SH AUTHOR
+Karel Zak <kzak@redhat.com>.
+.SH AVAILABILITY
+The wipefs command is part of the util-linux-ng package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
+.SH SEE ALSO
+.BR blkid (8)
+.BR findfs (8)
+

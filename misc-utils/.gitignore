@@ -16,3 +16,4 @@ uuidgen
 uuidd
 findfs
 blkid
+wipefs

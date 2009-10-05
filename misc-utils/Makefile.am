@@ -33,12 +33,14 @@ endif
 endif
 
 if BUILD_LIBBLKID
-sbin_PROGRAMS += blkid findfs
-dist_man_MANS += blkid.8 findfs.8
+sbin_PROGRAMS += blkid findfs wipefs
+dist_man_MANS += blkid.8 findfs.8 wipefs.8
 blkid_LDADD = $(ul_libblkid_la)
 blkid_CFLAGS = -I$(ul_libblkid_srcdir)
 findfs_LDADD = $(ul_libblkid_la)
 findfs_CFLAGS = -I$(ul_libblkid_srcdir)
+wipefs_LDADD = $(ul_libblkid_la)
+wipefs_CFLAGS = -I$(ul_libblkid_srcdir)
 if HAVE_STATIC_BLKID
 sbin_PROGRAMS += blkid.static
 blkid_static_SOURCES = $(blkid_SOURCES)
