@@ -70,9 +70,6 @@ static int check_mntent_file(const char *mtab_file, const char *file,
 	char		buf[1024], *device = 0, *mnt_dir = 0, *cp;
 
 	*mount_flags = 0;
-	if ((f = fopen(mtab_file, "r")) == NULL)
-		return errno;
-
 	if ((f = setmntent (mtab_file, "r")) == NULL)
 		return errno;
 	if (stat(file, &st_buf) == 0) {
