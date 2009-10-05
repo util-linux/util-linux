@@ -45,8 +45,8 @@ struct vfat_super_block {
 /* 43*/	unsigned char	vs_serno[4];
 /* 47*/	unsigned char	vs_label[11];
 /* 52*/	unsigned char   vs_magic[8];
-/* 5a*/	unsigned char	vs_dummy2[164];
-/* fe*/	unsigned char	vs_pmagic[2];
+/* 5a*/	unsigned char	vs_dummy2[0x1fe - 0x5a];
+/*1fe*/	unsigned char	vs_pmagic[2];
 };
 
 /* Yucky misaligned values */
@@ -71,8 +71,8 @@ struct msdos_super_block {
 /* 27*/	unsigned char	ms_serno[4];
 /* 2b*/	unsigned char	ms_label[11];
 /* 36*/	unsigned char   ms_magic[8];
-/* 3e*/	unsigned char	ms_dummy2[192];
-/* fe*/	unsigned char	ms_pmagic[2];
+/* 3e*/	unsigned char	ms_dummy2[0x1fe - 0x3e];
+/*1fe*/	unsigned char	ms_pmagic[2];
 };
 
 struct vfat_dir_entry {
@@ -140,19 +140,14 @@ static unsigned char *search_fat_label(struct vfat_dir_entry *dir, int count)
 static int probe_fat_nomagic(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct msdos_super_block *ms;
-	unsigned char *buf;
-
-	buf = blkid_probe_get_sector(pr, 0);
-	if (!buf)
-		return -1;
-
-	/* Old floppies have a valid MBR signature */
-	if (buf[510] != 0x55 || buf[511] != 0xAA)
-		return 1;
 
 	ms = blkid_probe_get_sb(pr, mag, struct msdos_super_block);
 	if (!ms)
 		return -1;
+
+	/* Old floppies have a valid MBR signature */
+	if (ms->ms_pmagic[0] != 0x55 || ms->ms_pmagic[1] != 0xAA)
+		return 1;
 
 	/* heads check */
 	if (ms->ms_heads == 0)
