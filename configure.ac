@@ -372,21 +372,6 @@ AM_CONDITIONAL(HAVE_BLKID, test "x$have_blkid" = xyes)
 
 AC_ARG_VAR([BLKID_LIBS_STATIC], [-l options for linking statically with blkid])
 
-AC_ARG_ENABLE([unshare],
-  AS_HELP_STRING([--disable-unshare], [do not build unshare]),
-  [], enable_unshare=check
-)
-build_unshare=yes
-if test "x$enable_unshare" = xcheck; then
-  if test "x$linux_os" = xno; then
-    AC_MSG_WARN([non-linux system; do not build unshare])
-    build_unshare=no
-  fi
-elif test "x$enable_unshare" = xno; then
-    build_unshare=no
-fi
-AM_CONDITIONAL(BUILD_UNSHARE, test "x$build_unshare" = xyes)
-
 UTIL_CHECK_LIB(util, openpty)
 UTIL_CHECK_LIB(termcap, tgetnum)
 
@@ -677,7 +662,6 @@ AC_ARG_ENABLE([switch_root],
   AS_HELP_STRING([--disable-switch_root], [do not build switch_root]),
   [], enable_switch_root=check
 )
-
 if test "x$enable_switch_root" = xno; then
   build_switch_root=no
 else
@@ -696,6 +680,79 @@ else
   fi
 fi
 AM_CONDITIONAL(BUILD_SWITCH_ROOT, test "x$build_switch_root" = xyes)
+
+
+AC_ARG_ENABLE([pivot_root],
+  AS_HELP_STRING([--disable-pivot_root], [do not build pivot_root]),
+  [], enable_pivot_root=check
+)
+if test "x$enable_pivot_root" = xno; then
+  build_pivot_root=no
+else
+  build_pivot_root=yes
+  case $enable_pivot_root:$linux_os in
+  yes:no) AC_MSG_ERROR([pivot_root selected for non-linux system]);;
+  check:no) AC_MSG_WARN([non-linux system; do not build pivot_root])
+            build_pivot_root=no;;
+  esac
+  if test "x$build_pivot_root" = xyes; then
+    case $enable_pivot_root:$util_cv_syscall_pivot_root in
+    yes:no) AC_MSG_ERROR([pivot_root selected but pivot_root syscall not found]);;
+    check:no) AC_MSG_WARN([pivot_root syscall not found; do not build pivot_root])
+              build_pivot_root=no;;
+    esac
+  fi
+fi
+AM_CONDITIONAL(BUILD_UNSHARE, test "x$build_pivot_root" = xyes)
+
+
+AC_ARG_ENABLE([fallocate],
+  AS_HELP_STRING([--disable-fallocate], [do not build fallocate]),
+  [], enable_fallocate=check
+)
+if test "x$enable_fallocate" = xno; then
+  build_fallocate=no
+else
+  build_fallocate=yes
+  case $enable_fallocate:$linux_os in
+  yes:no) AC_MSG_ERROR([fallocate selected for non-linux system]);;
+  check:no) AC_MSG_WARN([non-linux system; do not build fallocate])
+            build_fallocate=no;;
+  esac
+  if test "x$build_fallocate" = xyes; then
+    case $enable_fallocate:$util_cv_syscall_fallocate in
+    yes:no) AC_MSG_ERROR([fallocate selected but fallocate syscall not found]);;
+    check:no) AC_MSG_WARN([fallocate syscall not found; do not build fallocate])
+              build_fallocate=no;;
+    esac
+  fi
+fi
+AM_CONDITIONAL(BUILD_FALLOCATE, test "x$build_fallocate" = xyes)
+
+
+AC_ARG_ENABLE([unshare],
+  AS_HELP_STRING([--disable-unshare], [do not build unshare]),
+  [], enable_unshare=check
+)
+if test "x$enable_unshare" = xno; then
+  build_unshare=no
+else
+  build_unshare=yes
+  case $enable_unshare:$linux_os in
+  yes:no) AC_MSG_ERROR([unshare selected for non-linux system]);;
+  check:no) AC_MSG_WARN([non-linux system; do not build unshare])
+            build_unshare=no;;
+  esac
+  if test "x$build_unshare" = xyes; then
+    case $enable_unshare:$util_cv_syscall_unshare in
+    yes:no) AC_MSG_ERROR([unshare selected but unshare syscall not found]);;
+    check:no) AC_MSG_WARN([unshare syscall not found; do not build unshare])
+              build_unshare=no;;
+    esac
+  fi
+fi
+AM_CONDITIONAL(BUILD_UNSHARE, test "x$build_unshare" = xyes)
+
 
 
 AC_ARG_ENABLE([elvtune],
