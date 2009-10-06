@@ -228,6 +228,14 @@ new_namei(struct namei *parent, const char *path, const char *fname, int lev)
 		err(EXIT_FAILURE, _("out of memory?"));
 	if (lstat(path, &nm->st) == -1)
 		err(EXIT_FAILURE, _("could not stat '%s'"), path);
+
+	if (S_ISLNK(nm->st.st_mode))
+		readlink_to_namei(nm, path);
+	if (flags & NAMEI_OWNERS) {
+		add_uid(nm->st.st_uid);
+		add_gid(nm->st.st_gid);
+	}
+
 	return nm;
 }
 
@@ -269,12 +277,6 @@ add_namei(struct namei *parent, const char *orgpath, int start, struct namei **l
 			end = NULL;
 		if (!first)
 			first = nm;
-		if (S_ISLNK(nm->st.st_mode))
-			readlink_to_namei(nm, path);
-		if (flags & NAMEI_OWNERS) {
-			add_uid(nm->st.st_uid);
-			add_gid(nm->st.st_gid);
-		}
 		/* set begin of the next filename */
 		if (end) {
 			*end++ = '/';
