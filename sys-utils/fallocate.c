@@ -31,6 +31,7 @@
 #include <unistd.h>
 #include <getopt.h>
 #include <err.h>
+#include <limits.h>
 
 #ifndef HAVE_FALLOCATE
 # include <sys/syscall.h>
@@ -69,7 +70,12 @@ static loff_t cvtnum(char *s)
 	loff_t	i;
 	char	*sp;
 
+	errno = 0;
 	i = strtoll(s, &sp, 0);
+
+	if ((errno == ERANGE && (i == LLONG_MAX || i == LLONG_MIN)) ||
+	    (errno != 0 && i == 0))
+		return -1LL;
 	if (i == 0 && sp == s)
 		return -1LL;
 	if (*sp == '\0')
