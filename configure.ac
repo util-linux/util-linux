@@ -703,7 +703,7 @@ else
     esac
   fi
 fi
-AM_CONDITIONAL(BUILD_UNSHARE, test "x$build_pivot_root" = xyes)
+AM_CONDITIONAL(BUILD_PIVOT_ROOT, test "x$build_pivot_root" = xyes)
 
 
 AC_ARG_ENABLE([fallocate],
