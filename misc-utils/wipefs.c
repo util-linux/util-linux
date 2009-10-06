@@ -133,7 +133,8 @@ add_offset(struct wipe_desc *wp0, loff_t offset, int zap)
 	return wp;
 }
 
-static inline void *xmalloc(size_t sz)
+static inline void *
+xmalloc(size_t sz)
 {
 	void *x = malloc(sz);
 	if (!x)
@@ -141,7 +142,8 @@ static inline void *xmalloc(size_t sz)
 	return x;
 }
 
-static inline char *xstrdup(const char *s)
+static inline char *
+xstrdup(const char *s)
 {
 	char *x = strdup(s);
 	if (!x)
