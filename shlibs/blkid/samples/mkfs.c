@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 
 		if (!blkid_probe_lookup_value(pr, "TYPE", &type, NULL))
 			errx(EXIT_FAILURE, "%s: appears to contain an existing "
-					"filesystem (%s)", devname, type);
+					"%s superblock", devname, type);
 
 		if (!blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL))
 			errx(EXIT_FAILURE, "%s: appears to contain an partition "
