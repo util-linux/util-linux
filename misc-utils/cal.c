@@ -139,8 +139,6 @@ char		*Hrow;		/* pointer to highlighted row in month */
 
 #ifdef HAVE_LANGINFO_H
 # include <langinfo.h>
-#else
-# include <localeinfo.h>	/* libc4 only */
 #endif
 
 #include "widechar.h"
