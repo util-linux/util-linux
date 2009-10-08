@@ -8,7 +8,6 @@
 #define NOARGS void
 #else
 #define NOARGS
-#define const
 #endif
 
 #ifdef __GNUC__
