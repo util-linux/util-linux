@@ -7,6 +7,9 @@ AC_CONFIG_MACRO_DIR([m4])
 
 AM_INIT_AUTOMAKE([check-news -Wall foreign 1.9 dist-bzip2])
 
+m4_ifdef([AM_SILENT_RULES], [AM_SILENT_RULES([yes])],
+                            [AC_SUBST([AM_DEFAULT_VERBOSITY], [1])])
+
 AC_CONFIG_SRCDIR(mount/mount.c)
 
 AC_PREFIX_DEFAULT([/usr])
