@@ -52,7 +52,6 @@
 #include <errno.h>
 #include "nls.h"
 
-#include <sys/ioctl.h>
 #include <sys/param.h>
 
 #include "common.h"

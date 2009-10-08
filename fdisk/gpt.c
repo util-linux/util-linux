@@ -30,7 +30,6 @@
 #include <stdlib.h>
 #include <inttypes.h>
 #include <sys/stat.h>
-#include <sys/ioctl.h>
 #include <sys/utsname.h>
 #include <sys/types.h>
 #include <fcntl.h>
