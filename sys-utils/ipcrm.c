@@ -26,9 +26,7 @@
 /* for tolower and isupper */
 #include <ctype.h>
 
-#if defined (__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
-/* union semun is defined by including <sys/sem.h> */
-#else
+#ifndef HAVE_UNION_SEMUN
 /* according to X/OPEN we have to define it ourselves */
 union semun {
 	int val;

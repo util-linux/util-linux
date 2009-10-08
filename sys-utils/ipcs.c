@@ -77,9 +77,7 @@ struct shm_info {
 /* The last arg of semctl is a union semun, but where is it defined?
    X/OPEN tells us to define it ourselves, but until recently
    Linux include files would also define it. */
-#if defined (__GNU_LIBRARY__) && !defined(_SEM_SEMUN_UNDEFINED)
-/* union semun is defined by including <sys/sem.h> */
-#else
+#ifndef HAVE_UNION_SEMUN
 /* according to X/OPEN we have to define it ourselves */
 union semun {
 	int val;

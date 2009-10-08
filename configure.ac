@@ -469,6 +469,11 @@ printf(__progname);
 ])
 
 
+AC_CHECK_TYPES([union semun], [], [], [[
+#include <sys/sem.h>
+]])
+
+
 AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 #include <wchar.h>
 #include <wctype.h>
