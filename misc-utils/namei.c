@@ -61,6 +61,7 @@ struct namei {
 	int		relstart;	/* offset of relative path in 'abslink' */
 	struct namei	*next;		/* next item */
 	int		level;
+	int		mountpoint;	/* is mount point */
 };
 
 struct idcache {
@@ -209,6 +210,31 @@ readlink_to_namei(struct namei *nm, const char *path)
 	nm->abslink[sz] = '\0';
 }
 
+static struct stat *
+dotdot_stat(const char *dirname, struct stat *st)
+{
+	char *path;
+	size_t len;
+
+#define DOTDOTDIR	"/.."
+
+	if (!dirname)
+		return NULL;
+
+	len = strlen(dirname);
+	path = malloc(len + sizeof(DOTDOTDIR));
+	if (!path)
+		err(EXIT_FAILURE, _("out of memory?"));
+
+	memcpy(path, dirname, len);
+	memcpy(path + len, DOTDOTDIR, sizeof(DOTDOTDIR));
+
+	if (stat(path, st))
+		err(EXIT_FAILURE, _("could not stat '%s'"), path);
+	free(path);
+	return st;
+}
+
 static struct namei *
 new_namei(struct namei *parent, const char *path, const char *fname, int lev)
 {
@@ -234,6 +260,19 @@ new_namei(struct namei *parent, const char *path, const char *fname, int lev)
 	if (flags & NAMEI_OWNERS) {
 		add_uid(nm->st.st_uid);
 		add_gid(nm->st.st_gid);
+	}
+
+	if ((flags & NAMEI_MNTS) && S_ISDIR(nm->st.st_mode)) {
+		struct stat stbuf, *sb = NULL;
+
+		if (parent && S_ISDIR(parent->st.st_mode))
+			sb = &parent->st;
+		else if (!parent || S_ISLNK(parent->st.st_mode))
+			sb = dotdot_stat(path, &stbuf);
+
+		if (sb && (sb->st_dev != nm->st.st_dev ||   /* different device */
+		           sb->st_ino == nm->st.st_ino))    /* root directory */
+			nm->mountpoint = 1;
 	}
 
 	return nm;
@@ -368,9 +407,7 @@ print_namei(struct namei *nm, char *path)
 
 		strmode(nm->st.st_mode, md);
 
-		if ((flags & NAMEI_MNTS) && prev &&
-		    S_ISDIR(nm->st.st_mode) && S_ISDIR(prev->st.st_mode) &&
-		    prev->st.st_dev != nm->st.st_dev)
+		if (nm->mountpoint)
 			md[0] = 'D';
 
 		if (!(flags & NAMEI_VERTICAL)) {
