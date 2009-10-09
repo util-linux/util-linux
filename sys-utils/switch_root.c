@@ -267,13 +267,6 @@ int main(int argc, char *argv[])
 	if (access(init, X_OK))
 		warn("cannot access %s", init);
 
-	/* get session leader */
-	setsid();
-
-	/* set controlling terminal */
-	if (ioctl (0, TIOCSCTTY, 1))
-		warn("failed to TIOCSCTTY");
-
 	execv(init, initargs);
 	err(EXIT_FAILURE, "failed to execute %s", init);
 }
