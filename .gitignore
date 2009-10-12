@@ -34,7 +34,6 @@ missing
 libtool
 .deps
 .libs
-gtk-doc.make
 
 # libtool-2 stuff -- temporary added to repository (because libtool-2.x.x is
 #                    still not in avaialable in many Linux distributions)
@@ -47,3 +46,6 @@ gtk-doc.make
 
 # libuuid depends on AX_TLS macro
 !m4/tls.m4
+
+# GTK_DOC_CHECK depends on gtk-doc.m4
+!m4/gtk-doc.m4

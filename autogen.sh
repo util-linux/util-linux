@@ -55,10 +55,11 @@ HAS_GTKDOC=1
 	DIE=1
 }
 
-(gtkdocize --version) < /dev/null > /dev/null 2>&1 || {
-	echo "WARNING: You must have gtk-doc installed to generate libblkid API docs."
-	HAS_GTKDOC=0
-}
+#(gtkdocize --version) < /dev/null > /dev/null 2>&1 || {
+#	echo
+#	echo "You must have gtkdocize installed to generate util-linux-ng build system."
+#	echo
+#}
 
 if test "$DIE" -eq 1; then
 	exit 1
@@ -83,10 +84,7 @@ echo "   autoconf:   $(autoconf --version | head -1)"
 echo "   autoheader: $(autoheader --version | head -1)"
 echo "   automake:   $(automake --version | head -1)"
 #echo "   libtoolize: $(libtoolize --version | head -1)"
-
-if test "$HAS_GTKDOC" -eq 1; then
-	echo "   gtkdocize:  $(gtkdocize --version | head -1)"
-fi
+#echo "   gtkdocize:  $(gtkdocize --version | head -1)"
 
 set -e
 autopoint --force $AP_OPTS
@@ -94,10 +92,7 @@ autopoint --force $AP_OPTS
 aclocal -I m4 $AL_OPTS
 autoconf $AC_OPTS
 autoheader $AH_OPTS
-
-if test "$HAS_GTKDOC" -eq 1; then
-	gtkdocize
-fi
+#gtkdocize --copy --docdir config
 
 automake --add-missing $AM_OPTS
 

@@ -14,7 +14,7 @@ AC_CONFIG_SRCDIR(mount/mount.c)
 
 AC_PREFIX_DEFAULT([/usr])
 
-GTK_DOC_CHECK(1.10)
+GTK_DOC_CHECK([1.10])
 AC_PATH_PROG([XSLTPROC], [xsltproc])
 
 dnl version details from <major>.<minor>[-<suffix>]
