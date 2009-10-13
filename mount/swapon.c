@@ -135,11 +135,18 @@ read_proc_swaps(void) {
 
 	/* skip the first line */
 	if (!fgets(line, sizeof(line), swaps)) {
-		warnx(_("%s: unexpected file format"), _PATH_PROC_SWAPS);
+		/* do not whine about an empty file */
+		if (ferror(swaps))
+			warn(_("%s: unexpected file format"), _PATH_PROC_SWAPS);
 		fclose(swaps);
 		return;
 	}
+	/* make sure the first line is the header */
+	if (line[0] != '\0' && strncmp(line, "Filename\t", 9))
+		goto valid_first_line;
+
 	while (fgets(line, sizeof(line), swaps)) {
+ valid_first_line:
 		/*
 		 * Cut the line "swap_device  ... more info" after device.
 		 * This will fail with names with embedded spaces.
