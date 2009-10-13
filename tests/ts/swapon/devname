@@ -32,7 +32,8 @@ $TS_CMD_MKSWAP $DEVICE > /dev/null 2>> $TS_OUTPUT \
 
 ts_device_has "TYPE" "swap" $DEVICE || ts_die "Cannot found swap on $DEVICE" $DEVICE
 
-$TS_CMD_SWAPON $DEVICE 2>&1 >> $TS_OUTPUT
+LD_LIBRARY_PATH="$U_L_LIBRARY_PATH" \
+		$TS_CMD_SWAPON $DEVICE 2>&1 >> $TS_OUTPUT
 
 grep -q $DEVICE /proc/swaps || ts_die "Cannot found $DEVICE in /proc/swaps" $DEVICE
 

@@ -36,7 +36,8 @@ ts_device_has "LABEL" $LABEL $DEVICE \
 
 ts_udev_dev_support "by-label" $LABEL || ts_skip "udev ignores /dev/loop*" $DEVICE
 
-$TS_CMD_SWAPON -L $LABEL 2>&1 >> $TS_OUTPUT
+LD_LIBRARY_PATH="$U_L_LIBRARY_PATH" \
+	$TS_CMD_SWAPON -L $LABEL 2>&1 >> $TS_OUTPUT
 
 grep -q $DEVICE /proc/swaps || ts_die "Cannot found $DEVICE in /proc/swaps" $DEVICE
 

@@ -365,7 +365,8 @@ function ts_swapoff {
 		ln -sf $TS_CMD_SWAPON $TS_CMD_SWAPOFF
 		REMSWAPOFF="true"
 	fi
-	$TS_CMD_SWAPOFF $DEV 2>&1 >> $TS_OUTPUT
+	LD_LIBRARY_PATH="$U_L_LIBRARY_PATH" \
+			$TS_CMD_SWAPOFF $DEV 2>&1 >> $TS_OUTPUT
 	if [ -n "$REMSWAPOFF" ]; then
 		rm -f $TS_CMD_SWAPOFF
 	fi

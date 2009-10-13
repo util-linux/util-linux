@@ -18,11 +18,13 @@ TS_HELPER_PARTITIONS="$TOPDIR/shlibs/blkid/samples/partitions"
 TS_ECMD_BLKID="@BLKID@"
 TS_ECMD_VOLID="@VOLID@"
 
+U_L_LIBRARY_PATH="$TOPDIR/shlibs/blkid/src/.libs:$TOPDIR/shlibs/uuid/src/.libs"
+
 # paths to commands
 TS_CMD_MOUNT=${TS_CMD_MOUNT:-"$TOPDIR/mount/mount"}
 TS_CMD_UMOUNT=${TS_CMD_UMOUNT:-"$TOPDIR/mount/umount"}
-TS_CMD_SWAPON=${TS_CMD_SWAPON:-"$TOPDIR/mount/swapon"}
-TS_CMD_SWAPOFF=${TS_CMD_SWAPOFF:-"$TOPDIR/mount/swapoff"}
+TS_CMD_SWAPON=${TS_CMD_SWAPON:-"$TOPDIR/mount/.libs/swapon"}
+TS_CMD_SWAPOFF=${TS_CMD_SWAPOFF:-"$TOPDIR/mount/.libs/swapoff"}
 TS_CMD_LOSETUP=${TS_CMD_LOSETUP:-"$TOPDIR/mount/losetup"}
 
 TS_CMD_MTABLOCK=${TS_CMD_MTABLOCK:-"$TOPDIR/mount/mtab_lock_test"}
