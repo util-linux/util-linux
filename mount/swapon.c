@@ -791,6 +791,9 @@ main(int argc, char *argv[]) {
 
 	if (streq(progname, "swapon"))
 		return main_swapon(argc, argv);
-	else
+	else if (streq(progname, "swapoff"))
 		return main_swapoff(argc, argv);
+
+	errx(EXIT_FAILURE, _("'%s' is unsupported program name "
+			"(must be 'swapon' or 'swapoff')."), progname);
 }
