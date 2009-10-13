@@ -165,6 +165,7 @@ AC_CHECK_FUNCS(
 	setresuid \
 	inotify_init \
 	prctl \
+	getmntinfo \
 	__secure_getenv \
 	rpmatch])
 AC_FUNC_FSEEKO
