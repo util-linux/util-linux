@@ -35,6 +35,7 @@ endif
 if BUILD_LIBBLKID
 sbin_PROGRAMS += blkid findfs wipefs
 dist_man_MANS += blkid.8 findfs.8 wipefs.8
+blkid_SOURCES = blkid.c $(top_srcdir)/lib/ismounted.c
 blkid_LDADD = $(ul_libblkid_la)
 blkid_CFLAGS = -I$(ul_libblkid_srcdir)
 findfs_LDADD = $(ul_libblkid_la)

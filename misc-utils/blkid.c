@@ -40,6 +40,8 @@ extern int optind;
 
 #include <blkid.h>
 
+#include "ismounted.h"
+
 const char *progname = "blkid";
 
 static void print_version(FILE *out)
@@ -186,16 +188,12 @@ static void pretty_print_line(const char *device, const char *fs_type,
 
 static void pretty_print_dev(blkid_dev dev)
 {
-	fprintf(stderr, "pretty print not implemented yet\n");
-
-#ifdef NOT_IMPLEMENTED
 	blkid_tag_iterate	iter;
 	const char		*type, *value, *devname;
 	const char		*uuid = "", *fs_type = "", *label = "";
-	char			*cp;
 	int			len, mount_flags;
 	char			mtpt[80];
-	errcode_t		retval;
+	int			retval;
 
 	if (dev == NULL) {
 		pretty_print_line("device", "fs_type", "label",
@@ -224,20 +222,18 @@ static void pretty_print_dev(blkid_dev dev)
 
 	/* Get the mount point */
 	mtpt[0] = 0;
-	retval = ext2fs_check_mount_point(devname, &mount_flags,
-					  mtpt, sizeof(mtpt));
+	retval = check_mount_point(devname, &mount_flags, mtpt, sizeof(mtpt));
 	if (retval == 0) {
-		if (mount_flags & EXT2_MF_MOUNTED) {
+		if (mount_flags & MF_MOUNTED) {
 			if (!mtpt[0])
 				strcpy(mtpt, "(mounted, mtpt unknown)");
-		} else if (mount_flags & EXT2_MF_BUSY)
+		} else if (mount_flags & MF_BUSY)
 			strcpy(mtpt, "(in use)");
 		else
 			strcpy(mtpt, "(not mounted)");
 	}
 
 	pretty_print_line(devname, fs_type, label, mtpt, uuid);
-#endif
 }
 
 static void print_udev_format(const char *name, const char *value, size_t sz)
@@ -544,8 +540,14 @@ int main(int argc, char **argv)
 	}
 	err = 2;
 
-	if (output_format & OUTPUT_PRETTY_LIST)
+	if (eval == 0 && output_format & OUTPUT_PRETTY_LIST) {
+		if (lowprobe) {
+			fprintf(stderr, "The low-level probing mode does not "
+					"support 'list' output format\n");
+			exit(4);
+		}
 		pretty_print_dev(NULL);
+	}
 
 	if (lowprobe) {
 		/*
@@ -554,7 +556,8 @@ int main(int argc, char **argv)
 		blkid_probe pr;
 
 		if (!numdev) {
-			fprintf(stderr, "The low-probe option requires a device\n");
+			fprintf(stderr, "The low-level probing mode "
+					"requires a device\n");
 			exit(4);
 		}
 		pr = blkid_new_probe();
