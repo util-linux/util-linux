@@ -16,39 +16,127 @@
 
 const char *progname;
 
+
 struct bdc {
-	char *name;
-	char *iocname;
-	long ioc;
-	int argtype;
-#define ARGNONE	0
-#define ARGINTA	1
-#define ARGINTAP 2
-#define	ARGINTP	3
-#define ARGINTG	4
-#define ARGLINTG 5
-#define ARGLLINTG 6
-#define ARGLU 7
-#define ARGLLU 8
-	long argval;
-	char *argname;
-	char *help;
-} bdcms[] = {
-	{ "--setro", "BLKROSET", BLKROSET, ARGINTP, 1, NULL, N_("set read-only") },
-	{ "--setrw", "BLKROSET", BLKROSET, ARGINTP, 0, NULL, N_("set read-write") },
-	{ "--getro", "BLKROGET", BLKROGET, ARGINTG, -1, NULL, N_("get read-only") },
-	{ "--getss", "BLKSSZGET", BLKSSZGET, ARGINTG, -1, NULL, N_("get sectorsize") },
-	{ "--getbsz", "BLKBSZGET", BLKBSZGET, ARGINTG, -1, NULL, N_("get blocksize") },
-	{ "--setbsz", "BLKBSZSET", BLKBSZSET, ARGINTAP, 0, "BLOCKSIZE", N_("set blocksize") },
-	{ "--getsize", "BLKGETSIZE", BLKGETSIZE, ARGLU, -1, NULL, N_("get 32-bit sector count") },
-	{ "--getsize64", "BLKGETSIZE64", BLKGETSIZE64, ARGLLU, -1, NULL, N_("get size in bytes") },
-	{ "--setra", "BLKRASET", BLKRASET, ARGINTA, 0, "READAHEAD", N_("set readahead") },
-	{ "--getra", "BLKRAGET", BLKRAGET, ARGLINTG, -1, NULL, N_("get readahead") },
-	{ "--setfra", "BLKFRASET", BLKFRASET, ARGINTA, 0, "FSREADAHEAD", N_("set filesystem readahead") },
-	{ "--getfra", "BLKFRAGET", BLKFRAGET, ARGLINTG, -1, NULL, N_("get filesystem readahead") },
-	{ "--flushbufs", "BLKFLSBUF", BLKFLSBUF, ARGNONE, 0, NULL, N_("flush buffers") },
-	{ "--rereadpt", "BLKRRPART", BLKRRPART, ARGNONE, 0, NULL,
-	  N_("reread partition table") },
+	long		ioc;		/* ioctl code */
+	const char	*iocname;	/* ioctl name (e.g. BLKROSET) */
+	long		argval;		/* default argument */
+
+	const char	*name;		/* --setfoo */
+	const char	*argname;	/* argument name or NULL */
+
+	const char	*help;
+
+	int		argtype;
+	int		flags;
+};
+
+/* command flags */
+enum {
+	FL_NOPTR	= (1 << 1),	/* does not assume pointer (ARG_INT only)*/
+	FL_NORESULT	= (1 << 2)	/* does not return any data */
+};
+
+/* ioctl argument types */
+enum {
+	ARG_NONE,
+	ARG_INT,
+	ARG_LONG,
+	ARG_ULONG,
+	ARG_LLONG,
+	ARG_ULLONG
+};
+
+#define IOCTL_ENTRY( io )	.ioc = io, .iocname = # io
+
+struct bdc bdcms[] =
+{
+	{
+		IOCTL_ENTRY(BLKROSET),
+		.name = "--setro",
+		.argtype = ARG_INT,
+		.argval = 1,
+		.flags = FL_NORESULT,
+		.help = N_("set read-only")
+	},{
+		IOCTL_ENTRY(BLKROSET),
+		.name = "--setrw",
+		.argtype = ARG_INT,
+		.argval = 0,
+		.flags = FL_NORESULT,
+		.help = N_("set read-write")
+	},{
+		IOCTL_ENTRY(BLKROGET),
+		.name = "--getro",
+		.argtype = ARG_INT,
+		.argval = -1,
+		.help = N_("get read-only")
+	},{
+		IOCTL_ENTRY(BLKSSZGET),
+		.name = "--getss",
+		.argtype = ARG_INT,
+		.argval = -1,
+		.help = N_("get sectorsize")
+	},{
+		IOCTL_ENTRY(BLKBSZGET),
+		.name = "--getbsz",
+		.argtype = ARG_INT,
+		.argval = -1,
+		.help = N_("get blocksize")
+	},{
+		IOCTL_ENTRY(BLKBSZSET),
+		.name = "--setbsz",
+		.argname = "BLOCKSIZE",
+		.argtype = ARG_INT,
+		.flags = FL_NORESULT,
+	        .help = N_("set blocksize")
+	},{
+		IOCTL_ENTRY(BLKGETSIZE),
+		.name = "--getsize",
+		.argtype = ARG_ULONG,
+		.argval = -1,
+		.help = N_("get 32-bit sector count")
+	},{
+		IOCTL_ENTRY(BLKGETSIZE64),
+		.name = "--getsize64",
+		.argtype = ARG_ULLONG,
+		.argval = -1,
+		.help = N_("get size in bytes")
+	},{
+		IOCTL_ENTRY(BLKRASET),
+		.name = "--setra",
+		.argname = "READAHEAD",
+		.argtype = ARG_INT,
+		.flags = FL_NOPTR | FL_NORESULT,
+		.help = N_("set readahead")
+	},{
+		IOCTL_ENTRY(BLKRAGET),
+		.name = "--getra",
+		.argtype = ARG_LONG,
+		.argval = -1,
+		.help = N_("get readahead")
+	},{
+		IOCTL_ENTRY(BLKFRASET),
+		.name = "--setfra",
+		.argname = "FSREADAHEAD",
+		.argtype = ARG_INT,
+		.flags = FL_NOPTR | FL_NORESULT,
+		.help = N_("set filesystem readahead")
+	},{
+		IOCTL_ENTRY(BLKFRAGET),
+		.name = "--getfra",
+		.argtype = ARG_LONG,
+		.argval = -1,
+		.help = N_("get filesystem readahead")
+	},{
+		IOCTL_ENTRY(BLKFLSBUF),
+		.name = "--flushbufs",
+		.help = N_("flush buffers")
+	},{
+		IOCTL_ENTRY(BLKRRPART),
+		.name = "--rereadpt",
+		.help = N_("reread partition table")
+	}
 };
 
 #define SIZE(a)	(sizeof(a)/sizeof((a)[0]))
@@ -137,8 +225,7 @@ main(int argc, char **argv) {
 	for (d = 1; d < argc; d++) {
 		j = find_cmd(argv[d]);
 		if (j >= 0) {
-			if (bdcms[j].argtype == ARGINTA ||
-			    bdcms[j].argtype == ARGINTAP)
+			if (bdcms[j].argname)
 				d++;
 			continue;
 		}
@@ -205,91 +292,74 @@ do_commands(int fd, char **argv, int d) {
 
 		switch(bdcms[j].argtype) {
 		default:
-		case ARGNONE:
+		case ARG_NONE:
 			res = ioctl(fd, bdcms[j].ioc, 0);
 			break;
-		case ARGINTA:
-			if (i == d-1) {
-				fprintf(stderr, _("%s requires an argument\n"),
-					bdcms[j].name);
-				usage();
-			}
-			iarg = atoi(argv[++i]);
-			res = ioctl(fd, bdcms[j].ioc, iarg);
+		case ARG_INT:
+			if (bdcms[j].argname) {
+				if (i == d-1) {
+					fprintf(stderr, _("%s requires an argument\n"),
+						bdcms[j].name);
+					usage();
+				}
+				iarg = atoi(argv[++i]);
+			} else
+				iarg = bdcms[j].argval;
+
+			res = bdcms[j].flags & FL_NOPTR ?
+					ioctl(fd, bdcms[j].ioc, iarg) :
+					ioctl(fd, bdcms[j].ioc, &iarg);
 			break;
-		case ARGINTAP:
-			if (i == d-1) {
-				fprintf(stderr, _("%s requires an argument\n"),
-					bdcms[j].name);
-				usage();
-			}
-			iarg = atoi(argv[++i]);
-			res = ioctl(fd, bdcms[j].ioc, &iarg);
-			break;
-		case ARGINTP:
-		case ARGINTG:
-			iarg = bdcms[j].argval;
-			res = ioctl(fd, bdcms[j].ioc, &iarg);
-			break;
-		case ARGLINTG:
+		case ARG_LONG:
 			larg = bdcms[j].argval;
 			res = ioctl(fd, bdcms[j].ioc, &larg);
 			break;
-		case ARGLLINTG:
+		case ARG_LLONG:
 			llarg = bdcms[j].argval;
 			res = ioctl(fd, bdcms[j].ioc, &llarg);
 			break;
-		case ARGLU:
+		case ARG_ULONG:
 			lu = bdcms[j].argval;
 			res = ioctl(fd, bdcms[j].ioc, &lu);
 			break;
-		case ARGLLU:
+		case ARG_ULLONG:
 			llu = bdcms[j].argval;
 			res = ioctl(fd, bdcms[j].ioc, &llu);
 			break;
-
 		}
+
 		if (res == -1) {
 			perror(bdcms[j].iocname);
 			if (verbose)
 				printf(_("%s failed.\n"), _(bdcms[j].help));
 			exit(1);
 		}
-		switch(bdcms[j].argtype) {
-		case ARGINTG:
-			if (verbose)
-				printf("%s: %d\n", _(bdcms[j].help), iarg);
-			else
-				printf("%d\n", iarg);
-			break;
-		case ARGLINTG:
-			if (verbose)
-				printf("%s: %ld\n", _(bdcms[j].help), larg);
-			else
-				printf("%ld\n", larg);
-			break;
-		case ARGLLINTG:
-			if (verbose)
-				printf("%s: %lld\n", _(bdcms[j].help), llarg);
-			else
-				printf("%lld\n", llarg);
-			break;
-		case ARGLU:
-			if (verbose)
-				printf("%s: %lu\n", _(bdcms[j].help), lu);
-			else
-				printf("%lu\n", lu);
-			break;
-		case ARGLLU:
-			if (verbose)
-				printf("%s: %llu\n", _(bdcms[j].help), llu);
-			else
-				printf("%llu\n", llu);
-			break;
 
-		default:
+		if (bdcms[j].argtype == ARG_NONE ||
+		    (bdcms[j].flags & FL_NORESULT)) {
 			if (verbose)
 				printf(_("%s succeeded.\n"), _(bdcms[j].help));
+			continue;
+		}
+
+		if (verbose)
+			printf("%s: ", _(bdcms[j].help));
+
+		switch(bdcms[j].argtype) {
+		case ARG_INT:
+			printf("%d\n", iarg);
+			break;
+		case ARG_LONG:
+			printf("%ld\n", larg);
+			break;
+		case ARG_LLONG:
+			printf("%lld\n", llarg);
+			break;
+		case ARG_ULONG:
+			printf("%lu\n", lu);
+			break;
+		case ARG_ULLONG:
+			printf("%llu\n", llu);
 			break;
 		}
 	}
