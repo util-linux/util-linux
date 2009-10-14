@@ -40,7 +40,9 @@ enum {
 /* ioctl argument types */
 enum {
 	ARG_NONE,
+	ARG_USHRT,
 	ARG_INT,
+	ARG_UINT,
 	ARG_LONG,
 	ARG_ULONG,
 	ARG_LLONG,
@@ -258,6 +260,8 @@ void
 do_commands(int fd, char **argv, int d) {
 	int res, i, j;
 	int iarg;
+	unsigned int uarg;
+	unsigned short huarg;
 	long larg;
 	long long llarg;
 	unsigned long lu;
@@ -295,6 +299,10 @@ do_commands(int fd, char **argv, int d) {
 		case ARG_NONE:
 			res = ioctl(fd, bdcms[j].ioc, 0);
 			break;
+		case ARG_USHRT:
+			huarg = bdcms[j].argval;
+			res = ioctl(fd, bdcms[j].ioc, &huarg);
+			break;
 		case ARG_INT:
 			if (bdcms[j].argname) {
 				if (i == d-1) {
@@ -309,6 +317,10 @@ do_commands(int fd, char **argv, int d) {
 			res = bdcms[j].flags & FL_NOPTR ?
 					ioctl(fd, bdcms[j].ioc, iarg) :
 					ioctl(fd, bdcms[j].ioc, &iarg);
+			break;
+		case ARG_UINT:
+			uarg = bdcms[j].argval;
+			res = ioctl(fd, bdcms[j].ioc, &uarg);
 			break;
 		case ARG_LONG:
 			larg = bdcms[j].argval;
@@ -346,8 +358,14 @@ do_commands(int fd, char **argv, int d) {
 			printf("%s: ", _(bdcms[j].help));
 
 		switch(bdcms[j].argtype) {
+		case ARG_USHRT:
+			printf("%hu\n", huarg);
+			break;
 		case ARG_INT:
 			printf("%d\n", iarg);
+			break;
+		case ARG_UINT:
+			printf("%u\n", uarg);
 			break;
 		case ARG_LONG:
 			printf("%ld\n", larg);
