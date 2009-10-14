@@ -78,7 +78,37 @@ struct bdc bdcms[] =
 		.name = "--getss",
 		.argtype = ARG_INT,
 		.argval = -1,
-		.help = N_("get sectorsize")
+		.help = N_("get logical block (sector) size")
+	},{
+		IOCTL_ENTRY(BLKPBSZGET),
+		.name = "--getpbsz",
+		.argtype = ARG_UINT,
+		.argval = -1,
+		.help = N_("get physical block (sector) size")
+	},{
+		IOCTL_ENTRY(BLKIOMIN),
+		.name = "--getiomin",
+		.argtype = ARG_UINT,
+		.argval = -1,
+		.help = N_("get minimum I/O size")
+	},{
+		IOCTL_ENTRY(BLKIOOPT),
+		.name = "--getioopt",
+		.argtype = ARG_UINT,
+		.argval = -1,
+		.help = N_("get optimal I/O size")
+	},{
+		IOCTL_ENTRY(BLKALIGNOFF),
+		.name = "--getalignoff",
+		.argtype = ARG_INT,
+		.argtype = -1,
+		.help = N_("get alignment offset")
+	},{
+		IOCTL_ENTRY(BLKSECTGET),
+		.name = "--getmaxsect",
+		.argtype = ARG_USHRT,
+		.argval = -1,
+		.help = N_("get max sectors per request")
 	},{
 		IOCTL_ENTRY(BLKBSZGET),
 		.name = "--getbsz",

@@ -34,6 +34,12 @@
 #define BLKBSZSET  _IOW(0x12,113,size_t)
 #define BLKGETSIZE64 _IOR(0x12,114,size_t) /* return device size in bytes (u64 *arg) */
 
+/* block device topology ioctls, introduced in 2.6.32 */
+#define BLKIOMIN   _IO(0x1,120)
+#define BLKIOOPT   _IO(0x12,121)
+#define BLKALIGNOFF _IO(0x12,122)
+#define BLKPBSZGET _IO(0x12,123)
+
 #endif /* BLKROSET */
 
 #ifndef HDIO_GETGEO
