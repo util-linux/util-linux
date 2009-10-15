@@ -15,10 +15,7 @@
 
 #include <blkid.h>
 
-#ifndef TRUE
-# define TRUE 1
-# define FALSE 0
-#endif
+#include "c.h"
 
 int main(int argc, char *argv[])
 {
