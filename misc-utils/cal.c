@@ -64,6 +64,8 @@
 #include <time.h>
 #include <unistd.h>
 #include <err.h>
+
+#include "c.h"
 #include "nls.h"
 
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
@@ -142,8 +144,6 @@ char		*Hrow;		/* pointer to highlighted row in month */
 #endif
 
 #include "widechar.h"
-
-#define SIZE(a)	(sizeof(a)/sizeof((a)[0]))
 
 /* allow compile-time define to over-ride default */
 #ifndef NUM_MONTHS
@@ -461,7 +461,7 @@ do_monthly(int day, int month, int year, struct fmt_st *out) {
 	 */
 	snprintf(lineout, sizeof(lineout), _("%s %d"),
 			full_month[month - 1], year);
-	center_str(lineout, out->s[0], SIZE(out->s[0]), width);
+	center_str(lineout, out->s[0], ARRAY_SIZE(out->s[0]), width);
 
 	snprintf(out->s[1], FMT_ST_CHARS, "%s",
 		julian ? j_day_headings : day_headings);
@@ -536,7 +536,7 @@ monthly3(int day, int month, int year) {
                 w2 += (out_curm.s[i] == Hrow ? Slen : 0);
                 w3 += (out_next.s[i] == Hrow ? Slen : 0);
 #endif
-		snprintf(lineout, SIZE(lineout), "%-*s  %-*s  %-*s\n",
+		snprintf(lineout, sizeof(lineout), "%-*s  %-*s  %-*s\n",
 		       w1, out_prev.s[i],
 		       w2, out_curm.s[i],
 		       w3, out_next.s[i]);
@@ -802,11 +802,11 @@ center_str(const char* src, char* dest, size_t dest_size, int width)
 	int used, spaces, wc_conversion=0, wc_enabled=0;
 
 #ifdef HAVE_WIDECHAR
-	if (mbstowcs(str_wc, src, SIZE(str_wc)) > 0) {
-		str_wc[SIZE(str_wc)-1]=L'\0';
+	if (mbstowcs(str_wc, src, ARRAY_SIZE(str_wc)) > 0) {
+		str_wc[ARRAY_SIZE(str_wc)-1]=L'\0';
 		wc_enabled=1;
 		wc_conversion = wc_ensure_printable(str_wc);
-		used = wcswidth(str_wc, SIZE(str_wc));
+		used = wcswidth(str_wc, ARRAY_SIZE(str_wc));
 	}
 	else
 #endif
@@ -817,7 +817,7 @@ center_str(const char* src, char* dest, size_t dest_size, int width)
 		if (wc_enabled) {
 #ifdef HAVE_WIDECHAR
 			used = wc_truncate(str_wc, width, 1);
-			wcstombs(str, str_wc, SIZE(str));
+			wcstombs(str, str_wc, ARRAY_SIZE(str));
 #endif
 		} else {
 			memcpy(str, src, width);
@@ -841,7 +841,7 @@ center(str, len, separate)
 	int separate;
 {
 	char lineout[FMT_ST_CHARS];
-	center_str(str, lineout, SIZE(lineout), len);
+	center_str(str, lineout, ARRAY_SIZE(lineout), len);
 	fputs(lineout, stdout);
 	if (separate)
 		printf("%*s", separate, "");
