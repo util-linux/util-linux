@@ -43,13 +43,12 @@
 #endif
 #include <linux/blkpg.h>
 
+#include "c.h"
 #include "blkdev.h"
 
 #include "partx.h"
 #include "crc32.h"
 static void errmerge(int err, int m, char *msg1, char *msg2);
-
-#define SIZE(a) (sizeof(a)/sizeof((a)[0]))
 
 #define MAXTYPES	64
 #define MAXSLICES	256
@@ -264,7 +263,7 @@ main(int argc, char **argv){
 	for (i = 0; i < ptct; i++) {
 		ptp = &pts[i];
 		if (!type || !strcmp(type, ptp->type)) {
-			n = ptp->fn(fd, all, slices, SIZE(slices));
+			n = ptp->fn(fd, all, slices, ARRAY_SIZE(slices));
 			if (n >= 0 && verbose)
 			    printf("%s: %d slices\n", ptp->type, n);
 			if (n > 0 && (verbose || what == LIST)) {
