@@ -22,30 +22,11 @@
 #include <stdio.h>
 #include <stdarg.h>
 
+#include "c.h"
 #include "bitops.h"	/* $(top_srcdir)/include/ */
+
 #include "blkid.h"
 #include "list.h"
-
-#ifdef __GNUC__
-#define __BLKID_ATTR(x) __attribute__(x)
-#else
-#define __BLKID_ATTR(x)
-#endif
-
-#ifndef TRUE
-#define TRUE 1
-#define FALSE 0
-#endif
-
-#include <limits.h>
-#ifndef PATH_MAX
-# define PATH_MAX 4096
-#endif
-
-/* TODO: move to some top-level util-linux include file */
-#ifndef ARRAY_SIZE
-#define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
-#endif
 
 /*
  * This describes the attributes of a specific device.
