@@ -37,7 +37,7 @@ ts_device_has "TYPE" "ext3" $DEVICE || ts_die "Cannot found ext3 on $DEVICE" $DE
 $TS_CMD_MOUNT $DEVICE $TS_MOUNTPOINT >> $TS_OUTPUT 2>&1
 
 # test by ismounted.c
-$TS_HELPER_ISMOUNTED $DEVICE >> $TS_OUTPUT 2>&1
+$TS_HELPER_ISMOUNTED $DEVICE | awk '{print $1}' >> $TS_OUTPUT 2>&1
 
 $TS_CMD_UMOUNT $DEVICE || ts_die "Cannot umount $DEVICE" $DEVICE
 
