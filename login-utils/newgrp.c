@@ -14,17 +14,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <errno.h>
+
+#include "c.h"
 #include "pathnames.h"
 #include "my_crypt.h"
 #include "nls.h"
-
-#ifndef TRUE
-# define TRUE 1
-#endif
-
-#ifndef FALSE
-# define FALSE 0
-#endif
 
 /* try to read password from gshadow */
 static char *
@@ -100,14 +94,14 @@ main(int argc, char *argv[])
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
-    
+
     if (!(pw_entry = getpwuid(getuid()))) {
 	perror(_("newgrp: Who are you?"));
 	exit(1);
     }
-    
+
     shell = (pw_entry->pw_shell[0] ? pw_entry->pw_shell : _PATH_BSHELL);
-    
+
     if (argc < 2) {
 	if(setgid(pw_entry->pw_gid) < 0) {
 	    perror(_("newgrp: setgid"));
