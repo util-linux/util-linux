@@ -32,15 +32,13 @@
 #include <err.h>
 #include <pwd.h>
 #include <grp.h>
+
+#include "c.h"
 #include "nls.h"
 #include "widechar.h"
 
 #ifndef MAXSYMLINKS
 #define MAXSYMLINKS 256
-#endif
-
-#ifndef PATH_MAX
-#define PATH_MAX 4096
 #endif
 
 #ifndef LOGIN_NAME_MAX
