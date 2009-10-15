@@ -77,6 +77,7 @@
 #include "minix.h"
 #include "nls.h"
 #include "pathnames.h"
+#include "bitops.h"
 
 #define MINIX_ROOT_INO 1
 #define MINIX_BAD_INO 2
@@ -132,8 +133,7 @@ static unsigned short good_blocks_table[MAX_GOOD_BLOCKS];
 static int used_good_blocks = 0;
 static unsigned long req_nr_inodes = 0;
 
-#define inode_in_use(x) (isset(inode_map,(x)))
-#define zone_in_use(x) (isset(zone_map,(x)-FIRSTZONE+1))
+#define zone_in_use(x) (isset(zone_map,(x)-FIRSTZONE+1) != 0)
 
 #define mark_inode(x) (setbit(inode_map,(x)))
 #define unmark_inode(x) (clrbit(inode_map,(x)))
