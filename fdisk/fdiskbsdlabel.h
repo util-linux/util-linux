@@ -224,7 +224,7 @@ static struct systypes xbsd_fstypes[] = {
 	{BSD_FS_ADVFS,	"AdvFS"},
 	{ 0, NULL }
 };
-#define BSD_FSMAXTYPES (SIZE(xbsd_fstypes)-1)
+#define BSD_FSMAXTYPES (ARRAY_SIZE(xbsd_fstypes)-1)
 
 #endif
 

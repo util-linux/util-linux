@@ -2,6 +2,8 @@
    fdisk.h
 */
 
+#include "c.h"
+
 #define DEFAULT_SECTOR_SIZE	512
 #define MAX_SECTOR_SIZE	2048
 #define SECTOR_SIZE	512	/* still used in BSD code */
@@ -20,8 +22,6 @@
 
 #define IS_EXTENDED(i) \
 	((i) == EXTENDED || (i) == WIN98_EXTENDED || (i) == LINUX_EXTENDED)
-
-#define SIZE(a)	(sizeof(a)/sizeof((a)[0]))
 
 #define cround(n)	(display_in_cyl_units ? ((n)/units_per_sector)+1 : (n))
 #define scround(x)	(((x)+units_per_sector-1)/units_per_sector)
