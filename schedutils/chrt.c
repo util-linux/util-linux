@@ -29,6 +29,7 @@
 #include <errno.h>
 #include <err.h>
 
+#include "c.h"
 #include "nls.h"
 
 /* the SCHED_BATCH is supported since Linux 2.6.16
@@ -44,10 +45,6 @@
  */
 #if defined (__linux__) && !defined(SCHED_IDLE)
 # define SCHED_IDLE 5
-#endif
-
-#ifndef ARRAY_SIZE
-# define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 #endif
 
 static void show_usage(int rc)
