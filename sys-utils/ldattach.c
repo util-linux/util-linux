@@ -25,6 +25,7 @@
 #include <unistd.h>
 #include <err.h>
 
+#include "c.h"
 #include "nls.h"
 
 #define dbg(format, arg...) \
@@ -36,10 +37,6 @@
 
 #ifndef N_PPS
 # define N_PPS 18
-#endif
-
-#ifndef ARRAY_SIZE
-# define ARRAY_SIZE(arr) (sizeof(arr) / sizeof((arr)[0]))
 #endif
 
 /* attach a line discipline ioctl */
