@@ -43,7 +43,7 @@ available from ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
  </part>
 
   <part>
-    <title>Hihg-level</title>
+    <title>High-level</title>
     <xi:include href="xml/evaluate.xml"/>
     <xi:include href="xml/cache.xml"/>
     <xi:include href="xml/search.xml"/>
