@@ -24,8 +24,6 @@
 #include "xmalloc.h"
 #include "pathnames.h"
 
-#define SIZE(a) (sizeof(a)/sizeof(a[0]))
-
 #ifdef LOOP_SET_FD
 
 static int is_associated(int dev, struct stat *file, unsigned long long offset, int isoff);
