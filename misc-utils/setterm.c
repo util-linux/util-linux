@@ -102,10 +102,10 @@
 #define NCURSES_CONST const	/* define before including term.h */
 #endif
 #include <term.h>
- 
+
 #ifdef HAVE_NCURSES_H
 #include <ncurses.h>
-#elif defined(HAVE_NCURSES_NCURSES_H) 
+#elif defined(HAVE_NCURSES_NCURSES_H)
 #include <ncurses/ncurses.h>
 #endif
 
@@ -115,6 +115,8 @@
 #ifdef HAVE_LINUX_TIOCL_H
 #include <linux/tiocl.h>
 #endif
+
+#include "c.h"
 #include "nls.h"
 
 #if __GNU_LIBRARY__ < 5
@@ -129,12 +131,6 @@ _syscall3(int, klogctl, int, type, char*, buf, int, len);
 extern int klogctl(int type, char *buf, int len);
 
 /* Constants. */
-
-/* General constants. */
-#ifndef TRUE
-#define TRUE  1
-#define FALSE 0
-#endif
 
 /* Keyboard types. */
 #define PC	 0
@@ -304,9 +300,9 @@ par_color(int argc, char **argv, int *option, int *opt_color, int *bad_arg) {
 			*opt_color = DEFAULT;
 		else if (isdigit(argv[0][0]))
 			*opt_color = atoi(argv[0]);
-		else 
+		else
 			*bad_arg = TRUE;
-    
+
 		if(*opt_color < 0 || *opt_color > 9 || *opt_color == 8)
 			*bad_arg = TRUE;
 	}
@@ -361,7 +357,7 @@ par_color2(int argc, char **argv, int *option, int *opt_color, int *bad_arg) {
 			*opt_color |= WHITE;
 		else if (isdigit(argv[argc-1][0]))
 			*opt_color = atoi(argv[argc-1]);
-		else    
+		else
 			*bad_arg = TRUE;
 		if(*opt_color < 0 || *opt_color > 15)
 			*bad_arg = TRUE;
@@ -1138,7 +1134,7 @@ perform_sequence(int vcterm) {
 	if (opt_blength && vcterm) {
 		printf("\033[11;%d]", opt_blength_l);
 	}
-  
+
 	/* -bfreq freqnumber */
 	if (opt_bfreq && vcterm) {
 		printf("\033[10;%d]", opt_bfreq_f);
@@ -1221,7 +1217,7 @@ main(int argc, char **argv) {
 	setlocale(LC_ALL, "");
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
-  
+
 	if (argc < 2)
 		bad_arg = TRUE;
 
