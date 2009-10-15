@@ -101,7 +101,7 @@ struct bdc bdcms[] =
 		IOCTL_ENTRY(BLKALIGNOFF),
 		.name = "--getalignoff",
 		.argtype = ARG_INT,
-		.argtype = -1,
+		.argval = -1,
 		.help = N_("get alignment offset")
 	},{
 		IOCTL_ENTRY(BLKSECTGET),
