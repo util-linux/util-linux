@@ -46,14 +46,14 @@
 #include <sys/ioctl.h>
 #include <sys/stat.h>
 #include <sys/utsname.h>
+
+#include "c.h"
 #include "nls.h"
 #include "blkdev.h"
 #include "linux_version.h"
 #include "common.h"
 #include "wholedisk.h"
 #include "gpt.h"
-
-#define SIZE(a)	(sizeof(a)/sizeof(a[0]))
 
 /*
  * Table of contents:
@@ -135,20 +135,6 @@ fatal(char *s, ...) {
 }
 
 /*
- * GCC nonsense - needed for GCC 3.4.x with -O2
- *
- * Maybe just test with #if (__GNUC__ >= 3) && (__GNUC_MINOR__ >= 4) ?
- */
-#ifndef __GNUC_PREREQ
-#define __GNUC_PREREQ(x,y)	0
-#endif
-#if __GNUC_PREREQ(3,4)
-#define __attribute__used __attribute__ ((used))
-#else
-#define __attribute__used
-#endif
-
-/*
  * arm needs PACKED - use it everywhere?
  */
 #if defined(__GNUC__) && (defined(__arm__) || defined(__alpha__))
@@ -156,7 +142,6 @@ fatal(char *s, ...) {
 #else
 # define PACKED
 #endif
-
 
 /*
  *  A. About seeking
@@ -1413,7 +1398,7 @@ extended_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z)
 
 	cp = s->data + 0x1be;
 
-	if (pno+4 >= SIZE(z->partitions)) {
+	if (pno+4 >= ARRAY_SIZE(z->partitions)) {
 	    do_warn(_("too many partitions - ignoring those past nr (%d)\n"),
 		   pno-1);
 	    break;
@@ -1490,7 +1475,7 @@ bsd_partition(char *dev, int fd, struct part_desc *ep, struct disk_desc *z) {
 
 	bp = bp0 = &l->d_partitions[0];
 	while (bp - bp0 < BSD_MAXPARTITIONS && bp - bp0 < l->d_npartitions) {
-		if (pno+1 >= SIZE(z->partitions)) {
+		if (pno+1 >= ARRAY_SIZE(z->partitions)) {
 			do_warn(_("too many partitions - ignoring those "
 			       "past nr (%d)\n"), pno-1);
 			break;
@@ -1749,7 +1734,7 @@ read_stdin(char **fields, char *line, int fieldssize, int linesize) {
 	      ip++;
 	    if (*ip == 0)
 	      return fno;
-	    for(d = dumpflds; d-dumpflds < SIZE(dumpflds); d++) {
+	    for(d = dumpflds; d-dumpflds < ARRAY_SIZE(dumpflds); d++) {
 		if (!strncmp(ip, d->fldname, strlen(d->fldname))) {
 		    ip += strlen(d->fldname);
 		    while(isspace(*ip))
@@ -2024,7 +2009,7 @@ read_line(int pno, struct part_desc *ep, char *dev, int interactive,
 
     /* read input line - skip blank lines when reading from a file */
     do {
-	fno = read_stdin(fields, line, SIZE(fields), SIZE(line));
+	fno = read_stdin(fields, line, ARRAY_SIZE(fields), ARRAY_SIZE(line));
     } while(fno == RD_CMD || (fno == 0 && !interactive));
     if (fno == RD_EOF) {
 	return -1;
@@ -2241,7 +2226,7 @@ read_partition_chain(char *dev, int interactive, struct part_desc *ep,
     eob = 0;
     while (1) {
 	base = z->partno;
-	if (base+4 > SIZE(z->partitions)) {
+	if (base+4 > ARRAY_SIZE(z->partitions)) {
 	    do_warn(_("too many partitions\n"));
 	    break;
 	}
@@ -2270,7 +2255,7 @@ read_input(char *dev, int interactive, struct disk_desc *z) {
     int i;
     struct part_desc *partitions = &(z->partitions[0]), *ep;
 
-    for (i=0; i < SIZE(z->partitions); i++)
+    for (i=0; i < ARRAY_SIZE(z->partitions); i++)
       partitions[i] = zero_part_desc;
     z->partno = 0;
 
