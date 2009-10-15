@@ -50,6 +50,8 @@
  *
  * @UUID: filesystem UUID (lower case)
  *
+ * @UUID_SUB: subvolume uuid (e.g. btrfs)
+ *
  * @UUID_RAW: raw UUID from FS superblock
  *
  * @EXT_JOURNAL: external journal UUID

@@ -134,7 +134,7 @@ struct blkid_chaindrv {
  */
 #define BLKID_PROBVAL_BUFSIZ	64
 
-#define BLKID_NVALS_SUBLKS	12
+#define BLKID_NVALS_SUBLKS	14
 #define BLKID_NVALS_TOPLGY	3
 #define BLKID_NVALS_PARTS	1
 
