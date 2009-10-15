@@ -49,10 +49,10 @@
 #include <ctype.h>		/* for isdigit() */
 #include <unistd.h>
 #include <signal.h>
+
+#include "c.h"
 #include "kill.h"
 #include "nls.h"
-
-#define SIZE(a)	(sizeof(a)/sizeof(a[0]))
 
 struct signv {
 	char *name;
@@ -286,7 +286,7 @@ int signame_to_signum (char *sig)
 
     if (! strncasecmp (sig, "sig", 3))
 	sig += 3;
-    for (n = 0; n < SIZE(sys_signame); n++) {
+    for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
 	if (! strcasecmp (sys_signame[n].name, sig))
 	    return sys_signame[n].val;
     }
@@ -319,7 +319,7 @@ void printsig (int sig)
 {
     int n;
 
-    for (n = 0; n < SIZE(sys_signame); n++) {
+    for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
 	if (sys_signame[n].val == sig) {
 	    printf ("%s\n", sys_signame[n].name);
 	    return;
@@ -333,7 +333,7 @@ void printsignals (FILE *fp)
     int n, lth;
     int lpos = 0;
 
-    for (n = 0; n < SIZE(sys_signame); n++) {
+    for (n = 0; n < ARRAY_SIZE(sys_signame); n++) {
 	lth = 1+strlen(sys_signame[n].name);
 	if (lpos+lth > 72) {
 	    fputc ('\n', fp);
