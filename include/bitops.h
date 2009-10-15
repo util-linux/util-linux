@@ -4,6 +4,22 @@
 #include <stdint.h>
 #include <endian.h>
 
+/*
+ * Bit map related macros. Usually provided by libc.
+ */
+#include <sys/param.h>
+
+#ifndef NBBY
+# define NBBY            CHAR_BIT
+#endif
+
+#ifndef setbit
+# define setbit(a,i)	((a)[(i)/NBBY] |= 1<<((i)%NBBY))
+# define clrbit(a,i)	((a)[(i)/NBBY] &= ~(1<<((i)%NBBY)))
+# define isset(a,i)	((a)[(i)/NBBY] & (1<<((i)%NBBY)))
+# define isclr(a,i)	(((a)[(i)/NBBY] & (1<<((i)%NBBY))) == 0)
+#endif
+
 #if !defined __BYTE_ORDER || !(__BYTE_ORDER == __LITTLE_ENDIAN) && !(__BYTE_ORDER == __BIG_ENDIAN)
 #error missing __BYTE_ORDER
 #endif
