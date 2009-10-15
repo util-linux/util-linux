@@ -11,6 +11,7 @@
 #include <sys/ioctl.h>
 #include <errno.h>
 
+#include "c.h"
 #include "nls.h"
 #include "blkdev.h"
 
@@ -171,8 +172,6 @@ struct bdc bdcms[] =
 	}
 };
 
-#define SIZE(a)	(sizeof(a)/sizeof((a)[0]))
-
 static void
 usage(void) {
 	int i;
@@ -186,7 +185,7 @@ usage(void) {
 	fprintf(stderr, _("Available commands:\n"));
 	fprintf(stderr, "\t%-30s %s\n", "--getsz",
 			_("get size in 512-byte sectors"));
-	for (i = 0; i < SIZE(bdcms); i++) {
+	for (i = 0; i < ARRAY_SIZE(bdcms); i++) {
 		if (bdcms[i].argname)
 			fprintf(stderr, "\t%s %-*s %s\n", bdcms[i].name,
 					(int) (29 - strlen(bdcms[i].name)),
@@ -203,7 +202,7 @@ static int
 find_cmd(char *s) {
 	int j;
 
-	for (j = 0; j < SIZE(bdcms); j++)
+	for (j = 0; j < ARRAY_SIZE(bdcms); j++)
 		if (!strcmp(s, bdcms[j].name))
 			return j;
 	return -1;
