@@ -1,6 +1,7 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 dist_noinst_HEADERS = \
+	c.h \
 	bitops.h \
 	blkdev.h \
 	canonicalize.h \
