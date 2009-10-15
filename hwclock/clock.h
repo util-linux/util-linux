@@ -7,6 +7,8 @@
 #include <errno.h>		/* for errno, EPERM, EINVAL, ENOENT */
 #include <time.h>
 
+#include "c.h"
+
 struct clock_ops {
 	char *interface_name;
         int (*get_permissions)(void);
@@ -20,8 +22,6 @@ extern struct clock_ops *probe_for_rtc_clock(void);
 extern struct clock_ops *probe_for_kd_clock(void);
 
 typedef int bool;
-#define TRUE 1
-#define FALSE 0
 
 /* hwclock.c */
 extern char *progname;
