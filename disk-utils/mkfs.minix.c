@@ -111,7 +111,7 @@ static char * inode_buffer = NULL;
 #define Inode (((struct minix_inode *) inode_buffer)-1)
 #define Inode2 (((struct minix2_inode *) inode_buffer)-1)
 
-static char super_block_buffer[BLOCK_SIZE];
+static char *super_block_buffer;
 static char boot_block_buffer[512];
 #define Super (*(struct minix_super_block *)super_block_buffer)
 #define INODES ((unsigned long)Super.s_ninodes)
@@ -394,7 +394,10 @@ setup_tables(void) {
 	int i;
 	unsigned long inodes;
 
-	memset(super_block_buffer,0,BLOCK_SIZE);
+	super_block_buffer = calloc(1, BLOCK_SIZE);
+	if (!super_block_buffer)
+		die(_("unable to alloc buffer for superblock"));
+
 	memset(boot_block_buffer,0,512);
 	Super.s_magic = magic;
 	Super.s_log_zone_size = 0;
