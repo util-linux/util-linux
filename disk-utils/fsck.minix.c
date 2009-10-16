@@ -145,7 +145,8 @@ static char current_name[MAX_DEPTH*(NAME_MAX+1)+1];
 static char * inode_buffer = NULL;
 #define Inode (((struct minix_inode *) inode_buffer)-1)
 #define Inode2 (((struct minix2_inode *) inode_buffer)-1)
-static char super_block_buffer[BLOCK_SIZE];
+
+static char *super_block_buffer;
 #define Super (*(struct minix_super_block *)super_block_buffer)
 #define INODES ((unsigned long)Super.s_ninodes)
 #define ZONES ((unsigned long)(version2 ? Super.s_zones : Super.s_nzones))
@@ -584,6 +585,11 @@ static void
 read_superblock(void) {
 	if (BLOCK_SIZE != lseek(IN, BLOCK_SIZE, SEEK_SET))
 		die(_("seek failed"));
+
+	super_block_buffer = calloc(1, BLOCK_SIZE);
+	if (!super_block_buffer)
+		die(_("unable to alloc buffer for superblock"));
+
 	if (BLOCK_SIZE != read(IN, super_block_buffer, BLOCK_SIZE))
 		die(_("unable to read super block"));
 	if (MAGIC == MINIX_SUPER_MAGIC) {
