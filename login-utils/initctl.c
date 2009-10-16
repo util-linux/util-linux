@@ -64,8 +64,15 @@ int main (int argc, char **argv)
     struct sigaction sa;
     sigset_t ss;
     char *ptr;
-    long buffer[COMMAND_SIZE / sizeof (long) + 1];
-    struct command_struct *command = (struct command_struct *) buffer;
+    long *buffer;
+    struct command_struct *command;
+
+    buffer = calloc(COMMAND_SIZE / sizeof (long) + 1, sizeof(long));
+    if (!buffer) {
+	    fprintf (stderr, "Unable allocate buffer for command\n");
+	    exit(1);
+    }
+    command = (struct command_struct *) buffer;
 
     sigemptyset (&ss);
     sigaddset (&ss, SIG_PRESENT);
