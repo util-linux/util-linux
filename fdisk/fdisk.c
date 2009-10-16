@@ -174,7 +174,7 @@ static int type_open = O_RDWR;
  * Raw disk label. For DOS-type partition tables the MBR,
  * with descriptions of the primary partitions.
  */
-unsigned char MBRbuffer[MAX_SECTOR_SIZE];
+unsigned char *MBRbuffer;
 
 /*
  * per partition table entry data
@@ -947,6 +947,27 @@ get_geometry(int fd, struct geom *g) {
 		g->sectors = sectors;
 		g->cylinders = cylinders;
 	}
+}
+
+/*
+ * Please, always use allocated buffer if you want to cast the buffer to
+ * any struct -- cast non-allocated buffer to any struct is against
+ * strict-aliasing rules.  --kzak 16-Oct-2009
+ */
+static void init_mbr_buffer(void)
+{
+	if (MBRbuffer)
+		return;
+
+	MBRbuffer = calloc(1, MAX_SECTOR_SIZE);
+	if (!MBRbuffer)
+		fatal(out_of_memory);
+}
+
+void zeroize_mbr_buffer(void)
+{
+	if (MBRbuffer)
+		memset(MBRbuffer, 0, MAX_SECTOR_SIZE);
 }
 
 /*
@@ -2657,6 +2678,8 @@ main(int argc, char **argv) {
 		printf(_("Warning: the -b (set sector size) option should"
 			 " be used with one specified device\n"));
 #endif
+
+	init_mbr_buffer();
 
 	if (optl) {
 		nowarn = 1;

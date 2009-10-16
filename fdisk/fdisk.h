@@ -76,7 +76,9 @@ extern int valid_part_table_flag(unsigned char *b);
 extern unsigned int read_int(unsigned int low, unsigned int dflt,
 			     unsigned int high, unsigned int base, char *mesg);
 
-extern unsigned char MBRbuffer[MAX_SECTOR_SIZE];
+extern unsigned char *MBRbuffer;
+extern void zeroize_mbr_buffer(void);
+
 extern unsigned int heads, cylinders, sector_size;
 extern unsigned long long sectors;
 extern char *partition_type(unsigned char type);

@@ -44,7 +44,7 @@ mac_nolabel( void )
     maclabel->magic = 0;
     mac_label = 0;
     partitions = 4;
-    memset( MBRbuffer, 0, sizeof(MBRbuffer) );	/* avoid fdisk cores */
+    zeroize_mbr_buffer();
     return;
 }
 

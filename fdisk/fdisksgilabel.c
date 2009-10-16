@@ -737,7 +737,7 @@ create_sgilabel(void)
 		}
 	}
 
-	memset(MBRbuffer, 0, sizeof(MBRbuffer));
+	zeroize_mbr_buffer();
 	sgilabel->magic = SSWAP32(SGI_LABEL_MAGIC);
 	sgilabel->boot_part = SSWAP16(0);
 	sgilabel->swap_part = SSWAP16(1);
