@@ -97,6 +97,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&lvm1_idinfo,
 	&snapcow_idinfo,
 	&luks_idinfo,
+	&vmfs_volume_idinfo,
 
 	/* Filesystems */
 	&vfat_idinfo,
@@ -134,7 +135,8 @@ static const struct blkid_idinfo *idinfos[] =
 	&netware_idinfo,
 	&btrfs_idinfo,
 	&ubifs_idinfo,
-	&bfs_idinfo
+	&bfs_idinfo,
+	&vmfs_fs_idinfo
 };
 
 /*

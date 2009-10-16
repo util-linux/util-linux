@@ -61,6 +61,8 @@ extern const struct blkid_idinfo btrfs_idinfo;
 extern const struct blkid_idinfo ubifs_idinfo;
 extern const struct blkid_idinfo zfs_idinfo;
 extern const struct blkid_idinfo bfs_idinfo;
+extern const struct blkid_idinfo vmfs_volume_idinfo;
+extern const struct blkid_idinfo vmfs_fs_idinfo;
 
 /*
  * superblock functions
