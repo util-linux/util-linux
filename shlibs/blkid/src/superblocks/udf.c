@@ -28,28 +28,32 @@ struct volume_descriptor {
 		uint16_t	crc;
 		uint16_t	crc_len;
 		uint32_t	location;
-	} tag;
+	} __attribute__((packed)) tag;
+
 	union {
 		struct anchor_descriptor {
 			uint32_t	length;
 			uint32_t	location;
-		} anchor;
+		} __attribute__((packed)) anchor;
+
 		struct primary_descriptor {
 			uint32_t	seq_num;
 			uint32_t	desc_num;
 			struct dstring {
 				uint8_t	clen;
 				uint8_t	c[31];
-			} ident;
-		} primary;
-	} type;
-};
+			} __attribute__((packed)) ident;
+		} __attribute__((packed)) primary;
+
+	} __attribute__((packed)) type;
+
+} __attribute__((packed));
 
 struct volume_structure_descriptor {
 	uint8_t		type;
 	uint8_t		id[5];
 	uint8_t		version;
-};
+} __attribute__((packed));
 
 #define UDF_VSD_OFFSET			0x8000
 

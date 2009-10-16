@@ -39,7 +39,7 @@ struct xenix_super_block {
 	uint8_t		s_fill[371];
 	uint32_t	s_magic;
 	uint32_t	s_type;
-};
+} __attribute__((packed));
 
 
 #define SYSV_NICINOD			100

@@ -39,20 +39,20 @@ struct hpfs_boot_block
 	uint8_t		sig_hpfs[8];
 	uint8_t		pad[448];
 	uint8_t		magic[2];
-};
+} __attribute__((packed));
 
 struct hpfs_super_block
 {
 	uint8_t		magic[4];
 	uint8_t		magic1[4];
 	uint8_t		version;
-};
+} __attribute__((packed));
 
 struct hpfs_spare_super
 {
 	uint8_t		magic[4];
 	uint8_t		magic1[4];
-};
+} __attribute__((packed));
 
 
 #define HPFS_SB_OFFSET			0x2000

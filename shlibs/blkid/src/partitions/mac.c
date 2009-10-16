@@ -42,7 +42,7 @@ struct mac_partition {
 	char		processor[16];	/* identifies ISA of boot */
 
 	/* there is more stuff after this that we don't need */
-};
+} __attribute__((packed));
 
 /*
  * Driver descriptor structure, in block 0
@@ -54,7 +54,7 @@ struct mac_driver_desc {
 	uint32_t	block_count;	/* number of blocks on the device */
 
 	/* there is more stuff after this that we don't need */
-};
+} __attribute__((packed));
 
 static inline unsigned char *get_mac_block(
 					blkid_probe pr,

@@ -35,7 +35,7 @@ struct silicon_metadata {
 	uint16_t	vendor_id;
 	uint16_t	minor_ver;
 	uint16_t	major_ver;
-};
+} __attribute__((packed));
 
 #define SILICON_MAGIC		0x2F000000
 

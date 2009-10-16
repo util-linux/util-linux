@@ -67,7 +67,7 @@ struct adaptec_metadata {
 	uint32_t	raidtbl;
 	uint16_t	raidline;
 	uint8_t		res9[0xF6];
-};
+} __attribute__((packed));
 
 #define AD_SIGNATURE	"DPTM"
 #define AD_MAGIC	0x37FC4D1E

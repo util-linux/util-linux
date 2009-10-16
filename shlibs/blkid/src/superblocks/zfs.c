@@ -24,7 +24,7 @@ struct zfs_uberblock {
 	uint64_t	ub_guid_sum;	/* sum of all vdev guids	*/
 	uint64_t	ub_timestamp;	/* UTC time of last sync	*/
 	/*blkptr_t	ub_rootbp;*/	/* MOS objset_phys_t		*/
-};
+} __attribute__((packed));
 
 static int probe_zfs(blkid_probe pr, const struct blkid_idmag *mag)
 {

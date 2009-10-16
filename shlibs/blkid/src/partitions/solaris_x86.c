@@ -39,7 +39,7 @@ struct solaris_slice {
 	uint16_t s_flag;     /* permission flags */
 	uint32_t s_start;    /* start sector no of partition */
 	uint32_t s_size;     /* # of blocks in partition */
-};
+} __attribute__((packed));
 
 struct solaris_vtoc {
 	unsigned int v_bootinfo[3];     /* info needed by mboot (unsupported) */
@@ -55,7 +55,7 @@ struct solaris_vtoc {
 
 	unsigned int timestamp[SOLARIS_MAXPARTITIONS]; /* timestamp (unsupported) */
 	char         v_asciilabel[128];	/* for compatibility */
-};
+} __attribute__((packed));
 
 static int probe_solaris_pt(blkid_probe pr, const struct blkid_idmag *mag)
 {

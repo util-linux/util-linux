@@ -89,7 +89,7 @@ struct bsd_disklabel {
 		uint8_t		p_fstype;	/* filesystem type, see below */
 		uint8_t		p_frag;		/* filesystem fragments per block */
 		uint16_t	p_cpg;	        /* filesystem cylinders per group */
-	} d_partitions[BSD_MAXPARTITIONS];	/* actually may be more */
+	} __attribute__((packed)) d_partitions[BSD_MAXPARTITIONS];	/* actually may be more */
 } __attribute__((packed));
 
 

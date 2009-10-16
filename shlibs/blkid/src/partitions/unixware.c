@@ -58,7 +58,7 @@ struct unixware_partition {
 	uint16_t	s_flags;	/* permission flags */
 	uint32_t	start_sect;	/* starting sector */
 	uint32_t	nr_sects;	/* number of sectors */
-};
+} __attribute__((packed));
 
 struct unixware_disklabel {
 	uint32_t	d_type;		/* drive type */
@@ -91,7 +91,7 @@ struct unixware_disklabel {
 
 		struct unixware_partition
 			v_slice[UNIXWARE_MAXPARTITIONS]; /* partition */
-	} vtoc;
+	} __attribute__((packed)) vtoc;
 };
 
 static int probe_unixware_pt(blkid_probe pr, const struct blkid_idmag *mag)

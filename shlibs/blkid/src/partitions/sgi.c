@@ -47,7 +47,7 @@ struct sgi_device_parameter {
 	uint16_t xylogics_gap2;
 	uint16_t xylogics_readgate;
 	uint16_t xylogics_writecont;
-};
+} __attribute__((packed));
 
 struct sgi_disklabel {
 	uint32_t magic;			/* magic number */
@@ -61,18 +61,18 @@ struct sgi_disklabel {
 		unsigned char name[8];	/* name of volume */
 		uint32_t block_num;	/* logical block number */
 		uint32_t num_bytes;	/* how big, in bytes */
-	} volume[15];
+	} __attribute__((packed)) volume[15];
 
 	struct sgi_partition {
 		uint32_t num_blocks;	/* size in logical blocks */
 		uint32_t first_block;	/* first logical block */
 		uint32_t type;		/* type of this partition */
-	} partitions[SGI_MAXPARTITIONS];
+	} __attribute__((packed)) partitions[SGI_MAXPARTITIONS];
 
 	/* checksum is the 32bit 2's complement sum of the disklabel */
 	uint32_t csum;			/* disk label checksum */
 	uint32_t padding;		/* padding */
-};
+} __attribute__((packed));
 
 static uint32_t count_checksum(struct sgi_disklabel *label)
 {

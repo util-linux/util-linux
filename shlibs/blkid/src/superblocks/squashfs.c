@@ -26,7 +26,7 @@ struct sqsh_super_block {
 	uint32_t	directory_table_start_2;
 	uint16_t	s_major;
 	uint16_t	s_minor;
-};
+} __attribute__((packed));
 
 static int probe_squashfs(blkid_probe pr, const struct blkid_idmag *mag)
 {

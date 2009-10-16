@@ -21,7 +21,7 @@ struct romfs_super_block {
 	unsigned char	ros_magic[8];
 	uint32_t	ros_dummy1[2];
 	unsigned char	ros_volume[16];
-};
+} __attribute__((packed));
 
 static int probe_romfs(blkid_probe pr, const struct blkid_idmag *mag)
 {

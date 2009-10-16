@@ -28,7 +28,7 @@ struct swap_header_v1_2 {
 	unsigned char	volume[16];
 	uint32_t	padding[117];
 	uint32_t	badpages[1];
-};
+} __attribute__((packed));
 
 #define PAGESIZE_MIN	0xff6	/* 4086 (arm, i386, ...) */
 #define PAGESIZE_MAX	0xfff6	/* 65526 (ia64) */
