@@ -6,6 +6,7 @@ libblkid_topology_la_LIBADD =
 noinst_LTLIBRARIES = libblkid_topology.la
 libblkid_topology_la_SOURCES =	topology.c \
 				topology.h \
+				ioctl.c \
 				sysfs.c \
 				md.c \
 				dm.c \
