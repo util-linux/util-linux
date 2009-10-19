@@ -135,6 +135,9 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 	if (!pr || chn->idx < -1)
 		return -1;
 
+	if (!S_ISBLK(pr->mode))
+		return -1;	/* nothing, works with block devices only */
+
 	if (chn->binary) {
 		DBG(DEBUG_LOWPROBE, printf("initialize topology binary data\n"));
 
