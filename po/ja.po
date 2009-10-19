@@ -1,16 +1,16 @@
 # Japanese messages for util-linux-ng
 # Copyright (C) 2001 Free Software Foundation, Inc.
 # This file is distributed under the same license as the util-linux-ng package.
-# Daisuke Yamashita <yamad@mb.infoweb.ne.jp>, 1999-2001
 #   includes cfdisk original translation by
 #         Hidenobu NABETANI <nabetani@kern.phys.sci.osaka-u.ac.jp>
-# Makoto Kato <makoto.kt@gmail.com>, 2009
+# Daisuke Yamashita <yamad@mb.infoweb.ne.jp>, 1999-2001.
+# Makoto Kato <makoto.kt@gmail.com>, 2009.
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux-ng 2.14.2-rc2\n"
+"Project-Id-Version: util-linux-ng 2.16-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-07-15 23:23+0200\n"
-"PO-Revision-Date: 2009-01-28 16:54+0900\n"
+"POT-Creation-Date: 2009-07-02 14:56+0200\n"
+"PO-Revision-Date: 2009-07-20 14:08+0900\n"
 "Last-Translator: Makoto Kato <makoto.kt@gmail.com>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
@@ -45,7 +45,7 @@ msgstr "ブロックサイズを設定"
 
 #: disk-utils/blockdev.c:43
 msgid "get 32-bit sector count"
-msgstr ""
+msgstr "32-bitセクタカウントを取得する"
 
 #: disk-utils/blockdev.c:44
 msgid "get size in bytes"
@@ -60,14 +60,12 @@ msgid "get readahead"
 msgstr "readahead 値を取得"
 
 #: disk-utils/blockdev.c:47
-#, fuzzy
 msgid "set filesystem readahead"
-msgstr "readahead 値を設定"
+msgstr "ファイルシステム readahead 値を設定"
 
 #: disk-utils/blockdev.c:48
-#, fuzzy
 msgid "get filesystem readahead"
-msgstr "readahead 値を取得"
+msgstr "ファイルシステム readahead 値を取得"
 
 #: disk-utils/blockdev.c:49
 msgid "flush buffers"
@@ -144,17 +142,17 @@ msgstr "使い方:\n"
 #: disk-utils/elvtune.c:53
 #, c-format
 msgid "\tNOTE: elvtune only works with 2.4 kernels\n"
-msgstr ""
+msgstr "\tNOTE: elvtuneは2.4カーネルでのみ動作します\n"
 
 #: disk-utils/elvtune.c:104
-#, fuzzy, c-format
+#, c-format
 msgid "parse error\n"
-msgstr "seek エラーが発生しました"
+msgstr "解析エラー\n"
 
 #: disk-utils/elvtune.c:110
 #, c-format
 msgid "missing blockdevice, use -h for help\n"
-msgstr ""
+msgstr "ブロックデバイスが見つかりません。ヘルプを表示するためには、-hを使用してください\n"
 
 #: disk-utils/elvtune.c:131
 #, c-format
@@ -163,6 +161,9 @@ msgid ""
 "elvtune is only useful on older kernels;\n"
 "for 2.6 use IO scheduler sysfs tunables instead..\n"
 msgstr ""
+"\n"
+"elvtuneは古いカーネル上でのみ有益なものです;\n"
+"2.6カーネルでは、替わりにIOスケジューラーのsysfs経由の設定値を使いましょう..\n"
 
 #: disk-utils/fdformat.c:31
 #, c-format
@@ -249,48 +250,47 @@ msgstr ""
 " file       file to test\n"
 
 #: disk-utils/fsck.cramfs.c:164
-#, fuzzy, c-format
+#, c-format
 msgid "stat failed: %s"
-msgstr "(次のファイル: %s)"
+msgstr "stat が失敗: %s"
 
 #: disk-utils/fsck.cramfs.c:168 disk-utils/fsck.cramfs.c:552
-#, fuzzy, c-format
+#, c-format
 msgid "open failed: %s"
-msgstr "openpty が失敗\n"
+msgstr "open が失敗: %s"
 
 #: disk-utils/fsck.cramfs.c:173
 #, c-format
 msgid "ioctl failed: unable to determine device size: %s"
-msgstr ""
+msgstr "ioctl が失敗: デバイスサイズを取得できません: %s"
 
 #: disk-utils/fsck.cramfs.c:181
-#, fuzzy, c-format
+#, c-format
 msgid "not a block device or file: %s"
-msgstr "%s: ブロックデバイスではありません\n"
+msgstr "ブロックデバイスかファイルではありません: %s"
 
 #: disk-utils/fsck.cramfs.c:185 disk-utils/fsck.cramfs.c:227
 msgid "file length too short"
-msgstr ""
+msgstr "ファイルの長さが短すぎます"
 
 #: disk-utils/fsck.cramfs.c:190 disk-utils/fsck.cramfs.c:198
 #: disk-utils/fsck.cramfs.c:259 disk-utils/fsck.cramfs.c:279
-#, fuzzy, c-format
+#, c-format
 msgid "read failed: %s"
-msgstr "(次のファイル: %s)"
+msgstr "読み込みに失敗しました: %s"
 
 #: disk-utils/fsck.cramfs.c:208
 msgid "superblock magic not found"
-msgstr ""
+msgstr "スーパーブロックのマジック値が見つかりません"
 
 #: disk-utils/fsck.cramfs.c:217
-#, fuzzy
 msgid "unsupported filesystem features"
-msgstr "ファイルシステムタイプを入力してください: "
+msgstr "サポートされないファイルシステムの機能です"
 
 #: disk-utils/fsck.cramfs.c:220
-#, fuzzy, c-format
+#, c-format
 msgid "superblock size (%d) too small"
-msgstr "ブロックの数が少なすぎます"
+msgstr "スーパーブロックのサイズ (%d) が少なすぎます"
 
 #: disk-utils/fsck.cramfs.c:224
 #, fuzzy
@@ -305,11 +305,11 @@ msgstr "警告: パーティション %s はディスクの終りを越えてい
 #: disk-utils/fsck.cramfs.c:234
 #, c-format
 msgid "warning: old cramfs format\n"
-msgstr ""
+msgstr "警告: 古いcramfs形式です\n"
 
 #: disk-utils/fsck.cramfs.c:247
 msgid "unable to test CRC: old cramfs format"
-msgstr ""
+msgstr "CRCをテストできません: 古いcramfs形式です"
 
 #: disk-utils/fsck.cramfs.c:273 disk-utils/fsck.cramfs.c:340
 #: disk-utils/fsck.cramfs.c:478 login-utils/chfn.c:529 login-utils/chsh.c:439
@@ -318,14 +318,12 @@ msgid "malloc failed"
 msgstr "malloc に失敗"
 
 #: disk-utils/fsck.cramfs.c:298
-#, fuzzy
 msgid "crc error"
-msgstr ", エラー"
+msgstr "crcエラー"
 
 #: disk-utils/fsck.cramfs.c:365
-#, fuzzy
 msgid "root inode is not directory"
-msgstr "root inode がディレクトリではありません"
+msgstr "root inode がディレクトリではありません "
 
 #: disk-utils/fsck.cramfs.c:370
 #, c-format
@@ -334,7 +332,7 @@ msgstr ""
 
 #: disk-utils/fsck.cramfs.c:388
 msgid "data block too large"
-msgstr ""
+msgstr "データブロックが大きすぎます"
 
 #: disk-utils/fsck.cramfs.c:392
 #, c-format
@@ -364,7 +362,7 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:440
 #, fuzzy, c-format
 msgid "write failed: %s"
-msgstr "(次のファイル: %s)"
+msgstr "書き込みに失敗しました: %s"
 
 #: disk-utils/fsck.cramfs.c:453
 #, fuzzy, c-format
@@ -372,9 +370,9 @@ msgid "lchown failed: %s"
 msgstr "マウントに失敗しました"
 
 #: disk-utils/fsck.cramfs.c:459
-#, fuzzy, c-format
+#, c-format
 msgid "chown failed: %s"
-msgstr "マウントに失敗しました"
+msgstr "chown に失敗しました: %s"
 
 #: disk-utils/fsck.cramfs.c:466
 #, fuzzy, c-format
@@ -387,30 +385,29 @@ msgid "directory inode has zero offset and non-zero size: %s"
 msgstr ""
 
 #: disk-utils/fsck.cramfs.c:495
-#, fuzzy, c-format
+#, c-format
 msgid "mkdir failed: %s"
-msgstr "/dev: chdir() が失敗: %m"
+msgstr "mkdirが失敗: %s"
 
 #: disk-utils/fsck.cramfs.c:512
 msgid "filename length is zero"
-msgstr ""
+msgstr "ファイル名の長さがゼロです"
 
 #: disk-utils/fsck.cramfs.c:515
 msgid "bad filename length"
-msgstr ""
+msgstr "悪いファイル名の長さ"
 
 #: disk-utils/fsck.cramfs.c:522
-#, fuzzy
 msgid "bad inode offset"
-msgstr "不正な inode サイズ"
+msgstr "不正なiノードオフセット"
 
 #: disk-utils/fsck.cramfs.c:538
 msgid "file inode has zero offset and non-zero size"
-msgstr ""
+msgstr "ファイルiノードはゼロオフセットかゼロではないサイズを持ちます"
 
 #: disk-utils/fsck.cramfs.c:541
 msgid "file inode has zero size and non-zero offset"
-msgstr ""
+msgstr "ファイルiノードはゼロサイズかゼロではないオフセットを持ちます"
 
 #: disk-utils/fsck.cramfs.c:572
 msgid "symbolic link has zero offset"
@@ -418,7 +415,7 @@ msgstr ""
 
 #: disk-utils/fsck.cramfs.c:575
 msgid "symbolic link has zero size"
-msgstr ""
+msgstr "シンボリックリンクはサイズがゼロです"
 
 #: disk-utils/fsck.cramfs.c:587
 #, fuzzy, c-format
@@ -426,9 +423,9 @@ msgid "size error in symlink: %s"
 msgstr "%s への書き込みエラー: %s"
 
 #: disk-utils/fsck.cramfs.c:602
-#, fuzzy, c-format
+#, c-format
 msgid "symlink failed: %s"
-msgstr "fsync に失敗"
+msgstr "symlink が失敗: %s"
 
 #: disk-utils/fsck.cramfs.c:614
 #, c-format
@@ -443,7 +440,7 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:632
 #, c-format
 msgid "socket has non-zero size: %s"
-msgstr ""
+msgstr "ソケットはゼロではないサイズを持ちます: %s"
 
 #: disk-utils/fsck.cramfs.c:637
 #, c-format
@@ -451,9 +448,9 @@ msgid "bogus mode: %s (%o)"
 msgstr ""
 
 #: disk-utils/fsck.cramfs.c:647
-#, fuzzy, c-format
+#, c-format
 msgid "mknod failed: %s"
-msgstr "マウントに失敗しました"
+msgstr "mknod に失敗しました: %s"
 
 #: disk-utils/fsck.cramfs.c:683
 #, c-format
@@ -466,19 +463,16 @@ msgid "directory data end (%ld) != file data start (%ld)"
 msgstr ""
 
 #: disk-utils/fsck.cramfs.c:691
-#, fuzzy
 msgid "invalid file data offset"
-msgstr "不正な id: %s\n"
+msgstr "不正なファイルデータオフセット"
 
 #: disk-utils/fsck.cramfs.c:715
-#, fuzzy
 msgid "failed to allocate outbuffer"
-msgstr "バッファの確保ができません。\n"
+msgstr "出力バッファの確保に失敗しました"
 
 #: disk-utils/fsck.cramfs.c:728
-#, fuzzy
 msgid "compiled without -x support"
-msgstr "mount: -f オプションのサポート無しでコンパイルされています\n"
+msgstr "-x サポートなしでコンパイルされています"
 
 #: disk-utils/fsck.minix.c:210
 #, c-format
@@ -551,7 +545,7 @@ msgstr "スーパーブロックを書き込めません"
 
 #: disk-utils/fsck.minix.c:559
 msgid "Unable to write inode map"
-msgstr "inode マップを書き込めません"
+msgstr "iノードマップを書き込めません"
 
 #: disk-utils/fsck.minix.c:561
 msgid "Unable to write zone map"
@@ -559,7 +553,7 @@ msgstr "ゾーンマップを書き込めません"
 
 #: disk-utils/fsck.minix.c:563
 msgid "Unable to write inodes"
-msgstr "inode を書き込めません"
+msgstr "iノードを書き込めません"
 
 #: disk-utils/fsck.minix.c:590
 msgid "seek failed"
@@ -620,12 +614,12 @@ msgstr "inode を読込めません"
 #: disk-utils/fsck.minix.c:645
 #, c-format
 msgid "Warning: Firstzone != Norm_firstzone\n"
-msgstr "Warning: Firstzone != Norm_firstzone\n"
+msgstr "警告: Firstzone != Norm_firstzone\n"
 
 #: disk-utils/fsck.minix.c:650 disk-utils/mkfs.minix.c:450
 #, c-format
 msgid "%ld inodes\n"
-msgstr "inode 数 %ld\n"
+msgstr "iノード数 %ld\n"
 
 #: disk-utils/fsck.minix.c:651 disk-utils/mkfs.minix.c:451
 #, c-format
@@ -664,8 +658,7 @@ msgstr ""
 #: disk-utils/fsck.minix.c:671 disk-utils/fsck.minix.c:722
 #, c-format
 msgid "Inode %d marked unused, but used for file '%s'\n"
-msgstr ""
-"Inode %d は不使用マークされていますが、ファイル '%s' が利用しています\n"
+msgstr "iノード %d は不使用マークされていますが、ファイル '%s' が利用しています\n"
 
 #: disk-utils/fsck.minix.c:675 disk-utils/fsck.minix.c:726
 msgid "Mark in use"
@@ -824,12 +817,12 @@ msgid ""
 "%6ld inodes used (%ld%%)\n"
 msgstr ""
 "\n"
-"%6ld iノードが使われた (%ld%%)\n"
+"%6ld iノードが使用中 (%ld%%)\n"
 
 #: disk-utils/fsck.minix.c:1378
 #, c-format
 msgid "%6ld zones used (%ld%%)\n"
-msgstr "%6ld zone が使われた (%ld%%)\n"
+msgstr "%6ld zone が使用中 (%ld%%)\n"
 
 #: disk-utils/fsck.minix.c:1380
 #, c-format
@@ -861,9 +854,9 @@ msgid ""
 "FILE SYSTEM HAS BEEN CHANGED\n"
 "----------------------------\n"
 msgstr ""
-"----------------------------------\n"
-"*ファイルシステムが変更されました*\n"
-"----------------------------------\n"
+"--------------------------------\n"
+"ファイルシステムが変更されました\n"
+"--------------------------------\n"
 
 #: disk-utils/isosize.c:129
 #, c-format
@@ -933,18 +926,18 @@ msgid "cannot get size of %s"
 msgstr "%s のサイズを取得できません"
 
 #: disk-utils/mkfs.bfs.c:188
-#, fuzzy, c-format
+#, c-format
 msgid "blocks argument too large, max is %llu"
-msgstr "ブロックの引数が大きすぎます。最大 %lu です"
+msgstr "ブロックの引数が大きすぎます。最大 %llu です"
 
 #: disk-utils/mkfs.bfs.c:203
 msgid "too many inodes - max is 512"
-msgstr "i-ノードが多すぎます - 最大 512 です"
+msgstr "iノードが多すぎます - 最大 512 です"
 
 #: disk-utils/mkfs.bfs.c:212
-#, fuzzy, c-format
+#, c-format
 msgid "not enough space, need at least %llu blocks"
-msgstr "領域が不十分です。最低でも %lu ブロック必要です"
+msgstr "領域が不十分です。最低でも %llu ブロック必要です"
 
 #: disk-utils/mkfs.bfs.c:224 fdisk/fdisk.c:2345
 #, c-format
@@ -972,14 +965,14 @@ msgid "Inodes: %d (in 1 block)\n"
 msgstr "I-ノード: %d (1 ブロックあたり)\n"
 
 #: disk-utils/mkfs.bfs.c:232
-#, fuzzy, c-format
+#, c-format
 msgid "Inodes: %d (in %lld blocks)\n"
-msgstr "I-ノード: %d (%ld ブロックあたり)\n"
+msgstr "I-ノード: %d (%lld ブロックあたり)\n"
 
 #: disk-utils/mkfs.bfs.c:234
-#, fuzzy, c-format
+#, c-format
 msgid "Blocks: %lld\n"
-msgstr "ブロック数: %ld\n"
+msgstr "ブロック数: %lld\n"
 
 #: disk-utils/mkfs.bfs.c:235
 #, c-format
@@ -1018,8 +1011,7 @@ msgstr "%s の close でエラーが発生しました"
 #: disk-utils/mkfs.c:73
 #, c-format
 msgid "Usage: mkfs [-V] [-t fstype] [fs-options] device [size]\n"
-msgstr ""
-"使い方: mkfs [-V] [-t ファイルシステム型] [fs オプション] デバイス [サイズ]\n"
+msgstr "使い方: mkfs [-V] [-t ファイルシステム型] [fs オプション] デバイス [サイズ]\n"
 
 #: disk-utils/mkfs.c:88 disk-utils/mkfs.c:96 fdisk/cfdisk.c:351
 #: getopt/getopt.c:86 getopt/getopt.c:96 login-utils/wall.c:246
@@ -1033,10 +1025,9 @@ msgid "mkfs (%s)\n"
 msgstr "mkfs (%s)\n"
 
 #: disk-utils/mkfs.cramfs.c:126
-#, fuzzy, c-format
+#, c-format
 msgid ""
-"usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n "
-"name] dirname outfile\n"
+"usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n name] dirname outfile\n"
 " -h         print this help\n"
 " -v         be verbose\n"
 " -E         make all warnings errors (non-zero exit status)\n"
@@ -1051,17 +1042,14 @@ msgid ""
 " dirname    root of the filesystem to be compressed\n"
 " outfile    output file\n"
 msgstr ""
-"使い方: %s [-h] [-v] [-b blksize] [-e edition] [-i file] [-n name] dirname "
-"outfile\n"
-" -h         このヘルプを表示\n"
-" -v         be verbose\n"
+"使い方: %s [-h] [-v] [-b blksize] [-e edition] [-N endian]  [-i file] [-n name] dirname outfile\n"
+" -h         このヘルプを表示する\n"
+" -v         詳細を表示する\n"
 " -E         すべての警告をエラーとする (終了ステータスを 0 以外にする)\n"
-" -b blksize 指定したブロックサイズを利用する。\n"
-"            ページサイズと同じである必要があります\n"
+" -b blksize 指定したブロックサイズを利用する。ページサイズと同じである必要があります\n"
 " -e edition set edition number (part of fsid)\n"
-" -i file    ファイルシステム内にファイルイメージを挿入する (requires >= "
-"2.4.0)\n"
-" -n name    set name of cramfs filesystem\n"
+" -N endian  cramfs のエンディアン (big|little|host) を設定する。デフォルトはhost -i file    ファイルシステム内にファイルイメージを挿入する (requires >= 2.4.0)\n"
+" -n name    cramfs ファイルシステムの名前を設定する\n"
 " -p         pad by %d bytes for boot code\n"
 " -s         ディレクトリエントリをソートする (古いオプション。無視されます)\n"
 " -z         make explicit holes (requires >= 2.3.39)\n"
@@ -1075,8 +1063,7 @@ msgid ""
 " Please increase MAX_INPUT_NAMELEN in mkcramfs.c and recompile.  Exiting.\n"
 msgstr ""
 "非常に長い (%zu バイト) ファイル名 `%s' が見つかりました。\n"
-" mkcramfs.c 内の MAX_INPUT_NAMELEN を増やして再コンパイルしてください。終了し"
-"ます。\n"
+" mkcramfs.c 内の MAX_INPUT_NAMELEN を増やして再コンパイルしてください。終了します。\n"
 
 #: disk-utils/mkfs.cramfs.c:472
 #, c-format
@@ -1095,9 +1082,7 @@ msgstr "%6.2f%% (%+ld バイト)\t%s\n"
 
 #: disk-utils/mkfs.cramfs.c:854
 #, c-format
-msgid ""
-"warning: guestimate of required size (upper bound) is %lldMB, but maximum "
-"image size is %uMB.  We might die prematurely.\n"
+msgid "warning: guestimate of required size (upper bound) is %lldMB, but maximum image size is %uMB.  We might die prematurely.\n"
 msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:881
@@ -1105,9 +1090,9 @@ msgid "ROM image map"
 msgstr "ROM イメージマップ"
 
 #: disk-utils/mkfs.cramfs.c:895
-#, fuzzy, c-format
+#, c-format
 msgid "Including: %s\n"
-msgstr "不正な id: %s\n"
+msgstr "含む: %s\n"
 
 #: disk-utils/mkfs.cramfs.c:901
 #, c-format
@@ -1132,7 +1117,7 @@ msgstr "CRC: %x\n"
 #: disk-utils/mkfs.cramfs.c:926
 #, c-format
 msgid "not enough space allocated for ROM image (%lld allocated, %zu used)\n"
-msgstr ""
+msgstr "ROMイメージにおって十分な容量ではありません (%lld 確保、%zu 使用)\n"
 
 #: disk-utils/mkfs.cramfs.c:934
 msgid "ROM image"
@@ -1151,24 +1136,22 @@ msgstr "警告: ファイル名は 255 バイトに切り詰められます。\n
 #: disk-utils/mkfs.cramfs.c:950
 #, c-format
 msgid "warning: files were skipped due to errors.\n"
-msgstr ""
+msgstr "警告: ファイルはエラーのためスキップされました。\n"
 
 #: disk-utils/mkfs.cramfs.c:953
 #, c-format
 msgid "warning: file sizes truncated to %luMB (minus 1 byte).\n"
-msgstr ""
+msgstr "警告: ファイルサイズは%luMBに切り詰められました (最小1バイト)。\n"
 
 #: disk-utils/mkfs.cramfs.c:958
 #, c-format
-msgid ""
-"warning: uids truncated to %u bits.  (This may be a security concern.)\n"
-msgstr ""
+msgid "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
+msgstr "警告: uidは%uビットへ切り詰められました。 (セキュリティ上の懸念事項になるかもしれません。)\n"
 
 #: disk-utils/mkfs.cramfs.c:963
 #, c-format
-msgid ""
-"warning: gids truncated to %u bits.  (This may be a security concern.)\n"
-msgstr ""
+msgid "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
+msgstr "警告: gidは%uビットへ切り詰められました。 (セキュリティ上の懸念事項になるかもしれません。)\n"
 
 #: disk-utils/mkfs.cramfs.c:968
 #, c-format
@@ -1298,17 +1281,17 @@ msgid "unable to open %s"
 msgstr "%s を開けません"
 
 #: disk-utils/mkfs.minix.c:649
-#, fuzzy, c-format
+#, c-format
 msgid "cannot determine sector size for %s"
-msgstr "%s のサイズを取得できません"
+msgstr "%s のセクタサイズを取得できません"
 
 #: disk-utils/mkfs.minix.c:651
 #, c-format
 msgid "block size smaller than physical sector size of %s"
-msgstr ""
+msgstr "ブロックサイズが %s の物理セクタサイズよりも小さい"
 
 #: disk-utils/mkfs.minix.c:654
-#, fuzzy, c-format
+#, c-format
 msgid "cannot determine size of %s"
 msgstr "%s のサイズを取得できません"
 
@@ -1327,35 +1310,34 @@ msgid "Bad user-specified page size %d\n"
 msgstr "不正なユーザ指定ページサイズ %d\n"
 
 #: disk-utils/mkswap.c:163
-#, fuzzy, c-format
+#, c-format
 msgid "Using user-specified page size %d, instead of the system value %d\n"
-msgstr ""
-"システムのページサイズ値 %2$d/%3$d の代わりに、ユーザ指定値 %1$d を使います\n"
+msgstr "システムのページサイズ値 %2$d の代わりに、ユーザ指定値 %1$d を使います\n"
 
 #: disk-utils/mkswap.c:187
 #, c-format
 msgid "Bad swap header size, no label written.\n"
-msgstr ""
+msgstr "スワップヘッダサイズが正しくないため、ラベルは書き込まれません。\n"
 
 #: disk-utils/mkswap.c:197
 #, c-format
 msgid "Label was truncated.\n"
-msgstr ""
+msgstr "ラベルは切り詰められました。\n"
 
 #: disk-utils/mkswap.c:203
-#, fuzzy, c-format
+#, c-format
 msgid "no label, "
-msgstr "ラベル"
+msgstr "ラベルはありません, "
 
 #: disk-utils/mkswap.c:211
 #, c-format
 msgid "no uuid\n"
-msgstr ""
+msgstr "uuidがありません\n"
 
 #: disk-utils/mkswap.c:276
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [-c] [-pPAGESZ] [-L label] [-U UUID] /dev/name [blocks]\n"
-msgstr "使い方: %s [-c] [-v0|-v1] [-pページサイズ] /dev/name [ブロック数]\n"
+msgstr "使い方: %s [-c] [-pページサイズ] [-L ラベル] [-U UUID] /dev/name [ブロック数]\n"
 
 #: disk-utils/mkswap.c:290
 msgid "too many bad pages"
@@ -1391,9 +1373,9 @@ msgid "%s: %s: warning: don't erase bootbits sectors\n"
 msgstr ""
 
 #: disk-utils/mkswap.c:423
-#, fuzzy, c-format
+#, c-format
 msgid "        (%s partition table detected). "
-msgstr "   p   BSD 領域テーブルを表示する"
+msgstr "        (%s パーティションテーブルを認識しました)。"
 
 #: disk-utils/mkswap.c:425
 #, fuzzy, c-format
@@ -1403,12 +1385,12 @@ msgstr "   s   完全なディスクラベルを表示する"
 #: disk-utils/mkswap.c:495
 #, c-format
 msgid "%1$s: warning: ignore -U (UUIDs are unsupported by %1$s)\n"
-msgstr ""
+msgstr "%1$s: 警告: -U を無視します (UUIDsは%1$sによってサポートされません)\n"
 
 #: disk-utils/mkswap.c:511
-#, fuzzy, c-format
+#, c-format
 msgid "%s: does not support swapspace version %d.\n"
-msgstr "%s: エラー: 不明なバージョン %d\n"
+msgstr "%s: スワップ空間のバージョン %d はサポートされていません。\n"
 
 #: disk-utils/mkswap.c:519
 msgid "error: UUID parsing failed"
@@ -1420,10 +1402,9 @@ msgid "%s: error: Nowhere to set up swap on?\n"
 msgstr "%s: エラー: スワップを有効にするための場所がない？\n"
 
 #: disk-utils/mkswap.c:547
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error: size %llu KiB is larger than device size %llu KiB\n"
-msgstr ""
-"%s: エラー: サイズ %lu KiB がデバイスのサイズ %lu KiB よりも大きいです\n"
+msgstr "%s: エラー: サイズ %llu KiB がデバイスのサイズ %llu KiB よりも大きいです\n"
 
 #: disk-utils/mkswap.c:556
 #, c-format
@@ -1431,28 +1412,28 @@ msgid "%s: error: swap area needs to be at least %ld KiB\n"
 msgstr "%s: エラー: スワップ領域は少なくとも %ld KiB 必要です\n"
 
 #: disk-utils/mkswap.c:573
-#, fuzzy, c-format
+#, c-format
 msgid "%s: warning: truncating swap area to %llu KiB\n"
-msgstr "%s: 警告: スワップ領域を %ld KiB に切り詰めました\n"
+msgstr "%s: 警告: スワップ領域を %llu KiB に切り詰めました\n"
 
 #: disk-utils/mkswap.c:596
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error: will not try to make swapdevice on '%s'\n"
-msgstr "'%s' にはスワップデヴァイスを作らないようにします"
+msgstr "'%s: '%s' にはスワップデバイスを作らないようにします\n"
 
 #: disk-utils/mkswap.c:602
-#, fuzzy, c-format
+#, c-format
 msgid "%s: error: %s is mounted; will not make swapspace.\n"
-msgstr "%s はマウントされています -- ここにはファイルシステムをつくれません！"
+msgstr "%s: %s はマウントされています; ここにはスワップ空間をつくれません。\n"
 
 #: disk-utils/mkswap.c:618
 msgid "Unable to set up swap-space: unreadable"
 msgstr "スワップ空間を設定できません: 読込めません"
 
 #: disk-utils/mkswap.c:621
-#, fuzzy, c-format
+#, c-format
 msgid "Setting up swapspace version 1, size = %llu KiB\n"
-msgstr "スワップ空間バージョン %d を設定します、サイズ = %llu KiB\n"
+msgstr "スワップ空間バージョン1を設定します、サイズ = %llu KiB\n"
 
 #: disk-utils/mkswap.c:632
 #, c-format
@@ -1466,7 +1447,7 @@ msgstr "fsync に失敗"
 #: disk-utils/mkswap.c:654
 #, c-format
 msgid "%s: %s: unable to obtain selinux file label: %s\n"
-msgstr ""
+msgstr "%s: %s: selinuxのファイルラベルを含むことができません: %s\n"
 
 #: disk-utils/mkswap.c:660
 #, fuzzy
@@ -1487,47 +1468,48 @@ msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr "%s: %s の名前を %s に変更できません: %s\n"
 
 #: disk-utils/raw.c:50
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage:\n"
 "  %s "
-msgstr "使い方:\n"
+msgstr ""
+"使い方:\n"
+"  %s"
 
 #: disk-utils/raw.c:125
 #, c-format
-msgid ""
-"Device '%s' is control raw dev (use raw<N> where <N> is greater than zero)\n"
+msgid "Device '%s' is control raw dev (use raw<N> where <N> is greater than zero)\n"
 msgstr ""
 
 #: disk-utils/raw.c:145
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot locate block device '%s' (%s)\n"
-msgstr "ロックファイル %s をロックできません: %s\n"
+msgstr "ブロックファイル '%s' (%s) を配置できません\n"
 
 #: disk-utils/raw.c:151
-#, fuzzy, c-format
+#, c-format
 msgid "Device '%s' is not a block dev\n"
-msgstr "警告: %s はブロックデバイスではありません\n"
+msgstr "警告: '%s' はブロックデバイスではありません\n"
 
 #: disk-utils/raw.c:186
 #, fuzzy, c-format
 msgid "Cannot open master raw device '"
-msgstr "デバイス %s を stat できません"
+msgstr "マスターロウデバイスを開くことができません"
 
 #: disk-utils/raw.c:205
-#, fuzzy, c-format
+#, c-format
 msgid "Cannot locate raw device '%s' (%s)\n"
-msgstr "デバイス %s を stat できません"
+msgstr "ロウデバイス '%s' (%s) を配置できません\n"
 
 #: disk-utils/raw.c:211
-#, fuzzy, c-format
+#, c-format
 msgid "Raw device '%s' is not a character dev\n"
-msgstr "/dev/%s: キャラクタデバイスではありません"
+msgstr "ロウデバイス '%s' はキャラクタデバイスではありません\n"
 
 #: disk-utils/raw.c:216
-#, fuzzy, c-format
+#, c-format
 msgid "Device '%s' is not a raw dev\n"
-msgstr "%s はブロックスペシャルデバイスではありません"
+msgstr "デバイス '%s' はロウデバイスではありません\n"
 
 #: disk-utils/raw.c:231
 #, c-format
@@ -1668,16 +1650,12 @@ msgid "enlarged logical partitions overlap"
 msgstr "拡大された論理領域が重複しています"
 
 #: fdisk/cfdisk.c:999
-msgid ""
-"!!!! Internal error creating logical drive with no extended partition !!!!"
-msgstr ""
-"!!!! 内部エラー。拡張領域以外に論理ドライブを作成しようとしています !!!!"
+msgid "!!!! Internal error creating logical drive with no extended partition !!!!"
+msgstr "!!!! 内部エラー。拡張領域以外に論理ドライブを作成しようとしています !!!!"
 
 #: fdisk/cfdisk.c:1010 fdisk/cfdisk.c:1022
-msgid ""
-"Cannot create logical drive here -- would create two extended partitions"
-msgstr ""
-"ここには論理ドライブを作成できません -- 2 つの拡張領域であれば作成します"
+msgid "Cannot create logical drive here -- would create two extended partitions"
+msgstr "ここには論理ドライブを作成できません -- 2 つの拡張領域であれば作成します"
 
 #: fdisk/cfdisk.c:1164
 msgid "Menu item too long. Menu may look odd."
@@ -1783,11 +1761,8 @@ msgid "Opened disk read-only - you have no permission to write"
 msgstr "ディスクを読込み専用で開きました -- あなたには書込み権限がありません"
 
 #: fdisk/cfdisk.c:1682
-msgid ""
-"Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
-msgstr ""
-"警告!! サポートしていない GPT (GUID パーティションテーブル) を検出しました。"
-"GNU Parded を使ってください"
+msgid "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
+msgstr "警告!! サポートしていない GPT (GUID パーティションテーブル) を検出しました。GNU Parded を使ってください"
 
 #: fdisk/cfdisk.c:1701
 msgid "Cannot get disk size"
@@ -1806,10 +1781,8 @@ msgid "Warning!!  This may destroy data on your disk!"
 msgstr "警告！ これはあなたのディスクにあるデータを破壊するかもしれません"
 
 #: fdisk/cfdisk.c:1876
-msgid ""
-"Are you sure you want to write the partition table to disk? (yes or no): "
-msgstr ""
-"パーティション領域をディスクに書き込んでもよろしいですか？(yes または no): "
+msgid "Are you sure you want to write the partition table to disk? (yes or no): "
+msgstr "パーティション領域をディスクに書き込んでもよろしいですか？(yes または no): "
 
 #: fdisk/cfdisk.c:1882
 msgid "no"
@@ -1837,23 +1810,16 @@ msgstr "領域テーブルをディスクに書き込みました"
 
 #: fdisk/cfdisk.c:1923
 #, fuzzy
-msgid ""
-"Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx"
-"(8) or reboot to update table."
-msgstr ""
-"領域テーブルを書き込みましたが、再読込みに失敗。再起動して更新してください"
+msgid "Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx(8) or reboot to update table."
+msgstr "領域テーブルを書き込みましたが、再読込みに失敗。再起動して更新してください"
 
 #: fdisk/cfdisk.c:1933
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
-msgstr ""
-"ブート可能マーク付き基本領域がありません。DOS MBR はこれをブートできません。"
+msgstr "ブート可能マーク付き基本領域がありません。DOS MBR はこれをブートできません。"
 
 #: fdisk/cfdisk.c:1935
-msgid ""
-"More than one primary partition is marked bootable. DOS MBR cannot boot this."
-msgstr ""
-"ブート可能マーク付き基本領域が複数あります。DOS MBR はこれをブートできませ"
-"ん。"
+msgid "More than one primary partition is marked bootable. DOS MBR cannot boot this."
+msgstr "ブート可能マーク付き基本領域が複数あります。DOS MBR はこれをブートできません。"
 
 #: fdisk/cfdisk.c:1993 fdisk/cfdisk.c:2112 fdisk/cfdisk.c:2196
 msgid "Enter filename or press RETURN to display on screen: "
@@ -1909,9 +1875,8 @@ msgid "(%02X)"
 msgstr "(%02X)"
 
 #: fdisk/cfdisk.c:2096
-#, fuzzy
 msgid "None"
-msgstr "終了"
+msgstr "None"
 
 #: fdisk/cfdisk.c:2131 fdisk/cfdisk.c:2215
 #, c-format
@@ -1923,20 +1888,12 @@ msgid "               First       Last\n"
 msgstr "               最初の    最後の\n"
 
 #: fdisk/cfdisk.c:2134
-msgid ""
-" # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
-"Flag\n"
-msgstr ""
-" # 領域       セクタ    セクタ オフセット    大きさ   Filesystemタイプ(ID) フ"
-"ラグ\n"
+msgid " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) Flag\n"
+msgstr " # 領域       セクタ    セクタ オフセット    大きさ   Filesystemタイプ(ID) フラグ\n"
 
 #: fdisk/cfdisk.c:2135
-msgid ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
-msgstr ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
+msgid "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
+msgstr "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
 
 #: fdisk/cfdisk.c:2218
 msgid "         ---Starting----      ----Ending-----    Start     Number of\n"
@@ -1948,8 +1905,7 @@ msgstr " # Flags Head Sect  Cyl   ID  Head Sect  Cyl セクタ番号   セクタ
 
 #: fdisk/cfdisk.c:2220
 msgid "-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- -----------\n"
-msgstr ""
-"-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- -----------\n"
+msgstr "-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- -----------\n"
 
 #: fdisk/cfdisk.c:2253
 msgid "Raw"
@@ -2715,8 +2671,7 @@ msgstr "セクタ/シリンダ"
 #: fdisk/fdiskbsdlabel.c:481
 #, c-format
 msgid "Must be <= sectors/track * tracks/cylinder (default).\n"
-msgstr ""
-"デフォルトで sectors/track * tracks/cylinder 以下でなければならない。\n"
+msgstr "デフォルトで sectors/track * tracks/cylinder 以下でなければならない。\n"
 
 #: fdisk/fdiskbsdlabel.c:483
 msgid "rpm"
@@ -2784,7 +2739,7 @@ msgid ""
 "Syncing disks.\n"
 msgstr ""
 "\n"
-"ディスクと同期させます。\n"
+"ディスクと同期しています。\n"
 
 #: fdisk/fdisk.c:244
 msgid ""
@@ -2830,7 +2785,7 @@ msgstr "%s を開けません\n"
 #: fdisk/fdisk.c:269
 #, c-format
 msgid "Unable to read %s\n"
-msgstr "%s を読めません\n"
+msgstr "%s を読むことができません\n"
 
 #: fdisk/fdisk.c:273
 #, c-format
@@ -3070,31 +3025,31 @@ msgid "Warning: ignoring extra data in partition table %d\n"
 msgstr "警告: 領域テーブル %d 内の特別なデータを無視します\n"
 
 #: fdisk/fdisk.c:782
-#, fuzzy, c-format
+#, c-format
 msgid "omitting empty partition (%d)\n"
-msgstr "警告: 空のパーティション\n"
+msgstr "空のパーティション (%d) を省略しています\n"
 
 #: fdisk/fdisk.c:801
 #, c-format
 msgid "Disk identifier: 0x%08x\n"
-msgstr ""
+msgstr "ディスク識別子: 0x%08x\n"
 
 #: fdisk/fdisk.c:810
 #, c-format
 msgid "New disk identifier (current 0x%08x): "
-msgstr ""
+msgstr "新しいディスク識別子 (現在 0x%08x): "
 
 #: fdisk/fdisk.c:829
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Building a new DOS disklabel with disk identifier 0x%08x.\n"
 "Changes will remain in memory only, until you decide to write them.\n"
 "After that, of course, the previous content won't be recoverable.\n"
 "\n"
 msgstr ""
-"新たに DOS ディスクラベルを作成します。あなたが書き込みを決定するまで、変更"
-"は\n"
-"メモリ内だけに残します。その後はもちろん以前の内容は修復不可能になります。\n"
+"新たに DOS ディスクラベルをディスク識別子 0x%08x で作成します。\n"
+"あなたが書き込みを決定するまで、変更はメモリ内だけに残します。\n"
+"その後はもちろん以前の内容は修復不可能になります。\n"
 
 #: fdisk/fdisk.c:861
 #, c-format
@@ -3115,9 +3070,7 @@ msgstr ""
 
 #: fdisk/fdisk.c:1032
 #, c-format
-msgid ""
-"Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
-"disklabel\n"
+msgid "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"
 msgstr ""
 "デバイスは正常な DOS 領域テーブルも、Sun, SGI や OSF ディスクラベルも\n"
 "含んでいません\n"
@@ -3134,9 +3087,7 @@ msgstr "特別な拡張領域 %d を無視します\n"
 
 #: fdisk/fdisk.c:1074
 #, c-format
-msgid ""
-"Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
-"(rite)\n"
+msgid "Warning: invalid flag 0x%04x of partition table %d will be corrected by w(rite)\n"
 msgstr ""
 "警告: 領域テーブル %2$d の不正なフラグ 0x%1$04x は w(書き込み)によって\n"
 "正常になります\n"
@@ -3170,6 +3121,8 @@ msgid ""
 "Supported: 10^N: KB (KiloByte), MB (MegaByte), GB (GigaByte)\n"
 "            2^N: K  (KibiByte), M  (MebiByte), G  (GibiByte)\n"
 msgstr ""
+"サポート: 10^N: KB (KiloByte), MB (MegaByte), GB (GigaByte)\n"
+"           2^N: K  (KibiByte), M  (MebiByte), G  (GibiByte)\n"
 
 #: fdisk/fdisk.c:1269
 #, c-format
@@ -3389,7 +3342,7 @@ msgstr ""
 #: fdisk/fdisk.c:1826
 #, c-format
 msgid "%*s Boot      Start         End      Blocks   Id  System\n"
-msgstr "%*s ブート     始点        終点    ブロック   Id システム\n"
+msgstr "%*s ブート     始点        終点    ブロック   Id  システム\n"
 
 #: fdisk/fdisk.c:1827 fdisk/fdisksgilabel.c:223 fdisk/fdisksunlabel.c:603
 msgid "Device"
@@ -3466,14 +3419,14 @@ msgid "Logical partition %d not entirely in partition %d\n"
 msgstr "論理領域 %d は領域 %d 全体になっていません\n"
 
 #: fdisk/fdisk.c:2007
-#, fuzzy, c-format
+#, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu\n"
-msgstr "合計確保セクタ %ld は最大値 %lld よりも大きいです\n"
+msgstr "合計確保セクタ %llu は最大値 %llu よりも大きいです\n"
 
 #: fdisk/fdisk.c:2010
-#, fuzzy, c-format
+#, c-format
 msgid "%lld unallocated %d-byte sectors\n"
-msgstr "確保されていないセクタが %lld あります\n"
+msgstr "%lld 未確保 %d バイトセクタ\n"
 
 #: fdisk/fdisk.c:2025 fdisk/fdisksgilabel.c:633 fdisk/fdisksunlabel.c:416
 #, c-format
@@ -3493,7 +3446,7 @@ msgstr "利用可能フリーセクタがありません\n"
 #: fdisk/fdisk.c:2112
 #, c-format
 msgid "Last %1$s, +%2$s or +size{K,M,G}"
-msgstr ""
+msgstr "Last %1$s, +%2$s or +size{K,M,G}"
 
 #: fdisk/fdisk.c:2178
 #, c-format
@@ -3558,7 +3511,7 @@ msgstr "e   拡張"
 #: fdisk/fdisk.c:2237
 #, c-format
 msgid "Invalid partition number for type `%c'\n"
-msgstr "タイプ `%c' にとっては不正な領域番号です\n"
+msgstr "タイプ `%c' にとっては不正なパーティション番号です\n"
 
 #: fdisk/fdisk.c:2273
 #, c-format
@@ -3566,16 +3519,16 @@ msgid ""
 "The partition table has been altered!\n"
 "\n"
 msgstr ""
-"領域テーブルは交換されました！\n"
+"パーティションテーブルは変更されました！\n"
 "\n"
 
 #: fdisk/fdisk.c:2287
 #, c-format
 msgid "Calling ioctl() to re-read partition table.\n"
-msgstr "ioctl() を呼び出して領域テーブルを再読込みします。\n"
+msgstr "ioctl() を呼び出してパーティションテーブルを再読込みします。\n"
 
 #: fdisk/fdisk.c:2296
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "WARNING: Re-reading the partition table failed with error %d: %s.\n"
@@ -3583,9 +3536,10 @@ msgid ""
 "the next reboot or after you run partprobe(8) or kpartx(8)\n"
 msgstr ""
 "\n"
-"警告: 領域テーブルの再読込みがエラー %d で失敗しました: %s。\n"
-"カーネルはまだ古いテーブルを使っています。\n"
-"新しいテーブルは次回リブート時に使えるようになるでしょう。\n"
+"警告: パーティションテーブルの再読込みがエラー %d で失敗しました: %s。\n"
+"カーネルはまだ古いテーブルを使っています。新しいテーブルは\n"
+"次回リブート時か、partprobe(8)またはkpartx(8)を実行した後に\n"
+"使えるようになるでしょう\n"
 
 #: fdisk/fdisk.c:2304
 #, c-format
@@ -3600,21 +3554,23 @@ msgstr ""
 "fdisk マニュアルの追加情報ページを参照してください。\n"
 
 #: fdisk/fdisk.c:2310
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Error closing file\n"
-msgstr "%s のクローズエラー\n"
+msgstr ""
+"\n"
+"ファイルクローズ中にエラー\n"
 
 #: fdisk/fdisk.c:2314
 #, c-format
 msgid "Syncing disks.\n"
-msgstr "ディスクを同期させます。\n"
+msgstr "ディスクを同期しています。\n"
 
 #: fdisk/fdisk.c:2361
 #, c-format
 msgid "Partition %d has no data area\n"
-msgstr "領域 %d にデータ領域がありません\n"
+msgstr "パーティション %d にはデータ領域がありません\n"
 
 #: fdisk/fdisk.c:2366
 msgid "New beginning of data"
@@ -3645,19 +3601,17 @@ msgstr "警告: DOS 互換のためのセクタオフセットを設定します
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't "
-"support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 "\n"
-"警告: GPT (GUID パーティションテーブル) が '%s' に検出されました! この fdisk "
-"ユーティリティは GPT をサポートしません。GNU Parted を使ってください。\n"
+"警告: GPT (GUID パーティションテーブル) が '%s' に検出されました! この fdisk ユーティリティは GPT をサポートしません。GNU Parted を使ってください。\n"
 "\n"
 
 #: fdisk/fdisk.c:2533
 #, c-format
 msgid "Disk %s doesn't contain a valid partition table\n"
-msgstr "ディスク %s は正常な領域テーブルを含んでいません\n"
+msgstr "ディスク %s は正常なパーティションテーブルを含んでいません\n"
 
 #: fdisk/fdisk.c:2544
 #, c-format
@@ -3677,14 +3631,11 @@ msgstr "%c: 不明なコマンド\n"
 #: fdisk/fdisk.c:2653
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
-msgstr ""
-"このカーネルはセクタサイズを自分認識します -- -b オプションは無視します\n"
+msgstr "このカーネルはセクタサイズを自分認識します - -b オプションは無視します\n"
 
 #: fdisk/fdisk.c:2657
 #, c-format
-msgid ""
-"Warning: the -b (set sector size) option should be used with one specified "
-"device\n"
+msgid "Warning: the -b (set sector size) option should be used with one specified device\n"
 msgstr ""
 "警告: -b (セクタサイズ設定) オプションは 1 つのデバイス指定と共に\n"
 "使用されるべきです\n"
@@ -3692,8 +3643,7 @@ msgstr ""
 #: fdisk/fdisk.c:2717
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
-msgstr ""
-"%s でOSF/1 ディスクラベルを検出したので、ディスクラベルモードに移行します。\n"
+msgstr "%s でOSF/1 ディスクラベルを検出したので、ディスクラベルモードに移行します。\n"
 
 #: fdisk/fdisk.c:2727
 msgid "Command (m for help): "
@@ -3725,8 +3675,8 @@ msgid ""
 "\n"
 msgstr ""
 "\n"
-"\t残念ながら SGI 領域テーブル用のエキスパートメニューは\n"
-"\t用意されていません。\n"
+"\t残念ながら SGI パーティションテーブル用のエキスパートメニューは用意されていません。\n"
+"\n"
 
 #: fdisk/fdiskmaclabel.c:30
 msgid ""
@@ -3824,9 +3774,7 @@ msgstr "Linux RAID"
 
 #: fdisk/fdisksgilabel.c:164
 #, c-format
-msgid ""
-"According to MIPS Computer Systems, Inc the Label must not contain more than "
-"512 bytes\n"
+msgid "According to MIPS Computer Systems, Inc the Label must not contain more than 512 bytes\n"
 msgstr ""
 "MIPS Computer Systems, Inc によると、そのラベルは 512 バイト以上でなければ\n"
 "なりません\n"
@@ -3952,7 +3900,7 @@ msgstr "複数の entire disk の項目があります。\n"
 #: fdisk/fdisksgilabel.c:446 fdisk/fdisksunlabel.c:388
 #, c-format
 msgid "No partitions defined\n"
-msgstr "領域が定義されていません\n"
+msgstr "パーティションが定義されていません\n"
 
 #: fdisk/fdisksgilabel.c:452
 #, c-format
@@ -4111,15 +4059,14 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:731 fdisk/fdisksunlabel.c:227
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
-"d.\n"
+"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %d.\n"
 "This value may be truncated for devices > 33.8 GB.\n"
 msgstr ""
 
 #: fdisk/fdisksgilabel.c:745
 #, c-format
 msgid "Trying to keep parameters of partition %d.\n"
-msgstr "領域 %d の値の保存を試みます。\n"
+msgstr "パーティション %d の値の保存を試みます。\n"
 
 #: fdisk/fdisksgilabel.c:747
 #, c-format
@@ -4188,9 +4135,9 @@ msgstr ""
 "あるいは fresh label を強制してください (メインメニューの s コマンド)\n"
 
 #: fdisk/fdisksunlabel.c:153
-#, fuzzy, c-format
+#, c-format
 msgid "Detected sun disklabel with wrong version [0x%08x].\n"
-msgstr "間違ったチェックサム値の sgi ディスクラベルを検出しました。\n"
+msgstr "間違ったバージョン [0x%08x] の sun ディスクラベルを検出しました。\n"
 
 #: fdisk/fdisksunlabel.c:158
 #, fuzzy, c-format
@@ -4198,14 +4145,13 @@ msgid "Detected sun disklabel with wrong sanity [0x%08x].\n"
 msgstr "間違ったチェックサム値の sgi ディスクラベルを検出しました。\n"
 
 #: fdisk/fdisksunlabel.c:163
-#, fuzzy, c-format
+#, c-format
 msgid "Detected sun disklabel with wrong num_partitions [%u].\n"
-msgstr "間違ったチェックサム値の sgi ディスクラベルを検出しました。\n"
+msgstr "間違った num_partitions [%u] の sun ディスクラベルを検出しました。\n"
 
 #: fdisk/fdisksunlabel.c:168
 #, fuzzy, c-format
-msgid ""
-"Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
+msgid "Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
 msgstr ""
 "警告: 領域テーブル %2$d の不正なフラグ 0x%1$04x は w(書き込み)によって\n"
 "正常になります\n"
@@ -4340,7 +4286,7 @@ msgstr ""
 #: fdisk/fdisksunlabel.c:602
 #, c-format
 msgid "%*s Flag    Start       End    Blocks   Id  System\n"
-msgstr "%*s フラグ  始点       終点  ブロック   Id  システム\n"
+msgstr "%*s フラグ   始点      終点  ブロック   Id  システム\n"
 
 #: fdisk/fdisksunlabel.c:630
 msgid "Number of alternate cylinders"
@@ -4624,9 +4570,8 @@ msgid "Darwin boot"
 msgstr "Darwin ブート"
 
 #: fdisk/i386_sys_types.c:74
-#, fuzzy
 msgid "HFS / HFS+"
-msgstr "OS/2 HPFS"
+msgstr "HFS / HFS+"
 
 #: fdisk/i386_sys_types.c:75
 msgid "BSDI fs"
@@ -4770,8 +4715,7 @@ msgstr "パーティション復元ファイル (%s) の情報を取得できま
 
 #: fdisk/sfdisk.c:355
 msgid "partition restore file has wrong size - not restoring\n"
-msgstr ""
-"パーティション復元ファイルのサイズが間違っています -- 復元を行ないません\n"
+msgstr "パーティション復元ファイルのサイズが間違っています -- 復元を行ないません\n"
 
 #: fdisk/sfdisk.c:359
 msgid "out of memory?\n"
@@ -4814,8 +4758,7 @@ msgid ""
 "the entire disk. Using fdisk on it is probably meaningless.\n"
 "[Use the --force option if you really want this]\n"
 msgstr ""
-"警告: start=%lu -- この値はパーティションではなくディスクそのもののようで"
-"す。\n"
+"警告: start=%lu -- この値はパーティションではなくディスクそのもののようです。\n"
 "ここに fdisk を利用するのは多分意味がないことです。\n"
 "[本当にこれを行ないたければ、--force オプションを使ってください]\n"
 
@@ -4855,29 +4798,18 @@ msgstr ""
 
 #: fdisk/sfdisk.c:610
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
-msgstr ""
-"パーティション %2$s のヘッド数として %1$s は不可能です: %3$lu (0-%4$lu にして"
-"ください)\n"
+msgid "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
+msgstr "パーティション %2$s のヘッド数として %1$s は不可能です: %3$lu (0-%4$lu にしてください)\n"
 
 #: fdisk/sfdisk.c:615
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for sector: %lu (should be in 1-%"
-"lu)\n"
-msgstr ""
-"パーティション %2$s のセクタ数として %1$s は不可能です: %3$lu (1-%4$lu にして"
-"ください)\n"
+msgid "%s of partition %s has impossible value for sector: %lu (should be in 1-%lu)\n"
+msgstr "パーティション %2$s のセクタ数として %1$s は不可能です: %3$lu (1-%4$lu にしてください)\n"
 
 #: fdisk/sfdisk.c:620
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for cylinders: %lu (should be in 0-%"
-"lu)\n"
-msgstr ""
-"パーティション %2$s のシリンダ数として %1$s は不可能です: %3$lu (0-%4$lu にし"
-"てください)\n"
+msgid "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%lu)\n"
+msgstr "パーティション %2$s のシリンダ数として %1$s は不可能です: %3$lu (0-%4$lu にしてください)\n"
 
 #: fdisk/sfdisk.c:660
 #, c-format
@@ -4894,14 +4826,14 @@ msgid "Re-reading the partition table ...\n"
 msgstr "パーティションテーブルを再読み込み中...\n"
 
 #: fdisk/sfdisk.c:827
-#, fuzzy
 msgid ""
 "The command to re-read the partition table failed.\n"
 "Run partprobe(8), kpartx(8) or reboot your system now,\n"
 "before using mkfs\n"
 msgstr ""
-"パーティション再読込みコマンドが失敗しました\n"
-"mkfs を使う前に、システムを再起動してください\n"
+"パーティションテーブルを再読込みするコマンドが失敗しました。\n"
+"mkfs を使う前に、partprobe(8) か kpartx(8) を実行するか、\n"
+"システムを再起動してください\n"
 
 #: fdisk/sfdisk.c:833
 #, c-format
@@ -4946,9 +4878,9 @@ msgstr ""
 "\n"
 
 #: fdisk/sfdisk.c:951
-#, fuzzy, c-format
+#, c-format
 msgid "   Device Boot Start     End   #cyls    #blocks   Id  System\n"
-msgstr "デバイス ブート 始点    終点   #シリンダ #ブロック ID   システム\n"
+msgstr "デバイス ブート 始点    終点 #シリンダ #ブロック  Id  システム\n"
 
 #: fdisk/sfdisk.c:956
 #, c-format
@@ -4960,9 +4892,9 @@ msgstr ""
 "\n"
 
 #: fdisk/sfdisk.c:958
-#, fuzzy, c-format
+#, c-format
 msgid "   Device Boot    Start       End   #sectors  Id  System\n"
-msgstr " デバイス ブート  始点      終点   #セクタ   ID  システム\n"
+msgstr "デバイス ブート    始点      終点    #セクタ  Id システム\n"
 
 #: fdisk/sfdisk.c:961
 #, c-format
@@ -4974,7 +4906,7 @@ msgstr ""
 "\n"
 
 #: fdisk/sfdisk.c:963
-#, fuzzy, c-format
+#, c-format
 msgid "   Device Boot   Start       End    #blocks   Id  System\n"
 msgstr " デバイス ブート 始点        終点  #ブロック ID  システム\n"
 
@@ -4988,9 +4920,9 @@ msgstr ""
 "\n"
 
 #: fdisk/sfdisk.c:968
-#, fuzzy, c-format
+#, c-format
 msgid "   Device Boot Start   End    MiB    #blocks   Id  System\n"
-msgstr "デバイス ブート 始点   終点    MB   #ブロック ID  システム\n"
+msgstr "デバイス ブート 始点   終点   MiB  #ブロック   Id  システム\n"
 
 #: fdisk/sfdisk.c:1062
 #, c-format
@@ -5049,8 +4981,7 @@ msgstr "変です、%d つのパーティションしか定義されていませ
 #: fdisk/sfdisk.c:1212
 #, c-format
 msgid "Warning: partition %s has size 0 but is not marked Empty\n"
-msgstr ""
-"警告: パーティション %s はサイズ 0 ですが、空としてマークされていません\n"
+msgstr "警告: パーティション %s はサイズ 0 ですが、空としてマークされていません\n"
 
 #: fdisk/sfdisk.c:1215
 #, c-format
@@ -5151,10 +5082,8 @@ msgstr "開始"
 
 #: fdisk/sfdisk.c:1356
 #, c-format
-msgid ""
-"partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"パーティション %s: 始点: (c,h,s) 期待値 (%ld,%ld,%ld)  (%ld,%ld,%ld) を発見\n"
+msgid "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
+msgstr "パーティション %s: 始点: (c,h,s) 期待値 (%ld,%ld,%ld)  (%ld,%ld,%ld) を発見\n"
 
 #: fdisk/sfdisk.c:1362
 msgid "end"
@@ -5163,15 +5092,12 @@ msgstr "終了"
 #: fdisk/sfdisk.c:1365
 #, c-format
 msgid "partition %s: end: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
-msgstr ""
-"パーティション %s: 終点: (c,h,s) 期待値 (%ld,%ld,%ld)  (%ld,%ld,%ld) を発見\n"
+msgstr "パーティション %s: 終点: (c,h,s) 期待値 (%ld,%ld,%ld)  (%ld,%ld,%ld) を発見\n"
 
 #: fdisk/sfdisk.c:1368
 #, c-format
 msgid "partition %s ends on cylinder %ld, beyond the end of the disk\n"
-msgstr ""
-"シリンダ %2$ld にあるパーティション %1$s の終点はディスクの最後を越えていま"
-"す\n"
+msgstr "シリンダ %2$ld にあるパーティション %1$s の終点はディスクの最後を越えています\n"
 
 #: fdisk/sfdisk.c:1393
 #, c-format
@@ -5283,8 +5209,7 @@ msgstr "不正なタイプ\n"
 #: fdisk/sfdisk.c:2117
 #, c-format
 msgid "Warning: given size (%lu) exceeds max allowable size (%lu)\n"
-msgstr ""
-"警告: 与えられたサイズ (%lu) は、許容できる最大サイズ (%lu) を越えています\n"
+msgstr "警告: 与えられたサイズ (%lu) は、許容できる最大サイズ (%lu) を越えています\n"
 
 #: fdisk/sfdisk.c:2123
 msgid "Warning: empty partition\n"
@@ -5321,8 +5246,7 @@ msgid ""
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
 "Usually you only need to specify <start> and <size> (and perhaps <type>).\n"
 msgstr ""
-"以下の書式で入力して下さい -- 指定しなかったフィールドには初期値をセットしま"
-"す\n"
+"以下の書式で入力して下さい -- 指定しなかったフィールドには初期値をセットします\n"
 "<start> <size> <type [E,S,L,X,hex]> <bootable [-,*]> <c,h,s> <c,h,s>\n"
 "普通は <start> と <size> (そして恐らく <type>)を指定するだけで構いません。\n"
 
@@ -5360,11 +5284,8 @@ msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
 msgstr "    -i [or --increment]: シリンダ数など。0 ではなく 1 から"
 
 #: fdisk/sfdisk.c:2312
-msgid ""
-"    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
-"MB"
-msgstr ""
-"    -uS, -uB, -uC, -uM:  セクタ/ブロック/シリンダ/MB のユニットの受理/報告"
+msgid "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB"
+msgstr "    -uS, -uB, -uC, -uM:  セクタ/ブロック/シリンダ/MB のユニットの受理/報告"
 
 #: fdisk/sfdisk.c:2313
 msgid "    -T [or --list-types]:list the known partition types"
@@ -5387,8 +5308,7 @@ msgid "    -n :                 do not actually write to disk"
 msgstr "    -n :                 ディスクへの実際の書込みを行わない"
 
 #: fdisk/sfdisk.c:2318
-msgid ""
-"    -O file :            save the sectors that will be overwritten to file"
+msgid "    -O file :            save the sectors that will be overwritten to file"
 msgstr "    -O file :            上書きされるセクタをファイルに保存する"
 
 #: fdisk/sfdisk.c:2319
@@ -5412,12 +5332,8 @@ msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
 msgstr "    -g [or --show-geometry]: カーネルのジオメトリ情報を表示する"
 
 #: fdisk/sfdisk.c:2324
-msgid ""
-"    -G [or --show-pt-geometry]: print geometry guessed from the partition "
-"table"
-msgstr ""
-"    -G [or --show-pt-geometry]: 領域テーブルから推測されるジオメトリ情報を表"
-"示する"
+msgid "    -G [or --show-pt-geometry]: print geometry guessed from the partition table"
+msgstr "    -G [or --show-pt-geometry]: 領域テーブルから推測されるジオメトリ情報を表示する"
 
 #: fdisk/sfdisk.c:2325
 msgid ""
@@ -5428,8 +5344,7 @@ msgstr ""
 "                             またはそれらの記述子の入力を得る"
 
 #: fdisk/sfdisk.c:2327
-msgid ""
-"    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
+msgid "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
 msgstr "    -L  [or --Linux]:      Linux にそぐわなくても文句を云わない"
 
 #: fdisk/sfdisk.c:2328
@@ -5472,8 +5387,7 @@ msgstr "%s デバイス\t\t デバイス上のアクティブ領域をリスト�
 #: fdisk/sfdisk.c:2342
 #, c-format
 msgid "%s device n1 n2 ... activate partitions n1 ..., inactivate the rest\n"
-msgstr ""
-"%s デバイス n1 n2 ... n1 をアクティブにして..., 残りを非アクティブにします\n"
+msgstr "%s デバイス n1 n2 ... n1 をアクティブにして..., 残りを非アクティブにします\n"
 
 #: fdisk/sfdisk.c:2343
 #, c-format
@@ -5484,8 +5398,7 @@ msgstr "%s -An デバイス\t n をアクティヴにし、それ以外を非ア
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk "
-"doesn't support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 
@@ -5693,9 +5606,9 @@ msgstr ""
 "(詳細は fdisk(8)を見てください。)\n"
 
 #: fsck/fsck.c:327
-#, fuzzy, c-format
+#, c-format
 msgid "WARNING: couldn't open %s: %s\n"
-msgstr "%s: %s を開けません: %s\n"
+msgstr "警告: %s を開けません: %s\n"
 
 #: fsck/fsck.c:337
 #, c-format
@@ -5711,14 +5624,14 @@ msgid ""
 msgstr ""
 
 #: fsck/fsck.c:461
-#, fuzzy, c-format
+#, c-format
 msgid "fsck: %s: not found\n"
-msgstr "umount: %s: 見つかりません"
+msgstr "fsck: %s: 見つかりません\n"
 
 #: fsck/fsck.c:577
 #, c-format
 msgid "%s: wait: No more child process?!?\n"
-msgstr ""
+msgstr "%s: wait: 子プロセスは存在しない?!?\n"
 
 #: fsck/fsck.c:599
 #, c-format
@@ -5747,53 +5660,46 @@ msgid ""
 msgstr ""
 
 #: fsck/fsck.c:744
-#, fuzzy
 msgid "Couldn't allocate memory for filesystem types\n"
-msgstr "mount: ファイルシステムタイプを指定する必要があります"
+msgstr "ファイルシステムタイプのためのメモリを確保できませんでした\n"
 
 #: fsck/fsck.c:867
 #, c-format
-msgid ""
-"%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass "
-"number\n"
+msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number\n"
 msgstr ""
 
 #: fsck/fsck.c:894
 #, c-format
 msgid "fsck: cannot check %s: fsck.%s not found\n"
-msgstr ""
+msgstr "fsck: %sをチェックできません: fsck.%sは見つかりません\n"
 
 #: fsck/fsck.c:950
-#, fuzzy
 msgid "Checking all file systems.\n"
-msgstr "強制的に %s のファイルシステム検査します。\n"
+msgstr "すべてのファイルシステム検査します。\n"
 
 #: fsck/fsck.c:1041
 #, c-format
 msgid "--waiting-- (pass %d)\n"
-msgstr ""
+msgstr "--待機中-- (パス %d)\n"
 
 #: fsck/fsck.c:1061
-#, fuzzy
-msgid ""
-"Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
-msgstr ""
-"使い方: mkfs [-V] [-t ファイルシステム型] [fs オプション] デバイス [サイズ]\n"
+msgid "Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
+msgstr "使い方: fsck [-AMNPRTV] [ -C [ fd ] ] [-t ファイルシステム型] [fs オプション] [filesys ...]\n"
 
 #: fsck/fsck.c:1099
-#, fuzzy, c-format
+#, c-format
 msgid "%s: too many devices\n"
-msgstr "%s: %s は lp デバイスではありません。\n"
+msgstr "%s: デバイスが多すぎます\n"
 
 #: fsck/fsck.c:1110
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't open %s: %s\n"
 msgstr "%s を開けません: %s\n"
 
 #: fsck/fsck.c:1112
-#, fuzzy, c-format
+#, c-format
 msgid "Is /proc mounted?\n"
-msgstr "%s はアンマウントされました\n"
+msgstr "/proc はマウントされていますか?\n"
 
 #: fsck/fsck.c:1121
 #, c-format
@@ -5801,24 +5707,24 @@ msgid "Must be root to scan for matching filesystems: %s\n"
 msgstr ""
 
 #: fsck/fsck.c:1124
-#, fuzzy, c-format
+#, c-format
 msgid "Couldn't find matching filesystem: %s\n"
-msgstr "残りのファイルシステムをアンマウントします..."
+msgstr "一致するファイルシステムが見つかりません: %s\n"
 
 #: fsck/fsck.c:1132 fsck/fsck.c:1218
-#, fuzzy, c-format
+#, c-format
 msgid "%s: too many arguments\n"
-msgstr "%s: 不明な引数 %s\n"
+msgstr "%s: 引数が多すぎます\n"
 
 #: fsck/fsck.c:1252
-#, fuzzy, c-format
+#, c-format
 msgid "fsck from %s\n"
-msgstr "%s from %s\n"
+msgstr "fsck from %s\n"
 
 #: fsck/fsck.c:1264
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Unable to allocate memory for fsck_path\n"
-msgstr "inode 用バッファの確保ができません。"
+msgstr "%s: fsck_pathのためのメモリを確保ができません。\n"
 
 #: getopt/getopt.c:229
 msgid "Try `getopt --help' for more information.\n"
@@ -5842,18 +5748,15 @@ msgstr "       getopt [オプション] [--] オプション文字列 値\n"
 
 #: getopt/getopt.c:322
 msgid "       getopt [options] -o|--options optstring [options] [--]\n"
-msgstr ""
-"       getopt [オプション] -o|--options オプション文字列 [オプション] [--]\n"
+msgstr "       getopt [オプション] -o|--options オプション文字列 [オプション] [--]\n"
 
 #: getopt/getopt.c:323
 msgid "              parameters\n"
 msgstr "              値\n"
 
 #: getopt/getopt.c:324
-msgid ""
-"  -a, --alternative            Allow long options starting with single -\n"
-msgstr ""
-"  -a, --alternative            ロングオプションが - 一つで始まるのを許す\n"
+msgid "  -a, --alternative            Allow long options starting with single -\n"
+msgstr "  -a, --alternative            ロングオプションが - 一つで始まるのを許す\n"
 
 #: getopt/getopt.c:325
 msgid "  -h, --help                   This small usage guide\n"
@@ -5864,8 +5767,7 @@ msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr "  -l, --longoptions=longopts   ロングオプションを理解させる\n"
 
 #: getopt/getopt.c:327
-msgid ""
-"  -n, --name=progname          The name under which errors are reported\n"
+msgid "  -n, --name=progname          The name under which errors are reported\n"
 msgstr "  -n, --name=progname          エラー報告の際の名前\n"
 
 #: getopt/getopt.c:328
@@ -5981,7 +5883,7 @@ msgstr "ハードウェア時計%s時刻を保持しているとみなします\
 
 #: hwclock/hwclock.c:232 hwclock/hwclock.c:327
 msgid "UTC"
-msgstr " UTC "
+msgstr "UTC"
 
 #: hwclock/hwclock.c:232 hwclock/hwclock.c:326
 msgid "local"
@@ -6039,8 +5941,7 @@ msgstr "ハードウェア時計に不正な値: %4d/%.2d/%.2d %.2d:%.2d:%.2d\n"
 #: hwclock/hwclock.c:421
 #, c-format
 msgid "Hw clock time : %4d/%.2d/%.2d %.2d:%.2d:%.2d = %ld seconds since 1969\n"
-msgstr ""
-"ハードウェア時計時刻 : %4d/%.2d/%.2d %.2d:%.2d:%.2d = 1969 年以来 %ld 秒\n"
+msgstr "ハードウェア時計時刻 : %4d/%.2d/%.2d %.2d:%.2d:%.2d = 1969 年以来 %ld 秒\n"
 
 #: hwclock/hwclock.c:451
 #, c-format
@@ -6068,9 +5969,7 @@ msgstr ""
 
 #: hwclock/hwclock.c:572
 #, c-format
-msgid ""
-"The Hardware Clock registers contain values that are either invalid (e.g. "
-"50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
+msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
 msgstr ""
 "ハードウェア時計レジスタがおかしな値(例 何月50日)になっているか、\n"
 "捕捉できない範囲の値(例 2095年)になっています。\n"
@@ -6133,8 +6032,7 @@ msgstr ""
 #: hwclock/hwclock.c:663
 #, c-format
 msgid ""
-"The date command issued by %s returned something other than an integer where "
-"the converted time value was expected.\n"
+"The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
 "The command was:\n"
 "  %s\n"
 "The response was:\n"
@@ -6154,9 +6052,7 @@ msgstr "date 文字列 %s を 1969 年以来 %ld 秒とします\n"
 
 #: hwclock/hwclock.c:706
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot set the "
-"System Time from it.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it.\n"
 msgstr ""
 "ハードウェア時計は、正しい時刻を含んでいないので、ここから得られた値を\n"
 "システム時刻に設定できません。\n"
@@ -6193,18 +6089,16 @@ msgstr "settimeofday() 呼び出しに失敗"
 #: hwclock/hwclock.c:782
 #, c-format
 msgid "Current system time: %ld = %s\n"
-msgstr ""
+msgstr "現在のシステム時間: %ld = %s\n"
 
 #: hwclock/hwclock.c:805
 #, c-format
 msgid "\tUTC: %s\n"
-msgstr ""
+msgstr "\tUTC: %s\n"
 
 #: hwclock/hwclock.c:852
 #, c-format
-msgid ""
-"Not adjusting drift factor because the Hardware Clock previously contained "
-"garbage.\n"
+msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
 msgstr "ハードウェア時刻に以前のゴミが含まれており、ずれを修正できません。\n"
 
 #: hwclock/hwclock.c:857
@@ -6216,20 +6110,16 @@ msgstr "前回の調整以来、少なくとも一日経過しないと、ずれ
 
 #: hwclock/hwclock.c:863
 #, c-format
-msgid ""
-"Not adjusting drift factor because it has been less than a day since the "
-"last calibration.\n"
+msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
 msgstr "前回の調整以来、少なくとも一日経過しないと、ずれを修正できません。\n"
 
 #: hwclock/hwclock.c:911
 #, fuzzy, c-format
 msgid ""
-"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
-"of %f seconds/day.\n"
+"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
-"過去 %2$d 秒の間に、一日あたり %3$f 秒ずらしているのですが、クロックが %1"
-"$.1f 秒ずれました。\n"
+"過去 %2$d 秒の間に、一日あたり %3$f 秒ずらしているのですが、クロックが %1$.1f 秒ずれました。\n"
 "一日あたり %4$f 秒ずれを修正します\n"
 
 #: hwclock/hwclock.c:961
@@ -6258,9 +6148,7 @@ msgstr ""
 
 #: hwclock/hwclock.c:1001
 #, c-format
-msgid ""
-"Could not open file with the clock adjustment parameters in it (%s) for "
-"writing"
+msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
 msgstr ""
 
 #: hwclock/hwclock.c:1006 hwclock/hwclock.c:1011
@@ -6275,14 +6163,12 @@ msgstr "ずれの修正値は更新されませんでした。\n"
 
 #: hwclock/hwclock.c:1058
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
 msgstr "ハードウェア時計が、正常な時刻を含んでいないので、修正できません。\n"
 
 #: hwclock/hwclock.c:1066
 #, fuzzy, c-format
-msgid ""
-"Not setting clock because last adjustment time is zero, so history is bad."
+msgid "Not setting clock because last adjustment time is zero, so history is bad."
 msgstr "前回の調整以来、少なくとも一日経過しないと、ずれを修正できません。\n"
 
 #: hwclock/hwclock.c:1089
@@ -6313,8 +6199,7 @@ msgstr "シェルを変更しませんでした。\n"
 #: hwclock/hwclock.c:1259
 #, c-format
 msgid ""
-"The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
-"machine.\n"
+"The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken.\n"
 msgstr ""
@@ -6335,9 +6220,7 @@ msgstr "カーネルはエポック値を %lu と想定しています\n"
 
 #: hwclock/hwclock.c:1273
 #, c-format
-msgid ""
-"To set the epoch value, you must use the 'epoch' option to tell to what "
-"value to set it.\n"
+msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it.\n"
 msgstr ""
 "エポック値を設定するためには、何の値を設定するかを知らせるために 'epoch'\n"
 "オプションを使わなければなりません。\n"
@@ -6358,7 +6241,7 @@ msgid "%s from %s\n"
 msgstr "%s from %s\n"
 
 #: hwclock/hwclock.c:1313
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "hwclock - query and set the hardware clock (RTC)\n"
 "\n"
@@ -6401,41 +6284,41 @@ msgstr ""
 "使い方: hwclock [機能] [オプション...]\n"
 "\n"
 "機能:\n"
-"  --help         このヘルプを表示する\n"
-"  --show         ハードウェア時計を読み取って、結果を表示する\n"
-"  --set          --date で与えられた時刻を rtc に設定する\n"
-"  --hctosys      システム時刻をハードウェア時計に合わせる\n"
-"  --systohc      ハードウェア時計を現在のシステム時刻に合わせる\n"
-"  --adjust       時計が最後に設定または調整された時点から、システム的なずれ"
-"を\n"
-"                 計算して rtc を調整する\n"
-"  --getepoch     カーネルのハードウェア時刻のエポック値を表示する\n"
-"  --setepoch     カーネルのハードウェア時刻のエポック値を --epoch として与"
-"え\n"
-"                 られた値に設定する\n"
-"  --version      hwclock のバージョンを標準出力に表示する\n"
+"  -h | --help         このヘルプを表示する\n"
+"  -r | --show         ハードウェア時計を読み取って、結果を表示する\n"
+"       --set          --date で与えられた時刻を rtc に設定する\n"
+"  -s | --hctosys      システム時刻をハードウェア時計に合わせる\n"
+"  -w | --systohc      ハードウェア時計を現在のシステム時刻に合わせる\n"
+"       --systz        現在のタイムゾーンをベースとしたシステム時間に合わせる\n"
+"       --adjust       時計が最後に設定または調整された時点から、システム的な\n"
+"                      ずれを計算して rtc を調整する\n"
+"       --getepoch     カーネルのハードウェア時刻のエポック値を表示する\n"
+"       --setepoch     カーネルのハードウェア時刻のエポック値を                       --epoch として与えられた値に設定する\n"
+"  -v | --version      hwclock のバージョンを標準出力に表示する\n"
 "\n"
 "オプション: \n"
-"  --utc          ハードウェア時計を協定世界時刻で保持する\n"
-"  --localtime    ハードウェア時計をローカル時刻で保持する\n"
-"  --rtc=path     デフォルトの代わりに使用する /dev/... ファイルを指定する\n"
-"  --directisa    %s の代わりに、直接 ISA バスにアクセスする\n"
-"  --badyear      BIOS に問題があるため、rtc の年を無視する\n"
-"  --date         ハードウェア時計に指定する時刻\n"
-"  --epoch=year   ハードウェア時計のエポック値の起源に指定する年\n"
-"  --noadjfile    /etc/adjtime にアクセスしない。--utc 又は --localtime\n"
-"                 のいずれかの使用を必要とする\n"
-"  --adjfile=パス adjust ファイルのパスを指定する (デフォルトは /etc/"
-"adjtime)\n"
+"  -u | --utc          ハードウェア時計を協定世界時刻で保持する\n"
+"       --localtime    ハードウェア時計をローカル時刻で保持する\n"
+"  -f | --rtc=path     デフォルトの代わりに使用する /dev/... ファイルを指定する\n"
+"       --directisa    %s の代わりに、直接 ISA バスにアクセスする\n"
+"       --badyear      BIOS に問題があるため、rtc の年を無視する\n"
+"       --date         ハードウェア時計に指定する時刻\n"
+"       --epoch=year   ハードウェア時計のエポック値の起源に指定する年\n"
+"       --noadjfile    /etc/adjtime にアクセスしない。--utc 又は --localtime\n"
+"                      のいずれかの使用を必要とする\n"
+"       --adjfile=パス adjust ファイルのパスを指定する (デフォルトは\n"
+"                      /etc/adjtime)\n"
+"       --test         ハードウェア時計を更新する以外のすべてを行う\n"
+"  -D | --debug        デバッグモード\n"
 
 #: hwclock/hwclock.c:1348
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "  -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
 "       tell hwclock the type of alpha you have (see hwclock(8))\n"
 "\n"
 msgstr ""
-"  --jensen, --arc, --srm, --funky-toy\n"
+"  -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
 "                あなたの alpha のタイプを指示する (hwclock(8) 参照)\n"
 
 #: hwclock/hwclock.c:1435
@@ -6449,7 +6332,7 @@ msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr "%s は何らかのオプション引数を取ります。あなたは %d 個与えました。\n"
 
 #: hwclock/hwclock.c:1560
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "You have specified multiple functions.\n"
 "You can only perform one function at a time.\n"
@@ -6459,37 +6342,23 @@ msgstr ""
 
 #: hwclock/hwclock.c:1567
 #, c-format
-msgid ""
-"%s: The --utc and --localtime options are mutually exclusive.  You specified "
-"both.\n"
-msgstr ""
-"%s: --utc と --localtime オプションは相互排他的ですが、両方が指定されまし"
-"た。\n"
+msgid "%s: The --utc and --localtime options are mutually exclusive.  You specified both.\n"
+msgstr "%s: --utc と --localtime オプションは相互排他的ですが、両方が指定されました。\n"
 
 #: hwclock/hwclock.c:1574
 #, c-format
-msgid ""
-"%s: The --adjust and --noadjfile options are mutually exclusive.  You "
-"specified both.\n"
-msgstr ""
-"%s: --adjust と --noadjfile オプションは相互排他的ですが、両方が指定されまし"
-"た。\n"
+msgid "%s: The --adjust and --noadjfile options are mutually exclusive.  You specified both.\n"
+msgstr "%s: --adjust と --noadjfile オプションは相互排他的ですが、両方が指定されました。\n"
 
 #: hwclock/hwclock.c:1581
 #, c-format
-msgid ""
-"%s: The --adjfile and --noadjfile options are mutually exclusive.  You "
-"specified both.\n"
-msgstr ""
-"%s: --adjfile と --noadjfile オプションは相互排他的ですが、両方が指定されまし"
-"た。\n"
+msgid "%s: The --adjfile and --noadjfile options are mutually exclusive.  You specified both.\n"
+msgstr "%s: --adjfile と --noadjfile オプションは相互排他的ですが、両方が指定されました。\n"
 
 #: hwclock/hwclock.c:1590
 #, c-format
 msgid "%s: With --noadjfile, you must specify either --utc or --localtime\n"
-msgstr ""
-"%s: --noadjfile をつけた場合、--utc か --localtime のいずれかを指定しなければ"
-"なりません\n"
+msgstr "%s: --noadjfile をつけた場合、--utc か --localtime のいずれかを指定しなければなりません\n"
 
 #: hwclock/hwclock.c:1604
 #, c-format
@@ -6499,8 +6368,7 @@ msgstr "有効な設定時刻がありません。クロックを設定できま
 #: hwclock/hwclock.c:1621
 #, c-format
 msgid "Sorry, only the superuser can change the Hardware Clock.\n"
-msgstr ""
-"残念ながら、ハードウェアク時計の変更はスーパーユーザでしか行なえません。\n"
+msgstr "残念ながら、ハードウェアク時計の変更はスーパーユーザでしか行なえません。\n"
 
 #: hwclock/hwclock.c:1626
 #, c-format
@@ -6509,9 +6377,7 @@ msgstr "残念ながら、システム時計の変更はスーパーユーザで
 
 #: hwclock/hwclock.c:1631
 #, c-format
-msgid ""
-"Sorry, only the superuser can change the Hardware Clock epoch in the "
-"kernel.\n"
+msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel.\n"
 msgstr ""
 "残念ながら、カーネル内のハードウェア時計のエポック値を変更できるのは、\n"
 "スーパーユーザだけです。\n"
@@ -6523,9 +6389,7 @@ msgstr "既知のどんな方法でも、ハードウェア時計にアクセス
 
 #: hwclock/hwclock.c:1655
 #, c-format
-msgid ""
-"Use the --debug option to see the details of our search for an access "
-"method.\n"
+msgid "Use the --debug option to see the details of our search for an access method.\n"
 msgstr "--debug オプションでアクセス方法検索の詳細について見てください。\n"
 
 #: hwclock/kd.c:53
@@ -6606,8 +6470,7 @@ msgstr "割り込み更新をオフにするための %s への ioctl() が失�
 #: hwclock/rtc.c:303
 #, c-format
 msgid "ioctl() to %s to turn on update interrupts failed unexpectedly"
-msgstr ""
-"割り込み更新をオンにするための %s への ioctl() が予期せぬ失敗に終わりました"
+msgstr "割り込み更新をオンにするための %s への ioctl() が予期せぬ失敗に終わりました"
 
 #: hwclock/rtc.c:360
 #, c-format
@@ -6626,10 +6489,7 @@ msgstr "%s のオープンに失敗しました"
 
 #: hwclock/rtc.c:410 hwclock/rtc.c:454
 #, c-format
-msgid ""
-"To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
-"device driver via the device special file %s.  This file does not exist on "
-"this system.\n"
+msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system.\n"
 msgstr ""
 "カーネル内のエポック値を算出するには、スペシャルファイル %s を通じて\n"
 "Linux の 'rtc' デバイスドライバにアクセスする必要があります。しかし、この\n"
@@ -6648,25 +6508,21 @@ msgstr "%s への ioctl(RTC_EPOCH_READ) が失敗しました"
 #: hwclock/rtc.c:427
 #, c-format
 msgid "we have read epoch %ld from %s with RTC_EPOCH_READ ioctl.\n"
-msgstr ""
-"%2$s から RTC_EPOCH_READ ioctl によってエポック %1$ld を読み取りました。\n"
+msgstr "%2$s から RTC_EPOCH_READ ioctl によってエポック %1$ld を読み取りました。\n"
 
 #: hwclock/rtc.c:446
 #, c-format
 msgid "The epoch value may not be less than 1900.  You requested %ld\n"
-msgstr ""
-"エポック値は 1900 年以前ではあり得ません。あなたは %ld を要求しました\n"
+msgstr "エポック値は 1900 年以前ではあり得ません。あなたは %ld を要求しました\n"
 
 #: hwclock/rtc.c:464
 #, c-format
 msgid "setting epoch to %ld with RTC_EPOCH_SET ioctl to %s.\n"
-msgstr ""
-"%2$s から RTC_EPOCH_READ ioctl によってエポック %1$ld を読み取りました。\n"
+msgstr "%2$s から RTC_EPOCH_READ ioctl によってエポック %1$ld を読み取りました。\n"
 
 #: hwclock/rtc.c:469
 #, c-format
-msgid ""
-"The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
+msgid "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
 msgstr "%s のカーネルドライバは RTC_EPOCH_SET ioctl を持っていません。\n"
 
 #: hwclock/rtc.c:472
@@ -6745,15 +6601,11 @@ msgstr "%s: 入力が溢れました"
 #: login-utils/agetty.c:1207
 #, c-format
 msgid ""
-"Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H "
-"login_host] baud_rate,... line [termtype]\n"
-"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
-"line baud_rate,... [termtype]\n"
+"Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\n"
+"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"
 msgstr ""
-"使い方: %s [-8hiLmUw] [-l ログインプログラム] [-t タイムアウト] [-I 初期化文"
-"字列] [-H ログインホスト] ボーレート,... 行 [端末タイプ]\n"
-"又は\t[-hiLmw] [-l ログインプログラム] [-t タイムアウト [-I 初期化文字列] [-"
-"H ログインホスト] 行 ボーレート,... [端末タイプ]\n"
+"使い方: %s [-8hiLmUw] [-l ログインプログラム] [-t タイムアウト] [-I 初期化文字列] [-H ログインホスト] ボーレート,... 行 [端末タイプ]\n"
+"又は\t[-hiLmw] [-l ログインプログラム] [-t タイムアウト [-I 初期化文字列] [-H ログインホスト] 行 ボーレート,... [端末タイプ]\n"
 
 #: login-utils/checktty.c:91 login-utils/checktty.c:112
 #, c-format
@@ -6791,8 +6643,7 @@ msgstr "%s: ユーザ \"%s\" は存在しません。\n"
 #: login-utils/chfn.c:145 login-utils/chsh.c:131
 #, c-format
 msgid "%s: can only change local entries; use yp%s instead.\n"
-msgstr ""
-"%s: ローカルの項目しか変更できません -- かわりに yp%s を使いましょう。\n"
+msgstr "%s: ローカルの項目しか変更できません -- かわりに yp%s を使いましょう。\n"
 
 #: login-utils/chfn.c:156 login-utils/chsh.c:142
 msgid "Unknown user context"
@@ -6806,7 +6657,7 @@ msgstr ""
 #: login-utils/chfn.c:164 login-utils/chsh.c:150
 #, c-format
 msgid "%s: Can't set default context for /etc/passwd"
-msgstr ""
+msgstr "%s: /etc/passwd のデフォルトコンテキストを設定できません"
 
 #: login-utils/chfn.c:178
 #, c-format
@@ -6854,15 +6705,15 @@ msgstr "[ --help ] [ --version ]\n"
 
 #: login-utils/chfn.c:378
 msgid "Office"
-msgstr ""
+msgstr "オフィス"
 
 #: login-utils/chfn.c:379
 msgid "Office Phone"
-msgstr ""
+msgstr "オフィスの電話"
 
 #: login-utils/chfn.c:380
 msgid "Home Phone"
-msgstr ""
+msgstr "自宅の電話"
 
 #: login-utils/chfn.c:401 login-utils/chsh.c:321
 #, c-format
@@ -6905,17 +6756,13 @@ msgstr "%s: \"%s\" は /etc/shells リストの中にありません。\n"
 
 #: login-utils/chsh.c:164
 #, c-format
-msgid ""
-"%s: Running UID doesn't match UID of user we're altering, shell change "
-"denied\n"
+msgid "%s: Running UID doesn't match UID of user we're altering, shell change denied\n"
 msgstr ""
 
 #: login-utils/chsh.c:170
 #, c-format
 msgid "%s: Your shell is not in /etc/shells, shell change denied\n"
-msgstr ""
-"%s: あなたのシェルは /etc/shells にありませんので、シェルの変更が拒否されまし"
-"た\n"
+msgstr "%s: あなたのシェルは /etc/shells にありませんので、シェルの変更が拒否されました\n"
 
 #: login-utils/chsh.c:177
 #, c-format
@@ -7497,7 +7344,7 @@ msgstr ""
 
 #: login-utils/simpleinit.c:259
 msgid "error running finalprog\n"
-msgstr "finalprog 起動時にエラー発生\n"
+msgstr "finalprog実行時にエラー発生\n"
 
 #: login-utils/simpleinit.c:263
 msgid "error forking finalprog\n"
@@ -7545,19 +7392,19 @@ msgid "no TERM or cannot stat tty\n"
 msgstr "端末がないか tty の状態を取得できません\n"
 
 #: login-utils/simpleinit.c:938
-#, fuzzy, c-format
+#, c-format
 msgid "error stopping service: \"%s\"\n"
-msgstr "エラーによりサービスを停止します: \"%s\""
+msgstr "サービスを停止する際にエラーが発生しました: \"%s\"\n"
 
 #: login-utils/simpleinit.c:950
-#, fuzzy, c-format
+#, c-format
 msgid "Stopped service: %s\n"
-msgstr "エラーによりサービスを停止します: \"%s\""
+msgstr "サービスを停止します: %s\n"
 
 #: login-utils/simpleinit.c:1070
-#, fuzzy, c-format
+#, c-format
 msgid "error running programme: \"%s\"\n"
-msgstr "finalprog 起動時にエラー発生\n"
+msgstr "programme実行時にエラーが発生しました: \"%s\"\n"
 
 #: login-utils/ttymsg.c:75
 msgid "too many iov's (change code in wall/ttymsg.c)"
@@ -7604,14 +7451,14 @@ msgid "%s: can't link %s: %s\n"
 msgstr "%s: %s をリンクできません: %s\n"
 
 #: login-utils/vipw.c:202
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Can't get context for %s"
-msgstr "%s へのタイムアウトを取得できません: %s\n"
+msgstr "%s: %s のコンテキストを取得できません"
 
 #: login-utils/vipw.c:208
-#, fuzzy, c-format
+#, c-format
 msgid "%s: Can't set context for %s"
-msgstr "%s へのタイムアウトを取得できません: %s\n"
+msgstr "%s: %s のコンテキストを設定できません"
 
 #: login-utils/vipw.c:217
 #, c-format
@@ -7718,12 +7565,12 @@ msgstr "聖 Tib の日"
 #: misc-utils/findfs.c:24
 #, c-format
 msgid "Usage: %s LABEL=<label>|UUID=<uuid>\n"
-msgstr ""
+msgstr "使い方: %s LABEL=<label>|UUID=<uuid>\n"
 
 #: misc-utils/findfs.c:55
-#, fuzzy, c-format
+#, c-format
 msgid "unable to resolve '%s'"
-msgstr "%s を開けません"
+msgstr "'%s' を解決できません"
 
 #: misc-utils/kill.c:207
 #, c-format
@@ -7782,11 +7629,8 @@ msgstr "logger: 不明な優先度: %s.\n"
 
 #: misc-utils/logger.c:285
 #, c-format
-msgid ""
-"usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
-msgstr ""
-"使い方: logger [-is] [-f ファイル] [-p 優先度] [-t タグ] [-u ソケット] [ メッ"
-"セージ ... ]\n"
+msgid "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
+msgstr "使い方: logger [-is] [-f ファイル] [-p 優先度] [-t タグ] [-u ソケット] [ メッセージ ... ]\n"
 
 #: misc-utils/look.c:351
 #, c-format
@@ -7805,35 +7649,36 @@ msgstr "%2$s から %1$d バイト取得しました\n"
 
 #: misc-utils/namei.c:144 misc-utils/namei.c:198 misc-utils/namei.c:220
 #: misc-utils/namei.c:227 misc-utils/namei.c:248
-#, fuzzy
 msgid "out of memory?"
-msgstr "メモリが足りない？\n"
+msgstr "メモリが足りない?"
 
 #: misc-utils/namei.c:189
-#, fuzzy, c-format
+#, c-format
 msgid "failed to read symlink: %s"
-msgstr "%s から時刻を読込むための ioctl() に失敗しました"
+msgstr "symlink の読み込みに失敗しました: %s"
 
 #: misc-utils/namei.c:229
-#, fuzzy, c-format
+#, c-format
 msgid "could not stat '%s'"
-msgstr "デバイス %s を stat できません"
+msgstr "'%s' を stat できません"
 
 #: misc-utils/namei.c:411
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage: %s [options] pathname [pathname ...]\n"
-msgstr "使い方: namei [-mx] パス名 [パス名 ...]\n"
+msgstr ""
+"\n"
+"使い方: %s [オプション] パス名 [パス名 ...]\n"
 
 #: misc-utils/namei.c:412
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Options:\n"
 msgstr ""
 "\n"
-"%d 個の領域:\n"
+"オブション:\n"
 
 #: misc-utils/namei.c:415
 #, c-format
@@ -7848,18 +7693,18 @@ msgid ""
 msgstr ""
 
 #: misc-utils/namei.c:423
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "For more information see namei(1).\n"
 msgstr ""
 "\n"
-"詳細情報は、setarch(8) を確認してください。\n"
+"詳細情報は、namei(1) を確認してください。\n"
 
 #: misc-utils/namei.c:484
-#, fuzzy, c-format
+#, c-format
 msgid "failed to stat: %s"
-msgstr "%s の状態を取得できません"
+msgstr "stat が失敗しました: %s"
 
 #: misc-utils/namei.c:495
 #, c-format
@@ -7968,7 +7813,7 @@ msgstr "標準出力への書き込みが失敗しました"
 #: misc-utils/scriptreplay.c:110
 #, c-format
 msgid "unexpected end of file on %s"
-msgstr ""
+msgstr "%sで予期しないファイルの終端"
 
 #: misc-utils/scriptreplay.c:112
 #, c-format
@@ -8282,8 +8127,9 @@ msgid "read count"
 msgstr "%c を読込み\n"
 
 #: misc-utils/uuidd.c:203
+#, fuzzy
 msgid "bad response length"
-msgstr ""
+msgstr "悪いファイル名の長さ"
 
 #: misc-utils/uuidd.c:268
 #, c-format
@@ -8378,7 +8224,7 @@ msgstr ""
 #: misc-utils/uuidgen.c:32
 #, fuzzy, c-format
 msgid "Usage: %s [-r] [-t]\n"
-msgstr "使い方: %s [オプション] デバイス名...\n"
+msgstr "使い方: %s [オプション]\n"
 
 #: misc-utils/whereis.c:159
 #, c-format
@@ -8560,9 +8406,9 @@ msgid "%s: /dev directory does not exist."
 msgstr "%s: /dev ディレクトリは存在しません。"
 
 #: mount/lomount.c:461 mount/lomount.c:602
-#, fuzzy, c-format
+#, c-format
 msgid "%s: no permission to look at /dev/loop%s<N>"
-msgstr "%s: dev/loop# の権限を見ることができません"
+msgstr "%s: dev/loop%s<N> を見るための権限がありません"
 
 #: mount/lomount.c:605
 #, c-format
@@ -8575,14 +8421,12 @@ msgid ""
 "%s: Could not find any loop device. Maybe this kernel does not know\n"
 "       about the loop device? (If so, recompile or `modprobe loop'.)"
 msgstr ""
-"%s: loop デバイスが全く見つかりません。カーネルが loop デバイスをサポートして"
-"いないかもしれません。\n"
+"%s: loop デバイスが全く見つかりません。カーネルが loop デバイスをサポートしていないかもしれません。\n"
 "       (そうであれば、再コンパイルするか `insmod loop.o' して下さい。)"
 
 #: mount/lomount.c:638
-#, fuzzy
 msgid "Out of memory while reading passphrase"
-msgstr "バッファを拡大するときにメモリが足りなくなりました。\n"
+msgstr "パスフレーズの読み込み中にメモリが足りなくなりました"
 
 #: mount/lomount.c:681
 #, c-format
@@ -8627,7 +8471,7 @@ msgstr ""
 "再コンパイルしてください。\n"
 
 #: mount/lomount.c:888
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -8636,19 +8480,19 @@ msgid ""
 " %1$s -d | --detach <loopdev> [<loopdev> ...] delete\n"
 " %1$s -f | --find                             find unused\n"
 " %1$s -c | --set-capacity <loopdev>           resize\n"
-" %1$s -j | --associated <file> [-o <num>]     list all associated with "
-"<file>\n"
+" %1$s -j | --associated <file> [-o <num>]     list all associated with <file>\n"
 " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
 msgstr ""
 "\n"
 "使い方:\n"
 " %1$s loopデバイス                            情報をみる\n"
 " %1$s -a | --all                              使用されている一覧を表示する\n"
-" %1$s -d | --detach <loopデバイス>            削除\n"
+" %1$s -d | --detach <loopデバイス> [<loopデバイス>...] 削除\n"
 " %1$s -f | --find                             未使用のものを検索する\n"
+" %1$s -c | --set-capacity <loopデバイス>      リサイズ\n"
 " %1$s -j | --associated <ファイル> [-o <num>] <ファイル> に関連づけられた\n"
 "                                              一覧を表示\n"
-" %1$s [オプション] {-f|--find|loopdev} <file> setup\n"
+" %1$s [オプション] {-f|--find|loopdev} <ファイル> セットアップ\n"
 
 #: mount/lomount.c:898
 #, c-format
@@ -8669,7 +8513,7 @@ msgstr ""
 #: mount/lomount.c:1036 mount/lomount.c:1076
 #, c-format
 msgid "Loop device is %s\n"
-msgstr "Loop: デバイス は %s です\n"
+msgstr "Loopデバイス は %s です\n"
 
 #: mount/lomount.c:1063
 #, c-format
@@ -8684,9 +8528,7 @@ msgstr "%s: %s: デバイスを使用中です"
 #: mount/lomount.c:1090
 #, c-format
 msgid "No loop support was available at compile time. Please recompile.\n"
-msgstr ""
-"コンパイル時に loop サポートが有効になっていません。再コンパイルしてくださ"
-"い。\n"
+msgstr "コンパイル時に loop サポートが有効になっていません。再コンパイルしてください。\n"
 
 #: mount/mount.c:329
 #, c-format
@@ -8726,17 +8568,17 @@ msgstr "mount: %s のモード変更エラー: %s"
 #: mount/mount.c:663
 #, c-format
 msgid "mount: cannot set group id: %s"
-msgstr "mount: グループ ID を設定できません: %s"
+msgstr "mount: グループid を設定できません: %s"
 
 #: mount/mount.c:666
 #, c-format
 msgid "mount: cannot set user id: %s"
-msgstr "mount: ユーザー id を設定できません: %s"
+msgstr "mount: ユーザーid を設定できません: %s"
 
-#: mount/mount.c:705 mount/mount.c:1809
+#: mount/mount.c:705 mount/mount.c:1805
 #, c-format
 msgid "mount: cannot fork: %s"
-msgstr "mount: fork できません: %s"
+msgstr "mount: 子プロセスの起動ができません: %s"
 
 #: mount/mount.c:842
 #, c-format
@@ -8850,8 +8692,7 @@ msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: mtab によると、%s は %s にマウント済です\n"
 
 #: mount/mount.c:1358
-msgid ""
-"mount: I could not determine the filesystem type, and none was specified"
+msgid "mount: I could not determine the filesystem type, and none was specified"
 msgstr "mount: none が指定されましたが、ファイルシステムタイプを決定できません"
 
 #: mount/mount.c:1361
@@ -9008,8 +8849,7 @@ msgstr ""
 #: mount/mount.c:1506
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
-msgstr ""
-"mount: %s はブロックデバイスではありません (多分 `-o loop' とやってみたら？)"
+msgstr "mount: %s はブロックデバイスではありません (多分 `-o loop' とやってみたら？)"
 
 #: mount/mount.c:1509
 #, c-format
@@ -9035,27 +8875,22 @@ msgstr "mount: %s%s を読込み専用でマウントできません"
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s は書き込み禁止ですが、`-w' フラグが明示的に与えられました"
 
-#: mount/mount.c:1527
-#, fuzzy, c-format
-msgid "mount: cannot remount %s%s read-write, is write-protected"
-msgstr "mount: %s%s を読込み専用でマウントできません"
-
-#: mount/mount.c:1542
+#: mount/mount.c:1538
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s は書き込み禁止です、読込み専用でマウントします"
 
-#: mount/mount.c:1552
+#: mount/mount.c:1548
 #, fuzzy, c-format
 msgid "mount: no medium found on %s ...trying again\n"
 msgstr "mount: %s が見つかりません -- 作成します..\n"
 
-#: mount/mount.c:1558
+#: mount/mount.c:1554
 #, fuzzy, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: %s は %s にマウント済です\n"
 
-#: mount/mount.c:1576
+#: mount/mount.c:1572
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9065,22 +8900,22 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 
-#: mount/mount.c:1655
+#: mount/mount.c:1651
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: タイプが与えられていません -- コロンがあるので nfs の様ですが\n"
 
-#: mount/mount.c:1661
+#: mount/mount.c:1657
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr "mount: タイプが与えられていません -- // があるので cifs の様ですが\n"
 
-#: mount/mount.c:1756
+#: mount/mount.c:1752
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s は %s にマウント済です\n"
 
-#: mount/mount.c:1890
+#: mount/mount.c:1886
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9131,11 +8966,11 @@ msgstr ""
 "（与えられたタイプの）ファイルシステムをマウントすることに留意しましょう。\n"
 "既に見えているディレクトリツリーを他の場所にマウントできたりもします:\n"
 "        mount --bind olddir newdir\n"
-"or move a subtree:\n"
+"または、サブツリーを移動:\n"
 "        mount --move olddir newdir\n"
 "One can change the type of mount containing the directory dir:\n"
 "        mount --make-shared dir\n"
-"       mount --make-slave dir\n"
+"        mount --make-slave dir\n"
 "        mount --make-private dir\n"
 "        mount --make-unbindable dir\n"
 "One can change the type of all the mounts in a mount subtree\n"
@@ -9149,19 +8984,19 @@ msgstr ""
 "その他のオプション: [-nfFrsvw] [-o オプション] [-p passwdfd]\n"
 "もっと詳しいことを知りたければ、man 8 mount と唱えてみましょう。\n"
 
-#: mount/mount.c:2213
+#: mount/mount.c:2209
 msgid "mount: only root can do that"
 msgstr "mount: root だけがそれを行なえます"
 
-#: mount/mount.c:2223
+#: mount/mount.c:2219
 msgid "nothing was mounted"
 msgstr "何もマウントされませんでした"
 
-#: mount/mount.c:2241 mount/mount.c:2267
+#: mount/mount.c:2237 mount/mount.c:2263
 msgid "mount: no such partition found"
 msgstr "mount: そのようなパーティションは見つかりません"
 
-#: mount/mount.c:2244
+#: mount/mount.c:2240
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %2$s や %3$s 内に %1$s を見つけられません"
@@ -9207,7 +9042,7 @@ msgstr ""
 "\n"
 
 #: mount/swapon.c:92
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -9220,9 +9055,8 @@ msgid ""
 msgstr ""
 "\n"
 "使い方:\n"
-" %1$s -a [-e] [-v]                  /etc/fstab 内で指定したスワップを有効にす"
-"る\n"
-" %1$s [-p priority] [-v] <special>  指定されたスワップを有効にする\n"
+" %1$s -a [-e] [-v]                  /etc/fstab 内で指定したスワップを有効にする\n"
+" %1$s [-p priority] [-v] [-f] <special>  指定されたスワップを有効にする\n"
 " %1$s -s                            スワップの使用状況を表示\n"
 " %1$s -h                            ヘルプの表示\n"
 " %1$s -V                            バージョンの表示\n"
@@ -9250,7 +9084,7 @@ msgstr ""
 #: mount/swapon.c:138
 #, c-format
 msgid "%s: unexpected file format"
-msgstr ""
+msgstr "%s: 予期しないファイル形式"
 
 #: mount/swapon.c:177 mount/swapon.c:245 mount/swapon.c:390 mount/swapon.c:549
 #: mount/swapon.c:751
@@ -9261,34 +9095,29 @@ msgstr "openpty が失敗\n"
 #: mount/swapon.c:198
 #, fuzzy, c-format
 msgid "%s: reinitializing the swap."
-msgstr ""
-"%s: %s: ソフトウェアサスペンドデータを検出しました。スワップを再初期化しま"
-"す\n"
+msgstr "%s: %s: ソフトウェアサスペンドデータを検出しました。スワップを再初期化します\n"
 
 #: mount/swapon.c:202
-#, fuzzy
 msgid "fork failed"
-msgstr "子プロセスの起動に失敗\n"
+msgstr "子プロセスの起動に失敗"
 
 #: mount/swapon.c:218
-#, fuzzy
 msgid "execv failed"
-msgstr "実行に失敗\n"
+msgstr "実行に失敗"
 
 #: mount/swapon.c:226
-#, fuzzy
 msgid "waitpid failed"
-msgstr "setuid() に失敗"
+msgstr "waitpid に失敗"
 
 #: mount/swapon.c:250
-#, fuzzy, c-format
+#, c-format
 msgid "%s: lseek failed"
-msgstr "シークに失敗"
+msgstr "%s: シークに失敗"
 
 #: mount/swapon.c:256
-#, fuzzy, c-format
+#, c-format
 msgid "%s: write signature failed"
-msgstr "標準出力への書き込みが失敗しました"
+msgstr "%s: 署名の書き込みに失敗"
 
 #: mount/swapon.c:343
 #, c-format
@@ -9296,9 +9125,9 @@ msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
 msgstr ""
 
 #: mount/swapon.c:363
-#, fuzzy, c-format
+#, c-format
 msgid "%s: stat failed"
-msgstr "%s は失敗しました。\n"
+msgstr "%s: stat が失敗"
 
 #: mount/swapon.c:373
 #, fuzzy, c-format
@@ -9311,14 +9140,14 @@ msgid "%s: skipping - it appears to have holes."
 msgstr "%s: ファイル %s をスキップ -- ホールを検出。\n"
 
 #: mount/swapon.c:395
-#, fuzzy, c-format
+#, c-format
 msgid "%s: get size failed"
-msgstr "シークに失敗"
+msgstr "%s: サイズの取得に失敗"
 
 #: mount/swapon.c:401
 #, c-format
 msgid "%s: read swap header failed"
-msgstr ""
+msgstr "%s: スワップヘッダの読み込みに失敗しました"
 
 #: mount/swapon.c:414
 #, c-format
@@ -9332,16 +9161,13 @@ msgstr ""
 
 #: mount/swapon.c:424
 #, c-format
-msgid ""
-"%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
+msgid "%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
 msgstr ""
 
 #: mount/swapon.c:433
-#, fuzzy, c-format
+#, c-format
 msgid "%s: software suspend data detected. Rewriting the swap signature."
-msgstr ""
-"%s: %s: ソフトウェアサスペンドデータを検出しました。スワップを再初期化しま"
-"す\n"
+msgstr "%s: ソフトウェアサスペンドデータを検出しました。スワップ署名を書きなおします。"
 
 #: mount/swapon.c:457 mount/swapon.c:507
 #, c-format
@@ -9349,24 +9175,23 @@ msgid "%s on %s\n"
 msgstr "%2$s に %1$s\n"
 
 #: mount/swapon.c:479
-#, fuzzy, c-format
+#, c-format
 msgid "%s: swapon failed"
-msgstr "%s は失敗しました。\n"
+msgstr "%s swaponは失敗しました"
 
 #: mount/swapon.c:486
-#, fuzzy, c-format
+#, c-format
 msgid "cannot find the device for %s"
-msgstr "%s: %s 用のデバイスが見つかりません\n"
+msgstr "%s 用のデバイスが見つかりません"
 
 #: mount/swapon.c:519
-#, fuzzy
 msgid "Not superuser."
-msgstr "スーパーユーザーではありません\n"
+msgstr "スーパーユーザーではありません"
 
 #: mount/swapon.c:522
-#, fuzzy, c-format
+#, c-format
 msgid "%s: swapoff failed"
-msgstr "%s は失敗しました。\n"
+msgstr "%s: swapoffは失敗しました"
 
 #: mount/umount.c:41
 #, c-format
@@ -9410,6 +9235,8 @@ msgid ""
 "        (In some cases useful info about processes that use\n"
 "         the device is found by lsof(8) or fuser(1))"
 msgstr ""
+"umount %s: デバイスがビジーです。\n"
+"       (このデバイスがプロセスによって使われているのであれば、lsof(8)やfuser(1)を使って調査するのが有益かもしれません)"
 
 #: mount/umount.c:173
 #, c-format
@@ -9456,25 +9283,25 @@ msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: アンマウントのためのファイルシステムリストを見つけられません"
 
 #: mount/umount.c:397
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: umount -h | -V\n"
 "       umount -a [-d] [-f] [-r] [-n] [-v] [-t vfstypes] [-O opts]\n"
 "       umount [-d] [-f] [-r] [-n] [-v] special | node...\n"
 msgstr ""
-"使い方: umount [-hV]\n"
-"        umount -a [-f] [-r] [-n] [-v] [-t vfsタイプ] [-O オプション]\n"
-"        umount [-f] [-r] [-n] [-v] special | node...\n"
+"使い方: umount -h | -V\n"
+"        umount -a [-d] [-f] [-r] [-n] [-v] [-t vfsタイプ] [-O オプション]\n"
+"        umount [-d] [-f] [-r] [-n] [-v] special | node...\n"
 
 #: mount/umount.c:466
-#, fuzzy, c-format
+#, c-format
 msgid "device %s is associated with %s\n"
-msgstr "警告: %s は既に %s に関連づけされています\n"
+msgstr "デバイス %s は %s に関連づけされています\n"
 
 #: mount/umount.c:472
-#, fuzzy, c-format
+#, c-format
 msgid "device %s is not associated with %s\n"
-msgstr "警告: %s は既に %s に関連づけされています\n"
+msgstr "デバイス %s は %s に関連づけされていません\n"
 
 #: mount/umount.c:485
 msgid "Cannot umount \"\"\n"
@@ -9512,8 +9339,7 @@ msgstr "umount: %s は複数マウントされているようです"
 #: mount/umount.c:561
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
-msgstr ""
-"umount: %s は fstab にありません (さらに、あなたは root ではありません)"
+msgstr "umount: %s は fstab にありません (さらに、あなたは root ではありません)"
 
 #: mount/umount.c:567
 #, c-format
@@ -9581,12 +9407,12 @@ msgstr ""
 #: schedutils/chrt.c:118
 #, c-format
 msgid "pid %d's %s scheduling priority: %d\n"
-msgstr ""
+msgstr "pid %d's %s scheduling priority: %d\n"
 
 #: schedutils/chrt.c:147
 #, c-format
 msgid "SCHED_%s min/max priority\t: %d/%d\n"
-msgstr ""
+msgstr "SCHED_%s min/max priority\t: %d/%d\n"
 
 #: schedutils/chrt.c:150
 #, fuzzy, c-format
@@ -9618,17 +9444,15 @@ msgid "failed to execute %s"
 msgstr "typescript ファイル %s の読み込みが失敗しました"
 
 #: schedutils/ionice.c:57
-#, fuzzy
 msgid "ioprio_get failed"
-msgstr "openpty が失敗\n"
+msgstr "ioprio_get が失敗"
 
 #: schedutils/ionice.c:75
-#, fuzzy
 msgid "ioprio_set failed"
-msgstr "openpty が失敗\n"
+msgstr "ioprio_set が失敗"
 
 #: schedutils/ionice.c:81
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
 "ionice - sets or gets process io scheduling class and priority.\n"
@@ -9645,6 +9469,20 @@ msgid ""
 "  -h                  this help\n"
 "\n"
 msgstr ""
+"\n"
+"ionice - プロセスのioスケジューリングクラス・プライオリティを取得・設定する。\n"
+"\n"
+"使い方:\n"
+"  ionice [ オプション ] -p <pid> [<pid> ...]\n"
+"  ionoce [ オプション ] <command> [<arg> ...]\n"
+"\n"
+"オプション:\n"
+"  -n <classdata>      クラスデータ (0-7, lower being higher prio)\n"
+"  -c <class>          スケジューリングクラス\n"
+"                      1: リアルタイム, 2: ベストエフォート, 3: アイドル\n"
+"  -t                  エラーを無視する\n"
+"  -h                  このヘルプ\n"
+"\n"
 
 #: schedutils/ionice.c:110 schedutils/ionice.c:112
 #, fuzzy, c-format
@@ -9665,15 +9503,13 @@ msgid "bad prio class %d"
 msgstr ""
 
 #: schedutils/ionice.c:187
-#, fuzzy
 msgid "execvp failed"
-msgstr "実行に失敗\n"
+msgstr "execvpに失敗"
 
 #: sys-utils/ctrlaltdel.c:27
 #, c-format
 msgid "You must be root to set the Ctrl-Alt-Del behaviour.\n"
-msgstr ""
-"その Ctrl-Alt-Del の振る舞いを設定するには root で無ければなりません。\n"
+msgstr "その Ctrl-Alt-Del の振る舞いを設定するには root で無ければなりません。\n"
 
 #: sys-utils/ctrlaltdel.c:42
 #, c-format
@@ -9692,8 +9528,7 @@ msgstr ""
 #: sys-utils/cytune.c:125
 #, c-format
 msgid ""
-"File %s, For threshold value %lu and timrout value %lu, Maximum characters "
-"in fifo were %d,\n"
+"File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
 "ファイル %s、しきい値 %lu 及びタイムアウト値 %lu、パイプ内の最大キャラクタ\n"
@@ -9726,12 +9561,8 @@ msgstr "不正な初期時刻: %s\n"
 
 #: sys-utils/cytune.c:238
 #, c-format
-msgid ""
-"Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
-"[-g|-G] file [file...]\n"
-msgstr ""
-"使い方: %s [-q [-i 間隔]] ([-s 値]|[-S 値]) ([-t 値]|[-T 値]) [-g|-G] ファイ"
-"ル [ファイル...]\n"
+msgid "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) [-g|-G] file [file...]\n"
+msgstr "使い方: %s [-q [-i 間隔]] ([-s 値]|[-S 値]) ([-t 値]|[-T 値]) [-g|-G] ファイル [ファイル...]\n"
 
 #: sys-utils/cytune.c:250 sys-utils/cytune.c:269 sys-utils/cytune.c:289
 #: sys-utils/cytune.c:339
@@ -9784,8 +9615,7 @@ msgstr "%s で CYGETMON が発行できません: %s\n"
 
 #: sys-utils/cytune.c:418
 #, c-format
-msgid ""
-"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
 "%s: 整数 %lu、キャラクタ %lu/%lu -- fifo: 閾値 %lu、タイムアウト %lu、\n"
 "    最大 %lu、現在 %lu\n"
@@ -9797,8 +9627,7 @@ msgstr "   %f 整数/秒; %f 記録, %f 送信 (キャラクタ/秒)\n"
 
 #: sys-utils/cytune.c:429
 #, c-format
-msgid ""
-"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
 "%s: 整数 %lu、キャラクタ %lu -- fifo: しきい値 %lu、タイムアウト %lu、\n"
 "    最大 %lu、現在 %lu\n"
@@ -9829,6 +9658,18 @@ msgid ""
 "  -h  --help       Display this text\n"
 "  -V  --version    Display version\n"
 msgstr ""
+"使い方: %1$s [-sxun][-w #] fd#\n"
+"        %1$s [-sxon][-w #] ファイル [-c] command...\n"
+"        %1$s [-sxon][-w #] ディレクトリ [-c] command...\n"
+"  -s  --shared     共有ロックを取得する\n"
+"  -x  --exclusive  排他ロックを取得する\n"
+"  -u  --unlock     ロックを削除する\n"
+"  -n  --nonblock   Fail rather than wait\n"
+"  -w  --timeout    Wait for a limited amount of time\n"
+"  -o  --close      コマンドを実行する映えにファイルディスクリプタをクローズする\n"
+"  -c  --command    シェルを通してシングルコマンド文字列を実行する\n"
+"  -h  --help       このテキストを表示する\n"
+"  -V  --version    バージョンを表示する\n"
 
 #: sys-utils/flock.c:192
 #, fuzzy, c-format
@@ -9848,20 +9689,23 @@ msgstr "不正な数: %s\n"
 #: sys-utils/flock.c:238
 #, c-format
 msgid "%s: requires file descriptor, file or directory\n"
-msgstr ""
+msgstr "%s: ファイルディスクリプタかファイルかディレクトリを必要とします\n"
 
 #: sys-utils/flock.c:294
-#, fuzzy, c-format
+#, c-format
 msgid "%s: fork failed: %s\n"
-msgstr "子プロセスの起動に失敗\n"
+msgstr "%s: 子プロセスの起動に失敗: %s\n"
 
 #: sys-utils/ipcmk.c:84
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage: %s [options]\n"
 "\n"
-msgstr "使い方: %s [オプション] デバイス名...\n"
+msgstr ""
+"\n"
+"使い方: %s [オプション]\n"
+"\n"
 
 #: sys-utils/ipcmk.c:86
 #, c-format
@@ -9873,48 +9717,42 @@ msgid ""
 msgstr ""
 
 #: sys-utils/ipcmk.c:90
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "For more information see ipcmk(1).\n"
 "\n"
 msgstr ""
 "\n"
-"詳細情報は、setarch(8) を確認してください。\n"
+"詳細情報は、ipcmk(1) を確認してください。\n"
+"\n"
 
 #: sys-utils/ipcmk.c:142
 msgid "create share memory failed"
-msgstr ""
+msgstr "共有メモリの作成に失敗しました"
 
 #: sys-utils/ipcmk.c:144
-#, fuzzy, c-format
+#, c-format
 msgid "Shared memory id: %d\n"
-msgstr ""
-"\n"
-"シェアードメモリセグメント shmid=%d\n"
+msgstr "共有メモリid: %d\n"
 
 #: sys-utils/ipcmk.c:150
 msgid "create message queue failed"
 msgstr ""
 
 #: sys-utils/ipcmk.c:152
-#, fuzzy, c-format
+#, c-format
 msgid "Message queue id: %d\n"
-msgstr ""
-"\n"
-"メッセージキュー msqid=%d\n"
+msgstr "メッセージキューid: %d\n"
 
 #: sys-utils/ipcmk.c:158
-#, fuzzy
 msgid "create semaphore failed"
-msgstr "確保されたセマフォ数 = %d\n"
+msgstr "セマフォの作成に失敗しました"
 
 #: sys-utils/ipcmk.c:160
-#, fuzzy, c-format
+#, c-format
 msgid "Semaphore id: %d\n"
-msgstr ""
-"\n"
-"セマフォ配列 semid=%d\n"
+msgstr "セマフォid: %d\n"
 
 #: sys-utils/ipcrm.c:66
 #, c-format
@@ -9947,6 +9785,8 @@ msgid ""
 "usage: %s [ [-q msqid] [-m shmid] [-s semid]\n"
 "          [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"
 msgstr ""
+"使い方: %s [ [-q msqid] [-m shmid] [-s semid]\n"
+"           [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"
 
 #: sys-utils/ipcrm.c:181
 #, c-format
@@ -9985,7 +9825,7 @@ msgstr "不正な id"
 
 #: sys-utils/ipcrm.c:251
 msgid "already removed id"
-msgstr ""
+msgstr "既に削除されたidです"
 
 #: sys-utils/ipcrm.c:256
 msgid "unknown error in id"
@@ -10018,10 +9858,8 @@ msgstr "\t%s -h でヘルプを表示。\n"
 
 #: sys-utils/ipcs.c:128
 #, c-format
-msgid ""
-"%s provides information on ipc facilities for which you have read access.\n"
-msgstr ""
-"%s はあなたが読込アクセスできる ipc の資源状況などの情報を提供します。\n"
+msgid "%s provides information on ipc facilities for which you have read access.\n"
+msgstr "%s はあなたが読み込みアクセスできる ipc の資源状況などの情報を提供します。\n"
 
 #: sys-utils/ipcs.c:130
 #, c-format
@@ -10078,7 +9916,7 @@ msgstr "カーネルでの共有メモリの為の設定がされていません
 #: sys-utils/ipcs.c:264
 #, c-format
 msgid "------ Shared Memory Limits --------\n"
-msgstr "------ シェアードメモリの制限 --------\n"
+msgstr "------ 共有メモリの制限 --------\n"
 
 #: sys-utils/ipcs.c:269
 #, c-format
@@ -10103,7 +9941,7 @@ msgstr "最小セグメントサイズ (単位:バイト) = %lu\n"
 #: sys-utils/ipcs.c:280
 #, c-format
 msgid "------ Shared Memory Status --------\n"
-msgstr "------ シェアードメモリの状態 --------\n"
+msgstr "------ 共有メモリの状態 --------\n"
 
 #: sys-utils/ipcs.c:281
 #, c-format
@@ -10164,7 +10002,7 @@ msgstr "gid"
 #: sys-utils/ipcs.c:296
 #, c-format
 msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
-msgstr "------ シェアードメモリ 結合/分離/変更回数 --------\n"
+msgstr "------ 共有メモリ 結合/分離/変更回数 --------\n"
 
 #: sys-utils/ipcs.c:298 sys-utils/ipcs.c:305 sys-utils/ipcs.c:311
 #: sys-utils/ipcs.c:418 sys-utils/ipcs.c:427 sys-utils/ipcs.c:516
@@ -10294,9 +10132,9 @@ msgid "semid"
 msgstr "semid"
 
 #: sys-utils/ipcs.c:416
-#, fuzzy, c-format
+#, c-format
 msgid "------ Semaphore Operation/Change Times --------\n"
-msgstr "------ シェアードメモリ 命令/変更回数 --------\n"
+msgstr "------ セマフォ 命令/変更回数 --------\n"
 
 #: sys-utils/ipcs.c:418
 msgid "last-op"
@@ -10414,9 +10252,8 @@ msgid "messages"
 msgstr "メッセージ"
 
 #: sys-utils/ipcs.c:593
-#, fuzzy
 msgid "shmctl failed"
-msgstr "fsync に失敗"
+msgstr "shmctl に失敗しました"
 
 #: sys-utils/ipcs.c:595
 #, c-format
@@ -10458,9 +10295,8 @@ msgid "change_time=%-26.24s\n"
 msgstr "change_time=%-26.24s\n"
 
 #: sys-utils/ipcs.c:619
-#, fuzzy
 msgid "msgctl failed"
-msgstr "fsync に失敗"
+msgstr "msgctlが失敗"
 
 #: sys-utils/ipcs.c:621
 #, c-format
@@ -10492,9 +10328,8 @@ msgid "rcv_time=%-26.24s\n"
 msgstr "rcv_time=%-26.24s\n"
 
 #: sys-utils/ipcs.c:652 sys-utils/ipcs.c:674
-#, fuzzy
 msgid "semctl failed"
-msgstr "シークに失敗"
+msgstr "semctl が失敗しました"
 
 #: sys-utils/ipcs.c:654
 #, c-format
@@ -10556,6 +10391,8 @@ msgid ""
 "\n"
 "Usage: %s [ -dhV78neo12 ] [ -s <speed> ] <ldisc> <device>\n"
 msgstr ""
+"\n"
+"使い方: %s [ -dhV78neo12 ] [ -s <speed> ] <ldisc> <device>\n"
 
 #: sys-utils/ldattach.c:94
 msgid ""
@@ -10564,9 +10401,9 @@ msgid ""
 msgstr ""
 
 #: sys-utils/ldattach.c:179
-#, fuzzy, c-format
+#, c-format
 msgid "invalid speed: %s"
-msgstr "不正な id: %s\n"
+msgstr "不正な速度: %s"
 
 #: sys-utils/ldattach.c:182
 #, fuzzy, c-format
@@ -10583,9 +10420,9 @@ msgid "invalid line discipline: %s"
 msgstr "不正な id: %s\n"
 
 #: sys-utils/ldattach.c:207
-#, fuzzy, c-format
+#, c-format
 msgid "%s is not a serial line"
-msgstr "%s はブロックスペシャルデバイスではありません"
+msgstr "%s はシリアルラインではありません"
 
 #: sys-utils/ldattach.c:213
 #, fuzzy, c-format
@@ -10595,7 +10432,7 @@ msgstr "%s のサイズを取得できません"
 #: sys-utils/ldattach.c:216
 #, c-format
 msgid "speed %d unsupported"
-msgstr ""
+msgstr "速度 %d はサポートされません"
 
 #: sys-utils/ldattach.c:247
 #, c-format
@@ -10613,22 +10450,21 @@ msgid "cannot daemonize"
 msgstr "%s を open できません"
 
 #: sys-utils/lscpu.c:64
-#, fuzzy
 msgid "none"
-msgstr "終了"
+msgstr "なし"
 
 #: sys-utils/lscpu.c:65
 msgid "para"
-msgstr ""
+msgstr "準仮想化"
 
 #: sys-utils/lscpu.c:66
 msgid "full"
-msgstr ""
+msgstr "完全仮想化"
 
 #: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:441
-#, fuzzy, c-format
+#, c-format
 msgid "error: %s"
-msgstr "RE エラー"
+msgstr "エラー: %s"
 
 #: sys-utils/lscpu.c:154
 #, fuzzy, c-format
@@ -10641,18 +10477,16 @@ msgid "error: strdup failed"
 msgstr "標準出力への書き込みが失敗しました"
 
 #: sys-utils/lscpu.c:259
-#, fuzzy
 msgid "error: uname failed"
-msgstr "エラー: UUID の解析に失敗"
+msgstr "エラー: uname が失敗"
 
 #: sys-utils/lscpu.c:491
-#, fuzzy
 msgid "error: malloc failed"
-msgstr "malloc に失敗"
+msgstr "エラー: malloc に失敗"
 
 #: sys-utils/lscpu.c:506
 msgid "error: /sys filesystem is not accessable."
-msgstr ""
+msgstr "エラー: /sys ファイルシステムはアクセス不可能です。"
 
 #: sys-utils/lscpu.c:524
 #, c-format
@@ -10662,65 +10496,68 @@ msgid ""
 "# starting from zero.\n"
 "# CPU,Core,Socket,Node"
 msgstr ""
+"# The following is the parsable format, which can be fed to other\n"
+"# programs. Each different item in every column has an unique ID\n"
+"# starting from zero.\n"
+"# CPU,Core,Socket,Node"
 
 #: sys-utils/lscpu.c:590
 msgid "Thread(s) per core:"
-msgstr ""
+msgstr "コアあたりのスレッド数:"
 
 #: sys-utils/lscpu.c:591
 msgid "Core(s) per socket:"
-msgstr ""
+msgstr "ソケットあたりのコア数:"
 
 #: sys-utils/lscpu.c:592
 msgid "CPU socket(s):"
-msgstr ""
+msgstr "CPUソケット数:"
 
 #: sys-utils/lscpu.c:596
 msgid "NUMA node(s):"
-msgstr ""
+msgstr "NUMAノード:"
 
 #: sys-utils/lscpu.c:598
 msgid "Vendor ID:"
-msgstr ""
+msgstr "ベンダーID:"
 
 #: sys-utils/lscpu.c:600
 msgid "CPU family:"
-msgstr ""
+msgstr "CPUファミリー:"
 
 #: sys-utils/lscpu.c:602
 msgid "Model:"
-msgstr ""
+msgstr "モデル:"
 
 #: sys-utils/lscpu.c:604
 msgid "Stepping:"
-msgstr ""
+msgstr "ステッピング:"
 
 #: sys-utils/lscpu.c:606
 msgid "CPU MHz:"
-msgstr ""
+msgstr "CPU MHz:"
 
 #: sys-utils/lscpu.c:609 sys-utils/lscpu.c:611
-#, fuzzy
 msgid "Virtualization:"
-msgstr "古い場面:\n"
+msgstr "仮想化:"
 
 #: sys-utils/lscpu.c:614
 msgid "Hypervisor vendor:"
-msgstr ""
+msgstr "ハイパーバイザーベンダー:"
 
 #: sys-utils/lscpu.c:615
 msgid "Virtualization type:"
-msgstr ""
+msgstr "仮想化タイプ:"
 
 #: sys-utils/lscpu.c:623
 #, c-format
 msgid "%s cache:"
-msgstr ""
+msgstr "%s キャッシュ:"
 
 #: sys-utils/lscpu.c:631
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [option]\n"
-msgstr "使い方: %s [オプション] デバイス名...\n"
+msgstr "使い方: %s [オプション]\n"
 
 #: sys-utils/lscpu.c:634
 msgid ""
@@ -10730,20 +10567,23 @@ msgid ""
 "  -p, --parse    print out in parsable instead of printable format.\n"
 "  -s, --sysroot  use the directory as a new system root.\n"
 msgstr ""
+"CPU アーキテクチャ情報ヘルパー\n"
+"\n"
+"  -h, --help     使い方の情報を表示する\n"
+"  -p, --parse    通常の出力フォーマットの代わりに解析しやすい形式で出力する。\n"
+"  -s, --sysroot  新しいシステムルートとしてこのディレクトリを使う。\n"
 
 #: sys-utils/lscpu.c:683
-#, fuzzy, c-format
+#, c-format
 msgid "error: change working directory to %s."
-msgstr "%s のモード変更エラー: %s\n"
+msgstr "エラー: %sへ作業ディレクトリを変更する。 "
 
 #: sys-utils/rdev.c:77
 msgid "usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
-msgstr ""
-"使い方: rdev [ -rv ] [ -o オフセット ] [ イメージ [ 値 [ オフセット ] ] ]"
+msgstr "使い方: rdev [ -rv ] [ -o オフセット ] [ イメージ [ 値 [ オフセット ] ] ]"
 
 #: sys-utils/rdev.c:78
-msgid ""
-"  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
+msgid "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
 msgstr "  rdev /dev/fd0  (or rdev /linux, etc.) 現在のルートデバイスを表示"
 
 #: sys-utils/rdev.c:79
@@ -10779,15 +10619,12 @@ msgid "  vidmode ...                     same as rdev -v"
 msgstr "  vidmode ...                     rdev -v と同じ"
 
 #: sys-utils/rdev.c:87
-msgid ""
-"Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
-msgstr ""
-"注意: ビデオモードは: -3=尋ねる, -2=拡張, -1=通常Vga, 1=キー1, 2=キー2,..."
+msgid "Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
+msgstr "注意: ビデオモードは: -3=尋ねる, -2=拡張, -1=通常Vga, 1=キー1, 2=キー2,..."
 
 #: sys-utils/rdev.c:88
 msgid "      use -R 1 to mount root readonly, -R 0 for read/write."
-msgstr ""
-"      ルートを読込専用マウントするには -R 1 を、-R 0 で読み書きマウント。"
+msgstr "      ルートを読込専用マウントするには -R 1 を、-R 0 で読み書きマウント。"
 
 #: sys-utils/rdev.c:245
 msgid "missing comma"
@@ -10864,7 +10701,7 @@ msgid "total"
 msgstr "合計"
 
 #: sys-utils/renice.c:53
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "\n"
 "Usage:\n"
@@ -10877,17 +10714,17 @@ msgid ""
 msgstr ""
 "\n"
 "使い方:\n"
-" renice priority [-p|--pid] pid [... pid]\n"
-" renice priority  -g|--pgrp pgrp [... pgrp]\n"
-" renice priority  -u|--user user [... user]\n"
+" renice [-n] priority [-p|--pid] pid [... pid]\n"
+" renice [-n] priority  -g|--pgrp pgrp [... pgrp]\n"
+" renice [-n] priority  -u|--user user [... user]\n"
 " renice -h | --help\n"
 " renice -v | --version\n"
 "\n"
 
 #: sys-utils/renice.c:89
-#, fuzzy, c-format
+#, c-format
 msgid "renice from %s\n"
-msgstr "%s from %s\n"
+msgstr "renice from %s\n"
 
 #: sys-utils/renice.c:126
 #, c-format
@@ -10945,7 +10782,7 @@ msgstr ""
 
 #: sys-utils/rtcwake.c:163
 msgid "convert rtc time"
-msgstr ""
+msgstr "rtc時間を変換する"
 
 #: sys-utils/rtcwake.c:222
 msgid "set rtc alarm"
@@ -10953,16 +10790,16 @@ msgstr ""
 
 #: sys-utils/rtcwake.c:226
 msgid "enable rtc alarm"
-msgstr ""
+msgstr "rtcアラームを有効にする"
 
 #: sys-utils/rtcwake.c:230
 msgid "set rtc wake alarm"
 msgstr ""
 
 #: sys-utils/rtcwake.c:342
-#, fuzzy, c-format
+#, c-format
 msgid "%s: unrecognized suspend state '%s'\n"
-msgstr " %s: 認識できないパーティション\n"
+msgstr "%s: 認識できないサスペンド状態 '%s'\n"
 
 #: sys-utils/rtcwake.c:351
 #, fuzzy, c-format
@@ -10970,9 +10807,9 @@ msgid "%s: illegal interval %s seconds\n"
 msgstr "不正なキー"
 
 #: sys-utils/rtcwake.c:365
-#, fuzzy, c-format
+#, c-format
 msgid "%s: illegal time_t value %s\n"
-msgstr "%s: open に失敗: %s\n"
+msgstr "%s: 不正な time_t 値 %s\n"
 
 #: sys-utils/rtcwake.c:381
 #, c-format
@@ -11000,9 +10837,8 @@ msgid "%s: must provide wake time\n"
 msgstr ""
 
 #: sys-utils/rtcwake.c:413
-#, fuzzy
 msgid "malloc() failed"
-msgstr "malloc に失敗"
+msgstr "malloc() に失敗"
 
 #: sys-utils/rtcwake.c:425
 #, fuzzy, c-format
@@ -11030,7 +10866,7 @@ msgstr ""
 
 #: sys-utils/rtcwake.c:482
 msgid "disable rtc alarm interrupt"
-msgstr ""
+msgstr "rtcアラームの割り込みを無効にする"
 
 #: sys-utils/setarch.c:50
 #, c-format
@@ -11053,8 +10889,7 @@ msgstr ""
 msgid ""
 " -h, --help               displays this help text\n"
 " -v, --verbose            says what options are being switched on\n"
-" -R, --addr-no-randomize  disables randomization of the virtual address "
-"space\n"
+" -R, --addr-no-randomize  disables randomization of the virtual address space\n"
 " -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
 " -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
 " -L, --addr-compat-layout changes the way virtual memory is allocated\n"
@@ -11063,8 +10898,7 @@ msgid ""
 " -I, --short-inode        turns on SHORT_INODE\n"
 " -S, --whole-seconds      turns on WHOLE_SECONDS\n"
 " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
-" -3, --3gb                limits the used address space to a maximum of 3 "
-"GB\n"
+" -3, --3gb                limits the used address space to a maximum of 3 GB\n"
 "     --4gb                ignored (for backward compatibility only)\n"
 msgstr ""
 
@@ -11092,9 +10926,8 @@ msgid "%s: Unrecognized architecture"
 msgstr " %s: 認識できないパーティション\n"
 
 #: sys-utils/setarch.c:249 sys-utils/setarch.c:256
-#, fuzzy
 msgid "Not enough arguments"
-msgstr "引数が多すぎます。\n"
+msgstr "引数が十分ではありません"
 
 #: sys-utils/setarch.c:265 sys-utils/setarch.c:318
 #, fuzzy, c-format
@@ -11229,11 +11062,8 @@ msgstr "hexdump: 不正なスキップ値です。\n"
 
 #: text-utils/hexsyntax.c:131
 #, c-format
-msgid ""
-"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
-msgstr ""
-"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [ファイ"
-"ル ...]\n"
+msgid "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
+msgstr "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [ファイル ...]\n"
 
 #: text-utils/more.c:256
 #, c-format
@@ -11318,8 +11148,7 @@ msgstr ""
 #: text-utils/more.c:1294
 msgid ""
 "\n"
-"Most commands optionally preceded by integer argument k.  Defaults in "
-"brackets.\n"
+"Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 
@@ -11445,8 +11274,7 @@ msgstr "hexdump: 複数の文字のバイト数カウント\n"
 #: text-utils/parse.c:483
 #, c-format
 msgid "hexdump: bad byte count for conversion character %s.\n"
-msgstr ""
-"hexdump: 文字 %s の変換について不正なバイト数のカウントを行いました。\n"
+msgstr "hexdump: 文字 %s の変換について不正なバイト数のカウントを行いました。\n"
 
 #: text-utils/parse.c:490
 #, c-format
@@ -11484,25 +11312,20 @@ msgid ""
 "  n                       go to next file\n"
 "\n"
 "Many commands accept preceding numbers, for example:\n"
-"+1<newline> (next page); -1<newline> (previous page); 1<newline> (first "
-"page).\n"
+"+1<newline> (next page); -1<newline> (previous page); 1<newline> (first page).\n"
 "\n"
 "See pg(1) for more information.\n"
 "-------------------------------------------------------\n"
 msgstr ""
 
 #: text-utils/pg.c:223
-#, fuzzy
 msgid "Out of memory\n"
-msgstr "メモリが足りません"
+msgstr "メモリが足りません\n"
 
 #: text-utils/pg.c:236
 #, c-format
-msgid ""
-"%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
-msgstr ""
-"%s: 使い方: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [ファイ"
-"ル]\n"
+msgid "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
+msgstr "%s: 使い方: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [ファイル]\n"
 
 #: text-utils/pg.c:245
 #, c-format
@@ -11525,9 +11348,8 @@ msgid "...skipping backward\n"
 msgstr "...飛ばしています\n"
 
 #: text-utils/pg.c:394
-#, fuzzy
 msgid "No next file"
-msgstr "(次のファイル: %s)"
+msgstr "次のファイルはありません"
 
 #: text-utils/pg.c:398
 #, fuzzy
@@ -11542,7 +11364,7 @@ msgstr "%s: %s で read エラー\n"
 #: text-utils/pg.c:934
 #, c-format
 msgid "%s: Unexpected EOF in %s file\n"
-msgstr ""
+msgstr "%s: ファイル%sで予期しないファイルの終端\n"
 
 #: text-utils/pg.c:937
 #, fuzzy, c-format
@@ -11571,53 +11393,48 @@ msgid "Cannot open "
 msgstr "開けません"
 
 #: text-utils/pg.c:1355
-#, fuzzy
 msgid "saved"
-msgstr "送信"
+msgstr "保存しました"
 
 #: text-utils/pg.c:1462
 msgid ": !command not allowed in rflag mode.\n"
-msgstr ""
+msgstr ": !commandはrflagモードでは許可されません。\n"
 
 #: text-utils/pg.c:1494
-#, fuzzy
 msgid "fork() failed, try again later\n"
-msgstr "パスワードは変更 *されませんでした*。後でもう一度試してください。\n"
+msgstr "fork() が失敗しました、後で実行し直してください\n"
 
 #: text-utils/pg.c:1702
-#, fuzzy
 msgid "(Next file: "
-msgstr "(次のファイル: %s)"
+msgstr "(次のファイル: "
 
 #: text-utils/rev.c:113
-#, fuzzy
 msgid "unable to allocate bufferspace"
-msgstr "バッファ空間を確保できません\n"
+msgstr "バッファ空間を確保できません"
 
 #: text-utils/rev.c:143
 #, c-format
 msgid "usage: rev [file ...]\n"
-msgstr "使い方: rev [ ファイル ...]\n"
+msgstr "使い方: rev [ファイル ...]\n"
 
 #: text-utils/tailf.c:57 text-utils/tailf.c:92
-#, fuzzy, c-format
+#, c-format
 msgid "cannot open \"%s\" for read"
-msgstr "%s を読込み用に開けません\n"
+msgstr "\"%s\"を読込み用に開けません"
 
 #: text-utils/tailf.c:95 text-utils/tailf.c:204
-#, fuzzy, c-format
+#, c-format
 msgid "cannot stat \"%s\""
-msgstr "デバイス %s を stat できません"
+msgstr "\"%s\"をstatできません"
 
 #: text-utils/tailf.c:108
 #, c-format
 msgid "incomplete write to \"%s\" (written %ld, expected %ld)\n"
-msgstr ""
+msgstr "\"%s\" への書き込みが完了しません (%ld 書き込み完了、%ld 書き込み予定)\n"
 
 #: text-utils/tailf.c:188 text-utils/tailf.c:192
-#, fuzzy
 msgid "invalid number of lines"
-msgstr "不正な値 `%s'\n"
+msgstr "不正な行数"
 
 #: text-utils/tailf.c:199
 msgid "usage: tailf [-n N | -N] logfile"
@@ -11663,8 +11480,7 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 #~ msgid ""
 #~ "%s: Device '%s' contains a valid Sun disklabel.\n"
 #~ "This probably means creating v0 swap would destroy your partition table.\n"
-#~ "No swap was created. If you really want to create v0 swap on that "
-#~ "device,\n"
+#~ "No swap was created. If you really want to create v0 swap on that device,\n"
 #~ "use the -f option to force it.\n"
 #~ msgstr ""
 #~ "%s: デバイス '%s' は正常な Sun ディスクラベルを含んでいます。\n"
@@ -11839,11 +11655,8 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 #~ msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 #~ msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 
-#~ msgid ""
-#~ "usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
-#~ msgstr ""
-#~ "使い方: renice 優先度 [ [ -p ] プロセスID ] [ [ -g ] プロセスグループ] "
-#~ "[ [ -u ユーザ ]\n"
+#~ msgid "usage: renice priority [ [ -p ] pids ] [ [ -g ] pgrps ] [ [ -u ] users ]\n"
+#~ msgstr "使い方: renice 優先度 [ [ -p ] プロセスID ] [ [ -g ] プロセスグループ] [ [ -u ユーザ ]\n"
 
 #, fuzzy
 #~ msgid "Unknown option `%c' ignored"
@@ -11894,10 +11707,8 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 #~ msgstr "%s from %s\n"
 
 #, fuzzy
-#~ msgid ""
-#~ "%s: could not open %s, so UUID and LABEL conversion cannot be done.\n"
-#~ msgstr ""
-#~ "mount: %s をオープンできなかったので、UUID と LABEL の変換も行えません。\n"
+#~ msgid "%s: could not open %s, so UUID and LABEL conversion cannot be done.\n"
+#~ msgstr "mount: %s をオープンできなかったので、UUID と LABEL の変換も行えません。\n"
 
 #, fuzzy
 #~ msgid "%s: bad UUID"
@@ -11922,8 +11733,7 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 #~ msgstr "mount: 警告: 複数のホスト名はサポートされていません\n"
 
 #~ msgid "mount: directory to mount not in host:dir format\n"
-#~ msgstr ""
-#~ "mount: マウント先ディレクトリが ホスト:ディレクトリ 形式になっていません\n"
+#~ msgstr "mount: マウント先ディレクトリが ホスト:ディレクトリ 形式になっていません\n"
 
 #~ msgid "mount: can't get address for %s\n"
 #~ msgstr "mount: %s のアドレスが取得できません\n"
@@ -11988,10 +11798,8 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 #~ msgid "   %s [ -p ] dev name\n"
 #~ msgstr "   %s [ -p ] デバイス 名前\n"
 
-#~ msgid ""
-#~ "   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
-#~ msgstr ""
-#~ "   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
+#~ msgid "   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
+#~ msgstr "   %s [ -p ] dev size sect heads tracks stretch gap rate spec1 fmt_gap\n"
 
 #~ msgid "   %s [ -c | -y | -n | -d ] dev\n"
 #~ msgstr "   %s [ -c | -y | -n | -d ] デバイス\n"
@@ -12166,11 +11974,9 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 #~ "       about the loop device (then recompile or `insmod loop.o'), or\n"
 #~ "       maybe /dev/loop# has the wrong major number?"
 #~ msgstr ""
-#~ "mount: loop デバイスが全く見つかりません。多分このカーネルは loop デバイス"
-#~ "を\n"
+#~ "mount: loop デバイスが全く見つかりません。多分このカーネルは loop デバイスを\n"
 #~ "       扱えません(そうだとしたら、再コンパイルするか `insmod loop.o'して\n"
-#~ "       ください)。あるいは、/dev/loop# のメジャー番号が間違っているのか"
-#~ "も\n"
+#~ "       ください)。あるいは、/dev/loop# のメジャー番号が間違っているのかも\n"
 #~ "       知れません。"
 
 #~ msgid "Init (up to 16 hex digits): "
@@ -12183,8 +11989,7 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 #~ msgstr "暗号化システム %d の鍵取得方法が解りません\n"
 
 #~ msgid "mount: this version was compiled without support for the type `nfs'"
-#~ msgstr ""
-#~ "mount: このバージョンは 'nfs' タイプのサポートなしでコンパイルされています"
+#~ msgstr "mount: このバージョンは 'nfs' タイプのサポートなしでコンパイルされています"
 
 #~ msgid "mount: fs type %s not supported by kernel"
 #~ msgstr "mount: ファイルシステムタイプ %s はカーネルがサポートしていません"
@@ -12286,9 +12091,6 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 #~ msgid "sleepexit %d\n"
 #~ msgstr "スリープ終了 %d\n"
 
-#~ msgid "Usage: %s [ -s shell ] "
-#~ msgstr "使い方: %s [ -s シェル ] "
-
 #~ msgid "       [ username ]\n"
 #~ msgstr "        [ ユーザ名 ]\n"
 
@@ -12313,8 +12115,7 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 #~ msgid "The password must contain characters out of two of the following\n"
 #~ msgstr "パスワードは以下の内 2 種類は含まれなければなりません\n"
 
-#~ msgid ""
-#~ "classes:  upper and lower case letters, digits and non alphanumeric\n"
+#~ msgid "classes:  upper and lower case letters, digits and non alphanumeric\n"
 #~ msgstr "種類: 大文字と小文字、数値と非アルファベット数値\n"
 
 #~ msgid "characters. See passwd(1) for more information.\n"
@@ -12357,8 +12158,7 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 #~ msgstr "mount: 警告: 再マウントでのマウント済デバイスの変更はできません\n"
 
 #~ msgid "mount: warning: cannot change filesystem type with a remount\n"
-#~ msgstr ""
-#~ "mount: 警告: 再マウントでのファイルシステムタイプの変更はできません\n"
+#~ msgstr "mount: 警告: 再マウントでのファイルシステムタイプの変更はできません\n"
 
 #~ msgid "mount: %s has wrong major or minor number"
 #~ msgstr "mount: %s が間違ったメジャー又はマイナー番号になっています"
@@ -12439,8 +12239,7 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 #~ "使い方: mount [-hV]\n"
 #~ "        mount -a [-nfFrsvw] [-t ファイルシステム型]\n"
 #~ "        mount [-nfrsvw] [-o オプション] special | node\n"
-#~ "        mount [-nfrsvw] [-t ファイルシステム型] [-o オプション] special "
-#~ "node\n"
+#~ "        mount [-nfrsvw] [-t ファイルシステム型] [-o オプション] special node\n"
 #~ "        スペシャルデバイスは  -L ラベル  又は  -U uuid で指示できます。\n"
 
 #~ msgid "mount: %s:%s failed, reason given by server: %s\n"
@@ -12451,3 +12250,6 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 
 #~ msgid "sscanf error"
 #~ msgstr "sscanf エラー"
+
+#~ msgid "Usage: %s [ -s shell ] "
+#~ msgstr "使い方: %s [ -s シェル ] "
