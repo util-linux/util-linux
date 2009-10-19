@@ -39,7 +39,6 @@ lib/fsprobe.c
 lib/ismounted.c
 lib/linux_version.c
 lib/md5.c
-lib/pttype.c
 lib/setproctitle.c
 lib/wholedisk.c
 login-utils/agetty.c
@@ -76,6 +75,7 @@ misc-utils/setterm.c
 misc-utils/uuidd.c
 misc-utils/uuidgen.c
 misc-utils/whereis.c
+misc-utils/wipefs.c
 misc-utils/write.c
 mount/devname.c
 mount/fstab.c
@@ -127,6 +127,7 @@ shlibs/blkid/src/read.c
 shlibs/blkid/src/resolve.c
 shlibs/blkid/src/save.c
 shlibs/blkid/src/superblocks/adaptec_raid.c
+shlibs/blkid/src/superblocks/bfs.c
 shlibs/blkid/src/superblocks/btrfs.c
 shlibs/blkid/src/superblocks/cramfs.c
 shlibs/blkid/src/superblocks/ddf_raid.c
@@ -156,14 +157,21 @@ shlibs/blkid/src/superblocks/squashfs.c
 shlibs/blkid/src/superblocks/superblocks.c
 shlibs/blkid/src/superblocks/swap.c
 shlibs/blkid/src/superblocks/sysv.c
+shlibs/blkid/src/superblocks/ubifs.c
 shlibs/blkid/src/superblocks/udf.c
 shlibs/blkid/src/superblocks/ufs.c
 shlibs/blkid/src/superblocks/vfat.c
 shlibs/blkid/src/superblocks/via_raid.c
+shlibs/blkid/src/superblocks/vmfs.c
 shlibs/blkid/src/superblocks/vxfs.c
 shlibs/blkid/src/superblocks/xfs.c
 shlibs/blkid/src/superblocks/zfs.c
 shlibs/blkid/src/tag.c
+shlibs/blkid/src/topology/dm.c
+shlibs/blkid/src/topology/evms.c
+shlibs/blkid/src/topology/lvm.c
+shlibs/blkid/src/topology/md.c
+shlibs/blkid/src/topology/sysfs.c
 shlibs/blkid/src/topology/topology.c
 shlibs/blkid/src/tst_types.c
 shlibs/blkid/src/verify.c
@@ -184,6 +192,7 @@ sys-utils/arch.c
 sys-utils/ctrlaltdel.c
 sys-utils/cytune.c
 sys-utils/dmesg.c
+sys-utils/fallocate.c
 sys-utils/flock.c
 sys-utils/ipcmk.c
 sys-utils/ipcrm.c
@@ -199,6 +208,7 @@ sys-utils/setarch.c
 sys-utils/setsid.c
 sys-utils/switch_root.c
 sys-utils/tunelp.c
+sys-utils/unshare.c
 text-utils/col.c
 text-utils/colcrt.c
 text-utils/colrm.c
