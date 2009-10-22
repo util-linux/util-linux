@@ -931,7 +931,7 @@ blkid_loff_t blkid_probe_get_size(blkid_probe pr)
  * blkid_probe_get_sectorsize:
  * @pr: probe
  *
- * Returns: block device hardware sector size (BLKSSZGET ioctl, default 512).
+ * Returns: block device logical sector size (BLKSSZGET ioctl, default 512).
  */
 unsigned int blkid_probe_get_sectorsize(blkid_probe pr)
 {

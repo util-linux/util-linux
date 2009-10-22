@@ -85,7 +85,11 @@ blkdev_get_sectors(int fd, unsigned long long *sectors)
 	return -1;
 }
 
-/* get hardware sector size */
+/* get logical sector size (default is 512)
+ *
+ * This is the smallest unit the storage device can
+ * address. It is typically 512 bytes.
+ */
 int
 blkdev_get_sector_size(int fd, int *sector_size)
 {
