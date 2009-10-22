@@ -287,6 +287,7 @@ static int probe_gpt_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	blkid_partlist ls;
 	int i;
 	uint64_t fu, lu;
+	uint32_t ssf;
 
 
 	if (last_lba(pr, &lastlba))
@@ -314,6 +315,8 @@ static int probe_gpt_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!tab)
 		goto err;
 
+	ssf = blkid_probe_get_sectorsize(pr) / 512;
+
 	fu = le64_to_cpu(h->first_usable_lba);
 	lu = le64_to_cpu(h->last_usable_lba);
 
@@ -322,25 +325,27 @@ static int probe_gpt_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_partition par;
 		uint64_t start = le64_to_cpu(e->starting_lba);
 		uint64_t size = le64_to_cpu(e->ending_lba) -
-					le64_to_cpu(e->starting_lba);
+					le64_to_cpu(e->starting_lba) + 1ULL;
 
 		/* 00000000-0000-0000-0000-000000000000 entry */
 		if (!guidcmp(e->partition_type_guid, GPT_UNUSED_ENTRY_GUID))
 			continue;
 
 		/* the partition has to inside usable range */
-		if (start < fu || start + size > lu) {
+		if (start < fu || start + size - 1 > lu) {
 			DBG(DEBUG_LOWPROBE, printf(
 				"GPT entry[%d] overflows usable area - ignore\n",
 				i));
 			continue;
 		}
 
-		par = blkid_partlist_add_partition(ls, tab, 0, start, size);
+		par = blkid_partlist_add_partition(ls, tab, 0,
+						start * ssf, size * ssf);
 		if (!par)
 			goto err;
 
-		blkid_partition_set_utf8name(par, (unsigned char *) e->partition_name,
+		blkid_partition_set_utf8name(par,
+			(unsigned char *) e->partition_name,
 			sizeof(e->partition_name), BLKID_ENC_UTF16LE);
 
 		blkid_partition_set_uuid(par,
