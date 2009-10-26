@@ -93,6 +93,7 @@ static const struct blkid_idinfo *idinfos[] =
 	&highpoint37x_idinfo,
 	&adraid_idinfo,
 	&jmraid_idinfo,
+
 	&lvm2_idinfo,
 	&lvm1_idinfo,
 	&snapcow_idinfo,
@@ -388,9 +389,9 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
  * (cannot be used in while()) and checks for ambivalen results (more
  * filesystems on the device) -- in such case returns -2.
  *
- * The function does not check for filesystems when a RAID signature is
- * detected.  The function also does not check for collision between RAIDs. The
- * first detected RAID is returned.
+ * The function does not check for filesystems when a RAID or crypto signature
+ * is detected.  The function also does not check for collision between RAIDs
+ * and crypto devices. The first detected RAID or crypto device is returned.
  */
 static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 {
@@ -409,7 +410,7 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 		}
 		count++;
 
-		if (idinfos[chn->idx]->usage & BLKID_USAGE_RAID)
+		if (idinfos[chn->idx]->usage & (BLKID_USAGE_RAID | BLKID_USAGE_CRYPTO))
 			break;
 		if (!(idinfos[chn->idx]->flags & BLKID_IDINFO_TOLERANT))
 			intol++;
