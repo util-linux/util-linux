@@ -62,7 +62,7 @@
 # endif
 #endif
 
-#ifdef HAVE_BLKID_PROBE_ENABLE_PARTITIONS
+#ifdef HAVE_LIBBLKID_INTERNAL
 # include <blkid.h>
 #endif
 
@@ -407,7 +407,7 @@ zap_bootbits(int fd, const char *devname, int force)
 			whole = 1;
 			zap = 0;
 		} else {
-#ifdef HAVE_BLKID_PROBE_ENABLE_PARTITIONS
+#ifdef HAVE_LIBBLKID_INTERNAL
 			blkid_probe pr = blkid_new_probe();
 			if (!pr)
 				die(_("unable to alloc new libblkid probe"));
