@@ -330,6 +330,7 @@ AC_ARG_ENABLE([libblkid],
   AS_HELP_STRING([--disable-libblkid], [do not build libblkid and blkid utilities]),
   [], enable_libblkid=yes
 )
+AC_SUBST([LIBBLKID_DATE])
 AC_SUBST([LIBBLKID_VERSION])
 AC_SUBST([LIBBLKID_VERSION_INFO])
 AM_CONDITIONAL(BUILD_LIBBLKID, test "x$enable_libblkid" = xyes)
@@ -1022,6 +1023,7 @@ shlibs/blkid/Makefile
 shlibs/blkid/docs/Makefile
 shlibs/blkid/docs/version.xml
 shlibs/blkid/src/Makefile
+shlibs/blkid/src/blkid.h
 shlibs/blkid/src/superblocks/Makefile
 shlibs/blkid/src/topology/Makefile
 shlibs/blkid/src/partitions/Makefile

@@ -22,6 +22,12 @@
 static const char *lib_version = LIBBLKID_VERSION;	/* release version */
 static const char *lib_date = LIBBLKID_DATE;
 
+/**
+ * blkid_parse_version_string:
+ * @ver_string:  version string (e.g. "2.16.0")
+ *
+ * Returns: release version code.
+ */
 int blkid_parse_version_string(const char *ver_string)
 {
 	const char *cp;

@@ -30,6 +30,9 @@
 extern "C" {
 #endif
 
+#define BLKID_VERSION   "@LIBBLKID_VERSION@"
+#define BLKID_DATE      "@LIBBLKID_DATE@"
+
 /**
  * blkid_dev:
  *
