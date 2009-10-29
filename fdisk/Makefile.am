@@ -18,11 +18,26 @@ fdisk_SOURCES = fdisk.c fdiskbsdlabel.c fdisksgilabel.c \
 	fdisk.h fdisksunlabel.h fdisksgilabel.h fdiskaixlabel.h \
 	fdiskbsdlabel.h fdiskmaclabel.h $(fdisk_common)
 
+cflags_fdisk = $(AM_CFLAGS)
+ldadd_fdisk =
+
+if BUILD_LIBBLKID
+# only in-tree libblkid has topology support
+ldadd_fdisk += $(ul_libblkid_la)
+cflags_fdisk += -I$(ul_libblkid_srcdir)
+endif
+
 if HAVE_STATIC_FDISK
 sbin_PROGRAMS += fdisk.static
 fdisk_static_SOURCES = $(fdisk_SOURCES)
 fdisk_static_LDFLAGS = -all-static
+fdisk_static_CFLAGS = $(cflags_fdisk)
+fdisk_static_LDADD = $(ldadd_fdisk)
 endif
+
+fdisk_CFLAGS = $(cflags_fdisk)
+fdisk_LDADD = $(ldadd_fdisk)
+
 
 if !ARCH_SPARC
 

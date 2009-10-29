@@ -39,6 +39,9 @@
 #ifdef HAVE_LINUX_BLKPG_H
 #include <linux/blkpg.h>
 #endif
+#ifdef HAVE_LIBBLKID_INTERNAL
+#include <blkid.h>
+#endif
 
 #include "gpt.h"
 
@@ -219,6 +222,7 @@ unsigned int	heads,
 	display_in_cyl_units = 1;
 
 unsigned long long total_number_of_sectors;	/* (!) 512-byte sectors */
+unsigned long minimum_io_size, alignment_offset;
 
 #define dos_label (!sun_label && !sgi_label && !aix_label && !mac_label && !osf_label)
 int	sun_label = 0;			/* looking at sun disklabel */
@@ -849,14 +853,33 @@ create_doslabel(void) {
 }
 
 static void
-get_sectorsize(int fd) {
+get_topology(int fd) {
 	int arg;
+#ifdef HAVE_LIBBLKID_INTERNAL
+	blkid_probe pr;
 
 	if (user_set_sector_size)
 		return;
+	pr = blkid_new_probe();
+	if (pr && blkid_probe_set_device(pr, fd, 0, 0) == 0) {
+		blkid_topology tp = blkid_probe_get_topology(pr);
 
-	if (blkdev_get_sector_size(fd, &arg) == 0)
+		if (tp) {
+			minimum_io_size = blkid_topology_get_minimum_io_size(tp);
+			alignment_offset = blkid_topology_get_alignment_offset(tp);
+		}
+	}
+	blkid_free_probe(pr);
+#endif
+
+	if (user_set_sector_size)
+		;
+	else if (blkdev_get_sector_size(fd, &arg) == 0)
 		sector_size = arg;
+
+	if (!minimum_io_size)
+		minimum_io_size = sector_size;
+
 	if (sector_size != DEFAULT_SECTOR_SIZE)
 		printf(_("Note: sector size is %d (not %d)\n"),
 		       sector_size, DEFAULT_SECTOR_SIZE);
@@ -911,7 +934,7 @@ void
 get_geometry(int fd, struct geom *g) {
 	unsigned long long llcyls;
 
-	get_sectorsize(fd);
+	get_topology(fd);
 	sector_factor = sector_size / 512;
 	guess_device_type(fd);
 	heads = cylinders = sectors = 0;
@@ -1667,6 +1690,11 @@ list_disk_geometry(void) {
 	printf(_("Units = %s of %d * %d = %d bytes\n"),
 	       str_units(PLURAL),
 	       units_per_sector, sector_size, units_per_sector * sector_size);
+
+	printf(_("Sector size (logical/physical): %u bytes / %lu bytes\n"),
+				sector_size, minimum_io_size);
+	if (alignment_offset)
+		printf(_("Alignment offset: %lu bytes\n"), alignment_offset);
 	if (dos_label)
 		dos_print_mbr_id();
 	printf("\n");
