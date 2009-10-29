@@ -57,6 +57,7 @@ static void rfkill_event(void)
 		printf("RFKILL event: idx %u type %u op %u soft %u hard %u\n",
 					event.idx, event.type, event.op,
 					event.soft, event.hard);
+		fflush(stdout);
 	}
 
 	close(fd);
