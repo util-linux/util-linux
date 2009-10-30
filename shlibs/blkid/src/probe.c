@@ -306,7 +306,7 @@ void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn)
 	chn->binary = FALSE;
 	pr->cur_chain = NULL;
 
-	if (rc < 0)
+	if (rc != 0)
 		return NULL;
 
 	DBG(DEBUG_LOWPROBE,
