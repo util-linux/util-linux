@@ -117,8 +117,10 @@ blkid_probe_enable_topology
 <SUBSECTION>
 blkid_probe_get_topology
 blkid_topology_get_alignment_offset
+blkid_topology_get_logical_sector_size
 blkid_topology_get_minimum_io_size
 blkid_topology_get_optimal_io_size
+blkid_topology_get_physical_sector_size
 </SECTION>
 
 <SECTION>

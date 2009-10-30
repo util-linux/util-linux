@@ -27,6 +27,13 @@
  * NAME=value (tags) interface is enabled by blkid_probe_enable_topology(),
  * and provides:
  *
+ * @LOGICAL_SECTOR_SIZE: this is the smallest unit the storage device can
+ *                       address. It is typically 512 bytes.
+ *
+ * @PHYSICAL_SECTOR_SIZE: this is the smallest unit a physical storage device
+ *                        can write atomically. It is usually the same as the
+ *                        logical sector size but may be bigger.
+ *
  * @MINIMUM_IO_SIZE: minimum size which is the device's preferred unit of I/O.
  *                   For RAID arrays it is often the stripe chunk size.
  *
@@ -44,6 +51,8 @@
  */
 static int topology_probe(blkid_probe pr, struct blkid_chain *chn);
 static void topology_free(blkid_probe pr, void *data);
+static int topology_is_complete(blkid_probe pr);
+static int topology_set_logical_sector_size(blkid_probe pr);
 
 /*
  * Binary interface
@@ -52,6 +61,8 @@ struct blkid_struct_topology {
 	unsigned long	alignment_offset;
 	unsigned long	minimum_io_size;
 	unsigned long	optimal_io_size;
+	unsigned long	logical_sector_size;
+	unsigned long	physical_sector_size;
 };
 
 /*
@@ -173,6 +184,12 @@ static int topology_probe(blkid_probe pr, struct blkid_chain *chn)
 				continue;
 		}
 
+		if (!topology_is_complete(pr))
+			continue;
+
+		/* generic for all probing drivers */
+		topology_set_logical_sector_size(pr);
+
 		DBG(DEBUG_LOWPROBE,
 			printf("<-- leaving probing loop (type=%s) [TOPOLOGY idx=%d]\n",
 			id->name, chn->idx));
@@ -207,6 +224,24 @@ static int topology_set_value(blkid_probe pr, const char *name,
 	return blkid_probe_sprintf_value(pr, name, "%llu", data);
 }
 
+/* the topology info is complete when we have at least "minimum_io_size" which
+ * is provides by all blkid topology drivers */
+static int topology_is_complete(blkid_probe pr)
+{
+	struct blkid_chain *chn = blkid_probe_get_chain(pr);
+
+	if (!chn)
+		return FALSE;
+
+	if (chn->binary && chn->data) {
+		blkid_topology tp = (blkid_topology) chn->data;
+		if (tp->minimum_io_size)
+			return TRUE;
+	}
+
+	return __blkid_probe_lookup_value(pr, "MINIMUM_IO_SIZE") ? TRUE : FALSE;
+}
+
 int blkid_topology_set_alignment_offset(blkid_probe pr, unsigned long val)
 {
 	return topology_set_value(pr,
@@ -228,6 +263,30 @@ int blkid_topology_set_optimal_io_size(blkid_probe pr, unsigned long val)
 	return topology_set_value(pr,
 			"OPTIMAL_IO_SIZE",
 			offsetof(struct blkid_struct_topology, optimal_io_size),
+			val);
+}
+
+/* BLKSSZGET is provided on all systems since 2.3.3 -- so we don't have to
+ * waste time with sysfs or or.
+ */
+static int topology_set_logical_sector_size(blkid_probe pr)
+{
+	unsigned long val = blkid_probe_get_sectorsize(pr);
+
+	if (!val)
+		return -1;
+
+	return topology_set_value(pr,
+			"LOGICAL_SECTOR_SIZE",
+			offsetof(struct blkid_struct_topology, logical_sector_size),
+			val);
+}
+
+int blkid_topology_set_physical_sector_size(blkid_probe pr, unsigned long val)
+{
+	return topology_set_value(pr,
+			"PHYSICAL_SECTOR_SIZE",
+			offsetof(struct blkid_struct_topology, physical_sector_size),
 			val);
 }
 
@@ -262,5 +321,27 @@ unsigned long blkid_topology_get_minimum_io_size(blkid_topology tp)
 unsigned long blkid_topology_get_optimal_io_size(blkid_topology tp)
 {
 	return tp ? tp->optimal_io_size : 0;
+}
+
+/**
+ * blkid_topology_get_logical_sector_size
+ * @tp: topology
+ *
+ * Returns: logical sector size (BLKSSZGET ioctl) in bytes or 0.
+ */
+unsigned long blkid_topology_get_logical_sector_size(blkid_topology tp)
+{
+	return tp ? tp->logical_sector_size : 0;
+}
+
+/**
+ * blkid_topology_get_physical_sector_size
+ * @tp: topology
+ *
+ * Returns: logical sector size (BLKSSZGET ioctl) in bytes or 0.
+ */
+unsigned long blkid_topology_get_physical_sector_size(blkid_topology tp)
+{
+	return tp ? tp->physical_sector_size : 0;
 }
 

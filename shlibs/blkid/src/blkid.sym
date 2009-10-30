@@ -109,6 +109,8 @@ global:
 	blkid_probe_set_partitions_flags;
 	blkid_probe_set_superblocks_flags;
 	blkid_topology_get_alignment_offset;
+	blkid_topology_get_logical_sector_size;
 	blkid_topology_get_minimum_io_size;
 	blkid_topology_get_optimal_io_size;
+	blkid_topology_get_physical_sector_size;
 } BLKID_2.15;

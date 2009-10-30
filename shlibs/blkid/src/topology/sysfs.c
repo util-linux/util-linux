@@ -6,6 +6,7 @@
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  *
+ * For more information see Linux kernel Documentation/ABI/testing/sysfs-block.
  */
 #include <stdio.h>
 #include <string.h>
@@ -78,7 +79,7 @@ err:
 }
 
 /*
- * Sysfs topology values
+ * Sysfs topology values (since 2.6.31, May 2009).
  */
 static struct topology_val {
 
@@ -92,6 +93,7 @@ static struct topology_val {
 	{ "alignment_offset", blkid_topology_set_alignment_offset },
 	{ "queue/minimum_io_size", blkid_topology_set_minimum_io_size },
 	{ "queue/optimal_io_size", blkid_topology_set_optimal_io_size },
+	{ "queue/physical_block_size", blkid_topology_set_physical_sector_size },
 };
 
 static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)

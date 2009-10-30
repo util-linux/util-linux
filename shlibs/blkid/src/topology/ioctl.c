@@ -33,6 +33,8 @@ static struct topology_val {
 	{ BLKALIGNOFF, blkid_topology_set_alignment_offset },
 	{ BLKIOMIN, blkid_topology_set_minimum_io_size },
 	{ BLKIOOPT, blkid_topology_set_optimal_io_size },
+	{ BLKPBSZGET, blkid_topology_set_physical_sector_size }
+	/* we read BLKSSZGET in topology.c */
 };
 
 static int probe_ioctl_tp(blkid_probe pr, const struct blkid_idmag *mag)

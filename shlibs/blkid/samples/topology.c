@@ -42,12 +42,16 @@ int main(int argc, char *argv[])
 	tp = blkid_probe_get_topology(pr);
 	if (tp) {
 		printf("----- binary interface:\n");
-		printf("\talignment offset : %lu\n",
+		printf("\talignment offset     : %lu\n",
 				blkid_topology_get_alignment_offset(tp));
-		printf("\tminimum io size  : %lu\n",
+		printf("\tminimum io size      : %lu\n",
 				blkid_topology_get_minimum_io_size(tp));
-		printf("\toptimal io size  : %lu\n",
+		printf("\toptimal io size      : %lu\n",
 				blkid_topology_get_optimal_io_size(tp));
+		printf("\tlogical sector size  : %lu\n",
+				blkid_topology_get_logical_sector_size(tp));
+		printf("\tphysical sector size : %lu\n",
+				blkid_topology_get_physical_sector_size(tp));
 	}
 
 	/*
