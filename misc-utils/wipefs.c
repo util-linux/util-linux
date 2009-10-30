@@ -1,5 +1,5 @@
 /*
- * wipefs - utility to wipe filesystems of partition tables from device
+ * wipefs - utility to wipe filesystems from device
  *
  * Copyright (C) 2009 Red Hat, Inc. All rights reserved.
  * Written by Karel Zak <kzak@redhat.com>
