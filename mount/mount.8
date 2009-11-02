@@ -380,21 +380,16 @@ option, when present.
 Command line options available for the
 .B mount
 command:
-.TP
-.B \-V
+.IP "\fB\-V, \-\-version\fP"
 Output version.
-.TP
-.B \-h
+.IP "\fB\-h, \-\-help\fP"
 Print a help message.
-.TP
-.B \-v
+.IP "\fB\-v, \-\-verbose\fP"
 Verbose mode.
-.TP
-.B \-a
+.IP "\fB\-a, \-\-all\fP"
 Mount all filesystems (of the given types) mentioned in
 .IR fstab .
-.TP
-.B \-F
+.IP "\fB\-F, \-\-fork\fP"
 (Used in conjunction with
 .BR \-a .)
 Fork off a new incarnation of mount for each device.
@@ -406,8 +401,7 @@ Thus, you cannot use this option if you want to mount both
 .I /usr
 and
 .IR /usr/spool .
-.TP
-.B \-f
+.IP "\fB\-f, \-\-fake\fP"
 Causes everything to be done except for the actual system call; if it's not
 obvious, this ``fakes'' mounting the filesystem.  This option is useful in
 conjunction with the
@@ -418,11 +412,9 @@ command is trying to do. It can also be used to add entries for devices
 that were mounted earlier with the -n option. The -f option checks for
 existing record in /etc/mtab and fails when the record already
 exists (with regular non-fake mount, this check is done by kernel).
-.TP
-.B \-i
+.IP "\fB\-i, \-\-internal\-only\fP"
 Don't call the /sbin/mount.<filesystem> helper even if it exists.
-.TP
-.B \-l
+.IP "\fB\-l\fP"
 Add the labels in the mount output. Mount must have
 permission to read the disk device (e.g. be suid root) for this to work.
 One can set such a label for ext2, ext3 or ext4 using the
@@ -431,27 +423,23 @@ utility, or for XFS using
 .BR xfs_admin (8),
 or for reiserfs using
 .BR reiserfstune (8).
-.TP
-.B \-n
+.IP "\fB\-n, \-\-no\-mtab\fP"
 Mount without writing in
 .IR /etc/mtab .
 This is necessary for example when
 .I /etc
 is on a read-only filesystem.
-.TP
-.BI \-p " num"
+.IP "\fB\-p, \-\-pass\-fd \fInum\fP"
 In case of a loop mount with encryption, read the passphrase from
 file descriptor
 .I num
 instead of from the terminal.
-.TP
-.B \-s
+.IP "\fB\-s\fP"
 Tolerate sloppy mount options rather than failing. This will ignore
 mount options not supported by a filesystem type. Not all filesystems
 support this option. This option exists for support of the Linux
 autofs\-based automounter.
-.TP
-.B \-r
+.IP "\fB\-r, \-\-read\-only\fP"
 Mount the filesystem read-only. A synonym is
 .BR "\-o ro" .
 
@@ -461,23 +449,19 @@ journal if the filesystem is dirty. To prevent this kind of write access, you
 may want to mount ext3 or ext4 filesystem with "ro,noload" mount options or
 set the block device to read-only mode, see command
 .BR blockdev (8).
-.TP
-.B \-w
+.IP "\fB\-w, \-\-rw\fP"
 Mount the filesystem read/write. This is the default. A synonym is
 .BR "\-o rw" .
-.TP
-.BI \-L " label"
+.IP "\fB\-L \fIlabel\fP"
 Mount the partition that has the specified
 .IR label .
-.TP
-.BI \-U " uuid"
+.IP "\fB\-U \fIuuid\fP"
 Mount the partition that has the specified
 .IR uuid .
 These two options require the file
 .I /proc/partitions
 (present since Linux 2.1.116) to exist.
-.TP
-.BI \-t " vfstype"
+.IP "\fB\-t, \-\-types \fIvfstype\fP"
 The argument following the
 .B \-t
 is used to indicate the filesystem type.  The filesystem types which are
@@ -600,20 +584,19 @@ list.  The list of filesystem types can be prefixed with
 to specify the filesystem types on which no action should be taken.
 (This can be meaningful with the
 .B \-a
-option.)
-
-For example, the command:
+option.) For example, the command:
 .RS
 .RS
+.sp
 .B "mount \-a \-t nomsdos,ext"
+.sp
 .RE
 mounts all filesystems except those of type
 .I msdos
 and
 .IR ext .
 .RE
-.TP
-.B \-O
+.IP "\fB\-O, \-\-test-opts \fIopts\fP"
 Used in conjunction with
 .BR \-a ,
 to limit the set of filesystems to which the
@@ -654,14 +637,15 @@ options are cumulative in effect; that is, the command
 mounts all ext2 filesystems with the _netdev option, not all filesystems
 that are either ext2 or have the _netdev option specified.
 .RE
-.TP
-.B \-o
+.IP "\fB\-o, \-\-options \fIopts\fP"
 Options are specified with a
 .B \-o
 flag followed by a comma separated string of options. For example:
 .RS
 .RS
+.sp
 .B "mount LABEL=mydisk \-o noatime,nouser"
+.sp
 .RE
 
 For more details, see
@@ -670,18 +654,14 @@ and
 .B FILESYSTEM SPECIFIC MOUNT OPTIONS
 sections.
 .RE
-.TP
-.B \-B, \-\-bind
+.IP "\fB\-B, \-\-bind\fP"
 Remount a subtree somewhere else (so that its contents are available
 in both places). See above.
-.TP
-.B \-R, \-\-rbind
+.IP "\fB\-R, \-\-rbind\fP"
 Remount a subtree and all possible submounts somewhere else (so that its
 contents are available in both places). See above.
-.TP
-.B \-M, \-\-move
+.IP "\fB\-M, \-\-move\fP"
 Move a subtree to some other place. See above.
-.RE
 
 .SH FILESYSTEM INDEPENDENT MOUNT OPTIONS
 Some of these options are only useful when they appear in the
