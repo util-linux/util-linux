@@ -1003,6 +1003,33 @@ get_partition_table_geometry(void) {
 	}
 }
 
+/*
+ * Sets LBA of the first partition
+ */
+void
+update_sector_offset(void)
+{
+	if (dos_compatible_flag) {
+		/* usually 63 sectors for classic geometry */
+		sector_offset = sectors;
+
+		/* On the disks with alignment_offset the default geo.sectors
+		 * has to be aligned to physical block boundary. Check it!
+		 */
+		if (sectors && alignment_offset && !lba_is_aligned(sectors))
+			fprintf(stderr, _(
+			"\nWARNING: the device provides alignment_offset, but "
+			"the offset does not \nmatch with device geometry.\n\n"));
+	} else {
+		/*
+		 * Align the begin of the first partition to the physical block
+		 */
+		unsigned long long  x = minimum_io_size / sector_size;
+
+		sector_offset = align_lba(x, ALIGN_UP);
+	}
+}
+
 void
 get_geometry(int fd, struct geom *g) {
 	unsigned long long llcyls;
@@ -1027,9 +1054,7 @@ get_geometry(int fd, struct geom *g) {
 	if (blkdev_get_sectors(fd, &total_number_of_sectors) == -1)
 		total_number_of_sectors = 0;
 
-	sector_offset = 1;
-	if (dos_compatible_flag)
-		sector_offset = sectors;
+	update_sector_offset();
 
 	llcyls = total_number_of_sectors / (heads * sectors * sector_factor);
 	cylinders = llcyls;
@@ -1498,14 +1523,12 @@ toggle_active(int i) {
 static void
 toggle_dos_compatibility_flag(void) {
 	dos_compatible_flag = ~dos_compatible_flag;
-	if (dos_compatible_flag) {
-		sector_offset = sectors;
+	if (dos_compatible_flag)
 		printf(_("DOS Compatibility flag is set\n"));
-	}
-	else {
-		sector_offset = 1;
+	else
 		printf(_("DOS Compatibility flag is not set\n"));
-	}
+
+	update_sector_offset();
 }
 
 static void
@@ -2569,12 +2592,11 @@ xselect(void) {
 		case 's':
 			user_sectors = sectors = read_int(1, sectors, 63, 0,
 					   _("Number of sectors"));
-			if (dos_compatible_flag) {
-				sector_offset = sectors;
+			if (dos_compatible_flag)
 				fprintf(stderr, _("Warning: setting "
 					"sector offset for DOS "
 					"compatiblity\n"));
-			}
+			update_sector_offset();
 			update_units();
 			break;
 		case 'v':
