@@ -1033,6 +1033,7 @@ get_partition_table_geometry(void) {
 	}
 }
 
+
 /*
  * Sets LBA of the first partition
  */
@@ -1797,6 +1798,14 @@ static void check_consistency(struct partition *p, int partition) {
 }
 
 static void
+check_alignment(struct partition *p, int partition)
+{
+	if (!lba_is_aligned(get_start_sect(p)))
+		printf(_("Partition %i does not start on physical block boundary.\n"),
+			partition + 1);
+}
+
+static void
 list_disk_geometry(void) {
 	long long bytes = (total_number_of_sectors << 9);
 	long megabytes = bytes/1000000;
@@ -2031,6 +2040,7 @@ list_table(int xtra) {
 /* type name */		(type = partition_type(p->sys_ind)) ?
 			type : _("Unknown"));
 			check_consistency(p, i);
+			check_alignment(p, i);
 		}
 	}
 
@@ -2063,8 +2073,10 @@ x_list_table(int extend) {
 				cylinder(p->end_sector, p->end_cyl),
 				(unsigned long) get_start_sect(p),
 				(unsigned long) get_nr_sects(p), p->sys_ind);
-			if (p->sys_ind)
+			if (p->sys_ind) {
 				check_consistency(p, i);
+				check_alignment(p, i);
+			}
 		}
 	}
 }
@@ -2141,6 +2153,7 @@ verify(void) {
 		p = pe->part_table;
 		if (p->sys_ind && !IS_EXTENDED (p->sys_ind)) {
 			check_consistency(p, i);
+			check_alignment(p, i);
 			if (get_partition_start(pe) < first[i])
 				printf(_("Warning: bad start-of-data in "
 					"partition %d\n"), i + 1);
