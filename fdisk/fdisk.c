@@ -752,8 +752,11 @@ warn_cylinders(void) {
 "2) booting and partitioning software from other OSs\n"
 "   (e.g., DOS FDISK, OS/2 FDISK)\n"),
 			cylinders);
+}
 
-	if (total_number_of_sectors > UINT_MAX) {
+static void
+warn_limits(void) {
+	if (total_number_of_sectors > UINT_MAX && !nowarn) {
 		int giga = (total_number_of_sectors << 9) / 1000000000;
 		int hectogiga = (giga + 50) / 100;
 
@@ -767,6 +770,33 @@ warn_cylinders(void) {
 			(unsigned long long ) UINT_MAX * sector_size,
 			sector_size);
 	}
+}
+
+static void
+warn_alignment(void) {
+	if (nowarn || !alignment_required)
+		return;
+
+	fprintf(stderr, _("\n"
+"The device presents a logical sector size that is smaller than\n"
+"the physical sector size. Aligning to a physical sector boundary\n"
+"is recommended, or performance may be impacted.\n\n"));
+
+	/*
+	 * Print warning when sector_offset is not aligned for DOS mode
+	 */
+	if (alignment_offset == 0 && dos_compatible_flag &&
+	    !lba_is_aligned(sector_offset))
+
+		fprintf(stderr, _(
+"WARNING: The device does not provide compensation (alignment_offset)\n"
+"for DOS-compatible partitioning, but DOS-compatible mode is enabled.\n"
+"Use command 'c' to switch-off DOS mode.\n\n"));
+
+	if (display_in_cyl_units)
+		fprintf(stderr, _(
+"It's recommended to change display units to sectors (command 'u').\n\n"));
+
 }
 
 static void
@@ -1193,9 +1223,6 @@ got_dos_table:
 		}
 	}
 
-	warn_cylinders();
-	warn_geometry();
-
 	for (i = 0; i < 4; i++) {
 		struct pte *pe = &ptes[i];
 
@@ -1219,6 +1246,11 @@ got_dos_table:
 			pe->changed = 1;
 		}
 	}
+
+	warn_cylinders();
+	warn_geometry();
+	warn_limits();
+	warn_alignment();
 
 	return 0;
 }
