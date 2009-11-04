@@ -1033,7 +1033,6 @@ get_partition_table_geometry(void) {
 	}
 }
 
-
 /*
  * Sets LBA of the first partition
  */
@@ -1321,16 +1320,9 @@ read_hex(struct systypes *sys)
         }
 }
 
-/*
- * Print the message MESG, then read an integer in LOW..HIGH.
- * If the user hits Enter, DFLT is returned, provided that is in LOW..HIGH.
- * Answers like +10 are interpreted as offsets from BASE.
- *
- * There is no default if DFLT is not between LOW and HIGH.
- */
-unsigned int
-read_int(unsigned int low, unsigned int dflt, unsigned int high,
-	 unsigned int base, char *mesg)
+static unsigned int
+read_int_sx(unsigned int low, unsigned int dflt, unsigned int high,
+	 unsigned int base, char *mesg, int *suffix)
 {
 	unsigned int i;
 	int default_ok = 1;
@@ -1429,6 +1421,8 @@ read_int(unsigned int low, unsigned int dflt, unsigned int high,
 				bytes += unit/2;	/* round */
 				bytes /= unit;
 				i = bytes;
+				if (suffix)
+					*suffix = absolute;
 			}
 			if (minus)
 				i = -i;
@@ -1449,6 +1443,21 @@ read_int(unsigned int low, unsigned int dflt, unsigned int high,
 	}
 	return i;
 }
+
+/*
+ * Print the message MESG, then read an integer in LOW..HIGH.
+ * If the user hits Enter, DFLT is returned, provided that is in LOW..HIGH.
+ * Answers like +10 are interpreted as offsets from BASE.
+ *
+ * There is no default if DFLT is not between LOW and HIGH.
+ */
+unsigned int
+read_int(unsigned int low, unsigned int dflt, unsigned int high,
+	 unsigned int base, char *mesg)
+{
+	return read_int_sx(low, dflt, high, base, mesg, NULL);
+}
+
 
 int
 get_partition(int warn, int max) {
@@ -2298,15 +2307,28 @@ add_partition(int n, int sys) {
 	if (cround(start) == cround(limit)) {
 		stop = limit;
 	} else {
+		int sx = 0;
+
 		snprintf(mesg, sizeof(mesg),
 			_("Last %1$s, +%2$s or +size{K,M,G}"),
 			 str_units(SINGULAR), str_units(PLURAL));
 
-		stop = read_int(cround(start), cround(limit), cround(limit),
-				cround(start), mesg);
+		stop = read_int_sx(cround(start), cround(limit), cround(limit),
+				cround(start), mesg, &sx);
 		if (display_in_cyl_units) {
 			stop = stop * units_per_sector - 1;
 			if (stop >limit)
+				stop = limit;
+		}
+
+		if (sx && alignment_required) {
+			/* the last sector has not been exactly requested (but
+			 * defined by +size{K,M,G} convention), so be smart
+			 * and align the end of the partition. The next
+			 * partition will start at phy.block boundary.
+			 */
+			stop = align_lba_in_range(stop, start, limit) - 1;
+			if (stop > limit)
 				stop = limit;
 		}
 	}
