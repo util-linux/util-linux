@@ -637,6 +637,79 @@ test_c(char **m, char *mesg) {
 	return val;
 }
 
+#define alignment_required	(minimum_io_size != sector_size)
+
+static int
+lba_is_aligned(unsigned long long lba)
+{
+	unsigned long long bytes, phy_sectors;
+
+	bytes = lba * sector_size;
+	phy_sectors = bytes / minimum_io_size;
+
+	return (alignment_offset + (phy_sectors * minimum_io_size) == bytes);
+}
+
+#define ALIGN_UP	1
+#define ALIGN_DOWN	2
+#define ALIGN_NEAREST	3
+
+static unsigned long long
+align_lba(unsigned long long lba, int direction)
+{
+	unsigned long long sects_in_phy, res;
+
+	if (lba_is_aligned(lba))
+		return lba;
+
+	sects_in_phy = minimum_io_size / sector_size;
+
+	if (lba < sects_in_phy)
+		/* align to the first physical sector */
+		res = sects_in_phy;
+
+	else if (direction == ALIGN_UP)
+		res = ((lba + sects_in_phy) / sects_in_phy) * sects_in_phy;
+
+	else if (direction == ALIGN_DOWN)
+		res = (lba / sects_in_phy) * sects_in_phy;
+
+	else /* ALIGN_NEAREST */
+		res = ((lba + sects_in_phy/2) / sects_in_phy) * sects_in_phy;
+
+	if (alignment_offset)
+		/*
+		 * apply alignment_offset
+		 *
+		 * On disk with alignment compensation physical blocks start
+		 * at LBA < 0 (usually LBA -1). It means we have to move LBA
+		 * according the offset to be on the physical boundary.
+		 */
+		res -= (minimum_io_size - alignment_offset) / sector_size;
+
+	/* fprintf(stderr, "LBA %llu -align-> %llu (%s)\n", lba, res,
+	 *			lba_is_aligned(res) ? "OK" : "FALSE");
+	 */
+	return res;
+}
+
+static unsigned long long
+align_lba_in_range(	unsigned long long lba,
+			unsigned long long start,
+			unsigned long long stop)
+{
+	start = align_lba(start, ALIGN_UP);
+	stop = align_lba(stop, ALIGN_DOWN);
+
+	lba = align_lba(lba, ALIGN_NEAREST);
+
+	if (lba < start)
+		return start;
+	else if (lba > stop)
+		return stop;
+	return lba;
+}
+
 static int
 warn_geometry(void) {
 	char *m = NULL;
