@@ -2210,6 +2210,27 @@ verify(void) {
 		       n_sectors - total, sector_size);
 }
 
+static unsigned long long
+get_unused_start(int part_n,
+		unsigned long long start,
+		unsigned long long first[],
+		unsigned long long last[])
+{
+	int i;
+
+	for (i = 0; i < partitions; i++) {
+		unsigned long long lastplusoff;
+
+		if (start == ptes[i].offset)
+			start += sector_offset;
+		lastplusoff = last[i] + ((part_n < 4) ? 0 : sector_offset);
+		if (start >= first[i] && start <= lastplusoff)
+			start = lastplusoff + 1;
+	}
+
+	return start;
+}
+
 static void
 add_partition(int n, int sys) {
 	char mesg[256];		/* 48 does not suffice in Japanese */
@@ -2250,16 +2271,20 @@ add_partition(int n, int sys) {
 
 	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
 	do {
-		temp = start;
-		for (i = 0; i < partitions; i++) {
-			unsigned long long lastplusoff;
+		unsigned long long dflt, dflt_tmp;
 
-			if (start == ptes[i].offset)
-				start += sector_offset;
-			lastplusoff = last[i] + ((n<4) ? 0 : sector_offset);
-			if (start >= first[i] && start <= lastplusoff)
-				start = lastplusoff + 1;
-		}
+		temp = start;
+
+		dflt = start = get_unused_start(n, start, first, last);
+
+		/* the default sector should be aligned and unused */
+		do {
+			dflt_tmp = align_lba_in_range(dflt, start, limit);
+			dflt = get_unused_start(n, dflt_tmp, first, last);
+		} while (dflt != dflt_tmp && dflt > dflt_tmp && dflt < limit);
+
+		if (dflt >= limit)
+			dflt = start;
 		if (start > limit)
 			break;
 		if (start >= temp+units_per_sector && read) {
@@ -2270,7 +2295,7 @@ add_partition(int n, int sys) {
 		if (!read && start == temp) {
 			unsigned long long i = start;
 
-			start = read_int(cround(i), cround(i), cround(limit),
+			start = read_int(cround(i), cround(dflt), cround(limit),
 					 0, mesg);
 			if (display_in_cyl_units) {
 				start = (start - 1) * units_per_sector;
