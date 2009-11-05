@@ -3,6 +3,9 @@ AM_CPPFLAGS = -include $(top_builddir)/config.h -I$(top_srcdir)/include \
 AM_CFLAGS = -fsigned-char
 AM_LDFLAGS =
 
+# generic libtool options for static programs
+LT_STATIC_LDFLAGS = -all-static
+
 # Automake (at least up to 1.10) mishandles dist_man_MANS inside conditionals.
 # Unlike with other dist primaries, the files are not distributed if the
 # conditional is false.

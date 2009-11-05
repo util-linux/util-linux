@@ -45,7 +45,7 @@ wipefs_CFLAGS = -I$(ul_libblkid_srcdir)
 if HAVE_STATIC_BLKID
 sbin_PROGRAMS += blkid.static
 blkid_static_SOURCES = $(blkid_SOURCES)
-blkid_static_LDFLAGS = "-all-static"		# libtool option
+blkid_static_LDFLAGS = $(LT_STATIC_LDFALGS)
 blkid_static_LDADD = $(ul_libblkid_la)
 blkid_static_CFLAGS = -I$(ul_libblkid_srcdir)
 endif

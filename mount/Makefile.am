@@ -24,9 +24,7 @@ srcs_mount = fstab.c mount_mntent.c getusername.c lomount.c devname.c devname.h 
 ldadd_common =
 ldadd_static =
 cflags_common =
-
-# generic libtool options for all static programs
-ldflags_static ="-all-static"
+ldflags_static = $(LT_STATIC_LDFLAGS)
 
 mount_SOURCES = mount.c $(srcs_mount) ../lib/setproctitle.c
 mount_CFLAGS = $(SUID_CFLAGS) $(AM_CFLAGS) $(cflags_common)
