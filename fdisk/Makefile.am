@@ -21,7 +21,7 @@ fdisk_SOURCES = fdisk.c fdiskbsdlabel.c fdisksgilabel.c \
 if HAVE_STATIC_FDISK
 sbin_PROGRAMS += fdisk.static
 fdisk_static_SOURCES = $(fdisk_SOURCES)
-fdisk_static_LDFLAGS = $(LT_STATIC_LDFLAGS)
+fdisk_static_LDFLAGS = -all-static
 endif
 
 if !ARCH_SPARC
@@ -33,7 +33,7 @@ sfdisk_SOURCES = sfdisk.c partname.c $(fdisk_common)
 if HAVE_STATIC_SFDISK
 sbin_PROGRAMS += sfdisk.static
 sfdisk_static_SOURCES = $(sfdisk_SOURCES)
-sfdisk_static_LDFLAGS = $(LT_STATIC_LDFLAGS)
+sfdisk_static_LDFLAGS = -all-static
 endif
 
 if USE_SLANG
