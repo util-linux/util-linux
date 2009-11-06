@@ -13,8 +13,6 @@ libblkid
 
  - consolidate "getsize" stuff (see getsize.c and lib/blkdev.c)
 
- - cleanup __attribute__ usage
-
  - add values:
 
 	FSSIZE   -- filesystem size (klibc requirement)
@@ -40,6 +38,8 @@ fdisk(s)
 
 misc
 ----
+
+ * use something better than gtk-doc (doxyden?)
 
  * add to lib/blkdev.c code for /proc/partitions parsing -- unfortunate we
    duplicate this code in many places. The parser has to support unlimited
