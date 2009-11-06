@@ -19,12 +19,12 @@ AM_CPPFLAGS += -I$(ul_libblkid_srcdir) $(common_cflags)
 
 # includes
 blkidincdir = $(includedir)/blkid
-blkidinc_HEADERS = blkid.h
+nodist_blkidinc_HEADERS = blkid.h
 
 usrlib_exec_LTLIBRARIES = libblkid.la
 libblkid_la_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 		     probe.c read.c resolve.c save.c tag.c version.c verify.c \
-		     encode.c blkid.h list.h blkidP.h superblocks/superblocks.h \
+		     encode.c list.h blkidP.h superblocks/superblocks.h \
 		     config.c evaluate.c \
 		     $(blkidinc_HEADERS) \
 		     $(top_srcdir)/lib/blkdev.c \
@@ -33,12 +33,14 @@ libblkid_la_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 		     $(top_srcdir)/lib/md5.c \
 		     $(top_srcdir)/lib/crc32.c
 
+nodist_libblkid_la_SOURCES = blkid.h
+
 libblkid_la_LIBADD = superblocks/libblkid_superblocks.la \
 		     topology/libblkid_topology.la \
 		     partitions/libblkid_partitions.la \
 		     $(common_ldadd)
 
-libblkid_la_DEPENDENCIES = $(libblkid_la_LIBADD) blkid.sym
+libblkid_la_DEPENDENCIES = $(libblkid_la_LIBADD) blkid.sym blkid.h.in
 
 libblkid_la_LDFLAGS = -Wl,--version-script=$(ul_libblkid_srcdir)/blkid.sym \
                       -version-info $(LIBBLKID_VERSION_INFO)
