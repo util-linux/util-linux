@@ -1,4 +1,15 @@
-# -*- mode: makefile -*-
+#
+# WARNING: this is not gtk-doc.make file from gtk-doc project. This
+#          file has been modified to match with util-linux-ng requirements:
+#
+#          * install files to $datadir
+#          * don't maintain generated files in git repository
+#          * don't distribute the final html files
+#          * don't require --enable-gtk-doc for "make dist"
+#          * support out-of-tree build ($srcdir != $builddir)
+#
+# -- kzak, Nov 2009
+#
 
 ####################################
 # Everything below here is generic #
@@ -21,14 +32,14 @@ endif
 #
 GPATH = $(srcdir)
 
-TARGET_DIR=$(HTML_DIR)/$(DOC_MODULE)
+TARGET_DIR=$(docdir)/$(DOC_MODULE)
 
 EXTRA_DIST = 				\
 	$(content_files)		\
 	$(HTML_IMAGES)			\
 	$(DOC_MAIN_SGML_FILE)		\
-	$(DOC_MODULE)-sections.txt	\
-	$(DOC_MODULE)-overrides.txt
+	$(DOC_MODULE)-sections.txt
+#	$(DOC_MODULE)-overrides.txt
 
 DOC_STAMPS=scan-build.stamp tmpl-build.stamp sgml-build.stamp html-build.stamp \
 	   $(srcdir)/tmpl.stamp $(srcdir)/sgml.stamp $(srcdir)/html.stamp
@@ -59,30 +70,41 @@ $(REPORT_FILES): sgml-build.stamp
 
 #### scan ####
 
-scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB)
+scan-build.stamp: $(HFILE_GLOB) $(CFILE_GLOB) $(srcdir)/$(DOC_MODULE)-*.txt $(content_files)
+
+	test -f $(DOC_MODULE)-sections.txt || \
+		cp $(srcdir)/$(DOC_MODULE)-sections.txt $(builddir)
+
 	@echo 'gtk-doc: Scanning header files'
-	@-chmod -R u+w $(srcdir)
-	cd $(srcdir) && \
-	  gtkdoc-scan --module=$(DOC_MODULE) --source-dir=$(DOC_SOURCE_DIR) --ignore-headers="$(IGNORE_HFILES)" $(SCAN_OPTIONS) $(EXTRA_HFILES)
+	gtkdoc-scan --module=$(DOC_MODULE) \
+	            --source-dir=$(srcdir)/$(DOC_SOURCE_DIR) \
+	            --source-dir=$(builddir)/$(DOC_SOURCE_DIR) \
+	            --ignore-headers="$(IGNORE_HFILES)" \
+	            --output-dir=$(builddir) \
+	            $(SCAN_OPTIONS) $(EXTRA_HFILES)
+
 	if grep -l '^..*$$' $(srcdir)/$(DOC_MODULE).types > /dev/null 2>&1 ; then \
-	    CC="$(GTKDOC_CC)" LD="$(GTKDOC_LD)" RUN="$(GTKDOC_RUN)" CFLAGS="$(GTKDOC_CFLAGS) $(CFLAGS)" LDFLAGS="$(GTKDOC_LIBS) $(LDFLAGS)" gtkdoc-scangobj $(SCANGOBJ_OPTIONS) --module=$(DOC_MODULE) --output-dir=$(srcdir) ; \
+	    CC="$(GTKDOC_CC)" LD="$(GTKDOC_LD)" RUN="$(GTKDOC_RUN)" \
+	    CFLAGS="$(GTKDOC_CFLAGS) $(CFLAGS)" LDFLAGS="$(GTKDOC_LIBS) \
+            $(LDFLAGS)" gtkdoc-scangobj $(SCANGOBJ_OPTIONS) \
+			--module=$(DOC_MODULE) --output-dir=$(builddir) ; \
 	else \
-	    cd $(srcdir) ; \
 	    for i in $(SCANOBJ_FILES) ; do \
                test -f $$i || touch $$i ; \
 	    done \
 	fi
 	touch scan-build.stamp
 
-$(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt: scan-build.stamp
+$(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(srcdir)/$(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt: scan-build.stamp
 	@true
 
 #### templates ####
 
-tmpl-build.stamp: $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt
+tmpl-build.stamp: $(DOC_MODULE)-decl.txt $(SCANOBJ_FILES) $(srcdir)/$(DOC_MODULE)-sections.txt $(DOC_MODULE)-overrides.txt
 	@echo 'gtk-doc: Rebuilding template files'
-	@-chmod -R u+w $(srcdir)
-	cd $(srcdir) && gtkdoc-mktmpl --module=$(DOC_MODULE) $(MKTMPL_OPTIONS)
+	test -z $(builddir)/tmpl || $(MKDIR_P) $(builddir)/tmpl
+	gtkdoc-mktmpl --module=$(DOC_MODULE) \
+	              $(MKTMPL_OPTIONS)
 	touch tmpl-build.stamp
 
 tmpl.stamp: tmpl-build.stamp
@@ -94,11 +116,16 @@ tmpl/*.sgml:
 
 #### xml ####
 
-sgml-build.stamp: tmpl.stamp $(HFILE_GLOB) $(CFILE_GLOB) $(DOC_MODULE)-sections.txt $(srcdir)/tmpl/*.sgml $(expand_content_files)
+sgml-build.stamp: tmpl.stamp $(HFILE_GLOB) $(CFILE_GLOB) $(srcdir)/$(DOC_MODULE)-sections.txt $(builddir)/tmpl/*.sgml $(expand_content_files)
 	@echo 'gtk-doc: Building XML'
-	@-chmod -R u+w $(srcdir)
-	cd $(srcdir) && \
-	gtkdoc-mkdb --module=$(DOC_MODULE) --source-dir=$(DOC_SOURCE_DIR) --output-format=xml --expand-content-files="$(expand_content_files)" --main-sgml-file=$(DOC_MAIN_SGML_FILE) $(MKDB_OPTIONS)
+	gtkdoc-mkdb --module=$(DOC_MODULE) \
+	            --source-dir=$(srcdir)/$(DOC_SOURCE_DIR) \
+	            --source-dir=$(builddir)/$(DOC_SOURCE_DIR) \
+	            --output-format=xml \
+	            --ignore-files="$(IGNORE_HFILES)" \
+	            --expand-content-files="$(expand_content_files)" \
+	            --main-sgml-file=$(srcdir)/$(DOC_MAIN_SGML_FILE) \
+	            $(MKDB_OPTIONS)
 	touch sgml-build.stamp
 
 sgml.stamp: sgml-build.stamp
@@ -106,20 +133,23 @@ sgml.stamp: sgml-build.stamp
 
 #### html ####
 
-html-build.stamp: sgml.stamp $(DOC_MAIN_SGML_FILE) $(content_files)
+html-build.stamp: sgml.stamp $(srcdir)/$(DOC_MAIN_SGML_FILE) $(content_files)
 	@echo 'gtk-doc: Building HTML'
-	@-chmod -R u+w $(srcdir)
-	rm -rf $(srcdir)/html
-	mkdir $(srcdir)/html
-	mkhtml_options=""; \
-	gtkdoc-mkhtml 2>&1 --help | grep  >/dev/null "\-\-path"; \
-	if test "$(?)" = "0"; then \
-	  mkhtml_options=--path="$(srcdir)"; \
-	fi
-	cd $(srcdir)/html && gtkdoc-mkhtml $(mkhtml_options) $(MKHTML_OPTIONS) $(DOC_MODULE) ../$(DOC_MAIN_SGML_FILE)
-	test "x$(HTML_IMAGES)" = "x" || ( cd $(srcdir) && cp $(HTML_IMAGES) html )
+	rm -rf $(builddir)/html
+	$(MKDIR_P) $(builddir)/html
+	cd $(builddir)/html && \
+	  gtkdoc-mkhtml --path="$(abs_builddir):$(abs_builddir)/xml:$(abs_srcdir)" \
+	                $(MKHTML_OPTIONS) \
+	                $(DOC_MODULE) \
+	                $(abs_srcdir)/$(DOC_MAIN_SGML_FILE)
+
+	test "x$(HTML_IMAGES)" = "x" || \
+		( cd $(srcdir) && cp $(HTML_IMAGES) $(abs_builddir)/html )
+
 	@echo 'gtk-doc: Fixing cross-references'
-	cd $(srcdir) && gtkdoc-fixxref --module-dir=html --html-dir=$(HTML_DIR) $(FIXXREF_OPTIONS)
+	gtkdoc-fixxref --module-dir=html \
+	               --html-dir=$(HTML_DIR) \
+	               $(FIXXREF_OPTIONS)
 	touch html-build.stamp
 
 ##############
@@ -129,16 +159,15 @@ clean-local:
 	rm -rf .libs
 
 distclean-local:
-	cd $(srcdir) && \
-	  rm -rf xml $(REPORT_FILES) \
-	         $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
-
-maintainer-clean-local: clean
-	cd $(srcdir) && rm -rf xml html
+	rm -rf xml html tmpl $(REPORT_FILES) *.stamp \
+	       $(DOC_MODULE)-overrides.txt \
+	       $(DOC_MODULE)-decl-list.txt $(DOC_MODULE)-decl.txt
+	test $(abs_builddir) ==  $(abs_srcdir) || \
+	       rm -f $(DOC_MODULE)-sections.txt
 
 install-data-local:
-	installfiles=`echo $(srcdir)/html/*`; \
-	if test "$$installfiles" = '$(srcdir)/html/*'; \
+	installfiles=`echo $(builddir)/html/*`; \
+	if test "$$installfiles" = '$(builddir)/html/*'; \
 	then echo '-- Nothing to install' ; \
 	else \
 	  if test -n "$(DOC_MODULE_VERSION)"; then \
@@ -180,17 +209,17 @@ dist-check-gtkdoc:
 	@false
 endif
 
-dist-hook: dist-check-gtkdoc dist-hook-local sgml.stamp html-build.stamp
-	mkdir $(distdir)/tmpl
-	mkdir $(distdir)/xml
-	mkdir $(distdir)/html
-	-cp $(srcdir)/tmpl/*.sgml $(distdir)/tmpl
-	-cp $(srcdir)/xml/*.xml $(distdir)/xml
-	cp $(srcdir)/html/* $(distdir)/html
-	-cp $(srcdir)/$(DOC_MODULE).types $(distdir)/
-	-cp $(srcdir)/$(DOC_MODULE)-sections.txt $(distdir)/
-	cd $(distdir) && rm -f $(DISTCLEANFILES)
-	! which gtkdoc-rebase >/dev/null 2>&1 || \
-	  gtkdoc-rebase --online --relative --html-dir=$(distdir)/html
-
-.PHONY : dist-hook-local docs
+#dist-hook: dist-check-gtkdoc dist-hook-local sgml.stamp html-build.stamp
+#	mkdir $(distdir)/tmpl
+#	mkdir $(distdir)/xml
+#	mkdir $(distdir)/html
+#	-cp $(srcdir)/tmpl/*.sgml $(distdir)/tmpl
+#	-cp $(srcdir)/xml/*.xml $(distdir)/xml
+#	cp $(srcdir)/html/* $(distdir)/html
+#	-cp $(srcdir)/$(DOC_MODULE).types $(distdir)/
+#	-cp $(srcdir)/$(DOC_MODULE)-sections.txt $(distdir)/
+#	cd $(distdir) && rm -f $(DISTCLEANFILES)
+#	! which gtkdoc-rebase >/dev/null 2>&1 || \
+#	  gtkdoc-rebase --online --relative --html-dir=$(distdir)/html
+#
+#.PHONY : dist-hook-local docs
