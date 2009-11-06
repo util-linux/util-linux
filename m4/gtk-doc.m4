@@ -17,17 +17,27 @@ AC_DEFUN([GTK_DOC_CHECK],
 
   dnl enable/disable documentation building
   AC_ARG_ENABLE([gtk-doc],
-    AS_HELP_STRING([--enable-gtk-doc],
-                   [use gtk-doc to build documentation [[default=no]]]),,
-    [enable_gtk_doc=no])
+    AS_HELP_STRING([--disable-gtk-doc],
+                   [don't use gtk-doc to build documentation]),,
+    [enable_gtk_doc=check])
 
-  if test x$enable_gtk_doc = xyes; then
+  if test x$enable_gtk_doc = xno; then
+    has_gtk_doc=no
+  else
     ifelse([$1],[],
-      [PKG_CHECK_EXISTS([gtk-doc],,
-                        AC_MSG_ERROR([gtk-doc not installed and --enable-gtk-doc requested]))],
-      [PKG_CHECK_EXISTS([gtk-doc >= $1],,
-                        AC_MSG_ERROR([You need to have gtk-doc >= $1 installed to build gtk-doc]))])
+      [PKG_CHECK_EXISTS([gtk-doc],has_gtk_doc=yes,has_gtk_doc=no)],
+      [PKG_CHECK_EXISTS([gtk-doc >= $1],has_gtk_doc=yes,has_gtk_doc=no)])
   fi
+
+  case $enable_gtk_doc:$has_gtk_doc in
+  yes:no)
+    ifelse([$1],[],
+      [AC_MSG_ERROR([gtk-doc not installed and --enable-gtk-doc requested])],
+      [AC_MSG_ERROR([You need to have gtk-doc >= $1 installed to build gtk-doc])])
+    ;;
+  esac
+
+  enable_gtk_doc=$has_gtk_doc
 
   AC_MSG_CHECKING([whether to build gtk-doc documentation])
   AC_MSG_RESULT($enable_gtk_doc)
