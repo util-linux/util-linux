@@ -62,7 +62,7 @@ endif
 if BUILD_LIBBLKID
 # only in-tree libblkid has partitions parsing support
 mkswap_LDADD += $(ul_libblkid_la)
-mkswap_CFLAGS += -I$(ul_libblkid_srcdir)
+mkswap_CFLAGS += -I$(ul_libblkid_incdir)
 endif
 
 if HAVE_SELINUX

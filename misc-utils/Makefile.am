@@ -37,17 +37,17 @@ sbin_PROGRAMS += blkid findfs wipefs
 dist_man_MANS += blkid.8 findfs.8 wipefs.8
 blkid_SOURCES = blkid.c $(top_srcdir)/lib/ismounted.c
 blkid_LDADD = $(ul_libblkid_la)
-blkid_CFLAGS = -I$(ul_libblkid_srcdir)
+blkid_CFLAGS = -I$(ul_libblkid_incdir)
 findfs_LDADD = $(ul_libblkid_la)
-findfs_CFLAGS = -I$(ul_libblkid_srcdir)
+findfs_CFLAGS = -I$(ul_libblkid_incdir)
 wipefs_LDADD = $(ul_libblkid_la)
-wipefs_CFLAGS = -I$(ul_libblkid_srcdir)
+wipefs_CFLAGS = -I$(ul_libblkid_incdir)
 if HAVE_STATIC_BLKID
 sbin_PROGRAMS += blkid.static
 blkid_static_SOURCES = $(blkid_SOURCES)
 blkid_static_LDFLAGS = -all-static
 blkid_static_LDADD = $(ul_libblkid_la)
-blkid_static_CFLAGS = -I$(ul_libblkid_srcdir)
+blkid_static_CFLAGS = -I$(ul_libblkid_incdir)
 endif
 endif
 

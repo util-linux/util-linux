@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-AM_CPPFLAGS += -I$(ul_libblkid_srcdir)
+AM_CPPFLAGS += -I$(ul_libblkid_incdir) -I$(ul_libblkid_srcdir)
 libblkid_partitions_la_LIBADD =
 
 noinst_LTLIBRARIES = libblkid_partitions.la

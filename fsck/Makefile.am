@@ -10,7 +10,7 @@ fsck_CFLAGS =
 
 if BUILD_LIBBLKID
 fsck_LDADD += $(ul_libblkid_la)
-fsck_CFLAGS += -I$(ul_libblkid_srcdir)
+fsck_CFLAGS += -I$(ul_libblkid_incdir)
 else
 fsck_LDADD += $(BLKID_LIBS)
 fsck_CFLAGS += $(BLKID_CFLAGS)

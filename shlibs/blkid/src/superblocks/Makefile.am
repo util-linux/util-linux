@@ -1,6 +1,6 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-AM_CPPFLAGS += -I$(ul_libblkid_srcdir)
+AM_CPPFLAGS += -I$(ul_libblkid_incdir) -I$(ul_libblkid_srcdir)
 
 noinst_LTLIBRARIES = libblkid_superblocks.la
 libblkid_superblocks_la_SOURCES = \

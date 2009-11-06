@@ -15,7 +15,7 @@ common_cflags += $(UUID_CFLAGS)
 endif
 endif
 
-AM_CPPFLAGS += -I$(ul_libblkid_srcdir) $(common_cflags)
+AM_CPPFLAGS += -I$(ul_libblkid_incdir) -I$(ul_libblkid_srcdir) $(common_cflags)
 
 # includes
 blkidincdir = $(includedir)/blkid
