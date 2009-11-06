@@ -180,7 +180,7 @@ dist-check-gtkdoc:
 	@false
 endif
 
-dist-hook: dist-check-gtkdoc dist-hook-local
+dist-hook: dist-check-gtkdoc dist-hook-local sgml.stamp html-build.stamp
 	mkdir $(distdir)/tmpl
 	mkdir $(distdir)/xml
 	mkdir $(distdir)/html
