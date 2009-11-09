@@ -23,12 +23,12 @@ if BUILD_LIBUUID
 usrbin_exec_PROGRAMS += uuidgen
 dist_man_MANS += uuidgen.1
 uuidgen_LDADD = $(ul_libuuid_la)
-uuidgen_CFLAGS = -I$(ul_libuuid_srcdir)
+uuidgen_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_srcdir)
 if BUILD_UUIDD
 usrsbin_exec_PROGRAMS += uuidd
 dist_man_MANS += uuidd.8
 uuidd_LDADD = $(ul_libuuid_la)
-uuidd_CFLAGS = -I$(ul_libuuid_srcdir)
+uuidd_CFLAGS = $(AM_CFLAGS) -I$(ul_libuuid_srcdir)
 endif
 endif
 
@@ -37,17 +37,17 @@ sbin_PROGRAMS += blkid findfs wipefs
 dist_man_MANS += blkid.8 findfs.8 wipefs.8
 blkid_SOURCES = blkid.c $(top_srcdir)/lib/ismounted.c
 blkid_LDADD = $(ul_libblkid_la)
-blkid_CFLAGS = -I$(ul_libblkid_incdir)
+blkid_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 findfs_LDADD = $(ul_libblkid_la)
-findfs_CFLAGS = -I$(ul_libblkid_incdir)
+findfs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 wipefs_LDADD = $(ul_libblkid_la)
-wipefs_CFLAGS = -I$(ul_libblkid_incdir)
+wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 if HAVE_STATIC_BLKID
 sbin_PROGRAMS += blkid.static
 blkid_static_SOURCES = $(blkid_SOURCES)
 blkid_static_LDFLAGS = -all-static
 blkid_static_LDADD = $(ul_libblkid_la)
-blkid_static_CFLAGS = -I$(ul_libblkid_incdir)
+blkid_static_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 endif
 endif
 

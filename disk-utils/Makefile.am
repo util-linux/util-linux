@@ -15,7 +15,7 @@ mkfs_bfs_SOURCES = mkfs.bfs.c $(utils_common)
 
 mkswap_SOURCES = mkswap.c $(utils_common) ../lib/wholedisk.c
 mkswap_LDADD =
-mkswap_CFLAGS =
+mkswap_CFLAGS = $(AM_CFLAGS)
 
 usrbin_exec_PROGRAMS = isosize
 usrsbin_exec_PROGRAMS =
