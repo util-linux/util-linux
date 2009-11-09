@@ -251,6 +251,10 @@ is_pseudo_fs(const char *type)
 	    streq(type, "proc") ||
 	    streq(type, "tmpfs") ||
 	    streq(type, "sysfs") ||
+	    streq(type, "usbfs") ||
+	    streq(type, "cgroup") ||
+	    streq(type, "cpuset") ||
+	    streq(type, "rpc_pipefs") ||
 	    streq(type, "devpts"))
 		return 1;
 	return 0;
