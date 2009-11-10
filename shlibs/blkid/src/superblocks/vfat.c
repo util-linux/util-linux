@@ -189,14 +189,14 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 	struct vfat_super_block *vs;
 	struct msdos_super_block *ms;
 	struct vfat_dir_entry *dir;
-	const unsigned char *vol_label = NULL, *tmp;
+	const unsigned char *vol_label = 0, *tmp;
 	unsigned char	*vol_serno;
 	int maxloop = 100;
 	uint16_t sector_size, dir_entries, reserved;
 	uint32_t sect_count, fat_size, dir_size, cluster_count, fat_length;
 	uint32_t buf_size, start_data_sect, next, root_start, root_dir_entries;
 	const char *version = NULL;
-	unsigned char sb_buf[512], label_buf[11];
+
 
 	/* non-standard magic strings */
 	if (mag->len <= 2 && probe_fat_nomagic(pr, mag) != 0)
@@ -241,12 +241,6 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 	if (cluster_count > FAT32_MAX)
 		return 1;
 
-	/* all basic checks pass -- save the superblock to avoid overwriting
-	 * by the next blkid_probe_get_buffer() call */
-	memcpy(sb_buf, vs, sizeof(sb_buf));
-	ms = (struct msdos_super_block *) sb_buf;
-	vs = (struct vfat_super_block *) sb_buf;
-
 	if (ms->ms_fat_length) {
 		/* the label may be an attribute in the root directory */
 		root_start = (reserved + fat_size) * sector_size;
@@ -274,7 +268,6 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 		unsigned char *buf;
 		uint16_t fsinfo_sect;
 
-
 		/* Search the FAT32 root dir for the label attribute */
 		buf_size = vs->vs_cluster_size * sector_size;
 		start_data_sect = reserved + fat_size;
@@ -299,12 +292,8 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 			count = buf_size / sizeof(struct vfat_dir_entry);
 
 			vol_label = search_fat_label(dir, count);
-			if (vol_label) {
-				/* save the root dir entry label */
-				memcpy(label_buf, vol_label, sizeof(label_buf));
-				vol_label = label_buf;
+			if (vol_label)
 				break;
-			}
 
 			/* get FAT entry */
 			fat_entry_off = (reserved * sector_size) +
