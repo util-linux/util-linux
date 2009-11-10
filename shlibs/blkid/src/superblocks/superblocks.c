@@ -501,6 +501,8 @@ int blkid_probe_set_label(blkid_probe pr, unsigned char *label, size_t len)
 	v->data[len] = '\0';
 
 	v->len = blkid_rtrim_whitespace(v->data) + 1;
+	if (v->len == 1)
+		blkid_probe_reset_last_value(pr);
 	return 0;
 }
 
@@ -521,6 +523,8 @@ int blkid_probe_set_utf8label(blkid_probe pr, unsigned char *label,
 
 	blkid_encode_to_utf8(enc, v->data, sizeof(v->data), label, len);
 	v->len = blkid_rtrim_whitespace(v->data) + 1;
+	if (v->len == 1)
+		blkid_probe_reset_last_value(pr);
 	return 0;
 }
 

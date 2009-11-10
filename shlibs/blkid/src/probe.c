@@ -848,6 +848,25 @@ struct blkid_prval *blkid_probe_assign_value(
 	return v;
 }
 
+int blkid_probe_reset_last_value(blkid_probe pr)
+{
+	struct blkid_prval *v;
+
+	if (pr == NULL || pr->nvals == 0)
+		return -1;
+
+	v = &pr->vals[pr->nvals - 1];
+
+	DBG(DEBUG_LOWPROBE,
+		printf("un-assigning %s [%s]\n", v->name, v->chain->driver->name));
+
+	memset(v, 0, sizeof(struct blkid_prval));
+	pr->nvals--;
+
+	return 0;
+
+}
+
 int blkid_probe_set_value(blkid_probe pr, const char *name,
 		unsigned char *data, size_t len)
 {
@@ -878,7 +897,7 @@ int blkid_probe_vsprintf_value(blkid_probe pr, const char *name,
 	len = vsnprintf((char *) v->data, sizeof(v->data), fmt, ap);
 
 	if (len <= 0) {
-		pr->nvals--; /* reset the latest assigned value */
+		blkid_probe_reset_last_value(pr);
 		return -1;
 	}
 	v->len = len + 1;

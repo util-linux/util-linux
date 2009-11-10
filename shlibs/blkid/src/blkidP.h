@@ -379,6 +379,7 @@ extern void blkid_probe_chain_reset_vals(blkid_probe pr, struct blkid_chain *chn
 extern int blkid_probe_chain_copy_vals(blkid_probe pr, struct blkid_chain *chn,
 			                struct blkid_prval *vals, int nvals);
 extern struct blkid_prval *blkid_probe_assign_value(blkid_probe pr, const char *name);
+extern int blkid_probe_reset_last_value(blkid_probe pr);
 extern void blkid_probe_append_vals(blkid_probe pr, struct blkid_prval *vals, int nvals);
 
 extern struct blkid_chain *blkid_probe_get_chain(blkid_probe pr);
