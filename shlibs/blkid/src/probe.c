@@ -247,6 +247,12 @@ void blkid_probe_chain_reset_vals(blkid_probe pr, struct blkid_chain *chn)
 	pr->nvals = nvals;
 }
 
+static void blkid_probe_chain_reset_position(struct blkid_chain *chn)
+{
+	if (chn)
+		chn->idx = -1;
+}
+
 /*
  * Copies chain values from probing result to @vals, the max size of @vals is
  * @nvals and returns real number of values.
@@ -298,13 +304,14 @@ void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn)
 		return NULL;
 
 	pr->cur_chain = chn;
-	chn->idx = -1;			/* start probing from scratch */
 	chn->binary = TRUE;
+	blkid_probe_chain_reset_position(chn);
 
 	rc = chn->driver->probe(pr, chn);
 
 	chn->binary = FALSE;
 	pr->cur_chain = NULL;
+	blkid_probe_chain_reset_position(chn);
 
 	if (rc != 0)
 		return NULL;
@@ -336,7 +343,7 @@ void blkid_reset_probe(blkid_probe pr)
 	pr->cur_chain = NULL;
 
 	for (i = 0; i < BLKID_NCHAINS; i++)
-		pr->chains[i].idx = -1;
+		blkid_probe_chain_reset_position(&pr->chains[i]);
 }
 
 /***
@@ -381,7 +388,7 @@ unsigned long *blkid_probe_get_filter(blkid_probe pr, int chain, int create)
 	/* always when you touch the chain filter all indexes are reseted and
 	 * probing starts from scratch
 	 */
-	chn->idx = -1;
+	blkid_probe_chain_reset_position(chn);
 	pr->cur_chain = NULL;
 
 	if (!chn->driver->has_fltr || (!chn->fltr && !create))
@@ -754,10 +761,13 @@ int blkid_do_safeprobe(blkid_probe pr)
 		if (!chn->enabled)
 			continue;
 
-		chn->idx = - 1;
+		blkid_probe_chain_reset_position(chn);
+
+		rc = chn->driver->safeprobe(pr, chn);
+
+		blkid_probe_chain_reset_position(chn);
 
 		/* rc: -2 ambivalent, -1 = error, 0 = success, 1 = no result */
-		rc = chn->driver->safeprobe(pr, chn);
 		if (rc < 0)
 			goto done;	/* error */
 		if (rc == 0)
@@ -804,10 +814,13 @@ int blkid_do_fullprobe(blkid_probe pr)
 		if (!chn->enabled)
 			continue;
 
-		chn->idx = - 1;
+		blkid_probe_chain_reset_position(chn);
+
+		rc = chn->driver->probe(pr, chn);
+
+		blkid_probe_chain_reset_position(chn);
 
 		/* rc: -1 = error, 0 = success, 1 = no result */
-		rc = chn->driver->probe(pr, chn);
 		if (rc < 0)
 			goto done;	/* error */
 		if (rc == 0)
