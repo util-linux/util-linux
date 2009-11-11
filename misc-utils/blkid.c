@@ -323,6 +323,84 @@ static void print_tags(blkid_dev dev, char *show[], int output)
 		printf("\n");
 }
 
+
+static int append_str(char **res, size_t *sz, const char *a, const char *b)
+{
+	char *str = *res;
+	size_t asz = a ? strlen(a) : 0;
+	size_t bsz = b ? strlen(b) : 0;
+	size_t len = *sz + asz + bsz;
+
+	if (!len)
+		return -1;
+
+	str = realloc(str, len + 1);
+	if (!str) {
+		free(*res);
+		return -1;
+	}
+	*res = str;
+	str += *sz;
+
+	if (a) {
+		memcpy(str, a, asz);
+		str += asz;
+	}
+	if (b) {
+		memcpy(str, b, bsz);
+		str += bsz;
+	}
+	*str = '\0';
+	*sz = len;
+	return 0;
+}
+
+/*
+ * Compose and print ID_FS_AMBIVALENT for udev
+ */
+static int print_udev_ambivalent(blkid_probe pr)
+{
+	char *val = NULL;
+	size_t valsz = 0;
+	int count = 0, rc = -1;
+
+	while (!blkid_do_probe(pr)) {
+		const char *usage = NULL, *type = NULL, *version = NULL;
+		char enc[256];
+
+		blkid_probe_lookup_value(pr, "USAGE", &usage, NULL);
+		blkid_probe_lookup_value(pr, "TYPE", &type, NULL);
+		blkid_probe_lookup_value(pr, "VERSION", &version, NULL);
+
+		if (!usage || !type)
+			continue;
+
+		blkid_encode_string(usage, enc, sizeof(enc));
+		if (append_str(&val, &valsz, enc, ":"))
+			goto done;
+
+		blkid_encode_string(type, enc, sizeof(enc));
+		if (append_str(&val, &valsz, enc, version ? ":" : " "))
+			goto done;
+
+		if (version) {
+			blkid_encode_string(version, enc, sizeof(enc));
+			if (append_str(&val, &valsz, enc, " "))
+				goto done;
+		}
+		count++;
+	}
+
+	if (count > 1) {
+		*(val + valsz - 1) = '\0';		/* rem tailing whitespace */
+		printf("ID_FS_AMBIVALEN=%s\n", val);
+		rc = 0;
+	}
+done:
+	free(val);
+	return rc;
+}
+
 static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 			int output, blkid_loff_t offset, blkid_loff_t size)
 {
@@ -362,10 +440,16 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 	if (nvals > 1 && !(output & (OUTPUT_VALUE_ONLY | OUTPUT_UDEV_LIST)))
 		printf("\n");
 done:
-	if (rc == -2)
-		fprintf(stderr, "%s: ambivalent result "
-				"(probably more filesystems on the device)\n",
+	if (rc == -2) {
+		if (output & OUTPUT_UDEV_LIST)
+			print_udev_ambivalent(pr);
+		else
+			fprintf(stderr,
+				"%s: ambivalent result (probably more "
+				"filesystems on the device, use wipefs(8) "
+				"to see more details)\n",
 				devname);
+	}
 	close(fd);
 	return !nvals ? 2 : 0;
 }
