@@ -1057,7 +1057,6 @@ int blkid_probe_lookup_value(blkid_probe pr, const char *name,
 		*data = (char *) v->data;
 	if (len)
 		*len = v->len;
-	DBG(DEBUG_LOWPROBE, printf("returning %s value\n", v->name));
 	return 0;
 }
 
