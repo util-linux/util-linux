@@ -105,9 +105,10 @@ int  get_line(register FILE *f, int *length);
 void prbuf (register char *s, register int n);
 void execute (char *filename, char *cmd, ...);
 FILE *checkf (char *, int *);
+int prepare_line_buffer(void);
 
 #define TBUFSIZ	1024
-#define LINSIZ	256
+#define LINSIZ	256	/* minimal Line buffer size */
 #define ctrl(letter)	(letter & 077)
 #define RUBOUT	'\177'
 #define ESC	'\033'
@@ -141,7 +142,8 @@ int		nfiles;		/* Number of files left to process */
 char		*shell;		/* The name of the shell to use */
 int		shellp;		/* A previous shell command exists */
 sigjmp_buf	restore;
-char		Line[LINSIZ+2];	/* Line buffer */
+char		*Line;		/* Line buffer */
+size_t		LineLen;	/* size of Line buffer */
 int		Lpp = 24;	/* lines per page */
 char		*Clear;		/* clear screen */
 char		*eraseln;	/* erase line */
@@ -284,6 +286,10 @@ int main(int argc, char **argv) {
     fnames = argv;
     setlocale(LC_ALL, "");
     initterm ();
+    if (prepare_line_buffer()) {
+	fprintf(stderr, _("failed to initialize line buffer\n"));
+	exit(1);
+    }
     nscroll = Lpp/2 - 1;
     if (nscroll <= 0)
 	nscroll = 1;
@@ -767,6 +773,32 @@ static void prompt (char *filename)
     inwait++;
 }
 
+int prepare_line_buffer(void)
+{
+    char *nline;
+    size_t nsz = Mcol * 4;
+
+    if (LineLen >= nsz)
+        return 0;
+
+    if (nsz < LINSIZ)
+        nsz = LINSIZ;
+
+    nline = realloc(Line, nsz);
+    if (nline) {
+        Line = nline;
+        LineLen = nsz;
+        return 0;
+    }
+
+    /* error() uses siglongjmp(), we want to return from this
+     * function when the Line buffer is initilized first time in main()
+     */
+    if (Line)
+        error(_("out if memory"));
+    return -1;
+}
+
 /*
  * Get a logical line
  */
@@ -793,6 +825,8 @@ int get_line(register FILE *f, int *length)
     memset (&state, '\0', sizeof (mbstate_t));
 #endif
 
+    prepare_line_buffer();
+
     p = Line;
     column = 0;
     c = Getc (f);
@@ -800,7 +834,7 @@ int get_line(register FILE *f, int *length)
 	Currline++;
 	c = Getc (f);
     }
-    while (p < &Line[LINSIZ - 1]) {
+    while (p < &Line[LineLen - 1]) {
 #ifdef HAVE_WIDECHAR
 	if (fold_opt && use_mbc_buffer_flag && MB_CUR_MAX > 1) {
 	    use_mbc_buffer_flag = 0;
@@ -871,11 +905,11 @@ process_mbc:
 #if 0
 	if (c == '\033') {      /* ESC */
 		c = Getc(f);
-		while (c > ' ' && c < '0' && p < &Line[LINSIZ - 1]) {
+		while (c > ' ' && c < '0' && p < &Line[LineLen - 1]) {
 			*p++ = c;
 			c = Getc(f);
 		}
-		if (c >= '0' && c < '\177' && p < &Line[LINSIZ - 1]) {
+		if (c >= '0' && c < '\177' && p < &Line[LineLen - 1]) {
 			*p++ = c;
 			c = Getc(f);
 			continue;
@@ -890,7 +924,7 @@ process_mbc:
 		    promptlen = 0;
 		}
 		else {
-		    for (--p; p < &Line[LINSIZ - 1];) {
+		    for (--p; p < &Line[LineLen - 1];) {
 			*p++ = ' ';
 			if ((++column & 7) == 0)
 			    break;
@@ -2087,8 +2121,10 @@ void rdline (register FILE *f)
     register int  c;
     register char *p;
 
+    prepare_line_buffer();
+
     p = Line;
-    while ((c = Getc (f)) != '\n' && c != EOF && p - Line < LINSIZ - 1)
+    while ((c = Getc (f)) != '\n' && c != EOF && p - Line < LineLen - 1)
 	*p++ = c;
     if (c == '\n')
 	Currline++;
