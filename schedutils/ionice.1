@@ -37,11 +37,16 @@ This class takes a priority argument from \fI0-7\fR, with lower
 number being higher priority. Programs running at the same best effort
 priority are served in a round-robin fashion.
 
-A process that has not asked for an io priority formally uses "\fBnone\fP" as
-scheduling class, but the io scheduler will treat such processes as if it
-were in the best effort class. The priority within the best effort class will
-be dynamically derived from the cpu nice level of the process: io_priority =
-(cpu_nice + 20) / 5.
+Note that before kernel 2.6.26 a process that has not asked for an io priority
+formally uses "\fBnone\fP" as scheduling class, but the io scheduler will treat
+such processes as if it were in the best effort class. The priority within the
+best effort class will be dynamically derived from the cpu nice level of the
+process: io_priority = (cpu_nice + 20) / 5.
+
+For kernels after 2.6.26 with CFQ io scheduler a process that has not asked for
+an io priority inherits CPU scheduling class.  The io priority is derived from
+the cpu nice level of the process (same as before kernel 2.6.26).
+
 .IP "\fBReal time\fP"
 The RT scheduling class is given first access to the disk, regardless of
 what else is going on in the system. Thus the RT class needs to be used with
