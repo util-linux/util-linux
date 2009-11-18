@@ -163,7 +163,18 @@ or shortoption
 
 Note that the filesystem mount options will remain the same as those
 on the original mount point, and cannot be changed by passing the -o
-option along with --bind/--rbind.
+option along with --bind/--rbind. The mount options can be
+changed by a separate remount command, for example:
+
+.RS
+.br
+.B mount --bind
+.I olddir newdir
+.br
+.B mount -o remount,ro
+.I newdir
+.RE
+
 .RE
 
 .B The move operation.
