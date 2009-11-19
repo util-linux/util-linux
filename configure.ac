@@ -145,6 +145,7 @@ AC_CHECK_DECLS([_NL_TIME_WEEK_1STDAY],[],[],[[#include <langinfo.h>]])
 
 AC_CHECK_FUNCS(
 	[inet_aton \
+	futimens \
 	fsync \
 	getdomainname \
 	get_current_dir_name \

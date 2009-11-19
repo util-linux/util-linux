@@ -1226,6 +1226,41 @@ cdrom_setspeed(const char *spec) {
 }
 
 /*
+ * Check if @node is read-only filesystem by access() or futimens().
+ *
+ * Note that access(2) uses real-UID (= useless for suid programs)
+ * and euidaccess(2) does not check for read-only FS.
+ */
+static int
+is_readonly(const char *node)
+{
+	int res = 0;
+
+	if (getuid() == geteuid()) {
+		if (access(node, W_OK) == -1 && errno == EROFS)
+			res = 1;
+	}
+#ifdef HAVE_FUTIMENS
+	else {
+		struct timespec times[2];
+		int fd = open(node, O_RDONLY);
+
+		if (fd < 0)
+			goto done;
+
+		times[0].tv_nsec = UTIME_NOW;	/* atime */
+		times[1].tv_nsec = UTIME_OMIT;	/* mtime */
+
+		if (futimens(fd, times) == -1 && errno == EROFS)
+			res = 1;
+		close(fd);
+	}
+done:
+#endif
+	return res;
+}
+
+/*
  * try_mount_one()
  *	Try to mount one file system.
  *
@@ -1324,6 +1359,17 @@ mount_retry:
       res = status;
       goto out;
     }
+  }
+
+  /* Kernel allows to use MS_RDONLY for bind mounts, but the read-only request
+   * could be silently ignored. Check it to avoid 'ro' in ntab and 'rw' in
+   * /proc/mounts.
+   */
+  if (!fake && mnt5_res == 0 &&
+      (flags & MS_BIND) && (flags & MS_RDONLY) && !is_readonly(node)) {
+
+      printf(_("mount: warning: %s seems to be mounted read-write.\n"), node);
+      flags &= ~MS_RDONLY;
   }
 
   if (fake || mnt5_res == 0) {
