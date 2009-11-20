@@ -33,7 +33,6 @@
 #include <ctype.h>
 #include <dirent.h>
 #include <err.h>
-#include <libgen.h>
 
 #ifndef MS_MOVE
 #define MS_MOVE 8192
@@ -109,58 +108,13 @@ done:
 	return rc;
 }
 
-/* find the enclosing mount point of a path, by examining the backing device
- * of parent directories until we reach / or find a parent with a differing
- * device. Result must be freed.
- */
-static char *get_parent_mount(const char *path)
-{
-	struct stat sb;
-	char *dir;
-	char tmp[PATH_MAX];
-	dev_t inner_dev;
-
-	if (stat(path, &sb) != 0) {
-		warn("failed to stat %s", path);
-		return NULL;
-	}
-
-	inner_dev = sb.st_dev;
-	dir = strdup(path);
-
-	while (dir) {
-		char *parent;
-
-		strncpy(tmp, dir, PATH_MAX);
-		tmp[PATH_MAX - 1] = '\0';
-		parent = dirname(tmp);
-
-		if (stat(parent, &sb) != 0) {
-			warn("failed to stat %s", parent);
-			return NULL;
-		}
-		if (sb.st_dev != inner_dev)
-			return dir;
-
-		strncpy(dir, parent, PATH_MAX);
-		dir[PATH_MAX - 1] = '\0';
-
-		/* maybe we've reached / */
-		if (*dir == '/' && !*(dir + 1))
-			return dir;
-	}
-	return NULL;
-}
-
 static int switchroot(const char *newroot)
 {
 	/*  Don't try to unmount the old "/", there's no way to do it. */
 	const char *umounts[] = { "/dev", "/proc", "/sys", NULL };
 	int i;
-	int cfd, rc = -1;
+	int cfd;
 	pid_t pid;
-	const char *chroot_path = NULL;
-	char *newroot_mnt;
 
 	for (i = 0; umounts[i] != NULL; i++) {
 		char newmount[PATH_MAX];
@@ -175,43 +129,21 @@ static int switchroot(const char *newroot)
 		}
 	}
 
-	newroot_mnt = get_parent_mount(newroot);
-	if (newroot_mnt && strcmp(newroot, newroot_mnt)) {
-		/* newroot is not a mount point, so we have to MS_MOVE the
-		 * parent mount point and then chroot in to the "subroot"
-		 */
-		chroot_path = newroot + strlen(newroot_mnt);
-		newroot = newroot_mnt;
-	}
-
 	if (chdir(newroot)) {
 		warn("failed to change directory to %s", newroot);
-		goto done;
+		return -1;
 	}
 
 	cfd = open("/", O_RDONLY);
 
 	if (mount(newroot, "/", NULL, MS_MOVE, NULL) < 0) {
 		warn("failed to mount moving %s to /", newroot);
-		goto done;
+		return -1;
 	}
 
-	/* move to the real root of the device */
 	if (chroot(".")) {
 		warn("failed to change root");
-		goto done;
-	}
-
-	/* move to the subdirectory on the root device (subroot) */
-	if (chroot_path) {
-		if (chdir(chroot_path)) {
-			warn("failed to chdir to subroot %s", chroot_path);
-			goto done;
-		}
-		if (chroot(".")) {
-			warn("failed to change root to subroot %s", chroot_path);
-			goto done;
-		}
+		return -1;
 	}
 
 	if (cfd >= 0) {
@@ -223,10 +155,7 @@ static int switchroot(const char *newroot)
 		}
 		close(cfd);
 	}
-	rc = 0;
-done:
-	free(newroot_mnt);
-	return rc;
+	return 0;
 }
 
 static void usage(FILE *output)
