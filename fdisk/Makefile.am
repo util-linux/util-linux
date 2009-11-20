@@ -24,7 +24,7 @@ ldadd_fdisk =
 if BUILD_LIBBLKID
 # only in-tree libblkid has topology support
 ldadd_fdisk += $(ul_libblkid_la)
-cflags_fdisk += -I$(ul_libblkid_srcdir)
+cflags_fdisk += -I$(ul_libblkid_incdir)
 endif
 
 if HAVE_STATIC_FDISK
