@@ -6,8 +6,6 @@
  * Public Domain.
  */
 
-#ident	"@(#)line.c	1.7 (gritter) 7/5/02"
-
 #include	<stdio.h>
 #include	<unistd.h>
 
