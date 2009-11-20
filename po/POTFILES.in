@@ -101,6 +101,7 @@ schedutils/ionice.c
 schedutils/taskset.c
 shlibs/blkid/samples/mkfs.c
 shlibs/blkid/samples/partitions.c
+shlibs/blkid/samples/superblocks.c
 shlibs/blkid/samples/topology.c
 shlibs/blkid/src/cache.c
 shlibs/blkid/src/config.c
@@ -169,6 +170,7 @@ shlibs/blkid/src/superblocks/zfs.c
 shlibs/blkid/src/tag.c
 shlibs/blkid/src/topology/dm.c
 shlibs/blkid/src/topology/evms.c
+shlibs/blkid/src/topology/ioctl.c
 shlibs/blkid/src/topology/lvm.c
 shlibs/blkid/src/topology/md.c
 shlibs/blkid/src/topology/sysfs.c

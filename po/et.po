@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11r\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-10-19 10:46+0200\n"
+"POT-Creation-Date: 2009-11-20 15:37+0100\n"
 "PO-Revision-Date: 2002-05-19 20:04GMT+0300\n"
 "Last-Translator: Meelis Roos <mroos@linux.ee>\n"
 "Language-Team: Estonian <et@li.org>\n"
@@ -965,7 +965,7 @@ msgstr "liiga palju i-kirjeid - maksimum on 512"
 msgid "not enough space, need at least %llu blocks"
 msgstr "pole piisavalt vaba ruumi, vaja oleks vähemalt %lu plokki"
 
-#: disk-utils/mkfs.bfs.c:223 fdisk/fdisk.c:2366
+#: disk-utils/mkfs.bfs.c:223 fdisk/fdisk.c:2582
 #, c-format
 msgid "Device: %s\n"
 msgstr "Seade: %s\n"
@@ -1362,7 +1362,7 @@ msgid "too many bad pages"
 msgstr "liiga palju vigaseid lehekülgi"
 
 #: disk-utils/mkswap.c:310 misc-utils/look.c:182 misc-utils/setterm.c:1179
-#: text-utils/more.c:1982 text-utils/more.c:1993
+#: text-utils/more.c:2016 text-utils/more.c:2027
 msgid "Out of memory"
 msgstr "Mälu sai otsa"
 
@@ -1914,7 +1914,7 @@ msgstr " Primaarne"
 msgid "   Logical"
 msgstr " Loogiline"
 
-#: fdisk/cfdisk.c:2089 fdisk/fdisk.c:1555 fdisk/fdisk.c:1876
+#: fdisk/cfdisk.c:2089 fdisk/fdisk.c:1716 fdisk/fdisk.c:2050
 #: fdisk/fdisksgilabel.c:227 fdisk/fdisksunlabel.c:621 fdisk/sfdisk.c:638
 msgid "Unknown"
 msgstr "Tundmatu"
@@ -2495,9 +2495,9 @@ msgstr ""
 "\n"
 "BSD partitsioonitabel seadmel %s\n"
 
-#: fdisk/fdiskbsdlabel.c:128 fdisk/fdisk.c:386 fdisk/fdisk.c:405
-#: fdisk/fdisk.c:423 fdisk/fdisk.c:430 fdisk/fdisk.c:453 fdisk/fdisk.c:471
-#: fdisk/fdisk.c:487 fdisk/fdisk.c:503
+#: fdisk/fdiskbsdlabel.c:128 fdisk/fdisk.c:390 fdisk/fdisk.c:409
+#: fdisk/fdisk.c:427 fdisk/fdisk.c:434 fdisk/fdisk.c:457 fdisk/fdisk.c:475
+#: fdisk/fdisk.c:491 fdisk/fdisk.c:507
 msgid "Command action"
 msgstr "Käsk    Tähendus"
 
@@ -2517,9 +2517,9 @@ msgstr "   i   installeerida bootstrap"
 msgid "   l   list known filesystem types"
 msgstr "   l   anda nimekiri tuntud failisüsteemide tüüpidest"
 
-#: fdisk/fdiskbsdlabel.c:133 fdisk/fdisk.c:392 fdisk/fdisk.c:411
-#: fdisk/fdisk.c:424 fdisk/fdisk.c:436 fdisk/fdisk.c:461 fdisk/fdisk.c:478
-#: fdisk/fdisk.c:494 fdisk/fdisk.c:512
+#: fdisk/fdiskbsdlabel.c:133 fdisk/fdisk.c:396 fdisk/fdisk.c:415
+#: fdisk/fdisk.c:428 fdisk/fdisk.c:440 fdisk/fdisk.c:465 fdisk/fdisk.c:482
+#: fdisk/fdisk.c:498 fdisk/fdisk.c:516
 msgid "   m   print this menu"
 msgstr "   m   näidata sedasama menüüd"
 
@@ -2531,14 +2531,14 @@ msgstr "   n   lisada uus BSD partitsioon"
 msgid "   p   print BSD partition table"
 msgstr "   p   näidata BSD partitsioonitabelit"
 
-#: fdisk/fdiskbsdlabel.c:136 fdisk/fdisk.c:396 fdisk/fdisk.c:415
-#: fdisk/fdisk.c:426 fdisk/fdisk.c:440 fdisk/fdisk.c:463 fdisk/fdisk.c:480
-#: fdisk/fdisk.c:496 fdisk/fdisk.c:514
+#: fdisk/fdiskbsdlabel.c:136 fdisk/fdisk.c:400 fdisk/fdisk.c:419
+#: fdisk/fdisk.c:430 fdisk/fdisk.c:444 fdisk/fdisk.c:467 fdisk/fdisk.c:484
+#: fdisk/fdisk.c:500 fdisk/fdisk.c:518
 msgid "   q   quit without saving changes"
 msgstr "   q   väljuda salvetsamata"
 
-#: fdisk/fdiskbsdlabel.c:137 fdisk/fdisk.c:464 fdisk/fdisk.c:481
-#: fdisk/fdisk.c:497 fdisk/fdisk.c:515
+#: fdisk/fdiskbsdlabel.c:137 fdisk/fdisk.c:468 fdisk/fdisk.c:485
+#: fdisk/fdisk.c:501 fdisk/fdisk.c:519
 msgid "   r   return to main menu"
 msgstr "   r   tagasi peamenüüsse"
 
@@ -2581,7 +2581,7 @@ msgstr "Seadmel %s ei ole BSD partitsiooni\n"
 msgid "BSD disklabel command (m for help): "
 msgstr "BSD partitsioonitabeli käsk (m annab abiinfot): "
 
-#: fdisk/fdiskbsdlabel.c:283 fdisk/fdisk.c:2073 fdisk/fdisksgilabel.c:638
+#: fdisk/fdiskbsdlabel.c:283 fdisk/fdisk.c:2272 fdisk/fdisksgilabel.c:638
 #: fdisk/fdisksunlabel.c:431
 #, c-format
 msgid "First %s"
@@ -2734,7 +2734,7 @@ msgstr "sektorit rajal"
 msgid "tracks/cylinder"
 msgstr "rada silindris"
 
-#: fdisk/fdiskbsdlabel.c:469 fdisk/fdisk.c:648 fdisk/fdisk.c:1378
+#: fdisk/fdiskbsdlabel.c:469 fdisk/fdisk.c:725 fdisk/fdisk.c:1541
 #: fdisk/sfdisk.c:930
 msgid "cylinders"
 msgstr "silindrit"
@@ -2792,7 +2792,7 @@ msgstr "Bootstrap sai installitud seadmele %s\n"
 msgid "Partition (a-%c): "
 msgstr "Partitsioon (a-%c): "
 
-#: fdisk/fdiskbsdlabel.c:617 fdisk/fdisk.c:2220
+#: fdisk/fdiskbsdlabel.c:617 fdisk/fdisk.c:2436
 #, c-format
 msgid "The maximum number of partitions has been created\n"
 msgstr "Maksimaalne arv partitsioone on juba loodud\n"
@@ -2816,7 +2816,7 @@ msgstr ""
 "\n"
 "Kirjutan puhvreid kettale\n"
 
-#: fdisk/fdisk.c:244
+#: fdisk/fdisk.c:248
 msgid ""
 "Usage: fdisk [-b SSZ] [-u] DISK     Change partition table\n"
 "       fdisk -l [-b SSZ] [-u] DISK  List partition table(s)\n"
@@ -2838,7 +2838,7 @@ msgstr ""
 "-b 2048: kasutada 2048-baidiseid sektoreid (vajalik näiteks mõnel MO "
 "seadmel)\n"
 
-#: fdisk/fdisk.c:256
+#: fdisk/fdisk.c:260
 msgid ""
 "Usage: fdisk [-l] [-b SSZ] [-u] device\n"
 "E.g.: fdisk /dev/hda  (for the first IDE disk)\n"
@@ -2855,189 +2855,189 @@ msgstr ""
 "jaoks)\n"
 "            ...\n"
 
-#: fdisk/fdisk.c:265
+#: fdisk/fdisk.c:269
 #, c-format
 msgid "Unable to open %s\n"
 msgstr "Ei suuda avada seadet %s\n"
 
-#: fdisk/fdisk.c:269
+#: fdisk/fdisk.c:273
 #, c-format
 msgid "Unable to read %s\n"
 msgstr "Ei suuda lugeda seadet %s\n"
 
-#: fdisk/fdisk.c:273
+#: fdisk/fdisk.c:277
 #, c-format
 msgid "Unable to seek on %s\n"
 msgstr "Ei suuda seekida seadmel %s\n"
 
-#: fdisk/fdisk.c:277
+#: fdisk/fdisk.c:281
 #, c-format
 msgid "Unable to write %s\n"
 msgstr "Ei suuda kirjutada seadmele %s\n"
 
-#: fdisk/fdisk.c:281
+#: fdisk/fdisk.c:285
 #, c-format
 msgid "BLKGETSIZE ioctl failed on %s\n"
 msgstr "BLKGETSIZE ioctl ei õnnestunud seadmel %s\n"
 
-#: fdisk/fdisk.c:285
+#: fdisk/fdisk.c:289
 msgid "Unable to allocate any more memory\n"
 msgstr "Mälu sai otsa\n"
 
-#: fdisk/fdisk.c:288
+#: fdisk/fdisk.c:292
 msgid "Fatal error\n"
 msgstr "Fataalne viga\n"
 
-#: fdisk/fdisk.c:387
+#: fdisk/fdisk.c:391
 msgid "   a   toggle a read only flag"
 msgstr "   a   lülitada kirjutuskaitse lipp sisse/välja"
 
-#: fdisk/fdisk.c:388 fdisk/fdisk.c:432
+#: fdisk/fdisk.c:392 fdisk/fdisk.c:436
 msgid "   b   edit bsd disklabel"
 msgstr "   b redigeerida NSD partitsioonitabelit"
 
-#: fdisk/fdisk.c:389
+#: fdisk/fdisk.c:393
 msgid "   c   toggle the mountable flag"
 msgstr "   c   lülitada monteeritavuse lipp sisse/välja"
 
-#: fdisk/fdisk.c:390 fdisk/fdisk.c:409 fdisk/fdisk.c:434
+#: fdisk/fdisk.c:394 fdisk/fdisk.c:413 fdisk/fdisk.c:438
 msgid "   d   delete a partition"
 msgstr "   d   kustutada partitsioon"
 
-#: fdisk/fdisk.c:391 fdisk/fdisk.c:410 fdisk/fdisk.c:435
+#: fdisk/fdisk.c:395 fdisk/fdisk.c:414 fdisk/fdisk.c:439
 msgid "   l   list known partition types"
 msgstr "   l   anda nimekiri tuntud partitsioonitüüpidest"
 
-#: fdisk/fdisk.c:393 fdisk/fdisk.c:412 fdisk/fdisk.c:437
+#: fdisk/fdisk.c:397 fdisk/fdisk.c:416 fdisk/fdisk.c:441
 msgid "   n   add a new partition"
 msgstr "   n   lisada uus partitsioon"
 
-#: fdisk/fdisk.c:394 fdisk/fdisk.c:413 fdisk/fdisk.c:425 fdisk/fdisk.c:438
+#: fdisk/fdisk.c:398 fdisk/fdisk.c:417 fdisk/fdisk.c:429 fdisk/fdisk.c:442
 msgid "   o   create a new empty DOS partition table"
 msgstr "   o   luua uus tühi DOSi partitsioonitabel"
 
-#: fdisk/fdisk.c:395 fdisk/fdisk.c:414 fdisk/fdisk.c:439 fdisk/fdisk.c:462
-#: fdisk/fdisk.c:479 fdisk/fdisk.c:495 fdisk/fdisk.c:513
+#: fdisk/fdisk.c:399 fdisk/fdisk.c:418 fdisk/fdisk.c:443 fdisk/fdisk.c:466
+#: fdisk/fdisk.c:483 fdisk/fdisk.c:499 fdisk/fdisk.c:517
 msgid "   p   print the partition table"
 msgstr "   p   näidata partitsioonitabelit"
 
-#: fdisk/fdisk.c:397 fdisk/fdisk.c:416 fdisk/fdisk.c:427 fdisk/fdisk.c:441
+#: fdisk/fdisk.c:401 fdisk/fdisk.c:420 fdisk/fdisk.c:431 fdisk/fdisk.c:445
 msgid "   s   create a new empty Sun disklabel"
 msgstr "   s   luua uus tühi Sun'i partitsioonitabel"
 
-#: fdisk/fdisk.c:398 fdisk/fdisk.c:417 fdisk/fdisk.c:442
+#: fdisk/fdisk.c:402 fdisk/fdisk.c:421 fdisk/fdisk.c:446
 msgid "   t   change a partition's system id"
 msgstr "   t   muuta partitsiooni tüüpi"
 
-#: fdisk/fdisk.c:399 fdisk/fdisk.c:418 fdisk/fdisk.c:443
+#: fdisk/fdisk.c:403 fdisk/fdisk.c:422 fdisk/fdisk.c:447
 msgid "   u   change display/entry units"
 msgstr "   u   muuta sisestamise ja tabeli näitamise ühikuid"
 
-#: fdisk/fdisk.c:400 fdisk/fdisk.c:419 fdisk/fdisk.c:444 fdisk/fdisk.c:466
-#: fdisk/fdisk.c:483 fdisk/fdisk.c:499 fdisk/fdisk.c:517
+#: fdisk/fdisk.c:404 fdisk/fdisk.c:423 fdisk/fdisk.c:448 fdisk/fdisk.c:470
+#: fdisk/fdisk.c:487 fdisk/fdisk.c:503 fdisk/fdisk.c:521
 msgid "   v   verify the partition table"
 msgstr "   v   kontrollida partitsioonitabelit"
 
-#: fdisk/fdisk.c:401 fdisk/fdisk.c:420 fdisk/fdisk.c:445 fdisk/fdisk.c:467
-#: fdisk/fdisk.c:484 fdisk/fdisk.c:500 fdisk/fdisk.c:518
+#: fdisk/fdisk.c:405 fdisk/fdisk.c:424 fdisk/fdisk.c:449 fdisk/fdisk.c:471
+#: fdisk/fdisk.c:488 fdisk/fdisk.c:504 fdisk/fdisk.c:522
 msgid "   w   write table to disk and exit"
 msgstr "   w   kirjutada tabel kettale ja väljuda"
 
-#: fdisk/fdisk.c:402 fdisk/fdisk.c:446
+#: fdisk/fdisk.c:406 fdisk/fdisk.c:450
 msgid "   x   extra functionality (experts only)"
 msgstr "   x   lisafunktsionaalsus (ainult ekspertidele)"
 
-#: fdisk/fdisk.c:406
+#: fdisk/fdisk.c:410
 msgid "   a   select bootable partition"
 msgstr "   a   valida buutiv partitsioon"
 
-#: fdisk/fdisk.c:407
+#: fdisk/fdisk.c:411
 msgid "   b   edit bootfile entry"
 msgstr "   b   redigeerida buutfaili kirjet"
 
-#: fdisk/fdisk.c:408
+#: fdisk/fdisk.c:412
 msgid "   c   select sgi swap partition"
 msgstr "   c   valida SGI saalimispartitsioon"
 
-#: fdisk/fdisk.c:431
+#: fdisk/fdisk.c:435
 msgid "   a   toggle a bootable flag"
 msgstr "   a   lülitada buuditavuse lipp sisse/välja"
 
-#: fdisk/fdisk.c:433
+#: fdisk/fdisk.c:437
 msgid "   c   toggle the dos compatibility flag"
 msgstr "   c   lülitada DOSiga ühilduvuse rezhiim sisse/välja"
 
-#: fdisk/fdisk.c:454
+#: fdisk/fdisk.c:458
 msgid "   a   change number of alternate cylinders"
 msgstr "   a   muuta alternatiivsete silindrite arvu"
 
-#: fdisk/fdisk.c:455 fdisk/fdisk.c:473 fdisk/fdisk.c:489 fdisk/fdisk.c:505
+#: fdisk/fdisk.c:459 fdisk/fdisk.c:477 fdisk/fdisk.c:493 fdisk/fdisk.c:509
 msgid "   c   change number of cylinders"
 msgstr "   c   muuta silindrite arvu"
 
-#: fdisk/fdisk.c:456 fdisk/fdisk.c:474 fdisk/fdisk.c:490 fdisk/fdisk.c:506
+#: fdisk/fdisk.c:460 fdisk/fdisk.c:478 fdisk/fdisk.c:494 fdisk/fdisk.c:510
 msgid "   d   print the raw data in the partition table"
 msgstr "   d   näidata partitsioonitabelit baidikaupa"
 
-#: fdisk/fdisk.c:457
+#: fdisk/fdisk.c:461
 msgid "   e   change number of extra sectors per cylinder"
 msgstr "   e   muuta lisasektorite arvu silindril"
 
-#: fdisk/fdisk.c:458 fdisk/fdisk.c:477 fdisk/fdisk.c:493 fdisk/fdisk.c:510
+#: fdisk/fdisk.c:462 fdisk/fdisk.c:481 fdisk/fdisk.c:497 fdisk/fdisk.c:514
 msgid "   h   change number of heads"
 msgstr "   h   muuta peade arvu"
 
-#: fdisk/fdisk.c:459
+#: fdisk/fdisk.c:463
 msgid "   i   change interleave factor"
 msgstr "   i   muuta interleave-tegurit"
 
-#: fdisk/fdisk.c:460
+#: fdisk/fdisk.c:464
 msgid "   o   change rotation speed (rpm)"
 msgstr "   o   muuta pöörlemise kiirust (rpm)"
 
-#: fdisk/fdisk.c:465 fdisk/fdisk.c:482 fdisk/fdisk.c:498 fdisk/fdisk.c:516
+#: fdisk/fdisk.c:469 fdisk/fdisk.c:486 fdisk/fdisk.c:502 fdisk/fdisk.c:520
 msgid "   s   change number of sectors/track"
 msgstr "   s   muuta sektorite arvu rajal"
 
-#: fdisk/fdisk.c:468
+#: fdisk/fdisk.c:472
 msgid "   y   change number of physical cylinders"
 msgstr "   y   muuta füüsiliste silindrite arvu"
 
-#: fdisk/fdisk.c:472 fdisk/fdisk.c:488 fdisk/fdisk.c:504
+#: fdisk/fdisk.c:476 fdisk/fdisk.c:492 fdisk/fdisk.c:508
 msgid "   b   move beginning of data in a partition"
 msgstr "   b   liigutada andmete algust partitsioonis"
 
-#: fdisk/fdisk.c:475 fdisk/fdisk.c:491 fdisk/fdisk.c:507
+#: fdisk/fdisk.c:479 fdisk/fdisk.c:495 fdisk/fdisk.c:511
 msgid "   e   list extended partitions"
 msgstr "   e   näidata extended-partitsioonide nimekirja"
 
-#: fdisk/fdisk.c:476 fdisk/fdisk.c:492 fdisk/fdisk.c:509
+#: fdisk/fdisk.c:480 fdisk/fdisk.c:496 fdisk/fdisk.c:513
 msgid "   g   create an IRIX (SGI) partition table"
 msgstr "   g   luua IRIXi (SGI) partitsioonitabel"
 
-#: fdisk/fdisk.c:508
+#: fdisk/fdisk.c:512
 msgid "   f   fix partition order"
 msgstr "   f   parandada partitsioonide järjekord"
 
-#: fdisk/fdisk.c:511
+#: fdisk/fdisk.c:515
 #, fuzzy
 msgid "   i   change the disk identifier"
 msgstr "   u   muuta sisestamise ja tabeli näitamise ühikuid"
 
-#: fdisk/fdisk.c:627
+#: fdisk/fdisk.c:631
 #, c-format
 msgid "You must set"
 msgstr "Te peate määrama, et eksisteerib nii-ja-nii-mitu"
 
-#: fdisk/fdisk.c:644
+#: fdisk/fdisk.c:721
 msgid "heads"
 msgstr "pead"
 
-#: fdisk/fdisk.c:646 fdisk/fdisk.c:1378 fdisk/sfdisk.c:930
+#: fdisk/fdisk.c:723 fdisk/fdisk.c:1541 fdisk/sfdisk.c:930
 msgid "sectors"
 msgstr "sektorit"
 
-#: fdisk/fdisk.c:652
+#: fdisk/fdisk.c:729
 #, c-format
 msgid ""
 "%s%s.\n"
@@ -3046,11 +3046,11 @@ msgstr ""
 "%s%s.\n"
 "Te saate seda teha lisafunktsionaalsuse menüüst.\n"
 
-#: fdisk/fdisk.c:653
+#: fdisk/fdisk.c:730
 msgid " and "
 msgstr " ja "
 
-#: fdisk/fdisk.c:670
+#: fdisk/fdisk.c:747
 #, c-format
 msgid ""
 "\n"
@@ -3069,7 +3069,7 @@ msgstr ""
 "2) muude operatsioonisüsteemide buutimise ja partitsioneerimise\n"
 "tarkvaraga (näiteks DOSi FDISK, OS/2 FDISK)\n"
 
-#: fdisk/fdisk.c:683
+#: fdisk/fdisk.c:763
 #, c-format
 msgid ""
 "\n"
@@ -3080,44 +3080,70 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/fdisk.c:708
+#: fdisk/fdisk.c:780
+#, c-format
+msgid ""
+"\n"
+"The device presents a logical sector size that is smaller than\n"
+"the physical sector size. Aligning to a physical sector boundary\n"
+"is recommended, or performance may be impacted.\n"
+"\n"
+msgstr ""
+
+#: fdisk/fdisk.c:792
+#, c-format
+msgid ""
+"WARNING: The device does not provide compensation (alignment_offset)\n"
+"for DOS-compatible partitioning, but DOS-compatible mode is enabled.\n"
+"Use command 'c' to switch-off DOS mode.\n"
+"\n"
+msgstr ""
+
+#: fdisk/fdisk.c:798
+#, c-format
+msgid ""
+"It's recommended to change display units to sectors (command 'u').\n"
+"\n"
+msgstr ""
+
+#: fdisk/fdisk.c:815
 #, c-format
 msgid "Bad offset in primary extended partition\n"
 msgstr "Vigane offset primaarses extended-partitsioonis\n"
 
-#: fdisk/fdisk.c:722
+#: fdisk/fdisk.c:829
 #, c-format
 msgid ""
 "Warning: omitting partitions after #%d.\n"
 "They will be deleted if you save this partition table.\n"
 msgstr ""
 
-#: fdisk/fdisk.c:741
+#: fdisk/fdisk.c:848
 #, c-format
 msgid "Warning: extra link pointer in partition table %d\n"
 msgstr "Hoiatus: üleliigne 'link pointer' partitsioonitabelis %d\n"
 
-#: fdisk/fdisk.c:749
+#: fdisk/fdisk.c:856
 #, c-format
 msgid "Warning: ignoring extra data in partition table %d\n"
 msgstr "Hoiatus: ignoreerin üleliigseid andmeid partitsioonitabelis %d\n"
 
-#: fdisk/fdisk.c:782
+#: fdisk/fdisk.c:889
 #, fuzzy, c-format
 msgid "omitting empty partition (%d)\n"
 msgstr "Hoiatus: tühi partitsioon\n"
 
-#: fdisk/fdisk.c:801
+#: fdisk/fdisk.c:908
 #, c-format
 msgid "Disk identifier: 0x%08x\n"
 msgstr ""
 
-#: fdisk/fdisk.c:810
+#: fdisk/fdisk.c:917
 #, c-format
 msgid "New disk identifier (current 0x%08x): "
 msgstr ""
 
-#: fdisk/fdisk.c:829
+#: fdisk/fdisk.c:936
 #, fuzzy, c-format
 msgid ""
 "Building a new DOS disklabel with disk identifier 0x%08x.\n"
@@ -3129,41 +3155,50 @@ msgstr ""
 "kuni Te ise otsustate need kettale kirjutada. Pärast seda pole vana sisu\n"
 "loomulikult enam taastatav.\n"
 
-#: fdisk/fdisk.c:861
+#: fdisk/fdisk.c:987
 #, c-format
 msgid "Note: sector size is %d (not %d)\n"
 msgstr "Märkus: sektori suurus on %d (mitte %d)\n"
 
-#: fdisk/fdisk.c:1011
+#: fdisk/fdisk.c:1051
+#, c-format
+msgid ""
+"\n"
+"WARNING: the device provides alignment_offset, but the offset does not \n"
+"match with device geometry.\n"
+"\n"
+msgstr ""
+
+#: fdisk/fdisk.c:1162
 #, c-format
 msgid "You will not be able to write the partition table.\n"
 msgstr "Partitsioonitabelit ei saa salvestada\n"
 
-#: fdisk/fdisk.c:1043
+#: fdisk/fdisk.c:1194
 #, c-format
 msgid ""
 "This disk has both DOS and BSD magic.\n"
 "Give the 'b' command to go to BSD mode.\n"
 msgstr ""
 
-#: fdisk/fdisk.c:1053
+#: fdisk/fdisk.c:1204
 #, c-format
 msgid ""
 "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
 "disklabel\n"
 msgstr "Seade ei sisalda ei DOSi, Suni, SGI ega ODF partitsioonitabelit\n"
 
-#: fdisk/fdisk.c:1070
+#: fdisk/fdisk.c:1221
 #, c-format
 msgid "Internal error\n"
 msgstr "Sisemine viga\n"
 
-#: fdisk/fdisk.c:1083
+#: fdisk/fdisk.c:1231
 #, c-format
 msgid "Ignoring extra extended partition %d\n"
 msgstr "Ignoreerin lisa-extended partistsiooni %d\n"
 
-#: fdisk/fdisk.c:1095
+#: fdisk/fdisk.c:1243
 #, c-format
 msgid ""
 "Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
@@ -3172,7 +3207,7 @@ msgstr ""
 "Hoiatus: vigane lipp 0x%04x (partitsioonitabelis %d) parandatakse\n"
 "kirjutamisel (w) ära\n"
 
-#: fdisk/fdisk.c:1117
+#: fdisk/fdisk.c:1270
 #, c-format
 msgid ""
 "\n"
@@ -3181,95 +3216,95 @@ msgstr ""
 "\n"
 "Sain EOF-i kolm korda järjest - aitab\n"
 
-#: fdisk/fdisk.c:1156
+#: fdisk/fdisk.c:1309
 msgid "Hex code (type L to list codes): "
 msgstr "Kuueteistkümnendsüsteemis kood (L näitab koodide nimekirja): "
 
-#: fdisk/fdisk.c:1196
+#: fdisk/fdisk.c:1342
 #, fuzzy, c-format
 msgid "%s (%u-%u, default %u): "
 msgstr "%s (%d-%d, vaikimisi %d): "
 
-#: fdisk/fdisk.c:1263
+#: fdisk/fdisk.c:1409
 #, c-format
 msgid "Unsupported suffix: '%s'.\n"
 msgstr ""
 
-#: fdisk/fdisk.c:1264
+#: fdisk/fdisk.c:1410
 #, c-format
 msgid ""
 "Supported: 10^N: KB (KiloByte), MB (MegaByte), GB (GigaByte)\n"
 "            2^N: K  (KibiByte), M  (MebiByte), G  (GibiByte)\n"
 msgstr ""
 
-#: fdisk/fdisk.c:1290
+#: fdisk/fdisk.c:1438
 #, fuzzy, c-format
 msgid "Using default value %u\n"
 msgstr "Kasutan vaikimisi väärtust %d\n"
 
-#: fdisk/fdisk.c:1294
+#: fdisk/fdisk.c:1442
 #, c-format
 msgid "Value out of range.\n"
 msgstr "Väärtus on piiridest väljas\n"
 
-#: fdisk/fdisk.c:1304
+#: fdisk/fdisk.c:1467
 msgid "Partition number"
 msgstr "Partitsiooni number"
 
-#: fdisk/fdisk.c:1315
+#: fdisk/fdisk.c:1478
 #, c-format
 msgid "Warning: partition %d has empty type\n"
 msgstr "Hoiatus: partitsioonil %d on tühi tüüp\n"
 
-#: fdisk/fdisk.c:1337 fdisk/fdisk.c:1363
+#: fdisk/fdisk.c:1500 fdisk/fdisk.c:1526
 #, fuzzy, c-format
 msgid "Selected partition %d\n"
 msgstr "Ignoreerin lisa-extended partistsiooni %d\n"
 
-#: fdisk/fdisk.c:1340
+#: fdisk/fdisk.c:1503
 #, fuzzy, c-format
 msgid "No partition is defined yet!\n"
 msgstr "Ühtegi partitsiooni pole defineeritud\n"
 
-#: fdisk/fdisk.c:1366
+#: fdisk/fdisk.c:1529
 #, c-format
 msgid "All primary partitions have been defined already!\n"
 msgstr ""
 
-#: fdisk/fdisk.c:1376
+#: fdisk/fdisk.c:1539
 msgid "cylinder"
 msgstr "silinder"
 
-#: fdisk/fdisk.c:1376
+#: fdisk/fdisk.c:1539
 msgid "sector"
 msgstr "sektor"
 
-#: fdisk/fdisk.c:1385
+#: fdisk/fdisk.c:1548
 #, c-format
 msgid "Changing display/entry units to %s\n"
 msgstr "Sisestamisel ja näitamisel on nüüd ühikuteks %s\n"
 
-#: fdisk/fdisk.c:1396
+#: fdisk/fdisk.c:1559
 #, c-format
 msgid "WARNING: Partition %d is an extended partition\n"
 msgstr "Hoiatus: partitsioon %d on extended-partitsioon\n"
 
-#: fdisk/fdisk.c:1407
+#: fdisk/fdisk.c:1569
 #, c-format
 msgid "DOS Compatibility flag is set\n"
 msgstr "DOSiga ühilduvuse lipp on püsti\n"
 
-#: fdisk/fdisk.c:1411
+#: fdisk/fdisk.c:1571
 #, c-format
 msgid "DOS Compatibility flag is not set\n"
 msgstr "DOSiga ühilduvuse lipp pole püsti\n"
 
-#: fdisk/fdisk.c:1511
+#: fdisk/fdisk.c:1672
 #, c-format
 msgid "Partition %d does not exist yet!\n"
 msgstr "Partitsiooni %d pole veel olemas!\n"
 
-#: fdisk/fdisk.c:1516
+#: fdisk/fdisk.c:1677
 #, c-format
 msgid ""
 "Type 0 means free space to many systems\n"
@@ -3282,7 +3317,7 @@ msgstr ""
 "tekitada tüüpi 0 partitsioone. Te saate partitsiooni\n"
 "kustutada käsuga 'd'.\n"
 
-#: fdisk/fdisk.c:1525
+#: fdisk/fdisk.c:1686
 #, c-format
 msgid ""
 "You cannot change a partition into an extended one or vice versa\n"
@@ -3291,7 +3326,7 @@ msgstr ""
 "Partitsiooni ei saa muuta extended'iks ega extendedist harilikuks.\n"
 "Selle asemel tuleb partitsioon kustutada ja uus luua.\n"
 
-#: fdisk/fdisk.c:1534
+#: fdisk/fdisk.c:1695
 #, c-format
 msgid ""
 "Consider leaving partition 3 as Whole disk (5),\n"
@@ -3301,7 +3336,7 @@ msgstr ""
 "Soovitav on jätta partitsioon 3 terveks kettaks (5),\n"
 "sest SunOs/Solaris eeldab seda ja see meeldib isegi Linuxile.\n"
 
-#: fdisk/fdisk.c:1540
+#: fdisk/fdisk.c:1701
 #, fuzzy, c-format
 msgid ""
 "Consider leaving partition 9 as volume header (0),\n"
@@ -3311,66 +3346,71 @@ msgstr ""
 "Kaaluge partitsiooni 9 jätmist köite päiseks (0) ja\n"
 "partitsiooni 11 jätmist terveks kettaks (6) nagu IRIX seda eeldab\n"
 
-#: fdisk/fdisk.c:1557
+#: fdisk/fdisk.c:1718
 #, c-format
 msgid "Changed system type of partition %d to %x (%s)\n"
 msgstr "Partitsiooni %d tüüp on nüüd %x (%s)\n"
 
-#: fdisk/fdisk.c:1560
+#: fdisk/fdisk.c:1721
 #, fuzzy, c-format
 msgid "System type of partition %d is unchanged: %x (%s)\n"
 msgstr "Partitsiooni %d tüüp on nüüd %x (%s)\n"
 
-#: fdisk/fdisk.c:1612
+#: fdisk/fdisk.c:1773
 #, c-format
 msgid "Partition %d has different physical/logical beginnings (non-Linux?):\n"
 msgstr ""
 "Partitsiooni %d füüsiline ja loogiline algus ei lange kokku:\n"
 "(Pole Linuxi oma?)\n"
 
-#: fdisk/fdisk.c:1614 fdisk/fdisk.c:1622 fdisk/fdisk.c:1631 fdisk/fdisk.c:1641
+#: fdisk/fdisk.c:1775 fdisk/fdisk.c:1783 fdisk/fdisk.c:1792 fdisk/fdisk.c:1802
 #, c-format
 msgid "     phys=(%d, %d, %d) "
 msgstr "     füüs=(%d, %d, %d) "
 
-#: fdisk/fdisk.c:1615 fdisk/fdisk.c:1623
+#: fdisk/fdisk.c:1776 fdisk/fdisk.c:1784
 #, c-format
 msgid "logical=(%d, %d, %d)\n"
 msgstr "loogiline=(%d, %d, %d)\n"
 
-#: fdisk/fdisk.c:1620
+#: fdisk/fdisk.c:1781
 #, c-format
 msgid "Partition %d has different physical/logical endings:\n"
 msgstr "Partitsiooni %d füüsiline ja loogiline lõpp ei lange kokku:\n"
 
-#: fdisk/fdisk.c:1629
+#: fdisk/fdisk.c:1790
 #, c-format
 msgid "Partition %i does not start on cylinder boundary:\n"
 msgstr "Partitsioon %i ei alga silindri piirilt:\n"
 
-#: fdisk/fdisk.c:1632
+#: fdisk/fdisk.c:1793
 #, c-format
 msgid "should be (%d, %d, 1)\n"
 msgstr "peaks olema (%d, %d, 1)\n"
 
-#: fdisk/fdisk.c:1638
+#: fdisk/fdisk.c:1799
 #, fuzzy, c-format
 msgid "Partition %i does not end on cylinder boundary.\n"
 msgstr "Partitsioon %d ei lõppe silindri piiril\n"
 
-#: fdisk/fdisk.c:1642
+#: fdisk/fdisk.c:1803
 #, c-format
 msgid "should be (%d, %d, %d)\n"
 msgstr "peaks olema (%d, %d, %d)\n"
 
-#: fdisk/fdisk.c:1654
+#: fdisk/fdisk.c:1813
+#, fuzzy, c-format
+msgid "Partition %i does not start on physical block boundary.\n"
+msgstr "Partitsioon %i ei alga silindri piirilt:\n"
+
+#: fdisk/fdisk.c:1823
 #, c-format
 msgid ""
 "\n"
 "Disk %s: %ld MB, %lld bytes\n"
 msgstr ""
 
-#: fdisk/fdisk.c:1658
+#: fdisk/fdisk.c:1827
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -3380,7 +3420,7 @@ msgstr ""
 "Ketas %s: %d pead, %d sektorit rajal, %d silindrit\n"
 "\n"
 
-#: fdisk/fdisk.c:1661
+#: fdisk/fdisk.c:1830
 #, fuzzy, c-format
 msgid "%d heads, %llu sectors/track, %d cylinders"
 msgstr ""
@@ -3388,12 +3428,12 @@ msgstr ""
 "Ketas %s: %d pead, %d sektorit rajal, %d silindrit\n"
 "\n"
 
-#: fdisk/fdisk.c:1664
+#: fdisk/fdisk.c:1833
 #, c-format
 msgid ", total %llu sectors"
 msgstr ""
 
-#: fdisk/fdisk.c:1667
+#: fdisk/fdisk.c:1836
 #, fuzzy, c-format
 msgid "Units = %s of %d * %d = %d bytes\n"
 msgstr ""
@@ -3401,7 +3441,17 @@ msgstr ""
 "Ketas %s: %d pead, %d sektorit rajal, %d silindrit\n"
 "\n"
 
-#: fdisk/fdisk.c:1778
+#: fdisk/fdisk.c:1840
+#, c-format
+msgid "Sector size (logical/physical): %u bytes / %lu bytes\n"
+msgstr ""
+
+#: fdisk/fdisk.c:1843
+#, fuzzy, c-format
+msgid "Alignment offset: %lu bytes\n"
+msgstr "vigane i-kirje suurus"
+
+#: fdisk/fdisk.c:1952
 #, c-format
 msgid ""
 "Nothing to do. Ordering is correct already.\n"
@@ -3410,14 +3460,14 @@ msgstr ""
 "Midagi pole vaja teha, järjestus on juba õige\n"
 "\n"
 
-#: fdisk/fdisk.c:1806
+#: fdisk/fdisk.c:1980
 #, fuzzy, c-format
 msgid "Done.\n"
 msgstr ""
 "Valmis\n"
 "\n"
 
-#: fdisk/fdisk.c:1834
+#: fdisk/fdisk.c:2008
 #, c-format
 msgid ""
 "This doesn't look like a partition table\n"
@@ -3425,16 +3475,16 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/fdisk.c:1847
+#: fdisk/fdisk.c:2021
 #, fuzzy, c-format
 msgid "%*s Boot      Start         End      Blocks   Id  System\n"
 msgstr "%*s Boot    Algus       Lõpp   Plokke   Id  Süsteem\n"
 
-#: fdisk/fdisk.c:1848 fdisk/fdisksgilabel.c:210 fdisk/fdisksunlabel.c:603
+#: fdisk/fdisk.c:2022 fdisk/fdisksgilabel.c:210 fdisk/fdisksunlabel.c:603
 msgid "Device"
 msgstr "Seade"
 
-#: fdisk/fdisk.c:1885
+#: fdisk/fdisk.c:2060
 #, c-format
 msgid ""
 "\n"
@@ -3443,7 +3493,7 @@ msgstr ""
 "\n"
 "Partitsioonitabeli kirjed on füüsilisest erinevas järjekorras\n"
 
-#: fdisk/fdisk.c:1895
+#: fdisk/fdisk.c:2070
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -3454,87 +3504,87 @@ msgstr ""
 "Ketas %s: %d pead, %d sektorit rajal, %d silindrit\n"
 "\n"
 
-#: fdisk/fdisk.c:1897
+#: fdisk/fdisk.c:2072
 #, fuzzy, c-format
 msgid "Nr AF  Hd Sec  Cyl  Hd Sec  Cyl     Start      Size ID\n"
 msgstr "Nr AF  Pä Sek  Sil  Pä Sek  Sil    Algus     Maht ID\n"
 
-#: fdisk/fdisk.c:1943
+#: fdisk/fdisk.c:2120
 #, c-format
 msgid "Warning: partition %d contains sector 0\n"
 msgstr "Hoiatus: partitsioon %d sisaldab sektorit 0\n"
 
-#: fdisk/fdisk.c:1946
+#: fdisk/fdisk.c:2123
 #, c-format
 msgid "Partition %d: head %d greater than maximum %d\n"
 msgstr "Partitsioon %d: pea %d on suurem kui peade arv %d\n"
 
-#: fdisk/fdisk.c:1949
+#: fdisk/fdisk.c:2126
 #, fuzzy, c-format
 msgid "Partition %d: sector %d greater than maximum %llu\n"
 msgstr "Partitsioon %d: sektor %d on suurem kui sektroite arv rajal %d\n"
 
-#: fdisk/fdisk.c:1952
+#: fdisk/fdisk.c:2129
 #, c-format
 msgid "Partitions %d: cylinder %d greater than maximum %d\n"
 msgstr "Partitsioon %d: silinder %d on suurem kui silindrite arv %d\n"
 
-#: fdisk/fdisk.c:1956
+#: fdisk/fdisk.c:2133
 #, c-format
 msgid "Partition %d: previous sectors %d disagrees with total %d\n"
 msgstr "Partitsioon %d: eelnevate sektorite arv %d ei klapi summarsega (%d)\n"
 
-#: fdisk/fdisk.c:1989
+#: fdisk/fdisk.c:2167
 #, c-format
 msgid "Warning: bad start-of-data in partition %d\n"
 msgstr "Hoiatus: partitsioonis %d on andmete algus vigane\n"
 
-#: fdisk/fdisk.c:1997
+#: fdisk/fdisk.c:2175
 #, c-format
 msgid "Warning: partition %d overlaps partition %d.\n"
 msgstr "Hoiatus: partitsioon %d kattub partitsiooniga %d\n"
 
-#: fdisk/fdisk.c:2017
+#: fdisk/fdisk.c:2195
 #, c-format
 msgid "Warning: partition %d is empty\n"
 msgstr "Hoiatus: partitsioon %d on tühi\n"
 
-#: fdisk/fdisk.c:2022
+#: fdisk/fdisk.c:2200
 #, c-format
 msgid "Logical partition %d not entirely in partition %d\n"
 msgstr "Loogiline partitsioon %d pole üleni partitsioonis %d\n"
 
-#: fdisk/fdisk.c:2028
+#: fdisk/fdisk.c:2206
 #, fuzzy, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu\n"
 msgstr "Kogu kasutataud sektorite arv %d on suurem kui sektorite koguarv %d\n"
 
-#: fdisk/fdisk.c:2031
+#: fdisk/fdisk.c:2209
 #, fuzzy, c-format
 msgid "%lld unallocated %d-byte sectors\n"
 msgstr "%d vaba sektorit\n"
 
-#: fdisk/fdisk.c:2046 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
+#: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
 #, c-format
 msgid "Partition %d is already defined.  Delete it before re-adding it.\n"
 msgstr "Partitsioon %d on juba olemas. Kustutage see enne uuesti lisamist\n"
 
-#: fdisk/fdisk.c:2088
+#: fdisk/fdisk.c:2291
 #, fuzzy, c-format
 msgid "Sector %llu is already allocated\n"
 msgstr "Sektor%d on juba kasutusel\n"
 
-#: fdisk/fdisk.c:2124
+#: fdisk/fdisk.c:2327
 #, c-format
 msgid "No free sectors available\n"
 msgstr "Vabad sektorid on otsas\n"
 
-#: fdisk/fdisk.c:2133
+#: fdisk/fdisk.c:2338
 #, c-format
 msgid "Last %1$s, +%2$s or +size{K,M,G}"
 msgstr ""
 
-#: fdisk/fdisk.c:2199
+#: fdisk/fdisk.c:2415
 #, c-format
 msgid ""
 "\tSorry - this fdisk cannot handle AIX disk labels.\n"
@@ -3548,7 +3598,7 @@ msgstr ""
 "\t(käsuga o).\n"
 "\tHOIATUS: see hävitab ketta praeguse sisu!\n"
 
-#: fdisk/fdisk.c:2208
+#: fdisk/fdisk.c:2424
 #, fuzzy, c-format
 msgid ""
 "\tSorry - this fdisk cannot handle Mac disk labels.\n"
@@ -3562,24 +3612,24 @@ msgstr ""
 "\t(käsuga o).\n"
 "\tHOIATUS: see hävitab ketta praeguse sisu!\n"
 
-#: fdisk/fdisk.c:2228
+#: fdisk/fdisk.c:2444
 #, c-format
 msgid "You must delete some partition and add an extended partition first\n"
 msgstr ""
 "Te peate kõigepealt mõne partitsiooni kustutama ja asemele\n"
 "extended partitsiooni tegema\n"
 
-#: fdisk/fdisk.c:2231
+#: fdisk/fdisk.c:2447
 #, fuzzy, c-format
 msgid "All logical partitions are in use\n"
 msgstr "Loogilised partitsioonid on füüsilisest erinevas järjestuses"
 
-#: fdisk/fdisk.c:2232
+#: fdisk/fdisk.c:2448
 #, fuzzy, c-format
 msgid "Adding a primary partition\n"
 msgstr "Vigane primaarne partitsioon"
 
-#: fdisk/fdisk.c:2237
+#: fdisk/fdisk.c:2453
 #, c-format
 msgid ""
 "Command action\n"
@@ -3590,20 +3640,20 @@ msgstr ""
 "   %s\n"
 "   p   primaarse partitsiooni (1-4) loomine\n"
 
-#: fdisk/fdisk.c:2239
+#: fdisk/fdisk.c:2455
 msgid "l   logical (5 or over)"
 msgstr "l   loogilise partitsiooni (5-...) loomine"
 
-#: fdisk/fdisk.c:2239
+#: fdisk/fdisk.c:2455
 msgid "e   extended"
 msgstr "e   extended partitsiooni loomine"
 
-#: fdisk/fdisk.c:2258
+#: fdisk/fdisk.c:2474
 #, c-format
 msgid "Invalid partition number for type `%c'\n"
 msgstr "Vigane partitsiooni number tüübile `%c'\n"
 
-#: fdisk/fdisk.c:2294
+#: fdisk/fdisk.c:2510
 #, c-format
 msgid ""
 "The partition table has been altered!\n"
@@ -3612,12 +3662,12 @@ msgstr ""
 "Partitsioonitabelit on muudetud!\n"
 "\n"
 
-#: fdisk/fdisk.c:2308
+#: fdisk/fdisk.c:2524
 #, c-format
 msgid "Calling ioctl() to re-read partition table.\n"
 msgstr "Kasutan ioctl() partitsioonitabeli uuesti lugemiseks\n"
 
-#: fdisk/fdisk.c:2317
+#: fdisk/fdisk.c:2533
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -3631,7 +3681,7 @@ msgstr ""
 "Tuum kasutab endiselt vana tabelit,\n"
 "uus tabel hakkab kehtima järgmisest buudist alates.\n"
 
-#: fdisk/fdisk.c:2325
+#: fdisk/fdisk.c:2541
 #, c-format
 msgid ""
 "\n"
@@ -3644,49 +3694,49 @@ msgstr ""
 "partitsioone, lugege palun fdisk'i manuali\n"
 "lisainformatsiooni jaoks.\n"
 
-#: fdisk/fdisk.c:2331
+#: fdisk/fdisk.c:2547
 #, fuzzy, c-format
 msgid ""
 "\n"
 "Error closing file\n"
 msgstr "Viga %s sulgemisel\n"
 
-#: fdisk/fdisk.c:2335
+#: fdisk/fdisk.c:2551
 #, c-format
 msgid "Syncing disks.\n"
 msgstr "Kirjutan puhvreid kettale\n"
 
-#: fdisk/fdisk.c:2382
+#: fdisk/fdisk.c:2598
 #, c-format
 msgid "Partition %d has no data area\n"
 msgstr "Partitsioonil %d pole andmetele ruumi eraldatud\n"
 
-#: fdisk/fdisk.c:2387
+#: fdisk/fdisk.c:2603
 msgid "New beginning of data"
 msgstr "Andmete uus algus"
 
-#: fdisk/fdisk.c:2403
+#: fdisk/fdisk.c:2619
 msgid "Expert command (m for help): "
 msgstr "Eksperdi käsk (m annab abiinfot): "
 
-#: fdisk/fdisk.c:2416
+#: fdisk/fdisk.c:2632
 msgid "Number of cylinders"
 msgstr "Sisestage silindrite arv"
 
-#: fdisk/fdisk.c:2443
+#: fdisk/fdisk.c:2659
 msgid "Number of heads"
 msgstr "Sisetage peade arv"
 
-#: fdisk/fdisk.c:2470
+#: fdisk/fdisk.c:2686
 msgid "Number of sectors"
 msgstr "Sisetage sektorite arv"
 
-#: fdisk/fdisk.c:2473
+#: fdisk/fdisk.c:2688
 #, c-format
 msgid "Warning: setting sector offset for DOS compatiblity\n"
 msgstr "Hoiatus: sean sektorite offseti DOSiga ühilduvuse jaoks\n"
 
-#: fdisk/fdisk.c:2532
+#: fdisk/fdisk.c:2747
 #, c-format
 msgid ""
 "\n"
@@ -3695,32 +3745,32 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/fdisk.c:2554
+#: fdisk/fdisk.c:2769
 #, c-format
 msgid "Disk %s doesn't contain a valid partition table\n"
 msgstr "Seade %s ei sisalda äratuntavat partitsioonitabelit\n"
 
-#: fdisk/fdisk.c:2565
+#: fdisk/fdisk.c:2780
 #, c-format
 msgid "Cannot open %s\n"
 msgstr "Ei suuda avada seadmefaili %s\n"
 
-#: fdisk/fdisk.c:2584 fdisk/sfdisk.c:2603
+#: fdisk/fdisk.c:2799 fdisk/sfdisk.c:2603
 #, c-format
 msgid "cannot open %s\n"
 msgstr "Ei suuda avada faili %s\n"
 
-#: fdisk/fdisk.c:2604
+#: fdisk/fdisk.c:2819
 #, c-format
 msgid "%c: unknown command\n"
 msgstr "%c: tundmatu käsk\n"
 
-#: fdisk/fdisk.c:2674
+#: fdisk/fdisk.c:2889
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
 msgstr "Kasutatav tuum leiab sektori suuruse ise - ignoreerin -b võtit\n"
 
-#: fdisk/fdisk.c:2678
+#: fdisk/fdisk.c:2893
 #, c-format
 msgid ""
 "Warning: the -b (set sector size) option should be used with one specified "
@@ -3729,18 +3779,18 @@ msgstr ""
 "Hoiatus: -b võtit (sektori suuruse seadmine) tuleks kasutada ainult ühe "
 "täpselt määratud seadmega\n"
 
-#: fdisk/fdisk.c:2740
+#: fdisk/fdisk.c:2955
 #, fuzzy, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 "Leidisn seadmelt %s OSF/1 partitsioonitabeli, lähen OSF/1 rezhiimi.\n"
 "DOSi partitsioonitabeli rezhiimi naasmiseks kasutage käsku `r'.\n"
 
-#: fdisk/fdisk.c:2750
+#: fdisk/fdisk.c:2965
 msgid "Command (m for help): "
 msgstr "Käsk (m annab abiinfot): "
 
-#: fdisk/fdisk.c:2766
+#: fdisk/fdisk.c:2981
 #, c-format
 msgid ""
 "\n"
@@ -3749,16 +3799,16 @@ msgstr ""
 "\n"
 "Aktiivne buutfail on %s\n"
 
-#: fdisk/fdisk.c:2768
+#: fdisk/fdisk.c:2983
 msgid "Please enter the name of the new boot file: "
 msgstr "Palun sisestage uue buutfaili nimi: "
 
-#: fdisk/fdisk.c:2770
+#: fdisk/fdisk.c:2985
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "Buutfail jäi samaks\n"
 
-#: fdisk/fdisk.c:2843
+#: fdisk/fdisk.c:3058
 #, c-format
 msgid ""
 "\n"
@@ -6981,11 +7031,11 @@ msgstr "ei suuda avada faili %s lugemiseks"
 msgid "usage: last [-#] [-f file] [-t tty] [-h hostname] [user ...]\n"
 msgstr "Kasutamine: [-#] [-f fail] [-t tty] [-h hostinimi] [kasutaja ...]\n"
 
-#: login-utils/last.c:284
+#: login-utils/last.c:302
 msgid "  still logged in"
 msgstr "  veel masinas"
 
-#: login-utils/last.c:306
+#: login-utils/last.c:324
 #, c-format
 msgid ""
 "\n"
@@ -6994,15 +7044,15 @@ msgstr ""
 "\n"
 "wtmp algab %s"
 
-#: login-utils/last.c:362 login-utils/last.c:380 login-utils/last.c:431
+#: login-utils/last.c:380 login-utils/last.c:398 login-utils/last.c:449
 msgid "last: malloc failure.\n"
 msgstr "last: Mälu sai otsa\n"
 
-#: login-utils/last.c:407
+#: login-utils/last.c:425
 msgid "last: gethostname"
 msgstr "last: gethostname"
 
-#: login-utils/last.c:456
+#: login-utils/last.c:474
 #, c-format
 msgid ""
 "\n"
@@ -7502,7 +7552,7 @@ msgstr ""
 msgid "fork failed\n"
 msgstr "fork ei õnnestunud\n"
 
-#: login-utils/simpleinit.c:540 text-utils/more.c:1629
+#: login-utils/simpleinit.c:540 text-utils/more.c:1663
 msgid "exec failed\n"
 msgstr "exec ei õnnestunud\n"
 
@@ -8762,7 +8812,7 @@ msgstr "fork ei õnnestunud"
 msgid "mount: cannot set user id: %s"
 msgstr "fork ei õnnestunud"
 
-#: mount/mount.c:705 mount/mount.c:1809
+#: mount/mount.c:705 mount/mount.c:1855
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr ""
@@ -8873,208 +8923,213 @@ msgstr "mount: ei suuda avada seadet %s kiiruse seadmiseks"
 msgid "mount: cannot set speed: %s"
 msgstr ""
 
-#: mount/mount.c:1279
+#: mount/mount.c:1314
 #, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr ""
 
-#: mount/mount.c:1358
+#: mount/mount.c:1371
+#, c-format
+msgid "mount: warning: %s seems to be mounted read-write.\n"
+msgstr ""
+
+#: mount/mount.c:1404
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 
-#: mount/mount.c:1361
+#: mount/mount.c:1407
 msgid "mount: you must specify the filesystem type"
 msgstr ""
 
-#: mount/mount.c:1364
+#: mount/mount.c:1410
 msgid "mount: mount failed"
 msgstr ""
 
-#: mount/mount.c:1370 mount/mount.c:1407
+#: mount/mount.c:1416 mount/mount.c:1453
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr ""
 
-#: mount/mount.c:1372
+#: mount/mount.c:1418
 msgid "mount: permission denied"
 msgstr ""
 
-#: mount/mount.c:1374
+#: mount/mount.c:1420
 msgid "mount: must be superuser to use mount"
 msgstr ""
 
-#: mount/mount.c:1378 mount/mount.c:1382
+#: mount/mount.c:1424 mount/mount.c:1428
 #, c-format
 msgid "mount: %s is busy"
 msgstr ""
 
-#: mount/mount.c:1384
+#: mount/mount.c:1430
 msgid "mount: proc already mounted"
 msgstr ""
 
-#: mount/mount.c:1386
+#: mount/mount.c:1432
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr ""
 
-#: mount/mount.c:1392
+#: mount/mount.c:1438
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr ""
 
-#: mount/mount.c:1394
+#: mount/mount.c:1440
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr ""
 
-#: mount/mount.c:1399
+#: mount/mount.c:1445
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr ""
 
-#: mount/mount.c:1411
+#: mount/mount.c:1457
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
 "       (a path prefix is not a directory)\n"
 msgstr ""
 
-#: mount/mount.c:1423
+#: mount/mount.c:1469
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr ""
 
-#: mount/mount.c:1425
+#: mount/mount.c:1471
 #, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
 "       missing codepage or helper program, or other error"
 msgstr ""
 
-#: mount/mount.c:1432
+#: mount/mount.c:1478
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
 msgstr ""
 
-#: mount/mount.c:1441
+#: mount/mount.c:1487
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
 msgstr ""
 
-#: mount/mount.c:1446
+#: mount/mount.c:1492
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
 msgstr ""
 
-#: mount/mount.c:1453
+#: mount/mount.c:1499
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
 msgstr ""
 
-#: mount/mount.c:1459
+#: mount/mount.c:1505
 msgid "mount table full"
 msgstr ""
 
-#: mount/mount.c:1461
+#: mount/mount.c:1507
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr ""
 
-#: mount/mount.c:1467
+#: mount/mount.c:1513
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr ""
 
-#: mount/mount.c:1472
+#: mount/mount.c:1518
 #, fuzzy, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "   l   anda nimekiri tuntud failisüsteemide tüüpidest"
 
-#: mount/mount.c:1484
+#: mount/mount.c:1530
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr ""
 
-#: mount/mount.c:1487
+#: mount/mount.c:1533
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr ""
 
-#: mount/mount.c:1490
+#: mount/mount.c:1536
 msgid "mount: maybe you meant 'vfat'?"
 msgstr ""
 
-#: mount/mount.c:1493
+#: mount/mount.c:1539
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 
-#: mount/mount.c:1501
+#: mount/mount.c:1547
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr ""
 
-#: mount/mount.c:1503
+#: mount/mount.c:1549
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
 "       (maybe `insmod driver'?)"
 msgstr ""
 
-#: mount/mount.c:1506
+#: mount/mount.c:1552
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr ""
 
-#: mount/mount.c:1509
+#: mount/mount.c:1555
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr ""
 
-#: mount/mount.c:1514
+#: mount/mount.c:1560
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr ""
 
-#: mount/mount.c:1517
+#: mount/mount.c:1563
 msgid "block device "
 msgstr ""
 
-#: mount/mount.c:1519
+#: mount/mount.c:1565
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr ""
 
-#: mount/mount.c:1523
+#: mount/mount.c:1569
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr ""
 
-#: mount/mount.c:1527
+#: mount/mount.c:1573
 #, fuzzy, c-format
 msgid "mount: cannot remount %s%s read-write, is write-protected"
 msgstr "mount: ei suuda avada seadet %s kiiruse seadmiseks"
 
-#: mount/mount.c:1542
+#: mount/mount.c:1588
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr ""
 
-#: mount/mount.c:1552
+#: mount/mount.c:1598
 #, c-format
 msgid "mount: no medium found on %s ...trying again\n"
 msgstr ""
 
-#: mount/mount.c:1558
+#: mount/mount.c:1604
 #, fuzzy, c-format
 msgid "mount: no medium found on %s"
 msgstr "fork ei õnnestunud"
 
-#: mount/mount.c:1576
+#: mount/mount.c:1622
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9084,22 +9139,22 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 
-#: mount/mount.c:1655
+#: mount/mount.c:1701
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 
-#: mount/mount.c:1661
+#: mount/mount.c:1707
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 
-#: mount/mount.c:1756
+#: mount/mount.c:1802
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr ""
 
-#: mount/mount.c:1890
+#: mount/mount.c:1936
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9136,24 +9191,24 @@ msgid ""
 "For many more details, say  man 8 mount .\n"
 msgstr ""
 
-#: mount/mount.c:2215
+#: mount/mount.c:2261
 #, c-format
 msgid "mount: only root can do that (effective UID is %d)"
 msgstr ""
 
-#: mount/mount.c:2218
+#: mount/mount.c:2264
 msgid "mount: only root can do that"
 msgstr ""
 
-#: mount/mount.c:2229
+#: mount/mount.c:2275
 msgid "nothing was mounted"
 msgstr ""
 
-#: mount/mount.c:2247 mount/mount.c:2273
+#: mount/mount.c:2293 mount/mount.c:2319
 msgid "mount: no such partition found"
 msgstr ""
 
-#: mount/mount.c:2250
+#: mount/mount.c:2296
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr ""
@@ -9176,7 +9231,7 @@ msgstr ""
 msgid "bug in xstrndup call"
 msgstr ""
 
-#: mount/sundries.c:224 mount/sundries.c:276 mount/sundries.c:285
+#: mount/sundries.c:224 mount/sundries.c:280 mount/sundries.c:289
 #: mount/xmalloc.c:11
 msgid "not enough memory"
 msgstr ""
@@ -11192,17 +11247,22 @@ msgid ""
 "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
 msgstr ""
 
-#: text-utils/more.c:256
+#: text-utils/more.c:258
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr ""
 
-#: text-utils/more.c:479
+#: text-utils/more.c:290
+#, fuzzy, c-format
+msgid "failed to initialize line buffer\n"
+msgstr "ei jätku mälu kaartide puhvritele"
+
+#: text-utils/more.c:485
 #, fuzzy, c-format
 msgid "%s: unknown option \"-%c\"\n"
 msgstr "%s: tundmatu signaal %s\n"
 
-#: text-utils/more.c:511
+#: text-utils/more.c:517
 #, c-format
 msgid ""
 "\n"
@@ -11210,7 +11270,7 @@ msgid ""
 "\n"
 msgstr ""
 
-#: text-utils/more.c:555
+#: text-utils/more.c:561
 #, c-format
 msgid ""
 "\n"
@@ -11218,52 +11278,57 @@ msgid ""
 "\n"
 msgstr ""
 
-#: text-utils/more.c:658
+#: text-utils/more.c:664
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr ""
 
-#: text-utils/more.c:750
+#: text-utils/more.c:756
 #, c-format
 msgid "--More--"
 msgstr ""
 
-#: text-utils/more.c:752
+#: text-utils/more.c:758
 #, c-format
 msgid "(Next file: %s)"
 msgstr ""
 
-#: text-utils/more.c:757
+#: text-utils/more.c:763
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr ""
 
-#: text-utils/more.c:1172
+#: text-utils/more.c:798
+#, fuzzy
+msgid "out if memory"
+msgstr "Mälu sai otsa"
+
+#: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
 msgstr ""
 
-#: text-utils/more.c:1174
+#: text-utils/more.c:1208
 msgid "...back 1 page"
 msgstr ""
 
-#: text-utils/more.c:1217
+#: text-utils/more.c:1251
 msgid "...skipping one line"
 msgstr ""
 
-#: text-utils/more.c:1219
+#: text-utils/more.c:1253
 #, c-format
 msgid "...skipping %d lines"
 msgstr ""
 
-#: text-utils/more.c:1256
+#: text-utils/more.c:1290
 msgid ""
 "\n"
 "***Back***\n"
 "\n"
 msgstr ""
 
-#: text-utils/more.c:1294
+#: text-utils/more.c:1328
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -11271,7 +11336,7 @@ msgid ""
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 
-#: text-utils/more.c:1301
+#: text-utils/more.c:1335
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -11294,66 +11359,66 @@ msgid ""
 ".                       Repeat previous command\n"
 msgstr ""
 
-#: text-utils/more.c:1370 text-utils/more.c:1375
+#: text-utils/more.c:1404 text-utils/more.c:1409
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr ""
 
-#: text-utils/more.c:1409
+#: text-utils/more.c:1443
 #, c-format
 msgid "\"%s\" line %d"
 msgstr ""
 
-#: text-utils/more.c:1411
+#: text-utils/more.c:1445
 #, c-format
 msgid "[Not a file] line %d"
 msgstr ""
 
-#: text-utils/more.c:1495
+#: text-utils/more.c:1529
 msgid "  Overflow\n"
 msgstr ""
 
-#: text-utils/more.c:1542
+#: text-utils/more.c:1576
 msgid "...skipping\n"
 msgstr ""
 
-#: text-utils/more.c:1571
+#: text-utils/more.c:1605
 msgid "Regular expression botch"
 msgstr ""
 
-#: text-utils/more.c:1579
+#: text-utils/more.c:1613
 msgid ""
 "\n"
 "Pattern not found\n"
 msgstr ""
 
-#: text-utils/more.c:1582 text-utils/pg.c:1124 text-utils/pg.c:1275
+#: text-utils/more.c:1616 text-utils/pg.c:1124 text-utils/pg.c:1275
 msgid "Pattern not found"
 msgstr ""
 
-#: text-utils/more.c:1643
+#: text-utils/more.c:1677
 msgid "can't fork\n"
 msgstr ""
 
-#: text-utils/more.c:1682
+#: text-utils/more.c:1716
 msgid ""
 "\n"
 "...Skipping "
 msgstr ""
 
-#: text-utils/more.c:1686
+#: text-utils/more.c:1720
 msgid "...Skipping to file "
 msgstr ""
 
-#: text-utils/more.c:1688
+#: text-utils/more.c:1722
 msgid "...Skipping back to file "
 msgstr ""
 
-#: text-utils/more.c:1966
+#: text-utils/more.c:2000
 msgid "Line too long"
 msgstr ""
 
-#: text-utils/more.c:2009
+#: text-utils/more.c:2043
 msgid "No previous command to substitute for"
 msgstr ""
 

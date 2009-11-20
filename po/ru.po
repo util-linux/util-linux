@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-10-19 10:46+0200\n"
+"POT-Creation-Date: 2009-11-20 15:37+0100\n"
 "PO-Revision-Date: 2006-03-07 12:42+0200\n"
 "Last-Translator: Pavel Maryanov <acid_jack@ukr.net>\n"
 "Language-Team: Russian <ru@li.org>\n"
@@ -976,7 +976,7 @@ msgstr "слишком много inode'ов, максимум - 512"
 msgid "not enough space, need at least %llu blocks"
 msgstr "не хватает места, нужно как минимум %lu блоков"
 
-#: disk-utils/mkfs.bfs.c:223 fdisk/fdisk.c:2366
+#: disk-utils/mkfs.bfs.c:223 fdisk/fdisk.c:2582
 #, c-format
 msgid "Device: %s\n"
 msgstr "Устройство: %s\n"
@@ -1406,7 +1406,7 @@ msgid "too many bad pages"
 msgstr "слишком много плохих страниц"
 
 #: disk-utils/mkswap.c:310 misc-utils/look.c:182 misc-utils/setterm.c:1179
-#: text-utils/more.c:1982 text-utils/more.c:1993
+#: text-utils/more.c:2016 text-utils/more.c:2027
 msgid "Out of memory"
 msgstr "Не хватает памяти"
 
@@ -1962,7 +1962,7 @@ msgstr "   Основной"
 msgid "   Logical"
 msgstr "   Логический"
 
-#: fdisk/cfdisk.c:2089 fdisk/fdisk.c:1555 fdisk/fdisk.c:1876
+#: fdisk/cfdisk.c:2089 fdisk/fdisk.c:1716 fdisk/fdisk.c:2050
 #: fdisk/fdisksgilabel.c:227 fdisk/fdisksunlabel.c:621 fdisk/sfdisk.c:638
 msgid "Unknown"
 msgstr "Неизвестный"
@@ -2543,9 +2543,9 @@ msgstr ""
 "\n"
 "Метка BSD для устройства: %s\n"
 
-#: fdisk/fdiskbsdlabel.c:128 fdisk/fdisk.c:386 fdisk/fdisk.c:405
-#: fdisk/fdisk.c:423 fdisk/fdisk.c:430 fdisk/fdisk.c:453 fdisk/fdisk.c:471
-#: fdisk/fdisk.c:487 fdisk/fdisk.c:503
+#: fdisk/fdiskbsdlabel.c:128 fdisk/fdisk.c:390 fdisk/fdisk.c:409
+#: fdisk/fdisk.c:427 fdisk/fdisk.c:434 fdisk/fdisk.c:457 fdisk/fdisk.c:475
+#: fdisk/fdisk.c:491 fdisk/fdisk.c:507
 msgid "Command action"
 msgstr "Действие команды"
 
@@ -2565,9 +2565,9 @@ msgstr "   i   установка bootstrap"
 msgid "   l   list known filesystem types"
 msgstr "   l   список типов известных файловых систем"
 
-#: fdisk/fdiskbsdlabel.c:133 fdisk/fdisk.c:392 fdisk/fdisk.c:411
-#: fdisk/fdisk.c:424 fdisk/fdisk.c:436 fdisk/fdisk.c:461 fdisk/fdisk.c:478
-#: fdisk/fdisk.c:494 fdisk/fdisk.c:512
+#: fdisk/fdiskbsdlabel.c:133 fdisk/fdisk.c:396 fdisk/fdisk.c:415
+#: fdisk/fdisk.c:428 fdisk/fdisk.c:440 fdisk/fdisk.c:465 fdisk/fdisk.c:482
+#: fdisk/fdisk.c:498 fdisk/fdisk.c:516
 msgid "   m   print this menu"
 msgstr "   m   вывод этого меню"
 
@@ -2579,14 +2579,14 @@ msgstr "   n   добавление нового раздела BSD"
 msgid "   p   print BSD partition table"
 msgstr "   p   вывод таблицы разделов BSD"
 
-#: fdisk/fdiskbsdlabel.c:136 fdisk/fdisk.c:396 fdisk/fdisk.c:415
-#: fdisk/fdisk.c:426 fdisk/fdisk.c:440 fdisk/fdisk.c:463 fdisk/fdisk.c:480
-#: fdisk/fdisk.c:496 fdisk/fdisk.c:514
+#: fdisk/fdiskbsdlabel.c:136 fdisk/fdisk.c:400 fdisk/fdisk.c:419
+#: fdisk/fdisk.c:430 fdisk/fdisk.c:444 fdisk/fdisk.c:467 fdisk/fdisk.c:484
+#: fdisk/fdisk.c:500 fdisk/fdisk.c:518
 msgid "   q   quit without saving changes"
 msgstr "   q   выход без сохранения изменений"
 
-#: fdisk/fdiskbsdlabel.c:137 fdisk/fdisk.c:464 fdisk/fdisk.c:481
-#: fdisk/fdisk.c:497 fdisk/fdisk.c:515
+#: fdisk/fdiskbsdlabel.c:137 fdisk/fdisk.c:468 fdisk/fdisk.c:485
+#: fdisk/fdisk.c:501 fdisk/fdisk.c:519
 msgid "   r   return to main menu"
 msgstr "   r   возврат в главное меню"
 
@@ -2629,7 +2629,7 @@ msgstr "На %s нет раздела *BSD.\n"
 msgid "BSD disklabel command (m for help): "
 msgstr "Команда метки диска BSD (m для справки): "
 
-#: fdisk/fdiskbsdlabel.c:283 fdisk/fdisk.c:2073 fdisk/fdisksgilabel.c:638
+#: fdisk/fdiskbsdlabel.c:283 fdisk/fdisk.c:2272 fdisk/fdisksgilabel.c:638
 #: fdisk/fdisksunlabel.c:431
 #, c-format
 msgid "First %s"
@@ -2780,7 +2780,7 @@ msgstr "секторы/дорожка"
 msgid "tracks/cylinder"
 msgstr "дорожки/цилиндр"
 
-#: fdisk/fdiskbsdlabel.c:469 fdisk/fdisk.c:648 fdisk/fdisk.c:1378
+#: fdisk/fdiskbsdlabel.c:469 fdisk/fdisk.c:725 fdisk/fdisk.c:1541
 #: fdisk/sfdisk.c:930
 msgid "cylinders"
 msgstr "цилиндры"
@@ -2838,7 +2838,7 @@ msgstr "Bootstrap установлен на %s.\n"
 msgid "Partition (a-%c): "
 msgstr "Раздел (a-%c): "
 
-#: fdisk/fdiskbsdlabel.c:617 fdisk/fdisk.c:2220
+#: fdisk/fdiskbsdlabel.c:617 fdisk/fdisk.c:2436
 #, c-format
 msgid "The maximum number of partitions has been created\n"
 msgstr "Было создано максимально возможное количество разделов\n"
@@ -2862,7 +2862,7 @@ msgstr ""
 "\n"
 "Синхронизируются диски.\n"
 
-#: fdisk/fdisk.c:244
+#: fdisk/fdisk.c:248
 msgid ""
 "Usage: fdisk [-b SSZ] [-u] DISK     Change partition table\n"
 "       fdisk -l [-b SSZ] [-u] DISK  List partition table(s)\n"
@@ -2882,7 +2882,7 @@ msgstr ""
 "-u: определяет Начало и Конец в единицах сектора (вместо цилиндра)\n"
 "-b 2048: (для некоторых MO-дисков) использование 2048-байтовых секторов\n"
 
-#: fdisk/fdisk.c:256
+#: fdisk/fdisk.c:260
 msgid ""
 "Usage: fdisk [-l] [-b SSZ] [-u] device\n"
 "E.g.: fdisk /dev/hda  (for the first IDE disk)\n"
@@ -2898,189 +2898,189 @@ msgstr ""
 "  или: fdisk /dev/rd/c0d0  или: fdisk /dev/ida/c0d0  (для RAID-устройств)\n"
 "  ...\n"
 
-#: fdisk/fdisk.c:265
+#: fdisk/fdisk.c:269
 #, c-format
 msgid "Unable to open %s\n"
 msgstr "Невозможно открыть %s\n"
 
-#: fdisk/fdisk.c:269
+#: fdisk/fdisk.c:273
 #, c-format
 msgid "Unable to read %s\n"
 msgstr "Невозможно прочитать %s\n"
 
-#: fdisk/fdisk.c:273
+#: fdisk/fdisk.c:277
 #, c-format
 msgid "Unable to seek on %s\n"
 msgstr "Невозможно найти на %s\n"
 
-#: fdisk/fdisk.c:277
+#: fdisk/fdisk.c:281
 #, c-format
 msgid "Unable to write %s\n"
 msgstr "Невозможно записать %s\n"
 
-#: fdisk/fdisk.c:281
+#: fdisk/fdisk.c:285
 #, c-format
 msgid "BLKGETSIZE ioctl failed on %s\n"
 msgstr "BLKGETSIZE ioctl завершился неудачей на %s\n"
 
-#: fdisk/fdisk.c:285
+#: fdisk/fdisk.c:289
 msgid "Unable to allocate any more memory\n"
 msgstr "Невозможно выделить еще памяти\n"
 
-#: fdisk/fdisk.c:288
+#: fdisk/fdisk.c:292
 msgid "Fatal error\n"
 msgstr "Неисправимая ошибка\n"
 
-#: fdisk/fdisk.c:387
+#: fdisk/fdisk.c:391
 msgid "   a   toggle a read only flag"
 msgstr "   a   переключение флага загрузки"
 
-#: fdisk/fdisk.c:388 fdisk/fdisk.c:432
+#: fdisk/fdisk.c:392 fdisk/fdisk.c:436
 msgid "   b   edit bsd disklabel"
 msgstr "   b   редактирование метки диска bsd"
 
-#: fdisk/fdisk.c:389
+#: fdisk/fdisk.c:393
 msgid "   c   toggle the mountable flag"
 msgstr "   c   переключение флага монтирования"
 
-#: fdisk/fdisk.c:390 fdisk/fdisk.c:409 fdisk/fdisk.c:434
+#: fdisk/fdisk.c:394 fdisk/fdisk.c:413 fdisk/fdisk.c:438
 msgid "   d   delete a partition"
 msgstr "   d   удаление раздела"
 
-#: fdisk/fdisk.c:391 fdisk/fdisk.c:410 fdisk/fdisk.c:435
+#: fdisk/fdisk.c:395 fdisk/fdisk.c:414 fdisk/fdisk.c:439
 msgid "   l   list known partition types"
 msgstr "   l   список известных типов файловых систем"
 
-#: fdisk/fdisk.c:393 fdisk/fdisk.c:412 fdisk/fdisk.c:437
+#: fdisk/fdisk.c:397 fdisk/fdisk.c:416 fdisk/fdisk.c:441
 msgid "   n   add a new partition"
 msgstr "   n   добавление нового раздела"
 
-#: fdisk/fdisk.c:394 fdisk/fdisk.c:413 fdisk/fdisk.c:425 fdisk/fdisk.c:438
+#: fdisk/fdisk.c:398 fdisk/fdisk.c:417 fdisk/fdisk.c:429 fdisk/fdisk.c:442
 msgid "   o   create a new empty DOS partition table"
 msgstr "   o   создание новой пустой таблицы разделов DOS"
 
-#: fdisk/fdisk.c:395 fdisk/fdisk.c:414 fdisk/fdisk.c:439 fdisk/fdisk.c:462
-#: fdisk/fdisk.c:479 fdisk/fdisk.c:495 fdisk/fdisk.c:513
+#: fdisk/fdisk.c:399 fdisk/fdisk.c:418 fdisk/fdisk.c:443 fdisk/fdisk.c:466
+#: fdisk/fdisk.c:483 fdisk/fdisk.c:499 fdisk/fdisk.c:517
 msgid "   p   print the partition table"
 msgstr "   p   вывод таблицы разделов"
 
-#: fdisk/fdisk.c:397 fdisk/fdisk.c:416 fdisk/fdisk.c:427 fdisk/fdisk.c:441
+#: fdisk/fdisk.c:401 fdisk/fdisk.c:420 fdisk/fdisk.c:431 fdisk/fdisk.c:445
 msgid "   s   create a new empty Sun disklabel"
 msgstr "   s   создание новой чистой метки диска Sun"
 
-#: fdisk/fdisk.c:398 fdisk/fdisk.c:417 fdisk/fdisk.c:442
+#: fdisk/fdisk.c:402 fdisk/fdisk.c:421 fdisk/fdisk.c:446
 msgid "   t   change a partition's system id"
 msgstr "   t   изменение id системы раздела"
 
-#: fdisk/fdisk.c:399 fdisk/fdisk.c:418 fdisk/fdisk.c:443
+#: fdisk/fdisk.c:403 fdisk/fdisk.c:422 fdisk/fdisk.c:447
 msgid "   u   change display/entry units"
 msgstr "   u   изменение единиц измерения экрана/содержимого"
 
-#: fdisk/fdisk.c:400 fdisk/fdisk.c:419 fdisk/fdisk.c:444 fdisk/fdisk.c:466
-#: fdisk/fdisk.c:483 fdisk/fdisk.c:499 fdisk/fdisk.c:517
+#: fdisk/fdisk.c:404 fdisk/fdisk.c:423 fdisk/fdisk.c:448 fdisk/fdisk.c:470
+#: fdisk/fdisk.c:487 fdisk/fdisk.c:503 fdisk/fdisk.c:521
 msgid "   v   verify the partition table"
 msgstr "   v   проверка таблицы разделов"
 
-#: fdisk/fdisk.c:401 fdisk/fdisk.c:420 fdisk/fdisk.c:445 fdisk/fdisk.c:467
-#: fdisk/fdisk.c:484 fdisk/fdisk.c:500 fdisk/fdisk.c:518
+#: fdisk/fdisk.c:405 fdisk/fdisk.c:424 fdisk/fdisk.c:449 fdisk/fdisk.c:471
+#: fdisk/fdisk.c:488 fdisk/fdisk.c:504 fdisk/fdisk.c:522
 msgid "   w   write table to disk and exit"
 msgstr "   w   запись таблицы разделов на диск и выход"
 
-#: fdisk/fdisk.c:402 fdisk/fdisk.c:446
+#: fdisk/fdisk.c:406 fdisk/fdisk.c:450
 msgid "   x   extra functionality (experts only)"
 msgstr "   x   дополнительная функциональность (только для экспертов)"
 
-#: fdisk/fdisk.c:406
+#: fdisk/fdisk.c:410
 msgid "   a   select bootable partition"
 msgstr "   a   выбор загрузочного раздела"
 
-#: fdisk/fdisk.c:407
+#: fdisk/fdisk.c:411
 msgid "   b   edit bootfile entry"
 msgstr "   b   редактирование содержимого загрузочного файла"
 
-#: fdisk/fdisk.c:408
+#: fdisk/fdisk.c:412
 msgid "   c   select sgi swap partition"
 msgstr "   c   выбор раздела для свопинга sgi"
 
-#: fdisk/fdisk.c:431
+#: fdisk/fdisk.c:435
 msgid "   a   toggle a bootable flag"
 msgstr "   a   переключение флага загрузки"
 
-#: fdisk/fdisk.c:433
+#: fdisk/fdisk.c:437
 msgid "   c   toggle the dos compatibility flag"
 msgstr "   c   переключение флага dos-совместимости"
 
-#: fdisk/fdisk.c:454
+#: fdisk/fdisk.c:458
 msgid "   a   change number of alternate cylinders"
 msgstr "   a   изменение количества альтернативных цилиндров"
 
-#: fdisk/fdisk.c:455 fdisk/fdisk.c:473 fdisk/fdisk.c:489 fdisk/fdisk.c:505
+#: fdisk/fdisk.c:459 fdisk/fdisk.c:477 fdisk/fdisk.c:493 fdisk/fdisk.c:509
 msgid "   c   change number of cylinders"
 msgstr "   c   изменение количества цилиндров"
 
-#: fdisk/fdisk.c:456 fdisk/fdisk.c:474 fdisk/fdisk.c:490 fdisk/fdisk.c:506
+#: fdisk/fdisk.c:460 fdisk/fdisk.c:478 fdisk/fdisk.c:494 fdisk/fdisk.c:510
 msgid "   d   print the raw data in the partition table"
 msgstr "   d   вывод сырых данных в таблице разделов"
 
-#: fdisk/fdisk.c:457
+#: fdisk/fdisk.c:461
 msgid "   e   change number of extra sectors per cylinder"
 msgstr "   e   изменение количества дополнительных секторов на цилиндр"
 
-#: fdisk/fdisk.c:458 fdisk/fdisk.c:477 fdisk/fdisk.c:493 fdisk/fdisk.c:510
+#: fdisk/fdisk.c:462 fdisk/fdisk.c:481 fdisk/fdisk.c:497 fdisk/fdisk.c:514
 msgid "   h   change number of heads"
 msgstr "   h   изменение количества головок"
 
-#: fdisk/fdisk.c:459
+#: fdisk/fdisk.c:463
 msgid "   i   change interleave factor"
 msgstr "   i   изменение коэффициента чередования"
 
-#: fdisk/fdisk.c:460
+#: fdisk/fdisk.c:464
 msgid "   o   change rotation speed (rpm)"
 msgstr "   o   изменение скорости вращения (об/мин)"
 
-#: fdisk/fdisk.c:465 fdisk/fdisk.c:482 fdisk/fdisk.c:498 fdisk/fdisk.c:516
+#: fdisk/fdisk.c:469 fdisk/fdisk.c:486 fdisk/fdisk.c:502 fdisk/fdisk.c:520
 msgid "   s   change number of sectors/track"
 msgstr "   s   изменение количества секторов на дорожку"
 
-#: fdisk/fdisk.c:468
+#: fdisk/fdisk.c:472
 msgid "   y   change number of physical cylinders"
 msgstr "   y   изменение количества физических цилиндров"
 
-#: fdisk/fdisk.c:472 fdisk/fdisk.c:488 fdisk/fdisk.c:504
+#: fdisk/fdisk.c:476 fdisk/fdisk.c:492 fdisk/fdisk.c:508
 msgid "   b   move beginning of data in a partition"
 msgstr "   b   перемещение начала данных раздела"
 
-#: fdisk/fdisk.c:475 fdisk/fdisk.c:491 fdisk/fdisk.c:507
+#: fdisk/fdisk.c:479 fdisk/fdisk.c:495 fdisk/fdisk.c:511
 msgid "   e   list extended partitions"
 msgstr "   e   список расширенных разделов"
 
-#: fdisk/fdisk.c:476 fdisk/fdisk.c:492 fdisk/fdisk.c:509
+#: fdisk/fdisk.c:480 fdisk/fdisk.c:496 fdisk/fdisk.c:513
 msgid "   g   create an IRIX (SGI) partition table"
 msgstr "   g   создание таблицы разделов IRIX (SGI)"
 
-#: fdisk/fdisk.c:508
+#: fdisk/fdisk.c:512
 msgid "   f   fix partition order"
 msgstr "   f   закрепление порядка разделов"
 
-#: fdisk/fdisk.c:511
+#: fdisk/fdisk.c:515
 #, fuzzy
 msgid "   i   change the disk identifier"
 msgstr "   u   изменение единиц измерения экрана/содержимого"
 
-#: fdisk/fdisk.c:627
+#: fdisk/fdisk.c:631
 #, c-format
 msgid "You must set"
 msgstr "Вы должны установить"
 
-#: fdisk/fdisk.c:644
+#: fdisk/fdisk.c:721
 msgid "heads"
 msgstr "головки"
 
-#: fdisk/fdisk.c:646 fdisk/fdisk.c:1378 fdisk/sfdisk.c:930
+#: fdisk/fdisk.c:723 fdisk/fdisk.c:1541 fdisk/sfdisk.c:930
 msgid "sectors"
 msgstr "секторы"
 
-#: fdisk/fdisk.c:652
+#: fdisk/fdisk.c:729
 #, c-format
 msgid ""
 "%s%s.\n"
@@ -3089,11 +3089,11 @@ msgstr ""
 "%s%s.\n"
 "Вы можете сделать это из меню дополнительных функций.\n"
 
-#: fdisk/fdisk.c:653
+#: fdisk/fdisk.c:730
 msgid " and "
 msgstr " и "
 
-#: fdisk/fdisk.c:670
+#: fdisk/fdisk.c:747
 #, c-format
 msgid ""
 "\n"
@@ -3112,7 +3112,7 @@ msgstr ""
 "2) загрузкой и программами разметки из других ОС\n"
 "   (напр., DOS FDISK, OS/2 FDISK)\n"
 
-#: fdisk/fdisk.c:683
+#: fdisk/fdisk.c:763
 #, c-format
 msgid ""
 "\n"
@@ -3123,12 +3123,38 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/fdisk.c:708
+#: fdisk/fdisk.c:780
+#, c-format
+msgid ""
+"\n"
+"The device presents a logical sector size that is smaller than\n"
+"the physical sector size. Aligning to a physical sector boundary\n"
+"is recommended, or performance may be impacted.\n"
+"\n"
+msgstr ""
+
+#: fdisk/fdisk.c:792
+#, c-format
+msgid ""
+"WARNING: The device does not provide compensation (alignment_offset)\n"
+"for DOS-compatible partitioning, but DOS-compatible mode is enabled.\n"
+"Use command 'c' to switch-off DOS mode.\n"
+"\n"
+msgstr ""
+
+#: fdisk/fdisk.c:798
+#, c-format
+msgid ""
+"It's recommended to change display units to sectors (command 'u').\n"
+"\n"
+msgstr ""
+
+#: fdisk/fdisk.c:815
 #, c-format
 msgid "Bad offset in primary extended partition\n"
 msgstr "Неверное смещение в основном расширенном разделе\n"
 
-#: fdisk/fdisk.c:722
+#: fdisk/fdisk.c:829
 #, c-format
 msgid ""
 "Warning: omitting partitions after #%d.\n"
@@ -3137,34 +3163,34 @@ msgstr ""
 "Предупреждение: пропускаются разделы после #%d.\n"
 "Они будут удалены, если вы сохраните эту таблицу разделов.\n"
 
-#: fdisk/fdisk.c:741
+#: fdisk/fdisk.c:848
 #, c-format
 msgid "Warning: extra link pointer in partition table %d\n"
 msgstr ""
 "Предупреждение: указатель на дополнительную ссылку в таблице разделов %d\n"
 
-#: fdisk/fdisk.c:749
+#: fdisk/fdisk.c:856
 #, c-format
 msgid "Warning: ignoring extra data in partition table %d\n"
 msgstr ""
 "Предупреждение: игнорируются дополнительные данные в таблице разделов %d\n"
 
-#: fdisk/fdisk.c:782
+#: fdisk/fdisk.c:889
 #, fuzzy, c-format
 msgid "omitting empty partition (%d)\n"
 msgstr "Предупреждение: пустой раздел\n"
 
-#: fdisk/fdisk.c:801
+#: fdisk/fdisk.c:908
 #, c-format
 msgid "Disk identifier: 0x%08x\n"
 msgstr ""
 
-#: fdisk/fdisk.c:810
+#: fdisk/fdisk.c:917
 #, c-format
 msgid "New disk identifier (current 0x%08x): "
 msgstr ""
 
-#: fdisk/fdisk.c:829
+#: fdisk/fdisk.c:936
 #, fuzzy, c-format
 msgid ""
 "Building a new DOS disklabel with disk identifier 0x%08x.\n"
@@ -3178,17 +3204,26 @@ msgstr ""
 "восстановить.\n"
 "\n"
 
-#: fdisk/fdisk.c:861
+#: fdisk/fdisk.c:987
 #, c-format
 msgid "Note: sector size is %d (not %d)\n"
 msgstr "Примечание: размер сектора - %d (не %d)\n"
 
-#: fdisk/fdisk.c:1011
+#: fdisk/fdisk.c:1051
+#, c-format
+msgid ""
+"\n"
+"WARNING: the device provides alignment_offset, but the offset does not \n"
+"match with device geometry.\n"
+"\n"
+msgstr ""
+
+#: fdisk/fdisk.c:1162
 #, c-format
 msgid "You will not be able to write the partition table.\n"
 msgstr "Вы будете не в состоянии записать таблицу разделов.\n"
 
-#: fdisk/fdisk.c:1043
+#: fdisk/fdisk.c:1194
 #, c-format
 msgid ""
 "This disk has both DOS and BSD magic.\n"
@@ -3197,7 +3232,7 @@ msgstr ""
 "На этом диске имеются мэджики DOS и BSD.\n"
 "Задайте команду  'b' для перехода в режим BSD.\n"
 
-#: fdisk/fdisk.c:1053
+#: fdisk/fdisk.c:1204
 #, c-format
 msgid ""
 "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
@@ -3206,17 +3241,17 @@ msgstr ""
 "Устройство не содержит ни верной таблицы разделов DOS, ни метки диска Sun, "
 "SGI или OSF\n"
 
-#: fdisk/fdisk.c:1070
+#: fdisk/fdisk.c:1221
 #, c-format
 msgid "Internal error\n"
 msgstr "Внутренняя ошибка\n"
 
-#: fdisk/fdisk.c:1083
+#: fdisk/fdisk.c:1231
 #, c-format
 msgid "Ignoring extra extended partition %d\n"
 msgstr "Игнорируется дополнительный расширенный раздел %d\n"
 
-#: fdisk/fdisk.c:1095
+#: fdisk/fdisk.c:1243
 #, c-format
 msgid ""
 "Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
@@ -3225,7 +3260,7 @@ msgstr ""
 "Предупреждение: неверный флаг 0x%04x таблицы разделов %d будет исправлен "
 "записью\n"
 
-#: fdisk/fdisk.c:1117
+#: fdisk/fdisk.c:1270
 #, c-format
 msgid ""
 "\n"
@@ -3234,95 +3269,95 @@ msgstr ""
 "\n"
 "трижды получен EOF - завершение работы...\n"
 
-#: fdisk/fdisk.c:1156
+#: fdisk/fdisk.c:1309
 msgid "Hex code (type L to list codes): "
 msgstr "Шестнадцатеричный код (введите L для получения списка кодов): "
 
-#: fdisk/fdisk.c:1196
+#: fdisk/fdisk.c:1342
 #, c-format
 msgid "%s (%u-%u, default %u): "
 msgstr "%s (%u-%u, по умолчанию %u): "
 
-#: fdisk/fdisk.c:1263
+#: fdisk/fdisk.c:1409
 #, c-format
 msgid "Unsupported suffix: '%s'.\n"
 msgstr ""
 
-#: fdisk/fdisk.c:1264
+#: fdisk/fdisk.c:1410
 #, c-format
 msgid ""
 "Supported: 10^N: KB (KiloByte), MB (MegaByte), GB (GigaByte)\n"
 "            2^N: K  (KibiByte), M  (MebiByte), G  (GibiByte)\n"
 msgstr ""
 
-#: fdisk/fdisk.c:1290
+#: fdisk/fdisk.c:1438
 #, c-format
 msgid "Using default value %u\n"
 msgstr "Используется значение по умолчанию %u\n"
 
-#: fdisk/fdisk.c:1294
+#: fdisk/fdisk.c:1442
 #, c-format
 msgid "Value out of range.\n"
 msgstr "Значение за пределами диапазона.\n"
 
-#: fdisk/fdisk.c:1304
+#: fdisk/fdisk.c:1467
 msgid "Partition number"
 msgstr "Номер раздела"
 
-#: fdisk/fdisk.c:1315
+#: fdisk/fdisk.c:1478
 #, c-format
 msgid "Warning: partition %d has empty type\n"
 msgstr "Предупреждение: раздел %d имеет пустой тип\n"
 
-#: fdisk/fdisk.c:1337 fdisk/fdisk.c:1363
+#: fdisk/fdisk.c:1500 fdisk/fdisk.c:1526
 #, c-format
 msgid "Selected partition %d\n"
 msgstr "Выбранный раздел %d\n"
 
-#: fdisk/fdisk.c:1340
+#: fdisk/fdisk.c:1503
 #, c-format
 msgid "No partition is defined yet!\n"
 msgstr "Разделы еще не определены!\n"
 
-#: fdisk/fdisk.c:1366
+#: fdisk/fdisk.c:1529
 #, c-format
 msgid "All primary partitions have been defined already!\n"
 msgstr "Все основные разделы уже были определены!\n"
 
-#: fdisk/fdisk.c:1376
+#: fdisk/fdisk.c:1539
 msgid "cylinder"
 msgstr "цилиндр"
 
-#: fdisk/fdisk.c:1376
+#: fdisk/fdisk.c:1539
 msgid "sector"
 msgstr "сектор"
 
-#: fdisk/fdisk.c:1385
+#: fdisk/fdisk.c:1548
 #, c-format
 msgid "Changing display/entry units to %s\n"
 msgstr "Изменение единиц измерения экрана/содержимого на %s\n"
 
-#: fdisk/fdisk.c:1396
+#: fdisk/fdisk.c:1559
 #, c-format
 msgid "WARNING: Partition %d is an extended partition\n"
 msgstr "ПРЕДУПРЕЖДЕНИЕ: Раздел %d не является расширенным разделом\n"
 
-#: fdisk/fdisk.c:1407
+#: fdisk/fdisk.c:1569
 #, c-format
 msgid "DOS Compatibility flag is set\n"
 msgstr "Флаг DOS-совместимости установлен\n"
 
-#: fdisk/fdisk.c:1411
+#: fdisk/fdisk.c:1571
 #, c-format
 msgid "DOS Compatibility flag is not set\n"
 msgstr "Флаг DOS-совместимости не установлен\n"
 
-#: fdisk/fdisk.c:1511
+#: fdisk/fdisk.c:1672
 #, c-format
 msgid "Partition %d does not exist yet!\n"
 msgstr "Раздел %d еще не существует!\n"
 
-#: fdisk/fdisk.c:1516
+#: fdisk/fdisk.c:1677
 #, c-format
 msgid ""
 "Type 0 means free space to many systems\n"
@@ -3336,7 +3371,7 @@ msgstr ""
 "неразумно. Вы можете удалить раздел,\n"
 "используя команду `d'.\n"
 
-#: fdisk/fdisk.c:1525
+#: fdisk/fdisk.c:1686
 #, c-format
 msgid ""
 "You cannot change a partition into an extended one or vice versa\n"
@@ -3345,7 +3380,7 @@ msgstr ""
 "Вы не можете изменить раздел на расширенный или наоборот\n"
 "Сначала удалите его.\n"
 
-#: fdisk/fdisk.c:1534
+#: fdisk/fdisk.c:1695
 #, c-format
 msgid ""
 "Consider leaving partition 3 as Whole disk (5),\n"
@@ -3356,7 +3391,7 @@ msgstr ""
 "как того ожидает SunOS/Solaris, и который годится даже для Linux.\n"
 "\n"
 
-#: fdisk/fdisk.c:1540
+#: fdisk/fdisk.c:1701
 #, fuzzy, c-format
 msgid ""
 "Consider leaving partition 9 as volume header (0),\n"
@@ -3367,57 +3402,62 @@ msgstr ""
 "а раздел 11 в виде целого тома (6), как того ожидает IRIX.\n"
 "\n"
 
-#: fdisk/fdisk.c:1557
+#: fdisk/fdisk.c:1718
 #, c-format
 msgid "Changed system type of partition %d to %x (%s)\n"
 msgstr "Системный тип раздела %d изменен на %x (%s)\n"
 
-#: fdisk/fdisk.c:1560
+#: fdisk/fdisk.c:1721
 #, fuzzy, c-format
 msgid "System type of partition %d is unchanged: %x (%s)\n"
 msgstr "Системный тип раздела %d изменен на %x (%s)\n"
 
-#: fdisk/fdisk.c:1612
+#: fdisk/fdisk.c:1773
 #, c-format
 msgid "Partition %d has different physical/logical beginnings (non-Linux?):\n"
 msgstr "Раздел %d имеет различные физические/логические начала (не-Linux?):\n"
 
-#: fdisk/fdisk.c:1614 fdisk/fdisk.c:1622 fdisk/fdisk.c:1631 fdisk/fdisk.c:1641
+#: fdisk/fdisk.c:1775 fdisk/fdisk.c:1783 fdisk/fdisk.c:1792 fdisk/fdisk.c:1802
 #, c-format
 msgid "     phys=(%d, %d, %d) "
 msgstr "     физ=(%d, %d, %d) "
 
-#: fdisk/fdisk.c:1615 fdisk/fdisk.c:1623
+#: fdisk/fdisk.c:1776 fdisk/fdisk.c:1784
 #, c-format
 msgid "logical=(%d, %d, %d)\n"
 msgstr "логич=(%d, %d, %d)\n"
 
-#: fdisk/fdisk.c:1620
+#: fdisk/fdisk.c:1781
 #, c-format
 msgid "Partition %d has different physical/logical endings:\n"
 msgstr "Раздел %d имеет различные физические/логические окончания:\n"
 
-#: fdisk/fdisk.c:1629
+#: fdisk/fdisk.c:1790
 #, c-format
 msgid "Partition %i does not start on cylinder boundary:\n"
 msgstr "Раздел %i начинается не на границе цилиндра:\n"
 
-#: fdisk/fdisk.c:1632
+#: fdisk/fdisk.c:1793
 #, c-format
 msgid "should be (%d, %d, 1)\n"
 msgstr "должен быть (%d, %d, 1)\n"
 
-#: fdisk/fdisk.c:1638
+#: fdisk/fdisk.c:1799
 #, c-format
 msgid "Partition %i does not end on cylinder boundary.\n"
 msgstr "Раздел %i не заканчивается на границе цилиндра.\n"
 
-#: fdisk/fdisk.c:1642
+#: fdisk/fdisk.c:1803
 #, c-format
 msgid "should be (%d, %d, %d)\n"
 msgstr "должен быть (%d, %d, %d)\n"
 
-#: fdisk/fdisk.c:1654
+#: fdisk/fdisk.c:1813
+#, fuzzy, c-format
+msgid "Partition %i does not start on physical block boundary.\n"
+msgstr "Раздел %i начинается не на границе цилиндра:\n"
+
+#: fdisk/fdisk.c:1823
 #, c-format
 msgid ""
 "\n"
@@ -3426,7 +3466,7 @@ msgstr ""
 "\n"
 "Диск %s: %ld МБ, %lld байт\n"
 
-#: fdisk/fdisk.c:1658
+#: fdisk/fdisk.c:1827
 #, c-format
 msgid ""
 "\n"
@@ -3435,24 +3475,34 @@ msgstr ""
 "\n"
 "Диск %s: %ld.%ld ГБ, %lld байт\n"
 
-#: fdisk/fdisk.c:1661
+#: fdisk/fdisk.c:1830
 #, fuzzy, c-format
 msgid "%d heads, %llu sectors/track, %d cylinders"
 msgstr "%d головок, %d секторов/дорожку, %d цилиндров"
 
-#: fdisk/fdisk.c:1664
+#: fdisk/fdisk.c:1833
 #, c-format
 msgid ", total %llu sectors"
 msgstr ", всего %llu секторов"
 
-#: fdisk/fdisk.c:1667
+#: fdisk/fdisk.c:1836
 #, fuzzy, c-format
 msgid "Units = %s of %d * %d = %d bytes\n"
 msgstr ""
 "Единицы = %s по %d * %d = %d байт\n"
 "\n"
 
-#: fdisk/fdisk.c:1778
+#: fdisk/fdisk.c:1840
+#, c-format
+msgid "Sector size (logical/physical): %u bytes / %lu bytes\n"
+msgstr ""
+
+#: fdisk/fdisk.c:1843
+#, fuzzy, c-format
+msgid "Alignment offset: %lu bytes\n"
+msgstr "неверный размер inode"
+
+#: fdisk/fdisk.c:1952
 #, c-format
 msgid ""
 "Nothing to do. Ordering is correct already.\n"
@@ -3461,14 +3511,14 @@ msgstr ""
 "Нечего выполнять. Очередность уже в порядке.\n"
 "\n"
 
-#: fdisk/fdisk.c:1806
+#: fdisk/fdisk.c:1980
 #, fuzzy, c-format
 msgid "Done.\n"
 msgstr ""
 "Готово\n"
 "\n"
 
-#: fdisk/fdisk.c:1834
+#: fdisk/fdisk.c:2008
 #, c-format
 msgid ""
 "This doesn't look like a partition table\n"
@@ -3479,16 +3529,16 @@ msgstr ""
 "Возможно, вы выбрали неверное устройство.\n"
 "\n"
 
-#: fdisk/fdisk.c:1847
+#: fdisk/fdisk.c:2021
 #, c-format
 msgid "%*s Boot      Start         End      Blocks   Id  System\n"
 msgstr "%*s Загр     Начало       Конец       Блоки   Id  Система\n"
 
-#: fdisk/fdisk.c:1848 fdisk/fdisksgilabel.c:210 fdisk/fdisksunlabel.c:603
+#: fdisk/fdisk.c:2022 fdisk/fdisksgilabel.c:210 fdisk/fdisksunlabel.c:603
 msgid "Device"
 msgstr "Устр-во"
 
-#: fdisk/fdisk.c:1885
+#: fdisk/fdisk.c:2060
 #, c-format
 msgid ""
 "\n"
@@ -3497,7 +3547,7 @@ msgstr ""
 "\n"
 "Пункты таблицы разделов расположены не в дисковом порядке\n"
 
-#: fdisk/fdisk.c:1895
+#: fdisk/fdisk.c:2070
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -3508,89 +3558,89 @@ msgstr ""
 "Диск %s: %d головок, %d секторов, %d цилиндров\n"
 "\n"
 
-#: fdisk/fdisk.c:1897
+#: fdisk/fdisk.c:2072
 #, c-format
 msgid "Nr AF  Hd Sec  Cyl  Hd Sec  Cyl     Start      Size ID\n"
 msgstr "#  AF Гол Сек  Цил Гол Сек  Цил    Начало      Разм ID\n"
 
-#: fdisk/fdisk.c:1943
+#: fdisk/fdisk.c:2120
 #, c-format
 msgid "Warning: partition %d contains sector 0\n"
 msgstr "Предупреждение: раздел %d содержит нулевой сектор\n"
 
-#: fdisk/fdisk.c:1946
+#: fdisk/fdisk.c:2123
 #, c-format
 msgid "Partition %d: head %d greater than maximum %d\n"
 msgstr "Раздел %d: головка %d больше, чем максимум %d\n"
 
-#: fdisk/fdisk.c:1949
+#: fdisk/fdisk.c:2126
 #, fuzzy, c-format
 msgid "Partition %d: sector %d greater than maximum %llu\n"
 msgstr "Раздел %d: сектор %d больше, чем максимум %d\n"
 
-#: fdisk/fdisk.c:1952
+#: fdisk/fdisk.c:2129
 #, c-format
 msgid "Partitions %d: cylinder %d greater than maximum %d\n"
 msgstr "Раздел %d: цилиндр %d больше, чем максимум %d\n"
 
-#: fdisk/fdisk.c:1956
+#: fdisk/fdisk.c:2133
 #, c-format
 msgid "Partition %d: previous sectors %d disagrees with total %d\n"
 msgstr "Раздел %d: предыдущие секторы %d противоречат суммарному значению %d\n"
 
-#: fdisk/fdisk.c:1989
+#: fdisk/fdisk.c:2167
 #, c-format
 msgid "Warning: bad start-of-data in partition %d\n"
 msgstr "Предупреждение: неверное начало данных в разделе %d\n"
 
-#: fdisk/fdisk.c:1997
+#: fdisk/fdisk.c:2175
 #, c-format
 msgid "Warning: partition %d overlaps partition %d.\n"
 msgstr "Предупреждение: раздел %d перекрывает раздел %d.\n"
 
-#: fdisk/fdisk.c:2017
+#: fdisk/fdisk.c:2195
 #, c-format
 msgid "Warning: partition %d is empty\n"
 msgstr "Предупреждение: раздел %d пуст\n"
 
-#: fdisk/fdisk.c:2022
+#: fdisk/fdisk.c:2200
 #, c-format
 msgid "Logical partition %d not entirely in partition %d\n"
 msgstr "Логический раздел %d не находится целиком в разделе %d\n"
 
-#: fdisk/fdisk.c:2028
+#: fdisk/fdisk.c:2206
 #, fuzzy, c-format
 msgid "Total allocated sectors %llu greater than the maximum %llu\n"
 msgstr ""
 "Суммарное количество выделенных секторов %d больше, чем максимум %lld\n"
 
-#: fdisk/fdisk.c:2031
+#: fdisk/fdisk.c:2209
 #, fuzzy, c-format
 msgid "%lld unallocated %d-byte sectors\n"
 msgstr "%lld незанятых секторов\n"
 
-#: fdisk/fdisk.c:2046 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
+#: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
 #, c-format
 msgid "Partition %d is already defined.  Delete it before re-adding it.\n"
 msgstr ""
 "Раздел %d уже определен.  Удалите его перед тем, как снова добавить его.\n"
 
-#: fdisk/fdisk.c:2088
+#: fdisk/fdisk.c:2291
 #, fuzzy, c-format
 msgid "Sector %llu is already allocated\n"
 msgstr "Сектор %d уже выделен\n"
 
-#: fdisk/fdisk.c:2124
+#: fdisk/fdisk.c:2327
 #, c-format
 msgid "No free sectors available\n"
 msgstr "Отсутствуют доступные свободные секторы\n"
 
-#: fdisk/fdisk.c:2133
+#: fdisk/fdisk.c:2338
 #, c-format
 msgid "Last %1$s, +%2$s or +size{K,M,G}"
 msgstr ""
 
-#: fdisk/fdisk.c:2199
+#: fdisk/fdisk.c:2415
 #, c-format
 msgid ""
 "\tSorry - this fdisk cannot handle AIX disk labels.\n"
@@ -3605,7 +3655,7 @@ msgstr ""
 "\tПРЕДУПРЕЖДЕНИЕ: При этом содержимое на\n"
 "\tданном диске будет разрушено.\n"
 
-#: fdisk/fdisk.c:2208
+#: fdisk/fdisk.c:2424
 #, fuzzy, c-format
 msgid ""
 "\tSorry - this fdisk cannot handle Mac disk labels.\n"
@@ -3620,23 +3670,23 @@ msgstr ""
 "\tПРЕДУПРЕЖДЕНИЕ: При этом содержимое на\n"
 "\tданном диске будет разрушено.\n"
 
-#: fdisk/fdisk.c:2228
+#: fdisk/fdisk.c:2444
 #, c-format
 msgid "You must delete some partition and add an extended partition first\n"
 msgstr ""
 "Сначала вы должны удалить некоторые разделы и добавить расширенный раздел\n"
 
-#: fdisk/fdisk.c:2231
+#: fdisk/fdisk.c:2447
 #, c-format
 msgid "All logical partitions are in use\n"
 msgstr "Задействованы все логические разделы\n"
 
-#: fdisk/fdisk.c:2232
+#: fdisk/fdisk.c:2448
 #, c-format
 msgid "Adding a primary partition\n"
 msgstr "Добавляется основной раздел\n"
 
-#: fdisk/fdisk.c:2237
+#: fdisk/fdisk.c:2453
 #, c-format
 msgid ""
 "Command action\n"
@@ -3647,20 +3697,20 @@ msgstr ""
 "   %s\n"
 "   p   основной раздел (1-4)\n"
 
-#: fdisk/fdisk.c:2239
+#: fdisk/fdisk.c:2455
 msgid "l   logical (5 or over)"
 msgstr "l   логический (5 или более)"
 
-#: fdisk/fdisk.c:2239
+#: fdisk/fdisk.c:2455
 msgid "e   extended"
 msgstr "e   расширенный"
 
-#: fdisk/fdisk.c:2258
+#: fdisk/fdisk.c:2474
 #, c-format
 msgid "Invalid partition number for type `%c'\n"
 msgstr "Неверный номер раздела для типа `%c'\n"
 
-#: fdisk/fdisk.c:2294
+#: fdisk/fdisk.c:2510
 #, c-format
 msgid ""
 "The partition table has been altered!\n"
@@ -3669,12 +3719,12 @@ msgstr ""
 "Таблица разделов была изменена!\n"
 "\n"
 
-#: fdisk/fdisk.c:2308
+#: fdisk/fdisk.c:2524
 #, c-format
 msgid "Calling ioctl() to re-read partition table.\n"
 msgstr "Вызывается ioctl() для перечитывания таблицы разделов.\n"
 
-#: fdisk/fdisk.c:2317
+#: fdisk/fdisk.c:2533
 #, fuzzy, c-format
 msgid ""
 "\n"
@@ -3688,7 +3738,7 @@ msgstr ""
 "Ядро все еще использует старую таблицу.\n"
 "Новая таблица будет использована при следующей перезагрузке.\n"
 
-#: fdisk/fdisk.c:2325
+#: fdisk/fdisk.c:2541
 #, c-format
 msgid ""
 "\n"
@@ -3702,7 +3752,7 @@ msgstr ""
 "страницу руководства fdisk для получения\n"
 "дополнительной информации.\n"
 
-#: fdisk/fdisk.c:2331
+#: fdisk/fdisk.c:2547
 #, c-format
 msgid ""
 "\n"
@@ -3711,43 +3761,43 @@ msgstr ""
 "\n"
 "Ошибка закрытия файла\n"
 
-#: fdisk/fdisk.c:2335
+#: fdisk/fdisk.c:2551
 #, c-format
 msgid "Syncing disks.\n"
 msgstr "Синхронизируются диски.\n"
 
-#: fdisk/fdisk.c:2382
+#: fdisk/fdisk.c:2598
 #, c-format
 msgid "Partition %d has no data area\n"
 msgstr "Раздел %d не имеет области с данными\n"
 
-#: fdisk/fdisk.c:2387
+#: fdisk/fdisk.c:2603
 msgid "New beginning of data"
 msgstr "Новое начало данных"
 
-#: fdisk/fdisk.c:2403
+#: fdisk/fdisk.c:2619
 msgid "Expert command (m for help): "
 msgstr "Команды эксперта (m для справки): "
 
-#: fdisk/fdisk.c:2416
+#: fdisk/fdisk.c:2632
 msgid "Number of cylinders"
 msgstr "Количество цилиндров"
 
-#: fdisk/fdisk.c:2443
+#: fdisk/fdisk.c:2659
 msgid "Number of heads"
 msgstr "Количество головок"
 
-#: fdisk/fdisk.c:2470
+#: fdisk/fdisk.c:2686
 msgid "Number of sectors"
 msgstr "Количество секторов"
 
-#: fdisk/fdisk.c:2473
+#: fdisk/fdisk.c:2688
 #, c-format
 msgid "Warning: setting sector offset for DOS compatiblity\n"
 msgstr ""
 "Предупреждение: устанавливается смещение сектора для совместимости с DOS\n"
 
-#: fdisk/fdisk.c:2532
+#: fdisk/fdisk.c:2747
 #, c-format
 msgid ""
 "\n"
@@ -3756,32 +3806,32 @@ msgid ""
 "\n"
 msgstr ""
 
-#: fdisk/fdisk.c:2554
+#: fdisk/fdisk.c:2769
 #, c-format
 msgid "Disk %s doesn't contain a valid partition table\n"
 msgstr "На диске %s отсутствует верная таблица разделов\n"
 
-#: fdisk/fdisk.c:2565
+#: fdisk/fdisk.c:2780
 #, c-format
 msgid "Cannot open %s\n"
 msgstr "Невозможно открыть %s\n"
 
-#: fdisk/fdisk.c:2584 fdisk/sfdisk.c:2603
+#: fdisk/fdisk.c:2799 fdisk/sfdisk.c:2603
 #, c-format
 msgid "cannot open %s\n"
 msgstr "невозможно открыть %s\n"
 
-#: fdisk/fdisk.c:2604
+#: fdisk/fdisk.c:2819
 #, c-format
 msgid "%c: unknown command\n"
 msgstr "%c: неизвестная команда\n"
 
-#: fdisk/fdisk.c:2674
+#: fdisk/fdisk.c:2889
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
 msgstr "Это ядро само находит размер сектора - опция -b проигнорирована\n"
 
-#: fdisk/fdisk.c:2678
+#: fdisk/fdisk.c:2893
 #, c-format
 msgid ""
 "Warning: the -b (set sector size) option should be used with one specified "
@@ -3790,18 +3840,18 @@ msgstr ""
 "Предупреждение: опция -b (установка размера сектора) должна быть "
 "использована с одним указанным устройством\n"
 
-#: fdisk/fdisk.c:2740
+#: fdisk/fdisk.c:2955
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 "Обнаружена метка диска OSF/1 на %s, выполняется переход в режим метки "
 "диска.\n"
 
-#: fdisk/fdisk.c:2750
+#: fdisk/fdisk.c:2965
 msgid "Command (m for help): "
 msgstr "Команда (m для справки): "
 
-#: fdisk/fdisk.c:2766
+#: fdisk/fdisk.c:2981
 #, c-format
 msgid ""
 "\n"
@@ -3810,16 +3860,16 @@ msgstr ""
 "\n"
 "Текущий boot-файл: %s\n"
 
-#: fdisk/fdisk.c:2768
+#: fdisk/fdisk.c:2983
 msgid "Please enter the name of the new boot file: "
 msgstr "Пожалуйста, введите имя нового boot-файла: "
 
-#: fdisk/fdisk.c:2770
+#: fdisk/fdisk.c:2985
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "Boot-файл не изменен\n"
 
-#: fdisk/fdisk.c:2843
+#: fdisk/fdisk.c:3058
 #, c-format
 msgid ""
 "\n"
@@ -7134,11 +7184,11 @@ msgstr ""
 "использование: last [-#] [-f файл] [-t tty] [-h имя_хоста] "
 "[пользователь ...]\n"
 
-#: login-utils/last.c:284
+#: login-utils/last.c:302
 msgid "  still logged in"
 msgstr "  все еще в системе"
 
-#: login-utils/last.c:306
+#: login-utils/last.c:324
 #, c-format
 msgid ""
 "\n"
@@ -7147,15 +7197,15 @@ msgstr ""
 "\n"
 "wtmp начался %s"
 
-#: login-utils/last.c:362 login-utils/last.c:380 login-utils/last.c:431
+#: login-utils/last.c:380 login-utils/last.c:398 login-utils/last.c:449
 msgid "last: malloc failure.\n"
 msgstr "last: malloc завершился неудачей.\n"
 
-#: login-utils/last.c:407
+#: login-utils/last.c:425
 msgid "last: gethostname"
 msgstr "last: gethostname"
 
-#: login-utils/last.c:456
+#: login-utils/last.c:474
 #, c-format
 msgid ""
 "\n"
@@ -7659,7 +7709,7 @@ msgstr ""
 msgid "fork failed\n"
 msgstr "создание дочернего процесса завершилось неудачей\n"
 
-#: login-utils/simpleinit.c:540 text-utils/more.c:1629
+#: login-utils/simpleinit.c:540 text-utils/more.c:1663
 msgid "exec failed\n"
 msgstr "выполнение завершилось неудачей\n"
 
@@ -8945,7 +8995,7 @@ msgstr "mount: невозможно установить скорость: %s"
 msgid "mount: cannot set user id: %s"
 msgstr "mount: невозможно установить скорость: %s"
 
-#: mount/mount.c:705 mount/mount.c:1809
+#: mount/mount.c:705 mount/mount.c:1855
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: невозможно создать дочерний процесс: %s"
@@ -9056,69 +9106,74 @@ msgstr "mount: невозможно открыть %s для установки скорости"
 msgid "mount: cannot set speed: %s"
 msgstr "mount: невозможно установить скорость: %s"
 
-#: mount/mount.c:1279
+#: mount/mount.c:1314
 #, fuzzy, c-format
 msgid "mount: according to mtab, %s is already mounted on %s\n"
 msgstr "mount: согласно mtab, %s уже примонтирован на %s"
 
-#: mount/mount.c:1358
+#: mount/mount.c:1371
+#, fuzzy, c-format
+msgid "mount: warning: %s seems to be mounted read-write.\n"
+msgstr "umount: %s занят - перемонтирован только для чтения\n"
+
+#: mount/mount.c:1404
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: невозможно определить тип файловой системы, и ни одна не была указана"
 
-#: mount/mount.c:1361
+#: mount/mount.c:1407
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: вы должны указать тип файловой системы"
 
-#: mount/mount.c:1364
+#: mount/mount.c:1410
 msgid "mount: mount failed"
 msgstr "mount: монтирование завершилось неудачей"
 
-#: mount/mount.c:1370 mount/mount.c:1407
+#: mount/mount.c:1416 mount/mount.c:1453
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: точка монтирования %s не является каталогом"
 
-#: mount/mount.c:1372
+#: mount/mount.c:1418
 msgid "mount: permission denied"
 msgstr "mount: доступ запрещен"
 
-#: mount/mount.c:1374
+#: mount/mount.c:1420
 msgid "mount: must be superuser to use mount"
 msgstr ""
 "mount: необходимо иметь права суперпользователя для использования mount"
 
-#: mount/mount.c:1378 mount/mount.c:1382
+#: mount/mount.c:1424 mount/mount.c:1428
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s занят"
 
-#: mount/mount.c:1384
+#: mount/mount.c:1430
 msgid "mount: proc already mounted"
 msgstr "mount: proc уже примонтирован"
 
-#: mount/mount.c:1386
+#: mount/mount.c:1432
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s уже примонтирован или %s занят"
 
-#: mount/mount.c:1392
+#: mount/mount.c:1438
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: точка монтирования %s не существует"
 
-#: mount/mount.c:1394
+#: mount/mount.c:1440
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: точка монтирования %s является символической ссылкой в никуда"
 
-#: mount/mount.c:1399
+#: mount/mount.c:1445
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: специальное устройство %s не существует"
 
-#: mount/mount.c:1411
+#: mount/mount.c:1457
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -9127,12 +9182,12 @@ msgstr ""
 "mount: специальное устройство %s не существует\n"
 "       (префикс пути не является каталогом)\n"
 
-#: mount/mount.c:1423
+#: mount/mount.c:1469
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s уже не примонтирован или неверная опция"
 
-#: mount/mount.c:1425
+#: mount/mount.c:1471
 #, fuzzy, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -9141,13 +9196,13 @@ msgstr ""
 "mount: неверный тип ФС, неверная опция, неверный суперблок\n"
 "       на %s, отсутствует кодовая страница или другая ошибка"
 
-#: mount/mount.c:1432
+#: mount/mount.c:1478
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
 msgstr ""
 
-#: mount/mount.c:1441
+#: mount/mount.c:1487
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -9156,7 +9211,7 @@ msgstr ""
 "       используете ide-scsi, и поэтому нужен sr0, sda или\n"
 "       что-нибудь подобное?)"
 
-#: mount/mount.c:1446
+#: mount/mount.c:1492
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -9164,7 +9219,7 @@ msgstr ""
 "       (не пытаетесь лы вы примонтировать расширенный раздел\n"
 "       вместо одного из логических разделов внутри него?)"
 
-#: mount/mount.c:1453
+#: mount/mount.c:1499
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -9173,52 +9228,52 @@ msgstr ""
 "       найдена в syslog - попробуйте dmesg | tail или что-то\n"
 "       в этом роде\n"
 
-#: mount/mount.c:1459
+#: mount/mount.c:1505
 msgid "mount table full"
 msgstr "таблица монтирования заполнена"
 
-#: mount/mount.c:1461
+#: mount/mount.c:1507
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: невозможно прочитать суперблок"
 
-#: mount/mount.c:1467
+#: mount/mount.c:1513
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: неизвестное устройство"
 
-#: mount/mount.c:1472
+#: mount/mount.c:1518
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: неизвестный тип файловой системы '%s'"
 
-#: mount/mount.c:1484
+#: mount/mount.c:1530
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: возможно вы имели в виду %s"
 
-#: mount/mount.c:1487
+#: mount/mount.c:1533
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: может быть вы имели в виду 'iso9660'?"
 
-#: mount/mount.c:1490
+#: mount/mount.c:1536
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: может быть вы имели в виду 'vfat'?"
 
-#: mount/mount.c:1493
+#: mount/mount.c:1539
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s имеет неверный номер устройства или тип ФС %s не поддерживается"
 
-#: mount/mount.c:1501
+#: mount/mount.c:1547
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr ""
 "mount: %s не является блочным устройством, а определение состояния "
 "невозможно?"
 
-#: mount/mount.c:1503
+#: mount/mount.c:1549
 #, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -9227,57 +9282,57 @@ msgstr ""
 "mount: ядро не распознает %s как блочное устройство\n"
 "       (может быть `insmod driver'?)"
 
-#: mount/mount.c:1506
+#: mount/mount.c:1552
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr ""
 "mount: %s не является блочным устройством (может попробовать `-o loop'?)"
 
-#: mount/mount.c:1509
+#: mount/mount.c:1555
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s не является блочным устройством"
 
-#: mount/mount.c:1514
+#: mount/mount.c:1560
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s не является верным блочным устройством"
 
-#: mount/mount.c:1517
+#: mount/mount.c:1563
 msgid "block device "
 msgstr "блочное устройство "
 
-#: mount/mount.c:1519
+#: mount/mount.c:1565
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: невозможно примонтировать %s%s только для чтения"
 
-#: mount/mount.c:1523
+#: mount/mount.c:1569
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s защищен от записи, но явно указан флаг `-w'"
 
-#: mount/mount.c:1527
+#: mount/mount.c:1573
 #, fuzzy, c-format
 msgid "mount: cannot remount %s%s read-write, is write-protected"
 msgstr "mount: невозможно примонтировать %s%s только для чтения"
 
-#: mount/mount.c:1542
+#: mount/mount.c:1588
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s защищен от записи, монтируется только для чтения"
 
-#: mount/mount.c:1552
+#: mount/mount.c:1598
 #, fuzzy, c-format
 msgid "mount: no medium found on %s ...trying again\n"
 msgstr "mount: %s не найден - создается...\n"
 
-#: mount/mount.c:1558
+#: mount/mount.c:1604
 #, fuzzy, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: %s уже примонтирован на %s\n"
 
-#: mount/mount.c:1576
+#: mount/mount.c:1622
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9287,23 +9342,23 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 
-#: mount/mount.c:1655
+#: mount/mount.c:1701
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: не был указан тип - будет подразумеваться nfs из-за двоеточия\n"
 
-#: mount/mount.c:1661
+#: mount/mount.c:1707
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: не был указан тип - будет подразумеваться cifs из-за префикса //\n"
 
-#: mount/mount.c:1756
+#: mount/mount.c:1802
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s уже примонтирован на %s\n"
 
-#: mount/mount.c:1890
+#: mount/mount.c:1936
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9363,24 +9418,24 @@ msgstr ""
 "Другие опции: [-nfFrsvw] [-o опции] [-p passwdfd].\n"
 "Для получения более подробного описания наберите  man 8 mount .\n"
 
-#: mount/mount.c:2215
+#: mount/mount.c:2261
 #, fuzzy, c-format
 msgid "mount: only root can do that (effective UID is %d)"
 msgstr "mount: только root может сделать это"
 
-#: mount/mount.c:2218
+#: mount/mount.c:2264
 msgid "mount: only root can do that"
 msgstr "mount: только root может сделать это"
 
-#: mount/mount.c:2229
+#: mount/mount.c:2275
 msgid "nothing was mounted"
 msgstr "ничего не было примонтировано"
 
-#: mount/mount.c:2247 mount/mount.c:2273
+#: mount/mount.c:2293 mount/mount.c:2319
 msgid "mount: no such partition found"
 msgstr "mount: такой раздел не найден"
 
-#: mount/mount.c:2250
+#: mount/mount.c:2296
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: невозможно найти %s в %s или %s"
@@ -9403,7 +9458,7 @@ msgstr "; остальная часть файла проигнорирована"
 msgid "bug in xstrndup call"
 msgstr "ошибка в вызове xstrndup"
 
-#: mount/sundries.c:224 mount/sundries.c:276 mount/sundries.c:285
+#: mount/sundries.c:224 mount/sundries.c:280 mount/sundries.c:289
 #: mount/xmalloc.c:11
 msgid "not enough memory"
 msgstr "нехватка памяти"
@@ -11502,18 +11557,23 @@ msgstr ""
 "hexdump: [-bcCdovx] [-e строка_формата] [-f файл_формата] [-n длина] [-s "
 "пропуск] [файл ...]\n"
 
-#: text-utils/more.c:256
+#: text-utils/more.c:258
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
 msgstr ""
 "использование: %s [-dflpcsu] [+номер_строки | +/шаблон] имя1 имя2 ...\n"
 
-#: text-utils/more.c:479
+#: text-utils/more.c:290
+#, fuzzy, c-format
+msgid "failed to initialize line buffer\n"
+msgstr "Невозможно выделить буфер.\n"
+
+#: text-utils/more.c:485
 #, c-format
 msgid "%s: unknown option \"-%c\"\n"
 msgstr "%s: неизвестная опция \"-%c\"\n"
 
-#: text-utils/more.c:511
+#: text-utils/more.c:517
 #, c-format
 msgid ""
 "\n"
@@ -11524,7 +11584,7 @@ msgstr ""
 "*** %s: каталог ***\n"
 "\n"
 
-#: text-utils/more.c:555
+#: text-utils/more.c:561
 #, c-format
 msgid ""
 "\n"
@@ -11535,45 +11595,50 @@ msgstr ""
 "******** %s: Не текстовый файл ********\n"
 "\n"
 
-#: text-utils/more.c:658
+#: text-utils/more.c:664
 #, c-format
 msgid "[Use q or Q to quit]"
 msgstr "[Используйте q или or Q для выхода]"
 
-#: text-utils/more.c:750
+#: text-utils/more.c:756
 #, c-format
 msgid "--More--"
 msgstr "--Далее--"
 
-#: text-utils/more.c:752
+#: text-utils/more.c:758
 #, c-format
 msgid "(Next file: %s)"
 msgstr "(Следующий файл: %s)"
 
-#: text-utils/more.c:757
+#: text-utils/more.c:763
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Нажмите пробел для продолжения, 'q' для выхода.]"
 
-#: text-utils/more.c:1172
+#: text-utils/more.c:798
+#, fuzzy
+msgid "out if memory"
+msgstr "нехватка памяти"
+
+#: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
 msgstr "...назад на %d страниц"
 
-#: text-utils/more.c:1174
+#: text-utils/more.c:1208
 msgid "...back 1 page"
 msgstr "...назад на 1 страницу"
 
-#: text-utils/more.c:1217
+#: text-utils/more.c:1251
 msgid "...skipping one line"
 msgstr "...пропускается одна строка"
 
-#: text-utils/more.c:1219
+#: text-utils/more.c:1253
 #, c-format
 msgid "...skipping %d lines"
 msgstr "...пропускается %d строк"
 
-#: text-utils/more.c:1256
+#: text-utils/more.c:1290
 msgid ""
 "\n"
 "***Back***\n"
@@ -11583,7 +11648,7 @@ msgstr ""
 "***Назад***\n"
 "\n"
 
-#: text-utils/more.c:1294
+#: text-utils/more.c:1328
 msgid ""
 "\n"
 "Most commands optionally preceded by integer argument k.  Defaults in "
@@ -11596,7 +11661,7 @@ msgstr ""
 "Звездочка (*) означает, что аргумент становится новым значением по "
 "умолчанию.\n"
 
-#: text-utils/more.c:1301
+#: text-utils/more.c:1335
 msgid ""
 "<space>                 Display next k lines of text [current screen size]\n"
 "z                       Display next k lines of text [current screen size]*\n"
@@ -11642,34 +11707,34 @@ msgstr ""
 ":f                      Отображение имени текущего файла и номера строки\n"
 ".                       Повторение предыдущей команды\n"
 
-#: text-utils/more.c:1370 text-utils/more.c:1375
+#: text-utils/more.c:1404 text-utils/more.c:1409
 #, c-format
 msgid "[Press 'h' for instructions.]"
 msgstr "[Нажмите 'h' для получения инструкций.]"
 
-#: text-utils/more.c:1409
+#: text-utils/more.c:1443
 #, c-format
 msgid "\"%s\" line %d"
 msgstr "\"%s\" строка %d"
 
-#: text-utils/more.c:1411
+#: text-utils/more.c:1445
 #, c-format
 msgid "[Not a file] line %d"
 msgstr "[Не файл] строка %d"
 
-#: text-utils/more.c:1495
+#: text-utils/more.c:1529
 msgid "  Overflow\n"
 msgstr "  Переполнение\n"
 
-#: text-utils/more.c:1542
+#: text-utils/more.c:1576
 msgid "...skipping\n"
 msgstr "...пропускается\n"
 
-#: text-utils/more.c:1571
+#: text-utils/more.c:1605
 msgid "Regular expression botch"
 msgstr "Некорректное регулярное выражение"
 
-#: text-utils/more.c:1579
+#: text-utils/more.c:1613
 msgid ""
 "\n"
 "Pattern not found\n"
@@ -11677,15 +11742,15 @@ msgstr ""
 "\n"
 "Шаблон не найден\n"
 
-#: text-utils/more.c:1582 text-utils/pg.c:1124 text-utils/pg.c:1275
+#: text-utils/more.c:1616 text-utils/pg.c:1124 text-utils/pg.c:1275
 msgid "Pattern not found"
 msgstr "Шаблон не найден"
 
-#: text-utils/more.c:1643
+#: text-utils/more.c:1677
 msgid "can't fork\n"
 msgstr "невозможно создать дочерний процесс\n"
 
-#: text-utils/more.c:1682
+#: text-utils/more.c:1716
 msgid ""
 "\n"
 "...Skipping "
@@ -11693,19 +11758,19 @@ msgstr ""
 "\n"
 "...Пропускается "
 
-#: text-utils/more.c:1686
+#: text-utils/more.c:1720
 msgid "...Skipping to file "
 msgstr "...Пропускается до файла "
 
-#: text-utils/more.c:1688
+#: text-utils/more.c:1722
 msgid "...Skipping back to file "
 msgstr "...Пропускается обратно до файла "
 
-#: text-utils/more.c:1966
+#: text-utils/more.c:2000
 msgid "Line too long"
 msgstr "Строка слишком длинная"
 
-#: text-utils/more.c:2009
+#: text-utils/more.c:2043
 msgid "No previous command to substitute for"
 msgstr "Нет предыдущей команды для замены"
 
