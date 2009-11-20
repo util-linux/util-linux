@@ -160,6 +160,12 @@ main(int argc, char **argv) {
 	exit(0);
 }
 
+static char *utmp_ctime(struct utmp *u)
+{
+	time_t t = (time_t) u->ut_time;
+	return ctime(&t);
+}
+
 /*
  * print_partial_line --
  *	print the first part of each output line according to specified format
@@ -168,7 +174,7 @@ static void
 print_partial_line(struct utmp *bp) {
     char *ct;
 
-    ct = ctime(&bp->ut_time);
+    ct = utmp_ctime(bp);
     printf("%-*.*s  %-*.*s ", nmax, nmax, bp->ut_name, 
 	   lmax, lmax, bp->ut_line);
 
@@ -208,10 +214,22 @@ wtmp(void) {
 	int utl_len;
 	int listnr = 0;
 	int i;
-	
+
 	utmpname(file);
 
-	(void)time(&utmpbuf.ut_time);
+	{
+#if defined(_HAVE_UT_TV)
+		struct timeval tv;
+		gettimeofday(&tv, NULL);
+		utmpbuf.ut_tv.tv_sec = tv.tv_sec;
+		utmpbuf.ut_tv.tv_usec = tv.tv_usec;
+#else
+		time_t t;
+		time(&t);
+		utmpbuf.ut_time = t;
+#endif
+	}
+
 	(void)signal(SIGINT, onintr);
 	(void)signal(SIGQUIT, onintr);
 
@@ -226,7 +244,7 @@ wtmp(void) {
 	listnr = utl_len/sizeof(struct utmp);
 
 	if(listnr) 
-		ct = ctime(&utl[0].ut_time);
+		ct = utmp_ctime(&utl[0]);
 
 	for(i = listnr - 1; i >= 0; i--) {
 		bp = utl+i;
@@ -254,7 +272,7 @@ wtmp(void) {
 		    if (!bp->ut_name[0])
 			(void)strcpy(bp->ut_name, "reboot");
 		    if (want(bp, NO)) {
-			ct = ctime(&bp->ut_time);
+			ct = utmp_ctime(bp);
 			if(bp->ut_type != LOGIN_PROCESS) {
 			    print_partial_line(bp);
 			    putchar('\n');
@@ -452,7 +470,7 @@ static void
 onintr(int signo) {
 	char	*ct;
 
-	ct = ctime(&utmpbuf.ut_time);
+	ct = utmp_ctime(&utmpbuf);
 	printf(_("\ninterrupted %10.10s %5.5s \n"), ct, ct + 11);
 	if (signo == SIGINT)
 		exit(1);
