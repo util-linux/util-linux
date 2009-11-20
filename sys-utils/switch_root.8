@@ -32,6 +32,19 @@ show version number and exit
 .B switch_root
 returns 0 on success and 1 on failure.
 
+.SH NOTES
+switch_root will fail to function if
+.B newroot
+is not the root of a mount. If you want to switch root into a directory that
+does not meet this requirement then you can first use a bind-mounting trick to
+turn any directory into a mount point:
+.sp
+.nf
+.RS
+mount --bind $DIR $DIR
+.RE
+.fi
+
 .SH "SEE ALSO"
 .BR mount (8)
 .BR chroot (2)
