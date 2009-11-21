@@ -106,7 +106,7 @@ roll_file(const char *filename, off_t *size)
 		while ((rc = read(fd, buf, sizeof(buf))) > 0) {
 			wc = write(STDOUT_FILENO, buf, rc);
 			if (rc != wc)
-				warnx(_("incomplete write to \"%s\" (written %ld, expected %ld)\n"),
+				warnx(_("incomplete write to \"%s\" (written %zd, expected %zd)\n"),
 					filename, wc, rc);
 		}
 		fflush(stdout);
