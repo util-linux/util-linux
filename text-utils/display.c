@@ -336,7 +336,7 @@ doskip(const char *fname, int statok)
 			    fname, strerror(errno));
 			exit(1);
 		}
-		if (S_ISREG(sbuf.st_mode) && skip >= sbuf.st_size) {
+		if (S_ISREG(sbuf.st_mode) && skip > sbuf.st_size) {
 		  /* If size valid and skip >= size */
 			skip -= sbuf.st_size;
 			address += sbuf.st_size;
