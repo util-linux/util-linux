@@ -117,7 +117,7 @@ struct ufs_super_block {
 			uint64_t	fs_csaddr;
 			int64_t		fs_pendingblocks;
 			int32_t		fs_pendinginodes;
-		} fs_u2;
+		} __attribute__((packed)) fs_u2;
 	}  fs_u11;
 	union {
 		struct {
@@ -153,17 +153,22 @@ struct ufs_super_block {
 	int32_t		fs_rotbloff;
 	uint32_t	fs_magic;
 	uint8_t		fs_space[1];
-};
+} __attribute__((packed));
 
 #define UFS_MAGIC			0x00011954
 #define UFS2_MAGIC			0x19540119
 #define UFS_MAGIC_FEA			0x00195612
 #define UFS_MAGIC_LFN			0x00095014
+#define UFS_MAGIC_SEC			0x00612195
+#define UFS_MAGIC_4GB			0x05231994
 
 static int probe_ufs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	int offsets[] = { 0, 8, 64, 256 };
-	int mags[] = { UFS2_MAGIC, UFS_MAGIC, UFS_MAGIC_FEA, UFS_MAGIC_LFN };
+	int mags[] = {
+		UFS2_MAGIC, UFS_MAGIC, UFS_MAGIC_FEA, UFS_MAGIC_LFN,
+		UFS_MAGIC_SEC, UFS_MAGIC_4GB
+	};
 	int i;
 	uint32_t magic;
 	struct ufs_super_block *ufs;
