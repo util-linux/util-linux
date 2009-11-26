@@ -16,9 +16,41 @@
 /* features */
 #define CONFIG_CDROM_NOMEDIUM_RETRIES    5
 #define CONFIG_LIBMOUNT_ASSERT
+#define CONFIG_LIBMOUNT_DEBUG
 
 #ifdef CONFIG_LIBMOUNT_ASSERT
 #include <assert.h>
+#endif
+
+/*
+ * Debug
+ */
+#if defined(TEST_PROGRAM) && !defined(LIBMOUNT_DEBUG)
+#define CONFIG_LIBMOUNT_DEBUG
+#endif
+
+#define DEBUG_INIT	(1 << 1)
+#define DEBUG_ALL	0xFFFF
+
+#ifdef CONFIG_LIBMOUNT_DEBUG
+#include <stdio.h>
+extern int libmount_debug_mask;
+extern void mnt_init_debug(int mask);
+#define DBG(m,x)	if ((m) & libmount_debug_mask) x;
+#else
+#define DBG(m,x)
+#define mnt_init_debug(x)
+#endif
+
+#ifdef TEST_PROGRAM
+struct mtest {
+	const char	*name;
+	int		(*body)(struct mtest *ts, int argc, char *argv[]);
+	const char	*usage;
+};
+
+/* utils.c */
+extern int mnt_run_test(struct mtest *tests, int argc, char *argv[]);
 #endif
 
 /* utils.c */

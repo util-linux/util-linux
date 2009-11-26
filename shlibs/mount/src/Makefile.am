@@ -11,9 +11,7 @@ nodist_mountinc_HEADERS = mount.h
 usrlib_exec_LTLIBRARIES = libmount.la
 libmount_la_SOURCES = $(mountinc_HEADERS)
 
-nodist_libmount_la_SOURCES = mount.h \
-			     version.c \
-			     utils.c
+nodist_libmount_la_SOURCES = mount.h version.c utils.c test.c init.c
 
 libmount_la_LIBADD = $(ul_libblkid_la)
 
