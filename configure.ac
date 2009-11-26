@@ -35,6 +35,13 @@ LIBUUID_LT_MINOR=3
 LIBUUID_LT_MICRO=0
 LIBUUID_VERSION_INFO=`expr $LIBUUID_LT_MAJOR + $LIBUUID_LT_MINOR`:$LIBUUID_LT_MICRO:$LIBUUID_LT_MINOR
 
+dnl libmount version
+LIBMOUNT_VERSION="$PACKAGE_VERSION_MAJOR.$PACKAGE_VERSION_MINOR.$PACKAGE_VERSION_RELEASE"
+LIBMOUNT_LT_MAJOR=1
+LIBMOUNT_LT_MINOR=1
+LIBMOUNT_LT_MICRO=0
+LIBMOUNT_VERSION_INFO=`expr $LIBMOUNT_LT_MAJOR + $LIBMOUNT_LT_MINOR`:$LIBMOUNT_LT_MICRO:$LIBMOUNT_LT_MINOR
+
 # Check whether exec_prefix=/usr:
 case $exec_prefix:$prefix in
 NONE:NONE | NONE:/usr | /usr:*)
@@ -389,6 +396,16 @@ AM_CONDITIONAL(HAVE_BLKID, test "x$have_blkid" = xyes)
 : ${BLKID_LIBS='-lblkid -luuid'}
 
 AC_ARG_VAR([BLKID_LIBS_STATIC], [-l options for linking statically with blkid])
+
+
+AC_ARG_ENABLE([libmount],
+  AS_HELP_STRING([--disable-libmount], [do not build libmount]),
+  [], enable_libmount=yes
+)
+AC_SUBST([LIBMOUNT_VERSION])
+AC_SUBST([LIBMOUNT_VERSION_INFO])
+AM_CONDITIONAL(BUILD_LIBMOUNT, test "x$enable_libmount" = xyes)
+
 
 UTIL_CHECK_LIB(util, openpty)
 UTIL_CHECK_LIB(termcap, tgetnum)
@@ -1122,6 +1139,10 @@ shlibs/blkid/src/superblocks/Makefile
 shlibs/blkid/src/topology/Makefile
 shlibs/blkid/src/partitions/Makefile
 shlibs/blkid/samples/Makefile
+shlibs/mount/mount.pc
+shlibs/mount/Makefile
+shlibs/mount/src/Makefile
+shlibs/mount/src/mount.h
 shlibs/uuid/uuid.pc
 shlibs/uuid/Makefile
 shlibs/uuid/man/Makefile

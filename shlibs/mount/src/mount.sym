@@ -1,0 +1,11 @@
+/*
+ * The symbol versioning ensures that a new application requiring symbol foo()
+ * can't run with old libblkid.so not providing foo() - the global SONAME
+ * version info can't enforce this since we never change the SONAME.
+ */
+MOUNT_2.18 {
+global:
+	dummy;
+local:
+	*;
+};
