@@ -5,7 +5,8 @@
  */
 MOUNT_2.18 {
 global:
-	dummy;
+	mnt_get_library_version;
+	mnt_parse_version_string;
 local:
 	*;
 };

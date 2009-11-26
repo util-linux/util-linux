@@ -27,6 +27,10 @@ extern "C" {
 
 #define LIBMOUNT_VERSION   "@LIBMOUNT_VERSION@"
 
+/* version.c */
+extern int mnt_parse_version_string(const char *ver_string);
+extern int mnt_get_library_version(const char **ver_string);
+
 #ifdef __cplusplus
 }
 #endif
