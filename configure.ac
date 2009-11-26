@@ -188,6 +188,9 @@ AC_CHECK_FUNCS(
 	srandom \
 	setresgid \
 	setresuid \
+	strndup \
+	strnlen \
+	strnchr \
 	inotify_init \
 	prctl \
 	posix_fadvise \

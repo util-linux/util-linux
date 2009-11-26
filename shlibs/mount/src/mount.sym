@@ -5,7 +5,10 @@
  */
 MOUNT_2.18 {
 global:
+	mnt_fstype_is_netfs;
+	mnt_fstype_is_pseudofs;
 	mnt_get_library_version;
+	mnt_open_device;
 	mnt_parse_version_string;
 local:
 	*;
