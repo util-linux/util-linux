@@ -215,6 +215,22 @@ not to use this configuration if they need to avoid multiple filesystem
 checks running in parallel for some reason --- for example, if the
 machine in question is short on memory so that
 excessive paging is a concern.
+.sp
+.B fsck
+normally does not check whether the device actually exists before
+calling a file system specific checker. Therefore non-existing
+devices may cause the system to enter file system repair mode during
+boot if the filesystem specific checker returns a fatal error. The
+.B /etc/fstab
+mount option
+.B nofail
+may be used to have
+.B fsck
+skip non-existing devices.
+.B fsck
+also skips non-existing devices that have the special file system type
+.B auto
+.
 .TP
 .B \-C\fR [ \fI "fd" \fR ]
 Display completion/progress bars for those filesystem checkers (currently
