@@ -847,6 +847,22 @@ static int fs_match(struct fs_info *fs, struct fs_type_compile *cmp)
 	return (cmp->negate ? !ret : ret);
 }
 
+/*
+ * Check if a device exists
+ */
+static int device_exists(const char *device)
+{
+	struct stat st;
+
+	if (stat(device, &st) == -1)
+		return 0;
+
+	if (!S_ISBLK(st.st_mode))
+		return 0;
+
+	return 1;
+}
+
 /* Check if we should ignore this filesystem. */
 static int ignore(struct fs_info *fs)
 {
@@ -866,6 +882,15 @@ static int ignore(struct fs_info *fs)
 		fprintf(stderr,
 			_("%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number\n"),
 			fs->mountpt);
+		return 1;
+	}
+
+	/*
+	 * ignore devices that don't exist and have the "nofail" mount option
+	 */
+	if (!device_exists(fs->device) && opt_in_list("nofail", fs->opts)) {
+		if (verbose)
+			printf(_("%s: skipping nonexistent device\n"), fs->device);
 		return 1;
 	}
 
