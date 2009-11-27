@@ -27,6 +27,13 @@ extern "C" {
 
 #define LIBMOUNT_VERSION   "@LIBMOUNT_VERSION@"
 
+/**
+ * mnt_cache
+ *
+ * Stores canonicalized paths and evaluated tags
+ */
+typedef struct _mnt_cache mnt_cache;
+
 /* version.c */
 extern int mnt_parse_version_string(const char *ver_string);
 extern int mnt_get_library_version(const char **ver_string);
@@ -35,6 +42,19 @@ extern int mnt_get_library_version(const char **ver_string);
 extern int mnt_fstype_is_netfs(const char *type);
 extern int mnt_fstype_is_pseudofs(const char *type);
 extern int mnt_open_device(const char *devname, int flags);
+
+/* cache.c */
+extern mnt_cache *mnt_new_cache(void);
+extern void mnt_free_cache(mnt_cache *cache);
+extern const char *mnt_cache_find_path(mnt_cache *cache, const char *path);
+extern const char *mnt_cache_find_tag(mnt_cache *cache,
+                        const char *token, const char *value);
+extern int mnt_cache_read_tags(mnt_cache *cache, const char *devname);
+extern int mnt_cache_device_has_tag(mnt_cache *cache, const char *devname,
+                                const char *token, const char *value);
+extern char *mnt_resolve_path(const char *path, mnt_cache *cache);
+extern char *mnt_resolve_tag(const char *token, const char *value, mnt_cache *cache);
+extern char *mnt_resolve_spec(const char *spec, mnt_cache *cache);
 
 #ifdef __cplusplus
 }

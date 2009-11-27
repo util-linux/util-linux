@@ -11,7 +11,8 @@ nodist_mountinc_HEADERS = mount.h
 usrlib_exec_LTLIBRARIES = libmount.la
 libmount_la_SOURCES = $(mountinc_HEADERS)
 
-nodist_libmount_la_SOURCES = mount.h version.c utils.c test.c init.c
+nodist_libmount_la_SOURCES = mount.h version.c utils.c test.c init.c cache.c \
+			$(top_srcdir)/lib/canonicalize.c
 
 libmount_la_LIBADD = $(ul_libblkid_la)
 
@@ -20,7 +21,7 @@ libmount_la_DEPENDENCIES = $(libmount_la_LIBADD) mount.sym mount.h.in
 libmount_la_LDFLAGS = -Wl,--version-script=$(ul_libmount_srcdir)/mount.sym \
                       -version-info $(LIBMOUNT_VERSION_INFO)
 
-tests = test_version
+tests = test_version test_cache
 
 EXTRA_DIST = mount.sym mount.h.in
 CLEANFILES = $(tests)

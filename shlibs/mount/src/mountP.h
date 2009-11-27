@@ -30,13 +30,14 @@
 #endif
 
 #define DEBUG_INIT	(1 << 1)
+#define DEBUG_CACHE	(1 << 2)
 #define DEBUG_ALL	0xFFFF
 
 #ifdef CONFIG_LIBMOUNT_DEBUG
 #include <stdio.h>
 extern int libmount_debug_mask;
 extern void mnt_init_debug(int mask);
-#define DBG(m,x)	if ((m) & libmount_debug_mask) x;
+#define DBG(m,x)	if ((m) & libmount_debug_mask) x
 #else
 #define DBG(m,x)
 #define mnt_init_debug(x)
