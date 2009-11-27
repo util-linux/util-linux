@@ -20,7 +20,7 @@ libmount_la_DEPENDENCIES = $(libmount_la_LIBADD) mount.sym mount.h.in
 libmount_la_LDFLAGS = -Wl,--version-script=$(ul_libmount_srcdir)/mount.sym \
                       -version-info $(LIBMOUNT_VERSION_INFO)
 
-tests =
+tests = test_version
 
 EXTRA_DIST = mount.sym mount.h.in
 CLEANFILES = $(tests)

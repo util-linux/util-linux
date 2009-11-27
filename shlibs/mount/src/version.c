@@ -50,3 +50,31 @@ int mnt_get_library_version(const char **ver_string)
 
 	return mnt_parse_version_string(lib_version);
 }
+
+#ifdef TEST_PROGRAM
+int test_version(struct mtest *ts, int argc, char *argv[])
+{
+	const char *ver;
+
+	mnt_get_library_version(&ver);
+
+	printf("Library version: %s\n", ver);
+	printf("Library API version: " LIBMOUNT_VERSION "\n");
+
+	if (mnt_get_library_version(NULL) ==
+			mnt_parse_version_string(LIBMOUNT_VERSION))
+		return 0;
+
+	return -1;
+}
+
+int main(int argc, char *argv[])
+{
+	struct mtest ts[] = {
+		{ "--print", test_version, "print versions" },
+		{ NULL }
+	};
+
+	return mnt_run_test(ts, argc, argv);
+}
+#endif
