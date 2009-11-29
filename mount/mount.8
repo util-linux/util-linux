@@ -512,6 +512,7 @@ currently supported include:
 .IR smbfs ,
 .IR sysv ,
 .IR tmpfs ,
+.IR ubifs ,
 .IR udf ,
 .IR ufs ,
 .IR umsdos ,
@@ -2008,6 +2009,69 @@ online, then it is advisable to omit the mpol option from automatic
 mount options.  It can be added later, when the tmpfs is already mounted
 on MountPoint, by 'mount -o remount,mpol=Policy:NodeList MountPoint'.
 .PE
+
+.SH "Mount options for ubifs"
+UBIFS is a flash file system which works on top of UBI volumes. Note that
+.B
+atime
+is not supported and is always turned off.
+.TP
+The device name may be specified as
+.RS
+.B ubiX_Y
+UBI device number
+.BR X ,
+volume number
+.B Y
+.TP
+.B ubiY
+UBI device number
+.BR 0 ,
+volume number
+.B Y
+.TP
+.B ubiX:NAME
+UBI device number
+.BR X ,
+volume with name
+.B NAME
+.TP
+.B ubi:NAME
+UBI device number
+.BR 0 ,
+volume with name
+.B NAME
+.RE
+Alternative
+.B !
+separator may be used instead of
+.BR : .
+.TP
+The following mount options are available:
+.TP
+.BR bulk_read
+Enable bulk-read. VFS read-ahead is disabled because it slows down the file
+system. Bulk-Read is an internal optimization. Some flashes may read faster if
+the data are read at one go, rather than at several read requests. For
+example, OneNAND can do "read-while-load" if it reads more than one NAND page.
+.TP
+.BR no_bulk_read
+Do not bulk-read. This is the default.
+.TP
+.BR chk_data_crc
+Check data CRC-32 checksums. This is the default.
+.TP
+.BR no_chk_data_crc.
+Do not check data CRC-32 checksums. With this option, the filesystem does not
+check CRC-32 checksum for data, but it does check it for the internal indexing
+information. This option only affects reading, not writing. CRC-32 is always
+calculated when writing the data.
+.TP
+.BR compr= { none | lzo | zlib }
+Select the default compressor which is used when new files are written. It is
+still possible to read compressed files if mounted with the
+.B none
+option.
 
 .SH "Mount options for udf"
 udf is the "Universal Disk Format" filesystem defined by the Optical
