@@ -27,7 +27,7 @@ struct ntfs_super_block {
 	uint8_t		reserved2[3];
 	uint64_t	volume_serial;
 	uint16_t	checksum;
-};
+} __attribute__((packed));
 
 struct master_file_table_record {
 	uint32_t	magic;

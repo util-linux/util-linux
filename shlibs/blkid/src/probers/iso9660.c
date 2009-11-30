@@ -30,7 +30,7 @@ struct iso_volume_descriptor {
 	unsigned char	unused[8];
 	unsigned char	space_size[8];
 	unsigned char	escape_sequences[8];
-};
+} __attribute__((packed));
 
 #define ISO_SUPERBLOCK_OFFSET		0x8000
 #define ISO_SECTOR_SIZE			0x800
@@ -47,7 +47,7 @@ struct high_sierra_volume_descriptor {
 	unsigned char	unused1;
 	unsigned char	system_id[32];
 	unsigned char   volume_id[32];
-};
+} __attribute__((packed));
 
 /* returns 1 if the begin of @ascii is equal to @utf16 string.
  */

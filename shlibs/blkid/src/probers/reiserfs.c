@@ -28,7 +28,7 @@ struct reiserfs_super_block {
 	uint32_t	rs_dummy4[5];
 	unsigned char	rs_uuid[16];
 	char		rs_label[16];
-};
+} __attribute__((packed));
 
 struct reiser4_super_block {
 	unsigned char	rs4_magic[16];
@@ -36,7 +36,7 @@ struct reiser4_super_block {
 	unsigned char	rs4_uuid[16];
 	unsigned char	rs4_label[16];
 	uint64_t	rs4_dummy2;
-};
+} __attribute__((packed));
 
 static int probe_reiser(blkid_probe pr, const struct blkid_idmag *mag)
 {

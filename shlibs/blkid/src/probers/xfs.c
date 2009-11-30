@@ -32,7 +32,7 @@ struct xfs_super_block {
 	uint64_t	xs_icount;
 	uint64_t	xs_ifree;
 	uint64_t	xs_fdblocks;
-};
+} __attribute__((packed));
 
 static int probe_xfs(blkid_probe pr, const struct blkid_idmag *mag)
 {

@@ -47,7 +47,7 @@ struct vfat_super_block {
 /* 52*/	unsigned char   vs_magic[8];
 /* 5a*/	unsigned char	vs_dummy2[164];
 /*1fe*/	unsigned char	vs_pmagic[2];
-};
+} __attribute__((packed));
 
 /* Yucky misaligned values */
 struct msdos_super_block {
@@ -71,7 +71,7 @@ struct msdos_super_block {
 /* 36*/	unsigned char   ms_magic[8];
 /* 3d*/	unsigned char	ms_dummy2[192];
 /*1fe*/	unsigned char	ms_pmagic[2];
-};
+} __attribute__((packed));
 
 struct vfat_dir_entry {
 	uint8_t		name[11];
@@ -85,7 +85,7 @@ struct vfat_dir_entry {
 	uint16_t	date_write;
 	uint16_t	cluster_low;
 	uint32_t	size;
-};
+} __attribute__((packed));
 
 struct fat32_fsinfo {
 	uint8_t signature1[4];
@@ -94,7 +94,7 @@ struct fat32_fsinfo {
 	uint32_t free_clusters;
 	uint32_t next_cluster;
 	uint32_t reserved2[4];
-};
+} __attribute__((packed));
 
 /* maximum number of clusters */
 #define FAT12_MAX 0xFF4

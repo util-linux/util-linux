@@ -30,9 +30,9 @@ struct cramfs_super
 		uint32_t	edition;
 		uint32_t	blocks;
 		uint32_t	files;
-	} info;
+	} __attribute__((packed)) info;
 	uint8_t		name[16];
-};
+} __attribute__((packed));
 
 static int probe_cramfs(blkid_probe pr, const struct blkid_idmag *mag)
 {

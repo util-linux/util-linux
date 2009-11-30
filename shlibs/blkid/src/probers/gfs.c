@@ -56,7 +56,7 @@ struct gfs2_sb {
 	struct gfs2_inum __pad3; /* Was quota inode in gfs1 */
 	struct gfs2_inum __pad4; /* Was licence inode in gfs1 */
 	uint8_t sb_uuid[16]; /* The UUID maybe 0 for backwards compat */
-};
+} __attribute__((packed));
 
 static int probe_gfs(blkid_probe pr, const struct blkid_idmag *mag)
 {

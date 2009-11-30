@@ -76,7 +76,7 @@ struct ext2_super_block {
 	uint64_t		s_mmp_block;
 	uint32_t		s_raid_stripe_width;
 	uint32_t		s_reserved[163];
-};
+} __attribute__((packed));
 
 /* magic string */
 #define EXT_SB_MAGIC				"\123\357"

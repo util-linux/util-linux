@@ -21,7 +21,7 @@ struct nv_metadata {
 	uint32_t	size;
 	uint32_t	chksum;
 	uint16_t	version;
-};
+} __attribute__((packed));
 
 #define NVIDIA_SIGNATURE		"NVIDIA"
 

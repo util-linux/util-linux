@@ -27,10 +27,10 @@ struct via_metadata {
 		uint32_t	capacity_low;
 		uint32_t	capacity_high;
 		uint32_t	serial_checksum;
-	} array;
+	} __attribute__((packed)) array;
 	uint32_t	serial_checksum[8];
 	uint8_t		checksum;
-};
+} __attribute__((packed));
 
 #define VIA_SIGNATURE		0xAA55
 

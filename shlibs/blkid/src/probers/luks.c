@@ -37,7 +37,7 @@ struct luks_phdr {
 	uint8_t		mkDigestSalt[LUKS_SALTSIZE];
 	uint32_t	mkDigestIterations;
 	uint8_t		uuid[UUID_STRING_L];
-};
+} __attribute__((packed));
 
 static int probe_luks(blkid_probe pr, const struct blkid_idmag *mag)
 {
