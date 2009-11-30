@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.14-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-09-07 10:26+0200\n"
+"POT-Creation-Date: 2009-11-30 16:27+0100\n"
 "PO-Revision-Date: 2008-05-21 18:25+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -165,7 +165,7 @@ msgstr ""
 msgid "Formatting ... "
 msgstr "Formázás ... "
 
-#: disk-utils/fdformat.c:49 disk-utils/fdformat.c:84
+#: disk-utils/fdformat.c:49 disk-utils/fdformat.c:86
 #, c-format
 msgid "done\n"
 msgstr "kész\n"
@@ -186,7 +186,7 @@ msgstr ""
 "Probléma a(z) %d. cilinder olvasásakor, a várt %d helyett %d került "
 "beolvasásra\n"
 
-#: disk-utils/fdformat.c:79
+#: disk-utils/fdformat.c:80
 #, c-format
 msgid ""
 "bad data in cyl %d\n"
@@ -195,12 +195,12 @@ msgstr ""
 "hibás adatok a(z) %d. cilinderben\n"
 "Folytatás ... "
 
-#: disk-utils/fdformat.c:94
+#: disk-utils/fdformat.c:96
 #, c-format
 msgid "usage: %s [ -n ] device\n"
 msgstr "Használat: %s [-n] eszköz\n"
 
-#: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1282
+#: disk-utils/fdformat.c:118 disk-utils/fsck.minix.c:1282
 #: disk-utils/isosize.c:181 disk-utils/mkfs.bfs.c:115 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:813 disk-utils/mkfs.minix.c:571
 #: disk-utils/mkswap.c:461 misc-utils/ddate.c:179 misc-utils/rename.c:79
@@ -209,25 +209,25 @@ msgstr "Használat: %s [-n] eszköz\n"
 msgid "%s (%s)\n"
 msgstr "%s (%s)\n"
 
-#: disk-utils/fdformat.c:130
+#: disk-utils/fdformat.c:132
 #, c-format
 msgid "%s: not a block device\n"
 msgstr "%s: ez nem blokkos eszköz\n"
 
-#: disk-utils/fdformat.c:140
+#: disk-utils/fdformat.c:142
 msgid "Could not determine current format type"
 msgstr "Nem sikerült meghatározni az aktuális formázási típust"
 
-#: disk-utils/fdformat.c:141
+#: disk-utils/fdformat.c:143
 #, c-format
 msgid "%s-sided, %d tracks, %d sec/track. Total capacity %d kB.\n"
 msgstr "%s oldal, %d sáv, %d szektor/sáv. Teljes kapacitás: %d kB.\n"
 
-#: disk-utils/fdformat.c:142
+#: disk-utils/fdformat.c:144
 msgid "Double"
 msgstr "Dupla"
 
-#: disk-utils/fdformat.c:142
+#: disk-utils/fdformat.c:144
 msgid "Single"
 msgstr "Szimpla"
 
@@ -4970,18 +4970,6 @@ msgstr "%s: nincs ilyen partíció\n"
 msgid "unrecognized format - using sectors\n"
 msgstr "ismeretlen formátum - a szektorok kerülnek felhasználásra\n"
 
-#: fdisk/sfdisk.c:933
-#, c-format
-msgid "# partition table of %s\n"
-msgstr "# %s partíciós táblája\n"
-
-#: fdisk/sfdisk.c:934
-#, fuzzy, c-format
-msgid ""
-"unit: sectors\n"
-"\n"
-msgstr "SunOS alt szektorok"
-
 #: fdisk/sfdisk.c:944
 #, c-format
 msgid "unimplemented format - using %s\n"
@@ -5042,21 +5030,6 @@ msgstr ""
 #, c-format
 msgid "   Device Boot Start   End    MiB    #blocks   Id  System\n"
 msgstr "Eszköz Indítás Kezdet Vége    MiB   #blokkok   Az  Rendszer\n"
-
-#: fdisk/sfdisk.c:1062
-#, fuzzy, c-format
-msgid " start=%9lu"
-msgstr "kezdet"
-
-#: fdisk/sfdisk.c:1063
-#, fuzzy, c-format
-msgid ", size=%9lu"
-msgstr "Max. méret=%ld\n"
-
-#: fdisk/sfdisk.c:1067
-#, fuzzy, c-format
-msgid ", bootable"
-msgstr "AIX indítható"
 
 #: fdisk/sfdisk.c:1128
 #, c-format
@@ -6241,32 +6214,32 @@ msgstr ""
 "A hardveróra nem tartalmaz érvényes időt, így nem lehet beállítani a "
 "rendszeridőt.\n"
 
-#: hwclock/hwclock.c:728 hwclock/hwclock.c:804
+#: hwclock/hwclock.c:728 hwclock/hwclock.c:805
 #, c-format
 msgid "Calling settimeofday:\n"
 msgstr "A settimeofday hívása:\n"
 
-#: hwclock/hwclock.c:729 hwclock/hwclock.c:806
+#: hwclock/hwclock.c:729 hwclock/hwclock.c:807
 #, c-format
 msgid "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 msgstr "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 
-#: hwclock/hwclock.c:731 hwclock/hwclock.c:808
+#: hwclock/hwclock.c:731 hwclock/hwclock.c:809
 #, c-format
 msgid "\ttz.tz_minuteswest = %d\n"
 msgstr "\ttz.tz_minuteswest = %d\n"
 
-#: hwclock/hwclock.c:734 hwclock/hwclock.c:811
+#: hwclock/hwclock.c:734 hwclock/hwclock.c:812
 #, c-format
 msgid "Not setting system clock because running in test mode.\n"
 msgstr "A rendszeróra teszt módban nem kerül beállításra.\n"
 
-#: hwclock/hwclock.c:743 hwclock/hwclock.c:820
+#: hwclock/hwclock.c:743 hwclock/hwclock.c:821
 #, c-format
 msgid "Must be superuser to set system clock.\n"
 msgstr "Rendszergazdai jog szükséges a rendszeróra beállításához.\n"
 
-#: hwclock/hwclock.c:746 hwclock/hwclock.c:823
+#: hwclock/hwclock.c:746 hwclock/hwclock.c:824
 msgid "settimeofday() failed"
 msgstr "A settimeofday() nem sikerült"
 
@@ -6275,12 +6248,12 @@ msgstr "A settimeofday() nem sikerült"
 msgid "Current system time: %ld = %s\n"
 msgstr "rendszeridő olvasása"
 
-#: hwclock/hwclock.c:805
+#: hwclock/hwclock.c:806
 #, c-format
 msgid "\tUTC: %s\n"
 msgstr ""
 
-#: hwclock/hwclock.c:852
+#: hwclock/hwclock.c:853
 #, c-format
 msgid ""
 "Not adjusting drift factor because the Hardware Clock previously contained "
@@ -6289,7 +6262,7 @@ msgstr ""
 "A csúsztatási tényező nem kerül beállításra, mert a hardveróra korábban "
 "szemetet tartalmazott.\n"
 
-#: hwclock/hwclock.c:857
+#: hwclock/hwclock.c:858
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -6299,7 +6272,7 @@ msgstr ""
 "0,\n"
 "így az előzmények hibásak és új kalibráció szükséges.\n"
 
-#: hwclock/hwclock.c:863
+#: hwclock/hwclock.c:864
 #, c-format
 msgid ""
 "Not adjusting drift factor because it has been less than a day since the "
@@ -6308,7 +6281,7 @@ msgstr ""
 "A csúsztatási tényező nem kerül beállításra, mert még nem telt el egy nap az "
 "utolsó kalibráció óta.\n"
 
-#: hwclock/hwclock.c:911
+#: hwclock/hwclock.c:912
 #, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
@@ -6319,23 +6292,23 @@ msgstr ""
 "másodperc csúsztatási tényező ellenére.\n"
 "A csúsztatási tényező beállítva napi %f másodpercre\n"
 
-#: hwclock/hwclock.c:961
+#: hwclock/hwclock.c:962
 #, c-format
 msgid "Time since last adjustment is %d seconds\n"
 msgstr "Az utolsó igazítás óta eltelt idő %d másodperc\n"
 
-#: hwclock/hwclock.c:963
+#: hwclock/hwclock.c:964
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
 msgstr ""
 "%d másodperc beszúrása szükséges és az idő visszaállítása %.6f másodperccel\n"
 
-#: hwclock/hwclock.c:992
+#: hwclock/hwclock.c:993
 #, c-format
 msgid "Not updating adjtime file because of testing mode.\n"
 msgstr "Az adjtime fájl teszt módban nem kerül módosításra.\n"
 
-#: hwclock/hwclock.c:993
+#: hwclock/hwclock.c:994
 #, c-format
 msgid ""
 "Would have written the following to %s:\n"
@@ -6344,30 +6317,30 @@ msgstr ""
 "A(z) %s fájlba a következő került volna kiírásra:\n"
 "%s"
 
-#: hwclock/hwclock.c:1001
+#: hwclock/hwclock.c:1002
 #, c-format
 msgid ""
 "Could not open file with the clock adjustment parameters in it (%s) for "
 "writing"
 msgstr ""
 
-#: hwclock/hwclock.c:1006 hwclock/hwclock.c:1011
+#: hwclock/hwclock.c:1007 hwclock/hwclock.c:1012
 #, c-format
 msgid "Could not update file with the clock adjustment parameters (%s) in it"
 msgstr ""
 
-#: hwclock/hwclock.c:1017
+#: hwclock/hwclock.c:1018
 #, c-format
 msgid "Drift adjustment parameters not updated.\n"
 msgstr "A csúsztatás paraméterei nem kerültek frissítésre.\n"
 
-#: hwclock/hwclock.c:1058
+#: hwclock/hwclock.c:1059
 #, c-format
 msgid ""
 "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
 msgstr "A hardveróra nem tartalmaz érvényes időt, így nem lehet igazítani.\n"
 
-#: hwclock/hwclock.c:1066
+#: hwclock/hwclock.c:1067
 #, fuzzy, c-format
 msgid ""
 "Not setting clock because last adjustment time is zero, so history is bad."
@@ -6376,34 +6349,29 @@ msgstr ""
 "0,\n"
 "így az előzmények hibásak és új kalibráció szükséges.\n"
 
-#: hwclock/hwclock.c:1089
+#: hwclock/hwclock.c:1090
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr ""
 "A szükséges igazítás kevesebb mint egy másodperc, így nem kerül "
 "beállításra.\n"
 
-#: hwclock/hwclock.c:1115
+#: hwclock/hwclock.c:1116
 #, c-format
 msgid "Using %s.\n"
 msgstr "%s használata.\n"
 
-#: hwclock/hwclock.c:1117
+#: hwclock/hwclock.c:1118
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "Nem található használható órafelület\n"
 
-#: hwclock/hwclock.c:1219 hwclock/hwclock.c:1226
+#: hwclock/hwclock.c:1222 hwclock/hwclock.c:1228
 #, c-format
 msgid "Unable to set system clock.\n"
 msgstr "A rendszeróra nem állítható be.\n"
 
-#: hwclock/hwclock.c:1230
-#, fuzzy, c-format
-msgid "Clock in UTC, not changed.\n"
-msgstr "A parancsértelmező nem változott.\n"
-
-#: hwclock/hwclock.c:1259
+#: hwclock/hwclock.c:1258
 #, c-format
 msgid ""
 "The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
@@ -6415,17 +6383,17 @@ msgstr ""
 "A hwcolock ezen másolata nem Alpha gépre készült\n"
 "(és így feltételezhetően most sem Alpha gépen fut). Nincs teendő.\n"
 
-#: hwclock/hwclock.c:1268
+#: hwclock/hwclock.c:1267
 #, c-format
 msgid "Unable to get the epoch value from the kernel.\n"
 msgstr "Nem lehet lekérni az epoch értékét a rendszermagból.\n"
 
-#: hwclock/hwclock.c:1270
+#: hwclock/hwclock.c:1269
 #, c-format
 msgid "Kernel is assuming an epoch value of %lu\n"
 msgstr "A rendszermag feltételezi, hogy az epoch értéke %lu\n"
 
-#: hwclock/hwclock.c:1273
+#: hwclock/hwclock.c:1272
 #, c-format
 msgid ""
 "To set the epoch value, you must use the 'epoch' option to tell to what "
@@ -6433,22 +6401,22 @@ msgid ""
 msgstr ""
 "A beállítandó epoch érték megadásához használja az „epoch” kapcsolót.\n"
 
-#: hwclock/hwclock.c:1276
+#: hwclock/hwclock.c:1275
 #, c-format
 msgid "Not setting the epoch to %d - testing only.\n"
 msgstr "Az epoch értéke nem kerül beállításra (%d értékre) - ez csak teszt.\n"
 
-#: hwclock/hwclock.c:1279
+#: hwclock/hwclock.c:1278
 #, c-format
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Nem lehet beállítani az epoch értéket a rendszermagban.\n"
 
-#: hwclock/hwclock.c:1292 misc-utils/cal.c:345 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1291 misc-utils/cal.c:345 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s a(z) %s csomagból\n"
 
-#: hwclock/hwclock.c:1313
+#: hwclock/hwclock.c:1312
 #, fuzzy, c-format
 msgid ""
 "hwclock - query and set the hardware clock (RTC)\n"
@@ -6521,7 +6489,7 @@ msgstr ""
 "az\n"
 "                      /etc/adjtime)\n"
 
-#: hwclock/hwclock.c:1348
+#: hwclock/hwclock.c:1347
 #, fuzzy, c-format
 msgid ""
 "  -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
@@ -6532,18 +6500,18 @@ msgstr ""
 "                megadja a hwclocknak a használt alpha gép típusát\n"
 "                  (lásd a hwclock(8) kézikönyvoldalt)\n"
 
-#: hwclock/hwclock.c:1435
+#: hwclock/hwclock.c:1434
 #, c-format
 msgid "%s: Unable to connect to audit system\n"
 msgstr "%s: Nem lehet a megfigyelőrendszerhez csatlakozni.\n"
 
-#: hwclock/hwclock.c:1553
+#: hwclock/hwclock.c:1552
 #, c-format
 msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr ""
 "A(z) %s nem vár nem kapcsoló paramétereket. A következőt adta meg: %d.\n"
 
-#: hwclock/hwclock.c:1560
+#: hwclock/hwclock.c:1559
 #, c-format
 msgid ""
 "You have specified multiple functions.\n"
@@ -6552,7 +6520,7 @@ msgstr ""
 "Több műveletet adott meg egyszerre.\n"
 "Egyszerre csak egy művelet használható.\n"
 
-#: hwclock/hwclock.c:1567
+#: hwclock/hwclock.c:1566
 #, c-format
 msgid ""
 "%s: The --utc and --localtime options are mutually exclusive.  You specified "
@@ -6561,7 +6529,7 @@ msgstr ""
 "%s: Az --utc és a --locatime kölcsönösen kizárják egymást.\n"
 "Mégis mindkettőt megadta.\n"
 
-#: hwclock/hwclock.c:1574
+#: hwclock/hwclock.c:1573
 #, c-format
 msgid ""
 "%s: The --adjust and --noadjfile options are mutually exclusive.  You "
@@ -6570,7 +6538,7 @@ msgstr ""
 "%s: Az --adjust és a --noadjfile kölcsönösen kizárják egymást.\n"
 "Mégis mindkettőt megadta.\n"
 
-#: hwclock/hwclock.c:1581
+#: hwclock/hwclock.c:1580
 #, c-format
 msgid ""
 "%s: The --adjfile and --noadjfile options are mutually exclusive.  You "
@@ -6579,29 +6547,29 @@ msgstr ""
 "%s: Az --adjfile és a --noadjfile kölcsönösen kizárják egymást, de "
 "mindkettőt megadta.\n"
 
-#: hwclock/hwclock.c:1590
+#: hwclock/hwclock.c:1589
 #, c-format
 msgid "%s: With --noadjfile, you must specify either --utc or --localtime\n"
 msgstr ""
 "%s: A --noadjfile kapcsolóval használnia kell a --utc vagy --localtime "
 "egyikét\n"
 
-#: hwclock/hwclock.c:1604
+#: hwclock/hwclock.c:1603
 #, c-format
 msgid "No usable set-to time.  Cannot set clock.\n"
 msgstr "Nem használható a beállítandó idő. Az óra nem állítható be.\n"
 
-#: hwclock/hwclock.c:1621
+#: hwclock/hwclock.c:1620
 #, c-format
 msgid "Sorry, only the superuser can change the Hardware Clock.\n"
 msgstr "Elnézést, csak a rendszergazda módosíthatja a hardverórát.\n"
 
-#: hwclock/hwclock.c:1626
+#: hwclock/hwclock.c:1625
 #, c-format
 msgid "Sorry, only the superuser can change the System Clock.\n"
 msgstr "Elnézést, csak a rendszergazda módosíthatja a rendszerórát.\n"
 
-#: hwclock/hwclock.c:1631
+#: hwclock/hwclock.c:1630
 #, c-format
 msgid ""
 "Sorry, only the superuser can change the Hardware Clock epoch in the "
@@ -9340,7 +9308,7 @@ msgstr "; a fájl többi része figyelmen kívül marad"
 msgid "bug in xstrndup call"
 msgstr "hiba az xstrndup hívásban"
 
-#: mount/sundries.c:224 mount/sundries.c:276 mount/sundries.c:285
+#: mount/sundries.c:224 mount/sundries.c:280 mount/sundries.c:289
 #: mount/xmalloc.c:11
 msgid "not enough memory"
 msgstr "nincs elég memória"
@@ -9404,125 +9372,125 @@ msgstr ""
 " %1$s -V                           verzió megjelenítése\n"
 "\n"
 
-#: mount/swapon.c:138
+#: mount/swapon.c:140
 #, fuzzy, c-format
 msgid "%s: unexpected file format"
 msgstr "%s: %s: váratlan fájlformátum\n"
 
-#: mount/swapon.c:177 mount/swapon.c:245 mount/swapon.c:390 mount/swapon.c:549
-#: mount/swapon.c:751
+#: mount/swapon.c:184 mount/swapon.c:252 mount/swapon.c:397 mount/swapon.c:556
+#: mount/swapon.c:758
 #, fuzzy, c-format
 msgid "%s: open failed"
 msgstr "az openpty meghiúsult\n"
 
-#: mount/swapon.c:198
+#: mount/swapon.c:205
 #, fuzzy, c-format
 msgid "%s: reinitializing the swap."
 msgstr ""
 "%s: %s: szoftveres felfüggesztési adatok találhatók. A lapozóterület "
 "ismételt előkészítése.\n"
 
-#: mount/swapon.c:202
+#: mount/swapon.c:209
 #, fuzzy
 msgid "fork failed"
 msgstr "az indítás meghiúsult\n"
 
-#: mount/swapon.c:218
+#: mount/swapon.c:225
 #, fuzzy
 msgid "execv failed"
 msgstr "a végrehajtás meghiúsult\n"
 
-#: mount/swapon.c:226
+#: mount/swapon.c:233
 #, fuzzy
 msgid "waitpid failed"
 msgstr "a setuid() hívása meghiúsult"
 
-#: mount/swapon.c:250
+#: mount/swapon.c:257
 #, fuzzy, c-format
 msgid "%s: lseek failed"
 msgstr "a pozicionálás meghiúsult"
 
-#: mount/swapon.c:256
+#: mount/swapon.c:263
 #, fuzzy, c-format
 msgid "%s: write signature failed"
 msgstr "a szabványos kimenetre írás meghiúsult"
 
-#: mount/swapon.c:343
+#: mount/swapon.c:350
 #, c-format
 msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
 msgstr ""
 
-#: mount/swapon.c:363
+#: mount/swapon.c:370
 #, fuzzy, c-format
 msgid "%s: stat failed"
 msgstr "%s meghiúsult.\n"
 
-#: mount/swapon.c:373
+#: mount/swapon.c:380
 #, fuzzy, c-format
 msgid "%s: insecure permissions %04o, %04o suggested."
 msgstr ""
 "%s: figyelmeztetés: a(z) %s jogosultságai (%04o) nem biztonságosak, a "
 "javasolt érték: %04o\n"
 
-#: mount/swapon.c:381
+#: mount/swapon.c:388
 #, fuzzy, c-format
 msgid "%s: skipping - it appears to have holes."
 msgstr "%s: A(z) %s fájl kihagyása - úgy tűnik, lyukak vannak benne.\n"
 
-#: mount/swapon.c:395
+#: mount/swapon.c:402
 #, fuzzy, c-format
 msgid "%s: get size failed"
 msgstr "a pozicionálás meghiúsult"
 
-#: mount/swapon.c:401
+#: mount/swapon.c:408
 #, c-format
 msgid "%s: read swap header failed"
 msgstr ""
 
-#: mount/swapon.c:414
+#: mount/swapon.c:421
 #, c-format
 msgid "%s: last_page 0x%08llx is larger than actual size of swapspace"
 msgstr ""
 
-#: mount/swapon.c:419
+#: mount/swapon.c:426
 #, c-format
 msgid "%s: swap format pagesize does not match."
 msgstr ""
 
-#: mount/swapon.c:424
+#: mount/swapon.c:431
 #, c-format
 msgid ""
 "%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
 msgstr ""
 
-#: mount/swapon.c:433
+#: mount/swapon.c:440
 #, fuzzy, c-format
 msgid "%s: software suspend data detected. Rewriting the swap signature."
 msgstr ""
 "%s: %s: szoftveres felfüggesztési adatok találhatók. A lapozóterület "
 "ismételt előkészítése.\n"
 
-#: mount/swapon.c:457 mount/swapon.c:507
+#: mount/swapon.c:464 mount/swapon.c:514
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s a következőn: %s\n"
 
-#: mount/swapon.c:479
+#: mount/swapon.c:486
 #, fuzzy, c-format
 msgid "%s: swapon failed"
 msgstr "%s meghiúsult.\n"
 
-#: mount/swapon.c:486
+#: mount/swapon.c:493
 #, fuzzy, c-format
 msgid "cannot find the device for %s"
 msgstr "%s: nem található a(z) %s eszköze\n"
 
-#: mount/swapon.c:519
+#: mount/swapon.c:526
 #, fuzzy
 msgid "Not superuser."
 msgstr "Nem rendszergazda.\n"
 
-#: mount/swapon.c:522
+#: mount/swapon.c:529
 #, fuzzy, c-format
 msgid "%s: swapoff failed"
 msgstr "%s meghiúsult.\n"
@@ -11823,8 +11791,8 @@ msgid "cannot stat \"%s\""
 msgstr "a(z) „%s” nem érhető el"
 
 #: text-utils/tailf.c:108
-#, c-format
-msgid "incomplete write to \"%s\" (written %ld, expected %ld)\n"
+#, fuzzy, c-format
+msgid "incomplete write to \"%s\" (written %zd, expected %zd)\n"
 msgstr "befejezetlen írás a következőbe: „%s” (kiírva: %ld, várt: %ld)\n"
 
 #: text-utils/tailf.c:146
@@ -11879,6 +11847,31 @@ msgstr "A bemeneti sor túl hosszú.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Elfogyott a memória a puffer növelésekor.\n"
+
+#~ msgid "# partition table of %s\n"
+#~ msgstr "# %s partíciós táblája\n"
+
+#, fuzzy
+#~ msgid ""
+#~ "unit: sectors\n"
+#~ "\n"
+#~ msgstr "SunOS alt szektorok"
+
+#, fuzzy
+#~ msgid " start=%9lu"
+#~ msgstr "kezdet"
+
+#, fuzzy
+#~ msgid ", size=%9lu"
+#~ msgstr "Max. méret=%ld\n"
+
+#, fuzzy
+#~ msgid ", bootable"
+#~ msgstr "AIX indítható"
+
+#, fuzzy
+#~ msgid "Clock in UTC, not changed.\n"
+#~ msgstr "A parancsértelmező nem változott.\n"
 
 #~ msgid "%s: error: label only with v1 swap area\n"
 #~ msgstr "%s hiba: címke 1-es verziójú lapozóterülettel\n"

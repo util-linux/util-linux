@@ -15,7 +15,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.16-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-09-07 10:26+0200\n"
+"POT-Creation-Date: 2009-11-30 16:27+0100\n"
 "PO-Revision-Date: 2009-07-02 23:36+0200\n"
 "Last-Translator: Petr Pisar <petr.pisar@atlas.cz>\n"
 "Language-Team: Czech <translation-team-cs@lists.sourceforge.net>\n"
@@ -174,7 +174,7 @@ msgstr ""
 msgid "Formatting ... "
 msgstr "Formátuji… "
 
-#: disk-utils/fdformat.c:49 disk-utils/fdformat.c:84
+#: disk-utils/fdformat.c:49 disk-utils/fdformat.c:86
 #, c-format
 msgid "done\n"
 msgstr "hotovo\n"
@@ -193,7 +193,7 @@ msgstr "Chyba při čtení: "
 msgid "Problem reading cylinder %d, expected %d, read %d\n"
 msgstr "Chyba při čtení cylindru %d, předpoklad %d, přečteno %d\n"
 
-#: disk-utils/fdformat.c:79
+#: disk-utils/fdformat.c:80
 #, c-format
 msgid ""
 "bad data in cyl %d\n"
@@ -202,12 +202,12 @@ msgstr ""
 "chybná data v cylindru %d\n"
 "Pokračuji…"
 
-#: disk-utils/fdformat.c:94
+#: disk-utils/fdformat.c:96
 #, c-format
 msgid "usage: %s [ -n ] device\n"
 msgstr "Použití: %s [-n] ZAŘÍZENÍ\n"
 
-#: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1282
+#: disk-utils/fdformat.c:118 disk-utils/fsck.minix.c:1282
 #: disk-utils/isosize.c:181 disk-utils/mkfs.bfs.c:115 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:813 disk-utils/mkfs.minix.c:571
 #: disk-utils/mkswap.c:461 misc-utils/ddate.c:179 misc-utils/rename.c:79
@@ -216,25 +216,25 @@ msgstr "Použití: %s [-n] ZAŘÍZENÍ\n"
 msgid "%s (%s)\n"
 msgstr "%s: (%s)\n"
 
-#: disk-utils/fdformat.c:130
+#: disk-utils/fdformat.c:132
 #, c-format
 msgid "%s: not a block device\n"
 msgstr "%s: není blokové zařízení\n"
 
-#: disk-utils/fdformat.c:140
+#: disk-utils/fdformat.c:142
 msgid "Could not determine current format type"
 msgstr "Typ formátu nelze zjistit"
 
-#: disk-utils/fdformat.c:141
+#: disk-utils/fdformat.c:143
 #, c-format
 msgid "%s-sided, %d tracks, %d sec/track. Total capacity %d kB.\n"
 msgstr "stran: %s, stop: %d, sekt/stopu %d. Celková kapacita %'d kB.\n"
 
-#: disk-utils/fdformat.c:142
+#: disk-utils/fdformat.c:144
 msgid "Double"
 msgstr "2"
 
-#: disk-utils/fdformat.c:142
+#: disk-utils/fdformat.c:144
 msgid "Single"
 msgstr "1"
 
@@ -4950,20 +4950,6 @@ msgstr "diskový oddíl %s neexistuje\n"
 msgid "unrecognized format - using sectors\n"
 msgstr "Neznámý formát - používám sektory\n"
 
-#: fdisk/sfdisk.c:933
-#, c-format
-msgid "# partition table of %s\n"
-msgstr "# tabulka rozdělení disku pro %s\n"
-
-#: fdisk/sfdisk.c:934
-#, c-format
-msgid ""
-"unit: sectors\n"
-"\n"
-msgstr ""
-"jednotka: sektory\n"
-"\n"
-
 #: fdisk/sfdisk.c:944
 #, c-format
 msgid "unimplemented format - using %s\n"
@@ -5025,21 +5011,6 @@ msgstr ""
 #, c-format
 msgid "   Device Boot Start   End    MiB    #blocks   Id  System\n"
 msgstr "Zařízení  Boot Začátek Konec  MiB    Bloků     Id  Systém\n"
-
-#: fdisk/sfdisk.c:1062
-#, c-format
-msgid " start=%9lu"
-msgstr " začátek=%9lu"
-
-#: fdisk/sfdisk.c:1063
-#, c-format
-msgid ", size=%9lu"
-msgstr ", velikost=%9lu"
-
-#: fdisk/sfdisk.c:1067
-#, c-format
-msgid ", bootable"
-msgstr ", startovací"
 
 #: fdisk/sfdisk.c:1128
 #, c-format
@@ -6213,32 +6184,32 @@ msgstr ""
 "Systémový čas nelze podle hodin reálného času nastavit, protože neukazují\n"
 "platný čas.\n"
 
-#: hwclock/hwclock.c:728 hwclock/hwclock.c:804
+#: hwclock/hwclock.c:728 hwclock/hwclock.c:805
 #, c-format
 msgid "Calling settimeofday:\n"
 msgstr "Volám settimeofday:\n"
 
-#: hwclock/hwclock.c:729 hwclock/hwclock.c:806
+#: hwclock/hwclock.c:729 hwclock/hwclock.c:807
 #, c-format
 msgid "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 msgstr "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 
-#: hwclock/hwclock.c:731 hwclock/hwclock.c:808
+#: hwclock/hwclock.c:731 hwclock/hwclock.c:809
 #, c-format
 msgid "\ttz.tz_minuteswest = %d\n"
 msgstr "\ttz.tz_minuteswest = %d\n"
 
-#: hwclock/hwclock.c:734 hwclock/hwclock.c:811
+#: hwclock/hwclock.c:734 hwclock/hwclock.c:812
 #, c-format
 msgid "Not setting system clock because running in test mode.\n"
 msgstr "Testovací režim - systémový čas nezměněn.\n"
 
-#: hwclock/hwclock.c:743 hwclock/hwclock.c:820
+#: hwclock/hwclock.c:743 hwclock/hwclock.c:821
 #, c-format
 msgid "Must be superuser to set system clock.\n"
 msgstr "Nastavit systémový čas může pouze superuživatel.\n"
 
-#: hwclock/hwclock.c:746 hwclock/hwclock.c:823
+#: hwclock/hwclock.c:746 hwclock/hwclock.c:824
 msgid "settimeofday() failed"
 msgstr "volání settimeofday() selhalo"
 
@@ -6247,12 +6218,12 @@ msgstr "volání settimeofday() selhalo"
 msgid "Current system time: %ld = %s\n"
 msgstr "Současný systémový čas: %ld = %s\n"
 
-#: hwclock/hwclock.c:805
+#: hwclock/hwclock.c:806
 #, c-format
 msgid "\tUTC: %s\n"
 msgstr "\tUTC: %s\n"
 
-#: hwclock/hwclock.c:852
+#: hwclock/hwclock.c:853
 #, c-format
 msgid ""
 "Not adjusting drift factor because the Hardware Clock previously contained "
@@ -6261,7 +6232,7 @@ msgstr ""
 "Neopravuji míru posunu, protože hodiny reálného času posledně obsahovaly\n"
 "neplatné hodnoty.\n"
 
-#: hwclock/hwclock.c:857
+#: hwclock/hwclock.c:858
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -6270,7 +6241,7 @@ msgstr ""
 "Neopravuji míru posunu, protože čas poslední kalibrace je nula, takže\n"
 "historie je nepoužitelná a je nutné provézt kalibraci znovu.\n"
 
-#: hwclock/hwclock.c:863
+#: hwclock/hwclock.c:864
 #, c-format
 msgid ""
 "Not adjusting drift factor because it has been less than a day since the "
@@ -6279,7 +6250,7 @@ msgstr ""
 "Neopravuji míru posunu, protože poslední kalibrace ještě neuplynul celý "
 "den.\n"
 
-#: hwclock/hwclock.c:911
+#: hwclock/hwclock.c:912
 #, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
@@ -6291,22 +6262,22 @@ msgstr ""
 "je nastavena na %3$f sekund/den.\n"
 "Opravuji míru posunu o %4$f sekund.\n"
 
-#: hwclock/hwclock.c:961
+#: hwclock/hwclock.c:962
 #, c-format
 msgid "Time since last adjustment is %d seconds\n"
 msgstr "Počet sekund od poslední opravy: %d\n"
 
-#: hwclock/hwclock.c:963
+#: hwclock/hwclock.c:964
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
 msgstr "Potřebná změna času: sekund vpřed: %d ; sekund zpět: %.6f\n"
 
-#: hwclock/hwclock.c:992
+#: hwclock/hwclock.c:993
 #, c-format
 msgid "Not updating adjtime file because of testing mode.\n"
 msgstr "Testovací režim - soubor adjtime nezměněn.\n"
 
-#: hwclock/hwclock.c:993
+#: hwclock/hwclock.c:994
 #, c-format
 msgid ""
 "Would have written the following to %s:\n"
@@ -6315,30 +6286,30 @@ msgstr ""
 "Do %s by bylo uloženo následující:\n"
 "%s"
 
-#: hwclock/hwclock.c:1001
+#: hwclock/hwclock.c:1002
 #, c-format
 msgid ""
 "Could not open file with the clock adjustment parameters in it (%s) for "
 "writing"
 msgstr "Soubor s parametry posunu hodin (%s) se nepodařilo otevřít pro zápis"
 
-#: hwclock/hwclock.c:1006 hwclock/hwclock.c:1011
+#: hwclock/hwclock.c:1007 hwclock/hwclock.c:1012
 #, c-format
 msgid "Could not update file with the clock adjustment parameters (%s) in it"
 msgstr "Soubor s parametry posunu hodin (%s) se nepodařilo aktualizovat"
 
-#: hwclock/hwclock.c:1017
+#: hwclock/hwclock.c:1018
 #, c-format
 msgid "Drift adjustment parameters not updated.\n"
 msgstr "Parametry opravy posunu nezměněny.\n"
 
-#: hwclock/hwclock.c:1058
+#: hwclock/hwclock.c:1059
 #, c-format
 msgid ""
 "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
 msgstr "Hodiny reálného času obsahují neplatný čas, tudíž jej nelze opravit.\n"
 
-#: hwclock/hwclock.c:1066
+#: hwclock/hwclock.c:1067
 #, c-format
 msgid ""
 "Not setting clock because last adjustment time is zero, so history is bad."
@@ -6346,32 +6317,27 @@ msgstr ""
 "Nenastavuji hodiny, protože čas posledního posunu je nula, takže historie je "
 "nepoužitelná."
 
-#: hwclock/hwclock.c:1089
+#: hwclock/hwclock.c:1090
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr "Potřebná oprava je menší než 1 sekunda, proto hodiny nenastavuji.\n"
 
-#: hwclock/hwclock.c:1115
+#: hwclock/hwclock.c:1116
 #, c-format
 msgid "Using %s.\n"
 msgstr "Používám %s.\n"
 
-#: hwclock/hwclock.c:1117
+#: hwclock/hwclock.c:1118
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "Nebylo nalezeno žádné použitelné rozhraní k hodinám.\n"
 
-#: hwclock/hwclock.c:1219 hwclock/hwclock.c:1226
+#: hwclock/hwclock.c:1222 hwclock/hwclock.c:1228
 #, c-format
 msgid "Unable to set system clock.\n"
 msgstr "Systémový čas nelze nastavit.\n"
 
-#: hwclock/hwclock.c:1230
-#, c-format
-msgid "Clock in UTC, not changed.\n"
-msgstr "Hodiny v UTC, nezměněno.\n"
-
-#: hwclock/hwclock.c:1259
+#: hwclock/hwclock.c:1258
 #, c-format
 msgid ""
 "The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
@@ -6385,39 +6351,39 @@ msgstr ""
 "Tento program nebyl přeložen pro Alpha systém ( a tudíž pravděpodobně nyní\n"
 "neběží na Alphě). Ignorováno.\n"
 
-#: hwclock/hwclock.c:1268
+#: hwclock/hwclock.c:1267
 #, c-format
 msgid "Unable to get the epoch value from the kernel.\n"
 msgstr "Počátek epochy nelze z jádra zjistit.\n"
 
-#: hwclock/hwclock.c:1270
+#: hwclock/hwclock.c:1269
 #, c-format
 msgid "Kernel is assuming an epoch value of %lu\n"
 msgstr "Jádro pokládá za počátek epochy %lu.\n"
 
-#: hwclock/hwclock.c:1273
+#: hwclock/hwclock.c:1272
 #, c-format
 msgid ""
 "To set the epoch value, you must use the 'epoch' option to tell to what "
 "value to set it.\n"
 msgstr "Počátek epochy nastavíte pomocí přepínačů epoch a setepoch.\n"
 
-#: hwclock/hwclock.c:1276
+#: hwclock/hwclock.c:1275
 #, c-format
 msgid "Not setting the epoch to %d - testing only.\n"
 msgstr "Testovací režim - počátek epochy na %d neměním.\n"
 
-#: hwclock/hwclock.c:1279
+#: hwclock/hwclock.c:1278
 #, c-format
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Hodnotu počátku epochy v jádře nelze nastavit.\n"
 
-#: hwclock/hwclock.c:1292 misc-utils/cal.c:345 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1291 misc-utils/cal.c:345 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s na %s\n"
 
-#: hwclock/hwclock.c:1313
+#: hwclock/hwclock.c:1312
 #, c-format
 msgid ""
 "hwclock - query and set the hardware clock (RTC)\n"
@@ -6493,7 +6459,7 @@ msgstr ""
 "  -D | --debug        ladicí režim\n"
 "\n"
 
-#: hwclock/hwclock.c:1348
+#: hwclock/hwclock.c:1347
 #, c-format
 msgid ""
 "  -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
@@ -6503,18 +6469,18 @@ msgstr ""
 "  -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
 "                       určí typ vašeho systému Alpha (vizte hwclock(8))\n"
 
-#: hwclock/hwclock.c:1435
+#: hwclock/hwclock.c:1434
 #, c-format
 msgid "%s: Unable to connect to audit system\n"
 msgstr "%s: Nelze se připojit ke kontrolnímu systému\n"
 
-#: hwclock/hwclock.c:1553
+#: hwclock/hwclock.c:1552
 #, c-format
 msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr ""
 "%s akceptuje pouze přepínače. Zadáno argumentů, které nejsou přepínači: %d\n"
 
-#: hwclock/hwclock.c:1560
+#: hwclock/hwclock.c:1559
 #, c-format
 msgid ""
 "You have specified multiple functions.\n"
@@ -6523,14 +6489,14 @@ msgstr ""
 "Zadal jste vícero funkčních přepínačů.\n"
 "Program může provést v jeden okamžik právě jednu funkci.\n"
 
-#: hwclock/hwclock.c:1567
+#: hwclock/hwclock.c:1566
 #, c-format
 msgid ""
 "%s: The --utc and --localtime options are mutually exclusive.  You specified "
 "both.\n"
 msgstr "%s: Přepínače --utc a --localtime nelze použít zároveň.\n"
 
-#: hwclock/hwclock.c:1574
+#: hwclock/hwclock.c:1573
 #, c-format
 msgid ""
 "%s: The --adjust and --noadjfile options are mutually exclusive.  You "
@@ -6539,7 +6505,7 @@ msgstr ""
 "%s: Volby --adjust a --noadjfile se vzájemně vylučují. Vy jste však použil "
 "obě.\n"
 
-#: hwclock/hwclock.c:1581
+#: hwclock/hwclock.c:1580
 #, c-format
 msgid ""
 "%s: The --adjfile and --noadjfile options are mutually exclusive.  You "
@@ -6548,27 +6514,27 @@ msgstr ""
 "%s: Volby --adjfile a --noadjfile se vzájemně vylučují. Vy jste však použil"
 "(a) obě.\n"
 
-#: hwclock/hwclock.c:1590
+#: hwclock/hwclock.c:1589
 #, c-format
 msgid "%s: With --noadjfile, you must specify either --utc or --localtime\n"
 msgstr "%s: Současně s --noadjfile musíte použít buď --utc, nebo --localtime\n"
 
-#: hwclock/hwclock.c:1604
+#: hwclock/hwclock.c:1603
 #, c-format
 msgid "No usable set-to time.  Cannot set clock.\n"
 msgstr "Nebyl zadán platný čas, který mám nastavit. Hodiny nelze nastavit.\n"
 
-#: hwclock/hwclock.c:1621
+#: hwclock/hwclock.c:1620
 #, c-format
 msgid "Sorry, only the superuser can change the Hardware Clock.\n"
 msgstr "Hodiny reálného času může nastavit pouze superuživatel.\n"
 
-#: hwclock/hwclock.c:1626
+#: hwclock/hwclock.c:1625
 #, c-format
 msgid "Sorry, only the superuser can change the System Clock.\n"
 msgstr "Hodiny reálného času může nastavit pouze superuživatel.\n"
 
-#: hwclock/hwclock.c:1631
+#: hwclock/hwclock.c:1630
 #, c-format
 msgid ""
 "Sorry, only the superuser can change the Hardware Clock epoch in the "
@@ -9277,7 +9243,7 @@ msgstr "; ignoruji zbytek souboru"
 msgid "bug in xstrndup call"
 msgstr "chyba ve volání xstrndup"
 
-#: mount/sundries.c:224 mount/sundries.c:276 mount/sundries.c:285
+#: mount/sundries.c:224 mount/sundries.c:280 mount/sundries.c:289
 #: mount/xmalloc.c:11
 msgid "not enough memory"
 msgstr "Nedostatek paměti"
@@ -9341,88 +9307,88 @@ msgstr ""
 " %1$s -V                           vypíše verzi\n"
 "\n"
 
-#: mount/swapon.c:138
+#: mount/swapon.c:140
 #, c-format
 msgid "%s: unexpected file format"
 msgstr "%s: neočekávaný formát souboru"
 
-#: mount/swapon.c:177 mount/swapon.c:245 mount/swapon.c:390 mount/swapon.c:549
-#: mount/swapon.c:751
+#: mount/swapon.c:184 mount/swapon.c:252 mount/swapon.c:397 mount/swapon.c:556
+#: mount/swapon.c:758
 #, c-format
 msgid "%s: open failed"
 msgstr "%s: otevření se nezdařilo"
 
-#: mount/swapon.c:198
+#: mount/swapon.c:205
 #, c-format
 msgid "%s: reinitializing the swap."
 msgstr "%s: reinicializuji odkládací oblast."
 
-#: mount/swapon.c:202
+#: mount/swapon.c:209
 msgid "fork failed"
 msgstr "volání fork selhalo"
 
-#: mount/swapon.c:218
+#: mount/swapon.c:225
 msgid "execv failed"
 msgstr "funkce execv selhala"
 
-#: mount/swapon.c:226
+#: mount/swapon.c:233
 msgid "waitpid failed"
 msgstr "volání waitpid selhalo"
 
-#: mount/swapon.c:250
+#: mount/swapon.c:257
 #, c-format
 msgid "%s: lseek failed"
 msgstr "%s: volání lseek selhalo"
 
-#: mount/swapon.c:256
+#: mount/swapon.c:263
 #, c-format
 msgid "%s: write signature failed"
 msgstr "%s: zápis podpisu selhal"
 
 # TODO: i18n second argument
-#: mount/swapon.c:343
+#: mount/swapon.c:350
 #, c-format
 msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
 msgstr ""
 "%s: nalezen podpis odkládacího prostoru%s v%d pro %dKiB VELIKOST_STRÁNKY\n"
 
-#: mount/swapon.c:363
+#: mount/swapon.c:370
 #, c-format
 msgid "%s: stat failed"
 msgstr "%s: volání stat selhalo"
 
-#: mount/swapon.c:373
+#: mount/swapon.c:380
 #, c-format
 msgid "%s: insecure permissions %04o, %04o suggested."
 msgstr "%s: přístupová práva %04o nejsou bezpečná, %04o by byla lepší."
 
-#: mount/swapon.c:381
+#: mount/swapon.c:388
 #, c-format
 msgid "%s: skipping - it appears to have holes."
 msgstr "%s: vynechávám – zdá se, že obsahuje díry."
 
-#: mount/swapon.c:395
+#: mount/swapon.c:402
 #, c-format
 msgid "%s: get size failed"
 msgstr "%s: nepodařilo se zjistit velikost"
 
-#: mount/swapon.c:401
+#: mount/swapon.c:408
 #, c-format
 msgid "%s: read swap header failed"
 msgstr "%s: nepodařilo se načíst hlavičku odkládací oblasti"
 
-#: mount/swapon.c:414
+#: mount/swapon.c:421
 #, c-format
 msgid "%s: last_page 0x%08llx is larger than actual size of swapspace"
 msgstr ""
 "%s: last_page 0x%08llx je větší než současní velikost odkládacího prostoru"
 
-#: mount/swapon.c:419
+#: mount/swapon.c:426
 #, c-format
 msgid "%s: swap format pagesize does not match."
 msgstr "%s: formát odkládacího prostoru se neshoduje ve velikosti stránky."
 
-#: mount/swapon.c:424
+#: mount/swapon.c:431
 #, c-format
 msgid ""
 "%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
@@ -9430,32 +9396,32 @@ msgstr ""
 "%s: formát odkládacího prostoru se neshoduje ve velikosti stránky. (Lze ji "
 "reinicializovat pomocí --fixpgsz.)"
 
-#: mount/swapon.c:433
+#: mount/swapon.c:440
 #, c-format
 msgid "%s: software suspend data detected. Rewriting the swap signature."
 msgstr ""
 "%s: nalezena data ze softwarového uspání. Přepisuji podpis odkládací oblasti."
 
-#: mount/swapon.c:457 mount/swapon.c:507
+#: mount/swapon.c:464 mount/swapon.c:514
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s na %s\n"
 
-#: mount/swapon.c:479
+#: mount/swapon.c:486
 #, c-format
 msgid "%s: swapon failed"
 msgstr "%s: swapon selhal"
 
-#: mount/swapon.c:486
+#: mount/swapon.c:493
 #, c-format
 msgid "cannot find the device for %s"
 msgstr "nelze nalézt zařízení pro %s"
 
-#: mount/swapon.c:519
+#: mount/swapon.c:526
 msgid "Not superuser."
 msgstr "Nejste superuživatel."
 
-#: mount/swapon.c:522
+#: mount/swapon.c:529
 #, c-format
 msgid "%s: swapoff failed"
 msgstr "%s: swapoff selhal"
@@ -11825,8 +11791,8 @@ msgid "cannot stat \"%s\""
 msgstr "o „%s“ nelze získat podrobnosti"
 
 #: text-utils/tailf.c:108
-#, c-format
-msgid "incomplete write to \"%s\" (written %ld, expected %ld)\n"
+#, fuzzy, c-format
+msgid "incomplete write to \"%s\" (written %zd, expected %zd)\n"
 msgstr "neúplný zápis do „%s“ (zapsáno %ld, očekáváno %ld)\n"
 
 #: text-utils/tailf.c:146
@@ -11881,6 +11847,28 @@ msgstr "Vstupní řádka je příliš dlouhá.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Nedostatek paměti pro rostoucí buffer.\n"
+
+#~ msgid "# partition table of %s\n"
+#~ msgstr "# tabulka rozdělení disku pro %s\n"
+
+#~ msgid ""
+#~ "unit: sectors\n"
+#~ "\n"
+#~ msgstr ""
+#~ "jednotka: sektory\n"
+#~ "\n"
+
+#~ msgid " start=%9lu"
+#~ msgstr " začátek=%9lu"
+
+#~ msgid ", size=%9lu"
+#~ msgstr ", velikost=%9lu"
+
+#~ msgid ", bootable"
+#~ msgstr ", startovací"
+
+#~ msgid "Clock in UTC, not changed.\n"
+#~ msgstr "Hodiny v UTC, nezměněno.\n"
 
 #~ msgid "%s: error: label only with v1 swap area\n"
 #~ msgstr "%s: chyba: jmenovku lze použít pouze u verze 1\n"

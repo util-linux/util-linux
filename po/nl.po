@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng-2.14.2-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-09-07 10:26+0200\n"
+"POT-Creation-Date: 2009-11-30 16:27+0100\n"
 "PO-Revision-Date: 2009-01-31 20:52+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -174,7 +174,7 @@ msgstr ""
 msgid "Formatting ... "
 msgstr "Formatteren... "
 
-#: disk-utils/fdformat.c:49 disk-utils/fdformat.c:84
+#: disk-utils/fdformat.c:49 disk-utils/fdformat.c:86
 #, c-format
 msgid "done\n"
 msgstr "voltooid\n"
@@ -193,7 +193,7 @@ msgstr "Gelezen: "
 msgid "Problem reading cylinder %d, expected %d, read %d\n"
 msgstr "Probleem bij lezen van cilinder %d; verwacht: %d, gelezen: %d\n"
 
-#: disk-utils/fdformat.c:79
+#: disk-utils/fdformat.c:80
 #, c-format
 msgid ""
 "bad data in cyl %d\n"
@@ -202,12 +202,12 @@ msgstr ""
 "Slechte gegevens in cilinder %d\n"
 "Doorgaan... "
 
-#: disk-utils/fdformat.c:94
+#: disk-utils/fdformat.c:96
 #, c-format
 msgid "usage: %s [ -n ] device\n"
 msgstr "Gebruik:  %s [ -n ] apparaat\n"
 
-#: disk-utils/fdformat.c:116 disk-utils/fsck.minix.c:1282
+#: disk-utils/fdformat.c:118 disk-utils/fsck.minix.c:1282
 #: disk-utils/isosize.c:181 disk-utils/mkfs.bfs.c:115 disk-utils/mkfs.c:52
 #: disk-utils/mkfs.cramfs.c:813 disk-utils/mkfs.minix.c:571
 #: disk-utils/mkswap.c:461 misc-utils/ddate.c:179 misc-utils/rename.c:79
@@ -216,25 +216,25 @@ msgstr "Gebruik:  %s [ -n ] apparaat\n"
 msgid "%s (%s)\n"
 msgstr "%s (%s)\n"
 
-#: disk-utils/fdformat.c:130
+#: disk-utils/fdformat.c:132
 #, c-format
 msgid "%s: not a block device\n"
 msgstr "%s: is geen blok-apparaat\n"
 
-#: disk-utils/fdformat.c:140
+#: disk-utils/fdformat.c:142
 msgid "Could not determine current format type"
 msgstr "Kan huidige soort formattering niet bepalen"
 
-#: disk-utils/fdformat.c:141
+#: disk-utils/fdformat.c:143
 #, c-format
 msgid "%s-sided, %d tracks, %d sec/track. Total capacity %d kB.\n"
 msgstr "%szijdig, %d sporen, %d sectoren/spoor.  Totale capaciteit %d kB.\n"
 
-#: disk-utils/fdformat.c:142
+#: disk-utils/fdformat.c:144
 msgid "Double"
 msgstr "Dubbel"
 
-#: disk-utils/fdformat.c:142
+#: disk-utils/fdformat.c:144
 msgid "Single"
 msgstr "Enkel"
 
@@ -4980,20 +4980,6 @@ msgstr "%s: die partitie bestaat niet\n"
 msgid "unrecognized format - using sectors\n"
 msgstr "onbekende eenheid -- \"sectoren\" wordt gebruikt\n"
 
-#: fdisk/sfdisk.c:933
-#, c-format
-msgid "# partition table of %s\n"
-msgstr "# Partitietabel van %s\n"
-
-#: fdisk/sfdisk.c:934
-#, c-format
-msgid ""
-"unit: sectors\n"
-"\n"
-msgstr ""
-"eenheid: sectoren \n"
-"\n"
-
 #: fdisk/sfdisk.c:944
 #, c-format
 msgid "unimplemented format - using %s\n"
@@ -5055,21 +5041,6 @@ msgstr ""
 #, c-format
 msgid "   Device Boot Start   End    MiB    #blocks   Id  System\n"
 msgstr " Apparaat Ops Begin  Einde    MiB   #blokken   ID  Systeem\n"
-
-#: fdisk/sfdisk.c:1062
-#, c-format
-msgid " start=%9lu"
-msgstr " begin=%9lu"
-
-#: fdisk/sfdisk.c:1063
-#, c-format
-msgid ", size=%9lu"
-msgstr ", grootte=%9lu"
-
-#: fdisk/sfdisk.c:1067
-#, c-format
-msgid ", bootable"
-msgstr ", opstartbaar"
 
 #: fdisk/sfdisk.c:1128
 #, c-format
@@ -6243,32 +6214,32 @@ msgstr ""
 "De hardwareklok bevat geen geldige tijd, zodat de systeemtijd er niet mee "
 "ingesteld kan worden.\n"
 
-#: hwclock/hwclock.c:728 hwclock/hwclock.c:804
+#: hwclock/hwclock.c:728 hwclock/hwclock.c:805
 #, c-format
 msgid "Calling settimeofday:\n"
 msgstr "Aanroep van settimeofday():\n"
 
-#: hwclock/hwclock.c:729 hwclock/hwclock.c:806
+#: hwclock/hwclock.c:729 hwclock/hwclock.c:807
 #, c-format
 msgid "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 msgstr "\ttv.tv_sec = %ld, tv.tv_usec = %ld\n"
 
-#: hwclock/hwclock.c:731 hwclock/hwclock.c:808
+#: hwclock/hwclock.c:731 hwclock/hwclock.c:809
 #, c-format
 msgid "\ttz.tz_minuteswest = %d\n"
 msgstr "\ttz.tz_minuteswest = %d\n"
 
-#: hwclock/hwclock.c:734 hwclock/hwclock.c:811
+#: hwclock/hwclock.c:734 hwclock/hwclock.c:812
 #, c-format
 msgid "Not setting system clock because running in test mode.\n"
 msgstr "De systeemklok wordt niet ingesteld -- in testmodus.\n"
 
-#: hwclock/hwclock.c:743 hwclock/hwclock.c:820
+#: hwclock/hwclock.c:743 hwclock/hwclock.c:821
 #, c-format
 msgid "Must be superuser to set system clock.\n"
 msgstr "U moet root zijn om de systeemklok in te kunnen stellen.\n"
 
-#: hwclock/hwclock.c:746 hwclock/hwclock.c:823
+#: hwclock/hwclock.c:746 hwclock/hwclock.c:824
 msgid "settimeofday() failed"
 msgstr "settimeofday() is mislukt"
 
@@ -6277,12 +6248,12 @@ msgstr "settimeofday() is mislukt"
 msgid "Current system time: %ld = %s\n"
 msgstr "lezen van systeemtijd"
 
-#: hwclock/hwclock.c:805
+#: hwclock/hwclock.c:806
 #, c-format
 msgid "\tUTC: %s\n"
 msgstr ""
 
-#: hwclock/hwclock.c:852
+#: hwclock/hwclock.c:853
 #, c-format
 msgid ""
 "Not adjusting drift factor because the Hardware Clock previously contained "
@@ -6291,7 +6262,7 @@ msgstr ""
 "De verschuivingsfactor wordt niet aangepast,\n"
 "omdat de hardwareklok eerder rommel bevatte.\n"
 
-#: hwclock/hwclock.c:857
+#: hwclock/hwclock.c:858
 #, c-format
 msgid ""
 "Not adjusting drift factor because last calibration time is zero,\n"
@@ -6302,7 +6273,7 @@ msgstr ""
 "Er is dus geen bruikbare geschiedenis,\n"
 "en een latere hercalibratie is nodig.\n"
 
-#: hwclock/hwclock.c:863
+#: hwclock/hwclock.c:864
 #, c-format
 msgid ""
 "Not adjusting drift factor because it has been less than a day since the "
@@ -6311,7 +6282,7 @@ msgstr ""
 "De verschuivingsfactor wordt niet aangepast,\n"
 "omdat de vorige calibratie minder dan één dag geleden is.\n"
 
-#: hwclock/hwclock.c:911
+#: hwclock/hwclock.c:912
 #, c-format
 msgid ""
 "Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
@@ -6322,24 +6293,24 @@ msgstr ""
 "ondanks een verschuivingsfactor van %f seconden/dag.\n"
 "De verschuivingsfactor wordt met %f seconden/dag aangepast.\n"
 
-#: hwclock/hwclock.c:961
+#: hwclock/hwclock.c:962
 #, c-format
 msgid "Time since last adjustment is %d seconds\n"
 msgstr "De verlopen tijd sinds de vorige aanpassing is %d seconden.\n"
 
-#: hwclock/hwclock.c:963
+#: hwclock/hwclock.c:964
 #, c-format
 msgid "Need to insert %d seconds and refer time back %.6f seconds ago\n"
 msgstr ""
 "Er moeten %d seconden worden ingevoegd,\n"
 "en %.6f seconden zullen later verrekend worden.\n"
 
-#: hwclock/hwclock.c:992
+#: hwclock/hwclock.c:993
 #, c-format
 msgid "Not updating adjtime file because of testing mode.\n"
 msgstr "Het bestand /etc/adjtime wordt niet aangepast -- in testmodus.\n"
 
-#: hwclock/hwclock.c:993
+#: hwclock/hwclock.c:994
 #, c-format
 msgid ""
 "Would have written the following to %s:\n"
@@ -6348,24 +6319,24 @@ msgstr ""
 "Het volgende zou naar %s geschreven worden:\n"
 "%s"
 
-#: hwclock/hwclock.c:1001
+#: hwclock/hwclock.c:1002
 #, c-format
 msgid ""
 "Could not open file with the clock adjustment parameters in it (%s) for "
 "writing"
 msgstr ""
 
-#: hwclock/hwclock.c:1006 hwclock/hwclock.c:1011
+#: hwclock/hwclock.c:1007 hwclock/hwclock.c:1012
 #, c-format
 msgid "Could not update file with the clock adjustment parameters (%s) in it"
 msgstr ""
 
-#: hwclock/hwclock.c:1017
+#: hwclock/hwclock.c:1018
 #, c-format
 msgid "Drift adjustment parameters not updated.\n"
 msgstr "De parameters voor de verschuivingsaanpassing zijn niet bijgewerkt.\n"
 
-#: hwclock/hwclock.c:1058
+#: hwclock/hwclock.c:1059
 #, c-format
 msgid ""
 "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
@@ -6373,7 +6344,7 @@ msgstr ""
 "De hardwareklok bevat geen geldige tijd, zodat die niet aangepast kan "
 "worden.\n"
 
-#: hwclock/hwclock.c:1066
+#: hwclock/hwclock.c:1067
 #, fuzzy, c-format
 msgid ""
 "Not setting clock because last adjustment time is zero, so history is bad."
@@ -6383,34 +6354,29 @@ msgstr ""
 "Er is dus geen bruikbare geschiedenis,\n"
 "en een latere hercalibratie is nodig.\n"
 
-#: hwclock/hwclock.c:1089
+#: hwclock/hwclock.c:1090
 #, c-format
 msgid "Needed adjustment is less than one second, so not setting clock.\n"
 msgstr ""
 "De benodigde aanpassing is minder dan één seconde; de klok wordt niet "
 "veranderd.\n"
 
-#: hwclock/hwclock.c:1115
+#: hwclock/hwclock.c:1116
 #, c-format
 msgid "Using %s.\n"
 msgstr "%s wordt gebruikt.\n"
 
-#: hwclock/hwclock.c:1117
+#: hwclock/hwclock.c:1118
 #, c-format
 msgid "No usable clock interface found.\n"
 msgstr "Geen bruikbare klok-interface gevonden.\n"
 
-#: hwclock/hwclock.c:1219 hwclock/hwclock.c:1226
+#: hwclock/hwclock.c:1222 hwclock/hwclock.c:1228
 #, c-format
 msgid "Unable to set system clock.\n"
 msgstr "Instellen van de systeemklok is mislukt.\n"
 
-#: hwclock/hwclock.c:1230
-#, fuzzy, c-format
-msgid "Clock in UTC, not changed.\n"
-msgstr "Shell is niet gewijzigd.\n"
-
-#: hwclock/hwclock.c:1259
+#: hwclock/hwclock.c:1258
 #, c-format
 msgid ""
 "The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
@@ -6423,17 +6389,17 @@ msgstr ""
 "Deze versie van 'hwclock' is gemaakt voor een ander systeem dan de Alpha\n"
 "(en draait nu dus vermoedelijk niet op een Alpha).  Geen actie ondernomen.\n"
 
-#: hwclock/hwclock.c:1268
+#: hwclock/hwclock.c:1267
 #, c-format
 msgid "Unable to get the epoch value from the kernel.\n"
 msgstr "Verkrijgen van de tijdperkwaarde van de kernel is mislukt.\n"
 
-#: hwclock/hwclock.c:1270
+#: hwclock/hwclock.c:1269
 #, c-format
 msgid "Kernel is assuming an epoch value of %lu\n"
 msgstr "Kernel neemt als tijdperkwaarde %lu aan.\n"
 
-#: hwclock/hwclock.c:1273
+#: hwclock/hwclock.c:1272
 #, c-format
 msgid ""
 "To set the epoch value, you must use the 'epoch' option to tell to what "
@@ -6441,22 +6407,22 @@ msgid ""
 msgstr ""
 "Om de tijdperkwaarde in te stellen dient u de optie --epoch te gebruiken.\n"
 
-#: hwclock/hwclock.c:1276
+#: hwclock/hwclock.c:1275
 #, c-format
 msgid "Not setting the epoch to %d - testing only.\n"
 msgstr "Tijdperk wordt niet ingesteld op %d -- in testmodus.\n"
 
-#: hwclock/hwclock.c:1279
+#: hwclock/hwclock.c:1278
 #, c-format
 msgid "Unable to set the epoch value in the kernel.\n"
 msgstr "Instellen van de tijdperkwaarde in de kernel is mislukt.\n"
 
-#: hwclock/hwclock.c:1292 misc-utils/cal.c:345 misc-utils/kill.c:189
+#: hwclock/hwclock.c:1291 misc-utils/cal.c:345 misc-utils/kill.c:189
 #, c-format
 msgid "%s from %s\n"
 msgstr "%s (%s)\n"
 
-#: hwclock/hwclock.c:1313
+#: hwclock/hwclock.c:1312
 #, fuzzy, c-format
 msgid ""
 "hwclock - query and set the hardware clock (RTC)\n"
@@ -6527,7 +6493,7 @@ msgstr ""
 "  --adjfile=BESTAND  te gebruiken verschuivingsregistratiebestand\n"
 "                     (standaard is /etc/adjtime)\n"
 
-#: hwclock/hwclock.c:1348
+#: hwclock/hwclock.c:1347
 #, fuzzy, c-format
 msgid ""
 "  -J|--jensen, -A|--arc, -S|--srm, -F|--funky-toy\n"
@@ -6537,19 +6503,19 @@ msgstr ""
 "  --jensen, --arc, --srm, --funky-toy\n"
 "                het soort Alpha dat u gebruikt  (zie hwclock(8))\n"
 
-#: hwclock/hwclock.c:1435
+#: hwclock/hwclock.c:1434
 #, c-format
 msgid "%s: Unable to connect to audit system\n"
 msgstr "%s: Kan geen verbinding maken met auditsysteem\n"
 
-#: hwclock/hwclock.c:1553
+#: hwclock/hwclock.c:1552
 #, c-format
 msgid "%s takes no non-option arguments.  You supplied %d.\n"
 msgstr ""
 "%s kent geen andere argumenten dan functies en opties.\n"
 "U gaf %d.\n"
 
-#: hwclock/hwclock.c:1560
+#: hwclock/hwclock.c:1559
 #, c-format
 msgid ""
 "You have specified multiple functions.\n"
@@ -6558,48 +6524,48 @@ msgstr ""
 "U hebt verschillende functies aangegeven.\n"
 "Per aanroep kan slechts één functie worden gebruikt.\n"
 
-#: hwclock/hwclock.c:1567
+#: hwclock/hwclock.c:1566
 #, c-format
 msgid ""
 "%s: The --utc and --localtime options are mutually exclusive.  You specified "
 "both.\n"
 msgstr "%s: De opties --utc en --localtime sluiten elkaar uit.\n"
 
-#: hwclock/hwclock.c:1574
+#: hwclock/hwclock.c:1573
 #, c-format
 msgid ""
 "%s: The --adjust and --noadjfile options are mutually exclusive.  You "
 "specified both.\n"
 msgstr "%s: De opties --adjust en --noadjfile sluiten elkaar uit.\n"
 
-#: hwclock/hwclock.c:1581
+#: hwclock/hwclock.c:1580
 #, c-format
 msgid ""
 "%s: The --adjfile and --noadjfile options are mutually exclusive.  You "
 "specified both.\n"
 msgstr "%s: De opties --adjfile en --noadjfile sluiten elkaar uit.\n"
 
-#: hwclock/hwclock.c:1590
+#: hwclock/hwclock.c:1589
 #, c-format
 msgid "%s: With --noadjfile, you must specify either --utc or --localtime\n"
 msgstr "%s: Bij --noadjfile moet u of --utc of --localtime aangeven.\n"
 
-#: hwclock/hwclock.c:1604
+#: hwclock/hwclock.c:1603
 #, c-format
 msgid "No usable set-to time.  Cannot set clock.\n"
 msgstr "Geen bruikbare insteltijd.  Kan klok niet instellen.\n"
 
-#: hwclock/hwclock.c:1621
+#: hwclock/hwclock.c:1620
 #, c-format
 msgid "Sorry, only the superuser can change the Hardware Clock.\n"
 msgstr "Sorry, alleen root kan de hardwareklok instellen.\n"
 
-#: hwclock/hwclock.c:1626
+#: hwclock/hwclock.c:1625
 #, c-format
 msgid "Sorry, only the superuser can change the System Clock.\n"
 msgstr "Sorry, alleen root kan de systeemklok instellen.\n"
 
-#: hwclock/hwclock.c:1631
+#: hwclock/hwclock.c:1630
 #, c-format
 msgid ""
 "Sorry, only the superuser can change the Hardware Clock epoch in the "
@@ -9323,7 +9289,7 @@ msgstr "; rest van bestand genegeerd"
 msgid "bug in xstrndup call"
 msgstr "*programmeerfout* in aanroep van xstrndup()"
 
-#: mount/sundries.c:224 mount/sundries.c:276 mount/sundries.c:285
+#: mount/sundries.c:224 mount/sundries.c:280 mount/sundries.c:289
 #: mount/xmalloc.c:11
 msgid "not enough memory"
 msgstr "onvoldoende geheugen beschikbaar"
@@ -9387,125 +9353,125 @@ msgstr ""
 "  %1$s -V              programmaversie tonen\n"
 "\n"
 
-#: mount/swapon.c:138
+#: mount/swapon.c:140
 #, fuzzy, c-format
 msgid "%s: unexpected file format"
 msgstr "%s: %s: Onverwachte bestandsindeling\n"
 
-#: mount/swapon.c:177 mount/swapon.c:245 mount/swapon.c:390 mount/swapon.c:549
-#: mount/swapon.c:751
+#: mount/swapon.c:184 mount/swapon.c:252 mount/swapon.c:397 mount/swapon.c:556
+#: mount/swapon.c:758
 #, fuzzy, c-format
 msgid "%s: open failed"
 msgstr "openpty() is mislukt\n"
 
-#: mount/swapon.c:198
+#: mount/swapon.c:205
 #, fuzzy, c-format
 msgid "%s: reinitializing the swap."
 msgstr ""
 "%s: %s: sluimergegevens gevonden --\n"
 "wisselgeheugen wordt opnieuw ingesteld\n"
 
-#: mount/swapon.c:202
+#: mount/swapon.c:209
 #, fuzzy
 msgid "fork failed"
 msgstr "fork() is mislukt\n"
 
-#: mount/swapon.c:218
+#: mount/swapon.c:225
 #, fuzzy
 msgid "execv failed"
 msgstr "uitvoeren is mislukt\n"
 
-#: mount/swapon.c:226
+#: mount/swapon.c:233
 #, fuzzy
 msgid "waitpid failed"
 msgstr "setuid() is mislukt"
 
-#: mount/swapon.c:250
+#: mount/swapon.c:257
 #, fuzzy, c-format
 msgid "%s: lseek failed"
 msgstr "'seek' is mislukt"
 
-#: mount/swapon.c:256
+#: mount/swapon.c:263
 #, fuzzy, c-format
 msgid "%s: write signature failed"
 msgstr "schrijven naar standaarduitvoer is mislukt"
 
-#: mount/swapon.c:343
+#: mount/swapon.c:350
 #, c-format
 msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
 msgstr ""
 
-#: mount/swapon.c:363
+#: mount/swapon.c:370
 #, fuzzy, c-format
 msgid "%s: stat failed"
 msgstr "%s is mislukt.\n"
 
-#: mount/swapon.c:373
+#: mount/swapon.c:380
 #, fuzzy, c-format
 msgid "%s: insecure permissions %04o, %04o suggested."
 msgstr ""
 "%s: Waarschuwing: %s heeft onveilige toegangsrechten: %04o --\n"
 "aangeraden wordt: %04o\n"
 
-#: mount/swapon.c:381
+#: mount/swapon.c:388
 #, fuzzy, c-format
 msgid "%s: skipping - it appears to have holes."
 msgstr "%s: Bestand %s wordt overgeslagen -- het lijkt gaten te hebben.\n"
 
-#: mount/swapon.c:395
+#: mount/swapon.c:402
 #, fuzzy, c-format
 msgid "%s: get size failed"
 msgstr "'seek' is mislukt"
 
-#: mount/swapon.c:401
+#: mount/swapon.c:408
 #, c-format
 msgid "%s: read swap header failed"
 msgstr ""
 
-#: mount/swapon.c:414
+#: mount/swapon.c:421
 #, c-format
 msgid "%s: last_page 0x%08llx is larger than actual size of swapspace"
 msgstr ""
 
-#: mount/swapon.c:419
+#: mount/swapon.c:426
 #, c-format
 msgid "%s: swap format pagesize does not match."
 msgstr ""
 
-#: mount/swapon.c:424
+#: mount/swapon.c:431
 #, c-format
 msgid ""
 "%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
 msgstr ""
 
-#: mount/swapon.c:433
+#: mount/swapon.c:440
 #, fuzzy, c-format
 msgid "%s: software suspend data detected. Rewriting the swap signature."
 msgstr ""
 "%s: %s: sluimergegevens gevonden --\n"
 "wisselgeheugen wordt opnieuw ingesteld\n"
 
-#: mount/swapon.c:457 mount/swapon.c:507
+#: mount/swapon.c:464 mount/swapon.c:514
 #, c-format
 msgid "%s on %s\n"
 msgstr "%s op %s\n"
 
-#: mount/swapon.c:479
+#: mount/swapon.c:486
 #, fuzzy, c-format
 msgid "%s: swapon failed"
 msgstr "%s is mislukt.\n"
 
-#: mount/swapon.c:486
+#: mount/swapon.c:493
 #, fuzzy, c-format
 msgid "cannot find the device for %s"
 msgstr "%s: kan geen apparaat vinden voor %s\n"
 
-#: mount/swapon.c:519
+#: mount/swapon.c:526
 #, fuzzy
 msgid "Not superuser."
 msgstr "U bent niet root.\n"
 
-#: mount/swapon.c:522
+#: mount/swapon.c:529
 #, fuzzy, c-format
 msgid "%s: swapoff failed"
 msgstr "%s is mislukt.\n"
@@ -11798,8 +11764,8 @@ msgid "cannot stat \"%s\""
 msgstr "kan status van '%s' niet opvragen"
 
 #: text-utils/tailf.c:108
-#, c-format
-msgid "incomplete write to \"%s\" (written %ld, expected %ld)\n"
+#, fuzzy, c-format
+msgid "incomplete write to \"%s\" (written %zd, expected %zd)\n"
 msgstr "onvolledige schrijfoperatie naar '%s' (%ld geschreven, %ld verwacht)\n"
 
 #: text-utils/tailf.c:146
@@ -11854,6 +11820,29 @@ msgstr "Invoerregel is te lang\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Onvoldoende geheugen beschikbaar tijdens groeien van buffer\n"
+
+#~ msgid "# partition table of %s\n"
+#~ msgstr "# Partitietabel van %s\n"
+
+#~ msgid ""
+#~ "unit: sectors\n"
+#~ "\n"
+#~ msgstr ""
+#~ "eenheid: sectoren \n"
+#~ "\n"
+
+#~ msgid " start=%9lu"
+#~ msgstr " begin=%9lu"
+
+#~ msgid ", size=%9lu"
+#~ msgstr ", grootte=%9lu"
+
+#~ msgid ", bootable"
+#~ msgstr ", opstartbaar"
+
+#, fuzzy
+#~ msgid "Clock in UTC, not changed.\n"
+#~ msgstr "Shell is niet gewijzigd.\n"
 
 #~ msgid "%s: error: label only with v1 swap area\n"
 #~ msgstr "%s: fout: label is alleen mogelijk bij versie-1-wisselgeheugen\n"
