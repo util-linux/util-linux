@@ -244,6 +244,13 @@ or
 .B UUID
 (see the \-L and \-U options below).
 
+The recommended setup is to use LABEL=<label> or UUID=<uuid> tags rather than
+.B /dev/disk/by-{label,uuid}
+udev symlinks in the /etc/fstab file. The tags are
+more readable, robust and portable. The mount(8) command internally uses udev
+symlinks, so use the symlinks in /etc/fstab is not advantage over LABEL=/UUID=.
+For more details see libblkid(3).
+
 The
 .I proc
 filesystem is not associated with a special device, and when
