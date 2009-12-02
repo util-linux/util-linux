@@ -118,6 +118,162 @@ The option \-l adds the labels in this listing.
 See below.
 .RE
 
+.B The device indication.
+.RS
+Most devices are indicated by a file name (of a block special device), like
+.IR /dev/sda1 ,
+but there are other possibilities. For example, in the case of an NFS mount,
+.I device
+may look like
+.IR knuth.cwi.nl:/dir .
+It is possible to indicate a block special device using its
+volume
+.B LABEL
+or
+.B UUID
+(see the \-L and \-U options below).
+
+The recommended setup is to use LABEL=<label> or UUID=<uuid> tags rather than
+.B /dev/disk/by-{label,uuid}
+udev symlinks in the /etc/fstab file. The tags are
+more readable, robust and portable. The mount(8) command internally uses udev
+symlinks, so use the symlinks in /etc/fstab is not advantage over LABEL=/UUID=.
+For more details see libblkid(3).
+
+The
+.I proc
+filesystem is not associated with a special device, and when
+mounting it, an arbitrary keyword, such as
+.I proc
+can be used instead of a device specification.
+(The customary choice
+.I none
+is less fortunate: the error message `none busy' from
+.B umount
+can be confusing.)
+.RE
+
+.B The /etc/fstab, /etc/mtab and /proc/mounts files.
+.RS
+The file
+.I /etc/fstab
+(see
+.BR fstab (5)),
+may contain lines describing what devices are usually
+mounted where, using which options.
+.LP
+The command
+.RS
+.sp
+.B mount \-a
+.RB [ \-t
+.IR type ]
+.RB [ \-O
+.IR optlist ]
+.sp
+.RE
+(usually given in a bootscript) causes all filesystems mentioned in
+.I fstab
+(of the proper type and/or having or not having the proper options)
+to be mounted as indicated, except for those whose line contains the
+.B noauto
+keyword. Adding the
+.B \-F
+option will make mount fork, so that the
+filesystems are mounted simultaneously.
+.LP
+When mounting a filesystem mentioned in
+.IR fstab
+or
+.IR mtab ,
+it suffices to give only the device, or only the mount point.
+
+
+The programs
+.B mount
+and
+.B umount
+maintain a list of currently mounted filesystems in the file
+.IR /etc/mtab .
+If no arguments are given to
+.BR mount ,
+this list is printed.
+
+When the
+.I proc
+filesystem is mounted (say at
+.IR /proc ),
+the files
+.I /etc/mtab
+and
+.I /proc/mounts
+have very similar contents. The former has somewhat
+more information, such as the mount options used,
+but is not necessarily up-to-date (cf. the
+.B \-n
+option below). It is possible to replace
+.I /etc/mtab
+by a symbolic link to
+.IR /proc/mounts ,
+and especially when you have very large numbers of mounts
+things will be much faster with that symlink,
+but some information is lost that way, and in particular
+using the "user" option will fail.
+.RE
+
+.B The non-superuser mounts.
+.RS
+Normally, only the superuser can mount filesystems.
+However, when
+.I fstab
+contains the
+.B user
+option on a line, anybody can mount the corresponding system.
+.LP
+Thus, given a line
+.RS
+.sp
+.B "/dev/cdrom  /cd  iso9660  ro,user,noauto,unhide"
+.sp
+.RE
+any user can mount the iso9660 filesystem found on his CDROM
+using the command
+.RS
+.sp
+.B "mount /dev/cdrom"
+.sp
+.RE
+or
+.RS
+.sp
+.B "mount /cd"
+.sp
+.RE
+For more details, see
+.BR fstab (5).
+Only the user that mounted a filesystem can unmount it again.
+If any user should be able to unmount, then use
+.B users
+instead of
+.B user
+in the
+.I fstab
+line.
+The
+.B owner
+option is similar to the
+.B user
+option, with the restriction that the user must be the owner
+of the special file. This may be useful e.g. for
+.I /dev/fd
+if a login script makes the console user owner of this device.
+The
+.B group
+option is similar, with the restriction that the user must be
+member of the group of the special file.
+.RE
+
+
 .B The bind mounts.
 .RS
 .\" In fact since 2.3.99. At first the syntax was mount -t bind.
@@ -227,162 +383,6 @@ mounts under a given mountpoint.
 .BI "mount --make-runbindable " mountpoint
 .fi
 .RE
-.RE
-
-.B The device indication.
-.RS
-Most devices are indicated by a file name (of a block special device), like
-.IR /dev/sda1 ,
-but there are other possibilities. For example, in the case of an NFS mount,
-.I device
-may look like
-.IR knuth.cwi.nl:/dir .
-It is possible to indicate a block special device using its
-volume
-.B LABEL
-or
-.B UUID
-(see the \-L and \-U options below).
-
-The recommended setup is to use LABEL=<label> or UUID=<uuid> tags rather than
-.B /dev/disk/by-{label,uuid}
-udev symlinks in the /etc/fstab file. The tags are
-more readable, robust and portable. The mount(8) command internally uses udev
-symlinks, so use the symlinks in /etc/fstab is not advantage over LABEL=/UUID=.
-For more details see libblkid(3).
-
-The
-.I proc
-filesystem is not associated with a special device, and when
-mounting it, an arbitrary keyword, such as
-.I proc
-can be used instead of a device specification.
-(The customary choice
-.I none
-is less fortunate: the error message `none busy' from
-.B umount
-can be confusing.)
-.RE
-
-.B The /etc/fstab, /etc/mtab and /proc/mounts files.
-.RS
-The file
-.I /etc/fstab
-(see
-.BR fstab (5)),
-may contain lines describing what devices are usually
-mounted where, using which options.
-.LP
-The command
-.RS
-.sp
-.B mount \-a
-.RB [ \-t
-.IR type ]
-.RB [ \-O
-.IR optlist ]
-.sp
-.RE
-(usually given in a bootscript) causes all filesystems mentioned in
-.I fstab
-(of the proper type and/or having or not having the proper options)
-to be mounted as indicated, except for those whose line contains the
-.B noauto
-keyword. Adding the
-.B \-F
-option will make mount fork, so that the
-filesystems are mounted simultaneously.
-.LP
-When mounting a filesystem mentioned in
-.IR fstab
-or
-.IR mtab ,
-it suffices to give only the device, or only the mount point.
-
-
-The programs
-.B mount
-and
-.B umount
-maintain a list of currently mounted filesystems in the file
-.IR /etc/mtab .
-If no arguments are given to
-.BR mount ,
-this list is printed.
-
-When the
-.I proc
-filesystem is mounted (say at
-.IR /proc ),
-the files
-.I /etc/mtab
-and
-.I /proc/mounts
-have very similar contents. The former has somewhat
-more information, such as the mount options used,
-but is not necessarily up-to-date (cf. the
-.B \-n
-option below). It is possible to replace
-.I /etc/mtab
-by a symbolic link to
-.IR /proc/mounts ,
-and especially when you have very large numbers of mounts
-things will be much faster with that symlink,
-but some information is lost that way, and in particular
-working with the loop device will be less convenient,
-and using the "user" option will fail.
-.RE
-
-.B The non-superuser mounts.
-.RS
-Normally, only the superuser can mount filesystems.
-However, when
-.I fstab
-contains the
-.B user
-option on a line, anybody can mount the corresponding system.
-.LP
-Thus, given a line
-.RS
-.sp
-.B "/dev/cdrom  /cd  iso9660  ro,user,noauto,unhide"
-.sp
-.RE
-any user can mount the iso9660 filesystem found on his CDROM
-using the command
-.RS
-.sp
-.B "mount /dev/cdrom"
-.sp
-.RE
-or
-.RS
-.sp
-.B "mount /cd"
-.sp
-.RE
-For more details, see
-.BR fstab (5).
-Only the user that mounted a filesystem can unmount it again.
-If any user should be able to unmount, then use
-.B users
-instead of
-.B user
-in the
-.I fstab
-line.
-The
-.B owner
-option is similar to the
-.B user
-option, with the restriction that the user must be the owner
-of the special file. This may be useful e.g. for
-.I /dev/fd
-if a login script makes the console user owner of this device.
-The
-.B group
-option is similar, with the restriction that the user must be
-member of the group of the special file.
 .RE
 
 .SH COMMAND LINE OPTIONS
