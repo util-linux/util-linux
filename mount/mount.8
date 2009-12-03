@@ -449,6 +449,13 @@ Mount without writing in
 This is necessary for example when
 .I /etc
 is on a read-only filesystem.
+.IP "\fB\-\-no\-canonicalize\fP"
+Don't canonicalize paths. The mount command canonicalizes all paths 
+(from command line or fstab) and stores canonicalized paths to the 
+.IR /etc/mtab
+file. This option can be used together with the
+.B \-f
+flag for already canonicalized absolut paths.
 .IP "\fB\-p, \-\-pass\-fd \fInum\fP"
 In case of a loop mount with encryption, read the passphrase from
 file descriptor
