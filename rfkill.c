@@ -12,6 +12,7 @@
 #include <stdbool.h>
 #include <sys/types.h>
 #include <sys/poll.h>
+#include <sys/time.h>
 
 #include "rfkill.h"
 #include "core.h"
@@ -19,6 +20,7 @@
 static void rfkill_event(void)
 {
 	struct rfkill_event event;
+	struct timeval tv;
 	struct pollfd p;
 	ssize_t len;
 	int fd, n;
@@ -54,9 +56,10 @@ static void rfkill_event(void)
 			continue;
 		}
 
-		printf("RFKILL event: idx %u type %u op %u soft %u hard %u\n",
-					event.idx, event.type, event.op,
-					event.soft, event.hard);
+		gettimeofday(&tv, NULL);
+		printf("%ld.%06u: idx %u type %u op %u soft %u hard %u\n",
+			(long) tv.tv_sec, (unsigned int) tv.tv_usec,
+			event.idx, event.type, event.op, event.soft, event.hard);
 		fflush(stdout);
 	}
 
