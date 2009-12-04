@@ -98,8 +98,8 @@
 #define rand()		random()
 #endif
 
-#ifdef TLS
-#define THREAD_LOCAL static TLS
+#ifdef HAVE_TLS
+#define THREAD_LOCAL static __thread
 #else
 #define THREAD_LOCAL static
 #endif
@@ -589,7 +589,7 @@ void uuid__generate_time(uuid_t out, int *num)
 
 void uuid_generate_time(uuid_t out)
 {
-#ifdef TLS
+#ifdef HAVE_TLS
 	THREAD_LOCAL int		num = 0;
 	THREAD_LOCAL struct uuid	uu;
 	THREAD_LOCAL time_t		last_time = 0;

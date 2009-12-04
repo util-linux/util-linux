@@ -1,48 +1,111 @@
-# from http://autoconf-archive.cryp.to/ax_tls.html
 #
-# This was licensed under the GPL with the following exception:
+# AX_CHECK_TLS -- check whether the target supports TLS (thread-local storage)
 #
-# As a special exception, the respective Autoconf Macro's copyright
-# owner gives unlimited permission to copy, distribute and modify the
-# configure scripts that are the output of Autoconf when processing
-# the Macro. You need not follow the terms of the GNU General Public
-# License when using or distributing such scripts, even though
-# portions of the text of the Macro appear in them. The GNU General
-# Public License (GPL) does govern all other use of the material that
-# constitutes the Autoconf Macro.
+# Based on tls.m4 from gcc and extended by TLS link test for cross-compiling
+# support from http://old.nabble.com/Improve-TLS-link-test-for-cross-compiling-td24312975.html
 #
-# This special exception to the GPL applies to versions of the
-# Autoconf Macro released by the Autoconf Macro Archive. When you make
-# and distribute a modified version of the Autoconf Macro, you may
-# extend this special exception to the GPL to apply to your modified
-# version as well.
+# Note that AX_TLS from http://autoconf-archive.cryp.to/ax_tls.html supports
+# more keywords for TLS. We are happy with the "__thread" only.
 #
-AC_DEFUN([AX_TLS], [
-  AC_MSG_CHECKING(for thread local storage (TLS) class)
-  AC_CACHE_VAL(ac_cv_tls, [
-    ax_tls_keywords="__thread __declspec(thread) none"
-    for ax_tls_keyword in $ax_tls_keywords; do
-       case $ax_tls_keyword in
-          none) ac_cv_tls=none ; break ;;
-          *)
-             AC_TRY_COMPILE(
-                [#include <stdlib.h>
-                 static void
-                 foo(void) {
-                 static ] $ax_tls_keyword [ int bar;
-                 exit(1);
-                 }],
-                 [],
-                 [ac_cv_tls=$ax_tls_keyword ; break],
-                 ac_cv_tls=none
-             )
-          esac
-    done
-])
+# -- Karel Zak (04-Dec-2009)
+#
+dnl Check whether the target supports TLS.
+AC_DEFUN([AX_CHECK_TLS], [
 
-  if test "$ac_cv_tls" != "none"; then
-    dnl AC_DEFINE([TLS], [], [If the compiler supports a TLS storage class define it to that here])
-    AC_DEFINE_UNQUOTED([TLS], $ac_cv_tls, [If the compiler supports a TLS storage class define it to that here])
+  AC_REQUIRE([AC_CANONICAL_HOST])
+
+  AC_ARG_ENABLE([tls],
+    AS_HELP_STRING([--disable-tls], [disable use of thread local support]),
+      [], enable_tls=yes)
+
+  AC_CACHE_CHECK([whether the target supports thread-local storage],
+		 ax_cv_have_tls, [
+    AC_RUN_IFELSE([__thread int a; int b; int main() { return a = b; }],
+      [dnl If the test case passed with dynamic linking, try again with
+       dnl static linking, but only if static linking is supported (not
+       dnl on Solaris 10).  This fails with some older Red Hat releases.
+      chktls_save_LDFLAGS="$LDFLAGS"
+      LDFLAGS="-static $LDFLAGS"
+      AC_LINK_IFELSE([int main() { return 0; }],
+	AC_RUN_IFELSE([__thread int a; int b; int main() { return a = b; }],
+		      [ax_cv_have_tls=yes], [ax_cv_have_tls=no],[]),
+	[ax_cv_have_tls=yes])
+      LDFLAGS="$chktls_save_LDFLAGS"
+      if test $ax_cv_have_tls = yes; then
+	dnl So far, the binutils and the compiler support TLS.
+	dnl Also check whether the libc supports TLS, i.e. whether a variable
+	dnl with __thread linkage has a different address in different threads.
+	dnl First, find the thread_CFLAGS necessary for linking a program that
+	dnl calls pthread_create.
+	chktls_save_CFLAGS="$CFLAGS"
+	thread_CFLAGS=failed
+	for flag in '' '-pthread' '-lpthread'; do
+	  CFLAGS="$flag $chktls_save_CFLAGS"
+	  AC_LINK_IFELSE(
+	    [AC_LANG_PROGRAM(
+	       [#include <pthread.h>
+		void *g(void *d) { return NULL; }],
+	       [pthread_t t; pthread_create(&t,NULL,g,NULL);])],
+	    [thread_CFLAGS="$flag"])
+	  if test "X$thread_CFLAGS" != Xfailed; then
+	    break
+	  fi
+	done
+	CFLAGS="$chktls_save_CFLAGS"
+	if test "X$thread_CFLAGS" != Xfailed; then
+	  CFLAGS="$thread_CFLAGS $chktls_save_CFLAGS"
+	  AC_RUN_IFELSE(
+	    [AC_LANG_PROGRAM(
+	       [#include <pthread.h>
+		__thread int a;
+		static int *a_in_other_thread;
+		static void *
+		thread_func (void *arg)
+		{
+		  a_in_other_thread = &a;
+		  return (void *)0;
+		}],
+	       [pthread_t thread;
+		void *thread_retval;
+		int *a_in_main_thread;
+		if (pthread_create (&thread, (pthread_attr_t *)0,
+				    thread_func, (void *)0))
+		  return 0;
+		a_in_main_thread = &a;
+		if (pthread_join (thread, &thread_retval))
+		  return 0;
+		return (a_in_other_thread == a_in_main_thread);])],
+	     [ax_cv_have_tls=yes], [ax_cv_have_tls=no], [])
+	  CFLAGS="$chktls_save_CFLAGS"
+	fi
+      fi],
+      [ax_cv_have_tls=no],
+      [dnl This is the cross-compiling case. Assume libc supports TLS if the
+       dnl binutils and the compiler do.
+       AC_LINK_IFELSE([__thread int a; int b; int main() { return a = b; }],
+	 [chktls_save_LDFLAGS="$LDFLAGS"
+	  dnl Shared library options may depend on the host; this check
+	  dnl is only known to be needed for GNU/Linux.
+	  case $host in
+	    *-*-linux*)
+	      LDFLAGS="-shared -Wl,--no-undefined $LDFLAGS"
+	      ;;
+	  esac
+	  chktls_save_CFLAGS="$CFLAGS"
+	  CFLAGS="-fPIC $CFLAGS"
+	  dnl If -shared works, test if TLS works in a shared library.
+	  AC_LINK_IFELSE([int f() { return 0; }],
+	    [AC_LINK_IFELSE([__thread int a; int b; int f() { return a = b; }],
+	      [ax_cv_have_tls=yes],
+	      [ax_cv_have_tls=no])],
+	    [ax_cv_have_tls=yes])
+	  CFLAGS="$chktls_save_CFLAGS"
+	  LDFLAGS="$chktls_save_LDFLAGS"], [ax_cv_have_tls=no])
+      ]
+    )])
+
+  if test "$enable_tls $ax_cv_have_tls" = "yes yes"; then
+    AC_DEFINE(HAVE_TLS, 1,
+	      [Define to 1 if the target supports thread-local storage.])
   fi
-  AC_MSG_RESULT($ac_cv_tls)
 ])

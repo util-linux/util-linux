@@ -242,14 +242,7 @@ AC_DEFUN([UTIL_RESTORE_FLAGS], [
 ])
 
 
-AC_ARG_ENABLE([tls],
-  AS_HELP_STRING([--disable-tls], [disable use of thread local support]),
-  [], enable_tls=yes
-)
-if test "x$enable_tls" = xyes; then
-  AX_TLS
-fi
-
+AX_CHECK_TLS
 
 AC_ARG_ENABLE([mount],
   AS_HELP_STRING([--disable-mount], [do not build mount utilities]),
