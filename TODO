@@ -5,9 +5,6 @@ libblkid
 
        # blkid -p -o udev --filter-type nofat
 
- - (?) we need to ignore cache and config files when the files are writable
-   for non-root users and the library is linked with suid programs
-
  - add -<BE|LE> suffix to test images for native-endian filesystems (e.g. swap)
    and add support for such functionality to tests/ts/blkid/low-probe
 
@@ -39,17 +36,14 @@ fdisk(s)
 misc
 ----
 
- * use something better than gtk-doc (doxyden?)
+ * check for program_invocation_short_name in ./configure.ac and add 
+   lib/progname.c fallback for libc without this feature (for example
+   use the 1st field from /proc/#/cmdline)
 
- * add to lib/blkdev.c code for /proc/partitions parsing -- unfortunate we
-   duplicate this code in many places. The parser has to support unlimited
-   size (or 4096 bytes) of partition name.
+ * use something better than gtk-doc (doxyden?)
 
  * partx: copy sun.c, mac.c and dash.c from kpartx
    git://git.kernel.org/pub/scm/linux/storage/multipath-tools/.git
-
- * mkswap: use /proc/sys/kernel/random/uuid as a fallback solution for builds 
-   without libuuid
 
  * swapon -s  -- LABELs support
 
