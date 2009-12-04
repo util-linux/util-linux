@@ -34,8 +34,6 @@ $TS_CMD_MKSWAP -L $LABEL $DEVICE > /dev/null 2>> $TS_OUTPUT \
 ts_device_has "LABEL" $LABEL $DEVICE \
  || ts_die "Cannot found LABEL '$LABEL' on $DEVICE" $DEVICE
 
-ts_udev_dev_support "by-label" $LABEL || ts_skip "udev ignores /dev/loop*" $DEVICE
-
 LD_LIBRARY_PATH="$U_L_LIBRARY_PATH" \
 	$TS_CMD_SWAPON -L $LABEL 2>&1 >> $TS_OUTPUT
 

@@ -70,9 +70,6 @@ ts_log "check the image"
 ts_device_has "TYPE" "cramfs" $DEVICE
 [  "$?" == "0" ] || ts_die "Cannot found cramfs on $DEVICE" $DEVICE
 
-ts_udev_dev_support "by-label" $LABEL
-[ "$?" == "0" ] || ts_skip "udev ignores /dev/loop*" $DEVICE
-
 ts_log "mount the image"
 $TS_CMD_MOUNT -L $LABEL $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
 

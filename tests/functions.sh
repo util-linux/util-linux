@@ -100,7 +100,6 @@ function ts_init_env {
 	TS_MOUNTPOINT="$TS_OUTDIR/${TS_TESTNAME}-mnt"
 
 	TS_VERBOSE=$(ts_has_option "verbose" "$*")
-	TS_HAS_VOLUMEID="no"
 
 	BLKID_FILE="$TS_OUTDIR/${TS_TESTNAME}.blkidtab"
 
@@ -114,11 +113,6 @@ function ts_init_env {
 	. $TS_TOPDIR/commands.sh
 
 	export BLKID_FILE
-
-	if [ -x $TS_CMD_MOUNT ]; then
-		ldd $TS_CMD_MOUNT | grep -q 'libvolume_id' &> /dev/null
-		[ "$?" == "0" ] && TS_HAS_VOLUMEID="yes"
-	fi
 
 	rm -f $TS_OUTPUT
 	touch $TS_OUTPUT
@@ -282,44 +276,16 @@ function ts_device_deinit {
 	fi
 }
 
-function ts_udev_dev_support {
-	if [ "$TS_HAS_VOLUMEID" == "yes" ] && [ ! -L "/dev/disk/$1/$2" ]; then
-		return 1
-	fi
-	return 0
-}
-
 function ts_uuid_by_devname {
-	local DEV="$1"
-	local UUID=""
-	if [ -x "$TS_ECMD_BLKID" ]; then
-		UUID=$($TS_ECMD_BLKID -c /dev/null -w /dev/null -s "UUID" $DEV | sed 's/.*UUID="//g; s/"//g')
-	elif [ -x "$TS_ECMD_VOLID" ]; then
-		UUID=$($TS_ECMD_VOLID -u $DEV)
-	fi
-	echo $UUID
+	echo $($TS_CMD_BLKID -p -s UUID -o value $1)
 }
 
 function ts_label_by_devname {
-	local DEV="$1"
-	local TYPE=""
-	if [ -x "$TS_ECMD_BLKID" ]; then
-		LABEL=$($TS_ECMD_BLKID -c /dev/null -w /dev/null -s "LABEL" $DEV | sed 's/.*LABEL="//g; s/"//g')
-	elif [ -x "$TS_ECMD_VOLID" ]; then
-		LABEL=$($TS_ECMD_VOLID -l $DEV)
-	fi
-	echo $LABEL
+	echo $($TS_CMD_BLKID -p -s LABEL -o value $1)
 }
 
 function ts_fstype_by_devname {
-	local DEV="$1"
-	local TYPE=""
-	if [ -x "$TS_ECMD_BLKID" ]; then
-		TYPE=$($TS_ECMD_BLKID -c /dev/null -w /dev/null -s "TYPE" $DEV | sed 's/.*TYPE="//g; s/"//g')
-	elif [ -x "$TS_ECMD_VOLID" ]; then
-		TYPE=$($TS_ECMD_VOLID -t $DEV)
-	fi
-	echo $TYPE
+	echo $($TS_CMD_BLKID -p -s TYPE -o value $1)
 }
 
 function ts_device_has {

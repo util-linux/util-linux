@@ -14,10 +14,6 @@ TS_HELPER_ISMOUNTED="$TOPDIR/lib/test_ismounted"
 # TODO: use partx
 TS_HELPER_PARTITIONS="$TOPDIR/shlibs/blkid/samples/partitions"
 
-# external commands
-TS_ECMD_BLKID="@BLKID@"
-TS_ECMD_VOLID="@VOLID@"
-
 U_L_LIBRARY_PATH="$TOPDIR/shlibs/blkid/src/.libs:$TOPDIR/shlibs/uuid/src/.libs"
 
 # paths to commands

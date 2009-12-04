@@ -34,8 +34,6 @@ mkfs.ext3 -L $LABEL $DEVICE &> /dev/null || ts_die "Cannot make ext3 on $DEVICE"
 ts_device_has "LABEL" $LABEL $DEVICE \
  || ts_die "Cannot found LABEL '$LABEL' on $DEVICE" $DEVICE
 
-ts_udev_dev_support "by-label" $LABEL || ts_skip "udev ignores /dev/loop*" $DEVICE
-
 ts_device_has_uuid $DEVICE || ts_die "Cannot found UUID on $DEVICE" $DEVICE
 
 UUID=$(ts_uuid_by_devname $DEVICE)

@@ -91,8 +91,6 @@ esac
 AM_CONDITIONAL([LINUX], test "x$linux_os" = xyes)
 
 AC_PATH_PROG(PERL, perl)
-AC_PATH_PROG(BLKID, blkid, [], [$PATH:/sbin])
-AC_PATH_PROG(VOLID, vol_id, [], [$PATH:/lib/udev])
 
 AC_SYS_LARGEFILE
 
