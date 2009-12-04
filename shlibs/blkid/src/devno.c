@@ -99,8 +99,8 @@ int blkid_fstatat(DIR *dir, const char *dirname, const char *filename,
 	char device[PATH_MAX];
 	int len;
 
-	len = snprintf(device, sizeof(device), "%s/%s", *dirname, name);
-	if (len < 0 || len + 1 > sizeof(path))
+	len = snprintf(device, sizeof(device), "%s/%s", dirname, filename);
+	if (len < 0 || len + 1 > sizeof(device))
 		return -1;
 
 	return nofollow ? lstat(device, st) : stat(device, st);
