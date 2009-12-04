@@ -14,9 +14,6 @@ AC_CONFIG_SRCDIR(mount/mount.c)
 
 AC_PREFIX_DEFAULT([/usr])
 
-GTK_DOC_CHECK([1.10])
-AC_PATH_PROG([XSLTPROC], [xsltproc])
-
 dnl version details from <major>.<minor>[-<suffix>]
 PACKAGE_VERSION_MAJOR=$(echo $PACKAGE_VERSION | awk -F. '{print $1}')
 PACKAGE_VERSION_MINOR=$(echo $PACKAGE_VERSION | awk -F. '{print $2}' \
@@ -81,6 +78,9 @@ dnl libtool-2
 LT_INIT
 
 PKG_PROG_PKG_CONFIG
+
+GTK_DOC_CHECK([1.10])
+AC_PATH_PROG([XSLTPROC], [xsltproc])
 
 linux_os=no
 case ${host_os} in
