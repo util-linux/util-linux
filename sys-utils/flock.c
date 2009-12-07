@@ -287,6 +287,8 @@ int main(int argc, char *argv[])
   if ( cmd_argv ) {
     pid_t w, f;
 
+    /* Clear any inherited settings */
+    signal(SIGCHLD, SIG_DFL);
     f = fork();
 
     if ( f < 0 ) {
@@ -304,9 +306,15 @@ int main(int argc, char *argv[])
     } else {
       do {
 	w = waitpid(f, &status, 0);
+	if (w == -1 && errno != EINTR)
+	  break;
       } while ( w != f );
 
-      if ( WIFEXITED(status) )
+      if (w == -1) {
+	err = errno;
+	status = EXIT_FAILURE;
+	fprintf(stderr, "%s: waitpid failed: %s\n", program, strerror(err));
+      } else if ( WIFEXITED(status) )
 	status = WEXITSTATUS(status);
       else if ( WIFSIGNALED(status) )
 	status = WTERMSIG(status) + 128;
