@@ -78,6 +78,7 @@ blockdev:
 build-sys:
    - add --disable-makeinstall-setuid  [Karel Zak]
    - add HAVE_LIBBLKID_INTERNAL  [Karel Zak]
+   - check for pkg-config before gtk-doc  [Karel Zak]
    - check for union semun instead of using _SEM_SEMUN_UNDEFINED  [Guillem Jover]
    - clean up gtk-doc stuff  [Karel Zak]
    - clean up gtk-doc usage  [Karel Zak]
@@ -93,9 +94,11 @@ build-sys:
    - fix BUILD_PIVOT_ROOT condition  [Karel Zak]
    - fix blkid CFLAGS in fdisk/Makefile.am  [Karel Zak]
    - fix out-of-source build  [Karel Zak]
+   - release++ (v2.17-rc1)  [Karel Zak]
    - remove LT_STATIC_LDFLAGS  [Karel Zak]
    - remove gtkdocize from autogen.sh  [Karel Zak]
    - remove obsolete --with-fsprobe from distcheck flags  [Karel Zak]
+   - rewrite TLS detection  [Karel Zak]
 cal:
    - cal.1 formatting  [Peter Breitenlohner]
    - fix (harmless) typo  [Peter Breitenlohner]
@@ -126,6 +129,7 @@ dmesg:
 docs:
    - README width and language correction  [Jan Sarenik]
    - add 'unshare' and 'wipefs' to AUTHORS  [Karel Zak]
+   - add v2.17 ReleaseNotes  [Karel Zak]
    - update "The Perfect Patch" URL  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
    - update TODO  [Karel Zak]
@@ -152,8 +156,12 @@ fdisk:
    - use minimal_io_size for the first partition  [Karel Zak]
 findfs:
    - fix typo in findfs.8  [Karel Zak]
+flock:
+   - fix hang when parent ignores SIGCHLD  [Mike Frysinger]
 fsck:
+   - document fsck behavior wrt nofail option and fstype 'auto'  [Ludwig Nussel]
    - fsck.8 formatting  [Peter Breitenlohner]
+   - honor nofail option in fsck  [Ludwig Nussel]
 fsck.minix:
    - fix broken zone checking  [Karel Zak]
    - fix strict-aliasing bugs  [Karel Zak]
@@ -163,6 +171,7 @@ fstab:
 getopt:
    - getopt.1 formatting  [Peter Breitenlohner]
 hexdump:
+   - bug in hexdump when offset == file length  [Américo Wang]
    - hexdump.1 erroneous .Nm ""  [Peter Breitenlohner]
 hwclock:
    - do not access hardware clock when using --systz  [Scott James Remnant]
@@ -270,8 +279,10 @@ libblkid:
    - fix FALSE definition  [Karel Zak]
    - fix FAT super block definition  [Lawrence Rust]
    - fix NTFS non-ASCII labels  [Karel Zak]
+   - fix UFS detection  [Karel Zak]
    - fix blkid_devno_to_wholedisk()  [Karel Zak]
    - fix blkid_do_probe() to work properly with chains  [Karel Zak]
+   - fix blkid_fstatat() code  [Karel Zak]
    - fix blkid_probe_set_utf8label() call for Joliet  [Karel Zak]
    - fix buffer overflow in blkid_encode_string()  [Florian Zumbiehl]
    - fix cache->probe memory leak  [Karel Zak]
@@ -345,10 +356,15 @@ more:
    - limited line buffer length results in corrupted UTF-8 text  [Karel Zak]
    - more.1 formatting  [Peter Breitenlohner]
 mount:
+   - add --no-canonicalize option  [Karel Zak]
+   - add a note about /dev/disk/by-* to mount.8  [Karel Zak]
    - add a note about bind-dir remounts  [Karel Zak]
    - add info about ext{3,4} barriers to mount.8  [Karel Zak]
    - add long options to mount.8  [Karel Zak]
+   - add squashfs to mount.8  [Karel Zak]
+   - add ubifs to the mount.8 man page  [Sebastian Andrzej Siewior]
    - and libblkid  covert /dev/dm-N to /dev/mapper/<name>  [Karel Zak]
+   - better --move description  [Karel Zak]
    - check for unsuccessful read-only bind mounts  [Karel Zak]
    - document changed semantics of tmpfs size option in mount.8  [kevin.granade@gmail.com]
    - fix mount.8, xfs attr2 is enabled by default  [Karel Zak]
@@ -357,6 +373,7 @@ mount:
    - more explicitly explain 'strictatime' in mount.8  [Karel Zak]
    - more verbose "mount  only root can do that" message  [Karel Zak]
    - mount.8 formatting  [Peter Breitenlohner]
+   - move info about devices to the top of mount.8  [Karel Zak]
    - update list of pseudo filesystems  [Karel Zak]
 namei:
    - better mount points detection  [Karel Zak]
@@ -430,16 +447,20 @@ switch_root:
    - remove TIOCSCTTY and setsid()  [Karel Zak]
    - switch_root.8 formatting  [Peter Breitenlohner]
 tailf:
+   - fix printf format  [Mike Frysinger]
    - report inotify_add_watch() problems  [Karel Zak]
 tests:
    - add BFS libblkid regression test  [Karel Zak]
    - add NTFS blkid test  [Karel Zak]
    - add UBIFS test image to blkid test suite  [Corentin Chary]
+   - add UFS test image for libblkid  [Karel Zak]
+   - add VIA RAID test image for libblkid  [Karel Zak]
    - add blkid regression tests for ISO9660  [Karel Zak]
    - add partitions probing test  [Karel Zak]
    - fdisk doslabel test also checks changing partition type  [Zdenek Behan]
    - fdisk doslabel test also checks setting partition active  [Zdenek Behan]
    - refresh GPT regression test  [Karel Zak]
+   - remove vol_id from tests  [Karel Zak]
    - rename blkid/images to blkid/images-fs  [Karel Zak]
    - swapon workaround for libtool wrapper  [Karel Zak]
    - test for basic functionality of sun labels  [Zdenek Behan]
