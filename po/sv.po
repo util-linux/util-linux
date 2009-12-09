@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.13.1-rc1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-11-20 15:37+0100\n"
+"POT-Creation-Date: 2009-12-09 11:32+0100\n"
 "PO-Revision-Date: 2007-11-14 09:20+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -5911,29 +5911,34 @@ msgstr ""
 msgid "Couldn't allocate memory for filesystem types\n"
 msgstr "mount: du måste ange filsystemstypen"
 
-#: fsck/fsck.c:867
+#: fsck/fsck.c:883
 #, c-format
 msgid ""
 "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass "
 "number\n"
 msgstr ""
 
-#: fsck/fsck.c:894
+#: fsck/fsck.c:893
+#, fuzzy, c-format
+msgid "%s: skipping nonexistent device\n"
+msgstr "%s: %s är ingen lp-enhet.\n"
+
+#: fsck/fsck.c:919
 #, c-format
 msgid "fsck: cannot check %s: fsck.%s not found\n"
 msgstr ""
 
-#: fsck/fsck.c:950
+#: fsck/fsck.c:975
 #, fuzzy
 msgid "Checking all file systems.\n"
 msgstr "Tvingar filsystemskontroll på %s.\n"
 
-#: fsck/fsck.c:1041
+#: fsck/fsck.c:1066
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr ""
 
-#: fsck/fsck.c:1061
+#: fsck/fsck.c:1086
 #, fuzzy
 msgid ""
 "Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
@@ -5941,42 +5946,42 @@ msgstr ""
 "Användning: mkfs [-V] [-t filsystemstyp] [filsystemsflaggor] enhet "
 "[storlek]\n"
 
-#: fsck/fsck.c:1099
+#: fsck/fsck.c:1124
 #, fuzzy, c-format
 msgid "%s: too many devices\n"
 msgstr "%s: %s är ingen lp-enhet.\n"
 
-#: fsck/fsck.c:1110
+#: fsck/fsck.c:1135
 #, fuzzy, c-format
 msgid "Couldn't open %s: %s\n"
 msgstr "Kan inte öppna %s: %s\n"
 
-#: fsck/fsck.c:1112
+#: fsck/fsck.c:1137
 #, fuzzy, c-format
 msgid "Is /proc mounted?\n"
 msgstr "%s avmonterad\n"
 
-#: fsck/fsck.c:1121
+#: fsck/fsck.c:1146
 #, c-format
 msgid "Must be root to scan for matching filesystems: %s\n"
 msgstr ""
 
-#: fsck/fsck.c:1124
+#: fsck/fsck.c:1149
 #, fuzzy, c-format
 msgid "Couldn't find matching filesystem: %s\n"
 msgstr "Avmonterar alla återstående filsystem..."
 
-#: fsck/fsck.c:1132 fsck/fsck.c:1218
+#: fsck/fsck.c:1157 fsck/fsck.c:1243
 #, fuzzy, c-format
 msgid "%s: too many arguments\n"
 msgstr "%s: okänt argument: %s\n"
 
-#: fsck/fsck.c:1252
+#: fsck/fsck.c:1277
 #, fuzzy, c-format
 msgid "fsck from %s\n"
 msgstr "%s från %s\n"
 
-#: fsck/fsck.c:1264
+#: fsck/fsck.c:1289
 #, fuzzy, c-format
 msgid "%s: Unable to allocate memory for fsck_path\n"
 msgstr "Kan inte allokera buffert för inoder"
@@ -9361,7 +9366,7 @@ msgstr ""
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s är redan monterad på %s\n"
 
-#: mount/mount.c:1936
+#: mount/mount.c:1937
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9431,24 +9436,24 @@ msgstr ""
 "Andra flaggor: [-nfFrsvw] [-o flaggor] [-p lösenordfd].\n"
 "Ange  man 8 mount  för ytterligare detaljer.\n"
 
-#: mount/mount.c:2261
+#: mount/mount.c:2264
 #, fuzzy, c-format
 msgid "mount: only root can do that (effective UID is %d)"
 msgstr "mount: endast root kan göra det"
 
-#: mount/mount.c:2264
+#: mount/mount.c:2267
 msgid "mount: only root can do that"
 msgstr "mount: endast root kan göra det"
 
-#: mount/mount.c:2275
+#: mount/mount.c:2278
 msgid "nothing was mounted"
 msgstr "ingenting monterades"
 
-#: mount/mount.c:2293 mount/mount.c:2319
+#: mount/mount.c:2296 mount/mount.c:2322
 msgid "mount: no such partition found"
 msgstr "mount: ingen sådan partition hittades"
 
-#: mount/mount.c:2296
+#: mount/mount.c:2299
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: kan inte hitta %s i %s eller %s"
@@ -9467,11 +9472,11 @@ msgstr "[mntent]: rad %d i %s är felaktig%s\n"
 msgid "; rest of file ignored"
 msgstr "; resten av filen ignoreras"
 
-#: mount/sundries.c:31
+#: mount/sundries.c:32
 msgid "bug in xstrndup call"
 msgstr "programfel i xstrndup-anrop"
 
-#: mount/sundries.c:224 mount/sundries.c:280 mount/sundries.c:289
+#: mount/sundries.c:225 mount/sundries.c:281 mount/sundries.c:296
 #: mount/xmalloc.c:11
 msgid "not enough memory"
 msgstr "inte tillräckligt med minne"
@@ -10157,7 +10162,7 @@ msgstr "%s: felaktigt värde\n"
 msgid "%s: requires file descriptor, file or directory\n"
 msgstr ""
 
-#: sys-utils/flock.c:294
+#: sys-utils/flock.c:296
 #, fuzzy, c-format
 msgid "%s: fork failed: %s\n"
 msgstr "grening misslyckades\n"
@@ -11984,7 +11989,7 @@ msgstr "kan inte ta status på enheten %s"
 
 #: text-utils/tailf.c:109
 #, c-format
-msgid "incomplete write to \"%s\" (written %ld, expected %ld)\n"
+msgid "incomplete write to \"%s\" (written %zd, expected %zd)\n"
 msgstr ""
 
 #: text-utils/tailf.c:147

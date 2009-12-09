@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng-2.14.2-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-11-20 15:37+0100\n"
+"POT-Creation-Date: 2009-12-09 11:32+0100\n"
 "PO-Revision-Date: 2009-01-31 20:52+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -5892,29 +5892,34 @@ msgstr ""
 msgid "Couldn't allocate memory for filesystem types\n"
 msgstr "mount: u moet een bestandssysteemsoort aangeven"
 
-#: fsck/fsck.c:867
+#: fsck/fsck.c:883
 #, c-format
 msgid ""
 "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass "
 "number\n"
 msgstr ""
 
-#: fsck/fsck.c:894
+#: fsck/fsck.c:893
+#, fuzzy, c-format
+msgid "%s: skipping nonexistent device\n"
+msgstr "%s: %s is geen printerapparaat\n"
+
+#: fsck/fsck.c:919
 #, c-format
 msgid "fsck: cannot check %s: fsck.%s not found\n"
 msgstr ""
 
-#: fsck/fsck.c:950
+#: fsck/fsck.c:975
 #, fuzzy
 msgid "Checking all file systems.\n"
 msgstr "Gedwongen bestandssysteemcontrole van %s.\n"
 
-#: fsck/fsck.c:1041
+#: fsck/fsck.c:1066
 #, c-format
 msgid "--waiting-- (pass %d)\n"
 msgstr ""
 
-#: fsck/fsck.c:1061
+#: fsck/fsck.c:1086
 #, fuzzy
 msgid ""
 "Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
@@ -5922,42 +5927,42 @@ msgstr ""
 "Gebruik:  mkfs [-V] [-t bestandssysteemsoort] [bestandssysteemopties] "
 "apparaat [grootte]\n"
 
-#: fsck/fsck.c:1099
+#: fsck/fsck.c:1124
 #, fuzzy, c-format
 msgid "%s: too many devices\n"
 msgstr "%s: %s is geen printerapparaat\n"
 
-#: fsck/fsck.c:1110
+#: fsck/fsck.c:1135
 #, fuzzy, c-format
 msgid "Couldn't open %s: %s\n"
 msgstr "Kan %s niet openen: %s\n"
 
-#: fsck/fsck.c:1112
+#: fsck/fsck.c:1137
 #, fuzzy, c-format
 msgid "Is /proc mounted?\n"
 msgstr "%s is ontkoppeld\n"
 
-#: fsck/fsck.c:1121
+#: fsck/fsck.c:1146
 #, c-format
 msgid "Must be root to scan for matching filesystems: %s\n"
 msgstr ""
 
-#: fsck/fsck.c:1124
+#: fsck/fsck.c:1149
 #, fuzzy, c-format
 msgid "Couldn't find matching filesystem: %s\n"
 msgstr "Ontkoppelen van resterende bestandssystemen..."
 
-#: fsck/fsck.c:1132 fsck/fsck.c:1218
+#: fsck/fsck.c:1157 fsck/fsck.c:1243
 #, fuzzy, c-format
 msgid "%s: too many arguments\n"
 msgstr "%s: onbekend argument: %s\n"
 
-#: fsck/fsck.c:1252
+#: fsck/fsck.c:1277
 #, fuzzy, c-format
 msgid "fsck from %s\n"
 msgstr "%s (%s)\n"
 
-#: fsck/fsck.c:1264
+#: fsck/fsck.c:1289
 #, fuzzy, c-format
 msgid "%s: Unable to allocate memory for fsck_path\n"
 msgstr "Kan geen buffer reserveren voor inodes"
@@ -9360,7 +9365,7 @@ msgstr ""
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s is al aangekoppeld op %s\n"
 
-#: mount/mount.c:1936
+#: mount/mount.c:1937
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9433,24 +9438,24 @@ msgstr ""
 "wachtwoordbestandsdescriptor].\n"
 "Voor meer informatie, zie man mount(8).\n"
 
-#: mount/mount.c:2261
+#: mount/mount.c:2264
 #, fuzzy, c-format
 msgid "mount: only root can do that (effective UID is %d)"
 msgstr "mount: alleen root kan dat doen"
 
-#: mount/mount.c:2264
+#: mount/mount.c:2267
 msgid "mount: only root can do that"
 msgstr "mount: alleen root kan dat doen"
 
-#: mount/mount.c:2275
+#: mount/mount.c:2278
 msgid "nothing was mounted"
 msgstr "er is niets aangekoppeld"
 
-#: mount/mount.c:2293 mount/mount.c:2319
+#: mount/mount.c:2296 mount/mount.c:2322
 msgid "mount: no such partition found"
 msgstr "mount: die partitie is niet gevonden"
 
-#: mount/mount.c:2296
+#: mount/mount.c:2299
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: kan %s niet vinden in %s noch in %s"
@@ -9470,11 +9475,11 @@ msgstr "[mntent]: regel %d in %s is ongeldig%s\n"
 msgid "; rest of file ignored"
 msgstr "; rest van bestand genegeerd"
 
-#: mount/sundries.c:31
+#: mount/sundries.c:32
 msgid "bug in xstrndup call"
 msgstr "*programmeerfout* in aanroep van xstrndup()"
 
-#: mount/sundries.c:224 mount/sundries.c:280 mount/sundries.c:289
+#: mount/sundries.c:225 mount/sundries.c:281 mount/sundries.c:296
 #: mount/xmalloc.c:11
 msgid "not enough memory"
 msgstr "onvoldoende geheugen beschikbaar"
@@ -10195,7 +10200,7 @@ msgstr "%s: ongeldige waarde\n"
 msgid "%s: requires file descriptor, file or directory\n"
 msgstr ""
 
-#: sys-utils/flock.c:294
+#: sys-utils/flock.c:296
 #, fuzzy, c-format
 msgid "%s: fork failed: %s\n"
 msgstr "fork() is mislukt\n"
@@ -12045,8 +12050,8 @@ msgid "cannot stat \"%s\""
 msgstr "kan status van '%s' niet opvragen"
 
 #: text-utils/tailf.c:109
-#, c-format
-msgid "incomplete write to \"%s\" (written %ld, expected %ld)\n"
+#, fuzzy, c-format
+msgid "incomplete write to \"%s\" (written %zd, expected %zd)\n"
 msgstr "onvolledige schrijfoperatie naar '%s' (%ld geschreven, %ld verwacht)\n"
 
 #: text-utils/tailf.c:147
