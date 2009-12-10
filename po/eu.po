@@ -1,17 +1,17 @@
 # Basque translation of util-linux.
-# Copyright (C) 2005 Free Software Foundation, Inc.
-# This file is distributed under the same license as the util-linux package.
-# Mikel Olasagasti <hey_neken@mundurat.net>, 2005.
+# Copyright (C) 2009 Free Software Foundation, Inc.
+# This file is distributed under the same license as the util-linux-ng package.
+# Mikel Olasagasti Uranga <hey_neken@mundurat.net>, 2005, 2009.
 # , fuzzy
 #
 #
 msgid ""
 msgstr ""
-"Project-Id-Version: util-linux 2.13-pre2\n"
+"Project-Id-Version: util-linux-ng 2.17-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
 "POT-Creation-Date: 2009-12-09 11:32+0100\n"
-"PO-Revision-Date: 2005-08-15 18:45+0200\n"
-"Last-Translator: Mikel Olasagasti <hey_neken@mundurat.net>\n"
+"PO-Revision-Date: 2009-12-09 20:28+0100\n"
+"Last-Translator: Mikel Olasagasti Uranga <hey_neken@mundurat.net>\n"
 "Language-Team: Basque <translation-team-eu@lists.sourceforge.net>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=iso-8859-1\n"
@@ -105,17 +105,17 @@ msgstr "Erabilera:\n"
 #: disk-utils/blockdev.c:181
 #, c-format
 msgid "  %s --report [devices]\n"
-msgstr ""
+msgstr "  %s --report [gailuak]\n"
 
 #: disk-utils/blockdev.c:182
 #, c-format
 msgid "  %s [-v|-q] commands devices\n"
-msgstr ""
+msgstr "  %s [-v|-q] komandoak gailuak\n"
 
 #: disk-utils/blockdev.c:185
 #, c-format
 msgid "Available commands:\n"
-msgstr ""
+msgstr "Erabilgarri dauden komandoak:\n"
 
 #: disk-utils/blockdev.c:187
 #, fuzzy
@@ -125,7 +125,7 @@ msgstr "lortu tamainua byte-tan"
 #: disk-utils/blockdev.c:321
 #, c-format
 msgid "%s: Unknown command: %s\n"
-msgstr ""
+msgstr "%s: Komando ezezaguna: %s\n"
 
 #: disk-utils/blockdev.c:338
 #, c-format
@@ -133,9 +133,9 @@ msgid "%s requires an argument\n"
 msgstr ""
 
 #: disk-utils/blockdev.c:375
-#, fuzzy, c-format
+#, c-format
 msgid "%s failed.\n"
-msgstr "fsync-ek huts egin du"
+msgstr "%s-(e)k huts egin du.\n"
 
 #: disk-utils/blockdev.c:382
 #, c-format
@@ -155,7 +155,7 @@ msgstr ""
 #: disk-utils/blockdev.c:481
 #, c-format
 msgid "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
-msgstr ""
+msgstr "RO    RA   SSZ   BSZ   StartSec            Size   Device\n"
 
 #: disk-utils/elvtune.c:48
 #, c-format
@@ -250,7 +250,7 @@ msgstr "Bikoitza"
 
 #: disk-utils/fdformat.c:144
 msgid "Single"
-msgstr ""
+msgstr "Bakarra"
 
 #: disk-utils/fsck.cramfs.c:117
 #, c-format
@@ -263,9 +263,9 @@ msgid ""
 msgstr ""
 
 #: disk-utils/fsck.cramfs.c:163
-#, fuzzy, c-format
+#, c-format
 msgid "stat failed: %s"
-msgstr "fsync-ek huts egin du"
+msgstr "stat-ek huts egin du: %s"
 
 #: disk-utils/fsck.cramfs.c:167 disk-utils/fsck.cramfs.c:551
 #, fuzzy, c-format
@@ -284,7 +284,7 @@ msgstr ""
 
 #: disk-utils/fsck.cramfs.c:184 disk-utils/fsck.cramfs.c:226
 msgid "file length too short"
-msgstr ""
+msgstr "fitxategi luzeera motxegia"
 
 #: disk-utils/fsck.cramfs.c:189 disk-utils/fsck.cramfs.c:197
 #: disk-utils/fsck.cramfs.c:258 disk-utils/fsck.cramfs.c:278
@@ -328,11 +328,11 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:477 login-utils/chfn.c:529 login-utils/chsh.c:439
 #: misc-utils/wipefs.c:141 sys-utils/cytune.c:321
 msgid "malloc failed"
-msgstr ""
+msgstr "malloc-ek huts egin du"
 
 #: disk-utils/fsck.cramfs.c:297
 msgid "crc error"
-msgstr ""
+msgstr "crc errorea"
 
 #: disk-utils/fsck.cramfs.c:364
 msgid "root inode is not directory"
@@ -375,22 +375,22 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:439
 #, c-format
 msgid "write failed: %s"
-msgstr ""
+msgstr "write-k huts egin du: %s"
 
 #: disk-utils/fsck.cramfs.c:452
 #, c-format
 msgid "lchown failed: %s"
-msgstr ""
+msgstr "lchown-(e)k huts egin du: %s"
 
 #: disk-utils/fsck.cramfs.c:458
 #, c-format
 msgid "chown failed: %s"
-msgstr ""
+msgstr "chown-(e)k huts egin du: %s"
 
 #: disk-utils/fsck.cramfs.c:465
 #, c-format
 msgid "utime failed: %s"
-msgstr ""
+msgstr "utime-(e)k huts egin du: %s"
 
 #: disk-utils/fsck.cramfs.c:480
 #, c-format
@@ -400,7 +400,7 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:494
 #, c-format
 msgid "mkdir failed: %s"
-msgstr ""
+msgstr "mkdir-(e)k huts egin du: %s"
 
 #: disk-utils/fsck.cramfs.c:511
 msgid "filename length is zero"
@@ -408,7 +408,7 @@ msgstr ""
 
 #: disk-utils/fsck.cramfs.c:514
 msgid "bad filename length"
-msgstr ""
+msgstr "fitxategi luzeera okerra"
 
 #: disk-utils/fsck.cramfs.c:521
 msgid "bad inode offset"
@@ -463,7 +463,7 @@ msgstr ""
 #: disk-utils/fsck.cramfs.c:646
 #, c-format
 msgid "mknod failed: %s"
-msgstr ""
+msgstr "mknod-(e)k huts egin du: %s"
 
 #: disk-utils/fsck.cramfs.c:682
 #, c-format
@@ -495,7 +495,7 @@ msgstr ""
 #: disk-utils/fsck.minix.c:323
 #, c-format
 msgid "%s is mounted.\t "
-msgstr ""
+msgstr "%s montatua dago.\t"
 
 #: disk-utils/fsck.minix.c:325
 msgid "Do you really want to continue"
@@ -700,7 +700,7 @@ msgstr ""
 #: disk-utils/fsck.minix.c:1146 disk-utils/fsck.minix.c:1155
 #: disk-utils/fsck.minix.c:1201 disk-utils/fsck.minix.c:1210
 msgid "Clear"
-msgstr ""
+msgstr "Garbia"
 
 #: disk-utils/fsck.minix.c:800 disk-utils/fsck.minix.c:833
 #, c-format
@@ -709,7 +709,7 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:802 disk-utils/fsck.minix.c:835
 msgid "Correct"
-msgstr ""
+msgstr "Zuzena"
 
 #: disk-utils/fsck.minix.c:974 disk-utils/fsck.minix.c:1041
 #, c-format
@@ -718,7 +718,7 @@ msgstr ""
 
 #: disk-utils/fsck.minix.c:977 disk-utils/fsck.minix.c:1044
 msgid " Remove"
-msgstr ""
+msgstr " Ezabatu"
 
 #: disk-utils/fsck.minix.c:991 disk-utils/fsck.minix.c:1058
 #, c-format
@@ -856,6 +856,9 @@ msgid ""
 "FILE SYSTEM HAS BEEN CHANGED\n"
 "----------------------------\n"
 msgstr ""
+"----------------------------\n"
+"FITXATEGI SISTEMA ALDATU DA\n"
+"----------------------------\n"
 
 #: disk-utils/isosize.c:129
 #, c-format
@@ -1024,8 +1027,7 @@ msgstr ""
 #: disk-utils/mkfs.cramfs.c:126
 #, c-format
 msgid ""
-"usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n "
-"name] dirname outfile\n"
+"usage: %s [-h] [-v] [-b blksize] [-e edition] [-N endian] [-i file] [-n name] dirname outfile\n"
 " -h         print this help\n"
 " -v         be verbose\n"
 " -E         make all warnings errors (non-zero exit status)\n"
@@ -1059,15 +1061,13 @@ msgid "AIEEE: block \"compressed\" to > 2*blocklength (%ld)\n"
 msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:655
-#, fuzzy, c-format
+#, c-format
 msgid "%6.2f%% (%+ld bytes)\t%s\n"
-msgstr "%6.2f%% (%+d byte)\t%s\n"
+msgstr "%6.2f%% (%+ld bytes)\t%s\n"
 
 #: disk-utils/mkfs.cramfs.c:853
 #, c-format
-msgid ""
-"warning: guestimate of required size (upper bound) is %lldMB, but maximum "
-"image size is %uMB.  We might die prematurely.\n"
+msgid "warning: guestimate of required size (upper bound) is %lldMB, but maximum image size is %uMB.  We might die prematurely.\n"
 msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:880
@@ -1130,14 +1130,12 @@ msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:957
 #, c-format
-msgid ""
-"warning: uids truncated to %u bits.  (This may be a security concern.)\n"
+msgid "warning: uids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:962
 #, c-format
-msgid ""
-"warning: gids truncated to %u bits.  (This may be a security concern.)\n"
+msgid "warning: gids truncated to %u bits.  (This may be a security concern.)\n"
 msgstr ""
 
 #: disk-utils/mkfs.cramfs.c:967
@@ -1465,16 +1463,17 @@ msgid "%s: unable to relabel %s to %s: %s\n"
 msgstr ""
 
 #: disk-utils/raw.c:50
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage:\n"
 "  %s "
-msgstr "Erabilera:\n"
+msgstr ""
+"Erabilera:\n"
+"  %s"
 
 #: disk-utils/raw.c:125
 #, c-format
-msgid ""
-"Device '%s' is control raw dev (use raw<N> where <N> is greater than zero)\n"
+msgid "Device '%s' is control raw dev (use raw<N> where <N> is greater than zero)\n"
 msgstr ""
 
 #: disk-utils/raw.c:145
@@ -1646,13 +1645,11 @@ msgid "enlarged logical partitions overlap"
 msgstr ""
 
 #: fdisk/cfdisk.c:1001
-msgid ""
-"!!!! Internal error creating logical drive with no extended partition !!!!"
+msgid "!!!! Internal error creating logical drive with no extended partition !!!!"
 msgstr ""
 
 #: fdisk/cfdisk.c:1012 fdisk/cfdisk.c:1024
-msgid ""
-"Cannot create logical drive here -- would create two extended partitions"
+msgid "Cannot create logical drive here -- would create two extended partitions"
 msgstr ""
 
 #: fdisk/cfdisk.c:1166
@@ -1759,8 +1756,7 @@ msgid "Opened disk read-only - you have no permission to write"
 msgstr ""
 
 #: fdisk/cfdisk.c:1685
-msgid ""
-"Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
+msgid "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
 msgstr ""
 
 #: fdisk/cfdisk.c:1704
@@ -1780,8 +1776,7 @@ msgid "Warning!!  This may destroy data on your disk!"
 msgstr ""
 
 #: fdisk/cfdisk.c:1879
-msgid ""
-"Are you sure you want to write the partition table to disk? (yes or no): "
+msgid "Are you sure you want to write the partition table to disk? (yes or no): "
 msgstr ""
 
 #: fdisk/cfdisk.c:1885
@@ -1810,20 +1805,15 @@ msgstr "Partizio taula diskoan idatzi da"
 
 #: fdisk/cfdisk.c:1926
 #, fuzzy
-msgid ""
-"Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx"
-"(8) or reboot to update table."
-msgstr ""
-"Partizio taula idatzi da, baina taularen berirakurketak hutz egin du.  "
-"Berrabiarazi sistema taula berritzeko."
+msgid "Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx(8) or reboot to update table."
+msgstr "Partizio taula idatzi da, baina taularen berirakurketak hutz egin du.  Berrabiarazi sistema taula berritzeko."
 
 #: fdisk/cfdisk.c:1936
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
 msgstr ""
 
 #: fdisk/cfdisk.c:1938
-msgid ""
-"More than one primary partition is marked bootable. DOS MBR cannot boot this."
+msgid "More than one primary partition is marked bootable. DOS MBR cannot boot this."
 msgstr ""
 
 #: fdisk/cfdisk.c:1996 fdisk/cfdisk.c:2115 fdisk/cfdisk.c:2199
@@ -1893,15 +1883,11 @@ msgid "               First       Last\n"
 msgstr "               Lehena     Azkena\n"
 
 #: fdisk/cfdisk.c:2137
-msgid ""
-" # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
-"Flag\n"
+msgid " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) Flag\n"
 msgstr ""
 
 #: fdisk/cfdisk.c:2138
-msgid ""
-"-- ------- ----------- ----------- ------ ----------- -------------------- "
-"----\n"
+msgid "-- ------- ----------- ----------- ------ ----------- -------------------- ----\n"
 msgstr ""
 
 #: fdisk/cfdisk.c:2221
@@ -1950,14 +1936,11 @@ msgstr "cfdisk-entzat laguntza pantaila"
 
 #: fdisk/cfdisk.c:2289
 msgid "This is cfdisk, a curses based disk partitioning program, which"
-msgstr ""
-"Hau cfdisk da, curses-en oinarritutako disko partizionatze programa, non "
-"honek"
+msgstr "Hau cfdisk da, curses-en oinarritutako disko partizionatze programa, non honek"
 
 #: fdisk/cfdisk.c:2290
 msgid "allows you to create, delete and modify partitions on your hard"
-msgstr ""
-"zure diskoetan partizioak sortu, ezabatu eta modifikatzeko aukera ematen dizu"
+msgstr "zure diskoetan partizioak sortu, ezabatu eta modifikatzeko aukera ematen dizu"
 
 #: fdisk/cfdisk.c:2291
 msgid "disk drive."
@@ -3057,9 +3040,7 @@ msgstr ""
 
 #: fdisk/fdisk.c:1204
 #, c-format
-msgid ""
-"Device contains neither a valid DOS partition table, nor Sun, SGI or OSF "
-"disklabel\n"
+msgid "Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel\n"
 msgstr ""
 
 #: fdisk/fdisk.c:1221
@@ -3074,9 +3055,7 @@ msgstr ""
 
 #: fdisk/fdisk.c:1243
 #, c-format
-msgid ""
-"Warning: invalid flag 0x%04x of partition table %d will be corrected by w"
-"(rite)\n"
+msgid "Warning: invalid flag 0x%04x of partition table %d will be corrected by w(rite)\n"
 msgstr ""
 
 #: fdisk/fdisk.c:1270
@@ -3308,11 +3287,9 @@ msgid ""
 msgstr ""
 
 #: fdisk/fdisk.c:1980
-#, fuzzy, c-format
+#, c-format
 msgid "Done.\n"
-msgstr ""
-"Eginda\n"
-"\n"
+msgstr "Eginda.\n"
 
 #: fdisk/fdisk.c:2008
 #, c-format
@@ -3556,8 +3533,7 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't "
-"support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util fdisk doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 
@@ -3588,9 +3564,7 @@ msgstr ""
 
 #: fdisk/fdisk.c:2893
 #, c-format
-msgid ""
-"Warning: the -b (set sector size) option should be used with one specified "
-"device\n"
+msgid "Warning: the -b (set sector size) option should be used with one specified device\n"
 msgstr ""
 
 #: fdisk/fdisk.c:2955
@@ -3713,9 +3687,7 @@ msgstr ""
 
 #: fdisk/fdisksgilabel.c:151
 #, c-format
-msgid ""
-"According to MIPS Computer Systems, Inc the Label must not contain more than "
-"512 bytes\n"
+msgid "According to MIPS Computer Systems, Inc the Label must not contain more than 512 bytes\n"
 msgstr ""
 
 #: fdisk/fdisksgilabel.c:170
@@ -3949,8 +3921,7 @@ msgstr ""
 #: fdisk/fdisksgilabel.c:718 fdisk/fdisksunlabel.c:227
 #, c-format
 msgid ""
-"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %"
-"d.\n"
+"Warning:  BLKGETSIZE ioctl failed on %s.  Using geometry cylinder value of %d.\n"
 "This value may be truncated for devices > 33.8 GB.\n"
 msgstr ""
 
@@ -3982,7 +3953,7 @@ msgstr "SunOS usr"
 
 #: fdisk/fdisksunlabel.c:48
 msgid "Whole disk"
-msgstr ""
+msgstr "Disko osoa"
 
 #: fdisk/fdisksunlabel.c:49
 msgid "SunOS stand"
@@ -3997,23 +3968,20 @@ msgid "SunOS home"
 msgstr "SunOS home"
 
 #: fdisk/fdisksunlabel.c:52
-#, fuzzy
 msgid "SunOS alt sectors"
-msgstr "SunOS usr"
+msgstr "SunOS alt sectors"
 
 #: fdisk/fdisksunlabel.c:53
-#, fuzzy
 msgid "SunOS cachefs"
-msgstr "SunOS home"
+msgstr "SunOS cachefs"
 
 #: fdisk/fdisksunlabel.c:54
-#, fuzzy
 msgid "SunOS reserved"
-msgstr "SunOS usr"
+msgstr "SunOS reserved"
 
 #: fdisk/fdisksunlabel.c:58 fdisk/i386_sys_types.c:103
 msgid "Linux raid autodetect"
-msgstr ""
+msgstr "Automatikoki atzeman Linux raid-ak"
 
 #: fdisk/fdisksunlabel.c:141
 #, c-format
@@ -4041,8 +4009,7 @@ msgstr ""
 
 #: fdisk/fdisksunlabel.c:168
 #, c-format
-msgid ""
-"Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
+msgid "Warning: Wrong values need to be fixed up and will be corrected by w(rite)\n"
 msgstr ""
 
 #: fdisk/fdisksunlabel.c:198
@@ -4056,7 +4023,7 @@ msgstr ""
 
 #: fdisk/fdisksunlabel.c:236
 msgid "Sectors/track"
-msgstr ""
+msgstr "Sektoreak/pistak"
 
 #: fdisk/fdisksunlabel.c:351
 #, c-format
@@ -4170,11 +4137,11 @@ msgstr ""
 
 #: fdisk/i386_sys_types.c:6
 msgid "Empty"
-msgstr ""
+msgstr "Hutsik"
 
 #: fdisk/i386_sys_types.c:7
 msgid "FAT12"
-msgstr ""
+msgstr "FAT12"
 
 #: fdisk/i386_sys_types.c:8
 msgid "XENIX root"
@@ -4186,7 +4153,7 @@ msgstr "XENIX usr"
 
 #: fdisk/i386_sys_types.c:10
 msgid "FAT16 <32M"
-msgstr ""
+msgstr "FAT16 <32M"
 
 #: fdisk/i386_sys_types.c:11
 msgid "Extended"
@@ -4194,11 +4161,11 @@ msgstr ""
 
 #: fdisk/i386_sys_types.c:12
 msgid "FAT16"
-msgstr ""
+msgstr "FAT16"
 
 #: fdisk/i386_sys_types.c:13
 msgid "HPFS/NTFS"
-msgstr ""
+msgstr "HPFS/NTFS"
 
 #: fdisk/i386_sys_types.c:14
 msgid "AIX"
@@ -4206,71 +4173,71 @@ msgstr "AIX"
 
 #: fdisk/i386_sys_types.c:15
 msgid "AIX bootable"
-msgstr ""
+msgstr "AIX bootable"
 
 #: fdisk/i386_sys_types.c:16
 msgid "OS/2 Boot Manager"
-msgstr ""
+msgstr "OS/2 Boot Manager"
 
 #: fdisk/i386_sys_types.c:17
 msgid "W95 FAT32"
-msgstr ""
+msgstr "W95 FAT32"
 
 #: fdisk/i386_sys_types.c:18
 msgid "W95 FAT32 (LBA)"
-msgstr ""
+msgstr "W95 FAT32 (LBA)"
 
 #: fdisk/i386_sys_types.c:19
 msgid "W95 FAT16 (LBA)"
-msgstr ""
+msgstr "W95 FAT16 (LBA)"
 
 #: fdisk/i386_sys_types.c:20
 msgid "W95 Ext'd (LBA)"
-msgstr ""
+msgstr "W95 Ext'd (LBA)"
 
 #: fdisk/i386_sys_types.c:21
 msgid "OPUS"
-msgstr ""
+msgstr "OPUS"
 
 #: fdisk/i386_sys_types.c:22
 msgid "Hidden FAT12"
-msgstr ""
+msgstr "Hidden FAT12"
 
 #: fdisk/i386_sys_types.c:23
 msgid "Compaq diagnostics"
-msgstr ""
+msgstr "Compaq diagnostics"
 
 #: fdisk/i386_sys_types.c:24
 msgid "Hidden FAT16 <32M"
-msgstr ""
+msgstr "Hidden FAT16 <32M"
 
 #: fdisk/i386_sys_types.c:25
 msgid "Hidden FAT16"
-msgstr ""
+msgstr "Hidden FAT16"
 
 #: fdisk/i386_sys_types.c:26
 msgid "Hidden HPFS/NTFS"
-msgstr ""
+msgstr "Hidden HPFS/NTFS"
 
 #: fdisk/i386_sys_types.c:27
 msgid "AST SmartSleep"
-msgstr ""
+msgstr "AST SmartSleep"
 
 #: fdisk/i386_sys_types.c:28
 msgid "Hidden W95 FAT32"
-msgstr ""
+msgstr "Hidden W95 FAT32"
 
 #: fdisk/i386_sys_types.c:29
 msgid "Hidden W95 FAT32 (LBA)"
-msgstr ""
+msgstr "Hidden W95 FAT32 (LBA)"
 
 #: fdisk/i386_sys_types.c:30
 msgid "Hidden W95 FAT16 (LBA)"
-msgstr ""
+msgstr "Hidden W95 FAT16 (LBA)"
 
 #: fdisk/i386_sys_types.c:31
 msgid "NEC DOS"
-msgstr ""
+msgstr "NEC DOS"
 
 #: fdisk/i386_sys_types.c:32
 msgid "Plan 9"
@@ -4278,15 +4245,15 @@ msgstr "Plan 9"
 
 #: fdisk/i386_sys_types.c:33
 msgid "PartitionMagic recovery"
-msgstr ""
+msgstr "PartitionMagic recovery"
 
 #: fdisk/i386_sys_types.c:34
 msgid "Venix 80286"
-msgstr ""
+msgstr "Venix 80286"
 
 #: fdisk/i386_sys_types.c:35
 msgid "PPC PReP Boot"
-msgstr ""
+msgstr "PPC PReP Boot"
 
 #: fdisk/i386_sys_types.c:36
 msgid "SFS"
@@ -4294,35 +4261,35 @@ msgstr "SFS"
 
 #: fdisk/i386_sys_types.c:37
 msgid "QNX4.x"
-msgstr ""
+msgstr "QNX4.x"
 
 #: fdisk/i386_sys_types.c:38
 msgid "QNX4.x 2nd part"
-msgstr ""
+msgstr "QNX4.x 2nd part"
 
 #: fdisk/i386_sys_types.c:39
 msgid "QNX4.x 3rd part"
-msgstr ""
+msgstr "QNX4.x 3rd part"
 
 #: fdisk/i386_sys_types.c:40
 msgid "OnTrack DM"
-msgstr ""
+msgstr "OnTrack DM"
 
 #: fdisk/i386_sys_types.c:41
 msgid "OnTrack DM6 Aux1"
-msgstr ""
+msgstr "OnTrack DM6 Aux1"
 
 #: fdisk/i386_sys_types.c:42
 msgid "CP/M"
-msgstr ""
+msgstr "CP/M"
 
 #: fdisk/i386_sys_types.c:43
 msgid "OnTrack DM6 Aux3"
-msgstr ""
+msgstr "OnTrack DM6 Aux3"
 
 #: fdisk/i386_sys_types.c:44
 msgid "OnTrackDM6"
-msgstr ""
+msgstr "OnTrackDM6"
 
 #: fdisk/i386_sys_types.c:45
 msgid "EZ-Drive"
@@ -4330,32 +4297,32 @@ msgstr "EZ-Drive"
 
 #: fdisk/i386_sys_types.c:46
 msgid "Golden Bow"
-msgstr ""
+msgstr "Golden Bow"
 
 #: fdisk/i386_sys_types.c:47
 msgid "Priam Edisk"
-msgstr ""
+msgstr "Priam Edisk"
 
 #: fdisk/i386_sys_types.c:48 fdisk/i386_sys_types.c:92
 #: fdisk/i386_sys_types.c:98 fdisk/i386_sys_types.c:99
 msgid "SpeedStor"
-msgstr ""
+msgstr "SpeedStor"
 
 #: fdisk/i386_sys_types.c:49
 msgid "GNU HURD or SysV"
-msgstr ""
+msgstr "GNU HURD or SysV"
 
 #: fdisk/i386_sys_types.c:50
 msgid "Novell Netware 286"
-msgstr ""
+msgstr "Novell Netware 286"
 
 #: fdisk/i386_sys_types.c:51
 msgid "Novell Netware 386"
-msgstr ""
+msgstr "Novell Netware 386"
 
 #: fdisk/i386_sys_types.c:52
 msgid "DiskSecure Multi-Boot"
-msgstr ""
+msgstr "DiskSecure Multi-Boot"
 
 #: fdisk/i386_sys_types.c:53
 msgid "PC/IX"
@@ -4363,31 +4330,31 @@ msgstr "PC/IX"
 
 #: fdisk/i386_sys_types.c:54
 msgid "Old Minix"
-msgstr ""
+msgstr "Old Minix"
 
 #: fdisk/i386_sys_types.c:55
 msgid "Minix / old Linux"
-msgstr ""
+msgstr "Minix / old Linux"
 
 #: fdisk/i386_sys_types.c:56
 msgid "Linux swap / Solaris"
-msgstr ""
+msgstr "Linux swap / Solaris"
 
 #: fdisk/i386_sys_types.c:58
 msgid "OS/2 hidden C: drive"
-msgstr ""
+msgstr "OS/2 hidden C: drive"
 
 #: fdisk/i386_sys_types.c:59
 msgid "Linux extended"
-msgstr ""
+msgstr "Linux extended"
 
 #: fdisk/i386_sys_types.c:60 fdisk/i386_sys_types.c:61
 msgid "NTFS volume set"
-msgstr ""
+msgstr "NTFS volume set"
 
 #: fdisk/i386_sys_types.c:62
 msgid "Linux plaintext"
-msgstr ""
+msgstr "Linux plaintext"
 
 #: fdisk/i386_sys_types.c:64
 msgid "Amoeba"
@@ -4399,52 +4366,51 @@ msgstr "Amoeba BBT"
 
 #: fdisk/i386_sys_types.c:66
 msgid "BSD/OS"
-msgstr ""
+msgstr "BSD/OS"
 
 #: fdisk/i386_sys_types.c:67
 msgid "IBM Thinkpad hibernation"
-msgstr ""
+msgstr "IBM Thinkpad hibernation"
 
 #: fdisk/i386_sys_types.c:68
 msgid "FreeBSD"
-msgstr ""
+msgstr "FreeBSD"
 
 #: fdisk/i386_sys_types.c:69
 msgid "OpenBSD"
-msgstr ""
+msgstr "OpenBSD"
 
 #: fdisk/i386_sys_types.c:70
 msgid "NeXTSTEP"
-msgstr ""
+msgstr "NeXTSTEP"
 
 #: fdisk/i386_sys_types.c:71
 msgid "Darwin UFS"
-msgstr ""
+msgstr "Darwin UFS"
 
 #: fdisk/i386_sys_types.c:72
 msgid "NetBSD"
-msgstr ""
+msgstr "NetBSD"
 
 #: fdisk/i386_sys_types.c:73
 msgid "Darwin boot"
-msgstr ""
+msgstr "Darwin boot"
 
 #: fdisk/i386_sys_types.c:74
-#, fuzzy
 msgid "HFS / HFS+"
-msgstr "OS/2 HPFS"
+msgstr "HFS / HFS+"
 
 #: fdisk/i386_sys_types.c:75
 msgid "BSDI fs"
-msgstr ""
+msgstr "BSDI fs"
 
 #: fdisk/i386_sys_types.c:76
 msgid "BSDI swap"
-msgstr ""
+msgstr "BSDI swap"
 
 #: fdisk/i386_sys_types.c:77
 msgid "Boot Wizard hidden"
-msgstr ""
+msgstr "Boot Wizard ezkutua"
 
 #: fdisk/i386_sys_types.c:78
 msgid "Solaris boot"
@@ -4456,79 +4422,79 @@ msgstr "Solaris"
 
 #: fdisk/i386_sys_types.c:80
 msgid "DRDOS/sec (FAT-12)"
-msgstr ""
+msgstr "DRDOS/sec (FAT-12)"
 
 #: fdisk/i386_sys_types.c:81
 msgid "DRDOS/sec (FAT-16 < 32M)"
-msgstr ""
+msgstr "DRDOS/sec (FAT-16 < 32M)"
 
 #: fdisk/i386_sys_types.c:82
 msgid "DRDOS/sec (FAT-16)"
-msgstr ""
+msgstr "DRDOS/sec (FAT-16)"
 
 #: fdisk/i386_sys_types.c:83
 msgid "Syrinx"
-msgstr ""
+msgstr "Syrinx"
 
 #: fdisk/i386_sys_types.c:84
 msgid "Non-FS data"
-msgstr ""
+msgstr "Non-FS data"
 
 #: fdisk/i386_sys_types.c:85
 msgid "CP/M / CTOS / ..."
-msgstr ""
+msgstr "CP/M / CTOS / ..."
 
 #: fdisk/i386_sys_types.c:87
 msgid "Dell Utility"
-msgstr ""
+msgstr "Dell Utility"
 
 #: fdisk/i386_sys_types.c:88
 msgid "BootIt"
-msgstr ""
+msgstr "BootIt"
 
 #: fdisk/i386_sys_types.c:89
 msgid "DOS access"
-msgstr ""
+msgstr "DOS access"
 
 #: fdisk/i386_sys_types.c:91
 msgid "DOS R/O"
-msgstr ""
+msgstr "DOS R/O"
 
 #: fdisk/i386_sys_types.c:94
 msgid "BeOS fs"
-msgstr ""
+msgstr "BeOS fs"
 
 #: fdisk/i386_sys_types.c:95
 msgid "GPT"
-msgstr ""
+msgstr "GPT"
 
 #: fdisk/i386_sys_types.c:96
 msgid "EFI (FAT-12/16/32)"
-msgstr ""
+msgstr "EFI (FAT-12/16/32)"
 
 #: fdisk/i386_sys_types.c:97
 msgid "Linux/PA-RISC boot"
-msgstr ""
+msgstr "Linux/PA-RISC boot"
 
 #: fdisk/i386_sys_types.c:100
 msgid "DOS secondary"
-msgstr ""
+msgstr "DOS secondary"
 
 #: fdisk/i386_sys_types.c:101
 msgid "VMware VMFS"
-msgstr ""
+msgstr "VMware VMFS"
 
 #: fdisk/i386_sys_types.c:102
 msgid "VMware VMKCORE"
-msgstr ""
+msgstr "VMware VMKCORE"
 
 #: fdisk/i386_sys_types.c:106
 msgid "LANstep"
-msgstr ""
+msgstr "LANstep"
 
 #: fdisk/i386_sys_types.c:107
 msgid "BBT"
-msgstr ""
+msgstr "BBT"
 
 #: fdisk/sfdisk.c:164
 #, c-format
@@ -4651,22 +4617,17 @@ msgstr ""
 
 #: fdisk/sfdisk.c:595
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
+msgid "%s of partition %s has impossible value for head: %lu (should be in 0-%lu)\n"
 msgstr ""
 
 #: fdisk/sfdisk.c:600
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for sector: %lu (should be in 1-%"
-"lu)\n"
+msgid "%s of partition %s has impossible value for sector: %lu (should be in 1-%lu)\n"
 msgstr ""
 
 #: fdisk/sfdisk.c:605
 #, c-format
-msgid ""
-"%s of partition %s has impossible value for cylinders: %lu (should be in 0-%"
-"lu)\n"
+msgid "%s of partition %s has impossible value for cylinders: %lu (should be in 0-%lu)\n"
 msgstr ""
 
 #: fdisk/sfdisk.c:645
@@ -4879,17 +4840,16 @@ msgstr ""
 
 #: fdisk/sfdisk.c:1338
 msgid "start"
-msgstr ""
+msgstr "hasiera"
 
 #: fdisk/sfdisk.c:1341
 #, c-format
-msgid ""
-"partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
+msgid "partition %s: start: (c,h,s) expected (%ld,%ld,%ld) found (%ld,%ld,%ld)\n"
 msgstr ""
 
 #: fdisk/sfdisk.c:1347
 msgid "end"
-msgstr ""
+msgstr "amaiera"
 
 #: fdisk/sfdisk.c:1350
 #, c-format
@@ -5032,11 +4992,11 @@ msgstr ""
 
 #: fdisk/sfdisk.c:2208
 msgid "bad input\n"
-msgstr ""
+msgstr "sarrera okerra\n"
 
 #: fdisk/sfdisk.c:2230
 msgid "too many partitions\n"
-msgstr ""
+msgstr "partizio gehiegi\n"
 
 #: fdisk/sfdisk.c:2263
 msgid ""
@@ -5048,15 +5008,15 @@ msgstr ""
 #: fdisk/sfdisk.c:2289
 #, c-format
 msgid "Usage: %s [options] device ...\n"
-msgstr ""
+msgstr "Erabilera: %s [aukerak] gailua ...\n"
 
 #: fdisk/sfdisk.c:2290
 msgid "device: something like /dev/hda or /dev/sda"
-msgstr ""
+msgstr "gailua: /dev/hda edo /dev/sda moduko zerbait"
 
 #: fdisk/sfdisk.c:2291
 msgid "useful options:"
-msgstr ""
+msgstr "aukera baliogarriak:"
 
 #: fdisk/sfdisk.c:2292
 msgid "    -s [or --show-size]: list size of a partition"
@@ -5079,9 +5039,7 @@ msgid "    -i [or --increment]: number cylinders etc. from 1 instead of from 0"
 msgstr ""
 
 #: fdisk/sfdisk.c:2297
-msgid ""
-"    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/"
-"MB"
+msgid "    -uS, -uB, -uC, -uM:  accept/report in units of sectors/blocks/cylinders/MB"
 msgstr ""
 
 #: fdisk/sfdisk.c:2298
@@ -5105,8 +5063,7 @@ msgid "    -n :                 do not actually write to disk"
 msgstr ""
 
 #: fdisk/sfdisk.c:2303
-msgid ""
-"    -O file :            save the sectors that will be overwritten to file"
+msgid "    -O file :            save the sectors that will be overwritten to file"
 msgstr ""
 
 #: fdisk/sfdisk.c:2304
@@ -5130,9 +5087,7 @@ msgid "    -g [or --show-geometry]: print the kernel's idea of the geometry"
 msgstr ""
 
 #: fdisk/sfdisk.c:2309
-msgid ""
-"    -G [or --show-pt-geometry]: print geometry guessed from the partition "
-"table"
+msgid "    -G [or --show-pt-geometry]: print geometry guessed from the partition table"
 msgstr ""
 
 #: fdisk/sfdisk.c:2310
@@ -5142,8 +5097,7 @@ msgid ""
 msgstr ""
 
 #: fdisk/sfdisk.c:2312
-msgid ""
-"    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
+msgid "    -L  [or --Linux]:      do not complain about things irrelevant for Linux"
 msgstr ""
 
 #: fdisk/sfdisk.c:2313
@@ -5176,7 +5130,7 @@ msgstr ""
 
 #: fdisk/sfdisk.c:2325
 msgid "Usage:"
-msgstr ""
+msgstr "Erabilera:"
 
 #: fdisk/sfdisk.c:2326
 #, c-format
@@ -5197,8 +5151,7 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk "
-"doesn't support GPT. Use GNU Parted.\n"
+"WARNING: GPT (GUID Partition Table) detected on '%s'! The util sfdisk doesn't support GPT. Use GNU Parted.\n"
 "\n"
 msgstr ""
 
@@ -5214,7 +5167,7 @@ msgstr ""
 #: fdisk/sfdisk.c:2622
 #, c-format
 msgid "total: %llu blocks\n"
-msgstr ""
+msgstr "guztira: %llu bloke\n"
 
 #: fdisk/sfdisk.c:2665
 msgid "usage: sfdisk --print-id device partition-number\n"
@@ -5245,7 +5198,7 @@ msgstr ""
 #: fdisk/sfdisk.c:2729
 #, c-format
 msgid "%s: OK\n"
-msgstr ""
+msgstr "%s: OK\n"
 
 #: fdisk/sfdisk.c:2748 fdisk/sfdisk.c:2781
 #, c-format
@@ -5319,12 +5272,12 @@ msgstr ""
 
 #: fdisk/sfdisk.c:3037
 msgid "OK\n"
-msgstr ""
+msgstr "OK\n"
 
 #: fdisk/sfdisk.c:3046
 #, c-format
 msgid "Old situation:\n"
-msgstr ""
+msgstr "Egoera zaharra:\n"
 
 #: fdisk/sfdisk.c:3050
 #, c-format
@@ -5334,7 +5287,7 @@ msgstr ""
 #: fdisk/sfdisk.c:3058
 #, c-format
 msgid "New situation:\n"
-msgstr ""
+msgstr "Egoera berria:\n"
 
 #: fdisk/sfdisk.c:3063
 msgid ""
@@ -5365,12 +5318,12 @@ msgstr ""
 
 #: fdisk/sfdisk.c:3080
 msgid "Quitting - nothing changed\n"
-msgstr ""
+msgstr "Irteten - ez da ezer aldatu\n"
 
 #: fdisk/sfdisk.c:3086
 #, c-format
 msgid "Please answer one of y,n,q\n"
-msgstr ""
+msgstr "Mesedez erantzun y,n edo q\n"
 
 #: fdisk/sfdisk.c:3094
 #, c-format
@@ -5407,7 +5360,7 @@ msgstr ""
 #: fsck/fsck.c:461
 #, c-format
 msgid "fsck: %s: not found\n"
-msgstr ""
+msgstr "fsck: %s: ez da aurkitu\n"
 
 #: fsck/fsck.c:577
 #, c-format
@@ -5446,9 +5399,7 @@ msgstr ""
 
 #: fsck/fsck.c:883
 #, c-format
-msgid ""
-"%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass "
-"number\n"
+msgid "%s: skipping bad line in /etc/fstab: bind mount with nonzero fsck pass number\n"
 msgstr ""
 
 #: fsck/fsck.c:893
@@ -5471,14 +5422,13 @@ msgid "--waiting-- (pass %d)\n"
 msgstr ""
 
 #: fsck/fsck.c:1086
-msgid ""
-"Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
+msgid "Usage: fsck [-AMNPRTV] [ -C [ fd ] ] [-t fstype] [fs-options] [filesys ...]\n"
 msgstr ""
 
 #: fsck/fsck.c:1124
-#, fuzzy, c-format
+#, c-format
 msgid "%s: too many devices\n"
-msgstr "orri txar gehiegi"
+msgstr "%s: gailu gehiegi\n"
 
 #: fsck/fsck.c:1135
 #, c-format
@@ -5488,7 +5438,7 @@ msgstr ""
 #: fsck/fsck.c:1137
 #, c-format
 msgid "Is /proc mounted?\n"
-msgstr ""
+msgstr "/proc montatua dago?\n"
 
 #: fsck/fsck.c:1146
 #, c-format
@@ -5501,14 +5451,14 @@ msgid "Couldn't find matching filesystem: %s\n"
 msgstr ""
 
 #: fsck/fsck.c:1157 fsck/fsck.c:1243
-#, fuzzy, c-format
+#, c-format
 msgid "%s: too many arguments\n"
-msgstr "orri txar gehiegi"
+msgstr "%s: argumentu gehiegi\n"
 
 #: fsck/fsck.c:1277
-#, fuzzy, c-format
+#, c-format
 msgid "fsck from %s\n"
-msgstr "Gailua: %s\n"
+msgstr ""
 
 #: fsck/fsck.c:1289
 #, c-format
@@ -5544,8 +5494,7 @@ msgid "              parameters\n"
 msgstr ""
 
 #: getopt/getopt.c:324
-msgid ""
-"  -a, --alternative            Allow long options starting with single -\n"
+msgid "  -a, --alternative            Allow long options starting with single -\n"
 msgstr ""
 
 #: getopt/getopt.c:325
@@ -5557,8 +5506,7 @@ msgid "  -l, --longoptions=longopts   Long options to be recognized\n"
 msgstr ""
 
 #: getopt/getopt.c:327
-msgid ""
-"  -n, --name=progname          The name under which errors are reported\n"
+msgid "  -n, --name=progname          The name under which errors are reported\n"
 msgstr ""
 
 #: getopt/getopt.c:328
@@ -5674,11 +5622,11 @@ msgstr ""
 
 #: hwclock/hwclock.c:231 hwclock/hwclock.c:326
 msgid "UTC"
-msgstr ""
+msgstr "UTC"
 
 #: hwclock/hwclock.c:231 hwclock/hwclock.c:325
 msgid "local"
-msgstr ""
+msgstr "lokala"
 
 #: hwclock/hwclock.c:311
 #, c-format
@@ -5703,16 +5651,16 @@ msgstr ""
 #: hwclock/hwclock.c:324
 #, c-format
 msgid "Hardware clock is on %s time\n"
-msgstr ""
+msgstr "Hardwarearen ordulariak %s data dauka\n"
 
 #: hwclock/hwclock.c:326
 msgid "unknown"
-msgstr ""
+msgstr "ezezaguna"
 
 #: hwclock/hwclock.c:350
 #, c-format
 msgid "Waiting for clock tick...\n"
-msgstr ""
+msgstr "Ordulariaren tick-ari itxaroten\n"
 
 #: hwclock/hwclock.c:356
 #, c-format
@@ -5758,25 +5706,23 @@ msgstr ""
 
 #: hwclock/hwclock.c:571
 #, c-format
-msgid ""
-"The Hardware Clock registers contain values that are either invalid (e.g. "
-"50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
+msgid "The Hardware Clock registers contain values that are either invalid (e.g. 50th day of month) or beyond the range we can handle (e.g. Year 2095).\n"
 msgstr ""
 
 #: hwclock/hwclock.c:581
 #, c-format
 msgid "%s  %.6f seconds\n"
-msgstr ""
+msgstr "%s  %.6f segundu\n"
 
 #: hwclock/hwclock.c:615
 #, c-format
 msgid "No --date option specified.\n"
-msgstr ""
+msgstr "Ez da --date aukerarik zehaztu.\n"
 
 #: hwclock/hwclock.c:621
 #, c-format
 msgid "--date argument too long\n"
-msgstr ""
+msgstr "--date argumentua luzeegia da\n"
 
 #: hwclock/hwclock.c:628
 #, c-format
@@ -5812,8 +5758,7 @@ msgstr ""
 #: hwclock/hwclock.c:662
 #, c-format
 msgid ""
-"The date command issued by %s returned something other than an integer where "
-"the converted time value was expected.\n"
+"The date command issued by %s returned something other than an integer where the converted time value was expected.\n"
 "The command was:\n"
 "  %s\n"
 "The response was:\n"
@@ -5827,9 +5772,7 @@ msgstr ""
 
 #: hwclock/hwclock.c:705
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot set the "
-"System Time from it.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot set the System Time from it.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:727 hwclock/hwclock.c:804
@@ -5873,9 +5816,7 @@ msgstr ""
 
 #: hwclock/hwclock.c:852
 #, c-format
-msgid ""
-"Not adjusting drift factor because the Hardware Clock previously contained "
-"garbage.\n"
+msgid "Not adjusting drift factor because the Hardware Clock previously contained garbage.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:857
@@ -5887,16 +5828,13 @@ msgstr ""
 
 #: hwclock/hwclock.c:863
 #, c-format
-msgid ""
-"Not adjusting drift factor because it has been less than a day since the "
-"last calibration.\n"
+msgid "Not adjusting drift factor because it has been less than a day since the last calibration.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:911
 #, c-format
 msgid ""
-"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor "
-"of %f seconds/day.\n"
+"Clock drifted %.1f seconds in the past %d seconds in spite of a drift factor of %f seconds/day.\n"
 "Adjusting drift factor by %f seconds/day\n"
 msgstr ""
 
@@ -5924,9 +5862,7 @@ msgstr ""
 
 #: hwclock/hwclock.c:1001
 #, c-format
-msgid ""
-"Could not open file with the clock adjustment parameters in it (%s) for "
-"writing"
+msgid "Could not open file with the clock adjustment parameters in it (%s) for writing"
 msgstr ""
 
 #: hwclock/hwclock.c:1006 hwclock/hwclock.c:1011
@@ -5941,14 +5877,12 @@ msgstr ""
 
 #: hwclock/hwclock.c:1058
 #, c-format
-msgid ""
-"The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
+msgid "The Hardware Clock does not contain a valid time, so we cannot adjust it.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:1066
 #, c-format
-msgid ""
-"Not setting clock because last adjustment time is zero, so history is bad."
+msgid "Not setting clock because last adjustment time is zero, so history is bad."
 msgstr ""
 
 #: hwclock/hwclock.c:1089
@@ -5959,7 +5893,7 @@ msgstr ""
 #: hwclock/hwclock.c:1115
 #, c-format
 msgid "Using %s.\n"
-msgstr ""
+msgstr "%s erabiltzen\n"
 
 #: hwclock/hwclock.c:1117
 #, c-format
@@ -5974,8 +5908,7 @@ msgstr ""
 #: hwclock/hwclock.c:1257
 #, c-format
 msgid ""
-"The kernel keeps an epoch value for the Hardware Clock only on an Alpha "
-"machine.\n"
+"The kernel keeps an epoch value for the Hardware Clock only on an Alpha machine.\n"
 "This copy of hwclock was built for a machine other than Alpha\n"
 "(and thus is presumably not running on an Alpha now).  No action taken.\n"
 msgstr ""
@@ -5992,9 +5925,7 @@ msgstr ""
 
 #: hwclock/hwclock.c:1271
 #, c-format
-msgid ""
-"To set the epoch value, you must use the 'epoch' option to tell to what "
-"value to set it.\n"
+msgid "To set the epoch value, you must use the 'epoch' option to tell to what value to set it.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:1274
@@ -6079,23 +6010,17 @@ msgstr ""
 
 #: hwclock/hwclock.c:1565
 #, c-format
-msgid ""
-"%s: The --utc and --localtime options are mutually exclusive.  You specified "
-"both.\n"
+msgid "%s: The --utc and --localtime options are mutually exclusive.  You specified both.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:1572
 #, c-format
-msgid ""
-"%s: The --adjust and --noadjfile options are mutually exclusive.  You "
-"specified both.\n"
+msgid "%s: The --adjust and --noadjfile options are mutually exclusive.  You specified both.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:1579
 #, c-format
-msgid ""
-"%s: The --adjfile and --noadjfile options are mutually exclusive.  You "
-"specified both.\n"
+msgid "%s: The --adjfile and --noadjfile options are mutually exclusive.  You specified both.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:1588
@@ -6120,9 +6045,7 @@ msgstr ""
 
 #: hwclock/hwclock.c:1629
 #, c-format
-msgid ""
-"Sorry, only the superuser can change the Hardware Clock epoch in the "
-"kernel.\n"
+msgid "Sorry, only the superuser can change the Hardware Clock epoch in the kernel.\n"
 msgstr ""
 
 #: hwclock/hwclock.c:1650
@@ -6132,9 +6055,7 @@ msgstr ""
 
 #: hwclock/hwclock.c:1654
 #, c-format
-msgid ""
-"Use the --debug option to see the details of our search for an access "
-"method.\n"
+msgid "Use the --debug option to see the details of our search for an access method.\n"
 msgstr ""
 
 #: hwclock/kd.c:54
@@ -6234,10 +6155,7 @@ msgstr ""
 
 #: hwclock/rtc.c:410 hwclock/rtc.c:454
 #, c-format
-msgid ""
-"To manipulate the epoch value in the kernel, we must access the Linux 'rtc' "
-"device driver via the device special file %s.  This file does not exist on "
-"this system.\n"
+msgid "To manipulate the epoch value in the kernel, we must access the Linux 'rtc' device driver via the device special file %s.  This file does not exist on this system.\n"
 msgstr ""
 
 #: hwclock/rtc.c:415 hwclock/rtc.c:459
@@ -6267,8 +6185,7 @@ msgstr ""
 
 #: hwclock/rtc.c:469
 #, c-format
-msgid ""
-"The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
+msgid "The kernel device driver for %s does not have the RTC_EPOCH_SET ioctl.\n"
 msgstr ""
 
 #: hwclock/rtc.c:472
@@ -6327,12 +6244,12 @@ msgstr ""
 #: login-utils/agetty.c:945
 #, c-format
 msgid "user"
-msgstr ""
+msgstr "erabiltzailea"
 
 #: login-utils/agetty.c:945
 #, c-format
 msgid "users"
-msgstr ""
+msgstr "erabiltzaileak"
 
 #: login-utils/agetty.c:1030
 #, c-format
@@ -6347,10 +6264,8 @@ msgstr ""
 #: login-utils/agetty.c:1206
 #, c-format
 msgid ""
-"Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H "
-"login_host] baud_rate,... line [termtype]\n"
-"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] "
-"line baud_rate,... [termtype]\n"
+"Usage: %s [-8hiLmUw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] baud_rate,... line [termtype]\n"
+"or\t[-hiLmw] [-l login_program] [-t timeout] [-I initstring] [-H login_host] line baud_rate,... [termtype]\n"
 msgstr ""
 
 #: login-utils/checktty.c:91 login-utils/checktty.c:112
@@ -6423,7 +6338,7 @@ msgstr "Pasahitza: "
 
 #: login-utils/chfn.c:215 login-utils/chsh.c:214
 msgid "Incorrect password."
-msgstr ""
+msgstr "Pasahitz okerra."
 
 #: login-utils/chfn.c:226
 #, c-format
@@ -6449,15 +6364,15 @@ msgstr ""
 
 #: login-utils/chfn.c:378
 msgid "Office"
-msgstr ""
+msgstr "Bulegoa"
 
 #: login-utils/chfn.c:379
 msgid "Office Phone"
-msgstr ""
+msgstr "Bulegoko telefono zenbakia"
 
 #: login-utils/chfn.c:380
 msgid "Home Phone"
-msgstr ""
+msgstr "Etxeko telefono zenbakia"
 
 #: login-utils/chfn.c:401 login-utils/chsh.c:321
 #, c-format
@@ -6465,16 +6380,18 @@ msgid ""
 "\n"
 "Aborted.\n"
 msgstr ""
+"\n"
+"Abortatua.\n"
 
 #: login-utils/chfn.c:434
 #, c-format
 msgid "field is too long.\n"
-msgstr ""
+msgstr "eremua luzeegia da.\n"
 
 #: login-utils/chfn.c:442
 #, c-format
 msgid "'%c' is not allowed.\n"
-msgstr ""
+msgstr "'%c' ez dago onartuta.\n"
 
 #: login-utils/chfn.c:447
 #, c-format
@@ -6498,9 +6415,7 @@ msgstr ""
 
 #: login-utils/chsh.c:164
 #, c-format
-msgid ""
-"%s: Running UID doesn't match UID of user we're altering, shell change "
-"denied\n"
+msgid "%s: Running UID doesn't match UID of user we're altering, shell change denied\n"
 msgstr ""
 
 #: login-utils/chsh.c:170
@@ -7121,9 +7036,9 @@ msgid "error stopping service: \"%s\"\n"
 msgstr ""
 
 #: login-utils/simpleinit.c:950
-#, fuzzy, c-format
+#, c-format
 msgid "Stopped service: %s\n"
-msgstr "Gailua: %s\n"
+msgstr "Gelditutako gailua: %s\n"
 
 #: login-utils/simpleinit.c:1070
 #, c-format
@@ -7327,9 +7242,9 @@ msgid "logger: openlog: pathname too long\n"
 msgstr ""
 
 #: misc-utils/logger.c:75
-#, fuzzy, c-format
+#, c-format
 msgid "socket: %s.\n"
-msgstr "Gailua: %s\n"
+msgstr "socket: %s.\n"
 
 #: misc-utils/logger.c:80
 #, c-format
@@ -7353,8 +7268,7 @@ msgstr ""
 
 #: misc-utils/logger.c:285
 #, c-format
-msgid ""
-"usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
+msgid "usage: logger [-is] [-f file] [-p pri] [-t tag] [-u socket] [ message ... ]\n"
 msgstr ""
 
 #: misc-utils/look.c:351
@@ -7374,9 +7288,8 @@ msgstr ""
 
 #: misc-utils/namei.c:143 misc-utils/namei.c:198 misc-utils/namei.c:225
 #: misc-utils/namei.c:245 misc-utils/namei.c:252 misc-utils/namei.c:294
-#, fuzzy
 msgid "out of memory?"
-msgstr "memoriarik ez?\n"
+msgstr "memoriatik kanpo?"
 
 #: misc-utils/namei.c:188
 #, c-format
@@ -7817,23 +7730,20 @@ msgid "       %s -k\n"
 msgstr ""
 
 #: misc-utils/uuidd.c:152
-#, fuzzy
 msgid "bad arguments"
-msgstr "orri txar gehiegi"
+msgstr ""
 
 #: misc-utils/uuidd.c:159
-#, fuzzy
 msgid "socket"
-msgstr "Gailua: %s\n"
+msgstr ""
 
 #: misc-utils/uuidd.c:170
 msgid "connect"
 msgstr ""
 
 #: misc-utils/uuidd.c:189
-#, fuzzy
 msgid "write"
-msgstr "Idatzi"
+msgstr "idatzi"
 
 #: misc-utils/uuidd.c:197
 msgid "read count"
@@ -7934,9 +7844,9 @@ msgid "Killed uuidd running at pid %d\n"
 msgstr ""
 
 #: misc-utils/uuidgen.c:32
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [-r] [-t]\n"
-msgstr "erabilera: %s [ -n] gailua\n"
+msgstr "Erabilera: %s [-r] [-t]\n"
 
 #: misc-utils/whereis.c:159
 #, c-format
@@ -7944,14 +7854,12 @@ msgid "whereis [ -sbmu ] [ -SBM dir ... -f ] name...\n"
 msgstr ""
 
 #: misc-utils/wipefs.c:128
-#, fuzzy
 msgid "calloc failed"
-msgstr "settimeofday()-ek huts egin du"
+msgstr "calloc-ek huts egin du"
 
 #: misc-utils/wipefs.c:150
-#, fuzzy
 msgid "strdup failed"
-msgstr "setuid()-k huts egin du"
+msgstr "strdup-ek huts egin du"
 
 #: misc-utils/wipefs.c:199
 msgid "probing initialization failed"
@@ -7968,9 +7876,9 @@ msgid "%s: failed to seek to offset 0x%jx"
 msgstr ""
 
 #: misc-utils/wipefs.c:257
-#, fuzzy, c-format
+#, c-format
 msgid "%s: write failed"
-msgstr "fsync-ek huts egin du"
+msgstr ""
 
 #: misc-utils/wipefs.c:259
 #, c-format
@@ -7995,12 +7903,12 @@ msgid "invalid offset '%s' value specified"
 msgstr ""
 
 #: misc-utils/wipefs.c:312 sys-utils/fallocate.c:47
-#, fuzzy, c-format
+#, c-format
 msgid ""
 "Usage: %s [options] <filename>\n"
 "\n"
 "Options:\n"
-msgstr "erabilera: %s [ -n] gailua\n"
+msgstr ""
 
 #: misc-utils/wipefs.c:316
 #, c-format
@@ -8267,8 +8175,7 @@ msgid ""
 " %1$s -d | --detach <loopdev> [<loopdev> ...] delete\n"
 " %1$s -f | --find                             find unused\n"
 " %1$s -c | --set-capacity <loopdev>           resize\n"
-" %1$s -j | --associated <file> [-o <num>]     list all associated with "
-"<file>\n"
+" %1$s -j | --associated <file> [-o <num>]     list all associated with <file>\n"
 " %1$s [ options ] {-f|--find|loopdev} <file>  setup\n"
 msgstr ""
 
@@ -8475,8 +8382,7 @@ msgid "mount: warning: %s seems to be mounted read-write.\n"
 msgstr ""
 
 #: mount/mount.c:1404
-msgid ""
-"mount: I could not determine the filesystem type, and none was specified"
+msgid "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 
 #: mount/mount.c:1407
@@ -8839,9 +8745,9 @@ msgid "waitpid failed"
 msgstr "setuid()-k huts egin du"
 
 #: mount/swapon.c:257
-#, fuzzy, c-format
+#, c-format
 msgid "%s: lseek failed"
-msgstr "fsync-ek huts egin du"
+msgstr ""
 
 #: mount/swapon.c:263
 #, c-format
@@ -8856,7 +8762,7 @@ msgstr ""
 #: mount/swapon.c:370
 #, fuzzy, c-format
 msgid "%s: stat failed"
-msgstr "fsync-ek huts egin du"
+msgstr "setuid()-k huts egin du"
 
 #: mount/swapon.c:380
 #, c-format
@@ -8890,8 +8796,7 @@ msgstr ""
 
 #: mount/swapon.c:431
 #, c-format
-msgid ""
-"%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
+msgid "%s: swap format pagesize does not match. (Use --fixpgsz to reinitialize it.)"
 msgstr ""
 
 #: mount/swapon.c:440
@@ -8905,9 +8810,9 @@ msgid "%s on %s\n"
 msgstr ""
 
 #: mount/swapon.c:486
-#, fuzzy, c-format
+#, c-format
 msgid "%s: swapon failed"
-msgstr "fsync-ek huts egin du"
+msgstr "%s: swapon-ek huts egin du"
 
 #: mount/swapon.c:493
 #, c-format
@@ -8919,9 +8824,9 @@ msgid "Not superuser."
 msgstr ""
 
 #: mount/swapon.c:529
-#, fuzzy, c-format
+#, c-format
 msgid "%s: swapoff failed"
-msgstr "fsync-ek huts egin du"
+msgstr ""
 
 #: mount/swapon.c:797
 #, c-format
@@ -9125,9 +9030,9 @@ msgid "pid %d's %s scheduling policy: "
 msgstr ""
 
 #: schedutils/chrt.c:109
-#, fuzzy, c-format
+#, c-format
 msgid "unknown\n"
-msgstr "Ezezaguna"
+msgstr "ezezaguna\n"
 
 #: schedutils/chrt.c:113
 #, c-format
@@ -9176,9 +9081,8 @@ msgid "ioprio_get failed"
 msgstr ""
 
 #: schedutils/ionice.c:75
-#, fuzzy
 msgid "ioprio_set failed"
-msgstr "setuid()-k huts egin du"
+msgstr "ioprio-set-ek huts egin du"
 
 #: schedutils/ionice.c:81
 #, c-format
@@ -9200,9 +9104,9 @@ msgid ""
 msgstr ""
 
 #: schedutils/ionice.c:110 schedutils/ionice.c:112
-#, fuzzy, c-format
+#, c-format
 msgid "cannot parse number '%s'"
-msgstr "Ezin da '%s' fitxategia ireki"
+msgstr "Ezin da '%s' zenbakia irakurri"
 
 #: schedutils/ionice.c:151
 msgid "ignoring given class data for none class"
@@ -9218,9 +9122,8 @@ msgid "bad prio class %d"
 msgstr ""
 
 #: schedutils/ionice.c:187
-#, fuzzy
 msgid "execvp failed"
-msgstr "fsync-ek huts egin du"
+msgstr "execvp-ek huts egin du"
 
 #: sys-utils/ctrlaltdel.c:27
 #, c-format
@@ -9242,8 +9145,7 @@ msgstr ""
 #: sys-utils/cytune.c:125
 #, c-format
 msgid ""
-"File %s, For threshold value %lu and timrout value %lu, Maximum characters "
-"in fifo were %d,\n"
+"File %s, For threshold value %lu and timrout value %lu, Maximum characters in fifo were %d,\n"
 "and the maximum transfer rate in characters/second was %f\n"
 msgstr ""
 
@@ -9274,9 +9176,7 @@ msgstr ""
 
 #: sys-utils/cytune.c:238
 #, c-format
-msgid ""
-"Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) "
-"[-g|-G] file [file...]\n"
+msgid "Usage: %s [-q [-i interval]] ([-s value]|[-S value]) ([-t value]|[-T value]) [-g|-G] file [file...]\n"
 msgstr ""
 
 #: sys-utils/cytune.c:250 sys-utils/cytune.c:269 sys-utils/cytune.c:289
@@ -9330,8 +9230,7 @@ msgstr ""
 
 #: sys-utils/cytune.c:418
 #, c-format
-msgid ""
-"%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid "%s: %lu ints, %lu/%lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
 
 #: sys-utils/cytune.c:424
@@ -9341,8 +9240,7 @@ msgstr ""
 
 #: sys-utils/cytune.c:429
 #, c-format
-msgid ""
-"%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
+msgid "%s: %lu ints, %lu chars; fifo: %lu thresh, %lu tmout, %lu max, %lu now\n"
 msgstr ""
 
 #: sys-utils/cytune.c:435
@@ -9392,9 +9290,9 @@ msgid "keep size mode (-n option) unsupported"
 msgstr ""
 
 #: sys-utils/fallocate.c:174
-#, fuzzy, c-format
+#, c-format
 msgid "%s: fallocate failed"
-msgstr "fsync-ek huts egin du"
+msgstr "%s: fallocate-k huts egin du"
 
 #: sys-utils/flock.c:65
 #, c-format
@@ -9419,9 +9317,9 @@ msgid "%s: %s requires exactly one command argument\n"
 msgstr ""
 
 #: sys-utils/flock.c:219
-#, fuzzy, c-format
+#, c-format
 msgid "%s: cannot open lock file %s: %s\n"
-msgstr "Ezin da '%s' fitxategia ireki"
+msgstr "%s: ezin da %s blokeo fitxategia ireki: %s\n"
 
 #: sys-utils/flock.c:231
 #, c-format
@@ -9434,9 +9332,9 @@ msgid "%s: requires file descriptor, file or directory\n"
 msgstr ""
 
 #: sys-utils/flock.c:296
-#, fuzzy, c-format
+#, c-format
 msgid "%s: fork failed: %s\n"
-msgstr "fsync-ek huts egin du"
+msgstr ""
 
 #: sys-utils/ipcmk.c:84
 #, c-format
@@ -9591,8 +9489,7 @@ msgstr ""
 
 #: sys-utils/ipcs.c:124
 #, c-format
-msgid ""
-"%s provides information on ipc facilities for which you have read access.\n"
+msgid "%s provides information on ipc facilities for which you have read access.\n"
 msgstr ""
 
 #: sys-utils/ipcs.c:126
@@ -9975,9 +9872,8 @@ msgid "messages"
 msgstr ""
 
 #: sys-utils/ipcs.c:589
-#, fuzzy
 msgid "shmctl failed"
-msgstr "fsync-ek huts egin du"
+msgstr "shmctl-ek huts egin du"
 
 #: sys-utils/ipcs.c:591
 #, c-format
@@ -10017,9 +9913,8 @@ msgid "change_time=%-26.24s\n"
 msgstr ""
 
 #: sys-utils/ipcs.c:615
-#, fuzzy
 msgid "msgctl failed"
-msgstr "fsync-ek huts egin du"
+msgstr "msgctl-ek huts egin du"
 
 #: sys-utils/ipcs.c:617
 #, c-format
@@ -10049,9 +9944,8 @@ msgid "rcv_time=%-26.24s\n"
 msgstr ""
 
 #: sys-utils/ipcs.c:648 sys-utils/ipcs.c:670
-#, fuzzy
 msgid "semctl failed"
-msgstr "fsync-ek huts egin du"
+msgstr "semctl-ek huts egin du"
 
 #: sys-utils/ipcs.c:650
 #, c-format
@@ -10124,9 +10018,9 @@ msgid "invalid speed: %s"
 msgstr ""
 
 #: sys-utils/ldattach.c:179
-#, fuzzy, c-format
+#, c-format
 msgid "ldattach from %s\n"
-msgstr "Gailua: %s\n"
+msgstr ""
 
 #: sys-utils/ldattach.c:184 text-utils/tailf.c:206
 msgid "invalid option"
@@ -10167,9 +10061,8 @@ msgid "cannot daemonize"
 msgstr ""
 
 #: sys-utils/lscpu.c:64
-#, fuzzy
 msgid "none"
-msgstr "Ezer"
+msgstr "ez"
 
 #: sys-utils/lscpu.c:65
 msgid "para"
@@ -10198,9 +10091,8 @@ msgid "error: uname failed"
 msgstr ""
 
 #: sys-utils/lscpu.c:491
-#, fuzzy
 msgid "error: malloc failed"
-msgstr "settimeofday()-ek huts egin du"
+msgstr "errorea: malloc-ek huts egin du"
 
 #: sys-utils/lscpu.c:506
 msgid "error: /sys filesystem is not accessable."
@@ -10217,61 +10109,61 @@ msgstr ""
 
 #: sys-utils/lscpu.c:590
 msgid "Thread(s) per core:"
-msgstr ""
+msgstr "Core bakoitzeko hari kopurua:"
 
 #: sys-utils/lscpu.c:591
 msgid "Core(s) per socket:"
-msgstr ""
+msgstr "Socket bakoitzeko core kopurua:"
 
 #: sys-utils/lscpu.c:592
 msgid "CPU socket(s):"
-msgstr ""
+msgstr "CPU socketak:"
 
 #: sys-utils/lscpu.c:596
 msgid "NUMA node(s):"
-msgstr ""
+msgstr "NUMA noduak:"
 
 #: sys-utils/lscpu.c:598
 msgid "Vendor ID:"
-msgstr ""
+msgstr "Fabrikatzailearen IDa:"
 
 #: sys-utils/lscpu.c:600
 msgid "CPU family:"
-msgstr ""
+msgstr "CPU familia:"
 
 #: sys-utils/lscpu.c:602
 msgid "Model:"
-msgstr ""
+msgstr "Modeloa:"
 
 #: sys-utils/lscpu.c:604
 msgid "Stepping:"
-msgstr ""
+msgstr "Stepping-a:"
 
 #: sys-utils/lscpu.c:606
 msgid "CPU MHz:"
-msgstr ""
+msgstr "CPU MHz:"
 
 #: sys-utils/lscpu.c:609 sys-utils/lscpu.c:611
 msgid "Virtualization:"
-msgstr ""
+msgstr "Birtualizazioa:"
 
 #: sys-utils/lscpu.c:614
 msgid "Hypervisor vendor:"
-msgstr ""
+msgstr "Hypervisor-earen fabrikatzailea:"
 
 #: sys-utils/lscpu.c:615
 msgid "Virtualization type:"
-msgstr ""
+msgstr "Birtualizazio moeta:"
 
 #: sys-utils/lscpu.c:623
 #, c-format
 msgid "%s cache:"
-msgstr ""
+msgstr "%s cachea:"
 
 #: sys-utils/lscpu.c:631
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [option]\n"
-msgstr "erabilera: %s [ -n] gailua\n"
+msgstr "Erabilera: %s [aukera]\n"
 
 #: sys-utils/lscpu.c:634
 msgid ""
@@ -10292,8 +10184,7 @@ msgid "usage: rdev [ -rv ] [ -o OFFSET ] [ IMAGE [ VALUE [ OFFSET ] ] ]"
 msgstr ""
 
 #: sys-utils/rdev.c:78
-msgid ""
-"  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
+msgid "  rdev /dev/fd0  (or rdev /linux, etc.) displays the current ROOT device"
 msgstr ""
 
 #: sys-utils/rdev.c:79
@@ -10329,8 +10220,7 @@ msgid "  vidmode ...                     same as rdev -v"
 msgstr ""
 
 #: sys-utils/rdev.c:87
-msgid ""
-"Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
+msgid "Note: video modes are: -3=Ask, -2=Extended, -1=NormalVga, 1=key1, 2=key2,..."
 msgstr ""
 
 #: sys-utils/rdev.c:88
@@ -10339,7 +10229,7 @@ msgstr ""
 
 #: sys-utils/rdev.c:245
 msgid "missing comma"
-msgstr ""
+msgstr "koma falta da"
 
 #: sys-utils/readprofile.c:72
 #, c-format
@@ -10396,7 +10286,7 @@ msgstr ""
 
 #: sys-utils/readprofile.c:412
 msgid "total"
-msgstr ""
+msgstr "guztira"
 
 #: sys-utils/renice.c:53
 #, c-format
@@ -10412,27 +10302,27 @@ msgid ""
 msgstr ""
 
 #: sys-utils/renice.c:89
-#, fuzzy, c-format
+#, c-format
 msgid "renice from %s\n"
-msgstr "Gailua: %s\n"
+msgstr "%s-(e)tik renice-ea\n"
 
 #: sys-utils/renice.c:126
 #, c-format
 msgid "renice: %s: unknown user\n"
-msgstr ""
+msgstr "renice: %s: erabiltzaile ezezaguna\n"
 
 #: sys-utils/renice.c:134
 #, c-format
 msgid "renice: %s: bad value\n"
-msgstr ""
+msgstr "renice: %s: balio okerra\n"
 
 #: sys-utils/renice.c:152 sys-utils/renice.c:164
 msgid "getpriority"
-msgstr ""
+msgstr "getpriority"
 
 #: sys-utils/renice.c:157
 msgid "setpriority"
-msgstr ""
+msgstr "setpriority"
 
 #: sys-utils/renice.c:168
 #, c-format
@@ -10488,9 +10378,9 @@ msgid "%s: illegal interval %s seconds\n"
 msgstr ""
 
 #: sys-utils/rtcwake.c:369
-#, fuzzy, c-format
+#, c-format
 msgid "%s: illegal time_t value %s\n"
-msgstr "Baliogabeko sektore baloreak"
+msgstr "%s: baliogabeko %s time_t balorea\n"
 
 #: sys-utils/rtcwake.c:385
 #, c-format
@@ -10505,7 +10395,7 @@ msgstr ""
 #: sys-utils/rtcwake.c:403
 #, c-format
 msgid "Using UTC time.\n"
-msgstr ""
+msgstr "UTC ordua erabiltzen.\n"
 
 #: sys-utils/rtcwake.c:404
 #, c-format
@@ -10518,9 +10408,8 @@ msgid "%s: must provide wake time\n"
 msgstr ""
 
 #: sys-utils/rtcwake.c:417
-#, fuzzy
 msgid "malloc() failed"
-msgstr "settimeofday()-ek huts egin du"
+msgstr "malloc()-ek huts egin du"
 
 #: sys-utils/rtcwake.c:429
 #, c-format
@@ -10548,9 +10437,8 @@ msgid "%s: unable to execute %s: %s\n"
 msgstr ""
 
 #: sys-utils/rtcwake.c:496
-#, fuzzy
 msgid "rtc read"
-msgstr ", prest"
+msgstr "rtc irakurrita"
 
 #: sys-utils/rtcwake.c:505
 msgid "disable rtc alarm interrupt"
@@ -10574,8 +10462,7 @@ msgstr ""
 msgid ""
 " -h, --help               displays this help text\n"
 " -v, --verbose            says what options are being switched on\n"
-" -R, --addr-no-randomize  disables randomization of the virtual address "
-"space\n"
+" -R, --addr-no-randomize  disables randomization of the virtual address space\n"
 " -F, --fdpic-funcptrs     makes function pointers point to descriptors\n"
 " -Z, --mmap-page-zero     turns on MMAP_PAGE_ZERO\n"
 " -L, --addr-compat-layout changes the way virtual memory is allocated\n"
@@ -10584,8 +10471,7 @@ msgid ""
 " -I, --short-inode        turns on SHORT_INODE\n"
 " -S, --whole-seconds      turns on WHOLE_SECONDS\n"
 " -T, --sticky-timeouts    turns on STICKY_TIMEOUTS\n"
-" -3, --3gb                limits the used address space to a maximum of 3 "
-"GB\n"
+" -3, --3gb                limits the used address space to a maximum of 3 GB\n"
 "     --4gb                ignored (for backward compatibility only)\n"
 msgstr ""
 
@@ -10676,7 +10562,7 @@ msgstr ""
 
 #: sys-utils/tunelp.c:285
 msgid "LPGETIRQ error"
-msgstr ""
+msgstr "LPGETIRQ errorea"
 
 #: sys-utils/tunelp.c:291
 #, c-format
@@ -10689,9 +10575,9 @@ msgid "%s using polling\n"
 msgstr ""
 
 #: sys-utils/unshare.c:57
-#, fuzzy, c-format
+#, c-format
 msgid "Usage: %s [options] <program> [args...]\n"
-msgstr "erabilera: %s [ -n] gailua\n"
+msgstr ""
 
 #: sys-utils/unshare.c:60
 msgid ""
@@ -10714,22 +10600,22 @@ msgstr ""
 #: sys-utils/unshare.c:114
 #, fuzzy
 msgid "unshare failed"
-msgstr "fsync-ek huts egin du"
+msgstr "setuid()-k huts egin du"
 
 #: sys-utils/unshare.c:118
-#, fuzzy, c-format
+#, c-format
 msgid "exec %s failed"
-msgstr "fsync-ek huts egin du"
+msgstr "exec %s-(e)k huts egin du"
 
 #: text-utils/col.c:154
 #, c-format
 msgid "col: bad -l argument %s.\n"
-msgstr ""
+msgstr "col: -l baliogabeko argumentua %s.\n"
 
 #: text-utils/col.c:544
 #, c-format
 msgid "usage: col [-bfpx] [-l nline]\n"
-msgstr ""
+msgstr "usage: zutabea [-bfpx] [-l lerro zenbakia]\n"
 
 #: text-utils/col.c:550
 #, c-format
@@ -10756,12 +10642,12 @@ msgstr ""
 
 #: text-utils/column.c:297
 msgid "line too long"
-msgstr ""
+msgstr "lerro luzeegia"
 
 #: text-utils/column.c:374
 #, c-format
 msgid "usage: column [-tx] [-c columns] [file ...]\n"
-msgstr ""
+msgstr "erabilera: zutabea [-tx] [-c zutabeak] [fitxategia ...]\n"
 
 #: text-utils/hexsyntax.c:82
 #, c-format
@@ -10775,24 +10661,23 @@ msgstr ""
 
 #: text-utils/hexsyntax.c:131
 #, c-format
-msgid ""
-"hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
+msgid "hexdump: [-bcCdovx] [-e fmt] [-f fmt_file] [-n length] [-s skip] [file ...]\n"
 msgstr ""
 
 #: text-utils/more.c:258
 #, c-format
 msgid "usage: %s [-dflpcsu] [+linenum | +/pattern] name1 name2 ...\n"
-msgstr ""
+msgstr "erabilera: %s [-dflpcsu] [+lerrozenbakia | +/patroia] izena1 izena2 ...\n"
 
 #: text-utils/more.c:290
 #, c-format
 msgid "failed to initialize line buffer\n"
-msgstr ""
+msgstr "huts egin da lerro buffer-a hasieratzen\n"
 
 #: text-utils/more.c:485
 #, c-format
 msgid "%s: unknown option \"-%c\"\n"
-msgstr ""
+msgstr "%s: \"-%c\" aukera ezezaguna\n"
 
 #: text-utils/more.c:517
 #, c-format
@@ -10801,6 +10686,9 @@ msgid ""
 "*** %s: directory ***\n"
 "\n"
 msgstr ""
+"\n"
+"*** %s: direktorioa ***\n"
+"\n"
 
 #: text-utils/more.c:561
 #, c-format
@@ -10809,49 +10697,51 @@ msgid ""
 "******** %s: Not a text file ********\n"
 "\n"
 msgstr ""
+"\n"
+"******** %s: Ez da testu fitxategia ********\n"
+"\n"
 
 #: text-utils/more.c:664
 #, c-format
 msgid "[Use q or Q to quit]"
-msgstr ""
+msgstr "[Erabili q edo Q irteteko]"
 
 #: text-utils/more.c:756
 #, c-format
 msgid "--More--"
-msgstr ""
+msgstr "--Gehiago--"
 
 #: text-utils/more.c:758
 #, c-format
 msgid "(Next file: %s)"
-msgstr ""
+msgstr "(Hurrengo fitxategia: %s)"
 
 #: text-utils/more.c:763
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
-msgstr ""
+msgstr "[Sakatu zuriune-barra jarraitzeko, 'q' irteteko.]"
 
 #: text-utils/more.c:798
-#, fuzzy
 msgid "out if memory"
-msgstr "memoriarik ez"
+msgstr "memoriatik kanpo"
 
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
-msgstr ""
+msgstr "... %d orri atzera"
 
 #: text-utils/more.c:1208
 msgid "...back 1 page"
-msgstr ""
+msgstr "...orri bat atzera"
 
 #: text-utils/more.c:1251
 msgid "...skipping one line"
-msgstr ""
+msgstr "...saltatu lerro bat"
 
 #: text-utils/more.c:1253
 #, c-format
 msgid "...skipping %d lines"
-msgstr ""
+msgstr "...saltatu %d lerro"
 
 #: text-utils/more.c:1290
 msgid ""
@@ -10859,12 +10749,14 @@ msgid ""
 "***Back***\n"
 "\n"
 msgstr ""
+"\n"
+"***Atzera***\n"
+"\n"
 
 #: text-utils/more.c:1328
 msgid ""
 "\n"
-"Most commands optionally preceded by integer argument k.  Defaults in "
-"brackets.\n"
+"Most commands optionally preceded by integer argument k.  Defaults in brackets.\n"
 "Star (*) indicates argument becomes new default.\n"
 msgstr ""
 
@@ -10894,25 +10786,25 @@ msgstr ""
 #: text-utils/more.c:1404 text-utils/more.c:1409
 #, c-format
 msgid "[Press 'h' for instructions.]"
-msgstr ""
+msgstr "[Sakatu 'h' argibideentzat.]"
 
 #: text-utils/more.c:1443
 #, c-format
 msgid "\"%s\" line %d"
-msgstr ""
+msgstr "\"%s\" %d lerroa"
 
 #: text-utils/more.c:1445
 #, c-format
 msgid "[Not a file] line %d"
-msgstr ""
+msgstr "[Ez da fitxategia] %d lerroa"
 
 #: text-utils/more.c:1529
 msgid "  Overflow\n"
-msgstr ""
+msgstr " Gainezkatzea\n"
 
 #: text-utils/more.c:1576
 msgid "...skipping\n"
-msgstr ""
+msgstr "...salto egiten\n"
 
 #: text-utils/more.c:1605
 msgid "Regular expression botch"
@@ -10923,32 +10815,36 @@ msgid ""
 "\n"
 "Pattern not found\n"
 msgstr ""
+"\n"
+"Patroia ez da aurkitu\n"
 
 #: text-utils/more.c:1616 text-utils/pg.c:1124 text-utils/pg.c:1275
 msgid "Pattern not found"
-msgstr ""
+msgstr "Patroia ez da aurkitu"
 
 #: text-utils/more.c:1677
 msgid "can't fork\n"
-msgstr ""
+msgstr "ezin da fork egin\n"
 
 #: text-utils/more.c:1716
 msgid ""
 "\n"
 "...Skipping "
 msgstr ""
+"\n"
+"...salto egiten"
 
 #: text-utils/more.c:1720
 msgid "...Skipping to file "
-msgstr ""
+msgstr "...fitxategira salto egiten"
 
 #: text-utils/more.c:1722
 msgid "...Skipping back to file "
-msgstr ""
+msgstr "...atzera fitxategira salto egiten"
 
 #: text-utils/more.c:2000
 msgid "Line too long"
-msgstr ""
+msgstr "Lerroa luzeegia da"
 
 #: text-utils/more.c:2043
 msgid "No previous command to substitute for"
@@ -10966,17 +10862,17 @@ msgstr ""
 
 #: text-utils/odsyntax.c:134
 msgid "; see strings(1)."
-msgstr ""
+msgstr "; ikusi strings(1)."
 
 #: text-utils/parse.c:63
 #, c-format
 msgid "hexdump: can't read %s.\n"
-msgstr ""
+msgstr "hexdump: ezin da %s  irakurri.\n"
 
 #: text-utils/parse.c:68
 #, c-format
 msgid "hexdump: line too long.\n"
-msgstr ""
+msgstr "hexdump: lerroa luzeegia da.\n"
 
 #: text-utils/parse.c:401
 #, c-format
@@ -11024,22 +10920,19 @@ msgid ""
 "  n                       go to next file\n"
 "\n"
 "Many commands accept preceding numbers, for example:\n"
-"+1<newline> (next page); -1<newline> (previous page); 1<newline> (first "
-"page).\n"
+"+1<newline> (next page); -1<newline> (previous page); 1<newline> (first page).\n"
 "\n"
 "See pg(1) for more information.\n"
 "-------------------------------------------------------\n"
 msgstr ""
 
 #: text-utils/pg.c:223
-#, fuzzy
 msgid "Out of memory\n"
-msgstr "Memoriarik ez"
+msgstr "Memoriatik kanpo\n"
 
 #: text-utils/pg.c:236
 #, c-format
-msgid ""
-"%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
+msgid "%s: Usage: %s [-number] [-p string] [-cefnrs] [+line] [+/pattern/] [files]\n"
 msgstr ""
 
 #: text-utils/pg.c:245
@@ -11062,7 +10955,7 @@ msgstr ""
 
 #: text-utils/pg.c:394
 msgid "No next file"
-msgstr ""
+msgstr "Ez da testu fitxategia"
 
 #: text-utils/pg.c:398
 msgid "No previous file"
@@ -11094,7 +10987,7 @@ msgstr ""
 
 #: text-utils/pg.c:1198
 msgid "(EOF)"
-msgstr ""
+msgstr "(EOF)"
 
 #: text-utils/pg.c:1224 text-utils/pg.c:1251
 msgid "No remembered search string"
@@ -11102,7 +10995,7 @@ msgstr ""
 
 #: text-utils/pg.c:1307
 msgid "Cannot open "
-msgstr ""
+msgstr "Ezin da ireki"
 
 #: text-utils/pg.c:1355
 msgid "saved"
@@ -11118,7 +11011,7 @@ msgstr ""
 
 #: text-utils/pg.c:1702
 msgid "(Next file: "
-msgstr ""
+msgstr "(Hurrengo fitxategia: "
 
 #: text-utils/rev.c:113
 msgid "unable to allocate bufferspace"
@@ -11130,9 +11023,9 @@ msgid "usage: rev [file ...]\n"
 msgstr ""
 
 #: text-utils/tailf.c:58 text-utils/tailf.c:93
-#, fuzzy, c-format
+#, c-format
 msgid "cannot open \"%s\" for read"
-msgstr "Ezin da disko unitatea ireki"
+msgstr "ezin da \"%s\" ireki irakurketarako"
 
 #: text-utils/tailf.c:96 text-utils/tailf.c:215
 #, c-format
@@ -11161,16 +11054,16 @@ msgstr ""
 
 #: text-utils/tailf.c:199 text-utils/tailf.c:203
 msgid "invalid number of lines"
-msgstr ""
+msgstr "baliogabeko lerro kopurua"
 
 #: text-utils/tailf.c:210
 msgid "usage: tailf [-n N | -N] logfile"
-msgstr ""
+msgstr "erabilera: tailf [-n N | -N] fitxategia"
 
 #: text-utils/ul.c:141
 #, c-format
 msgid "usage: %s [ -i ] [ -tTerm ] file...\n"
-msgstr ""
+msgstr "erabilera: %s [ -i ] [ -tTerm ] fitxategia...\n"
 
 #: text-utils/ul.c:152
 #, c-format
@@ -11197,15 +11090,8 @@ msgstr ""
 msgid "Out of memory when growing buffer.\n"
 msgstr "Memoriarik ez buffer-a hazterakoan.\n"
 
-#, fuzzy
-#~ msgid ""
-#~ "unit: sectors\n"
-#~ "\n"
-#~ msgstr "SunOS usr"
-
-#, fuzzy
-#~ msgid ", bootable"
-#~ msgstr "Abiogarria"
+#~ msgid "Password error."
+#~ msgstr "Pasahitz errorea."
 
 #~ msgid "%-10s %-10s %-10s %-10s %-10s %-10s\n"
 #~ msgstr "%-10s %-10s %-10s %-10s %-10s %-10s\n"
@@ -11230,9 +11116,6 @@ msgstr "Memoriarik ez buffer-a hazterakoan.\n"
 
 #~ msgid "%-10s %-10s %-10s %-10s %-12s %-12s\n"
 #~ msgstr "%-10s %-10s %-10s %-10s %-12s %-12s\n"
-
-#~ msgid "Password error."
-#~ msgstr "Pasahitz errorea."
 
 #~ msgid "3,5\" floppy"
 #~ msgstr "3,5\" disketea"
