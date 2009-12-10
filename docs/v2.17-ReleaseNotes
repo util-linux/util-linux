@@ -127,11 +127,12 @@ dmesg:
    - dmesg.1 formatting  [Peter Breitenlohner]
    - fix typo in man page  [Ken Kopin]
 docs:
-   - README width and language correction  [Jan Sarenik]
+   - add ngettext() into TODO file  [Karel Zak]
    - add 'unshare' and 'wipefs' to AUTHORS  [Karel Zak]
    - add v2.17 ReleaseNotes  [Karel Zak]
-   - update "The Perfect Patch" URL  [Karel Zak]
+   - README width and language correction  [Jan Sarenik]
    - update AUTHORS file  [Karel Zak]
+   - update "The Perfect Patch" URL  [Karel Zak]
    - update TODO  [Karel Zak]
 elvtune:
    - elvtune.8 formatting  [Peter Breitenlohner]
@@ -208,6 +209,7 @@ ldattach:
    - use c.h  [Karel Zak]
 lib:
    - add a generic crc32()  [Karel Zak]
+   - bug (typo) in function MD5Final()  [Karel Zak]
    - fix file descriptor leak in is_mounted()  [Theodore Ts'o]
    - fix lib/Makefile.am (remove pttype.c)  [Karel Zak]
    - import whole ismounted.c code from e2fsprogs  [Karel Zak]
@@ -395,15 +397,17 @@ pivot_root:
    - pivot_root.8 formatting  [Peter Breitenlohner]
 po:
    - fix grammar glitch in german translation  [Hendrik Lönngren]
+   - fix msgid bugs  [Karel Zak]
    - merge changes  [Karel Zak]
-   - update POTFILES.in  [Karel Zak]
    - update cs.po (from translationproject.org)  [Petr Pisar]
+   - update eu.po (from translationproject.org)  [Mikel Olasagasti Uranga]
    - update fi.po (from translationproject.org)  [Lauri Nurmi]
    - update fr.po (from translationproject.org)  [Nicolas Provost]
    - update id.po (from translationproject.org)  [Arif E. Nugroho]
    - update ja.po (from translationproject.org)  [Makoto Kato]
    - update pl.po (from translationproject.org)  [Jakub Bogusz]
    - update po/POTFILES.in  [Karel Zak]
+   - update POTFILES.in  [Karel Zak]
    - update vi.po (from translationproject.org)  [Clytie Siddall]
 rdev:
    - rdev.8 formatting  [Peter Breitenlohner]
