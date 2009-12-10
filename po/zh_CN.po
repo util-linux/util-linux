@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng-2.14.1-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2008-08-23 23:20+0800\n"
 "Last-Translator: Ray Wang <wanglei1123@gmail.com>\n"
 "Language-Team: Chinese (simplified) <translation-team-zh-cn@lists."
@@ -3045,7 +3045,7 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3408,7 +3408,7 @@ msgstr ""
 
 #: fdisk/fdisk.c:2209
 #, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr ""
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8012,7 +8012,7 @@ msgstr ""
 #, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
+"For more information see wipefs(8).\n"
 msgstr ""
 
 #: misc-utils/wipefs.c:373
@@ -8844,7 +8844,15 @@ msgstr ""
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
+msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+msgid "same"
 msgstr ""
 
 #: mount/swapon.c:370
@@ -9159,6 +9167,10 @@ msgstr ""
 #: schedutils/chrt.c:239
 #, c-format
 msgid "failed to set pid %d's policy"
+msgstr ""
+
+#: schedutils/chrt.c:242
+msgid "new"
 msgstr ""
 
 #: schedutils/chrt.c:248
@@ -10335,7 +10347,7 @@ msgstr ""
 msgid "missing comma"
 msgstr ""
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr ""
@@ -10820,10 +10832,6 @@ msgstr ""
 #: text-utils/more.c:763
 #, c-format
 msgid "[Press space to continue, 'q' to quit.]"
-msgstr ""
-
-#: text-utils/more.c:798
-msgid "out if memory"
 msgstr ""
 
 #: text-utils/more.c:1206

@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.16-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2009-09-08 18:00+0700\n"
 "Last-Translator: Arif E. Nugroho <arif_endro@yahoo.com>\n"
 "Language-Team: Indonesian <translation-team-id@lists.sourceforge.net>\n"
@@ -3205,7 +3205,7 @@ msgstr "Note: ukuran sector adalah %d (bukan %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3604,8 +3604,8 @@ msgid "Total allocated sectors %llu greater than the maximum %llu\n"
 msgstr "Total sektor teralokasi %llu lebih besar dari pada maksimal %llu\n"
 
 #: fdisk/fdisk.c:2209
-#, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+#, fuzzy, c-format
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld sektor tidak dialokasikan %d-byte sektor\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8637,7 +8637,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
+"For more information see wipefs(8).\n"
 msgstr ""
 "\n"
 "Untuk informasi lebih lanjut lihat ipcmk(1).\n"
@@ -9596,8 +9596,17 @@ msgstr "%s: gagal menulis tanda tangan"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
-msgstr "%s: ditemukan tanda %sswap v%d untuk %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
+msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Nama"
 
 #: mount/swapon.c:370
 #, c-format
@@ -9945,6 +9954,11 @@ msgstr "gagal mendapatkan prioritas"
 #, c-format
 msgid "failed to set pid %d's policy"
 msgstr "gagal menset kebijakan pid %d"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Baru"
 
 #: schedutils/chrt.c:248
 #, c-format
@@ -11204,7 +11218,7 @@ msgstr "      gunakan -R 1 untuk memount root readonly, -R 0 untuk read/write."
 msgid "missing comma"
 msgstr "hilang koma"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "kehabisan memori"
@@ -11760,11 +11774,6 @@ msgstr "(File selanjutnya: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Tekan spasi untuk melanjutkan, 'q' untuk berhenti.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "kehabisan memori"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -12186,6 +12195,13 @@ msgstr "Baris input terlalu panjang.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Kehabisan memori ketika meningkatkan buffer.\n"
+
+#~ msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+#~ msgstr "%s: ditemukan tanda %sswap v%d untuk %d KiB PAGE_SIZE\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "kehabisan memori"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# tabel partisi dari %s\n"

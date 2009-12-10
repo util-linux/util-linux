@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.13.1-rc1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2008-04-18 13:44+0100\n"
 "Last-Translator: Marco Colombo <m.colombo@ed.ac.uk>\n"
 "Language-Team: Italian <tp@lists.linux.it>\n"
@@ -3197,7 +3197,7 @@ msgstr "Nota: la dimensione del settore è %d (non %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3595,7 +3595,7 @@ msgstr "Numero totale dei settori allocati %ld superiore al massimo %lld\n"
 
 #: fdisk/fdisk.c:2209
 #, fuzzy, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld settori non allocati\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8607,7 +8607,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
+"For more information see wipefs(8).\n"
 msgstr ""
 "\n"
 "Per maggiori informazioni vedere setarch(8).\n"
@@ -9466,8 +9466,17 @@ msgstr "Apertura di %s non riuscita"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Nome"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -9788,6 +9797,11 @@ msgstr "Scrittura della partizione su %s non riuscita\n"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "Scrittura della partizione su %s non riuscita\n"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Nuova"
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11023,7 +11037,7 @@ msgstr ""
 msgid "missing comma"
 msgstr "virgola mancante"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "memoria esaurita"
@@ -11540,11 +11554,6 @@ msgstr "(File successivo: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Premere spazio per continuare, 'q' per uscire.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "memoria esaurita"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -11918,6 +11927,10 @@ msgstr "Linea di input troppo lunga.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Memoria insufficiente quando si amplia il buffer.\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "memoria esaurita"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# tabella delle partizioni di %s\n"

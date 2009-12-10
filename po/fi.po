@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.16-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2009-07-04 14:59+0300\n"
 "Last-Translator: Lauri Nurmi <lanurmi@iki.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -3193,7 +3193,7 @@ msgstr "Huom: sektorikoko on %d (ei %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3590,8 +3590,8 @@ msgstr ""
 "Varattujen sektoreiden kokonaismäärä %llu on suurempi kuin maksimi %llu\n"
 
 #: fdisk/fdisk.c:2209
-#, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+#, fuzzy, c-format
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld varaamatonta %d-tavuista sektoria\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8577,7 +8577,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
+"For more information see wipefs(8).\n"
 msgstr ""
 "\n"
 "Lisätietoja manuaalisivulla setarch(8).\n"
@@ -9496,8 +9496,17 @@ msgstr "kirjoittaminen vakiotulosteeseen epäonnistui"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Nimi"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -9822,6 +9831,11 @@ msgstr "Osion kirjoitus epäonnistui laitteelle %s"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "Osion kirjoitus epäonnistui laitteelle %s"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Uusi"
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11042,7 +11056,7 @@ msgstr "      -R 1 liittää juuren vain luku -tilaan, -R 0 luku/kirjoitus."
 msgid "missing comma"
 msgstr "puuttuva pilkku"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "muisti lopussa"
@@ -11572,11 +11586,6 @@ msgstr "(Seuraava tiedosto: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Välilyönti jatkaa, ”q” lopettaa.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "muisti lopussa"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -11976,6 +11985,10 @@ msgstr "Syöterivi on liian pitkä.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Muisti loppui kasvatettaessa puskuria.\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "muisti lopussa"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# %s:n osiotaulu\n"

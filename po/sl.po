@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre6\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2006-03-05 12:29+0200\n"
 "Last-Translator: Simon Mihevc <simonmihevc@email.si>\n"
 "Language-Team: Slovenian <translation-team-sl@lists.sourceforge.net>\n"
@@ -3219,7 +3219,7 @@ msgstr "Opomba: velikost sektorja je %d (ne %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3619,7 +3619,7 @@ msgstr "Vsota dodeljenih sektorjev %d je veèja od najveèje %lld\n"
 
 #: fdisk/fdisk.c:2209
 #, fuzzy, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld nedodeljenih sektorjev\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8575,11 +8575,11 @@ msgid ""
 msgstr ""
 
 #: misc-utils/wipefs.c:322
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
-msgstr ""
+"For more information see wipefs(8).\n"
+msgstr "Finger informacija spremenjena.\n"
 
 #: misc-utils/wipefs.c:373
 msgid "--offset and --all are mutually exclusive"
@@ -9471,8 +9471,17 @@ msgstr "Odpiranje %s ni uspelo"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Ime"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -9794,6 +9803,11 @@ msgstr "Neuspe¹no zapisovanje razdelka na %s\n"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "Neuspe¹no zapisovanje razdelka na %s\n"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Nova"
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11024,7 +11038,7 @@ msgstr ""
 msgid "missing comma"
 msgstr "vejica manjka"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "zmanjkalo je pomnilnika"
@@ -11538,11 +11552,6 @@ msgstr "(Naslednja datoteka: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Pritisnite preslednico za nadaljevanje, Q za izhod.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "zmanjkalo je pomnilnika"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -11941,6 +11950,10 @@ msgstr "Vhodna vrstica je predolga.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Pri poveèevanju medpomnilnika je zmanjkalo pomnilnika.\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "zmanjkalo je pomnilnika"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# tabela razdelkov od %s\n"

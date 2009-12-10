@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2006-03-06 15:45+0200\n"
 "Last-Translator: Nilgün Belma Bugüner <nilgun@buguner.name.tr>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -3210,7 +3210,7 @@ msgstr "Bilgi: sektör uzunluğu %d (%d değil)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3616,7 +3616,7 @@ msgstr ""
 
 #: fdisk/fdisk.c:2209
 #, fuzzy, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld sektör kullanılmamış\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8613,11 +8613,11 @@ msgid ""
 msgstr ""
 
 #: misc-utils/wipefs.c:322
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
-msgstr ""
+"For more information see wipefs(8).\n"
+msgstr "Kullanıcı bilgileri değiştirildi.\n"
 
 #: misc-utils/wipefs.c:373
 msgid "--offset and --all are mutually exclusive"
@@ -9507,8 +9507,17 @@ msgstr "%s açılamadı"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "İsim"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -9844,6 +9853,11 @@ msgstr "%s disk bölümüne yazarken hata oluştu\n"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "%s disk bölümüne yazarken hata oluştu\n"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Yeni"
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11076,7 +11090,7 @@ msgstr "      kökü salt-okunur bağlamak için -R 1, oku-yaz için -R 0 kullan
 msgid "missing comma"
 msgstr "virgül eksik"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "bellek yetersiz"
@@ -11593,11 +11607,6 @@ msgstr "(Sonraki dosya: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Devam etmek için boşluk çubuğuna, çıkmak için 'q' tuşuna basınız.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "bellek yetersiz"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -11998,6 +12007,10 @@ msgstr "Girdi satırı çok uzun.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Tampon büyütülürken bellek yetmedi.\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "bellek yetersiz"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# %s disk bölümleme tablosu\n"

@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng-2.14.2-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2009-01-31 20:52+0100\n"
 "Last-Translator: Benno Schulenberg <benno@vertaalt.nl>\n"
 "Language-Team: Dutch <vertaling@vrijschrift.org>\n"
@@ -3214,7 +3214,7 @@ msgstr "Let op: sectorgrootte is %d (niet %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3616,7 +3616,7 @@ msgstr "Totaal aantal gereserveerde sectoren %ld is groter dan maximum %lld\n"
 
 #: fdisk/fdisk.c:2209
 #, fuzzy, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld niet-gereserveerde sectoren\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8620,7 +8620,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
+"For more information see wipefs(8).\n"
 msgstr ""
 "\n"
 "Voor meer informatie zie setarch(8).\n"
@@ -9582,8 +9582,17 @@ msgstr "schrijven naar standaarduitvoer is mislukt"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Naam"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -9911,6 +9920,11 @@ msgstr "Instellen van systeemeigenschappen voor %s is mislukt"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "Instellen van systeemeigenschappen voor %s is mislukt"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Nieuw"
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11151,7 +11165,7 @@ msgstr ""
 msgid "missing comma"
 msgstr "komma ontbreekt"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "onvoldoende geheugen beschikbaar"
@@ -11706,11 +11720,6 @@ msgstr "(Volgend bestand: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Druk op de spatiebalk om verder te gaan; 'q' om af te sluiten.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "onvoldoende geheugen beschikbaar"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -12106,6 +12115,10 @@ msgstr "Invoerregel is te lang\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Onvoldoende geheugen beschikbaar tijdens groeien van buffer\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "onvoldoende geheugen beschikbaar"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# Partitietabel van %s\n"

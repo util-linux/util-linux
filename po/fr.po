@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.16-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2009-07-05 22:36+0100\n"
 "Last-Translator: Nicolas Provost <nprovost@quadriv.com>\n"
 "Language-Team: French <traduc@traduc.org>\n"
@@ -3245,7 +3245,7 @@ msgstr "Note: taille de secteur %d (et non pas %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3646,8 +3646,8 @@ msgid "Total allocated sectors %llu greater than the maximum %llu\n"
 msgstr "Total de secteurs alloués %llu supérieur au maximum %llu\n"
 
 #: fdisk/fdisk.c:2209
-#, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+#, fuzzy, c-format
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld secteurs de %d octets non alloués\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8757,7 +8757,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
+"For more information see wipefs(8).\n"
 msgstr ""
 "\n"
 "Pour plus d'informations voir ipcmk(1).\n"
@@ -9716,8 +9716,17 @@ msgstr "%s : échec d'écriture de signature"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
-msgstr "%s : chaîne de signature trouvée %sswap v%d pour PAGE_SIZE de %d Ko\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
+msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Nom"
 
 #: mount/swapon.c:370
 #, c-format
@@ -10068,6 +10077,11 @@ msgstr "impossible d'analyser la priorité"
 #, c-format
 msgid "failed to set pid %d's policy"
 msgstr "impossible de fixer la stratégie d'exécution du pid %d"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Nouvelle"
 
 #: schedutils/chrt.c:248
 #, c-format
@@ -11338,7 +11352,7 @@ msgstr ""
 msgid "missing comma"
 msgstr "virgule manquante"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "mémoire épuisée"
@@ -11900,11 +11914,6 @@ msgstr "(Prochain fichier: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Appuyer sur la barre d'espacement pour continuer, « q » pour quitter.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "mémoire épuisée"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -12330,6 +12339,14 @@ msgstr "Ligne d'entrée trop longue.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Mémoire épuisée lors de l'accroissement du tampon.\n"
+
+#~ msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+#~ msgstr ""
+#~ "%s : chaîne de signature trouvée %sswap v%d pour PAGE_SIZE de %d Ko\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "mémoire épuisée"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# table de partitions de %s\n"

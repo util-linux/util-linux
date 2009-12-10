@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.12m\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2004-12-22 01:31+0100\n"
 "Last-Translator: Santiago Vila Doncel <sanvila@unex.es>\n"
 "Language-Team: Spanish <es@li.org>\n"
@@ -3238,7 +3238,7 @@ msgstr "Nota: el tamaño del sector es %d (no %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3640,7 +3640,7 @@ msgstr "El total de sectores asignados %d supera el máximo %lld\n"
 
 #: fdisk/fdisk.c:2209
 #, fuzzy, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld sectores no asignados\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8713,11 +8713,11 @@ msgid ""
 msgstr ""
 
 #: misc-utils/wipefs.c:322
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
-msgstr ""
+"For more information see wipefs(8).\n"
+msgstr "Se ha cambiado la información de finger.\n"
 
 #: misc-utils/wipefs.c:373
 msgid "--offset and --all are mutually exclusive"
@@ -9620,8 +9620,17 @@ msgstr "Error al abrir %s"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Nombre"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -9945,6 +9954,11 @@ msgstr "Error al escribir la partición en %s\n"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "Error al escribir la partición en %s\n"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "nuevo "
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11189,7 +11203,7 @@ msgstr ""
 msgid "missing comma"
 msgstr "falta una coma"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "no queda memoria"
@@ -11707,11 +11721,6 @@ msgstr "(Siguiente fichero: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Pulse la barra espaciadora para continuar; 'q' para salir.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "no queda memoria"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -12116,6 +12125,10 @@ msgstr "Línea de entrada demasiado larga.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "no queda memoria"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# tabla de particiones de %s\n"
@@ -12740,9 +12753,6 @@ msgstr "No queda memoria al aumentar el tamaño del búfer.\n"
 
 #~ msgid "for reading"
 #~ msgstr "para lectura"
-
-#~ msgid "new "
-#~ msgstr "nuevo "
 
 #~ msgid "The password must contain characters out of two of the following\n"
 #~ msgstr ""

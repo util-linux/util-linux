@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.16-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2009-07-20 14:08+0900\n"
 "Last-Translator: Makoto Kato <makoto.kt@gmail.com>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -3179,7 +3179,7 @@ msgstr "注意: セクタサイズが %d です (%d ではなく)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3571,8 +3571,8 @@ msgid "Total allocated sectors %llu greater than the maximum %llu\n"
 msgstr "合計確保セクタ %llu は最大値 %llu よりも大きいです\n"
 
 #: fdisk/fdisk.c:2209
-#, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+#, fuzzy, c-format
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld 未確保 %d バイトセクタ\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8539,7 +8539,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
+"For more information see wipefs(8).\n"
 msgstr ""
 "\n"
 "詳細情報は、ipcmk(1) を確認してください。\n"
@@ -9457,8 +9457,17 @@ msgstr "%s: 署名の書き込みに失敗"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "名前"
 
 #: mount/swapon.c:370
 #, c-format
@@ -9783,6 +9792,11 @@ msgstr "%s のパーティション書き込みに失敗\n"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "%s のパーティション書き込みに失敗\n"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "新たに"
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11041,7 +11055,7 @@ msgstr ""
 msgid "missing comma"
 msgstr "カンマを欠いています"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "メモリが足りません"
@@ -11578,11 +11592,6 @@ msgstr "(次のファイル: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[スペースキーを押すと続き、'q' で終了。]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "メモリが足りません"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -11957,6 +11966,10 @@ msgstr "入力行が長すぎます。\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "バッファを拡大するときにメモリが足りなくなりました。\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "メモリが足りません"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# %s のパーティションテーブル\n"
@@ -12631,9 +12644,6 @@ msgstr "バッファを拡大するときにメモリが足りなくなりまし
 
 #~ msgid "Warning: your account expires on %s %d, %d\n"
 #~ msgstr "警告: あなたのアカウントは %s %d, %d に期限が切れます\n"
-
-#~ msgid "new "
-#~ msgstr "新たに"
 
 #~ msgid "The password must contain characters out of two of the following\n"
 #~ msgstr "パスワードは以下の内 2 種類は含まれなければなりません\n"

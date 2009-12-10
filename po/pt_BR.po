@@ -14,7 +14,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11b\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2001-05-24 16:03-03:00\n"
 "Last-Translator: Rodrigo Stulzer Lopes <rodrigo@conectiva.com.br>\n"
 "Language-Team: Brazilian Portuguese <ldp-br@bazar.conectiva.com.br>\n"
@@ -3201,7 +3201,7 @@ msgstr "Nota: o tamanho do setor é %d (não %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3601,7 +3601,7 @@ msgstr "O total de setores alocados, %d, é maior do que o máximo: %d\n"
 
 #: fdisk/fdisk.c:2209
 #, fuzzy, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%d setores não alocados\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8612,11 +8612,11 @@ msgid ""
 msgstr ""
 
 #: misc-utils/wipefs.c:322
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
-msgstr ""
+"For more information see wipefs(8).\n"
+msgstr "As informações de finger foram alteradas.\n"
 
 #: misc-utils/wipefs.c:373
 msgid "--offset and --all are mutually exclusive"
@@ -9504,8 +9504,17 @@ msgstr "A abertura de %s falhou"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Nome"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -9829,6 +9838,11 @@ msgstr "Não foi possível gravar a partição em %s\n"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "Não foi possível gravar a partição em %s\n"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "novas "
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11068,7 +11082,7 @@ msgstr ""
 msgid "missing comma"
 msgstr ""
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, fuzzy, c-format
 msgid "out of memory"
 msgstr "memória insuficiente?\n"
@@ -11579,11 +11593,6 @@ msgstr "(Próximo arquivo: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Pressione espaço para continuar, 'q' para sair.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "memória insuficiente?\n"
-
 #: text-utils/more.c:1206
 #, fuzzy, c-format
 msgid "...back %d pages"
@@ -11968,6 +11977,10 @@ msgstr "Linha de entrada longa demais.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Falta memória quando o buffer cresce.\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "memória insuficiente?\n"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# tabela de partição de %s\n"
@@ -12497,9 +12510,6 @@ msgstr "Falta memória quando o buffer cresce.\n"
 
 #~ msgid "You have too many processes running.\n"
 #~ msgstr "Número excessivo de processos em execução.\n"
-
-#~ msgid "new "
-#~ msgstr "novas "
 
 #~ msgid "The password must have at least 6 characters, try again.\n"
 #~ msgstr "A senha deve ter pelo menos 6 caracteres; tente novamente.\n"

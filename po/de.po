@@ -44,7 +44,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.13.1-rc1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2008-01-09 17:38+0200\n"
 "Last-Translator: Michael Piefel <piefel@informatik.hu-berlin.de>\n"
 "Language-Team: German <translation-team-de@lists.sourceforge.net>\n"
@@ -3283,7 +3283,7 @@ msgstr "Hinweis: Die Sektorgröße ist %d (nicht %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3691,7 +3691,7 @@ msgstr "Gesamtanzahl belegter Sektoren %ld größer als Maximum %lld\n"
 
 #: fdisk/fdisk.c:2209
 #, fuzzy, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld unbenutzte Sektoren\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8797,7 +8797,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
+"For more information see wipefs(8).\n"
 msgstr ""
 "\n"
 "Für weitere Informationen siehe setarch(8).\n"
@@ -9736,8 +9736,17 @@ msgstr "Konnte %s nicht öffnen"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Name"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -10062,6 +10071,11 @@ msgstr "Konnte Persönlichkeit nicht auf %s setzen"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "Konnte Persönlichkeit nicht auf %s setzen"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Neue"
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11305,7 +11319,7 @@ msgstr ""
 msgid "missing comma"
 msgstr "fehlendes Komma"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "Speicher ist alle"
@@ -11840,11 +11854,6 @@ msgstr "(Nächste Datei: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Leertaste zum Fortfahren, ›q‹ zum Beenden.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "Speicher ist alle"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -12245,6 +12254,10 @@ msgstr "Eingabezeile ist zu lang.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Speicher ist alle beim Vergrößern eines Puffers.\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "Speicher ist alle"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# Partitionstabelle von %s\n"

@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.16-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2009-09-19 18:16+0930\n"
 "Last-Translator: Clytie Siddall <clytie@riverland.net.au>\n"
 "Language-Team: Vietnamese <vi-VN@googlegroups.com>\n"
@@ -3195,7 +3195,7 @@ msgstr "Chú ý: kích cỡ rãnh ghi là %d (không %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3600,8 +3600,8 @@ msgid "Total allocated sectors %llu greater than the maximum %llu\n"
 msgstr "Tổng số rãnh ghi phân phối %llu lớn hơn tối đa %llu\n"
 
 #: fdisk/fdisk.c:2209
-#, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+#, fuzzy, c-format
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld rãnh ghi %d-byte không được phân phối\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8627,7 +8627,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
+"For more information see wipefs(8).\n"
 msgstr ""
 "\n"
 "Để tìm thêm thông tin, xem ipcmk(1).\n"
@@ -9580,9 +9580,17 @@ msgstr "%s: lỗi ghi chữ ký"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
-"%s: tìm thấy chuỗi chữ ký vùng trao đổi %s v%d cho %d KiB KÍCH_CỠ_TRANG\n"
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Tên"
 
 #: mount/swapon.c:370
 #, c-format
@@ -9936,6 +9944,11 @@ msgstr "lỗi phân tích mức ưu tiên"
 #, c-format
 msgid "failed to set pid %d's policy"
 msgstr "lỗi đặt chính sách của PID %d"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Mới"
 
 #: schedutils/chrt.c:248
 #, c-format
@@ -11205,7 +11218,7 @@ msgstr "      hãy dùng « -R 1 » để gắn gốc chỉ đọc, « -R 0 » �
 msgid "missing comma"
 msgstr "thiếu dấu phẩy"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "không đủ bộ nhớ"
@@ -11763,11 +11776,6 @@ msgstr "(Tập tin tiếp theo: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Nhấn phím trắng để tiếp tục, 'q' để thoát]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "không đủ bộ nhớ"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -12189,6 +12197,14 @@ msgstr "Dòng nhập vào quá dài.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Không đủ bộ nhớ khi tăng vùng đệm.\n"
+
+#~ msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+#~ msgstr ""
+#~ "%s: tìm thấy chuỗi chữ ký vùng trao đổi %s v%d cho %d KiB KÍCH_CỠ_TRANG\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "không đủ bộ nhớ"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# bảng phân vùng của %s\n"

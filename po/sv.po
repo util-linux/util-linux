@@ -12,7 +12,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.13.1-rc1\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2007-11-14 09:20+0100\n"
 "Last-Translator: Daniel Nylander <po@danielnylander.se>\n"
 "Language-Team: Swedish <tp-sv@listor.tp-sv.se>\n"
@@ -3216,7 +3216,7 @@ msgstr "Observera: sektorstorleken är %d (inte %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3622,7 +3622,7 @@ msgstr "Totala antalet allokerade sektorer %ld är större än maximala %lld\n"
 
 #: fdisk/fdisk.c:2209
 #, fuzzy, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld oallokerade sektorer\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8641,7 +8641,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
+"For more information see wipefs(8).\n"
 msgstr ""
 "\n"
 "För mer information, se setarch(8).\n"
@@ -9554,8 +9554,17 @@ msgstr "Öppning av %s misslyckades"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Namn"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -9876,6 +9885,11 @@ msgstr "Misslyckades med att ställa in personlighet till %s"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "Misslyckades med att ställa in personlighet till %s"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Ny"
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11111,7 +11125,7 @@ msgstr ""
 msgid "missing comma"
 msgstr "komma saknas"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "slut på minne"
@@ -11641,11 +11655,6 @@ msgstr "(Nästa fil: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Tryck blanksteg för att fortsätta, \"q\" för att avsluta.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "slut på minne"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -12046,6 +12055,10 @@ msgstr "Indataraden är för lång.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Slut på minne vid växande av buffert.\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "slut på minne"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# partitionstabell för %s\n"

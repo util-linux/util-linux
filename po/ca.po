@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2005-09-17 13:40+0200\n"
 "Last-Translator: Josep Puigdemont <josep.puigdemont@gmail.com>\n"
 "Language-Team: Catalan <ca@dodds.net>\n"
@@ -3246,7 +3246,7 @@ msgstr "Nota: la mida del sector és %d (no %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3650,7 +3650,7 @@ msgstr "El total de sectors assignats %d supera el màxim de %lld\n"
 
 #: fdisk/fdisk.c:2209
 #, fuzzy, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld sectors no assignats\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8709,11 +8709,11 @@ msgid ""
 msgstr ""
 
 #: misc-utils/wipefs.c:322
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
-msgstr ""
+"For more information see wipefs(8).\n"
+msgstr "S'ha canviat la informació del finger.\n"
 
 #: misc-utils/wipefs.c:373
 msgid "--offset and --all are mutually exclusive"
@@ -9612,8 +9612,17 @@ msgstr "S'ha produït un error en obrir %s"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Nom"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -9937,6 +9946,11 @@ msgstr "No s'ha pogut escriure la partició a %s\n"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "No s'ha pogut escriure la partició a %s\n"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Nova"
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11181,7 +11195,7 @@ msgstr ""
 msgid "missing comma"
 msgstr "falta una coma"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "no hi ha prou memòria"
@@ -11696,11 +11710,6 @@ msgstr "(Fitxer següent: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Premeu la barra espaiadora per continuar; «q» per a sortir.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "no hi ha prou memòria"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -12104,6 +12113,10 @@ msgstr "Línia d'entrada massa llarga.\n"
 msgid "Out of memory when growing buffer.\n"
 msgstr ""
 "S'ha esgotat la memòria en augmentar la mida de la memòria intermèdia.\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "no hi ha prou memòria"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# taula de particions de %s\n"

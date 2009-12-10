@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2006-04-06 10:45+0200\n"
 "Last-Translator: Maxim V. Dziumanenko <mvd@mylinux.com.ua>\n"
 "Language-Team: Ukrainian <translation-team-uk@lists.sourceforge.net>\n"
@@ -3194,7 +3194,7 @@ msgstr "Примітка: розмір сектору %d (не %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3596,7 +3596,7 @@ msgstr "Загальна кількість розподілених секто�
 
 #: fdisk/fdisk.c:2209
 #, fuzzy, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld нерозподілених секторів\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8590,11 +8590,11 @@ msgid ""
 msgstr ""
 
 #: misc-utils/wipefs.c:322
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
-msgstr ""
+"For more information see wipefs(8).\n"
+msgstr "Finger інформацію змінено.\n"
 
 #: misc-utils/wipefs.c:373
 msgid "--offset and --all are mutually exclusive"
@@ -9487,8 +9487,17 @@ msgstr "Помилка відкривання %s"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Назва"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -9810,6 +9819,11 @@ msgstr "не вдається записати розділ на %s\n"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "не вдається записати розділ на %s\n"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Новий"
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11047,7 +11061,7 @@ msgstr ""
 msgid "missing comma"
 msgstr "відсутня кома"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "недостатньо пам'яті"
@@ -11563,11 +11577,6 @@ msgstr "(Наступний файл: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Натисніть пробіл, щоб продовжити, або 'q', щоб вийти.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "недостатньо пам'яті"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -11969,6 +11978,10 @@ msgstr "Вхідний рядок надто довгий.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Недостатньо пам'яті для збільшення буфера.\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "недостатньо пам'яті"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# таблиця розділів диску %s\n"

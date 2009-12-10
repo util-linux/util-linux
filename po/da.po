@@ -13,7 +13,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.11y\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2005-08-15 21:00+0200\n"
 "Last-Translator: Claus Hindsgaul <claus_h@image.dk>\n"
 "Language-Team: Danish <dansk@klid.dk>\n"
@@ -3190,7 +3190,7 @@ msgstr "Bemærk: sektorstørrelsen er %d (ikke %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3592,7 +3592,7 @@ msgstr ""
 
 #: fdisk/fdisk.c:2209
 #, fuzzy, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld ikke-allokerede sektorer\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8541,11 +8541,11 @@ msgid ""
 msgstr ""
 
 #: misc-utils/wipefs.c:322
-#, c-format
+#, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
-msgstr ""
+"For more information see wipefs(8).\n"
+msgstr "Finger-informationer ændret.\n"
 
 #: misc-utils/wipefs.c:373
 msgid "--offset and --all are mutually exclusive"
@@ -9427,8 +9427,17 @@ msgstr "Åbning af %s mislykkedes"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Navn"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -9750,6 +9759,11 @@ msgstr "Mislykket skrivning af partition på %s\n"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "Mislykket skrivning af partition på %s\n"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Ny"
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -10978,7 +10992,7 @@ msgstr "      brug -R 1 for at montere skrivebeskyttet, -R 0 for skriveadgang."
 msgid "missing comma"
 msgstr "manglende komma"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "løbet tør for hukommelse"
@@ -11491,11 +11505,6 @@ msgstr "(Næste fil: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Tryk mellemrum for at fortsætte, 'q' for at afslutte.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "løbet tør for hukommelse"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -11895,6 +11904,10 @@ msgstr "For lang inddatalinje.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Løb tør for hukommelse under forstørring af buffer.\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "løbet tør for hukommelse"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# partitionstabel for %s\n"

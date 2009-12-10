@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.14-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-09 11:32+0100\n"
+"POT-Creation-Date: 2009-12-10 21:51+0100\n"
 "PO-Revision-Date: 2008-05-21 18:25+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -3202,7 +3202,7 @@ msgstr "Megjegyzés: a szektorméret: %d (és nem %d)\n"
 #, c-format
 msgid ""
 "\n"
-"WARNING: the device provides alignment_offset, but the offset does not \n"
+"WARNING: the device provides alignment_offset, but the offset does not\n"
 "match with device geometry.\n"
 "\n"
 msgstr ""
@@ -3607,7 +3607,7 @@ msgstr ""
 
 #: fdisk/fdisk.c:2209
 #, fuzzy, c-format
-msgid "%lld unallocated %d-byte sectors\n"
+msgid "Remaining %lld unallocated %d-byte sectors\n"
 msgstr "%lld szektor nincs lefoglalva\n"
 
 #: fdisk/fdisk.c:2245 fdisk/fdisksgilabel.c:620 fdisk/fdisksunlabel.c:416
@@ -8638,7 +8638,7 @@ msgstr ""
 #, fuzzy, c-format
 msgid ""
 "\n"
-"For more information see wipefs(1).\n"
+"For more information see wipefs(8).\n"
 msgstr ""
 "\n"
 "További információkért tekintse meg a setarch(8) kézikönyvoldalt.\n"
@@ -9601,8 +9601,17 @@ msgstr "a szabványos kimenetre írás meghiúsult"
 
 #: mount/swapon.c:350
 #, c-format
-msgid "%s: found %sswap v%d signature string for %d KiB PAGE_SIZE\n"
+msgid "%s: found swap signature: version %d, page-size %d, %s byte order"
 msgstr ""
+
+#: mount/swapon.c:355
+msgid "different"
+msgstr ""
+
+#: mount/swapon.c:355
+#, fuzzy
+msgid "same"
+msgstr "Név"
 
 #: mount/swapon.c:370
 #, fuzzy, c-format
@@ -9932,6 +9941,11 @@ msgstr "A személyiség beállítása meghiúsult a következőre: %s"
 #, fuzzy, c-format
 msgid "failed to set pid %d's policy"
 msgstr "A személyiség beállítása meghiúsult a következőre: %s"
+
+#: schedutils/chrt.c:242
+#, fuzzy
+msgid "new"
+msgstr "Új"
 
 #: schedutils/chrt.c:248
 #, fuzzy, c-format
@@ -11177,7 +11191,7 @@ msgstr ""
 msgid "missing comma"
 msgstr "hiányzó vessző"
 
-#: sys-utils/readprofile.c:72
+#: sys-utils/readprofile.c:72 text-utils/more.c:798
 #, c-format
 msgid "out of memory"
 msgstr "elfogyott a memória"
@@ -11733,11 +11747,6 @@ msgstr "(Következő fájl: %s)"
 msgid "[Press space to continue, 'q' to quit.]"
 msgstr "[Nyomja le a szóközt a folytatáshoz vagy a q billentyűt a kilépéshez.]"
 
-#: text-utils/more.c:798
-#, fuzzy
-msgid "out if memory"
-msgstr "elfogyott a memória"
-
 #: text-utils/more.c:1206
 #, c-format
 msgid "...back %d pages"
@@ -12133,6 +12142,10 @@ msgstr "A bemeneti sor túl hosszú.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Elfogyott a memória a puffer növelésekor.\n"
+
+#, fuzzy
+#~ msgid "out if memory"
+#~ msgstr "elfogyott a memória"
 
 #~ msgid "# partition table of %s\n"
 #~ msgstr "# %s partíciós táblája\n"
