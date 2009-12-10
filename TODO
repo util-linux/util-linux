@@ -45,6 +45,15 @@ fdisk(s)
 misc
 ----
 
+ * use ngettext() for strings with plurals, for example
+
+    /* include/nls.h */
+    #define P_(id, id_plural, n)	ngettext(id, id_plural, n)
+
+    printf(P_("%d used sector",
+              "%d used sectors", sectors),
+              sectors);
+
  * check for program_invocation_short_name in ./configure.ac and add 
    lib/progname.c fallback for libc without this feature (for example
    use the 1st field from /proc/#/cmdline)
