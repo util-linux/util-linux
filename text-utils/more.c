@@ -795,7 +795,7 @@ int prepare_line_buffer(void)
      * function when the Line buffer is initilized first time in main()
      */
     if (Line)
-        error(_("out if memory"));
+        error(_("out of memory"));
     return -1;
 }
 

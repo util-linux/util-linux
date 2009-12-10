@@ -347,12 +347,12 @@ swap_get_size(const char *hdr, const char *devname, unsigned int pagesize)
 		last_page = swab32(s->last_page);
 	}
 	if (verbose)
-		warnx(_("%s: found %sswap v%d signature string"
-				" for %d KiB PAGE_SIZE\n"),
+		warnx(_("%s: found swap signature: version %d, "
+			"page-size %d, %s byte order"),
 			devname,
-			flip ? "other-endian " : "",
 			swap_version,
-			pagesize / 1024);
+			pagesize / 1024,
+			flip ? _("different") : _("same"));
 
 	return (last_page + 1) * pagesize;
 }

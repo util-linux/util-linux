@@ -239,7 +239,7 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("failed to set pid %d's policy"), pid);
 
 	if (verbose)
-		show_rt_info("new", pid);
+		show_rt_info(_("new"), pid);
 
 	if (!pid) {
 		argv += optind + 1;

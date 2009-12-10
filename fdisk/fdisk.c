@@ -388,7 +388,7 @@ static void
 menu(void) {
 	if (sun_label) {
 	   puts(_("Command action"));
-	   puts(_("   a   toggle a read only flag")); 		/* sun */
+	   puts(_("   a   toggle a read only flag"));		/* sun */
 	   puts(_("   b   edit bsd disklabel"));
 	   puts(_("   c   toggle the mountable flag"));		/* sun */
 	   puts(_("   d   delete a partition"));
@@ -1048,8 +1048,8 @@ update_sector_offset(void)
 		 */
 		if (sectors && alignment_offset && !lba_is_aligned(sectors))
 			fprintf(stderr, _(
-			"\nWARNING: the device provides alignment_offset, but "
-			"the offset does not \nmatch with device geometry.\n\n"));
+		"\nWARNING: the device provides alignment_offset, but the offset does not\n"
+		"match with device geometry.\n\n"));
 	} else {
 		/*
 		 * Align the begin of the first partition to the physical block
@@ -2206,7 +2206,7 @@ verify(void) {
 		printf(_("Total allocated sectors %llu greater than the maximum"
 			" %llu\n"), total, n_sectors);
 	else if (total < n_sectors)
-		printf(_("%lld unallocated %d-byte sectors\n"),
+		printf(_("Remaining %lld unallocated %d-byte sectors\n"),
 		       n_sectors - total, sector_size);
 }
 

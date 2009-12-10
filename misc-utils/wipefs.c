@@ -319,7 +319,7 @@ usage(FILE *out)
 	" -o, --offset <num>  offset to erase, in bytes\n"
 	" -p, --parsable      print out in parsable instead of printable format\n"));
 
-	fprintf(out, _("\nFor more information see wipefs(1).\n"));
+	fprintf(out, _("\nFor more information see wipefs(8).\n"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
