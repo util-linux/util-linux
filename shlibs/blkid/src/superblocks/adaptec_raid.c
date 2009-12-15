@@ -16,6 +16,7 @@
 #include "superblocks.h"
 
 struct adaptec_metadata {
+
 	uint32_t	b0idcode;
 	uint8_t		lunsave[8];
 	uint16_t	sdtype;
@@ -63,13 +64,13 @@ struct adaptec_metadata {
 	uint32_t	fwTestMagic;
 	uint32_t	fwTestSeqNum;
 	uint8_t		fwTestRes[8];
-	uint8_t		smagic[4];
+	uint32_t	smagic;
 	uint32_t	raidtbl;
 	uint16_t	raidline;
 	uint8_t		res9[0xF6];
 } __attribute__((packed));
 
-#define AD_SIGNATURE	"DPTM"
+#define AD_SIGNATURE	0x4450544D	/* "DPTM" */
 #define AD_MAGIC	0x37FC4D1E
 
 static int probe_adraid(blkid_probe pr, const struct blkid_idmag *mag)
@@ -87,7 +88,7 @@ static int probe_adraid(blkid_probe pr, const struct blkid_idmag *mag)
 					sizeof(struct adaptec_metadata));
 	if (!ad)
 		return -1;
-	if (memcmp(ad->smagic, AD_SIGNATURE, sizeof(AD_SIGNATURE)) != 0)
+	if (ad->smagic != be32_to_cpu(AD_SIGNATURE))
 		return -1;
 	if (ad->b0idcode != be32_to_cpu(AD_MAGIC))
 		return -1;
