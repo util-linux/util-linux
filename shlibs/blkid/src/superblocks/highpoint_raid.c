@@ -45,14 +45,14 @@ static int probe_highpoint45x(blkid_probe pr, const struct blkid_idmag *mag)
 }
 
 const struct blkid_idinfo highpoint45x_idinfo = {
-	.name		= "highpoint_raid_member",
+	.name		= "hpt45x_raid_member",
 	.usage		= BLKID_USAGE_RAID,
 	.probefunc	= probe_highpoint45x,
 	.magics		= BLKID_NONE_MAGIC
 };
 
 const struct blkid_idinfo highpoint37x_idinfo = {
-	.name		= "highpoint_raid_member",
+	.name		= "hpt37x_raid_member",
 	.usage		= BLKID_USAGE_RAID,
 	.magics		= {
 		/*
