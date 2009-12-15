@@ -55,8 +55,15 @@ const struct blkid_idinfo highpoint37x_idinfo = {
 	.name		= "highpoint_raid_member",
 	.usage		= BLKID_USAGE_RAID,
 	.magics		= {
-		{ .magic = "\xf0\x16\x78\x5a", .len = 4, .kboff = 4 },
-		{ .magic = "\xfd\x16\x78\x5a", .len = 4, .kboff = 4 },
+		/*
+		 * Superblok offset:                      4608 bytes  (9 sectors)
+		 * Magic string offset within superblock:   32 bytes
+		 *
+		 * kboff = (4608 + 32) / 1024
+		 * sboff = (4608 + 32) % kboff
+		 */
+		{ .magic = "\xf0\x16\x78\x5a", .len = 4, .kboff = 4, .sboff = 544 },
+		{ .magic = "\xfd\x16\x78\x5a", .len = 4, .kboff = 4, .sboff = 544 },
 		{ NULL }
 	}
 };
