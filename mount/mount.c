@@ -2257,7 +2257,8 @@ main(int argc, char *argv[]) {
 
 		if (restricted &&
 		    (types || options || readwrite || nomtab || mount_all ||
-		     fake || mounttype || (argc + specseen) != 1)) {
+		     nocanonicalize || fake || mounttype ||
+		     (argc + specseen) != 1)) {
 
 			if (ruid == 0 && euid != 0)
 				/* user is root, but setuid to non-root */
