@@ -388,6 +388,8 @@ static struct option longopts[] =
   { "version", 0, 0, 'V' },
   { "read-only", 0, 0, 'r' },
   { "types", 1, 0, 't' },
+
+  { "no-canonicalize", 0, 0, 144 },
   { NULL, 0, 0, 0 }
 };
 
@@ -672,7 +674,10 @@ main (int argc, char *argv[]) {
 			types = optarg;
 			break;
 		case 'i':
-  			external_allowed = 0;
+			external_allowed = 0;
+			break;
+		case 144:
+			nocanonicalize = 1;
 			break;
 		case 0:
 			break;
@@ -691,7 +696,8 @@ main (int argc, char *argv[]) {
 		}
 	}
 
-	if (restricted && (all || types || nomtab || force || remount)) {
+	if (restricted &&
+	    (all || types || nomtab || force || remount || nocanonicalize)) {
 		die (2, _("umount: only root can do that"));
 	}
 
