@@ -448,7 +448,10 @@ endline_for_mb(unsigned col, char *s)
 			pos += TABSIZE - (pos % TABSIZE);
 			break;
 		default:
-			pos += wcwidth(*p);
+			if (iswprint(*p))
+				pos += wcwidth(*p);
+			else
+				pos += wcwidth(L'?');
 		}
 		if (pos > col) {
 			if (*p == L'\t')
