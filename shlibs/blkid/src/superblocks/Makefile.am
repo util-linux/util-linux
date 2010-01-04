@@ -44,4 +44,5 @@ libblkid_superblocks_la_SOURCES = \
 			zfs.c \
 			ubifs.c \
 			bfs.c \
+			drbd.c \
 			vmfs.c
