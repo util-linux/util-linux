@@ -906,10 +906,11 @@ unitsize(int format) {
 
 static unsigned long
 get_disksize(int format) {
-    unsigned long cs = B.cylinders;
-    if (cs && leave_last)
-      cs--;
-    return (cs * B.cylindersize) / unitsize(format);
+    if (B.total_size && leave_last)
+	    /* don't use last cylinder (--leave-last option) */
+	    return (B.total_size - B.cylindersize) / unitsize(format);
+
+    return B.total_size / unitsize(format);
 }
 
 static void
