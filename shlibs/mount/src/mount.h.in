@@ -56,6 +56,17 @@ extern char *mnt_resolve_path(const char *path, mnt_cache *cache);
 extern char *mnt_resolve_tag(const char *token, const char *value, mnt_cache *cache);
 extern char *mnt_resolve_spec(const char *spec, mnt_cache *cache);
 
+/* optstr.c */
+extern int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,
+				char **value, size_t *valuesz);
+extern int mnt_optstr_append_option(char **optstr, const char *name,
+				const char *value);
+extern int mnt_optstr_get_option(char *optstr, const char *name,
+				char **value, size_t *valsz);
+extern int mnt_optstr_set_option(char **optstr, const char *name,
+				const char *value);
+extern int mnt_optstr_remove_option(char **optstr, const char *name);
+
 #ifdef __cplusplus
 }
 #endif

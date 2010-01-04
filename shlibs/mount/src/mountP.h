@@ -31,6 +31,7 @@
 
 #define DEBUG_INIT	(1 << 1)
 #define DEBUG_CACHE	(1 << 2)
+#define DEBUG_OPTIONS	(1 << 3)
 #define DEBUG_ALL	0xFFFF
 
 #ifdef CONFIG_LIBMOUNT_DEBUG
