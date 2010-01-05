@@ -11,7 +11,9 @@
 #define _LIBMOUNT_PRIVATE_H
 
 #include <sys/types.h>
+
 #include "mount.h"
+#include "list.h"
 
 /* features */
 #define CONFIG_CDROM_NOMEDIUM_RETRIES    5
@@ -68,5 +70,32 @@ extern char *strnchr(const char *s, size_t maxlen, int c);
 #endif
 extern char *mnt_get_username(const uid_t uid);
 extern char *mnt_strconcat3(char *s, const char *t, const char *u);
+
+
+/*
+ * Generic iterator
+ */
+struct _mnt_iter {
+        struct list_head        *p;		/* current position */
+        struct list_head        *head;		/* start position */
+	int			direction;	/* MNT_ITER_{FOR,BACK}WARD */
+};
+
+#define IS_ITER_FORWARD(_i)	((_i)->direction == MNT_ITER_FORWARD)
+#define IS_ITER_BACKWARD(_i)	((_i)->direction == MNT_ITER_BACKWARD)
+
+#define MNT_ITER_INIT(itr, list) \
+	do { \
+		(itr)->p = IS_ITER_FORWARD(itr) ? \
+				(list)->next : (list)->prev; \
+		(itr)->head = (list); \
+	} while(0)
+
+#define MNT_ITER_ITERATE(itr, res, restype, member) \
+	do { \
+		res = list_entry((itr)->p, restype, member); \
+		(itr)->p = IS_ITER_FORWARD(itr) ? \
+				(itr)->p->next : (itr)->p->prev; \
+	} while(0)
 
 #endif

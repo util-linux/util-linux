@@ -34,6 +34,13 @@ extern "C" {
  */
 typedef struct _mnt_cache mnt_cache;
 
+/**
+ * mnt_iter
+ *
+ * Generic iterator (stores state about lists)
+ */
+typedef struct _mnt_iter mnt_iter;
+
 /* version.c */
 extern int mnt_parse_version_string(const char *ver_string);
 extern int mnt_get_library_version(const char **ver_string);
@@ -66,6 +73,17 @@ extern int mnt_optstr_get_option(char *optstr, const char *name,
 extern int mnt_optstr_set_option(char **optstr, const char *name,
 				const char *value);
 extern int mnt_optstr_remove_option(char **optstr, const char *name);
+
+
+/* iter.c */
+enum {
+
+	MNT_ITER_FORWARD = 0,
+	MNT_ITER_BACKWARD
+};
+extern mnt_iter *mnt_new_iter(int direction);
+extern void mnt_free_iter(mnt_iter *mi);
+extern void mnt_reset_iter(mnt_iter *mi, int direction);
 
 #ifdef __cplusplus
 }

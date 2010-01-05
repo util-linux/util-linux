@@ -12,7 +12,7 @@ usrlib_exec_LTLIBRARIES = libmount.la
 libmount_la_SOURCES = $(mountinc_HEADERS)
 
 nodist_libmount_la_SOURCES = mount.h version.c utils.c test.c init.c cache.c \
-			optstr.c \
+			optstr.c iter.c list.h \
 			$(top_srcdir)/lib/canonicalize.c
 
 libmount_la_LIBADD = $(ul_libblkid_la)
