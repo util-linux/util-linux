@@ -406,9 +406,11 @@ partition_type_text(int i) {
 
 static void
 fdexit(int ret) {
-    if (opened)
+    if (opened) {
+	if (changed)
+		fsync(fd);
 	close(fd);
-
+    }
     if (changed) {
 	fprintf(stderr, _("Disk has been changed.\n"));
 #if 0
@@ -1912,12 +1914,10 @@ write_part_table(void) {
     if (is_bdev) {
 #ifdef BLKRRPART
 	 sync();
-	 sleep(2);
 	 if (!ioctl(fd,BLKRRPART))
 	      changed = TRUE;
 #endif
 	 sync();
-	 sleep(4);
 
 	 clear_warning();
 	 if (changed)

@@ -2519,7 +2519,6 @@ reread_partition_table(int leave) {
 	i = fstat(fd, &statbuf);
 	if (i == 0 && S_ISBLK(statbuf.st_mode)) {
 		sync();
-		sleep(2);
 #ifdef BLKRRPART
 		printf(_("Calling ioctl() to re-read partition table.\n"));
 		i = ioctl(fd, BLKRRPART);
@@ -2550,7 +2549,6 @@ reread_partition_table(int leave) {
 
 		printf(_("Syncing disks.\n"));
 		sync();
-		sleep(4);		/* for sync() */
 		exit(!!i);
 	}
 }
