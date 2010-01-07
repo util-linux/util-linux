@@ -1,3 +1,4 @@
+CPU op-mode(s):        64-bit
 CPU(s):                16
 Thread(s) per core:    1
 Core(s) per socket:    4
