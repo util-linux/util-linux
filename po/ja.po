@@ -9,7 +9,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.16-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2009-12-10 21:51+0100\n"
+"POT-Creation-Date: 2010-01-07 21:55+0100\n"
 "PO-Revision-Date: 2009-07-20 14:08+0900\n"
 "Last-Translator: Makoto Kato <makoto.kt@gmail.com>\n"
 "Language-Team: Japanese <translation-team-ja@lists.sourceforge.net>\n"
@@ -972,7 +972,7 @@ msgstr "iノードが多すぎます - 最大 512 です"
 msgid "not enough space, need at least %llu blocks"
 msgstr "領域が不十分です。最低でも %llu ブロック必要です"
 
-#: disk-utils/mkfs.bfs.c:223 fdisk/fdisk.c:2582
+#: disk-utils/mkfs.bfs.c:223 fdisk/fdisk.c:2580
 #, c-format
 msgid "Device: %s\n"
 msgstr "デバイス: %s\n"
@@ -1637,17 +1637,17 @@ msgstr "OS/2 IFS"
 msgid "NTFS"
 msgstr "NTFS"
 
-#: fdisk/cfdisk.c:413
+#: fdisk/cfdisk.c:415
 #, c-format
 msgid "Disk has been changed.\n"
 msgstr "ディスクが変更されました。\n"
 
-#: fdisk/cfdisk.c:415
+#: fdisk/cfdisk.c:417
 #, c-format
 msgid "Reboot the system to ensure the partition table is correctly updated.\n"
 msgstr "領域情報を正しく更新させるにはシステムを再起動してください。\n"
 
-#: fdisk/cfdisk.c:419
+#: fdisk/cfdisk.c:421
 #, c-format
 msgid ""
 "\n"
@@ -1660,223 +1660,223 @@ msgstr ""
 "まった場合は、cfdisk マニュアルにある追加情報ページ\n"
 "を参照してください。\n"
 
-#: fdisk/cfdisk.c:514
+#: fdisk/cfdisk.c:516
 msgid "FATAL ERROR"
 msgstr "*致命的なエラー*"
 
-#: fdisk/cfdisk.c:515
+#: fdisk/cfdisk.c:517
 msgid "Press any key to exit cfdisk"
 msgstr "中断するには何かキーを入力してください"
 
-#: fdisk/cfdisk.c:562 fdisk/cfdisk.c:570
+#: fdisk/cfdisk.c:564 fdisk/cfdisk.c:572
 msgid "Cannot seek on disk drive"
 msgstr "ディスクドライブ上で seek できません"
 
-#: fdisk/cfdisk.c:564
+#: fdisk/cfdisk.c:566
 msgid "Cannot read disk drive"
 msgstr "ディスクドライブを読み込めません"
 
-#: fdisk/cfdisk.c:572
+#: fdisk/cfdisk.c:574
 msgid "Cannot write disk drive"
 msgstr "ディスクドライブに書き込めません"
 
-#: fdisk/cfdisk.c:915
+#: fdisk/cfdisk.c:917
 msgid "Too many partitions"
 msgstr "領域が多すぎます"
 
-#: fdisk/cfdisk.c:920
+#: fdisk/cfdisk.c:922
 msgid "Partition begins before sector 0"
 msgstr "領域がセクタ 0 よりまえから始まっています"
 
-#: fdisk/cfdisk.c:925
+#: fdisk/cfdisk.c:927
 msgid "Partition ends before sector 0"
 msgstr "領域がセクタ 0 より前で終わっています"
 
-#: fdisk/cfdisk.c:930
+#: fdisk/cfdisk.c:932
 msgid "Partition begins after end-of-disk"
 msgstr "領域がディスクの終点よりも後ろから始まっています"
 
-#: fdisk/cfdisk.c:935
+#: fdisk/cfdisk.c:937
 msgid "Partition ends after end-of-disk"
 msgstr "領域がディスクの終点よりも後ろで終わっています"
 
-#: fdisk/cfdisk.c:940
+#: fdisk/cfdisk.c:942
 msgid "Partition ends in the final partial cylinder"
 msgstr ""
 
-#: fdisk/cfdisk.c:964
+#: fdisk/cfdisk.c:966
 msgid "logical partitions not in disk order"
 msgstr "論理領域がディスクの順序と一致しません"
 
-#: fdisk/cfdisk.c:967
+#: fdisk/cfdisk.c:969
 msgid "logical partitions overlap"
 msgstr "論理領域が重複しています"
 
-#: fdisk/cfdisk.c:971
+#: fdisk/cfdisk.c:973
 msgid "enlarged logical partitions overlap"
 msgstr "拡大された論理領域が重複しています"
 
-#: fdisk/cfdisk.c:1001
+#: fdisk/cfdisk.c:1003
 msgid ""
 "!!!! Internal error creating logical drive with no extended partition !!!!"
 msgstr ""
 "!!!! 内部エラー。拡張領域以外に論理ドライブを作成しようとしています !!!!"
 
-#: fdisk/cfdisk.c:1012 fdisk/cfdisk.c:1024
+#: fdisk/cfdisk.c:1014 fdisk/cfdisk.c:1026
 msgid ""
 "Cannot create logical drive here -- would create two extended partitions"
 msgstr ""
 "ここには論理ドライブを作成できません -- 2 つの拡張領域であれば作成します"
 
-#: fdisk/cfdisk.c:1166
+#: fdisk/cfdisk.c:1168
 msgid "Menu item too long. Menu may look odd."
 msgstr "メニュー項目名が長すぎます。メニュー表示が乱れている可能性があります。"
 
-#: fdisk/cfdisk.c:1222
+#: fdisk/cfdisk.c:1224
 msgid "Menu without direction. Defaulting to horizontal."
 msgstr "メニューに方向がありません。水平方向を初期値とします。"
 
-#: fdisk/cfdisk.c:1354
+#: fdisk/cfdisk.c:1356
 msgid "Illegal key"
 msgstr "不正なキー"
 
-#: fdisk/cfdisk.c:1377
+#: fdisk/cfdisk.c:1379
 msgid "Press a key to continue"
 msgstr "続けるには何かキーを入力してください"
 
-#: fdisk/cfdisk.c:1424 fdisk/cfdisk.c:2054 fdisk/cfdisk.c:2586
+#: fdisk/cfdisk.c:1426 fdisk/cfdisk.c:2054 fdisk/cfdisk.c:2586
 #: fdisk/cfdisk.c:2588
 msgid "Primary"
 msgstr "基本領域"
 
-#: fdisk/cfdisk.c:1424
+#: fdisk/cfdisk.c:1426
 msgid "Create a new primary partition"
 msgstr "新規に基本領域を作成します"
 
-#: fdisk/cfdisk.c:1425 fdisk/cfdisk.c:2054 fdisk/cfdisk.c:2585
+#: fdisk/cfdisk.c:1427 fdisk/cfdisk.c:2054 fdisk/cfdisk.c:2585
 #: fdisk/cfdisk.c:2588
 msgid "Logical"
 msgstr "論理領域"
 
-#: fdisk/cfdisk.c:1425
+#: fdisk/cfdisk.c:1427
 msgid "Create a new logical partition"
 msgstr "新規に論理領域を作成します"
 
-#: fdisk/cfdisk.c:1426 fdisk/cfdisk.c:1481 fdisk/cfdisk.c:2259
+#: fdisk/cfdisk.c:1428 fdisk/cfdisk.c:1483 fdisk/cfdisk.c:2259
 msgid "Cancel"
 msgstr "中止"
 
-#: fdisk/cfdisk.c:1426 fdisk/cfdisk.c:1481
+#: fdisk/cfdisk.c:1428 fdisk/cfdisk.c:1483
 msgid "Don't create a partition"
 msgstr "領域を作成しません"
 
-#: fdisk/cfdisk.c:1442
+#: fdisk/cfdisk.c:1444
 msgid "!!! Internal error !!!"
 msgstr "!!! 内部エラー !!!"
 
-#: fdisk/cfdisk.c:1445
+#: fdisk/cfdisk.c:1447
 msgid "Size (in MB): "
 msgstr "サイズ (MB 単位): "
 
-#: fdisk/cfdisk.c:1479
+#: fdisk/cfdisk.c:1481
 msgid "Beginning"
 msgstr "最初から"
 
-#: fdisk/cfdisk.c:1479
+#: fdisk/cfdisk.c:1481
 msgid "Add partition at beginning of free space"
 msgstr "空き領域の最初に領域を追加"
 
-#: fdisk/cfdisk.c:1480
+#: fdisk/cfdisk.c:1482
 msgid "End"
 msgstr "最後から"
 
-#: fdisk/cfdisk.c:1480
+#: fdisk/cfdisk.c:1482
 msgid "Add partition at end of free space"
 msgstr "空き領域の最後に領域を追加"
 
-#: fdisk/cfdisk.c:1498
+#: fdisk/cfdisk.c:1500
 msgid "No room to create the extended partition"
 msgstr "拡張領域を作成するための場所がありません"
 
-#: fdisk/cfdisk.c:1572
+#: fdisk/cfdisk.c:1574
 msgid "No partition table.\n"
 msgstr "領域テーブルがありません。\n"
 
-#: fdisk/cfdisk.c:1576
+#: fdisk/cfdisk.c:1578
 #, fuzzy
 msgid "No partition table. Starting with zero table."
 msgstr "領域テーブルが無いか領域テーブルの署名が不正です"
 
-#: fdisk/cfdisk.c:1586
+#: fdisk/cfdisk.c:1588
 msgid "Bad signature on partition table"
 msgstr "領域テーブルの署名が不正です"
 
-#: fdisk/cfdisk.c:1590
+#: fdisk/cfdisk.c:1592
 msgid "Unknown partition table type"
 msgstr "不明な領域テーブルのタイプ"
 
-#: fdisk/cfdisk.c:1592
+#: fdisk/cfdisk.c:1594
 msgid "Do you wish to start with a zero table [y/N] ?"
 msgstr "ゼロテーブルで開始しましょうか [y/N] ?"
 
-#: fdisk/cfdisk.c:1640
+#: fdisk/cfdisk.c:1642
 msgid "You specified more cylinders than fit on disk"
 msgstr "ディスクにとって適切な数よりも多くのシリンダ数を指定されました"
 
-#: fdisk/cfdisk.c:1672
+#: fdisk/cfdisk.c:1674
 msgid "Cannot open disk drive"
 msgstr "ディスクドライブを開けません"
 
-#: fdisk/cfdisk.c:1674 fdisk/cfdisk.c:1863
+#: fdisk/cfdisk.c:1676 fdisk/cfdisk.c:1865
 msgid "Opened disk read-only - you have no permission to write"
 msgstr "ディスクを読込み専用で開きました -- あなたには書込み権限がありません"
 
-#: fdisk/cfdisk.c:1685
+#: fdisk/cfdisk.c:1687
 msgid ""
 "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
 msgstr ""
 "警告!! サポートしていない GPT (GUID パーティションテーブル) を検出しました。"
 "GNU Parded を使ってください"
 
-#: fdisk/cfdisk.c:1704
+#: fdisk/cfdisk.c:1706
 msgid "Cannot get disk size"
 msgstr "ディスクサイズを取得できません"
 
-#: fdisk/cfdisk.c:1730
+#: fdisk/cfdisk.c:1732
 msgid "Bad primary partition"
 msgstr "不正な基本領域"
 
-#: fdisk/cfdisk.c:1760
+#: fdisk/cfdisk.c:1762
 msgid "Bad logical partition"
 msgstr "不正な論理領域"
 
-#: fdisk/cfdisk.c:1875
+#: fdisk/cfdisk.c:1877
 msgid "Warning!!  This may destroy data on your disk!"
 msgstr "警告！ これはあなたのディスクにあるデータを破壊するかもしれません"
 
-#: fdisk/cfdisk.c:1879
+#: fdisk/cfdisk.c:1881
 msgid ""
 "Are you sure you want to write the partition table to disk? (yes or no): "
 msgstr ""
 "パーティション領域をディスクに書き込んでもよろしいですか？(yes または no): "
 
-#: fdisk/cfdisk.c:1885
+#: fdisk/cfdisk.c:1887
 msgid "no"
 msgstr "no"
 
-#: fdisk/cfdisk.c:1887
+#: fdisk/cfdisk.c:1889
 msgid "Did not write partition table to disk"
 msgstr "領域テーブルをディスクに書き込みませんでした"
 
-#: fdisk/cfdisk.c:1889
+#: fdisk/cfdisk.c:1891
 msgid "yes"
 msgstr "yes"
 
-#: fdisk/cfdisk.c:1893
+#: fdisk/cfdisk.c:1895
 msgid "Please enter `yes' or `no'"
 msgstr "`yes' か `no' のいずれかを入力してください"
 
-#: fdisk/cfdisk.c:1897
+#: fdisk/cfdisk.c:1899
 msgid "Writing partition table to disk..."
 msgstr "領域テーブルを書き込み中..."
 
@@ -3669,12 +3669,12 @@ msgstr ""
 "パーティションテーブルは変更されました！\n"
 "\n"
 
-#: fdisk/fdisk.c:2524
+#: fdisk/fdisk.c:2523
 #, c-format
 msgid "Calling ioctl() to re-read partition table.\n"
 msgstr "ioctl() を呼び出してパーティションテーブルを再読込みします。\n"
 
-#: fdisk/fdisk.c:2533
+#: fdisk/fdisk.c:2532
 #, c-format
 msgid ""
 "\n"
@@ -3688,7 +3688,7 @@ msgstr ""
 "次回リブート時か、partprobe(8)またはkpartx(8)を実行した後に\n"
 "使えるようになるでしょう\n"
 
-#: fdisk/fdisk.c:2541
+#: fdisk/fdisk.c:2540
 #, c-format
 msgid ""
 "\n"
@@ -3700,7 +3700,7 @@ msgstr ""
 "警告: DOS 6.x 領域を作成、または変更してしまった場合は、\n"
 "fdisk マニュアルの追加情報ページを参照してください。\n"
 
-#: fdisk/fdisk.c:2547
+#: fdisk/fdisk.c:2546
 #, c-format
 msgid ""
 "\n"
@@ -3709,42 +3709,42 @@ msgstr ""
 "\n"
 "ファイルクローズ中にエラー\n"
 
-#: fdisk/fdisk.c:2551
+#: fdisk/fdisk.c:2550
 #, c-format
 msgid "Syncing disks.\n"
 msgstr "ディスクを同期しています。\n"
 
-#: fdisk/fdisk.c:2598
+#: fdisk/fdisk.c:2596
 #, c-format
 msgid "Partition %d has no data area\n"
 msgstr "パーティション %d にはデータ領域がありません\n"
 
-#: fdisk/fdisk.c:2603
+#: fdisk/fdisk.c:2601
 msgid "New beginning of data"
 msgstr "新規データ開始位置"
 
-#: fdisk/fdisk.c:2619
+#: fdisk/fdisk.c:2617
 msgid "Expert command (m for help): "
 msgstr "上級者コマンド (m でヘルプ): "
 
-#: fdisk/fdisk.c:2632
+#: fdisk/fdisk.c:2630
 msgid "Number of cylinders"
 msgstr "シリンダ数"
 
-#: fdisk/fdisk.c:2659
+#: fdisk/fdisk.c:2657
 msgid "Number of heads"
 msgstr "ヘッド数"
 
-#: fdisk/fdisk.c:2686
+#: fdisk/fdisk.c:2684
 msgid "Number of sectors"
 msgstr "セクタ数"
 
-#: fdisk/fdisk.c:2688
+#: fdisk/fdisk.c:2686
 #, c-format
 msgid "Warning: setting sector offset for DOS compatiblity\n"
 msgstr "警告: DOS 互換のためのセクタオフセットを設定します\n"
 
-#: fdisk/fdisk.c:2747
+#: fdisk/fdisk.c:2745
 #, c-format
 msgid ""
 "\n"
@@ -3757,33 +3757,33 @@ msgstr ""
 "ユーティリティは GPT をサポートしません。GNU Parted を使ってください。\n"
 "\n"
 
-#: fdisk/fdisk.c:2769
+#: fdisk/fdisk.c:2767
 #, c-format
 msgid "Disk %s doesn't contain a valid partition table\n"
 msgstr "ディスク %s は正常なパーティションテーブルを含んでいません\n"
 
-#: fdisk/fdisk.c:2780
+#: fdisk/fdisk.c:2778
 #, c-format
 msgid "Cannot open %s\n"
 msgstr "%s を開けません\n"
 
-#: fdisk/fdisk.c:2799 fdisk/sfdisk.c:2603
+#: fdisk/fdisk.c:2797 fdisk/sfdisk.c:2603
 #, c-format
 msgid "cannot open %s\n"
 msgstr "%s を開けません\n"
 
-#: fdisk/fdisk.c:2819
+#: fdisk/fdisk.c:2817
 #, c-format
 msgid "%c: unknown command\n"
 msgstr "%c: 不明なコマンド\n"
 
-#: fdisk/fdisk.c:2889
+#: fdisk/fdisk.c:2887
 #, c-format
 msgid "This kernel finds the sector size itself - -b option ignored\n"
 msgstr ""
 "このカーネルはセクタサイズを自分認識します - -b オプションは無視します\n"
 
-#: fdisk/fdisk.c:2893
+#: fdisk/fdisk.c:2891
 #, c-format
 msgid ""
 "Warning: the -b (set sector size) option should be used with one specified "
@@ -3792,17 +3792,17 @@ msgstr ""
 "警告: -b (セクタサイズ設定) オプションは 1 つのデバイス指定と共に\n"
 "使用されるべきです\n"
 
-#: fdisk/fdisk.c:2955
+#: fdisk/fdisk.c:2953
 #, c-format
 msgid "Detected an OSF/1 disklabel on %s, entering disklabel mode.\n"
 msgstr ""
 "%s でOSF/1 ディスクラベルを検出したので、ディスクラベルモードに移行します。\n"
 
-#: fdisk/fdisk.c:2965
+#: fdisk/fdisk.c:2963
 msgid "Command (m for help): "
 msgstr "コマンド (m でヘルプ): "
 
-#: fdisk/fdisk.c:2981
+#: fdisk/fdisk.c:2979
 #, c-format
 msgid ""
 "\n"
@@ -3811,16 +3811,16 @@ msgstr ""
 "\n"
 "現在のブートファイルは: %s\n"
 
-#: fdisk/fdisk.c:2983
+#: fdisk/fdisk.c:2981
 msgid "Please enter the name of the new boot file: "
 msgstr "新たなブートファイル名を入力してください: "
 
-#: fdisk/fdisk.c:2985
+#: fdisk/fdisk.c:2983
 #, c-format
 msgid "Boot file unchanged\n"
 msgstr "ブートファイルを変更しませんでした\n"
 
-#: fdisk/fdisk.c:3058
+#: fdisk/fdisk.c:3056
 #, c-format
 msgid ""
 "\n"
@@ -4996,7 +4996,7 @@ msgstr ""
 msgid "Re-reading the partition table ...\n"
 msgstr "パーティションテーブルを再読み込み中...\n"
 
-#: fdisk/sfdisk.c:812
+#: fdisk/sfdisk.c:811
 msgid ""
 "The command to re-read the partition table failed.\n"
 "Run partprobe(8), kpartx(8) or reboot your system now,\n"
@@ -5006,17 +5006,17 @@ msgstr ""
 "mkfs を使う前に、partprobe(8) か kpartx(8) を実行するか、\n"
 "システムを再起動してください\n"
 
-#: fdisk/sfdisk.c:818
+#: fdisk/sfdisk.c:817
 #, c-format
 msgid "Error closing %s\n"
 msgstr "%s のクローズエラー\n"
 
-#: fdisk/sfdisk.c:856
+#: fdisk/sfdisk.c:855
 #, c-format
 msgid "%s: no such partition\n"
 msgstr "%s: そのようなパーティションはありません\n"
 
-#: fdisk/sfdisk.c:879
+#: fdisk/sfdisk.c:878
 msgid "unrecognized format - using sectors\n"
 msgstr "認識できないフォーマット -- セクタ数を利用します\n"
 
@@ -9318,24 +9318,24 @@ msgstr ""
 "その他のオプション: [-nfFrsvw] [-o オプション] [-p passwdfd]\n"
 "もっと詳しいことを知りたければ、man 8 mount と唱えてみましょう。\n"
 
-#: mount/mount.c:2264
+#: mount/mount.c:2265
 #, fuzzy, c-format
 msgid "mount: only root can do that (effective UID is %d)"
 msgstr "mount: root だけがそれを行なえます"
 
-#: mount/mount.c:2267
+#: mount/mount.c:2268
 msgid "mount: only root can do that"
 msgstr "mount: root だけがそれを行なえます"
 
-#: mount/mount.c:2278
+#: mount/mount.c:2279
 msgid "nothing was mounted"
 msgstr "何もマウントされませんでした"
 
-#: mount/mount.c:2296 mount/mount.c:2322
+#: mount/mount.c:2297 mount/mount.c:2323
 msgid "mount: no such partition found"
 msgstr "mount: そのようなパーティションは見つかりません"
 
-#: mount/mount.c:2299
+#: mount/mount.c:2300
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %2$s や %3$s 内に %1$s を見つけられません"
@@ -9636,7 +9636,7 @@ msgstr "%s はアンマウントされました\n"
 msgid "umount: cannot find list of filesystems to unmount"
 msgstr "umount: アンマウントのためのファイルシステムリストを見つけられません"
 
-#: mount/umount.c:397
+#: mount/umount.c:399
 #, c-format
 msgid ""
 "Usage: umount -h | -V\n"
@@ -9647,66 +9647,66 @@ msgstr ""
 "        umount -a [-d] [-f] [-r] [-n] [-v] [-t vfsタイプ] [-O オプション]\n"
 "        umount [-d] [-f] [-r] [-n] [-v] special | node...\n"
 
-#: mount/umount.c:466
+#: mount/umount.c:468
 #, c-format
 msgid "device %s is associated with %s\n"
 msgstr "デバイス %s は %s に関連づけされています\n"
 
-#: mount/umount.c:472
+#: mount/umount.c:474
 #, c-format
 msgid "device %s is not associated with %s\n"
 msgstr "デバイス %s は %s に関連づけされていません\n"
 
-#: mount/umount.c:485
+#: mount/umount.c:487
 msgid "Cannot umount \"\"\n"
 msgstr "\"\" をアンマウントできません\n"
 
-#: mount/umount.c:491
+#: mount/umount.c:493
 #, c-format
 msgid "Trying to umount %s\n"
 msgstr "%s をアンマウントします\n"
 
-#: mount/umount.c:504
+#: mount/umount.c:506
 msgid "umount: confused when analyzing mtab"
 msgstr ""
 
-#: mount/umount.c:509
+#: mount/umount.c:511
 #, c-format
 msgid "umount: cannot umount %s -- %s is mounted over it on the same point."
 msgstr ""
 
-#: mount/umount.c:516
+#: mount/umount.c:518
 #, c-format
 msgid "Could not find %s in mtab\n"
 msgstr "mtab に %s が見つかりません\n"
 
-#: mount/umount.c:523
+#: mount/umount.c:525
 #, c-format
 msgid "umount: %s is not mounted (according to mtab)"
 msgstr "umount: %s マウントされていません (mtab によると)"
 
-#: mount/umount.c:547
+#: mount/umount.c:549
 #, c-format
 msgid "umount: it seems %s is mounted multiple times"
 msgstr "umount: %s は複数マウントされているようです"
 
-#: mount/umount.c:561
+#: mount/umount.c:563
 #, c-format
 msgid "umount: %s is not in the fstab (and you are not root)"
 msgstr ""
 "umount: %s は fstab にありません (さらに、あなたは root ではありません)"
 
-#: mount/umount.c:567
+#: mount/umount.c:569
 #, c-format
 msgid "umount: %s mount disagrees with the fstab"
 msgstr "umount: %s は fstab と一致しないマウントです"
 
-#: mount/umount.c:608
+#: mount/umount.c:610
 #, c-format
 msgid "umount: only %s can unmount %s from %s"
 msgstr "umount: %s だけが %s を %s からアンマウントできます"
 
-#: mount/umount.c:695
+#: mount/umount.c:701
 msgid "umount: only root can do that"
 msgstr "umount: root だけがそれを行なえます"
 
@@ -10880,34 +10880,34 @@ msgstr "準仮想化"
 msgid "full"
 msgstr "完全仮想化"
 
-#: sys-utils/lscpu.c:129 sys-utils/lscpu.c:152 sys-utils/lscpu.c:441
+#: sys-utils/lscpu.c:137 sys-utils/lscpu.c:160 sys-utils/lscpu.c:456
 #, c-format
 msgid "error: %s"
 msgstr "エラー: %s"
 
-#: sys-utils/lscpu.c:154
+#: sys-utils/lscpu.c:162
 #, fuzzy, c-format
 msgid "error parse: %s"
 msgstr "%s の読み取りエラー\n"
 
-#: sys-utils/lscpu.c:176
+#: sys-utils/lscpu.c:184
 #, fuzzy
 msgid "error: strdup failed"
 msgstr "標準出力への書き込みが失敗しました"
 
-#: sys-utils/lscpu.c:259
+#: sys-utils/lscpu.c:267
 msgid "error: uname failed"
 msgstr "エラー: uname が失敗"
 
-#: sys-utils/lscpu.c:491
+#: sys-utils/lscpu.c:506
 msgid "error: malloc failed"
 msgstr "エラー: malloc に失敗"
 
-#: sys-utils/lscpu.c:506
+#: sys-utils/lscpu.c:521
 msgid "error: /sys filesystem is not accessable."
 msgstr "エラー: /sys ファイルシステムはアクセス不可能です。"
 
-#: sys-utils/lscpu.c:524
+#: sys-utils/lscpu.c:539
 #, c-format
 msgid ""
 "# The following is the parsable format, which can be fed to other\n"
@@ -10920,65 +10920,70 @@ msgstr ""
 "# starting from zero.\n"
 "# CPU,Core,Socket,Node"
 
-#: sys-utils/lscpu.c:590
+#: sys-utils/lscpu.c:619
+#, fuzzy
+msgid "CPU op-mode(s):"
+msgstr "CPUソケット数:"
+
+#: sys-utils/lscpu.c:625
 msgid "Thread(s) per core:"
 msgstr "コアあたりのスレッド数:"
 
-#: sys-utils/lscpu.c:591
+#: sys-utils/lscpu.c:626
 msgid "Core(s) per socket:"
 msgstr "ソケットあたりのコア数:"
 
-#: sys-utils/lscpu.c:592
+#: sys-utils/lscpu.c:627
 msgid "CPU socket(s):"
 msgstr "CPUソケット数:"
 
-#: sys-utils/lscpu.c:596
+#: sys-utils/lscpu.c:631
 msgid "NUMA node(s):"
 msgstr "NUMAノード:"
 
-#: sys-utils/lscpu.c:598
+#: sys-utils/lscpu.c:633
 msgid "Vendor ID:"
 msgstr "ベンダーID:"
 
-#: sys-utils/lscpu.c:600
+#: sys-utils/lscpu.c:635
 msgid "CPU family:"
 msgstr "CPUファミリー:"
 
-#: sys-utils/lscpu.c:602
+#: sys-utils/lscpu.c:637
 msgid "Model:"
 msgstr "モデル:"
 
-#: sys-utils/lscpu.c:604
+#: sys-utils/lscpu.c:639
 msgid "Stepping:"
 msgstr "ステッピング:"
 
-#: sys-utils/lscpu.c:606
+#: sys-utils/lscpu.c:641
 msgid "CPU MHz:"
 msgstr "CPU MHz:"
 
-#: sys-utils/lscpu.c:609 sys-utils/lscpu.c:611
+#: sys-utils/lscpu.c:644 sys-utils/lscpu.c:646
 msgid "Virtualization:"
 msgstr "仮想化:"
 
-#: sys-utils/lscpu.c:614
+#: sys-utils/lscpu.c:649
 msgid "Hypervisor vendor:"
 msgstr "ハイパーバイザーベンダー:"
 
-#: sys-utils/lscpu.c:615
+#: sys-utils/lscpu.c:650
 msgid "Virtualization type:"
 msgstr "仮想化タイプ:"
 
-#: sys-utils/lscpu.c:623
+#: sys-utils/lscpu.c:658
 #, c-format
 msgid "%s cache:"
 msgstr "%s キャッシュ:"
 
-#: sys-utils/lscpu.c:631
+#: sys-utils/lscpu.c:666
 #, c-format
 msgid "Usage: %s [option]\n"
 msgstr "使い方: %s [オプション]\n"
 
-#: sys-utils/lscpu.c:634
+#: sys-utils/lscpu.c:669
 msgid ""
 "CPU architecture information helper\n"
 "\n"
@@ -10993,7 +10998,7 @@ msgstr ""
 "る。\n"
 "  -s, --sysroot  新しいシステムルートとしてこのディレクトリを使う。\n"
 
-#: sys-utils/lscpu.c:683
+#: sys-utils/lscpu.c:718
 #, c-format
 msgid "error: change working directory to %s."
 msgstr "エラー: %sへ作業ディレクトリを変更する。 "
@@ -11686,7 +11691,7 @@ msgstr ""
 "\n"
 "パターンが見つかりません\n"
 
-#: text-utils/more.c:1616 text-utils/pg.c:1124 text-utils/pg.c:1275
+#: text-utils/more.c:1616 text-utils/pg.c:1127 text-utils/pg.c:1278
 msgid "Pattern not found"
 msgstr "パターンが見つかりません"
 
@@ -11837,55 +11842,55 @@ msgstr "次のファイルはありません"
 msgid "No previous file"
 msgstr "領域が定義されていません\n"
 
-#: text-utils/pg.c:928
+#: text-utils/pg.c:931
 #, fuzzy, c-format
 msgid "%s: Read error from %s file\n"
 msgstr "%s: %s で read エラー\n"
 
-#: text-utils/pg.c:934
+#: text-utils/pg.c:937
 #, c-format
 msgid "%s: Unexpected EOF in %s file\n"
 msgstr "%s: ファイル%sで予期しないファイルの終端\n"
 
-#: text-utils/pg.c:937
+#: text-utils/pg.c:940
 #, fuzzy, c-format
 msgid "%s: Unknown error in %s file\n"
 msgstr "%s: %s で seek エラー\n"
 
-#: text-utils/pg.c:1032
+#: text-utils/pg.c:1035
 #, c-format
 msgid "%s: Cannot create tempfile\n"
 msgstr "%s: 一時ファイルを作成できません\n"
 
-#: text-utils/pg.c:1041 text-utils/pg.c:1216 text-utils/pg.c:1243
+#: text-utils/pg.c:1044 text-utils/pg.c:1219 text-utils/pg.c:1246
 msgid "RE error: "
 msgstr "RE エラー"
 
-#: text-utils/pg.c:1198
+#: text-utils/pg.c:1201
 msgid "(EOF)"
 msgstr "(EOF)"
 
-#: text-utils/pg.c:1224 text-utils/pg.c:1251
+#: text-utils/pg.c:1227 text-utils/pg.c:1254
 msgid "No remembered search string"
 msgstr ""
 
-#: text-utils/pg.c:1307
+#: text-utils/pg.c:1310
 msgid "Cannot open "
 msgstr "開けません"
 
-#: text-utils/pg.c:1355
+#: text-utils/pg.c:1358
 msgid "saved"
 msgstr "保存しました"
 
-#: text-utils/pg.c:1462
+#: text-utils/pg.c:1465
 msgid ": !command not allowed in rflag mode.\n"
 msgstr ": !commandはrflagモードでは許可されません。\n"
 
-#: text-utils/pg.c:1494
+#: text-utils/pg.c:1497
 msgid "fork() failed, try again later\n"
 msgstr "fork() が失敗しました、後で実行し直してください\n"
 
-#: text-utils/pg.c:1702
+#: text-utils/pg.c:1705
 msgid "(Next file: "
 msgstr "(次のファイル: "
 
