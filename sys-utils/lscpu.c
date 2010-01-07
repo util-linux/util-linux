@@ -80,6 +80,12 @@ const char *hv_vendors[] = {
 	[HYPER_MSHV]	= "Microsoft"
 };
 
+/* CPU modes (bits) */
+enum {
+	MODE_REAL	= (1 << 1),
+	MODE_TRANSPARENT = (1 << 2),
+	MODE_LONG	= (1 << 3)
+};
 
 /* CPU(s) description */
 struct cpu_desc {
@@ -107,6 +113,8 @@ struct cpu_desc {
 	char	*mhz;
 	char	*stepping;
 	char	*flags;
+
+	int	mode;		/* rm, lm or/and tm */
 
 	/* NUMA */
 	int	*nodecpu;
@@ -285,6 +293,13 @@ read_basicinfo(struct cpu_desc *cpu)
 			cpu->virtflag = strdup("svm");
 		else if (strstr(buf, " vmx "))
 			cpu->virtflag = strdup("vmx");
+
+		if (strstr(buf, " rm "))
+			cpu->mode |= MODE_REAL;
+		if (strstr(buf, " tm "))
+			cpu->mode |= MODE_TRANSPARENT;
+		if (strstr(buf, " lm "))
+			cpu->mode |= MODE_LONG;
 	}
 
 	fclose(fp);
@@ -584,6 +599,26 @@ static void
 print_readable(struct cpu_desc *cpu)
 {
 	print_s("Architecture:", cpu->arch);
+
+	if (cpu->mode & (MODE_REAL | MODE_TRANSPARENT | MODE_LONG)) {
+		char buf[64], *p = buf;
+
+		if (cpu->mode & MODE_REAL) {
+			strcpy(p, "16-bit, ");
+			p += 8;
+		}
+		if (cpu->mode & MODE_TRANSPARENT) {
+			strcpy(p, "32-bit, ");
+			p += 8;
+		}
+		if (cpu->mode & MODE_LONG) {
+			strcpy(p, "64-bit, ");
+			p += 8;
+		}
+		*(p - 2) = '\0';
+		print_s(_("CPU op-mode(s):"), buf);
+	}
+
 	print_n("CPU(s):", cpu->ct_cpu);
 
 	if (have_topology) {
