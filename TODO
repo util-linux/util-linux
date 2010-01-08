@@ -77,6 +77,20 @@ misc
  
  * use rpmatch() for all Y/N questions
 
+ * make chrt, taskset, ... threads aware. Currently these utils work with
+   group leader (master thread) and don't propagate requested changes to 
+   the whole group of threads.  It meas add a new option (e.g. -t):
+
+	chrt <prio> <pid>     # master thread only
+        chrt -t <prio> <pid>  # whole group of threads
+
+  Note that we need to scan /proc and call ched_set{scheduler,affinity}
+  syscalls for all individual threads.
+
+ * umount by label:
+	# mount LABEL=mylabel
+	# umount LABEL=mylabel
+
  * mount -a -- reorder fstab entries by paths before mount (just idea only)
 
  * mount -a  (just idea only)
