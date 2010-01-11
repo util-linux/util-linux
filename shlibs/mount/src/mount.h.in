@@ -38,6 +38,13 @@ extern "C" {
 typedef struct _mnt_cache mnt_cache;
 
 /**
+ * mnt_lock:
+ *
+ * Stores information about locked file (e.g. /etc/mtab)
+ */
+typedef struct _mnt_lock mnt_lock;
+
+/**
  * mnt_iter:
  *
  * Generic iterator (stores state about lists)
@@ -175,6 +182,14 @@ extern char *mnt_optls_create_mountdata(mnt_optls *ls);
 extern char *mnt_optls_create_mtab_optstr(mnt_optls *ls);
 extern char *mnt_optls_create_userspace_optstr(mnt_optls *ls);
 extern int mnt_optls_print_debug(mnt_optls *ls, FILE *file);
+
+/* lock.c */
+extern mnt_lock *mnt_new_lock(const char *lockfile, pid_t id);
+extern void mnt_free_lock(mnt_lock *ml);
+extern const char *mnt_lock_get_lockfile(mnt_lock *ml);
+extern const char *mnt_lock_get_linkfile(mnt_lock *ml);
+extern void mnt_unlock_file(mnt_lock *ml);
+extern int mnt_lock_file(mnt_lock *ml);
 
 
 /*
