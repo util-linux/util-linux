@@ -22,15 +22,8 @@ libmount_la_DEPENDENCIES = $(libmount_la_LIBADD) mount.sym mount.h.in
 libmount_la_LDFLAGS = -Wl,--version-script=$(ul_libmount_srcdir)/mount.sym \
                       -version-info $(LIBMOUNT_VERSION_INFO)
 
-tests = test_version test_cache test_optstr test_optls
-
 EXTRA_DIST = mount.sym mount.h.in
 CLEANFILES = $(tests)
-
-tests: all $(tests)
-test_%: %.c
-	$(COMPILE) -DTEST_PROGRAM $< .libs/libmount.a -o $@ $(BLKID_LIBS)
-
 
 # move lib from $(usrlib_execdir) to $(libdir) if needed
 install-exec-hook:
@@ -46,3 +39,24 @@ install-exec-hook:
 
 uninstall-hook:
 	rm -f $(DESTDIR)$(libdir)/libmount.so*
+
+# tests
+noinst_PROGRAMS = test_version test_cache test_optstr test_optls
+tests_cppflags = $(AM_CPPFLAGS) -DTEST_PROGRAM
+tests_ldadd = .libs/libmount.a $(ul_libblkid_la)
+
+test_version_SOURCES = version.c
+test_version_CPPFLAGS = $(tests_cppflags)
+test_version_LDADD = $(tests_ldadd)
+
+test_cache_SOURCES = cache.c
+test_cache_CPPFLAGS = $(tests_cppflags)
+test_cache_LDADD = $(tests_ldadd)
+
+test_optstr_SOURCES = optstr.c
+test_optstr_CPPFLAGS = $(tests_cppflags)
+test_optstr_LDADD = $(tests_ldadd)
+
+test_optls_SOURCES = optls.c
+test_optls_CPPFLAGS = $(tests_cppflags)
+test_optls_LDADD = $(tests_ldadd)
