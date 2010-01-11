@@ -25,21 +25,61 @@
 extern "C" {
 #endif
 
+#include <stdio.h>
+
+
 #define LIBMOUNT_VERSION   "@LIBMOUNT_VERSION@"
 
 /**
- * mnt_cache
+ * mnt_cache:
  *
  * Stores canonicalized paths and evaluated tags
  */
 typedef struct _mnt_cache mnt_cache;
 
 /**
- * mnt_iter
+ * mnt_iter:
  *
  * Generic iterator (stores state about lists)
  */
 typedef struct _mnt_iter mnt_iter;
+
+/**
+ * mnt_optls:
+ *
+ * Mount options list (stores parsed mount options)
+ */
+typedef struct _mnt_optls mnt_optls;
+
+/**
+ * mnt_optent:
+ *
+ * Parsed mount option - "mnt_optls" entry
+ */
+typedef struct _mnt_optent mnt_optent;
+
+/**
+ * struct mnt_optmap:
+ *
+ * Mount options description (map)
+ *
+ * The libmount supports mount options with values in %<type>:
+ * %s, %d, %u, %o, %x
+ */
+struct mnt_optmap
+{
+	const char	*name;	 /* option name[=%<type>] (e.g. "loop[=%s]") */
+	int		id;	 /* option ID or MS_* flags (e.g MS_RDONLY) */
+	int		mask;	 /* MNT_{MFLAG,MDATA,INVMASK,...} mask */
+};
+
+/*
+ * mount options map masks
+ */
+#define MNT_MFLAG	(1 << 1) /* use the mask as mount(2) flag */
+#define MNT_MDATA	(1 << 2) /* use the option as mount(2) data */
+#define MNT_INVERT	(1 << 3) /* invert the mountflag */
+#define MNT_NOMTAB	(1 << 4) /* skip in the mtab option string */
 
 /* version.c */
 extern int mnt_parse_version_string(const char *ver_string);
@@ -74,7 +114,6 @@ extern int mnt_optstr_set_option(char **optstr, const char *name,
 				const char *value);
 extern int mnt_optstr_remove_option(char **optstr, const char *name);
 
-
 /* iter.c */
 enum {
 
@@ -84,6 +123,161 @@ enum {
 extern mnt_iter *mnt_new_iter(int direction);
 extern void mnt_free_iter(mnt_iter *mi);
 extern void mnt_reset_iter(mnt_iter *mi, int direction);
+
+/* optmap.c */
+enum {
+	MNT_LINUX_MAP = 1,
+	MNT_USERSPACE_MAP
+};
+extern const struct mnt_optmap *mnt_get_builtin_optmap(int id);
+
+/* optent.c */
+extern const struct mnt_optmap *mnt_optent_get_map(mnt_optent *op);
+extern const struct mnt_optmap *mnt_optent_get_mapent(mnt_optent *op);
+extern const char *mnt_optent_get_type(mnt_optent *op);
+extern int mnt_optent_set_value(mnt_optent *op, const char *data);
+extern int mnt_optent_has_value(mnt_optent *op);
+extern int mnt_optent_require_value(mnt_optent *op);
+extern int mnt_optent_is_inverted(mnt_optent *op);
+extern int mnt_optent_strtoul_value(mnt_optent *op, unsigned long int *number);
+extern int mnt_optent_strtol_value(mnt_optent *op, long int *number);
+extern int mnt_optent_strtoull_value(mnt_optent *op, unsigned long long int *number);
+extern const char *mnt_optent_get_value(mnt_optent *op);
+extern int mnt_optent_strlen_value(mnt_optent *op);
+extern int mnt_optent_snprintf_value(mnt_optent *op, char *str, size_t size);
+extern char *mnt_optent_dup_value(mnt_optent *op);
+extern const char *mnt_optent_get_name(mnt_optent *op);
+extern int mnt_optent_get_mask(mnt_optent *op);
+extern int mnt_optent_get_id(mnt_optent *op);
+extern int mnt_optent_get_flag(mnt_optent *op, int *flags);
+extern int mnt_optent_is_unknown(mnt_optent *op);
+extern int mnt_optent_print_debug(mnt_optent *op, FILE *file);
+
+/* optls.c */
+extern mnt_optls *mnt_new_optls(void);
+extern void mnt_free_optls(mnt_optls *ls);
+extern int mnt_optls_add_map(mnt_optls *ls, const struct mnt_optmap *map);
+extern int mnt_optls_add_builtin_map(mnt_optls *ls, int id);
+extern mnt_optent *mnt_optls_add_option(mnt_optls *ls,
+                        const char *name, const char *value);
+extern int mnt_optls_parse_optstr(mnt_optls *ls, const char *optstr);
+extern int mnt_optls_remove_option(mnt_optls *ls, const char *name);
+extern int mnt_optls_remove_option_by_flags(mnt_optls *ls,
+                const struct mnt_optmap *map, const int flags);
+extern int mnt_optls_remove_option_by_iflags(mnt_optls *ls,
+                const struct mnt_optmap *map, const int flags);
+extern int mnt_optls_iterate_options(mnt_iter *itr, mnt_optls *ls,
+                const struct mnt_optmap *map, mnt_optent **option);
+extern mnt_optent *mnt_optls_get_option(mnt_optls *ls, const char *name);
+extern int mnt_optls_get_ids(mnt_optls *ls, const struct mnt_optmap *map);
+extern int mnt_optls_create_mountflags(mnt_optls *ls);
+extern char *mnt_optls_create_mountdata(mnt_optls *ls);
+extern char *mnt_optls_create_mtab_optstr(mnt_optls *ls);
+extern char *mnt_optls_create_userspace_optstr(mnt_optls *ls);
+extern int mnt_optls_print_debug(mnt_optls *ls, FILE *file);
+
+
+/*
+ * mount(8) userspace options masks (MNT_MAP_USERSPACE map)
+ */
+#define MNT_MS_DFLTS	(1 << 1)
+#define MNT_MS_NOAUTO	(1 << 2)
+#define MNT_MS_USER	(1 << 3)
+#define MNT_MS_USERS	(1 << 4)
+#define MNT_MS_OWNER	(1 << 5)
+#define MNT_MS_GROUP	(1 << 6)
+#define MNT_MS_NETDEV	(1 << 7)
+#define MNT_MS_COMMENT  (1 << 8)
+#define MNT_MS_LOOP     (1 << 9)
+#define MNT_MS_NOFAIL   (1 << 10)
+
+/*
+ * mount(2) MS_* masks (MNT_MAP_LINUX map)
+ */
+#ifndef MS_RDONLY
+#define MS_RDONLY	 1	/* Mount read-only */
+#endif
+#ifndef MS_NOSUID
+#define MS_NOSUID	 2	/* Ignore suid and sgid bits */
+#endif
+#ifndef MS_NODEV
+#define MS_NODEV	 4	/* Disallow access to device special files */
+#endif
+#ifndef MS_NOEXEC
+#define MS_NOEXEC	 8	/* Disallow program execution */
+#endif
+#ifndef MS_SYNCHRONOUS
+#define MS_SYNCHRONOUS	16	/* Writes are synced at once */
+#endif
+#ifndef MS_REMOUNT
+#define MS_REMOUNT	32	/* Alter flags of a mounted FS */
+#endif
+#ifndef MS_MANDLOCK
+#define MS_MANDLOCK	64	/* Allow mandatory locks on an FS */
+#endif
+#ifndef MS_DIRSYNC
+#define MS_DIRSYNC	128	/* Directory modifications are synchronous */
+#endif
+#ifndef MS_NOATIME
+#define MS_NOATIME	0x400	/* 1024: Do not update access times. */
+#endif
+#ifndef MS_NODIRATIME
+#define MS_NODIRATIME   0x800	/* 2048: Don't update directory access times */
+#endif
+#ifndef MS_BIND
+#define	MS_BIND		0x1000	/* 4096: Mount existing tree also elsewhere */
+#endif
+#ifndef MS_MOVE
+#define MS_MOVE		0x2000	/* 8192: Atomically move tree */
+#endif
+#ifndef MS_REC
+#define MS_REC		0x4000	/* 16384: Recursive loopback */
+#endif
+#ifndef MS_VERBOSE
+#define MS_VERBOSE	0x8000	/* 32768 */
+#endif
+#ifndef MS_RELATIME
+#define MS_RELATIME	0x200000 /* 200000: Update access times relative
+                                  to mtime/ctime */
+#endif
+#ifndef MS_UNBINDABLE
+#define MS_UNBINDABLE	(1<<17)	/* 131072 unbindable*/
+#endif
+#ifndef MS_PRIVATE
+#define MS_PRIVATE	(1<<18)	/* 262144 Private*/
+#endif
+#ifndef MS_SLAVE
+#define MS_SLAVE	(1<<19)	/* 524288 Slave*/
+#endif
+#ifndef MS_SHARED
+#define MS_SHARED	(1<<20)	/* 1048576 Shared*/
+#endif
+#ifndef MS_I_VERSION
+#define MS_I_VERSION	(1<<23)	/* update inode I_version field */
+#endif
+#ifndef MS_STRICTATIME
+#define MS_STRICTATIME	(1<<24) /* strict atime semantics */
+#endif
+
+/*
+ * Magic mount flag number. Had to be or-ed to the flag values.
+ */
+#ifndef MS_MGC_VAL
+#define MS_MGC_VAL 0xC0ED0000	/* magic flag number to indicate "new" flags */
+#endif
+#ifndef MS_MGC_MSK
+#define MS_MGC_MSK 0xffff0000	/* magic flag number mask */
+#endif
+
+
+/* Shared-subtree options */
+#define MS_PROPAGATION  (MS_SHARED|MS_SLAVE|MS_UNBINDABLE|MS_PRIVATE)
+
+/* Options that we make ordinary users have by default.  */
+#define MS_SECURE	(MS_NOEXEC|MS_NOSUID|MS_NODEV)
+
+/* Options that we make owner-mounted devices have by default */
+#define MS_OWNERSECURE	(MS_NOSUID|MS_NODEV)
 
 #ifdef __cplusplus
 }
