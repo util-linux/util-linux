@@ -18,26 +18,25 @@ fdisk_SOURCES = fdisk.c fdiskbsdlabel.c fdisksgilabel.c \
 	fdisk.h fdisksunlabel.h fdisksgilabel.h fdiskaixlabel.h \
 	fdiskbsdlabel.h fdiskmaclabel.h $(fdisk_common)
 
-cflags_fdisk = $(AM_CFLAGS)
-ldadd_fdisk =
+cflags_blkid = $(AM_CFLAGS)
+ldadd_blkid =
 
 if BUILD_LIBBLKID
 # only in-tree libblkid has topology support
-ldadd_fdisk += $(ul_libblkid_la)
-cflags_fdisk += -I$(ul_libblkid_incdir)
+ldadd_blkid += $(ul_libblkid_la)
+cflags_blkid += -I$(ul_libblkid_incdir)
 endif
 
 if HAVE_STATIC_FDISK
 sbin_PROGRAMS += fdisk.static
 fdisk_static_SOURCES = $(fdisk_SOURCES)
 fdisk_static_LDFLAGS = -all-static
-fdisk_static_CFLAGS = $(cflags_fdisk)
-fdisk_static_LDADD = $(ldadd_fdisk)
+fdisk_static_CFLAGS = $(cflags_blkid)
+fdisk_static_LDADD = $(ldadd_blkid)
 endif
 
-fdisk_CFLAGS = $(cflags_fdisk)
-fdisk_LDADD = $(ldadd_fdisk)
-
+fdisk_CFLAGS = $(cflags_blkid)
+fdisk_LDADD = $(ldadd_blkid)
 
 if !ARCH_SPARC
 
@@ -55,13 +54,15 @@ if USE_SLANG
 sbin_PROGRAMS += cfdisk
 dist_man_MANS += cfdisk.8
 cfdisk_SOURCES = cfdisk.c $(fdisk_common)
-cfdisk_LDADD = -lslang
+cfdisk_CFLAGS = $(cflags_blkid)
+cfdisk_LDADD = -lslang $(ldadd_blkid)
 else
 if HAVE_NCURSES
 sbin_PROGRAMS += cfdisk
 dist_man_MANS += cfdisk.8
 cfdisk_SOURCES = cfdisk.c $(fdisk_common)
-cfdisk_LDADD = @NCURSES_LIBS@
+cfdisk_CFLAGS = $(cflags_blkid)
+cfdisk_LDADD = @NCURSES_LIBS@ $(ldadd_blkid)
 endif
 endif
 
