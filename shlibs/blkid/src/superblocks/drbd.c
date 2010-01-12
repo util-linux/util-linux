@@ -78,7 +78,8 @@ static int probe_drbd(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_probe_get_buffer(pr,
 		off,
 		sizeof(struct md_on_disk_08));
-
+	if (!md)
+		return -1;
 
 	if (be32_to_cpu(md->magic) != DRBD_MD_MAGIC_08)
 		return -1;
