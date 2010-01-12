@@ -13,6 +13,7 @@ libmount_la_SOURCES = $(mountinc_HEADERS)
 
 nodist_libmount_la_SOURCES = mount.h version.c utils.c test.c init.c cache.c \
 			optstr.c optmap.c optent.c optls.c iter.c list.h lock.c \
+			fs.c \
 			$(top_srcdir)/lib/canonicalize.c
 
 libmount_la_LIBADD = $(ul_libblkid_la)

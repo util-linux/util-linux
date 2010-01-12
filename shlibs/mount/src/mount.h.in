@@ -88,6 +88,14 @@ struct mnt_optmap
 #define MNT_INVERT	(1 << 3) /* invert the mountflag */
 #define MNT_NOMTAB	(1 << 4) /* skip in the mtab option string */
 
+/**
+ * mnt_fs:
+ *
+ * Parsed fstab/mtab/mountinfo entry
+ */
+typedef struct _mnt_fs mnt_fs;
+
+
 /* version.c */
 extern int mnt_parse_version_string(const char *ver_string);
 extern int mnt_get_library_version(const char **ver_string);
@@ -191,6 +199,43 @@ extern const char *mnt_lock_get_linkfile(mnt_lock *ml);
 extern void mnt_unlock_file(mnt_lock *ml);
 extern int mnt_lock_file(mnt_lock *ml);
 
+/* fs.c */
+extern mnt_fs *mnt_new_fs(void);
+extern void mnt_free_fs(mnt_fs *ent);
+extern const char *mnt_fs_get_source(mnt_fs *ent);
+extern int mnt_fs_set_source(mnt_fs *ent, const char *source);
+extern const char *mnt_fs_get_srcpath(mnt_fs *ent);
+extern int mnt_fs_get_tag(mnt_fs *ent, const char **name, const char **value);
+extern const char *mnt_fs_get_target(mnt_fs *ent);
+extern int mnt_fs_set_target(mnt_fs *ent, const char *target);
+extern const char *mnt_fs_get_fstype(mnt_fs *ent);
+extern int mnt_fs_set_fstype(mnt_fs *ent, const char *fstype);
+extern const char *mnt_fs_get_optstr(mnt_fs *ent);
+extern int mnt_fs_set_optstr(mnt_fs *ent, const char *optstr);
+extern const char *mnt_fs_get_optfs(mnt_fs *ent);
+extern const char *mnt_fs_get_optvfs(mnt_fs *ent);
+extern int mnt_fs_get_freq(mnt_fs *ent);
+extern int mnt_fs_set_freq(mnt_fs *ent, int freq);
+extern int mnt_fs_get_passno(mnt_fs *ent);
+extern int mnt_fs_set_passno(mnt_fs *ent, int passno);
+extern int mnt_fs_get_option(mnt_fs *ent, const char *name,
+				char **value, size_t *valsz);
+
+/* mtab/fstab line */
+#define MNT_MFILE_PRINTFMT	"%s %s %s %s %d %d\n"
+
+extern int mnt_fprintf_line(
+                        FILE *f,
+                        const char *fmt,
+                        const char *source,
+                        const char *target,
+                        const char *fstype,
+                        const char *options,
+                        int freq,
+                        int passno);
+
+extern int mnt_fs_fprintf(mnt_fs *ent, FILE *f, const char *fmt);
+extern int mnt_fs_print_debug(mnt_fs *ent, FILE *file);
 
 /*
  * mount(8) userspace options masks (MNT_MAP_USERSPACE map)

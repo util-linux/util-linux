@@ -126,6 +126,42 @@ struct _mnt_optls {
 	struct list_head	opts;	/* list of options */
 };
 
+/*
+ * This struct represents one entry in mtab/fstab/mountinfo file.
+ */
+struct _mnt_fs {
+	struct list_head ents;
+
+	int		id;		/* mountinfo[1]: ID */
+	int		parent;		/* moutninfo[2]: parent */
+
+	char		*source;	/* fstab[1]: mountinfo[10]:
+                                         * source dev, file, dir or TAG */
+	char		*tagname;	/* fstab[1]: tag name - "LABEL", "UUID", ..*/
+	char		*tagval;	/*           tag value */
+
+	char		*mntroot;	/* mountinfo[4]: root of the mount within the FS */
+	char		*target;	/* mountinfo[5], fstab[2]: mountpoint */
+	char		*fstype;	/* mountinfo[9], fstab[3]: filesystem type */
+
+	char		*optstr;	/* mountinfo[6,11], fstab[4]: option string */
+	char		*vfs_optstr;	/* mountinfo[6]: fs-independent (VFS) options */
+	char		*fs_optstr;	/* mountinfo[11]: fs-depend options */
+
+	int		freq;		/* fstab[5]:  dump frequency in days */
+	int		passno;		/* fstab[6]: pass number on parallel fsck */
+
+	int		flags;		/* MNT_ENTRY_* flags */
+	int		lineno;		/* line number in the parental file */
+};
+
+/*
+ * fs flags
+ */
+#define MNT_FS_ERROR	(1 << 1) /* broken entry */
+#define MNT_FS_PSEUDO	(1 << 2) /* pseudo filesystem */
+#define MNT_FS_NET	(1 << 3) /* network filesystem */
+
 /* optmap.c */
 extern const struct mnt_optmap *mnt_optmap_get_entry(struct mnt_optmap const **maps,
                              int nmaps, const char *name,
@@ -149,5 +185,8 @@ extern mnt_optent *mnt_new_optent_from_optstr(char **optstr,
 extern int mnt_optent_assign_map(mnt_optent *op,
 	                        struct mnt_optmap const **maps, int nmaps);
 
+/* fs.c */
+extern int __mnt_fs_set_source(mnt_fs *fs, char *source);
+extern int __mnt_fs_set_fstype(mnt_fs *fs, char *fstype);
 
 #endif /* _LIBMOUNT_PRIVATE_H */
