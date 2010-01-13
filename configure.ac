@@ -116,7 +116,6 @@ AC_CHECK_HEADERS(
 	net/if_dl.h \
         netinet/in.h \
 	rpcsvc/nfs_prot.h \
-	scsi/scsi.h \
 	stdlib.h \
 	sys/disk.h \
 	sys/disklabel.h \
