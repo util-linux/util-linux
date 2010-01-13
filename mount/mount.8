@@ -1267,7 +1267,11 @@ in files after a crash and journal recovery.
 .TP
 .BR barrier=0 " / "  barrier=1 "
 This enables/disables barriers.  barrier=0 disables it, barrier=1 enables it.
-The ext3 filesystem does not enable write barriers by default.
+Write barriers enforce proper on-disk ordering of journal commits, making
+volatile disk write caches safe to use, at some performance penalty.  The ext3
+filesystem does not enable write barriers by default.  Be sure to enable
+barriers unless your disks are battery-backed one way or another.  Otherwise
+you risk filesystem corruption in case of power failure.
 .TP
 .BI commit= nrsec
 Sync all data and metadata every
@@ -1932,6 +1936,15 @@ manual page.
 Enable POSIX Access Control Lists. See the
 .BR acl (5)
 manual page.
+.TP
+.BR barrier=none " / "  barrier=flush "
+This enables/disables the use of write barriers in the journaling code.
+barrier=none disables it, barrier=flush enables it. Write barriers enforce
+proper on-disk ordering of journal commits, making volatile disk write caches
+safe to use, at some performance penalty. The reiserfs filesystem does not
+enable write barriers by default. Be sure to enable barriers unless your disks
+are battery-backed one way or another. Otherwise you risk filesystem
+corruption in case of power failure.
 
 .SH "Mount options for romfs"
 None.
