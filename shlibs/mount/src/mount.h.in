@@ -95,6 +95,13 @@ struct mnt_optmap
  */
 typedef struct _mnt_fs mnt_fs;
 
+/**
+ * mnt_tab:
+ *
+ * List of mnt_fs entries (parsed fstab/mtab/mountinfo)
+ */
+typedef struct _mnt_tab mnt_tab;
+
 
 /* version.c */
 extern int mnt_parse_version_string(const char *ver_string);
@@ -236,6 +243,35 @@ extern int mnt_fprintf_line(
 
 extern int mnt_fs_fprintf(mnt_fs *ent, FILE *f, const char *fmt);
 extern int mnt_fs_print_debug(mnt_fs *ent, FILE *file);
+
+/* tab-parse.c */
+extern mnt_tab *mnt_new_tab_from_file(const char *filename);
+extern int mnt_tab_parse_file(mnt_tab *tb);
+extern char *mnt_tab_strerror(mnt_tab *tb, char *buf, size_t buflen);
+extern int mnt_tab_get_nerrs(mnt_tab *tb);
+
+/* tab.c */
+extern mnt_tab *mnt_new_tab(const char *filename);
+extern void mnt_free_tab(mnt_tab *tb);
+extern int mnt_tab_get_nents(mnt_tab *tb);
+extern int mnt_tab_set_cache(mnt_tab *tb, mnt_cache *mpc);
+extern mnt_cache *mnt_tab_get_cache(mnt_tab *tb);
+extern const char *mnt_tab_get_name(mnt_tab *tb);
+extern int mnt_tab_add_fs(mnt_tab *tb, mnt_fs *fs);
+extern int mnt_tab_remove_fs(mnt_tab *tb, mnt_fs *fs);
+extern int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs);
+extern int mnt_tab_set_iter(mnt_tab *tb, mnt_iter *itr, mnt_fs *fs);
+
+extern mnt_fs *mnt_tab_find_target(mnt_tab *tb, const char *path, int direction);
+extern mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction);
+extern mnt_fs *mnt_tab_find_tag(mnt_tab *tb, const char *tag,
+				const char *val, int direction);
+extern mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int direction);
+extern mnt_fs *mnt_tab_find_pair(mnt_tab *tb, const char *srcpath,
+	                        const char *target, int direction);
+extern int mnt_tab_fprintf(mnt_tab *tb, FILE *f, const char *fmt);
+extern int mnt_tab_update_file(mnt_tab *tb);
+
 
 /*
  * mount(8) userspace options masks (MNT_MAP_USERSPACE map)

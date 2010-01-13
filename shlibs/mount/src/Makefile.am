@@ -13,7 +13,7 @@ libmount_la_SOURCES = $(mountinc_HEADERS)
 
 nodist_libmount_la_SOURCES = mount.h version.c utils.c test.c init.c cache.c \
 			optstr.c optmap.c optent.c optls.c iter.c list.h lock.c \
-			fs.c \
+			fs.c tab.c tab_parse.c \
 			$(top_srcdir)/lib/canonicalize.c
 
 libmount_la_LIBADD = $(ul_libblkid_la)
@@ -42,7 +42,8 @@ uninstall-hook:
 	rm -f $(DESTDIR)$(libdir)/libmount.so*
 
 # tests
-noinst_PROGRAMS = test_version test_cache test_optstr test_optls test_lock
+noinst_PROGRAMS = test_version test_cache test_optstr test_optls test_lock \
+		  test_tab
 tests_cppflags = $(AM_CPPFLAGS) -DTEST_PROGRAM
 tests_ldadd = .libs/libmount.a $(ul_libblkid_la)
 
@@ -65,3 +66,7 @@ test_optls_LDADD = $(tests_ldadd)
 test_lock_SOURCES = lock.c
 test_lock_CPPFLAGS = $(tests_cppflags)
 test_lock_LDADD = $(tests_ldadd)
+
+test_tab_SOURCES = tab_parse.c tab.c
+test_tab_CPPFLAGS = $(tests_cppflags)
+test_tab_LDADD = $(tests_ldadd)

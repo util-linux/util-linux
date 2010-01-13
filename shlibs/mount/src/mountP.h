@@ -35,6 +35,7 @@
 #define DEBUG_CACHE	(1 << 2)
 #define DEBUG_OPTIONS	(1 << 3)
 #define DEBUG_LOCKS	(1 << 4)
+#define DEBUG_TAB	(1 << 5)
 #define DEBUG_ALL	0xFFFF
 
 #ifdef CONFIG_LIBMOUNT_DEBUG
@@ -162,6 +163,31 @@ struct _mnt_fs {
 #define MNT_FS_PSEUDO	(1 << 2) /* pseudo filesystem */
 #define MNT_FS_NET	(1 << 3) /* network filesystem */
 
+/*
+ * File format
+ */
+enum {
+       MNT_FMT_FSTAB = 1,              /* /etc/{fs,m}tab */
+       MNT_FMT_MOUNTINFO               /* /proc/#/mountinfo */
+};
+
+/*
+ * mtab/fstab/mountinfo file
+ */
+struct _mnt_tab {
+	char		*filename;	/* file name or NULL */
+	int		fmt;		/* MNT_FMT_* file format */
+
+	int		nlines;		/* number of lines in the file (include commentrys) */
+	int		nents;		/* number of valid entries */
+	int		nerrs;		/* number of broken entries (parse errors) */
+
+	mnt_cache	*cache;		/* canonicalized paths/tags cache */
+
+	struct list_head	ents;	/* list of entries (mentry) */
+};
+
+
 /* optmap.c */
 extern const struct mnt_optmap *mnt_optmap_get_entry(struct mnt_optmap const **maps,
                              int nmaps, const char *name,
@@ -188,5 +214,7 @@ extern int mnt_optent_assign_map(mnt_optent *op,
 /* fs.c */
 extern int __mnt_fs_set_source(mnt_fs *fs, char *source);
 extern int __mnt_fs_set_fstype(mnt_fs *fs, char *fstype);
+
+
 
 #endif /* _LIBMOUNT_PRIVATE_H */

@@ -112,9 +112,6 @@ static int mnt_cache_add_entry(mnt_cache *cache, char *native,
 	e->flag = flag;
 	cache->nents++;
 
-	DBG(DEBUG_CACHE,
-		printf("cache: [%zd entry] added %s\n", cache->nents, real));
-
 	return 0;
 }
 
@@ -146,6 +143,8 @@ static int mnt_cache_add_tag(mnt_cache *cache, const char *token,
 
 	if (mnt_cache_add_entry(cache, native, real, flag))
 		goto error;
+	DBG(DEBUG_CACHE,
+		printf("cache: added %s: %s=%s\n", real, token, value));
 	return 0;
 error:
 	free(native);
@@ -236,6 +235,9 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 
 	if (!cache || !devname)
 		return -1;
+
+
+	DBG(DEBUG_CACHE, printf("cache: tags for %s requested\n", devname));
 
 	/* check is device is already cached */
 	for (i = 0; i < cache->nents; i++) {
@@ -352,7 +354,7 @@ char *mnt_resolve_path(const char *path, mnt_cache *cache)
 		}
 	}
 
-	DBG(DEBUG_CACHE, printf("cache: %s --> %s\n", path, p));
+	DBG(DEBUG_CACHE, printf("cache: added %s: %s\n", path, p));
 	return p;
 error:
 	if (real != native)
