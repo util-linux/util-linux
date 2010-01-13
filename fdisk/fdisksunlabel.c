@@ -22,11 +22,6 @@
 #include "blkdev.h"
 
 #include <endian.h>
-#ifdef HAVE_SCSI_SCSI_H
-#define u_char	unsigned char
-#include <scsi/scsi.h>		/* SCSI_IOCTL_GET_IDLUN */
-#undef u_char
-#endif
 #ifdef HAVE_LINUX_MAJOR_H
 #include <linux/major.h>	/* FLOPPY_MAJOR */
 #endif
