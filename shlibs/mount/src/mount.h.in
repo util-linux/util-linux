@@ -181,7 +181,7 @@ extern int mnt_optls_remove_option_by_flags(mnt_optls *ls,
                 const struct mnt_optmap *map, const int flags);
 extern int mnt_optls_remove_option_by_iflags(mnt_optls *ls,
                 const struct mnt_optmap *map, const int flags);
-extern int mnt_optls_iterate_options(mnt_iter *itr, mnt_optls *ls,
+extern int mnt_optls_next_option(mnt_optls *ls, mnt_iter *itr,
                 const struct mnt_optmap *map, mnt_optent **option);
 extern mnt_optent *mnt_optls_get_option(mnt_optls *ls, const char *name);
 extern int mnt_optls_get_ids(mnt_optls *ls, const struct mnt_optmap *map);

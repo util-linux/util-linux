@@ -94,7 +94,7 @@ int mnt_optls_add_map(mnt_optls *ls, const struct mnt_optmap *map)
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-	while(mnt_optls_iterate_options(&itr, ls, NULL, &op) == 0) {
+	while(mnt_optls_next_option(ls, &itr, NULL, &op) == 0) {
 		if (!mnt_optent_is_unknown(op))
 			continue;
 		if (mnt_optent_assign_map(op, &map, 1) == -1)
@@ -169,7 +169,7 @@ mnt_optent *mnt_optls_add_option(mnt_optls *ls,
  * possible to call this function more than once. The new options from @optstr
  * will be appended to the container.
 *
- * The options are accessible by mnt_optls_iterate_options().
+ * The options are accessible by mnt_optls_next_option().
  *
  * If the @optls container is associated with any options map(s), all new
  * options are verified according to the descriptions from the map(s).
@@ -339,8 +339,9 @@ int mnt_optls_remove_option_by_iflags(mnt_optls *ls,
 }
 
 /**
- * mnt_optls_iterate_options:
+ * mnt_optls_next_option:
  * @ls: pointer to mnt_optls instance
+ * @itr: iterator
  * @map: pointer to the map of wanted options or NULL for all options
  * @option: returns pointer to the option object
  *
@@ -351,12 +352,12 @@ int mnt_optls_remove_option_by_iflags(mnt_optls *ls,
  *
  *     mnt_optls_parse_optstr(ls, "noexec,nodev");
  *
- *     while(mnt_optls_iterate_options(itr, ls, NULL, &option ))
+ *     while(mnt_optls_next_option(ls, itr, NULL, &option))
  *         printf("%s\n", mnt_optent_get_name(option)));
  *
  * Returns 0 on succes, -1 in case of error or 1 at end of list.
  */
-int mnt_optls_iterate_options(mnt_iter *itr, mnt_optls *ls,
+int mnt_optls_next_option(mnt_optls *ls, mnt_iter *itr,
 		const struct mnt_optmap *map, mnt_optent **option)
 {
 	assert(itr);
@@ -395,7 +396,7 @@ mnt_optent *mnt_optls_get_option(mnt_optls *ls, const char *name)
 		return NULL;
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-	while(mnt_optls_iterate_options(&itr, ls, NULL, &op) == 0) {
+	while(mnt_optls_next_option(ls, &itr, NULL, &op) == 0) {
 		const char *n = mnt_optent_get_name(op);
 
 		if (n && !strcmp(n, name))
@@ -428,7 +429,7 @@ int mnt_optls_get_ids(mnt_optls *ls, const struct mnt_optmap *map)
 		return 0;
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-	while(mnt_optls_iterate_options(&itr, ls, map, &op) == 0)
+	while(mnt_optls_next_option(ls, &itr, map, &op) == 0)
 		mnt_optent_get_flag(op, &flags);
 
 	DBG(DEBUG_OPTIONS, fprintf(stderr,
@@ -456,7 +457,7 @@ int mnt_optls_create_mountflags(mnt_optls *ls)
 		return 0;
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-	while(mnt_optls_iterate_options(&itr, ls, NULL, &op) == 0) {
+	while(mnt_optls_next_option(ls, &itr, NULL, &op) == 0) {
 		if (!(op->mask & MNT_MFLAG))
 			continue;
 		mnt_optent_get_flag(op, &flags);
@@ -486,7 +487,7 @@ char *mnt_optls_create_mountdata(mnt_optls *ls)
 		return NULL;
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-	while(mnt_optls_iterate_options(&itr, ls, NULL, &op) == 0) {
+	while(mnt_optls_next_option(ls, &itr, NULL, &op) == 0) {
 		if (!(op->mask & MNT_MDATA) && !mnt_optent_is_unknown(op))
 			continue;
 		if (mnt_optstr_append_option(&optstr,
@@ -523,7 +524,7 @@ char *mnt_optls_create_mtab_optstr(mnt_optls *ls)
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-	while(mnt_optls_iterate_options(&itr, ls, NULL, &op) == 0) {
+	while(mnt_optls_next_option(ls, &itr, NULL, &op) == 0) {
 		if (op->mask & MNT_NOMTAB)
 			continue;
 		if (mnt_optstr_append_option(&optstr,
@@ -560,7 +561,7 @@ char *mnt_optls_create_userspace_optstr(mnt_optls *ls)
 		return NULL;
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
-	while(mnt_optls_iterate_options(&itr, ls, NULL, &op) == 0) {
+	while(mnt_optls_next_option(ls, &itr, NULL, &op) == 0) {
 		if (mnt_optent_is_unknown(op))
 			continue;
 		if (op->mask & (MNT_MDATA | MNT_MFLAG | MNT_NOMTAB))
@@ -599,7 +600,7 @@ int mnt_optls_print_debug(mnt_optls *ls, FILE *file)
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 
 	fprintf(file, "--- opts: %p\n", ls);
-	while(mnt_optls_iterate_options(&itr, ls, NULL, &op) == 0)
+	while(mnt_optls_next_option(ls, &itr, NULL, &op) == 0)
 		mnt_optent_print_debug(op, file);
 
 	return 0;
