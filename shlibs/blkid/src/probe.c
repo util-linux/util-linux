@@ -470,6 +470,102 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 	return 0;
 }
 
+static int blkid_probe_has_buffer(blkid_probe pr,
+				blkid_loff_t off, blkid_loff_t len)
+{
+	return pr && (off + len <= pr->sbbuf_len ||
+		     (pr->buf_off < off && off + len < pr->buf_len));
+}
+
+/*
+ * Returns buffer from the begin (69kB) of the device.
+ */
+static unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr,
+				blkid_loff_t off, blkid_loff_t len)
+{
+	if (off + len > BLKID_SB_BUFSIZ)
+		return NULL;
+	if (!pr->sbbuf) {
+		pr->sbbuf = malloc(BLKID_SB_BUFSIZ);
+		if (!pr->sbbuf)
+			return NULL;
+	}
+	if (off + len > pr->sbbuf_len) {
+		/*
+		 * The sbbuf is not completely in memory.
+		 *
+		 * We don't read whole BLKID_SB_BUFSIZ by one read(), it's too
+		 * aggresive to small devices (floppies). We read necessary
+		 * data to complete the current request (off + len) only.
+		 */
+		ssize_t	ret_read;
+
+		blkid_loff_t have = pr->sbbuf_len,
+			     want = off + len - have;
+
+		DBG(DEBUG_LOWPROBE,
+			printf("\tsb-buffer read() off=%jd len=%jd\n", have, want));
+
+		if (lseek(pr->fd, pr->off + have, SEEK_SET) < 0)
+			return NULL;
+
+		ret_read = read(pr->fd, pr->sbbuf + have, want);
+		if (ret_read < 0)
+			ret_read = 0;
+		pr->sbbuf_len = have + ret_read;
+	}
+	if (off + len > pr->sbbuf_len)
+		return NULL;
+	return pr->sbbuf + off;
+}
+
+/*
+ * Returns pointer to the buffer on arbitrary offset on the device
+ */
+unsigned char *blkid_probe_get_extra_buffer(blkid_probe pr,
+				blkid_loff_t off, blkid_loff_t len)
+{
+	unsigned char *newbuf = NULL;
+
+	if (off + len <= BLKID_SB_BUFSIZ &&
+	    (!blkid_probe_is_tiny(pr) || blkid_probe_has_buffer(pr, off, len)))
+		/*
+		 * Don't use extra buffer for superblock data if
+		 *	- data are already in SB buffer
+		 *	- or the device is large and we needn't extra
+		 *	  optimalization for tiny devices
+		 */
+		return blkid_probe_get_sb_buffer(pr, off, len);
+
+	if (len > pr->buf_max) {
+		newbuf = realloc(pr->buf, len);
+		if (!newbuf)
+			return NULL;
+		pr->buf = newbuf;
+		pr->buf_max = len;
+		pr->buf_off = 0;
+		pr->buf_len = 0;
+	}
+	if (newbuf || off < pr->buf_off ||
+	    off + len > pr->buf_off + pr->buf_len) {
+		ssize_t ret_read;
+
+		if (blkid_llseek(pr->fd, pr->off + off, SEEK_SET) < 0)
+			return NULL;
+
+		DBG(DEBUG_LOWPROBE,
+			printf("\textra-buffer read: off=%jd len=%jd\n", off, len));
+
+		ret_read = read(pr->fd, pr->buf, len);
+		if (ret_read != (ssize_t) len)
+			return NULL;
+		pr->buf_off = off;
+		pr->buf_len = len;
+	}
+	return off ? pr->buf + (off - pr->buf_off) : pr->buf;
+}
+
+
 /*
  * @off: offset within probing area
  * @len: size of requested buffer
@@ -493,62 +589,16 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 				blkid_loff_t off, blkid_loff_t len)
 {
-	ssize_t ret_read = 0;
-
 	if (off < 0 || len < 0) {
 		DBG(DEBUG_LOWPROBE,
 			printf("unexpected offset or length of buffer requested\n"));
 		return NULL;
 	}
-
 	if (off + len > pr->size)
 		return NULL;
-
-	DBG(DEBUG_LOWPROBE,
-		printf("\tbuffer: offset=%jd size=%jd\n", off, len));
-
-	if (off + len <= BLKID_SB_BUFSIZ) {
-		if (!pr->sbbuf) {
-			pr->sbbuf = malloc(BLKID_SB_BUFSIZ);
-			if (!pr->sbbuf)
-				return NULL;
-		}
-		if (!pr->sbbuf_len) {
-			if (lseek(pr->fd, pr->off, SEEK_SET) < 0)
-				return NULL;
-			ret_read = read(pr->fd, pr->sbbuf, BLKID_SB_BUFSIZ);
-			if (ret_read < 0)
-				ret_read = 0;
-			pr->sbbuf_len = ret_read;
-		}
-		if (off + len > pr->sbbuf_len)
-			return NULL;
-		return pr->sbbuf + off;
-	} else {
-		unsigned char *newbuf = NULL;
-
-		if (len > pr->buf_max) {
-			newbuf = realloc(pr->buf, len);
-			if (!newbuf)
-				return NULL;
-			pr->buf = newbuf;
-			pr->buf_max = len;
-			pr->buf_off = 0;
-			pr->buf_len = 0;
-		}
-		if (newbuf || off < pr->buf_off ||
-		    off + len > pr->buf_off + pr->buf_len) {
-			if (blkid_llseek(pr->fd, pr->off + off, SEEK_SET) < 0)
-				return NULL;
-
-			ret_read = read(pr->fd, pr->buf, len);
-			if (ret_read != (ssize_t) len)
-				return NULL;
-			pr->buf_off = off;
-			pr->buf_len = len;
-		}
-		return off ? pr->buf + (off - pr->buf_off) : pr->buf;
-	}
+	if (off + len <= BLKID_SB_BUFSIZ)
+		return blkid_probe_get_sb_buffer(pr, off, len);
+	return blkid_probe_get_extra_buffer(pr, off, len);
 }
 
 /*
@@ -620,7 +670,6 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 	if (!pr->size)
 		goto err;
-
 	DBG(DEBUG_LOWPROBE, printf("ready for low-probing, offset=%zd, size=%zd\n",
 				pr->off, pr->size));
 	return 0;
