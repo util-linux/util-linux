@@ -471,17 +471,23 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 }
 
 /*
+ * @off: offset within probing area
+ * @len: size of requested buffer
+ *
+ * The probing area is between pr->off and pr->size. The @off = 0 is pr->off, the
+ * max @len is pr->size.
+ *
  * Note that we have two offsets:
  *
  *	1/ general device offset (pr->off), that's useful for example when we
  *	   probe a partition from whole disk image:
- *	               blkid-low --offset  <partition_position> disk.img
+ *	               blkid -O <partition_position> -S <size> disk.img
  *
- *	2/ buffer offset (the 'off' argument), that useful for offsets in
+ *	2/ buffer offset (the @off argument), that useful for offsets in
  *	   superbloks, ...
  *
- *	That means never use lseek(fd, 0, SEEK_SET), the zero position is always
- *	pr->off, so lseek(fd, pr->off, SEEK_SET).
+ * That means never use lseek(fd, 0, SEEK_SET), the zero position is always
+ * pr->off, so lseek(fd, pr->off, SEEK_SET).
  *
  */
 unsigned char *blkid_probe_get_buffer(blkid_probe pr,
@@ -494,6 +500,13 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 			printf("unexpected offset or length of buffer requested\n"));
 		return NULL;
 	}
+
+	if (off + len > pr->size)
+		return NULL;
+
+	DBG(DEBUG_LOWPROBE,
+		printf("\tbuffer: offset=%jd size=%jd\n", off, len));
+
 	if (off + len <= BLKID_SB_BUFSIZ) {
 		if (!pr->sbbuf) {
 			pr->sbbuf = malloc(BLKID_SB_BUFSIZ);
@@ -525,7 +538,6 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 		}
 		if (newbuf || off < pr->buf_off ||
 		    off + len > pr->buf_off + pr->buf_len) {
-
 			if (blkid_llseek(pr->fd, pr->off + off, SEEK_SET) < 0)
 				return NULL;
 
@@ -537,6 +549,14 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 		}
 		return off ? pr->buf + (off - pr->buf_off) : pr->buf;
 	}
+}
+
+/*
+ * Small devices need a special care.
+ */
+int blkid_probe_is_tiny(blkid_probe pr)
+{
+	return (pr && pr->size <= 1440 * 1024 && !S_ISCHR(pr->mode));
 }
 
 /**
@@ -589,6 +609,13 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 		if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode))
 			pr->devno = sb.st_rdev;
+
+		if (pr->off > pr->size)
+			goto err;
+
+		/* The probing area cannot be larger than whole device, pr->off
+		 * is offset within the device */
+		pr->size -= pr->off;
 	}
 
 	if (!pr->size)
