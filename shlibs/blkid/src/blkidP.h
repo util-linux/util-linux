@@ -357,7 +357,9 @@ extern blkid_dev blkid_new_dev(void);
 extern void blkid_free_dev(blkid_dev dev);
 
 /* probe.c */
-unsigned char *blkid_probe_get_buffer(blkid_probe pr,
+extern int blkid_probe_is_tiny(blkid_probe pr);
+
+extern unsigned char *blkid_probe_get_buffer(blkid_probe pr,
                                 blkid_loff_t off, blkid_loff_t len);
 
 extern unsigned char *blkid_probe_get_sector(blkid_probe pr, unsigned int sector);
