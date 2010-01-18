@@ -111,22 +111,29 @@ struct fat32_fsinfo {
 
 static const char *no_name = "NO NAME    ";
 
-static unsigned char *search_fat_label(struct vfat_dir_entry *dir, int count)
+static unsigned char *search_fat_label(blkid_probe pr,
+				uint32_t offset, uint32_t entries)
 {
+	struct vfat_dir_entry *dir;
 	int i;
 
-	for (i = 0; i < count; i++) {
-		if (dir[i].name[0] == 0x00)
+	for (i = 0; i < entries; i++) {
+
+		dir = (struct vfat_dir_entry *)
+				blkid_probe_get_extra_buffer(pr,
+					offset + (i * sizeof(struct vfat_dir_entry)),
+					sizeof(struct vfat_dir_entry));
+		if (dir->name[0] == 0x00)
 			break;
 
-		if ((dir[i].name[0] == FAT_ENTRY_FREE) ||
-		    (dir[i].cluster_high != 0 || dir[i].cluster_low != 0) ||
-		    ((dir[i].attr & FAT_ATTR_MASK) == FAT_ATTR_LONG_NAME))
+		if ((dir->name[0] == FAT_ENTRY_FREE) ||
+		    (dir->cluster_high != 0 || dir->cluster_low != 0) ||
+		    ((dir->attr & FAT_ATTR_MASK) == FAT_ATTR_LONG_NAME))
 			continue;
 
-		if ((dir[i].attr & (FAT_ATTR_VOLUME_ID | FAT_ATTR_DIR)) ==
+		if ((dir->attr & (FAT_ATTR_VOLUME_ID | FAT_ATTR_DIR)) ==
 		    FAT_ATTR_VOLUME_ID) {
-			return dir[i].name;
+			return dir->name;
 		}
 	}
 	return 0;
@@ -188,14 +195,14 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct vfat_super_block *vs;
 	struct msdos_super_block *ms;
-	struct vfat_dir_entry *dir;
 	const unsigned char *vol_label = 0, *tmp;
-	unsigned char	*vol_serno;
+	unsigned char *vol_serno, vol_label_buf[11];
 	int maxloop = 100;
 	uint16_t sector_size, dir_entries, reserved;
 	uint32_t sect_count, fat_size, dir_size, cluster_count, fat_length;
 	uint32_t buf_size, start_data_sect, next, root_start, root_dir_entries;
 	const char *version = NULL;
+
 
 
 	/* non-standard magic strings */
@@ -247,12 +254,11 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 		root_dir_entries = vs->vs_dir_entries[0] +
 			(vs->vs_dir_entries[1] << 8);
 
-		buf_size = root_dir_entries * sizeof(struct vfat_dir_entry);
-
-		dir = (struct vfat_dir_entry *)
-			blkid_probe_get_extra_buffer(pr, root_start, buf_size);
-		if (dir)
-			vol_label = search_fat_label(dir, root_dir_entries);
+		vol_label = search_fat_label(pr, root_start, root_dir_entries);
+		if (vol_label) {
+			memcpy(vol_label_buf, vol_label, 11);
+			vol_label = vol_label_buf;
+		}
 
 		if (!vol_label || !memcmp(vol_label, no_name, 11))
 			vol_label = ms->ms_label;
@@ -285,16 +291,14 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 			next_off = (start_data_sect + next_sect_off) *
 				sector_size;
 
-			dir = (struct vfat_dir_entry *)
-				blkid_probe_get_extra_buffer(pr, next_off, buf_size);
-			if (dir == NULL)
-				break;
-
 			count = buf_size / sizeof(struct vfat_dir_entry);
 
-			vol_label = search_fat_label(dir, count);
-			if (vol_label)
+			vol_label = search_fat_label(pr, next_off, count);
+			if (vol_label) {
+				memcpy(vol_label_buf, vol_label, 11);
+				vol_label = vol_label_buf;
 				break;
+			}
 
 			/* get FAT entry */
 			fat_entry_off = (reserved * sector_size) +
