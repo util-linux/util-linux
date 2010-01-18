@@ -640,6 +640,10 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	pr->mode = 0;
 	pr->blkssz = 0;
 
+#if defined(POSIX_FADV_RANDOM) && defined(HAVE_POSIX_FADVISE)
+	/* Disable read-ahead */
+	posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
+#endif
 	if (size)
 		pr->size = size;
 	else {

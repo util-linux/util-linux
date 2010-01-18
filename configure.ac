@@ -163,6 +163,7 @@ AC_CHECK_FUNCS(
 	setresuid \
 	inotify_init \
 	prctl \
+	posix_fadvise \
 	getmntinfo \
 	__secure_getenv \
 	rpmatch])
