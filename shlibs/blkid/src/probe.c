@@ -470,7 +470,7 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 	return 0;
 }
 
-static int blkid_probe_has_buffer(blkid_probe pr,
+int blkid_probe_has_buffer(blkid_probe pr,
 				blkid_loff_t off, blkid_loff_t len)
 {
 	return pr && (off + len <= pr->sbbuf_len ||
@@ -494,14 +494,20 @@ static unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr,
 		/*
 		 * The sbbuf is not completely in memory.
 		 *
-		 * We don't read whole BLKID_SB_BUFSIZ by one read(), it's too
-		 * aggresive to small devices (floppies). We read necessary
-		 * data to complete the current request (off + len) only.
 		 */
 		ssize_t	ret_read;
+		blkid_loff_t want, have = pr->sbbuf_len;
 
-		blkid_loff_t have = pr->sbbuf_len,
-			     want = off + len - have;
+		if (blkid_probe_is_tiny(pr))
+			/* We don't read whole BLKID_SB_BUFSIZ by one read(),
+			 * it's too aggresive to small devices (floppies). We
+			 * read necessary data to complete the current request
+			 * (off + len) only.
+			 */
+			want = off + len - have;
+		else
+			/* large disk -- read all SB */
+			want = BLKID_SB_BUFSIZ - have;
 
 		DBG(DEBUG_LOWPROBE,
 			printf("\tsb-buffer read() off=%jd len=%jd\n", have, want));
@@ -606,7 +612,7 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
  */
 int blkid_probe_is_tiny(blkid_probe pr)
 {
-	return (pr && pr->size <= 1440 * 1024 && !S_ISCHR(pr->mode));
+	return pr && (pr->flags & BLKID_TINY_DEV);
 }
 
 /**
@@ -676,6 +682,10 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		goto err;
 	DBG(DEBUG_LOWPROBE, printf("ready for low-probing, offset=%zd, size=%zd\n",
 				pr->off, pr->size));
+
+	if (pr->size <= 1440 * 1024 && !S_ISCHR(pr->mode))
+		pr->flags |= BLKID_TINY_DEV;
+
 	return 0;
 err:
 	DBG(DEBUG_LOWPROBE,
