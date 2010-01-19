@@ -61,6 +61,7 @@ const struct blkid_idinfo jfs_idinfo =
 	.name		= "jfs",
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_jfs,
+	.minsz		= 16 * 1024 * 1024,
 	.magics		=
 	{
 		{ .magic = "JFS1", .len = 4, .kboff = 32 },

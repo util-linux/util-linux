@@ -99,6 +99,7 @@ const struct blkid_idinfo swap_idinfo =
 	.name		= "swap",
 	.usage		= BLKID_USAGE_OTHER,
 	.probefunc	= probe_swap,
+	.minsz		= 10 * 4096,	/* 10 pages */
 	.magics		=
 	{
 		{ "SWAP-SPACE", 10, 0,  0xff6 },
@@ -121,6 +122,7 @@ const struct blkid_idinfo swsuspend_idinfo =
 	.name		= "swsuspend",
 	.usage		= BLKID_USAGE_OTHER,
 	.probefunc	= probe_swsuspend,
+	.minsz		= 10 * 4096,	/* 10 pages */
 	.magics		=
 	{
 		{ "S1SUSPEND", 9, 0, 0xff6 },
