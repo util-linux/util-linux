@@ -108,6 +108,7 @@ const struct blkid_idinfo gfs_idinfo =
 	.name		= "gfs",
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_gfs,
+	.minsz		= 32 * 1024 * 1024,	/* minimal size of GFS journal */
 	.magics		=
 	{
 		{ .magic = "\x01\x16\x19\x70", .len = 4, .kboff = 64 },
@@ -120,6 +121,7 @@ const struct blkid_idinfo gfs2_idinfo =
 	.name		= "gfs2",
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_gfs2,
+	.minsz		= 32 * 1024 * 1024,	/* minimal size of GFS journal */
 	.magics		=
 	{
 		{ .magic = "\x01\x16\x19\x70", .len = 4, .kboff = 64 },
