@@ -155,6 +155,7 @@ struct blkid_idinfo
 	const char	*name;		/* fs, raid or partition table name */
 	int		usage;		/* BLKID_USAGE_* flag */
 	int		flags;		/* BLKID_IDINFO_* flags */
+	int		minsz;		/* minimal device size */
 
 					/* probe function */
 	int		(*probefunc)(blkid_probe pr, const struct blkid_idmag *mag);

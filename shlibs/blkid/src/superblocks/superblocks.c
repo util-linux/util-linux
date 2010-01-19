@@ -331,10 +331,15 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 			continue;
 
 		id = idinfos[i];
+
+		if (id->minsz && id->minsz > pr->size)
+			continue;	/* the device is too small */
+
 		mag = id->magics ? &id->magics[0] : NULL;
 
-		/* don't probe for RAIDs on floppies */
-		if ((id->usage & BLKID_USAGE_RAID) && blkid_probe_is_tiny(pr))
+		/* don't probe for RAIDs, swap or journal on floppies */
+		if ((id->usage & (BLKID_USAGE_RAID | BLKID_USAGE_OTHER)) &&
+		    blkid_probe_is_tiny(pr))
 			continue;
 
 		DBG(DEBUG_LOWPROBE, printf("[%d] %s:\n", i, id->name));

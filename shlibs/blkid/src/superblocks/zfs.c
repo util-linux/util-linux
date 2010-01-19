@@ -54,6 +54,7 @@ const struct blkid_idinfo zfs_idinfo =
 	.name		= "zfs",
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_zfs,
+	.minsz		= 64 * 1024 * 1024,
 	.magics		=
 	{
 		{ .magic = "\0\0\x02\xf5\xb0\x07\xb1\x0c", .len = 8, .kboff = 8 },
