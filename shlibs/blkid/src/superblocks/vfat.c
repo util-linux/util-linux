@@ -111,32 +111,59 @@ struct fat32_fsinfo {
 
 static const char *no_name = "NO NAME    ";
 
+/*
+ * Look for LABEL (name) in the FAT root directory.
+ */
 static unsigned char *search_fat_label(blkid_probe pr,
 				uint32_t offset, uint32_t entries)
 {
-	struct vfat_dir_entry *dir;
+	struct vfat_dir_entry *ent, *dir = NULL;
 	int i;
 
-	for (i = 0; i < entries; i++) {
+	DBG(DEBUG_LOWPROBE,
+		printf("\tlook for label in root-dir "
+			"(entries: %d, offset: %d)\n", entries, offset));
 
+	if (!blkid_probe_is_tiny(pr)) {
+		/* large disk, read whole root directory */
 		dir = (struct vfat_dir_entry *)
+			blkid_probe_get_buffer(pr,
+					offset,
+					entries * sizeof(struct vfat_dir_entry));
+		if (!dir)
+			return NULL;
+	}
+
+	for (i = 0; i < entries; i++) {
+		/*
+		 * The root directory could be relatively large (4-16kB).
+		 * Fortunately, the LABEL is usually the first entry in the
+		 * directory. On tiny disks we call read() per entry.
+		 */
+		if (!dir)
+			ent = (struct vfat_dir_entry *)
 				blkid_probe_get_extra_buffer(pr,
 					offset + (i * sizeof(struct vfat_dir_entry)),
 					sizeof(struct vfat_dir_entry));
-		if (dir->name[0] == 0x00)
+		else
+			ent = &dir[i];
+
+		if (!ent || ent->name[0] == 0x00)
 			break;
 
-		if ((dir->name[0] == FAT_ENTRY_FREE) ||
-		    (dir->cluster_high != 0 || dir->cluster_low != 0) ||
-		    ((dir->attr & FAT_ATTR_MASK) == FAT_ATTR_LONG_NAME))
+		if ((ent->name[0] == FAT_ENTRY_FREE) ||
+		    (ent->cluster_high != 0 || ent->cluster_low != 0) ||
+		    ((ent->attr & FAT_ATTR_MASK) == FAT_ATTR_LONG_NAME))
 			continue;
 
-		if ((dir->attr & (FAT_ATTR_VOLUME_ID | FAT_ATTR_DIR)) ==
+		if ((ent->attr & (FAT_ATTR_VOLUME_ID | FAT_ATTR_DIR)) ==
 		    FAT_ATTR_VOLUME_ID) {
-			return dir->name;
+			DBG(DEBUG_LOWPROBE,
+				printf("\tfound fs LABEL at entry %d\n", i));
+			return ent->name;
 		}
 	}
-	return 0;
+	return NULL;
 }
 
 /*
