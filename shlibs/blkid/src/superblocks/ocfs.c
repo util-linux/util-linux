@@ -174,6 +174,7 @@ const struct blkid_idinfo ocfs_idinfo =
 	.name		= "ocfs",
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_ocfs,
+	.minsz		= 108 * 1024 * 1024,
 	.magics		=
 	{
 		{ .magic = "OracleCFS", .len = 9, .kboff = 8 },
@@ -186,6 +187,7 @@ const struct blkid_idinfo ocfs2_idinfo =
 	.name		= "ocfs2",
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_ocfs2,
+	.minsz		= 108 * 1024 * 1024,
 	.magics		=
 	{
 		{ .magic = "OCFSV2", .len = 6, .kboff = 1 },
@@ -196,6 +198,7 @@ const struct blkid_idinfo ocfs2_idinfo =
 	}
 };
 
+/* Oracle ASM (Automatic Storage Management) */
 const struct blkid_idinfo oracleasm_idinfo =
 {
 	.name		= "oracleasm",
