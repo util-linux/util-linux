@@ -505,6 +505,9 @@ static int idinfo_probe(blkid_probe pr, const struct blkid_idinfo *id)
 	int hasmag = 0;
 	int rc = 1;		/* = nothing detected */
 
+	if (id->minsz && id->minsz > pr->size)
+		goto nothing;	/* the device is too small */
+
 	mag = id->magics ? &id->magics[0] : NULL;
 
 	/* try to detect by magic string */
