@@ -25,7 +25,7 @@ usrlib_exec_LTLIBRARIES = libblkid.la
 libblkid_la_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 		     probe.c read.c resolve.c save.c tag.c version.c verify.c \
 		     encode.c list.h blkidP.h superblocks/superblocks.h \
-		     config.c evaluate.c \
+		     config.c evaluate.c fat.h \
 		     $(blkidinc_HEADERS) \
 		     $(top_srcdir)/lib/blkdev.c \
 		     $(top_srcdir)/lib/linux_version.c \

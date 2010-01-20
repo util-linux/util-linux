@@ -18,62 +18,8 @@
 
 #include "superblocks.h"
 
-/* Yucky misaligned values */
-struct vfat_super_block {
-/* 00*/	unsigned char	vs_ignored[3];
-/* 03*/	unsigned char	vs_sysid[8];
-/* 0b*/	unsigned char	vs_sector_size[2];
-/* 0d*/	uint8_t		vs_cluster_size;
-/* 0e*/	uint16_t	vs_reserved;
-/* 10*/	uint8_t		vs_fats;
-/* 11*/	unsigned char	vs_dir_entries[2];
-/* 13*/	unsigned char	vs_sectors[2];
-/* 15*/	unsigned char	vs_media;
-/* 16*/	uint16_t	vs_fat_length;
-/* 18*/	uint16_t	vs_secs_track;
-/* 1a*/	uint16_t	vs_heads;
-/* 1c*/	uint32_t	vs_hidden;
-/* 20*/	uint32_t	vs_total_sect;
-/* 24*/	uint32_t	vs_fat32_length;
-/* 28*/	uint16_t	vs_flags;
-/* 2a*/	uint8_t		vs_version[2];
-/* 2c*/	uint32_t	vs_root_cluster;
-/* 30*/	uint16_t	vs_fsinfo_sector;
-/* 32*/	uint16_t	vs_backup_boot;
-/* 34*/	uint16_t	vs_reserved2[6];
-/* 40*/	unsigned char	vs_unknown[3];
-/* 43*/	unsigned char	vs_serno[4];
-/* 47*/	unsigned char	vs_label[11];
-/* 52*/	unsigned char   vs_magic[8];
-/* 5a*/	unsigned char	vs_dummy2[0x1fe - 0x5a];
-/*1fe*/	unsigned char	vs_pmagic[2];
-} __attribute__((packed));
-
-/* Yucky misaligned values */
-struct msdos_super_block {
-/* 00*/	unsigned char	ms_ignored[3];
-/* 03*/	unsigned char	ms_sysid[8];
-/* 0b*/	unsigned char	ms_sector_size[2];
-/* 0d*/	uint8_t		ms_cluster_size;
-/* 0e*/	uint16_t	ms_reserved;
-/* 10*/	uint8_t		ms_fats;
-/* 11*/	unsigned char	ms_dir_entries[2];
-/* 13*/	unsigned char	ms_sectors[2]; /* =0 iff V3 or later */
-/* 15*/	unsigned char	ms_media;
-/* 16*/	uint16_t	ms_fat_length; /* Sectors per FAT */
-/* 18*/	uint16_t	ms_secs_track;
-/* 1a*/	uint16_t	ms_heads;
-/* 1c*/	uint32_t	ms_hidden;
-/* V3 BPB */
-/* 20*/	uint32_t	ms_total_sect; /* iff ms_sectors == 0 */
-/* V4 BPB */
-/* 24*/	unsigned char	ms_unknown[3]; /* Phys drive no., resvd, V4 sig (0x29) */
-/* 27*/	unsigned char	ms_serno[4];
-/* 2b*/	unsigned char	ms_label[11];
-/* 36*/	unsigned char   ms_magic[8];
-/* 3e*/	unsigned char	ms_dummy2[0x1fe - 0x3e];
-/*1fe*/	unsigned char	ms_pmagic[2];
-} __attribute__((packed));
+/* {msdos,vfat}_super_block is defined in ../fat.h */
+#include "fat.h"
 
 struct vfat_dir_entry {
 	uint8_t		name[11];
@@ -193,7 +139,7 @@ static int probe_fat_nomagic(blkid_probe pr, const struct blkid_idmag *mag)
 		return 1;
 
 	/* media check */
-	if (ms->ms_media < 0xf8 && ms->ms_media != 0xf0)
+	if (!blkid_fat_valid_media(ms))
 		return 1;
 
 	/* fat counts(Linux kernel expects at least 1 FAT table) */
@@ -230,8 +176,6 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 	uint32_t buf_size, start_data_sect, next, root_start, root_dir_entries;
 	const char *version = NULL;
 
-
-
 	/* non-standard magic strings */
 	if (mag->len <= 2 && probe_fat_nomagic(pr, mag) != 0)
 		return 1;
@@ -245,10 +189,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 		return -1;
 
 	/* sector size check */
-	tmp = (unsigned char *) &ms->ms_sector_size;
-	sector_size = tmp[0] + (tmp[1] << 8);
-	if (sector_size != 0x200 && sector_size != 0x400 &&
-	    sector_size != 0x800 && sector_size != 0x1000)
+	if (!blkid_fat_valid_sectorsize(ms, &sector_size))
 		return 1;
 
 	tmp = (unsigned char *) &ms->ms_dir_entries;
