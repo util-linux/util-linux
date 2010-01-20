@@ -173,6 +173,7 @@ const struct blkid_idinfo unixware_pt_idinfo =
 {
 	.name		= "unixware",
 	.probefunc	= probe_unixware_pt,
+	.minsz		= 1024 * 1440 + 1,		/* ignore floppies */
 	.magics		=
 	{
 		{
