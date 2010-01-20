@@ -16,6 +16,7 @@
 #include "partitions.h"
 #include "dos.h"
 #include "aix.h"
+#include "fat.h"
 
 static const struct dos_subtypes {
 	unsigned char type;
@@ -139,18 +140,30 @@ static int probe_dos_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	if (memcmp(data, BLKID_AIX_MAGIC_STRING, BLKID_AIX_MAGIC_STRLEN) == 0)
 		goto nothing;
 
-	p0 = (struct dos_partition *) (data + BLKID_MSDOS_PT_OFFSET);
-
 	/*
 	 * Now that the 55aa signature is present, this is probably
 	 * either the boot sector of a FAT filesystem or a DOS-type
-	 * partition table. Reject this in case the boot indicator
-	 * is not 0 or 0x80.
+	 * partition table.
 	 */
-	for (p = p0, i = 0; i < 4; i++, p++) {
+	{
+		struct msdos_super_block *ms =
+				(struct msdos_super_block *) data;
+
+		if (ms->ms_fats && ms->ms_reserved &&
+		    ms->ms_cluster_size &&
+		    blkid_fat_valid_media(ms) &&
+		    blkid_fat_valid_sectorsize(ms, NULL))
+			goto nothing;		/* FAT */
+	}
+
+	p0 = (struct dos_partition *) (data + BLKID_MSDOS_PT_OFFSET);
+
+	/*
+	 * Reject PT where boot indicator is not 0 or 0x80.
+	 */
+	for (p = p0, i = 0; i < 4; i++, p++)
 		if (p->boot_ind != 0 && p->boot_ind != 0x80)
 			goto nothing;
-	}
 
 	/*
 	 * GPT uses valid MBR
