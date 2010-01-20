@@ -115,6 +115,7 @@ static const struct blkid_chaindrv *chains_drvs[] = {
 };
 
 static void blkid_probe_reset_vals(blkid_probe pr);
+static void blkid_probe_reset_buffer(blkid_probe pr);
 
 /**
  * blkid_new_probe:
@@ -137,6 +138,7 @@ blkid_probe blkid_new_probe(void)
 		pr->chains[i].flags = chains_drvs[i]->dflt_flags;
 		pr->chains[i].enabled = chains_drvs[i]->dflt_enabled;
 	}
+	INIT_LIST_HEAD(&pr->buffers);
 	return pr;
 }
 
@@ -202,24 +204,11 @@ void blkid_free_probe(blkid_probe pr)
 			ch->driver->free_data(pr, ch->data);
 		free(ch->fltr);
 	}
-	free(pr->buf);
-	free(pr->sbbuf);
 
 	if ((pr->flags & BLKID_PRIVATE_FD) && pr->fd >= 0)
 		close(pr->fd);
+	blkid_probe_reset_buffer(pr);
 	free(pr);
-}
-
-static void blkid_probe_reset_buffer(blkid_probe pr)
-{
-	DBG(DEBUG_LOWPROBE, printf("reseting blkid probe buffer\n"));
-	if (pr->buf)
-		memset(pr->buf, 0, pr->buf_max);
-	pr->buf_off = 0;
-	pr->buf_len = 0;
-	if (pr->sbbuf)
-		memset(pr->sbbuf, 0, BLKID_SB_BUFSIZ);
-	pr->sbbuf_len = 0;
 }
 
 
@@ -470,141 +459,79 @@ int __blkid_probe_filter_types(blkid_probe pr, int chain, int flag, char *names[
 	return 0;
 }
 
-int blkid_probe_has_buffer(blkid_probe pr,
+unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 				blkid_loff_t off, blkid_loff_t len)
 {
-	return pr && (off + len <= pr->sbbuf_len ||
-		     (pr->buf_off < off && off + len < pr->buf_len));
-}
+	struct list_head *p;
+	struct blkid_bufinfo *bf = NULL;
 
-/*
- * Returns buffer from the begin (69kB) of the device.
- */
-static unsigned char *blkid_probe_get_sb_buffer(blkid_probe pr,
-				blkid_loff_t off, blkid_loff_t len)
-{
-	if (off + len > BLKID_SB_BUFSIZ)
-		return NULL;
-	if (!pr->sbbuf) {
-		pr->sbbuf = malloc(BLKID_SB_BUFSIZ);
-		if (!pr->sbbuf)
-			return NULL;
+	list_for_each(p, &pr->buffers) {
+		struct blkid_bufinfo *x =
+				list_entry(p, struct blkid_bufinfo, bufs);
+
+		if (x->off <= off && off + len <= x->off + x->len) {
+			DBG(DEBUG_LOWPROBE,
+				printf("\treuse buffer: off=%jd len=%jd\n",
+							x->off, x->len));
+			bf = x;
+			break;
+		}
 	}
-	if (off + len > pr->sbbuf_len) {
-		/*
-		 * The sbbuf is not completely in memory.
-		 *
-		 */
-		ssize_t	ret_read;
-		blkid_loff_t want, have = pr->sbbuf_len;
-
-		if (blkid_probe_is_tiny(pr))
-			/* We don't read whole BLKID_SB_BUFSIZ by one read(),
-			 * it's too aggresive to small devices (floppies). We
-			 * read necessary data to complete the current request
-			 * (off + len) only.
-			 */
-			want = off + len - have;
-		else
-			/* large disk -- read all SB */
-			want = BLKID_SB_BUFSIZ - have;
-
-		DBG(DEBUG_LOWPROBE,
-			printf("\tsb-buffer read() off=%jd len=%jd\n", have, want));
-
-		if (lseek(pr->fd, pr->off + have, SEEK_SET) < 0)
-			return NULL;
-
-		ret_read = read(pr->fd, pr->sbbuf + have, want);
-		if (ret_read < 0)
-			ret_read = 0;
-		pr->sbbuf_len = have + ret_read;
-	}
-	if (off + len > pr->sbbuf_len)
-		return NULL;
-	return pr->sbbuf + off;
-}
-
-/*
- * Returns pointer to the buffer on arbitrary offset on the device
- */
-unsigned char *blkid_probe_get_extra_buffer(blkid_probe pr,
-				blkid_loff_t off, blkid_loff_t len)
-{
-	unsigned char *newbuf = NULL;
-
-	if (off + len <= BLKID_SB_BUFSIZ &&
-	    (!blkid_probe_is_tiny(pr) || blkid_probe_has_buffer(pr, off, len)))
-		/*
-		 * Don't use extra buffer for superblock data if
-		 *	- data are already in SB buffer
-		 *	- or the device is large and we needn't extra
-		 *	  optimalization for tiny devices
-		 */
-		return blkid_probe_get_sb_buffer(pr, off, len);
-
-	if (len > pr->buf_max) {
-		newbuf = realloc(pr->buf, len);
-		if (!newbuf)
-			return NULL;
-		pr->buf = newbuf;
-		pr->buf_max = len;
-		pr->buf_off = 0;
-		pr->buf_len = 0;
-	}
-	if (newbuf || off < pr->buf_off ||
-	    off + len > pr->buf_off + pr->buf_len) {
-		ssize_t ret_read;
+	if (!bf) {
+		ssize_t ret;
 
 		if (blkid_llseek(pr->fd, pr->off + off, SEEK_SET) < 0)
 			return NULL;
 
-		DBG(DEBUG_LOWPROBE,
-			printf("\textra-buffer read: off=%jd len=%jd\n", off, len));
-
-		ret_read = read(pr->fd, pr->buf, len);
-		if (ret_read != (ssize_t) len)
+		/* allocate info and space for data by why call */
+		bf = calloc(1, sizeof(struct blkid_bufinfo) + len);
+		if (!bf)
 			return NULL;
-		pr->buf_off = off;
-		pr->buf_len = len;
+
+		bf->data = ((unsigned char *) bf) + sizeof(struct blkid_bufinfo);
+		bf->len = len;
+		bf->off = off;
+		INIT_LIST_HEAD(&bf->bufs);
+
+		DBG(DEBUG_LOWPROBE,
+			printf("\tbuffer read: off=%jd len=%jd\n", off, len));
+
+		ret = read(pr->fd, bf->data, len);
+		if (ret != (ssize_t) len) {
+			free(bf);
+			return NULL;
+		}
+		list_add_tail(&bf->bufs, &pr->buffers);
 	}
-	return off ? pr->buf + (off - pr->buf_off) : pr->buf;
+
+	return off ? bf->data + (off - bf->off) : bf->data;
 }
 
 
-/*
- * @off: offset within probing area
- * @len: size of requested buffer
- *
- * The probing area is between pr->off and pr->size. The @off = 0 is pr->off, the
- * max @len is pr->size.
- *
- * Note that we have two offsets:
- *
- *	1/ general device offset (pr->off), that's useful for example when we
- *	   probe a partition from whole disk image:
- *	               blkid -O <partition_position> -S <size> disk.img
- *
- *	2/ buffer offset (the @off argument), that useful for offsets in
- *	   superbloks, ...
- *
- * That means never use lseek(fd, 0, SEEK_SET), the zero position is always
- * pr->off, so lseek(fd, pr->off, SEEK_SET).
- *
- */
-unsigned char *blkid_probe_get_buffer(blkid_probe pr,
-				blkid_loff_t off, blkid_loff_t len)
+static void blkid_probe_reset_buffer(blkid_probe pr)
 {
-	if (off < 0 || len < 0) {
-		DBG(DEBUG_LOWPROBE,
-			printf("unexpected offset or length of buffer requested\n"));
-		return NULL;
+	ssize_t	read_ct = 0, len_ct = 0;
+
+	if (!pr || list_empty(&pr->buffers))
+		return;
+
+	DBG(DEBUG_LOWPROBE, printf("reseting probing buffers\n"));
+
+	while (!list_empty(&pr->buffers)) {
+		struct blkid_bufinfo *bf = list_entry(pr->buffers.next,
+						struct blkid_bufinfo, bufs);
+
+		read_ct++;
+		len_ct += bf->len;
+		list_del(&bf->bufs);
+		free(bf);
 	}
-	if (off + len > pr->size)
-		return NULL;
-	if (off + len <= BLKID_SB_BUFSIZ)
-		return blkid_probe_get_sb_buffer(pr, off, len);
-	return blkid_probe_get_extra_buffer(pr, off, len);
+
+	DBG(DEBUG_LOWPROBE,
+		printf("buffers summary: %jd bytes by %jd read() call(s)\n",
+			len_ct, read_ct));
+
+	INIT_LIST_HEAD(&pr->buffers);
 }
 
 /*
