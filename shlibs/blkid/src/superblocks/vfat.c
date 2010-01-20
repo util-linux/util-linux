@@ -142,7 +142,7 @@ static unsigned char *search_fat_label(blkid_probe pr,
 		 */
 		if (!dir)
 			ent = (struct vfat_dir_entry *)
-				blkid_probe_get_extra_buffer(pr,
+				blkid_probe_get_buffer(pr,
 					offset + (i * sizeof(struct vfat_dir_entry)),
 					sizeof(struct vfat_dir_entry));
 		else
@@ -330,7 +330,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 			/* get FAT entry */
 			fat_entry_off = (reserved * sector_size) +
 				(next * sizeof(uint32_t));
-			buf = blkid_probe_get_extra_buffer(pr, fat_entry_off, buf_size);
+			buf = blkid_probe_get_buffer(pr, fat_entry_off, buf_size);
 			if (buf == NULL)
 				break;
 
@@ -351,7 +351,7 @@ static int probe_vfat(blkid_probe pr, const struct blkid_idmag *mag)
 		if (fsinfo_sect) {
 			struct fat32_fsinfo *fsinfo;
 
-			buf = blkid_probe_get_extra_buffer(pr,
+			buf = blkid_probe_get_buffer(pr,
 					fsinfo_sect * sector_size,
 					sizeof(struct fat32_fsinfo));
 			if (buf == NULL)
