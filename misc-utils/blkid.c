@@ -255,7 +255,12 @@ static void print_udev_format(const char *name, const char *value, size_t sz)
 
 		blkid_encode_string(value, enc, sizeof(enc));
 		printf("ID_FS_%s_ENC=%s\n", name, enc);
-	}
+
+	} else if (!strcmp(name, "PTTYPE"))
+		printf("ID_PART_TABLE_TYPE=%s\n", value);
+
+	/* TODO:  ID_PART_ENTRY_{UUID,NAME,FLAG} */
+
 	else
 		printf("ID_FS_%s=%s\n", name, value);
 }
@@ -410,6 +415,7 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 	size_t len;
 	int fd;
 	int rc = 0;
+	struct stat st;
 
 	fd = open(devname, O_RDONLY);
 	if (fd < 0)
@@ -417,9 +423,35 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 
 	if (blkid_probe_set_device(pr, fd, offset, size))
 		goto done;
-	rc = blkid_do_safeprobe(pr);
-	if (rc)
+
+	if (fstat(fd, &st))
 		goto done;
+	/*
+	 * partitions probing
+	 */
+	blkid_probe_enable_superblocks(pr, 0);	/* enabled by default ;-( */
+
+	blkid_probe_enable_partitions(pr, 1);
+	rc = blkid_do_fullprobe(pr);
+	blkid_probe_enable_partitions(pr, 0);
+
+	if (rc < 0)
+		goto done;	/* -1 = error, 1 = nothing, 0 = succes */
+
+	/*
+	 * Don't probe for FS/RAIDs on small devices
+	 */
+	if (rc || S_ISCHR(st.st_mode) ||
+	    blkid_probe_get_size(pr) > 1024 * 1440) {
+		/*
+		 * filesystems/RAIDs probing
+		 */
+		blkid_probe_enable_superblocks(pr, 1);
+
+		rc = blkid_do_safeprobe(pr);
+		if (rc < 0)
+			goto done;
+	}
 
 	nvals = blkid_probe_numof_values(pr);
 
@@ -647,8 +679,6 @@ int main(int argc, char **argv)
 		pr = blkid_new_probe();
 		if (!pr)
 			goto exit;
-
-		blkid_probe_enable_superblocks(pr, 1);
 
 		blkid_probe_set_superblocks_flags(pr,
 				BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
