@@ -195,9 +195,9 @@ static void rfkill_block(bool all, __u32 idx, __u8 block, __u8 type)
 
 struct rfkill_type_str {
 	enum rfkill_type type;
-	char *name;
+	const char *name;
 };
-static struct rfkill_type_str rfkill_type_strings[] = {
+static const struct rfkill_type_str rfkill_type_strings[] = {
 	{	.type = RFKILL_TYPE_ALL,		.name = "all"	},
 	{	.type = RFKILL_TYPE_WLAN,		.name = "wifi"	},
 	{	.type = RFKILL_TYPE_WLAN,		.name = "wlan"	}, /* alias */
@@ -211,9 +211,9 @@ static struct rfkill_type_str rfkill_type_strings[] = {
 	{	.name = NULL }
 };
 
-static enum rfkill_type rfkill_str_to_type(char *s)
+static enum rfkill_type rfkill_str_to_type(const char *s)
 {
-	struct rfkill_type_str *p;
+	const struct rfkill_type_str *p;
 
 	for (p = rfkill_type_strings; p->name != NULL; p++) {
 		if ((strlen(s) == strlen(p->name)) && (!strcmp(s,p->name)))
@@ -244,7 +244,7 @@ static void version(void)
 	printf("rfkill %s\n", rfkill_version);
 }
 
-static void do_block_unblock(__u8 block, char *param)
+static void do_block_unblock(__u8 block, const char *param)
 {
 	enum rfkill_type t;
 	__u32 idx;
