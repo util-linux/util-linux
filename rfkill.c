@@ -172,12 +172,24 @@ static struct rfkill_id rfkill_id_to_type(const char *s)
 	return ret;
 }
 
-static int rfkill_list(void)
+static int rfkill_list(const char *param)
 {
+	struct rfkill_id id = { .result = RFKILL_IS_INVALID };
 	struct rfkill_event event;
 	const char *name;
 	ssize_t len;
 	int fd;
+
+	if (param) {
+		id = rfkill_id_to_type(param);
+		if (id.result == RFKILL_IS_INVALID) {
+			fprintf(stderr, "Bogus %s argument '%s'.\n", "list", param);
+			return 2;
+		}
+		/* don't filter "all" */
+		if (id.result == RFKILL_IS_TYPE && id.type == RFKILL_TYPE_ALL)
+			id.result = RFKILL_IS_INVALID;
+	}
 
 	fd = open("/dev/rfkill", O_RDONLY);
 	if (fd < 0) {
@@ -207,6 +219,20 @@ static int rfkill_list(void)
 
 		if (event.op != RFKILL_OP_ADD)
 			continue;
+
+		/* filter out unwanted results */
+		switch (id.result)
+		{
+		case RFKILL_IS_TYPE:
+			if (event.type != id.type)
+				continue;
+			break;
+		case RFKILL_IS_INDEX:
+			if (event.idx != id.index)
+				continue;
+			break;
+		case RFKILL_IS_INVALID:; /* must be last */
+		}
 
 		name = get_name(event.idx);
 
@@ -271,7 +297,7 @@ static void usage(void)
 	fprintf(stderr, "Commands:\n");
 	fprintf(stderr, "\thelp\n");
 	fprintf(stderr, "\tevent\n");
-	fprintf(stderr, "\tlist\n");
+	fprintf(stderr, "\tlist [IDENTIFIER]\n");
 	fprintf(stderr, "\tblock IDENTIFIER\n");
 	fprintf(stderr, "\tunblock IDENTIFIER\n");
 	fprintf(stderr, "where IDENTIFIER is the index no. of an rfkill switch or one of:\n");
@@ -304,7 +330,9 @@ int main(int argc, char **argv)
 	if (strcmp(*argv, "event") == 0) {
 		rfkill_event();
 	} else if (strcmp(*argv, "list") == 0) {
-		rfkill_list();
+		argc--;
+		argv++;
+		rfkill_list(*argv); /* NULL is acceptable */
 	} else if (strcmp(*argv, "block") == 0 && argc > 1) {
 		argc--;
 		argv++;
