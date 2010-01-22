@@ -224,8 +224,6 @@ static enum rfkill_type rfkill_str_to_type(char *s)
 
 static const char *argv0;
 
-#define BLOCK_PARAMS "{<idx>,all,wifi,wlan,bluetooth,uwb,ultrawideband,wimax,wwan,gps}"
-
 static void usage(void)
 {
 	fprintf(stderr, "Usage:\t%s [options] command\n", argv0);
@@ -235,8 +233,10 @@ static void usage(void)
 	fprintf(stderr, "\thelp\n");
 	fprintf(stderr, "\tevent\n");
 	fprintf(stderr, "\tlist\n");
-	fprintf(stderr, "\tblock "BLOCK_PARAMS"\n");
-	fprintf(stderr, "\tunblock "BLOCK_PARAMS"\n");
+	fprintf(stderr, "\tblock IDENTIFIER\n");
+	fprintf(stderr, "\tunblock IDENTIFIER\n");
+	fprintf(stderr, "where IDENTIFIER is the index no. of an rfkill switch or one of:\n");
+	fprintf(stderr, "\t<idx> all wifi wlan bluetooth uwb ultrawideband wimax wwan gps\n");
 }
 
 static void version(void)
