@@ -118,6 +118,60 @@ static const char *type2string(enum rfkill_type type)
 	return NULL;
 }
 
+struct rfkill_type_str {
+	enum rfkill_type type;
+	const char *name;
+};
+static const struct rfkill_type_str rfkill_type_strings[] = {
+	{	.type = RFKILL_TYPE_ALL,		.name = "all"	},
+	{	.type = RFKILL_TYPE_WLAN,		.name = "wifi"	},
+	{	.type = RFKILL_TYPE_WLAN,		.name = "wlan"	}, /* alias */
+	{	.type = RFKILL_TYPE_BLUETOOTH,	.name = "bluetooth"	},
+	{	.type = RFKILL_TYPE_UWB,		.name = "uwb"	},
+	{	.type = RFKILL_TYPE_UWB,		.name = "ultrawideband"	}, /* alias */
+	{	.type = RFKILL_TYPE_WIMAX,		.name = "wimax"	},
+	{	.type = RFKILL_TYPE_WWAN,		.name = "wwan"	},
+	{	.type = RFKILL_TYPE_GPS,		.name = "gps"	},
+	{	.type = RFKILL_TYPE_FM,			.name = "fm"	},
+	{	.name = NULL }
+};
+
+struct rfkill_id {
+	union {
+		enum rfkill_type type;
+		__u32 index;
+	};
+	enum {
+		RFKILL_IS_INVALID,
+		RFKILL_IS_TYPE,
+		RFKILL_IS_INDEX,
+	} result;
+};
+
+static struct rfkill_id rfkill_id_to_type(const char *s)
+{
+	const struct rfkill_type_str *p;
+	struct rfkill_id ret;
+
+	if (islower(*s)) {
+		for (p = rfkill_type_strings; p->name != NULL; p++) {
+			if ((strlen(s) == strlen(p->name)) && (!strcmp(s,p->name))) {
+				ret.type = p->type;
+				ret.result = RFKILL_IS_TYPE;
+				return ret;
+			}
+		}
+	} else if (isdigit(*s)) {
+		/* assume a numeric character implies an index. */
+		ret.index = atoi(s);
+		ret.result = RFKILL_IS_INDEX;
+		return ret;
+	}
+
+	ret.result = RFKILL_IS_INVALID;
+	return ret;
+}
+
 static int rfkill_list(void)
 {
 	struct rfkill_event event;
@@ -166,11 +220,18 @@ static int rfkill_list(void)
 	return 0;
 }
 
-static int rfkill_block(bool all, __u32 idx, __u8 block, __u8 type)
+static int rfkill_block(__u8 block, const char *param)
 {
+	struct rfkill_id id;
 	struct rfkill_event event;
 	ssize_t len;
 	int fd;
+
+	id = rfkill_id_to_type(param);
+	if (id.result == RFKILL_IS_INVALID) {
+		fprintf(stderr, "Bogus %s argument '%s'.\n", block ? "block" : "unblock", param);
+		return 2;
+	}
 
 	fd = open("/dev/rfkill", O_RDWR);
 	if (fd < 0) {
@@ -179,12 +240,16 @@ static int rfkill_block(bool all, __u32 idx, __u8 block, __u8 type)
 	}
 
 	memset(&event, 0, sizeof(event));
-	if (!all) {
-		event.idx = idx;
-		event.op = RFKILL_OP_CHANGE;
-	} else {
+	switch (id.result) {
+	case RFKILL_IS_TYPE:
 		event.op = RFKILL_OP_CHANGE_ALL;
-		event.type = type;
+		event.type = id.type;
+		break;
+	case RFKILL_IS_INDEX:
+		event.op = RFKILL_OP_CHANGE;
+		event.idx = id.index;
+		break;
+	case RFKILL_IS_INVALID:; /* must be last */
 	}
 	event.soft = block;
 
@@ -194,35 +259,6 @@ static int rfkill_block(bool all, __u32 idx, __u8 block, __u8 type)
 
 	close(fd);
 	return 0;
-}
-
-struct rfkill_type_str {
-	enum rfkill_type type;
-	const char *name;
-};
-static const struct rfkill_type_str rfkill_type_strings[] = {
-	{	.type = RFKILL_TYPE_ALL,		.name = "all"	},
-	{	.type = RFKILL_TYPE_WLAN,		.name = "wifi"	},
-	{	.type = RFKILL_TYPE_WLAN,		.name = "wlan"	}, /* alias */
-	{	.type = RFKILL_TYPE_BLUETOOTH,	.name = "bluetooth"	},
-	{	.type = RFKILL_TYPE_UWB,		.name = "uwb"	},
-	{	.type = RFKILL_TYPE_UWB,		.name = "ultrawideband"	}, /* alias */
-	{	.type = RFKILL_TYPE_WIMAX,		.name = "wimax"	},
-	{	.type = RFKILL_TYPE_WWAN,		.name = "wwan"	},
-	{	.type = RFKILL_TYPE_GPS,		.name = "gps"	},
-	{	.type = RFKILL_TYPE_FM,			.name = "fm"	},
-	{	.name = NULL }
-};
-
-static enum rfkill_type rfkill_str_to_type(const char *s)
-{
-	const struct rfkill_type_str *p;
-
-	for (p = rfkill_type_strings; p->name != NULL; p++) {
-		if ((strlen(s) == strlen(p->name)) && (!strcmp(s,p->name)))
-			return p->type;
-	}
-	return NUM_RFKILL_TYPES;
 }
 
 static const char *argv0;
@@ -245,26 +281,6 @@ static void usage(void)
 static void version(void)
 {
 	printf("rfkill %s\n", rfkill_version);
-}
-
-static int do_block_unblock(__u8 block, const char *param)
-{
-	enum rfkill_type t;
-	__u32 idx;
-
-	if (islower(*param)) {
-		/* assume alphabetic characters imply a wireless type name */
-		t = rfkill_str_to_type(param);
-		if (t < NUM_RFKILL_TYPES)
-			return rfkill_block(true, 0, block, t);
-	} else if (isdigit(*param)) {
-		/* assume a numeric character implies an index. */
-		idx = atoi(param);
-		return rfkill_block(false, idx, block, 0);
-	}
-
-	fprintf(stderr,"Bogus %sblock argument '%s'.\n",block?"":"un",param);
-	exit(1);
 }
 
 int main(int argc, char **argv)
@@ -292,11 +308,11 @@ int main(int argc, char **argv)
 	} else if (strcmp(*argv, "block") == 0 && argc > 1) {
 		argc--;
 		argv++;
-		ret = do_block_unblock(1,*argv);
+		ret = rfkill_block(1,*argv);
 	} else if (strcmp(*argv, "unblock") == 0 && argc > 1) {
 		argc--;
 		argv++;
-		ret = do_block_unblock(0,*argv);
+		ret = rfkill_block(0,*argv);
 	} else {
 		usage();
 		return 1;
