@@ -200,8 +200,10 @@ struct rfkill_type_str {
 static struct rfkill_type_str rfkill_type_strings[] = {
 	{	.type = RFKILL_TYPE_ALL,		.name = "all"	},
 	{	.type = RFKILL_TYPE_WLAN,		.name = "wifi"	},
+	{	.type = RFKILL_TYPE_WLAN,		.name = "wlan"	}, /* alias */
 	{	.type = RFKILL_TYPE_BLUETOOTH,	.name = "bluetooth"	},
 	{	.type = RFKILL_TYPE_UWB,		.name = "uwb"	},
+	{	.type = RFKILL_TYPE_UWB,		.name = "ultrawideband"	}, /* alias */
 	{	.type = RFKILL_TYPE_WIMAX,		.name = "wimax"	},
 	{	.type = RFKILL_TYPE_WWAN,		.name = "wwan"	},
 	{	.type = RFKILL_TYPE_GPS,		.name = "gps"	},
@@ -222,7 +224,7 @@ static enum rfkill_type rfkill_str_to_type(char *s)
 
 static const char *argv0;
 
-#define BLOCK_PARAMS "{<idx>,all,wifi,bluetooth,uwb,wimax,wwan,gps}"
+#define BLOCK_PARAMS "{<idx>,all,wifi,wlan,bluetooth,uwb,ultrawideband,wimax,wwan,gps}"
 
 static void usage(void)
 {
