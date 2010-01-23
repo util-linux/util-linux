@@ -17,8 +17,9 @@ Show rfkill's built-in help text.
 .B event
 Listen for rfkill events and display them on stdout.
 .TP
-.B list
-List the current state of all available rfkill-using devices.
+.B list [type]
+List the current state of all available rfkill-using devices,
+or just all of the given type.
 .TP
 .BI block " index|type"
 Disable the device corresponding to the given index.
