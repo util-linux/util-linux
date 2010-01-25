@@ -1,9 +1,18 @@
 #!/bin/sh
 
 VERSION="0.3"
+
+SUFFIX=
+if test "x$1" = x--suffix; then
+	shift
+	SUFFIX="-$1"
+	shift
+fi
 OUT="$1"
 
-if head=`git rev-parse --verify HEAD 2>/dev/null`; then
+if test "x$SUFFIX" != 'x'; then
+	v="$VERSION$SUFFIX"
+elif head=`git rev-parse --verify HEAD 2>/dev/null`; then
 	git update-index --refresh --unmerged > /dev/null
 	descr=$(git describe 2>/dev/null || echo "v$VERSION")
 

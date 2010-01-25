@@ -29,7 +29,11 @@ VERSION_OBJS := $(filter-out version.o, $(OBJS))
 version.c: version.sh $(patsubst %.o,%.c,$(VERSION_OBJS)) rfkill.h Makefile \
 		$(wildcard .git/index .git/refs/tags)
 	@$(NQ) ' GEN ' $@
+ifeq (,$(VERSION_SUFFIX))
 	$(Q)./version.sh $@
+else
+	$(Q)./version.sh --suffix "$(VERSION_SUFFIX)" $@
+endif
 
 %.o: %.c rfkill.h
 	@$(NQ) ' CC  ' $@
