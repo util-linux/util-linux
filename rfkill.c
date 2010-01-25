@@ -291,6 +291,8 @@ static const char *argv0;
 
 static void usage(void)
 {
+	const struct rfkill_type_str *p;
+
 	fprintf(stderr, "Usage:\t%s [options] command\n", argv0);
 	fprintf(stderr, "Options:\n");
 	fprintf(stderr, "\t--version\tshow version (%s)\n", rfkill_version);
@@ -301,7 +303,10 @@ static void usage(void)
 	fprintf(stderr, "\tblock IDENTIFIER\n");
 	fprintf(stderr, "\tunblock IDENTIFIER\n");
 	fprintf(stderr, "where IDENTIFIER is the index no. of an rfkill switch or one of:\n");
-	fprintf(stderr, "\t<idx> all wifi wlan bluetooth uwb ultrawideband wimax wwan gps\n");
+	fprintf(stderr, "\t<idx>");
+	for (p = rfkill_type_strings; p->name != NULL; p++)
+		fprintf(stderr, " %s", p->name);
+	fprintf(stderr, "\n");
 }
 
 static void version(void)
