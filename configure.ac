@@ -960,6 +960,34 @@ if test "x$enable_require_password" = xyes; then
 fi
 
 
+AC_DEFUN([FS_PATHS_DEFAULT], [/sbin:/sbin/fs.d:/sbin/fs])
+AC_ARG_ENABLE([fs-paths-default],
+  AS_HELP_STRING([--enable-fs-paths-default=paths], [default search path for fs helpers @<:@FS_PATHS_DEFAULT@:>@]),
+  [case "$enableval" in
+     yes) fs_paths_defaults="FS_PATHS_DEFAULT" ;;
+      no) fs_paths_defaults="" ;;
+       *) fs_paths_defaults="$enableval" ;;
+   esac],
+  [fs_paths_defaults="FS_PATHS_DEFAULT"]
+)
+AC_ARG_ENABLE([fs-paths-extra],
+  AS_HELP_STRING([--enable-fs-paths-extra=paths], [additional search paths for fs helpers]),
+  [case "$enableval" in
+     yes|no) fs_paths_extra="" ;;
+          *) fs_paths_extra="$enableval" ;;
+    esac],
+  [fs_paths_extra=""]
+)
+fs_paths="$fs_paths_defaults"
+if test "x$fs_paths_extra" != "x"; then
+  if test "x$fs_paths" != "x"; then
+    fs_paths="${fs_paths}:"
+  fi
+  fs_paths="${fs_paths}${fs_paths_extra}"
+fi
+AC_DEFINE_UNQUOTED([FS_SEARCH_PATH], "$fs_paths", [search path for fs helpers])
+
+
 AC_ARG_ENABLE([use-tty-group],
   AS_HELP_STRING([--disable-use-tty-group], [do not install wall and write setgid tty]),
   [], enable_use_tty_group=yes

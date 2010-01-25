@@ -27,7 +27,7 @@
 # define DEFAULT_FSTYPE		"ext2"
 #endif
 
-#define SEARCH_PATH	"PATH=/sbin:/sbin/fs:/sbin/fs.d:/etc/fs:/etc"
+#define SEARCH_PATH	"PATH=" FS_SEARCH_PATH
 #define PROGNAME	"mkfs.%s"
 
 

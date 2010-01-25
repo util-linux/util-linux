@@ -105,7 +105,7 @@ char *progname;
 char *fstype = NULL;
 struct fs_info *filesys_info = NULL, *filesys_last = NULL;
 struct fsck_instance *instance_list;
-const char *fsck_prefix_path = "/sbin:/sbin/fs.d:/sbin/fs:/etc/fs:/etc";
+const char fsck_prefix_path[] = FS_SEARCH_PATH;
 char *fsck_path = 0;
 
 static char *string_copy(const char *s)
