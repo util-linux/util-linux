@@ -536,8 +536,8 @@ main(int argc, char **argv)
 	ttt.c_cflag &= ~HUPCL;
 
 	/* These can fail, e.g. with ttyn on a read-only filesystem */
-	chown(ttyn, 0, 0);
-	chmod(ttyn, TTY_MODE);
+	fchown(0, 0, 0);
+	fchmod(0, TTY_MODE);
 
 	/* Kill processes left on this tty */
 	tcsetattr(0,TCSAFLUSH,&ttt);
@@ -1009,9 +1009,9 @@ Michael Riepe <michael@stud.uni-hannover.de>
     logaudit(tty_name, username, hostname, pwd, 1);
     dolastlog(quietlog);
 
-    chown(ttyn, pwd->pw_uid,
+    fchown(0, pwd->pw_uid,
 	  (gr = getgrnam(TTYGRPNAME)) ? gr->gr_gid : pwd->pw_gid);
-    chmod(ttyn, TTY_MODE);
+    fchmod(0, TTY_MODE);
 
 #ifdef LOGIN_CHOWN_VCS
     /* if tty is one of the VC's then change owner and mode of the
