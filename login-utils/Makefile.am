@@ -26,7 +26,7 @@ if NEED_LIBCRYPT
 simpleinit_LDADD = -lcrypt
 endif
 
-endif
+endif # BUILD_INIT
 
 if BUILD_LAST
 usrbin_exec_PROGRAMS += last
@@ -40,6 +40,9 @@ usrbin_exec_PROGRAMS += chfn chsh newgrp
 usrsbin_exec_PROGRAMS += vipw
 dist_man_MANS += chfn.1 chsh.1 login.1 newgrp.1 vipw.8 vigr.8
 
+# login, chfn and chsh libs
+login_ldadd_common =
+
 chfn_SOURCES = chfn.c $(chfn_chsh_common)
 chsh_SOURCES = chsh.c $(chfn_chsh_common)
 chfn_chsh_common = islocal.c setpwnam.c islocal.h my_crypt.h setpwnam.h \
@@ -48,9 +51,9 @@ login_SOURCES = login.c login.h my_crypt.h ../lib/setproctitle.c
 newgrp_SOURCES = newgrp.c my_crypt.h
 vipw_SOURCES = vipw.c setpwnam.h
 
-chfn_LDADD =
-chsh_LDADD =
-login_LDADD =
+chfn_LDADD = $(login_ldadd_common)
+chsh_LDADD = $(login_ldadd_common)
+login_LDADD = $(login_ldadd_common)
 newgrp_LDADD =
 vipw_LDADD =
 
@@ -62,19 +65,17 @@ chfn_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 chsh_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 newgrp_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 
-if NEED_LIBCRYPT
-chfn_LDADD += -lcrypt
-chsh_LDADD += -lcrypt
-login_LDADD += -lcrypt
-newgrp_LDADD += -lcrypt
-endif
-
 if HAVE_PAM
-chfn_LDADD += -lpam -lpam_misc
-chsh_LDADD += -lpam -lpam_misc
-login_LDADD += -lpam -lpam_misc
+login_ldadd_common += -lpam -lpam_misc
 else
+if NEED_LIBCRYPT
+login_ldadd_common += -lcrypt
+endif
 login_SOURCES += checktty.c
+endif #! HAVE_PAM
+
+if NEED_LIBCRYPT
+newgrp_LDADD += -lcrypt
 endif
 
 if HAVE_AUDIT
@@ -83,10 +84,9 @@ endif
 
 if HAVE_SELINUX
 chfn_SOURCES += selinux_utils.c selinux_utils.h
-chfn_LDADD += -lselinux
 chsh_SOURCES += selinux_utils.c selinux_utils.h
-chsh_LDADD += -lselinux
 vipw_LDADD += -lselinux
+login_ldadd_common += -lselinux
 endif
 
 
