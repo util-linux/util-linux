@@ -11,20 +11,84 @@
 
 #include "superblocks.h"
 
+struct minix_super_block {
+        uint16_t s_ninodes;
+        uint16_t s_nzones;
+        uint16_t s_imap_blocks;
+        uint16_t s_zmap_blocks;
+        uint16_t s_firstdatazone;
+        uint16_t s_log_zone_size;
+        uint32_t s_max_size;
+        uint16_t s_magic;
+        uint16_t s_state;
+        uint32_t s_zones;
+};
+
+struct minix3_super_block {
+	uint32_t s_ninodes;
+	uint16_t s_pad0;
+	uint16_t s_imap_blocks;
+	uint16_t s_zmap_blocks;
+	uint16_t s_firstdatazone;
+	uint16_t s_log_zone_size;
+	uint16_t s_pad1;
+	uint32_t s_max_size;
+	uint32_t s_zones;
+	uint16_t s_magic;
+	uint16_t s_pad2;
+	uint16_t s_blocksize;
+	uint8_t  s_disk_version;
+};
+
+#define MINIX_BLOCK_SIZE_BITS 10
+#define MINIX_BLOCK_SIZE (1 << MINIX_BLOCK_SIZE_BITS)
+
 static int probe_minix(blkid_probe pr, const struct blkid_idmag *mag)
 {
+	int version;
+
 	/* for more details see magic strings below */
 	switch(mag->magic[1]) {
 	case '\023':
-		blkid_probe_set_version(pr, "1");
+		version = 1;
 		break;
 	case '\044':
-		blkid_probe_set_version(pr, "2");
+		version = 2;
 		break;
 	case '\115':
-		blkid_probe_set_version(pr, "3");
+		version = 3;
+		break;
+	default:
+		return -1;
 		break;
 	}
+
+	if (version <= 2) {
+		struct minix_super_block *sb;
+		uint32_t zones;
+
+		sb = blkid_probe_get_sb(pr, mag, struct minix_super_block);
+		if (!sb || sb->s_imap_blocks == 0 || sb->s_zmap_blocks == 0)
+			return -1;
+
+		zones = version == 2 ? sb->s_zones : sb->s_nzones;
+
+		/* sanity checks to be sure that the FS is really minix */
+		if (sb->s_imap_blocks * MINIX_BLOCK_SIZE * 8 < sb->s_ninodes + 1)
+			return -1;
+		if (sb->s_zmap_blocks * MINIX_BLOCK_SIZE * 8 < zones - sb->s_firstdatazone + 1)
+			return -1;
+
+	} else if (version == 3) {
+		struct minix3_super_block *sb;
+
+		sb = blkid_probe_get_sb(pr, mag, struct minix3_super_block);
+		if (!sb || sb->s_imap_blocks == 0 || sb->s_zmap_blocks == 0)
+			return -1;
+
+	}
+
+	blkid_probe_sprintf_version(pr, "%d", version);
 	return 0;
 }
 
