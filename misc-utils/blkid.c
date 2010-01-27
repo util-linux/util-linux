@@ -469,7 +469,7 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 		print_value(output, num++, devname, (char *) data, name, len);
 	}
 
-	if (nvals > 1 && !(output & (OUTPUT_VALUE_ONLY | OUTPUT_UDEV_LIST)))
+	if (nvals >= 1 && !(output & (OUTPUT_VALUE_ONLY | OUTPUT_UDEV_LIST)))
 		printf("\n");
 done:
 	if (rc == -2) {
