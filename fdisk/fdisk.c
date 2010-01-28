@@ -222,7 +222,7 @@ unsigned int	heads,
 	display_in_cyl_units = 1;
 
 unsigned long long total_number_of_sectors;	/* (!) 512-byte sectors */
-unsigned long minimum_io_size, alignment_offset;
+unsigned long io_size, alignment_offset;
 
 #define dos_label (!sun_label && !sgi_label && !aix_label && !mac_label && !osf_label)
 int	sun_label = 0;			/* looking at sun disklabel */
@@ -637,7 +637,7 @@ test_c(char **m, char *mesg) {
 	return val;
 }
 
-#define alignment_required	(minimum_io_size != sector_size)
+#define alignment_required	(io_size != sector_size)
 
 static int
 lba_is_aligned(unsigned long long lba)
@@ -645,9 +645,9 @@ lba_is_aligned(unsigned long long lba)
 	unsigned long long bytes, phy_sectors;
 
 	bytes = lba * sector_size;
-	phy_sectors = bytes / minimum_io_size;
+	phy_sectors = bytes / io_size;
 
-	return (alignment_offset + (phy_sectors * minimum_io_size) == bytes);
+	return (alignment_offset + (phy_sectors * io_size) == bytes);
 }
 
 #define ALIGN_UP	1
@@ -662,7 +662,7 @@ align_lba(unsigned long long lba, int direction)
 	if (lba_is_aligned(lba))
 		return lba;
 
-	sects_in_phy = minimum_io_size / sector_size;
+	sects_in_phy = io_size / sector_size;
 
 	if (lba < sects_in_phy)
 		/* align to the first physical sector */
@@ -685,7 +685,7 @@ align_lba(unsigned long long lba, int direction)
 		 * at LBA < 0 (usually LBA -1). It means we have to move LBA
 		 * according the offset to be on the physical boundary.
 		 */
-		res -= (minimum_io_size - alignment_offset) / sector_size;
+		res -= (io_size - alignment_offset) / sector_size;
 
 	/* fprintf(stderr, "LBA %llu -align-> %llu (%s)\n", lba, res,
 	 *			lba_is_aligned(res) ? "OK" : "FALSE");
@@ -968,7 +968,9 @@ get_topology(int fd) {
 		blkid_topology tp = blkid_probe_get_topology(pr);
 
 		if (tp) {
-			minimum_io_size = blkid_topology_get_minimum_io_size(tp);
+			io_size = blkid_topology_get_optimal_io_size(tp);
+			if (!io_size)
+				io_size = blkid_topology_get_minimum_io_size(tp);
 			alignment_offset = blkid_topology_get_alignment_offset(tp);
 		}
 	}
@@ -980,8 +982,8 @@ get_topology(int fd) {
 	else if (blkdev_get_sector_size(fd, &arg) == 0)
 		sector_size = arg;
 
-	if (!minimum_io_size)
-		minimum_io_size = sector_size;
+	if (!io_size)
+		io_size = sector_size;
 
 	if (sector_size != DEFAULT_SECTOR_SIZE)
 		printf(_("Note: sector size is %d (not %d)\n"),
@@ -1054,7 +1056,7 @@ update_sector_offset(void)
 		/*
 		 * Align the begin of the first partition to the physical block
 		 */
-		unsigned long long  x = minimum_io_size / sector_size;
+		unsigned long long  x = io_size / sector_size;
 
 		sector_offset = align_lba(x, ALIGN_UP);
 	}
@@ -1838,7 +1840,7 @@ list_disk_geometry(void) {
 	       units_per_sector, sector_size, units_per_sector * sector_size);
 
 	printf(_("Sector size (logical/physical): %u bytes / %lu bytes\n"),
-				sector_size, minimum_io_size);
+				sector_size, io_size);
 	if (alignment_offset)
 		printf(_("Alignment offset: %lu bytes\n"), alignment_offset);
 	if (dos_label)
