@@ -779,8 +779,8 @@ warn_alignment(void) {
 
 	fprintf(stderr, _("\n"
 "The device presents a logical sector size that is smaller than\n"
-"the physical sector size. Aligning to a physical sector boundary\n"
-"is recommended, or performance may be impacted.\n\n"));
+"the optimal I/O size (often physical sector size). Aligning to a optimal\n"
+"I/O size boundary is recommended, or performance may be impacted.\n\n"));
 
 	/*
 	 * Print warning when sector_offset is not aligned for DOS mode
@@ -1812,7 +1812,7 @@ static void
 check_alignment(struct partition *p, int partition)
 {
 	if (!lba_is_aligned(get_start_sect(p)))
-		printf(_("Partition %i does not start on physical block boundary.\n"),
+		printf(_("Partition %i does not start on optimal I/O size boundary.\n"),
 			partition + 1);
 }
 
@@ -1839,7 +1839,7 @@ list_disk_geometry(void) {
 	       str_units(PLURAL),
 	       units_per_sector, sector_size, units_per_sector * sector_size);
 
-	printf(_("Sector size (logical/physical): %u bytes / %lu bytes\n"),
+	printf(_("Sector size (logical / optimal IO): %u bytes / %lu bytes\n"),
 				sector_size, io_size);
 	if (alignment_offset)
 		printf(_("Alignment offset: %lu bytes\n"), alignment_offset);
