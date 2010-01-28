@@ -200,6 +200,13 @@ opentty(const char * tty) {
 		exit(1);
 	}
 
+	if (!isatty(fd)) {
+		close(fd);
+		syslog(LOG_ERR, _("FATAL: %s is not a terminal"), tty);
+		sleep(1);
+		exit(1);
+	}
+
 	flags = fcntl(fd, F_GETFL);
 	flags &= ~O_NONBLOCK;
 	fcntl(fd, F_SETFL, flags);
@@ -222,7 +229,9 @@ static void
 check_ttyname(char *ttyn) {
 	struct stat statbuf;
 
-	if (lstat(ttyn, &statbuf)
+	if (ttyn == NULL
+	    || *ttyn == '\0'
+	    || lstat(ttyn, &statbuf)
 	    || !S_ISCHR(statbuf.st_mode)
 	    || (statbuf.st_nlink > 1 && strncmp(ttyn, "/dev/", 5))
 	    || (access(ttyn, R_OK | W_OK) != 0)) {
@@ -378,7 +387,7 @@ main(int argc, char **argv)
     int ask, fflag, hflag, pflag, cnt, errsv;
     int quietlog, passwd_req;
     char *domain, *ttyn;
-    char tbuf[MAXPATHLEN + 2], tname[sizeof(_PATH_DEV_TTY) + 10];
+    char tbuf[MAXPATHLEN + 2];
     char *termenv;
     char *childArgv[10];
     char *buff;
@@ -495,14 +504,9 @@ main(int argc, char **argv)
     for (cnt = getdtablesize(); cnt > 2; cnt--)
       close(cnt);
 
+    /* note that libc checks that the file descriptor is a terminal, so we don't
+     * have to call isatty() here */
     ttyn = ttyname(0);
-
-    if (ttyn == NULL || *ttyn == '\0') {
-	/* no snprintf required - see definition of tname */
-	snprintf(tname, sizeof(tname), "%s??", _PATH_DEV_TTY);
-	ttyn = tname;
-    }
-
     check_ttyname(ttyn);
 
     if (strncmp(ttyn, "/dev/", 5) == 0)
