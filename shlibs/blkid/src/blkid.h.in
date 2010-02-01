@@ -142,6 +142,7 @@ extern int blkid_devno_to_wholedisk(dev_t dev, char *diskname,
 /* devname.c */
 extern int blkid_probe_all(blkid_cache cache);
 extern int blkid_probe_all_new(blkid_cache cache);
+extern int blkid_probe_all_removable(blkid_cache cache);
 extern blkid_dev blkid_get_dev(blkid_cache cache, const char *devname,
 			       int flags);
 

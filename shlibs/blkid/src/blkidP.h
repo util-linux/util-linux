@@ -51,6 +51,7 @@ struct blkid_struct_dev
 
 #define BLKID_BID_FL_VERIFIED	0x0001	/* Device data validated from disk */
 #define BLKID_BID_FL_INVALID	0x0004	/* Device is invalid */
+#define BLKID_BID_FL_REMOVABLE	0x0008	/* Device added by blkid_probe_all_removable() */
 
 /*
  * Each tag defines a NAME=value pair for a particular device.  The tags

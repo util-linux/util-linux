@@ -114,3 +114,11 @@ global:
 	blkid_topology_get_optimal_io_size;
 	blkid_topology_get_physical_sector_size;
 } BLKID_2.15;
+
+/*
+ * version(s) since util-linux-ng 2.18
+ */
+BLKID_2.18 {
+global:
+	blkid_probe_all_removable;
+} BLKID_2.17;

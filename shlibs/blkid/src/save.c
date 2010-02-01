@@ -119,7 +119,7 @@ int blkid_flush_cache(blkid_cache cache)
 
 	list_for_each(p, &cache->bic_devs) {
 		blkid_dev dev = list_entry(p, struct blkid_struct_dev, bid_devs);
-		if (!dev->bid_type)
+		if (!dev->bid_type || (dev->bid_flags & BLKID_BID_FL_REMOVABLE))
 			continue;
 		if ((ret = save_dev(dev, file)) < 0)
 			break;
