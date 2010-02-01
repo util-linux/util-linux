@@ -267,6 +267,8 @@ extern char *blkid_strndup(const char *s, const int length);
 extern char *blkid_strconcat(const char *a, const char *b, const char *c);
 extern int blkid_fstatat(DIR *dir, const char *dirname, const char *filename,
 			struct stat *st, int nofollow);
+extern int blkid_openat(DIR *dir, const char *dirname, const char *filename,
+			int flags);
 
 #define BLKID_CACHE_FILE	"/etc/blkid.tab"
 #define BLKID_CONFIG_FILE	"/etc/blkid.conf"

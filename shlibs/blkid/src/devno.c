@@ -96,14 +96,30 @@ int blkid_fstatat(DIR *dir, const char *dirname, const char *filename,
 	return fstatat(dirfd(dir), filename, st,
 			nofollow ? AT_SYMLINK_NOFOLLOW : 0);
 #else
-	char device[PATH_MAX];
+	char path[PATH_MAX];
 	int len;
 
-	len = snprintf(device, sizeof(device), "%s/%s", dirname, filename);
-	if (len < 0 || len + 1 > sizeof(device))
+	len = snprintf(path, sizeof(path), "%s/%s", dirname, filename);
+	if (len < 0 || len + 1 > sizeof(path))
 		return -1;
 
-	return nofollow ? lstat(device, st) : stat(device, st);
+	return nofollow ? lstat(path, st) : stat(path, st);
+#endif
+}
+
+int blkid_openat(DIR *dir, const char *dirname, const char *filename, int flags)
+{
+#ifdef HAVE_FSTATAT
+	return openat(dirfd(dir), filename, flags);
+#else
+	char path[PATH_MAX];
+	int len;
+
+	len = snprintf(path, sizeof(path), "%s/%s", dirname, filename);
+	if (len < 0 || len + 1 > sizeof(path))
+		return -1;
+
+	return open(path, flags);
 #endif
 }
 
