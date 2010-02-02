@@ -47,6 +47,11 @@
 # define SCHED_IDLE 5
 #endif
 
+#if defined(__linux__) && !defined(SCHED_RESET_ON_FORK)
+#define SCHED_RESET_ON_FORK 0x40000000
+#endif
+
+
 static void show_usage(int rc)
 {
 	fprintf(stdout, _(
@@ -92,6 +97,9 @@ static void show_rt_info(const char *what, pid_t pid)
 	case SCHED_FIFO:
 		printf("SCHED_FIFO\n");
 		break;
+	case SCHED_FIFO|SCHED_RESET_ON_FORK:
+		printf("SCHED_FIFO|SCHED_RESET_ON_FORK\n");
+		break;
 #ifdef SCHED_IDLE
 	case SCHED_IDLE:
 		printf("SCHED_IDLE\n");
@@ -99,6 +107,9 @@ static void show_rt_info(const char *what, pid_t pid)
 #endif
 	case SCHED_RR:
 		printf("SCHED_RR\n");
+		break;
+	case SCHED_RR|SCHED_RESET_ON_FORK:
+		printf("SCHED_RR|SCHED_RESET_ON_FORK\n");
 		break;
 #ifdef SCHED_BATCH
 	case SCHED_BATCH:
