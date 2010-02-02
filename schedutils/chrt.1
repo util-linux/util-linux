@@ -55,6 +55,11 @@ The
 policy is supported since Linux 2.6.16. The
 .BR SCHED_IDLE
 policy is supported since Linux 2.6.23.
+.PP
+The
+.BR SCHED_RESET_ON_FORK
+flag for policies SCHED_RR and SCHED_FIFO is supported
+since Linux 2.6.31.
 .SH OPTIONS
 .TP
 .B -p, --pid
@@ -68,6 +73,15 @@ set scheduling policy to
 .B -f, --fifo
 set scheduling policy to
 .BR SCHED_FIFO
+.TP
+.B -R, --reset-on-fork
+add
+.B SCHED_RESET_ON_FORK
+flag to the
+.B SCHED_FIFO
+or
+.B SCHED_RR
+scheduling policy (Linux specific)
 .TP
 .B -i, --idle
 set schedulng policy to
