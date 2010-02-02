@@ -99,6 +99,7 @@ static int probe_befs(blkid_probe pr, const struct blkid_idmag *mag)
 	struct small_data *sd;
 	int fs_le;
 	uint64_t volume_id = 0;
+	const char *version = NULL;
 
 	bs = (struct befs_super_block *) blkid_probe_get_buffer(pr,
 					mag->sboff - B_OS_NAME_LENGTH,
@@ -111,20 +112,15 @@ static int probe_befs(blkid_probe pr, const struct blkid_idmag *mag)
 		&& le32_to_cpu(bs->magic3) == SUPER_BLOCK_MAGIC3
 		&& le32_to_cpu(bs->fs_byte_order) == SUPER_BLOCK_FS_ENDIAN) {
 		fs_le = 1;
-		blkid_probe_set_version(pr, "little-endian");
+		version = "little-endian";
 	} else if (be32_to_cpu(bs->magic1) == SUPER_BLOCK_MAGIC1
 		&& be32_to_cpu(bs->magic2) == SUPER_BLOCK_MAGIC2
 		&& be32_to_cpu(bs->magic3) == SUPER_BLOCK_MAGIC3
 		&& be32_to_cpu(bs->fs_byte_order) == SUPER_BLOCK_FS_ENDIAN) {
 		fs_le = 0;
-		blkid_probe_set_version(pr, "big-endian");
-	} else {
+		version = "big-endian";
+	} else
 		return -1;
-	}
-
-	if (strlen(bs->name))
-		blkid_probe_set_label(pr, (unsigned char *) bs->name,
-							sizeof(bs->name));
 
 	bi = (struct befs_inode *) blkid_probe_get_buffer(pr,
 			(FS32_TO_CPU(bs->root_dir.allocation_group, fs_le)
@@ -140,6 +136,18 @@ static int probe_befs(blkid_probe pr, const struct blkid_idmag *mag)
 	if (FS32_TO_CPU(bi->magic1, fs_le) != INODE_MAGIC1)
 		return -1;
 
+	/*
+	 * all checks pass, set LABEL and VERSION
+	 */
+	if (strlen(bs->name))
+		blkid_probe_set_label(pr, (unsigned char *) bs->name,
+							sizeof(bs->name));
+	if (version)
+		blkid_probe_set_version(pr, version);
+
+	/*
+	 * search for UUID
+	 */
 	sd = (struct small_data *) bi->small_data;
 
 	do {
