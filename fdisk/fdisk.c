@@ -754,19 +754,6 @@ void update_units(void)
 }
 
 static void
-warn_cylinders(void) {
-	if (dos_label && cylinders > 1024 && !nowarn)
-		fprintf(stderr, _("\n"
-"The number of cylinders for this disk is set to %d.\n"
-"There is nothing wrong with that, but this is larger than 1024,\n"
-"and could in certain setups cause problems with:\n"
-"1) software that runs at boot time (e.g., old versions of LILO)\n"
-"2) booting and partitioning software from other OSs\n"
-"   (e.g., DOS FDISK, OS/2 FDISK)\n"),
-			cylinders);
-}
-
-static void
 warn_limits(void) {
 	if (total_number_of_sectors > UINT_MAX && !nowarn) {
 		int giga = (total_number_of_sectors << 9) / 1000000000;
@@ -786,29 +773,26 @@ warn_limits(void) {
 
 static void
 warn_alignment(void) {
-	if (nowarn || !alignment_required)
+	if (nowarn)
 		return;
 
-	fprintf(stderr, _("\n"
+	if (sector_size != phy_sector_size)
+		fprintf(stderr, _("\n"
 "The device presents a logical sector size that is smaller than\n"
-"the optimal I/O size (often physical sector size). Aligning to a optimal\n"
-"I/O size boundary is recommended, or performance may be impacted.\n\n"));
+"the physical sector size. Aligning to a physical sector (or optimal\n"
+"I/O) size boundary is recommended, or performance may be impacted.\n"));
 
-	/*
-	 * Print warning when sector_offset is not aligned for DOS mode
-	 */
-	if (alignment_offset == 0 && dos_compatible_flag &&
-	    !lba_is_aligned(sector_offset))
+	if (dos_compatible_flag) {
+		fprintf(stderr, _("\n"
+"WARNING: DOS-compatible mode is deprecated. It's strongly recommended to\n"
+"         switch off the mode (command 'c')"));
 
-		fprintf(stderr, _(
-"WARNING: The device does not provide compensation (alignment_offset)\n"
-"for DOS-compatible partitioning, but DOS-compatible mode is enabled.\n"
-"Use command 'c' to switch-off DOS mode.\n\n"));
-
-	if (display_in_cyl_units)
-		fprintf(stderr, _(
-"It's recommended to change display units to sectors (command 'u').\n\n"));
-
+		if (display_in_cyl_units)
+			fprintf(stderr, _(" and change display units to\n"
+"         sectors (command 'u').\n"));
+		else
+			fprintf(stderr, ".\n");
+	}
 }
 
 static void
@@ -1285,7 +1269,6 @@ got_dos_table:
 		}
 	}
 
-	warn_cylinders();
 	warn_geometry();
 	warn_limits();
 	warn_alignment();
@@ -1787,6 +1770,9 @@ static void check_consistency(struct partition *p, int partition) {
 	unsigned int lbc, lbh, lbs;	/* logical beginning c, h, s */
 	unsigned int lec, leh, les;	/* logical ending c, h, s */
 
+	if (!dos_compatible_flag)
+		return;
+
 	if (!heads || !sectors || (partition >= 4))
 		return;		/* do not check extended partitions */
 
@@ -1848,7 +1834,7 @@ static void
 check_alignment(unsigned long long lba, int partition)
 {
 	if (!lba_is_aligned(lba))
-		printf(_("Partition %i does not start on optimal I/O size boundary.\n"),
+		printf(_("Partition %i does not start on physical sector boundary.\n"),
 			partition + 1);
 }
 
@@ -1875,8 +1861,10 @@ list_disk_geometry(void) {
 	       str_units(PLURAL),
 	       units_per_sector, sector_size, units_per_sector * sector_size);
 
-	printf(_("Sector size (logical / optimal IO): %u bytes / %lu bytes\n"),
-				sector_size, io_size);
+	printf(_("Sector size (logical/physical): %u bytes / %u bytes\n"),
+				sector_size, phy_sector_size);
+	printf(_("I/O size (minimum/optimal): %lu bytes / %lu bytes\n"),
+				min_io_size, io_size);
 	if (alignment_offset)
 		printf(_("Alignment offset: %lu bytes\n"), alignment_offset);
 	if (dos_label)
@@ -2667,8 +2655,6 @@ xselect(void) {
 					 _("Number of cylinders"));
 			if (sun_label)
 				sun_set_ncyl(cylinders);
-			if (dos_label)
-				warn_cylinders();
 			break;
 		case 'd':
 			print_raw();
