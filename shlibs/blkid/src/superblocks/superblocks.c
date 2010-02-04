@@ -311,7 +311,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		printf("--> starting probing loop [SUBLKS idx=%d]\n",
 		chn->idx));
 
-	if (pr->size <= 1024 && !S_ISCHR(pr->mode))
+	if (pr->size <= 0 || (pr->size <= 1024 && !S_ISCHR(pr->mode)))
 		/* Ignore very very small block devices or regular files (e.g.
 		 * extended partitions). Note that size of the UBI char devices
 		 * is 1 byte */
