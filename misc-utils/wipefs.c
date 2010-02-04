@@ -190,13 +190,27 @@ static struct wipe_desc *
 read_offsets(struct wipe_desc *wp, const char *fname, int zap)
 {
 	blkid_probe pr;
+	int rc;
 
 	if (!fname)
 		return NULL;
 
 	pr = blkid_new_probe_from_filename(fname);
 	if (!pr)
-		errx(EXIT_FAILURE, _("probing initialization failed"));
+		errx(EXIT_FAILURE, _("error: %s: probing initialization failed"), fname);
+
+	blkid_probe_enable_superblocks(pr, 0);	/* enabled by default ;-( */
+
+	blkid_probe_enable_partitions(pr, 1);
+	rc = blkid_do_fullprobe(pr);
+	blkid_probe_enable_partitions(pr, 0);
+
+	if (rc == 0) {
+		const char *type = NULL;
+		blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL);
+		errx(EXIT_FAILURE, _("error: %s: appears to contain '%s' "
+				"partition table"), fname, type);
+	}
 
 	blkid_probe_enable_superblocks(pr, 1);
 	blkid_probe_set_superblocks_flags(pr, BLKID_SUBLKS_MAGIC |
