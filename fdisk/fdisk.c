@@ -215,6 +215,7 @@ unsigned long long sector_offset = 1, extended_offset = 0, sectors;
 
 unsigned int	heads,
 	cylinders,
+	phy_sector_size = DEFAULT_SECTOR_SIZE,
 	sector_size = DEFAULT_SECTOR_SIZE,
 	sector_factor = 1,
 	user_set_sector_size = 0,
@@ -222,7 +223,11 @@ unsigned int	heads,
 	display_in_cyl_units = 1;
 
 unsigned long long total_number_of_sectors;	/* (!) 512-byte sectors */
-unsigned long io_size, alignment_offset;
+unsigned long grain = DEFAULT_SECTOR_SIZE,
+	      io_size = DEFAULT_SECTOR_SIZE,
+	      min_io_size = DEFAULT_SECTOR_SIZE,
+	      alignment_offset;
+int has_topology;
 
 #define dos_label (!sun_label && !sgi_label && !aix_label && !mac_label && !osf_label)
 int	sun_label = 0;			/* looking at sun disklabel */
@@ -637,7 +642,7 @@ test_c(char **m, char *mesg) {
 	return val;
 }
 
-#define alignment_required	(io_size != sector_size)
+#define alignment_required	(grain != sector_size)
 
 static int
 lba_is_aligned(unsigned long long lba)
@@ -645,9 +650,9 @@ lba_is_aligned(unsigned long long lba)
 	unsigned long long bytes, phy_sectors;
 
 	bytes = lba * sector_size;
-	phy_sectors = bytes / io_size;
+	phy_sectors = bytes / phy_sector_size;
 
-	return (alignment_offset + (phy_sectors * io_size) == bytes);
+	return (alignment_offset + (phy_sectors * phy_sector_size) == bytes);
 }
 
 #define ALIGN_UP	1
@@ -659,14 +664,16 @@ align_lba(unsigned long long lba, int direction)
 {
 	unsigned long long sects_in_phy, res;
 
-	if (lba_is_aligned(lba))
-		return lba;
+	sects_in_phy = grain / sector_size;
 
-	sects_in_phy = io_size / sector_size;
+	if (lba == sector_offset)
+		res = lba;			/* the offset should be aligned */
 
-	if (lba < sects_in_phy)
-		/* align to the first physical sector */
-		res = sects_in_phy;
+	else if (lba < sects_in_phy)
+		res = sects_in_phy;		/* align to the first physical sector */
+
+	else if (lba % sects_in_phy == 0)
+		res = lba;			/* already aligned to the grain */
 
 	else if (direction == ALIGN_UP)
 		res = ((lba + sects_in_phy) / sects_in_phy) * sects_in_phy;
@@ -677,7 +684,7 @@ align_lba(unsigned long long lba, int direction)
 	else /* ALIGN_NEAREST */
 		res = ((lba + sects_in_phy/2) / sects_in_phy) * sects_in_phy;
 
-	if (alignment_offset)
+	if (alignment_offset && res > alignment_offset / sector_size)
 		/*
 		 * apply alignment_offset
 		 *
@@ -685,11 +692,16 @@ align_lba(unsigned long long lba, int direction)
 		 * at LBA < 0 (usually LBA -1). It means we have to move LBA
 		 * according the offset to be on the physical boundary.
 		 */
-		res -= (io_size - alignment_offset) / sector_size;
+		res -= (phy_sector_size - alignment_offset) / sector_size;
 
-	/* fprintf(stderr, "LBA %llu -align-> %llu (%s)\n", lba, res,
-	 *			lba_is_aligned(res) ? "OK" : "FALSE");
-	 */
+	/***
+	 fprintf(stderr, "LBA %llu --align-(%s)--> %llu (%s)\n",
+				lba,
+				direction == ALIGN_UP ?   "UP     " :
+				direction == ALIGN_DOWN ? "DOWN   " : "NEAREST",
+				res,
+				lba_is_aligned(res) ? "OK" : "FALSE");
+	***/
 	return res;
 }
 
@@ -968,10 +980,23 @@ get_topology(int fd) {
 		blkid_topology tp = blkid_probe_get_topology(pr);
 
 		if (tp) {
+			min_io_size = blkid_topology_get_minimum_io_size(tp);
 			io_size = blkid_topology_get_optimal_io_size(tp);
-			if (!io_size)
-				io_size = blkid_topology_get_minimum_io_size(tp);
+			phy_sector_size = blkid_topology_get_physical_sector_size(tp);
 			alignment_offset = blkid_topology_get_alignment_offset(tp);
+
+			/* We assume that the device provides topology info if
+			 * optimal_io_size is set or alignment_offset is set or
+			 * minimum_io_size is not power of 2.
+			 *
+			 * See also update_sector_offset().
+			 */
+			if (io_size || alignment_offset ||
+			    (min_io_size & (min_io_size - 1)))
+				has_topology = 1;
+			if (!io_size)
+				/* optimal IO is optional, default to minimum IO */
+				io_size = min_io_size;
 		}
 	}
 	blkid_free_probe(pr);
@@ -1041,15 +1066,35 @@ get_partition_table_geometry(void) {
 void
 update_sector_offset(void)
 {
+	grain = io_size;
+
 	if (dos_compatible_flag)
 		sector_offset = sectors;	/* usually 63 sectors */
 	else {
 		/*
-		 * Align the begin of the first partition to the physical block
+		 * Align the begin of partitions to:
+		 *
+		 * a) topology
+		 *  a2) alignment offset
+		 *  a1) or physical sector (minimal_io_size, aka "grain")
+		 *
+		 * b) or default to 1MiB (2048 sectrors, Windows Vista default)
+		 *
+		 * c) or for very small devices use 1 phy.sector (small device =
+		 *    device where the offset is quarter of of whole size
+		 *    of the device).
 		 */
-		unsigned long long  x = io_size / sector_size;
+		unsigned long long x;
 
-		sector_offset = align_lba(x, ALIGN_UP);
+		if (has_topology)
+			x = alignment_offset ? alignment_offset : io_size;
+		else
+			x = grain = 2048 * 512;
+
+		sector_offset = x / sector_size;
+
+		if (total_number_of_sectors <= sector_offset * 4)
+			sector_offset = phy_sector_size / sector_size;
 	}
 }
 
