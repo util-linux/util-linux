@@ -289,7 +289,7 @@ void *blkid_probe_get_binary_data(blkid_probe pr, struct blkid_chain *chn)
 {
 	int rc;
 
-	if (!pr && !chn)
+	if (!pr || !chn)
 		return NULL;
 
 	pr->cur_chain = chn;
@@ -465,6 +465,9 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 	struct list_head *p;
 	struct blkid_bufinfo *bf = NULL;
 
+	if (pr->size <= 0)
+		return NULL;
+
 	list_for_each(p, &pr->buffers) {
 		struct blkid_bufinfo *x =
 				list_entry(p, struct blkid_bufinfo, bufs);
@@ -605,8 +608,6 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		pr->size -= pr->off;
 	}
 
-	if (!pr->size)
-		goto err;
 	DBG(DEBUG_LOWPROBE, printf("ready for low-probing, offset=%zd, size=%zd\n",
 				pr->off, pr->size));
 
@@ -648,6 +649,10 @@ int blkid_probe_set_dimension(blkid_probe pr,
 
 	pr->off = off;
 	pr->size = size;
+	pr->flags &= ~BLKID_TINY_DEV;
+
+	if (pr->size <= 1440 * 1024 && !S_ISCHR(pr->mode))
+		pr->flags |= BLKID_TINY_DEV;
 
 	blkid_probe_reset_buffer(pr);
 
