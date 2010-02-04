@@ -24,6 +24,13 @@ libblkid
 	...
 	blkid_unref(tp);
 
+wipefs
+------
+
+ - some filesystem (namely FAT) contains more magic strings, so if you erase
+   one magic string the FS is still detectable by libblkid. We have to inform
+   users that there is more valid magic string for the same FS.
+
 fdisk(s)
 --------
 
