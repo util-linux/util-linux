@@ -1,6 +1,6 @@
 #!/bin/sh
 
-VERSION="0.3"
+VERSION="0.4"
 
 SUFFIX=
 if test "x$1" = x--suffix; then
