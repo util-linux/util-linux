@@ -1041,18 +1041,9 @@ get_partition_table_geometry(void) {
 void
 update_sector_offset(void)
 {
-	if (dos_compatible_flag) {
-		/* usually 63 sectors for classic geometry */
-		sector_offset = sectors;
-
-		/* On the disks with alignment_offset the default geo.sectors
-		 * has to be aligned to physical block boundary. Check it!
-		 */
-		if (sectors && alignment_offset && !lba_is_aligned(sectors))
-			fprintf(stderr, _(
-		"\nWARNING: the device provides alignment_offset, but the offset does not\n"
-		"match with device geometry.\n\n"));
-	} else {
+	if (dos_compatible_flag)
+		sector_offset = sectors;	/* usually 63 sectors */
+	else {
 		/*
 		 * Align the begin of the first partition to the physical block
 		 */
