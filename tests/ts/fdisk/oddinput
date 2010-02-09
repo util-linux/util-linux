@@ -24,7 +24,7 @@ ts_init "$*"
 
 ts_log "Initialize empty image"
 TEST_IMAGE_NAME=$(ts_image_init 10)
-ts_image_md5sum 2>&1 >> $TS_OUTPUT
+ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 ts_log "Empty image listing" # this should report empty partition table
 # TEST_IMAGE_NAME has absolute path, and is by definition different on each computer, we need to sed it away
