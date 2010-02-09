@@ -1800,9 +1800,9 @@ static void check_consistency(struct partition *p, int partition) {
 }
 
 static void
-check_alignment(struct partition *p, int partition)
+check_alignment(unsigned long long lba, int partition)
 {
-	if (!lba_is_aligned(get_start_sect(p)))
+	if (!lba_is_aligned(lba))
 		printf(_("Partition %i does not start on optimal I/O size boundary.\n"),
 			partition + 1);
 }
@@ -2042,7 +2042,7 @@ list_table(int xtra) {
 /* type name */		(type = partition_type(p->sys_ind)) ?
 			type : _("Unknown"));
 			check_consistency(p, i);
-			check_alignment(p, i);
+			check_alignment(get_partition_start(pe), i);
 		}
 	}
 
@@ -2077,7 +2077,7 @@ x_list_table(int extend) {
 				(unsigned long) get_nr_sects(p), p->sys_ind);
 			if (p->sys_ind) {
 				check_consistency(p, i);
-				check_alignment(p, i);
+				check_alignment(get_partition_start(pe), i);
 			}
 		}
 	}
@@ -2155,7 +2155,7 @@ verify(void) {
 		p = pe->part_table;
 		if (p->sys_ind && !IS_EXTENDED (p->sys_ind)) {
 			check_consistency(p, i);
-			check_alignment(p, i);
+			check_alignment(get_partition_start(pe), i);
 			if (get_partition_start(pe) < first[i])
 				printf(_("Warning: bad start-of-data in "
 					"partition %d\n"), i + 1);
