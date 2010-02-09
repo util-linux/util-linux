@@ -2309,17 +2309,16 @@ add_partition(int n, int sys) {
 
 	snprintf(mesg, sizeof(mesg), _("First %s"), str_units(SINGULAR));
 	do {
-		unsigned long long dflt, dflt_tmp;
+		unsigned long long dflt, aligned;
 
 		temp = start;
-
 		dflt = start = get_unused_start(n, start, first, last);
 
 		/* the default sector should be aligned and unused */
 		do {
-			dflt_tmp = align_lba_in_range(dflt, start, limit);
-			dflt = get_unused_start(n, dflt_tmp, first, last);
-		} while (dflt != dflt_tmp && dflt > dflt_tmp && dflt < limit);
+			aligned = align_lba_in_range(dflt, dflt, limit);
+			dflt = get_unused_start(n, aligned, first, last);
+		} while (dflt != aligned && dflt > aligned && dflt < limit);
 
 		if (dflt >= limit)
 			dflt = start;
