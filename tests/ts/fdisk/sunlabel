@@ -34,41 +34,41 @@ FDISK_CMD_CREATE_SECONDARY="n\n2\n128\n\n" # create secondary partition cylinder
 
 ts_log "Initialize empty image"
 TEST_IMAGE_NAME=$(ts_image_init 10)
-ts_image_md5sum 2>&1 >> $TS_OUTPUT
+ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 ts_log "Create new SUN partition table"
 echo -e "${FDISK_CMD_INIT}${FDISK_CMD_DELETEALL}${FDISK_CMD_WRITE_CLOSE}" \
 	 | $TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum 2>&1 >> $TS_OUTPUT
+ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 ts_log "Create first partition"
 echo -e "${FDISK_CMD_CREATE_PRIMARY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum 2>&1 >> $TS_OUTPUT
+ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 ts_log "Set partition sysid"
 echo -e "${FDISK_CMD_CHANGE_SYSID}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum 2>&1 >> $TS_OUTPUT
+ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 ts_log "Set first partition readonly"
 echo -e "${FDISK_CMD_TOGGLE_READONLY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum 2>&1 >> $TS_OUTPUT
+ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 ts_log "Set first partition mountable"
 echo -e "${FDISK_CMD_TOGGLE_MOUNTABLE}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum 2>&1 >> $TS_OUTPUT
+ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 ts_log "Create second partition"
 echo -e "${FDISK_CMD_CREATE_SECONDARY}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum 2>&1 >> $TS_OUTPUT
+ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 ts_log "Delete all partitions"
 echo -e "${FDISK_CMD_DELETEALL}${FDISK_CMD_WRITE_CLOSE}" | \
 	$TS_CMD_FDISK ${TEST_IMAGE_NAME} &> /dev/null
-ts_image_md5sum 2>&1 >> $TS_OUTPUT
+ts_image_md5sum >> $TS_OUTPUT 2>&1
 
 ts_finalize
