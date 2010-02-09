@@ -1,0 +1,99 @@
+Create partitions
+Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel
+
+Changes will remain in memory only, until you decide to write them.
+After that, of course, the previous content won't be recoverable.
+
+Warning: invalid flag 0x0000 of partition table 4 will be corrected by w(rite)
+
+The device presents a logical sector size that is smaller than
+the physical sector size. Aligning to a physical sector (or optimal
+I/O) size boundary is recommended, or performance may be impacted.
+
+WARNING: DOS-compatible mode is deprecated. It's strongly recommended to
+         switch off the mode (command 'c') and change display units to
+         sectors (command 'u').
+
+Command (m for help): DOS Compatibility flag is not set
+
+Command (m for help): Changing display/entry units to sectors
+
+Command (m for help): Command action
+   e   extended
+   p   primary partition (1-4)
+Partition number (1-4): First sector (64-102399, default 64): Using default value 64
+Last sector, +sectors or +size{K,M,G} (64-102399, default 102399): 
+Command (m for help): Command action
+   e   extended
+   p   primary partition (1-4)
+Partition number (1-4): First sector (41024-102399, default 41024): Using default value 41024
+Last sector, +sectors or +size{K,M,G} (41024-102399, default 102399): Using default value 102399
+
+Command (m for help): 
+Disk /dev/sdb: 52 MB, 52428800 bytes
+32 heads, 32 sectors/track, 100 cylinders, total 102400 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 32768 bytes
+
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdb1              64       41023       20480   83  Linux
+/dev/sdb2           41024      102399       30688   83  Linux
+
+Command (m for help): The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+Syncing disks.
+Alignment offsets:
+0
+0
+Create partitions (MD)
+Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel
+
+Changes will remain in memory only, until you decide to write them.
+After that, of course, the previous content won't be recoverable.
+
+Warning: invalid flag 0x0000 of partition table 4 will be corrected by w(rite)
+
+The device presents a logical sector size that is smaller than
+the physical sector size. Aligning to a physical sector (or optimal
+I/O) size boundary is recommended, or performance may be impacted.
+
+WARNING: DOS-compatible mode is deprecated. It's strongly recommended to
+         switch off the mode (command 'c') and change display units to
+         sectors (command 'u').
+
+Command (m for help): DOS Compatibility flag is not set
+
+Command (m for help): Changing display/entry units to sectors
+
+Command (m for help): Command action
+   e   extended
+   p   primary partition (1-4)
+Partition number (1-4): First sector (256-102015, default 256): Using default value 256
+Last sector, +sectors or +size{K,M,G} (256-102015, default 102015): 
+Command (m for help): Command action
+   e   extended
+   p   primary partition (1-4)
+Partition number (1-4): First sector (20736-102015, default 20736): Using default value 20736
+Last sector, +sectors or +size{K,M,G} (20736-102015, default 102015): 
+Command (m for help): 
+Disk /dev/md8: 52 MB, 52232192 bytes
+2 heads, 4 sectors/track, 12752 cylinders, total 102016 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 65536 bytes / 131072 bytes
+
+
+    Device Boot      Start         End      Blocks   Id  System
+/dev/md8p1             256       20735       10240   83  Linux
+/dev/md8p2           20736       41215       10240   83  Linux
+
+Command (m for help): The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+Syncing disks.
+Alignment offsets (MD):
+0
+0

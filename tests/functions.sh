@@ -255,7 +255,7 @@ function ts_image_init {
 }
 
 function ts_device_init {
-	local img=$(ts_image_init)
+	local img=$(ts_image_init $1 $2)
 	local dev=$($TS_CMD_LOSETUP -s -f "$img")
 
 	if [ -z "$dev" ]; then
