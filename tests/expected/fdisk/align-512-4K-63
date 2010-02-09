@@ -1,0 +1,79 @@
+Create partitions
+Device contains neither a valid DOS partition table, nor Sun, SGI or OSF disklabel
+
+Changes will remain in memory only, until you decide to write them.
+After that, of course, the previous content won't be recoverable.
+
+Warning: invalid flag 0x0000 of partition table 4 will be corrected by w(rite)
+
+The device presents a logical sector size that is smaller than
+the physical sector size. Aligning to a physical sector (or optimal
+I/O) size boundary is recommended, or performance may be impacted.
+
+WARNING: DOS-compatible mode is deprecated. It's strongly recommended to
+         switch off the mode (command 'c') and change display units to
+         sectors (command 'u').
+
+Command (m for help): DOS Compatibility flag is not set
+
+Command (m for help): Changing display/entry units to sectors
+
+Command (m for help): Command action
+   e   extended
+   p   primary partition (1-4)
+Partition number (1-4): First sector (7-102399, default 7): Using default value 7
+Last sector, +sectors or +size{K,M,G} (7-102399, default 102399):
+Command (m for help): Command action
+   e   extended
+   p   primary partition (1-4)
+Partition number (1-4): First sector (20479-102399, default 20479): Using default value 20479
+Last sector, +sectors or +size{K,M,G} (20479-102399, default 102399):
+Command (m for help): Command action
+   e   extended
+   p   primary partition (1-4)
+Partition number (1-4): First sector (40959-102399, default 40959): Using default value 40959
+Last sector, +sectors or +size{K,M,G} (40959-102399, default 102399):
+Command (m for help): Command action
+   e   extended
+   p   primary partition (1-4)
+Selected partition 4
+First sector (61439-102399, default 61439): Using default value 61439
+Last sector, +sectors or +size{K,M,G} (61439-102399, default 102399): Using default value 102399
+
+Command (m for help): First sector (61446-102399, default 61503): Using default value 61503
+Last sector, +sectors or +size{K,M,G} (61503-102399, default 102399):
+Command (m for help): First sector (61446-102399, default 71807): Using default value 71807
+Last sector, +sectors or +size{K,M,G} (71807-102399, default 102399):
+Command (m for help): First sector (61446-102399, default 82111): Using default value 82111
+Last sector, +sectors or +size{K,M,G} (82111-102399, default 102399): Using default value 102399
+
+Command (m for help):
+Disk /dev/sdb: 52 MB, 52428800 bytes
+32 heads, 32 sectors/track, 100 cylinders, total 102400 sectors
+Units = sectors of 1 * 512 = 512 bytes
+Sector size (logical/physical): 512 bytes / 4096 bytes
+I/O size (minimum/optimal): 4096 bytes / 32768 bytes
+Alignment offset: 3584 bytes
+
+
+   Device Boot      Start         End      Blocks   Id  System
+/dev/sdb1               7       20478       10236   83  Linux
+/dev/sdb2           20479       40958       10240   83  Linux
+/dev/sdb3           40959       61438       10240   83  Linux
+/dev/sdb4           61439      102399       20480+   5  Extended
+/dev/sdb5           61503       71742        5120   83  Linux
+/dev/sdb6           71807       82046        5120   83  Linux
+/dev/sdb7           82111      102399       10144+  83  Linux
+
+Command (m for help): The partition table has been altered!
+
+Calling ioctl() to re-read partition table.
+Syncing disks.
+Alignment offsets:
+0
+0
+0
+0
+0
+0
+0
