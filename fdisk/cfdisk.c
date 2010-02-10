@@ -2584,6 +2584,7 @@ static void
 do_curses_fdisk(void) {
     int done = FALSE;
     char command;
+    int is_first_run = TRUE;
 
     static struct MenuItem menuMain[] = {
         { 'b', N_("Bootable"), N_("Toggle bootable flag of the current partition") },
@@ -2630,12 +2631,13 @@ do_curses_fdisk(void) {
 	} else if (p_info[cur_part].id > 0) {
 	    s = ((opentype == O_RDWR) ? "bdhmpqtuW" : "bdhmpqtu");
 	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 10,
-	        s, MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
+	        s, MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, is_first_run ? 7 : 0);
 	} else {
 	    s = ((opentype == O_RDWR) ? "hpquW" : "hpqu");
 	    command = menuSelect(COMMAND_LINE_Y, COMMAND_LINE_X, menuMain, 10,
 	        s, MENU_HORIZ | MENU_BUTTON | MENU_ACCEPT_OTHERS, 0);
 	}
+	is_first_run = FALSE;
 	switch ( command ) {
 	case 'B':
 	case 'b':
