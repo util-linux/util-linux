@@ -3,6 +3,7 @@
 
 #include "mount_mntent.h"
 int mtab_is_writable(void);
+int mtab_is_a_symlink(void);
 int mtab_does_not_exist(void);
 void reset_mtab_info(void);
 int is_mounted_once(const char *name);
