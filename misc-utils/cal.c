@@ -312,7 +312,11 @@ main(int argc, char **argv) {
 	 POSIX:  19971201 + 7 -1 = 0
 	 */
 	{
-		int wfd = (int)(intptr_t) nl_langinfo(_NL_TIME_WEEK_1STDAY);
+		int wfd;
+		union { unsigned int word; char *string; } val;
+		val.string = nl_langinfo(_NL_TIME_WEEK_1STDAY);
+
+		wfd = val.word;
 		wfd = day_in_week(wfd % 100, (wfd / 100) % 100, wfd / (100 * 100));
 		weekstart = (wfd + *nl_langinfo(_NL_TIME_FIRST_WEEKDAY) - 1) % 7;
 	}
