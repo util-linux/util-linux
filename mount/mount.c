@@ -201,6 +201,7 @@ static int opt_nofail = 0;
 static const char *opt_loopdev, *opt_vfstype, *opt_offset, *opt_sizelimit,
         *opt_encryption, *opt_speed, *opt_comment, *opt_uhelper;
 
+static int is_readonly(const char *node);
 static int mounted (const char *spec0, const char *node0);
 static int check_special_mountprog(const char *spec, const char *node,
 		const char *type, int flags, char *extra_opts, int *status);
@@ -282,6 +283,14 @@ print_all (char *types) {
 	  if (matching_type (mc->m.mnt_type, types))
 	       print_one (&(mc->m));
      }
+
+     if (!mtab_does_not_exist() && !mtab_is_a_symlink() && is_readonly(_PATH_MOUNTED))
+          printf(_("\n"
+	"mount: warning: /etc/mtab is not writable (e.g. read-only filesystem).\n"
+	"       It's possible that information reported by mount(8) is not\n"
+	"       up to date. For actual information about system mount points\n"
+	"       check the /proc/mounts file.\n\n"));
+
      exit (0);
 }
 

@@ -55,7 +55,7 @@ mtab_does_not_exist(void) {
 	return var_mtab_does_not_exist;
 }
 
-static int
+int
 mtab_is_a_symlink(void) {
 	get_mtab_info();
 	return var_mtab_is_a_symlink;
