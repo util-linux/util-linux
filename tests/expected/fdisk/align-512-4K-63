@@ -26,25 +26,25 @@ Last sector, +sectors or +size{K,M,G} (7-102399, default 102399):
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (20479-102399, default 20479): Using default value 20479
-Last sector, +sectors or +size{K,M,G} (20479-102399, default 102399):
+Partition number (1-4): First sector (20487-102399, default 20487): Using default value 20487
+Last sector, +sectors or +size{K,M,G} (20487-102399, default 102399):
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (40959-102399, default 40959): Using default value 40959
-Last sector, +sectors or +size{K,M,G} (40959-102399, default 102399):
+Partition number (1-4): First sector (40967-102399, default 40967): Using default value 40967
+Last sector, +sectors or +size{K,M,G} (40967-102399, default 102399):
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
 Selected partition 4
-First sector (61439-102399, default 61439): Using default value 61439
-Last sector, +sectors or +size{K,M,G} (61439-102399, default 102399): Using default value 102399
+First sector (61447-102399, default 61447): Using default value 61447
+Last sector, +sectors or +size{K,M,G} (61447-102399, default 102399): Using default value 102399
 
-Command (m for help): First sector (61446-102399, default 61503): Using default value 61503
+Command (m for help): First sector (61454-102399, default 61503): Using default value 61503
 Last sector, +sectors or +size{K,M,G} (61503-102399, default 102399):
-Command (m for help): First sector (61446-102399, default 71807): Using default value 71807
+Command (m for help): First sector (61454-102399, default 71807): Using default value 71807
 Last sector, +sectors or +size{K,M,G} (71807-102399, default 102399):
-Command (m for help): First sector (61446-102399, default 82111): Using default value 82111
+Command (m for help): First sector (61454-102399, default 82111): Using default value 82111
 Last sector, +sectors or +size{K,M,G} (82111-102399, default 102399): Using default value 102399
 
 Command (m for help):
@@ -57,10 +57,10 @@ Alignment offset: 3584 bytes
 
 
    Device Boot      Start         End      Blocks   Id  System
-/dev/sdb1               7       20478       10236   83  Linux
-/dev/sdb2           20479       40958       10240   83  Linux
-/dev/sdb3           40959       61438       10240   83  Linux
-/dev/sdb4           61439      102399       20480+   5  Extended
+/dev/sdb1               7       20486       10240   83  Linux
+/dev/sdb2           20487       40966       10240   83  Linux
+/dev/sdb3           40967       61446       10240   83  Linux
+/dev/sdb4           61447      102399       20476+   5  Extended
 /dev/sdb5           61503       71742        5120   83  Linux
 /dev/sdb6           71807       82046        5120   83  Linux
 /dev/sdb7           82111      102399       10144+  83  Linux
