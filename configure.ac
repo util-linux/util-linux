@@ -126,6 +126,8 @@ AC_CHECK_HEADERS(
 	sys/prctl.h \
 	sys/queue.h \
 	sys/sockio.h \
+	sys/socket.h \
+	sys/syscall.h \
 	sys/file.h \
 	sys/ioctl.h \
 	sys/stat.h \
@@ -140,9 +142,24 @@ AC_CHECK_HEADERS([linux/raw.h],
 
 AC_CHECK_DECLS([_NL_TIME_WEEK_1STDAY],[],[],[[#include <langinfo.h>]])
 
+AC_CHECK_DECL([llseek],
+	[AC_DEFINE(HAVE_LLSEEK_PROTOTYPE, 1,
+			[Define to 1 if have llseek prototype])],
+	[],
+	[#include <unistd.h>])
+
+AC_CHECK_DECL([lseek64],
+	[AC_DEFINE(HAVE_LSEEK64_PROTOTYPE, 1,
+			[Define to 1 if have lseek64 prototype])],
+	[],
+	[#define _LARGEFILE_SOURCE
+	 #define _LARGEFILE64_SOURCE
+	 #include <unistd.h>])
+
 AC_CHECK_FUNCS(
 	[inet_aton \
 	futimens \
+	fstat64 \
 	fsync \
 	getdomainname \
 	get_current_dir_name \
