@@ -37,7 +37,6 @@
 #include <string.h>
 #include <time.h>
 #include <stdlib.h>
-#include <errno.h>
 #include <paths.h>
 #include <unistd.h>
 #include <errno.h>

@@ -16,7 +16,6 @@
 #include <unistd.h>
 #endif
 #include <stdlib.h>
-#include <string.h>
 #if HAVE_SYS_TYPES_H
 #include <sys/types.h>
 #endif
