@@ -215,7 +215,6 @@ unsigned long long sector_offset = 1, extended_offset = 0, sectors;
 
 unsigned int	heads,
 	cylinders,
-	phy_sector_size = DEFAULT_SECTOR_SIZE,
 	sector_size = DEFAULT_SECTOR_SIZE,
 	sector_factor = 1,
 	user_set_sector_size = 0,
@@ -226,6 +225,7 @@ unsigned long long total_number_of_sectors;	/* (!) 512-byte sectors */
 unsigned long grain = DEFAULT_SECTOR_SIZE,
 	      io_size = DEFAULT_SECTOR_SIZE,
 	      min_io_size = DEFAULT_SECTOR_SIZE,
+	      phy_sector_size = DEFAULT_SECTOR_SIZE,
 	      alignment_offset;
 int has_topology;
 
@@ -647,12 +647,10 @@ test_c(char **m, char *mesg) {
 static int
 lba_is_aligned(unsigned long long lba)
 {
-	unsigned long long bytes, phy_sectors;
+	unsigned int granularity = max(phy_sector_size, min_io_size);
+	unsigned long long offset = (lba << 9) & (granularity - 1);
 
-	bytes = lba * sector_size;
-	phy_sectors = bytes / phy_sector_size;
-
-	return (alignment_offset + (phy_sectors * phy_sector_size) == bytes);
+	return !((granularity + alignment_offset - offset) & (granularity - 1));
 }
 
 #define ALIGN_UP	1
@@ -662,41 +660,44 @@ lba_is_aligned(unsigned long long lba)
 static unsigned long long
 align_lba(unsigned long long lba, int direction)
 {
-	unsigned long long sects_in_phy, res;
+	unsigned long long res;
 
-	sects_in_phy = grain / sector_size;
+	if (lba_is_aligned(lba))
+		res = lba;
+	else {
+		unsigned long long sects_in_phy = grain / sector_size;
 
-	if (lba == sector_offset)
-		res = lba;			/* the offset should be aligned */
+		if (lba < sector_offset)
+			res = sector_offset;
 
-	else if (lba < sects_in_phy)
-		res = sects_in_phy;		/* align to the first physical sector */
+		else if (direction == ALIGN_UP)
+			res = ((lba + sects_in_phy) / sects_in_phy) * sects_in_phy;
 
-	else if (lba % sects_in_phy == 0)
-		res = lba;			/* already aligned to the grain */
+		else if (direction == ALIGN_DOWN)
+			res = (lba / sects_in_phy) * sects_in_phy;
 
-	else if (direction == ALIGN_UP)
-		res = ((lba + sects_in_phy) / sects_in_phy) * sects_in_phy;
+		else /* ALIGN_NEAREST */
+			res = ((lba + sects_in_phy / 2) / sects_in_phy) * sects_in_phy;
 
-	else if (direction == ALIGN_DOWN)
-		res = (lba / sects_in_phy) * sects_in_phy;
-
-	else /* ALIGN_NEAREST */
-		res = ((lba + sects_in_phy/2) / sects_in_phy) * sects_in_phy;
-
-	if (alignment_offset && res > alignment_offset / sector_size)
-		/*
-		 * apply alignment_offset
-		 *
-		 * On disk with alignment compensation physical blocks start
-		 * at LBA < 0 (usually LBA -1). It means we have to move LBA
-		 * according the offset to be on the physical boundary.
-		 */
-		res -= (phy_sector_size - alignment_offset) / sector_size;
+		if (alignment_offset && !lba_is_aligned(res) &&
+		    res > alignment_offset / sector_size) {
+			/*
+			 * apply alignment_offset
+			 *
+			 * On disk with alignment compensation physical blocks starts
+			 * at LBA < 0 (usually LBA -1). It means we have to move LBA
+			 * according the offset to be on the physical boundary.
+			 */
+			/* fprintf(stderr, "LBA: %llu apply alignment_offset\n", res); */
+			res -= (max(phy_sector_size, min_io_size) -
+					alignment_offset) / sector_size;
+		}
+	}
 
 	/***
-	 fprintf(stderr, "LBA %llu --align-(%s)--> %llu (%s)\n",
+	 fprintf(stderr, "LBA %llu (%s) --align-(%s)--> %llu (%s)\n",
 				lba,
+				lba_is_aligned(lba) ? "OK" : "FALSE",
 				direction == ALIGN_UP ?   "UP     " :
 				direction == ALIGN_DOWN ? "DOWN   " : "NEAREST",
 				res,
@@ -1861,7 +1862,7 @@ list_disk_geometry(void) {
 	       str_units(PLURAL),
 	       units_per_sector, sector_size, units_per_sector * sector_size);
 
-	printf(_("Sector size (logical/physical): %u bytes / %u bytes\n"),
+	printf(_("Sector size (logical/physical): %u bytes / %lu bytes\n"),
 				sector_size, phy_sector_size);
 	printf(_("I/O size (minimum/optimal): %lu bytes / %lu bytes\n"),
 				min_io_size, io_size);
