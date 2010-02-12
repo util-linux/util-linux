@@ -1571,7 +1571,7 @@ mount_retry:
 	error (_("mount: %s is not a block device, and stat fails?"), spec);
       else if (S_ISBLK(statbuf.st_mode))
         error (_("mount: the kernel does not recognize %s as a block device\n"
-	       "       (maybe `insmod driver'?)"), spec);
+	       "       (maybe `modprobe driver'?)"), spec);
       else if (S_ISREG(statbuf.st_mode))
 	error (_("mount: %s is not a block device (maybe try `-o loop'?)"),
 		 spec);
