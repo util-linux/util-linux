@@ -248,7 +248,7 @@ static int get_node_id(unsigned char *node_id)
      sizeof((i).ifr_name)+(i).ifr_addr.sa_len)
 #else
 #define ifreq_size(i) sizeof(struct ifreq)
-#endif /* HAVE_SA_LEN*/
+#endif /* HAVE_SA_LEN */
 
 	sd = socket(AF_INET, SOCK_DGRAM, IPPROTO_IP);
 	if (sd < 0) {
