@@ -309,7 +309,6 @@ extern int blkid_fstatat(DIR *dir, const char *dirname, const char *filename,
 #define DEBUG_ALL	0xFFFF
 
 #ifdef CONFIG_BLKID_DEBUG
-#include <stdio.h>
 extern int blkid_debug_mask;
 extern void blkid_init_debug(int mask);
 extern void blkid_debug_dump_dev(blkid_dev dev);
