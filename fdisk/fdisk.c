@@ -689,6 +689,9 @@ align_lba(unsigned long long lba, int direction)
 			/* fprintf(stderr, "LBA: %llu apply alignment_offset\n", res); */
 			res -= (max(phy_sector_size, min_io_size) -
 					alignment_offset) / sector_size;
+
+			if (direction == ALIGN_UP && res < lba)
+				res += sects_in_phy;
 		}
 	}
 
