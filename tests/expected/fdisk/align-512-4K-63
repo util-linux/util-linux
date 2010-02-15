@@ -40,12 +40,12 @@ Selected partition 4
 First sector (61447-102399, default 61447): Using default value 61447
 Last sector, +sectors or +size{K,M,G} (61447-102399, default 102399): Using default value 102399
 
-Command (m for help): First sector (61454-102399, default 61503): Using default value 61503
-Last sector, +sectors or +size{K,M,G} (61503-102399, default 102399): 
-Command (m for help): First sector (61454-102399, default 71807): Using default value 71807
-Last sector, +sectors or +size{K,M,G} (71807-102399, default 102399): 
-Command (m for help): First sector (61454-102399, default 82111): Using default value 82111
-Last sector, +sectors or +size{K,M,G} (82111-102399, default 102399): Using default value 102399
+Command (m for help): First sector (61454-102399, default 63487): Using default value 63487
+Last sector, +sectors or +size{K,M,G} (63487-102399, default 102399):
+Command (m for help): First sector (61454-102399, default 75775): Using default value 75775
+Last sector, +sectors or +size{K,M,G} (75775-102399, default 102399):
+Command (m for help): First sector (61454-102399, default 88063): Using default value 88063
+Last sector, +sectors or +size{K,M,G} (88063-102399, default 102399): Using default value 102399
 
 Command (m for help): 
 Disk /dev/sdb: 52 MB, 52428800 bytes
@@ -61,9 +61,9 @@ Alignment offset: 3584 bytes
 /dev/sdb2           20487       40966       10240   83  Linux
 /dev/sdb3           40967       61446       10240   83  Linux
 /dev/sdb4           61447      102399       20476+   5  Extended
-/dev/sdb5           61503       71742        5120   83  Linux
-/dev/sdb6           71807       82046        5120   83  Linux
-/dev/sdb7           82111      102399       10144+  83  Linux
+/dev/sdb5           63487       73726        5120   83  Linux
+/dev/sdb6           75775       86014        5120   83  Linux
+/dev/sdb7           88063      102399        7168+  83  Linux
 
 Command (m for help): The partition table has been altered!
 

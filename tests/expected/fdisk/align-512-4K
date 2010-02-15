@@ -21,31 +21,31 @@ Command (m for help): Changing display/entry units to sectors
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (64-102399, default 64): Using default value 64
-Last sector, +sectors or +size{K,M,G} (64-102399, default 102399): 
+Partition number (1-4): First sector (2048-102399, default 2048): Using default value 2048
+Last sector, +sectors or +size{K,M,G} (2048-102399, default 102399):
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (20544-102399, default 20544): Using default value 20544
-Last sector, +sectors or +size{K,M,G} (20544-102399, default 102399): 
+Partition number (1-4): First sector (22528-102399, default 22528): Using default value 22528
+Last sector, +sectors or +size{K,M,G} (22528-102399, default 102399):
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (41024-102399, default 41024): Using default value 41024
-Last sector, +sectors or +size{K,M,G} (41024-102399, default 102399): 
+Partition number (1-4): First sector (43008-102399, default 43008): Using default value 43008
+Last sector, +sectors or +size{K,M,G} (43008-102399, default 102399):
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
 Selected partition 4
-First sector (61504-102399, default 61504): Using default value 61504
-Last sector, +sectors or +size{K,M,G} (61504-102399, default 102399): Using default value 102399
+First sector (63488-102399, default 63488): Using default value 63488
+Last sector, +sectors or +size{K,M,G} (63488-102399, default 102399): Using default value 102399
 
-Command (m for help): First sector (61568-102399, default 61568): Using default value 61568
-Last sector, +sectors or +size{K,M,G} (61568-102399, default 102399): 
-Command (m for help): First sector (71872-102399, default 71872): Using default value 71872
-Last sector, +sectors or +size{K,M,G} (71872-102399, default 102399): 
-Command (m for help): First sector (82176-102399, default 82176): Using default value 82176
-Last sector, +sectors or +size{K,M,G} (82176-102399, default 102399): Using default value 102399
+Command (m for help): First sector (65536-102399, default 65536): Using default value 65536
+Last sector, +sectors or +size{K,M,G} (65536-102399, default 102399):
+Command (m for help): First sector (77824-102399, default 77824): Using default value 77824
+Last sector, +sectors or +size{K,M,G} (77824-102399, default 102399):
+Command (m for help): First sector (90112-102399, default 90112): Using default value 90112
+Last sector, +sectors or +size{K,M,G} (90112-102399, default 102399): Using default value 102399
 
 Command (m for help): 
 Disk /dev/sdb: 52 MB, 52428800 bytes
@@ -56,13 +56,13 @@ I/O size (minimum/optimal): 4096 bytes / 32768 bytes
 
 
    Device Boot      Start         End      Blocks   Id  System
-/dev/sdb1              64       20543       10240   83  Linux
-/dev/sdb2           20544       41023       10240   83  Linux
-/dev/sdb3           41024       61503       10240   83  Linux
-/dev/sdb4           61504      102399       20448    5  Extended
-/dev/sdb5           61568       71807        5120   83  Linux
-/dev/sdb6           71872       82111        5120   83  Linux
-/dev/sdb7           82176      102399       10112   83  Linux
+/dev/sdb1            2048       22527       10240   83  Linux
+/dev/sdb2           22528       43007       10240   83  Linux
+/dev/sdb3           43008       63487       10240   83  Linux
+/dev/sdb4           63488      102399       19456    5  Extended
+/dev/sdb5           65536       75775        5120   83  Linux
+/dev/sdb6           77824       88063        5120   83  Linux
+/dev/sdb7           90112      102399        6144   83  Linux
 
 Command (m for help): The partition table has been altered!
 
