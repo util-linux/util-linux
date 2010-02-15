@@ -21,13 +21,13 @@ Command (m for help): Changing display/entry units to sectors
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (64-102399, default 64): Using default value 64
-Last sector, +sectors or +size{K,M,G} (64-102399, default 102399):
+Partition number (1-4): First sector (2048-102399, default 2048): Using default value 2048
+Last sector, +sectors or +size{K,M,G} (2048-102399, default 102399):
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (41024-102399, default 41024): Using default value 41024
-Last sector, +sectors or +size{K,M,G} (41024-102399, default 102399): Using default value 102399
+Partition number (1-4): First sector (43008-102399, default 43008): Using default value 43008
+Last sector, +sectors or +size{K,M,G} (43008-102399, default 102399): Using default value 102399
 
 Command (m for help):
 Disk /dev/sdb: 52 MB, 52428800 bytes
@@ -38,8 +38,8 @@ I/O size (minimum/optimal): 4096 bytes / 32768 bytes
 
 
    Device Boot      Start         End      Blocks   Id  System
-/dev/sdb1              64       41023       20480   83  Linux
-/dev/sdb2           41024      102399       30688   83  Linux
+/dev/sdb1            2048       43007       20480   83  Linux
+/dev/sdb2           43008      102399       29696   83  Linux
 
 Command (m for help): The partition table has been altered!
 
@@ -71,24 +71,24 @@ Command (m for help): Changing display/entry units to sectors
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (256-102015, default 256): Using default value 256
-Last sector, +sectors or +size{K,M,G} (256-102015, default 102015):
+Partition number (1-4): First sector (2048-100095, default 2048): Using default value 2048
+Last sector, +sectors or +size{K,M,G} (2048-100095, default 100095):
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (20736-102015, default 20736): Using default value 20736
-Last sector, +sectors or +size{K,M,G} (20736-102015, default 102015):
+Partition number (1-4): First sector (22528-100095, default 22528): Using default value 22528
+Last sector, +sectors or +size{K,M,G} (22528-100095, default 100095):
 Command (m for help):
-Disk /dev/md8: 52 MB, 52232192 bytes
-2 heads, 4 sectors/track, 12752 cylinders, total 102016 sectors
+Disk /dev/md8: 51 MB, 51249152 bytes
+2 heads, 4 sectors/track, 12512 cylinders, total 100096 sectors
 Units = sectors of 1 * 512 = 512 bytes
 Sector size (logical/physical): 512 bytes / 4096 bytes
 I/O size (minimum/optimal): 65536 bytes / 131072 bytes
 
 
     Device Boot      Start         End      Blocks   Id  System
-/dev/md8p1             256       20735       10240   83  Linux
-/dev/md8p2           20736       41215       10240   83  Linux
+/dev/md8p1            2048       22527       10240   83  Linux
+/dev/md8p2           22528       43007       10240   83  Linux
 
 Command (m for help): The partition table has been altered!
 
