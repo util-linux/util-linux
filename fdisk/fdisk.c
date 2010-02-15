@@ -242,6 +242,7 @@ jmp_buf listingbuf;
 void fatal(enum failure why) {
 	char	error[LINE_LENGTH],
 		*message = error;
+	int	rc = EXIT_FAILURE;
 
 	if (listing) {
 		close(fd);
@@ -249,25 +250,22 @@ void fatal(enum failure why) {
 	}
 
 	switch (why) {
+		case help:
+			rc = EXIT_SUCCESS;
 		case usage: message = _(
-"Usage: fdisk [-b SSZ] [-u] DISK     Change partition table\n"
-"       fdisk -l [-b SSZ] [-u] DISK  List partition table(s)\n"
-"       fdisk -s PARTITION           Give partition size(s) in blocks\n"
-"       fdisk -v                     Give fdisk version\n"
-"Here DISK is something like /dev/hdb or /dev/sda\n"
-"and PARTITION is something like /dev/hda7\n"
-"-u: give Start and End in sector (instead of cylinder) units\n"
-"-b 2048: (for certain MO disks) use 2048-byte sectors\n");
-			break;
-		case usage2:
-		  /* msg in cases where fdisk used to probe */
-			message = _(
-"Usage: fdisk [-l] [-b SSZ] [-u] device\n"
-"E.g.: fdisk /dev/hda  (for the first IDE disk)\n"
-"  or: fdisk /dev/sdc  (for the third SCSI disk)\n"
-"  or: fdisk /dev/eda  (for the first PS/2 ESDI drive)\n"
-"  or: fdisk /dev/rd/c0d0  or: fdisk /dev/ida/c0d0  (for RAID devices)\n"
-"  ...\n");
+"Usage:\n"
+" fdisk [options] <disk>    change partition table\n"
+" fdisk [options] -l <disk> list partition table(s)\n"
+" fdisk -s <partition>      give partition size(s) in blocks\n"
+"\nOptions:\n"
+" -b <size>                 sector size (512, 1024, 2048 or 4096)\n"
+" -h                        print help\n"
+" -u <size>                 give sizes in sectors instead of cylinders\n"
+" -v                        print version\n"
+" -C <number>               specify the number of cylinders\n"
+" -H <number>               specify the number of heads\n"
+" -S <number>               specify the number of sectors per track\n"
+"\n");
 			break;
 		case unable_to_open:
 			snprintf(error, sizeof(error),
@@ -299,7 +297,7 @@ void fatal(enum failure why) {
 
 	fputc('\n', stderr);
 	fputs(message, stderr);
-	exit(1);
+	exit(rc);
 }
 
 static void
@@ -2852,17 +2850,7 @@ main(int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	/*
-	 * Calls:
-	 *  fdisk -v
-	 *  fdisk -l [-b sectorsize] [-u] device ...
-	 *  fdisk -s [partition] ...
-	 *  fdisk [-b sectorsize] [-u] device
-	 *
-	 * Options -C, -H, -S set the geometry.
-	 *
-	 */
-	while ((c = getopt(argc, argv, "b:C:H:lsS:uvV")) != -1) {
+	while ((c = getopt(argc, argv, "b:C:hH:lsS:uvV")) != -1) {
 		switch (c) {
 		case 'b':
 			/* Ugly: this sector size is really per device,
@@ -2878,6 +2866,9 @@ main(int argc, char **argv) {
 			break;
 		case 'C':
 			user_cylinders = atoi(optarg);
+			break;
+		case 'h':
+			fatal(help);
 			break;
 		case 'H':
 			user_heads = atoi(optarg);
@@ -2964,10 +2955,8 @@ main(int argc, char **argv) {
 
 	if (argc-optind == 1)
 		disk_device = argv[optind];
-	else if (argc-optind != 0)
-		fatal(usage);
 	else
-		fatal(usage2);
+		fatal(usage);
 
 	gpt_warning(disk_device);
 	get_boot(fdisk);

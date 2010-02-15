@@ -25,6 +25,8 @@ fdisk \- Partition table manipulator for Linux
 .IR partition ...
 .sp
 .B fdisk \-v
+.sp
+.B fdisk \-h
 .SH DESCRIPTION
 Hard disks can be divided into one or more logical disks called
 .IR partitions .
@@ -181,6 +183,9 @@ program and Linux partitions with the Linux fdisk or Linux cfdisk program.
 Specify the sector size of the disk. Valid values are 512, 1024, 2048 or 4096.
 (Recent kernels know the sector size. Use this only on old kernels or
 to override the kernel's ideas.)
+.TP
+.BI \-h
+Print help and then exit.
 .TP
 .BI "\-C " cyls
 Specify the number of cylinders of the disk.
