@@ -1080,17 +1080,26 @@ update_sector_offset(void)
 		 *    device where the offset is quarter of of whole size
 		 *    of the device).
 		 */
-		unsigned long long x;
+		unsigned long long x = 0;
 
-		if (has_topology)
-			x = alignment_offset ? alignment_offset : io_size;
-		else
-			x = grain = 2048 * 512;
+		if (has_topology) {
+			if (alignment_offset)
+				x = alignment_offset;
+			else if (io_size > 2048 * 512)
+				x = io_size;
+		}
+		/* default to 1MiB */
+		if (!x)
+			x = 2048 * 512;
 
 		sector_offset = x / sector_size;
 
 		if (total_number_of_sectors <= sector_offset * 4)
 			sector_offset = phy_sector_size / sector_size;
+
+		/* use 1MiB grain always when possible */
+		if (grain < 2048 * 512)
+			grain = 2048 * 512;
 	}
 }
 
