@@ -1076,9 +1076,7 @@ update_sector_offset(void)
 		 *
 		 * b) or default to 1MiB (2048 sectrors, Windows Vista default)
 		 *
-		 * c) or for very small devices use 1 phy.sector (small device =
-		 *    device where the offset is quarter of of whole size
-		 *    of the device).
+		 * c) or for very small devices use 1 phy.sector
 		 */
 		unsigned long long x = 0;
 
@@ -1094,12 +1092,17 @@ update_sector_offset(void)
 
 		sector_offset = x / sector_size;
 
+		/* don't use huge offset on small devices */
 		if (total_number_of_sectors <= sector_offset * 4)
 			sector_offset = phy_sector_size / sector_size;
 
 		/* use 1MiB grain always when possible */
 		if (grain < 2048 * 512)
 			grain = 2048 * 512;
+
+		/* don't use huge grain on small devices */
+		if (total_number_of_sectors <= (grain * 4 / sector_size))
+			grain = phy_sector_size;
 	}
 }
 
