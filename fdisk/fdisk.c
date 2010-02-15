@@ -990,8 +990,12 @@ get_topology(int fd) {
 	else if (blkdev_get_sector_size(fd, &arg) == 0)
 		sector_size = arg;
 
+	if (!phy_sector_size)
+		phy_sector_size = sector_size;
+	if (!min_io_size)
+		min_io_size = phy_sector_size;
 	if (!io_size)
-		io_size = sector_size;
+		io_size = min_io_size;
 
 	if (sector_size != DEFAULT_SECTOR_SIZE)
 		printf(_("Note: sector size is %d (not %d)\n"),
