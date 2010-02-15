@@ -6,7 +6,7 @@
 fdisk \- Partition table manipulator for Linux
 .SH SYNOPSIS
 .B fdisk
-.RB [ \-u ]
+.RB [ \-uc ]
 .RB [ \-b
 .IR sectorsize ]
 .RB [ \-C
@@ -186,6 +186,9 @@ to override the kernel's ideas.)
 .TP
 .BI \-h
 Print help and then exit.
+.TP
+.BI \-c
+Switch off DOS-compatible mode. (Recommended)
 .TP
 .BI "\-C " cyls
 Specify the number of cylinders of the disk.

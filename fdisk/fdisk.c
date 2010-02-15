@@ -259,6 +259,7 @@ void fatal(enum failure why) {
 " fdisk -s <partition>      give partition size(s) in blocks\n"
 "\nOptions:\n"
 " -b <size>                 sector size (512, 1024, 2048 or 4096)\n"
+" -c                        switch off DOS-compatible mode\n"
 " -h                        print help\n"
 " -u <size>                 give sizes in sectors instead of cylinders\n"
 " -v                        print version\n"
@@ -794,7 +795,12 @@ warn_alignment(void) {
 "         sectors (command 'u').\n"));
 		else
 			fprintf(stderr, ".\n");
-	}
+
+	 } else if (display_in_cyl_units)
+		fprintf(stderr, _("\n"
+"WARNING: cylinders as display units are deprecated. Use command 'u' to\n"
+"         change units to sectors.\n"));
+
 }
 
 static void
@@ -2857,7 +2863,7 @@ main(int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt(argc, argv, "b:C:hH:lsS:uvV")) != -1) {
+	while ((c = getopt(argc, argv, "b:cC:hH:lsS:uvV")) != -1) {
 		switch (c) {
 		case 'b':
 			/* Ugly: this sector size is really per device,
@@ -2873,6 +2879,9 @@ main(int argc, char **argv) {
 			break;
 		case 'C':
 			user_cylinders = atoi(optarg);
+			break;
+		case 'c':
+			dos_compatible_flag = 0;
 			break;
 		case 'h':
 			fatal(help);
