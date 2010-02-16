@@ -354,7 +354,7 @@ swap_get_size(const char *hdr, const char *devname, unsigned int pagesize)
 			pagesize / 1024,
 			flip ? _("different") : _("same"));
 
-	return (last_page + 1) * pagesize;
+	return ((unsigned long long) last_page + 1) * pagesize;
 }
 
 static int
