@@ -17,6 +17,7 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <termios.h>
+#include <errno.h>
 #ifdef HAVE_SYS_IOCTL_H
 #include <sys/ioctl.h>
 #endif
@@ -413,9 +414,10 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 	struct stat st;
 
 	fd = open(devname, O_RDONLY);
-	if (fd < 0)
+	if (fd < 0) {
+		fprintf(stderr, "error: %s: %s\n", devname, strerror(errno));
 		return 2;
-
+	}
 	if (blkid_probe_set_device(pr, fd, offset, size))
 		goto done;
 
