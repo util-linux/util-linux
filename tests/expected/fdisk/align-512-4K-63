@@ -22,17 +22,17 @@ Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
 Partition number (1-4): First sector (7-102399, default 7): Using default value 7
-Last sector, +sectors or +size{K,M,G} (7-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (7-102399, default 102399): 
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
 Partition number (1-4): First sector (20487-102399, default 20487): Using default value 20487
-Last sector, +sectors or +size{K,M,G} (20487-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (20487-102399, default 102399): 
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
 Partition number (1-4): First sector (40967-102399, default 40967): Using default value 40967
-Last sector, +sectors or +size{K,M,G} (40967-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (40967-102399, default 102399): 
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
@@ -41,13 +41,13 @@ First sector (61447-102399, default 61447): Using default value 61447
 Last sector, +sectors or +size{K,M,G} (61447-102399, default 102399): Using default value 102399
 
 Command (m for help): First sector (61454-102399, default 63487): Using default value 63487
-Last sector, +sectors or +size{K,M,G} (63487-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (63487-102399, default 102399): 
 Command (m for help): First sector (61454-102399, default 75775): Using default value 75775
-Last sector, +sectors or +size{K,M,G} (75775-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (75775-102399, default 102399): 
 Command (m for help): First sector (61454-102399, default 88063): Using default value 88063
 Last sector, +sectors or +size{K,M,G} (88063-102399, default 102399): Using default value 102399
 
-Command (m for help):
+Command (m for help): 
 Disk /dev/sdb: 52 MB, 52428800 bytes
 32 heads, 32 sectors/track, 100 cylinders, total 102400 sectors
 Units = sectors of 1 * 512 = 512 bytes
