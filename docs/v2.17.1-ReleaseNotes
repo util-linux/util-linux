@@ -1,0 +1,100 @@
+Util-linux-ng 2.17.1 Release Notes
+==================================
+
+Release highlights
+------------------
+
+fdisk:
+   - supports new command line option "-c" to disable DOS-compatible mode from
+     command line.
+
+     The DOS-compatible mode is DEPRECATED and will be disabled by default
+     in the next major release. Currently, the DOS mode is enabled by default
+     for backward compatibility only. 
+
+     The cylinders as display units are DEPRECATED. It's recommended to use
+     "-u" command line option or "u" fdisk command and use sectors as display
+     units.
+
+   Note that the new support for 4K-sector disks is useless in DOS-compatible
+   mode. The fdisk command prints warning(s) when startup in DOS mode.
+
+
+Changes since v2.17.1
+---------------------
+
+ For more details see ChangeLog files at:
+ ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.17/
+
+
+blkid:
+   - add newline when only one value is printed  [Karel Zak]
+   - fix #ifdef HAVE_TERMIO[S]_H  [Karel Zak]
+   - probe for PT, don't probe for FS on small whole-disks  [Karel Zak]
+   - report open() errors in low-level probing  [Karel Zak]
+build-sys:
+   - add missing tests for libuuid and libblkid  [Karel Zak]
+   - remove duplicate #includes  [Karel Zak]
+cal:
+   - fix first day of the week calculation on BE systems  [Karel Zak]
+cfdisk:
+   - set '[New]' as default item on menu for non allocated space instead of '[Help]'.  [Francesco Cosoleto]
+   - set '[Quit]' as default menu item on first run instead of '[Bootable]'.  [Francesco Cosoleto]
+docs:
+   - update AUTHORS file  [Karel Zak]
+fdisk:
+   - add -c option (switch off DOS mode)  [Karel Zak]
+   - cleanup alignment, default to 1MiB offset  [Karel Zak]
+   - cleanup help, add -h option  [Karel Zak]
+   - cleanup warnings  [Karel Zak]
+   - don't check alignment_offset against geometry  [Karel Zak]
+   - don't include scsi.h  [Karel Zak]
+   - don't use 1MiB grain on small devices  [Karel Zak]
+   - fallback for topology values  [Karel Zak]
+   - fix ALIGN_UP  [Karel Zak]
+   - fix check_alignment()  [Karel Zak]
+   - fix default first sector  [Karel Zak]
+   - use "optimal I/O size" in warnings  [Karel Zak]
+   - use 1MiB offset and grain always when possible  [Karel Zak]
+   - use more elegant way to count and check alignment  [Karel Zak]
+   - use optimal_io_size  [Karel Zak]
+include:
+   - add min/max macros  [Karel Zak]
+libblkid:
+   - add minimal sizes for OCFS and GFS  [Karel Zak]
+   - add sanity checks for FAT to DOS PT parser  [Karel Zak]
+   - call read() per FAT root dir entry  [Karel Zak]
+   - disable read-ahead when probing device files  [Linus Torvalds]
+   - don't call read() per FAT dir-entry on large disks  [Karel Zak]
+   - don't probe for GPT and Unixware PT on floppies  [Karel Zak]
+   - don't return error on empty files  [Karel Zak]
+   - fix segfault in drdb  [Matthias König]
+   - more robust minix probing  [Karel Zak]
+   - read whole SB buffer (69kB) on large disks  [Karel Zak]
+   - read() optimization for small devices  [Karel Zak]
+   - restrict RAID/FS proving for small devices (1.4MiB)  [Karel Zak]
+   - rewrite blkid_probe_get_buffer()  [Karel Zak]
+   - set minimal size for jfs, reiser, swap and zfs  [Karel Zak]
+login:
+   - check that after tty reopen we still work with a terminal  [Karel Zak]
+   - don't link PAMed version with libcrypt  [Karel Zak]
+   - use fd instead of pathname for update tty's owner and permissions  [Yann Droneaud]
+mount:
+   - advise users to use "modprobe", not "insmod"  [Karel Zak]
+   - update documentation about barrier mount options  [Jan Kara]
+   - warn users that mtab is read-only  [Karel Zak]
+namei:
+   - fix man page formatting  [Vladimir Brednikov]
+po:
+   - update id.po (from translationproject.org)  [Arif E. Nugroho]
+   - update pl.po (from translationproject.org)  [Jakub Bogusz]
+   - update vi.po (from translationproject.org)  [Clytie Siddall]
+tests:
+   - add fdisk alignment tests  [Karel Zak]
+   - fix RAIDs tests  [Karel Zak]
+   - fix and update old fdisk tests  [Karel Zak]
+   - update FS test images  [Karel Zak]
+   - update fdisk tests  [Karel Zak]
+   - update fdisk tests (add whitespaces)  [Karel Zak]
+wipefs:
+   - ignore devices with partition table  [Karel Zak]
