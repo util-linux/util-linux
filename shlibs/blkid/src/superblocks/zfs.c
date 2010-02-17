@@ -23,21 +23,22 @@ struct zfs_uberblock {
 	uint64_t	ub_txg;		/* txg of last sync		*/
 	uint64_t	ub_guid_sum;	/* sum of all vdev guids	*/
 	uint64_t	ub_timestamp;	/* UTC time of last sync	*/
-	/*blkptr_t	ub_rootbp;*/	/* MOS objset_phys_t		*/
+	char		ub_rootbp;	/* MOS objset_phys_t		*/
 } __attribute__((packed));
 
 static int probe_zfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct zfs_uberblock *ub;
-	int swab_endian;
 	uint64_t spa_version;
 
 	ub = blkid_probe_get_sb(pr, mag, struct zfs_uberblock);
 	if (!ub)
 		return -1;
 
-	swab_endian = (ub->ub_magic == swab64(UBERBLOCK_MAGIC));
-	spa_version = swab_endian ? swab64(ub->ub_version) : ub->ub_version;
+	if (ub->ub_magic == be64_to_cpu(UBERBLOCK_MAGIC))
+		spa_version = be64_to_cpu(ub->ub_version);
+	else
+		spa_version = le64_to_cpu(ub->ub_version);
 
 	blkid_probe_sprintf_version(pr, "%" PRIu64, spa_version);
 #if 0
@@ -57,10 +58,19 @@ const struct blkid_idinfo zfs_idinfo =
 	.minsz		= 64 * 1024 * 1024,
 	.magics		=
 	{
-		{ .magic = "\0\0\x02\xf5\xb0\x07\xb1\x0c", .len = 8, .kboff = 8 },
-		{ .magic = "\x1c\xb1\x07\xb0\xf5\x02\0\0", .len = 8, .kboff = 8 },
-		{ .magic = "\0\0\x02\xf5\xb0\x07\xb1\x0c", .len = 8, .kboff = 264 },
-		{ .magic = "\x0c\xb1\x07\xb0\xf5\x02\0\0", .len = 8, .kboff = 264 },
+		/* ZFS has 128 root blocks (#4 is the first used), check only 6 of them */
+		{ .magic = "\0\0\0\0\0\xba\xb1\x0c", .len = 8, .kboff = 128 },
+		{ .magic = "\x0c\xb1\xba\0\0\0\0\0", .len = 8, .kboff = 128 },
+		{ .magic = "\0\0\0\0\0\xba\xb1\x0c", .len = 8, .kboff = 132 },
+		{ .magic = "\x0c\xb1\xba\0\0\0\0\0", .len = 8, .kboff = 132 },
+		{ .magic = "\0\0\0\0\0\xba\xb1\x0c", .len = 8, .kboff = 136 },
+		{ .magic = "\x0c\xb1\xba\0\0\0\0\0", .len = 8, .kboff = 136 },
+		{ .magic = "\0\0\0\0\0\xba\xb1\x0c", .len = 8, .kboff = 384 },
+		{ .magic = "\x0c\xb1\xba\0\0\0\0\0", .len = 8, .kboff = 384 },
+		{ .magic = "\0\0\0\0\0\xba\xb1\x0c", .len = 8, .kboff = 388 },
+		{ .magic = "\x0c\xb1\xba\0\0\0\0\0", .len = 8, .kboff = 388 },
+		{ .magic = "\0\0\0\0\0\xba\xb1\x0c", .len = 8, .kboff = 392 },
+		{ .magic = "\x0c\xb1\xba\0\0\0\0\0", .len = 8, .kboff = 392 },
 		{ NULL }
 	}
 };
