@@ -1637,6 +1637,11 @@ write_partitions(char *dev, int fd, struct disk_desc *z) {
 	error(_("Failed writing the partition on %s\n"), dev);
 	return 0;
     }
+    if (fsync(fd)) {
+	perror(dev);
+	error(_("Failed writing the partition on %s\n"), dev);
+	return 0;
+    }
     return 1;
 }
 
