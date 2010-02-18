@@ -11,7 +11,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <stdint.h>
+#include <inttypes.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -22,57 +22,30 @@
 static unsigned long dev_topology_attribute(const char *attribute,
 				dev_t dev, dev_t *primary)
 {
-	const char *sysfs_fmt_str = "/sys/dev/block/%d:%d/%s";
-	char path[PATH_MAX];
-	int len;
-	FILE *fp = NULL;
-	struct stat info;
-	unsigned long result = 0UL;
-
-	len = snprintf(path, sizeof(path), sysfs_fmt_str,
-			major(dev), minor(dev), attribute);
-	if (len < 0 || len + 1 > sizeof(path))
-		goto err;
+	uint64_t result;
 
 	/*
 	 * check if the desired sysfs attribute exists
 	 * - if not: either the kernel doesn't have topology support or the
 	 *   device could be a partition
 	 */
-	if (stat(path, &info) < 0) {
+	if (!blkid_devno_has_attribute(dev, attribute)) {
 		if (!*primary &&
 		    blkid_devno_to_wholedisk(dev, NULL, 0, primary))
 			goto err;
 
 		/* get attribute from partition's primary device */
-		len = snprintf(path, sizeof(path), sysfs_fmt_str,
-				major(*primary), minor(*primary), attribute);
-		if (len < 0 || len + 1 > sizeof(path))
-			goto err;
+		dev = *primary;
 	}
 
-	fp = fopen(path, "r");
-	if (!fp) {
-		DBG(DEBUG_LOWPROBE, printf(
-			"topology: %s: fopen failed, errno=%d\n", path, errno));
+	if (blkid_devno_get_attribute(dev, attribute, &result))
 		goto err;
-	}
-
-	if (fscanf(fp, "%lu", &result) != 1) {
-		DBG(DEBUG_LOWPROBE, printf(
-			"topology: %s: unexpected file format\n", path));
-		goto err;
-	}
-
-	fclose(fp);
 
 	DBG(DEBUG_LOWPROBE,
-		printf("topology: attribute %s = %lu\n", attribute, result));
+		printf("topology: attribute %s = %" PRIu64 "\n", attribute, result));
 
 	return result;
 err:
-	if (fp)
-		fclose(fp);
 	DBG(DEBUG_LOWPROBE,
 		printf("topology: failed to read %s attribute\n", attribute));
 	return 0;

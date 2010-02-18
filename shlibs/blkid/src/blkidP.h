@@ -21,6 +21,7 @@
 #include <sys/stat.h>
 #include <stdio.h>
 #include <stdarg.h>
+#include <stdint.h>
 
 #include "c.h"
 #include "bitops.h"	/* $(top_srcdir)/include/ */
@@ -331,6 +332,9 @@ struct dir_list {
 };
 extern void blkid__scan_dir(char *, dev_t, struct dir_list **, char **);
 extern int blkid_driver_has_major(const char *drvname, int major);
+extern int blkid_devno_has_attribute(dev_t devno, const char *attribute);
+extern int blkid_devno_get_attribute(dev_t devno, const char *attribute,
+							uint64_t *result);
 
 /* lseek.c */
 extern blkid_loff_t blkid_llseek(int fd, blkid_loff_t offset, int whence);
