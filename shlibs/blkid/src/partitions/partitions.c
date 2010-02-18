@@ -426,7 +426,7 @@ static blkid_partition new_partition(blkid_partlist ls, blkid_parttable tab)
 }
 
 blkid_partition blkid_partlist_add_partition(blkid_partlist ls,
-					blkid_parttable tab, int type,
+					blkid_parttable tab,
 					blkid_loff_t start, blkid_loff_t size)
 {
 	blkid_partition par = new_partition(ls, tab);
@@ -434,17 +434,13 @@ blkid_partition blkid_partlist_add_partition(blkid_partlist ls,
 	if (!par)
 		return NULL;
 
-	par->type = type;
 	par->start = start;
 	par->size = size;
 
 	DBG(DEBUG_LOWPROBE,
-		printf("parts: add partition (%p type=0x%x, "
-			"start=%llu, size=%llu, table=%p)\n",
-			par, par->type,
-			(unsigned long long) par->start,
-			(unsigned long long) par->size,
-			tab));
+		printf("parts: add partition (%p start=%llu, size=%llu, table=%p)\n",
+			par, (unsigned long long) par->start,
+			(unsigned long long) par->size,	tab));
 	return par;
 }
 
@@ -826,6 +822,14 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 			return par;
 	}
 	return NULL;
+}
+
+int blkid_partition_set_type(blkid_partition par, int type)
+{
+	if (!par)
+		return -1;
+	par->type = type;
+	return 0;
 }
 
 /**

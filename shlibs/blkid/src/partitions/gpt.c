@@ -339,8 +339,8 @@ static int probe_gpt_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			continue;
 		}
 
-		par = blkid_partlist_add_partition(ls, tab, 0,
-						start * ssf, size * ssf);
+		par = blkid_partlist_add_partition(ls, tab,
+					start * ssf, size * ssf);
 		if (!par)
 			goto err;
 

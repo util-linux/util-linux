@@ -100,6 +100,7 @@ static int probe_solaris_pt(blkid_probe pr, const struct blkid_idmag *mag)
 
 		uint32_t start = le32_to_cpu(p->s_start);
 		uint32_t size = le32_to_cpu(p->s_size);
+		blkid_partition par;
 
 		if (size == 0 || le16_to_cpu(p->s_tag) == SOLARIS_TAG_WHOLEDISK)
 			continue;
@@ -116,9 +117,11 @@ static int probe_solaris_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			continue;
 		}
 
-		if (!blkid_partlist_add_partition(ls, tab,
-				le16_to_cpu(p->s_tag), start, size))
+		par = blkid_partlist_add_partition(ls, tab, start, size);
+		if (!par)
 			goto err;
+
+		blkid_partition_set_type(par, le16_to_cpu(p->s_tag));
 	}
 
 	return 0;

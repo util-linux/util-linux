@@ -58,6 +58,7 @@ static int probe_minix_pt(blkid_probe pr, const struct blkid_idmag *mag)
 
 	for (i = 0; i < MINIX_MAXPARTITIONS; i++, p++) {
 		uint32_t start, size;
+		blkid_partition par;
 
 		if (p->sys_type != BLKID_MINIX_PARTITION)
 			continue;
@@ -72,9 +73,11 @@ static int probe_minix_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			continue;
 		}
 
-		if (!blkid_partlist_add_partition(ls, tab,
-					p->sys_type, start, size))
+		par = blkid_partlist_add_partition(ls, tab, start, size);
+		if (!par)
 			goto err;
+
+		blkid_partition_set_type(par, p->sys_type);
 	}
 
 	return 0;

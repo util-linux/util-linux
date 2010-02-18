@@ -75,6 +75,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 		/* Parse data partition */
 		for (p = p0, i = 0; i < 4; i++, p++) {
 			uint32_t abs_start;
+			blkid_partition par;
 
 			/* the start is relative to the parental ext.partition */
 			start = dos_partition_start(p) * ssf;
@@ -93,10 +94,12 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 				if (abs_start + size > ex_start + ex_size)
 					continue;
 			}
-			if (!blkid_partlist_add_partition(ls, tab, p->sys_type,
-						abs_start, size))
+
+			par = blkid_partlist_add_partition(ls, tab, abs_start, size);
+			if (!par)
 				goto err;
 
+			blkid_partition_set_type(par, p->sys_type);
 			ct_nodata = 0;
 		}
 		/* The first nested ext.partition should be a link to the next
@@ -194,14 +197,19 @@ static int probe_dos_pt(blkid_probe pr, const struct blkid_idmag *mag)
 
 	/* Parse primary partitions */
 	for (p = p0, i = 0; i < 4; i++, p++) {
+		blkid_partition par;
+
 		start = dos_partition_start(p) * ssf;
 		size = dos_partition_size(p) * ssf;
 
 		if (!size)
 			continue;
-		if (!blkid_partlist_add_partition(ls, tab, p->sys_type,
-							start, size))
+
+		par = blkid_partlist_add_partition(ls, tab, start, size);
+		if (!par)
 			goto err;
+
+		blkid_partition_set_type(par, p->sys_type);
 	}
 
 	/* Linux uses partition numbers greater than 4

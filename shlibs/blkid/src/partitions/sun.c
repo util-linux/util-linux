@@ -132,6 +132,7 @@ static int probe_sun_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_loff_t start;
 		blkid_loff_t size;
 		uint16_t type = infos ? be16_to_cpu(infos[i].id) : 0;
+		blkid_partition par;
 
                 start = be32_to_cpu(p->start_cylinder) * spc;
 		size = be32_to_cpu(p->num_sectors);
@@ -139,8 +140,11 @@ static int probe_sun_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		if (type == SUN_TAG_WHOLEDISK || !size)
 			continue;
 
-		if (!blkid_partlist_add_partition(ls, tab, type, start, size))
+		par = blkid_partlist_add_partition(ls, tab, start, size);
+		if (!par)
 			goto err;
+
+		blkid_partition_set_type(par, type);
 	}
 	return 0;
 

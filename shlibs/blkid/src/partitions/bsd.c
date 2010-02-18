@@ -164,6 +164,7 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			le16_to_cpu(l->d_npartitions) - BSD_MAXPARTITIONS));
 
 	for (i = 0, p = l->d_partitions; i < nparts; i++, p++) {
+		blkid_partition par;
 		uint32_t start, size;
 
 		/* TODO: in fdisk-mode returns all non-zero (p_size) partitions */
@@ -180,8 +181,11 @@ static int probe_bsd_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			continue;
 		}
 
-		if (!blkid_partlist_add_partition(ls, tab, p->p_fstype, start, size))
+		par = blkid_partlist_add_partition(ls, tab, start, size);
+		if (!par)
 			goto err;
+
+		blkid_partition_set_type(par, p->p_fstype);
 	}
 
 	return 0;

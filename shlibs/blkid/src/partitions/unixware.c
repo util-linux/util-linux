@@ -132,6 +132,7 @@ static int probe_unixware_pt(blkid_probe pr, const struct blkid_idmag *mag)
 
 		uint32_t start, size;
 		uint16_t tag, flg;
+		blkid_partition par;
 
 		tag = le16_to_cpu(p->s_label);
 		flg = le16_to_cpu(p->s_flags);
@@ -151,8 +152,11 @@ static int probe_unixware_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			continue;
 		}
 
-		if (!blkid_partlist_add_partition(ls, tab, tag, start, size))
+		par = blkid_partlist_add_partition(ls, tab, start, size);
+		if (!par)
 			goto err;
+
+		blkid_partition_set_type(par, tag);
 	}
 
 	return 0;

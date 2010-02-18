@@ -144,7 +144,7 @@ static int probe_mac_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		start = be32_to_cpu(p->start_block) * ssf;
 		size = be32_to_cpu(p->block_count) * ssf;
 
-		par = blkid_partlist_add_partition(ls, tab, 0, start, size);
+		par = blkid_partlist_add_partition(ls, tab, start, size);
 		if (!par)
 			goto err;
 

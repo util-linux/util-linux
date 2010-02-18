@@ -123,13 +123,17 @@ static int probe_sgi_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		uint32_t size = be32_to_cpu(p->num_blocks);
 		uint32_t start = be32_to_cpu(p->first_block);
 		uint32_t type = be32_to_cpu(p->type);
+		blkid_partition par;
 
 		if (size == 0 || type == SGI_TYPE_VOLULME ||
 			         type == SGI_TYPE_VOLHDR)
 			continue;
 
-		if (!blkid_partlist_add_partition(ls, tab, type, start, size))
+		par = blkid_partlist_add_partition(ls, tab, start, size);
+		if (!par)
 			goto err;
+
+		blkid_partition_set_type(par, type);
 	}
 
 	return 0;

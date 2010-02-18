@@ -10,7 +10,7 @@ extern blkid_parttable blkid_partlist_new_parttable(blkid_partlist ls,
 				const char *type, blkid_loff_t offset);
 
 extern blkid_partition blkid_partlist_add_partition(blkid_partlist ls,
-				blkid_parttable tab, int type,
+				blkid_parttable tab,
 				blkid_loff_t start, blkid_loff_t size);
 
 extern int blkid_partlist_set_partno(blkid_partlist ls, int partno);
@@ -31,6 +31,8 @@ extern int blkid_partition_set_utf8name(blkid_partition par,
 
 extern int blkid_partition_set_uuid(blkid_partition par,
 		const unsigned char *uuid);
+
+extern int blkid_partition_set_type(blkid_partition par, int type);
 
 extern int blkid_partition_set_type_string(blkid_partition par,
                 const unsigned char *type, size_t len);
