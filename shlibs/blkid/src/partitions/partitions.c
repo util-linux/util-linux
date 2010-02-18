@@ -713,6 +713,14 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 	par = blkid_partlist_devno_to_partition(ls, devno);
 	if (par) {
 		const char *v;
+		blkid_parttable tab = blkid_partition_get_table(par);
+
+		if (tab) {
+			v = blkid_parttable_get_type(tab);
+			if (v)
+				blkid_probe_set_value(pr, "PART_ENTRY_SCHEME",
+					(unsigned char *) v, strlen(v) + 1);
+		}
 
 		v = blkid_partition_get_name(par);
 		if (v)
@@ -736,6 +744,9 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 		if (blkid_partition_get_flags(par))
 			blkid_probe_sprintf_value(pr, "PART_ENTRY_FLAGS",
 				"0x%llx", blkid_partition_get_flags(par));
+
+		blkid_probe_sprintf_value(pr, "PART_ENTRY_NUMBER",
+				"%d", blkid_partition_get_partno(par));
 	}
 	rc = 0;
 nothing:

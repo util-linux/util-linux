@@ -119,7 +119,7 @@ struct blkid_chaindrv {
 
 #define BLKID_NVALS_SUBLKS	14
 #define BLKID_NVALS_TOPLGY	5
-#define BLKID_NVALS_PARTS	1
+#define BLKID_NVALS_PARTS	8
 
 /* Max number of all values in probing result */
 #define BLKID_NVALS             (BLKID_NVALS_SUBLKS + \
