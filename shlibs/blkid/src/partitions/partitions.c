@@ -33,6 +33,12 @@
  *
  * @PTTYPE: partition table type (dos, gpt, etc.).
  *
+ * @PART_ENTRY_NAME: partition name (gpt and mac only)
+ *
+ * @PART_ENTRY_UUID: partition UUID (gpt only)
+ *
+ * @PART_ENTRY_TYPE: partition type, 0xNN (e.g 0x82) or type UUID (gpt only)
+ *
  * Example:
  *
  * <informalexample>
@@ -170,6 +176,8 @@ struct blkid_struct_partlist {
 
 	struct list_head l_tabs;	/* list of partition tables */
 };
+
+static int blkid_partitions_probe_partition(blkid_probe pr);
 
 /**
  * blkid_probe_enable_partitions:
@@ -557,7 +565,7 @@ nothing:
  */
 static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 {
-	int i = 0;
+	int i = 0, rc = 1;
 
 	if (!pr || chn->idx < -1)
 		return -1;
@@ -594,12 +602,25 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 		DBG(DEBUG_LOWPROBE,
 			printf("<-- leaving probing loop (type=%s) [PARTS idx=%d]\n",
 			name, chn->idx));
-		return 0;
+		rc = 0;
+		break;
 	}
-	DBG(DEBUG_LOWPROBE,
-		printf("<-- leaving probing loop (failed) [PARTS idx=%d]\n",
-		chn->idx));
-	return 1;
+
+	if (rc == 1) {
+		DBG(DEBUG_LOWPROBE,
+			printf("<-- leaving probing loop (failed) [PARTS idx=%d]\n",
+			chn->idx));
+	}
+
+	/*
+	 * Gather PART_ENTRY_* values if the current device is a partition.
+	 */
+	if ((blkid_partitions_get_flags(pr) & BLKID_PARTS_ENTRY_DETAILS)) {
+		if (!blkid_partitions_probe_partition(pr))
+			rc = 0;
+	}
+
+	return rc;
 }
 
 /* Probe for nested partition table within the parental partition */
@@ -649,6 +670,73 @@ int blkid_partitions_do_subprobe(blkid_probe pr, blkid_partition parent,
 		"parts: <---- %s subprobe done (parent=%p, rc=%d)\n",
 		id->name, parent, rc));
 
+	return rc;
+}
+
+static int blkid_partitions_probe_partition(blkid_probe pr)
+{
+	int rc = 1;
+	blkid_probe disk_pr = NULL;
+	blkid_partlist ls;
+	blkid_partition par;
+	dev_t devno, disk_devno;
+	char *disk_path = NULL;
+
+	devno = blkid_probe_get_devno(pr);
+	if (!devno)
+		goto nothing;
+
+	if (blkid_devno_to_wholedisk(devno, NULL, 0, &disk_devno))
+		goto nothing;
+
+	if (devno == disk_devno)
+		goto nothing;		/* this is not a partition */
+
+	disk_path = blkid_devno_to_devname(disk_devno);
+	if (!disk_path)
+		goto nothing;
+
+	DBG(DEBUG_LOWPROBE, printf(
+		"parts: %d:%d: starting whole-disk probing: %s\n",
+		major(devno), minor(devno), disk_path));
+
+	/* create a new prober for the disk */
+	disk_pr = blkid_new_probe_from_filename(disk_path);
+	if (!disk_pr)
+		goto nothing;
+
+	/* parse PT */
+	ls = blkid_probe_get_partitions(disk_pr);
+	if (!ls)
+		goto nothing;
+
+	par = blkid_partlist_devno_to_partition(ls, devno);
+	if (par) {
+		const char *v;
+
+		v = blkid_partition_get_name(par);
+		if (v)
+			blkid_probe_set_value(pr, "PART_ENTRY_NAME",
+				(unsigned char *) v, strlen(v) + 1);
+
+		v = blkid_partition_get_uuid(par);
+		if (v)
+			blkid_probe_set_value(pr, "PART_ENTRY_UUID",
+				(unsigned char *) v, strlen(v) + 1);
+
+		/* type */
+		v = blkid_partition_get_type_string(par);
+		if (v)
+			blkid_probe_set_value(pr, "PART_ENTRY_TYPE",
+				(unsigned char *) v, strlen(v) + 1);
+		else
+			blkid_probe_sprintf_value(pr, "PART_ENTRY_TYPE",
+				"0x%02x", blkid_partition_get_type(par));
+	}
+	rc = 0;
+nothing:
+	blkid_free_probe(disk_pr);
+	free(disk_path);
 	return rc;
 }
 
@@ -705,6 +793,39 @@ blkid_partition blkid_partlist_get_partition(blkid_partlist ls, int n)
 		return NULL;
 
 	return &ls->parts[n];
+}
+
+/**
+ * blkid_partlist_devno_to_partition:
+ * @ls: partitions list
+ * @devno: requested partition
+ *
+ * This function tries to get start and size for @devno from sysfs and
+ * returns a partition from @ls which matches with the values from sysfs.
+ *
+ * This funtion is necessary when you want to make a relation between an entry
+ * in the partition table (@ls) and block devices in your system.
+ *
+ * Returns: partition object or NULL in case or error.
+ */
+blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno)
+{
+	uint64_t start, size;
+	int i;
+
+	if (blkid_devno_get_attribute(devno, "start", &start))
+		return NULL;
+	if (blkid_devno_get_attribute(devno, "size", &size))
+		return NULL;
+
+	for (i = 0; i < ls->nparts; i++) {
+		blkid_partition par = &ls->parts[i];
+
+		if (blkid_partition_get_start(par) == start &&
+		    blkid_partition_get_size(par) == size)
+			return par;
+	}
+	return NULL;
 }
 
 /**

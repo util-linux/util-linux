@@ -260,7 +260,8 @@ extern int blkid_probe_filter_partitions_type(blkid_probe pr, int flag, char *na
 
 
 /* partitions probing flags */
-#define BLKID_PARTS_FORCE_GPT	(1 << 1)
+#define BLKID_PARTS_FORCE_GPT		(1 << 1)
+#define BLKID_PARTS_ENTRY_DETAILS	(1 << 2)
 extern int blkid_probe_set_partitions_flags(blkid_probe pr, int flags);
 
 /* binary interface */
@@ -268,6 +269,7 @@ extern blkid_partlist blkid_probe_get_partitions(blkid_probe pr);
 
 extern int blkid_partlist_numof_partitions(blkid_partlist ls);
 extern blkid_partition blkid_partlist_get_partition(blkid_partlist ls, int n);
+extern blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno);
 
 extern blkid_parttable blkid_partition_get_table(blkid_partition par);
 extern const char *blkid_partition_get_name(blkid_partition par);
