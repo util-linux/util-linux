@@ -255,7 +255,8 @@ static void print_udev_format(const char *name, const char *value, size_t sz)
 	} else if (!strcmp(name, "PTTYPE")) {
 		printf("ID_PART_TABLE_TYPE=%s\n", value);
 
-	} else if (!strcmp(name, "PART_ENTRY_NAME")) {
+	} else if (!strcmp(name, "PART_ENTRY_NAME") ||
+		  !strcmp(name, "PART_ENTRY_TYPE")) {
 
 		blkid_safe_string(value, safe, sizeof(safe));
 		printf("ID_%s=%s\n", name, safe);
