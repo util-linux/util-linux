@@ -39,6 +39,8 @@
  *
  * @PART_ENTRY_TYPE: partition type, 0xNN (e.g 0x82) or type UUID (gpt only)
  *
+ * @PART_ENTRY_FLAGS: partition flags (e.g. boot_ind) or  attributes (e.g. gpt attributes)
+ *
  * Example:
  *
  * <informalexample>
@@ -157,6 +159,8 @@ struct blkid_struct_partition {
 
 	int		type;		/* partition type */
 	char		typestr[37];	/* partition type string (GPT and Mac) */
+
+	unsigned long long flags;	/* partition flags / attributes */
 
 	int		partno;		/* partition number */
 	char		uuid[37];	/* UUID (when supported by PT), e.g GPT */
@@ -727,7 +731,11 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 				(unsigned char *) v, strlen(v) + 1);
 		else
 			blkid_probe_sprintf_value(pr, "PART_ENTRY_TYPE",
-				"0x%02x", blkid_partition_get_type(par));
+				"0x%x", blkid_partition_get_type(par));
+
+		if (blkid_partition_get_flags(par))
+			blkid_probe_sprintf_value(pr, "PART_ENTRY_FLAGS",
+				"0x%llx", blkid_partition_get_flags(par));
 	}
 	rc = 0;
 nothing:
@@ -1154,5 +1162,25 @@ int blkid_partition_set_type_uuid(blkid_partition par, const unsigned char *uuid
 const char *blkid_partition_get_type_string(blkid_partition par)
 {
 	return par && *par->typestr ? par->typestr : NULL;
+}
+
+
+int blkid_partition_set_flags(blkid_partition par, unsigned long long flags)
+{
+	if (!par)
+		return -1;
+	par->flags = flags;
+	return 0;
+}
+
+/**
+ * blkid_partition_get_flags
+ * @par: partition
+ *
+ * Returns: partition flags (or attributes for gpt).
+ */
+unsigned long long blkid_partition_get_flags(blkid_partition par)
+{
+	return par ? par->flags : 0;
 }
 

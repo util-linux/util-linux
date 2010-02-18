@@ -157,6 +157,7 @@ static int probe_unixware_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			goto err;
 
 		blkid_partition_set_type(par, tag);
+		blkid_partition_set_flags(par, flg);
 	}
 
 	return 0;

@@ -100,6 +100,7 @@ static int parse_dos_extended(blkid_probe pr, blkid_parttable tab,
 				goto err;
 
 			blkid_partition_set_type(par, p->sys_type);
+			blkid_partition_set_flags(par, p->boot_ind);
 			ct_nodata = 0;
 		}
 		/* The first nested ext.partition should be a link to the next
@@ -210,6 +211,7 @@ static int probe_dos_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			goto err;
 
 		blkid_partition_set_type(par, p->sys_type);
+		blkid_partition_set_flags(par, p->boot_ind);
 	}
 
 	/* Linux uses partition numbers greater than 4

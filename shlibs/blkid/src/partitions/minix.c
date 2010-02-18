@@ -78,6 +78,7 @@ static int probe_minix_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			goto err;
 
 		blkid_partition_set_type(par, p->sys_type);
+		blkid_partition_set_flags(par, p->boot_ind);
 	}
 
 	return 0;

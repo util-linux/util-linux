@@ -122,6 +122,7 @@ static int probe_solaris_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			goto err;
 
 		blkid_partition_set_type(par, le16_to_cpu(p->s_tag));
+		blkid_partition_set_flags(par, le16_to_cpu(p->s_flag));
 	}
 
 	return 0;

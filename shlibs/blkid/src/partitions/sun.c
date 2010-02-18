@@ -132,6 +132,7 @@ static int probe_sun_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_loff_t start;
 		blkid_loff_t size;
 		uint16_t type = infos ? be16_to_cpu(infos[i].id) : 0;
+		uint16_t flags = infos ? be16_to_cpu(infos[i].flags) : 0;
 		blkid_partition par;
 
                 start = be32_to_cpu(p->start_cylinder) * spc;
@@ -145,6 +146,7 @@ static int probe_sun_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			goto err;
 
 		blkid_partition_set_type(par, type);
+		blkid_partition_set_flags(par, flags);
 	}
 	return 0;
 

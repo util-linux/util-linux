@@ -40,6 +40,8 @@ extern int blkid_partition_set_type_string(blkid_partition par,
 extern int blkid_partition_set_type_uuid(blkid_partition par,
 		const unsigned char *uuid);
 
+extern int blkid_partition_set_flags(blkid_partition par, unsigned long long flags);
+
 /*
  * partition probers
  */
