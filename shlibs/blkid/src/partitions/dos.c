@@ -221,25 +221,26 @@ static int probe_dos_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			goto err;
 	}
 
-	/* Parse subtypes (nested partitions) */
-	for (p = p0, i = 0; i < 4; i++, p++) {
-		int n;
+	/* Parse subtypes (nested partitions) on large disks */
+	if (!blkid_probe_is_tiny(pr)) {
+		for (p = p0, i = 0; i < 4; i++, p++) {
+			int n;
 
-		if (!dos_partition_size(p) || is_extended(p))
-			continue;
-
-		for (n = 0; n < ARRAY_SIZE(dos_nested); n++) {
-			if (dos_nested[n].type != p->sys_type)
+			if (!dos_partition_size(p) || is_extended(p))
 				continue;
 
-			if (blkid_partitions_do_subprobe(pr,
-					blkid_partlist_get_partition(ls, i),
-					dos_nested[n].id) == -1)
-				goto err;
-			break;
+			for (n = 0; n < ARRAY_SIZE(dos_nested); n++) {
+				if (dos_nested[n].type != p->sys_type)
+					continue;
+
+				if (blkid_partitions_do_subprobe(pr,
+						blkid_partlist_get_partition(ls, i),
+						dos_nested[n].id) == -1)
+					goto err;
+				break;
+			}
 		}
 	}
-
 	return 0;
 
 nothing:
