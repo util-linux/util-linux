@@ -146,17 +146,17 @@ int check_sun_label(void)
 
 		if (sunlabel->version != SSWAP32(SUN_LABEL_VERSION)) {
 			fprintf(stderr,_("Detected sun disklabel with wrong version [0x%08x].\n"),
-				sunlabel->version);
+				SSWAP32(sunlabel->version));
 			need_fixing = 1;
 		}
 		if (sunlabel->sanity != SSWAP32(SUN_LABEL_SANE)) {
 			fprintf(stderr,_("Detected sun disklabel with wrong sanity [0x%08x].\n"),
-				sunlabel->sanity);
+				SSWAP32(sunlabel->sanity));
 			need_fixing = 1;
 		}
 		if (sunlabel->num_partitions != SSWAP16(SUN_NUM_PARTITIONS)) {
 			fprintf(stderr,_("Detected sun disklabel with wrong num_partitions [%u].\n"),
-				sunlabel->num_partitions);
+				SSWAP16(sunlabel->num_partitions));
 			need_fixing = 1;
 		}
 		if (need_fixing) {
