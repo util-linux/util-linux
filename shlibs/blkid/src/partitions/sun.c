@@ -32,7 +32,7 @@ struct sun_disklabel {
 		uint16_t nparts;      /* num of partitions */
 
 		struct sun_info {     /* partition information */
-			uint16_t id;
+			uint16_t id;  /* tag */
 			uint16_t flags;
 		} __attribute__ ((packed)) infos[8];
 
@@ -84,12 +84,11 @@ static int probe_sun_pt(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	struct sun_disklabel *l;
 	struct sun_partition *p;
-	struct sun_info *infos = NULL;
 	blkid_parttable tab = NULL;
 	blkid_partlist ls;
 	uint16_t nparts;
 	blkid_loff_t spc;
-	int i;
+	int i, use_vtoc;
 
 	l = (struct sun_disklabel *) blkid_probe_get_sector(pr, 0);
 	if (!l)
@@ -113,30 +112,41 @@ static int probe_sun_pt(blkid_probe pr, const struct blkid_idmag *mag)
 	if (!tab)
 		goto err;
 
-	/* default number of partitions */
-	nparts = SUN_MAXPARTITIONS;
-
 	/* sectors per cylinder (partition offset is in cylinders...) */
 	spc = be16_to_cpu(l->ntrks) * be16_to_cpu(l->nsect);
 
-	if ((be32_to_cpu(l->vtoc.sanity) == SUN_VTOC_SANITY) &&
-	    (be32_to_cpu(l->vtoc.version) == SUN_VTOC_VERSION) &&
-	    (be16_to_cpu(l->vtoc.nparts) <= SUN_MAXPARTITIONS)) {
+	DBG(DEBUG_LOWPROBE,
+		printf("Sun VTOC sanity=%u version=%u nparts=%u\n",
+			be32_to_cpu(l->vtoc.sanity),
+			be32_to_cpu(l->vtoc.version),
+			be16_to_cpu(l->vtoc.nparts)));
 
-		nparts = be16_to_cpu(l->vtoc.nparts);
-		infos = l->vtoc.infos;			/* for partition type */
-	}
+	/* Check to see if we can use the VTOC table */
+	use_vtoc = ((be32_to_cpu(l->vtoc.sanity) == SUN_VTOC_SANITY) &&
+		    (be32_to_cpu(l->vtoc.version) == SUN_VTOC_VERSION) &&
+		    (be16_to_cpu(l->vtoc.nparts) <= SUN_MAXPARTITIONS));
+
+	/* Use 8 partition entries if not specified in validated VTOC */
+	nparts = use_vtoc ? be16_to_cpu(l->vtoc.nparts) : SUN_MAXPARTITIONS;
+
+	/*
+	 * So that old Linux-Sun partitions continue to work,
+	 * alow the VTOC to be used under the additional condition ...
+	 */
+	use_vtoc = use_vtoc || !(l->vtoc.sanity || l->vtoc.version || l->vtoc.nparts);
 
 	for (i = 0, p = l->partitions; i < nparts; i++, p++) {
 
-		blkid_loff_t start;
-		blkid_loff_t size;
-		uint16_t type = infos ? be16_to_cpu(infos[i].id) : 0;
-		uint16_t flags = infos ? be16_to_cpu(infos[i].flags) : 0;
+		blkid_loff_t start, size;
+		uint16_t type = 0, flags = 0;
 		blkid_partition par;
 
                 start = be32_to_cpu(p->start_cylinder) * spc;
 		size = be32_to_cpu(p->num_sectors);
+		if (use_vtoc) {
+			type = be16_to_cpu(l->vtoc.infos[i].id);
+			flags = be16_to_cpu(l->vtoc.infos[i].flags);
+		}
 
 		if (type == SUN_TAG_WHOLEDISK || !size)
 			continue;
@@ -145,8 +155,10 @@ static int probe_sun_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		if (!par)
 			goto err;
 
-		blkid_partition_set_type(par, type);
-		blkid_partition_set_flags(par, flags);
+		if (type)
+			blkid_partition_set_type(par, type);
+		if (flags)
+			blkid_partition_set_flags(par, flags);
 	}
 	return 0;
 
