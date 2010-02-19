@@ -451,7 +451,7 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 	if (rc < 0)
 		goto done;	/* -1 = error, 1 = nothing, 0 = succes */
 
-	if (blkid_probe_lookup_value(pr, "PTTYPE", NULL, NULL))
+	if (blkid_probe_lookup_value(pr, "PTTYPE", NULL, NULL) == 0)
 		/* partition table detected */
 		has_pt = 1;
 
