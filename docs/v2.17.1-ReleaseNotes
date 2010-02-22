@@ -34,6 +34,7 @@ blkid:
    - report open() errors in low-level probing  [Karel Zak]
 build-sys:
    - add missing tests for libuuid and libblkid  [Karel Zak]
+   - release++ (v2.17.1-rc1)  [Karel Zak]
    - remove duplicate #includes  [Karel Zak]
 cal:
    - fix first day of the week calculation on BE systems  [Karel Zak]
@@ -41,6 +42,7 @@ cfdisk:
    - set '[New]' as default item on menu for non allocated space instead of '[Help]'.  [Francesco Cosoleto]
    - set '[Quit]' as default menu item on first run instead of '[Bootable]'.  [Francesco Cosoleto]
 docs:
+   - add v2.17.1 ReleaseNotes  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
 fdisk:
    - add -c option (switch off DOS mode)  [Karel Zak]
@@ -54,6 +56,7 @@ fdisk:
    - fix ALIGN_UP  [Karel Zak]
    - fix check_alignment()  [Karel Zak]
    - fix default first sector  [Karel Zak]
+   - swap VTOC values for warning messages  [Karel Zak]
    - use "optimal I/O size" in warnings  [Karel Zak]
    - use 1MiB offset and grain always when possible  [Karel Zak]
    - use more elegant way to count and check alignment  [Karel Zak]
@@ -68,6 +71,7 @@ libblkid:
    - don't call read() per FAT dir-entry on large disks  [Karel Zak]
    - don't probe for GPT and Unixware PT on floppies  [Karel Zak]
    - don't return error on empty files  [Karel Zak]
+   - fix ZSF detection  [Andreas Dilger]
    - fix segfault in drdb  [Matthias König]
    - more robust minix probing  [Karel Zak]
    - read whole SB buffer (69kB) on large disks  [Karel Zak]
@@ -86,9 +90,16 @@ mount:
 namei:
    - fix man page formatting  [Vladimir Brednikov]
 po:
+   - merge changes  [Karel Zak]
+   - update cs.po (from translationproject.org)  [Petr Pisar]
+   - update eu.po (from translationproject.org)  [Mikel Olasagasti Uranga]
    - update id.po (from translationproject.org)  [Arif E. Nugroho]
    - update pl.po (from translationproject.org)  [Jakub Bogusz]
    - update vi.po (from translationproject.org)  [Clytie Siddall]
+sfdisk:
+   - make sure writes make it to disk in write_partitions()  [Bryn M. Reeves]
+swapon:
+   - fix swapsize calculation  [Karel Zak]
 tests:
    - add fdisk alignment tests  [Karel Zak]
    - fix RAIDs tests  [Karel Zak]
