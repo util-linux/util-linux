@@ -20,8 +20,8 @@ fdisk:
    mode. The fdisk command prints warning(s) when startup in DOS mode.
 
 
-Changes since v2.17.1
----------------------
+Changes since v2.17
+-------------------
 
  For more details see ChangeLog files at:
  ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.17/
