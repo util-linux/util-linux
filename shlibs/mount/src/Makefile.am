@@ -43,7 +43,7 @@ uninstall-hook:
 
 # tests
 noinst_PROGRAMS = test_version test_cache test_optstr test_optls test_lock \
-		  test_tab
+		  test_tab test_utils
 tests_cppflags = $(AM_CPPFLAGS) -DTEST_PROGRAM
 tests_ldadd = .libs/libmount.a $(ul_libblkid_la)
 
@@ -70,3 +70,7 @@ test_lock_LDADD = $(tests_ldadd)
 test_tab_SOURCES = tab_parse.c tab.c
 test_tab_CPPFLAGS = $(tests_cppflags)
 test_tab_LDADD = $(tests_ldadd)
+
+test_utils_SOURCES = utils.c
+test_utils_CPPFLAGS = $(tests_cppflags)
+test_utils_LDADD = $(tests_ldadd)
