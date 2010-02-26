@@ -39,6 +39,11 @@ wipefs
 fdisk(s)
 --------
 
+ * Sun label support is completely useless for large disks, it uses number of
+   cylinders from on-disk-label where the geometry is stored by int16 values.
+   It seems better to completely ignore this stuff from the label and always
+   use geometry + BLKGETSIZE64 from kernel.
+
  * use off_t instead "long long"
 
  * catch SIGINT (Ctrl-C) and return to main menu.
