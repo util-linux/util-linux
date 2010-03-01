@@ -145,13 +145,15 @@ static int parse_iflag(char *str, int *set_iflag, int *clr_iflag)
 
 static void __attribute__((__noreturn__)) usage(int exitcode)
 {
-    fprintf(stderr,
+    FILE *out = exitcode == EXIT_SUCCESS ? stdout : stderr;
+
+    fprintf(out,
 	    _("\nUsage: %s [ -dhV78neo12 ] [ -s <speed> ] [ -i [-]<iflag> ] <ldisc> <device>\n"),
 	    progname);
-    fputs(_("\nKnown <ldisc> names:\n"), stderr);
-    print_table(stderr, ld_discs);
-    fputs(_("\nKnown <iflag> names:\n"), stderr);
-    print_table(stderr, ld_iflags);
+    fputs(_("\nKnown <ldisc> names:\n"), out);
+    print_table(out, ld_discs);
+    fputs(_("\nKnown <iflag> names:\n"), out);
+    print_table(out, ld_iflags);
     exit(exitcode);
 }
 
