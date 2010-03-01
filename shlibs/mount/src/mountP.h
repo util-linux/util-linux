@@ -152,7 +152,7 @@ struct _mnt_fs {
 	int		freq;		/* fstab[5]:  dump frequency in days */
 	int		passno;		/* fstab[6]: pass number on parallel fsck */
 
-	int		flags;		/* MNT_ENTRY_* flags */
+	int		flags;		/* MNT_FS_* flags */
 	int		lineno;		/* line number in the parental file */
 };
 

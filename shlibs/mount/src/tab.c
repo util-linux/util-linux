@@ -31,6 +31,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include <errno.h>
 #include <limits.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -232,6 +233,8 @@ int mnt_tab_remove_fs(mnt_tab *tb, mnt_fs *fs)
  */
 int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs)
 {
+	int rc;
+
 	assert(tb);
 	assert(itr);
 	assert(fs);
@@ -239,16 +242,53 @@ int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs)
 	if (!tb || !itr || !fs)
 		return -1;
 again:
+	rc = 1;
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &tb->ents);
 	if (itr->p != itr->head) {
 		MNT_ITER_ITERATE(itr, *fs, struct _mnt_fs, ents);
-		return 0;
+		rc = 0;
 	}
 
 	/* ignore broken entries */
 	if (*fs && ((*fs)->flags & MNT_FS_ERROR))
 		goto again;
+
+	return rc;
+}
+
+/**
+ * mnt_tab_find_next_fs:
+ * @tb: table
+ * @itr: iterator
+ * @match_func: function returns 1 or 0
+ * @fs: returns pointer to the next matching table entry
+ *
+ * This function allows search in @tb.
+ *
+ * Returns -1 in case of error, 1 at end of table or 0 o success.
+ */
+int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
+		int (*match_func)(mnt_fs *, void *), void *userdata,
+		mnt_fs **fs)
+{
+	if (!tb || !itr || !fs || !match_func)
+		return -1;
+
+	if (!itr->head)
+		MNT_ITER_INIT(itr, &tb->ents);
+
+	do {
+		if (itr->p != itr->head)
+			MNT_ITER_ITERATE(itr, *fs, struct _mnt_fs, ents);
+		else
+			break;			/* end */
+
+		if ((*fs)->flags & MNT_FS_ERROR)
+			continue;
+		if (match_func(*fs, userdata))
+			return 0;
+	} while(1);
 
 	return 1;
 }
@@ -386,16 +426,32 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 	}
 
 	/* evaluated tag */
-	if (ntags && mnt_cache_read_tags(tb->cache, cn) > 0) {
+	if (ntags) {
 		mnt_reset_iter(&itr, direction);
-		while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
-			const char *t, *v;
 
-			if (mnt_fs_get_tag(fs, &t, &v))
-				continue;
+		if (mnt_cache_read_tags(tb->cache, cn) > 0) {
+			/* @path's TAGs are in the cache */
+			while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+				const char *t, *v;
 
-			if (mnt_cache_device_has_tag(tb->cache, cn, t, v))
-				return fs;
+				if (mnt_fs_get_tag(fs, &t, &v))
+					continue;
+
+				if (mnt_cache_device_has_tag(tb->cache, cn, t, v))
+					return fs;
+			}
+		} else if (errno == EACCES) {
+			/* @path is unaccessible, try evaluate all TAGs in @tb
+			 * by udev symlinks -- this could be expensive on systems
+			 * with huge fstab/mtab */
+			 while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+				 const char *t, *v, *x;
+				 if (mnt_fs_get_tag(fs, &t, &v))
+					 continue;
+				 x = mnt_resolve_tag(t, v, tb->cache);
+				 if (x && !strcmp(x, cn))
+					 return fs;
+			 }
 		}
 	}
 
@@ -503,87 +559,6 @@ mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int direction)
 	return fs;
 }
 
-/**
- * mnt_tab_find_pair:
- * @tb: tab pointer
- * @srcpath: canonicalized source path (devname or dirname)
- * @target: canonicalized mountpoint
- * @direction: MNT_ITER_{FORWARD,BACKWARD}
- *
- * Returns a tab entry or NULL.
- */
-mnt_fs *mnt_tab_find_pair(mnt_tab *tb, const char *srcpath,
-			const char *target, int direction)
-{
-	mnt_iter itr;
-	mnt_fs *fs;
-	int has_tags = -1;
-	const char *p;
-
-	assert(tb);
-	assert(srcpath);
-	assert(target);
-
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: %s: lookup pair: srcpath(%s) target(%s)\n",
-		tb->filename, srcpath, target));
-
-	/* native paths */
-	mnt_reset_iter(&itr, direction);
-	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
-		if (!fs->target || strcmp(fs->target, target))
-			continue;
-		p = mnt_fs_get_srcpath(fs);
-		if (p && strcmp(p, srcpath) == 0)
-			return fs;
-	}
-
-	if (!tb->cache)
-		return NULL;
-
-	mnt_reset_iter(&itr, direction);
-	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
-		const char *src;
-
-		if (!fs->target)
-			continue;
-
-		/* canonicalized or non-canonicalied target */
-		if (strcmp(fs->target, target)) {
-			p = mnt_resolve_path(fs->target, tb->cache);
-			if (!p || strcmp(p, target))
-				continue;
-		}
-
-		src = mnt_fs_get_srcpath(fs);
-		if (src) {
-			/* canonicalized or non-canonicalied srcpath */
-			if (strcmp(src, srcpath)) {
-				p = mnt_resolve_path(src, tb->cache);
-				if (!p || strcmp(p, srcpath))
-					continue;
-			}
-		} else if (has_tags != 0) {
-			/* entry source is tag */
-			const char *t, *v;
-
-			if (mnt_fs_get_tag(fs, &t, &v))
-				continue;
-			if (has_tags == -1 &&
-			    mnt_cache_read_tags(tb->cache, srcpath)) {
-				has_tags = 0;
-				continue;
-			}
-			has_tags = 1;
-			if (!mnt_cache_device_has_tag(tb->cache, srcpath, t, v))
-				continue;
-		} else
-			continue;
-
-		return fs;
-	}
-	return NULL;
-}
 
 /**
  * mnt_tab_fprintf:

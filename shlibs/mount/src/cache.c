@@ -408,7 +408,8 @@ error:
  * @spec: path or tag
  * @cache: paths cache
  *
- * Returns canonicalized path or NULL.
+ * Returns canonicalized path or NULL. The result has to be
+ * deallocated by free() if @cache is NULL.
  */
 char *mnt_resolve_spec(const char *spec, mnt_cache *cache)
 {
