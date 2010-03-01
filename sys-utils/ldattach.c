@@ -47,9 +47,14 @@
 static const char *progname;
 static int debug = 0;
 
+struct ld_table {
+	const char	*name;
+	int		value;
+};
+
 /* currently supported line disciplines, plus some aliases */
-static const struct ld_entry { const char *s; int v; }
-ld_table[] = {
+static const struct ld_table ld_discs[] =
+{
 	{ "TTY",	N_TTY },
 	{ "SLIP",	N_SLIP },
 	{ "MOUSE",	N_MOUSE },
@@ -68,29 +73,39 @@ ld_table[] = {
 	{ "GIGASET",	N_GIGASET_M101 },
 	{ "M101",	N_GIGASET_M101 },
 	{ "PPS",	N_PPS },
+	{ NULL, 0 }
 };
 
-/* look up line discipline code */
-static int lookup_ld(const char *s)
+static int lookup_table(const struct ld_table *tab, const char *str)
 {
-    size_t i;
+    const struct ld_table *t;
 
-    for (i = 0; i < ARRAY_SIZE(ld_table); i++)
-	if (!strcasecmp(ld_table[i].s, s))
-	    return ld_table[i].v;
+    for (t = tab; t && t->name; t++)
+	if (!strcasecmp(t->name, str))
+	    return t->value;
     return -1;
+}
+
+static void print_table(FILE *out, const struct ld_table *tab)
+{
+    const struct ld_table *t;
+    int i;
+
+    for (t = tab, i = 1; t && t->name; t++, i++) {
+	fprintf(out, "  %-10s", t->name);
+	if (!(i % 3))
+		fputc('\n', out);
+    }
 }
 
 static void __attribute__((__noreturn__)) usage(int exitcode)
 {
-    size_t i;
-
     fprintf(stderr,
 	    _("\nUsage: %s [ -dhV78neo12 ] [ -s <speed> ] <ldisc> <device>\n"),
 	    progname);
     fputs(_("\nKnown <ldisc> names:\n"), stderr);
-    for (i = 0; i < ARRAY_SIZE(ld_table); i++)
-	fprintf(stderr, "  %s\n", ld_table[i].s);
+    print_table(stderr, ld_discs);
+
     exit(exitcode);
 }
 
@@ -142,7 +157,6 @@ int main(int argc, char **argv)
 	{0, 0, 0, 0}
     };
 
-
     setlocale(LC_ALL, "");
     bindtextdomain(PACKAGE, LOCALEDIR);
     textdomain(PACKAGE);
@@ -190,7 +204,8 @@ int main(int argc, char **argv)
 	usage(EXIT_FAILURE);
 
     /* parse line discipline specification */
-    if ((ldisc = lookup_ld(argv[optind])) < 0) {
+    ldisc = lookup_table(ld_discs, argv[optind]);
+    if (ldisc < 0) {
 	ldisc = strtol(argv[optind], &end, 0);
 	if (*end || ldisc < 0)
 	    errx(EXIT_FAILURE, _("invalid line discipline: %s"), argv[optind]);
