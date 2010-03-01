@@ -79,6 +79,7 @@
 #define _PATH_PROC_MOUNTS	"/proc/mounts"
 #define _PATH_PROC_PARTITIONS	"/proc/partitions"
 #define _PATH_PROC_DEVICES	"/proc/devices"
+#define _PATH_PROC_MOUNTINFO	"/proc/self/mountinfo"
 
 #define _PATH_SYS_BLOCK		"/sys/block"
 

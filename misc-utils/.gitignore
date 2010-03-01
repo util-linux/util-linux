@@ -17,3 +17,4 @@ uuidd
 findfs
 blkid
 wipefs
+findmnt
