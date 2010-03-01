@@ -360,7 +360,7 @@ cpuid(unsigned int op, unsigned int *eax, unsigned int *ebx,
 		  "=a" (*eax),
 		  "=c" (*ecx),
 		  "=d" (*edx)
-		: "0" (op), "c"(0));
+		: "1" (op), "c"(0));
 }
 
 static void
