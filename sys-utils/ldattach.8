@@ -1,6 +1,6 @@
 .\" Copyright 2008 Tilman Schmidt (tilman@imap.cc)
 .\" May be distributed under the GNU General Public License version 2 or later
-.TH LDATTACH 8 "14 January 2008" "Linux 2.6" "Linux Programmer's Manual"
+.TH LDATTACH 8 "14 February 2010" "Linux 2.6" "Linux Programmer's Manual"
 .SH NAME
 ldattach \- attach a line discipline to a serial line
 .SH SYNOPSIS
@@ -8,6 +8,8 @@ ldattach \- attach a line discipline to a serial line
 .RB [ \-dhV78neo12 ]
 .RB [ \-s
 .IR speed ]
+.RB [ \-i
+.IR iflag ]
 .I ldisc device
 .SH DESCRIPTION
 The
@@ -122,6 +124,13 @@ Sets the number of stop bits of the serial line to one.
 .TP
 \fB-2\fP | \fB--twostopbits\fP
 Sets the number of stop bits of the serial line to two.
+.TP
+\fB-i\fP \fIvalue\fP | \fB--iflag\fP [\fB-\fP]\fIvalue\fP{,...}
+Sets the specified bits in the c_iflag word of the serial line.
+\fIValue\fP may be a number or a symbolic name.
+If \fIvalue\fP is prefixed by a minus sign, clear the specified bits instead.
+Several comma separated \fIvalue\fPs may be given in order to
+set and clear multiple bits.
 .SH "SEE ALSO"
 .BR inputattach (1),
 .BR ttys (4)

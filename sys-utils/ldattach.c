@@ -76,6 +76,27 @@ static const struct ld_table ld_discs[] =
 	{ NULL, 0 }
 };
 
+/* known c_iflag names */
+static const struct ld_table ld_iflags[] =
+{
+	{ "IGNBRK",	IGNBRK },
+	{ "BRKINT",	BRKINT },
+	{ "IGNPAR",	IGNPAR },
+	{ "PARMRK",	PARMRK },
+	{ "INPCK",	INPCK },
+	{ "ISTRIP",	ISTRIP },
+	{ "INLCR",	INLCR },
+	{ "IGNCR",	IGNCR },
+	{ "ICRNL",	ICRNL },
+	{ "IUCLC",	IUCLC },
+	{ "IXON",	IXON },
+	{ "IXANY",	IXANY },
+	{ "IXOFF",	IXOFF },
+	{ "IMAXBEL",	IMAXBEL },
+	{ "IUTF8",	IUTF8 },
+	{ NULL, 0 }
+};
+
 static int lookup_table(const struct ld_table *tab, const char *str)
 {
     const struct ld_table *t;
@@ -98,14 +119,39 @@ static void print_table(FILE *out, const struct ld_table *tab)
     }
 }
 
+static int parse_iflag(char *str, int *set_iflag, int *clr_iflag)
+{
+    int iflag;
+    char *s, *end;
+
+    for (s = strtok(str, ","); s != NULL; s = strtok(NULL, ",")) {
+	if (*s == '-')
+	    s++;
+        if ((iflag = lookup_table(ld_iflags, s)) < 0) {
+	    iflag = strtol(s, &end, 0);
+	    if (*end || iflag < 0)
+	        errx(EXIT_FAILURE, _("invalid iflag: %s"), s);
+	}
+	if (s > str && *(s - 1) == '-')
+	    *clr_iflag |= iflag;
+	else
+	    *set_iflag |= iflag;
+    }
+
+    dbg("iflag (set/clear): %d/%d", *set_iflag, *clr_iflag);
+    return 0;
+}
+
+
 static void __attribute__((__noreturn__)) usage(int exitcode)
 {
     fprintf(stderr,
-	    _("\nUsage: %s [ -dhV78neo12 ] [ -s <speed> ] <ldisc> <device>\n"),
+	    _("\nUsage: %s [ -dhV78neo12 ] [ -s <speed> ] [ -i [-]<iflag> ] <ldisc> <device>\n"),
 	    progname);
     fputs(_("\nKnown <ldisc> names:\n"), stderr);
     print_table(stderr, ld_discs);
-
+    fputs(_("\nKnown <iflag> names:\n"), stderr);
+    print_table(stderr, ld_iflags);
     exit(exitcode);
 }
 
@@ -138,6 +184,7 @@ int main(int argc, char **argv)
     int tty_fd;
     struct termios ts;
     int speed = 0, bits = '-', parity = '-', stop = '-';
+    int set_iflag = 0, clr_iflag = 0;
     int ldisc;
     int optc;
     char *end;
@@ -151,6 +198,7 @@ int main(int argc, char **argv)
 	{"oddparity", 0, 0, 'o'},
 	{"onestopbit", 0, 0, '1'},
 	{"twostopbits", 0, 0, '2'},
+	{"iflag", 1, 0, 'i'},
 	{"help", 0, 0, 'h'},
 	{"version", 0, 0, 'V'},
 	{"debug", 0, 0, 'd'},
@@ -166,7 +214,7 @@ int main(int argc, char **argv)
 
     if (argc == 0)
 	usage(EXIT_SUCCESS);
-    while ((optc = getopt_long(argc, argv, "dhV78neo12s:", opttbl, NULL)) >= 0) {
+    while ((optc = getopt_long(argc, argv, "dhV78neo12s:i:", opttbl, NULL)) >= 0) {
 	switch (optc) {
 	case 'd':
 	    debug++;
@@ -188,6 +236,9 @@ int main(int argc, char **argv)
 	    speed = strtol(optarg, &end, 10);
 	    if (*end || speed <= 0)
 		errx(EXIT_FAILURE, _("invalid speed: %s"), optarg);
+	    break;
+	case 'i':
+	    parse_iflag(optarg, &set_iflag, &clr_iflag);
 	    break;
 	case 'V':
 	    printf(_("ldattach from %s\n"), PACKAGE_STRING);
@@ -255,6 +306,10 @@ int main(int argc, char **argv)
 	break;
     }
     ts.c_cflag |= CREAD;	/* just to be on the safe side */
+
+    ts.c_iflag |= set_iflag;
+    ts.c_iflag &= ~clr_iflag;
+
     if (tcsetattr(tty_fd, TCSAFLUSH, &ts) < 0)
 	err(EXIT_FAILURE, _("cannot set terminal attributes for %s"), dev);
 
