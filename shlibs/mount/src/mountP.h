@@ -135,6 +135,7 @@ struct _mnt_fs {
 
 	int		id;		/* mountinfo[1]: ID */
 	int		parent;		/* moutninfo[2]: parent */
+	dev_t		devno;		/* moutninfo[3]: st_dev */
 
 	char		*source;	/* fstab[1]: mountinfo[10]:
                                          * source dev, file, dir or TAG */

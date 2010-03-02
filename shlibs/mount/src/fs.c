@@ -328,7 +328,7 @@ const char *mnt_fs_get_fs_optstr(mnt_fs *fs)
 
 /**
  * mnt_fs_get_vfs_optstr:
- * @fs: fstab/mtab/mountinfo entry pointer
+ * @fs: fstab/mtab entry pointer
  *
  * This function works for "mountinfo" files only.
  *
@@ -355,7 +355,7 @@ int mnt_fs_get_freq(mnt_fs *fs)
 
 /**
  * mnt_fs_set_freq:
- * @fs: fstab/mtab/mountinfo entry pointer
+ * @fs: fstab/mtab entry pointer
  * @freq: dump frequency in days
  *
  * Returns 0 on success or -1 in case of error.
@@ -363,7 +363,6 @@ int mnt_fs_get_freq(mnt_fs *fs)
 int mnt_fs_set_freq(mnt_fs *fs, int freq)
 {
 	assert(fs);
-
 	if (!fs)
 		return -1;
 	fs->freq = freq;
@@ -372,7 +371,7 @@ int mnt_fs_set_freq(mnt_fs *fs, int freq)
 
 /**
  * mnt_fs_get_passno:
- * @fs: fstab/mtab/mountinfo entry pointer
+ * @fs: fstab/mtab entry pointer
  *
  * Returns "pass number on parallel fsck".
  */
@@ -384,7 +383,7 @@ int mnt_fs_get_passno(mnt_fs *fs)
 
 /**
  * mnt_fs_set_passno:
- * @fs: fstab/mtab/mountinfo entry pointer
+ * @fs: fstab/mtab entry pointer
  * @passno: pass number
  *
  * Returns 0 on success or -1 in case of error.
@@ -392,11 +391,48 @@ int mnt_fs_get_passno(mnt_fs *fs)
 int mnt_fs_set_passno(mnt_fs *fs, int passno)
 {
 	assert(fs);
-
 	if (!fs)
 		return -1;
 	fs->passno = passno;
 	return 0;
+}
+
+/**
+ * mnt_fs_get_id:
+ * @fs: /proc/self/mountinfo entry
+ *
+ * Returns: mount ID (unique identifier of the mount) or -1 if ID undefined
+ * (for example if @fs is not mountinfo entry).
+ */
+int mnt_fs_get_id(mnt_fs *fs)
+{
+	assert(fs);
+	return fs ? fs->id : -1;
+}
+
+/**
+ * mnt_fs_get_parent_id:
+ * @fs: /proc/self/mountinfo entry
+ *
+ * Returns: parent mount ID or -1 if ID undefined (for example if @fs is not
+ * mountinfo entry).
+ */
+int mnt_fs_get_parent_id(mnt_fs *fs)
+{
+	assert(fs);
+	return fs ? fs->parent : -1;
+}
+
+/**
+ * mnt_fs_get_devno:
+ * @fs: /proc/self/mountinfo
+ *
+ * Returns: value of st_dev for files on filesystem or 0 in case of error.
+ */
+dev_t mnt_fs_get_devno(mnt_fs *fs)
+{
+	assert(fs);
+	return fs ? fs->devno : 0;
 }
 
 /**
@@ -414,7 +450,6 @@ int mnt_fs_get_option(mnt_fs *fs, const char *name,
 	char *optstr = (char *) mnt_fs_get_optstr(fs);
 	return optstr ? mnt_optstr_get_option(optstr, name, value, valsz) : 1;
 }
-
 
 /**
  * mnt_fs_match_target:
@@ -689,6 +724,11 @@ int mnt_fs_print_debug(mnt_fs *fs, FILE *file)
 	fprintf(file, "optstr: %s\n", mnt_fs_get_optstr(fs));
 	fprintf(file, "freq:   %d\n", mnt_fs_get_freq(fs));
 	fprintf(file, "pass:   %d\n", mnt_fs_get_passno(fs));
+	fprintf(file, "id:     %d\n", mnt_fs_get_id(fs));
+	fprintf(file, "parent: %d\n", mnt_fs_get_parent_id(fs));
+	fprintf(file, "devno:  %d:%d\n", major(mnt_fs_get_devno(fs)),
+					 minor(mnt_fs_get_devno(fs)));
+
 
 	return 0;
 }

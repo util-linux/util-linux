@@ -17,12 +17,15 @@ global:
 	mnt_free_optls;
 	mnt_free_tab;
 	mnt_fs_fprintf;
+	mnt_fs_get_devno;
 	mnt_fs_get_freq;
 	mnt_fs_get_fstype;
+	mnt_fs_get_id;
 	mnt_fs_get_optfs;
 	mnt_fs_get_option;
 	mnt_fs_get_optstr;
 	mnt_fs_get_optvfs;
+	mnt_fs_get_parent_id;
 	mnt_fs_get_passno;
 	mnt_fs_get_source;
 	mnt_fs_get_srcpath;

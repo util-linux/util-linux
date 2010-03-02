@@ -709,12 +709,20 @@ err:
 int test_parse(struct mtest *ts, int argc, char *argv[])
 {
 	mnt_tab *tb;
+	mnt_iter *itr;
+	mnt_fs *fs;
 
 	tb = create_tab(argv[1]);
 	if (!tb)
 		return -1;
 
-	mnt_tab_fprintf(tb, stdout, MNT_MFILE_PRINTFMT);
+	itr = mnt_new_iter(MNT_ITER_FORWARD);
+	if (!itr)
+		goto err;
+	while(mnt_tab_next_fs(tb, itr, &fs) == 0)
+		mnt_fs_print_debug(fs, stdout);
+err:
+	mnt_free_iter(itr);
 	mnt_free_tab(tb);
 	return 0;
 }

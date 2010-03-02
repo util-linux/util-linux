@@ -166,6 +166,8 @@ static int mnt_tab_parse_file_line(mnt_fs *fs, char *s)
  */
 static int mnt_parse_mountinfo_line(mnt_fs *fs, char *s)
 {
+	unsigned int maj, min;
+
 	/* ID */
 	if (next_number(&s, &fs->id) != 0)
 		return 1;
@@ -174,9 +176,12 @@ static int mnt_parse_mountinfo_line(mnt_fs *fs, char *s)
 	if (next_number(&s, &fs->parent) != 0)
 		return 1;
 
-	/* <maj>:<min> (ignore) */
-	if (next_word_skip(&s) != 0)
+	/* <maj>:<min> */
+	s = skip_spaces(s);
+	if (!*s || sscanf(s, "%u:%u", &maj, &min) != 2)
 		return 1;
+	fs->devno = makedev(maj, min);
+	next_word_skip(&s);
 
 	/* MOUNTROOT */
 	fs->mntroot = next_word(&s);
@@ -532,62 +537,3 @@ done:
 	return buf;
 }
 
-#ifdef LIBMOUNT_TEST_PROGRAM
-int test_parse(struct mtest *ts, int argc, char *argv[])
-{
-	mnt_tab *tb;
-	mnt_fs *fs;
-	mnt_iter *itr;
-
-	if (argc != 2)
-		goto err;
-
-	tb = mnt_new_tab(argv[1]);
-	if (!tb)
-		goto err;
-	if (mnt_tab_parse_file(tb) != 0)
-		goto err;
-	if (mnt_tab_get_nerrs(tb)) {
-		char buf[BUFSIZ];
-
-		mnt_tab_strerror(tb, buf, sizeof(buf));
-		printf("\t%s\n", buf);
-		goto err;
-	}
-
-	itr = mnt_new_iter(MNT_ITER_FORWARD);
-	if (!itr)
-		goto err;
-	while(mnt_tab_next_fs(tb, itr, &fs) == 0) {
-		const char *tg, *vl;
-
-		if (mnt_fs_get_tag(fs, &tg, &vl) == 0)
-			printf("%s=%s", tg, vl);
-		else
-			printf("%s", mnt_fs_get_srcpath(fs));
-
-		printf("|%s|%s|%s|%d|%d|\n",
-				mnt_fs_get_target(fs),
-				mnt_fs_get_fstype(fs),
-				mnt_fs_get_optstr(fs),
-				mnt_fs_get_freq(fs),
-				mnt_fs_get_passno(fs));
-	}
-	mnt_free_tab(tb);
-	mnt_free_iter(itr);
-
-	return 0;
-err:
-	return -1;
-}
-
-int main(int argc, char *argv[])
-{
-	struct mtest tss[] = {
-	{ "--parse",    test_parse, "<file>   parse the {fs,m}tab or mountinfo file" },
-	{ NULL }
-	};
-	return mnt_run_test(tss, argc, argv);
-}
-
-#endif /* LIBMOUNT_TEST_PROGRAM */
