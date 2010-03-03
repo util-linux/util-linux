@@ -828,9 +828,9 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 	uint64_t start, size;
 	int i;
 
-	if (blkid_devno_get_attribute(devno, "start", &start))
+	if (blkid_devno_get_u64_attribute(devno, "start", &start))
 		return NULL;
-	if (blkid_devno_get_attribute(devno, "size", &size))
+	if (blkid_devno_get_u64_attribute(devno, "size", &size))
 		return NULL;
 
 	for (i = 0; i < ls->nparts; i++) {

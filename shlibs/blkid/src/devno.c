@@ -478,7 +478,7 @@ int blkid_devno_has_attribute(dev_t devno, const char *attribute)
 	return 0;
 }
 
-int blkid_devno_get_attribute(dev_t devno, const char *attribute, uint64_t *result)
+int blkid_devno_get_u64_attribute(dev_t devno, const char *attribute, uint64_t *result)
 {
 	FILE *f;
 	char path[PATH_MAX];
@@ -490,6 +490,24 @@ int blkid_devno_get_attribute(dev_t devno, const char *attribute, uint64_t *resu
 	f = fopen(path, "r");
 	if (f) {
 		rc = fscanf(f, "%" SCNu64, result);
+		fclose(f);
+	}
+
+	return rc == 1 ? 0 : -1;
+}
+
+int blkid_devno_get_s64_attribute(dev_t devno, const char *attribute, int64_t *result)
+{
+	FILE *f;
+	char path[PATH_MAX];
+	int rc = 0;
+
+	if (!mk_devno_attribute_path(path, sizeof(path), devno, attribute))
+		return -1;
+
+	f = fopen(path, "r");
+	if (f) {
+		rc = fscanf(f, "%" SCNd64, result);
 		fclose(f);
 	}
 

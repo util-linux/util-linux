@@ -19,51 +19,20 @@
 
 #include "topology.h"
 
-static unsigned long dev_topology_attribute(const char *attribute,
-				dev_t dev, dev_t *primary)
-{
-	uint64_t result;
-
-	/*
-	 * check if the desired sysfs attribute exists
-	 * - if not: either the kernel doesn't have topology support or the
-	 *   device could be a partition
-	 */
-	if (!blkid_devno_has_attribute(dev, attribute)) {
-		if (!*primary &&
-		    blkid_devno_to_wholedisk(dev, NULL, 0, primary))
-			goto err;
-
-		/* get attribute from partition's primary device */
-		dev = *primary;
-	}
-
-	if (blkid_devno_get_attribute(dev, attribute, &result))
-		goto err;
-
-	DBG(DEBUG_LOWPROBE,
-		printf("topology: attribute %s = %" PRIu64 "\n", attribute, result));
-
-	return result;
-err:
-	DBG(DEBUG_LOWPROBE,
-		printf("topology: failed to read %s attribute\n", attribute));
-	return 0;
-}
-
 /*
  * Sysfs topology values (since 2.6.31, May 2009).
  */
 static struct topology_val {
 
-	/* /sys/dev/block/<maj>:<min>/NAME */
-	const char *sysfs_name;
+	/* /sys/dev/block/<maj>:<min>/<ATTR> */
+	const char *attr;
 
-	/* function to set probing resut */
-	int (*set_result)(blkid_probe, unsigned long);
+	/* functions to set probing resut */
+	int (*set_ulong)(blkid_probe, unsigned long);
+	int (*set_int)(blkid_probe, int);
 
 } topology_vals[] = {
-	{ "alignment_offset", blkid_topology_set_alignment_offset },
+	{ "alignment_offset", NULL, blkid_topology_set_alignment_offset },
 	{ "queue/minimum_io_size", blkid_topology_set_minimum_io_size },
 	{ "queue/optimal_io_size", blkid_topology_set_optimal_io_size },
 	{ "queue/physical_block_size", blkid_topology_set_physical_sector_size },
@@ -72,7 +41,7 @@ static struct topology_val {
 static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	dev_t dev, pri_dev = 0;
-	int i, rc = 0, count = 0;
+	int i, count = 0;
 
 	dev = blkid_probe_get_devno(pr);
 	if (!dev)
@@ -80,17 +49,38 @@ static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
 		struct topology_val *val = &topology_vals[i];
-		unsigned long data;
+		dev_t attr_dev = dev;
+		int rc = 1;
 
-		/*
-		 * Don't bother reporting any of the topology information
-		 * if it's zero.
-		 */
-		data = dev_topology_attribute(val->sysfs_name, dev, &pri_dev);
-		if (!data)
-			continue;
+		if (!blkid_devno_has_attribute(dev, val->attr)) {
+			/* get attribute from partition's primary device */
+			if (!pri_dev &&
+			    blkid_devno_to_wholedisk(dev, NULL, 0, &pri_dev))
+				continue;
+			attr_dev = pri_dev;
+		}
 
-		rc = val->set_result(pr, data);
+		if (val->set_ulong) {
+			uint64_t data = 0;
+
+			if (blkid_devno_get_u64_attribute(attr_dev,
+							val->attr, &data))
+				continue;
+			if (!data)
+				continue;
+			rc = val->set_ulong(pr, (unsigned long) data);
+
+		} else if (val->set_int) {
+			int64_t data = 0;
+
+			if (blkid_devno_get_s64_attribute(attr_dev,
+							val->attr, &data))
+				continue;
+			if (!data)
+				continue;
+			rc = val->set_int(pr, (int) data);
+		}
+
 		if (rc)
 			goto err;
 		count++;

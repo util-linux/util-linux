@@ -26,11 +26,12 @@ static struct topology_val {
 
 	long  ioc;
 
-	/* function to set probing resut */
-	int (*set_result)(blkid_probe, unsigned long);
+	/* functions to set probing resut */
+	int (*set_ulong)(blkid_probe, unsigned long);
+	int (*set_int)(blkid_probe, int);
 
 } topology_vals[] = {
-	{ BLKALIGNOFF, blkid_topology_set_alignment_offset },
+	{ BLKALIGNOFF, NULL, blkid_topology_set_alignment_offset },
 	{ BLKIOMIN, blkid_topology_set_minimum_io_size },
 	{ BLKIOOPT, blkid_topology_set_optimal_io_size },
 	{ BLKPBSZGET, blkid_topology_set_physical_sector_size }
@@ -44,12 +45,16 @@ static int probe_ioctl_tp(blkid_probe pr, const struct blkid_idmag *mag)
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
 		struct topology_val *val = &topology_vals[i];
+		int rc = 1;
 		unsigned int data;
-		int rc;
 
 		if (ioctl(pr->fd, val->ioc, &data) == -1)
 			goto nothing;
-		rc = val->set_result(pr, (unsigned long) data);
+
+		if (val->set_int)
+			rc = val->set_int(pr, (int) data);
+		else
+			rc = val->set_ulong(pr, (unsigned long) data);
 		if (rc)
 			goto err;
 		count++;

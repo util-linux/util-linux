@@ -333,8 +333,10 @@ struct dir_list {
 extern void blkid__scan_dir(char *, dev_t, struct dir_list **, char **);
 extern int blkid_driver_has_major(const char *drvname, int major);
 extern int blkid_devno_has_attribute(dev_t devno, const char *attribute);
-extern int blkid_devno_get_attribute(dev_t devno, const char *attribute,
+extern int blkid_devno_get_u64_attribute(dev_t devno, const char *attribute,
 							uint64_t *result);
+extern int blkid_devno_get_s64_attribute(dev_t devno, const char *attribute,
+							int64_t *result);
 
 /* lseek.c */
 extern blkid_loff_t blkid_llseek(int fd, blkid_loff_t offset, int whence);

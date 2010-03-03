@@ -242,12 +242,26 @@ static int topology_is_complete(blkid_probe pr)
 	return __blkid_probe_lookup_value(pr, "MINIMUM_IO_SIZE") ? TRUE : FALSE;
 }
 
-int blkid_topology_set_alignment_offset(blkid_probe pr, unsigned long val)
+int blkid_topology_set_alignment_offset(blkid_probe pr, int val)
 {
+	unsigned long xval;
+
+	/* Welcome to Hell. The kernel is able to returns -1 as an
+	 * alignment_offset if no compatible sizes and alignments
+	 * exist for stacked devices.
+	 *
+	 * There is no way how libblkid caller can respond to the value -1, so
+	 * we will hide this corner case...
+	 *
+	 * (TODO: maybe we can export an extra boolean value 'misaligned' rather
+	 *  then complete hide this problem.)
+	 */
+	xval = val < 0 ? 0 : val;
+
 	return topology_set_value(pr,
 			"ALIGNMENT_OFFSET",
 			offsetof(struct blkid_struct_topology, alignment_offset),
-			val);
+			xval);
 }
 
 int blkid_topology_set_minimum_io_size(blkid_probe pr, unsigned long val)
