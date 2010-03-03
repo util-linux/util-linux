@@ -41,7 +41,6 @@ static struct topology_val {
 static int probe_ioctl_tp(blkid_probe pr, const struct blkid_idmag *mag)
 {
 	int i;
-	int count = 0;
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
 		struct topology_val *val = &topology_vals[i];
@@ -57,11 +56,9 @@ static int probe_ioctl_tp(blkid_probe pr, const struct blkid_idmag *mag)
 			rc = val->set_ulong(pr, (unsigned long) data);
 		if (rc)
 			goto err;
-		count++;
 	}
 
-	if (count)
-		return 0;
+	return 0;
 nothing:
 	return 1;
 err:

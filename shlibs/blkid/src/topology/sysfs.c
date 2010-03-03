@@ -66,8 +66,6 @@ static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)
 			if (blkid_devno_get_u64_attribute(attr_dev,
 							val->attr, &data))
 				continue;
-			if (!data)
-				continue;
 			rc = val->set_ulong(pr, (unsigned long) data);
 
 		} else if (val->set_int) {
@@ -75,8 +73,6 @@ static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)
 
 			if (blkid_devno_get_s64_attribute(attr_dev,
 							val->attr, &data))
-				continue;
-			if (!data)
 				continue;
 			rc = val->set_int(pr, (int) data);
 		}
