@@ -147,6 +147,7 @@ enum {
 extern mnt_iter *mnt_new_iter(int direction);
 extern void mnt_free_iter(mnt_iter *mi);
 extern void mnt_reset_iter(mnt_iter *mi, int direction);
+extern int mnt_iter_get_direction(mnt_iter *itr);
 
 /* optmap.c */
 enum {

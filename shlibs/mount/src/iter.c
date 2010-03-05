@@ -39,7 +39,7 @@ void mnt_free_iter(mnt_iter *itr)
 /**
  * mnt_reset_iter:
  * @itr: iterator pointer
- * @direction: MNT_INTER_{FOR,BACK}WARD iterator direction
+ * @direction: MNT_INTER_{FOR,BACK}WARD or -1 to keep the derection unchanged
  *
  * Resets iterator.
  */
@@ -47,8 +47,23 @@ void mnt_reset_iter(mnt_iter *itr, int direction)
 {
 	assert(itr);
 
+	if (direction == -1)
+		direction = itr->direction;
+
 	if (itr) {
 		memset(itr, 0, sizeof(struct _mnt_iter));
 		itr->direction = direction;
 	}
+}
+
+/**
+ * mnt_iter_get_direction:
+ * @itr: iterator pointer
+ *
+ * Returns: MNT_INTER_{FOR,BACK}WARD or -1 in case of error.
+ */
+int mnt_iter_get_direction(mnt_iter *itr)
+{
+	assert(itr);
+	return itr ? itr->direction : -1;
 }
