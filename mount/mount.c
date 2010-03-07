@@ -782,8 +782,8 @@ procfsnext(FILE *procfs) {
    char fsname[100];
 
    while (fgets(line, sizeof(line), procfs)) {
-      if (sscanf (line, "nodev %[^\n]\n", fsname) == 1) continue;
-      if (sscanf (line, " %[^ \n]\n", fsname) != 1) continue;
+      if (sscanf (line, "nodev %[^#\n]\n", fsname) == 1) continue;
+      if (sscanf (line, " %[^# \n]\n", fsname) != 1) continue;
       return xstrdup(fsname);
    }
    return 0;
