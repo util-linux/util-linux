@@ -9,6 +9,7 @@
  * GNU Lesser General Public License.
  */
 
+#include <string.h>
 #include "superblocks.h"
 
 struct minix_super_block {
@@ -45,6 +46,7 @@ struct minix3_super_block {
 
 static int probe_minix(blkid_probe pr, const struct blkid_idmag *mag)
 {
+	unsigned char *ext;
 	int version;
 
 	/* for more details see magic strings below */
@@ -87,6 +89,14 @@ static int probe_minix(blkid_probe pr, const struct blkid_idmag *mag)
 			return -1;
 
 	}
+
+	/* unfortunately, some parts of ext3 is sometimes possible to
+	 * interpreted as minix superblock. So check for extN magic
+	 * string. (For extN magic string and offsets see ext.c.)
+	 */
+	ext = blkid_probe_get_buffer(pr, 0x400 + 0x38, 2);
+	if (ext && memcmp(ext, "\123\357", 2) == 0)
+		return -1;
 
 	blkid_probe_sprintf_version(pr, "%d", version);
 	return 0;
