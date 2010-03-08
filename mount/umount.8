@@ -123,6 +123,12 @@ anymore.
 Don't canonicalize paths. For more details about this option see the
 .B mount(8)
 man page.
+.IP "\fB\-\-fake\fP"
+Causes everything to be done except for the actual system call; this
+``fakes'' unmounting the filesystem.  It can  be used to remove
+entries from
+.I /etc/mtab
+that were unmounted earlier with the -n option.
 
 .SH "THE LOOP DEVICE"
 The

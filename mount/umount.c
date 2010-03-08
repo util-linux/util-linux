@@ -81,6 +81,9 @@ int restricted = 1;
 int complained_err = 0;
 char *complained_dev = NULL;
 
+/* True for fake umount (--fake).  */
+static int fake = 0;
+
 /*
  * check_special_umountprog()
  *	If there is a special umount program for this type, exec it.
@@ -187,7 +190,7 @@ umount_one (const char *spec, const char *node, const char *type,
 	    const char *opts, struct mntentchn *mc) {
 	int umnt_err = 0;
 	int isroot;
-	int res;
+	int res = 0;
 	int status;
 	const char *loopdev;
 	int myloop = 0;
@@ -210,6 +213,9 @@ umount_one (const char *spec, const char *node, const char *type,
 	if (check_special_umountprog(spec, node, type, &status))
 		return status;
 
+	/* Skip the actual umounting for --fake */
+	if (fake)
+		goto writemtab;
 	/*
 	 * Ignore the option "-d" for non-loop devices and loop devices with
 	 * LO_FLAGS_AUTOCLEAR flag.
@@ -390,6 +396,7 @@ static struct option longopts[] =
   { "types", 1, 0, 't' },
 
   { "no-canonicalize", 0, 0, 144 },
+  { "fake", 0, 0, 145 },
   { NULL, 0, 0, 0 }
 };
 
@@ -679,6 +686,9 @@ main (int argc, char *argv[]) {
 		case 144:
 			nocanonicalize = 1;
 			break;
+		case 145:
+			fake = 1;
+			break;
 		case 0:
 			break;
 		case '?':
@@ -697,7 +707,8 @@ main (int argc, char *argv[]) {
 	}
 
 	if (restricted &&
-	    (all || types || nomtab || force || remount || nocanonicalize)) {
+	    (all || types || nomtab || force || remount || nocanonicalize ||
+	     fake)) {
 		die (2, _("umount: only root can do that"));
 	}
 
