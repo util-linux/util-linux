@@ -51,6 +51,7 @@ blkid_static_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 endif
 endif
 
+cal_SOURCES = cal.c $(top_srcdir)/lib/mbsalign.c
 if HAVE_TINFO
 cal_LDADD = -ltinfo @NCURSES_LIBS@
 else

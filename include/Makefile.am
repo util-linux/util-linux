@@ -12,6 +12,7 @@ dist_noinst_HEADERS = \
 	linux_reboot.h \
 	linux_version.h \
 	md5.h \
+	mbsalign.h \
 	nls.h \
 	pathnames.h \
 	setproctitle.h \

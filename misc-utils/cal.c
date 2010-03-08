@@ -67,6 +67,7 @@
 
 #include "c.h"
 #include "nls.h"
+#include "mbsalign.h"
 
 #if defined(HAVE_LIBNCURSES) || defined(HAVE_LIBNCURSESW)
 
@@ -243,8 +244,8 @@ struct fmt_st
 };
 
 char * ascii_day(char *, int);
-int center_str(const char* src, char* dest, size_t dest_size, int width);
-void center(const char *, int, int);
+int center_str(const char* src, char* dest, size_t dest_size, size_t width);
+void center(const char *, size_t, int);
 void day_array(int, int, int, int *);
 int day_in_week(int, int, int);
 int day_in_year(int, int, int);
@@ -753,95 +754,22 @@ trim_trailing_spaces(s)
 	*p = '\0';
 }
 
-#ifdef HAVE_WIDECHAR
-/* replace non printable chars.
- * return 1 if replacement made, 0 otherwise */
-int wc_ensure_printable(wchar_t* wchars)
-{
-	int replaced=0;
-	wchar_t* wc = wchars;
-	while (*wc) {
-		if (!iswprint((wint_t) *wc)) {
-			*wc=L'\uFFFD';
-			replaced=1;
-		}
-		wc++;
-	}
-	return replaced;
-}
-
-/* truncate wchar string to width cells.
- * returns number of cells used. */
-size_t wc_truncate(wchar_t* wchars, size_t width, size_t minchars)
-{
-	int wc=0;
-	int cells=0;
-	while (*(wchars+wc)) {
-		cells = wcswidth(wchars, wc+1);
-		if (cells > width) {
-			if (wc >= minchars) {
-				break;
-			}
-		}
-		wc++;
-	}
-	wchars[wc]=L'\0';
-	return cells;
-}
-#endif
-
 /*
  * Center string, handling multibyte characters appropriately.
  * In addition if the string is too large for the width it's truncated.
  * The number of trailing spaces may be 1 less than the number of leading spaces.
  */
 int
-center_str(const char* src, char* dest, size_t dest_size, int width)
+center_str(const char* src, char* dest, size_t dest_size, size_t width)
 {
-#ifdef HAVE_WIDECHAR
-	wchar_t str_wc[FMT_ST_CHARS];
-#endif
-	char str[FMT_ST_CHARS];
-	const char* str_to_print=src;
-	int used, spaces, wc_conversion=0, wc_enabled=0;
-
-#ifdef HAVE_WIDECHAR
-	if (mbstowcs(str_wc, src, ARRAY_SIZE(str_wc)) > 0) {
-		str_wc[ARRAY_SIZE(str_wc)-1]=L'\0';
-		wc_enabled=1;
-		wc_conversion = wc_ensure_printable(str_wc);
-		used = wcswidth(str_wc, ARRAY_SIZE(str_wc));
-	}
-	else
-#endif
-		used = strlen(src);
-
-	if (wc_conversion || used > width) {
-		str_to_print=str;
-		if (wc_enabled) {
-#ifdef HAVE_WIDECHAR
-			used = wc_truncate(str_wc, width, 1);
-			wcstombs(str, str_wc, ARRAY_SIZE(str));
-#endif
-		} else {
-			memcpy(str, src, width);
-			str[width]='\0';
-		}
-	}
-
-	spaces = width - used;
-	spaces = ( spaces < 0 ? 0 : spaces );
-
-	return snprintf(dest, dest_size, "%*s%s%*s",
-		spaces / 2 + spaces % 2, "",
-		str_to_print,
-		spaces / 2, "" );
+	return mbsalign(src, dest, dest_size, &width,
+			MBS_ALIGN_CENTER, MBA_UNIBYTE_FALLBACK);
 }
 
 void
 center(str, len, separate)
 	const char *str;
-	int len;
+	size_t len;
 	int separate;
 {
 	char lineout[FMT_ST_CHARS];
