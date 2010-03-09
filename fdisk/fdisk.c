@@ -25,6 +25,7 @@
 #include "nls.h"
 #include "blkdev.h"
 #include "common.h"
+#include "mbsalign.h"
 #include "fdisk.h"
 #include "wholedisk.h"
 
@@ -568,9 +569,19 @@ void list_types(struct systypes *sys)
 	i = done = 0;
 
 	do {
-		printf("%c%2x  %-15.15s", i ? ' ' : '\n',
-		        sys[next].type, _(sys[next].name));
- 		next = last[i++] + done;
+		#define NAME_WIDTH 15
+		char name[NAME_WIDTH * MB_LEN_MAX];
+		size_t width = NAME_WIDTH;
+
+		printf("%c%2x  ", i ? ' ' : '\n', sys[next].type);
+		size_t ret = mbsalign(_(sys[next].name), name, sizeof(name),
+				      &width, MBS_ALIGN_LEFT, 0);
+		if (ret == (size_t)-1 || ret >= sizeof(name))
+			printf("%-15.15s", _(sys[next].name));
+		else
+			fputs(name, stdout);
+
+		next = last[i++] + done;
 		if (i > 3 || next >= last[i]) {
 			i = 0;
 			next = ++done;
