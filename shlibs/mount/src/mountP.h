@@ -155,6 +155,8 @@ struct _mnt_fs {
 
 	int		flags;		/* MNT_FS_* flags */
 	int		lineno;		/* line number in the parental file */
+
+	void		*userdata;	/* library independent data */
 };
 
 /*

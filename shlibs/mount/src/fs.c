@@ -58,6 +58,33 @@ void mnt_free_fs(mnt_fs *fs)
 }
 
 /**
+ * mnt_fs_get_userdata:
+ * @fs: mnt_file instance
+ *
+ * Returns private data set by mnt_fs_set_userdata() or NULL.
+ */
+void *mnt_fs_get_userdata(mnt_fs *fs)
+{
+	return fs ? fs->userdata : NULL;
+}
+
+/**
+ * mnt_fs_set_userdata:
+ * @fs: mnt_file instance
+ *
+ * The "userdata" are library independent data.
+ *
+ * Returns 0 or -1 in case of error (if @fs is NULL).
+ */
+int mnt_fs_set_userdata(mnt_fs *fs, void *data)
+{
+	if (!fs)
+		return -1;
+	fs->userdata = data;
+	return 0;
+}
+
+/**
  * mnt_fs_get_srcpath:
  * @fs: mnt_file (fstab/mtab/mountinfo) fs
  *

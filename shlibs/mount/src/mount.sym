@@ -31,6 +31,7 @@ global:
 	mnt_fs_get_srcpath;
 	mnt_fs_get_tag;
 	mnt_fs_get_target;
+	mnt_fs_get_userdata;
 	mnt_fs_match_fstype;
 	mnt_fs_match_options;
 	mnt_fs_match_source;
@@ -42,6 +43,7 @@ global:
 	mnt_fs_set_passno;
 	mnt_fs_set_source;
 	mnt_fs_set_target;
+	mnt_fs_set_userdata;
 	mnt_fstype_is_netfs;
 	mnt_fstype_is_pseudofs;
 	mnt_get_builtin_optmap;
@@ -116,6 +118,8 @@ global:
 	mnt_tab_get_name;
 	mnt_tab_get_nents;
 	mnt_tab_get_nerrs;
+	mnt_tab_get_root_fs;
+	mnt_tab_next_child_fs;
 	mnt_tab_next_fs;
 	mnt_tab_parse_file;
 	mnt_tab_remove_fs;

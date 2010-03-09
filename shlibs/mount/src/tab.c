@@ -210,6 +210,97 @@ int mnt_tab_remove_fs(mnt_tab *tb, mnt_fs *fs)
 }
 
 /**
+ * mnt_tab_get_root_fs:
+ * @tb: mountinfo file (/proc/self/mountinfo)
+ * @root: returns pointer to the root filesystem (/)
+ *
+ * Returns: 0 on success or -1 case of error.
+ */
+int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
+{
+	mnt_iter itr;
+	mnt_fs *fs;
+	int root_id = 0;
+
+	assert(tb);
+	assert(root);
+
+	if (!tb || !root)
+		return -1;
+
+	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
+	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+		int id = mnt_fs_get_parent_id(fs);
+		if (!id)
+			break;		/* @tab is not mountinfo file? */
+
+		if (!*root || id < root_id) {
+			*root = fs;
+			root_id = id;
+		}
+	}
+
+	return root_id ? 0 : -1;
+}
+
+/**
+ * mnt_tab_next_child_fs:
+ * @tb: mountinfo file (/proc/self/mountinfo)
+ * @parent: parental FS
+ * @chld: returns the next child filesystem
+ *
+ * Note that filesystems are returned in the order how was mounted (according to
+ * IDs in /proc/self/mountinfo).
+ *
+ * Returns 0 on success, -1 in case of error or 1 at end of list.
+ */
+int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
+			mnt_fs *parent, mnt_fs **chld)
+{
+	mnt_fs *fs;
+	int parent_id, lastchld_id = 0, chld_id = 0;
+
+	if (!tb || !itr || !parent)
+		return -1;
+
+	parent_id = mnt_fs_get_id(parent);
+	if (!parent_id)
+		return -1;
+
+	/* get ID of the previously returned child */
+	if (itr->head && itr->p != itr->head) {
+		MNT_ITER_ITERATE(itr, fs, struct _mnt_fs, ents);
+		lastchld_id = mnt_fs_get_id(fs);
+	}
+
+	*chld = NULL;
+
+	mnt_reset_iter(itr, MNT_ITER_FORWARD);
+	while(mnt_tab_next_fs(tb, itr, &fs) == 0) {
+		int id;
+
+		if (mnt_fs_get_parent_id(fs) != parent_id)
+			continue;
+
+		id = mnt_fs_get_id(fs);
+
+		if ((!lastchld_id || id > lastchld_id) &&
+		    (!*chld || id < chld_id)) {
+			*chld = fs;
+			chld_id = id;
+		}
+	}
+
+	if (!chld_id)
+		return 1;	/* end of iterator */
+
+	/* set the iterator to the @chld for the next call */
+	mnt_tab_set_iter(tb, itr, *chld);
+
+	return 0;
+}
+
+/**
  * mnt_tab_next_fs:
  * @tb: tab pointer
  * @itr: iterator
@@ -290,6 +381,7 @@ int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 			return 0;
 	} while(1);
 
+	*fs = NULL;
 	return 1;
 }
 

@@ -212,6 +212,8 @@ extern int mnt_lock_file(mnt_lock *ml);
 /* fs.c */
 extern mnt_fs *mnt_new_fs(void);
 extern void mnt_free_fs(mnt_fs *ent);
+extern void *mnt_fs_get_userdata(mnt_fs *fs);
+extern int mnt_fs_set_userdata(mnt_fs *fs, void *data);
 extern const char *mnt_fs_get_source(mnt_fs *ent);
 extern int mnt_fs_set_source(mnt_fs *ent, const char *source);
 extern const char *mnt_fs_get_srcpath(mnt_fs *ent);
@@ -271,6 +273,9 @@ extern const char *mnt_tab_get_name(mnt_tab *tb);
 extern int mnt_tab_add_fs(mnt_tab *tb, mnt_fs *fs);
 extern int mnt_tab_remove_fs(mnt_tab *tb, mnt_fs *fs);
 extern int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs);
+extern int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
+	                        mnt_fs *parent, mnt_fs **chld);
+extern int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root);
 extern int mnt_tab_set_iter(mnt_tab *tb, mnt_iter *itr, mnt_fs *fs);
 
 extern mnt_fs *mnt_tab_find_target(mnt_tab *tb, const char *path, int direction);
