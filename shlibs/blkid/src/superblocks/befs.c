@@ -123,13 +123,13 @@ static int probe_befs(blkid_probe pr, const struct blkid_idmag *mag)
 		return -1;
 
 	bi = (struct befs_inode *) blkid_probe_get_buffer(pr,
-			(FS32_TO_CPU(bs->root_dir.allocation_group, fs_le)
-				<< FS32_TO_CPU(bs->ag_shift, fs_le)
-				<< FS32_TO_CPU(bs->block_shift, fs_le))
-			+ (FS16_TO_CPU(bs->root_dir.start, fs_le)
-				<< FS32_TO_CPU(bs->block_shift, fs_le)),
-			FS16_TO_CPU(bs->root_dir.len, fs_le)
-				<< FS32_TO_CPU(bs->block_shift, fs_le));
+		((blkid_loff_t)FS32_TO_CPU(bs->root_dir.allocation_group, fs_le)
+			<< FS32_TO_CPU(bs->ag_shift, fs_le)
+			<< FS32_TO_CPU(bs->block_shift, fs_le))
+		+ ((blkid_loff_t)FS16_TO_CPU(bs->root_dir.start, fs_le)
+			<< FS32_TO_CPU(bs->block_shift, fs_le)),
+		(blkid_loff_t)FS16_TO_CPU(bs->root_dir.len, fs_le)
+			<< FS32_TO_CPU(bs->block_shift, fs_le));
 	if (!bi)
 		return -1;
 
