@@ -22,6 +22,7 @@
 #include "fsprobe.h"
 #include "pathnames.h"
 #include "swapheader.h"
+#include "mangle.h"
 
 #define PATH_MKSWAP	"/sbin/mkswap"
 
@@ -173,7 +174,7 @@ read_proc_swaps(void) {
 			break;
 		swapFiles = q;
 
-		swapFiles[numSwaps++] = strdup(line);
+		swapFiles[numSwaps++] = unmangle(line);
 	}
 	fclose(swaps);
 }

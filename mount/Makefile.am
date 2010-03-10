@@ -37,7 +37,8 @@ umount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 umount_LDADD = $(ldadd_common)
 
 swapon_SOURCES = swapon.c swap_constants.h ../lib/linux_version.c \
-	../lib/blkdev.c ../lib/fsprobe.c ../lib/canonicalize.c
+	../lib/blkdev.c ../lib/fsprobe.c ../lib/canonicalize.c \
+	../lib/mangle.c
 swapon_CFLAGS = $(cflags_common)
 swapon_LDADD = $(ldadd_common)
 
