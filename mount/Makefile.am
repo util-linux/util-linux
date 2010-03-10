@@ -16,7 +16,7 @@ hdrs_mount = fstab.h mount_mntent.h mount_constants.h \
 # generic sources for mount and umount
 srcs_mount = fstab.c mount_mntent.c getusername.c lomount.c devname.c devname.h \
 	$(srcs_common) $(hdrs_mount) ../lib/env.c ../lib/linux_version.c \
-	../lib/blkdev.c ../lib/fsprobe.c
+	../lib/blkdev.c ../lib/fsprobe.c ../lib/mangle.c
 
 # generic flags for all programs (except losetup)
 # -- note that pkg-config autoconf macros (pkg.m4) does not differentiate
