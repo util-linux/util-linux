@@ -608,7 +608,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		pr->size -= pr->off;
 	}
 
-	DBG(DEBUG_LOWPROBE, printf("ready for low-probing, offset=%zd, size=%zd\n",
+	DBG(DEBUG_LOWPROBE, printf("ready for low-probing, offset=%jd, size=%jd\n",
 				pr->off, pr->size));
 
 	if (pr->size <= 1440 * 1024 && !S_ISCHR(pr->mode))
