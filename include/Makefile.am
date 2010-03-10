@@ -20,4 +20,5 @@ dist_noinst_HEADERS = \
 	wholedisk.h \
 	widechar.h \
 	crc32.h \
+	mangle.h \
 	xstrncpy.h
