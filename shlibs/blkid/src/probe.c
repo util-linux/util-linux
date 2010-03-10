@@ -591,9 +591,13 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 		pr->mode = sb.st_mode;
 
-		if (S_ISBLK(sb.st_mode))
-			blkdev_get_size(fd, (unsigned long long *) &pr->size);
-		else if (S_ISCHR(sb.st_mode))
+		if (S_ISBLK(sb.st_mode)) {
+			if (blkdev_get_size(fd, (unsigned long long *) &pr->size)) {
+				DBG(DEBUG_LOWPROBE, printf(
+					"failed to get device size\n"));
+				goto err;
+			}
+		} else if (S_ISCHR(sb.st_mode))
 			pr->size = 1;		/* UBI devices are char... */
 		else if (S_ISREG(sb.st_mode))
 			pr->size = sb.st_size;	/* regular file */
@@ -975,7 +979,11 @@ dev_t blkid_probe_get_devno(blkid_probe pr)
  * blkid_probe_get_size:
  * @pr: probe
  *
- * Returns: block device (or file) size in bytes or -1 in case of error.
+ * This function returns size of probing area as defined by blkid_probe_set_device().
+ * If the size of the probing area is unrestricted then this function returns
+ * the real size of device. See also blkid_get_dev_size().
+ *
+ * Returns: size in bytes or -1 in case of error.
  */
 blkid_loff_t blkid_probe_get_size(blkid_probe pr)
 {

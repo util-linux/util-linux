@@ -34,7 +34,11 @@
 #define BLKBSZSET  _IOW(0x12,113,size_t)
 #define BLKGETSIZE64 _IOR(0x12,114,size_t) /* return device size in bytes (u64 *arg) */
 
-#endif /* BLKROSET */
+#endif /* BLKROSET && __linux__ */
+
+#ifdef APPLE_DARWIN
+#define BLKGETSIZE DKIOCGETBLOCKCOUNT32
+#endif
 
 /* block device topology ioctls, introduced in 2.6.32 */
 #ifndef BLKIOMIN

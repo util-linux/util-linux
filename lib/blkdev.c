@@ -3,6 +3,21 @@
 #include <sys/ioctl.h>
 #include <unistd.h>
 
+#ifdef HAVE_LINUX_FD_H
+#include <linux/fd.h>
+#endif
+
+#ifdef HAVE_SYS_DISKLABEL_H
+#include <sys/disklabel.h>
+#endif
+
+#ifdef HAVE_SYS_DISK_H
+#ifdef HAVE_SYS_QUEUE_H
+#include <sys/queue.h> /* for LIST_HEAD */
+#endif
+#include <sys/disk.h>
+#endif
+
 #include "blkdev.h"
 #include "linux_version.h"
 
@@ -41,17 +56,26 @@ blkdev_find_size (int fd) {
 int
 blkdev_get_size(int fd, unsigned long long *bytes)
 {
-	/* TODO: use stat as well */
+#ifdef DKIOCGETBLOCKCOUNT
+	/* Apple Darwin */
+	if (ioctl(fd, DKIOCGETBLOCKCOUNT, bytes) >= 0) {
+		*bytes <<= 9;
+		return 0;
+	}
+#endif
 
 #ifdef BLKGETSIZE64
+	{
 #ifdef __linux__
-	int ver = get_linux_version();
-	/* kernels 2.4.15-2.4.17, had a broken BLKGETSIZE64 */
-	if (ver >= KERNEL_VERSION (2,6,0) ||
-	   (ver >= KERNEL_VERSION (2,4,18) && ver < KERNEL_VERSION (2,5,0)))
+		int ver = get_linux_version();
+
+		/* kernels 2.4.15-2.4.17, had a broken BLKGETSIZE64 */
+		if (ver >= KERNEL_VERSION (2,6,0) ||
+		   (ver >= KERNEL_VERSION (2,4,18) && ver < KERNEL_VERSION (2,5,0)))
 #endif
-		if (ioctl(fd, BLKGETSIZE64, bytes) >= 0)
-			return 0;
+			if (ioctl(fd, BLKGETSIZE64, bytes) >= 0)
+				return 0;
+	}
 #endif /* BLKGETSIZE64 */
 
 #ifdef BLKGETSIZE
@@ -64,8 +88,55 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 		}
 	}
 
-	return -1;
 #endif /* BLKGETSIZE */
+
+#ifdef DIOCGMEDIASIZE
+	/* FreeBSD */
+	if (ioctl(fd, DIOCGMEDIASIZE, bytes) >= 0)
+		return 0
+#endif
+
+#ifdef FDGETPRM
+	{
+		struct floppy_struct this_floppy;
+
+		if (ioctl(fd, FDGETPRM, &this_floppy) >= 0) {
+			*bytes = this_floppy.size << 9;
+			return 0;
+		}
+	}
+#endif /* FDGETPRM */
+
+#ifdef HAVE_SYS_DISKLABEL_H
+	{
+		/*
+		 * This code works for FreeBSD 4.11 i386, except for the full device
+		 * (such as /dev/ad0). It doesn't work properly for newer FreeBSD
+		 * though. FreeBSD >= 5.0 should be covered by the DIOCGMEDIASIZE
+		 * above however.
+		 *
+		 * Note that FreeBSD >= 4.0 has disk devices as unbuffered (raw,
+		 * character) devices, so we need to check for S_ISCHR, too.
+		 */
+		int part = -1;
+		struct disklabel lab;
+		struct partition *pp;
+		char ch;
+		struct stat st;
+
+		if ((fstat(fd, &st) >= 0) &&
+		    (S_ISBLK(st.st_mode) || S_ISCHR(st.st_mode)))
+			part = st.st_rdev & 7;
+
+		if (part >= 0 && (ioctl(fd, DIOCGDINFO, (char *)&lab) >= 0)) {
+			pp = &lab.d_partitions[part];
+			if (pp->p_size) {
+				 *bytes = pp->p_size << 9;
+				 return 0;
+			}
+		}
+	}
+#endif /* HAVE_SYS_DISKLABEL_H */
 
 	*bytes = blkdev_find_size(fd);
 	return 0;
