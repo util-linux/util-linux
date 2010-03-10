@@ -25,11 +25,7 @@
  */
 blkid_loff_t blkid_get_dev_size(int fd)
 {
-	struct stat st;
 	unsigned long long bytes;
-
-	if (fstat(fd, &st) == 0 && S_ISREG(st.st_mode))
-		return st.st_size;
 
 	if (blkdev_get_size(fd, &bytes))
 		return 0;
