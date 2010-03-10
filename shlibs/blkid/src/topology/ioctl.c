@@ -44,11 +44,18 @@ static int probe_ioctl_tp(blkid_probe pr, const struct blkid_idmag *mag)
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
 		struct topology_val *val = &topology_vals[i];
-		unsigned int data;
+		unsigned int data = 0;
 		int rc;
 
-		if (ioctl(pr->fd, val->ioc, &data) == -1)
+		if (val->ioc == BLKALIGNOFF) {
+			int sdata = 0;
+			if (ioctl(pr->fd, val->ioc, &sdata) == -1)
+				goto nothing;
+			data = sdata < 0 ? 0 : sdata;
+
+		} else if (ioctl(pr->fd, val->ioc, &data) == -1)
 			goto nothing;
+
 		rc = val->set_result(pr, (unsigned long) data);
 		if (rc)
 			goto err;

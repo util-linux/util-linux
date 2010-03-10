@@ -43,6 +43,10 @@
  * @ALIGNMENT_OFFSET: indicates how many bytes the beginning o the device is
  *                    offset from the disk's natural alignment.
  *
+ * The NAME=value tags are not defined when the corresponding topology value
+ * is zero. The MINIMUM_IO_SIZE should be always defined if kernel provides
+ * topology information.
+ *
  * Binary interface:
  *
  * blkid_probe_get_tolology()
@@ -214,6 +218,8 @@ static int topology_set_value(blkid_probe pr, const char *name,
 
 	if (!chn)
 		return -1;
+	if (!data)
+		return 0;	/* ignore zeros */
 
 	if (chn->binary) {
 		unsigned long *v =

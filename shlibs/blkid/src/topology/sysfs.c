@@ -12,6 +12,7 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <inttypes.h>
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
@@ -19,15 +20,14 @@
 
 #include "topology.h"
 
-static unsigned long dev_topology_attribute(const char *attribute,
-				dev_t dev, dev_t *primary)
+static int dev_topology_attribute(const char *attribute,
+			dev_t dev, dev_t *primary, int64_t *result)
 {
 	const char *sysfs_fmt_str = "/sys/dev/block/%d:%d/%s";
 	char path[PATH_MAX];
 	int len;
 	FILE *fp = NULL;
 	struct stat info;
-	unsigned long result = 0UL;
 
 	len = snprintf(path, sizeof(path), sysfs_fmt_str,
 			major(dev), minor(dev), attribute);
@@ -58,7 +58,7 @@ static unsigned long dev_topology_attribute(const char *attribute,
 		goto err;
 	}
 
-	if (fscanf(fp, "%lu", &result) != 1) {
+	if (fscanf(fp, "%" SCNd64, result) != 1) {
 		DBG(DEBUG_LOWPROBE, printf(
 			"topology: %s: unexpected file format\n", path));
 		goto err;
@@ -67,15 +67,15 @@ static unsigned long dev_topology_attribute(const char *attribute,
 	fclose(fp);
 
 	DBG(DEBUG_LOWPROBE,
-		printf("topology: attribute %s = %lu\n", attribute, result));
+		printf("topology: attribute %s = %"PRId64"\n", attribute, *result));
 
-	return result;
+	return 0;
 err:
 	if (fp)
 		fclose(fp);
 	DBG(DEBUG_LOWPROBE,
 		printf("topology: failed to read %s attribute\n", attribute));
-	return 0;
+	return -1;
 }
 
 /*
@@ -107,17 +107,16 @@ static int probe_sysfs_tp(blkid_probe pr, const struct blkid_idmag *mag)
 
 	for (i = 0; i < ARRAY_SIZE(topology_vals); i++) {
 		struct topology_val *val = &topology_vals[i];
-		unsigned long data;
+		int64_t data = 0;
 
-		/*
-		 * Don't bother reporting any of the topology information
-		 * if it's zero.
-		 */
-		data = dev_topology_attribute(val->sysfs_name, dev, &pri_dev);
-		if (!data)
+		if (dev_topology_attribute(val->sysfs_name, dev,
+					&pri_dev, &data))
 			continue;
 
-		rc = val->set_result(pr, data);
+		if (!strcmp(val->sysfs_name, "alignment_offset") && data < 0)
+			data = 0;
+
+		rc = val->set_result(pr, (unsigned long) data);
 		if (rc)
 			goto err;
 		count++;
