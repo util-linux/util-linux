@@ -198,7 +198,10 @@ extern int blkid_probe_set_device(blkid_probe pr, int fd,
 
 extern dev_t blkid_probe_get_devno(blkid_probe pr);
 extern blkid_loff_t blkid_probe_get_size(blkid_probe pr);
+extern blkid_loff_t blkid_probe_get_offset(blkid_probe pr);
 extern unsigned int blkid_probe_get_sectorsize(blkid_probe pr);
+
+extern int blkid_probe_get_fd(blkid_probe pr);
 
 /*
  * superblocks probing

@@ -991,6 +991,30 @@ blkid_loff_t blkid_probe_get_size(blkid_probe pr)
 }
 
 /**
+ * blkid_probe_get_offset:
+ * @pr: probe
+ *
+ * This function returns offset of probing area as defined by blkid_probe_set_device().
+ *
+ * Returns: offset in bytes or -1 in case of error.
+ */
+blkid_loff_t blkid_probe_get_offset(blkid_probe pr)
+{
+	return pr ? pr->off : -1;
+}
+
+/**
+ * blkid_probe_get_fd:
+ * @pr: probe
+ *
+ * Returns: file descriptor for assigned device/file.
+ */
+int blkid_probe_get_fd(blkid_probe pr)
+{
+	return pr ? pr->fd : -1;
+}
+
+/**
  * blkid_probe_get_sectorsize:
  * @pr: probe
  *
