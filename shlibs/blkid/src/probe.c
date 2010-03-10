@@ -569,6 +569,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 		close(pr->fd);
 
 	pr->flags &= ~BLKID_PRIVATE_FD;
+	pr->flags &= ~BLKID_TINY_DEV;
 	pr->fd = fd;
 	pr->off = off;
 	pr->size = 0;
