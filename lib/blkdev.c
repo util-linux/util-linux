@@ -138,6 +138,15 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 	}
 #endif /* HAVE_SYS_DISKLABEL_H */
 
+	{
+		struct stat st;
+
+		if (fstat(fd, &st) == 0 && S_ISREG(st.st_mode)) {
+			*bytes = st.st_size;
+			return 0;
+		}
+	}
+
 	*bytes = blkdev_find_size(fd);
 	return 0;
 }
