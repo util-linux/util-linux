@@ -120,11 +120,15 @@ swapoff_usage(FILE *fp, int n) {
 static int numSwaps;
 static char **swapFiles;	/* array of swap file and partition names */
 
+#define DELETED_SUFFIX		"\\040(deleted)"
+#define DELETED_SUFFIX_SZ	(sizeof(DELETED_SUFFIX) - 1)
+
 static void
 read_proc_swaps(void) {
 	FILE *swaps;
 	char line[1024];
 	char *p, **q;
+	size_t sz;
 
 	numSwaps = 0;
 	swapFiles = NULL;
@@ -152,7 +156,17 @@ read_proc_swaps(void) {
 		 * This will fail with names with embedded spaces.
 		 */
 		for (p = line; *p && *p != ' '; p++);
-		*p = 0;
+		*p = '\0';
+
+		/* the kernel can use " (deleted)" suffix for paths
+		 * in /proc/swaps, we have to remove this junk.
+		 */
+		sz = strlen(line);
+		if (sz > DELETED_SUFFIX_SZ) {
+		       p = line + (sz - DELETED_SUFFIX_SZ);
+		       if (strcmp(p, DELETED_SUFFIX) == 0)
+			       *p = '\0';
+		}
 
 		q = realloc(swapFiles, (numSwaps+1) * sizeof(*swapFiles));
 		if (q == NULL)
