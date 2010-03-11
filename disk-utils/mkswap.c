@@ -337,8 +337,6 @@ get_size(const char  *file) {
 	}
 	if (blkdev_get_size(fd, &size) == 0)
 		size /= pagesize;
-	else
-		size = blkdev_find_size(fd) / pagesize;
 
 	close(fd);
 	return size;
