@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2009 by Andreas Dilger <adilger@sun.com>
+ * Copyright (C) 2009-2010 by Andreas Dilger <adilger@sun.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
@@ -15,6 +15,10 @@
 
 #include "superblocks.h"
 
+#define VDEV_LABEL_UBERBLOCK	(128 * 1024ULL)
+#define VDEV_LABEL_NVPAIR	( 16 * 1024ULL)
+#define VDEV_LABEL_SIZE		(256 * 1024ULL)
+
 /* #include <sys/uberblock_impl.h> */
 #define UBERBLOCK_MAGIC         0x00bab10c              /* oo-ba-bloc!  */
 struct zfs_uberblock {
@@ -26,52 +30,188 @@ struct zfs_uberblock {
 	char		ub_rootbp;	/* MOS objset_phys_t		*/
 } __attribute__((packed));
 
+#define ZFS_TRIES	64
+#define ZFS_WANT	 4
+
+#define DATA_TYPE_UINT64 8
+#define DATA_TYPE_STRING 9
+
+struct nvpair {
+	uint32_t	nvp_size;
+	uint32_t	nvp_unkown;
+	uint32_t	nvp_namelen;
+	char		nvp_name[0]; /* aligned to 4 bytes */
+	/* aligned ptr array for string arrays */
+	/* aligned array of data for value */
+};
+
+struct nvstring {
+	uint32_t	nvs_type;
+	uint32_t	nvs_elem;
+	uint32_t	nvs_strlen;
+	unsigned char	nvs_string[0];
+};
+
+struct nvuint64 {
+	uint32_t	nvu_type;
+	uint32_t	nvu_elem;
+	uint64_t	nvu_value;
+};
+
+struct nvlist {
+	uint32_t	nvl_unknown[3];
+	struct nvpair	nvl_nvpair;
+};
+
+#define nvdebug(fmt, ...)	do { } while(0)
+/*#define nvdebug(fmt, a...)	printf(fmt, ##a)*/
+
+static void zfs_extract_guid_name(blkid_probe pr, loff_t offset)
+{
+	struct nvlist *nvl;
+	struct nvpair *nvp;
+	int left = 4096;
+	int found = 0;
+
+	offset = (offset & ~(VDEV_LABEL_SIZE - 1)) + VDEV_LABEL_NVPAIR;
+
+	/* Note that we currently assume that the desired fields are within
+	 * the first 4k (left) of the nvlist.  This is true for all pools
+	 * I've seen, and simplifies this code somewhat, because we don't
+	 * have to handle an nvpair crossing a buffer boundary. */
+	nvl = (struct nvlist *)blkid_probe_get_buffer(pr, offset, left);
+	if (nvl == NULL)
+		return;
+
+	nvdebug("zfs_extract: nvlist offset %llu\n", offset);
+
+	nvp = &nvl->nvl_nvpair;
+	while (left > sizeof(*nvp) && nvp->nvp_size != 0 && found < 3) {
+		int avail;   /* tracks that name/value data fits in nvp_size */
+		int namesize;
+
+		nvp->nvp_size = be32_to_cpu(nvp->nvp_size);
+		nvp->nvp_namelen = be32_to_cpu(nvp->nvp_namelen);
+		avail = nvp->nvp_size - nvp->nvp_namelen - sizeof(*nvp);
+
+		nvdebug("left %u, nvp_size %u\n", left, nvp->nvp_size);
+		if (left < nvp->nvp_size || avail < 0)
+			break;
+
+		namesize = (nvp->nvp_namelen + 3) & ~3;
+
+		nvdebug("nvlist: size %u, namelen %u, name %*s\n",
+			nvp->nvp_size, nvp->nvp_namelen, nvp->nvp_namelen,
+			nvp->nvp_name);
+		if (strncmp(nvp->nvp_name, "name", nvp->nvp_namelen) == 0) {
+			struct nvstring *nvs = (void *)(nvp->nvp_name+namesize);
+
+			nvs->nvs_type = be32_to_cpu(nvs->nvs_type);
+			nvs->nvs_strlen = be32_to_cpu(nvs->nvs_strlen);
+			avail -= nvs->nvs_strlen + sizeof(*nvs);
+			nvdebug("nvstring: type %u string %*s\n", nvs->nvs_type,
+				nvs->nvs_strlen, nvs->nvs_string);
+			if (nvs->nvs_type == DATA_TYPE_STRING && avail >= 0)
+				blkid_probe_set_label(pr, nvs->nvs_string,
+						      nvs->nvs_strlen);
+			found++;
+		} else if (strncmp(nvp->nvp_name, "guid",
+				   nvp->nvp_namelen) == 0) {
+			struct nvuint64 *nvu = (void *)(nvp->nvp_name+namesize);
+			uint64_t nvu_value;
+
+			memcpy(&nvu_value, &nvu->nvu_value, sizeof(nvu_value));
+			nvu->nvu_type = be32_to_cpu(nvu->nvu_type);
+			nvu_value = be64_to_cpu(nvu_value);
+			avail -= sizeof(*nvu);
+			nvdebug("nvuint64: type %u value %"PRIu64"\n",
+				nvu->nvu_type, nvu_value);
+			if (nvu->nvu_type == DATA_TYPE_UINT64 && avail >= 0)
+				blkid_probe_sprintf_value(pr, "UUID_SUB",
+							  "%"PRIu64, nvu_value);
+			found++;
+		} else if (strncmp(nvp->nvp_name, "pool_guid",
+				   nvp->nvp_namelen) == 0) {
+			struct nvuint64 *nvu = (void *)(nvp->nvp_name+namesize);
+			uint64_t nvu_value;
+
+			memcpy(&nvu_value, &nvu->nvu_value, sizeof(nvu_value));
+			nvu->nvu_type = be32_to_cpu(nvu->nvu_type);
+			nvu_value = be64_to_cpu(nvu_value);
+			avail -= sizeof(*nvu);
+			nvdebug("nvuint64: type %u value %"PRIu64"\n",
+				nvu->nvu_type, nvu_value);
+			if (nvu->nvu_type == DATA_TYPE_UINT64 && avail >= 0)
+				blkid_probe_sprintf_uuid(pr, (unsigned char *)
+							 &nvu_value,
+							 sizeof(nvu_value),
+							 "%"PRIu64, nvu_value);
+			found++;
+		}
+		left -= nvp->nvp_size;
+		nvp = (struct nvpair *)((char *)nvp + nvp->nvp_size);
+	}
+}
+
+#define zdebug(fmt, ...)	do {} while(0)
+/*#define zdebug(fmt, a...)	printf(fmt, ##a)*/
+
+/* ZFS has 128x1kB host-endian root blocks, stored in 2 areas at the start
+ * of the disk, and 2 areas at the end of the disk.  Check only some of them...
+ * #4 (@ 132kB) is the first one written on a new filesystem. */
 static int probe_zfs(blkid_probe pr, const struct blkid_idmag *mag)
 {
+	uint64_t swab_magic = swab64(UBERBLOCK_MAGIC);
 	struct zfs_uberblock *ub;
-	uint64_t spa_version;
+	int swab_endian;
+	loff_t offset;
+	int tried;
+	int found;
 
-	ub = blkid_probe_get_sb(pr, mag, struct zfs_uberblock);
-	if (!ub)
+	zdebug("probe_zfs\n");
+	/* Look for at least 4 uberblocks to ensure a positive match */
+	for (tried = found = 0, offset = VDEV_LABEL_UBERBLOCK;
+	     tried < ZFS_TRIES && found < ZFS_WANT;
+	     tried++, offset += 4096) {
+		/* also try the second uberblock copy */
+		if (tried == (ZFS_TRIES / 2))
+			offset = VDEV_LABEL_SIZE + VDEV_LABEL_UBERBLOCK;
+
+		ub = (struct zfs_uberblock *)
+			blkid_probe_get_buffer(pr, offset,
+					       sizeof(struct zfs_uberblock));
+		if (ub == NULL)
+			return -1;
+
+		if (ub->ub_magic == UBERBLOCK_MAGIC)
+			found++;
+
+		if ((swab_endian = (ub->ub_magic == swab_magic)))
+			found++;
+
+		zdebug("probe_zfs: found %s-endian uberblock at %llu\n",
+		       swab_endian ? "big" : "little", offset >> 10);
+	}
+
+	if (found < 4)
 		return -1;
 
-	if (ub->ub_magic == be64_to_cpu(UBERBLOCK_MAGIC))
-		spa_version = be64_to_cpu(ub->ub_version);
-	else
-		spa_version = le64_to_cpu(ub->ub_version);
+	/* If we found the 4th uberblock, then we will have exited from the
+	 * scanning loop immediately, and ub will be a valid uberblock. */
+	blkid_probe_sprintf_version(pr, "%" PRIu64, swab_endian ?
+				    swab64(ub->ub_version) : ub->ub_version);
 
-	blkid_probe_sprintf_version(pr, "%" PRIu64, spa_version);
-#if 0
-	/* read nvpair data for pool name, pool GUID from the MOS, but
-	 * unfortunately this is more complex than it could be */
-	blkid_probe_set_label(pr, pool_name, pool_len));
-	blkid_probe_set_uuid(pr, pool_guid);
-#endif
+	zfs_extract_guid_name(pr, offset);
+
 	return 0;
 }
 
 const struct blkid_idinfo zfs_idinfo =
 {
-	.name		= "zfs",
-	.usage		= BLKID_USAGE_FILESYSTEM,
+	.name		= "zfs_member",
+	.usage		= BLKID_USAGE_RAID,
 	.probefunc	= probe_zfs,
 	.minsz		= 64 * 1024 * 1024,
-	.magics		=
-	{
-		/* ZFS has 128 root blocks (#4 is the first used), check only 6 of them */
-		{ .magic = "\0\0\0\0\0\xba\xb1\x0c", .len = 8, .kboff = 128 },
-		{ .magic = "\x0c\xb1\xba\0\0\0\0\0", .len = 8, .kboff = 128 },
-		{ .magic = "\0\0\0\0\0\xba\xb1\x0c", .len = 8, .kboff = 132 },
-		{ .magic = "\x0c\xb1\xba\0\0\0\0\0", .len = 8, .kboff = 132 },
-		{ .magic = "\0\0\0\0\0\xba\xb1\x0c", .len = 8, .kboff = 136 },
-		{ .magic = "\x0c\xb1\xba\0\0\0\0\0", .len = 8, .kboff = 136 },
-		{ .magic = "\0\0\0\0\0\xba\xb1\x0c", .len = 8, .kboff = 384 },
-		{ .magic = "\x0c\xb1\xba\0\0\0\0\0", .len = 8, .kboff = 384 },
-		{ .magic = "\0\0\0\0\0\xba\xb1\x0c", .len = 8, .kboff = 388 },
-		{ .magic = "\x0c\xb1\xba\0\0\0\0\0", .len = 8, .kboff = 388 },
-		{ .magic = "\0\0\0\0\0\xba\xb1\x0c", .len = 8, .kboff = 392 },
-		{ .magic = "\x0c\xb1\xba\0\0\0\0\0", .len = 8, .kboff = 392 },
-		{ NULL }
-	}
+	.magics		= BLKID_NONE_MAGIC
 };
 
