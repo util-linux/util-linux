@@ -90,7 +90,7 @@ static int probe_drbd(blkid_probe pr, const struct blkid_idmag *mag)
 	 */
 	blkid_probe_sprintf_uuid(pr,
 		(unsigned char *) &md->device_uuid, sizeof(md->device_uuid),
-		"0x%" PRIx64, be64_to_cpu(md->device_uuid));
+		"%" PRIx64, be64_to_cpu(md->device_uuid));
 
 	blkid_probe_set_version(pr, "v08");
 
