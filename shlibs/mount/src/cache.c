@@ -220,7 +220,7 @@ const char *mnt_cache_find_tag(mnt_cache *cache,
  *
  * Reads @devname LABEL and UUID to the @cache.
  *
- * Returns: 1 if at least on tag was added, 0 no tag was added or
+ * Returns: 0 if at least on tag was added, 1 if no tag was added or
  *          -1 in case of error.
  */
 int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
@@ -289,7 +289,7 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 		ntags++;
 	}
 
-	return ntags ? 1 : 0;
+	return ntags ? 0 : 1;
 error:
 	blkid_free_probe(pr);
 	close(fd);
@@ -315,6 +315,37 @@ int mnt_cache_device_has_tag(mnt_cache *cache, const char *devname,
 	if (path && strcmp(path, devname) == 0)
 		return 1;
 	return 0;
+}
+
+/**
+ * mnt_cache_find_tag_value:
+ * @cache: cache for results
+ * @devname: device name
+ * @token: tag name ("LABEL" or "UUID")
+ *
+ * Returns: LABEL or UUID for the @devname or NULL in case of error.
+ */
+char *mnt_cache_find_tag_value(mnt_cache *cache,
+		const char *devname, const char *token)
+{
+	int i;
+
+	if (!cache || !devname || !token)
+		return NULL;
+
+	if (mnt_cache_read_tags(cache, devname) != 0)
+		return NULL;
+
+	for (i = 0; i < cache->nents; i++) {
+		struct mnt_cache_entry *e = &cache->ents[i];
+		if (!(e->flag & MNT_CACHE_ISTAG))
+			continue;
+		if (strcmp(e->real, devname) == 0 &&	/* dev name */
+		    strcmp(token, e->native) == 0)	/* tag name */
+			return e->native + strlen(token) + 1;	/* tag value */
+	}
+
+	return NULL;
 }
 
 /**

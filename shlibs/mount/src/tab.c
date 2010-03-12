@@ -519,9 +519,11 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 
 	/* evaluated tag */
 	if (ntags) {
+		int rc = mnt_cache_read_tags(tb->cache, cn);
+
 		mnt_reset_iter(&itr, direction);
 
-		if (mnt_cache_read_tags(tb->cache, cn) > 0) {
+		if (rc == 0) {
 			/* @path's TAGs are in the cache */
 			while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
 				const char *t, *v;
@@ -532,7 +534,7 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 				if (mnt_cache_device_has_tag(tb->cache, cn, t, v))
 					return fs;
 			}
-		} else if (errno == EACCES) {
+		} else if (rc < 0 && errno == EACCES) {
 			/* @path is unaccessible, try evaluate all TAGs in @tb
 			 * by udev symlinks -- this could be expensive on systems
 			 * with huge fstab/mtab */

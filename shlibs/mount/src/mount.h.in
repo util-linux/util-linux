@@ -123,6 +123,10 @@ extern const char *mnt_cache_find_tag(mnt_cache *cache,
 extern int mnt_cache_read_tags(mnt_cache *cache, const char *devname);
 extern int mnt_cache_device_has_tag(mnt_cache *cache, const char *devname,
                                 const char *token, const char *value);
+
+extern char *mnt_cache_find_tag_value(mnt_cache *cache,
+				const char *devname, const char *token);
+
 extern char *mnt_resolve_path(const char *path, mnt_cache *cache);
 extern char *mnt_resolve_tag(const char *token, const char *value, mnt_cache *cache);
 extern char *mnt_resolve_spec(const char *spec, mnt_cache *cache);

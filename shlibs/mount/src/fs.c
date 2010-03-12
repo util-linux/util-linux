@@ -574,7 +574,7 @@ int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache)
 		return 0;
 
 	/* read @source's tags to the cache */
-	if (mnt_cache_read_tags(cache, cn) < 1) {
+	if (mnt_cache_read_tags(cache, cn) < 0) {
 		if (errno == EACCES) {
 			/* we don't have permissions to read TAGs from
 			 * @source, but can translate @fs tag to devname.
