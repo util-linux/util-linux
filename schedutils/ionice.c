@@ -81,7 +81,7 @@ static void usage(int rc)
 	"\nionice - sets or gets process io scheduling class and priority.\n"
 	"\nUsage:\n"
 	"  ionice [ options ] -p <pid> [<pid> ...]\n"
-	"  ionoce [ options ] <command> [<arg> ...]\n"
+	"  ionice [ options ] <command> [<arg> ...]\n"
 	"\nOptions:\n"
 	"  -n <classdata>      class data (0-7, lower being higher prio)\n"
 	"  -c <class>          scheduling class\n"
