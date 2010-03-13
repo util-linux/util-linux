@@ -1124,7 +1124,7 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
                  const bool hctosys, const bool systohc, const bool systz,
                  const struct timeval startup_time,
                  const bool utc, const bool local_opt,
-		 const bool testing) {
+		 const bool testing, const bool predict) {
 /*---------------------------------------------------------------------------
   Do all the normal work of hwclock - read, set clock, etc.
 
@@ -1137,13 +1137,13 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
     int rc;  /* local return code */
     bool no_auth;  /* User lacks necessary authorization to access the clock */
 
-    if (!systz) {
+    if (!systz && !predict) {
       no_auth = ur->get_permissions();
       if (no_auth)
               return EX_NOPERM;
     }
 
-    if (!noadjfile && (adjust || set || systohc || (!utc && !local_opt))) {
+    if (!noadjfile && (adjust || set || systohc || (!utc && !local_opt) || predict)) {
       rc = read_adjtime(&adjtime);
       if (rc)
 	      return rc;
@@ -1177,7 +1177,7 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
              Defined only if hclock_valid is true.
              */
 
-	if (show || adjust || hctosys || (!noadjfile && !systz)) {
+	if (show || adjust || hctosys || (!noadjfile && !systz && !predict)) {
           /* data from HW-clock are required */
           rc = synchronize_to_clock_tick();
           if (rc && rc != 2)		/* 2= synchronization timeout */
@@ -1227,6 +1227,20 @@ manipulate_clock(const bool show, const bool adjust, const bool noadjfile,
 	    printf(_("Unable to set system clock.\n"));
 	    return rc;
 	  }
+        } else if (predict) {
+            int adjustment;
+            double retro;
+
+            calculate_adjustment(adjtime.drift_factor,
+                                 adjtime.last_adj_time,
+                                 adjtime.not_adjusted,
+                                 set_time,
+                                 &adjustment, &retro);
+            if (debug) {
+                printf(_("At %ld seconds after 1969, RTC is predicted to read %ld seconds after 1969.\n"),
+                       set_time, set_time + adjustment);
+            }
+            display_time(TRUE, set_time + adjustment, -retro);
         }
         if (!noadjfile)
          save_adjtime(adjtime, testing);
@@ -1322,6 +1336,7 @@ usage( const char *fmt, ... ) {
 	"       --getepoch     print out the kernel's hardware clock epoch value\n"
 	"       --setepoch     set the kernel's hardware clock epoch value to the \n"
 	"                      value given with --epoch\n"
+	"       --predict      predict rtc reading at time given with --date\n"
 	"  -v | --version      print out the version of hwclock to stdout\n"
 	"\nOptions: \n"
 	"  -u | --utc          the hardware clock is kept in UTC\n"
@@ -1391,6 +1406,7 @@ static const struct option longopts[] = {
 	{ "rtc", 1, 0, 'f' },
 	{ "adjfile", 1, 0, 138 },
 	{ "systz", 0, 0, 139 },
+	{ "predict-hc", 0, 0, 140 },
 	{ NULL, 0, 0, 0 }
 };
 
@@ -1416,7 +1432,7 @@ main(int argc, char **argv) {
 
 	/* Variables set by various options; show may also be set later */
 	/* The options debug, badyear and epoch_option are global */
-	bool show, set, systohc, hctosys, systz, adjust, getepoch, setepoch;
+	bool show, set, systohc, hctosys, systz, adjust, getepoch, setepoch, predict;
 	bool utc, testing, local_opt, noadjfile, directisa;
 	bool ARCconsole, Jensen, SRM, funky_toy;
 	char *date_opt;
@@ -1446,7 +1462,7 @@ main(int argc, char **argv) {
 	textdomain(PACKAGE);
 
 	/* Set option defaults */
-	show = set = systohc = hctosys = systz = adjust = noadjfile = FALSE;
+	show = set = systohc = hctosys = systz = adjust = noadjfile = predict = FALSE;
 	getepoch = setepoch = utc = local_opt = testing = debug = FALSE;
 	ARCconsole = Jensen = SRM = funky_toy = directisa = badyear = FALSE;
 	date_opt = NULL;
@@ -1522,6 +1538,9 @@ main(int argc, char **argv) {
 		case 139:
 			systz = TRUE;			/* --systz */
 			break;
+		case 140:
+			predict = TRUE;			/* --predict-hc */
+			break;
 		case 'f':
 			rtc_dev_name = optarg;		/* --rtc */
 			break;
@@ -1554,7 +1573,7 @@ main(int argc, char **argv) {
 	}
 
 	if (show + set + systohc + hctosys + systz + adjust + getepoch
-	    + setepoch > 1){
+	    + setepoch + predict > 1){
 		fprintf(stderr, _("You have specified multiple functions.\n"
 				  "You can only perform one function "
 				  "at a time.\n"));
@@ -1595,7 +1614,7 @@ main(int argc, char **argv) {
 	set_cmos_access(Jensen, funky_toy);
 #endif
 
-	if (set) {
+	if (set || predict) {
 		rc = interpret_date_string(date_opt, &set_time);
 		/* (time-consuming) */
 		if (rc != 0) {
@@ -1606,7 +1625,7 @@ main(int argc, char **argv) {
 	}
 
 	if (!(show | set | systohc | hctosys | systz | adjust | getepoch
-	      | setepoch))
+	      | setepoch | predict))
 		show = 1; /* default to show */
 
 
@@ -1643,7 +1662,7 @@ main(int argc, char **argv) {
 
 	if (debug)
 		out_version();
-	if (!systz) {
+	if (!systz && !predict) {
 		determine_clock_access_method(directisa);
 		if (!ur) {
 			fprintf(stderr,
@@ -1660,7 +1679,7 @@ main(int argc, char **argv) {
 
 	rc = manipulate_clock(show, adjust, noadjfile, set, set_time,
 				hctosys, systohc, systz, startup_time, utc,
-				local_opt, testing);
+				local_opt, testing, predict);
 	hwclock_exit(rc);
 	return rc;	/* Not reached */
 }

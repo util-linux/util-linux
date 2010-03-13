@@ -132,6 +132,13 @@ For example, on a Digital Unix machine:
 .sp
 .I hwclock --setepoch --epoch=1952
 
+.TP
+.BI \-\-predict
+Predict what the RTC will read at time given by the
+.B \-\-date
+option based on the adjtime file. This is useful for example if you
+need to set an RTC wakeup time to distant future and want to account
+for the RTC drift.
 
 .SH OPTIONS
 .PP
