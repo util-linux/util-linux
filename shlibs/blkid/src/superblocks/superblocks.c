@@ -314,7 +314,7 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		/* Ignore very very small block devices or regular files (e.g.
 		 * extended partitions). Note that size of the UBI char devices
 		 * is 1 byte */
-		return 1;
+		goto nothing;
 
 	i = chn->idx + 1;
 
@@ -395,6 +395,8 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 			id->name, chn->idx));
 		return 0;
 	}
+
+nothing:
 	DBG(DEBUG_LOWPROBE,
 		printf("<-- leaving probing loop (failed) [SUBLKS idx=%d]\n",
 		chn->idx));
