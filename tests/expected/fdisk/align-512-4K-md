@@ -22,7 +22,7 @@ Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
 Partition number (1-4): First sector (2048-102399, default 2048): Using default value 2048
-Last sector, +sectors or +size{K,M,G} (2048-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (2048-102399, default 102399): 
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
@@ -72,12 +72,12 @@ Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
 Partition number (1-4): First sector (2048-100095, default 2048): Using default value 2048
-Last sector, +sectors or +size{K,M,G} (2048-100095, default 100095):
+Last sector, +sectors or +size{K,M,G} (2048-100095, default 100095): 
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
 Partition number (1-4): First sector (22528-100095, default 22528): Using default value 22528
-Last sector, +sectors or +size{K,M,G} (22528-100095, default 100095):
+Last sector, +sectors or +size{K,M,G} (22528-100095, default 100095): 
 Command (m for help): 
 Disk /dev/md8: 51 MB, 51249152 bytes
 2 heads, 4 sectors/track, 12512 cylinders, total 100096 sectors

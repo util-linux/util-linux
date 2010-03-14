@@ -41,9 +41,9 @@ First sector (61447-102399, default 61447): Using default value 61447
 Last sector, +sectors or +size{K,M,G} (61447-102399, default 102399): Using default value 102399
 
 Command (m for help): First sector (61454-102399, default 63487): Using default value 63487
-Last sector, +sectors or +size{K,M,G} (63487-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (63487-102399, default 102399): 
 Command (m for help): First sector (61454-102399, default 75775): Using default value 75775
-Last sector, +sectors or +size{K,M,G} (75775-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (75775-102399, default 102399): 
 Command (m for help): First sector (61454-102399, default 88063): Using default value 88063
 Last sector, +sectors or +size{K,M,G} (88063-102399, default 102399): Using default value 102399
 

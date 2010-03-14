@@ -18,17 +18,17 @@ Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
 Partition number (1-4): First sector (2048-102399, default 2048): Using default value 2048
-Last sector, +sectors or +size{K,M,G} (2048-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (2048-102399, default 102399): 
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
 Partition number (1-4): First sector (22528-102399, default 22528): Using default value 22528
-Last sector, +sectors or +size{K,M,G} (22528-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (22528-102399, default 102399): 
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
 Partition number (1-4): First sector (43008-102399, default 43008): Using default value 43008
-Last sector, +sectors or +size{K,M,G} (43008-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (43008-102399, default 102399): 
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
@@ -37,9 +37,9 @@ First sector (63488-102399, default 63488): Using default value 63488
 Last sector, +sectors or +size{K,M,G} (63488-102399, default 102399): Using default value 102399
 
 Command (m for help): First sector (65536-102399, default 65536): Using default value 65536
-Last sector, +sectors or +size{K,M,G} (65536-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (65536-102399, default 102399): 
 Command (m for help): First sector (77824-102399, default 77824): Using default value 77824
-Last sector, +sectors or +size{K,M,G} (77824-102399, default 102399):
+Last sector, +sectors or +size{K,M,G} (77824-102399, default 102399): 
 Command (m for help): First sector (90112-102399, default 90112): Using default value 90112
 Last sector, +sectors or +size{K,M,G} (90112-102399, default 102399): Using default value 102399
 
