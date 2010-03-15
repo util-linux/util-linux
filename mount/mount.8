@@ -199,6 +199,34 @@ If no arguments are given to
 .BR mount ,
 this list is printed.
 
+The
+.B mount
+program does not read the
+.I /etc/fstab
+file if
+.I device
+(or LABEL/UUID) and
+.I dir
+are specified. For example:
+.RS
+.sp
+.B "mount /dev/foo /dir"
+.sp
+.RE
+If you want to override mount options from
+.I /etc/fstab
+you have to use:
+.RS
+.sp
+.B "mount device|dir -o <options>"
+.sp
+.RE
+and then the mount options from command line will be appended to
+the list of options from
+.IR /etc/fstab .
+The usual behaviour is that the last option wins if there is more duplicated
+options.
+
 When the
 .I proc
 filesystem is mounted (say at
