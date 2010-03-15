@@ -323,7 +323,7 @@ strtoll_offset(const char *str)
 static void __attribute__((__noreturn__))
 usage(FILE *out)
 {
-	fprintf(out, _("Usage: %s [options] <filename>\n\nOptions:\n"),
+	fprintf(out, _("Usage: %s [options] <device>\n\nOptions:\n"),
 			program_invocation_short_name);
 
 	fprintf(out, _(
