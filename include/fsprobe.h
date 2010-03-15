@@ -17,6 +17,7 @@ extern char *fsprobe_get_devname_by_spec(const char *spec);
 extern char *fsprobe_get_label_by_devname(const char *devname);
 extern char *fsprobe_get_uuid_by_devname(const char *devname);
 extern char *fsprobe_get_fstype_by_devname(const char *devname);
+extern char *fsprobe_get_fstype_by_devname_ambi(const char *devname, int *ambi);
 
 
 extern int fsprobe_known_fstype(const char *fstype);

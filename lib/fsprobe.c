@@ -117,9 +117,9 @@ fsprobe_exit(void)
  * probing interface
  */
 static char *
-fsprobe_get_value(const char *name, const char *devname)
+fsprobe_get_value(const char *name, const char *devname, int *ambi)
 {
-	int fd;
+	int fd, rc;
 	const char *data = NULL;
 
 	if (!devname || !name)
@@ -139,10 +139,11 @@ fsprobe_get_value(const char *name, const char *devname)
 	blkid_probe_set_superblocks_flags(blprobe,
 		BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID | BLKID_SUBLKS_TYPE);
 
-	if (blkid_do_safeprobe(blprobe))
-		goto done;
-	if (blkid_probe_lookup_value(blprobe, name, &data, NULL))
-		goto done;
+	rc = blkid_do_safeprobe(blprobe);
+	if (ambi)
+		*ambi = rc == -2 ? 1 : 0;	/* ambivalent probing result */
+	if (!rc)
+		blkid_probe_lookup_value(blprobe, name, &data, NULL);
 done:
 	close(fd);
 	return data ? strdup((char *) data) : NULL;
@@ -151,19 +152,25 @@ done:
 char *
 fsprobe_get_label_by_devname(const char *devname)
 {
-	return fsprobe_get_value("LABEL", devname);
+	return fsprobe_get_value("LABEL", devname, NULL);
 }
 
 char *
 fsprobe_get_uuid_by_devname(const char *devname)
 {
-	return fsprobe_get_value("UUID", devname);
+	return fsprobe_get_value("UUID", devname, NULL);
 }
 
 char *
 fsprobe_get_fstype_by_devname(const char *devname)
 {
-	return fsprobe_get_value("TYPE", devname);
+	return fsprobe_get_value("TYPE", devname, NULL);
+}
+
+char *
+fsprobe_get_fstype_by_devname_ambi(const char *devname, int *ambi)
+{
+	return fsprobe_get_value("TYPE", devname, ambi);
 }
 
 char *
@@ -229,6 +236,14 @@ fsprobe_get_fstype_by_devname(const char *devname)
 	blkid_put_cache(c);
 
 	return tp;
+}
+
+char *
+fsprobe_get_fstype_by_devname_ambi(const char *devname, int *ambi)
+{
+	if (ambi)
+		*ambi = 0;
+	return fsprobe_get_fstype_by_devname(devname);
 }
 
 char *

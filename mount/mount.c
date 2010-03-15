@@ -744,8 +744,6 @@ static int
 was_tested(const char *fstype) {
 	struct tried *t;
 
-	if (fsprobe_known_fstype(fstype))
-		return 1;
 	for (t = tried; t; t = t->next) {
 		if (!strcmp(t->type, fstype))
 			return 1;
@@ -886,9 +884,9 @@ procfsloop_mount(int (*mount_fn)(struct mountargs *, int *, int *),
 }
 
 static const char *
-guess_fstype_by_devname(const char *devname)
+guess_fstype_by_devname(const char *devname, int *ambivalent)
 {
-   const char *type = fsprobe_get_fstype_by_devname(devname);
+   const char *type = fsprobe_get_fstype_by_devname_ambi(devname, ambivalent);
 
    if (verbose) {
       printf (_("mount: you didn't specify a filesystem type for %s\n"), devname);
@@ -915,12 +913,13 @@ static int
 guess_fstype_and_mount(const char *spec, const char *node, const char **types,
 		       int flags, char *mount_opts, int *special, int *status) {
    struct mountargs args = { spec, node, NULL, flags & ~MS_NOSYS, mount_opts };
+   int ambivalent = 0;
 
    if (*types && strcasecmp (*types, "auto") == 0)
       *types = NULL;
 
    if (!*types && !(flags & MS_REMOUNT)) {
-      *types = guess_fstype_by_devname(spec);
+      *types = guess_fstype_by_devname(spec, &ambivalent);
       if (*types) {
 	  if (!strcmp(*types, MNTTYPE_SWAP)) {
 	      error(_("%s looks like swapspace - not mounted"), spec);
@@ -930,6 +929,11 @@ guess_fstype_and_mount(const char *spec, const char *node, const char **types,
 	      args.type = *types;
 	      return do_mount (&args, special, status);
           }
+      } else if (ambivalent) {
+          error(_("mount: %s: more filesystems detected. This should not happen,\n"
+		  "       use -t <type> to explicitly specify the filesystem type or\n"
+		  "       use wipefs(8) to clean up the device.\n"), spec);
+	  return 1;
       }
    }
 
