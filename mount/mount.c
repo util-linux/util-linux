@@ -1103,6 +1103,22 @@ loop_check(const char **spec, const char **type, int *flags,
   *loop = ((*flags & MS_LOOP) || *loopdev || opt_offset || opt_sizelimit || opt_encryption);
   *loopfile = *spec;
 
+  /* Automatically create a loop device from a regular file if a filesystem
+   * is not specified.
+   *
+   * Note that there is not a restriction (on kernel side) that prevents regular
+   * file as a mount(2) source argument. A filesystem that is able to mount
+   * regular files could be implemented.
+   *
+   * If the filesystem type is specified than "-o loop" is required to create a
+   * loop device.
+   */
+  if (!*loop && (!*type || strcmp(*type, "auto") == 0)) {
+    struct stat st;
+    if (stat(*loopfile, &st) == 0)
+      *loop = S_ISREG(st.st_mode);
+  }
+
   if (*loop) {
     *flags |= MS_LOOP;
     if (fake) {

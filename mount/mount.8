@@ -2536,17 +2536,36 @@ Since Linux version 2.1.21 xiafs is no longer part of the kernel source.
 .SH "THE LOOP DEVICE"
 One further possible type is a mount via the loop device. For example,
 the command
-
-.nf
-.B "  mount /tmp/fdimage /mnt -t vfat -o loop=/dev/loop3
-.fi
-
+.RS
+.sp
+.B "mount /tmp/disk.img /mnt -t vfat -o loop=/dev/loop"
+.sp
+.RE
 will set up the loop device
 .I /dev/loop3
 to correspond to the file
-.IR /tmp/fdimage ,
+.IR /tmp/disk.img ,
 and then mount this device on
 .IR /mnt .
+
+If no explicit loop device is mentioned
+(but just an option `\fB\-o loop\fP' is given), then
+.B mount
+will try to find some unused loop device and use that, for example
+.RS
+.sp
+.B "mount /tmp/disk.img /mnt -o loop"
+.sp
+.RE
+The mount command
+.B automatically
+creates a loop device from a regular file if a filesystem type is
+not specified, for example:
+.RS
+.sp
+.B "mount /tmp/disk.img /mnt"
+.sp
+.RE
 
 This type of mount knows about four options, namely
 .BR loop ", " offset ", " sizelimit " and " encryption ,
@@ -2554,11 +2573,6 @@ that are really options to
 .BR \%losetup (8).
 (These options can be used in addition to those specific
 to the filesystem type.)
-
-If no explicit loop device is mentioned
-(but just an option `\fB\-o loop\fP' is given), then
-.B mount
-will try to find some unused loop device and use that.
 
 Since Linux 2.6.25 is supported auto-destruction of loop devices and
 then any loop device allocated by
