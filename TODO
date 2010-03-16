@@ -8,8 +8,6 @@ libblkid
  - add -<BE|LE> suffix to test images for native-endian filesystems (e.g. swap)
    and add support for such functionality to tests/ts/blkid/low-probe
 
- - consolidate "getsize" stuff (see getsize.c and lib/blkdev.c)
-
  - add values:
 
 	FSSIZE   -- filesystem size (klibc requirement)
