@@ -46,17 +46,20 @@
 # define FALSE 0
 #endif
 
-
-#define min(x, y) ({				\
+#ifndef min
+# define min(x, y) ({				\
 	typeof(x) _min1 = (x);			\
 	typeof(y) _min2 = (y);			\
 	(void) (&_min1 == &_min2);		\
 	_min1 < _min2 ? _min1 : _min2; })
+#endif
 
-#define max(x, y) ({				\
+#ifndef max
+# define max(x, y) ({				\
 	typeof(x) _max1 = (x);			\
 	typeof(y) _max2 = (y);			\
 	(void) (&_max1 == &_max2);		\
 	_max1 > _max2 ? _max1 : _max2; })
+#endif
 
 #endif /* UTIL_LINUX_C_H */
