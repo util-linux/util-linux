@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <sys/ioctl.h>
 #include <unistd.h>
+#include <stdint.h>
 
 #ifdef HAVE_LINUX_FD_H
 #include <linux/fd.h>
@@ -35,14 +36,23 @@ blkdev_valid_offset (int fd, off_t offset) {
 
 off_t
 blkdev_find_size (int fd) {
-	off_t high, low;
+	uintmax_t high, low = 0;
 
-	low = 0;
-	for (high = 1; high > 0 && blkdev_valid_offset (fd, high); high *= 2)
+	for (high = 1024; blkdev_valid_offset (fd, high); ) {
+		if (high == UINTMAX_MAX)
+			return -1;
+
 		low = high;
+
+		if (high >= UINTMAX_MAX/2)
+			high = UINTMAX_MAX;
+		else
+			high *= 2;
+	}
+
 	while (low < high - 1)
 	{
-		const off_t mid = (low + high) / 2;
+		uintmax_t mid = (low + high) / 2;
 
 		if (blkdev_valid_offset (fd, mid))
 			low = mid;
@@ -146,6 +156,8 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 			*bytes = st.st_size;
 			return 0;
 		}
+		if (!S_ISBLK(st.st_mode))
+			return -1;
 	}
 
 	*bytes = blkdev_find_size(fd);
