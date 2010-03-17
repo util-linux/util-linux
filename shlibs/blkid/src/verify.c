@@ -11,6 +11,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
@@ -73,19 +74,34 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 		return NULL;
 	}
 
-	if ((now >= dev->bid_time) &&
-	    (st.st_mtime <= dev->bid_time) &&
-	    ((diff < BLKID_PROBE_MIN) ||
-	     (dev->bid_flags & BLKID_BID_FL_VERIFIED &&
-	      diff < BLKID_PROBE_INTERVAL)))
+	if (now >= dev->bid_time &&
+#ifdef HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC
+	    (st.st_mtime < dev->bid_time ||
+	        (st.st_mtime == dev->bid_time &&
+		 st.st_mtim.tv_nsec / 1000 <= dev->bid_utime)) &&
+#else
+	    st.st_mtime <= dev->bid_time &&
+#endif
+	    (diff < BLKID_PROBE_MIN ||
+		(dev->bid_flags & BLKID_BID_FL_VERIFIED &&
+		 diff < BLKID_PROBE_INTERVAL)))
 		return dev;
 
+#ifndef HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC
 	DBG(DEBUG_PROBE,
 	    printf("need to revalidate %s (cache time %lu, stat time %lu,\n\t"
 		   "time since last check %lu)\n",
 		   dev->bid_name, (unsigned long)dev->bid_time,
 		   (unsigned long)st.st_mtime, (unsigned long)diff));
-
+#else
+	DBG(DEBUG_PROBE,
+	    printf("need to revalidate %s (cache time %lu.%lu, stat time %lu.%lu,\n\t"
+		   "time since last check %lu)\n",
+		   dev->bid_name,
+		   (unsigned long)dev->bid_time, (unsigned long)dev->bid_utime,
+		   (unsigned long)st.st_mtime, (unsigned long)st.st_mtim.tv_nsec / 1000,
+		   (unsigned long)diff));
+#endif
 
 	if (!cache->probe) {
 		cache->probe = blkid_new_probe();
@@ -156,8 +172,16 @@ blkid_dev blkid_verify(blkid_cache cache, blkid_dev dev)
 
 found_type:
 	if (dev) {
+#ifdef HAVE_STRUCT_STAT_ST_MTIM_TV_NSEC
+		struct timeval tv;
+		if (!gettimeofday(&tv, NULL)) {
+			dev->bid_time = tv.tv_sec;
+			dev->bid_utime = tv.tv_usec;
+		} else
+#endif
+			dev->bid_time = time(0);
+
 		dev->bid_devno = st.st_rdev;
-		dev->bid_time = time(0);
 		dev->bid_flags |= BLKID_BID_FL_VERIFIED;
 		cache->bic_flags |= BLKID_BIC_FL_CHANGED;
 

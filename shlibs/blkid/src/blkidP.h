@@ -19,6 +19,7 @@
 #include <sys/types.h>
 #include <dirent.h>
 #include <sys/stat.h>
+#include <sys/types.h>
 #include <stdio.h>
 #include <stdarg.h>
 #include <stdint.h>
@@ -45,6 +46,7 @@ struct blkid_struct_dev
 	int			bid_pri;	/* Device priority */
 	dev_t			bid_devno;	/* Device major/minor number */
 	time_t			bid_time;	/* Last update time of device */
+	suseconds_t		bid_utime;	/* Last update time (microseconds) */
 	unsigned int		bid_flags;	/* Device status bitflags */
 	char			*bid_label;	/* Shortcut to device LABEL */
 	char			*bid_uuid;	/* Shortcut to binary UUID */

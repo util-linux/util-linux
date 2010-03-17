@@ -37,9 +37,11 @@ static int save_dev(blkid_dev dev, FILE *file)
 	    printf("device %s, type %s\n", dev->bid_name, dev->bid_type ?
 		   dev->bid_type : "(null)"));
 
-	fprintf(file,
-		"<device DEVNO=\"0x%04lx\" TIME=\"%ld\"",
-		(unsigned long) dev->bid_devno, (long) dev->bid_time);
+	fprintf(file, "<device DEVNO=\"0x%04lx\" TIME=\"%ld.%ld\"",
+			(unsigned long) dev->bid_devno,
+			(long) dev->bid_time,
+			(long) dev->bid_utime);
+
 	if (dev->bid_pri)
 		fprintf(file, " PRI=\"%d\"", dev->bid_pri);
 	list_for_each(p, &dev->bid_tags) {

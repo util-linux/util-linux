@@ -601,6 +601,9 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM([[
 AC_CHECK_MEMBERS([struct termios.c_line],,,
     [[#include <termios.h>]])
 
+AC_CHECK_MEMBERS([struct stat.st_mtim.tv_nsec],,,
+	[#include <sys/stat.h>])
+
 AC_CHECK_DECLS([
  ADDR_NO_RANDOMIZE,
  FDPIC_FUNCPTRS,

@@ -84,7 +84,7 @@ void blkid_debug_dump_dev(blkid_dev dev)
 
 	printf("  dev: name = %s\n", dev->bid_name);
 	printf("  dev: DEVNO=\"0x%0llx\"\n", (long long)dev->bid_devno);
-	printf("  dev: TIME=\"%ld\"\n", (long)dev->bid_time);
+	printf("  dev: TIME=\"%ld.%ld\"\n", (long)dev->bid_time, (long)dev->bid_utime);
 	printf("  dev: PRI=\"%d\"\n", dev->bid_pri);
 	printf("  dev: flags = 0x%08X\n", dev->bid_flags);
 

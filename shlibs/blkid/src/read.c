@@ -49,7 +49,8 @@ static void debug_dump_dev(blkid_dev dev);
  *
  *	The following tags are required for each entry:
  *	<ID="id">	unique (within this file) ID number of this device
- *	<TIME="time">	(ascii time_t) time this entry was last read from disk
+ *	<TIME="sec.usec"> (time_t and suseconds_t) time this entry was last
+ *	                 read from disk
  *	<TYPE="type">	(detected) type of filesystem/data for this partition
  *
  *	The following tags may be present, depending on the device contents
@@ -318,9 +319,12 @@ static int parse_tag(blkid_cache cache, blkid_dev dev, char **cp)
 		dev->bid_devno = STRTOULL(value, 0, 0);
 	else if (!strcmp(name, "PRI"))
 		dev->bid_pri = strtol(value, 0, 0);
-	else if (!strcmp(name, "TIME"))
-		dev->bid_time = STRTOULL(value, 0, 0);
-	else
+	else if (!strcmp(name, "TIME")) {
+		char *end = NULL;
+		dev->bid_time = STRTOULL(value, &end, 0);
+		if (end && *end == '.')
+			dev->bid_utime = STRTOULL(end + 1, 0, 0);
+	} else
 		ret = blkid_set_tag(dev, name, value, strlen(value));
 
 	DBG(DEBUG_READ, printf("    tag: %s=\"%s\"\n", name, value));
@@ -455,7 +459,7 @@ static void debug_dump_dev(blkid_dev dev)
 
 	printf("  dev: name = %s\n", dev->bid_name);
 	printf("  dev: DEVNO=\"0x%0llx\"\n", (long long)dev->bid_devno);
-	printf("  dev: TIME=\"%lld\"\n", (long long)dev->bid_time);
+	printf("  dev: TIME=\"%ld.%ld\"\n", (long)dev->bid_time, (long)dev->bid_utime);
 	printf("  dev: PRI=\"%d\"\n", dev->bid_pri);
 	printf("  dev: flags = 0x%08X\n", dev->bid_flags);
 
