@@ -965,8 +965,6 @@ get_topology(int fd) {
 #ifdef HAVE_LIBBLKID_INTERNAL
 	blkid_probe pr;
 
-	if (user_set_sector_size)
-		return;
 	pr = blkid_new_probe();
 	if (pr && blkid_probe_set_device(pr, fd, 0, 0) == 0) {
 		blkid_topology tp = blkid_probe_get_topology(pr);
@@ -995,12 +993,20 @@ get_topology(int fd) {
 #endif
 
 	if (user_set_sector_size)
-		;
-	else if (blkdev_get_sector_size(fd, &arg) == 0)
+		/* fdisk since 2.17 differentiate between logical and physical
+		 * sectors size. For backward compatibility the
+		 *    fdisk -b <sectorsize>
+		 * changes both, logical and physical sector size.
+		 */
+		phy_sector_size = sector_size;
+
+	else if (blkdev_get_sector_size(fd, &arg) == 0) {
 		sector_size = arg;
 
-	if (!phy_sector_size)
-		phy_sector_size = sector_size;
+		if (!phy_sector_size)
+			phy_sector_size = sector_size;
+	}
+
 	if (!min_io_size)
 		min_io_size = phy_sector_size;
 	if (!io_size)
