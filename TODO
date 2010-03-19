@@ -60,6 +60,9 @@ fdisk(s)
 misc
 ----
 
+ * partx: add to it an option to make it usable in shell scripts without having
+   to parse its output with sed
+
  * use ngettext() for strings with plurals, for example
 
     /* include/nls.h */
