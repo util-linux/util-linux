@@ -76,6 +76,7 @@ static void usage(int error)
 		"  -S <bytes>  overwrite device size\n"
 		"  -O <bytes>  probe at the given offset\n"
 		"  -u <list>   filter by \"usage\" (e.g. -u filesystem,raid)\n"
+		"  -n <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"
 		"\n",
 				progname);
 
@@ -532,17 +533,13 @@ static int list_to_usage(const char *list, int *flag)
 		*flag = BLKID_FLTR_NOTIN;
 		p += 2;
 	}
-
 	if (!p || !*p)
 		goto err;
-
 	while(p) {
 		word = p;
-
 		p = strchr(p, ',');
 		if (p)
 			p++;
-
 		if (!strncmp(word, "filesystem", 10))
 			mask |= BLKID_USAGE_FILESYSTEM;
 		else if (!strncmp(word, "raid", 4))
@@ -555,12 +552,64 @@ static int list_to_usage(const char *list, int *flag)
 			goto err;
 	}
 	return mask;
-
 err:
 	*flag = 0;
 	fprintf(stderr, "unknown kerword in -u <list> argument: '%s'\n",
 			word ? word : list);
 	exit(4);
+}
+
+/* converts comma separated list to types[] */
+static char **list_to_types(const char *list, int *flag)
+{
+	int i;
+	const char *p = list;
+	char **res;
+
+	if (p && strncmp(p, "no", 2) == 0) {
+		*flag = BLKID_FLTR_NOTIN;
+		p += 2;
+	}
+	if (!p || !*p) {
+		fprintf(stderr, "error: -u <list> argument is empty\n");
+		goto err;
+	}
+	for (i = 1; p && (p = strchr(p, ',')); i++, p++);
+
+	res = calloc(i + 1, sizeof(char *));
+	if (!res)
+		goto err_mem;
+	p = *flag & BLKID_FLTR_NOTIN ? list + 2 : list;
+	i = 0;
+
+	while(p) {
+		const char *word = p;
+		p = strchr(p, ',');
+		res[i] = p ? strndup(word, p - word) : strdup(word);
+		if (!res[i++])
+			goto err_mem;
+		if (p)
+			p++;
+	}
+	res[i] = NULL;
+	return res;
+err_mem:
+	fprintf(stderr, "out of memory\n");
+err:
+	*flag = 0;
+	free(res);
+	exit(4);
+}
+
+static void free_types_list(char *list[])
+{
+	char **n;
+
+	if (!list)
+		return;
+	for (n = list; *n; n++)
+		free(*n);
+	free(list);
 }
 
 int main(int argc, char **argv)
@@ -572,6 +621,7 @@ int main(int argc, char **argv)
 	char *read = NULL;
 	char *write = NULL;
 	int fltr_usage = 0;
+	char **fltr_type = NULL;
 	int fltr_flag = BLKID_FLTR_ONLYIN;
 	unsigned int numdev = 0, numtag = 0;
 	int version = 0;
@@ -584,7 +634,7 @@ int main(int argc, char **argv)
 
 	show[0] = NULL;
 
-	while ((c = getopt (argc, argv, "c:f:ghlL:o:O:ps:S:t:u:U:w:v")) != EOF)
+	while ((c = getopt (argc, argv, "c:f:ghlL:n:o:O:ps:S:t:u:U:w:v")) != EOF)
 		switch (c) {
 		case 'c':
 			if (optarg && !*optarg)
@@ -599,7 +649,18 @@ int main(int argc, char **argv)
 			search_value = strdup(optarg);
 			search_type = strdup("LABEL");
 			break;
+		case 'n':
+			if (fltr_usage) {
+				fprintf(stderr, "error: -u and -n options are mutually exclusive\n");
+				exit(4);
+			}
+			fltr_type = list_to_types(optarg, &fltr_flag);
+			break;
 		case 'u':
+			if (fltr_type) {
+				fprintf(stderr, "error: -u and -n options are mutually exclusive\n");
+				exit(4);
+			}
 			fltr_usage = list_to_usage(optarg, &fltr_flag);
 			break;
 		case 'U':
@@ -733,6 +794,9 @@ int main(int argc, char **argv)
 		if (fltr_usage &&
 		    blkid_probe_filter_superblocks_usage(pr, fltr_flag, fltr_usage))
 			goto exit;
+		else if (fltr_type &&
+		    blkid_probe_filter_superblocks_type(pr, fltr_flag, fltr_type))
+			goto exit;
 
 		for (i = 0; i < numdev; i++)
 			err = lowprobe_device(pr, devices[i], show,
@@ -802,6 +866,7 @@ int main(int argc, char **argv)
 exit:
 	free(search_type);
 	free(search_value);
+	free_types_list(fltr_type);
 	if (!lowprobe && !eval)
 		blkid_put_cache(cache);
 	return err;

@@ -43,6 +43,8 @@ blkid \- command\-line utility to locate/print block device attributes
 .RB [ \-s
 .IR tag ]
 .in +9
+.RB [ \-n
+.IR list ]
 .RB [ \-u
 .IR list ]
 .I device
@@ -103,6 +105,21 @@ Unfortunately, the original
 from e2fsprogs use the \fB-L\fR option as a
 synonym to the \fB-o list\fR option. For better portability use "-l -o device
 -t LABEL=<label>" and "-o list" in your scripts rather than -L option.
+.TP
+.B \-n " list "
+Restrict probing functions to defined (comma separated) list of superblock types (names).
+The list can be prefixed with "no" to specify the types which should be ignored.
+For example:
+.sp
+  blkid -p -n vfat,ext3,ext4 /dev/sda1
+.sp
+probes for vfat, ext3 and ext4 filesystems, and
+.sp
+  blkid -p -u nominix /dev/sda1
+.sp
+probes for all supported formats exclude minix filesystem. This option is
+useful with
+\fB-p\fR only.
 .TP
 .B \-u " list "
 Restrict probing functions to defined (comma separated) list of "usage" types.
