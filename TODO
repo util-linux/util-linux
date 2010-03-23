@@ -1,10 +1,6 @@
 libblkid
 --------
 
- - add command line interface for blkid_probe_filter_types():
-
-       # blkid -p -o udev --filter-type nofat
-
  - add -<BE|LE> suffix to test images for native-endian filesystems (e.g. swap)
    and add support for such functionality to tests/ts/blkid/low-probe
 
