@@ -540,7 +540,7 @@ xbsd_write_bootstrap (void)
   memmove (&dl, d, sizeof (struct xbsd_disklabel));
 
   /* The disklabel will be overwritten by 0's from bootxx anyway */
-  bzero (d, sizeof (struct xbsd_disklabel));
+  memset (d, 0, sizeof (struct xbsd_disklabel));
 
   snprintf (path, sizeof(path), "%s/boot%s", bootdir, dkbasename);
   if (!xbsd_get_bootstrap (path, &disklabelbuffer[xbsd_dlabel.d_secsize],
@@ -656,7 +656,7 @@ xbsd_initlabel (struct partition *p, struct xbsd_disklabel *d, int pindex) {
 	struct geom g;
 
 	get_geometry (fd, &g);
-	bzero (d, sizeof (struct xbsd_disklabel));
+	memset (d, 0, sizeof (struct xbsd_disklabel));
 
 	d -> d_magic = BSD_DISKMAGIC;
 
