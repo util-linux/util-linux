@@ -183,15 +183,15 @@ usage(void) {
 	fputc('\n', stderr);
 
 	fprintf(stderr, _("Available commands:\n"));
-	fprintf(stderr, "\t%-30s %s\n", "--getsz",
+	fprintf(stderr, "  %-25s %s\n", "--getsz",
 			_("get size in 512-byte sectors"));
 	for (i = 0; i < ARRAY_SIZE(bdcms); i++) {
 		if (bdcms[i].argname)
-			fprintf(stderr, "\t%s %-*s %s\n", bdcms[i].name,
-					(int) (29 - strlen(bdcms[i].name)),
+			fprintf(stderr, "  %s %-*s %s\n", bdcms[i].name,
+					(int) (24 - strlen(bdcms[i].name)),
 					bdcms[i].argname, _(bdcms[i].help));
 		else
-			fprintf(stderr, "\t%-30s %s\n", bdcms[i].name,
+			fprintf(stderr, "  %-25s %s\n", bdcms[i].name,
 					_(bdcms[i].help));
 	}
 	fputc('\n', stderr);
