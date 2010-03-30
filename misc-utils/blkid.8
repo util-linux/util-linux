@@ -63,6 +63,9 @@ has two main forms of operation: either searching for a device with a
 specific NAME=value pair, or displaying NAME=value pairs for one or
 more devices.
 .SH OPTIONS
+The \fIsize\fR and \fIoffset\fR arguments may be followed by binary (2^N) 
+suffixes KiB, MiB, GiB, TiB, PiB and EiB (the "iB" is optional, e.g. "K" has the
+same meaning as "KiB") or decimal (10^N) suffixes KB, MB, GB, PB and EB.
 .TP
 .BI \-c " cachefile"
 Read from
@@ -146,7 +149,7 @@ and \fB-U\fR options
 vol_id compatible mode; usable in udev rules
 .RE
 .TP
-.BI \-O " bytes"
+.BI \-O " offset"
 Probe at the given offset (only useful with \fB-p\fR).
 .TP
 .BI \-p
@@ -163,7 +166,7 @@ In order to just refresh the cache without showing any tokens, use
 .B "-s none"
 with no other options.
 .TP
-.BI \-S " bytes"
+.BI \-S " size"
 Overwrite device/file size (only useful with \fB-p\fR).
 .TP
 .BI \-t " NAME" = "value"

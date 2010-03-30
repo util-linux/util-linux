@@ -37,6 +37,7 @@ extern int optind;
 #include <blkid.h>
 
 #include "ismounted.h"
+#include "strtosize.h"
 
 const char *progname = "blkid";
 
@@ -73,8 +74,8 @@ static void usage(int error)
 		"  <dev>       specify device(s) to probe (default: all devices)\n\n"
 		"Low-level probing options:\n"
 		"  -p          switch to low-level mode (bypass cache)\n"
-		"  -S <bytes>  overwrite device size\n"
-		"  -O <bytes>  probe at the given offset\n"
+		"  -S <size>   overwrite device size\n"
+		"  -O <offset> probe at the given offset\n"
 		"  -u <list>   filter by \"usage\" (e.g. -u filesystem,raid)\n"
 		"  -n <list>   filter by filesystem type (e.g. -n vfat,ext3)\n"
 		"\n",
@@ -630,7 +631,7 @@ int main(int argc, char **argv)
 	int output_format = 0;
 	int lookup = 0, gc = 0, lowprobe = 0, eval = 0;
 	int c;
-	blkid_loff_t offset = 0, size = 0;
+	uintmax_t offset = 0, size = 0;
 
 	show[0] = NULL;
 
@@ -693,7 +694,10 @@ int main(int argc, char **argv)
 			}
 			break;
 		case 'O':
-			offset = strtoll(optarg, NULL, 10);
+			if (strtosize(optarg, &offset))
+				fprintf(stderr,
+					"Invalid offset '%s' specified\n",
+					optarg);
 			break;
 		case 'p':
 			lowprobe++;
@@ -707,7 +711,10 @@ int main(int argc, char **argv)
 			show[numtag] = NULL;
 			break;
 		case 'S':
-			size = strtoll(optarg, NULL, 10);
+			if (strtosize(optarg, &size))
+				fprintf(stderr,
+					"Invalid size '%s' specified\n",
+					optarg);
 			break;
 		case 't':
 			if (search_type) {
@@ -800,7 +807,9 @@ int main(int argc, char **argv)
 
 		for (i = 0; i < numdev; i++)
 			err = lowprobe_device(pr, devices[i], show,
-					output_format, offset, size);
+					output_format,
+					(blkid_loff_t) offset,
+					(blkid_loff_t) size);
 		blkid_free_probe(pr);
 	} else if (eval) {
 		/*
