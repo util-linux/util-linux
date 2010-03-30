@@ -10,6 +10,7 @@ TS_HELPER_BYTESWAP="$TS_TOPDIR/helpers/test_byteswap"
 TS_HELPER_MD5="$TS_TOPDIR/helpers/test_md5"
 
 TS_HELPER_ISMOUNTED="$TOPDIR/lib/test_ismounted"
+TS_HELPER_STRTOSIZE="$TOPDIR/lib/test_strtosize"
 
 # TODO: use partx
 TS_HELPER_PARTITIONS="$TOPDIR/shlibs/blkid/samples/partitions"

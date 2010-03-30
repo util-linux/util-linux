@@ -22,4 +22,5 @@ dist_noinst_HEADERS = \
 	widechar.h \
 	crc32.h \
 	mangle.h \
+	strtosize.h \
 	xstrncpy.h
