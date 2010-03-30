@@ -39,7 +39,7 @@ Setup loop device:
 .RB [ \-o
 .IR offset ]
 .RB [ \-\-sizelimit
-.IR limit ]
+.IR size ]
 .in +8
 .RB [ \-p
 .IR pfd ]
@@ -78,6 +78,10 @@ When the cryptoloop module is loaded (or compiled in), it uses number 18.
 This cryptoloop module will take the name of an arbitrary encryption type
 and find the module that knows how to perform that encryption.
 .SH OPTIONS
+The \fIsize\fR and \fIoffset\fR arguments may be followed by binary (2^N)
+suffixes KiB, MiB, GiB, TiB, PiB and EiB (the "iB" is optional, e.g. "K" has the
+same meaning as "KiB") or decimal (10^N) suffixes KB, MB, GB, PB and EB.
+
 .IP "\fB\-a, \-\-all\fP"
 show status of all loop devices
 .IP "\fB\-c, \-\-set-capacity\fP \fIloopdev\fP
@@ -98,8 +102,8 @@ show status of all loop devices associated with given
 .IP "\fB\-o, \-\-offset \fIoffset\fP"
 the data start is moved \fIoffset\fP bytes into the specified file or
 device
-.IP "\fB\-\-sizelimit \fIlimit\fP"
-the data end is set to no more than \fIsizelimit\fP bytes after the data start
+.IP "\fB\-\-sizelimit \fIsize\fP"
+the data end is set to no more than \fIsize\fP bytes after the data start
 .IP "\fB\-p, \-\-pass-fd \fInum\fP"
 read the passphrase from file descriptor with number
 .I num

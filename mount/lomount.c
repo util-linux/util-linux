@@ -881,6 +881,8 @@ find_unused_loop_device (void) {
 #include <getopt.h>
 #include <stdarg.h>
 
+#include "strtosize.h"
+
 static void
 usage(void) {
 	fprintf(stderr, _("\nUsage:\n"
@@ -913,7 +915,7 @@ main(int argc, char **argv) {
 	int showdev = 0;
 	int ro = 0;
 	int pfd = -1;
-	unsigned long long off, slimit;
+	uintmax_t off = 0, slimit = 0;
 	struct option longopts[] = {
 		{ "all", 0, 0, 'a' },
 		{ "set-capacity", 0, 0, 'c' },
@@ -936,8 +938,6 @@ main(int argc, char **argv) {
 	textdomain(PACKAGE);
 
 	capacity = delete = find = all = 0;
-	off = 0;
-        slimit = 0;
 	assoc = offset = sizelimit = encryption = passfd = NULL;
 
 	progname = argv[0];
@@ -1015,11 +1015,15 @@ main(int argc, char **argv) {
 			usage();
 	}
 
-	if (offset && sscanf(offset, "%llu", &off) != 1)
+	if (offset && strtosize(offset, &off)) {
+		error(_("%s: invalid offset '%s' specified"), progname, offset);
 		usage();
-
-	if (sizelimit && sscanf(sizelimit, "%llu", &slimit) != 1)
+	}
+	if (sizelimit && strtosize(sizelimit, &slimit)) {
+		error(_("%s: invalid sizelimit '%s' specified"),
+					progname, sizelimit);
 		usage();
+	}
 
 	if (all)
 		return show_used_loop_devices();

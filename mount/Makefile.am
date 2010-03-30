@@ -42,7 +42,7 @@ swapon_SOURCES = swapon.c swap_constants.h ../lib/linux_version.c \
 swapon_CFLAGS = $(cflags_common)
 swapon_LDADD = $(ldadd_common)
 
-losetup_SOURCES = lomount.c $(srcs_common) loop.h lomount.h
+losetup_SOURCES = lomount.c $(srcs_common) loop.h lomount.h ../lib/strtosize.c
 losetup_CPPFLAGS = -DMAIN $(AM_CPPFLAGS)
 
 mount_static_LDADD =
