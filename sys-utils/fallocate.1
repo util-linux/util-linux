@@ -25,17 +25,18 @@ The exit code returned by
 is 0 on success and 1 on failure.
 .PP
 .SH OPTIONS
+The \fIlength\fR and \fIoffset\fR arguments may be followed by binary (2^N)
+suffixes KiB, MiB, GiB, TiB, PiB and EiB (the "iB" is optional, e.g. "K" has the
+same meaning as "KiB") or decimal (10^N) suffixes KB, MB, GB, PB and EB.
 .IP "\fB\-h, \-\-help\fP"
 Print help and exit.
 .IP "\fB\-n, \-\-keep-size\fP"
 Do not modify the apparent length of the file. This may effectively allocate
 blocks past EOF, which can be removed with a truncate.
 .IP "\fB\-o, \-\-offset\fP \fIoffset\fP
-Specifies the beginning offset of the allocation, in bytes.  Suffixes of k, m,
-g, t, p, e may be specified to denote KiB, MiB, GiB, etc.
+Specifies the beginning offset of the allocation, in bytes.
 .IP "\fB\-l, \-\-length\fP \fIlength\fP
-Specifies the length of the allocation, in bytes.  Suffixes of k, m, g, t, p, e
-may be specified to denote KiB, MiB, GiB, etc.
+Specifies the length of the allocation, in bytes.
 .SH AUTHORS
 .nf
 Eric Sandeen <sandeen@redhat.com>

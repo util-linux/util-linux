@@ -40,6 +40,7 @@
 #include <linux/falloc.h>	/* for FALLOC_FL_* flags */
 
 #include "nls.h"
+#include "strtosize.h"
 
 
 static void __attribute__((__noreturn__)) usage(FILE *out)
@@ -58,47 +59,14 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
 
-#define EXABYTES(x)     ((x) << 60)
-#define PETABYTES(x)    ((x) << 50)
-#define TERABYTES(x)    ((x) << 40)
-#define GIGABYTES(x)    ((x) << 30)
-#define MEGABYTES(x)    ((x) << 20)
-#define KILOBYTES(x)    ((x) << 10)
-
 static loff_t cvtnum(char *s)
 {
-	loff_t	i;
-	char	*sp;
+	uintmax_t x;
 
-	errno = 0;
-	i = strtoll(s, &sp, 0);
-
-	if ((errno == ERANGE && (i == LLONG_MAX || i == LLONG_MIN)) ||
-	    (errno != 0 && i == 0))
-		return -1LL;
-	if (i == 0 && sp == s)
-		return -1LL;
-	if (*sp == '\0')
-		return i;
-	if (sp[1] != '\0')
+	if (strtosize(s, &x))
 		return -1LL;
 
-	switch (tolower(*sp)) {
-	case 'k':
-		return KILOBYTES(i);
-	case 'm':
-		return MEGABYTES(i);
-	case 'g':
-		return GIGABYTES(i);
-	case 't':
-		return TERABYTES(i);
-	case 'p':
-		return PETABYTES(i);
-	case 'e':
-		return EXABYTES(i);
-	}
-
-	return -1LL;
+	return x;
 }
 
 int main(int argc, char **argv)

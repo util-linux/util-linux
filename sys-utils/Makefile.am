@@ -25,6 +25,7 @@ info_TEXINFOS = ipc.texi
 
 if BUILD_FALLOCATE
 usrbin_exec_PROGRAMS += fallocate
+fallocate_SOURCES = fallocate.c ../lib/strtosize.c
 dist_man_MANS += fallocate.1
 endif
 
