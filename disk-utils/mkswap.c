@@ -565,8 +565,9 @@ main(int argc, char ** argv) {
 
 		errno = 0;
 		blks = strtoll(block_count, &tmp, 0);
-		if ((tmp && *tmp) ||
-		    (errno != 0 && (blks == ULLONG_MAX || blks == 0)) ||
+		if ((tmp == block_count) ||
+		    (tmp && *tmp) ||
+		    (errno != 0 && (blks == LLONG_MAX || blks == LLONG_MIN)) ||
 		    blks < 0)
 			usage();
 
