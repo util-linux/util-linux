@@ -1075,7 +1075,7 @@ loop_check(const char **spec, const char **type, int *flags,
 	   int *loop, const char **loopdev, const char **loopfile,
 	   const char *node) {
   int looptype;
-  unsigned long long offset, sizelimit;
+  unsigned long long offset = 0, sizelimit = 0;
 
   /*
    * In the case of a loop mount, either type is of the form lo@/dev/loop5
@@ -1127,12 +1127,34 @@ loop_check(const char **spec, const char **type, int *flags,
     } else {
       int loop_opts = SETLOOP_AUTOCLEAR; /* always attempt autoclear */
       int res;
+      char *endptr = NULL;
+      long long xnum;
 
       if (*flags & MS_RDONLY)
         loop_opts |= SETLOOP_RDONLY;
 
-      offset = opt_offset ? strtoull(opt_offset, NULL, 0) : 0;
-      sizelimit = opt_sizelimit ? strtoull(opt_sizelimit, NULL, 0) : 0;
+      if (opt_offset) {
+        errno = 0;
+        xnum = strtoll(opt_offset, &endptr, 0);
+        if ((endptr && *endptr) ||
+            (errno != 0 && (xnum == LLONG_MAX || xnum == 0)) ||
+             xnum < 0) {
+          error(_("mount: invalid offset '%s' specified"), opt_offset);
+          return EX_FAIL;
+        }
+        offset = xnum;
+      }
+      if (opt_sizelimit) {
+        errno = 0;
+        xnum = strtoll(opt_sizelimit, &endptr, 0);
+        if ((endptr && *endptr) ||
+	    (errno != 0 && (xnum == LLONG_MAX || xnum == 0)) ||
+             xnum < 0) {
+          error(_("mount: invalid sizelimit '%s' specified"), opt_sizelimit);
+          return EX_FAIL;
+        }
+	sizelimit = xnum;
+      }
 
       if (is_mounted_same_loopfile(node, *loopfile, offset)) {
         error(_("mount: according to mtab %s is already mounted on %s as loop"), *loopfile, node);
