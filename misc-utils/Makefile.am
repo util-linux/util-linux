@@ -40,6 +40,7 @@ blkid_LDADD = $(ul_libblkid_la)
 blkid_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 findfs_LDADD = $(ul_libblkid_la)
 findfs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
+wipefs_SOURCES = wipefs.c ../lib/strtosize.c
 wipefs_LDADD = $(ul_libblkid_la)
 wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 if HAVE_STATIC_BLKID

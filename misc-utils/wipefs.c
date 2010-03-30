@@ -34,6 +34,7 @@
 #include <blkid.h>
 
 #include "nls.h"
+#include "strtosize.h"
 
 struct wipe_desc {
 	loff_t		offset;		/* magic string offset */
@@ -305,21 +306,13 @@ do_wipe(struct wipe_desc *wp, const char *fname, int noact)
 static loff_t
 strtoll_offset(const char *str)
 {
-	char *end = NULL;
-	loff_t off;
+	uintmax_t sz;
 
-	errno = 0;
-	off = strtoll(str, &end, 0);
-
-	if ((errno == ERANGE && (off == LLONG_MAX || off == LONG_MIN)) ||
-	    (errno != 0 && off == 0))
-		err(EXIT_FAILURE, _("invalid offset '%s' value specified"), str);
-
-	if (*end != '\0')
+	if (strtosize(str, &sz))
 		errx(EXIT_FAILURE, _("invalid offset '%s' value specified"), str);
-
-	return off;
+	return sz;
 }
+
 
 static void __attribute__((__noreturn__))
 usage(FILE *out)
