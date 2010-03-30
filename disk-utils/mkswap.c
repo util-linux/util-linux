@@ -559,13 +559,18 @@ main(int argc, char ** argv) {
 		usage();
 	}
 	if (block_count) {
-		/* this silly user specified the number of blocks
-		   explicitly */
-		char *tmp;
-		int blocks_per_page = pagesize/1024;
-		PAGES = strtoull(block_count,&tmp,0)/blocks_per_page;
-		if (*tmp)
+		/* this silly user specified the number of blocks explicitly */
+		char *tmp = NULL;
+		long long blks;
+
+		errno = 0;
+		blks = strtoll(block_count, &tmp, 0);
+		if ((tmp && *tmp) ||
+		    (errno != 0 && (blks == ULLONG_MAX || blks == 0)) ||
+		    blks < 0)
 			usage();
+
+		PAGES = blks / (pagesize / 1024);
 	}
 	sz = get_size(device_name);
 	if (!PAGES) {
