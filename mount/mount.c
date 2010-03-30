@@ -41,6 +41,7 @@
 #include "env.h"
 #include "nls.h"
 #include "blkdev.h"
+#include "strtosize.h"
 
 #define DO_PS_FIDDLING
 
@@ -1071,11 +1072,26 @@ is_mounted_same_loopfile(const char *node0, const char *loopfile, unsigned long 
 }
 
 static int
+parse_offset(const char **opt, uintmax_t *val)
+{
+	char *tmp;
+
+	if (strtosize(*opt, val))
+		return -1;
+
+	tmp = xmalloc(32);
+	snprintf(tmp, 32, "%jd", *val);
+	my_free(*opt);
+	*opt = tmp;
+	return 0;
+}
+
+static int
 loop_check(const char **spec, const char **type, int *flags,
 	   int *loop, const char **loopdev, const char **loopfile,
 	   const char *node) {
   int looptype;
-  unsigned long long offset = 0, sizelimit = 0;
+  uintmax_t offset = 0, sizelimit = 0;
 
   /*
    * In the case of a loop mount, either type is of the form lo@/dev/loop5
@@ -1127,33 +1143,17 @@ loop_check(const char **spec, const char **type, int *flags,
     } else {
       int loop_opts = SETLOOP_AUTOCLEAR; /* always attempt autoclear */
       int res;
-      char *endptr = NULL;
-      long long xnum;
 
       if (*flags & MS_RDONLY)
         loop_opts |= SETLOOP_RDONLY;
 
-      if (opt_offset) {
-        errno = 0;
-        xnum = strtoll(opt_offset, &endptr, 0);
-        if ((endptr && *endptr) ||
-            (errno != 0 && (xnum == LLONG_MAX || xnum == 0)) ||
-             xnum < 0) {
-          error(_("mount: invalid offset '%s' specified"), opt_offset);
-          return EX_FAIL;
-        }
-        offset = xnum;
+      if (opt_offset && parse_offset(&opt_offset, &offset)) {
+        error(_("mount: invalid offset '%s' specified"), opt_offset);
+        return EX_FAIL;
       }
-      if (opt_sizelimit) {
-        errno = 0;
-        xnum = strtoll(opt_sizelimit, &endptr, 0);
-        if ((endptr && *endptr) ||
-	    (errno != 0 && (xnum == LLONG_MAX || xnum == 0)) ||
-             xnum < 0) {
-          error(_("mount: invalid sizelimit '%s' specified"), opt_sizelimit);
-          return EX_FAIL;
-        }
-	sizelimit = xnum;
+      if (opt_sizelimit && parse_offset(&opt_sizelimit, &sizelimit)) {
+        error(_("mount: invalid sizelimit '%s' specified"), opt_sizelimit);
+        return EX_FAIL;
       }
 
       if (is_mounted_same_loopfile(node, *loopfile, offset)) {

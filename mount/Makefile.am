@@ -26,7 +26,7 @@ ldadd_static =
 cflags_common = $(AM_CFLAGS)
 ldflags_static = -all-static
 
-mount_SOURCES = mount.c $(srcs_mount) ../lib/setproctitle.c
+mount_SOURCES = mount.c $(srcs_mount) ../lib/setproctitle.c ../lib/strtosize.c
 mount_CFLAGS = $(SUID_CFLAGS) $(cflags_common)
 mount_LDFLAGS = $(SUID_LDFLAGS) $(AM_LDFLAGS)
 mount_LDADD = $(ldadd_common)
