@@ -107,6 +107,8 @@ AC_CHECK_HEADERS(
 	linux/fd.h \
 	linux/tiocl.h \
 	linux/version.h \
+	linux/falloc.h \
+	fcntl.h \
 	locale.h \
 	stdint.h \
 	inttypes.h \
@@ -580,7 +582,40 @@ UTIL_CHECK_SYSCALL([ioprio_get],
 
 dnl fallocate could be available as libc function or as syscall only
 UTIL_CHECK_SYSCALL([fallocate])
-AC_CHECK_FUNCS([fallocate])
+
+dnl check for valid fallocate() function
+dnl with 32 bits glibc 2.10, fallocate() exists but not fallocate64()
+dnl when _FILE_OFFSET_BITS==64, fallocate() is redirect to fallocate64()
+dnl and program can't be linked.
+dnl AC_CHECK_FUNC can't catch such errors since it's redefining
+dnl function prototype.
+AC_MSG_CHECKING([for valid fallocate() function])
+AC_LINK_IFELSE([
+AC_LANG_PROGRAM([[
+#ifdef HAVE_UNISTD_H
+# include <unistd.h>
+#endif
+#ifdef HAVE_SYS_TYPES_H
+# include <sys/types.h>
+#endif
+#ifdef HAVE_LINUX_FALLOC_H
+# include <linux/falloc.h>
+#endif
+#ifdef HAVE_FCNTL_H
+# include <fcntl.h>
+#endif
+]],[[
+   long ret;
+
+   ret = fallocate(0, FALLOC_FL_KEEP_SIZE, 0xfffffffful, 0xfffffffful);
+
+   if (ret != 0) {
+      return 1;
+   }
+   ]])],[
+AC_MSG_RESULT([yes])
+AC_DEFINE(HAVE_FALLOCATE,1,[Have valid fallocate() function])],[
+AC_MSG_RESULT([no])])
 
 dnl unshare could be available as libc function or as syscall only
 UTIL_CHECK_SYSCALL([unshare])
