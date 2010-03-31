@@ -295,6 +295,9 @@ main(int argc, char **argv){
 				}
 			    }
 			    for (j=0; j<n; j++) {
+			        /* skip unused/empty partitions */
+				if (slices[j].size == 0)
+				    continue;
 				pt.pno = lower+j;
 				pt.start = 512 * (long long) slices[j].start;
 				pt.length = 512 * (long long) slices[j].size;
