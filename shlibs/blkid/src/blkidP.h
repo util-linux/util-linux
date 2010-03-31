@@ -208,6 +208,7 @@ struct blkid_struct_probe
 /* flags */
 #define BLKID_PRIVATE_FD	(1 << 1)	/* see blkid_new_probe_from_filename() */
 #define BLKID_TINY_DEV		(1 << 2)	/* <= 1.47MiB (floppy or so) */
+#define BLKID_CDROM_DEV		(1 << 3)	/* is a CD/DVD drive */
 
 /*
  * Evaluation methods (for blkid_eval_* API)
@@ -369,6 +370,7 @@ extern void blkid_free_dev(blkid_dev dev);
 
 /* probe.c */
 extern int blkid_probe_is_tiny(blkid_probe pr);
+extern int blkid_probe_is_cdrom(blkid_probe pr);
 extern unsigned char *blkid_probe_get_buffer(blkid_probe pr,
                                 blkid_loff_t off, blkid_loff_t len);
 

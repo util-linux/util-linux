@@ -108,6 +108,7 @@ AC_CHECK_HEADERS(
 	linux/tiocl.h \
 	linux/version.h \
 	linux/falloc.h \
+	linux/cdrom.h \
 	fcntl.h \
 	locale.h \
 	stdint.h \

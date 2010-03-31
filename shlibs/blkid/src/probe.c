@@ -77,6 +77,9 @@
 #include <fcntl.h>
 #include <ctype.h>
 #include <sys/types.h>
+#ifdef HAVE_LINUX_CDROM_H
+#include <linux/cdrom.h>
+#endif
 #ifdef HAVE_SYS_STAT_H
 #include <sys/stat.h>
 #endif
@@ -545,6 +548,14 @@ int blkid_probe_is_tiny(blkid_probe pr)
 	return pr && (pr->flags & BLKID_TINY_DEV);
 }
 
+/*
+ * CDROMs may fail when probed for RAID (last sector problem)
+ */
+int blkid_probe_is_cdrom(blkid_probe pr)
+{
+	return pr && (pr->flags & BLKID_CDROM_DEV);
+}
+
 /**
  * blkid_probe_set_device:
  * @pr: probe
@@ -570,6 +581,7 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 
 	pr->flags &= ~BLKID_PRIVATE_FD;
 	pr->flags &= ~BLKID_TINY_DEV;
+	pr->flags &= ~BLKID_CDROM_DEV;
 	pr->fd = fd;
 	pr->off = off;
 	pr->size = 0;
@@ -619,6 +631,10 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	if (pr->size <= 1440 * 1024 && !S_ISCHR(pr->mode))
 		pr->flags |= BLKID_TINY_DEV;
 
+#ifdef CDROM_GET_CAPABILITY
+	if (S_ISBLK(pr->mode) && ioctl(fd, CDROM_GET_CAPABILITY, NULL) >= 0)
+		pr->flags |= BLKID_CDROM_DEV;
+#endif
 	return 0;
 err:
 	DBG(DEBUG_LOWPROBE,

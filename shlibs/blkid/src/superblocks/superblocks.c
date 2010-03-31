@@ -343,6 +343,11 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		    blkid_probe_is_tiny(pr))
 			continue;
 
+		/* don't probe for RAIDs, swap or journal on floppies or CD/DVDs */
+		if ((id->usage & (BLKID_USAGE_RAID | BLKID_USAGE_OTHER)) &&
+		    (blkid_probe_is_tiny(pr) || blkid_probe_is_cdrom(pr)))
+			continue;
+
 		DBG(DEBUG_LOWPROBE, printf("[%d] %s:\n", i, id->name));
 
 		/* try to detect by magic string */
