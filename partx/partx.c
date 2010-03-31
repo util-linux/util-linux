@@ -178,6 +178,8 @@ main(int argc, char **argv){
 		while (upper == 0 || lower <= upper) {
 			int err;
 
+			if (lower > MAXSLICES)
+				break;
 			pt.pno = lower;
 			pt.start = 0;
 			pt.length = 0;
