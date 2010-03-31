@@ -1,5 +1,5 @@
-ID_FS_LABEL_ENC=test-ocfs2
 ID_FS_LABEL=test-ocfs2
+ID_FS_LABEL_ENC=test-ocfs2
 ID_FS_TYPE=ocfs2
 ID_FS_USAGE=filesystem
 ID_FS_UUID=6b6bfbea-3a79-4f0c-b166-a20776102445

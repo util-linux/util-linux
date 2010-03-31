@@ -78,7 +78,12 @@ function ts_has_option {
 function ts_init_env {
 	local mydir=$(ts_abspath $(dirname $0))
 
-	export LANG="en_US.UTF-8"
+	LANG="POSIX"
+	LANGUAGE="POSIX"
+	LC_ALL="POSIX"
+	CHARSET="UTF-8"
+
+	export LANG LANGUAGE LC_ALL CHARSET
 
 	TS_TOPDIR=$(ts_abspath $mydir/../../)
 	TS_SCRIPT="$mydir/$(basename $0)"

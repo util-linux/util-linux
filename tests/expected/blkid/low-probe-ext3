@@ -1,5 +1,5 @@
-ID_FS_LABEL_ENC=test-ext3
 ID_FS_LABEL=test-ext3
+ID_FS_LABEL_ENC=test-ext3
 ID_FS_SEC_TYPE=ext2
 ID_FS_TYPE=ext3
 ID_FS_USAGE=filesystem
