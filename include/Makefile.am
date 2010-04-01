@@ -23,4 +23,5 @@ dist_noinst_HEADERS = \
 	crc32.h \
 	mangle.h \
 	strtosize.h \
-	xstrncpy.h
+	xstrncpy.h \
+	writeall.h

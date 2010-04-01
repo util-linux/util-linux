@@ -53,6 +53,7 @@
 #include "blkdev.h"
 #include "pathnames.h"
 #include "wholedisk.h"
+#include "writeall.h"
 
 #ifdef HAVE_LIBUUID
 # ifdef HAVE_UUID_UUID_H
@@ -368,24 +369,6 @@ check_mount(void) {
 	if (!mnt)
 		return 0;
 	return 1;
-}
-
-
-static int
-write_all(int fd, const void *buf, size_t count) {
-	while(count) {
-		ssize_t tmp;
-
-		errno = 0;
-		tmp = write(fd, buf, count);
-		if (tmp > 0) {
-			count -= tmp;
-			if (count)
-				buf += tmp;
-		} else if (errno != EINTR && errno != EAGAIN)
-			return -1;
-	}
-	return 0;
 }
 
 static void
