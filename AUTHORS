@@ -35,6 +35,8 @@ AUTHORS (merged projects & commands):
                        Jeremy Katz <katzj@redhat.com>
       unshare:         Mikhail Gusarov <dottedmag@dottedmag.net>
       wipefs:          Karel Zak <kzak@redhat.com>
+      swaplabel:       Jason Borden <jborden@bluehost.com>
+                       Karel Zak <kzak@redhat.com>
 
 
 CONTRIBUTORS:

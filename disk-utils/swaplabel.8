@@ -1,0 +1,66 @@
+.\" Copyright 2010 Jason Borden <jborden@bluehost.com>
+.\"
+.\" This file may be copied under the terms of the GNU Public License.
+.\"
+.TH SWAPLABEL 8 "2 April 2010" "Linux" "Linux Programmer's Manual"
+.SH NAME
+swaplabel \- Print or change the label / UUID of a swap area
+.SH SYNOPSIS
+.B swaplabel
+.RB [ \-L
+.IR label ]
+.RB [ \-U
+.IR UUID ]
+.I device
+.SH DESCRIPTION
+.B swaplabel
+will display or change the label / UUID of a swap partition located on
+.IR device 
+(or regular file).
+.PP
+If the optional arguments
+.B \-L 
+and
+.B \-U 
+are not present,
+.B swaplabel
+will simply display the awap area label and UUID of
+.IR device .
+.PP
+If an optional argument is present, then
+.B swaplabel
+will change the appropriate value of
+.IR device .
+These values can also be set during swap creation using
+.BR mkswap (8).
+The
+.B swaplabel
+utility allows to change the label or UUID on actively used swap device.
+.SH OPTIONS
+.IP "\fB\-h, \-\-help\fP"
+Print help and exit.
+.IP "\fB\-L, \-\-label\fP \fIlabel\fP"
+Specify a new label for
+.IR device .
+Swap partition labels can be at most 16 characters long.  If
+.IR label
+is longer than 16 characters,
+.B swapinfo
+will truncate it and print a warning message.
+.IP "\fB\-U, \-\-uuid\fP \fIuuid\fP"
+Specify a new UUID for
+.IR device .
+.IR UUID
+must be in the standard 8-4-4-4-12 character format, such as is ouput by
+.BR uuidgen (1) .
+.PP
+.SH AUTHOR
+.B swaplabel
+was written by Jason Borden <jborden@bluehost.com> and Karel Zak <kzak@redhat.com>.
+.SH AVAILABILITY
+.B swaplabel
+is part of the util-linux-ng package and is available from ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
+.SH SEE ALSO
+.BR mkswap (8),
+.BR swapon (8),
+.BR uuidgen (1)

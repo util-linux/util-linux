@@ -10,3 +10,4 @@ mkswap
 mkfs.cramfs
 elvtune
 raw
+swaplabel
