@@ -372,7 +372,7 @@ check_mount(void) {
 }
 
 static void
-zap_bootbits(int fd, const char *devname, int force)
+zap_bootbits(int fd, const char *devname, int force, int is_blkdev)
 {
 	char *type = NULL;
 	int whole = 0;
@@ -382,7 +382,7 @@ zap_bootbits(int fd, const char *devname, int force)
 		if (lseek(fd, 0, SEEK_SET) != 0)
 	                die(_("unable to rewind swap-device"));
 
-		if (is_whole_disk_fd(fd, devname)) {
+		if (is_blkdev && is_whole_disk_fd(fd, devname)) {
 			/* don't zap bootbits on whole disk -- we know nothing
 			 * about bootloaders on the device */
 			whole = 1;
@@ -625,7 +625,7 @@ main(int argc, char ** argv) {
 	if (check)
 		check_blocks();
 
-	zap_bootbits(DEV, device_name, force);
+	zap_bootbits(DEV, device_name, force, S_ISBLK(statbuf.st_mode));
 
 	p->version = 1;
 	p->last_page = PAGES-1;
