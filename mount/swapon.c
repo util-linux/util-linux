@@ -121,9 +121,6 @@ swapoff_usage(FILE *fp, int n) {
 static int numSwaps;
 static char **swapFiles;	/* array of swap file and partition names */
 
-#define DELETED_SUFFIX		"\\040(deleted)"
-#define DELETED_SUFFIX_SZ	(sizeof(DELETED_SUFFIX) - 1)
-
 static void
 read_proc_swaps(void) {
 	FILE *swaps;
@@ -163,9 +160,9 @@ read_proc_swaps(void) {
 		 * in /proc/swaps, we have to remove this junk.
 		 */
 		sz = strlen(line);
-		if (sz > DELETED_SUFFIX_SZ) {
-		       p = line + (sz - DELETED_SUFFIX_SZ);
-		       if (strcmp(p, DELETED_SUFFIX) == 0)
+		if (sz > PATH_DELETED_SUFFIX_SZ) {
+		       p = line + (sz - PATH_DELETED_SUFFIX_SZ);
+		       if (strcmp(p, PATH_DELETED_SUFFIX) == 0)
 			       *p = '\0';
 		}
 

@@ -12,6 +12,10 @@
 # error "we need an ANSI compiler"
 #endif
 
+/* used by kernel in /proc (e.g. /proc/swaps) for deleted files */
+#define PATH_DELETED_SUFFIX	"\\040(deleted)"
+#define PATH_DELETED_SUFFIX_SZ	(sizeof(PATH_DELETED_SUFFIX) - 1)
+
 /* DEFPATHs from <paths.h> don't include /usr/local */
 #undef _PATH_DEFPATH
 #define	_PATH_DEFPATH	        "/usr/local/bin:/bin:/usr/bin"
