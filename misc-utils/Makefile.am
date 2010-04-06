@@ -47,6 +47,7 @@ wipefs_LDADD = $(ul_libblkid_la)
 wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 findmnt_LDADD = $(ul_libmount_la)
 findmnt_CFLAGS = $(AM_CFLAGS) -I$(ul_libmount_incdir)
+findmnt_SOURCES = findmnt.c $(top_srcdir)/lib/tt.c
 if HAVE_STATIC_BLKID
 sbin_PROGRAMS += blkid.static
 blkid_static_SOURCES = $(blkid_SOURCES)
