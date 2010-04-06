@@ -126,6 +126,16 @@ _INLINE_ int list_empty(struct list_head *head)
 }
 
 /**
+ * list_last_entry - tests whether is entry last in the list
+ * @entry:	the entry to test.
+ * @head:	the list to test.
+ */
+_INLINE_ int list_last_entry(struct list_head *entry, struct list_head *head)
+{
+	return head->prev == entry;
+}
+
+/**
  * list_splice - join two lists
  * @list:	the new list to add.
  * @head:	the place to add it in the first list.
@@ -162,6 +172,14 @@ _INLINE_ void list_splice(struct list_head *list, struct list_head *head)
  */
 #define list_for_each(pos, head) \
 	for (pos = (head)->next; pos != (head); pos = pos->next)
+
+/**
+ * list_for_each_backwardly - iterate over elements in a list in reverse
+ * @pos:	the &struct list_head to use as a loop counter.
+ * @head:	the head for your list.
+ */
+#define list_for_each_backwardly(pos, head) \
+	for (pos = (head)->prev; pos != (head); pos = pos->prev)
 
 /**
  * list_for_each_safe - iterate over elements in a list, but don't dereference

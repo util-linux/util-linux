@@ -11,6 +11,7 @@ dist_noinst_HEADERS = \
 	ismounted.h \
 	linux_reboot.h \
 	linux_version.h \
+	list.h \
 	md5.h \
 	mbsalign.h \
 	nls.h \
