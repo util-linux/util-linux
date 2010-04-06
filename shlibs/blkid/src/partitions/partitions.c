@@ -839,6 +839,12 @@ blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno
 		if (blkid_partition_get_start(par) == start &&
 		    blkid_partition_get_size(par) == size)
 			return par;
+
+		/* exception for extended dos partitions */
+		if (blkid_partition_get_start(par) == start &&
+		    blkid_partition_is_extended(par) && size <= 1024)
+			return par;
+
 	}
 	return NULL;
 }
