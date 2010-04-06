@@ -18,6 +18,7 @@ dist_noinst_HEADERS = \
 	pathnames.h \
 	setproctitle.h \
 	swapheader.h \
+	tt.h \
 	usleep.h \
 	wholedisk.h \
 	widechar.h \
