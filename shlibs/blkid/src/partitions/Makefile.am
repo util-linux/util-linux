@@ -18,4 +18,5 @@ libblkid_partitions_la_SOURCES = partitions.c \
 				dos.c \
 				dos.h \
 				minix.c \
+				ultrix.c \
 				gpt.c

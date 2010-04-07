@@ -57,5 +57,6 @@ extern const struct blkid_idinfo mac_pt_idinfo;
 extern const struct blkid_idinfo dos_pt_idinfo;
 extern const struct blkid_idinfo minix_pt_idinfo;
 extern const struct blkid_idinfo gpt_pt_idinfo;
+extern const struct blkid_idinfo ultrix_pt_idinfo;
 
 #endif /* BLKID_PARTITIONS_H */
