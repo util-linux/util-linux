@@ -27,7 +27,9 @@
  * @short_description: partitions tables detection and parsing
  *
  * This chain supports binary and NAME=value interfaces, but complete PT
- * description is provided by binary interface only.
+ * description is provided by binary interface only. The libblkid prober is
+ * compatible with kernel partition tables parser. The parser does not return
+ * empty (size=0) partitions or special hidden partitions.
  *
  * NAME=value interface, supported tags:
  *
@@ -424,7 +426,7 @@ static blkid_partition new_partition(blkid_partlist ls, blkid_parttable tab)
 
 	ref_parttable(tab);
 	par->tab = tab;
-	par->partno = ls->next_partno++;
+	par->partno = blkid_partlist_increment_partno(ls);
 
 	return par;
 }
@@ -455,6 +457,11 @@ int blkid_partlist_set_partno(blkid_partlist ls, int partno)
 		return -1;
 	ls->next_partno = partno;
 	return 0;
+}
+
+int blkid_partlist_increment_partno(blkid_partlist ls)
+{
+	return ls ? ls->next_partno++ : -1;
 }
 
 /* allows to set "parent" for the next nested partition */

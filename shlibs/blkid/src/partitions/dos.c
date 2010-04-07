@@ -203,9 +203,12 @@ static int probe_dos_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		start = dos_partition_start(p) * ssf;
 		size = dos_partition_size(p) * ssf;
 
-		if (!size)
+		if (!size) {
+			/* Linux kernel ignores empty partitions, but partno for
+			 * the empty primary partitions is not reused */
+			blkid_partlist_increment_partno(ls);
 			continue;
-
+		}
 		par = blkid_partlist_add_partition(ls, tab, start, size);
 		if (!par)
 			goto err;

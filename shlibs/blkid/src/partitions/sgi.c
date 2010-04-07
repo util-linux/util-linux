@@ -126,9 +126,10 @@ static int probe_sgi_pt(blkid_probe pr, const struct blkid_idmag *mag)
 		blkid_partition par;
 
 		if (size == 0 || type == SGI_TYPE_VOLULME ||
-			         type == SGI_TYPE_VOLHDR)
+			         type == SGI_TYPE_VOLHDR) {
+			blkid_partlist_increment_partno(ls);
 			continue;
-
+		}
 		par = blkid_partlist_add_partition(ls, tab, start, size);
 		if (!par)
 			goto err;

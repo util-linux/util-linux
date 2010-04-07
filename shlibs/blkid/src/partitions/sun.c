@@ -148,9 +148,10 @@ static int probe_sun_pt(blkid_probe pr, const struct blkid_idmag *mag)
 			flags = be16_to_cpu(l->vtoc.infos[i].flags);
 		}
 
-		if (type == SUN_TAG_WHOLEDISK || !size)
+		if (type == SUN_TAG_WHOLEDISK || !size) {
+			blkid_partlist_increment_partno(ls);
 			continue;
-
+		}
 		par = blkid_partlist_add_partition(ls, tab, start, size);
 		if (!par)
 			goto err;

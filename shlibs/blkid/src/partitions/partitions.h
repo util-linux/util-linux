@@ -14,6 +14,8 @@ extern blkid_partition blkid_partlist_add_partition(blkid_partlist ls,
 				blkid_loff_t start, blkid_loff_t size);
 
 extern int blkid_partlist_set_partno(blkid_partlist ls, int partno);
+extern int blkid_partlist_increment_partno(blkid_partlist ls);
+
 extern blkid_partition blkid_partlist_get_parent(blkid_partlist ls);
 
 extern int blkid_partitions_do_subprobe(blkid_probe pr,
