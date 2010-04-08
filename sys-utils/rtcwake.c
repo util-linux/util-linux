@@ -62,10 +62,12 @@ enum ClockMode {
 };
 
 static unsigned		verbose;
+static unsigned		dryrun;
 enum ClockMode		clock_mode = CM_AUTO;
 
 static struct option long_options[] = {
 	{"auto",	no_argument,		0, 'a'},
+	{"dry-run",	no_argument,		0, 'n'},
 	{"local",	no_argument,		0, 'l'},
 	{"utc",		no_argument,		0, 'u'},
 	{"verbose",	no_argument,		0, 'v'},
@@ -82,6 +84,7 @@ static void usage(int retval)
 {
 	printf(_("usage: %s [options]\n"
 		"    -d | --device <device>    select rtc device (rtc0|rtc1|...)\n"
+		"    -n | --dry-run            does everything, but suspend\n"
 		"    -l | --local              RTC uses local timezone\n"
 		"    -m | --mode               standby|mem|... sleep mode\n"
 		"    -s | --seconds <seconds>  seconds to sleep\n"
@@ -214,8 +217,9 @@ static int setup_alarm(int fd, time_t *wakeup)
 	wake.time.tm_isdst = -1;
 
 	wake.enabled = 1;
+
 	/* First try the preferred RTC_WKALM_SET */
-	if (ioctl(fd, RTC_WKALM_SET, &wake) < 0) {
+	if (!dryrun && ioctl(fd, RTC_WKALM_SET, &wake) < 0) {
 		wake.enabled = 0;
 		/* Fall back on the non-preferred way of setting wakeups; only
 		* works for alarms < 24 hours from now */
@@ -246,8 +250,10 @@ static void suspend_system(const char *suspend)
 		return;
 	}
 
-	fprintf(f, "%s\n", suspend);
-	fflush(f);
+	if (!dryrun) {
+		fprintf(f, "%s\n", suspend);
+		fflush(f);
+	}
 
 	/* this executes after wake from suspend */
 	fclose(f);
@@ -308,7 +314,7 @@ int main(int argc, char **argv)
 
 	progname = basename(argv[0]);
 
-	while ((t = getopt_long(argc, argv, "ahd:lm:s:t:uVv",
+	while ((t = getopt_long(argc, argv, "ahd:lm:ns:t:uVv",
 					long_options, NULL)) != EOF) {
 		switch (t) {
 		case 'a':
@@ -346,6 +352,10 @@ int main(int argc, char **argv)
 				_("%s: unrecognized suspend state '%s'\n"),
 				progname, optarg);
 			usage(EXIT_FAILURE);
+
+		case 'n':
+			dryrun = 1;
+			break;
 
 			/* alarm time, seconds-to-sleep (relative) */
 		case 's':
@@ -486,11 +496,13 @@ int main(int argc, char **argv)
 		arg[i++] = "now";
 		arg[i]   = NULL;
 
-		execv(arg[0], arg);
+		if (!dryrun) {
+			execv(arg[0], arg);
 
-		fprintf(stderr, _("%s: unable to execute %s: %s\n"),
+			fprintf(stderr, _("%s: unable to execute %s: %s\n"),
 				progname, _PATH_SHUTDOWN, strerror(errno));
-		rc = EXIT_FAILURE;
+			rc = EXIT_FAILURE;
+		}
 
 	} else if (strcmp(suspend, "on") == 0) {
 		unsigned long data;
@@ -498,15 +510,17 @@ int main(int argc, char **argv)
 		if (verbose)
 			printf(_("suspend mode: on; reading rtc\n"));
 
-		do {
-			t = read(fd, &data, sizeof data);
-			if (t < 0) {
-				perror(_("rtc read"));
-				break;
-			}
-			if (verbose)
-				printf("... %s: %03lx\n", devname, data);
-		} while (!(data & RTC_AF));
+		if (!dryrun) {
+			do {
+				t = read(fd, &data, sizeof data);
+				if (t < 0) {
+					perror(_("rtc read"));
+					break;
+				}
+				if (verbose)
+					printf("... %s: %03lx\n", devname, data);
+			} while (!(data & RTC_AF));
+		}
 
 	} else {
 		if (verbose)
@@ -515,7 +529,7 @@ int main(int argc, char **argv)
 		suspend_system(suspend);
 	}
 
-	if (ioctl(fd, RTC_AIE_OFF, 0) < 0)
+	if (!dryrun && ioctl(fd, RTC_AIE_OFF, 0) < 0)
 		perror(_("disable rtc alarm interrupt"));
 
 	close(fd);
