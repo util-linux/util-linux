@@ -537,7 +537,6 @@ int mnt_fs_match_target(mnt_fs *fs, const char *target, mnt_cache *cache)
  */
 int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache)
 {
-	int rc = 0;
 	char *cn;
 	const char *src, *t, *v;
 
@@ -545,10 +544,11 @@ int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache)
 		return 0;
 
 	/* 1) native paths/tags */
-	rc = !strcmp(source, fs->source);
-	if (rc || !cache)
-		return rc;
+	if (!strcmp(source, fs->source))
+		return 1;
 
+	if (!cache)
+		return 0;
 	if (fs->flags & (MNT_FS_NET | MNT_FS_PSEUDO))
 		return 0;
 
@@ -558,19 +558,17 @@ int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache)
 
 	/* 2) canonicalized and native */
 	src = mnt_fs_get_srcpath(fs);
-	if (src)
-		rc = !strcmp(cn, src);
+	if (src && !strcmp(cn, src))
+		return 1;
 
 	/* 3) canonicalized and canonicalized */
-	if (src && !rc) {
+	if (src) {
 		src = mnt_resolve_path(src, cache);
-		rc = !strcmp(cn, src);
+		if (src && !strcmp(cn, src))
+			return 1;
 	}
-	if (src && !rc)
-		/* fs->source is path and does not match with @source */
-		return 0;
-
-	if (mnt_fs_get_tag(fs, &t, &v))
+	if (src || mnt_fs_get_tag(fs, &t, &v))
+		/* src path does not match and tag is not defined */
 		return 0;
 
 	/* read @source's tags to the cache */
@@ -590,10 +588,10 @@ int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache)
 	}
 
 	/* 4) has the @source a tag that matches with tag from @fs ? */
-	if (!mnt_cache_device_has_tag(cache, cn, t, v))
-		return 0;
+	if (mnt_cache_device_has_tag(cache, cn, t, v))
+		return 1;
 
-	return 1;
+	return 0;
 }
 
 /**
