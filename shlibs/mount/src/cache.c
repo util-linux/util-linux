@@ -24,7 +24,7 @@
  */
 #define MNT_CACHE_CHUNKSZ	128
 
-#define MNT_CACHE_ISTAG	(1 << 1) /* entry is TAG */
+#define MNT_CACHE_ISTAG		(1 << 1) /* entry is TAG */
 #define MNT_CACHE_ISPATH	(1 << 2) /* entry is path */
 #define MNT_CACHE_TAGREAD	(1 << 3) /* tag read by mnt_cache_read_tags() */
 
@@ -112,6 +112,11 @@ static int mnt_cache_add_entry(mnt_cache *cache, char *native,
 	e->flag = flag;
 	cache->nents++;
 
+	DBG(DEBUG_CACHE,
+		printf("cache: add entry[%2zd] (%s): %s: %s\n",
+			cache->nents,
+			(flag & MNT_CACHE_ISPATH) ? "path" : "tag",
+			real, native));
 	return 0;
 }
 
@@ -141,10 +146,8 @@ static int mnt_cache_add_tag(mnt_cache *cache, const char *token,
 	memcpy(native, token, tksz + 1);	   /* include '\0' */
 	memcpy(native + tksz + 1, value, vlsz + 1);
 
-	if (mnt_cache_add_entry(cache, native, real, flag))
+	if (mnt_cache_add_entry(cache, native, real, flag | MNT_CACHE_ISTAG))
 		goto error;
-	DBG(DEBUG_CACHE,
-		printf("cache: added %s: %s=%s\n", real, token, value));
 	return 0;
 error:
 	free(native);
@@ -236,7 +239,6 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 	if (!cache || !devname)
 		return -1;
 
-
 	DBG(DEBUG_CACHE, printf("cache: tags for %s requested\n", devname));
 
 	/* check is device is already cached */
@@ -282,7 +284,7 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 		if (!dev)
 			goto error;
 		if (mnt_cache_add_tag(cache, tags[i], data, dev,
-				(MNT_CACHE_ISTAG | MNT_CACHE_TAGREAD))) {
+					MNT_CACHE_TAGREAD)) {
 			free(dev);
 			goto error;
 		}
@@ -385,7 +387,6 @@ char *mnt_resolve_path(const char *path, mnt_cache *cache)
 		}
 	}
 
-	DBG(DEBUG_CACHE, printf("cache: added %s: %s\n", path, p));
 	return p;
 error:
 	if (real != native)
@@ -421,11 +422,10 @@ char *mnt_resolve_tag(const char *token, const char *value, mnt_cache *cache)
 		p = blkid_evaluate_tag(token, value, cache ? &cache->bc : NULL);
 
 		if (p && cache &&
-		    mnt_cache_add_tag(cache, token, value, p, MNT_CACHE_ISTAG))
+		    mnt_cache_add_tag(cache, token, value, p, 0))
 				goto error;
 	}
 
-	DBG(DEBUG_CACHE, printf("cache: %s=%s --> %s\n", token, value, p));
 	return p;
 error:
 	free(p);
