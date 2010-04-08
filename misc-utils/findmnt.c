@@ -358,6 +358,7 @@ static mnt_tab *parse_tabfile(const char *path)
 		mnt_tab_strerror(tb, buf, sizeof(buf));
 		warnx(_("%s: parse error: %s"), path, buf);
 	}
+
 	return tb;
 }
 
@@ -582,7 +583,7 @@ int main(int argc, char *argv[])
 			if (tabfile)
 				errx_mutually_exclusive("--{fstab,mtab,kernel}");
 			tabfile = _PATH_MNTTAB;
-			flags &= ~TT_FL_TREE;
+			tt_flags &= ~TT_FL_TREE;
 			break;
 		case 'k':		/* kernel (mountinfo) */
 			if (tabfile)
@@ -593,10 +594,6 @@ int main(int argc, char *argv[])
 			set_match(COL_FSTYPE, optarg);
 			break;
 		case 'r':
-			if (!(tt_flags & TT_FL_TREE) &&
-			    !(tt_flags & TT_FL_RAW))
-				errx_mutually_exclusive("--{raw,list}");
-
 			tt_flags &= ~TT_FL_TREE;	/* disable the default */
 			tt_flags |= TT_FL_RAW;		/* enable raw */
 			break;
@@ -644,9 +641,23 @@ int main(int argc, char *argv[])
 	if (!is_listall_mode() || (flags & FL_FIRSTONLY))
 		tt_flags &= ~TT_FL_TREE;
 
+	if (!(flags & FL_NOSWAPMATCH) &&
+	    !get_match(COL_TARGET) && get_match(COL_SOURCE)) {
+		/*
+		 * Check if we can swap source and target, it's
+		 * not possible if the source is LABEL=/UUID=
+		 */
+		const char *x = get_match(COL_SOURCE);
+
+		if (!strncmp(x, "LABEL=", 6) || !strncmp(x, "UUID=", 5))
+			flags |= FL_NOSWAPMATCH;
+	}
+
 	/*
 	 * initialize libmount
 	 */
+	mnt_init_debug(0);
+
 	tb = parse_tabfile(tabfile);
 	if (!tb)
 		goto leave;
@@ -656,6 +667,7 @@ int main(int argc, char *argv[])
 		warn(_("failed to initialize libmount iterator"));
 		goto leave;
 	}
+
 	cache = mnt_new_cache();
 	if (!cache) {
 		warn(_("failed to initialize libmount cache"));
@@ -671,6 +683,7 @@ int main(int argc, char *argv[])
 		warn(_("failed to initialize output table"));
 		goto leave;
 	}
+
 	for (i = 0; i < ncolumns; i++) {
 		int fl = get_column_truncate(i) ? TT_FL_TRUNCATE : 0;
 
