@@ -468,15 +468,19 @@ int main(int argc, char **argv)
 	fflush(stdout);
 	usleep(10 * 1000);
 
-	if (strcmp(suspend, "no") == 0)
+	if (strcmp(suspend, "no") == 0) {
+		if (verbose)
+			printf(_("suspend mode: no; leaving\n"));
+		close(fd);
 		exit(EXIT_SUCCESS);
-	else if (strcmp(suspend, "on") != 0) {
-		sync();
-		suspend_system(suspend);
+
 	} else if (strcmp(suspend, "off") == 0) {
 		char *arg[4];
 		int i = 0;
 
+		if (verbose)
+			printf(_("suspend mode: off; executing %s\n"),
+						_PATH_SHUTDOWN);
 		arg[i++] = _PATH_SHUTDOWN;
 		arg[i++] = "-P";
 		arg[i++] = "now";
@@ -487,8 +491,12 @@ int main(int argc, char **argv)
 		fprintf(stderr, _("%s: unable to execute %s: %s\n"),
 				progname, _PATH_SHUTDOWN, strerror(errno));
 		rc = EXIT_FAILURE;
-	} else {
+
+	} else if (strcmp(suspend, "on") == 0) {
 		unsigned long data;
+
+		if (verbose)
+			printf(_("suspend mode: on; reading rtc\n"));
 
 		do {
 			t = read(fd, &data, sizeof data);
@@ -499,6 +507,12 @@ int main(int argc, char **argv)
 			if (verbose)
 				printf("... %s: %03lx\n", devname, data);
 		} while (!(data & RTC_AF));
+
+	} else {
+		if (verbose)
+			printf(_("suspend mode: %s; suspending system\n"), suspend);
+		sync();
+		suspend_system(suspend);
 	}
 
 	if (ioctl(fd, RTC_AIE_OFF, 0) < 0)
