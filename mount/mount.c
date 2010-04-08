@@ -1120,16 +1120,15 @@ loop_check(const char **spec, const char **type, int *flags,
   *loopfile = *spec;
 
   /* Automatically create a loop device from a regular file if a filesystem
-   * is not specified.
+   * is not specified or the filesystem is known for libblkid (these
+   * filesystems work with block devices only).
    *
    * Note that there is not a restriction (on kernel side) that prevents regular
    * file as a mount(2) source argument. A filesystem that is able to mount
    * regular files could be implemented.
-   *
-   * If the filesystem type is specified than "-o loop" is required to create a
-   * loop device.
    */
-  if (!*loop && (!*type || strcmp(*type, "auto") == 0)) {
+  if (!*loop && (!*type || strcmp(*type, "auto") == 0 ||
+			   fsprobe_known_fstype(*type))) {
     struct stat st;
     if (stat(*loopfile, &st) == 0)
       *loop = S_ISREG(st.st_mode);

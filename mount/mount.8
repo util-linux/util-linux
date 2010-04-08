@@ -2560,13 +2560,14 @@ will try to find some unused loop device and use that, for example
 The mount command
 .B automatically
 creates a loop device from a regular file if a filesystem type is
-not specified, for example:
+not specified or the filesystem is known for libblkid, for example:
 .RS
 .sp
 .B "mount /tmp/disk.img /mnt"
 .sp
+.B "mount -t ext3 /tmp/disk.img /mnt"
+.sp
 .RE
-
 This type of mount knows about four options, namely
 .BR loop ", " offset ", " sizelimit " and " encryption ,
 that are really options to
