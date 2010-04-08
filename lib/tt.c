@@ -541,7 +541,7 @@ static void print_header(struct tt *tb, char *buf, size_t bufsz)
 {
 	struct list_head *p;
 
-	if (tb->flags & TT_FL_NOHEADINGS)
+	if ((tb->flags & TT_FL_NOHEADINGS) || list_empty(&tb->tb_lines))
 		return;
 
 	/* set width according to the size of data
