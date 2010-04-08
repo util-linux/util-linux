@@ -1,0 +1,148 @@
+.\" -*- nroff -*-
+.TH FINDMNT 8 "Apr 2010" "Version 1.0"
+.SH NAME
+findmnt \- find a filesystem
+.SH SYNOPSIS
+.B findmnt
+.RB [ options ]
+.sp
+.B findmnt
+.RB [ options ]
+.IR device | mountpoint
+.sp
+.B findmnt
+.RB [ options ]
+.RB [ \--source ]
+.IR device
+.RB [ \--target ]
+.IR mountpoint
+.SH DESCRIPTION
+.B findmnt
+will list all mounted filesytems or search for a filesystem. The
+.B findmnt
+is able to search in
+.IR /etc/fstab ,
+.IR /etc/mtab
+or
+.IR /proc/self/mountinfo .
+If
+.IR device
+or
+.IR mountpoint
+is not given, all filesystems are show.
+.PP
+The command prints all mounted filesystems in tree-like format by default.
+.SH OPTIONS
+.IP "\fB\-h, \-\-help\fP"
+Print help and exit.
+.IP "\fB\-s, \-\-fstab\fP"
+Search in
+.IR /etc/fstab .
+The output is in the list format (see --list).
+.IP "\fB\-m, \-\-mtab\fP"
+Search in
+.IR /etc/mtab .
+The output is in the list format (see --list).
+.IP "\fB\-k, \-\-kernel\fP"
+Search in
+.IR /proc/self/mountinfo .
+The output is in the tree-like format. This is the default.
+.IP "\fB\-c, \-\-canonicalize\fP"
+Canonicalize all printed paths.
+.IP "\fB\-d, \-\-direction \fIword\fP"
+Search direction -
+.IR forward
+or
+.IR backward .
+.IP "\fB\-e, \-\-evaluate\fP"
+Convert all tags (LABEL or UUID) to the device names.
+.IP "\fB\-f, \-\-first-only\fP"
+Print the first matching filesystem only.
+.IP "\fB\-i, \-\-invert\fP"
+Invert sense of matching.
+.IP "\fB\-l, \-\-list\fP"
+Use list output format.
+.IP "\fB\-n, \-\-noheadings\fP"
+Do not print header line.
+.IP "\fB\-u, \-\-notruncate\fP"
+Do not truncate text in columns. The default is not truncate
+.BR TARGET ,
+.BR SOURCE ,
+.BR UUID
+and
+.BR LABEL
+columns. This option disables text truncation in the all others columns.
+.IP "\fB\-O, \-\-options \fIlist\fP"
+Used to limit the set of printed filesystems. More than one option
+may be specified in a comma separated list. The
+.B \-t
+and
+.B \-O
+options are cumulative in effect. It is different from
+.B \-t
+in that each option is matched exactly; a leading
+.I no
+at the beginning
+of one option does not negate the rest. For more details see
+.BR mount (8).
+.IP "\fB\-o, \-\-output \fIlist\fP"
+Define output columns. Currently are supported
+.BR SOURCE ,
+.BR TARGET ,
+.BR FSTYPE ,
+.BR OPTIONS ,
+.BR LABEL
+and
+.BR UUID .
+The
+.BR TARGET
+column contains tree formatting if the
+.B \-\-list
+or
+.B \-\-raw
+options are not specified.
+.IP "\fB\-r, \-\-raw\fP"
+Use raw output format.
+.IP "\fB\-a, \-\-ascii\fP"
+Use ascii chars for tree formatting.
+.IP "\fB\-t, \-\-types \fIlist\fP"
+Used to limit the set of printed filesystems. More than one type may be
+specified in a comma separated list. The list of filesystem types can be
+prefixed with
+.I no
+to specify the filesystem types on which no action should be taken. For
+more details see
+.BR mount (8).
+.IP "\fB\-S, \-\-source \fIspec\fP"
+Explicitly define mount source. Supported are device, LABEL= or UUID=.
+.IP "\fB\-T, \-\-target \fIdir\fP"
+Explicitly define mount target (mountpoint directory).
+.SH EXAMPLES
+.IP "\fBfindmnt \-\-fstab \-t nfs\fP"
+Prints all nfs filesystems defined in
+.IR /etc/fstab .
+.IP "\fBfindmnt \-\-fstab /mnt/foo\fP"
+Prints all
+.IR /etc/fstab
+filesystems where mountpoint directory is /mnt/foo. It also prints bind mounts where /mnt/foo
+is a source.
+.IP "\fBfindmnt \-\-fstab --target /mnt/foo\fP"
+Prints all
+.IR /etc/fstab
+filesystems where mountpoint directory is /mnt/foo.
+.IP "\fBfindmnt --fstab --evaluate\fP"
+Prints all
+.IR /etc/fstab
+filesystems and converts LABEL= and UUID= tags to the real device names.
+.IP "\fBfindmnt -n --raw --evaluate --output=target LABEL=/boot
+Prints only mountpoint where is mounted filesystem with a label "/boot".
+.SH AUTHORS
+.nf
+Karel Zak <kzak@redhat.com>
+.fi
+.SH SEE ALSO
+.BR mount (8),
+.BR fstab (5)
+.SH AVAILABILITY
+The findmnt command is part of the util-linux-ng package and is available from
+ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
