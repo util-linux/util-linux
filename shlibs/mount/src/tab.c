@@ -228,6 +228,9 @@ int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
 	if (!tb || !root)
 		return -1;
 
+	DBG(DEBUG_TAB, fprintf(stderr,
+		"libmount: %s: lookup root fs\n", tb->filename));
+
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
 		int id = mnt_fs_get_parent_id(fs);
@@ -262,6 +265,10 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
 
 	if (!tb || !itr || !parent)
 		return -1;
+
+	DBG(DEBUG_TAB, fprintf(stderr,
+		"libmount: %s: lookup next child of %s\n",
+		tb->filename, mnt_fs_get_target(parent)));
 
 	parent_id = mnt_fs_get_id(parent);
 	if (!parent_id)
@@ -365,6 +372,9 @@ int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 {
 	if (!tb || !itr || !fs || !match_func)
 		return -1;
+
+	DBG(DEBUG_TAB, fprintf(stderr,
+		"libmount: %s: lookup next fs\n", tb->filename));
 
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &tb->ents);
