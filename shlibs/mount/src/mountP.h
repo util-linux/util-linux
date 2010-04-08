@@ -41,11 +41,9 @@
 #ifdef CONFIG_LIBMOUNT_DEBUG
 #include <stdio.h>
 extern int libmount_debug_mask;
-extern void mnt_init_debug(int mask);
 #define DBG(m,x)	if ((m) & libmount_debug_mask) x
 #else
 #define DBG(m,x)
-#define mnt_init_debug(x)
 #endif
 
 #ifdef TEST_PROGRAM

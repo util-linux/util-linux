@@ -129,6 +129,7 @@ global:
 	mnt_tab_strerror;
 	mnt_tab_update_file;
 	mnt_unlock_file;
+	mnt_init_debug;
 local:
 	*;
 };

@@ -9,7 +9,6 @@
 
 #include "mountP.h"
 
-#ifdef CONFIG_LIBMOUNT_DEBUG
 int libmount_debug_mask;
 
 void mnt_init_debug(int mask)
@@ -28,4 +27,3 @@ void mnt_init_debug(int mask)
 				libmount_debug_mask);
 	libmount_debug_mask |= DEBUG_INIT;
 }
-#endif

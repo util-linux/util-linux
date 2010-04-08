@@ -102,6 +102,8 @@ typedef struct _mnt_fs mnt_fs;
  */
 typedef struct _mnt_tab mnt_tab;
 
+/* init.c */
+extern void mnt_init_debug(int mask);
 
 /* version.c */
 extern int mnt_parse_version_string(const char *ver_string);
