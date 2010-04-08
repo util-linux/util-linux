@@ -26,7 +26,7 @@ static struct topology_val {
 
 	long  ioc;
 
-	/* functions to set probing resut */
+	/* functions to set probing result */
 	int (*set_ulong)(blkid_probe, unsigned long);
 	int (*set_int)(blkid_probe, int);
 

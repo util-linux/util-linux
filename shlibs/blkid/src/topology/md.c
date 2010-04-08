@@ -1,7 +1,7 @@
 /*
  * Linux Software RAID (md) topology
- * -- this is fallback for old systems where the toplogy information are not
- *    exporte dy sysfs
+ * -- this is fallback for old systems where the topology information is not
+ *    exported by sysfs
  *
  * Copyright (C) 2009 Karel Zak <kzak@redhat.com>
  *

@@ -17,9 +17,9 @@
 /**
  * SECTION:topology
  * @title: Topology information
- * @short_description: block device tolology information.
+ * @short_description: block device topology information.
  *
- * The tolology chain provides details about Linux block devices, for more
+ * The topology chain provides details about Linux block devices, for more
  * information see:
  *
  *      Linux kernel Documentation/ABI/testing/sysfs-block
@@ -40,7 +40,7 @@
  * @OPTIMAL_IO_SIZE: usually the stripe width for RAID or zero. For RAID arrays
  *                   it is usually the stripe width or the internal track size.
  *
- * @ALIGNMENT_OFFSET: indicates how many bytes the beginning o the device is
+ * @ALIGNMENT_OFFSET: indicates how many bytes the beginning of the device is
  *                    offset from the disk's natural alignment.
  *
  * The NAME=value tags are not defined when the corresponding topology value
@@ -49,7 +49,7 @@
  *
  * Binary interface:
  *
- * blkid_probe_get_tolology()
+ * blkid_probe_get_topology()
  *
  * blkid_topology_get_'VALUENAME'()
  */
@@ -126,13 +126,13 @@ int blkid_probe_enable_topology(blkid_probe pr, int enable)
  *
  * WARNING: the returned object will be overwritten by the next
  *          blkid_probe_get_topology() call for the same @pr. If you want to
- *          use more blkid_tolopogy objects in the same time you have to create
+ *          use more blkid_topopogy objects in the same time you have to create
  *          more blkid_probe handlers (see blkid_new_probe()).
  *
  * TODO:    add blkid_ref() and blkid_unref() to allows to use blkid_topology
  *          independently on libblkid probing stuff.
  *
- * Returns: blkid_tolopogy, or NULL in case of error.
+ * Returns: blkid_topopogy, or NULL in case of error.
  */
 blkid_topology blkid_probe_get_topology(blkid_probe pr)
 {
@@ -231,7 +231,7 @@ static int topology_set_value(blkid_probe pr, const char *name,
 }
 
 /* the topology info is complete when we have at least "minimum_io_size" which
- * is provides by all blkid topology drivers */
+ * is provided by all blkid topology drivers */
 static int topology_is_complete(blkid_probe pr)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
@@ -252,7 +252,7 @@ int blkid_topology_set_alignment_offset(blkid_probe pr, int val)
 {
 	unsigned long xval;
 
-	/* Welcome to Hell. The kernel is able to returns -1 as an
+	/* Welcome to Hell. The kernel is able to return -1 as an
 	 * alignment_offset if no compatible sizes and alignments
 	 * exist for stacked devices.
 	 *
@@ -287,7 +287,7 @@ int blkid_topology_set_optimal_io_size(blkid_probe pr, unsigned long val)
 }
 
 /* BLKSSZGET is provided on all systems since 2.3.3 -- so we don't have to
- * waste time with sysfs or or.
+ * waste time with sysfs.
  */
 static int topology_set_logical_sector_size(blkid_probe pr)
 {
