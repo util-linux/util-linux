@@ -4,6 +4,16 @@
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
+
+/**
+ * SECTION: optls
+ * @title: Options container
+ * @short_description: high-level API for work with parsed mount options
+ *
+ * The optls container allows to work with parsed mount options and generate
+ * arguments for mount(2) syscall, output to mtab or analyze userspace specific
+ * options.
+ */
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -52,7 +62,8 @@ void mnt_free_optls(mnt_optls *ls)
  * @map: pointer to the custom map
  *
  * Stores pointer to the custom options map (options description). The map has
- * to be accessible all time when the libmount works with options.
+ * to be accessible all time when the libmount works with options. (The map is
+ * usually a static array.)
  *
  * All already stored unknown mount options are reverified against the new map.
  * Note, it's recommented to add all maps to the @optls container before options
@@ -60,6 +71,8 @@ void mnt_free_optls(mnt_optls *ls)
  *
  * Example (add new options "foo" and "bar=<data>"):
  *
+ * <informalexample>
+ *   <programlisting>
  *     #define MY_MS_FOO   (1 << 1)
  *     #define MY_MS_BAR   (1 << 2)
  *
@@ -71,6 +84,8 @@ void mnt_free_optls(mnt_optls *ls)
  *     };
  *
  *     mnt_optls_add_map(ls, myoptions);
+ *   </programlisting>
+ * </informalexample>
  *
  * Returns: 0 on success, 1 on failed verification, or -1 in case of error.
  */
@@ -108,7 +123,9 @@ int mnt_optls_add_map(mnt_optls *ls, const struct mnt_optmap *map)
  * @ls: pointer to mnt_optls instance
  * @map_id: built-in map id (see mnt_get_builtin_map())
  *
- * Returns 0 on success or -1 in case of error.
+ * Same as mnt_optls_add_map(), but works with libmount built in maps.
+ *
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_optls_add_builtin_map(mnt_optls *ls, int id)
 {
@@ -165,10 +182,10 @@ mnt_optent *mnt_optls_add_option(mnt_optls *ls,
  * @ls: pointer to mnt_optls instance.
  * @optstr: zero terminated string with mount options (comma separaed list)
  *
- * Parses @optstr and all options from @optstr are added to @optls.  It's
+ * Parses @optstr and all options from @optstr are added to the @optls. It's
  * possible to call this function more than once. The new options from @optstr
  * will be appended to the container.
-*
+ *
  * The options are accessible by mnt_optls_next_option().
  *
  * If the @optls container is associated with any options map(s), all new
@@ -183,7 +200,7 @@ mnt_optent *mnt_optls_add_option(mnt_optls *ls,
  *      mnt_optls_add_option(ls, "user", "snake");
  *      mnt_optls_add_option(ls, "noexec", NULL);
  *
- * Returns 0 on success or -1 in case of error.
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_optls_parse_optstr(mnt_optls *ls, const char *optstr)
 {
@@ -210,7 +227,7 @@ int mnt_optls_parse_optstr(mnt_optls *ls, const char *optstr)
  * @ls: pointer to mnt_optls instance
  * @name: option name
  *
- * Returns 0 on success, 1 if @name not found and -1 in case of error.
+ * Returns: 0 on success, 1 if @name not found and -1 in case of error.
  */
 int mnt_optls_remove_option(mnt_optls *ls, const char *name)
 {
@@ -254,7 +271,7 @@ int mnt_optls_remove_option(mnt_optls *ls, const char *name)
  *
  * See also mnt_optent_get_flag() and mnt_optls_remove_option_by_iflags().
  *
- * Returns number of removed options or -1 in case of error.
+ * Returns: number of removed options or -1 in case of error.
  */
 int mnt_optls_remove_option_by_flags(mnt_optls *ls,
 		const struct mnt_optmap *map, const int flags)
@@ -302,7 +319,7 @@ int mnt_optls_remove_option_by_flags(mnt_optls *ls,
  *
  * See also mnt_optent_get_flag() and mnt_optls_remove_option_by_flags().
  *
- * Returns number of removed options or -1 in case of error.
+ * Returns: number of removed options or -1 in case of error.
  */
 int mnt_optls_remove_option_by_iflags(mnt_optls *ls,
 		const struct mnt_optmap *map, const int flags)
@@ -346,7 +363,8 @@ int mnt_optls_remove_option_by_iflags(mnt_optls *ls,
  * @option: returns pointer to the option object
  *
  * Example (print all options):
- *
+ * <informalexample>
+ *   <programlisting>*
  *     mnt_optent *option;
  *     mnt_optls *ls = mnt_optls_new();
  *
@@ -354,8 +372,10 @@ int mnt_optls_remove_option_by_iflags(mnt_optls *ls,
  *
  *     while(mnt_optls_next_option(ls, itr, NULL, &option))
  *         printf("%s\n", mnt_optent_get_name(option)));
+ *   </programlisting>
+ * </informalexample>
  *
- * Returns 0 on succes, -1 in case of error or 1 at end of list.
+ * Returns: 0 on succes, -1 in case of error or 1 at end of list.
  */
 int mnt_optls_next_option(mnt_optls *ls, mnt_iter *itr,
 		const struct mnt_optmap *map, mnt_optent **option)
@@ -382,7 +402,7 @@ int mnt_optls_next_option(mnt_optls *ls, mnt_iter *itr,
  * @ls: pointer to mnt_optls instance
  * @name: options name
  *
- * Returns the option or NULL.
+ * Returns: the option or NULL.
  */
 mnt_optent *mnt_optls_get_option(mnt_optls *ls, const char *name)
 {
@@ -416,7 +436,7 @@ mnt_optent *mnt_optls_get_option(mnt_optls *ls, const char *name)
  * mnt_optls_create_mountflags() that returns MNT_MFLAG options
  * (mount(2) flags) only.
  *
- * Return IDs from all options.
+ * Return: IDs from all options.
  */
 int mnt_optls_get_ids(mnt_optls *ls, const struct mnt_optmap *map)
 {
@@ -444,7 +464,7 @@ int mnt_optls_get_ids(mnt_optls *ls, const struct mnt_optmap *map)
  * The mountflags are IDs from all MNT_MFLAG options. See "struct mnt_optmap".
  * For more details about mountflags see mount(2) syscall.
  *
- * Returns mount flags or 0.
+ * Returns: mount flags or 0.
  */
 int mnt_optls_create_mountflags(mnt_optls *ls)
 {
@@ -474,7 +494,7 @@ int mnt_optls_create_mountflags(mnt_optls *ls)
  *
  * For more details about mountdata see mount(2) syscall.
  *
- * Returns newly allocated string with mount options or NULL in case of error.
+ * Returns: newly allocated string with mount options or NULL in case of error.
  */
 char *mnt_optls_create_mountdata(mnt_optls *ls)
 {
@@ -510,7 +530,7 @@ err:
  * mnt_optls_create_mtab_optstr:
  * @ls: pointer to mnt_optls instance
  *
- * Returns newly allocated string with mount options for mtab.
+ * Returns: newly allocated string with mount options for mtab.
  */
 char *mnt_optls_create_mtab_optstr(mnt_optls *ls)
 {
@@ -547,8 +567,8 @@ err:
  * mnt_optls_create_userspace_optstr:
  * @ls: pointer to mnt_optls instance
  *
- * Returns newly allocated string with mount options that are
- * userspace specific (e.g. uhelper=).
+ * Returns: newly allocated string with mount options that are
+ * userspace specific (e.g. uhelper=,loop=).
  */
 char *mnt_optls_create_userspace_optstr(mnt_optls *ls)
 {
@@ -589,6 +609,8 @@ err:
  * @ls: pointer to mnt_optls instance
  *
  * Prints details about options container.
+ *
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_optls_print_debug(mnt_optls *ls, FILE *file)
 {

@@ -3,9 +3,13 @@
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
+ */
+
+/**
+ * SECTION: optmap
+ * @title: Option maps
+ * @short_description: description for mount options
  *
- * Option-maps
- * -----------
  * The mount(2) linux syscall uses two arguments for mount options:
  *
  *    1) mountflags (see MS_* macros in linux/fs.h)
@@ -45,6 +49,8 @@
  *    - MNT_LINUX_MAP     -- fs-independent kernel mount options (usually MS_* flags)
  *    - MNT_USERSPACE_MAP -- userspace specific mount options (e.g. "user", "loop")
  *
+ * For more details about option map struct see "struct mnt_optmap" in
+ * mount/mount.h.
  */
 #include <string.h>
 #include <stdlib.h>
@@ -153,7 +159,7 @@ static const struct mnt_optmap userspace_opts_map[] =
  * MNT_USERSPACE_MAP - userpace mount(8) specific mount options
  *                     (e.g user=, _netdev, ...)
  *
- * Returns internal (static) libmount map.
+ * Returns: static built-in libmount map.
  */
 const struct mnt_optmap *mnt_get_builtin_optmap(int id)
 {

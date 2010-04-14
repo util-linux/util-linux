@@ -1,31 +1,37 @@
 /*
- * Copyright (C) 2008 Karel Zak <kzak@redhat.com>
+ * Copyright (C) 2008-2010 Karel Zak <kzak@redhat.com>
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
+ */
+
+/**
+ * SECTION: tab
+ * @title: Filesystems container
+ * @short_description: container for entries from fstab/mtab/mountinfo
  *
- * Note:
- *	mnt_tab_find_* functions are mount(8) compatible. It means it tries
- *	to found an entry in more iterations where the first attempt is always
- *	based on comparison with unmodified (non-canonicalized or un-evaluated)
- *	paths or tags. For example fstab with two entries:
  *
- *		LABEL=foo	/foo	auto   rw
- *		/dev/foo	/foo	auto   rw
+ * Note that mnt_tab_find_* functions are mount(8) compatible. These functions
+ * try to found an entry in more iterations where the first attempt is always
+ * based on comparison with unmodified (non-canonicalized or un-evaluated)
+ * paths or tags. For example fstab with two entries:
  *
- *	where both lines are used for the *same* device, then
+ *	LABEL=foo	/foo	auto   rw
+ *	/dev/foo	/foo	auto   rw
  *
- *		mnt_tab_find_source(tb, "/dev/foo", &fs);
+ * where both lines are used for the *same* device, then
  *
- *	will returns the second line, and
+ *	mnt_tab_find_source(tb, "/dev/foo", &fs);
  *
- *		mnt_tab_find_source(tb, "LABEL=foo", &fs);
+ * will returns the second line, and
  *
- *	will returns the first entry, and
+ *	mnt_tab_find_source(tb, "LABEL=foo", &fs);
+ *
+ * will returns the first entry, and
  *
  *		mnt_tab_find_source(tb, "UUID=<anyuuid>", &fs);
  *
- *	will returns the first entry (if UUID matches with the device).
+ * will returns the first entry (if UUID matches with the device).
  */
 
 #include <string.h>
@@ -51,7 +57,7 @@
  * Note that this function does not parse the file. See also
  * mnt_tab_parse_file().
  *
- * Returns newly allocated tab struct.
+ * Returns: newly allocated tab struct.
  */
 mnt_tab *mnt_new_tab(const char *filename)
 {
@@ -97,7 +103,7 @@ void mnt_free_tab(mnt_tab *tb)
  * mnt_tab_get_nents:
  * @tb: pointer to tab
  *
- * Returns number of valid entries in tab.
+ * Returns: number of valid entries in tab.
  */
 int mnt_tab_get_nents(mnt_tab *tb)
 {
@@ -119,7 +125,7 @@ int mnt_tab_get_nents(mnt_tab *tb)
  *
  * See also mnt_new_cache().
  *
- * Returns 0 on success or -1 in case of error.
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_tab_set_cache(mnt_tab *tb, mnt_cache *mpc)
 {
@@ -134,7 +140,7 @@ int mnt_tab_set_cache(mnt_tab *tb, mnt_cache *mpc)
  * mnt_tab_get_cache:
  * @tb: pointer to tab
  *
- * Returns pointer to mnt_cache instance or NULL.
+ * Returns: pointer to mnt_cache instance or NULL.
  */
 mnt_cache *mnt_tab_get_cache(mnt_tab *tb)
 {
@@ -146,7 +152,7 @@ mnt_cache *mnt_tab_get_cache(mnt_tab *tb)
  * mnt_tab_get_name:
  * @tb: tab pointer
  *
- * Returns tab filename or NULL.
+ * Returns: tab filename or NULL.
  */
 const char *mnt_tab_get_name(mnt_tab *tb)
 {
@@ -161,7 +167,7 @@ const char *mnt_tab_get_name(mnt_tab *tb)
  *
  * Adds a new entry to tab.
  *
- * Returns 0 on success or -1 in case of error.
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_tab_add_fs(mnt_tab *tb, mnt_fs *fs)
 {
@@ -190,7 +196,7 @@ int mnt_tab_add_fs(mnt_tab *tb, mnt_fs *fs)
  * @tb: tab pointer
  * @fs: new entry
  *
- * Returns 0 on success or -1 in case of error.
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_tab_remove_fs(mnt_tab *tb, mnt_fs *fs)
 {
@@ -255,7 +261,7 @@ int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
  * Note that filesystems are returned in the order how was mounted (according to
  * IDs in /proc/self/mountinfo).
  *
- * Returns 0 on success, -1 in case of error or 1 at end of list.
+ * Returns: 0 on success, -1 in case of error or 1 at end of list.
  */
 int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
 			mnt_fs *parent, mnt_fs **chld)
@@ -313,7 +319,7 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
  * @itr: iterator
  * @fs: returns the next tab entry
  *
- * Returns 0 on success, -1 in case of error or 1 at end of list.
+ * Returns: 0 on success, -1 in case of error or 1 at end of list.
  *
  * Example (list all mountpoints from fstab in backward order):
  *
@@ -364,7 +370,7 @@ again:
  *
  * This function allows search in @tb.
  *
- * Returns -1 in case of error, 1 at end of table or 0 o success.
+ * Returns: -1 in case of error, 1 at end of table or 0 o success.
  */
 int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 		int (*match_func)(mnt_fs *, void *), void *userdata,
@@ -403,7 +409,7 @@ int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
  *
  * Sets @iter to the position of @fs in the file @tb.
  *
- * Returns 0 on success, -1 in case of error.
+ * Returns: 0 on success, -1 in case of error.
  */
 int mnt_tab_set_iter(mnt_tab *tb, mnt_iter *itr, mnt_fs *fs)
 {
@@ -431,7 +437,7 @@ int mnt_tab_set_iter(mnt_tab *tb, mnt_iter *itr, mnt_fs *fs)
  * against realpath(fs->target). The 2nd and 3rd iterations are not performed
  * when @tb cache is not set (see mnt_tab_set_cache()).
  *
- * Returns a tab entry or NULL.
+ * Returns: a tab entry or NULL.
  */
 mnt_fs *mnt_tab_find_target(mnt_tab *tb, const char *path, int direction)
 {
@@ -487,7 +493,7 @@ mnt_fs *mnt_tab_find_target(mnt_tab *tb, const char *path, int direction)
  * The 2nd, 3rd and 4th iterations are not performed when @tb cache is not
  * set (see mnt_tab_set_cache()).
  *
- * Returns a tab entry or NULL.
+ * Returns: a tab entry or NULL.
  */
 mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 {
@@ -587,7 +593,7 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
  * name) and mnt_tab_find_srcpath() is preformed. The second attempt is not
  * performed when @tb cache is not set (see mnt_tab_set_cache()).
 
- * Returns a tab entry or NULL.
+ * Returns: a tab entry or NULL.
  */
 mnt_fs *mnt_tab_find_tag(mnt_tab *tb, const char *tag,
 			const char *val, int direction)
@@ -632,7 +638,7 @@ mnt_fs *mnt_tab_find_tag(mnt_tab *tb, const char *tag,
  * about @source format (device, LABEL, UUID, ...). This function parses @source
  * and calls mnt_tab_find_tag() or mnt_tab_find_srcpath().
  *
- * Returns a tab entry or NULL.
+ * Returns: a tab entry or NULL.
  */
 mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int direction)
 {
@@ -670,7 +676,7 @@ mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int direction)
  * @fmt: per line printf-like format string (see MNT_MFILE_PRINTFMT)
  * @tb: tab pointer
  *
- * Returns 0 on success, -1 in case of error.
+ * Returns: 0 on success, -1 in case of error.
  */
 int mnt_tab_fprintf(mnt_tab *tb, FILE *f, const char *fmt)
 {
@@ -699,7 +705,7 @@ int mnt_tab_fprintf(mnt_tab *tb, FILE *f, const char *fmt)
  *
  * Writes tab to disk. Don't forget to lock the file (see mnt_lock()).
  *
- * Returns 0 on success, -1 in case of error.
+ * Returns: 0 on success, -1 in case of error.
  */
 int mnt_tab_update_file(mnt_tab *tb)
 {

@@ -5,6 +5,16 @@
  * GNU Lesser General Public License.
  */
 
+/**
+ * SECTION: optstr
+ * @title: Mount oprions string
+ * @short_description: low-level API for work with mount options
+ *
+ * This is simple and low-level API to work with mount options that are stored
+ * in string. This API is independent on the high-level options container and
+ * option maps.
+ */
+
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -129,7 +139,7 @@ static int mnt_optstr_locate_option(char *optstr, const char *name, char **begin
  *
  * Parses the first option in @optstr  or -1 in case of error.
  *
- * Returns 0 on success, 1 at the end of @optstr or -1 in case of error.
+ * Returns: 0 on success, 1 at the end of @optstr or -1 in case of error.
  */
 int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,
 					char **value, size_t *valuesz)

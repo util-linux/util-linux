@@ -3,10 +3,14 @@
  *
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
- *
- * The mnt_fs is representation of one line in a fstab / mtab / mountinfo.
  */
 
+/**
+ * SECTION: fs
+ * @title: Filesystem
+ * @short_description: mnt_fs is represents one entry in fstab/mtab/mountinfo
+ *
+ */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -20,7 +24,7 @@
 /**
  * mnt_new_fs:
  *
- * Returns newly allocated mnt_file fs.
+ * Returns: newly allocated mnt_file fs.
  */
 mnt_fs *mnt_new_fs(void)
 {
@@ -61,7 +65,7 @@ void mnt_free_fs(mnt_fs *fs)
  * mnt_fs_get_userdata:
  * @fs: mnt_file instance
  *
- * Returns private data set by mnt_fs_set_userdata() or NULL.
+ * Returns: private data set by mnt_fs_set_userdata() or NULL.
  */
 void *mnt_fs_get_userdata(mnt_fs *fs)
 {
@@ -74,7 +78,7 @@ void *mnt_fs_get_userdata(mnt_fs *fs)
  *
  * The "userdata" are library independent data.
  *
- * Returns 0 or -1 in case of error (if @fs is NULL).
+ * Returns: 0 or -1 in case of error (if @fs is NULL).
  */
 int mnt_fs_set_userdata(mnt_fs *fs, void *data)
 {
@@ -89,16 +93,13 @@ int mnt_fs_set_userdata(mnt_fs *fs, void *data)
  * @fs: mnt_file (fstab/mtab/mountinfo) fs
  *
  * The mount "source path" is:
- *	- a directory for 'bind' mounts (in fstab or mtab only)
- *	- a device name for standard mounts
- *	- NULL when path is not set (for example when TAG
- *	  (LABEL/UUID) is defined)
+ * - a directory for 'bind' mounts (in fstab or mtab only)
+ * - a device name for standard mounts
  *
  * See also mnt_fs_get_tag() and mnt_fs_get_source().
  *
- * Returns mount "source" path or NULL in case of error or when the path
+ * Returns: mount source path or NULL in case of error or when the path
  * is not defined.
- *
  */
 const char *mnt_fs_get_srcpath(mnt_fs *fs)
 {
@@ -115,7 +116,7 @@ const char *mnt_fs_get_srcpath(mnt_fs *fs)
 /**
  * @fs: mnt_file (fstab/mtab/mountinfo) fs
  *
- * Returns mount "source". Note that the source could be unparsed TAG
+ * Returns: mount source. Note that the source could be unparsed TAG
  * (LABEL/UUID). See also mnt_fs_get_srcpath() and mnt_fs_get_tag().
  */
 const char *mnt_fs_get_source(mnt_fs *fs)
@@ -150,7 +151,9 @@ int __mnt_fs_set_source(mnt_fs *fs, char *source)
  * @fs: fstab/mtab/mountinfo entry
  * @source: new source
  *
- * Returns 0 on success or -1 in case of error.
+ * This function creates a private copy (strdup()) of @source.
+ *
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_fs_set_source(mnt_fs *fs, const char *source)
 {
@@ -179,14 +182,15 @@ int mnt_fs_set_source(mnt_fs *fs, const char *source)
  *
  * "TAG" is NAME=VALUE (e.g. LABEL=foo)
  *
- * The TAG is the first column in the fstab file. The TAG
- * or "srcpath" has to be always set for all entries.
+ * The TAG is the first column in the fstab file. The TAG or "srcpath" has to
+ * be always set for all entries.
  *
  * See also mnt_fs_get_source().
  *
- * Example:
+ * <informalexample>
+ *   <programlisting>
  *	char *src;
- *	mnt_fs *fs = mnt_file_find_target(mf, "/home");
+ *	mnt_fs *fs = mnt_tab_find_target(tb, "/home", MNT_ITER_FORWARD);
  *
  *	if (!fs)
  *		goto err;
@@ -198,8 +202,10 @@ int mnt_fs_set_source(mnt_fs *fs, const char *source)
  *			printf("%s: %s\n", tag, val);	// LABEL or UUID
  *	} else
  *		printf("device: %s\n", src);		// device or bind path
+ *   </programlisting>
+ * </informalexample>
  *
- * Returns 0 on success or -1 in case that a TAG is not defined.
+ * Returns: 0 on success or -1 in case that a TAG is not defined.
  */
 int mnt_fs_get_tag(mnt_fs *fs, const char **name, const char **value)
 {
@@ -216,7 +222,7 @@ int mnt_fs_get_tag(mnt_fs *fs, const char **name, const char **value)
  * mnt_fs_get_target:
  * @fs: fstab/mtab/mountinfo entry pointer
  *
- * Returns pointer to mountpoint path or NULL
+ * Returns: pointer to mountpoint path or NULL
  */
 const char *mnt_fs_get_target(mnt_fs *fs)
 {
@@ -229,7 +235,9 @@ const char *mnt_fs_get_target(mnt_fs *fs)
  * @fs: fstab/mtab/mountinfo entry
  * @target: mountpoint
  *
- * Returns 0 on success or -1 in case of error.
+ * This function creates a private copy (strdup()) of @target.
+ *
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_fs_set_target(mnt_fs *fs, const char *target)
 {
@@ -253,7 +261,7 @@ int mnt_fs_set_target(mnt_fs *fs, const char *target)
  * mnt_fs_get_fstype:
  * @fs: fstab/mtab/mountinfo entry pointer
  *
- * Returns pointer to filesystem type.
+ * Returns: pointer to filesystem type.
  */
 const char *mnt_fs_get_fstype(mnt_fs *fs)
 {
@@ -287,7 +295,9 @@ int __mnt_fs_set_fstype(mnt_fs *fs, char *fstype)
  * @fs: fstab/mtab/mountinfo entry
  * @fstype: filesystem type
  *
- * Returns 0 on success or -1 in case of error.
+ * This function creates a private copy (strdup()) of @fstype.
+ *
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_fs_set_fstype(mnt_fs *fs, const char *fstype)
 {
@@ -308,7 +318,7 @@ int mnt_fs_set_fstype(mnt_fs *fs, const char *fstype)
  * mnt_fs_get_optstr:
  * @fs: fstab/mtab/mountinfo entry pointer
  *
- * Returns pointer to mount option string with all options (FS and VFS)
+ * Returns: pointer to mount option string with all options (FS and VFS)
  */
 const char *mnt_fs_get_optstr(mnt_fs *fs)
 {
@@ -321,22 +331,30 @@ const char *mnt_fs_get_optstr(mnt_fs *fs)
  * @fs: fstab/mtab/mountinfo entry
  * @optstr: options string
  *
- * Returns 0 on success or -1 in case of error.
+ * This function creates a private copy (strdup()) of @optstr.
+ *
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_fs_set_optstr(mnt_fs *fs, const char *optstr)
 {
+	char *p;
+
 	assert(fs);
 
 	if (!fs || !optstr)
 		return -1;
+	p = strdup(optstr);
+	if (!p)
+		return -1;
+
 	free(fs->optstr);
 	free(fs->fs_optstr);
 	free(fs->vfs_optstr);
 	fs->fs_optstr = fs->vfs_optstr = NULL;
 
-	fs->optstr = strdup(optstr);
+	fs->optstr = p;
 
-	return fs->optstr ? 0 : -1;
+	return 0;
 }
 
 /**
@@ -345,7 +363,7 @@ int mnt_fs_set_optstr(mnt_fs *fs, const char *optstr)
  *
  * This function works for "mountinfo" files only.
  *
- * Returns pointer to superblock (fs-depend) mount option string or NULL.
+ * Returns: pointer to superblock (fs-depend) mount option string or NULL.
  */
 const char *mnt_fs_get_fs_optstr(mnt_fs *fs)
 {
@@ -359,7 +377,7 @@ const char *mnt_fs_get_fs_optstr(mnt_fs *fs)
  *
  * This function works for "mountinfo" files only.
  *
- * Returns pointer to fs-independent (VFS) mount option string or NULL.
+ * Returns: pointer to fs-independent (VFS) mount option string or NULL.
  */
 const char *mnt_fs_get_vfs_optstr(mnt_fs *fs)
 {
@@ -372,7 +390,7 @@ const char *mnt_fs_get_vfs_optstr(mnt_fs *fs)
  * mnt_fs_get_freq:
  * @fs: fstab/mtab/mountinfo entry pointer
  *
- * Returns "dump frequency in days".
+ * Returns: "dump frequency in days".
  */
 int mnt_fs_get_freq(mnt_fs *fs)
 {
@@ -385,7 +403,7 @@ int mnt_fs_get_freq(mnt_fs *fs)
  * @fs: fstab/mtab entry pointer
  * @freq: dump frequency in days
  *
- * Returns 0 on success or -1 in case of error.
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_fs_set_freq(mnt_fs *fs, int freq)
 {
@@ -400,7 +418,7 @@ int mnt_fs_set_freq(mnt_fs *fs, int freq)
  * mnt_fs_get_passno:
  * @fs: fstab/mtab entry pointer
  *
- * Returns "pass number on parallel fsck".
+ * Returns: "pass number on parallel fsck".
  */
 int mnt_fs_get_passno(mnt_fs *fs)
 {
@@ -413,7 +431,7 @@ int mnt_fs_get_passno(mnt_fs *fs)
  * @fs: fstab/mtab entry pointer
  * @passno: pass number
  *
- * Returns 0 on success or -1 in case of error.
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_fs_set_passno(mnt_fs *fs, int passno)
 {
@@ -469,7 +487,7 @@ dev_t mnt_fs_get_devno(mnt_fs *fs)
  * @value: returns pointer to the begin of the value (e.g. name=VALUE) or NULL
  * @valsz: returns size of options value or 0
  *
- * Returns 0 on success, 1 when not found the @name or -1 in case of error.
+ * Returns: 0 on success, 1 when not found the @name or -1 in case of error.
  */
 int mnt_fs_get_option(mnt_fs *fs, const char *name,
 		char **value, size_t *valsz)
@@ -491,7 +509,7 @@ int mnt_fs_get_option(mnt_fs *fs, const char *name,
  *
  * The 2nd and 3rd attempts are not performed when @cache is NULL.
  *
- * Returns 1 if @fs target is equal to @target else 0.
+ * Returns: 1 if @fs target is equal to @target else 0.
  */
 int mnt_fs_match_target(mnt_fs *fs, const char *target, mnt_cache *cache)
 {
@@ -533,7 +551,7 @@ int mnt_fs_match_target(mnt_fs *fs, const char *target, mnt_cache *cache)
  * The 2nd, 3rd and 4th attempts are not performed when @cache is NULL. The
  * 2nd and 3rd attempts are not performed if @fs->source is tag.
  *
- * Returns 1 if @fs source is equal to @source else 0.
+ * Returns: 1 if @fs source is equal to @source else 0.
  */
 int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache)
 {
@@ -601,7 +619,7 @@ int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache)
  *
  * For more details see mnt_match_fstype().
  *
- * Returns 1 if @fs type is matching to @types else 0. The function returns
+ * Returns: 1 if @fs type is matching to @types else 0. The function returns
  * 0 when types is NULL.
  */
 int mnt_fs_match_fstype(mnt_fs *fs, const char *types)
@@ -616,7 +634,7 @@ int mnt_fs_match_fstype(mnt_fs *fs, const char *types)
  *
  * For more details see mnt_match_options().
  *
- * Returns 1 if @fs type is matching to @options else 0. The function returns
+ * Returns: 1 if @fs type is matching to @options else 0. The function returns
  * 0 when types is NULL.
  */
 int mnt_fs_match_options(mnt_fs *fs, const char *options)
@@ -662,7 +680,7 @@ static char *mangle(const char *s)
 /**
  * mnt_fprintf_line:
  * @f: FILE
- * @fmt: printf-like format string (see MNT_MFILE_PRINTFMT)
+ * @fmt: printf-like format string (see MNT_TAB_PRINTFMT)
  * @source: (spec) device name or tag=value
  * @target: mountpoint
  * @fstype: filesystem type
@@ -670,7 +688,12 @@ static char *mangle(const char *s)
  * @freq: dump frequency in days
  * @passno: pass number on parallel fsck
  *
- * Returns return value from fprintf().
+ * It's recommended to use this function rather than directly call fprintf() to
+ * write an entry to mtab/fstab. All data in these files has to be properly
+ * formatted (for example space within paths/tags has to be escaped, see
+ * fstab(5) for more details).
+ *
+ * Returns: return value from fprintf().
  */
 int mnt_fprintf_line(	FILE *f,
 			const char *fmt,
@@ -709,9 +732,9 @@ done:
  * mnt_fs_fprintf:
  * @fs: fstab/mtab/mountinfo entry
  * @f: FILE
- * @fmt: printf-like format string (see MNT_MFILE_PRINTFMT)
+ * @fmt: printf-like format string (see MNT_TAB_PRINTFMT)
  *
- * Returns return value from fprintf().
+ * Returns: return value from fprintf().
  */
 int mnt_fs_fprintf(mnt_fs *fs, FILE *f, const char *fmt)
 {
@@ -736,7 +759,7 @@ int mnt_fs_fprintf(mnt_fs *fs, FILE *f, const char *fmt)
  * @fs: fstab/mtab/mountinfo entry
  * @file: output
  *
- * Returns 0 on success or -1 in case of error.
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_fs_print_debug(mnt_fs *fs, FILE *file)
 {

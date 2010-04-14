@@ -4,6 +4,16 @@
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
+
+/**
+ * SECTION: lock
+ * @title: Mtab locking
+ * @short_description: locking methods for work with /etc/mtab
+ *
+ * The lock is backwardly compatible with the standard linux /etc/mtab locking.
+ * Note, it's necessary to use the same locking schema in all application that
+ * access the file.
+ */
 #include <string.h>
 #include <stdlib.h>
 #include <sys/types.h>
@@ -39,7 +49,7 @@ struct _mnt_lock {
  * @lockfile: path to lockfile or NULL (default is _PATH_MOUNTED_LOCK)
  * @id: unique linkfile identifier or 0 (default is getpid())
  *
- * Returns newly allocated lock handler or NULL on case of error.
+ * Returns: newly allocated lock handler or NULL on case of error.
  */
 mnt_lock *mnt_new_lock(const char *lockfile, pid_t id)
 {
@@ -79,7 +89,7 @@ void mnt_free_lock(mnt_lock *ml)
  * mnt_lock_get_lockfile:
  * @ml: mnt_lock handler
  *
- * Returns path to lockfile.
+ * Returns: path to lockfile.
  */
 const char *mnt_lock_get_lockfile(mnt_lock *ml)
 {
@@ -94,7 +104,7 @@ const char *mnt_lock_get_lockfile(mnt_lock *ml)
  * mnt_lock_get_linkfile:
  * @ml: mnt_lock handler
  *
- * Returns unique (per process) path to linkfile.
+ * Returns: unique (per process) path to linkfile.
  */
 const char *mnt_lock_get_linkfile(mnt_lock *ml)
 {
@@ -126,7 +136,7 @@ static void mnt_lockalrm_handler(int sig)
  * Waits for F_SETLKW, unfortunately we have to use SIGALRM here to interrupt
  * fcntl() to avoid never ending waiting.
  *
- * Returns 0 on success, 1 on timeout, -errno on error.
+ * Returns: 0 on success, 1 on timeout, -errno on error.
  */
 static int mnt_wait_lock(mnt_lock *ml, struct flock *fl, time_t maxtime)
 {
@@ -189,7 +199,7 @@ static int mnt_wait_lock(mnt_lock *ml, struct flock *fl, time_t maxtime)
  * There was very small number of attempts and extremely long waiting (1s)
  * that is useless on machines with large number of mount processes.
  *
- * Now we wait few thousand microseconds between attempts and we have global
+ * Now we wait few thousand microseconds between attempts and we have a global
  * time limit (30s) rather than limit for number of attempts. The advantage
  * is that this method also counts time which we spend in fcntl(F_SETLKW) and
  * number of attempts is not restricted.
@@ -256,11 +266,13 @@ void mnt_unlock_file(mnt_lock *ml)
  *   1. create linkfile (e.g. /etc/mtab~.<pid>)
  *   2. link linkfile --> lockfile (e.g. /etc/mtab~.<pid> --> /etc/mtab~)
  *
- *   3. a) link() successful: setups F_SETLK lock (see fcnlt(2))
- *      b) link() failed: wait (max 30s) on F_SETLKW lock, goto 2.
+ *   3. a) link() success: setups F_SETLK lock (see fcnlt(2))
+ *      b) link() failed:  wait (max 30s) on F_SETLKW lock, goto 2.
  *
  * Example:
  *
+ * <informalexample>
+ *   <programlisting>
  * mnt_lock *ml;
  *
  * void unlock_fallback(void)
@@ -292,8 +304,10 @@ void mnt_unlock_file(mnt_lock *ml)
  *	ml = NULL;
  *	return 0;
  * }
+ *   </programlisting>
+ * </informalexample>
  *
- * Returns 0 on success or -1 in case of error.
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_lock_file(mnt_lock *ml)
 {
@@ -497,6 +511,10 @@ int test_lock(struct mtest *ts, int argc, char *argv[])
 	return 0;
 }
 
+/*
+ * Note that this test should be executed from a script that creates many
+ * parallel processes, otherwise this test does not make sense.
+ */
 int main(int argc, char *argv[])
 {
 	struct mtest tss[] = {

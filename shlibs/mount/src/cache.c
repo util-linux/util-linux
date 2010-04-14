@@ -5,6 +5,16 @@
  * GNU Lesser General Public License.
  */
 
+/**
+ * SECTION: cache
+ * @title: Cache
+ * @short_description: paths and tags (UUID/LABEL) caching
+ *
+ * The cache is a very simple API for work with tags (LABEL, UUID, ...) and
+ * paths. The cache uses libblkid as a backend from TAGs resolution.
+ *
+ * All returned paths are always canonicalized.
+ */
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -20,7 +30,7 @@
 #include "mountP.h"
 
 /*
- * Canonicalized (resolved) paths cache
+ * Canonicalized (resolved) paths & tags cache
  */
 #define MNT_CACHE_CHUNKSZ	128
 
@@ -55,7 +65,7 @@ struct _mnt_cache {
 /**
  * mnt_new_cache:
  *
- * Returns new mnt_cache instance or NULL in case of ENOMEM error.
+ * Returns: new mnt_cache instance or NULL in case of ENOMEM error.
  */
 mnt_cache *mnt_new_cache(void)
 {
@@ -66,7 +76,7 @@ mnt_cache *mnt_new_cache(void)
  * mnt_free_cache:
  * @cache: pointer to mnt_cache instance
  *
- * Deallocates mnt_cache.
+ * Deallocates the cache.
  */
 void mnt_free_cache(mnt_cache *cache)
 {
@@ -158,9 +168,9 @@ error:
 /**
  * mnt_cache_find_path:
  * @cache: pointer to mnt_cache instance
- * @path: requested "native" (non-canonicalized) path
+ * @path: "native" (non-canonicalized) path
  *
- * Returns cached canonicalized path or NULL.
+ * Returns: cached canonicalized path or NULL.
  */
 const char *mnt_cache_find_path(mnt_cache *cache, const char *path)
 {
@@ -188,7 +198,7 @@ const char *mnt_cache_find_path(mnt_cache *cache, const char *path)
  * @token: tag name
  * @value: tag value
  *
- * Returns cached path or NULL.
+ * Returns: cached path or NULL.
  */
 const char *mnt_cache_find_tag(mnt_cache *cache,
 			const char *token, const char *value)
@@ -223,7 +233,7 @@ const char *mnt_cache_find_tag(mnt_cache *cache,
  *
  * Reads @devname LABEL and UUID to the @cache.
  *
- * Returns: 0 if at least on tag was added, 1 if no tag was added or
+ * Returns: 0 if at least one tag was added, 1 if no tag was added or
  *          -1 in case of error.
  */
 int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
@@ -355,7 +365,7 @@ char *mnt_cache_find_tag_value(mnt_cache *cache,
  * @path: "native" path
  * @cache: cache for results or NULL
  *
- * Returns absolute path or NULL in case of error. The result has to be
+ * Returns: absolute path or NULL in case of error. The result has to be
  * deallocated by free() if @cache is NULL.
  */
 char *mnt_resolve_path(const char *path, mnt_cache *cache)
@@ -401,7 +411,7 @@ error:
  * @value: tag value
  * @cache: for results or NULL
  *
- * Returns device name or NULL in case of error. The result has to be
+ * Returns: device name or NULL in case of error. The result has to be
  * deallocated by free() if @cache is NULL.
  */
 char *mnt_resolve_tag(const char *token, const char *value, mnt_cache *cache)
@@ -439,7 +449,7 @@ error:
  * @spec: path or tag
  * @cache: paths cache
  *
- * Returns canonicalized path or NULL. The result has to be
+ * Returns: canonicalized path or NULL. The result has to be
  * deallocated by free() if @cache is NULL.
  */
 char *mnt_resolve_spec(const char *spec, mnt_cache *cache)
@@ -558,7 +568,7 @@ int main(int argc, char *argv[])
 	struct mtest ts[] = {
 		{ "--resolve-path", test_resolve_path, "  resolve paths from stdin" },
 		{ "--resolve-spec", test_resolve_spec, "  evaluate specs from stdin" },
-		{ "--read-tags", test_read_tags,       "  read devname or TAG stdin" },
+		{ "--read-tags", test_read_tags,       "  read devname or TAG from stdin" },
 		{ NULL }
 	};
 

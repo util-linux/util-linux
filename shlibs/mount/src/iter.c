@@ -4,6 +4,15 @@
  * This file may be redistributed under the terms of the
  * GNU Lesser General Public License.
  */
+
+/**
+ * SECTION: iter
+ * @title: Iterator
+ * @short_description: unified iterator
+ *
+ * The iterator keeps direction and last position for access to the internal
+ * library tables/lists.
+ */
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
@@ -14,7 +23,7 @@
  * mnt_new_iter:
  * @direction: MNT_INTER_{FOR,BACK}WARD direction
  *
- * Returns newly allocated generic libmount iterator.
+ * Returns: newly allocated generic libmount iterator.
  */
 mnt_iter *mnt_new_iter(int direction)
 {

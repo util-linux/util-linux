@@ -7,6 +7,12 @@
  * See COPYING.libmount for the License of this software.
  */
 
+/**
+ * SECTION: version
+ * @title: Version functions
+ * @short_description: functions to get library version.
+ */
+
 #include <unistd.h>
 #include <string.h>
 #include <stdio.h>

@@ -5,6 +5,11 @@
  * GNU Lesser General Public License.
  */
 
+/**
+ * SECTION: optent
+ * @title: Mount option entry
+ * @short_description: the entry keeps one parsed mount option
+ */
 #include <string.h>
 #include <stdlib.h>
 #include <ctype.h>
@@ -174,7 +179,7 @@ err:
  * Parses the first mount option from @optstr and move @optstr pointer
  * to the next option.
  *
- * Returns: new optent (parsed option) or NULL in case of error.
+ * Returns new optent (parsed option) or NULL in case of error.
  */
 mnt_optent *mnt_new_optent_from_optstr(char **optstr,
 			struct mnt_optmap const **maps, int nmaps)
@@ -245,10 +250,7 @@ err:
  * mnt_optent_get_map:
  * @op: pointer to mnt_optent instance
  *
- * Note that the @op has to be associated with any option map (see
- * mnt_optent_assign_map()) or NULL is returned.
- *
- * Returns pointer to the head of the map that is associated with the option or
+ * Returns: pointer to the head of the map that is associated with the option or
  * NULL (for "extra options").
  */
 const struct mnt_optmap *mnt_optent_get_map(mnt_optent *op)
@@ -261,10 +263,7 @@ const struct mnt_optmap *mnt_optent_get_map(mnt_optent *op)
  * mnt_optent_get_map_entry:
  * @op: pointer to mnt_optent instance
  *
- * Note that the @op has to be associated with any option map (see
- * mnt_optent_assign_map()) or NULL is returned.
-
- * Returns pointer to the map entry that describes the option or NULL (for
+ * Returns: pointer to the map entry that describes the option or NULL (for
  * "extra options").
  */
 const struct mnt_optmap *mnt_optent_get_mapent(mnt_optent *op)
@@ -277,10 +276,10 @@ const struct mnt_optmap *mnt_optent_get_mapent(mnt_optent *op)
  * mnt_optent_get_type:
  * @op: mnt_optent instance
  *
- * Note that the @op has to be associated with any option map (see
- * mnt_optent_assign_map()) or the default "%s]" is returned.
+ * Note that the @op has to be associated with any option map
+ * or the default "%s]" is returned.
  *
- * Returns pointer to the begin of type format string or NULL. For example:
+ * Returns: pointer to the begin of type format string or NULL. For example:
  *
  *  "%s"  --> string, required argument (definition in the map is: "foo=%s")
  *  "%s]" --> string, optional argument (definition in the map is: "foo[=%s]")
@@ -302,7 +301,7 @@ const char *mnt_optent_get_type(mnt_optent *op)
  *
  * The function unset (zeroize) the option value if the @data pointer is NULL.
  *
- * Returns 0 on success or -1 in case of error.
+ * Returns: 0 on success or -1 in case of error.
  */
 int mnt_optent_set_value(mnt_optent *op, const char *data)
 {
@@ -344,7 +343,7 @@ err:
  * mnt_optent_has_value:
  * @option: pointer to mnt_optent instance
  *
- * Returns 1 if the option has actually set an argument value, or 0.
+ * Returns: 1 if the option has actually set an argument value, or 0.
  */
 int mnt_optent_has_value(mnt_optent *op)
 {
@@ -355,10 +354,10 @@ int mnt_optent_has_value(mnt_optent *op)
  * mnt_optent_require_value:
  * @op: pointer to mnt_optent instance
  *
- * Note that the @op has to be associated with any option map (see
- * mnt_optent_assign_map()) or 0 is returned.
+ * Note that the @op has to be associated with any option map
+ * or 0 is returned.
  *
- * Returns 1 if the option requires an argument (option=<arg>).
+ * Returns: 1 if the option requires an argument (option=<arg>).
  */
 int mnt_optent_require_value(mnt_optent *op)
 {
@@ -369,7 +368,7 @@ int mnt_optent_require_value(mnt_optent *op)
  * mnt_optent_is_inverted:
  * @op: pointer to mnt_optent instance
  *
- * Returns 1 if the option has MNT_INVERT mask or 0.
+ * Returns: 1 if the option has MNT_INVERT mask or 0.
  */
 int mnt_optent_is_inverted(mnt_optent *op)
 {
@@ -400,9 +399,9 @@ static int get_number_base(const char *type)
  * (e.g "123ABC" returns -1).
  *
  * This function also converts {enum0,enumN} type to number 0..N. For more
- * details see info about options maps.
+ * details see info about option maps.
  *
- * Returns 0 on success, -1 in case of error.
+ * Returns: 0 on success, -1 in case of error.
  */
 int mnt_optent_strtoul_value(mnt_optent *op, unsigned long int *number)
 {
@@ -456,7 +455,7 @@ err:
  * The whole option value has to be possible to convert to the number
  * (e.g "123ABC" returns -1).
  *
- * Returns 0 on success, -1 in case of error.
+ * Returns: 0 on success, -1 in case of error.
  */
 int mnt_optent_strtol_value(mnt_optent *op, long int *number)
 {
@@ -500,7 +499,7 @@ err:
  * The whole option value has to be possible to convert to the number
  * (e.g "123ABC" returns -1).
  *
- * Returns 0 on success, -1 in case of error.
+ * Returns: 0 on success, -1 in case of error.
  */
 int mnt_optent_strtoull_value(mnt_optent *op, unsigned long long int *number)
 {
@@ -539,7 +538,7 @@ err:
  *
  * See also mnt_optent_has_value().
  *
- * Returns pointer to value or NULL.
+ * Returns: pointer to value or NULL.
  */
 const char  *mnt_optent_get_value(mnt_optent *op)
 {
@@ -550,7 +549,7 @@ const char  *mnt_optent_get_value(mnt_optent *op)
  * mnt_optent_strlen_value:
  * @op: pointer to mnt_optent instance
  *
- * Returns length of string that is necessary to print option value or -1 in
+ * Returns: length of string that is necessary to print option value or -1 in
  * case of error.
  */
 int mnt_optent_strlen_value(mnt_optent *op)
@@ -570,7 +569,7 @@ int mnt_optent_strlen_value(mnt_optent *op)
  * @str: resulting string
  * @size: size of string
  *
- * Returns number of printed characters or negative number in case of error.
+ * Returns: number of printed characters or negative number in case of error.
  */
 int mnt_optent_snprintf_value(mnt_optent *op, char *str, size_t size)
 {
@@ -590,7 +589,7 @@ int mnt_optent_snprintf_value(mnt_optent *op, char *str, size_t size)
  * mnt_optent_dup_value:
  * @op: pointer to mnt_optent instance
  *
- * Returns duplicate a option value.
+ * Returns: duplicate a option value.
  */
 char *mnt_optent_dup_value(mnt_optent *op)
 {
@@ -605,7 +604,7 @@ char *mnt_optent_dup_value(mnt_optent *op)
  * mnt_optent_get_name:
  * @op: pointer to mnt_optent instance
  *
- * Returns option name or NULL in case of error.
+ * Returns: option name or NULL in case of error.
  */
 const char *mnt_optent_get_name(mnt_optent *op)
 {
@@ -620,7 +619,7 @@ const char *mnt_optent_get_name(mnt_optent *op)
  * The initial value of the option mask is a copy from map->mask.
  * Note that the mask is NOT a mountflag/ID.
  *
- * Returns option mask or 0.
+ * Returns: option mask or 0.
  */
 int mnt_optent_get_mask(mnt_optent *op)
 {
@@ -638,7 +637,7 @@ int mnt_optent_get_mask(mnt_optent *op)
  * "nooption" (e.g. noexec) -- you have to carefully check for MNT_INVERT in
  * the option mask. See mnt_optent_get_flag().
  *
- * Returns option ID/mountflag or 0 for extra options (options with undefined
+ * Returns: option ID/mountflag or 0 for extra options (options with undefined
  * options map).
  */
 int mnt_optent_get_id(mnt_optent *op)
@@ -652,19 +651,22 @@ int mnt_optent_get_id(mnt_optent *op)
  * @op: pointer to mnt_optent instance
  * @flags: resulting flags
  *
- * Adds option ID to @flags or removes option ID from @flags when the option
- * is inverted option (e.g. "norelatime")
+ * Adds option ID to @flags or removes the ID from @flags when the option
+ * is an inverted option (e.g. "norelatime")
  *
- * Example:
+ * <informalexample>
+ *  <programlisting>
  *	int flags = 0;
  *
- *	while(mnt_iterate_options(&itr, opts, map, &op) == 0)
+ *	while(mnt_optls_next_option(&itr, opts, map, &op) == 0)
  *		mnt_optent_get_flag(op, &flags);
  *
  *	if (flags & MS_RELATIME)
  *		printf("relatime is set\n");
+ *  </programlisting>
+ * </informalexample>
  *
- * Returns 0 on success, -1 in case of error.
+ * Returns: 0 on success, -1 in case of error.
  */
 int mnt_optent_get_flag(mnt_optent *op, int *flags)
 {
@@ -686,9 +688,9 @@ int mnt_optent_get_flag(mnt_optent *op, int *flags)
  * mnt_optent_is_unknown:
  * @op: pointer to mnt_optent instance
  *
- * The "extra option" is unknown option (undefined in any option map)
+ * The "extra options" are unknown options (undefined in any option map)
  *
- * Return 1 or 0.
+ * Returns: 1 or 0.
  */
 int mnt_optent_is_unknown(mnt_optent *op)
 {
@@ -703,7 +705,7 @@ int mnt_optent_is_unknown(mnt_optent *op)
  *
  * Prints details about the option.
  *
- * Returns 0 on success, -1 in case of error.
+ * Returns: 0 on success, -1 in case of error.
  */
 int mnt_optent_print_debug(mnt_optent *op, FILE *file)
 {

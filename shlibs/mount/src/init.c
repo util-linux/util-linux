@@ -5,12 +5,28 @@
  * GNU Lesser General Public License.
  */
 
+/**
+ * SECTION: init
+ * @title: Library initialization
+ * @short_description: initialize debuging
+ */
+
 #include <stdlib.h>
 
 #include "mountP.h"
 
 int libmount_debug_mask;
 
+/**
+ * mnt_init_debug:
+ * @mask: debug mask (0xffff to enable full debuging)
+ *
+ * If the @mask is not specified then this function reads
+ * LIBMOUNT_DEBUG environment variable to get the mask.
+ *
+ * Already initialized debugging stuff cannot be changed. It does not
+ * have effect to call this function twice.
+ */
 void mnt_init_debug(int mask)
 {
 	if (libmount_debug_mask & DEBUG_INIT)

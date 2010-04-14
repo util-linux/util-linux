@@ -5,6 +5,11 @@
  * GNU Lesser General Public License.
  */
 
+/**
+ * SECTION: utils
+ * @title: Utils
+ * @short_description: misc utils.
+ */
 #include <unistd.h>
 #include <errno.h>
 #include <stdlib.h>

@@ -381,12 +381,8 @@ err:
  *
  * Parses whole table (e.g. /etc/fstab).
  *
- * Returns 0 on success and -1 in case of error. The parse errors is possible
- * to detect by mnt_tab_get_nerrs() and error message is possible to create by
- * mnt_tab_strerror().
- *
- * Example:
- *
+ * <informalexample>
+ *   <programlisting>
  *	mnt_tab *tb = mnt_new_tab("/etc/fstab");
  *	int rc;
  *
@@ -401,6 +397,12 @@ err:
  *		mnt_fprintf_tab(tb, stdout, NULL);
  *
  *	mnt_free_tab(tb);
+ *   </programlisting>
+ * </informalexample>
+ *
+ * Returns: 0 on success and -1 in case of error. The parse errors is possible
+ * to detect by mnt_tab_get_nerrs() and error message is possible to create by
+ * mnt_tab_strerror().
  */
 int mnt_tab_parse_file(mnt_tab *tb)
 {
@@ -450,7 +452,7 @@ error:
  * not provide details (by mnt_tab_strerror()) about failed parsing -- so you
  * should not to use this function for user-writeable files like /etc/fstab.
  *
- * Returns newly allocated tab on success and NULL in case of error.
+ * Returns: newly allocated tab on success and NULL in case of error.
  */
 mnt_tab *mnt_new_tab_from_file(const char *filename)
 {
@@ -472,7 +474,7 @@ mnt_tab *mnt_new_tab_from_file(const char *filename)
  * mnt_tab_get_nerrs:
  * @tb: pointer to table
  *
- * Returns number of broken (parse error) entries in the table.
+ * Returns: number of broken (parse error) entries in the table.
  */
 int mnt_tab_get_nerrs(mnt_tab *tb)
 {
@@ -486,7 +488,7 @@ int mnt_tab_get_nerrs(mnt_tab *tb)
  * @buf: buffer to return error message
  * @buflen: lenght of the buf
  *
- * Returns error message for table (file) parse errors. For example:
+ * Returns: error message for table (file) parse errors. For example:
  *
  *	"/etc/fstab: parse error at line(s): 1, 2 and 3."
  */

@@ -248,7 +248,7 @@ extern int mnt_fs_match_fstype(mnt_fs *fs, const char *types);
 extern int mnt_fs_match_options(mnt_fs *fs, const char *options);
 
 /* mtab/fstab line */
-#define MNT_MFILE_PRINTFMT	"%s %s %s %s %d %d\n"
+#define MNT_TAB_PRINTFMT	"%s %s %s %s %d %d\n"
 
 extern int mnt_fprintf_line(
                         FILE *f,
