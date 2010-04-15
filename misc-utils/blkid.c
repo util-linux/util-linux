@@ -424,6 +424,7 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 	int fd;
 	int rc = 0;
 	struct stat st;
+	static int first = 1;
 
 	fd = open(devname, O_RDONLY);
 	if (fd < 0) {
@@ -493,6 +494,10 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 
 	nvals = blkid_probe_numof_values(pr);
 
+	if (nvals && !first && output & OUTPUT_UDEV_LIST)
+		/* add extra line between output from devices */
+		fputc('\n', stdout);
+
 	if (output & OUTPUT_DEVICE_ONLY) {
 		printf("%s\n", devname);
 		goto done;
@@ -507,6 +512,8 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 		print_value(output, num++, devname, (char *) data, name, len);
 	}
 
+	if (first)
+		first = 0;
 	if (nvals >= 1 && !(output & (OUTPUT_VALUE_ONLY | OUTPUT_UDEV_LIST)))
 		printf("\n");
 done:
