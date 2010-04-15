@@ -12,8 +12,9 @@
  *
  * The mount(2) linux syscall uses two arguments for mount options:
  *
- *    1) mountflags (see MS_* macros in linux/fs.h)
- *    2) mountdata  (usully a comma separated string of options)
+ *	@mountflags: (see MS_* macros in linux/fs.h)
+ *
+ *	@mountdata: (usully a comma separated string of options)
  *
  * The libmount uses options-map(s) to describe mount options. The number of
  * maps is unlimited. The libmount options parser could be easily extended
@@ -21,16 +22,19 @@
  *
  * The option description (map entry) includes:
  *
- *    - option name and argument type (e.g. "loop[=%s]")
- *    - option ID (in the map unique identifier or a mountflags, e.g MS_RDONLY)
- *    - mask (MNT_INVERT, MNT_MDATA, MNT_MFLAG, MNT_NOMTAB)
+ *	@name: and argument type (e.g. "loop[=%s]")
+ *
+ *	@id: (in the map unique identifier or a mountflags, e.g MS_RDONLY)
+ *
+ *	@mask: (MNT_INVERT, MNT_MDATA, MNT_MFLAG, MNT_NOMTAB)
  *
  * The option argument type is defined by:
  *
- *     "=<type>"          -- required argument
- *     "[=<type>]"        -- optional argument
+ *	"=type"   -- required argument
  *
- * where the <type> is sscanf() format string or
+ *	"[=type]" -- optional argument
+ *
+ * where the 'type' is sscanf() format string or
  *
  *     {item0,item1,...}  -- enum (mnt_option_get_number() converts the value
  *                           to 0..N number)
@@ -39,15 +43,32 @@
  * stores the option argument as a string. The conversion to the data type is
  * on-demant by mnt_option_get_value_*() functions.
  *
- * The library checks options argument according to <type> format for simple
+ * The library checks options argument according to 'type' format for simple
  * formats only:
  *
  *	%s, %d, %ld, %lld, %u, %lu, %llu, %x, %o and {enum}
  *
+ * Example:
+ *
+ * <informalexample>
+ *   <programlisting>
+ *     #define MY_MS_FOO   (1 << 1)
+ *     #define MY_MS_BAR   (1 << 2)
+ *
+ *     mnt_optmap myoptions[] = {
+ *       { "foo",   MY_MS_FOO, MNT_MFLAG },
+ *       { "nofoo", MY_MS_FOO, MNT_MFLAG | MNT_INVERT },
+ *       { "bar=%s",MY_MS_BAR, MNT_MDATA },
+ *       { NULL }
+ *     };
+ *   </programlisting>
+ * </informalexample>
+ *
  * The libmount defines two basic built-in options maps:
  *
- *    - MNT_LINUX_MAP     -- fs-independent kernel mount options (usually MS_* flags)
- *    - MNT_USERSPACE_MAP -- userspace specific mount options (e.g. "user", "loop")
+ *	@MNT_LINUX_MAP: fs-independent kernel mount options (usually MS_* flags)
+ *
+ *	@MNT_USERSPACE_MAP: userspace specific mount options (e.g. "user", "loop")
  *
  * For more details about option map struct see "struct mnt_optmap" in
  * mount/mount.h.

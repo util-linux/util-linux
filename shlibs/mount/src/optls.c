@@ -69,7 +69,7 @@ void mnt_free_optls(mnt_optls *ls)
  * Note, it's recommented to add all maps to the @optls container before options
  * parsing.
  *
- * Example (add new options "foo" and "bar=<data>"):
+ * Example (add new options "foo" and "bar=data"):
  *
  * <informalexample>
  *   <programlisting>
@@ -121,7 +121,7 @@ int mnt_optls_add_map(mnt_optls *ls, const struct mnt_optmap *map)
 /**
  * mnt_optls_add_builtin_map:
  * @ls: pointer to mnt_optls instance
- * @map_id: built-in map id (see mnt_get_builtin_map())
+ * @id: built-in map id (see mnt_get_builtin_map())
  *
  * Same as mnt_optls_add_map(), but works with libmount built in maps.
  *
@@ -436,7 +436,7 @@ mnt_optent *mnt_optls_get_option(mnt_optls *ls, const char *name)
  * mnt_optls_create_mountflags() that returns MNT_MFLAG options
  * (mount(2) flags) only.
  *
- * Return: IDs from all options.
+ * Returns: IDs from all options.
  */
 int mnt_optls_get_ids(mnt_optls *ls, const struct mnt_optmap *map)
 {

@@ -263,8 +263,8 @@ void mnt_unlock_file(mnt_lock *ml)
  *
  * Locking scheme:
  *
- *   1. create linkfile (e.g. /etc/mtab~.<pid>)
- *   2. link linkfile --> lockfile (e.g. /etc/mtab~.<pid> --> /etc/mtab~)
+ *   1. create linkfile (e.g. /etc/mtab~.$PID)
+ *   2. link linkfile --> lockfile (e.g. /etc/mtab~.$PID --> /etc/mtab~)
  *
  *   3. a) link() success: setups F_SETLK lock (see fcnlt(2))
  *      b) link() failed:  wait (max 30s) on F_SETLKW lock, goto 2.
@@ -273,37 +273,37 @@ void mnt_unlock_file(mnt_lock *ml)
  *
  * <informalexample>
  *   <programlisting>
- * mnt_lock *ml;
+ *	mnt_lock *ml;
  *
- * void unlock_fallback(void)
- * {
- *	if (!ml)
- *		return;
- *	mnt_unlock_file(ml);
- *	mnt_free_lock(ml);
- * }
- *
- * int update_mtab()
- * {
- *	int sig = 0;
- *
- *	atexit(unlock_fallback);
- *
- *	ml = mnt_new_lock(NULL, 0);
- *
- *	if (mnt_lock_file(ml) != 0) {
- *		printf(stderr, "cannot create %s lockfile\n",
- *				mnt_lock_get_lockfile(ml));
- *		return -1;
+ *	void unlock_fallback(void)
+ *	{
+ *		if (!ml)
+ *			return;
+ *		mnt_unlock_file(ml);
+ *		mnt_free_lock(ml);
  *	}
  *
- *	... modify mtab ...
+ *	int update_mtab()
+ *	{
+ *		int sig = 0;
  *
- *	mnt_unlock_file(ml);
- *	mnt_free_lock(ml);
- *	ml = NULL;
- *	return 0;
- * }
+ *		atexit(unlock_fallback);
+ *
+ *		ml = mnt_new_lock(NULL, 0);
+ *
+ *		if (mnt_lock_file(ml) != 0) {
+ *			printf(stderr, "cannot create %s lockfile\n",
+ *					mnt_lock_get_lockfile(ml));
+ *			return -1;
+ *		}
+ *
+ *		... modify mtab ...
+ *
+ *		mnt_unlock_file(ml);
+ *		mnt_free_lock(ml);
+ *		ml = NULL;
+ *		return 0;
+ *	}
  *   </programlisting>
  * </informalexample>
  *

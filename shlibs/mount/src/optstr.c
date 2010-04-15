@@ -7,7 +7,7 @@
 
 /**
  * SECTION: optstr
- * @title: Mount oprions string
+ * @title: Options string
  * @short_description: low-level API for work with mount options
  *
  * This is simple and low-level API to work with mount options that are stored

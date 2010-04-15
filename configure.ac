@@ -1147,6 +1147,8 @@ shlibs/mount/mount.pc
 shlibs/mount/Makefile
 shlibs/mount/src/Makefile
 shlibs/mount/src/mount.h
+shlibs/mount/docs/Makefile
+shlibs/mount/docs/version.xml
 shlibs/uuid/uuid.pc
 shlibs/uuid/Makefile
 shlibs/uuid/man/Makefile

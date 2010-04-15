@@ -7,8 +7,8 @@
 
 /**
  * SECTION: optent
- * @title: Mount option entry
- * @short_description: the entry keeps one parsed mount option
+ * @title: Parsed option
+ * @short_description: the mnt_optent keeps one parsed mount option
  */
 #include <string.h>
 #include <stdlib.h>
@@ -357,7 +357,7 @@ int mnt_optent_has_value(mnt_optent *op)
  * Note that the @op has to be associated with any option map
  * or 0 is returned.
  *
- * Returns: 1 if the option requires an argument (option=<arg>).
+ * Returns: 1 if the option requires an argument (option=arg).
  */
 int mnt_optent_require_value(mnt_optent *op)
 {
@@ -534,13 +534,12 @@ err:
 /**
  * mnt_optent_get_value:
  * @op: pointer to mnt_optent instance
- * @data: resulting string
  *
  * See also mnt_optent_has_value().
  *
  * Returns: pointer to value or NULL.
  */
-const char  *mnt_optent_get_value(mnt_optent *op)
+const char *mnt_optent_get_value(mnt_optent *op)
 {
 	return op? op->value : NULL;
 }

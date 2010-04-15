@@ -8,7 +8,7 @@
 /**
  * SECTION: fs
  * @title: Filesystem
- * @short_description: mnt_fs is represents one entry in fstab/mtab/mountinfo
+ * @short_description: mnt_fs represents one entry in fstab/mtab/mountinfo
  *
  */
 #include <stdio.h>
@@ -114,6 +114,7 @@ const char *mnt_fs_get_srcpath(mnt_fs *fs)
 }
 
 /**
+ * mnt_fs_get_source:
  * @fs: mnt_file (fstab/mtab/mountinfo) fs
  *
  * Returns: mount source. Note that the source could be unparsed TAG
@@ -390,7 +391,7 @@ const char *mnt_fs_get_vfs_optstr(mnt_fs *fs)
  * mnt_fs_get_freq:
  * @fs: fstab/mtab/mountinfo entry pointer
  *
- * Returns: "dump frequency in days".
+ * Returns: dump frequency in days.
  */
 int mnt_fs_get_freq(mnt_fs *fs)
 {

@@ -140,12 +140,13 @@ int mnt_fstype_is_netfs(const char *type)
  *
  * The @pattern list of filesystem can be prefixed with a global
  * "no" prefix to invert matching of the whole list. The "no" could
- * also used for individual items in the @pattern list.
+ * also used for individual items in the @pattern list. So,
+ * "nofoo,bar" has the same meaning as "nofoo,nobar".
  *
- * "nofoo,bar" has the same meaning as "nofoo,nobar"
+ * "bar"  : "nofoo,bar"		-> False   (global "no" prefix)
  *
- * "bar" : "nofoo,bar"		-> False   (global "no" prefix)
- * "bar" : "foo,bar"		-> True
+ * "bar"  : "foo,bar"		-> True
+ *
  * "bar" : "foo,nobar"		-> False
  *
  * Returns: 1 if type is matching, else 0. This function also returns
@@ -225,8 +226,9 @@ static int check_option(const char *haystack, size_t len,
  * Unlike fs type matching, nonetdev,user and nonetdev,nouser have
  * DIFFERENT meanings; each option is matched explicitly as specified.
  *
- * xxx,yyy,zzz : nozzz		-> False
- * xxx,yyy,zzz : xxx,noeee	-> True
+ * "xxx,yyy,zzz" : "nozzz"	-> False
+ *
+ * "xxx,yyy,zzz" : "xxx,noeee"	-> True
  *
  * Returns: 1 if pattern is matching, else 0. This function also returns 0
  *          if @pattern is NULL and @optstr is non-NULL.

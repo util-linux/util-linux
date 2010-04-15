@@ -7,7 +7,7 @@
 
 /**
  * SECTION: tab
- * @title: Filesystems container
+ * @title: FS container
  * @short_description: container for entries from fstab/mtab/mountinfo
  *
  *
@@ -15,22 +15,31 @@
  * try to found an entry in more iterations where the first attempt is always
  * based on comparison with unmodified (non-canonicalized or un-evaluated)
  * paths or tags. For example fstab with two entries:
- *
+ * <informalexample>
+ *   <programlisting>
  *	LABEL=foo	/foo	auto   rw
  *	/dev/foo	/foo	auto   rw
+ *  </programlisting>
+ * </informalexample>
  *
  * where both lines are used for the *same* device, then
- *
+ * <informalexample>
+ *  <programlisting>
  *	mnt_tab_find_source(tb, "/dev/foo", &fs);
- *
+ *  </programlisting>
+ * </informalexample>
  * will returns the second line, and
- *
+ * <informalexample>
+ *  <programlisting>
  *	mnt_tab_find_source(tb, "LABEL=foo", &fs);
- *
+ *  </programlisting>
+ * </informalexample>
  * will returns the first entry, and
- *
- *		mnt_tab_find_source(tb, "UUID=<anyuuid>", &fs);
- *
+ * <informalexample>
+ *  <programlisting>
+ *	mnt_tab_find_source(tb, "UUID=anyuuid", &fs);
+ *  </programlisting>
+ * </informalexample>
  * will returns the first entry (if UUID matches with the device).
  */
 
@@ -81,7 +90,7 @@ err:
 
 /**
  * mnt_free_tab:
- * @tab: tab pointer
+ * @tb: tab pointer
  *
  * Deallocates tab struct and all entries.
  */
@@ -255,6 +264,7 @@ int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
 /**
  * mnt_tab_next_child_fs:
  * @tb: mountinfo file (/proc/self/mountinfo)
+ * @itr: iterator
  * @parent: parental FS
  * @chld: returns the next child filesystem
  *
@@ -322,7 +332,8 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
  * Returns: 0 on success, -1 in case of error or 1 at end of list.
  *
  * Example (list all mountpoints from fstab in backward order):
- *
+ * <informalexample>
+ *   <programlisting>
  *	mnt_fs *fs;
  *	mnt_tab *tb = mnt_new_tab("/etc/fstab");
  *	mnt_iter *itr = mnt_new_iter(MNT_ITER_BACKWARD);
@@ -334,6 +345,8 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
  *		printf("mount point: %s\n", dir);
  *	}
  *	mnt_free_tab(fi);
+ *   </programlisting>
+ * </informalexample>
  */
 int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs)
 {
@@ -366,6 +379,7 @@ again:
  * @tb: table
  * @itr: iterator
  * @match_func: function returns 1 or 0
+ * @userdata: extra data for match_func
  * @fs: returns pointer to the next matching table entry
  *
  * This function allows search in @tb.
@@ -633,6 +647,7 @@ mnt_fs *mnt_tab_find_tag(mnt_tab *tb, const char *tag,
  * mnt_tab_find_source:
  * @tb: tab pointer
  * @source: TAG or path
+ * @direction: MNT_ITER_{FORWARD,BACKWARD}
  *
  * This is high-level API for mnt_tab_find_{srcpath,tag}. You needn't to care
  * about @source format (device, LABEL, UUID, ...). This function parses @source
@@ -672,9 +687,9 @@ mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int direction)
 
 /**
  * mnt_tab_fprintf:
- * @f: FILE
- * @fmt: per line printf-like format string (see MNT_MFILE_PRINTFMT)
  * @tb: tab pointer
+ * @f: FILE
+ * @fmt: per line printf-like format string (see MNT_TAB_PRINTFMT)
  *
  * Returns: 0 on success, -1 in case of error.
  */
@@ -731,7 +746,7 @@ int mnt_tab_update_file(mnt_tab *tb)
 	if (!f)
 		goto error;
 
-	if (mnt_tab_fprintf(tb, f, MNT_MFILE_PRINTFMT) != 0)
+	if (mnt_tab_fprintf(tb, f, MNT_TAB_PRINTFMT) != 0)
 		goto error;
 
 	fd = fileno(f);

@@ -66,12 +66,9 @@ typedef struct _mnt_optls mnt_optls;
 typedef struct _mnt_optent mnt_optent;
 
 /**
- * struct mnt_optmap:
+ * mnt_optmap:
  *
  * Mount options description (map)
- *
- * The libmount supports mount options with values in %<type>:
- * %s, %d, %u, %o, %x
  */
 struct mnt_optmap
 {
