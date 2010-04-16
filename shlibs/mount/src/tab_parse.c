@@ -248,21 +248,26 @@ static int detect_fmt(char *line)
 
 
 /*
- * Merges @vfs and @fs options strings into a new string
- * This function skips the generic part of @fs options.
- * For example (see "rw"):
+ * Merges @vfs and @fs options strings into a new string.
+ * This function cares about 'ro/rw' options. The 'ro' is
+ * always used if @vfs or @fs is read-only.
+ * For example:
+ *
+ *    mnt_merge_optstr("rw,noexec", "ro,journal=update")
+ *
+ *           returns: "ro,noexec,journal=update"
  *
  *    mnt_merge_optstr("rw,noexec", "rw,journal=update")
  *
- * returns --> "rw,noexec,journal=update"
- *
+ *           returns: "rw,noexec,journal=update"
+
  * We need this function for /proc/self/mountinfo parsing.
  */
 static char *merge_optstr(const char *vfs, const char *fs)
 {
-	const char *p1 = vfs, *p2 = fs;
-	char *res;
+	char *res, *p;
 	size_t sz;
+	int ro = 0, rw = 0;
 
 	if (!vfs && !fs)
 		return NULL;
@@ -271,26 +276,29 @@ static char *merge_optstr(const char *vfs, const char *fs)
 	if (!strcmp(vfs, fs))
 		return strdup(vfs);		/* e.g. "aaa" and "aaa" */
 
-	/* skip the same FS options */
-	while (*p1 && *p2 && *++p1 == *++p2);
-
-	if (*p1 == ',')
-		p1++;
-	if (*p2 == ',')
-		p2++;
-	if (!*p1 && !*p2)			/* e.g. "aaa,bbb" and "aaa,bbb," */
-		return strdup(vfs);
-	if (!*p1 || !*p2)			/* e.g. "aaa" and "aaa,bbb" */
-		return strdup(*p1 ? vfs : fs);
-
-	p1 = vfs;
-	sz = strlen(p1) + strlen(p2) + 2;	/* 2= separator + '\0' */
-
+	sz = strlen(vfs) + strlen(fs) + 2;
 	res = malloc(sz);
 	if (!res)
 		return NULL;
+	p = res + 3;			/* make a room for rw/ro flag */
 
-	snprintf(res, sz, "%s,%s", p1, p2);
+	snprintf(p, sz - 3, "%s,%s", vfs, fs);
+
+	/* remove 'rw' flags */
+	rw += !mnt_optstr_remove_option(&p, "rw");	/* from vfs */
+	rw += !mnt_optstr_remove_option(&p, "rw");	/* from fs */
+
+	/* remove 'ro' flags if necessary */
+	if (rw != 2) {
+		ro += !mnt_optstr_remove_option(&p, "ro");
+		if (ro + rw < 2)
+			ro += !mnt_optstr_remove_option(&p, "ro");
+	}
+
+	if (!strlen(p))
+		memcpy(res, ro ? "ro" : "rw", 3);
+	else
+		memcpy(res, ro ? "ro," : "rw,", 3);
 	return res;
 }
 
