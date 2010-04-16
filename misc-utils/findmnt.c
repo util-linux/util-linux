@@ -56,6 +56,8 @@ enum {
 	COL_TARGET,
 	COL_FSTYPE,
 	COL_OPTIONS,
+	COL_VFS_OPTIONS,
+	COL_FS_OPTIONS,
 	COL_LABEL,
 	COL_UUID,
 
@@ -76,6 +78,8 @@ struct colinfo infos[__NCOLUMNS] = {
 	[COL_TARGET]  = { "TARGET",     0.30, FALSE },
 	[COL_FSTYPE]  = { "FSTYPE",     0.10, TRUE },
 	[COL_OPTIONS] = { "OPTIONS",    0.10, TRUE },
+	[COL_VFS_OPTIONS] = { "VFS-OPTIONS", 0.20, TRUE },
+	[COL_FS_OPTIONS] = { "FS-OPTIONS", 0.10, TRUE },
 	[COL_LABEL]   = { "LABEL",      0.10, FALSE },
 	[COL_UUID]    = { "UUID",         36, FALSE },
 };
@@ -273,6 +277,12 @@ static const char *get_data(mnt_fs *fs, int num)
 		break;
 	case COL_OPTIONS:
 		str = mnt_fs_get_optstr(fs);
+		break;
+	case COL_VFS_OPTIONS:
+		str = mnt_fs_get_vfs_optstr(fs);
+		break;
+	case COL_FS_OPTIONS:
+		str = mnt_fs_get_fs_optstr(fs);
 		break;
 	case COL_UUID:
 		str = get_tag(fs, "UUID");
