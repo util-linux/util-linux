@@ -35,6 +35,7 @@ struct tt_column {
 	int	seqnum;
 
 	int	width;		/* real column width */
+	int	width_min;	/* minimal width (width of header) */
 	double	width_hint;	/* hint (N < 1 is in percent of termwidth) */
 
 	int	flags;

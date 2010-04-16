@@ -388,6 +388,9 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 
 			if (cl->width < len)
 				cl->width = len;
+
+fprintf(stderr, "KZAK: 1: %s = %d\n", cl->name, cl->width);
+
 		}
 	}
 
@@ -397,14 +400,18 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 		struct tt_column *cl =
 				list_entry(p, struct tt_column, cl_columns);
 
-		size_t len = mbs_width(cl->name);
+		cl->width_min = mbs_width(cl->name);
 
-		if (cl->width < len)
-			cl->width = len;
-		else if (cl->width_hint >= 1)
+		if (cl->width < cl->width_min)
+			cl->width = cl->width_min;
+		else if (cl->width_hint >= 1 &&
+			 cl->width_min < (int) cl->width_hint)
 			cl->width = (int) cl->width_hint;
 
 		width += cl->width + (is_last_column(tb, cl) ? 0 : 1);
+
+fprintf(stderr, "KZAK: 2: %s = %d\n", cl->name, cl->width);
+
 	}
 
 	if (width == tb->termwidth)
@@ -438,6 +445,8 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 				continue;	/* never truncate the tree */
 			if (trunc_only && !(cl->flags & TT_FL_TRUNCATE))
 				continue;
+			if (cl->width == cl->width_min)
+				continue;
 			if (cl->width > cl->width_hint * tb->termwidth) {
 				cl->width--;
 				width--;
@@ -451,7 +460,7 @@ static void recount_widths(struct tt *tb, char *buf, size_t bufsz)
 		}
 	}
 leave:
-/*
+///*
 	fprintf(stderr, "terminal: %d, output: %d\n", tb->termwidth, width);
 
 	list_for_each(p, &tb->tb_columns) {
@@ -463,7 +472,7 @@ leave:
 			cl->width_hint > 1 ? (int) cl->width_hint :
 					     (int) (cl->width_hint * tb->termwidth));
 	}
-*/
+//*/
 	return;
 }
 
