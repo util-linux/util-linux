@@ -994,6 +994,48 @@ dev_t blkid_probe_get_devno(blkid_probe pr)
 }
 
 /**
+ * blkid_probe_get_wholedisk_devno:
+ * @pr: probe
+ *
+ * Returns: device number of the wholedisk, or 0 for regilar files.
+ */
+dev_t blkid_probe_get_wholedisk_devno(blkid_probe pr)
+{
+	if (!pr->disk_devno) {
+		dev_t devno, disk_devno = 0;
+
+		devno = blkid_probe_get_devno(pr);
+		if (!devno)
+			return 0;
+
+		 if (blkid_devno_to_wholedisk(devno, NULL, 0, &disk_devno) == 0)
+			pr->disk_devno = disk_devno;
+	}
+	return pr->disk_devno;
+}
+
+/**
+ * blkid_probe_is_wholedisk:
+ * @pr: probe
+ *
+ * Returns: 1 if the device is whole-disk or 0.
+ */
+int blkid_probe_is_wholedisk(blkid_probe pr)
+{
+	dev_t devno, disk_devno;
+
+	devno = blkid_probe_get_devno(pr);
+	if (!devno)
+		return 0;
+
+	disk_devno = blkid_probe_get_wholedisk_devno(pr);
+	if (!disk_devno)
+		return 0;
+
+	return devno == disk_devno;
+}
+
+/**
  * blkid_probe_get_size:
  * @pr: probe
  *

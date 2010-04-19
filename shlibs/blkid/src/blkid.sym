@@ -125,4 +125,6 @@ global:
 	blkid_probe_all_removable;
 	blkid_probe_get_fd;
 	blkid_probe_get_offset;
+	blkid_probe_get_wholedisk_devno;
+	blkid_probe_is_wholedisk;
 } BLKID_2.17;

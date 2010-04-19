@@ -191,6 +191,7 @@ struct blkid_struct_probe
 	blkid_loff_t		size;		/* end of data on the device */
 
 	dev_t			devno;		/* device number (st.st_rdev) */
+	dev_t			disk_devno;	/* devno of the whole-disk or 0 */
 	unsigned int		blkssz;		/* sector size (BLKSSZGET ioctl) */
 	mode_t			mode;		/* struct stat.sb_mode */
 

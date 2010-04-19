@@ -694,7 +694,8 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 	if (!devno)
 		goto nothing;
 
-	if (blkid_devno_to_wholedisk(devno, NULL, 0, &disk_devno))
+	disk_devno = blkid_probe_get_wholedisk_devno(pr);
+	if (!disk_devno)
 		goto nothing;
 
 	if (devno == disk_devno)
