@@ -571,6 +571,8 @@ int blkid_probe_is_cdrom(blkid_probe pr)
 int blkid_probe_set_device(blkid_probe pr, int fd,
 		blkid_loff_t off, blkid_loff_t size)
 {
+	struct stat sb;
+
 	if (!pr)
 		return -1;
 
@@ -593,16 +595,16 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	/* Disable read-ahead */
 	posix_fadvise(fd, 0, 0, POSIX_FADV_RANDOM);
 #endif
+	if (fstat(fd, &sb))
+		goto err;
+
+	pr->mode = sb.st_mode;
+	if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode))
+		pr->devno = sb.st_rdev;
+
 	if (size)
 		pr->size = size;
 	else {
-		struct stat sb;
-
-		if (fstat(fd, &sb))
-			goto err;
-
-		pr->mode = sb.st_mode;
-
 		if (S_ISBLK(sb.st_mode)) {
 			if (blkdev_get_size(fd, (unsigned long long *) &pr->size)) {
 				DBG(DEBUG_LOWPROBE, printf(
@@ -613,9 +615,6 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 			pr->size = 1;		/* UBI devices are char... */
 		else if (S_ISREG(sb.st_mode))
 			pr->size = sb.st_size;	/* regular file */
-
-		if (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode))
-			pr->devno = sb.st_rdev;
 
 		if (pr->off > pr->size)
 			goto err;
@@ -628,11 +627,11 @@ int blkid_probe_set_device(blkid_probe pr, int fd,
 	DBG(DEBUG_LOWPROBE, printf("ready for low-probing, offset=%jd, size=%jd\n",
 				pr->off, pr->size));
 
-	if (pr->size <= 1440 * 1024 && !S_ISCHR(pr->mode))
+	if (pr->size <= 1440 * 1024 && !S_ISCHR(sb.st_mode))
 		pr->flags |= BLKID_TINY_DEV;
 
 #ifdef CDROM_GET_CAPABILITY
-	if (S_ISBLK(pr->mode) && ioctl(fd, CDROM_GET_CAPABILITY, NULL) >= 0)
+	if (S_ISBLK(sb.st_mode) && ioctl(fd, CDROM_GET_CAPABILITY, NULL) >= 0)
 		pr->flags |= BLKID_CDROM_DEV;
 #endif
 	return 0;
@@ -983,13 +982,6 @@ int blkid_probe_sprintf_value(blkid_probe pr, const char *name,
  */
 dev_t blkid_probe_get_devno(blkid_probe pr)
 {
-	if (!pr->devno) {
-		struct stat sb;
-
-		if (fstat(pr->fd, &sb) == 0 &&
-		    (S_ISBLK(sb.st_mode) || S_ISCHR(sb.st_mode)))
-			pr->devno = sb.st_rdev;
-	}
 	return pr->devno;
 }
 
@@ -1076,7 +1068,7 @@ int blkid_probe_get_fd(blkid_probe pr)
 
 /**
  * blkid_probe_get_sectorsize:
- * @pr: probe
+ * @pr: probe or NULL (for NULL returns 512)
  *
  * Returns: block device logical sector size (BLKSSZGET ioctl, default 512).
  */
@@ -1084,23 +1076,14 @@ unsigned int blkid_probe_get_sectorsize(blkid_probe pr)
 {
 	if (!pr)
 		return DEFAULT_SECTOR_SIZE;  /*... and good luck! */
+
 	if (pr->blkssz)
 		return pr->blkssz;
-	if (!pr->mode) {
-		struct stat st;
 
-		if (fstat(pr->fd, &st))
-			goto fallback;
-		pr->mode = st.st_mode;
-	}
-	if (S_ISBLK(pr->mode)) {
-	    if (blkdev_get_sector_size(pr->fd, (int *) &pr->blkssz))
-		goto fallback;
+	if (S_ISBLK(pr->mode) &&
+	    blkdev_get_sector_size(pr->fd, (int *) &pr->blkssz) == 0)
+		return pr->blkssz;
 
-	    return pr->blkssz;
-	}
-
-fallback:
 	pr->blkssz = DEFAULT_SECTOR_SIZE;
 	return pr->blkssz;
 }
