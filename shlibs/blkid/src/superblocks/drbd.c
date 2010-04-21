@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <inttypes.h>
+#include <stddef.h>
 
 #include "superblocks.h"
 
@@ -75,9 +76,9 @@ static int probe_drbd(blkid_probe pr, const struct blkid_idmag *mag)
 		return -1;
 
 	md = (struct md_on_disk_08 *)
-		blkid_probe_get_buffer(pr,
-		off,
-		sizeof(struct md_on_disk_08));
+			blkid_probe_get_buffer(pr,
+					off,
+					sizeof(struct md_on_disk_08));
 	if (!md)
 		return -1;
 
@@ -93,6 +94,12 @@ static int probe_drbd(blkid_probe pr, const struct blkid_idmag *mag)
 		"%" PRIx64, be64_to_cpu(md->device_uuid));
 
 	blkid_probe_set_version(pr, "v08");
+
+	if (blkid_probe_set_magic(pr,
+				off + offsetof(struct md_on_disk_08, magic),
+				sizeof(md->magic),
+				(unsigned char *) &md->magic))
+		return -1;
 
 	return 0;
 }

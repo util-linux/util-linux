@@ -47,8 +47,13 @@ static int probe_pdcraid(blkid_probe pr, const struct blkid_idmag *mag)
 			return -1;
 
 		if (memcmp(pdc->sig, PDC_SIGNATURE,
-				sizeof(PDC_SIGNATURE) - 1) == 0)
+				sizeof(PDC_SIGNATURE) - 1) == 0) {
+
+			if (blkid_probe_set_magic(pr, off, sizeof(pdc->sig),
+						(unsigned char *) pdc->sig))
+				return -1;
 			return 0;
+		}
 	}
 	return -1;
 }

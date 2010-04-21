@@ -41,7 +41,9 @@ static int probe_lsiraid(blkid_probe pr, const struct blkid_idmag *mag)
 
 	if (memcmp(lsi->sig, LSI_SIGNATURE, sizeof(LSI_SIGNATURE)-1) != 0)
 		return -1;
-
+	if (blkid_probe_set_magic(pr, off, sizeof(lsi->sig),
+				(unsigned char *) lsi->sig))
+		return -1;
 	return 0;
 }
 

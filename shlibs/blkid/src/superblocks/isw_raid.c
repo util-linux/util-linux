@@ -46,7 +46,9 @@ static int probe_iswraid(blkid_probe pr, const struct blkid_idmag *mag)
 	if (blkid_probe_sprintf_version(pr, "%6s",
 			&isw->sig[sizeof(ISW_SIGNATURE)-1]) != 0)
 		return -1;
-
+	if (blkid_probe_set_magic(pr, off, sizeof(isw->sig),
+				(unsigned char *) isw->sig))
+		return -1;
 	return 0;
 }
 

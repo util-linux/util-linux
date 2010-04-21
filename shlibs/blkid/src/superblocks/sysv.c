@@ -12,6 +12,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #include "superblocks.h"
 
@@ -107,7 +108,18 @@ static int probe_sysv(blkid_probe pr, const struct blkid_idmag *mag)
 
 		if (sb->s_magic == cpu_to_le32(0xfd187e20) ||
 		    sb->s_magic == cpu_to_be32(0xfd187e20)) {
-			blkid_probe_set_label(pr, sb->s_fname, sizeof(sb->s_fname));
+
+			if (blkid_probe_set_label(pr, sb->s_fname,
+						sizeof(sb->s_fname)))
+				return -1;
+
+			if (blkid_probe_set_magic(pr,
+					off + offsetof(struct sysv_super_block,
+								s_magic),
+					sizeof(sb->s_magic),
+					(unsigned char *) &sb->s_magic))
+				return -1;
+
 			return 0;
 		}
 	}

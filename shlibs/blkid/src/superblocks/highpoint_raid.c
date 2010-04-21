@@ -41,6 +41,9 @@ static int probe_highpoint45x(blkid_probe pr, const struct blkid_idmag *mag)
 	magic = le32_to_cpu(hpt->magic);
 	if (magic != HPT45X_MAGIC_OK && magic != HPT45X_MAGIC_BAD)
 		return -1;
+	if (blkid_probe_set_magic(pr, off, sizeof(hpt->magic),
+				(unsigned char *) &hpt->magic))
+		return -1;
 	return 0;
 }
 

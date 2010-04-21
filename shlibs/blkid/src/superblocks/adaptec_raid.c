@@ -94,7 +94,9 @@ static int probe_adraid(blkid_probe pr, const struct blkid_idmag *mag)
 		return -1;
 	if (blkid_probe_sprintf_version(pr, "%u", ad->resver) != 0)
 		return -1;
-
+	if (blkid_probe_set_magic(pr, off, sizeof(ad->b0idcode),
+				(unsigned char *) &ad->b0idcode))
+		return -1;
 	return 0;
 }
 

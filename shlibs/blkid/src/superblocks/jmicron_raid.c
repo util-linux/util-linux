@@ -45,7 +45,9 @@ static int probe_jmraid(blkid_probe pr, const struct blkid_idmag *mag)
 	if (blkid_probe_sprintf_version(pr, "%u.%u",
 				jm->major_version, jm->minor_version) != 0)
 		return -1;
-
+	if (blkid_probe_set_magic(pr, off, sizeof(jm->signature),
+				(unsigned char *) jm->signature))
+		return -1;
 	return 0;
 }
 

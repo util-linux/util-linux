@@ -69,6 +69,10 @@ static int probe_viaraid(blkid_probe pr, const struct blkid_idmag *mag)
 		return -1;
 	if (blkid_probe_sprintf_version(pr, "%u", v->version_number) != 0)
 		return -1;
+	if (blkid_probe_set_magic(pr, off,
+				sizeof(v->signature),
+				(unsigned char *) &v->signature))
+		return -1;
 	return 0;
 }
 

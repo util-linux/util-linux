@@ -203,6 +203,11 @@ static int probe_zfs(blkid_probe pr, const struct blkid_idmag *mag)
 
 	zfs_extract_guid_name(pr, offset);
 
+	if (blkid_probe_set_magic(pr, offset,
+				sizeof(ub->ub_magic),
+				(unsigned char *) &ub->ub_magic))
+		return -1;
+
 	return 0;
 }
 

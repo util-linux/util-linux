@@ -32,12 +32,13 @@ static int probe_ddf(blkid_probe pr, const struct blkid_idmag *mag)
 	int i;
 	struct ddf_header *ddf = NULL;
 	char version[DDF_REV_LENGTH + 1];
+	uint64_t off;
 
 	if (pr->size < 0x30000)
 		return -1;
 
 	for (i = 0; i < ARRAY_SIZE(hdrs); i++) {
-		uint64_t off = ((pr->size / 0x200) - hdrs[i]) * 0x200;
+		off = ((pr->size / 0x200) - hdrs[i]) * 0x200;
 
 		ddf = (struct ddf_header *) blkid_probe_get_buffer(pr,
 					off,
@@ -60,6 +61,10 @@ static int probe_ddf(blkid_probe pr, const struct blkid_idmag *mag)
 	*(version + sizeof(ddf->ddf_rev)) = '\0';
 
 	if (blkid_probe_set_version(pr, version) != 0)
+		return -1;
+	if (blkid_probe_set_magic(pr, off,
+			sizeof(ddf->signature),
+			(unsigned char *) ddf->signature))
 		return -1;
 	return 0;
 }

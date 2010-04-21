@@ -15,6 +15,7 @@
 #include <errno.h>
 #include <ctype.h>
 #include <stdint.h>
+#include <stddef.h>
 
 #include "superblocks.h"
 
@@ -204,6 +205,13 @@ found:
 				sizeof(ufs->fs_u11.fs_u2.fs_volname));
 	} else
 		blkid_probe_set_version(pr, "1");
+
+	if (blkid_probe_set_magic(pr,
+			(offsets[i] * 1024) +
+				offsetof(struct ufs_super_block, fs_magic),
+			sizeof(ufs->fs_magic),
+			(unsigned char *) &ufs->fs_magic))
+		return -1;
 
 	return 0;
 }
