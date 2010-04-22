@@ -210,7 +210,7 @@ read_offsets(struct wipe_desc *wp, const char *fname, int zap)
 	if (rc == 0) {
 		const char *type = NULL;
 		blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL);
-		errx(EXIT_FAILURE, _("error: %s: appears to contain '%s' "
+		warnx(_("WARNING: %s: appears to contain '%s' "
 				"partition table"), fname, type);
 	}
 
