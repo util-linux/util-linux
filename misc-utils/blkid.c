@@ -419,7 +419,7 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 {
 	const char *data;
 	const char *name;
-	int nvals = 0, n, num = 1, has_pt = 0;
+	int nvals = 0, n, num = 1;
 	size_t len;
 	int fd;
 	int rc = 0;
@@ -436,62 +436,35 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 
 	if (fstat(fd, &st))
 		goto done;
-	/*
-	 * partitions probing
-	 */
-	blkid_probe_enable_superblocks(pr, 0);	/* enabled by default ;-( */
 
 	blkid_probe_enable_partitions(pr, 1);
-
-	/* This is for PART_ENTRY_{UUID,NAME,TYPE,...} values and it will
-	 * open() whole-disk device.
-	 */
 	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_ENTRY_DETAILS);
 
-	rc = blkid_do_fullprobe(pr);
-	blkid_probe_enable_partitions(pr, 0);
-
-	if (rc < 0)
-		goto done;	/* -1 = error, 1 = nothing, 0 = succes */
-
-	if (blkid_probe_lookup_value(pr, "PTTYPE", NULL, NULL) == 0)
-		/* partition table detected */
-		has_pt = 1;
-
-	/*
-	 * filesystems/raids probing
-	 *
-	 * Q: Why do we try to probe for FS/RAID on device with partiton table?
-	 *
-	 * A: For some devices the kernel creates partitions because it is too
-	 *    dumb to find out, that the device contains a RAID signature or
-	 *    other metadata that signifies, that this device should not be
-	 *    handled.
-	 *
-	 *    Many RAID signatures are at the end of the device, or at least
-	 *    still allow that the volume contains a partition table at the
-	 *    beginning of the device, which the kernel will find. Udev needs
-	 *    to look at the disk, if there are such RAID signatures, and then
-	 *    it needs to handle it, and in many cases just kill all the
-	 *    wrongly kernel-created partitions.
-	 *
-	 * -- Kay Sievers
-	 *    http://thread.gmane.org/gmane.linux.utilities.util-linux-ng/2888/focus=2890
-	 *
-	 * This all is unncecessary for very small devices (<= 1.44MiB).
-	 */
-	if (has_pt == 0 || S_ISCHR(st.st_mode) ||
-	    blkid_probe_get_size(pr) > 1024 * 1440) {
+	if (!S_ISCHR(st.st_mode) && blkid_probe_get_size(pr) <= 1024 * 1440) {
 		/*
-		 * filesystems/RAIDs probing
+		 * check if the small disk is partitioned, if yes then
+		 * don't probe for filesystems.
 		 */
-		blkid_probe_enable_superblocks(pr, 1);
+		blkid_probe_enable_superblocks(pr, 0);
 
-		rc = blkid_do_safeprobe(pr);
+		rc = blkid_do_fullprobe(pr);
 		if (rc < 0)
-			goto done;
+			goto done;	/* -1 = error, 1 = nothing, 0 = succes */
+
+		if (blkid_probe_lookup_value(pr, "PTTYPE", NULL, NULL) == 0)
+			/* partition table detected */
+			goto print_vals;
+
+		/* small whole-disk is unpartitioned, probe for filesystems only */
+		blkid_probe_enable_partitions(pr, 0);
 	}
 
+	blkid_probe_enable_superblocks(pr, 1);
+
+	rc = blkid_do_safeprobe(pr);
+	if (rc < 0)
+		goto done;
+print_vals:
 	nvals = blkid_probe_numof_values(pr);
 
 	if (nvals && !first && output & OUTPUT_UDEV_LIST)
