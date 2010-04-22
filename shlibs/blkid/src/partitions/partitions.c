@@ -582,6 +582,9 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 	if (chn->binary)
 		partitions_init_data(pr, chn);
 
+	if (pr->prob_flags & BLKID_PARTS_IGNORE_PT)
+		goto details_only;
+
 	DBG(DEBUG_LOWPROBE,
 		printf("--> starting probing loop [PARTS idx=%d]\n",
 		chn->idx));
@@ -620,6 +623,7 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 			chn->idx));
 	}
 
+details_only:
 	/*
 	 * Gather PART_ENTRY_* values if the current device is a partition.
 	 */
@@ -761,6 +765,82 @@ static int blkid_partitions_probe_partition(blkid_probe pr)
 nothing:
 	blkid_free_probe(disk_pr);
 	free(disk_path);
+	return rc;
+}
+
+/*
+ * This function is compatible with blkid_probe_get_partitions(), but the
+ * result is not stored in @pr and all probing is independent on the
+ * status of @pr. It's possible to call this function from arbitrary
+ * place without a care about @pr.
+ */
+static blkid_partlist blkid_probe_get_independent_partlist(blkid_probe pr)
+{
+
+	blkid_partlist ls = NULL, org_ls = NULL;
+	struct blkid_chain *chn = &pr->chains[BLKID_CHAIN_PARTS];
+	struct blkid_prval vals[BLKID_NVALS_PARTS];
+	int nvals = BLKID_NVALS_PARTS;
+	int idx;
+
+	/* save old results */
+	nvals = blkid_probe_chain_copy_vals(pr, chn, vals, nvals);
+	idx = chn->idx;
+	if (chn->data) {
+		org_ls = chn->data;
+		chn->data = NULL;
+	}
+
+	ls = blkid_probe_get_partitions(pr);
+
+	/* restore original results */
+	chn->data = org_ls;
+	chn->idx = idx;
+
+	blkid_probe_chain_reset_vals(pr, chn);
+	blkid_probe_append_vals(pr, vals, nvals);
+
+	return ls;
+}
+
+/*
+ * Returns 1 if the device is whole-disk and the area specified by @offset and
+ * @size is covered by any partition.
+ */
+int blkid_probe_is_covered_by_pt(blkid_probe pr,
+				 blkid_loff_t offset, blkid_loff_t size)
+{
+	blkid_partlist ls = NULL;
+	blkid_loff_t start, end;
+	int nparts, i, rc = 0;
+
+	DBG(DEBUG_LOWPROBE, printf(
+		"=> checking if off=%jd size=%jd covered by PT\n",
+		offset, size));
+
+	ls = blkid_probe_get_independent_partlist(pr);
+	if (!ls)
+		goto done;
+
+	nparts = blkid_partlist_numof_partitions(ls);
+	if (!nparts)
+		goto done;
+
+	end = (offset + size) >> 9;
+	start = offset >> 9;
+
+	for (i = 0; i < nparts; i++) {
+		blkid_partition par = &ls->parts[i];
+
+		if (start >= par->start && end <= par->start + par->size) {
+			rc = 1;
+			break;
+		}
+	}
+done:
+	partitions_free_data(pr, (void *)ls);
+
+	DBG(DEBUG_LOWPROBE, printf("<= %s covered by PT\n", rc ? "IS" : "NOT"));
 	return rc;
 }
 

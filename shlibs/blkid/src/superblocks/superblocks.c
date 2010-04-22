@@ -478,14 +478,17 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 	int idx = -1;
 	int count = 0;
 	int intol = 0;
-	int rc;
+	int rc, bin_org = chn->binary;
+
+	chn->binary = TRUE;
 
 	while ((rc = superblocks_probe(pr, chn)) == 0) {
 
-		if (blkid_probe_is_tiny(pr) && !count)
+		if (blkid_probe_is_tiny(pr) && !count) {
 			/* floppy or so -- returns the first result. */
+			chn->binary = bin_org;
 			return 0;
-
+		}
 		if (!count) {
 			/* save the first result */
 			nvals = blkid_probe_chain_copy_vals(pr, chn, vals, nvals);
@@ -500,6 +503,9 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 		if (!(idinfos[chn->idx]->flags & BLKID_IDINFO_TOLERANT))
 			intol++;
 	}
+
+	chn->binary = bin_org;
+
 	if (rc < 0)
 		return rc;		/* error */
 	if (count > 1 && intol) {
@@ -518,6 +524,30 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 	if (sb && chn->data)
 		superblocks_copy_data(chn->data, sb);
 	chn->idx = idx;
+
+	/*
+	 * Check for collisions between RAID and partition table
+	 */
+	if (sb && sb->usage == BLKID_USAGE_RAID &&
+	    sb->magic_off > pr->size / 2 &&
+	    (S_ISREG(pr->mode) || blkid_probe_is_wholedisk(pr)) &&
+	    blkid_probe_is_covered_by_pt(pr, sb->magic_off, 0x200)) {
+		/*
+		 * Ignore the result if the detected RAID superblock is
+		 * within some existing partition (for example RAID on
+		 * the last partition).
+		 */
+		blkid_probe_chain_reset_vals(pr, chn);
+		return 1;
+	}
+
+	/*
+	 * The RAID device could be partitioned. The problem are RAID1 devices
+	 * where the partition table is visible from underlaying devices. We
+	 * have to ignore such partition tables.
+	 */
+	if (sb && sb->usage == BLKID_USAGE_RAID)
+		pr->prob_flags |= BLKID_PARTS_IGNORE_PT;
 
 	return 0;
 }

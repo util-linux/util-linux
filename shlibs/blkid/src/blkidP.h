@@ -196,6 +196,7 @@ struct blkid_struct_probe
 	mode_t			mode;		/* struct stat.sb_mode */
 
 	int			flags;		/* private libray flags */
+	int			prob_flags;	/* always zeroized by blkid_do_*() */
 
 	struct list_head	buffers;	/* list of buffers */
 
@@ -206,10 +207,12 @@ struct blkid_struct_probe
 	int			nvals;		/* number of assigned vals */
 };
 
-/* flags */
+/* private flags */
 #define BLKID_PRIVATE_FD	(1 << 1)	/* see blkid_new_probe_from_filename() */
 #define BLKID_TINY_DEV		(1 << 2)	/* <= 1.47MiB (floppy or so) */
 #define BLKID_CDROM_DEV		(1 << 3)	/* is a CD/DVD drive */
+/* private probing flags */
+#define BLKID_PARTS_IGNORE_PT	(1 << 1)	/* ignore partition table */
 
 /*
  * Evaluation methods (for blkid_eval_* API)
@@ -389,6 +392,9 @@ extern int blkid_probe_set_dimension(blkid_probe pr,
 					(_mag)->kboff << 10, sizeof(type)))
 
 extern blkid_partlist blkid_probe_get_partlist(blkid_probe pr);
+
+extern int blkid_probe_is_covered_by_pt(blkid_probe pr,
+					blkid_loff_t offset, blkid_loff_t size);
 
 extern void blkid_probe_chain_reset_vals(blkid_probe pr, struct blkid_chain *chn);
 extern int blkid_probe_chain_copy_vals(blkid_probe pr, struct blkid_chain *chn,
