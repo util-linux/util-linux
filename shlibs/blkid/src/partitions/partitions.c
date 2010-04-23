@@ -278,9 +278,6 @@ int blkid_probe_filter_partitions_type(blkid_probe pr, int flag, char *names[])
  *          use more blkid_partlist objects in the same time you have to create
  *          more blkid_probe handlers (see blkid_new_probe()).
  *
- * TODO:    add blkid_ref() and blkid_unref() to allows to use blkid_partlist
- *          independently on libblkid probing stuff.
- *
  * Returns: list of partitions, or NULL in case of error.
  */
 blkid_partlist blkid_probe_get_partitions(blkid_probe pr)
@@ -607,9 +604,10 @@ static int partitions_probe(blkid_probe pr, struct blkid_chain *chn)
 		name = idinfos[i]->name;
 
 		/* all checks passed */
-		blkid_probe_set_value(pr, "PTTYPE",
-				(unsigned char *) name,	strlen(name) + 1);
-
+		if (!chn->binary)
+			blkid_probe_set_value(pr, "PTTYPE",
+						(unsigned char *) name,
+						strlen(name) + 1);
 		DBG(DEBUG_LOWPROBE,
 			printf("<-- leaving probing loop (type=%s) [PARTS idx=%d]\n",
 			name, chn->idx));
@@ -879,17 +877,30 @@ int blkid_partlist_numof_partitions(blkid_partlist ls)
 }
 
 /**
+ * blkid_partlist_get_table:
+ *
+ * Returns top-level partition table or NULL of there is not a partition table
+ * on the device.
+ */
+blkid_parttable blkid_partlist_get_table(blkid_partlist ls)
+{
+	if (!ls || list_empty(&ls->l_tabs))
+		return NULL;
+
+	return list_entry(ls->l_tabs.next,
+			struct blkid_struct_parttable, t_tabs);
+}
+
+
+/**
  * blkid_partlist_get_partition:
  * @ls: partitions list
  * @n: partition number in range 0..N, where 'N' is blkid_partlist_numof_partitions().
  *
  * It's possible that the list of partitions is *empty*, but there is a valid
  * partition table on the disk. This happen when on-disk details about
- * partitions are unknown, but we are able to detect partition table magic
- * string only. The nice example is AIX. If your question is: "Is there any
- * partition table?", use:
- *
- *	blkid_probe_lookup_value(pr, "PTTYPE", &type, NULL);
+ * partitions are unknown or the partition table is empty. The nice example is
+ * AIX. See also blkid_partlist_get_table().
  *
  * Returns: partition object or NULL in case or error.
  */

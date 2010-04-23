@@ -21,7 +21,7 @@ int main(int argc, char *argv[])
 	char *devname;
 	blkid_probe pr;
 	blkid_partlist ls;
-	blkid_parttable root_tab = NULL;
+	blkid_parttable root_tab;
 
 	if (argc < 2) {
 		fprintf(stderr, "usage: %s <device|file>  "
@@ -40,25 +40,32 @@ int main(int argc, char *argv[])
 	if (!ls)
 		errx(EXIT_FAILURE, "%s: failed to read partitions\n", devname);
 
+	/*
+	 * Print info about the primary (root) partition table
+	 */
+	root_tab = blkid_partlist_get_table(ls);
+	if (!root_tab)
+		errx(EXIT_FAILURE, "%s: does not contains any "
+				 "known partition table\n", devname);
+
+	printf("size: %jd, sector size: %u, PT: %s, offset: %jd\n---\n",
+		blkid_probe_get_size(pr),
+		blkid_probe_get_sectorsize(pr),
+		blkid_parttable_get_type(root_tab),
+		blkid_parttable_get_offset(root_tab));
+
+	/*
+	 * List partitions
+	 */
 	nparts = blkid_partlist_numof_partitions(ls);
 	if (!nparts)
-		 errx(EXIT_FAILURE, "%s: does not contains any "
-				 "known partition table\n", devname);
+		goto done;
 
 	for (i = 0; i < nparts; i++) {
 		const char *p;
 		blkid_partition par = blkid_partlist_get_partition(ls, i);
 		blkid_parttable tab = blkid_partition_get_table(par);
 
-		if (i == 0) {
-			root_tab = tab;
-			printf("size: %llu, sector size: %u, "
-					"PT: %s, offset: %llu\n---\n",
-				(unsigned long long) blkid_probe_get_size(pr),
-				blkid_probe_get_sectorsize(pr),
-				blkid_parttable_get_type(tab),
-				(unsigned long long) blkid_parttable_get_offset(tab));
-		}
 		printf("#%d: %10llu %10llu  0x%x",
 			blkid_partition_get_partno(par),
 			(unsigned long long) blkid_partition_get_start(par),
@@ -66,7 +73,7 @@ int main(int argc, char *argv[])
 			blkid_partition_get_type(par));
 
 		if (root_tab != tab)
-			/* subpartition */
+			/* subpartition (BSD, Minix, ...) */
 			printf(" (%s)", blkid_parttable_get_type(tab));
 
 		p = blkid_partition_get_name(par);
@@ -82,7 +89,7 @@ int main(int argc, char *argv[])
 		putc('\n', stdout);
 	}
 
+done:
 	blkid_free_probe(pr);
-
 	return EXIT_SUCCESS;
 }

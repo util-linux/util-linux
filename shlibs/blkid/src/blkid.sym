@@ -122,6 +122,7 @@ BLKID_2.18 {
 global:
 	blkid_partition_get_flags;
 	blkid_partlist_devno_to_partition;
+	blkid_partlist_get_table;
 	blkid_probe_all_removable;
 	blkid_probe_get_fd;
 	blkid_probe_get_offset;

@@ -274,6 +274,7 @@ extern int blkid_probe_set_partitions_flags(blkid_probe pr, int flags);
 extern blkid_partlist blkid_probe_get_partitions(blkid_probe pr);
 
 extern int blkid_partlist_numof_partitions(blkid_partlist ls);
+extern blkid_parttable blkid_partlist_get_table(blkid_partlist ls);
 extern blkid_partition blkid_partlist_get_partition(blkid_partlist ls, int n);
 extern blkid_partition blkid_partlist_devno_to_partition(blkid_partlist ls, dev_t devno);
 
