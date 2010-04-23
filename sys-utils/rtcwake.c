@@ -344,6 +344,7 @@ int main(int argc, char **argv)
 					|| strcmp(optarg, "on") == 0
 					|| strcmp(optarg, "no") == 0
 					|| strcmp(optarg, "off") == 0
+					|| strcmp(optarg, "disable") == 0
 			   ) {
 				suspend = strdup(optarg);
 				break;
@@ -413,7 +414,7 @@ int main(int argc, char **argv)
 		printf(clock_mode == CM_UTC ? _("Using UTC time.\n") :
 				_("Using local time.\n"));
 
-	if (!alarm && !seconds) {
+	if (!alarm && !seconds && strcmp(suspend,"disable")) {
 		fprintf(stderr, _("%s: must provide wake time\n"), progname);
 		usage(EXIT_FAILURE);
 	}
@@ -522,6 +523,10 @@ int main(int argc, char **argv)
 			} while (!(data & RTC_AF));
 		}
 
+	} else if (strcmp(suspend, "disable") == 0) {
+		/* just break, alarm gets disabled in the end */
+		if (verbose)
+			printf(_("suspend mode: disable; disabling alarm\n"));
 	} else {
 		if (verbose)
 			printf(_("suspend mode: %s; suspending system\n"), suspend);
