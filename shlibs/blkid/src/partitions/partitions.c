@@ -627,7 +627,9 @@ details_only:
 	/*
 	 * Gather PART_ENTRY_* values if the current device is a partition.
 	 */
-	if ((blkid_partitions_get_flags(pr) & BLKID_PARTS_ENTRY_DETAILS)) {
+	if (!chn->binary &&
+	    (blkid_partitions_get_flags(pr) & BLKID_PARTS_ENTRY_DETAILS)) {
+
 		if (!blkid_partitions_probe_partition(pr))
 			rc = 0;
 	}
