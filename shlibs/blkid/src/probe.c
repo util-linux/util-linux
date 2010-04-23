@@ -16,7 +16,7 @@
  * the selected (see blkid_probe_set_device()) device.
  *
  * The probing routines are grouped together into separate chains. Currently,
- * the librray provides superblocks, partitions and topology chains.
+ * the library provides superblocks, partitions and topology chains.
  *
  * The probing routines is possible to filter (enable/disable) by type (e.g.
  * fstype "vfat" or partype "gpt") or by usage flags (e.g. BLKID_USAGE_RAID).
@@ -35,6 +35,20 @@
  *   2. The binary interfaces. These interfaces return data in the native formats.
  *      The interface is always specific to the probing chain.
  *
+ *  Note that the previous probing result (binary or NAME=value) is always
+ *  zeroized when a chain probing function is called. For example
+ *
+ * <informalexample>
+ *   <programlisting>
+ *     blkid_probe_enable_partitions(pr, TRUE);
+ *     blkid_probe_enable_superblocks(pr, FALSE);
+ *
+ *     blkid_do_safeprobe(pr);
+ *   </programlisting>
+ * </informalexample>
+ *
+ * overwrites the previous probing result for the partitions chain, the superblocks
+ * result is not modified.
  */
 
 /**

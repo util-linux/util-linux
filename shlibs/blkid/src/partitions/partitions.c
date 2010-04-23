@@ -899,8 +899,9 @@ blkid_parttable blkid_partlist_get_table(blkid_partlist ls)
  *
  * It's possible that the list of partitions is *empty*, but there is a valid
  * partition table on the disk. This happen when on-disk details about
- * partitions are unknown or the partition table is empty. The nice example is
- * AIX. See also blkid_partlist_get_table().
+ * partitions are unknown or the partition table is empty.
+ *
+ * See also blkid_partlist_get_table().
  *
  * Returns: partition object or NULL in case or error.
  */
