@@ -98,10 +98,10 @@ The
 .Nm logger
 utility exits 0 on success, and >0 if an error occurs.
 .Pp
-Valid facility names are: auth, authpriv (for security information of
-a sensitive nature), cron, daemon, ftp, kern, lpr, mail, news,
-security (deprecated synonym for auth), syslog, user, uucp, and local0
-to local7, inclusive.
+Valid facility names are: auth, authpriv (for security information of a
+sensitive nature), cron, daemon, ftp, kern (can’t be generated from user
+process), lpr, mail, news, security (deprecated synonym for auth), syslog,
+user, uucp, and local0 to local7, inclusive.
 .Pp
 Valid level names are):
 alert, crit, debug, emerg, err, error (deprecated synonym for err),
