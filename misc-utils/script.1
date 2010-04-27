@@ -41,6 +41,7 @@
 .Nm script
 .Op Fl a
 .Op Fl c Ar COMMAND
+.Op Fl e
 .Op Fl f
 .Op Fl q
 .Op Fl t
@@ -74,6 +75,9 @@ retaining the prior contents.
 Run the COMMAND rather than an interactive shell.
 This makes it easy for a script to capture the output of a program that
 behaves differently when its stdout is not a tty.
+.It Fl e
+Return the exit code of the child process. Uses the same format as bash
+termination on signal termination exit code is 128+n.
 .It Fl f
 Flush output after each write. This is nice for telecooperation:
 One person does `mkfifo foo; script -f foo' and another can

@@ -81,6 +81,7 @@ int	master;
 int	slave;
 int	child;
 int	subchild;
+int	childstatus;
 char	*fname;
 
 struct	termios tt;
@@ -92,6 +93,7 @@ char	line[] = "/dev/ptyXX";
 #endif
 int	aflg = 0;
 char	*cflg = NULL;
+int	eflg = 0;
 int	fflg = 0;
 int	qflg = 0;
 int	tflg = 0;
@@ -127,6 +129,7 @@ die_if_link(char *fn) {
 
 int
 main(int argc, char **argv) {
+	sigset_t block_mask, unblock_mask;
 	struct sigaction sa;
 	extern int optind;
 	char *p;
@@ -150,13 +153,16 @@ main(int argc, char **argv) {
 		}
 	}
 
-	while ((ch = getopt(argc, argv, "ac:fqt")) != -1)
+	while ((ch = getopt(argc, argv, "ac:efqt")) != -1)
 		switch((char)ch) {
 		case 'a':
 			aflg++;
 			break;
 		case 'c':
 			cflg = optarg;
+			break;
+		case 'e':
+			eflg++;
 			break;
 		case 'f':
 			fflg++;
@@ -170,7 +176,7 @@ main(int argc, char **argv) {
 		case '?':
 		default:
 			fprintf(stderr,
-				_("usage: script [-a] [-f] [-q] [-t] [file]\n"));
+				_("usage: script [-a] [-e] [-f] [-q] [-t] [file]\n"));
 			exit(1);
 		}
 	argc -= optind;
@@ -196,19 +202,30 @@ main(int argc, char **argv) {
 		printf(_("Script started, file is %s\n"), fname);
 	fixtty();
 
+	/* setup SIGCHLD handler */
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
-
 	sa.sa_handler = finish;
 	sigaction(SIGCHLD, &sa, NULL);
 
+	/* init mask for SIGCHLD */
+	sigprocmask(SIG_SETMASK, NULL, &block_mask);
+	sigaddset(&block_mask, SIGCHLD);
+
+	sigprocmask(SIG_SETMASK, &block_mask, &unblock_mask);
 	child = fork();
+	sigprocmask(SIG_SETMASK, &unblock_mask, NULL);
+
 	if (child < 0) {
 		perror("fork");
 		fail();
 	}
 	if (child == 0) {
+
+		sigprocmask(SIG_SETMASK, &block_mask, NULL);
 		subchild = child = fork();
+		sigprocmask(SIG_SETMASK, &unblock_mask, NULL);
+
 		if (child < 0) {
 			perror("fork");
 			fail();
@@ -232,9 +249,6 @@ doinput() {
 	char ibuf[BUFSIZ];
 
 	(void) fclose(fscript);
-
-	if (die == 0 && child && kill(child, 0) == -1 && errno == ESRCH)
-		die = 1;
 
 	while (die == 0) {
 		if ((cc = read(0, ibuf, BUFSIZ)) > 0) {
@@ -263,8 +277,10 @@ finish(int dummy) {
 	register int pid;
 
 	while ((pid = wait3(&status, WNOHANG, 0)) > 0)
-		if (pid == child)
+		if (pid == child) {
+			childstatus = status;
 			die = 1;
+		}
 }
 
 void
@@ -302,17 +318,6 @@ dooutput() {
 	tvec = time((time_t *)NULL);
 	my_strftime(obuf, sizeof obuf, "%c\n", localtime(&tvec));
 	fprintf(fscript, _("Script started on %s"), obuf);
-
-	if (die == 0 && child && kill(child, 0) == -1 && errno == ESRCH)
-		/*
-		 * the SIGCHLD handler could be executed when the "child"
-		 * variable is not set yet. It means that the "die" is zero
-		 * althought the child process is already done. We have to
-		 * check this thing now. Now we have the "child" variable
-		 * already initialized. For more details see main() and
-		 * finish().  --kzak 07-Aug-2007
-		 */
-		die = 1;
 
 	do {
 		if (die && flgs == 0) {
@@ -435,6 +440,13 @@ done() {
 		(void) tcsetattr(0, TCSADRAIN, &tt);
 		if (!qflg)
 			printf(_("Script done, file is %s\n"), fname);
+	}
+
+	if(eflg) {
+		if (WIFSIGNALED(childstatus))
+			exit(WTERMSIG(childstatus) + 0x80);
+		else
+			exit(WEXITSTATUS(childstatus));
 	}
 	exit(0);
 }
