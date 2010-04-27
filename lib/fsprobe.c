@@ -20,29 +20,6 @@
 
 static blkid_cache blcache;
 
-#ifdef HAVE_LIBBLKID_INTERNAL
-/* ask kernel developers why we need such ugly open() method... */
-static int
-open_device(const char *devname)
-{
-	int retries = 0;
-
-	do {
-		int fd = open(devname, O_RDONLY);
-		if (fd >= 0)
-			return fd;
-		if (errno != ENOMEDIUM)
-			break;
-		if (retries >= CRDOM_NOMEDIUM_RETRIES)
-			break;
-		++retries;
-		sleep(3);
-	} while(1);
-
-	return -1;
-}
-#endif
-
 /*
  * Parses NAME=value, returns -1 on parse error, 0 success. The success is also
  * when the 'spec' doesn't contain name=value pair (because the spec could be
@@ -124,7 +101,7 @@ fsprobe_get_value(const char *name, const char *devname, int *ambi)
 
 	if (!devname || !name)
 		return NULL;
-	fd = open_device(devname);
+	fd = open(devname, O_RDONLY);
 	if (fd < 0)
 		return NULL;
 	if (!blprobe)

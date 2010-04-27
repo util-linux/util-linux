@@ -8,9 +8,6 @@
 
 #define DEFAULT_SECTOR_SIZE       512
 
-/* open() retries when errno is ENOMEDIUM */
-#define CRDOM_NOMEDIUM_RETRIES    5
-
 #if !defined(BLKROSET) && defined(__linux__)
 
 #define BLKROSET   _IO(0x12,93)	/* set device read-only (0 = read-write) */
