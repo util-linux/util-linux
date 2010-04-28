@@ -2662,7 +2662,8 @@ static void
 move_begin(int i) {
 	struct pte *pe = &ptes[i];
 	struct partition *p = pe->part_table;
-	unsigned int new, first;
+	unsigned int new, free_start, curr_start, last;
+	int x;
 
 	if (warn_geometry())
 		return;
@@ -2670,13 +2671,37 @@ move_begin(int i) {
 		printf(_("Partition %d has no data area\n"), i + 1);
 		return;
 	}
-	first = get_partition_start(pe);
-	new = read_int(first, first, first + get_nr_sects(p) - 1, first,
+
+	/* the default start is at the second sector of the disk or at the
+	 * second sector of the extended partition
+	 */
+	free_start = pe->offset ? pe->offset + 1 : 1;
+
+	curr_start = get_partition_start(pe);
+
+	/* look for a free space before the current start of the partition */
+	for (x = 0; x < partitions; x++) {
+		unsigned int end;
+		struct pte *prev_pe = &ptes[x];
+		struct partition *prev_p = prev_pe->part_table;
+
+		if (!prev_p)
+			continue;
+		end = get_partition_start(prev_pe) + get_nr_sects(prev_p);
+
+		if (!is_cleared_partition(prev_p) &&
+		    end > free_start && end <= curr_start)
+			free_start = end;
+	}
+
+	last = get_partition_start(pe) + get_nr_sects(p) - 1;
+
+	new = read_int(free_start, curr_start, last, free_start,
 		       _("New beginning of data")) - pe->offset;
 
 	if (new != get_nr_sects(p)) {
-		first = get_nr_sects(p) + get_start_sect(p) - new;
-		set_nr_sects(p, first);
+		unsigned int sects = get_nr_sects(p) + get_start_sect(p) - new;
+		set_nr_sects(p, sects);
 		set_start_sect(p, new);
 		pe->changed = 1;
 	}
