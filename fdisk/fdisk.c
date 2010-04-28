@@ -1522,11 +1522,11 @@ read_int(unsigned int low, unsigned int dflt, unsigned int high,
 
 
 int
-get_partition(int warn, int max) {
+get_partition_dflt(int warn, int max, int dflt) {
 	struct pte *pe;
 	int i;
 
-	i = read_int(1, 0, max, 0, _("Partition number")) - 1;
+	i = read_int(1, dflt, max, 0, _("Partition number")) - 1;
 	pe = &ptes[i];
 
 	if (warn) {
@@ -1541,6 +1541,11 @@ get_partition(int warn, int max) {
 				i+1);
 	}
 	return i;
+}
+
+int
+get_partition(int warn, int max) {
+	return get_partition_dflt(warn, max, 0);
 }
 
 static int
@@ -1573,14 +1578,17 @@ static int
 get_nonexisting_partition(int warn, int max) {
 	int pno = -1;
 	int i;
+	int dflt = 0;
 
 	for (i = 0; i < max; i++) {
 		struct pte *pe = &ptes[i];
 		struct partition *p = pe->part_table;
 
 		if (p && is_cleared_partition(p)) {
-			if (pno >= 0)
+			if (pno >= 0) {
+				dflt = pno + 1;
 				goto not_unique;
+			}
 			pno = i;
 		}
 	}
@@ -1592,7 +1600,7 @@ get_nonexisting_partition(int warn, int max) {
 	return -1;
 
  not_unique:
-	return get_partition(warn, max);
+	return get_partition_dflt(warn, max, dflt);
 }
 
 const char *
