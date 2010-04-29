@@ -451,6 +451,21 @@ fi
 AM_CONDITIONAL(USE_SLANG, test "x$use_slang" = xyes)
 
 
+AC_ARG_WITH([utempter],
+  AS_HELP_STRING([--with-utempter], [compile script(1) with libutempter]),
+  [], with_utempter=no
+)
+
+if test "x$with_utempter" = xyes; then
+  UTIL_CHECK_LIB(utempter, utempter_add_record)
+  if test "x$have_utempter" = xno; then
+    AC_MSG_ERROR([utempter selected but libutempter not found])
+  fi
+else
+  AM_CONDITIONAL(HAVE_UTEMPTER, false)
+fi
+
+
 AC_LINK_IFELSE([AC_LANG_PROGRAM([[
 #define _XOPEN_SOURCE
 #include <unistd.h>

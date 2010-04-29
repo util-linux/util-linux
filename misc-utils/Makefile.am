@@ -11,6 +11,7 @@ usrbin_exec_PROGRAMS = cal ddate logger look mcookie \
 EXTRA_DIST += README.cal README.ddate README.namei README.namei2
 
 mcookie_SOURCES = mcookie.c ../lib/md5.c
+script_LDADD =
 
 usrbin_exec_SCRIPTS = chkdupexe
 
@@ -66,7 +67,11 @@ endif
 endif
 
 if HAVE_UTIL
-script_LDADD = -lutil
+script_LDADD += -lutil
+endif
+
+if HAVE_UTEMPTER
+script_LDADD += -lutempter
 endif
 
 if HAVE_NCURSES

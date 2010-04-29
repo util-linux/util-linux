@@ -59,9 +59,12 @@
 
 #include "nls.h"
 
-
 #ifdef HAVE_LIBUTIL
 #include <pty.h>
+#endif
+
+#ifdef HAVE_LIBUTEMPTER
+#include <utempter.h>
 #endif
 
 void finish(int);
@@ -77,7 +80,7 @@ void doshell(void);
 
 char	*shell;
 FILE	*fscript;
-int	master;
+int	master = -1;
 int	slave;
 int	child;
 int	subchild;
@@ -202,6 +205,9 @@ main(int argc, char **argv) {
 		printf(_("Script started, file is %s\n"), fname);
 	fixtty();
 
+#ifdef HAVE_LIBUTEMPTER
+	utempter_add_record(master, NULL);
+#endif
 	/* setup SIGCHLD handler */
 	sigemptyset(&sa.sa_mask);
 	sa.sa_flags = 0;
@@ -391,6 +397,8 @@ doshell() {
 	(void) dup2(slave, 2);
 	(void) close(slave);
 
+	master = -1;
+
 	shname = strrchr(shell, '/');
 	if (shname)
 		shname++;
@@ -436,10 +444,16 @@ done() {
 		}
 		(void) fclose(fscript);
 		(void) close(master);
+
+		master = -1;
 	} else {
 		(void) tcsetattr(0, TCSADRAIN, &tt);
 		if (!qflg)
 			printf(_("Script done, file is %s\n"), fname);
+#ifdef HAVE_LIBUTEMPTER
+		if (master >= 0)
+			utempter_remove_record(master);
+#endif
 	}
 
 	if(eflg) {
@@ -488,9 +502,11 @@ getmaster() {
 					return;
 				}
 				(void) close(master);
+				master = -1;
 			}
 		}
 	}
+	master = -1;
 	fprintf(stderr, _("Out of pty's\n"));
 	fail();
 #endif /* not HAVE_LIBUTIL */
