@@ -33,6 +33,8 @@ struct swap_header_v1_2 {
 #define PAGESIZE_MIN	0xff6	/* 4086 (arm, i386, ...) */
 #define PAGESIZE_MAX	0xfff6	/* 65526 (ia64) */
 
+#define TOI_MAGIC_STRING	"\xed\xc3\x02\xe9\x98\x56\xe5\x0c"
+#define TOI_MAGIC_STRLEN	(sizeof(TOI_MAGIC_STRING) - 1)
 
 static int swap_set_info(blkid_probe pr, const char *version)
 {
@@ -64,8 +66,18 @@ static int swap_set_info(blkid_probe pr, const char *version)
 
 static int probe_swap(blkid_probe pr, const struct blkid_idmag *mag)
 {
+	unsigned char *buf;
+
 	if (!mag)
 		return -1;
+
+	/* TuxOnIce keeps valid swap header at the end of the 1st page */
+	buf = blkid_probe_get_buffer(pr, 0, TOI_MAGIC_STRLEN);
+	if (!buf)
+		return -1;
+
+	if (memcmp(buf, TOI_MAGIC_STRING, TOI_MAGIC_STRLEN) == 0)
+		return 1;	/* Ignore swap signature, it's TuxOnIce */
 
 	if (!memcmp(mag->magic, "SWAP-SPACE", mag->len)) {
 		/* swap v0 doesn't support LABEL or UUID */
@@ -88,7 +100,7 @@ static int probe_swsuspend(blkid_probe pr, const struct blkid_idmag *mag)
 		return swap_set_info(pr, "s2suspend");
 	if (!memcmp(mag->magic, "ULSUSPEND", mag->len))
 		return swap_set_info(pr, "ulsuspend");
-	if (!memcmp(mag->magic, "\xed\xc3\x02\xe9\x98\x56\xe5\x0c", mag->len))
+	if (!memcmp(mag->magic, TOI_MAGIC_STRING, mag->len))
 		return swap_set_info(pr, "tuxonice");
 
 	return -1;	/* no signature detected */
@@ -125,26 +137,22 @@ const struct blkid_idinfo swsuspend_idinfo =
 	.minsz		= 10 * 4096,	/* 10 pages */
 	.magics		=
 	{
+		{ TOI_MAGIC_STRING, TOI_MAGIC_STRLEN, 0, 0 },
 		{ "S1SUSPEND", 9, 0, 0xff6 },
 		{ "S2SUSPEND", 9, 0, 0xff6 },
 		{ "ULSUSPEND", 9, 0, 0xff6 },
-		{ "\xed\xc3\x02\xe9\x98\x56\xe5\x0c", 8, 0, 0xff6 },
 		{ "S1SUSPEND", 9, 0, 0x1ff6 },
 		{ "S2SUSPEND", 9, 0, 0x1ff6 },
 		{ "ULSUSPEND", 9, 0, 0x1ff6 },
-		{ "\xed\xc3\x02\xe9\x98\x56\xe5\x0c", 8, 0, 0x1ff6 },
 		{ "S1SUSPEND", 9, 0, 0x3ff6 },
 		{ "S2SUSPEND", 9, 0, 0x3ff6 },
 		{ "ULSUSPEND", 9, 0, 0x3ff6 },
-		{ "\xed\xc3\x02\xe9\x98\x56\xe5\x0c", 8, 0, 0x3ff6 },
 		{ "S1SUSPEND", 9, 0, 0x7ff6 },
 		{ "S2SUSPEND", 9, 0, 0x7ff6 },
 		{ "ULSUSPEND", 9, 0, 0x7ff6 },
-		{ "\xed\xc3\x02\xe9\x98\x56\xe5\x0c", 8, 0, 0x7ff6 },
 		{ "S1SUSPEND", 9, 0, 0xfff6 },
 		{ "S2SUSPEND", 9, 0, 0xfff6 },
 		{ "ULSUSPEND", 9, 0, 0xfff6 },
-		{ "\xed\xc3\x02\xe9\x98\x56\xe5\x0c", 8, 0, 0xfff6 },
 		{ NULL }
 	}
 };
