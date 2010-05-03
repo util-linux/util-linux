@@ -184,7 +184,7 @@ int main(int argc, char *argv[])
 			ioprio_setpid(0, ioprio, ioclass);
 			execvp(argv[optind], &argv[optind]);
 			/* execvp should never return */
-			err(EXIT_FAILURE, _("execvp failed"));
+			err(EXIT_FAILURE, _("executing %s failed"), argv[optind]);
 		}
 	}
 
