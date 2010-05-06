@@ -17,12 +17,12 @@ Command (m for help): Changing display/entry units to sectors
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (2048-104447, default 2048): Using default value 2048
+Partition number (1-4, default 1): First sector (2048-104447, default 2048): Using default value 2048
 Last sector, +sectors or +size{K,M,G} (2048-104447, default 104447): 
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (53248-104447, default 53248): Using default value 53248
+Partition number (1-4, default 2): First sector (53248-104447, default 53248): Using default value 53248
 Last sector, +sectors or +size{K,M,G} (53248-104447, default 104447): Using default value 104447
 
 Command (m for help): 
@@ -50,9 +50,17 @@ ID_FS_USAGE=raid
 
 
 ID_FS_VERSION=0.90.0
+ID_PART_ENTRY_NUMBER=1
+ID_PART_ENTRY_SCHEME=dos
+ID_PART_ENTRY_TYPE=0x83
+ID_PART_ENTRY_TYPE_ENC=0x83
 Probe second RAID member
 ID_FS_TYPE=linux_raid_member
 ID_FS_USAGE=raid
 
 
 ID_FS_VERSION=0.90.0
+ID_PART_ENTRY_NUMBER=2
+ID_PART_ENTRY_SCHEME=dos
+ID_PART_ENTRY_TYPE=0x83
+ID_PART_ENTRY_TYPE_ENC=0x83
