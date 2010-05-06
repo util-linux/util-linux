@@ -47,6 +47,9 @@ Unshare the IPC namespace,
 .TP
 .BR \-n , " \-\-net"
 Unshare the network namespace.
+.SH NOTES
+The unshare command drops potential privileges before executing the
+target program. This allows to setuid unshare.
 .SH SEE ALSO
 unshare(2), clone(2)
 .SH BUGS

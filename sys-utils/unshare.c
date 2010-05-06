@@ -113,6 +113,13 @@ int main(int argc, char *argv[])
 	if(-1 == unshare(unshare_flags))
 		err(EXIT_FAILURE, _("unshare failed"));
 
+	/* drop potential root euid/egid if we had been setuid'd */
+	if (setgid(getgid()) < 0)
+		err(EXIT_FAILURE, _("cannot set group id"));
+
+	if (setuid(getuid()) < 0)
+		err(EXIT_FAILURE, _("cannot set user id"));
+
 	execvp(argv[optind], argv + optind);
 
 	err(EXIT_FAILURE, _("exec %s failed"), argv[optind]);
