@@ -364,7 +364,7 @@ int blkid_devno_to_wholedisk(dev_t dev, char *diskname,
 	 *	- dirname  ../../block/sda/sda1 = ../../block/sda
 	 *	- basename ../../block/sda      = sda
 	 */
-	linklen = readlink(path, linkpath, sizeof(linkpath));
+	linklen = readlink(path, linkpath, sizeof(linkpath) - 1);
 	if (linklen < 0)
 		goto err;
 	linkpath[linklen] = '\0';
