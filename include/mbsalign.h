@@ -38,6 +38,8 @@ enum {
 #endif
 };
 
-size_t
-mbsalign (const char *src, char *dest, size_t dest_size,
-          size_t *width, mbs_align_t align, int flags);
+extern size_t mbs_truncate(char *str, size_t *width);
+
+extern size_t mbsalign (const char *src, char *dest,
+			size_t dest_size,  size_t *width,
+			mbs_align_t align, int flags);

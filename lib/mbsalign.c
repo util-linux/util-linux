@@ -99,6 +99,40 @@ rpl_wcswidth (const wchar_t *s, size_t n)
 }
 #endif
 
+/* Truncate multi-byte string to @width and returns number of
+ * bytes of the new string @str, and in @width returns number
+ * of cells.
+ */
+size_t
+mbs_truncate(char *str, size_t *width)
+{
+	size_t bytes = strlen(str);
+#ifdef HAVE_WIDECHAR
+	size_t sz = mbstowcs(NULL, str, 0);
+	wchar_t *wcs = NULL;
+
+	if (sz == (size_t) -1)
+		goto done;
+
+	wcs = malloc((sz + 1) * sizeof(wchar_t));
+	if (!wcs)
+		goto done;
+
+	if (!mbstowcs(wcs, str, sz))
+		goto done;
+	*width = wc_truncate(wcs, *width);
+	bytes = wcstombs(str, wcs, bytes);
+done:
+	free(wcs);
+#else
+	if (*width < bytes)
+		bytes = *width;
+#endif
+	if (bytes >= 0)
+		str[bytes] = '\0';
+	return bytes;
+}
+
 /* Write N_SPACES space characters to DEST while ensuring
    nothing is written beyond DEST_END. A terminating NUL
    is always added to DEST.

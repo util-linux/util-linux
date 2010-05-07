@@ -83,11 +83,16 @@
 #include <blkid.h>
 #endif
 
+#ifdef HAVE_WIDECHAR
+#include <wctype.h>
+#endif
+
 #include "nls.h"
 #include "blkdev.h"
 #include "xstrncpy.h"
 #include "common.h"
 #include "gpt.h"
+#include "mbsalign.h"
 
 #ifdef __GNU__
 #define DEFAULT_DEVICE "/dev/hd0"
@@ -407,10 +412,10 @@ fdexit(int ret) {
 
 static int
 get_string(char *str, int len, char *def) {
-    unsigned char c;
-    int i = 0;
-    int x, y;
+    size_t cells = 0, i = 0;
+    int x, y, key;
     int use_def = FALSE;
+    wint_t c;
 
     getyx(stdscr, y, x);
     clrtoeol();
@@ -424,7 +429,13 @@ get_string(char *str, int len, char *def) {
     }
 
     refresh();
+
+#if defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
+    while ((key = get_wch(&c)) != ERR &&
+	   c != '\r' && c != '\n' && c != KEY_ENTER) {
+#else
     while ((c = getch()) != '\n' && c != CR) {
+#endif
 	switch (c) {
 	case ESC:
 	    move(y, x);
@@ -433,10 +444,14 @@ get_string(char *str, int len, char *def) {
 	    return GS_ESCAPE;
 	case DEL:
 	case '\b':
+	case KEY_BACKSPACE:
 	    if (i > 0) {
-		str[--i] = 0;
-		mvaddch(y, x+i, ' ');
-		move(y, x+i);
+		cells--;
+		i = mbs_truncate(str, &cells);
+		if (i < 0)
+			return GS_ESCAPE;
+		mvaddch(y, x + cells, ' ');
+		move(y, x + cells);
 	    } else if (use_def) {
 		clrtoeol();
 		use_def = FALSE;
@@ -444,15 +459,39 @@ get_string(char *str, int len, char *def) {
 		putchar(BELL);
 	    break;
 	default:
+#if defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
+	    if (i < len && iswprint(c)) {
+		wchar_t wc = (wchar_t) c;
+		char s[MB_CUR_MAX + 1];
+		int  sz = wctomb(s, wc);
+
+		if (sz + i < len) {
+			s[sz] = '\0';
+			mvaddnstr(y, x + cells, s, sz);
+			if (use_def) {
+			    clrtoeol();
+			    use_def = FALSE;
+			}
+			memcpy(str + i, s, sz);
+			i += sz;
+			str[i] = '\0';
+			cells += wcwidth(wc);
+		} else
+			putchar(BELL);
+	    }
+#else
 	    if (i < len && isprint(c)) {
-		mvaddch(y, x+i, c);
+	        mvaddch(y, x + cells, c);
 		if (use_def) {
 		    clrtoeol();
 		    use_def = FALSE;
 		}
 		str[i++] = c;
 		str[i] = 0;
-	    } else
+		cells++;
+	    }
+#endif
+	    else
 		putchar(BELL);
 	}
 	refresh();
