@@ -25,8 +25,8 @@ main(int argc, char **argv){
 		exit(1);
 	}
 	p.pno = atoi(argv[2]);
-	p.start = 512 * ((long long) atol(argv[3]));
-	p.length = 512 * ((long long) atol(argv[4]));
+	p.start = 512 * atoll(argv[3]);
+	p.length = 512 * atoll(argv[4]);
 	p.devname[0] = 0;
 	p.volname[0] = 0;
 	a.op = BLKPG_ADD_PARTITION;
