@@ -34,6 +34,9 @@ extern int optind;
 #define OUTPUT_PRETTY_LIST	0x0004
 #define OUTPUT_UDEV_LIST	0x0008
 
+#define LOWPROBE_TOPOLOGY	0x0001
+#define LOWPROBE_SUPERBLOCKS	0x0002
+
 #include <blkid.h>
 
 #include "ismounted.h"
@@ -59,6 +62,7 @@ static void usage(int error)
 		"        [-t <token>] [-w <file>] [dev ...]\n\n"
 		"  %1$s -p [-s <tag>] [-O <offset>] [-S <size>] \n"
 		"        [-o format] <dev> [dev ...]\n\n"
+		"  %1$s -i [-s <tag>] [-o format] <dev> [dev ...]\n\n"
 		"Options:\n"
 		"  -c <file>   cache file (default: /etc/blkid.tab, /dev/null = none)\n"
 		"  -h          print this usage message and exit\n"
@@ -74,7 +78,8 @@ static void usage(int error)
 		"  -w <file>   write cache to different file (/dev/null = no write)\n"
 		"  <dev>       specify device(s) to probe (default: all devices)\n\n"
 		"Low-level probing options:\n"
-		"  -p          switch to low-level mode (bypass cache)\n"
+		"  -p          low-level superblocks probing (bypass cache)\n"
+		"  -i          gather information about I/O limits\n"
 		"  -S <size>   overwrite device size\n"
 		"  -O <offset> probe at the given offset\n"
 		"  -u <list>   filter by \"usage\" (e.g. -u filesystem,raid)\n"
@@ -238,6 +243,7 @@ static void pretty_print_dev(blkid_dev dev)
 static void print_udev_format(const char *name, const char *value, size_t sz)
 {
 	char enc[265], safe[256];
+	size_t namelen = strlen(name);
 
 	*safe = *enc = '\0';
 
@@ -270,6 +276,11 @@ static void print_udev_format(const char *name, const char *value, size_t sz)
 	} else if (!strncmp(name, "PART_ENTRY_", 11))
 		printf("ID_%s=%s\n", name, value);
 
+	else if (namelen >= 15 && (
+		   !strcmp(name + (namelen - 12), "_SECTOR_SIZE") ||
+		   !strcmp(name + (namelen - 8), "_IO_SIZE") ||
+		   !strcmp(name, "ALIGNMENT_OFFSET")))
+			printf("ID_IOLIMIT_%s=%s\n", name, value);
 	else
 		printf("ID_FS_%s=%s\n", name, value);
 }
@@ -415,28 +426,13 @@ done:
 	return rc;
 }
 
-static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
-			int output, blkid_loff_t offset, blkid_loff_t size)
+static int lowprobe_superblocks(blkid_probe pr)
 {
-	const char *data;
-	const char *name;
-	int nvals = 0, n, num = 1;
-	size_t len;
-	int fd;
-	int rc = 0;
 	struct stat st;
-	static int first = 1;
+	int rc;
 
-	fd = open(devname, O_RDONLY);
-	if (fd < 0) {
-		fprintf(stderr, "error: %s: %s\n", devname, strerror(errno));
-		return 2;
-	}
-	if (blkid_probe_set_device(pr, fd, offset, size))
-		goto done;
-
-	if (fstat(fd, &st))
-		goto done;
+	if (fstat(blkid_probe_get_fd(pr), &st))
+		return -1;
 
 	blkid_probe_enable_partitions(pr, 1);
 	blkid_probe_set_partitions_flags(pr, BLKID_PARTS_ENTRY_DETAILS);
@@ -450,11 +446,10 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 
 		rc = blkid_do_fullprobe(pr);
 		if (rc < 0)
-			goto done;	/* -1 = error, 1 = nothing, 0 = succes */
+			return rc;	/* -1 = error, 1 = nothing, 0 = succes */
 
 		if (blkid_probe_lookup_value(pr, "PTTYPE", NULL, NULL) == 0)
-			/* partition table detected */
-			goto print_vals;
+			return 0;	/* partition table detected */
 
 		/* small whole-disk is unpartitioned, probe for filesystems only */
 		blkid_probe_enable_partitions(pr, 0);
@@ -462,10 +457,47 @@ static int lowprobe_device(blkid_probe pr, const char *devname,	char *show[],
 
 	blkid_probe_enable_superblocks(pr, 1);
 
-	rc = blkid_do_safeprobe(pr);
+	return blkid_do_safeprobe(pr);
+}
+
+static int lowprobe_topology(blkid_probe pr)
+{
+	/* enable topology probing only */
+	blkid_probe_enable_topology(pr, 1);
+
+	blkid_probe_enable_superblocks(pr, 0);
+	blkid_probe_enable_partitions(pr, 0);
+
+	return blkid_do_fullprobe(pr);
+}
+
+static int lowprobe_device(blkid_probe pr, const char *devname,
+			int chain, char *show[], int output,
+			blkid_loff_t offset, blkid_loff_t size)
+{
+	const char *data;
+	const char *name;
+	int nvals = 0, n, num = 1;
+	size_t len;
+	int fd;
+	int rc = 0;
+	static int first = 1;
+
+	fd = open(devname, O_RDONLY);
+	if (fd < 0) {
+		fprintf(stderr, "error: %s: %s\n", devname, strerror(errno));
+		return 2;
+	}
+	if (blkid_probe_set_device(pr, fd, offset, size))
+		goto done;
+
+	if (chain & LOWPROBE_TOPOLOGY)
+		rc = lowprobe_topology(pr);
+	if (rc >= 0 && (chain & LOWPROBE_SUPERBLOCKS))
+		rc = lowprobe_superblocks(pr);
 	if (rc < 0)
 		goto done;
-print_vals:
+
 	nvals = blkid_probe_numof_values(pr);
 
 	if (nvals && !first && output & OUTPUT_UDEV_LIST)
@@ -616,7 +648,7 @@ int main(int argc, char **argv)
 
 	show[0] = NULL;
 
-	while ((c = getopt (argc, argv, "c:f:ghlL:n:o:O:ps:S:t:u:U:w:v")) != EOF)
+	while ((c = getopt (argc, argv, "c:f:ghilL:n:o:O:ps:S:t:u:U:w:v")) != EOF)
 		switch (c) {
 		case 'c':
 			if (optarg && !*optarg)
@@ -650,6 +682,9 @@ int main(int argc, char **argv)
 			search_value = strdup(optarg);
 			search_type = strdup("UUID");
 			break;
+		case 'i':
+			lowprobe |= LOWPROBE_TOPOLOGY;
+			break;
 		case 'l':
 			lookup++;
 			break;
@@ -681,7 +716,7 @@ int main(int argc, char **argv)
 					optarg);
 			break;
 		case 'p':
-			lowprobe++;
+			lowprobe |= LOWPROBE_SUPERBLOCKS;
 			break;
 		case 's':
 			if (numtag + 1 >= sizeof(show) / sizeof(*show)) {
@@ -774,20 +809,23 @@ int main(int argc, char **argv)
 		if (!pr)
 			goto exit;
 
-		blkid_probe_set_superblocks_flags(pr,
+		if (lowprobe & LOWPROBE_SUPERBLOCKS) {
+			blkid_probe_set_superblocks_flags(pr,
 				BLKID_SUBLKS_LABEL | BLKID_SUBLKS_UUID |
 				BLKID_SUBLKS_TYPE | BLKID_SUBLKS_SECTYPE |
 				BLKID_SUBLKS_USAGE | BLKID_SUBLKS_VERSION);
 
-		if (fltr_usage &&
-		    blkid_probe_filter_superblocks_usage(pr, fltr_flag, fltr_usage))
-			goto exit;
-		else if (fltr_type &&
-		    blkid_probe_filter_superblocks_type(pr, fltr_flag, fltr_type))
-			goto exit;
+			if (fltr_usage && blkid_probe_filter_superblocks_usage(
+						pr, fltr_flag, fltr_usage))
+				goto exit;
+
+			else if (fltr_type && blkid_probe_filter_superblocks_type(
+						pr, fltr_flag, fltr_type))
+				goto exit;
+		}
 
 		for (i = 0; i < numdev; i++)
-			err = lowprobe_device(pr, devices[i], show,
+			err = lowprobe_device(pr, devices[i], lowprobe, show,
 					output_format,
 					(blkid_loff_t) offset,
 					(blkid_loff_t) size);

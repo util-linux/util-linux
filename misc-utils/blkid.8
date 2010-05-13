@@ -50,6 +50,18 @@ blkid \- command\-line utility to locate/print block device attributes
 .IR list ]
 .I device
 [\fIdevice\fR ...]
+.in -9
+
+.B blkid
+.RB -i
+.RB [ \-s
+.IR tag ]
+.RB [ \-o
+.IR format ]
+.RB [ \-s
+.IR tag ]
+.I device
+[\fIdevice\fR ...]
 
 .SH DESCRIPTION
 The
@@ -84,6 +96,10 @@ devices which no longer exist.
 .TP
 .B \-h
 Display a usage message and exit.
+.TP
+.B \-i
+Display I/O Limits (aka I/O topology) information. This option could be used
+together with \fB-p\fR option.
 .TP
 .B \-l
 Look up one device that matches the search parameter specified using
@@ -141,7 +157,7 @@ print the value of the tags
 .TP
 .B list
 print the devices in a user-friendly format, this output format is unsupported
-for low-level probing (\fB-p\fR)
+for low-level probing (\fB-p\fR or \fB-i\fR)
 .TP
 .B device
 print the device name only, this output format is always enabled for \fB-L\fR
@@ -152,10 +168,11 @@ vol_id compatible mode; usable in udev rules
 .RE
 .TP
 .BI \-O " offset"
-Probe at the given offset (only useful with \fB-p\fR).
+Probe at the given offset (only useful with \fB-p\fR). This option could be
+used together with \fB-i\fR option.
 .TP
 .BI \-p
-Switch to low-level probing mode (bypass cache)
+Switch to low-level superblock probing mode (bypass cache).
 .TP
 .BI \-s " tag"
 For each (specified) device, show only the tags that match
