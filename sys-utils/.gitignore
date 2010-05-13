@@ -4,6 +4,7 @@ cytune
 dmesg
 fallocate
 flock
+fsfreeze
 i386.8
 ia64.8
 ipcmk

@@ -45,6 +45,11 @@
 #define BLKPBSZGET _IO(0x12,123)
 #endif
 
+#ifndef FIFREEZE
+#define FIFREEZE   _IOWR('X', 119, int)    /* Freeze */
+#define FITHAW     _IOWR('X', 120, int)    /* Thaw */
+#endif
+
 #ifndef HDIO_GETGEO
 # ifdef __linux__
 #  define HDIO_GETGEO 0x0301
