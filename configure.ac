@@ -878,13 +878,6 @@ AC_ARG_ENABLE([raw],
 AM_CONDITIONAL(BUILD_RAW, test "x$enable_raw" = xyes)
 
 
-AC_ARG_ENABLE([rdev],
-  AS_HELP_STRING([--enable-rdev], [build rdev on i386]),
-  [], enable_rdev=no
-)
-AM_CONDITIONAL(BUILD_RDEV, test "x$enable_rdev" = xyes)
-
-
 AC_ARG_ENABLE([rename],
   AS_HELP_STRING([--disable-rename], [do not build rename]),
   [], enable_rename=yes

@@ -49,13 +49,6 @@ bin_PROGRAMS += arch
 dist_man_MANS += arch.1
 endif
 
-RDEV_LINKS =
-if BUILD_RDEV
-usrsbin_exec_PROGRAMS += rdev
-RDEV_LINKS += ramsize vidmode rootflags
-dist_man_MANS += rdev.8
-endif
-
 SETARCH_LINKS = linux32 linux64
 
 if ARCH_S390
@@ -83,21 +76,14 @@ if ARCH_HPPA
 SETARCH_LINKS += parisc parisc64 parisc32
 endif
 
-RDEV_MAN_LINKS = $(RDEV_LINKS:=.8)
 SETARCH_MAN_LINKS = $(SETARCH_LINKS:=.8)
 man_MANS = $(RDEV_MAN_LINKS) $(SETARCH_MAN_LINKS)
 CLEANFILES = $(man_MANS)
-
-$(RDEV_MAN_LINKS): rdev.8
-	echo ".so man8/rdev.8" > $@
 
 $(SETARCH_MAN_LINKS): setarch.8
 	echo ".so man8/setarch.8" > $@
 
 install-exec-hook:
-	for I in $(RDEV_LINKS); do \
-		cd $(DESTDIR)$(usrsbin_execdir) && ln -sf rdev $$I ; \
-	done
 	for I in $(SETARCH_LINKS); do \
 		cd $(DESTDIR)$(usrbin_execdir) && ln -sf setarch $$I ; \
 	done

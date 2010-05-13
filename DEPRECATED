@@ -53,8 +53,3 @@ Why:	nobody uses this implementation
 What:	shutdown(1)
 Why:	nobody uses this implementation
 
-----------------------------
-
-What:	rdev(8), ramsize(8), vidmode(8) and  rootflags(8)
-Why:	i386 specific and probably useless
-

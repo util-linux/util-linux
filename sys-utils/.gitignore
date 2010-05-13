@@ -24,11 +24,8 @@ pivot_root
 ppc32.8
 ppc64.8
 ppc.8
-ramsize.8
-rdev
 readprofile
 renice
-rootflags.8
 rtcwake
 s390.8
 s390x.8
@@ -41,5 +38,4 @@ sparc.8
 switch_root
 tunelp
 unshare
-vidmode.8
 x86_64.8
