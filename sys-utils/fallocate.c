@@ -122,6 +122,11 @@ int main(int argc, char **argv)
 
 	fname = argv[optind++];
 
+	if (optind != argc) {
+		warnx(_("unexpected number of arguments"));
+		usage(stderr);
+	}
+
 	fd = open(fname, O_WRONLY|O_CREAT, 0644);
 	if (fd < 0)
 		err(EXIT_FAILURE, _("%s: open failed"), fname);
