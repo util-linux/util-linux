@@ -98,8 +98,8 @@ devices which no longer exist.
 Display a usage message and exit.
 .TP
 .B \-i
-Display I/O Limits (aka I/O topology) information. This option could be used
-together with \fB-p\fR option.
+Display I/O Limits (aka I/O topology) information. The 'export' output format is
+automatically enabled. This option could be used together with \fB-p\fR option.
 .TP
 .B \-l
 Look up one device that matches the search parameter specified using
@@ -164,7 +164,11 @@ print the device name only, this output format is always enabled for \fB-L\fR
 and \fB-U\fR options
 .TP
 .B udev
-vol_id compatible mode; usable in udev rules
+print key="value" pairs for easy import into the udev environment
+.TP
+.B export
+print key=value pairs for easy import into the environment.  This output format
+is automatically enabled when I/O Limits (\fB-i\fR option) are requested. 
 .RE
 .TP
 .BI \-O " offset"

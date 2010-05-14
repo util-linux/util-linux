@@ -29,13 +29,14 @@ extern char *optarg;
 extern int optind;
 #endif
 
-#define OUTPUT_VALUE_ONLY	0x0001
-#define OUTPUT_DEVICE_ONLY	0x0002
-#define OUTPUT_PRETTY_LIST	0x0004
-#define OUTPUT_UDEV_LIST	0x0008
+#define OUTPUT_VALUE_ONLY	(1 << 1)
+#define OUTPUT_DEVICE_ONLY	(1 << 2)
+#define OUTPUT_PRETTY_LIST	(1 << 3)
+#define OUTPUT_UDEV_LIST	(1 << 4)
+#define OUTPUT_EXPORT_LIST	(1 << 5)
 
-#define LOWPROBE_TOPOLOGY	0x0001
-#define LOWPROBE_SUPERBLOCKS	0x0002
+#define LOWPROBE_TOPOLOGY	(1 << 1)
+#define LOWPROBE_SUPERBLOCKS	(1 << 2)
 
 #include <blkid.h>
 
@@ -68,7 +69,7 @@ static void usage(int error)
 		"  -h          print this usage message and exit\n"
 		"  -g          garbage collect the blkid cache\n"
 		"  -o <format> output format; can be one of:\n"
-		"              value, device, list, udev or full; (default: full)\n"
+		"              value, device, list, udev, export or full; (default: full)\n"
 		"  -s <tag>    show specified tag(s) (default show all tags)\n"
 		"  -t <token>  find device with a specific token (NAME=value pair)\n"
 		"  -l          lookup the the first device with arguments specified by -t\n"
@@ -305,6 +306,12 @@ static void print_value(int output, int num, const char *devname,
 	} else if (output & OUTPUT_UDEV_LIST) {
 		print_udev_format(name, value, valsz);
 
+	} else if (output & OUTPUT_EXPORT_LIST) {
+		fputs(name, stdout);
+		fputs("=", stdout);
+		safe_print(value, valsz);
+		fputs("\n", stdout);
+
 	} else {
 		if (num == 1 && devname)
 			printf("%s: ", devname);
@@ -320,6 +327,7 @@ static void print_tags(blkid_dev dev, char *show[], int output)
 	blkid_tag_iterate	iter;
 	const char		*type, *value, *devname;
 	int			num = 1;
+	static int		first = 1;
 
 	if (!dev)
 		return;
@@ -340,12 +348,22 @@ static void print_tags(blkid_dev dev, char *show[], int output)
 	while (blkid_tag_next(iter, &type, &value) == 0) {
 		if (show[0] && !has_item(show, type))
 			continue;
+
+		if (num == 1 && !first &&
+		    (output & (OUTPUT_UDEV_LIST | OUTPUT_EXPORT_LIST)))
+			/* add extra line between output from more devices */
+			fputc('\n', stdout);
+
 		print_value(output, num++, devname, value, type, strlen(value));
 	}
 	blkid_tag_iterate_end(iter);
 
-	if (num > 1 && !(output & (OUTPUT_VALUE_ONLY | OUTPUT_UDEV_LIST)))
-		printf("\n");
+	if (num > 1) {
+		if (!(output & (OUTPUT_VALUE_ONLY | OUTPUT_UDEV_LIST |
+						OUTPUT_EXPORT_LIST)))
+			printf("\n");
+		first = 0;
+	}
 }
 
 
@@ -500,7 +518,7 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 
 	nvals = blkid_probe_numof_values(pr);
 
-	if (nvals && !first && output & OUTPUT_UDEV_LIST)
+	if (nvals && !first && output & (OUTPUT_UDEV_LIST | OUTPUT_EXPORT_LIST))
 		/* add extra line between output from devices */
 		fputc('\n', stdout);
 
@@ -520,7 +538,8 @@ static int lowprobe_device(blkid_probe pr, const char *devname,
 
 	if (first)
 		first = 0;
-	if (nvals >= 1 && !(output & (OUTPUT_VALUE_ONLY | OUTPUT_UDEV_LIST)))
+	if (nvals >= 1 && !(output & (OUTPUT_VALUE_ONLY |
+					OUTPUT_UDEV_LIST | OUTPUT_EXPORT_LIST)))
 		printf("\n");
 done:
 	if (rc == -2) {
@@ -700,6 +719,8 @@ int main(int argc, char **argv)
 				output_format = OUTPUT_PRETTY_LIST;
 			else if (!strcmp(optarg, "udev"))
 				output_format = OUTPUT_UDEV_LIST;
+			else if (!strcmp(optarg, "export"))
+				output_format = OUTPUT_EXPORT_LIST;
 			else if (!strcmp(optarg, "full"))
 				output_format = 0;
 			else {
@@ -785,7 +806,7 @@ int main(int argc, char **argv)
 	}
 	err = 2;
 
-	if (eval == 0 && output_format & OUTPUT_PRETTY_LIST) {
+	if (eval == 0 && (output_format & OUTPUT_PRETTY_LIST)) {
 		if (lowprobe) {
 			fprintf(stderr, "The low-level probing mode does not "
 					"support 'list' output format\n");
@@ -805,6 +826,11 @@ int main(int argc, char **argv)
 					"requires a device\n");
 			exit(4);
 		}
+
+		/* automatically enable 'export' format for I/O Limits */
+		if (!output_format  && (lowprobe & LOWPROBE_TOPOLOGY))
+			output_format = OUTPUT_EXPORT_LIST;
+
 		pr = blkid_new_probe();
 		if (!pr)
 			goto exit;
