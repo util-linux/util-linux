@@ -296,7 +296,7 @@ void do_shm (char format)
 		break;
 
 	case PID:
-		printf (_("------ Shared Memory Creator/Last-op --------\n"));
+		printf (_("------ Shared Memory Creator/Last-op PIDs --------\n"));
 		printf ("%-10s %-10s %-10s %-10s\n",
 			_("shmid"),_("owner"),_("cpid"),_("lpid"));
 		break;
