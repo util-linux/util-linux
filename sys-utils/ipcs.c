@@ -487,21 +487,21 @@ void do_msg (char format)
 	case LIMITS:
 		if ((msgctl (0, IPC_INFO, (struct msqid_ds *) (void *) &msginfo)) < 0 )
 			return;
-		printf (_("------ Messages: Limits --------\n"));
+		printf (_("------ Messages Limits --------\n"));
 		printf (_("max queues system wide = %d\n"), msginfo.msgmni);
 		printf (_("max size of message (bytes) = %d\n"), msginfo.msgmax);
 		printf (_("default max size of queue (bytes) = %d\n"), msginfo.msgmnb);
 		return;
 
 	case STATUS:
-		printf (_("------ Messages: Status --------\n"));
+		printf (_("------ Messages Status --------\n"));
 		printf (_("allocated queues = %d\n"), msginfo.msgpool);
 		printf (_("used headers = %d\n"), msginfo.msgmap);
 		printf (_("used space = %d bytes\n"), msginfo.msgtql);
 		return;
 
 	case CREATOR:
-		printf (_("------ Message Queues: Creators/Owners --------\n"));
+		printf (_("------ Message Queues Creators/Owners --------\n"));
 		printf ("%-10s %-10s %-10s %-10s %-10s %-10s\n",
 			_("msqid"),_("perms"),_("cuid"),_("cgid"),_("uid"),_("gid"));
 		break;
