@@ -1,7 +1,7 @@
 test: shm headers
 ------ Shared Memory Attach/Detach/Change Times --------
 shmid      owner      attached             detached             changed             
------- Shared Memory Creator/Last-op --------
+------ Shared Memory Creator/Last-op PIDs --------
 shmid      owner      cpid       lpid      
 ------ Shared Memory Segment Creators/Owners --------
 shmid      perms      cuid       cgid       uid        gid       
@@ -13,10 +13,10 @@ test: mesg headers
 msqid    owner      send                 recv                 change              
 ------ Message Queues PIDs --------
 msqid      owner      lspid      lrpid     
------- Message Queues: Creators/Owners --------
+------ Message Queues Creators/Owners --------
 msqid      perms      cuid       cgid       uid        gid       
------- Messages: Limits --------
------- Messages: Status --------
+------ Messages Limits --------
+------ Messages Status --------
 
 test: sem headers
 ------ Semaphore Operation/Change Times --------
@@ -43,7 +43,7 @@ semid    owner      last-op                    last-changed
 --
 ------ Message Queues Send/Recv/Change Times --------
 msqid    owner      send                 recv                 change              
------- Shared Memory Creator/Last-op --------
+------ Shared Memory Creator/Last-op PIDs --------
 shmid      owner      cpid       lpid      
 --
 ------ Message Queues PIDs --------
@@ -54,11 +54,11 @@ shmid      perms      cuid       cgid       uid        gid
 ------ Semaphore Arrays Creators/Owners --------
 semid      perms      cuid       cgid       uid        gid       
 --
------- Message Queues: Creators/Owners --------
+------ Message Queues Creators/Owners --------
 msqid      perms      cuid       cgid       uid        gid       
 ------ Shared Memory Limits --------
 ------ Semaphore Limits --------
------- Messages: Limits --------
+------ Messages Limits --------
 ------ Shared Memory Status --------
 ------ Semaphore Status --------
------- Messages: Status --------
+------ Messages Status --------
