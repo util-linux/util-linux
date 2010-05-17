@@ -103,6 +103,7 @@
 #ifdef HAVE_ERRNO_H
 #include <errno.h>
 #endif
+#include <inttypes.h>
 #include <stdint.h>
 #include <stdarg.h>
 
@@ -542,7 +543,7 @@ unsigned char *blkid_probe_get_buffer(blkid_probe pr,
 
 static void blkid_probe_reset_buffer(blkid_probe pr)
 {
-	ssize_t	read_ct = 0, len_ct = 0;
+	uint64_t read_ct = 0, len_ct = 0;
 
 	if (!pr || list_empty(&pr->buffers))
 		return;
@@ -560,7 +561,8 @@ static void blkid_probe_reset_buffer(blkid_probe pr)
 	}
 
 	DBG(DEBUG_LOWPROBE,
-		printf("buffers summary: %jd bytes by %jd read() call(s)\n",
+		printf("buffers summary: %"PRIu64" bytes "
+			"by %"PRIu64" read() call(s)\n",
 			len_ct, read_ct));
 
 	INIT_LIST_HEAD(&pr->buffers);
