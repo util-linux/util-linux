@@ -34,14 +34,67 @@ struct mdp0_super_block {
 	uint32_t	set_uuid3;
 };
 
+/*
+ * Version-1, little-endian.
+ */
 struct mdp1_super_block {
-	uint32_t	magic;
-	uint32_t	major_version;
-	uint32_t	feature_map;
-	uint32_t	pad0;
-	uint8_t		set_uuid[16];
-	uint8_t		set_name[32];
+	/* constant array information - 128 bytes */
+	uint32_t	magic;		/* MD_SB_MAGIC: 0xa92b4efc - little endian */
+	uint32_t	major_version;	/* 1 */
+	uint32_t	feature_map;	/* 0 for now */
+	uint32_t	pad0;		/* always set to 0 when writing */
+
+	uint8_t		set_uuid[16];	/* user-space generated. */
+	unsigned char	set_name[32];	/* set and interpreted by user-space */
+
+	uint64_t	ctime;		/* lo 40 bits are seconds, top 24 are microseconds or 0*/
+	uint32_t	level;		/* -4 (multipath), -1 (linear), 0,1,4,5 */
+	uint32_t	layout;		/* only for raid5 currently */
+	uint64_t	size;		/* used size of component devices, in 512byte sectors */
+
+	uint32_t	chunksize;	/* in 512byte sectors */
+	uint32_t	raid_disks;
+	uint32_t	bitmap_offset;	/* sectors after start of superblock that bitmap starts
+					 * NOTE: signed, so bitmap can be before superblock
+					 * only meaningful of feature_map[0] is set.
+					 */
+
+	/* These are only valid with feature bit '4' */
+	uint32_t	new_level;	/* new level we are reshaping to		*/
+	uint64_t	reshape_position;	/* next address in array-space for reshape */
+	uint32_t	delta_disks;	/* change in number of raid_disks		*/
+	uint32_t	new_layout;	/* new layout					*/
+	uint32_t	new_chunk;	/* new chunk size (bytes)			*/
+	uint8_t		pad1[128-124];	/* set to 0 when written */
+
+	/* constant this-device information - 64 bytes */
+	uint64_t	data_offset;	/* sector start of data, often 0 */
+	uint64_t	data_size;	/* sectors in this device that can be used for data */
+	uint64_t	super_offset;	/* sector start of this superblock */
+	uint64_t	recovery_offset;/* sectors before this offset (from data_offset) have been recovered */
+	uint32_t	dev_number;	/* permanent identifier of this  device - not role in raid */
+	uint32_t	cnt_corrected_read; /* number of read errors that were corrected by re-writing */
+	uint8_t		device_uuid[16]; /* user-space setable, ignored by kernel */
+        uint8_t		devflags;        /* per-device flags.  Only one defined...*/
+	uint8_t		pad2[64-57];	/* set to 0 when writing */
+
+	/* array state information - 64 bytes */
+	uint64_t	utime;		/* 40 bits second, 24 btes microseconds */
+	uint64_t	events;		/* incremented when superblock updated */
+	uint64_t	resync_offset;	/* data before this offset (from data_offset) known to be in sync */
+	uint32_t	sb_csum;	/* checksum upto dev_roles[max_dev] */
+	uint32_t	max_dev;	/* size of dev_roles[] array to consider */
+	uint8_t		pad3[64-32];	/* set to 0 when writing */
+
+	/* device state information. Indexed by dev_number.
+	 * 2 bytes per device
+	 * Note there are no per-device state flags. State information is rolled
+	 * into the 'roles' value.  If a device is spare or faulty, then it doesn't
+	 * have a meaningful role.
+	 */
+	uint16_t	dev_roles[0];	/* role in array, or 0xffff for a spare, or 0xfffe for faulty */
 };
+
 
 #define MD_RESERVED_BYTES		0x10000
 #define MD_SB_MAGIC			0xa92b4efc
@@ -115,7 +168,12 @@ static int probe_raid1(blkid_probe pr, off_t off)
 		return -1;
 	if (le32_to_cpu(mdp1->major_version) != 1)
 		return -1;
+	if (le64_to_cpu(mdp1->super_offset) != off >> 9)
+		return -1;
 	if (blkid_probe_set_uuid(pr, (unsigned char *) mdp1->set_uuid) != 0)
+		return -1;
+	if (blkid_probe_set_uuid_as(pr,
+			(unsigned char *) mdp1->device_uuid, "UUID_SUB") != 0)
 		return -1;
 	if (blkid_probe_set_label(pr, mdp1->set_name,
 				sizeof(mdp1->set_name)) != 0)
