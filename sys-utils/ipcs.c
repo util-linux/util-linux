@@ -109,26 +109,41 @@ void print_shm (int id);
 void print_msg (int id);
 void print_sem (int id);
 
-static char *progname;
-
 static void
 usage(int rc) {
-	printf (_("usage : %s -asmq -tclup \n"), progname);
-	printf (_("\t%s [-s -m -q] -i id\n"), progname);
-	printf (_("\t%s -h for help.\n"), progname);
+	printf (_("Usage: %1$s [-asmq] [-t|-c|-l|-u|-p]\n"
+	          "       %1$s [-s|-m|-q] -i id\n"
+	          "       %1$s -h for help\n"),
+		program_invocation_short_name);
 	exit(rc);
 }
 
 static void
 help (int rc) {
-	printf (_("%s provides information on ipc facilities for"
-		  " which you have read access.\n"), progname);
-	printf (_("Resource Specification:\n\t-m : shared_mem\n\t-q : messages\n"));
-	printf (_("\t-s : semaphores\n\t-a : all (default)\n"));
-	printf (_("Output Format:\n\t-t : time\n\t-p : pid\n\t-c : creator\n"));
-	printf (_("\t-l : limits\n\t-u : summary\n"));
-	printf (_("-i id [-s -q -m] : details on resource identified by id\n"));
-	usage(rc);
+	printf (_("Usage: %1$s [resource]... [output-format]\n"
+	          "       %1$s [resource] -i id\n\n"),
+		program_invocation_short_name);
+
+	printf (_("Provide information on IPC facilities for which you "
+		  "have read access.\n\n"));
+
+	printf (_(
+	"    -h      display this help\n"
+	"    -i id   print details on resource identified by id\n\n"));
+
+	printf (_("Resource options:\n"
+	"    -m      shared memory segments\n"
+	"    -q      message queues\n"
+	"    -s      semaphores\n"
+	"    -a      all (default)\n\n"));
+
+	printf (_("Output format:\n"
+	"    -t      time\n"
+	"    -p      pid\n"
+	"    -c      creator\n"
+	"    -l      limits\n"
+	"    -u      summary\n"));
+	exit(rc);
 }
 
 int
@@ -141,7 +156,6 @@ main (int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	progname = argv[0];
 	while ((opt = getopt (argc, argv, options)) != -1) {
 		switch (opt) {
 		case 'i':
