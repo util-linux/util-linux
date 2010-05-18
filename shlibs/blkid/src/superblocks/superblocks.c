@@ -528,22 +528,6 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 	chn->idx = idx;
 
 	/*
-	 * Check for collisions between RAID and partition table
-	 */
-	if (sb && sb->usage == BLKID_USAGE_RAID &&
-	    sb->magic_off > pr->size / 2 &&
-	    (S_ISREG(pr->mode) || blkid_probe_is_wholedisk(pr)) &&
-	    blkid_probe_is_covered_by_pt(pr, sb->magic_off, 0x200)) {
-		/*
-		 * Ignore the result if the detected RAID superblock is
-		 * within some existing partition (for example RAID on
-		 * the last partition).
-		 */
-		blkid_probe_chain_reset_vals(pr, chn);
-		return 1;
-	}
-
-	/*
 	 * The RAID device could be partitioned. The problem are RAID1 devices
 	 * where the partition table is visible from underlaying devices. We
 	 * have to ignore such partition tables.

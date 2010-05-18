@@ -106,6 +106,7 @@ static int probe_raid0(blkid_probe pr, off_t off)
 		uint32_t ints[4];
 		uint8_t bytes[16];
 	} uuid;
+	uint32_t ma, mi, pa;
 
 	if (pr->size < 0x10000)
 		return -1;
@@ -125,11 +126,9 @@ static int probe_raid0(blkid_probe pr, off_t off)
 			uuid.ints[2] = swab32(mdp0->set_uuid2);
 			uuid.ints[3] = swab32(mdp0->set_uuid3);
 		}
-		if (blkid_probe_sprintf_version(pr, "%u.%u.%u",
-				le32_to_cpu(mdp0->major_version),
-				le32_to_cpu(mdp0->minor_version),
-				le32_to_cpu(mdp0->patch_version)) != 0)
-			return -1;
+		ma = le32_to_cpu(mdp0->major_version);
+		mi = le32_to_cpu(mdp0->minor_version);
+		pa = le32_to_cpu(mdp0->patch_version);
 
 	} else if (be32_to_cpu(mdp0->md_magic) == MD_SB_MAGIC) {
 		uuid.ints[0] = mdp0->set_uuid0;
@@ -138,14 +137,24 @@ static int probe_raid0(blkid_probe pr, off_t off)
 			uuid.ints[2] = mdp0->set_uuid2;
 			uuid.ints[3] = mdp0->set_uuid3;
 		}
-		if (blkid_probe_sprintf_version(pr, "%u.%u.%u",
-				be32_to_cpu(mdp0->major_version),
-				be32_to_cpu(mdp0->minor_version),
-				be32_to_cpu(mdp0->patch_version)) != 0)
-			return -1;
+		ma = be32_to_cpu(mdp0->major_version);
+		mi = be32_to_cpu(mdp0->minor_version);
+		pa = be32_to_cpu(mdp0->patch_version);
 	} else
-		return -1;
+		return 1;
 
+	/*
+	 * Check for collisions between RAID and partition table
+	 */
+	if ((S_ISREG(pr->mode) || blkid_probe_is_wholedisk(pr)) &&
+	    blkid_probe_is_covered_by_pt(pr, off, 0x200)) {
+		/* ignore this superblock, it's within any partition and
+		 * we are working with whole-disk now */
+		return 1;
+	}
+
+	if (blkid_probe_sprintf_version(pr, "%u.%u.%u", ma, mi, pa) != 0)
+		return -1;
 	if (blkid_probe_set_uuid(pr, (unsigned char *) uuid.bytes) != 0)
 		return -1;
 	if (blkid_probe_set_magic(pr, off, sizeof(mdp0->md_magic),

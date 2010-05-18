@@ -829,6 +829,19 @@ int blkid_probe_is_covered_by_pt(blkid_probe pr,
 	end = (offset + size) >> 9;
 	start = offset >> 9;
 
+	/* check if the partition table fits into the device */
+	for (i = 0; i < nparts; i++) {
+		blkid_partition par = &ls->parts[i];
+
+		if (par->start + par->size > pr->size) {
+			DBG(DEBUG_LOWPROBE, printf("partition #%d overflows "
+					"device (off=%lu size=%lu)\n",
+					par->partno, par->start, par->size));
+			goto done;
+		}
+	}
+
+	/* check if the requested area is covered by PT */
 	for (i = 0; i < nparts; i++) {
 		blkid_partition par = &ls->parts[i];
 
