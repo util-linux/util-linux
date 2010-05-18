@@ -71,7 +71,6 @@
 
 static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn);
 static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn);
-static void superblocks_free(blkid_probe pr, void *data);
 
 static int blkid_probe_set_usage(blkid_probe pr, int usage);
 
@@ -156,22 +155,7 @@ const struct blkid_chaindrv superblocks_drv = {
 	.has_fltr     = TRUE,
 	.probe        = superblocks_probe,
 	.safeprobe    = superblocks_safeprobe,
-	.free_data    = superblocks_free
 };
-
-/*
- * Private chain data
- *
- * TODO: export this data by binary interface (see topology.c or partitions.c
- *       for more details) by blkid_probe_get_superblock() or so.
- */
-struct blkid_struct_superblock {
-	blkid_loff_t	magic_off;		/* offset of the magic string */
-	int		usage;
-};
-
-/* TODO: move to blkid.h */
-typedef struct blkid_struct_superblock *blkid_superblock;
 
 /**
  * blkid_probe_enable_superblocks:
@@ -311,39 +295,6 @@ int blkid_known_fstype(const char *fstype)
 	return 0;
 }
 
-/* init and returns private data */
-static blkid_superblock superblocks_init_data(blkid_probe pr,
-					struct blkid_chain *chn)
-{
-	DBG(DEBUG_LOWPROBE, printf("initialize superblocks binary data\n"));
-
-	if (chn->data)
-		memset(chn->data, 0,
-			sizeof(struct blkid_struct_superblock));
-	else {
-		chn->data = calloc(1,
-				sizeof(struct blkid_struct_superblock));
-		if (!chn->data)
-			return NULL;
-	}
-	return chn->data;
-}
-
-static void superblocks_free(blkid_probe pr, void *data)
-{
-	free(data);
-}
-
-static blkid_superblock superblocks_copy_data(blkid_superblock dest,
-						blkid_superblock src)
-{
-	if (!src || !dest)
-		return NULL;
-
-	memcpy(dest, src, sizeof(struct blkid_struct_superblock));
-	return dest;
-}
-
 /*
  * The blkid_do_probe() backend.
  */
@@ -364,9 +315,6 @@ static int superblocks_probe(blkid_probe pr, struct blkid_chain *chn)
 		 * extended partitions). Note that size of the UBI char devices
 		 * is 1 byte */
 		goto nothing;
-
-	if (chn->binary)
-		superblocks_init_data(pr, chn);
 
 	i = chn->idx + 1;
 
@@ -472,44 +420,37 @@ nothing:
  */
 static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 {
-	blkid_superblock sb = NULL;
-	struct blkid_struct_superblock sb_buff;
-
 	struct blkid_prval vals[BLKID_NVALS_SUBLKS];
 	int nvals = BLKID_NVALS_SUBLKS;
 	int idx = -1;
 	int count = 0;
 	int intol = 0;
-	int rc, bin_org = chn->binary;
-
-	chn->binary = TRUE;
+	int rc;
 
 	while ((rc = superblocks_probe(pr, chn)) == 0) {
 
-		if (blkid_probe_is_tiny(pr) && !count) {
+		if (blkid_probe_is_tiny(pr) && !count)
 			/* floppy or so -- returns the first result. */
-			chn->binary = bin_org;
 			return 0;
-		}
-		if (!count) {
-			/* save the first result */
-			nvals = blkid_probe_chain_copy_vals(pr, chn, vals, nvals);
-			idx = chn->idx;
-			if (chn->data)
-				sb = superblocks_copy_data(&sb_buff, chn->data);
-		}
+
 		count++;
 
 		if (idinfos[chn->idx]->usage & (BLKID_USAGE_RAID | BLKID_USAGE_CRYPTO))
 			break;
+
 		if (!(idinfos[chn->idx]->flags & BLKID_IDINFO_TOLERANT))
 			intol++;
-	}
 
-	chn->binary = bin_org;
+		if (count == 1) {
+			/* save the first result */
+			nvals = blkid_probe_chain_copy_vals(pr, chn, vals, nvals);
+			idx = chn->idx;
+		}
+	}
 
 	if (rc < 0)
 		return rc;		/* error */
+
 	if (count > 1 && intol) {
 		DBG(DEBUG_LOWPROBE,
 			printf("ERROR: superblocks chain: "
@@ -520,19 +461,19 @@ static int superblocks_safeprobe(blkid_probe pr, struct blkid_chain *chn)
 	if (!count)
 		return 1;		/* nothing detected */
 
-	/* restore the first result */
-	blkid_probe_chain_reset_vals(pr, chn);
-	blkid_probe_append_vals(pr, vals, nvals);
-	if (sb && chn->data)
-		superblocks_copy_data(chn->data, sb);
-	chn->idx = idx;
+	if (idx != -1) {
+		/* restore the first result */
+		blkid_probe_chain_reset_vals(pr, chn);
+		blkid_probe_append_vals(pr, vals, nvals);
+		chn->idx = idx;
+	}
 
 	/*
 	 * The RAID device could be partitioned. The problem are RAID1 devices
 	 * where the partition table is visible from underlaying devices. We
 	 * have to ignore such partition tables.
 	 */
-	if (sb && sb->usage == BLKID_USAGE_RAID)
+	if (chn->idx >= 0 && idinfos[chn->idx]->usage & BLKID_USAGE_RAID)
 		pr->prob_flags |= BLKID_PARTS_IGNORE_PT;
 
 	return 0;
@@ -550,10 +491,6 @@ int blkid_probe_set_magic(blkid_probe pr, blkid_loff_t offset,
 		if (!rc && offset)
 			rc = blkid_probe_sprintf_value(pr, "SBMAGIC_OFFSET",
 					"%llu",	offset);
-	}
-	if (!rc && chn->data) {
-		blkid_superblock sb = (blkid_superblock) chn->data;
-		sb->magic_off = offset;
 	}
 	return rc;
 }
@@ -587,11 +524,6 @@ static int blkid_probe_set_usage(blkid_probe pr, int usage)
 {
 	struct blkid_chain *chn = blkid_probe_get_chain(pr);
 	char *u = NULL;
-
-	if (chn->data) {
-		blkid_superblock sb = (blkid_superblock) chn->data;
-		sb->usage = usage;
-	}
 
 	if (!(chn->flags & BLKID_SUBLKS_USAGE))
 		return 0;
