@@ -253,7 +253,7 @@ void mnt_unlock_file(mnt_lock *ml)
 }
 
 /**
- * mnt_lock:
+ * mnt_lock_file
  * @ml: pointer to mnt_lock instance
  *
  * Creates lock file (e.g. /etc/mtab~). Note that this function uses

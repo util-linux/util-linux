@@ -458,8 +458,8 @@ static int __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _(
 	"\nOptions:\n"
 	" -s, --fstab            search in static table of filesystems\n"
-	" -m, --mtab             search in table of mounted filesystems (default)\n"
-	" -k, --kernel           search in kernel (mountinfo) file\n\n"
+	" -m, --mtab             search in table of mounted filesystems\n"
+	" -k, --kernel           search in kernel (mountinfo) file (default)\n\n"
 
 	" -c, --canonicalize     canonicalize printed paths\n"
 	" -d, --direction <word> search direction - 'forward' or 'backward'\n"
