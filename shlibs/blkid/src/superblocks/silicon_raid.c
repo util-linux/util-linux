@@ -48,6 +48,8 @@ static int probe_silraid(blkid_probe pr, const struct blkid_idmag *mag)
 
 	if (pr->size < 0x10000)
 		return -1;
+	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
+		return -1;
 
 	off = ((pr->size / 0x200) - 1) * 0x200;
 

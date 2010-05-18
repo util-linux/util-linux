@@ -33,6 +33,8 @@ static int probe_pdcraid(blkid_probe pr, const struct blkid_idmag *mag)
 
 	if (pr->size < 0x40000)
 		return -1;
+	if (!S_ISREG(pr->mode) && !blkid_probe_is_wholedisk(pr))
+		return -1;
 
 	for (i = 0; sectors[i] != 0; i++) {
 		uint64_t off;
