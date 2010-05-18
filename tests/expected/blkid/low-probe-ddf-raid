@@ -1,5 +1,5 @@
 ID_FS_TYPE=ddf_raid_member
 ID_FS_USAGE=raid
-ID_FS_UUID=8Z_I__B_8Z_I_e_I_q_I____
-ID_FS_UUID_ENC=8Z\xb0I\x95\x10B\x028Z\xb0I\xc8e\xb0I\xb8q\xb0I\xff\xff\xff\xff
-ID_FS_VERSION=02.00.00
+ID_FS_UUID=Linux-MDޭ__
+ID_FS_UUID_ENC=Linux-MDޭ\xbe\xef
+ID_FS_VERSION=01.02.00
