@@ -17,17 +17,17 @@ Command (m for help): Changing display/entry units to sectors
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (2048-102399, default 2048): Using default value 2048
+Partition number (1-4, default 1): First sector (2048-102399, default 2048): Using default value 2048
 Last sector, +sectors or +size{K,M,G} (2048-102399, default 102399): 
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (22528-102399, default 22528): Using default value 22528
+Partition number (1-4, default 2): First sector (22528-102399, default 22528): Using default value 22528
 Last sector, +sectors or +size{K,M,G} (22528-102399, default 102399): 
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
-Partition number (1-4): First sector (43008-102399, default 43008): Using default value 43008
+Partition number (1-4, default 3): First sector (43008-102399, default 43008): Using default value 43008
 Last sector, +sectors or +size{K,M,G} (43008-102399, default 102399): 
 Command (m for help): Command action
    e   extended
