@@ -1425,7 +1425,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
   }
 
   /* Kernel allows to use MS_RDONLY for bind mounts, but the read-only request
-   * could be silently ignored. Check it to avoid 'ro' in ntab and 'rw' in
+   * could be silently ignored. Check it to avoid 'ro' in mtab and 'rw' in
    * /proc/mounts.
    */
   if (!fake && mnt5_res == 0 &&
