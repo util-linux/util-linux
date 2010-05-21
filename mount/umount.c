@@ -379,7 +379,6 @@ umount_all (char *types, char *test_opts) {
 	  }
      }
 
-     sync ();
      return errors;
 }
 
