@@ -32,6 +32,8 @@ depcomp
 install-sh
 missing
 libtool
+cscope.out
+tags
 .deps
 .libs
 
