@@ -99,7 +99,7 @@ struct mdp1_super_block {
 #define MD_RESERVED_BYTES		0x10000
 #define MD_SB_MAGIC			0xa92b4efc
 
-static int probe_raid0(blkid_probe pr, off_t off)
+static int probe_raid0(blkid_probe pr, blkid_loff_t off)
 {
 	struct mdp0_super_block *mdp0;
 	union {
@@ -107,8 +107,9 @@ static int probe_raid0(blkid_probe pr, off_t off)
 		uint8_t bytes[16];
 	} uuid;
 	uint32_t ma, mi, pa;
+	uint64_t size;
 
-	if (pr->size < 0x10000)
+	if (pr->size < MD_RESERVED_BYTES)
 		return -1;
 	mdp0 = (struct mdp0_super_block *)
 			blkid_probe_get_buffer(pr,
@@ -129,6 +130,7 @@ static int probe_raid0(blkid_probe pr, off_t off)
 		ma = le32_to_cpu(mdp0->major_version);
 		mi = le32_to_cpu(mdp0->minor_version);
 		pa = le32_to_cpu(mdp0->patch_version);
+		size = le32_to_cpu(mdp0->size);
 
 	} else if (be32_to_cpu(mdp0->md_magic) == MD_SB_MAGIC) {
 		uuid.ints[0] = mdp0->set_uuid0;
@@ -140,14 +142,31 @@ static int probe_raid0(blkid_probe pr, off_t off)
 		ma = be32_to_cpu(mdp0->major_version);
 		mi = be32_to_cpu(mdp0->minor_version);
 		pa = be32_to_cpu(mdp0->patch_version);
+		size = be32_to_cpu(mdp0->size);
 	} else
+		return 1;
+
+	size <<= 10;	/* convert KiB to bytes */
+
+	if (pr->size < size + MD_RESERVED_BYTES)
+		/* device is too small */
+		return 1;
+
+	if (off < size)
+		/* no space before superblock */
 		return 1;
 
 	/*
 	 * Check for collisions between RAID and partition table
+	 *
+	 * For example the superblock is at the end of the last partition, it's
+	 * the same possition as at the end of the disk...
 	 */
 	if ((S_ISREG(pr->mode) || blkid_probe_is_wholedisk(pr)) &&
-	    blkid_probe_is_covered_by_pt(pr, off, 0x200)) {
+	    blkid_probe_is_covered_by_pt(pr,
+			off - size,				/* min. start  */
+			size + MD_RESERVED_BYTES)) {		/* min. length */
+
 		/* ignore this superblock, it's within any partition and
 		 * we are working with whole-disk now */
 		return 1;
