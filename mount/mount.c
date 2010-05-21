@@ -1435,6 +1435,18 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       flags &= ~MS_RDONLY;
   }
 
+  /* Kernel can silently add MS_RDONLY flag when mounting file system that
+   * does not have write support. Check this to avoid 'ro' in /proc/mounts
+   * and 'rw' in mtab.
+   */
+  if (!fake && mnt5_res == 0 &&
+      !(flags & MS_RDONLY) && !(flags & MS_PROPAGATION) && !(flags & MS_MOVE) &&
+      is_readonly(node)) {
+
+      printf(_("mount: warning: %s seems to be mounted read-only.\n"), node);
+      flags |= MS_RDONLY;
+  }
+
   if (fake || mnt5_res == 0) {
       /* Mount succeeded, report this (if verbose) and write mtab entry.  */
 
