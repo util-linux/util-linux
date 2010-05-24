@@ -239,3 +239,73 @@ int cstr_to_cpuset(struct bitmask *mask, const char* str)
 
 	return 0;
 }
+
+#ifdef TEST_PROGRAM
+
+#include <err.h>
+#include <getopt.h>
+
+int main(int argc, char *argv[])
+{
+	struct bitmask *set;
+	char *buf, *mask = NULL, *range = NULL;
+	int ncpus = 2048, rc, c;
+
+	struct option longopts[] = {
+	    { "ncpus", 1, 0, 'n' },
+	    { "mask",  1, 0, 'm' },
+	    { "range", 1, 0, 'r' },
+	    { NULL,    0, 0, 0 }
+	};
+
+	while ((c = getopt_long(argc, argv, "n:m:r:", longopts, NULL)) != -1) {
+		switch(c) {
+		case 'n':
+			ncpus = atoi(optarg);
+			break;
+		case 'm':
+			mask = strdup(optarg);
+			break;
+		case 'r':
+			range = strdup(optarg);
+			break;
+		default:
+			goto usage_err;
+		}
+	}
+
+	if (!mask && !range)
+		goto usage_err;
+
+	set = bitmask_alloc(ncpus);
+	if (!set)
+		err(EXIT_FAILURE, "failed to allocate cpu set");
+
+	buf = malloc(7 * ncpus);
+	if (!buf)
+		err(EXIT_FAILURE, "failed to allocate cpu set buffer");
+
+	if (mask)
+		rc = str_to_cpuset(set, mask);
+	else
+		rc = cstr_to_cpuset(set, range);
+
+	if (rc)
+		errx(EXIT_FAILURE, "failed to parse string: %s", mask ? : range);
+
+	printf("%-15s = %15s ", mask ? : range,	cpuset_to_str(set, buf));
+	printf("[%s]\n", cpuset_to_cstr(set, buf));
+
+	free(buf);
+	free(set->maskp);
+	free(set);
+
+	return EXIT_SUCCESS;
+
+usage_err:
+	fprintf(stderr,
+		"usage: %s [--ncpus <num>] --mask <mask> | --range <list>",
+		program_invocation_short_name);
+	exit(EXIT_FAILURE);
+}
+#endif

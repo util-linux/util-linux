@@ -11,6 +11,7 @@ TS_HELPER_MD5="$TS_TOPDIR/helpers/test_md5"
 
 TS_HELPER_ISMOUNTED="$TOPDIR/lib/test_ismounted"
 TS_HELPER_STRTOSIZE="$TOPDIR/lib/test_strtosize"
+TS_HELPER_CPUSET="$TOPDIR/lib/test_cpuset"
 
 # TODO: use partx
 TS_HELPER_PARTITIONS="$TOPDIR/shlibs/blkid/samples/partitions"
