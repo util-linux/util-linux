@@ -14,6 +14,7 @@ endif
 
 if HAVE_SCHED_GETAFFINITY
 usrbin_exec_PROGRAMS += taskset
+taskset_SOURCES = taskset.c $(top_srcdir)/lib/cpuset.c
 dist_man_MANS += taskset.1
 endif
 
