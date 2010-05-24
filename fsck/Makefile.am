@@ -3,8 +3,8 @@ include $(top_srcdir)/config/include-Makefile.am
 sbin_PROGRAMS = fsck
 dist_man_MANS = fsck.8
 
-fsck_SOURCES = base_device.c fsck.c fsck.h ../lib/ismounted.c \
-	       ../lib/fsprobe.c ../lib/canonicalize.c
+fsck_SOURCES = base_device.c fsck.c fsck.h $(top_srcdir)/lib/ismounted.c \
+	       $(top_srcdir)/lib/fsprobe.c $(top_srcdir)/lib/canonicalize.c
 fsck_LDADD =
 fsck_CFLAGS = $(AM_CFLAGS)
 

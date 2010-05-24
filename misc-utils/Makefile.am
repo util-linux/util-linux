@@ -10,7 +10,7 @@ usrbin_exec_PROGRAMS = cal ddate logger look mcookie \
 	namei script whereis scriptreplay
 EXTRA_DIST += README.cal README.ddate README.namei README.namei2
 
-mcookie_SOURCES = mcookie.c ../lib/md5.c
+mcookie_SOURCES = mcookie.c $(top_srcdir)/lib/md5.c
 script_LDADD =
 
 usrbin_exec_SCRIPTS = chkdupexe
@@ -36,12 +36,13 @@ endif
 if BUILD_LIBBLKID
 sbin_PROGRAMS += blkid findfs wipefs
 dist_man_MANS += blkid.8 findfs.8 wipefs.8
-blkid_SOURCES = blkid.c $(top_srcdir)/lib/ismounted.c ../lib/strtosize.c
+blkid_SOURCES = blkid.c $(top_srcdir)/lib/ismounted.c \
+		$(top_srcdir)/lib/strtosize.c
 blkid_LDADD = $(ul_libblkid_la)
 blkid_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 findfs_LDADD = $(ul_libblkid_la)
 findfs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
-wipefs_SOURCES = wipefs.c ../lib/strtosize.c
+wipefs_SOURCES = wipefs.c $(top_srcdir)/lib/strtosize.c
 wipefs_LDADD = $(ul_libblkid_la)
 wipefs_CFLAGS = $(AM_CFLAGS) -I$(ul_libblkid_incdir)
 if HAVE_STATIC_BLKID

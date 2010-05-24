@@ -1,8 +1,8 @@
 include $(top_srcdir)/config/include-Makefile.am
 
-utils_common = ../lib/blkdev.c
+utils_common = $(top_srcdir)/lib/blkdev.c
 if LINUX
-utils_common += ../lib/linux_version.c
+utils_common += $(top_srcdir)/lib/linux_version.c
 endif
 
 if HAVE_UUID
@@ -28,7 +28,7 @@ swaplabel_SOURCES = swaplabel.c $(utils_common)
 swaplabel_LDADD = $(uuid_ldadd)
 swaplabel_CFLAGS = $(AM_CFLAGS) $(uuid_cflags)
 
-mkswap_SOURCES = mkswap.c $(utils_common) ../lib/wholedisk.c
+mkswap_SOURCES = mkswap.c $(utils_common) $(top_srcdir)/lib/wholedisk.c
 mkswap_LDADD = $(uuid_ldadd)
 mkswap_CFLAGS = $(AM_CFLAGS) $(uuid_cflags)
 
@@ -52,7 +52,7 @@ endif
 if BUILD_ELVTUNE
 sbin_PROGRAMS += elvtune
 dist_man_MANS += elvtune.8
-elvtune_SOURCES = elvtune.c ../lib/linux_version.c
+elvtune_SOURCES = elvtune.c $(top_srcdir)/lib/linux_version.c
 endif
 
 if HAVE_RAW
@@ -66,7 +66,7 @@ if BUILD_CRAMFS
 cramfs_common = $(utils_common) cramfs.h cramfs_common.c cramfs_common.h
 sbin_PROGRAMS += fsck.cramfs mkfs.cramfs
 fsck_cramfs_SOURCES = fsck.cramfs.c $(cramfs_common)
-mkfs_cramfs_SOURCES = mkfs.cramfs.c $(cramfs_common) ../lib/md5.c
+mkfs_cramfs_SOURCES = mkfs.cramfs.c $(cramfs_common) $(top_srcdir)/lib/md5.c
 fsck_cramfs_LDADD = -lz
 mkfs_cramfs_LDADD = -lz
 endif
