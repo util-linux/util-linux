@@ -47,12 +47,6 @@ int have_topology;
 int have_cache;
 int have_node;
 
-/* cache(s) description */
-struct ca_desc {
-	char	*caname;
-	char	*casize;
-	int	camap;
-};
 
 /* virtualization types */
 enum {
@@ -87,8 +81,15 @@ enum {
 	MODE_LONG	= (1 << 3)
 };
 
-/* CPU(s) description */
-struct cpu_desc {
+/* cache(s) description */
+struct cpu_cache {
+	char	*name;
+	char	*size;
+	int	map;
+};
+
+/* global description */
+struct lscpu_desc {
 	/* counters */
 	int	ct_cpu;
 	int	ct_thread;
@@ -107,7 +108,7 @@ struct cpu_desc {
 	int	virtype;	/* VIRT_PARA|FULL|NONE ? */
 
 	/* caches */
-	struct ca_desc	cache[CACHE_MAX];
+	struct cpu_cache	cache[CACHE_MAX];
 
 	/* misc */
 	char	*mhz;
@@ -279,7 +280,7 @@ int lookup(char *line, char *pattern, char **value)
 }
 
 static void
-read_basicinfo(struct cpu_desc *cpu)
+read_basicinfo(struct lscpu_desc *desc)
 {
 	FILE *fp = xfopen(_PATH_PROC_CPUINFO, "r");
 	char buf[BUFSIZ];
@@ -288,41 +289,41 @@ read_basicinfo(struct cpu_desc *cpu)
 	/* architecture */
 	if (uname(&utsbuf) == -1)
 		err(EXIT_FAILURE, _("error: uname failed"));
-	cpu->arch = xstrdup(utsbuf.machine);
+	desc->arch = xstrdup(utsbuf.machine);
 
 	/* count CPU(s) */
-	while(path_exist(_PATH_SYS_SYSTEM "/cpu/cpu%d", cpu->ct_cpu))
-		cpu->ct_cpu++;
+	while(path_exist(_PATH_SYS_SYSTEM "/cpu/cpu%d", desc->ct_cpu))
+		desc->ct_cpu++;
 
 	/* details */
 	while (fgets(buf, sizeof(buf), fp) != NULL) {
 		/* IA64 */
-		if (lookup(buf, "vendor", &cpu->vendor)) ;
-		else if (lookup(buf, "vendor_id", &cpu->vendor)) ;
+		if (lookup(buf, "vendor", &desc->vendor)) ;
+		else if (lookup(buf, "vendor_id", &desc->vendor)) ;
 		/* IA64 */
-		else if (lookup(buf, "family", &cpu->family)) ;
-		else if (lookup(buf, "cpu family", &cpu->family)) ;
-		else if (lookup(buf, "model", &cpu->model)) ;
-		else if (lookup(buf, "stepping", &cpu->stepping)) ;
-		else if (lookup(buf, "cpu MHz", &cpu->mhz)) ;
-		else if (lookup(buf, "flags", &cpu->flags)) ;
+		else if (lookup(buf, "family", &desc->family)) ;
+		else if (lookup(buf, "cpu family", &desc->family)) ;
+		else if (lookup(buf, "model", &desc->model)) ;
+		else if (lookup(buf, "stepping", &desc->stepping)) ;
+		else if (lookup(buf, "cpu MHz", &desc->mhz)) ;
+		else if (lookup(buf, "flags", &desc->flags)) ;
 		else
 			continue;
 	}
 
-	if (cpu->flags) {
-		snprintf(buf, sizeof(buf), " %s ", cpu->flags);
+	if (desc->flags) {
+		snprintf(buf, sizeof(buf), " %s ", desc->flags);
 		if (strstr(buf, " svm "))
-			cpu->virtflag = strdup("svm");
+			desc->virtflag = strdup("svm");
 		else if (strstr(buf, " vmx "))
-			cpu->virtflag = strdup("vmx");
+			desc->virtflag = strdup("vmx");
 
 		if (strstr(buf, " rm "))
-			cpu->mode |= MODE_REAL;
+			desc->mode |= MODE_REAL;
 		if (strstr(buf, " tm "))
-			cpu->mode |= MODE_TRANSPARENT;
+			desc->mode |= MODE_TRANSPARENT;
 		if (strstr(buf, " lm "))
-			cpu->mode |= MODE_LONG;
+			desc->mode |= MODE_LONG;
 	}
 
 	fclose(fp);
@@ -387,7 +388,7 @@ cpuid(unsigned int op, unsigned int *eax, unsigned int *ebx,
 }
 
 static void
-read_hypervisor_cpuid(struct cpu_desc *cpu)
+read_hypervisor_cpuid(struct lscpu_desc *desc)
 {
 	unsigned int eax = 0, ebx = 0, ecx = 0, edx = 0;
 	char hyper_vendor_id[13];
@@ -404,28 +405,28 @@ read_hypervisor_cpuid(struct cpu_desc *cpu)
 		return;
 
 	if (!strncmp("XenVMMXenVMM", hyper_vendor_id, 12))
-		cpu->hyper = HYPER_XEN;
+		desc->hyper = HYPER_XEN;
 	else if (!strncmp("KVMKVMKVM", hyper_vendor_id, 9))
-		cpu->hyper = HYPER_KVM;
+		desc->hyper = HYPER_KVM;
 	else if (!strncmp("Microsoft Hv", hyper_vendor_id, 12))
-		cpu->hyper = HYPER_MSHV;
+		desc->hyper = HYPER_MSHV;
 }
 
 #else	/* ! __x86_64__ */
 static void
-read_hypervisor_cpuid(struct cpu_desc *cpu)
+read_hypervisor_cpuid(struct lscpu_desc *desc)
 {
 }
 #endif
 
 static void
-read_hypervisor(struct cpu_desc *cpu)
+read_hypervisor(struct lscpu_desc *desc)
 {
-	read_hypervisor_cpuid(cpu);
+	read_hypervisor_cpuid(desc);
 
-	if (cpu->hyper)
+	if (desc->hyper)
 		/* hvm */
-		cpu->virtype = VIRT_FULL;
+		desc->virtype = VIRT_FULL;
 
 	else if (!access(_PATH_PROC_XEN, F_OK)) {
 		/* Xen para-virt or dom0 */
@@ -440,34 +441,34 @@ read_hypervisor(struct cpu_desc *cpu)
 				dom0 = 1;
 			fclose(fd);
 		}
-		cpu->virtype = dom0 ? VIRT_NONE : VIRT_PARA;
-		cpu->hyper = HYPER_XEN;
+		desc->virtype = dom0 ? VIRT_NONE : VIRT_PARA;
+		desc->hyper = HYPER_XEN;
 
 	} else if (has_pci_device(0x5853, 0x0001)) {
 		/* Xen full-virt on non-x86_64 */
-		cpu->hyper = HYPER_XEN;
-		cpu->virtype = VIRT_FULL;
+		desc->hyper = HYPER_XEN;
+		desc->virtype = VIRT_FULL;
 	}
 }
 
 static void
-read_topology(struct cpu_desc *cpu)
+read_topology(struct lscpu_desc *desc)
 {
 	/* number of threads */
-	cpu->ct_thread = path_sibling(
+	desc->ct_thread = path_sibling(
 				_PATH_SYS_CPU0 "/topology/thread_siblings");
 
 	/* number of cores */
-	cpu->ct_core = path_sibling(
+	desc->ct_core = path_sibling(
 				_PATH_SYS_CPU0 "/topology/core_siblings")
-			/ cpu->ct_thread;
+			/ desc->ct_thread;
 
 	/* number of sockets */
-	cpu->ct_socket = cpu->ct_cpu / cpu->ct_core / cpu->ct_thread;
+	desc->ct_socket = desc->ct_cpu / desc->ct_core / desc->ct_thread;
 }
 
 static void
-read_cache(struct cpu_desc *cpu)
+read_cache(struct lscpu_desc *desc)
 {
 	char buf[256];
 	DIR *dp;
@@ -502,37 +503,37 @@ read_cache(struct cpu_desc *cpu)
 		else
 			snprintf(buf, sizeof(buf), "L%d", level);
 
-		cpu->cache[cpu->ct_cache].caname = xstrdup(buf);
+		desc->cache[desc->ct_cache].name = xstrdup(buf);
 
 		/* cache size */
 		path_getstr(buf, sizeof(buf),
 				_PATH_SYS_CPU0 "/cache/%s/size", dir->d_name);
-		cpu->cache[cpu->ct_cache].casize = xstrdup(buf);
+		desc->cache[desc->ct_cache].size = xstrdup(buf);
 
 		/* information about how CPUs share different caches */
-		cpu->cache[cpu->ct_cache].camap = path_sibling(
+		desc->cache[desc->ct_cache].map = path_sibling(
 				_PATH_SYS_CPU0 "/cache/%s/shared_cpu_map",
 				dir->d_name);
-		cpu->ct_cache++;
+		desc->ct_cache++;
 	}
 }
 
 static void
-read_nodes(struct cpu_desc *cpu)
+read_nodes(struct lscpu_desc *desc)
 {
 	int i;
 
 	/* number of NUMA node */
-	while (path_exist(_PATH_SYS_SYSTEM "/node/node%d", cpu->ct_node))
-		cpu->ct_node++;
+	while (path_exist(_PATH_SYS_SYSTEM "/node/node%d", desc->ct_node))
+		desc->ct_node++;
 
-	cpu->nodecpu = (int *) malloc(cpu->ct_node * sizeof(int));
-	if (!cpu->nodecpu)
+	desc->nodecpu = (int *) malloc(desc->ct_node * sizeof(int));
+	if (!desc->nodecpu)
 		err(EXIT_FAILURE, _("error: malloc failed"));
 
 	/* information about how nodes share different CPUs */
-	for (i = 0; i < cpu->ct_node; i++)
-		cpu->nodecpu[i] = path_sibling(
+	for (i = 0; i < desc->ct_node; i++)
+		desc->nodecpu[i] = path_sibling(
 					_PATH_SYS_SYSTEM "/node/node%d/cpumap",
 					i);
 }
@@ -556,7 +557,7 @@ check_system(void)
 }
 
 static void
-print_parsable(struct cpu_desc *cpu)
+print_parsable(struct lscpu_desc *desc)
 {
 	int i, j;
 
@@ -570,26 +571,26 @@ print_parsable(struct cpu_desc *cpu)
 		/* separator between CPU topology and cache information */
 		putchar(',');
 
-		for (i = cpu->ct_cache - 1; i >= 0; i--)
-			printf(",%s", cpu->cache[i].caname);
+		for (i = desc->ct_cache - 1; i >= 0; i--)
+			printf(",%s", desc->cache[i].name);
 	}
 	putchar('\n');
 
-	for (i = 0; i < cpu->ct_cpu; i++) {
+	for (i = 0; i < desc->ct_cpu; i++) {
 		printf("%d", i);
 
 		if (have_topology)
 			printf(",%d,%d",
-				i / cpu->ct_thread,
-			        i / cpu->ct_core / cpu->ct_thread);
+				i / desc->ct_thread,
+			        i / desc->ct_core / desc->ct_thread);
 		else
 			printf(",,");
 
 		if (have_node) {
 			int c = 0;
 
-			for (j = 0; j < cpu->ct_node; j++) {
-				c += cpu->nodecpu[j];
+			for (j = 0; j < desc->ct_node; j++) {
+				c += desc->nodecpu[j];
 				if (i < c) {
 					printf(",%d", j);
 					break;
@@ -601,14 +602,14 @@ print_parsable(struct cpu_desc *cpu)
 		if (have_cache) {
 			putchar(',');
 
-			for (j = cpu->ct_cache - 1; j >= 0; j--) {
+			for (j = desc->ct_cache - 1; j >= 0; j--) {
 				/* If shared_cpu_map is 0, all CPUs share the same
 				   cache. */
-				if (cpu->cache[j].camap == 0)
-					cpu->cache[j].camap = cpu->ct_core *
-							      cpu->ct_thread;
+				if (desc->cache[j].map == 0)
+					desc->cache[j].map = desc->ct_core *
+							      desc->ct_thread;
 
-				printf(",%d", i / cpu->cache[j].camap);
+				printf(",%d", i / desc->cache[j].map);
 			}
 		}
 		putchar('\n');
@@ -621,22 +622,22 @@ print_parsable(struct cpu_desc *cpu)
 #define print_n(_key, _val)	printf("%-23s%d\n", _key, _val)
 
 static void
-print_readable(struct cpu_desc *cpu)
+print_readable(struct lscpu_desc *desc)
 {
-	print_s("Architecture:", cpu->arch);
+	print_s("Architecture:", desc->arch);
 
-	if (cpu->mode & (MODE_REAL | MODE_TRANSPARENT | MODE_LONG)) {
+	if (desc->mode & (MODE_REAL | MODE_TRANSPARENT | MODE_LONG)) {
 		char buf[64], *p = buf;
 
-		if (cpu->mode & MODE_REAL) {
+		if (desc->mode & MODE_REAL) {
 			strcpy(p, "16-bit, ");
 			p += 8;
 		}
-		if (cpu->mode & MODE_TRANSPARENT) {
+		if (desc->mode & MODE_TRANSPARENT) {
 			strcpy(p, "32-bit, ");
 			p += 8;
 		}
-		if (cpu->mode & MODE_LONG) {
+		if (desc->mode & MODE_LONG) {
 			strcpy(p, "64-bit, ");
 			p += 8;
 		}
@@ -644,44 +645,44 @@ print_readable(struct cpu_desc *cpu)
 		print_s(_("CPU op-mode(s):"), buf);
 	}
 
-	print_n("CPU(s):", cpu->ct_cpu);
+	print_n("CPU(s):", desc->ct_cpu);
 
 	if (have_topology) {
-		print_n(_("Thread(s) per core:"), cpu->ct_thread);
-		print_n(_("Core(s) per socket:"), cpu->ct_core);
-		print_n(_("CPU socket(s):"), cpu->ct_socket);
+		print_n(_("Thread(s) per core:"), desc->ct_thread);
+		print_n(_("Core(s) per socket:"), desc->ct_core);
+		print_n(_("CPU socket(s):"), desc->ct_socket);
 	}
 
 	if (have_node)
-		print_n(_("NUMA node(s):"), cpu->ct_node);
-	if (cpu->vendor)
-		print_s(_("Vendor ID:"), cpu->vendor);
-	if (cpu->family)
-		print_s(_("CPU family:"), cpu->family);
-	if (cpu->model)
-		print_s(_("Model:"), cpu->model);
-	if (cpu->stepping)
-		print_s(_("Stepping:"), cpu->stepping);
-	if (cpu->mhz)
-		print_s(_("CPU MHz:"), cpu->mhz);
-	if (cpu->virtflag) {
-		if (!strcmp(cpu->virtflag, "svm"))
+		print_n(_("NUMA node(s):"), desc->ct_node);
+	if (desc->vendor)
+		print_s(_("Vendor ID:"), desc->vendor);
+	if (desc->family)
+		print_s(_("CPU family:"), desc->family);
+	if (desc->model)
+		print_s(_("Model:"), desc->model);
+	if (desc->stepping)
+		print_s(_("Stepping:"), desc->stepping);
+	if (desc->mhz)
+		print_s(_("CPU MHz:"), desc->mhz);
+	if (desc->virtflag) {
+		if (!strcmp(desc->virtflag, "svm"))
 			print_s(_("Virtualization:"), "AMD-V");
-		else if (!strcmp(cpu->virtflag, "vmx"))
+		else if (!strcmp(desc->virtflag, "vmx"))
 			print_s(_("Virtualization:"), "VT-x");
 	}
-	if (cpu->hyper) {
-		print_s(_("Hypervisor vendor:"), hv_vendors[cpu->hyper]);
-		print_s(_("Virtualization type:"), virt_types[cpu->virtype]);
+	if (desc->hyper) {
+		print_s(_("Hypervisor vendor:"), hv_vendors[desc->hyper]);
+		print_s(_("Virtualization type:"), virt_types[desc->virtype]);
 	}
 	if (have_cache) {
 		char buf[512];
 		int i;
 
-		for (i = cpu->ct_cache - 1; i >= 0; i--) {
+		for (i = desc->ct_cache - 1; i >= 0; i--) {
 			snprintf(buf, sizeof(buf),
-					_("%s cache:"), cpu->cache[i].caname);
-			print_s(buf, cpu->cache[i].casize);
+					_("%s cache:"), desc->cache[i].name);
+			print_s(buf, desc->cache[i].size);
 		}
 	}
 }
@@ -701,15 +702,15 @@ void usage(int rc)
 static int
 ca_compare(const void *a, const void *b)
 {
-	struct ca_desc *cache1 = (struct ca_desc *) a;
-	struct ca_desc *cache2 = (struct ca_desc *) b;
+	struct cpu_cache *c1 = (struct cpu_cache *) a;
+	struct cpu_cache *c2 = (struct cpu_cache *) b;
 
-	return strcmp(cache2->caname, cache1->caname);
+	return strcmp(c2->name, c1->name);
 }
 
 int main(int argc, char *argv[])
 {
-	struct cpu_desc _cpu, *cpu = &_cpu;
+	struct lscpu_desc _desc, *desc = &_desc;
 	int parsable = 0, c;
 
 	struct option longopts[] = {
@@ -742,28 +743,28 @@ int main(int argc, char *argv[])
 		errx(EXIT_FAILURE,
 		     _("error: change working directory to %s."), pathbuf);
 
-	memset(cpu, 0, sizeof(*cpu));
+	memset(desc, 0, sizeof(*desc));
 
 	check_system();
 
-	read_basicinfo(cpu);
+	read_basicinfo(desc);
 
 	if (have_topology)
-		read_topology(cpu);
+		read_topology(desc);
 	if (have_cache) {
-		read_cache(cpu);
-		qsort(cpu->cache, cpu->ct_cache, sizeof(struct ca_desc), ca_compare);
+		read_cache(desc);
+		qsort(desc->cache, desc->ct_cache, sizeof(struct cpu_cache), ca_compare);
 	}
 	if (have_node)
-		read_nodes(cpu);
+		read_nodes(desc);
 
-	read_hypervisor(cpu);
+	read_hypervisor(desc);
 
 	/* Show time! */
 	if (parsable)
-		print_parsable(cpu);
+		print_parsable(desc);
 	else
-		print_readable(cpu);
+		print_readable(desc);
 
 	return EXIT_SUCCESS;
 }
