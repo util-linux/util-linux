@@ -1,3 +1,15 @@
+/*
+ * Terminology:
+ *
+ *	cpuset	- (libc) cpu_set_t data structure represents set of CPUs
+ *	cpumask	- string with hex mask (e.g. "0x00000001")
+ *	cpulist - string with CPU ranges (e.g. "0-3,5,7,8")
+ *
+ * Based on code from taskset.c and Linux kernel.
+ *
+ * Copyright (C) 2010 Karel Zak <kzak@redhat.com>
+ */
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -6,7 +18,6 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
-#include <sys/syscall.h>
 
 #include "cpuset.h"
 
@@ -18,73 +29,6 @@ static inline int val_to_char(int v)
 		return ('a' - 10) + v;
 	else
 		return -1;
-}
-
-/*
- * The following bitmask declarations, bitmask_*() routines, and associated
- * _setbit() and _getbit() routines are:
- * Copyright (c) 2004 Silicon Graphics, Inc. (SGI) All rights reserved.
- * SGI publishes it under the terms of the GNU General Public License, v2,
- * as published by the Free Software Foundation.
- */
-
-static unsigned int _getbit(const struct bitmask *bmp, unsigned int n)
-{
-	if (n < bmp->size)
-		return (bmp->maskp[n/bitsperlong] >> (n % bitsperlong)) & 1;
-	else
-		return 0;
-}
-
-static void _setbit(struct bitmask *bmp, unsigned int n, unsigned int v)
-{
-	if (n < bmp->size) {
-		if (v)
-			bmp->maskp[n/bitsperlong] |= 1UL << (n % bitsperlong);
-		else
-			bmp->maskp[n/bitsperlong] &= ~(1UL << (n % bitsperlong));
-	}
-}
-
-static int bitmask_isbitset(const struct bitmask *bmp, unsigned int i)
-{
-	return _getbit(bmp, i);
-}
-
-struct bitmask *bitmask_clearall(struct bitmask *bmp)
-{
-	unsigned int i;
-	for (i = 0; i < bmp->size; i++)
-		_setbit(bmp, i, 0);
-	return bmp;
-}
-
-struct bitmask *bitmask_setbit(struct bitmask *bmp, unsigned int i)
-{
-	_setbit(bmp, i, 1);
-	return bmp;
-}
-
-unsigned int bitmask_nbytes(struct bitmask *bmp)
-{
-	return longsperbits(bmp->size) * sizeof(unsigned long);
-}
-
-
-struct bitmask *bitmask_alloc(unsigned int n)
-{
-	struct bitmask *bmp;
-
-	bmp = malloc(sizeof(*bmp));
-	if (!bmp)
-		return 0;
-	bmp->size = n;
-	bmp->maskp = calloc(longsperbits(n), sizeof(unsigned long));
-	if (!bmp->maskp) {
-		free(bmp);
-		return 0;
-	}
-	return bmp;
 }
 
 static inline int char_to_val(int c)
@@ -109,102 +53,148 @@ static const char *nexttoken(const char *q,  int sep)
 	return q;
 }
 
-char *cpuset_to_cstr(struct bitmask *mask, char *str)
+/*
+ * Allocates a new set for ncpus and returns size in bytes and size in bits
+ */
+cpu_set_t *cpuset_alloc(int ncpus, size_t *setsize, size_t *nbits)
+{
+	cpu_set_t *set = CPU_ALLOC(ncpus);
+
+	if (!set)
+		return NULL;
+	if (setsize)
+		*setsize = CPU_ALLOC_SIZE(ncpus);
+	if (nbits)
+		*nbits = cpuset_nbits(CPU_ALLOC_SIZE(ncpus));
+	return set;
+}
+
+void cpuset_free(cpu_set_t *set)
+{
+	CPU_FREE(set);
+}
+
+/*
+ * Returns human readable representation of the cpuset. The output format is
+ * a list of CPUs with ranges (for example, "0,1,3-9").
+ */
+char *cpulist_create(char *str, size_t len,
+			cpu_set_t *set, size_t setsize)
 {
 	int i;
 	char *ptr = str;
 	int entry_made = 0;
+	size_t max = cpuset_nbits(setsize);
 
-	for (i = 0; i < mask->size; i++) {
-		if (bitmask_isbitset(mask, i)) {
-			int j;
+	for (i = 0; i < max; i++) {
+		if (CPU_ISSET_S(i, setsize, set)) {
+			int j, rlen;
 			int run = 0;
 			entry_made = 1;
-			for (j = i + 1; j < mask->size; j++) {
-				if (bitmask_isbitset(mask, j))
+			for (j = i + 1; j < max; j++) {
+				if (CPU_ISSET_S(j, setsize, set))
 					run++;
 				else
 					break;
 			}
 			if (!run)
-				sprintf(ptr, "%d,", i);
+				rlen = snprintf(ptr, len, "%d,", i);
 			else if (run == 1) {
-				sprintf(ptr, "%d,%d,", i, i + 1);
+				rlen = snprintf(ptr, len, "%d,%d,", i, i + 1);
 				i++;
 			} else {
-				sprintf(ptr, "%d-%d,", i, i + run);
+				rlen = snprintf(ptr, len, "%d-%d,", i, i + run);
 				i += run;
 			}
-			while (*ptr != 0)
-				ptr++;
+			if (rlen < 0 || rlen + 1 > len)
+				return NULL;
+			ptr += rlen;
+			len -= rlen;
 		}
 	}
 	ptr -= entry_made;
-	*ptr = 0;
+	*ptr = '\0';
 
 	return str;
 }
 
-char *cpuset_to_str(struct bitmask *mask, char *str)
+/*
+ * Returns string with CPU mask.
+ */
+char *cpumask_create(char *str, size_t len,
+			cpu_set_t *set, size_t setsize)
 {
-	int base;
 	char *ptr = str;
-	char *ret = 0;
+	char *ret = NULL;
+	int cpu;
 
-	for (base = mask->size - 4; base >= 0; base -= 4) {
+	for (cpu = cpuset_nbits(setsize) - 4; cpu >= 0; cpu -= 4) {
 		char val = 0;
-		if (bitmask_isbitset(mask, base))
+
+		if (len == (ptr - str))
+			break;
+
+		if (CPU_ISSET_S(cpu, setsize, set))
 			val |= 1;
-		if (bitmask_isbitset(mask, base + 1))
+		if (CPU_ISSET_S(cpu + 1, setsize, set))
 			val |= 2;
-		if (bitmask_isbitset(mask, base + 2))
+		if (CPU_ISSET_S(cpu + 2, setsize, set))
 			val |= 4;
-		if (bitmask_isbitset(mask, base + 3))
+		if (CPU_ISSET_S(cpu + 3, setsize, set))
 			val |= 8;
+
 		if (!ret && val)
 			ret = ptr;
 		*ptr++ = val_to_char(val);
 	}
-	*ptr = 0;
+	*ptr = '\0';
 	return ret ? ret : ptr - 1;
 }
 
-int str_to_cpuset(struct bitmask *mask, const char* str)
+/*
+ * Parses string with list of CPU ranges.
+ */
+int cpumask_parse(const char *str, cpu_set_t *set, size_t setsize)
 {
 	int len = strlen(str);
 	const char *ptr = str + len - 1;
-	int base = 0;
+	int cpu = 0;
 
 	/* skip 0x, it's all hex anyway */
 	if (len > 1 && !memcmp(str, "0x", 2L))
 		str += 2;
 
-	bitmask_clearall(mask);
+	CPU_ZERO_S(setsize, set);
+
 	while (ptr >= str) {
 		char val = char_to_val(*ptr);
 		if (val == (char) -1)
 			return -1;
 		if (val & 1)
-			bitmask_setbit(mask, base);
+			CPU_SET_S(cpu, setsize, set);
 		if (val & 2)
-			bitmask_setbit(mask, base + 1);
+			CPU_SET_S(cpu + 1, setsize, set);
 		if (val & 4)
-			bitmask_setbit(mask, base + 2);
+			CPU_SET_S(cpu + 2, setsize, set);
 		if (val & 8)
-			bitmask_setbit(mask, base + 3);
+			CPU_SET_S(cpu + 3, setsize, set);
 		len--;
 		ptr--;
-		base += 4;
+		cpu += 4;
 	}
 
 	return 0;
 }
 
-int cstr_to_cpuset(struct bitmask *mask, const char* str)
+/*
+ * Parses string with CPUs mask.
+ */
+int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize)
 {
 	const char *p, *q;
 	q = str;
-	bitmask_clearall(mask);
+
+	CPU_ZERO_S(setsize, set);
 
 	while (p = q, q = nexttoken(q, ','), p) {
 		unsigned int a;	/* beginning of range */
@@ -232,7 +222,7 @@ int cstr_to_cpuset(struct bitmask *mask, const char* str)
 		if (!(a <= b))
 			return 1;
 		while (a <= b) {
-			bitmask_setbit(mask, a);
+			CPU_SET_S(a, setsize, set);
 			a += s;
 		}
 	}
@@ -247,7 +237,8 @@ int cstr_to_cpuset(struct bitmask *mask, const char* str)
 
 int main(int argc, char *argv[])
 {
-	struct bitmask *set;
+	cpu_set_t *set;
+	size_t setsize, buflen, nbits;
 	char *buf, *mask = NULL, *range = NULL;
 	int ncpus = 2048, rc, c;
 
@@ -277,28 +268,34 @@ int main(int argc, char *argv[])
 	if (!mask && !range)
 		goto usage_err;
 
-	set = bitmask_alloc(ncpus);
+	set = cpuset_alloc(ncpus, &setsize, &nbits);
 	if (!set)
 		err(EXIT_FAILURE, "failed to allocate cpu set");
 
-	buf = malloc(7 * ncpus);
+	/*
+	fprintf(stderr, "ncpus: %d, cpuset bits: %zd, cpuset bytes: %zd\n",
+			ncpus, nbits, setsize);
+	*/
+
+	buflen = 7 * nbits;
+	buf = malloc(buflen);
 	if (!buf)
 		err(EXIT_FAILURE, "failed to allocate cpu set buffer");
 
 	if (mask)
-		rc = str_to_cpuset(set, mask);
+		rc = cpumask_parse(mask, set, setsize);
 	else
-		rc = cstr_to_cpuset(set, range);
+		rc = cpulist_parse(range, set, setsize);
 
 	if (rc)
 		errx(EXIT_FAILURE, "failed to parse string: %s", mask ? : range);
 
-	printf("%-15s = %15s ", mask ? : range,	cpuset_to_str(set, buf));
-	printf("[%s]\n", cpuset_to_cstr(set, buf));
+	printf("%-15s = %15s ", mask ? : range,
+				cpumask_create(buf, buflen, set, setsize));
+	printf("[%s]\n", cpulist_create(buf, buflen, set, setsize));
 
 	free(buf);
-	free(set->maskp);
-	free(set);
+	cpuset_free(set);
 
 	return EXIT_SUCCESS;
 

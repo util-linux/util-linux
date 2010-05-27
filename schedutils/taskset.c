@@ -72,19 +72,31 @@ max_number_of_cpus(void)
 {
 	int n;
 	int cpus = 2048;
+	size_t setsize;
+	cpu_set_t *set = cpuset_alloc(cpus, &setsize, NULL);
+
+	if (!set)
+		goto err;
 
 	for (;;) {
-		unsigned long buffer[longsperbits(cpus)];
-		memset(buffer, 0, sizeof(buffer));
+		CPU_ZERO_S(setsize, set);
+
 		/* the library version does not return size of cpumask_t */
-		n = syscall(SYS_sched_getaffinity, 0, bytesperbits(cpus),
-								&buffer);
+		n = syscall(SYS_sched_getaffinity, 0, setsize, set);
+
 		if (n < 0 && errno == EINVAL && cpus < 1024*1024) {
+			cpuset_free(set);
 			cpus *= 2;
+			set = cpuset_alloc(cpus, &setsize, NULL);
+			if (!set)
+				goto err;
 			continue;
 		}
+		cpuset_free(set);
 		return n*8;
 	}
+
+err:
 	fprintf (stderr, "cannot determine NR_CPUS; aborting");
 	exit(1);
 	return 0;
@@ -92,14 +104,13 @@ max_number_of_cpus(void)
 
 int main(int argc, char *argv[])
 {
-	struct bitmask *new_mask, *cur_mask;
+	cpu_set_t *new_set, *cur_set;
 	pid_t pid = 0;
 	int opt, err;
-	char *mstr;
-	char *cstr;
+	char *buf;
 	int c_opt = 0;
-        unsigned int cpus_configured;
-	int new_mask_byte_size, cur_mask_byte_size;
+        unsigned int ncpus;
+	size_t new_setsize, cur_setsize, cur_nbits, buflen;
 
 	struct option longopts[] = {
 		{ "pid",	0, NULL, 'p' },
@@ -136,37 +147,34 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	cpus_configured = max_number_of_cpus();
+	ncpus = max_number_of_cpus();
 
 	/*
 	 * cur_mask is always used for the sched_getaffinity call
 	 * On the sched_getaffinity the kernel demands a user mask of
 	 * at least the size of its own cpumask_t.
 	 */
-	cur_mask = bitmask_alloc(cpus_configured);
-	if (!cur_mask) {
-		fprintf (stderr, "bitmask_alloc failed\n");
+	cur_set = cpuset_alloc(ncpus, &cur_setsize, &cur_nbits);
+	if (!cur_set) {
+		fprintf (stderr, "cpuset_alloc failed\n");
 		exit(1);
 	}
-	cur_mask_byte_size = bitmask_nbytes(cur_mask);
-	mstr = malloc(1 + cur_mask->size / 4);
-	cstr = malloc(7 * cur_mask->size);
+	buflen = 7 * cur_nbits;
+	buf = malloc(buflen);
 
 	/*
 	 * new_mask is always used for the sched_setaffinity call
 	 * On the sched_setaffinity the kernel will zero-fill its
 	 * cpumask_t if the user's mask is shorter.
 	 */
-	new_mask = bitmask_alloc(cpus_configured);
-	if (!new_mask) {
-		fprintf (stderr, "bitmask_alloc failed\n");
+	new_set = cpuset_alloc(ncpus, &new_setsize, NULL);
+	if (!new_set) {
+		fprintf (stderr, "cpuset_alloc failed\n");
 		exit(1);
 	}
-	new_mask_byte_size = bitmask_nbytes(new_mask);
 
 	if (pid) {
-		if (sched_getaffinity(pid, cur_mask_byte_size,
-					(cpu_set_t *)cur_mask->maskp) < 0) {
+		if (sched_getaffinity(pid, cur_setsize, cur_set) < 0) {
 			perror("sched_getaffinity");
 			fprintf(stderr, "failed to get pid %d's affinity\n",
 				pid);
@@ -174,19 +182,19 @@ int main(int argc, char *argv[])
 		}
 		if (c_opt)
 			printf("pid %d's current affinity list: %s\n", pid,
-				cpuset_to_cstr(cur_mask, cstr));
+				cpulist_create(buf, buflen, cur_set, cur_setsize));
 		else
 			printf("pid %d's current affinity mask: %s\n", pid,
-				cpuset_to_str(cur_mask, mstr));
+				cpumask_create(buf, buflen, cur_set, cur_setsize));
 
 		if (argc - optind == 1)
 			return 0;
 	}
 
 	if (c_opt)
-		err = cstr_to_cpuset(new_mask, argv[optind]);
+		err = cpulist_parse(argv[optind], new_set, new_setsize);
 	else
-		err = str_to_cpuset(new_mask, argv[optind]);
+		err = cpumask_parse(argv[optind], new_set, new_setsize);
 
 	if (err) {
 		if (c_opt)
@@ -198,15 +206,13 @@ int main(int argc, char *argv[])
 		return 1;
 	}
 
-	if (sched_setaffinity(pid, new_mask_byte_size,
-					(cpu_set_t *) new_mask->maskp) < 0) {
+	if (sched_setaffinity(pid, new_setsize, new_set) < 0) {
 		perror("sched_setaffinity");
 		fprintf(stderr, "failed to set pid %d's affinity.\n", pid);
 		return 1;
 	}
 
-	if (sched_getaffinity(pid, cur_mask_byte_size,
-					(cpu_set_t *)cur_mask->maskp) < 0) {
+	if (sched_getaffinity(pid, cur_setsize, cur_set) < 0) {
 		perror("sched_getaffinity");
 		fprintf(stderr, "failed to get pid %d's affinity.\n", pid);
 		return 1;
@@ -214,12 +220,18 @@ int main(int argc, char *argv[])
 
 	if (pid) {
 		if (c_opt)
-			printf("pid %d's new affinity list: %s\n", pid, 
-		               cpuset_to_cstr(cur_mask, cstr));
+			printf("pid %d's new affinity list: %s\n", pid,
+				cpulist_create(buf, buflen, cur_set, cur_setsize));
 		else
-			printf("pid %d's new affinity mask: %s\n", pid, 
-		               cpuset_to_str(cur_mask, mstr));
-	} else {
+			printf("pid %d's new affinity mask: %s\n", pid,
+				cpumask_create(buf, buflen, cur_set, cur_setsize));
+	}
+
+	free(buf);
+	cpuset_free(cur_set);
+	cpuset_free(new_set);
+
+	if (!pid) {
 		argv += optind + 1;
 		execvp(argv[0], argv);
 		perror("execvp");

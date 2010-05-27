@@ -1,23 +1,18 @@
 #ifndef UTIL_LINUX_CPUSET_H
 #define UTIL_LINUX_CPUSET_H
 
-struct bitmask {
-	unsigned int size;
-	unsigned long *maskp;
-};
+#include <sched.h>
 
 
-#define howmany(x,y) (((x)+((y)-1))/(y))
-#define bitsperlong (8 * sizeof(unsigned long))
-#define longsperbits(n) howmany(n, bitsperlong)
-#define bytesperbits(x) ((x+7)/8)
+#define cpuset_nbits(setsize)	(8 * (setsize))
 
-extern unsigned int bitmask_nbytes(struct bitmask *bmp);
-extern struct bitmask *bitmask_alloc(unsigned int n);
+extern cpu_set_t *cpuset_alloc(int ncpus, size_t *setsize, size_t *nbits);
+extern void cpuset_free(cpu_set_t *set);
 
-extern char *cpuset_to_cstr(struct bitmask *mask, char *str);
-extern char *cpuset_to_str(struct bitmask *mask, char *str);
-extern int str_to_cpuset(struct bitmask *mask, const char* str);
-extern int cstr_to_cpuset(struct bitmask *mask, const char* str);
+extern char *cpulist_create(char *str, size_t len, cpu_set_t *set, size_t setsize);
+extern int cpulist_parse(const char *str, cpu_set_t *set, size_t setsize);
+
+extern char *cpumask_create(char *str, size_t len, cpu_set_t *set, size_t setsize);
+extern int cpumask_parse(const char *str, cpu_set_t *set, size_t setsize);
 
 #endif /* UTIL_LINUX_CPUSET_H */
