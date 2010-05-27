@@ -122,8 +122,10 @@ struct cpu_desc {
 
 char pathbuf[PATH_MAX] = "/";
 
-static void path_scanstr(char *result, const char *path, ...)
-		__attribute__ ((__format__ (__printf__, 2, 3)));
+static void path_getstr(char *result, size_t len, const char *path, ...)
+		__attribute__ ((__format__ (__printf__, 3, 4)));
+static int path_getnum(const char *path, ...)
+		__attribute__ ((__format__ (__printf__, 1, 2)));
 static int path_exist(const char *path, ...)
 		__attribute__ ((__format__ (__printf__, 1, 2)));
 static int path_sibling(const char *path, ...)
@@ -146,7 +148,7 @@ path_vfopen(const char *mode, const char *path, va_list ap)
 }
 
 static void
-path_scanstr(char *result, const char *path, ...)
+path_getstr(char *result, size_t len, const char *path, ...)
 {
 	FILE *fd;
 	va_list ap;
@@ -155,13 +157,34 @@ path_scanstr(char *result, const char *path, ...)
 	fd = path_vfopen("r", path, ap);
 	va_end(ap);
 
-	if (fscanf(fd, "%s", result) != 1) {
+	if (!fgets(result, len, fd))
+		err(EXIT_FAILURE, _("failed to read: %s"), pathbuf);
+	fclose(fd);
+
+	len = strlen(result);
+	if (result[len - 1] == '\n')
+		result[len - 1] = '\0';
+}
+
+static int
+path_getnum(const char *path, ...)
+{
+	FILE *fd;
+	va_list ap;
+	int result;
+
+	va_start(ap, path);
+	fd = path_vfopen("r", path, ap);
+	va_end(ap);
+
+	if (fscanf(fd, "%d", &result) != 1) {
 		if (ferror(fd))
 			err(EXIT_FAILURE, _("error: %s"), pathbuf);
 		else
 			errx(EXIT_FAILURE, _("error parse: %s"), pathbuf);
 	}
 	fclose(fd);
+	return result;
 }
 
 static int
@@ -461,7 +484,8 @@ read_cache(struct cpu_desc *cpu)
 			continue;
 
 		/* cache type */
-		path_scanstr(buf, _PATH_SYS_CPU0 "/cache/%s/type", dir->d_name);
+		path_getstr(buf, sizeof(buf),
+				_PATH_SYS_CPU0 "/cache/%s/type", dir->d_name);
 		if (!strcmp(buf, "Data"))
 			type = 'd';
 		else if (!strcmp(buf, "Instruction"))
@@ -470,8 +494,8 @@ read_cache(struct cpu_desc *cpu)
 			type = 0;
 
 		/* cache level */
-		path_scanstr(buf, _PATH_SYS_CPU0 "/cache/%s/level", dir->d_name);
-		level = atoi(buf);
+		level = path_getnum(_PATH_SYS_CPU0 "/cache/%s/level",
+				dir->d_name);
 
 		if (type)
 			snprintf(buf, sizeof(buf), "L%d%c", level, type);
@@ -481,7 +505,8 @@ read_cache(struct cpu_desc *cpu)
 		cpu->cache[cpu->ct_cache].caname = xstrdup(buf);
 
 		/* cache size */
-		path_scanstr(buf, _PATH_SYS_CPU0 "/cache/%s/size", dir->d_name);
+		path_getstr(buf, sizeof(buf),
+				_PATH_SYS_CPU0 "/cache/%s/size", dir->d_name);
 		cpu->cache[cpu->ct_cache].casize = xstrdup(buf);
 
 		/* information about how CPUs share different caches */
