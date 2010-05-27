@@ -682,6 +682,17 @@ AC_COMPILE_IFELSE([AC_LANG_PROGRAM(
 ])
 
 
+AC_CHECK_TYPES([cpu_set_t], [have_cpu_set_t=yes], [], [[
+#include <sched.h>
+]])
+
+AM_CONDITIONAL(HAVE_CPU_SET_T, [test "x$have_cpu_set_t" = xyes])
+
+AC_CHECK_DECLS([CPU_ALLOC], [], [], [[
+#include <sched.h>
+]])
+
+
 dnl UTIL_SET_ARCH(ARCHNAME, PATTERN)
 dnl ---------------------------------
 AC_DEFUN([UTIL_SET_ARCH], [

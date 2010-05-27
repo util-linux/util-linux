@@ -3,7 +3,10 @@ include $(top_srcdir)/config/include-Makefile.am
 AM_CPPFLAGS += -DTEST_PROGRAM
 
 noinst_PROGRAMS = test_blkdev test_ismounted test_wholedisk test_mangle \
-		  test_strtosize test_cpuset
+		  test_strtosize
+if HAVE_CPU_SET_T
+noinst_PROGRAMS += test_cpuset
+endif
 
 test_blkdev_SOURCES = blkdev.c
 test_ismounted_SOURCES = ismounted.c
