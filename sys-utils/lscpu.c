@@ -31,22 +31,18 @@
 #include <unistd.h>
 #include <stdarg.h>
 
+#include "cpuset.h"
 #include "nls.h"
 
 #define CACHE_MAX 100
 
 /* /sys paths */
 #define _PATH_SYS_SYSTEM	"/sys/devices/system"
-#define _PATH_SYS_CPU0		_PATH_SYS_SYSTEM "/cpu/cpu0"
+#define _PATH_SYS_CPU		_PATH_SYS_SYSTEM "/cpu"
 #define _PATH_PROC_XEN		"/proc/xen"
 #define _PATH_PROC_XENCAP	_PATH_PROC_XEN "/capabilities"
 #define _PATH_PROC_CPUINFO	"/proc/cpuinfo"
 #define _PATH_PROC_PCIDEVS	"/proc/bus/pci/devices"
-
-int have_topology;
-int have_cache;
-int have_node;
-
 
 /* virtualization types */
 enum {
@@ -83,22 +79,15 @@ enum {
 
 /* cache(s) description */
 struct cpu_cache {
-	char	*name;
-	char	*size;
-	int	map;
+	char		*name;
+	char		*size;
+
+	int		nsharedmaps;
+	cpu_set_t	**sharedmaps;
 };
 
 /* global description */
 struct lscpu_desc {
-	/* counters */
-	int	ct_cpu;
-	int	ct_thread;
-	int	ct_core;
-	int	ct_socket;
-	int	ct_node;
-	int	ct_cache;
-
-	/* who is who */
 	char	*arch;
 	char	*vendor;
 	char	*family;
@@ -106,26 +95,36 @@ struct lscpu_desc {
 	char	*virtflag;	/* virtualization flag (vmx, svm) */
 	int	hyper;		/* hypervisor vendor ID */
 	int	virtype;	/* VIRT_PARA|FULL|NONE ? */
-
-	/* caches */
-	struct cpu_cache	cache[CACHE_MAX];
-
-	/* misc */
 	char	*mhz;
 	char	*stepping;
 	char	*flags;
-
 	int	mode;		/* rm, lm or/and tm */
 
-	/* NUMA */
-	int	*nodecpu;
+	int		ncpus;		/* number of CPUs */
+
+	int		nnodes;		/* number of NUMA modes */
+	cpu_set_t	**nodemaps;	/* array with NUMA nodes */
+
+	/* sockets -- based on core_siblings (internal kernel map of cpuX's
+	 * hardware threads within the same physical_package_id (socket)) */
+	int		nsockets;	/* number of all sockets */
+	cpu_set_t	**socketmaps;	/* unique core_siblings */
+
+	/* cores -- based on thread_siblings (internel kernel map of cpuX's
+	 * hardware threads within the same core as cpuX) */
+	int		ncores;		/* number of all cores */
+	cpu_set_t	**coremaps;	/* unique thread_siblings */
+
+	int		nthreads;	/* number of threads */
+
+	int		ncaches;
+	struct cpu_cache *caches;
 };
 
 static size_t sysrootlen;
 static char pathbuf[PATH_MAX];
+static int maxcpus;		/* size in bits of kernel cpu mask */
 
-static const char *path_create(const char *path, ...)
-		__attribute__ ((__format__ (__printf__, 1, 2)));
 static FILE *path_fopen(const char *mode, int exit_on_err, const char *path, ...)
 		__attribute__ ((__format__ (__printf__, 3, 4)));
 static void path_getstr(char *result, size_t len, const char *path, ...)
@@ -134,7 +133,7 @@ static int path_getnum(const char *path, ...)
 		__attribute__ ((__format__ (__printf__, 1, 2)));
 static int path_exist(const char *path, ...)
 		__attribute__ ((__format__ (__printf__, 1, 2)));
-static int path_sibling(const char *path, ...)
+static cpu_set_t *path_cpuset(const char *path, ...)
 		__attribute__ ((__format__ (__printf__, 1, 2)));
 
 static const char *
@@ -146,19 +145,6 @@ path_vcreate(const char *path, va_list ap)
 	else
 		vsnprintf(pathbuf, sizeof(pathbuf), path, ap);
 	return pathbuf;
-}
-
-static const char *
-path_create(const char *path, ...)
-{
-	const char *p;
-	va_list ap;
-
-	va_start(ap, path);
-	p = path_vcreate(path, ap);
-	va_end(ap);
-
-	return p;
 }
 
 static FILE *
@@ -239,7 +225,7 @@ path_exist(const char *path, ...)
 	return access(p, F_OK) == 0;
 }
 
-char *
+static char *
 xstrdup(const char *str)
 {
 	char *s = strdup(str);
@@ -248,33 +234,35 @@ xstrdup(const char *str)
 	return s;
 }
 
-/* count the set bit in a mapping file */
-static int
-path_sibling(const char *path, ...)
+static cpu_set_t *
+path_cpuset(const char *path, ...)
 {
-	int c, n;
-	int result = 0;
-	char s[2];
-	FILE *fp;
+	FILE *fd;
 	va_list ap;
+	cpu_set_t *set;
+	size_t setsize, len = maxcpus * 7;
+	char buf[len];
 
 	va_start(ap, path);
-	fp = path_vfopen("r", 1, path, ap);
+	fd = path_vfopen("r", 1, path, ap);
 	va_end(ap);
 
-	while ((c = fgetc(fp)) != EOF) {
-		if (isxdigit(c)) {
-			s[0] = c;
-			s[1] = '\0';
-			for (n = strtol(s, NULL, 16); n > 0; n /= 2) {
-				if (n % 2)
-					result++;
-			}
-		}
-	}
-	fclose(fp);
+	if (!fgets(buf, len, fd))
+		err(EXIT_FAILURE, _("failed to read: %s"), pathbuf);
+	fclose(fd);
 
-	return result;
+	len = strlen(buf);
+	if (buf[len - 1] == '\n')
+		buf[len - 1] = '\0';
+
+	set = cpuset_alloc(maxcpus, &setsize, NULL);
+	if (!set)
+		err(EXIT_FAILURE, _("failed to callocate cpu set"));
+
+	if (cpumask_parse(buf, set, setsize))
+		errx(EXIT_FAILURE, _("faild to parse CPU mask %s"), buf);
+
+	return set;
 }
 
 /* Lookup a pattern and get the value from cpuinfo.
@@ -331,8 +319,8 @@ read_basicinfo(struct lscpu_desc *desc)
 	desc->arch = xstrdup(utsbuf.machine);
 
 	/* count CPU(s) */
-	while(path_exist(_PATH_SYS_SYSTEM "/cpu/cpu%d", desc->ct_cpu))
-		desc->ct_cpu++;
+	while(path_exist(_PATH_SYS_SYSTEM "/cpu/cpu%d", desc->ncpus))
+		desc->ncpus++;
 
 	/* details */
 	while (fgets(buf, sizeof(buf), fp) != NULL) {
@@ -366,6 +354,17 @@ read_basicinfo(struct lscpu_desc *desc)
 	}
 
 	fclose(fp);
+
+	if (path_exist(_PATH_SYS_SYSTEM "/cpu/kernel_max"))
+		maxcpus = path_getnum(_PATH_SYS_SYSTEM "/cpu/kernel_max");
+
+	else if (!sysrootlen)
+		/* the root is '/' so we are working with data from the current kernel */
+		maxcpus = get_max_number_of_cpus();
+	else
+		/* we are reading some /sys snapshot instead the real /sys,
+		 * let's use any crazy number... */
+		maxcpus = desc->ncpus > 2048 ? desc->ncpus : 2048;
 }
 
 static int
@@ -490,71 +489,138 @@ read_hypervisor(struct lscpu_desc *desc)
 	}
 }
 
-static void
-read_topology(struct lscpu_desc *desc)
+/* add @set to the @ary, unnecesary set is deallocated. */
+static int add_cpuset_to_array(cpu_set_t **ary, int *items, cpu_set_t *set)
 {
-	/* number of threads */
-	desc->ct_thread = path_sibling(
-				_PATH_SYS_CPU0 "/topology/thread_siblings");
+	int i;
+	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 
-	/* number of cores */
-	desc->ct_core = path_sibling(
-				_PATH_SYS_CPU0 "/topology/core_siblings")
-			/ desc->ct_thread;
+	if (!ary)
+		return -1;
 
-	/* number of sockets */
-	desc->ct_socket = desc->ct_cpu / desc->ct_core / desc->ct_thread;
+	for (i = 0; i < *items; i++) {
+		if (CPU_EQUAL_S(setsize, set, ary[i]))
+			break;
+	}
+	if (i == *items) {
+		ary[*items] = set;
+		++*items;
+		return 0;
+	}
+	CPU_FREE(set);
+	return 1;
 }
 
 static void
-read_cache(struct lscpu_desc *desc)
+read_topology(struct lscpu_desc *desc, int num)
+{
+	cpu_set_t *thread_siblings, *core_siblings;
+
+	if (!path_exist(_PATH_SYS_CPU "/cpu%d/topology/thread_siblings", num))
+		return;
+
+	thread_siblings = path_cpuset(_PATH_SYS_CPU
+					"/cpu%d/topology/thread_siblings", num);
+	core_siblings = path_cpuset(_PATH_SYS_CPU
+					"/cpu%d/topology/core_siblings", num);
+	if (num == 0) {
+		int ncores, nsockets, nthreads;
+		size_t setsize = CPU_ALLOC_SIZE(maxcpus);
+
+		/* threads within one core */
+		nthreads = CPU_COUNT_S(setsize, thread_siblings);
+		/* cores within one socket */
+		ncores = CPU_COUNT_S(setsize, core_siblings) / nthreads;
+		/* number of sockets */
+		nsockets = desc->ncpus / nthreads / ncores;
+		/* all threads */
+		desc->nthreads = nsockets * ncores * nthreads;
+
+		desc->socketmaps = calloc(nsockets, sizeof(cpu_set_t *));
+		if (!desc->socketmaps)
+			err(EXIT_FAILURE, _("error: calloc failed"));
+		desc->coremaps = calloc(ncores * nsockets, sizeof(cpu_set_t *));
+		if (!desc->coremaps)
+			err(EXIT_FAILURE, _("error: calloc failed"));
+	}
+
+	add_cpuset_to_array(desc->socketmaps, &desc->nsockets, core_siblings);
+	add_cpuset_to_array(desc->coremaps, &desc->ncores, thread_siblings);
+}
+
+static int
+cachecmp(const void *a, const void *b)
+{
+	struct cpu_cache *c1 = (struct cpu_cache *) a;
+	struct cpu_cache *c2 = (struct cpu_cache *) b;
+
+	return strcmp(c2->name, c1->name);
+}
+
+static void
+read_cache(struct lscpu_desc *desc, int num)
 {
 	char buf[256];
-	DIR *dp;
-	struct dirent *dir;
-	int level, type;
-	const char *p = path_create(_PATH_SYS_CPU0 "/cache");
+	int i;
 
-	dp = opendir(p);
-	if (dp == NULL)
-		err(EXIT_FAILURE, _("error: %s"), p);
+	if (num == 0) {
+		while(path_exist(_PATH_SYS_SYSTEM "/cpu/cpu%d/cache/index%d",
+					num, desc->ncaches))
+			desc->ncaches++;
 
-	while ((dir = readdir(dp)) != NULL) {
-		if (!strcmp(dir->d_name, ".")
-		    || !strcmp(dir->d_name, ".."))
-			continue;
+		if (!desc->ncaches)
+			return;
 
-		/* cache type */
-		path_getstr(buf, sizeof(buf),
-				_PATH_SYS_CPU0 "/cache/%s/type", dir->d_name);
-		if (!strcmp(buf, "Data"))
-			type = 'd';
-		else if (!strcmp(buf, "Instruction"))
-			type = 'i';
-		else
-			type = 0;
+		desc->caches = calloc(desc->ncaches, sizeof(*desc->caches));
+		if (!desc->caches)
+			err(EXIT_FAILURE, _("calloc failed"));
+	}
+	for (i = 0; i < desc->ncaches; i++) {
+		struct cpu_cache *ca = &desc->caches[i];
+		cpu_set_t *map;
 
-		/* cache level */
-		level = path_getnum(_PATH_SYS_CPU0 "/cache/%s/level",
-				dir->d_name);
+		if (!ca->name) {
+			int type, level;
 
-		if (type)
-			snprintf(buf, sizeof(buf), "L%d%c", level, type);
-		else
-			snprintf(buf, sizeof(buf), "L%d", level);
+			/* cache type */
+			path_getstr(buf, sizeof(buf),
+					_PATH_SYS_CPU "/cpu%d/cache/index%d/type",
+					num, i);
+			if (!strcmp(buf, "Data"))
+				type = 'd';
+			else if (!strcmp(buf, "Instruction"))
+				type = 'i';
+			else
+				type = 0;
 
-		desc->cache[desc->ct_cache].name = xstrdup(buf);
+			/* cache level */
+			level = path_getnum(_PATH_SYS_CPU "/cpu%d/cache/index%d/level",
+					num, i);
+			if (type)
+				snprintf(buf, sizeof(buf), "L%d%c", level, type);
+			else
+				snprintf(buf, sizeof(buf), "L%d", level);
 
-		/* cache size */
-		path_getstr(buf, sizeof(buf),
-				_PATH_SYS_CPU0 "/cache/%s/size", dir->d_name);
-		desc->cache[desc->ct_cache].size = xstrdup(buf);
+			ca->name = xstrdup(buf);
+
+			/* cache size */
+			path_getstr(buf, sizeof(buf),
+					_PATH_SYS_CPU "/cpu%d/cache/index%d/size",
+					num, i);
+			ca->size = xstrdup(buf);
+		}
 
 		/* information about how CPUs share different caches */
-		desc->cache[desc->ct_cache].map = path_sibling(
-				_PATH_SYS_CPU0 "/cache/%s/shared_cpu_map",
-				dir->d_name);
-		desc->ct_cache++;
+		map = path_cpuset(_PATH_SYS_CPU "/cpu%d/cache/index%d/shared_cpu_map",
+				num, i);
+
+		if (!ca->sharedmaps) {
+			ca->sharedmaps = calloc(desc->ncpus, sizeof(cpu_set_t *));
+			if (!ca->sharedmaps)
+				err(EXIT_FAILURE, _("error: calloc failed"));
+		}
+
+		add_cpuset_to_array(ca->sharedmaps, &ca->nsharedmaps, map);
 	}
 }
 
@@ -564,42 +630,28 @@ read_nodes(struct lscpu_desc *desc)
 	int i;
 
 	/* number of NUMA node */
-	while (path_exist(_PATH_SYS_SYSTEM "/node/node%d", desc->ct_node))
-		desc->ct_node++;
+	while (path_exist(_PATH_SYS_SYSTEM "/node/node%d", desc->nnodes))
+		desc->nnodes++;
 
-	desc->nodecpu = (int *) malloc(desc->ct_node * sizeof(int));
-	if (!desc->nodecpu)
-		err(EXIT_FAILURE, _("error: malloc failed"));
+	if (!desc->nnodes)
+		return;
+
+	desc->nodemaps = calloc(desc->nnodes, sizeof(cpu_set_t *));
+	if (!desc->nodemaps)
+		err(EXIT_FAILURE, _("error: calloc failed"));
 
 	/* information about how nodes share different CPUs */
-	for (i = 0; i < desc->ct_node; i++)
-		desc->nodecpu[i] = path_sibling(
+	for (i = 0; i < desc->nnodes; i++)
+		desc->nodemaps[i] = path_cpuset(
 					_PATH_SYS_SYSTEM "/node/node%d/cpumap",
 					i);
-}
-
-static void
-check_system(void)
-{
-	/* Read through sysfs. */
-	if (!path_exist(_PATH_SYS_SYSTEM))
-		errx(EXIT_FAILURE,
-		     _("error: %s is not accessable."), pathbuf);
-
-	if (path_exist(_PATH_SYS_SYSTEM "/node"))
-		have_node = 1;
-
-	if (path_exist(_PATH_SYS_CPU0 "/topology/thread_siblings"))
-		have_topology = 1;
-
-	if (path_exist(_PATH_SYS_CPU0 "/cache"))
-		have_cache = 1;
 }
 
 static void
 print_parsable(struct lscpu_desc *desc)
 {
 	int i, j;
+	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 
 	printf(_(
 	"# The following is the parsable format, which can be fed to other\n"
@@ -607,50 +659,66 @@ print_parsable(struct lscpu_desc *desc)
 	"# starting from zero.\n"
 	"# CPU,Core,Socket,Node"));
 
-	if (have_cache) {
+	if (desc->ncaches) {
 		/* separator between CPU topology and cache information */
 		putchar(',');
 
-		for (i = desc->ct_cache - 1; i >= 0; i--)
-			printf(",%s", desc->cache[i].name);
+		for (i = desc->ncaches - 1; i >= 0; i--)
+			printf(",%s", desc->caches[i].name);
 	}
 	putchar('\n');
 
-	for (i = 0; i < desc->ct_cpu; i++) {
+	for (i = 0; i < desc->ncpus; i++) {
+
+		/* #CPU */
 		printf("%d", i);
 
-		if (have_topology)
-			printf(",%d,%d",
-				i / desc->ct_thread,
-			        i / desc->ct_core / desc->ct_thread);
-		else
-			printf(",,");
+		/* Core */
+		for (j = 0; j < desc->ncores; j++) {
+			if (CPU_ISSET_S(i, setsize, desc->coremaps[j])) {
+				printf(",%d", j);
+				break;
+			}
+		}
+		if (j == desc->ncores)
+			putchar(',');
 
-		if (have_node) {
-			int c = 0;
+		/* Socket */
+		for (j = 0; j < desc->nsockets; j++) {
+			if (CPU_ISSET_S(i, setsize, desc->socketmaps[j])) {
+				printf(",%d", j);
+				break;
+			}
+		}
+		if (j == desc->nsockets)
+			putchar(',');
 
-			for (j = 0; j < desc->ct_node; j++) {
-				c += desc->nodecpu[j];
-				if (i < c) {
-					printf(",%d", j);
+		/* Nodes */
+		for (j = 0; j < desc->nnodes; j++) {
+			if (CPU_ISSET_S(i, setsize, desc->nodemaps[j])) {
+				printf(",%d", j);
+				break;
+			}
+		}
+		if (j == desc->nnodes)
+			putchar(',');
+
+		if (desc->ncaches)
+			putchar(',');
+
+		/* Caches */
+		for (j = desc->ncaches - 1; j >= 0; j--) {
+			struct cpu_cache *ca = &desc->caches[j];
+			int x;
+
+			for (x = 0; x < ca->nsharedmaps; x++) {
+				if (CPU_ISSET_S(i, setsize, ca->sharedmaps[x])) {
+					printf(",%d", x);
 					break;
 				}
 			}
-		} else
-			putchar(',');
-
-		if (have_cache) {
-			putchar(',');
-
-			for (j = desc->ct_cache - 1; j >= 0; j--) {
-				/* If shared_cpu_map is 0, all CPUs share the same
-				   cache. */
-				if (desc->cache[j].map == 0)
-					desc->cache[j].map = desc->ct_core *
-							      desc->ct_thread;
-
-				printf(",%d", i / desc->cache[j].map);
-			}
+			if (x == ca->nsharedmaps)
+				putchar(',');
 		}
 		putchar('\n');
 	}
@@ -664,6 +732,9 @@ print_parsable(struct lscpu_desc *desc)
 static void
 print_readable(struct lscpu_desc *desc)
 {
+	char buf[512];
+	int i;
+
 	print_s("Architecture:", desc->arch);
 
 	if (desc->mode & (MODE_REAL | MODE_TRANSPARENT | MODE_LONG)) {
@@ -685,16 +756,16 @@ print_readable(struct lscpu_desc *desc)
 		print_s(_("CPU op-mode(s):"), buf);
 	}
 
-	print_n("CPU(s):", desc->ct_cpu);
+	print_n("CPU(s):", desc->ncpus);
 
-	if (have_topology) {
-		print_n(_("Thread(s) per core:"), desc->ct_thread);
-		print_n(_("Core(s) per socket:"), desc->ct_core);
-		print_n(_("CPU socket(s):"), desc->ct_socket);
+	if (desc->nsockets) {
+		print_n(_("Thread(s) per core:"), desc->nthreads / desc->ncores);
+		print_n(_("Core(s) per socket:"), desc->ncores / desc->nsockets);
+		print_n(_("CPU socket(s):"), desc->nsockets);
 	}
 
-	if (have_node)
-		print_n(_("NUMA node(s):"), desc->ct_node);
+	if (desc->nnodes)
+		print_n(_("NUMA node(s):"), desc->nnodes);
 	if (desc->vendor)
 		print_s(_("Vendor ID:"), desc->vendor);
 	if (desc->family)
@@ -715,14 +786,27 @@ print_readable(struct lscpu_desc *desc)
 		print_s(_("Hypervisor vendor:"), hv_vendors[desc->hyper]);
 		print_s(_("Virtualization type:"), virt_types[desc->virtype]);
 	}
-	if (have_cache) {
+	if (desc->ncaches) {
 		char buf[512];
 		int i;
 
-		for (i = desc->ct_cache - 1; i >= 0; i--) {
+		for (i = desc->ncaches - 1; i >= 0; i--) {
 			snprintf(buf, sizeof(buf),
-					_("%s cache:"), desc->cache[i].name);
-			print_s(buf, desc->cache[i].size);
+					_("%s cache:"), desc->caches[i].name);
+			print_s(buf, desc->caches[i].size);
+		}
+	}
+
+	if (desc->nnodes) {
+		size_t setbuflen = 7 * maxcpus;
+		char setbuf[setbuflen];
+
+		for (i = 0; i < desc->nnodes; i++) {
+			snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), i);
+			print_s(buf, cpulist_create(
+						setbuf, setbuflen,
+						desc->nodemaps[i],
+						CPU_ALLOC_SIZE(maxcpus)));
 		}
 	}
 }
@@ -739,19 +823,10 @@ void usage(int rc)
 	exit(rc);
 }
 
-static int
-ca_compare(const void *a, const void *b)
-{
-	struct cpu_cache *c1 = (struct cpu_cache *) a;
-	struct cpu_cache *c2 = (struct cpu_cache *) b;
-
-	return strcmp(c2->name, c1->name);
-}
-
 int main(int argc, char *argv[])
 {
 	struct lscpu_desc _desc, *desc = &_desc;
-	int parsable = 0, c;
+	int parsable = 0, c, i;
 
 	struct option longopts[] = {
 		{ "help",	no_argument,       0, 'h' },
@@ -783,18 +858,16 @@ int main(int argc, char *argv[])
 
 	memset(desc, 0, sizeof(*desc));
 
-	check_system();
-
 	read_basicinfo(desc);
 
-	if (have_topology)
-		read_topology(desc);
-	if (have_cache) {
-		read_cache(desc);
-		qsort(desc->cache, desc->ct_cache, sizeof(struct cpu_cache), ca_compare);
+	for (i = 0; i < desc->ncpus; i++) {
+		read_topology(desc, i);
+		read_cache(desc, i);
 	}
-	if (have_node)
-		read_nodes(desc);
+
+	qsort(desc->caches, desc->ncaches, sizeof(struct cpu_cache), cachecmp);
+
+	read_nodes(desc);
 
 	read_hypervisor(desc);
 

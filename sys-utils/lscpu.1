@@ -23,12 +23,15 @@ Print a help message.
 .BR \-p , " \-\-parse"
 Print out in parsable instead of printable format.
 .SH BUGS
-The program at the moment does not handle the system installed with
-different types of physical processors.
+The basic overview about CPU family, model, etc. is always based on the first
+CPU only.
 
 Sometimes in Xen Dom0 kernel reports wrong data.
 .SH AUTHOR
+.nf
 Cai Qian <qcai@redhat.com>
+Karel Zak <kzak@redhat.com>
+.fi
 .SH AVAILABILITY
 The setarch command is part of the util-linux-ng package and is available from
 ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/.
