@@ -27,7 +27,6 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
-#include <sys/syscall.h>
 #include <err.h>
 
 #include "cpuset.h"
@@ -62,40 +61,6 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	fprintf(out, _("\nFor more information see taskset(1).\n"));
 
 	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
-}
-
-/*
- * Number of bits in a CPU bitmask on current system
- */
-static int max_number_of_cpus(void)
-{
-	int n, cpus = 2048;
-	size_t setsize;
-	cpu_set_t *set = cpuset_alloc(cpus, &setsize, NULL);
-
-	if (!set)
-		goto err;
-
-	for (;;) {
-		CPU_ZERO_S(setsize, set);
-
-		/* the library version does not return size of cpumask_t */
-		n = syscall(SYS_sched_getaffinity, 0, setsize, set);
-
-		if (n < 0 && errno == EINVAL && cpus < 1024 * 1024) {
-			cpuset_free(set);
-			cpus *= 2;
-			set = cpuset_alloc(cpus, &setsize, NULL);
-			if (!set)
-				goto err;
-			continue;
-		}
-		cpuset_free(set);
-		return n * 8;
-	}
-err:
-	errx(EXIT_FAILURE, _("cannot determine NR_CPUS; aborting"));
-	return 0;
 }
 
 int main(int argc, char *argv[])
@@ -143,7 +108,9 @@ int main(int argc, char *argv[])
 			|| (pid && (argc - optind < 1 || argc - optind > 2)))
 		usage(stderr);
 
-	ncpus = max_number_of_cpus();
+	ncpus = get_max_number_of_cpus();
+	if (ncpus <= 0)
+		errx(EXIT_FAILURE, _("cannot determine NR_CPUS; aborting"));
 
 	/*
 	 * cur_set is always used for the sched_getaffinity call

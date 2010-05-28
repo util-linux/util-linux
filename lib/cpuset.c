@@ -18,6 +18,7 @@
 #include <errno.h>
 #include <string.h>
 #include <ctype.h>
+#include <sys/syscall.h>
 
 #include "cpuset.h"
 
@@ -51,6 +52,38 @@ static const char *nexttoken(const char *q,  int sep)
 	if (q)
 		q++;
 	return q;
+}
+
+/*
+ * Number of bits in a CPU bitmask on current system
+ */
+int get_max_number_of_cpus(void)
+{
+	int n, cpus = 2048;
+	size_t setsize;
+	cpu_set_t *set = cpuset_alloc(cpus, &setsize, NULL);
+
+	if (!set)
+		return -1;	/* error */
+
+	for (;;) {
+		CPU_ZERO_S(setsize, set);
+
+		/* the library version does not return size of cpumask_t */
+		n = syscall(SYS_sched_getaffinity, 0, setsize, set);
+
+		if (n < 0 && errno == EINVAL && cpus < 1024 * 1024) {
+			cpuset_free(set);
+			cpus *= 2;
+			set = cpuset_alloc(cpus, &setsize, NULL);
+			if (!set)
+				return -1;	/* error */
+			continue;
+		}
+		cpuset_free(set);
+		return n * 8;
+	}
+	return -1;
 }
 
 /*
@@ -200,7 +233,13 @@ int cpumask_parse(const char *str, cpu_set_t *set, size_t setsize)
 	CPU_ZERO_S(setsize, set);
 
 	while (ptr >= str) {
-		char val = char_to_val(*ptr);
+		char val;
+
+		/* cpu masks in /sys uses comma as a separator */
+		if (*ptr == ',')
+			ptr--;
+
+		val = char_to_val(*ptr);
 		if (val == (char) -1)
 			return -1;
 		if (val & 1)

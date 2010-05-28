@@ -51,6 +51,8 @@ extern int __cpuset_count_s(size_t setsize, const cpu_set_t *set);
 
 #define cpuset_nbits(setsize)	(8 * (setsize))
 
+extern int get_max_number_of_cpus(void);
+
 extern cpu_set_t *cpuset_alloc(int ncpus, size_t *setsize, size_t *nbits);
 extern void cpuset_free(cpu_set_t *set);
 
