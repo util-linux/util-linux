@@ -36,12 +36,12 @@
 #define CACHE_MAX 100
 
 /* /sys paths */
-#define _PATH_SYS_SYSTEM	"sys/devices/system"
+#define _PATH_SYS_SYSTEM	"/sys/devices/system"
 #define _PATH_SYS_CPU0		_PATH_SYS_SYSTEM "/cpu/cpu0"
-#define _PATH_PROC_XEN		"proc/xen"
+#define _PATH_PROC_XEN		"/proc/xen"
 #define _PATH_PROC_XENCAP	_PATH_PROC_XEN "/capabilities"
-#define _PATH_PROC_CPUINFO	"proc/cpuinfo"
-#define _PATH_PROC_PCIDEVS	"proc/bus/pci/devices"
+#define _PATH_PROC_CPUINFO	"/proc/cpuinfo"
+#define _PATH_PROC_PCIDEVS	"/proc/bus/pci/devices"
 
 int have_topology;
 int have_cache;
@@ -121,8 +121,13 @@ struct lscpu_desc {
 	int	*nodecpu;
 };
 
-char pathbuf[PATH_MAX] = "/";
+static size_t sysrootlen;
+static char pathbuf[PATH_MAX];
 
+static const char *path_create(const char *path, ...)
+		__attribute__ ((__format__ (__printf__, 1, 2)));
+static FILE *path_fopen(const char *mode, int exit_on_err, const char *path, ...)
+		__attribute__ ((__format__ (__printf__, 3, 4)));
 static void path_getstr(char *result, size_t len, const char *path, ...)
 		__attribute__ ((__format__ (__printf__, 3, 4)));
 static int path_getnum(const char *path, ...)
@@ -132,20 +137,53 @@ static int path_exist(const char *path, ...)
 static int path_sibling(const char *path, ...)
 		__attribute__ ((__format__ (__printf__, 1, 2)));
 
-static FILE *
-xfopen(const char *path, const char *mode)
+static const char *
+path_vcreate(const char *path, va_list ap)
 {
-	FILE *fd = fopen(path, mode);
-	if (!fd)
-		err(EXIT_FAILURE, _("error: %s"), path);
-	return fd;
+	if (sysrootlen)
+		vsnprintf(pathbuf + sysrootlen,
+			  sizeof(pathbuf) - sysrootlen, path, ap);
+	else
+		vsnprintf(pathbuf, sizeof(pathbuf), path, ap);
+	return pathbuf;
+}
+
+static const char *
+path_create(const char *path, ...)
+{
+	const char *p;
+	va_list ap;
+
+	va_start(ap, path);
+	p = path_vcreate(path, ap);
+	va_end(ap);
+
+	return p;
 }
 
 static FILE *
-path_vfopen(const char *mode, const char *path, va_list ap)
+path_vfopen(const char *mode, int exit_on_error, const char *path, va_list ap)
 {
-	vsnprintf(pathbuf, sizeof(pathbuf), path, ap);
-	return xfopen(pathbuf, mode);
+	FILE *f;
+	const char *p = path_vcreate(path, ap);
+
+	f = fopen(p, mode);
+	if (!f && exit_on_error)
+		err(EXIT_FAILURE, _("error: cannot open %s"), p);
+	return f;
+}
+
+static FILE *
+path_fopen(const char *mode, int exit_on_error, const char *path, ...)
+{
+	FILE *fd;
+	va_list ap;
+
+	va_start(ap, path);
+	fd = path_vfopen("r", exit_on_error, path, ap);
+	va_end(ap);
+
+	return fd;
 }
 
 static void
@@ -155,7 +193,7 @@ path_getstr(char *result, size_t len, const char *path, ...)
 	va_list ap;
 
 	va_start(ap, path);
-	fd = path_vfopen("r", path, ap);
+	fd = path_vfopen("r", 1, path, ap);
 	va_end(ap);
 
 	if (!fgets(result, len, fd))
@@ -175,14 +213,14 @@ path_getnum(const char *path, ...)
 	int result;
 
 	va_start(ap, path);
-	fd = path_vfopen("r", path, ap);
+	fd = path_vfopen("r", 1, path, ap);
 	va_end(ap);
 
 	if (fscanf(fd, "%d", &result) != 1) {
 		if (ferror(fd))
-			err(EXIT_FAILURE, _("error: %s"), pathbuf);
+			err(EXIT_FAILURE, _("failed to read: %s"), pathbuf);
 		else
-			errx(EXIT_FAILURE, _("error parse: %s"), pathbuf);
+			errx(EXIT_FAILURE, _("parse error: %s"), pathbuf);
 	}
 	fclose(fd);
 	return result;
@@ -192,12 +230,13 @@ static int
 path_exist(const char *path, ...)
 {
 	va_list ap;
+	const char *p;
 
 	va_start(ap, path);
-	vsnprintf(pathbuf, sizeof(pathbuf), path, ap);
+	p = path_vcreate(path, ap);
 	va_end(ap);
 
-	return access(pathbuf, F_OK) == 0;
+	return access(p, F_OK) == 0;
 }
 
 char *
@@ -220,7 +259,7 @@ path_sibling(const char *path, ...)
 	va_list ap;
 
 	va_start(ap, path);
-	fp = path_vfopen("r", path, ap);
+	fp = path_vfopen("r", 1, path, ap);
 	va_end(ap);
 
 	while ((c = fgetc(fp)) != EOF) {
@@ -282,7 +321,7 @@ int lookup(char *line, char *pattern, char **value)
 static void
 read_basicinfo(struct lscpu_desc *desc)
 {
-	FILE *fp = xfopen(_PATH_PROC_CPUINFO, "r");
+	FILE *fp = path_fopen("r", 1, _PATH_PROC_CPUINFO);
 	char buf[BUFSIZ];
 	struct utsname utsbuf;
 
@@ -336,7 +375,7 @@ has_pci_device(int vendor, int device)
 	int num, fn, ven, dev;
 	int res = 1;
 
-	f = fopen(_PATH_PROC_PCIDEVS, "r");
+	f = path_fopen("r", 0, _PATH_PROC_PCIDEVS);
 	if (!f)
 		return 0;
 
@@ -428,9 +467,9 @@ read_hypervisor(struct lscpu_desc *desc)
 		/* hvm */
 		desc->virtype = VIRT_FULL;
 
-	else if (!access(_PATH_PROC_XEN, F_OK)) {
+	else if (path_exist(_PATH_PROC_XEN)) {
 		/* Xen para-virt or dom0 */
-		FILE *fd = fopen(_PATH_PROC_XENCAP, "r");
+		FILE *fd = path_fopen("r", 0, _PATH_PROC_XENCAP);
 		int dom0 = 0;
 
 		if (fd) {
@@ -474,10 +513,11 @@ read_cache(struct lscpu_desc *desc)
 	DIR *dp;
 	struct dirent *dir;
 	int level, type;
+	const char *p = path_create(_PATH_SYS_CPU0 "/cache");
 
-	dp = opendir(_PATH_SYS_CPU0 "/cache");
+	dp = opendir(p);
 	if (dp == NULL)
-		err(EXIT_FAILURE, _("error: %s"), _PATH_SYS_CPU0 "/cache");
+		err(EXIT_FAILURE, _("error: %s"), p);
 
 	while ((dir = readdir(dp)) != NULL) {
 		if (!strcmp(dir->d_name, ".")
@@ -542,17 +582,17 @@ static void
 check_system(void)
 {
 	/* Read through sysfs. */
-	if (access(_PATH_SYS_SYSTEM, F_OK))
+	if (!path_exist(_PATH_SYS_SYSTEM))
 		errx(EXIT_FAILURE,
-		     _("error: /sys filesystem is not accessable."));
+		     _("error: %s is not accessable."), pathbuf);
 
-	if (!access(_PATH_SYS_SYSTEM "/node", F_OK))
+	if (path_exist(_PATH_SYS_SYSTEM "/node"))
 		have_node = 1;
 
-	if (!access(_PATH_SYS_CPU0 "/topology/thread_siblings", F_OK))
+	if (path_exist(_PATH_SYS_CPU0 "/topology/thread_siblings"))
 		have_topology = 1;
 
-	if (!access(_PATH_SYS_CPU0 "/cache", F_OK))
+	if (path_exist(_PATH_SYS_CPU0 "/cache"))
 		have_cache = 1;
 }
 
@@ -732,16 +772,14 @@ int main(int argc, char *argv[])
 			parsable = 1;
 			break;
 		case 's':
+			sysrootlen = strlen(optarg);
 			strncpy(pathbuf, optarg, sizeof(pathbuf));
+			pathbuf[sizeof(pathbuf) - 1] = '\0';
 			break;
 		default:
 			usage(EXIT_FAILURE);
 		}
 	}
-
-	if (chdir(pathbuf) == -1)
-		errx(EXIT_FAILURE,
-		     _("error: change working directory to %s."), pathbuf);
 
 	memset(desc, 0, sizeof(*desc));
 
