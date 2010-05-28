@@ -1440,7 +1440,7 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
    * and 'rw' in mtab.
    */
   if (!fake && mnt5_res == 0 &&
-      !(flags & MS_RDONLY) && !(flags & MS_PROPAGATION) && !(flags & MS_MOVE) &&
+      !(flags & (MS_RDONLY | MS_PROPAGATION | MS_MOVE)) &&
       is_readonly(node)) {
 
       printf(_("mount: warning: %s seems to be mounted read-only.\n"), node);
