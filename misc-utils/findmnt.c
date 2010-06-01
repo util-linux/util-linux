@@ -94,46 +94,46 @@ int ncolumns;
 /* libmount cache */
 mnt_cache *cache;
 
-static inline int get_column_id(int num)
+static int get_column_id(int num)
 {
 	assert(num < ncolumns);
 	assert(columns[num] < __NCOLUMNS);
 	return columns[num];
 }
 
-static inline struct colinfo *get_column_info(int num)
+static struct colinfo *get_column_info(int num)
 {
 	return &infos[ get_column_id(num) ];
 }
 
-static inline const char *column_id_to_name(int id)
+static const char *column_id_to_name(int id)
 {
 	assert(id < __NCOLUMNS);
 	return infos[id].name;
 }
 
-static inline const char *get_column_name(int num)
+static const char *get_column_name(int num)
 {
 	return get_column_info(num)->name;
 }
 
-static inline float get_column_whint(int num)
+static float get_column_whint(int num)
 {
 	return get_column_info(num)->whint;
 }
 
-static inline int get_column_truncate(int num)
+static int get_column_truncate(int num)
 {
 	return get_column_info(num)->truncate;
 }
 
-static inline const char *get_match(int id)
+static const char *get_match(int id)
 {
 	assert(id < __NCOLUMNS);
 	return infos[id].match;
 }
 
-static inline void set_match(int id, const char *match)
+static void set_match(int id, const char *match)
 {
 	assert(id < __NCOLUMNS);
 	infos[id].match = match;
@@ -142,7 +142,7 @@ static inline void set_match(int id, const char *match)
 /*
  * "findmnt" without any filter
  */
-static inline int is_listall_mode(void)
+static int is_listall_mode(void)
 {
 	return (!get_match(COL_SOURCE) &&
 		!get_match(COL_TARGET) &&
@@ -155,7 +155,7 @@ static inline int is_listall_mode(void)
  *
  * ... it works like "mount <devname|TAG=|mountpoint>"
  */
-static inline int is_mount_compatible_mode(void)
+static int is_mount_compatible_mode(void)
 {
 	if (!get_match(COL_SOURCE))
 	       return 0;		/* <devname|TAG=|mountpoint> is required */
@@ -459,7 +459,8 @@ static int __attribute__((__noreturn__)) usage(FILE *out)
 	"\nOptions:\n"
 	" -s, --fstab            search in static table of filesystems\n"
 	" -m, --mtab             search in table of mounted filesystems\n"
-	" -k, --kernel           search in kernel (mountinfo) file (default)\n\n"
+	" -k, --kernel           search in kernel table of mounted \n"
+        "                        filesystems (default)\n\n"
 
 	" -c, --canonicalize     canonicalize printed paths\n"
 	" -d, --direction <word> search direction - 'forward' or 'backward'\n"
@@ -686,7 +687,7 @@ int main(int argc, char *argv[])
 	mnt_tab_set_cache(tb, cache);
 
 	/*
-	 * initialize output formatting (table.h)
+	 * initialize output formatting (tt.h)
 	 */
 	tt = tt_new_table(tt_flags);
 	if (!tt) {
