@@ -11,6 +11,7 @@ L1d cache:             16K
 L1i cache:             16K
 L2 cache:              256K
 L3 cache:              3072K
+NUMA node0 CPU(s):     0,1
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID

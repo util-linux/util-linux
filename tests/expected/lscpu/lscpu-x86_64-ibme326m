@@ -12,6 +12,7 @@ CPU MHz:               1995.058
 L1d cache:             1024K
 L1i cache:             1024K
 L2 cache:              1024K
+NUMA node0 CPU(s):     0,1
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID
