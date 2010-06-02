@@ -268,11 +268,8 @@ static void print_udev_format(const char *name, const char *value, size_t sz)
 	} else if (!strcmp(name, "PART_ENTRY_NAME") ||
 		  !strcmp(name, "PART_ENTRY_TYPE")) {
 
-		blkid_safe_string(value, safe, sizeof(safe));
-		printf("ID_%s=%s\n", name, safe);
-
 		blkid_encode_string(value, enc, sizeof(enc));
-		printf("ID_%s_ENC=%s\n", name, enc);
+		printf("ID_%s=%s\n", name, enc);
 
 	} else if (!strncmp(name, "PART_ENTRY_", 11))
 		printf("ID_%s=%s\n", name, value);
