@@ -291,34 +291,6 @@ char *mnt_strconcat3(char *s, const char *t, const char *u)
      return s;
 }
 
-/**
- * mnt_open_device:
- * @devname: device path
- * @flags: open(2) flags
- *
- * Opens device like open(2), but waits for cdrom medium (if errno=ENOMEDIUM).
- *
- * Returns: file descriptor or -1 in case of error.
- */
-int mnt_open_device(const char *devname, int flags)
-{
-	int retries = 0;
-
-	do {
-		int fd = open(devname, flags);
-		if (fd >= 0)
-			return fd;
-		if (errno != ENOMEDIUM)
-			break;
-		if (retries >= CONFIG_CDROM_NOMEDIUM_RETRIES)
-			break;
-		++retries;
-		sleep(3);
-	} while(1);
-
-	return -1;
-}
-
 /*
  * Returns allocated string with username or NULL.
  */

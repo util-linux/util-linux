@@ -239,7 +239,6 @@ const char *mnt_cache_find_tag(mnt_cache *cache,
 int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 {
 	int i, ntags = 0;
-	int fd;
 	static blkid_probe pr;
 	const char *tags[] = { "LABEL", "UUID" };
 
@@ -264,14 +263,9 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 	DBG(DEBUG_CACHE,
 		printf("cache: reading tags for: %s\n", devname));
 
-	fd = mnt_open_device(devname, O_RDONLY);
-	if (fd < 0)
-		return -1;
-	pr = blkid_new_probe();
+	pr = blkid_new_probe_from_filename(devname);
 	if (!pr)
-		goto error;
-	if (blkid_probe_set_device(pr, fd, 0, 0))
-		goto error;
+		return -1;
 
 	blkid_probe_enable_superblocks(pr, 1);
 
@@ -304,7 +298,6 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 	return ntags ? 0 : 1;
 error:
 	blkid_free_probe(pr);
-	close(fd);
 	return -1;
 }
 

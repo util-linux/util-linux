@@ -13,7 +13,6 @@ mnt_get_library_version
 <FILE>utils</FILE>
 mnt_fstype_is_netfs
 mnt_fstype_is_pseudofs
-mnt_open_device
 mnt_match_fstype
 mnt_match_options
 </SECTION>

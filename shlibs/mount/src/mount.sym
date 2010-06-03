@@ -62,7 +62,6 @@ global:
 	mnt_new_optls;
 	mnt_new_tab;
 	mnt_new_tab_from_file;
-	mnt_open_device;
 	mnt_optent_dup_value;
 	mnt_optent_get_flag;
 	mnt_optent_get_id;

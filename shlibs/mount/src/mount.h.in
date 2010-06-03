@@ -109,7 +109,6 @@ extern int mnt_get_library_version(const char **ver_string);
 /* utils.c */
 extern int mnt_fstype_is_netfs(const char *type);
 extern int mnt_fstype_is_pseudofs(const char *type);
-extern int mnt_open_device(const char *devname, int flags);
 extern int mnt_match_fstype(const char *type, const char *pattern);
 extern int mnt_match_options(const char *optstr, const char *pattern);
 
