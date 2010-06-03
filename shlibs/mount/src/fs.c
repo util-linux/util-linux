@@ -353,6 +353,10 @@ int mnt_fs_set_optstr(mnt_fs *fs, const char *optstr)
 	free(fs->vfs_optstr);
 	fs->fs_optstr = fs->vfs_optstr = NULL;
 
+	/* TODO: it would be possible to use built-in maps of options
+	 * and differentiate between VFS and FS options, then we can
+	 * set fs_optstr and vfs_optstr */
+
 	fs->optstr = p;
 
 	return 0;
