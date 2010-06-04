@@ -71,7 +71,7 @@ ts_device_has "TYPE" "cramfs" $DEVICE
 [  "$?" == "0" ] || ts_die "Cannot found cramfs on $DEVICE" $DEVICE
 
 ts_log "mount the image"
-$TS_CMD_MOUNT -L $LABEL $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
+$TS_CMD_MOUNT -r -L $LABEL $TS_MOUNTPOINT 2>&1 >> $TS_OUTPUT
 
 # check it
 ts_is_mounted $DEVICE || ts_die "Cannot found $DEVICE in /proc/mounts" $DEVICE
