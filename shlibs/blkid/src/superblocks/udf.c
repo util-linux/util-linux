@@ -136,6 +136,9 @@ anchor:
 				blkid_probe_set_utf8label(pr,
 						vd->type.primary.ident.c,
 						31, BLKID_ENC_UTF16BE);
+
+			if (clen == 8 || clen == 16)
+				break;
 		}
 	}
 
