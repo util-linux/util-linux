@@ -13,7 +13,7 @@ L2 cache:              256K
 L3 cache:              3072K
 NUMA node0 CPU(s):     4-7
 NUMA node1 CPU(s):     0-3
-NUMA node2 CPU(s):
+NUMA node2 CPU(s):     
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID
