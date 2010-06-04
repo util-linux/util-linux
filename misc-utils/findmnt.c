@@ -34,6 +34,7 @@
 #endif
 #include <assert.h>
 
+#define USE_UNSTABLE_LIBMOUNT_API
 #include <mount.h>
 
 #include "pathnames.h"

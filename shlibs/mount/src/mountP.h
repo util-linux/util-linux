@@ -12,11 +12,12 @@
 
 #include <sys/types.h>
 
+#define USE_UNSTABLE_LIBMOUNT_API
+
 #include "mount.h"
 #include "list.h"
 
 /* features */
-#define CONFIG_CDROM_NOMEDIUM_RETRIES    5
 #define CONFIG_LIBMOUNT_ASSERT
 #define CONFIG_LIBMOUNT_DEBUG
 
