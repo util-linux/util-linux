@@ -9,13 +9,15 @@ mountincdir = $(includedir)/mount
 nodist_mountinc_HEADERS = mount.h
 
 usrlib_exec_LTLIBRARIES = libmount.la
-libmount_la_SOURCES = $(mountinc_HEADERS)
-
-nodist_libmount_la_SOURCES = mount.h version.c utils.c test.c init.c cache.c \
+libmount_la_SOURCES =	mount.h version.c utils.c test.c init.c cache.c \
 			optstr.c optmap.c optent.c optls.c iter.c lock.c \
-			fs.c tab.c tab_parse.c \
+		      	fs.c tab.c tab_parse.c \
+			$(mountinc_HEADERS) \
 			$(top_srcdir)/include/list.h \
+			$(top_srcdir)/lib/mangle.c \
 			$(top_srcdir)/lib/canonicalize.c
+
+nodist_libmount_la_SOURCES = mountP.h
 
 libmount_la_LIBADD = $(ul_libblkid_la)
 
