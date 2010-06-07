@@ -24,14 +24,15 @@ nodist_blkidinc_HEADERS = blkid.h
 usrlib_exec_LTLIBRARIES = libblkid.la
 libblkid_la_SOURCES = cache.c dev.c devname.c devno.c getsize.c llseek.c  \
 		     probe.c read.c resolve.c save.c tag.c version.c verify.c \
-		     encode.c list.h blkidP.h superblocks/superblocks.h \
+		     encode.c blkidP.h superblocks/superblocks.h \
 		     config.c evaluate.c fat.h \
 		     $(blkidinc_HEADERS) \
 		     $(top_srcdir)/lib/blkdev.c \
 		     $(top_srcdir)/lib/linux_version.c \
 		     $(top_srcdir)/lib/canonicalize.c \
 		     $(top_srcdir)/lib/md5.c \
-		     $(top_srcdir)/lib/crc32.c
+		     $(top_srcdir)/lib/crc32.c \
+		     $(top_srcdir)/include/list.h
 
 nodist_libblkid_la_SOURCES = blkid.h
 
