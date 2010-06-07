@@ -11,6 +11,7 @@
 #include <limits.h>
 
 #include "nls.h"
+#include "mangle.h"
 #include "mountP.h"
 
 static inline char *skip_spaces(char *s)
@@ -29,29 +30,6 @@ static inline char *skip_nonspaces(char *s)
 	while (*s && !(*s == ' ' || *s == '\t'))
 		s++;
 	return s;
-}
-
-#define isoctal(a) (((a) & ~7) == '0')
-
-/* returns malloced pointer - no more strdup required */
-static void unmangle(char *s, char *buf, size_t len)
-{
-	size_t sz = 0;
-	assert(s);
-
-	while(*s && sz < len - 1) {
-		if (*s == '\\' && sz + 4 < len - 1 && isoctal(s[1]) &&
-		    isoctal(s[2]) && isoctal(s[3])) {
-
-			*buf++ = 64*(s[1] & 7) + 8*(s[2] & 7) + (s[3] & 7);
-			s += 4;
-			sz += 4;
-		} else {
-			*buf++ = *s++;
-			sz++;
-		}
-	}
-	*buf = '\0';
 }
 
 static size_t next_word_size(char *s, char **start, char **end)
@@ -88,7 +66,7 @@ static char *next_word(char **s)
 	if (!res)
 		return NULL;
 
-	unmangle(*s, res, sz);
+	unmangle_to_buffer(*s, res, sz);
 	*s = end + 1;
 	return res;
 }
