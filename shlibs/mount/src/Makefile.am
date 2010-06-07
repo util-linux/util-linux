@@ -9,7 +9,7 @@ mountincdir = $(includedir)/mount
 nodist_mountinc_HEADERS = mount.h
 
 usrlib_exec_LTLIBRARIES = libmount.la
-libmount_la_SOURCES =	mount.h version.c utils.c test.c init.c cache.c \
+libmount_la_SOURCES =	mountP.h version.c utils.c test.c init.c cache.c \
 			optstr.c optmap.c optent.c optls.c iter.c lock.c \
 		      	fs.c tab.c tab_parse.c \
 			$(mountinc_HEADERS) \
