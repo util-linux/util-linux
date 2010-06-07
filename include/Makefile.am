@@ -1,29 +1,30 @@
 include $(top_srcdir)/config/include-Makefile.am
 
 dist_noinst_HEADERS = \
-	c.h \
 	bitops.h \
 	blkdev.h \
 	canonicalize.h \
 	carefulputc.h \
+	c.h \
+	cpuset.h \
+	crc32.h \
 	env.h \
 	fsprobe.h \
 	ismounted.h \
 	linux_reboot.h \
 	linux_version.h \
 	list.h \
-	md5.h \
+	mangle.h \
 	mbsalign.h \
+	md5.h \
 	nls.h \
 	pathnames.h \
 	setproctitle.h \
+	strtosize.h \
 	swapheader.h \
 	tt.h \
 	usleep.h \
 	wholedisk.h \
 	widechar.h \
-	crc32.h \
-	mangle.h \
-	strtosize.h \
-	xstrncpy.h \
-	writeall.h
+	writeall.h \
+	xstrncpy.h
