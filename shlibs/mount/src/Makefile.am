@@ -44,36 +44,13 @@ install-exec-hook:
 uninstall-hook:
 	rm -f $(DESTDIR)$(libdir)/libmount.so*
 
-# tests
-noinst_PROGRAMS = test_version test_cache test_optstr test_optls test_lock \
+
+tests = test_version test_cache test_optstr test_optls test_lock \
 		  test_tab test_utils
-tests_cppflags = $(AM_CPPFLAGS) -DTEST_PROGRAM
-tests_ldadd = .libs/libmount.a $(ul_libblkid_la)
 
-test_version_SOURCES = version.c
-test_version_CPPFLAGS = $(tests_cppflags)
-test_version_LDADD = $(tests_ldadd)
+tests: all $(tests)
+test_%: %.c
+	$(COMPILE) -DTEST_PROGRAM $< .libs/libmount.a \
+		$(ul_libblkid_builddir)/.libs/libblkid.a -o $@ \
+		$(UUID_LIBS)
 
-test_cache_SOURCES = cache.c
-test_cache_CPPFLAGS = $(tests_cppflags)
-test_cache_LDADD = $(tests_ldadd)
-
-test_optstr_SOURCES = optstr.c
-test_optstr_CPPFLAGS = $(tests_cppflags)
-test_optstr_LDADD = $(tests_ldadd)
-
-test_optls_SOURCES = optls.c
-test_optls_CPPFLAGS = $(tests_cppflags)
-test_optls_LDADD = $(tests_ldadd)
-
-test_lock_SOURCES = lock.c
-test_lock_CPPFLAGS = $(tests_cppflags)
-test_lock_LDADD = $(tests_ldadd)
-
-test_tab_SOURCES = tab_parse.c tab.c
-test_tab_CPPFLAGS = $(tests_cppflags)
-test_tab_LDADD = $(tests_ldadd)
-
-test_utils_SOURCES = utils.c
-test_utils_CPPFLAGS = $(tests_cppflags)
-test_utils_LDADD = $(tests_ldadd)
