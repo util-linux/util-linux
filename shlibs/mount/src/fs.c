@@ -16,7 +16,7 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <errno.h>
-#include <blkid/blkid.h>
+#include <blkid.h>
 
 #include "nls.h"
 #include "mountP.h"

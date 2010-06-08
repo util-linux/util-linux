@@ -51,7 +51,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <unistd.h>
-#include <blkid/blkid.h>
+#include <blkid.h>
 
 #include "nls.h"
 #include "mountP.h"

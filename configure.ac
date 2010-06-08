@@ -405,6 +405,12 @@ AC_ARG_ENABLE([libmount],
   AS_HELP_STRING([--disable-libmount], [do not build libmount]),
   [], enable_libmount=yes
 )
+
+case "$enable_libblkid:$enable_libmount" in
+no:yes)
+  AC_MSG_ERROR([cannot enable libmount when libblkid is disabled]) ;;
+esac
+
 AC_SUBST([LIBMOUNT_VERSION])
 AC_SUBST([LIBMOUNT_VERSION_INFO])
 AC_DEFINE_UNQUOTED(LIBMOUNT_VERSION, "$LIBMOUNT_VERSION", [libmount version string])
