@@ -61,7 +61,7 @@ fallocate(1), losetup(8) and mount(8):
     (MiB, GiB, ...) and hex numbers
 
 umount(8):
-  - supports new command line option "-f/--fake" to avoid umount(2) syscall
+  - supports new command line option "--fake" to avoid umount(2) syscall
 
 
 Stable maintenance releases between v2.17 and v2.18
