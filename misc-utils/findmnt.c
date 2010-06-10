@@ -555,13 +555,13 @@ int main(int argc, char *argv[])
 			flags |= FL_CANONICALIZE;
 			break;
 		case 'd':
-			if (!strcmp(optarg, _("forward")))
+			if (!strcmp(optarg, "forward"))
 				direction = MNT_ITER_FORWARD;
-			else if (!strcmp(optarg, _("backward")))
+			else if (!strcmp(optarg, "backward"))
 				direction = MNT_ITER_BACKWARD;
 			else
 				errx(EXIT_FAILURE,
-					_("uknown direction '%s')"), optarg);
+					_("unknown direction '%s')"), optarg);
 			break;
 		case 'e':
 			flags |= FL_EVALUATE;
