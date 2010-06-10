@@ -241,7 +241,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 	fd_pidfile = open(pidfile_path, O_CREAT | O_RDWR, 0664);
 	if (fd_pidfile < 0) {
 		if (!quiet)
-			fprintf(stderr, "Failed to open/create %s: %s\n",
+			fprintf(stderr, _("Failed to open/create %s: %s\n"),
 				pidfile_path, strerror(errno));
 		exit(1);
 	}
@@ -258,7 +258,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 		if ((errno == EAGAIN) || (errno == EINTR))
 			continue;
 		if (!quiet)
-			fprintf(stderr, "Failed to lock %s: %s\n",
+			fprintf(stderr, _("Failed to lock %s: %s\n"),
 				pidfile_path, strerror(errno));
 		exit(1);
 	}
@@ -359,7 +359,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 				printf(_("operation %d, incoming num = %d\n"),
 				       op, num);
 		} else if (debug)
-			printf("operation %d\n", op);
+			printf(_("operation %d\n"), op);
 
 		switch(op) {
 		case UUIDD_OP_GETPID:

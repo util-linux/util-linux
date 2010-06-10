@@ -149,7 +149,7 @@ die(char *str) {
 
 static void
 usage(void) {
-	fprintf(stderr, "%s (%s)\n", program_name, PACKAGE_STRING);
+	fprintf(stderr, _("%s (%s)\n"), program_name, PACKAGE_STRING);
 	fprintf(stderr,
 		_("Usage: %s [-c | -l filename] [-nXX] [-iXX] /dev/name [blocks]\n"),
 		  program_name);

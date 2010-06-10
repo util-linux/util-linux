@@ -425,7 +425,7 @@ swapon_checks(const char *special)
 		unsigned long long swapsize =
 				swap_get_size(hdr, special, pagesize);
 		if (verbose)
-			warnx("%s: pagesize=%d, swapsize=%llu, devsize=%llu",
+			warnx(_("%s: pagesize=%d, swapsize=%llu, devsize=%llu"),
 				special, pagesize, swapsize, devsize);
 
 		if (swapsize > devsize) {
@@ -663,7 +663,7 @@ main_swapon(int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf("%s: (%s)\n", progname, PACKAGE_STRING);
+			printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
 			exit(0);
 		case 0:
 			break;
@@ -715,7 +715,7 @@ main_swapoff(int argc, char *argv[]) {
 			++verbose;
 			break;
 		case 'V':		/* version */
-			printf("%s (%s)\n", progname, PACKAGE_STRING);
+			printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
 			exit(0);
 		case 'L':
 			addl(optarg);

@@ -735,7 +735,7 @@ print_readable(struct lscpu_desc *desc)
 	char buf[512];
 	int i;
 
-	print_s("Architecture:", desc->arch);
+	print_s(_("Architecture:"), desc->arch);
 
 	if (desc->mode & (MODE_REAL | MODE_TRANSPARENT | MODE_LONG)) {
 		char buf[64], *p = buf;

@@ -81,7 +81,7 @@ print_usage(char *progname) {
 
 static void
 print_version(char *progname) {
-  printf("%s (%s)\n", progname, PACKAGE_STRING);
+  printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
 }
 
 static void *
@@ -256,7 +256,7 @@ main (int argc, char ** argv) {
       status = 0xdeadbeef;
       retval = ioctl(fd, LPGETSTATUS - offset, &status);
       if (retval < 0)
-      	perror("LPGETSTATUS error");
+	perror(_("LPGETSTATUS error"));
       else {
         if (status == 0xdeadbeef)	/* a few 1.1.7x kernels will do this */
           status = retval;
@@ -271,7 +271,7 @@ main (int argc, char ** argv) {
     } else
 #endif /* LPGETSTATUS */
     if (ioctl(fd, cmds->op - offset, cmds->val) < 0) {
-      perror("tunelp: ioctl");
+      perror(_("tunelp: ioctl failed"));
     }
     cmdst = cmds;
     cmds = cmds->next;

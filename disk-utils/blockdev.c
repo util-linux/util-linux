@@ -177,7 +177,7 @@ usage(void) {
 	int i;
 	fputc('\n', stderr);
 	fprintf(stderr, _("Usage:\n"));
-	fprintf(stderr, "  %s -V\n", progname);
+	fprintf(stderr, _("  %s -V\n"), progname);
 	fprintf(stderr, _("  %s --report [devices]\n"), progname);
 	fprintf(stderr, _("  %s [-v|-q] commands devices\n"), progname);
 	fputc('\n', stderr);
@@ -235,7 +235,7 @@ main(int argc, char **argv) {
 
 	/* -V not together with commands */
 	if (!strcmp(argv[1], "-V") || !strcmp(argv[1], "--version")) {
-		printf("%s (%s)\n", progname, PACKAGE_STRING);
+		printf(_("%s (%s)\n"), progname, PACKAGE_STRING);
 		exit(0);
 	}
 
