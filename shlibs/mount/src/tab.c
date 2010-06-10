@@ -55,6 +55,7 @@
 
 #include "nls.h"
 #include "mountP.h"
+#include "c.h"
 
 /**
  * mnt_new_tab:

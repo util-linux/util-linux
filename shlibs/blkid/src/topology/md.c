@@ -26,6 +26,10 @@
 #define MD_MAJOR	9
 #endif
 
+#ifndef _IOT__IOTBASE_uint32_t
+#define _IOT__IOTBASE_uint32_t IOT_SIMPLE(uint32_t)
+#endif
+#define _IOT_md_array_info _IOT (_IOTS(uint32_t), 18, 0, 0, 0, 0)
 #define GET_ARRAY_INFO          _IOR (MD_MAJOR, 0x11, struct md_array_info)
 
 struct md_array_info {

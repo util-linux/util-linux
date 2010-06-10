@@ -66,8 +66,10 @@ static void show_usage(int rc)
 	"  -i | --idle          set policy to SCHED_IDLE\n"
 	"  -o | --other         set policy to SCHED_OTHER\n"
 	"  -r | --rr            set policy to SCHED_RR (default)\n"
+#ifdef SCHED_RESET_ON_FORK
 	"\nScheduling flags:\n"
 	"  -R | --reset-on-fork set SCHED_RESET_ON_FORK for FIFO or RR\n"
+#endif
 	"\nOptions:\n"
 	"  -h | --help          display this help\n"
 	"  -p | --pid           operate on existing given pid\n"
@@ -99,9 +101,11 @@ static void show_rt_info(const char *what, pid_t pid)
 	case SCHED_FIFO:
 		printf("SCHED_FIFO\n");
 		break;
+#ifdef SCHED_RESET_ON_FORK
 	case SCHED_FIFO|SCHED_RESET_ON_FORK:
 		printf("SCHED_FIFO|SCHED_RESET_ON_FORK\n");
 		break;
+#endif
 #ifdef SCHED_IDLE
 	case SCHED_IDLE:
 		printf("SCHED_IDLE\n");
@@ -110,9 +114,11 @@ static void show_rt_info(const char *what, pid_t pid)
 	case SCHED_RR:
 		printf("SCHED_RR\n");
 		break;
+#ifdef SCHED_RESET_ON_FORK
 	case SCHED_RR|SCHED_RESET_ON_FORK:
 		printf("SCHED_RR|SCHED_RESET_ON_FORK\n");
 		break;
+#endif
 #ifdef SCHED_BATCH
 	case SCHED_BATCH:
 		printf("SCHED_BATCH\n");
@@ -199,9 +205,11 @@ int main(int argc, char *argv[])
 		case 'f':
 			policy = SCHED_FIFO;
 			break;
+#ifdef SCHED_RESET_ON_FORK
 		case 'R':
 			policy_flag |= SCHED_RESET_ON_FORK;
 			break;
+#endif
 		case 'i':
 #ifdef SCHED_IDLE
 			policy = SCHED_IDLE;
@@ -249,11 +257,13 @@ int main(int argc, char *argv[])
 	if (errno)
 		err(EXIT_FAILURE, _("failed to parse priority"));
 
+#ifdef SCHED_RESET_ON_FORK
 	/* sanity check */
 	if ((policy_flag & SCHED_RESET_ON_FORK) &&
 	    !(policy == SCHED_FIFO || policy == SCHED_RR))
 		errx(EXIT_FAILURE, _("SCHED_RESET_ON_FORK flag is suppoted for "
 				"SCHED_FIFO and SCHED_RR policies only"));
+#endif
 
 	policy |= policy_flag;
 
