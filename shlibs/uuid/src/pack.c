@@ -1,5 +1,5 @@
 /*
- * Internal routine for packing UUID's
+ * Internal routine for packing UUIDs
  *
  * Copyright (C) 1996, 1997 Theodore Ts'o.
  *

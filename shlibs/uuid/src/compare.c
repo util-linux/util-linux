@@ -1,7 +1,7 @@
 /*
- * compare.c --- compare whether or not two UUID's are the same
+ * compare.c --- compare whether or not two UUIDs are the same
  *
- * Returns 0 if the two UUID's are different, and 1 if they are the same.
+ * Returns 0 if the two UUIDs are different, and 1 if they are the same.
  *
  * Copyright (C) 1996, 1997 Theodore Ts'o.
  *

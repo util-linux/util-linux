@@ -412,7 +412,7 @@ static void server_loop(const char *socket_path, const char *pidfile_path,
 			uuid__generate_random((unsigned char *) reply_buf +
 					      sizeof(num), &num);
 			if (debug) {
-				printf(_("Generated %d UUID's:\n"), num);
+				printf(_("Generated %d UUIDs:\n"), num);
 				for (i=0, cp=reply_buf+sizeof(num);
 				     i < num; i++, cp+=16) {
 					uuid_unparse((unsigned char *)cp, str);
@@ -531,9 +531,9 @@ int main(int argc, char **argv)
 
 			uuid_unparse((unsigned char *) buf, str);
 
-			printf(_("%s and subsequent %d UUID's\n"), str, num);
+			printf(_("%s and subsequent %d UUIDs\n"), str, num);
 		} else {
-			printf(_("List of UUID's:\n"));
+			printf(_("List of UUIDs:\n"));
 			cp = buf + 4;
 			if (ret != (int) (sizeof(num) + num*sizeof(uu)))
 				goto unexpected_size;
