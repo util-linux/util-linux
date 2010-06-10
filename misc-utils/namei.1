@@ -9,26 +9,26 @@ namei - follow a pathname until a terminal point is found
 .RI [ options ]
 .IR  pathname ...
 .SH DESCRIPTION
-.B Namei
+.B namei
 uses its arguments as pathnames to any type
 of Unix file (symlinks, files, directories, and so forth).
-.B Namei
-then follows each pathname until a terminal
-point is found (a file, directory, char device, etc).
-If it finds a symbolic link, we show the link, and start
+.B namei
+then follows each pathname until an endpoint
+is found (a file, a directory, a device node, etc).
+If it finds a symbolic link, it shows the link, and starts
 following it, indenting the output to show the context.
 .PP
-This program is useful for finding a "too many levels of
+This program is useful for finding "too many levels of
 symbolic links" problems.
 .PP
-For each line output,
+For each line of output,
 .B namei
-outputs a the following characters to identify the file types found:
+uses the following characters to identify the file type found:
 .LP
 .nf
-   f: = the pathname we are currently trying to resolve
+   f: = the pathname currently being resolved
     d = directory
-    l = symbolic link (both the link and it's contents are output)
+    l = symbolic link (both the link and its contents are output)
     s = socket
     b = block device
     c = character device
@@ -37,12 +37,12 @@ outputs a the following characters to identify the file types found:
     ? = an error of some kind
 .fi
 .PP
-.B Namei
+.B namei
 prints an informative message when
 the maximum number of symbolic links this system can have has been exceeded.
 .SH OPTIONS
 .IP "\fB\-l, \-\-long\fP"
-Use a long listing format (same as -m -o -v).
+Use the long listing format (same as -m -o -v).
 .IP "\fB\-m, \-\-modes\fP"
 Show the mode bits of each file type in the style of ls(1),
 for example 'rwxr-xr-x'.
@@ -51,9 +51,9 @@ Show owner and group name of each file.
 .IP "\fB\-n, \-\-nosymlinks\fP"
 Don't follow symlinks.
 .IP "\fB\-v, \-\-vertical\fP"
-Vertical align of modes and owners.
+Vertically align the modes and owners.
 .IP "\fB\-x, \-\-mountpoints\fP"
-Show mount point directories with a 'D', rather than a 'd'.
+Show mountpoint directories with a 'D' rather than a 'd'.
 .SH AUTHOR
 The original
 .B namei

@@ -275,7 +275,7 @@ umount_one (const char *spec, const char *node, const char *type,
 	if (res >= 0) {
 		/* Umount succeeded */
 		if (verbose)
-			printf (_("%s umounted\n"), spec);
+			printf (_("%s has been unmounted\n"), spec);
 
 		/* Free any loop devices that we allocated ourselves */
 		if (mc) {
@@ -490,13 +490,13 @@ umount_file (char *arg) {
 	int ok;
 
 	if (!*arg) {		/* "" would be expanded to `pwd` */
-		die(2, _("Cannot umount \"\"\n"));
+		die(2, _("Cannot unmount \"\"\n"));
 		return 0;
 	}
 
 	file = canonicalize(arg); /* mtab paths are canonicalized */
 	if (verbose > 1)
-		printf(_("Trying to umount %s\n"), file);
+		printf(_("Trying to unmount %s\n"), file);
 
 	mc = getmntdirbackward(file, NULL);
 	if (!mc) {
@@ -514,8 +514,8 @@ umount_file (char *arg) {
 			if (strcmp(file, mc1->m.mnt_fsname)) {
 				/* Something was stacked over `file' on the
 				   same mount point. */
-				die(EX_FAIL, _("umount: cannot umount %s -- %s is "
-				    "mounted over it on the same point."),
+				die(EX_FAIL, _("umount: cannot unmount %s -- %s is "
+				    "mounted over it on the same point"),
 				    file, mc1->m.mnt_fsname);
 			}
 		}

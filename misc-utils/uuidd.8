@@ -27,9 +27,9 @@ uuidd \- UUID generation daemon
 The
 .B uuidd
 daemon is used by the UUID library to generate
-universally unique identifiers (UUIDs), especially time-based UUIDs
+universally unique identifiers (UUIDs), especially time-based UUIDs,
 in a secure and guaranteed-unique fashion, even in the face of large
-numbers of threads trying to grab UUIDs running on different CPUs.
+numbers of threads running on different CPUs trying to grab UUIDs.
 .SH OPTIONS
 .TP
 .B \-d
@@ -38,7 +38,7 @@ Run
 in debugging mode.  This prevents uuidd from running as a daemon.
 .TP
 .B \-k
-If a currently uuidd daemon is running, kill it.
+If currently a uuidd daemon is running, kill it.
 .TP
 .BI \-n " number"
 When issuing a test request to a running uuidd, request a bulk response

@@ -935,7 +935,7 @@ static void process_command (const struct command_struct *command)
 		execlp (get_path (victim->first_service->name),
 			victim->first_service->name, "stop", NULL);
 		snprintf (txt, sizeof(txt),
-			_("error stopping service: \"%s\"\n"),
+			_("error at stopping service \"%s\"\n"),
 			 victim->first_service->name);
 		err (txt);
 		_exit (SIG_NOT_STOPPED);
@@ -1067,7 +1067,7 @@ static int run_command (const char *file, const char *name, pid_t pid)
 	    for (i = 1; i < NSIG; i++) signal (i, SIG_DFL);
 	    execlp (get_path (file), service->name, "start", NULL);
 	    snprintf (txt, sizeof(txt),
-		_("error running programme: \"%s\"\n"), service->name);
+		_("error at starting service \"%s\"\n"), service->name);
 	    err (txt);
 	    _exit (SIG_FAILED);
 	    break;
