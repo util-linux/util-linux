@@ -260,7 +260,7 @@ path_cpuset(const char *path, ...)
 		err(EXIT_FAILURE, _("failed to callocate cpu set"));
 
 	if (cpumask_parse(buf, set, setsize))
-		errx(EXIT_FAILURE, _("faild to parse CPU mask %s"), buf);
+		errx(EXIT_FAILURE, _("failed to parse CPU mask %s"), buf);
 
 	return set;
 }
