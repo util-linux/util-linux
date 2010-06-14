@@ -80,7 +80,7 @@ static void show_usage(int rc)
 	exit(rc);
 }
 
-static void show_rt_info(const char *what, pid_t pid)
+static void show_rt_info(pid_t pid, int isnew)
 {
 	struct sched_param sp;
 	int policy;
@@ -93,7 +93,11 @@ static void show_rt_info(const char *what, pid_t pid)
 	if (policy == -1)
 		err(EXIT_FAILURE, _("failed to get pid %d's policy"), pid);
 
-	printf(_("pid %d's %s scheduling policy: "), pid, what);
+	if (isnew)
+		printf(_("pid %d's new scheduling policy: "), pid);
+	else
+		printf(_("pid %d's current scheduling policy: "), pid);
+
 	switch (policy) {
 	case SCHED_OTHER:
 		printf("SCHED_OTHER\n");
@@ -131,8 +135,12 @@ static void show_rt_info(const char *what, pid_t pid)
 	if (sched_getparam(pid, &sp))
 		err(EXIT_FAILURE, _("failed to get pid %d's attributes"), pid);
 
-	printf(_("pid %d's %s scheduling priority: %d\n"),
-		pid, what, sp.sched_priority);
+	if (isnew)
+		printf(_("pid %d's new scheduling priority: %d\n"),
+		       pid, sp.sched_priority);
+	else
+		printf(_("pid %d's current scheduling priority: %d\n"),
+		       pid, sp.sched_priority);
 }
 
 static void show_min_max(void)
@@ -247,7 +255,7 @@ int main(int argc, char *argv[])
 		show_usage(EXIT_FAILURE);
 
 	if ((pid > -1) && (verbose || argc - optind == 1)) {
-		show_rt_info(_("current"), pid);
+		show_rt_info(pid, FALSE);
 		if (argc - optind == 1)
 			return EXIT_SUCCESS;
 	}
@@ -274,7 +282,7 @@ int main(int argc, char *argv[])
 		err(EXIT_FAILURE, _("failed to set pid %d's policy"), pid);
 
 	if (verbose)
-		show_rt_info(_("new"), pid);
+		show_rt_info(pid, TRUE);
 
 	if (!pid) {
 		argv += optind + 1;
