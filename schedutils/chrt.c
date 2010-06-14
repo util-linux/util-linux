@@ -54,26 +54,33 @@
 
 static void show_usage(int rc)
 {
-	fprintf(stdout, _(
-	"\nchrt - manipulate real-time attributes of a process.\n"
+	FILE *out = rc == EXIT_SUCCESS ? stdout : stderr;
+
+	fprintf(out, _(
+	"\nchrt - manipulate real-time attributes of a process\n"
 	"\nSet policy:\n"
 	"  chrt [options] <policy> <priority> {<pid> | <command> [<arg> ...]}\n"
 	"\nGet policy:\n"
-	"  chrt [options] {<pid> | <command> [<arg> ...]}\n\n"
+	"  chrt [options] {<pid> | <command> [<arg> ...]}\n"));
+
+	fprintf(out, _(
 	"\nScheduling policies:\n"
 	"  -b | --batch         set policy to SCHED_BATCH\n"
 	"  -f | --fifo          set policy to SCHED_FIFO\n"
 	"  -i | --idle          set policy to SCHED_IDLE\n"
 	"  -o | --other         set policy to SCHED_OTHER\n"
-	"  -r | --rr            set policy to SCHED_RR (default)\n"
+	"  -r | --rr            set policy to SCHED_RR (default)\n"));
+
 #ifdef SCHED_RESET_ON_FORK
+	fprintf(out, _(
 	"\nScheduling flags:\n"
-	"  -R | --reset-on-fork set SCHED_RESET_ON_FORK for FIFO or RR\n"
+	"  -R | --reset-on-fork set SCHED_RESET_ON_FORK for FIFO or RR\n"));
 #endif
+	fprintf(out, _(
 	"\nOptions:\n"
 	"  -h | --help          display this help\n"
-	"  -p | --pid           operate on existing given pid\n"
 	"  -m | --max           show min and max valid priorities\n"
+	"  -p | --pid           operate on existing given pid\n"
 	"  -v | --verbose       display status information\n"
 	"  -V | --version       output version information\n\n"));
 
