@@ -25,7 +25,7 @@
 .\" 2002-05-11 Robert Love <rml@tech9.net>
 .\" 	Initial version
 .\"
-.TH CHRT "1" "Apr 2003" "schedutils" "Linux User's Manual"
+.TH CHRT "1" "June 2010" "schedutils" "Linux User's Manual"
 .SH NAME
 chrt \- manipulate real-time attributes of a process
 .SH SYNOPSIS
@@ -40,7 +40,7 @@ chrt \- manipulate real-time attributes of a process
 .SH DESCRIPTION
 .PP
 .BR chrt (1)
-sets or retrieves the real-time scheduling attributes of an existing PID or
+sets or retrieves the real-time scheduling attributes of an existing PID, or
 runs COMMAND with the given attributes.  Both policy (one of
 .BR SCHED_OTHER ,
 .BR SCHED_FIFO ,
@@ -74,15 +74,6 @@ set scheduling policy to
 set scheduling policy to
 .BR SCHED_FIFO
 .TP
-.B -R, --reset-on-fork
-add
-.B SCHED_RESET_ON_FORK
-flag to the
-.B SCHED_FIFO
-or
-.B SCHED_RR
-scheduling policy (Linux specific)
-.TP
 .B -i, --idle
 set schedulng policy to
 .BR SCHED_IDLE
@@ -100,11 +91,23 @@ set scheduling policy to
 .BR SCHED_RR
 (the default)
 .TP
+.B -R, --reset-on-fork
+add
+.B SCHED_RESET_ON_FORK
+flag to the
+.B SCHED_FIFO
+or
+.B SCHED_RR
+scheduling policy (Linux specific)
+.TP
+.B -v, --verbose
+show status information
+.TP
 .B -h, --help
 display usage information and exit
 .TP
-.B -v, --version
-output version information and exit
+.B -V, --version
+display version information and exit
 .SH USAGE
 .TP
 The default behavior is to run a new command::
