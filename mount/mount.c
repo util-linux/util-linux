@@ -314,11 +314,11 @@ append_opt(char *s, const char *opt, const char *val)
 }
 
 static char *
-append_numopt(char *s, const char *opt, long num)
+append_numopt(char *s, const char *opt, unsigned int num)
 {
 	char buf[32];
 
-	snprintf(buf, sizeof(buf), "%ld", num);
+	snprintf(buf, sizeof(buf), "%u", num);
 	return append_opt(s, opt, buf);
 }
 
@@ -1729,12 +1729,12 @@ usersubst(const char *opts) {
 
 	s = "uid=useruid";
 	if (opts && (w = strstr(opts, s)) != NULL) {
-		sprintf(id, "uid=%d", getuid());
+		sprintf(id, "uid=%u", getuid());
 		opts = subst_string(opts, w, strlen(s), id);
 	}
 	s = "gid=usergid";
 	if (opts && (w = strstr(opts, s)) != NULL) {
-		sprintf(id, "gid=%d", getgid());
+		sprintf(id, "gid=%u", getgid());
 		opts = subst_string(opts, w, strlen(s), id);
 	}
 	return xstrdup(opts);
@@ -2299,8 +2299,8 @@ main(int argc, char *argv[]) {
 		printf("mount: mtab path:  \"%s\"\n", _PATH_MOUNTED);
 		printf("mount: lock path:  \"%s\"\n", _PATH_MOUNTED_LOCK);
 		printf("mount: temp path:  \"%s\"\n", _PATH_MOUNTED_TMP);
-		printf("mount: UID:        %d\n", getuid());
-		printf("mount: eUID:       %d\n", geteuid());
+		printf("mount: UID:        %u\n", getuid());
+		printf("mount: eUID:       %u\n", geteuid());
 	}
 
 	argc -= optind;
@@ -2331,7 +2331,7 @@ main(int argc, char *argv[]) {
 			if (ruid == 0 && euid != 0)
 				/* user is root, but setuid to non-root */
 				die (EX_USAGE, _("mount: only root can do that "
-					"(effective UID is %d)"), euid);
+					"(effective UID is %u)"), euid);
 
 			die (EX_USAGE, _("mount: only root can do that"));
 		}
