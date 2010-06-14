@@ -1127,8 +1127,9 @@ loop_check(const char **spec, const char **type, int *flags,
    * file as a mount(2) source argument. A filesystem that is able to mount
    * regular files could be implemented.
    */
-  if (!*loop && (!*type || strcmp(*type, "auto") == 0 ||
-			   fsprobe_known_fstype(*type))) {
+  if (!*loop && !(*flags & (MS_BIND | MS_MOVE | MS_PROPAGATION)) &&
+      (!*type || strcmp(*type, "auto") == 0 || fsprobe_known_fstype(*type))) {
+
     struct stat st;
     if (stat(*loopfile, &st) == 0)
       *loop = S_ISREG(st.st_mode);
