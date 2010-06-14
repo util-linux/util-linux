@@ -796,18 +796,12 @@ warn_alignment(void) {
 "the physical sector size. Aligning to a physical sector (or optimal\n"
 "I/O) size boundary is recommended, or performance may be impacted.\n"));
 
-	if (dos_compatible_flag) {
+	if (dos_compatible_flag)
 		fprintf(stderr, _("\n"
 "WARNING: DOS-compatible mode is deprecated. It's strongly recommended to\n"
-"         switch off the mode (command 'c')"));
+"         switch off the mode (with command 'c')."));
 
-		if (display_in_cyl_units)
-			fprintf(stderr, _(" and change display units to\n"
-"         sectors (command 'u').\n"));
-		else
-			fprintf(stderr, ".\n");
-
-	 } else if (display_in_cyl_units)
+	if (display_in_cyl_units)
 		fprintf(stderr, _("\n"
 "WARNING: cylinders as display units are deprecated. Use command 'u' to\n"
 "         change units to sectors.\n"));
