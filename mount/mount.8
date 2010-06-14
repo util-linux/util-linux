@@ -359,6 +359,21 @@ changed by a separate remount command, for example:
 .I newdir
 .RE
 
+Note that behavior of the remount operation depends on the /etc/mtab file. The
+first command stores the 'bind' flag to the /etc/mtab file and the second
+command reads the flag from the file.  If you have a system without the
+/etc/mtab file or if you explicitly define source and target for the remount
+command (then mount(8) does not read /etc/mtab), then you have to use bind flag
+(or option) for the remount command too. For example:
+
+.RS
+.br
+.B mount --bind
+.I olddir newdir
+.br
+.B mount -o remount,ro,bind
+.I olddir newdir
+.RE
 .RE
 
 .B The move operation.
