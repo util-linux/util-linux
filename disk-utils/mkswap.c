@@ -393,7 +393,7 @@ zap_bootbits(int fd, const char *devname, int force, int is_blkdev)
 			if (!pr)
 				die(_("unable to alloc new libblkid probe"));
 			if (blkid_probe_set_device(pr, fd, 0, 0))
-				die(_("unable to assign device to liblkid probe"));
+				die(_("unable to assign device to libblkid probe"));
 
 			blkid_probe_enable_partitions(pr, 1);
 			blkid_probe_enable_superblocks(pr, 0);

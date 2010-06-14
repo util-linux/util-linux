@@ -561,7 +561,7 @@ int main(int argc, char *argv[])
 				direction = MNT_ITER_BACKWARD;
 			else
 				errx(EXIT_FAILURE,
-					_("unknown direction '%s')"), optarg);
+					_("unknown direction '%s'"), optarg);
 			break;
 		case 'e':
 			flags |= FL_EVALUATE;
