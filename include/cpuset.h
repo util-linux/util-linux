@@ -38,6 +38,16 @@
 	  & __CPUMASK (__cpu))) != 0					      \
       : 0; })
 
+# define CPU_EQUAL_S(setsize, cpusetp1, cpusetp2) \
+   ({ __cpu_mask *__arr1 = (cpusetp1)->__bits;				      \
+      __cpu_mask *__arr2 = (cpusetp2)->__bits;				      \
+      size_t __imax = (setsize) / sizeof (__cpu_mask);			      \
+      size_t __i;							      \
+      for (__i = 0; __i < __imax; ++__i)				      \
+	if (__bits[__i] != __bits[__i])					      \
+	  break;							      \
+      __i == __imax; })
+
 extern int __cpuset_count_s(size_t setsize, const cpu_set_t *set);
 # define CPU_COUNT_S(setsize, cpusetp)	__cpuset_count_s(setsize, cpusetp)
 
