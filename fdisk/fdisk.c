@@ -204,7 +204,7 @@ int	fd,				/* the disk */
 	ext_index,			/* the prime extended partition */
 	listing = 0,			/* no aborts for fdisk -l */
 	nowarn = 0,			/* no warnings for fdisk -l/-s */
-	dos_compatible_flag = ~0,
+	dos_compatible_flag = 0,	/* disabled by default */
 	dos_changed = 0,
 	partitions = 4;			/* maximum partition + 1 */
 
@@ -220,7 +220,7 @@ unsigned int	heads,
 	sector_factor = 1,
 	user_set_sector_size = 0,
 	units_per_sector = 1,
-	display_in_cyl_units = 1;
+	display_in_cyl_units = 0;
 
 unsigned long long total_number_of_sectors;	/* (!) 512-byte sectors */
 unsigned long grain = DEFAULT_SECTOR_SIZE,
@@ -259,14 +259,14 @@ void fatal(enum failure why) {
 " fdisk [options] -l <disk> list partition table(s)\n"
 " fdisk -s <partition>      give partition size(s) in blocks\n"
 "\nOptions:\n"
-" -b <size>                 sector size (512, 1024, 2048 or 4096)\n"
-" -c                        switch off DOS-compatible mode\n"
-" -h                        print this help text\n"
-" -u                        show sizes in sectors instead of cylinders\n"
-" -v                        print program version\n"
-" -C <number>               specify the number of cylinders\n"
-" -H <number>               specify the number of heads\n"
-" -S <number>               specify the number of sectors per track\n"
+" -b <size>             sector size (512, 1024, 2048 or 4096)\n"
+" -c                    switch off DOS-compatible mode (default)\n"
+" -h                    print this help text\n"
+" -u                    show sizes in sectors instead of cylinders (default)\n"
+" -v                    print program version\n"
+" -C <number>           specify the number of cylinders\n"
+" -H <number>           specify the number of heads\n"
+" -S <number>           specify the number of sectors per track\n"
 "\n");
 			break;
 		case unable_to_open:
@@ -764,7 +764,7 @@ void update_units(void)
 	if (display_in_cyl_units && cyl_units)
 		units_per_sector = cyl_units;
 	else
-		units_per_sector = 1; 	/* in sectors */
+		units_per_sector = 1;	/* in sectors */
 }
 
 static void
