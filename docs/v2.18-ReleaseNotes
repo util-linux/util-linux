@@ -4,9 +4,9 @@ Util-linux-ng 2.18 Release Notes
 The util-linux-ng package does not contain rdev(8), ramsize(8), 
 vidmode(8) and rootflags(8) anymore. 
 
-The fdisk(8) command does not use DOS-compatible mode and cylinders as
-display units by default. The old deprecated DOS behavior could be enabled
-by 'c' and 'u' fdisk commands.
+The fdisk(8) command does not use DOS-compatible mode and cylinders as display
+units by default. The old deprecated DOS behavior could be enabled by 'c' and
+'u' fdisk commands or from command line by '-c=dos -u=cylinders' options.
 
 Release highlights
 ------------------

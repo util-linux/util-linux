@@ -28,6 +28,21 @@ fdisk \- Partition table manipulator for Linux
 .sp
 .B fdisk \-h
 .SH DESCRIPTION
+.B fdisk
+(in the first form of invocation)
+is a menu driven program for creation and manipulation of
+partition tables.
+It understands DOS type partition tables and BSD or SUN type disklabels.
+
+.B fdisk
+does not understand GUID Partition Table (GPT) and
+it is not designed for large partitions. In particular case use more advanced GNU
+.BR parted (8).
+
+.B fdisk does not use DOS-compatible mode and cylinders
+as display units by default. The old deprecated DOS behavior could be 
+enabled by '-cdos -ucyl' command line options.
+
 Hard disks can be divided into one or more logical disks called
 .IR partitions .
 This division is described in the
@@ -50,17 +65,7 @@ so as to make sure that this stuff is accessible to the BIOS.
 There may be reasons of security, ease of administration and backup,
 or testing, to use more than the minimum number of partitions.
 
-.B fdisk
-(in the first form of invocation)
-is a menu driven program for creation and manipulation of
-partition tables.
-It understands DOS type partition tables and BSD or SUN type disklabels.
-
-.B fdisk
-doesn't understand GUID Partition Table (GPT) and
-it is not designed for large partitions. In particular case use more advanced GNU
-.BR parted (8).
-
+.SH DEVICES
 The
 .I device
 is usually /dev/sda, /dev/sdb or so. A device name refers to the entire disk.
@@ -78,6 +83,7 @@ name followed by a partition number.  For example,
 is the first partition on the first hard disk in the system.
 See also Linux kernel documentation (the Documentation/devices.txt file).
 
+.SH DISK LABELS
 A BSD/SUN type disklabel can describe 8 partitions,
 the third of which should be a `whole disk' partition.
 Do not start a partition that actually uses its first sector
@@ -189,8 +195,12 @@ between logical and physical sector size. This option changes both sector sizes 
 .BI \-h
 Print help and then exit.
 .TP
-.BI \-c
-Switch off DOS-compatible mode. (Default)
+.BI "\-c"[=mode]
+Specifies the compatiblity mode, 'dos' or 'nondos' mode. The default is non-DOS
+compatibility mode. For backward compatibility the option is possible to use
+without <mode> argument, then the default is used. Note that the optional
+<mode> argument cannot be separated from the -c option by space, the correct
+form is for example '-c=dos'.
 .TP
 .BI "\-C " cyls
 Specify the number of cylinders of the disk.
@@ -213,9 +223,12 @@ If no devices are given, those mentioned in
 .I /proc/partitions
 (if that exists) are used.
 .TP
-.B \-u
-When listing partition tables, give sizes in sectors instead
-of cylinders. (Default)
+.BI "\-u"[=unit]
+When listing partition tables, give sizes in 'sectors' or in 'cylinders'.  The
+default is to give sizes in sectors. For backward compatibility the option is
+possible to use without <units> argument, then the default is used. Note that
+the optional <unit> argument cannot be separated from the -u option by space,
+the correct form is for example '-u=cylinders'.
 .TP
 .BI "\-s " partition
 The

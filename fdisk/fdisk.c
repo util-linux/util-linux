@@ -260,9 +260,9 @@ void fatal(enum failure why) {
 " fdisk -s <partition>      give partition size(s) in blocks\n"
 "\nOptions:\n"
 " -b <size>             sector size (512, 1024, 2048 or 4096)\n"
-" -c                    switch off DOS-compatible mode (default)\n"
+" -c[=<mode>]           compatible mode: 'dos' or 'nondos' (default)\n"
 " -h                    print this help text\n"
-" -u                    show sizes in sectors instead of cylinders (default)\n"
+" -u[=<unit>]           dysplay units: 'cylinders' or 'sectors' (default)\n"
 " -v                    print program version\n"
 " -C <number>           specify the number of cylinders\n"
 " -H <number>           specify the number of heads\n"
@@ -1609,8 +1609,11 @@ void change_units(void)
 {
 	display_in_cyl_units = !display_in_cyl_units;
 	update_units();
-	printf(_("Changing display/entry units to %s\n"),
-		str_units(PLURAL));
+
+	if (display_in_cyl_units)
+		printf(_("Changing display/entry units to cylinders (DEPRECATED!)\n"));
+	else
+		printf(_("Changing display/entry units to sectors\n"));
 }
 
 static void
@@ -1630,7 +1633,7 @@ static void
 toggle_dos_compatibility_flag(void) {
 	dos_compatible_flag = ~dos_compatible_flag;
 	if (dos_compatible_flag)
-		printf(_("DOS Compatibility flag is set\n"));
+		printf(_("DOS Compatibility flag is set (DEPRECATED!)\n"));
 	else
 		printf(_("DOS Compatibility flag is not set\n"));
 
@@ -2919,7 +2922,7 @@ main(int argc, char **argv) {
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while ((c = getopt(argc, argv, "b:cC:hH:lsS:uvV")) != -1) {
+	while ((c = getopt(argc, argv, "b:c::C:hH:lsS:u::vV")) != -1) {
 		switch (c) {
 		case 'b':
 			/* Ugly: this sector size is really per device,
@@ -2937,7 +2940,12 @@ main(int argc, char **argv) {
 			user_cylinders = atoi(optarg);
 			break;
 		case 'c':
-			dos_compatible_flag = 0;
+			dos_compatible_flag = 0;	/* default */
+
+			if (optarg && !strcmp(optarg, "=dos"))
+				dos_compatible_flag = ~0;
+			else if (optarg && strcmp(optarg, "=nondos"))
+				fatal(usage);
 			break;
 		case 'h':
 			fatal(help);
@@ -2959,7 +2967,11 @@ main(int argc, char **argv) {
 			opts = 1;
 			break;
 		case 'u':
-			display_in_cyl_units = 0;
+			display_in_cyl_units = 0;		/* default */
+			if (optarg && strcmp(optarg, "=cylinders") == 0)
+				display_in_cyl_units = !display_in_cyl_units;
+			else if (optarg && strcmp(optarg, "=sectors"))
+				fatal(usage);
 			break;
 		case 'V':
 		case 'v':
