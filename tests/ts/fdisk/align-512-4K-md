@@ -44,8 +44,6 @@ DEVICE="/dev/${DEVNAME}"
 
 ts_log "Create partitions"
 $TS_CMD_FDISK ${DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
-c
-u
 n
 p
 1
@@ -74,8 +72,6 @@ MD_DEVICE=/dev/${MD_DEVNAME}
 
 ts_log "Create partitions (MD)"
 $TS_CMD_FDISK ${MD_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
-c
-u
 n
 p
 1

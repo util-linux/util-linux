@@ -46,8 +46,6 @@ ts_log "Create RAID device"
 
 ts_log "Create partitions on RAID device"
 $TS_CMD_FDISK ${MD_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
-c
-u
 n
 p
 1

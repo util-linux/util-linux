@@ -10,14 +10,6 @@ The device presents a logical sector size that is smaller than
 the physical sector size. Aligning to a physical sector (or optimal
 I/O) size boundary is recommended, or performance may be impacted.
 
-WARNING: DOS-compatible mode is deprecated. It's strongly recommended to
-         switch off the mode (command 'c') and change display units to
-         sectors (command 'u').
-
-Command (m for help): DOS Compatibility flag is not set
-
-Command (m for help): Changing display/entry units to sectors
-
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)

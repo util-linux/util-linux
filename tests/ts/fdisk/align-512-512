@@ -31,8 +31,6 @@ DEVICE=$(ts_device_init 50)
 
 ts_log "Create partitions"
 $TS_CMD_FDISK ${DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
-c
-u
 n
 p
 1

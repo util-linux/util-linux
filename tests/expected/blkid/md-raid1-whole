@@ -8,14 +8,6 @@ After that, of course, the previous content won't be recoverable.
 
 Warning: invalid flag 0x0000 of partition table 4 will be corrected by w(rite)
 
-WARNING: DOS-compatible mode is deprecated. It's strongly recommended to
-         switch off the mode (command 'c') and change display units to
-         sectors (command 'u').
-
-Command (m for help): DOS Compatibility flag is not set
-
-Command (m for help): Changing display/entry units to sectors
-
 Command (m for help): Command action
    e   extended
    p   primary partition (1-4)
