@@ -174,7 +174,7 @@ get_offset_from_probe(struct wipe_desc *wp, blkid_probe pr, int zap)
 		wp->usage = xstrdup(usage);
 		wp->type = xstrdup(type);
 
-		wp->magic = xmalloc(wp->len);
+		wp->magic = xmalloc(len);
 		memcpy(wp->magic, mag, len);
 		wp->len = len;
 
