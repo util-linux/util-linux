@@ -44,7 +44,7 @@
       size_t __imax = (setsize) / sizeof (__cpu_mask);			      \
       size_t __i;							      \
       for (__i = 0; __i < __imax; ++__i)				      \
-	if (__bits[__i] != __bits[__i])					      \
+	if (__arr1[__i] != __arr2[__i])					      \
 	  break;							      \
       __i == __imax; })
 
