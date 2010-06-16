@@ -303,6 +303,23 @@ do_wipe(struct wipe_desc *wp, const char *fname, int noact)
 	return 0;
 }
 
+static void
+free_wipe(struct wipe_desc *wp)
+{
+	while (wp) {
+		struct wipe_desc *next = wp->next;
+
+		free(wp->usage);
+		free(wp->type);
+		free(wp->magic);
+		free(wp->label);
+		free(wp->uuid);
+		free(wp);
+
+		wp = next;
+	}
+}
+
 static loff_t
 strtoll_offset(const char *str)
 {
@@ -391,6 +408,8 @@ main(int argc, char **argv)
 			do_wipe(wp, fname, noact);
 		else
 			print_all(wp, mode);
+
+		free_wipe(wp);
 	}
 	return EXIT_SUCCESS;
 }
