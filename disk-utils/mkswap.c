@@ -145,7 +145,6 @@ is_sparc64(void) {
 static int user_pagesize;
 static int pagesize;
 static unsigned long *signature_page = NULL;
-struct swap_header_v1 *p;
 
 static void
 init_signature_page(void) {
@@ -167,9 +166,12 @@ init_signature_page(void) {
 				  "instead of the system value %d\n"),
 				pagesize, kernel_pagesize);
 
-	signature_page = (unsigned long *) malloc(pagesize);
-	memset(signature_page, 0, pagesize);
-	p = (struct swap_header_v1 *) signature_page;
+	signature_page = (unsigned long *) calloc(1, pagesize);
+	if (!signature_page) {
+		fprintf(stderr, _("%s: calloc() failed: %s\n"),
+					program_name, strerror(errno));
+		exit(1);
+	}
 }
 
 static void
@@ -294,6 +296,8 @@ die(const char *str) {
 
 static void
 page_bad(int page) {
+	struct swap_header_v1_2 *p = (struct swap_header_v1_2 *) signature_page;
+
 	if (badpages == MAX_BADPAGES)
 		die(_("too many bad pages"));
 	p->badpages[badpages] = page;
@@ -439,6 +443,7 @@ zap_bootbits(int fd, const char *devname, int force, int is_blkdev)
 int
 main(int argc, char ** argv) {
 	struct stat statbuf;
+	struct swap_header_v1_2 *hdr;
 	int i;
 	unsigned long long maxpages;
 	unsigned long long goodpages;
@@ -627,9 +632,10 @@ main(int argc, char ** argv) {
 
 	zap_bootbits(DEV, device_name, force, S_ISBLK(statbuf.st_mode));
 
-	p->version = 1;
-	p->last_page = PAGES-1;
-	p->nr_badpages = badpages;
+	hdr = (struct swap_header_v1_2 *) signature_page;
+	hdr->version = 1;
+	hdr->last_page = PAGES - 1;
+	hdr->nr_badpages = badpages;
 
 	if (badpages > PAGES - MIN_GOODPAGES)
 		die(_("Unable to set up swap-space: unreadable"));
