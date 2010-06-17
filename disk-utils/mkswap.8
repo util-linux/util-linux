@@ -91,7 +91,9 @@ will refuse to erase the first block on a device with a partition table or on
 whole disk (e.g. /dec/sda).
 .TP
 .BI \-p \ PSZ
-Specify the page size to use.
+Specify the page size in bytes to use. This option is usually unnecessary,
+.B mkswap
+reads the size from kernel.
 .TP
 .BI \-L \ label
 Specify a label, to allow swapon by label.
