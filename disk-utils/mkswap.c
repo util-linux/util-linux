@@ -153,7 +153,7 @@ init_signature_page(void) {
 
 	if (user_pagesize) {
 		if ((user_pagesize & (user_pagesize-1)) ||
-		    user_pagesize < 1024) {
+		    user_pagesize < sizeof(struct swap_header_v1_2) + 10) {
 			fprintf(stderr, _("Bad user-specified page size %d\n"),
 				user_pagesize);
 			exit(1);
