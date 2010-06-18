@@ -402,7 +402,7 @@ private, slave or unbindable. A shared mount provides ability to create mirrors
 of that mount such that mounts and umounts within any of the mirrors propagate
 to the other mirror. A slave mount receives propagation from its master, but
 any not vice-versa.  A private mount carries no propagation abilities.  A
-unbindable mount is a private mount which cannot cloned through a bind
+unbindable mount is a private mount which cannot be cloned through a bind
 operation. Detailed semantics is documented in Documentation/sharedsubtree.txt
 file in the kernel source tree.
 
@@ -1396,7 +1396,7 @@ small amount of time to see if any other transactions can piggyback on the
 synchronous write. The algorithm used is designed to automatically tune for
 the speed of the disk, by measuring the amount of time (on average) that it
 takes to finish committing a transaction. Call this time the "commit time".
-If the time that the transactoin has been running is less than the commit time,
+If the time that the transaction has been running is less than the commit time,
 ext4 will try sleeping for the commit time to see if other operations will join
 the transaction. The commit time is capped by the max_batch_time, which
 defaults to 15000us (15ms). This optimization can be turned off entirely by
@@ -1428,7 +1428,7 @@ If auto_da_alloc is enabled, ext4 will detect the replace-via-rename and
 replace-via-truncate patterns and force that any delayed allocation blocks are
 allocated such that at the next journal commit, in the default data=ordered
 mode, the data blocks of the new file are forced to disk before the rename()
-operation is commited.  This provides roughly the same level of guarantees as
+operation is committed.  This provides roughly the same level of guarantees as
 ext3, and avoids the "zero-length" problem that can happen when a system
 crashes before the delayed allocation blocks are forced to disk.
 
