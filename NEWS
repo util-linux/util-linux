@@ -1,3 +1,7 @@
+util-linux-ng 2.18-rc2: Jun 18 2010
+* see docs/v2.18-ReleaseNotes or complete changelog at
+  ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.18/v2.18-rc2-ChangeLog
+
 util-linux-ng 2.18-rc1: Jun 7 2010
 * see docs/v2.18-ReleaseNotes or complete changelog at
   ftp://ftp.kernel.org/pub/linux/utils/util-linux-ng/v2.18/v2.18-rc1-ChangeLog
