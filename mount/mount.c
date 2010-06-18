@@ -1452,13 +1452,15 @@ try_mount_one (const char *spec0, const char *node0, const char *types0,
       /* Mount succeeded, report this (if verbose) and write mtab entry.  */
 
       if (!(mounttype & MS_PROPAGATION)) {
+	      char *mtab_opts = fix_opts_string (flags & ~MS_NOMTAB, extra_opts, user);
 	      update_mtab_entry(loop ? loopfile : spec,
 			node,
 			types ? types : "unknown",
-			fix_opts_string (flags & ~MS_NOMTAB, extra_opts, user),
+			mtab_opts,
 			flags,
 			freq,
 			pass);
+	      free (mtab_opts);
       }
 
       block_signals (SIG_UNBLOCK);
