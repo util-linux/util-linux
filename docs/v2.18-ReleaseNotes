@@ -113,7 +113,10 @@ blockdev:
    - reduce usage text width  [Francesco Cosoleto]
 build-sys:
    - add missing tests for libuuid and libblkid  [Karel Zak]
+   - cleanup lib{mount,blkid} building  [Karel Zak]
    - improved check for fallocate()  [Yann Droneaud]
+   - minor changes for GNU/Hurd  [Samuel Thibault]
+   - release++ (v2.18-rc1)  [Karel Zak]
    - remove duplicate #includes  [Karel Zak]
    - replace ../ with $top_srcdir  [Karel Zak]
    - update include/Makefile.am  [Karel Zak]
@@ -121,6 +124,7 @@ build-sys:
 cal:
    - factor out and update multibyte alignment code  [Pádraig Brady]
    - fix first day of the week calculation on BE systems  [Karel Zak]
+   - remove unnecessary info from man page  [Karel Zak]
 cfdisk:
    - set '[New]' as default item on menu for non allocated space instead of '[Help]'.  [Francesco Cosoleto]
    - set '[Quit]' as default menu item on first run instead of '[Bootable]'.  [Francesco Cosoleto]
@@ -128,8 +132,13 @@ cfdisk:
    - use libblkid  [Matthias König]
 chrt:
    - add --reset-on-fork  [Karel Zak]
+   - add --verbose to man page, correct -V for --version, alphabetize  [Benno Schulenberg]
    - add support for SCHED_RESET_ON_FORK  [Adrian Knoth]
+   - change two messages into four translatable sentences  [Benno Schulenberg]
+   - slice help text into manageable chunks for translators  [Benno Schulenberg]
 docs:
+   - fix umount --fake note in ReleaseNotes  [Karel Zak]
+   - update  ReleaseNotes  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
    - update TODO file  [Karel Zak]
    - update tests/README  [Karel Zak]
@@ -142,9 +151,11 @@ fdisk:
    - cleanup help, add -h option  [Karel Zak]
    - cleanup warnings  [Karel Zak]
    - correctly truncate and align translated partition names  [Pádraig Brady]
+   - disable DOS mode and cylinders by default  [Karel Zak]
    - don't check alignment_offset against geometry  [Karel Zak]
    - don't include scsi.h  [Karel Zak]
    - don't use 1MiB grain on small devices  [Karel Zak]
+   - extend -c and -u options to support old DOS stuff  [Karel Zak]
    - fallback for topology values  [Karel Zak]
    - fix 'p' output for sun label  [Karel Zak]
    - fix -b <sectorsize>  [Karel Zak]
@@ -153,8 +164,10 @@ fdisk:
    - fix default first sector  [Karel Zak]
    - improve 'move begin of partition' command  [Karel Zak]
    - improve add partition dialog  [Karel Zak]
+   - remove erroneous <size> argument from -u option in help text  [Benno Schulenberg]
    - replace bzero with memset  [Jon Ringle]
    - swap VTOC values for warning messages  [Karel Zak]
+   - untangle the reporting of deprecated mode and unit  [Benno Schulenberg]
    - use "optimal I/O size" in warnings  [Karel Zak]
    - use 1MiB offset and grain always when possible  [Karel Zak]
    - use more elegant way to count and check alignment  [Karel Zak]
@@ -169,6 +182,7 @@ findmnt:
    - move from /sbin to /bin  [Karel Zak]
    - rewrite to use lib/tt.c  [Karel Zak]
    - small change in usage()  [Karel Zak]
+   - ungettextize the directions and fix spelling  [Benno Schulenberg]
 fsck/mkfs/mount:
    - unify default search paths for helpers  [Mike Frysinger]
 fsfreeze:
@@ -293,6 +307,7 @@ libmount:
    - another Makefile.am fix  [Karel Zak]
    - cleanup cache flags and debug messages  [Karel Zak]
    - cleanup docs  [Karel Zak]
+   - don't build tests by default  [Karel Zak]
    - export mnt_init_debug()  [Karel Zak]
    - fix Makefile.am  [Karel Zak]
    - fix mnt_fs_match_source()  [Karel Zak]
@@ -314,21 +329,31 @@ login:
 losetup:
    - support suffixes and hex numbers for --offset and --sizelimit  [Karel Zak]
 lscpu:
+   - add CPU_EQUAL_S definition for old/obscure libc  [Karel Zak]
    - cleanup path_scanstr()  [Karel Zak]
    - cleanup used names  [Karel Zak]
+   - fix CPU_EQUAL_S macro  [Karel Zak]
    - fix cpuid opcode detection  [Henne Vogelsang]
+   - fix typo, "faild" to "failed"  [Benno Schulenberg]
    - improve --sysroot code  [Karel Zak]
    - use cpuset masks, read data for all CPUs  [Karel Zak]
+messages:
+   - gettextize a few skipped or forgotten ones  [Benno Schulenberg]
 mkswap:
+   - add a note that -p is uncecessary  [Karel Zak]
    - don't call blkdev_find_size()  [Karel Zak]
+   - don't use too small user-specified page size  [Karel Zak]
    - fixed strtoll() usage  [Yann Droneaud]
    - more robust strtoull() usage  [Karel Zak]
    - move write_all() to include/writeall.h  [Karel Zak]
+   - use calloc(), remove obsolete v1 header usage  [Karel Zak]
    - zap bootbits on regular files  [Karel Zak]
 mount:
+   - add notes about -o remount,ro,bind to mount.8  [Karel Zak]
    - advise users to use "modprobe", not "insmod"  [Karel Zak]
    - automatically detect and loop-mount regular files  [Karel Zak]
    - detect when kernel silently adds MS_RDONLY flag  [Petr Uzel]
+   - don't create loopdev for MS_BIND  [Karel Zak]
    - fix coding style  [Karel Zak]
    - fix information about XFS log buffers in mount.8  [Christoph Hellwig]
    - fix typo in comment  [Petr Uzel]
@@ -340,6 +365,7 @@ mount:
    - revert ugly ENOMEDIUM support  [Karel Zak]
    - support suffixes for offset= and sizelimit=  [Karel Zak]
    - update documentation about barrier mount options  [Jan Kara]
+   - use %u for uid_t and gid_t  [Karel Zak]
    - use auto-loopdev for all known filesystems  [Karel Zak]
    - use unmangle/mangle() from lib  [Karel Zak]
    - warn users that mtab is read-only  [Karel Zak]
@@ -356,6 +382,7 @@ po:
    - update id.po (from translationproject.org)  [Arif E. Nugroho]
    - update ja.po (from translationproject.org)  [Makoto Kato]
    - update list of files  [Karel Zak]
+   - update nl.po (from translationproject.org)  [Benno Schulenberg]
    - update pl.po (from translationproject.org)  [Jakub Bogusz]
    - update vi.po (from translationproject.org)  [Clytie Siddall]
 rdev:
@@ -404,14 +431,21 @@ tests:
    - update lscpu  [Karel Zak]
    - update lscpu test  [Karel Zak]
    - use POSIX locale  [Yann Droneaud]
+textual:
+   - fix typos  [Karel Zak]
+   - fix typos, and rephrase some things for clarity  [Benno Schulenberg]
 umount:
    - add --fake option to umount(8)  [Miklos Szeredi]
    - do not sync() as the kernel does it by itself  [Petr Uzel]
 unshare:
    - drop potential euid privileges before exec  [Karel Zak]
+uuidd:
+   - spell the plural of "UUID" consistently as "UUIDs"  [Benno Schulenberg]
 wipefs:
    - cleanup usage() and man page  [Karel Zak]
    - fix license (GPL -> GPLv2+)  [Karel Zak]
+   - fix mem usage  [Karel Zak]
+   - fix memory leaks  [Karel Zak]
    - ignore devices with partition table  [Karel Zak]
    - print warning is PT detected  [Karel Zak]
    - support suffixes for --offset  [Karel Zak]
