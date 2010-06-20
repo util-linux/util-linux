@@ -27,10 +27,10 @@ The
 argument will usually be a disk partition (something like
 .IR /dev/sdb7 )
 but can also be a file.
-The Linux kernel does not look at partition Id's, but
+The Linux kernel does not look at partition IDs, but
 many installation scripts will assume that partitions
 of hex type 82 (LINUX_SWAP) are meant to be swap partitions.
-(\fBWarning: Solaris also uses this type. Be careful not to kill
+(\fBWarning: Solaris also uses this type.  Be careful not to kill
 your Solaris partitions.\fP)
 
 The
@@ -39,39 +39,39 @@ parameter is superfluous but retained for backwards compatibility.
 (It specifies the desired size of the swap area in 1024-byte blocks.
 .B mkswap
 will use the entire partition or file if it is omitted.
-Specifying it is unwise - a typo may destroy your disk.)
+Specifying it is unwise -- a typo may destroy your disk.)
 
 The
 .I PSZ
-parameter specifies the page size to use. It is almost always
+parameter specifies the page size to use.  It is almost always
 unnecessary (even unwise) to specify it, but certain old libc
 versions lie about the page size, so it is possible that
 .B mkswap
-gets it wrong. The symptom is that a subsequent
+gets it wrong.  The symptom is that a subsequent
 .B swapon
-fails because no swap signature is found. Typical values for
+fails because no swap signature is found.  Typical values for
 .I PSZ
 are 4096 or 8192.
 
 After creating the swap area, you need the
 .B swapon
-command to start using it. Usually swap areas are listed in
+command to start using it.  Usually swap areas are listed in
 .I /etc/fstab
 so that they can be taken into use at boot time by a
 .B swapon -a
 command in some boot script.
 
 .SH WARNING
-The swap header does not touch the first block. A boot loader or disk label
-can be there, but it is not recommended setup. The recommended setup is to
+The swap header does not touch the first block.  A boot loader or disk label
+can be there, but it is not a recommended setup.  The recommended setup is to
 use a separate partition for a Linux swap area.
 
-.B mkswap like many others mkfs-like utils erases the first block to remove
+.B mkswap, like many others mkfs-like utils, erases the first block to remove
 .B old on-disk filesystems.
 
 .B mkswap
 refuses to erase the first block on a device with a disk
-label (SUN, BSD, ...) or on whole disk (e.g. /dev/sda).
+label (SUN, BSD, ...) or on a whole disk (e.g. /dev/sda).
 
 .SH OPTIONS
 .TP
@@ -81,45 +81,45 @@ before creating the swap area.
 If any are found, the count is printed.
 .TP
 .B \-f
-Force - go ahead even if the command is stupid.
+Force -- go ahead even if the command is stupid.
 This allows the creation of a swap area larger than the file
 or partition it resides on.
 
-Without this option
+Without this option,
 .B mkswap
 will refuse to erase the first block on a device with a partition table or on
-whole disk (e.g. /dec/sda).
-.TP
-.BI \-p \ PSZ
-Specify the page size in bytes to use. This option is usually unnecessary,
-.B mkswap
-reads the size from kernel.
+a whole disk (e.g. /dev/sda).
 .TP
 .BI \-L \ label
-Specify a label, to allow swapon by label.
-(Only for new style swap areas.)
+Specify a label, to allow
+.B swapon
+by label.
 .TP
-.BR \-v0 , \ \-v1
-Specify the swap space version. This option is deprecated and \-v1 is
-supported only.
-
-The kernel has not supported v0 swap space format since 2.5.22. The new version
-v1 is supported since 2.1.117.
-
+.BI \-p \ PSZ
+Specify the page size (in bytes) to use.  This option is usually unnecessary,
+.B mkswap
+reads the size from the kernel.
 .TP
 .BI \-U \ uuid
-Specify the uuid to use. The default is to generate UUIDs.
+Specify the uuid to use.  The default is to generate a UUID.
+.TP
+.BR \-v1
+Specify the swap-space version.  The old \-v0 option has become obsolete
+and now only \-v1 is supported.
+
+The kernel has not supported v0 swap-space format since 2.5.22.
+The new version v1 is supported since 2.1.117.
 
 .SH NOTES
 The maximum useful size of a swap area depends on the architecture and
 the kernel version.
-It is roughly 2GiB on i386, PPC, m68k, ARM, 1GiB on sparc, 512MiB on mips,
-128GiB on alpha and 3TiB on sparc64. For kernels after 2.3.3 there is no
+It is roughly 2GiB on i386, PPC, m68k and ARM, 1GiB on sparc, 512MiB on mips,
+128GiB on alpha, and 3TiB on sparc64.  For kernels after 2.3.3 there is no
 such limitation.
 
-Note that before 2.1.117 the kernel allocated one byte for each page,
-while it now allocates two bytes, so that taking a swap area of 2 GiB
-in use might require 2 MiB of kernel memory.
+Note that before version 2.1.117 the kernel allocated one byte for each page,
+while it now allocates two bytes, so that taking into use a swap area of 2 GiB
+might require 2 MiB of kernel memory.
 
 Presently, Linux allows 32 swap areas (this was 8 before Linux 2.4.10).
 The areas in use can be seen in the file
@@ -130,10 +130,10 @@ The areas in use can be seen in the file
 refuses areas smaller than 10 pages.
 
 If you don't know the page size that your machine uses, you may be
-able to look it up with "cat /proc/cpuinfo" (or you may not -
+able to look it up with "cat /proc/cpuinfo" (or you may not --
 the contents of this file depend on architecture and kernel version).
 
-To setup a swap file, it is necessary to create that file before
+To set up a swap file, it is necessary to create that file before
 initializing it with
 .BR mkswap ,
 e.g. using a command like
