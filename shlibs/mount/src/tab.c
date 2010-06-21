@@ -194,10 +194,7 @@ int mnt_tab_add_fs(mnt_tab *tb, mnt_fs *fs)
 		tb->filename, mnt_fs_get_source(fs),
 		mnt_fs_get_target(fs)));
 
-	if (fs->flags & MNT_FS_ERROR)
-		tb->nerrs++;
-	else
-		tb->nents++;
+	tb->nents++;
 	return 0;
 }
 
@@ -218,10 +215,7 @@ int mnt_tab_remove_fs(mnt_tab *tb, mnt_fs *fs)
 
 	list_del(&fs->ents);
 
-	if (fs->flags & MNT_FS_ERROR)
-		tb->nerrs--;
-	else
-		tb->nents--;
+	tb->nents--;
 	return 0;
 }
 
@@ -359,7 +353,6 @@ int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs)
 
 	if (!tb || !itr || !fs)
 		return -1;
-again:
 	rc = 1;
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &tb->ents);
@@ -367,10 +360,6 @@ again:
 		MNT_ITER_ITERATE(itr, *fs, struct _mnt_fs, ents);
 		rc = 0;
 	}
-
-	/* ignore broken entries */
-	if (*fs && ((*fs)->flags & MNT_FS_ERROR))
-		goto again;
 
 	return rc;
 }
@@ -406,8 +395,6 @@ int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 		else
 			break;			/* end */
 
-		if ((*fs)->flags & MNT_FS_ERROR)
-			continue;
 		if (match_func(*fs, userdata))
 			return 0;
 	} while(1);
@@ -775,40 +762,6 @@ error:
 }
 
 #ifdef TEST_PROGRAM
-int test_strerr(struct mtest *ts, int argc, char *argv[])
-{
-	char buf[BUFSIZ];
-	mnt_tab *tb;
-	int i;
-
-	tb = mnt_new_tab("-test-");
-	if (!tb)
-		goto err;
-
-	for (i = 0; i < 10; i++) {
-		mnt_fs *fs = mnt_new_fs();
-		if (!fs)
-			goto err;
-		if (i % 2)
-			fs->flags |= MNT_FS_ERROR;	/* mark entry as broken */
-		fs->lineno = i+1;
-		mnt_tab_add_fs(tb, fs);
-	}
-
-	printf("\tadded %d valid lines\n", mnt_tab_get_nents(tb));
-	printf("\tadded %d broken lines\n", mnt_tab_get_nerrs(tb));
-
-	if (!mnt_tab_get_nerrs(tb))		/* report broken entries */
-		goto err;
-	mnt_tab_strerror(tb, buf, sizeof(buf));
-	printf("\t%s\n", buf);
-
-	mnt_free_tab(tb);
-	return 0;
-err:
-	return -1;
-}
-
 mnt_tab *create_tab(const char *file)
 {
 	mnt_tab *tb;
@@ -820,12 +773,6 @@ mnt_tab *create_tab(const char *file)
 		goto err;
 	if (mnt_tab_parse_file(tb) != 0)
 		goto err;
-	if (mnt_tab_get_nerrs(tb)) {
-		char buf[BUFSIZ];
-		mnt_tab_strerror(tb, buf, sizeof(buf));
-		fprintf(stderr, "%s\n", buf);
-		goto err;
-	}
 	return tb;
 err:
 	mnt_free_tab(tb);
@@ -916,7 +863,6 @@ int test_find_fw(struct mtest *ts, int argc, char *argv[])
 int main(int argc, char *argv[])
 {
 	struct mtest tss[] = {
-	{ "--strerror", test_strerr,       "        test tab error reporting" },
 	{ "--parse",    test_parse,        "<file>  parse and print tab" },
 	{ "--find-forward",  test_find_fw, "<file> <source|target> <string>" },
 	{ "--find-backward", test_find_bw, "<file> <source|target> <string>" },

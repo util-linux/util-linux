@@ -321,12 +321,6 @@ static mnt_tab *parse_tabfile(const char *path)
 		warn(_("can't read: %s"), path);
 		return NULL;
 	}
-	if (mnt_tab_get_nerrs(tb)) {
-		char buf[BUFSIZ];
-		mnt_tab_strerror(tb, buf, sizeof(buf));
-		warnx(_("%s: parse error: %s"), path, buf);
-	}
-
 	return tb;
 }
 

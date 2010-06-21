@@ -117,7 +117,6 @@ global:
 	mnt_tab_get_cache;
 	mnt_tab_get_name;
 	mnt_tab_get_nents;
-	mnt_tab_get_nerrs;
 	mnt_tab_get_root_fs;
 	mnt_tab_next_child_fs;
 	mnt_tab_next_fs;
@@ -126,7 +125,6 @@ global:
 	mnt_tab_set_cache;
 	mnt_tab_set_parser_errcb;
 	mnt_tab_set_iter;
-	mnt_tab_strerror;
 	mnt_tab_update_file;
 	mnt_unlock_file;
 	mnt_init_debug;

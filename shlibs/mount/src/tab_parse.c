@@ -284,7 +284,7 @@ static char *merge_optstr(const char *vfs, const char *fs)
 /*
  * Read and parse the next line from {fs,m}tab or mountinfo
  */
-static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs)
+static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs, int *nlines)
 {
 	char buf[BUFSIZ];
 	char *s;
@@ -297,7 +297,7 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs)
 	do {
 		if (fgets(buf, sizeof(buf), f) == NULL)
 			return -1;
-		tb->nlines++;
+		++*nlines;
 		s = index (buf, '\n');
 		if (!s) {
 			/* Missing final newline?  Otherwise extremely */
@@ -310,7 +310,7 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs)
 			} else {
 				DBG(DEBUG_TAB, fprintf(stderr,
 					"libmount: %s: %d: missing newline at line\n",
-					tb->filename, tb->nlines));
+					tb->filename, *nlines));
 				goto err;
 			}
 		}
@@ -321,7 +321,7 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs)
 	} while (*s == '\0' || *s == '#');
 
 	DBG(DEBUG_TAB, fprintf(stderr, "libmount: %s:%d: %s\n",
-		tb->filename, tb->nlines, s));
+		tb->filename, *nlines, s));
 
 	if (!tb->fmt)
 		tb->fmt = detect_fmt(s);
@@ -343,25 +343,18 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs)
 			goto err;
 	}
 
-	fs->lineno = tb->nlines;
-
 	DBG(DEBUG_TAB, fprintf(stderr,
 		"libmount: %s: %d: SOURCE:%s, MNTPOINT:%s, TYPE:%s, "
 				  "OPTS:%s, FREQ:%d, PASSNO:%d\n",
-		tb->filename, fs->lineno,
+		tb->filename, *nlines,
 		fs->source, fs->target, fs->fstype,
 		fs->optstr, fs->freq, fs->passno));
 
 	return 0;
 err:
 	if (tb->errcb)
-		return tb->errcb(tb, NULL, tb->nlines, 0);
+		return tb->errcb(tb, NULL, *nlines, 0);
 
-	/* we don't report parse errors to caller; caller has to check
-	 * errors by mnt_tab_get_nerrs() or internaly by MNT_ENTRY_ERR flag
-	 */
-	fs->lineno = tb->nlines;
-	fs->flags |= MNT_FS_ERROR;
 	return 0;
 }
 
@@ -394,6 +387,7 @@ err:
 int mnt_tab_parse_file(mnt_tab *tb)
 {
 	FILE *f;
+	int nlines = 0;
 
 	assert(tb);
 	assert(tb->filename);
@@ -411,7 +405,7 @@ int mnt_tab_parse_file(mnt_tab *tb)
 		if (!fs)
 			goto error;
 
-		rc = mnt_tab_parse_next(tb, f, fs);
+		rc = mnt_tab_parse_next(tb, f, fs, &nlines);
 		if (!rc)
 			rc = mnt_tab_add_fs(tb, fs);
 		else if (feof(f)) {
@@ -474,74 +468,5 @@ int mnt_tab_set_parser_errcb(mnt_tab *tb,
 	assert(tb);
 	tb->errcb = cb;
 	return 0;
-}
-
-/**
- * mnt_tab_get_nerrs:
- * @tb: pointer to table
- *
- * Returns: number of broken (parse error) entries in the table.
- */
-int mnt_tab_get_nerrs(mnt_tab *tb)
-{
-	assert(tb);
-	return tb->nerrs;
-}
-
-/**
- * mnt_tab_strerror:
- * @tb: pointer to table
- * @buf: buffer to return error message
- * @buflen: lenght of the buf
- *
- * Returns: error message for table (file) parse errors. For example:
- *
- *	"/etc/fstab: parse error at line(s): 1, 2 and 3."
- */
-char *mnt_tab_strerror(mnt_tab *tb, char *buf, size_t buflen)
-{
-	struct list_head *p;
-	int last = -1;
-	char *b = buf;
-	char *end = buf + buflen - 1;
-
-	assert(tb);
-	assert(buf);
-	assert(buflen);
-
-	if (!tb || !tb->nerrs || !buf || buflen <=0)
-		return NULL;
-
-	if (tb->filename) {
-		snprintf(b, end - b, "%s: ", tb->filename);
-		b += strnlen(b, end - b);
-	}
-
-	if (tb->nerrs > 1)
-		strncpy(b, _("parse error at lines: "), end - b);
-	else
-		strncpy(b, _("parse error at line: "), end - b);
-	b += strnlen(b, end - b);
-	*b = '\0';
-
-	list_for_each(p, &tb->ents) {
-		mnt_fs *fs = list_entry(p, mnt_fs, ents);
-		if (b == end)
-			goto done;
-		if (fs->flags & MNT_FS_ERROR) {
-			if (last != -1) {
-				snprintf(b, end - b, "%d, ", last);
-				b += strnlen(b, end - b);
-			}
-			last = fs->lineno;
-		}
-	}
-
-	if (tb->nerrs == 1)
-		snprintf(b, end - b, "%d.", last);
-	else
-		snprintf(b - 1, end - b, _(" and %d."), last);
-done:
-	return buf;
 }
 

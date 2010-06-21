@@ -142,7 +142,6 @@ struct _mnt_fs {
 	int		passno;		/* fstab[6]: pass number on parallel fsck */
 
 	int		flags;		/* MNT_FS_* flags */
-	int		lineno;		/* line number in the parental file */
 
 	void		*userdata;	/* library independent data */
 };
@@ -150,9 +149,8 @@ struct _mnt_fs {
 /*
  * fs flags
  */
-#define MNT_FS_ERROR	(1 << 1) /* broken entry */
-#define MNT_FS_PSEUDO	(1 << 2) /* pseudo filesystem */
-#define MNT_FS_NET	(1 << 3) /* network filesystem */
+#define MNT_FS_PSEUDO	(1 << 1) /* pseudo filesystem */
+#define MNT_FS_NET	(1 << 2) /* network filesystem */
 
 /*
  * File format
@@ -168,10 +166,7 @@ enum {
 struct _mnt_tab {
 	char		*filename;	/* file name or NULL */
 	int		fmt;		/* MNT_FMT_* file format */
-
-	int		nlines;		/* number of lines in the file (include commentrys) */
 	int		nents;		/* number of valid entries */
-	int		nerrs;		/* number of broken entries (parse errors) */
 
 	mnt_cache	*cache;		/* canonicalized paths/tags cache */
 
