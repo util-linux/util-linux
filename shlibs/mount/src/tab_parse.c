@@ -354,6 +354,9 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs)
 
 	return 0;
 err:
+	if (tb->errcb)
+		return tb->errcb(tb, NULL, tb->nlines, 0);
+
 	/* we don't report parse errors to caller; caller has to check
 	 * errors by mnt_tab_get_nerrs() or internaly by MNT_ENTRY_ERR flag
 	 */
@@ -374,22 +377,19 @@ err:
  *	int rc;
  *
  *	rc = mnt_tab_parse_file(tb);
- *	if (rc) {
- *		if (mnt_tab_get_nerrs(tb)) {             / * parse error * /
- *			mnt_tab_strerror(tb, buf, sizeof(buf));
- *			fprintf(stderr, "%s: %s\n", progname, buf);
- *		} else
- *			perror(mnt_tab_get_name(tb));  / * system error * /
- *	} else
+ *	if (rc)
+ *		perror(mnt_tab_get_name(tb));  / * system error * /
+ *	else
  *		mnt_fprintf_tab(tb, stdout, NULL);
  *
  *	mnt_free_tab(tb);
  *   </programlisting>
  * </informalexample>
  *
- * Returns: 0 on success and -1 in case of error. The parse errors is possible
- * to detect by mnt_tab_get_nerrs() and error message is possible to create by
- * mnt_tab_strerror().
+ * The libmount parser ignores broken (with syntax error) lines, these lines are
+ * reported to caller by errcb() function (see mnt_tab_set_parser_errcb()).
+ *
+ * Returns: 0 on success, -1 in case of error.
  */
 int mnt_tab_parse_file(mnt_tab *tb)
 {
@@ -455,6 +455,25 @@ mnt_tab *mnt_new_tab_from_file(const char *filename)
 		tb = NULL;
 	}
 	return tb;
+}
+
+/**
+ * mnt_tab_set_parser_errcb:
+ * @tab: pointer to table
+ * @cb: pointer to callback function
+ *
+ * The error callback function is called by table parser (mnt_tab_parse_file())
+ * in case of sytax error. If the callback function does not return zero then
+ * parsing is aborted.
+ *
+ * Returns: 0 on success or -1 in case of error.
+ */
+int mnt_tab_set_parser_errcb(mnt_tab *tb,
+		int (*cb)(mnt_tab *tb, const char *filename, int line, int flag))
+{
+	assert(tb);
+	tb->errcb = cb;
+	return 0;
 }
 
 /**

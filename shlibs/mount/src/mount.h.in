@@ -266,7 +266,8 @@ extern int mnt_fs_print_debug(mnt_fs *ent, FILE *file);
 /* tab-parse.c */
 extern mnt_tab *mnt_new_tab_from_file(const char *filename);
 extern int mnt_tab_parse_file(mnt_tab *tb);
-extern char *mnt_tab_strerror(mnt_tab *tb, char *buf, size_t buflen);
+extern int mnt_tab_set_parser_errcb(mnt_tab *tb,
+                int (*cb)(mnt_tab *tb, const char *filename, int line, int flag));
 extern int mnt_tab_get_nerrs(mnt_tab *tb);
 
 /* tab.c */

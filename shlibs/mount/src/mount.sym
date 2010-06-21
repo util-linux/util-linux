@@ -124,6 +124,7 @@ global:
 	mnt_tab_parse_file;
 	mnt_tab_remove_fs;
 	mnt_tab_set_cache;
+	mnt_tab_set_parser_errcb;
 	mnt_tab_set_iter;
 	mnt_tab_strerror;
 	mnt_tab_update_file;
