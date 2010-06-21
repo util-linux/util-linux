@@ -93,6 +93,7 @@
 #include "common.h"
 #include "gpt.h"
 #include "mbsalign.h"
+#include "widechar.h"
 
 #ifdef __GNU__
 #define DEFAULT_DEVICE "/dev/hd0"
