@@ -762,6 +762,13 @@ error:
 }
 
 #ifdef TEST_PROGRAM
+
+static int parser_errcb(mnt_tab *tb, const char *filename, int line, int flag)
+{
+	fprintf(stderr, "%s:%d: parse error\n", filename, line);
+	return 0;
+}
+
 mnt_tab *create_tab(const char *file)
 {
 	mnt_tab *tb;
@@ -771,6 +778,9 @@ mnt_tab *create_tab(const char *file)
 	tb = mnt_new_tab(file);
 	if (!tb)
 		goto err;
+
+	mnt_tab_set_parser_errcb(tb, parser_errcb);
+
 	if (mnt_tab_parse_file(tb) != 0)
 		goto err;
 	return tb;
@@ -792,6 +802,7 @@ int test_parse(struct mtest *ts, int argc, char *argv[])
 	itr = mnt_new_iter(MNT_ITER_FORWARD);
 	if (!itr)
 		goto err;
+
 	while(mnt_tab_next_fs(tb, itr, &fs) == 0)
 		mnt_fs_print_debug(fs, stdout);
 err:

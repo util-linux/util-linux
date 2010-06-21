@@ -330,6 +330,7 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs, int *nlines)
 		/* parse /etc/{fs,m}tab */
 		if (mnt_tab_parse_file_line(fs, s) != 0)
 			goto err;
+
 	} else if (tb->fmt == MNT_FMT_MOUNTINFO) {
 		/* parse /proc/self/mountinfo */
 		if (mnt_parse_mountinfo_line(fs, s) != 0)
@@ -340,11 +341,11 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs, int *nlines)
 	if (!fs->optstr && (fs->vfs_optstr || fs->fs_optstr)) {
 		fs->optstr = merge_optstr(fs->vfs_optstr, fs->fs_optstr);
 		if (!fs->optstr)
-			goto err;
+			return -1;
 	}
 
 	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: %s: %d: SOURCE:%s, MNTPOINT:%s, TYPE:%s, "
+		"libmount: %s:%d: SOURCE:%s, MNTPOINT:%s, TYPE:%s, "
 				  "OPTS:%s, FREQ:%d, PASSNO:%d\n",
 		tb->filename, *nlines,
 		fs->source, fs->target, fs->fstype,
@@ -352,10 +353,13 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs, int *nlines)
 
 	return 0;
 err:
-	if (tb->errcb)
-		return tb->errcb(tb, NULL, *nlines, 0);
+	DBG(DEBUG_TAB, fprintf(stderr,
+		"libmount: %s:%d: parse error\n", tb->filename, *nlines));
 
-	return 0;
+	if (tb->errcb && tb->errcb(tb, tb->filename, *nlines, 0))
+		return -1;	/* fatal error */
+
+	return 1;		/* recoverable error */
 }
 
 /**
@@ -402,19 +406,20 @@ int mnt_tab_parse_file(mnt_tab *tb)
 	while (!feof(f)) {
 		int rc;
 		mnt_fs *fs = mnt_new_fs();
+
 		if (!fs)
 			goto error;
 
 		rc = mnt_tab_parse_next(tb, f, fs, &nlines);
 		if (!rc)
 			rc = mnt_tab_add_fs(tb, fs);
-		else if (feof(f)) {
-			mnt_free_fs(fs);
-			break;
-		}
 		if (rc) {
 			mnt_free_fs(fs);
-			goto error;
+			if (rc == 1)
+				continue;	/* recoverable error */
+			if (feof(f))
+				break;
+			goto error;		/* fatal error */
 		}
 	}
 
