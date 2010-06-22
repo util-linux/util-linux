@@ -364,43 +364,20 @@ err:
 }
 
 /**
- * mnt_tab_parse_file:
+ * mnt_tab_parse_stream:
  * @tb: tab pointer
- * @filename: file
- *
- * Parses whole table (e.g. /etc/fstab).
- *
- * <informalexample>
- *   <programlisting>
- *	mnt_tab *tb = mnt_new_tab();
- *	int rc;
- *
- *	rc = mnt_tab_parse_file(tb, "/etc/fstab");
- *	if (!rc)
- *		mnt_fprintf_tab(tb, stdout, NULL);
- *	mnt_free_tab(tb);
- *   </programlisting>
- * </informalexample>
- *
- * The libmount parser ignores broken (with syntax error) lines, these lines are
- * reported to caller by errcb() function (see mnt_tab_set_parser_errcb()).
+ * @f: file stream
+ * @filename: filename used for debug and error messages
  *
  * Returns: 0 on success, -1 in case of error.
  */
-int mnt_tab_parse_file(mnt_tab *tb, const char *filename)
+int mnt_tab_parse_stream(mnt_tab *tb, FILE *f, const char *filename)
 {
-	FILE *f;
 	int nlines = 0;
 
 	assert(tb);
+	assert(f);
 	assert(filename);
-
-	if (!filename)
-		return -1;
-
-	f = fopen(filename, "r");
-	if (!f)
-		return -1;
 
 	DBG(DEBUG_TAB,
 		fprintf(stderr, "libmount: tab %p: start parsing %s\n", tb, filename));
@@ -427,22 +404,61 @@ int mnt_tab_parse_file(mnt_tab *tb, const char *filename)
 
 	DBG(DEBUG_TAB,
 		fprintf(stderr, "libmount: tab %p: stop parsing %s\n", tb, filename));
-	fclose(f);
 	return 0;
 error:
 	DBG(DEBUG_TAB,
 		fprintf(stderr, "libmount: tab %p: error parsing %s\n", tb, filename));
-	fclose(f);
 	return -1;
 }
 
 /**
- * mnt_new_tab_parse:
+ * mnt_tab_parse_file:
+ * @tb: tab pointer
+ * @filename: file
+ *
+ * Parses whole table (e.g. /etc/fstab).
+ *
+ * <informalexample>
+ *   <programlisting>
+ *	mnt_tab *tb = mnt_new_tab();
+ *	int rc;
+ *
+ *	rc = mnt_tab_parse_file(tb, "/etc/fstab");
+ *	if (!rc)
+ *		mnt_fprintf_tab(tb, stdout, NULL);
+ *	mnt_free_tab(tb);
+ *   </programlisting>
+ * </informalexample>
+ *
+ * The libmount parser ignores broken (syntax error) lines, these lines are
+ * reported to caller by errcb() function (see mnt_tab_set_parser_errcb()).
+ *
+ * Returns: 0 on success, -1 in case of error.
+ */
+int mnt_tab_parse_file(mnt_tab *tb, const char *filename)
+{
+	FILE *f;
+	int rc = -1;
+
+	assert(tb);
+	assert(filename);
+
+	if (!filename || !tb)
+		return -1;
+
+	f = fopen(filename, "r");
+	if (f) {
+		rc = mnt_tab_parse_stream(tb, f, filename);
+		fclose(f);
+	}
+	return rc;
+}
+
+/**
+ * mnt_new_tab_from_file:
  * @filename: /etc/{m,fs}tab or /proc/self/mountinfo path
  *
- * Same as mnt_new_tab() + mnt_tab_parse_file(). Note that this function does
- * not provide details (by mnt_tab_strerror()) about failed parsing -- so you
- * should not to use this function for user-writeable files like /etc/fstab.
+ * Same as mnt_new_tab() + mnt_tab_parse_file().
  *
  * Returns: newly allocated tab on success and NULL in case of error.
  */
