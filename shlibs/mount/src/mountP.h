@@ -164,7 +164,6 @@ enum {
  * mtab/fstab/mountinfo file
  */
 struct _mnt_tab {
-	char		*filename;	/* file name or NULL */
 	int		fmt;		/* MNT_FMT_* file format */
 	int		nents;		/* number of valid entries */
 

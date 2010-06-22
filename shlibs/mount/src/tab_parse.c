@@ -284,7 +284,8 @@ static char *merge_optstr(const char *vfs, const char *fs)
 /*
  * Read and parse the next line from {fs,m}tab or mountinfo
  */
-static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs, int *nlines)
+static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs,
+				const char *filename, int *nlines)
 {
 	char buf[BUFSIZ];
 	char *s;
@@ -305,12 +306,12 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs, int *nlines)
 			if (feof(f)) {
 				DBG(DEBUG_TAB, fprintf(stderr,
 					"libmount: WARNING: no final newline at the end of %s\n",
-					tb->filename));
+					filename));
 				s = index (buf, '\0');
 			} else {
 				DBG(DEBUG_TAB, fprintf(stderr,
 					"libmount: %s: %d: missing newline at line\n",
-					tb->filename, *nlines));
+					filename, *nlines));
 				goto err;
 			}
 		}
@@ -321,7 +322,7 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs, int *nlines)
 	} while (*s == '\0' || *s == '#');
 
 	DBG(DEBUG_TAB, fprintf(stderr, "libmount: %s:%d: %s\n",
-		tb->filename, *nlines, s));
+		filename, *nlines, s));
 
 	if (!tb->fmt)
 		tb->fmt = detect_fmt(s);
@@ -345,18 +346,18 @@ static int mnt_tab_parse_next(mnt_tab *tb, FILE *f, mnt_fs *fs, int *nlines)
 	}
 
 	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: %s:%d: SOURCE:%s, MNTPOINT:%s, TYPE:%s, "
+		"libmount: tab %p: %s:%d: SOURCE:%s, MNTPOINT:%s, TYPE:%s, "
 				  "OPTS:%s, FREQ:%d, PASSNO:%d\n",
-		tb->filename, *nlines,
+		tb, filename, *nlines,
 		fs->source, fs->target, fs->fstype,
 		fs->optstr, fs->freq, fs->passno));
 
 	return 0;
 err:
 	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: %s:%d: parse error\n", tb->filename, *nlines));
+		"libmount: tab %p: %s:%d: parse error\n", tb, filename, *nlines));
 
-	if (tb->errcb && tb->errcb(tb, tb->filename, *nlines, 0))
+	if (tb->errcb && tb->errcb(tb, filename, *nlines, 0))
 		return -1;	/* fatal error */
 
 	return 1;		/* recoverable error */
@@ -365,20 +366,18 @@ err:
 /**
  * mnt_tab_parse_file:
  * @tb: tab pointer
+ * @filename: file
  *
  * Parses whole table (e.g. /etc/fstab).
  *
  * <informalexample>
  *   <programlisting>
- *	mnt_tab *tb = mnt_new_tab("/etc/fstab");
+ *	mnt_tab *tb = mnt_new_tab();
  *	int rc;
  *
- *	rc = mnt_tab_parse_file(tb);
- *	if (rc)
- *		perror(mnt_tab_get_name(tb));  / * system error * /
- *	else
+ *	rc = mnt_tab_parse_file(tb, "/etc/fstab");
+ *	if (!rc)
  *		mnt_fprintf_tab(tb, stdout, NULL);
- *
  *	mnt_free_tab(tb);
  *   </programlisting>
  * </informalexample>
@@ -388,20 +387,23 @@ err:
  *
  * Returns: 0 on success, -1 in case of error.
  */
-int mnt_tab_parse_file(mnt_tab *tb)
+int mnt_tab_parse_file(mnt_tab *tb, const char *filename)
 {
 	FILE *f;
 	int nlines = 0;
 
 	assert(tb);
-	assert(tb->filename);
+	assert(filename);
 
-	if (!tb->filename)
+	if (!filename)
 		return -1;
 
-	f = fopen(tb->filename, "r");
+	f = fopen(filename, "r");
 	if (!f)
 		return -1;
+
+	DBG(DEBUG_TAB,
+		fprintf(stderr, "libmount: tab %p: start parsing %s\n", tb, filename));
 
 	while (!feof(f)) {
 		int rc;
@@ -410,7 +412,7 @@ int mnt_tab_parse_file(mnt_tab *tb)
 		if (!fs)
 			goto error;
 
-		rc = mnt_tab_parse_next(tb, f, fs, &nlines);
+		rc = mnt_tab_parse_next(tb, f, fs, filename, &nlines);
 		if (!rc)
 			rc = mnt_tab_add_fs(tb, fs);
 		if (rc) {
@@ -423,9 +425,13 @@ int mnt_tab_parse_file(mnt_tab *tb)
 		}
 	}
 
+	DBG(DEBUG_TAB,
+		fprintf(stderr, "libmount: tab %p: stop parsing %s\n", tb, filename));
 	fclose(f);
 	return 0;
 error:
+	DBG(DEBUG_TAB,
+		fprintf(stderr, "libmount: tab %p: error parsing %s\n", tb, filename));
 	fclose(f);
 	return -1;
 }
@@ -448,8 +454,8 @@ mnt_tab *mnt_new_tab_from_file(const char *filename)
 
 	if (!filename)
 		return NULL;
-	tb = mnt_new_tab(filename);
-	if (tb && mnt_tab_parse_file(tb) != 0) {
+	tb = mnt_new_tab();
+	if (tb && mnt_tab_parse_file(tb, filename) != 0) {
 		mnt_free_tab(tb);
 		tb = NULL;
 	}

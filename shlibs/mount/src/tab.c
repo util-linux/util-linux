@@ -59,34 +59,26 @@
 
 /**
  * mnt_new_tab:
- * @filename: file name or NULL
  *
  * The tab is a container for mnt_fs entries that usually represents a fstab,
  * mtab or mountinfo file from your system.
  *
- * Note that this function does not parse the file. See also
- * mnt_tab_parse_file().
+ * See also mnt_tab_parse_file().
  *
  * Returns: newly allocated tab struct.
  */
-mnt_tab *mnt_new_tab(const char *filename)
+mnt_tab *mnt_new_tab(void)
 {
 	mnt_tab *tb = NULL;
 
 	tb = calloc(1, sizeof(struct _mnt_tab));
 	if (!tb)
-		goto err;
+		return NULL;
 
-	if (filename) {
-		tb->filename = strdup(filename);
-		if (!tb->filename)
-			goto err;
-	}
+	DBG(DEBUG_TAB, fprintf(stderr, "libmount: new tab %p\n", tb));
+
 	INIT_LIST_HEAD(&tb->ents);
 	return tb;
-err:
-	free(tb);
-	return NULL;
 }
 
 /**
@@ -99,7 +91,6 @@ void mnt_free_tab(mnt_tab *tb)
 {
 	if (!tb)
 		return;
-	free(tb->filename);
 
 	while (!list_empty(&tb->ents)) {
 		mnt_fs *fs = list_entry(tb->ents.next, mnt_fs, ents);
@@ -159,18 +150,6 @@ mnt_cache *mnt_tab_get_cache(mnt_tab *tb)
 }
 
 /**
- * mnt_tab_get_name:
- * @tb: tab pointer
- *
- * Returns: tab filename or NULL.
- */
-const char *mnt_tab_get_name(mnt_tab *tb)
-{
-	assert(tb);
-	return tb ? tb->filename : NULL;
-}
-
-/**
  * mnt_tab_add_fs:
  * @tb: tab pointer
  * @fs: new entry
@@ -190,8 +169,8 @@ int mnt_tab_add_fs(mnt_tab *tb, mnt_fs *fs)
 	list_add_tail(&fs->ents, &tb->ents);
 
 	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: %s: add entry: %s %s\n",
-		tb->filename, mnt_fs_get_source(fs),
+		"libmount: tab %p: add entry: %s %s\n",
+		tb, mnt_fs_get_source(fs),
 		mnt_fs_get_target(fs)));
 
 	tb->nents++;
@@ -238,8 +217,7 @@ int mnt_tab_get_root_fs(mnt_tab *tb, mnt_fs **root)
 	if (!tb || !root)
 		return -1;
 
-	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: %s: lookup root fs\n", tb->filename));
+	DBG(DEBUG_TAB, fprintf(stderr, "libmount: tab %p: lookup root fs\n", tb));
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
@@ -278,8 +256,8 @@ int mnt_tab_next_child_fs(mnt_tab *tb, mnt_iter *itr,
 		return -1;
 
 	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: %s: lookup next child of %s\n",
-		tb->filename, mnt_fs_get_target(parent)));
+		"libmount: tab %p: lookup next child of %s\n",
+		tb, mnt_fs_get_target(parent)));
 
 	parent_id = mnt_fs_get_id(parent);
 	if (!parent_id)
@@ -384,7 +362,7 @@ int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 		return -1;
 
 	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: %s: lookup next fs\n", tb->filename));
+		"libmount: tab %p: lookup next fs\n", tb));
 
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &tb->ents);
@@ -451,7 +429,7 @@ mnt_fs *mnt_tab_find_target(mnt_tab *tb, const char *path, int direction)
 	assert(path);
 
 	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: %s: lookup target: %s\n", tb->filename, path));
+		"libmount: tab %p: lookup target: %s\n", tb, path));
 
 	/* native @target */
 	mnt_reset_iter(&itr, direction);
@@ -509,7 +487,7 @@ mnt_fs *mnt_tab_find_srcpath(mnt_tab *tb, const char *path, int direction)
 	assert(path);
 
 	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: %s: lookup srcpath: %s\n", tb->filename, path));
+		"libmount: tab %p: lookup srcpath: %s\n", tb, path));
 
 	/* native paths */
 	mnt_reset_iter(&itr, direction);
@@ -611,7 +589,7 @@ mnt_fs *mnt_tab_find_tag(mnt_tab *tb, const char *tag,
 		return NULL;
 
 	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: %s: lookup by TAG: %s %s\n", tb->filename, tag, val));
+		"libmount: tab %p: lookup by TAG: %s %s\n", tb, tag, val));
 
 	/* look up by TAG */
 	mnt_reset_iter(&itr, direction);
@@ -654,7 +632,7 @@ mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int direction)
 		return NULL;
 
 	DBG(DEBUG_TAB, fprintf(stderr,
-		"libmount: %s: lookup SOURCE: %s\n", tb->filename, source));
+		"libmount: tab %p: lookup SOURCE: %s\n", tb, source));
 
 	if (strchr(source, '=')) {
 		char *tag, *val;
@@ -710,20 +688,15 @@ int mnt_tab_fprintf(mnt_tab *tb, FILE *f, const char *fmt)
  *
  * Returns: 0 on success, -1 in case of error.
  */
-int mnt_tab_update_file(mnt_tab *tb)
+int mnt_tab_update_file(mnt_tab *tb, const char *filename)
 {
 	FILE *f = NULL;
 	char tmpname[PATH_MAX];
-	const char *filename;
 	struct stat st;
 	int fd;
 
 	assert(tb);
 	if (!tb)
-		goto error;
-
-	filename = mnt_tab_get_name(tb);
-	if (!filename)
 		goto error;
 
 	if (snprintf(tmpname, sizeof(tmpname), "%s.tmp", filename)
@@ -775,13 +748,13 @@ mnt_tab *create_tab(const char *file)
 
 	if (!file)
 		return NULL;
-	tb = mnt_new_tab(file);
+	tb = mnt_new_tab();
 	if (!tb)
 		goto err;
 
 	mnt_tab_set_parser_errcb(tb, parser_errcb);
 
-	if (mnt_tab_parse_file(tb) != 0)
+	if (mnt_tab_parse_file(tb, file) != 0)
 		goto err;
 	return tb;
 err:

@@ -265,12 +265,12 @@ extern int mnt_fs_print_debug(mnt_fs *ent, FILE *file);
 
 /* tab-parse.c */
 extern mnt_tab *mnt_new_tab_from_file(const char *filename);
-extern int mnt_tab_parse_file(mnt_tab *tb);
+extern int mnt_tab_parse_file(mnt_tab *tb, const char *filename);
 extern int mnt_tab_set_parser_errcb(mnt_tab *tb,
                 int (*cb)(mnt_tab *tb, const char *filename, int line, int flag));
 
 /* tab.c */
-extern mnt_tab *mnt_new_tab(const char *filename);
+extern mnt_tab *mnt_new_tab(void);
 extern void mnt_free_tab(mnt_tab *tb);
 extern int mnt_tab_get_nents(mnt_tab *tb);
 extern int mnt_tab_set_cache(mnt_tab *tb, mnt_cache *mpc);
@@ -295,7 +295,7 @@ extern int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 		        mnt_fs **fs);
 
 extern int mnt_tab_fprintf(mnt_tab *tb, FILE *f, const char *fmt);
-extern int mnt_tab_update_file(mnt_tab *tb);
+extern int mnt_tab_update_file(mnt_tab *tb, const char *filename);
 
 
 /*
