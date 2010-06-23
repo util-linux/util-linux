@@ -308,15 +308,32 @@ leave:
 	return rc;
 }
 
+/* error callback */
+static int parser_errcb(mnt_tab *tb, const char *filename, int line, int flag)
+{
+	warn(_("%s: parse error at line %d"), filename, line);
+	return 0;
+}
+
 /* calls libmount fstab/mtab/mountinfo parser */
 static mnt_tab *parse_tabfile(const char *path)
 {
-	mnt_tab *tb = mnt_new_tab(path);
+	int rc;
+	mnt_tab *tb = mnt_new_tab();
+
 	if (!tb) {
 		warn(_("failed to initialize libmount tab"));
 		return NULL;
 	}
-	if (mnt_tab_parse_file(tb) != 0) {
+
+	mnt_tab_set_parser_errcb(tb, parser_errcb);
+
+	if (!strcmp(path, _PATH_MNTTAB))
+		rc = mnt_tab_parse_fstab(tb);
+	else
+		rc = mnt_tab_parse_file(tb, path);
+
+	if (rc) {
 		mnt_free_tab(tb);
 		warn(_("can't read: %s"), path);
 		return NULL;

@@ -22,6 +22,7 @@ will list all mounted filesytems or search for a filesystem.  The
 .B findmnt
 command is able to search in
 .IR /etc/fstab ,
+.IR /etc/fstab.d ,
 .IR /etc/mtab
 or
 .IR /proc/self/mountinfo .
@@ -37,7 +38,9 @@ The command prints all mounted filesystems in the tree-like format by default.
 Print help and exit.
 .IP "\fB\-s, \-\-fstab\fP"
 Search in
-.IR /etc/fstab .
+.IR /etc/fstab
+and
+.IR /etc/fstab.d .
 The output is in the list format (see --list).
 .IP "\fB\-m, \-\-mtab\fP"
 Search in
