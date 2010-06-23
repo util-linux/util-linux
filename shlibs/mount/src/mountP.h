@@ -47,6 +47,9 @@ extern int libmount_debug_mask;
 #define DBG(m,x)
 #endif
 
+/* extension for files in the /etc/fstab.d directory */
+#define MNT_MNTTABDIR_EXT	".fstab"
+
 #ifdef TEST_PROGRAM
 struct mtest {
 	const char	*name;

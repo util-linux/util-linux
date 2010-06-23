@@ -9,10 +9,16 @@
 #include <stdlib.h>
 #include <ctype.h>
 #include <limits.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <dirent.h>
+#include <fcntl.h>
 
 #include "nls.h"
+#include "at.h"
 #include "mangle.h"
 #include "mountP.h"
+#include "pathnames.h"
 
 static inline char *skip_spaces(char *s)
 {
@@ -416,7 +422,7 @@ error:
  * @tb: tab pointer
  * @filename: file
  *
- * Parses whole table (e.g. /etc/fstab).
+ * Parses whole table (e.g. /etc/mtab) and appends new records to the @tab.
  *
  * <informalexample>
  *   <programlisting>
@@ -458,7 +464,10 @@ int mnt_tab_parse_file(mnt_tab *tb, const char *filename)
  * mnt_new_tab_from_file:
  * @filename: /etc/{m,fs}tab or /proc/self/mountinfo path
  *
- * Same as mnt_new_tab() + mnt_tab_parse_file().
+ * Same as mnt_new_tab() + mnt_tab_parse_file(). Use this function for private
+ * files only. This function does not allow to use error callback, so you
+ * cannot provide any feedback to end-users about broken records in files (e.g.
+ * fstab).
  *
  * Returns: newly allocated tab on success and NULL in case of error.
  */
@@ -497,3 +506,99 @@ int mnt_tab_set_parser_errcb(mnt_tab *tb,
 	return 0;
 }
 
+/**
+ * mnt_tab_parse_fstab:
+ * @tb: table
+ *
+ * This function parses /etc/fstab or /etc/fstab.d and appends new lines to the
+ * @tab. If the system contains classic fstab file and also fstab.d directory
+ * then the fstab file is parsed before the fstab.d directory.
+ *
+ * The fstab.d directory:
+ *	- files are sorted by strverscmp(3)
+ *	- files that starts with "." are ignored (e.g. ".10foo.fstab")
+ *	- files without the ".fstab" extension are ignored
+ *
+ * See also mnt_tab_set_parser_errcb().
+ *
+ * Returns: 0 on success (least one record has been sucessfully parsed) or -1.
+ */
+int mnt_tab_parse_fstab(mnt_tab *tb)
+{
+	int num, n = 0, i;
+	DIR *dir = NULL;
+	FILE *f;
+	struct dirent **namelist = NULL;
+
+	assert(tb);
+	if (!tb)
+		return -1;
+
+	num = mnt_tab_get_nents(tb);
+
+	/* classic fstab */
+	{
+		f = fopen(_PATH_MNTTAB, "r");
+		if (f) {
+			mnt_tab_parse_stream(tb, f, _PATH_MNTTAB);
+			fclose(f);
+		}
+	}
+
+	/* TODO: it would be nice to have a scandir() implemenation that
+	 *       is able to use already opened directory */
+	n = scandir(_PATH_MNTTAB_DIR, &namelist, NULL, versionsort);
+	if (n <= 0)
+		goto done;
+
+	/* let use "at" functions rather than play crazy games with paths... */
+	dir = opendir(_PATH_MNTTAB_DIR);
+	if (!dir)
+		goto done;
+
+	for (i = 0; i < n; i++) {
+		struct dirent *d = namelist[i];
+		struct stat st;
+		size_t namesz;
+
+#ifdef _DIRENT_HAVE_D_TYPE
+		if (d->d_type != DT_UNKNOWN && d->d_type != DT_REG &&
+		    d->d_type != DT_LNK)
+			continue;
+#endif
+		if (*d->d_name == '.')
+			continue;
+
+#define MNT_MNTTABDIR_EXTSIZ	(sizeof(MNT_MNTTABDIR_EXT) - 1)
+
+		namesz = strlen(d->d_name);
+		if (!namesz || namesz < MNT_MNTTABDIR_EXTSIZ + 1 ||
+		    strcmp(d->d_name + (namesz - MNT_MNTTABDIR_EXTSIZ),
+			    MNT_MNTTABDIR_EXT))
+				continue;
+
+		if (fstat_at(dirfd(dir), _PATH_MNTTAB_DIR, d->d_name, &st, 0) ||
+		    !S_ISREG(st.st_mode))
+			continue;
+
+		f = fopen_at(dirfd(dir), _PATH_MNTTAB_DIR,
+					d->d_name, O_RDONLY, "r");
+		if (f) {
+			mnt_tab_parse_stream(tb, f, d->d_name);
+			fclose(f);
+		}
+	}
+done:
+	for (i = 0; i < n; i++)
+		free(namelist[i]);
+	free(namelist);
+	if (dir)
+		closedir(dir);
+
+	num = mnt_tab_get_nents(tb) - num;
+
+	DBG(DEBUG_TAB, fprintf(stderr,
+		"libmount: tab %p: fstab contains %d records\n", tb, num));
+
+	return num > 0 ? 0 : -1;
+}

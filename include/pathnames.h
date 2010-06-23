@@ -100,6 +100,8 @@
 # endif
 #endif
 
+#define _PATH_MNTTAB_DIR	_PATH_MNTTAB ".d"
+
 #define _PATH_MOUNTED_LOCK	_PATH_MOUNTED "~"
 #define _PATH_MOUNTED_TMP	_PATH_MOUNTED ".tmp"
 
