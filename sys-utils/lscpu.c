@@ -756,7 +756,7 @@ print_readable(struct lscpu_desc *desc)
 		print_s(_("CPU op-mode(s):"), buf);
 	}
 
-	print_n("CPU(s):", desc->ncpus);
+	print_n(_("CPU(s):"), desc->ncpus);
 
 	if (desc->nsockets) {
 		print_n(_("Thread(s) per core:"), desc->nthreads / desc->ncores);
