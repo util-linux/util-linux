@@ -288,11 +288,25 @@ void do_shm (char format)
 
 	case STATUS:
 		printf (_("------ Shared Memory Status --------\n"));
-		printf (_("segments allocated %d\n"), shm_info.used_ids);
-		printf (_("pages allocated %ld\n"), shm_info.shm_tot);
-		printf (_("pages resident  %ld\n"), shm_info.shm_rss);
-		printf (_("pages swapped   %ld\n"), shm_info.shm_swp);
-		printf (_("Swap performance: %ld attempts\t %ld successes\n"),
+		/* TRANSLATORS: This output format is mantained for backward compatibility
+		   as ipcs is used in scripts. For consistency with the rest, the translated
+		   form can follow this model:
+
+		   "segments allocated = %d\n"
+		   "pages allocated = %ld\n"
+		   "pages resident = %ld\n"
+		   "pages swapped = %ld\n"
+		   "swap performance = %ld attempts, %ld successes\n"
+		*/
+		printf (_("segments allocated %d\n"
+		          "pages allocated %ld\n"
+		          "pages resident  %ld\n"
+		          "pages swapped   %ld\n"
+		          "Swap performance: %ld attempts\t %ld successes\n"),
+			shm_info.used_ids,
+			shm_info.shm_tot,
+			shm_info.shm_rss,
+			shm_info.shm_swp,
 			shm_info.swap_attempts, shm_info.swap_successes);
 		return;
 
