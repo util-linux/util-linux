@@ -176,8 +176,6 @@ int main(int argc, char **argv)
 
 		/* make sure the option is in range */
 		if (c != 'q' && c != 'm' && c != 's') {
-			fprintf(stderr, _("%s: illegal option -- %c\n"),
-				prog, c);
 			usage(prog);
 			error++;
 			return error;
