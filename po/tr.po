@@ -11,7 +11,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux 2.13-pre7\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2010-06-18 11:27+0200\n"
+"POT-Creation-Date: 2010-06-30 14:44+0200\n"
 "PO-Revision-Date: 2006-03-06 15:45+0200\n"
 "Last-Translator: Nilgün Belma Bugüner <nilgun@buguner.name.tr>\n"
 "Language-Team: Turkish <gnu-tr-u12a@lists.sourceforge.net>\n"
@@ -1062,7 +1062,7 @@ msgid "Usage: mkfs [-V] [-t fstype] [fs-options] device [size]\n"
 msgstr ""
 "Kullanımı: mkfs [-V] [-t dsySistTürü] [dsySist-seçenekleri] aygıt [uzunluk]\n"
 
-#: disk-utils/mkfs.c:88 disk-utils/mkfs.c:96 fdisk/cfdisk.c:357
+#: disk-utils/mkfs.c:88 disk-utils/mkfs.c:96 fdisk/cfdisk.c:358
 #: getopt/getopt.c:86 getopt/getopt.c:96 login-utils/wall.c:246
 #, c-format
 msgid "%s: Out of memory!\n"
@@ -1703,27 +1703,27 @@ msgstr "Kullanıcı bilgileri değiştirildi.\n"
 msgid "ignore -U (UUIDs are unsupported)"
 msgstr ""
 
-#: fdisk/cfdisk.c:382 fdisk/cfdisk.c:1964
+#: fdisk/cfdisk.c:383 fdisk/cfdisk.c:1965
 msgid "Unusable"
 msgstr "Kullanışsız"
 
-#: fdisk/cfdisk.c:384 fdisk/cfdisk.c:1966
+#: fdisk/cfdisk.c:385 fdisk/cfdisk.c:1967
 msgid "Free Space"
 msgstr "Boş Alan"
 
-#: fdisk/cfdisk.c:399
+#: fdisk/cfdisk.c:400
 #, c-format
 msgid "Disk has been changed.\n"
 msgstr "Disk değiştirildi.\n"
 
-#: fdisk/cfdisk.c:401
+#: fdisk/cfdisk.c:402
 #, c-format
 msgid "Reboot the system to ensure the partition table is correctly updated.\n"
 msgstr ""
 "Bölümleme tablosunun doğru olarak güncellendiğinden emin olabilmek için\n"
 "sistemi yeniden başlatın.\n"
 
-#: fdisk/cfdisk.c:405
+#: fdisk/cfdisk.c:406
 #, c-format
 msgid ""
 "\n"
@@ -1736,229 +1736,229 @@ msgstr ""
 "değişiklik yaptıysanız, lütfen cfdisk man sayfalarındaki\n"
 "ek bilgileri okuyun.\n"
 
-#: fdisk/cfdisk.c:534
+#: fdisk/cfdisk.c:535
 msgid "FATAL ERROR"
 msgstr "ÖLÜMCÜL HATA"
 
-#: fdisk/cfdisk.c:535
+#: fdisk/cfdisk.c:536
 msgid "Press any key to exit cfdisk"
 msgstr "cfdisk'ten çıkmak için herhangi bir tuşa basınız"
 
-#: fdisk/cfdisk.c:582 fdisk/cfdisk.c:590
+#: fdisk/cfdisk.c:583 fdisk/cfdisk.c:591
 msgid "Cannot seek on disk drive"
 msgstr "Disk sürücü üzerinde arama yapılamıyor"
 
-#: fdisk/cfdisk.c:584
+#: fdisk/cfdisk.c:585
 msgid "Cannot read disk drive"
 msgstr "Disk sürücüsü okunamıyor"
 
-#: fdisk/cfdisk.c:592
+#: fdisk/cfdisk.c:593
 msgid "Cannot write disk drive"
 msgstr "Disk sürücüsüne yazılamıyor"
 
-#: fdisk/cfdisk.c:800
+#: fdisk/cfdisk.c:801
 msgid "Too many partitions"
 msgstr "Disk bölümü sayısı çok fazla"
 
-#: fdisk/cfdisk.c:805
+#: fdisk/cfdisk.c:806
 msgid "Partition begins before sector 0"
 msgstr "Disk bölümü sıfırıncı sektörden önce başlıyor"
 
-#: fdisk/cfdisk.c:810
+#: fdisk/cfdisk.c:811
 msgid "Partition ends before sector 0"
 msgstr "Disk bölümü sıfırıncı sektörden önce bitiyor"
 
-#: fdisk/cfdisk.c:815
+#: fdisk/cfdisk.c:816
 msgid "Partition begins after end-of-disk"
 msgstr "Disk bölümü disk sonundan sonra başlıyor"
 
-#: fdisk/cfdisk.c:820
+#: fdisk/cfdisk.c:821
 msgid "Partition ends after end-of-disk"
 msgstr "Disk bölümü disk sonundan sonra bitiyor"
 
-#: fdisk/cfdisk.c:825
+#: fdisk/cfdisk.c:826
 msgid "Partition ends in the final partial cylinder"
 msgstr "Disk bölümü son kısmî silindir içinde bitiyor"
 
-#: fdisk/cfdisk.c:849
+#: fdisk/cfdisk.c:850
 msgid "logical partitions not in disk order"
 msgstr "mantıksal bölümler sıralamaya uygun değil"
 
-#: fdisk/cfdisk.c:852
+#: fdisk/cfdisk.c:853
 msgid "logical partitions overlap"
 msgstr "mantıksal bölümler içiçe geçmiş"
 
-#: fdisk/cfdisk.c:856
+#: fdisk/cfdisk.c:857
 msgid "enlarged logical partitions overlap"
 msgstr "büyütülen mantıksal bölümler içiçe geçiyor"
 
-#: fdisk/cfdisk.c:886
+#: fdisk/cfdisk.c:887
 msgid ""
 "!!!! Internal error creating logical drive with no extended partition !!!!"
 msgstr ""
 "!!!! Ek disk bölümü içermeyen mantıksal bölüm oluşturulurken iç hata !!!!"
 
-#: fdisk/cfdisk.c:897 fdisk/cfdisk.c:909
+#: fdisk/cfdisk.c:898 fdisk/cfdisk.c:910
 msgid ""
 "Cannot create logical drive here -- would create two extended partitions"
 msgstr "Burada mantıksal bölüm oluşturulamıyor -- iki ek bölüm oluşacaktı"
 
-#: fdisk/cfdisk.c:1049
+#: fdisk/cfdisk.c:1050
 msgid "Menu item too long. Menu may look odd."
 msgstr "Menü öğesi çok uzun. Menü tuhaf görünebilir."
 
-#: fdisk/cfdisk.c:1105
+#: fdisk/cfdisk.c:1106
 #, fuzzy
 msgid "Menu without direction. Defaulting to horizontal."
 msgstr "Menü yönsüz. Yatay olarak öntanımlanıyor."
 
-#: fdisk/cfdisk.c:1237
+#: fdisk/cfdisk.c:1238
 msgid "Illegal key"
 msgstr "Kuraldışı tuş"
 
-#: fdisk/cfdisk.c:1260
+#: fdisk/cfdisk.c:1261
 msgid "Press a key to continue"
 msgstr "Devam etmek için bir tuşa basınız"
 
-#: fdisk/cfdisk.c:1307 fdisk/cfdisk.c:1935 fdisk/cfdisk.c:2467
-#: fdisk/cfdisk.c:2469
+#: fdisk/cfdisk.c:1308 fdisk/cfdisk.c:1936 fdisk/cfdisk.c:2468
+#: fdisk/cfdisk.c:2470
 msgid "Primary"
 msgstr "Birincil"
 
-#: fdisk/cfdisk.c:1307
+#: fdisk/cfdisk.c:1308
 msgid "Create a new primary partition"
 msgstr "Yeni birincil disk bölümü oluşturur"
 
-#: fdisk/cfdisk.c:1308 fdisk/cfdisk.c:1935 fdisk/cfdisk.c:2466
-#: fdisk/cfdisk.c:2469
+#: fdisk/cfdisk.c:1309 fdisk/cfdisk.c:1936 fdisk/cfdisk.c:2467
+#: fdisk/cfdisk.c:2470
 msgid "Logical"
 msgstr "Mantıksal"
 
-#: fdisk/cfdisk.c:1308
+#: fdisk/cfdisk.c:1309
 msgid "Create a new logical partition"
 msgstr "Yeni mantıksal disk bölümü oluşturur"
 
-#: fdisk/cfdisk.c:1309 fdisk/cfdisk.c:1364 fdisk/cfdisk.c:2140
+#: fdisk/cfdisk.c:1310 fdisk/cfdisk.c:1365 fdisk/cfdisk.c:2141
 msgid "Cancel"
 msgstr "Vazgeç"
 
-#: fdisk/cfdisk.c:1309 fdisk/cfdisk.c:1364
+#: fdisk/cfdisk.c:1310 fdisk/cfdisk.c:1365
 msgid "Don't create a partition"
 msgstr "Bir disk bölümü oluşturulmaz"
 
-#: fdisk/cfdisk.c:1325
+#: fdisk/cfdisk.c:1326
 msgid "!!! Internal error !!!"
 msgstr "!!! İç hata !!!"
 
-#: fdisk/cfdisk.c:1328
+#: fdisk/cfdisk.c:1329
 msgid "Size (in MB): "
 msgstr "Alan (MB):"
 
-#: fdisk/cfdisk.c:1362
+#: fdisk/cfdisk.c:1363
 msgid "Beginning"
 msgstr "Başlangıç"
 
-#: fdisk/cfdisk.c:1362
+#: fdisk/cfdisk.c:1363
 msgid "Add partition at beginning of free space"
 msgstr "Disk bölümünü boş alanın başlangıcına ekler"
 
-#: fdisk/cfdisk.c:1363
+#: fdisk/cfdisk.c:1364
 msgid "End"
 msgstr "Son"
 
-#: fdisk/cfdisk.c:1363
+#: fdisk/cfdisk.c:1364
 msgid "Add partition at end of free space"
 msgstr "Disk bölümnü boş alanın sonuna ekler"
 
-#: fdisk/cfdisk.c:1381
+#: fdisk/cfdisk.c:1382
 msgid "No room to create the extended partition"
 msgstr "Ek disk bölümünü oluşturacak yer yok"
 
-#: fdisk/cfdisk.c:1455
+#: fdisk/cfdisk.c:1456
 msgid "No partition table.\n"
 msgstr "Disk bölümleme tablosu yok.\n"
 
-#: fdisk/cfdisk.c:1459
+#: fdisk/cfdisk.c:1460
 msgid "No partition table. Starting with zero table."
 msgstr "Disk bölümleme tablosu yok. Boş tablo ile başlanacak."
 
-#: fdisk/cfdisk.c:1469
+#: fdisk/cfdisk.c:1470
 msgid "Bad signature on partition table"
 msgstr "Disk bölümleme tablosundaki imza kötü"
 
-#: fdisk/cfdisk.c:1473
+#: fdisk/cfdisk.c:1474
 msgid "Unknown partition table type"
 msgstr "Disk bölümleme tablosu türü bilinmiyor"
 
-#: fdisk/cfdisk.c:1475
+#: fdisk/cfdisk.c:1476
 msgid "Do you wish to start with a zero table [y/N] ?"
 msgstr "Temiz bir tablo ile başlamak ister misiniz [e/H] ?"
 
-#: fdisk/cfdisk.c:1523
+#: fdisk/cfdisk.c:1524
 msgid "You specified more cylinders than fit on disk"
 msgstr "Diskte bulunan silindir sayısından büyük bir sayı belirttiniz"
 
-#: fdisk/cfdisk.c:1555
+#: fdisk/cfdisk.c:1556
 msgid "Cannot open disk drive"
 msgstr "Disk açılamıyor"
 
-#: fdisk/cfdisk.c:1557 fdisk/cfdisk.c:1746
+#: fdisk/cfdisk.c:1558 fdisk/cfdisk.c:1747
 msgid "Opened disk read-only - you have no permission to write"
 msgstr "Açılan disk salt-okunur - yazma izniniz yok"
 
-#: fdisk/cfdisk.c:1568
+#: fdisk/cfdisk.c:1569
 msgid ""
 "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
 msgstr ""
 
-#: fdisk/cfdisk.c:1587
+#: fdisk/cfdisk.c:1588
 msgid "Cannot get disk size"
 msgstr "Diskin toplam alanı hesaplanamıyor"
 
-#: fdisk/cfdisk.c:1613
+#: fdisk/cfdisk.c:1614
 msgid "Bad primary partition"
 msgstr "Birincil disk bölümü bozuk"
 
-#: fdisk/cfdisk.c:1643
+#: fdisk/cfdisk.c:1644
 msgid "Bad logical partition"
 msgstr "Mantıksal disk bölümü bozuk"
 
-#: fdisk/cfdisk.c:1758
+#: fdisk/cfdisk.c:1759
 msgid "Warning!!  This may destroy data on your disk!"
 msgstr "Uyarı!! Bu işlem disk üzerindeki veriyi yokedebilir!"
 
-#: fdisk/cfdisk.c:1762
+#: fdisk/cfdisk.c:1763
 msgid ""
 "Are you sure you want to write the partition table to disk? (yes or no): "
 msgstr ""
 "Disk bölümleme tablosunun diske yazılmasını gerçekten istiyor musunuz?\n"
 "(evet/hayır ya da yes/no): "
 
-#: fdisk/cfdisk.c:1768
+#: fdisk/cfdisk.c:1769
 msgid "no"
 msgstr "hayır"
 
-#: fdisk/cfdisk.c:1770
+#: fdisk/cfdisk.c:1771
 msgid "Did not write partition table to disk"
 msgstr "Disk bölümleme tablosu diske yazılmadı"
 
-#: fdisk/cfdisk.c:1772
+#: fdisk/cfdisk.c:1773
 msgid "yes"
 msgstr "evet"
 
-#: fdisk/cfdisk.c:1776
+#: fdisk/cfdisk.c:1777
 msgid "Please enter `yes' or `no'"
 msgstr "Lütfen ya `evet´ ya da `hayır´ yazınız"
 
-#: fdisk/cfdisk.c:1780
+#: fdisk/cfdisk.c:1781
 msgid "Writing partition table to disk..."
 msgstr "Disk bölümleme tablosu diske yazılıyor..."
 
-#: fdisk/cfdisk.c:1805 fdisk/cfdisk.c:1809
+#: fdisk/cfdisk.c:1806 fdisk/cfdisk.c:1810
 msgid "Wrote partition table to disk"
 msgstr "Disk bölümleme tablosu diske yazıldı"
 
-#: fdisk/cfdisk.c:1807
+#: fdisk/cfdisk.c:1808
 #, fuzzy
 msgid ""
 "Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx"
@@ -1967,86 +1967,86 @@ msgstr ""
 "Bölümleme tablosu yazıldı ama tablo yeniden okunamadı. Sistemi yeniden "
 "başlatın."
 
-#: fdisk/cfdisk.c:1817
+#: fdisk/cfdisk.c:1818
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
 msgstr ""
 "Önyükleme için imlenmiş hiç birincil disk bölümü yok. DOS MBR bunu "
 "başlatamayabilir."
 
-#: fdisk/cfdisk.c:1819
+#: fdisk/cfdisk.c:1820
 msgid ""
 "More than one primary partition is marked bootable. DOS MBR cannot boot this."
 msgstr ""
 "Önyükleme için imlenmiş çok sayıda birincil disk bölümü var. DOS MBR bunu "
 "başlatamayabilir."
 
-#: fdisk/cfdisk.c:1877 fdisk/cfdisk.c:1996 fdisk/cfdisk.c:2080
+#: fdisk/cfdisk.c:1878 fdisk/cfdisk.c:1997 fdisk/cfdisk.c:2081
 msgid "Enter filename or press RETURN to display on screen: "
 msgstr "Dosya ismini girin ya da ENTER tuşuna basın: "
 
-#: fdisk/cfdisk.c:1886 fdisk/cfdisk.c:2004 fdisk/cfdisk.c:2088
+#: fdisk/cfdisk.c:1887 fdisk/cfdisk.c:2005 fdisk/cfdisk.c:2089
 #, c-format
 msgid "Cannot open file '%s'"
 msgstr "'%s' dosyası açılamıyor"
 
-#: fdisk/cfdisk.c:1897
+#: fdisk/cfdisk.c:1898
 #, c-format
 msgid "Disk Drive: %s\n"
 msgstr "Sabit Disk: %s\n"
 
-#: fdisk/cfdisk.c:1899
+#: fdisk/cfdisk.c:1900
 msgid "Sector 0:\n"
 msgstr "Sektör 0:\n"
 
-#: fdisk/cfdisk.c:1906
+#: fdisk/cfdisk.c:1907
 #, c-format
 msgid "Sector %d:\n"
 msgstr "Sektör %d:\n"
 
-#: fdisk/cfdisk.c:1926
+#: fdisk/cfdisk.c:1927
 msgid "   None   "
 msgstr "   Yok    "
 
-#: fdisk/cfdisk.c:1928
+#: fdisk/cfdisk.c:1929
 msgid "   Pri/Log"
 msgstr "   Bir/Man"
 
-#: fdisk/cfdisk.c:1930
+#: fdisk/cfdisk.c:1931
 msgid "   Primary"
 msgstr "  Birincil "
 
-#: fdisk/cfdisk.c:1932
+#: fdisk/cfdisk.c:1933
 msgid "   Logical"
 msgstr " Mantıksal "
 
-#: fdisk/cfdisk.c:1970 fdisk/fdisk.c:1783 fdisk/fdisk.c:2122
+#: fdisk/cfdisk.c:1971 fdisk/fdisk.c:1783 fdisk/fdisk.c:2122
 #: fdisk/fdisksgilabel.c:227 fdisk/fdisksunlabel.c:616 fdisk/sfdisk.c:638
 msgid "Unknown"
 msgstr "Bilinmeyen"
 
-#: fdisk/cfdisk.c:1976 fdisk/cfdisk.c:2444 fdisk/fdisksunlabel.c:39
+#: fdisk/cfdisk.c:1977 fdisk/cfdisk.c:2445 fdisk/fdisksunlabel.c:39
 msgid "Boot"
 msgstr "Açılış"
 
-#: fdisk/cfdisk.c:1978
+#: fdisk/cfdisk.c:1979
 #, c-format
 msgid "(%02X)"
 msgstr "(%02X)"
 
-#: fdisk/cfdisk.c:1980
+#: fdisk/cfdisk.c:1981
 msgid "None"
 msgstr "Hiçbiri"
 
-#: fdisk/cfdisk.c:2015 fdisk/cfdisk.c:2099
+#: fdisk/cfdisk.c:2016 fdisk/cfdisk.c:2100
 #, c-format
 msgid "Partition Table for %s\n"
 msgstr "%s için Disk Bölümleme Tablosu\n"
 
-#: fdisk/cfdisk.c:2017
+#: fdisk/cfdisk.c:2018
 msgid "               First       Last\n"
 msgstr " Bölüm         İlk          Son              Sektör    Dosya\n"
 
-#: fdisk/cfdisk.c:2018
+#: fdisk/cfdisk.c:2019
 msgid ""
 " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
 "Flag\n"
@@ -2054,7 +2054,7 @@ msgstr ""
 " # Türü       Sektör      Sektör    Başl     Sayısı    Sistemi   Türü    "
 "Flama\n"
 
-#: fdisk/cfdisk.c:2019
+#: fdisk/cfdisk.c:2020
 msgid ""
 "-- ------- ----------- ----------- ------ ----------- -------------------- "
 "----\n"
@@ -2062,472 +2062,472 @@ msgstr ""
 "-- -------   --------    --------- ------  ---------  ---------  -----  "
 "------\n"
 
-#: fdisk/cfdisk.c:2102
+#: fdisk/cfdisk.c:2103
 #, fuzzy
 msgid "         ---Starting----      ----Ending-----    Start     Number of\n"
 msgstr "         --Başlangıç---      ----Bitiş-----   Başlangıç  Sektör\n"
 
-#: fdisk/cfdisk.c:2103
+#: fdisk/cfdisk.c:2104
 #, fuzzy
 msgid " # Flags Head Sect  Cyl   ID  Head Sect  Cyl     Sector    Sectors\n"
 msgstr " # Flama Kafa Sekt Sld  Kiml Kafa Sekt Sld    Sektörü   Sayısı\n"
 
-#: fdisk/cfdisk.c:2104
+#: fdisk/cfdisk.c:2105
 #, fuzzy
 msgid "-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- -----------\n"
 msgstr "-- ----- ---- ---- ---- ---- ---- ---- ----  --------- ---------\n"
 
-#: fdisk/cfdisk.c:2137
+#: fdisk/cfdisk.c:2138
 msgid "Raw"
 msgstr "Ham"
 
-#: fdisk/cfdisk.c:2137
+#: fdisk/cfdisk.c:2138
 msgid "Print the table using raw data format"
 msgstr "Tablo temel veri biçemi olarak yazılır"
 
-#: fdisk/cfdisk.c:2138 fdisk/cfdisk.c:2241
+#: fdisk/cfdisk.c:2139 fdisk/cfdisk.c:2242
 msgid "Sectors"
 msgstr "Sektör"
 
-#: fdisk/cfdisk.c:2138
+#: fdisk/cfdisk.c:2139
 msgid "Print the table ordered by sectors"
 msgstr "Tabloyu sektörlere dağılımına göre yazar"
 
-#: fdisk/cfdisk.c:2139
+#: fdisk/cfdisk.c:2140
 msgid "Table"
 msgstr "Tablo"
 
-#: fdisk/cfdisk.c:2139
+#: fdisk/cfdisk.c:2140
 msgid "Just print the partition table"
 msgstr "Disk bölümleme tablosunu yazar"
 
-#: fdisk/cfdisk.c:2140
+#: fdisk/cfdisk.c:2141
 msgid "Don't print the table"
 msgstr "Tablo yazılamıyor"
 
-#: fdisk/cfdisk.c:2168
+#: fdisk/cfdisk.c:2169
 msgid "Help Screen for cfdisk"
 msgstr "cfdisk Yardım Ekranı"
 
-#: fdisk/cfdisk.c:2170
+#: fdisk/cfdisk.c:2171
 msgid "This is cfdisk, a curses based disk partitioning program, which"
 msgstr ""
 "Sabit diskinizdeki disk bölümlerini oluşturabilmenizi, silebilmenizi ve"
 
-#: fdisk/cfdisk.c:2171
+#: fdisk/cfdisk.c:2172
 msgid "allows you to create, delete and modify partitions on your hard"
 msgstr ""
 "değiştirebilmenizi sağlayan etkileşimli bir disk bölümleme uygulamasıdır."
 
-#: fdisk/cfdisk.c:2172
+#: fdisk/cfdisk.c:2173
 msgid "disk drive."
 msgstr " "
 
-#: fdisk/cfdisk.c:2174
+#: fdisk/cfdisk.c:2175
 msgid "Copyright (C) 1994-1999 Kevin E. Martin & aeb"
 msgstr "Telif Hakkı (C) 1994-1999 Kevin E. Martin & aeb"
 
-#: fdisk/cfdisk.c:2176
+#: fdisk/cfdisk.c:2177
 msgid "Command      Meaning"
 msgstr " Komut       Anlamı"
 
-#: fdisk/cfdisk.c:2177
+#: fdisk/cfdisk.c:2178
 msgid "-------      -------"
 msgstr " -----       ------"
 
-#: fdisk/cfdisk.c:2178
+#: fdisk/cfdisk.c:2179
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          Seçilen disk bölümünün açılış flamasını kaldırır/indirir"
 
-#: fdisk/cfdisk.c:2179
+#: fdisk/cfdisk.c:2180
 msgid "  d          Delete the current partition"
 msgstr "  d          Seçilen disk bölümünü siler"
 
-#: fdisk/cfdisk.c:2180
+#: fdisk/cfdisk.c:2181
 msgid "  g          Change cylinders, heads, sectors-per-track parameters"
 msgstr "  g          Silindir, kafa, sektör/İz parametrelerini değiştirir"
 
-#: fdisk/cfdisk.c:2181
+#: fdisk/cfdisk.c:2182
 msgid "             WARNING: This option should only be used by people who"
 msgstr "             UYARI: Bu seçenek sadece ne yaptığını iyi bilen kişilerce"
 
-#: fdisk/cfdisk.c:2182
+#: fdisk/cfdisk.c:2183
 msgid "             know what they are doing."
 msgstr "             kullanılabilir."
 
-#: fdisk/cfdisk.c:2183
+#: fdisk/cfdisk.c:2184
 msgid "  h          Print this screen"
 msgstr "  h          Bu yardım ekranını gösterir"
 
-#: fdisk/cfdisk.c:2184
+#: fdisk/cfdisk.c:2185
 msgid "  m          Maximize disk usage of the current partition"
 msgstr "  m          Seçilen disk bölümünü kalan boş yere sığdırır"
 
-#: fdisk/cfdisk.c:2185
+#: fdisk/cfdisk.c:2186
 msgid "             Note: This may make the partition incompatible with"
 msgstr "             Bilgi: Disk bölümünü DOS, OS/2 ve benzeri sistemlerle"
 
-#: fdisk/cfdisk.c:2186
+#: fdisk/cfdisk.c:2187
 msgid "             DOS, OS/2, ..."
 msgstr "             uyumsuzluk oluşturabilir."
 
-#: fdisk/cfdisk.c:2187
+#: fdisk/cfdisk.c:2188
 msgid "  n          Create new partition from free space"
 msgstr "  n          Boş alanda yeni bir disk bölümü oluşturur"
 
-#: fdisk/cfdisk.c:2188
+#: fdisk/cfdisk.c:2189
 msgid "  p          Print partition table to the screen or to a file"
 msgstr "  p          Disk bölümleme tablosunu ekrana ya da bir dosyaya yazar"
 
-#: fdisk/cfdisk.c:2189
+#: fdisk/cfdisk.c:2190
 msgid "             There are several different formats for the partition"
 msgstr ""
 "             Disk bölümleme tablosunu farklı biçemlerde elde edebilirsiniz."
 
-#: fdisk/cfdisk.c:2190
+#: fdisk/cfdisk.c:2191
 msgid "             that you can choose from:"
 msgstr "             Bu biçemler:"
 
-#: fdisk/cfdisk.c:2191
+#: fdisk/cfdisk.c:2192
 msgid "                r - Raw data (exactly what would be written to disk)"
 msgstr "                r - Temel veri (verinin diske yazılan biçemi)"
 
-#: fdisk/cfdisk.c:2192
+#: fdisk/cfdisk.c:2193
 msgid "                s - Table ordered by sectors"
 msgstr "                s - Disk bölümlerinin sektörlere dağılımını gösterir"
 
-#: fdisk/cfdisk.c:2193
+#: fdisk/cfdisk.c:2194
 msgid "                t - Table in raw format"
 msgstr "                t - Geleneksel disk bölümleme tablosu"
 
-#: fdisk/cfdisk.c:2194
+#: fdisk/cfdisk.c:2195
 msgid "  q          Quit program without writing partition table"
 msgstr ""
 "  q          Disk bölümleme tablosu diskteki yerine kaydedilmeden çıkılır"
 
-#: fdisk/cfdisk.c:2195
+#: fdisk/cfdisk.c:2196
 msgid "  t          Change the filesystem type"
 msgstr "  t          Dosya sistemi türünü değiştirir"
 
-#: fdisk/cfdisk.c:2196
+#: fdisk/cfdisk.c:2197
 msgid "  u          Change units of the partition size display"
 msgstr "  u          Disk bölümü boyunun birimini değiştirir"
 
-#: fdisk/cfdisk.c:2197
+#: fdisk/cfdisk.c:2198
 msgid "             Rotates through MB, sectors and cylinders"
 msgstr "             MB, sektör, silindir birimleri sırayla yer değiştirir"
 
-#: fdisk/cfdisk.c:2198
+#: fdisk/cfdisk.c:2199
 msgid "  W          Write partition table to disk (must enter upper case W)"
 msgstr "  W          Disk bölümleme tablosunu diskteki yerine yazar. (Büyük W)"
 
-#: fdisk/cfdisk.c:2199
+#: fdisk/cfdisk.c:2200
 msgid "             Since this might destroy data on the disk, you must"
 msgstr "             Diskteki veriyi yanlışlıkla kaybetmemek için "
 
-#: fdisk/cfdisk.c:2200
+#: fdisk/cfdisk.c:2201
 msgid "             either confirm or deny the write by entering `yes' or"
 msgstr ""
 "             'evet' ya da 'hayır' yazmanız istenerek veriyi diske yazdırıp,"
 
-#: fdisk/cfdisk.c:2201
+#: fdisk/cfdisk.c:2202
 msgid "             `no'"
 msgstr "             yazdırmayacağınıza kesin karar verebilirsiniz"
 
-#: fdisk/cfdisk.c:2202
+#: fdisk/cfdisk.c:2203
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "Yukarı Ok    Kürsörü önceki disk bölümüne kaydırır"
 
-#: fdisk/cfdisk.c:2203
+#: fdisk/cfdisk.c:2204
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "Aşağı Ok     Kürsörü sonraki disk bölümüne kaydırır"
 
-#: fdisk/cfdisk.c:2204
+#: fdisk/cfdisk.c:2205
 msgid "CTRL-L       Redraws the screen"
 msgstr "CTRL-L       Ekranı tazeler"
 
-#: fdisk/cfdisk.c:2205
+#: fdisk/cfdisk.c:2206
 msgid "  ?          Print this screen"
 msgstr "  ?          Bu yardım ekranını gösterir"
 
-#: fdisk/cfdisk.c:2207
+#: fdisk/cfdisk.c:2208
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Bilgi: Kaydet (W) komutu dışında tüm komutları büyük ya da küçük harf"
 
-#: fdisk/cfdisk.c:2208
+#: fdisk/cfdisk.c:2209
 msgid "case letters (except for Writes)."
 msgstr "olarak kullanabilirsiniz."
 
-#: fdisk/cfdisk.c:2239 fdisk/fdisksunlabel.c:232
+#: fdisk/cfdisk.c:2240 fdisk/fdisksunlabel.c:232
 msgid "Cylinders"
 msgstr "Silindir"
 
-#: fdisk/cfdisk.c:2239
+#: fdisk/cfdisk.c:2240
 msgid "Change cylinder geometry"
 msgstr "Silindir geometrisini değiştirir"
 
-#: fdisk/cfdisk.c:2240 fdisk/fdisksunlabel.c:230
+#: fdisk/cfdisk.c:2241 fdisk/fdisksunlabel.c:230
 msgid "Heads"
 msgstr "Kafa"
 
-#: fdisk/cfdisk.c:2240
+#: fdisk/cfdisk.c:2241
 msgid "Change head geometry"
 msgstr "Kafa geometrisini değiştirir"
 
-#: fdisk/cfdisk.c:2241
+#: fdisk/cfdisk.c:2242
 msgid "Change sector geometry"
 msgstr "Sektör geometrisini değiştirir"
 
-#: fdisk/cfdisk.c:2242
+#: fdisk/cfdisk.c:2243
 msgid "Done"
 msgstr "Tamam"
 
-#: fdisk/cfdisk.c:2242
+#: fdisk/cfdisk.c:2243
 msgid "Done with changing geometry"
 msgstr "Geometri değişikliği yapıldı"
 
-#: fdisk/cfdisk.c:2255
+#: fdisk/cfdisk.c:2256
 msgid "Enter the number of cylinders: "
 msgstr "Silindir sayısını verin: "
 
-#: fdisk/cfdisk.c:2266 fdisk/cfdisk.c:2839
+#: fdisk/cfdisk.c:2267 fdisk/cfdisk.c:2840
 msgid "Illegal cylinders value"
 msgstr "Silindir sayısı kuraldışı"
 
-#: fdisk/cfdisk.c:2272
+#: fdisk/cfdisk.c:2273
 msgid "Enter the number of heads: "
 msgstr "Kafa sayısını verin: "
 
-#: fdisk/cfdisk.c:2279 fdisk/cfdisk.c:2849
+#: fdisk/cfdisk.c:2280 fdisk/cfdisk.c:2850
 msgid "Illegal heads value"
 msgstr "Kafa sayısı kuraldışı"
 
-#: fdisk/cfdisk.c:2285
+#: fdisk/cfdisk.c:2286
 msgid "Enter the number of sectors per track: "
 msgstr "sektör/iz sayısını verin: "
 
-#: fdisk/cfdisk.c:2292 fdisk/cfdisk.c:2856
+#: fdisk/cfdisk.c:2293 fdisk/cfdisk.c:2857
 msgid "Illegal sectors value"
 msgstr "sektör sayısı kuraldışı"
 
-#: fdisk/cfdisk.c:2395
+#: fdisk/cfdisk.c:2396
 msgid "Enter filesystem type: "
 msgstr "Dosya sistemi türünü verin: "
 
-#: fdisk/cfdisk.c:2413
+#: fdisk/cfdisk.c:2414
 msgid "Cannot change FS Type to empty"
 msgstr "Dosya sistemi türü boş olarak değiştirilemez"
 
-#: fdisk/cfdisk.c:2415
+#: fdisk/cfdisk.c:2416
 msgid "Cannot change FS Type to extended"
 msgstr "Dosya sistemi türü ek olarak değiştirilemez"
 
-#: fdisk/cfdisk.c:2446
+#: fdisk/cfdisk.c:2447
 #, c-format
 msgid "Unk(%02X)"
 msgstr "Ne?(%02X)"
 
-#: fdisk/cfdisk.c:2449 fdisk/cfdisk.c:2452
+#: fdisk/cfdisk.c:2450 fdisk/cfdisk.c:2453
 msgid ", NC"
 msgstr ", NC"
 
-#: fdisk/cfdisk.c:2457 fdisk/cfdisk.c:2460
+#: fdisk/cfdisk.c:2458 fdisk/cfdisk.c:2461
 msgid "NC"
 msgstr "NC"
 
-#: fdisk/cfdisk.c:2468
+#: fdisk/cfdisk.c:2469
 msgid "Pri/Log"
 msgstr "Bir/Man"
 
-#: fdisk/cfdisk.c:2475
+#: fdisk/cfdisk.c:2476
 #, c-format
 msgid "Unknown (%02X)"
 msgstr "Bilinmeyen (%02X)"
 
-#: fdisk/cfdisk.c:2544
+#: fdisk/cfdisk.c:2545
 #, c-format
 msgid "Disk Drive: %s"
 msgstr "Sabit Disk: %s"
 
-#: fdisk/cfdisk.c:2551
+#: fdisk/cfdisk.c:2552
 #, c-format
 msgid "Size: %lld bytes, %lld MB"
 msgstr "Boyut: %lld bayt, %lld MB"
 
-#: fdisk/cfdisk.c:2554
+#: fdisk/cfdisk.c:2555
 #, c-format
 msgid "Size: %lld bytes, %lld.%lld GB"
 msgstr "Boyut: %lld bayt, %lld.%lld GB"
 
-#: fdisk/cfdisk.c:2558
+#: fdisk/cfdisk.c:2559
 #, c-format
 msgid "Heads: %d   Sectors per Track: %d   Cylinders: %lld"
 msgstr "Kafa: %d        Sektör/İz: %d       Silindir: %lld  "
 
-#: fdisk/cfdisk.c:2562 login-utils/chfn.c:377
+#: fdisk/cfdisk.c:2563 login-utils/chfn.c:377
 msgid "Name"
 msgstr "İsim"
 
-#: fdisk/cfdisk.c:2563
+#: fdisk/cfdisk.c:2564
 msgid "Flags"
 msgstr "Flama"
 
-#: fdisk/cfdisk.c:2564
+#: fdisk/cfdisk.c:2565
 msgid "Part Type"
 msgstr "Bölüm Türü"
 
-#: fdisk/cfdisk.c:2565
+#: fdisk/cfdisk.c:2566
 msgid "FS Type"
 msgstr "DS Türü"
 
-#: fdisk/cfdisk.c:2566
+#: fdisk/cfdisk.c:2567
 msgid "[Label]"
 msgstr "[Etiket]"
 
-#: fdisk/cfdisk.c:2568
+#: fdisk/cfdisk.c:2569
 msgid "    Sectors"
 msgstr "   Sektör  "
 
-#: fdisk/cfdisk.c:2570
+#: fdisk/cfdisk.c:2571
 msgid "  Cylinders"
 msgstr "  Silindir"
 
-#: fdisk/cfdisk.c:2572
+#: fdisk/cfdisk.c:2573
 msgid "  Size (MB)"
 msgstr "  Boy (MB) "
 
-#: fdisk/cfdisk.c:2574
+#: fdisk/cfdisk.c:2575
 msgid "  Size (GB)"
 msgstr "  Boy (GB) "
 
-#: fdisk/cfdisk.c:2629
+#: fdisk/cfdisk.c:2630
 msgid "Bootable"
 msgstr "Açılış"
 
-#: fdisk/cfdisk.c:2629
+#: fdisk/cfdisk.c:2630
 msgid "Toggle bootable flag of the current partition"
 msgstr "Seçilen disk bölümünde Açılış flamasını kaldırır/indirir"
 
-#: fdisk/cfdisk.c:2630
+#: fdisk/cfdisk.c:2631
 msgid "Delete"
 msgstr "Sil"
 
-#: fdisk/cfdisk.c:2630
+#: fdisk/cfdisk.c:2631
 msgid "Delete the current partition"
 msgstr "Seçilen disk bölümünü kaldırır"
 
-#: fdisk/cfdisk.c:2631
+#: fdisk/cfdisk.c:2632
 msgid "Geometry"
 msgstr "Geometri"
 
-#: fdisk/cfdisk.c:2631
+#: fdisk/cfdisk.c:2632
 msgid "Change disk geometry (experts only)"
 msgstr "Disk geometrisini değiştirir (uzmanlar için)"
 
-#: fdisk/cfdisk.c:2632
+#: fdisk/cfdisk.c:2633
 msgid "Help"
 msgstr "Yardım"
 
-#: fdisk/cfdisk.c:2632
+#: fdisk/cfdisk.c:2633
 msgid "Print help screen"
 msgstr "Yardım ekranını gösterir"
 
-#: fdisk/cfdisk.c:2633
+#: fdisk/cfdisk.c:2634
 msgid "Maximize"
 msgstr "Sığdır"
 
-#: fdisk/cfdisk.c:2633
+#: fdisk/cfdisk.c:2634
 msgid "Maximize disk usage of the current partition (experts only)"
 msgstr "Seçilen disk bölümünü kalan yere göre ayarlar (uzmanlar için)"
 
-#: fdisk/cfdisk.c:2634
+#: fdisk/cfdisk.c:2635
 msgid "New"
 msgstr "Yeni"
 
-#: fdisk/cfdisk.c:2634
+#: fdisk/cfdisk.c:2635
 msgid "Create new partition from free space"
 msgstr "Boş alanda yeni bir disk bölümü oluşturur"
 
-#: fdisk/cfdisk.c:2635
+#: fdisk/cfdisk.c:2636
 msgid "Print"
 msgstr "Yaz"
 
-#: fdisk/cfdisk.c:2635
+#: fdisk/cfdisk.c:2636
 msgid "Print partition table to the screen or to a file"
 msgstr "Disk bölümleme tablosunu ekrana ya da bir dosyaya yazar"
 
-#: fdisk/cfdisk.c:2636
+#: fdisk/cfdisk.c:2637
 msgid "Quit"
 msgstr "Çık"
 
-#: fdisk/cfdisk.c:2636
+#: fdisk/cfdisk.c:2637
 msgid "Quit program without writing partition table"
 msgstr "Disk bölümleme tablosunu diske kaydetmeden çıkar"
 
-#: fdisk/cfdisk.c:2637
+#: fdisk/cfdisk.c:2638
 msgid "Type"
 msgstr "Türü"
 
-#: fdisk/cfdisk.c:2637
+#: fdisk/cfdisk.c:2638
 msgid "Change the filesystem type (DOS, Linux, OS/2 and so on)"
 msgstr "Dosya sistemi türünü değiştirir (DOS, Linux, OS/2,..,vs)"
 
-#: fdisk/cfdisk.c:2638
+#: fdisk/cfdisk.c:2639
 msgid "Units"
 msgstr "Birim"
 
-#: fdisk/cfdisk.c:2638
+#: fdisk/cfdisk.c:2639
 msgid "Change units of the partition size display (MB, sect, cyl)"
 msgstr "Gösterilecek boy birimini değiştirir (MB, sekt, sld)"
 
-#: fdisk/cfdisk.c:2639
+#: fdisk/cfdisk.c:2640
 msgid "Write"
 msgstr "Kaydet"
 
-#: fdisk/cfdisk.c:2639
+#: fdisk/cfdisk.c:2640
 msgid "Write partition table to disk (this might destroy data)"
 msgstr ""
 "Disk bölümleme tablosunu diske kaydeder (bu işlem verilerin kaybına sebep "
 "olur)"
 
-#: fdisk/cfdisk.c:2686
+#: fdisk/cfdisk.c:2687
 msgid "Cannot make this partition bootable"
 msgstr "Bu disk bölümüne açılış kaydı yapılamaz"
 
-#: fdisk/cfdisk.c:2696
+#: fdisk/cfdisk.c:2697
 msgid "Cannot delete an empty partition"
 msgstr "Bir boş disk bölümü silinemez"
 
-#: fdisk/cfdisk.c:2716 fdisk/cfdisk.c:2718
+#: fdisk/cfdisk.c:2717 fdisk/cfdisk.c:2719
 msgid "Cannot maximize this partition"
 msgstr "Bu disk bölümü sığdırılamıyor"
 
-#: fdisk/cfdisk.c:2726
+#: fdisk/cfdisk.c:2727
 msgid "This partition is unusable"
 msgstr "Bu disk bölümü kullanışsız"
 
-#: fdisk/cfdisk.c:2728
+#: fdisk/cfdisk.c:2729
 msgid "This partition is already in use"
 msgstr "Bu disk bölümü zaten kullanımda"
 
-#: fdisk/cfdisk.c:2745
+#: fdisk/cfdisk.c:2746
 msgid "Cannot change the type of an empty partition"
 msgstr "Bir boş disk bölümünün türü değiştirilemez"
 
-#: fdisk/cfdisk.c:2772 fdisk/cfdisk.c:2778
+#: fdisk/cfdisk.c:2773 fdisk/cfdisk.c:2779
 msgid "No more partitions"
 msgstr "Başka disk bölümü yok"
 
-#: fdisk/cfdisk.c:2785
+#: fdisk/cfdisk.c:2786
 msgid "Illegal command"
 msgstr "Kuraldışı komut"
 
-#: fdisk/cfdisk.c:2795
+#: fdisk/cfdisk.c:2796
 #, c-format
 msgid "Copyright (C) 1994-2002 Kevin E. Martin & aeb\n"
 msgstr "Telif Hakkı © 1994-2002 Kevin E. Martin & aeb\n"
 
-#: fdisk/cfdisk.c:2802
+#: fdisk/cfdisk.c:2803
 #, c-format
 msgid ""
 "\n"
@@ -2929,7 +2929,7 @@ msgid ""
 " -b <size>             sector size (512, 1024, 2048 or 4096)\n"
 " -c[=<mode>]           compatible mode: 'dos' or 'nondos' (default)\n"
 " -h                    print this help text\n"
-" -u[=<unit>]           dysplay units: 'cylinders' or 'sectors' (default)\n"
+" -u[=<unit>]           display units: 'cylinders' or 'sectors' (default)\n"
 " -v                    print program version\n"
 " -C <number>           specify the number of cylinders\n"
 " -H <number>           specify the number of heads\n"
@@ -9145,7 +9145,7 @@ msgstr "mount: hız ayarlanamıyor: %s"
 msgid "mount: cannot set user id: %s"
 msgstr "mount: hız ayarlanamıyor: %s"
 
-#: mount/mount.c:729 mount/mount.c:1923
+#: mount/mount.c:729 mount/mount.c:1925
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: ast süreç oluşturulamıyor: %s"
@@ -9289,62 +9289,62 @@ msgstr "umount: %s meşgul- salt-okunur olarak yeniden bağlandı\n"
 msgid "mount: warning: %s seems to be mounted read-only.\n"
 msgstr "umount: %s meşgul- salt-okunur olarak yeniden bağlandı\n"
 
-#: mount/mount.c:1480
+#: mount/mount.c:1482
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr "mount: Dosya sistemi türü saptanamadı ve belirtilmemiş"
 
-#: mount/mount.c:1483
+#: mount/mount.c:1485
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: dosya sistemi türünü belirtmelisiniz"
 
-#: mount/mount.c:1486
+#: mount/mount.c:1488
 msgid "mount: mount failed"
 msgstr "mount: bağlanamadı"
 
-#: mount/mount.c:1492 mount/mount.c:1529
+#: mount/mount.c:1494 mount/mount.c:1531
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: bağlama noktası %s bir dizin değil"
 
-#: mount/mount.c:1494
+#: mount/mount.c:1496
 msgid "mount: permission denied"
 msgstr "mount: erişim engellendi"
 
-#: mount/mount.c:1496
+#: mount/mount.c:1498
 msgid "mount: must be superuser to use mount"
 msgstr "mount: root tarafından kullanılmalı"
 
-#: mount/mount.c:1500 mount/mount.c:1504
+#: mount/mount.c:1502 mount/mount.c:1506
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s meşgul"
 
-#: mount/mount.c:1506
+#: mount/mount.c:1508
 msgid "mount: proc already mounted"
 msgstr "mount: proc zaten bağlı"
 
-#: mount/mount.c:1508
+#: mount/mount.c:1510
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: ya %s zaten bağlı ya da %s meşgul"
 
-#: mount/mount.c:1514
+#: mount/mount.c:1516
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: bağlama noktası %s yok"
 
-#: mount/mount.c:1516
+#: mount/mount.c:1518
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: bağlama noktası %s hiçbir yere sembolik bağ sağlamıyor"
 
-#: mount/mount.c:1521
+#: mount/mount.c:1523
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: özel aygıt %s yok"
 
-#: mount/mount.c:1533
+#: mount/mount.c:1535
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -9353,12 +9353,12 @@ msgstr ""
 "mount: özel aygıt %s yok\n"
 "       (dosya yolu öneki bir dizin değil)\n"
 
-#: mount/mount.c:1545
+#: mount/mount.c:1547
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s zaten bağlı değil, ya da seçenek yanlış"
 
-#: mount/mount.c:1547
+#: mount/mount.c:1549
 #, fuzzy, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -9367,13 +9367,13 @@ msgstr ""
 "mount: dosya sistemi türü yanlış, seçenek yanlış, %s üzerinde superblok\n"
 "       hatalı, karakter kümesi eksik, ya da başka bir hata olabilir"
 
-#: mount/mount.c:1554
+#: mount/mount.c:1556
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
 msgstr ""
 
-#: mount/mount.c:1563
+#: mount/mount.c:1565
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -9381,7 +9381,7 @@ msgstr ""
 "       (fiilen ide-scsi kullanıldığına göre bu bir IDE aygıt\n"
 "        olabilir mi? Burada sr0, sda gibi birşeyler olmalı, değil mi?)"
 
-#: mount/mount.c:1568
+#: mount/mount.c:1570
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -9389,7 +9389,7 @@ msgstr ""
 "       (içindeki bir mantıksal disk bölümü yerine\n"
 "        bir ek disk bölümünü bağlamaya çalışmıyor musunuz?)"
 
-#: mount/mount.c:1575
+#: mount/mount.c:1577
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -9397,53 +9397,53 @@ msgstr ""
 "       Bazı durumlarda syslog'da bulunan bilgiler yararlıdır.\n"
 "       dmesg | tail  gibi birşeyler deneyin\n"
 
-#: mount/mount.c:1581
+#: mount/mount.c:1583
 msgid "mount table full"
 msgstr "bağ tablosu dolu"
 
-#: mount/mount.c:1583
+#: mount/mount.c:1585
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: superblok okunamıyor"
 
-#: mount/mount.c:1589
+#: mount/mount.c:1591
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: aygıt bilinmiyor"
 
-#: mount/mount.c:1594
+#: mount/mount.c:1596
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: dosya sistemi türü '%s' bilinmiyor"
 
-#: mount/mount.c:1606
+#: mount/mount.c:1608
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: herhalde %s kastettiniz"
 
-#: mount/mount.c:1609
+#: mount/mount.c:1611
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: 'iso9660' kastetmiş olabilir misiniz?"
 
-#: mount/mount.c:1612
+#: mount/mount.c:1614
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: 'vfat' kastetmiş olabilir misiniz?"
 
-#: mount/mount.c:1615
+#: mount/mount.c:1617
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: %s yanlış aygıt numarasına sahip ya da dosya sistemi türü %s "
 "desteklenmiyor"
 
-#: mount/mount.c:1623
+#: mount/mount.c:1625
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr ""
 "mount: %s bir blok aygıtı olmayabilir mi ve durum bilgileri alınamayabilir "
 "mi?"
 
-#: mount/mount.c:1625
+#: mount/mount.c:1627
 #, fuzzy, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -9452,52 +9452,52 @@ msgstr ""
 "mount: çekirdek %s aygıtını bir blok aygıtı olarak tanımıyor\n"
 "       (`insmod sürücü' denenebilir?)"
 
-#: mount/mount.c:1628
+#: mount/mount.c:1630
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s bir blok aygıtı değil ( `-o loop' denenebilir mi?)"
 
-#: mount/mount.c:1631
+#: mount/mount.c:1633
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s bir blok aygıtı değil"
 
-#: mount/mount.c:1636
+#: mount/mount.c:1638
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s geçerli bir blok aygıtı değil"
 
-#: mount/mount.c:1639
+#: mount/mount.c:1641
 msgid "block device "
 msgstr "blok aygıtı "
 
-#: mount/mount.c:1641
+#: mount/mount.c:1643
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: %s%s salt-okunur bağlanamıyor"
 
-#: mount/mount.c:1645
+#: mount/mount.c:1647
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr ""
 "mount: %s%s yazma korumalı olduğu halde alenen `-w' seçeneği belirtilmiş"
 
-#: mount/mount.c:1649
+#: mount/mount.c:1651
 #, fuzzy, c-format
 msgid "mount: cannot remount %s%s read-write, is write-protected"
 msgstr "mount: %s%s salt-okunur bağlanamıyor"
 
-#: mount/mount.c:1664
+#: mount/mount.c:1666
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s yazma korumalı, salt-okunur olarak bağlanıyor"
 
-#: mount/mount.c:1672
+#: mount/mount.c:1674
 #, fuzzy, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: %s zaten %s üzerinde bağlı\n"
 
-#: mount/mount.c:1690
+#: mount/mount.c:1692
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9507,22 +9507,22 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 
-#: mount/mount.c:1769
+#: mount/mount.c:1771
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr "mount: tür belirtilmemiş - ':' içerdiğinden nfs varsayılıyor\n"
 
-#: mount/mount.c:1775
+#: mount/mount.c:1777
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr "mount: tür belirtilmemiş - '//' öneki içerdiğinden cifs varsayılıyor\n"
 
-#: mount/mount.c:1870
+#: mount/mount.c:1872
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s zaten %s üzerinde bağlı\n"
 
-#: mount/mount.c:2005
+#: mount/mount.c:2007
 #, fuzzy, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9585,24 +9585,24 @@ msgstr ""
 "Çeviri hatalarını <gnu-tr@belgeler.org> adresine bildiriniz.\n"
 "Daha fazla bilgi edinmek için 'man 8 mount' yazabilirsiniz.\n"
 
-#: mount/mount.c:2333
+#: mount/mount.c:2335
 #, fuzzy, c-format
 msgid "mount: only root can do that (effective UID is %u)"
 msgstr "mount: bunu sadece root yapabilir"
 
-#: mount/mount.c:2336
+#: mount/mount.c:2338
 msgid "mount: only root can do that"
 msgstr "mount: bunu sadece root yapabilir"
 
-#: mount/mount.c:2347
+#: mount/mount.c:2349
 msgid "nothing was mounted"
 msgstr "hiçbir şey bağlanmadı"
 
-#: mount/mount.c:2365 mount/mount.c:2391
+#: mount/mount.c:2367 mount/mount.c:2393
 msgid "mount: no such partition found"
 msgstr "mount: böyle bir disk bölümü yok"
 
-#: mount/mount.c:2368
+#: mount/mount.c:2370
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %s  %s ya da %s içinde bulunamıyor"
@@ -10642,54 +10642,49 @@ msgstr ""
 "kullanımı: %s [ [-q msqkiml] [-m shmkiml] [-s semkiml]\n"
 "              [-Q msganh] [-M shmanh] [-S semanh] ... ]\n"
 
-#: sys-utils/ipcrm.c:179
-#, c-format
-msgid "%s: illegal option -- %c\n"
-msgstr "%s: kuraldışı seçenek -- %c\n"
-
-#: sys-utils/ipcrm.c:191
+#: sys-utils/ipcrm.c:189
 #, c-format
 msgid "%s: illegal key (%s)\n"
 msgstr "%s: kuraldışı tuş (%s)\n"
 
-#: sys-utils/ipcrm.c:206 sys-utils/ipcrm.c:238
+#: sys-utils/ipcrm.c:204 sys-utils/ipcrm.c:236
 msgid "permission denied for key"
 msgstr "anahtar için erişim engellendi"
 
-#: sys-utils/ipcrm.c:209 sys-utils/ipcrm.c:248
+#: sys-utils/ipcrm.c:207 sys-utils/ipcrm.c:246
 msgid "already removed key"
 msgstr "anahtar zaten silinmiş"
 
-#: sys-utils/ipcrm.c:212 sys-utils/ipcrm.c:243
+#: sys-utils/ipcrm.c:210 sys-utils/ipcrm.c:241
 msgid "invalid key"
 msgstr "anahtar geçersiz"
 
-#: sys-utils/ipcrm.c:215 sys-utils/ipcrm.c:253
+#: sys-utils/ipcrm.c:213 sys-utils/ipcrm.c:251
 msgid "unknown error in key"
 msgstr "anahtarda bilinmeyen hata"
 
-#: sys-utils/ipcrm.c:239
+#: sys-utils/ipcrm.c:237
 msgid "permission denied for id"
 msgstr "kimlik için izinler yetersiz"
 
-#: sys-utils/ipcrm.c:244
+#: sys-utils/ipcrm.c:242
 msgid "invalid id"
 msgstr "kimlik geçersiz"
 
-#: sys-utils/ipcrm.c:249
+#: sys-utils/ipcrm.c:247
 msgid "already removed id"
 msgstr "kimlik zaten silinmiş"
 
-#: sys-utils/ipcrm.c:254
+#: sys-utils/ipcrm.c:252
 msgid "unknown error in id"
 msgstr "kimlikte bilinmeyen hata"
 
-#: sys-utils/ipcrm.c:257
+#: sys-utils/ipcrm.c:255
 #, c-format
 msgid "%s: %s (%s)\n"
 msgstr "%s: %s (%s)\n"
 
-#: sys-utils/ipcrm.c:265
+#: sys-utils/ipcrm.c:263
 #, c-format
 msgid "%s: unknown argument: %s\n"
 msgstr "%s: bilinmeyen argüman: %s\n"
@@ -10783,320 +10778,315 @@ msgstr "asgari bölüt boyu (bayt) = %lu\n"
 msgid "------ Shared Memory Status --------\n"
 msgstr "----- Paylaşımlı Bellek Durumu -----\n"
 
-#: sys-utils/ipcs.c:291
+#. TRANSLATORS: This output format is mantained for backward compatibility
+#. as ipcs is used in scripts. For consistency with the rest, the translated
+#. form can follow this model:
+#.
+#. "segments allocated = %d\n"
+#. "pages allocated = %ld\n"
+#. "pages resident = %ld\n"
+#. "pages swapped = %ld\n"
+#. "swap performance = %ld attempts, %ld successes\n"
+#.
+#: sys-utils/ipcs.c:301
 #, c-format
-msgid "segments allocated %d\n"
-msgstr "ayrılmış bölüt sayısı %d\n"
+msgid ""
+"segments allocated %d\n"
+"pages allocated %ld\n"
+"pages resident  %ld\n"
+"pages swapped   %ld\n"
+"Swap performance: %ld attempts\t %ld successes\n"
+msgstr ""
 
-#: sys-utils/ipcs.c:292
-#, c-format
-msgid "pages allocated %ld\n"
-msgstr "ayrılmış sayfa sayısı  %ld\n"
-
-#: sys-utils/ipcs.c:293
-#, c-format
-msgid "pages resident  %ld\n"
-msgstr "bulunan sayfa sayısı   %ld\n"
-
-#: sys-utils/ipcs.c:294
-#, c-format
-msgid "pages swapped   %ld\n"
-msgstr "takaslı sayfa sayısı   %ld\n"
-
-#: sys-utils/ipcs.c:295
-#, c-format
-msgid "Swap performance: %ld attempts\t %ld successes\n"
-msgstr "Takas verimi: %ld deneme\t %ld başarı\n"
-
-#: sys-utils/ipcs.c:300
+#: sys-utils/ipcs.c:314
 #, c-format
 msgid "------ Shared Memory Segment Creators/Owners --------\n"
 msgstr "--- Paylaşımlı Bellek Bölüt Oluşturucuları/Kendileri ---\n"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:308 sys-utils/ipcs.c:315
-#: sys-utils/ipcs.c:321
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:322 sys-utils/ipcs.c:329
+#: sys-utils/ipcs.c:335
 msgid "shmid"
 msgstr "shmid"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:321 sys-utils/ipcs.c:422
-#: sys-utils/ipcs.c:437 sys-utils/ipcs.c:520 sys-utils/ipcs.c:538
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:335 sys-utils/ipcs.c:436
+#: sys-utils/ipcs.c:451 sys-utils/ipcs.c:534 sys-utils/ipcs.c:552
 msgid "perms"
 msgstr "izinler"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:520
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:436 sys-utils/ipcs.c:534
 msgid "cuid"
 msgstr "ckullkiml"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:520
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:436 sys-utils/ipcs.c:534
 msgid "cgid"
 msgstr "cgkiml"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:520
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:436 sys-utils/ipcs.c:534
 msgid "uid"
 msgstr "kullkim"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:520
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:436 sys-utils/ipcs.c:534
 msgid "gid"
 msgstr "gkiml"
 
-#: sys-utils/ipcs.c:306
+#: sys-utils/ipcs.c:320
 #, c-format
 msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
 msgstr "---- Paylaşımlı Bellek Ekleme/Ayırma/Değişiklik Zamanları ----\n"
 
-#: sys-utils/ipcs.c:308 sys-utils/ipcs.c:315 sys-utils/ipcs.c:321
-#: sys-utils/ipcs.c:428 sys-utils/ipcs.c:437 sys-utils/ipcs.c:526
-#: sys-utils/ipcs.c:532 sys-utils/ipcs.c:538
+#: sys-utils/ipcs.c:322 sys-utils/ipcs.c:329 sys-utils/ipcs.c:335
+#: sys-utils/ipcs.c:442 sys-utils/ipcs.c:451 sys-utils/ipcs.c:540
+#: sys-utils/ipcs.c:546 sys-utils/ipcs.c:552
 msgid "owner"
 msgstr "sahibi"
 
-#: sys-utils/ipcs.c:308
+#: sys-utils/ipcs.c:322
 msgid "attached"
 msgstr "ekleme"
 
-#: sys-utils/ipcs.c:308
+#: sys-utils/ipcs.c:322
 msgid "detached"
 msgstr "ayırma"
 
-#: sys-utils/ipcs.c:309
+#: sys-utils/ipcs.c:323
 msgid "changed"
 msgstr "değişiklik"
 
-#: sys-utils/ipcs.c:313
+#: sys-utils/ipcs.c:327
 #, fuzzy, c-format
 msgid "------ Shared Memory Creator/Last-op PIDs --------\n"
 msgstr "---- Paylaşımlı Bellek Oluşturucu/Son işlem ----\n"
 
-#: sys-utils/ipcs.c:315
+#: sys-utils/ipcs.c:329
 msgid "cpid"
 msgstr "cpid"
 
-#: sys-utils/ipcs.c:315
+#: sys-utils/ipcs.c:329
 msgid "lpid"
 msgstr "lpid"
 
-#: sys-utils/ipcs.c:319
+#: sys-utils/ipcs.c:333
 #, c-format
 msgid "------ Shared Memory Segments --------\n"
 msgstr "----- Paylaşımlı Bellek Bölütleri -----\n"
 
-#: sys-utils/ipcs.c:321 sys-utils/ipcs.c:437 sys-utils/ipcs.c:538
+#: sys-utils/ipcs.c:335 sys-utils/ipcs.c:451 sys-utils/ipcs.c:552
 msgid "key"
 msgstr "anahtar"
 
-#: sys-utils/ipcs.c:321
+#: sys-utils/ipcs.c:335
 msgid "bytes"
 msgstr "bayt"
 
-#: sys-utils/ipcs.c:322
+#: sys-utils/ipcs.c:336
 msgid "nattch"
 msgstr "ekSayısı"
 
-#: sys-utils/ipcs.c:322
+#: sys-utils/ipcs.c:336
 msgid "status"
 msgstr "durum"
 
-#: sys-utils/ipcs.c:343 sys-utils/ipcs.c:345 sys-utils/ipcs.c:347
-#: sys-utils/ipcs.c:458 sys-utils/ipcs.c:460 sys-utils/ipcs.c:559
-#: sys-utils/ipcs.c:561 sys-utils/ipcs.c:563 sys-utils/ipcs.c:614
-#: sys-utils/ipcs.c:616 sys-utils/ipcs.c:644 sys-utils/ipcs.c:646
-#: sys-utils/ipcs.c:648 sys-utils/ipcs.c:671
+#: sys-utils/ipcs.c:357 sys-utils/ipcs.c:359 sys-utils/ipcs.c:361
+#: sys-utils/ipcs.c:472 sys-utils/ipcs.c:474 sys-utils/ipcs.c:573
+#: sys-utils/ipcs.c:575 sys-utils/ipcs.c:577 sys-utils/ipcs.c:628
+#: sys-utils/ipcs.c:630 sys-utils/ipcs.c:658 sys-utils/ipcs.c:660
+#: sys-utils/ipcs.c:662 sys-utils/ipcs.c:685
 msgid "Not set"
 msgstr "Belirlenmedi"
 
-#: sys-utils/ipcs.c:375
+#: sys-utils/ipcs.c:389
 msgid "dest"
 msgstr "hedef"
 
-#: sys-utils/ipcs.c:376
+#: sys-utils/ipcs.c:390
 msgid "locked"
 msgstr "kilitli"
 
-#: sys-utils/ipcs.c:396
+#: sys-utils/ipcs.c:410
 #, c-format
 msgid "kernel not configured for semaphores\n"
 msgstr "çekirdek semaforlar için yapılandırılmamış\n"
 
-#: sys-utils/ipcs.c:402
+#: sys-utils/ipcs.c:416
 #, c-format
 msgid "------ Semaphore Limits --------\n"
 msgstr "------ Semafor Sınırları --------\n"
 
-#: sys-utils/ipcs.c:406
+#: sys-utils/ipcs.c:420
 #, c-format
 msgid "max number of arrays = %d\n"
 msgstr "azami dizi sayısı = %d\n"
 
-#: sys-utils/ipcs.c:407
+#: sys-utils/ipcs.c:421
 #, c-format
 msgid "max semaphores per array = %d\n"
 msgstr "dizi başına azami semafor sayısı = %d\n"
 
-#: sys-utils/ipcs.c:408
+#: sys-utils/ipcs.c:422
 #, c-format
 msgid "max semaphores system wide = %d\n"
 msgstr "tüm sistemdeki azami semafor sayısı = %d\n"
 
-#: sys-utils/ipcs.c:409
+#: sys-utils/ipcs.c:423
 #, c-format
 msgid "max ops per semop call = %d\n"
 msgstr "semop çağrısı başına azami işlem sayısı = %d\n"
 
-#: sys-utils/ipcs.c:410
+#: sys-utils/ipcs.c:424
 #, c-format
 msgid "semaphore max value = %d\n"
 msgstr "semafor azami değeri = %d\n"
 
-#: sys-utils/ipcs.c:414
+#: sys-utils/ipcs.c:428
 #, c-format
 msgid "------ Semaphore Status --------\n"
 msgstr "------ Semafor Durumu --------\n"
 
-#: sys-utils/ipcs.c:415
+#: sys-utils/ipcs.c:429
 #, c-format
 msgid "used arrays = %d\n"
 msgstr "kullanılan dizi sayısı = %d\n"
 
-#: sys-utils/ipcs.c:416
+#: sys-utils/ipcs.c:430
 #, c-format
 msgid "allocated semaphores = %d\n"
 msgstr "ayrılmış semafor sayısı = %d\n"
 
-#: sys-utils/ipcs.c:420
+#: sys-utils/ipcs.c:434
 #, c-format
 msgid "------ Semaphore Arrays Creators/Owners --------\n"
 msgstr "------ Semafor Dizileri Oluşturucu/Kendi --------\n"
 
-#: sys-utils/ipcs.c:422 sys-utils/ipcs.c:428 sys-utils/ipcs.c:437
+#: sys-utils/ipcs.c:436 sys-utils/ipcs.c:442 sys-utils/ipcs.c:451
 msgid "semid"
 msgstr "semkiml"
 
-#: sys-utils/ipcs.c:426
+#: sys-utils/ipcs.c:440
 #, fuzzy, c-format
 msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "---- Paylaşımlı Bellek İşlem/Değişiklik Zamanları ----\n"
 
-#: sys-utils/ipcs.c:428
+#: sys-utils/ipcs.c:442
 msgid "last-op"
 msgstr "son-işl"
 
-#: sys-utils/ipcs.c:428
+#: sys-utils/ipcs.c:442
 msgid "last-changed"
 msgstr "son-değş"
 
-#: sys-utils/ipcs.c:435
+#: sys-utils/ipcs.c:449
 #, c-format
 msgid "------ Semaphore Arrays --------\n"
 msgstr "------ Semafor Dizileri ------\n"
 
-#: sys-utils/ipcs.c:437
+#: sys-utils/ipcs.c:451
 msgid "nsems"
 msgstr "semSayısı"
 
-#: sys-utils/ipcs.c:496
+#: sys-utils/ipcs.c:510
 #, c-format
 msgid "kernel not configured for message queues\n"
 msgstr "çekirdek ileti kuyrukları için yapılandırılmamış\n"
 
-#: sys-utils/ipcs.c:504
+#: sys-utils/ipcs.c:518
 #, fuzzy, c-format
 msgid "------ Messages Limits --------\n"
 msgstr "------ İletiler: Sınırlar --------\n"
 
-#: sys-utils/ipcs.c:505
+#: sys-utils/ipcs.c:519
 #, c-format
 msgid "max queues system wide = %d\n"
 msgstr "tüm sistemdeki azami kuyruk sayısı = %d\n"
 
-#: sys-utils/ipcs.c:506
+#: sys-utils/ipcs.c:520
 #, c-format
 msgid "max size of message (bytes) = %d\n"
 msgstr "azami ileti uzunluğu (bayt) = %d\n"
 
-#: sys-utils/ipcs.c:507
+#: sys-utils/ipcs.c:521
 #, c-format
 msgid "default max size of queue (bytes) = %d\n"
 msgstr "öntanımlı azami kuyruk boyu (bayt) = %d\n"
 
-#: sys-utils/ipcs.c:511
+#: sys-utils/ipcs.c:525
 #, fuzzy, c-format
 msgid "------ Messages Status --------\n"
 msgstr "------ İletiler: Durum --------\n"
 
-#: sys-utils/ipcs.c:512
+#: sys-utils/ipcs.c:526
 #, c-format
 msgid "allocated queues = %d\n"
 msgstr "ayrılmış kuyruk sayısı = %d\n"
 
-#: sys-utils/ipcs.c:513
+#: sys-utils/ipcs.c:527
 #, c-format
 msgid "used headers = %d\n"
 msgstr "kullanılmış başlık sayısı = %d\n"
 
-#: sys-utils/ipcs.c:514
+#: sys-utils/ipcs.c:528
 #, c-format
 msgid "used space = %d bytes\n"
 msgstr "kullanılmış alan = %d bayt\n"
 
-#: sys-utils/ipcs.c:518
+#: sys-utils/ipcs.c:532
 #, fuzzy, c-format
 msgid "------ Message Queues Creators/Owners --------\n"
 msgstr "------ İleti Kuyrukları: Oluşturucu/Kendi --------\n"
 
-#: sys-utils/ipcs.c:520 sys-utils/ipcs.c:526 sys-utils/ipcs.c:532
-#: sys-utils/ipcs.c:538
+#: sys-utils/ipcs.c:534 sys-utils/ipcs.c:540 sys-utils/ipcs.c:546
+#: sys-utils/ipcs.c:552
 msgid "msqid"
 msgstr "iltkiml"
 
-#: sys-utils/ipcs.c:524
+#: sys-utils/ipcs.c:538
 #, c-format
 msgid "------ Message Queues Send/Recv/Change Times --------\n"
 msgstr "------ İleti Kuyrukları Gönd/Alım/Değiş. Zamanları --------\n"
 
-#: sys-utils/ipcs.c:526
+#: sys-utils/ipcs.c:540
 msgid "send"
 msgstr "gönderim"
 
-#: sys-utils/ipcs.c:526
+#: sys-utils/ipcs.c:540
 msgid "recv"
 msgstr "alım"
 
-#: sys-utils/ipcs.c:526
+#: sys-utils/ipcs.c:540
 msgid "change"
 msgstr "değişim"
 
-#: sys-utils/ipcs.c:530
+#: sys-utils/ipcs.c:544
 #, c-format
 msgid "------ Message Queues PIDs --------\n"
 msgstr "------ İleti Kuyrukları PID'leri --------\n"
 
-#: sys-utils/ipcs.c:532
+#: sys-utils/ipcs.c:546
 msgid "lspid"
 msgstr "lspid"
 
-#: sys-utils/ipcs.c:532
+#: sys-utils/ipcs.c:546
 msgid "lrpid"
 msgstr "lrpid"
 
-#: sys-utils/ipcs.c:536
+#: sys-utils/ipcs.c:550
 #, c-format
 msgid "------ Message Queues --------\n"
 msgstr "------ İleti Kuyrukları --------\n"
 
-#: sys-utils/ipcs.c:539
+#: sys-utils/ipcs.c:553
 msgid "used-bytes"
 msgstr "kull-bayt"
 
-#: sys-utils/ipcs.c:539
+#: sys-utils/ipcs.c:553
 msgid "messages"
 msgstr "ileti-sayısı"
 
-#: sys-utils/ipcs.c:603
+#: sys-utils/ipcs.c:617
 #, fuzzy
 msgid "shmctl failed"
 msgstr "fsync hata verdi"
 
-#: sys-utils/ipcs.c:605
+#: sys-utils/ipcs.c:619
 #, c-format
 msgid ""
 "\n"
@@ -11105,42 +11095,42 @@ msgstr ""
 "\n"
 "Paylaşımlı bellek Bölüt shmid=%d\n"
 
-#: sys-utils/ipcs.c:606
+#: sys-utils/ipcs.c:620
 #, c-format
 msgid "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\n"
 msgstr "kullkiml=%d\tgkiml=%d\tckullkiml=%d\tcgkiml=%d\n"
 
-#: sys-utils/ipcs.c:608
+#: sys-utils/ipcs.c:622
 #, c-format
 msgid "mode=%#o\taccess_perms=%#o\n"
 msgstr "kip=%#o\terişim_izni=%#o\n"
 
-#: sys-utils/ipcs.c:610
+#: sys-utils/ipcs.c:624
 #, c-format
 msgid "bytes=%ld\tlpid=%d\tcpid=%d\tnattch=%ld\n"
 msgstr "bayt=%ld\tlpid=%d\tcpid=%d\tekSayısı=%ld\n"
 
-#: sys-utils/ipcs.c:613
+#: sys-utils/ipcs.c:627
 #, c-format
 msgid "att_time=%-26.24s\n"
 msgstr "att_time=%-26.24s\n"
 
-#: sys-utils/ipcs.c:615
+#: sys-utils/ipcs.c:629
 #, c-format
 msgid "det_time=%-26.24s\n"
 msgstr "det_time=%-26.24s\n"
 
-#: sys-utils/ipcs.c:617 sys-utils/ipcs.c:647
+#: sys-utils/ipcs.c:631 sys-utils/ipcs.c:661
 #, c-format
 msgid "change_time=%-26.24s\n"
 msgstr "change_time=%-26.24s\n"
 
-#: sys-utils/ipcs.c:629
+#: sys-utils/ipcs.c:643
 #, fuzzy
 msgid "msgctl failed"
 msgstr "fsync hata verdi"
 
-#: sys-utils/ipcs.c:631
+#: sys-utils/ipcs.c:645
 #, c-format
 msgid ""
 "\n"
@@ -11149,32 +11139,32 @@ msgstr ""
 "\n"
 "İleti Kuyruğu iltkiml=%d\n"
 
-#: sys-utils/ipcs.c:632
+#: sys-utils/ipcs.c:646
 #, c-format
 msgid "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\tmode=%#o\n"
 msgstr "kullkiml=%d\tgkiml=%d\tckullkiml=%d\tcgkiml=%d\tkip=%#o\n"
 
-#: sys-utils/ipcs.c:634
+#: sys-utils/ipcs.c:648
 #, c-format
 msgid "cbytes=%ld\tqbytes=%ld\tqnum=%ld\tlspid=%d\tlrpid=%d\n"
 msgstr "cbayt=%ld\tqbayt=%ld\tqSayısı=%ld\tlspid=%d\tlrpid=%d\n"
 
-#: sys-utils/ipcs.c:643
+#: sys-utils/ipcs.c:657
 #, c-format
 msgid "send_time=%-26.24s\n"
 msgstr "gönderim_zamanı=%-26.24s\n"
 
-#: sys-utils/ipcs.c:645
+#: sys-utils/ipcs.c:659
 #, c-format
 msgid "rcv_time=%-26.24s\n"
 msgstr "alış_zamanı=%-26.24s\n"
 
-#: sys-utils/ipcs.c:662 sys-utils/ipcs.c:684
+#: sys-utils/ipcs.c:676 sys-utils/ipcs.c:698
 #, fuzzy
 msgid "semctl failed"
 msgstr "erişim başarısız"
 
-#: sys-utils/ipcs.c:664
+#: sys-utils/ipcs.c:678
 #, c-format
 msgid ""
 "\n"
@@ -11183,48 +11173,48 @@ msgstr ""
 "\n"
 "Semafor Dizisi semkiml=%d\n"
 
-#: sys-utils/ipcs.c:665
+#: sys-utils/ipcs.c:679
 #, c-format
 msgid "uid=%d\t gid=%d\t cuid=%d\t cgid=%d\n"
 msgstr "kullkiml=%d\t gkiml=%d\t ckullkiml=%d\t cgkiml=%d\n"
 
-#: sys-utils/ipcs.c:667
+#: sys-utils/ipcs.c:681
 #, c-format
 msgid "mode=%#o, access_perms=%#o\n"
 msgstr "kip=%#o, erişim_izni=%#o\n"
 
-#: sys-utils/ipcs.c:669
+#: sys-utils/ipcs.c:683
 #, c-format
 msgid "nsems = %ld\n"
 msgstr "semSayısı = %ld\n"
 
-#: sys-utils/ipcs.c:670
+#: sys-utils/ipcs.c:684
 #, c-format
 msgid "otime = %-26.24s\n"
 msgstr "otime = %-26.24s\n"
 
-#: sys-utils/ipcs.c:672
+#: sys-utils/ipcs.c:686
 #, c-format
 msgid "ctime = %-26.24s\n"
 msgstr "ctime = %-26.24s\n"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "semnum"
 msgstr "semnum"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "value"
 msgstr "değer"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "ncount"
 msgstr "nsayısı"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "zcount"
 msgstr "zsayısı"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "pid"
 msgstr "pid"
 
@@ -11373,6 +11363,10 @@ msgstr ""
 
 #: sys-utils/lscpu.c:756
 msgid "CPU op-mode(s):"
+msgstr ""
+
+#: sys-utils/lscpu.c:759
+msgid "CPU(s):"
 msgstr ""
 
 #: sys-utils/lscpu.c:762
@@ -12411,6 +12405,24 @@ msgstr "Girdi satırı çok uzun.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Tampon büyütülürken bellek yetmedi.\n"
+
+#~ msgid "%s: illegal option -- %c\n"
+#~ msgstr "%s: kuraldışı seçenek -- %c\n"
+
+#~ msgid "segments allocated %d\n"
+#~ msgstr "ayrılmış bölüt sayısı %d\n"
+
+#~ msgid "pages allocated %ld\n"
+#~ msgstr "ayrılmış sayfa sayısı  %ld\n"
+
+#~ msgid "pages resident  %ld\n"
+#~ msgstr "bulunan sayfa sayısı   %ld\n"
+
+#~ msgid "pages swapped   %ld\n"
+#~ msgstr "takaslı sayfa sayısı   %ld\n"
+
+#~ msgid "Swap performance: %ld attempts\t %ld successes\n"
+#~ msgstr "Takas verimi: %ld deneme\t %ld başarı\n"
 
 #, fuzzy
 #~ msgid "error running programme: \"%s\"\n"

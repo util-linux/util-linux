@@ -262,7 +262,7 @@ void fatal(enum failure why) {
 " -b <size>             sector size (512, 1024, 2048 or 4096)\n"
 " -c[=<mode>]           compatible mode: 'dos' or 'nondos' (default)\n"
 " -h                    print this help text\n"
-" -u[=<unit>]           dysplay units: 'cylinders' or 'sectors' (default)\n"
+" -u[=<unit>]           display units: 'cylinders' or 'sectors' (default)\n"
 " -v                    print program version\n"
 " -C <number>           specify the number of cylinders\n"
 " -H <number>           specify the number of heads\n"

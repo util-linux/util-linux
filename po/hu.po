@@ -7,7 +7,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.14-rc2\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2010-06-18 11:27+0200\n"
+"POT-Creation-Date: 2010-06-30 14:44+0200\n"
 "PO-Revision-Date: 2008-05-21 18:25+0200\n"
 "Last-Translator: Gabor Kelemen <kelemeng@gnome.hu>\n"
 "Language-Team: Hungarian <translation-team-hu@lists.sourceforge.net>\n"
@@ -1057,7 +1057,7 @@ msgstr ""
 "Használat: mkfs [-V] [-t fájlrendszertípus] [fájlrendszer-beállítások] "
 "eszköz [méret]\n"
 
-#: disk-utils/mkfs.c:88 disk-utils/mkfs.c:96 fdisk/cfdisk.c:357
+#: disk-utils/mkfs.c:88 disk-utils/mkfs.c:96 fdisk/cfdisk.c:358
 #: getopt/getopt.c:86 getopt/getopt.c:96 login-utils/wall.c:246
 #, c-format
 msgid "%s: Out of memory!\n"
@@ -1702,27 +1702,27 @@ msgstr ""
 "%1$s: figyelmeztetés: a -U figyelmen kívül marad (a(z) %1$s nem támogatja az "
 "UUID-ket)\n"
 
-#: fdisk/cfdisk.c:382 fdisk/cfdisk.c:1964
+#: fdisk/cfdisk.c:383 fdisk/cfdisk.c:1965
 msgid "Unusable"
 msgstr "Használhatatlan"
 
-#: fdisk/cfdisk.c:384 fdisk/cfdisk.c:1966
+#: fdisk/cfdisk.c:385 fdisk/cfdisk.c:1967
 msgid "Free Space"
 msgstr "Szabad terület"
 
-#: fdisk/cfdisk.c:399
+#: fdisk/cfdisk.c:400
 #, c-format
 msgid "Disk has been changed.\n"
 msgstr "A lemez megváltozott.\n"
 
-#: fdisk/cfdisk.c:401
+#: fdisk/cfdisk.c:402
 #, c-format
 msgid "Reboot the system to ensure the partition table is correctly updated.\n"
 msgstr ""
 "A rendszer újraindításával biztosíthatja a partíciós tábla megfelelő "
 "frissítését.\n"
 
-#: fdisk/cfdisk.c:405
+#: fdisk/cfdisk.c:406
 #, c-format
 msgid ""
 "\n"
@@ -1735,232 +1735,232 @@ msgstr ""
 "létre vagy módosított, akkor további információkért\n"
 "olvassa el a cfdisk kézikönyv oldalát.\n"
 
-#: fdisk/cfdisk.c:534
+#: fdisk/cfdisk.c:535
 msgid "FATAL ERROR"
 msgstr "VÉGZETES HIBA "
 
-#: fdisk/cfdisk.c:535
+#: fdisk/cfdisk.c:536
 msgid "Press any key to exit cfdisk"
 msgstr "Üssön le egy billentyűt a kilépéshez"
 
-#: fdisk/cfdisk.c:582 fdisk/cfdisk.c:590
+#: fdisk/cfdisk.c:583 fdisk/cfdisk.c:591
 msgid "Cannot seek on disk drive"
 msgstr "Nem lehet pozicionálni a lemezmeghajtón"
 
-#: fdisk/cfdisk.c:584
+#: fdisk/cfdisk.c:585
 msgid "Cannot read disk drive"
 msgstr "A lemezmeghajtó nem olvasható"
 
-#: fdisk/cfdisk.c:592
+#: fdisk/cfdisk.c:593
 msgid "Cannot write disk drive"
 msgstr "A lemezmeghajtó nem írható"
 
-#: fdisk/cfdisk.c:800
+#: fdisk/cfdisk.c:801
 msgid "Too many partitions"
 msgstr "Túl sok partíció"
 
-#: fdisk/cfdisk.c:805
+#: fdisk/cfdisk.c:806
 msgid "Partition begins before sector 0"
 msgstr "A partíció a 0. szektor előtt kezdődik"
 
-#: fdisk/cfdisk.c:810
+#: fdisk/cfdisk.c:811
 msgid "Partition ends before sector 0"
 msgstr "A partíció a 0. szektor után fejeződik be"
 
-#: fdisk/cfdisk.c:815
+#: fdisk/cfdisk.c:816
 msgid "Partition begins after end-of-disk"
 msgstr "A partíció a lemez vége után kezdődik"
 
-#: fdisk/cfdisk.c:820
+#: fdisk/cfdisk.c:821
 msgid "Partition ends after end-of-disk"
 msgstr "A partíció a lemezmeghajtó után végződik"
 
-#: fdisk/cfdisk.c:825
+#: fdisk/cfdisk.c:826
 msgid "Partition ends in the final partial cylinder"
 msgstr "A partíció az utolsó részleges cilinder után végződik"
 
-#: fdisk/cfdisk.c:849
+#: fdisk/cfdisk.c:850
 msgid "logical partitions not in disk order"
 msgstr "a logikai partíciók nincsenek a lemezlistában"
 
-#: fdisk/cfdisk.c:852
+#: fdisk/cfdisk.c:853
 msgid "logical partitions overlap"
 msgstr "logikai partíciók fedik egymást"
 
-#: fdisk/cfdisk.c:856
+#: fdisk/cfdisk.c:857
 msgid "enlarged logical partitions overlap"
 msgstr "megnövelt logikai partíciók fedik egymást"
 
-#: fdisk/cfdisk.c:886
+#: fdisk/cfdisk.c:887
 msgid ""
 "!!!! Internal error creating logical drive with no extended partition !!!!"
 msgstr ""
 "Belső hiba logikai partíció kiterjesztett partíció nélküli létrehozása során!"
 
-#: fdisk/cfdisk.c:897 fdisk/cfdisk.c:909
+#: fdisk/cfdisk.c:898 fdisk/cfdisk.c:910
 msgid ""
 "Cannot create logical drive here -- would create two extended partitions"
 msgstr ""
 "Nem hozható létre logikai meghajtó -- ez két kiterjesztett partíciót hozna "
 "létre"
 
-#: fdisk/cfdisk.c:1049
+#: fdisk/cfdisk.c:1050
 msgid "Menu item too long. Menu may look odd."
 msgstr "A menüelem túl hosszú. A menü furcsán jelenhet meg."
 
-#: fdisk/cfdisk.c:1105
+#: fdisk/cfdisk.c:1106
 msgid "Menu without direction. Defaulting to horizontal."
 msgstr ""
 "A menünek nincs iránya. Alapértelmezetten vízszintes kerül felhasználásra."
 
-#: fdisk/cfdisk.c:1237
+#: fdisk/cfdisk.c:1238
 msgid "Illegal key"
 msgstr "Érvénytelen billentyű"
 
-#: fdisk/cfdisk.c:1260
+#: fdisk/cfdisk.c:1261
 msgid "Press a key to continue"
 msgstr "Nyomjon meg egy billentyűt a folytatáshoz"
 
-#: fdisk/cfdisk.c:1307 fdisk/cfdisk.c:1935 fdisk/cfdisk.c:2467
-#: fdisk/cfdisk.c:2469
+#: fdisk/cfdisk.c:1308 fdisk/cfdisk.c:1936 fdisk/cfdisk.c:2468
+#: fdisk/cfdisk.c:2470
 msgid "Primary"
 msgstr "Elsődleges"
 
-#: fdisk/cfdisk.c:1307
+#: fdisk/cfdisk.c:1308
 msgid "Create a new primary partition"
 msgstr "Új elsődleges partíció létrehozása"
 
-#: fdisk/cfdisk.c:1308 fdisk/cfdisk.c:1935 fdisk/cfdisk.c:2466
-#: fdisk/cfdisk.c:2469
+#: fdisk/cfdisk.c:1309 fdisk/cfdisk.c:1936 fdisk/cfdisk.c:2467
+#: fdisk/cfdisk.c:2470
 msgid "Logical"
 msgstr "Logikai"
 
-#: fdisk/cfdisk.c:1308
+#: fdisk/cfdisk.c:1309
 msgid "Create a new logical partition"
 msgstr "Új logikai partíció létrehozása"
 
-#: fdisk/cfdisk.c:1309 fdisk/cfdisk.c:1364 fdisk/cfdisk.c:2140
+#: fdisk/cfdisk.c:1310 fdisk/cfdisk.c:1365 fdisk/cfdisk.c:2141
 msgid "Cancel"
 msgstr "Mégsem"
 
-#: fdisk/cfdisk.c:1309 fdisk/cfdisk.c:1364
+#: fdisk/cfdisk.c:1310 fdisk/cfdisk.c:1365
 msgid "Don't create a partition"
 msgstr "Ne hozzon létre partíciót"
 
-#: fdisk/cfdisk.c:1325
+#: fdisk/cfdisk.c:1326
 msgid "!!! Internal error !!!"
 msgstr "!!! Belső hiba !!!"
 
-#: fdisk/cfdisk.c:1328
+#: fdisk/cfdisk.c:1329
 msgid "Size (in MB): "
 msgstr "Méret (MB): "
 
-#: fdisk/cfdisk.c:1362
+#: fdisk/cfdisk.c:1363
 msgid "Beginning"
 msgstr "Kezdet"
 
-#: fdisk/cfdisk.c:1362
+#: fdisk/cfdisk.c:1363
 msgid "Add partition at beginning of free space"
 msgstr "Partíció hozzáadása a szabad terület elején"
 
-#: fdisk/cfdisk.c:1363
+#: fdisk/cfdisk.c:1364
 msgid "End"
 msgstr "Vége"
 
-#: fdisk/cfdisk.c:1363
+#: fdisk/cfdisk.c:1364
 msgid "Add partition at end of free space"
 msgstr "Partíció hozzáadása a szabad terület végén"
 
-#: fdisk/cfdisk.c:1381
+#: fdisk/cfdisk.c:1382
 msgid "No room to create the extended partition"
 msgstr "Nincs hely a kiterjesztett partíció létrehozásához"
 
-#: fdisk/cfdisk.c:1455
+#: fdisk/cfdisk.c:1456
 msgid "No partition table.\n"
 msgstr "Nincs jelen partíciós tábla.\n"
 
-#: fdisk/cfdisk.c:1459
+#: fdisk/cfdisk.c:1460
 msgid "No partition table. Starting with zero table."
 msgstr "Nincs partíciós tábla. Indítás üres táblával."
 
-#: fdisk/cfdisk.c:1469
+#: fdisk/cfdisk.c:1470
 msgid "Bad signature on partition table"
 msgstr "A partíciós tábla aláírása hibás"
 
-#: fdisk/cfdisk.c:1473
+#: fdisk/cfdisk.c:1474
 msgid "Unknown partition table type"
 msgstr "A partíciós tábla típusa ismeretlen"
 
-#: fdisk/cfdisk.c:1475
+#: fdisk/cfdisk.c:1476
 msgid "Do you wish to start with a zero table [y/N] ?"
 msgstr "Üres táblával szeretne indulni [i/N]?"
 
-#: fdisk/cfdisk.c:1523
+#: fdisk/cfdisk.c:1524
 msgid "You specified more cylinders than fit on disk"
 msgstr "Több cilindert adott meg, mint amennyi elfér a lemezen"
 
-#: fdisk/cfdisk.c:1555
+#: fdisk/cfdisk.c:1556
 msgid "Cannot open disk drive"
 msgstr "Nem nyitható meg a lemezmeghajtó"
 
-#: fdisk/cfdisk.c:1557 fdisk/cfdisk.c:1746
+#: fdisk/cfdisk.c:1558 fdisk/cfdisk.c:1747
 msgid "Opened disk read-only - you have no permission to write"
 msgstr "A megnyitott lemez csak olvasható - nincs joga írni rá"
 
-#: fdisk/cfdisk.c:1568
+#: fdisk/cfdisk.c:1569
 msgid ""
 "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
 msgstr ""
 "Figyelmeztetés: Nem támogatott GPT (GUID partíciós tábla). Használja a GNU "
 "Parted-et."
 
-#: fdisk/cfdisk.c:1587
+#: fdisk/cfdisk.c:1588
 msgid "Cannot get disk size"
 msgstr "Nem lehet lekérdezni a lemez méretét"
 
-#: fdisk/cfdisk.c:1613
+#: fdisk/cfdisk.c:1614
 msgid "Bad primary partition"
 msgstr "Hibás elsődleges partíció"
 
-#: fdisk/cfdisk.c:1643
+#: fdisk/cfdisk.c:1644
 msgid "Bad logical partition"
 msgstr "Hibás logikai partíció"
 
-#: fdisk/cfdisk.c:1758
+#: fdisk/cfdisk.c:1759
 msgid "Warning!!  This may destroy data on your disk!"
 msgstr "Figyelmeztetés: ez megsemmisítheti a lemezen található adatait!"
 
-#: fdisk/cfdisk.c:1762
+#: fdisk/cfdisk.c:1763
 msgid ""
 "Are you sure you want to write the partition table to disk? (yes or no): "
 msgstr ""
 "Biztosan ki akarja írni a partíciós táblát a lemezre? (igen vagy nem): "
 
-#: fdisk/cfdisk.c:1768
+#: fdisk/cfdisk.c:1769
 msgid "no"
 msgstr "nem"
 
-#: fdisk/cfdisk.c:1770
+#: fdisk/cfdisk.c:1771
 msgid "Did not write partition table to disk"
 msgstr "A partíciós tábla nem került a lemezre"
 
-#: fdisk/cfdisk.c:1772
+#: fdisk/cfdisk.c:1773
 msgid "yes"
 msgstr "igen"
 
-#: fdisk/cfdisk.c:1776
+#: fdisk/cfdisk.c:1777
 msgid "Please enter `yes' or `no'"
 msgstr "Az „igen” vagy „nem” egyikét írja be"
 
-#: fdisk/cfdisk.c:1780
+#: fdisk/cfdisk.c:1781
 msgid "Writing partition table to disk..."
 msgstr "Partíciós tábla kiírása a lemezre..."
 
-#: fdisk/cfdisk.c:1805 fdisk/cfdisk.c:1809
+#: fdisk/cfdisk.c:1806 fdisk/cfdisk.c:1810
 msgid "Wrote partition table to disk"
 msgstr "A partíciós tábla kiírva a lemezre"
 
-#: fdisk/cfdisk.c:1807
+#: fdisk/cfdisk.c:1808
 #, fuzzy
 msgid ""
 "Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx"
@@ -1968,87 +1968,87 @@ msgid ""
 msgstr ""
 "A partíciós tábla kiírva, de újraolvasni nem sikerült. Újraindítás szükséges."
 
-#: fdisk/cfdisk.c:1817
+#: fdisk/cfdisk.c:1818
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
 msgstr ""
 "Egy elsődleges partíció sincs indíthatóként kijelölve. A DOS MBR ezt nem "
 "tudja elindítani."
 
-#: fdisk/cfdisk.c:1819
+#: fdisk/cfdisk.c:1820
 msgid ""
 "More than one primary partition is marked bootable. DOS MBR cannot boot this."
 msgstr ""
 "Több elsődleges partíció van indíthatóként kijelölve. A DOS MBR ezt nem "
 "tudja elindítani."
 
-#: fdisk/cfdisk.c:1877 fdisk/cfdisk.c:1996 fdisk/cfdisk.c:2080
+#: fdisk/cfdisk.c:1878 fdisk/cfdisk.c:1997 fdisk/cfdisk.c:2081
 msgid "Enter filename or press RETURN to display on screen: "
 msgstr ""
 "Adjon meg fájlnevet vagy nyomja meg az ENTER-t a képernyő megjelenítéshez: "
 
-#: fdisk/cfdisk.c:1886 fdisk/cfdisk.c:2004 fdisk/cfdisk.c:2088
+#: fdisk/cfdisk.c:1887 fdisk/cfdisk.c:2005 fdisk/cfdisk.c:2089
 #, c-format
 msgid "Cannot open file '%s'"
 msgstr "Nem nyitható meg a(z) „%s” fájl"
 
-#: fdisk/cfdisk.c:1897
+#: fdisk/cfdisk.c:1898
 #, c-format
 msgid "Disk Drive: %s\n"
 msgstr "Lemezmeghajtó: %s\n"
 
-#: fdisk/cfdisk.c:1899
+#: fdisk/cfdisk.c:1900
 msgid "Sector 0:\n"
 msgstr "0. szektor:\n"
 
-#: fdisk/cfdisk.c:1906
+#: fdisk/cfdisk.c:1907
 #, c-format
 msgid "Sector %d:\n"
 msgstr "%d. szektor:\n"
 
-#: fdisk/cfdisk.c:1926
+#: fdisk/cfdisk.c:1927
 msgid "   None   "
 msgstr "   Nincs  "
 
-#: fdisk/cfdisk.c:1928
+#: fdisk/cfdisk.c:1929
 msgid "   Pri/Log"
 msgstr "   Els/Log"
 
-#: fdisk/cfdisk.c:1930
+#: fdisk/cfdisk.c:1931
 msgid "   Primary"
 msgstr "   Elsődleges"
 
-#: fdisk/cfdisk.c:1932
+#: fdisk/cfdisk.c:1933
 msgid "   Logical"
 msgstr "   Logikai"
 
-#: fdisk/cfdisk.c:1970 fdisk/fdisk.c:1783 fdisk/fdisk.c:2122
+#: fdisk/cfdisk.c:1971 fdisk/fdisk.c:1783 fdisk/fdisk.c:2122
 #: fdisk/fdisksgilabel.c:227 fdisk/fdisksunlabel.c:616 fdisk/sfdisk.c:638
 msgid "Unknown"
 msgstr "Ismeretlen"
 
-#: fdisk/cfdisk.c:1976 fdisk/cfdisk.c:2444 fdisk/fdisksunlabel.c:39
+#: fdisk/cfdisk.c:1977 fdisk/cfdisk.c:2445 fdisk/fdisksunlabel.c:39
 msgid "Boot"
 msgstr "Indítható"
 
-#: fdisk/cfdisk.c:1978
+#: fdisk/cfdisk.c:1979
 #, c-format
 msgid "(%02X)"
 msgstr "(%02X)"
 
-#: fdisk/cfdisk.c:1980
+#: fdisk/cfdisk.c:1981
 msgid "None"
 msgstr "Nincs"
 
-#: fdisk/cfdisk.c:2015 fdisk/cfdisk.c:2099
+#: fdisk/cfdisk.c:2016 fdisk/cfdisk.c:2100
 #, c-format
 msgid "Partition Table for %s\n"
 msgstr "A(z) „%s” partíciós táblája\n"
 
-#: fdisk/cfdisk.c:2017
+#: fdisk/cfdisk.c:2018
 msgid "               First       Last\n"
 msgstr "               Első     Utolsó\n"
 
-#: fdisk/cfdisk.c:2018
+#: fdisk/cfdisk.c:2019
 msgid ""
 " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
 "Flag\n"
@@ -2056,7 +2056,7 @@ msgstr ""
 " # Típus     Szektor   Szektor   Eltolás   Hossz  Fájlrendszer Típus (ID)  "
 "Jelző\n"
 
-#: fdisk/cfdisk.c:2019
+#: fdisk/cfdisk.c:2020
 msgid ""
 "-- ------- ----------- ----------- ------ ----------- -------------------- "
 "----\n"
@@ -2064,466 +2064,466 @@ msgstr ""
 "-- ------- ----------- ----------- ------ ----------- -------------------- "
 "----\n"
 
-#: fdisk/cfdisk.c:2102
+#: fdisk/cfdisk.c:2103
 msgid "         ---Starting----      ----Ending-----    Start     Number of\n"
 msgstr "         ---Kezdet--          ---Vég---       Kezdet     Szám\n"
 
-#: fdisk/cfdisk.c:2103
+#: fdisk/cfdisk.c:2104
 msgid " # Flags Head Sect  Cyl   ID  Head Sect  Cyl     Sector    Sectors\n"
 msgstr " # Jelzők Fej Szekt Cil   ID  Fej Szektor Cil    Szektor Szektorok\n"
 
-#: fdisk/cfdisk.c:2104
+#: fdisk/cfdisk.c:2105
 msgid "-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- -----------\n"
 msgstr ""
 "-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- -----------\n"
 
-#: fdisk/cfdisk.c:2137
+#: fdisk/cfdisk.c:2138
 msgid "Raw"
 msgstr "Nyers"
 
-#: fdisk/cfdisk.c:2137
+#: fdisk/cfdisk.c:2138
 msgid "Print the table using raw data format"
 msgstr "Tábla megjelenítése nyers formában"
 
-#: fdisk/cfdisk.c:2138 fdisk/cfdisk.c:2241
+#: fdisk/cfdisk.c:2139 fdisk/cfdisk.c:2242
 msgid "Sectors"
 msgstr "Szektorok"
 
-#: fdisk/cfdisk.c:2138
+#: fdisk/cfdisk.c:2139
 msgid "Print the table ordered by sectors"
 msgstr "Tábla megjelenítése szektorok szerint"
 
-#: fdisk/cfdisk.c:2139
+#: fdisk/cfdisk.c:2140
 msgid "Table"
 msgstr "Táblázat"
 
-#: fdisk/cfdisk.c:2139
+#: fdisk/cfdisk.c:2140
 msgid "Just print the partition table"
 msgstr "Csak megjeleníti a partíciós táblát"
 
-#: fdisk/cfdisk.c:2140
+#: fdisk/cfdisk.c:2141
 msgid "Don't print the table"
 msgstr "Ne jelenjen meg a tábla"
 
-#: fdisk/cfdisk.c:2168
+#: fdisk/cfdisk.c:2169
 msgid "Help Screen for cfdisk"
 msgstr "A cfdisk súgója"
 
-#: fdisk/cfdisk.c:2170
+#: fdisk/cfdisk.c:2171
 msgid "This is cfdisk, a curses based disk partitioning program, which"
 msgstr "Ez a cfdisk, egy curses alapú lemezparticionáló program, amellyel"
 
-#: fdisk/cfdisk.c:2171
+#: fdisk/cfdisk.c:2172
 msgid "allows you to create, delete and modify partitions on your hard"
 msgstr "létrehozhatja, törölheti és módosíthatja a partícióit a"
 
-#: fdisk/cfdisk.c:2172
+#: fdisk/cfdisk.c:2173
 msgid "disk drive."
 msgstr "merevlemezen."
 
-#: fdisk/cfdisk.c:2174
+#: fdisk/cfdisk.c:2175
 msgid "Copyright (C) 1994-1999 Kevin E. Martin & aeb"
 msgstr "Copyright (C) 1994-1999 Kevin E. Martin & aeb"
 
-#: fdisk/cfdisk.c:2176
+#: fdisk/cfdisk.c:2177
 msgid "Command      Meaning"
 msgstr "Parancs     Jelentés"
 
-#: fdisk/cfdisk.c:2177
+#: fdisk/cfdisk.c:2178
 msgid "-------      -------"
 msgstr "-------      -------"
 
-#: fdisk/cfdisk.c:2178
+#: fdisk/cfdisk.c:2179
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          Az aktuális partíció megjelölése indíthatóként"
 
-#: fdisk/cfdisk.c:2179
+#: fdisk/cfdisk.c:2180
 msgid "  d          Delete the current partition"
 msgstr "  d          Az aktuális partíció törlése"
 
-#: fdisk/cfdisk.c:2180
+#: fdisk/cfdisk.c:2181
 msgid "  g          Change cylinders, heads, sectors-per-track parameters"
 msgstr "  g          A cilinder-, fej-, és sávonkénti szektorszám módosítása"
 
-#: fdisk/cfdisk.c:2181
+#: fdisk/cfdisk.c:2182
 msgid "             WARNING: This option should only be used by people who"
 msgstr "             FIGYELMEZTETÉS: Ezt a lehetőséget csak akkor használja,"
 
-#: fdisk/cfdisk.c:2182
+#: fdisk/cfdisk.c:2183
 msgid "             know what they are doing."
 msgstr "             ha tudja, hogy mit csinál."
 
-#: fdisk/cfdisk.c:2183
+#: fdisk/cfdisk.c:2184
 msgid "  h          Print this screen"
 msgstr "  h          Ezen képernyő megjelenítése"
 
-#: fdisk/cfdisk.c:2184
+#: fdisk/cfdisk.c:2185
 msgid "  m          Maximize disk usage of the current partition"
 msgstr "  m          Az aktuális partíció lemezkihasználásának maximalizálása"
 
-#: fdisk/cfdisk.c:2185
+#: fdisk/cfdisk.c:2186
 msgid "             Note: This may make the partition incompatible with"
 msgstr "             Megjegyzés: Ez inkompatibilissé teheti a partíciót a "
 
-#: fdisk/cfdisk.c:2186
+#: fdisk/cfdisk.c:2187
 msgid "             DOS, OS/2, ..."
 msgstr "             DOS-sal, OS/2-vel, ..."
 
-#: fdisk/cfdisk.c:2187
+#: fdisk/cfdisk.c:2188
 msgid "  n          Create new partition from free space"
 msgstr "  n          Új partíció létrehozása a szabad területből"
 
-#: fdisk/cfdisk.c:2188
+#: fdisk/cfdisk.c:2189
 msgid "  p          Print partition table to the screen or to a file"
 msgstr "  p          A partíciós tábla kiírása a képernyőre vagy fájlba"
 
-#: fdisk/cfdisk.c:2189
+#: fdisk/cfdisk.c:2190
 msgid "             There are several different formats for the partition"
 msgstr "             Számos különböző partícióformátum létezik,"
 
-#: fdisk/cfdisk.c:2190
+#: fdisk/cfdisk.c:2191
 msgid "             that you can choose from:"
 msgstr "             amelyek közül választhat:"
 
-#: fdisk/cfdisk.c:2191
+#: fdisk/cfdisk.c:2192
 msgid "                r - Raw data (exactly what would be written to disk)"
 msgstr ""
 "                r - Nyers adatok (pontosan az, ami ki lesz írva a lemezre)"
 
-#: fdisk/cfdisk.c:2192
+#: fdisk/cfdisk.c:2193
 msgid "                s - Table ordered by sectors"
 msgstr "                s - Táblázat szektorok szerint rendezve"
 
-#: fdisk/cfdisk.c:2193
+#: fdisk/cfdisk.c:2194
 msgid "                t - Table in raw format"
 msgstr "                t - Táblázat nyers formában"
 
-#: fdisk/cfdisk.c:2194
+#: fdisk/cfdisk.c:2195
 msgid "  q          Quit program without writing partition table"
 msgstr "  q          Kilépés a programból a partíciós tábla kiírása nélkül"
 
-#: fdisk/cfdisk.c:2195
+#: fdisk/cfdisk.c:2196
 msgid "  t          Change the filesystem type"
 msgstr "  t          A fájlrendszer típusának megváltoztatása"
 
-#: fdisk/cfdisk.c:2196
+#: fdisk/cfdisk.c:2197
 msgid "  u          Change units of the partition size display"
 msgstr "  u          A partícióméret kijelzési egységének megváltoztatása"
 
-#: fdisk/cfdisk.c:2197
+#: fdisk/cfdisk.c:2198
 msgid "             Rotates through MB, sectors and cylinders"
 msgstr "             Választhat MB-ok, szektorok és cilinderek között"
 
-#: fdisk/cfdisk.c:2198
+#: fdisk/cfdisk.c:2199
 msgid "  W          Write partition table to disk (must enter upper case W)"
 msgstr ""
 "  W          Kiírja a partíciós táblát a lemezre (csak a nagy W érvényes)"
 
-#: fdisk/cfdisk.c:2199
+#: fdisk/cfdisk.c:2200
 msgid "             Since this might destroy data on the disk, you must"
 msgstr "             Ez letörli az összes adatot a lemezről, ezért"
 
-#: fdisk/cfdisk.c:2200
+#: fdisk/cfdisk.c:2201
 msgid "             either confirm or deny the write by entering `yes' or"
 msgstr "             erősítse, vagy tagadja meg az írást az „igen”"
 
-#: fdisk/cfdisk.c:2201
+#: fdisk/cfdisk.c:2202
 msgid "             `no'"
 msgstr "             vagy „nem” beírásával"
 
-#: fdisk/cfdisk.c:2202
+#: fdisk/cfdisk.c:2203
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "Fel nyíl     A kurzort az előző partícióra mozgatja"
 
-#: fdisk/cfdisk.c:2203
+#: fdisk/cfdisk.c:2204
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "Le nyíl      A kurzort a következő partícióra mozgatja"
 
-#: fdisk/cfdisk.c:2204
+#: fdisk/cfdisk.c:2205
 msgid "CTRL-L       Redraws the screen"
 msgstr "Ctrl-L       Újrarajzolja a képernyőt"
 
-#: fdisk/cfdisk.c:2205
+#: fdisk/cfdisk.c:2206
 msgid "  ?          Print this screen"
 msgstr "  ?          Ez a képernyő"
 
-#: fdisk/cfdisk.c:2207
+#: fdisk/cfdisk.c:2208
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Megjegyzés: Az összes parancs beírható kis és nagy betűvel is"
 
-#: fdisk/cfdisk.c:2208
+#: fdisk/cfdisk.c:2209
 msgid "case letters (except for Writes)."
 msgstr "kivéve kiírásnál (W)."
 
-#: fdisk/cfdisk.c:2239 fdisk/fdisksunlabel.c:232
+#: fdisk/cfdisk.c:2240 fdisk/fdisksunlabel.c:232
 msgid "Cylinders"
 msgstr "Cilinderek"
 
-#: fdisk/cfdisk.c:2239
+#: fdisk/cfdisk.c:2240
 msgid "Change cylinder geometry"
 msgstr "Cilinderek geometriájának megváltoztatása"
 
-#: fdisk/cfdisk.c:2240 fdisk/fdisksunlabel.c:230
+#: fdisk/cfdisk.c:2241 fdisk/fdisksunlabel.c:230
 msgid "Heads"
 msgstr "Fejek"
 
-#: fdisk/cfdisk.c:2240
+#: fdisk/cfdisk.c:2241
 msgid "Change head geometry"
 msgstr "Fejek geometriájának megváltoztatása"
 
-#: fdisk/cfdisk.c:2241
+#: fdisk/cfdisk.c:2242
 msgid "Change sector geometry"
 msgstr "Szektorok geometriájának megváltoztatása"
 
-#: fdisk/cfdisk.c:2242
+#: fdisk/cfdisk.c:2243
 msgid "Done"
 msgstr "Kész"
 
-#: fdisk/cfdisk.c:2242
+#: fdisk/cfdisk.c:2243
 msgid "Done with changing geometry"
 msgstr "A geometria megváltoztatása kész"
 
-#: fdisk/cfdisk.c:2255
+#: fdisk/cfdisk.c:2256
 msgid "Enter the number of cylinders: "
 msgstr "Adja meg a cilinderek számát: "
 
-#: fdisk/cfdisk.c:2266 fdisk/cfdisk.c:2839
+#: fdisk/cfdisk.c:2267 fdisk/cfdisk.c:2840
 msgid "Illegal cylinders value"
 msgstr "Érvénytelen cilinderérték"
 
-#: fdisk/cfdisk.c:2272
+#: fdisk/cfdisk.c:2273
 msgid "Enter the number of heads: "
 msgstr "Adja meg a fejek számát: "
 
-#: fdisk/cfdisk.c:2279 fdisk/cfdisk.c:2849
+#: fdisk/cfdisk.c:2280 fdisk/cfdisk.c:2850
 msgid "Illegal heads value"
 msgstr "Érvénytelen fejszám"
 
-#: fdisk/cfdisk.c:2285
+#: fdisk/cfdisk.c:2286
 msgid "Enter the number of sectors per track: "
 msgstr "Adja meg a sávonkénti szektorok számát: "
 
-#: fdisk/cfdisk.c:2292 fdisk/cfdisk.c:2856
+#: fdisk/cfdisk.c:2293 fdisk/cfdisk.c:2857
 msgid "Illegal sectors value"
 msgstr "Érvénytelen szektorszám"
 
-#: fdisk/cfdisk.c:2395
+#: fdisk/cfdisk.c:2396
 msgid "Enter filesystem type: "
 msgstr "Adja meg a fájlrendszer típusát: "
 
-#: fdisk/cfdisk.c:2413
+#: fdisk/cfdisk.c:2414
 msgid "Cannot change FS Type to empty"
 msgstr "A fájlrendszer típusa nem módosítható üresre"
 
-#: fdisk/cfdisk.c:2415
+#: fdisk/cfdisk.c:2416
 msgid "Cannot change FS Type to extended"
 msgstr "A fájlrendszer típusa nem módosítható kiterjesztettre"
 
-#: fdisk/cfdisk.c:2446
+#: fdisk/cfdisk.c:2447
 #, c-format
 msgid "Unk(%02X)"
 msgstr "Ism(%02X)"
 
-#: fdisk/cfdisk.c:2449 fdisk/cfdisk.c:2452
+#: fdisk/cfdisk.c:2450 fdisk/cfdisk.c:2453
 msgid ", NC"
 msgstr ", NC"
 
-#: fdisk/cfdisk.c:2457 fdisk/cfdisk.c:2460
+#: fdisk/cfdisk.c:2458 fdisk/cfdisk.c:2461
 msgid "NC"
 msgstr "NC"
 
-#: fdisk/cfdisk.c:2468
+#: fdisk/cfdisk.c:2469
 msgid "Pri/Log"
 msgstr "Els/Log"
 
-#: fdisk/cfdisk.c:2475
+#: fdisk/cfdisk.c:2476
 #, c-format
 msgid "Unknown (%02X)"
 msgstr "Ismeretlen (%02X)"
 
-#: fdisk/cfdisk.c:2544
+#: fdisk/cfdisk.c:2545
 #, c-format
 msgid "Disk Drive: %s"
 msgstr "Lemezmeghajtó: %s"
 
-#: fdisk/cfdisk.c:2551
+#: fdisk/cfdisk.c:2552
 #, c-format
 msgid "Size: %lld bytes, %lld MB"
 msgstr "Méret: %lld bájt, %lld MB"
 
-#: fdisk/cfdisk.c:2554
+#: fdisk/cfdisk.c:2555
 #, c-format
 msgid "Size: %lld bytes, %lld.%lld GB"
 msgstr "Méret: %lld bájt, %lld.%lld GB"
 
-#: fdisk/cfdisk.c:2558
+#: fdisk/cfdisk.c:2559
 #, c-format
 msgid "Heads: %d   Sectors per Track: %d   Cylinders: %lld"
 msgstr "Fejek: %d   Sávonkénti szektorszám: %d   Cilinderek: %lld"
 
-#: fdisk/cfdisk.c:2562 login-utils/chfn.c:377
+#: fdisk/cfdisk.c:2563 login-utils/chfn.c:377
 msgid "Name"
 msgstr "Név"
 
-#: fdisk/cfdisk.c:2563
+#: fdisk/cfdisk.c:2564
 msgid "Flags"
 msgstr "Jelek"
 
-#: fdisk/cfdisk.c:2564
+#: fdisk/cfdisk.c:2565
 msgid "Part Type"
 msgstr "Part. típus"
 
-#: fdisk/cfdisk.c:2565
+#: fdisk/cfdisk.c:2566
 msgid "FS Type"
 msgstr "FR típus"
 
-#: fdisk/cfdisk.c:2566
+#: fdisk/cfdisk.c:2567
 msgid "[Label]"
 msgstr "[Címke]"
 
-#: fdisk/cfdisk.c:2568
+#: fdisk/cfdisk.c:2569
 msgid "    Sectors"
 msgstr "   Szektorok"
 
-#: fdisk/cfdisk.c:2570
+#: fdisk/cfdisk.c:2571
 msgid "  Cylinders"
 msgstr "  Cilinderek"
 
-#: fdisk/cfdisk.c:2572
+#: fdisk/cfdisk.c:2573
 msgid "  Size (MB)"
 msgstr "  Méret (MB)"
 
-#: fdisk/cfdisk.c:2574
+#: fdisk/cfdisk.c:2575
 msgid "  Size (GB)"
 msgstr "  Méret (GB)"
 
-#: fdisk/cfdisk.c:2629
+#: fdisk/cfdisk.c:2630
 msgid "Bootable"
 msgstr "Aktív"
 
-#: fdisk/cfdisk.c:2629
+#: fdisk/cfdisk.c:2630
 msgid "Toggle bootable flag of the current partition"
 msgstr "Az aktuális partíció indíthatóvá tétele"
 
-#: fdisk/cfdisk.c:2630
+#: fdisk/cfdisk.c:2631
 msgid "Delete"
 msgstr "Törlés"
 
-#: fdisk/cfdisk.c:2630
+#: fdisk/cfdisk.c:2631
 msgid "Delete the current partition"
 msgstr "Az aktuális partíció törlése"
 
-#: fdisk/cfdisk.c:2631
+#: fdisk/cfdisk.c:2632
 msgid "Geometry"
 msgstr "Geometria"
 
-#: fdisk/cfdisk.c:2631
+#: fdisk/cfdisk.c:2632
 msgid "Change disk geometry (experts only)"
 msgstr "A lemezgeometria módosítása (csak haladóknak)"
 
-#: fdisk/cfdisk.c:2632
+#: fdisk/cfdisk.c:2633
 msgid "Help"
 msgstr "Súgó"
 
-#: fdisk/cfdisk.c:2632
+#: fdisk/cfdisk.c:2633
 msgid "Print help screen"
 msgstr "Segítség kiírása"
 
-#: fdisk/cfdisk.c:2633
+#: fdisk/cfdisk.c:2634
 msgid "Maximize"
 msgstr "Maximal."
 
-#: fdisk/cfdisk.c:2633
+#: fdisk/cfdisk.c:2634
 msgid "Maximize disk usage of the current partition (experts only)"
 msgstr "Maximalizálja az aktuális partíció lemezkihasználását (csak haladónak)"
 
-#: fdisk/cfdisk.c:2634
+#: fdisk/cfdisk.c:2635
 msgid "New"
 msgstr "Új"
 
-#: fdisk/cfdisk.c:2634
+#: fdisk/cfdisk.c:2635
 msgid "Create new partition from free space"
 msgstr "Új partíció létrehozása a szabad területen"
 
-#: fdisk/cfdisk.c:2635
+#: fdisk/cfdisk.c:2636
 msgid "Print"
 msgstr "Megnézés"
 
-#: fdisk/cfdisk.c:2635
+#: fdisk/cfdisk.c:2636
 msgid "Print partition table to the screen or to a file"
 msgstr "Kiírja a partíciós táblát a képernyőre vagy egy fájlba"
 
-#: fdisk/cfdisk.c:2636
+#: fdisk/cfdisk.c:2637
 msgid "Quit"
 msgstr "Kilépés"
 
-#: fdisk/cfdisk.c:2636
+#: fdisk/cfdisk.c:2637
 msgid "Quit program without writing partition table"
 msgstr "Kilépés a partíciós tábla kiírása nélkül"
 
-#: fdisk/cfdisk.c:2637
+#: fdisk/cfdisk.c:2638
 msgid "Type"
 msgstr "Típus"
 
-#: fdisk/cfdisk.c:2637
+#: fdisk/cfdisk.c:2638
 msgid "Change the filesystem type (DOS, Linux, OS/2 and so on)"
 msgstr "A fájlrendszer típusának módosítása (DOS, Linux, OS/2, stb)"
 
-#: fdisk/cfdisk.c:2638
+#: fdisk/cfdisk.c:2639
 msgid "Units"
 msgstr "Egység"
 
-#: fdisk/cfdisk.c:2638
+#: fdisk/cfdisk.c:2639
 msgid "Change units of the partition size display (MB, sect, cyl)"
 msgstr ""
 "A partícióméret kijelzési egységének megváltoztatása (MB, Szekt., Cil.)"
 
-#: fdisk/cfdisk.c:2639
+#: fdisk/cfdisk.c:2640
 msgid "Write"
 msgstr "Kiírás"
 
-#: fdisk/cfdisk.c:2639
+#: fdisk/cfdisk.c:2640
 msgid "Write partition table to disk (this might destroy data)"
 msgstr "A partíciós tábla kiírása a lemezre (adatvesztést okozhat)"
 
-#: fdisk/cfdisk.c:2686
+#: fdisk/cfdisk.c:2687
 msgid "Cannot make this partition bootable"
 msgstr "Ez a partíció nem tehető indíthatóvá"
 
-#: fdisk/cfdisk.c:2696
+#: fdisk/cfdisk.c:2697
 msgid "Cannot delete an empty partition"
 msgstr "Nem törölhet üres partíciót"
 
-#: fdisk/cfdisk.c:2716 fdisk/cfdisk.c:2718
+#: fdisk/cfdisk.c:2717 fdisk/cfdisk.c:2719
 msgid "Cannot maximize this partition"
 msgstr "Nem maximalizálhatja ezt a partíciót"
 
-#: fdisk/cfdisk.c:2726
+#: fdisk/cfdisk.c:2727
 msgid "This partition is unusable"
 msgstr "Ez a partíció használhatatlan"
 
-#: fdisk/cfdisk.c:2728
+#: fdisk/cfdisk.c:2729
 msgid "This partition is already in use"
 msgstr "Ez a partíció már használatban van"
 
-#: fdisk/cfdisk.c:2745
+#: fdisk/cfdisk.c:2746
 msgid "Cannot change the type of an empty partition"
 msgstr "Üres partíció típusa nem módosítható"
 
-#: fdisk/cfdisk.c:2772 fdisk/cfdisk.c:2778
+#: fdisk/cfdisk.c:2773 fdisk/cfdisk.c:2779
 msgid "No more partitions"
 msgstr "Nincs több partíció"
 
-#: fdisk/cfdisk.c:2785
+#: fdisk/cfdisk.c:2786
 msgid "Illegal command"
 msgstr "Érvénytelen parancs"
 
-#: fdisk/cfdisk.c:2795
+#: fdisk/cfdisk.c:2796
 #, c-format
 msgid "Copyright (C) 1994-2002 Kevin E. Martin & aeb\n"
 msgstr "Copyright (C) 1994-2002 Kevin E. Martin & aeb\n"
 
-#: fdisk/cfdisk.c:2802
+#: fdisk/cfdisk.c:2803
 #, c-format
 msgid ""
 "\n"
@@ -2928,7 +2928,7 @@ msgid ""
 " -b <size>             sector size (512, 1024, 2048 or 4096)\n"
 " -c[=<mode>]           compatible mode: 'dos' or 'nondos' (default)\n"
 " -h                    print this help text\n"
-" -u[=<unit>]           dysplay units: 'cylinders' or 'sectors' (default)\n"
+" -u[=<unit>]           display units: 'cylinders' or 'sectors' (default)\n"
 " -v                    print program version\n"
 " -C <number>           specify the number of cylinders\n"
 " -H <number>           specify the number of heads\n"
@@ -9201,7 +9201,7 @@ msgstr "mount: nem állítható be a csoportazonosító: %s"
 msgid "mount: cannot set user id: %s"
 msgstr "mount: nem állítható be a felhasználóazonosító: %s"
 
-#: mount/mount.c:729 mount/mount.c:1923
+#: mount/mount.c:729 mount/mount.c:1925
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: nem indítható a program: %s"
@@ -9349,63 +9349,63 @@ msgstr "umount: a(z) %s foglalt - újracsatolva csak olvashatóként\n"
 msgid "mount: warning: %s seems to be mounted read-only.\n"
 msgstr "umount: a(z) %s foglalt - újracsatolva csak olvashatóként\n"
 
-#: mount/mount.c:1480
+#: mount/mount.c:1482
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: nem határozható meg a fájlrendszer típusa és nem is adta azt meg"
 
-#: mount/mount.c:1483
+#: mount/mount.c:1485
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: meg kell adnia a fájlrendszer típusát"
 
-#: mount/mount.c:1486
+#: mount/mount.c:1488
 msgid "mount: mount failed"
 msgstr "mount: a csatolás meghiúsult"
 
-#: mount/mount.c:1492 mount/mount.c:1529
+#: mount/mount.c:1494 mount/mount.c:1531
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: a(z) %s csatolási pont nem egy könyvtár"
 
-#: mount/mount.c:1494
+#: mount/mount.c:1496
 msgid "mount: permission denied"
 msgstr "mount: hozzáférés megtagadva"
 
-#: mount/mount.c:1496
+#: mount/mount.c:1498
 msgid "mount: must be superuser to use mount"
 msgstr "mount: csak a rendszergazda használhatja a mount parancsot"
 
-#: mount/mount.c:1500 mount/mount.c:1504
+#: mount/mount.c:1502 mount/mount.c:1506
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: a(z) %s foglalt"
 
-#: mount/mount.c:1506
+#: mount/mount.c:1508
 msgid "mount: proc already mounted"
 msgstr "mount: a proc fájlrendszer már csatolva van"
 
-#: mount/mount.c:1508
+#: mount/mount.c:1510
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: a(z) %s már csatolva van, vagy a(z) %s foglalt"
 
-#: mount/mount.c:1514
+#: mount/mount.c:1516
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: a(z) %s csatolási pont nem létezik"
 
-#: mount/mount.c:1516
+#: mount/mount.c:1518
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: a(z) %s csatolási pont egy szimbolikus link a semmibe"
 
-#: mount/mount.c:1521
+#: mount/mount.c:1523
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: a(z) %s speciális eszköz nem létezik"
 
-#: mount/mount.c:1533
+#: mount/mount.c:1535
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -9414,12 +9414,12 @@ msgstr ""
 "mount: a(z) %s speciális eszköz nem létezik\n"
 "       (az elérési út egy előtagja nem könyvtár)\n"
 
-#: mount/mount.c:1545
+#: mount/mount.c:1547
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: a(z) %s még nincs csatolva, vagy a kapcsoló hibás"
 
-#: mount/mount.c:1547
+#: mount/mount.c:1549
 #, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -9428,7 +9428,7 @@ msgstr ""
 "mount: hibás fájlrendszertípus, hibás kapcsoló, hibás szuperblokk a(z)\n"
 "       %s eszközön, hiányzó kódlap vagy segédprogram, vagy egyéb hiba"
 
-#: mount/mount.c:1554
+#: mount/mount.c:1556
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
@@ -9436,7 +9436,7 @@ msgstr ""
 "       (számos fájlrendszer (például nfs, cifs) esetén szükséges\n"
 "       lehet egy /sbin/mount.<típus> segédprogram)"
 
-#: mount/mount.c:1563
+#: mount/mount.c:1565
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -9444,7 +9444,7 @@ msgstr ""
 "       (lehet, hogy ez egy IDE eszköz, miközben ide-scsi-t\n"
 "       használ, így az sr0 vagy sda vagy hasonló szükséges?)"
 
-#: mount/mount.c:1568
+#: mount/mount.c:1570
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -9452,7 +9452,7 @@ msgstr ""
 "       (lehet, hogy egy kiterjesztett partíciót próbál csatolni\n"
 "       az általa tartalmazott valamelyik logikai partíció helyett?)"
 
-#: mount/mount.c:1575
+#: mount/mount.c:1577
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -9460,50 +9460,50 @@ msgstr ""
 "       Egyes esetekben hasznos információk találhatók a syslogban\n"
 "       próbálja kiadni a dmesg | tail parancsot vagy egy ehhez hasonlót\n"
 
-#: mount/mount.c:1581
+#: mount/mount.c:1583
 msgid "mount table full"
 msgstr "a csatolási tábla megtelt"
 
-#: mount/mount.c:1583
+#: mount/mount.c:1585
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: nem lehet olvasni a(z) %s szuperblokkját"
 
-#: mount/mount.c:1589
+#: mount/mount.c:1591
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: a(z) %s eszköz ismeretlen"
 
-#: mount/mount.c:1594
+#: mount/mount.c:1596
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: ismeretlen fájlrendszertípus: „%s”"
 
-#: mount/mount.c:1606
+#: mount/mount.c:1608
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: talán a következőre gondolt: %s"
 
-#: mount/mount.c:1609
+#: mount/mount.c:1611
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: talán az „iso9660” típusra gondolt?"
 
-#: mount/mount.c:1612
+#: mount/mount.c:1614
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: talán a „vfat” típusra gondolt?"
 
-#: mount/mount.c:1615
+#: mount/mount.c:1617
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: a(z) %s eszközszáma hibás vagy a(z) %s fájlrendszer nem támogatott"
 
-#: mount/mount.c:1623
+#: mount/mount.c:1625
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: a(z) %s nem blokkeszköz és az elérés meghiúsult."
 
-#: mount/mount.c:1625
+#: mount/mount.c:1627
 #, fuzzy, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -9512,53 +9512,53 @@ msgstr ""
 "mount: a rendszermag nem ismeri fel a(z) %s blokkeszközt\n"
 "       (talán ki kellene adnia az „insmod meghajtó” parancsot?)"
 
-#: mount/mount.c:1628
+#: mount/mount.c:1630
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr ""
 "mount: a(z) %s nem blokkeszköz (próbálja használni a „-o loop” kapcsolót)"
 
-#: mount/mount.c:1631
+#: mount/mount.c:1633
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: a(z) %s nem blokkeszköz"
 
-#: mount/mount.c:1636
+#: mount/mount.c:1638
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: a(z) %s nem egy érvényes blokkeszköz"
 
 # ez a következő három %s%s-ben az első %s lesz, meg kell majd ott fordítani
-#: mount/mount.c:1639
+#: mount/mount.c:1641
 msgid "block device "
 msgstr "blokkeszköz"
 
-#: mount/mount.c:1641
+#: mount/mount.c:1643
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: a(z) %2$s%1$s nem csatolható írásvédettként"
 
-#: mount/mount.c:1645
+#: mount/mount.c:1647
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: a(z) %2$s%1$s írásvédett, de megadásra került a „-w” kapcsoló"
 
-#: mount/mount.c:1649
+#: mount/mount.c:1651
 #, fuzzy, c-format
 msgid "mount: cannot remount %s%s read-write, is write-protected"
 msgstr "mount: a(z) %2$s%1$s nem csatolható írásvédettként"
 
-#: mount/mount.c:1664
+#: mount/mount.c:1666
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: a(z) %2$s%1$s írásvédett, csatolás csak olvashatóként"
 
-#: mount/mount.c:1672
+#: mount/mount.c:1674
 #, fuzzy, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: a(z) %s már csatolva van a(z) %s alá\n"
 
-#: mount/mount.c:1690
+#: mount/mount.c:1692
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9568,24 +9568,24 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 
-#: mount/mount.c:1769
+#: mount/mount.c:1771
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 "mount: nem adott meg típust - a kettőspont miatt nfs típust feltételezek\n"
 
-#: mount/mount.c:1775
+#: mount/mount.c:1777
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: nem adott meg típust - a // előtag miatt cifs típust feltételezek\n"
 
-#: mount/mount.c:1870
+#: mount/mount.c:1872
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: a(z) %s már csatolva van a(z) %s alá\n"
 
-#: mount/mount.c:2005
+#: mount/mount.c:2007
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9661,24 +9661,24 @@ msgstr ""
 "Egyéb kapcsolók: [-nfFrsvw] [-o kapcsolók].\n"
 "További információkért adja ki a „man 8 mount” parancsot.\n"
 
-#: mount/mount.c:2333
+#: mount/mount.c:2335
 #, fuzzy, c-format
 msgid "mount: only root can do that (effective UID is %u)"
 msgstr "mount: ezt csak a rendszergazda teheti meg"
 
-#: mount/mount.c:2336
+#: mount/mount.c:2338
 msgid "mount: only root can do that"
 msgstr "mount: ezt csak a rendszergazda teheti meg"
 
-#: mount/mount.c:2347
+#: mount/mount.c:2349
 msgid "nothing was mounted"
 msgstr "semmi nem lett csatolva"
 
-#: mount/mount.c:2365 mount/mount.c:2391
+#: mount/mount.c:2367 mount/mount.c:2393
 msgid "mount: no such partition found"
 msgstr "mount: nincs ilyen partíció"
 
-#: mount/mount.c:2368
+#: mount/mount.c:2370
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: a(z) %s nem található a(z) %s vagy a(z) %s alatt"
@@ -10745,54 +10745,49 @@ msgstr ""
 "              [-Q üzenetkulcs] [-M osztottmemória-kulcs] [-S "
 "szemaforkulcs] ... ]\n"
 
-#: sys-utils/ipcrm.c:179
-#, c-format
-msgid "%s: illegal option -- %c\n"
-msgstr "%s: érvénytelen kapcsoló -- %c\n"
-
-#: sys-utils/ipcrm.c:191
+#: sys-utils/ipcrm.c:189
 #, c-format
 msgid "%s: illegal key (%s)\n"
 msgstr "%s: érvénytelen kulcs (%s)\n"
 
-#: sys-utils/ipcrm.c:206 sys-utils/ipcrm.c:238
+#: sys-utils/ipcrm.c:204 sys-utils/ipcrm.c:236
 msgid "permission denied for key"
 msgstr "a kulcs elérése megtagadva"
 
-#: sys-utils/ipcrm.c:209 sys-utils/ipcrm.c:248
+#: sys-utils/ipcrm.c:207 sys-utils/ipcrm.c:246
 msgid "already removed key"
 msgstr "a kulcs már el van távolítva"
 
-#: sys-utils/ipcrm.c:212 sys-utils/ipcrm.c:243
+#: sys-utils/ipcrm.c:210 sys-utils/ipcrm.c:241
 msgid "invalid key"
 msgstr "érvénytelen kulcs"
 
-#: sys-utils/ipcrm.c:215 sys-utils/ipcrm.c:253
+#: sys-utils/ipcrm.c:213 sys-utils/ipcrm.c:251
 msgid "unknown error in key"
 msgstr "ismeretlen hiba a kulcsban"
 
-#: sys-utils/ipcrm.c:239
+#: sys-utils/ipcrm.c:237
 msgid "permission denied for id"
 msgstr "az azonosító elérése megtagadva"
 
-#: sys-utils/ipcrm.c:244
+#: sys-utils/ipcrm.c:242
 msgid "invalid id"
 msgstr "érvénytelen azonosító"
 
-#: sys-utils/ipcrm.c:249
+#: sys-utils/ipcrm.c:247
 msgid "already removed id"
 msgstr "az azonosító már el van távolítva"
 
-#: sys-utils/ipcrm.c:254
+#: sys-utils/ipcrm.c:252
 msgid "unknown error in id"
 msgstr "ismeretlen hiba az azonosítóban"
 
-#: sys-utils/ipcrm.c:257
+#: sys-utils/ipcrm.c:255
 #, c-format
 msgid "%s: %s (%s)\n"
 msgstr "%s: %s (%s)\n"
 
-#: sys-utils/ipcrm.c:265
+#: sys-utils/ipcrm.c:263
 #, c-format
 msgid "%s: unknown argument: %s\n"
 msgstr "%s: ismeretlen argumentum: %s\n"
@@ -10889,321 +10884,316 @@ msgstr "minimális szegmensméret = %lu\n"
 msgid "------ Shared Memory Status --------\n"
 msgstr "------- Osztott memória állapota --------\n"
 
-#: sys-utils/ipcs.c:291
+#. TRANSLATORS: This output format is mantained for backward compatibility
+#. as ipcs is used in scripts. For consistency with the rest, the translated
+#. form can follow this model:
+#.
+#. "segments allocated = %d\n"
+#. "pages allocated = %ld\n"
+#. "pages resident = %ld\n"
+#. "pages swapped = %ld\n"
+#. "swap performance = %ld attempts, %ld successes\n"
+#.
+#: sys-utils/ipcs.c:301
 #, c-format
-msgid "segments allocated %d\n"
-msgstr "lefoglalt szegmensek:    %d\n"
+msgid ""
+"segments allocated %d\n"
+"pages allocated %ld\n"
+"pages resident  %ld\n"
+"pages swapped   %ld\n"
+"Swap performance: %ld attempts\t %ld successes\n"
+msgstr ""
 
-#: sys-utils/ipcs.c:292
-#, c-format
-msgid "pages allocated %ld\n"
-msgstr "lefoglalt lapok:         %ld\n"
-
-#: sys-utils/ipcs.c:293
-#, c-format
-msgid "pages resident  %ld\n"
-msgstr "memóriában maradó lapok: %ld\n"
-
-#: sys-utils/ipcs.c:294
-#, c-format
-msgid "pages swapped   %ld\n"
-msgstr "kilapozott lapok:        %ld\n"
-
-#: sys-utils/ipcs.c:295
-#, c-format
-msgid "Swap performance: %ld attempts\t %ld successes\n"
-msgstr "Lapozóterület teljesítménye: %ld kísérlet\t %ld sikeres\n"
-
-#: sys-utils/ipcs.c:300
+#: sys-utils/ipcs.c:314
 #, c-format
 msgid "------ Shared Memory Segment Creators/Owners --------\n"
 msgstr "------- Osztott memóriaszegmens létrehozói/tulajdonosai ------\n"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:308 sys-utils/ipcs.c:315
-#: sys-utils/ipcs.c:321
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:322 sys-utils/ipcs.c:329
+#: sys-utils/ipcs.c:335
 msgid "shmid"
 msgstr "o.m.-az"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:321 sys-utils/ipcs.c:422
-#: sys-utils/ipcs.c:437 sys-utils/ipcs.c:520 sys-utils/ipcs.c:538
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:335 sys-utils/ipcs.c:436
+#: sys-utils/ipcs.c:451 sys-utils/ipcs.c:534 sys-utils/ipcs.c:552
 msgid "perms"
 msgstr "jogok"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:520
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:436 sys-utils/ipcs.c:534
 msgid "cuid"
 msgstr "l.fh.az"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:520
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:436 sys-utils/ipcs.c:534
 msgid "cgid"
 msgstr "l.cs.az"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:520
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:436 sys-utils/ipcs.c:534
 msgid "uid"
 msgstr "fh.az"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:520
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:436 sys-utils/ipcs.c:534
 msgid "gid"
 msgstr "cs.az"
 
-#: sys-utils/ipcs.c:306
+#: sys-utils/ipcs.c:320
 #, c-format
 msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
 msgstr ""
 "-------- Osztott memória csatolási/leválasztási/módosítási számai -------\n"
 
-#: sys-utils/ipcs.c:308 sys-utils/ipcs.c:315 sys-utils/ipcs.c:321
-#: sys-utils/ipcs.c:428 sys-utils/ipcs.c:437 sys-utils/ipcs.c:526
-#: sys-utils/ipcs.c:532 sys-utils/ipcs.c:538
+#: sys-utils/ipcs.c:322 sys-utils/ipcs.c:329 sys-utils/ipcs.c:335
+#: sys-utils/ipcs.c:442 sys-utils/ipcs.c:451 sys-utils/ipcs.c:540
+#: sys-utils/ipcs.c:546 sys-utils/ipcs.c:552
 msgid "owner"
 msgstr "tulajdonos"
 
-#: sys-utils/ipcs.c:308
+#: sys-utils/ipcs.c:322
 msgid "attached"
 msgstr "csatolva"
 
-#: sys-utils/ipcs.c:308
+#: sys-utils/ipcs.c:322
 msgid "detached"
 msgstr "leválasztva"
 
-#: sys-utils/ipcs.c:309
+#: sys-utils/ipcs.c:323
 msgid "changed"
 msgstr "módosítva"
 
-#: sys-utils/ipcs.c:313
+#: sys-utils/ipcs.c:327
 #, fuzzy, c-format
 msgid "------ Shared Memory Creator/Last-op PIDs --------\n"
 msgstr "-------- Osztott memória létrehozója/utolsó művelete --------\n"
 
-#: sys-utils/ipcs.c:315
+#: sys-utils/ipcs.c:329
 msgid "cpid"
 msgstr "l.f.az"
 
-#: sys-utils/ipcs.c:315
+#: sys-utils/ipcs.c:329
 msgid "lpid"
 msgstr "u.f.az"
 
-#: sys-utils/ipcs.c:319
+#: sys-utils/ipcs.c:333
 #, c-format
 msgid "------ Shared Memory Segments --------\n"
 msgstr "------- Osztott memóriaszegmensek --------\n"
 
-#: sys-utils/ipcs.c:321 sys-utils/ipcs.c:437 sys-utils/ipcs.c:538
+#: sys-utils/ipcs.c:335 sys-utils/ipcs.c:451 sys-utils/ipcs.c:552
 msgid "key"
 msgstr "kulcs"
 
-#: sys-utils/ipcs.c:321
+#: sys-utils/ipcs.c:335
 msgid "bytes"
 msgstr "bájt"
 
-#: sys-utils/ipcs.c:322
+#: sys-utils/ipcs.c:336
 msgid "nattch"
 msgstr "csat.szám"
 
-#: sys-utils/ipcs.c:322
+#: sys-utils/ipcs.c:336
 msgid "status"
 msgstr "állapot"
 
-#: sys-utils/ipcs.c:343 sys-utils/ipcs.c:345 sys-utils/ipcs.c:347
-#: sys-utils/ipcs.c:458 sys-utils/ipcs.c:460 sys-utils/ipcs.c:559
-#: sys-utils/ipcs.c:561 sys-utils/ipcs.c:563 sys-utils/ipcs.c:614
-#: sys-utils/ipcs.c:616 sys-utils/ipcs.c:644 sys-utils/ipcs.c:646
-#: sys-utils/ipcs.c:648 sys-utils/ipcs.c:671
+#: sys-utils/ipcs.c:357 sys-utils/ipcs.c:359 sys-utils/ipcs.c:361
+#: sys-utils/ipcs.c:472 sys-utils/ipcs.c:474 sys-utils/ipcs.c:573
+#: sys-utils/ipcs.c:575 sys-utils/ipcs.c:577 sys-utils/ipcs.c:628
+#: sys-utils/ipcs.c:630 sys-utils/ipcs.c:658 sys-utils/ipcs.c:660
+#: sys-utils/ipcs.c:662 sys-utils/ipcs.c:685
 msgid "Not set"
 msgstr "Nincs beállítva"
 
-#: sys-utils/ipcs.c:375
+#: sys-utils/ipcs.c:389
 msgid "dest"
 msgstr "cél"
 
-#: sys-utils/ipcs.c:376
+#: sys-utils/ipcs.c:390
 msgid "locked"
 msgstr "zárolva"
 
-#: sys-utils/ipcs.c:396
+#: sys-utils/ipcs.c:410
 #, c-format
 msgid "kernel not configured for semaphores\n"
 msgstr "a rendszermag nincs beállítva szemaforok használatára\n"
 
-#: sys-utils/ipcs.c:402
+#: sys-utils/ipcs.c:416
 #, c-format
 msgid "------ Semaphore Limits --------\n"
 msgstr "-------- Szemaforok korlátai -----------\n"
 
-#: sys-utils/ipcs.c:406
+#: sys-utils/ipcs.c:420
 #, c-format
 msgid "max number of arrays = %d\n"
 msgstr "a tömbök maximális száma = %d\n"
 
-#: sys-utils/ipcs.c:407
+#: sys-utils/ipcs.c:421
 #, c-format
 msgid "max semaphores per array = %d\n"
 msgstr "szemaforok tömbönként maximális száma = %d\n"
 
-#: sys-utils/ipcs.c:408
+#: sys-utils/ipcs.c:422
 #, c-format
 msgid "max semaphores system wide = %d\n"
 msgstr "rendszerszintű szemaforok maximális száma = %d\n"
 
-#: sys-utils/ipcs.c:409
+#: sys-utils/ipcs.c:423
 #, c-format
 msgid "max ops per semop call = %d\n"
 msgstr "szemafor hívásonkénti műveletek maximális száma = %d\n"
 
-#: sys-utils/ipcs.c:410
+#: sys-utils/ipcs.c:424
 #, c-format
 msgid "semaphore max value = %d\n"
 msgstr "szemafor maximális értéke = %d\n"
 
-#: sys-utils/ipcs.c:414
+#: sys-utils/ipcs.c:428
 #, c-format
 msgid "------ Semaphore Status --------\n"
 msgstr "--------- Szemaforállapot -------\n"
 
-#: sys-utils/ipcs.c:415
+#: sys-utils/ipcs.c:429
 #, c-format
 msgid "used arrays = %d\n"
 msgstr "használt tömbök = %d\n"
 
-#: sys-utils/ipcs.c:416
+#: sys-utils/ipcs.c:430
 #, c-format
 msgid "allocated semaphores = %d\n"
 msgstr "lefoglalt szemaforok = %d\n"
 
-#: sys-utils/ipcs.c:420
+#: sys-utils/ipcs.c:434
 #, c-format
 msgid "------ Semaphore Arrays Creators/Owners --------\n"
 msgstr "------- A szemafortömbök létrehozói/tulajdonosai ------- \n"
 
-#: sys-utils/ipcs.c:422 sys-utils/ipcs.c:428 sys-utils/ipcs.c:437
+#: sys-utils/ipcs.c:436 sys-utils/ipcs.c:442 sys-utils/ipcs.c:451
 msgid "semid"
 msgstr "szem.az"
 
-#: sys-utils/ipcs.c:426
+#: sys-utils/ipcs.c:440
 #, c-format
 msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "---------- Szemaforműveletek/módosítások számai -------\n"
 
-#: sys-utils/ipcs.c:428
+#: sys-utils/ipcs.c:442
 msgid "last-op"
 msgstr "ut.művelet"
 
-#: sys-utils/ipcs.c:428
+#: sys-utils/ipcs.c:442
 msgid "last-changed"
 msgstr "ut.változás"
 
-#: sys-utils/ipcs.c:435
+#: sys-utils/ipcs.c:449
 #, c-format
 msgid "------ Semaphore Arrays --------\n"
 msgstr "------- Szemafortömbök ----------\n"
 
-#: sys-utils/ipcs.c:437
+#: sys-utils/ipcs.c:451
 msgid "nsems"
 msgstr "szem.sz"
 
-#: sys-utils/ipcs.c:496
+#: sys-utils/ipcs.c:510
 #, c-format
 msgid "kernel not configured for message queues\n"
 msgstr "a rendszermag nincs beállítva üzenetsorok használatára\n"
 
-#: sys-utils/ipcs.c:504
+#: sys-utils/ipcs.c:518
 #, fuzzy, c-format
 msgid "------ Messages Limits --------\n"
 msgstr "         Üzenetek: korlátok ---------\n"
 
-#: sys-utils/ipcs.c:505
+#: sys-utils/ipcs.c:519
 #, c-format
 msgid "max queues system wide = %d\n"
 msgstr "rendszerszintű sorok maximálisan = %d\n"
 
-#: sys-utils/ipcs.c:506
+#: sys-utils/ipcs.c:520
 #, c-format
 msgid "max size of message (bytes) = %d\n"
 msgstr "maximális üzenetméret (bájt) = %d\n"
 
-#: sys-utils/ipcs.c:507
+#: sys-utils/ipcs.c:521
 #, c-format
 msgid "default max size of queue (bytes) = %d\n"
 msgstr "sor alapértelmezett maximális mérete (bájt) = %d\n"
 
-#: sys-utils/ipcs.c:511
+#: sys-utils/ipcs.c:525
 #, fuzzy, c-format
 msgid "------ Messages Status --------\n"
 msgstr "------ Üzenetek: állapot -------\n"
 
-#: sys-utils/ipcs.c:512
+#: sys-utils/ipcs.c:526
 #, c-format
 msgid "allocated queues = %d\n"
 msgstr "lefoglalt sorok = %d\n"
 
-#: sys-utils/ipcs.c:513
+#: sys-utils/ipcs.c:527
 #, c-format
 msgid "used headers = %d\n"
 msgstr "használt fejlécek = %d\n"
 
-#: sys-utils/ipcs.c:514
+#: sys-utils/ipcs.c:528
 #, c-format
 msgid "used space = %d bytes\n"
 msgstr "használt terület = %d bájt\n"
 
-#: sys-utils/ipcs.c:518
+#: sys-utils/ipcs.c:532
 #, fuzzy, c-format
 msgid "------ Message Queues Creators/Owners --------\n"
 msgstr "------ Üzenetsorok: létrehozók/tulajdonosok --------\n"
 
-#: sys-utils/ipcs.c:520 sys-utils/ipcs.c:526 sys-utils/ipcs.c:532
-#: sys-utils/ipcs.c:538
+#: sys-utils/ipcs.c:534 sys-utils/ipcs.c:540 sys-utils/ipcs.c:546
+#: sys-utils/ipcs.c:552
 msgid "msqid"
 msgstr "üz.az"
 
-#: sys-utils/ipcs.c:524
+#: sys-utils/ipcs.c:538
 #, c-format
 msgid "------ Message Queues Send/Recv/Change Times --------\n"
 msgstr "-------- Üzenetsorok küldések/fogadások/módosítások számai -------\n"
 
-#: sys-utils/ipcs.c:526
+#: sys-utils/ipcs.c:540
 msgid "send"
 msgstr "küldés"
 
-#: sys-utils/ipcs.c:526
+#: sys-utils/ipcs.c:540
 msgid "recv"
 msgstr "fogadás"
 
-#: sys-utils/ipcs.c:526
+#: sys-utils/ipcs.c:540
 msgid "change"
 msgstr "módosítás"
 
-#: sys-utils/ipcs.c:530
+#: sys-utils/ipcs.c:544
 #, c-format
 msgid "------ Message Queues PIDs --------\n"
 msgstr "----- Üzenetsorok PID-jei --------\n"
 
-#: sys-utils/ipcs.c:532
+#: sys-utils/ipcs.c:546
 msgid "lspid"
 msgstr "u.k.f.az"
 
-#: sys-utils/ipcs.c:532
+#: sys-utils/ipcs.c:546
 msgid "lrpid"
 msgstr "u.f.f.az"
 
-#: sys-utils/ipcs.c:536
+#: sys-utils/ipcs.c:550
 #, c-format
 msgid "------ Message Queues --------\n"
 msgstr "------- Üzenetsorok ---------\n"
 
-#: sys-utils/ipcs.c:539
+#: sys-utils/ipcs.c:553
 msgid "used-bytes"
 msgstr "használt bájtok"
 
-#: sys-utils/ipcs.c:539
+#: sys-utils/ipcs.c:553
 msgid "messages"
 msgstr "üzenetek"
 
-#: sys-utils/ipcs.c:603
+#: sys-utils/ipcs.c:617
 #, fuzzy
 msgid "shmctl failed"
 msgstr "az fsync meghiúsult"
 
-#: sys-utils/ipcs.c:605
+#: sys-utils/ipcs.c:619
 #, c-format
 msgid ""
 "\n"
@@ -11212,42 +11202,42 @@ msgstr ""
 "\n"
 "Osztott memóriaszegmens o.m.az =%d\n"
 
-#: sys-utils/ipcs.c:606
+#: sys-utils/ipcs.c:620
 #, c-format
 msgid "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\n"
 msgstr "f.az=%d\tcs.az=%d\tl.fh.az=%d\tl.cs.az=%d\n"
 
-#: sys-utils/ipcs.c:608
+#: sys-utils/ipcs.c:622
 #, c-format
 msgid "mode=%#o\taccess_perms=%#o\n"
 msgstr "mód=%#o\thozzáférési_jog=%#o\n"
 
-#: sys-utils/ipcs.c:610
+#: sys-utils/ipcs.c:624
 #, c-format
 msgid "bytes=%ld\tlpid=%d\tcpid=%d\tnattch=%ld\n"
 msgstr "bájt=%ld\tu.f.az=%d\tl.f.az=%d\tcsat.szám=%ld\n"
 
-#: sys-utils/ipcs.c:613
+#: sys-utils/ipcs.c:627
 #, c-format
 msgid "att_time=%-26.24s\n"
 msgstr "csatl_idő=%-26.24s\n"
 
-#: sys-utils/ipcs.c:615
+#: sys-utils/ipcs.c:629
 #, c-format
 msgid "det_time=%-26.24s\n"
 msgstr "lev_idő=%-26.24s\n"
 
-#: sys-utils/ipcs.c:617 sys-utils/ipcs.c:647
+#: sys-utils/ipcs.c:631 sys-utils/ipcs.c:661
 #, c-format
 msgid "change_time=%-26.24s\n"
 msgstr "módosítási_idő=%-26.24s\n"
 
-#: sys-utils/ipcs.c:629
+#: sys-utils/ipcs.c:643
 #, fuzzy
 msgid "msgctl failed"
 msgstr "az fsync meghiúsult"
 
-#: sys-utils/ipcs.c:631
+#: sys-utils/ipcs.c:645
 #, c-format
 msgid ""
 "\n"
@@ -11256,32 +11246,32 @@ msgstr ""
 "\n"
 "Üzenetsor üz.az=%d\n"
 
-#: sys-utils/ipcs.c:632
+#: sys-utils/ipcs.c:646
 #, c-format
 msgid "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\tmode=%#o\n"
 msgstr "f.az=%d\tcs.az=%d\tl.fh.az=%d\tl.cs.az=%d\tmód=%#o\n"
 
-#: sys-utils/ipcs.c:634
+#: sys-utils/ipcs.c:648
 #, c-format
 msgid "cbytes=%ld\tqbytes=%ld\tqnum=%ld\tlspid=%d\tlrpid=%d\n"
 msgstr "l.bájt=%ld\ts.bájt=%ld\ts.szám=%ld\tu.k.f.az=%d\tu.f.f.az=%d\n"
 
-#: sys-utils/ipcs.c:643
+#: sys-utils/ipcs.c:657
 #, c-format
 msgid "send_time=%-26.24s\n"
 msgstr "küldési_idő=%-26.24s\n"
 
-#: sys-utils/ipcs.c:645
+#: sys-utils/ipcs.c:659
 #, c-format
 msgid "rcv_time=%-26.24s\n"
 msgstr "fogadási_idő=%-26.24s\n"
 
-#: sys-utils/ipcs.c:662 sys-utils/ipcs.c:684
+#: sys-utils/ipcs.c:676 sys-utils/ipcs.c:698
 #, fuzzy
 msgid "semctl failed"
 msgstr "a pozicionálás meghiúsult"
 
-#: sys-utils/ipcs.c:664
+#: sys-utils/ipcs.c:678
 #, c-format
 msgid ""
 "\n"
@@ -11290,48 +11280,48 @@ msgstr ""
 "\n"
 "Szemafortömb szem.az=%d\n"
 
-#: sys-utils/ipcs.c:665
+#: sys-utils/ipcs.c:679
 #, c-format
 msgid "uid=%d\t gid=%d\t cuid=%d\t cgid=%d\n"
 msgstr "f.az=%d\t cs.az=%d\t l.fh.az=%d\t l.cs.az=%d\n"
 
-#: sys-utils/ipcs.c:667
+#: sys-utils/ipcs.c:681
 #, c-format
 msgid "mode=%#o, access_perms=%#o\n"
 msgstr "mód=%#o, hozzáférési_jog=%#o\n"
 
-#: sys-utils/ipcs.c:669
+#: sys-utils/ipcs.c:683
 #, c-format
 msgid "nsems = %ld\n"
 msgstr "szem.szám = %ld\n"
 
-#: sys-utils/ipcs.c:670
+#: sys-utils/ipcs.c:684
 #, c-format
 msgid "otime = %-26.24s\n"
 msgstr "oidő = %-26.24s\n"
 
-#: sys-utils/ipcs.c:672
+#: sys-utils/ipcs.c:686
 #, c-format
 msgid "ctime = %-26.24s\n"
 msgstr "cidő = %-26.24s\n"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "semnum"
 msgstr "szemaforszám"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "value"
 msgstr "érték"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "ncount"
 msgstr "n.szám"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "zcount"
 msgstr "z.szám"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "pid"
 msgstr "f.az"
 
@@ -11483,6 +11473,10 @@ msgstr ""
 
 #: sys-utils/lscpu.c:756
 msgid "CPU op-mode(s):"
+msgstr ""
+
+#: sys-utils/lscpu.c:759
+msgid "CPU(s):"
 msgstr ""
 
 #: sys-utils/lscpu.c:762
@@ -12555,6 +12549,24 @@ msgstr "A bemeneti sor túl hosszú.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Elfogyott a memória a puffer növelésekor.\n"
+
+#~ msgid "%s: illegal option -- %c\n"
+#~ msgstr "%s: érvénytelen kapcsoló -- %c\n"
+
+#~ msgid "segments allocated %d\n"
+#~ msgstr "lefoglalt szegmensek:    %d\n"
+
+#~ msgid "pages allocated %ld\n"
+#~ msgstr "lefoglalt lapok:         %ld\n"
+
+#~ msgid "pages resident  %ld\n"
+#~ msgstr "memóriában maradó lapok: %ld\n"
+
+#~ msgid "pages swapped   %ld\n"
+#~ msgstr "kilapozott lapok:        %ld\n"
+
+#~ msgid "Swap performance: %ld attempts\t %ld successes\n"
+#~ msgstr "Lapozóterület teljesítménye: %ld kísérlet\t %ld sikeres\n"
 
 #, fuzzy
 #~ msgid "error running programme: \"%s\"\n"

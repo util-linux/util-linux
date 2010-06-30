@@ -19,7 +19,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: util-linux-ng 2.17-rc3\n"
 "Report-Msgid-Bugs-To: Karel Zak <kzak@redhat.com>\n"
-"POT-Creation-Date: 2010-06-18 11:27+0200\n"
+"POT-Creation-Date: 2010-06-30 14:44+0200\n"
 "PO-Revision-Date: 2009-12-16 21:30+0200\n"
 "Last-Translator: Lauri Nurmi <lanurmi@iki.fi>\n"
 "Language-Team: Finnish <translation-team-fi@lists.sourceforge.net>\n"
@@ -1061,7 +1061,7 @@ msgstr ""
 "Käyttö: mkfs [-V] [-t tied.järj. tyyppi] [tied.järj.valitsimet] laite "
 "[koko]\n"
 
-#: disk-utils/mkfs.c:88 disk-utils/mkfs.c:96 fdisk/cfdisk.c:357
+#: disk-utils/mkfs.c:88 disk-utils/mkfs.c:96 fdisk/cfdisk.c:358
 #: getopt/getopt.c:86 getopt/getopt.c:96 login-utils/wall.c:246
 #, c-format
 msgid "%s: Out of memory!\n"
@@ -1700,27 +1700,27 @@ msgstr ""
 msgid "ignore -U (UUIDs are unsupported)"
 msgstr ""
 
-#: fdisk/cfdisk.c:382 fdisk/cfdisk.c:1964
+#: fdisk/cfdisk.c:383 fdisk/cfdisk.c:1965
 msgid "Unusable"
 msgstr "Ei käytettävissä"
 
-#: fdisk/cfdisk.c:384 fdisk/cfdisk.c:1966
+#: fdisk/cfdisk.c:385 fdisk/cfdisk.c:1967
 msgid "Free Space"
 msgstr "Vapaa tila"
 
-#: fdisk/cfdisk.c:399
+#: fdisk/cfdisk.c:400
 #, c-format
 msgid "Disk has been changed.\n"
 msgstr "Levy on vaihdettu.\n"
 
-#: fdisk/cfdisk.c:401
+#: fdisk/cfdisk.c:402
 #, c-format
 msgid "Reboot the system to ensure the partition table is correctly updated.\n"
 msgstr ""
 "Järjestelmä on syytä käynnistää uudelleen osiotaulun päivittymisen "
 "varmistamiseksi.\n"
 
-#: fdisk/cfdisk.c:405
+#: fdisk/cfdisk.c:406
 #, c-format
 msgid ""
 "\n"
@@ -1732,228 +1732,228 @@ msgstr ""
 "VAROITUS: Jos DOS 6.x -osioita luotiin tai muutettiin,\n"
 "katso lisätietoja cfdiskin manuaalisivulta.\n"
 
-#: fdisk/cfdisk.c:534
+#: fdisk/cfdisk.c:535
 msgid "FATAL ERROR"
 msgstr "VAKAVA VIRHE"
 
-#: fdisk/cfdisk.c:535
+#: fdisk/cfdisk.c:536
 msgid "Press any key to exit cfdisk"
 msgstr "Paina mitä tahansa näppäintä poistuaksesi cfdiskistä"
 
-#: fdisk/cfdisk.c:582 fdisk/cfdisk.c:590
+#: fdisk/cfdisk.c:583 fdisk/cfdisk.c:591
 msgid "Cannot seek on disk drive"
 msgstr "Levyasemalla ei voi siirtyä"
 
-#: fdisk/cfdisk.c:584
+#: fdisk/cfdisk.c:585
 msgid "Cannot read disk drive"
 msgstr "Levyasemaa ei voi lukea"
 
-#: fdisk/cfdisk.c:592
+#: fdisk/cfdisk.c:593
 msgid "Cannot write disk drive"
 msgstr "Levyasemalle ei voi kirjoittaa"
 
-#: fdisk/cfdisk.c:800
+#: fdisk/cfdisk.c:801
 msgid "Too many partitions"
 msgstr "Liian monta osiota"
 
-#: fdisk/cfdisk.c:805
+#: fdisk/cfdisk.c:806
 msgid "Partition begins before sector 0"
 msgstr "Osion alku on ennen sektoria 0"
 
-#: fdisk/cfdisk.c:810
+#: fdisk/cfdisk.c:811
 msgid "Partition ends before sector 0"
 msgstr "Osion loppu on ennen sektoria 0"
 
-#: fdisk/cfdisk.c:815
+#: fdisk/cfdisk.c:816
 msgid "Partition begins after end-of-disk"
 msgstr "Osion alku on levyn lopun jälkeen"
 
-#: fdisk/cfdisk.c:820
+#: fdisk/cfdisk.c:821
 msgid "Partition ends after end-of-disk"
 msgstr "Osion loppu on levyn lopun jälkeen"
 
-#: fdisk/cfdisk.c:825
+#: fdisk/cfdisk.c:826
 msgid "Partition ends in the final partial cylinder"
 msgstr "Osion loppu on viimeisellä osittaisella sylinterillä"
 
-#: fdisk/cfdisk.c:849
+#: fdisk/cfdisk.c:850
 msgid "logical partitions not in disk order"
 msgstr "loogiset osiot eivät ole levyjärjestyksessä"
 
-#: fdisk/cfdisk.c:852
+#: fdisk/cfdisk.c:853
 msgid "logical partitions overlap"
 msgstr "loogiset osiot ovat päällekkäiset"
 
-#: fdisk/cfdisk.c:856
+#: fdisk/cfdisk.c:857
 msgid "enlarged logical partitions overlap"
 msgstr "suurennetut loogiset osiot ovat päällekkäiset"
 
-#: fdisk/cfdisk.c:886
+#: fdisk/cfdisk.c:887
 msgid ""
 "!!!! Internal error creating logical drive with no extended partition !!!!"
 msgstr ""
 "!!!! Sisäinen virhe luotaessa loogista asemaa ilman laajennettua osiota !!!!"
 
-#: fdisk/cfdisk.c:897 fdisk/cfdisk.c:909
+#: fdisk/cfdisk.c:898 fdisk/cfdisk.c:910
 msgid ""
 "Cannot create logical drive here -- would create two extended partitions"
 msgstr ""
 "Tähän ei voi luoda loogista asemaa – luotaisiin kaksi laajennettua osiota"
 
-#: fdisk/cfdisk.c:1049
+#: fdisk/cfdisk.c:1050
 msgid "Menu item too long. Menu may look odd."
 msgstr "Liian pitkä valikon kohta. Valikko voi näyttää oudolta."
 
-#: fdisk/cfdisk.c:1105
+#: fdisk/cfdisk.c:1106
 msgid "Menu without direction. Defaulting to horizontal."
 msgstr "Valikko ilman suuntaa. Käytetään oletuksena vaakasuuntaa."
 
-#: fdisk/cfdisk.c:1237
+#: fdisk/cfdisk.c:1238
 msgid "Illegal key"
 msgstr "Väärä näppäin"
 
-#: fdisk/cfdisk.c:1260
+#: fdisk/cfdisk.c:1261
 msgid "Press a key to continue"
 msgstr "Paina näppäintä jatkaaksesi"
 
-#: fdisk/cfdisk.c:1307 fdisk/cfdisk.c:1935 fdisk/cfdisk.c:2467
-#: fdisk/cfdisk.c:2469
+#: fdisk/cfdisk.c:1308 fdisk/cfdisk.c:1936 fdisk/cfdisk.c:2468
+#: fdisk/cfdisk.c:2470
 msgid "Primary"
 msgstr "Ensiö"
 
-#: fdisk/cfdisk.c:1307
+#: fdisk/cfdisk.c:1308
 msgid "Create a new primary partition"
 msgstr "Luo uusi ensiöosio"
 
-#: fdisk/cfdisk.c:1308 fdisk/cfdisk.c:1935 fdisk/cfdisk.c:2466
-#: fdisk/cfdisk.c:2469
+#: fdisk/cfdisk.c:1309 fdisk/cfdisk.c:1936 fdisk/cfdisk.c:2467
+#: fdisk/cfdisk.c:2470
 msgid "Logical"
 msgstr "Looginen"
 
-#: fdisk/cfdisk.c:1308
+#: fdisk/cfdisk.c:1309
 msgid "Create a new logical partition"
 msgstr "Luo uusi looginen osio"
 
-#: fdisk/cfdisk.c:1309 fdisk/cfdisk.c:1364 fdisk/cfdisk.c:2140
+#: fdisk/cfdisk.c:1310 fdisk/cfdisk.c:1365 fdisk/cfdisk.c:2141
 msgid "Cancel"
 msgstr "Peruuta"
 
-#: fdisk/cfdisk.c:1309 fdisk/cfdisk.c:1364
+#: fdisk/cfdisk.c:1310 fdisk/cfdisk.c:1365
 msgid "Don't create a partition"
 msgstr "Älä luo osiota"
 
-#: fdisk/cfdisk.c:1325
+#: fdisk/cfdisk.c:1326
 msgid "!!! Internal error !!!"
 msgstr "!!! Sisäinen virhe !!!"
 
-#: fdisk/cfdisk.c:1328
+#: fdisk/cfdisk.c:1329
 msgid "Size (in MB): "
 msgstr "Koko (Mt): "
 
-#: fdisk/cfdisk.c:1362
+#: fdisk/cfdisk.c:1363
 msgid "Beginning"
 msgstr "Alku"
 
-#: fdisk/cfdisk.c:1362
+#: fdisk/cfdisk.c:1363
 msgid "Add partition at beginning of free space"
 msgstr "Lisää osio tyhjän tilan alkuun"
 
-#: fdisk/cfdisk.c:1363
+#: fdisk/cfdisk.c:1364
 msgid "End"
 msgstr "Loppu"
 
-#: fdisk/cfdisk.c:1363
+#: fdisk/cfdisk.c:1364
 msgid "Add partition at end of free space"
 msgstr "Lisää osio tyhjän tilan loppuun"
 
-#: fdisk/cfdisk.c:1381
+#: fdisk/cfdisk.c:1382
 msgid "No room to create the extended partition"
 msgstr "Laajennetun osion luomiseen ei ole tilaa"
 
-#: fdisk/cfdisk.c:1455
+#: fdisk/cfdisk.c:1456
 msgid "No partition table.\n"
 msgstr "Ei osiotaulua.\n"
 
-#: fdisk/cfdisk.c:1459
+#: fdisk/cfdisk.c:1460
 msgid "No partition table. Starting with zero table."
 msgstr "Ei osiotaulua. Aloitetaan tyhjällä taululla."
 
-#: fdisk/cfdisk.c:1469
+#: fdisk/cfdisk.c:1470
 msgid "Bad signature on partition table"
 msgstr "Osiotaulun allekirjoitus on virheellinen"
 
-#: fdisk/cfdisk.c:1473
+#: fdisk/cfdisk.c:1474
 msgid "Unknown partition table type"
 msgstr "Tuntematon osiotaulun tyyppi"
 
-#: fdisk/cfdisk.c:1475
+#: fdisk/cfdisk.c:1476
 msgid "Do you wish to start with a zero table [y/N] ?"
 msgstr "Haluatko aloittaa tyhjällä osiotaululla [y/N]?"
 
-#: fdisk/cfdisk.c:1523
+#: fdisk/cfdisk.c:1524
 msgid "You specified more cylinders than fit on disk"
 msgstr "Annettu sylinterimäärä ei mahdu levylle"
 
-#: fdisk/cfdisk.c:1555
+#: fdisk/cfdisk.c:1556
 msgid "Cannot open disk drive"
 msgstr "Levyasemaa ei voi avata"
 
-#: fdisk/cfdisk.c:1557 fdisk/cfdisk.c:1746
+#: fdisk/cfdisk.c:1558 fdisk/cfdisk.c:1747
 msgid "Opened disk read-only - you have no permission to write"
 msgstr "Levy avattiin vain luku -tilassa – sinulla ei ole kirjoitusoikeutta"
 
-#: fdisk/cfdisk.c:1568
+#: fdisk/cfdisk.c:1569
 msgid ""
 "Warning!!  Unsupported GPT (GUID Partition Table) detected. Use GNU Parted."
 msgstr ""
 "Varoitus!! Havaittu ei-tuettu GPT (GUID Partition Table). Käytä GNU Partedia."
 
-#: fdisk/cfdisk.c:1587
+#: fdisk/cfdisk.c:1588
 msgid "Cannot get disk size"
 msgstr "Levyn kokoa ei voi hakea"
 
-#: fdisk/cfdisk.c:1613
+#: fdisk/cfdisk.c:1614
 msgid "Bad primary partition"
 msgstr "Viallinen ensiöosio"
 
-#: fdisk/cfdisk.c:1643
+#: fdisk/cfdisk.c:1644
 msgid "Bad logical partition"
 msgstr "Viallinen looginen osio"
 
-#: fdisk/cfdisk.c:1758
+#: fdisk/cfdisk.c:1759
 msgid "Warning!!  This may destroy data on your disk!"
 msgstr "Varoitus!! Tämä voi tuhota dataa levyltä!"
 
-#: fdisk/cfdisk.c:1762
+#: fdisk/cfdisk.c:1763
 msgid ""
 "Are you sure you want to write the partition table to disk? (yes or no): "
 msgstr "Haluatko varmasti kirjoittaa osiotaulun levylle? (jaa tai ei):"
 
-#: fdisk/cfdisk.c:1768
+#: fdisk/cfdisk.c:1769
 msgid "no"
 msgstr "ei"
 
-#: fdisk/cfdisk.c:1770
+#: fdisk/cfdisk.c:1771
 msgid "Did not write partition table to disk"
 msgstr "Osiotaulua ei kirjoitettu levylle"
 
-#: fdisk/cfdisk.c:1772
+#: fdisk/cfdisk.c:1773
 msgid "yes"
 msgstr "jaa"
 
-#: fdisk/cfdisk.c:1776
+#: fdisk/cfdisk.c:1777
 msgid "Please enter `yes' or `no'"
 msgstr "Kirjoita ”jaa” tai ”ei”"
 
-#: fdisk/cfdisk.c:1780
+#: fdisk/cfdisk.c:1781
 msgid "Writing partition table to disk..."
 msgstr "Kirjoitetaan osiotaulua levylle..."
 
-#: fdisk/cfdisk.c:1805 fdisk/cfdisk.c:1809
+#: fdisk/cfdisk.c:1806 fdisk/cfdisk.c:1810
 msgid "Wrote partition table to disk"
 msgstr "Osiotaulu kirjoitettiin levylle"
 
-#: fdisk/cfdisk.c:1807
+#: fdisk/cfdisk.c:1808
 msgid ""
 "Wrote partition table, but re-read table failed.  Run partprobe(8), kpartx"
 "(8) or reboot to update table."
@@ -1961,86 +1961,86 @@ msgstr ""
 "Osiotaulu kirjoitettiin, mutta uudelleenluku epäonnistui. Aja partprobe(8), "
 "kpartx(8) tai käynnistä tietokone uudelleen, jotta taulu päivittyy."
 
-#: fdisk/cfdisk.c:1817
+#: fdisk/cfdisk.c:1818
 msgid "No primary partitions are marked bootable. DOS MBR cannot boot this."
 msgstr ""
 "Yhtään ensiöosiota ei ole merkitty käynnistettäväksi. DOS MBR ei käynnistä "
 "tätä."
 
-#: fdisk/cfdisk.c:1819
+#: fdisk/cfdisk.c:1820
 msgid ""
 "More than one primary partition is marked bootable. DOS MBR cannot boot this."
 msgstr ""
 "Useampi kuin yksi ensiöosio on merkitty käynnistettäväksi. DOS MBR ei "
 "käynnistä tätä."
 
-#: fdisk/cfdisk.c:1877 fdisk/cfdisk.c:1996 fdisk/cfdisk.c:2080
+#: fdisk/cfdisk.c:1878 fdisk/cfdisk.c:1997 fdisk/cfdisk.c:2081
 msgid "Enter filename or press RETURN to display on screen: "
 msgstr "Syötä tiedostonimi tai paina RETURN saadaksesi näytölle: "
 
-#: fdisk/cfdisk.c:1886 fdisk/cfdisk.c:2004 fdisk/cfdisk.c:2088
+#: fdisk/cfdisk.c:1887 fdisk/cfdisk.c:2005 fdisk/cfdisk.c:2089
 #, c-format
 msgid "Cannot open file '%s'"
 msgstr "Tiedostoa ”%s” ei voi avata"
 
-#: fdisk/cfdisk.c:1897
+#: fdisk/cfdisk.c:1898
 #, c-format
 msgid "Disk Drive: %s\n"
 msgstr "Levyasema: %s\n"
 
-#: fdisk/cfdisk.c:1899
+#: fdisk/cfdisk.c:1900
 msgid "Sector 0:\n"
 msgstr "Sektori 0:\n"
 
-#: fdisk/cfdisk.c:1906
+#: fdisk/cfdisk.c:1907
 #, c-format
 msgid "Sector %d:\n"
 msgstr "Sektori %d:\n"
 
-#: fdisk/cfdisk.c:1926
+#: fdisk/cfdisk.c:1927
 msgid "   None   "
 msgstr "   Ei mitään"
 
-#: fdisk/cfdisk.c:1928
+#: fdisk/cfdisk.c:1929
 msgid "   Pri/Log"
 msgstr "   Ens/Loog"
 
-#: fdisk/cfdisk.c:1930
+#: fdisk/cfdisk.c:1931
 msgid "   Primary"
 msgstr "   Ensiö"
 
-#: fdisk/cfdisk.c:1932
+#: fdisk/cfdisk.c:1933
 msgid "   Logical"
 msgstr "   Looginen"
 
-#: fdisk/cfdisk.c:1970 fdisk/fdisk.c:1783 fdisk/fdisk.c:2122
+#: fdisk/cfdisk.c:1971 fdisk/fdisk.c:1783 fdisk/fdisk.c:2122
 #: fdisk/fdisksgilabel.c:227 fdisk/fdisksunlabel.c:616 fdisk/sfdisk.c:638
 msgid "Unknown"
 msgstr "Tuntematon"
 
-#: fdisk/cfdisk.c:1976 fdisk/cfdisk.c:2444 fdisk/fdisksunlabel.c:39
+#: fdisk/cfdisk.c:1977 fdisk/cfdisk.c:2445 fdisk/fdisksunlabel.c:39
 msgid "Boot"
 msgstr "Käynnistettävä"
 
-#: fdisk/cfdisk.c:1978
+#: fdisk/cfdisk.c:1979
 #, c-format
 msgid "(%02X)"
 msgstr "(%02X)"
 
-#: fdisk/cfdisk.c:1980
+#: fdisk/cfdisk.c:1981
 msgid "None"
 msgstr "Ei mitään"
 
-#: fdisk/cfdisk.c:2015 fdisk/cfdisk.c:2099
+#: fdisk/cfdisk.c:2016 fdisk/cfdisk.c:2100
 #, c-format
 msgid "Partition Table for %s\n"
 msgstr "Laitteen %s osiotaulu\n"
 
-#: fdisk/cfdisk.c:2017
+#: fdisk/cfdisk.c:2018
 msgid "               First       Last\n"
 msgstr "               Alku-      Loppu-\n"
 
-#: fdisk/cfdisk.c:2018
+#: fdisk/cfdisk.c:2019
 msgid ""
 " # Type       Sector      Sector   Offset    Length   Filesystem Type (ID) "
 "Flag\n"
@@ -2048,7 +2048,7 @@ msgstr ""
 " # Tyyppi    sektori     sektori   Siirt.    Pituus   Tied.järj. tyyppi (ID) "
 "Liput\n"
 
-#: fdisk/cfdisk.c:2019
+#: fdisk/cfdisk.c:2020
 msgid ""
 "-- ------- ----------- ----------- ------ ----------- -------------------- "
 "----\n"
@@ -2056,465 +2056,465 @@ msgstr ""
 "-- ------- ----------- ----------- ------ ----------- -------------------- "
 "----\n"
 
-#: fdisk/cfdisk.c:2102
+#: fdisk/cfdisk.c:2103
 msgid "         ---Starting----      ----Ending-----    Start     Number of\n"
 msgstr "          ----Alku----         ----Loppu----     Alku-     Sektorien\n"
 
-#: fdisk/cfdisk.c:2103
+#: fdisk/cfdisk.c:2104
 msgid " # Flags Head Sect  Cyl   ID  Head Sect  Cyl     Sector    Sectors\n"
 msgstr " # Liput Päät Sekt  Syl   ID  Päät Sekt  Syl     sektori   määrä\n"
 
-#: fdisk/cfdisk.c:2104
+#: fdisk/cfdisk.c:2105
 msgid "-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- -----------\n"
 msgstr ""
 "-- ----- ---- ---- ----- ---- ---- ---- ----- ----------- ------------\n"
 
-#: fdisk/cfdisk.c:2137
+#: fdisk/cfdisk.c:2138
 msgid "Raw"
 msgstr "Raaka"
 
-#: fdisk/cfdisk.c:2137
+#: fdisk/cfdisk.c:2138
 msgid "Print the table using raw data format"
 msgstr "Näytä taulu raa'assa datamuodossa"
 
-#: fdisk/cfdisk.c:2138 fdisk/cfdisk.c:2241
+#: fdisk/cfdisk.c:2139 fdisk/cfdisk.c:2242
 msgid "Sectors"
 msgstr "Sektorit"
 
-#: fdisk/cfdisk.c:2138
+#: fdisk/cfdisk.c:2139
 msgid "Print the table ordered by sectors"
 msgstr "Näytä taulu järjestettynä sektoreiden mukaan"
 
-#: fdisk/cfdisk.c:2139
+#: fdisk/cfdisk.c:2140
 msgid "Table"
 msgstr "Taulu"
 
-#: fdisk/cfdisk.c:2139
+#: fdisk/cfdisk.c:2140
 msgid "Just print the partition table"
 msgstr "Näytä osiotaulu"
 
-#: fdisk/cfdisk.c:2140
+#: fdisk/cfdisk.c:2141
 msgid "Don't print the table"
 msgstr "Älä näytä taulua"
 
-#: fdisk/cfdisk.c:2168
+#: fdisk/cfdisk.c:2169
 msgid "Help Screen for cfdisk"
 msgstr "Cfdiskin ohjeruutu"
 
-#: fdisk/cfdisk.c:2170
+#: fdisk/cfdisk.c:2171
 msgid "This is cfdisk, a curses based disk partitioning program, which"
 msgstr "Tämä on cfdisk, curses-pohjainen levynosiointiohjelma, "
 
-#: fdisk/cfdisk.c:2171
+#: fdisk/cfdisk.c:2172
 msgid "allows you to create, delete and modify partitions on your hard"
 msgstr "jolla voi luoda, poistaa ja muuttaa kiintolevyllä "
 
-#: fdisk/cfdisk.c:2172
+#: fdisk/cfdisk.c:2173
 msgid "disk drive."
 msgstr "olevia osioita."
 
-#: fdisk/cfdisk.c:2174
+#: fdisk/cfdisk.c:2175
 msgid "Copyright (C) 1994-1999 Kevin E. Martin & aeb"
 msgstr "Copyright © 1994-1999 Kevin E. Martin & aeb"
 
-#: fdisk/cfdisk.c:2176
+#: fdisk/cfdisk.c:2177
 msgid "Command      Meaning"
 msgstr "Komento      Merkitys"
 
-#: fdisk/cfdisk.c:2177
+#: fdisk/cfdisk.c:2178
 msgid "-------      -------"
 msgstr "-------      --------"
 
-#: fdisk/cfdisk.c:2178
+#: fdisk/cfdisk.c:2179
 msgid "  b          Toggle bootable flag of the current partition"
 msgstr "  b          Aseta nykyisen osion käynnistettävyyslippu päälle/pois"
 
-#: fdisk/cfdisk.c:2179
+#: fdisk/cfdisk.c:2180
 msgid "  d          Delete the current partition"
 msgstr "  d          Poista nykyinen osio"
 
-#: fdisk/cfdisk.c:2180
+#: fdisk/cfdisk.c:2181
 msgid "  g          Change cylinders, heads, sectors-per-track parameters"
 msgstr "  g          Muuta sylinteri-, pää- ja sektoriparametreja"
 
-#: fdisk/cfdisk.c:2181
+#: fdisk/cfdisk.c:2182
 msgid "             WARNING: This option should only be used by people who"
 msgstr "             VAROITUS: Tätä valitsinta tulee käyttää vain niiden,"
 
-#: fdisk/cfdisk.c:2182
+#: fdisk/cfdisk.c:2183
 msgid "             know what they are doing."
 msgstr "             jotka tietävät mitä ovat tekemässä."
 
-#: fdisk/cfdisk.c:2183
+#: fdisk/cfdisk.c:2184
 msgid "  h          Print this screen"
 msgstr "  h          Näytä tämä ohjeruutu"
 
-#: fdisk/cfdisk.c:2184
+#: fdisk/cfdisk.c:2185
 msgid "  m          Maximize disk usage of the current partition"
 msgstr "  m          Maksimoi nykyisen osion levynkäyttö"
 
-#: fdisk/cfdisk.c:2185
+#: fdisk/cfdisk.c:2186
 msgid "             Note: This may make the partition incompatible with"
 msgstr "             Huom: Tämä saattaa tehdä osiosta epäyhteensopivan"
 
-#: fdisk/cfdisk.c:2186
+#: fdisk/cfdisk.c:2187
 msgid "             DOS, OS/2, ..."
 msgstr "             mm. DOSin ja OS/2:n kanssa."
 
-#: fdisk/cfdisk.c:2187
+#: fdisk/cfdisk.c:2188
 msgid "  n          Create new partition from free space"
 msgstr "  n          Luo uusi osio tyhjästä tilasta"
 
-#: fdisk/cfdisk.c:2188
+#: fdisk/cfdisk.c:2189
 msgid "  p          Print partition table to the screen or to a file"
 msgstr "  p          Tulosta osiotaulu ruudulle tai tiedostoon"
 
-#: fdisk/cfdisk.c:2189
+#: fdisk/cfdisk.c:2190
 msgid "             There are several different formats for the partition"
 msgstr "             Osioille on useita erilaisia muotoja,"
 
-#: fdisk/cfdisk.c:2190
+#: fdisk/cfdisk.c:2191
 msgid "             that you can choose from:"
 msgstr "             joista voit valita:"
 
-#: fdisk/cfdisk.c:2191
+#: fdisk/cfdisk.c:2192
 msgid "                r - Raw data (exactly what would be written to disk)"
 msgstr ""
 "                r – Raaka data (tasan se, mitä levylle kirjoitettaisiin)"
 
-#: fdisk/cfdisk.c:2192
+#: fdisk/cfdisk.c:2193
 msgid "                s - Table ordered by sectors"
 msgstr "                s – Sektoreittain järjestetty taulu"
 
-#: fdisk/cfdisk.c:2193
+#: fdisk/cfdisk.c:2194
 msgid "                t - Table in raw format"
 msgstr "                t – Taulu raa'assa muodossa"
 
-#: fdisk/cfdisk.c:2194
+#: fdisk/cfdisk.c:2195
 msgid "  q          Quit program without writing partition table"
 msgstr "  q          Lopeta ohjelma kirjoittamatta osiotaulua"
 
-#: fdisk/cfdisk.c:2195
+#: fdisk/cfdisk.c:2196
 msgid "  t          Change the filesystem type"
 msgstr "  t          Muuta tiedostojärjestelmän tyyppiä"
 
-#: fdisk/cfdisk.c:2196
+#: fdisk/cfdisk.c:2197
 msgid "  u          Change units of the partition size display"
 msgstr "  u          Muuta osiokokonäkymän yksiköitä"
 
-#: fdisk/cfdisk.c:2197
+#: fdisk/cfdisk.c:2198
 msgid "             Rotates through MB, sectors and cylinders"
 msgstr "             Vaihtaa megatavujen, sektoreiden ja sylinterien välillä"
 
-#: fdisk/cfdisk.c:2198
+#: fdisk/cfdisk.c:2199
 msgid "  W          Write partition table to disk (must enter upper case W)"
 msgstr "  W          Kirjoita osiotaulu levylle (on annettava iso kirjain W)"
 
-#: fdisk/cfdisk.c:2199
+#: fdisk/cfdisk.c:2200
 msgid "             Since this might destroy data on the disk, you must"
 msgstr "             Koska tämä saattaa tuhota levyllä olevaa dataa, kirjoitus"
 
-#: fdisk/cfdisk.c:2200
+#: fdisk/cfdisk.c:2201
 msgid "             either confirm or deny the write by entering `yes' or"
 msgstr ""
 "             on joko varmistettava tai peruttava kirjoittamalla ”jaa” tai"
 
-#: fdisk/cfdisk.c:2201
+#: fdisk/cfdisk.c:2202
 msgid "             `no'"
 msgstr "             ”ei”"
 
-#: fdisk/cfdisk.c:2202
+#: fdisk/cfdisk.c:2203
 msgid "Up Arrow     Move cursor to the previous partition"
 msgstr "Nuoli ylös   Siirrä osoitin edelliseen osioon"
 
-#: fdisk/cfdisk.c:2203
+#: fdisk/cfdisk.c:2204
 msgid "Down Arrow   Move cursor to the next partition"
 msgstr "Nuoli alas   Siirrä osoitin seuraavaan osioon"
 
-#: fdisk/cfdisk.c:2204
+#: fdisk/cfdisk.c:2205
 msgid "CTRL-L       Redraws the screen"
 msgstr "Ctrl-L       Piirtää ruudun uudelleen"
 
-#: fdisk/cfdisk.c:2205
+#: fdisk/cfdisk.c:2206
 msgid "  ?          Print this screen"
 msgstr "  ?          Näytä tämä ohjeruutu"
 
-#: fdisk/cfdisk.c:2207
+#: fdisk/cfdisk.c:2208
 msgid "Note: All of the commands can be entered with either upper or lower"
 msgstr "Huom: Kaikki komennot voi antaa joko isoilla tai pienillä"
 
-#: fdisk/cfdisk.c:2208
+#: fdisk/cfdisk.c:2209
 msgid "case letters (except for Writes)."
 msgstr "kirjaimilla (paitsi taulun kirjoitus (W) )."
 
-#: fdisk/cfdisk.c:2239 fdisk/fdisksunlabel.c:232
+#: fdisk/cfdisk.c:2240 fdisk/fdisksunlabel.c:232
 msgid "Cylinders"
 msgstr "Sylinterit"
 
-#: fdisk/cfdisk.c:2239
+#: fdisk/cfdisk.c:2240
 msgid "Change cylinder geometry"
 msgstr "Muuta sylinterigeometriaa"
 
-#: fdisk/cfdisk.c:2240 fdisk/fdisksunlabel.c:230
+#: fdisk/cfdisk.c:2241 fdisk/fdisksunlabel.c:230
 msgid "Heads"
 msgstr "Päät"
 
-#: fdisk/cfdisk.c:2240
+#: fdisk/cfdisk.c:2241
 msgid "Change head geometry"
 msgstr "Vaihda päägeometriaa"
 
-#: fdisk/cfdisk.c:2241
+#: fdisk/cfdisk.c:2242
 msgid "Change sector geometry"
 msgstr "Vaihda sektorigeometriaa"
 
-#: fdisk/cfdisk.c:2242
+#: fdisk/cfdisk.c:2243
 msgid "Done"
 msgstr "Valmis"
 
-#: fdisk/cfdisk.c:2242
+#: fdisk/cfdisk.c:2243
 msgid "Done with changing geometry"
 msgstr "Geometrian muutos valmis"
 
-#: fdisk/cfdisk.c:2255
+#: fdisk/cfdisk.c:2256
 msgid "Enter the number of cylinders: "
 msgstr "Anna sylinterien määrä: "
 
-#: fdisk/cfdisk.c:2266 fdisk/cfdisk.c:2839
+#: fdisk/cfdisk.c:2267 fdisk/cfdisk.c:2840
 msgid "Illegal cylinders value"
 msgstr "Virheellinen sylinteriarvo"
 
-#: fdisk/cfdisk.c:2272
+#: fdisk/cfdisk.c:2273
 msgid "Enter the number of heads: "
 msgstr "Anna päiden määrä: "
 
-#: fdisk/cfdisk.c:2279 fdisk/cfdisk.c:2849
+#: fdisk/cfdisk.c:2280 fdisk/cfdisk.c:2850
 msgid "Illegal heads value"
 msgstr "Virheellinen pääarvo"
 
-#: fdisk/cfdisk.c:2285
+#: fdisk/cfdisk.c:2286
 msgid "Enter the number of sectors per track: "
 msgstr "Anna sektorien määrä uraa kohden: "
 
-#: fdisk/cfdisk.c:2292 fdisk/cfdisk.c:2856
+#: fdisk/cfdisk.c:2293 fdisk/cfdisk.c:2857
 msgid "Illegal sectors value"
 msgstr "Virheellinen sektorimäärä"
 
-#: fdisk/cfdisk.c:2395
+#: fdisk/cfdisk.c:2396
 msgid "Enter filesystem type: "
 msgstr "Anna tiedostojärjestelmän tyyppi: "
 
-#: fdisk/cfdisk.c:2413
+#: fdisk/cfdisk.c:2414
 msgid "Cannot change FS Type to empty"
 msgstr "Tiedostojärjestelmän tyyppiä ei voi muuttaa tyhjäksi"
 
-#: fdisk/cfdisk.c:2415
+#: fdisk/cfdisk.c:2416
 msgid "Cannot change FS Type to extended"
 msgstr "Tiedostojärjestelmän tyyppiä ei voi muuttaa laajennetuksi"
 
-#: fdisk/cfdisk.c:2446
+#: fdisk/cfdisk.c:2447
 #, c-format
 msgid "Unk(%02X)"
 msgstr "Tunt(%02X)"
 
-#: fdisk/cfdisk.c:2449 fdisk/cfdisk.c:2452
+#: fdisk/cfdisk.c:2450 fdisk/cfdisk.c:2453
 msgid ", NC"
 msgstr ", NC"
 
-#: fdisk/cfdisk.c:2457 fdisk/cfdisk.c:2460
+#: fdisk/cfdisk.c:2458 fdisk/cfdisk.c:2461
 msgid "NC"
 msgstr "NC"
 
-#: fdisk/cfdisk.c:2468
+#: fdisk/cfdisk.c:2469
 msgid "Pri/Log"
 msgstr "Ens/Loog"
 
-#: fdisk/cfdisk.c:2475
+#: fdisk/cfdisk.c:2476
 #, c-format
 msgid "Unknown (%02X)"
 msgstr "Tuntematon (%02X)"
 
-#: fdisk/cfdisk.c:2544
+#: fdisk/cfdisk.c:2545
 #, c-format
 msgid "Disk Drive: %s"
 msgstr "Levyasema: %s"
 
-#: fdisk/cfdisk.c:2551
+#: fdisk/cfdisk.c:2552
 #, c-format
 msgid "Size: %lld bytes, %lld MB"
 msgstr "Koko: %lld tavua, %lld Mt"
 
-#: fdisk/cfdisk.c:2554
+#: fdisk/cfdisk.c:2555
 #, c-format
 msgid "Size: %lld bytes, %lld.%lld GB"
 msgstr "Koko: %lld tavua, %lld.%lld Gt"
 
-#: fdisk/cfdisk.c:2558
+#: fdisk/cfdisk.c:2559
 #, c-format
 msgid "Heads: %d   Sectors per Track: %d   Cylinders: %lld"
 msgstr "Päät: %d   Sektorit/ura: %d   Sylinterit: %lld"
 
-#: fdisk/cfdisk.c:2562 login-utils/chfn.c:377
+#: fdisk/cfdisk.c:2563 login-utils/chfn.c:377
 msgid "Name"
 msgstr "Nimi"
 
-#: fdisk/cfdisk.c:2563
+#: fdisk/cfdisk.c:2564
 msgid "Flags"
 msgstr "Liput"
 
-#: fdisk/cfdisk.c:2564
+#: fdisk/cfdisk.c:2565
 msgid "Part Type"
 msgstr "Osiotyyppi"
 
-#: fdisk/cfdisk.c:2565
+#: fdisk/cfdisk.c:2566
 msgid "FS Type"
 msgstr "Tied.järj.tyyppi"
 
-#: fdisk/cfdisk.c:2566
+#: fdisk/cfdisk.c:2567
 msgid "[Label]"
 msgstr "[Nimiö]"
 
-#: fdisk/cfdisk.c:2568
+#: fdisk/cfdisk.c:2569
 msgid "    Sectors"
 msgstr "   Sektorit"
 
-#: fdisk/cfdisk.c:2570
+#: fdisk/cfdisk.c:2571
 msgid "  Cylinders"
 msgstr " Sylinterit"
 
-#: fdisk/cfdisk.c:2572
+#: fdisk/cfdisk.c:2573
 msgid "  Size (MB)"
 msgstr " Koko (Mt)"
 
-#: fdisk/cfdisk.c:2574
+#: fdisk/cfdisk.c:2575
 msgid "  Size (GB)"
 msgstr " Koko (Gt)"
 
-#: fdisk/cfdisk.c:2629
+#: fdisk/cfdisk.c:2630
 msgid "Bootable"
 msgstr "Käynnistettävä"
 
-#: fdisk/cfdisk.c:2629
+#: fdisk/cfdisk.c:2630
 msgid "Toggle bootable flag of the current partition"
 msgstr "Aseta nykyisen osion käynnistettävyyslippu päälle/pois"
 
-#: fdisk/cfdisk.c:2630
+#: fdisk/cfdisk.c:2631
 msgid "Delete"
 msgstr "Poista"
 
-#: fdisk/cfdisk.c:2630
+#: fdisk/cfdisk.c:2631
 msgid "Delete the current partition"
 msgstr "Poista nykyinen osio"
 
-#: fdisk/cfdisk.c:2631
+#: fdisk/cfdisk.c:2632
 msgid "Geometry"
 msgstr "Geometria"
 
-#: fdisk/cfdisk.c:2631
+#: fdisk/cfdisk.c:2632
 msgid "Change disk geometry (experts only)"
 msgstr "Muuta levyn geometriaa (vain asiantuntijoille)"
 
-#: fdisk/cfdisk.c:2632
+#: fdisk/cfdisk.c:2633
 msgid "Help"
 msgstr "Ohje"
 
-#: fdisk/cfdisk.c:2632
+#: fdisk/cfdisk.c:2633
 msgid "Print help screen"
 msgstr "Näytä ohjeruutu"
 
-#: fdisk/cfdisk.c:2633
+#: fdisk/cfdisk.c:2634
 msgid "Maximize"
 msgstr "Maksimoi"
 
-#: fdisk/cfdisk.c:2633
+#: fdisk/cfdisk.c:2634
 msgid "Maximize disk usage of the current partition (experts only)"
 msgstr "Maksimoi nykyisen osion tilankäyttö (vain asiantuntijoille)"
 
-#: fdisk/cfdisk.c:2634
+#: fdisk/cfdisk.c:2635
 msgid "New"
 msgstr "Uusi"
 
-#: fdisk/cfdisk.c:2634
+#: fdisk/cfdisk.c:2635
 msgid "Create new partition from free space"
 msgstr "Luo uusi osio tyhjästä tilasta"
 
-#: fdisk/cfdisk.c:2635
+#: fdisk/cfdisk.c:2636
 msgid "Print"
 msgstr "Näytä"
 
-#: fdisk/cfdisk.c:2635
+#: fdisk/cfdisk.c:2636
 msgid "Print partition table to the screen or to a file"
 msgstr "Tulosta osiotaulu ruudulle tai tiedostoon"
 
-#: fdisk/cfdisk.c:2636
+#: fdisk/cfdisk.c:2637
 msgid "Quit"
 msgstr "Lopeta"
 
-#: fdisk/cfdisk.c:2636
+#: fdisk/cfdisk.c:2637
 msgid "Quit program without writing partition table"
 msgstr "Lopeta ohjelma kirjoittamatta osiotaulua"
 
-#: fdisk/cfdisk.c:2637
+#: fdisk/cfdisk.c:2638
 msgid "Type"
 msgstr "Tyyppi"
 
-#: fdisk/cfdisk.c:2637
+#: fdisk/cfdisk.c:2638
 msgid "Change the filesystem type (DOS, Linux, OS/2 and so on)"
 msgstr "Vaihda tiedostojärjestelmän tyyppi (DOS, Linux, OS/2, jne)"
 
-#: fdisk/cfdisk.c:2638
+#: fdisk/cfdisk.c:2639
 msgid "Units"
 msgstr "Yksiköt"
 
-#: fdisk/cfdisk.c:2638
+#: fdisk/cfdisk.c:2639
 msgid "Change units of the partition size display (MB, sect, cyl)"
 msgstr "Vaihda osiokokonäytön yksiköt (Mt, sekt, syl)"
 
-#: fdisk/cfdisk.c:2639
+#: fdisk/cfdisk.c:2640
 msgid "Write"
 msgstr "Kirjoita"
 
-#: fdisk/cfdisk.c:2639
+#: fdisk/cfdisk.c:2640
 msgid "Write partition table to disk (this might destroy data)"
 msgstr "Kirjoita osiotaulu levylle (tämä saattaa tuhota dataa)"
 
-#: fdisk/cfdisk.c:2686
+#: fdisk/cfdisk.c:2687
 msgid "Cannot make this partition bootable"
 msgstr "Tästä osiosta ei voi tehdä käynnistettävää"
 
-#: fdisk/cfdisk.c:2696
+#: fdisk/cfdisk.c:2697
 msgid "Cannot delete an empty partition"
 msgstr "Tyhjää osiota ei voi poistaa"
 
-#: fdisk/cfdisk.c:2716 fdisk/cfdisk.c:2718
+#: fdisk/cfdisk.c:2717 fdisk/cfdisk.c:2719
 msgid "Cannot maximize this partition"
 msgstr "Tätä osiota ei voi maksimoida"
 
-#: fdisk/cfdisk.c:2726
+#: fdisk/cfdisk.c:2727
 msgid "This partition is unusable"
 msgstr "Tämä osio on ei ole käytettävissä"
 
-#: fdisk/cfdisk.c:2728
+#: fdisk/cfdisk.c:2729
 msgid "This partition is already in use"
 msgstr "Tämä osio on jo käytössä"
 
-#: fdisk/cfdisk.c:2745
+#: fdisk/cfdisk.c:2746
 msgid "Cannot change the type of an empty partition"
 msgstr "Tyhjän osion tyyppiä ei voi vaihtaa"
 
-#: fdisk/cfdisk.c:2772 fdisk/cfdisk.c:2778
+#: fdisk/cfdisk.c:2773 fdisk/cfdisk.c:2779
 msgid "No more partitions"
 msgstr "Ei enempää osioita"
 
-#: fdisk/cfdisk.c:2785
+#: fdisk/cfdisk.c:2786
 msgid "Illegal command"
 msgstr "Virheellinen komento"
 
-#: fdisk/cfdisk.c:2795
+#: fdisk/cfdisk.c:2796
 #, c-format
 msgid "Copyright (C) 1994-2002 Kevin E. Martin & aeb\n"
 msgstr "Copyright © 1994-2002 Kevin E. Martin & aeb\n"
 
-#: fdisk/cfdisk.c:2802
+#: fdisk/cfdisk.c:2803
 #, c-format
 msgid ""
 "\n"
@@ -2916,7 +2916,7 @@ msgid ""
 " -b <size>             sector size (512, 1024, 2048 or 4096)\n"
 " -c[=<mode>]           compatible mode: 'dos' or 'nondos' (default)\n"
 " -h                    print this help text\n"
-" -u[=<unit>]           dysplay units: 'cylinders' or 'sectors' (default)\n"
+" -u[=<unit>]           display units: 'cylinders' or 'sectors' (default)\n"
 " -v                    print program version\n"
 " -C <number>           specify the number of cylinders\n"
 " -H <number>           specify the number of heads\n"
@@ -9109,7 +9109,7 @@ msgstr "mount: ryhmä-id:tä voi asettaa: %s"
 msgid "mount: cannot set user id: %s"
 msgstr "mount: käyttäjä-id:tä ei voi asettaa: %s"
 
-#: mount/mount.c:729 mount/mount.c:1923
+#: mount/mount.c:729 mount/mount.c:1925
 #, c-format
 msgid "mount: cannot fork: %s"
 msgstr "mount: haarauttaminen ei onnistu: %s"
@@ -9254,64 +9254,64 @@ msgstr "umount: %s on varattu – uudelleenliitettiin vain luku -tilassa\n"
 msgid "mount: warning: %s seems to be mounted read-only.\n"
 msgstr "umount: %s on varattu – uudelleenliitettiin vain luku -tilassa\n"
 
-#: mount/mount.c:1480
+#: mount/mount.c:1482
 msgid ""
 "mount: I could not determine the filesystem type, and none was specified"
 msgstr ""
 "mount: Tiedostojärjestelmän tyyppiä ei voitu määrittää, eikä tyyppiä ole "
 "annettu"
 
-#: mount/mount.c:1483
+#: mount/mount.c:1485
 msgid "mount: you must specify the filesystem type"
 msgstr "mount: tiedostojärjestelmän tyyppi on annettava"
 
-#: mount/mount.c:1486
+#: mount/mount.c:1488
 msgid "mount: mount failed"
 msgstr "mount: liitos epäonnistui"
 
-#: mount/mount.c:1492 mount/mount.c:1529
+#: mount/mount.c:1494 mount/mount.c:1531
 #, c-format
 msgid "mount: mount point %s is not a directory"
 msgstr "mount: liitospiste %s ei ole hakemisto"
 
-#: mount/mount.c:1494
+#: mount/mount.c:1496
 msgid "mount: permission denied"
 msgstr "mount: lupa evätty"
 
-#: mount/mount.c:1496
+#: mount/mount.c:1498
 msgid "mount: must be superuser to use mount"
 msgstr "mount: mountin käyttöön vaaditaan pääkäyttäjän oikeudet"
 
-#: mount/mount.c:1500 mount/mount.c:1504
+#: mount/mount.c:1502 mount/mount.c:1506
 #, c-format
 msgid "mount: %s is busy"
 msgstr "mount: %s on varattu"
 
-#: mount/mount.c:1506
+#: mount/mount.c:1508
 msgid "mount: proc already mounted"
 msgstr "mount: proc on jo liitetty"
 
-#: mount/mount.c:1508
+#: mount/mount.c:1510
 #, c-format
 msgid "mount: %s already mounted or %s busy"
 msgstr "mount: %s on jo liitetty tai %s on varattu"
 
-#: mount/mount.c:1514
+#: mount/mount.c:1516
 #, c-format
 msgid "mount: mount point %s does not exist"
 msgstr "mount: liitospiste %s ei ole olemassa"
 
-#: mount/mount.c:1516
+#: mount/mount.c:1518
 #, c-format
 msgid "mount: mount point %s is a symbolic link to nowhere"
 msgstr "mount: liitospiste %s on symlinkki olemattomaan"
 
-#: mount/mount.c:1521
+#: mount/mount.c:1523
 #, c-format
 msgid "mount: special device %s does not exist"
 msgstr "mount: erikoislaite %s ei ole olemassa"
 
-#: mount/mount.c:1533
+#: mount/mount.c:1535
 #, c-format
 msgid ""
 "mount: special device %s does not exist\n"
@@ -9320,12 +9320,12 @@ msgstr ""
 "mount: erikoislaite %s ei ole olemassa\n"
 "       (polun etuliite ei ole hakemisto)\n"
 
-#: mount/mount.c:1545
+#: mount/mount.c:1547
 #, c-format
 msgid "mount: %s not mounted already, or bad option"
 msgstr "mount: %s ei ole vielä liitetty, tai virheellinen valitsin"
 
-#: mount/mount.c:1547
+#: mount/mount.c:1549
 #, c-format
 msgid ""
 "mount: wrong fs type, bad option, bad superblock on %s,\n"
@@ -9335,13 +9335,13 @@ msgstr ""
 "       superlohko laitteella %s, puuttuva koodisivu tai apuohjelma, tai muu "
 "virhe"
 
-#: mount/mount.c:1554
+#: mount/mount.c:1556
 msgid ""
 "       (for several filesystems (e.g. nfs, cifs) you might\n"
 "       need a /sbin/mount.<type> helper program)"
 msgstr ""
 
-#: mount/mount.c:1563
+#: mount/mount.c:1565
 msgid ""
 "       (could this be the IDE device where you in fact use\n"
 "       ide-scsi so that sr0 or sda or so is needed?)"
@@ -9349,7 +9349,7 @@ msgstr ""
 "       (voisiko tämä olla IDE-laite, joka käyttää ide-scsi-ajuria,\n"
 "       jolloin käytetään sr0:aa tai sda:ta?)"
 
-#: mount/mount.c:1568
+#: mount/mount.c:1570
 msgid ""
 "       (aren't you trying to mount an extended partition,\n"
 "       instead of some logical partition inside?)"
@@ -9357,7 +9357,7 @@ msgstr ""
 "       (etkö yritäkin liittää laajennettua osiota, etkä\n"
 "       sen sisältämää loogista osiota?)"
 
-#: mount/mount.c:1575
+#: mount/mount.c:1577
 msgid ""
 "       In some cases useful info is found in syslog - try\n"
 "       dmesg | tail  or so\n"
@@ -9365,51 +9365,51 @@ msgstr ""
 "       Joissakin tapauksissa järjestelmälokista löytyy hyödyllistä\n"
 "       tietoa – kokeile esim. komentoa ”dmesg | tail”.\n"
 
-#: mount/mount.c:1581
+#: mount/mount.c:1583
 msgid "mount table full"
 msgstr "liitostaulukko täynnä"
 
-#: mount/mount.c:1583
+#: mount/mount.c:1585
 #, c-format
 msgid "mount: %s: can't read superblock"
 msgstr "mount: %s: superlohkoa ei voi lukea"
 
-#: mount/mount.c:1589
+#: mount/mount.c:1591
 #, c-format
 msgid "mount: %s: unknown device"
 msgstr "mount: %s: tuntematon laite"
 
-#: mount/mount.c:1594
+#: mount/mount.c:1596
 #, c-format
 msgid "mount: unknown filesystem type '%s'"
 msgstr "mount: tuntematon tiedostojärjestelmän tyyppi ”%s”"
 
-#: mount/mount.c:1606
+#: mount/mount.c:1608
 #, c-format
 msgid "mount: probably you meant %s"
 msgstr "mount: tarkoitat todennäköisesti %s"
 
-#: mount/mount.c:1609
+#: mount/mount.c:1611
 msgid "mount: maybe you meant 'iso9660'?"
 msgstr "mount: ehkä tarkoitit ”iso9660”?"
 
-#: mount/mount.c:1612
+#: mount/mount.c:1614
 msgid "mount: maybe you meant 'vfat'?"
 msgstr "mount: ehkä tarkoitit ”vfat”?"
 
-#: mount/mount.c:1615
+#: mount/mount.c:1617
 #, c-format
 msgid "mount: %s has wrong device number or fs type %s not supported"
 msgstr ""
 "mount: tiedoston %s laitenumero on väärä tai tiedostojärjestelmätyyppi %s ei "
 "ole tuettu"
 
-#: mount/mount.c:1623
+#: mount/mount.c:1625
 #, c-format
 msgid "mount: %s is not a block device, and stat fails?"
 msgstr "mount: %s ei ole lohkolaite, ja tilan luku epäonnistuu?"
 
-#: mount/mount.c:1625
+#: mount/mount.c:1627
 #, fuzzy, c-format
 msgid ""
 "mount: the kernel does not recognize %s as a block device\n"
@@ -9418,51 +9418,51 @@ msgstr ""
 "mount: ydin ei tunnista tiedostoa %s lohkolaitteeksi\n"
 "       (ehkä ”insmod ajuri” auttaa?)"
 
-#: mount/mount.c:1628
+#: mount/mount.c:1630
 #, c-format
 msgid "mount: %s is not a block device (maybe try `-o loop'?)"
 msgstr "mount: %s ei ole lohkolaite (yritä ”-o loop”?)"
 
-#: mount/mount.c:1631
+#: mount/mount.c:1633
 #, c-format
 msgid "mount: %s is not a block device"
 msgstr "mount: %s ei ole lohkolaite"
 
-#: mount/mount.c:1636
+#: mount/mount.c:1638
 #, c-format
 msgid "mount: %s is not a valid block device"
 msgstr "mount: %s ei ole kelvollinen lohkolaite"
 
-#: mount/mount.c:1639
+#: mount/mount.c:1641
 msgid "block device "
 msgstr "lohkolaite "
 
-#: mount/mount.c:1641
+#: mount/mount.c:1643
 #, c-format
 msgid "mount: cannot mount %s%s read-only"
 msgstr "mount: ei voi liittää %s%s vain luku -tilassa"
 
-#: mount/mount.c:1645
+#: mount/mount.c:1647
 #, c-format
 msgid "mount: %s%s is write-protected but explicit `-w' flag given"
 msgstr "mount: %s%s on kirjoitussuojattu, mutta ”-w” -lippu on annettu"
 
-#: mount/mount.c:1649
+#: mount/mount.c:1651
 #, fuzzy, c-format
 msgid "mount: cannot remount %s%s read-write, is write-protected"
 msgstr "mount: ei voi liittää %s%s vain luku -tilassa"
 
-#: mount/mount.c:1664
+#: mount/mount.c:1666
 #, c-format
 msgid "mount: %s%s is write-protected, mounting read-only"
 msgstr "mount: %s%s on kirjoitussuojattu, liitetään vain luku -tilassa"
 
-#: mount/mount.c:1672
+#: mount/mount.c:1674
 #, fuzzy, c-format
 msgid "mount: no medium found on %s"
 msgstr "mount: %s on jo liitetty paikkaan %s\n"
 
-#: mount/mount.c:1690
+#: mount/mount.c:1692
 #, c-format
 msgid ""
 "mount: %s does not contain SELinux labels.\n"
@@ -9472,26 +9472,26 @@ msgid ""
 "       this file system.  For more details see restorecon(8) and mount(8).\n"
 msgstr ""
 
-#: mount/mount.c:1769
+#: mount/mount.c:1771
 #, c-format
 msgid "mount: no type was given - I'll assume nfs because of the colon\n"
 msgstr ""
 "mount: tyyppiä ei annettu – kaksoispisteen perusteella sen oletetaan olevan "
 "nfs\n"
 
-#: mount/mount.c:1775
+#: mount/mount.c:1777
 #, c-format
 msgid "mount: no type was given - I'll assume cifs because of the // prefix\n"
 msgstr ""
 "mount: tyyppiä ei annettu – //-alkuliitteen perusteella sen oletetaan olevan "
 "cifs\n"
 
-#: mount/mount.c:1870
+#: mount/mount.c:1872
 #, c-format
 msgid "mount: %s already mounted on %s\n"
 msgstr "mount: %s on jo liitetty paikkaan %s\n"
 
-#: mount/mount.c:2005
+#: mount/mount.c:2007
 #, c-format
 msgid ""
 "Usage: mount -V                 : print version\n"
@@ -9560,24 +9560,24 @@ msgstr ""
 "Muut valitsimet: [-nfFrsvw] [-o valitsimet] [-p kahva].\n"
 "Paljon lisätietoja komennolla:  man 8 mount .\n"
 
-#: mount/mount.c:2333
+#: mount/mount.c:2335
 #, fuzzy, c-format
 msgid "mount: only root can do that (effective UID is %u)"
 msgstr "mount: vain root voi tehdä tuon"
 
-#: mount/mount.c:2336
+#: mount/mount.c:2338
 msgid "mount: only root can do that"
 msgstr "mount: vain root voi tehdä tuon"
 
-#: mount/mount.c:2347
+#: mount/mount.c:2349
 msgid "nothing was mounted"
 msgstr "mitään ei liitetty"
 
-#: mount/mount.c:2365 mount/mount.c:2391
+#: mount/mount.c:2367 mount/mount.c:2393
 msgid "mount: no such partition found"
 msgstr "mount: osiota ei löydy"
 
-#: mount/mount.c:2368
+#: mount/mount.c:2370
 #, c-format
 msgid "mount: can't find %s in %s or %s"
 msgstr "mount: %s ei löydy tiedostosta %s, eikä %s"
@@ -10626,58 +10626,53 @@ msgstr ""
 "käyttö: %s [ [-q vstjno-id] [-m jmuisti-id] [-s semid]\n"
 "           [-Q msgkey] [-M shmkey] [-S semkey] ... ]\n"
 
-#: sys-utils/ipcrm.c:179
-#, c-format
-msgid "%s: illegal option -- %c\n"
-msgstr "%s: virheellinen valitsin – %c\n"
-
-#: sys-utils/ipcrm.c:191
+#: sys-utils/ipcrm.c:189
 #, c-format
 msgid "%s: illegal key (%s)\n"
 msgstr "%s: virheellinen avain (%s)\n"
 
-#: sys-utils/ipcrm.c:206 sys-utils/ipcrm.c:238
+#: sys-utils/ipcrm.c:204 sys-utils/ipcrm.c:236
 #, fuzzy
 msgid "permission denied for key"
 msgstr "mount: lupa evätty"
 
-#: sys-utils/ipcrm.c:209 sys-utils/ipcrm.c:248
+#: sys-utils/ipcrm.c:207 sys-utils/ipcrm.c:246
 msgid "already removed key"
 msgstr ""
 
-#: sys-utils/ipcrm.c:212 sys-utils/ipcrm.c:243
+#: sys-utils/ipcrm.c:210 sys-utils/ipcrm.c:241
 msgid "invalid key"
 msgstr ""
 
-#: sys-utils/ipcrm.c:215 sys-utils/ipcrm.c:253
+#: sys-utils/ipcrm.c:213 sys-utils/ipcrm.c:251
 #, fuzzy
 msgid "unknown error in key"
 msgstr "%s: Tuntematon virhe tiedostossa %s\n"
 
-#: sys-utils/ipcrm.c:239
+#: sys-utils/ipcrm.c:237
 #, fuzzy
 msgid "permission denied for id"
 msgstr "mount: lupa evätty"
 
-#: sys-utils/ipcrm.c:244
+#: sys-utils/ipcrm.c:242
 msgid "invalid id"
 msgstr "virheellinen id"
 
-#: sys-utils/ipcrm.c:249
+#: sys-utils/ipcrm.c:247
 msgid "already removed id"
 msgstr ""
 
-#: sys-utils/ipcrm.c:254
+#: sys-utils/ipcrm.c:252
 #, fuzzy
 msgid "unknown error in id"
 msgstr "%s: Tuntematon virhe tiedostossa %s\n"
 
-#: sys-utils/ipcrm.c:257
+#: sys-utils/ipcrm.c:255
 #, c-format
 msgid "%s: %s (%s)\n"
 msgstr "%s: %s (%s)\n"
 
-#: sys-utils/ipcrm.c:265
+#: sys-utils/ipcrm.c:263
 #, c-format
 msgid "%s: unknown argument: %s\n"
 msgstr "%s: tuntematon argumentti: %s\n"
@@ -10770,323 +10765,318 @@ msgstr "segmentin vähimmäiskoko (tavua) = %lu\n"
 msgid "------ Shared Memory Status --------\n"
 msgstr "------ Jaetun muistin tila ---------\n"
 
-#: sys-utils/ipcs.c:291
+#. TRANSLATORS: This output format is mantained for backward compatibility
+#. as ipcs is used in scripts. For consistency with the rest, the translated
+#. form can follow this model:
+#.
+#. "segments allocated = %d\n"
+#. "pages allocated = %ld\n"
+#. "pages resident = %ld\n"
+#. "pages swapped = %ld\n"
+#. "swap performance = %ld attempts, %ld successes\n"
+#.
+#: sys-utils/ipcs.c:301
 #, c-format
-msgid "segments allocated %d\n"
+msgid ""
+"segments allocated %d\n"
+"pages allocated %ld\n"
+"pages resident  %ld\n"
+"pages swapped   %ld\n"
+"Swap performance: %ld attempts\t %ld successes\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:292
-#, c-format
-msgid "pages allocated %ld\n"
-msgstr ""
-
-#: sys-utils/ipcs.c:293
-#, c-format
-msgid "pages resident  %ld\n"
-msgstr ""
-
-#: sys-utils/ipcs.c:294
-#, c-format
-msgid "pages swapped   %ld\n"
-msgstr ""
-
-#: sys-utils/ipcs.c:295
-#, c-format
-msgid "Swap performance: %ld attempts\t %ld successes\n"
-msgstr ""
-
-#: sys-utils/ipcs.c:300
+#: sys-utils/ipcs.c:314
 #, c-format
 msgid "------ Shared Memory Segment Creators/Owners --------\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:308 sys-utils/ipcs.c:315
-#: sys-utils/ipcs.c:321
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:322 sys-utils/ipcs.c:329
+#: sys-utils/ipcs.c:335
 msgid "shmid"
 msgstr "jmuisti-id"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:321 sys-utils/ipcs.c:422
-#: sys-utils/ipcs.c:437 sys-utils/ipcs.c:520 sys-utils/ipcs.c:538
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:335 sys-utils/ipcs.c:436
+#: sys-utils/ipcs.c:451 sys-utils/ipcs.c:534 sys-utils/ipcs.c:552
 msgid "perms"
 msgstr "oikeudet"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:520
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:436 sys-utils/ipcs.c:534
 msgid "cuid"
 msgstr "cuid"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:520
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:436 sys-utils/ipcs.c:534
 msgid "cgid"
 msgstr "cgid"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:520
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:436 sys-utils/ipcs.c:534
 msgid "uid"
 msgstr "uid"
 
-#: sys-utils/ipcs.c:302 sys-utils/ipcs.c:422 sys-utils/ipcs.c:520
+#: sys-utils/ipcs.c:316 sys-utils/ipcs.c:436 sys-utils/ipcs.c:534
 msgid "gid"
 msgstr "gid"
 
-#: sys-utils/ipcs.c:306
+#: sys-utils/ipcs.c:320
 #, c-format
 msgid "------ Shared Memory Attach/Detach/Change Times --------\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:308 sys-utils/ipcs.c:315 sys-utils/ipcs.c:321
-#: sys-utils/ipcs.c:428 sys-utils/ipcs.c:437 sys-utils/ipcs.c:526
-#: sys-utils/ipcs.c:532 sys-utils/ipcs.c:538
+#: sys-utils/ipcs.c:322 sys-utils/ipcs.c:329 sys-utils/ipcs.c:335
+#: sys-utils/ipcs.c:442 sys-utils/ipcs.c:451 sys-utils/ipcs.c:540
+#: sys-utils/ipcs.c:546 sys-utils/ipcs.c:552
 msgid "owner"
 msgstr "omistaja"
 
-#: sys-utils/ipcs.c:308
+#: sys-utils/ipcs.c:322
 msgid "attached"
 msgstr ""
 
-#: sys-utils/ipcs.c:308
+#: sys-utils/ipcs.c:322
 msgid "detached"
 msgstr ""
 
-#: sys-utils/ipcs.c:309
+#: sys-utils/ipcs.c:323
 #, fuzzy
 msgid "changed"
 msgstr "Kuori vaihdettu.\n"
 
-#: sys-utils/ipcs.c:313
+#: sys-utils/ipcs.c:327
 #, fuzzy, c-format
 msgid "------ Shared Memory Creator/Last-op PIDs --------\n"
 msgstr "------ Jaetun muistin tila ---------\n"
 
-#: sys-utils/ipcs.c:315
+#: sys-utils/ipcs.c:329
 msgid "cpid"
 msgstr "cpid"
 
-#: sys-utils/ipcs.c:315
+#: sys-utils/ipcs.c:329
 msgid "lpid"
 msgstr "lpid"
 
-#: sys-utils/ipcs.c:319
+#: sys-utils/ipcs.c:333
 #, c-format
 msgid "------ Shared Memory Segments --------\n"
 msgstr "------ Jaetun muistin segmentit ------\n"
 
-#: sys-utils/ipcs.c:321 sys-utils/ipcs.c:437 sys-utils/ipcs.c:538
+#: sys-utils/ipcs.c:335 sys-utils/ipcs.c:451 sys-utils/ipcs.c:552
 msgid "key"
 msgstr "avain"
 
-#: sys-utils/ipcs.c:321
+#: sys-utils/ipcs.c:335
 msgid "bytes"
 msgstr "tavut"
 
-#: sys-utils/ipcs.c:322
+#: sys-utils/ipcs.c:336
 msgid "nattch"
 msgstr "liit-määrä"
 
-#: sys-utils/ipcs.c:322
+#: sys-utils/ipcs.c:336
 msgid "status"
 msgstr "status"
 
-#: sys-utils/ipcs.c:343 sys-utils/ipcs.c:345 sys-utils/ipcs.c:347
-#: sys-utils/ipcs.c:458 sys-utils/ipcs.c:460 sys-utils/ipcs.c:559
-#: sys-utils/ipcs.c:561 sys-utils/ipcs.c:563 sys-utils/ipcs.c:614
-#: sys-utils/ipcs.c:616 sys-utils/ipcs.c:644 sys-utils/ipcs.c:646
-#: sys-utils/ipcs.c:648 sys-utils/ipcs.c:671
+#: sys-utils/ipcs.c:357 sys-utils/ipcs.c:359 sys-utils/ipcs.c:361
+#: sys-utils/ipcs.c:472 sys-utils/ipcs.c:474 sys-utils/ipcs.c:573
+#: sys-utils/ipcs.c:575 sys-utils/ipcs.c:577 sys-utils/ipcs.c:628
+#: sys-utils/ipcs.c:630 sys-utils/ipcs.c:658 sys-utils/ipcs.c:660
+#: sys-utils/ipcs.c:662 sys-utils/ipcs.c:685
 msgid "Not set"
 msgstr "Ei asetettu"
 
-#: sys-utils/ipcs.c:375
+#: sys-utils/ipcs.c:389
 msgid "dest"
 msgstr "kohde"
 
-#: sys-utils/ipcs.c:376
+#: sys-utils/ipcs.c:390
 msgid "locked"
 msgstr "lukittu"
 
-#: sys-utils/ipcs.c:396
+#: sys-utils/ipcs.c:410
 #, c-format
 msgid "kernel not configured for semaphores\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:402
+#: sys-utils/ipcs.c:416
 #, c-format
 msgid "------ Semaphore Limits --------\n"
 msgstr "------- Semaforien rajat -------\n"
 
-#: sys-utils/ipcs.c:406
+#: sys-utils/ipcs.c:420
 #, c-format
 msgid "max number of arrays = %d\n"
 msgstr "taulukkoja enintään = %d\n"
 
-#: sys-utils/ipcs.c:407
+#: sys-utils/ipcs.c:421
 #, c-format
 msgid "max semaphores per array = %d\n"
 msgstr "semaforeja taulukossa enintään = %d\n"
 
-#: sys-utils/ipcs.c:408
+#: sys-utils/ipcs.c:422
 #, c-format
 msgid "max semaphores system wide = %d\n"
 msgstr "semaforeja järjestelmässä enintään = %d\n"
 
-#: sys-utils/ipcs.c:409
+#: sys-utils/ipcs.c:423
 #, c-format
 msgid "max ops per semop call = %d\n"
 msgstr "operaatioita semop-kutsua kohden enintään = %d\n"
 
-#: sys-utils/ipcs.c:410
+#: sys-utils/ipcs.c:424
 #, c-format
 msgid "semaphore max value = %d\n"
 msgstr "semaforin arvo enintään = %d\n"
 
-#: sys-utils/ipcs.c:414
+#: sys-utils/ipcs.c:428
 #, c-format
 msgid "------ Semaphore Status --------\n"
 msgstr "------- Semaforien tila --------\n"
 
-#: sys-utils/ipcs.c:415
+#: sys-utils/ipcs.c:429
 #, c-format
 msgid "used arrays = %d\n"
 msgstr "käytettyjä taulukoita = %d\n"
 
-#: sys-utils/ipcs.c:416
+#: sys-utils/ipcs.c:430
 #, c-format
 msgid "allocated semaphores = %d\n"
 msgstr "varattuja semaforeja = %d\n"
 
-#: sys-utils/ipcs.c:420
+#: sys-utils/ipcs.c:434
 #, c-format
 msgid "------ Semaphore Arrays Creators/Owners --------\n"
 msgstr "----- Semaforitaulukoiden Luojat/Omistajat -----\n"
 
-#: sys-utils/ipcs.c:422 sys-utils/ipcs.c:428 sys-utils/ipcs.c:437
+#: sys-utils/ipcs.c:436 sys-utils/ipcs.c:442 sys-utils/ipcs.c:451
 msgid "semid"
 msgstr "semid"
 
-#: sys-utils/ipcs.c:426
+#: sys-utils/ipcs.c:440
 #, c-format
 msgid "------ Semaphore Operation/Change Times --------\n"
 msgstr "------ Semaforien Operaatio-/Muutosajat --------\n"
 
-#: sys-utils/ipcs.c:428
+#: sys-utils/ipcs.c:442
 msgid "last-op"
 msgstr ""
 
-#: sys-utils/ipcs.c:428
+#: sys-utils/ipcs.c:442
 #, fuzzy
 msgid "last-changed"
 msgstr "Salasanaa ei vaihdettu."
 
-#: sys-utils/ipcs.c:435
+#: sys-utils/ipcs.c:449
 #, c-format
 msgid "------ Semaphore Arrays --------\n"
 msgstr "------ Semaforitaulukot --------\n"
 
-#: sys-utils/ipcs.c:437
+#: sys-utils/ipcs.c:451
 #, fuzzy
 msgid "nsems"
 msgstr "käyttäjää"
 
-#: sys-utils/ipcs.c:496
+#: sys-utils/ipcs.c:510
 #, c-format
 msgid "kernel not configured for message queues\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:504
+#: sys-utils/ipcs.c:518
 #, fuzzy, c-format
 msgid "------ Messages Limits --------\n"
 msgstr "------- Viestien rajat ---------\n"
 
-#: sys-utils/ipcs.c:505
+#: sys-utils/ipcs.c:519
 #, c-format
 msgid "max queues system wide = %d\n"
 msgstr "jonoja järjestelmässä enintään = %d\n"
 
-#: sys-utils/ipcs.c:506
+#: sys-utils/ipcs.c:520
 #, c-format
 msgid "max size of message (bytes) = %d\n"
 msgstr "viestin koko enintään (tavua) = %d\n"
 
-#: sys-utils/ipcs.c:507
+#: sys-utils/ipcs.c:521
 #, c-format
 msgid "default max size of queue (bytes) = %d\n"
 msgstr "jonon oletusenimmäiskoko (tavua) = %d\n"
 
 # Ilman kaksoispistettä Status-otsikoiden yhtenäisyyden vuoksi
-#: sys-utils/ipcs.c:511
+#: sys-utils/ipcs.c:525
 #, fuzzy, c-format
 msgid "------ Messages Status --------\n"
 msgstr "------- Viestien tila --------\n"
 
-#: sys-utils/ipcs.c:512
+#: sys-utils/ipcs.c:526
 #, c-format
 msgid "allocated queues = %d\n"
 msgstr "varattuja jonoja = %d\n"
 
-#: sys-utils/ipcs.c:513
+#: sys-utils/ipcs.c:527
 #, c-format
 msgid "used headers = %d\n"
 msgstr "käytettyjä otsakkeita = %d\n"
 
-#: sys-utils/ipcs.c:514
+#: sys-utils/ipcs.c:528
 #, c-format
 msgid "used space = %d bytes\n"
 msgstr "käytettyä tilaa = %d tavua\n"
 
-#: sys-utils/ipcs.c:518
+#: sys-utils/ipcs.c:532
 #, fuzzy, c-format
 msgid "------ Message Queues Creators/Owners --------\n"
 msgstr "------- Viestijonot: Luojat/Omistajat ----------\n"
 
-#: sys-utils/ipcs.c:520 sys-utils/ipcs.c:526 sys-utils/ipcs.c:532
-#: sys-utils/ipcs.c:538
+#: sys-utils/ipcs.c:534 sys-utils/ipcs.c:540 sys-utils/ipcs.c:546
+#: sys-utils/ipcs.c:552
 msgid "msqid"
 msgstr "vstjno-id"
 
-#: sys-utils/ipcs.c:524
+#: sys-utils/ipcs.c:538
 #, c-format
 msgid "------ Message Queues Send/Recv/Change Times --------\n"
 msgstr "----- Viestijonot: Läh.-/Vast.otto-/Muutosajat ------\n"
 
-#: sys-utils/ipcs.c:526
+#: sys-utils/ipcs.c:540
 msgid "send"
 msgstr "send"
 
-#: sys-utils/ipcs.c:526
+#: sys-utils/ipcs.c:540
 msgid "recv"
 msgstr "recv"
 
-#: sys-utils/ipcs.c:526
+#: sys-utils/ipcs.c:540
 msgid "change"
 msgstr ""
 
-#: sys-utils/ipcs.c:530
+#: sys-utils/ipcs.c:544
 #, c-format
 msgid "------ Message Queues PIDs --------\n"
 msgstr "------- Viestijonot: PIDit --------\n"
 
-#: sys-utils/ipcs.c:532
+#: sys-utils/ipcs.c:546
 msgid "lspid"
 msgstr "lspid"
 
-#: sys-utils/ipcs.c:532
+#: sys-utils/ipcs.c:546
 msgid "lrpid"
 msgstr "lrpid"
 
-#: sys-utils/ipcs.c:536
+#: sys-utils/ipcs.c:550
 #, c-format
 msgid "------ Message Queues --------\n"
 msgstr "-------- Viestijonot ---------\n"
 
-#: sys-utils/ipcs.c:539
+#: sys-utils/ipcs.c:553
 msgid "used-bytes"
 msgstr "käyt-tavut"
 
-#: sys-utils/ipcs.c:539
+#: sys-utils/ipcs.c:553
 msgid "messages"
 msgstr "viestit"
 
-#: sys-utils/ipcs.c:603
+#: sys-utils/ipcs.c:617
 msgid "shmctl failed"
 msgstr "shmctl epäonnistui"
 
-#: sys-utils/ipcs.c:605
+#: sys-utils/ipcs.c:619
 #, c-format
 msgid ""
 "\n"
@@ -11095,42 +11085,42 @@ msgstr ""
 "\n"
 "Jaetun muistin segmentti jmuisti-id=%d\n"
 
-#: sys-utils/ipcs.c:606
+#: sys-utils/ipcs.c:620
 #, c-format
 msgid "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\n"
 msgstr "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\n"
 
-#: sys-utils/ipcs.c:608
+#: sys-utils/ipcs.c:622
 #, c-format
 msgid "mode=%#o\taccess_perms=%#o\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:610
+#: sys-utils/ipcs.c:624
 #, c-format
 msgid "bytes=%ld\tlpid=%d\tcpid=%d\tnattch=%ld\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:613
+#: sys-utils/ipcs.c:627
 #, c-format
 msgid "att_time=%-26.24s\n"
 msgstr "att_time=%-26.24s\n"
 
-#: sys-utils/ipcs.c:615
+#: sys-utils/ipcs.c:629
 #, c-format
 msgid "det_time=%-26.24s\n"
 msgstr "det_time=%-26.24s\n"
 
-#: sys-utils/ipcs.c:617 sys-utils/ipcs.c:647
+#: sys-utils/ipcs.c:631 sys-utils/ipcs.c:661
 #, c-format
 msgid "change_time=%-26.24s\n"
 msgstr "change_time=%-26.24s\n"
 
-#: sys-utils/ipcs.c:629
+#: sys-utils/ipcs.c:643
 #, fuzzy
 msgid "msgctl failed"
 msgstr "fsync epäonnistui"
 
-#: sys-utils/ipcs.c:631
+#: sys-utils/ipcs.c:645
 #, c-format
 msgid ""
 "\n"
@@ -11139,80 +11129,80 @@ msgstr ""
 "\n"
 "Viestijonon msqid=%d\n"
 
-#: sys-utils/ipcs.c:632
+#: sys-utils/ipcs.c:646
 #, c-format
 msgid "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\tmode=%#o\n"
 msgstr "uid=%d\tgid=%d\tcuid=%d\tcgid=%d\tmode=%#o\n"
 
-#: sys-utils/ipcs.c:634
+#: sys-utils/ipcs.c:648
 #, c-format
 msgid "cbytes=%ld\tqbytes=%ld\tqnum=%ld\tlspid=%d\tlrpid=%d\n"
 msgstr "cbytes=%ld\tqbytes=%ld\tqnum=%ld\tlspid=%d\tlrpid=%d\n"
 
-#: sys-utils/ipcs.c:643
+#: sys-utils/ipcs.c:657
 #, c-format
 msgid "send_time=%-26.24s\n"
 msgstr "send_time=%-26.24s\n"
 
-#: sys-utils/ipcs.c:645
+#: sys-utils/ipcs.c:659
 #, c-format
 msgid "rcv_time=%-26.24s\n"
 msgstr "rcv_time=%-26.24s\n"
 
-#: sys-utils/ipcs.c:662 sys-utils/ipcs.c:684
+#: sys-utils/ipcs.c:676 sys-utils/ipcs.c:698
 #, fuzzy
 msgid "semctl failed"
 msgstr "siirtyminen epäonnistui"
 
-#: sys-utils/ipcs.c:664
+#: sys-utils/ipcs.c:678
 #, c-format
 msgid ""
 "\n"
 "Semaphore Array semid=%d\n"
 msgstr ""
 
-#: sys-utils/ipcs.c:665
+#: sys-utils/ipcs.c:679
 #, c-format
 msgid "uid=%d\t gid=%d\t cuid=%d\t cgid=%d\n"
 msgstr "uid=%d\t gid=%d\t cuid=%d\t cgid=%d\n"
 
-#: sys-utils/ipcs.c:667
+#: sys-utils/ipcs.c:681
 #, c-format
 msgid "mode=%#o, access_perms=%#o\n"
 msgstr "mode=%#o, access_perms=%#o\n"
 
-#: sys-utils/ipcs.c:669
+#: sys-utils/ipcs.c:683
 #, c-format
 msgid "nsems = %ld\n"
 msgstr "nsems = %ld\n"
 
-#: sys-utils/ipcs.c:670
+#: sys-utils/ipcs.c:684
 #, c-format
 msgid "otime = %-26.24s\n"
 msgstr "otime = %-26.24s\n"
 
-#: sys-utils/ipcs.c:672
+#: sys-utils/ipcs.c:686
 #, c-format
 msgid "ctime = %-26.24s\n"
 msgstr "ctime = %-26.24s\n"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "semnum"
 msgstr "semnum"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "value"
 msgstr "value"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "ncount"
 msgstr "ncount"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "zcount"
 msgstr "zcount"
 
-#: sys-utils/ipcs.c:675
+#: sys-utils/ipcs.c:689
 msgid "pid"
 msgstr "pid"
 
@@ -11358,6 +11348,10 @@ msgstr ""
 
 #: sys-utils/lscpu.c:756
 msgid "CPU op-mode(s):"
+msgstr ""
+
+#: sys-utils/lscpu.c:759
+msgid "CPU(s):"
 msgstr ""
 
 #: sys-utils/lscpu.c:762
@@ -12408,6 +12402,9 @@ msgstr "Syöterivi on liian pitkä.\n"
 #, c-format
 msgid "Out of memory when growing buffer.\n"
 msgstr "Muisti loppui kasvatettaessa puskuria.\n"
+
+#~ msgid "%s: illegal option -- %c\n"
+#~ msgstr "%s: virheellinen valitsin – %c\n"
 
 #~ msgid "error running programme: \"%s\"\n"
 #~ msgstr "Virhe ajettaessa ohjelmaa: ”%s”\n"
