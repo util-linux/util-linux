@@ -59,6 +59,10 @@ fdisk(s)
 misc
 ----
 
+ * switch_root:
+     - move all mountpoints to the newroot (there are hardcoded /proc /sys and /dev paths now)
+     - add --dont-move[=<list of dirs>] options
+
  * partx: add to it an option to make it usable in shell scripts without having
    to parse its output with sed
 
