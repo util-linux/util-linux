@@ -117,6 +117,7 @@ build-sys:
    - improved check for fallocate()  [Yann Droneaud]
    - minor changes for GNU/Hurd  [Samuel Thibault]
    - release++ (v2.18-rc1)  [Karel Zak]
+   - release++ (v2.18-rc2)  [Karel Zak]
    - remove duplicate #includes  [Karel Zak]
    - replace ../ with $top_srcdir  [Karel Zak]
    - update include/Makefile.am  [Karel Zak]
@@ -126,6 +127,7 @@ cal:
    - fix first day of the week calculation on BE systems  [Karel Zak]
    - remove unnecessary info from man page  [Karel Zak]
 cfdisk:
+   - fix warning  implicit declaration of function ‘wcwidth’  [Karel Zak]
    - set '[New]' as default item on menu for non allocated space instead of '[Help]'.  [Francesco Cosoleto]
    - set '[Quit]' as default menu item on first run instead of '[Bootable]'.  [Francesco Cosoleto]
    - support non-ascii characters in input  [Karel Zak]
@@ -140,8 +142,10 @@ docs:
    - fix umount --fake note in ReleaseNotes  [Karel Zak]
    - update  ReleaseNotes  [Karel Zak]
    - update AUTHORS file  [Karel Zak]
+   - update TODO  [Karel Zak]
    - update TODO file  [Karel Zak]
    - update tests/README  [Karel Zak]
+   - update v2.18 ReleaseNotes  [Karel Zak]
 fallocate:
    - check for number of arguments  [Karel Zak]
    - support suffixes for --offset and --lenght  [Karel Zak]
@@ -164,6 +168,7 @@ fdisk:
    - fix default first sector  [Karel Zak]
    - improve 'move begin of partition' command  [Karel Zak]
    - improve add partition dialog  [Karel Zak]
+   - improve the description of -c and -u options on man page  [Benno Schulenberg]
    - remove erroneous <size> argument from -u option in help text  [Benno Schulenberg]
    - replace bzero with memset  [Jon Ringle]
    - swap VTOC values for warning messages  [Karel Zak]
@@ -183,6 +188,8 @@ findmnt:
    - rewrite to use lib/tt.c  [Karel Zak]
    - small change in usage()  [Karel Zak]
    - ungettextize the directions and fix spelling  [Benno Schulenberg]
+fsck:
+   - fix typo in fsck.8  [Francesco Cosoleto]
 fsck/mkfs/mount:
    - unify default search paths for helpers  [Mike Frysinger]
 fsfreeze:
@@ -197,8 +204,11 @@ include:
 ionice:
    - fix typo  [Pierre Hauweele]
    - non-cryptic error message when ionice can't execvp  [Ævar Arnfjörð Bjarmason]
+ipcrm:
+   - remove redundant message in case of invalid option  [Francesco Cosoleto]
 ipcs:
    - add missing "PIDs" to related shared memory header text  [Francesco Cosoleto]
+   - advise translators a different output format  [Francesco Cosoleto]
    - get rid of colons from header strings for consistency  [Francesco Cosoleto]
    - reorganize help and usage texts  [Francesco Cosoleto]
 ldattach:
@@ -334,8 +344,11 @@ lscpu:
    - cleanup used names  [Karel Zak]
    - fix CPU_EQUAL_S macro  [Karel Zak]
    - fix cpuid opcode detection  [Henne Vogelsang]
+   - fix typo in lscpu.1  [Francesco Cosoleto]
    - fix typo, "faild" to "failed"  [Benno Schulenberg]
+   - gettextize "CPU(s)"  [Francesco Cosoleto]
    - improve --sysroot code  [Karel Zak]
+   - replace LC_MESSAGES with LC_ALL in setlocate()  [Francesco Cosoleto]
    - use cpuset masks, read data for all CPUs  [Karel Zak]
 messages:
    - gettextize a few skipped or forgotten ones  [Benno Schulenberg]
@@ -346,6 +359,7 @@ mkswap:
    - fixed strtoll() usage  [Yann Droneaud]
    - more robust strtoull() usage  [Karel Zak]
    - move write_all() to include/writeall.h  [Karel Zak]
+   - tweak the man page  [Benno Schulenberg]
    - use calloc(), remove obsolete v1 header usage  [Karel Zak]
    - zap bootbits on regular files  [Karel Zak]
 mount:
@@ -356,7 +370,9 @@ mount:
    - don't create loopdev for MS_BIND  [Karel Zak]
    - fix coding style  [Karel Zak]
    - fix information about XFS log buffers in mount.8  [Christoph Hellwig]
+   - fix memory leak  [Petr Uzel]
    - fix typo in comment  [Petr Uzel]
+   - fix typos in mount.8  [Petr Uzel]
    - more explicitly explain fstab usage in mount.8  [Karel Zak]
    - more robust offset= and sizelimit= parsing  [Karel Zak]
    - posix option of vfat is obsolete  [Yoshihiro Takahashi]
@@ -434,6 +450,7 @@ tests:
 textual:
    - fix typos  [Karel Zak]
    - fix typos, and rephrase some things for clarity  [Benno Schulenberg]
+   - slightly improve two README files  [Benno Schulenberg]
 umount:
    - add --fake option to umount(8)  [Miklos Szeredi]
    - do not sync() as the kernel does it by itself  [Petr Uzel]
