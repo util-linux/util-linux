@@ -64,6 +64,13 @@
 #include <errno.h>
 #include <getopt.h>
 #include <fcntl.h>
+
+#ifdef HAVE_SLANG_H
+#include <slang.h>
+#elif defined(HAVE_SLANG_SLANG_H)
+#include <slang/slang.h>
+#endif
+
 #ifdef HAVE_SLCURSES_H
 #include <slcurses.h>
 #elif defined(HAVE_SLANG_SLCURSES_H)
@@ -73,6 +80,7 @@
 #elif defined(HAVE_NCURSES_NCURSES_H)
 #include <ncurses/ncurses.h>
 #endif
+
 #include <signal.h>
 #include <math.h>
 #include <string.h>
@@ -431,7 +439,8 @@ get_string(char *str, int len, char *def) {
 
     refresh();
 
-#if defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
+#if !defined(HAVE_SLCURSES_H) && !defined(HAVE_SLANG_SLCURSES_H) && \
+    defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
     while ((key = get_wch(&c)) != ERR &&
 	   c != '\r' && c != '\n' && c != KEY_ENTER) {
 #else

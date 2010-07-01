@@ -54,7 +54,7 @@ endif
 if USE_SLANG
 sbin_PROGRAMS += cfdisk
 dist_man_MANS += cfdisk.8
-cfdisk_SOURCES = cfdisk.c $(fdisk_common) $(top_srcdir)/lib/mbsalign.c
+cfdisk_SOURCES = cfdisk.c $(fdisk_common)
 cfdisk_CFLAGS = $(cflags_blkid)
 cfdisk_LDADD = -lslang $(ldadd_blkid)
 else
