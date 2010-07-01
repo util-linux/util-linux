@@ -470,7 +470,15 @@ AM_CONDITIONAL(HAVE_TINFO, test "x$have_tinfo" = xyes)
 
 use_slang=no
 if test "x$with_slang" = xyes; then
-  AC_CHECK_HEADERS([slcurses.h slang/slcurses.h], [use_slang=yes])
+  AC_CHECK_HEADERS([slang.h slang/slang.h])
+  AC_CHECK_HEADERS([slcurses.h slang/slcurses.h],
+                   [use_slang=yes], [], [
+#ifdef HAVE_SLANG_H
+#include <slang.h>
+#elif defined(HAVE_SLANG_SLANG_H)
+#include <slang/slang.h>
+#endif
+])
   if test "x$use_slang" = xno; then
     AC_MSG_ERROR([slang selected but slcurses.h not found])
   fi
