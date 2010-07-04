@@ -254,7 +254,8 @@ static char *merge_optstr(const char *vfs, const char *fs)
 	if (!strcmp(vfs, fs))
 		return strdup(vfs);		/* e.g. "aaa" and "aaa" */
 
-	sz = strlen(vfs) + strlen(fs) + 2;
+	/* leave space for leading "r[ow],", "," and trailing zero */
+	sz = strlen(vfs) + strlen(fs) + 5;
 	res = malloc(sz);
 	if (!res)
 		return NULL;
