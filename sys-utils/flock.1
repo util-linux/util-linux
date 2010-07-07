@@ -51,11 +51,11 @@ used the following manner:
 .PP
 \fC(
 .br
-  flock -s 200
+  flock -s 9
 .br
   # ... commands executed under lock ...
 .br
-) 200>/var/lock/mylockfile\fP
+) 9>/var/lock/mylockfile\fP
 .PP
 The mode used to open the file doesn't matter to \fBflock\fP; using
 \fC>\fP or \fP>>\fP allows the lockfile to be created if it does not
