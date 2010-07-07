@@ -167,6 +167,18 @@ automatically detects and rewrites swap space signature with old software
 suspend data (e.g S1SUSPEND, S2SUSPEND, ...). The problem is that if we don't
 do it, then we get data corruption the next time an attempt at unsuspending is
 made.
+.PP
+.B swapon
+may not work correctly when using a swap file with some versions of btrfs.
+This is due to the swap file implementation in the kernel expecting to be able
+to write to the file directly, without the assistance of the file system.
+Since btrfs is a copy-on-write file system, the file location may not be
+static and corruption can result. Btrfs actively disallows the use of files
+on its file systems by refusing to map the file. This can be seen in the system
+log as "swapon: swapfile has holes." One possible workaround is to map the
+file to a loopback device. This will allow the file system to determine the
+mapping properly but may come with a performance impact.
+
 .SH SEE ALSO
 .BR swapon (2),
 .BR swapoff (2),
