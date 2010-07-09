@@ -51,7 +51,7 @@ void mnt_free_fs(mnt_fs *fs)
 	free(fs->source);
 	free(fs->tagname);
 	free(fs->tagval);
-	free(fs->mntroot);
+	free(fs->root);
 	free(fs->target);
 	free(fs->fstype);
 	free(fs->optstr);
@@ -448,6 +448,18 @@ int mnt_fs_set_passno(mnt_fs *fs, int passno)
 }
 
 /**
+ * mnt_fs_get_root:
+ * @fs: /proc/self/mountinfo entry
+ *
+ * Returns: root of the mount within the filesystem or NULL
+ */
+const char *mnt_fs_get_root(mnt_fs *fs)
+{
+	assert(fs);
+	return fs ? fs->root : NULL;
+}
+
+/**
  * mnt_fs_get_id:
  * @fs: /proc/self/mountinfo entry
  *
@@ -475,7 +487,7 @@ int mnt_fs_get_parent_id(mnt_fs *fs)
 
 /**
  * mnt_fs_get_devno:
- * @fs: /proc/self/mountinfo
+ * @fs: /proc/self/mountinfo entry
  *
  * Returns: value of st_dev for files on filesystem or 0 in case of error.
  */

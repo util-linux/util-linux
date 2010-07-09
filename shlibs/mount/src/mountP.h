@@ -133,7 +133,7 @@ struct _mnt_fs {
 	char		*tagname;	/* fstab[1]: tag name - "LABEL", "UUID", ..*/
 	char		*tagval;	/*           tag value */
 
-	char		*mntroot;	/* mountinfo[4]: root of the mount within the FS */
+	char		*root;		/* mountinfo[4]: root of the mount within the FS */
 	char		*target;	/* mountinfo[5], fstab[2]: mountpoint */
 	char		*fstype;	/* mountinfo[9], fstab[3]: filesystem type */
 

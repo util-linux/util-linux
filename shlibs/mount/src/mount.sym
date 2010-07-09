@@ -133,3 +133,9 @@ global:
 local:
 	*;
 };
+
+
+MOUNT_2.19 {
+global:
+	mnt_fs_get_root;
+} MOUNT_2.18;

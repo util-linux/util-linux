@@ -168,8 +168,8 @@ static int mnt_parse_mountinfo_line(mnt_fs *fs, char *s)
 	next_word_skip(&s);
 
 	/* MOUNTROOT */
-	fs->mntroot = next_word(&s);
-	if (!fs->mntroot)
+	fs->root = next_word(&s);
+	if (!fs->root)
 		return 1;
 
 	/* TARGET (mountpoit) */

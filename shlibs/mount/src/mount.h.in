@@ -31,7 +31,6 @@ extern "C" {
 
 #include <stdio.h>
 
-
 #define LIBMOUNT_VERSION   "@LIBMOUNT_VERSION@"
 
 /**
@@ -236,6 +235,7 @@ extern int mnt_fs_get_freq(mnt_fs *ent);
 extern int mnt_fs_set_freq(mnt_fs *ent, int freq);
 extern int mnt_fs_get_passno(mnt_fs *ent);
 extern int mnt_fs_set_passno(mnt_fs *ent, int passno);
+extern const char *mnt_fs_get_root(mnt_fs *fs);
 extern int mnt_fs_get_id(mnt_fs *fs);
 extern int mnt_fs_get_parent_id(mnt_fs *fs);
 extern dev_t mnt_fs_get_devno(mnt_fs *fs);
