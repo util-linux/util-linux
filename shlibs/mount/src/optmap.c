@@ -210,9 +210,9 @@ const struct mnt_optmap *mnt_optmap_get_entry(
 	assert(nmaps);
 	assert(name);
 	assert(namelen);
-	assert(mapent);
 
-	*mapent = NULL;
+	if (mapent)
+		*mapent = NULL;
 
 	for (i = 0; i < nmaps; i++) {
 		const struct mnt_optmap *map = maps[i];
@@ -224,7 +224,8 @@ const struct mnt_optmap *mnt_optmap_get_entry(
 				continue;
 			p = ent->name + namelen;
 			if (*p == '\0' || *p == '=' || *p == '[') {
-				*mapent = ent;
+				if (mapent)
+					*mapent = ent;
 				return map;
 			}
 		}

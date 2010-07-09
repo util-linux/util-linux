@@ -149,25 +149,16 @@ int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,
 	return mnt_optstr_parse_next(optstr, name, namesz, value, valuesz);
 }
 
-/**
- * mnt_optstr_append_option:
- * @optstr: option string or NULL
- * @name: value name
- * @value: value
- *
- * Returns: reallocated (or newly allocated) @optstr with ,name=value
- */
-int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
+static int __mnt_optstr_append_option(char **optstr,
+			const char *name, size_t nsz,
+			const char *value, size_t vsz)
 {
 	char *p;
-	size_t sz, vsz, osz, nsz;
+	size_t sz, osz;
 
-	if (!name)
-		return -1;
+	assert(name);
 
 	osz = *optstr ? strlen(*optstr) : 0;
-	nsz = strlen(name);
-	vsz = value ? strlen(value) : 0;
 
 	sz = osz + nsz + 1;		/* 1: '\0' */
 	if (osz)
@@ -196,6 +187,27 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 	*p = '\0';
 
 	return 0;
+}
+
+/**
+ * mnt_optstr_append_option:
+ * @optstr: option string or NULL
+ * @name: value name
+ * @value: value
+ *
+ * Returns: reallocated (or newly allocated) @optstr with ,name=value
+ */
+int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
+{
+	size_t vsz, nsz;
+
+	if (!name)
+		return -1;
+
+	nsz = strlen(name);
+	vsz = value ? strlen(value) : 0;
+
+	return __mnt_optstr_append_option(optstr, name, nsz, value, vsz);
 }
 
 /**
@@ -318,6 +330,67 @@ int mnt_optstr_remove_option(char **optstr, const char *name)
 	return 0;
 }
 
+/**
+ * mnt_split_optstr:
+ * @optstr: string with comma separated list of options
+ * @user: returns newly allocated string with userspace options
+ * @vfs: returns newly allocated string with VFS options
+ * @fs: returns newly allocated string with FS options
+ *
+ * Note that FS options are all options that are undefined in MNT_USERSPACE_MAP
+ * or MNT_LINUX_MAP.
+ *
+ * Returns: 0 on success, or -1 in case of error.
+ */
+int mnt_split_optstr(char *optstr, char **user, char **vfs, char **fs)
+{
+	char *name, *val;
+	size_t namesz, valsz;
+	struct mnt_optmap const *maps[2];
+
+	assert(optstr);
+
+	if (!optstr)
+		return -1;
+
+	maps[0] = mnt_get_builtin_optmap(MNT_LINUX_MAP);
+	maps[1] = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
+
+	if (vfs)
+		*vfs = NULL;
+	if (fs)
+		*fs = NULL;
+	if (user)
+		*user = NULL;
+
+	while(!mnt_optstr_next_option(&optstr, &name, &namesz, &val, &valsz)) {
+		int rc = 0;
+		const struct mnt_optmap *m =
+			 mnt_optmap_get_entry(maps, 2, name, namesz, NULL);
+
+		if (m && m == maps[0] && vfs)
+			rc = __mnt_optstr_append_option(vfs, name, namesz,
+								val, valsz);
+		else if (m && m == maps[1] && user)
+			rc = __mnt_optstr_append_option(user, name, namesz,
+								val, valsz);
+		else if (!m && fs)
+			rc = __mnt_optstr_append_option(fs, name, namesz,
+								val, valsz);
+		if (rc) {
+			if (vfs)
+				free(*vfs);
+			if (fs)
+				free(*fs);
+			if (user)
+				free(*user);
+			return rc;
+		}
+	}
+
+	return 0;
+}
+
 #ifdef TEST_PROGRAM
 
 int test_append(struct mtest *ts, int argc, char *argv[])
@@ -339,6 +412,30 @@ int test_append(struct mtest *ts, int argc, char *argv[])
 	}
 done:
 	return -1;
+}
+
+int test_split(struct mtest *ts, int argc, char *argv[])
+{
+	char *optstr, *user = NULL, *fs = NULL, *vfs = NULL;
+	int rc = -1;
+
+	if (argc < 2)
+		return -1;
+
+	optstr = strdup(argv[1]);
+
+	if (mnt_split_optstr(optstr, &user, &vfs, &fs) == 0) {
+		printf("user : %s\n", user);
+		printf("vfs  : %s\n", vfs);
+		printf("fs   : %s\n", fs);
+		rc = 0;
+	}
+
+	free(user);
+	free(vfs);
+	free(fs);
+	free(optstr);
+	return rc;
 }
 
 int test_set(struct mtest *ts, int argc, char *argv[])
@@ -419,6 +516,7 @@ int main(int argc, char *argv[])
 		{ "--set",    test_set,    "<optstr> <name> [<value>]  (un)set value" },
 		{ "--get",    test_get,    "<optstr> <name>            search name in optstr" },
 		{ "--remove", test_remove, "<optstr> <name>            remove name in optstr" },
+		{ "--split",  test_split,  "<optstr>                   split into FS, VFS and userspace" },
 		{ NULL }
 	};
 	return  mnt_run_test(tss, argc, argv);

@@ -332,34 +332,56 @@ const char *mnt_fs_get_optstr(mnt_fs *fs)
  * @fs: fstab/mtab/mountinfo entry
  * @optstr: options string
  *
- * This function creates a private copy (strdup()) of @optstr.
+ * This function creates a private copy of @optstr.
  *
  * Returns: 0 on success or -1 in case of error.
  */
 int mnt_fs_set_optstr(mnt_fs *fs, const char *optstr)
 {
-	char *p;
+	char *p, *v, *f;
 
 	assert(fs);
 
 	if (!fs || !optstr)
 		return -1;
-	p = strdup(optstr);
-	if (!p)
+	if (mnt_split_optstr((char *) optstr, NULL, &v, &f))
 		return -1;
+
+	p = strdup(optstr);
+	if (!p) {
+		free(v);
+		free(f);
+		return -1;
+	}
 
 	free(fs->optstr);
 	free(fs->fs_optstr);
 	free(fs->vfs_optstr);
-	fs->fs_optstr = fs->vfs_optstr = NULL;
-
-	/* TODO: it would be possible to use built-in maps of options
-	 * and differentiate between VFS and FS options, then we can
-	 * set fs_optstr and vfs_optstr */
 
 	fs->optstr = p;
-
+	fs->fs_optstr = f;
+	fs->vfs_optstr = v;
 	return 0;
+}
+
+/**
+ * mnt_fs_append_optstr:
+ * @fs: fstab/mtab/mountinfo entry
+ * @optstr: options string (usually userspace specific options)
+ *
+ * This function appends @optstr to the current list of the mount options. The
+ * VFS and FS specific lists are not modified -- so then the
+ * mnt_fs_get_optstr() function returns VFS + FS + userspace mount options.
+ *
+ * Returns: 0 on success or -1 in case of error.
+ */
+int mnt_fs_append_optstr(mnt_fs *fs, const char *optstr)
+{
+	assert(fs);
+
+	if (!fs || !optstr)
+		return -1;
+	return mnt_optstr_append_option(&fs->optstr, optstr, NULL);
 }
 
 /**

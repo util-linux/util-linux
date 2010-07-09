@@ -17,6 +17,7 @@ global:
 	mnt_free_lock;
 	mnt_free_optls;
 	mnt_free_tab;
+	mnt_fs_append_optstr;
 	mnt_fs_fprintf;
 	mnt_fs_get_devno;
 	mnt_fs_get_freq;
@@ -109,6 +110,7 @@ global:
 	mnt_resolve_path;
 	mnt_resolve_spec;
 	mnt_resolve_tag;
+	mnt_split_optstr;
 	mnt_tab_add_fs;
 	mnt_tab_find_next_fs;
 	mnt_tab_find_source;
