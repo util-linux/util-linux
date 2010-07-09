@@ -3,7 +3,7 @@
  * can't run with old libblkid.so not providing foo;
  * version info can't enforce this since we never change the SONAME.
  */
-MOUNT_2.18 {
+MOUNT_2.19 {
 global:
 	mnt_cache_device_has_tag;
 	mnt_cache_find_path;
@@ -20,19 +20,20 @@ global:
 	mnt_fs_fprintf;
 	mnt_fs_get_devno;
 	mnt_fs_get_freq;
+	mnt_fs_get_fs_optstr;
 	mnt_fs_get_fstype;
 	mnt_fs_get_id;
-	mnt_fs_get_fs_optstr;
 	mnt_fs_get_option;
 	mnt_fs_get_optstr;
-	mnt_fs_get_vfs_optstr;
 	mnt_fs_get_parent_id;
 	mnt_fs_get_passno;
+	mnt_fs_get_root;
 	mnt_fs_get_source;
 	mnt_fs_get_srcpath;
 	mnt_fs_get_tag;
 	mnt_fs_get_target;
 	mnt_fs_get_userdata;
+	mnt_fs_get_vfs_optstr;
 	mnt_fs_match_fstype;
 	mnt_fs_match_options;
 	mnt_fs_match_source;
@@ -49,6 +50,7 @@ global:
 	mnt_fstype_is_pseudofs;
 	mnt_get_builtin_optmap;
 	mnt_get_library_version;
+	mnt_init_debug;
 	mnt_iter_get_direction;
 	mnt_lock_file;
 	mnt_lock_get_linkfile;
@@ -125,17 +127,11 @@ global:
 	mnt_tab_parse_stream;
 	mnt_tab_remove_fs;
 	mnt_tab_set_cache;
-	mnt_tab_set_parser_errcb;
 	mnt_tab_set_iter;
+	mnt_tab_set_parser_errcb;
 	mnt_tab_update_file;
 	mnt_unlock_file;
-	mnt_init_debug;
 local:
 	*;
 };
 
-
-MOUNT_2.19 {
-global:
-	mnt_fs_get_root;
-} MOUNT_2.18;
