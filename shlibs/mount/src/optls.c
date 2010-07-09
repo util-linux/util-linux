@@ -386,6 +386,9 @@ int mnt_optls_next_option(mnt_optls *ls, mnt_iter *itr,
 
 	if (!itr || !ls || !option)
 		return -1;
+
+	*option = NULL;
+
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &ls->opts);
 	while (itr->p != itr->head) {
