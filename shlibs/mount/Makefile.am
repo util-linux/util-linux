@@ -10,4 +10,4 @@ endif
 pkgconfigdir = $(usrlib_execdir)/pkgconfig
 pkgconfig_DATA = mount.pc
 
-EXTRA_DIST = mount.pc.in
+EXTRA_DIST = COPYING.libmount mount.pc.in
