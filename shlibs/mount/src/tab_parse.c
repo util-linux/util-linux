@@ -602,3 +602,93 @@ done:
 
 	return num > 0 ? 0 : -1;
 }
+
+/*
+ * This function uses @uf to found corresponding record in @tb, then the record
+ * from @tb is updated (userspace specific mount options are added).
+ *
+ * Note that @uf must contain userspace specific mount options only!
+ *
+ * Returns: modified filesystem (from @tb) or NULL.
+ */
+static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
+{
+	mnt_fs *fs;
+	mnt_iter itr;
+	const char *optstr, *src, *target, *root;
+
+	assert(tb);
+	assert(uf);
+	if (!tb || !uf)
+		return NULL;
+
+	src = mnt_fs_get_srcpath(uf);
+	target = mnt_fs_get_target(uf);
+	optstr = mnt_fs_get_vfs_optstr(uf);
+	root = mnt_fs_get_root(uf);
+
+	if (!src || !target || !optstr || !root)
+		return NULL;
+
+	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
+
+	while(mnt_tab_next_fs(tb, &itr, &fs) == 0) {
+		const char *s = mnt_fs_get_srcpath(fs),
+			   *t = mnt_fs_get_target(fs),
+			   *r = mnt_fs_get_root(fs);
+
+		if (s && t && r && !strcmp(t, target) &&
+		    !strcmp(s, src) && !strcmp(r, root))
+			break;
+	}
+
+	if (fs)
+		mnt_fs_append_optstr(fs, optstr);
+	return fs;
+}
+
+/**
+ * mnt_tab_parse_mtab:
+ * @tb: table
+ *
+ * This function parses /etc/mtab or {/proc/self,/var/run/mount}/mountinfo or
+ * /proc/mounts. Note that the /var/run/mount/mountinfo file is optional and
+ * contains userspace specific mount options only.
+ *
+ * See also mnt_tab_set_parser_errcb().
+ *
+ * Returns: 0 on success or -1 in case of error.
+ */
+int mnt_tab_parse_mtab(mnt_tab *tb)
+{
+	int rc;
+	mnt_tab *u_tb;
+	mnt_fs *u_fs;
+	mnt_iter itr;
+
+	if (mnt_has_regular_mtab()) {
+		rc = mnt_tab_parse_file(tb, _PATH_MOUNTED);
+		if (!rc)
+			return 0;		/* system with regular mtab */
+	}
+
+	/* read kernel information from /proc/self/mountinfo */
+	rc = mnt_tab_parse_file(tb, _PATH_PROC_MOUNTINFO);
+	if (rc)
+		/* hmm, old kernel? ...try /proc/mounts */
+		return mnt_tab_parse_file(tb, _PATH_PROC_MOUNTS);
+
+	/* try to read userspace specific information from /var/run/mount */
+	u_tb = mnt_new_tab_from_file(MNT_PATH_MOUNTINFO);
+	if (!u_tb)
+		return 0;	/* private mountinfo does not exist */
+
+	mnt_reset_iter(&itr, MNT_ITER_BACKWARD);
+
+	/*  merge userspace options into mountinfo from kernel */
+	while(mnt_tab_next_fs(u_tb, &itr, &u_fs) == 0)
+		mnt_tab_merge_userspace_fs(tb, u_fs);
+
+	mnt_free_tab(u_tb);
+	return 0;
+}

@@ -126,6 +126,7 @@ global:
 	mnt_tab_next_fs;
 	mnt_tab_parse_file;
 	mnt_tab_parse_fstab;
+	mnt_tab_parse_mtab;
 	mnt_tab_parse_stream;
 	mnt_tab_remove_fs;
 	mnt_tab_set_cache;

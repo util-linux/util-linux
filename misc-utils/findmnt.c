@@ -330,6 +330,8 @@ static mnt_tab *parse_tabfile(const char *path)
 
 	if (!strcmp(path, _PATH_MNTTAB))
 		rc = mnt_tab_parse_fstab(tb);
+	else if (!strcmp(path, _PATH_MOUNTED))
+		rc = mnt_tab_parse_mtab(tb);
 	else
 		rc = mnt_tab_parse_file(tb, path);
 

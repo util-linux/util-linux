@@ -28,6 +28,7 @@
 #include <fcntl.h>
 #include <pwd.h>
 
+#include "pathnames.h"
 #include "mountP.h"
 
 char *mnt_getenv_safe(const char *arg)
@@ -247,6 +248,18 @@ char *mnt_get_username(const uid_t uid)
 
 	free(buf);
 	return username;
+}
+
+/*
+ * Returns 1 if /etc/mtab is a reqular file.
+ */
+int mnt_has_regular_mtab(void)
+{
+	struct stat st;
+
+	if (lstat(_PATH_MOUNTED, &st) == 0 && S_ISREG(st.st_mode))
+		return 1;
+	return 0;
 }
 
 #ifdef TEST_PROGRAM

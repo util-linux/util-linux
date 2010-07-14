@@ -50,6 +50,10 @@ extern int libmount_debug_mask;
 /* extension for files in the /etc/fstab.d directory */
 #define MNT_MNTTABDIR_EXT	".fstab"
 
+/* library private paths */
+#define MNT_PATH_RUNDIR		"/var/run/mount"
+#define MNT_PATH_MOUNTINFO	MNT_PATH_RUNDIR "/mountinfo"
+
 #ifdef TEST_PROGRAM
 struct mtest {
 	const char	*name;
@@ -64,6 +68,7 @@ extern int mnt_run_test(struct mtest *tests, int argc, char *argv[]);
 /* utils.c */
 extern char *mnt_getenv_safe(const char *arg);
 extern char *mnt_get_username(const uid_t uid);
+extern int mnt_has_regular_mtab(void);
 
 /*
  * Generic iterator
@@ -205,7 +210,5 @@ extern int mnt_optent_assign_map(mnt_optent *op,
 /* fs.c */
 extern int __mnt_fs_set_source(mnt_fs *fs, char *source);
 extern int __mnt_fs_set_fstype(mnt_fs *fs, char *fstype);
-
-
 
 #endif /* _LIBMOUNT_PRIVATE_H */

@@ -381,6 +381,7 @@ int mnt_fs_append_optstr(mnt_fs *fs, const char *optstr)
 
 	if (!fs || !optstr)
 		return -1;
+
 	return mnt_optstr_append_option(&fs->optstr, optstr, NULL);
 }
 

@@ -332,6 +332,8 @@ int mnt_tab_next_fs(mnt_tab *tb, mnt_iter *itr, mnt_fs **fs)
 	if (!tb || !itr || !fs)
 		return -1;
 	rc = 1;
+	*fs = NULL;
+
 	if (!itr->head)
 		MNT_ITER_INIT(itr, &tb->ents);
 	if (itr->p != itr->head) {
