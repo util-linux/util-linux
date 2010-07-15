@@ -104,7 +104,7 @@ static int probe_nilfs2(blkid_probe pr, const struct blkid_idmag *mag)
 
 const struct blkid_idinfo nilfs2_idinfo =
 {
-	.name		= "nilfs",
+	.name		= "nilfs2",
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_nilfs2,
 	.magics		=
