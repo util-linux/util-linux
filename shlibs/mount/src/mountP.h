@@ -67,6 +67,9 @@ extern int mnt_run_test(struct mtest *tests, int argc, char *argv[]);
 
 /* utils.c */
 extern char *mnt_getenv_safe(const char *arg);
+extern int endswith(const char *s, const char *sx);
+extern int startswith(const char *s, const char *sx);
+
 extern char *mnt_get_username(const uid_t uid);
 extern int mnt_has_regular_mtab(void);
 

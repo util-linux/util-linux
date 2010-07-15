@@ -28,6 +28,7 @@
 #include <fcntl.h>
 #include <pwd.h>
 
+#include "strutils.h"
 #include "pathnames.h"
 #include "mountP.h"
 
@@ -50,6 +51,37 @@ char *mnt_getenv_safe(const char *arg)
 #else
 	return getenv(arg);
 #endif
+}
+
+int endswith(const char *s, const char *sx)
+{
+	ssize_t off;
+
+	assert(s);
+	assert(sx);
+
+	off = strlen(s);
+	if (!off)
+		return 0;
+	off -= strlen(sx);
+	if (off < 0)
+		return 0;
+
+        return !strcmp(s + off, sx);
+}
+
+int startswith(const char *s, const char *sx)
+{
+	size_t off;
+
+	assert(s);
+	assert(sx);
+
+	off = strlen(sx);
+	if (!off)
+		return 0;
+
+        return !strncmp(s, sx, off);
 }
 
 /**
@@ -318,12 +350,32 @@ int test_match_options(struct mtest *ts, int argc, char *argv[])
 	return 0;
 }
 
+int test_startswith(struct mtest *ts, int argc, char *argv[])
+{
+	char *optstr = argv[1];
+	char *pattern = argv[2];
+
+	printf("%s\n", startswith(optstr, pattern) ? "YES" : "NOT");
+	return 0;
+}
+
+int test_endswith(struct mtest *ts, int argc, char *argv[])
+{
+	char *optstr = argv[1];
+	char *pattern = argv[2];
+
+	printf("%s\n", endswith(optstr, pattern) ? "YES" : "NOT");
+	return 0;
+}
+
 
 int main(int argc, char *argv[])
 {
 	struct mtest tss[] = {
 	{ "--match-fstype",  test_match_fstype,    "<type> <pattern>     FS types matching" },
 	{ "--match-options", test_match_options,   "<options> <pattern>  options matching" },
+	{ "--starts-with",   test_startswith,      "<string> <prefix>" },
+	{ "--ends-with",     test_endswith,        "<string> <prefix>" },
 	{ NULL }
 	};
 
