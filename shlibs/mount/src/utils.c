@@ -262,6 +262,43 @@ int mnt_has_regular_mtab(void)
 	return 0;
 }
 
+/**
+ * mnt_get_writable_mtab_path:
+ *
+ * Returns: pointer to the static string with path to the file with userspace
+ *          mount options (classic /etc/mtab or /var/run/mount/mountinfo)
+ */
+const char *mnt_get_writable_mtab_path(void)
+{
+	struct stat mst, ist;
+	int mtab, info;
+
+	mtab = !lstat(_PATH_MOUNTED, &mst);
+	info = !stat(MNT_PATH_RUNDIR, &ist);
+
+	/* A) mtab is symlink, /var/run/mount is available */
+	if (mtab && S_ISLNK(mst.st_mode) && info) {
+		int fd = open(MNT_PATH_MOUNTINFO, O_RDWR | O_CREAT, 0644);
+		if (fd >= 0) {
+			close(fd);
+			return MNT_PATH_MOUNTINFO;
+		}
+		return NULL;	/* probably EACCES */
+	}
+
+	/* B) classis system with /etc/mtab */
+	if (mtab && S_ISREG(mst.st_mode)) {
+		int fd = open(_PATH_MOUNTED, O_RDWR, 0644);
+		if (fd >= 0) {
+			close(fd);
+			return _PATH_MOUNTED;
+		}
+		return NULL;    /* probably EACCES */
+	}
+
+	return NULL;
+}
+
 #ifdef TEST_PROGRAM
 int test_match_fstype(struct mtest *ts, int argc, char *argv[])
 {

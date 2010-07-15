@@ -51,6 +51,7 @@ global:
 	mnt_fstype_is_pseudofs;
 	mnt_get_builtin_optmap;
 	mnt_get_library_version;
+	mnt_get_writable_mtab_path;
 	mnt_init_debug;
 	mnt_iter_get_direction;
 	mnt_lock_file;
