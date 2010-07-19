@@ -291,6 +291,7 @@ const struct blkid_idinfo hfs_idinfo =
 	.name		= "hfs",
 	.usage		= BLKID_USAGE_FILESYSTEM,
 	.probefunc	= probe_hfs,
+	.flags		= BLKID_IDINFO_TOLERANT,
 	.magics		=
 	{
 		{ .magic = "BD", .len = 2, .kboff = 1 },
