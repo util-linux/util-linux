@@ -421,6 +421,11 @@ fdexit(int ret) {
     exit(ret);
 }
 
+/*
+ * Note that @len is size of @str buffer.
+ *
+ * Returns number of read bytes (without \0).
+ */
 static int
 get_string(char *str, int len, char *def) {
     size_t cells = 0, i = 0;
@@ -472,7 +477,7 @@ get_string(char *str, int len, char *def) {
 	    break;
 	default:
 #if defined(HAVE_LIBNCURSESW) && defined(HAVE_WIDECHAR)
-	    if (i < len && iswprint(c)) {
+	    if (i + 1 < len && iswprint(c)) {
 		wchar_t wc = (wchar_t) c;
 		char s[MB_CUR_MAX + 1];
 		int  sz = wctomb(s, wc);
@@ -492,7 +497,7 @@ get_string(char *str, int len, char *def) {
 			putchar(BELL);
 	    }
 #else
-	    if (i < len && isprint(c)) {
+	    if (i + 1 < len && isprint(c)) {
 	        mvaddch(y, x + cells, c);
 		if (use_def) {
 		    clrtoeol();
@@ -2405,7 +2410,7 @@ change_id(int i) {
 
     sprintf(def, "%02X", new_id);
     mvaddstr(COMMAND_LINE_Y, COMMAND_LINE_X, _("Enter filesystem type: "));
-    if ((len = get_string(id, 2, def)) <= 0 && len != GS_DEFAULT)
+    if ((len = get_string(id, 3, def)) <= 0 && len != GS_DEFAULT)
 	return;
 
     if (len != GS_DEFAULT) {
