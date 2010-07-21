@@ -44,7 +44,7 @@ char *mangle(const char *s)
 	return ss;
 }
 
-void unmangle_to_buffer(char *s, char *buf, size_t len)
+void unmangle_to_buffer(const char *s, char *buf, size_t len)
 {
 	size_t sz = 0;
 
@@ -63,7 +63,7 @@ void unmangle_to_buffer(char *s, char *buf, size_t len)
 	*buf = '\0';
 }
 
-static inline char *skip_nonspaces(char *s)
+static inline const char *skip_nonspaces(const char *s)
 {
 	while (*s && !(*s == ' ' || *s == '\t'))
 		s++;
@@ -73,9 +73,10 @@ static inline char *skip_nonspaces(char *s)
 /*
  * Returns mallocated buffer or NULL in case of error.
  */
-char *unmangle(char *s)
+char *unmangle(const char *s)
 {
-	char *buf, *end;
+	char *buf;
+	const char *end;
 	size_t sz;
 
 	end = skip_nonspaces(s);

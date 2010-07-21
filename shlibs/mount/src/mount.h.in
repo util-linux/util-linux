@@ -110,6 +110,8 @@ extern int mnt_parse_version_string(const char *ver_string);
 extern int mnt_get_library_version(const char **ver_string);
 
 /* utils.c */
+extern char *mnt_mangle(const char *str);
+extern char *mnt_unmangle(const char *str);
 extern int mnt_fstype_is_netfs(const char *type);
 extern int mnt_fstype_is_pseudofs(const char *type);
 extern int mnt_match_fstype(const char *type, const char *pattern);

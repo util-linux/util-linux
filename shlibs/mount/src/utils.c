@@ -31,6 +31,7 @@
 #include "strutils.h"
 #include "pathnames.h"
 #include "mountP.h"
+#include "mangle.h"
 
 char *mnt_getenv_safe(const char *arg)
 {
@@ -82,6 +83,32 @@ int startswith(const char *s, const char *sx)
 		return 0;
 
         return !strncmp(s, sx, off);
+}
+
+/**
+ * mnt_mangle:
+ * @str: string
+ *
+ * Encode @str to be compatible with fstab/mtab
+ *
+ * Returns: new allocated string or NULL in case of error.
+ */
+char *mnt_mangle(const char *str)
+{
+	return mangle(str);
+}
+
+/**
+ * mnt_unmangle:
+ * @str: string
+ *
+ * Decode @str from fstab/mtab
+ *
+ * Returns: new allocated string or NULL in case of error.
+ */
+char *mnt_unmangle(const char *str)
+{
+	return unmangle(str);
 }
 
 /**

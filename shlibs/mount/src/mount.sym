@@ -55,6 +55,7 @@ global:
 	mnt_lock_file;
 	mnt_lock_get_linkfile;
 	mnt_lock_get_lockfile;
+	mnt_mangle;
 	mnt_match_fstype;
 	mnt_match_options;
 	mnt_new_cache;
@@ -132,6 +133,7 @@ global:
 	mnt_tab_set_parser_errcb;
 	mnt_tab_update_file;
 	mnt_unlock_file;
+	mnt_unmangle;
 local:
 	*;
 };

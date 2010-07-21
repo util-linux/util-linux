@@ -7,8 +7,8 @@
 
 extern char *mangle(const char *s);
 
-extern void unmangle_to_buffer(char *s, char *buf, size_t len);
-extern char *unmangle(char *s);
+extern void unmangle_to_buffer(const char *s, char *buf, size_t len);
+extern char *unmangle(const char *s);
 
 #endif /* UTIL_LINUX_MANGLE_H */
 
