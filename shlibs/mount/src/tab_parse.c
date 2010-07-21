@@ -607,7 +607,8 @@ done:
  * This function uses @uf to found corresponding record in @tb, then the record
  * from @tb is updated (userspace specific mount options are added).
  *
- * Note that @uf must contain userspace specific mount options only!
+ * Note that @uf must contain only userspace specific mount options instead of
+ * VFS options (note that FS options are ignored).
  *
  * Returns: modified filesystem (from @tb) or NULL.
  */

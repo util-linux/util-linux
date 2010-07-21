@@ -252,21 +252,6 @@ extern int mnt_fs_match_target(mnt_fs *fs, const char *target, mnt_cache *cache)
 extern int mnt_fs_match_source(mnt_fs *fs, const char *source, mnt_cache *cache);
 extern int mnt_fs_match_fstype(mnt_fs *fs, const char *types);
 extern int mnt_fs_match_options(mnt_fs *fs, const char *options);
-
-/* mtab/fstab line */
-#define MNT_TAB_PRINTFMT	"%s %s %s %s %d %d\n"
-
-extern int mnt_fprintf_line(
-                        FILE *f,
-                        const char *fmt,
-                        const char *source,
-                        const char *target,
-                        const char *fstype,
-                        const char *options,
-                        int freq,
-                        int passno);
-
-extern int mnt_fs_fprintf(mnt_fs *ent, FILE *f, const char *fmt);
 extern int mnt_fs_print_debug(mnt_fs *ent, FILE *file);
 
 /* tab-parse.c */
@@ -302,10 +287,6 @@ extern mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int directio
 extern int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 			int (*match_func)(mnt_fs *, void *), void *userdata,
 		        mnt_fs **fs);
-
-extern int mnt_tab_fprintf(mnt_tab *tb, FILE *f, const char *fmt);
-extern int mnt_tab_update_file(mnt_tab *tb, const char *filename);
-
 
 /*
  * mount(8) userspace options masks (MNT_MAP_USERSPACE map)

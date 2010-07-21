@@ -10,7 +10,6 @@ global:
 	mnt_cache_find_tag;
 	mnt_cache_find_tag_value;
 	mnt_cache_read_tags;
-	mnt_fprintf_line;
 	mnt_free_cache;
 	mnt_free_fs;
 	mnt_free_iter;
@@ -18,7 +17,6 @@ global:
 	mnt_free_optls;
 	mnt_free_tab;
 	mnt_fs_append_optstr;
-	mnt_fs_fprintf;
 	mnt_fs_get_devno;
 	mnt_fs_get_freq;
 	mnt_fs_get_fs_optstr;
@@ -118,7 +116,6 @@ global:
 	mnt_tab_find_srcpath;
 	mnt_tab_find_tag;
 	mnt_tab_find_target;
-	mnt_tab_fprintf;
 	mnt_tab_get_cache;
 	mnt_tab_get_name;
 	mnt_tab_get_nents;
