@@ -10,6 +10,7 @@ global:
 	mnt_cache_find_tag;
 	mnt_cache_find_tag_value;
 	mnt_cache_read_tags;
+	mnt_copy_fs;
 	mnt_free_cache;
 	mnt_free_fs;
 	mnt_free_iter;
@@ -42,6 +43,7 @@ global:
 	mnt_fs_set_fstype;
 	mnt_fs_set_optstr;
 	mnt_fs_set_passno;
+	mnt_fs_set_root;
 	mnt_fs_set_source;
 	mnt_fs_set_target;
 	mnt_fs_set_userdata;

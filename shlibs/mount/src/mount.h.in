@@ -146,7 +146,7 @@ extern int mnt_optstr_set_option(char **optstr, const char *name,
 				const char *value);
 extern int mnt_optstr_remove_option(char **optstr, const char *name);
 
-extern int mnt_split_optstr(char *optstr, char **user, char **vfs, char **fs);
+extern int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs);
 
 /* iter.c */
 enum {
@@ -224,6 +224,7 @@ extern int mnt_lock_file(mnt_lock *ml);
 /* fs.c */
 extern mnt_fs *mnt_new_fs(void);
 extern void mnt_free_fs(mnt_fs *ent);
+extern mnt_fs *mnt_copy_fs(mnt_fs *fs);
 extern void *mnt_fs_get_userdata(mnt_fs *fs);
 extern int mnt_fs_set_userdata(mnt_fs *fs, void *data);
 extern const char *mnt_fs_get_source(mnt_fs *ent);
@@ -244,6 +245,7 @@ extern int mnt_fs_set_freq(mnt_fs *ent, int freq);
 extern int mnt_fs_get_passno(mnt_fs *ent);
 extern int mnt_fs_set_passno(mnt_fs *ent, int passno);
 extern const char *mnt_fs_get_root(mnt_fs *fs);
+extern int mnt_fs_set_root(mnt_fs *fs, const char *root);
 extern int mnt_fs_get_id(mnt_fs *fs);
 extern int mnt_fs_get_parent_id(mnt_fs *fs);
 extern dev_t mnt_fs_get_devno(mnt_fs *fs);

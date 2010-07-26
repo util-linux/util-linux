@@ -17,6 +17,7 @@
 #include <ctype.h>
 #include <errno.h>
 #include <blkid.h>
+#include <stddef.h>
 
 #include "nls.h"
 #include "mountP.h"
@@ -59,6 +60,68 @@ void mnt_free_fs(mnt_fs *fs)
 	free(fs->fs_optstr);
 
 	free(fs);
+}
+
+static inline int cpy_str_item(void *new, void *old, size_t offset)
+{
+	char **o = (char **) (old + offset);
+	char **n = (char **) (new + offset);
+
+	if (!*o)
+		return 0;	/* source (old) is empty */
+
+	*n = strdup(*o);
+	if (!*n)
+		return -1;
+	return 0;
+}
+
+/**
+ * mnt_copy_fs:
+ * @fs: source FS
+ *
+ * This function does not copy userdata (se mnt_fs_set_userdata()). A new copy is
+ * not linked with any existing mnt_tab.
+ *
+ * Returns: copy of @fs
+ */
+mnt_fs *mnt_copy_fs(mnt_fs *fs)
+{
+	mnt_fs *n = mnt_new_fs();
+
+	if (!n)
+		return NULL;
+
+	n->id         = fs->id;
+	n->parent     = fs->parent;
+	n->devno      = fs->devno;
+
+	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, source)))
+		goto err;
+	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, tagname)))
+		goto err;
+	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, tagval)))
+		goto err;
+	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, root)))
+		goto err;
+	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, target)))
+		goto err;
+	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, fstype)))
+		goto err;
+	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, optstr)))
+		goto err;
+	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, vfs_optstr)))
+		goto err;
+	if (cpy_str_item(n, fs, offsetof(struct _mnt_fs, fs_optstr)))
+		goto err;
+	n->freq       = fs->freq;
+	n->passno     = fs->passno;
+	n->flags      = fs->flags;
+
+	return n;
+err:
+	mnt_free_fs(n);
+	return NULL;
 }
 
 /**
@@ -480,6 +543,30 @@ const char *mnt_fs_get_root(mnt_fs *fs)
 {
 	assert(fs);
 	return fs ? fs->root : NULL;
+}
+
+/**
+ * mnt_fs_set_root:
+ * @fs: mountinfo entry
+ * @root: path
+ *
+ * Returns: 0 on success or -1 in case of error.
+ */
+int mnt_fs_set_root(mnt_fs *fs, const char *root)
+{
+	char *p = NULL;
+
+	assert(fs);
+	if (!fs)
+		return -1;
+	if (root) {
+		p = strdup(root);
+		if (!p)
+			return -1;
+	}
+	free(fs->root);
+	fs->root = p;
+	return 0;
 }
 
 /**
