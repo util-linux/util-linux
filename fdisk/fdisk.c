@@ -1801,7 +1801,7 @@ change_sysid(void) {
  * Lubkin Oct.  1991). */
 
 static void
-long2chs(ulong ls, unsigned int *c, unsigned int *h, unsigned int *s) {
+long2chs(unsigned long ls, unsigned int *c, unsigned int *h, unsigned int *s) {
 	int spc = heads * sectors;
 
 	*c = ls / spc;
