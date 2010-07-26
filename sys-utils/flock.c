@@ -253,7 +253,7 @@ int main(int argc, char *argv[])
       memset(&sa, 0, sizeof sa);
 
       sa.sa_handler = timeout_handler;
-      sa.sa_flags   = SA_ONESHOT;
+      sa.sa_flags   = SA_RESETHAND;
       sigaction(SIGALRM, &sa, &old_sa);
 
       setitimer(ITIMER_REAL, &timeout, &old_timer);

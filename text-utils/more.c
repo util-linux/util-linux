@@ -62,6 +62,10 @@
 #include <regex.h>
 #undef _REGEX_RE_COMP
 
+#ifndef XTABS
+#define XTABS TAB3
+#endif
+
 #define VI		"vi"	/* found on the user's path */
 
 #define Fopen(s,m)	(Currline = 0,file_pos=0,fopen(s,m))
