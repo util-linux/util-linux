@@ -32,6 +32,7 @@
 #include "pathnames.h"
 #include "mountP.h"
 #include "mangle.h"
+#include "canonicalize.h"
 
 char *mnt_getenv_safe(const char *arg)
 {
@@ -358,6 +359,73 @@ const char *mnt_get_writable_mtab_path(void)
 	return NULL;
 }
 
+
+/* returns basename and keeps dirname in the @path, if @path is "/" (root)
+ * then returns empty string */
+static char *stripoff_last_component(char *path)
+{
+	char *p = strrchr(path, '/');
+
+	if (!p)
+		return NULL;
+	*p = '\0';
+	return ++p;
+}
+
+char *mnt_get_mountpoint(const char *path)
+{
+	char *mnt = strdup(path);
+	struct stat st;
+	dev_t dir, base;
+
+	if (!mnt)
+		return NULL;
+	if (*mnt == '/' && *(mnt + 1) == '\0')
+		return mnt;				/* root fs */
+
+	if (stat(mnt, &st))
+		goto err;
+	base = st.st_dev;
+
+	do {
+		char *p = stripoff_last_component(mnt);
+
+		if (!p)
+			break;
+		if (stat(*mnt ? mnt : "/", &st))
+			goto err;
+		dir = st.st_dev;
+		if (dir != base) {
+			*(p - 1) = '/';
+			return mnt;
+		}
+		base = dir;
+	} while (mnt && *(mnt + 1) != '\0');
+
+	memcpy(mnt, "/", 2);
+	return mnt;		/* root fs */
+err:
+	free(mnt);
+	return NULL;
+}
+
+char *mnt_get_fs_root(const char *path)
+{
+	char *mnt = mnt_get_mountpoint(path);
+	const char *p;
+	size_t sz;
+
+	if (!mnt)
+		return NULL;
+
+	sz = strlen(mnt);
+	p = sz > 1 ? path + sz : path;
+
+	free(mnt);
+
+	return *p ? strdup(p) : strdup("/");
+}
+
 #ifdef TEST_PROGRAM
 int test_match_fstype(struct mtest *ts, int argc, char *argv[])
 {
@@ -395,6 +463,27 @@ int test_endswith(struct mtest *ts, int argc, char *argv[])
 	return 0;
 }
 
+int test_mountpoint(struct mtest *ts, int argc, char *argv[])
+{
+	char *path = canonicalize_path(argv[1]),
+	     *mnt = path ? mnt_get_mountpoint(path) :  NULL;
+
+	printf("%s: %s\n", argv[1], mnt ? : "unknown");
+	free(mnt);
+	free(path);
+	return 0;
+}
+
+int test_fsroot(struct mtest *ts, int argc, char *argv[])
+{
+	char *path = canonicalize_path(argv[1]),
+	     *mnt = path ? mnt_get_fs_root(path) : NULL;
+
+	printf("%s: %s\n", argv[1], mnt ? : "unknown");
+	free(mnt);
+	free(path);
+	return 0;
+}
 
 int main(int argc, char *argv[])
 {
@@ -403,6 +492,8 @@ int main(int argc, char *argv[])
 	{ "--match-options", test_match_options,   "<options> <pattern>  options matching" },
 	{ "--starts-with",   test_startswith,      "<string> <prefix>" },
 	{ "--ends-with",     test_endswith,        "<string> <prefix>" },
+	{ "--mountpoint",    test_mountpoint,      "<path>" },
+	{ "--fs-root",       test_fsroot,          "<path>" },
 	{ NULL }
 	};
 
