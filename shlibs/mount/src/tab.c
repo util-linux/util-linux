@@ -680,6 +680,34 @@ err:
 	return NULL;
 }
 
+int test_copy_fs(struct mtest *ts, int argc, char *argv[])
+{
+	mnt_tab *tb;
+	mnt_fs *fs;
+
+	tb = create_tab(argv[1]);
+	if (!tb)
+		return -1;
+
+	fs = mnt_tab_find_target(tb, "/", MNT_ITER_FORWARD);
+	if (!fs)
+		goto err;
+
+	printf("ORIGINAL:\n");
+	mnt_fs_print_debug(fs, stdout);
+
+	fs = mnt_copy_fs(fs);
+	if (!fs)
+		goto err;
+
+	printf("COPY:\n");
+	mnt_fs_print_debug(fs, stdout);
+	mnt_free_fs(fs);
+err:
+	mnt_free_tab(tb);
+	return 0;
+}
+
 int test_parse(struct mtest *ts, int argc, char *argv[])
 {
 	mnt_tab *tb;
@@ -768,6 +796,7 @@ int main(int argc, char *argv[])
 	{ "--parse",    test_parse,        "<file>  parse and print tab" },
 	{ "--find-forward",  test_find_fw, "<file> <source|target> <string>" },
 	{ "--find-backward", test_find_bw, "<file> <source|target> <string>" },
+	{ "--copy-fs",       test_copy_fs, "<file>  copy root FS from the file" },
 	{ NULL }
 	};
 
