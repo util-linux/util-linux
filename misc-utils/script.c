@@ -59,7 +59,7 @@
 
 #include "nls.h"
 
-#ifdef HAVE_LIBUTIL
+#if HAVE_LIBUTIL && HAVE_PTY_H
 #include <pty.h>
 #endif
 
@@ -91,7 +91,7 @@ struct	termios tt;
 struct	winsize win;
 int	lb;
 int	l;
-#ifndef HAVE_LIBUTIL
+#if !HAVE_LIBUTIL || !HAVE_PTY_H
 char	line[] = "/dev/ptyXX";
 #endif
 int	aflg = 0;
@@ -467,7 +467,7 @@ done() {
 
 void
 getmaster() {
-#ifdef HAVE_LIBUTIL
+#if HAVE_LIBUTIL && HAVE_PTY_H
 	(void) tcgetattr(0, &tt);
 	(void) ioctl(0, TIOCGWINSZ, (char *)&win);
 	if (openpty(&master, &slave, NULL, &tt, &win) < 0) {
