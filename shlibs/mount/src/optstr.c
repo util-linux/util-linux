@@ -336,15 +336,25 @@ int mnt_optstr_remove_option(char **optstr, const char *name)
  * @user: returns newly allocated string with userspace options
  * @vfs: returns newly allocated string with VFS options
  * @fs: returns newly allocated string with FS options
+ * @ignore_user: option mask for options that should be ignored
+ * @ignore_vfs: option mask for options that should be ignored
+ *
+ * For example:
+ *
+ *	mnt_split_optstr(optstr, &u, NULL, NULL, MNT_NOMTAB, 0);
+ *
+ * returns all userspace options, the options that does not belong to
+ * mtab are ignored.
  *
  * Note that FS options are all options that are undefined in MNT_USERSPACE_MAP
  * or MNT_LINUX_MAP.
  *
  * Returns: 0 on success, or -1 in case of error.
  */
-int mnt_split_optstr(char *optstr, char **user, char **vfs, char **fs)
+int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
+			int ignore_user, int ignore_vfs)
 {
-	char *name, *val;
+	char *name, *val, *str = (char *) optstr;
 	size_t namesz, valsz;
 	struct mnt_optmap const *maps[2];
 
@@ -363,18 +373,23 @@ int mnt_split_optstr(char *optstr, char **user, char **vfs, char **fs)
 	if (user)
 		*user = NULL;
 
-	while(!mnt_optstr_next_option(&optstr, &name, &namesz, &val, &valsz)) {
+	while(!mnt_optstr_next_option(&str, &name, &namesz, &val, &valsz)) {
 		int rc = 0;
+		const struct mnt_optmap *ent;
 		const struct mnt_optmap *m =
-			 mnt_optmap_get_entry(maps, 2, name, namesz, NULL);
+			 mnt_optmap_get_entry(maps, 2, name, namesz, &ent);
 
-		if (m && m == maps[0] && vfs)
+		if (m && m == maps[0] && vfs) {
+			if (ignore_vfs && (ent->mask & ignore_vfs))
+				continue;
 			rc = __mnt_optstr_append_option(vfs, name, namesz,
 								val, valsz);
-		else if (m && m == maps[1] && user)
+		} else if (m && m == maps[1] && user) {
+			if (ignore_user && (ent->mask & ignore_user))
+				continue;
 			rc = __mnt_optstr_append_option(user, name, namesz,
 								val, valsz);
-		else if (!m && fs)
+		} else if (!m && fs)
 			rc = __mnt_optstr_append_option(fs, name, namesz,
 								val, valsz);
 		if (rc) {

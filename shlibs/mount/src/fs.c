@@ -407,7 +407,7 @@ int mnt_fs_set_optstr(mnt_fs *fs, const char *optstr)
 
 	if (!fs || !optstr)
 		return -1;
-	if (mnt_split_optstr((char *) optstr, NULL, &v, &f))
+	if (mnt_split_optstr((char *) optstr, NULL, &v, &f, 0, 0))
 		return -1;
 
 	p = strdup(optstr);

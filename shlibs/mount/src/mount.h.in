@@ -146,7 +146,9 @@ extern int mnt_optstr_set_option(char **optstr, const char *name,
 				const char *value);
 extern int mnt_optstr_remove_option(char **optstr, const char *name);
 
-extern int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs);
+extern int mnt_split_optstr(const char *optstr,
+			    char **user, char **vfs, char **fs,
+			    int ifnore_user, int ignore_vfs);
 
 /* iter.c */
 enum {
@@ -305,6 +307,7 @@ extern int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 #define MNT_MS_COMMENT  (1 << 8)
 #define MNT_MS_LOOP     (1 << 9)
 #define MNT_MS_NOFAIL   (1 << 10)
+#define MNT_MS_UHELPER  (1 << 11)
 
 /*
  * mount(2) MS_* masks (MNT_MAP_LINUX map)

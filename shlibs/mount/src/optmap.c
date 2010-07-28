@@ -167,6 +167,8 @@ static const struct mnt_optmap userspace_opts_map[] =
 
    { "nofail",  MNT_MS_NOFAIL, MNT_NOMTAB },               /* Do not fail if ENOENT on dev */
 
+   { "uhelper=%s", MNT_MS_UHELPER },			   /* /sbin/umount.<helper> */
+
    { NULL, 0, 0 }
 };
 
