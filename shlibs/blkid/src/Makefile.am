@@ -46,7 +46,7 @@ libblkid_la_DEPENDENCIES = $(libblkid_la_LIBADD) blkid.sym blkid.h.in
 libblkid_la_LDFLAGS = -Wl,--version-script=$(ul_libblkid_srcdir)/blkid.sym \
                       -version-info $(LIBBLKID_VERSION_INFO)
 
-tests = test_cache test_config test_dev test_devname test_devno test_getsize \
+tests = test_cache test_config test_dev test_devname test_devno \
 	test_read test_resolve test_save test_tag test_verify test_evaluate
 
 EXTRA_DIST = blkid.sym tst_types.c blkid.h.in
