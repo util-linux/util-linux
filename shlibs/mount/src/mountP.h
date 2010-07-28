@@ -37,6 +37,8 @@
 #define DEBUG_OPTIONS	(1 << 3)
 #define DEBUG_LOCKS	(1 << 4)
 #define DEBUG_TAB	(1 << 5)
+#define DEBUG_MTAB	(1 << 6)
+#define DEBUG_UTILS	(1 << 7)
 #define DEBUG_ALL	0xFFFF
 
 #ifdef CONFIG_LIBMOUNT_DEBUG
@@ -74,7 +76,7 @@ extern char *mnt_get_username(const uid_t uid);
 extern int mnt_has_regular_mtab(void);
 
 extern char *mnt_get_mountpoint(const char *path);
-extern char *mnt_get_fs_root(const char *path);
+extern char *mnt_get_fs_root(const char *path, const char *mountpoint);
 
 /*
  * Generic iterator

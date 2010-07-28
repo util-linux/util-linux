@@ -381,7 +381,7 @@ char *mnt_get_mountpoint(const char *path)
 	if (!mnt)
 		return NULL;
 	if (*mnt == '/' && *(mnt + 1) == '\0')
-		return mnt;				/* root fs */
+		goto done;
 
 	if (stat(mnt, &st))
 		goto err;
@@ -397,31 +397,37 @@ char *mnt_get_mountpoint(const char *path)
 		dir = st.st_dev;
 		if (dir != base) {
 			*(p - 1) = '/';
-			return mnt;
+			goto done;
 		}
 		base = dir;
 	} while (mnt && *(mnt + 1) != '\0');
 
 	memcpy(mnt, "/", 2);
-	return mnt;		/* root fs */
+done:
+	DBG(DEBUG_UTILS, fprintf(stderr,
+		"libmount: utils: fs-root for %s is %s\n", path, mnt));
+	return mnt;
 err:
 	free(mnt);
 	return NULL;
 }
 
-char *mnt_get_fs_root(const char *path)
+char *mnt_get_fs_root(const char *path, const char *mnt)
 {
-	char *mnt = mnt_get_mountpoint(path);
+	char *m = (char *) mnt;
 	const char *p;
 	size_t sz;
 
-	if (!mnt)
+	if (!m)
+		m = mnt_get_mountpoint(path);
+	if (!m)
 		return NULL;
 
-	sz = strlen(mnt);
+	sz = strlen(m);
 	p = sz > 1 ? path + sz : path;
 
-	free(mnt);
+	if (m != mnt)
+		free(m);
 
 	return *p ? strdup(p) : strdup("/");
 }
