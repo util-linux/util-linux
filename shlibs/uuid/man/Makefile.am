@@ -9,4 +9,4 @@ man_MANS = $(UUID_GENERATE_LINKS)
 CLEANFILES = $(man_MANS)
 
 $(UUID_GENERATE_LINKS): uuid_generate.3
-	echo ".so man3/uuid_generate.3" > $@
+	$(AM_V_GEN)echo ".so man3/uuid_generate.3" > $@
