@@ -325,6 +325,9 @@ add_namei(struct namei *parent, const char *orgpath, int start, struct namei **l
 
 	if (last)
 		*last = nm;
+
+	free(path);
+
 	return first;
 }
 
