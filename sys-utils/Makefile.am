@@ -88,7 +88,7 @@ SETARCH_MAN_LINKS = $(SETARCH_LINKS:=.8)
 man_MANS = $(RDEV_MAN_LINKS) $(SETARCH_MAN_LINKS)
 CLEANFILES = $(man_MANS)
 
-$(SETARCH_MAN_LINKS): setarch.8
+$(SETARCH_MAN_LINKS):
 	$(AM_V_GEN)echo ".so man8/setarch.8" > $@
 
 install-exec-hook:
