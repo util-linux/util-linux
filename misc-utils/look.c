@@ -186,6 +186,9 @@ look(char *front, char *back)
 
 	if (front)
 		print_from(front, back);
+
+	free(comparbuf);
+
 	return (front ? 0 : 1);
 }
 
