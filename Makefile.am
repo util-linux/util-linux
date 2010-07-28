@@ -1,12 +1,26 @@
 include $(top_srcdir)/config/include-Makefile.am
 
+SHLIBS_DIRS =
+
+if BUILD_LIBUUID
+SHLIBS_DIRS += shlibs/uuid
+endif
+
+if BUILD_LIBBLKID
+SHLIBS_DIRS += shlibs/blkid
+endif
+
+if BUILD_LIBMOUNT
+SHLIBS_DIRS += shlibs/mount
+endif
+
 SUBDIRS = \
 	include \
 	disk-utils \
 	fdisk \
 	getopt \
 	lib \
-	shlibs \
+	$(SHLIBS_DIRS) \
 	login-utils \
 	misc-utils \
 	po \

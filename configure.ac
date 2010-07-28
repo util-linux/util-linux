@@ -1168,7 +1168,6 @@ shlibs/uuid/uuid.pc
 shlibs/uuid/Makefile
 shlibs/uuid/man/Makefile
 shlibs/uuid/src/Makefile
-shlibs/Makefile
 sys-utils/Makefile
 tests/commands.sh
 tests/helpers/Makefile
