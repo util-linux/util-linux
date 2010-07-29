@@ -1821,6 +1821,41 @@ mounted (const char *spec0, const char *node0) {
 	return ret;
 }
 
+/* returns 0 if not mounted, 1 if mounted and -1 in case of error */
+static int
+is_fstab_entry_mounted(struct mntentchn *mc, int verbose)
+{
+	struct stat st;
+
+	if (mounted(mc->m.mnt_fsname, mc->m.mnt_dir))
+		goto yes;
+
+	/* extra care for loop devices */
+	if ((strstr(mc->m.mnt_opts, "loop=") ||
+	     (stat(mc->m.mnt_fsname, &st) == 0 && S_ISREG(st.st_mode)))) {
+
+		char *p = strstr(mc->m.mnt_opts, "offset=");
+		uintmax_t offset = 0;
+
+		if (p && strtosize(p + 7, &offset) != 0) {
+			if (verbose)
+				printf(_("mount: ignore %s "
+					"(unparsable offset= option)\n"),
+					mc->m.mnt_fsname);
+			return -1;
+		}
+		if (is_mounted_same_loopfile(mc->m.mnt_dir, mc->m.mnt_fsname, offset))
+			goto yes;
+	}
+
+	return 0;
+yes:
+	if (verbose)
+		printf(_("mount: %s already mounted on %s\n"),
+			       mc->m.mnt_fsname, mc->m.mnt_dir);
+	return 1;
+}
+
 /* avoid using stat() on things we are not going to mount anyway.. */
 static int
 has_noauto (const char *opts) {
@@ -1866,16 +1901,8 @@ do_mount_all (char *types, char *options, char *test_opts) {
 		if (matching_type (mc->m.mnt_type, types)
 		    && matching_opts (mc->m.mnt_opts, test_opts)
 		    && !streq (mc->m.mnt_dir, "/")
-		    && !streq (mc->m.mnt_dir, "root")) {
-
-			if (mounted (mc->m.mnt_fsname, mc->m.mnt_dir)) {
-				if (verbose)
-					printf(_("mount: %s already mounted "
-						 "on %s\n"),
-					       mc->m.mnt_fsname,
-					       mc->m.mnt_dir);
-				continue;
-			}
+		    && !streq (mc->m.mnt_dir, "root")
+		    && !is_fstab_entry_mounted(mc, verbose)) {
 
 			mtmp = (struct mntentchn *) xmalloc(sizeof(*mtmp));
 			*mtmp = *mc;
