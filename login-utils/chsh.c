@@ -128,8 +128,7 @@ main (int argc, char *argv[]) {
     }
 
     if (!(is_local(pw->pw_name))) {
-       fprintf (stderr, _("%s: can only change local entries; use yp%s instead.\n"),
-           whoami, whoami);
+       fprintf (stderr, _("%s: can only change local entries.\n"), whoami);
        exit(1);
     }
 
