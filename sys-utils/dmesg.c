@@ -111,12 +111,12 @@ main(int argc, char *argv[]) {
 
 	if (bufsize) {
 		sz = bufsize + 8;
-		buf = (char *) malloc(sz);
+		buf = (char *) malloc(sz * sizeof(char));
 		n = klogctl(cmd, buf, sz);
 	} else {
 		sz = 16392;
 		while (1) {
-			buf = (char *) malloc(sz);
+			buf = (char *) malloc(sz * sizeof(char));
 			n = klogctl(3, buf, sz);	/* read only */
 			if (n != sz || sz > (1<<28))
 				break;
@@ -147,5 +147,6 @@ main(int argc, char *argv[]) {
 	}
 	if (lastc != '\n')
 		putchar('\n');
+	free(buf);
 	return 0;
 }
