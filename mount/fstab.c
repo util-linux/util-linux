@@ -216,6 +216,24 @@ getmntfile (const char *name) {
 }
 
 /*
+ * Given the name NAME, and the place MCPREV we found it last time,
+ * try to find it in mtab.
+ */
+struct mntentchn *
+getmntfilebackward (const char *name, struct mntentchn *mcprev) {
+	struct mntentchn *mc, *mc0;
+
+	mc0 = mtab_head();
+	if (!mcprev)
+		mcprev = mc0;
+	for (mc = mcprev->prev; mc && mc != mc0; mc = mc->prev)
+		if (streq(mc->m.mnt_dir, name) ||
+		    streq(mc->m.mnt_fsname, name))
+			return mc;
+	return NULL;
+}
+
+/*
  * Given the directory name NAME, and the place MCPREV we found it last time,
  * try to find more occurrences.
  */

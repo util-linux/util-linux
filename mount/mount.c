@@ -2140,10 +2140,11 @@ getfs(const char *spec, const char *uuid, const char *label)
 	/*
 	 * D) remount -- try /etc/mtab
 	 *    Earlier mtab was tried first, but this would sometimes try the
-	 *    wrong mount in case mtab had the root device entry wrong.
+	 *    wrong mount in case mtab had the root device entry wrong.  Try
+	 *    the last occurrence first, since that is the visible mount.
 	 */
 	if (!mc && (devname || spec))
-		mc = getmntfile (devname ? devname : spec);
+		mc = getmntfilebackward (devname ? devname : spec, NULL);
 
 	my_free(devname);
 	return mc;
