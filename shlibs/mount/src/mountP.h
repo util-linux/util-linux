@@ -106,32 +106,6 @@ struct _mnt_iter {
 
 
 /*
- * mnt_optls entry
- */
-struct _mnt_optent {
-	char			*name;	/* option name (allcocated when mapent is NULL) */
-	char			*value;	/* option argument value */
-
-	int			mask;	/* MNT_{INVMASK,MDATA,MFLAG,NOMTAB,NOSYS}
-					 * modifiable flags (initial value comes from map->mask)
-					 */
-	const struct mnt_optmap	*mapent;/* the option description (msp entry) */
-	const struct mnt_optmap	*map;   /* head of the map */
-
-	struct list_head	opts;	/* list of options */
-};
-
-/*
- * Container (list) for mount options
- */
-struct _mnt_optls {
-	struct mnt_optmap const	**maps;	/* array with option maps */
-	size_t			nmaps;	/* number of maps */
-
-	struct list_head	opts;	/* list of options */
-};
-
-/*
  * This struct represents one entry in mtab/fstab/mountinfo file.
  */
 struct _mnt_fs {
@@ -192,20 +166,6 @@ extern int mnt_optmap_enum_to_number(const struct mnt_optmap *mapent,
                         const char *rawdata, size_t len);
 extern const char *mnt_optmap_get_type(const struct mnt_optmap *mapent);
 extern int mnt_optmap_require_value(const struct mnt_optmap *mapent);
-
-/* optent.c */
-
-/* private option masks -- see mount.h.in for the publick masks */
-#define MNT_HASVAL	(1 << 10)
-
-extern mnt_optent *mnt_new_optent(const char *name, size_t namesz,
-				const char *value, size_t valsz,
-				struct mnt_optmap const **maps, int nmaps);
-extern void mnt_free_optent(mnt_optent *op);
-extern mnt_optent *mnt_new_optent_from_optstr(char **optstr,
-	                        struct mnt_optmap const **maps, int nmaps);
-extern int mnt_optent_assign_map(mnt_optent *op,
-	                        struct mnt_optmap const **maps, int nmaps);
 
 /* fs.c */
 extern int __mnt_fs_set_source(mnt_fs *fs, char *source);
