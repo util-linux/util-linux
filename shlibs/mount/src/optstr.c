@@ -452,7 +452,7 @@ int mnt_optstr_get_mountflags(const char *optstr)
 	}
 
 	DBG(DEBUG_OPTIONS, fprintf(stderr,
-		"libmount: optstr '%s': mountflags 0x%08x", optstr, flags));
+		"libmount: optstr '%s': mountflags 0x%08x\n", optstr, flags));
 	return flags;
 }
 

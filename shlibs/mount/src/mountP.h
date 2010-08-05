@@ -169,14 +169,6 @@ struct _mnt_fs {
 #define MNT_FS_NET	(1 << 2) /* network filesystem */
 
 /*
- * File format
- */
-enum {
-       MNT_FMT_FSTAB = 1,              /* /etc/{fs,m}tab */
-       MNT_FMT_MOUNTINFO               /* /proc/#/mountinfo */
-};
-
-/*
  * mtab/fstab/mountinfo file
  */
 struct _mnt_tab {
