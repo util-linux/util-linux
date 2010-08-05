@@ -21,6 +21,9 @@ char *mangle(const char *s)
 	char *ss, *sp;
 	int n;
 
+	if (!s)
+		return NULL;
+
 	n = strlen(s);
 	ss = sp = malloc(4*n+1);
 	if (!sp)
@@ -47,6 +50,9 @@ char *mangle(const char *s)
 void unmangle_to_buffer(const char *s, char *buf, size_t len)
 {
 	size_t sz = 0;
+
+	if (!s)
+		return;
 
 	while(*s && sz < len - 1) {
 		if (*s == '\\' && sz + 4 < len - 1 && isoctal(s[1]) &&
@@ -78,6 +84,9 @@ char *unmangle(const char *s)
 	char *buf;
 	const char *end;
 	size_t sz;
+
+	if (!s)
+		return NULL;
 
 	end = skip_nonspaces(s);
 	sz = end - s + 1;
