@@ -206,7 +206,10 @@ static int mnt_parse_mountinfo_line(mnt_fs *fs, char *s)
 	fs->fs_optstr = next_word(&s);
 	if (!fs->fs_optstr)
 		return 1;
-
+	if (!strcmp(fs->fs_optstr, "none")) {
+		free(fs->fs_optstr);
+		fs->fs_optstr = NULL;
+	}
 	return 0;
 }
 

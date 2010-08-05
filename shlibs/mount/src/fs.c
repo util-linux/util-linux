@@ -193,10 +193,10 @@ int __mnt_fs_set_source(mnt_fs *fs, char *source)
 {
 	assert(fs);
 
-	if (!source)
-		return -1;
+	if (source && !strcmp(source, "none"))
+		source = NULL;
 
-	if (strchr(source, '=')) {
+	if (source && strchr(source, '=')) {
 		char *name, *val;
 
 		if (blkid_parse_tag_string(source, &name, &val) != 0)
@@ -401,20 +401,23 @@ const char *mnt_fs_get_optstr(mnt_fs *fs)
  */
 int mnt_fs_set_optstr(mnt_fs *fs, const char *optstr)
 {
-	char *p, *v, *f;
+	char *p = NULL, *v = NULL, *f = NULL;
 
 	assert(fs);
 
-	if (!fs || !optstr)
-		return -1;
-	if (mnt_split_optstr((char *) optstr, NULL, &v, &f, 0, 0))
+	if (!fs)
 		return -1;
 
-	p = strdup(optstr);
-	if (!p) {
-		free(v);
-		free(f);
-		return -1;
+	if (optstr) {
+		if (mnt_split_optstr((char *) optstr, NULL, &v, &f, 0, 0))
+			return -1;
+
+		p = strdup(optstr);
+		if (!p) {
+			free(v);
+			free(f);
+			return -1;
+		}
 	}
 
 	free(fs->optstr);

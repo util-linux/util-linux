@@ -325,8 +325,10 @@ int mnt_has_regular_mtab(void)
 /**
  * mnt_get_writable_mtab_path:
  *
- * Returns: pointer to the static string with path to the file with userspace
- *          mount options (classic /etc/mtab or /var/run/mount/mountinfo)
+ * It's not error if this function return NULL and errno is not set. In case of
+ * error the errno is set by open(2).
+ *
+ * Returns: pointer to the static string with path to mtab or NULL.
  */
 const char *mnt_get_writable_mtab_path(void)
 {
@@ -335,6 +337,8 @@ const char *mnt_get_writable_mtab_path(void)
 
 	mtab = !lstat(_PATH_MOUNTED, &mst);
 	info = !stat(MNT_PATH_RUNDIR, &ist);
+
+	errno = 0;
 
 	/* A) mtab is symlink, /var/run/mount is available */
 	if (mtab && S_ISLNK(mst.st_mode) && info) {
