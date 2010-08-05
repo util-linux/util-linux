@@ -102,6 +102,27 @@ typedef struct _mnt_fs mnt_fs;
  */
 typedef struct _mnt_tab mnt_tab;
 
+/**
+ * mnt_mtab
+ *
+ * /etc/mtab or /var/run/mountinfo update description
+ */
+typedef struct _mnt_mtab mnt_mtab;
+
+/*
+ * Tab file format
+ */
+enum {
+	MNT_FMT_FSTAB = 1,              /* /etc/{fs,m}tab */
+	MNT_FMT_MTAB = MNT_FMT_FSTAB,	/* alias */
+	MNT_FMT_MOUNTINFO               /* /proc/#/mountinfo */
+};
+
+enum {
+	MNT_ACT_MOUNT = 1,
+	MNT_ACT_UMOUNT
+};
+
 /* init.c */
 extern void mnt_init_debug(int mask);
 
@@ -149,6 +170,8 @@ extern int mnt_optstr_remove_option(char **optstr, const char *name);
 extern int mnt_split_optstr(const char *optstr,
 			    char **user, char **vfs, char **fs,
 			    int ifnore_user, int ignore_vfs);
+
+extern int mnt_optstr_get_mountflags(const char *optstr);
 
 /* iter.c */
 enum {

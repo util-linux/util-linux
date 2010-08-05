@@ -103,6 +103,7 @@ global:
 	mnt_optls_remove_option_by_flags;
 	mnt_optls_remove_option_by_iflags;
 	mnt_optstr_append_option;
+	mnt_optstr_get_mountflags;
 	mnt_optstr_get_option;
 	mnt_optstr_next_option;
 	mnt_optstr_remove_option;
