@@ -46,6 +46,7 @@ enum {
 	FL_FIRSTONLY	= (1 << 3),
 	FL_INVERT	= (1 << 4),
 	FL_NOSWAPMATCH	= (1 << 6),
+	FL_NOFSROOT	= (1 << 7),
 };
 
 /* column IDs */
@@ -215,7 +216,9 @@ static const char *get_data(mnt_fs *fs, int num)
 
 	switch(get_column_id(num)) {
 	case COL_SOURCE:
-		/* dir or dev */
+	{
+		const char *root = mnt_fs_get_root(fs);
+
 		str = mnt_fs_get_srcpath(fs);
 
 		if (str && (flags & FL_CANONICALIZE))
@@ -226,7 +229,14 @@ static const char *get_data(mnt_fs *fs, int num)
 			if (str && (flags & FL_EVALUATE))
 				str = mnt_resolve_spec(str, cache);
 		}
+		if (root && str && !(flags & FL_NOFSROOT) && strcmp(root, "/")) {
+			char *tmp;
+
+			if (asprintf(&tmp, "%s[%s]", str, root) > 0)
+				str = tmp;
+		}
 		break;
+	}
 	case COL_TARGET:
 		str = mnt_fs_get_target(fs);
 		break;
@@ -450,6 +460,7 @@ static void __attribute__((__noreturn__)) usage(FILE *out)
 	" -r, --raw              use raw format output\n"
 	" -a, --ascii            use ascii chars for tree formatting\n"
 	" -t, --types <list>     limit the set of filesystem by FS types\n"
+	" -v, --nofsroot         don't print [/dir] for bind or btrfs mounts\n"
 	" -S, --source <string>  device, LABEL= or UUID=device\n"
 	" -T, --target <string>  mountpoint\n\n"));
 
@@ -508,6 +519,7 @@ int main(int argc, char *argv[])
 	    { "output",       1, 0, 'o' },
 	    { "raw",          0, 0, 'r' },
 	    { "types",        1, 0, 't' },
+	    { "fsroot",       0, 0, 'v' },
 	    { "source",       1, 0, 'S' },
 	    { "target",       1, 0, 'T' },
 
@@ -530,7 +542,7 @@ int main(int argc, char *argv[])
 	tt_flags |= TT_FL_TREE;
 
 	while ((c = getopt_long(argc, argv,
-				"acd:ehifo:O:klmnrst:uS:T:", longopts, NULL)) != -1) {
+				"acd:ehifo:O:klmnrst:uvS:T:", longopts, NULL)) != -1) {
 		switch(c) {
 		case 'a':
 			tt_flags |= TT_FL_ASCII;
@@ -603,6 +615,9 @@ int main(int argc, char *argv[])
 		case 'n':
 			tt_flags |= TT_FL_NOHEADINGS;
 			break;
+		case 'v':
+			flags |= FL_NOFSROOT;
+			break;
 		case 'S':
 			set_match(COL_SOURCE, optarg);
 			flags |= FL_NOSWAPMATCH;
@@ -625,6 +640,7 @@ int main(int argc, char *argv[])
 			tt_flags &= ~TT_FL_TREE;
 		}
 	}
+
 	if (optind < argc && (get_match(COL_SOURCE) || get_match(COL_TARGET)))
 		errx(EXIT_FAILURE, _(
 			"options --target and --source can't be used together "
