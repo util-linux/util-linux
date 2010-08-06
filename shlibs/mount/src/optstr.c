@@ -410,6 +410,7 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
 /**
  * mnt_optstr_get_mountflags:
  * @optstr: string with comma separated list of options
+ * @flags: returns mount flags
  *
  * The mountflags are IDs from all MNT_MFLAG options from MNT_LINUX_MAP options
  * map. See "struct mnt_optmap".  For more details about mountflags see
@@ -421,18 +422,19 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
  *
  *	"bind,noexec,foo,bar" --returns->   MS_BIND|MS_NOEXEC
  *
- * Returns: mount flags or 0.
+ * Note that @flags are not zeroized by this function.
+ *
+ * Returns: 0 on success or -1 in case of error
  */
-int mnt_optstr_get_mountflags(const char *optstr)
+int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags)
 {
-	int flags = 0;
 	struct mnt_optmap const *maps[1];
 	char *name, *str = (char *) optstr;
 	size_t namesz = 0;
 
 	assert(optstr);
 
-	if (!optstr)
+	if (!optstr || !flags)
 		return -1;
 
 	maps[0] = mnt_get_builtin_optmap(MNT_LINUX_MAP);
@@ -445,15 +447,15 @@ int mnt_optstr_get_mountflags(const char *optstr)
 			if (!(ent->mask & MNT_MFLAG))
 				continue;
 			if (ent->mask & MNT_INVERT)
-				flags &= ~ent->id;
+				*flags &= ~ent->id;
 			else
-				flags |= ent->id;
+				*flags |= ent->id;
 		}
 	}
 
 	DBG(DEBUG_OPTIONS, fprintf(stderr,
-		"libmount: optstr '%s': mountflags 0x%08x\n", optstr, flags));
-	return flags;
+		"libmount: optstr '%s': mountflags 0x%08lx\n", optstr, *flags));
+	return 0;
 }
 
 #ifdef TEST_PROGRAM

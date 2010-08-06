@@ -57,7 +57,7 @@
  */
 struct _mnt_mtab {
 	int		action;		/* MNT_ACT_{MOUNT,UMOUNT} */
-	int		mountflags;	/* MS_* flags */
+	unsigned long	mountflags;	/* MS_* flags */
 	char		*filename;	/* usually /etc/mtab or /var/run/mount/mountinfo */
 	char		*old_target;	/* for MS_MOVE */
 	int		format;		/* MNT_FMT_{MTAB,MOUNTINFO} */
@@ -205,7 +205,7 @@ int mnt_mtab_set_optstr(mnt_mtab *mt, const char *optstr)
  *
  * Returns: 0 on success, -1 in case of error.
  */
-int mnt_mtab_set_mountflags(mnt_mtab *mt, int flags)
+int mnt_mtab_set_mountflags(mnt_mtab *mt, unsigned long flags)
 {
 	assert(mt);
 	if (!mt)
@@ -596,7 +596,7 @@ int mnt_mtab_prepare_update(mnt_mtab *mt)
 
 	o = mnt_fs_get_optstr(mt->fs);
 	if (o)
-		mt->mountflags |= mnt_optstr_get_mountflags(o);
+		mnt_optstr_get_mountflags(o, &mt->mountflags);
 
 	/* umount */
 	if (mt->action == MNT_ACT_UMOUNT)
