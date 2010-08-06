@@ -15,6 +15,7 @@ global:
 	mnt_free_fs;
 	mnt_free_iter;
 	mnt_free_lock;
+	mnt_free_mtab;
 	mnt_free_optls;
 	mnt_free_tab;
 	mnt_fs_append_optstr;
@@ -60,10 +61,20 @@ global:
 	mnt_mangle;
 	mnt_match_fstype;
 	mnt_match_options;
+	mnt_mtab_disable_lock;
+	mnt_mtab_get_lock;
+	mnt_mtab_prepare_update;
+	mnt_mtab_set_action;
+	mnt_mtab_set_filename;
+	mnt_mtab_set_format;
+	mnt_mtab_set_fs;
+	mnt_mtab_set_mountflags;
+	mnt_mtab_set_old_target;
 	mnt_new_cache;
 	mnt_new_fs;
 	mnt_new_iter;
 	mnt_new_lock;
+	mnt_new_mtab;
 	mnt_new_optls;
 	mnt_new_tab;
 	mnt_new_tab_from_file;
@@ -137,6 +148,7 @@ global:
 	mnt_tab_update_file;
 	mnt_unlock_file;
 	mnt_unmangle;
+	mnt_update_mtab;
 local:
 	*;
 };

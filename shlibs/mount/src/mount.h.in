@@ -104,6 +104,9 @@ enum {
 	MNT_FMT_MOUNTINFO               /* /proc/#/mountinfo */
 };
 
+/*
+ * Actions
+ */
 enum {
 	MNT_ACT_MOUNT = 1,
 	MNT_ACT_UMOUNT
@@ -190,7 +193,7 @@ extern int mnt_lock_file(mnt_lock *ml);
 /* fs.c */
 extern mnt_fs *mnt_new_fs(void);
 extern void mnt_free_fs(mnt_fs *ent);
-extern mnt_fs *mnt_copy_fs(mnt_fs *fs);
+extern mnt_fs *mnt_copy_fs(const mnt_fs *fs);
 extern void *mnt_fs_get_userdata(mnt_fs *fs);
 extern int mnt_fs_set_userdata(mnt_fs *fs, void *data);
 extern const char *mnt_fs_get_source(mnt_fs *ent);
@@ -257,6 +260,21 @@ extern mnt_fs *mnt_tab_find_source(mnt_tab *tb, const char *source, int directio
 extern int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 			int (*match_func)(mnt_fs *, void *), void *userdata,
 		        mnt_fs **fs);
+
+/* mtab.c */
+extern mnt_mtab *mnt_new_mtab(int action, unsigned long mountflags, const mnt_fs *fs);
+extern void mnt_free_mtab(mnt_mtab *mt);
+extern int mnt_mtab_set_filename(mnt_mtab *mt, const char *filename);
+extern int mnt_mtab_set_action(mnt_mtab *mt, int action);
+extern int mnt_mtab_set_format(mnt_mtab *mt, int format);
+extern int mnt_mtab_set_mountflags(mnt_mtab *mt, unsigned long flags);
+extern mnt_lock *mnt_mtab_get_lock(mnt_mtab *mt);
+extern int mnt_mtab_disable_lock(mnt_mtab *mt, int disable);
+extern int mnt_mtab_set_old_target(mnt_mtab *mt, const char *target);
+extern int mnt_mtab_set_fs(mnt_mtab *mt, const mnt_fs *fs);
+
+extern int mnt_mtab_prepare_update(mnt_mtab *mt);
+extern int mnt_update_mtab(mnt_mtab *mt);
 
 /*
  * mount(8) userspace options masks (MNT_MAP_USERSPACE map)
