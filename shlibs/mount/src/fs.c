@@ -62,7 +62,7 @@ void mnt_free_fs(mnt_fs *fs)
 	free(fs);
 }
 
-static inline int cpy_str_item(void *new, void *old, size_t offset)
+static inline int cpy_str_item(void *new, const void *old, size_t offset)
 {
 	char **o = (char **) (old + offset);
 	char **n = (char **) (new + offset);
@@ -85,7 +85,7 @@ static inline int cpy_str_item(void *new, void *old, size_t offset)
  *
  * Returns: copy of @fs
  */
-mnt_fs *mnt_copy_fs(mnt_fs *fs)
+mnt_fs *mnt_copy_fs(const mnt_fs *fs)
 {
 	mnt_fs *n = mnt_new_fs();
 

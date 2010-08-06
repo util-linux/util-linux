@@ -72,7 +72,7 @@ struct _mnt_mtab {
  *
  * Returns: newly allocated mtab description
  */
-mnt_mtab *mnt_new_mtab(int action)
+mnt_mtab *mnt_new_mtab(int action, unsigned long mountflags, const mnt_fs *fs)
 {
 	mnt_mtab *mt;
 
@@ -83,19 +83,13 @@ mnt_mtab *mnt_new_mtab(int action)
 	DBG(DEBUG_MTAB, fprintf(stderr,
 		"libmount: mtab %p: allocate\n", mt));
 
-	mt->action = action;
-	mt->fs = mnt_new_fs();
-	if (!mt->fs)
-		goto err;
+	if (action)
+		mnt_mtab_set_action(mt, action);
+	if (mountflags)
+		mnt_mtab_set_mountflags(mt, mountflags);
+	if (fs)
+		mnt_mtab_set_fs(mt, fs);
 	return mt;
-err:
-	mnt_free_fs(mt->fs);
-	free(mt);
-
-	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab: failed to allocate handler\n"));
-
-	return NULL;
 }
 
 /**
@@ -113,7 +107,9 @@ void mnt_free_mtab(mnt_mtab *mt)
 		"libmount: mtab %p: deallacate\n", mt));
 
 	mnt_free_lock(mt->lc);
+	mnt_free_fs(mt->fs);
 	free(mt->filename);
+	free(mt->old_target);
 	free(mt);
 }
 
@@ -127,8 +123,8 @@ void mnt_free_mtab(mnt_mtab *mt)
 int mnt_mtab_set_filename(mnt_mtab *mt, const char *filename)
 {
 	char *p = NULL;
-	assert(mt);
 
+	assert(mt);
 	if (!mt)
 		return -1;
 	if (filename) {
@@ -179,20 +175,30 @@ int mnt_mtab_set_format(mnt_mtab *mt, int format)
 }
 
 /**
- * mnt_mtab_set_optstr:
+ * mnt_mtab_set_fs:
  * @mt: mtab
- * @optstr: mount options that will be used for mount(2)
+ * @fs: filesystem to write to mtab
  *
- * Note that mnt_mtab_prepare_update() will remove options that does not belong
- * to mtab.
+ * This function could be used instead of mnt_mtab_set_{fstype,source,target,optstr}.
  *
- * Returns: 0 on success, -1 in case of error.
+ * Returns; 0 on success, -1 in case of error.
  */
-int mnt_mtab_set_optstr(mnt_mtab *mt, const char *optstr)
+int mnt_mtab_set_fs(mnt_mtab *mt, const mnt_fs *fs)
 {
+	mnt_fs *x = NULL;
+
+	assert(mt);
 	if (!mt)
 		return -1;
-	return mnt_fs_set_optstr(mt->fs, optstr);
+	if (fs) {
+		x = mnt_copy_fs(fs);
+		if (!x)
+			return -1;
+	}
+
+	mnt_free_fs(mt->fs);
+	mt->fs = x;
+	return 0;
 }
 
 /**
@@ -253,30 +259,6 @@ int mnt_mtab_disable_lock(mnt_mtab *mt, int disable)
 }
 
 /**
- * mnt_mtab_set_source:
- * @mt: mtab
- * @source: device or directory name
- *
- * Returns: 0 on success, -1 in case of error.
- */
-int mnt_mtab_set_source(mnt_mtab *mt, const char *source)
-{
-	return mt ? mnt_fs_set_source(mt->fs, source) : -1;
-}
-
-/**
- * mnt_mtab_set_target:
- * @mt: mtab
- * @target: mountpoint
- *
- * Returns: 0 on success, -1 in case of error.
- */
-int mnt_mtab_set_target(mnt_mtab *mt, const char *target)
-{
-	return mt ? mnt_fs_set_target(mt->fs, target) : -1;
-}
-
-/**
  * mnt_mtab_set_old_target:
  * @mt: mtab
  * @target: old mountpoint
@@ -287,28 +269,19 @@ int mnt_mtab_set_target(mnt_mtab *mt, const char *target)
  */
 int mnt_mtab_set_old_target(mnt_mtab *mt, const char *target)
 {
+	char *p = NULL;
+
 	if (!mt)
 		return -1;
-	mt->old_target = strdup(target);
-	if (!mt->old_target)
-		return -1;
+	if (p) {
+		p = strdup(target);
+		if (!p)
+			return -1;
+	}
+	free(mt->old_target);
+	mt->old_target = p;
 	return 0;
 }
-
-/**
- * mnt_mtab_set_fstype:
- * @mt: mtab
- * @fstype: filesystem type (e.g. "ext3")
- *
- * Returns: 0 on success, -1 in case of error.
- */
-int mnt_mtab_set_fstype(mnt_mtab *mt, const char *fstype)
-{
-	if (!mt)
-		return -1;
-	return mnt_fs_set_fstype(mt->fs, fstype);
-}
-
 
 /*
  * The format is same as /proc/self/mountinfo, but it contains userspace
@@ -567,8 +540,9 @@ int mnt_mtab_prepare_update(mnt_mtab *mt)
 	const char *o = NULL;
 
 	assert(mt);
+	assert(mt->fs);
 
-	if (!mt)
+	if (!mt || !mt->fs)
 		return -1;
 
 	DBG(DEBUG_MTAB, fprintf(stderr,
@@ -807,8 +781,9 @@ int mnt_update_mtab(mnt_mtab *mt)
 	assert(mt);
 	assert(mt->filename);
 	assert(mt->format);
+	assert(mt->fs);
 
-	if (!mt)
+	if (!mt || !mt->fs)
 		return -1;
 
 	DBG(DEBUG_MTAB, fprintf(stderr,
@@ -872,80 +847,91 @@ static int update(mnt_mtab *mt)
 
 int test_add(struct mtest *ts, int argc, char *argv[])
 {
+	mnt_fs *fs = mnt_new_fs();
 	mnt_mtab *mt;
 	int rc = -1;
 
-	if (argc < 5)
+	if (argc < 5 || !fs)
 		return -1;
-	mt = mnt_new_mtab(MNT_ACT_MOUNT);
+	mnt_fs_set_source(fs, argv[1]);
+	mnt_fs_set_target(fs, argv[2]);
+	mnt_fs_set_fstype(fs, argv[3]);
+	mnt_fs_set_optstr(fs, argv[4]);
+
+	mt = mnt_new_mtab(MNT_ACT_MOUNT, 0, fs);
 	if (!mt)
 		return -1;
-	mnt_mtab_set_source(mt, argv[1]);
-	mnt_mtab_set_target(mt, argv[2]);
-	mnt_mtab_set_fstype(mt, argv[3]);
-	mnt_mtab_set_optstr(mt, argv[4]);
 
 	rc = update(mt);
 
 	mnt_free_mtab(mt);
+	mnt_free_fs(fs);
 	return rc;
 }
 
 int test_remove(struct mtest *ts, int argc, char *argv[])
 {
+	mnt_fs *fs = mnt_new_fs();
 	mnt_mtab *mt;
 	int rc = -1;
 
-	if (argc < 2)
+	if (argc < 2 || !fs)
 		return -1;
-	mt = mnt_new_mtab(MNT_ACT_UMOUNT);
+	mnt_fs_set_target(fs, argv[1]);
+
+	mt = mnt_new_mtab(MNT_ACT_UMOUNT, 0, fs);
 	if (!mt)
 		return -1;
-	mnt_mtab_set_target(mt, argv[1]);
 
 	rc = update(mt);
 
 	mnt_free_mtab(mt);
+	mnt_free_fs(fs);
 	return rc;
 }
 
 int test_move(struct mtest *ts, int argc, char *argv[])
 {
+	mnt_fs *fs = mnt_new_fs();
 	mnt_mtab *mt;
 	int rc = -1;
 
-	if (argc < 3)
+	if (argc < 3 || !fs)
 		return -1;
-	mt = mnt_new_mtab(MNT_ACT_MOUNT);
+	mnt_fs_set_target(fs, argv[2]);
+
+	mt = mnt_new_mtab(MNT_ACT_MOUNT, MS_MOVE, fs);
 	if (!mt)
 		return -1;
-	mnt_mtab_set_mountflags(mt, MS_MOVE);
 	mnt_mtab_set_old_target(mt, argv[1]);
-	mnt_mtab_set_target(mt, argv[2]);
 
 	rc = update(mt);
 
 	mnt_free_mtab(mt);
+	mnt_free_fs(fs);
 	return rc;
 }
 
 int test_remount(struct mtest *ts, int argc, char *argv[])
 {
+	mnt_fs *fs = mnt_new_fs();
 	mnt_mtab *mt;
 	int rc = -1;
 
-	if (argc < 3)
+	if (argc < 3 || !fs)
 		return -1;
-	mt = mnt_new_mtab(MNT_ACT_MOUNT);
+
+	mnt_fs_set_target(fs, argv[1]);
+	mnt_fs_set_optstr(fs, argv[2]);
+
+	mt = mnt_new_mtab(MNT_ACT_MOUNT, MS_REMOUNT, fs);
 	if (!mt)
 		return -1;
-	mnt_mtab_set_mountflags(mt, MS_REMOUNT);
-	mnt_mtab_set_target(mt, argv[1]);
-	mnt_mtab_set_optstr(mt, argv[2]);
 
 	rc = update(mt);
 
 	mnt_free_mtab(mt);
+	mnt_free_fs(fs);
 	return rc;
 }
 
