@@ -36,12 +36,16 @@
  * Wed Sep 14 22:26:00 1994: Patch from bjdouma <bjdouma@xs4all.nl> to handle
  *                           last line that has no newline correctly.
  * 3-Jun-1998: Patched by Nicolai Langfeldt to work better on Linux:
- * 	Handle any-length-lines.  Code copied from util-linux' setpwnam.c
+ *	Handle any-length-lines.  Code copied from util-linux' setpwnam.c
  * 1999-02-22 Arkadiusz Mi¶kiewicz <misiek@pld.ORG.PL>
- * 	added Native Language Support
+ *	added Native Language Support
  * 1999-09-19 Bruno Haible <haible@clisp.cons.org>
- * 	modified to work correctly in multi-byte locales
- *
+ *	modified to work correctly in multi-byte locales
+ * July 2010 - Davidlohr Bueso <dave@gnu.org>
+ *      Fixed memory leaks (including Linux signal handling)
+ *      Added some memory allocation error handling
+ *      Lowered the default buffer size to 256, instead of 512 bytes
+ *      Changed tab indentation to 8 chars for better reading the code
  */
 
 #include <stdarg.h>
@@ -52,94 +56,115 @@
 #include <string.h>
 #include <unistd.h>
 #include <err.h>
+#include <signal.h>
 
 #include "nls.h"
 #include "widechar.h"
 
-void usage(void);
+wchar_t *buf;
 
-int
-main(int argc, char *argv[])
+static void sig_handler(int signo)
 {
-  register char *filename;
-  register wchar_t *t;
-  size_t buflen = 512;
-  wchar_t *p = malloc(buflen*sizeof(wchar_t));
-  size_t len;
-  FILE *fp;
-  int ch, rval;
-
-  setlocale(LC_ALL, "");
-  bindtextdomain(PACKAGE, LOCALEDIR);
-  textdomain(PACKAGE);
-
-  while ((ch = getopt(argc, argv, "")) != -1)
-    switch(ch) {
-    case '?':
-    default:
-      usage();
-    }
-
-  argc -= optind;
-  argv += optind;
-
-  fp = stdin;
-  filename = "stdin";
-  rval = 0;
-  do {
-    if (*argv) {
-      if ((fp = fopen(*argv, "r")) == NULL) {
-	warn("cannot open %s", *argv );
-	rval = 1;
-	++argv;
-	continue;
-      }
-      filename = *argv++;
-    }
-
-    while (fgetws(p, buflen, fp)) {
-
-      len = wcslen(p);
-
-      /* This is my hack from setpwnam.c -janl */
-      while (p[len-1] != '\n' && !feof(fp)) {
-	/* Extend input buffer if it failed getting the whole line */
-
-	/* So now we double the buffer size */
-	buflen *= 2;
-
-	p = realloc(p, buflen*sizeof(wchar_t));
-	if (p == NULL)
-	  err(1, _("unable to allocate bufferspace"));
-
-	/* And fill the rest of the buffer */
-	if (fgetws(&p[len], buflen/2, fp) == NULL) break;
-
-	len = wcslen(p);
-
-	/* That was a lot of work for nothing.  Gimme perl! */
-      }
-
-      t = p + len - 1 - (*(p+len-1)=='\r' || *(p+len-1)=='\n');
-      for ( ; t >= p; --t)
-	if (*t != 0)
-	  putwchar(*t);
-      putwchar('\n');
-    }
-    fflush(fp);
-    if (ferror(fp)) {
-      warn("%s", filename);
-      rval = 1;
-    }
-    if (fclose(fp))
-      rval = 1;
-  } while(*argv);
-  exit(rval);
+	free(buf);
+	exit(EXIT_SUCCESS);
 }
 
-void
-usage(void)
+static void __attribute__((__noreturn__)) usage(FILE *out)
 {
-	(void)fprintf(stderr, _("usage: rev [file ...]\n"));
-	exit(1);
+	fprintf(out, _("Usage: %s [file ...]\n"),
+			program_invocation_short_name);
+
+	fprintf(out, _("\nFor more information see rev(1).\n"));
+
+	exit(out == stderr ? EXIT_FAILURE : EXIT_SUCCESS);
 }
+
+int main(int argc, char *argv[])
+{
+	char *filename = "stdin";
+	wchar_t *t;
+	size_t len, bufsiz = BUFSIZ;
+	FILE *fp = stdin;
+	int ch, rval = EXIT_SUCCESS;
+
+	setlocale(LC_ALL, "");
+	bindtextdomain(PACKAGE, LOCALEDIR);
+	textdomain(PACKAGE);
+
+	signal(SIGINT, sig_handler);
+	signal(SIGTERM, sig_handler);
+
+	while ((ch = getopt(argc, argv, "")) != -1)
+		switch(ch) {
+		case '?':
+		case 'h':
+			usage(stdout);
+		default:
+			usage(stderr);
+		}
+
+	argc -= optind;
+	argv += optind;
+
+	do {
+		if (*argv) {
+			if ((fp = fopen(*argv, "r")) == NULL) {
+				warn(_("%s: open failed"), *argv );
+				rval = EXIT_FAILURE;
+				++argv;
+				continue;
+			}
+			filename = *argv++;
+		}
+
+		buf = malloc(bufsiz * sizeof(wchar_t));
+		if (!buf)
+			err(EXIT_FAILURE, _("malloc failed"));
+
+		while (fgetws(buf, bufsiz, fp)) {
+			len = wcslen(buf);
+
+			/* This is my hack from setpwnam.c -janl */
+			while (buf[len-1] != '\n' && !feof(fp)) {
+				wchar_t *x;
+
+				/* Extend input buffer if it failed getting the whole line */
+
+				/* So now we double the buffer size */
+				bufsiz *= 2;
+
+				x = realloc(buf, bufsiz * sizeof(wchar_t));
+				if (!x) {
+					free(buf);
+					err(EXIT_FAILURE, _("realloc failed"));
+				}
+				buf = x;
+
+				/* And fill the rest of the buffer */
+				if (!fgetws(&buf[len], bufsiz/2, fp))
+					break;
+
+				len = wcslen(buf);
+			}
+
+			t = buf + len - 1 - (*(buf+len-1)=='\r' || *(buf+len-1)=='\n');
+			for ( ; t >= buf; --t) {
+				if (*t != 0)
+					putwchar(*t);
+			}
+			putwchar('\n');
+		}
+
+		fflush(fp);
+		if (ferror(fp)) {
+			warn("%s", filename);
+			rval = EXIT_FAILURE;
+		}
+		if (fclose(fp))
+			rval = EXIT_FAILURE;
+	} while(*argv);
+
+	free(buf);
+	return rval;
+}
+
