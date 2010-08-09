@@ -119,6 +119,8 @@
 # include <paths.h>
 #endif
 
+#include "getdef.h"
+
 /* The default PATH for simulated logins to non-superuser accounts.  */
 #define DEFAULT_LOGIN_PATH "/usr/local/bin:/bin:/usr/bin"
 
@@ -491,23 +493,29 @@ modify_environment (const struct passwd *pw, const char *shell)
       xsetenv ("USER", pw->pw_name);
       xsetenv ("LOGNAME", pw->pw_name);
       xsetenv ("PATH", (pw->pw_uid
-			? DEFAULT_LOGIN_PATH
-			: DEFAULT_ROOT_LOGIN_PATH));
+			? getdef_str ("PATH", DEFAULT_LOGIN_PATH)
+			: getdef_str ("SUPATH", DEFAULT_ROOT_LOGIN_PATH)));
     }
   else
     {
       /* Set HOME, SHELL, and if not becoming a super-user,
 	 USER and LOGNAME.  */
       if (change_environment)
-	{
-	  xsetenv ("HOME", pw->pw_dir);
-	  xsetenv ("SHELL", shell);
-	  if (pw->pw_uid)
-	    {
-	      xsetenv ("USER", pw->pw_name);
-	      xsetenv ("LOGNAME", pw->pw_name);
-	    }
-	}
+        {
+          xsetenv ("HOME", pw->pw_dir);
+          xsetenv ("SHELL", shell);
+	  if (getdef_bool ("ALWAYS_SET_PATH", 0))
+	    xsetenv ("PATH", (pw->pw_uid
+			      ? getdef_str ("PATH",
+					    DEFAULT_LOGIN_PATH)
+			      : getdef_str ("SUPATH",
+					    DEFAULT_ROOT_LOGIN_PATH)));
+          if (pw->pw_uid)
+            {
+              xsetenv ("USER", pw->pw_name);
+              xsetenv ("LOGNAME", pw->pw_name);
+            }
+        }
     }
 
 #ifdef USE_PAM
@@ -736,6 +744,7 @@ main (int argc, char **argv)
 #ifdef SYSLOG_FAILURE
       log_su (pw, false);
 #endif
+      sleep (getdef_num ("FAIL_DELAY", 1));
       error (EXIT_FAIL, 0, _("incorrect password"));
     }
 #ifdef SYSLOG_SUCCESS
