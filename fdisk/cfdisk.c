@@ -1659,7 +1659,7 @@ fill_p_info(void) {
 			     bs, 1, &errmsg)) {
 				char *bad = _("Bad logical partition");
 				char *msg = (char *) xmalloc(strlen(bad) + strlen(errmsg) + 30);
-				sprintf(msg, "%s %d: %s", bad, i + 1, errmsg);
+				sprintf(msg, "%s %d: %s", bad, i, errmsg);
 				fatal(msg, 4);
 			}
 		}
