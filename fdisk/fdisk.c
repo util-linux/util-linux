@@ -180,6 +180,8 @@ static int type_open = O_RDWR;
  */
 unsigned char *MBRbuffer;
 
+int MBRbuffer_changed;
+
 /*
  * per partition table entry data
  *
@@ -934,6 +936,7 @@ dos_set_mbr_id(void) {
 		return;
 
 	dos_write_mbr_id(MBRbuffer, new_id);
+	MBRbuffer_changed = 1;
 	dos_print_mbr_id();
 }
 
@@ -2553,10 +2556,18 @@ write_table(void) {
 	int i;
 
 	if (dos_label) {
-		for (i=0; i<3; i++)
-			if (ptes[i].changed)
-				ptes[3].changed = 1;
-		for (i = 3; i < partitions; i++) {
+		/* MBR (primary partitions) */
+		if (!MBRbuffer_changed) {
+			for (i = 0; i < 4; i++)
+				if (ptes[i].changed)
+					MBRbuffer_changed = 1;
+		}
+		if (MBRbuffer_changed) {
+			write_part_table_flag(MBRbuffer);
+			write_sector(fd, 0, MBRbuffer);
+		}
+		/* EBR (logical partitions) */
+		for (i = 4; i < partitions; i++) {
 			struct pte *pe = &ptes[i];
 
 			if (pe->changed) {
