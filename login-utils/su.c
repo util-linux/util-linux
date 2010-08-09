@@ -120,18 +120,10 @@
 #endif
 
 /* The default PATH for simulated logins to non-superuser accounts.  */
-#ifdef _PATH_DEFPATH
-# define DEFAULT_LOGIN_PATH _PATH_DEFPATH
-#else
-# define DEFAULT_LOGIN_PATH ":/usr/ucb:/bin:/usr/bin"
-#endif
+#define DEFAULT_LOGIN_PATH "/usr/local/bin:/bin:/usr/bin"
 
 /* The default PATH for simulated logins to superuser accounts.  */
-#ifdef _PATH_DEFPATH_ROOT
-# define DEFAULT_ROOT_LOGIN_PATH _PATH_DEFPATH_ROOT
-#else
-# define DEFAULT_ROOT_LOGIN_PATH "/usr/ucb:/bin:/usr/bin:/etc"
-#endif
+#define DEFAULT_ROOT_LOGIN_PATH "/usr/sbin:/bin:/usr/bin:/sbin"
 
 /* The shell to run if none is given in the user's passwd entry.  */
 #define DEFAULT_SHELL "/bin/sh"
