@@ -21,6 +21,7 @@ libblkid
 	...
 	blkid_unref(tp);
 
+
 blkid(8)
   
   - add a new option (-r) that allows to print removable block devices that
@@ -35,6 +36,9 @@ wipefs
 
 fdisk(s)
 --------
+
+ * sfdisk rounds to cylinders is -uM (megabyte units) is specified, this is
+   pretty stupid feature. It has to round to sectors if -uS or -uM is specified.
 
  * Sun label support is completely useless for large disks, it uses number of
    cylinders from on-disk-label where the geometry is stored by int16 values.
