@@ -487,7 +487,7 @@ int test_mountpoint(struct mtest *ts, int argc, char *argv[])
 int test_fsroot(struct mtest *ts, int argc, char *argv[])
 {
 	char *path = canonicalize_path(argv[1]),
-	     *mnt = path ? mnt_get_fs_root(path) : NULL;
+	     *mnt = path ? mnt_get_fs_root(path, NULL) : NULL;
 
 	printf("%s: %s\n", argv[1], mnt ? : "unknown");
 	free(mnt);

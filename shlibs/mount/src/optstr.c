@@ -491,7 +491,7 @@ int test_split(struct mtest *ts, int argc, char *argv[])
 
 	optstr = strdup(argv[1]);
 
-	if (mnt_split_optstr(optstr, &user, &vfs, &fs) == 0) {
+	if (mnt_split_optstr(optstr, &user, &vfs, &fs, 0, 0) == 0) {
 		printf("user : %s\n", user);
 		printf("vfs  : %s\n", vfs);
 		printf("fs   : %s\n", fs);
