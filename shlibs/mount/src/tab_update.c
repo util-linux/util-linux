@@ -6,16 +6,16 @@
  */
 
 /**
- * SECTION: mtab
- * @title: mtab managment
+ * SECTION: update
+ * @title: mtab (fstab) managment
  * @short_description: userspace mount information management
  *
  * The libmount library allows to use more modes for mtab management:
  *
  * - /etc/mtab is regular file
  *
- *   then libmount manages the file in classical way (all mounts are
- *   added to the file)
+ *   then libmount manages the file in classical way (all mounts are added to
+ *   the file). This mode is always used for /etc/fstab updates as well.
  *
  * - /etc/mtab is symlink
  *
@@ -29,11 +29,11 @@
  *
  *
  * The mtab is always updated in two steps. The first step is to prepare a new
- * mtab entry -- mnt_mtab_prepare_update(), this step has to be done before
- * mount(2) syscall. The second step is to update the mtab file --
- * mnt_update_mtab(), this step should be done after mount(2) syscall.
+ * update entry -- mnt_prepare_update(), this step has to be done before
+ * mount(2) syscall. The second step is to update the file --
+ * mnt_update_file(), this step should be done after mount(2) syscall.
  *
- * The mnt_update_mtab() behaviour is undefined if mnt_mtab_prepare_update() has
+ * The mnt_update_file() behaviour is undefined if mnt_prepare_update() has
  * not been used.
  */
 
@@ -55,140 +55,140 @@
 /*
  * mtab update description
  */
-struct _mnt_mtab {
+struct _mnt_update {
 	int		action;		/* MNT_ACT_{MOUNT,UMOUNT} */
 	unsigned long	mountflags;	/* MS_* flags */
 	char		*filename;	/* usually /etc/mtab or /var/run/mount/mountinfo */
 	char		*old_target;	/* for MS_MOVE */
-	int		format;		/* MNT_FMT_{MTAB,MOUNTINFO} */
+	int		format;		/* MNT_FMT_{MTAB,FSTAB,MOUNTINFO} */
 	int		nolock;		/* don't alloca private mnt_lock */
 	mnt_fs		*fs;		/* entry */
 	mnt_lock	*lc;		/* lock or NULL */
 };
 
 /**
- * mnt_new_mtab:
+ * mnt_new_update:
  * @action: MNT_ACT_{MOUNT,UMOUNT}
+ * @mountflags: MS_{REMOUNT,BIND,MOVE}
+ * @fs: FS description
  *
- * Returns: newly allocated mtab description
+ * Returns: newly allocated update description
  */
-mnt_mtab *mnt_new_mtab(int action, unsigned long mountflags, const mnt_fs *fs)
+mnt_update *mnt_new_update(int action, unsigned long mountflags, const mnt_fs *fs)
 {
-	mnt_mtab *mt;
+	mnt_update *upd;
 
-	mt = calloc(1, sizeof(struct _mnt_mtab));
-	if (!mt)
+	upd = calloc(1, sizeof(struct _mnt_update));
+	if (!upd)
 		return NULL;
 
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %p: allocate\n", mt));
+		"libmount: update %p: allocate\n", upd));
 
 	if (action)
-		mnt_mtab_set_action(mt, action);
+		mnt_update_set_action(upd, action);
 	if (mountflags)
-		mnt_mtab_set_mountflags(mt, mountflags);
+		mnt_update_set_mountflags(upd, mountflags);
 	if (fs)
-		mnt_mtab_set_fs(mt, fs);
-	return mt;
+		mnt_update_set_fs(upd, fs);
+	return upd;
 }
 
 /**
- * mnt_free_mtab:
- * @mt: mtab
+ * mnt_free_update:
+ * @upd: update
  *
- * Deallocates mnt_mtab handler.
+ * Deallocates mnt_update handler.
  */
-void mnt_free_mtab(mnt_mtab *mt)
+void mnt_free_update(mnt_update *upd)
 {
-	if (!mt)
+	if (!upd)
 		return;
 
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %p: deallacate\n", mt));
+		"libmount: update %p: deallacate\n", upd));
 
-	mnt_free_lock(mt->lc);
-	mnt_free_fs(mt->fs);
-	free(mt->filename);
-	free(mt->old_target);
-	free(mt);
+	mnt_free_lock(upd->lc);
+	free(upd->filename);
+	free(upd->old_target);
+	free(upd);
 }
 
 /**
- * mnt_mtab_set_filename:
- * @mt: mtab
- * @filename: path to mtab (default is /etc/mtab or /var/run/mount/mountinfo)
+ * mnt_update_set_filename:
+ * @upd: update
+ * @filename: path to update (default is /etc/update or /var/run/mount/mountinfo)
  *
  * Returns: 0 on success, -1 in case of error.
  */
-int mnt_mtab_set_filename(mnt_mtab *mt, const char *filename)
+int mnt_update_set_filename(mnt_update *upd, const char *filename)
 {
 	char *p = NULL;
 
-	assert(mt);
-	if (!mt)
+	assert(upd);
+	if (!upd)
 		return -1;
 	if (filename) {
 		p = strdup(filename);
 		if (!p)
 			return -1;
 	}
-	free(mt->filename);
-	mt->filename = p;
+	free(upd->filename);
+	upd->filename = p;
 	return 0;
 }
 
 /**
- * mnt_mtab_set_action:
- * @mt: mtab
+ * mnt_update_set_action:
+ * @upd: update
  * @action: MNT_ACT_{MOUNT,UMOUNT}
  *
- * Overwrites the previously defined action by mnt_new_mtab().
+ * Overwrites the previously defined (usually by mnt_new_update()) action.
  *
  * Returns: 0 on success, -1 in case of error.
  */
-int mnt_mtab_set_action(mnt_mtab *mt, int action)
+int mnt_update_set_action(mnt_update *upd, int action)
 {
-	assert(mt);
-	if (!mt)
+	assert(upd);
+	if (!upd)
 		return -1;
-	mt->action = action;
+	upd->action = action;
 	return 0;
 }
 
 /**
- * mnt_mtab_set_format:
- * @mt: mtab
- * @format: MNT_FMT_{MTAB,MOUNTINFO}
+ * mnt_update_set_format:
+ * @upd: update
+ * @format: MNT_FMT_{MTAB,FSTAB,MOUNTINFO}
  *
- * Sets mtab file format, default is MNT_FMT_MTAB for paths that end with
- * "mtab" and MNT_FMT_MOUNTINFO for paths that end with "mountinfo".
+ * Sets update file format, default is MNT_FMT_MTAB for paths that end with
+ * "update", MNT_FMT_MOUNTINFO for paths that end with "mountinfo" and
+ * MNT_FMT_FSTAB for paths that end with "fstab".
  *
  * Returns: 0 on success, -1 in case of error.
  */
-int mnt_mtab_set_format(mnt_mtab *mt, int format)
+int mnt_update_set_format(mnt_update *upd, int format)
 {
-	assert(mt);
-	if (!mt)
+	assert(upd);
+	if (!upd)
 		return -1;
-	mt->format = format;
+	upd->format = format;
 	return 0;
 }
 
 /**
- * mnt_mtab_set_fs:
- * @mt: mtab
- * @fs: filesystem to write to mtab
- *
- * This function could be used instead of mnt_mtab_set_{fstype,source,target,optstr}.
+ * mnt_update_set_fs:
+ * @upd: update
+ * @fs: filesystem to write to file
  *
  * Returns; 0 on success, -1 in case of error.
  */
-int mnt_mtab_set_fs(mnt_mtab *mt, const mnt_fs *fs)
+int mnt_update_set_fs(mnt_update *upd, const mnt_fs *fs)
 {
 	mnt_fs *x = NULL;
 
-	assert(mt);
-	if (!mt)
+	assert(upd);
+	if (!upd)
 		return -1;
 	if (fs) {
 		x = mnt_copy_fs(fs);
@@ -196,96 +196,97 @@ int mnt_mtab_set_fs(mnt_mtab *mt, const mnt_fs *fs)
 			return -1;
 	}
 
-	mnt_free_fs(mt->fs);
-	mt->fs = x;
+	mnt_free_fs(upd->fs);
+	upd->fs = x;
 	return 0;
 }
 
 /**
- * mnt_mtab_set_mountflags:
- * @mt: mtab
- * @flags: MS_{REMOUNT,MOVE}
+ * mnt_update_set_mountflags:
+ * @upd: update
+ * @flags: MS_{REMOUNT,MOVE,BIND,...}
  *
  * Sets mount flags for mount/umount action. The flags are also
- * extracted from mount options by mnt_mtab_prepare_update().
+ * extracted from mount options by mnt_prepare_update(). The mount flags
+ * are used for mtab update to differentiate between move, remount, ...
  *
  * Returns: 0 on success, -1 in case of error.
  */
-int mnt_mtab_set_mountflags(mnt_mtab *mt, unsigned long flags)
+int mnt_update_set_mountflags(mnt_update *upd, unsigned long flags)
 {
-	assert(mt);
-	if (!mt)
+	assert(upd);
+	if (!upd)
 		return -1;
-	mt->mountflags = flags;
+	upd->mountflags = flags;
 	return 0;
 }
 
 /**
- * mnt_mtab_get_lock:
- * @mt: mtab
+ * mnt_update_get_lock:
+ * @upd: update
  *
- * This function should not be called before mnt_mtab_prepare_update(). The lock
+ * This function should not be called before mnt_prepare_update(). The lock
  * is initialized when mtab update is required only.
  *
- * Note that after mnt_mtab_disable_lock(mt, TRUE) or after mnt_free_mtab()
- * the lock will be automaticaly deallocated.
+ * Note that after mnt_update_disable_lock(mt, TRUE) or after mnt_free_update()
+ * the lock will be automatically deallocated.
  *
  * Returns: libmount lock handler or NULL if locking is disabled.
  */
-mnt_lock *mnt_mtab_get_lock(mnt_mtab *mt)
+mnt_lock *mnt_update_get_lock(mnt_update *upd)
 {
-	return mt ? mt->lc : NULL;
+	return upd ? upd->lc : NULL;
 }
 
 /**
- * mnt_mtab_disable_lock:
- * @mt: mtab
+ * mnt_update_disable_lock:
+ * @upd: update
  * @disable: TRUE/FALSE
  *
- * Enable or disable mtab locking, the locking is enabled by default.
+ * Enable or disable update locking, the locking is enabled by default.
  *
  * Returns: 0 on success, -1 in case of error.
  */
-int mnt_mtab_disable_lock(mnt_mtab *mt, int disable)
+int mnt_update_disable_lock(mnt_update *upd, int disable)
 {
-	if (!mt)
+	if (!upd)
 		return -1;
 	if (disable) {
-		mnt_free_lock(mt->lc);
-		mt->lc = NULL;
+		mnt_free_lock(upd->lc);
+		upd->lc = NULL;
 	}
-	mt->nolock = disable;
+	upd->nolock = disable;
 	return 0;
 }
 
 /**
- * mnt_mtab_set_old_target:
- * @mt: mtab
+ * mnt_update_set_old_target:
+ * @upd: update
  * @target: old mountpoint
  *
  * Sets the original target for the MS_MOVE operation.
  *
  * Returns: 0 on success, -1 in case of error.
  */
-int mnt_mtab_set_old_target(mnt_mtab *mt, const char *target)
+int mnt_update_set_old_target(mnt_update *upd, const char *target)
 {
 	char *p = NULL;
 
-	if (!mt)
+	if (!upd)
 		return -1;
 	if (p) {
 		p = strdup(target);
 		if (!p)
 			return -1;
 	}
-	free(mt->old_target);
-	mt->old_target = p;
+	free(upd->old_target);
+	upd->old_target = p;
 	return 0;
 }
 
 /*
  * The format is same as /proc/self/mountinfo, but it contains userspace
- * mount options and some unncessary fields are ignored.
+ * mount options and some unnecessary fields are ignored.
  */
 static int fprintf_mountinfo_fs(FILE *f, mnt_fs *fs)
 {
@@ -329,6 +330,7 @@ done:
 	return rc;
 }
 
+/* mtab and fstab update */
 static int fprintf_mtab_fs(FILE *f, mnt_fs *fs)
 {
 	char *m1 = NULL, *m2 = NULL, *m3 = NULL, *m4 = NULL;
@@ -370,14 +372,14 @@ static int update_file(const char *filename, int fmt, mnt_tab *tb)
 	char tmpname[PATH_MAX];
 	struct stat st;
 	int fd;
-	int (*line_fn)(FILE *, mnt_fs *);
+	int (*line_fn)(FILE *, mnt_fs *) = fprintf_mountinfo_fs;
 
 	assert(tb);
 	if (!tb)
 		goto error;
 
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %s: update from tab %p\n", filename, tb));
+		"libmount: update %s: update from tab %p\n", filename, tb));
 
 	if (snprintf(tmpname, sizeof(tmpname), "%s.tmp", filename)
 						>= sizeof(tmpname))
@@ -387,7 +389,9 @@ static int update_file(const char *filename, int fmt, mnt_tab *tb)
 	if (!f)
 		goto error;
 
-	line_fn = fmt == MNT_FMT_MTAB ? fprintf_mtab_fs : fprintf_mountinfo_fs;
+
+	if (fmt == MNT_FMT_MTAB || fmt == MNT_FMT_FSTAB)
+		line_fn = fprintf_mtab_fs;
 
 	mnt_reset_iter(&itr, MNT_ITER_FORWARD);
 	while(mnt_tab_next_fs(tb, &itr, &fs) == 0)
@@ -413,20 +417,20 @@ static int update_file(const char *filename, int fmt, mnt_tab *tb)
 	return 0;
 error:
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %s: update from tab %p failed\n", filename, tb));
+		"libmount: update %s: update from tab %p failed\n", filename, tb));
 	if (f)
 		fclose(f);
 	return -1;
 }
 
-static int set_fs_root(mnt_mtab *mt, mnt_fs *fs)
+static int set_fs_root(mnt_update *upd, mnt_fs *fs)
 {
 	char *root = NULL, *mnt = NULL;
 	const char *fstype;
 	char *optstr;
 	mnt_tab *tb = NULL;
 
-	if (mt->mountflags & MS_REMOUNT)
+	if (upd->mountflags & MS_REMOUNT)
 		return 0;
 
 	optstr = (char *) mnt_fs_get_optstr(fs);
@@ -435,7 +439,7 @@ static int set_fs_root(mnt_mtab *mt, mnt_fs *fs)
 	/*
 	 * bind-mount -- get fs-root and source device for the source filesystem
 	 */
-	if (mt->mountflags & MS_BIND) {
+	if (upd->mountflags & MS_BIND) {
 		const char *src, *src_root;
 		mnt_fs *src_fs;
 
@@ -517,79 +521,85 @@ err:
 }
 
 /**
- * mnt_mtab_prepare_update:
- * @mt: mtab
+ * mnt_prepare_update:
+ * @upd: update
  *
  * Prepares internal data for mtab update:
- * - set mtab filename if mnt_mtab_set_filename() was't called
- * - set mtab file format if mnt_mtab_set_format() was't called
- * - (bitwise) OR mountflags from mount options
+ * - set filename if mnt_update_set_filename() wasn't called
+ * - set file format if mnt_update_set_format() wasn't called
+ * - bitwise-OR mountflags from mount options
  * - for /var/run/mount/mountinfo:
- *   * evaluate if mtab update is necessary
+ *   * evaluate if the update is necessary
  *   * set fs root and devname for bind mount and btrfs subvolumes
- * - allocate mtab_lock if necessary
+ * - allocate update_lock if necessary
  *
- * This function has to be always called before mount(2). The mnt_update_mtab()
- * should not be called is mnt_mtab_prepare_update() returns non-zero value.
+ * This function has to be always called before mount(2). The mnt_update_file()
+ * should not be called if mnt_prepare_update() returns non-zero value.
  *
- * Returns: 0 on success, 1 if update is unncessary, -1 in case of error
+ * Returns: 0 on success, 1 if update is unnecessary, -1 in case of error
  */
-int mnt_mtab_prepare_update(mnt_mtab *mt)
+int mnt_prepare_update(mnt_update *upd)
 {
 	char *u = NULL;
 	const char *o = NULL;
 
-	assert(mt);
-	assert(mt->fs);
+	assert(upd);
+	assert(upd->fs);
 
-	if (!mt || !mt->fs)
+	if (!upd || !upd->fs)
 		return -1;
 
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %p: prepare update (target %s, source %s, optstr %s)\n",
-		mt, mnt_fs_get_target(mt->fs), mnt_fs_get_source(mt->fs),
-		mnt_fs_get_optstr(mt->fs)));
+		"libmount: update %p: prepare update (target %s, source %s, optstr %s)\n",
+		upd, mnt_fs_get_target(upd->fs), mnt_fs_get_source(upd->fs),
+		mnt_fs_get_optstr(upd->fs)));
 
-	if (!mt->filename) {
+	if (!upd->filename) {
 		const char *p = mnt_get_writable_mtab_path();
 		if (!p) {
 			if (errno)
 			       goto err;	/* EACCES? */
 			goto nothing;		/* no mtab */
 		}
-		mt->filename = strdup(p);
-		if (!mt->filename)
+		upd->filename = strdup(p);
+		if (!upd->filename)
 			goto err;
 	}
-	if (!mt->format)
-		mt->format = endswith(mt->filename, "mountinfo") ?
-					MNT_FMT_MOUNTINFO : MNT_FMT_MTAB;
-
+	if (!upd->format) {
+		if (endswith(upd->filename, "mountinfo"))
+			upd->format = MNT_FMT_MOUNTINFO;
+		else if (endswith(upd->filename, "fstab"))
+			upd->format = MNT_FMT_FSTAB;
+		else
+			upd->format = MNT_FMT_MTAB;
+	}
 
 	/* TODO: cannonicalize source and target paths on mnt->fs */
 
-	o = mnt_fs_get_optstr(mt->fs);
-	if (o)
-		mnt_optstr_get_mountflags(o, &mt->mountflags);
+	if (upd->format != MNT_FMT_FSTAB) {
+		o = mnt_fs_get_optstr(upd->fs);
+		if (o)
+			mnt_optstr_get_mountflags(o, &upd->mountflags);
+	}
 
 	/* umount */
-	if (mt->action == MNT_ACT_UMOUNT)
+	if (upd->action == MNT_ACT_UMOUNT)
 		return 0;
 
 	/*
 	 * A) classic /etc/mtab
 	 */
-	if (mt->format != MNT_FMT_MOUNTINFO)
+	if (upd->format != MNT_FMT_MOUNTINFO)
 		return 0;
 
 	/*
 	 * B) /var/run/mount/mountinfo
 	 */
-	if (mt->mountflags & MS_REMOUNT) {
+	if (upd->mountflags & MS_REMOUNT) {
 		/* remount */
 		if (mnt_split_optstr(o, &u, NULL, NULL, MNT_NOMTAB, 0))
 			goto err;
-		if (mnt_fs_set_optstr(mt->fs, u))
+		if (mnt_fs_set_optstr(upd->fs, u))
 			goto err;
 
 	} else {
@@ -599,76 +609,76 @@ int mnt_mtab_prepare_update(mnt_mtab *mt)
 			goto err;
 		if (!u)
 			goto nothing;	/* no userpsace options */
-		if (set_fs_root(mt, mt->fs))
+		if (set_fs_root(upd, upd->fs))
 			goto err;
-		mnt_fs_set_optstr(mt->fs, u);
+		mnt_fs_set_optstr(upd->fs, u);
 	}
 
-	if (!mt->nolock && !mt->lc) {
-		mt->lc = mnt_new_lock(mt->filename, 0);
-		if (!mt->lc)
+	if (!upd->nolock && !upd->lc) {
+		upd->lc = mnt_new_lock(upd->filename, 0);
+		if (!upd->lc)
 			goto err;
 	}
 
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %p: prepare update: success\n", mt));
+		"libmount: update %p: prepare update: success\n", upd));
 	free(u);
 	return 0;
 err:
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %p: prepare update: failed\n", mt));
+		"libmount: update %p: prepare update: failed\n", upd));
 	free(u);
 	return -1;
 nothing:
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %p: prepare update: unnecessary\n", mt));
+		"libmount: update %p: prepare update: unnecessary\n", upd));
 	free(u);
 	return 1;
 }
 
-static int add_entry(mnt_mtab *mt)
+static int add_entry(mnt_update *upd)
 {
 	FILE *f;
 	int rc = -1;
 
-	assert(mt);
+	assert(upd);
 
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %p: add entry\n", mt));
-	if (mt->lc)
-		mnt_lock_file(mt->lc);
-	f = fopen(mt->filename, "a+");
+		"libmount: update %p: add entry\n", upd));
+	if (upd->lc)
+		mnt_lock_file(upd->lc);
+	f = fopen(upd->filename, "a+");
 	if (f) {
-		if (mt->format == MNT_FMT_MOUNTINFO)
-			rc = fprintf_mountinfo_fs(f, mt->fs);
+		if (upd->format == MNT_FMT_MOUNTINFO)
+			rc = fprintf_mountinfo_fs(f, upd->fs);
 		else
-			rc = fprintf_mtab_fs(f, mt->fs);
+			rc = fprintf_mtab_fs(f, upd->fs);
 		fclose(f);
 	}
-	if (mt->lc)
-		mnt_unlock_file(mt->lc);
+	if (upd->lc)
+		mnt_unlock_file(upd->lc);
 	return rc;
 }
 
-static int remove_entry(mnt_mtab *mt)
+static int remove_entry(mnt_update *upd)
 {
 	const char *target;
 	mnt_tab *tb = NULL;
 	mnt_fs *fs = NULL;
 	int rc = -1;
 
-	assert(mt);
-	assert(mt->filename);
+	assert(upd);
+	assert(upd->filename);
 
-	target = mnt_fs_get_target(mt->fs);
+	target = mnt_fs_get_target(upd->fs);
 	assert(target);
 
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %p: remove entry (target %s)\n", mt, target));
+		"libmount: update %p: remove entry (target %s)\n", upd, target));
 
-	if (mt->lc)
-		mnt_lock_file(mt->lc);
-	tb = mnt_new_tab_from_file(mt->filename);
+	if (upd->lc)
+		mnt_lock_file(upd->lc);
+	tb = mnt_new_tab_from_file(upd->filename);
 	if (!tb)
 		goto done;
 	fs = mnt_tab_find_target(tb, target, MNT_ITER_BACKWARD);
@@ -678,72 +688,72 @@ static int remove_entry(mnt_mtab *mt)
 	}
 	mnt_tab_remove_fs(tb, fs);
 
-	if (!update_file(mt->filename, mt->format, tb))
+	if (!update_file(upd->filename, upd->format, tb))
 		rc = 0;
 done:
-	if (mt->lc)
-		mnt_unlock_file(mt->lc);
+	if (upd->lc)
+		mnt_unlock_file(upd->lc);
 	mnt_free_tab(tb);
 	mnt_free_fs(fs);
 	return rc;
 }
 
-static int modify_target(mnt_mtab *mt)
+static int modify_target(mnt_update *upd)
 {
 	mnt_tab *tb = NULL;
 	mnt_fs *fs = NULL;
 	int rc = -1;
 
-	assert(mt);
-	assert(mt->old_target);
-	assert(mt->filename);
-	assert(mnt_fs_get_target(mt->fs));
+	assert(upd);
+	assert(upd->old_target);
+	assert(upd->filename);
+	assert(mnt_fs_get_target(upd->fs));
 
-	if (!mt->old_target)
+	if (!upd->old_target)
 		return -1;
 
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %p: modify target (%s->%s)\n", mt,
-		mt->old_target, mnt_fs_get_target(mt->fs)));
+		"libmount: update %p: modify target (%s->%s)\n", upd,
+		upd->old_target, mnt_fs_get_target(upd->fs)));
 
-	if (mt->lc)
-		mnt_lock_file(mt->lc);
-	tb = mnt_new_tab_from_file(mt->filename);
+	if (upd->lc)
+		mnt_lock_file(upd->lc);
+	tb = mnt_new_tab_from_file(upd->filename);
 	if (!tb)
 		goto done;
-	fs = mnt_tab_find_target(tb, mt->old_target, MNT_ITER_BACKWARD);
+	fs = mnt_tab_find_target(tb, upd->old_target, MNT_ITER_BACKWARD);
 	if (!fs) {
 		rc = 0;	/* no error if the file does not contain the target */
 		goto done;
 	}
 
-	mnt_fs_set_target(fs, mnt_fs_get_target(mt->fs));
+	mnt_fs_set_target(fs, mnt_fs_get_target(upd->fs));
 
-	if (!update_file(mt->filename, mt->format, tb))
+	if (!update_file(upd->filename, upd->format, tb))
 		rc = 0;
 done:
-	if (mt->lc)
-		mnt_unlock_file(mt->lc);
+	if (upd->lc)
+		mnt_unlock_file(upd->lc);
 	mnt_free_tab(tb);
 	return rc;
 }
 
-static int modify_options(mnt_mtab *mt)
+static int modify_options(mnt_update *upd)
 {
 	mnt_tab *tb = NULL;
 	mnt_fs *fs = NULL, *rem_fs = NULL;
 	int rc = -1;
-	const char *target = mnt_fs_get_target(mt->fs);
+	const char *target = mnt_fs_get_target(upd->fs);
 
 	assert(target);
-	assert(mt->filename);
+	assert(upd->filename);
 
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %p: modify options (target %s)\n", mt, target));
+		"libmount: update %p: modify options (target %s)\n", upd, target));
 
-	if (mt->lc)
-		mnt_lock_file(mt->lc);
-	tb = mnt_new_tab_from_file(mt->filename);
+	if (upd->lc)
+		mnt_lock_file(upd->lc);
+	tb = mnt_new_tab_from_file(upd->filename);
 	if (!tb)
 		goto done;
 	fs = mnt_tab_find_target(tb, target, MNT_ITER_BACKWARD);
@@ -751,60 +761,60 @@ static int modify_options(mnt_mtab *mt)
 		rc = 0;	/* no error if the file does not contain the target */
 		goto done;
 	}
-	if (mt->format == MNT_FMT_MOUNTINFO && !mnt_fs_get_optstr(mt->fs)) {
+	if (upd->format == MNT_FMT_MOUNTINFO && !mnt_fs_get_optstr(upd->fs)) {
 		mnt_tab_remove_fs(tb, fs);
 		rem_fs = fs;
 	} else
-		mnt_fs_set_optstr(fs, mnt_fs_get_optstr(mt->fs));
+		mnt_fs_set_optstr(fs, mnt_fs_get_optstr(upd->fs));
 
-	if (!update_file(mt->filename, mt->format, tb))
+	if (!update_file(upd->filename, upd->format, tb))
 		rc = 0;
 done:
-	if (mt->lc)
-		mnt_unlock_file(mt->lc);
+	if (upd->lc)
+		mnt_unlock_file(upd->lc);
 	mnt_free_tab(tb);
 	mnt_free_fs(rem_fs);
 	return rc;
 }
 
 /**
- * mnt_update_mtab:
- * @mt: mtab
+ * mnt_update_file:
+ * @upd: update
  *
- * Updates the mtab file. The behavior of this function is undefined if
- * mnt_mtab_prepare_update() has not been called.
+ * Updates the update file. The behavior of this function is undefined if
+ * mnt_prepare_update() has not been called.
  *
  * Returns: 0 on success, -1 in case of error.
  */
-int mnt_update_mtab(mnt_mtab *mt)
+int mnt_update_file(mnt_update *upd)
 {
-	assert(mt);
-	assert(mt->filename);
-	assert(mt->format);
-	assert(mt->fs);
+	assert(upd);
+	assert(upd->filename);
+	assert(upd->format);
+	assert(upd->fs);
 
-	if (!mt || !mt->fs)
+	if (!upd || !upd->fs)
 		return -1;
 
 	DBG(DEBUG_MTAB, fprintf(stderr,
-		"libmount: mtab %p: update (target %s)\n", mt,
-		mnt_fs_get_target(mt->fs)));
+		"libmount: update %p: update (target %s)\n", upd,
+		mnt_fs_get_target(upd->fs)));
 	/*
 	 * umount
 	 */
-	if (mt->action == MNT_ACT_UMOUNT)
-		return remove_entry(mt);
+	if (upd->action == MNT_ACT_UMOUNT)
+		return remove_entry(upd);
 	/*
 	 * mount
 	 */
-	if (mt->action == MNT_ACT_MOUNT) {
-		if (mt->mountflags & MS_REMOUNT)
-			return modify_options(mt);
+	if (upd->action == MNT_ACT_MOUNT) {
+		if (upd->mountflags & MS_REMOUNT)
+			return modify_options(upd);
 
-		if (mt->mountflags & MS_MOVE)
-			return modify_target(mt);
+		if (upd->mountflags & MS_MOVE)
+			return modify_target(upd);
 
-		return add_entry(mt);	/* mount */
+		return add_entry(upd);	/* mount */
 	}
 	return -1;
 }
@@ -821,34 +831,34 @@ static void lock_fallback(void)
 		mnt_unlock_file(lock);
 }
 
-static int update(mnt_mtab *mt)
+static int update(mnt_update *upd)
 {
 	int rc;
 
 	/*
 	 * Note that mount(2) syscal should be called *after*
-	 * mnt_mtab_prepare_update() and *before* mnt_update_mtab()
+	 * mnt_prepare_update() and *before* mnt_update_file()
 	 */
-	rc = mnt_mtab_prepare_update(mt);
+	rc = mnt_prepare_update(upd);
 	if (!rc) {
 		/* setup lock fallback */
-		lock = mnt_mtab_get_lock(mt);
+		lock = mnt_update_get_lock(upd);
 		atexit(lock_fallback);
 
-		return mnt_update_mtab(mt);
+		return mnt_update_file(upd);
 	}
 	if (rc == 1) {
-		printf("mtab: update is not reuquired\n");
+		printf("update: update is not reuquired\n");
 		return 0;
 	}
-	fprintf(stderr, "mtab: failed to prepare update\n");
+	fprintf(stderr, "update: failed to prepare update\n");
 	return -1;
 }
 
 int test_add(struct mtest *ts, int argc, char *argv[])
 {
 	mnt_fs *fs = mnt_new_fs();
-	mnt_mtab *mt;
+	mnt_update *upd;
 	int rc = -1;
 
 	if (argc < 5 || !fs)
@@ -858,13 +868,44 @@ int test_add(struct mtest *ts, int argc, char *argv[])
 	mnt_fs_set_fstype(fs, argv[3]);
 	mnt_fs_set_optstr(fs, argv[4]);
 
-	mt = mnt_new_mtab(MNT_ACT_MOUNT, 0, fs);
-	if (!mt)
+	upd = mnt_new_update(MNT_ACT_MOUNT, 0, fs);
+	if (!upd)
 		return -1;
 
-	rc = update(mt);
+	rc = update(upd);
 
-	mnt_free_mtab(mt);
+	mnt_free_update(upd);
+	mnt_free_fs(fs);
+	return rc;
+}
+
+int test_add_fstab(struct mtest *ts, int argc, char *argv[])
+{
+	mnt_fs *fs = mnt_new_fs();
+	mnt_update *upd;
+	int rc = -1;
+
+	if (argc < 7 || !fs)
+		return -1;
+	mnt_fs_set_source(fs, argv[1]);
+	mnt_fs_set_target(fs, argv[2]);
+	mnt_fs_set_fstype(fs, argv[3]);
+	mnt_fs_set_optstr(fs, argv[4]);
+	mnt_fs_set_freq(fs, atoi(argv[5]));
+	mnt_fs_set_passno(fs, atoi(argv[6]));
+
+	/* this is tricky -- to add to fstab use "MNT_ACT_MOUNT" */
+	upd = mnt_new_update(MNT_ACT_MOUNT, 0, fs);
+	if (!upd)
+		return -1;
+
+	mnt_update_disable_lock(upd, TRUE);		/* lock is unnecessary */
+	mnt_update_set_filename(upd, _PATH_MNTTAB);	/* fstab */
+	mnt_update_set_format(upd, MNT_FMT_FSTAB);
+
+	rc = update(upd);
+
+	mnt_free_update(upd);
 	mnt_free_fs(fs);
 	return rc;
 }
@@ -872,20 +913,20 @@ int test_add(struct mtest *ts, int argc, char *argv[])
 int test_remove(struct mtest *ts, int argc, char *argv[])
 {
 	mnt_fs *fs = mnt_new_fs();
-	mnt_mtab *mt;
+	mnt_update *upd;
 	int rc = -1;
 
 	if (argc < 2 || !fs)
 		return -1;
 	mnt_fs_set_target(fs, argv[1]);
 
-	mt = mnt_new_mtab(MNT_ACT_UMOUNT, 0, fs);
-	if (!mt)
+	upd = mnt_new_update(MNT_ACT_UMOUNT, 0, fs);
+	if (!upd)
 		return -1;
 
-	rc = update(mt);
+	rc = update(upd);
 
-	mnt_free_mtab(mt);
+	mnt_free_update(upd);
 	mnt_free_fs(fs);
 	return rc;
 }
@@ -893,21 +934,21 @@ int test_remove(struct mtest *ts, int argc, char *argv[])
 int test_move(struct mtest *ts, int argc, char *argv[])
 {
 	mnt_fs *fs = mnt_new_fs();
-	mnt_mtab *mt;
+	mnt_update *upd;
 	int rc = -1;
 
 	if (argc < 3 || !fs)
 		return -1;
 	mnt_fs_set_target(fs, argv[2]);
 
-	mt = mnt_new_mtab(MNT_ACT_MOUNT, MS_MOVE, fs);
-	if (!mt)
+	upd = mnt_new_update(MNT_ACT_MOUNT, MS_MOVE, fs);
+	if (!upd)
 		return -1;
-	mnt_mtab_set_old_target(mt, argv[1]);
+	mnt_update_set_old_target(upd, argv[1]);
 
-	rc = update(mt);
+	rc = update(upd);
 
-	mnt_free_mtab(mt);
+	mnt_free_update(upd);
 	mnt_free_fs(fs);
 	return rc;
 }
@@ -915,7 +956,7 @@ int test_move(struct mtest *ts, int argc, char *argv[])
 int test_remount(struct mtest *ts, int argc, char *argv[])
 {
 	mnt_fs *fs = mnt_new_fs();
-	mnt_mtab *mt;
+	mnt_update *upd;
 	int rc = -1;
 
 	if (argc < 3 || !fs)
@@ -924,13 +965,13 @@ int test_remount(struct mtest *ts, int argc, char *argv[])
 	mnt_fs_set_target(fs, argv[1]);
 	mnt_fs_set_optstr(fs, argv[2]);
 
-	mt = mnt_new_mtab(MNT_ACT_MOUNT, MS_REMOUNT, fs);
-	if (!mt)
+	upd = mnt_new_update(MNT_ACT_MOUNT, MS_REMOUNT, fs);
+	if (!upd)
 		return -1;
 
-	rc = update(mt);
+	rc = update(upd);
 
-	mnt_free_mtab(mt);
+	mnt_free_update(upd);
 	mnt_free_fs(fs);
 	return rc;
 }
@@ -942,6 +983,9 @@ int main(int argc, char *argv[])
 	{ "--remove", test_remove,  "<target>                      MS_REMOUNT mtab change" },
 	{ "--move",   test_move,    "<old_target>  <target>        MS_MOVE mtab change" },
 	{ "--remount",test_remount, "<target>  <options>           MS_REMOUNT mtab change" },
+
+	{ "--add-fstab", test_add_fstab, "<src> <target> <type> <options> <freq> <passno>  add line to fstab" },
+
 	{ NULL }
 	};
 

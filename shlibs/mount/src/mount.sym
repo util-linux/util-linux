@@ -61,15 +61,6 @@ global:
 	mnt_mangle;
 	mnt_match_fstype;
 	mnt_match_options;
-	mnt_mtab_disable_lock;
-	mnt_mtab_get_lock;
-	mnt_mtab_prepare_update;
-	mnt_mtab_set_action;
-	mnt_mtab_set_filename;
-	mnt_mtab_set_format;
-	mnt_mtab_set_fs;
-	mnt_mtab_set_mountflags;
-	mnt_mtab_set_old_target;
 	mnt_new_cache;
 	mnt_new_fs;
 	mnt_new_iter;
@@ -103,7 +94,7 @@ global:
 	mnt_optls_add_option;
 	mnt_optls_create_mountdata;
 	mnt_optls_create_mountflags;
-	mnt_optls_create_mtab_optstr;
+	mnt_optls_create_update_optstr;
 	mnt_optls_create_userspace_optstr;
 	mnt_optls_get_ids;
 	mnt_optls_get_option;
@@ -148,7 +139,16 @@ global:
 	mnt_tab_update_file;
 	mnt_unlock_file;
 	mnt_unmangle;
+	mnt_update_disable_lock;
+	mnt_update_get_lock;
 	mnt_update_mtab;
+	mnt_update_prepare_update;
+	mnt_update_set_action;
+	mnt_update_set_filename;
+	mnt_update_set_format;
+	mnt_update_set_fs;
+	mnt_update_set_mountflags;
+	mnt_update_set_old_target;
 local:
 	*;
 };

@@ -89,11 +89,11 @@ typedef struct _mnt_fs mnt_fs;
 typedef struct _mnt_tab mnt_tab;
 
 /**
- * mnt_mtab
+ * mnt_update
  *
  * /etc/mtab or /var/run/mountinfo update description
  */
-typedef struct _mnt_mtab mnt_mtab;
+typedef struct _mnt_update mnt_update;
 
 /*
  * Tab file format
@@ -261,20 +261,20 @@ extern int mnt_tab_find_next_fs(mnt_tab *tb, mnt_iter *itr,
 			int (*match_func)(mnt_fs *, void *), void *userdata,
 		        mnt_fs **fs);
 
-/* mtab.c */
-extern mnt_mtab *mnt_new_mtab(int action, unsigned long mountflags, const mnt_fs *fs);
-extern void mnt_free_mtab(mnt_mtab *mt);
-extern int mnt_mtab_set_filename(mnt_mtab *mt, const char *filename);
-extern int mnt_mtab_set_action(mnt_mtab *mt, int action);
-extern int mnt_mtab_set_format(mnt_mtab *mt, int format);
-extern int mnt_mtab_set_mountflags(mnt_mtab *mt, unsigned long flags);
-extern mnt_lock *mnt_mtab_get_lock(mnt_mtab *mt);
-extern int mnt_mtab_disable_lock(mnt_mtab *mt, int disable);
-extern int mnt_mtab_set_old_target(mnt_mtab *mt, const char *target);
-extern int mnt_mtab_set_fs(mnt_mtab *mt, const mnt_fs *fs);
+/* tab_update.c */
+extern mnt_update *mnt_new_update(int action, unsigned long mountflags, const mnt_fs *fs);
+extern void mnt_free_update(mnt_update *upd);
+extern int mnt_update_set_filename(mnt_update *upd, const char *filename);
+extern int mnt_update_set_action(mnt_update *upd, int action);
+extern int mnt_update_set_format(mnt_update *upd, int format);
+extern int mnt_update_set_mountflags(mnt_update *upd, unsigned long flags);
+extern mnt_lock *mnt_update_get_lock(mnt_update *upd);
+extern int mnt_update_disable_lock(mnt_update *upd, int disable);
+extern int mnt_update_set_old_target(mnt_update *upd, const char *target);
+extern int mnt_update_set_fs(mnt_update *upd, const mnt_fs *fs);
 
-extern int mnt_mtab_prepare_update(mnt_mtab *mt);
-extern int mnt_update_mtab(mnt_mtab *mt);
+extern int mnt_update_prepare_update(mnt_update *upd);
+extern int mnt_update_mtab(mnt_update *upd);
 
 /*
  * mount(8) userspace options masks (MNT_MAP_USERSPACE map)
