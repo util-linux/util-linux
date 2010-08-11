@@ -101,6 +101,7 @@ struct lscpu_desc {
 	int	mode;		/* rm, lm or/and tm */
 
 	int		ncpus;		/* number of CPUs */
+	cpu_set_t	*online;	/* mask with online CPUs */
 
 	int		nnodes;		/* number of NUMA modes */
 	cpu_set_t	**nodemaps;	/* array with NUMA nodes */
@@ -124,6 +125,10 @@ struct lscpu_desc {
 static size_t sysrootlen;
 static char pathbuf[PATH_MAX];
 static int maxcpus;		/* size in bits of kernel cpu mask */
+
+#define is_cpu_online(_d, _cpu) \
+		((_d) && (_d)->online ? \
+			CPU_ISSET_S((_cpu), CPU_ALLOC_SIZE(maxcpus), (_d)->online) : 0)
 
 static FILE *path_fopen(const char *mode, int exit_on_err, const char *path, ...)
 		__attribute__ ((__format__ (__printf__, 3, 4)));
@@ -235,17 +240,14 @@ xstrdup(const char *str)
 }
 
 static cpu_set_t *
-path_cpuset(const char *path, ...)
+path_cpuparse(int islist, const char *path, va_list ap)
 {
 	FILE *fd;
-	va_list ap;
 	cpu_set_t *set;
 	size_t setsize, len = maxcpus * 7;
 	char buf[len];
 
-	va_start(ap, path);
 	fd = path_vfopen("r", 1, path, ap);
-	va_end(ap);
 
 	if (!fgets(buf, len, fd))
 		err(EXIT_FAILURE, _("failed to read: %s"), pathbuf);
@@ -259,8 +261,38 @@ path_cpuset(const char *path, ...)
 	if (!set)
 		err(EXIT_FAILURE, _("failed to callocate cpu set"));
 
-	if (cpumask_parse(buf, set, setsize))
-		errx(EXIT_FAILURE, _("failed to parse CPU mask %s"), buf);
+	if (islist) {
+		if (cpulist_parse(buf, set, setsize))
+			errx(EXIT_FAILURE, _("failed to parse CPU list %s"), buf);
+	} else {
+		if (cpumask_parse(buf, set, setsize))
+			errx(EXIT_FAILURE, _("failed to parse CPU mask %s"), buf);
+	}
+	return set;
+}
+
+static cpu_set_t *
+path_cpuset(const char *path, ...)
+{
+	va_list ap;
+	cpu_set_t *set;
+
+	va_start(ap, path);
+	set = path_cpuparse(0, path, ap);
+	va_end(ap);
+
+	return set;
+}
+
+static cpu_set_t *
+path_cpulist(const char *path, ...)
+{
+	va_list ap;
+	cpu_set_t *set;
+
+	va_start(ap, path);
+	set = path_cpuparse(1, path, ap);
+	va_end(ap);
 
 	return set;
 }
@@ -365,6 +397,9 @@ read_basicinfo(struct lscpu_desc *desc)
 		/* we are reading some /sys snapshot instead of the real /sys,
 		 * let's use any crazy number... */
 		maxcpus = desc->ncpus > 2048 ? desc->ncpus : 2048;
+
+	/* get mask for online CPUs */
+	desc->online = path_cpulist(_PATH_SYS_SYSTEM "/cpu/online");
 }
 
 static int
@@ -523,7 +558,8 @@ read_topology(struct lscpu_desc *desc, int num)
 					"/cpu%d/topology/thread_siblings", num);
 	core_siblings = path_cpuset(_PATH_SYS_CPU
 					"/cpu%d/topology/core_siblings", num);
-	if (num == 0) {
+
+	if (!desc->coremaps) {
 		int ncores, nsockets, nthreads;
 		size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 
@@ -563,7 +599,7 @@ read_cache(struct lscpu_desc *desc, int num)
 	char buf[256];
 	int i;
 
-	if (num == 0) {
+	if (!desc->ncaches) {
 		while(path_exist(_PATH_SYS_SYSTEM "/cpu/cpu%d/cache/index%d",
 					num, desc->ncaches))
 			desc->ncaches++;
@@ -670,6 +706,9 @@ print_parsable(struct lscpu_desc *desc)
 
 	for (i = 0; i < desc->ncpus; i++) {
 
+		if (!is_cpu_online(desc, i))
+			continue;
+
 		/* #CPU */
 		printf("%d", i);
 
@@ -734,6 +773,7 @@ print_readable(struct lscpu_desc *desc)
 {
 	char buf[512];
 	int i;
+	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
 
 	print_s(_("Architecture:"), desc->arch);
 
@@ -757,6 +797,7 @@ print_readable(struct lscpu_desc *desc)
 	}
 
 	print_n(_("CPU(s):"), desc->ncpus);
+	print_n(_("On-line CPU(s):"), CPU_COUNT_S(setsize, desc->online));
 
 	if (desc->nsockets) {
 		print_n(_("Thread(s) per core:"), desc->nthreads / desc->ncores);
@@ -806,7 +847,7 @@ print_readable(struct lscpu_desc *desc)
 			print_s(buf, cpulist_create(
 						setbuf, setbuflen,
 						desc->nodemaps[i],
-						CPU_ALLOC_SIZE(maxcpus)));
+						setsize));
 		}
 	}
 }
@@ -861,6 +902,8 @@ int main(int argc, char *argv[])
 	read_basicinfo(desc);
 
 	for (i = 0; i < desc->ncpus; i++) {
+		if (!is_cpu_online(desc, i))
+			continue;
 		read_topology(desc, i);
 		read_cache(desc, i);
 	}
