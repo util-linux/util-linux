@@ -258,11 +258,16 @@ loop_scandir(const char *dirname, int **ary, int hasprefix)
 		if (n == -1 || n < NLOOPS_DEFAULT)
 			continue;
 		if (count + 1 > arylen) {
+			int *tmp;
+
 			arylen += 1;
-			*ary = *ary ? realloc(*ary, arylen * sizeof(int)) :
-				      malloc(arylen * sizeof(int));
-			if (!*ary)
+
+			tmp = realloc(*ary, arylen * sizeof(int));
+			if (!tmp) {
+				free(*ary);
 				return -1;
+			}
+			*ary = tmp;
 		}
 		(*ary)[count++] = n;
 	}
