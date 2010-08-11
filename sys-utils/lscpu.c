@@ -769,7 +769,24 @@ print_parsable(struct lscpu_desc *desc)
 #define print_n(_key, _val)	printf("%-23s%d\n", _key, _val)
 
 static void
-print_readable(struct lscpu_desc *desc)
+print_cpuset(const char *key, cpu_set_t *set, int hex)
+{
+	size_t setsize = CPU_ALLOC_SIZE(maxcpus);
+	size_t setbuflen = 7 * maxcpus;
+	char setbuf[setbuflen], *p;
+
+	if (hex) {
+		p = cpumask_create(setbuf, setbuflen, set, setsize);
+		printf("%-23s0x%s\n", key, p);
+	} else {
+		p = cpulist_create(setbuf, setbuflen, set, setsize);
+		print_s(key, p);
+	}
+
+}
+
+static void
+print_readable(struct lscpu_desc *desc, int hex)
 {
 	char buf[512];
 	int i;
@@ -797,7 +814,31 @@ print_readable(struct lscpu_desc *desc)
 	}
 
 	print_n(_("CPU(s):"), desc->ncpus);
-	print_n(_("On-line CPU(s):"), CPU_COUNT_S(setsize, desc->online));
+
+	print_cpuset(hex ? _("On-line CPU(s) mask:") :
+			   _("On-line CPU(s) list:"),
+		     desc->online, hex);
+
+	if (CPU_COUNT_S(setsize, desc->online) != desc->ncpus) {
+		cpu_set_t *set;
+
+		/* Linux kernel provides cpuset of off-line CPUs that contains
+		 * all configured CPUs (see /sys/devices/system/cpu/offline),
+		 * but want to print real (present in system) off-line CPUs only.
+		 */
+		set = cpuset_alloc(maxcpus, NULL, NULL);
+		if (!set)
+			err(EXIT_FAILURE, _("failed to callocate cpu set"));
+		CPU_ZERO_S(setsize, set);
+		for (i = 0; i < desc->ncpus; i++) {
+			if (!is_cpu_online(desc, i))
+				CPU_SET_S(i, setsize, set);
+		}
+		print_cpuset(hex ? _("Off-line CPU(s) mask:") :
+				   _("Off-line CPU(s) list:"),
+			     set, hex);
+		cpuset_free(set);
+	}
 
 	if (desc->nsockets) {
 		print_n(_("Thread(s) per core:"), desc->nthreads / desc->ncores);
@@ -838,17 +879,9 @@ print_readable(struct lscpu_desc *desc)
 		}
 	}
 
-	if (desc->nnodes) {
-		size_t setbuflen = 7 * maxcpus;
-		char setbuf[setbuflen];
-
-		for (i = 0; i < desc->nnodes; i++) {
-			snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), i);
-			print_s(buf, cpulist_create(
-						setbuf, setbuflen,
-						desc->nodemaps[i],
-						setsize));
-		}
+	for (i = 0; i < desc->nnodes; i++) {
+		snprintf(buf, sizeof(buf), _("NUMA node%d CPU(s):"), i);
+		print_cpuset(buf, desc->nodemaps[i], hex);
 	}
 }
 
@@ -860,19 +893,22 @@ void usage(int rc)
 	puts(_(	"CPU architecture information helper\n\n"
 		"  -h, --help     usage information\n"
 		"  -p, --parse    print out in parsable instead of printable format.\n"
-		"  -s, --sysroot  use the directory as a new system root.\n"));
+		"  -s, --sysroot  use the directory as a new system root.\n"
+		"  -x, --hex      print haxadecimal masks rather than lists of CPU(s)\n"));
+
 	exit(rc);
 }
 
 int main(int argc, char *argv[])
 {
 	struct lscpu_desc _desc, *desc = &_desc;
-	int parsable = 0, c, i;
+	int parsable = 0, c, i, hex = 0;
 
 	struct option longopts[] = {
 		{ "help",	no_argument,       0, 'h' },
 		{ "parse",	no_argument,       0, 'p' },
 		{ "sysroot",	required_argument, 0, 's' },
+		{ "hex",	no_argument,	   0, 'x' },
 		{ NULL,		0, 0, 0 }
 	};
 
@@ -880,7 +916,7 @@ int main(int argc, char *argv[])
 	bindtextdomain(PACKAGE, LOCALEDIR);
 	textdomain(PACKAGE);
 
-	while((c = getopt_long(argc, argv, "hps:", longopts, NULL)) != -1) {
+	while((c = getopt_long(argc, argv, "hps:x", longopts, NULL)) != -1) {
 		switch (c) {
 		case 'h':
 			usage(EXIT_SUCCESS);
@@ -891,6 +927,9 @@ int main(int argc, char *argv[])
 			sysrootlen = strlen(optarg);
 			strncpy(pathbuf, optarg, sizeof(pathbuf));
 			pathbuf[sizeof(pathbuf) - 1] = '\0';
+			break;
+		case 'x':
+			hex = 1;
 			break;
 		default:
 			usage(EXIT_FAILURE);
@@ -918,7 +957,7 @@ int main(int argc, char *argv[])
 	if (parsable)
 		print_parsable(desc);
 	else
-		print_readable(desc);
+		print_readable(desc, hex);
 
 	return EXIT_SUCCESS;
 }
