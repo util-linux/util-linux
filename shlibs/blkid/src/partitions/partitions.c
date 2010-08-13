@@ -833,7 +833,7 @@ int blkid_probe_is_covered_by_pt(blkid_probe pr,
 	for (i = 0; i < nparts; i++) {
 		blkid_partition par = &ls->parts[i];
 
-		if (par->start + par->size > pr->size) {
+		if (par->start + par->size > (pr->size >> 9)) {
 			DBG(DEBUG_LOWPROBE, printf("partition #%d overflows "
 					"device (off=%lu size=%lu)\n",
 					par->partno, par->start, par->size));
