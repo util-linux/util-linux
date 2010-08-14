@@ -88,6 +88,7 @@ roll_file(const char *filename, off_t *size)
 	char buf[BUFSIZ];
 	int fd;
 	struct stat st;
+	off_t pos;
 
 	if (!(fd = open(filename, O_RDONLY)))
 		err(EXIT_FAILURE, _("cannot open \"%s\" for read"), filename);
@@ -111,8 +112,16 @@ roll_file(const char *filename, off_t *size)
 		}
 		fflush(stdout);
 	}
+
+	pos = lseek(fd, 0, SEEK_CUR);
+
+	/* If we've successfully read something, use the file position, this
+	 * avoids data duplication. If we read nothing or hit an error, reset
+	 * to the reported size, this handles truncated files.
+	 */
+	*size = (pos != -1 && pos != *size) ? pos : st.st_size;
+
 	close(fd);
-	*size = st.st_size;
 }
 
 static void
