@@ -30,6 +30,7 @@
 #include <sys/utsname.h>
 #include <unistd.h>
 #include <stdarg.h>
+#include <bitops.h>
 
 #include "cpuset.h"
 #include "nls.h"
@@ -97,6 +98,7 @@ struct lscpu_desc {
 	int	virtype;	/* VIRT_PARA|FULL|NONE ? */
 	char	*mhz;
 	char	*stepping;
+	char    *bogomips;
 	char	*flags;
 	int	mode;		/* rm, lm or/and tm */
 
@@ -366,6 +368,7 @@ read_basicinfo(struct lscpu_desc *desc)
 		else if (lookup(buf, "stepping", &desc->stepping)) ;
 		else if (lookup(buf, "cpu MHz", &desc->mhz)) ;
 		else if (lookup(buf, "flags", &desc->flags)) ;
+		else if (lookup(buf, "bogomips", &desc->bogomips)) ;
 		else
 			continue;
 	}
@@ -812,7 +815,13 @@ print_readable(struct lscpu_desc *desc, int hex)
 		*(p - 2) = '\0';
 		print_s(_("CPU op-mode(s):"), buf);
 	}
-
+#ifdef __BYTE_ORDER
+#if (__BYTE_ORDER == __LITTLE_ENDIAN)
+	print_s(_("Byte Order:"), "Little Endian");
+#else
+	print_s(_("Byte Order:"), "Big Endian");
+#endif
+#endif
 	print_n(_("CPU(s):"), desc->ncpus);
 
 	print_cpuset(hex ? _("On-line CPU(s) mask:") :
@@ -858,6 +867,8 @@ print_readable(struct lscpu_desc *desc, int hex)
 		print_s(_("Stepping:"), desc->stepping);
 	if (desc->mhz)
 		print_s(_("CPU MHz:"), desc->mhz);
+	if (desc->bogomips)
+		print_s(_("BogoMIPS:"), desc->bogomips);
 	if (desc->virtflag) {
 		if (!strcmp(desc->virtflag, "svm"))
 			print_s(_("Virtualization:"), "AMD-V");
