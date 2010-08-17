@@ -38,6 +38,16 @@
    restricts who can su to UID 0 accounts.  RMS considers that to
    be fascist.
 
+#ifdef USE_PAM
+
+   Actually, with PAM, su has nothing to do with whether or not a
+   wheel group is enforced by su.  RMS tries to restrict your access
+   to a su which implements the wheel group, but PAM considers that
+   to be fascist, and gives the user/sysadmin the opportunity to
+   enforce a wheel group by proper editing of /etc/pam.d/su
+
+#endif
+
    Compile-time options:
    -DSYSLOG_SUCCESS	Log successful su's (by default, to root) with syslog.
    -DSYSLOG_FAILURE	Log failed su's (by default, to root) with syslog.
@@ -53,6 +63,13 @@
 #include <sys/types.h>
 #include <pwd.h>
 #include <grp.h>
+#ifdef USE_PAM
+# include <security/pam_appl.h>
+# include <security/pam_misc.h>
+# include <signal.h>
+# include <sys/wait.h>
+# include <sys/fsuid.h>
+#endif
 
 /* Hide any system prototype for getusershell.
    This is necessary because some Cray systems have a conflicting
@@ -119,7 +136,9 @@
 /* The user to become if none is specified.  */
 #define DEFAULT_USER "root"
 
+#ifndef USE_PAM
 char *crypt ();
+#endif
 char *getusershell ();
 void endusershell ();
 void setusershell ();
@@ -140,6 +159,11 @@ static bool simulate_login;
 
 /* If true, change some environment vars to indicate the user su'd to.  */
 static bool change_environment;
+
+#ifdef USE_PAM
+static bool _pam_session_opened;
+static bool _pam_cred_established;
+#endif
 
 static struct option const longopts[] =
 {
@@ -216,7 +240,164 @@ log_su (struct passwd const *pw, bool successful)
 }
 #endif
 
+#ifdef USE_PAM
+# define PAM_SERVICE_NAME PROGRAM_NAME
+# define PAM_SERVICE_NAME_L PROGRAM_NAME "-l"
+static sig_atomic_t volatile caught_signal = false;
+static pam_handle_t *pamh = NULL;
+static int retval;
+static struct pam_conv conv =
+{
+  misc_conv,
+  NULL
+};
+
+# define PAM_BAIL_P(a) \
+  if (retval) \
+    { \
+      pam_end (pamh, retval); \
+      a; \
+    }
+
+static void
+cleanup_pam (int retcode)
+{
+  if (_pam_session_opened)
+    pam_close_session (pamh, 0);
+
+  if (_pam_cred_established)
+    pam_setcred (pamh, PAM_DELETE_CRED | PAM_SILENT);
+
+  pam_end(pamh, retcode);
+}
+
+/* Signal handler for parent process.  */
+static void
+su_catch_sig (int sig)
+{
+  caught_signal = true;
+}
+
+/* Export env variables declared by PAM modules.  */
+static void
+export_pamenv (void)
+{
+  char **env;
+
+  /* This is a copy but don't care to free as we exec later anyways.  */
+  env = pam_getenvlist (pamh);
+  while (env && *env)
+    {
+      if (putenv (*env) != 0)
+	xalloc_die ();
+      env++;
+    }
+}
+
+static void
+create_watching_parent (void)
+{
+  pid_t child;
+  sigset_t ourset;
+  int status = 0;
+
+  retval = pam_open_session (pamh, 0);
+  if (retval != PAM_SUCCESS)
+    {
+      cleanup_pam (retval);
+      error (EXIT_FAILURE, 0, _("cannot not open session: %s"),
+	     pam_strerror (pamh, retval));
+    }
+  else
+    _pam_session_opened = 1;
+
+  child = fork ();
+  if (child == (pid_t) -1)
+    {
+      cleanup_pam (PAM_ABORT);
+      error (EXIT_FAILURE, errno, _("cannot create child process"));
+    }
+
+  /* the child proceeds to run the shell */
+  if (child == 0)
+    return;
+
+  /* In the parent watch the child.  */
+
+  /* su without pam support does not have a helper that keeps
+     sitting on any directory so let's go to /.  */
+  if (chdir ("/") != 0)
+    error (0, errno, _("warning: cannot change directory to %s"), "/");
+
+  sigfillset (&ourset);
+  if (sigprocmask (SIG_BLOCK, &ourset, NULL))
+    {
+      error (0, errno, _("cannot block signals"));
+      caught_signal = true;
+    }
+  if (!caught_signal)
+    {
+      struct sigaction action;
+      action.sa_handler = su_catch_sig;
+      sigemptyset (&action.sa_mask);
+      action.sa_flags = 0;
+      sigemptyset (&ourset);
+      if (sigaddset (&ourset, SIGTERM)
+	  || sigaddset (&ourset, SIGALRM)
+	  || sigaction (SIGTERM, &action, NULL)
+	  || sigprocmask (SIG_UNBLOCK, &ourset, NULL))
+	{
+	  error (0, errno, _("cannot set signal handler"));
+	  caught_signal = true;
+	}
+    }
+  if (!caught_signal)
+    {
+      pid_t pid;
+      for (;;)
+	{
+	  pid = waitpid (child, &status, WUNTRACED);
+
+	  if (pid != (pid_t)-1 && WIFSTOPPED (status))
+	    {
+	      kill (getpid (), SIGSTOP);
+	      /* once we get here, we must have resumed */
+	      kill (pid, SIGCONT);
+	    }
+	  else
+	    break;
+	}
+      if (pid != (pid_t)-1)
+	if (WIFSIGNALED (status))
+	  status = WTERMSIG (status) + 128;
+	else
+	  status = WEXITSTATUS (status);
+      else
+	status = 1;
+    }
+  else
+    status = 1;
+
+  if (caught_signal)
+    {
+      fprintf (stderr, _("\nSession terminated, killing shell..."));
+      kill (child, SIGTERM);
+    }
+
+  cleanup_pam (PAM_SUCCESS);
+
+  if (caught_signal)
+    {
+      sleep (2);
+      kill (child, SIGKILL);
+      fprintf (stderr, _(" ...killed.\n"));
+    }
+  exit (status);
+}
+#endif
+
 /* Ask the user for a password.
+   If PAM is in use, let PAM ask for the password if necessary.
    Return true if the user gives the correct password for entry PW,
    false if not.  Return true without asking for a password if run by UID 0
    or if PW has an empty password.  */
@@ -224,16 +405,58 @@ log_su (struct passwd const *pw, bool successful)
 static bool
 correct_password (const struct passwd *pw)
 {
+#ifdef USE_PAM
+  const struct passwd *lpw;
+  const char *cp;
+
+  retval = pam_start (simulate_login ? PAM_SERVICE_NAME_L : PAM_SERVICE_NAME,
+		      pw->pw_name, &conv, &pamh);
+  PAM_BAIL_P (return false);
+
+  if (isatty (0) && (cp = ttyname (0)) != NULL)
+    {
+      const char *tty;
+
+      if (strncmp (cp, "/dev/", 5) == 0)
+	tty = cp + 5;
+      else
+	tty = cp;
+      retval = pam_set_item (pamh, PAM_TTY, tty);
+      PAM_BAIL_P (return false);
+    }
+# if 0 /* Manpage discourages use of getlogin.  */
+  cp = getlogin ();
+  if (!(cp && *cp && (lpw = getpwnam (cp)) != NULL && lpw->pw_uid == getuid ()))
+# endif
+  lpw = getpwuid (getuid ());
+  if (lpw && lpw->pw_name)
+    {
+      retval = pam_set_item (pamh, PAM_RUSER, (const void *) lpw->pw_name);
+      PAM_BAIL_P (return false);
+    }
+  retval = pam_authenticate (pamh, 0);
+  PAM_BAIL_P (return false);
+  retval = pam_acct_mgmt (pamh, 0);
+  if (retval == PAM_NEW_AUTHTOK_REQD)
+    {
+      /* Password has expired.  Offer option to change it.  */
+      retval = pam_chauthtok (pamh, PAM_CHANGE_EXPIRED_AUTHTOK);
+      PAM_BAIL_P (return false);
+    }
+  PAM_BAIL_P (return false);
+  /* Must be authenticated if this point was reached.  */
+  return true;
+#else /* !USE_PAM */
   char *unencrypted, *encrypted, *correct;
-#if HAVE_GETSPNAM && HAVE_STRUCT_SPWD_SP_PWDP
+# if HAVE_GETSPNAM && HAVE_STRUCT_SPWD_SP_PWDP
   /* Shadow passwd stuff for SVR3 and maybe other systems.  */
-  struct spwd *sp = getspnam (pw->pw_name);
+  const struct spwd *sp = getspnam (pw->pw_name);
 
   endspent ();
   if (sp)
     correct = sp->sp_pwdp;
   else
-#endif
+# endif
     correct = pw->pw_passwd;
 
   if (getuid () == 0 || !correct || correct[0] == '\0')
@@ -248,6 +471,7 @@ correct_password (const struct passwd *pw)
   encrypted = crypt (unencrypted, correct);
   memset (unencrypted, 0, strlen (unencrypted));
   return STREQ (encrypted, correct);
+#endif /* !USE_PAM */
 }
 
 /* Update `environ' for the new shell based on PW, with SHELL being
@@ -290,19 +514,41 @@ modify_environment (const struct passwd *pw, const char *shell)
 	    }
 	}
     }
+
+#ifdef USE_PAM
+  export_pamenv ();
+#endif
 }
 
 /* Become the user and group(s) specified by PW.  */
 
 static void
-change_identity (const struct passwd *pw)
+init_groups (const struct passwd *pw)
 {
 #ifdef HAVE_INITGROUPS
   errno = 0;
   if (initgroups (pw->pw_name, pw->pw_gid) == -1)
-    error (EXIT_FAIL, errno, _("cannot set groups"));
+    {
+# ifdef USE_PAM
+      cleanup_pam (PAM_ABORT);
+# endif
+      error (EXIT_FAIL, errno, _("cannot set groups"));
+    }
   endgrent ();
 #endif
+
+#ifdef USE_PAM
+  retval = pam_setcred (pamh, PAM_ESTABLISH_CRED);
+  if (retval != PAM_SUCCESS)
+    error (EXIT_FAILURE, 0, "%s", pam_strerror (pamh, retval));
+  else
+    _pam_cred_established = 1;
+#endif
+}
+
+static void
+change_identity (const struct passwd *pw)
+{
   if (setgid (pw->pw_gid))
     error (EXIT_FAIL, errno, _("cannot set group id"));
   if (setuid (pw->pw_uid))
@@ -516,9 +762,21 @@ main (int argc, char **argv)
       shell = NULL;
     }
   shell = xstrdup (shell ? shell : pw->pw_shell);
-  modify_environment (pw, shell);
+
+  init_groups (pw);
+
+#ifdef USE_PAM
+  create_watching_parent ();
+  /* Now we're in the child.  */
+#endif
 
   change_identity (pw);
+
+  /* Set environment after pam_open_session, which may put KRB5CCNAME
+     into the pam_env, etc.  */
+
+  modify_environment (pw, shell);
+
   if (simulate_login && chdir (pw->pw_dir) != 0)
     error (0, errno, _("warning: cannot change directory to %s"), pw->pw_dir);
 
