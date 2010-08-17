@@ -83,6 +83,9 @@
 
 #if HAVE_SYSLOG_H && HAVE_SYSLOG
 # include <syslog.h>
+# define SYSLOG_SUCCESS  1
+# define SYSLOG_FAILURE  1
+# define SYSLOG_NON_ROOT 1
 #else
 # undef SYSLOG_SUCCESS
 # undef SYSLOG_FAILURE
