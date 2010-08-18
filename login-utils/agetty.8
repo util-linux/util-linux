@@ -3,7 +3,7 @@
 agetty \- alternative Linux getty
 
 .SH SYNOPSIS
-.BR "agetty " [\-8ihLmnUw]
+.BR "agetty " [\-8ihLmnsUw]
 .RI "[-f " issue_file ]
 .RI "[-l " login_program ]
 .RI "[-I " init ]
@@ -11,16 +11,6 @@ agetty \- alternative Linux getty
 .RI "[-H " login_host ]
 .I port
 .I baud_rate,...
-.RI [ term ]
-.br
-.BR "agetty " [\-8ihLmnw]
-.RI "[-f " issue_file ]
-.RI "[-l " login_program ]
-.RI "[-I " init ]
-.RI "[-t " timeout ]
-.RI "[-H " login_host ]
-.I baud_rate,...
-.I port
 .RI [ term ]
 
 .SH DESCRIPTION
@@ -162,6 +152,10 @@ lines.
 Force the line to be a local line with no need for carrier detect. This can
 be useful when you have a locally attached terminal where the serial line
 does not set the carrier detect signal.
+.TP
+\-s
+Try to keep the existing baud rate. The baud rates from
+the command line are used when agetty receives a BREAK character.
 .TP
 \-U
 Turn on support for detecting an uppercase only terminal.  This setting will
