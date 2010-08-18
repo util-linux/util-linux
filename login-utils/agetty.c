@@ -134,6 +134,7 @@ struct options {
 #define F_NOPROMPT	(1<<7)		/* don't ask for login name! */
 #define F_LCUC		(1<<8)		/* Support for *LCUC stty modes */
 #define F_KEEPSPEED	(1<<9)		/* Follow baud rate from kernel */
+#define F_KEEPCFLAGS	(1<<10)		/* Reuse c_cflags setup from kernel */
 
 /* Storage for things detected while the login name was read. */
 
@@ -374,8 +375,11 @@ parse_args(argc, argv, op)
     extern int optind;			/* getopt */
     int     c;
 
-    while (isascii(c = getopt(argc, argv, "8I:LH:f:hil:mst:wUn"))) {
+    while (isascii(c = getopt(argc, argv, "8cI:LH:f:hil:mst:wUn"))) {
 	switch (c) {
+	case 'c':
+	    op->flags |= F_KEEPCFLAGS;
+	    break;
 	case '8':
 	    op->eightbits = 1;
 	    break;
@@ -709,7 +713,8 @@ termio_init(tp, op)
     /* flush input and output queues, important for modems! */
     (void) tcflush(0, TCIOFLUSH);
 
-    tp->c_cflag = CS8 | HUPCL | CREAD | (tp->c_cflag & CLOCAL);
+    if (!(op->flags & F_KEEPCFLAGS))
+	tp->c_cflag = CS8 | HUPCL | CREAD | (tp->c_cflag & CLOCAL);
 
     if (!(op->flags & F_KEEPSPEED)) {
 	    cfsetispeed(tp, op->speeds[FIRST_SPEED]);

@@ -3,7 +3,7 @@
 agetty \- alternative Linux getty
 
 .SH SYNOPSIS
-.BR "agetty " [\-8ihLmnsUw]
+.BR "agetty " [\-c8ihLmnsUw]
 .RI "[-f " issue_file ]
 .RI "[-l " login_program ]
 .RI "[-I " init ]
@@ -81,6 +81,10 @@ whatever init(8) may have set, and is inherited by login and the shell.
 .nf
 .fi
 .ad
+.TP
+\-c
+Don't reset terminal cflags (control modes). See \fItermios(3)\fP for more
+details.
 .TP
 \-8
 Assume that the tty is 8-bit clean, hence disable parity detection.
