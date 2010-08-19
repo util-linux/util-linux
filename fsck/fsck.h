@@ -44,6 +44,8 @@ struct fs_info {
 	int   freq;
 	int   passno;
 	int   flags;
+	dev_t disk;
+	int   stacked;
 	struct fs_info *next;
 };
 
@@ -60,8 +62,7 @@ struct fsck_instance {
 	time_t	start_time;
 	char *	prog;
 	char *	type;
-	char *	device;
-	char *	base_device;
+	struct fs_info *fs;
 	struct fsck_instance *next;
 };
 

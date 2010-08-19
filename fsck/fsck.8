@@ -200,6 +200,11 @@ If there are multiple filesystems with the same pass number,
 fsck will attempt to check them in parallel, although it will avoid running
 multiple filesystem checks on the same physical disk.
 .sp
+.B fsck
+does not check stacked devices (RAIDs, dm-crypt, ...) in parallel with any other
+device. See below for FSCK_FORCE_ALL_PARALLEL setting. The /sys filesystem is
+used to detemine dependencies between devices.
+.sp
 Hence, a very common configuration in
 .I /etc/fstab
 files is to set the root filesystem to have a
@@ -366,10 +371,10 @@ program's behavior is affected by the following environment variables:
 .B FSCK_FORCE_ALL_PARALLEL
 If this environment variable is set,
 .B fsck
-will attempt to run all of the specified filesystems in parallel,
-regardless of whether the filesystems appear to be on the same
-device.  (This is useful for RAID systems or high-end storage systems
-such as those sold by companies such as IBM or EMC.)
+will attempt to run all of the specified filesystems in parallel, regardless of
+whether the filesystems appear to be on the same device.  (This is useful for
+RAID systems or high-end storage systems such as those sold by companies such
+as IBM or EMC.) Note that the fs_passno value is still used.
 .TP
 .B FSCK_MAX_INST
 This environment variable will limit the maximum number of file system

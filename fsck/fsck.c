@@ -42,6 +42,8 @@
 #include <errno.h>
 #include <malloc.h>
 #include <signal.h>
+#include <dirent.h>
+#include <blkid.h>
 
 #include "fsprobe.h"
 
@@ -217,8 +219,6 @@ static void parse_escape(char *word)
 static void free_instance(struct fsck_instance *i)
 {
 	free(i->prog);
-	free(i->device);
-	free(i->base_device);
 	free(i);
 	return;
 }
@@ -240,6 +240,8 @@ static struct fs_info *create_fs_device(const char *device, const char *mntpnt,
 	fs->passno = passno;
 	fs->flags = 0;
 	fs->next = NULL;
+	fs->disk = 0;
+	fs->stacked = 0;
 
 	if (!filesys_info)
 		filesys_info = fs;
@@ -414,8 +416,7 @@ static int progress_active(NOARGS)
  * Execute a particular fsck program, and link it into the list of
  * child processes we are waiting for.
  */
-static int execute(const char *type, const char *device, const char *mntpt,
-		   int interactive)
+static int execute(const char *type, struct fs_info *fs, int interactive)
 {
 	char *s, *argv[80], prog[80];
 	int  argc, i;
@@ -452,7 +453,7 @@ static int execute(const char *type, const char *device, const char *mntpt,
 		}
 	}
 
-	argv[argc++] = string_copy(device);
+	argv[argc++] = string_copy(fs->device);
 	argv[argc] = 0;
 
 	s = find_fsck(prog);
@@ -464,7 +465,7 @@ static int execute(const char *type, const char *device, const char *mntpt,
 
 	if (verbose || noexecute) {
 		printf("[%s (%d) -- %s] ", s, num_running,
-		       mntpt ? mntpt : device);
+		       fs->mountpt ? fs->mountpt : fs->device);
 		for (i=0; i < argc; i++)
 			printf("%s ", argv[i]);
 		printf("\n");
@@ -492,9 +493,8 @@ static int execute(const char *type, const char *device, const char *mntpt,
 	inst->pid = pid;
 	inst->prog = string_copy(prog);
 	inst->type = string_copy(type);
-	inst->device = string_copy(device);
-	inst->base_device = base_device(device);
 	inst->start_time = time(0);
+	inst->fs = fs;
 	inst->next = NULL;
 
 	/*
@@ -597,12 +597,12 @@ static struct fsck_instance *wait_one(int flags)
 		} else {
 			printf(_("Warning... %s for device %s exited "
 			       "with signal %d.\n"),
-			       inst->prog, inst->device, sig);
+			       inst->prog, inst->fs->device, sig);
 			status = EXIT_ERROR;
 		}
 	} else {
 		printf(_("%s %s: status is %x, should never happen.\n"),
-		       inst->prog, inst->device, status);
+		       inst->prog, inst->fs->device, status);
 		status = EXIT_ERROR;
 	}
 	inst->exit_status = status;
@@ -641,7 +641,7 @@ ret_inst:
 		instance_list = inst->next;
 	if (verbose > 1)
 		printf(_("Finished with %s (exit status %d)\n"),
-		       inst->device, inst->exit_status);
+		       inst->fs->device, inst->exit_status);
 	num_running--;
 	return inst;
 }
@@ -698,7 +698,7 @@ static void fsck_device(struct fs_info *fs, int interactive)
 		type = DEFAULT_FSTYPE;
 
 	num_running++;
-	retval = execute(type, fs->device, fs->mountpt, interactive);
+	retval = execute(type, fs, interactive);
 	if (retval) {
 		fprintf(stderr, _("%s: Error %d while executing fsck.%s "
 			"for %s\n"), progname, retval, type, fs->device);
@@ -924,40 +924,75 @@ static int ignore(struct fs_info *fs)
 	return 0;
 }
 
+static int count_slaves(dev_t disk)
+{
+	DIR *dir;
+	struct dirent *dp;
+	char dirname[PATH_MAX];
+	int count = 0;
+
+	snprintf(dirname, sizeof(dirname),
+			"/sys/dev/block/%u:%u/slaves/",
+			major(disk), minor(disk));
+
+	if (!(dir = opendir(dirname)))
+		return -1;
+
+	while ((dp = readdir(dir)) != 0) {
+#ifdef _DIRENT_HAVE_D_TYPE
+		if (dp->d_type != DT_UNKNOWN && dp->d_type != DT_LNK)
+			continue;
+#endif
+		if (dp->d_name[0] == '.' &&
+		    ((dp->d_name[1] == 0) ||
+		     ((dp->d_name[1] == '.') && (dp->d_name[2] == 0))))
+			continue;
+
+		count++;
+	}
+	closedir(dir);
+	return count;
+}
+
 /*
  * Returns TRUE if a partition on the same disk is already being
  * checked.
  */
-static int device_already_active(char *device)
+static int disk_already_active(struct fs_info *fs)
 {
 	struct fsck_instance *inst;
-	char *base;
 
 	if (force_all_parallel)
 		return 0;
 
-#ifdef BASE_MD
-	/* Don't check a soft raid disk with any other disk */
-	if (instance_list &&
-	    (!strncmp(instance_list->device, BASE_MD, sizeof(BASE_MD)-1) ||
-	     !strncmp(device, BASE_MD, sizeof(BASE_MD)-1)))
+	if (instance_list && instance_list->fs->stacked)
+		/* any instance for a stacked device is already running */
 		return 1;
-#endif
 
-	base = base_device(device);
+	if (!fs->disk) {
+		struct stat st;
+		dev_t disk;
+
+		if (!stat(fs->device, &st) &&
+		    !blkid_devno_to_wholedisk(st.st_rdev, NULL, 0, &disk)) {
+			fs->disk = disk;
+			fs->stacked = count_slaves(disk);
+		}
+	}
+
 	/*
 	 * If we don't know the base device, assume that the device is
 	 * already active if there are any fsck instances running.
+	 *
+	 * Don't check a stacked device with any other disk too.
 	 */
-	if (!base)
+	if (!fs->disk || fs->stacked)
 		return (instance_list != 0);
+
 	for (inst = instance_list; inst; inst = inst->next) {
-		if (!inst->base_device || !strcmp(base, inst->base_device)) {
-			free(base);
+		if (!inst->fs->disk || fs->disk == inst->fs->disk)
 			return 1;
-		}
 	}
-	free(base);
 	return 0;
 }
 
@@ -1038,7 +1073,7 @@ static int check_all(NOARGS)
 			 * already been spawned, then we need to defer
 			 * this to another pass.
 			 */
-			if (device_already_active(fs->device)) {
+			if (disk_already_active(fs)) {
 				pass_done = 0;
 				continue;
 			}
