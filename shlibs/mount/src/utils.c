@@ -265,33 +265,6 @@ int mnt_match_options(const char *optstr, const char *pattern)
 }
 
 /*
- * Reallocates its first arg @s - typical use: s = mnt_strconcat3(s,t,u);
- * Returns reallocated @s ion succes or NULL in case of error.
- */
-char *mnt_strconcat3(char *s, const char *t, const char *u)
-{
-     size_t len = 0;
-
-     len = (s ? strlen(s) : 0) + (t ? strlen(t) : 0) + (u ? strlen(u) : 0);
-
-     if (!len)
-	     return NULL;
-     if (!s) {
-	     s = malloc(len + 1);
-	     *s = '\0';
-     } else
-	     s = realloc(s, len + 1);
-
-     if (!s)
-	     return NULL;
-     if (t)
-	     strcat(s, t);
-     if (u)
-	     strcat(s, u);
-     return s;
-}
-
-/*
  * Returns allocated string with username or NULL.
  */
 char *mnt_get_username(const uid_t uid)

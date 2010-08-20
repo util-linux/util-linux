@@ -70,8 +70,6 @@ extern char *strndup(const char *s, size_t n);
 extern char *strnchr(const char *s, size_t maxlen, int c);
 #endif
 extern char *mnt_get_username(const uid_t uid);
-extern char *mnt_strconcat3(char *s, const char *t, const char *u);
-
 
 /*
  * Generic iterator
