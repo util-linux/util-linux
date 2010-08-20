@@ -402,7 +402,8 @@ read_basicinfo(struct lscpu_desc *desc)
 		maxcpus = desc->ncpus > 2048 ? desc->ncpus : 2048;
 
 	/* get mask for online CPUs */
-	desc->online = path_cpulist(_PATH_SYS_SYSTEM "/cpu/online");
+	if (path_exist(_PATH_SYS_SYSTEM "/cpu/online"))
+		desc->online = path_cpulist(_PATH_SYS_SYSTEM "/cpu/online");
 }
 
 static int
@@ -709,7 +710,7 @@ print_parsable(struct lscpu_desc *desc)
 
 	for (i = 0; i < desc->ncpus; i++) {
 
-		if (!is_cpu_online(desc, i))
+		if (desc->online && !is_cpu_online(desc, i))
 			continue;
 
 		/* #CPU */
@@ -824,11 +825,12 @@ print_readable(struct lscpu_desc *desc, int hex)
 #endif
 	print_n(_("CPU(s):"), desc->ncpus);
 
-	print_cpuset(hex ? _("On-line CPU(s) mask:") :
-			   _("On-line CPU(s) list:"),
-		     desc->online, hex);
+	if (desc->online)
+		print_cpuset(hex ? _("On-line CPU(s) mask:") :
+				   _("On-line CPU(s) list:"),
+				desc->online, hex);
 
-	if (CPU_COUNT_S(setsize, desc->online) != desc->ncpus) {
+	if (desc->online && CPU_COUNT_S(setsize, desc->online) != desc->ncpus) {
 		cpu_set_t *set;
 
 		/* Linux kernel provides cpuset of off-line CPUs that contains
@@ -952,7 +954,7 @@ int main(int argc, char *argv[])
 	read_basicinfo(desc);
 
 	for (i = 0; i < desc->ncpus; i++) {
-		if (!is_cpu_online(desc, i))
+		if (desc->online && !is_cpu_online(desc, i))
 			continue;
 		read_topology(desc, i);
 		read_cache(desc, i);
