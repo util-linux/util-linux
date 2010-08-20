@@ -17,7 +17,7 @@ AUTOTOOLS:
 PATCHES:
 
      * send your patches to the mailing list or to the upstream maintainer
-       (see the AUTHORS file)
+       (see the AUTHORS and README files)
 
      * diff -u
 
