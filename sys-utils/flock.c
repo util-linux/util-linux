@@ -298,8 +298,8 @@ int main(int argc, char *argv[])
     } else if ( f == 0 ) {
       if ( do_close )
 	close(fd);
-      err = errno;
       execvp(cmd_argv[0], cmd_argv);
+      err = errno;
       /* execvp() failed */
       fprintf(stderr, "%s: %s: %s\n", program, cmd_argv[0], strerror(err));
       _exit((err == ENOMEM) ? EX_OSERR: EX_UNAVAILABLE);
