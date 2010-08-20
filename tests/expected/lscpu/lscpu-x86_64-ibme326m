@@ -9,6 +9,7 @@ CPU family:            15
 Model:                 33
 Stepping:              2
 CPU MHz:               1995.058
+BogoMIPS:              3989.41
 L1d cache:             1024K
 L1i cache:             1024K
 L2 cache:              1024K

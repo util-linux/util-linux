@@ -9,6 +9,7 @@ CPU family:            15
 Model:                 4
 Stepping:              3
 CPU MHz:               3790.599
+BogoMIPS:              7579.94
 L1d cache:             16K
 L2 cache:              2048K
 NUMA node0 CPU(s):     0,1

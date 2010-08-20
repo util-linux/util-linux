@@ -9,6 +9,7 @@ CPU family:            16
 Model:                 2
 Stepping:              3
 CPU MHz:               2210.188
+BogoMIPS:              4420.50
 Virtualization:        AMD-V
 L1d cache:             512K
 L1i cache:             512K

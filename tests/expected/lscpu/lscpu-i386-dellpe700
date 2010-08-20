@@ -8,6 +8,7 @@ CPU family:            15
 Model:                 2
 Stepping:              9
 CPU MHz:               3391.773
+BogoMIPS:              6781.99
 
 # The following is the parsable format, which can be fed to other
 # programs. Each different item in every column has an unique ID

@@ -8,6 +8,7 @@ CPU family:            6
 Model:                 15
 Stepping:              7
 CPU MHz:               1596.044
+BogoMIPS:              3191.91
 Virtualization:        VT-x
 L1d cache:             32K
 L1i cache:             32K
