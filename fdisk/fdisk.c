@@ -219,12 +219,11 @@ unsigned long long sector_offset = 1, extended_offset = 0, sectors;
 unsigned int	heads,
 	cylinders,
 	sector_size = DEFAULT_SECTOR_SIZE,
-	sector_factor = 1,
 	user_set_sector_size = 0,
 	units_per_sector = 1,
 	display_in_cyl_units = 0;
 
-unsigned long long total_number_of_sectors;	/* (!) 512-byte sectors */
+unsigned long long total_number_of_sectors;	/* in logical sectors */
 unsigned long grain = DEFAULT_SECTOR_SIZE,
 	      io_size = DEFAULT_SECTOR_SIZE,
 	      min_io_size = DEFAULT_SECTOR_SIZE,
@@ -772,7 +771,8 @@ void update_units(void)
 static void
 warn_limits(void) {
 	if (total_number_of_sectors > UINT_MAX && !nowarn) {
-		int giga = (total_number_of_sectors << 9) / 1000000000;
+		unsigned long long bytes = total_number_of_sectors * sector_size;
+		int giga = bytes / 1000000000;
 		int hectogiga = (giga + 50) / 100;
 
 		fprintf(stderr, _("\n"
@@ -781,7 +781,7 @@ warn_limits(void) {
 "larger than (%llu bytes) for %d-byte sectors. Use parted(1) and GUID \n"
 "partition table format (GPT).\n\n"),
 			hectogiga / 10, hectogiga % 10,
-			total_number_of_sectors << 9,
+			bytes,
 			(unsigned long long ) UINT_MAX * sector_size,
 			sector_size);
 	}
@@ -1122,10 +1122,9 @@ update_sector_offset(void)
 
 void
 get_geometry(int fd, struct geom *g) {
-	unsigned long long llcyls;
+	unsigned long long llcyls, nsects = 0;
 
 	get_topology(fd);
-	sector_factor = sector_size / 512;
 	guess_device_type(fd);
 	heads = cylinders = sectors = 0;
 	kern_heads = kern_sectors = 0;
@@ -1141,12 +1140,13 @@ get_geometry(int fd, struct geom *g) {
 		pt_sectors ? pt_sectors :
 		kern_sectors ? kern_sectors : 63;
 
-	if (blkdev_get_sectors(fd, &total_number_of_sectors) == -1)
-		total_number_of_sectors = 0;
+	/* get number of 512-byte sectors, and convert it the real sectors */
+	if (blkdev_get_sectors(fd, &nsects) == 0)
+		total_number_of_sectors = (nsects / (sector_size >> 9));
 
 	update_sector_offset();
 
-	llcyls = total_number_of_sectors / (heads * sectors * sector_factor);
+	llcyls = total_number_of_sectors / (heads * sectors);
 	cylinders = llcyls;
 	if (cylinders != llcyls)	/* truncated? */
 		cylinders = ~0;
@@ -1889,7 +1889,7 @@ check_alignment(unsigned long long lba, int partition)
 
 static void
 list_disk_geometry(void) {
-	long long bytes = (total_number_of_sectors << 9);
+	unsigned long long bytes = total_number_of_sectors * sector_size;
 	long megabytes = bytes/1000000;
 
 	if (megabytes < 10000)
@@ -1897,14 +1897,13 @@ list_disk_geometry(void) {
 		       disk_device, megabytes, bytes);
 	else {
 		long hectomega = (megabytes + 50) / 100;
-		printf(_("\nDisk %s: %ld.%ld GB, %lld bytes\n"),
+		printf(_("\nDisk %s: %ld.%ld GB, %llu bytes\n"),
 		       disk_device, hectomega / 10, hectomega % 10, bytes);
 	}
 	printf(_("%d heads, %llu sectors/track, %d cylinders"),
 	       heads, sectors, cylinders);
 	if (units_per_sector == 1)
-		printf(_(", total %llu sectors"),
-		       total_number_of_sectors / sector_factor);
+		printf(_(", total %llu sectors"), total_number_of_sectors);
 	printf("\n");
 	printf(_("Units = %s of %d * %d = %d bytes\n"),
 	       str_units(PLURAL),
@@ -2213,7 +2212,7 @@ static void
 verify(void) {
 	int i, j;
 	unsigned long long total = 1;
-	unsigned long long n_sectors = (total_number_of_sectors / sector_factor);
+	unsigned long long n_sectors = total_number_of_sectors;
 	unsigned long long first[partitions], last[partitions];
 	struct partition *p;
 
@@ -2327,7 +2326,7 @@ add_partition(int n, int sys) {
 		if (display_in_cyl_units || !total_number_of_sectors)
 			llimit = heads * sectors * cylinders - 1;
 		else
-			llimit = (total_number_of_sectors / sector_factor) - 1;
+			llimit = total_number_of_sectors - 1;
 		limit = llimit;
 		if (limit != llimit)
 			limit = 0x7fffffff;
