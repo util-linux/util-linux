@@ -256,7 +256,9 @@ is_pseudo_fs(const char *type)
 	    streq(type, "cgroup") ||
 	    streq(type, "cpuset") ||
 	    streq(type, "rpc_pipefs") ||
-	    streq(type, "devpts"))
+	    streq(type, "devpts") ||
+	    streq(type, "securityfs") ||
+	    streq(type, "debugfs"))
 		return 1;
 	return 0;
 }
