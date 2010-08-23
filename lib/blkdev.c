@@ -104,7 +104,7 @@ blkdev_get_size(int fd, unsigned long long *bytes)
 #ifdef DIOCGMEDIASIZE
 	/* FreeBSD */
 	if (ioctl(fd, DIOCGMEDIASIZE, bytes) >= 0)
-		return 0
+		return 0;
 #endif
 
 #ifdef FDGETPRM
