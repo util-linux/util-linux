@@ -659,7 +659,7 @@ static int
 lba_is_aligned(unsigned long long lba)
 {
 	unsigned int granularity = max(phy_sector_size, min_io_size);
-	unsigned long long offset = (lba << 9) & (granularity - 1);
+	unsigned long long offset = (lba * sector_size) & (granularity - 1);
 
 	return !((granularity + alignment_offset - offset) & (granularity - 1));
 }
