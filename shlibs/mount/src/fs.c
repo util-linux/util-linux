@@ -72,7 +72,7 @@ static inline int cpy_str_item(void *new, const void *old, size_t offset)
 
 	*n = strdup(*o);
 	if (!*n)
-		return -1;
+		return -ENOMEM;
 	return 0;
 }
 
@@ -141,12 +141,12 @@ void *mnt_fs_get_userdata(mnt_fs *fs)
  *
  * The "userdata" are library independent data.
  *
- * Returns: 0 or -1 in case of error (if @fs is NULL).
+ * Returns: 0 or negative number in case of error (if @fs is NULL).
  */
 int mnt_fs_set_userdata(mnt_fs *fs, void *data)
 {
 	if (!fs)
-		return -1;
+		return -EINVAL;
 	fs->userdata = data;
 	return 0;
 }
@@ -217,18 +217,17 @@ int __mnt_fs_set_source(mnt_fs *fs, char *source)
  *
  * This function creates a private copy (strdup()) of @source.
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_fs_set_source(mnt_fs *fs, const char *source)
 {
 	char *p;
 
 	if (!fs && !source)
-		return -1;
-
+		return -EINVAL;
 	p = strdup(source);
 	if (!p)
-		return -1;
+		return -ENOMEM;
 
 	free(fs->tagval);
 	free(fs->tagname);
@@ -269,12 +268,12 @@ int mnt_fs_set_source(mnt_fs *fs, const char *source)
  *   </programlisting>
  * </informalexample>
  *
- * Returns: 0 on success or -1 in case that a TAG is not defined.
+ * Returns: 0 on success or negative number in case that a TAG is not defined.
  */
 int mnt_fs_get_tag(mnt_fs *fs, const char **name, const char **value)
 {
 	if (fs == NULL || !fs->tagname)
-		return -1;
+		return -EINVAL;
 	if (name)
 		*name = fs->tagname;
 	if (value)
@@ -301,7 +300,7 @@ const char *mnt_fs_get_target(mnt_fs *fs)
  *
  * This function creates a private copy (strdup()) of @target.
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_fs_set_target(mnt_fs *fs, const char *target)
 {
@@ -310,11 +309,10 @@ int mnt_fs_set_target(mnt_fs *fs, const char *target)
 	assert(fs);
 
 	if (!fs || !target)
-		return -1;
-
+		return -EINVAL;
 	p = strdup(target);
 	if (!p)
-		return -1;
+		return -ENOMEM;
 	free(fs->target);
 	fs->target = p;
 
@@ -339,7 +337,7 @@ int __mnt_fs_set_fstype(mnt_fs *fs, char *fstype)
 	assert(fs);
 
 	if (!fstype)
-		return -1;
+		return -EINVAL;
 
 	fs->fstype = fstype;
 	fs->flags &= ~MNT_FS_PSEUDO;
@@ -361,18 +359,17 @@ int __mnt_fs_set_fstype(mnt_fs *fs, char *fstype)
  *
  * This function creates a private copy (strdup()) of @fstype.
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_fs_set_fstype(mnt_fs *fs, const char *fstype)
 {
 	char *p;
 
 	if (!fs || !fstype)
-		return -1;
-
+		return -EINVAL;
 	p = strdup(fstype);
 	if (!p)
-		return -1;
+		return -ENOMEM;
 	free(fs->fstype);
 
 	return __mnt_fs_set_fstype(fs, p);
@@ -397,18 +394,19 @@ int __mnt_fs_set_optstr(mnt_fs *fs, const char *optstr, int split)
 	assert(fs);
 
 	if (!fs)
-		return -1;
-
+		return -EINVAL;
 	if (optstr) {
-		if (split &&
-		    mnt_split_optstr((char *) optstr, NULL, &v, &f, 0, 0))
-			return -1;
+		int rc = 0;
 
+		if (split)
+			rc = mnt_split_optstr((char *) optstr, NULL, &v, &f, 0, 0);
+		if (rc)
+			return rc;
 		p = strdup(optstr);
 		if (!p) {
 			free(v);
 			free(f);
-			return -1;
+			return -ENOMEM;
 		}
 	}
 
@@ -430,7 +428,7 @@ int __mnt_fs_set_optstr(mnt_fs *fs, const char *optstr, int split)
  * This function creates a private copy of @optstr. The function also updates
  * VFS and FS mount options.
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_fs_set_optstr(mnt_fs *fs, const char *optstr)
 {
@@ -445,15 +443,13 @@ int mnt_fs_set_optstr(mnt_fs *fs, const char *optstr)
  * This function appends @optstr to the current list of the mount options. The VFS and
  * FS mount options are not modified.
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_fs_append_userspace_optstr(mnt_fs *fs, const char *optstr)
 {
 	assert(fs);
-
 	if (!fs || !optstr)
-		return -1;
-
+		return -EINVAL;
 	return mnt_optstr_append_option(&fs->optstr, optstr, NULL);
 }
 
@@ -462,31 +458,29 @@ int mnt_fs_append_userspace_optstr(mnt_fs *fs, const char *optstr)
  * @fs: fstab/mtab/mountinfo entry
  * @optstr: mount options
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_fs_append_optstr(mnt_fs *fs, const char *optstr)
 {
 	char *v = NULL, *f = NULL;
+	int rc;
 
 	assert(fs);
 
 	if (!fs)
-		return -1;
+		return -EINVAL;
 	if (!optstr)
 		return 0;
 
-	if (mnt_split_optstr((char *) optstr, NULL, &v, &f, 0, 0))
-		return -1;
+	rc = mnt_split_optstr((char *) optstr, NULL, &v, &f, 0, 0);
+	if (!rc)
+		rc = mnt_optstr_append_option(&fs->optstr, optstr, NULL);
+	if (!rc && v)
+		rc = mnt_optstr_append_option(&fs->vfs_optstr, v, NULL);
+	if (!rc && f)
+	       rc = mnt_optstr_append_option(&fs->fs_optstr, f, NULL);
 
-	if (mnt_optstr_append_option(&fs->optstr, optstr, NULL))
-		return -1;
-	if (v && mnt_optstr_append_option(&fs->vfs_optstr, v, NULL))
-		return -1;
-	if (f && mnt_optstr_append_option(&fs->fs_optstr, f, NULL))
-		return -1;
-
-	return 0;
-
+	return rc;
 }
 
 /**
@@ -535,13 +529,13 @@ int mnt_fs_get_freq(mnt_fs *fs)
  * @fs: fstab/mtab entry pointer
  * @freq: dump frequency in days
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_fs_set_freq(mnt_fs *fs, int freq)
 {
 	assert(fs);
 	if (!fs)
-		return -1;
+		return -EINVAL;
 	fs->freq = freq;
 	return 0;
 }
@@ -563,13 +557,13 @@ int mnt_fs_get_passno(mnt_fs *fs)
  * @fs: fstab/mtab entry pointer
  * @passno: pass number
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_fs_set_passno(mnt_fs *fs, int passno)
 {
 	assert(fs);
 	if (!fs)
-		return -1;
+		return -EINVAL;
 	fs->passno = passno;
 	return 0;
 }
@@ -591,7 +585,7 @@ const char *mnt_fs_get_root(mnt_fs *fs)
  * @fs: mountinfo entry
  * @root: path
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_fs_set_root(mnt_fs *fs, const char *root)
 {
@@ -599,11 +593,11 @@ int mnt_fs_set_root(mnt_fs *fs, const char *root)
 
 	assert(fs);
 	if (!fs)
-		return -1;
+		return -EINVAL;
 	if (root) {
 		p = strdup(root);
 		if (!p)
-			return -1;
+			return -ENOMEM;
 	}
 	free(fs->root);
 	fs->root = p;
@@ -614,26 +608,24 @@ int mnt_fs_set_root(mnt_fs *fs, const char *root)
  * mnt_fs_get_id:
  * @fs: /proc/self/mountinfo entry
  *
- * Returns: mount ID (unique identifier of the mount) or -1 if ID undefined
- * (for example if @fs is not mountinfo entry).
+ * Returns: mount ID (unique identifier of the mount) or negative number in case of error.
  */
 int mnt_fs_get_id(mnt_fs *fs)
 {
 	assert(fs);
-	return fs ? fs->id : -1;
+	return fs ? fs->id : -EINVAL;
 }
 
 /**
  * mnt_fs_get_parent_id:
  * @fs: /proc/self/mountinfo entry
  *
- * Returns: parent mount ID or -1 if ID undefined (for example if @fs is not
- * mountinfo entry).
+ * Returns: parent mount ID or negative number in case of error.
  */
 int mnt_fs_get_parent_id(mnt_fs *fs)
 {
 	assert(fs);
-	return fs ? fs->parent : -1;
+	return fs ? fs->parent : -EINVAL;
 }
 
 /**
@@ -655,7 +647,7 @@ dev_t mnt_fs_get_devno(mnt_fs *fs)
  * @value: returns pointer to the begin of the value (e.g. name=VALUE) or NULL
  * @valsz: returns size of options value or 0
  *
- * Returns: 0 on success, 1 when not found the @name or -1 in case of error.
+ * Returns: 0 on success, 1 when not found the @name or negative number in case of error.
  */
 int mnt_fs_get_option(mnt_fs *fs, const char *name,
 		char **value, size_t *valsz)
@@ -815,12 +807,12 @@ int mnt_fs_match_options(mnt_fs *fs, const char *options)
  * @fs: fstab/mtab/mountinfo entry
  * @file: output
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error.
  */
 int mnt_fs_print_debug(mnt_fs *fs, FILE *file)
 {
 	if (!fs)
-		return -1;
+		return -EINVAL;
 	fprintf(file, "------ fs: %p\n", fs);
 	fprintf(file, "source: %s\n", mnt_fs_get_source(fs));
 	fprintf(file, "target: %s\n", mnt_fs_get_target(fs));
@@ -832,7 +824,5 @@ int mnt_fs_print_debug(mnt_fs *fs, FILE *file)
 	fprintf(file, "parent: %d\n", mnt_fs_get_parent_id(fs));
 	fprintf(file, "devno:  %d:%d\n", major(mnt_fs_get_devno(fs)),
 					 minor(mnt_fs_get_devno(fs)));
-
-
 	return 0;
 }
