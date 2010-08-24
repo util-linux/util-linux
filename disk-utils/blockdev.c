@@ -75,6 +75,12 @@ struct bdc bdcms[] =
 		.argval = -1,
 		.help = N_("get read-only")
 	},{
+		IOCTL_ENTRY(BLKDISCARDZEROES),
+		.name = "--getdiscardzeroes",
+		.argtype = ARG_UINT,
+		.argval = -1,
+		.help = N_("get discard zeroes support status")
+	},{
 		IOCTL_ENTRY(BLKSSZGET),
 		.name = "--getss",
 		.argtype = ARG_INT,

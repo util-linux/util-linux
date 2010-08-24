@@ -33,6 +33,7 @@
 
 #endif /* BLKROSET && __linux__ */
 
+
 #ifdef APPLE_DARWIN
 #define BLKGETSIZE DKIOCGETBLOCKCOUNT32
 #endif
@@ -43,6 +44,11 @@
 #define BLKIOOPT   _IO(0x12,121)
 #define BLKALIGNOFF _IO(0x12,122)
 #define BLKPBSZGET _IO(0x12,123)
+#endif
+
+/* discard zeroes support, introduced in 2.6.33 (commait 98262f27) */
+#ifndef BLKDISCARDZEROES
+#define BLKDISCARDZEROES _IO(0x12,124)
 #endif
 
 #ifndef FIFREEZE
