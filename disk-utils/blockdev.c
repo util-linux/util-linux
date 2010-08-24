@@ -109,7 +109,7 @@ struct bdc bdcms[] =
 		.name = "--getalignoff",
 		.argtype = ARG_INT,
 		.argval = -1,
-		.help = N_("get alignment offset")
+		.help = N_("get alignment offset in bytes")
 	},{
 		IOCTL_ENTRY(BLKSECTGET),
 		.name = "--getmaxsect",
@@ -125,7 +125,7 @@ struct bdc bdcms[] =
 	},{
 		IOCTL_ENTRY(BLKBSZSET),
 		.name = "--setbsz",
-		.argname = "BLOCKSIZE",
+		.argname = "<bytes>",
 		.argtype = ARG_INT,
 		.flags = FL_NORESULT,
 	        .help = N_("set blocksize")
@@ -134,7 +134,7 @@ struct bdc bdcms[] =
 		.name = "--getsize",
 		.argtype = ARG_ULONG,
 		.argval = -1,
-		.help = N_("get 32-bit sector count")
+		.help = N_("get 32-bit sector count (deprecated, use --getsz)")
 	},{
 		IOCTL_ENTRY(BLKGETSIZE64),
 		.name = "--getsize64",
@@ -144,7 +144,7 @@ struct bdc bdcms[] =
 	},{
 		IOCTL_ENTRY(BLKRASET),
 		.name = "--setra",
-		.argname = "READAHEAD",
+		.argname = "<sectors>",
 		.argtype = ARG_INT,
 		.flags = FL_NOPTR | FL_NORESULT,
 		.help = N_("set readahead")
@@ -157,7 +157,7 @@ struct bdc bdcms[] =
 	},{
 		IOCTL_ENTRY(BLKFRASET),
 		.name = "--setfra",
-		.argname = "FSREADAHEAD",
+		.argname = "<sectors>",
 		.argtype = ARG_INT,
 		.flags = FL_NOPTR | FL_NORESULT,
 		.help = N_("set filesystem readahead")
