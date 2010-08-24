@@ -279,9 +279,9 @@ int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
 	if (*optstr)
 		rc = mnt_optstr_locate_option(*optstr, name,
 					&begin, &end, &val, &valsz);
-	if (rc == -1)
+	if (rc < 0)
 		/* parse error */
-		return -1;
+		return rc;
 	if (rc == 1)
 		/* not found */
 		return mnt_optstr_append_option(optstr, name, value);

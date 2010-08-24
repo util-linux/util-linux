@@ -505,7 +505,7 @@ int test_lock(struct mtest *ts, int argc, char *argv[])
 		if (!lock)
 			return -1;
 
-		if (mnt_lock_file(lock) == -1) {
+		if (mnt_lock_file(lock) != 0) {
 			fprintf(stderr, "%d: failed to lock %s file\n",
 					getpid(), datafile);
 			return -1;

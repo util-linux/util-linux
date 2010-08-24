@@ -42,7 +42,7 @@ int mnt_run_test(struct mtest *tests, int argc, char *argv[])
 		}
 	}
 
-	if (rc == -1 && ts->name == NULL)
+	if (rc < 0 && ts->name == NULL)
 		goto usage;
 
 	return rc == 0 ? EXIT_SUCCESS : EXIT_FAILURE;

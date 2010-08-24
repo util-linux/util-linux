@@ -111,7 +111,7 @@ static int mnt_cache_add_entry(mnt_cache *cache, char *native,
 
 		e = realloc(cache->ents, sz * sizeof(struct mnt_cache_entry));
 		if (!e)
-			return -1;
+			return -ENOMEM;
 		cache->ents = e;
 		cache->nallocs = sz;
 	}
@@ -136,6 +136,7 @@ static int mnt_cache_add_tag(mnt_cache *cache, const char *token,
 {
 	size_t tksz, vlsz;
 	char *native;
+	int rc;
 
 	assert(cache);
 	assert(real);
@@ -151,17 +152,17 @@ static int mnt_cache_add_tag(mnt_cache *cache, const char *token,
 
 	native = malloc(tksz + vlsz + 2);
 	if (!native)
-		goto error;
+		return -ENOMEM;
 
 	memcpy(native, token, tksz + 1);	   /* include '\0' */
 	memcpy(native + tksz + 1, value, vlsz + 1);
 
-	if (mnt_cache_add_entry(cache, native, real, flag | MNT_CACHE_ISTAG))
-		goto error;
-	return 0;
-error:
+	rc = mnt_cache_add_entry(cache, native, real, flag | MNT_CACHE_ISTAG);
+	if (!rc)
+		return 0;
+
 	free(native);
-	return -1;
+	return rc;
 }
 
 
@@ -234,7 +235,7 @@ const char *mnt_cache_find_tag(mnt_cache *cache,
  * Reads @devname LABEL and UUID to the @cache.
  *
  * Returns: 0 if at least one tag was added, 1 if no tag was added or
- *          -1 in case of error.
+ *          negative number in case of error.
  */
 int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 {
@@ -246,7 +247,7 @@ int mnt_cache_read_tags(mnt_cache *cache, const char *devname)
 	assert(devname);
 
 	if (!cache || !devname)
-		return -1;
+		return -EINVAL;
 
 	DBG(DEBUG_CACHE, printf("cache: tags for %s requested\n", devname));
 
@@ -477,7 +478,7 @@ int test_resolve_path(struct mtest *ts, int argc, char *argv[])
 
 	cache = mnt_new_cache();
 	if (!cache)
-		return -1;
+		return -ENOMEM;
 
 	while(fgets(line, sizeof(line), stdin)) {
 		size_t sz = strlen(line);
@@ -500,7 +501,7 @@ int test_resolve_spec(struct mtest *ts, int argc, char *argv[])
 
 	cache = mnt_new_cache();
 	if (!cache)
-		return -1;
+		return -ENOMEM;
 
 	while(fgets(line, sizeof(line), stdin)) {
 		size_t sz = strlen(line);
@@ -523,7 +524,7 @@ int test_read_tags(struct mtest *ts, int argc, char *argv[])
 
 	cache = mnt_new_cache();
 	if (!cache)
-		return -1;
+		return -ENOMEM;
 
 	while(fgets(line, sizeof(line), stdin)) {
 		size_t sz = strlen(line);

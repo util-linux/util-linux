@@ -11,6 +11,7 @@
 #define _LIBMOUNT_PRIVATE_H
 
 #include <sys/types.h>
+#include <errno.h>
 #include "c.h"
 
 #define USE_UNSTABLE_LIBMOUNT_API
