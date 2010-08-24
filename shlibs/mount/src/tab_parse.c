@@ -613,7 +613,7 @@ done:
  * Note that @uf must contain only userspace specific mount options instead of
  * VFS options (note that FS options are ignored).
  *
- * Returns: modified filesystem (from @tb) or NULL.
+ * Returns modified filesystem (from @tb) or NULL.
  */
 static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
 {
@@ -647,7 +647,7 @@ static mnt_fs *mnt_tab_merge_userspace_fs(mnt_tab *tb, mnt_fs *uf)
 	}
 
 	if (fs)
-		mnt_fs_append_optstr(fs, optstr);
+		mnt_fs_append_userspace_optstr(fs, optstr);
 	return fs;
 }
 

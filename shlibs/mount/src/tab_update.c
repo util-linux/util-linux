@@ -531,6 +531,7 @@ err:
  * - for /var/run/mount/mountinfo:
  *   * evaluate if the update is necessary
  *   * set fs root and devname for bind mount and btrfs subvolumes
+ *   * removes unnecessary mount options
  * - allocate update_lock if necessary
  *
  * This function has to be always called before mount(2). The mnt_update_file()
@@ -599,7 +600,7 @@ int mnt_prepare_update(mnt_update *upd)
 		/* remount */
 		if (mnt_split_optstr(o, &u, NULL, NULL, MNT_NOMTAB, 0))
 			goto err;
-		if (mnt_fs_set_optstr(upd->fs, u))
+		if (__mnt_fs_set_optstr(upd->fs, u, FALSE))
 			goto err;
 
 	} else {
@@ -611,7 +612,7 @@ int mnt_prepare_update(mnt_update *upd)
 			goto nothing;	/* no userpsace options */
 		if (set_fs_root(upd, upd->fs))
 			goto err;
-		mnt_fs_set_optstr(upd->fs, u);
+		__mnt_fs_set_optstr(upd->fs, u, FALSE);
 	}
 
 	if (!upd->nolock && !upd->lc) {
@@ -765,7 +766,7 @@ static int modify_options(mnt_update *upd)
 		mnt_tab_remove_fs(tb, fs);
 		rem_fs = fs;
 	} else
-		mnt_fs_set_optstr(fs, mnt_fs_get_optstr(upd->fs));
+		__mnt_fs_set_optstr(fs, mnt_fs_get_optstr(upd->fs), FALSE);
 
 	if (!update_file(upd->filename, upd->format, tb))
 		rc = 0;

@@ -11,6 +11,7 @@
 #define _LIBMOUNT_PRIVATE_H
 
 #include <sys/types.h>
+#include "c.h"
 
 #define USE_UNSTABLE_LIBMOUNT_API
 
@@ -170,5 +171,6 @@ extern int mnt_optmap_require_value(const struct mnt_optmap *mapent);
 /* fs.c */
 extern int __mnt_fs_set_source(mnt_fs *fs, char *source);
 extern int __mnt_fs_set_fstype(mnt_fs *fs, char *fstype);
+extern int __mnt_fs_set_optstr(mnt_fs *fs, const char *optstr, int split);
 
 #endif /* _LIBMOUNT_PRIVATE_H */

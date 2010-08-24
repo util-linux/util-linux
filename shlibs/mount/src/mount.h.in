@@ -207,6 +207,7 @@ extern int mnt_fs_set_fstype(mnt_fs *ent, const char *fstype);
 extern const char *mnt_fs_get_optstr(mnt_fs *ent);
 extern int mnt_fs_set_optstr(mnt_fs *ent, const char *optstr);
 extern int mnt_fs_append_optstr(mnt_fs *fs, const char *optstr);
+extern int mnt_fs_append_userspace_optstr(mnt_fs *fs, const char *optstr);
 extern const char *mnt_fs_get_vfs_optstr(mnt_fs *ent);
 extern const char *mnt_fs_get_fs_optstr(mnt_fs *ent);
 extern int mnt_fs_get_freq(mnt_fs *ent);

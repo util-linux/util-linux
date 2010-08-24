@@ -390,16 +390,7 @@ const char *mnt_fs_get_optstr(mnt_fs *fs)
 	return fs ? fs->optstr : NULL;
 }
 
-/**
- * mnt_fs_set_optstr:
- * @fs: fstab/mtab/mountinfo entry
- * @optstr: options string
- *
- * This function creates a private copy of @optstr.
- *
- * Returns: 0 on success or -1 in case of error.
- */
-int mnt_fs_set_optstr(mnt_fs *fs, const char *optstr)
+int __mnt_fs_set_optstr(mnt_fs *fs, const char *optstr, int split)
 {
 	char *p = NULL, *v = NULL, *f = NULL;
 
@@ -409,7 +400,8 @@ int mnt_fs_set_optstr(mnt_fs *fs, const char *optstr)
 		return -1;
 
 	if (optstr) {
-		if (mnt_split_optstr((char *) optstr, NULL, &v, &f, 0, 0))
+		if (split &&
+		    mnt_split_optstr((char *) optstr, NULL, &v, &f, 0, 0))
 			return -1;
 
 		p = strdup(optstr);
@@ -431,17 +423,31 @@ int mnt_fs_set_optstr(mnt_fs *fs, const char *optstr)
 }
 
 /**
- * mnt_fs_append_optstr:
+ * mnt_fs_set_optstr:
  * @fs: fstab/mtab/mountinfo entry
- * @optstr: options string (usually userspace specific options)
+ * @optstr: options string
  *
- * This function appends @optstr to the current list of the mount options. The
- * VFS and FS specific lists are not modified -- so then the
- * mnt_fs_get_optstr() function returns VFS + FS + userspace mount options.
+ * This function creates a private copy of @optstr. The function also updates
+ * VFS and FS mount options.
  *
  * Returns: 0 on success or -1 in case of error.
  */
-int mnt_fs_append_optstr(mnt_fs *fs, const char *optstr)
+int mnt_fs_set_optstr(mnt_fs *fs, const char *optstr)
+{
+	return __mnt_fs_set_optstr(fs, optstr, TRUE);
+}
+
+/**
+ * mnt_fs_append_userspace_optstr:
+ * @fs: fstab/mtab/mountinfo entry
+ * @optstr: options string
+ *
+ * This function appends @optstr to the current list of the mount options. The VFS and
+ * FS mount options are not modified.
+ *
+ * Returns: 0 on success or -1 in case of error.
+ */
+int mnt_fs_append_userspace_optstr(mnt_fs *fs, const char *optstr)
 {
 	assert(fs);
 
@@ -449,6 +455,38 @@ int mnt_fs_append_optstr(mnt_fs *fs, const char *optstr)
 		return -1;
 
 	return mnt_optstr_append_option(&fs->optstr, optstr, NULL);
+}
+
+/**
+ * mnt_fs_append_optstr:
+ * @fs: fstab/mtab/mountinfo entry
+ * @optstr: mount options
+ *
+ * Returns: 0 on success or -1 in case of error.
+ */
+int mnt_fs_append_optstr(mnt_fs *fs, const char *optstr)
+{
+	char *v = NULL, *f = NULL;
+
+	assert(fs);
+
+	if (!fs)
+		return -1;
+	if (!optstr)
+		return 0;
+
+	if (mnt_split_optstr((char *) optstr, NULL, &v, &f, 0, 0))
+		return -1;
+
+	if (mnt_optstr_append_option(&fs->optstr, optstr, NULL))
+		return -1;
+	if (v && mnt_optstr_append_option(&fs->vfs_optstr, v, NULL))
+		return -1;
+	if (f && mnt_optstr_append_option(&fs->fs_optstr, f, NULL))
+		return -1;
+
+	return 0;
+
 }
 
 /**
