@@ -246,14 +246,14 @@ int mnt_optmap_enum_to_number(const struct mnt_optmap *mapent,
 	int n = -1;
 
 	if (!rawdata || !*rawdata || !mapent || !len)
-		return -1;
+		return -EINVAL;
 
 	p = strrchr(mapent->name, '=');
 	if (!p || *(p + 1) == '{')
-		return -1;	/* value unexpected or not "enum" */
+		return -EINVAL;	/* value unexpected or not "enum" */
 	p += 2;
 	if (!*p || *(p + 1) == '}')
-		return -1;	/* hmm... option <type> is "={" or "={}" */
+		return -EINVAL;	/* hmm... option <type> is "={" or "={}" */
 
 	/* we cannot use strstr(), @rawdata is not terminated */
 	for (; p && *p; p++) {
@@ -266,7 +266,7 @@ int mnt_optmap_enum_to_number(const struct mnt_optmap *mapent,
 		if (!begin || !end)
 			continue;
 		if (end <= begin)
-			return -1;
+			return -EINVAL;
 		n++;
 		if (len == end - begin && strncasecmp(begin, rawdata, len) == 0)
 			return n;
