@@ -69,10 +69,10 @@ void mnt_reset_iter(mnt_iter *itr, int direction)
  * mnt_iter_get_direction:
  * @itr: iterator pointer
  *
- * Returns: MNT_INTER_{FOR,BACK}WARD or -1 in case of error.
+ * Returns: MNT_INTER_{FOR,BACK}WARD or negative number in case of error.
  */
 int mnt_iter_get_direction(mnt_iter *itr)
 {
 	assert(itr);
-	return itr ? itr->direction : -1;
+	return itr ? itr->direction : -EINVAL;
 }
