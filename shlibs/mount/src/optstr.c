@@ -27,7 +27,7 @@
  * Parses the first option from @optstr. The @optstr pointer is set to begin of
  * the next option.
  *
- * Returns -1 on parse error, 1 at the end of optstr and 0 on success.
+ * Returns -EINVAL on parse error, 1 at the end of optstr and 0 on success.
  */
 static int mnt_optstr_parse_next(char **optstr,	 char **name, size_t *namesz,
 					char **value, size_t *valsz)
@@ -88,14 +88,14 @@ static int mnt_optstr_parse_next(char **optstr,	 char **name, size_t *namesz,
 error:
 	DBG(DEBUG_OPTIONS, fprintf(stderr,
 			"libmount: parse error: \"%s\"\n", optstr0));
-	return -1;
+	return -EINVAL;
 }
 
 /*
  * Locates the first option that match with @name. The @end is set to
  * char behind the option (it means ',' or \0).
  *
- * Returns -1 on parse error, 1 when not found and 0 on success.
+ * Returns negative number on parse error, 1 when not found and 0 on success.
  */
 static int mnt_optstr_locate_option(char *optstr, const char *name, char **begin,
 					char **end, char **value, size_t *valsz)
@@ -137,15 +137,16 @@ static int mnt_optstr_locate_option(char *optstr, const char *name, char **begin
  * @value: returns option value or NULL
  * @valuesz: returns option value length or zero
  *
- * Parses the first option in @optstr  or -1 in case of error.
+ * Parses the first option in @optstr.
  *
- * Returns: 0 on success, 1 at the end of @optstr or -1 in case of error.
+ * Returns: 0 on success, 1 at the end of @optstr or negative number in case of
+ * error.
  */
 int mnt_optstr_next_option(char **optstr, char **name, size_t *namesz,
 					char **value, size_t *valuesz)
 {
 	if (!optstr || !*optstr)
-		return -1;
+		return -EINVAL;
 	return mnt_optstr_parse_next(optstr, name, namesz, value, valuesz);
 }
 
@@ -168,7 +169,7 @@ static int __mnt_optstr_append_option(char **optstr,
 
 	p = realloc(*optstr, sz);
 	if (!p)
-		return -1;
+		return -ENOMEM;
 	*optstr = p;
 
 	if (osz) {
@@ -202,7 +203,7 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
 	size_t vsz, nsz;
 
 	if (!name)
-		return -1;
+		return -EINVAL;
 
 	nsz = strlen(name);
 	vsz = value ? strlen(value) : 0;
@@ -217,7 +218,8 @@ int mnt_optstr_append_option(char **optstr, const char *name, const char *value)
  * @value: returns pointer to the begin of the value (e.g. name=VALUE) or NULL
  * @valsz: returns size of the value or 0
  *
- * Returns: 0 on success, 1 when not found the @name or -1 in case of error.
+ * Returns: 0 on success, 1 when not found the @name or negative number in case
+ * of error.
  */
 int mnt_optstr_get_option(char *optstr, const char *name,
 				char **value, size_t *valsz)
@@ -249,7 +251,7 @@ static int insert_substring(char **str, char *pos, const char *substr)
 
 	p = realloc(*str, strlen(*str) + 1 + ssz);
 	if (!p)
-		return -1;
+		return -ENOMEM;
 	*str = p;
 
 	memmove(pos + ssz + 1, pos, strlen(pos) + 1);
@@ -266,7 +268,8 @@ static int insert_substring(char **str, char *pos, const char *substr)
  *
  * Set or unset option @value.
  *
- * Returns: 0 on success, 1 when not found the @name or -1 in case of error.
+ * Returns: 0 on success, 1 when not found the @name or negative number in case
+ * of error.
  */
 int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
 {
@@ -275,7 +278,7 @@ int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
 	int rc = 1;
 
 	if (!optstr)
-		return -1;
+		return -EINVAL;
 	if (*optstr)
 		rc = mnt_optstr_locate_option(*optstr, name,
 					&begin, &end, &val, &valsz);
@@ -304,8 +307,6 @@ int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
 		remove_substring(*optstr, nameend, end);
 		rc = insert_substring(optstr, nameend, value);
 	}
-
-
 	return 0;
 }
 
@@ -314,7 +315,8 @@ int mnt_optstr_set_option(char **optstr, const char *name, const char *value)
  * @optstr: string with comma separated list of options
  * @name: requested option name
  *
- * Returns: 0 on success, 1 when not found the @name or -1 in case of error.
+ * Returns: 0 on success, 1 when not found the @name or negative number in case
+ * of error.
  */
 int mnt_optstr_remove_option(char **optstr, const char *name)
 {
@@ -349,7 +351,7 @@ int mnt_optstr_remove_option(char **optstr, const char *name)
  * Note that FS options are all options that are undefined in MNT_USERSPACE_MAP
  * or MNT_LINUX_MAP.
  *
- * Returns: 0 on success, or -1 in case of error.
+ * Returns: 0 on success, or negative number in case of error.
  */
 int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
 			int ignore_user, int ignore_vfs)
@@ -361,7 +363,7 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
 	assert(optstr);
 
 	if (!optstr)
-		return -1;
+		return -EINVAL;
 
 	maps[0] = mnt_get_builtin_optmap(MNT_LINUX_MAP);
 	maps[1] = mnt_get_builtin_optmap(MNT_USERSPACE_MAP);
@@ -424,7 +426,7 @@ int mnt_split_optstr(const char *optstr, char **user, char **vfs, char **fs,
  *
  * Note that @flags are not zeroized by this function.
  *
- * Returns: 0 on success or -1 in case of error
+ * Returns: 0 on success or negative number in case of error
  */
 int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags)
 {
@@ -435,7 +437,7 @@ int mnt_optstr_get_mountflags(const char *optstr, unsigned long *flags)
 	assert(optstr);
 
 	if (!optstr || !flags)
-		return -1;
+		return -EINVAL;
 
 	maps[0] = mnt_get_builtin_optmap(MNT_LINUX_MAP);
 
@@ -464,38 +466,37 @@ int test_append(struct mtest *ts, int argc, char *argv[])
 {
 	const char *value = NULL, *name;
 	char *optstr;
+	int rc;
 
 	if (argc < 3)
-		goto done;
+		return -EINVAL;
 	optstr = strdup(argv[1]);
 	name = argv[2];
 
 	if (argc == 4)
 		value = argv[3];
 
-	if (mnt_optstr_append_option(&optstr, name, value) == 0) {
+	rc = mnt_optstr_append_option(&optstr, name, value);
+	if (!rc)
 		printf("result: >%s<\n", optstr);
-		return 0;
-	}
-done:
-	return -1;
+	return rc;
 }
 
 int test_split(struct mtest *ts, int argc, char *argv[])
 {
 	char *optstr, *user = NULL, *fs = NULL, *vfs = NULL;
-	int rc = -1;
+	int rc;
 
 	if (argc < 2)
-		return -1;
+		return -EINVAL;
 
 	optstr = strdup(argv[1]);
 
-	if (mnt_split_optstr(optstr, &user, &vfs, &fs, 0, 0) == 0) {
+	rc = mnt_split_optstr(optstr, &user, &vfs, &fs, 0, 0);
+	if (!rc) {
 		printf("user : %s\n", user);
 		printf("vfs  : %s\n", vfs);
 		printf("fs   : %s\n", fs);
-		rc = 0;
 	}
 
 	free(user);
@@ -509,21 +510,20 @@ int test_set(struct mtest *ts, int argc, char *argv[])
 {
 	const char *value = NULL, *name;
 	char *optstr;
+	int rc;
 
 	if (argc < 3)
-		goto done;
+		return -EINVAL;
 	optstr = strdup(argv[1]);
 	name = argv[2];
 
 	if (argc == 4)
 		value = argv[3];
 
-	if (mnt_optstr_set_option(&optstr, name, value) == 0) {
+	rc = mnt_optstr_set_option(&optstr, name, value);
+	if (!rc)
 		printf("result: >%s<\n", optstr);
-		return 0;
-	}
-done:
-	return -1;
+	return rc
 }
 
 int test_get(struct mtest *ts, int argc, char *argv[])
@@ -535,7 +535,7 @@ int test_get(struct mtest *ts, int argc, char *argv[])
 	int rc;
 
 	if (argc < 2)
-		goto done;
+		return -EINVAL;
 	optstr = argv[1];
 	name = argv[2];
 
@@ -548,31 +548,28 @@ int test_get(struct mtest *ts, int argc, char *argv[])
 				goto done;
 		}
 		printf("\n");
-		return 0;
 	} else if (rc == 1)
 		printf("%s: not found\n", name);
 	else
 		printf("parse error: %s\n", optstr);
-done:
-	return -1;
+	return rc;
 }
 
 int test_remove(struct mtest *ts, int argc, char *argv[])
 {
 	const char *name;
 	char *optstr;
+	int rc;
 
 	if (argc < 3)
-		goto done;
+		return -EINVAL;
 	optstr = strdup(argv[1]);
 	name = argv[2];
 
-	if (mnt_optstr_remove_option(&optstr, name) == 0) {
+	rc = mnt_optstr_remove_option(&optstr, name);
+	if (!rc)
 		printf("result: >%s<\n", optstr);
-		return 0;
-	}
-done:
-	return -1;
+	return rc;
 }
 
 
