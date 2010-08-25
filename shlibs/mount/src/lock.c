@@ -316,35 +316,37 @@ void mnt_unlock_file(mnt_lock *ml)
  *   </programlisting>
  * </informalexample>
  *
- * Returns: 0 on success or -1 in case of error.
+ * Returns: 0 on success or negative number in case of error (-ETIMEOUT is case
+ * of stale lock file).
  */
 int mnt_lock_file(mnt_lock *ml)
 {
-	int i;
+	int i, rc = -1;
 	struct timespec waittime;
 	struct timeval maxtime;
 	const char *lockfile, *linkfile;
 
 	if (!ml)
-		return -1;
+		return -EINVAL;
 	if (ml->locked)
 		return 0;
 
 	lockfile = mnt_lock_get_lockfile(ml);
 	if (!lockfile)
-		return -1;
+		return -EINVAL;
 	linkfile = mnt_lock_get_linkfile(ml);
 	if (!linkfile)
-		return -1;
+		return -EINVAL;
 
 	i = open(linkfile, O_WRONLY|O_CREAT, S_IRUSR|S_IWUSR);
-	if (i < 0)
-		/* linkfile does not exist (as a file)
-		   and we cannot create it. Read-only filesystem?
-		   Too many files open in the system?
-		   Filesystem full? */
+	if (i < 0) {
+		/* linkfile does not exist (as a file) and we cannot create it.
+		 * Read-only or full filesystem? Too many files open in the system?
+		 */
+		if (errno > 0)
+			rc = -errno;
 		goto failed;
-
+	}
 	close(i);
 
 	gettimeofday(&maxtime, NULL);
@@ -363,9 +365,11 @@ int mnt_lock_file(mnt_lock *ml)
 		if (j == 0)
 			ml->locked = 1;
 
-		if (j < 0 && errno != EEXIST)
+		if (j < 0 && errno != EEXIST) {
+			if (errno > 0)
+				rc = -errno;
 			goto failed;
-
+		}
 		ml->lockfile_fd = open(lockfile, O_WRONLY);
 
 		if (ml->lockfile_fd < 0) {
@@ -376,6 +380,8 @@ int mnt_lock_file(mnt_lock *ml)
 				ml->locked = 0;
 				continue;
 			}
+			if (errsv > 0)
+				rc = -errsv;
 			goto failed;
 		}
 
@@ -401,11 +407,13 @@ int mnt_lock_file(mnt_lock *ml)
 				DBG(DEBUG_LOCKS, fprintf(stderr,
 					"%s: can't create link: time out (perhaps "
 					"there is a stale lock file?)", lockfile));
+				rc = -ETIMEDOUT;
 				goto failed;
 
-			} else if (err < 0)
+			} else if (err < 0) {
+				rc = err;
 				goto failed;
-
+			}
 			nanosleep(&waittime, NULL);
 			close(ml->lockfile_fd);
 			ml->lockfile_fd = -1;
@@ -419,7 +427,7 @@ int mnt_lock_file(mnt_lock *ml)
 
 failed:
 	mnt_unlock_file(ml);
-	return -1;
+	return rc;
 }
 
 #ifdef TEST_PROGRAM
